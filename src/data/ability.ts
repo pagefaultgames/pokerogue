@@ -5250,7 +5250,7 @@ export class IllusionPreSummonAbAttr extends PreSummonAbAttr {
 
 export class IllusionBreakAbAttr extends PostDefendAbAttr {
   /**
-   * Destroy illusion if attack move deals damage to zoroark
+   * Destroy the illusion upon taking damage
    *
    * @param pokemon - The Pokémon with the Illusion ability.
    * @param passive - unused
