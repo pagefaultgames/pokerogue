@@ -72,8 +72,8 @@ import { GameModes, getGameMode } from "#app/game-mode";
 import FieldSpritePipeline from "#app/pipelines/field-sprite";
 import SpritePipeline from "#app/pipelines/sprite";
 import PartyExpBar from "#app/ui/party-exp-bar";
-import type { TrainerSlot } from "#app/data/trainer-config";
-import { trainerConfigs } from "#app/data/trainer-config";
+import type { TrainerSlot } from "./enums/trainer-slot";
+import { trainerConfigs } from "#app/data/trainers/trainer-config";
 import Trainer, { TrainerVariant } from "#app/field/trainer";
 import type TrainerData from "#app/system/trainer-data";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
@@ -167,9 +167,10 @@ import { ExpGainsSpeed } from "#enums/exp-gains-speed";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { FRIENDSHIP_GAIN_FROM_BATTLE } from "#app/data/balance/starters";
 import { StatusEffect } from "#enums/status-effect";
-import { initGlobalScene } from "#app/global-scene";
+import { globalScene, initGlobalScene } from "#app/global-scene";
 import { ShowAbilityPhase } from "#app/phases/show-ability-phase";
 import { HideAbilityPhase } from "#app/phases/hide-ability-phase";
+import { timedEventManager } from "./global-event-manager";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
@@ -2268,6 +2269,9 @@ export default class BattleScene extends SceneBase {
     if (bgmName === undefined) {
       bgmName = this.currentBattle?.getBgmOverride() || this.arena?.bgm;
     }
+
+    bgmName = timedEventManager.getEventBgmReplacement(bgmName);
+
     if (this.bgm && bgmName === this.bgm.key) {
       if (!this.bgm.isPlaying) {
         this.bgm.play({
@@ -2660,6 +2664,10 @@ export default class BattleScene extends SceneBase {
         return 41.42;
       case "mystery_encounter_delibirdy": // Firel Delibirdy
         return 82.28;
+      case "title_afd": // Andr06 - PokéRogue Title Remix (AFD)
+        return 47.660;
+      case "battle_rival_3_afd": // Andr06 - Final N Battle Remix (AFD)
+        return 49.147;
     }
 
     return 0;

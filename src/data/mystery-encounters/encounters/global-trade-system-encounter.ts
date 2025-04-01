@@ -3,7 +3,7 @@ import {
   selectPokemonForOption,
   setEncounterRewards,
 } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { TrainerSlot } from "#app/data/trainer-config";
+import { TrainerSlot } from "#enums/trainer-slot";
 import { ModifierTier } from "#app/modifier/modifier-tier";
 import { MusicPreference } from "#app/system/settings/settings";
 import type { ModifierTypeOption } from "#app/modifier/modifier-type";
@@ -46,6 +46,7 @@ import { addPokemonDataToDexAndValidateAchievements } from "#app/data/mystery-en
 import type { PokeballType } from "#enums/pokeball";
 import { doShinySparkleAnim } from "#app/field/anims";
 import { TrainerType } from "#enums/trainer-type";
+import { timedEventManager } from "#app/global-event-manager";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/globalTradeSystem";
@@ -273,8 +274,8 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
           // Extra shiny roll at 1/128 odds (boosted by events and charms)
           if (!tradePokemon.shiny) {
             const shinyThreshold = new NumberHolder(WONDER_TRADE_SHINY_CHANCE);
-            if (globalScene.eventManager.isEventActive()) {
-              shinyThreshold.value *= globalScene.eventManager.getShinyMultiplier();
+            if (timedEventManager.isEventActive()) {
+              shinyThreshold.value *= timedEventManager.getShinyMultiplier();
             }
             globalScene.applyModifiers(ShinyRateBoosterModifier, true, shinyThreshold);
 

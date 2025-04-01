@@ -43,8 +43,9 @@ import type { Moves } from "#enums/moves";
 import { initMoveAnim, loadMoveAnimAssets } from "#app/data/battle-anims";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import { Status } from "#app/data/status-effect";
-import type { TrainerConfig } from "#app/data/trainer-config";
-import { trainerConfigs, TrainerSlot } from "#app/data/trainer-config";
+import type { TrainerConfig } from "#app/data/trainers/trainer-config";
+import { trainerConfigs } from "#app/data/trainers/trainer-config";
+import { TrainerSlot } from "#enums/trainer-slot";
 import type PokemonSpecies from "#app/data/pokemon-species";
 import type { IEggOptions } from "#app/data/egg";
 import { Egg } from "#app/data/egg";
@@ -64,6 +65,7 @@ import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { PokemonType } from "#enums/pokemon-type";
 import { getNatureName } from "#app/data/nature";
 import { getPokemonNameWithAffix } from "#app/messages";
+import { timedEventManager } from "#app/global-event-manager";
 
 /**
  * Animates exclamation sprite over trainer's head at start of encounter
@@ -1045,7 +1047,7 @@ export function handleMysteryEncounterTurnStartEffects(): boolean {
 export function getRandomEncounterSpecies(level: number, isBoss = false, rerollHidden = false): EnemyPokemon {
   let bossSpecies: PokemonSpecies;
   let isEventEncounter = false;
-  const eventEncounters = globalScene.eventManager.getEventEncounters();
+  const eventEncounters = timedEventManager.getEventEncounters();
   let formIndex: number | undefined;
 
   if (eventEncounters.length > 0 && randSeedInt(2) === 1) {
