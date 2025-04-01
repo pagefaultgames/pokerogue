@@ -2841,7 +2841,7 @@ export class PostSummonFormChangeByWeatherAbAttr extends PostSummonAbAttr {
   private ability: Abilities;
 
   constructor(ability: Abilities) {
-    super(false);
+    super(true);
 
     this.ability = ability;
   }
@@ -2865,7 +2865,6 @@ export class PostSummonFormChangeByWeatherAbAttr extends PostSummonAbAttr {
     if (!simulated) {
       globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeWeatherTrigger);
       globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeRevertWeatherFormTrigger);
-      globalScene.queueAbilityDisplay(pokemon, passive, true);
     }
   }
 }

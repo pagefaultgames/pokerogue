@@ -69,6 +69,19 @@ export class GameMode implements GameModeConfig {
   }
 
   /**
+   * Enables challenges if they are disabled and sets the specified challenge's value
+   * @param challenge The challenge to set
+   * @param value The value to give the challenge. Impact depends on the specific challenge
+   */
+  setChallengeValue(challenge: Challenges, value: number) {
+    if (!this.isChallenge) {
+      this.isChallenge = true;
+      this.challenges = allChallenges.map(c => copyChallenge(c));
+    }
+    this.challenges.filter((chal: Challenge) => chal.id === challenge).map((chal: Challenge) => (chal.value = value));
+  }
+
+  /**
    * Helper function to see if a GameMode has a specific challenge type
    * @param challenge the Challenges it looks for
    * @returns true if the game mode has that challenge

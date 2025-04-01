@@ -6715,6 +6715,8 @@ class CallMoveAttr extends OverrideMoveEffectAttr {
     const replaceMoveTarget = move.moveTarget === MoveTarget.NEAR_OTHER ? MoveTarget.NEAR_ENEMY : undefined;
     const moveTargets = getMoveTargets(user, move.id, replaceMoveTarget);
     if (moveTargets.targets.length === 0) {
+      globalScene.queueMessage(i18next.t("battle:attackFailed"));
+      console.log("CallMoveAttr failed due to no targets.");
       return false;
     }
     const targets = moveTargets.multiple || moveTargets.targets.length === 1
