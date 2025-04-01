@@ -2835,9 +2835,9 @@ const modifierPool: ModifierPool = {
             const moveset = p.getMoveset(true).map(m => m.moveId);
 
             const hasAbility = [
-              Abilities.DRIZZLE,
-              Abilities.ORICHALCUM_PULSE,
               Abilities.DROUGHT,
+              Abilities.ORICHALCUM_PULSE,
+              Abilities.DRIZZLE,
               Abilities.SAND_STREAM,
               Abilities.SAND_SPIT,
               Abilities.SNOW_WARNING,
