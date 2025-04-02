@@ -179,7 +179,7 @@ class SystemVersionConverter extends VersionConverter {
       }
       if (curMinor === 8) {
         if (curPatch <= 2) {
-          console.log("Applying v1.8.3 session data migration!");
+          console.log("Applying v1.8.3 system data migration!");
           this.callMigrators(data, v1_8_3.systemMigrators);
         }
       }
