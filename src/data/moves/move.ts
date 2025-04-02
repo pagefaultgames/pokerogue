@@ -106,7 +106,6 @@ import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { SwitchPhase } from "#app/phases/switch-phase";
 import { SwitchSummonPhase } from "#app/phases/switch-summon-phase";
-import { ShowAbilityPhase } from "#app/phases/show-ability-phase";
 import { SpeciesFormChangeRevertWeatherFormTrigger } from "../pokemon-forms";
 import type { GameMode } from "#app/game-mode";
 import { applyChallenges, ChallengeType } from "../challenge";
@@ -912,7 +911,7 @@ export default class Move implements Localizable {
     ];
 
     // ...and cannot enhance Pollen Puff when targeting an ally.
-    const exceptPollenPuffAlly: boolean = this.id === Moves.POLLEN_PUFF && targets.includes(user.getAlly().getBattlerIndex())
+    const exceptPollenPuffAlly: boolean = this.id === Moves.POLLEN_PUFF && targets.includes(user.getAlly()?.getBattlerIndex())
 
     return (!restrictSpread || !isMultiTarget)
       && !this.isChargingMove()
@@ -1924,7 +1923,9 @@ export class PartyStatusCureAttr extends MoveEffectAttr {
       pokemon.resetStatus();
       pokemon.updateInfo();
     } else {
-      globalScene.unshiftPhase(new ShowAbilityPhase(pokemon.id, pokemon.getPassiveAbility()?.id === this.abilityCondition));
+      // TODO: Ability displays should be handled by the ability
+      globalScene.queueAbilityDisplay(pokemon, pokemon.getPassiveAbility()?.id === this.abilityCondition, true);
+      globalScene.queueAbilityDisplay(pokemon, pokemon.getPassiveAbility()?.id === this.abilityCondition, false);
     }
   }
 }

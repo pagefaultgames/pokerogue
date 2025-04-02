@@ -167,7 +167,7 @@ import { ExpGainsSpeed } from "#enums/exp-gains-speed";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { FRIENDSHIP_GAIN_FROM_BATTLE } from "#app/data/balance/starters";
 import { StatusEffect } from "#enums/status-effect";
-import { globalScene, initGlobalScene } from "#app/global-scene";
+import { initGlobalScene } from "#app/global-scene";
 import { ShowAbilityPhase } from "#app/phases/show-ability-phase";
 import { HideAbilityPhase } from "#app/phases/hide-ability-phase";
 import { timedEventManager } from "./global-event-manager";
@@ -2665,7 +2665,7 @@ export default class BattleScene extends SceneBase {
       case "mystery_encounter_delibirdy": // Firel Delibirdy
         return 82.28;
       case "title_afd": // Andr06 - PokéRogue Title Remix (AFD)
-        return 47.660;
+        return 47.66;
       case "battle_rival_3_afd": // Andr06 - Final N Battle Remix (AFD)
         return 49.147;
     }
@@ -2937,12 +2937,17 @@ export default class BattleScene extends SceneBase {
    * @param show Whether to show or hide the bar
    */
   public queueAbilityDisplay(pokemon: Pokemon, passive: boolean, show: boolean): void {
-    this.unshiftPhase(
-      show
-        ? new ShowAbilityPhase(pokemon.getBattlerIndex(), passive)
-        : new HideAbilityPhase(pokemon.getBattlerIndex(), passive),
-    );
+    this.unshiftPhase(show ? new ShowAbilityPhase(pokemon.getBattlerIndex(), passive) : new HideAbilityPhase());
     this.clearPhaseQueueSplice();
+  }
+
+  /**
+   * Hides the ability bar if it is currently visible
+   */
+  public hideAbilityBar(): void {
+    if (this.abilityBar.isVisible()) {
+      this.unshiftPhase(new HideAbilityPhase());
+    }
   }
 
   /**

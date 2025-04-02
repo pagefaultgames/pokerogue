@@ -28,6 +28,8 @@ export class TurnEndPhase extends FieldPhase {
     globalScene.currentBattle.incrementTurn();
     globalScene.eventTarget.dispatchEvent(new TurnEndEvent(globalScene.currentBattle.turn));
 
+    globalScene.hideAbilityBar();
+
     const handlePokemon = (pokemon: Pokemon) => {
       if (!pokemon.switchOutStatus) {
         pokemon.lapseTags(BattlerTagLapseType.TURN_END);
