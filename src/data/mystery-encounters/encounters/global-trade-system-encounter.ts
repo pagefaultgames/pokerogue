@@ -985,12 +985,11 @@ function doTradeReceivedSequence(
 function generateRandomTraderName() {
   const length = TrainerType.YOUNGSTER - TrainerType.ACE_TRAINER + 1;
   // +1 avoids TrainerType.UNKNOWN
-  const trainerTypePool = i18next.t("trainersCommon:" + TrainerType[randInt(length) + 1], { returnObjects: true });
+  const classKey = `trainersCommon:${TrainerType[randInt(length) + 1]}`;
   // Some trainers have 2 gendered pools, some do not
-  const gender = randInt(2) === 0 ? "MALE" : "FEMALE";
-  const trainerNameString = randSeedItem(
-    Object.values(trainerTypePool.hasOwnProperty(gender) ? trainerTypePool[gender] : trainerTypePool),
-  ) as string;
+  const genderKey = i18next.exists(`${classKey}.MALE`) ? (randInt(2) === 0 ? ".MALE" : ".FEMALE") : "";
+  const trainerNameKey = randSeedItem(Object.keys(i18next.t(`${classKey}${genderKey}`, { returnObjects: true })));
+  const trainerNameString = i18next.t(`${classKey}${genderKey}.${trainerNameKey}`);
   // Some names have an '&' symbol and need to be trimmed to a single name instead of a double name
   const trainerNames = trainerNameString.split(" & ");
   return trainerNames[randInt(trainerNames.length)];
