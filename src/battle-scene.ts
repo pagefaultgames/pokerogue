@@ -2942,6 +2942,15 @@ export default class BattleScene extends SceneBase {
   }
 
   /**
+   * Hides the ability bar if it is currently visible
+   */
+  public hideAbilityBar(): void {
+    if (this.abilityBar.isVisible()) {
+      this.unshiftPhase(new HideAbilityPhase());
+    }
+  }
+
+  /**
    * Moves everything from nextCommandPhaseQueue to phaseQueue (keeping order)
    */
   populatePhaseQueue(): void {
