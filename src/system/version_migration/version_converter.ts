@@ -10,6 +10,9 @@ import * as v1_1_0 from "./versions/v1_1_0";
 // --- v1.7.0 PATCHES --- //
 import * as v1_7_0 from "./versions/v1_7_0";
 
+// --- v1.8.3 PATCHES --- //
+import * as v1_8_3 from "./versions/v1_8_3";
+
 const LATEST_VERSION = version.split(".").map(value => Number.parseInt(value));
 
 /**
@@ -173,6 +176,12 @@ class SystemVersionConverter extends VersionConverter {
       if (curMinor < 7) {
         console.log("Applying v1.7.0 system data migration!");
         this.callMigrators(data, v1_7_0.systemMigrators);
+      }
+      if (curMinor === 8) {
+        if (curPatch <= 2) {
+          console.log("Applying v1.8.3 system data migration!");
+          this.callMigrators(data, v1_8_3.systemMigrators);
+        }
       }
     }
 
