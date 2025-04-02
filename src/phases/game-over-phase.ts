@@ -31,6 +31,7 @@ import ChallengeData from "#app/system/challenge-data";
 import TrainerData from "#app/system/trainer-data";
 import ArenaData from "#app/system/arena-data";
 import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
+import { HideAbilityPhase } from "#app/phases/hide-ability-phase";
 
 export class GameOverPhase extends BattlePhase {
   private isVictory: boolean;
@@ -44,6 +45,10 @@ export class GameOverPhase extends BattlePhase {
 
   start() {
     super.start();
+
+    if (globalScene.abilityBar.isVisible()) {
+      globalScene.unshiftPhase(new HideAbilityPhase());
+    }
 
     // Failsafe if players somehow skip floor 200 in classic mode
     if (globalScene.gameMode.isClassic && globalScene.currentBattle.waveIndex > 200) {

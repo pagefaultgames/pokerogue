@@ -334,12 +334,7 @@ export class MoveEffectPhase extends PokemonPhase {
                   target.getPassiveAbility().hasAttr(ReflectStatusMoveAbAttr),
                 ),
               );
-              queuedPhases.push(
-                new HideAbilityPhase(
-                  target.getBattlerIndex(),
-                  target.getPassiveAbility().hasAttr(ReflectStatusMoveAbAttr),
-                ),
-              );
+              queuedPhases.push(new HideAbilityPhase());
             }
 
             queuedPhases.push(
