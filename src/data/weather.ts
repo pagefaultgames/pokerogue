@@ -11,6 +11,7 @@ import { TerrainType, getTerrainName } from "./terrain";
 import i18next from "i18next";
 import { globalScene } from "#app/global-scene";
 import type { Arena } from "#app/field/arena";
+import { timedEventManager } from "#app/global-event-manager";
 
 export class Weather {
   public weatherType: WeatherType;
@@ -405,8 +406,8 @@ export function getRandomWeatherType(arena: Arena): WeatherType {
       break;
   }
 
-  if (arena.biomeType === Biome.TOWN && globalScene.eventManager.isEventActive()) {
-    globalScene.eventManager.getWeather()?.map(w => weatherPool.push(w));
+  if (arena.biomeType === Biome.TOWN && timedEventManager.isEventActive()) {
+    timedEventManager.getWeather()?.map(w => weatherPool.push(w));
   }
 
   if (weatherPool.length > 1) {

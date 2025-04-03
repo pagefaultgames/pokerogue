@@ -28,7 +28,6 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import { Moves } from "#enums/moves";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
-import { ShowAbilityPhase } from "#app/phases/show-ability-phase";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { CommonAnimPhase } from "#app/phases/common-anim-phase";
 
@@ -1160,9 +1159,11 @@ class TailwindTag extends ArenaTag {
         );
       }
       // Raise attack by one stage if party member has WIND_RIDER ability
+      // TODO: Ability displays should be handled by the ability
       if (pokemon.hasAbility(Abilities.WIND_RIDER)) {
-        globalScene.unshiftPhase(new ShowAbilityPhase(pokemon.getBattlerIndex()));
+        globalScene.queueAbilityDisplay(pokemon, false, true);
         globalScene.unshiftPhase(new StatStageChangePhase(pokemon.getBattlerIndex(), true, [Stat.ATK], 1, true));
+        globalScene.queueAbilityDisplay(pokemon, false, false);
       }
     }
   }
