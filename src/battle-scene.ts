@@ -170,6 +170,7 @@ import { StatusEffect } from "#enums/status-effect";
 import { initGlobalScene } from "#app/global-scene";
 import { ShowAbilityPhase } from "#app/phases/show-ability-phase";
 import { HideAbilityPhase } from "#app/phases/hide-ability-phase";
+import { timedEventManager } from "./global-event-manager";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
@@ -2268,6 +2269,9 @@ export default class BattleScene extends SceneBase {
     if (bgmName === undefined) {
       bgmName = this.currentBattle?.getBgmOverride() || this.arena?.bgm;
     }
+
+    bgmName = timedEventManager.getEventBgmReplacement(bgmName);
+
     if (this.bgm && bgmName === this.bgm.key) {
       if (!this.bgm.isPlaying) {
         this.bgm.play({
@@ -2660,6 +2664,10 @@ export default class BattleScene extends SceneBase {
         return 41.42;
       case "mystery_encounter_delibirdy": // Firel Delibirdy
         return 82.28;
+      case "title_afd": // Andr06 - PokéRogue Title Remix (AFD)
+        return 47.66;
+      case "battle_rival_3_afd": // Andr06 - Final N Battle Remix (AFD)
+        return 49.147;
     }
 
     return 0;
@@ -2929,12 +2937,17 @@ export default class BattleScene extends SceneBase {
    * @param show Whether to show or hide the bar
    */
   public queueAbilityDisplay(pokemon: Pokemon, passive: boolean, show: boolean): void {
-    this.unshiftPhase(
-      show
-        ? new ShowAbilityPhase(pokemon.getBattlerIndex(), passive)
-        : new HideAbilityPhase(pokemon.getBattlerIndex(), passive),
-    );
+    this.unshiftPhase(show ? new ShowAbilityPhase(pokemon.getBattlerIndex(), passive) : new HideAbilityPhase());
     this.clearPhaseQueueSplice();
+  }
+
+  /**
+   * Hides the ability bar if it is currently visible
+   */
+  public hideAbilityBar(): void {
+    if (this.abilityBar.isVisible()) {
+      this.unshiftPhase(new HideAbilityPhase());
+    }
   }
 
   /**

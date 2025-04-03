@@ -263,6 +263,7 @@ import { Nature } from "#enums/nature";
 import { StatusEffect } from "#enums/status-effect";
 import { doShinySparkleAnim } from "#app/field/anims";
 import { MoveFlags } from "#enums/MoveFlags";
+import { timedEventManager } from "#app/global-event-manager";
 
 export enum LearnMoveSituation {
   MISC,
@@ -1446,7 +1447,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     const ally = this.getAlly();
-    if (ally) {
+    if (!Utils.isNullOrUndefined(ally)) {
       applyAllyStatMultiplierAbAttrs(AllyStatMultiplierAbAttr, ally, stat, statValue, simulated, this, move?.hasFlag(MoveFlags.IGNORE_ABILITIES) || ignoreAllyAbility);
     }
 
@@ -2983,8 +2984,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     const shinyThreshold = new Utils.NumberHolder(BASE_SHINY_CHANCE);
     if (thresholdOverride === undefined) {
-      if (globalScene.eventManager.isEventActive()) {
-        shinyThreshold.value *= globalScene.eventManager.getShinyMultiplier();
+      if (timedEventManager.isEventActive()) {
+        const tchance = timedEventManager.getClassicTrainerShinyChance();
+        shinyThreshold.value *= timedEventManager.getShinyMultiplier();
+        if (this.hasTrainer() && tchance > 0) {
+          shinyThreshold.value = Math.max(tchance, shinyThreshold.value); // Choose the higher boost
+        }
       }
       if (!this.hasTrainer()) {
         globalScene.applyModifiers(
@@ -3025,8 +3030,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       if (thresholdOverride !== undefined && applyModifiersToOverride) {
         shinyThreshold.value = thresholdOverride;
       }
-      if (globalScene.eventManager.isEventActive()) {
-        shinyThreshold.value *= globalScene.eventManager.getShinyMultiplier();
+      if (timedEventManager.isEventActive()) {
+        shinyThreshold.value *= timedEventManager.getShinyMultiplier();
       }
       if (!this.hasTrainer()) {
         globalScene.applyModifiers(
@@ -3709,7 +3714,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       : i18next.t("arenaTag:yourTeam");
   }
 
-  getAlly(): Pokemon {
+  getAlly(): Pokemon | undefined {
     return (
       this.isPlayer()
         ? globalScene.getPlayerField()
@@ -3895,7 +3900,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     );
 
     const ally = this.getAlly();
-    if (ally) {
+    if (!isNullOrUndefined(ally)) {
       const ignore = this.hasAbilityWithAttr(MoveAbilityBypassAbAttr) || sourceMove.hasFlag(MoveFlags.IGNORE_ABILITIES);
       applyAllyStatMultiplierAbAttrs(AllyStatMultiplierAbAttr, ally, Stat.ACC, accuracyMultiplier, false, this, ignore);
       applyAllyStatMultiplierAbAttrs(AllyStatMultiplierAbAttr, ally, Stat.EVA, evasionMultiplier, false, this, ignore);
@@ -4331,11 +4336,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         damage,
       );
 
+      const ally = this.getAlly();
       /** Additionally apply friend guard damage reduction if ally has it. */
-      if (globalScene.currentBattle.double && this.getAlly()?.isActive(true)) {
+      if (globalScene.currentBattle.double && !isNullOrUndefined(ally) && ally.isActive(true)) {
         applyPreDefendAbAttrs(
           AlliedFieldDamageReductionAbAttr,
-          this.getAlly(),
+          ally,
           source,
           move,
           cancelled,
@@ -6469,10 +6475,10 @@ export class PlayerPokemon extends Pokemon {
         amount,
       );
       const candyFriendshipMultiplier = globalScene.gameMode.isClassic
-        ? globalScene.eventManager.getClassicFriendshipMultiplier()
+        ? timedEventManager.getClassicFriendshipMultiplier()
         : 1;
       const fusionReduction = fusionStarterSpeciesId
-        ? globalScene.eventManager.areFusionsBoosted()
+        ? timedEventManager.areFusionsBoosted()
           ? 1.5 // Divide candy gain for fusions by 1.5 during events
           : 2 // 2 for fusions outside events
         : 1; // 1 for non-fused mons

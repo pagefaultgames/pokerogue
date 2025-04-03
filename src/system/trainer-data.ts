@@ -5,8 +5,8 @@ export default class TrainerData {
   public trainerType: TrainerType;
   public variant: TrainerVariant;
   public partyTemplateIndex: number;
-  public name: string;
-  public partnerName: string;
+  public nameKey: string;
+  public partnerNameKey: string | undefined;
 
   constructor(source: Trainer | any) {
     const sourceTrainer = source instanceof Trainer ? (source as Trainer) : null;
@@ -17,11 +17,11 @@ export default class TrainerData {
         ? TrainerVariant.FEMALE
         : TrainerVariant.DEFAULT;
     this.partyTemplateIndex = source.partyMemberTemplateIndex;
-    this.name = source.name;
-    this.partnerName = source.partnerName;
+    this.nameKey = source.nameKey;
+    this.partnerNameKey = source.partnerNameKey;
   }
 
   toTrainer(): Trainer {
-    return new Trainer(this.trainerType, this.variant, this.partyTemplateIndex, this.name, this.partnerName);
+    return new Trainer(this.trainerType, this.variant, this.partyTemplateIndex, this.nameKey, this.partnerNameKey);
   }
 }
