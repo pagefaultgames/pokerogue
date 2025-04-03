@@ -42,8 +42,12 @@ export class RevivalBlessingPhase extends BattlePhase {
             true,
           );
 
-          if (globalScene.currentBattle.double && globalScene.getPlayerParty().length > 1) {
-            const allyPokemon = this.user.getAlly();
+          const allyPokemon = this.user.getAlly();
+          if (
+            globalScene.currentBattle.double &&
+            globalScene.getPlayerParty().length > 1 &&
+            !Utils.isNullOrUndefined(allyPokemon)
+          ) {
             if (slotIndex <= 1) {
               // Revived ally pokemon
               globalScene.unshiftPhase(

@@ -1272,23 +1272,22 @@ function checkSpeciesValidForChallenge(species: PokemonSpecies, props: DexAttrPr
   if (soft && isValidForChallenge.value) {
     return true;
   }
-  pokemonFormChanges[species.speciesId].forEach(f1 => {
-    // Exclude form changes that require the mon to be on the field to begin with,
-    // such as Castform
-    if (!("item" in f1)) {
-      return;
+
+  const result = pokemonFormChanges[species.speciesId].some(f1 => {
+    // Exclude form changes that require the mon to be on the field to begin with
+    if (!("item" in f1.trigger)) {
+      return false;
     }
-    species.forms.forEach((f2, formIndex) => {
+
+    return species.forms.some((f2, formIndex) => {
       if (f1.formKey === f2.formKey) {
-        const formProps = { ...props };
-        formProps.formIndex = formIndex;
+        const formProps = { ...props, formIndex };
         const isFormValidForChallenge = new Utils.BooleanHolder(true);
         applyChallenges(ChallengeType.STARTER_CHOICE, species, isFormValidForChallenge, formProps);
-        if (isFormValidForChallenge.value) {
-          return true;
-        }
+        return isFormValidForChallenge.value;
       }
+      return false;
     });
   });
-  return false;
+  return result;
 }
