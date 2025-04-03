@@ -887,19 +887,8 @@ export default class BattleScene extends SceneBase {
     return true;
   }
 
-  public getPlayerParty(useIllusion = true): PlayerPokemon[] {
+  public getPlayerParty(): PlayerPokemon[] {
     const party = this.party;
-    if (!useIllusion) {
-      party.map(pokemon => {
-        pokemon.shiny = pokemon.isShiny();
-        pokemon.variant = pokemon.getVariant();
-        pokemon.name = pokemon.getNameToRender();
-        if (pokemon.isFusion()) {
-          pokemon.fusionVariant = pokemon.summonData?.illusion?.basePokemon.fusionVariant ?? pokemon.fusionVariant;
-          pokemon.fusionShiny = pokemon.summonData?.illusion?.basePokemon.fusionShiny ?? pokemon.fusionShiny;
-        }
-      });
-    }
     return party;
   }
 

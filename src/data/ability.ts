@@ -5244,7 +5244,7 @@ export class IllusionPreSummonAbAttr extends PreSummonAbAttr {
         return false;
       }
     }
-    return pokemon.canApplyAbility();
+    return !pokemon.summonData.illusionBroken;
   }
 }
 
@@ -5262,6 +5262,7 @@ export class IllusionBreakAbAttr extends PostDefendAbAttr {
    */
   override applyPostDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): void {
     pokemon.breakIllusion();
+    pokemon.summonData.illusionBroken = true;
   }
 
   override canApplyPostDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean {

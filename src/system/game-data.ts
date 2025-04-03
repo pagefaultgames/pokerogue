@@ -1011,7 +1011,7 @@ export class GameData {
       seed: globalScene.seed,
       playTime: globalScene.sessionPlayTime,
       gameMode: globalScene.gameMode.modeId,
-      party: globalScene.getPlayerParty(false).map(p => new PokemonData(p)),
+      party: globalScene.getPlayerParty().map(p => new PokemonData(p)),
       enemyParty: globalScene.getEnemyParty().map(p => new PokemonData(p)),
       modifiers: globalScene.findModifiers(() => true).map(m => new PersistentModifierData(m, true)),
       enemyModifiers: globalScene.findModifiers(() => true, false).map(m => new PersistentModifierData(m, false)),
@@ -1423,12 +1423,11 @@ export class GameData {
               ),
             ) // TODO: is this bang correct?
           : this.getSessionSaveData();
-
         const maxIntAttrValue = 0x80000000;
         const systemData = useCachedSystem
           ? this.parseSystemData(decrypt(localStorage.getItem(`data_${loggedInUser?.username}`)!, bypassLogin))
           : this.getSystemSaveData(); // TODO: is this bang correct?
-
+        
         const request = {
           system: systemData,
           session: sessionData,
@@ -1445,7 +1444,6 @@ export class GameData {
             bypassLogin,
           ),
         );
-
         localStorage.setItem(
           `sessionData${globalScene.sessionSlotId ? globalScene.sessionSlotId : ""}_${loggedInUser?.username}`,
           encrypt(JSON.stringify(sessionData), bypassLogin),
