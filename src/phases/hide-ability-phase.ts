@@ -1,27 +1,12 @@
 import { globalScene } from "#app/global-scene";
-import type { BattlerIndex } from "#app/battle";
-import { PokemonPhase } from "./pokemon-phase";
+import { Phase } from "#app/phase";
 
-export class HideAbilityPhase extends PokemonPhase {
-  private passive: boolean;
-
-  constructor(battlerIndex: BattlerIndex, passive = false) {
-    super(battlerIndex);
-
-    this.passive = passive;
-  }
-
+export class HideAbilityPhase extends Phase {
   start() {
     super.start();
 
-    const pokemon = this.getPokemon();
-
-    if (pokemon) {
-      globalScene.abilityBar.hide().then(() => {
-        this.end();
-      });
-    } else {
+    globalScene.abilityBar.hide().then(() => {
       this.end();
-    }
+    });
   }
 }

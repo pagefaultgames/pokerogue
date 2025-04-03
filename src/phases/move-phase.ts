@@ -42,7 +42,6 @@ import { CommonAnimPhase } from "#app/phases/common-anim-phase";
 import { MoveChargePhase } from "#app/phases/move-charge-phase";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { MoveEndPhase } from "#app/phases/move-end-phase";
-import { ShowAbilityPhase } from "#app/phases/show-ability-phase";
 import { NumberHolder } from "#app/utils";
 import { Abilities } from "#enums/abilities";
 import { ArenaTagType } from "#enums/arena-tag-type";
@@ -535,11 +534,16 @@ export class MovePhase extends BattlePhase {
 
         if (this.pokemon.hasAbilityWithAttr(BlockRedirectAbAttr)) {
           redirectTarget.value = currentTarget;
-          globalScene.unshiftPhase(
-            new ShowAbilityPhase(
-              this.pokemon.getBattlerIndex(),
-              this.pokemon.getPassiveAbility().hasAttr(BlockRedirectAbAttr),
-            ),
+          // TODO: Ability displays should be handled by the ability
+          globalScene.queueAbilityDisplay(
+            this.pokemon,
+            this.pokemon.getPassiveAbility().hasAttr(BlockRedirectAbAttr),
+            true,
+          );
+          globalScene.queueAbilityDisplay(
+            this.pokemon,
+            this.pokemon.getPassiveAbility().hasAttr(BlockRedirectAbAttr),
+            false,
           );
         }
 

@@ -32,6 +32,7 @@ import { TeraAIMode } from "#enums/tera-ai-mode";
 import { TrainerPoolTier } from "#enums/trainer-pool-tier";
 import { TrainerSlot } from "#enums/trainer-slot";
 import { TrainerType } from "#enums/trainer-type";
+import { timedEventManager } from "#app/global-event-manager";
 
 // Type imports
 import type { PokemonSpeciesFilter } from "#app/data/pokemon-species";
@@ -516,13 +517,13 @@ export class TrainerConfig {
   //   return ret;
   // }
 
-  setEventModifierRewardFuncs(...modifierTypeFuncs: (() => ModifierTypeFunc)[]): TrainerConfig {
-    this.eventRewardFuncs = modifierTypeFuncs.map(func => () => {
-      const modifierTypeFunc = func();
-      const modifierType = modifierTypeFunc();
-      modifierType.withIdFromFunc(modifierTypeFunc);
-      return modifierType;
-    });
+  /**
+   * Sets eventRewardFuncs to the active event rewards for the specified wave
+   * @param wave Associated with {@linkcode getFixedBattleEventRewards}
+   * @returns this
+   */
+  setEventModifierRewardFuncs(wave: number): TrainerConfig {
+    this.eventRewardFuncs = timedEventManager.getFixedBattleEventRewards(wave).map(r => modifierTypes[r]);
     return this;
   }
 
@@ -3696,11 +3697,7 @@ export const trainerConfigs: TrainerConfigs = {
       () => modifierTypes.SUPER_EXP_CHARM,
       () => modifierTypes.EXP_SHARE,
     )
-    .setEventModifierRewardFuncs(
-      () => modifierTypes.SHINY_CHARM,
-      () => modifierTypes.ABILITY_CHARM,
-      () => modifierTypes.CATCHING_CHARM,
-    )
+    .setEventModifierRewardFuncs(8)
     .setPartyMemberFunc(
       0,
       getRandomPartyMemberFunc(
@@ -3768,7 +3765,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setMixedBattleBgm("battle_rival")
     .setPartyTemplates(trainerPartyTemplates.RIVAL_2)
     .setModifierRewardFuncs(() => modifierTypes.EXP_SHARE)
-    .setEventModifierRewardFuncs(() => modifierTypes.SHINY_CHARM)
+    .setEventModifierRewardFuncs(25)
     .setPartyMemberFunc(
       0,
       getRandomPartyMemberFunc(
@@ -4077,7 +4074,7 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([Species.RAYQUAZA], TrainerSlot.TRAINER, true, p => {
         p.setBoss(true, 3);
         p.pokeball = PokeballType.MASTER_BALL;
-        p.shiny = true;
+        p.shiny = timedEventManager.getClassicTrainerShinyChance() === 0;
         p.variant = 1;
       }),
     )
@@ -4174,7 +4171,7 @@ export const trainerConfigs: TrainerConfigs = {
         p.setBoss();
         p.generateAndPopulateMoveset();
         p.pokeball = PokeballType.MASTER_BALL;
-        p.shiny = true;
+        p.shiny = timedEventManager.getClassicTrainerShinyChance() === 0;
         p.variant = 1;
         p.formIndex = 1; // Mega Rayquaza
         p.generateName();
