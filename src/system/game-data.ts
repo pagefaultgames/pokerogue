@@ -1791,7 +1791,9 @@ export class GameData {
       const dexEntry = this.dexData[species.speciesId];
       const caughtAttr = dexEntry.caughtAttr;
       const formIndex = pokemon.formIndex;
-      const dexAttr = pokemon.getDexAttr();
+
+      // This makes sure that we do not try to unlock data which cannot be unlocked
+      const dexAttr = pokemon.getDexAttr() & species.getFullUnlocksData();
 
       // Mark as caught
       dexEntry.caughtAttr |= dexAttr;
@@ -1801,6 +1803,10 @@ export class GameData {
       // always true except for the case of Urshifu.
       const formKey = pokemon.getFormKey();
       if (formIndex > 0) {
+        // In case a Pikachu with formIndex > 0 was unlocked, base form Pichu is also unlocked
+        if (pokemon.species.speciesId === Species.PIKACHU && species.speciesId === Species.PICHU) {
+          dexEntry.caughtAttr |= globalScene.gameData.getFormAttr(0);
+        }
         if (pokemon.species.speciesId === Species.URSHIFU) {
           if (formIndex === 2) {
             dexEntry.caughtAttr |= globalScene.gameData.getFormAttr(0);

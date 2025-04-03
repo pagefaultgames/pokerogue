@@ -1569,7 +1569,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     const ally = this.getAlly();
-    if (ally) {
+    if (!Utils.isNullOrUndefined(ally)) {
       applyAllyStatMultiplierAbAttrs(AllyStatMultiplierAbAttr, ally, stat, statValue, simulated, this, move?.hasFlag(MoveFlags.IGNORE_ABILITIES) || ignoreAllyAbility);
     }
 
@@ -3901,7 +3901,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       : i18next.t("arenaTag:yourTeam");
   }
 
-  getAlly(): Pokemon {
+  getAlly(): Pokemon | undefined {
     return (
       this.isPlayer()
         ? globalScene.getPlayerField()
@@ -4087,7 +4087,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     );
 
     const ally = this.getAlly();
-    if (ally) {
+    if (!isNullOrUndefined(ally)) {
       const ignore = this.hasAbilityWithAttr(MoveAbilityBypassAbAttr) || sourceMove.hasFlag(MoveFlags.IGNORE_ABILITIES);
       applyAllyStatMultiplierAbAttrs(AllyStatMultiplierAbAttr, ally, Stat.ACC, accuracyMultiplier, false, this, ignore);
       applyAllyStatMultiplierAbAttrs(AllyStatMultiplierAbAttr, ally, Stat.EVA, evasionMultiplier, false, this, ignore);
@@ -4523,11 +4523,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         damage,
       );
 
+      const ally = this.getAlly();
       /** Additionally apply friend guard damage reduction if ally has it. */
-      if (globalScene.currentBattle.double && this.getAlly()?.isActive(true)) {
+      if (globalScene.currentBattle.double && !isNullOrUndefined(ally) && ally.isActive(true)) {
         applyPreDefendAbAttrs(
           AlliedFieldDamageReductionAbAttr,
-          this.getAlly(),
+          ally,
           source,
           move,
           cancelled,
