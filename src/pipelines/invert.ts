@@ -1,17 +1,5 @@
 import type { Game } from "phaser";
-
-const fragShader = `
-precision mediump float;
-
-uniform sampler2D uMainSampler;
-
-varying vec2 outTexCoord;
-
-void main()
-{
-    gl_FragColor = 1.0 - texture2D(uMainSampler, outTexCoord);
-}
-`;
+import fragShader from "./glsl/invert.frag?raw";
 
 export default class InvertPostFX extends Phaser.Renderer.WebGL.Pipelines.PostFXPipeline {
   constructor(game: Game) {
