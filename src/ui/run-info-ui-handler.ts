@@ -18,7 +18,7 @@ import { getTypeRgb } from "#app/data/type";
 import { PokemonType } from "#enums/pokemon-type";
 import { TypeColor, TypeShadow } from "#app/enums/color";
 import { getNatureStatMultiplier, getNatureName } from "../data/nature";
-import { getVariantTint } from "#app/data/variant";
+import { getVariantTint } from "#app/sprites/variant";
 import * as Modifier from "../modifier/modifier";
 import type { Species } from "#enums/species";
 import { PlayerGender } from "#enums/player-gender";

@@ -1,9 +1,8 @@
 import { globalScene } from "#app/global-scene";
-import { isNullOrUndefined } from "#app/utils";
-import { variantColorCache, variantData } from "#app/data/variant";
+import { variantColorCache, variantData } from "#app/sprites/variant";
 import { Gender } from "#app/data/gender";
 import { hasExpSprite } from "./sprite-utilts";
-import type { Variant, VariantSet } from "#app/data/variant";
+import type { Variant, VariantSet } from "#app/sprites/variant";
 import type Pokemon from "#app/field/pokemon";
 import type BattleScene from "#app/battle-scene";
 
@@ -11,57 +10,6 @@ import type BattleScene from "#app/battle-scene";
 
 /** Regex matching double underscores */
 const DUNDER_REGEX = /\_{2}/g;
-
-/**
- * Gracefully handle errors loading a variant sprite. Log if it fails and attempt to fall back on
- * non-experimental sprites before giving up.
- *
- * @param cacheKey the cache key for the variant color sprite
- * @param attemptedSpritePath the sprite path that failed to load
- * @param useExpSprite was the attempted sprite experimental
- * @param battleSpritePath the filename of the sprite
- * @param optionalParams any additional params to log
- */
-async function fallbackVariantColor(
-  cacheKey: string,
-  attemptedSpritePath: string,
-  useExpSprite: boolean,
-  battleSpritePath: string,
-  ...optionalParams: any[]
-) {
-  console.warn(`Could not load ${attemptedSpritePath}!`, ...optionalParams);
-  if (useExpSprite) {
-    await populateVariantColorCache(cacheKey, false, battleSpritePath);
-  }
-}
-
-/**
- * Attempt to process variant sprite.
- *
- * @param cacheKey the cache key for the variant color sprite
- * @param useExpSprite should the experimental sprite be used
- * @param battleSpritePath the filename of the sprite
- */
-export async function populateVariantColorCache(cacheKey: string, useExpSprite: boolean, battleSpritePath: string) {
-  const spritePath = `./images/pokemon/variant/${useExpSprite ? "exp/" : ""}${battleSpritePath}.json`;
-  return globalScene
-    .cachedFetch(spritePath)
-    .then(res => {
-      // Prevent the JSON from processing if it failed to load
-      if (!res.ok) {
-        return fallbackVariantColor(cacheKey, res.url, useExpSprite, battleSpritePath, res.status, res.statusText);
-      }
-      return res.json();
-    })
-    .catch(error => {
-      return fallbackVariantColor(cacheKey, spritePath, useExpSprite, battleSpritePath, error);
-    })
-    .then(c => {
-      if (!isNullOrUndefined(c)) {
-        variantColorCache[cacheKey] = c;
-      }
-    });
-}
 
 /**
  * Calculate the sprite ID from a pokemon form.
@@ -100,7 +48,7 @@ export function getSpriteAtlasPath(pokemon: Pokemon, ignoreOverride = false): st
 }
 
 /**
- * Load the variant assets for the given sprite and stores them in {@linkcode variantColorCache}.
+ * Load the variant assets for the given sprite and store it in {@linkcode variantColorCache}.
  * @param spriteKey the key of the sprite to load
  * @param fileRoot the root path of the sprite file
  * @param variant the variant to load

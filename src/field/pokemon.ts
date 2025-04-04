@@ -2,9 +2,9 @@ import Phaser from "phaser";
 import type { AnySound } from "#app/battle-scene";
 import type BattleScene from "#app/battle-scene";
 import { globalScene } from "#app/global-scene";
-import type { Variant, VariantSet } from "#app/data/variant";
-import { variantColorCache } from "#app/data/variant";
-import { variantData } from "#app/data/variant";
+import type { Variant, VariantSet } from "#app/sprites/variant";
+import { populateVariantColors, variantColorCache } from "#app/sprites/variant";
+import { variantData } from "#app/sprites/variant";
 import BattleInfo, {
   PlayerBattleInfo,
   EnemyBattleInfo,
@@ -265,6 +265,7 @@ import { doShinySparkleAnim } from "#app/field/anims";
 import { MoveFlags } from "#enums/MoveFlags";
 import { hasExpSprite } from "#app/sprites/sprite-utilts";
 import { timedEventManager } from "#app/global-event-manager";
+import { loadMoveAnimations } from "#app/sprites/pokemon-asset-loader";
 import { ResetStatusPhase } from "#app/phases/reset-status-phase";
 
 export enum LearnMoveSituation {
@@ -697,115 +698,79 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   abstract getBattlerIndex(): BattlerIndex;
 
-  loadAssets(ignoreOverride = true): Promise<void> {
-    return new Promise(resolve => {
-      const moveIds = this.getMoveset().map(m => m.getMove().id);
-      Promise.allSettled(moveIds.map(m => initMoveAnim(m))).then(() => {
-        loadMoveAnimAssets(moveIds);
-        this.getSpeciesForm().loadAssets(
-          this.getGender() === Gender.FEMALE,
-          this.formIndex,
-          this.shiny,
-          this.variant,
-        );
-        if (this.isPlayer() || this.getFusionSpeciesForm()) {
-          globalScene.loadPokemonAtlas(
-            this.getBattleSpriteKey(true, ignoreOverride),
-            this.getBattleSpriteAtlasPath(true, ignoreOverride),
-          );
-        }
-        if (this.getFusionSpeciesForm()) {
-          this.getFusionSpeciesForm().loadAssets(
-            this.getFusionGender() === Gender.FEMALE,
-            this.fusionFormIndex,
-            this.fusionShiny,
-            this.fusionVariant,
-          );
-          globalScene.loadPokemonAtlas(
-            this.getFusionBattleSpriteKey(true, ignoreOverride),
-            this.getFusionBattleSpriteAtlasPath(true, ignoreOverride),
-          );
-        }
-        globalScene.load.once(Phaser.Loader.Events.COMPLETE, () => {
-          if (this.isPlayer()) {
-            const originalWarn = console.warn;
-            // Ignore warnings for missing frames, because there will be a lot
-            console.warn = () => {};
-            const battleFrameNames = globalScene.anims.generateFrameNames(
-              this.getBattleSpriteKey(),
-              { zeroPad: 4, suffix: ".png", start: 1, end: 400 },
-            );
-            console.warn = originalWarn;
-            if (!globalScene.anims.exists(this.getBattleSpriteKey())) {
-              globalScene.anims.create({
-                key: this.getBattleSpriteKey(),
-                frames: battleFrameNames,
-                frameRate: 10,
-                repeat: -1,
-              });
-            }
-          }
-          this.playAnim();
-          const updateFusionPaletteAndResolve = () => {
-            this.updateFusionPalette();
-            if (this.summonData?.speciesForm) {
-              this.updateFusionPalette(true);
-            }
-            resolve();
-          };
-          if (this.shiny) {
-            const populateVariantColors = (
-              isBackSprite = false,
-            ): Promise<void> => {
-              return new Promise(async resolve => {
-                const battleSpritePath = this.getBattleSpriteAtlasPath(
-                  isBackSprite,
-                  ignoreOverride,
-                )
-                  .replace("variant/", "")
-                  .replace(/_[1-3]$/, "");
-                let config = variantData;
-                const useExpSprite =
-                  globalScene.experimentalSprites &&
-                  hasExpSprite(
-                    this.getBattleSpriteKey(isBackSprite, ignoreOverride),
-                  );
-                battleSpritePath
-                  .split("/")
-                  .map(p => (config ? (config = config[p]) : null));
-                const variantSet: VariantSet = config as VariantSet;
-                if (variantSet && variantSet[this.variant] === 1) {
-                  const cacheKey = this.getBattleSpriteKey(isBackSprite);
-                  if (!variantColorCache.hasOwnProperty(cacheKey)) {
-                    await this.populateVariantColorCache(
-                      cacheKey,
-                      useExpSprite,
-                      battleSpritePath,
-                    );
-                  }
-                }
-                resolve();
-              });
-            };
-            if (this.isPlayer()) {
-              Promise.all([
-                populateVariantColors(false),
-                populateVariantColors(true),
-              ]).then(() => updateFusionPaletteAndResolve());
-            } else {
-              populateVariantColors(false).then(() =>
-                updateFusionPaletteAndResolve(),
-              );
-            }
-          } else {
-            updateFusionPaletteAndResolve();
-          }
-        });
-        if (!globalScene.load.isLoading()) {
-          globalScene.load.start();
-        }
+  async loadAssets(ignoreOverride = true) {
+    /** Promises that are loading assets and can be run concurrently. */
+    const loadPromises: Promise<void>[] = [];
+    // Assets for moves
+    loadPromises.push(loadMoveAnimations(this.getMoveset().map(m => m.getMove().id)));
+  
+    // Load the assets for the species form
+    loadPromises.push(
+      this.getSpeciesForm().loadAssets(this.getGender() === Gender.FEMALE, this.formIndex, this.shiny, this.variant),
+    );
+
+    if (this.isPlayer() || this.getFusionSpeciesForm()) {
+      globalScene.loadPokemonAtlas(
+        this.getBattleSpriteKey(true, ignoreOverride),
+        this.getBattleSpriteAtlasPath(true, ignoreOverride),
+      );
+    }
+    if (this.getFusionSpeciesForm()) {
+      loadPromises.push(this.getFusionSpeciesForm().loadAssets(
+        this.getFusionGender() === Gender.FEMALE,
+        this.fusionFormIndex,
+        this.fusionShiny,
+        this.fusionVariant,
+      ));
+      globalScene.loadPokemonAtlas(
+        this.getFusionBattleSpriteKey(true, ignoreOverride),
+        this.getFusionBattleSpriteAtlasPath(true, ignoreOverride),
+      );
+    }
+
+    if (this.shiny) {
+      loadPromises.push(populateVariantColors(this, false, ignoreOverride))
+      if (this.isPlayer()) {
+        loadPromises.push(populateVariantColors(this, true, ignoreOverride));
+      }
+    }
+
+    await Promise.allSettled(loadPromises);
+
+    // Wait for the assets we queued to load to finish loading, then...
+    if (!globalScene.load.isLoading()) {
+      globalScene.load.start();
+    }
+    // See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Using_promises#creating_a_promise_around_an_old_callback_api
+    await new Promise(resolve => globalScene.load.once(Phaser.Loader.Events.COMPLETE, resolve));
+
+    // With the sprites loaded, generate the animation frame information
+    if (this.isPlayer()) {
+      const originalWarn = console.warn;
+      // Ignore warnings for missing frames, because there will be a lot
+      console.warn = () => {};
+      const battleFrameNames = globalScene.anims.generateFrameNames(this.getBattleSpriteKey(), {
+        zeroPad: 4,
+        suffix: ".png",
+        start: 1,
+        end: 400,
       });
-    });
+      console.warn = originalWarn;
+      globalScene.anims.create({
+        key: this.getBattleSpriteKey(),
+        frames: battleFrameNames,
+        frameRate: 10,
+        repeat: -1,
+      });
+    }
+    // With everything loaded, now begin playing the animation.
+    this.playAnim();
+
+    // update the fusion palette
+    this.updateFusionPalette();
+    if (this.summonData?.speciesForm) {
+      this.updateFusionPalette(true);
+    }
   }
 
   /**

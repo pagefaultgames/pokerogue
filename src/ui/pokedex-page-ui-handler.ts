@@ -1,7 +1,7 @@
 import type { SpeciesFormEvolution } from "#app/data/balance/pokemon-evolutions";
 import { pokemonEvolutions, pokemonPrevolutions, pokemonStarters } from "#app/data/balance/pokemon-evolutions";
-import type { Variant } from "#app/data/variant";
-import { getVariantTint, getVariantIcon } from "#app/data/variant";
+import type { Variant } from "#app/sprites/variant";
+import { getVariantTint, getVariantIcon } from "#app/sprites/variant";
 import { argbFromRgba } from "@material/material-color-utilities";
 import i18next from "i18next";
 import { starterColors } from "#app/battle-scene";

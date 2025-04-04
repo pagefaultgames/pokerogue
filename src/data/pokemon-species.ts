@@ -26,8 +26,8 @@ import {
   pokemonSpeciesLevelMoves,
 } from "#app/data/balance/pokemon-level-moves";
 import type { Stat } from "#enums/stat";
-import type { Variant, VariantSet } from "#app/data/variant";
-import { variantData } from "#app/data/variant";
+import type { Variant, VariantSet } from "#app/sprites/variant";
+import { variantData } from "#app/sprites/variant";
 import { speciesStarterCosts, POKERUS_STARTER_COUNT } from "#app/data/balance/starters";
 import { SpeciesFormKey } from "#enums/species-form-key";
 import { starterPassiveAbilities } from "#app/data/balance/passives";
@@ -589,18 +589,19 @@ export abstract class PokemonSpeciesForm {
     return true;
   }
 
-  loadAssets(
+  async loadAssets(
     female: boolean,
     formIndex?: number,
-    shiny?: boolean,
+    shiny = false,
     variant?: Variant,
-    startLoad?: boolean,
-    back?: boolean,
-  ): Promise<void> {
-    return new Promise(resolve => {
-      const spriteKey = this.getSpriteKey(female, formIndex, shiny, variant, back);
-      globalScene.loadPokemonAtlas(spriteKey, this.getSpriteAtlasPath(female, formIndex, shiny, variant, back));
-      globalScene.load.audio(`${this.getCryKey(formIndex)}`, `audio/${this.getCryKey(formIndex)}.m4a`);
+    startLoad = false,
+    back = false,
+  ) {
+    const spriteKey = this.getSpriteKey(female, formIndex, shiny, variant, back);
+    globalScene.loadPokemonAtlas(spriteKey, this.getSpriteAtlasPath(female, formIndex, shiny, variant, back));
+    globalScene.load.audio(this.getCryKey(formIndex), `audio/${this.getCryKey(formIndex)}.m4a`);
+
+    return new Promise<void>(resolve => {
       globalScene.load.once(Phaser.Loader.Events.COMPLETE, () => {
         const originalWarn = console.warn;
         // Ignore warnings for missing frames, because there will be a lot

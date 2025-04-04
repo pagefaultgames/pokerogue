@@ -1,4 +1,4 @@
-import { variantColorCache } from "#app/data/variant";
+import { variantColorCache } from "#app/sprites/variant";
 import MysteryEncounterIntroVisuals from "#app/field/mystery-encounter-intro";
 import Pokemon from "#app/field/pokemon";
 import Trainer from "#app/field/trainer";

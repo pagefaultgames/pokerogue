@@ -4,7 +4,7 @@ import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounte
 import type { Species } from "#enums/species";
 import { isNullOrUndefined } from "#app/utils";
 import { getSpriteKeysFromSpecies } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
-import type { Variant } from "#app/data/variant";
+import type { Variant } from "#app/sprites/variant";
 import { doShinySparkleAnim } from "#app/field/anims";
 import PlayAnimationConfig = Phaser.Types.Animations.PlayAnimationConfig;
 import { loadPokemonVariantAssets } from "#app/sprites/pokemon-sprite";
