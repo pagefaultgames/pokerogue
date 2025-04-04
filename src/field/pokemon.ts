@@ -1361,12 +1361,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       critStage,
     );
     const bonusCrit = new Utils.BooleanHolder(false);
-    //@ts-ignore
-    if (applyAbAttrs(BonusCritAbAttr, source, null, false, bonusCrit)) {
-      // TODO: resolve ts-ignore. This is a promise. Checking a promise is bogus.
-      if (bonusCrit.value) {
-        critStage.value += 1;
-      }
+    applyAbAttrs(BonusCritAbAttr, source, null, false, bonusCrit)
+    if (bonusCrit.value) {
+      critStage.value += 1;
     }
     const critBoostTag = source.getTag(CritBoostTag);
     if (critBoostTag) {
