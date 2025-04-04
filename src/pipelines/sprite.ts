@@ -161,12 +161,21 @@ vec3 hsv2rgb(vec3 c) {
 void main() {
     vec4 texture = texture2D(uMainSampler[0], outTexCoord);
 
-    ivec4 colorInt = ivec4(int(texture.r * 255.0), int(texture.g * 255.0), int(texture.b * 255.0), int(texture.a * 255.0));
+    ivec4 colorInt = ivec4(texture*255.0);
 
     for (int i = 0; i < 32; i++) {
         if (baseVariantColors[i][3] == 0)
             break;
-        if (texture.a > 0.0 && colorInt.r == baseVariantColors[i].r && colorInt.g == baseVariantColors[i].g && colorInt.b == baseVariantColors[i].b) {
+        // abs value is broken in this version of gles with highp
+        ivec3 diffs = ivec3(
+            (colorInt.r > baseVariantColors[i].r) ? colorInt.r - baseVariantColors[i].r : baseVariantColors[i].r - colorInt.r,
+            (colorInt.g > baseVariantColors[i].g) ? colorInt.g - baseVariantColors[i].g : baseVariantColors[i].g - colorInt.g,
+            (colorInt.b > baseVariantColors[i].b) ? colorInt.b - baseVariantColors[i].b : baseVariantColors[i].b - colorInt.b
+        );
+        // Set color threshold to be within 3 points for each channel
+        bvec3 threshold = lessThan(diffs, ivec3(3));
+
+        if (texture.a > 0.0 && all(threshold)) {
             texture.rgb = variantColors[i].rgb;
             break;
         }
@@ -177,7 +186,7 @@ void main() {
             break;
         if (texture.a > 0.0 && colorInt.r == spriteColors[i].r && colorInt.g == spriteColors[i].g && colorInt.b == spriteColors[i].b) {
             vec3 fusionColor = vec3(float(fusionSpriteColors[i].r) / 255.0, float(fusionSpriteColors[i].g) / 255.0, float(fusionSpriteColors[i].b) / 255.0);
-            vec3 bg = vec3(float(spriteColors[i].r) / 255.0, float(spriteColors[i].g) / 255.0, float(spriteColors[i].b) / 255.0);
+            vec3 bg = vec3(spriteColors[i].rgb) / 255.0;
             float gray = (bg.r + bg.g + bg.b) / 3.0;
             bg = vec3(gray, gray, gray);
             vec3 fg = fusionColor;
@@ -203,7 +212,7 @@ void main() {
         teraCol.rgb = mix(teraCol.rgb, teraColor, 0.5);
         color.rgb = blendOverlay(color.rgb, teraCol.rgb);
 
-        if (teraColor.r < 1.0 || teraColor.g < 1.0 || teraColor.b < 1.0) {
+        if (any(lessThan(teraCol.rgb, vec3(1.0)))) {
             vec3 teraColHsv = rgb2hsv(teraColor);
             color.rgb = mix(color.rgb, teraColor, (1.0 - teraColHsv.g) / 2.0);
         }
