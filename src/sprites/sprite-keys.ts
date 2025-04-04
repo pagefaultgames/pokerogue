@@ -1,1 +1,1 @@
-export const expSpriteKeys: string[] = [];
+export const expSpriteKeys: Set<string> = new Set();
