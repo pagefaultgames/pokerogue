@@ -7,7 +7,7 @@ import { getPokemonSpecies, getPokemonSpeciesForm } from "../data/pokemon-specie
 import { Status } from "../data/status-effect";
 import Pokemon, { EnemyPokemon, PokemonMove, PokemonSummonData } from "../field/pokemon";
 import { TrainerSlot } from "#enums/trainer-slot";
-import type { Variant } from "#app/data/variant";
+import type { Variant } from "#app/sprites/variant";
 import { loadBattlerTag } from "../data/battler-tags";
 import type { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
