@@ -28,6 +28,8 @@ export class TurnEndPhase extends FieldPhase {
     globalScene.currentBattle.incrementTurn();
     globalScene.eventTarget.dispatchEvent(new TurnEndEvent(globalScene.currentBattle.turn));
 
+    globalScene.hideAbilityBar();
+
     const handlePokemon = (pokemon: Pokemon) => {
       if (!pokemon.switchOutStatus) {
         pokemon.lapseTags(BattlerTagLapseType.TURN_END);
@@ -68,12 +70,12 @@ export class TurnEndPhase extends FieldPhase {
     globalScene.arena.lapseTags();
 
     if (globalScene.arena.weather && !globalScene.arena.weather.lapse()) {
-      globalScene.arena.trySetWeather(WeatherType.NONE, false);
+      globalScene.arena.trySetWeather(WeatherType.NONE);
       globalScene.arena.triggerWeatherBasedFormChangesToNormal();
     }
 
     if (globalScene.arena.terrain && !globalScene.arena.terrain.lapse()) {
-      globalScene.arena.trySetTerrain(TerrainType.NONE, false);
+      globalScene.arena.trySetTerrain(TerrainType.NONE);
     }
 
     this.end();

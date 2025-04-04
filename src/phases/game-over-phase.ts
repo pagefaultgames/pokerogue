@@ -5,7 +5,7 @@ import { pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
 import { getCharVariantFromDialogue } from "#app/data/dialogue";
 import type PokemonSpecies from "#app/data/pokemon-species";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
-import { trainerConfigs } from "#app/data/trainer-config";
+import { trainerConfigs } from "#app/data/trainers/trainer-config";
 import type Pokemon from "#app/field/pokemon";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import { BattlePhase } from "#app/phases/battle-phase";
@@ -44,6 +44,8 @@ export class GameOverPhase extends BattlePhase {
 
   start() {
     super.start();
+
+    globalScene.hideAbilityBar();
 
     // Failsafe if players somehow skip floor 200 in classic mode
     if (globalScene.gameMode.isClassic && globalScene.currentBattle.waveIndex > 200) {
