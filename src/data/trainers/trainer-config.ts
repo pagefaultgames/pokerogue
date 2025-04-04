@@ -32,6 +32,7 @@ import { TeraAIMode } from "#enums/tera-ai-mode";
 import { TrainerPoolTier } from "#enums/trainer-pool-tier";
 import { TrainerSlot } from "#enums/trainer-slot";
 import { TrainerType } from "#enums/trainer-type";
+import { timedEventManager } from "#app/global-event-manager";
 
 // Type imports
 import type { PokemonSpeciesFilter } from "#app/data/pokemon-species";
@@ -516,13 +517,13 @@ export class TrainerConfig {
   //   return ret;
   // }
 
-  setEventModifierRewardFuncs(...modifierTypeFuncs: (() => ModifierTypeFunc)[]): TrainerConfig {
-    this.eventRewardFuncs = modifierTypeFuncs.map(func => () => {
-      const modifierTypeFunc = func();
-      const modifierType = modifierTypeFunc();
-      modifierType.withIdFromFunc(modifierTypeFunc);
-      return modifierType;
-    });
+  /**
+   * Sets eventRewardFuncs to the active event rewards for the specified wave
+   * @param wave Associated with {@linkcode getFixedBattleEventRewards}
+   * @returns this
+   */
+  setEventModifierRewardFuncs(wave: number): TrainerConfig {
+    this.eventRewardFuncs = timedEventManager.getFixedBattleEventRewards(wave).map(r => modifierTypes[r]);
     return this;
   }
 
@@ -1898,19 +1899,21 @@ export const trainerConfigs: TrainerConfigs = {
         Species.MANKEY,
         Species.GROWLITHE,
         Species.MAGNEMITE,
-        Species.GASTLY,
+        Species.ONIX,
         Species.VOLTORB,
         Species.EXEGGCUTE,
         Species.CUBONE,
         Species.LICKITUNG,
-        Species.SCYTHER,
         Species.TAUROS,
-        Species.GYARADOS,
+        Species.MAGIKARP,
         Species.MURKROW,
         Species.ELEKID,
         Species.MAGBY,
       ],
       [TrainerPoolTier.RARE]: [
+        Species.ABRA,
+        Species.GASTLY,
+        Species.SCYTHER,
         Species.PORYGON,
         Species.OMANYTE,
         Species.KABUTO,
@@ -1969,7 +1972,6 @@ export const trainerConfigs: TrainerConfigs = {
         Species.DIGLETT,
         Species.GROWLITHE,
         Species.SLUGMA,
-        Species.MAGBY,
         Species.POOCHYENA,
         Species.ZIGZAGOON,
         Species.NUMEL,
@@ -1978,24 +1980,24 @@ export const trainerConfigs: TrainerConfigs = {
       ],
       [TrainerPoolTier.UNCOMMON]: [
         Species.RHYHORN,
-        Species.GLIGAR,
         Species.PHANPY,
+        Species.MAGBY,
+        Species.ZANGOOSE,
         Species.SOLROCK,
-        Species.HIPPOPOTAS,
         Species.HEATMOR,
         Species.ROLYCOLY,
-        Species.SILICOBRA,
+        Species.CAPSAKID,
       ],
       [TrainerPoolTier.RARE]: [
-        Species.ARON,
         Species.TRAPINCH,
         Species.LILEEP,
         Species.ANORITH,
+        Species.GOLETT,
         Species.TURTONATOR,
         Species.TOEDSCOOL,
         Species.HISUI_GROWLITHE,
       ],
-      [TrainerPoolTier.SUPER_RARE]: [Species.CHARCADET, Species.CAPSAKID],
+      [TrainerPoolTier.SUPER_RARE]: [Species.CHARCADET, Species.ARON],
     }),
   [TrainerType.TABITHA]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.5)
@@ -2028,6 +2030,7 @@ export const trainerConfigs: TrainerConfigs = {
         Species.REMORAID,
         Species.ZIGZAGOON,
         Species.LOTAD,
+        Species.WINGULL,
         Species.CARVANHA,
         Species.WAILMER,
         Species.BARBOACH,
@@ -2039,16 +2042,18 @@ export const trainerConfigs: TrainerConfigs = {
         Species.HORSEA,
         Species.CHINCHOU,
         Species.WOOPER,
-        Species.WINGULL,
         Species.AZURILL,
+        Species.SEVIPER,
         Species.CLAMPERL,
+        Species.WIMPOD,
         Species.CLOBBOPUS,
       ],
       [TrainerPoolTier.RARE]: [
         Species.MANTYKE,
+        Species.TYMPOLE,
         Species.SKRELP,
-        Species.DHELMISE,
         Species.ARROKUDA,
+        Species.WIGLETT,
         Species.HISUI_QWILFISH,
         Species.PALDEA_WOOPER,
       ],
@@ -2103,6 +2108,7 @@ export const trainerConfigs: TrainerConfigs = {
       ],
       [TrainerPoolTier.RARE]: [
         Species.SNEASEL,
+        Species.TEDDIURSA,
         Species.ELEKID,
         Species.MAGBY,
         Species.DUSKULL,
@@ -2206,10 +2212,11 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyTemplateFunc(() => getEvilGruntPartyTemplate())
     .setSpeciesPools({
       [TrainerPoolTier.COMMON]: [
-        Species.PONYTA,
         Species.HOUNDOUR,
+        Species.GULPIN,
         Species.SKORUPI,
         Species.CROAGUNK,
+        Species.PURRLOIN,
         Species.SCRAGGY,
         Species.FLETCHLING,
         Species.SCATTERBUG,
@@ -2220,7 +2227,6 @@ export const trainerConfigs: TrainerConfigs = {
       [TrainerPoolTier.UNCOMMON]: [
         Species.POOCHYENA,
         Species.ELECTRIKE,
-        Species.PURRLOIN,
         Species.FOONGUS,
         Species.PANCHAM,
         Species.BINACLE,
@@ -2230,8 +2236,13 @@ export const trainerConfigs: TrainerConfigs = {
         Species.PHANTUMP,
         Species.PUMPKABOO,
       ],
-      [TrainerPoolTier.RARE]: [Species.SNEASEL, Species.LITWICK, Species.PAWNIARD, Species.SLIGGOO],
-      [TrainerPoolTier.SUPER_RARE]: [Species.NOIBAT, Species.HISUI_SLIGGOO, Species.HISUI_AVALUGG],
+      [TrainerPoolTier.RARE]: [
+        Species.SNEASEL, 
+        Species.LITWICK, 
+        Species.PAWNIARD, 
+        Species.NOIBAT,
+      ],
+      [TrainerPoolTier.SUPER_RARE]: [Species.SLIGGOO, Species.HISUI_SLIGGOO, Species.HISUI_AVALUGG],
     }),
   [TrainerType.BRYONY]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.5)
@@ -2286,14 +2297,13 @@ export const trainerConfigs: TrainerConfigs = {
         Species.ORANGURU,
         Species.PASSIMIAN,
         Species.PYUKUMUKU,
-        Species.MINIOR,
         Species.BRUXISH,
         Species.ALOLA_SANDSHREW,
         Species.ALOLA_VULPIX,
         Species.ALOLA_MAROWAK,
       ],
       [TrainerPoolTier.RARE]: [
-        Species.MAGNEMITE,
+        Species.MINIOR,
         Species.TURTONATOR,
         Species.MIMIKYU,
         Species.DRAMPA,
@@ -2321,6 +2331,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setSpeciesPools({
       [TrainerPoolTier.COMMON]: [
         Species.EKANS,
+        Species.VENONAT,
         Species.DROWZEE,
         Species.KOFFING,
         Species.SPINARAK,
@@ -2379,7 +2390,7 @@ export const trainerConfigs: TrainerConfigs = {
         Species.KLINK,
         Species.SKWOVET,
         Species.ROOKIDEE,
-        Species.CRAMORANT,
+        Species.ROLYCOLY,
         Species.CUFANT,
         Species.GALAR_MEOWTH,
         Species.GALAR_ZIGZAGOON,
@@ -2389,9 +2400,11 @@ export const trainerConfigs: TrainerConfigs = {
         Species.RIOLU,
         Species.DRILBUR,
         Species.APPLIN,
+        Species.CRAMORANT,
         Species.ARROKUDA,
         Species.SINISTEA,
         Species.HATENNA,
+        Species.FALINKS,
         Species.GALAR_PONYTA,
         Species.GALAR_YAMASK,
       ],
@@ -2399,7 +2412,6 @@ export const trainerConfigs: TrainerConfigs = {
         Species.SCIZOR,
         Species.BELDUM,
         Species.HONEDGE,
-        Species.FALINKS,
         Species.GALAR_FARFETCHD,
         Species.GALAR_MR_MIME,
         Species.GALAR_DARUMAKA,
@@ -3685,11 +3697,7 @@ export const trainerConfigs: TrainerConfigs = {
       () => modifierTypes.SUPER_EXP_CHARM,
       () => modifierTypes.EXP_SHARE,
     )
-    .setEventModifierRewardFuncs(
-      () => modifierTypes.SHINY_CHARM,
-      () => modifierTypes.ABILITY_CHARM,
-      () => modifierTypes.CATCHING_CHARM,
-    )
+    .setEventModifierRewardFuncs(8)
     .setPartyMemberFunc(
       0,
       getRandomPartyMemberFunc(
@@ -3757,7 +3765,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setMixedBattleBgm("battle_rival")
     .setPartyTemplates(trainerPartyTemplates.RIVAL_2)
     .setModifierRewardFuncs(() => modifierTypes.EXP_SHARE)
-    .setEventModifierRewardFuncs(() => modifierTypes.SHINY_CHARM)
+    .setEventModifierRewardFuncs(25)
     .setPartyMemberFunc(
       0,
       getRandomPartyMemberFunc(
@@ -4066,7 +4074,7 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([Species.RAYQUAZA], TrainerSlot.TRAINER, true, p => {
         p.setBoss(true, 3);
         p.pokeball = PokeballType.MASTER_BALL;
-        p.shiny = true;
+        p.shiny = timedEventManager.getClassicTrainerShinyChance() === 0;
         p.variant = 1;
       }),
     )
@@ -4163,7 +4171,7 @@ export const trainerConfigs: TrainerConfigs = {
         p.setBoss();
         p.generateAndPopulateMoveset();
         p.pokeball = PokeballType.MASTER_BALL;
-        p.shiny = true;
+        p.shiny = timedEventManager.getClassicTrainerShinyChance() === 0;
         p.variant = 1;
         p.formIndex = 1; // Mega Rayquaza
         p.generateName();
@@ -4833,7 +4841,7 @@ export const trainerConfigs: TrainerConfigs = {
         p.formIndex = Utils.randSeedInt(4, 1); // Shock, Burn, Chill, or Douse Drive
         if (!p.moveset.some(move => !Utils.isNullOrUndefined(move) && move.moveId === Moves.TECHNO_BLAST)) {
           // Check if Techno Blast is in the moveset, if not, replace the first move with Techno Blast.
-          p.moveset[0] = new PokemonMove(Moves.TECHNO_BLAST);
+          p.moveset[2] = new PokemonMove(Moves.TECHNO_BLAST);
         }
       }),
     )

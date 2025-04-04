@@ -69,6 +69,7 @@ import type { Phase } from "#app/phase";
 import { ShowAbilityPhase } from "./show-ability-phase";
 import { MovePhase } from "./move-phase";
 import { MoveEndPhase } from "./move-end-phase";
+import { HideAbilityPhase } from "#app/phases/hide-ability-phase";
 
 export class MoveEffectPhase extends PokemonPhase {
   public move: PokemonMove;
@@ -326,12 +327,14 @@ export class MoveEffectPhase extends PokemonPhase {
               ? getMoveTargets(target, move.id).targets
               : [user.getBattlerIndex()];
             if (!isReflecting) {
+              // TODO: Ability displays should be handled by the ability
               queuedPhases.push(
                 new ShowAbilityPhase(
                   target.getBattlerIndex(),
                   target.getPassiveAbility().hasAttr(ReflectStatusMoveAbAttr),
                 ),
               );
+              queuedPhases.push(new HideAbilityPhase());
             }
 
             queuedPhases.push(

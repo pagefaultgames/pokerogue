@@ -17,6 +17,23 @@ export class BattleEndPhase extends BattlePhase {
   start() {
     super.start();
 
+    // cull any extra `BattleEnd` phases from the queue.
+    globalScene.phaseQueue = globalScene.phaseQueue.filter(phase => {
+      if (phase instanceof BattleEndPhase) {
+        this.isVictory ||= phase.isVictory;
+        return false;
+      }
+      return true;
+    });
+    // `phaseQueuePrepend` is private, so we have to use this inefficient loop.
+    while (globalScene.tryRemoveUnshiftedPhase(phase => {
+      if (phase instanceof BattleEndPhase) {
+        this.isVictory ||= phase.isVictory;
+        return true;
+      }
+      return false;
+    })) {}
+
     globalScene.gameData.gameStats.battles++;
     if (
       globalScene.gameMode.isEndless &&

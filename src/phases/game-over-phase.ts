@@ -45,6 +45,8 @@ export class GameOverPhase extends BattlePhase {
   start() {
     super.start();
 
+    globalScene.hideAbilityBar();
+
     // Failsafe if players somehow skip floor 200 in classic mode
     if (globalScene.gameMode.isClassic && globalScene.currentBattle.waveIndex > 200) {
       this.isVictory = true;

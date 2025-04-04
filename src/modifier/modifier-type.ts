@@ -127,6 +127,7 @@ import type { PermanentStat, TempBattleStat } from "#enums/stat";
 import { getStatKey, Stat, TEMP_BATTLE_STATS } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import i18next from "i18next";
+import { timedEventManager } from "#app/global-event-manager";
 
 const outputModifierData = false;
 const useMaxWeightForOutput = false;
@@ -2655,7 +2656,7 @@ const modifierPool: ModifierPool = {
           if (globalScene.gameMode.isSplicedOnly) {
             return 4;
           }
-          if (globalScene.gameMode.isClassic && globalScene.eventManager.areFusionsBoosted()) {
+          if (globalScene.gameMode.isClassic && timedEventManager.areFusionsBoosted()) {
             return 2;
           }
         }
@@ -2822,37 +2823,48 @@ const modifierPool: ModifierPool = {
       modifierTypes.MYSTICAL_ROCK,
       (party: Pokemon[]) => {
         return party.some(p => {
-          const moveset = p.getMoveset(true).map(m => m.moveId);
+          let isHoldingMax = false;
+          for (const i of p.getHeldItems()) {
+            if (i.type.id === "MYSTICAL_ROCK") {
+              isHoldingMax = i.getStackCount() === i.getMaxStackCount();
+              break;
+            }
+          }
 
-          const hasAbility = [
-            Abilities.DRIZZLE,
-            Abilities.ORICHALCUM_PULSE,
-            Abilities.DRIZZLE,
-            Abilities.SAND_STREAM,
-            Abilities.SAND_SPIT,
-            Abilities.SNOW_WARNING,
-            Abilities.ELECTRIC_SURGE,
-            Abilities.HADRON_ENGINE,
-            Abilities.PSYCHIC_SURGE,
-            Abilities.GRASSY_SURGE,
-            Abilities.SEED_SOWER,
-            Abilities.MISTY_SURGE,
-          ].some(a => p.hasAbility(a, false, true));
+          if (!isHoldingMax) {
+            const moveset = p.getMoveset(true).map(m => m.moveId);
 
-          const hasMoves = [
-            Moves.SUNNY_DAY,
-            Moves.RAIN_DANCE,
-            Moves.SANDSTORM,
-            Moves.SNOWSCAPE,
-            Moves.HAIL,
-            Moves.CHILLY_RECEPTION,
-            Moves.ELECTRIC_TERRAIN,
-            Moves.PSYCHIC_TERRAIN,
-            Moves.GRASSY_TERRAIN,
-            Moves.MISTY_TERRAIN,
-          ].some(m => moveset.includes(m));
+            const hasAbility = [
+              Abilities.DROUGHT,
+              Abilities.ORICHALCUM_PULSE,
+              Abilities.DRIZZLE,
+              Abilities.SAND_STREAM,
+              Abilities.SAND_SPIT,
+              Abilities.SNOW_WARNING,
+              Abilities.ELECTRIC_SURGE,
+              Abilities.HADRON_ENGINE,
+              Abilities.PSYCHIC_SURGE,
+              Abilities.GRASSY_SURGE,
+              Abilities.SEED_SOWER,
+              Abilities.MISTY_SURGE,
+            ].some(a => p.hasAbility(a, false, true));
 
-          return hasAbility || hasMoves;
+            const hasMoves = [
+              Moves.SUNNY_DAY,
+              Moves.RAIN_DANCE,
+              Moves.SANDSTORM,
+              Moves.SNOWSCAPE,
+              Moves.HAIL,
+              Moves.CHILLY_RECEPTION,
+              Moves.ELECTRIC_TERRAIN,
+              Moves.PSYCHIC_TERRAIN,
+              Moves.GRASSY_TERRAIN,
+              Moves.MISTY_TERRAIN,
+            ].some(m => moveset.includes(m));
+
+            return hasAbility || hasMoves;
+          }
+          return false;
         })
           ? 10
           : 0;
@@ -2939,7 +2951,7 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(
       modifierTypes.DNA_SPLICERS,
       (party: Pokemon[]) =>
-        !(globalScene.gameMode.isClassic && globalScene.eventManager.areFusionsBoosted()) &&
+        !(globalScene.gameMode.isClassic && timedEventManager.areFusionsBoosted()) &&
         !globalScene.gameMode.isSplicedOnly &&
         party.filter(p => !p.fusionSpecies).length > 1
           ? 24
@@ -3703,7 +3715,7 @@ export function getPartyLuckValue(party: Pokemon[]): number {
     );
     return DailyLuck.value;
   }
-  const eventSpecies = globalScene.eventManager.getEventLuckBoostedSpecies();
+  const eventSpecies = timedEventManager.getEventLuckBoostedSpecies();
   const luck = Phaser.Math.Clamp(
     party
       .map(p => (p.isAllowedInBattle() ? p.getLuck() + (eventSpecies.includes(p.species.speciesId) ? 1 : 0) : 0))
@@ -3711,7 +3723,7 @@ export function getPartyLuckValue(party: Pokemon[]): number {
     0,
     14,
   );
-  return Math.min(globalScene.eventManager.getEventLuckBoost() + (luck ?? 0), 14);
+  return Math.min(timedEventManager.getEventLuckBoost() + (luck ?? 0), 14);
 }
 
 export function getLuckString(luckValue: number): string {
