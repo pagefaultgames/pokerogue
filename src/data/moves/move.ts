@@ -346,7 +346,7 @@ export default class Move implements Localizable {
    * @param target The {@linkcode Pokemon} targeted by this move
    * @returns `true` if the move can bypass the target's Substitute; `false` otherwise.
    */
-  hitsSubstitute(user: Pokemon, target: Pokemon | null): boolean {
+  hitsSubstitute(user: Pokemon, target?: Pokemon): boolean {
     if ([ MoveTarget.USER, MoveTarget.USER_SIDE, MoveTarget.ENEMY_SIDE, MoveTarget.BOTH_SIDES ].includes(this.moveTarget)
         || !target?.getTag(BattlerTagType.SUBSTITUTE)) {
       return false;
@@ -632,14 +632,14 @@ export default class Move implements Localizable {
    * @param flag {@linkcode MoveFlags} MoveFlag to check on user and/or target
    * @param user {@linkcode Pokemon} the Pokemon using the move
    * @param target {@linkcode Pokemon} the Pokemon receiving the move
-   * @param isFollowUp (defaults to `false) `true` if the move was used as a follow up
+   * @param isFollowUp (defaults to `false`) `true` if the move was used as a follow up
    * @returns boolean
    * @see {@linkcode hasFlag}
    */
-  doesFlagEffectApply({ flag, user, target = null, isFollowUp = false }: {
+  doesFlagEffectApply({ flag, user, target, isFollowUp = false }: {
     flag: MoveFlags;
     user: Pokemon;
-    target?: Pokemon | null;
+    target?: Pokemon;
     isFollowUp?: boolean;
   }): boolean {
     // special cases below, eg: if the move flag is MAKES_CONTACT, and the user pokemon has an ability that ignores contact (like "Long Reach"), then overrides and move does not make contact
@@ -651,7 +651,7 @@ export default class Move implements Localizable {
         break;
       case MoveFlags.IGNORE_ABILITIES:
         if (user.hasAbilityWithAttr(MoveAbilityBypassAbAttr)) {
-          const abilityEffectsIgnored = new Utils.BooleanHolder(false);
+          const abilityEffectsIgnored = new Utils.BooleanHolder(false); 
           applyAbAttrs(MoveAbilityBypassAbAttr, user, abilityEffectsIgnored, false, this);
           if (abilityEffectsIgnored.value) {
             return true;
@@ -662,7 +662,7 @@ export default class Move implements Localizable {
         return this.hasFlag(MoveFlags.IGNORE_ABILITIES) && !isFollowUp;
       case MoveFlags.IGNORE_PROTECT:
         if (user.hasAbilityWithAttr(IgnoreProtectOnContactAbAttr)
-          && this.doesFlagEffectApply({ flag: MoveFlags.MAKES_CONTACT, user, target: null })) {
+          && this.doesFlagEffectApply({ flag: MoveFlags.MAKES_CONTACT, user })) {
           return true;
         }
         break;
