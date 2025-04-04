@@ -108,9 +108,9 @@ import {
   FusionSpeciesFormEvolution,
 } from "#app/data/balance/pokemon-evolutions";
 import {
-  reverseCompatibleTms,
   tmSpecies,
   tmPoolTiers,
+  reverseTmSpecies,
 } from "#app/data/balance/tms";
 import {
   BattlerTag,
@@ -6370,7 +6370,8 @@ export class PlayerPokemon extends Pokemon {
     this.compatibleTms = [];
 
     const tms = Object.keys(tmSpecies);
-    for (const tm of tms) {
+    const rtms = Object.keys(reverseTmSpecies);
+    for (const tm of tms.concat(rtms)) {
       const moveId = Number.parseInt(tm) as Moves;
       let compatible = false;
       for (const p of tmSpecies[tm]) {
@@ -6392,7 +6393,10 @@ export class PlayerPokemon extends Pokemon {
           break;
         }
       }
-      if (reverseCompatibleTms.indexOf(moveId) > -1) {
+      if (rtms.includes(tm) &&
+        (!reverseTmSpecies[moveId].includes(this.species.speciesId) ||
+        (this.fusionSpecies && !reverseTmSpecies[moveId].includes(this.fusionSpecies.speciesId)))
+      ) {
         compatible = !compatible;
       }
       if (compatible) {
