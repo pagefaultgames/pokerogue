@@ -754,14 +754,16 @@ export default class BattleScene extends SceneBase {
   }
 
   async initExpSprites(): Promise<void> {
-    if (expSpriteKeys.length) {
+    if (expSpriteKeys.size > 0) {
       return;
     }
     this.cachedFetch("./exp-sprites.json")
       .then(res => res.json())
       .then(keys => {
         if (Array.isArray(keys)) {
-          expSpriteKeys.push(...keys);
+          for (const key of keys) {
+            expSpriteKeys.add(key);
+          }
         }
         Promise.resolve();
       });
