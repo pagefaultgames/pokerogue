@@ -1340,8 +1340,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Retrieves the critical-hit stage considering the move used and the Pokemon
-   * who used it.
+   * Calculate the critical-hit stage of a move used against this pokemon by
+   * the given source
+   * 
    * @param source the {@linkcode Pokemon} who using the move
    * @param move the {@linkcode Move} being used
    * @returns the final critical-hit stage value
