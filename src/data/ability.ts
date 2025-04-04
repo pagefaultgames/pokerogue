@@ -854,7 +854,8 @@ export class PostDefendStatStageChangeAbAttr extends PostDefendAbAttr {
     }
 
     if (this.allOthers) {
-      const otherPokemon = pokemon.getAlly() ? pokemon.getOpponents().concat([ pokemon.getAlly() ]) : pokemon.getOpponents();
+      const ally = pokemon.getAlly();
+      const otherPokemon = !Utils.isNullOrUndefined(ally) ? pokemon.getOpponents().concat([ ally ]) : pokemon.getOpponents();
       for (const other of otherPokemon) {
         globalScene.unshiftPhase(new StatStageChangePhase((other).getBattlerIndex(), false, [ this.stat ], this.stages));
       }
@@ -2460,12 +2461,12 @@ export class PostSummonAllyHealAbAttr extends PostSummonAbAttr {
   }
 
   override canApplyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
-    return pokemon.getAlly()?.isActive(true);
+    return pokemon.getAlly()?.isActive(true) ?? false;
   }
 
   override applyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): void {
     const target = pokemon.getAlly();
-    if (!simulated) {
+    if (!simulated && !Utils.isNullOrUndefined(target)) {
       globalScene.unshiftPhase(new PokemonHealPhase(target.getBattlerIndex(),
         Utils.toDmgValue(pokemon.getMaxHp() / this.healRatio), i18next.t("abilityTriggers:postSummonAllyHeal", { pokemonNameWithAffix: getPokemonNameWithAffix(target), pokemonName: pokemon.name }), true, !this.showAnim));
     }
@@ -2486,12 +2487,12 @@ export class PostSummonClearAllyStatStagesAbAttr extends PostSummonAbAttr {
   }
 
   override canApplyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
-    return pokemon.getAlly()?.isActive(true);
+    return pokemon.getAlly()?.isActive(true) ?? false;
   }
 
   override applyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): void {
     const target = pokemon.getAlly();
-    if (!simulated) {
+    if (!simulated && !Utils.isNullOrUndefined(target)) {
       for (const s of BATTLE_STATS) {
         target.setStatStage(s, 0);
       }
@@ -2712,7 +2713,7 @@ export class PostSummonCopyAllyStatsAbAttr extends PostSummonAbAttr {
     }
 
     const ally = pokemon.getAlly();
-    if (!ally || ally.getStatStages().every(s => s === 0)) {
+    if (Utils.isNullOrUndefined(ally) || ally.getStatStages().every(s => s === 0)) {
       return false;
     }
 
@@ -2721,7 +2722,7 @@ export class PostSummonCopyAllyStatsAbAttr extends PostSummonAbAttr {
 
   override applyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): void {
     const ally = pokemon.getAlly();
-    if (!simulated) {
+    if (!simulated && !Utils.isNullOrUndefined(ally)) {
       for (const s of BATTLE_STATS) {
         pokemon.setStatStage(s, ally.getStatStage(s));
       }
@@ -2866,8 +2867,9 @@ export class CommanderAbAttr extends AbAttr {
     // another Pokemon, this effect cannot apply.
 
     // TODO: Should this work with X + Dondozo fusions?
-    return globalScene.currentBattle?.double && pokemon.getAlly()?.species.speciesId === Species.DONDOZO
-           && !(pokemon.getAlly().isFainted() || pokemon.getAlly().getTag(BattlerTagType.COMMANDED));
+    const ally = pokemon.getAlly();
+    return globalScene.currentBattle?.double && !Utils.isNullOrUndefined(ally) && ally.species.speciesId === Species.DONDOZO
+           && !(ally.isFainted() || ally.getTag(BattlerTagType.COMMANDED));
   }
 
   override apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: null, args: any[]): void {
@@ -2877,7 +2879,7 @@ export class CommanderAbAttr extends AbAttr {
       // Play an animation of the source jumping into the ally Dondozo's mouth
       globalScene.triggerPokemonBattleAnim(pokemon, PokemonAnimType.COMMANDER_APPLY);
       // Apply boosts from this effect to the ally Dondozo
-      pokemon.getAlly().addTag(BattlerTagType.COMMANDED, 0, Moves.NONE, pokemon.id);
+      pokemon.getAlly()?.addTag(BattlerTagType.COMMANDED, 0, Moves.NONE, pokemon.id);
       // Cancel the source Pokemon's next move (if a move is queued)
       globalScene.tryRemovePhase((phase) => phase instanceof MovePhase && phase.pokemon === pokemon);
     }
@@ -4077,7 +4079,7 @@ export class PostTurnStatusHealAbAttr extends PostTurnAbAttr {
  */
 export class PostTurnResetStatusAbAttr extends PostTurnAbAttr {
   private allyTarget: boolean;
-  private target: Pokemon;
+  private target: Pokemon | undefined;
 
   constructor(allyTarget = false) {
     super(true);
@@ -4090,11 +4092,11 @@ export class PostTurnResetStatusAbAttr extends PostTurnAbAttr {
     } else {
       this.target = pokemon;
     }
-    return !Utils.isNullOrUndefined(this.target.status);
+    return !Utils.isNullOrUndefined(this.target?.status);
   }
 
   override applyPostTurn(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): void {
-    if (!simulated && this.target.status) {
+    if (!simulated && this.target?.status) {
       globalScene.queueMessage(getStatusEffectHealText(this.target.status?.effect, getPokemonNameWithAffix(this.target)));
       this.target.resetStatus(false);
       this.target.updateInfo();
@@ -5440,6 +5442,8 @@ class ForceSwitchOutHelper {
      * It will not flee if it is a Mystery Encounter with fleeing disabled (checked in `getSwitchOutCondition()`) or if it is a wave 10x wild boss
      */
     } else {
+      const allyPokemon = switchOutTarget.getAlly();
+
       if (!globalScene.currentBattle.waveIndex || globalScene.currentBattle.waveIndex % 10 === 0) {
         return false;
       }
@@ -5447,14 +5451,12 @@ class ForceSwitchOutHelper {
       if (switchOutTarget.hp > 0) {
         switchOutTarget.leaveField(false);
         globalScene.queueMessage(i18next.t("moveTriggers:fled", { pokemonName: getPokemonNameWithAffix(switchOutTarget) }), null, true, 500);
-
-        if (globalScene.currentBattle.double) {
-          const allyPokemon = switchOutTarget.getAlly();
+        if (globalScene.currentBattle.double && !Utils.isNullOrUndefined(allyPokemon)) {
           globalScene.redirectPokemonMoves(switchOutTarget, allyPokemon);
         }
       }
 
-      if (!switchOutTarget.getAlly()?.isActive(true)) {
+      if (!allyPokemon?.isActive(true)) {
         globalScene.clearEnemyHeldItemModifiers();
 
         if (switchOutTarget.hp) {
@@ -6440,9 +6442,9 @@ export function initAbilities() {
     new Ability(Abilities.CUTE_CHARM, 3)
       .attr(PostDefendContactApplyTagChanceAbAttr, 30, BattlerTagType.INFATUATED),
     new Ability(Abilities.PLUS, 3)
-      .conditionalAttr(p => globalScene.currentBattle.double && [ Abilities.PLUS, Abilities.MINUS ].some(a => p.getAlly().hasAbility(a)), StatMultiplierAbAttr, Stat.SPATK, 1.5),
+      .conditionalAttr(p => globalScene.currentBattle.double && [ Abilities.PLUS, Abilities.MINUS ].some(a => (p.getAlly()?.hasAbility(a) ?? false)), StatMultiplierAbAttr, Stat.SPATK, 1.5),
     new Ability(Abilities.MINUS, 3)
-      .conditionalAttr(p => globalScene.currentBattle.double && [ Abilities.PLUS, Abilities.MINUS ].some(a => p.getAlly().hasAbility(a)), StatMultiplierAbAttr, Stat.SPATK, 1.5),
+      .conditionalAttr(p => globalScene.currentBattle.double && [ Abilities.PLUS, Abilities.MINUS ].some(a => (p.getAlly()?.hasAbility(a) ?? false)), StatMultiplierAbAttr, Stat.SPATK, 1.5),
     new Ability(Abilities.FORECAST, 3)
       .uncopiable()
       .unreplaceable()
@@ -6669,7 +6671,7 @@ export function initAbilities() {
       .attr(PostDefendMoveDisableAbAttr, 30)
       .bypassFaint(),
     new Ability(Abilities.HEALER, 5)
-      .conditionalAttr(pokemon => pokemon.getAlly() && Utils.randSeedInt(10) < 3, PostTurnResetStatusAbAttr, true),
+      .conditionalAttr(pokemon => !Utils.isNullOrUndefined(pokemon.getAlly()) && Utils.randSeedInt(10) < 3, PostTurnResetStatusAbAttr, true),
     new Ability(Abilities.FRIEND_GUARD, 5)
       .attr(AlliedFieldDamageReductionAbAttr, 0.75)
       .ignorable(),
