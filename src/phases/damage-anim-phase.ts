@@ -10,7 +10,12 @@ export class DamageAnimPhase extends PokemonPhase {
   private damageResult: DamageResult;
   private critical: boolean;
 
-  constructor(battlerIndex: BattlerIndex, amount: number, damageResult: DamageResult = HitResult.EFFECTIVE, critical: boolean = false) {
+  constructor(
+    battlerIndex: BattlerIndex,
+    amount: number,
+    damageResult: DamageResult = HitResult.EFFECTIVE,
+    critical = false,
+  ) {
     super(battlerIndex);
 
     this.amount = amount;

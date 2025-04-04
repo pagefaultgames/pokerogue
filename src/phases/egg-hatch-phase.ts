@@ -309,7 +309,9 @@ export class EggHatchPhase extends Phase {
       SoundFade.fadeOut(globalScene, this.evolutionBgm, fixedInt(100));
     }
     for (let e = 0; e < 5; e++) {
-      globalScene.time.delayedCall(fixedInt(375 * e), () => globalScene.playSound("se/egg_hatch", { volume: 1 - (e * 0.2) }));
+      globalScene.time.delayedCall(fixedInt(375 * e), () =>
+        globalScene.playSound("se/egg_hatch", { volume: 1 - e * 0.2 }),
+      );
     }
     this.eggLightraysOverlay.setVisible(true);
     this.eggLightraysOverlay.play("egg_lightrays");
@@ -370,32 +372,31 @@ export class EggHatchPhase extends Phase {
           doShinySparkleAnim(this.pokemonShinySparkle, this.pokemon.variant);
         });
       }
-      globalScene.time.delayedCall(fixedInt(!this.skipped ? !isShiny ? 1250 : 1750 : !isShiny ? 250 : 750), () => {
+      globalScene.time.delayedCall(fixedInt(!this.skipped ? (!isShiny ? 1250 : 1750) : !isShiny ? 250 : 750), () => {
         this.infoContainer.show(this.pokemon, false, this.skipped ? 2 : 1);
 
-          globalScene.playSoundWithoutBgm("evolution_fanfare");
+        globalScene.playSoundWithoutBgm("evolution_fanfare");
 
-          globalScene.ui.showText(
-            i18next.t("egg:hatchFromTheEgg", {
-              pokemonName: this.pokemon.species.getExpandedSpeciesName(),
-            }),
-            null,
-            () => {
-              globalScene.gameData.updateSpeciesDexIvs(this.pokemon.species.speciesId, this.pokemon.ivs);
-              globalScene.gameData.setPokemonCaught(this.pokemon, true, true).then(() => {
-                globalScene.gameData.setEggMoveUnlocked(this.pokemon.species, this.eggMoveIndex).then(value => {
-                  this.eggHatchData.setEggMoveUnlocked(value);
-                  globalScene.ui.showText("", 0);
-                  this.end();
-                });
+        globalScene.ui.showText(
+          i18next.t("egg:hatchFromTheEgg", {
+            pokemonName: this.pokemon.species.getExpandedSpeciesName(),
+          }),
+          null,
+          () => {
+            globalScene.gameData.updateSpeciesDexIvs(this.pokemon.species.speciesId, this.pokemon.ivs);
+            globalScene.gameData.setPokemonCaught(this.pokemon, true, true).then(() => {
+              globalScene.gameData.setEggMoveUnlocked(this.pokemon.species, this.eggMoveIndex).then(value => {
+                this.eggHatchData.setEggMoveUnlocked(value);
+                globalScene.ui.showText("", 0);
+                this.end();
               });
-            },
-            null,
-            true,
-            3000,
-          );
-        },
-      );
+            });
+          },
+          null,
+          true,
+          3000,
+        );
+      });
     });
     globalScene.tweens.add({
       duration: fixedInt(this.skipped ? 500 : 3000),

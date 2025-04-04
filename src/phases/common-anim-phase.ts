@@ -9,7 +9,12 @@ export class CommonAnimPhase extends PokemonPhase {
   private targetIndex?: BattlerIndex;
   private playOnEmptyField: boolean;
 
-  constructor(battlerIndex?: BattlerIndex, targetIndex?: BattlerIndex, anim: CommonAnim | null = null, playOnEmptyField: boolean = false) {
+  constructor(
+    battlerIndex?: BattlerIndex,
+    targetIndex?: BattlerIndex,
+    anim: CommonAnim | null = null,
+    playOnEmptyField = false,
+  ) {
     super(battlerIndex);
 
     this.anim = anim;

@@ -12,7 +12,7 @@ import { UnavailablePhase } from "./unavailable-phase";
 export class LoginPhase extends Phase {
   private showText: boolean;
 
-  constructor(showText: boolean = true) {
+  constructor(showText = true) {
     super();
 
     this.showText = showText;

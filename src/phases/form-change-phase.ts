@@ -145,8 +145,17 @@ export class FormChangePhase extends EvolutionPhase {
                                           );
 
                                           transformedPokemon.destroy();
-                                          globalScene.ui.showText(getSpeciesFormChangeMessage(this.pokemon, this.formChange, preName), null, () => this.end(), null, true, fixedInt(delay));
-                                          globalScene.time.delayedCall(fixedInt(delay + 250), () => globalScene.playBgm());
+                                          globalScene.ui.showText(
+                                            getSpeciesFormChangeMessage(this.pokemon, this.formChange, preName),
+                                            null,
+                                            () => this.end(),
+                                            null,
+                                            true,
+                                            fixedInt(delay),
+                                          );
+                                          globalScene.time.delayedCall(fixedInt(delay + 250), () =>
+                                            globalScene.playBgm(),
+                                          );
                                         });
                                       });
                                     },

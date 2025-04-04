@@ -46,11 +46,13 @@ export class SelectBiomePhase extends BattlePhase {
       if (biomes.length > 1 && globalScene.findModifier(m => m instanceof MapModifier)) {
         let biomeChoices: Biome[] = [];
         globalScene.executeWithSeedOffset(() => {
-          biomeChoices = (!Array.isArray(biomeLinks[currentBiome])
-            ? [ biomeLinks[currentBiome] as Biome ]
-            : biomeLinks[currentBiome] as (Biome | [Biome, number])[])
-            .filter((b, i) => !Array.isArray(b) || !randSeedInt(b[1]))
-            .map(b => Array.isArray(b) ? b[0] : b);
+          biomeChoices = (
+            !Array.isArray(biomeLinks[currentBiome])
+              ? [biomeLinks[currentBiome] as Biome]
+              : (biomeLinks[currentBiome] as (Biome | [Biome, number])[])
+          )
+            .filter(b => !Array.isArray(b) || !randSeedInt(b[1]))
+            .map(b => (Array.isArray(b) ? b[0] : b));
         }, globalScene.currentBattle.waveIndex);
         const biomeSelectItems = biomeChoices.map(b => {
           const ret: OptionSelectItem = {
