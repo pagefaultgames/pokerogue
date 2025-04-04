@@ -24,10 +24,6 @@ import { globalScene } from "#app/global-scene";
 import { TeraPhase } from "./tera-phase";
 
 export class TurnStartPhase extends FieldPhase {
-  constructor() {
-    super();
-  }
-
   /**
    * This orders the active Pokemon on the field by speed into an BattlerIndex array and returns that array.
    * It also checks for Trick Room and reverses the array if it is present.

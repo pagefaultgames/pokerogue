@@ -3,10 +3,6 @@ import { TrainerSlot } from "#enums/trainer-slot";
 import { Phase } from "#app/phase";
 
 export class BattlePhase extends Phase {
-  constructor() {
-    super();
-  }
-
   showEnemyTrainer(trainerSlot: TrainerSlot = TrainerSlot.NONE): void {
     if (!globalScene.currentBattle.trainer) {
       console.warn("Enemy trainer is missing!");

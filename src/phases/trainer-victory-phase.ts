@@ -14,10 +14,6 @@ import { achvs } from "#app/system/achv";
 import { timedEventManager } from "#app/global-event-manager";
 
 export class TrainerVictoryPhase extends BattlePhase {
-  constructor() {
-    super();
-  }
-
   start() {
     globalScene.disableMenu = true;
 

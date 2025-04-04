@@ -70,7 +70,8 @@ export class PokemonHealPhase extends CommonAnimPhase {
       globalScene.queueMessage(healBlock.onActivation(pokemon));
       this.message = null;
       return super.end();
-    } else if (healOrDamage) {
+    }
+    if (healOrDamage) {
       const hpRestoreMultiplier = new NumberHolder(1);
       if (!this.revive) {
         globalScene.applyModifiers(HealingBoosterModifier, this.player, hpRestoreMultiplier);
