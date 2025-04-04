@@ -35,6 +35,13 @@ export abstract class PhasePriorityQueue {
   public push(phase: Phase): void {
     this.queue.push(phase);
   }
+
+  /**
+   * Removes all phases from the queue
+   */
+  public clear(): void {
+    this.queue.splice(0, this.queue.length);
+  }
 }
 
 /**

@@ -2756,6 +2756,7 @@ export default class BattleScene extends SceneBase {
     for (const queue of [this.phaseQueue, this.phaseQueuePrepend, this.conditionalQueue, this.nextCommandPhaseQueue]) {
       queue.splice(0, queue.length);
     }
+    this.dynamicPhaseQueues.forEach(queue => queue.clear());
     this.currentPhase = null;
     this.standbyPhase = null;
     this.clearPhaseQueueSplice();
