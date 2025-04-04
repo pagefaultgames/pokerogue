@@ -18,7 +18,7 @@ import { vouchers } from "#app/system/voucher";
 import type { OptionSelectConfig, OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
 import { SaveSlotUiMode } from "#app/ui/save-slot-select-ui-handler";
 import { Mode } from "#app/ui/ui";
-import { isLocal, isLocalServerConnected } from "#app/utils";
+import { isLocal, isLocalServerConnected, isNullOrUndefined } from "#app/utils";
 import i18next from "i18next";
 import { CheckSwitchPhase } from "./check-switch-phase";
 import { EncounterPhase } from "./encounter-phase";
@@ -290,7 +290,7 @@ export class TitlePhase extends Phase {
           });
       } else {
         let seed: string = btoa(new Date().toISOString().substring(0, 10));
-        if (!Utils.isNullOrUndefined(Overrides.DAILY_RUN_SEED_OVERRIDE)) {
+        if (!isNullOrUndefined(Overrides.DAILY_RUN_SEED_OVERRIDE)) {
           seed = Overrides.DAILY_RUN_SEED_OVERRIDE;
         }
         generateDaily(seed);
