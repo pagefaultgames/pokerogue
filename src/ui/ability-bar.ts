@@ -1,101 +1,114 @@
-import { getPokemonNameWithAffix } from "#app/messages";
 import { globalScene } from "#app/global-scene";
-import type Pokemon from "../field/pokemon";
 import { TextStyle, addTextObject } from "./text";
 import i18next from "i18next";
 
-const hiddenX = -118;
-const shownX = 0;
+const barWidth = 118;
+const screenLeft = 0;
 const baseY = -116;
 
 export default class AbilityBar extends Phaser.GameObjects.Container {
-  private bg: Phaser.GameObjects.Image;
+  private abilityBars: Phaser.GameObjects.Image[];
   private abilityBarText: Phaser.GameObjects.Text;
-
-  private tween: Phaser.Tweens.Tween | null;
-  private autoHideTimer: NodeJS.Timeout | null;
-
-  public shown: boolean;
+  private player: boolean;
+  private screenRight: number; // hold screenRight in case size changes between show and hide
+  private shown: boolean;
 
   constructor() {
-    super(globalScene, hiddenX, baseY);
+    super(globalScene, barWidth, baseY);
+    this.abilityBars = [];
+    this.player = true;
+    this.shown = false;
   }
 
   setup(): void {
-    this.bg = globalScene.add.image(0, 0, "ability_bar_left");
-    this.bg.setOrigin(0, 0);
+    for (const key of ["ability_bar_right", "ability_bar_left"]) {
+      const bar = globalScene.add.image(0, 0, key);
+      bar.setOrigin(0, 0);
+      bar.setVisible(false);
+      this.add(bar);
+      this.abilityBars.push(bar);
+    }
 
-    this.add(this.bg);
-
-    this.abilityBarText = addTextObject(15, 3, "", TextStyle.MESSAGE, { fontSize: "72px" });
+    this.abilityBarText = addTextObject(15, 3, "", TextStyle.MESSAGE, {
+      fontSize: "72px",
+    });
     this.abilityBarText.setOrigin(0, 0);
     this.abilityBarText.setWordWrapWidth(600, true);
     this.add(this.abilityBarText);
+    this.bringToTop(this.abilityBarText);
 
     this.setVisible(false);
-    this.shown = false;
+    this.setX(-barWidth); // start hidden (right edge of bar at x=0)
   }
 
-  showAbility(pokemon: Pokemon, passive: boolean = false): void {
-    this.abilityBarText.setText(`${i18next.t("fightUiHandler:abilityFlyInText", { pokemonName: getPokemonNameWithAffix(pokemon), passive: passive ? i18next.t("fightUiHandler:passive") : "", abilityName: !passive ?  pokemon.getAbility().name : pokemon.getPassiveAbility().name })}`);
+  public override setVisible(value: boolean): this {
+    this.abilityBars[+this.player].setVisible(value);
+    this.shown = value;
+    return this;
+  }
 
-    if (this.shown) {
-      return;
+  public async startTween(config: any, text?: string): Promise<void> {
+    this.setVisible(true);
+    if (text) {
+      this.abilityBarText.setText(text);
     }
+    return new Promise(resolve => {
+      globalScene.tweens.add({
+        ...config,
+        onComplete: () => {
+          if (config.onComplete) {
+            config.onComplete();
+          }
+          resolve();
+        },
+      });
+    });
+  }
 
+  public async showAbility(pokemonName: string, abilityName: string, passive = false, player = true): Promise<void> {
+    const text = `${i18next.t("fightUiHandler:abilityFlyInText", { pokemonName: pokemonName, passive: passive ? i18next.t("fightUiHandler:passive") : "", abilityName: abilityName })}`;
+    this.screenRight = globalScene.scaledCanvas.width;
+    if (player !== this.player) {
+      // Move the bar if it has changed from the player to enemy side (or vice versa)
+      this.setX(player ? -barWidth : this.screenRight);
+      this.player = player;
+    }
     globalScene.fieldUI.bringToTop(this);
 
+    let y = baseY;
+    if (this.player) {
+      y += globalScene.currentBattle.double ? 14 : 0;
+    } else {
+      y -= globalScene.currentBattle.double ? 28 : 14;
+    }
 
-    this.y = baseY + (globalScene.currentBattle.double ? 14 : 0);
-    this.tween = globalScene.tweens.add({
-      targets: this,
-      x: shownX,
-      duration: 500,
-      ease: "Sine.easeOut",
-      onComplete: () => {
-        this.tween = null;
-        this.resetAutoHideTimer();
-      }
-    });
+    this.setY(y);
 
-    this.setVisible(true);
-    this.shown = true;
+    return this.startTween(
+      {
+        targets: this,
+        x: this.player ? screenLeft : this.screenRight - barWidth,
+        duration: 500,
+        ease: "Sine.easeOut",
+        hold: 1000,
+      },
+      text,
+    );
   }
 
-  hide(): void {
-    if (!this.shown) {
-      return;
-    }
-
-    if (this.autoHideTimer) {
-      clearInterval(this.autoHideTimer);
-    }
-
-    if (this.tween) {
-      this.tween.stop();
-    }
-
-    this.tween = globalScene.tweens.add({
+  public async hide(): Promise<void> {
+    return this.startTween({
       targets: this,
-      x: -91,
-      duration: 500,
+      x: this.player ? -barWidth : this.screenRight,
+      duration: 200,
       ease: "Sine.easeIn",
       onComplete: () => {
-        this.tween = null;
         this.setVisible(false);
-      }
+      },
     });
-
-    this.shown = false;
   }
 
-  resetAutoHideTimer(): void {
-    if (this.autoHideTimer) {
-      clearInterval(this.autoHideTimer);
-    }
-    this.autoHideTimer = setTimeout(() => {
-      this.hide();
-      this.autoHideTimer = null;
-    }, 2500);
+  public isVisible(): boolean {
+    return this.shown;
   }
 }

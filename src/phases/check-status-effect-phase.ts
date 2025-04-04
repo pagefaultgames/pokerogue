@@ -13,7 +13,7 @@ export class CheckStatusEffectPhase extends Phase {
   start() {
     const field = globalScene.getField();
     for (const o of this.order) {
-      if (field[o].status && field[o].status.isPostTurn()) {
+      if (field[o].status?.isPostTurn()) {
         globalScene.unshiftPhase(new PostTurnStatusEffectPhase(o));
       }
     }

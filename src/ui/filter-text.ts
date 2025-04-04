@@ -8,7 +8,7 @@ import type UI from "./ui";
 import { Mode } from "./ui";
 import { globalScene } from "#app/global-scene";
 
-export enum FilterTextRow{
+export enum FilterTextRow {
   NAME,
   MOVE_1,
   MOVE_2,
@@ -18,13 +18,13 @@ export enum FilterTextRow{
 
 export class FilterText extends Phaser.GameObjects.Container {
   private window: Phaser.GameObjects.NineSlice;
-  private labels:  Phaser.GameObjects.Text[] = [];
-  private selections:  Phaser.GameObjects.Text[] = [];
+  private labels: Phaser.GameObjects.Text[] = [];
+  private selections: Phaser.GameObjects.Text[] = [];
   private selectionStrings: string[] = [];
   private rows: FilterTextRow[] = [];
   public cursorObj: Phaser.GameObjects.Image;
-  public numFilters: number = 0;
-  private lastCursor: number = -1;
+  public numFilters = 0;
+  private lastCursor = -1;
   private uiTheme: UiTheme;
 
   private menuMessageBoxContainer: Phaser.GameObjects.Container;
@@ -35,9 +35,9 @@ export class FilterText extends Phaser.GameObjects.Container {
 
   private onChange: () => void;
 
-  public defaultText: string = "---";
+  public defaultText = "---";
 
-  constructor(x: number, y: number, width: number, height: number, onChange: () => void,) {
+  constructor(x: number, y: number, width: number, height: number, onChange: () => void) {
     super(globalScene, x, y);
 
     this.onChange = onChange;
@@ -59,7 +59,17 @@ export class FilterText extends Phaser.GameObjects.Container {
     this.menuMessageBoxContainer.setVisible(false);
 
     // Full-width window used for testing dialog messages in debug mode
-    this.dialogueMessageBox = addWindow(-this.textPadding, 0, globalScene.game.canvas.width / 6 + this.textPadding * 2, 49, false, false, 0, 0, WindowVariant.THIN);
+    this.dialogueMessageBox = addWindow(
+      -this.textPadding,
+      0,
+      globalScene.game.canvas.width / 6 + this.textPadding * 2,
+      49,
+      false,
+      false,
+      0,
+      0,
+      WindowVariant.THIN,
+    );
     this.dialogueMessageBox.setOrigin(0, 0);
     this.menuMessageBoxContainer.add(this.dialogueMessageBox);
 
@@ -69,7 +79,6 @@ export class FilterText extends Phaser.GameObjects.Container {
     this.menuMessageBoxContainer.add(menuMessageText);
 
     this.message = menuMessageText;
-
   }
 
   /**
@@ -80,7 +89,6 @@ export class FilterText extends Phaser.GameObjects.Container {
    * @returns true if successful, false if the provided column was already in use for another filter
    */
   addFilter(row: FilterTextRow, title: string): boolean {
-
     const paddingX = 6;
     const cursorOffset = 8;
     const extraSpaceX = 40;
@@ -95,7 +103,12 @@ export class FilterText extends Phaser.GameObjects.Container {
     this.labels.push(filterTypesLabel);
     this.add(filterTypesLabel);
 
-    const filterTypesSelection = addTextObject(paddingX + cursorOffset + extraSpaceX, 3, this.defaultText, TextStyle.TOOLTIP_CONTENT);
+    const filterTypesSelection = addTextObject(
+      paddingX + cursorOffset + extraSpaceX,
+      3,
+      this.defaultText,
+      TextStyle.TOOLTIP_CONTENT,
+    );
     this.selections.push(filterTypesSelection);
     this.add(filterTypesSelection);
 
@@ -120,7 +133,6 @@ export class FilterText extends Phaser.GameObjects.Container {
   }
 
   startSearch(index: number, ui: UI): void {
-
     ui.playSelect();
     const prefilledText = "";
     const buttonAction: any = {};
@@ -133,18 +145,17 @@ export class FilterText extends Phaser.GameObjects.Container {
         const handler = ui.getHandler() as AwaitableUiHandler;
         handler.tutorialActive = true;
         // Switch to the dialog test window
-        this.selections[index].setText(String(i18next.t(dialogueName)));
+        this.selections[index].setText(dialogueName === "" ? this.defaultText : String(i18next.t(dialogueName)));
         ui.revertMode();
         this.onChange();
       },
       () => {
         ui.revertMode();
         this.onChange;
-      }
+      },
     ];
     ui.setOverlayMode(Mode.POKEDEX_SCAN, buttonAction, prefilledText, index);
   }
-
 
   setCursor(cursor: number): void {
     const cursorOffset = 8;
@@ -199,7 +210,6 @@ export class FilterText extends Phaser.GameObjects.Container {
    * @returns the index of the closest filter
    */
   getNearestFilter(container: StarterContainer): number {
-
     const midy = container.y + container.icon.displayHeight / 2;
     let nearest = 0;
     let nearestDist = 1000;
@@ -213,6 +223,4 @@ export class FilterText extends Phaser.GameObjects.Container {
 
     return nearest;
   }
-
-
 }

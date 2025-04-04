@@ -6,7 +6,7 @@ import { addWindow } from "./ui-theme";
 import * as Utils from "../utils";
 import { argbFromRgba } from "@material/material-color-utilities";
 import { Button } from "#enums/buttons";
-import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
+import BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
 
 export interface OptionSelectConfig {
   xOffset?: number;
@@ -35,6 +35,7 @@ const scrollDownLabel = "↓";
 
 export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
   protected optionSelectContainer: Phaser.GameObjects.Container;
+  protected optionSelectTextContainer: Phaser.GameObjects.Container;
   protected optionSelectBg: Phaser.GameObjects.NineSlice;
   protected optionSelectText: BBCodeText;
   protected optionSelectIcons: Phaser.GameObjects.Sprite[];
@@ -43,17 +44,17 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
 
   protected blockInput: boolean;
 
-  protected scrollCursor: number = 0;
-  protected fullCursor: number = 0;
+  protected scrollCursor = 0;
+  protected fullCursor = 0;
 
-  protected scale: number = 0.1666666667;
+  protected scale = 0.1666666667;
 
   private cursorObj: Phaser.GameObjects.Image | null;
 
   protected unskippedIndices: number[] = [];
 
   protected defaultTextStyle: TextStyle = TextStyle.WINDOW;
-
+  protected textContent: string;
 
   constructor(mode: Mode | null) {
     super(mode);
@@ -68,7 +69,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
   setup() {
     const ui = this.getUi();
 
-    this.optionSelectContainer = globalScene.add.container((globalScene.game.canvas.width / 6) - 1, -48);
+    this.optionSelectContainer = globalScene.add.container(globalScene.game.canvas.width / 6 - 1, -48);
     this.optionSelectContainer.setName(`option-select-${this.mode ? Mode[this.mode] : "UNKNOWN"}`);
     this.optionSelectContainer.setVisible(false);
     ui.add(this.optionSelectContainer);
@@ -77,6 +78,9 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
     this.optionSelectBg.setName("option-select-bg");
     this.optionSelectBg.setOrigin(1, 1);
     this.optionSelectContainer.add(this.optionSelectBg);
+
+    this.optionSelectTextContainer = globalScene.add.container(0, 0);
+    this.optionSelectContainer.add(this.optionSelectTextContainer);
 
     this.optionSelectIcons = [];
 
@@ -109,33 +113,50 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
       this.optionSelectIcons.splice(0, this.optionSelectIcons.length);
     }
 
-    const optionsWithScroll = (this.config?.options && this.config?.options.length > (this.config?.maxOptions!)) ? this.getOptionsWithScroll() : options;
+    const optionsWithScroll =
+      this.config?.options && this.config?.options.length > this.config?.maxOptions!
+        ? this.getOptionsWithScroll()
+        : options;
 
     // Setting the initial text to establish the width of the select object. We consider all options, even ones that are not displayed,
     // Except in the case of autocomplete, where we don't want to set up a text element with potentially hundreds of lines.
     const optionsForWidth = globalScene.ui.getMode() === Mode.AUTO_COMPLETE ? optionsWithScroll : options;
     this.optionSelectText = addBBCodeTextObject(
-      0, 0, optionsForWidth.map(o => o.item
-        ? `[shadow=${getTextColor(o.style ?? this.defaultTextStyle, true, globalScene.uiTheme)}][color=${getTextColor(o.style ?? TextStyle.WINDOW, false, globalScene.uiTheme)}]    ${o.label}[/color][/shadow]`
-        : `[shadow=${getTextColor(o.style ?? this.defaultTextStyle, true, globalScene.uiTheme)}][color=${getTextColor(o.style ?? TextStyle.WINDOW, false, globalScene.uiTheme)}]${o.label}[/color][/shadow]`
-      ).join("\n"),
-      TextStyle.WINDOW, { maxLines: options.length, lineSpacing: 12 }
+      0,
+      0,
+      optionsForWidth
+        .map(o =>
+          o.item
+            ? `[shadow=${getTextColor(o.style ?? this.defaultTextStyle, true, globalScene.uiTheme)}][color=${getTextColor(o.style ?? TextStyle.WINDOW, false, globalScene.uiTheme)}]    ${o.label}[/color][/shadow]`
+            : `[shadow=${getTextColor(o.style ?? this.defaultTextStyle, true, globalScene.uiTheme)}][color=${getTextColor(o.style ?? TextStyle.WINDOW, false, globalScene.uiTheme)}]${o.label}[/color][/shadow]`,
+        )
+        .join("\n"),
+      TextStyle.WINDOW,
+      { maxLines: options.length, lineSpacing: 12 },
     );
     this.optionSelectText.setOrigin(0, 0);
     this.optionSelectText.setName("text-option-select");
-    this.optionSelectContainer.add(this.optionSelectText);
-    this.optionSelectContainer.setPosition((globalScene.game.canvas.width / 6) - 1 - (this.config?.xOffset || 0), -48 + (this.config?.yOffset || 0));
+    this.optionSelectTextContainer.add(this.optionSelectText);
+    this.optionSelectContainer.setPosition(
+      globalScene.game.canvas.width / 6 - 1 - (this.config?.xOffset || 0),
+      -48 + (this.config?.yOffset || 0),
+    );
     this.optionSelectBg.width = Math.max(this.optionSelectText.displayWidth + 24, this.getWindowWidth());
     this.optionSelectBg.height = this.getWindowHeight();
-    this.optionSelectText.setPosition(this.optionSelectBg.x - this.optionSelectBg.width + 12 + 24 * this.scale, this.optionSelectBg.y - this.optionSelectBg.height + 2 + 42 * this.scale);
+    this.optionSelectTextContainer.setPosition(
+      this.optionSelectBg.x - this.optionSelectBg.width + 12 + 24 * this.scale,
+      this.optionSelectBg.y - this.optionSelectBg.height + 2 + 42 * this.scale,
+    );
 
     // Now that the container and background widths are established, we can set up the proper text restricted to visible options
-    this.optionSelectText.setText(optionsWithScroll.map(o => o.item
-      ? `[shadow=${getTextColor(o.style ?? this.defaultTextStyle, true, globalScene.uiTheme)}][color=${getTextColor(o.style ?? TextStyle.WINDOW, false, globalScene.uiTheme)}]    ${o.label}[/color][/shadow]`
-      : `[shadow=${getTextColor(o.style ?? this.defaultTextStyle, true, globalScene.uiTheme)}][color=${getTextColor(o.style ?? TextStyle.WINDOW, false, globalScene.uiTheme)}]${o.label}[/color][/shadow]`
-    ).join("\n")
-
-    );
+    this.textContent = optionsWithScroll
+      .map(o =>
+        o.item
+          ? `[shadow=${getTextColor(o.style ?? this.defaultTextStyle, true, globalScene.uiTheme)}][color=${getTextColor(o.style ?? TextStyle.WINDOW, false, globalScene.uiTheme)}]    ${o.label}[/color][/shadow]`
+          : `[shadow=${getTextColor(o.style ?? this.defaultTextStyle, true, globalScene.uiTheme)}][color=${getTextColor(o.style ?? TextStyle.WINDOW, false, globalScene.uiTheme)}]${o.label}[/color][/shadow]`,
+      )
+      .join("\n");
+    this.optionSelectText.setText(this.textContent);
 
     options.forEach((option: OptionSelectItem, i: number) => {
       if (option.item) {
@@ -143,7 +164,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
         itemIcon.setScale(3 * this.scale);
         this.optionSelectIcons.push(itemIcon);
 
-        this.optionSelectContainer.add(itemIcon);
+        this.optionSelectTextContainer.add(itemIcon);
 
         itemIcon.setPositionRelative(this.optionSelectText, 36 * this.scale, 7 + i * (114 * this.scale - 3));
 
@@ -152,7 +173,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
           itemOverlayIcon.setScale(3 * this.scale);
           this.optionSelectIcons.push(itemOverlayIcon);
 
-          this.optionSelectContainer.add(itemOverlayIcon);
+          this.optionSelectTextContainer.add(itemOverlayIcon);
 
           itemOverlayIcon.setPositionRelative(this.optionSelectText, 36 * this.scale, 7 + i * (114 * this.scale - 3));
 
@@ -184,7 +205,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
 
     if (this.config.delay) {
       this.blockInput = true;
-      this.optionSelectText.setAlpha(0.5);
+      this.optionSelectTextContainer.setAlpha(0.5);
       this.cursorObj?.setAlpha(0.8);
       globalScene.time.delayedCall(Utils.fixedInt(this.config.delay), () => this.unblockInput());
     }
@@ -278,7 +299,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
     }
 
     this.blockInput = false;
-    this.optionSelectText.setAlpha(1);
+    this.optionSelectTextContainer.setAlpha(1);
     this.cursorObj?.setAlpha(1);
   }
 
@@ -295,8 +316,12 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
 
     const optionsScrollTotal = options.length;
     const optionStartIndex = this.scrollCursor;
-    const optionEndIndex = Math.min(optionsScrollTotal, optionStartIndex +
-      (!optionStartIndex || this.scrollCursor + (this.config.maxOptions - 1) >= optionsScrollTotal ? this.config.maxOptions - 1 : this.config.maxOptions - 2)
+    const optionEndIndex = Math.min(
+      optionsScrollTotal,
+      optionStartIndex +
+        (!optionStartIndex || this.scrollCursor + (this.config.maxOptions - 1) >= optionsScrollTotal
+          ? this.config.maxOptions - 1
+          : this.config.maxOptions - 2),
     );
 
     if (this.config?.maxOptions && options.length > this.config.maxOptions) {
@@ -306,14 +331,14 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
         options.unshift({
           label: scrollUpLabel,
           handler: () => true,
-          style: this.defaultTextStyle
+          style: this.defaultTextStyle,
         });
       }
       if (optionEndIndex < optionsScrollTotal) {
         options.push({
           label: scrollDownLabel,
           handler: () => true,
-          style: this.defaultTextStyle
+          style: this.defaultTextStyle,
         });
       }
     }
@@ -332,13 +357,12 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
     const changed = this.fullCursor !== fullCursor;
 
     if (changed && this.config?.maxOptions && this.config.options.length > this.config.maxOptions) {
-
       // If the fullCursor is the last possible value, we go to the bottom
       if (fullCursor === this.unskippedIndices.length - 1) {
         this.fullCursor = fullCursor;
         this.cursor = this.config.maxOptions - (this.config.options.length - this.unskippedIndices[fullCursor]);
         this.scrollCursor = this.config.options.length - this.config.maxOptions + 1;
-      // If the fullCursor is the first possible value, we go to the top
+        // If the fullCursor is the first possible value, we go to the top
       } else if (fullCursor === 0) {
         this.fullCursor = fullCursor;
         this.cursor = this.unskippedIndices[fullCursor];
@@ -385,7 +409,11 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
     }
 
     this.cursorObj.setScale(this.scale * 6);
-    this.cursorObj.setPositionRelative(this.optionSelectBg, 12, 102 * this.scale + this.cursor * (114 * this.scale - 3));
+    this.cursorObj.setPositionRelative(
+      this.optionSelectBg,
+      12,
+      102 * this.scale + this.cursor * (114 * this.scale - 3),
+    );
 
     return changed;
   }

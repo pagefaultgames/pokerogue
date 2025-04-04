@@ -17,8 +17,28 @@ export class BattleEndPhase extends BattlePhase {
   start() {
     super.start();
 
+    // cull any extra `BattleEnd` phases from the queue.
+    globalScene.phaseQueue = globalScene.phaseQueue.filter(phase => {
+      if (phase instanceof BattleEndPhase) {
+        this.isVictory ||= phase.isVictory;
+        return false;
+      }
+      return true;
+    });
+    // `phaseQueuePrepend` is private, so we have to use this inefficient loop.
+    while (globalScene.tryRemoveUnshiftedPhase(phase => {
+      if (phase instanceof BattleEndPhase) {
+        this.isVictory ||= phase.isVictory;
+        return true;
+      }
+      return false;
+    })) {}
+
     globalScene.gameData.gameStats.battles++;
-    if (globalScene.gameMode.isEndless && globalScene.currentBattle.waveIndex + 1 > globalScene.gameData.gameStats.highestEndlessWave) {
+    if (
+      globalScene.gameMode.isEndless &&
+      globalScene.currentBattle.waveIndex + 1 > globalScene.gameData.gameStats.highestEndlessWave
+    ) {
       globalScene.gameData.gameStats.highestEndlessWave = globalScene.currentBattle.waveIndex + 1;
     }
 
@@ -37,7 +57,7 @@ export class BattleEndPhase extends BattlePhase {
     }
 
     for (const pokemon of globalScene.getField()) {
-      if (pokemon && pokemon.battleSummonData) {
+      if (pokemon?.battleSummonData) {
         pokemon.battleSummonData.waveTurnCount = 1;
       }
     }
@@ -52,7 +72,9 @@ export class BattleEndPhase extends BattlePhase {
 
     globalScene.clearEnemyHeldItemModifiers();
 
-    const lapsingModifiers = globalScene.findModifiers(m => m instanceof LapsingPersistentModifier || m instanceof LapsingPokemonHeldItemModifier) as (LapsingPersistentModifier | LapsingPokemonHeldItemModifier)[];
+    const lapsingModifiers = globalScene.findModifiers(
+      m => m instanceof LapsingPersistentModifier || m instanceof LapsingPokemonHeldItemModifier,
+    ) as (LapsingPersistentModifier | LapsingPokemonHeldItemModifier)[];
     for (const m of lapsingModifiers) {
       const args: any[] = [];
       if (m instanceof LapsingPokemonHeldItemModifier) {
@@ -63,6 +85,7 @@ export class BattleEndPhase extends BattlePhase {
       }
     }
 
-    globalScene.updateModifiers().then(() => this.end());
+    globalScene.updateModifiers();
+    this.end();
   }
 }

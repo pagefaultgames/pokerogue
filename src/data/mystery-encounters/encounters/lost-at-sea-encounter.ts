@@ -29,7 +29,9 @@ const namespace = "mysteryEncounters/lostAtSea";
  * @see {@link https://github.com/pagefaultgames/pokerogue/issues/3793 | GitHub Issue #3793}
  * @see For biome requirements check {@linkcode mysteryEncountersByBiome}
  */
-export const LostAtSeaEncounter: MysteryEncounter = MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.LOST_AT_SEA)
+export const LostAtSeaEncounter: MysteryEncounter = MysteryEncounterBuilder.withEncounterType(
+  MysteryEncounterType.LOST_AT_SEA,
+)
   .withEncounterTier(MysteryEncounterTier.COMMON)
   .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
   .withIntroSpriteConfigs([
@@ -57,8 +59,7 @@ export const LostAtSeaEncounter: MysteryEncounter = MysteryEncounterBuilder.with
   .withQuery(`${namespace}:query`)
   .withOption(
     // Option 1: Use a (non fainted) pokemon that can learn Surf to guide you back/
-    MysteryEncounterOptionBuilder
-      .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
+    MysteryEncounterOptionBuilder.newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
       .withPokemonCanLearnMoveRequirement(OPTION_1_REQUIRED_MOVE)
       .withDialogue({
         buttonLabel: `${namespace}:option.1.label`,
@@ -72,12 +73,11 @@ export const LostAtSeaEncounter: MysteryEncounter = MysteryEncounterBuilder.with
         ],
       })
       .withOptionPhase(async () => handlePokemonGuidingYouPhase())
-      .build()
+      .build(),
   )
   .withOption(
     //Option 2: Use a (non fainted) pokemon that can learn fly to guide you back.
-    MysteryEncounterOptionBuilder
-      .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
+    MysteryEncounterOptionBuilder.newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_DEFAULT)
       .withPokemonCanLearnMoveRequirement(OPTION_2_REQUIRED_MOVE)
       .withDialogue({
         buttonLabel: `${namespace}:option.2.label`,
@@ -91,7 +91,7 @@ export const LostAtSeaEncounter: MysteryEncounter = MysteryEncounterBuilder.with
         ],
       })
       .withOptionPhase(async () => handlePokemonGuidingYouPhase())
-      .build()
+      .build(),
   )
   .withSimpleOption(
     // Option 3: Wander aimlessly
@@ -105,7 +105,7 @@ export const LostAtSeaEncounter: MysteryEncounter = MysteryEncounterBuilder.with
       ],
     },
     async () => {
-      const allowedPokemon = globalScene.getPlayerParty().filter((p) => p.isAllowedInBattle());
+      const allowedPokemon = globalScene.getPlayerParty().filter(p => p.isAllowedInBattle());
 
       for (const pkm of allowedPokemon) {
         const percentage = DAMAGE_PERCENTAGE / 100;
@@ -116,7 +116,7 @@ export const LostAtSeaEncounter: MysteryEncounter = MysteryEncounterBuilder.with
       leaveEncounterWithoutBattle();
 
       return true;
-    }
+    },
   )
   .withOutroDialogue([
     {
