@@ -5,6 +5,7 @@ import { StatusEffect } from "#app/enums/status-effect";
 import { PokemonPhase } from "./pokemon-phase";
 import { MysteryEncounterPostSummonTag } from "#app/data/battler-tags";
 import { BattlerTagType } from "#enums/battler-tag-type";
+import type { BattlerIndex } from "#app/battle";
 
 export class PostSummonPhase extends PokemonPhase {
   start() {
