@@ -8,7 +8,7 @@ import {
   PostFaintAbAttr,
   PostKnockOutAbAttr,
   PostVictoryAbAttr,
-} from "#app/data/ability";
+} from "#app/data/abilities/ability";
 import type { DestinyBondTag, GrudgeTag } from "#app/data/battler-tags";
 import { BattlerTagLapseType } from "#app/data/battler-tags";
 import { battleSpecDialogue } from "#app/data/dialogue";

@@ -6,7 +6,7 @@ import type { OptionSelectItem } from "./abstact-option-select-ui-handler";
 import { isNullOrUndefined } from "#app/utils";
 import { Mode } from "./ui";
 import { FilterTextRow } from "./filter-text";
-import { allAbilities } from "#app/data/ability";
+import { allAbilities } from "#app/data/data-lists";
 import { allMoves } from "#app/data/moves/move";
 import { allSpecies } from "#app/data/pokemon-species";
 import i18next from "i18next";
