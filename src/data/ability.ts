@@ -3499,8 +3499,18 @@ export class BonusCritAbAttr extends AbAttr {
   constructor() {
     super(false);
   }
-  override apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: Utils.BooleanHolder, args: any[]): void {
-    (args[0] as Utils.BooleanHolder).value = true;
+
+  /**
+   * Apply the bonus crit ability by increasing the value in the provided number holder by 1
+   * 
+   * @param pokemon The pokemon with the BonusCrit ability (unused)
+   * @param passive Unused
+   * @param simulated Unused
+   * @param cancelled Unused
+   * @param args Args[0] is a number holder containing the crit stage.
+   */
+  override apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: Utils.BooleanHolder, args: [Utils.NumberHolder, ...any]): void {
+    (args[0] as Utils.NumberHolder).value += 1;
   }
 }
 

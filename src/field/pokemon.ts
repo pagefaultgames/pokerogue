@@ -1360,11 +1360,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       source.isPlayer(),
       critStage,
     );
-    const bonusCrit = new Utils.BooleanHolder(false);
-    applyAbAttrs(BonusCritAbAttr, source, null, false, bonusCrit)
-    if (bonusCrit.value) {
-      critStage.value += 1;
-    }
+    applyAbAttrs(BonusCritAbAttr, source, null, false, critStage)
     const critBoostTag = source.getTag(CritBoostTag);
     if (critBoostTag) {
       if (critBoostTag instanceof DragonCheerTag) {
