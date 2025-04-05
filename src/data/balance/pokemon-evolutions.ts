@@ -15,91 +15,10 @@ import { SpeciesFormKey } from "#enums/species-form-key";
 import { speciesStarterCosts } from "./starters";
 import i18next from "i18next";
 import { allMoves } from "../moves/move";
+import { SpeciesWildEvolutionDelay } from "#enums/species-wild-evolution-delay";
+import { EvolutionItem } from "#enums/evolution-item";
+import { EvolutionConditionType } from "#enums/evolution-condition-type";
 
-
-export enum SpeciesWildEvolutionDelay {
-  NONE,
-  SHORT,
-  MEDIUM,
-  LONG,
-  VERY_LONG,
-  NEVER
-}
-
-export enum EvolutionItem {
-  NONE,
-
-  LINKING_CORD,
-  SUN_STONE,
-  MOON_STONE,
-  LEAF_STONE,
-  FIRE_STONE,
-  WATER_STONE,
-  THUNDER_STONE,
-  ICE_STONE,
-  DUSK_STONE,
-  DAWN_STONE,
-  SHINY_STONE,
-  CRACKED_POT,
-  SWEET_APPLE,
-  TART_APPLE,
-  STRAWBERRY_SWEET,
-  UNREMARKABLE_TEACUP,
-  UPGRADE,
-  DUBIOUS_DISC,
-  DRAGON_SCALE,
-  PRISM_SCALE,
-  RAZOR_CLAW,
-  RAZOR_FANG,
-  REAPER_CLOTH,
-  ELECTIRIZER,
-  MAGMARIZER,
-  PROTECTOR,
-  SACHET,
-  WHIPPED_DREAM,
-  SYRUPY_APPLE,
-  CHIPPED_POT,
-  GALARICA_CUFF,
-  GALARICA_WREATH,
-  AUSPICIOUS_ARMOR,
-  MALICIOUS_ARMOR,
-  MASTERPIECE_TEACUP,
-  SUN_FLUTE,
-  MOON_FLUTE,
-
-  BLACK_AUGURITE = 51,
-  PEAT_BLOCK,
-  METAL_ALLOY,
-  SCROLL_OF_DARKNESS,
-  SCROLL_OF_WATERS,
-  LEADERS_CREST
-}
-
-export enum EvolutionConditionType {
-  NONE,
-  DAY,
-  NIGHT,
-  FRIENDSHIP,
-  FRIENDSHIP_DAY,
-  FRIENDSHIP_NIGHT,
-  MOVE,
-  MOVE_DAY,
-  MOVE_NIGHT,
-  MOVE_TYPE,
-  FRIENDSHIP_MOVE_TYPE,
-  PARTY_MEMBER_TYPE,
-  CAUGHT_SPECIES,
-  WEATHER,
-  TREASURE,
-  NATURE,
-  MALE,
-  FEMALE,
-  BIOME,
-  TYROGUE,
-  SHEDINJA,
-  DUNSPARCE,
-  TANDEMAUS,
-}
 
 /**
  * Pokemon Evolution tuple type consisting of:
