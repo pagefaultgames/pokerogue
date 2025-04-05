@@ -1329,7 +1329,16 @@ export const trainerConfigs: TrainerConfigs = {
       [TrainerPoolTier.RARE]: [Species.BELLOSSOM, Species.HITMONTOP, Species.MIME_JR, Species.ORICORIO],
       [TrainerPoolTier.SUPER_RARE]: [Species.QUAXLY, Species.JANGMO_O],
     }),
-  [TrainerType.DEPOT_AGENT]: new TrainerConfig(++t).setMoneyMultiplier(1.45).setEncounterBgm(TrainerType.CLERK),
+  [TrainerType.DEPOT_AGENT]: new TrainerConfig(++t)
+    .setMoneyMultiplier(1.45)
+    .setEncounterBgm(TrainerType.CLERK)
+    .setPartyTemplates(
+      trainerPartyTemplates.TWO_AVG,
+      trainerPartyTemplates.THREE_WEAK,
+      trainerPartyTemplates.THREE_AVG,
+      trainerPartyTemplates.FOUR_WEAK,
+    )
+    .setSpeciesFilter(s => s.isOfType(PokemonType.GROUND)),
   [TrainerType.DOCTOR]: new TrainerConfig(++t)
     .setHasGenders("Nurse", "lass")
     .setHasDouble("Medical Team")
@@ -1380,7 +1389,6 @@ export const trainerConfigs: TrainerConfigs = {
         Species.CHINCHOU,
         Species.CORSOLA,
         Species.WAILMER,
-        Species.BARBOACH,
         Species.CLAMPERL,
         Species.LUVDISC,
         Species.MANTYKE,
@@ -2236,12 +2244,7 @@ export const trainerConfigs: TrainerConfigs = {
         Species.PHANTUMP,
         Species.PUMPKABOO,
       ],
-      [TrainerPoolTier.RARE]: [
-        Species.SNEASEL, 
-        Species.LITWICK, 
-        Species.PAWNIARD, 
-        Species.NOIBAT,
-      ],
+      [TrainerPoolTier.RARE]: [Species.SNEASEL, Species.LITWICK, Species.PAWNIARD, Species.NOIBAT],
       [TrainerPoolTier.SUPER_RARE]: [Species.SLIGGOO, Species.HISUI_SLIGGOO, Species.HISUI_AVALUGG],
     }),
   [TrainerType.BRYONY]: new TrainerConfig(++t)
