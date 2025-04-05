@@ -20,7 +20,7 @@ import { UnlockPhase } from "#app/phases/unlock-phase";
 import { achvs, ChallengeAchv } from "#app/system/achv";
 import { Unlockables } from "#app/system/unlockables";
 import { Mode } from "#app/ui/ui";
-import * as Utils from "#app/utils";
+import { isLocal, isLocalServerConnected } from "#app/utils";
 import { PlayerGender } from "#enums/player-gender";
 import { TrainerType } from "#enums/trainer-type";
 import i18next from "i18next";
@@ -219,7 +219,7 @@ export class GameOverPhase extends BattlePhase {
     /* Added a local check to see if the game is running offline
       If Online, execute apiFetch as intended
       If Offline, execute offlineNewClear() only for victory, a localStorage implementation of newClear daily run checks */
-    if (!Utils.isLocal || Utils.isLocalServerConnected) {
+    if (!isLocal || isLocalServerConnected) {
       pokerogueApi.savedata.session
         .newclear({
           slot: globalScene.sessionSlotId,

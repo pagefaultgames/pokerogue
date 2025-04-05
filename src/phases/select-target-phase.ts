@@ -8,6 +8,7 @@ import i18next from "#app/plugins/i18n";
 import { allMoves } from "#app/data/moves/move";
 
 export class SelectTargetPhase extends PokemonPhase {
+  // biome-ignore lint/complexity/noUselessConstructor: This makes `fieldIndex` required
   constructor(fieldIndex: number) {
     super(fieldIndex);
   }

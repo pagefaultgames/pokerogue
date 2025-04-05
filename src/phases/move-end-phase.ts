@@ -5,7 +5,7 @@ import type { BattlerIndex } from "#app/battle";
 
 export class MoveEndPhase extends PokemonPhase {
   private wasFollowUp: boolean;
-  constructor(battlerIndex: BattlerIndex, wasFollowUp: boolean = false) {
+  constructor(battlerIndex: BattlerIndex, wasFollowUp = false) {
     super(battlerIndex);
     this.wasFollowUp = wasFollowUp;
   }

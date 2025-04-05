@@ -8,18 +8,18 @@ import { Species } from "#enums/species";
 
 export class PokemonAnimPhase extends BattlePhase {
   /** The type of animation to play in this phase */
-  private key: PokemonAnimType;
+  protected key: PokemonAnimType;
   /** The Pokemon to which this animation applies */
-  private pokemon: Pokemon;
+  protected pokemon: Pokemon;
   /** Any other field sprites affected by this animation */
-  private fieldAssets: Phaser.GameObjects.Sprite[];
+  protected fieldAssets: Phaser.GameObjects.Sprite[];
 
-  constructor(key: PokemonAnimType, pokemon: Pokemon, fieldAssets?: Phaser.GameObjects.Sprite[]) {
+  constructor(key: PokemonAnimType, pokemon: Pokemon, fieldAssets: Phaser.GameObjects.Sprite[] = []) {
     super();
 
     this.key = key;
     this.pokemon = pokemon;
-    this.fieldAssets = fieldAssets ?? [];
+    this.fieldAssets = fieldAssets;
   }
 
   start(): void {

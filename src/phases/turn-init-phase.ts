@@ -15,10 +15,6 @@ import { TurnStartPhase } from "./turn-start-phase";
 import { globalScene } from "#app/global-scene";
 
 export class TurnInitPhase extends FieldPhase {
-  constructor() {
-    super();
-  }
-
   start() {
     super.start();
 

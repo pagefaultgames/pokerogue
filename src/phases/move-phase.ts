@@ -227,7 +227,7 @@ export class MovePhase extends BattlePhase {
             (!this.pokemon.randSeedInt(4) || Overrides.STATUS_ACTIVATION_OVERRIDE === true) &&
             Overrides.STATUS_ACTIVATION_OVERRIDE !== false;
           break;
-        case StatusEffect.SLEEP:
+        case StatusEffect.SLEEP: {
           applyMoveAttrs(BypassSleepAttr, this.pokemon, null, this.move.getMove());
           const turnsRemaining = new NumberHolder(this.pokemon.status.sleepTurnsRemaining ?? 0);
           applyAbAttrs(
@@ -242,6 +242,7 @@ export class MovePhase extends BattlePhase {
           healed = this.pokemon.status.sleepTurnsRemaining <= 0;
           activated = !healed && !this.pokemon.getTag(BattlerTagType.BYPASS_SLEEP);
           break;
+        }
         case StatusEffect.FREEZE:
           healed =
             !!this.move

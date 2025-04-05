@@ -26,13 +26,15 @@ export class BattleEndPhase extends BattlePhase {
       return true;
     });
     // `phaseQueuePrepend` is private, so we have to use this inefficient loop.
-    while (globalScene.tryRemoveUnshiftedPhase(phase => {
-      if (phase instanceof BattleEndPhase) {
-        this.isVictory ||= phase.isVictory;
-        return true;
-      }
-      return false;
-    })) {}
+    while (
+      globalScene.tryRemoveUnshiftedPhase(phase => {
+        if (phase instanceof BattleEndPhase) {
+          this.isVictory ||= phase.isVictory;
+          return true;
+        }
+        return false;
+      })
+    ) {}
 
     globalScene.gameData.gameStats.battles++;
     if (

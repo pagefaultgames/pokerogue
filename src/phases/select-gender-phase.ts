@@ -6,10 +6,6 @@ import { Mode } from "#app/ui/ui";
 import i18next from "i18next";
 
 export class SelectGenderPhase extends Phase {
-  constructor() {
-    super();
-  }
-
   start(): void {
     super.start();
 
