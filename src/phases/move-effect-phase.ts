@@ -616,7 +616,6 @@ export class MoveEffectPhase extends PokemonPhase {
    * @param user - The {@linkcode Pokemon} using this phase's invoked move
    * @param target - {@linkcode Pokemon} the current target of this phase's invoked move
    * @param hitResult - The {@linkcode HitResult} of the attempted move
-   * @returns a `Promise` intended to be passed into a `then()` call.
    */
   protected applyOnGetHitAbEffects(user: Pokemon, target: Pokemon, hitResult: HitResult): void {
     if (!target.isFainted() || target.canApplyAbility()) {
