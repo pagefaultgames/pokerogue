@@ -42,7 +42,6 @@ import { CommonAnimPhase } from "#app/phases/common-anim-phase";
 import { MoveChargePhase } from "#app/phases/move-charge-phase";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { MoveEndPhase } from "#app/phases/move-end-phase";
-import { ShowAbilityPhase } from "#app/phases/show-ability-phase";
 import { NumberHolder } from "#app/utils";
 import { Abilities } from "#enums/abilities";
 import { ArenaTagType } from "#enums/arena-tag-type";
@@ -169,7 +168,7 @@ export class MovePhase extends BattlePhase {
 
     // Check move to see if arena.ignoreAbilities should be true.
     if (!this.followUp || this.reflected) {
-      if (this.move.getMove().checkFlag(MoveFlags.IGNORE_ABILITIES, this.pokemon, null)) {
+      if (this.move.getMove().doesFlagEffectApply({ flag: MoveFlags.IGNORE_ABILITIES, user: this.pokemon, isFollowUp: this.followUp })) {
         globalScene.arena.setIgnoreAbilities(true, this.pokemon.getBattlerIndex());
       }
     }
@@ -466,13 +465,10 @@ export class MovePhase extends BattlePhase {
   }
 
   /**
-   * Queues a {@linkcode MoveEndPhase} if the move wasn't a {@linkcode followUp} and {@linkcode canMove()} returns `true`,
-   * then ends the phase.
+   * Queues a {@linkcode MoveEndPhase} and then ends the phase
    */
   public end(): void {
-    if (!this.followUp && this.canMove()) {
-      globalScene.unshiftPhase(new MoveEndPhase(this.pokemon.getBattlerIndex()));
-    }
+    globalScene.unshiftPhase(new MoveEndPhase(this.pokemon.getBattlerIndex(), this.followUp));
 
     super.end();
   }
@@ -535,11 +531,16 @@ export class MovePhase extends BattlePhase {
 
         if (this.pokemon.hasAbilityWithAttr(BlockRedirectAbAttr)) {
           redirectTarget.value = currentTarget;
-          globalScene.unshiftPhase(
-            new ShowAbilityPhase(
-              this.pokemon.getBattlerIndex(),
-              this.pokemon.getPassiveAbility().hasAttr(BlockRedirectAbAttr),
-            ),
+          // TODO: Ability displays should be handled by the ability
+          globalScene.queueAbilityDisplay(
+            this.pokemon,
+            this.pokemon.getPassiveAbility().hasAttr(BlockRedirectAbAttr),
+            true,
+          );
+          globalScene.queueAbilityDisplay(
+            this.pokemon,
+            this.pokemon.getPassiveAbility().hasAttr(BlockRedirectAbAttr),
+            false,
           );
         }
 

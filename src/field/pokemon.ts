@@ -1340,8 +1340,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Retrieves the critical-hit stage considering the move used and the Pokemon
-   * who used it.
+   * Calculate the critical-hit stage of a move used against this pokemon by
+   * the given source
+   * 
    * @param source the {@linkcode Pokemon} who using the move
    * @param move the {@linkcode Move} being used
    * @returns the final critical-hit stage value
@@ -1360,14 +1361,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       source.isPlayer(),
       critStage,
     );
-    const bonusCrit = new Utils.BooleanHolder(false);
-    //@ts-ignore
-    if (applyAbAttrs(BonusCritAbAttr, source, null, false, bonusCrit)) {
-      // TODO: resolve ts-ignore. This is a promise. Checking a promise is bogus.
-      if (bonusCrit.value) {
-        critStage.value += 1;
-      }
-    }
+    applyAbAttrs(BonusCritAbAttr, source, null, false, critStage)
     const critBoostTag = source.getTag(CritBoostTag);
     if (critBoostTag) {
       if (critBoostTag instanceof DragonCheerTag) {
@@ -1447,7 +1441,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     const ally = this.getAlly();
-    if (ally) {
+    if (!Utils.isNullOrUndefined(ally)) {
       applyAllyStatMultiplierAbAttrs(AllyStatMultiplierAbAttr, ally, stat, statValue, simulated, this, move?.hasFlag(MoveFlags.IGNORE_ABILITIES) || ignoreAllyAbility);
     }
 
@@ -3714,7 +3708,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       : i18next.t("arenaTag:yourTeam");
   }
 
-  getAlly(): Pokemon {
+  getAlly(): Pokemon | undefined {
     return (
       this.isPlayer()
         ? globalScene.getPlayerField()
@@ -3900,7 +3894,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     );
 
     const ally = this.getAlly();
-    if (ally) {
+    if (!isNullOrUndefined(ally)) {
       const ignore = this.hasAbilityWithAttr(MoveAbilityBypassAbAttr) || sourceMove.hasFlag(MoveFlags.IGNORE_ABILITIES);
       applyAllyStatMultiplierAbAttrs(AllyStatMultiplierAbAttr, ally, Stat.ACC, accuracyMultiplier, false, this, ignore);
       applyAllyStatMultiplierAbAttrs(AllyStatMultiplierAbAttr, ally, Stat.EVA, evasionMultiplier, false, this, ignore);
@@ -4336,11 +4330,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         damage,
       );
 
+      const ally = this.getAlly();
       /** Additionally apply friend guard damage reduction if ally has it. */
-      if (globalScene.currentBattle.double && this.getAlly()?.isActive(true)) {
+      if (globalScene.currentBattle.double && !isNullOrUndefined(ally) && ally.isActive(true)) {
         applyPreDefendAbAttrs(
           AlliedFieldDamageReductionAbAttr,
-          this.getAlly(),
+          ally,
           source,
           move,
           cancelled,
