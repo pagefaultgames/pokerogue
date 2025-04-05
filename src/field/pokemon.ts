@@ -6985,9 +6985,6 @@ export class EnemyPokemon extends Pokemon {
             pe.speciesId === speciesId &&
             (!pe.evoFormKey || pe.evoFormKey === this.getFormKey()),
         );
-        if (evolution?.condition?.enforceFunc) {
-          evolution.condition.enforceFunc(this);
-        }
         speciesId = prevolution;
       }
     }

@@ -1,5 +1,6 @@
 import { globalScene } from "#app/global-scene";
-import { EvolutionItem, pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
+import { pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
+import { EvolutionItem } from "#enums/evolution-item";
 import { tmPoolTiers, tmSpecies } from "#app/data/balance/tms";
 import { getBerryEffectDescription, getBerryName } from "#app/data/berry";
 import { allMoves, AttackMove } from "#app/data/moves/move";
