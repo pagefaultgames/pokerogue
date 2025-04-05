@@ -18,7 +18,7 @@ import PokemonIconAnimHandler, { PokemonIconAnimMode } from "#app/ui/pokemon-ico
 import { pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
 import { addWindow } from "#app/ui/ui-theme";
 import { SpeciesFormChangeItemTrigger, FormChangeItem } from "#app/data/pokemon-forms";
-import { getVariantTint } from "#app/data/variant";
+import { getVariantTint } from "#app/sprites/variant";
 import { Button } from "#enums/buttons";
 import { applyChallenges, ChallengeType } from "#app/data/challenge";
 import MoveInfoOverlay from "#app/ui/move-info-overlay";

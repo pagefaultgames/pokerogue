@@ -613,3 +613,25 @@ export function animationFileName(move: Moves): string {
 export function camelCaseToKebabCase(str: string): string {
   return str.replace(/[A-Z]+(?![a-z])|[A-Z]/g, (s, o) => (o ? "-" : "") + s.toLowerCase());
 }
+
+/**
+ * Merges the two objects, such that for each property in `b` that matches a property in `a`,
+ * the value in `a` is replaced by the value in `b`. This is done recursively if the property is a non-array object
+ *
+ * If the property does not exist in `a` or its `typeof` evaluates differently, the property is skipped.
+ * If the value of the property is an array, the array is replaced. If it is any other object, the object is merged recursively.
+ */
+// biome-ignore lint/complexity/noBannedTypes: This function is designed to merge json objects
+export function deepMergeObjects(a: Object, b: Object) {
+  for (const key in b) {
+    // !(key in a) is redundant here, yet makes it clear that we're explicitly interested in properties that exist in `a`
+    if (!(key in a) || typeof a[key] !== typeof b[key]) {
+      continue;
+    }
+    if (typeof b[key] === "object" && !Array.isArray(b[key])) {
+      deepMergeObjects(a[key], b[key]);
+    } else {
+      a[key] = b[key];
+    }
+  }
+}
