@@ -5336,6 +5336,15 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     );
   }
 
+  messageIsImmune(quiet: boolean): boolean {
+    if(!quiet){
+      globalScene.queueMessage(
+        i18next.t("abilityTriggers:moveImmunity", {pokemonNameWithAffix: getPokemonNameWithAffix(this),})
+      );
+    }
+    return false;
+  }
+
   /**
    * Checks if a status effect can be applied to the Pokemon.
    *
@@ -5354,24 +5363,17 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   ): boolean {
     if (effect !== StatusEffect.FAINT) {
       if (overrideStatus ? this.status?.effect === effect : this.status) {
-        return false;
+        return this.messageIsImmune(quiet);
       }
       if (
         this.isGrounded() &&
         !ignoreField &&
         globalScene.arena.terrain?.terrainType === TerrainType.MISTY
       ) {
-        return false;
+        return this.messageIsImmune(quiet);
       }
     }
 
-    if (
-      sourcePokemon &&
-      sourcePokemon !== this &&
-      this.isSafeguarded(sourcePokemon)
-    ) {
-      return false;
-    }
 
     const types = this.getTypes(true, true);
 
@@ -5397,22 +5399,22 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
               defType,
             );
             if (cancelImmunity.value) {
-              return false;
+              return this.messageIsImmune(quiet);
             }
           }
 
-          return true;
+            return true;
         });
 
         if (this.isOfType(PokemonType.POISON) || this.isOfType(PokemonType.STEEL)) {
           if (poisonImmunity.includes(true)) {
-            return false;
+            return this.messageIsImmune(quiet);
           }
         }
         break;
       case StatusEffect.PARALYSIS:
         if (this.isOfType(PokemonType.ELECTRIC)) {
-          return false;
+          return this.messageIsImmune(quiet);
         }
         break;
       case StatusEffect.SLEEP:
@@ -5420,7 +5422,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           this.isGrounded() &&
           globalScene.arena.terrain?.terrainType === TerrainType.ELECTRIC
         ) {
-          return false;
+          return this.messageIsImmune(quiet);
         }
         break;
       case StatusEffect.FREEZE:
@@ -5432,12 +5434,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
               globalScene.arena.weather.weatherType,
             ))
         ) {
-          return false;
+          return this.messageIsImmune(quiet);
         }
         break;
       case StatusEffect.BURN:
         if (this.isOfType(PokemonType.FIRE)) {
-          return false;
+          return this.messageIsImmune(quiet);
         }
         break;
     }
@@ -5468,6 +5470,16 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     if (cancelled.value) {
+      return this.messageIsImmune(quiet);
+    }
+
+    if (
+      sourcePokemon &&
+      sourcePokemon !== this &&
+      this.isSafeguarded(sourcePokemon)
+    ) {
+      if(!quiet){ 
+        globalScene.queueMessage(i18next.t("moveTriggers:safeguard", { targetName: getPokemonNameWithAffix(this) }));}
       return false;
     }
 
@@ -5481,7 +5493,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     turnsRemaining = 0,
     sourceText: string | null = null,
   ): boolean {
-    if (!this.canSetStatus(effect, asPhase, false, sourcePokemon)) {
+    if (!this.canSetStatus(effect, false, false, sourcePokemon)) {
       return false;
     }
     if (this.isFainted() && effect !== StatusEffect.FAINT) {
