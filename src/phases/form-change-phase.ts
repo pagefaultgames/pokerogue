@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import * as Utils from "../utils";
+import { fixedInt } from "#app/utils";
 import { achvs } from "../system/achv";
 import type { SpeciesFormChange } from "../data/pokemon-forms";
 import { getSpeciesFormChangeMessage } from "../data/pokemon-forms";
@@ -9,7 +9,7 @@ import type PartyUiHandler from "../ui/party-ui-handler";
 import { getPokemonNameWithAffix } from "../messages";
 import { EndEvolutionPhase } from "./end-evolution-phase";
 import { EvolutionPhase } from "./evolution-phase";
-import { BattlerTagType } from "#app/enums/battler-tag-type";
+import { BattlerTagType } from "#enums/battler-tag-type";
 import { SpeciesFormKey } from "#enums/species-form-key";
 
 export class FormChangePhase extends EvolutionPhase {
@@ -151,9 +151,9 @@ export class FormChangePhase extends EvolutionPhase {
                                             () => this.end(),
                                             null,
                                             true,
-                                            Utils.fixedInt(delay),
+                                            fixedInt(delay),
                                           );
-                                          globalScene.time.delayedCall(Utils.fixedInt(delay + 250), () =>
+                                          globalScene.time.delayedCall(fixedInt(delay + 250), () =>
                                             globalScene.playBgm(),
                                           );
                                         });

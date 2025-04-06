@@ -15,10 +15,6 @@ import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 import * as Utils from "../utils";
 
 export class SelectStarterPhase extends Phase {
-  constructor() {
-    super();
-  }
-
   start() {
     super.start();
 

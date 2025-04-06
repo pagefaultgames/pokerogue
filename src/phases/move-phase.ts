@@ -168,7 +168,7 @@ export class MovePhase extends BattlePhase {
 
     // Check move to see if arena.ignoreAbilities should be true.
     if (!this.followUp || this.reflected) {
-      if (this.move.getMove().checkFlag(MoveFlags.IGNORE_ABILITIES, this.pokemon, null)) {
+      if (this.move.getMove().doesFlagEffectApply({ flag: MoveFlags.IGNORE_ABILITIES, user: this.pokemon, isFollowUp: this.followUp })) {
         globalScene.arena.setIgnoreAbilities(true, this.pokemon.getBattlerIndex());
       }
     }
@@ -227,7 +227,7 @@ export class MovePhase extends BattlePhase {
             (!this.pokemon.randSeedInt(4) || Overrides.STATUS_ACTIVATION_OVERRIDE === true) &&
             Overrides.STATUS_ACTIVATION_OVERRIDE !== false;
           break;
-        case StatusEffect.SLEEP:
+        case StatusEffect.SLEEP: {
           applyMoveAttrs(BypassSleepAttr, this.pokemon, null, this.move.getMove());
           const turnsRemaining = new NumberHolder(this.pokemon.status.sleepTurnsRemaining ?? 0);
           applyAbAttrs(
@@ -242,6 +242,7 @@ export class MovePhase extends BattlePhase {
           healed = this.pokemon.status.sleepTurnsRemaining <= 0;
           activated = !healed && !this.pokemon.getTag(BattlerTagType.BYPASS_SLEEP);
           break;
+        }
         case StatusEffect.FREEZE:
           healed =
             !!this.move
@@ -465,13 +466,10 @@ export class MovePhase extends BattlePhase {
   }
 
   /**
-   * Queues a {@linkcode MoveEndPhase} if the move wasn't a {@linkcode followUp} and {@linkcode canMove()} returns `true`,
-   * then ends the phase.
+   * Queues a {@linkcode MoveEndPhase} and then ends the phase
    */
   public end(): void {
-    if (!this.followUp && this.canMove()) {
-      globalScene.unshiftPhase(new MoveEndPhase(this.pokemon.getBattlerIndex()));
-    }
+    globalScene.unshiftPhase(new MoveEndPhase(this.pokemon.getBattlerIndex(), this.followUp));
 
     super.end();
   }

@@ -1469,8 +1469,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Retrieves the critical-hit stage considering the move used and the Pokemon
-   * who used it.
+   * Calculate the critical-hit stage of a move used against this pokemon by
+   * the given source
+   * 
    * @param source the {@linkcode Pokemon} who using the move
    * @param move the {@linkcode Move} being used
    * @returns the final critical-hit stage value
@@ -1489,14 +1490,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       source.isPlayer(),
       critStage,
     );
-    const bonusCrit = new Utils.BooleanHolder(false);
-    //@ts-ignore
-    if (applyAbAttrs(BonusCritAbAttr, source, null, false, bonusCrit)) {
-      // TODO: resolve ts-ignore. This is a promise. Checking a promise is bogus.
-      if (bonusCrit.value) {
-        critStage.value += 1;
-      }
-    }
+    applyAbAttrs(BonusCritAbAttr, source, null, false, critStage)
     const critBoostTag = source.getTag(CritBoostTag);
     if (critBoostTag) {
       if (critBoostTag instanceof DragonCheerTag) {
