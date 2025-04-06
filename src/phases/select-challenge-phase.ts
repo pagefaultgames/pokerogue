@@ -3,10 +3,6 @@ import { Phase } from "#app/phase";
 import { Mode } from "#app/ui/ui";
 
 export class SelectChallengePhase extends Phase {
-  constructor() {
-    super();
-  }
-
   start() {
     super.start();
 
