@@ -5928,7 +5928,7 @@ export class AddArenaTagAttr extends MoveEffectAttr {
     }
 
     if ((move.chance < 0 || move.chance === 100 || user.randSeedInt(100) < move.chance) && user.getLastXMoves(1)[0]?.result === MoveResult.SUCCESS) {
-      const side = ((this.selfSideTarget ? user : target).isPlayer() != (move.hasAttr(AddArenaTrapTagAttr) && target == user)) ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
+      const side = ((this.selfSideTarget ? user : target).isPlayer() !== (move.hasAttr(AddArenaTrapTagAttr) && target === user)) ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
       globalScene.arena.addTag(this.tagType, this.turnCount, move.id, user.id, side);
       return true;
     }
@@ -5977,7 +5977,7 @@ export class RemoveArenaTagsAttr extends MoveEffectAttr {
 export class AddArenaTrapTagAttr extends AddArenaTagAttr {
   getCondition(): MoveConditionFunc {
     return (user, target, move) => {
-      const side = (this.selfSideTarget != user.isPlayer()) ? ArenaTagSide.ENEMY : ArenaTagSide.PLAYER;
+      const side = (this.selfSideTarget !== user.isPlayer()) ? ArenaTagSide.ENEMY : ArenaTagSide.PLAYER;
       const tag = globalScene.arena.getTagOnSide(this.tagType, side) as ArenaTrapTag;
       if (!tag) {
         return true;

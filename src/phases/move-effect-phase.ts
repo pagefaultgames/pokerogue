@@ -243,7 +243,7 @@ export class MoveEffectPhase extends PokemonPhase {
     const playOnEmptyField =
       (globalScene.currentBattle?.mysteryEncounter?.hasBattleAnimationsWithoutTargets ?? false) ||
       (!hasActiveTargets && move.hasAttr(AddArenaTrapTagAttr));
-    // Move animation only needs one target, unless it is a hazard move
+    // Move animation only needs one target. The attacker is used as a fallback.
     new MoveAnim(
       move.id as Moves,
       user,
@@ -253,18 +253,14 @@ export class MoveEffectPhase extends PokemonPhase {
       /** Has the move successfully hit a target (for damage) yet? */
       let hasHit = false;
 
-      /**
-       * In the event that the move is a hazard move, there may be no target and the move should still succeed.
-       * The user pokemon is used as a dummy target, to ensure all code still runs, but it's values are not used.
-       */
-      let dummyPokemon = user;
-
       // Prevent ENEMY_SIDE targeted moves from occurring twice in double battles
       // and check which target will magic bounce.
-      // The dummy pokemon is used in case the move is a hazard and there are no targets.
+      // In the event that the move is a hazard move, there may be no target and the move should still succeed.
+      // In this case, the user is used as the "target" to prevent a crash.
+      // This should not affect normal execution of the move otherwise.
       const trueTargets: Pokemon[] =
         !hasActiveTargets && move.hasAttr(AddArenaTrapTagAttr)
-          ? [dummyPokemon]
+          ? [user]
           : move.moveTarget !== MoveTarget.ENEMY_SIDE
             ? targets
             : (() => {
