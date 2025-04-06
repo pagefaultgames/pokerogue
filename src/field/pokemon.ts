@@ -558,6 +558,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
   }
 
+  getPokeball(useIllusion = false){
+    if(useIllusion){
+      return this.summonData?.illusion?.pokeball ?? this.pokeball
+    } else {
+      return this.pokeball
+    }
+  }
+
   init(): void {
     this.fieldPosition = FieldPosition.CENTER;
     this.initBattleInfo();

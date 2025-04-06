@@ -135,11 +135,10 @@ describe("Abilities - Illusion", () => {
 
     const zoroark = game.scene.getPlayerPokemon()!;
 
-    console.log("OOOOOOOOOOOOOOOOOOOOO", !!zoroark.summonData.illusion)
     expect(zoroark.name).equals("Axew");
     expect(zoroark.getNameToRender()).equals("axew nickname");
     expect(zoroark.getGender(false, true)).equals(Gender.FEMALE);
     expect(zoroark.isShiny(true)).equals(true);
-    expect(zoroark.summonData?.illusion?.pokeball).equals(PokeballType.GREAT_BALL);
+    expect(zoroark.getPokeball(true)).equals(PokeballType.GREAT_BALL);
   });
 });

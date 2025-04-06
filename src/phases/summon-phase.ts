@@ -128,7 +128,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
       this.player ? 36 : 248,
       this.player ? 80 : 44,
       "pb",
-      getPokeballAtlasKey(pokemon.summonData?.illusion?.pokeball ?? pokemon.pokeball),
+      getPokeballAtlasKey(pokemon.getPokeball(true)),
     );
     pokeball.setVisible(false);
     pokeball.setOrigin(0.5, 0.625);
@@ -180,7 +180,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
             addPokeballOpenParticles(
               pokemon.x,
               pokemon.y - 16,
-              pokemon.summonData?.illusion?.pokeball ?? pokemon.pokeball,
+              pokemon.getPokeball(true),
             );
             globalScene.updateModifiers(this.player);
             globalScene.updateFieldScale();
@@ -189,7 +189,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
             pokemon.setVisible(true);
             pokemon.getSprite().setVisible(true);
             pokemon.setScale(0.5);
-            pokemon.tint(getPokeballTintColor(pokemon.summonData?.illusion?.pokeball ?? pokemon.pokeball));
+            pokemon.tint(getPokeballTintColor(pokemon.getPokeball(true)));
             pokemon.untint(250, "Sine.easeIn");
             globalScene.updateFieldScale();
             globalScene.tweens.add({
