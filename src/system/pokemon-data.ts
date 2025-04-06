@@ -180,6 +180,7 @@ export default class PokemonData {
         this.summonData.types = source.summonData.types;
         this.summonData.speciesForm = source.summonData.speciesForm;
         this.summonDataSpeciesFormIndex = source.summonDataSpeciesFormIndex;
+        this.summonData.illusionBroken = source.summonData.illusionBroken;
 
         if (source.summonData.tags) {
           this.summonData.tags = source.summonData.tags?.map(t => loadBattlerTag(t));
@@ -225,6 +226,7 @@ export default class PokemonData {
     if (this.summonData) {
       // when loading from saved session, recover summonData.speciesFrom and form index species object
       // used to stay transformed on reload session
+
       if (this.summonData.speciesForm) {
         this.summonData.speciesForm = getPokemonSpeciesForm(
           this.summonData.speciesForm.speciesId,

@@ -5232,6 +5232,7 @@ export class IllusionPreSummonAbAttr extends PreSummonAbAttr {
   }
 
   override canApplyPreSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
+    pokemon.initSummondata()
     if(pokemon.hasTrainer()){
       const party: Pokemon[] = (pokemon.isPlayer() ? globalScene.getPlayerParty() : globalScene.getEnemyParty()).filter(p => p.isAllowedInBattle());
       const lastPokemon: Pokemon = party.filter(p => p !==pokemon).at(-1) || pokemon;

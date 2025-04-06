@@ -888,8 +888,7 @@ export default class BattleScene extends SceneBase {
   }
 
   public getPlayerParty(): PlayerPokemon[] {
-    const party = this.party;
-    return party;
+    return this.party;
   }
 
   /**

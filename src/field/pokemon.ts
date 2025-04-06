@@ -560,7 +560,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   init(): void {
     this.fieldPosition = FieldPosition.CENTER;
-    this.summonData = new PokemonSummonData(); // Need to be init for illusion to work
     this.initBattleInfo();
 
     globalScene.fieldUI.addAt(this.battleInfo, 0);
@@ -5795,6 +5794,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   primeSummonData(summonDataPrimer: PokemonSummonData): void {
     this.summonDataPrimer = summonDataPrimer;
+  }
+
+  // For PreSummonAbAttr to get access to summonData
+  initSummondata(): void {
+    this.summonData = this.summonData ?? this.summonDataPrimer ?? new PokemonSummonData()
   }
 
   resetSummonData(): void {
