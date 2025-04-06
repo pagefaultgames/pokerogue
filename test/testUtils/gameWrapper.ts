@@ -21,6 +21,8 @@ import KeyboardPlugin = Phaser.Input.Keyboard.KeyboardPlugin;
 import GamepadPlugin = Phaser.Input.Gamepad.GamepadPlugin;
 import EventEmitter = Phaser.Events.EventEmitter;
 import UpdateList = Phaser.GameObjects.UpdateList;
+import { PokedexMonContainer } from "#app/ui/pokedex-mon-container";
+import MockContainer from "./mocks/mocksContainer/mockContainer";
 // biome-ignore lint/style/noNamespaceImport: Necessary in order to mock the var
 import * as bypassLoginModule from "#app/global-vars/bypass-login";
 
@@ -61,6 +63,10 @@ export default class GameWrapper {
       }
     };
     BattleScene.prototype.addPokemonIcon = () => new Phaser.GameObjects.Container(this.scene);
+
+    // Pokedex container is not actually mocking container, but the sprites they contain are mocked.
+    // We need to mock the remove function to not throw an error when removing a sprite.
+    PokedexMonContainer.prototype.remove = MockContainer.prototype.remove;
   }
 
   setScene(scene: BattleScene) {

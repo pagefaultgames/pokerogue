@@ -205,6 +205,7 @@ export default class PhaseInterceptor {
   private phaseFrom;
   private inProgress;
   private originalSetMode;
+  private originalSetOverlayMode;
   private originalSuperEnd;
 
   /**
@@ -442,6 +443,7 @@ export default class PhaseInterceptor {
    */
   initPhases() {
     this.originalSetMode = UI.prototype.setMode;
+    this.originalSetOverlayMode = UI.prototype.setOverlayMode;
     this.originalSuperEnd = Phase.prototype.end;
     UI.prototype.setMode = (mode, ...args) => this.setMode.call(this, mode, ...args);
     Phase.prototype.end = () => this.superEndPhase.call(this);
@@ -509,6 +511,18 @@ export default class PhaseInterceptor {
   }
 
   /**
+   * mock to set overlay mode
+   * @param mode - The {@linkcode Mode} to set.
+   * @param args - Additional arguments to pass to the original method.
+   */
+  setOverlayMode(mode: Mode, ...args: unknown[]): Promise<void> {
+    const instance = this.scene.ui;
+    console.log("setOverlayMode", `${Mode[mode]} (=${mode})`, args);
+    const ret = this.originalSetOverlayMode.apply(instance, [mode, ...args]);
+    return ret;
+  }
+
+  /**
    * Method to start the prompt handler.
    */
   startPromptHandler() {
@@ -572,6 +586,7 @@ export default class PhaseInterceptor {
       phase.prototype.start = this.phases[phase.name].start;
     }
     UI.prototype.setMode = this.originalSetMode;
+    UI.prototype.setOverlayMode = this.originalSetOverlayMode;
     Phase.prototype.end = this.originalSuperEnd;
     clearInterval(this.promptInterval);
     clearInterval(this.interval);
