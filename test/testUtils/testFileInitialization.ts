@@ -3,7 +3,7 @@ import { initLoggedInUser } from "#app/account";
 import { initAbilities } from "#app/data/abilities/ability";
 import { initBiomes } from "#app/data/balance/biomes";
 import { initEggMoves } from "#app/data/balance/egg-moves";
-import { initPokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
+import { initPokemonPrevolutions, initPokemonStarters } from "#app/data/balance/pokemon-evolutions";
 import { initMoves } from "#app/data/moves/move";
 import { initMysteryEncounters } from "#app/data/mystery-encounters/mystery-encounters";
 import { initPokemonForms } from "#app/data/pokemon-forms";
@@ -85,7 +85,6 @@ export function initTestFile() {
   HTMLCanvasElement.prototype.getContext = () => mockContext;
 
   // Initialize all of these things if and only if they have not been initialized yet
-  // initSpecies();
   if (!wasInitialized) {
     wasInitialized = true;
     initI18n();
@@ -101,6 +100,8 @@ export function initTestFile() {
     initAbilities();
     initLoggedInUser();
     initMysteryEncounters();
+    // init the pokemon starters for the pokedex
+    initPokemonStarters();
   }
 
   manageListeners();
