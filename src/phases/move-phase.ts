@@ -477,11 +477,9 @@ export class MovePhase extends BattlePhase {
    * Queues a {@linkcode MoveEndPhase} and then ends the phase
    */
   public end(): void {
-    if (!this.followUp && this.canMove()) {
-      globalScene.unshiftPhase(
-        new MoveEndPhase(this.pokemon.getBattlerIndex(), this.getActiveTargetPokemon(), this.followUp),
-      );
-    }
+    globalScene.unshiftPhase(
+      new MoveEndPhase(this.pokemon.getBattlerIndex(), this.getActiveTargetPokemon(), this.followUp),
+    );
 
     super.end();
   }
