@@ -11,6 +11,7 @@ import { allSpecies, getPokemonSpecies, type PokemonForm } from "#app/data/pokem
 import { Button } from "#enums/buttons";
 import { DropDownColumn } from "#app/ui/filter-bar";
 import type PokemonSpecies from "#app/data/pokemon-species";
+import { PokemonType } from "#enums/pokemon-type";
 
 /**
  * Return all permutations of elements from an array
@@ -77,6 +78,34 @@ describe("UI - Pokedex", () => {
         )
       ) {
         speciesSet.add(pkmn.speciesId);
+      }
+    }
+    return speciesSet;
+  }
+
+  /**
+   * Compute a set of pokemon that have one of the specified type(s)
+   *
+   * Includes all forms of the pokemon
+   * @param types The types to filter for
+   */
+  function getSpeciesWithType(...types: PokemonType[]): Set<Species> {
+    const speciesSet = new Set<Species>();
+    const tySet = new Set<PokemonType>(types);
+
+    // get the pokemon and its forms
+    outer: for (const pkmn of allSpecies) {
+      // @ts-ignore We know that type2 might be null.
+      if (tySet.has(pkmn.type1) || tySet.has(pkmn.type2)) {
+        speciesSet.add(pkmn.speciesId);
+        continue;
+      }
+      for (const form of pkmn.forms) {
+        // @ts-ignore We know that type2 might be null.
+        if (tySet.has(form.type1) || tySet.has(form.type2)) {
+          speciesSet.add(pkmn.speciesId);
+          continue outer;
+        }
       }
     }
     return speciesSet;
@@ -205,6 +234,35 @@ describe("UI - Pokedex", () => {
     }
 
     expect(whiteListCount).toBe(whitelist.length);
+  });
+
+  it("should filter to show only the pokemon with a type when filtering by a single type", async () => {
+    const pokedexHandler = await runToOpenPokedex();
+
+    // @ts-ignore filterBar is private
+    pokedexHandler.filterBar.getFilter(DropDownColumn.TYPES).toggleOptionState(PokemonType.NORMAL + 1);
+
+    const expectedPokemon = getSpeciesWithType(PokemonType.NORMAL);
+    // @ts-ignore private
+    const filteredPokemon = new Set(pokedexHandler.filteredPokemonData.map(pokemon => pokemon.species.speciesId));
+
+    expect(filteredPokemon).toEqual(expectedPokemon);
+  });
+
+  // Todo: Pokemon with a mega that adds a type do not show up in the filter, e.g. pinsir.
+  it.todo("should show only the pokemon with one of the types when filtering by multiple types", async () => {
+    const pokedexHandler = await runToOpenPokedex();
+
+    // @ts-ignore filterBar is private
+    pokedexHandler.filterBar.getFilter(DropDownColumn.TYPES).toggleOptionState(PokemonType.NORMAL + 1);
+    // @ts-ignore filterBar is private
+    pokedexHandler.filterBar.getFilter(DropDownColumn.TYPES).toggleOptionState(PokemonType.FLYING + 1);
+
+    const expectedPokemon = getSpeciesWithType(PokemonType.NORMAL, PokemonType.FLYING);
+    // @ts-ignore private
+    const filteredPokemon = new Set(pokedexHandler.filteredPokemonData.map(pokemon => pokemon.species.speciesId));
+
+    expect(filteredPokemon).toEqual(expectedPokemon);
   });
 
   /****************************
