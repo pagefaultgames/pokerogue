@@ -13,6 +13,7 @@ import { SelectModifierPhase } from "./select-modifier-phase";
 import { TrainerVictoryPhase } from "./trainer-victory-phase";
 import { handleMysteryEncounterVictory } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { globalScene } from "#app/global-scene";
+import { timedEventManager } from "#app/global-event-manager";
 
 export class VictoryPhase extends PokemonPhase {
   /** If true, indicates that the phase is intended for EXP purposes only, and not to continue a battle to next phase */
@@ -53,12 +54,23 @@ export class VictoryPhase extends PokemonPhase {
       }
       if (globalScene.gameMode.isEndless || !globalScene.gameMode.isWaveFinal(globalScene.currentBattle.waveIndex)) {
         globalScene.pushPhase(new EggLapsePhase());
-        if (
-          globalScene.gameMode.isClassic &&
-          globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.EVIL_BOSS_2
-        ) {
-          // Should get Lock Capsule on 165 before shop phase so it can be used in the rewards shop
-          globalScene.pushPhase(new ModifierRewardPhase(modifierTypes.LOCK_CAPSULE));
+        if (globalScene.gameMode.isClassic) {
+          if (globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.RIVAL_1) {
+            // Get event modifiers for this wave
+            timedEventManager
+              .getFixedBattleEventRewards(ClassicFixedBossWaves.RIVAL_1)
+              .map(r => globalScene.pushPhase(new ModifierRewardPhase(modifierTypes[r])));
+          }
+          if (globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.RIVAL_2) {
+            // Get event modifiers for this wave
+            timedEventManager
+              .getFixedBattleEventRewards(ClassicFixedBossWaves.RIVAL_2)
+              .map(r => globalScene.pushPhase(new ModifierRewardPhase(modifierTypes[r])));
+          }
+          if (globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.EVIL_BOSS_2) {
+            // Should get Lock Capsule on 165 before shop phase so it can be used in the rewards shop
+            globalScene.pushPhase(new ModifierRewardPhase(modifierTypes.LOCK_CAPSULE));
+          }
         }
         if (globalScene.currentBattle.waveIndex % 10) {
           globalScene.pushPhase(new SelectModifierPhase(undefined, undefined, this.getFixedBattleCustomModifiers()));
