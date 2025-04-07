@@ -77,7 +77,7 @@ export class BattleEndPhase extends BattlePhase {
       try {
         p.destroy();
       } catch {
-        console.warn("Unable to destroy stale pokemon objects in BattleEndPhase.");
+        console.warn("Unable to destroy stale pokemon object in BattleEndPhase:", p);
       }
     }
 
