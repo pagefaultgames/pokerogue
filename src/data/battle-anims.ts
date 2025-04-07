@@ -4,7 +4,6 @@ import { MoveFlags } from "#enums/MoveFlags";
 import type Pokemon from "../field/pokemon";
 import { type nil, getFrameMs, getEnumKeys, getEnumValues, animationFileName } from "../utils";
 import type { BattlerIndex } from "../battle";
-import type { Element } from "json-stable-stringify";
 import { Moves } from "#enums/moves";
 import { SubstituteTag } from "./battler-tags";
 import { isNullOrUndefined } from "../utils";
@@ -1429,7 +1428,8 @@ export class MoveAnim extends BattleAnim {
   public move: Moves;
 
   constructor(move: Moves, user: Pokemon, target: BattlerIndex, playOnEmptyField = false) {
-    super(user, globalScene.getField()[target], playOnEmptyField);
+    // Set target to the user pokemon if no target is found to avoid crashes
+    super(user, globalScene.getField()[target] ?? user, playOnEmptyField);
 
     this.move = move;
   }
@@ -1731,10 +1731,12 @@ export async function populateAnims() {
     let props: string[];
     for (let p = 0; p < propSets.length; p++) {
       props = propSets[p];
+      // @ts-ignore TODO
       const ai = props.indexOf(a.key);
       if (ai === -1) {
         continue;
       }
+      // @ts-ignore TODO
       const bi = props.indexOf(b.key);
 
       return ai < bi ? -1 : ai > bi ? 1 : 0;

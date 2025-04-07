@@ -1,24 +1,27 @@
 import { globalScene } from "#app/global-scene";
-import type { BattlerIndex } from "#app/battle";
 import { BattlerTagLapseType } from "#app/data/battler-tags";
 import { PokemonPhase } from "./pokemon-phase";
+import type { BattlerIndex } from "#app/battle";
 import { applyPostSummonAbAttrs, PostSummonRemoveEffectAbAttr } from "#app/data/ability";
 import type Pokemon from "#app/field/pokemon";
 
 export class MoveEndPhase extends PokemonPhase {
+  private wasFollowUp: boolean;
+
   /** Targets from the preceding MovePhase */
   private targets: Pokemon[];
-  constructor(battlerIndex: BattlerIndex, targets: Pokemon[]) {
+  constructor(battlerIndex: BattlerIndex, targets: Pokemon[], wasFollowUp = false) {
     super(battlerIndex);
 
     this.targets = targets;
+    this.wasFollowUp = wasFollowUp;
   }
 
   start() {
     super.start();
 
     const pokemon = this.getPokemon();
-    if (pokemon.isActive(true)) {
+    if (!this.wasFollowUp && pokemon?.isActive(true)) {
       pokemon.lapseTags(BattlerTagLapseType.AFTER_MOVE);
     }
     globalScene.arena.setIgnoreAbilities(false);

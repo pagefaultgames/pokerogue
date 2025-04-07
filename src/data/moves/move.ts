@@ -64,9 +64,6 @@ import {
   PostDamageForceSwitchAbAttr,
   PostItemLostAbAttr,
   ReverseDrainAbAttr,
-  UncopiableAbilityAbAttr,
-  UnsuppressableAbilityAbAttr,
-  UnswappableAbilityAbAttr,
   UserFieldMoveTypePowerBoostAbAttr,
   VariableMovePowerAbAttr,
   WonderSkinAbAttr,
@@ -109,7 +106,6 @@ import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { SwitchPhase } from "#app/phases/switch-phase";
 import { SwitchSummonPhase } from "#app/phases/switch-summon-phase";
-import { ShowAbilityPhase } from "#app/phases/show-ability-phase";
 import { SpeciesFormChangeRevertWeatherFormTrigger } from "../pokemon-forms";
 import type { GameMode } from "#app/game-mode";
 import { applyChallenges, ChallengeType } from "../challenge";
@@ -350,7 +346,7 @@ export default class Move implements Localizable {
    * @param target The {@linkcode Pokemon} targeted by this move
    * @returns `true` if the move can bypass the target's Substitute; `false` otherwise.
    */
-  hitsSubstitute(user: Pokemon, target: Pokemon | null): boolean {
+  hitsSubstitute(user: Pokemon, target?: Pokemon): boolean {
     if ([ MoveTarget.USER, MoveTarget.USER_SIDE, MoveTarget.ENEMY_SIDE, MoveTarget.BOTH_SIDES ].includes(this.moveTarget)
         || !target?.getTag(BattlerTagType.SUBSTITUTE)) {
       return false;
@@ -622,12 +618,30 @@ export default class Move implements Localizable {
 
   /**
    * Checks if the move flag applies to the pokemon(s) using/receiving the move
+   *
+   * This method will take the `user`'s ability into account when reporting flags, e.g.
+   * calling this method for {@linkcode MoveFlags.MAKES_CONTACT | MAKES_CONTACT}
+   * will return `false` if the user has a {@linkcode Abilities.LONG_REACH} that is not being suppressed.
+   *
+   * **Note:** This method only checks if the move should have effectively have the flag applied to its use.
+   * It does *not* check whether the flag will trigger related effects.
+   * For example using this method to check {@linkcode MoveFlags.WIND_MOVE}
+   * will not consider {@linkcode Abilities.WIND_RIDER | Wind Rider }.
+   *
+   * To simply check whether the move has a flag, use {@linkcode hasFlag}.
    * @param flag {@linkcode MoveFlags} MoveFlag to check on user and/or target
    * @param user {@linkcode Pokemon} the Pokemon using the move
    * @param target {@linkcode Pokemon} the Pokemon receiving the move
+   * @param isFollowUp (defaults to `false`) `true` if the move was used as a follow up
    * @returns boolean
+   * @see {@linkcode hasFlag}
    */
-  checkFlag(flag: MoveFlags, user: Pokemon, target: Pokemon | null): boolean {
+  doesFlagEffectApply({ flag, user, target, isFollowUp = false }: {
+    flag: MoveFlags;
+    user: Pokemon;
+    target?: Pokemon;
+    isFollowUp?: boolean;
+  }): boolean {
     // special cases below, eg: if the move flag is MAKES_CONTACT, and the user pokemon has an ability that ignores contact (like "Long Reach"), then overrides and move does not make contact
     switch (flag) {
       case MoveFlags.MAKES_CONTACT:
@@ -637,16 +651,18 @@ export default class Move implements Localizable {
         break;
       case MoveFlags.IGNORE_ABILITIES:
         if (user.hasAbilityWithAttr(MoveAbilityBypassAbAttr)) {
-          const abilityEffectsIgnored = new Utils.BooleanHolder(false);
+          const abilityEffectsIgnored = new Utils.BooleanHolder(false); 
           applyAbAttrs(MoveAbilityBypassAbAttr, user, abilityEffectsIgnored, false, this);
           if (abilityEffectsIgnored.value) {
             return true;
           }
+          // Sunsteel strike, Moongeist beam, and photon geyser will not ignore abilities if invoked
+          // by another move, such as via metronome.
         }
-        break;
+        return this.hasFlag(MoveFlags.IGNORE_ABILITIES) && !isFollowUp;
       case MoveFlags.IGNORE_PROTECT:
         if (user.hasAbilityWithAttr(IgnoreProtectOnContactAbAttr)
-          && this.checkFlag(MoveFlags.MAKES_CONTACT, user, null)) {
+          && this.doesFlagEffectApply({ flag: MoveFlags.MAKES_CONTACT, user })) {
           return true;
         }
         break;
@@ -792,9 +808,9 @@ export default class Move implements Localizable {
     }
 
     applyPreAttackAbAttrs(VariableMovePowerAbAttr, source, target, this, simulated, power);
-
-    if (source.getAlly()) {
-      applyPreAttackAbAttrs(AllyMoveCategoryPowerBoostAbAttr, source.getAlly(), target, this, simulated, power);
+    const ally = source.getAlly();
+    if (!Utils.isNullOrUndefined(ally)) {
+      applyPreAttackAbAttrs(AllyMoveCategoryPowerBoostAbAttr, ally, target, this, simulated, power);
     }
 
     const fieldAuras = new Set(
@@ -905,7 +921,7 @@ export default class Move implements Localizable {
       SacrificialAttrOnHit
     ];
 
-    // ...and cannot enhance these specific moves.
+    // ...and cannot enhance these specific moves
     const exceptMoves: Moves[] = [
       Moves.FLING,
       Moves.UPROAR,
@@ -914,10 +930,15 @@ export default class Move implements Localizable {
       Moves.ENDEAVOR
     ];
 
+    // ...and cannot enhance Pollen Puff when targeting an ally.
+    const ally = user.getAlly();
+    const exceptPollenPuffAlly: boolean = this.id === Moves.POLLEN_PUFF && !Utils.isNullOrUndefined(ally) && targets.includes(ally.getBattlerIndex())
+
     return (!restrictSpread || !isMultiTarget)
       && !this.isChargingMove()
       && !exceptAttrs.some(attr => this.hasAttr(attr))
       && !exceptMoves.some(id => this.id === id)
+      && !exceptPollenPuffAlly
       && this.category !== MoveCategory.STATUS;
   }
 }
@@ -1213,7 +1234,7 @@ export class MoveEffectAttr extends MoveAttr {
   canApply(user: Pokemon, target: Pokemon, move: Move, args?: any[]) {
     return !! (this.selfTarget ? user.hp && !user.getTag(BattlerTagType.FRENZY) : target.hp)
            && (this.selfTarget || !target.getTag(BattlerTagType.PROTECTED) ||
-                move.checkFlag(MoveFlags.IGNORE_PROTECT, user, target));
+                move.doesFlagEffectApply({ flag: MoveFlags.IGNORE_PROTECT, user, target }));
   }
 
   /** Applies move effects so long as they are able based on {@linkcode canApply} */
@@ -1580,10 +1601,6 @@ export class SurviveDamageAttr extends ModifiedDamageAttr {
     return Math.min(damage, target.hp - 1);
   }
 
-  getCondition(): MoveConditionFunc {
-    return (user, target, move) => target.hp > 1;
-  }
-
   getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
     return target.hp > 1 ? 0 : -20;
   }
@@ -1927,7 +1944,9 @@ export class PartyStatusCureAttr extends MoveEffectAttr {
       pokemon.resetStatus();
       pokemon.updateInfo();
     } else {
-      globalScene.unshiftPhase(new ShowAbilityPhase(pokemon.id, pokemon.getPassiveAbility()?.id === this.abilityCondition));
+      // TODO: Ability displays should be handled by the ability
+      globalScene.queueAbilityDisplay(pokemon, pokemon.getPassiveAbility()?.id === this.abilityCondition, true);
+      globalScene.queueAbilityDisplay(pokemon, pokemon.getPassiveAbility()?.id === this.abilityCondition, false);
     }
   }
 }
@@ -1948,7 +1967,7 @@ export class FlameBurstAttr extends MoveEffectAttr {
     const targetAlly = target.getAlly();
     const cancelled = new Utils.BooleanHolder(false);
 
-    if (targetAlly) {
+    if (!Utils.isNullOrUndefined(targetAlly)) {
       applyAbAttrs(BlockNonDirectDamageAbAttr, targetAlly, cancelled);
     }
 
@@ -1961,7 +1980,7 @@ export class FlameBurstAttr extends MoveEffectAttr {
   }
 
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
-    return target.getAlly() ? -5 : 0;
+    return !Utils.isNullOrUndefined(target.getAlly()) ? -5 : 0;
   }
 }
 
@@ -4355,10 +4374,10 @@ export class LastMoveDoublePowerAttr extends VariablePowerAttr {
       const userAlly = user.getAlly();
       const enemyAlly = enemy?.getAlly();
 
-      if (userAlly && userAlly.turnData.acted) {
+      if (!Utils.isNullOrUndefined(userAlly) && userAlly.turnData.acted) {
         pokemonActed.push(userAlly);
       }
-      if (enemyAlly && enemyAlly.turnData.acted) {
+      if (!Utils.isNullOrUndefined(enemyAlly) && enemyAlly.turnData.acted) {
         pokemonActed.push(enemyAlly);
       }
     }
@@ -5905,7 +5924,7 @@ export class AddArenaTagAttr extends MoveEffectAttr {
     }
 
     if ((move.chance < 0 || move.chance === 100 || user.randSeedInt(100) < move.chance) && user.getLastXMoves(1)[0]?.result === MoveResult.SUCCESS) {
-      const side = (this.selfSideTarget ? user : target).isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
+      const side = ((this.selfSideTarget ? user : target).isPlayer() !== (move.hasAttr(AddArenaTrapTagAttr) && target === user)) ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
       globalScene.arena.addTag(this.tagType, this.turnCount, move.id, user.id, side);
       return true;
     }
@@ -5954,7 +5973,7 @@ export class RemoveArenaTagsAttr extends MoveEffectAttr {
 export class AddArenaTrapTagAttr extends AddArenaTagAttr {
   getCondition(): MoveConditionFunc {
     return (user, target, move) => {
-      const side = (this.selfSideTarget ? user : target).isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
+      const side = (this.selfSideTarget !== user.isPlayer()) ? ArenaTagSide.ENEMY : ArenaTagSide.PLAYER;
       const tag = globalScene.arena.getTagOnSide(this.tagType, side) as ArenaTrapTag;
       if (!tag) {
         return true;
@@ -6160,9 +6179,8 @@ export class RevivalBlessingAttr extends MoveEffectAttr {
       pokemon.resetStatus();
       pokemon.heal(Math.min(Utils.toDmgValue(0.5 * pokemon.getMaxHp()), pokemon.getMaxHp()));
       globalScene.queueMessage(i18next.t("moveTriggers:revivalBlessing", { pokemonName: getPokemonNameWithAffix(pokemon) }), 0, true);
-
-      if (globalScene.currentBattle.double && globalScene.getEnemyParty().length > 1) {
-        const allyPokemon = user.getAlly();
+      const allyPokemon = user.getAlly();
+      if (globalScene.currentBattle.double && globalScene.getEnemyParty().length > 1 && !Utils.isNullOrUndefined(allyPokemon)) {
         // Handle cases where revived pokemon needs to get switched in on same turn
         if (allyPokemon.isFainted() || allyPokemon === pokemon) {
           // Enemy switch phase should be removed and replaced with the revived pkmn switching in
@@ -6341,18 +6359,19 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
         return false;
       }
 
+      const allyPokemon = switchOutTarget.getAlly();
+
       if (switchOutTarget.hp > 0) {
         switchOutTarget.leaveField(false);
         globalScene.queueMessage(i18next.t("moveTriggers:fled", { pokemonName: getPokemonNameWithAffix(switchOutTarget) }), null, true, 500);
 
         // in double battles redirect potential moves off fled pokemon
-        if (globalScene.currentBattle.double) {
-          const allyPokemon = switchOutTarget.getAlly();
+        if (globalScene.currentBattle.double && !Utils.isNullOrUndefined(allyPokemon)) {
           globalScene.redirectPokemonMoves(switchOutTarget, allyPokemon);
         }
       }
 
-      if (!switchOutTarget.getAlly()?.isActive(true)) {
+      if (!allyPokemon?.isActive(true)) {
         globalScene.clearEnemyHeldItemModifiers();
 
         if (switchOutTarget.hp) {
@@ -6714,6 +6733,8 @@ class CallMoveAttr extends OverrideMoveEffectAttr {
     const replaceMoveTarget = move.moveTarget === MoveTarget.NEAR_OTHER ? MoveTarget.NEAR_ENEMY : undefined;
     const moveTargets = getMoveTargets(user, move.id, replaceMoveTarget);
     if (moveTargets.targets.length === 0) {
+      globalScene.queueMessage(i18next.t("battle:attackFailed"));
+      console.log("CallMoveAttr failed due to no targets.");
       return false;
     }
     const targets = moveTargets.multiple || moveTargets.targets.length === 1
@@ -7026,7 +7047,7 @@ export class RepeatMoveAttr extends MoveEffectAttr {
     const firstTarget = globalScene.getField()[moveTargets[0]];
     if (globalScene.currentBattle.double && moveTargets.length === 1 && firstTarget.isFainted() && firstTarget !== target.getAlly()) {
       const ally = firstTarget.getAlly();
-      if (ally.isActive()) { // ally exists, is not dead and can sponge the blast
+      if (!Utils.isNullOrUndefined(ally) && ally.isActive()) { // ally exists, is not dead and can sponge the blast
         moveTargets = [ ally.getBattlerIndex() ];
       }
     }
@@ -7379,7 +7400,7 @@ export class AbilityChangeAttr extends MoveEffectAttr {
   }
 
   getCondition(): MoveConditionFunc {
-    return (user, target, move) => !(this.selfTarget ? user : target).getAbility().hasAttr(UnsuppressableAbilityAbAttr) && (this.selfTarget ? user : target).getAbility().id !== this.ability;
+    return (user, target, move) => (this.selfTarget ? user : target).getAbility().isReplaceable && (this.selfTarget ? user : target).getAbility().id !== this.ability;
   }
 }
 
@@ -7400,10 +7421,11 @@ export class AbilityCopyAttr extends MoveEffectAttr {
     globalScene.queueMessage(i18next.t("moveTriggers:copiedTargetAbility", { pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target), abilityName: allAbilities[target.getAbility().id].name }));
 
     user.setTempAbility(target.getAbility());
+    const ally = user.getAlly();
 
-    if (this.copyToPartner && globalScene.currentBattle?.double && user.getAlly().hp) {
-      globalScene.queueMessage(i18next.t("moveTriggers:copiedTargetAbility", { pokemonName: getPokemonNameWithAffix(user.getAlly()), targetName: getPokemonNameWithAffix(target), abilityName: allAbilities[target.getAbility().id].name }));
-      user.getAlly().setTempAbility(target.getAbility());
+    if (this.copyToPartner && globalScene.currentBattle?.double && !Utils.isNullOrUndefined(ally) && ally.hp) { // TODO is this the best way to check that the ally is active?
+      globalScene.queueMessage(i18next.t("moveTriggers:copiedTargetAbility", { pokemonName: getPokemonNameWithAffix(ally), targetName: getPokemonNameWithAffix(target), abilityName: allAbilities[target.getAbility().id].name }));
+      ally.setTempAbility(target.getAbility());
     }
 
     return true;
@@ -7411,9 +7433,10 @@ export class AbilityCopyAttr extends MoveEffectAttr {
 
   getCondition(): MoveConditionFunc {
     return (user, target, move) => {
-      let ret = !target.getAbility().hasAttr(UncopiableAbilityAbAttr) && !user.getAbility().hasAttr(UnsuppressableAbilityAbAttr);
+      const ally = user.getAlly();
+      let ret = target.getAbility().isCopiable && user.getAbility().isReplaceable;
       if (this.copyToPartner && globalScene.currentBattle?.double) {
-        ret = ret && (!user.getAlly().hp || !user.getAlly().getAbility().hasAttr(UnsuppressableAbilityAbAttr));
+        ret = ret && (!ally?.hp || ally?.getAbility().isReplaceable);
       } else {
         ret = ret && user.getAbility().id !== target.getAbility().id;
       }
@@ -7442,7 +7465,7 @@ export class AbilityGiveAttr extends MoveEffectAttr {
   }
 
   getCondition(): MoveConditionFunc {
-    return (user, target, move) => !user.getAbility().hasAttr(UncopiableAbilityAbAttr) && !target.getAbility().hasAttr(UnsuppressableAbilityAbAttr) && user.getAbility().id !== target.getAbility().id;
+    return (user, target, move) => user.getAbility().isCopiable && target.getAbility().isReplaceable && user.getAbility().id !== target.getAbility().id;
   }
 }
 
@@ -7465,7 +7488,7 @@ export class SwitchAbilitiesAttr extends MoveEffectAttr {
   }
 
   getCondition(): MoveConditionFunc {
-    return (user, target, move) => !user.getAbility().hasAttr(UnswappableAbilityAbAttr) && !target.getAbility().hasAttr(UnswappableAbilityAbAttr);
+    return (user, target, move) => [user, target].every(pkmn => pkmn.getAbility().isSwappable);
   }
 }
 
@@ -7495,7 +7518,7 @@ export class SuppressAbilitiesAttr extends MoveEffectAttr {
 
   /** Causes the effect to fail when the target's ability is unsupressable or already suppressed. */
   getCondition(): MoveConditionFunc {
-    return (user, target, move) => !target.getAbility().hasAttr(UnsuppressableAbilityAbAttr) && !target.summonData.abilitySuppressed;
+    return (user, target, move) => target.getAbility().isSuppressable && !target.summonData.abilitySuppressed;
   }
 }
 
@@ -8109,7 +8132,7 @@ export class ResistLastMoveTypeAttr extends MoveEffectAttr {
     for (let i = 0; i < Object.keys(PokemonType).length; i++) {
       const multiplier = new NumberHolder(1);
       multiplier.value = getTypeDamageMultiplier(type, i);
-      applyChallenges(gameMode, ChallengeType.TYPE_EFFECTIVENESS, multiplier);
+      applyChallenges(ChallengeType.TYPE_EFFECTIVENESS, multiplier);
       if (multiplier.value < 1) {
         typeResistances.push(i);
       }
@@ -8184,6 +8207,7 @@ export function getMoveTargets(user: Pokemon, move: Moves, replaceTarget?: MoveT
 
   let set: Pokemon[] = [];
   let multiple = false;
+  const ally: Pokemon | undefined = user.getAlly();
 
   switch (moveTarget) {
     case MoveTarget.USER:
@@ -8194,7 +8218,7 @@ export function getMoveTargets(user: Pokemon, move: Moves, replaceTarget?: MoveT
     case MoveTarget.OTHER:
     case MoveTarget.ALL_NEAR_OTHERS:
     case MoveTarget.ALL_OTHERS:
-      set = (opponents.concat([ user.getAlly() ]));
+      set = !Utils.isNullOrUndefined(ally) ? (opponents.concat([ ally ])) : opponents;
       multiple = moveTarget === MoveTarget.ALL_NEAR_OTHERS || moveTarget === MoveTarget.ALL_OTHERS;
       break;
     case MoveTarget.NEAR_ENEMY:
@@ -8211,21 +8235,22 @@ export function getMoveTargets(user: Pokemon, move: Moves, replaceTarget?: MoveT
       return { targets: [ -1 as BattlerIndex ], multiple: false };
     case MoveTarget.NEAR_ALLY:
     case MoveTarget.ALLY:
-      set = [ user.getAlly() ];
+      set = !Utils.isNullOrUndefined(ally) ? [ ally ] : [];
       break;
     case MoveTarget.USER_OR_NEAR_ALLY:
     case MoveTarget.USER_AND_ALLIES:
     case MoveTarget.USER_SIDE:
-      set = [ user, user.getAlly() ];
+      set = !Utils.isNullOrUndefined(ally) ? [ user, ally ] : [ user ];
       multiple = moveTarget !== MoveTarget.USER_OR_NEAR_ALLY;
       break;
     case MoveTarget.ALL:
     case MoveTarget.BOTH_SIDES:
-      set = [ user, user.getAlly() ].concat(opponents);
+      set = (!Utils.isNullOrUndefined(ally) ? [ user, ally ] : [ user ]).concat(opponents);
       multiple = true;
       break;
     case MoveTarget.CURSE:
-      set = user.getTypes(true).includes(PokemonType.GHOST) ? (opponents.concat([ user.getAlly() ])) : [ user ];
+      const extraTargets = !Utils.isNullOrUndefined(ally) ? [ ally ] : [];
+      set = user.getTypes(true).includes(PokemonType.GHOST) ? (opponents.concat(extraTargets)) : [ user ];
       break;
   }
 
@@ -8688,7 +8713,7 @@ export function initMoves() {
     new SelfStatusMove(Moves.REST, PokemonType.PSYCHIC, -1, 5, -1, 0, 1)
       .attr(StatusEffectAttr, StatusEffect.SLEEP, true, 3, true)
       .attr(HealAttr, 1, true)
-      .condition((user, target, move) => !user.isFullHp() && user.canSetStatus(StatusEffect.SLEEP, true, true))
+      .condition((user, target, move) => !user.isFullHp() && user.canSetStatus(StatusEffect.SLEEP, true, true, user))
       .triageMove(),
     new AttackMove(Moves.ROCK_SLIDE, PokemonType.ROCK, MoveCategory.PHYSICAL, 75, 90, 10, 30, 0, 1)
       .attr(FlinchAttr)
@@ -10119,7 +10144,7 @@ export function initMoves() {
       .attr(StatStageChangeAttr, [ Stat.DEF, Stat.SPDEF ], 1, false, { condition: (user, target, move) => !![ Abilities.PLUS, Abilities.MINUS ].find(a => target.hasAbility(a, false)) })
       .ignoresSubstitute()
       .target(MoveTarget.USER_AND_ALLIES)
-      .condition((user, target, move) => !![ user, user.getAlly() ].filter(p => p?.isActive()).find(p => !![ Abilities.PLUS, Abilities.MINUS ].find(a => p.hasAbility(a, false)))),
+      .condition((user, target, move) => !![ user, user.getAlly() ].filter(p => p?.isActive()).find(p => !![ Abilities.PLUS, Abilities.MINUS ].find(a => p?.hasAbility(a, false)))),
     new StatusMove(Moves.HAPPY_HOUR, PokemonType.NORMAL, -1, 30, -1, 0, 6) // No animation
       .attr(AddArenaTagAttr, ArenaTagType.HAPPY_HOUR, null, true)
       .target(MoveTarget.USER_SIDE),
@@ -10309,7 +10334,7 @@ export function initMoves() {
       .attr(StatStageChangeAttr, [ Stat.ATK, Stat.SPATK ], 1, false, { condition: (user, target, move) => !![ Abilities.PLUS, Abilities.MINUS ].find(a => target.hasAbility(a, false)) })
       .ignoresSubstitute()
       .target(MoveTarget.USER_AND_ALLIES)
-      .condition((user, target, move) => !![ user, user.getAlly() ].filter(p => p?.isActive()).find(p => !![ Abilities.PLUS, Abilities.MINUS ].find(a => p.hasAbility(a, false)))),
+      .condition((user, target, move) => !![ user, user.getAlly() ].filter(p => p?.isActive()).find(p => !![ Abilities.PLUS, Abilities.MINUS ].find(a => p?.hasAbility(a, false)))),
     new AttackMove(Moves.THROAT_CHOP, PokemonType.DARK, MoveCategory.PHYSICAL, 80, 100, 15, 100, 0, 7)
       .attr(AddBattlerTagAttr, BattlerTagType.THROAT_CHOPPED),
     new AttackMove(Moves.POLLEN_PUFF, PokemonType.BUG, MoveCategory.SPECIAL, 90, 100, 15, -1, 0, 7)

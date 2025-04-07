@@ -22,7 +22,7 @@ describe("Moves - Endure", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([ Moves.THUNDER, Moves.BULLET_SEED, Moves.TOXIC, Moves.SHEER_COLD ])
+      .moveset([Moves.THUNDER, Moves.BULLET_SEED, Moves.TOXIC, Moves.SHEER_COLD])
       .ability(Abilities.SKILL_LINK)
       .startingLevel(100)
       .battleType("single")
@@ -51,7 +51,7 @@ describe("Moves - Endure", () => {
   });
 
   it("should let the pokemon survive against OHKO moves", async () => {
-    await game.classicMode.startBattle([ Species.MAGIKARP ]);
+    await game.classicMode.startBattle([Species.MAGIKARP]);
     const enemy = game.scene.getEnemyPokemon()!;
 
     game.move.select(Moves.SHEER_COLD);
@@ -74,7 +74,7 @@ describe("Moves - Endure", () => {
       .enemySpecies(Species.MAGIKARP)
       .moveset(move)
       .enemyMoveset(Moves.ENDURE);
-    await game.classicMode.startBattle([ Species.MAGIKARP, Species.FEEBAS ]);
+    await game.classicMode.startBattle([Species.MAGIKARP, Species.FEEBAS]);
     const enemy = game.scene.getEnemyPokemon()!;
     enemy.damageAndUpdate(enemy.hp - 1);
 

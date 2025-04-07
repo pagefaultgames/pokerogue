@@ -15,10 +15,6 @@ import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 import * as Utils from "../utils";
 
 export class SelectStarterPhase extends Phase {
-  constructor() {
-    super();
-  }
-
   start() {
     super.start();
 
@@ -101,7 +97,7 @@ export class SelectStarterPhase extends Phase {
         starterPokemon.generateFusionSpecies(true);
       }
       starterPokemon.setVisible(false);
-      applyChallenges(globalScene.gameMode, ChallengeType.STARTER_MODIFY, starterPokemon);
+      applyChallenges(ChallengeType.STARTER_MODIFY, starterPokemon);
       party.push(starterPokemon);
       loadPokemonAssets.push(starterPokemon.loadAssets());
     });

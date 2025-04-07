@@ -161,7 +161,6 @@ import {
   applyPreAttackAbAttrs,
   applyPreDefendAbAttrs,
   applyPreSetStatusAbAttrs,
-  UnsuppressableAbilityAbAttr,
   NoFusionAbilityAbAttr,
   MultCritAbAttr,
   IgnoreTypeImmunityAbAttr,
@@ -264,6 +263,7 @@ import { Nature } from "#enums/nature";
 import { StatusEffect } from "#enums/status-effect";
 import { doShinySparkleAnim } from "#app/field/anims";
 import { MoveFlags } from "#enums/MoveFlags";
+import { timedEventManager } from "#app/global-event-manager";
 import { ResetStatusPhase } from "#app/phases/reset-status-phase";
 
 export enum LearnMoveSituation {
@@ -636,7 +636,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public isAllowedInChallenge(): boolean {
     const challengeAllowed = new Utils.BooleanHolder(true);
     applyChallenges(
-      globalScene.gameMode,
       ChallengeType.POKEMON_IN_BATTLE,
       this,
       challengeAllowed,
@@ -1342,8 +1341,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Retrieves the critical-hit stage considering the move used and the Pokemon
-   * who used it.
+   * Calculate the critical-hit stage of a move used against this pokemon by
+   * the given source
+   * 
    * @param source the {@linkcode Pokemon} who using the move
    * @param move the {@linkcode Move} being used
    * @returns the final critical-hit stage value
@@ -1362,14 +1362,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       source.isPlayer(),
       critStage,
     );
-    const bonusCrit = new Utils.BooleanHolder(false);
-    //@ts-ignore
-    if (applyAbAttrs(BonusCritAbAttr, source, null, false, bonusCrit)) {
-      // TODO: resolve ts-ignore. This is a promise. Checking a promise is bogus.
-      if (bonusCrit.value) {
-        critStage.value += 1;
-      }
-    }
+    applyAbAttrs(BonusCritAbAttr, source, null, false, critStage)
     const critBoostTag = source.getTag(CritBoostTag);
     if (critBoostTag) {
       if (critBoostTag instanceof DragonCheerTag) {
@@ -1449,7 +1442,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     const ally = this.getAlly();
-    if (ally) {
+    if (!Utils.isNullOrUndefined(ally)) {
       applyAllyStatMultiplierAbAttrs(AllyStatMultiplierAbAttr, ally, stat, statValue, simulated, this, move?.hasFlag(MoveFlags.IGNORE_ABILITIES) || ignoreAllyAbility);
     }
 
@@ -1600,7 +1593,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   calculateBaseStats(): number[] {
     const baseStats = this.getSpeciesForm(true).baseStats.slice(0);
     applyChallenges(
-      globalScene.gameMode,
       ChallengeType.FLIP_STAT,
       this,
       baseStats,
@@ -1622,7 +1614,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (this.isFusion()) {
       const fusionBaseStats = this.getFusionSpeciesForm(true).baseStats;
       applyChallenges(
-        globalScene.gameMode,
         ChallengeType.FLIP_STAT,
         this,
         fusionBaseStats,
@@ -2178,7 +2169,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
     if (
       this.summonData?.abilitySuppressed &&
-      !ability.hasAttr(UnsuppressableAbilityAbAttr)
+      ability.isSuppressable
     ) {
       return false;
     }
@@ -2201,7 +2192,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       // (Balance decided that the other ability of a neutralizing gas pokemon should not be neutralized)
       // If the ability itself is neutralizing gas, don't suppress it (handled through arena tag)
       const unsuppressable =
-        ability.hasAttr(UnsuppressableAbilityAbAttr) ||
+        !ability.isSuppressable ||
         thisAbilitySuppressing ||
         (hasSuppressingAbility && !suppressAbilitiesTag.shouldApplyToSelf());
       if (!unsuppressable) {
@@ -2596,7 +2587,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           getTypeDamageMultiplier(moveType, defType),
         );
         applyChallenges(
-          globalScene.gameMode,
           ChallengeType.TYPE_EFFECTIVENESS,
           multiplier,
         );
@@ -2648,7 +2638,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       getTypeDamageMultiplier(moveType, PokemonType.FLYING),
     );
     applyChallenges(
-      globalScene.gameMode,
       ChallengeType.TYPE_EFFECTIVENESS,
       typeMultiplierAgainstFlying,
     );
@@ -2990,8 +2979,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     const shinyThreshold = new Utils.NumberHolder(BASE_SHINY_CHANCE);
     if (thresholdOverride === undefined) {
-      if (globalScene.eventManager.isEventActive()) {
-        shinyThreshold.value *= globalScene.eventManager.getShinyMultiplier();
+      if (timedEventManager.isEventActive()) {
+        const tchance = timedEventManager.getClassicTrainerShinyChance();
+        shinyThreshold.value *= timedEventManager.getShinyMultiplier();
+        if (this.hasTrainer() && tchance > 0) {
+          shinyThreshold.value = Math.max(tchance, shinyThreshold.value); // Choose the higher boost
+        }
       }
       if (!this.hasTrainer()) {
         globalScene.applyModifiers(
@@ -3032,8 +3025,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       if (thresholdOverride !== undefined && applyModifiersToOverride) {
         shinyThreshold.value = thresholdOverride;
       }
-      if (globalScene.eventManager.isEventActive()) {
-        shinyThreshold.value *= globalScene.eventManager.getShinyMultiplier();
+      if (timedEventManager.isEventActive()) {
+        shinyThreshold.value *= timedEventManager.getShinyMultiplier();
       }
       if (!this.hasTrainer()) {
         globalScene.applyModifiers(
@@ -3716,7 +3709,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       : i18next.t("arenaTag:yourTeam");
   }
 
-  getAlly(): Pokemon {
+  getAlly(): Pokemon | undefined {
     return (
       this.isPlayer()
         ? globalScene.getPlayerField()
@@ -3902,7 +3895,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     );
 
     const ally = this.getAlly();
-    if (ally) {
+    if (!isNullOrUndefined(ally)) {
       const ignore = this.hasAbilityWithAttr(MoveAbilityBypassAbAttr) || sourceMove.hasFlag(MoveFlags.IGNORE_ABILITIES);
       applyAllyStatMultiplierAbAttrs(AllyStatMultiplierAbAttr, ally, Stat.ACC, accuracyMultiplier, false, this, ignore);
       applyAllyStatMultiplierAbAttrs(AllyStatMultiplierAbAttr, ally, Stat.EVA, evasionMultiplier, false, this, ignore);
@@ -4338,11 +4331,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         damage,
       );
 
+      const ally = this.getAlly();
       /** Additionally apply friend guard damage reduction if ally has it. */
-      if (globalScene.currentBattle.double && this.getAlly()?.isActive(true)) {
+      if (globalScene.currentBattle.double && !isNullOrUndefined(ally) && ally.isActive(true)) {
         applyPreDefendAbAttrs(
           AlliedFieldDamageReductionAbAttr,
-          this.getAlly(),
+          ally,
           source,
           move,
           cancelled,
@@ -4767,6 +4761,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         stubTag,
         cancelled,
         true,
+        this,
       ),
     );
 
@@ -4794,18 +4789,25 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       newTag,
       cancelled,
     );
+    if (cancelled.value) {
+      return false;
+    }
 
-    const userField = this.getAlliedField();
-    userField.forEach(pokemon =>
+    for (const pokemon of this.getAlliedField()) {
       applyPreApplyBattlerTagAbAttrs(
         UserFieldBattlerTagImmunityAbAttr,
         pokemon,
         newTag,
         cancelled,
-      ),
-    );
+        false,
+        this
+      );
+      if (cancelled.value) {
+        return false;
+      }
+    }
 
-    if (!cancelled.value && newTag.canAdd(this)) {
+    if (newTag.canAdd(this)) {
       this.summonData.tags.push(newTag);
       newTag.onAdd(this);
       return true;
@@ -5448,17 +5450,22 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       cancelled,
       quiet,
     );
+    if (cancelled.value) {
+      return false;
+    }
 
-    const userField = this.getAlliedField();
-    userField.forEach(pokemon =>
+    for (const pokemon of this.getAlliedField()) {
       applyPreSetStatusAbAttrs(
         UserFieldStatusEffectImmunityAbAttr,
         pokemon,
         effect,
         cancelled,
-        quiet,
-      ),
-    );
+        quiet, this, sourcePokemon,
+      )
+      if (cancelled.value) {
+        break;
+      }
+    }
 
     if (cancelled.value) {
       return false;
@@ -6438,10 +6445,10 @@ export class PlayerPokemon extends Pokemon {
         amount,
       );
       const candyFriendshipMultiplier = globalScene.gameMode.isClassic
-        ? globalScene.eventManager.getClassicFriendshipMultiplier()
+        ? timedEventManager.getClassicFriendshipMultiplier()
         : 1;
       const fusionReduction = fusionStarterSpeciesId
-        ? globalScene.eventManager.areFusionsBoosted()
+        ? timedEventManager.areFusionsBoosted()
           ? 1.5 // Divide candy gain for fusions by 1.5 during events
           : 2 // 2 for fusions outside events
         : 1; // 1 for non-fused mons

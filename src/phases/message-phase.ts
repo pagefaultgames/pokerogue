@@ -3,9 +3,9 @@ import { Phase } from "#app/phase";
 
 export class MessagePhase extends Phase {
   private text: string;
-  private callbackDelay: number | null;
-  private prompt: boolean | null;
-  private promptDelay: number | null;
+  private callbackDelay?: number | null;
+  private prompt?: boolean | null;
+  private promptDelay?: number | null;
   private speaker?: string;
 
   constructor(
@@ -18,9 +18,9 @@ export class MessagePhase extends Phase {
     super();
 
     this.text = text;
-    this.callbackDelay = callbackDelay!; // TODO: is this bang correct?
-    this.prompt = prompt!; // TODO: is this bang correct?
-    this.promptDelay = promptDelay!; // TODO: is this bang correct?
+    this.callbackDelay = callbackDelay;
+    this.prompt = prompt;
+    this.promptDelay = promptDelay;
     this.speaker = speaker;
   }
 
@@ -29,7 +29,7 @@ export class MessagePhase extends Phase {
 
     if (this.text.indexOf("$") > -1) {
       const pokename: string[] = [];
-      const repname = [ "#POKEMON1", "#POKEMON2" ];
+      const repname = ["#POKEMON1", "#POKEMON2"];
       for (let p = 0; p < globalScene.getPlayerField().length; p++) {
         pokename.push(globalScene.getPlayerField()[p].getNameToRender());
         this.text = this.text.split(pokename[p]).join(repname[p]);

@@ -11,6 +11,7 @@ import { globalScene } from "#app/global-scene";
 import type { Species } from "#enums/species";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { PlayerGender } from "#enums/player-gender";
+import { timedEventManager } from "#app/global-event-manager";
 
 export default class TitleUiHandler extends OptionSelectUiHandler {
   /** If the stats can not be retrieved, use this fallback value */
@@ -43,8 +44,8 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
     logo.setOrigin(0.5, 0);
     this.titleContainer.add(logo);
 
-    if (globalScene.eventManager.isEventActive()) {
-      this.eventDisplay = new TimedEventDisplay(0, 0, globalScene.eventManager.activeEvent());
+    if (timedEventManager.isEventActive()) {
+      this.eventDisplay = new TimedEventDisplay(0, 0, timedEventManager.activeEvent());
       this.eventDisplay.setup();
       this.titleContainer.add(this.eventDisplay);
     }
@@ -142,7 +143,7 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
 
       const ui = this.getUi();
 
-      if (globalScene.eventManager.isEventActive()) {
+      if (timedEventManager.isEventActive()) {
         this.eventDisplay.setWidth(globalScene.scaledCanvas.width - this.optionSelectBg.width - this.optionSelectBg.x);
         this.eventDisplay.show();
       }
