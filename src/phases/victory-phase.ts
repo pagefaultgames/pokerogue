@@ -55,21 +55,18 @@ export class VictoryPhase extends PokemonPhase {
       if (globalScene.gameMode.isEndless || !globalScene.gameMode.isWaveFinal(globalScene.currentBattle.waveIndex)) {
         globalScene.pushPhase(new EggLapsePhase());
         if (globalScene.gameMode.isClassic) {
-          if (globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.RIVAL_1) {
-            // Get event modifiers for this wave
-            timedEventManager
-              .getFixedBattleEventRewards(ClassicFixedBossWaves.RIVAL_1)
-              .map(r => globalScene.pushPhase(new ModifierRewardPhase(modifierTypes[r])));
-          }
-          if (globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.RIVAL_2) {
-            // Get event modifiers for this wave
-            timedEventManager
-              .getFixedBattleEventRewards(ClassicFixedBossWaves.RIVAL_2)
-              .map(r => globalScene.pushPhase(new ModifierRewardPhase(modifierTypes[r])));
-          }
-          if (globalScene.currentBattle.waveIndex === ClassicFixedBossWaves.EVIL_BOSS_2) {
-            // Should get Lock Capsule on 165 before shop phase so it can be used in the rewards shop
-            globalScene.pushPhase(new ModifierRewardPhase(modifierTypes.LOCK_CAPSULE));
+          switch (globalScene.currentBattle.waveIndex) {
+            case ClassicFixedBossWaves.RIVAL_1:
+            case ClassicFixedBossWaves.RIVAL_2:
+              // Get event modifiers for this wave
+              timedEventManager
+                .getFixedBattleEventRewards(globalScene.currentBattle.waveIndex)
+                .map(r => globalScene.pushPhase(new ModifierRewardPhase(modifierTypes[r])));
+              break;
+            case ClassicFixedBossWaves.EVIL_BOSS_2:
+              // Should get Lock Capsule on 165 before shop phase so it can be used in the rewards shop
+              globalScene.pushPhase(new ModifierRewardPhase(modifierTypes.LOCK_CAPSULE));
+              break;
           }
         }
         if (globalScene.currentBattle.waveIndex % 10) {
