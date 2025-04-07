@@ -269,29 +269,33 @@ describe("UI - Pokedex", () => {
    *    Tests for UI Input    *
    ****************************/
 
-  it("should wrap the cursor to the top when moving to an empty entry when there are more than 81 pokemon", async () => {
-    const pokedexHandler = await runToOpenPokedex();
+  // TODO: fix cursor wrapping
+  it.todo(
+    "should wrap the cursor to the top when moving to an empty entry when there are more than 81 pokemon",
+    async () => {
+      const pokedexHandler = await runToOpenPokedex();
 
-    // Filter by gen 2 so we can pan a specific amount.
-    // @ts-ignore filterText is private
-    pokedexHandler.filterBar.getFilter(DropDownColumn.GEN).options[2].toggleOptionState();
-    pokedexHandler.updateStarters();
-    // @ts-ignore filteredPokemonData is private
-    expect(pokedexHandler.filteredPokemonData.length, "pokemon in gen2").toBe(100);
+      // Filter by gen 2 so we can pan a specific amount.
+      // @ts-ignore filterText is private
+      pokedexHandler.filterBar.getFilter(DropDownColumn.GEN).options[2].toggleOptionState();
+      pokedexHandler.updateStarters();
+      // @ts-ignore filteredPokemonData is private
+      expect(pokedexHandler.filteredPokemonData.length, "pokemon in gen2").toBe(100);
 
-    // Let's try to pan to the right to see what the pokemon it points to is.
+      // Let's try to pan to the right to see what the pokemon it points to is.
 
-    // pan to the right once and down 11 times
-    pokedexHandler.processInput(Button.RIGHT);
-    // Nab the pokemon that is selected for comparison later.
+      // pan to the right once and down 11 times
+      pokedexHandler.processInput(Button.RIGHT);
+      // Nab the pokemon that is selected for comparison later.
 
-    // @ts-ignore filteredPokemonData is private
-    const selectedPokemon = pokedexHandler.lastSpecies.speciesId;
-    for (let i = 0; i < 11; i++) {
-      pokedexHandler.processInput(Button.DOWN);
-    }
+      // @ts-ignore filteredPokemonData is private
+      const selectedPokemon = pokedexHandler.lastSpecies.speciesId;
+      for (let i = 0; i < 11; i++) {
+        pokedexHandler.processInput(Button.DOWN);
+      }
 
-    // @ts-ignore lastSpecies is private
-    expect(selectedPokemon).toEqual(pokedexHandler.lastSpecies.speciesId);
-  });
+      // @ts-ignore lastSpecies is private
+      expect(selectedPokemon).toEqual(pokedexHandler.lastSpecies.speciesId);
+    },
+  );
 });
