@@ -1000,7 +1000,7 @@ export class PostDefendContactApplyStatusEffectAbAttr extends PostDefendAbAttr {
 
   override canApplyPostDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, hitResult: HitResult | null, args: any[]): boolean {
     const effect = this.effects.length === 1 ? this.effects[0] : this.effects[pokemon.randSeedInt(this.effects.length)];
-    return move.checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon) && !attacker.status
+    return move.doesFlagEffectApply({flag: MoveFlags.MAKES_CONTACT, user: attacker, target: pokemon}) && !attacker.status
       && (this.chance === -1 || pokemon.randSeedInt(100) < this.chance) && !move.hitsSubstitute(attacker, pokemon)
       && attacker.canSetStatus(effect, true, false, pokemon);
   }
@@ -1040,7 +1040,7 @@ export class PostDefendContactApplyTagChanceAbAttr extends PostDefendAbAttr {
   }
 
   override canApplyPostDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, hitResult: HitResult | null, args: any[]): boolean {
-    return move.checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon) && pokemon.randSeedInt(100) < this.chance
+    return move.doesFlagEffectApply({flag: MoveFlags.MAKES_CONTACT, user: attacker, target: pokemon}) && pokemon.randSeedInt(100) < this.chance
       && !move.hitsSubstitute(attacker, pokemon) && attacker.canAddTag(this.tagType);
   }
 
@@ -1087,7 +1087,7 @@ export class PostDefendContactDamageAbAttr extends PostDefendAbAttr {
   }
 
   override canApplyPostDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, hitResult: HitResult | null, args: any[]): boolean {
-    return !simulated && move.checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon)
+    return !simulated && move.doesFlagEffectApply({flag: MoveFlags.MAKES_CONTACT, user: attacker, target: pokemon})
       && !attacker.hasAbilityWithAttr(BlockNonDirectDamageAbAttr) && !move.hitsSubstitute(attacker, pokemon);
   }
 
@@ -1120,8 +1120,7 @@ export class PostDefendPerishSongAbAttr extends PostDefendAbAttr {
   }
 
   override canApplyPostDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, hitResult: HitResult | null, args: any[]): boolean {
-    return (move.checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon) && !move.hitsSubstitute(attacker, pokemon))
-      && !attacker.getTag(BattlerTagType.PERISH_SONG);
+    return move.doesFlagEffectApply({flag: MoveFlags.MAKES_CONTACT, user: attacker, target: pokemon}) && !attacker.getTag(BattlerTagType.PERISH_SONG);
   }
 
   override applyPostDefend(pokemon: Pokemon, _passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, _hitResult: HitResult, _args: any[]): void {
@@ -1165,7 +1164,7 @@ export class PostDefendAbilitySwapAbAttr extends PostDefendAbAttr {
   }
 
   override canApplyPostDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, hitResult: HitResult | null, args: any[]): boolean {
-    return move.checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon)
+    return move.doesFlagEffectApply({flag: MoveFlags.MAKES_CONTACT, user: attacker, target: pokemon})
       && attacker.getAbility().isSwappable && !move.hitsSubstitute(attacker, pokemon);
   }
 
@@ -1191,7 +1190,7 @@ export class PostDefendAbilityGiveAbAttr extends PostDefendAbAttr {
   }
 
   override canApplyPostDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, hitResult: HitResult | null, args: any[]): boolean {
-    return move.checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon) && attacker.getAbility().isSuppressable
+    return move.doesFlagEffectApply({flag: MoveFlags.MAKES_CONTACT, user: attacker, target: pokemon}) && attacker.getAbility().isSuppressable
       && !attacker.getAbility().hasAttr(PostDefendAbilityGiveAbAttr) && !move.hitsSubstitute(attacker, pokemon);
   }
 
@@ -1222,7 +1221,7 @@ export class PostDefendMoveDisableAbAttr extends PostDefendAbAttr {
 
   override canApplyPostDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, hitResult: HitResult | null, args: any[]): boolean {
     return attacker.getTag(BattlerTagType.DISABLED) === null && !move.hitsSubstitute(attacker, pokemon)
-      && move.checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon) && (this.chance === -1 || pokemon.randSeedInt(100) < this.chance);
+      && move.doesFlagEffectApply({flag: MoveFlags.MAKES_CONTACT, user: attacker, target: pokemon}) && (this.chance === -1 || pokemon.randSeedInt(100) < this.chance);
   }
 
   override applyPostDefend(pokemon: Pokemon, _passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, _hitResult: HitResult, _args: any[]): void {
@@ -1927,7 +1926,7 @@ export class PostAttackApplyStatusEffectAbAttr extends PostAttackAbAttr {
       super.canApplyPostAttack(pokemon, passive, simulated, attacker, move, hitResult, args)
       && !(pokemon !== attacker && move.hitsSubstitute(attacker, pokemon))
       && (simulated || !attacker.hasAbilityWithAttr(IgnoreMoveEffectsAbAttr) && pokemon !== attacker
-      && (!this.contactRequired || move.checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon)) && pokemon.randSeedInt(100) < this.chance && !pokemon.status)
+      && (!this.contactRequired || move.doesFlagEffectApply({flag: MoveFlags.MAKES_CONTACT, user: attacker, target: pokemon})) && pokemon.randSeedInt(100) < this.chance && !pokemon.status)
     ) {
       const effect = this.effects.length === 1 ? this.effects[0] : this.effects[pokemon.randSeedInt(this.effects.length)];
       return simulated || attacker.canSetStatus(effect, true, false, pokemon);
@@ -1966,7 +1965,7 @@ export class PostAttackApplyBattlerTagAbAttr extends PostAttackAbAttr {
     /**Battler tags inflicted by abilities post attacking are also considered additional effects.*/
     return super.canApplyPostAttack(pokemon, passive, simulated, attacker, move, hitResult, args) &&
       !attacker.hasAbilityWithAttr(IgnoreMoveEffectsAbAttr) && pokemon !== attacker &&
-      (!this.contactRequired || move.checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon)) &&
+      (!this.contactRequired || move.doesFlagEffectApply({flag: MoveFlags.MAKES_CONTACT, user: attacker, target: pokemon})) &&
       pokemon.randSeedInt(100) < this.chance(attacker, pokemon, move) && !pokemon.status;
   }
 
@@ -2299,6 +2298,11 @@ export class PostSummonAbAttr extends AbAttr {
 }
 
 /**
+ * Base class for ability attributes which remove an effect on summon
+ */
+export class PostSummonRemoveEffectAbAttr extends PostSummonAbAttr {}
+
+/**
  * Removes specified arena tags when a Pokemon is summoned.
  */
 export class PostSummonRemoveArenaTagAbAttr extends PostSummonAbAttr {
@@ -2405,6 +2409,31 @@ export class PostSummonAddBattlerTagAbAttr extends PostSummonAbAttr {
     if (!simulated) {
       pokemon.addTag(this.tagType, this.turnCount);
     }
+  }
+}
+
+/**
+ * Removes Specific battler tags when a Pokemon is summoned
+ *
+ * This should realistically only ever activate on gain rather than on summon
+ */
+export class PostSummonRemoveBattlerTagAbAttr extends PostSummonRemoveEffectAbAttr {
+  private immuneTags: BattlerTagType[];
+
+  /**
+   * @param immuneTags - The {@linkcode BattlerTagType | battler tags} the Pokémon is immune to.
+   */
+  constructor(...immuneTags: BattlerTagType[]) {
+    super();
+    this.immuneTags = immuneTags;
+  }
+
+  public override canApplyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
+    return this.immuneTags.some(tagType => !!pokemon.getTag(tagType));
+  }
+
+  public override applyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): void {
+    this.immuneTags.forEach(tagType => pokemon.removeTag(tagType));
   }
 }
 
@@ -2592,6 +2621,43 @@ export class PostSummonTerrainChangeAbAttr extends PostSummonAbAttr {
     if (!simulated) {
       globalScene.arena.trySetTerrain(this.terrainType, false, pokemon);
     }
+  }
+}
+
+/**
+ * Heals a status effect if the Pokemon is afflicted with it upon switch in (or gain)
+ */
+export class PostSummonHealStatusAbAttr extends PostSummonRemoveEffectAbAttr {
+  private immuneEffects: StatusEffect[];
+  private statusHealed: StatusEffect;
+
+  /**
+   * @param immuneEffects - The {@linkcode StatusEffect}s the Pokémon is immune to.
+   */
+  constructor(...immuneEffects: StatusEffect[]) {
+    super();
+    this.immuneEffects = immuneEffects;
+  }
+
+  public override canApplyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
+    const status = pokemon.status?.effect;
+    return !Utils.isNullOrUndefined(status) && (this.immuneEffects.length < 1 || this.immuneEffects.includes(status))
+  }
+
+  public override applyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): void {
+    const status = pokemon.status?.effect;
+    if (!Utils.isNullOrUndefined(status)) {
+      this.statusHealed = status;
+      pokemon.resetStatus(false);
+      pokemon.updateInfo();
+    }
+  }
+
+  public override getTriggerMessage(_pokemon: Pokemon, _abilityName: string, ..._args: any[]): string | null {
+    if (this.statusHealed) {
+      return getStatusEffectHealText(this.statusHealed, getPokemonNameWithAffix(_pokemon));
+    }
+    return null;
   }
 }
 
@@ -3501,8 +3567,18 @@ export class BonusCritAbAttr extends AbAttr {
   constructor() {
     super(false);
   }
-  override apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: Utils.BooleanHolder, args: any[]): void {
-    (args[0] as Utils.BooleanHolder).value = true;
+
+  /**
+   * Apply the bonus crit ability by increasing the value in the provided number holder by 1
+   * 
+   * @param pokemon The pokemon with the BonusCrit ability (unused)
+   * @param passive Unused
+   * @param simulated Unused
+   * @param cancelled Unused
+   * @param args Args[0] is a number holder containing the crit stage.
+   */
+  override apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: Utils.BooleanHolder, args: [Utils.NumberHolder, ...any]): void {
+    (args[0] as Utils.NumberHolder).value += 1;
   }
 }
 
@@ -4753,7 +4829,7 @@ export class PostFaintContactDamageAbAttr extends PostFaintAbAttr {
   }
 
   override canApplyPostFaint(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker?: Pokemon, move?: Move, hitResult?: HitResult, ...args: any[]): boolean {
-    const diedToDirectDamage = move !== undefined && attacker !== undefined && move.checkFlag(MoveFlags.MAKES_CONTACT, attacker, pokemon);
+    const diedToDirectDamage = move !== undefined && attacker !== undefined && move.doesFlagEffectApply({flag: MoveFlags.MAKES_CONTACT, user: attacker, target: pokemon});
     const cancelled = new Utils.BooleanHolder(false);
     globalScene.getField(true).map(p => applyAbAttrs(FieldPreventExplosiveMovesAbAttr, p, cancelled, simulated));
     if (!diedToDirectDamage || cancelled.value || attacker!.hasAbilityWithAttr(BlockNonDirectDamageAbAttr)) {
@@ -6299,6 +6375,7 @@ export function initAbilities() {
       .ignorable(),
     new Ability(Abilities.LIMBER, 3)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.PARALYSIS)
+      .attr(PostSummonHealStatusAbAttr, StatusEffect.PARALYSIS)
       .ignorable(),
     new Ability(Abilities.SAND_VEIL, 3)
       .attr(StatMultiplierAbAttr, Stat.EVA, 1.2)
@@ -6316,6 +6393,7 @@ export function initAbilities() {
       .ignorable(),
     new Ability(Abilities.OBLIVIOUS, 3)
       .attr(BattlerTagImmunityAbAttr, [ BattlerTagType.INFATUATED, BattlerTagType.TAUNT ])
+      .attr(PostSummonRemoveBattlerTagAbAttr, BattlerTagType.INFATUATED, BattlerTagType.TAUNT)
       .attr(IntimidateImmunityAbAttr)
       .ignorable(),
     new Ability(Abilities.CLOUD_NINE, 3)
@@ -6328,6 +6406,7 @@ export function initAbilities() {
       .attr(StatMultiplierAbAttr, Stat.ACC, 1.3),
     new Ability(Abilities.INSOMNIA, 3)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.SLEEP)
+      .attr(PostSummonHealStatusAbAttr, StatusEffect.SLEEP)
       .attr(BattlerTagImmunityAbAttr, BattlerTagType.DROWSY)
       .ignorable(),
     new Ability(Abilities.COLOR_CHANGE, 3)
@@ -6335,6 +6414,7 @@ export function initAbilities() {
       .condition(getSheerForceHitDisableAbCondition()),
     new Ability(Abilities.IMMUNITY, 3)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.POISON, StatusEffect.TOXIC)
+      .attr(PostSummonHealStatusAbAttr, StatusEffect.POISON, StatusEffect.TOXIC)
       .ignorable(),
     new Ability(Abilities.FLASH_FIRE, 3)
       .attr(TypeImmunityAddBattlerTagAbAttr, PokemonType.FIRE, BattlerTagType.FIRE_BOOST, 1)
@@ -6344,6 +6424,7 @@ export function initAbilities() {
       .ignorable(),
     new Ability(Abilities.OWN_TEMPO, 3)
       .attr(BattlerTagImmunityAbAttr, BattlerTagType.CONFUSED)
+      .attr(PostSummonRemoveBattlerTagAbAttr, BattlerTagType.CONFUSED)
       .attr(IntimidateImmunityAbAttr)
       .ignorable(),
     new Ability(Abilities.SUCTION_CUPS, 3)
@@ -6409,9 +6490,11 @@ export function initAbilities() {
       .ignorable(),
     new Ability(Abilities.MAGMA_ARMOR, 3)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.FREEZE)
+      .attr(PostSummonHealStatusAbAttr, StatusEffect.FREEZE)
       .ignorable(),
     new Ability(Abilities.WATER_VEIL, 3)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.BURN)
+      .attr(PostSummonHealStatusAbAttr, StatusEffect.BURN)
       .ignorable(),
     new Ability(Abilities.MAGNET_PULL, 3)
       .attr(ArenaTrapAbAttr, (user, target) => {
@@ -6505,6 +6588,7 @@ export function initAbilities() {
       .attr(DoubleBattleChanceAbAttr),
     new Ability(Abilities.VITAL_SPIRIT, 3)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.SLEEP)
+      .attr(PostSummonHealStatusAbAttr, StatusEffect.SLEEP)
       .attr(BattlerTagImmunityAbAttr, BattlerTagType.DROWSY)
       .ignorable(),
     new Ability(Abilities.WHITE_SMOKE, 3)
@@ -6843,6 +6927,7 @@ export function initAbilities() {
       .attr(MoveTypeChangeAbAttr, PokemonType.ICE, 1.2, (user, target, move) => move.type === PokemonType.NORMAL && !move.hasAttr(VariableMoveTypeAttr)),
     new Ability(Abilities.SWEET_VEIL, 6)
       .attr(UserFieldStatusEffectImmunityAbAttr, StatusEffect.SLEEP)
+      .attr(PostSummonUserFieldRemoveStatusEffectAbAttr, StatusEffect.SLEEP)
       .attr(UserFieldBattlerTagImmunityAbAttr, BattlerTagType.DROWSY)
       .ignorable()
       .partial(), // Mold Breaker ally should not be affected by Sweet Veil
@@ -6927,6 +7012,7 @@ export function initAbilities() {
       .attr(ReceivedTypeDamageMultiplierAbAttr, PokemonType.FIRE, 0.5)
       .attr(MoveTypePowerBoostAbAttr, PokemonType.WATER, 2)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.BURN)
+      .attr(PostSummonHealStatusAbAttr, StatusEffect.BURN)
       .ignorable(),
     new Ability(Abilities.STEELWORKER, 7)
       .attr(MoveTypePowerBoostAbAttr, PokemonType.STEEL),
@@ -7205,6 +7291,7 @@ export function initAbilities() {
     new Ability(Abilities.THERMAL_EXCHANGE, 9)
       .attr(PostDefendStatStageChangeAbAttr, (target, user, move) => user.getMoveType(move) === PokemonType.FIRE && move.category !== MoveCategory.STATUS, Stat.ATK, 1)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.BURN)
+      .attr(PostSummonHealStatusAbAttr, StatusEffect.BURN)
       .ignorable(),
     new Ability(Abilities.ANGER_SHELL, 9)
       .attr(PostDefendHpGatedStatStageChangeAbAttr, (target, user, move) => move.category !== MoveCategory.STATUS, 0.5, [ Stat.ATK, Stat.SPATK, Stat.SPD ], 1)

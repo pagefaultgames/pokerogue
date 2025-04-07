@@ -4,10 +4,6 @@ import { getRandomWeatherType } from "#app/data/weather";
 import { NextEncounterPhase } from "./next-encounter-phase";
 
 export class NewBiomeEncounterPhase extends NextEncounterPhase {
-  constructor() {
-    super();
-  }
-
   doEncounter(): void {
     globalScene.playBgm(undefined, true);
 

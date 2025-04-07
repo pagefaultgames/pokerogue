@@ -264,6 +264,7 @@ import { StatusEffect } from "#enums/status-effect";
 import { doShinySparkleAnim } from "#app/field/anims";
 import { MoveFlags } from "#enums/MoveFlags";
 import { timedEventManager } from "#app/global-event-manager";
+import { ResetStatusPhase } from "#app/phases/reset-status-phase";
 
 export enum LearnMoveSituation {
   MISC,
@@ -1340,8 +1341,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Retrieves the critical-hit stage considering the move used and the Pokemon
-   * who used it.
+   * Calculate the critical-hit stage of a move used against this pokemon by
+   * the given source
+   * 
    * @param source the {@linkcode Pokemon} who using the move
    * @param move the {@linkcode Move} being used
    * @returns the final critical-hit stage value
@@ -1360,14 +1362,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       source.isPlayer(),
       critStage,
     );
-    const bonusCrit = new Utils.BooleanHolder(false);
-    //@ts-ignore
-    if (applyAbAttrs(BonusCritAbAttr, source, null, false, bonusCrit)) {
-      // TODO: resolve ts-ignore. This is a promise. Checking a promise is bogus.
-      if (bonusCrit.value) {
-        critStage.value += 1;
-      }
-    }
+    applyAbAttrs(BonusCritAbAttr, source, null, false, critStage)
     const critBoostTag = source.getTag(CritBoostTag);
     if (critBoostTag) {
       if (critBoostTag instanceof DragonCheerTag) {
@@ -4819,7 +4814,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (newTag.canAdd(this)) {
       this.summonData.tags.push(newTag);
       newTag.onAdd(this);
-
       return true;
     }
 
@@ -5490,8 +5484,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     sourcePokemon: Pokemon | null = null,
     turnsRemaining = 0,
     sourceText: string | null = null,
+    overrideStatus?: boolean
   ): boolean {
-    if (!this.canSetStatus(effect, asPhase, false, sourcePokemon)) {
+    if (!this.canSetStatus(effect, asPhase, overrideStatus, sourcePokemon)) {
       return false;
     }
     if (this.isFainted() && effect !== StatusEffect.FAINT) {
@@ -5507,6 +5502,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     if (asPhase) {
+      if (overrideStatus) {
+        this.resetStatus(false);
+      }
       globalScene.unshiftPhase(
         new ObtainStatusEffectPhase(
           this.getBattlerIndex(),
@@ -5546,20 +5544,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     effect = effect!; // If `effect` is undefined then `trySetStatus()` will have already returned early via the `canSetStatus()` call
     this.status = new Status(effect, 0, sleepTurnsRemaining?.value);
 
-    if (effect !== StatusEffect.FAINT) {
-      globalScene.triggerPokemonFormChange(
-        this,
-        SpeciesFormChangeStatusEffectTrigger,
-        true,
-      );
-      applyPostSetStatusAbAttrs(
-        PostSetStatusAbAttr,
-        this,
-        effect,
-        sourcePokemon,
-      );
-    }
-
     return true;
   }
 
@@ -5574,21 +5558,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (!revive && lastStatus === StatusEffect.FAINT) {
       return;
     }
-    this.status = null;
-    if (lastStatus === StatusEffect.SLEEP) {
-      this.setFrameRate(10);
-      if (this.getTag(BattlerTagType.NIGHTMARE)) {
-        this.lapseTag(BattlerTagType.NIGHTMARE);
-      }
-    }
-    if (confusion) {
-      if (this.getTag(BattlerTagType.CONFUSED)) {
-        this.lapseTag(BattlerTagType.CONFUSED);
-      }
-    }
-    if (reloadAssets) {
-      this.loadAssets(false).then(() => this.playAnim());
-    }
+    globalScene.unshiftPhase(new ResetStatusPhase(this, confusion, reloadAssets));
   }
 
   /**

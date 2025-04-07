@@ -15,6 +15,7 @@ import type { DelayedAttackTag } from "#app/data/arena-tag";
 import { CommonAnim } from "#app/data/battle-anims";
 import { BattlerTagLapseType, CenterOfAttentionTag } from "#app/data/battler-tags";
 import {
+  AddArenaTrapTagAttr,
   allMoves,
   applyMoveAttrs,
   BypassRedirectAttr,
@@ -168,7 +169,11 @@ export class MovePhase extends BattlePhase {
 
     // Check move to see if arena.ignoreAbilities should be true.
     if (!this.followUp || this.reflected) {
-      if (this.move.getMove().checkFlag(MoveFlags.IGNORE_ABILITIES, this.pokemon, null)) {
+      if (
+        this.move
+          .getMove()
+          .doesFlagEffectApply({ flag: MoveFlags.IGNORE_ABILITIES, user: this.pokemon, isFollowUp: this.followUp })
+      ) {
         globalScene.arena.setIgnoreAbilities(true, this.pokemon.getBattlerIndex());
       }
     }
@@ -201,7 +206,10 @@ export class MovePhase extends BattlePhase {
     const targets = this.getActiveTargetPokemon();
     const moveQueue = this.pokemon.getMoveQueue();
 
-    if (targets.length === 0 || (moveQueue.length && moveQueue[0].move === Moves.NONE)) {
+    if (
+      (targets.length === 0 && !this.move.getMove().hasAttr(AddArenaTrapTagAttr)) ||
+      (moveQueue.length && moveQueue[0].move === Moves.NONE)
+    ) {
       this.showMoveText();
       this.showFailedText();
       this.cancel();
@@ -227,7 +235,7 @@ export class MovePhase extends BattlePhase {
             (!this.pokemon.randSeedInt(4) || Overrides.STATUS_ACTIVATION_OVERRIDE === true) &&
             Overrides.STATUS_ACTIVATION_OVERRIDE !== false;
           break;
-        case StatusEffect.SLEEP:
+        case StatusEffect.SLEEP: {
           applyMoveAttrs(BypassSleepAttr, this.pokemon, null, this.move.getMove());
           const turnsRemaining = new NumberHolder(this.pokemon.status.sleepTurnsRemaining ?? 0);
           applyAbAttrs(
@@ -242,6 +250,7 @@ export class MovePhase extends BattlePhase {
           healed = this.pokemon.status.sleepTurnsRemaining <= 0;
           activated = !healed && !this.pokemon.getTag(BattlerTagType.BYPASS_SLEEP);
           break;
+        }
         case StatusEffect.FREEZE:
           healed =
             !!this.move
@@ -468,7 +477,9 @@ export class MovePhase extends BattlePhase {
    * Queues a {@linkcode MoveEndPhase} and then ends the phase
    */
   public end(): void {
-    globalScene.unshiftPhase(new MoveEndPhase(this.pokemon.getBattlerIndex(), this.followUp));
+    globalScene.unshiftPhase(
+      new MoveEndPhase(this.pokemon.getBattlerIndex(), this.getActiveTargetPokemon(), this.followUp),
+    );
 
     super.end();
   }
