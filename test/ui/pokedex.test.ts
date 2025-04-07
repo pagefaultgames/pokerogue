@@ -8,6 +8,8 @@ import { allAbilities } from "#app/data/ability";
 import { Abilities } from "#enums/abilities";
 import type { Species } from "#enums/species";
 import { allSpecies } from "#app/data/pokemon-species";
+import { Button } from "#enums/buttons";
+import { DropDownColumn } from "#app/ui/filter-bar";
 
 describe("UI - Pokedex", () => {
   let phaserGame: Phaser.Game;
@@ -63,7 +65,7 @@ describe("UI - Pokedex", () => {
     return speciesSet;
   }
 
-  it("Test filtering by overgrow returns the list of pokemon with the overgrow ability", async () => {
+  it("should filter to show only the pokemon with an ability when filtering by ability", async () => {
     // await game.importData("test/testUtils/saves/everything.prsv");
     const pokedexHandler = await runToOpenPokedex();
 
@@ -80,4 +82,34 @@ describe("UI - Pokedex", () => {
 
     expect(filteredSpecies).toEqual(overgrowSpecies);
   });
+
+  it.todo(
+    "should wrap the cursor to the top when moving to an empty entry when there are more than 81 pokemon",
+    async () => {
+      const pokedexHandler = await runToOpenPokedex();
+
+      // Filter by gen 2 so we can pan a specific amount.
+      // @ts-ignore filterText is private
+      pokedexHandler.filterBar.getFilter(DropDownColumn.GEN).options[2].toggleOptionState();
+      pokedexHandler.updateStarters();
+      // @ts-ignore filteredPokemonData is private
+      expect(pokedexHandler.filteredPokemonData.length, "Expecting gen2 to have 100 pokemon").toBe(100);
+
+      // Let's try to pan to the right to see what the pokemon it points to is.
+
+      // pan to the right once and down 11 times
+      pokedexHandler.processInput(Button.RIGHT);
+      // Nab the pokemon that is selected for comparison later.
+
+      // @ts-ignore filteredPokemonData is private
+      const selectedPokemon = pokedexHandler.lastSpecies.speciesId;
+      for (let i = 0; i < 11; i++) {
+        pokedexHandler.processInput(Button.DOWN);
+      }
+
+      // @ts-ignore lastSpecies is private
+      const selectedPokemon2 = pokedexHandler.lastSpecies.speciesId;
+      expect(selectedPokemon).toEqual(selectedPokemon2);
+    },
+  );
 });
