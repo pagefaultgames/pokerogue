@@ -169,7 +169,11 @@ export class MovePhase extends BattlePhase {
 
     // Check move to see if arena.ignoreAbilities should be true.
     if (!this.followUp || this.reflected) {
-      if (this.move.getMove().doesFlagEffectApply({ flag: MoveFlags.IGNORE_ABILITIES, user: this.pokemon, isFollowUp: this.followUp })) {
+      if (
+        this.move
+          .getMove()
+          .doesFlagEffectApply({ flag: MoveFlags.IGNORE_ABILITIES, user: this.pokemon, isFollowUp: this.followUp })
+      ) {
         globalScene.arena.setIgnoreAbilities(true, this.pokemon.getBattlerIndex());
       }
     }
@@ -473,7 +477,9 @@ export class MovePhase extends BattlePhase {
    * Queues a {@linkcode MoveEndPhase} and then ends the phase
    */
   public end(): void {
-    globalScene.unshiftPhase(new MoveEndPhase(this.pokemon.getBattlerIndex(), this.followUp));
+    globalScene.unshiftPhase(
+      new MoveEndPhase(this.pokemon.getBattlerIndex(), this.getActiveTargetPokemon(), this.followUp),
+    );
 
     super.end();
   }
