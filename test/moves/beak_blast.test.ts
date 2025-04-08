@@ -127,4 +127,14 @@ describe("Moves - Beak Blast", () => {
     await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon.status?.effect).toBe(StatusEffect.BURN);
   });
+
+  it("should not burn a long reach enemy that hits the user with a contact move", async () => {
+    game.override.enemyAbility(Abilities.LONG_REACH);
+    game.override.enemyMoveset([Moves.FALSE_SWIPE]).enemyLevel(100);
+    await game.classicMode.startBattle([Species.MAGIKARP]);
+    game.move.select(Moves.BEAK_BLAST);
+    await game.phaseInterceptor.to("BerryPhase", false);
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    expect(enemyPokemon.status?.effect).not.toBe(StatusEffect.BURN);
+  });
 });
