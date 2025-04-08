@@ -66,15 +66,15 @@ describe("UI - Pokedex", () => {
 
   /**
    * Compute a set of pokemon that have a specific ability in allAbilities
-   * @param abilty The ability to filter for
+   * @param ability - The ability to filter for
    */
-  function getSpeciesWithAbility(abilty: Abilities): Set<Species> {
+  function getSpeciesWithAbility(ability: Abilities): Set<Species> {
     const speciesSet = new Set<Species>();
     for (const pkmn of allSpecies) {
       if (
-        [pkmn.ability1, pkmn.ability2, pkmn.getPassiveAbility(), pkmn.abilityHidden].includes(abilty) ||
+        [pkmn.ability1, pkmn.ability2, pkmn.getPassiveAbility(), pkmn.abilityHidden].includes(ability) ||
         pkmn.forms.some(form =>
-          [form.ability1, form.ability2, form.abilityHidden, form.getPassiveAbility()].includes(abilty),
+          [form.ability1, form.ability2, form.abilityHidden, form.getPassiveAbility()].includes(ability),
         )
       ) {
         speciesSet.add(pkmn.speciesId);
@@ -87,7 +87,7 @@ describe("UI - Pokedex", () => {
    * Compute a set of pokemon that have one of the specified type(s)
    *
    * Includes all forms of the pokemon
-   * @param types The types to filter for
+   * @param types - The types to filter for
    */
   function getSpeciesWithType(...types: PokemonType[]): Set<Species> {
     const speciesSet = new Set<Species>();
@@ -118,12 +118,12 @@ describe("UI - Pokedex", () => {
    *
    * This will override the ability of the pokemon species only, unless set forms is true
    *
-   * @param species The species to set the abilities for
-   * @param ability The ability to set for the first ability
-   * @param ability2 The ability to set for the second ability
-   * @param hidden The ability to set for the hidden ability
-   * @param passive The ability to set for the passive ability
-   * @param setForms Whether to also overwrite the abilities for each of the species' forms (defaults to true)
+   * @param species - The species to set the abilities for
+   * @param ability - The ability to set for the first ability
+   * @param ability2 - The ability to set for the second ability
+   * @param hidden - The ability to set for the hidden ability
+   * @param passive - The ability to set for the passive ability
+   * @param setForms - Whether to also overwrite the abilities for each of the species' forms (defaults to `true`)
    */
   function createAbilityMocks(
     species: Species,
@@ -170,7 +170,7 @@ describe("UI - Pokedex", () => {
 
     // filter all species to be the pokemon that have overgrow
     const overgrowSpecies = getSpeciesWithAbility(Abilities.OVERGROW);
-    // @ts-ignore
+    // @ts-expect-error - `filteredPokemonData` is private
     const filteredSpecies = new Set(pokedexHandler.filteredPokemonData.map(pokemon => pokemon.species.speciesId));
 
     expect(filteredSpecies).toEqual(overgrowSpecies);
@@ -243,7 +243,7 @@ describe("UI - Pokedex", () => {
     pokedexHandler.filterBar.getFilter(DropDownColumn.TYPES).toggleOptionState(PokemonType.NORMAL + 1);
 
     const expectedPokemon = getSpeciesWithType(PokemonType.NORMAL);
-    // @ts-ignore private
+    // @ts-expect-error - `filteredPokemonData` is private
     const filteredPokemon = new Set(pokedexHandler.filteredPokemonData.map(pokemon => pokemon.species.speciesId));
 
     expect(filteredPokemon).toEqual(expectedPokemon);
@@ -259,7 +259,7 @@ describe("UI - Pokedex", () => {
     pokedexHandler.filterBar.getFilter(DropDownColumn.TYPES).toggleOptionState(PokemonType.FLYING + 1);
 
     const expectedPokemon = getSpeciesWithType(PokemonType.NORMAL, PokemonType.FLYING);
-    // @ts-ignore private
+    // @ts-expect-error - `filteredPokemonData` is private
     const filteredPokemon = new Set(pokedexHandler.filteredPokemonData.map(pokemon => pokemon.species.speciesId));
 
     expect(filteredPokemon).toEqual(expectedPokemon);
@@ -288,7 +288,7 @@ describe("UI - Pokedex", () => {
       pokedexHandler.processInput(Button.RIGHT);
       // Nab the pokemon that is selected for comparison later.
 
-      // @ts-ignore filteredPokemonData is private
+      // @ts-expect-error - `lastSpecies` is private
       const selectedPokemon = pokedexHandler.lastSpecies.speciesId;
       for (let i = 0; i < 11; i++) {
         pokedexHandler.processInput(Button.DOWN);
