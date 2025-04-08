@@ -203,8 +203,8 @@ export class FilterText extends Phaser.GameObjects.Container {
   /**
    * Forcibly set the selection text for a specific filter row and then call the `onChange` function
    *
-   * @param row the filter row to set the text for
-   * @param value the text to set for the filter row
+   * @param row - The filter row to set the text for
+   * @param value - The text to set for the filter row
    */
   setValue(row: FilterTextRow, value: string) {
     this.selections[row].setText(value);
