@@ -152,7 +152,7 @@ repository -- adding a new entry to the English locale with text for each key
 you added to your main PR. You *only* need to add the English key and value - the translation team will handle the rest.
 
 3.  If your feature is pulled from the mainline Pokémon games (e.g. a Move or Ability implementation), add a source link for any added text within the locale PR. 
-(Poké Corpus)[https://abcboy101.github.io/poke-corpus/] is a great resource for finding text from the latest mainline games; otherwise, a YouTube video link showing the text in mainline is sufficient.
+[Poké Corpus](https://abcboy101.github.io/poke-corpus) is a great resource for finding text from the latest mainline games; otherwise, a YouTube video link showing the text in mainline is sufficient.
 
 4. Ping @lugiadrien in **#dev-corner** or the current callout thread to make sure your locales PR is seen. 
 It'll be merged into the locales repository after any necessary corrections, at which point you can test it in your main PR (after updating locales from remote)
