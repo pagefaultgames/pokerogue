@@ -95,13 +95,13 @@ describe("UI - Pokedex", () => {
 
     // get the pokemon and its forms
     outer: for (const pkmn of allSpecies) {
-      // @ts-ignore We know that type2 might be null.
+      // @ts-expect-error We know that type2 might be null.
       if (tySet.has(pkmn.type1) || tySet.has(pkmn.type2)) {
         speciesSet.add(pkmn.speciesId);
         continue;
       }
       for (const form of pkmn.forms) {
-        // @ts-ignore We know that type2 might be null.
+        // @ts-expect-error We know that type2 might be null.
         if (tySet.has(form.type1) || tySet.has(form.type2)) {
           speciesSet.add(pkmn.speciesId);
           continue outer;
@@ -165,7 +165,7 @@ describe("UI - Pokedex", () => {
     // Get name of overgrow
     const overgrow = allAbilities[Abilities.OVERGROW].name;
 
-    // @ts-ignore filterText is private
+    // @ts-expect-error `filterText` is private
     pokedexHandler.filterText.setValue(FilterTextRow.ABILITY_1, overgrow);
 
     // filter all species to be the pokemon that have overgrow
@@ -211,13 +211,13 @@ describe("UI - Pokedex", () => {
 
     const pokedexHandler = await runToOpenPokedex();
 
-    // @ts-ignore filterText is private
+    // @ts-expect-error `filterText` is private
     pokedexHandler.filterText.setValue(FilterTextRow.ABILITY_1, ab1_instance.name);
-    // @ts-ignore filterText is private
+    // @ts-expect-error `filterText` is private
     pokedexHandler.filterText.setValue(FilterTextRow.ABILITY_2, ab2_instance.name);
 
     let whiteListCount = 0;
-    // @ts-ignore filteredPokemonData is private
+    // @ts-expect-error `filteredPokemonData` is private
     for (const species of pokedexHandler.filteredPokemonData) {
       expect(blacklist, "entry must have one of the abilities as a passive").not.toContain(species.species.speciesId);
 
@@ -239,7 +239,7 @@ describe("UI - Pokedex", () => {
   it("should filter to show only the pokemon with a type when filtering by a single type", async () => {
     const pokedexHandler = await runToOpenPokedex();
 
-    // @ts-ignore filterBar is private
+    // @ts-expect-error - `filterBar` is private
     pokedexHandler.filterBar.getFilter(DropDownColumn.TYPES).toggleOptionState(PokemonType.NORMAL + 1);
 
     const expectedPokemon = getSpeciesWithType(PokemonType.NORMAL);
@@ -253,9 +253,9 @@ describe("UI - Pokedex", () => {
   it.todo("should show only the pokemon with one of the types when filtering by multiple types", async () => {
     const pokedexHandler = await runToOpenPokedex();
 
-    // @ts-ignore filterBar is private
+    // @ts-expect-error - `filterBar` is private
     pokedexHandler.filterBar.getFilter(DropDownColumn.TYPES).toggleOptionState(PokemonType.NORMAL + 1);
-    // @ts-ignore filterBar is private
+    // @ts-expect-error - `filterBar` is private
     pokedexHandler.filterBar.getFilter(DropDownColumn.TYPES).toggleOptionState(PokemonType.FLYING + 1);
 
     const expectedPokemon = getSpeciesWithType(PokemonType.NORMAL, PokemonType.FLYING);
@@ -276,10 +276,10 @@ describe("UI - Pokedex", () => {
       const pokedexHandler = await runToOpenPokedex();
 
       // Filter by gen 2 so we can pan a specific amount.
-      // @ts-ignore filterText is private
+      // @ts-expect-error `filterBar` is private
       pokedexHandler.filterBar.getFilter(DropDownColumn.GEN).options[2].toggleOptionState();
       pokedexHandler.updateStarters();
-      // @ts-ignore filteredPokemonData is private
+      // @ts-expect-error - `filteredPokemonData` is private
       expect(pokedexHandler.filteredPokemonData.length, "pokemon in gen2").toBe(100);
 
       // Let's try to pan to the right to see what the pokemon it points to is.
@@ -294,7 +294,7 @@ describe("UI - Pokedex", () => {
         pokedexHandler.processInput(Button.DOWN);
       }
 
-      // @ts-ignore lastSpecies is private
+      // @ts-expect-error `lastSpecies` is private
       expect(selectedPokemon).toEqual(pokedexHandler.lastSpecies.speciesId);
     },
   );
