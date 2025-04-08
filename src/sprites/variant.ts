@@ -36,14 +36,14 @@ export function getVariantIcon(variant: Variant): number {
 }
 
 /** Delete all of the keys in variantData */
-export function clearVariantData() {
+export function clearVariantData(): void {
   for (const key in variantData) {
     delete variantData[key];
   }
 }
 
 /** Update the variant data to use experiment sprite files for variants that have experimental sprites. */
-export async function mergeExperimentalData(mainData: any, expData: any) {
+export async function mergeExperimentalData(mainData: any, expData: any): Promise<void> {
   if (!expData) {
     return;
   }
@@ -54,7 +54,7 @@ export async function mergeExperimentalData(mainData: any, expData: any) {
       if (!mainData[key]) {
         mainData[key] = {};
       }
-      this.mergeExperimentalData(mainData[key], expData[key]);
+      mergeExperimentalData(mainData[key], expData[key]);
     } else {
       // Otherwise, replace the value
       mainData[key] = expData[key];
@@ -62,8 +62,8 @@ export async function mergeExperimentalData(mainData: any, expData: any) {
   }
 }
 
-/** Populate the variant color cache with the variant colors for this pokemon.
- *
+/**
+ * Populate the variant color cache with the variant colors for this pokemon.
  * The global scene must be initialized before this function is called.
  */
 export async function populateVariantColors(
@@ -93,11 +93,11 @@ export async function populateVariantColors(
  * Gracefully handle errors loading a variant sprite. Log if it fails and attempt to fall back on
  * non-experimental sprites before giving up.
  *
- * @param cacheKey the cache key for the variant color sprite
- * @param attemptedSpritePath the sprite path that failed to load
- * @param useExpSprite was the attempted sprite experimental
- * @param battleSpritePath the filename of the sprite
- * @param optionalParams any additional params to log
+ * @param cacheKey - The cache key for the variant color sprite
+ * @param attemptedSpritePath - The sprite path that failed to load
+ * @param useExpSprite - Was the attempted sprite experimental
+ * @param battleSpritePath - The filename of the sprite
+ * @param optionalParams - Any additional params to log
  */
 async function fallbackVariantColor(
   cacheKey: string,
@@ -105,7 +105,7 @@ async function fallbackVariantColor(
   useExpSprite: boolean,
   battleSpritePath: string,
   ...optionalParams: any[]
-) {
+): Promise<void> {
   console.warn(`Could not load ${attemptedSpritePath}!`, ...optionalParams);
   if (useExpSprite) {
     await populateVariantColorCache(cacheKey, false, battleSpritePath);
@@ -115,11 +115,11 @@ async function fallbackVariantColor(
 /**
  * Fetch a variant color sprite from the key and store it in the variant color cache.
  *
- * @param cacheKey the cache key for the variant color sprite
- * @param useExpSprite should the experimental sprite be used
- * @param battleSpritePath the filename of the sprite
+ * @param cacheKey - The cache key for the variant color sprite
+ * @param useExpSprite - Should the experimental sprite be used
+ * @param battleSpritePath - The filename of the sprite
  */
-export async function populateVariantColorCache(cacheKey: string, useExpSprite: boolean, battleSpritePath: string) {
+export async function populateVariantColorCache(cacheKey: string, useExpSprite: boolean, battleSpritePath: string): Promise<void> {
   const spritePath = `./images/pokemon/variant/${useExpSprite ? "exp/" : ""}${battleSpritePath}.json`;
   return globalScene
     .cachedFetch(spritePath)

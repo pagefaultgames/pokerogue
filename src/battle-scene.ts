@@ -769,11 +769,11 @@ export default class BattleScene extends SceneBase {
       });
   }
 
-  /**Initialize the variant data.
-   *
+  /**
+   * Initialize the variant data.
    * If experimental sprites are enabled, their entries are replaced via this method.
    */
-  async initVariantData() {
+  async initVariantData(): Promise<void> {
     clearVariantData();
     const otherVariantData = await this.cachedFetch("./images/pokemon/variant/_masterlist.json").then(r => r.json());
     for (const k of Object.keys(otherVariantData)) {
@@ -797,7 +797,7 @@ export default class BattleScene extends SceneBase {
     return fetch(url, init);
   }
 
-  async initStarterColors() {
+  async initStarterColors(): Promise<void> {
     if (starterColors) {
       return;
     }

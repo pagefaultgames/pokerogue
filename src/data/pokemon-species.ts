@@ -596,7 +596,7 @@ export abstract class PokemonSpeciesForm {
     variant?: Variant,
     startLoad = false,
     back = false,
-  ) {
+  ): Promise<void> {
     const spriteKey = this.getSpriteKey(female, formIndex, shiny, variant, back);
     globalScene.loadPokemonAtlas(spriteKey, this.getSpriteAtlasPath(female, formIndex, shiny, variant, back));
     globalScene.load.audio(this.getCryKey(formIndex), `audio/${this.getCryKey(formIndex)}.m4a`);

@@ -698,7 +698,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   abstract getBattlerIndex(): BattlerIndex;
 
-  async loadAssets(ignoreOverride = true) {
+  async loadAssets(ignoreOverride = true): Promise<void> {
     /** Promises that are loading assets and can be run concurrently. */
     const loadPromises: Promise<void>[] = [];
     // Assets for moves

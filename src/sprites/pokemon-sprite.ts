@@ -49,17 +49,17 @@ export function getSpriteAtlasPath(pokemon: Pokemon, ignoreOverride = false): st
 
 /**
  * Load the variant assets for the given sprite and store it in {@linkcode variantColorCache}.
- * @param spriteKey the key of the sprite to load
- * @param fileRoot the root path of the sprite file
- * @param variant the variant to load
- * @param scene the scene to load the assets in (defaults to the global scene)
+ * @param spriteKey - The key of the sprite to load
+ * @param fileRoot - The root path of the sprite file
+ * @param variant - The variant to load
+ * @param scene - The scene to load the assets in (defaults to the global scene)
  */
 export async function loadPokemonVariantAssets(
   spriteKey: string,
   fileRoot: string,
   variant: Variant,
   scene: BattleScene = globalScene,
-) {
+): Promise<void> {
   if (variantColorCache.hasOwnProperty(spriteKey)) {
     return;
   }
