@@ -127,7 +127,7 @@ fetching translated text is as follows:
 2. The game looks up the key in the corresponding JSON file in the user's
 language, e.g.
 
-    ```json
+    ```ts
     // from "en/file-name.json"...
     "keyName": "{{arg1}}! This is {{arg2}} of translated text!" 
     ```
@@ -136,7 +136,7 @@ corresponding English key (in the case of LATAM Spanish, it will first default t
 
 3. The game shows the text to the user:
 
-    ```json
+    ```ts
     "Hello! This is an example of translated text!"
     ```
 ### Adding Translated Text
