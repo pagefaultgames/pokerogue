@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import { variantColorCache, variantData } from "#app/sprites/variant";
 import { Gender } from "#app/data/gender";
-import { hasExpSprite } from "./sprite-utilts";
+import { hasExpSprite } from "./sprite-utils";
 import type { Variant, VariantSet } from "#app/sprites/variant";
 import type Pokemon from "#app/field/pokemon";
 import type BattleScene from "#app/battle-scene";

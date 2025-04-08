@@ -171,7 +171,7 @@ import { initGlobalScene } from "#app/global-scene";
 import { ShowAbilityPhase } from "#app/phases/show-ability-phase";
 import { HideAbilityPhase } from "#app/phases/hide-ability-phase";
 import { expSpriteKeys } from "./sprites/sprite-keys";
-import { hasExpSprite } from "./sprites/sprite-utilts";
+import { hasExpSprite } from "./sprites/sprite-utils";
 import { timedEventManager } from "./global-event-manager";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";

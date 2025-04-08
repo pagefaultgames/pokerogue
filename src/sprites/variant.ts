@@ -1,5 +1,5 @@
 import { VariantTier } from "#app/enums/variant-tier";
-import { hasExpSprite } from "#app/sprites/sprite-utilts";
+import { hasExpSprite } from "#app/sprites/sprite-utils";
 import { globalScene } from "#app/global-scene";
 import type Pokemon from "#app/field/pokemon";
 import { isNullOrUndefined } from "#app/utils";
@@ -119,7 +119,11 @@ async function fallbackVariantColor(
  * @param useExpSprite - Should the experimental sprite be used
  * @param battleSpritePath - The filename of the sprite
  */
-export async function populateVariantColorCache(cacheKey: string, useExpSprite: boolean, battleSpritePath: string): Promise<void> {
+export async function populateVariantColorCache(
+  cacheKey: string,
+  useExpSprite: boolean,
+  battleSpritePath: string,
+): Promise<void> {
   const spritePath = `./images/pokemon/variant/${useExpSprite ? "exp/" : ""}${battleSpritePath}.json`;
   return globalScene
     .cachedFetch(spritePath)
