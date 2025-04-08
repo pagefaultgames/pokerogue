@@ -128,6 +128,7 @@ import {
   TarShotTag,
   AutotomizedTag,
   PowerTrickTag,
+  type GrudgeTag,
 } from "../data/battler-tags";
 import { WeatherType } from "#enums/weather-type";
 import {
@@ -4754,8 +4755,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         new FaintPhase(
           this.getBattlerIndex(),
           false,
-          destinyTag,
-          grudgeTag,
           source,
         ),
       );
@@ -4989,6 +4988,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     return false;
   }
+
+  /**@overload */
+  getTag(tagType: BattlerTagType.GRUDGE): GrudgeTag | nil;
 
   /** @overload */
   getTag(tagType: BattlerTagType): BattlerTag | nil;
