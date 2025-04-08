@@ -145,7 +145,7 @@ corresponding English key (in the case of LATAM Spanish, it will first default t
 The workflow is:
 
 1.  Make a pull request to the main repository for your new feature. 
-If this feature requires new text, the text should be integrated intothe code with a new i18next key pointing to where you plan to add it into the pokerogue-locales repository.
+If this feature requires new text, the text should be integrated into the code with a new i18next key pointing to where you plan to add it into the pokerogue-locales repository.
 
 2. Make another pull request -- this time to the [pokerogue-locales](https://github.com/pagefaultgames/pokerogue-locales)
 repository -- adding a new entry to the English locale with text for each key
