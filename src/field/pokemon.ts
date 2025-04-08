@@ -4762,7 +4762,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
       this.destroySubstitute();
       this.lapseTag(BattlerTagType.COMMANDED);
-      this.resetSummonData();
     }
 
     return result;
@@ -4824,7 +4823,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       );
       this.destroySubstitute();
       this.lapseTag(BattlerTagType.COMMANDED);
-      this.resetSummonData();
     }
     return damage;
   }
