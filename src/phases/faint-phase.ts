@@ -74,6 +74,8 @@ export class FaintPhase extends PokemonPhase {
 
     const faintPokemon = this.getPokemon();
 
+    faintPokemon.resetSummonData();
+
     if (!isNullOrUndefined(this.destinyTag) && !isNullOrUndefined(this.source)) {
       this.destinyTag.lapse(this.source, BattlerTagLapseType.CUSTOM);
     }
