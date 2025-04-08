@@ -22,17 +22,17 @@ describe("Abilities - Liquid Ooze", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.SPLASH])
+      .moveset([Moves.SPLASH, Moves.GIGA_DRAIN])
       .ability(Abilities.BALL_FETCH)
       .battleType("single")
       .disableCrits()
+      .enemyLevel(20)
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.LIQUID_OOZE)
       .enemyMoveset(Moves.SPLASH);
   });
 
   it("should drain the attacker's HP after a draining move", async () => {
-    game.override.moveset(Moves.GIGA_DRAIN).enemyLevel(20);
     await game.classicMode.startBattle([Species.FEEBAS]);
 
     game.move.select(Moves.GIGA_DRAIN);
@@ -42,7 +42,7 @@ describe("Abilities - Liquid Ooze", () => {
   });
 
   it("should not drain the attacker's HP if it ignores indirect damage", async () => {
-    game.override.moveset(Moves.GIGA_DRAIN).enemyLevel(20).ability(Abilities.MAGIC_GUARD);
+    game.override.ability(Abilities.MAGIC_GUARD);
     await game.classicMode.startBattle([Species.FEEBAS]);
 
     game.move.select(Moves.GIGA_DRAIN);
@@ -52,7 +52,7 @@ describe("Abilities - Liquid Ooze", () => {
   });
 
   it("should not apply if suppressed", async () => {
-    game.override.moveset(Moves.GIGA_DRAIN).enemyLevel(20).ability(Abilities.NEUTRALIZING_GAS);
+    game.override.ability(Abilities.NEUTRALIZING_GAS);
     await game.classicMode.startBattle([Species.FEEBAS]);
 
     game.move.select(Moves.GIGA_DRAIN);

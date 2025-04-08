@@ -807,10 +807,10 @@ export class ReverseDrainAbAttr extends PostDefendAbAttr {
   private attacker: Pokemon;
 
     /**
-   * Determines if a damage and draining move was used
+   * Determines if a damage and draining move was used.
    * Examples include: Absorb, Draining Kiss, Bitter Blade, etc.
    * 
-   * If so, this ability should cause the move user should be damaged instead of healed
+   * If so, this ability should cause the move user to be damaged instead of healed
    */
   override canApplyPostDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, hitResult: HitResult | null, args: any[]): boolean {
     this.attacker = attacker;
