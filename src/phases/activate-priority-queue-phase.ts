@@ -1,4 +1,4 @@
-import type { DynamicPhaseType } from "#app/data/phase-priority-queue";
+import type { DynamicPhaseType } from "#enums/dynamic-phase-type";
 import { globalScene } from "#app/global-scene";
 import { Phase } from "#app/phase";
 

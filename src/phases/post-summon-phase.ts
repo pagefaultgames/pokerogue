@@ -1,11 +1,10 @@
 import { globalScene } from "#app/global-scene";
-import { applyAbAttrs, applyPostSummonAbAttrs, CommanderAbAttr, PostSummonAbAttr } from "#app/data/ability";
+import { applyAbAttrs, CommanderAbAttr } from "#app/data/ability";
 import { ArenaTrapTag } from "#app/data/arena-tag";
 import { StatusEffect } from "#app/enums/status-effect";
 import { PokemonPhase } from "./pokemon-phase";
 import { MysteryEncounterPostSummonTag } from "#app/data/battler-tags";
 import { BattlerTagType } from "#enums/battler-tag-type";
-import type { BattlerIndex } from "#app/battle";
 
 export class PostSummonPhase extends PokemonPhase {
   start() {
@@ -36,29 +35,5 @@ export class PostSummonPhase extends PokemonPhase {
 
   public getPriority() {
     return 0;
-  }
-}
-
-/**
- * Helper to {@linkcode PostSummonPhase} which applies abilities
- */
-export class PostSummonActivateAbilityPhase extends PostSummonPhase {
-  private priority: number;
-  private passive: boolean;
-
-  constructor(battlerIndex: BattlerIndex, priority: number, passive: boolean) {
-    super(battlerIndex);
-    this.priority = priority;
-    this.passive = passive;
-  }
-
-  start() {
-    applyPostSummonAbAttrs(PostSummonAbAttr, this.getPokemon(), this.passive, false);
-
-    this.end();
-  }
-
-  public override getPriority() {
-    return this.priority;
   }
 }

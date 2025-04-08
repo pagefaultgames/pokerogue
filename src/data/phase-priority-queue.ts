@@ -1,10 +1,12 @@
 import { globalScene } from "#app/global-scene";
 import type { Phase } from "#app/phase";
 import { ActivatePriorityQueuePhase } from "#app/phases/activate-priority-queue-phase";
-import { type PostSummonPhase, PostSummonActivateAbilityPhase } from "#app/phases/post-summon-phase";
+import type { PostSummonPhase } from "#app/phases/post-summon-phase";
+import { PostSummonActivateAbilityPhase } from "#app/phases/post-summon-activate-ability-phase";
 import { Stat } from "#enums/stat";
 import { BooleanHolder } from "#app/utils";
 import { TrickRoomTag } from "#app/data/arena-tag";
+import { DynamicPhaseType } from "#enums/dynamic-phase-type";
 
 /**
  * Stores a list of {@linkcode Phase}s
@@ -92,11 +94,4 @@ function isTrickRoom(): boolean {
   const speedReversed = new BooleanHolder(false);
   globalScene.arena.applyTags(TrickRoomTag, false, speedReversed);
   return speedReversed.value;
-}
-
-/**
- * Enum representation of the phase types held by implementations of {@linkcode PhasePriorityQueue}
- */
-export enum DynamicPhaseType {
-  POST_SUMMON,
 }

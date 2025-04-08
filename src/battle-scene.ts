@@ -171,11 +171,8 @@ import { initGlobalScene } from "#app/global-scene";
 import { ShowAbilityPhase } from "#app/phases/show-ability-phase";
 import { HideAbilityPhase } from "#app/phases/hide-ability-phase";
 import { timedEventManager } from "./global-event-manager";
-import {
-  type DynamicPhaseType,
-  type PhasePriorityQueue,
-  PostSummonPhasePriorityQueue,
-} from "#app/data/phase-priority-queue";
+import { type PhasePriorityQueue, PostSummonPhasePriorityQueue } from "#app/data/phase-priority-queue";
+import type { DynamicPhaseType } from "./enums/dynamic-phase-type";
 import { PostSummonPhase } from "#app/phases/post-summon-phase";
 import { ActivatePriorityQueuePhase } from "#app/phases/activate-priority-queue-phase";
 
