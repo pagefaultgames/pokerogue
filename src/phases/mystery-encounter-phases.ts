@@ -22,12 +22,11 @@ import { globalScene } from "#app/global-scene";
 import { getCharVariantFromDialogue } from "../data/dialogue";
 import type { OptionSelectSettings } from "../data/mystery-encounters/utils/encounter-phase-utils";
 import { transitionMysteryEncounterIntroVisuals } from "../data/mystery-encounters/utils/encounter-phase-utils";
-import { TrainerSlot } from "../data/trainer-config";
+import { TrainerSlot } from "#enums/trainer-slot";
 import { IvScannerModifier } from "../modifier/modifier";
 import { Phase } from "../phase";
 import { Mode } from "../ui/ui";
-import * as Utils from "../utils";
-import { isNullOrUndefined } from "../utils";
+import { isNullOrUndefined, randSeedItem } from "#app/utils";
 
 /**
  * Will handle (in order):
@@ -387,7 +386,7 @@ export class MysteryEncounterBattlePhase extends Phase {
         const trainer = globalScene.currentBattle.trainer;
         let message: string;
         globalScene.executeWithSeedOffset(
-          () => (message = Utils.randSeedItem(encounterMessages)),
+          () => (message = randSeedItem(encounterMessages)),
           globalScene.currentBattle.mysteryEncounter?.getSeedOffset(),
         );
         message = message!; // tell TS compiler it's defined now

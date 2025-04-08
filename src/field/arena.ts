@@ -40,8 +40,8 @@ import { TrainerType } from "#enums/trainer-type";
 import { Abilities } from "#enums/abilities";
 import { SpeciesFormChangeRevertWeatherFormTrigger, SpeciesFormChangeWeatherTrigger } from "#app/data/pokemon-forms";
 import { CommonAnimPhase } from "#app/phases/common-anim-phase";
-import { ShowAbilityPhase } from "#app/phases/show-ability-phase";
 import { WeatherType } from "#enums/weather-type";
+import { FieldEffectModifier } from "#app/modifier/modifier";
 
 export class Arena {
   public biomeType: Biome;
@@ -311,10 +311,10 @@ export class Arena {
   /**
    * Attempts to set a new weather to the battle
    * @param weather {@linkcode WeatherType} new {@linkcode WeatherType} to set
-   * @param hasPokemonSource boolean if the new weather is from a pokemon
+   * @param user {@linkcode Pokemon} that caused the weather effect
    * @returns true if new weather set, false if no weather provided or attempting to set the same weather as currently in use
    */
-  trySetWeather(weather: WeatherType, hasPokemonSource: boolean): boolean {
+  trySetWeather(weather: WeatherType, user?: Pokemon): boolean {
     if (Overrides.WEATHER_OVERRIDE) {
       return this.trySetWeatherOverride(Overrides.WEATHER_OVERRIDE);
     }
@@ -336,7 +336,14 @@ export class Arena {
       return false;
     }
 
-    this.weather = weather ? new Weather(weather, hasPokemonSource ? 5 : 0) : null;
+    const weatherDuration = new Utils.NumberHolder(0);
+
+    if (!Utils.isNullOrUndefined(user)) {
+      weatherDuration.value = 5;
+      globalScene.applyModifier(FieldEffectModifier, user.isPlayer(), user, weatherDuration);
+    }
+
+    this.weather = weather ? new Weather(weather, weatherDuration.value) : null;
     this.eventTarget.dispatchEvent(
       new WeatherChangedEvent(oldWeatherType, this.weather?.weatherType!, this.weather?.turnsLeft!),
     ); // TODO: is this bang correct?
@@ -370,7 +377,6 @@ export class Arena {
       const isCherrimWithFlowerGift = p.hasAbility(Abilities.FLOWER_GIFT) && p.species.speciesId === Species.CHERRIM;
 
       if (isCastformWithForecast || isCherrimWithFlowerGift) {
-        new ShowAbilityPhase(p.getBattlerIndex());
         globalScene.triggerPokemonFormChange(p, SpeciesFormChangeWeatherTrigger);
       }
     });
@@ -387,7 +393,6 @@ export class Arena {
         p.hasAbility(Abilities.FLOWER_GIFT, false, true) && p.species.speciesId === Species.CHERRIM;
 
       if (isCastformWithForecast || isCherrimWithFlowerGift) {
-        new ShowAbilityPhase(p.getBattlerIndex());
         return globalScene.triggerPokemonFormChange(p, SpeciesFormChangeRevertWeatherFormTrigger);
       }
     });
@@ -398,14 +403,29 @@ export class Arena {
     return !(this.terrain?.terrainType === (terrain || undefined));
   }
 
-  trySetTerrain(terrain: TerrainType, hasPokemonSource: boolean, ignoreAnim = false): boolean {
+  /**
+   * Attempts to set a new terrain effect to the battle
+   * @param terrain {@linkcode TerrainType} new {@linkcode TerrainType} to set
+   * @param ignoreAnim boolean if the terrain animation should be ignored
+   * @param user {@linkcode Pokemon} that caused the terrain effect
+   * @returns true if new terrain set, false if no terrain provided or attempting to set the same terrain as currently in use
+   */
+  trySetTerrain(terrain: TerrainType, ignoreAnim = false, user?: Pokemon): boolean {
     if (!this.canSetTerrain(terrain)) {
       return false;
     }
 
     const oldTerrainType = this.terrain?.terrainType || TerrainType.NONE;
 
-    this.terrain = terrain ? new Terrain(terrain, hasPokemonSource ? 5 : 0) : null;
+    const terrainDuration = new Utils.NumberHolder(0);
+
+    if (!Utils.isNullOrUndefined(user)) {
+      terrainDuration.value = 5;
+      globalScene.applyModifier(FieldEffectModifier, user.isPlayer(), user, terrainDuration);
+    }
+
+    this.terrain = terrain ? new Terrain(terrain, terrainDuration.value) : null;
+
     this.eventTarget.dispatchEvent(
       new TerrainChangedEvent(oldTerrainType, this.terrain?.terrainType!, this.terrain?.turnsLeft!),
     ); // TODO: are those bangs correct?
@@ -673,7 +693,7 @@ export class Arena {
   ): boolean {
     const existingTag = this.getTagOnSide(tagType, side);
     if (existingTag) {
-      existingTag.onOverlap(this);
+      existingTag.onOverlap(this, globalScene.getPokemonById(sourceId));
 
       if (existingTag instanceof ArenaTrapTag) {
         const { tagType, side, turnCount, layers, maxLayers } = existingTag as ArenaTrapTag;
@@ -802,9 +822,9 @@ export class Arena {
   resetArenaEffects(): void {
     // Don't reset weather if a Biome's permanent weather is active
     if (this.weather?.turnsLeft !== 0) {
-      this.trySetWeather(WeatherType.NONE, false);
+      this.trySetWeather(WeatherType.NONE);
     }
-    this.trySetTerrain(TerrainType.NONE, false, true);
+    this.trySetTerrain(TerrainType.NONE, true);
     this.resetPlayerFaintCount();
     this.removeAllTags();
   }

@@ -209,8 +209,8 @@ export class FaintPhase extends PokemonPhase {
     }
 
     // in double battles redirect potential moves off fainted pokemon
-    if (globalScene.currentBattle.double) {
-      const allyPokemon = pokemon.getAlly();
+    const allyPokemon = pokemon.getAlly();
+    if (globalScene.currentBattle.double && !isNullOrUndefined(allyPokemon)) {
       globalScene.redirectPokemonMoves(pokemon, allyPokemon);
     }
 
@@ -258,7 +258,7 @@ export class FaintPhase extends PokemonPhase {
           } else {
             // Final boss' HP threshold has been bypassed; cancel faint and force check for 2nd phase
             enemy.hp++;
-            globalScene.unshiftPhase(new DamageAnimPhase(enemy.getBattlerIndex(), 0, HitResult.OTHER));
+            globalScene.unshiftPhase(new DamageAnimPhase(enemy.getBattlerIndex(), 0, HitResult.INDIRECT));
             this.end();
           }
           return true;
