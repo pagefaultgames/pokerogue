@@ -1618,9 +1618,6 @@ export class ProtectedTag extends BattlerTag {
   }
 }
 
-/** Base class for `BattlerTag`s that block damaging moves but not status moves */
-export class DamageProtectedTag extends ProtectedTag {}
-
 /** Class for `BattlerTag`s that apply some effect when hit by a contact move */
 export class ContactProtectedTag extends ProtectedTag {
   /**
@@ -1693,7 +1690,10 @@ export class ContactDamageProtectedTag extends ContactProtectedTag {
   }
 }
 
-export class ContactSetStatusProtectedTag extends ContactProtectedTag {
+/** Base class for `BattlerTag`s that block damaging moves but not status moves */
+export class DamageProtectedTag extends ContactProtectedTag {}
+
+export class ContactSetStatusProtectedTag extends DamageProtectedTag {
   /**
    * @param sourceMove The move that caused the tag to be applied
    * @param tagType The type of the tag
@@ -1721,7 +1721,7 @@ export class ContactSetStatusProtectedTag extends ContactProtectedTag {
  * `BattlerTag` class for moves that block damaging moves and lower enemy stats if the enemy's move makes contact
  * Used by {@linkcode Moves.KINGS_SHIELD}, {@linkcode Moves.OBSTRUCT}, {@linkcode Moves.SILK_TRAP}
  */
-export class ContactStatStageChangeProtectedTag extends ContactProtectedTag {
+export class ContactStatStageChangeProtectedTag extends DamageProtectedTag {
   private stat: BattleStat;
   private levels: number;
 
