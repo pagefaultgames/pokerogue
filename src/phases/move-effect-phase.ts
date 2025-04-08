@@ -628,16 +628,19 @@ export class MoveEffectPhase extends PokemonPhase {
    * @returns a `Promise` intended to be passed into a `then()` call.
    */
   protected applyOnGetHitAbEffects(user: Pokemon, target: Pokemon, hitResult: HitResult) {
+    const hitsSubstitute = this.move.getMove().hitsSubstitute(user, target);
     if (!target.isFainted() || target.canApplyAbility()) {
       applyPostDefendAbAttrs(PostDefendAbAttr, target, user, this.move.getMove(), hitResult);
 
-      if (!this.move.getMove().hitsSubstitute(user, target)) {
+      if (!hitsSubstitute) {
         if (!user.isPlayer() && this.move.getMove() instanceof AttackMove) {
           globalScene.applyShuffledModifiers(EnemyAttackStatusEffectChanceModifier, false, target);
         }
       }
     }
-    target.lapseTags(BattlerTagLapseType.AFTER_HIT);
+    if (!hitsSubstitute) {
+      target.lapseTags(BattlerTagLapseType.AFTER_HIT);
+    }
   }
 
   /**
