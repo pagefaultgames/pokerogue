@@ -55,6 +55,7 @@
   },
   "dependencies": {
     "@material/material-color-utilities": "^0.2.7",
+    "compare-versions": "^6.1.1",
     "crypto-js": "^4.2.0",
     "i18next": "^24.2.2",
     "i18next-browser-languagedetector": "^8.0.4",

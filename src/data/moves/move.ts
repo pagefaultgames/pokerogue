@@ -2443,12 +2443,8 @@ export class StatusEffectAttr extends MoveEffectAttr {
     const statusCheck = moveChance < 0 || moveChance === 100 || user.randSeedInt(100) < moveChance;
     if (statusCheck) {
       const pokemon = this.selfTarget ? user : target;
-      if (pokemon.status) {
-        if (this.overrideStatus) {
-          pokemon.resetStatus();
-        } else {
-          return false;
-        }
+      if (pokemon.status && !this.overrideStatus) {
+        return false;
       }
 
       if (user !== target && target.isSafeguarded(user)) {
@@ -2457,8 +2453,8 @@ export class StatusEffectAttr extends MoveEffectAttr {
         }
         return false;
       }
-      if ((!pokemon.status || (pokemon.status.effect === this.effect && moveChance < 0))
-        && pokemon.trySetStatus(this.effect, true, user, this.turnsRemaining)) {
+      if (((!pokemon.status || this.overrideStatus) || (pokemon.status.effect === this.effect && moveChance < 0))
+        && pokemon.trySetStatus(this.effect, true, user, this.turnsRemaining, null, this.overrideStatus)) {
         applyPostAttackAbAttrs(ConfusionOnStatusEffectAbAttr, user, target, move, null, false, this.effect);
         return true;
       }
