@@ -1,0 +1,28 @@
+import type { BattlerIndex } from "#app/battle";
+import { applyPostSummonAbAttrs, PostSummonAbAttr } from "#app/data/ability";
+import { PostSummonPhase } from "#app/phases/post-summon-phase";
+
+/**
+ * Helper to {@linkcode PostSummonPhase} which applies abilities
+ */
+
+export class PostSummonActivateAbilityPhase extends PostSummonPhase {
+  private priority: number;
+  private passive: boolean;
+
+  constructor(battlerIndex: BattlerIndex, priority: number, passive: boolean) {
+    super(battlerIndex);
+    this.priority = priority;
+    this.passive = passive;
+  }
+
+  start() {
+    applyPostSummonAbAttrs(PostSummonAbAttr, this.getPokemon(), this.passive, false);
+
+    this.end();
+  }
+
+  public override getPriority() {
+    return this.priority;
+  }
+}
