@@ -9,7 +9,7 @@ import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { allMoves } from "#app/data/moves/move";
 import { BattlerTagType } from "#enums/battler-tag-type";
-import { allAbilities } from "#app/data/ability";
+import { allAbilities } from "#app/data/data-lists";
 
 describe("Abilities - Flower Veil", () => {
   let phaserGame: Phaser.Game;

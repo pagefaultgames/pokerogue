@@ -1,13 +1,13 @@
 import { globalScene } from "#app/global-scene";
 import {
-  allAbilities,
   applyAbAttrs,
   BlockNonDirectDamageAbAttr,
   FlinchEffectAbAttr,
   ProtectStatAbAttr,
   ConditionalUserFieldProtectStatAbAttr,
   ReverseDrainAbAttr,
-} from "#app/data/ability";
+} from "#app/data/abilities/ability";
+import { allAbilities } from "./data-lists";
 import { ChargeAnim, CommonAnim, CommonBattleAnim, MoveChargeAnim } from "#app/data/battle-anims";
 import type Move from "#app/data/moves/move";
 import {

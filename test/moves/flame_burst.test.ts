@@ -1,4 +1,4 @@
-import { allAbilities } from "#app/data/ability";
+import { allAbilities } from "#app/data/data-lists";
 import { Abilities } from "#app/enums/abilities";
 import type Pokemon from "#app/field/pokemon";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
