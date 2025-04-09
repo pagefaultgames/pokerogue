@@ -1,4 +1,4 @@
-import { getVariantTint } from "#app/data/variant";
+import { getVariantTint } from "#app/sprites/variant";
 import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import { globalScene } from "#app/global-scene";
 import { Gender, getGenderColor, getGenderSymbol } from "../data/gender";

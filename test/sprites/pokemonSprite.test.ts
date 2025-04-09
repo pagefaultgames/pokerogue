@@ -3,8 +3,10 @@ import fs from "fs";
 import path from "path";
 import { beforeAll, describe, expect, it } from "vitest";
 import _masterlist from "../../public/images/pokemon/variant/_masterlist.json";
+import _exp_masterlist from "../../public/images/pokemon/variant/_exp_masterlist.json";
 
 type PokemonVariantMasterlist = typeof _masterlist;
+type PokemonExpVariantMasterlist = typeof _exp_masterlist;
 
 const deepCopy = (data: any) => {
   return JSON.parse(JSON.stringify(data));
@@ -12,7 +14,7 @@ const deepCopy = (data: any) => {
 
 describe("check if every variant's sprite are correctly set", () => {
   let masterlist: PokemonVariantMasterlist;
-  let expVariant: PokemonVariantMasterlist["exp"];
+  let expVariant: PokemonExpVariantMasterlist;
   let femaleVariant: PokemonVariantMasterlist["female"];
   let backVariant: PokemonVariantMasterlist["back"];
   let rootDir: string;
@@ -20,13 +22,12 @@ describe("check if every variant's sprite are correctly set", () => {
   beforeAll(() => {
     rootDir = `${getAppRootDir()}${path.sep}public${path.sep}images${path.sep}pokemon${path.sep}variant${path.sep}`;
     masterlist = deepCopy(_masterlist);
-    expVariant = masterlist.exp;
+    expVariant = deepCopy(_exp_masterlist);
     femaleVariant = masterlist.female;
     backVariant = masterlist.back;
-    //@ts-ignore
-    delete masterlist.exp; //TODO: resolve ts-ignore
-    //@ts-ignore
-    delete masterlist.female; //TODO: resolve ts-ignore
+
+    // @ts-ignore
+    delete masterlist.female; // TODO: resolve ts-ignore
     //@ts-ignore
     delete masterlist.back; //TODO: resolve ts-ignore
   });

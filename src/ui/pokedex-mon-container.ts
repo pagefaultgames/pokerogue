@@ -1,4 +1,4 @@
-import type { Variant } from "#app/data/variant";
+import type { Variant } from "#app/sprites/variant";
 import { globalScene } from "#app/global-scene";
 import { isNullOrUndefined } from "#app/utils";
 import type PokemonSpecies from "../data/pokemon-species";

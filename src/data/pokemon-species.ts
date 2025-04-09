@@ -26,11 +26,12 @@ import {
   pokemonSpeciesLevelMoves,
 } from "#app/data/balance/pokemon-level-moves";
 import type { Stat } from "#enums/stat";
-import type { Variant, VariantSet } from "#app/data/variant";
-import { variantData } from "#app/data/variant";
+import type { Variant, VariantSet } from "#app/sprites/variant";
+import { variantData } from "#app/sprites/variant";
 import { speciesStarterCosts, POKERUS_STARTER_COUNT } from "#app/data/balance/starters";
 import { SpeciesFormKey } from "#enums/species-form-key";
 import { starterPassiveAbilities } from "#app/data/balance/passives";
+import { loadPokemonVariantAssets } from "#app/sprites/pokemon-sprite";
 
 export enum Region {
   NORMAL,
@@ -387,6 +388,7 @@ export abstract class PokemonSpeciesForm {
     return `${/_[1-3]$/.test(spriteId) ? "variant/" : ""}${spriteId}`;
   }
 
+  /** Compute the sprite ID of the pokemon form. */
   getSpriteId(female: boolean, formIndex?: number, shiny?: boolean, variant = 0, back?: boolean): string {
     if (formIndex === undefined || this instanceof PokemonForm) {
       formIndex = this.formIndex;
@@ -394,7 +396,9 @@ export abstract class PokemonSpeciesForm {
 
     const formSpriteKey = this.getFormSpriteKey(formIndex);
     const showGenderDiffs =
-      this.genderDiffs && female && ![SpeciesFormKey.MEGA, SpeciesFormKey.GIGANTAMAX].find(k => formSpriteKey === k);
+      this.genderDiffs &&
+      female &&
+      ![SpeciesFormKey.MEGA, SpeciesFormKey.GIGANTAMAX].includes(formSpriteKey as SpeciesFormKey);
 
     const baseSpriteKey = `${showGenderDiffs ? "female__" : ""}${this.speciesId}${formSpriteKey ? `-${formSpriteKey}` : ""}`;
 
@@ -585,18 +589,19 @@ export abstract class PokemonSpeciesForm {
     return true;
   }
 
-  loadAssets(
+  async loadAssets(
     female: boolean,
     formIndex?: number,
-    shiny?: boolean,
+    shiny = false,
     variant?: Variant,
-    startLoad?: boolean,
-    back?: boolean,
+    startLoad = false,
+    back = false,
   ): Promise<void> {
-    return new Promise(resolve => {
-      const spriteKey = this.getSpriteKey(female, formIndex, shiny, variant, back);
-      globalScene.loadPokemonAtlas(spriteKey, this.getSpriteAtlasPath(female, formIndex, shiny, variant, back));
-      globalScene.load.audio(`${this.getCryKey(formIndex)}`, `audio/${this.getCryKey(formIndex)}.m4a`);
+    const spriteKey = this.getSpriteKey(female, formIndex, shiny, variant, back);
+    globalScene.loadPokemonAtlas(spriteKey, this.getSpriteAtlasPath(female, formIndex, shiny, variant, back));
+    globalScene.load.audio(this.getCryKey(formIndex), `audio/${this.getCryKey(formIndex)}.m4a`);
+
+    return new Promise<void>(resolve => {
       globalScene.load.once(Phaser.Loader.Events.COMPLETE, () => {
         const originalWarn = console.warn;
         // Ignore warnings for missing frames, because there will be a lot
@@ -621,7 +626,9 @@ export abstract class PokemonSpeciesForm {
         const spritePath = this.getSpriteAtlasPath(female, formIndex, shiny, variant, back)
           .replace("variant/", "")
           .replace(/_[1-3]$/, "");
-        globalScene.loadPokemonVariantAssets(spriteKey, spritePath, variant).then(() => resolve());
+        if (!Utils.isNullOrUndefined(variant)) {
+          loadPokemonVariantAssets(spriteKey, spritePath, variant).then(() => resolve());
+        }
       });
       if (startLoad) {
         if (!globalScene.load.isLoading()) {
