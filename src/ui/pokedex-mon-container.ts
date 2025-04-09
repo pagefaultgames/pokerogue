@@ -13,6 +13,7 @@ interface SpeciesDetails {
 
 export class PokedexMonContainer extends Phaser.GameObjects.Container {
   public species: PokemonSpecies;
+  public formIndex: number;
   public icon: Phaser.GameObjects.Sprite;
   public shinyIcons: Phaser.GameObjects.Image[] = [];
   public label: Phaser.GameObjects.Text;
@@ -178,6 +179,7 @@ export class PokedexMonContainer extends Phaser.GameObjects.Container {
 
     if (!isNullOrUndefined(formIndex)) {
       defaultProps.formIndex = formIndex;
+      this.formIndex = formIndex;
     }
     if (!isNullOrUndefined(shiny)) {
       defaultProps.shiny = shiny;

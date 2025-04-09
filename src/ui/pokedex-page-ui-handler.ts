@@ -257,6 +257,8 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
   private menuDescriptions: string[];
   private isFormGender: boolean;
   private filteredIndices: Species[] | null = null;
+  private filteredFormIndices: (number | null)[] | null = null;
+  private filteredIndex: number;
 
   private availableVariants: number;
   private unlockedVariants: boolean[];
@@ -679,8 +681,8 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       form: 0,
     };
     this.formIndex = this.savedStarterAttributes.form ?? 0;
-    this.filteredIndices = args[2] ?? null;
-    this.starterSetup();
+    this.filteredIndices = args[2] ? [...args[2]] : null;
+    this.filteredFormIndices = args[3] ? [...args[3]] : null;
 
     if (args[4] instanceof Function) {
       this.exitCallback = args[4];
@@ -695,6 +697,21 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     this.getUi().bringToTop(this.starterSelectContainer);
 
     this.starterAttributes = this.initStarterPrefs();
+
+    if (this.filteredIndices) {
+      this.filteredIndex = this.filteredIndices.findIndex(id => id === this.species.speciesId);
+    }
+
+    if (this.filteredFormIndices) {
+      const newForm = this.filteredFormIndices[this.filteredIndex];
+      if (!isNullOrUndefined(newForm)) {
+        this.savedStarterAttributes.form = newForm;
+        this.starterAttributes.form = newForm;
+        this.formIndex = newForm;
+      }
+    }
+
+    this.starterSetup();
 
     this.menuOptions = Utils.getEnumKeys(MenuOptions).map(m => Number.parseInt(MenuOptions[m]) as MenuOptions);
 
@@ -1145,13 +1162,19 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
           const starterAttributes = this.previousStarterAttributes.pop();
           this.moveInfoOverlay.clear();
           this.clearText();
-          ui.setModeForceTransition(Mode.POKEDEX_PAGE, species, starterAttributes);
+          ui.setModeForceTransition(
+            Mode.POKEDEX_PAGE,
+            species,
+            starterAttributes,
+            this.filteredIndices,
+            this.filteredFormIndices,
+          );
           success = true;
         });
         this.blockInput = false;
       } else {
         ui.revertMode().then(() => {
-          console.log("exitCallback", this.exitCallback);
+
           if (this.exitCallback instanceof Function) {
             const exitCallback = this.exitCallback;
             this.exitCallback = null;
@@ -1589,7 +1612,13 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                           this.savedStarterAttributes.form = newFormIndex;
                           this.moveInfoOverlay.clear();
                           this.clearText();
-                          ui.setMode(Mode.POKEDEX_PAGE, newSpecies, this.savedStarterAttributes);
+                          ui.setMode(
+                            Mode.POKEDEX_PAGE,
+                            newSpecies,
+                            this.savedStarterAttributes,
+                            this.filteredIndices,
+                            this.filteredFormIndices,
+                          );
                           return true;
                         },
                         onHover: () => this.showText(conditionText),
@@ -1631,7 +1660,13 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                           this.savedStarterAttributes.form = newFormIndex;
                           this.moveInfoOverlay.clear();
                           this.clearText();
-                          ui.setMode(Mode.POKEDEX_PAGE, evoSpecies, this.savedStarterAttributes);
+                          ui.setMode(
+                            Mode.POKEDEX_PAGE,
+                            evoSpecies,
+                            this.savedStarterAttributes,
+                            this.filteredIndices,
+                            this.filteredFormIndices,
+                          );
                           return true;
                         },
                         onHover: () => this.showText(conditionText),
@@ -1675,11 +1710,15 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                             this.savedStarterAttributes.form = newFormIndex;
                             this.moveInfoOverlay.clear();
                             this.clearText();
+                            if (this.filteredFormIndices) {
+                              this.filteredFormIndices[this.filteredIndex] = null;
+                            }
                             ui.setMode(
                               Mode.POKEDEX_PAGE,
                               newSpecies,
                               this.savedStarterAttributes,
                               this.filteredIndices,
+                              this.filteredFormIndices,
                             );
                             return true;
                           },
@@ -2061,6 +2100,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                 newSpecies,
                 this.savedStarterAttributes,
                 this.filteredIndices,
+                this.filteredFormIndices,
               );
             });
             this.blockInput = false;
@@ -2100,6 +2140,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                 newSpecies,
                 this.savedStarterAttributes,
                 this.filteredIndices,
+                this.filteredFormIndices,
               );
             });
             break;
