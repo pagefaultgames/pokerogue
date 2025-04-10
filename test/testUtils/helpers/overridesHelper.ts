@@ -15,6 +15,8 @@ import type { WeatherType } from "#enums/weather-type";
 import { expect, vi } from "vitest";
 import { GameManagerHelper } from "./gameManagerHelper";
 import { shiftCharCodes } from "#app/utils";
+import type { RandomTrainerOverride } from "#app/overrides";
+import type { BattleType } from "#enums/battle-type";
 
 /**
  * Helper to handle overrides in tests
@@ -101,8 +103,8 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the player (pokemon) {@linkcode Species | species}
-   * @param species the (pokemon) {@linkcode Species | species} to set
+   * Override the player (pokemon) {@linkcode Species species}
+   * @param species the (pokemon) {@linkcode Species species} to set
    * @returns `this`
    */
   public starterSpecies(species: Species | number): this {
@@ -158,8 +160,8 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the player (pokemon) {@linkcode Abilities | ability}.
-   * @param ability the (pokemon) {@linkcode Abilities | ability} to set
+   * Override the player (pokemon) {@linkcode Abilities ability}.
+   * @param ability the (pokemon) {@linkcode Abilities ability} to set
    * @returns `this`
    */
   public ability(ability: Abilities): this {
@@ -169,8 +171,8 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the player (pokemon) **passive** {@linkcode Abilities | ability}
-   * @param passiveAbility the (pokemon) **passive** {@linkcode Abilities | ability} to set
+   * Override the player (pokemon) **passive** {@linkcode Abilities ability}
+   * @param passiveAbility the (pokemon) **passive** {@linkcode Abilities ability} to set
    * @returns `this`
    */
   public passiveAbility(passiveAbility: Abilities): this {
@@ -194,8 +196,8 @@ export class OverridesHelper extends GameManagerHelper {
     return this;
   }
   /**
-   * Override the player (pokemon) {@linkcode Moves | moves}set
-   * @param moveset the {@linkcode Moves | moves}set to set
+   * Override the player (pokemon) {@linkcode Moves moves}set
+   * @param moveset the {@linkcode Moves moves}set to set
    * @returns `this`
    */
   public moveset(moveset: Moves | Moves[]): this {
@@ -209,8 +211,8 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the player (pokemon) {@linkcode StatusEffect | status-effect}
-   * @param statusEffect the {@linkcode StatusEffect | status-effect} to set
+   * Override the player (pokemon) {@linkcode StatusEffect status-effect}
+   * @param statusEffect the {@linkcode StatusEffect status-effect} to set
    * @returns
    */
   public statusEffect(statusEffect: StatusEffect): this {
@@ -226,6 +228,19 @@ export class OverridesHelper extends GameManagerHelper {
   public disableTrainerWaves(): this {
     vi.spyOn(Overrides, "DISABLE_STANDARD_TRAINERS_OVERRIDE", "get").mockReturnValue(true);
     this.log("Standard trainer waves are disabled!");
+    return this;
+  }
+
+  /**
+   * Override the trainer chosen when a random trainer is selected.
+   *
+   * Does not force the battle to be a trainer battle.
+   * @see {@linkcode setBattleType}
+   * @returns `this`
+   */
+  public randomTrainer(trainer: RandomTrainerOverride | null): this {
+    vi.spyOn(Overrides, "RANDOM_TRAINER_OVERRIDE", "get").mockReturnValue(trainer);
+    this.log("Partner battle is forced!");
     return this;
   }
 
@@ -264,20 +279,36 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the battle type (e.g., single or double).
-   * @see {@linkcode Overrides.BATTLE_TYPE_OVERRIDE}
-   * @param battleType battle type to set
+   * Override the battle style (e.g., single or double).
+   * @see {@linkcode Overrides.BATTLE_STYLE_OVERRIDE}
+   * @param battleStyle - The battle style to set
    * @returns `this`
    */
-  public battleType(battleType: BattleStyle | null): this {
-    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue(battleType);
-    this.log(battleType === null ? "Battle type override disabled!" : `Battle type set to ${battleType}!`);
+  public battleStyle(battleStyle: BattleStyle | null): this {
+    vi.spyOn(Overrides, "BATTLE_STYLE_OVERRIDE", "get").mockReturnValue(battleStyle);
+    this.log(battleStyle === null ? "Battle type override disabled!" : `Battle type set to ${battleStyle}!`);
     return this;
   }
 
   /**
-   * Override the enemy (pokemon) {@linkcode Species | species}
-   * @param species the (pokemon) {@linkcode Species | species} to set
+   * Override the battle type (e.g., WILD, or Trainer) for non-scripted battles.
+   * @see {@linkcode Overrides.BATTLE_TYPE_OVERRIDE}
+   * @param battleType - The battle type to set
+   * @returns `this`
+   */
+  public battleType(battleType: Exclude<BattleType, BattleType.CLEAR>): this {
+    vi.spyOn(Overrides, "BATTLE_TYPE_OVERRIDE", "get").mockReturnValue(battleType);
+    this.log(
+      battleType === null
+        ? "Battle type override disabled!"
+        : `Battle type set to ${battleType[battleType]} (=${battleType})!`,
+    );
+    return this;
+  }
+
+  /**
+   * Override the enemy (pokemon) {@linkcode Species species}
+   * @param species the (pokemon) {@linkcode Species species} to set
    * @returns `this`
    */
   public enemySpecies(species: Species | number): this {
@@ -308,8 +339,8 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the enemy (pokemon) {@linkcode Abilities | ability}
-   * @param ability the (pokemon) {@linkcode Abilities | ability} to set
+   * Override the enemy (pokemon) {@linkcode Abilities ability}
+   * @param ability the (pokemon) {@linkcode Abilities ability} to set
    * @returns `this`
    */
   public enemyAbility(ability: Abilities): this {
@@ -319,8 +350,8 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the enemy (pokemon) **passive** {@linkcode Abilities | ability}
-   * @param passiveAbility the (pokemon) **passive** {@linkcode Abilities | ability} to set
+   * Override the enemy (pokemon) **passive** {@linkcode Abilities ability}
+   * @param passiveAbility the (pokemon) **passive** {@linkcode Abilities ability} to set
    * @returns `this`
    */
   public enemyPassiveAbility(passiveAbility: Abilities): this {
@@ -330,7 +361,7 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Forces the status of the enemy (pokemon) **passive** {@linkcode Abilities | ability}
+   * Forces the status of the enemy (pokemon) **passive** {@linkcode Abilities ability}
    * @param hasPassiveAbility forces the passive to be active if `true`, inactive if `false`
    * @returns `this`
    */
@@ -345,8 +376,8 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the enemy (pokemon) {@linkcode Moves | moves}set
-   * @param moveset the {@linkcode Moves | moves}set to set
+   * Override the enemy (pokemon) {@linkcode Moves moves}set
+   * @param moveset the {@linkcode Moves moves}set to set
    * @returns `this`
    */
   public enemyMoveset(moveset: Moves | Moves[]): this {
@@ -371,8 +402,8 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the enemy (pokemon) {@linkcode StatusEffect | status-effect}
-   * @param statusEffect the {@linkcode StatusEffect | status-effect} to set
+   * Override the enemy (pokemon) {@linkcode StatusEffect status-effect}
+   * @param statusEffect the {@linkcode StatusEffect status-effect} to set
    * @returns
    */
   public enemyStatusEffect(statusEffect: StatusEffect): this {

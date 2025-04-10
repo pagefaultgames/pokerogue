@@ -26,7 +26,7 @@ describe("Moves - Friend Guard", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .battleType("double")
+      .battleStyle("double")
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset([Moves.TACKLE, Moves.SPLASH, Moves.DRAGON_RAGE])
       .enemySpecies(Species.SHUCKLE)

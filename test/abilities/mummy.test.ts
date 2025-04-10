@@ -24,7 +24,7 @@ describe("Abilities - Mummy", () => {
     game.override
       .moveset([Moves.SPLASH])
       .ability(Abilities.MUMMY)
-      .battleType("single")
+      .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)

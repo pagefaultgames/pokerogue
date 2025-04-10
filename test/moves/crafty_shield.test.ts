@@ -26,7 +26,7 @@ describe("Moves - Crafty Shield", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
 
-    game.override.battleType("double");
+    game.override.battleStyle("double");
 
     game.override.moveset([Moves.CRAFTY_SHIELD, Moves.SPLASH, Moves.SWORDS_DANCE]);
 

@@ -27,7 +27,7 @@ describe("Items - Scope Lens", () => {
       .enemyMoveset(Moves.SPLASH)
       .moveset([Moves.POUND])
       .startingHeldItems([{ name: "SCOPE_LENS" }])
-      .battleType("single")
+      .battleStyle("single")
       .disableCrits();
   }, 20000);
 

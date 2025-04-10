@@ -24,7 +24,7 @@ describe("Moves - Baneful Bunker", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
 
-    game.override.battleType("single");
+    game.override.battleStyle("single");
 
     game.override.moveset(Moves.SLASH);
 

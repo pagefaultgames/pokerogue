@@ -33,7 +33,7 @@ describe("Moves - Destiny Bond", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .battleType("single")
+      .battleStyle("single")
       .ability(Abilities.UNNERVE) // Pre-emptively prevent flakiness from opponent berries
       .enemySpecies(Species.RATTATA)
       .enemyAbility(Abilities.RUN_AWAY)
@@ -157,7 +157,7 @@ describe("Moves - Destiny Bond", () => {
   });
 
   it("should not KO an ally", async () => {
-    game.override.moveset([Moves.DESTINY_BOND, Moves.CRUNCH]).battleType("double");
+    game.override.moveset([Moves.DESTINY_BOND, Moves.CRUNCH]).battleStyle("double");
     await game.classicMode.startBattle([Species.SHEDINJA, Species.BULBASAUR, Species.SQUIRTLE]);
 
     const enemyPokemon0 = game.scene.getEnemyField()[0];
@@ -201,7 +201,7 @@ describe("Moves - Destiny Bond", () => {
   });
 
   it("should not cause a crash if the user is KO'd by Pledge moves", async () => {
-    game.override.moveset([Moves.GRASS_PLEDGE, Moves.WATER_PLEDGE]).battleType("double");
+    game.override.moveset([Moves.GRASS_PLEDGE, Moves.WATER_PLEDGE]).battleStyle("double");
     await game.classicMode.startBattle(defaultParty);
 
     const enemyPokemon0 = game.scene.getEnemyField()[0];

@@ -66,7 +66,8 @@ import {
   PostItemLostAbAttr,
 } from "#app/data/ability";
 import type { FixedBattleConfig } from "#app/battle";
-import Battle, { BattleType } from "#app/battle";
+import Battle from "#app/battle";
+import { BattleType } from "#enums/battle-type";
 import type { GameMode } from "#app/game-mode";
 import { GameModes, getGameMode } from "#app/game-mode";
 import FieldSpritePipeline from "#app/pipelines/field-sprite";
@@ -1327,22 +1328,27 @@ export default class BattleScene extends SceneBase {
     } else {
       if (
         !this.gameMode.hasTrainers ||
+        Overrides.BATTLE_TYPE_OVERRIDE === BattleType.WILD ||
         (Overrides.DISABLE_STANDARD_TRAINERS_OVERRIDE && isNullOrUndefined(trainerData))
       ) {
         newBattleType = BattleType.WILD;
-      } else if (battleType === undefined) {
-        newBattleType = this.gameMode.isWaveTrainer(newWaveIndex, this.arena) ? BattleType.TRAINER : BattleType.WILD;
       } else {
-        newBattleType = battleType;
+        newBattleType =
+          Overrides.BATTLE_TYPE_OVERRIDE ??
+          battleType ??
+          (this.gameMode.isWaveTrainer(newWaveIndex, this.arena) ? BattleType.TRAINER : BattleType.WILD);
       }
 
       if (newBattleType === BattleType.TRAINER) {
-        const trainerType = this.arena.randomTrainerType(newWaveIndex);
+        const trainerType =
+          Overrides.RANDOM_TRAINER_OVERRIDE?.trainerType ?? this.arena.randomTrainerType(newWaveIndex);
         let doubleTrainer = false;
         if (trainerConfigs[trainerType].doubleOnly) {
           doubleTrainer = true;
         } else if (trainerConfigs[trainerType].hasDouble) {
-          doubleTrainer = !Utils.randSeedInt(this.getDoubleBattleChance(newWaveIndex, playerField));
+          doubleTrainer =
+            Overrides.RANDOM_TRAINER_OVERRIDE?.alwaysDouble ||
+            !Utils.randSeedInt(this.getDoubleBattleChance(newWaveIndex, playerField));
           // Add a check that special trainers can't be double except for tate and liza - they should use the normal double chance
           if (
             trainerConfigs[trainerType].trainerTypeDouble &&
@@ -1362,7 +1368,10 @@ export default class BattleScene extends SceneBase {
 
       // Check for mystery encounter
       // Can only occur in place of a standard (non-boss) wild battle, waves 10-180
-      if (this.isWaveMysteryEncounter(newBattleType, newWaveIndex) || newBattleType === BattleType.MYSTERY_ENCOUNTER) {
+      if (
+        !Overrides.BATTLE_TYPE_OVERRIDE &&
+        (this.isWaveMysteryEncounter(newBattleType, newWaveIndex) || newBattleType === BattleType.MYSTERY_ENCOUNTER)
+      ) {
         newBattleType = BattleType.MYSTERY_ENCOUNTER;
         // Reset to base spawn weight
         this.mysteryEncounterSaveData.encounterSpawnChance = BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT;
@@ -1372,9 +1381,9 @@ export default class BattleScene extends SceneBase {
     if (double === undefined && newWaveIndex > 1) {
       if (newBattleType === BattleType.WILD && !this.gameMode.isWaveFinal(newWaveIndex)) {
         newDouble = !Utils.randSeedInt(this.getDoubleBattleChance(newWaveIndex, playerField));
-      } else if (newBattleType === BattleType.TRAINER) {
-        newDouble = newTrainer?.variant === TrainerVariant.DOUBLE;
       }
+    } else if (double === undefined && newBattleType === BattleType.TRAINER) {
+      newDouble = newTrainer?.variant === TrainerVariant.DOUBLE;
     } else if (!battleConfig) {
       newDouble = !!double;
     }
@@ -1384,10 +1393,10 @@ export default class BattleScene extends SceneBase {
       newDouble = false;
     }
 
-    if (!isNullOrUndefined(Overrides.BATTLE_TYPE_OVERRIDE)) {
+    if (!isNullOrUndefined(Overrides.BATTLE_STYLE_OVERRIDE)) {
       let doubleOverrideForWave: "single" | "double" | null = null;
 
-      switch (Overrides.BATTLE_TYPE_OVERRIDE) {
+      switch (Overrides.BATTLE_STYLE_OVERRIDE) {
         case "double":
           doubleOverrideForWave = "double";
           break;
@@ -1407,7 +1416,7 @@ export default class BattleScene extends SceneBase {
       }
       /**
        * Override battles into single only if not fighting with trainers.
-       * @see {@link https://github.com/pagefaultgames/pokerogue/issues/1948 | GitHub Issue #1948}
+       * @see {@link https://github.com/pagefaultgames/pokerogue/issues/1948 GitHub Issue #1948}
        */
       if (newBattleType !== BattleType.TRAINER && doubleOverrideForWave === "single") {
         newDouble = false;
@@ -1435,6 +1444,7 @@ export default class BattleScene extends SceneBase {
 
     this.executeWithSeedOffset(
       () => {
+        console.log(`Starting a new battle with ${BattleType[newBattleType]} and double: ${newDouble}`);
         this.currentBattle = new Battle(this.gameMode, newWaveIndex, newBattleType, newTrainer, newDouble);
       },
       newWaveIndex << 3,

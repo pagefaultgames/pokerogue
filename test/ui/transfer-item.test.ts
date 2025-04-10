@@ -26,7 +26,7 @@ describe("UI - Transfer Items", () => {
 
   beforeEach(async () => {
     game = new GameManager(phaserGame);
-    game.override.battleType("single");
+    game.override.battleStyle("single");
     game.override.startingLevel(100);
     game.override.startingWave(1);
     game.override.startingHeldItems([

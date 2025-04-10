@@ -26,7 +26,7 @@ describe("Abilities - Volt Absorb", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleType("single");
+    game.override.battleStyle("single");
     game.override.disableCrits();
   });
 

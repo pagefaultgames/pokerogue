@@ -24,7 +24,7 @@ describe("EXP Modifier Items", () => {
 
     game.override.enemyAbility(Abilities.BALL_FETCH);
     game.override.ability(Abilities.BALL_FETCH);
-    game.override.battleType("single");
+    game.override.battleStyle("single");
   });
 
   it("EXP booster items stack multiplicatively", async () => {

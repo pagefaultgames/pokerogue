@@ -29,7 +29,7 @@ describe("Abilities - Libero", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleType("single");
+    game.override.battleStyle("single");
     game.override.ability(Abilities.LIBERO);
     game.override.startingLevel(100);
     game.override.enemySpecies(Species.RATTATA);

@@ -22,7 +22,7 @@ describe("Abilities - Intrepid Sword", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleType("single");
+    game.override.battleStyle("single");
     game.override.enemySpecies(Species.ZACIAN);
     game.override.enemyAbility(Abilities.INTREPID_SWORD);
     game.override.ability(Abilities.INTREPID_SWORD);

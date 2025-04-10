@@ -25,7 +25,7 @@ describe("Abilities - Intimidate", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .battleType("single")
+      .battleStyle("single")
       .enemySpecies(Species.RATTATA)
       .enemyAbility(Abilities.INTIMIDATE)
       .enemyPassiveAbility(Abilities.HYDRATION)
@@ -65,7 +65,7 @@ describe("Abilities - Intimidate", () => {
   }, 20000);
 
   it("should lower ATK stat stage by 1 for every enemy Pokemon in a double battle on entry", async () => {
-    game.override.battleType("double").startingWave(3);
+    game.override.battleStyle("double").startingWave(3);
     await game.classicMode.runToSummon([Species.MIGHTYENA, Species.POOCHYENA]);
     game.onNextPrompt(
       "CheckSwitchPhase",

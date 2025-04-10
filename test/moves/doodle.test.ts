@@ -26,7 +26,7 @@ describe("Moves - Doodle", () => {
     game.override
       .moveset([Moves.SPLASH, Moves.DOODLE])
       .ability(Abilities.ADAPTABILITY)
-      .battleType("single")
+      .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)
@@ -43,7 +43,7 @@ describe("Moves - Doodle", () => {
   });
 
   it("should copy the opponent's ability to itself and its ally in doubles", async () => {
-    game.override.battleType("double");
+    game.override.battleStyle("double");
     await game.classicMode.startBattle([Species.FEEBAS, Species.MAGIKARP]);
 
     game.move.select(Moves.DOODLE, 0, BattlerIndex.ENEMY);
@@ -55,7 +55,7 @@ describe("Moves - Doodle", () => {
   });
 
   it("should activate post-summon abilities", async () => {
-    game.override.battleType("double").enemyAbility(Abilities.INTIMIDATE);
+    game.override.battleStyle("double").enemyAbility(Abilities.INTIMIDATE);
 
     await game.classicMode.startBattle([Species.FEEBAS, Species.MAGIKARP]);
 

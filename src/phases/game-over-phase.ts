@@ -1,5 +1,5 @@
 import { clientSessionId } from "#app/account";
-import { BattleType } from "#app/battle";
+import { BattleType } from "#enums/battle-type";
 import { globalScene } from "#app/global-scene";
 import { pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
 import { getCharVariantFromDialogue } from "#app/data/dialogue";

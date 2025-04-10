@@ -23,9 +23,9 @@ describe("Abilities - Oblivious", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([ Moves.SPLASH ])
+      .moveset([Moves.SPLASH])
       .ability(Abilities.BALL_FETCH)
-      .battleType("single")
+      .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)
@@ -33,12 +33,12 @@ describe("Abilities - Oblivious", () => {
   });
 
   it("should remove taunt when gained", async () => {
-    game.override.ability(Abilities.OBLIVIOUS)
+    game.override
+      .ability(Abilities.OBLIVIOUS)
       .enemyAbility(Abilities.BALL_FETCH)
       .moveset(Moves.SKILL_SWAP)
-      .enemyMoveset(Moves.SPLASH),
-
-    await game.classicMode.startBattle([ Species.FEEBAS ]);
+      .enemyMoveset(Moves.SPLASH);
+    await game.classicMode.startBattle([Species.FEEBAS]);
     const enemy = game.scene.getEnemyPokemon();
     enemy?.addTag(BattlerTagType.TAUNT);
     expect(enemy?.getTag(BattlerTagType.TAUNT)).toBeTruthy();
@@ -50,12 +50,12 @@ describe("Abilities - Oblivious", () => {
   });
 
   it("should remove infatuation when gained", async () => {
-    game.override.ability(Abilities.OBLIVIOUS)
+    game.override
+      .ability(Abilities.OBLIVIOUS)
       .enemyAbility(Abilities.BALL_FETCH)
       .moveset(Moves.SKILL_SWAP)
-      .enemyMoveset(Moves.SPLASH),
-
-    await game.classicMode.startBattle([ Species.FEEBAS ]);
+      .enemyMoveset(Moves.SPLASH);
+    await game.classicMode.startBattle([Species.FEEBAS]);
     const enemy = game.scene.getEnemyPokemon();
     vi.spyOn(enemy!, "isOppositeGender").mockReturnValue(true);
     enemy?.addTag(BattlerTagType.INFATUATED, 5, Moves.JUDGMENT, game.scene.getPlayerPokemon()?.id); // sourceID needs to be defined

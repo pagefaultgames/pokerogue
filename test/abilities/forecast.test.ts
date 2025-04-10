@@ -75,7 +75,7 @@ describe("Abilities - Forecast", () => {
     async () => {
       game.override
         .moveset([Moves.RAIN_DANCE, Moves.SUNNY_DAY, Moves.SNOWSCAPE, Moves.SPLASH])
-        .battleType("double")
+        .battleStyle("double")
         .starterForms({
           [Species.KYOGRE]: 1,
           [Species.GROUDON]: 1,

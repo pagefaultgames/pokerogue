@@ -24,7 +24,7 @@ describe("Moves - Autotomize", () => {
     game = new GameManager(phaserGame);
     game.override
       .moveset([Moves.AUTOTOMIZE, Moves.KINGS_SHIELD, Moves.FALSE_SWIPE])
-      .battleType("single")
+      .battleStyle("single")
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH);
   });

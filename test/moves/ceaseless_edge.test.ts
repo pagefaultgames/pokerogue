@@ -26,7 +26,7 @@ describe("Moves - Ceaseless Edge", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleType("single");
+    game.override.battleStyle("single");
     game.override.enemySpecies(Species.RATTATA);
     game.override.enemyAbility(Abilities.RUN_AWAY);
     game.override.enemyPassiveAbility(Abilities.RUN_AWAY);

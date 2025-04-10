@@ -24,7 +24,7 @@ describe("Moves - Power Split", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .battleType("single")
+      .battleStyle("single")
       .enemyAbility(Abilities.NONE)
       .enemySpecies(Species.MEW)
       .enemyLevel(200)

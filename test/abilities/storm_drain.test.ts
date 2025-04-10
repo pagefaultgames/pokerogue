@@ -26,7 +26,7 @@ describe("Abilities - Storm Drain", () => {
     game.override
       .moveset([Moves.SPLASH, Moves.WATER_GUN])
       .ability(Abilities.BALL_FETCH)
-      .battleType("double")
+      .battleStyle("double")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)

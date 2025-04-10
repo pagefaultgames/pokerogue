@@ -25,7 +25,7 @@ describe("Moves - Electrify", () => {
     game = new GameManager(phaserGame);
     game.override
       .moveset(Moves.ELECTRIFY)
-      .battleType("single")
+      .battleStyle("single")
       .startingLevel(100)
       .enemySpecies(Species.SNORLAX)
       .enemyAbility(Abilities.BALL_FETCH)

@@ -24,7 +24,7 @@ describe("Abilities - Beast Boost", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .battleType("single")
+      .battleStyle("single")
       .enemySpecies(Species.BULBASAUR)
       .enemyAbility(Abilities.BEAST_BOOST)
       .ability(Abilities.BEAST_BOOST)

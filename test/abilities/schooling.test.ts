@@ -25,7 +25,7 @@ describe("Abilities - SCHOOLING", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     const moveToUse = Moves.SPLASH;
-    game.override.battleType("single");
+    game.override.battleStyle("single");
     game.override.ability(Abilities.SCHOOLING);
     game.override.moveset([moveToUse]);
     game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);

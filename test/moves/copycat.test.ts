@@ -31,7 +31,7 @@ describe("Moves - Copycat", () => {
     game.override
       .moveset([Moves.COPYCAT, Moves.SPIKY_SHIELD, Moves.SWORDS_DANCE, Moves.SPLASH])
       .ability(Abilities.BALL_FETCH)
-      .battleType("single")
+      .battleStyle("single")
       .disableCrits()
       .starterSpecies(Species.FEEBAS)
       .enemySpecies(Species.MAGIKARP)

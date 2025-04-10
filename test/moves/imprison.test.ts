@@ -23,7 +23,7 @@ describe("Moves - Imprison", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .battleType("single")
+      .battleStyle("single")
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset([Moves.IMPRISON, Moves.SPLASH, Moves.GROWL])
       .enemySpecies(Species.SHUCKLE)

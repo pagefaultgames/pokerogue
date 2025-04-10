@@ -24,7 +24,7 @@ describe("Abilities - Sturdy", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleType("single");
+    game.override.battleStyle("single");
 
     game.override.starterSpecies(Species.LUCARIO);
     game.override.startingLevel(100);

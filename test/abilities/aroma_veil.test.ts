@@ -25,7 +25,7 @@ describe("Moves - Aroma Veil", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .battleType("double")
+      .battleStyle("double")
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset([Moves.HEAL_BLOCK, Moves.IMPRISON, Moves.SPLASH])
       .enemySpecies(Species.SHUCKLE)

@@ -25,7 +25,7 @@ describe("Moves - Purify", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleType("single");
+    game.override.battleStyle("single");
 
     game.override.starterSpecies(Species.PYUKUMUKU);
     game.override.startingLevel(10);

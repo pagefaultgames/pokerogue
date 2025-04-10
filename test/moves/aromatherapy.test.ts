@@ -26,7 +26,7 @@ describe("Moves - Aromatherapy", () => {
     game.override
       .moveset([Moves.AROMATHERAPY, Moves.SPLASH])
       .statusEffect(StatusEffect.BURN)
-      .battleType("double")
+      .battleStyle("double")
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH);
   });

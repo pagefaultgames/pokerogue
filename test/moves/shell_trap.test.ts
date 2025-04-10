@@ -27,7 +27,7 @@ describe("Moves - Shell Trap", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .battleType("double")
+      .battleStyle("double")
       .moveset([Moves.SHELL_TRAP, Moves.SPLASH, Moves.BULLDOZE])
       .enemySpecies(Species.SNORLAX)
       .enemyMoveset([Moves.RAZOR_LEAF])
@@ -128,7 +128,7 @@ describe("Moves - Shell Trap", () => {
   });
 
   it("should not activate from a subsequent physical attack", async () => {
-    game.override.battleType("single");
+    game.override.battleStyle("single");
     vi.spyOn(allMoves[Moves.RAZOR_LEAF], "priority", "get").mockReturnValue(-4);
 
     await game.startBattle([Species.CHARIZARD]);

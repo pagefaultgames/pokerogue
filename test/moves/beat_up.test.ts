@@ -23,7 +23,7 @@ describe("Moves - Beat Up", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleType("single");
+    game.override.battleStyle("single");
 
     game.override.enemySpecies(Species.SNORLAX);
     game.override.enemyLevel(100);

@@ -29,7 +29,7 @@ describe("Moves - Jaw Lock", () => {
     game = new GameManager(phaserGame);
 
     game.override
-      .battleType("single")
+      .battleStyle("single")
       .enemySpecies(Species.SNORLAX)
       .enemyAbility(Abilities.INSOMNIA)
       .enemyMoveset(Moves.SPLASH)
@@ -107,7 +107,7 @@ describe("Moves - Jaw Lock", () => {
   });
 
   it("should not trap other targets after the first target is trapped", async () => {
-    game.override.battleType("double");
+    game.override.battleStyle("double");
 
     await game.startBattle([Species.CHARMANDER, Species.BULBASAUR]);
 

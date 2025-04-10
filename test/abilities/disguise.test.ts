@@ -27,7 +27,7 @@ describe("Abilities - Disguise", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .battleType("single")
+      .battleStyle("single")
       .enemySpecies(Species.MIMIKYU)
       .enemyMoveset(Moves.SPLASH)
       .starterSpecies(Species.REGIELEKI)

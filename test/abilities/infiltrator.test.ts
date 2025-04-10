@@ -30,7 +30,7 @@ describe("Abilities - Infiltrator", () => {
     game.override
       .moveset([Moves.TACKLE, Moves.WATER_GUN, Moves.SPORE, Moves.BABY_DOLL_EYES])
       .ability(Abilities.INFILTRATOR)
-      .battleType("single")
+      .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.SNORLAX)
       .enemyAbility(Abilities.BALL_FETCH)

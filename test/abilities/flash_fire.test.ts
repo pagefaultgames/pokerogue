@@ -27,7 +27,7 @@ describe("Abilities - Flash Fire", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .battleType("single")
+      .battleStyle("single")
       .ability(Abilities.FLASH_FIRE)
       .enemyAbility(Abilities.BALL_FETCH)
       .startingLevel(20)

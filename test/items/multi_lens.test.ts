@@ -27,7 +27,7 @@ describe("Items - Multi Lens", () => {
       .moveset([Moves.TACKLE, Moves.TRAILBLAZE, Moves.TACHYON_CUTTER, Moves.FUTURE_SIGHT])
       .ability(Abilities.BALL_FETCH)
       .startingHeldItems([{ name: "MULTI_LENS" }])
-      .battleType("single")
+      .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.SNORLAX)
       .enemyAbility(Abilities.BALL_FETCH)
@@ -99,7 +99,7 @@ describe("Items - Multi Lens", () => {
   });
 
   it("should enhance multi-target moves", async () => {
-    game.override.battleType("double").moveset([Moves.SWIFT, Moves.SPLASH]);
+    game.override.battleStyle("double").moveset([Moves.SWIFT, Moves.SPLASH]);
 
     await game.classicMode.startBattle([Species.MAGIKARP, Species.FEEBAS]);
 
@@ -213,7 +213,7 @@ describe("Items - Multi Lens", () => {
   });
 
   it("should not allow Pollen Puff to heal ally more than once", async () => {
-    game.override.battleType("double").moveset([Moves.POLLEN_PUFF, Moves.ENDURE]);
+    game.override.battleStyle("double").moveset([Moves.POLLEN_PUFF, Moves.ENDURE]);
     await game.classicMode.startBattle([Species.BULBASAUR, Species.OMANYTE]);
 
     const [, rightPokemon] = game.scene.getPlayerField();

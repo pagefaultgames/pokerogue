@@ -23,7 +23,7 @@ describe("Moves - Toxic", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleType("single").moveset(Moves.TOXIC).enemySpecies(Species.MAGIKARP).enemyMoveset(Moves.SPLASH);
+    game.override.battleStyle("single").moveset(Moves.TOXIC).enemySpecies(Species.MAGIKARP).enemyMoveset(Moves.SPLASH);
   });
 
   it("should be guaranteed to hit if user is Poison-type", async () => {

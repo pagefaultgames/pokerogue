@@ -25,7 +25,7 @@ describe("Moves - Pollen Puff", () => {
     game.override
       .moveset([Moves.POLLEN_PUFF])
       .ability(Abilities.BALL_FETCH)
-      .battleType("single")
+      .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)
@@ -33,7 +33,7 @@ describe("Moves - Pollen Puff", () => {
   });
 
   it("should not heal more than once when the user has a source of multi-hit", async () => {
-    game.override.battleType("double").moveset([Moves.POLLEN_PUFF, Moves.ENDURE]).ability(Abilities.PARENTAL_BOND);
+    game.override.battleStyle("double").moveset([Moves.POLLEN_PUFF, Moves.ENDURE]).ability(Abilities.PARENTAL_BOND);
     await game.classicMode.startBattle([Species.BULBASAUR, Species.OMANYTE]);
 
     const [_, rightPokemon] = game.scene.getPlayerField();

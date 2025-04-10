@@ -24,7 +24,7 @@ describe("Moves - Freezy Frost", () => {
     game = new GameManager(phaserGame);
 
     game.override
-      .battleType("single")
+      .battleStyle("single")
       .enemySpecies(Species.RATTATA)
       .enemyLevel(100)
       .enemyMoveset([Moves.HOWL, Moves.HOWL, Moves.HOWL, Moves.HOWL])
@@ -71,7 +71,7 @@ describe("Moves - Freezy Frost", () => {
   });
 
   it("should clear all stat changes in double battle", async () => {
-    game.override.battleType("double");
+    game.override.battleStyle("double");
     await game.classicMode.startBattle([Species.SHUCKLE, Species.RATTATA]);
     const [leftPlayer, rightPlayer] = game.scene.getPlayerField();
     const [leftOpp, rightOpp] = game.scene.getEnemyField();

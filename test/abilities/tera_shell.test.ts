@@ -24,7 +24,7 @@ describe("Abilities - Tera Shell", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .battleType("single")
+      .battleStyle("single")
       .ability(Abilities.TERA_SHELL)
       .moveset([Moves.SPLASH])
       .enemySpecies(Species.SNORLAX)

@@ -28,7 +28,7 @@ describe("Moves - Fly", () => {
     game = new GameManager(phaserGame);
     game.override
       .moveset(Moves.FLY)
-      .battleType("single")
+      .battleStyle("single")
       .startingLevel(100)
       .enemySpecies(Species.SNORLAX)
       .enemyLevel(100)

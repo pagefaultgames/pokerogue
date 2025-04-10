@@ -25,7 +25,7 @@ describe("Abilities - Wandering Spirit", () => {
     game.override
       .moveset([Moves.SPLASH])
       .ability(Abilities.WANDERING_SPIRIT)
-      .battleType("single")
+      .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)

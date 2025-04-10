@@ -34,7 +34,7 @@ describe("Moves - Tera Blast", () => {
     game = new GameManager(phaserGame);
 
     game.override
-      .battleType("single")
+      .battleStyle("single")
       .disableCrits()
       .starterSpecies(Species.FEEBAS)
       .moveset([Moves.TERA_BLAST])

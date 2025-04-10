@@ -25,7 +25,7 @@ describe("Items - Light Ball", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
 
-    game.override.battleType("single");
+    game.override.battleStyle("single");
   });
 
   it("LIGHT_BALL activates in battle correctly", async () => {

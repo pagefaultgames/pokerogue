@@ -25,7 +25,7 @@ describe("Items - Metal Powder", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
 
-    game.override.battleType("single");
+    game.override.battleStyle("single");
   });
 
   it("METAL_POWDER activates in battle correctly", async () => {

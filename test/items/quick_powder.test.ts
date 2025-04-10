@@ -25,7 +25,7 @@ describe("Items - Quick Powder", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
 
-    game.override.battleType("single");
+    game.override.battleStyle("single");
   });
 
   it("QUICK_POWDER activates in battle correctly", async () => {

@@ -23,7 +23,7 @@ describe("Moves - Spikes", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .battleType("single")
+      .battleStyle("single")
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)
       .ability(Abilities.BALL_FETCH)
@@ -81,7 +81,7 @@ describe("Moves - Spikes", () => {
 
   it("should work when all targets fainted", async () => {
     game.override.enemySpecies(Species.DIGLETT);
-    game.override.battleType("double");
+    game.override.battleStyle("double");
     game.override.startingLevel(50);
     await game.classicMode.startBattle([Species.RAYQUAZA, Species.ROWLET]);
 

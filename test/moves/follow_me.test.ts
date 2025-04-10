@@ -24,7 +24,7 @@ describe("Moves - Follow Me", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleType("double");
+    game.override.battleStyle("double");
     game.override.starterSpecies(Species.AMOONGUSS);
     game.override.ability(Abilities.BALL_FETCH);
     game.override.enemySpecies(Species.SNORLAX);

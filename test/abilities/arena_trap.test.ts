@@ -32,7 +32,7 @@ describe("Abilities - Arena Trap", () => {
 
   // TODO: Enable test when Issue #935 is addressed
   it.todo("should not allow grounded Pokémon to flee", async () => {
-    game.override.battleType("single");
+    game.override.battleStyle("single");
 
     await game.classicMode.startBattle();
 
@@ -61,7 +61,7 @@ describe("Abilities - Arena Trap", () => {
    */
   it("should lift if pokemon with this ability leaves the field", async () => {
     game.override
-      .battleType("double")
+      .battleStyle("double")
       .enemyMoveset(Moves.SPLASH)
       .moveset([Moves.ROAR, Moves.SPLASH])
       .ability(Abilities.BALL_FETCH);
