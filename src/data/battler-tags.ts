@@ -1,4 +1,5 @@
 import { globalScene } from "#app/global-scene";
+import Overrides from "#app/overrides";
 import {
   applyAbAttrs,
   BlockNonDirectDamageAbAttr,
@@ -739,31 +740,33 @@ export class ConfusedTag extends BattlerTag {
   }
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
-    const ret = lapseType !== BattlerTagLapseType.CUSTOM && super.lapse(pokemon, lapseType);
+    const shouldLapse = lapseType !== BattlerTagLapseType.CUSTOM && super.lapse(pokemon, lapseType);
 
-    if (ret) {
-      globalScene.queueMessage(
-        i18next.t("battlerTags:confusedLapse", {
-          pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-        }),
-      );
-      globalScene.unshiftPhase(new CommonAnimPhase(pokemon.getBattlerIndex(), undefined, CommonAnim.CONFUSION));
-
-      // 1/3 chance of hitting self with a 40 base power move
-      if (pokemon.randSeedInt(3) === 0) {
-        const atk = pokemon.getEffectiveStat(Stat.ATK);
-        const def = pokemon.getEffectiveStat(Stat.DEF);
-        const damage = toDmgValue(
-          ((((2 * pokemon.level) / 5 + 2) * 40 * atk) / def / 50 + 2) * (pokemon.randSeedIntRange(85, 100) / 100),
-        );
-        globalScene.queueMessage(i18next.t("battlerTags:confusedLapseHurtItself"));
-        pokemon.damageAndUpdate(damage, { result: HitResult.CONFUSION });
-        pokemon.battleData.hitCount++;
-        (globalScene.getCurrentPhase() as MovePhase).cancel();
-      }
+    if (!shouldLapse) {
+      return false;
     }
 
-    return ret;
+    globalScene.queueMessage(
+      i18next.t("battlerTags:confusedLapse", {
+        pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+      }),
+    );
+    globalScene.unshiftPhase(new CommonAnimPhase(pokemon.getBattlerIndex(), undefined, CommonAnim.CONFUSION));
+
+    // 1/3 chance of hitting self with a 40 base power move
+    if (pokemon.randSeedInt(3) === 0 || Overrides.CONFUSION_ACTIVATION_OVERRIDE === true) {
+      const atk = pokemon.getEffectiveStat(Stat.ATK);
+      const def = pokemon.getEffectiveStat(Stat.DEF);
+      const damage = toDmgValue(
+        ((((2 * pokemon.level) / 5 + 2) * 40 * atk) / def / 50 + 2) * (pokemon.randSeedIntRange(85, 100) / 100),
+      );
+      // Intentionally don't increment rage fist's hitCount
+      globalScene.queueMessage(i18next.t("battlerTags:confusedLapseHurtItself"));
+      pokemon.damageAndUpdate(damage, { result: HitResult.CONFUSION });
+      (globalScene.getCurrentPhase() as MovePhase).cancel();
+    }
+
+    return true;
   }
 
   getDescriptor(): string {

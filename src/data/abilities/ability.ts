@@ -3278,13 +3278,13 @@ export class ConditionalUserFieldStatusEffectImmunityAbAttr extends UserFieldSta
 
 /**
  * Conditionally provides immunity to stat drop effects to the user's field.
- * 
+ *
  * Used by {@linkcode Abilities.FLOWER_VEIL | Flower Veil}.
  */
 export class ConditionalUserFieldProtectStatAbAttr extends PreStatStageChangeAbAttr {
   /** {@linkcode BattleStat} to protect or `undefined` if **all** {@linkcode BattleStat} are protected */
   protected protectedStat?: BattleStat;
-  
+
   /** If the method evaluates to true, the stat will be protected. */
   protected condition: (target: Pokemon) => boolean;
 
@@ -3301,7 +3301,7 @@ export class ConditionalUserFieldProtectStatAbAttr extends PreStatStageChangeAbA
    * @param stat The stat being affected
    * @param cancelled Holds whether the stat change was already prevented.
    * @param args Args[0] is the target pokemon of the stat change.
-   * @returns 
+   * @returns
    */
   override canApplyPreStatStageChange(pokemon: Pokemon, passive: boolean, simulated: boolean, stat: BattleStat, cancelled: BooleanHolder, args: [Pokemon, ...any]): boolean {
     const target = args[0];
@@ -3433,7 +3433,7 @@ export class BonusCritAbAttr extends AbAttr {
 
   /**
    * Apply the bonus crit ability by increasing the value in the provided number holder by 1
-   * 
+   *
    * @param pokemon The pokemon with the BonusCrit ability (unused)
    * @param passive Unused
    * @param simulated Unused
@@ -3586,7 +3586,7 @@ export class PreWeatherEffectAbAttr extends AbAttr {
     args: any[]): boolean {
     return true;
   }
-  
+
   applyPreWeatherEffect(
     pokemon: Pokemon,
     passive: boolean,
@@ -3727,7 +3727,7 @@ function getAnticipationCondition(): AbAttrCondition {
  */
 function getOncePerBattleCondition(ability: Abilities): AbAttrCondition {
   return (pokemon: Pokemon) => {
-    return !pokemon.battleData?.abilitiesApplied.includes(ability);
+    return !pokemon.waveData.abilitiesApplied.includes(ability);
   };
 }
 
@@ -4065,7 +4065,8 @@ export class PostTurnLootAbAttr extends PostTurnAbAttr {
   override canApplyPostTurn(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
     // Clamp procChance to [0, 1]. Skip if didn't proc (less than pass)
     const pass = Phaser.Math.RND.realInRange(0, 1);
-    return !(Math.max(Math.min(this.procChance(pokemon), 1), 0) < pass) && this.itemType === "EATEN_BERRIES" && !!pokemon.battleData.berriesEaten;
+    console.log("apply check ran; worked: ", Math.max(Math.min(this.procChance(pokemon), 1), 0) >= pass && this.itemType === "EATEN_BERRIES");
+    return Math.max(Math.min(this.procChance(pokemon), 1), 0) >= pass && this.itemType === "EATEN_BERRIES";
   }
 
   override applyPostTurn(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): void {
@@ -4079,11 +4080,22 @@ export class PostTurnLootAbAttr extends PostTurnAbAttr {
    * @returns whether a new berry was created
    */
   createEatenBerry(pokemon: Pokemon, simulated: boolean): boolean {
-    const berriesEaten = pokemon.battleData.berriesEaten;
+    const berriesUnderCap = new Set(
+      globalScene.getModifiers(BerryModifier, pokemon.isPlayer()).filter(
+        // get all berry modifiers for this mon that are under cap
+        (bm) => bm.pokemonId == pokemon.id && bm.getMaxStackCount() < bm.getStackCount()
+      ).map((bm) => bm.berryType)
+    );
+
+    const berriesEaten = pokemon.battleData.berriesEaten.filter(
+      (bt) => berriesUnderCap.has(bt)
+    );
 
     if (!berriesEaten.length) {
+      console.log("NOPE!")
       return false;
     }
+    console.log("YUP!")
 
     if (simulated) {
       return true;
@@ -4095,7 +4107,7 @@ export class PostTurnLootAbAttr extends PostTurnAbAttr {
     berriesEaten.splice(randomIdx); // Remove berry from memory
 
     const berryModifier = globalScene.findModifier(
-      (m) => m instanceof BerryModifier && m.berryType === chosenBerryType,
+      (m) => m instanceof BerryModifier && m.berryType === chosenBerryType && m.pokemonId == pokemon.id,
       pokemon.isPlayer()
     ) as BerryModifier | undefined;
 
@@ -4548,7 +4560,8 @@ export class CheckTrappedAbAttr extends AbAttr {
     simulated: boolean,
     trapped: BooleanHolder,
     otherPokemon: Pokemon,
-    args: any[]): boolean {
+    args: any[],
+  ): boolean {
     return true;
   }
 
@@ -4978,7 +4991,8 @@ export class IgnoreTypeImmunityAbAttr extends AbAttr {
 }
 
 /**
- * Ignores the type immunity to Status Effects of the defender if the defender is of a certain type
+ * Attribute to ignore type-based immunities to Status Effect if the defender is of a certain type.
+ * Used by {@linkcode Abilities.CORROSION}.
  */
 export class IgnoreTypeStatusEffectImmunityAbAttr extends AbAttr {
   private statusEffect: StatusEffect[];
@@ -5416,8 +5430,8 @@ function applySingleAbAttrs<TAttr extends AbAttr>(
     if (pokemon.summonData && !pokemon.summonData.abilitiesApplied.includes(ability.id)) {
       pokemon.summonData.abilitiesApplied.push(ability.id);
     }
-    if (pokemon.battleData && !simulated && !pokemon.battleData.abilitiesApplied.includes(ability.id)) {
-      pokemon.battleData.abilitiesApplied.push(ability.id);
+    if (pokemon.battleData && !simulated && !pokemon.waveData.abilitiesApplied.includes(ability.id)) {
+      pokemon.waveData.abilitiesApplied.push(ability.id);
     }
 
     globalScene.clearPhaseQueueSplice();
@@ -6286,12 +6300,12 @@ export function applyOnLoseAbAttrs(pokemon: Pokemon, passive = false, simulated 
  */
 function setAbilityRevealed(pokemon: Pokemon): void {
   if (pokemon.battleData) {
-    pokemon.battleData.abilityRevealed = true;
+    pokemon.waveData.abilityRevealed = true;
   }
 }
 
 /**
- * Returns the Pokemon with weather-based forms
+ * Returns qll Pokemon on field with weather-based forms
  */
 function getPokemonWithWeatherBasedForms() {
   return globalScene.getField(true).filter(p =>

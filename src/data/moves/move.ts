@@ -649,7 +649,7 @@ export default class Move implements Localizable {
         break;
       case MoveFlags.IGNORE_ABILITIES:
         if (user.hasAbilityWithAttr(MoveAbilityBypassAbAttr)) {
-          const abilityEffectsIgnored = new BooleanHolder(false); 
+          const abilityEffectsIgnored = new BooleanHolder(false);
           applyAbAttrs(MoveAbilityBypassAbAttr, user, abilityEffectsIgnored, false, this);
           if (abilityEffectsIgnored.value) {
             return true;
@@ -2706,6 +2706,9 @@ export class EatBerryAttr extends MoveEffectAttr {
   }
 
   eatBerry(consumer: Pokemon, berryOwner?: Pokemon) {
+    // Update consumer's battle data to record berries eaten
+    consumer.battleData.berriesEaten.push(this.chosenBerry!.berryType)
+    consumer.battleData.berriesEatenLast.push(this.chosenBerry!.berryType)
     getBerryEffectFunc(this.chosenBerry!.berryType)(consumer, berryOwner); // consumer eats the berry
     applyAbAttrs(HealFromBerryUseAbAttr, consumer, new BooleanHolder(false));
   }
@@ -4119,30 +4122,23 @@ export class FriendshipPowerAttr extends VariablePowerAttr {
 
 /**
  * This Attribute calculates the current power of {@linkcode Moves.RAGE_FIST}.
- * The counter for power calculation does not reset on every wave but on every new arena encounter
+ * The counter for power calculation does not reset on every wave but on every new arena encounter.
+ * Self-inflicted confusion damage and hits taken by a Subsitute are ignored.
  */
 export class RageFistPowerAttr extends VariablePowerAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const { hitCount, prevHitCount } = user.battleData;
+    /* Reasons this works correctly:
+     * Confusion calls user.damageAndUpdate() directly (no counter increment),
+     * Substitute hits call user.damageAndUpdate() with a damage value of 0, also causing
+      no counter increment
+    */
+    const hitCount = user.battleData.hitCount;
     const basePower: NumberHolder = args[0];
 
-    this.updateHitReceivedCount(user, hitCount, prevHitCount);
-
-    basePower.value = 50 + (Math.min(user.customPokemonData.hitsRecCount, 6) * 50);
-
+    basePower.value = 50 * (1 + Math.min(hitCount, 6));
     return true;
   }
 
-  /**
-   * Updates the number of hits the Pokemon has taken in battle
-   * @param user Pokemon calling Rage Fist
-   * @param hitCount The number of received hits this battle
-   * @param previousHitCount The number of received hits this battle since last time Rage Fist was used
-   */
-  protected updateHitReceivedCount(user: Pokemon, hitCount: number, previousHitCount: number): void {
-    user.customPokemonData.hitsRecCount += (hitCount - previousHitCount);
-    user.battleData.prevHitCount = hitCount;
-  }
 }
 
 /**
@@ -8034,7 +8030,7 @@ export class MoveCondition {
 
 export class FirstMoveCondition extends MoveCondition {
   constructor() {
-    super((user, target, move) => user.battleSummonData?.waveTurnCount === 1);
+    super((user, target, move) => user.summonData?.waveTurnCount === 1);
   }
 
   getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
@@ -10005,7 +10001,7 @@ export function initMoves() {
       .condition(new FirstMoveCondition())
       .condition(failIfLastCondition),
     new AttackMove(Moves.BELCH, PokemonType.POISON, MoveCategory.SPECIAL, 120, 90, 10, -1, 0, 6)
-      .condition((user, target, move) => user.battleData.berriesEaten.length > 0),
+      .condition((user, target, move) => user.battleData.hasEatenBerry),
     new StatusMove(Moves.ROTOTILLER, PokemonType.GROUND, -1, 10, -1, 0, 6)
       .target(MoveTarget.ALL)
       .condition((user, target, move) => {

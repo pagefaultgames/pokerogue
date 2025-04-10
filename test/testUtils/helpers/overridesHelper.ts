@@ -147,7 +147,8 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the player's starting modifiers
+   * Override the player's starting modifiers.
+   * ** SHOULD NOT BE USED ON ITEMS ** - use {@linkcode startingHeldItems} instead
    * @param modifiers the modifiers to set
    * @returns `this`
    */
@@ -487,6 +488,21 @@ export class OverridesHelper extends GameManagerHelper {
       this.log(`Paralysis and Freeze forced to ${activate ? "always" : "never"} activate!`);
     } else {
       this.log("Status activation override disabled!");
+    }
+    return this;
+  }
+
+  /**
+   * Override confusion to always or never activate
+   * @param activate - `true` to force activation, `false` to force no activation, `null` to disable the override
+   * @returns `this`
+   */
+  public confusionActivation(activate: boolean | null): this {
+    vi.spyOn(Overrides, "CONFUSION_ACTIVATION_OVERRIDE", "get").mockReturnValue(activate);
+    if (activate !== null) {
+      this.log(`Confusion forced to ${activate ? "always" : "never"} activate!`);
+    } else {
+      this.log("Confusion activation override disabled!");
     }
     return this;
   }

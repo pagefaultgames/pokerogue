@@ -77,9 +77,6 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
     case BerryType.SITRUS:
     case BerryType.ENIGMA:
       return (pokemon: Pokemon, berryOwner?: Pokemon) => {
-        if (pokemon.battleData) {
-          pokemon.battleData.berriesEaten.push(berryType);
-        }
         const hpHealed = new NumberHolder(toDmgValue(pokemon.getMaxHp() / 4));
         applyAbAttrs(DoubleBerryEffectAbAttr, pokemon, null, false, hpHealed);
         globalScene.unshiftPhase(
@@ -97,9 +94,6 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
       };
     case BerryType.LUM:
       return (pokemon: Pokemon, berryOwner?: Pokemon) => {
-        if (pokemon.battleData) {
-          pokemon.battleData.berriesEaten.push(berryType);
-        }
         if (pokemon.status) {
           globalScene.queueMessage(getStatusEffectHealText(pokemon.status.effect, getPokemonNameWithAffix(pokemon)));
         }
@@ -113,9 +107,6 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
     case BerryType.APICOT:
     case BerryType.SALAC:
       return (pokemon: Pokemon, berryOwner?: Pokemon) => {
-        if (pokemon.battleData) {
-          pokemon.battleData.berriesEaten.push(berryType);
-        }
         // Offset BerryType such that LIECHI -> Stat.ATK = 1, GANLON -> Stat.DEF = 2, so on and so forth
         const stat: BattleStat = berryType - BerryType.ENIGMA;
         const statStages = new NumberHolder(1);
@@ -125,17 +116,11 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
       };
     case BerryType.LANSAT:
       return (pokemon: Pokemon, berryOwner?: Pokemon) => {
-        if (pokemon.battleData) {
-          pokemon.battleData.berriesEaten.push(berryType);
-        }
         pokemon.addTag(BattlerTagType.CRIT_BOOST);
         applyPostItemLostAbAttrs(PostItemLostAbAttr, berryOwner ?? pokemon, false);
       };
     case BerryType.STARF:
       return (pokemon: Pokemon, berryOwner?: Pokemon) => {
-        if (pokemon.battleData) {
-          pokemon.battleData.berriesEaten.push(berryType);
-        }
         const randStat = randSeedInt(Stat.SPD, Stat.ATK);
         const stages = new NumberHolder(2);
         applyAbAttrs(DoubleBerryEffectAbAttr, pokemon, null, false, stages);
@@ -144,9 +129,6 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
       };
     case BerryType.LEPPA:
       return (pokemon: Pokemon, berryOwner?: Pokemon) => {
-        if (pokemon.battleData) {
-          pokemon.battleData.berriesEaten.push(berryType);
-        }
         const ppRestoreMove = pokemon.getMoveset().find(m => !m.getPpRatio())
           ? pokemon.getMoveset().find(m => !m.getPpRatio())
           : pokemon.getMoveset().find(m => m.getPpRatio() < 1);

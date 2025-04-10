@@ -60,7 +60,7 @@ export const modifierSortFunc = (a: Modifier, b: Modifier): number => {
   const aId = a instanceof PokemonHeldItemModifier && a.pokemonId ? a.pokemonId : 4294967295;
   const bId = b instanceof PokemonHeldItemModifier && b.pokemonId ? b.pokemonId : 4294967295;
 
-  //First sort by pokemonID
+  // First sort by pokemonID
   if (aId < bId) {
     return 1;
   }
@@ -746,6 +746,10 @@ export abstract class PokemonHeldItemModifier extends PersistentModifier {
         .reduce((stackCount: number, maxStackCount: number) => Math.max(stackCount, maxStackCount), 0);
     }
     return this.getMaxHeldItemCount(pokemon);
+  }
+
+  getCountUnderMax(forThreshold?: boolean): number {
+    return this.getMaxStackCount(forThreshold) - this.getStackCount();
   }
 
   abstract getMaxHeldItemCount(pokemon?: Pokemon): number;
@@ -1644,8 +1648,8 @@ export class FlinchChanceModifier extends PokemonHeldItemModifier {
    * @returns `true` if {@linkcode FlinchChanceModifier} has been applied
    */
   override apply(pokemon: Pokemon, flinched: BooleanHolder): boolean {
-    // The check for pokemon.battleSummonData is to ensure that a crash doesn't occur when a Pokemon with King's Rock procs a flinch
-    if (pokemon.battleSummonData && !flinched.value && pokemon.randSeedInt(100) < this.getStackCount() * this.chance) {
+    // The check for pokemon.summonData is to ensure that a crash doesn't occur when a Pokemon with King's Rock procs a flinch
+    if (pokemon.summonData && !flinched.value && pokemon.randSeedInt(100) < this.getStackCount() * this.chance) {
       flinched.value = true;
       return true;
     }
@@ -3715,13 +3719,13 @@ export class EnemyEndureChanceModifier extends EnemyPersistentModifier {
    * @returns `true` if {@linkcode Pokemon} endured
    */
   override apply(target: Pokemon): boolean {
-    if (target.battleData.endured || target.randSeedInt(100) >= this.chance * this.getStackCount()) {
+    if (target.waveData.endured || target.randSeedInt(100) >= this.chance * this.getStackCount()) {
       return false;
     }
 
     target.addTag(BattlerTagType.ENDURE_TOKEN, 1);
 
-    target.battleData.endured = true;
+    target.waveData.endured = true;
 
     return true;
   }

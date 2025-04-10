@@ -14,8 +14,6 @@ export class CustomPokemonData {
   public passive: Abilities | -1;
   public nature: Nature | -1;
   public types: PokemonType[];
-  /** `hitsReceivedCount` aka `hitsRecCount` saves how often the pokemon got hit until a new arena encounter (used for Rage Fist) */
-  public hitsRecCount: number;
 
   constructor(data?: CustomPokemonData | Partial<CustomPokemonData>) {
     if (!isNullOrUndefined(data)) {
@@ -27,10 +25,5 @@ export class CustomPokemonData {
     this.passive = this.passive ?? -1;
     this.nature = this.nature ?? -1;
     this.types = this.types ?? [];
-    this.hitsRecCount = this.hitsRecCount ?? 0;
-  }
-
-  resetHitReceivedCount(): void {
-    this.hitsRecCount = 0;
   }
 }

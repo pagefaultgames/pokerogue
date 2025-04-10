@@ -1465,10 +1465,12 @@ export default class BattleScene extends SceneBase {
       const isWaveIndexMultipleOfFiftyMinusOne = lastBattle.waveIndex % 50 === 49;
       const isNewBiome =
         isWaveIndexMultipleOfTen || isEndlessFifthWave || (isEndlessOrDaily && isWaveIndexMultipleOfFiftyMinusOne);
+      /** Whether to reset and recall pokemon*/
       const resetArenaState =
         isNewBiome ||
         [BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER].includes(this.currentBattle.battleType) ||
         this.currentBattle.battleSpec === BattleSpec.FINAL_BOSS;
+
       for (const enemyPokemon of this.getEnemyParty()) {
         enemyPokemon.destroy();
       }
@@ -1476,6 +1478,8 @@ export default class BattleScene extends SceneBase {
       if (!isNewBiome && newWaveIndex % 10 === 5) {
         this.arena.updatePoolsForTimeOfDay();
       }
+
+      // If this is a new trainer battle or biome, recall player pokemon and reset all temporary effects
       if (resetArenaState) {
         this.arena.resetArenaEffects();
 
@@ -2855,7 +2859,7 @@ export default class BattleScene extends SceneBase {
       // adds to the end of PhaseQueuePrepend
       this.unshiftPhase(phase);
     } else {
-      //remember that pushPhase adds it to nextCommandPhaseQueue
+      // remember that pushPhase adds it to nextCommandPhaseQueue
       this.pushPhase(phase);
     }
   }
@@ -3043,70 +3047,64 @@ export default class BattleScene extends SceneBase {
     itemLost = true,
   ): boolean {
     const source = itemModifier.pokemonId ? itemModifier.getPokemon() : null;
-    const cancelled = new BooleanHolder(false);
 
+    // Check for effects that might block us from stealing
+    const cancelled = new BooleanHolder(false);
     if (source && source.isPlayer() !== target.isPlayer()) {
       applyAbAttrs(BlockItemTheftAbAttr, source, cancelled);
     }
-
     if (cancelled.value) {
       return false;
     }
 
+    // Create a new modifier for the reciever with the extra items
     const newItemModifier = itemModifier.clone() as PokemonHeldItemModifier;
     newItemModifier.pokemonId = target.id;
     const matchingModifier = this.findModifier(
       m => m instanceof PokemonHeldItemModifier && m.matchType(itemModifier) && m.pokemonId === target.id,
       target.isPlayer(),
-    ) as PokemonHeldItemModifier;
+    ) as PokemonHeldItemModifier | undefined;
 
-    if (matchingModifier) {
-      const maxStackCount = matchingModifier.getMaxStackCount();
-      if (matchingModifier.stackCount >= maxStackCount) {
-        return false;
-      }
-      const countTaken = Math.min(
-        transferQuantity,
-        itemModifier.stackCount,
-        maxStackCount - matchingModifier.stackCount,
-      );
-      itemModifier.stackCount -= countTaken;
-      newItemModifier.stackCount = matchingModifier.stackCount + countTaken;
+    const countTaken = Math.min(
+      transferQuantity,
+      itemModifier.stackCount,
+      matchingModifier?.getCountUnderMax() ?? Number.MAX_SAFE_INTEGER,
+    );
+
+    if (countTaken <= 0) {
+      // Can't transfer negative items
+      return false;
+    }
+
+    itemModifier.stackCount -= countTaken;
+    newItemModifier.stackCount = (matchingModifier?.stackCount ?? 0) + countTaken;
+
+    if (source && source.isPlayer() !== target.isPlayer() && !ignoreUpdate) {
+      this.updateModifiers(source.isPlayer(), instant);
+    }
+
+    // If the old modifier is at 0 stacks, try and remove it
+    if (itemModifier.stackCount <= 0 && source && !this.removeModifier(itemModifier, !source.isPlayer())) {
+      // Can't remove the prior modifier for whatever reason
+      return false;
+    }
+
+    // Add the new modifier to the recieving pokemon, overriding the prior one as applicable
+    if (matchingModifier && !this.removeModifier(matchingModifier, !target.isPlayer())) {
+      return false;
+    }
+
+    if (target.isPlayer()) {
+      this.addModifier(newItemModifier, ignoreUpdate, playSound, false, instant);
     } else {
-      const countTaken = Math.min(transferQuantity, itemModifier.stackCount);
-      itemModifier.stackCount -= countTaken;
-      newItemModifier.stackCount = countTaken;
+      this.addEnemyModifier(newItemModifier, ignoreUpdate, instant);
     }
 
-    const removeOld = itemModifier.stackCount === 0;
-
-    if (!removeOld || !source || this.removeModifier(itemModifier, !source.isPlayer())) {
-      const addModifier = () => {
-        if (!matchingModifier || this.removeModifier(matchingModifier, !target.isPlayer())) {
-          if (target.isPlayer()) {
-            this.addModifier(newItemModifier, ignoreUpdate, playSound, false, instant);
-            if (source && itemLost) {
-              applyPostItemLostAbAttrs(PostItemLostAbAttr, source, false);
-            }
-            return true;
-          }
-          this.addEnemyModifier(newItemModifier, ignoreUpdate, instant);
-          if (source && itemLost) {
-            applyPostItemLostAbAttrs(PostItemLostAbAttr, source, false);
-          }
-          return true;
-        }
-        return false;
-      };
-      if (source && source.isPlayer() !== target.isPlayer() && !ignoreUpdate) {
-        this.updateModifiers(source.isPlayer(), instant);
-        addModifier();
-      } else {
-        addModifier();
-      }
-      return true;
+    if (source && itemLost) {
+      applyPostItemLostAbAttrs(PostItemLostAbAttr, source, false);
     }
-    return false;
+
+    return true;
   }
 
   canTransferHeldItemModifier(itemModifier: PokemonHeldItemModifier, target: Pokemon, transferQuantity = 1): boolean {

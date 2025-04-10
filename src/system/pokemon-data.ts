@@ -5,7 +5,7 @@ import type { Nature } from "#enums/nature";
 import type { PokeballType } from "#enums/pokeball";
 import { getPokemonSpecies, getPokemonSpeciesForm } from "../data/pokemon-species";
 import { Status } from "../data/status-effect";
-import Pokemon, { EnemyPokemon, PokemonMove, PokemonSummonData } from "../field/pokemon";
+import Pokemon, { EnemyPokemon, PokemonMove, PokemonSummonData, type PokemonBattleData } from "../field/pokemon";
 import { TrainerSlot } from "#enums/trainer-slot";
 import type { Variant } from "#app/sprites/variant";
 import { loadBattlerTag } from "../data/battler-tags";
@@ -63,13 +63,15 @@ export default class PokemonData {
   public bossSegments?: number;
 
   public summonData: PokemonSummonData;
+  public battleData: PokemonBattleData;
   public summonDataSpeciesFormIndex: number;
 
   /** Data that can customize a Pokemon in non-standard ways from its Species */
   public customPokemonData: CustomPokemonData;
   public fusionCustomPokemonData: CustomPokemonData;
 
-  // Deprecated attributes, needed for now to allow SessionData migration (see PR#4619 comments)
+  // Deprecated attributes, needed for now to allow SessionData migration (see PR#4619 comments).
+  // TODO: These can probably be safely deleted (what with the upgrade scripts and all)
   public natureOverride: Nature | -1;
   public mysteryEncounterPokemonData: CustomPokemonData | null;
   public fusionMysteryEncounterPokemonData: CustomPokemonData | null;
@@ -90,13 +92,7 @@ export default class PokemonData {
     this.pokeball = source.pokeball;
     this.level = source.level;
     this.exp = source.exp;
-    if (!forHistory) {
-      this.levelExp = source.levelExp;
-    }
     this.gender = source.gender;
-    if (!forHistory) {
-      this.hp = source.hp;
-    }
     this.stats = source.stats;
     this.ivs = source.ivs;
     this.nature = source.nature !== undefined ? source.nature : (0 as Nature);
@@ -107,10 +103,6 @@ export default class PokemonData {
     this.metSpecies = source.metSpecies;
     this.metWave = source.metWave ?? (this.metBiome === -1 ? -1 : 0);
     this.luck = source.luck !== undefined ? source.luck : source.shiny ? source.variant + 1 : 0;
-    if (!forHistory) {
-      this.pauseEvolutions = !!source.pauseEvolutions;
-      this.evoCounter = source.evoCounter ?? 0;
-    }
     this.pokerus = !!source.pokerus;
     this.teraType = source.teraType as PokemonType;
     this.isTerastallized = source.isTerastallized || false;
@@ -144,6 +136,12 @@ export default class PokemonData {
       : null;
 
     if (!forHistory) {
+      this.levelExp = source.levelExp;
+      this.hp = source.hp;
+
+      this.pauseEvolutions = !!source.pauseEvolutions;
+      this.evoCounter = source.evoCounter ?? 0;
+
       this.boss = (source instanceof EnemyPokemon && !!source.bossSegments) || (!this.player && !!source.boss);
       this.bossSegments = source.bossSegments;
     }
@@ -155,6 +153,9 @@ export default class PokemonData {
         if (this.player && sourcePokemon.summonData) {
           this.summonData = sourcePokemon.summonData;
           this.summonDataSpeciesFormIndex = this.getSummonDataSpeciesFormIndex();
+        }
+        if (this.player && sourcePokemon.battleData) {
+          this.battleData = sourcePokemon.battleData;
         }
       }
     } else {

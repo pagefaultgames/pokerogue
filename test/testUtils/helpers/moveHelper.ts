@@ -104,6 +104,17 @@ export class MoveHelper extends GameManagerHelper {
   }
 
   /**
+   * Forces the Confusion status to activate on the next move by temporarily mocking {@linkcode Overrides.CONFUSION_ACTIVATION_OVERRIDE},
+   * advancing to the next `MovePhase`, and then resetting the override to `null`
+   * @param activated - `true` to force the Pokemon to hit themself, `false` to forcibly disable it
+   */
+  public async forceConfusionActivation(activated: boolean): Promise<void> {
+    vi.spyOn(Overrides, "CONFUSION_ACTIVATION_OVERRIDE", "get").mockReturnValue(activated);
+    await this.game.phaseInterceptor.to("MovePhase");
+    vi.spyOn(Overrides, "CONFUSION_ACTIVATION_OVERRIDE", "get").mockReturnValue(null);
+  }
+
+  /**
    * Changes a pokemon's moveset to the given move(s).
    * Used when the normal moveset override can't be used (such as when it's necessary to check or update properties of the moveset).
    * @param pokemon - The {@linkcode Pokemon} being modified
