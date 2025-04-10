@@ -180,12 +180,15 @@ describe("Moves - Whirlwind", () => {
 
     game.move.select(Moves.SPLASH);
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.LUNAR_DANCE);
+    await game.forceEnemyMove(Moves.MEMENTO);
     await game.forceEnemyMove(Moves.SPLASH);
     await game.toNextTurn();
 
+    // Get the enemy pokemon id so we can check if is the same after switch.
+    const enemy_id = game.scene.getEnemyPokemon()!.id;
+
     // Hit the enemy that fainted with whirlwind.
-    game.move.select(Moves.WHIRLWIND, 0, BattlerIndex.ENEMY_2);
+    game.move.select(Moves.WHIRLWIND, 0, BattlerIndex.ENEMY);
     game.move.select(Moves.SPLASH, 1);
 
     await game.forceEnemyMove(Moves.SPLASH);
@@ -194,6 +197,22 @@ describe("Moves - Whirlwind", () => {
     await game.toNextTurn();
 
     // Expect the enemy pokemon to not have switched out.
-    expect(game.scene.getPlayerPokemon()!.getLastXMoves(1)[0].result).toBe(MoveResult.FAIL);
+    expect(game.scene.getEnemyPokemon()!.id).toBe(enemy_id);
+  });
+
+  it("should force a wild pokemon to flee", async () => {
+    game.override
+      .battleType(BattleType.WILD)
+      .moveset([Moves.WHIRLWIND, Moves.SPLASH])
+      .enemyMoveset(Moves.SPLASH)
+      .ability(Abilities.BALL_FETCH);
+    await game.classicMode.startBattle([Species.MAGIKARP]);
+
+    const user = game.scene.getPlayerPokemon()!;
+
+    game.move.select(Moves.WHIRLWIND);
+    await game.phaseInterceptor.to("BerryPhase");
+
+    expect(user.getLastXMoves(1)[0].result).toBe(MoveResult.SUCCESS);
   });
 });

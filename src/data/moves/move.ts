@@ -6230,10 +6230,8 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     // Check if the move category is not STATUS or if the switch out condition is not met
     if (!this.getSwitchOutCondition()(user, target, move)) {
-      console.log("=========== Switch out condition was false!===========");
       return false;
     }
-    console.log("=========== Switch out condition was true!===========");
 
     /** The {@linkcode Pokemon} to be switched out with this effect */
     const switchOutTarget = this.selfSwitch ? user : target;
@@ -6376,7 +6374,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
   }
 
   getCondition(): MoveConditionFunc {
-    return (user, target, move) => (move.category !== MoveCategory.STATUS || this.getSwitchOutCondition()(user, target, move));
+    return (user, target, move) => (move.category !== MoveCategory.STATUS || this.getSwitchOutCondition(true)(user, target, move));
   }
 
   getFailedText(_user: Pokemon, target: Pokemon, _move: Move): string | undefined {
@@ -6387,7 +6385,13 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
     }
   }
 
-  getSwitchOutCondition(): MoveConditionFunc {
+
+  /**
+   * Check if the switch out conditions are met.
+   * 
+   * @param preliminary - Whether to check for failure conditions that occur before the hit check (defaults to false)
+   */
+  getSwitchOutCondition(preliminary = false): MoveConditionFunc {
     return (user, target, move) => {
       const switchOutTarget = (this.selfSwitch ? user : target);
       const player = switchOutTarget instanceof PlayerPokemon;
@@ -6415,22 +6419,21 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
         }
       }
 
+      if (preliminary) {
+        return true;
+      }
+
       if (!player && globalScene.currentBattle.battleType === BattleType.WILD) {
-        // Prevent wild pokemon fr
-        return !(this.isBatonPass()
-            // Don't allow boss waves of wild pokemon to flee
-            && globalScene.currentBattle.waveIndex % 10 === 0
-            // Don't allow wild mons to flee with U-turn et al.
-            && this.selfSwitch && move.category !== MoveCategory.STATUS)
+        // wild pokemon cannot switch out with baton pass.
+        return !this.isBatonPass()
+                && globalScene.currentBattle.waveIndex % 10 !== 0
+                // Don't allow wild mons to flee with U-turn et al.
+                && !(this.selfSwitch && MoveCategory.STATUS !== move.category);
       }
 
       const party = player ? globalScene.getPlayerParty() : globalScene.getEnemyParty();
-      // Determine if this is a
-      const currentBattle = globalScene.currentBattle;
-      // If the trainer battle is a partner, then they can switch out as long as they have at least one pokemon in the back
-      const MIN_BATTLE_COUNT = (!player && currentBattle.trainer?.variant === TrainerVariant.DOUBLE) ? 1 : currentBattle.getBattlerCount();
-      return party.filter(p => p.isAllowedInBattle()
-          && (player || (p as EnemyPokemon).trainerSlot === (switchOutTarget as EnemyPokemon).trainerSlot)).length > MIN_BATTLE_COUNT;
+      return party.filter(p => p.isAllowedInBattle() && !p.isOnField()
+          && (player || (p as EnemyPokemon).trainerSlot === (switchOutTarget as EnemyPokemon).trainerSlot)).length > 0;
     };
   }
 
