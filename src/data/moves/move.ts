@@ -6297,7 +6297,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
       // Find indices of off-field Pokemon that are eligible to be switched into
       const eligibleNewIndices: number[] = [];
       globalScene.getEnemyParty().forEach((pokemon, index) => {
-        if (pokemon.isAllowedInBattle() && !pokemon.isOnField()) {
+        if (pokemon.isAllowedInBattle() && !pokemon.isOnField() && (pokemon as EnemyPokemon).trainerSlot === (switchOutTarget as EnemyPokemon).trainerSlot) {
           eligibleNewIndices.push(index);
         }
       });
