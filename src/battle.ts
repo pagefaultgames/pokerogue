@@ -30,6 +30,7 @@ import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import type { CustomModifierSettings } from "#app/modifier/modifier-type";
 import { ModifierTier } from "#app/modifier/modifier-tier";
 import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import { BattleType } from "#enums/battle-type";
 
 export enum ClassicFixedBossWaves {
   TOWN_YOUNGSTER = 5,
@@ -52,13 +53,6 @@ export enum ClassicFixedBossWaves {
   ELITE_FOUR_4 = 188,
   CHAMPION = 190,
   RIVAL_6 = 195,
-}
-
-export enum BattleType {
-  WILD,
-  TRAINER,
-  CLEAR,
-  MYSTERY_ENCOUNTER,
 }
 
 export enum BattlerIndex {

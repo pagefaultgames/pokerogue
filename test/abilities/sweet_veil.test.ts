@@ -25,7 +25,7 @@ describe("Abilities - Sweet Veil", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleType("double");
+    game.override.battleStyle("double");
     game.override.moveset([Moves.SPLASH, Moves.REST, Moves.YAWN]);
     game.override.enemySpecies(Species.MAGIKARP);
     game.override.enemyAbility(Abilities.BALL_FETCH);

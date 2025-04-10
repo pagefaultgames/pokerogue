@@ -30,7 +30,7 @@ describe("Items - Temporary Stat Stage Boosters", () => {
     game = new GameManager(phaserGame);
 
     game.override
-      .battleType("single")
+      .battleStyle("single")
       .enemySpecies(Species.SHUCKLE)
       .enemyMoveset(Moves.SPLASH)
       .enemyAbility(Abilities.BALL_FETCH)

@@ -9,7 +9,7 @@ import { formatLargeNumber, getPlayTimeString, formatMoney, formatFancyLargeNumb
 import type PokemonData from "../system/pokemon-data";
 import i18next from "i18next";
 import { Button } from "../enums/buttons";
-import { BattleType } from "../battle";
+import { BattleType } from "#enums/battle-type";
 import { TrainerVariant } from "../field/trainer";
 import { Challenges } from "#enums/challenges";
 import { getLuckString, getLuckTextTint } from "../modifier/modifier-type";

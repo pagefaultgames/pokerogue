@@ -25,7 +25,7 @@ describe("Moves - Tailwind", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .battleType("double")
+      .battleStyle("double")
       .moveset([Moves.TAILWIND, Moves.SPLASH])
       .enemyMoveset(Moves.SPLASH)
       .enemyAbility(Abilities.BALL_FETCH)
@@ -54,7 +54,7 @@ describe("Moves - Tailwind", () => {
   });
 
   it("lasts for 4 turns", async () => {
-    game.override.battleType("single");
+    game.override.battleStyle("single");
 
     await game.classicMode.startBattle([Species.MAGIKARP]);
 
@@ -77,7 +77,7 @@ describe("Moves - Tailwind", () => {
   });
 
   it("does not affect the opposing side", async () => {
-    game.override.battleType("single");
+    game.override.battleStyle("single");
 
     await game.classicMode.startBattle([Species.MAGIKARP]);
 

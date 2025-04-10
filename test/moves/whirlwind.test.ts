@@ -10,6 +10,9 @@ import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { Status } from "#app/data/status-effect";
 import { StatusEffect } from "#enums/status-effect";
+import { BattlerIndex } from "#app/battle";
+import { BattleType } from "#enums/battle-type";
+import { TrainerType } from "#enums/trainer-type";
 
 describe("Moves - Whirlwind", () => {
   let phaserGame: Phaser.Game;
@@ -28,8 +31,8 @@ describe("Moves - Whirlwind", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .battleType("single")
-      .moveset(Moves.SPLASH)
+      .battleStyle("single")
+      .moveset([Moves.SPLASH])
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset([Moves.SPLASH, Moves.WHIRLWIND])
       .enemySpecies(Species.PIDGEY);
@@ -155,5 +158,42 @@ describe("Moves - Whirlwind", () => {
 
     expect(lapras.isOnField()).toBe(true);
     expect(eevee.isOnField()).toBe(false);
+  });
+
+  it("cannot pull in the other trainer's pokemon in a partner trainer battle", async () => {
+    game.override
+      .battleType(BattleType.TRAINER)
+      .randomTrainer({
+        trainerType: TrainerType.BREEDER,
+        alwaysDouble: true,
+      })
+      .enemyMoveset([Moves.SPLASH, Moves.LUNAR_DANCE])
+      .moveset([Moves.WHIRLWIND, Moves.SPLASH]);
+    await game.classicMode.startBattle([Species.MAGIKARP, Species.TOTODILE]);
+
+    // expect the enemy to have at least 4 pokemon, necessary for this check to even work
+    expect(game.scene.getEnemyParty().length, "enemy must have exactly 4 pokemon").toBe(4);
+
+    const user = game.scene.getPlayerPokemon()!;
+
+    console.log(user.getMoveset(false));
+
+    game.move.select(Moves.SPLASH);
+    game.move.select(Moves.SPLASH);
+    await game.forceEnemyMove(Moves.LUNAR_DANCE);
+    await game.forceEnemyMove(Moves.SPLASH);
+    await game.toNextTurn();
+
+    // Hit the enemy that fainted with whirlwind.
+    game.move.select(Moves.WHIRLWIND, 0, BattlerIndex.ENEMY_2);
+    game.move.select(Moves.SPLASH, 1);
+
+    await game.forceEnemyMove(Moves.SPLASH);
+    await game.forceEnemyMove(Moves.SPLASH);
+
+    await game.toNextTurn();
+
+    // Expect the enemy pokemon to not have switched out.
+    expect(game.scene.getPlayerPokemon()!.getLastXMoves(1)[0].result).toBe(MoveResult.FAIL);
   });
 });

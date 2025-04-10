@@ -34,7 +34,7 @@ describe("Moves - Reflect", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     globalScene = game.scene;
-    game.override.battleType("single");
+    game.override.battleStyle("single");
     game.override.ability(Abilities.NONE);
     game.override.moveset([Moves.ABSORB, Moves.ROCK_SLIDE, Moves.TACKLE]);
     game.override.enemyLevel(100);
@@ -60,7 +60,7 @@ describe("Moves - Reflect", () => {
   });
 
   it("reduces damage of physical attacks by a third in a double battle", async () => {
-    game.override.battleType("double");
+    game.override.battleStyle("double");
 
     const moveToUse = Moves.ROCK_SLIDE;
     await game.classicMode.startBattle([Species.SHUCKLE, Species.SHUCKLE]);

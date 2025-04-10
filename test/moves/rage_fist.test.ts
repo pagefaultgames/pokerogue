@@ -27,7 +27,7 @@ describe("Moves - Rage Fist", () => {
     move = allMoves[Moves.RAGE_FIST];
     game = new GameManager(phaserGame);
     game.override
-      .battleType("single")
+      .battleStyle("single")
       .moveset([Moves.RAGE_FIST, Moves.SPLASH, Moves.SUBSTITUTE])
       .startingLevel(100)
       .enemyLevel(1)

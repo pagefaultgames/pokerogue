@@ -26,7 +26,7 @@ describe("Moves - Geomancy", () => {
     game = new GameManager(phaserGame);
     game.override
       .moveset(Moves.GEOMANCY)
-      .battleType("single")
+      .battleStyle("single")
       .startingLevel(100)
       .enemySpecies(Species.SNORLAX)
       .enemyLevel(100)

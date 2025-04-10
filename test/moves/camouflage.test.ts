@@ -27,7 +27,7 @@ describe("Moves - Camouflage", () => {
     game.override
       .moveset([Moves.CAMOUFLAGE])
       .ability(Abilities.BALL_FETCH)
-      .battleType("single")
+      .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.REGIELEKI)
       .enemyAbility(Abilities.BALL_FETCH)

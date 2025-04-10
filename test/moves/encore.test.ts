@@ -27,7 +27,7 @@ describe("Moves - Encore", () => {
     game.override
       .moveset([Moves.SPLASH, Moves.ENCORE])
       .ability(Abilities.BALL_FETCH)
-      .battleType("single")
+      .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)

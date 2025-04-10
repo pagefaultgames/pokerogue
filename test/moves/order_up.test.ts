@@ -29,7 +29,7 @@ describe("Moves - Order Up", () => {
     game.override
       .moveset(Moves.ORDER_UP)
       .ability(Abilities.COMMANDER)
-      .battleType("double")
+      .battleStyle("double")
       .disableCrits()
       .enemySpecies(Species.SNORLAX)
       .enemyAbility(Abilities.BALL_FETCH)

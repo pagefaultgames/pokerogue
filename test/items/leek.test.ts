@@ -29,7 +29,7 @@ describe("Items - Leek", () => {
       .startingHeldItems([{ name: "LEEK" }])
       .moveset([Moves.TACKLE])
       .disableCrits()
-      .battleType("single");
+      .battleStyle("single");
   });
 
   it("should raise CRIT stage by 2 when held by FARFETCHD", async () => {

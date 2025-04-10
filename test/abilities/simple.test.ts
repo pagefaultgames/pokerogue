@@ -23,7 +23,7 @@ describe("Abilities - Simple", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .battleType("single")
+      .battleStyle("single")
       .enemySpecies(Species.BULBASAUR)
       .enemyAbility(Abilities.SIMPLE)
       .ability(Abilities.INTIMIDATE)

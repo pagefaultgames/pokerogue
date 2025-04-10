@@ -24,7 +24,7 @@ describe("Abilities - COSTAR", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleType("double");
+    game.override.battleStyle("double");
     game.override.ability(Abilities.COSTAR);
     game.override.moveset([Moves.SPLASH, Moves.NASTY_PLOT]);
     game.override.enemyMoveset(Moves.SPLASH);

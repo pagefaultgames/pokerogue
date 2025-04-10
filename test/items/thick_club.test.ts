@@ -25,7 +25,7 @@ describe("Items - Thick Club", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
 
-    game.override.battleType("single");
+    game.override.battleStyle("single");
   });
 
   it("THICK_CLUB activates in battle correctly", async () => {

@@ -22,7 +22,7 @@ describe("Moves - Obstruct", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .battleType("single")
+      .battleStyle("single")
       .enemySpecies(Species.MAGIKARP)
       .enemyMoveset(Moves.TACKLE)
       .enemyAbility(Abilities.BALL_FETCH)

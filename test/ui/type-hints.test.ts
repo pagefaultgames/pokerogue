@@ -27,12 +27,12 @@ describe("UI - Type Hints", () => {
   beforeEach(async () => {
     game = new GameManager(phaserGame);
     game.settings.typeHints(true); //activate type hints
-    game.override.battleType("single").startingLevel(100).startingWave(1).enemyMoveset(Moves.SPLASH);
+    game.override.battleStyle("single").startingLevel(100).startingWave(1).enemyMoveset(Moves.SPLASH);
   });
 
   it("check immunity color", async () => {
     game.override
-      .battleType("single")
+      .battleStyle("single")
       .startingLevel(100)
       .startingWave(1)
       .enemySpecies(Species.FLORGES)

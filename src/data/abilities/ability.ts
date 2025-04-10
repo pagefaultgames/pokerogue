@@ -30,7 +30,7 @@ import i18next from "i18next";
 import { Command } from "#app/ui/command-ui-handler";
 import { BerryModifierType } from "#app/modifier/modifier-type";
 import { getPokeballName } from "#app/data/pokeball";
-import { BattleType } from "#app/battle";
+import { BattleType } from "#enums/battle-type";
 import { MovePhase } from "#app/phases/move-phase";
 import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
