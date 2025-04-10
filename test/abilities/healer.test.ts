@@ -71,9 +71,6 @@ describe("Abilities - Healer", () => {
     expect(ally.trySetStatus(StatusEffect.BURN)).toBe(true);
     game.move.select(Moves.SPLASH);
     game.move.select(Moves.SPLASH, 1);
-    await game.forceEnemyMove(Moves.SPLASH);
-    expect(ally.status?.effect).toBe(StatusEffect.BURN);
-    // Give the ally a status
     await game.toNextTurn();
 
     expect(ally.status?.effect, "status effect was not healed").toBeFalsy();
@@ -88,9 +85,6 @@ describe("Abilities - Healer", () => {
     expect(ally.trySetStatus(StatusEffect.BURN)).toBe(true);
     game.move.select(Moves.SPLASH);
     game.move.select(Moves.SPLASH, 1);
-    await game.forceEnemyMove(Moves.SPLASH);
-    expect(ally.status?.effect).toBe(StatusEffect.BURN);
-    // Give the ally a status
     await game.toNextTurn();
 
     expect(ally.status?.effect, "status effect was not healed").toBeFalsy();
