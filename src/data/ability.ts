@@ -4168,7 +4168,9 @@ export class PostTurnResetStatusAbAttr extends PostTurnAbAttr {
     } else {
       this.target = pokemon;
     }
-    return !Utils.isNullOrUndefined(this.target?.status);
+
+    const effect = this.target?.status?.effect;
+    return !!effect && effect !== StatusEffect.FAINT;
   }
 
   override applyPostTurn(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): void {
