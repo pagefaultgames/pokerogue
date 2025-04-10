@@ -43,7 +43,20 @@ import { BattleType } from "#enums/battle-type";
  * }
  * ```
  */
-const overrides = {} satisfies Partial<InstanceType<OverridesType>>;
+const overrides = {
+  HAS_PASSIVE_ABILITY_OVERRIDE: false,
+  OPP_HAS_PASSIVE_ABILITY_OVERRIDE: false,
+  RANDOM_TRAINER_OVERRIDE: {
+    trainerType: TrainerType.BREEDER,
+    alwaysDouble: true
+  },
+  BATTLE_TYPE_OVERRIDE: BattleType.TRAINER,
+  ABILITY_OVERRIDE: Abilities.BALL_FETCH,
+  OPP_ABILITY_OVERRIDE: Abilities.BALL_FETCH,
+  STARTING_LEVEL_OVERRIDE: 100,
+  MOVESET_OVERRIDE: [ Moves.WHIRLWIND, Moves.SPLASH],
+  OPP_MOVESET_OVERRIDE: [ Moves.SPLASH]
+} satisfies Partial<InstanceType<OverridesType>>;
 
 /**
  * If you need to add Overrides values for local testing do that inside {@linkcode overrides}
