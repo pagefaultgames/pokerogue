@@ -6377,7 +6377,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
   }
 
   getCondition(): MoveConditionFunc {
-    return (user, target, move) => (move.category !== MoveCategory.STATUS || this.getSwitchOutCondition(true)(user, target, move));
+    return (user, target, move) => (move.category !== MoveCategory.STATUS || this.getSwitchOutCondition()(user, target, move));
   }
 
   getFailedText(_user: Pokemon, target: Pokemon, _move: Move): string | undefined {
@@ -6389,12 +6389,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
   }
 
 
-  /**
-   * Check if the switch out conditions are met.
-   * 
-   * @param preliminary - Whether to check for failure conditions that occur before the hit check (defaults to false)
-   */
-  getSwitchOutCondition(preliminary = false): MoveConditionFunc {
+  getSwitchOutCondition(): MoveConditionFunc {
     return (user, target, move) => {
       const switchOutTarget = (this.selfSwitch ? user : target);
       const player = switchOutTarget instanceof PlayerPokemon;
@@ -6422,9 +6417,6 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
         }
       }
 
-      if (preliminary) {
-        return true;
-      }
 
       if (!player && globalScene.currentBattle.battleType === BattleType.WILD) {
         // wild pokemon cannot switch out with baton pass.

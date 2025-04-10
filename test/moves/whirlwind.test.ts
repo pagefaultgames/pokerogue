@@ -44,7 +44,8 @@ describe("Moves - Whirlwind", () => {
     { move: Moves.SKY_DROP, name: "Sky Drop" },
   ])("should not hit a flying target: $name (=$move)", async ({ move }) => {
     game.override.moveset([move]);
-    await game.classicMode.startBattle([Species.STARAPTOR]);
+    // Must have a pokemon in the back so that the move misses instead of fails.
+    await game.classicMode.startBattle([Species.STARAPTOR, Species.MAGIKARP]);
 
     const staraptor = game.scene.getPlayerPokemon()!;
 
@@ -160,7 +161,7 @@ describe("Moves - Whirlwind", () => {
     expect(eevee.isOnField()).toBe(false);
   });
 
-  it("cannot pull in the other trainer's pokemon in a partner trainer battle", async () => {
+  it("should not pull in the other trainer's pokemon in a partner trainer battle", async () => {
     game.override
       .battleType(BattleType.TRAINER)
       .randomTrainer({
