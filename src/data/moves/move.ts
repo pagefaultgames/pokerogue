@@ -2426,8 +2426,6 @@ export class StatusEffectAttr extends MoveEffectAttr {
       if (pokemon.status) {
         if (this.overrideStatus) {
           pokemon.resetStatus();
-        } else {
-          return false;
         }
       }
 
