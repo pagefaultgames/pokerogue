@@ -1444,7 +1444,6 @@ export default class BattleScene extends SceneBase {
 
     this.executeWithSeedOffset(
       () => {
-        console.log(`Starting a new battle with ${BattleType[newBattleType]} and double: ${newDouble}`);
         this.currentBattle = new Battle(this.gameMode, newWaveIndex, newBattleType, newTrainer, newDouble);
       },
       newWaveIndex << 3,
