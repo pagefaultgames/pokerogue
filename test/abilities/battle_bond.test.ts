@@ -28,7 +28,7 @@ describe("Abilities - BATTLE BOND", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .battleType("single")
+      .battleStyle("single")
       .startingWave(4) // Leads to arena reset on Wave 5 trainer battle
       .ability(Abilities.BATTLE_BOND)
       .starterForms({ [Species.GRENINJA]: ashForm })

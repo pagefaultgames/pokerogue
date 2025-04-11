@@ -24,7 +24,7 @@ describe("Weather - Hail", () => {
     game = new GameManager(phaserGame);
     game.override
       .weather(WeatherType.HAIL)
-      .battleType("single")
+      .battleStyle("single")
       .moveset(Moves.SPLASH)
       .enemyMoveset(Moves.SPLASH)
       .enemySpecies(Species.MAGIKARP);

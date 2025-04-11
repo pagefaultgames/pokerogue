@@ -27,7 +27,7 @@ describe("Abilities - Galvanize", () => {
     game = new GameManager(phaserGame);
 
     game.override
-      .battleType("single")
+      .battleStyle("single")
       .startingLevel(100)
       .ability(Abilities.GALVANIZE)
       .moveset([Moves.TACKLE, Moves.REVELATION_DANCE, Moves.FURY_SWIPES])

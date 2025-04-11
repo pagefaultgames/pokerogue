@@ -26,7 +26,7 @@ describe("Moves - Upper Hand", () => {
     game.override
       .moveset(Moves.UPPER_HAND)
       .ability(Abilities.BALL_FETCH)
-      .battleType("single")
+      .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)

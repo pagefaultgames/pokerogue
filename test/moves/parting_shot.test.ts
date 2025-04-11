@@ -26,7 +26,7 @@ describe("Moves - Parting Shot", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleType("single");
+    game.override.battleStyle("single");
     game.override.moveset([Moves.PARTING_SHOT, Moves.SPLASH]);
     game.override.enemyMoveset(Moves.SPLASH);
     game.override.startingLevel(5);

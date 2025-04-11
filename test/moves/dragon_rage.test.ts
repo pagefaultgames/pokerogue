@@ -31,7 +31,7 @@ describe("Moves - Dragon Rage", () => {
   beforeEach(async () => {
     game = new GameManager(phaserGame);
 
-    game.override.battleType("single");
+    game.override.battleStyle("single");
 
     game.override.starterSpecies(Species.SNORLAX);
     game.override.moveset([Moves.DRAGON_RAGE]);

@@ -23,7 +23,7 @@ describe("Abilities - Hyper Cutter", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .battleType("single")
+      .battleStyle("single")
       .moveset([Moves.SAND_ATTACK, Moves.NOBLE_ROAR, Moves.DEFOG, Moves.OCTOLOCK])
       .ability(Abilities.BALL_FETCH)
       .enemySpecies(Species.SHUCKLE)

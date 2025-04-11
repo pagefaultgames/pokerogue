@@ -24,7 +24,7 @@ describe("Moves - Future Sight", () => {
     game.override
       .startingLevel(50)
       .moveset([Moves.FUTURE_SIGHT, Moves.SPLASH])
-      .battleType("single")
+      .battleStyle("single")
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.STURDY)
       .enemyMoveset(Moves.SPLASH);

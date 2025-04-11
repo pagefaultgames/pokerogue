@@ -28,7 +28,7 @@ describe("Abilities - Steely Spirit", () => {
   beforeEach(() => {
     ironHeadPower = allMoves[moveToCheck].power;
     game = new GameManager(phaserGame);
-    game.override.battleType("double");
+    game.override.battleStyle("double");
     game.override.enemySpecies(Species.SHUCKLE);
     game.override.enemyAbility(Abilities.BALL_FETCH);
     game.override.moveset([Moves.IRON_HEAD, Moves.SPLASH]);

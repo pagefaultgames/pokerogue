@@ -27,7 +27,7 @@ describe("Moves - Fell Stinger", () => {
     game = new GameManager(phaserGame);
 
     game.override
-      .battleType("single")
+      .battleStyle("single")
       .moveset([Moves.FELL_STINGER, Moves.SALT_CURE, Moves.BIND, Moves.LEECH_SEED])
       .startingLevel(50)
       .disableCrits()
@@ -99,7 +99,7 @@ describe("Moves - Fell Stinger", () => {
   });
 
   it("should not grant stat boost if enemy is KO'd by Salt Cure", async () => {
-    game.override.battleType("double").startingLevel(5);
+    game.override.battleStyle("double").startingLevel(5);
     const saltCure = allMoves[Moves.SALT_CURE];
     const fellStinger = allMoves[Moves.FELL_STINGER];
     vi.spyOn(saltCure, "accuracy", "get").mockReturnValue(100);
@@ -124,7 +124,7 @@ describe("Moves - Fell Stinger", () => {
   });
 
   it("should not grant stat boost if enemy dies to Bind or a similar effect", async () => {
-    game.override.battleType("double").startingLevel(5);
+    game.override.battleStyle("double").startingLevel(5);
     vi.spyOn(allMoves[Moves.BIND], "accuracy", "get").mockReturnValue(100);
     vi.spyOn(allMoves[Moves.FELL_STINGER], "power", "get").mockReturnValue(50000);
 
@@ -147,7 +147,7 @@ describe("Moves - Fell Stinger", () => {
   });
 
   it("should not grant stat boost if enemy dies to Leech Seed", async () => {
-    game.override.battleType("double").startingLevel(5);
+    game.override.battleStyle("double").startingLevel(5);
     vi.spyOn(allMoves[Moves.LEECH_SEED], "accuracy", "get").mockReturnValue(100);
     vi.spyOn(allMoves[Moves.FELL_STINGER], "power", "get").mockReturnValue(50000);
 

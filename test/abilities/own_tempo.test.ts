@@ -23,9 +23,9 @@ describe("Abilities - Own Tempo", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([ Moves.SPLASH ])
+      .moveset([Moves.SPLASH])
       .ability(Abilities.BALL_FETCH)
-      .battleType("single")
+      .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)
@@ -33,12 +33,12 @@ describe("Abilities - Own Tempo", () => {
   });
 
   it("should remove confusion when gained", async () => {
-    game.override.ability(Abilities.OWN_TEMPO)
+    game.override
+      .ability(Abilities.OWN_TEMPO)
       .enemyAbility(Abilities.BALL_FETCH)
       .moveset(Moves.SKILL_SWAP)
-      .enemyMoveset(Moves.SPLASH),
-
-    await game.classicMode.startBattle([ Species.FEEBAS ]);
+      .enemyMoveset(Moves.SPLASH);
+    await game.classicMode.startBattle([Species.FEEBAS]);
     const enemy = game.scene.getEnemyPokemon();
     enemy?.addTag(BattlerTagType.CONFUSED);
     expect(enemy?.getTag(BattlerTagType.CONFUSED)).toBeTruthy();

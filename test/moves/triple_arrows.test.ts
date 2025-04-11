@@ -32,7 +32,7 @@ describe("Moves - Triple Arrows", () => {
     game.override
       .ability(Abilities.BALL_FETCH)
       .moveset([Moves.TRIPLE_ARROWS])
-      .battleType("single")
+      .battleStyle("single")
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.STURDY)
       .enemyMoveset(Moves.SPLASH);

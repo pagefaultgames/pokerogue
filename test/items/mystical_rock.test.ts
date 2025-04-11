@@ -29,7 +29,7 @@ describe("Items - Mystical Rock", () => {
       .enemyAbility(Abilities.BALL_FETCH)
       .moveset([Moves.SUNNY_DAY, Moves.GRASSY_TERRAIN])
       .startingHeldItems([{ name: "MYSTICAL_ROCK", count: 2 }])
-      .battleType("single");
+      .battleStyle("single");
   });
 
   it("should increase weather duration by +2 turns per stack", async () => {

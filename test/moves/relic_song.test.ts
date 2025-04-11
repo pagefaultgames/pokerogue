@@ -24,7 +24,7 @@ describe("Moves - Relic Song", () => {
     game = new GameManager(phaserGame);
     game.override
       .moveset([Moves.RELIC_SONG, Moves.SPLASH])
-      .battleType("single")
+      .battleStyle("single")
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH)
       .enemySpecies(Species.MAGIKARP)

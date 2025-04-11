@@ -26,7 +26,7 @@ describe("Abilities - Lightningrod", () => {
     game.override
       .moveset([Moves.SPLASH, Moves.SHOCK_WAVE])
       .ability(Abilities.BALL_FETCH)
-      .battleType("double")
+      .battleStyle("double")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)

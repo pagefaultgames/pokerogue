@@ -24,7 +24,7 @@ describe("Abilities - Unseen Fist", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleType("single");
+    game.override.battleStyle("single");
     game.override.starterSpecies(Species.URSHIFU);
     game.override.enemySpecies(Species.SNORLAX);
     game.override.enemyMoveset([Moves.PROTECT, Moves.PROTECT, Moves.PROTECT, Moves.PROTECT]);

@@ -26,7 +26,7 @@ describe("Abilities - Stakeout", () => {
     game.override
       .moveset([Moves.SPLASH, Moves.SURF])
       .ability(Abilities.STAKEOUT)
-      .battleType("single")
+      .battleStyle("single")
       .disableCrits()
       .startingLevel(100)
       .enemyLevel(100)

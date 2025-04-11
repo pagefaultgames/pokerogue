@@ -25,7 +25,7 @@ describe("Moves - Quick Guard", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
 
-    game.override.battleType("double");
+    game.override.battleStyle("double");
 
     game.override.moveset([Moves.QUICK_GUARD, Moves.SPLASH, Moves.FOLLOW_ME]);
 
@@ -84,7 +84,7 @@ describe("Moves - Quick Guard", () => {
   });
 
   test("should fail if the user is the last to move in the turn", async () => {
-    game.override.battleType("single");
+    game.override.battleStyle("single");
     game.override.enemyMoveset([Moves.QUICK_GUARD]);
 
     await game.classicMode.startBattle([Species.CHARIZARD]);

@@ -39,7 +39,7 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
     game.override.enemySpecies(Species.RESHIRAM);
     game.override.enemyMoveset([Moves.REST, Moves.REST, Moves.REST, Moves.REST]);
 
-    game.override.battleType("double");
+    game.override.battleStyle("double");
     game.override.startingWave(97);
     game.override.disableCrits();
 

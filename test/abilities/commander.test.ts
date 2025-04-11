@@ -34,7 +34,7 @@ describe("Abilities - Commander", () => {
       .enemyLevel(100)
       .moveset([Moves.LIQUIDATION, Moves.MEMENTO, Moves.SPLASH, Moves.FLIP_TURN])
       .ability(Abilities.COMMANDER)
-      .battleType("double")
+      .battleStyle("double")
       .disableCrits()
       .enemySpecies(Species.SNORLAX)
       .enemyAbility(Abilities.BALL_FETCH)

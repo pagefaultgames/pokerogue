@@ -30,7 +30,7 @@ describe("Moves - Pledge Moves", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .battleType("double")
+      .battleStyle("double")
       .startingLevel(100)
       .moveset([Moves.FIRE_PLEDGE, Moves.GRASS_PLEDGE, Moves.WATER_PLEDGE, Moves.SPLASH])
       .enemySpecies(Species.SNORLAX)
@@ -86,7 +86,7 @@ describe("Moves - Pledge Moves", () => {
   });
 
   it("Fire Pledge - should not combine with an enemy's Pledge move", async () => {
-    game.override.battleType("single").enemyMoveset(Moves.GRASS_PLEDGE);
+    game.override.battleStyle("single").enemyMoveset(Moves.GRASS_PLEDGE);
 
     await game.classicMode.startBattle([Species.CHARIZARD]);
 

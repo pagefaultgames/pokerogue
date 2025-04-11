@@ -27,7 +27,7 @@ describe("Moves - Telekinesis", () => {
     game = new GameManager(phaserGame);
     game.override
       .moveset([Moves.TELEKINESIS, Moves.TACKLE, Moves.MUD_SHOT, Moves.SMACK_DOWN])
-      .battleType("single")
+      .battleStyle("single")
       .enemySpecies(Species.SNORLAX)
       .enemyLevel(60)
       .enemyAbility(Abilities.BALL_FETCH)

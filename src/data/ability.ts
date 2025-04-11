@@ -26,7 +26,7 @@ import { Command } from "../ui/command-ui-handler";
 import { BerryModifierType } from "#app/modifier/modifier-type";
 import { getPokeballName } from "./pokeball";
 import type { BattlerIndex } from "#app/battle";
-import { BattleType } from "#app/battle";
+import { BattleType } from "#enums/battle-type";
 import { Abilities } from "#enums/abilities";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
@@ -47,6 +47,7 @@ import { PokemonAnimType } from "#enums/pokemon-anim-type";
 import { StatusEffect } from "#enums/status-effect";
 import { WeatherType } from "#enums/weather-type";
 import { PokemonTransformPhase } from "#app/phases/pokemon-transform-phase";
+import { TrainerVariant } from "#app/field/trainer";
 
 export class Ability implements Localizable {
   public id: Abilities;
@@ -5573,8 +5574,8 @@ class ForceSwitchOutHelper {
 
     const party = player ? globalScene.getPlayerParty() : globalScene.getEnemyParty();
     return (!player && globalScene.currentBattle.battleType === BattleType.WILD)
-      || party.filter(p => p.isAllowedInBattle()
-        && (player || (p as EnemyPokemon).trainerSlot === (switchOutTarget as EnemyPokemon).trainerSlot)).length > globalScene.currentBattle.getBattlerCount();
+      || party.filter(p => p.isAllowedInBattle() && !p.isOnField()
+        && (player || (p as EnemyPokemon).trainerSlot === (switchOutTarget as EnemyPokemon).trainerSlot)).length > 0;
   }
 
   /**

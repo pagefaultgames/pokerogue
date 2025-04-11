@@ -25,7 +25,7 @@ describe("Moves - Mist", () => {
     game.override
       .moveset([Moves.MIST, Moves.SPLASH])
       .ability(Abilities.BALL_FETCH)
-      .battleType("double")
+      .battleStyle("double")
       .disableCrits()
       .enemySpecies(Species.SNORLAX)
       .enemyAbility(Abilities.BALL_FETCH)

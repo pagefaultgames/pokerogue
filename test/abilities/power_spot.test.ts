@@ -26,7 +26,7 @@ describe("Abilities - Power Spot", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleType("double");
+    game.override.battleStyle("double");
     game.override.moveset([Moves.TACKLE, Moves.BREAKING_SWIPE, Moves.SPLASH, Moves.DAZZLING_GLEAM]);
     game.override.enemyMoveset(Moves.SPLASH);
     game.override.enemySpecies(Species.SHUCKLE);

@@ -27,7 +27,7 @@ describe("Moves - Mirror Move", () => {
     game.override
       .moveset([Moves.MIRROR_MOVE, Moves.SPLASH])
       .ability(Abilities.BALL_FETCH)
-      .battleType("single")
+      .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)
@@ -35,7 +35,7 @@ describe("Moves - Mirror Move", () => {
   });
 
   it("should use the last move that the target used on the user", async () => {
-    game.override.battleType("double").enemyMoveset([Moves.TACKLE, Moves.GROWL]);
+    game.override.battleStyle("double").enemyMoveset([Moves.TACKLE, Moves.GROWL]);
     await game.classicMode.startBattle([Species.FEEBAS, Species.MAGIKARP]);
 
     game.move.select(Moves.MIRROR_MOVE, 0, BattlerIndex.ENEMY); // target's last move is Tackle, enemy should receive damage from Mirror Move copying Tackle

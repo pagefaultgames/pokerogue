@@ -26,7 +26,7 @@ describe("Moves - Mat Block", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
 
-    game.override.battleType("double");
+    game.override.battleStyle("double");
 
     game.override.moveset([Moves.MAT_BLOCK, Moves.SPLASH]);
 

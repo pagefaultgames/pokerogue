@@ -25,7 +25,7 @@ describe("Moves - Shed Tail", () => {
     game = new GameManager(phaserGame);
     game.override
       .moveset([Moves.SHED_TAIL])
-      .battleType("single")
+      .battleStyle("single")
       .enemySpecies(Species.SNORLAX)
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH);

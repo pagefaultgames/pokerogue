@@ -25,7 +25,7 @@ describe("Moves - Steamroller", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.moveset([Moves.STEAMROLLER]).battleType("single").enemyAbility(Abilities.BALL_FETCH);
+    game.override.moveset([Moves.STEAMROLLER]).battleStyle("single").enemyAbility(Abilities.BALL_FETCH);
   });
 
   it("should always hit a minimzed target with double damage", async () => {

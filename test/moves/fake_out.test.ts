@@ -21,7 +21,7 @@ describe("Moves - Fake Out", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .battleType("single")
+      .battleStyle("single")
       .enemySpecies(Species.CORVIKNIGHT)
       .moveset([Moves.FAKE_OUT, Moves.SPLASH])
       .enemyMoveset(Moves.SPLASH)

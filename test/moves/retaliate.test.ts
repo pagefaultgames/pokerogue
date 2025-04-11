@@ -26,7 +26,7 @@ describe("Moves - Retaliate", () => {
     retaliate = allMoves[Moves.RETALIATE];
     game = new GameManager(phaserGame);
     game.override
-      .battleType("single")
+      .battleStyle("single")
       .enemySpecies(Species.SNORLAX)
       .enemyMoveset([Moves.RETALIATE, Moves.RETALIATE, Moves.RETALIATE, Moves.RETALIATE])
       .enemyLevel(100)

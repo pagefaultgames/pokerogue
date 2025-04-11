@@ -22,7 +22,7 @@ describe("Abilities - Stall", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleType("single");
+    game.override.battleStyle("single");
     game.override.disableCrits();
     game.override.enemySpecies(Species.REGIELEKI);
     game.override.enemyAbility(Abilities.STALL);

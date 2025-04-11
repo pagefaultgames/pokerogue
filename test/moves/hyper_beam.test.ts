@@ -26,7 +26,7 @@ describe("Moves - Hyper Beam", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
 
-    game.override.battleType("single");
+    game.override.battleStyle("single");
     game.override.ability(Abilities.BALL_FETCH);
     game.override.enemySpecies(Species.SNORLAX);
     game.override.enemyAbility(Abilities.BALL_FETCH);

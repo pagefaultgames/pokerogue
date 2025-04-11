@@ -26,7 +26,7 @@ describe("Moves - Fairy Lock", () => {
     game.override
       .moveset([Moves.FAIRY_LOCK, Moves.SPLASH])
       .ability(Abilities.BALL_FETCH)
-      .battleType("double")
+      .battleStyle("double")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)

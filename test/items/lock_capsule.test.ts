@@ -25,7 +25,7 @@ describe("Items - Lock Capsule", () => {
     game = new GameManager(phaserGame);
 
     game.override
-      .battleType("single")
+      .battleStyle("single")
       .startingLevel(200)
       .moveset([Moves.SURF])
       .enemyAbility(Abilities.BALL_FETCH)

@@ -24,7 +24,7 @@ describe("Moves - Thunder Wave", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .battleType("single")
+      .battleStyle("single")
       .starterSpecies(Species.PIKACHU)
       .moveset([Moves.THUNDER_WAVE])
       .enemyMoveset(Moves.SPLASH);

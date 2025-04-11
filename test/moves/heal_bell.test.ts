@@ -26,7 +26,7 @@ describe("Moves - Heal Bell", () => {
     game.override
       .moveset([Moves.HEAL_BELL, Moves.SPLASH])
       .statusEffect(StatusEffect.BURN)
-      .battleType("double")
+      .battleStyle("double")
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH);
   });

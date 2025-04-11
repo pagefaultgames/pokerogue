@@ -27,7 +27,7 @@ describe("Moves - Beak Blast", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .battleType("single")
+      .battleStyle("single")
       .ability(Abilities.UNNERVE)
       .moveset([Moves.BEAK_BLAST])
       .enemySpecies(Species.SNORLAX)

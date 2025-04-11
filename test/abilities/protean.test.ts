@@ -29,7 +29,7 @@ describe("Abilities - Protean", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleType("single");
+    game.override.battleStyle("single");
     game.override.ability(Abilities.PROTEAN);
     game.override.startingLevel(100);
     game.override.enemySpecies(Species.RATTATA);

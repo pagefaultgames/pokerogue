@@ -24,7 +24,7 @@ describe("Weather - Strong Winds", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleType("single");
+    game.override.battleStyle("single");
     game.override.startingLevel(10);
     game.override.enemySpecies(Species.TAILLOW);
     game.override.enemyAbility(Abilities.DELTA_STREAM);

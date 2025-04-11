@@ -24,7 +24,7 @@ describe("Moves - Make It Rain", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleType("double");
+    game.override.battleStyle("double");
     game.override.moveset([Moves.MAKE_IT_RAIN, Moves.SPLASH]);
     game.override.enemySpecies(Species.SNORLAX);
     game.override.enemyAbility(Abilities.INSOMNIA);
@@ -48,7 +48,7 @@ describe("Moves - Make It Rain", () => {
 
   it("should apply effects even if the target faints", async () => {
     game.override.enemyLevel(1); // ensures the enemy will faint
-    game.override.battleType("single");
+    game.override.battleStyle("single");
 
     await game.startBattle([Species.CHARIZARD]);
 

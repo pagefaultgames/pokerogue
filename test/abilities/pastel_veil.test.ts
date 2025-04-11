@@ -26,7 +26,7 @@ describe("Abilities - Pastel Veil", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .battleType("double")
+      .battleStyle("double")
       .moveset([Moves.TOXIC_THREAD, Moves.SPLASH])
       .enemyAbility(Abilities.BALL_FETCH)
       .enemySpecies(Species.SUNKERN)

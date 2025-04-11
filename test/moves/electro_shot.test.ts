@@ -27,7 +27,7 @@ describe("Moves - Electro Shot", () => {
     game = new GameManager(phaserGame);
     game.override
       .moveset(Moves.ELECTRO_SHOT)
-      .battleType("single")
+      .battleStyle("single")
       .startingLevel(100)
       .enemySpecies(Species.SNORLAX)
       .enemyLevel(100)

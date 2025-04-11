@@ -30,7 +30,7 @@ describe("Moves - Fusion Flare", () => {
     game.override.enemySpecies(Species.RATTATA);
     game.override.enemyMoveset([Moves.REST, Moves.REST, Moves.REST, Moves.REST]);
 
-    game.override.battleType("single");
+    game.override.battleStyle("single");
     game.override.startingWave(97);
     game.override.disableCrits();
   });

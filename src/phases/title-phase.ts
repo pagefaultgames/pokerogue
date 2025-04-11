@@ -1,5 +1,5 @@
 import { loggedInUser } from "#app/account";
-import { BattleType } from "#app/battle";
+import { BattleType } from "#enums/battle-type";
 import { fetchDailyRunSeed, getDailyRunStarters } from "#app/data/daily-run";
 import { Gender } from "#app/data/gender";
 import { getBiomeKey } from "#app/field/arena";

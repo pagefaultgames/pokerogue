@@ -28,7 +28,7 @@ describe("Moves - Flower Shield", () => {
     game = new GameManager(phaserGame);
     game.override.ability(Abilities.NONE);
     game.override.enemyAbility(Abilities.NONE);
-    game.override.battleType("single");
+    game.override.battleStyle("single");
     game.override.moveset([Moves.FLOWER_SHIELD, Moves.SPLASH]);
     game.override.enemyMoveset(Moves.SPLASH);
   });
@@ -51,7 +51,7 @@ describe("Moves - Flower Shield", () => {
   });
 
   it("raises DEF stat stage by 1 for all Grass-type Pokemon on the field by one stage - double battle", async () => {
-    game.override.enemySpecies(Species.MAGIKARP).startingBiome(Biome.GRASS).battleType("double");
+    game.override.enemySpecies(Species.MAGIKARP).startingBiome(Biome.GRASS).battleStyle("double");
 
     await game.startBattle([Species.CHERRIM, Species.MAGIKARP]);
     const field = game.scene.getField(true);
