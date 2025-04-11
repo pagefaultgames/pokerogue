@@ -12,7 +12,8 @@ import {
 import type { DestinyBondTag, GrudgeTag } from "#app/data/battler-tags";
 import { BattlerTagLapseType } from "#app/data/battler-tags";
 import { battleSpecDialogue } from "#app/data/dialogue";
-import { allMoves, PostVictoryStatStageChangeAttr } from "#app/data/moves/move";
+import { PostVictoryStatStageChangeAttr } from "#app/data/moves/move";
+import { allMoves } from "#app/data/moves/all-moves";
 import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms";
 import { BattleSpec } from "#app/enums/battle-spec";
 import { StatusEffect } from "#app/enums/status-effect";

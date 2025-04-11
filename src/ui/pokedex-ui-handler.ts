@@ -38,7 +38,7 @@ import type { OptionSelectConfig } from "./abstact-option-select-ui-handler";
 import { FilterText, FilterTextRow } from "./filter-text";
 import { allAbilities } from "#app/data/ability";
 import { starterPassiveAbilities } from "#app/data/balance/passives";
-import { allMoves } from "#app/data/moves/move";
+import { allMoves } from "#app/data/moves/all-moves";
 import { speciesTmMoves } from "#app/data/balance/tms";
 import { pokemonPrevolutions, pokemonStarters } from "#app/data/balance/pokemon-evolutions";
 import { Biome } from "#enums/biome";

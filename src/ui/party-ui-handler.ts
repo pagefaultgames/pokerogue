@@ -11,7 +11,8 @@ import {
   PokemonHeldItemModifier,
   SwitchEffectTransferModifier,
 } from "#app/modifier/modifier";
-import { allMoves, ForceSwitchOutAttr } from "#app/data/moves/move";
+import { ForceSwitchOutAttr } from "#app/data/moves/move";
+import { allMoves } from "#app/data/moves/all-moves";
 import { Gender, getGenderColor, getGenderSymbol } from "#app/data/gender";
 import { StatusEffect } from "#enums/status-effect";
 import PokemonIconAnimHandler, { PokemonIconAnimMode } from "#app/ui/pokemon-icon-anim-handler";
