@@ -2723,7 +2723,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param ignoreStrongWinds whether or not this ignores strong winds (anticipation, forewarn, stealth rocks)
    * @param simulated tag to only apply the strong winds effect message when the move is used
    * @param move (optional) the move whose type effectiveness is to be checked. Used for applying {@linkcode VariableMoveTypeChartAttr}
-   * @param {boolean} useIllusion - Whether we want the attack type effectiveness on the illusion or not
+   * @param useIllusion - Whether we want the attack type effectiveness on the illusion or not
    * @returns a multiplier for the type effectiveness
    */
   getAttackTypeEffectiveness(
