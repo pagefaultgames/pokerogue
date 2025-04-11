@@ -2587,7 +2587,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param ignoreAbility Whether to ignore abilities that might affect type effectiveness or immunity (defaults to `false`).
    * @param simulated Whether to apply abilities via simulated calls (defaults to `true`)
    * @param cancelled {@linkcode Utils.BooleanHolder} Stores whether the move was cancelled by a non-type-based immunity.
-   * @param {boolean} useIllusion - Whether we want the attack move effectiveness on the illusion or not
+   * @param useIllusion - Whether we want the attack move effectiveness on the illusion or not
    * Currently only used by {@linkcode Pokemon.apply} to determine whether a "No effect" message should be shown.
    * @returns The type damage multiplier, indicating the effectiveness of the move
    */
