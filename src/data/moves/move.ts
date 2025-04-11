@@ -21,8 +21,8 @@ import {
   HitResult,
   MoveResult,
   PlayerPokemon,
-  PokemonMove,
 } from "../../field/pokemon";
+import { PokemonMove } from "./pokemon-move";
 import {
   getNonVolatileStatusEffects,
   getStatusEffectHealText,

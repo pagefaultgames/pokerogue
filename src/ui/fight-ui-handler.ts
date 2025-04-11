@@ -10,7 +10,7 @@ import { getLocalizedSpriteKey, fixedInt, padInt } from "#app/utils";
 import { MoveCategory } from "#enums/MoveCategory";
 import i18next from "i18next";
 import { Button } from "#enums/buttons";
-import type { PokemonMove } from "#app/field/pokemon";
+import type { PokemonMove } from "#app/data/moves/pokemon-move";
 import type Pokemon from "#app/field/pokemon";
 import type { CommandPhase } from "#app/phases/command-phase";
 import MoveInfoOverlay from "./move-info-overlay";

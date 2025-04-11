@@ -1,4 +1,5 @@
-import type { EnemyPokemon, PokemonMove } from "../field/pokemon";
+import type { EnemyPokemon } from "../field/pokemon";
+import type { PokemonMove } from "./moves/pokemon-move";
 import type Pokemon from "../field/pokemon";
 import { HitResult, MoveResult, PlayerPokemon } from "../field/pokemon";
 import { PokemonType } from "#enums/pokemon-type";

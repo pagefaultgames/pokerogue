@@ -6,7 +6,7 @@ import type PokemonSpecies from "#app/data/pokemon-species";
 import { getPokemonSpecies, getPokemonSpeciesForm } from "#app/data/pokemon-species";
 import { speciesStarterCosts } from "#app/data/balance/starters";
 import type Pokemon from "#app/field/pokemon";
-import { PokemonMove } from "#app/field/pokemon";
+import { PokemonMove } from "./moves/pokemon-move";
 import type { FixedBattleConfig } from "#app/battle";
 import { ClassicFixedBossWaves, BattleType, getRandomTrainerFunc } from "#app/battle";
 import Trainer, { TrainerVariant } from "#app/field/trainer";

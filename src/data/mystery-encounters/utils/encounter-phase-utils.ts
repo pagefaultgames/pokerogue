@@ -10,7 +10,8 @@ import { showEncounterText } from "#app/data/mystery-encounters/utils/encounter-
 import type { PlayerPokemon } from "#app/field/pokemon";
 import type { AiType } from "#enums/ai-type";
 import type Pokemon from "#app/field/pokemon";
-import { EnemyPokemon, FieldPosition, PokemonMove, PokemonSummonData } from "#app/field/pokemon";
+import { EnemyPokemon, FieldPosition, PokemonSummonData } from "#app/field/pokemon";
+import { PokemonMove } from "#app/data/moves/pokemon-move";
 import type { CustomModifierSettings, ModifierType } from "#app/modifier/modifier-type";
 import {
   getPartyLuckValue,
