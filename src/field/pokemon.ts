@@ -263,6 +263,7 @@ import { LearnMoveSituation } from "#enums/learn-move-situation";
 import { TurnMove } from "#app/interfaces/turn-move";
 import { AiType } from "#enums/ai-type";
 import { PokemonMove } from "#app/data/moves/pokemon-move";
+import { DamageCalculationResult } from "#app/interfaces/damage-calculation-result";
 
 export enum FieldPosition {
   CENTER,
@@ -7887,15 +7888,5 @@ export type DamageResult =
   | HitResult.CONFUSION 
   | HitResult.INDIRECT_KO 
   | HitResult.INDIRECT;
-
-/** Interface containing the results of a damage calculation for a given move */
-export interface DamageCalculationResult {
-  /** `true` if the move was cancelled (thus suppressing "No Effect" messages) */
-  cancelled: boolean;
-  /** The effectiveness of the move */
-  result: HitResult;
-  /** The damage dealt by the move */
-  damage: number;
-}
 
 
