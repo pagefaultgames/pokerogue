@@ -2029,7 +2029,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         !ignoreOverride && 
         this.summonData?.types && 
         this.summonData.types.length > 0 && 
-        (!!!this.summonData?.illusion || !doIllusion)
+        (!this.summonData?.illusion || !doIllusion)
       ) {
         this.summonData.types.forEach(t => types.push(t));
       } else {
