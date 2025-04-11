@@ -259,15 +259,7 @@ import { MoveFlags } from "#enums/MoveFlags";
 import { timedEventManager } from "#app/global-event-manager";
 import { loadMoveAnimations } from "#app/sprites/pokemon-asset-loader";
 import { ResetStatusPhase } from "#app/phases/reset-status-phase";
-
-export enum LearnMoveSituation {
-  MISC,
-  LEVEL_UP,
-  RELEARN,
-  EVOLUTION,
-  EVOLUTION_FUSED, // If fusionSpecies has Evolved
-  EVOLUTION_FUSED_BASE, // If fusion's base species has Evolved
-}
+import { LearnMoveSituation } from "#enums/learn-move-situation";
 
 export enum FieldPosition {
   CENTER,
