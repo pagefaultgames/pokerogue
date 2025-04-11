@@ -277,6 +277,36 @@ export enum FieldPosition {
   RIGHT,
 }
 
+/** Base typeclass for damage parameter methods, used for DRY */
+type damageParams = {
+  /** The attacking {@linkcode Pokemon} */
+  source: Pokemon;
+  /** The move used in the attack */
+  move: Move;
+  /** The move's {@linkcode MoveCategory} after variable-category effects are applied */
+  moveCategory: MoveCategory;
+  /** If `true`, ignores this Pokemon's defensive ability effects */
+  ignoreAbility?: boolean;
+  /** If `true`, ignores the attacking Pokemon's ability effects */
+  ignoreSourceAbility?: boolean;
+  /** If `true`, ignores the ally Pokemon's ability effects */
+  ignoreAllyAbility?: boolean;
+  /** If `true`, ignores the ability effects of the attacking pokemon's ally */
+  ignoreSourceAllyAbility?: boolean;
+  /** If `true`, calculates damage for a critical hit */
+  isCritical?: boolean;
+  /** If `true`, suppresses changes to game state during the calculation */
+  simulated?: boolean;
+  /** If defined, used in place of calculated effectiveness values */
+  effectiveness?: number;
+}
+
+/** Type for the parameters of {@linkcode Pokemon#getBaseDamage getBaseDamage} */
+type getBaseDamageParams = Omit<damageParams, "effectiveness">
+
+/** Type for the parameters of {@linkcode Pokemon#getAttackDamage getAttackDamage} */
+type getAttackDamageParams = Omit<damageParams, "moveCategory">;
+
 export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public id: number;
   public name: string;
@@ -1441,25 +1471,16 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * Calculate the critical-hit stage of a move used against this pokemon by
    * the given source
    * 
-   * @param source the {@linkcode Pokemon} who using the move
-   * @param move the {@linkcode Move} being used
-   * @returns the final critical-hit stage value
+   * @param source - The {@linkcode Pokemon} who using the move
+   * @param move - The {@linkcode Move} being used
+   * @returns The final critical-hit stage value
    */
   getCritStage(source: Pokemon, move: Move): number {
     const critStage = new NumberHolder(0);
     applyMoveAttrs(HighCritAttr, source, this, move, critStage);
-    globalScene.applyModifiers(
-      CritBoosterModifier,
-      source.isPlayer(),
-      source,
-      critStage,
-    );
-    globalScene.applyModifiers(
-      TempCritBoosterModifier,
-      source.isPlayer(),
-      critStage,
-    );
-    applyAbAttrs(BonusCritAbAttr, source, null, false, critStage)
+    globalScene.applyModifiers(CritBoosterModifier, source.isPlayer(), source, critStage);
+    globalScene.applyModifiers(TempCritBoosterModifier, source.isPlayer(), critStage);
+    applyAbAttrs(BonusCritAbAttr, source, null, false, critStage);
     const critBoostTag = source.getTag(CritBoostTag);
     if (critBoostTag) {
       if (critBoostTag instanceof DragonCheerTag) {
@@ -1473,6 +1494,19 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     console.log(`crit stage: +${critStage.value}`);
     return critStage.value;
+  }
+
+  /**
+   * Calculates the category of a move when used by this pokemon after
+   * category-changing move effects are applied.
+   * @param target - The {@linkcode Pokemon} using the move
+   * @param move - The {@linkcode Move} being used
+   * @returns The given move's final category
+   */
+  getMoveCategory(target: Pokemon, move: Move): MoveCategory {
+    const moveCategory = new Utils.NumberHolder(move.category);
+    applyMoveAttrs(VariableMoveCategoryAttr, this, target, move, moveCategory);
+    return moveCategory.value;
   }
 
   /**
@@ -4075,27 +4109,28 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Calculates the base damage of the given move against this Pokemon when attacked by the given source.
    * Used during damage calculation and for Shell Side Arm's forecasting effect.
-   * @param source the attacking {@linkcode Pokemon}.
-   * @param move the {@linkcode Move} used in the attack.
-   * @param moveCategory the move's {@linkcode MoveCategory} after variable-category effects are applied.
-   * @param ignoreAbility if `true`, ignores this Pokemon's defensive ability effects (defaults to `false`).
-   * @param ignoreSourceAbility if `true`, ignore's the attacking Pokemon's ability effects (defaults to `false`).
-   * @param ignoreAllyAbility if `true`, ignores the ally Pokemon's ability effects (defaults to `false`).
-   * @param ignoreSourceAllyAbility if `true`, ignores the attacking Pokemon's ally's ability effects (defaults to `false`).
-   * @param isCritical if `true`, calculates effective stats as if the hit were critical (defaults to `false`).
-   * @param simulated if `true`, suppresses changes to game state during calculation (defaults to `true`).
+   * @param source - The attacking {@linkcode Pokemon}.
+   * @param move - The {@linkcode Move} used in the attack.
+   * @param moveCategory - The move's {@linkcode MoveCategory} after variable-category effects are applied.
+   * @param ignoreAbility - If `true`, ignores this Pokemon's defensive ability effects (defaults to `false`).
+   * @param ignoreSourceAbility - If `true`, ignore's the attacking Pokemon's ability effects (defaults to `false`).
+   * @param ignoreAllyAbility - If `true`, ignores the ally Pokemon's ability effects (defaults to `false`).
+   * @param ignoreSourceAllyAbility - If `true`, ignores the attacking Pokemon's ally's ability effects (defaults to `false`).
+   * @param isCritical - if `true`, calculates effective stats as if the hit were critical (defaults to `false`).
+   * @param simulated - if `true`, suppresses changes to game state during calculation (defaults to `true`).
    * @returns The move's base damage against this Pokemon when used by the source Pokemon.
    */
   getBaseDamage(
-    source: Pokemon,
-    move: Move,
-    moveCategory: MoveCategory,
+    {
+    source,
+    move,
+    moveCategory,
     ignoreAbility = false,
     ignoreSourceAbility = false,
     ignoreAllyAbility = false,
     ignoreSourceAllyAbility = false,
     isCritical = false,
-    simulated = true,
+    simulated = true}: getBaseDamageParams
   ): number {
     const isPhysical = moveCategory === MoveCategory.PHYSICAL;
 
@@ -4222,27 +4257,27 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Calculates the damage of an attack made by another Pokemon against this Pokemon
    * @param source {@linkcode Pokemon} the attacking Pokemon
-   * @param move {@linkcode Pokemon} the move used in the attack
+   * @param move The {@linkcode Move} used in the attack
    * @param ignoreAbility If `true`, ignores this Pokemon's defensive ability effects
    * @param ignoreSourceAbility If `true`, ignores the attacking Pokemon's ability effects
    * @param ignoreAllyAbility If `true`, ignores the ally Pokemon's ability effects
    * @param ignoreSourceAllyAbility If `true`, ignores the ability effects of the attacking pokemon's ally
    * @param isCritical If `true`, calculates damage for a critical hit.
    * @param simulated If `true`, suppresses changes to game state during the calculation.
-   * @returns a {@linkcode DamageCalculationResult} object with three fields:
-   * - `cancelled`: `true` if the move was cancelled by another effect.
-   * - `result`: {@linkcode HitResult} indicates the attack's type effectiveness.
-   * - `damage`: `number` the attack's final damage output.
+   * @param effectiveness If defined, used in place of calculated effectiveness values
+   * @returns The {@linkcode DamageCalculationResult}
    */
   getAttackDamage(
-    source: Pokemon,
-    move: Move,
-    ignoreAbility = false,
-    ignoreSourceAbility = false,
-    ignoreAllyAbility = false,
-    ignoreSourceAllyAbility = false,
-    isCritical = false,
-    simulated = true,
+    {
+      source,
+      move,
+      ignoreAbility = false,
+      ignoreSourceAbility = false,
+      ignoreAllyAbility = false,
+      ignoreSourceAllyAbility = false,
+      isCritical = false,
+      simulated = true,
+      effectiveness}: getAttackDamageParams,
   ): DamageCalculationResult {
     const damage = new NumberHolder(0);
     const defendingSide = this.isPlayer()
@@ -4272,7 +4307,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
      *
      * Note that the source's abilities are not ignored here
      */
-    const typeMultiplier = this.getMoveEffectiveness(
+    const typeMultiplier = effectiveness ?? this.getMoveEffectiveness(
       source,
       move,
       ignoreAbility,
@@ -4344,7 +4379,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
      * The attack's base damage, as determined by the source's level, move power
      * and Attack stat as well as this Pokemon's Defense stat
      */
-    const baseDamage = this.getBaseDamage(
+    const baseDamage = this.getBaseDamage({
       source,
       move,
       moveCategory,
@@ -4354,7 +4389,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       ignoreSourceAllyAbility,
       isCritical,
       simulated,
-    );
+    });
 
     /** 25% damage debuff on moves hitting more than one non-fainted target (regardless of immunities) */
     const { targets, multiple } = getMoveTargets(source, move.id);
@@ -4637,7 +4672,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       cancelled,
       result,
       damage: dmg,
-    } = this.getAttackDamage(source, move, false, false, false, false, isCritical, false);
+    } = this.getAttackDamage(
+      {source, move, isCritical, simulated: false});
 
     const typeBoost = source.findTag(
       t =>
@@ -7311,14 +7347,15 @@ export class EnemyPokemon extends Pokemon {
                   ].includes(move.id);
                 return (
                   doesNotFail &&
-                  p.getAttackDamage(
-                    this,
+                  p.getAttackDamage({
+                    source: this,
                     move,
-                    !p.battleData.abilityRevealed,
-                    false,
-                    !p.getAlly()?.battleData.abilityRevealed,
-                    false,
+                    ignoreAbility: !p.battleData.abilityRevealed,
+                    ignoreSourceAbility: false,
+                    ignoreAllyAbility: !p.getAlly()?.battleData.abilityRevealed,
+                    ignoreSourceAllyAbility: false,
                     isCritical,
+                  }
                   ).damage >= p.hp
                 );
               })
