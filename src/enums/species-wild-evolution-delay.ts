@@ -1,5 +1,3 @@
-
-
 export enum SpeciesWildEvolutionDelay {
   NONE,
   SHORT,
