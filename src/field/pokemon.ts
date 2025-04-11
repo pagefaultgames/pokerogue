@@ -267,6 +267,7 @@ import { DamageCalculationResult } from "#app/interfaces/damage-calculation-resu
 import { FieldPosition } from "#enums/field-position";
 import { AttackMoveResult } from "#app/interfaces/attack-move-result";
 import { HitResult } from "#enums/hit-result";
+import { DamageResult } from "#app/@types/damage-result";
 
 export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public id: number;
@@ -7851,12 +7852,3 @@ export enum MoveResult {
   MISS,
   OTHER,
 }
-
-export type DamageResult =
-  | HitResult.EFFECTIVE
-  | HitResult.SUPER_EFFECTIVE
-  | HitResult.NOT_VERY_EFFECTIVE
-  | HitResult.ONE_HIT_KO
-  | HitResult.CONFUSION 
-  | HitResult.INDIRECT_KO 
-  | HitResult.INDIRECT;
