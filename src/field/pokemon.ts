@@ -7758,75 +7758,34 @@ export class EnemyPokemon extends Pokemon {
  */
 interface IllusionData {
   basePokemon: {
-    /**
-     * The actual name of the Pokemon.
-     * @type {string}
-     */
+    /** The actual name of the Pokemon */
     name: string;
-    /**
-     * The actual nickname of the Pokemon.
-     * @type {string}
-     */
+    /** The actual nickname of the Pokemon */
     nickname: string;
-    /**
-     * Store whether the base pokemon is shiny or not.
-     * @type {boolean}
-     */
+    /** Whether the base pokemon is shiny or not */
     shiny: boolean;
-    /**
-     * The shiny variant of the base pokemon.
-     * @type {Variant}
-     */
+    /** The shiny variant of the base pokemon */
     variant: Variant;
-    /**
-     * Whether the fusionned species of the base pokemon is shiny or not.
-     * @type {PokemonSpecies}
-     */
+    /** Whether the fusion species of the base pokemon is shiny or not */
     fusionShiny: boolean;
-    /**
-     * The variant of the fusionned species of the base pokemon.
-     * @type {Variant}
-     */
+    /** The variant of the fusion species of the base pokemon */
     fusionVariant: Variant;
   };
-  /**
-   * The species of the illusion.
-   * @type {PokemonSpecies}
-   */
+  /** The species of the illusion */
   species: Species;
-  /**
-   * The formIndex of the illusion
-   * @type {integer}
-   */
+  /** The formIndex of the illusion */
   formIndex: number;
-  /**
-   * The gender of the illusion
-   * @type {Gender}
-   */
+  /** The gender of the illusion */
   gender: Gender;
-  /**
-   * The pokeball of the illusion.
-   */
+  /** The pokeball of the illusion */
   pokeball: PokeballType;
-  /**
-   * The fusionned species of the illusion if it's a fusion.
-   * @type {PokemonSpecies}
-   */
+  /** The fusion species of the illusion if it's a fusion */
   fusionSpecies?: PokemonSpecies;
-  /**
-   * The fusionFormIndex of the illusion
-   * @type {integer}
-   */
+  /** The fusionFormIndex of the illusion */
   fusionFormIndex?: number;
-  /**
-   * The fusionGender of the illusion if it's a fusion
-   * @type {Gender}
-   */
+  /** The fusionGender of the illusion if it's a fusion */
   fusionGender?: Gender;
-  /**
-   * The level of the illusion (not used currently)
-   * @type {integer}
-   */
+  /** The level of the illusion (not used currently) */
   level?: number
 }
 
