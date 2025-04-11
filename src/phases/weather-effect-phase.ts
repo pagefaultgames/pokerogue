@@ -14,7 +14,7 @@ import { getWeatherDamageMessage, getWeatherLapseMessage } from "#app/data/weath
 import { BattlerTagType } from "#app/enums/battler-tag-type";
 import { WeatherType } from "#app/enums/weather-type";
 import type Pokemon from "#app/field/pokemon";
-import { HitResult } from "#app/field/pokemon";
+import { HitResult } from "#enums/hit-result";
 import { BooleanHolder, toDmgValue } from "#app/utils";
 import { CommonAnimPhase } from "./common-anim-phase";
 

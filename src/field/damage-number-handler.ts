@@ -1,7 +1,7 @@
 import { TextStyle, addTextObject } from "../ui/text";
-import type { DamageResult } from "./pokemon";
+import type { DamageResult } from "#app/@types/damage-result";
 import type Pokemon from "./pokemon";
-import { HitResult } from "./pokemon";
+import { HitResult } from "#enums/hit-result";
 import * as Utils from "../utils";
 import type { BattlerIndex } from "../battle";
 import { globalScene } from "#app/global-scene";

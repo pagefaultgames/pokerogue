@@ -1,10 +1,11 @@
 import { BattlerIndex } from "#app/battle";
 import { Stat } from "#enums/stat";
-import { allMoves, TeraMoveCategoryAttr } from "#app/data/moves/move";
+import { TeraMoveCategoryAttr } from "#app/data/moves/move";
+import { allMoves } from "#app/data/moves/all-moves";
 import type Move from "#app/data/moves/move";
 import { PokemonType } from "#enums/pokemon-type";
 import { Abilities } from "#app/enums/abilities";
-import { HitResult } from "#app/field/pokemon";
+import { HitResult } from "#enums/hit-result";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";

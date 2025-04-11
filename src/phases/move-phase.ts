@@ -16,7 +16,6 @@ import { CommonAnim } from "#app/data/battle-anims";
 import { BattlerTagLapseType, CenterOfAttentionTag } from "#app/data/battler-tags";
 import {
   AddArenaTrapTagAttr,
-  allMoves,
   applyMoveAttrs,
   BypassRedirectAttr,
   BypassSleepAttr,
@@ -27,13 +26,14 @@ import {
   PreMoveMessageAttr,
   PreUseInterruptAttr,
 } from "#app/data/moves/move";
+import { allMoves } from "#app/data/moves/all-moves";
 import { MoveFlags } from "#enums/MoveFlags";
 import { SpeciesFormChangePreMoveTrigger } from "#app/data/pokemon-forms";
 import { getStatusEffectActivationText, getStatusEffectHealText } from "#app/data/status-effect";
 import { PokemonType } from "#enums/pokemon-type";
 import { getTerrainBlockMessage, getWeatherBlockMessage } from "#app/data/weather";
 import { MoveUsedEvent } from "#app/events/battle-scene";
-import type { PokemonMove } from "#app/field/pokemon";
+import type { PokemonMove } from "#app/data/moves/pokemon-move";
 import type Pokemon from "#app/field/pokemon";
 import { MoveResult } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";

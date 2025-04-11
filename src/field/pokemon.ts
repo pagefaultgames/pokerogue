@@ -2,7 +2,7 @@ import Phaser from "phaser";
 import type { AnySound } from "#app/battle-scene";
 import type BattleScene from "#app/battle-scene";
 import { globalScene } from "#app/global-scene";
-import type { Variant, VariantSet } from "#app/sprites/variant";
+import type { Variant } from "#app/sprites/variant";
 import { populateVariantColors, variantColorCache } from "#app/sprites/variant";
 import { variantData } from "#app/sprites/variant";
 import BattleInfo, {
@@ -17,7 +17,6 @@ import {
   applyMoveAttrs,
   FixedDamageAttr,
   VariableAtkAttr,
-  allMoves,
   TypelessAttr,
   CritOnlyAttr,
   getMoveTargets,
@@ -42,6 +41,7 @@ import {
   VariableMoveTypeChartAttr,
   HpSplitAttr,
 } from "#app/data/moves/move";
+import { allMoves } from "#app/data/moves/all-moves";
 import { MoveTarget } from "#enums/MoveTarget";
 import { MoveCategory } from "#enums/MoveCategory";
 import type { PokemonSpeciesForm } from "#app/data/pokemon-species";
@@ -96,7 +96,6 @@ import {
 } from "#app/modifier/modifier";
 import { PokeballType } from "#enums/pokeball";
 import { Gender } from "#app/data/gender";
-import { initMoveAnim, loadMoveAnimAssets } from "#app/data/battle-anims";
 import { Status, getRandomStatus } from "#app/data/status-effect";
 import type {
   SpeciesFormEvolution,
@@ -221,7 +220,6 @@ import {
   SpeciesFormChangeLapseTeraTrigger,
   SpeciesFormChangeMoveLearnedTrigger,
   SpeciesFormChangePostMoveTrigger,
-  SpeciesFormChangeStatusEffectTrigger,
 } from "#app/data/pokemon-forms";
 import { TerrainType } from "#app/data/terrain";
 import type { TrainerSlot } from "#enums/trainer-slot";
@@ -263,25 +261,18 @@ import { Nature } from "#enums/nature";
 import { StatusEffect } from "#enums/status-effect";
 import { doShinySparkleAnim } from "#app/field/anims";
 import { MoveFlags } from "#enums/MoveFlags";
-import { hasExpSprite } from "#app/sprites/sprite-utils";
 import { timedEventManager } from "#app/global-event-manager";
 import { loadMoveAnimations } from "#app/sprites/pokemon-asset-loader";
 import { ResetStatusPhase } from "#app/phases/reset-status-phase";
-
-export enum LearnMoveSituation {
-  MISC,
-  LEVEL_UP,
-  RELEARN,
-  EVOLUTION,
-  EVOLUTION_FUSED, // If fusionSpecies has Evolved
-  EVOLUTION_FUSED_BASE, // If fusion's base species has Evolved
-}
-
-export enum FieldPosition {
-  CENTER,
-  LEFT,
-  RIGHT,
-}
+import { LearnMoveSituation } from "#enums/learn-move-situation";
+import { TurnMove } from "#app/interfaces/turn-move";
+import { AiType } from "#enums/ai-type";
+import { PokemonMove } from "#app/data/moves/pokemon-move";
+import { DamageCalculationResult } from "#app/interfaces/damage-calculation-result";
+import { FieldPosition } from "#enums/field-position";
+import { AttackMoveResult } from "#app/interfaces/attack-move-result";
+import { HitResult } from "#enums/hit-result";
+import { DamageResult } from "#app/@types/damage-result";
 
 export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public id: number;
@@ -7551,24 +7542,6 @@ export class EnemyPokemon extends Pokemon {
   }
 }
 
-export interface TurnMove {
-  move: Moves;
-  targets: BattlerIndex[];
-  result?: MoveResult;
-  virtual?: boolean;
-  turn?: number;
-  ignorePP?: boolean;
-}
-
-export interface AttackMoveResult {
-  move: Moves;
-  result: DamageResult;
-  damage: number;
-  critical: boolean;
-  sourceId: number;
-  sourceBattlerIndex: BattlerIndex;
-}
-
 export class PokemonSummonData {
   /** [Atk, Def, SpAtk, SpDef, Spd, Acc, Eva] */
   public statStages: number[] = [0, 0, 0, 0, 0, 0, 0];
@@ -7638,164 +7611,10 @@ export class PokemonTurnData {
   public extraTurns = 0;
 }
 
-export enum AiType {
-  RANDOM,
-  SMART_RANDOM,
-  SMART,
-}
-
 export enum MoveResult {
   PENDING,
   SUCCESS,
   FAIL,
   MISS,
   OTHER,
-}
-
-export enum HitResult {
-  EFFECTIVE = 1,
-  SUPER_EFFECTIVE,
-  NOT_VERY_EFFECTIVE,
-  ONE_HIT_KO,
-  NO_EFFECT,
-  STATUS,
-  HEAL,
-  FAIL,
-  MISS,
-  INDIRECT,
-  IMMUNE,
-  CONFUSION,
-  INDIRECT_KO,
-}
-
-export type DamageResult =
-  | HitResult.EFFECTIVE
-  | HitResult.SUPER_EFFECTIVE
-  | HitResult.NOT_VERY_EFFECTIVE
-  | HitResult.ONE_HIT_KO
-  | HitResult.CONFUSION 
-  | HitResult.INDIRECT_KO 
-  | HitResult.INDIRECT;
-
-/** Interface containing the results of a damage calculation for a given move */
-export interface DamageCalculationResult {
-  /** `true` if the move was cancelled (thus suppressing "No Effect" messages) */
-  cancelled: boolean;
-  /** The effectiveness of the move */
-  result: HitResult;
-  /** The damage dealt by the move */
-  damage: number;
-}
-
-/**
- * Wrapper class for the {@linkcode Move} class for Pokemon to interact with.
- * These are the moves assigned to a {@linkcode Pokemon} object.
- * It links to {@linkcode Move} class via the move ID.
- * Compared to {@linkcode Move}, this class also tracks if a move has received.
- * PP Ups, amount of PP used, and things like that.
- * @see {@linkcode isUsable} - checks if move is restricted, out of PP, or not implemented.
- * @see {@linkcode getMove} - returns {@linkcode Move} object by looking it up via ID.
- * @see {@linkcode usePp} - removes a point of PP from the move.
- * @see {@linkcode getMovePp} - returns amount of PP a move currently has.
- * @see {@linkcode getPpRatio} - returns the current PP amount / max PP amount.
- * @see {@linkcode getName} - returns name of {@linkcode Move}.
- **/
-export class PokemonMove {
-  public moveId: Moves;
-  public ppUsed: number;
-  public ppUp: number;
-  public virtual: boolean;
-
-  /**
-   * If defined and nonzero, overrides the maximum PP of the move (e.g., due to move being copied by Transform).
-   * This also nullifies all effects of `ppUp`.
-   */
-  public maxPpOverride?: number;
-
-  constructor(
-    moveId: Moves,
-    ppUsed = 0,
-    ppUp = 0,
-    virtual = false,
-    maxPpOverride?: number,
-  ) {
-    this.moveId = moveId;
-    this.ppUsed = ppUsed;
-    this.ppUp = ppUp;
-    this.virtual = virtual;
-    this.maxPpOverride = maxPpOverride;
-  }
-
-  /**
-   * Checks whether the move can be selected or performed by a Pokemon, without consideration for the move's targets.
-   * The move is unusable if it is out of PP, restricted by an effect, or unimplemented.
-   *
-   * @param {Pokemon} pokemon {@linkcode Pokemon} that would be using this move
-   * @param {boolean} ignorePp If `true`, skips the PP check
-   * @param {boolean} ignoreRestrictionTags If `true`, skips the check for move restriction tags (see {@link MoveRestrictionBattlerTag})
-   * @returns `true` if the move can be selected and used by the Pokemon, otherwise `false`.
-   */
-  isUsable(
-    pokemon: Pokemon,
-    ignorePp = false,
-    ignoreRestrictionTags = false,
-  ): boolean {
-    if (
-      this.moveId &&
-      !ignoreRestrictionTags &&
-      pokemon.isMoveRestricted(this.moveId, pokemon)
-    ) {
-      return false;
-    }
-
-    if (this.getMove().name.endsWith(" (N)")) {
-      return false;
-    }
-
-    return (
-      ignorePp || this.ppUsed < this.getMovePp() || this.getMove().pp === -1
-    );
-  }
-
-  getMove(): Move {
-    return allMoves[this.moveId];
-  }
-
-  /**
-   * Sets {@link ppUsed} for this move and ensures the value does not exceed {@link getMovePp}
-   * @param {number} count Amount of PP to use
-   */
-  usePp(count = 1) {
-    this.ppUsed = Math.min(this.ppUsed + count, this.getMovePp());
-  }
-
-  getMovePp(): number {
-    return (
-      this.maxPpOverride ||
-      this.getMove().pp + this.ppUp * Utils.toDmgValue(this.getMove().pp / 5)
-    );
-  }
-
-  getPpRatio(): number {
-    return 1 - this.ppUsed / this.getMovePp();
-  }
-
-  getName(): string {
-    return this.getMove().name;
-  }
-
-  /**
-   * Copies an existing move or creates a valid PokemonMove object from json representing one
-   * @param {PokemonMove | any} source The data for the move to copy
-   * @return {PokemonMove} A valid pokemonmove object
-   */
-  static loadMove(source: PokemonMove | any): PokemonMove {
-    return new PokemonMove(
-      source.moveId,
-      source.ppUsed,
-      source.ppUp,
-      source.virtual,
-      source.maxPpOverride,
-    );
-  }
 }

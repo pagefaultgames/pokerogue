@@ -1,8 +1,5 @@
-import {
-  pokemonEvolutions,
-  SpeciesFormEvolution,
-  SpeciesWildEvolutionDelay,
-} from "#app/data/balance/pokemon-evolutions";
+import { pokemonEvolutions, SpeciesFormEvolution } from "#app/data/balance/pokemon-evolutions";
+import { SpeciesWildEvolutionDelay } from "#enums/species-wild-evolution-delay";
 import { Abilities } from "#app/enums/abilities";
 import { Moves } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
