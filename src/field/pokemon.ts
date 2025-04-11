@@ -1135,7 +1135,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       !fusionSpecies?.forms?.length || 
       fusionFormIndex >= fusionSpecies?.forms.length
     ) {
-      //@ts-ignore
       return fusionSpecies;
     }
     return fusionSpecies?.forms[fusionFormIndex];
