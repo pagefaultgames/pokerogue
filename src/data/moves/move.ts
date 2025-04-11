@@ -12,16 +12,16 @@ import {
   TypeBoostTag,
 } from "../battler-tags";
 import { getPokemonNameWithAffix } from "../../messages";
-import type { AttackMoveResult } from "../../field/pokemon";
+import type { AttackMoveResult } from "#app/interfaces/attack-move-result";
 import type { TurnMove } from "#app/interfaces/turn-move";
 import type Pokemon from "../../field/pokemon";
 import {
   EnemyPokemon,
-  FieldPosition,
   HitResult,
   MoveResult,
   PlayerPokemon,
 } from "../../field/pokemon";
+import { FieldPosition } from "#enums/field-position";
 import { PokemonMove } from "./pokemon-move";
 import {
   getNonVolatileStatusEffects,

@@ -214,7 +214,7 @@ import {
   SpeciesFormChangeActiveTrigger,
   SpeciesFormChangeLapseTeraTrigger,
   SpeciesFormChangeMoveLearnedTrigger,
-  SpeciesFormChangePostMoveTrigger
+  SpeciesFormChangePostMoveTrigger,
 } from "#app/data/pokemon-forms";
 import { TerrainType } from "#app/data/terrain";
 import type { TrainerSlot } from "#enums/trainer-slot";
@@ -264,12 +264,8 @@ import { TurnMove } from "#app/interfaces/turn-move";
 import { AiType } from "#enums/ai-type";
 import { PokemonMove } from "#app/data/moves/pokemon-move";
 import { DamageCalculationResult } from "#app/interfaces/damage-calculation-result";
-
-export enum FieldPosition {
-  CENTER,
-  LEFT,
-  RIGHT,
-}
+import { FieldPosition } from "#enums/field-position";
+import { AttackMoveResult } from "#app/interfaces/attack-move-result";
 
 export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public id: number;
@@ -7775,15 +7771,6 @@ interface IllusionData {
   level?: number
 }
 
-export interface AttackMoveResult {
-  move: Moves;
-  result: DamageResult;
-  damage: number;
-  critical: boolean;
-  sourceId: number;
-  sourceBattlerIndex: BattlerIndex;
-}
-
 export class PokemonSummonData {
   /** [Atk, Def, SpAtk, SpDef, Spd, Acc, Eva] */
   public statStages: number[] = [0, 0, 0, 0, 0, 0, 0];
@@ -7888,5 +7875,3 @@ export type DamageResult =
   | HitResult.CONFUSION 
   | HitResult.INDIRECT_KO 
   | HitResult.INDIRECT;
-
-

@@ -13,7 +13,7 @@ import { Moves } from "#app/enums/moves";
 import { PokeballType } from "#enums/pokeball";
 import type { PlayerPokemon } from "#app/field/pokemon";
 import type { TurnMove } from "#app/interfaces/turn-move";
-import { FieldPosition } from "#app/field/pokemon";
+import { FieldPosition } from "#enums/field-position";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { Command } from "#app/ui/command-ui-handler";
 import { Mode } from "#app/ui/ui";
