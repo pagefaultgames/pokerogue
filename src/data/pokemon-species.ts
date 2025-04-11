@@ -13,11 +13,8 @@ import { uncatchableSpecies } from "#app/data/balance/biomes";
 import { speciesEggMoves } from "#app/data/balance/egg-moves";
 import { GrowthRate } from "#app/data/exp";
 import type { EvolutionLevel } from "#app/data/balance/pokemon-evolutions";
-import {
-  SpeciesWildEvolutionDelay,
-  pokemonEvolutions,
-  pokemonPrevolutions,
-} from "#app/data/balance/pokemon-evolutions";
+import { pokemonEvolutions, pokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
+import { SpeciesWildEvolutionDelay } from "#enums/species-wild-evolution-delay";
 import { PokemonType } from "#enums/pokemon-type";
 import type { LevelMoves } from "#app/data/balance/pokemon-level-moves";
 import {
