@@ -2,7 +2,7 @@ import Phaser from "phaser";
 import type { AnySound } from "#app/battle-scene";
 import type BattleScene from "#app/battle-scene";
 import { globalScene } from "#app/global-scene";
-import type { Variant, VariantSet } from "#app/sprites/variant";
+import type { Variant } from "#app/sprites/variant";
 import { populateVariantColors, variantColorCache } from "#app/sprites/variant";
 import { variantData } from "#app/sprites/variant";
 import BattleInfo, {
@@ -96,7 +96,6 @@ import {
 } from "#app/modifier/modifier";
 import { PokeballType } from "#enums/pokeball";
 import { Gender } from "#app/data/gender";
-import { initMoveAnim, loadMoveAnimAssets } from "#app/data/battle-anims";
 import { Status, getRandomStatus } from "#app/data/status-effect";
 import type {
   SpeciesFormEvolution,
@@ -268,6 +267,7 @@ import { timedEventManager } from "#app/global-event-manager";
 import { loadMoveAnimations } from "#app/sprites/pokemon-asset-loader";
 import { ResetStatusPhase } from "#app/phases/reset-status-phase";
 import { LearnMoveSituation } from "#enums/learn-move-situation";
+import { TurnMove } from "#app/interfaces/turn-move";
 
 export enum FieldPosition {
   CENTER,
@@ -7541,15 +7541,6 @@ export class EnemyPokemon extends Pokemon {
 
     return ret;
   }
-}
-
-export interface TurnMove {
-  move: Moves;
-  targets: BattlerIndex[];
-  result?: MoveResult;
-  virtual?: boolean;
-  turn?: number;
-  ignorePP?: boolean;
 }
 
 export interface AttackMoveResult {

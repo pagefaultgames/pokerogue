@@ -12,7 +12,8 @@ import {
   TypeBoostTag,
 } from "../battler-tags";
 import { getPokemonNameWithAffix } from "../../messages";
-import type { AttackMoveResult, TurnMove } from "../../field/pokemon";
+import type { AttackMoveResult } from "../../field/pokemon";
+import type { TurnMove } from "#app/interfaces/turn-move";
 import type Pokemon from "../../field/pokemon";
 import {
   EnemyPokemon,

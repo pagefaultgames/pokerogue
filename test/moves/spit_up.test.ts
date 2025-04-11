@@ -2,7 +2,7 @@ import { Stat } from "#enums/stat";
 import { StockpilingTag } from "#app/data/battler-tags";
 import { allMoves } from "#app/data/moves/all-moves";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
-import type { TurnMove } from "#app/field/pokemon";
+import type { TurnMove } from "#app/interfaces/turn-move";
 import { MoveResult } from "#app/field/pokemon";
 import GameManager from "#test/testUtils/gameManager";
 import { Abilities } from "#enums/abilities";
