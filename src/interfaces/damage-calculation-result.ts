@@ -1,4 +1,4 @@
-import type { HitResult } from "#app/field/pokemon";
+import type { HitResult } from "#enums/hit-result";
 
 /** Interface containing the results of a damage calculation for a given move */
 export interface DamageCalculationResult {

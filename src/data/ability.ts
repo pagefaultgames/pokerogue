@@ -1,7 +1,8 @@
 import type { EnemyPokemon } from "../field/pokemon";
 import type { PokemonMove } from "./moves/pokemon-move";
 import type Pokemon from "../field/pokemon";
-import { HitResult, MoveResult, PlayerPokemon } from "../field/pokemon";
+import { MoveResult, PlayerPokemon } from "../field/pokemon";
+import { HitResult } from "#enums/hit-result";
 import { PokemonType } from "#enums/pokemon-type";
 import type { Constructor } from "#app/utils";
 import * as Utils from "../utils";
