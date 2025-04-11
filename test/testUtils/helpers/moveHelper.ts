@@ -1,7 +1,7 @@
 import type { BattlerIndex } from "#app/battle";
 import { Button } from "#app/enums/buttons";
 import type Pokemon from "#app/field/pokemon";
-import { PokemonMove } from "#app/field/pokemon";
+import { PokemonMove } from "#app/data/moves/pokemon-move";
 import Overrides from "#app/overrides";
 import type { CommandPhase } from "#app/phases/command-phase";
 import { LearnMovePhase } from "#app/phases/learn-move-phase";

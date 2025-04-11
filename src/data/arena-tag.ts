@@ -7,7 +7,8 @@ import { MoveTarget } from "#enums/MoveTarget";
 import { MoveCategory } from "#enums/MoveCategory";
 import { getPokemonNameWithAffix } from "#app/messages";
 import type Pokemon from "#app/field/pokemon";
-import { HitResult, PokemonMove } from "#app/field/pokemon";
+import { HitResult } from "#app/field/pokemon";
+import { PokemonMove } from "./moves/pokemon-move";
 import { StatusEffect } from "#enums/status-effect";
 import type { BattlerIndex } from "#app/battle";
 import {
