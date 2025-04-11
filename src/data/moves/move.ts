@@ -17,10 +17,10 @@ import type { TurnMove } from "#app/interfaces/turn-move";
 import type Pokemon from "../../field/pokemon";
 import {
   EnemyPokemon,
-  HitResult,
   MoveResult,
   PlayerPokemon,
 } from "../../field/pokemon";
+import { HitResult } from "#enums/hit-result";
 import { FieldPosition } from "#enums/field-position";
 import { PokemonMove } from "./pokemon-move";
 import {
