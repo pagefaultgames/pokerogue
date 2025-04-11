@@ -71,6 +71,7 @@ export class LevelUpPhase extends PlayerPartyMemberPokemonPhase {
     if (!this.pokemon.pauseEvolutions) {
       const evolution = this.pokemon.getEvolution();
       if (evolution) {
+        this.pokemon.breakIllusion()
         globalScene.unshiftPhase(new EvolutionPhase(this.pokemon, evolution, this.lastLevel));
       }
     }
