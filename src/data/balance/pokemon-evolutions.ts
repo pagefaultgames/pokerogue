@@ -14,16 +14,8 @@ import { DamageMoneyRewardModifier, ExtraModifierModifier, MoneyMultiplierModifi
 import { SpeciesFormKey } from "#enums/species-form-key";
 import { speciesStarterCosts } from "./starters";
 import i18next from "i18next";
+import { SpeciesWildEvolutionDelay } from "#enums/species-wild-evolution-delay";
 
-
-export enum SpeciesWildEvolutionDelay {
-  NONE,
-  SHORT,
-  MEDIUM,
-  LONG,
-  VERY_LONG,
-  NEVER
-}
 
 export enum EvolutionItem {
   NONE,
