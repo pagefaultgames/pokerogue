@@ -26,12 +26,6 @@ export class TrainerVictoryPhase extends BattlePhase {
       globalScene.unshiftPhase(new ModifierRewardPhase(modifierRewardFunc));
     }
 
-    if (timedEventManager.isEventActive()) {
-      for (const rewardFunc of globalScene.currentBattle.trainer?.config.eventRewardFuncs!) {
-        globalScene.unshiftPhase(new ModifierRewardPhase(rewardFunc));
-      }
-    }
-
     const trainerType = globalScene.currentBattle.trainer?.config.trainerType!; // TODO: is this bang correct?
     // Validate Voucher for boss trainers
     if (vouchers.hasOwnProperty(TrainerType[trainerType])) {
