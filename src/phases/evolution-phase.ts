@@ -10,7 +10,7 @@ import { Mode } from "#app/ui/ui";
 import { cos, sin } from "#app/field/anims";
 import type { PlayerPokemon } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
-import { LearnMoveSituation } from "#app/field/pokemon";
+import { LearnMoveSituation } from "#enums/learn-move-situation";
 import { getTypeRgb } from "#app/data/type";
 import i18next from "i18next";
 import { getPokemonNameWithAffix } from "#app/messages";
