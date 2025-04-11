@@ -262,12 +262,12 @@ import { Nature } from "#enums/nature";
 import { StatusEffect } from "#enums/status-effect";
 import { doShinySparkleAnim } from "#app/field/anims";
 import { MoveFlags } from "#enums/MoveFlags";
-import { hasExpSprite } from "#app/sprites/sprite-utils";
 import { timedEventManager } from "#app/global-event-manager";
 import { loadMoveAnimations } from "#app/sprites/pokemon-asset-loader";
 import { ResetStatusPhase } from "#app/phases/reset-status-phase";
 import { LearnMoveSituation } from "#enums/learn-move-situation";
 import { TurnMove } from "#app/interfaces/turn-move";
+import { AiType } from "#enums/ai-type";
 
 export enum FieldPosition {
   CENTER,
@@ -7619,12 +7619,6 @@ export class PokemonTurnData {
    * forced to act again in the same turn
    */
   public extraTurns = 0;
-}
-
-export enum AiType {
-  RANDOM,
-  SMART_RANDOM,
-  SMART,
 }
 
 export enum MoveResult {
