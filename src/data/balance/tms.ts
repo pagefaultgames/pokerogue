@@ -30926,6 +30926,7 @@ export const tmSpecies: TmSpecies = {
     Species.MURKROW,
     Species.SLOWKING,
     Species.MISDREAVUS,
+    Species.UNOWN,
     Species.GIRAFARIG,
     Species.PINECO,
     Species.FORRETRESS,
