@@ -5296,10 +5296,10 @@ export class IllusionPreSummonAbAttr extends PreSummonAbAttr {
   /**
    * Apply a new illusion when summoning Zoroark if the illusion is available
    *
-   * @param {Pokemon} pokemon - The Pokémon with the Illusion ability.
-   * @param {boolean} passive - N/A
-   * @param {...any} args - N/A
-   * @returns {boolean} - Whether the illusion was applied.
+   * @param pokemon - The Pokémon with the Illusion ability.
+   * @param passive - N/A
+   * @param args - N/A
+   * @returns Whether the illusion was applied.
    */
   override applyPreSummon(pokemon: Pokemon, passive: boolean, args: any[]): void {
     const party: Pokemon[] = (pokemon.isPlayer() ? globalScene.getPlayerParty() : globalScene.getEnemyParty()).filter(p => p.isAllowedInBattle());
