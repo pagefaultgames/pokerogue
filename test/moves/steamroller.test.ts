@@ -1,7 +1,7 @@
 import { BattlerIndex } from "#app/battle";
 import { allMoves } from "#app/data/moves/all-moves";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
-import type { DamageCalculationResult } from "#app/field/pokemon";
+import type { DamageCalculationResult } from "#app/interfaces/damage-calculation-result";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
