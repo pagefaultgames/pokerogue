@@ -1855,7 +1855,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       ? this.variant 
       : Math.max(this.variant, this.fusionVariant) as Variant;
     }
-
   }
 
   getBaseVariant(doubleShiny: boolean): Variant {
