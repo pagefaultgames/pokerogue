@@ -260,6 +260,7 @@ import { timedEventManager } from "#app/global-event-manager";
 import { loadMoveAnimations } from "#app/sprites/pokemon-asset-loader";
 import { ResetStatusPhase } from "#app/phases/reset-status-phase";
 import { LearnMoveSituation } from "#enums/learn-move-situation";
+import { TurnMove } from "#app/interfaces/turn-move";
 
 export enum FieldPosition {
   CENTER,
@@ -7769,15 +7770,6 @@ interface IllusionData {
   fusionGender?: Gender;
   /** The level of the illusion (not used currently) */
   level?: number
-}
-
-export interface TurnMove {
-  move: Moves;
-  targets: BattlerIndex[];
-  result?: MoveResult;
-  virtual?: boolean;
-  turn?: number;
-  ignorePP?: boolean;
 }
 
 export interface AttackMoveResult {
