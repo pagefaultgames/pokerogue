@@ -73,76 +73,92 @@ export function getBerryPredicate(berryType: BerryType): BerryPredicate {
 export type BerryEffectFunc = (pokemon: Pokemon, berryOwner?: Pokemon) => void;
 
 export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
-  switch (berryType) {
-    case BerryType.SITRUS:
-    case BerryType.ENIGMA:
-      return (pokemon: Pokemon, berryOwner?: Pokemon) => {
-        const hpHealed = new NumberHolder(toDmgValue(pokemon.getMaxHp() / 4));
-        applyAbAttrs(DoubleBerryEffectAbAttr, pokemon, null, false, hpHealed);
-        globalScene.unshiftPhase(
-          new PokemonHealPhase(
-            pokemon.getBattlerIndex(),
-            hpHealed.value,
-            i18next.t("battle:hpHealBerry", {
-              pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-              berryName: getBerryName(berryType),
-            }),
-            true,
-          ),
-        );
-        applyPostItemLostAbAttrs(PostItemLostAbAttr, berryOwner ?? pokemon, false);
-      };
-    case BerryType.LUM:
-      return (pokemon: Pokemon, berryOwner?: Pokemon) => {
-        if (pokemon.status) {
-          globalScene.queueMessage(getStatusEffectHealText(pokemon.status.effect, getPokemonNameWithAffix(pokemon)));
-        }
-        pokemon.resetStatus(true, true);
-        pokemon.updateInfo();
-        applyPostItemLostAbAttrs(PostItemLostAbAttr, berryOwner ?? pokemon, false);
-      };
-    case BerryType.LIECHI:
-    case BerryType.GANLON:
-    case BerryType.PETAYA:
-    case BerryType.APICOT:
-    case BerryType.SALAC:
-      return (pokemon: Pokemon, berryOwner?: Pokemon) => {
-        // Offset BerryType such that LIECHI -> Stat.ATK = 1, GANLON -> Stat.DEF = 2, so on and so forth
-        const stat: BattleStat = berryType - BerryType.ENIGMA;
-        const statStages = new NumberHolder(1);
-        applyAbAttrs(DoubleBerryEffectAbAttr, pokemon, null, false, statStages);
-        globalScene.unshiftPhase(new StatStageChangePhase(pokemon.getBattlerIndex(), true, [stat], statStages.value));
-        applyPostItemLostAbAttrs(PostItemLostAbAttr, berryOwner ?? pokemon, false);
-      };
-    case BerryType.LANSAT:
-      return (pokemon: Pokemon, berryOwner?: Pokemon) => {
-        pokemon.addTag(BattlerTagType.CRIT_BOOST);
-        applyPostItemLostAbAttrs(PostItemLostAbAttr, berryOwner ?? pokemon, false);
-      };
-    case BerryType.STARF:
-      return (pokemon: Pokemon, berryOwner?: Pokemon) => {
-        const randStat = randSeedInt(Stat.SPD, Stat.ATK);
-        const stages = new NumberHolder(2);
-        applyAbAttrs(DoubleBerryEffectAbAttr, pokemon, null, false, stages);
-        globalScene.unshiftPhase(new StatStageChangePhase(pokemon.getBattlerIndex(), true, [randStat], stages.value));
-        applyPostItemLostAbAttrs(PostItemLostAbAttr, berryOwner ?? pokemon, false);
-      };
-    case BerryType.LEPPA:
-      return (pokemon: Pokemon, berryOwner?: Pokemon) => {
-        const ppRestoreMove = pokemon.getMoveset().find(m => !m.getPpRatio())
-          ? pokemon.getMoveset().find(m => !m.getPpRatio())
-          : pokemon.getMoveset().find(m => m.getPpRatio() < 1);
-        if (ppRestoreMove !== undefined) {
-          ppRestoreMove!.ppUsed = Math.max(ppRestoreMove!.ppUsed - 10, 0);
-          globalScene.queueMessage(
-            i18next.t("battle:ppHealBerry", {
-              pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-              moveName: ppRestoreMove!.getName(),
-              berryName: getBerryName(berryType),
-            }),
+  return (consumer: Pokemon, berryOwner: Pokemon = consumer) => {
+    // Apply an effect pertaining to what berry we're using
+    switch (berryType) {
+      case BerryType.SITRUS:
+      case BerryType.ENIGMA:
+        {
+          const hpHealed = new NumberHolder(toDmgValue(consumer.getMaxHp() / 4));
+          applyAbAttrs(DoubleBerryEffectAbAttr, consumer, null, false, hpHealed);
+          globalScene.unshiftPhase(
+            new PokemonHealPhase(
+              consumer.getBattlerIndex(),
+              hpHealed.value,
+              i18next.t("battle:hpHealBerry", {
+                pokemonNameWithAffix: getPokemonNameWithAffix(consumer),
+                berryName: getBerryName(berryType),
+              }),
+              true,
+            ),
           );
-          applyPostItemLostAbAttrs(PostItemLostAbAttr, berryOwner ?? pokemon, false);
         }
-      };
-  }
+        break;
+      case BerryType.LUM:
+        {
+          if (consumer.status) {
+            globalScene.queueMessage(
+              getStatusEffectHealText(consumer.status.effect, getPokemonNameWithAffix(consumer)),
+            );
+          }
+          consumer.resetStatus(true, true);
+          consumer.updateInfo();
+        }
+        break;
+      case BerryType.LIECHI:
+      case BerryType.GANLON:
+      case BerryType.PETAYA:
+      case BerryType.APICOT:
+      case BerryType.SALAC:
+        {
+          // Offset BerryType such that LIECHI --> Stat.ATK = 1, GANLON --> Stat.DEF = 2, so on and so forth
+          const stat: BattleStat = berryType - BerryType.ENIGMA;
+          const statStages = new NumberHolder(1);
+          applyAbAttrs(DoubleBerryEffectAbAttr, consumer, null, false, statStages);
+          globalScene.unshiftPhase(
+            new StatStageChangePhase(consumer.getBattlerIndex(), true, [stat], statStages.value),
+          );
+        }
+        break;
+
+      case BerryType.LANSAT:
+        {
+          consumer.addTag(BattlerTagType.CRIT_BOOST);
+        }
+        break;
+
+      case BerryType.STARF:
+        {
+          const randStat = randSeedInt(Stat.SPD, Stat.ATK);
+          const stages = new NumberHolder(2);
+          applyAbAttrs(DoubleBerryEffectAbAttr, consumer, null, false, stages);
+          globalScene.unshiftPhase(
+            new StatStageChangePhase(consumer.getBattlerIndex(), true, [randStat], stages.value),
+          );
+        }
+        break;
+
+      case BerryType.LEPPA:
+        {
+          const ppRestoreMove =
+            consumer.getMoveset().find(m => !m.getPpRatio()) ?? consumer.getMoveset().find(m => m.getPpRatio() < 1);
+          if (ppRestoreMove !== undefined) {
+            ppRestoreMove!.ppUsed = Math.max(ppRestoreMove!.ppUsed - 10, 0);
+            globalScene.queueMessage(
+              i18next.t("battle:ppHealBerry", {
+                pokemonNameWithAffix: getPokemonNameWithAffix(consumer),
+                moveName: ppRestoreMove!.getName(),
+                berryName: getBerryName(berryType),
+              }),
+            );
+          }
+        }
+        break;
+      default:
+        console.error("Incorrect BerryType %d passed to GetBerryEffectFunc", berryType);
+    }
+
+    // Trigger unburden on the mon losing the berry
+    applyPostItemLostAbAttrs(PostItemLostAbAttr, berryOwner, false);
+  };
 }

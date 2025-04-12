@@ -9,14 +9,14 @@
  - The best example of this is JSDoc-style comments as seen below:
    - When formatted this way, the comment gets shown by intellisense in VS Code or similar IDEs just by hovering over the text!
    - Functions also show each the comment for parameter as you type them, making keeping track of what each one does in lengthy functions much more clear
-```js
+```ts
 /**
  * Changes the type-based weather modifier if this move's power would be reduced by it
- * @param user {@linkcode Pokemon} using this move
- * @param target {@linkcode Pokemon} target of this move
- * @param move {@linkcode Move} being used
- * @param args [0] {@linkcode Utils.NumberHolder} for arenaAttackTypeMultiplier
- * @returns true if the function succeeds
+ * @param user The {@linkcode Pokemon} using this move
+ * @param target The {@linkcode Pokemon} being targeted by this move
+ * @param move The {@linkcode Move} being used
+ * @param args `[0]` {@linkcode Utils.NumberHolder} for arenaAttackTypeMultiplier
+ * @returns `true` if the function succeeds
  */
 apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
 }
@@ -46,7 +46,7 @@ If you're interested in going more in depth, you can find a reference guide for 
 While other classes should be fully documented, Abilities and Moves heavily incoperate inheritance (i.e. the `extends` keyword). Because of this, much of the functionality in these classes is duplicated or only slightly changed between classes.
 ### With this in mind, there's a few more things to keep in mind for these:
 - Do not document any parameters if the function mirrors the one they extend.
-  - Keep this in mind for functions that are not the `apply` function as they are usually sparce and mostly reused
+  - Keep this in mind for functions that are not the `apply` function as they are usually sparse and mostly reused
 - The class itself must be documented
   - This must include the `@extends BaseClass` and `@see {@linkcode apply}` tags
 - Class member variables must be documented

@@ -60,6 +60,11 @@ import { SwitchType } from "#enums/switch-type";
 import { MoveFlags } from "#enums/MoveFlags";
 import { MoveTarget } from "#enums/MoveTarget";
 import { MoveCategory } from "#enums/MoveCategory";
+import type { BerryType } from "#enums/berry-type";
+import { CommonAnimPhase } from "#app/phases/common-anim-phase";
+import { CommonAnim } from "../battle-anims";
+import { getBerryEffectFunc } from "../berry";
+import { BerryUsedEvent } from "#app/events/battle-scene";
 
 // Type imports
 import type { EnemyPokemon, PokemonMove } from "#app/field/pokemon";
@@ -3727,7 +3732,7 @@ function getAnticipationCondition(): AbAttrCondition {
  */
 function getOncePerBattleCondition(ability: Abilities): AbAttrCondition {
   return (pokemon: Pokemon) => {
-    return !pokemon.waveData.abilitiesApplied.includes(ability);
+    return !pokemon.waveData.abilitiesApplied.has(ability);
   };
 }
 
@@ -4016,7 +4021,7 @@ export class PostTurnStatusHealAbAttr extends PostTurnAbAttr {
 
 /**
  * After the turn ends, resets the status of either the ability holder or their ally
- * @param {boolean} allyTarget Whether to target ally, defaults to false (self-target)
+ * @param allyTarget Whether to target ally, defaults to false (self-target)
  */
 export class PostTurnResetStatusAbAttr extends PostTurnAbAttr {
   private allyTarget: boolean;
@@ -4046,27 +4051,39 @@ export class PostTurnResetStatusAbAttr extends PostTurnAbAttr {
 }
 
 /**
- * After the turn ends, try to create an extra item
+ * Attribute to try and restore eaten berries after the turn ends.
+ * Used by {@linkcode Abilities.HARVEST}.
  */
-export class PostTurnLootAbAttr extends PostTurnAbAttr {
+export class PostTurnRestoreBerryAbAttr extends PostTurnAbAttr {
   /**
-   * @param itemType - The type of item to create
    * @param procChance - Chance to create an item
-   * @see {@linkcode applyPostTurn()}
+   * @see {@linkcode createEatenBerry()}
    */
   constructor(
-    /** Extend itemType to add more options */
-    private itemType: "EATEN_BERRIES" | "HELD_BERRIES",
     private procChance: (pokemon: Pokemon) => number
   ) {
     super();
   }
 
   override canApplyPostTurn(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
+    // check if we have at least 1 recoverable berry
+    const cappedBerries = new Set(
+      globalScene.getModifiers(BerryModifier, pokemon.isPlayer()).filter(
+        (bm) => bm.pokemonId === pokemon.id && bm.getCountUnderMax() < 1
+      ).map((bm) => bm.berryType)
+    );
+
+    const hasBerryUnderCap = pokemon.battleData.berriesEaten.some(
+      (bt) => !cappedBerries.has(bt)
+    );
+
+    if (!hasBerryUnderCap) {
+      return false;
+    }
+
     // Clamp procChance to [0, 1]. Skip if didn't proc (less than pass)
     const pass = Phaser.Math.RND.realInRange(0, 1);
-    console.log("apply check ran; worked: ", Math.max(Math.min(this.procChance(pokemon), 1), 0) >= pass && this.itemType === "EATEN_BERRIES");
-    return Math.max(Math.min(this.procChance(pokemon), 1), 0) >= pass && this.itemType === "EATEN_BERRIES";
+    return Math.max(Math.min(this.procChance(pokemon), 1), 0) >= pass;
   }
 
   override applyPostTurn(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): void {
@@ -4077,60 +4094,119 @@ export class PostTurnLootAbAttr extends PostTurnAbAttr {
    * Create a new berry chosen randomly from the berries the pokemon ate this battle
    * @param pokemon The pokemon with this ability
    * @param simulated whether the associated ability call is simulated
-   * @returns whether a new berry was created
+   * @returns `true` if a new berry was created
    */
   createEatenBerry(pokemon: Pokemon, simulated: boolean): boolean {
-    const berriesUnderCap = new Set(
+    // get all berries we just ate that are under cap
+    const cappedBerries = new Set(
       globalScene.getModifiers(BerryModifier, pokemon.isPlayer()).filter(
-        // get all berry modifiers for this mon that are under cap
-        (bm) => bm.pokemonId == pokemon.id && bm.getMaxStackCount() < bm.getStackCount()
+        (bm) => bm.pokemonId === pokemon.id && bm.getCountUnderMax() < 1
       ).map((bm) => bm.berryType)
     );
 
     const berriesEaten = pokemon.battleData.berriesEaten.filter(
-      (bt) => berriesUnderCap.has(bt)
+      (bt) => !cappedBerries.has(bt)
     );
 
     if (!berriesEaten.length) {
-      console.log("NOPE!")
       return false;
     }
-    console.log("YUP!")
 
     if (simulated) {
       return true;
     }
 
+    // Pick a random berry to yoink
     const randomIdx = randSeedInt(berriesEaten.length);
     const chosenBerryType = berriesEaten[randomIdx];
+    pokemon.battleData.berriesEaten.splice(randomIdx, 1); // Remove berry from memory
     const chosenBerry = new BerryModifierType(chosenBerryType);
-    berriesEaten.splice(randomIdx); // Remove berry from memory
 
+    // Add the randomly chosen berry or update the existing one
     const berryModifier = globalScene.findModifier(
       (m) => m instanceof BerryModifier && m.berryType === chosenBerryType && m.pokemonId == pokemon.id,
       pokemon.isPlayer()
     ) as BerryModifier | undefined;
 
-    if (!berryModifier) {
+    if (berryModifier) {
+      berryModifier.stackCount++
+    } else {
+      // make new modifier
       const newBerry = new BerryModifier(chosenBerry, pokemon.id, chosenBerryType, 1);
       if (pokemon.isPlayer()) {
         globalScene.addModifier(newBerry);
       } else {
         globalScene.addEnemyModifier(newBerry);
       }
-    } else if (berryModifier.stackCount < berryModifier.getMaxHeldItemCount(pokemon)) {
-      berryModifier.stackCount++;
     }
 
-    globalScene.queueMessage(i18next.t("abilityTriggers:postTurnLootCreateEatenBerry", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), berryName: chosenBerry.name }));
     globalScene.updateModifiers(pokemon.isPlayer());
-
+    globalScene.queueMessage(i18next.t("abilityTriggers:postTurnLootCreateEatenBerry", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), berryName: chosenBerry.name }));
     return true;
   }
 }
 
 /**
- * Attribute used for {@linkcode Abilities.MOODY}
+  * Attribute to track and re-trigger last turn's berries at the end of the `BerryPhase`.
+  * Used by {@linkcode Abilities.CUD_CHEW}.
+*/
+export class RepeatBerryNextTurnAbAttr extends PostTurnAbAttr {
+  constructor() {
+    super(true);
+  }
+
+  /**
+   * @returns `true` if the pokemon ate anything last turn
+   */
+  override canApply(pokemon: Pokemon, _passive: boolean, _simulated: boolean, _args: any[]): boolean {
+    return !!pokemon.summonData.berriesEatenLast.length;
+  }
+
+  /**
+   * Cause this {@linkcode Pokemon} to regurgitate and eat all berries
+   * inside its `berriesEatenLast` array.
+   * @param pokemon The pokemon having the tummy ache
+   * @param _passive N/A
+   * @param _simulated N/A
+   * @param _cancelled N/A
+   * @param _args N/A
+   */
+  override apply(pokemon: Pokemon, _passive: boolean, _simulated: boolean, _cancelled: BooleanHolder | null, _args: any[]): void {
+    // play funni animation
+    globalScene.unshiftPhase(
+      new CommonAnimPhase(pokemon.getBattlerIndex(), pokemon.getBattlerIndex(), CommonAnim.USE_ITEM),
+    );
+
+    // re-apply effect of all berries previously scarfed
+    for (const berryType of pokemon.summonData.berriesEatenLast) {
+      getBerryEffectFunc(berryType)(pokemon);
+      const bMod = new BerryModifier(new BerryModifierType(berryType), pokemon.id, berryType, 1);
+      globalScene.eventTarget.dispatchEvent(new BerryUsedEvent(bMod)); // trigger message
+    }
+  }
+
+  /**
+   * @returns `true` if the pokemon ate anything this turn (we move it into `battleData`)
+   */
+  override canApplyPostTurn(pokemon: Pokemon, _passive: boolean, _simulated: boolean, _args: any[]): boolean {
+    return !!pokemon.turnData.berriesEaten.length;
+  }
+
+  /**
+   * Move this {@linkcode Pokemon}'s `berriesEaten` array inside `PokemonTurnData`
+   * into its `summonData`.
+   * @param pokemon The {@linkcode Pokemon} having a nice snack
+   * @param _passive N/A
+   * @param _simulated N/A
+   * @param _args N/A
+   */
+  override applyPostTurn(pokemon: Pokemon, _passive: boolean, _simulated: boolean, _args: any[]): void {
+    pokemon.summonData.berriesEatenLast = pokemon.turnData.berriesEaten;
+  }
+}
+
+/**
+ * Attribute used for {@linkcode Abilities.MOODY} to randomly raise and lower stats at turn end.
  */
 export class MoodyAbAttr extends PostTurnAbAttr {
   constructor() {
@@ -4216,7 +4292,8 @@ export class PostTurnFormChangeAbAttr extends PostTurnAbAttr {
 
 
 /**
- * Attribute used for abilities (Bad Dreams) that damages the opponents for being asleep
+ * Attribute used for abilities (Bad Dreams) that damages the opponents for being asleep.
+ * @extends PostTurnAbAttr
  */
 export class PostTurnHurtIfSleepingAbAttr extends PostTurnAbAttr {
   override canApplyPostTurn(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
@@ -4224,7 +4301,7 @@ export class PostTurnHurtIfSleepingAbAttr extends PostTurnAbAttr {
   }
   /**
    * Deals damage to all sleeping opponents equal to 1/8 of their max hp (min 1)
-   * @param pokemon Pokemon that has this ability
+   * @param pokemon {@linkcode Pokemon} with this ability
    * @param passive N/A
    * @param simulated `true` if applying in a simulated call.
    * @param args N/A
@@ -4518,17 +4595,19 @@ export class HealFromBerryUseAbAttr extends AbAttr {
   }
 
   override apply(pokemon: Pokemon, passive: boolean, simulated: boolean, ...args: [BooleanHolder, any[]]): void {
+    if (simulated) {
+      return;
+    }
+
     const { name: abilityName } = passive ? pokemon.getPassiveAbility() : pokemon.getAbility();
-    if (!simulated) {
-      globalScene.unshiftPhase(
-        new PokemonHealPhase(
-          pokemon.getBattlerIndex(),
-          toDmgValue(pokemon.getMaxHp() * this.healPercent),
-          i18next.t("abilityTriggers:healFromBerryUse", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), abilityName }),
-          true
+    globalScene.unshiftPhase(
+      new PokemonHealPhase(
+        pokemon.getBattlerIndex(),
+        toDmgValue(pokemon.getMaxHp() * this.healPercent),
+        i18next.t("abilityTriggers:healFromBerryUse", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), abilityName }),
+        true
         )
       );
-    }
   }
 }
 
@@ -5176,7 +5255,7 @@ export class IllusionPreSummonAbAttr extends PreSummonAbAttr {
 
       // If the last conscious Pokémon in the party is a Terastallized Ogerpon or Terapagos, Illusion will not activate.
       // Illusion will also not activate if the Pokémon with Illusion is Terastallized and the last Pokémon in the party is Ogerpon or Terapagos.
-      if ( 
+      if (
         lastPokemon === pokemon ||
         ((speciesId === Species.OGERPON || speciesId === Species.TERAPAGOS) && (lastPokemon.isTerastallized || pokemon.isTerastallized))
       ) {
@@ -5427,11 +5506,8 @@ function applySingleAbAttrs<TAttr extends AbAttr>(
       globalScene.queueAbilityDisplay(pokemon, passive, false);
     }
 
-    if (pokemon.summonData && !pokemon.summonData.abilitiesApplied.includes(ability.id)) {
-      pokemon.summonData.abilitiesApplied.push(ability.id);
-    }
-    if (pokemon.battleData && !simulated && !pokemon.waveData.abilitiesApplied.includes(ability.id)) {
-      pokemon.waveData.abilitiesApplied.push(ability.id);
+    if (!simulated) {
+      pokemon.waveData.abilitiesApplied.add(ability.id);
     }
 
     globalScene.clearPhaseQueueSplice();
@@ -6755,8 +6831,7 @@ export function initAbilities() {
       .attr(MovePowerBoostAbAttr, (user, target, move) => move.category === MoveCategory.SPECIAL && user?.status?.effect === StatusEffect.BURN, 1.5),
     new Ability(Abilities.HARVEST, 5)
       .attr(
-        PostTurnLootAbAttr,
-        "EATEN_BERRIES",
+        PostTurnRestoreBerryAbAttr,
         /** Rate is doubled when under sun {@link https://dex.pokemonshowdown.com/abilities/harvest} */
         (pokemon) => 0.5 * (getWeatherCondition(WeatherType.SUNNY, WeatherType.HARSH_SUN)(pokemon) ? 2 : 1)
       )
@@ -7200,7 +7275,7 @@ export function initAbilities() {
     new Ability(Abilities.WANDERING_SPIRIT, 8)
       .attr(PostDefendAbilitySwapAbAttr)
       .bypassFaint()
-      .edgeCase(), //  interacts incorrectly with rock head. It's meant to switch abilities before recoil would apply so that a pokemon with rock head would lose rock head first and still take the recoil
+      .edgeCase(), // interacts incorrectly with rock head. It's meant to switch abilities before recoil would apply so that a pokemon with rock head would lose rock head first and still take the recoil
     new Ability(Abilities.GORILLA_TACTICS, 8)
       .attr(GorillaTacticsAbAttr),
     new Ability(Abilities.NEUTRALIZING_GAS, 8)
@@ -7340,7 +7415,7 @@ export function initAbilities() {
     new Ability(Abilities.OPPORTUNIST, 9)
       .attr(StatStageChangeCopyAbAttr),
     new Ability(Abilities.CUD_CHEW, 9)
-      .unimplemented(),
+      .attr(RepeatBerryNextTurnAbAttr),
     new Ability(Abilities.SHARPNESS, 9)
       .attr(MovePowerBoostAbAttr, (user, target, move) => move.hasFlag(MoveFlags.SLICING_MOVE), 1.5),
     new Ability(Abilities.SUPREME_OVERLORD, 9)

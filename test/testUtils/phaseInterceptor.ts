@@ -326,7 +326,7 @@ export default class PhaseInterceptor {
   /**
    * Method to transition to a target phase.
    * @param phaseTo - The phase to transition to.
-   * @param runTarget - Whether or not to run the target phase.
+   * @param runTarget - Whether or not to run the target phase; default `true`.
    * @returns A promise that resolves when the transition is complete.
    */
   async to(phaseTo: PhaseInterceptorPhase, runTarget = true): Promise<void> {

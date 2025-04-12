@@ -322,7 +322,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public fusionCustomPokemonData: CustomPokemonData | null;
   public fusionTeraType: PokemonType;
 
-  public customPokemonData: CustomPokemonData;
+  public customPokemonData: CustomPokemonData = new CustomPokemonData();
 
   /**
   * TODO: Figure out if we can remove this thing
@@ -332,13 +332,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   /* Pokemon data types, in vague order of precedence */
 
   /** Data that resets on switch (stat stages, battler tags, etc.) */
-  public summonData: PokemonSummonData;
+  public summonData: PokemonSummonData = new PokemonSummonData;
   /** Wave data correponding to moves/ability information revealed */
-  public waveData: PokemonWaveData;
+  public waveData: PokemonWaveData = new PokemonWaveData;
   /** Data that resets only on battle end (hit count, harvest berries, etc.) */
-  public battleData: PokemonBattleData;
+  public battleData: PokemonBattleData = new PokemonBattleData;
   /** Per-turn data like hit count & flinch tracking */
-  public turnData: PokemonTurnData;
+  public turnData: PokemonTurnData = new PokemonTurnData;
 
   /** Used by Mystery Encounters to execute pokemon-specific logic (such as stat boosts) at start of battle */
   public mysteryEncounterBattleEffects?: (pokemon: Pokemon) => void;
@@ -466,6 +466,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.customPokemonData = new CustomPokemonData(
         dataSource.customPokemonData,
       );
+      this.summonData = dataSource.summonData;
+      this.battleData = dataSource.battleData;
       this.teraType = dataSource.teraType;
       this.isTerastallized = dataSource.isTerastallized;
       this.stellarTypesBoosted = dataSource.stellarTypesBoosted ?? [];
@@ -493,8 +495,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       if (this.variant === undefined) {
         this.variant = this.shiny ? this.generateShinyVariant() : 0;
       }
-
-      this.customPokemonData = new CustomPokemonData();
 
       if (nature !== undefined) {
         this.setNature(nature);
@@ -545,6 +545,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (!dataSource) {
       this.calculateStats();
     }
+
   }
 
   /**
@@ -2223,8 +2224,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * Accounts for all the various effects which can affect whether an ability will be present or
    * in effect, and both passive and non-passive.
    * @param attrType - {@linkcode AbAttr} The ability attribute to check for.
-   * @param canApply - If `false`, it doesn't check whether the ability is currently active; Default `true`
-   * @param ignoreOverride - If `true`, it ignores ability changing effects; Default `false`
+   * @param canApply - Whether to check if the ability is currently active; Default `true`
+   * @param ignoreOverride - Whether to ignore ability changing effects; Default `false`
    * @returns An array of all the ability attributes on this ability.
    */
   public getAbilityAttrs<T extends AbAttr = AbAttr>(
@@ -2377,15 +2378,15 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * Checks whether a pokemon has the specified ability and it's in effect. Accounts for all the various
    * effects which can affect whether an ability will be present or in effect, and both passive and
    * non-passive. This is the primary way to check whether a pokemon has a particular ability.
-   * @param {Abilities} ability The ability to check for
-   * @param {boolean} canApply If false, it doesn't check whether the ability is currently active
-   * @param {boolean} ignoreOverride If true, it ignores ability changing effects
-   * @returns {boolean} Whether the ability is present and active
+   * @param ability The ability to check for
+   * @param canApply - Whether to check if the ability is currently active; default `true`
+   * @param ignoreOverride Whether to ignore ability changing effects; default `false`
+   * @returns `true` if the ability is present and active
    */
   public hasAbility(
     ability: Abilities,
     canApply = true,
-    ignoreOverride?: boolean,
+    ignoreOverride = false,
   ): boolean {
     if (
       this.getAbility(ignoreOverride).id === ability &&
@@ -2408,15 +2409,15 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * Accounts for all the various effects which can affect whether an ability will be present or
    * in effect, and both passive and non-passive. This is one of the two primary ways to check
    * whether a pokemon has a particular ability.
-   * @param {AbAttr} attrType The ability attribute to check for
-   * @param {boolean} canApply If false, it doesn't check whether the ability is currently active
-   * @param {boolean} ignoreOverride If true, it ignores ability changing effects
-   * @returns {boolean} Whether an ability with that attribute is present and active
+   * @param attrType The {@link AbAttr | ability attribute} to check for
+   * @param canApply - Whether to check if the ability is currently active; default `true`
+   * @param ignoreOverride Whether to ignore ability changing effects; default `false`
+   * @returns `true` if an ability with the given {@linkcode AbAttr} is present and active
    */
   public hasAbilityWithAttr(
     attrType: Constructor<AbAttr>,
     canApply = true,
-    ignoreOverride?: boolean,
+    ignoreOverride = false,
   ): boolean {
     if (
       (!canApply || this.canApplyAbility()) &&
@@ -5572,7 +5573,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           return !cancelImmunity.value;
         });
 
-        if (!typeImmune) {
+        if (typeImmune) {
           return false;
         }
         break;
@@ -5757,7 +5758,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     this.summonData = new PokemonSummonData();
     this.setSwitchOutStatus(false);
     if (!this.battleData) {
-      this.resetBattleData();
+      this.resetBattleAndWaveData();
     }
     if (this.getTag(BattlerTagType.SEEDED)) {
       this.lapseTag(BattlerTagType.SEEDED);
@@ -5800,20 +5801,21 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-  Reset a {@linkcode Pokemon}'s {@linkcode PokemonBattleData | battleData},
-  as well as any transient {@linkcode PokemonWaveData | waveData}.
+  Reset a {@linkcode Pokemon}'s per-battle {@linkcode PokemonBattleData | battleData},
+  as well as any transient {@linkcode PokemonWaveData | waveData} for the current wave.
   Called before a new battle starts.
   */
-  resetBattleData(): void {
+  resetBattleAndWaveData(): void {
     this.battleData = new PokemonBattleData();
     this.resetWaveData();
   }
 
   /**
   Reset a {@linkcode Pokemon}'s {@linkcode PokemonWaveData | waveData}.
-  Called once per new wave start as well as by {@linkcode resetBattleData}.
+  Called once per new wave start as well as by {@linkcode resetBattleAndWaveData}.
   */
   resetWaveData(): void {
+    console.log("Wave data reset for pokemon %s", this.name)
     this.waveData = new PokemonWaveData();
   }
 
@@ -6421,7 +6423,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     heldItem: PokemonHeldItemModifier,
     forBattle = true,
   ): boolean {
-    if (heldItem.pokemonId === -1 || heldItem.pokemonId === this.id) {
+    if (heldItem.pokemonId !== -1 && heldItem.pokemonId !== this.id) {
+      return false;
+    }
+
       heldItem.stackCount--;
       if (heldItem.stackCount <= 0) {
         globalScene.removeModifier(heldItem, !this.isPlayer());
@@ -6429,10 +6434,23 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       if (forBattle) {
         applyPostItemLostAbAttrs(PostItemLostAbAttr, this, false);
       }
+
       return true;
-    } else {
-      return false;
+  }
+
+  /**
+   * Record a berry being eaten for ability and move triggers.
+   * Only tracks things that proc _every_ time a berry is eaten.
+   * @param berryType The type of berry being eaten.
+   * @param updateHarvest Whether to track the berry for harvest; default `true`.
+   */
+  public recordEatenBerry(berryType: BerryType, updateHarvest: boolean = true) {
+    this.battleData.hasEatenBerry = true;
+    if (updateHarvest) {
+      // Only track for harvest if we actually consumed the berry
+      this.battleData.berriesEaten.push(berryType)
     }
+    this.turnData.berriesEaten.push(berryType);
   }
 }
 
@@ -7001,6 +7019,8 @@ export class PlayerPokemon extends Pokemon {
     if (partyMemberIndex > fusedPartyMemberIndex) {
       partyMemberIndex--;
     }
+
+    // combine the two mons' held items
     const fusedPartyMemberHeldModifiers = globalScene.findModifiers(
       m => m instanceof PokemonHeldItemModifier && m.pokemonId === pokemon.id,
       true,
@@ -7824,7 +7844,7 @@ export interface AttackMoveResult {
 
 /**
 Persistent in-battle data for a {@linkcode Pokemon}.
-Resets on switch but not on new battle.
+Resets on switch or new battle.
 */
 export class PokemonSummonData {
   /** [Atk, Def, SpAtk, SpDef, Spd, Acc, Eva] */
@@ -7832,7 +7852,6 @@ export class PokemonSummonData {
   public moveQueue: TurnMove[] = [];
   public tags: BattlerTag[] = [];
   public abilitySuppressed = false;
-  public abilitiesApplied: Abilities[] = [];
   public speciesForm: PokemonSpeciesForm | null;
   public fusionSpeciesForm: PokemonSpeciesForm;
   public ability: Abilities = Abilities.NONE;
@@ -7850,6 +7869,9 @@ export class PokemonSummonData {
   /** Data pertaining to this pokemon's illusion. */
   public illusion: IllusionData | null = null;
 
+  /** Array containing all berries eaten in the last turn; used by {@linkcode Abilities.CUD_CHEW} */
+  public berriesEatenLast: BerryType[] = [];
+
   /** The number of turns the pokemon has passed since entering the battle */
   public turnCount = 1;
   /** The number of turns the pokemon has passed since the start of the wave */
@@ -7859,7 +7881,7 @@ export class PokemonSummonData {
 }
 
 /**
-Temporary data for a {@linkcode Pokemon}.
+Persistent data for a {@linkcode Pokemon}.
 Resets at the start of a new battle (but not on switch).
 */
 export class PokemonBattleData {
@@ -7869,19 +7891,27 @@ export class PokemonBattleData {
   public hasEatenBerry: boolean = false;
   /** A list of all berries eaten in this current battle; used by {@linkcode Abilities.HARVEST} */
   public berriesEaten: BerryType[] = [];
-  /** A list of all berries eaten in the last turn; used by {@linkcode Abilities.CUD_CHEW} */
-  public berriesEatenLast: BerryType[] = [];
 }
 
-/** Data related to a {@linkcode Pokemon} that resets per wave. */
+/**
+Temporary data for a {@linkcode Pokemon}.
+Resets on new wave.
+*/
 export class PokemonWaveData {
   /** whether the pokemon has endured due to a {@linkcode BattlerTagType.ENDURE_TOKEN} */
   public endured = false;
-  public abilitiesApplied: Abilities[] = [];
+  /**
+  A set of all the abilities this {@linkcode Pokemon} has used in this wave.
+  Used to track once per battle conditions, as well as (hopefully) by the updated AI.
+  */
+  public abilitiesApplied: Set<Abilities> = new Set<Abilities>;
   public abilityRevealed = false;
-
 }
 
+/**
+Temporary data for a {@linkcode Pokemon}.
+Resets at the start of a new turn.
+*/
 export class PokemonTurnData {
   public flinched = false;
   public acted = false;
@@ -7909,6 +7939,12 @@ export class PokemonTurnData {
    * forced to act again in the same turn
    */
   public extraTurns = 0;
+  /**
+   * All berries eaten by this pokemon in this turn.
+   * Saved into {@linkcode PokemonBattleData | BattleData} by {@linkcode Pe at turn end.
+   * @see {@linkcode PokemonsummonData.berriesEatenLast}
+  */
+  public berriesEaten: BerryType[] = []
 }
 
 export enum AiType {
@@ -8036,9 +8072,9 @@ export class PokemonMove {
 
   /**
    * Sets {@link ppUsed} for this move and ensures the value does not exceed {@link getMovePp}
-   * @param {number} count Amount of PP to use
+   * @param count Amount of PP to use
    */
-  usePp(count = 1) {
+  usePp(count: number = 1) {
     this.ppUsed = Math.min(this.ppUsed + count, this.getMovePp());
   }
 

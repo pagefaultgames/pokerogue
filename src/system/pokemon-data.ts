@@ -62,11 +62,11 @@ export default class PokemonData {
   public boss: boolean;
   public bossSegments?: number;
 
+  // Effects that need to be preserved between waves
   public summonData: PokemonSummonData;
   public battleData: PokemonBattleData;
   public summonDataSpeciesFormIndex: number;
 
-  /** Data that can customize a Pokemon in non-standard ways from its Species */
   public customPokemonData: CustomPokemonData;
   public fusionCustomPokemonData: CustomPokemonData;
 
@@ -77,7 +77,7 @@ export default class PokemonData {
   public fusionMysteryEncounterPokemonData: CustomPokemonData | null;
 
   constructor(source: Pokemon | any, forHistory = false) {
-    const sourcePokemon = source instanceof Pokemon ? source : null;
+    const sourcePokemon = source instanceof Pokemon ? source : undefined;
     this.id = source.id;
     this.player = sourcePokemon ? sourcePokemon.isPlayer() : source.player;
     this.species = sourcePokemon ? sourcePokemon.species.speciesId : source.species;
@@ -95,7 +95,7 @@ export default class PokemonData {
     this.gender = source.gender;
     this.stats = source.stats;
     this.ivs = source.ivs;
-    this.nature = source.nature !== undefined ? source.nature : (0 as Nature);
+    this.nature = source.nature !== undefined ? source.nature : (0 as Nature); // TODO?: I'm pretty sure this can become nullish coaclescing
     this.friendship =
       source.friendship !== undefined ? source.friendship : getPokemonSpecies(this.species).baseFriendship;
     this.metLevel = source.metLevel || 5;
@@ -127,6 +127,7 @@ export default class PokemonData {
     this.customPokemonData = new CustomPokemonData(source.customPokemonData);
 
     // Deprecated, but needed for session data migration
+    // TODO: Do we really need this??
     this.natureOverride = source.natureOverride;
     this.mysteryEncounterPokemonData = source.mysteryEncounterPokemonData
       ? new CustomPokemonData(source.mysteryEncounterPokemonData)
@@ -146,6 +147,7 @@ export default class PokemonData {
       this.bossSegments = source.bossSegments;
     }
 
+    // TODO: Refactor to use nullish coaclescing in favor of big conditional
     if (sourcePokemon) {
       this.moveset = sourcePokemon.moveset;
       if (!forHistory) {
@@ -174,7 +176,6 @@ export default class PokemonData {
         this.summonData.statStages = source.summonData.statStages;
         this.summonData.moveQueue = source.summonData.moveQueue;
         this.summonData.abilitySuppressed = source.summonData.abilitySuppressed;
-        this.summonData.abilitiesApplied = source.summonData.abilitiesApplied;
 
         this.summonData.ability = source.summonData.ability;
         this.summonData.moveset = source.summonData.moveset?.map(m => PokemonMove.loadMove(m));

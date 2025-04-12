@@ -62,7 +62,7 @@ describe("Moves - Rage Fist", () => {
     game.move.select(Moves.SPLASH);
     await game.toNextTurn();
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(Moves.RAGE_FIST);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("TurnEndPhase");
 
@@ -93,8 +93,19 @@ describe("Moves - Rage Fist", () => {
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toNextTurn();
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(Moves.RAGE_FIST);
     await game.move.forceStatusActivation(true);
+    await game.forceEnemyMove(Moves.SPLASH);
+    await game.phaseInterceptor.to("BerryPhase");
+
+    // didn't go up
+    expect(game.scene.getPlayerPokemon()?.battleData.hitCount).toBe(0);
+
+    await game.toNextTurn();
+
+    game.move.select(Moves.RAGE_FIST);
+    await game.move.forceStatusActivation(false);
+    await game.toNextTurn();
 
     expect(move.calculateBattlePower).toHaveLastReturnedWith(150);
     expect(game.scene.getPlayerPokemon()?.battleData.hitCount).toBe(2);
@@ -114,6 +125,7 @@ describe("Moves - Rage Fist", () => {
     await game.phaseInterceptor.to("BerryPhase", false);
 
     expect(move.calculateBattlePower).toHaveLastReturnedWith(250);
+    expect(game.scene.getPlayerPokemon()?.battleData.hitCount).toBe(4);
   });
 
   it("should reset hits recieved during trainer battles", async () => {

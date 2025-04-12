@@ -329,7 +329,7 @@ export class EncounterPhase extends BattlePhase {
 
     for (const pokemon of globalScene.getPlayerParty()) {
       if (pokemon) {
-        pokemon.resetBattleData();
+        pokemon.resetBattleAndWaveData();
       }
     }
 

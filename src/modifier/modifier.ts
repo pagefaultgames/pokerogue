@@ -734,7 +734,7 @@ export abstract class PokemonHeldItemModifier extends PersistentModifier {
     return 1;
   }
 
-  getMaxStackCount(forThreshold?: boolean): number {
+  getMaxStackCount(forThreshold = false): number {
     const pokemon = this.getPokemon();
     if (!pokemon) {
       return 0;
@@ -748,8 +748,8 @@ export abstract class PokemonHeldItemModifier extends PersistentModifier {
     return this.getMaxHeldItemCount(pokemon);
   }
 
-  getCountUnderMax(forThreshold?: boolean): number {
-    return this.getMaxStackCount(forThreshold) - this.getStackCount();
+  getCountUnderMax(): number {
+    return this.getMaxHeldItemCount() - this.getStackCount();
   }
 
   abstract getMaxHeldItemCount(pokemon?: Pokemon): number;
@@ -1870,11 +1870,14 @@ export class BerryModifier extends PokemonHeldItemModifier {
   override apply(pokemon: Pokemon): boolean {
     const preserve = new BooleanHolder(false);
     globalScene.applyModifiers(PreserveBerryModifier, pokemon.isPlayer(), pokemon, preserve);
+    this.consumed = !preserve.value;
 
+    // munch time!
     getBerryEffectFunc(this.berryType)(pokemon);
-    if (!preserve.value) {
-      this.consumed = true;
-    }
+
+    // Update berry eaten trackers for Belch, Harvest, Cud Chew, etc.
+    // Don't recover it if we proc berry pouch (no item duplication)
+    pokemon.recordEatenBerry(this.berryType, this.consumed);
 
     return true;
   }
