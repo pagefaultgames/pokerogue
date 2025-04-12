@@ -2729,7 +2729,7 @@ export class EatBerryAttr extends MoveEffectAttr {
  */
 export class StealEatBerryAttr extends EatBerryAttr {
   constructor() {
-    super(true);
+    super(false);
   }
   /**
    * User steals a random berry from the target and then eats it.
