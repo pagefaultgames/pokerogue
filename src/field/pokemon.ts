@@ -4600,212 +4600,36 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     };
   }
 
-  /**
-   * Applies the results of a move to this pokemon
-   * @param source The {@linkcode Pokemon} using the move
-   * @param move The {@linkcode Move} being used
-   * @returns The {@linkcode HitResult} of the attack
-   */
-  apply(source: Pokemon, move: Move): HitResult {
-    const defendingSide = this.isPlayer()
-      ? ArenaTagSide.PLAYER
-      : ArenaTagSide.ENEMY;
-    const moveCategory = new NumberHolder(move.category);
-    applyMoveAttrs(VariableMoveCategoryAttr, source, this, move, moveCategory);
-    if (moveCategory.value === MoveCategory.STATUS) {
-      const cancelled = new BooleanHolder(false);
-      const typeMultiplier = this.getMoveEffectiveness(
-        source,
-        move,
-        false,
-        false,
-        cancelled,
-      );
-
-      if (!cancelled.value && typeMultiplier === 0) {
-        globalScene.queueMessage(
-          i18next.t("battle:hitResultNoEffect", {
-            pokemonName: getPokemonNameWithAffix(this),
-          }),
-        );
-      }
-      return typeMultiplier === 0 ? HitResult.NO_EFFECT : HitResult.STATUS;
+  /** Calculate whether the given move critically hits this pokemon 
+   * @param source - The {@linkcode Pokemon} using the move
+   * @param move - The {@linkcode Move} being used
+   * @param simulated - If `true`, suppresses changes to game state during calculation (defaults to `true`)
+   * @returns whether the move critically hits the pokemon
+  */
+  getCriticalHitResult(source: Pokemon, move: Move, simulated: boolean = true): boolean {
+    const defendingSide = this.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
+    const noCritTag = globalScene.arena.getTagOnSide(NoCritTag, defendingSide);
+    if (noCritTag || Overrides.NEVER_CRIT_OVERRIDE || move.hasAttr(FixedDamageAttr)) {
+      return false;
     }
-    /** Determines whether the attack critically hits */
-    let isCritical: boolean;
-    const critOnly = new BooleanHolder(false);
-    const critAlways = source.getTag(BattlerTagType.ALWAYS_CRIT);
-    applyMoveAttrs(CritOnlyAttr, source, this, move, critOnly);
-    applyAbAttrs(
-      ConditionalCritAbAttr,
-      source,
-      null,
-      false,
-      critOnly,
-      this,
-      move,
-    );
-    if (critOnly.value || critAlways) {
-      isCritical = true;
-    } else {
+    const isCritical = new BooleanHolder(false);
+
+    if (source.getTag(BattlerTagType.ALWAYS_CRIT)) {
+      isCritical.value = true;
+    }
+    applyMoveAttrs(CritOnlyAttr, source, this, move, isCritical);
+    applyAbAttrs(ConditionalCritAbAttr, source, null, simulated, isCritical, this, move);
+    if (!isCritical.value) {
       const critChance = [24, 8, 2, 1][
         Math.max(0, Math.min(this.getCritStage(source, move), 3))
       ];
-      isCritical =
-        critChance === 1 || !globalScene.randBattleSeedInt(critChance);
+      isCritical.value = critChance === 1 || !globalScene.randBattleSeedInt(critChance);
     }
 
-    const noCritTag = globalScene.arena.getTagOnSide(NoCritTag, defendingSide);
-    const blockCrit = new BooleanHolder(false);
-    applyAbAttrs(BlockCritAbAttr, this, null, false, blockCrit);
-    if (noCritTag || blockCrit.value || Overrides.NEVER_CRIT_OVERRIDE) {
-      isCritical = false;
-    }
+    applyAbAttrs(BlockCritAbAttr, this, null, simulated, isCritical);
 
-    /**
-     * Applies stat changes from {@linkcode move} and gives it to {@linkcode source}
-     * before damage calculation
-     */
-    applyMoveAttrs(StatChangeBeforeDmgCalcAttr, source, this, move);
-
-    const {
-      cancelled,
-      result,
-      damage: dmg,
-    } = this.getAttackDamage(
-      {source, move, isCritical, simulated: false});
-
-    const typeBoost = source.findTag(
-      t =>
-        t instanceof TypeBoostTag && t.boostedType === source.getMoveType(move),
-    ) as TypeBoostTag;
-    if (typeBoost?.oneUse) {
-      source.removeTag(typeBoost.tagType);
-    }
-
-    if (
-      cancelled ||
-      result === HitResult.IMMUNE ||
-      result === HitResult.NO_EFFECT
-    ) {
-      source.stopMultiHit(this);
-
-      if (!cancelled) {
-        if (result === HitResult.IMMUNE) {
-          globalScene.queueMessage(
-            i18next.t("battle:hitResultImmune", {
-              pokemonName: getPokemonNameWithAffix(this),
-            }),
-          );
-        } else {
-          globalScene.queueMessage(
-            i18next.t("battle:hitResultNoEffect", {
-              pokemonName: getPokemonNameWithAffix(this),
-            }),
-          );
-        }
-      }
-      return result;
-    }
-
-      // In case of fatal damage, this tag would have gotten cleared before we could lapse it.
-      const destinyTag = this.getTag(BattlerTagType.DESTINY_BOND);
-      const grudgeTag = this.getTag(BattlerTagType.GRUDGE);
-
-    if (dmg) {
-      this.lapseTags(BattlerTagLapseType.HIT);
-
-      const substitute = this.getTag(SubstituteTag);
-      const isBlockedBySubstitute =
-        !!substitute && move.hitsSubstitute(source, this);
-      if (isBlockedBySubstitute) {
-        substitute.hp -= dmg;
-      }
-      if (!this.isPlayer() && dmg >= this.hp) {
-        globalScene.applyModifiers(EnemyEndureChanceModifier, false, this);
-      }
-
-        /**
-         * We explicitly require to ignore the faint phase here, as we want to show the messages
-         * about the critical hit and the super effective/not very effective messages before the faint phase.
-         */
-        const damage = this.damageAndUpdate(isBlockedBySubstitute ? 0 : dmg, 
-          { 
-            result: result as DamageResult, 
-            isCritical, 
-            ignoreFaintPhase: true, 
-            source 
-          });
-
-      if (damage > 0) {
-        if (source.isPlayer()) {
-          globalScene.validateAchvs(DamageAchv, new NumberHolder(damage));
-          if (damage > globalScene.gameData.gameStats.highestDamage) {
-            globalScene.gameData.gameStats.highestDamage = damage;
-          }
-        }
-        source.turnData.totalDamageDealt += damage;
-        source.turnData.singleHitDamageDealt = damage;
-        this.turnData.damageTaken += damage;
-        this.battleData.hitCount++;
-
-        const attackResult = {
-          move: move.id,
-          result: result as DamageResult,
-          damage: damage,
-          critical: isCritical,
-          sourceId: source.id,
-          sourceBattlerIndex: source.getBattlerIndex(),
-        };
-        this.turnData.attacksReceived.unshift(attackResult);
-        if (source.isPlayer() && !this.isPlayer()) {
-          globalScene.applyModifiers(
-            DamageMoneyRewardModifier,
-            true,
-            source,
-            new NumberHolder(damage),
-          );
-        }
-      }
-    }
-
-    if (isCritical) {
-      globalScene.queueMessage(i18next.t("battle:hitResultCriticalHit"));
-    }
-
-    // want to include is.Fainted() in case multi hit move ends early, still want to render message
-    if (source.turnData.hitsLeft === 1 || this.isFainted()) {
-      switch (result) {
-        case HitResult.SUPER_EFFECTIVE:
-          globalScene.queueMessage(i18next.t("battle:hitResultSuperEffective"));
-          break;
-        case HitResult.NOT_VERY_EFFECTIVE:
-          globalScene.queueMessage(
-            i18next.t("battle:hitResultNotVeryEffective"),
-          );
-          break;
-        case HitResult.ONE_HIT_KO:
-          globalScene.queueMessage(i18next.t("battle:hitResultOneHitKO"));
-          break;
-      }
-    }
-
-    if (this.isFainted()) {
-      // set splice index here, so future scene queues happen before FaintedPhase
-      globalScene.setPhaseQueueSplice();
-      globalScene.unshiftPhase(
-        new FaintPhase(
-          this.getBattlerIndex(),
-          false,
-          source,
-        ),
-      );
-
-      this.destroySubstitute();
-      this.lapseTag(BattlerTagType.COMMANDED);
-    }
-
-    return result;
+    return isCritical.value;
+    
   }
 
   /**
@@ -4869,7 +4693,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Called by apply(), given the damage, adds a new DamagePhase and actually updates HP values, etc.
+   * Given the damage, adds a new DamagePhase and update HP values, etc.
+   * 
    * Checks for 'Indirect' HitResults to account for Endure/Reviver Seed applying correctly
    * @param damage integer - passed to damage()
    * @param result an enum if it's super effective, not very, etc.
@@ -5172,8 +4997,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Gets whether the given move is currently disabled for this Pokemon.
    *
-   * @param {Moves} moveId {@linkcode Moves} ID of the move to check
-   * @returns {boolean} `true` if the move is disabled for this Pokemon, otherwise `false`
+   * @param moveId - The {@linkcode Moves} ID of the move to check
+   * @returns `true` if the move is disabled for this Pokemon, otherwise `false`
    *
    * @see {@linkcode MoveRestrictionBattlerTag}
    */
@@ -5184,9 +5009,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Gets whether the given move is currently disabled for the user based on the player's target selection
    *
-   * @param {Moves} moveId {@linkcode Moves} ID of the move to check
-   * @param {Pokemon} user {@linkcode Pokemon} the move user
-   * @param {Pokemon} target {@linkcode Pokemon} the target of the move
+   * @param moveId - The {@linkcode Moves} ID of the move to check
+   * @param user - The move user
+   * @param target - The target of the move
    *
    * @returns {boolean} `true` if the move is disabled for this Pokemon due to the player's target selection
    *
@@ -5216,10 +5041,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Gets the {@link MoveRestrictionBattlerTag} that is restricting a move, if it exists.
    *
-   * @param {Moves} moveId {@linkcode Moves} ID of the move to check
-   * @param {Pokemon} user {@linkcode Pokemon} the move user, optional and used when the target is a factor in the move's restricted status
-   * @param {Pokemon} target {@linkcode Pokemon} the target of the move, optional and used when the target is a factor in the move's restricted status
-   * @returns {MoveRestrictionBattlerTag | null} the first tag on this Pokemon that restricts the move, or `null` if the move is not restricted.
+   * @param moveId - {@linkcode Moves} ID of the move to check
+   * @param user - {@linkcode Pokemon} the move user, optional and used when the target is a factor in the move's restricted status
+   * @param target - {@linkcode Pokemon} the target of the move, optional and used when the target is a factor in the move's restricted status
+   * @returns The first tag on this Pokemon that restricts the move, or `null` if the move is not restricted.
    */
   getRestrictingTag(
     moveId: Moves,
@@ -5279,20 +5104,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   getMoveQueue(): TurnMove[] {
     return this.summonData.moveQueue;
-  }
-
-  /**
-   * If this Pokemon is using a multi-hit move, cancels all subsequent strikes
-   * @param {Pokemon} target If specified, this only cancels subsequent strikes against the given target
-   */
-  stopMultiHit(target?: Pokemon): void {
-    const effectPhase = globalScene.getCurrentPhase();
-    if (
-      effectPhase instanceof MoveEffectPhase &&
-      effectPhase.getUserPokemon() === this
-    ) {
-      effectPhase.stopMultiHit(target);
-    }
   }
 
   changeForm(formChange: SpeciesFormChange): Promise<void> {
@@ -5712,7 +5523,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
      * cancel the attack's subsequent hits.
      */
     if (effect === StatusEffect.SLEEP || effect === StatusEffect.FREEZE) {
-      this.stopMultiHit();
+      const currentPhase = globalScene.getCurrentPhase();
+      if (currentPhase instanceof MoveEffectPhase && currentPhase.getUserPokemon() === this) {
+        this.turnData.hitCount = 1;
+        this.turnData.hitsLeft = 1;
+      }
     }
 
     if (asPhase) {
