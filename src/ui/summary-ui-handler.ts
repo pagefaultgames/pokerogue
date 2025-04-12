@@ -2,7 +2,16 @@ import { starterColors } from "#app/battle-scene";
 import { globalScene } from "#app/global-scene";
 import { Mode } from "#app/ui/ui";
 import UiHandler from "#app/ui/ui-handler";
-import * as Utils from "#app/utils";
+import {
+  getLocalizedSpriteKey,
+  rgbHexToRgba,
+  padInt,
+  getEnumValues,
+  fixedInt,
+  isNullOrUndefined,
+  toReadableString,
+  formatStat,
+} from "#app/utils";
 import type { PlayerPokemon, PokemonMove } from "#app/field/pokemon";
 import { getStarterValueFriendshipCap, speciesStarterCosts } from "#app/data/balance/starters";
 import { argbFromRgba } from "@material/material-color-utilities";
@@ -255,7 +264,7 @@ export default class SummaryUiHandler extends UiHandler {
 
     this.statusContainer.add(statusLabel);
 
-    this.status = globalScene.add.sprite(91, 4, Utils.getLocalizedSpriteKey("statuses"));
+    this.status = globalScene.add.sprite(91, 4, getLocalizedSpriteKey("statuses"));
     this.status.setOrigin(0.5, 0);
 
     this.statusContainer.add(this.status);
@@ -330,10 +339,10 @@ export default class SummaryUiHandler extends UiHandler {
     this.shinyOverlay.setVisible(this.pokemon.isShiny());
 
     const colorScheme = starterColors[this.pokemon.species.getRootSpeciesId()];
-    this.candyIcon.setTint(argbFromRgba(Utils.rgbHexToRgba(colorScheme[0])));
-    this.candyOverlay.setTint(argbFromRgba(Utils.rgbHexToRgba(colorScheme[1])));
+    this.candyIcon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[0])));
+    this.candyOverlay.setTint(argbFromRgba(rgbHexToRgba(colorScheme[1])));
 
-    this.numberText.setText(Utils.padInt(this.pokemon.species.speciesId, 4));
+    this.numberText.setText(padInt(this.pokemon.species.speciesId, 4));
     this.numberText.setColor(this.getTextColor(!this.pokemon.isShiny() ? TextStyle.SUMMARY : TextStyle.SUMMARY_GOLD));
     this.numberText.setShadowColor(
       this.getTextColor(!this.pokemon.isShiny() ? TextStyle.SUMMARY : TextStyle.SUMMARY_GOLD, true),
@@ -600,7 +609,7 @@ export default class SummaryUiHandler extends UiHandler {
         }
         success = true;
       } else {
-        const pages = Utils.getEnumValues(Page);
+        const pages = getEnumValues(Page);
         switch (button) {
           case Button.UP:
           case Button.DOWN: {
@@ -675,10 +684,10 @@ export default class SummaryUiHandler extends UiHandler {
       if (moveDescriptionLineCount > 3) {
         this.descriptionScrollTween = globalScene.tweens.add({
           targets: this.moveDescriptionText,
-          delay: Utils.fixedInt(2000),
+          delay: fixedInt(2000),
           loop: -1,
-          hold: Utils.fixedInt(2000),
-          duration: Utils.fixedInt((moveDescriptionLineCount - 3) * 2000),
+          hold: fixedInt(2000),
+          duration: fixedInt((moveDescriptionLineCount - 3) * 2000),
           y: `-=${14.83 * (moveDescriptionLineCount - 3)}`,
         });
       }
@@ -697,10 +706,10 @@ export default class SummaryUiHandler extends UiHandler {
       this.moveCursorObj.setVisible(true);
       this.moveCursorBlinkTimer = globalScene.time.addEvent({
         loop: true,
-        delay: Utils.fixedInt(600),
+        delay: fixedInt(600),
         callback: () => {
           this.moveCursorObj?.setVisible(false);
-          globalScene.time.delayedCall(Utils.fixedInt(100), () => {
+          globalScene.time.delayedCall(fixedInt(100), () => {
             if (!this.moveCursorObj) {
               return;
             }
@@ -818,7 +827,7 @@ export default class SummaryUiHandler extends UiHandler {
         const getTypeIcon = (index: number, type: PokemonType, tera = false) => {
           const xCoord = typeLabel.width * typeLabel.scale + 9 + 34 * index;
           const typeIcon = !tera
-            ? globalScene.add.sprite(xCoord, 42, Utils.getLocalizedSpriteKey("types"), PokemonType[type].toLowerCase())
+            ? globalScene.add.sprite(xCoord, 42, getLocalizedSpriteKey("types"), PokemonType[type].toLowerCase())
             : globalScene.add.sprite(xCoord, 42, "type_tera");
           if (tera) {
             typeIcon.setScale(0.5);
@@ -853,7 +862,7 @@ export default class SummaryUiHandler extends UiHandler {
 
         if (
           globalScene.gameData.achvUnlocks.hasOwnProperty(achvs.TERASTALLIZE.id) &&
-          !Utils.isNullOrUndefined(this.pokemon)
+          !isNullOrUndefined(this.pokemon)
         ) {
           const teraIcon = globalScene.add.sprite(123, 26, "button_tera");
           teraIcon.setName("terrastallize-icon");
@@ -925,10 +934,10 @@ export default class SummaryUiHandler extends UiHandler {
             abilityInfo.descriptionText.setY(69);
             this.descriptionScrollTween = globalScene.tweens.add({
               targets: abilityInfo.descriptionText,
-              delay: Utils.fixedInt(2000),
+              delay: fixedInt(2000),
               loop: -1,
-              hold: Utils.fixedInt(2000),
-              duration: Utils.fixedInt((abilityDescriptionLineCount - 2) * 2000),
+              hold: fixedInt(2000),
+              duration: fixedInt((abilityDescriptionLineCount - 2) * 2000),
               y: `-=${14.83 * (abilityDescriptionLineCount - 2)}`,
             });
           }
@@ -939,8 +948,8 @@ export default class SummaryUiHandler extends UiHandler {
         this.passiveContainer?.descriptionText?.setVisible(false);
 
         const closeFragment = getBBCodeFrag("", TextStyle.WINDOW_ALT);
-        const rawNature = Utils.toReadableString(Nature[this.pokemon?.getNature()!]); // TODO: is this bang correct?
-        const nature = `${getBBCodeFrag(Utils.toReadableString(getNatureName(this.pokemon?.getNature()!)), TextStyle.SUMMARY_RED)}${closeFragment}`; // TODO: is this bang correct?
+        const rawNature = toReadableString(Nature[this.pokemon?.getNature()!]); // TODO: is this bang correct?
+        const nature = `${getBBCodeFrag(toReadableString(getNatureName(this.pokemon?.getNature()!)), TextStyle.SUMMARY_RED)}${closeFragment}`; // TODO: is this bang correct?
 
         const memoString = i18next.t("pokemonSummary:memoString", {
           metFragment: i18next.t(
@@ -999,8 +1008,8 @@ export default class SummaryUiHandler extends UiHandler {
 
           const statValueText =
             stat !== Stat.HP
-              ? Utils.formatStat(this.pokemon?.getStat(stat)!) // TODO: is this bang correct?
-              : `${Utils.formatStat(this.pokemon?.hp!, true)}/${Utils.formatStat(this.pokemon?.getMaxHp()!, true)}`; // TODO: are those bangs correct?
+              ? formatStat(this.pokemon?.getStat(stat)!) // TODO: is this bang correct?
+              : `${formatStat(this.pokemon?.hp!, true)}/${formatStat(this.pokemon?.getMaxHp()!, true)}`; // TODO: are those bangs correct?
           const ivText = `${this.pokemon?.ivs[stat]}/31`;
 
           const statValue = addTextObject(93 + 88 * colIndex, 16 * rowIndex, statValueText, TextStyle.WINDOW_ALT);
@@ -1106,7 +1115,7 @@ export default class SummaryUiHandler extends UiHandler {
           this.extraMoveRowContainer.setVisible(true);
 
           if (this.newMove && this.pokemon) {
-            const spriteKey = Utils.getLocalizedSpriteKey("types");
+            const spriteKey = getLocalizedSpriteKey("types");
             const moveType = this.pokemon.getMoveType(this.newMove);
             const newMoveTypeIcon = globalScene.add.sprite(0, 0, spriteKey, PokemonType[moveType].toLowerCase());
             newMoveTypeIcon.setOrigin(0, 1);
@@ -1116,7 +1125,7 @@ export default class SummaryUiHandler extends UiHandler {
           ppOverlay.setOrigin(0, 1);
           this.extraMoveRowContainer.add(ppOverlay);
 
-          const pp = Utils.padInt(this.newMove?.pp!, 2, "  "); // TODO: is this bang correct?
+          const pp = padInt(this.newMove?.pp!, 2, "  "); // TODO: is this bang correct?
           const ppText = addTextObject(173, 1, `${pp}/${pp}`, TextStyle.WINDOW);
           ppText.setOrigin(0, 1);
           this.extraMoveRowContainer.add(ppText);
@@ -1132,7 +1141,7 @@ export default class SummaryUiHandler extends UiHandler {
           this.moveRowsContainer.add(moveRowContainer);
 
           if (move && this.pokemon) {
-            const spriteKey = Utils.getLocalizedSpriteKey("types");
+            const spriteKey = getLocalizedSpriteKey("types");
             const moveType = this.pokemon.getMoveType(move.getMove());
             const typeIcon = globalScene.add.sprite(0, 0, spriteKey, PokemonType[moveType].toLowerCase());
             typeIcon.setOrigin(0, 1);
@@ -1153,7 +1162,7 @@ export default class SummaryUiHandler extends UiHandler {
           if (move) {
             const maxPP = move.getMovePp();
             const pp = maxPP - move.ppUsed;
-            ppText.setText(`${Utils.padInt(pp, 2, "  ")}/${Utils.padInt(maxPP, 2, "  ")}`);
+            ppText.setText(`${padInt(pp, 2, "  ")}/${padInt(maxPP, 2, "  ")}`);
           }
 
           moveRowContainer.add(ppText);

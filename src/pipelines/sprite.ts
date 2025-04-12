@@ -3,7 +3,7 @@ import MysteryEncounterIntroVisuals from "#app/field/mystery-encounter-intro";
 import Pokemon from "#app/field/pokemon";
 import Trainer from "#app/field/trainer";
 import { globalScene } from "#app/global-scene";
-import * as Utils from "#app/utils";
+import { rgbHexToRgba } from "#app/utils";
 import FieldSpritePipeline from "./field-sprite";
 import spriteFragShader from "./glsl/spriteFragShader.frag?raw";
 import spriteVertShader from "./glsl/spriteShader.vert?raw";
@@ -144,8 +144,8 @@ export default class SpritePipeline extends FieldSpritePipeline {
         const baseColors = Object.keys(variantColors[variant]);
         for (let c = 0; c < 32; c++) {
           if (c < baseColors.length) {
-            const baseColor = Array.from(Object.values(Utils.rgbHexToRgba(baseColors[c])));
-            const variantColor = Array.from(Object.values(Utils.rgbHexToRgba(variantColors[variant][baseColors[c]])));
+            const baseColor = Array.from(Object.values(rgbHexToRgba(baseColors[c])));
+            const variantColor = Array.from(Object.values(rgbHexToRgba(variantColors[variant][baseColors[c]])));
             flatBaseColors.splice(flatBaseColors.length, 0, ...baseColor);
             flatVariantColors.splice(flatVariantColors.length, 0, ...variantColor.map(c => c / 255.0));
           } else {

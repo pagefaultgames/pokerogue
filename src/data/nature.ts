@@ -1,4 +1,4 @@
-import * as Utils from "../utils";
+import { toReadableString } from "#app/utils";
 import { TextStyle, getBBCodeFrag } from "../ui/text";
 import { Nature } from "#enums/nature";
 import { UiTheme } from "#enums/ui-theme";
@@ -12,7 +12,7 @@ export function getNatureName(
   ignoreBBCode = false,
   uiTheme: UiTheme = UiTheme.DEFAULT,
 ): string {
-  let ret = Utils.toReadableString(Nature[nature]);
+  let ret = toReadableString(Nature[nature]);
   //Translating nature
   if (i18next.exists(`nature:${ret}`)) {
     ret = i18next.t(`nature:${ret}` as any);

@@ -4,7 +4,7 @@ import type { Mode } from "./ui";
 import { TextStyle, addTextInputObject, addTextObject } from "./text";
 import { WindowVariant, addWindow } from "./ui-theme";
 import type InputText from "phaser3-rex-plugins/plugins/inputtext";
-import * as Utils from "../utils";
+import { fixedInt } from "#app/utils";
 import { Button } from "#enums/buttons";
 import { globalScene } from "#app/global-scene";
 
@@ -135,7 +135,7 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
 
       this.tween = globalScene.tweens.add({
         targets: this.modalContainer,
-        duration: Utils.fixedInt(1000),
+        duration: fixedInt(1000),
         ease: "Sine.easeInOut",
         y: "-=24",
         alpha: 1,
