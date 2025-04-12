@@ -5,7 +5,7 @@ import { addBBCodeTextObject, addTextObject, getTextColor, TextStyle } from "#ap
 import { Command } from "#app/ui/command-ui-handler";
 import MessageUiHandler from "#app/ui/message-ui-handler";
 import { Mode } from "#app/ui/ui";
-import * as Utils from "#app/utils";
+import { BooleanHolder, toReadableString, randInt, getLocalizedSpriteKey } from "#app/utils";
 import {
   PokemonFormChangeItemModifier,
   PokemonHeldItemModifier,
@@ -215,7 +215,7 @@ export default class PartyUiHandler extends MessageUiHandler {
    * @returns
    */
   private FilterChallengeLegal = (pokemon: PlayerPokemon) => {
-    const challengeAllowed = new Utils.BooleanHolder(true);
+    const challengeAllowed = new BooleanHolder(true);
     applyChallenges(ChallengeType.POKEMON_IN_BATTLE, pokemon, challengeAllowed);
     if (!challengeAllowed.value) {
       return i18next.t("partyUiHandler:cantBeUsed", {
@@ -1201,7 +1201,7 @@ export default class PartyUiHandler extends MessageUiHandler {
               if (this.localizedOptions.includes(option)) {
                 optionName = i18next.t(`partyUiHandler:${PartyOption[option]}`);
               } else {
-                optionName = Utils.toReadableString(PartyOption[option]);
+                optionName = toReadableString(PartyOption[option]);
               }
             }
             break;
@@ -1309,7 +1309,7 @@ export default class PartyUiHandler extends MessageUiHandler {
   }
 
   getReleaseMessage(pokemonName: string): string {
-    const rand = Utils.randInt(128);
+    const rand = randInt(128);
     if (rand < 20) {
       return i18next.t("partyUiHandler:goodbye", { pokemonName: pokemonName });
     }
@@ -1566,7 +1566,7 @@ class PartySlot extends Phaser.GameObjects.Container {
     }
 
     if (this.pokemon.status) {
-      const statusIndicator = globalScene.add.sprite(0, 0, Utils.getLocalizedSpriteKey("statuses"));
+      const statusIndicator = globalScene.add.sprite(0, 0, getLocalizedSpriteKey("statuses"));
       statusIndicator.setFrame(StatusEffect[this.pokemon.status?.effect].toLowerCase());
       statusIndicator.setOrigin(0, 0);
       statusIndicator.setPositionRelative(slotLevelLabel, this.slotIndex >= battlerCount ? 43 : 55, 0);
