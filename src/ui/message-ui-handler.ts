@@ -1,6 +1,6 @@
 import AwaitableUiHandler from "./awaitable-ui-handler";
 import type { Mode } from "./ui";
-import * as Utils from "../utils";
+import { getFrameMs } from "#app/utils";
 import { globalScene } from "#app/global-scene";
 
 export default abstract class MessageUiHandler extends AwaitableUiHandler {
@@ -183,7 +183,7 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
           if (charDelay) {
             this.textTimer!.paused = true; // TODO: is the bang correct?
             globalScene.tweens.addCounter({
-              duration: Utils.getFrameMs(charDelay),
+              duration: getFrameMs(charDelay),
               onComplete: () => {
                 this.textTimer!.paused = false; // TODO: is the bang correct?
                 advance();
@@ -193,7 +193,7 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
             this.textTimer!.paused = true;
             globalScene.time.delayedCall(150, () => {
               globalScene.ui.fadeOut(750).then(() => {
-                const delay = Utils.getFrameMs(charFade);
+                const delay = getFrameMs(charFade);
                 globalScene.time.delayedCall(delay, () => {
                   globalScene.ui.fadeIn(500).then(() => {
                     this.textTimer!.paused = false;

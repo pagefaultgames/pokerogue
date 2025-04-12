@@ -1,12 +1,12 @@
 import { TrainerType } from "#enums/trainer-type";
-import * as Utils from "../utils";
+import { toReadableString } from "#app/utils";
 
 class TrainerNameConfig {
   public urls: string[];
   public femaleUrls: string[] | null;
 
   constructor(type: TrainerType, ...urls: string[]) {
-    this.urls = urls.length ? urls : [Utils.toReadableString(TrainerType[type]).replace(/ /g, "_")];
+    this.urls = urls.length ? urls : [toReadableString(TrainerType[type]).replace(/ /g, "_")];
   }
 
   hasGenderVariant(...femaleUrls: string[]): TrainerNameConfig {

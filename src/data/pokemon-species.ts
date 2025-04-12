@@ -8,7 +8,7 @@ import type { AnySound } from "#app/battle-scene";
 import { globalScene } from "#app/global-scene";
 import type { GameMode } from "#app/game-mode";
 import { DexAttr, type StarterMoveset } from "#app/system/game-data";
-import * as Utils from "#app/utils";
+import { isNullOrUndefined, capitalizeString, randSeedInt, randSeedGauss, randSeedItem } from "#app/utils";
 import { uncatchableSpecies } from "#app/data/balance/biomes";
 import { speciesEggMoves } from "#app/data/balance/egg-moves";
 import { GrowthRate } from "#app/data/exp";
@@ -290,7 +290,7 @@ export abstract class PokemonSpeciesForm {
    * @returns The id of the ability
    */
   getPassiveAbility(formIndex?: number): Abilities {
-    if (Utils.isNullOrUndefined(formIndex)) {
+    if (isNullOrUndefined(formIndex)) {
       formIndex = this.formIndex;
     }
     let starterSpeciesId = this.speciesId;
@@ -626,7 +626,7 @@ export abstract class PokemonSpeciesForm {
         const spritePath = this.getSpriteAtlasPath(female, formIndex, shiny, variant, back)
           .replace("variant/", "")
           .replace(/_[1-3]$/, "");
-        if (!Utils.isNullOrUndefined(variant)) {
+        if (!isNullOrUndefined(variant)) {
           loadPokemonVariantAssets(spriteKey, spritePath, variant).then(() => resolve());
         }
       });
@@ -852,8 +852,8 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
    */
   getFormNameToDisplay(formIndex = 0, append = false): string {
     const formKey = this.forms?.[formIndex!]?.formKey;
-    const formText = Utils.capitalizeString(formKey, "-", false, false) || "";
-    const speciesName = Utils.capitalizeString(Species[this.speciesId], "_", true, false);
+    const formText = capitalizeString(formKey, "-", false, false) || "";
+    const speciesName = capitalizeString(Species[this.speciesId], "_", true, false);
     let ret = "";
 
     const region = this.getRegion();
@@ -884,7 +884,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
       if (i18next.exists(i18key)) {
         ret = i18next.t(i18key);
       } else {
-        const rootSpeciesName = Utils.capitalizeString(Species[this.getRootSpeciesId()], "_", true, false);
+        const rootSpeciesName = capitalizeString(Species[this.getRootSpeciesId()], "_", true, false);
         const i18RootKey = `pokemonForm:${rootSpeciesName}${formText}`;
         ret = i18next.exists(i18RootKey) ? i18next.t(i18RootKey) : formText;
       }
@@ -1079,7 +1079,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
       return this.speciesId;
     }
 
-    const randValue = evolutionPool.size === 1 ? 0 : Utils.randSeedInt(totalWeight);
+    const randValue = evolutionPool.size === 1 ? 0 : randSeedInt(totalWeight);
 
     for (const weight of evolutionPool.keys()) {
       if (randValue < weight) {
@@ -1164,7 +1164,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
           Math.min(
             Math.max(
               evolution?.level! +
-                Math.round(Utils.randSeedGauss(0.5, 1 + levelDiff * 0.2) * Math.max(evolution?.wildDelay!, 0.5) * 5) -
+                Math.round(randSeedGauss(0.5, 1 + levelDiff * 0.2) * Math.max(evolution?.wildDelay!, 0.5) * 5) -
                 1,
               2,
               evolution?.level!,
@@ -1182,7 +1182,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
         Math.min(
           Math.max(
             lastPrevolutionLevel +
-              Math.round(Utils.randSeedGauss(0.5, 1 + levelDiff * 0.2) * Math.max(evolution?.wildDelay!, 0.5) * 5),
+              Math.round(randSeedGauss(0.5, 1 + levelDiff * 0.2) * Math.max(evolution?.wildDelay!, 0.5) * 5),
             lastPrevolutionLevel + 1,
             evolution?.level!,
           ),
@@ -1367,7 +1367,7 @@ export function getPokerusStarters(): PokemonSpecies[] {
   globalScene.executeWithSeedOffset(
     () => {
       while (pokerusStarters.length < POKERUS_STARTER_COUNT) {
-        const randomSpeciesId = Number.parseInt(Utils.randSeedItem(Object.keys(speciesStarterCosts)), 10);
+        const randomSpeciesId = Number.parseInt(randSeedItem(Object.keys(speciesStarterCosts)), 10);
         const species = getPokemonSpecies(randomSpeciesId);
         if (!pokerusStarters.includes(species)) {
           pokerusStarters.push(species);

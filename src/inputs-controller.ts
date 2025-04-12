@@ -1,6 +1,5 @@
 import Phaser from "phaser";
-import * as Utils from "./utils";
-import { deepCopy } from "./utils";
+import { deepCopy, getEnumValues } from "#app/utils";
 import pad_generic from "./configs/inputs/pad_generic";
 import pad_unlicensedSNES from "./configs/inputs/pad_unlicensedSNES";
 import pad_xbox360 from "./configs/inputs/pad_xbox360";
@@ -102,7 +101,7 @@ export class InputsController {
       [Device.KEYBOARD]: "default",
     };
 
-    for (const b of Utils.getEnumValues(Button)) {
+    for (const b of getEnumValues(Button)) {
       this.interactions[b] = {
         pressTime: false,
         isPressed: false,
