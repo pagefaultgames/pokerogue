@@ -151,8 +151,6 @@ export class MoveEffectPhase extends PokemonPhase {
 
     let targets = this.getTargets();
 
-    let fieldBounce = false;
-
     // For field targeted moves, we only look for the first target that may magic bounce
 
     for (const [i, target] of targets.entries()) {
@@ -162,7 +160,6 @@ export class MoveEffectPhase extends PokemonPhase {
       if (fieldMove && hitCheck[0] === HitCheckResult.REFLECTED) {
         targets = [target];
         this.hitChecks = [hitCheck];
-        fieldBounce = true;
         break;
       }
       if (hitCheck[0] === HitCheckResult.HIT) {
@@ -173,13 +170,8 @@ export class MoveEffectPhase extends PokemonPhase {
       this.hitChecks[i] = hitCheck;
     }
 
-    if (anySuccess || (fieldMove && !fieldBounce)) {
+    if (anySuccess) {
       this.moveHistoryEntry.result = MoveResult.SUCCESS;
-      // Unreflected field moves have no targets; they target the field
-      if (fieldMove) {
-        this.hitChecks = [];
-        return [];
-      }
     } else {
       user.turnData.hitCount = 1;
       user.turnData.hitsLeft = 1;
@@ -350,6 +342,9 @@ export class MoveEffectPhase extends PokemonPhase {
 
     const targets = this.conductHitChecks(user, fieldMove);
 
+    this.firstHit = user.turnData.hitCount === user.turnData.hitsLeft;
+    this.lastHit = user.turnData.hitsLeft === 1 || !targets.some(t => t.isActive(true));
+
     // only play the animation if the move had at least one successful target
 
     // Play the animation if the move was successful against any of its targets or it has a POST_TARGET effect (like self destruct)
@@ -375,6 +370,7 @@ export class MoveEffectPhase extends PokemonPhase {
    * Callback to be called after the move animation is played
    */
   private postAnimCallback(user: Pokemon, targets: Pokemon[]) {
+    console.log("============Inside post anim callback======");
     // Add to the move history entry
     if (this.firstHit) {
       user.pushMoveHistory(this.moveHistoryEntry);
@@ -387,7 +383,10 @@ export class MoveEffectPhase extends PokemonPhase {
       console.warn(e.message || "Unexpected error in move effect phase");
       this.end();
     }
-    //
+    // Apply queued phases
+    if (this.queuedPhases.length) {
+      globalScene.appendToPhase(this.queuedPhases, MoveEndPhase);
+    }
     const moveType = user.getMoveType(this.move, true);
     if (this.move.category !== MoveCategory.STATUS && !user.stellarTypesBoosted.includes(moveType)) {
       user.stellarTypesBoosted.push(moveType);
@@ -398,11 +397,6 @@ export class MoveEffectPhase extends PokemonPhase {
     }
 
     this.updateSubstitutes();
-
-    // Apply queued phases
-    if (this.queuedPhases.length) {
-      globalScene.appendToPhase(this.queuedPhases, MoveEndPhase);
-    }
     this.end();
   }
 
@@ -592,7 +586,7 @@ export class MoveEffectPhase extends PokemonPhase {
    * @param target - {@linkcode Pokemon} the target to check for protection
    * @param move - The {@linkcode Move} being used
    */
-  private protectedCheck(user: Pokemon, target: Pokemon, move: Move) {
+  private protectedCheck(user: Pokemon, target: Pokemon) {
     /** The {@linkcode ArenaTagSide} to which the target belongs */
     const targetSide = target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
     /** Has the invoked move been cancelled by conditional protection (e.g Quick Guard)? */
@@ -608,7 +602,7 @@ export class MoveEffectPhase extends PokemonPhase {
         hasConditionalProtectApplied,
         user,
         target,
-        move.id,
+        this.move.id,
         bypassIgnoreProtect,
       );
     }
@@ -648,18 +642,21 @@ export class MoveEffectPhase extends PokemonPhase {
       return [HitCheckResult.ERROR, 0];
     }
 
-    // Moves targeting the user or field bypass accuracy and effectiveness checks
+    // Moves targeting the user bypass all checks
     if (move.moveTarget === MoveTarget.USER) {
       return [HitCheckResult.HIT, 1];
     }
 
+    const fieldTargeted = isFieldTargeted(move);
+
     // If the target is not on the field, cancel the hit check
-    if (!target.isActive(true)) {
+    if (!target.isActive(true) && !fieldTargeted) {
       return [HitCheckResult.TARGET_NOT_ON_FIELD, 0];
     }
 
     // If the target of the move is hidden by the effects of its commander ability, then this misses
     if (
+      !fieldTargeted &&
       globalScene.currentBattle.double &&
       target.getAlly()?.getTag(BattlerTagType.COMMANDED)?.getSourcePokemon() === target
     ) {
@@ -667,19 +664,26 @@ export class MoveEffectPhase extends PokemonPhase {
     }
 
     /** Whether both accuracy and invulnerability checks can be skipped */
-    const bypassAccAndInvuln = this.checkBypassAccAndInvuln(target);
+    const bypassAccAndInvuln = fieldTargeted || this.checkBypassAccAndInvuln(target);
     const semiInvulnerableTag = target.getTag(SemiInvulnerableTag);
 
     if (semiInvulnerableTag && !bypassAccAndInvuln && !this.checkBypassSemiInvuln(semiInvulnerableTag)) {
       return [HitCheckResult.MISS, 0];
     }
 
-    if (this.protectedCheck(user, target, move)) {
+    if (!fieldTargeted && this.protectedCheck(user, target)) {
+      console.log("====== Protected ========");
       return [HitCheckResult.PROTECTED, 0];
     }
 
     if (!this.reflected && move.doesFlagEffectApply({ flag: MoveFlags.REFLECTABLE, user, target })) {
       return [HitCheckResult.REFLECTED, 0];
+    }
+
+    // After the magic bounce check, field targeted moves are always successful
+    if (fieldTargeted) {
+      console.log("====== Field targeted moves overriding hit check ========");
+      return [HitCheckResult.HIT, 1];
     }
 
     const cancelNoEffectMessage = new BooleanHolder(false);

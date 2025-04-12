@@ -36,8 +36,7 @@ describe("Items - Dire Hit", () => {
       .enemyMoveset(Moves.SPLASH)
       .moveset([Moves.POUND])
       .startingHeldItems([{ name: "DIRE_HIT" }])
-      .battleStyle("single")
-      .disableCrits();
+      .battleStyle("single");
   }, 20000);
 
   it("should raise CRIT stage by 1", async () => {

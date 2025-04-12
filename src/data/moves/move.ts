@@ -669,10 +669,10 @@ export default class Move implements Localizable {
       case MoveFlags.REFLECTABLE:
         // If the target is not semi-invulnerable and either has magic coat active or an unignored magic bounce ability
         if (
-          target?.getTag(SemiInvulnerableTag) &&
-          (target.getTag(BattlerTagType.MAGIC_COAT) ||
+          target?.getTag(SemiInvulnerableTag) ||
+          !(target?.getTag(BattlerTagType.MAGIC_COAT) ||
             (!this.doesFlagEffectApply({ flag: MoveFlags.IGNORE_ABILITIES, user, target }) &&
-              target.hasAbilityWithAttr(ReflectStatusMoveAbAttr)))
+              target?.hasAbilityWithAttr(ReflectStatusMoveAbAttr)))
         ) {
           return false;
         }
@@ -2733,11 +2733,11 @@ export class StealEatBerryAttr extends EatBerryAttr {
   }
   /**
    * User steals a random berry from the target and then eats it.
-   * @param {Pokemon} user Pokemon that used the move and will eat the stolen berry
-   * @param {Pokemon} target Pokemon that will have its berry stolen
-   * @param {Move} move Move being used
-   * @param {any[]} args Unused
-   * @returns {boolean} true if the function succeeds
+   * @param user - Pokemon that used the move and will eat the stolen berry
+   * @param target - Pokemon that will have its berry stolen
+   * @param move - Move being used
+   * @param args Unused
+   * @returns  true if the function succeeds
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const cancelled = new BooleanHolder(false);
