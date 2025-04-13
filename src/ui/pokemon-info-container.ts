@@ -8,7 +8,7 @@ import type Pokemon from "../field/pokemon";
 import i18next from "i18next";
 import type { DexEntry, StarterDataEntry } from "../system/game-data";
 import { DexAttr } from "../system/game-data";
-import * as Utils from "../utils";
+import { fixedInt } from "#app/utils";
 import ConfirmUiHandler from "./confirm-ui-handler";
 import { StatsContainer } from "./stats-container";
 import { TextStyle, addBBCodeTextObject, addTextObject, getTextColor } from "./text";
@@ -393,7 +393,7 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
       if (!eggInfo) {
         globalScene.tweens.add({
           targets: this,
-          duration: Utils.fixedInt(Math.floor(750 / speedMultiplier)),
+          duration: fixedInt(Math.floor(750 / speedMultiplier)),
           ease: "Cubic.easeInOut",
           x: this.initialX - this.infoWindowWidth,
           onComplete: () => {
@@ -403,9 +403,9 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
 
         if (showMoves) {
           globalScene.tweens.add({
-            delay: Utils.fixedInt(Math.floor(325 / speedMultiplier)),
+            delay: fixedInt(Math.floor(325 / speedMultiplier)),
             targets: this.pokemonMovesContainer,
-            duration: Utils.fixedInt(Math.floor(325 / speedMultiplier)),
+            duration: fixedInt(Math.floor(325 / speedMultiplier)),
             ease: "Cubic.easeInOut",
             x: this.movesContainerInitialX - 57,
             onComplete: () => resolve(),
@@ -463,7 +463,7 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
     return new Promise<void>(resolve => {
       globalScene.tweens.add({
         targets: this,
-        duration: Utils.fixedInt(Math.floor(150 / speedMultiplier)),
+        duration: fixedInt(Math.floor(150 / speedMultiplier)),
         ease: "Cubic.easeInOut",
         x: xPosition,
         onComplete: () => {
@@ -482,14 +482,14 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
 
       globalScene.tweens.add({
         targets: this.pokemonMovesContainer,
-        duration: Utils.fixedInt(Math.floor(750 / speedMultiplier)),
+        duration: fixedInt(Math.floor(750 / speedMultiplier)),
         ease: "Cubic.easeInOut",
         x: this.movesContainerInitialX,
       });
 
       globalScene.tweens.add({
         targets: this,
-        duration: Utils.fixedInt(Math.floor(750 / speedMultiplier)),
+        duration: fixedInt(Math.floor(750 / speedMultiplier)),
         ease: "Cubic.easeInOut",
         x: this.initialX,
         onComplete: () => {

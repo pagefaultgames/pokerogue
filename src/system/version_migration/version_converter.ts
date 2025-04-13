@@ -48,12 +48,15 @@ export const settingsMigrators: Readonly<SettingsSaveMigrator[]> = [settingsMigr
 // import * as vA_B_C from "./versions/vA_B_C";
 
 // --- v1.0.4 (and below) PATCHES --- //
+// biome-ignore lint/style/noNamespaceImport: Convenience (TODO: make this a file-wide ignore when Biome supports those)
 import * as v1_0_4 from "./versions/v1_0_4";
 
 // --- v1.7.0 PATCHES --- //
+// biome-ignore lint/style/noNamespaceImport: Convenience
 import * as v1_7_0 from "./versions/v1_7_0";
 
 // --- v1.8.3 PATCHES --- //
+// biome-ignore lint/style/noNamespaceImport: Convenience
 import * as v1_8_3 from "./versions/v1_8_3";
 
 /** Current game version */

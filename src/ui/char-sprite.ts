@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import * as Utils from "../utils";
+import { MissingTextureKey } from "#app/utils";
 
 export default class CharSprite extends Phaser.GameObjects.Container {
   private sprite: Phaser.GameObjects.Sprite;
@@ -57,7 +57,7 @@ export default class CharSprite extends Phaser.GameObjects.Container {
         },
       });
 
-      this.setVisible(globalScene.textures.get(key).key !== Utils.MissingTextureKey);
+      this.setVisible(globalScene.textures.get(key).key !== MissingTextureKey);
       this.shown = true;
 
       this.key = key;

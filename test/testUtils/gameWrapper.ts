@@ -2,7 +2,7 @@
 import BattleScene, * as battleScene from "#app/battle-scene";
 import { MoveAnim } from "#app/data/battle-anims";
 import Pokemon from "#app/field/pokemon";
-import * as Utils from "#app/utils";
+import { setCookie, sessionIdKey } from "#app/utils";
 import { blobToString } from "#test/testUtils/gameManagerUtils";
 import { MockClock } from "#test/testUtils/mocks/mockClock";
 import { MockFetch } from "#test/testUtils/mocks/mockFetch";
@@ -29,7 +29,7 @@ window.URL.createObjectURL = (blob: Blob) => {
 };
 navigator.getGamepads = () => [];
 global.fetch = vi.fn(MockFetch);
-Utils.setCookie(Utils.sessionIdKey, "fake_token");
+setCookie(sessionIdKey, "fake_token");
 
 window.matchMedia = () => ({
   matches: false,

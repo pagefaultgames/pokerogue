@@ -1,3 +1,4 @@
+// biome-ignore lint/style/noNamespaceImport: Necessary for mocks
 import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { Status } from "#app/data/status-effect";
 import { CommandPhase } from "#app/phases/command-phase";
