@@ -121,6 +121,7 @@ import { MoveFlags } from "#enums/MoveFlags";
 import { MoveEffectTrigger } from "#enums/MoveEffectTrigger";
 import { MultiHitType } from "#enums/MultiHitType";
 import { invalidAssistMoves, invalidCopycatMoves, invalidMetronomeMoves, invalidMirrorMoveMoves, invalidSleepTalkMoves } from "./invalid-moves";
+import { applyHeldItemAttrs, AttackTypeBoosterHeldItemAttr } from "#app/modifier/held-items";
 
 type MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => boolean;
 type UserMoveConditionFunc = (user: Pokemon, move: Move) => boolean;
@@ -837,7 +838,7 @@ export default class Move implements Localizable {
 
     if (!this.hasAttr(TypelessAttr)) {
       globalScene.arena.applyTags(WeakenMoveTypeTag, simulated, this.type, power);
-      globalScene.applyModifiers(AttackTypeBoosterModifier, source.isPlayer(), source, this.type, power);
+      applyHeldItemAttrs(AttackTypeBoosterHeldItemAttr, source, this.type, power)
     }
 
     if (source.getTag(HelpingHandTag)) {
