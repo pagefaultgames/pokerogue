@@ -2802,7 +2802,7 @@ export function initBiomes() {
     ]
     ],
     [ Species.MEW, PokemonType.PSYCHIC, -1, [
-      [ Biome.JUNGLE, BiomePoolTier.ULTRA_RARE ]
+      [ Biome.JUNGLE, BiomePoolTier.ULTRA_RARE ],
       [ Biome.JUNGLE, BiomePoolTier.BOSS_SUPER_RARE ]
     ]
     ],
@@ -3276,7 +3276,7 @@ export function initBiomes() {
     ]
     ],
     [ Species.CELEBI, PokemonType.PSYCHIC, PokemonType.GRASS, [
-      [ Biome.FOREST, BiomePoolTier.ULTRA_RARE ]
+      [ Biome.FOREST, BiomePoolTier.ULTRA_RARE ],
       [ Biome.FOREST, BiomePoolTier.BOSS_SUPER_RARE ]
     ]
     ],
@@ -3763,9 +3763,9 @@ export function initBiomes() {
     ],
     [ Species.CASTFORM, PokemonType.NORMAL, -1, [
       [ Biome.METROPOLIS, BiomePoolTier.RARE ],
-      [ Biome.METROPOLIS, BiomePoolTier.BOSS ]
+      [ Biome.METROPOLIS, BiomePoolTier.BOSS ],
       [ Biome.LABORATORY, BiomePoolTier.RARE ],
-      [ Biome.LABORATORY, BiomePoolTier.BOSS ]
+      [ Biome.LABORATORY, BiomePoolTier.BOSS ],
     ]
     ],
     [ Species.KECLEON, PokemonType.NORMAL, -1, [
@@ -3922,7 +3922,7 @@ export function initBiomes() {
     ]
     ],
     [ Species.JIRACHI, PokemonType.STEEL, PokemonType.PSYCHIC, [
-      [ Biome.MOUNTAIN, BiomePoolTier.ULTRA_RARE ]
+      [ Biome.MOUNTAIN, BiomePoolTier.ULTRA_RARE ],
       [ Biome.MOUNTAIN, BiomePoolTier.BOSS_SUPER_RARE ]
     ]
     ],
@@ -4325,12 +4325,12 @@ export function initBiomes() {
     ]
     ],
     [ Species.LEAFEON, PokemonType.GRASS, -1, [
-      [ Biome.JUNGLE, BiomePoolTier.SUPER_RARE ]
+      [ Biome.JUNGLE, BiomePoolTier.SUPER_RARE ],
       [ Biome.JUNGLE, BiomePoolTier.BOSS_RARE ]
     ]
     ],
     [ Species.GLACEON, PokemonType.ICE, -1, [
-      [ Biome.ICE_CAVE, BiomePoolTier.SUPER_RARE ]
+      [ Biome.ICE_CAVE, BiomePoolTier.SUPER_RARE ],
       [ Biome.ICE_CAVE, BiomePoolTier.BOSS_RARE ]
     ]
     ],
@@ -4436,14 +4436,14 @@ export function initBiomes() {
     ]
     ],
     [ Species.SHAYMIN, PokemonType.GRASS, -1, [
-      [ Biome.MEADOW, BiomePoolTier.ULTRA_RARE ]
+      [ Biome.MEADOW, BiomePoolTier.ULTRA_RARE ],
       [ Biome.MEADOW, BiomePoolTier.BOSS_SUPER_RARE ]
     ]
     ],
     [ Species.ARCEUS, PokemonType.NORMAL, -1, [ ]
     ],
     [ Species.VICTINI, PokemonType.PSYCHIC, PokemonType.FIRE, [
-      [ Biome.BEACH, BiomePoolTier.ULTRA_RARE ]
+      [ Biome.BEACH, BiomePoolTier.ULTRA_RARE ],
       [ Biome.BEACH, BiomePoolTier.BOSS_SUPER_RARE ]
     ]
     ],
@@ -5532,52 +5532,52 @@ export function initBiomes() {
     ]
     ],
     [ Species.ROWLET, PokemonType.GRASS, PokemonType.FLYING, [
-      [ Biome.FOREST, BiomePoolTier.RARE ]
+      [ Biome.FOREST, BiomePoolTier.RARE ],
       [ Biome.ISLAND, BiomePoolTier.RARE ]
     ]
     ],
     [ Species.DARTRIX, PokemonType.GRASS, PokemonType.FLYING, [
-      [ Biome.FOREST, BiomePoolTier.RARE ]
+      [ Biome.FOREST, BiomePoolTier.RARE ],
       [ Biome.ISLAND, BiomePoolTier.RARE ]
     ]
     ],
     [ Species.DECIDUEYE, PokemonType.GRASS, PokemonType.GHOST, [
       [ Biome.FOREST, BiomePoolTier.RARE ],
-      [ Biome.FOREST, BiomePoolTier.BOSS_RARE ]
+      [ Biome.FOREST, BiomePoolTier.BOSS_RARE ],
       [ Biome.ISLAND, BiomePoolTier.RARE ],
       [ Biome.ISLAND, BiomePoolTier.BOSS_RARE ]
     ]
     ],
     [ Species.LITTEN, PokemonType.FIRE, -1, [
-      [ Biome.VOLCANO, BiomePoolTier.RARE ]
+      [ Biome.VOLCANO, BiomePoolTier.RARE ],
       [ Biome.ISLAND, BiomePoolTier.RARE ]
     ]
     ],
     [ Species.TORRACAT, PokemonType.FIRE, -1, [
-      [ Biome.VOLCANO, BiomePoolTier.RARE ]
+      [ Biome.VOLCANO, BiomePoolTier.RARE ],
       [ Biome.ISLAND, BiomePoolTier.RARE ]
     ]
     ],
     [ Species.INCINEROAR, PokemonType.FIRE, PokemonType.DARK, [
       [ Biome.VOLCANO, BiomePoolTier.RARE ],
-      [ Biome.VOLCANO, BiomePoolTier.BOSS_RARE ]
+      [ Biome.VOLCANO, BiomePoolTier.BOSS_RARE ],
       [ Biome.ISLAND, BiomePoolTier.RARE ],
       [ Biome.ISLAND, BiomePoolTier.BOSS_RARE ]
     ]
     ],
     [ Species.POPPLIO, PokemonType.WATER, -1, [
-      [ Biome.SEA, BiomePoolTier.RARE ]
+      [ Biome.SEA, BiomePoolTier.RARE ],
       [ Biome.ISLAND, BiomePoolTier.RARE ]
     ]
     ],
     [ Species.BRIONNE, PokemonType.WATER, -1, [
-      [ Biome.SEA, BiomePoolTier.RARE ]
+      [ Biome.SEA, BiomePoolTier.RARE ],
       [ Biome.ISLAND, BiomePoolTier.RARE ]
     ]
     ],
     [ Species.PRIMARINA, PokemonType.WATER, PokemonType.FAIRY, [
       [ Biome.SEA, BiomePoolTier.RARE ],
-      [ Biome.SEA, BiomePoolTier.BOSS_RARE ]
+      [ Biome.SEA, BiomePoolTier.BOSS_RARE ],
       [ Biome.ISLAND, BiomePoolTier.RARE ],
       [ Biome.ISLAND, BiomePoolTier.BOSS_RARE ]
     ]
@@ -6668,7 +6668,7 @@ export function initBiomes() {
     ],
     [ Species.VAROOM, PokemonType.STEEL, PokemonType.POISON, [
       [ Biome.METROPOLIS, BiomePoolTier.RARE ],
-      [ Biome.SLUM, BiomePoolTier.RARE ]
+      [ Biome.SLUM, BiomePoolTier.RARE ],
       [ Biome.FACTORY, BiomePoolTier.RARE ]
     ]
     ],
@@ -6676,7 +6676,7 @@ export function initBiomes() {
       [ Biome.METROPOLIS, BiomePoolTier.RARE ],
       [ Biome.METROPOLIS, BiomePoolTier.BOSS_RARE ],
       [ Biome.SLUM, BiomePoolTier.RARE ],
-      [ Biome.SLUM, BiomePoolTier.BOSS_RARE ]
+      [ Biome.SLUM, BiomePoolTier.BOSS_RARE ],
       [ Biome.FACTORY, BiomePoolTier.RARE ],
       [ Biome.FACTORY, BiomePoolTier.BOSS_RARE ]
     ]
@@ -6935,7 +6935,7 @@ export function initBiomes() {
     ]
     ],
     [ Species.PECHARUNT, PokemonType.POISON, PokemonType.GHOST, [
-      [ Biome.SWAMP, BiomePoolTier.ULTRA_RARE ]
+      [ Biome.SWAMP, BiomePoolTier.ULTRA_RARE ],
       [ Biome.SWAMP, BiomePoolTier.BOSS_SUPER_RARE ]
     ]
     ],
