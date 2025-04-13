@@ -1,9 +1,15 @@
 import { globalScene } from "#app/global-scene";
-import { applyPreSwitchOutAbAttrs, PostDamageForceSwitchAbAttr, PreSwitchOutAbAttr } from "#app/data/ability";
+import {
+  applyPreSummonAbAttrs,
+  applyPreSwitchOutAbAttrs,
+  PostDamageForceSwitchAbAttr,
+  PreSummonAbAttr,
+  PreSwitchOutAbAttr,
+} from "#app/data/ability";
 import { allMoves, ForceSwitchOutAttr } from "#app/data/moves/move";
 import { getPokeballTintColor } from "#app/data/pokeball";
 import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms";
-import { TrainerSlot } from "#app/data/trainer-config";
+import { TrainerSlot } from "#enums/trainer-slot";
 import type Pokemon from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { SwitchEffectTransferModifier } from "#app/modifier/modifier";
@@ -23,11 +29,11 @@ export class SwitchSummonPhase extends SummonPhase {
 
   /**
    * Constructor for creating a new SwitchSummonPhase
-   * @param switchType the type of switch behavior
-   * @param fieldIndex integer representing position on the battle field
-   * @param slotIndex integer for the index of pokemon (in party of 6) to switch into
-   * @param doReturn boolean whether to render "comeback" dialogue
-   * @param player boolean if the switch is from the player
+   * @param switchType - The type of switch behavior
+   * @param fieldIndex - Position on the battle field
+   * @param slotIndex - The index of pokemon (in party of 6) to switch into
+   * @param doReturn - Whether to render "comeback" dialogue
+   * @param player - (Optional) `true` if the switch is from the player
    */
   constructor(switchType: SwitchType, fieldIndex: number, slotIndex: number, doReturn: boolean, player?: boolean) {
     super(fieldIndex, player !== undefined ? player : true);
@@ -99,7 +105,7 @@ export class SwitchSummonPhase extends SummonPhase {
     );
     globalScene.playSound("se/pb_rel");
     pokemon.hideInfo();
-    pokemon.tint(getPokeballTintColor(pokemon.pokeball), 1, 250, "Sine.easeIn");
+    pokemon.tint(getPokeballTintColor(pokemon.getPokeball(true)), 1, 250, "Sine.easeIn");
     globalScene.tweens.add({
       targets: pokemon,
       duration: 250,
@@ -116,6 +122,7 @@ export class SwitchSummonPhase extends SummonPhase {
     const party = this.player ? this.getParty() : globalScene.getEnemyParty();
     const switchedInPokemon = party[this.slotIndex];
     this.lastPokemon = this.getPokemon();
+    applyPreSummonAbAttrs(PreSummonAbAttr, switchedInPokemon);
     applyPreSwitchOutAbAttrs(PreSwitchOutAbAttr, this.lastPokemon);
     if (this.switchType === SwitchType.BATON_PASS && switchedInPokemon) {
       (this.player ? globalScene.getEnemyField() : globalScene.getPlayerField()).forEach(enemyPokemon =>

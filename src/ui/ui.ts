@@ -28,7 +28,7 @@ import { addWindow } from "./ui-theme";
 import LoginFormUiHandler from "./login-form-ui-handler";
 import RegistrationFormUiHandler from "./registration-form-ui-handler";
 import LoadingModalUiHandler from "./loading-modal-ui-handler";
-import * as Utils from "../utils";
+import { executeIf } from "#app/utils";
 import GameStatsUiHandler from "./game-stats-ui-handler";
 import AwaitableUiHandler from "./awaitable-ui-handler";
 import SaveSlotSelectUiHandler from "./save-slot-select-ui-handler";
@@ -329,7 +329,7 @@ export default class UI extends Phaser.GameObjects.Container {
     promptDelay?: number | null,
   ): void {
     const pokename: string[] = [];
-    const repname = [ "#POKEMON1", "#POKEMON2" ];
+    const repname = ["#POKEMON1", "#POKEMON2"];
     for (let p = 0; p < globalScene.getPlayerField().length; p++) {
       pokename.push(globalScene.getPlayerField()[p].getNameToRender());
       text = text.split(pokename[p]).join(repname[p]);
@@ -674,7 +674,7 @@ export default class UI extends Phaser.GameObjects.Container {
       if (!this?.modeChain?.length) {
         return resolve();
       }
-      this.revertMode().then(success => Utils.executeIf(success, this.revertModes).then(() => resolve()));
+      this.revertMode().then(success => executeIf(success, this.revertModes).then(() => resolve()));
     });
   }
 

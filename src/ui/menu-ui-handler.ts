@@ -2,7 +2,7 @@ import { bypassLogin } from "#app/battle-scene";
 import { globalScene } from "#app/global-scene";
 import { TextStyle, addTextObject, getTextStyleOptions } from "./text";
 import { Mode } from "./ui";
-import * as Utils from "../utils";
+import { getEnumKeys, isLocal, isBeta, fixedInt, getCookie, sessionIdKey } from "#app/utils";
 import { addWindow, WindowVariant } from "./ui-theme";
 import MessageUiHandler from "./message-ui-handler";
 import type { OptionSelectConfig, OptionSelectItem } from "./abstact-option-select-ui-handler";
@@ -75,7 +75,7 @@ export default class MenuUiHandler extends MessageUiHandler {
       { condition: bypassLogin, options: [MenuOptions.LOG_OUT] },
     ];
 
-    this.menuOptions = Utils.getEnumKeys(MenuOptions)
+    this.menuOptions = getEnumKeys(MenuOptions)
       .map(m => Number.parseInt(MenuOptions[m]) as MenuOptions)
       .filter(m => {
         return !this.excludedMenus().some(exclusion => exclusion.condition && exclusion.options.includes(m));
@@ -130,7 +130,7 @@ export default class MenuUiHandler extends MessageUiHandler {
       { condition: bypassLogin, options: [MenuOptions.LOG_OUT] },
     ];
 
-    this.menuOptions = Utils.getEnumKeys(MenuOptions)
+    this.menuOptions = getEnumKeys(MenuOptions)
       .map(m => Number.parseInt(MenuOptions[m]) as MenuOptions)
       .filter(m => {
         return !this.excludedMenus().some(exclusion => exclusion.condition && exclusion.options.includes(m));
@@ -238,7 +238,7 @@ export default class MenuUiHandler extends MessageUiHandler {
       });
     };
 
-    if (Utils.isLocal || Utils.isBeta) {
+    if (isLocal || isBeta) {
       manageDataOptions.push({
         label: i18next.t("menuUiHandler:importSession"),
         handler: () => {
@@ -292,7 +292,7 @@ export default class MenuUiHandler extends MessageUiHandler {
       },
       keepOpen: true,
     });
-    if (Utils.isLocal || Utils.isBeta) {
+    if (isLocal || isBeta) {
       manageDataOptions.push({
         label: i18next.t("menuUiHandler:importData"),
         handler: () => {
@@ -328,7 +328,7 @@ export default class MenuUiHandler extends MessageUiHandler {
         keepOpen: true,
       },
     );
-    if (Utils.isLocal || Utils.isBeta) {
+    if (isLocal || isBeta) {
       // this should make sure we don't have this option in live
       manageDataOptions.push({
         label: "Test Dialogue",
@@ -510,7 +510,7 @@ export default class MenuUiHandler extends MessageUiHandler {
     this.render();
     super.show(args);
 
-    this.menuOptions = Utils.getEnumKeys(MenuOptions)
+    this.menuOptions = getEnumKeys(MenuOptions)
       .map(m => Number.parseInt(MenuOptions[m]) as MenuOptions)
       .filter(m => {
         return !this.excludedMenus().some(exclusion => exclusion.condition && exclusion.options.includes(m));
@@ -574,7 +574,7 @@ export default class MenuUiHandler extends MessageUiHandler {
             ui.setOverlayMode(Mode.EGG_LIST);
             success = true;
           } else {
-            ui.showText(i18next.t("menuUiHandler:noEggs"), null, () => ui.showText(""), Utils.fixedInt(1500));
+            ui.showText(i18next.t("menuUiHandler:noEggs"), null, () => ui.showText(""), fixedInt(1500));
             error = true;
           }
           break;
@@ -607,7 +607,7 @@ export default class MenuUiHandler extends MessageUiHandler {
                     : i18next.t("menuUiHandler:unlinkDiscord"),
                 handler: () => {
                   if (loggedInUser?.discordId === "") {
-                    const token = Utils.getCookie(Utils.sessionIdKey);
+                    const token = getCookie(sessionIdKey);
                     const redirectUri = encodeURIComponent(`${import.meta.env.VITE_SERVER_URL}/auth/discord/callback`);
                     const discordId = import.meta.env.VITE_DISCORD_CLIENT_ID;
                     const discordUrl = `https://discord.com/api/oauth2/authorize?client_id=${discordId}&redirect_uri=${redirectUri}&response_type=code&scope=identify&state=${token}&prompt=none`;
@@ -627,7 +627,7 @@ export default class MenuUiHandler extends MessageUiHandler {
                     : i18next.t("menuUiHandler:unlinkGoogle"),
                 handler: () => {
                   if (loggedInUser?.googleId === "") {
-                    const token = Utils.getCookie(Utils.sessionIdKey);
+                    const token = getCookie(sessionIdKey);
                     const redirectUri = encodeURIComponent(`${import.meta.env.VITE_SERVER_URL}/auth/google/callback`);
                     const googleId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
                     const googleUrl = `https://accounts.google.com/o/oauth2/auth?client_id=${googleId}&response_type=code&redirect_uri=${redirectUri}&scope=openid&state=${token}`;

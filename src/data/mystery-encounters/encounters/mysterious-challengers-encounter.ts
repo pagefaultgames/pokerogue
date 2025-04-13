@@ -3,18 +3,16 @@ import {
   initBattleWithEnemyConfig,
   setEncounterRewards,
 } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import {
-  trainerConfigs,
-  TrainerPartyCompoundTemplate,
-  TrainerPartyTemplate,
-  trainerPartyTemplates,
-} from "#app/data/trainer-config";
+import { trainerConfigs } from "#app/data/trainers/trainer-config";
+import { trainerPartyTemplates } from "#app/data/trainers/TrainerPartyTemplate";
+import { TrainerPartyCompoundTemplate } from "#app/data/trainers/TrainerPartyTemplate";
+import { TrainerPartyTemplate } from "#app/data/trainers/TrainerPartyTemplate";
 import { ModifierTier } from "#app/modifier/modifier-tier";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import { globalScene } from "#app/global-scene";
-import * as Utils from "#app/utils";
+import { randSeedInt } from "#app/utils";
 import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
@@ -48,7 +46,7 @@ export const MysteriousChallengersEncounter: MysteryEncounter = MysteryEncounter
     const normalConfig = trainerConfigs[normalTrainerType].clone();
     let female = false;
     if (normalConfig.hasGenders) {
-      female = !!Utils.randSeedInt(2);
+      female = !!randSeedInt(2);
     }
     const normalSpriteKey = normalConfig.getSpriteKey(female, normalConfig.doubleOnly);
     encounter.enemyPartyConfigs.push({
@@ -78,7 +76,7 @@ export const MysteriousChallengersEncounter: MysteryEncounter = MysteryEncounter
     hardConfig.setPartyTemplates(hardTemplate);
     female = false;
     if (hardConfig.hasGenders) {
-      female = !!Utils.randSeedInt(2);
+      female = !!randSeedInt(2);
     }
     const hardSpriteKey = hardConfig.getSpriteKey(female, hardConfig.doubleOnly);
     encounter.enemyPartyConfigs.push({
@@ -98,7 +96,7 @@ export const MysteriousChallengersEncounter: MysteryEncounter = MysteryEncounter
     brutalConfig.partyTemplateFunc = null; // Overrides gym leader party template func
     female = false;
     if (brutalConfig.hasGenders) {
-      female = !!Utils.randSeedInt(2);
+      female = !!randSeedInt(2);
     }
     const brutalSpriteKey = brutalConfig.getSpriteKey(female, brutalConfig.doubleOnly);
     encounter.enemyPartyConfigs.push({
