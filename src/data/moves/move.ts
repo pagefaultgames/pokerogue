@@ -7389,11 +7389,13 @@ export class AbilityChangeAttr extends MoveEffectAttr {
 
     const moveTarget = this.selfTarget ? user : target;
 
-    globalScene.queueMessage(i18next.t("moveTriggers:acquiredAbility", { pokemonName: getPokemonNameWithAffix((this.selfTarget ? user : target)), abilityName: allAbilities[this.ability].name }));
-
+    globalScene.triggerPokemonFormChange(moveTarget, SpeciesFormChangeRevertWeatherFormTrigger);
+    if (moveTarget.breakIllusion()) {
+      globalScene.queueMessage(i18next.t("abilityTriggers:illusionBreak", { pokemonName: getPokemonNameWithAffix(moveTarget) }));
+    }
+    globalScene.queueMessage(i18next.t("moveTriggers:acquiredAbility", { pokemonName: getPokemonNameWithAffix(moveTarget), abilityName: allAbilities[this.ability].name }));
     moveTarget.setTempAbility(allAbilities[this.ability]);
     globalScene.triggerPokemonFormChange(moveTarget, SpeciesFormChangeRevertWeatherFormTrigger);
-
     return true;
   }
 
@@ -8673,6 +8675,8 @@ export function initMoves() {
       .makesContact(false),
     new StatusMove(Moves.TRANSFORM, PokemonType.NORMAL, -1, 10, -1, 0, 1)
       .attr(TransformAttr)
+      .condition((user, target, move) => !target.getTag(BattlerTagType.SUBSTITUTE))
+      .condition((user, target, move) => !target.summonData?.illusion && !user.summonData?.illusion)
       // transforming from or into fusion pokemon causes various problems (such as crashes)
       .condition((user, target, move) => !target.getTag(BattlerTagType.SUBSTITUTE) && !user.fusionSpecies && !target.fusionSpecies)
       .ignoresProtect(),

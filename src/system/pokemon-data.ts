@@ -79,12 +79,14 @@ export default class PokemonData {
     this.id = source.id;
     this.player = sourcePokemon ? sourcePokemon.isPlayer() : source.player;
     this.species = sourcePokemon ? sourcePokemon.species.speciesId : source.species;
-    this.nickname = sourcePokemon ? sourcePokemon.nickname : source.nickname;
+    this.nickname = sourcePokemon 
+    ? (!!sourcePokemon.summonData?.illusion ? sourcePokemon.summonData.illusion.basePokemon.nickname : sourcePokemon.nickname) 
+    : source.nickname;
     this.formIndex = Math.max(Math.min(source.formIndex, getPokemonSpecies(this.species).forms.length - 1), 0);
     this.abilityIndex = source.abilityIndex;
     this.passive = source.passive;
-    this.shiny = source.shiny;
-    this.variant = source.variant;
+    this.shiny = sourcePokemon ? sourcePokemon.isShiny() : source.shiny;
+    this.variant = sourcePokemon ? sourcePokemon.getVariant() : source.variant;
     this.pokeball = source.pokeball;
     this.level = source.level;
     this.exp = source.exp;
@@ -117,8 +119,12 @@ export default class PokemonData {
     this.fusionSpecies = sourcePokemon ? sourcePokemon.fusionSpecies?.speciesId : source.fusionSpecies;
     this.fusionFormIndex = source.fusionFormIndex;
     this.fusionAbilityIndex = source.fusionAbilityIndex;
-    this.fusionShiny = source.fusionShiny;
-    this.fusionVariant = source.fusionVariant;
+    this.fusionShiny = sourcePokemon 
+    ? (!!sourcePokemon.summonData?.illusion ? sourcePokemon.summonData.illusion.basePokemon.fusionShiny : sourcePokemon.fusionShiny) 
+    : source.fusionShiny;
+    this.fusionVariant = sourcePokemon 
+    ? (!!sourcePokemon.summonData?.illusion ? sourcePokemon.summonData.illusion.basePokemon.fusionVariant : sourcePokemon.fusionVariant) 
+    : source.fusionVariant;
     this.fusionGender = source.fusionGender;
     this.fusionLuck =
       source.fusionLuck !== undefined ? source.fusionLuck : source.fusionShiny ? source.fusionVariant + 1 : 0;
@@ -174,6 +180,7 @@ export default class PokemonData {
         this.summonData.types = source.summonData.types;
         this.summonData.speciesForm = source.summonData.speciesForm;
         this.summonDataSpeciesFormIndex = source.summonDataSpeciesFormIndex;
+        this.summonData.illusionBroken = source.summonData.illusionBroken;
 
         if (source.summonData.tags) {
           this.summonData.tags = source.summonData.tags?.map(t => loadBattlerTag(t));
@@ -219,6 +226,7 @@ export default class PokemonData {
     if (this.summonData) {
       // when loading from saved session, recover summonData.speciesFrom and form index species object
       // used to stay transformed on reload session
+
       if (this.summonData.speciesForm) {
         this.summonData.speciesForm = getPokemonSpeciesForm(
           this.summonData.speciesForm.speciesId,

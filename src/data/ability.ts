@@ -2370,6 +2370,18 @@ export class PostSummonMessageAbAttr extends PostSummonAbAttr {
   }
 }
 
+/**
+ * Removes illusions when a Pokemon is summoned.
+ */
+export class PostSummonRemoveIllusionAbAttr extends PostSummonAbAttr {
+  applyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
+    for (const pokemon of globalScene.getField(true)) {
+      pokemon.breakIllusion();
+    }
+    return true;
+  }
+}
+
 export class PostSummonUnnamedMessageAbAttr extends PostSummonAbAttr {
   //Attr doesn't force pokemon name on the message
   private message: string;
@@ -2812,7 +2824,7 @@ export class PostSummonTransformAbAttr extends PostSummonAbAttr {
   }
 
   private getTarget(targets: Pokemon[]): Pokemon {
-    let target: Pokemon;
+    let target: Pokemon = targets[0];
     if (targets.length > 1) {
       globalScene.executeWithSeedOffset(() => {
         // in a double battle, if one of the opposing pokemon is fused the other one will be chosen
@@ -2829,6 +2841,7 @@ export class PostSummonTransformAbAttr extends PostSummonAbAttr {
     } else {
       target = targets[0];
     }
+
     target = target!;
 
     return target;
@@ -2836,6 +2849,12 @@ export class PostSummonTransformAbAttr extends PostSummonAbAttr {
 
   override canApplyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
     const targets = pokemon.getOpponents();
+    const target = this.getTarget(targets);
+
+    if (!!target.summonData?.illusion) {
+      return false;
+    }
+
     if (simulated || !targets.length) {
       return simulated;
     }
@@ -4741,8 +4760,8 @@ export class MaxMultiHitAbAttr extends AbAttr {
 }
 
 export class PostBattleAbAttr extends AbAttr {
-  constructor() {
-    super(true);
+  constructor(showAbility: boolean = true) {
+    super(showAbility);
   }
 
   canApplyPostBattle(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
@@ -5258,6 +5277,92 @@ export class FormBlockDamageAbAttr extends ReceivedMoveDamageMultiplierAbAttr {
     return this.triggerMessageFunc(pokemon, abilityName);
   }
 }
+
+/**
+ * Base class for defining {@linkcode Ability} attributes before summon
+ * (should use {@linkcode PostSummonAbAttr} for most ability)
+ * @see {@linkcode applyPreSummon()}
+ */
+export class PreSummonAbAttr extends AbAttr {
+  applyPreSummon(pokemon: Pokemon, passive: boolean, args: any[]): void {}
+
+  canApplyPreSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
+    return true;
+  }
+}
+
+export class IllusionPreSummonAbAttr extends PreSummonAbAttr {
+  /**
+   * Apply a new illusion when summoning Zoroark if the illusion is available
+   *
+   * @param pokemon - The Pokémon with the Illusion ability.
+   * @param passive - N/A
+   * @param args - N/A
+   * @returns Whether the illusion was applied.
+   */
+  override applyPreSummon(pokemon: Pokemon, passive: boolean, args: any[]): void {
+    const party: Pokemon[] = (pokemon.isPlayer() ? globalScene.getPlayerParty() : globalScene.getEnemyParty()).filter(p => p.isAllowedInBattle());
+    const lastPokemon: Pokemon = party.filter(p => p !==pokemon).at(-1) || pokemon;
+    pokemon.setIllusion(lastPokemon);
+  }
+
+  override canApplyPreSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
+    pokemon.initSummondata()
+    if(pokemon.hasTrainer()){
+      const party: Pokemon[] = (pokemon.isPlayer() ? globalScene.getPlayerParty() : globalScene.getEnemyParty()).filter(p => p.isAllowedInBattle());
+      const lastPokemon: Pokemon = party.filter(p => p !==pokemon).at(-1) || pokemon;
+      const speciesId = lastPokemon.species.speciesId;
+
+      // If the last conscious Pokémon in the party is a Terastallized Ogerpon or Terapagos, Illusion will not activate.
+      // Illusion will also not activate if the Pokémon with Illusion is Terastallized and the last Pokémon in the party is Ogerpon or Terapagos.
+      if ( 
+        lastPokemon === pokemon ||
+        ((speciesId === Species.OGERPON || speciesId === Species.TERAPAGOS) && (lastPokemon.isTerastallized || pokemon.isTerastallized))
+      ) {
+        return false;
+      }
+    }
+    return !pokemon.summonData.illusionBroken;
+  }
+}
+
+export class IllusionBreakAbAttr extends PostDefendAbAttr {
+  /**
+   * Destroy the illusion upon taking damage
+   *
+   * @param pokemon - The Pokémon with the Illusion ability.
+   * @param passive - unused
+   * @param attacker - The attacking Pokémon.
+   * @param move - The move being used.
+   * @param hitResult - The type of hitResult the pokemon got
+   * @param args - unused
+   * @returns - Whether the illusion was destroyed.
+   */
+  override applyPostDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): void {
+    pokemon.breakIllusion();
+    pokemon.summonData.illusionBroken = true;
+  }
+
+  override canApplyPostDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean {
+    const breakIllusion: HitResult[] = [ HitResult.EFFECTIVE, HitResult.SUPER_EFFECTIVE, HitResult.NOT_VERY_EFFECTIVE, HitResult.ONE_HIT_KO ];
+    return breakIllusion.includes(hitResult) && !!pokemon.summonData?.illusion
+  }
+}
+
+export class IllusionPostBattleAbAttr extends PostBattleAbAttr {
+  /**
+   * Break the illusion once the battle ends
+   *
+   * @param pokemon - The Pokémon with the Illusion ability.
+   * @param passive - Unused
+   * @param args - Unused
+   * @returns - Whether the illusion was applied.
+   */
+  override applyPostBattle(pokemon: Pokemon, passive: boolean, simulated:boolean, args: any[]): void {
+   pokemon.breakIllusion()
+  }
+}
+
 
 /**
  * If a Pokémon with this Ability selects a damaging move, it has a 30% chance of going first in its priority bracket. If the Ability activates, this is announced at the start of the turn (after move selection).
@@ -6014,6 +6119,20 @@ export function applyPostSummonAbAttrs(
     (attr, passive) => attr.canApplyPostSummon(pokemon, passive, simulated, args),
     args,
     simulated,
+  );
+}
+
+export function applyPreSummonAbAttrs(
+  attrType: Constructor<PreSummonAbAttr>,
+  pokemon: Pokemon,
+  ...args: any[]
+): void {
+  applyAbAttrsInternal<PreSummonAbAttr>(
+    attrType,
+    pokemon,
+    (attr, passive) => attr.applyPreSummon(pokemon, passive, args),
+    (attr, passive) => attr.canApplyPreSummon(pokemon, passive, args),
+    args
   );
 }
 
@@ -6811,8 +6930,14 @@ export function initAbilities() {
         return isNullOrUndefined(movePhase);
       }, 1.3),
     new Ability(Abilities.ILLUSION, 5)
+      //The pokemon generate an illusion if it's available
+      .attr(IllusionPreSummonAbAttr, false)
+      //The pokemon loses his illusion when he is damaged by a move
+      .attr(IllusionBreakAbAttr, true)
+      //Illusion is available again after a battle
+      .conditionalAttr((pokemon) => pokemon.isAllowedInBattle(), IllusionPostBattleAbAttr, false)
       .uncopiable()
-      .unimplemented(),
+      .bypassFaint(),
     new Ability(Abilities.IMPOSTER, 5)
       .attr(PostSummonTransformAbAttr)
       .uncopiable(),
@@ -7223,6 +7348,8 @@ export function initAbilities() {
       .attr(PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr)
       .uncopiable()
       .attr(NoTransformAbilityAbAttr)
+      .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) => i18next.t("abilityTriggers:postSummonNeutralizingGas", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }))
+      .attr(PostSummonRemoveIllusionAbAttr)
       .bypassFaint(),
     new Ability(Abilities.PASTEL_VEIL, 8)
       .attr(PostSummonUserFieldRemoveStatusEffectAbAttr, StatusEffect.POISON, StatusEffect.TOXIC)

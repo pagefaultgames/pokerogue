@@ -357,8 +357,14 @@ export default class SummaryUiHandler extends UiHandler {
     this.pokemonSprite.setPipelineData("isTerastallized", this.pokemon.isTerastallized);
     this.pokemonSprite.setPipelineData("ignoreTimeTint", true);
     this.pokemonSprite.setPipelineData("spriteKey", this.pokemon.getSpriteKey());
-    this.pokemonSprite.setPipelineData("shiny", this.pokemon.shiny);
-    this.pokemonSprite.setPipelineData("variant", this.pokemon.variant);
+    this.pokemonSprite.setPipelineData(
+      "shiny",
+      this.pokemon.summonData?.illusion?.basePokemon.shiny ?? this.pokemon.shiny,
+    );
+    this.pokemonSprite.setPipelineData(
+      "variant",
+      this.pokemon.summonData?.illusion?.basePokemon.variant ?? this.pokemon.variant,
+    );
     ["spriteColors", "fusionSpriteColors"].map(k => {
       delete this.pokemonSprite.pipelineData[`${k}Base`];
       if (this.pokemon?.summonData?.speciesForm) {
@@ -368,7 +374,7 @@ export default class SummaryUiHandler extends UiHandler {
     });
     this.pokemon.cry();
 
-    this.nameText.setText(this.pokemon.getNameToRender());
+    this.nameText.setText(this.pokemon.getNameToRender(false));
 
     const isFusion = this.pokemon.isFusion();
 
@@ -426,8 +432,8 @@ export default class SummaryUiHandler extends UiHandler {
 
     this.friendshipShadow.setCrop(0, 0, 16, 16 - 16 * ((this.pokemon?.friendship || 0) / 255));
 
-    const doubleShiny = isFusion && this.pokemon.shiny && this.pokemon.fusionShiny;
-    const baseVariant = !doubleShiny ? this.pokemon.getVariant() : this.pokemon.variant;
+    const doubleShiny = this.pokemon.isDoubleShiny(false);
+    const baseVariant = this.pokemon.getBaseVariant(doubleShiny);
 
     this.shinyIcon.setPositionRelative(
       this.nameText,
@@ -435,7 +441,7 @@ export default class SummaryUiHandler extends UiHandler {
       3,
     );
     this.shinyIcon.setTexture(`shiny_star${doubleShiny ? "_1" : ""}`);
-    this.shinyIcon.setVisible(this.pokemon.isShiny());
+    this.shinyIcon.setVisible(this.pokemon.isShiny(false));
     this.shinyIcon.setTint(getVariantTint(baseVariant));
     if (this.shinyIcon.visible) {
       const shinyDescriptor =
@@ -455,7 +461,9 @@ export default class SummaryUiHandler extends UiHandler {
     this.fusionShinyIcon.setPosition(this.shinyIcon.x, this.shinyIcon.y);
     this.fusionShinyIcon.setVisible(doubleShiny);
     if (isFusion) {
-      this.fusionShinyIcon.setTint(getVariantTint(this.pokemon.fusionVariant));
+      this.fusionShinyIcon.setTint(
+        getVariantTint(this.pokemon.summonData?.illusion?.basePokemon.fusionVariant ?? this.pokemon.fusionVariant),
+      );
     }
 
     this.pokeball.setFrame(getPokeballAtlasKey(this.pokemon.pokeball));
@@ -838,7 +846,7 @@ export default class SummaryUiHandler extends UiHandler {
           return typeIcon;
         };
 
-        const types = this.pokemon?.getTypes(false, false, true)!; // TODO: is this bang correct?
+        const types = this.pokemon?.getTypes(false, false, true, false)!; // TODO: is this bang correct?
         profileContainer.add(getTypeIcon(0, types[0]));
         if (types.length > 1) {
           profileContainer.add(getTypeIcon(1, types[1]));
