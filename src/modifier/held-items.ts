@@ -191,7 +191,7 @@ export class AttackTypeBoosterHeldItemAttr extends HeldItemAttr {
 
 export function applyHeldItemAttrs(attrType: Constructor<HeldItemAttr>, pokemon: Pokemon, ...args: any[]) {
   if (pokemon) {
-    for (const [item, stackCount] of pokemon.getHeldItems2()) {
+    for (const [item, stackCount] of pokemon.heldItemManager.getHeldItems()) {
       if (allHeldItems[item].hasAttr(attrType)) {
         attrType.apply(stackCount, ...args);
       }
