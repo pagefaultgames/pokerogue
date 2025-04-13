@@ -259,6 +259,7 @@ import { MoveFlags } from "#enums/MoveFlags";
 import { timedEventManager } from "#app/global-event-manager";
 import { loadMoveAnimations } from "#app/sprites/pokemon-asset-loader";
 import { ResetStatusPhase } from "#app/phases/reset-status-phase";
+import { allHeldItems, HeldItemType } from "#app/modifier/held-items";
 
 export enum LearnMoveSituation {
   MISC,
@@ -340,6 +341,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public usedTMs: Moves[];
 
   private shinySparkle: Phaser.GameObjects.Sprite;
+
+  private heldItems: [HeldItemType, number][] = [];
 
   constructor(
     x: number,
@@ -1184,6 +1187,22 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       m => m instanceof PokemonHeldItemModifier && m.pokemonId === this.id,
       this.isPlayer(),
     ) as PokemonHeldItemModifier[];
+  }
+
+  getHeldItems2(): [HeldItemType, number][] {
+    return this.heldItems;
+  }
+
+  addHeldItem(itemType: HeldItemType, stack: number) {
+    const maxStack = allHeldItems[itemType].getMaxStackCount();
+
+    const existing = this.heldItems.find(([type]) => type === itemType);
+
+    if (existing) {
+      existing[1] = Math.min(existing[1] + stack, maxStack);
+    } else {
+      this.heldItems.push([itemType, Math.min(stack, maxStack)]);
+    }
   }
 
   updateScale(): void {
