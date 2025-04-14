@@ -4175,10 +4175,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       stabMultiplier.value += 0.5;
     }
 
-    if (!ignoreSourceAbility) {
-      applyAbAttrs(StabBoostAbAttr, source, null, simulated, stabMultiplier);
-    }
-
     applyMoveAttrs(
       CombinedPledgeStabBoostAttr,
       source,
@@ -4186,6 +4182,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       move,
       stabMultiplier,
     );
+
+    if (!ignoreSourceAbility) {
+      applyAbAttrs(StabBoostAbAttr, source, null, simulated, stabMultiplier);
+    }
 
     if (
       source.isTerastallized &&
@@ -4201,11 +4201,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       (!source.stellarTypesBoosted.includes(moveType) ||
         source.hasSpecies(Species.TERAPAGOS))
     ) {
-      if (matchesSourceType) {
-        stabMultiplier.value += 0.5;
-      } else {
-        stabMultiplier.value += 0.2;
-      }
+      stabMultiplier.value += matchesSourceType ? 0.5 : 0.2;
     }
 
     return Math.min(stabMultiplier.value, 2.25);
@@ -4395,7 +4391,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
 
     /** A damage multiplier for when the attack is of the attacker's type and/or Tera type. */
-
     const stabMultiplier = this.calculateStabMultiplier(source, move, ignoreSourceAbility, simulated);
 
     /** Halves damage if the attacker is using a physical attack while burned */
