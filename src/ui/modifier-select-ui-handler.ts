@@ -9,7 +9,7 @@ import { LockModifierTiersModifier, PokemonHeldItemModifier, HealShopCostModifie
 import { handleTutorial, Tutorial } from "../tutorial";
 import { Button } from "#enums/buttons";
 import MoveInfoOverlay from "./move-info-overlay";
-import { allMoves } from "#app/data/moves/all-moves";
+import { allMoves } from "../data/moves/move";
 import { formatMoney, NumberHolder } from "#app/utils";
 import Overrides from "#app/overrides";
 import i18next from "i18next";

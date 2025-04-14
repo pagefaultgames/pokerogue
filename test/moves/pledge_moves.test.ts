@@ -1,8 +1,7 @@
 import { BattlerIndex } from "#app/battle";
 import { allAbilities } from "#app/data/ability";
 import { ArenaTagSide } from "#app/data/arena-tag";
-import { FlinchAttr } from "#app/data/moves/move";
-import { allMoves } from "#app/data/moves/all-moves";
+import { allMoves, FlinchAttr } from "#app/data/moves/move";
 import { PokemonType } from "#enums/pokemon-type";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { Stat } from "#enums/stat";

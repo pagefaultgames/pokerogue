@@ -11,12 +11,12 @@ import {
 import { ChargeAnim, CommonAnim, CommonBattleAnim, MoveChargeAnim } from "#app/data/battle-anims";
 import type Move from "#app/data/moves/move";
 import {
+  allMoves,
   applyMoveAttrs,
   ConsecutiveUseDoublePowerAttr,
   HealOnAllyAttr,
   StatusCategoryOnAllyAttr,
 } from "#app/data/moves/move";
-import { allMoves } from "./moves/all-moves";
 import { MoveFlags } from "#enums/MoveFlags";
 import { MoveCategory } from "#enums/MoveCategory";
 import { SpeciesFormChangeAbilityTrigger } from "#app/data/pokemon-forms";
@@ -24,8 +24,7 @@ import { getStatusEffectHealText } from "#app/data/status-effect";
 import { TerrainType } from "#app/data/terrain";
 import { PokemonType } from "#enums/pokemon-type";
 import type Pokemon from "#app/field/pokemon";
-import { MoveResult } from "#app/field/pokemon";
-import { HitResult } from "#enums/hit-result";
+import { HitResult, MoveResult } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { CommonAnimPhase } from "#app/phases/common-anim-phase";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";

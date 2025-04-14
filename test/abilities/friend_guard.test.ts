@@ -6,7 +6,7 @@ import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { BattlerIndex } from "#app/battle";
 import { allAbilities } from "#app/data/ability";
-import { allMoves } from "#app/data/moves/all-moves";
+import { allMoves } from "#app/data/moves/move";
 import { MoveCategory } from "#enums/MoveCategory";
 
 describe("Moves - Friend Guard", () => {

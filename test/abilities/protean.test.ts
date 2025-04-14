@@ -1,4 +1,4 @@
-import { allMoves } from "#app/data/moves/all-moves";
+import { allMoves } from "#app/data/moves/move";
 import { PokemonType } from "#enums/pokemon-type";
 import { Weather } from "#app/data/weather";
 import type { PlayerPokemon } from "#app/field/pokemon";

@@ -12,17 +12,16 @@ import {
   TypeBoostTag,
 } from "../battler-tags";
 import { getPokemonNameWithAffix } from "../../messages";
-import type { AttackMoveResult } from "#app/interfaces/attack-move-result";
-import type { TurnMove } from "#app/interfaces/turn-move";
+import type { AttackMoveResult, TurnMove } from "../../field/pokemon";
 import type Pokemon from "../../field/pokemon";
 import {
   EnemyPokemon,
+  FieldPosition,
+  HitResult,
   MoveResult,
   PlayerPokemon,
+  PokemonMove,
 } from "../../field/pokemon";
-import { HitResult } from "#enums/hit-result";
-import { FieldPosition } from "#enums/field-position";
-import { PokemonMove } from "./pokemon-move";
 import {
   getNonVolatileStatusEffects,
   getStatusEffectHealText,
@@ -122,7 +121,6 @@ import { MoveFlags } from "#enums/MoveFlags";
 import { MoveEffectTrigger } from "#enums/MoveEffectTrigger";
 import { MultiHitType } from "#enums/MultiHitType";
 import { invalidAssistMoves, invalidCopycatMoves, invalidMetronomeMoves, invalidMirrorMoveMoves, invalidSleepTalkMoves } from "./invalid-moves";
-import { allMoves } from "./all-moves";
 
 type MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => boolean;
 type UserMoveConditionFunc = (user: Pokemon, move: Move) => boolean;
@@ -8259,7 +8257,11 @@ export function getMoveTargets(user: Pokemon, move: Moves, replaceTarget?: MoveT
   return { targets: set.filter(p => p?.isActive(true)).map(p => p.getBattlerIndex()).filter(t => t !== undefined), multiple };
 }
 
-allMoves.push(new SelfStatusMove(Moves.NONE, PokemonType.NORMAL, MoveCategory.STATUS, -1, -1, 0, 1));
+export const allMoves: Move[] = [
+  new SelfStatusMove(Moves.NONE, PokemonType.NORMAL, MoveCategory.STATUS, -1, -1, 0, 1),
+];
+
+export const selfStatLowerMoves: Moves[] = [];
 
 export function initMoves() {
   allMoves.push(
@@ -11248,4 +11250,9 @@ export function initMoves() {
     new AttackMove(Moves.MALIGNANT_CHAIN, PokemonType.POISON, MoveCategory.SPECIAL, 100, 100, 5, 50, 0, 9)
       .attr(StatusEffectAttr, StatusEffect.TOXIC)
   );
+  allMoves.map(m => {
+    if (m.getAttrs(StatStageChangeAttr).some(a => a.selfTarget && a.stages < 0)) {
+      selfStatLowerMoves.push(m.id);
+    }
+  });
 }

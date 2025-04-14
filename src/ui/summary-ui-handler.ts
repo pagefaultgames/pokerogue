@@ -12,8 +12,7 @@ import {
   toReadableString,
   formatStat,
 } from "#app/utils";
-import type { PlayerPokemon } from "#app/field/pokemon";
-import type { PokemonMove } from "#app/data/moves/pokemon-move";
+import type { PlayerPokemon, PokemonMove } from "#app/field/pokemon";
 import { getStarterValueFriendshipCap, speciesStarterCosts } from "#app/data/balance/starters";
 import { argbFromRgba } from "@material/material-color-utilities";
 import { getTypeRgb } from "#app/data/type";

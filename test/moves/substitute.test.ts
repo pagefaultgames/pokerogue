@@ -1,8 +1,7 @@
 import { BattlerIndex } from "#app/battle";
 import { ArenaTagSide } from "#app/data/arena-tag";
 import { SubstituteTag, TrappedTag } from "#app/data/battler-tags";
-import { StealHeldItemChanceAttr } from "#app/data/moves/move";
-import { allMoves } from "#app/data/moves/all-moves";
+import { allMoves, StealHeldItemChanceAttr } from "#app/data/moves/move";
 import { MoveResult } from "#app/field/pokemon";
 import type { CommandPhase } from "#app/phases/command-phase";
 import GameManager from "#test/testUtils/gameManager";

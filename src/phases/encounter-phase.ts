@@ -11,7 +11,7 @@ import { TrainerSlot } from "#enums/trainer-slot";
 import { getRandomWeatherType } from "#app/data/weather";
 import { EncounterPhaseEvent } from "#app/events/battle-scene";
 import type Pokemon from "#app/field/pokemon";
-import { FieldPosition } from "#enums/field-position";
+import { FieldPosition } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { BoostBugSpawnModifier, IvScannerModifier, TurnHeldItemTransferModifier } from "#app/modifier/modifier";
 import { ModifierPoolType, regenerateModifierPoolThresholds } from "#app/modifier/modifier-type";
