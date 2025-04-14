@@ -20,7 +20,7 @@ import { UnlockPhase } from "#app/phases/unlock-phase";
 import { achvs, ChallengeAchv } from "#app/system/achv";
 import { Unlockables } from "#app/system/unlockables";
 import { UiMode } from "#enums/ui-mode";
-import { isLocal, isLocalServerConnected } from "#app/utils";
+import { isLocal, isLocalServerConnected } from "#app/utils/common";
 import { PlayerGender } from "#enums/player-gender";
 import { TrainerType } from "#enums/trainer-type";
 import i18next from "i18next";

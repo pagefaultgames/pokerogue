@@ -15,7 +15,7 @@ import type MysteryEncounterUiHandler from "#app/ui/mystery-encounter-ui-handler
 import type PartyUiHandler from "#app/ui/party-ui-handler";
 import type OptionSelectUiHandler from "#app/ui/settings/option-select-ui-handler";
 import { UiMode } from "#enums/ui-mode";
-import { isNullOrUndefined } from "#app/utils";
+import { isNullOrUndefined } from "#app/utils/common";
 import { Button } from "#enums/buttons";
 import { StatusEffect } from "#enums/status-effect";
 import type GameManager from "#test/testUtils/gameManager";

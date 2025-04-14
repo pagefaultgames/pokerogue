@@ -1,6 +1,6 @@
 import { Button } from "#app/enums/buttons";
 import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
-import { formatText } from "#app/utils";
+import { formatText } from "#app/utils/common";
 import type { InputFieldConfig } from "./form-modal-ui-handler";
 import { FormModalUiHandler } from "./form-modal-ui-handler";
 import type { ModalConfig } from "./modal-ui-handler";

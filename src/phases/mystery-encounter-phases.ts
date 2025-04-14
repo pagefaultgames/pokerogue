@@ -26,7 +26,7 @@ import { TrainerSlot } from "#enums/trainer-slot";
 import { IvScannerModifier } from "../modifier/modifier";
 import { Phase } from "../phase";
 import { UiMode } from "#enums/ui-mode";
-import { isNullOrUndefined, randSeedItem } from "#app/utils";
+import { isNullOrUndefined, randSeedItem } from "#app/utils/common";
 
 /**
  * Will handle (in order):

@@ -12,7 +12,7 @@ import type { Starter } from "#app/ui/starter-select-ui-handler";
 import { UiMode } from "#enums/ui-mode";
 import type { Species } from "#enums/species";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
-import { isNullOrUndefined } from "#app/utils";
+import { isNullOrUndefined } from "#app/utils/common";
 
 export class SelectStarterPhase extends Phase {
   start() {

@@ -5,7 +5,8 @@ import { Phase } from "#app/phase";
 import { handleTutorial, Tutorial } from "#app/tutorial";
 import { UiMode } from "#enums/ui-mode";
 import i18next, { t } from "i18next";
-import { getCookie, sessionIdKey, executeIf, removeCookie } from "#app/utils";
+import { sessionIdKey, executeIf } from "#app/utils/common";
+import { getCookie, removeCookie } from "#app/utils/cookies";
 import { SelectGenderPhase } from "./select-gender-phase";
 import { UnavailablePhase } from "./unavailable-phase";
 

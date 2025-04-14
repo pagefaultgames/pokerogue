@@ -1,7 +1,7 @@
 import { BattlerIndex } from "../battle";
 import { UiMode } from "#enums/ui-mode";
 import UiHandler from "./ui-handler";
-import { isNullOrUndefined, fixedInt } from "#app/utils";
+import { isNullOrUndefined, fixedInt } from "#app/utils/common";
 import { getMoveTargets } from "../data/moves/move";
 import { Button } from "#enums/buttons";
 import type { Moves } from "#enums/moves";

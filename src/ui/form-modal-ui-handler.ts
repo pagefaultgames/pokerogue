@@ -4,7 +4,7 @@ import type { UiMode } from "#enums/ui-mode";
 import { TextStyle, addTextInputObject, addTextObject } from "./text";
 import { WindowVariant, addWindow } from "./ui-theme";
 import type InputText from "phaser3-rex-plugins/plugins/inputtext";
-import { fixedInt } from "#app/utils";
+import { fixedInt } from "#app/utils/common";
 import { Button } from "#enums/buttons";
 import { globalScene } from "#app/global-scene";
 

@@ -31,7 +31,7 @@ import {
 import { PokemonType } from "#enums/pokemon-type";
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import { randSeedInt, randSeedShuffle } from "#app/utils";
+import { randSeedInt, randSeedShuffle } from "#app/utils/common";
 import { showEncounterDialogue, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { UiMode } from "#enums/ui-mode";
 import i18next from "i18next";

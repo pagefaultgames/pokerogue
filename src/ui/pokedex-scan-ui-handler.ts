@@ -3,7 +3,7 @@ import { FormModalUiHandler } from "./form-modal-ui-handler";
 import type { ModalConfig } from "./modal-ui-handler";
 import type { PlayerPokemon } from "#app/field/pokemon";
 import type { OptionSelectItem } from "./abstact-option-select-ui-handler";
-import { isNullOrUndefined } from "#app/utils";
+import { isNullOrUndefined } from "#app/utils/common";
 import { UiMode } from "#enums/ui-mode";
 import { FilterTextRow } from "./filter-text";
 import { allAbilities } from "#app/data/data-lists";

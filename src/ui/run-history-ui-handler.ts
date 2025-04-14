@@ -3,7 +3,7 @@ import { GameModes } from "../game-mode";
 import { TextStyle, addTextObject } from "./text";
 import { UiMode } from "#enums/ui-mode";
 import { addWindow } from "./ui-theme";
-import { fixedInt, formatLargeNumber } from "#app/utils";
+import { fixedInt, formatLargeNumber } from "#app/utils/common";
 import type PokemonData from "../system/pokemon-data";
 import MessageUiHandler from "./message-ui-handler";
 import i18next from "i18next";

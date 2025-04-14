@@ -11,7 +11,7 @@ import {
   isNullOrUndefined,
   toReadableString,
   formatStat,
-} from "#app/utils";
+} from "#app/utils/common";
 import type { PlayerPokemon, PokemonMove } from "#app/field/pokemon";
 import { getStarterValueFriendshipCap, speciesStarterCosts } from "#app/data/balance/starters";
 import { argbFromRgba } from "@material/material-color-utilities";

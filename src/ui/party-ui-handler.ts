@@ -5,7 +5,7 @@ import { addBBCodeTextObject, addTextObject, getTextColor, TextStyle } from "#ap
 import { Command } from "#app/ui/command-ui-handler";
 import MessageUiHandler from "#app/ui/message-ui-handler";
 import { UiMode } from "#enums/ui-mode";
-import { BooleanHolder, toReadableString, randInt, getLocalizedSpriteKey } from "#app/utils";
+import { BooleanHolder, toReadableString, randInt, getLocalizedSpriteKey } from "#app/utils/common";
 import {
   PokemonFormChangeItemModifier,
   PokemonHeldItemModifier,

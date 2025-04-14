@@ -33,7 +33,7 @@ import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
 import type { StatStageChangeCallback } from "#app/phases/stat-stage-change-phase";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import i18next from "#app/plugins/i18n";
-import { BooleanHolder, getFrameMs, NumberHolder, toDmgValue } from "#app/utils";
+import { BooleanHolder, getFrameMs, NumberHolder, toDmgValue } from "#app/utils/common";
 import { Abilities } from "#enums/abilities";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Moves } from "#enums/moves";
@@ -42,7 +42,7 @@ import { Species } from "#enums/species";
 import { EFFECTIVE_STATS, getStatKey, Stat, type BattleStat, type EffectiveStat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { WeatherType } from "#enums/weather-type";
-import { isNullOrUndefined } from "#app/utils";
+import { isNullOrUndefined } from "#app/utils/common";
 
 export enum BattlerTagLapseType {
   FAINT,

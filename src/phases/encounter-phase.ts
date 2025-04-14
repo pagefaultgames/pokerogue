@@ -30,7 +30,7 @@ import { ToggleDoublePositionPhase } from "#app/phases/toggle-double-position-ph
 import { achvs } from "#app/system/achv";
 import { handleTutorial, Tutorial } from "#app/tutorial";
 import { UiMode } from "#enums/ui-mode";
-import { randSeedInt, randSeedItem } from "#app/utils";
+import { randSeedInt, randSeedItem } from "#app/utils/common";
 import { BattleSpec } from "#enums/battle-spec";
 import { Biome } from "#enums/biome";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";

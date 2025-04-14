@@ -8,7 +8,7 @@ import { pokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
 import type PokemonSpecies from "#app/data/pokemon-species";
 import { allSpecies, getPokemonSpecies } from "#app/data/pokemon-species";
 import { speciesStarterCosts } from "#app/data/balance/starters";
-import { randInt, getEnumKeys, isLocal, executeIf, fixedInt, randSeedItem, NumberHolder } from "#app/utils";
+import { randInt, getEnumKeys, isLocal, executeIf, fixedInt, randSeedItem, NumberHolder } from "#app/utils/common";
 import Overrides from "#app/overrides";
 import PokemonData from "#app/system/pokemon-data";
 import PersistentModifierData from "#app/system/modifier-data";

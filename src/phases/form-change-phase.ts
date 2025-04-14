@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import { fixedInt } from "#app/utils";
+import { fixedInt } from "#app/utils/common";
 import { achvs } from "../system/achv";
 import type { SpeciesFormChange } from "../data/pokemon-forms";
 import { getSpeciesFormChangeMessage } from "../data/pokemon-forms";

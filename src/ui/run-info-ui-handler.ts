@@ -5,7 +5,7 @@ import { TextStyle, addTextObject, addBBCodeTextObject, getTextColor } from "./t
 import { UiMode } from "#enums/ui-mode";
 import { addWindow } from "./ui-theme";
 import { getPokeballAtlasKey } from "#app/data/pokeball";
-import { formatLargeNumber, getPlayTimeString, formatMoney, formatFancyLargeNumber } from "#app/utils";
+import { formatLargeNumber, getPlayTimeString, formatMoney, formatFancyLargeNumber } from "#app/utils/common";
 import type PokemonData from "../system/pokemon-data";
 import i18next from "i18next";
 import { Button } from "../enums/buttons";

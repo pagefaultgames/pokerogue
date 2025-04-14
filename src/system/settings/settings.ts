@@ -9,7 +9,7 @@ import { EaseType } from "#enums/ease-type";
 import { MoneyFormat } from "#enums/money-format";
 import { PlayerGender } from "#enums/player-gender";
 import { ShopCursorTarget } from "#enums/shop-cursor-target";
-import { isLocal } from "#app/utils";
+import { isLocal } from "#app/utils/common";
 
 const VOLUME_OPTIONS: SettingOption[] = new Array(11).fill(null).map((_, i) =>
   i

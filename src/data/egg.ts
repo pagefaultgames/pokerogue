@@ -4,7 +4,7 @@ import type PokemonSpecies from "#app/data/pokemon-species";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { speciesStarterCosts } from "#app/data/balance/starters";
 import { VariantTier } from "#enums/variant-tier";
-import { randInt, randomString, randSeedInt, getIvsFromId } from "#app/utils";
+import { randInt, randomString, randSeedInt, getIvsFromId } from "#app/utils/common";
 import Overrides from "#app/overrides";
 import { pokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
 import type { PlayerPokemon } from "#app/field/pokemon";

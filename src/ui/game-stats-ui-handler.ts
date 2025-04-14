@@ -3,7 +3,7 @@ import { TextStyle, addTextObject } from "#app/ui/text";
 import type { UiMode } from "#enums/ui-mode";
 import UiHandler from "#app/ui/ui-handler";
 import { addWindow } from "#app/ui/ui-theme";
-import { getPlayTimeString, formatFancyLargeNumber, toReadableString } from "#app/utils";
+import { getPlayTimeString, formatFancyLargeNumber, toReadableString } from "#app/utils/common";
 import type { GameData } from "#app/system/game-data";
 import { DexAttr } from "#app/system/game-data";
 import { speciesStarterCosts } from "#app/data/balance/starters";

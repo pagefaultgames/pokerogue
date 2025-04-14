@@ -1,7 +1,7 @@
 import PokemonInfoContainer from "#app/ui/pokemon-info-container";
 import { Gender } from "#app/data/gender";
 import { PokemonType } from "#enums/pokemon-type";
-import { rgbHexToRgba, padInt } from "#app/utils";
+import { rgbHexToRgba, padInt } from "#app/utils/common";
 import { TextStyle, addTextObject } from "#app/ui/text";
 import { speciesEggMoves } from "#app/data/balance/egg-moves";
 import { allMoves } from "#app/data/moves/move";

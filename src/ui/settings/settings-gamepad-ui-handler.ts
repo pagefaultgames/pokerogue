@@ -13,7 +13,7 @@ import pad_unlicensedSNES from "#app/configs/inputs/pad_unlicensedSNES";
 import type { InterfaceConfig } from "#app/inputs-controller";
 import AbstractControlSettingsUiHandler from "#app/ui/settings/abstract-control-settings-ui-handler";
 import { Device } from "#enums/devices";
-import { truncateString } from "#app/utils";
+import { truncateString } from "#app/utils/common";
 import i18next from "i18next";
 import { globalScene } from "#app/global-scene";
 

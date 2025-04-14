@@ -31,7 +31,7 @@ import type ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 import type PartyUiHandler from "#app/ui/party-ui-handler";
 import type TargetSelectUiHandler from "#app/ui/target-select-ui-handler";
 import { UiMode } from "#enums/ui-mode";
-import { isNullOrUndefined } from "#app/utils";
+import { isNullOrUndefined } from "#app/utils/common";
 import { BattleStyle } from "#enums/battle-style";
 import { Button } from "#enums/buttons";
 import { ExpGainsSpeed } from "#enums/exp-gains-speed";

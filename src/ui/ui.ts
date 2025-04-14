@@ -28,7 +28,7 @@ import { addWindow } from "./ui-theme";
 import LoginFormUiHandler from "./login-form-ui-handler";
 import RegistrationFormUiHandler from "./registration-form-ui-handler";
 import LoadingModalUiHandler from "./loading-modal-ui-handler";
-import { executeIf } from "#app/utils";
+import { executeIf } from "#app/utils/common";
 import GameStatsUiHandler from "./game-stats-ui-handler";
 import AwaitableUiHandler from "./awaitable-ui-handler";
 import SaveSlotSelectUiHandler from "./save-slot-select-ui-handler";

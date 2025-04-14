@@ -2,7 +2,8 @@ import type { AccountInfoResponse } from "#app/@types/PokerogueAccountApi";
 import { SESSION_ID_COOKIE_NAME } from "#app/constants";
 import { PokerogueAccountApi } from "#app/plugins/api/pokerogue-account-api";
 import { getApiBaseUrl } from "#test/testUtils/testUtils";
-import * as Utils from "#app/utils";
+import * as Utils from "#app/utils/common";
+import * as cookies from "#app/utils/cookies";
 import { http, HttpResponse } from "msw";
 import { beforeAll, afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { initServerForApiTests } from "#test/testUtils/testFileInitialization";
@@ -104,7 +105,7 @@ describe("Pokerogue Account API", () => {
       const error = await accountApi.login(loginParams);
 
       expect(error).toBeNull();
-      expect(Utils.setCookie).toHaveBeenCalledWith(SESSION_ID_COOKIE_NAME, "abctest");
+      expect(cookies.setCookie).toHaveBeenCalledWith(SESSION_ID_COOKIE_NAME, "abctest");
     });
 
     it("should return error message and report a warning on FAILURE", async () => {
@@ -139,7 +140,7 @@ describe("Pokerogue Account API", () => {
 
       await accountApi.logout();
 
-      expect(Utils.removeCookie).toHaveBeenCalledWith(SESSION_ID_COOKIE_NAME);
+      expect(cookies.removeCookie).toHaveBeenCalledWith(SESSION_ID_COOKIE_NAME);
     });
 
     it("should report a warning on and remove cookie on FAILURE", async () => {
@@ -147,7 +148,7 @@ describe("Pokerogue Account API", () => {
 
       await accountApi.logout();
 
-      expect(Utils.removeCookie).toHaveBeenCalledWith(SESSION_ID_COOKIE_NAME);
+      expect(cookies.removeCookie).toHaveBeenCalledWith(SESSION_ID_COOKIE_NAME);
       expect(console.warn).toHaveBeenCalledWith("Log out failed!", expect.any(Error));
     });
 
@@ -156,7 +157,7 @@ describe("Pokerogue Account API", () => {
 
       await accountApi.logout();
 
-      expect(Utils.removeCookie).toHaveBeenCalledWith(SESSION_ID_COOKIE_NAME);
+      expect(cookies.removeCookie).toHaveBeenCalledWith(SESSION_ID_COOKIE_NAME);
       expect(console.warn).toHaveBeenCalledWith("Log out failed!", expect.any(Error));
     });
   });

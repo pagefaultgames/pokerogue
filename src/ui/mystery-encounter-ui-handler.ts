@@ -6,7 +6,7 @@ import { addWindow, WindowVariant } from "./ui-theme";
 import type { MysteryEncounterPhase } from "../phases/mystery-encounter-phases";
 import { PartyUiMode } from "./party-ui-handler";
 import type MysteryEncounterOption from "#app/data/mystery-encounters/mystery-encounter-option";
-import { fixedInt, isNullOrUndefined } from "#app/utils";
+import { fixedInt, isNullOrUndefined } from "#app/utils/common";
 import { getPokeballAtlasKey } from "../data/pokeball";
 import type { OptionSelectSettings } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { getEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";

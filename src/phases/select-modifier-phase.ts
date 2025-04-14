@@ -29,7 +29,7 @@ import i18next from "i18next";
 import { BattlePhase } from "./battle-phase";
 import Overrides from "#app/overrides";
 import type { CustomModifierSettings } from "#app/modifier/modifier-type";
-import { isNullOrUndefined, NumberHolder } from "#app/utils";
+import { isNullOrUndefined, NumberHolder } from "#app/utils/common";
 
 export class SelectModifierPhase extends BattlePhase {
   private rerollCount: number;

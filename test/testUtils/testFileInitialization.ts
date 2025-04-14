@@ -11,7 +11,7 @@ import { initSpecies } from "#app/data/pokemon-species";
 import { initAchievements } from "#app/system/achv";
 import { initVouchers } from "#app/system/voucher";
 import { initStatsKeys } from "#app/ui/game-stats-ui-handler";
-import { setCookie } from "#app/utils";
+import { setCookie } from "#app/utils/cookies";
 import { blobToString } from "#test/testUtils/gameManagerUtils";
 import { MockConsoleLog } from "#test/testUtils/mocks/mockConsoleLog";
 import { mockContext } from "#test/testUtils/mocks/mockContextCanvas";

@@ -1,6 +1,6 @@
 import OptionSelectUiHandler from "./settings/option-select-ui-handler";
 import { UiMode } from "#enums/ui-mode";
-import { fixedInt, randInt, randItem } from "#app/utils";
+import { fixedInt, randInt, randItem } from "#app/utils/common";
 import { TextStyle, addTextObject } from "./text";
 import { getSplashMessages } from "../data/splash-messages";
 import i18next from "i18next";

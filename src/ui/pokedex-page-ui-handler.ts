@@ -52,9 +52,9 @@ import {
   padInt,
   rgbHexToRgba,
   toReadableString,
-} from "#app/utils";
+} from "#app/utils/common";
 import type { Nature } from "#enums/nature";
-import { getEnumKeys } from "#app/utils";
+import { getEnumKeys } from "#app/utils/common";
 import { speciesTmMoves } from "#app/data/balance/tms";
 import type { BiomeTierTod } from "#app/data/balance/biomes";
 import { BiomePoolTier, catchableSpecies } from "#app/data/balance/biomes";

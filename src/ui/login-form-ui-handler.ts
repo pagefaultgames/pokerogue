@@ -1,7 +1,7 @@
 import type { InputFieldConfig } from "./form-modal-ui-handler";
 import { FormModalUiHandler } from "./form-modal-ui-handler";
 import type { ModalConfig } from "./modal-ui-handler";
-import { fixedInt } from "#app/utils";
+import { fixedInt } from "#app/utils/common";
 import { UiMode } from "#enums/ui-mode";
 import i18next from "i18next";
 import { addTextObject, TextStyle } from "./text";

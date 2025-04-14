@@ -5,7 +5,7 @@ import { addWindow } from "./ui-theme";
 import { Button } from "#enums/buttons";
 import i18next from "i18next";
 import type { Challenge } from "#app/data/challenge";
-import { getLocalizedSpriteKey } from "#app/utils";
+import { getLocalizedSpriteKey } from "#app/utils/common";
 import { Challenges } from "#app/enums/challenges";
 import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import { Color, ShadowColor } from "#app/enums/color";

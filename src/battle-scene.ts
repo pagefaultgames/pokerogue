@@ -18,7 +18,7 @@ import {
   isNullOrUndefined,
   BooleanHolder,
   type Constructor,
-} from "#app/utils";
+} from "#app/utils/common";
 import type { Modifier, ModifierPredicate, TurnHeldItemTransferModifier } from "./modifier/modifier";
 import {
   ConsumableModifier,

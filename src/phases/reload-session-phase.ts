@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import { Phase } from "#app/phase";
 import { UiMode } from "#enums/ui-mode";
-import { fixedInt } from "#app/utils";
+import { fixedInt } from "#app/utils/common";
 
 export class ReloadSessionPhase extends Phase {
   private systemDataStr?: string;

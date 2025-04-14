@@ -2,7 +2,8 @@
 import BattleScene, * as battleScene from "#app/battle-scene";
 import { MoveAnim } from "#app/data/battle-anims";
 import Pokemon from "#app/field/pokemon";
-import { setCookie, sessionIdKey } from "#app/utils";
+import { sessionIdKey } from "#app/utils/common";
+import { setCookie } from "#app/utils/cookies";
 import { blobToString } from "#test/testUtils/gameManagerUtils";
 import { MockClock } from "#test/testUtils/mocks/mockClock";
 import { MockFetch } from "#test/testUtils/mocks/mockFetch";

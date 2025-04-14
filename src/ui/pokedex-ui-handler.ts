@@ -31,7 +31,7 @@ import {
   getValueReductionCandyCounts,
   getSameSpeciesEggCandyCounts,
 } from "#app/data/balance/starters";
-import { BooleanHolder, fixedInt, getLocalizedSpriteKey, padInt, randIntRange, rgbHexToRgba } from "#app/utils";
+import { BooleanHolder, fixedInt, getLocalizedSpriteKey, padInt, randIntRange, rgbHexToRgba } from "#app/utils/common";
 import type { Nature } from "#enums/nature";
 import { addWindow } from "./ui-theme";
 import type { OptionSelectConfig } from "./abstact-option-select-ui-handler";

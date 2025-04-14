@@ -6,7 +6,7 @@ import {
   MoveEffectChanceMultiplierAbAttr,
 } from "#app/data/abilities/ability";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
-import { NumberHolder } from "#app/utils";
+import { NumberHolder } from "#app/utils/common";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";

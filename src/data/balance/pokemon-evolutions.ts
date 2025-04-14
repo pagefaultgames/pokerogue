@@ -3,7 +3,7 @@ import { Gender } from "#app/data/gender";
 import { PokeballType } from "#enums/pokeball";
 import type Pokemon from "#app/field/pokemon";
 import { PokemonType } from "#enums/pokemon-type";
-import { randSeedInt } from "#app/utils";
+import { randSeedInt } from "#app/utils/common";
 import { WeatherType } from "#enums/weather-type";
 import { Nature } from "#enums/nature";
 import { Biome } from "#enums/biome";

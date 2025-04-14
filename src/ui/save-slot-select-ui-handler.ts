@@ -6,7 +6,7 @@ import { GameMode } from "../game-mode";
 import * as Modifier from "#app/modifier/modifier";
 import type { SessionSaveData } from "../system/game-data";
 import type PokemonData from "../system/pokemon-data";
-import { isNullOrUndefined, fixedInt, getPlayTimeString, formatLargeNumber } from "#app/utils";
+import { isNullOrUndefined, fixedInt, getPlayTimeString, formatLargeNumber } from "#app/utils/common";
 import MessageUiHandler from "./message-ui-handler";
 import { TextStyle, addTextObject } from "./text";
 import { UiMode } from "#enums/ui-mode";

@@ -1,5 +1,5 @@
 import { BattlerIndex } from "#app/battle";
-import { isBetween } from "#app/utils";
+import { isBetween } from "#app/utils/common";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";

@@ -55,7 +55,7 @@ import {
   getStarterValueFriendshipCap,
   speciesStarterCosts,
 } from "#app/data/balance/starters";
-import { NumberHolder, randSeedInt, getIvsFromId, BooleanHolder, randSeedItem, isNullOrUndefined, getEnumValues, toDmgValue, fixedInt, rgbaToInt, rgbHexToRgba, rgbToHsv, deltaRgb, isBetween, type nil, type Constructor } from "#app/utils";
+import { NumberHolder, randSeedInt, getIvsFromId, BooleanHolder, randSeedItem, isNullOrUndefined, getEnumValues, toDmgValue, fixedInt, rgbaToInt, rgbHexToRgba, rgbToHsv, deltaRgb, isBetween, type nil, type Constructor } from "#app/utils/common";
 import type { TypeDamageMultiplier } from "#app/data/type";
 import { getTypeDamageMultiplier, getTypeRgb } from "#app/data/type";
 import { PokemonType } from "#enums/pokemon-type";

@@ -74,7 +74,7 @@ import {
   randIntRange,
   rgbHexToRgba,
   toReadableString,
-} from "#app/utils";
+} from "#app/utils/common";
 import type { Nature } from "#enums/nature";
 import { PLAYER_PARTY_MAX_SIZE } from "#app/constants";
 import { achvs } from "#app/system/achv";

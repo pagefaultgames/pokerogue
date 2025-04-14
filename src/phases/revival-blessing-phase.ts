@@ -4,7 +4,7 @@ import type { PartyOption } from "#app/ui/party-ui-handler";
 import PartyUiHandler, { PartyUiMode } from "#app/ui/party-ui-handler";
 import { UiMode } from "#enums/ui-mode";
 import i18next from "i18next";
-import { toDmgValue, isNullOrUndefined } from "#app/utils";
+import { toDmgValue, isNullOrUndefined } from "#app/utils/common";
 import { BattlePhase } from "#app/phases/battle-phase";
 import { SwitchSummonPhase } from "#app/phases/switch-summon-phase";
 import { ToggleDoublePositionPhase } from "#app/phases/toggle-double-position-phase";

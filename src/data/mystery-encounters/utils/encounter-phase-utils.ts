@@ -31,7 +31,7 @@ import type { OptionSelectConfig, OptionSelectItem } from "#app/ui/abstact-optio
 import type { PartyOption, PokemonSelectFilter } from "#app/ui/party-ui-handler";
 import { PartyUiMode } from "#app/ui/party-ui-handler";
 import { UiMode } from "#enums/ui-mode";
-import { isNullOrUndefined, randSeedInt, randomString, randSeedItem } from "#app/utils";
+import { isNullOrUndefined, randSeedInt, randomString, randSeedItem } from "#app/utils/common";
 import type { BattlerTagType } from "#enums/battler-tag-type";
 import { Biome } from "#enums/biome";
 import type { TrainerType } from "#enums/trainer-type";

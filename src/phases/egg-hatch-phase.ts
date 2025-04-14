@@ -11,7 +11,7 @@ import PokemonInfoContainer from "#app/ui/pokemon-info-container";
 import { UiMode } from "#enums/ui-mode";
 import i18next from "i18next";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
-import { fixedInt, getFrameMs, randInt } from "#app/utils";
+import { fixedInt, getFrameMs, randInt } from "#app/utils/common";
 import type { EggLapsePhase } from "./egg-lapse-phase";
 import type { EggHatchData } from "#app/data/egg-hatch-data";
 import { doShinySparkleAnim } from "#app/field/anims";

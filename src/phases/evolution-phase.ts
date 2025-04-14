@@ -5,7 +5,7 @@ import { globalScene } from "#app/global-scene";
 import type { SpeciesFormEvolution } from "#app/data/balance/pokemon-evolutions";
 import { FusionSpeciesFormEvolution } from "#app/data/balance/pokemon-evolutions";
 import type EvolutionSceneHandler from "#app/ui/evolution-scene-handler";
-import { fixedInt, getFrameMs, randInt } from "#app/utils";
+import { fixedInt, getFrameMs, randInt } from "#app/utils/common";
 import { UiMode } from "#enums/ui-mode";
 import { cos, sin } from "#app/field/anims";
 import type { PlayerPokemon } from "#app/field/pokemon";

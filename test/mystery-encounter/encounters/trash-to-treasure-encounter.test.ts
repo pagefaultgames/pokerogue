@@ -21,7 +21,7 @@ import { MovePhase } from "#app/phases/move-phase";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 import { UiMode } from "#enums/ui-mode";
-import * as Utils from "#app/utils";
+import * as Utils from "#app/utils/common";
 import { Moves } from "#enums/moves";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
