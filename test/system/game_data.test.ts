@@ -1,4 +1,4 @@
-import * as BattleScene from "#app/battle-scene";
+import * as bypassLoginModule from "#app/global-vars/bypass-login";
 import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
 import type { SessionSaveData } from "#app/system/game-data";
 import { Abilities } from "#enums/abilities";
@@ -33,13 +33,13 @@ describe("System - Game Data", () => {
 
   describe("tryClearSession", () => {
     beforeEach(() => {
-      vi.spyOn(BattleScene, "bypassLogin", "get").mockReturnValue(false);
+      vi.spyOn(bypassLoginModule, "bypassLogin", "get").mockReturnValue(false);
       vi.spyOn(game.scene.gameData, "getSessionSaveData").mockReturnValue({} as SessionSaveData);
       vi.spyOn(account, "updateUserInfo").mockImplementation(async () => [true, 1]);
     });
 
     it("should return [true, true] if bypassLogin is true", async () => {
-      vi.spyOn(BattleScene, "bypassLogin", "get").mockReturnValue(true);
+      vi.spyOn(bypassLoginModule, "bypassLogin", "get").mockReturnValue(true);
 
       const result = await game.scene.gameData.tryClearSession(0);
 
