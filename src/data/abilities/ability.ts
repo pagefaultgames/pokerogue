@@ -80,7 +80,7 @@ export class BlockRecoilDamageAttr extends AbAttr {
     cancelled.value = true;
   }
 
-  getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]) {
+  getTriggerMessage(pokemon: Pokemon, abilityName: string, ..._args: any[]) {
     return i18next.t("abilityTriggers:blockRecoilDamage", { pokemonName: getPokemonNameWithAffix(pokemon), abilityName: abilityName });
   }
 }
