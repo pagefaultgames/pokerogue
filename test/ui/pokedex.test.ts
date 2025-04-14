@@ -328,6 +328,92 @@ describe("UI - Pokedex", () => {
     ).toBe(true);
   });
 
+  it("filtering for pokemon that can unlock passive shows only species with sufficient candies", async () => {
+    await game.importData("./test/testUtils/saves/data_pokedex_tests.prsv");
+    const pokedexHandler = await runToOpenPokedex();
+
+    // @ts-expect-error - `filterBar` is private
+    const filter = pokedexHandler.filterBar.getFilter(DropDownColumn.UNLOCKS);
+
+    // Cycling 4 times to get to the "can unlock" for passive
+    const expectedPokemon = new Set([
+      Species.EKANS,
+      Species.CHIKORITA,
+      Species.CYNDAQUIL,
+      Species.TORCHIC,
+      Species.TURTWIG,
+    ]);
+
+    // cycling twice to get to the "can unlock" for passive
+    filter.toggleOptionState(0);
+    filter.toggleOptionState(0);
+
+    expect(
+      // @ts-expect-error - `filteredPokemonData` is private
+      pokedexHandler.filteredPokemonData.every(pokemon =>
+        expectedPokemon.has(pokedexHandler.getStarterSpeciesId(pokemon.species.speciesId)),
+      ),
+    ).toBe(true);
+  });
+
+  it("filtering for pokemon that have any cost reduction shows only the species that have unlocked a cost reduction", async () => {
+    await game.importData("./test/testUtils/saves/data_pokedex_tests.prsv");
+    const pokedexHandler = await runToOpenPokedex();
+
+    const expectedPokemon = new Set([Species.TREECKO, Species.CYNDAQUIL, Species.TOTODILE]);
+
+    // @ts-expect-error - `filterBar` is private
+    const filter = pokedexHandler.filterBar.getFilter(DropDownColumn.UNLOCKS);
+    // Cycle 1 time for cost reduction
+    filter.toggleOptionState(1);
+
+    expect(
+      // @ts-expect-error - `filteredPokemonData` is private
+      pokedexHandler.filteredPokemonData.every(pokemon =>
+        expectedPokemon.has(pokedexHandler.getStarterSpeciesId(pokemon.species.speciesId)),
+      ),
+    ).toBe(true);
+  });
+
+  it("filtering for pokemon that have a single cost reduction shows only the species that have unlocked a single cost reduction", async () => {
+    await game.importData("./test/testUtils/saves/data_pokedex_tests.prsv");
+    const pokedexHandler = await runToOpenPokedex();
+
+    const expectedPokemon = new Set([Species.CYNDAQUIL, Species.TOTODILE]);
+
+    // @ts-expect-error - `filterBar` is private
+    const filter = pokedexHandler.filterBar.getFilter(DropDownColumn.UNLOCKS);
+    // Cycle 2 times for one cost reduction
+    filter.toggleOptionState(1);
+    filter.toggleOptionState(1);
+
+    expect(
+      // @ts-expect-error - `filteredPokemonData` is private
+      pokedexHandler.filteredPokemonData.every(pokemon =>
+        expectedPokemon.has(pokedexHandler.getStarterSpeciesId(pokemon.species.speciesId)),
+      ),
+    ).toBe(true);
+  });
+
+  it("filtering for pokemon that have two cost reductinos sorts only shows the species that have unlocked both cost reductions", async () => {
+    await game.importData("./test/testUtils/saves/data_pokedex_tests.prsv");
+    const pokedexHandler = await runToOpenPokedex();
+
+    // @ts-expect-error - `filterBar` is private
+    const filter = pokedexHandler.filterBar.getFilter(DropDownColumn.UNLOCKS);
+    // Cycle 3 time for two cost reductions
+    filter.toggleOptionState(1);
+    filter.toggleOptionState(1);
+    filter.toggleOptionState(1);
+
+    expect(
+      // @ts-expect-error - `filteredPokemonData` is private
+      pokedexHandler.filteredPokemonData.every(
+        pokemon => pokedexHandler.getStarterSpeciesId(pokemon.species.speciesId) === Species.TREECKO,
+      ),
+    ).toBe(true);
+  });
+
   it("filtering by shiny status shows the caught pokemon with the selected shiny tier", async () => {
     await game.importData("./test/testUtils/saves/data_pokedex_tests.prsv");
     const pokedexHandler = await runToOpenPokedex();
