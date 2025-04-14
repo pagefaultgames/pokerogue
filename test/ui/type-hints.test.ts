@@ -3,7 +3,7 @@ import { Moves } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
 import { CommandPhase } from "#app/phases/command-phase";
 import FightUiHandler from "#app/ui/fight-ui-handler";
-import { Mode } from "#app/ui/ui";
+import { UiMode } from "#enums/ui-mode";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -42,14 +42,14 @@ describe("UI - Type Hints", () => {
 
     await game.startBattle([Species.RAYQUAZA]);
 
-    game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
+    game.onNextPrompt("CommandPhase", UiMode.COMMAND, () => {
       const { ui } = game.scene;
       const handler = ui.getHandler<FightUiHandler>();
       handler.processInput(Button.ACTION); // select "Fight"
       game.phaseInterceptor.unlock();
     });
 
-    game.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
+    game.onNextPrompt("CommandPhase", UiMode.FIGHT, () => {
       const { ui } = game.scene;
       const movesContainer = ui.getByName<Phaser.GameObjects.Container>(FightUiHandler.MOVES_CONTAINER_NAME);
       const dragonClawText = movesContainer
@@ -67,14 +67,14 @@ describe("UI - Type Hints", () => {
 
     await game.startBattle([Species.RAYQUAZA]);
 
-    game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
+    game.onNextPrompt("CommandPhase", UiMode.COMMAND, () => {
       const { ui } = game.scene;
       const handler = ui.getHandler<FightUiHandler>();
       handler.processInput(Button.ACTION); // select "Fight"
       game.phaseInterceptor.unlock();
     });
 
-    game.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
+    game.onNextPrompt("CommandPhase", UiMode.FIGHT, () => {
       const { ui } = game.scene;
       const movesContainer = ui.getByName<Phaser.GameObjects.Container>(FightUiHandler.MOVES_CONTAINER_NAME);
       const growlText = movesContainer

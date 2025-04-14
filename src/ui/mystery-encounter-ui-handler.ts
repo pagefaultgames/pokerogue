@@ -1,5 +1,5 @@
 import { addBBCodeTextObject, getBBCodeFrag, TextStyle } from "./text";
-import { Mode } from "./ui";
+import { UiMode } from "#enums/ui-mode";
 import UiHandler from "./ui-handler";
 import { Button } from "#enums/buttons";
 import { addWindow, WindowVariant } from "./ui-theme";
@@ -47,7 +47,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
   protected blockInput = true;
 
   constructor() {
-    super(Mode.MYSTERY_ENCOUNTER);
+    super(UiMode.MYSTERY_ENCOUNTER);
   }
 
   override setup() {
@@ -141,8 +141,8 @@ export default class MysteryEncounterUiHandler extends UiHandler {
             ...this.overrideSettings,
             slideInDescription: false,
           };
-          globalScene.ui.setMode(Mode.PARTY, PartyUiMode.CHECK, -1, () => {
-            globalScene.ui.setMode(Mode.MYSTERY_ENCOUNTER, overrideSettings);
+          globalScene.ui.setMode(UiMode.PARTY, PartyUiMode.CHECK, -1, () => {
+            globalScene.ui.setMode(UiMode.MYSTERY_ENCOUNTER, overrideSettings);
             setTimeout(() => {
               this.setCursor(this.viewPartyIndex);
               this.unblockInput();

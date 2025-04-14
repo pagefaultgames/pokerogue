@@ -2,7 +2,7 @@ import { SwitchType } from "#enums/switch-type";
 import { globalScene } from "#app/global-scene";
 import type { PartyOption } from "#app/ui/party-ui-handler";
 import PartyUiHandler, { PartyUiMode } from "#app/ui/party-ui-handler";
-import { Mode } from "#app/ui/ui";
+import { UiMode } from "#enums/ui-mode";
 import i18next from "i18next";
 import { toDmgValue, isNullOrUndefined } from "#app/utils";
 import { BattlePhase } from "#app/phases/battle-phase";
@@ -21,7 +21,7 @@ export class RevivalBlessingPhase extends BattlePhase {
 
   public override start(): void {
     globalScene.ui.setMode(
-      Mode.PARTY,
+      UiMode.PARTY,
       PartyUiMode.REVIVAL_BLESSING,
       this.user.getFieldIndex(),
       (slotIndex: integer, _option: PartyOption) => {
@@ -63,7 +63,7 @@ export class RevivalBlessingPhase extends BattlePhase {
             }
           }
         }
-        globalScene.ui.setMode(Mode.MESSAGE).then(() => this.end());
+        globalScene.ui.setMode(UiMode.MESSAGE).then(() => this.end());
       },
       PartyUiHandler.FilterFainted,
     );

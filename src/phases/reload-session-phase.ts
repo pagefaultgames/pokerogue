@@ -1,6 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import { Phase } from "#app/phase";
-import { Mode } from "#app/ui/ui";
+import { UiMode } from "#enums/ui-mode";
 import { fixedInt } from "#app/utils";
 
 export class ReloadSessionPhase extends Phase {
@@ -13,7 +13,7 @@ export class ReloadSessionPhase extends Phase {
   }
 
   start(): void {
-    globalScene.ui.setMode(Mode.SESSION_RELOAD);
+    globalScene.ui.setMode(UiMode.SESSION_RELOAD);
 
     let delayElapsed = false;
     let loaded = false;

@@ -1,7 +1,7 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import Phaser from "phaser";
 import GameManager from "#test/testUtils/gameManager";
-import { Mode } from "#app/ui/ui";
+import { UiMode } from "#enums/ui-mode";
 import { Stat } from "#enums/stat";
 import { getMovePosition } from "#test/testUtils/gameManagerUtils";
 import { Abilities } from "#enums/abilities";
@@ -38,9 +38,9 @@ describe("Abilities - Intimidate", () => {
     await game.classicMode.runToSummon([Species.MIGHTYENA, Species.POOCHYENA]);
     game.onNextPrompt(
       "CheckSwitchPhase",
-      Mode.CONFIRM,
+      UiMode.CONFIRM,
       () => {
-        game.setMode(Mode.MESSAGE);
+        game.setMode(UiMode.MESSAGE);
         game.endPhase();
       },
       () => game.isCurrentPhase("CommandPhase") || game.isCurrentPhase("TurnInitPhase"),
@@ -69,9 +69,9 @@ describe("Abilities - Intimidate", () => {
     await game.classicMode.runToSummon([Species.MIGHTYENA, Species.POOCHYENA]);
     game.onNextPrompt(
       "CheckSwitchPhase",
-      Mode.CONFIRM,
+      UiMode.CONFIRM,
       () => {
-        game.setMode(Mode.MESSAGE);
+        game.setMode(UiMode.MESSAGE);
         game.endPhase();
       },
       () => game.isCurrentPhase("CommandPhase") || game.isCurrentPhase("TurnInitPhase"),

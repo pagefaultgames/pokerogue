@@ -19,7 +19,7 @@ import { SummonPhase } from "#app/phases/summon-phase";
 import { UnlockPhase } from "#app/phases/unlock-phase";
 import { achvs, ChallengeAchv } from "#app/system/achv";
 import { Unlockables } from "#app/system/unlockables";
-import { Mode } from "#app/ui/ui";
+import { UiMode } from "#enums/ui-mode";
 import { isLocal, isLocalServerConnected } from "#app/utils";
 import { PlayerGender } from "#enums/player-gender";
 import { TrainerType } from "#enums/trainer-type";
@@ -78,7 +78,7 @@ export class GameOverPhase extends BattlePhase {
     } else {
       globalScene.ui.showText(i18next.t("battle:retryBattle"), null, () => {
         globalScene.ui.setMode(
-          Mode.CONFIRM,
+          UiMode.CONFIRM,
           () => {
             globalScene.ui.fadeOut(1250).then(() => {
               globalScene.reset();

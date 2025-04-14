@@ -30,7 +30,7 @@ import type CommandUiHandler from "#app/ui/command-ui-handler";
 import type ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 import type PartyUiHandler from "#app/ui/party-ui-handler";
 import type TargetSelectUiHandler from "#app/ui/target-select-ui-handler";
-import { Mode } from "#app/ui/ui";
+import { UiMode } from "#enums/ui-mode";
 import { isNullOrUndefined } from "#app/utils";
 import { BattleStyle } from "#enums/battle-style";
 import { Button } from "#enums/buttons";
@@ -102,7 +102,7 @@ export default class GameManager {
 
     if (!firstTimeScene) {
       this.scene.reset(false, true);
-      (this.scene.ui.handlers[Mode.STARTER_SELECT] as StarterSelectUiHandler).clearStarterPreferences();
+      (this.scene.ui.handlers[UiMode.STARTER_SELECT] as StarterSelectUiHandler).clearStarterPreferences();
       this.scene.clearAllPhases();
 
       // Must be run after phase interceptor has been initialized.
@@ -135,7 +135,7 @@ export default class GameManager {
    * Sets the game mode.
    * @param mode - The mode to set.
    */
-  setMode(mode: Mode) {
+  setMode(mode: UiMode) {
     this.scene.ui?.setMode(mode);
   }
 
@@ -144,7 +144,7 @@ export default class GameManager {
    * @param mode - The mode to wait for.
    * @returns A promise that resolves when the mode is set.
    */
-  waitMode(mode: Mode): Promise<void> {
+  waitMode(mode: UiMode): Promise<void> {
     return new Promise(async resolve => {
       await waitUntil(() => this.scene.ui?.getMode() === mode);
       return resolve();
@@ -168,7 +168,7 @@ export default class GameManager {
    */
   onNextPrompt(
     phaseTarget: string,
-    mode: Mode,
+    mode: UiMode,
     callback: () => void,
     expireFn?: () => void,
     awaitingActionInput = false,
@@ -208,7 +208,7 @@ export default class GameManager {
     console.log("===to final boss encounter===");
     await this.runToTitle();
 
-    this.onNextPrompt("TitlePhase", Mode.TITLE, () => {
+    this.onNextPrompt("TitlePhase", UiMode.TITLE, () => {
       this.scene.gameMode = getGameMode(mode);
       const starters = generateStarter(this.scene, species);
       const selectStarterPhase = new SelectStarterPhase();
@@ -243,7 +243,7 @@ export default class GameManager {
 
     this.onNextPrompt(
       "TitlePhase",
-      Mode.TITLE,
+      UiMode.TITLE,
       () => {
         this.scene.gameMode = getGameMode(GameModes.CLASSIC);
         const starters = generateStarter(this.scene, species);
@@ -256,7 +256,7 @@ export default class GameManager {
 
     this.onNextPrompt(
       "EncounterPhase",
-      Mode.MESSAGE,
+      UiMode.MESSAGE,
       () => {
         const handler = this.scene.ui.getHandler() as BattleMessageUiHandler;
         handler.processInput(Button.ACTION);
@@ -284,9 +284,9 @@ export default class GameManager {
     if (this.scene.battleStyle === BattleStyle.SWITCH) {
       this.onNextPrompt(
         "CheckSwitchPhase",
-        Mode.CONFIRM,
+        UiMode.CONFIRM,
         () => {
-          this.setMode(Mode.MESSAGE);
+          this.setMode(UiMode.MESSAGE);
           this.endPhase();
         },
         () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(TurnInitPhase),
@@ -294,9 +294,9 @@ export default class GameManager {
 
       this.onNextPrompt(
         "CheckSwitchPhase",
-        Mode.CONFIRM,
+        UiMode.CONFIRM,
         () => {
-          this.setMode(Mode.MESSAGE);
+          this.setMode(UiMode.MESSAGE);
           this.endPhase();
         },
         () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(TurnInitPhase),
@@ -316,7 +316,7 @@ export default class GameManager {
   selectTarget(movePosition: number, targetIndex?: BattlerIndex) {
     this.onNextPrompt(
       "SelectTargetPhase",
-      Mode.TARGET_SELECT,
+      UiMode.TARGET_SELECT,
       () => {
         const handler = this.scene.ui.getHandler() as TargetSelectUiHandler;
         const move = (this.scene.getCurrentPhase() as SelectTargetPhase)
@@ -351,7 +351,7 @@ export default class GameManager {
   doSelectModifier() {
     this.onNextPrompt(
       "SelectModifierPhase",
-      Mode.MODIFIER_SELECT,
+      UiMode.MODIFIER_SELECT,
       () => {
         const handler = this.scene.ui.getHandler() as ModifierSelectUiHandler;
         handler.processInput(Button.CANCEL);
@@ -365,7 +365,7 @@ export default class GameManager {
 
     this.onNextPrompt(
       "SelectModifierPhase",
-      Mode.CONFIRM,
+      UiMode.CONFIRM,
       () => {
         const handler = this.scene.ui.getHandler() as ModifierSelectUiHandler;
         handler.processInput(Button.ACTION);
@@ -427,9 +427,9 @@ export default class GameManager {
 
     this.onNextPrompt(
       "CheckSwitchPhase",
-      Mode.CONFIRM,
+      UiMode.CONFIRM,
       () => {
-        this.setMode(Mode.MESSAGE);
+        this.setMode(UiMode.MESSAGE);
         this.endPhase();
       },
       () => this.isCurrentPhase(TurnInitPhase),
@@ -461,7 +461,7 @@ export default class GameManager {
    * @param mode - The target mode.
    * @returns True if the current mode matches the target mode, otherwise false.
    */
-  isCurrentMode(mode: Mode) {
+  isCurrentMode(mode: UiMode) {
     return this.scene.ui?.getMode() === mode;
   }
 
@@ -516,7 +516,7 @@ export default class GameManager {
    * @param pokemonIndex the index of the pokemon in your party to switch to
    */
   doSwitchPokemon(pokemonIndex: number) {
-    this.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
+    this.onNextPrompt("CommandPhase", UiMode.COMMAND, () => {
       (this.scene.ui.getHandler() as CommandUiHandler).setCursor(2);
       (this.scene.ui.getHandler() as CommandUiHandler).processInput(Button.ACTION);
     });
@@ -545,7 +545,7 @@ export default class GameManager {
    * non-command switch actions happen in SwitchPhase.
    */
   doSelectPartyPokemon(slot: number, inPhase = "SwitchPhase") {
-    this.onNextPrompt(inPhase, Mode.PARTY, () => {
+    this.onNextPrompt(inPhase, UiMode.PARTY, () => {
       const partyHandler = this.scene.ui.getHandler() as PartyUiHandler;
 
       partyHandler.setCursor(slot);
@@ -560,12 +560,12 @@ export default class GameManager {
    * @param ballIndex the index of the pokeball to throw
    */
   public doThrowPokeball(ballIndex: number) {
-    this.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
+    this.onNextPrompt("CommandPhase", UiMode.COMMAND, () => {
       (this.scene.ui.getHandler() as CommandUiHandler).setCursor(1);
       (this.scene.ui.getHandler() as CommandUiHandler).processInput(Button.ACTION);
     });
 
-    this.onNextPrompt("CommandPhase", Mode.BALL, () => {
+    this.onNextPrompt("CommandPhase", UiMode.BALL, () => {
       const ballHandler = this.scene.ui.getHandler() as BallUiHandler;
       ballHandler.setCursor(ballIndex);
       ballHandler.processInput(Button.ACTION); // select ball and throw

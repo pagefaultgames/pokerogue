@@ -1,4 +1,4 @@
-import { Mode } from "#app/ui/ui";
+import { UiMode } from "#enums/ui-mode";
 import i18next from "i18next";
 import { globalScene } from "#app/global-scene";
 import { hasTouchscreen } from "#app/touch-controls";
@@ -906,7 +906,7 @@ export function setSetting(setting: string, value: number): boolean {
               return false;
             }
           };
-          globalScene.ui.setOverlayMode(Mode.OPTION_SELECT, {
+          globalScene.ui.setOverlayMode(UiMode.OPTION_SELECT, {
             options: [
               {
                 label: "English",

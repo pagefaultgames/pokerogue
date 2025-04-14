@@ -2,7 +2,7 @@ import type BattleScene from "#app/battle-scene";
 import { LoginPhase } from "#app/phases/login-phase";
 import { TitlePhase } from "#app/phases/title-phase";
 import { UnavailablePhase } from "#app/phases/unavailable-phase";
-import { Mode } from "#app/ui/ui";
+import { UiMode } from "#enums/ui-mode";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -32,7 +32,7 @@ describe("Phases", () => {
       const loginPhase = new LoginPhase();
       scene.unshiftPhase(loginPhase);
       await game.phaseInterceptor.to(LoginPhase);
-      expect(scene.ui.getMode()).to.equal(Mode.MESSAGE);
+      expect(scene.ui.getMode()).to.equal(UiMode.MESSAGE);
     });
   });
 
@@ -41,7 +41,7 @@ describe("Phases", () => {
       const titlePhase = new TitlePhase();
       scene.unshiftPhase(titlePhase);
       await game.phaseInterceptor.to(TitlePhase);
-      expect(scene.ui.getMode()).to.equal(Mode.TITLE);
+      expect(scene.ui.getMode()).to.equal(UiMode.TITLE);
     });
   });
 
@@ -50,7 +50,7 @@ describe("Phases", () => {
       const unavailablePhase = new UnavailablePhase();
       scene.unshiftPhase(unavailablePhase);
       await game.phaseInterceptor.to(UnavailablePhase);
-      expect(scene.ui.getMode()).to.equal(Mode.UNAVAILABLE);
+      expect(scene.ui.getMode()).to.equal(UiMode.UNAVAILABLE);
     }, 20000);
   });
 });
