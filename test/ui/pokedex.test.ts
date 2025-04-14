@@ -395,7 +395,7 @@ describe("UI - Pokedex", () => {
     ).toBe(true);
   });
 
-  it("filtering for pokemon that have two cost reductinos sorts only shows the species that have unlocked both cost reductions", async () => {
+  it("filtering for pokemon that have two cost reductions sorts only shows the species that have unlocked both cost reductions", async () => {
     await game.importData("./test/testUtils/saves/data_pokedex_tests.prsv");
     const pokedexHandler = await runToOpenPokedex();
 
