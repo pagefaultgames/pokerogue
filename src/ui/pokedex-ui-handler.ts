@@ -2,7 +2,7 @@ import type { Variant } from "#app/sprites/variant";
 import { getVariantTint, getVariantIcon } from "#app/sprites/variant";
 import { argbFromRgba } from "@material/material-color-utilities";
 import i18next from "i18next";
-import { starterColors } from "#app/battle-scene";
+import { starterColors } from "#app/global-vars/starter-colors";
 import { speciesEggMoves } from "#app/data/balance/egg-moves";
 import { pokemonFormLevelMoves, pokemonSpeciesLevelMoves } from "#app/data/balance/pokemon-level-moves";
 import type { PokemonForm } from "#app/data/pokemon-species";

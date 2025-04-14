@@ -1,6 +1,6 @@
 import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
 import type { UserInfo } from "#app/@types/UserInfo";
-import { bypassLogin } from "#app/battle-scene";
+import { bypassLogin } from "./global-vars/bypass-login";
 import { randomString } from "#app/utils/common";
 
 export let loggedInUser: UserInfo | null = null;

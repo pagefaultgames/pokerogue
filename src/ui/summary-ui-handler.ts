@@ -1,4 +1,4 @@
-import { starterColors } from "#app/battle-scene";
+import { starterColors } from "#app/global-vars/starter-colors";
 import { globalScene } from "#app/global-scene";
 import { UiMode } from "#enums/ui-mode";
 import UiHandler from "#app/ui/ui-handler";

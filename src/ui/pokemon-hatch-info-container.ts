@@ -7,7 +7,7 @@ import { speciesEggMoves } from "#app/data/balance/egg-moves";
 import { allMoves } from "#app/data/moves/move";
 import { Species } from "#enums/species";
 import { getEggTierForSpecies } from "#app/data/egg";
-import { starterColors } from "#app/battle-scene";
+import { starterColors } from "#app/global-vars/starter-colors";
 import { globalScene } from "#app/global-scene";
 import { argbFromRgba } from "@material/material-color-utilities";
 import type { EggHatchData } from "#app/data/egg-hatch-data";

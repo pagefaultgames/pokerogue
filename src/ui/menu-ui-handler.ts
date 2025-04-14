@@ -1,4 +1,4 @@
-import { bypassLogin } from "#app/battle-scene";
+import { bypassLogin } from "#app/global-vars/bypass-login";
 import { globalScene } from "#app/global-scene";
 import { TextStyle, addTextObject, getTextStyleOptions } from "./text";
 import { UiMode } from "#enums/ui-mode";

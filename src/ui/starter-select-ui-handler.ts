@@ -6,7 +6,7 @@ import { getVariantTint, getVariantIcon } from "#app/sprites/variant";
 import { argbFromRgba } from "@material/material-color-utilities";
 import i18next from "i18next";
 import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
-import { starterColors } from "#app/battle-scene";
+import { starterColors } from "#app/global-vars/starter-colors";
 import { globalScene } from "#app/global-scene";
 import type { Ability } from "#app/data/abilities/ability-class";
 import { allAbilities } from "#app/data/data-lists";
