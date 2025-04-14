@@ -328,6 +328,48 @@ describe("UI - Pokedex", () => {
     ).toBe(true);
   });
 
+  it("filtering by shiny status shows the caught pokemon with the selected shiny tier", async () => {
+    await game.importData("./test/testUtils/saves/data_pokedex_tests.prsv");
+    const pokedexHandler = await runToOpenPokedex();
+    // @ts-expect-error - `filterBar` is private
+    const filter = pokedexHandler.filterBar.getFilter(DropDownColumn.CAUGHT);
+    filter.toggleOptionState(3);
+
+    // @ts-expect-error - `filteredPokemonData` is private
+    let filteredPokemon = pokedexHandler.filteredPokemonData.map(pokemon => pokemon.species.speciesId);
+
+    // Red shiny
+    expect(filteredPokemon.length).toBe(1);
+    expect(filteredPokemon[0], "tier 1 shiny").toBe(Species.CATERPIE);
+
+    // tier 2 shiny
+    filter.toggleOptionState(3);
+    filter.toggleOptionState(2);
+
+    // @ts-expect-error - `filteredPokemonData` is private
+    filteredPokemon = pokedexHandler.filteredPokemonData.map(pokemon => pokemon.species.speciesId);
+    expect(filteredPokemon.length).toBe(1);
+    expect(filteredPokemon[0], "tier 2 shiny").toBe(Species.RATTATA);
+
+    filter.toggleOptionState(2);
+    filter.toggleOptionState(1);
+    // @ts-expect-error - `filteredPokemonData` is private
+    filteredPokemon = pokedexHandler.filteredPokemonData.map(pokemon => pokemon.species.speciesId);
+    expect(filteredPokemon.length).toBe(1);
+    expect(filteredPokemon[0], "tier 3 shiny").toBe(Species.EKANS);
+
+    // filter by no shiny
+    filter.toggleOptionState(1);
+    filter.toggleOptionState(4);
+
+    // @ts-expect-error - `filteredPokemonData` is private
+    filteredPokemon = pokedexHandler.filteredPokemonData.map(pokemon => pokemon.species.speciesId);
+    expect(filteredPokemon.length).toBe(27);
+    expect(filteredPokemon, "not shiny").not.toContain(Species.CATERPIE);
+    expect(filteredPokemon, "not shiny").not.toContain(Species.RATTATA);
+    expect(filteredPokemon, "not shiny").not.toContain(Species.EKANS);
+  });
+
   /****************************
    *    Tests for UI Input    *
    ****************************/
