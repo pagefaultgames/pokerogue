@@ -1,8 +1,10 @@
 import { globalScene } from "#app/global-scene";
-import { EvolutionItem, pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
+import { pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
+import { EvolutionItem } from "#enums/evolution-item";
 import { tmPoolTiers, tmSpecies } from "#app/data/balance/tms";
 import { getBerryEffectDescription, getBerryName } from "#app/data/berry";
-import { allMoves, AttackMove } from "#app/data/moves/move";
+import { AttackMove } from "#app/data/moves/move";
+import { allMoves } from "#app/data/moves/all-moves";
 import { getNatureName, getNatureStatMultiplier } from "#app/data/nature";
 import { getPokeballCatchMultiplier, getPokeballName, MAX_PER_TYPE_POKEBALLS } from "#app/data/pokeball";
 import {
@@ -13,7 +15,8 @@ import {
 } from "#app/data/pokemon-forms";
 import { getStatusEffectDescriptor } from "#app/data/status-effect";
 import { PokemonType } from "#enums/pokemon-type";
-import type { EnemyPokemon, PlayerPokemon, PokemonMove } from "#app/field/pokemon";
+import type { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
+import type { PokemonMove } from "#app/data/moves/pokemon-move";
 import type Pokemon from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import {

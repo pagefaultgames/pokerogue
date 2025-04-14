@@ -12,13 +12,16 @@ import {
 import type { DestinyBondTag, GrudgeTag } from "#app/data/battler-tags";
 import { BattlerTagLapseType } from "#app/data/battler-tags";
 import { battleSpecDialogue } from "#app/data/dialogue";
-import { allMoves, PostVictoryStatStageChangeAttr } from "#app/data/moves/move";
+import { PostVictoryStatStageChangeAttr } from "#app/data/moves/move";
+import { allMoves } from "#app/data/moves/all-moves";
 import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms";
 import { BattleSpec } from "#app/enums/battle-spec";
 import { StatusEffect } from "#app/enums/status-effect";
 import type { EnemyPokemon } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
-import { HitResult, PlayerPokemon, PokemonMove } from "#app/field/pokemon";
+import { PlayerPokemon } from "#app/field/pokemon";
+import { HitResult } from "#enums/hit-result";
+import { PokemonMove } from "#app/data/moves/pokemon-move";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { PokemonInstantReviveModifier } from "#app/modifier/modifier";
 import { SwitchType } from "#enums/switch-type";

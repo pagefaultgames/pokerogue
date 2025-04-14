@@ -1,10 +1,10 @@
 import { BattlerIndex } from "#app/battle";
-import { allMoves } from "#app/data/moves/move";
+import { allMoves } from "#app/data/moves/all-moves";
 import { PokemonType } from "#enums/pokemon-type";
 import { Abilities } from "#app/enums/abilities";
 import { Moves } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
-import { HitResult } from "#app/field/pokemon";
+import { HitResult } from "#enums/hit-result";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";

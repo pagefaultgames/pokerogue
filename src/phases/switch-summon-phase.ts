@@ -6,7 +6,8 @@ import {
   PreSummonAbAttr,
   PreSwitchOutAbAttr,
 } from "#app/data/ability";
-import { allMoves, ForceSwitchOutAttr } from "#app/data/moves/move";
+import { ForceSwitchOutAttr } from "#app/data/moves/move";
+import { allMoves } from "#app/data/moves/all-moves";
 import { getPokeballTintColor } from "#app/data/pokeball";
 import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms";
 import { TrainerSlot } from "#enums/trainer-slot";

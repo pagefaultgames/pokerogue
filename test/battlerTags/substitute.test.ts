@@ -1,5 +1,7 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import type { PokemonTurnData, TurnMove, PokemonMove } from "#app/field/pokemon";
+import type { PokemonTurnData } from "#app/field/pokemon";
+import type { PokemonMove } from "#app/data/moves/pokemon-move";
+import type { TurnMove } from "#app/interfaces/turn-move";
 import type Pokemon from "#app/field/pokemon";
 import { MoveResult } from "#app/field/pokemon";
 import type BattleScene from "#app/battle-scene";
@@ -7,7 +9,7 @@ import { BattlerTagLapseType, BindTag, SubstituteTag } from "#app/data/battler-t
 import { Moves } from "#app/enums/moves";
 import { PokemonAnimType } from "#app/enums/pokemon-anim-type";
 import * as messages from "#app/messages";
-import { allMoves } from "#app/data/moves/move";
+import { allMoves } from "#app/data/moves/all-moves";
 import type { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import GameManager from "#test/testUtils/gameManager";
 

@@ -1,6 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import { modifierTypes } from "#app/modifier/modifier-type";
-import { PokemonMove } from "#app/field/pokemon";
+import { PokemonMove } from "#app/data/moves/pokemon-move";
 import { toReadableString, isNullOrUndefined, randSeedItem, randSeedInt } from "#app/utils";
 import { pokemonEvolutions, pokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
