@@ -1,5 +1,5 @@
 // @ts-nocheck - TODO: remove this
-import BattleScene, * as battleScene from "#app/battle-scene";
+import BattleScene from "#app/battle-scene";
 import { MoveAnim } from "#app/data/battle-anims";
 import Pokemon from "#app/field/pokemon";
 import { sessionIdKey } from "#app/utils/common";
@@ -21,6 +21,8 @@ import KeyboardPlugin = Phaser.Input.Keyboard.KeyboardPlugin;
 import GamepadPlugin = Phaser.Input.Gamepad.GamepadPlugin;
 import EventEmitter = Phaser.Events.EventEmitter;
 import UpdateList = Phaser.GameObjects.UpdateList;
+// biome-ignore lint/style/noNamespaceImport: Necessary in order to mock the var
+import * as bypassLoginModule from "#app/global-vars/bypass-login";
 
 window.URL.createObjectURL = (blob: Blob) => {
   blobToString(blob).then((data: string) => {
@@ -44,7 +46,7 @@ export default class GameWrapper {
     Phaser.Math.RND.sow(["test"]);
     // vi.spyOn(Utils, "apiFetch", "get").mockReturnValue(fetch);
     if (bypassLogin) {
-      vi.spyOn(battleScene, "bypassLogin", "get").mockReturnValue(true);
+      vi.spyOn(bypassLoginModule, "bypassLogin", "get").mockReturnValue(true);
     }
     this.game = phaserGame;
     MoveAnim.prototype.getAnim = () => ({

@@ -21,6 +21,7 @@ import Phaser from "phaser";
 import InputText from "phaser3-rex-plugins/plugins/inputtext";
 import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import { manageListeners } from "./listenersManager";
+import { initI18n } from "#app/plugins/i18n";
 
 let wasInitialized = false;
 /**
@@ -87,6 +88,7 @@ export function initTestFile() {
   // initSpecies();
   if (!wasInitialized) {
     wasInitialized = true;
+    initI18n();
     initVouchers();
     initAchievements();
     initStatsKeys();
