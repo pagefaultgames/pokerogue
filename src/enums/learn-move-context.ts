@@ -1,4 +1,4 @@
-export enum LearnMoveSituation {
+export enum LearnMoveContext {
   MISC,
   LEVEL_UP,
   RELEARN,

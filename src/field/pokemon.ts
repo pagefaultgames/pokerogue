@@ -259,7 +259,7 @@ import { MoveFlags } from "#enums/MoveFlags";
 import { timedEventManager } from "#app/global-event-manager";
 import { loadMoveAnimations } from "#app/sprites/pokemon-asset-loader";
 import { ResetStatusPhase } from "#app/phases/reset-status-phase";
-import { LearnMoveSituation } from "#enums/learn-move-situation";
+import { LearnMoveContext } from "#enums/learn-move-context";
 import { TurnMove } from "#app/interfaces/turn-move";
 import { AiType } from "#enums/ai-type";
 import { PokemonMove } from "#app/data/moves/pokemon-move";
@@ -2919,7 +2919,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     includeEvolutionMoves = false,
     simulateEvolutionChain = false,
     includeRelearnerMoves = false,
-    learnSituation: LearnMoveSituation = LearnMoveSituation.MISC,
+    learnSituation: LearnMoveContext = LearnMoveContext.MISC,
   ): LevelMoves {
     const ret: LevelMoves = [];
     let levelMoves: LevelMoves = [];
@@ -2927,7 +2927,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       startingLevel = this.level;
     }
     if (
-      learnSituation === LearnMoveSituation.EVOLUTION_FUSED &&
+      learnSituation === LearnMoveContext.EVOLUTION_FUSED &&
       this.fusionSpecies
     ) {
       // For fusion evolutions, get ONLY the moves of the component mon that evolved
@@ -2979,7 +2979,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
       if (
         this.fusionSpecies &&
-        learnSituation !== LearnMoveSituation.EVOLUTION_FUSED_BASE
+        learnSituation !== LearnMoveContext.EVOLUTION_FUSED_BASE
       ) {
         // For fusion evolutions, get ONLY the moves of the component mon that evolved
         if (simulateEvolutionChain) {
