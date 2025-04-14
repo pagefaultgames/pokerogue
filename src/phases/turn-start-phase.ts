@@ -1,10 +1,9 @@
 import { applyAbAttrs, BypassSpeedChanceAbAttr, PreventBypassSpeedChanceAbAttr } from "#app/data/ability";
-import { MoveHeaderAttr } from "#app/data/moves/move";
-import { allMoves } from "#app/data/moves/all-moves";
+import { allMoves, MoveHeaderAttr } from "#app/data/moves/move";
 import { Abilities } from "#app/enums/abilities";
 import { Stat } from "#app/enums/stat";
 import type Pokemon from "#app/field/pokemon";
-import { PokemonMove } from "#app/data/moves/pokemon-move";
+import { PokemonMove } from "#app/field/pokemon";
 import { BypassSpeedChanceModifier } from "#app/modifier/modifier";
 import { Command } from "#app/ui/command-ui-handler";
 import { randSeedShuffle, BooleanHolder } from "#app/utils";

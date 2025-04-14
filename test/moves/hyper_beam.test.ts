@@ -1,4 +1,4 @@
-import { allMoves } from "#app/data/moves/all-moves";
+import { allMoves } from "#app/data/moves/move";
 import { Abilities } from "#app/enums/abilities";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
 import { Moves } from "#app/enums/moves";

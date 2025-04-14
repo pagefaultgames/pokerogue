@@ -1,5 +1,5 @@
 import { type PokeballCounts } from "#app/battle-scene";
-import { EvolutionItem } from "#enums/evolution-item";
+import { EvolutionItem } from "#app/data/balance/pokemon-evolutions";
 import { Gender } from "#app/data/gender";
 import { FormChangeItem } from "#app/data/pokemon-forms";
 import { Variant } from "#app/sprites/variant";

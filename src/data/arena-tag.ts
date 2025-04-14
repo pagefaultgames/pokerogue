@@ -2,13 +2,12 @@ import { globalScene } from "#app/global-scene";
 import type { Arena } from "#app/field/arena";
 import { PokemonType } from "#enums/pokemon-type";
 import { BooleanHolder, NumberHolder, toDmgValue } from "#app/utils";
-import { allMoves } from "./moves/all-moves";
+import { allMoves } from "#app/data/moves/move";
 import { MoveTarget } from "#enums/MoveTarget";
 import { MoveCategory } from "#enums/MoveCategory";
 import { getPokemonNameWithAffix } from "#app/messages";
 import type Pokemon from "#app/field/pokemon";
-import { HitResult } from "#enums/hit-result";
-import { PokemonMove } from "./moves/pokemon-move";
+import { HitResult, PokemonMove } from "#app/field/pokemon";
 import { StatusEffect } from "#enums/status-effect";
 import type { BattlerIndex } from "#app/battle";
 import {

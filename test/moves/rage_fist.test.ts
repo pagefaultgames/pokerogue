@@ -2,7 +2,7 @@ import { BattlerIndex } from "#app/battle";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import { allMoves } from "#app/data/moves/all-moves";
+import { allMoves } from "#app/data/moves/move";
 import type Move from "#app/data/moves/move";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";

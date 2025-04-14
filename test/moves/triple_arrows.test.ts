@@ -1,5 +1,4 @@
-import { FlinchAttr, StatStageChangeAttr } from "#app/data/moves/move";
-import { allMoves } from "#app/data/moves/all-moves";
+import { allMoves, FlinchAttr, StatStageChangeAttr } from "#app/data/moves/move";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import type Move from "#app/data/moves/move";

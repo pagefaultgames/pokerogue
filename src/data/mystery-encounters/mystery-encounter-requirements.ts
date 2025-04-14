@@ -1,7 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import { allAbilities } from "#app/data/ability";
-import { pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
-import { EvolutionItem } from "#enums/evolution-item";
+import { EvolutionItem, pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
 import { Nature } from "#enums/nature";
 import { FormChangeItem, pokemonFormChanges, SpeciesFormChangeItemTrigger } from "#app/data/pokemon-forms";
 import { StatusEffect } from "#enums/status-effect";

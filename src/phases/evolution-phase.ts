@@ -10,7 +10,7 @@ import { Mode } from "#app/ui/ui";
 import { cos, sin } from "#app/field/anims";
 import type { PlayerPokemon } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
-import { LearnMoveContext } from "#enums/learn-move-context";
+import { LearnMoveSituation } from "#app/field/pokemon";
 import { getTypeRgb } from "#app/data/type";
 import i18next from "i18next";
 import { getPokemonNameWithAffix } from "#app/messages";
@@ -343,11 +343,11 @@ export class EvolutionPhase extends Phase {
       this.evolutionHandler.canCancel = false;
 
       this.pokemon.evolve(this.evolution, this.pokemon.species).then(() => {
-        const learnSituation: LearnMoveContext = this.fusionSpeciesEvolved
-          ? LearnMoveContext.EVOLUTION_FUSED
+        const learnSituation: LearnMoveSituation = this.fusionSpeciesEvolved
+          ? LearnMoveSituation.EVOLUTION_FUSED
           : this.pokemon.fusionSpecies
-            ? LearnMoveContext.EVOLUTION_FUSED_BASE
-            : LearnMoveContext.EVOLUTION;
+            ? LearnMoveSituation.EVOLUTION_FUSED_BASE
+            : LearnMoveSituation.EVOLUTION;
         const levelMoves = this.pokemon
           .getLevelMoves(this.lastLevel + 1, true, false, false, learnSituation)
           .filter(lm => lm[0] === EVOLVE_MOVE);

@@ -1,4 +1,4 @@
-import { allMoves } from "#app/data/moves/all-moves";
+import { allMoves } from "#app/data/moves/move";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { TrainerSlot } from "#enums/trainer-slot";
 import { PokemonType } from "#enums/pokemon-type";

@@ -1,6 +1,6 @@
 import { BattlerIndex } from "#app/battle";
 import { ArenaTagSide } from "#app/data/arena-tag";
-import { allMoves } from "#app/data/moves/all-moves";
+import { allMoves } from "#app/data/moves/move";
 import GameManager from "#test/testUtils/gameManager";
 import { toDmgValue } from "#app/utils";
 import { Abilities } from "#enums/abilities";
@@ -534,12 +534,12 @@ describe("Abilities - Wimp Out", () => {
       .enemyAbility(Abilities.WIMP_OUT)
       .startingLevel(50)
       .enemyLevel(1)
-      .enemyMoveset([Moves.SPLASH, Moves.ENDURE])
+      .enemyMoveset([ Moves.SPLASH, Moves.ENDURE ])
       .battleType("double")
-      .moveset([Moves.DRAGON_ENERGY, Moves.SPLASH])
+      .moveset([ Moves.DRAGON_ENERGY, Moves.SPLASH ])
       .startingWave(wave);
 
-    await game.classicMode.startBattle([Species.REGIDRAGO, Species.MAGIKARP]);
+    await game.classicMode.startBattle([ Species.REGIDRAGO, Species.MAGIKARP ]);
 
     // turn 1
     game.move.select(Moves.DRAGON_ENERGY, 0);
@@ -549,5 +549,6 @@ describe("Abilities - Wimp Out", () => {
 
     await game.phaseInterceptor.to("SelectModifierPhase");
     expect(game.scene.currentBattle.waveIndex).toBe(wave + 1);
+
   });
 });
