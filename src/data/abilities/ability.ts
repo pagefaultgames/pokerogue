@@ -31,7 +31,6 @@ import { Command } from "#app/ui/command-ui-handler";
 import { BerryModifierType } from "#app/modifier/modifier-type";
 import { getPokeballName } from "#app/data/pokeball";
 import { BattleType } from "#app/battle";
-import { Stat, type BattleStat , BATTLE_STATS, EFFECTIVE_STATS, getStatKey } from "#enums/stat";
 import { MovePhase } from "#app/phases/move-phase";
 import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
@@ -47,6 +46,7 @@ import { AbAttr } from "#app/data/abilities/ab-attrs/ab-attr";
 import { Ability } from "#app/data/abilities/ability-class";
 
 // Enum imports
+import { Stat, type BattleStat , BATTLE_STATS, EFFECTIVE_STATS, getStatKey, type EffectiveStat } from "#enums/stat";
 import { PokemonType } from "#enums/pokemon-type";
 import { PokemonAnimType } from "#enums/pokemon-anim-type";
 import { StatusEffect } from "#enums/status-effect";
