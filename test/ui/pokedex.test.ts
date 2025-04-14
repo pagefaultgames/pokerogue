@@ -13,6 +13,22 @@ import { DropDownColumn } from "#app/ui/filter-bar";
 import type PokemonSpecies from "#app/data/pokemon-species";
 import { PokemonType } from "#enums/pokemon-type";
 
+/*
+Information for the `data_pokedex_tests.psrv`:
+
+Caterpie - Shiny 0
+Rattata - Shiny 1
+Ekans - Shiny 2
+
+Chikorita has enough candies to unlock passive
+Cyndaquil has first cost reduction unlocked, enough candies to buy the second
+Totodile has first cost reduction unlocked, not enough candies to buy the second
+Treecko has both cost reduction unlocked
+Torchic has enough candies to do anything
+Mudkip has passive unlocked
+Turtwig has enough candies to purchase an egg
+*/
+
 /**
  * Return all permutations of elements from an array
  */
@@ -263,6 +279,53 @@ describe("UI - Pokedex", () => {
     const filteredPokemon = new Set(pokedexHandler.filteredPokemonData.map(pokemon => pokemon.species.speciesId));
 
     expect(filteredPokemon).toEqual(expectedPokemon);
+  });
+
+  it("filtering for unlockable cost reduction only shows species with sufficient candies", async () => {
+    // load the save file
+    await game.importData("./test/testUtils/saves/data_pokedex_tests.prsv");
+    const pokedexHandler = await runToOpenPokedex();
+
+    // @ts-expect-error - `filterBar` is private
+    const filter = pokedexHandler.filterBar.getFilter(DropDownColumn.UNLOCKS);
+
+    // Cycling 4 times to get to the "can unlock" for cost reduction
+    for (let i = 0; i < 4; i++) {
+      // index 1 is the cost reduction
+      filter.toggleOptionState(1);
+    }
+
+    const expectedPokemon = new Set([
+      Species.CHIKORITA,
+      Species.CYNDAQUIL,
+      Species.TORCHIC,
+      Species.TURTWIG,
+      Species.EKANS,
+      Species.MUDKIP,
+    ]);
+    expect(
+      // @ts-expect-error - `filteredPokemonData` is private
+      pokedexHandler.filteredPokemonData.every(pokemon =>
+        expectedPokemon.has(pokedexHandler.getStarterSpeciesId(pokemon.species.speciesId)),
+      ),
+    ).toBe(true);
+  });
+
+  it("filtering by passive unlocked only shows species that have their passive", async () => {
+    await game.importData("./test/testUtils/saves/data_pokedex_tests.prsv");
+    const pokedexHandler = await runToOpenPokedex();
+
+    // @ts-expect-error - `filterBar` is private
+    const filter = pokedexHandler.filterBar.getFilter(DropDownColumn.UNLOCKS);
+
+    filter.toggleOptionState(0); // cycle to Passive: Yes
+
+    expect(
+      // @ts-expect-error - `filteredPokemonData` is private
+      pokedexHandler.filteredPokemonData.every(
+        pokemon => pokedexHandler.getStarterSpeciesId(pokemon.species.speciesId) === Species.MUDKIP,
+      ),
+    ).toBe(true);
   });
 
   /****************************
