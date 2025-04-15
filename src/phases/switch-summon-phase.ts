@@ -5,7 +5,7 @@ import {
   PostDamageForceSwitchAbAttr,
   PreSummonAbAttr,
   PreSwitchOutAbAttr,
-} from "#app/data/ability";
+} from "#app/data/abilities/ability";
 import { allMoves, ForceSwitchOutAttr } from "#app/data/moves/move";
 import { getPokeballTintColor } from "#app/data/pokeball";
 import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms";

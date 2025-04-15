@@ -14,7 +14,7 @@ import {
   PostDefendAbAttr,
   ReflectStatusMoveAbAttr,
   TypeImmunityAbAttr,
-} from "#app/data/ability";
+} from "#app/data/abilities/ability";
 import { ArenaTagSide, ConditionalProtectTag } from "#app/data/arena-tag";
 import { MoveAnim } from "#app/data/battle-anims";
 import {

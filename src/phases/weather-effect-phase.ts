@@ -7,7 +7,7 @@ import {
   BlockNonDirectDamageAbAttr,
   applyPostWeatherLapseAbAttrs,
   PostWeatherLapseAbAttr,
-} from "#app/data/ability";
+} from "#app/data/abilities/ability";
 import { CommonAnim } from "#app/data/battle-anims";
 import type { Weather } from "#app/data/weather";
 import { getWeatherDamageMessage, getWeatherLapseMessage } from "#app/data/weather";
