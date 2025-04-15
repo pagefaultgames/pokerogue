@@ -5,8 +5,9 @@ import { StatusEffect } from "#enums/status-effect";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi, type MockInstance } from "vitest";
-import * as Utils from "#app/utils";
-import { allAbilities, PostTurnResetStatusAbAttr } from "#app/data/ability";
+import { isNullOrUndefined } from "#app/utils";
+import { PostTurnResetStatusAbAttr } from "#app/data/abilities/ability";
+import { allAbilities } from "#app/data/data-lists";
 import type Pokemon from "#app/field/pokemon";
 
 describe("Abilities - Healer", () => {
@@ -40,7 +41,7 @@ describe("Abilities - Healer", () => {
     healerAttr = allAbilities[Abilities.HEALER].getAttrs(PostTurnResetStatusAbAttr)[0];
     healerAttrSpy = vi
       .spyOn(healerAttr, "getCondition")
-      .mockReturnValue((pokemon: Pokemon) => !Utils.isNullOrUndefined(pokemon.getAlly()));
+      .mockReturnValue((pokemon: Pokemon) => !isNullOrUndefined(pokemon.getAlly()));
   });
 
   it("should not queue a message phase for healing if the ally has fainted", async () => {
