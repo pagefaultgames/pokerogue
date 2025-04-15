@@ -27,11 +27,12 @@ import {
 } from "#app/data/balance/pokemon-level-moves";
 import type { Stat } from "#enums/stat";
 import type { Variant, VariantSet } from "#app/sprites/variant";
-import { variantData } from "#app/sprites/variant";
+import { populateVariantColorCache, variantData } from "#app/sprites/variant";
 import { speciesStarterCosts, POKERUS_STARTER_COUNT } from "#app/data/balance/starters";
 import { SpeciesFormKey } from "#enums/species-form-key";
 import { starterPassiveAbilities } from "#app/data/balance/passives";
 import { loadPokemonVariantAssets } from "#app/sprites/pokemon-sprite";
+import { hasExpSprite } from "#app/sprites/sprite-utils";
 
 export enum Region {
   NORMAL,
@@ -388,8 +389,7 @@ export abstract class PokemonSpeciesForm {
     return `${/_[1-3]$/.test(spriteId) ? "variant/" : ""}${spriteId}`;
   }
 
-  /** Compute the sprite ID of the pokemon form. */
-  getSpriteId(female: boolean, formIndex?: number, shiny?: boolean, variant = 0, back?: boolean): string {
+  getBaseSpriteKey(female: boolean, formIndex?: number): string {
     if (formIndex === undefined || this instanceof PokemonForm) {
       formIndex = this.formIndex;
     }
@@ -400,7 +400,12 @@ export abstract class PokemonSpeciesForm {
       female &&
       ![SpeciesFormKey.MEGA, SpeciesFormKey.GIGANTAMAX].includes(formSpriteKey as SpeciesFormKey);
 
-    const baseSpriteKey = `${showGenderDiffs ? "female__" : ""}${this.speciesId}${formSpriteKey ? `-${formSpriteKey}` : ""}`;
+    return `${showGenderDiffs ? "female__" : ""}${this.speciesId}${formSpriteKey ? `-${formSpriteKey}` : ""}`;
+  }
+
+  /** Compute the sprite ID of the pokemon form. */
+  getSpriteId(female: boolean, formIndex?: number, shiny?: boolean, variant = 0, back?: boolean): string {
+    const baseSpriteKey = this.getBaseSpriteKey(female, formIndex);
 
     let config = variantData;
     `${back ? "back__" : ""}${baseSpriteKey}`.split("__").map(p => (config ? (config = config[p]) : null));
@@ -597,10 +602,19 @@ export abstract class PokemonSpeciesForm {
     startLoad = false,
     back = false,
   ): Promise<void> {
+    // We need to populate the color cache for this species' variant
     const spriteKey = this.getSpriteKey(female, formIndex, shiny, variant, back);
     globalScene.loadPokemonAtlas(spriteKey, this.getSpriteAtlasPath(female, formIndex, shiny, variant, back));
     globalScene.load.audio(this.getCryKey(formIndex), `audio/${this.getCryKey(formIndex)}.m4a`);
 
+    const baseSpriteKey = this.getBaseSpriteKey(female, formIndex);
+
+    // Force the variant color cache to be loaded for the form
+    await populateVariantColorCache(
+      "pkmn__" + baseSpriteKey,
+      globalScene.experimentalSprites && hasExpSprite(spriteKey),
+      baseSpriteKey,
+    );
     return new Promise<void>(resolve => {
       globalScene.load.once(Phaser.Loader.Events.COMPLETE, () => {
         const originalWarn = console.warn;
