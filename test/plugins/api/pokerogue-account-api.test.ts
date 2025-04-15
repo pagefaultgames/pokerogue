@@ -2,7 +2,7 @@ import type { AccountInfoResponse } from "#app/@types/PokerogueAccountApi";
 import { SESSION_ID_COOKIE_NAME } from "#app/constants";
 import { PokerogueAccountApi } from "#app/plugins/api/pokerogue-account-api";
 import { getApiBaseUrl } from "#test/testUtils/testUtils";
-import * as Utils from "#app/utils/common";
+import * as CookieUtils from "#app/utils/cookies";
 import * as cookies from "#app/utils/cookies";
 import { http, HttpResponse } from "msw";
 import { beforeAll, afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -99,7 +99,7 @@ describe("Pokerogue Account API", () => {
     const loginParams = { username: "test", password: "test" };
 
     it("should return null and set the cookie on SUCCESS", async () => {
-      vi.spyOn(Utils, "setCookie");
+      vi.spyOn(CookieUtils, "setCookie");
       server.use(http.post(`${apiBase}/account/login`, () => HttpResponse.json({ token: "abctest" })));
 
       const error = await accountApi.login(loginParams);
@@ -131,11 +131,11 @@ describe("Pokerogue Account API", () => {
 
   describe("Logout", () => {
     beforeEach(() => {
-      vi.spyOn(Utils, "removeCookie");
+      vi.spyOn(CookieUtils, "removeCookie");
     });
 
     it("should remove cookie on success", async () => {
-      vi.spyOn(Utils, "setCookie");
+      vi.spyOn(CookieUtils, "setCookie");
       server.use(http.get(`${apiBase}/account/logout`, () => new HttpResponse("", { status: 200 })));
 
       await accountApi.logout();
