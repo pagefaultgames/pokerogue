@@ -76,14 +76,14 @@ export class MoveHelper extends GameManagerHelper {
     const movePosition = getMovePosition(this.game.scene, pkmIndex, move);
     this.game.scene.getPlayerParty()[pkmIndex].isTerastallized = false;
 
-    this.game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
+    this.game.onNextPrompt("CommandPhase", UiMode.COMMAND, () => {
       this.game.scene.ui.setMode(
-        Mode.FIGHT,
+        UiMode.FIGHT,
         (this.game.scene.getCurrentPhase() as CommandPhase).getFieldIndex(),
         Command.TERA,
       );
     });
-    this.game.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
+    this.game.onNextPrompt("CommandPhase", UiMode.FIGHT, () => {
       (this.game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.TERA, movePosition, false);
     });
 
