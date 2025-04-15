@@ -5,7 +5,6 @@ import { PostSummonPhase } from "#app/phases/post-summon-phase";
 /**
  * Helper to {@linkcode PostSummonPhase} which applies abilities
  */
-
 export class PostSummonActivateAbilityPhase extends PostSummonPhase {
   private priority: number;
   private passive: boolean;
