@@ -63,22 +63,21 @@ describe.each([
     const typeSpy = vi.spyOn(playerPokemon, "getMoveType");
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
-    vi.spyOn(enemyPokemon, "apply");
-
-    const move = allMoves[Moves.TACKLE];
-    const powerSpy = vi.spyOn(move, "calculateBattlePower");
+    const enemySpy = vi.spyOn(enemyPokemon, "apply");
+    const powerSpy = vi.spyOn(allMoves[Moves.TACKLE], "calculateBattlePower");
 
     game.move.select(Moves.TACKLE);
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    expect(playerPokemon.getMoveType).toHaveLastReturnedWith(ty);
-    expect(enemyPokemon.apply).toHaveReturnedWith(HitResult.EFFECTIVE);
-    expect(move.calculateBattlePower).toHaveReturnedWith(48);
+    expect(typeSpy).toHaveLastReturnedWith(ty);
+    expect(enemySpy).toHaveReturnedWith(HitResult.EFFECTIVE);
+    expect(powerSpy).toHaveReturnedWith(48);
     expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
 
     typeSpy.mockRestore();
     powerSpy.mockRestore();
+    enemySpy.mockRestore();
   });
 
   // Galvanize specifically would like to check for volt absorb's activation
