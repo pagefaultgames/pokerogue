@@ -1,4 +1,4 @@
-import type { Variant } from "#app/data/variant";
+import type { Variant } from "#app/sprites/variant";
 import { Weather } from "#app/data/weather";
 import { Abilities } from "#app/enums/abilities";
 import type { ModifierOverride } from "#app/modifier/modifier-type";

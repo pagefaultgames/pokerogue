@@ -1,7 +1,7 @@
 import type { SpeciesFormEvolution } from "#app/data/balance/pokemon-evolutions";
 import { pokemonEvolutions, pokemonPrevolutions, pokemonStarters } from "#app/data/balance/pokemon-evolutions";
-import type { Variant } from "#app/data/variant";
-import { getVariantTint, getVariantIcon } from "#app/data/variant";
+import type { Variant } from "#app/sprites/variant";
+import { getVariantTint, getVariantIcon } from "#app/sprites/variant";
 import { argbFromRgba } from "@material/material-color-utilities";
 import i18next from "i18next";
 import { starterColors } from "#app/battle-scene";
@@ -54,7 +54,7 @@ import {
   toReadableString,
 } from "#app/utils";
 import type { Nature } from "#enums/nature";
-import * as Utils from "../utils";
+import { getEnumKeys } from "#app/utils";
 import { speciesTmMoves } from "#app/data/balance/tms";
 import type { BiomeTierTod } from "#app/data/balance/biomes";
 import { BiomePoolTier, catchableSpecies } from "#app/data/balance/biomes";
@@ -592,7 +592,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
     this.menuContainer.setVisible(false);
 
-    this.menuOptions = Utils.getEnumKeys(MenuOptions).map(m => Number.parseInt(MenuOptions[m]) as MenuOptions);
+    this.menuOptions = getEnumKeys(MenuOptions).map(m => Number.parseInt(MenuOptions[m]) as MenuOptions);
 
     this.optionSelectText = addBBCodeTextObject(
       0,
@@ -696,7 +696,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
     this.starterAttributes = this.initStarterPrefs();
 
-    this.menuOptions = Utils.getEnumKeys(MenuOptions).map(m => Number.parseInt(MenuOptions[m]) as MenuOptions);
+    this.menuOptions = getEnumKeys(MenuOptions).map(m => Number.parseInt(MenuOptions[m]) as MenuOptions);
 
     this.menuContainer.setVisible(true);
 

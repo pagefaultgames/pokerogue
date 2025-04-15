@@ -4,7 +4,7 @@ import { BerryUsedEvent } from "#app/events/battle-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { BerryModifier } from "#app/modifier/modifier";
 import i18next from "i18next";
-import * as Utils from "#app/utils";
+import { BooleanHolder } from "#app/utils";
 import { FieldPhase } from "./field-phase";
 import { CommonAnimPhase } from "./common-anim-phase";
 import { globalScene } from "#app/global-scene";
@@ -20,7 +20,7 @@ export class BerryPhase extends FieldPhase {
       }, pokemon.isPlayer());
 
       if (hasUsableBerry) {
-        const cancelled = new Utils.BooleanHolder(false);
+        const cancelled = new BooleanHolder(false);
         pokemon.getOpponents().map(opp => applyAbAttrs(PreventBerryUseAbAttr, opp, cancelled));
 
         if (cancelled.value) {
@@ -44,7 +44,7 @@ export class BerryPhase extends FieldPhase {
 
           globalScene.updateModifiers(pokemon.isPlayer());
 
-          applyAbAttrs(HealFromBerryUseAbAttr, pokemon, new Utils.BooleanHolder(false));
+          applyAbAttrs(HealFromBerryUseAbAttr, pokemon, new BooleanHolder(false));
         }
       }
     });

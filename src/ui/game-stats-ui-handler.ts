@@ -3,7 +3,7 @@ import { TextStyle, addTextObject } from "#app/ui/text";
 import type { Mode } from "#app/ui/ui";
 import UiHandler from "#app/ui/ui-handler";
 import { addWindow } from "#app/ui/ui-theme";
-import * as Utils from "#app/utils";
+import { getPlayTimeString, formatFancyLargeNumber, toReadableString } from "#app/utils";
 import type { GameData } from "#app/system/game-data";
 import { DexAttr } from "#app/system/game-data";
 import { speciesStarterCosts } from "#app/data/balance/starters";
@@ -25,7 +25,7 @@ interface DisplayStats {
 const displayStats: DisplayStats = {
   playTime: {
     label_key: "playTime",
-    sourceFunc: gameData => Utils.getPlayTimeString(gameData.gameStats.playTime),
+    sourceFunc: gameData => getPlayTimeString(gameData.gameStats.playTime),
   },
   battles: {
     label_key: "totalBattles",
@@ -91,7 +91,7 @@ const displayStats: DisplayStats = {
   },
   highestMoney: {
     label_key: "highestMoney",
-    sourceFunc: gameData => Utils.formatFancyLargeNumber(gameData.gameStats.highestMoney),
+    sourceFunc: gameData => formatFancyLargeNumber(gameData.gameStats.highestMoney),
   },
   highestDamage: {
     label_key: "highestDamage",
@@ -435,7 +435,7 @@ export function initStatsKeys() {
     }
     if (!(displayStats[key] as DisplayStat).label_key) {
       const splittableKey = key.replace(/([a-z]{2,})([A-Z]{1}(?:[^A-Z]|$))/g, "$1_$2");
-      (displayStats[key] as DisplayStat).label_key = Utils.toReadableString(
+      (displayStats[key] as DisplayStat).label_key = toReadableString(
         `${splittableKey[0].toUpperCase()}${splittableKey.slice(1)}`,
       );
     }

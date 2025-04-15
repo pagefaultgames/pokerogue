@@ -1,7 +1,7 @@
 import { BattlerIndex } from "#app/battle";
 import { Abilities } from "#app/enums/abilities";
 import { Species } from "#app/enums/species";
-import * as Utils from "#app/utils";
+import { toDmgValue } from "#app/utils";
 import { Moves } from "#enums/moves";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -71,8 +71,8 @@ describe("Multi-target damage reduction", () => {
     // Single target moves don't get reduced
     expect(tackle1).toBe(tackle2);
     // Moves that target all enemies get reduced if there's more than one enemy
-    expect(gleam1).toBeLessThanOrEqual(Utils.toDmgValue(gleam2 * 0.75) + 1);
-    expect(gleam1).toBeGreaterThanOrEqual(Utils.toDmgValue(gleam2 * 0.75) - 1);
+    expect(gleam1).toBeLessThanOrEqual(toDmgValue(gleam2 * 0.75) + 1);
+    expect(gleam1).toBeGreaterThanOrEqual(toDmgValue(gleam2 * 0.75) - 1);
   });
 
   it("should reduce earthquake when more than one pokemon other than user is not fainted", async () => {
@@ -122,7 +122,7 @@ describe("Multi-target damage reduction", () => {
 
     const damageEnemy1Turn3 = enemy1.getMaxHp() - enemy1.hp;
     // Turn 3: 1 target, should be no damage reduction
-    expect(damageEnemy1Turn1).toBeLessThanOrEqual(Utils.toDmgValue(damageEnemy1Turn3 * 0.75) + 1);
-    expect(damageEnemy1Turn1).toBeGreaterThanOrEqual(Utils.toDmgValue(damageEnemy1Turn3 * 0.75) - 1);
+    expect(damageEnemy1Turn1).toBeLessThanOrEqual(toDmgValue(damageEnemy1Turn3 * 0.75) + 1);
+    expect(damageEnemy1Turn1).toBeGreaterThanOrEqual(toDmgValue(damageEnemy1Turn3 * 0.75) - 1);
   });
 });

@@ -498,6 +498,7 @@ describe("Abilities - Wimp Out", () => {
     const hasFled = enemyPokemon.switchOutStatus;
     expect(isVisible && !hasFled).toBe(true);
   });
+
   it("wimp out will not skip battles when triggered in a double battle", async () => {
     const wave = 2;
     game.override
@@ -524,5 +525,30 @@ describe("Abilities - Wimp Out", () => {
 
     await game.toNextWave();
     expect(game.scene.currentBattle.waveIndex).toBe(wave + 1);
+  });
+
+  it("wimp out should not skip battles when triggering the same turn as another enemy faints", async () => {
+    const wave = 2;
+    game.override
+      .enemySpecies(Species.WIMPOD)
+      .enemyAbility(Abilities.WIMP_OUT)
+      .startingLevel(50)
+      .enemyLevel(1)
+      .enemyMoveset([ Moves.SPLASH, Moves.ENDURE ])
+      .battleType("double")
+      .moveset([ Moves.DRAGON_ENERGY, Moves.SPLASH ])
+      .startingWave(wave);
+
+    await game.classicMode.startBattle([ Species.REGIDRAGO, Species.MAGIKARP ]);
+
+    // turn 1
+    game.move.select(Moves.DRAGON_ENERGY, 0);
+    game.move.select(Moves.SPLASH, 1);
+    await game.forceEnemyMove(Moves.SPLASH);
+    await game.forceEnemyMove(Moves.ENDURE);
+
+    await game.phaseInterceptor.to("SelectModifierPhase");
+    expect(game.scene.currentBattle.waveIndex).toBe(wave + 1);
+
   });
 });

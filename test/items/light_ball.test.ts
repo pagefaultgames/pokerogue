@@ -2,7 +2,7 @@ import { Stat } from "#enums/stat";
 import { SpeciesStatBoosterModifier } from "#app/modifier/modifier";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import i18next from "#app/plugins/i18n";
-import * as Utils from "#app/utils";
+import { NumberHolder } from "#app/utils";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phase from "phaser";
@@ -90,9 +90,9 @@ describe("Items - Light Ball", () => {
     const spAtkStat = partyMember.getStat(Stat.SPATK);
 
     // Making sure modifier is not applied without holding item
-    const atkValue = new Utils.NumberHolder(atkStat);
+    const atkValue = new NumberHolder(atkStat);
     game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.DEF, atkValue);
-    const spAtkValue = new Utils.NumberHolder(spAtkStat);
+    const spAtkValue = new NumberHolder(spAtkStat);
     game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.SPDEF, spAtkValue);
 
     expect(atkValue.value / atkStat).toBe(1);
@@ -129,9 +129,9 @@ describe("Items - Light Ball", () => {
     const spAtkStat = partyMember.getStat(Stat.SPATK);
 
     // Making sure modifier is not applied without holding item
-    const atkValue = new Utils.NumberHolder(atkStat);
+    const atkValue = new NumberHolder(atkStat);
     game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.DEF, atkValue);
-    const spAtkValue = new Utils.NumberHolder(spAtkStat);
+    const spAtkValue = new NumberHolder(spAtkStat);
     game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.SPDEF, spAtkValue);
 
     expect(atkValue.value / atkStat).toBe(1);
@@ -168,9 +168,9 @@ describe("Items - Light Ball", () => {
     const spAtkStat = partyMember.getStat(Stat.SPATK);
 
     // Making sure modifier is not applied without holding item
-    const atkValue = new Utils.NumberHolder(atkStat);
+    const atkValue = new NumberHolder(atkStat);
     game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.DEF, atkValue);
-    const spAtkValue = new Utils.NumberHolder(spAtkStat);
+    const spAtkValue = new NumberHolder(spAtkStat);
     game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.SPDEF, spAtkValue);
 
     expect(atkValue.value / atkStat).toBe(1);
@@ -197,9 +197,9 @@ describe("Items - Light Ball", () => {
     const spAtkStat = partyMember.getStat(Stat.SPATK);
 
     // Making sure modifier is not applied without holding item
-    const atkValue = new Utils.NumberHolder(atkStat);
+    const atkValue = new NumberHolder(atkStat);
     game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.DEF, atkValue);
-    const spAtkValue = new Utils.NumberHolder(spAtkStat);
+    const spAtkValue = new NumberHolder(spAtkStat);
     game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.SPDEF, spAtkValue);
 
     expect(atkValue.value / atkStat).toBe(1);
