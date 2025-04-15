@@ -116,7 +116,6 @@ export class TrainerConfig {
   public modifierRewardFuncs: ModifierTypeFunc[] = [];
   public partyTemplates: TrainerPartyTemplate[];
   public partyTemplateFunc: PartyTemplateFunc;
-  public eventRewardFuncs: ModifierTypeFunc[] = [];
   public partyMemberFuncs: PartyMemberFuncs = {};
   public speciesPools: TrainerTierPools;
   public speciesFilter: PokemonSpeciesFilter;
@@ -516,16 +515,6 @@ export class TrainerConfig {
   //   }
   //   return ret;
   // }
-
-  /**
-   * Sets eventRewardFuncs to the active event rewards for the specified wave
-   * @param wave Associated with {@linkcode getFixedBattleEventRewards}
-   * @returns this
-   */
-  setEventModifierRewardFuncs(wave: number): TrainerConfig {
-    this.eventRewardFuncs = timedEventManager.getFixedBattleEventRewards(wave).map(r => modifierTypes[r]);
-    return this;
-  }
 
   setModifierRewardFuncs(...modifierTypeFuncs: (() => ModifierTypeFunc)[]): TrainerConfig {
     this.modifierRewardFuncs = modifierTypeFuncs.map(func => () => {
@@ -3692,7 +3681,6 @@ export const trainerConfigs: TrainerConfigs = {
       () => modifierTypes.SUPER_EXP_CHARM,
       () => modifierTypes.EXP_SHARE,
     )
-    .setEventModifierRewardFuncs(8)
     .setPartyMemberFunc(
       0,
       getRandomPartyMemberFunc(
@@ -3760,7 +3748,6 @@ export const trainerConfigs: TrainerConfigs = {
     .setMixedBattleBgm("battle_rival")
     .setPartyTemplates(trainerPartyTemplates.RIVAL_2)
     .setModifierRewardFuncs(() => modifierTypes.EXP_SHARE)
-    .setEventModifierRewardFuncs(25)
     .setPartyMemberFunc(
       0,
       getRandomPartyMemberFunc(
