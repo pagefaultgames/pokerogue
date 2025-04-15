@@ -253,6 +253,6 @@ export class SwitchSummonPhase extends SummonPhase {
   }
 
   queuePostSummon(): void {
-    globalScene.unshiftPhase(new PostSummonPhase(this.getPokemon().getBattlerIndex()));
+    globalScene.startDynamicPhase(new PostSummonPhase(this.getPokemon().getBattlerIndex()));
   }
 }

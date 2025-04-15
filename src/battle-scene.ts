@@ -184,6 +184,10 @@ import { HideAbilityPhase } from "#app/phases/hide-ability-phase";
 import { expSpriteKeys } from "./sprites/sprite-keys";
 import { hasExpSprite } from "./sprites/sprite-utils";
 import { timedEventManager } from "./global-event-manager";
+import { type PhasePriorityQueue, PostSummonPhasePriorityQueue } from "#app/data/phase-priority-queue";
+import type { DynamicPhaseType } from "#enums/dynamic-phase-type";
+import { PostSummonPhase } from "#app/phases/post-summon-phase";
+import { ActivatePriorityQueuePhase } from "#app/phases/activate-priority-queue-phase";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
@@ -314,6 +318,10 @@ export default class BattleScene extends SceneBase {
   /** overrides default of inserting phases to end of phaseQueuePrepend array, useful or inserting Phases "out of order" */
   private phaseQueuePrependSpliceIndex: number;
   private nextCommandPhaseQueue: Phase[];
+  /** Storage for {@linkcode PhasePriorityQueue}s which hold phases whose order dynamically changes */
+  private dynamicPhaseQueues: PhasePriorityQueue[];
+  /** Parallel array to {@linkcode dynamicPhaseQueues} - matches phase types to their queues */
+  private dynamicPhaseTypes: Constructor<Phase>[];
 
   private currentPhase: Phase | null;
   private standbyPhase: Phase | null;
@@ -409,6 +417,8 @@ export default class BattleScene extends SceneBase {
     this.conditionalQueue = [];
     this.phaseQueuePrependSpliceIndex = -1;
     this.nextCommandPhaseQueue = [];
+    this.dynamicPhaseQueues = [new PostSummonPhasePriorityQueue()];
+    this.dynamicPhaseTypes = [PostSummonPhase];
     this.eventManager = new TimedEventManager();
     this.updateGameInfo();
     initGlobalScene(this);
@@ -2635,12 +2645,16 @@ export default class BattleScene extends SceneBase {
   }
 
   /**
-   * Adds a phase to nextCommandPhaseQueue, as long as boolean passed in is false
+   * Adds a phase to the end of the appropriate queue (dynamic or {@linkcode phaseQueue} / {@linkcode nextCommandPhaseQueue})
    * @param phase {@linkcode Phase} the phase to add
-   * @param defer boolean on which queue to add to, defaults to false, and adds to phaseQueue
+   * @param defer If `true`, add to {@linkcode nextCommandPhaseQueue} instead of {@linkcode phaseQueue}
    */
   pushPhase(phase: Phase, defer = false): void {
-    (!defer ? this.phaseQueue : this.nextCommandPhaseQueue).push(phase);
+    if (this.getDynamicPhaseType(phase) !== undefined) {
+      this.pushDynamicPhase(phase);
+    } else {
+      (!defer ? this.phaseQueue : this.nextCommandPhaseQueue).push(phase);
+    }
   }
 
   /**
@@ -2669,6 +2683,7 @@ export default class BattleScene extends SceneBase {
     for (const queue of [this.phaseQueue, this.phaseQueuePrepend, this.conditionalQueue, this.nextCommandPhaseQueue]) {
       queue.splice(0, queue.length);
     }
+    this.dynamicPhaseQueues.forEach(queue => queue.clear());
     this.currentPhase = null;
     this.standbyPhase = null;
     this.clearPhaseQueueSplice();
@@ -2719,8 +2734,9 @@ export default class BattleScene extends SceneBase {
 
     this.currentPhase = this.phaseQueue.shift() ?? null;
 
+    const unactivatedConditionalPhases: [() => boolean, Phase][] = [];
     // Check if there are any conditional phases queued
-    if (this.conditionalQueue?.length) {
+    while (this.conditionalQueue?.length) {
       // Retrieve the first conditional phase from the queue
       const conditionalPhase = this.conditionalQueue.shift();
       // Evaluate the condition associated with the phase
@@ -2729,11 +2745,12 @@ export default class BattleScene extends SceneBase {
         this.pushPhase(conditionalPhase[1]);
       } else if (conditionalPhase) {
         // If the condition is not met, re-add the phase back to the front of the conditional queue
-        this.conditionalQueue.unshift(conditionalPhase);
+        unactivatedConditionalPhases.push(conditionalPhase);
       } else {
         console.warn("condition phase is undefined/null!", conditionalPhase);
       }
     }
+    this.conditionalQueue.push(...unactivatedConditionalPhases);
 
     if (this.currentPhase) {
       console.log(`%cStart Phase ${this.currentPhase.constructor.name}`, "color:green;");
@@ -2819,13 +2836,14 @@ export default class BattleScene extends SceneBase {
    * Tries to add the input phase(s) to index after target phase in the {@linkcode phaseQueue}, else simply calls {@linkcode unshiftPhase()}
    * @param phase {@linkcode Phase} the phase(s) to be added
    * @param targetPhase {@linkcode Phase} the type of phase to search for in {@linkcode phaseQueue}
+   * @param condition Condition the target phase must meet to be appended to
    * @returns `true` if a `targetPhase` was found to append to
    */
-  appendToPhase(phase: Phase | Phase[], targetPhase: Constructor<Phase>): boolean {
+  appendToPhase(phase: Phase | Phase[], targetPhase: Constructor<Phase>, condition?: (p: Phase) => boolean): boolean {
     if (!Array.isArray(phase)) {
       phase = [phase];
     }
-    const targetIndex = this.phaseQueue.findIndex(ph => ph instanceof targetPhase);
+    const targetIndex = this.phaseQueue.findIndex(ph => ph instanceof targetPhase && (!condition || condition(ph)));
 
     if (targetIndex !== -1 && this.phaseQueue.length > targetIndex) {
       this.phaseQueue.splice(targetIndex + 1, 0, ...phase);
@@ -2833,6 +2851,68 @@ export default class BattleScene extends SceneBase {
     }
     this.unshiftPhase(...phase);
     return false;
+  }
+
+  /**
+   * Checks a phase and returns the matching {@linkcode DynamicPhaseType}, or undefined if it does not match one
+   * @param phase The phase to check
+   * @returns The corresponding {@linkcode DynamicPhaseType} or `undefined`
+   */
+  public getDynamicPhaseType(phase: Phase | null): DynamicPhaseType | undefined {
+    let phaseType: DynamicPhaseType | undefined;
+    this.dynamicPhaseTypes.forEach((cls, index) => {
+      if (phase instanceof cls) {
+        phaseType = index;
+      }
+    });
+
+    return phaseType;
+  }
+
+  /**
+   * Pushes a phase onto its corresponding dynamic queue and marks the activation point in {@linkcode phaseQueue}
+   *
+   * The {@linkcode ActivatePriorityQueuePhase} will run the top phase in the dynamic queue (not necessarily {@linkcode phase})
+   * @param phase The phase to push
+   */
+  public pushDynamicPhase(phase: Phase): void {
+    const type = this.getDynamicPhaseType(phase);
+    if (type === undefined) {
+      return;
+    }
+
+    this.pushPhase(new ActivatePriorityQueuePhase(type));
+    this.dynamicPhaseQueues[type].push(phase);
+  }
+
+  /**
+   * Unshifts the top phase from the corresponding dynamic queue onto {@linkcode phaseQueue}
+   * @param type {@linkcode DynamicPhaseType} The type of dynamic phase to start
+   */
+  public startDynamicPhaseType(type: DynamicPhaseType): void {
+    const phase = this.dynamicPhaseQueues[type].pop();
+    if (phase) {
+      this.unshiftPhase(phase);
+    }
+  }
+
+  /**
+   * Unshifts an {@linkcode ActivatePriorityQueuePhase} for {@linkcode phase}, then pushes {@linkcode phase} to its dynamic queue
+   *
+   * This is the same as {@linkcode pushDynamicPhase}, except the activation phase is unshifted
+   *
+   * {@linkcode phase} is not guaranteed to be the next phase from the queue to run (if the queue is not empty)
+   * @param phase The phase to add
+   * @returns
+   */
+  public startDynamicPhase(phase: Phase): void {
+    const type = this.getDynamicPhaseType(phase);
+    if (type === undefined) {
+      return;
+    }
+
+    this.unshiftPhase(new ActivatePriorityQueuePhase(type));
+    this.dynamicPhaseQueues[type].push(phase);
   }
 
   /**
