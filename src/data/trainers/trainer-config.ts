@@ -1318,7 +1318,16 @@ export const trainerConfigs: TrainerConfigs = {
       [TrainerPoolTier.RARE]: [Species.BELLOSSOM, Species.HITMONTOP, Species.MIME_JR, Species.ORICORIO],
       [TrainerPoolTier.SUPER_RARE]: [Species.QUAXLY, Species.JANGMO_O],
     }),
-  [TrainerType.DEPOT_AGENT]: new TrainerConfig(++t).setMoneyMultiplier(1.45).setEncounterBgm(TrainerType.CLERK),
+  [TrainerType.DEPOT_AGENT]: new TrainerConfig(++t)
+    .setMoneyMultiplier(1.45)
+    .setEncounterBgm(TrainerType.CLERK)
+    .setPartyTemplates(
+      trainerPartyTemplates.TWO_AVG,
+      trainerPartyTemplates.THREE_WEAK,
+      trainerPartyTemplates.THREE_AVG,
+      trainerPartyTemplates.FOUR_WEAK,
+    )
+    .setSpeciesFilter(s => s.isOfType(PokemonType.GROUND)),
   [TrainerType.DOCTOR]: new TrainerConfig(++t)
     .setHasGenders("Nurse", "lass")
     .setHasDouble("Medical Team")
@@ -1369,7 +1378,6 @@ export const trainerConfigs: TrainerConfigs = {
         Species.CHINCHOU,
         Species.CORSOLA,
         Species.WAILMER,
-        Species.BARBOACH,
         Species.CLAMPERL,
         Species.LUVDISC,
         Species.MANTYKE,
