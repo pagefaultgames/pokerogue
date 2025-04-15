@@ -134,9 +134,9 @@ export default class PokemonData {
 
     this.moveset =
       sourcePokemon?.moveset ??
-      (source.moveset || [new PokemonMove(Moves.TACKLE), new PokemonMove(Moves.GROWL)]).map(
-        (m: any) => new PokemonMove(m.moveId, m.ppUsed, m.ppUp, m.virtual, m.maxPpOverride),
-      );
+      (source.moveset || [new PokemonMove(Moves.TACKLE), new PokemonMove(Moves.GROWL)])
+        .filter((m: any) => !!m)
+        .map((m: any) => new PokemonMove(m.moveId, m.ppUsed, m.ppUp, m.virtual, m.maxPpOverride));
 
     if (!forHistory) {
       this.levelExp = source.levelExp;
@@ -148,9 +148,10 @@ export default class PokemonData {
       this.boss = (source instanceof EnemyPokemon && !!source.bossSegments) || (!this.player && !!source.boss);
       this.bossSegments = source.bossSegments;
       this.status =
-        (sourcePokemon?.status ?? source.status)
+        sourcePokemon?.status ??
+        (source.status
           ? new Status(source.status.effect, source.status.toxicTurnCount, source.status.sleepTurnsRemaining)
-          : null;
+          : null);
 
       this.summonData = sourcePokemon?.summonData ?? new PokemonSummonData(source.summonData);
 

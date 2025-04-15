@@ -405,6 +405,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           species.ability2 !== species.ability1 ? randAbilityIndex : 0; // Use random ability index if species has a second ability, otherwise use 0
       }
     }
+
     if (formIndex !== undefined) {
       this.formIndex = formIndex;
     }
@@ -420,6 +421,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     this.exp =
       dataSource?.exp || getLevelTotalExp(this.level, species.growthRate);
     this.levelExp = dataSource?.levelExp || 0;
+
+    // TODO?: Maybe instead of using such a giant if statement, maybe some optional chaining/null coaclescing would look better
     if (dataSource) {
       this.id = dataSource.id;
       this.hp = dataSource.hp;
@@ -1109,9 +1112,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * @param {boolean} useIllusion - Whether we want the speciesForm of the illusion or not.
+   * Get this {@linkcode Pokemon}'s {@linkcode PokemonSpeciesForm}.
+   * @param ignoreOverride - ?????; default `false`.
+   * @param useIllusion - `true` to use the speciesForm of the illusion; default `false`.
    */
-  getSpeciesForm(ignoreOverride?: boolean, useIllusion: boolean = false): PokemonSpeciesForm {
+  getSpeciesForm(ignoreOverride: boolean = false, useIllusion: boolean = false): PokemonSpeciesForm {
     const species: PokemonSpecies = useIllusion && !!this.summonData.illusion ? getPokemonSpecies(this.summonData.illusion.species) : this.species;
 
     const formIndex: integer = useIllusion && !!this.summonData.illusion ? this.summonData.illusion.formIndex : this.formIndex;
@@ -1119,6 +1124,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (!ignoreOverride && this.summonData.speciesForm) {
       return this.summonData.speciesForm;
     }
+
     if (species.forms && species.forms.length > 0) {
       return species.forms[formIndex];
     }
@@ -5817,7 +5823,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   Called once per new wave start as well as by {@linkcode resetBattleAndWaveData}.
   */
   resetWaveData(): void {
-    console.log("Wave data reset for pokemon %s", this.name)
     this.waveData = new PokemonWaveData();
   }
 
@@ -7881,12 +7886,12 @@ export class PokemonSummonData {
   /** The list of moves the pokemon has used since entering the battle */
   public moveHistory: TurnMove[] = [];
 
-  constructor(data?: PokemonSummonData | Partial<PokemonSummonData>) {
-    if (!isNullOrUndefined(data)) {
-      Object.assign(this, data);
-    }
-    this.moveset = this.moveset?.map(m => PokemonMove.loadMove(m));
-    this.tags = this.tags.map(t => loadBattlerTag(t));
+  constructor(source?: any) {
+    if (!isNullOrUndefined(source)) {
+      Object.assign(this, source);
+      this.moveset = source.moveset?.map(m => PokemonMove.loadMove(m));
+      this.tags = source.tags.map(t => loadBattlerTag(t));
+   }
   }
 }
 

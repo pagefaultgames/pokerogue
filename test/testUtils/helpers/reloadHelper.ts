@@ -73,6 +73,6 @@ export class ReloadHelper extends GameManagerHelper {
     }
 
     await this.game.phaseInterceptor.to(CommandPhase);
-    console.log("==================[New Turn]==================");
+    console.log("==================[New Turn (Reloaded)]==================");
   }
 }

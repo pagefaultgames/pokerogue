@@ -119,7 +119,6 @@ describe("Abilities - Imposter", () => {
 
     await game.classicMode.startBattle([Species.DITTO]);
 
-    const player = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;
 
     game.move.select(Moves.SPLASH);
@@ -132,7 +131,7 @@ describe("Abilities - Imposter", () => {
     await game.reload.reloadSession();
 
     const playerReloaded = game.scene.getPlayerPokemon()!;
-    const playerMoveset = player.getMoveset();
+    const playerMoveset = playerReloaded.getMoveset();
 
     expect(playerReloaded.getSpeciesForm().speciesId).toBe(enemy.getSpeciesForm().speciesId);
     expect(playerReloaded.getAbility()).toBe(enemy.getAbility());
