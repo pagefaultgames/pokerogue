@@ -10,7 +10,7 @@ import {
   ReflectStatStageChangeAbAttr,
   StatStageChangeCopyAbAttr,
   StatStageChangeMultiplierAbAttr,
-} from "#app/data/ability";
+} from "#app/data/abilities/ability";
 import { ArenaTagSide, MistTag } from "#app/data/arena-tag";
 import type { ArenaTag } from "#app/data/arena-tag";
 import type Pokemon from "#app/field/pokemon";

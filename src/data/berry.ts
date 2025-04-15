@@ -9,7 +9,7 @@ import {
   ReduceBerryUseThresholdAbAttr,
   applyAbAttrs,
   applyPostItemLostAbAttrs,
-} from "./ability";
+} from "./abilities/ability";
 import i18next from "i18next";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BerryType } from "#enums/berry-type";

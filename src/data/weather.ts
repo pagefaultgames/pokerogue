@@ -6,7 +6,7 @@ import { PokemonType } from "#enums/pokemon-type";
 import type Move from "./moves/move";
 import { AttackMove } from "./moves/move";
 import { randSeedInt } from "#app/utils";
-import { SuppressWeatherEffectAbAttr } from "./ability";
+import { SuppressWeatherEffectAbAttr } from "./abilities/ability";
 import { TerrainType, getTerrainName } from "./terrain";
 import i18next from "i18next";
 import { globalScene } from "#app/global-scene";

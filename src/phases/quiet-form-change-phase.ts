@@ -16,7 +16,7 @@ import {
   ClearTerrainAbAttr,
   ClearWeatherAbAttr,
   PostTeraFormChangeStatChangeAbAttr,
-} from "#app/data/ability";
+} from "#app/data/abilities/ability";
 
 export class QuietFormChangePhase extends BattlePhase {
   protected pokemon: Pokemon;
