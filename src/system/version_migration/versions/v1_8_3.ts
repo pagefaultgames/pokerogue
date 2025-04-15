@@ -1,14 +1,16 @@
+import type { SystemSaveMigrator } from "#app/@types/SystemSaveMigrator";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { DexAttr, type SystemSaveData } from "#app/system/game-data";
 import { Species } from "#enums/species";
 
-export const systemMigrators = [
-  /**
-   * If a starter is caught, but the only forms registered as caught are not starterSelectable,
-   * unlock the default form.
-   * @param data {@linkcode SystemSaveData}
-   */
-  function migratePichuForms(data: SystemSaveData) {
+/**
+ * If a starter is caught, but the only forms registered as caught are not starterSelectable,
+ * unlock the default form.
+ * @param data - {@linkcode SystemSaveData}
+ */
+const migratePichuForms: SystemSaveMigrator = {
+  version: "1.8.3",
+  migrate: (data: SystemSaveData): void => {
     if (data.starterData && data.dexData) {
       // This is Pichu's Pokédex number
       const sd = 172;
@@ -23,8 +25,6 @@ export const systemMigrators = [
       }
     }
   },
-] as const;
+};
 
-export const settingsMigrators = [] as const;
-
-export const sessionMigrators = [] as const;
+export const systemMigrators: Readonly<SystemSaveMigrator[]> = [migratePichuForms] as const;

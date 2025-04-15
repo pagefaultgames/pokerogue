@@ -5,7 +5,7 @@ import { addWindow } from "./ui-theme";
 import { Button } from "#enums/buttons";
 import i18next from "i18next";
 import type { Challenge } from "#app/data/challenge";
-import * as Utils from "../utils";
+import { getLocalizedSpriteKey } from "#app/utils";
 import { Challenges } from "#app/enums/challenges";
 import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import { Color, ShadowColor } from "#app/enums/color";
@@ -193,7 +193,7 @@ export default class GameChallengesUiHandler extends UiHandler {
       };
     }
 
-    this.monoTypeValue = globalScene.add.sprite(8, 98, Utils.getLocalizedSpriteKey("types"));
+    this.monoTypeValue = globalScene.add.sprite(8, 98, getLocalizedSpriteKey("types"));
     this.monoTypeValue.setName("challenge-value-monotype-sprite");
     this.monoTypeValue.setScale(0.86);
     this.monoTypeValue.setVisible(false);

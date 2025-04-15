@@ -10,11 +10,10 @@ import { handleTutorial, Tutorial } from "../tutorial";
 import { Button } from "#enums/buttons";
 import MoveInfoOverlay from "./move-info-overlay";
 import { allMoves } from "../data/moves/move";
-import * as Utils from "./../utils";
+import { formatMoney, NumberHolder } from "#app/utils";
 import Overrides from "#app/overrides";
 import i18next from "i18next";
 import { ShopCursorTarget } from "#app/enums/shop-cursor-target";
-import { NumberHolder } from "./../utils";
 import Phaser from "phaser";
 import type { PokeballType } from "#enums/pokeball";
 
@@ -645,7 +644,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     this.rerollCostText.setVisible(true);
     const canReroll = globalScene.money >= this.rerollCost;
 
-    const formattedMoney = Utils.formatMoney(globalScene.moneyFormat, this.rerollCost);
+    const formattedMoney = formatMoney(globalScene.moneyFormat, this.rerollCost);
 
     this.rerollCostText.setText(i18next.t("modifierSelectUiHandler:rerollCost", { formattedMoney }));
     this.rerollCostText.setColor(this.getTextColor(canReroll ? TextStyle.MONEY : TextStyle.PARTY_RED));
@@ -933,7 +932,7 @@ class ModifierOption extends Phaser.GameObjects.Container {
     const cost = Overrides.WAIVE_ROLL_FEE_OVERRIDE ? 0 : this.modifierTypeOption.cost;
     const textStyle = cost <= globalScene.money ? TextStyle.MONEY : TextStyle.PARTY_RED;
 
-    const formattedMoney = Utils.formatMoney(globalScene.moneyFormat, cost);
+    const formattedMoney = formatMoney(globalScene.moneyFormat, cost);
 
     this.itemCostText.setText(i18next.t("modifierSelectUiHandler:itemCost", { formattedMoney }));
     this.itemCostText.setColor(getTextColor(textStyle, false, globalScene.uiTheme));

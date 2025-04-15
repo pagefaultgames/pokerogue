@@ -6,8 +6,7 @@ import { addWindow, WindowVariant } from "./ui-theme";
 import type { MysteryEncounterPhase } from "../phases/mystery-encounter-phases";
 import { PartyUiMode } from "./party-ui-handler";
 import type MysteryEncounterOption from "#app/data/mystery-encounters/mystery-encounter-option";
-import * as Utils from "../utils";
-import { isNullOrUndefined } from "../utils";
+import { fixedInt, isNullOrUndefined } from "#app/utils";
 import { getPokeballAtlasKey } from "../data/pokeball";
 import type { OptionSelectSettings } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { getEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
@@ -456,10 +455,10 @@ export default class MysteryEncounterUiHandler extends UiHandler {
       if (optionTextWidth > nonScrollWidth) {
         this.optionScrollTweens[i] = globalScene.tweens.add({
           targets: optionText,
-          delay: Utils.fixedInt(2000),
+          delay: fixedInt(2000),
           loop: -1,
-          hold: Utils.fixedInt(2000),
-          duration: Utils.fixedInt(((optionTextWidth - nonScrollWidth) / 15) * 2000),
+          hold: fixedInt(2000),
+          duration: fixedInt(((optionTextWidth - nonScrollWidth) / 15) * 2000),
           x: `-=${optionTextWidth - nonScrollWidth}`,
         });
       }
@@ -527,10 +526,10 @@ export default class MysteryEncounterUiHandler extends UiHandler {
     if (descriptionLineCount > 6) {
       this.descriptionScrollTween = globalScene.tweens.add({
         targets: descriptionTextObject,
-        delay: Utils.fixedInt(2000),
+        delay: fixedInt(2000),
         loop: -1,
-        hold: Utils.fixedInt(2000),
-        duration: Utils.fixedInt((descriptionLineCount - 6) * 2000),
+        hold: fixedInt(2000),
+        duration: fixedInt((descriptionLineCount - 6) * 2000),
         y: `-=${10 * (descriptionLineCount - 6)}`,
       });
     }
@@ -637,10 +636,10 @@ export default class MysteryEncounterUiHandler extends UiHandler {
       if (tooltipLineCount > 3) {
         this.tooltipScrollTween = globalScene.tweens.add({
           targets: tooltipTextObject,
-          delay: Utils.fixedInt(1200),
+          delay: fixedInt(1200),
           loop: -1,
-          hold: Utils.fixedInt(1200),
-          duration: Utils.fixedInt((tooltipLineCount - 3) * 1200),
+          hold: fixedInt(1200),
+          duration: fixedInt((tooltipLineCount - 3) * 1200),
           y: `-=${11.2 * (tooltipLineCount - 3)}`,
         });
       }

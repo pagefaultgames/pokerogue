@@ -3,7 +3,7 @@ import { TextStyle, addBBCodeTextObject, getTextColor, getTextStyleOptions } fro
 import { Mode } from "./ui";
 import UiHandler from "./ui-handler";
 import { addWindow } from "./ui-theme";
-import * as Utils from "../utils";
+import { rgbHexToRgba, fixedInt } from "#app/utils";
 import { argbFromRgba } from "@material/material-color-utilities";
 import { Button } from "#enums/buttons";
 import BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
@@ -178,8 +178,8 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
           itemOverlayIcon.setPositionRelative(this.optionSelectText, 36 * this.scale, 7 + i * (114 * this.scale - 3));
 
           if (option.itemArgs) {
-            itemIcon.setTint(argbFromRgba(Utils.rgbHexToRgba(option.itemArgs[0])));
-            itemOverlayIcon.setTint(argbFromRgba(Utils.rgbHexToRgba(option.itemArgs[1])));
+            itemIcon.setTint(argbFromRgba(rgbHexToRgba(option.itemArgs[0])));
+            itemOverlayIcon.setTint(argbFromRgba(rgbHexToRgba(option.itemArgs[1])));
           }
         }
       }
@@ -207,7 +207,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
       this.blockInput = true;
       this.optionSelectTextContainer.setAlpha(0.5);
       this.cursorObj?.setAlpha(0.8);
-      globalScene.time.delayedCall(Utils.fixedInt(this.config.delay), () => this.unblockInput());
+      globalScene.time.delayedCall(fixedInt(this.config.delay), () => this.unblockInput());
     }
 
     if (this.config?.supportHover) {

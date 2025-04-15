@@ -297,16 +297,16 @@ export class MoveEffectPhase extends PokemonPhase {
           );
         }
 
-          /** Is the target protected by Protect, etc. or a relevant conditional protection effect? */
-          const isProtected =
-            ![MoveTarget.ENEMY_SIDE, MoveTarget.BOTH_SIDES].includes(this.move.getMove().moveTarget) &&
-            (bypassIgnoreProtect.value ||
-              !this.move.getMove().doesFlagEffectApply({ flag: MoveFlags.IGNORE_PROTECT, user, target })) &&
-            (hasConditionalProtectApplied.value ||
-              (!target.findTags(t => t instanceof DamageProtectedTag).length &&
-                target.findTags(t => t instanceof ProtectedTag).find(t => target.lapseTag(t.tagType))) ||
-              (this.move.getMove().category !== MoveCategory.STATUS &&
-                target.findTags(t => t instanceof DamageProtectedTag).find(t => target.lapseTag(t.tagType))));
+        /** Is the target protected by Protect, etc. or a relevant conditional protection effect? */
+        const isProtected =
+          ![MoveTarget.ENEMY_SIDE, MoveTarget.BOTH_SIDES].includes(this.move.getMove().moveTarget) &&
+          (bypassIgnoreProtect.value ||
+            !this.move.getMove().doesFlagEffectApply({ flag: MoveFlags.IGNORE_PROTECT, user, target })) &&
+          (hasConditionalProtectApplied.value ||
+            (!target.findTags(t => t instanceof DamageProtectedTag).length &&
+              target.findTags(t => t instanceof ProtectedTag).find(t => target.lapseTag(t.tagType))) ||
+            (this.move.getMove().category !== MoveCategory.STATUS &&
+              target.findTags(t => t instanceof DamageProtectedTag).find(t => target.lapseTag(t.tagType))));
 
         /** Is the target hidden by the effects of its Commander ability? */
         const isCommanding =
@@ -316,11 +316,11 @@ export class MoveEffectPhase extends PokemonPhase {
         /** Is the target reflecting status moves from the magic coat move? */
         const isReflecting = !!target.getTag(BattlerTagType.MAGIC_COAT);
 
-          /** Is the target's magic bounce ability not ignored and able to reflect this move? */
-          const canMagicBounce =
-            !isReflecting &&
-            !move.doesFlagEffectApply({ flag: MoveFlags.IGNORE_ABILITIES, user, target }) &&
-            target.hasAbilityWithAttr(ReflectStatusMoveAbAttr);
+        /** Is the target's magic bounce ability not ignored and able to reflect this move? */
+        const canMagicBounce =
+          !isReflecting &&
+          !move.doesFlagEffectApply({ flag: MoveFlags.IGNORE_ABILITIES, user, target }) &&
+          target.hasAbilityWithAttr(ReflectStatusMoveAbAttr);
 
         const semiInvulnerableTag = target.getTag(SemiInvulnerableTag);
 
@@ -333,21 +333,19 @@ export class MoveEffectPhase extends PokemonPhase {
           (isReflecting || canMagicBounce) &&
           !semiInvulnerableTag;
 
-          // If the move will bounce, then queue the bounce and move on to the next target
-          if (!target.switchOutStatus && willBounce) {
-            const newTargets = move.isMultiTarget()
-              ? getMoveTargets(target, move.id).targets
-              : [user.getBattlerIndex()];
-            if (!isReflecting) {
-              // TODO: Ability displays should be handled by the ability
-              queuedPhases.push(
-                new ShowAbilityPhase(
-                  target.getBattlerIndex(),
-                  target.getPassiveAbility().hasAttr(ReflectStatusMoveAbAttr),
-                ),
-              );
-              queuedPhases.push(new HideAbilityPhase());
-            }
+        // If the move will bounce, then queue the bounce and move on to the next target
+        if (!target.switchOutStatus && willBounce) {
+          const newTargets = move.isMultiTarget() ? getMoveTargets(target, move.id).targets : [user.getBattlerIndex()];
+          if (!isReflecting) {
+            // TODO: Ability displays should be handled by the ability
+            queuedPhases.push(
+              new ShowAbilityPhase(
+                target.getBattlerIndex(),
+                target.getPassiveAbility().hasAttr(ReflectStatusMoveAbAttr),
+              ),
+            );
+            queuedPhases.push(new HideAbilityPhase());
+          }
 
           queuedPhases.push(new MovePhase(target, newTargets, new PokemonMove(move.id, 0, 0, true), true, true, true));
           continue;
