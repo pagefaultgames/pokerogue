@@ -91,6 +91,10 @@ export class BattlerTag {
 
   onOverlap(_pokemon: Pokemon): void {}
 
+  /**
+   * Tick down a given BattlerTag.
+   * @returns `true` if the tag should be removed (`turnsLeft <= 0`)
+   */
   lapse(_pokemon: Pokemon, _lapseType: BattlerTagLapseType): boolean {
     return --this.turnCount > 0;
   }

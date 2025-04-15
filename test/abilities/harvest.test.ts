@@ -1,5 +1,7 @@
-import { BerryModifier } from "#app/modifier/modifier";
+import type Pokemon from "#app/field/pokemon";
+import { BerryModifier, PreserveBerryModifier } from "#app/modifier/modifier";
 import type { ModifierOverride } from "#app/modifier/modifier-type";
+import type { BooleanHolder } from "#app/utils";
 import { Abilities } from "#enums/abilities";
 import { BerryType } from "#enums/berry-type";
 import { Moves } from "#enums/moves";
@@ -17,13 +19,13 @@ describe("Abilities - Harvest", () => {
   const getPlayerBerries = () =>
     game.scene.getModifiers(BerryModifier, true).filter(b => b.pokemonId === game.scene.getPlayerPokemon()?.id);
 
-  /** Check whether the player's Modifiers contains AT LEAST the specified berries. */
+  /** Check whether the player's Modifiers contains the specified berries. */
   function expectBerriesContaining(...berries: ModifierOverride[]): void {
     const actualBerries: ModifierOverride[] = getPlayerBerries().map(
       // only grab berry type and quantity since that's literally all we care about
       b => ({ name: "BERRY", type: b.berryType, count: b.getStackCount() }),
     );
-    expect(actualBerries).toEqual(expect.arrayContaining(berries));
+    expect(actualBerries).toEqual(berries);
   }
 
   beforeAll(() => {
@@ -221,18 +223,40 @@ describe("Abilities - Harvest", () => {
       expectBerriesContaining(...initBerries);
     });
 
-    it("cannot restore berries eaten by Pluck", async () => {
+    it("cannot restore Plucked berries for either side", async () => {
       const initBerries: ModifierOverride[] = [{ name: "BERRY", type: BerryType.PETAYA, count: 1 }];
-      game.override.startingHeldItems(initBerries).enemyMoveset(Moves.PLUCK);
+      game.override.startingHeldItems(initBerries).enemyAbility(Abilities.HARVEST).enemyMoveset(Moves.PLUCK);
       await game.classicMode.startBattle([Species.FEEBAS]);
 
       // gobble gobble gobble
       game.move.select(Moves.SPLASH);
-      await game.phaseInterceptor.to("TurnEndPhase");
+      await game.phaseInterceptor.to("BerryPhase");
 
-      // pluck no trigger harvest so we have no berr
+      // pluck triggers harvest for neither side
       expect(game.scene.getPlayerPokemon()?.battleData.berriesEaten).toEqual([]);
-      expectBerriesContaining();
+      expect(game.scene.getEnemyPokemon()?.battleData.berriesEaten).toEqual([]);
+      expect(getPlayerBerries()).toEqual([]);
+    });
+
+    it("cannot restore berries preserved via Berry Pouch", async () => {
+      // mock berry pouch to have a 100% success rate
+      vi.spyOn(PreserveBerryModifier.prototype, "apply").mockImplementation(
+        (_pokemon: Pokemon, doPreserve: BooleanHolder): boolean => {
+          doPreserve.value = false;
+          return true;
+        },
+      );
+
+      const initBerries: ModifierOverride[] = [{ name: "BERRY", type: BerryType.PETAYA, count: 1 }];
+      game.override.startingHeldItems(initBerries).startingModifier([{ name: "BERRY_POUCH", count: 1 }]);
+      await game.classicMode.startBattle([Species.FEEBAS]);
+
+      game.move.select(Moves.SPLASH);
+      await game.phaseInterceptor.to("TurnEndPhase", false);
+
+      // won;t trigger harvest since we didn't lose the berry (it just doesn't ever add it to the array)
+      expect(game.scene.getPlayerPokemon()?.battleData.berriesEaten).toEqual([]);
+      expectBerriesContaining(...initBerries);
     });
 
     it("can restore stolen berries", async () => {

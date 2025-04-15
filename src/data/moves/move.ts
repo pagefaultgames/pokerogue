@@ -2682,7 +2682,7 @@ export class EatBerryAttr extends MoveEffectAttr {
 
     const heldBerries = this.getTargetHeldBerries(target);
     if (heldBerries.length <= 0) {
-      // no berries makes a hungry munchlax...
+      // no berries makes munchlax very sad...
       return false;
     }
 
@@ -8044,7 +8044,7 @@ export class MoveCondition {
 
 export class FirstMoveCondition extends MoveCondition {
   constructor() {
-    super((user, target, move) => user.summonData?.waveTurnCount === 1);
+    super((user, target, move) => user.summonData.waveTurnCount === 1);
   }
 
   getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
@@ -8686,7 +8686,7 @@ export function initMoves() {
     new StatusMove(Moves.TRANSFORM, PokemonType.NORMAL, -1, 10, -1, 0, 1)
       .attr(TransformAttr)
       .condition((user, target, move) => !target.getTag(BattlerTagType.SUBSTITUTE))
-      .condition((user, target, move) => !target.summonData?.illusion && !user.summonData?.illusion)
+      .condition((user, target, move) => !target.summonData.illusion && !user.summonData.illusion)
       // transforming from or into fusion pokemon causes various problems (such as crashes)
       .condition((user, target, move) => !target.getTag(BattlerTagType.SUBSTITUTE) && !user.fusionSpecies && !target.fusionSpecies)
       .ignoresProtect(),

@@ -41,13 +41,7 @@ import { WeatherType } from "#enums/weather-type";
  * }
  * ```
  */
-const overrides = {
-  STARTING_HELD_ITEMS_OVERRIDE: [{ name: "BERRY", type: BerryType.LUM, count: 2 }],
-  WEATHER_OVERRIDE: WeatherType.SUNNY,
-  ABILITY_OVERRIDE: Abilities.HARVEST,
-  OPP_MOVESET_OVERRIDE: Moves.NUZZLE
-
-} satisfies Partial<InstanceType<typeof DefaultOverrides>>;
+const overrides = {} satisfies Partial<InstanceType<typeof DefaultOverrides>>;
 
 /**
  * If you need to add Overrides values for local testing do that inside {@linkcode overrides}

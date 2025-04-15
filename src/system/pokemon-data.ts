@@ -8,7 +8,6 @@ import { Status } from "../data/status-effect";
 import Pokemon, { EnemyPokemon, PokemonMove, PokemonSummonData, type PokemonBattleData } from "../field/pokemon";
 import { TrainerSlot } from "#enums/trainer-slot";
 import type { Variant } from "#app/sprites/variant";
-import { loadBattlerTag } from "../data/battler-tags";
 import type { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import type { Species } from "#enums/species";
@@ -81,9 +80,8 @@ export default class PokemonData {
     this.id = source.id;
     this.player = sourcePokemon ? sourcePokemon.isPlayer() : source.player;
     this.species = sourcePokemon ? sourcePokemon.species.speciesId : source.species;
-    this.nickname = sourcePokemon 
-    ? (!!sourcePokemon.summonData?.illusion ? sourcePokemon.summonData.illusion.basePokemon.nickname : sourcePokemon.nickname) 
-    : source.nickname;
+    this.nickname =
+      sourcePokemon?.summonData.illusion?.basePokemon.nickname ?? sourcePokemon?.nickname ?? source.nickname;
     this.formIndex = Math.max(Math.min(source.formIndex, getPokemonSpecies(this.species).forms.length - 1), 0);
     this.abilityIndex = source.abilityIndex;
     this.passive = source.passive;
@@ -102,7 +100,7 @@ export default class PokemonData {
     this.metBiome = source.metBiome !== undefined ? source.metBiome : -1;
     this.metSpecies = source.metSpecies;
     this.metWave = source.metWave ?? (this.metBiome === -1 ? -1 : 0);
-    this.luck = source.luck !== undefined ? source.luck : source.shiny ? source.variant + 1 : 0;
+    this.luck = (source.luck ?? source.shiny) ? source.variant + 1 : 0;
     this.pokerus = !!source.pokerus;
     this.teraType = source.teraType as PokemonType;
     this.isTerastallized = source.isTerastallized || false;
@@ -111,12 +109,16 @@ export default class PokemonData {
     this.fusionSpecies = sourcePokemon ? sourcePokemon.fusionSpecies?.speciesId : source.fusionSpecies;
     this.fusionFormIndex = source.fusionFormIndex;
     this.fusionAbilityIndex = source.fusionAbilityIndex;
-    this.fusionShiny = sourcePokemon 
-    ? (!!sourcePokemon.summonData?.illusion ? sourcePokemon.summonData.illusion.basePokemon.fusionShiny : sourcePokemon.fusionShiny) 
-    : source.fusionShiny;
-    this.fusionVariant = sourcePokemon 
-    ? (!!sourcePokemon.summonData?.illusion ? sourcePokemon.summonData.illusion.basePokemon.fusionVariant : sourcePokemon.fusionVariant) 
-    : source.fusionVariant;
+    this.fusionShiny = sourcePokemon
+      ? sourcePokemon.summonData.illusion
+        ? sourcePokemon.summonData.illusion.basePokemon.fusionShiny
+        : sourcePokemon.fusionShiny
+      : source.fusionShiny;
+    this.fusionVariant = sourcePokemon
+      ? sourcePokemon.summonData.illusion
+        ? sourcePokemon.summonData.illusion.basePokemon.fusionVariant
+        : sourcePokemon.fusionVariant
+      : source.fusionVariant;
     this.fusionGender = source.fusionGender;
     this.fusionLuck =
       source.fusionLuck !== undefined ? source.fusionLuck : source.fusionShiny ? source.fusionVariant + 1 : 0;
@@ -136,6 +138,12 @@ export default class PokemonData {
       ? new CustomPokemonData(source.fusionMysteryEncounterPokemonData)
       : null;
 
+    this.moveset =
+      sourcePokemon?.moveset ??
+      (source.moveset || [new PokemonMove(Moves.TACKLE), new PokemonMove(Moves.GROWL)]).map(
+        (m: any) => new PokemonMove(m.moveId, m.ppUsed, m.ppUp, m.virtual, m.maxPpOverride),
+      );
+
     if (!forHistory) {
       this.levelExp = source.levelExp;
       this.hp = source.hp;
@@ -145,51 +153,14 @@ export default class PokemonData {
 
       this.boss = (source instanceof EnemyPokemon && !!source.bossSegments) || (!this.player && !!source.boss);
       this.bossSegments = source.bossSegments;
-    }
-
-    // TODO: Refactor to use nullish coaclescing in favor of big conditional
-    if (sourcePokemon) {
-      this.moveset = sourcePokemon.moveset;
-      if (!forHistory) {
-        this.status = sourcePokemon.status;
-        if (this.player && sourcePokemon.summonData) {
-          this.summonData = sourcePokemon.summonData;
-          this.summonDataSpeciesFormIndex = this.getSummonDataSpeciesFormIndex();
-        }
-        if (this.player && sourcePokemon.battleData) {
-          this.battleData = sourcePokemon.battleData;
-        }
-      }
-    } else {
-      this.moveset = (source.moveset || [new PokemonMove(Moves.TACKLE), new PokemonMove(Moves.GROWL)])
-        .filter(m => m)
-        .map((m: any) => new PokemonMove(m.moveId, m.ppUsed, m.ppUp, m.virtual, m.maxPpOverride));
-      if (!forHistory) {
-        this.status = source.status
+      this.status =
+        (sourcePokemon?.status ?? source.status)
           ? new Status(source.status.effect, source.status.toxicTurnCount, source.status.sleepTurnsRemaining)
           : null;
-      }
+      this.summonData = sourcePokemon?.summonData ?? new PokemonSummonData(source.summonData);
 
-      this.summonData = new PokemonSummonData();
-      if (!forHistory && source.summonData) {
-        this.summonData.stats = source.summonData.stats;
-        this.summonData.statStages = source.summonData.statStages;
-        this.summonData.moveQueue = source.summonData.moveQueue;
-        this.summonData.abilitySuppressed = source.summonData.abilitySuppressed;
-
-        this.summonData.ability = source.summonData.ability;
-        this.summonData.moveset = source.summonData.moveset?.map(m => PokemonMove.loadMove(m));
-        this.summonData.types = source.summonData.types;
-        this.summonData.speciesForm = source.summonData.speciesForm;
-        this.summonDataSpeciesFormIndex = source.summonDataSpeciesFormIndex;
-        this.summonData.illusionBroken = source.summonData.illusionBroken;
-
-        if (source.summonData.tags) {
-          this.summonData.tags = source.summonData.tags?.map(t => loadBattlerTag(t));
-        } else {
-          this.summonData.tags = [];
-        }
-      }
+      this.summonDataSpeciesFormIndex = this.getSummonDataSpeciesFormIndex();
+      this.battleData = sourcePokemon?.battleData ?? source.battleData;
     }
   }
 

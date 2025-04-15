@@ -2668,7 +2668,7 @@ export class PostSummonCopyAllyStatsAbAttr extends PostSummonAbAttr {
 }
 
 /**
- * Used by Imposter
+ * Attribute used by {@linkcode Abilities.IMPOSTER} to transform into a random opposing pokemon on entry.
  */
 export class PostSummonTransformAbAttr extends PostSummonAbAttr {
   constructor() {
@@ -2703,7 +2703,7 @@ export class PostSummonTransformAbAttr extends PostSummonAbAttr {
     const targets = pokemon.getOpponents();
     const target = this.getTarget(targets);
 
-    if (!!target.summonData?.illusion) {
+    if (target.summonData.illusion) {
       return false;
     }
 
@@ -5247,7 +5247,7 @@ export class IllusionPreSummonAbAttr extends PreSummonAbAttr {
   }
 
   override canApplyPreSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
-    pokemon.initSummondata()
+    pokemon.initSummonData()
     if(pokemon.hasTrainer()){
       const party: Pokemon[] = (pokemon.isPlayer() ? globalScene.getPlayerParty() : globalScene.getEnemyParty()).filter(p => p.isAllowedInBattle());
       const lastPokemon: Pokemon = party.filter(p => p !==pokemon).at(-1) || pokemon;
@@ -5285,7 +5285,7 @@ export class IllusionBreakAbAttr extends PostDefendAbAttr {
 
   override canApplyPostDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean {
     const breakIllusion: HitResult[] = [ HitResult.EFFECTIVE, HitResult.SUPER_EFFECTIVE, HitResult.NOT_VERY_EFFECTIVE, HitResult.ONE_HIT_KO ];
-    return breakIllusion.includes(hitResult) && !!pokemon.summonData?.illusion
+    return breakIllusion.includes(hitResult) && !!pokemon.summonData.illusion
   }
 }
 
@@ -6371,13 +6371,10 @@ export function applyOnLoseAbAttrs(pokemon: Pokemon, passive = false, simulated 
 
 /**
  * Sets the ability of a Pokémon as revealed.
- *
  * @param pokemon - The Pokémon whose ability is being revealed.
  */
 function setAbilityRevealed(pokemon: Pokemon): void {
-  if (pokemon.battleData) {
-    pokemon.waveData.abilityRevealed = true;
-  }
+  pokemon.waveData.abilityRevealed = true;
 }
 
 /**
@@ -6952,7 +6949,7 @@ export function initAbilities() {
       .attr(HealFromBerryUseAbAttr, 1 / 3),
     new Ability(Abilities.PROTEAN, 6)
       .attr(PokemonTypeChangeAbAttr),
-    //.condition((p) => !p.summonData?.abilitiesApplied.includes(Abilities.PROTEAN)), //Gen 9 Implementation
+    //.condition((p) => !p.summonData.abilitiesApplied.includes(Abilities.PROTEAN)), //Gen 9 Implementation
     new Ability(Abilities.FUR_COAT, 6)
       .attr(ReceivedMoveDamageMultiplierAbAttr, (target, user, move) => move.category === MoveCategory.PHYSICAL, 0.5)
       .ignorable(),
@@ -7198,7 +7195,7 @@ export function initAbilities() {
       .attr(PostSummonStatStageChangeAbAttr, [ Stat.DEF ], 1, true),
     new Ability(Abilities.LIBERO, 8)
       .attr(PokemonTypeChangeAbAttr),
-    //.condition((p) => !p.summonData?.abilitiesApplied.includes(Abilities.LIBERO)), //Gen 9 Implementation
+    //.condition((p) => !p.summonData.abilitiesApplied.includes(Abilities.LIBERO)), //Gen 9 Implementation
     new Ability(Abilities.BALL_FETCH, 8)
       .attr(FetchBallAbAttr)
       .condition(getOncePerBattleCondition(Abilities.BALL_FETCH)),

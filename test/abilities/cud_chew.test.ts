@@ -1,4 +1,7 @@
-import { RepeatBerryNextTurnAbAttr } from "#app/data/ability";
+import { RepeatBerryNextTurnAbAttr } from "#app/data/abilities/ability";
+import { getBerryEffectFunc } from "#app/data/berry";
+import Pokemon from "#app/field/pokemon";
+import { toDmgValue } from "#app/utils";
 import { Abilities } from "#enums/abilities";
 import { BerryType } from "#enums/berry-type";
 import { Moves } from "#enums/moves";
@@ -25,7 +28,7 @@ describe("Abilities - Cud Chew", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset(Moves.SPLASH)
+      .moveset([Moves.BUG_BITE, Moves.SPLASH, Moves.HYPER_VOICE, Moves.STUFF_CHEEKS])
       .startingHeldItems([{ name: "BERRY", type: BerryType.SITRUS, count: 1 }])
       .ability(Abilities.CUD_CHEW)
       .battleType("single")
@@ -47,6 +50,46 @@ describe("Abilities - Cud Chew", () => {
 
       // berries tracked in turnData; not moved to battleData yet
       expect(farigiraf.summonData.berriesEatenLast).toEqual([]);
+      expect(farigiraf.turnData.berriesEaten).toEqual([BerryType.SITRUS]);
+
+      await game.phaseInterceptor.to("TurnEndPhase");
+
+      // berries stored in battleData; not yet cleared from turnData
+      expect(farigiraf.summonData.berriesEatenLast).toEqual([BerryType.SITRUS]);
+      expect(farigiraf.turnData.berriesEaten).toEqual([BerryType.SITRUS]);
+
+      await game.toNextTurn();
+
+      // turnData cleared on turn start
+      expect(farigiraf.summonData.berriesEatenLast).toEqual([BerryType.SITRUS]);
+      expect(farigiraf.turnData.berriesEaten).toEqual([]);
+    });
+
+    it("can store multiple berries across 2 turns with teatime", async () => {
+      // always eat first berry for stuff cheeks & company
+      vi.spyOn(Pokemon.prototype, "randSeedInt").mockReturnValue(0);
+      game.override
+        .startingHeldItems([
+          { name: "BERRY", type: BerryType.PETAYA, count: 3 },
+          { name: "BERRY", type: BerryType.LIECHI, count: 3 },
+        ])
+        .enemyMoveset(Moves.TEATIME);
+
+      await game.classicMode.startBattle([Species.FARIGIRAF]);
+
+      const farigiraf = game.scene.getPlayerPokemon()!;
+      farigiraf.hp = 1; // needed to allow berry procs
+
+      game.move.select(Moves.STUFF_CHEEKS);
+      await game.phaseInterceptor.to("BerryPhase");
+
+      // berries tracked in turnData; not moved to battleData yet
+      expect(farigiraf.summonData.berriesEatenLast).toEqual([
+        BerryType.PETAYA,
+        BerryType.PETAYA,
+        BerryType.PETAYA,
+        BerryType.LIECHI,
+      ]);
       expect(farigiraf.turnData.berriesEaten).toEqual([BerryType.SITRUS]);
 
       await game.phaseInterceptor.to("TurnEndPhase");
@@ -150,20 +193,80 @@ describe("Abilities - Cud Chew", () => {
       expect(farigiraf.hp).toBeGreaterThanOrEqual(farigiraf.hp / 2);
     });
 
-    it("doesn't count non-eating removal", async () => {
+    it("doesn't trigger on non-eating removal", async () => {
       game.override.enemyMoveset(Moves.INCINERATE);
       await game.classicMode.startBattle([Species.FARIGIRAF]);
 
       const farigiraf = game.scene.getPlayerPokemon()!;
-      const initHp = farigiraf.getMaxHp() / 4; // needed to allow sitrus procs without dying
-      farigiraf.hp = initHp;
+      farigiraf.hp = farigiraf.getMaxHp() / 4; // needed to allow sitrus procs without dying
 
       game.move.select(Moves.SPLASH);
       await game.toNextTurn();
 
-      // only 1 berry eaten due to 2nd one being cooked
-      expect(farigiraf.summonData.berriesEatenLast).toEqual([BerryType.SITRUS]);
+      // no berries eaten due to getting cooked
+      expect(farigiraf.summonData.berriesEatenLast).toEqual([]);
       expect(farigiraf.turnData.berriesEaten).toEqual([]);
+      expect(farigiraf.hp).toBeLessThan(farigiraf.getMaxHp() / 4);
+    });
+
+    it("works with pluck even if berry is useless", async () => {
+      const bSpy = vi.fn(getBerryEffectFunc);
+      game.override
+        .enemySpecies(Species.BLAZIKEN)
+        .enemyHeldItems([{ name: "BERRY", type: BerryType.SITRUS, count: 1 }])
+        .startingHeldItems([]);
+      await game.classicMode.startBattle([Species.FARIGIRAF]);
+
+      game.move.select(Moves.BUG_BITE);
+      await game.toNextTurn();
+      game.move.select(Moves.BUG_BITE);
+      await game.toNextTurn();
+
+      expect(bSpy).toBeCalledTimes(2);
+    });
+
+    it("works with Ripen", async () => {
+      const bSpy = vi.fn(getBerryEffectFunc);
+      game.override.passiveAbility(Abilities.RIPEN);
+      await game.classicMode.startBattle([Species.FARIGIRAF]);
+
+      const farigiraf = game.scene.getPlayerPokemon()!;
+      farigiraf.hp = 1;
+
+      game.move.select(Moves.SPLASH);
+      await game.toNextTurn();
+      game.move.select(Moves.SPLASH);
+      await game.toNextTurn();
+
+      expect(farigiraf.hp).toBeGreaterThanOrEqual(4 * toDmgValue(farigiraf.getMaxHp() / 4));
+      expect(bSpy).toHaveBeenCalledTimes(2);
+    });
+
+    it("is preserved on reload/wave clear", async () => {
+      game.override.enemyLevel(1);
+      await game.classicMode.startBattle([Species.FARIGIRAF]);
+
+      const farigiraf = game.scene.getPlayerPokemon()!;
+      farigiraf.hp = 1; // needed to allow sitrus procs without dying
+
+      game.move.select(Moves.HYPER_VOICE);
+      await game.toNextWave();
+
+      // berry went yummy yummy in big fat giraffe tummy
+      expect(farigiraf.summonData.berriesEatenLast).toEqual([BerryType.SITRUS]);
+      expect(farigiraf.hp).toBeGreaterThan(Math.trunc(farigiraf.getMaxHp() / 4));
+
+      // reload and the berry should still be there...?
+      await game.reload.reloadSession();
+
+      const farigirafReloaded = game.scene.getPlayerPokemon()!;
+      expect(farigirafReloaded.summonData.berriesEatenLast).toEqual([BerryType.SITRUS]);
+
+      // blow up next wave to make sure it works funsies
+      game.move.select(Moves.HYPER_VOICE);
+      await game.toNextWave();
+
+      expect(farigirafReloaded.hp).toBeGreaterThanOrEqual(2 * toDmgValue(farigiraf.getMaxHp() / 4));
     });
   });
 });

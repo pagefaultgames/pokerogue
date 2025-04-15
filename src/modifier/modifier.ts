@@ -1916,9 +1916,7 @@ export class PreserveBerryModifier extends PersistentModifier {
    * @returns always `true`
    */
   override apply(pokemon: Pokemon, doPreserve: BooleanHolder): boolean {
-    if (!doPreserve.value) {
-      doPreserve.value = pokemon.randSeedInt(10) < this.getStackCount() * 3;
-    }
+    doPreserve.value ||= pokemon.randSeedInt(10) < this.getStackCount() * 3;
 
     return true;
   }
