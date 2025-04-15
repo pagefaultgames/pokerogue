@@ -8,6 +8,10 @@ import { HitResult } from "#app/field/pokemon";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { TYPE_BOOST_ITEM_BOOST_PERCENT } from "#app/constants";
+import { allAbilities } from "#app/data/data-lists";
+import { MoveTypeChangeAbAttr } from "#app/data/abilities/ability";
+import { toDmgValue } from "#app/utils";
 
 /**
  * Tests for abilities that change the type of normal moves to
@@ -43,6 +47,7 @@ describe.each([
     game.override
       .battleStyle("single")
       .startingLevel(100)
+      .starterSpecies(Species.MAGIKARP)
       .ability(ab)
       .moveset([Moves.TACKLE, Moves.REVELATION_DANCE, Moves.FURY_SWIPES])
       .enemySpecies(Species.DUSCLOPS)
@@ -55,13 +60,13 @@ describe.each([
     await game.classicMode.startBattle();
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
-    vi.spyOn(playerPokemon, "getMoveType");
+    const typeSpy = vi.spyOn(playerPokemon, "getMoveType");
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
     vi.spyOn(enemyPokemon, "apply");
 
     const move = allMoves[Moves.TACKLE];
-    vi.spyOn(move, "calculateBattlePower");
+    const powerSpy = vi.spyOn(move, "calculateBattlePower");
 
     game.move.select(Moves.TACKLE);
 
@@ -71,6 +76,9 @@ describe.each([
     expect(enemyPokemon.apply).toHaveReturnedWith(HitResult.EFFECTIVE);
     expect(move.calculateBattlePower).toHaveReturnedWith(48);
     expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
+
+    typeSpy.mockRestore();
+    powerSpy.mockRestore();
   });
 
   // Galvanize specifically would like to check for volt absorb's activation
@@ -104,6 +112,7 @@ describe.each([
     { moveName: "Terrain Pulse", move: Moves.TERRAIN_PULSE, expected_ty: PokemonType.NORMAL },
     { moveName: "Weather Ball", move: Moves.WEATHER_BALL, expected_ty: PokemonType.NORMAL },
     { moveName: "Multi Attack", move: Moves.MULTI_ATTACK, expected_ty: PokemonType.NORMAL },
+    { moveName: "Techno Blast", move: Moves.TECHNO_BLAST, expected_ty: PokemonType.NORMAL },
   ])("should not change the type of $moveName", async ({ move, expected_ty }) => {
     game.override
       .enemySpecies(Species.MAGIKARP)
@@ -154,5 +163,45 @@ describe.each([
     }
     tySpy.mockRestore();
     enemySpy.mockRestore();
+  });
+
+  it("should not be affected by silk scarf after changing the move's type", async () => {
+    game.override.startingHeldItems([{ name: "ATTACK_TYPE_BOOSTER", count: 1, type: PokemonType.NORMAL }]);
+    await game.classicMode.startBattle();
+
+    const testMoveInstance = allMoves[Moves.TACKLE];
+
+    // get the power boost from the ability so we can compare it to the item
+    // @ts-expect-error power multiplier is private
+    const boost = allAbilities[ab]?.getAttrs(MoveTypeChangeAbAttr)[0]?.powerMultiplier;
+    expect(boost, "power boost should be defined").toBeDefined();
+
+    const powerSpy = vi.spyOn(testMoveInstance, "calculateBattlePower");
+    const typeSpy = vi.spyOn(game.scene.getPlayerPokemon()!, "getMoveType");
+    game.move.select(Moves.TACKLE);
+    await game.phaseInterceptor.to("BerryPhase", false);
+    expect(typeSpy, "type was not changed").toHaveLastReturnedWith(ty);
+    expect(powerSpy).toHaveLastReturnedWith(toDmgValue(testMoveInstance.power * boost));
+
+    powerSpy.mockRestore();
+  });
+
+  it("should be affected by the type boosting item after changing the move's type", async () => {
+    game.override.startingHeldItems([{ name: "ATTACK_TYPE_BOOSTER", count: 1, type: ty }]);
+    await game.classicMode.startBattle();
+
+    // get the power boost from the ability so we can compare it to the item
+    // @ts-expect-error power multiplier is private
+    const boost = allAbilities[ab]?.getAttrs(MoveTypeChangeAbAttr)[0]?.powerMultiplier;
+    expect(boost, "power boost should be defined").toBeDefined();
+
+    const tackle = allMoves[Moves.TACKLE];
+
+    const spy = vi.spyOn(tackle, "calculateBattlePower");
+    game.move.select(Moves.TACKLE);
+    await game.phaseInterceptor.to("BerryPhase", false);
+    expect(spy).toHaveLastReturnedWith(toDmgValue(tackle.power * boost * (1 + TYPE_BOOST_ITEM_BOOST_PERCENT / 100)));
+
+    spy.mockRestore();
   });
 });
