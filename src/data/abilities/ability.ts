@@ -1257,7 +1257,7 @@ export class MoveTypeChangeAbAttr extends PreAttackAbAttr {
    * @returns whether the move type change attribute can be applied
    */
   override canApplyPreAttack(pokemon: Pokemon, _passive: boolean, _simulated: boolean, _defender: Pokemon | null, move: Move, _args: [NumberHolder?, NumberHolder?, ...any]): boolean {
-    return (this.condition && this.condition(pokemon, _defender, move) && 
+    return ((!this.condition || this.condition(pokemon, _defender, move)) &&
             !noAbilityTypeOverrideMoves.has(move.id) && 
             (!pokemon.isTerastallized ||
               (move.id !== Moves.TERA_BLAST &&
@@ -7027,7 +7027,7 @@ export function initAbilities() {
     new Ability(Abilities.TRIAGE, 7)
       .attr(ChangeMovePriorityAbAttr, (pokemon, move) => move.hasFlag(MoveFlags.TRIAGE_MOVE), 3),
     new Ability(Abilities.GALVANIZE, 7)
-      .attr(MoveTypeChangeAbAttr, PokemonType.ELECTRIC, 1.2, (user, target, move) => move.type === PokemonType.NORMAL),
+      .attr(MoveTypeChangeAbAttr, PokemonType.ELECTRIC, 1.2, (_user, _target, move) => move.type === PokemonType.NORMAL),
     new Ability(Abilities.SURGE_SURFER, 7)
       .conditionalAttr(getTerrainCondition(TerrainType.ELECTRIC), StatMultiplierAbAttr, Stat.SPD, 2),
     new Ability(Abilities.SCHOOLING, 7)

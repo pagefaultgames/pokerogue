@@ -814,10 +814,6 @@ export default class Move implements Localizable {
 
     // apply move type changing ability attributes
     applyPreAttackAbAttrs(MoveTypeChangeAbAttr, source, target, this, true, typeChangeHolder, typeChangeMovePowerMultiplier);
-    if (typeChangeHolder.value !== this.type) {
-      console.log("==========================================");
-      console.log("Move type change to " + PokemonType[typeChangeHolder.value]);
-    }
 
     const sourceTeraType = source.getTeraType();
     if (source.isTerastallized && sourceTeraType === this.type && power.value < 60 && this.priority <= 0 && !this.hasAttr(MultiHitAttr) && !globalScene.findModifier(m => m instanceof PokemonMultiHitModifier && m.pokemonId === source.id)) {
@@ -856,9 +852,7 @@ export default class Move implements Localizable {
 
     if (!this.hasAttr(TypelessAttr)) {
       globalScene.arena.applyTags(WeakenMoveTypeTag, simulated, typeChangeHolder.value, power);
-      console.log("Before applying attack type boosters, power is " + power.value);
       globalScene.applyModifiers(AttackTypeBoosterModifier, source.isPlayer(), source, typeChangeHolder.value, power);
-      console.log("After applying attack type boosters, power is " + power.value);
     }
 
     if (source.getTag(HelpingHandTag)) {
