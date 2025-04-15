@@ -116,7 +116,6 @@ export class TrainerConfig {
   public modifierRewardFuncs: ModifierTypeFunc[] = [];
   public partyTemplates: TrainerPartyTemplate[];
   public partyTemplateFunc: PartyTemplateFunc;
-  public eventRewardFuncs: ModifierTypeFunc[] = [];
   public partyMemberFuncs: PartyMemberFuncs = {};
   public speciesPools: TrainerTierPools;
   public speciesFilter: PokemonSpeciesFilter;
@@ -516,16 +515,6 @@ export class TrainerConfig {
   //   }
   //   return ret;
   // }
-
-  /**
-   * Sets eventRewardFuncs to the active event rewards for the specified wave
-   * @param wave Associated with {@linkcode getFixedBattleEventRewards}
-   * @returns this
-   */
-  setEventModifierRewardFuncs(wave: number): TrainerConfig {
-    this.eventRewardFuncs = timedEventManager.getFixedBattleEventRewards(wave).map(r => modifierTypes[r]);
-    return this;
-  }
 
   setModifierRewardFuncs(...modifierTypeFuncs: (() => ModifierTypeFunc)[]): TrainerConfig {
     this.modifierRewardFuncs = modifierTypeFuncs.map(func => () => {
@@ -1329,7 +1318,16 @@ export const trainerConfigs: TrainerConfigs = {
       [TrainerPoolTier.RARE]: [Species.BELLOSSOM, Species.HITMONTOP, Species.MIME_JR, Species.ORICORIO],
       [TrainerPoolTier.SUPER_RARE]: [Species.QUAXLY, Species.JANGMO_O],
     }),
-  [TrainerType.DEPOT_AGENT]: new TrainerConfig(++t).setMoneyMultiplier(1.45).setEncounterBgm(TrainerType.CLERK),
+  [TrainerType.DEPOT_AGENT]: new TrainerConfig(++t)
+    .setMoneyMultiplier(1.45)
+    .setEncounterBgm(TrainerType.CLERK)
+    .setPartyTemplates(
+      trainerPartyTemplates.TWO_AVG,
+      trainerPartyTemplates.THREE_WEAK,
+      trainerPartyTemplates.THREE_AVG,
+      trainerPartyTemplates.FOUR_WEAK,
+    )
+    .setSpeciesFilter(s => s.isOfType(PokemonType.GROUND)),
   [TrainerType.DOCTOR]: new TrainerConfig(++t)
     .setHasGenders("Nurse", "lass")
     .setHasDouble("Medical Team")
@@ -1380,7 +1378,6 @@ export const trainerConfigs: TrainerConfigs = {
         Species.CHINCHOU,
         Species.CORSOLA,
         Species.WAILMER,
-        Species.BARBOACH,
         Species.CLAMPERL,
         Species.LUVDISC,
         Species.MANTYKE,
@@ -3692,7 +3689,6 @@ export const trainerConfigs: TrainerConfigs = {
       () => modifierTypes.SUPER_EXP_CHARM,
       () => modifierTypes.EXP_SHARE,
     )
-    .setEventModifierRewardFuncs(8)
     .setPartyMemberFunc(
       0,
       getRandomPartyMemberFunc(
@@ -3760,7 +3756,6 @@ export const trainerConfigs: TrainerConfigs = {
     .setMixedBattleBgm("battle_rival")
     .setPartyTemplates(trainerPartyTemplates.RIVAL_2)
     .setModifierRewardFuncs(() => modifierTypes.EXP_SHARE)
-    .setEventModifierRewardFuncs(25)
     .setPartyMemberFunc(
       0,
       getRandomPartyMemberFunc(
