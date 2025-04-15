@@ -18,10 +18,6 @@ import { PokemonHealPhase } from "./pokemon-heal-phase";
 import { globalScene } from "#app/global-scene";
 
 export class TurnEndPhase extends FieldPhase {
-  constructor() {
-    super();
-  }
-
   start() {
     super.start();
 

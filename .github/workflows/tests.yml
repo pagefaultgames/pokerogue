@@ -5,18 +5,58 @@ on:
   # but only for the main branch
   push:
     branches:
-      - main  # Trigger on push events to the main branch
+      - main # Trigger on push events to the main branch
       - beta # Trigger on push events to the beta branch
+    # go upvote https://github.com/actions/runner/issues/1182 and yell at microsoft until they fix this or ditch yml for workflows
+    paths:
+      # src and test files
+      - "src/**"
+      - "test/**"
+      - "public/**"
+      # Workflows that can impact tests
+      - ".github/workflows/test*.yml"
+      # top-level files
+      - "package*.json"
+      - ".nvrmc" # Updates to node version can break tests
+      - "vite.*.ts" # vite.config.ts, vite.vitest.config.ts, vitest.workspace.ts
+      - "tsconfig*.json" # tsconfig.json tweaking can impact compilation
+      - "global.d.ts"
+      - ".env.*"
+      # Blanket negations for files that cannot impact tests
+      - "!**/*.py" # No .py files
+      - "!**/*.sh" # No .sh files
+      - "!**/*.md" # No .md files
+      - "!**/.git*" # .gitkeep and family
+
   pull_request:
     branches:
-      - main  # Trigger on pull request events targeting the main branch
+      - main # Trigger on pull request events targeting the main branch
       - beta # Trigger on pull request events targeting the beta branch
+    paths: # go upvote https://github.com/actions/runner/issues/1182 and yell at microsoft because until then we have to duplicate this
+      # src and test files
+      - "src/**"
+      - "test/**"
+      - "public/**"
+      # Workflows that can impact tests
+      - ".github/workflows/test*.yml"
+      # top-level files
+      - "package*.json"
+      - ".nvrmc" # Updates to node version can break tests
+      - "vite*" # vite.config.ts, vite.vitest.config.ts, vitest.workspace.ts
+      - "tsconfig*.json" # tsconfig.json tweaking can impact compilation
+      - "global.d.ts"
+      - ".env.*"
+      # Blanket negations for files that cannot impact tests
+      - "!**/*.py" # No .py files
+      - "!**/*.sh" # No .sh files
+      - "!**/*.md" # No .md files
+      - "!**/.git*" # .gitkeep and family
   merge_group:
     types: [checks_requested]
 
 jobs:
   run-tests:
-    name: Run Tests 
+    name: Run Tests
     strategy:
       matrix:
         shard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]

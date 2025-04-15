@@ -2734,7 +2734,7 @@ export class PokemonMoveAccuracyBoosterModifier extends PokemonHeldItemModifier 
    * @returns always `true`
    */
   override apply(_pokemon: Pokemon, moveAccuracy: NumberHolder): boolean {
-    moveAccuracy.value = Math.min(moveAccuracy.value + this.accuracyAmount * this.getStackCount(), 100);
+    moveAccuracy.value = moveAccuracy.value + this.accuracyAmount * this.getStackCount();
 
     return true;
   }

@@ -4,15 +4,18 @@ import { AbilityAttr, defaultStarterSpecies, DexAttr } from "#app/system/game-da
 import { allSpecies } from "#app/data/pokemon-species";
 import { CustomPokemonData } from "#app/data/custom-pokemon-data";
 import { isNullOrUndefined } from "#app/utils";
+import type { SystemSaveMigrator } from "#app/@types/SystemSaveMigrator";
+import type { SettingsSaveMigrator } from "#app/@types/SettingsSaveMigrator";
+import type { SessionSaveMigrator } from "#app/@types/SessionSaveMigrator";
 
-export const systemMigrators = [
-  /**
-   * Migrate ability starter data if empty for caught species.
-   * @param data {@linkcode SystemSaveData}
-   */
-  function migrateAbilityData(data: SystemSaveData) {
+/**
+ * Migrate ability starter data if empty for caught species.
+ * @param data - {@linkcode SystemSaveData}
+ */
+const migrateAbilityData: SystemSaveMigrator = {
+  version: "1.0.4",
+  migrate: (data: SystemSaveData): void => {
     if (data.starterData && data.dexData) {
-      // biome-ignore lint/complexity/noForEach: <explanation>
       Object.keys(data.starterData).forEach(sd => {
         if (data.dexData[sd]?.caughtAttr && data.starterData[sd] && !data.starterData[sd].abilityAttr) {
           data.starterData[sd].abilityAttr = 1;
@@ -20,12 +23,15 @@ export const systemMigrators = [
       });
     }
   },
+};
 
-  /**
-   * Populate legendary Pokémon statistics if they are missing.
-   * @param data {@linkcode SystemSaveData}
-   */
-  function fixLegendaryStats(data: SystemSaveData) {
+/**
+ * Populate legendary Pokémon statistics if they are missing.
+ * @param data - {@linkcode SystemSaveData}
+ */
+const fixLegendaryStats: SystemSaveMigrator = {
+  version: "1.0.4",
+  migrate: (data: SystemSaveData): void => {
     if (
       data.gameStats &&
       data.gameStats.legendaryPokemonCaught !== undefined &&
@@ -34,7 +40,6 @@ export const systemMigrators = [
       data.gameStats.subLegendaryPokemonSeen = 0;
       data.gameStats.subLegendaryPokemonCaught = 0;
       data.gameStats.subLegendaryPokemonHatched = 0;
-      // biome-ignore lint/complexity/noForEach: <explanation>
       allSpecies
         .filter(s => s.subLegendary)
         .forEach(s => {
@@ -66,12 +71,15 @@ export const systemMigrators = [
       );
     }
   },
+};
 
-  /**
-   * Unlock all starters' first ability and female gender option.
-   * @param data {@linkcode SystemSaveData}
-   */
-  function fixStarterData(data: SystemSaveData) {
+/**
+ * Unlock all starters' first ability and female gender option.
+ * @param data - {@linkcode SystemSaveData}
+ */
+const fixStarterData: SystemSaveMigrator = {
+  version: "1.0.4",
+  migrate: (data: SystemSaveData): void => {
     if (!isNullOrUndefined(data.starterData)) {
       for (const starterId of defaultStarterSpecies) {
         if (data.starterData[starterId]?.abilityAttr) {
@@ -83,17 +91,22 @@ export const systemMigrators = [
       }
     }
   },
+};
+
+export const systemMigrators: Readonly<SystemSaveMigrator[]> = [
+  migrateAbilityData,
+  fixLegendaryStats,
+  fixStarterData,
 ] as const;
 
-export const settingsMigrators = [
-  /**
-   * Migrate from "REROLL_TARGET" property to {@linkcode
-   * SettingKeys.Shop_Cursor_Target}.
-   * @param data the `settings` object
-   */
-
-  // biome-ignore lint/complexity/noBannedTypes: TODO: fix the type to not be object...
-  function fixRerollTarget(data: Object) {
+/**
+ * Migrate from `REROLL_TARGET` property to {@linkcode SettingKeys.Shop_Cursor_Target}
+ * @param data - The `settings` object
+ */
+const fixRerollTarget: SettingsSaveMigrator = {
+  version: "1.0.4",
+  // biome-ignore lint/complexity/noBannedTypes: TODO - refactor settings
+  migrate: (data: Object): void => {
     if (data.hasOwnProperty("REROLL_TARGET") && !data.hasOwnProperty(SettingKeys.Shop_Cursor_Target)) {
       data[SettingKeys.Shop_Cursor_Target] = data["REROLL_TARGET"];
       // biome-ignore lint/performance/noDelete: intentional
@@ -101,16 +114,20 @@ export const settingsMigrators = [
       localStorage.setItem("settings", JSON.stringify(data));
     }
   },
-] as const;
+};
 
-export const sessionMigrators = [
-  /**
-   *  Converts old lapsing modifiers (battle items, lures, and Dire Hit) and
-   *  other miscellaneous modifiers (vitamins, White Herb) to any new class
-   *  names and/or change in reload arguments.
-   *  @param data {@linkcode SessionSaveData}
-   */
-  function migrateModifiers(data: SessionSaveData) {
+export const settingsMigrators: Readonly<SettingsSaveMigrator[]> = [fixRerollTarget] as const;
+
+/**
+ *  Converts old lapsing modifiers (battle items, lures, and Dire Hit) and
+ *  other miscellaneous modifiers (vitamins, White Herb) to any new class
+ *  names and/or change in reload arguments.
+ *  @param data - {@linkcode SessionSaveData}
+ */
+const migrateModifiers: SessionSaveMigrator = {
+  version: "1.0.4",
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: necessary?
+  migrate: (data: SessionSaveData): void => {
     for (const m of data.modifiers) {
       if (m.className === "PokemonBaseStatModifier") {
         m.className = "BaseStatModifier";
@@ -163,12 +180,11 @@ export const sessionMigrators = [
       }
     }
   },
-  /**
-   *  Converts old Pokemon natureOverride and mysteryEncounterData
-   *  to use the new conjoined {@linkcode Pokemon.customPokemonData} structure instead.
-   *  @param data {@linkcode SessionSaveData}
-   */
-  function migrateCustomPokemonDataAndNatureOverrides(data: SessionSaveData) {
+};
+
+const migrateCustomPokemonData: SessionSaveMigrator = {
+  version: "1.0.4",
+  migrate: (data: SessionSaveData): void => {
     // Fix Pokemon nature overrides and custom data migration
     for (const pokemon of data.party) {
       if (pokemon["mysteryEncounterPokemonData"]) {
@@ -186,4 +202,6 @@ export const sessionMigrators = [
       }
     }
   },
-] as const;
+};
+
+export const sessionMigrators: Readonly<SessionSaveMigrator[]> = [migrateModifiers, migrateCustomPokemonData] as const;

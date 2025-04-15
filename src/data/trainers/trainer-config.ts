@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import { PokemonMove } from "#app/field/pokemon";
-import * as Utils from "#app/utils";
+import { toReadableString, isNullOrUndefined, randSeedItem, randSeedInt } from "#app/utils";
 import { pokemonEvolutions, pokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { tmSpecies } from "#app/data/balance/tms";
@@ -116,7 +116,6 @@ export class TrainerConfig {
   public modifierRewardFuncs: ModifierTypeFunc[] = [];
   public partyTemplates: TrainerPartyTemplate[];
   public partyTemplateFunc: PartyTemplateFunc;
-  public eventRewardFuncs: ModifierTypeFunc[] = [];
   public partyMemberFuncs: PartyMemberFuncs = {};
   public speciesPools: TrainerTierPools;
   public speciesFilter: PokemonSpeciesFilter;
@@ -139,7 +138,7 @@ export class TrainerConfig {
   constructor(trainerType: TrainerType, allowLegendaries?: boolean) {
     this.trainerType = trainerType;
     this.trainerAI = new TrainerAI();
-    this.name = Utils.toReadableString(TrainerType[this.getDerivedType()]);
+    this.name = toReadableString(TrainerType[this.getDerivedType()]);
     this.battleBgm = "battle_trainer";
     this.mixedBattleBgm = "battle_trainer";
     this.victoryBgm = "victory_trainer";
@@ -482,10 +481,10 @@ export class TrainerConfig {
         .fill(null)
         .map((_, i) => i)
         .filter(i => shedinjaCanTera || party[i].species.speciesId !== Species.SHEDINJA); // Shedinja can only Tera on Bug specialty type (or no specialty type)
-      const setPartySlot = !Utils.isNullOrUndefined(slot) ? Phaser.Math.Wrap(slot, 0, party.length) : -1; // If we have a tera slot defined, wrap it to party size.
+      const setPartySlot = !isNullOrUndefined(slot) ? Phaser.Math.Wrap(slot, 0, party.length) : -1; // If we have a tera slot defined, wrap it to party size.
       for (let t = 0; t < Math.min(count(), party.length); t++) {
         const randomIndex =
-          partyMemberIndexes.indexOf(setPartySlot) > -1 ? setPartySlot : Utils.randSeedItem(partyMemberIndexes);
+          partyMemberIndexes.indexOf(setPartySlot) > -1 ? setPartySlot : randSeedItem(partyMemberIndexes);
         partyMemberIndexes.splice(partyMemberIndexes.indexOf(randomIndex), 1);
         if (this.hasSpecialtyType()) {
           party[randomIndex].teraType = this.specialtyType;
@@ -517,16 +516,6 @@ export class TrainerConfig {
   //   return ret;
   // }
 
-  /**
-   * Sets eventRewardFuncs to the active event rewards for the specified wave
-   * @param wave Associated with {@linkcode getFixedBattleEventRewards}
-   * @returns this
-   */
-  setEventModifierRewardFuncs(wave: number): TrainerConfig {
-    this.eventRewardFuncs = timedEventManager.getFixedBattleEventRewards(wave).map(r => modifierTypes[r]);
-    return this;
-  }
-
   setModifierRewardFuncs(...modifierTypeFuncs: (() => ModifierTypeFunc)[]): TrainerConfig {
     this.modifierRewardFuncs = modifierTypeFuncs.map(func => () => {
       const modifierTypeFunc = func();
@@ -555,7 +544,7 @@ export class TrainerConfig {
       initI18n();
     }
 
-    if (!Utils.isNullOrUndefined(specialtyType)) {
+    if (!isNullOrUndefined(specialtyType)) {
       this.setSpecialtyType(specialtyType);
     }
 
@@ -636,7 +625,7 @@ export class TrainerConfig {
       }
       this.setPartyMemberFunc(-(s + 1), getRandomPartyMemberFunc(speciesPool));
     });
-    if (!Utils.isNullOrUndefined(specialtyType)) {
+    if (!isNullOrUndefined(specialtyType)) {
       this.setSpeciesFilter(p => p.isOfType(specialtyType));
       this.setSpecialtyType(specialtyType);
     }
@@ -749,7 +738,7 @@ export class TrainerConfig {
     });
 
     // Set species filter and specialty type if provided, otherwise filter by base total.
-    if (!Utils.isNullOrUndefined(specialtyType)) {
+    if (!isNullOrUndefined(specialtyType)) {
       this.setSpeciesFilter(p => p.isOfType(specialtyType) && p.baseTotal >= ELITE_FOUR_MINIMUM_BST);
       this.setSpecialtyType(specialtyType);
     } else {
@@ -927,7 +916,7 @@ export class TrainerConfig {
    * @returns true if specialtyType is defined and not Type.UNKNOWN
    */
   hasSpecialtyType(): boolean {
-    return !Utils.isNullOrUndefined(this.specialtyType) && this.specialtyType !== PokemonType.UNKNOWN;
+    return !isNullOrUndefined(this.specialtyType) && this.specialtyType !== PokemonType.UNKNOWN;
   }
 
   /**
@@ -1006,7 +995,7 @@ export function getRandomPartyMemberFunc(
   postProcess?: (enemyPokemon: EnemyPokemon) => void,
 ) {
   return (level: number, strength: PartyMemberStrength) => {
-    let species = Utils.randSeedItem(speciesPool);
+    let species = randSeedItem(speciesPool);
     if (!ignoreEvolution) {
       species = getPokemonSpecies(species).getTrainerSpeciesForLevel(
         level,
@@ -3557,7 +3546,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(
       5,
       getRandomPartyMemberFunc([Species.URSHIFU], TrainerSlot.TRAINER, true, p => {
-        p.formIndex = Utils.randSeedInt(2, 2); // Random G-Max Urshifu
+        p.formIndex = randSeedInt(2, 2); // Random G-Max Urshifu
         p.generateAndPopulateMoveset();
         p.generateName();
         p.gender = Gender.MALE;
@@ -3667,10 +3656,10 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(
       4,
       getRandomPartyMemberFunc([Species.OGERPON], TrainerSlot.TRAINER, true, p => {
-        p.formIndex = Utils.randSeedInt(4); // Random Ogerpon Tera Mask
+        p.formIndex = randSeedInt(4); // Random Ogerpon Tera Mask
         p.generateAndPopulateMoveset();
         p.pokeball = PokeballType.ULTRA_BALL;
-        if (!p.moveset.some(move => !Utils.isNullOrUndefined(move) && move.moveId === Moves.IVY_CUDGEL)) {
+        if (!p.moveset.some(move => !isNullOrUndefined(move) && move.moveId === Moves.IVY_CUDGEL)) {
           // Check if Ivy Cudgel is in the moveset, if not, replace the first move with Ivy Cudgel.
           p.moveset[0] = new PokemonMove(Moves.IVY_CUDGEL);
         }
@@ -3700,7 +3689,6 @@ export const trainerConfigs: TrainerConfigs = {
       () => modifierTypes.SUPER_EXP_CHARM,
       () => modifierTypes.EXP_SHARE,
     )
-    .setEventModifierRewardFuncs(8)
     .setPartyMemberFunc(
       0,
       getRandomPartyMemberFunc(
@@ -3768,7 +3756,6 @@ export const trainerConfigs: TrainerConfigs = {
     .setMixedBattleBgm("battle_rival")
     .setPartyTemplates(trainerPartyTemplates.RIVAL_2)
     .setModifierRewardFuncs(() => modifierTypes.EXP_SHARE)
-    .setEventModifierRewardFuncs(25)
     .setPartyMemberFunc(
       0,
       getRandomPartyMemberFunc(
@@ -4721,10 +4708,10 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(
       2,
       getRandomPartyMemberFunc([Species.SILVALLY], TrainerSlot.TRAINER, true, p => {
-        p.formIndex = Utils.randSeedInt(18); // Random Silvally Form
+        p.formIndex = randSeedInt(18); // Random Silvally Form
         p.generateAndPopulateMoveset();
         p.pokeball = PokeballType.ROGUE_BALL;
-        if (!p.moveset.some(move => !Utils.isNullOrUndefined(move) && move.moveId === Moves.MULTI_ATTACK)) {
+        if (!p.moveset.some(move => !isNullOrUndefined(move) && move.moveId === Moves.MULTI_ATTACK)) {
           // Check if Multi Attack is in the moveset, if not, replace the first move with Multi Attack.
           p.moveset[0] = new PokemonMove(Moves.MULTI_ATTACK);
         }
@@ -4841,8 +4828,8 @@ export const trainerConfigs: TrainerConfigs = {
         p.setBoss(true, 2);
         p.generateAndPopulateMoveset();
         p.pokeball = PokeballType.ULTRA_BALL;
-        p.formIndex = Utils.randSeedInt(4, 1); // Shock, Burn, Chill, or Douse Drive
-        if (!p.moveset.some(move => !Utils.isNullOrUndefined(move) && move.moveId === Moves.TECHNO_BLAST)) {
+        p.formIndex = randSeedInt(4, 1); // Shock, Burn, Chill, or Douse Drive
+        if (!p.moveset.some(move => !isNullOrUndefined(move) && move.moveId === Moves.TECHNO_BLAST)) {
           // Check if Techno Blast is in the moveset, if not, replace the first move with Techno Blast.
           p.moveset[2] = new PokemonMove(Moves.TECHNO_BLAST);
         }
@@ -5014,7 +5001,7 @@ export const trainerConfigs: TrainerConfigs = {
       1,
       getRandomPartyMemberFunc([Species.ROTOM], TrainerSlot.TRAINER, true, p => {
         p.generateAndPopulateMoveset();
-        p.formIndex = Utils.randSeedInt(5, 1); // Heat, Wash, Frost, Fan, or Mow
+        p.formIndex = randSeedInt(5, 1); // Heat, Wash, Frost, Fan, or Mow
       }),
     )
     .setPartyMemberFunc(
@@ -5027,7 +5014,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(
       3,
       getRandomPartyMemberFunc([Species.REVAVROOM], TrainerSlot.TRAINER, true, p => {
-        p.formIndex = Utils.randSeedInt(5, 1); // Random Starmobile form
+        p.formIndex = randSeedInt(5, 1); // Random Starmobile form
         p.generateAndPopulateMoveset();
         p.pokeball = PokeballType.ROGUE_BALL;
       }),
