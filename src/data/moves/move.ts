@@ -13,7 +13,7 @@ import {
 } from "../battler-tags";
 import { getPokemonNameWithAffix } from "../../messages";
 import type { AttackMoveResult, TurnMove } from "../../field/pokemon";
-import Pokemon from "../../field/pokemon";
+import type Pokemon from "../../field/pokemon";
 import {
   EnemyPokemon,
   FieldPosition,
