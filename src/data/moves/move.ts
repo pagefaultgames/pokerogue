@@ -13,7 +13,7 @@ import {
 } from "../battler-tags";
 import { getPokemonNameWithAffix } from "../../messages";
 import type { AttackMoveResult, TurnMove } from "../../field/pokemon";
-import type Pokemon from "../../field/pokemon";
+import Pokemon from "../../field/pokemon";
 import {
   EnemyPokemon,
   FieldPosition,
@@ -4826,7 +4826,12 @@ export class FormChangeItemTypeAttr extends VariableMoveTypeAttr {
       return true;
     }
 
-    return false;
+    // Force move to have its original typing if it changed
+    if (moveType.value === move.type) {
+      return false;
+    }
+    moveType.value = move.type
+    return true;
   }
 }
 
@@ -4977,7 +4982,11 @@ export class WeatherBallTypeAttr extends VariableMoveTypeAttr {
           moveType.value = PokemonType.ICE;
           break;
         default:
-          return false;
+          if (moveType.value === move.type) {
+            return false;
+          }
+          moveType.value = move.type;
+          break;
       }
       return true;
     }
@@ -5025,7 +5034,12 @@ export class TerrainPulseTypeAttr extends VariableMoveTypeAttr {
         moveType.value = PokemonType.PSYCHIC;
         break;
       default:
-        return false;
+        if (moveType.value === move.type) {
+          return false;
+        }
+        // force move to have its original typing if it was changed
+        moveType.value = move.type;
+        break;
     }
     return true;
   }

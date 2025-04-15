@@ -9,7 +9,7 @@ import BattleInfo, {
   PlayerBattleInfo,
   EnemyBattleInfo,
 } from "#app/ui/battle-info";
-import type Move from "#app/data/moves/move";
+import Move from "#app/data/moves/move";
 import {
   HighCritAttr,
   HitsTagAttr,
@@ -2583,8 +2583,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    */
   public getMoveType(move: Move, simulated = true): PokemonType {
     const moveTypeHolder = new NumberHolder(move.type);
+    // If the user is terastallized and the move is tera blast, then the move type is the tera type
 
-    applyMoveAttrs(VariableMoveTypeAttr, this, null, move, moveTypeHolder);
+    // Abilities that change the move type go first
     applyPreAttackAbAttrs(
       MoveTypeChangeAbAttr,
       this,
@@ -2593,6 +2594,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       simulated,
       moveTypeHolder,
     );
+    // And then moves that change the move type go
+    applyMoveAttrs(VariableMoveTypeAttr, this, null, move, moveTypeHolder);
+
+    // If the user is terastallized and the move is tera blast, or tera starstorm that is stellar type,
+    // then bypass the check for ion deluge
+    if (this.isTerastallized && (move.id === Moves.TERA_BLAST || move.id === Moves.TERA_STARSTORM && moveTypeHolder.value === PokemonType.STELLAR)) {
+      return moveTypeHolder.value as PokemonType;
+    }
 
     globalScene.arena.applyTags(
       ArenaTagType.ION_DELUGE,
