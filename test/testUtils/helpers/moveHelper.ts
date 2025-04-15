@@ -66,6 +66,33 @@ export class MoveHelper extends GameManagerHelper {
   }
 
   /**
+   * Select the move to be used by the given Pokemon(-index), **which will also terastallize on this turn**.
+   * Triggers during the next {@linkcode CommandPhase}
+   * @param move - the move to use
+   * @param pkmIndex - the pokemon index. Relevant for double-battles only (defaults to 0)
+   * @param targetIndex - The {@linkcode BattlerIndex} of the Pokemon to target for single-target moves, or `null` if a manual call to `selectTarget()` is required
+   */
+  public selectWithTera(move: Moves, pkmIndex: 0 | 1 = 0, targetIndex?: BattlerIndex | null) {
+    const movePosition = getMovePosition(this.game.scene, pkmIndex, move);
+    this.game.scene.getPlayerParty()[pkmIndex].isTerastallized = false;
+
+    this.game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
+      this.game.scene.ui.setMode(
+        Mode.FIGHT,
+        (this.game.scene.getCurrentPhase() as CommandPhase).getFieldIndex(),
+        Command.TERA,
+      );
+    });
+    this.game.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
+      (this.game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.TERA, movePosition, false);
+    });
+
+    if (targetIndex !== null) {
+      this.game.selectTarget(movePosition, targetIndex);
+    }
+  }
+
+  /**
    * Forces the Paralysis or Freeze status to activate on the next move by temporarily mocking {@linkcode Overrides.STATUS_ACTIVATION_OVERRIDE},
    * advancing to the next `MovePhase`, and then resetting the override to `null`
    * @param activated - `true` to force the status to activate, `false` to force the status to not activate (will cause Freeze to heal)
