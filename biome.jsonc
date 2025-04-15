@@ -65,7 +65,8 @@
         "useDefaultParameterLast": "off", // TODO: Fix spots in the codebase where this flag would be triggered, and then enable
         "useSingleVarDeclarator": "off",
         "useNodejsImportProtocol": "off",
-        "useTemplate": "off" // string concatenation is faster: https://stackoverflow.com/questions/29055518/are-es6-template-literals-faster-than-string-concatenation
+        "useTemplate": "off", // string concatenation is faster: https://stackoverflow.com/questions/29055518/are-es6-template-literals-faster-than-string-concatenation
+        "noNamespaceImport": "error"
       },
       "suspicious": {
         "noDoubleEquals": "error",
@@ -99,6 +100,9 @@
         "rules": {
           "performance": {
             "noDelete": "off"
+          },
+          "style": {
+            "noNamespaceImport": "off"
           }
         }
       }

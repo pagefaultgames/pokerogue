@@ -30,7 +30,6 @@ import { CommonAnimPhase } from "#app/phases/common-anim-phase";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { MovePhase } from "#app/phases/move-phase";
 import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
-import { ShowAbilityPhase } from "#app/phases/show-ability-phase";
 import type { StatStageChangeCallback } from "#app/phases/stat-stage-change-phase";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import i18next from "#app/plugins/i18n";
@@ -43,7 +42,7 @@ import { Species } from "#enums/species";
 import { EFFECTIVE_STATS, getStatKey, Stat, type BattleStat, type EffectiveStat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { WeatherType } from "#enums/weather-type";
-import * as Utils from "../utils";
+import { isNullOrUndefined } from "#app/utils";
 
 export enum BattlerTagLapseType {
   FAINT,
@@ -303,7 +302,7 @@ export class DisabledTag extends MoveRestrictionBattlerTag {
     super.onAdd(pokemon);
 
     const move = pokemon.getLastXMoves(-1).find(m => !m.virtual);
-    if (Utils.isNullOrUndefined(move) || move.move === Moves.STRUGGLE || move.move === Moves.NONE) {
+    if (isNullOrUndefined(move) || move.move === Moves.STRUGGLE || move.move === Moves.NONE) {
       return;
     }
 
@@ -1901,12 +1900,14 @@ export class TruantTag extends AbilityBattlerTag {
 
     if (lastMove && lastMove.move !== Moves.NONE) {
       (globalScene.getCurrentPhase() as MovePhase).cancel();
-      globalScene.unshiftPhase(new ShowAbilityPhase(pokemon.id, passive));
+      // TODO: Ability displays should be handled by the ability
+      globalScene.queueAbilityDisplay(pokemon, passive, true);
       globalScene.queueMessage(
         i18next.t("battlerTags:truantLapse", {
           pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
         }),
       );
+      globalScene.queueAbilityDisplay(pokemon, passive, false);
     }
 
     return true;

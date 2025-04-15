@@ -2,7 +2,7 @@ import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { ExpBoosterModifier } from "#app/modifier/modifier";
 import i18next from "i18next";
-import * as Utils from "#app/utils";
+import { NumberHolder } from "#app/utils";
 import { PlayerPartyMemberPokemonPhase } from "./player-party-member-pokemon-phase";
 import { LevelUpPhase } from "./level-up-phase";
 
@@ -19,7 +19,7 @@ export class ExpPhase extends PlayerPartyMemberPokemonPhase {
     super.start();
 
     const pokemon = this.getPokemon();
-    const exp = new Utils.NumberHolder(this.expValue);
+    const exp = new NumberHolder(this.expValue);
     globalScene.applyModifiers(ExpBoosterModifier, true, exp);
     exp.value = Math.floor(exp.value);
     globalScene.ui.showText(

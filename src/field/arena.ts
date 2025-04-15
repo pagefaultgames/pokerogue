@@ -1,8 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import type { BiomeTierTrainerPools, PokemonPools } from "#app/data/balance/biomes";
 import { biomePokemonPools, BiomePoolTier, biomeTrainerPools } from "#app/data/balance/biomes";
-import type { Constructor } from "#app/utils";
-import * as Utils from "#app/utils";
+import { randSeedInt, NumberHolder, isNullOrUndefined, type Constructor } from "#app/utils";
 import type PokemonSpecies from "#app/data/pokemon-species";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import {
@@ -40,7 +39,6 @@ import { TrainerType } from "#enums/trainer-type";
 import { Abilities } from "#enums/abilities";
 import { SpeciesFormChangeRevertWeatherFormTrigger, SpeciesFormChangeWeatherTrigger } from "#app/data/pokemon-forms";
 import { CommonAnimPhase } from "#app/phases/common-anim-phase";
-import { ShowAbilityPhase } from "#app/phases/show-ability-phase";
 import { WeatherType } from "#enums/weather-type";
 import { FieldEffectModifier } from "#app/modifier/modifier";
 
@@ -125,7 +123,7 @@ export class Arena {
     if (typeof luckValue !== "undefined") {
       luckModifier = luckValue * (isBossSpecies ? 0.5 : 2);
     }
-    const tierValue = Utils.randSeedInt(randVal - luckModifier);
+    const tierValue = randSeedInt(randVal - luckModifier);
     let tier = !isBossSpecies
       ? tierValue >= 156
         ? BiomePoolTier.COMMON
@@ -154,7 +152,7 @@ export class Arena {
     if (!tierPool.length) {
       ret = globalScene.randomSpecies(waveIndex, level);
     } else {
-      const entry = tierPool[Utils.randSeedInt(tierPool.length)];
+      const entry = tierPool[randSeedInt(tierPool.length)];
       let species: Species;
       if (typeof entry === "number") {
         species = entry as Species;
@@ -165,7 +163,7 @@ export class Arena {
           if (level >= levelThreshold) {
             const speciesIds = entry[levelThreshold];
             if (speciesIds.length > 1) {
-              species = speciesIds[Utils.randSeedInt(speciesIds.length)];
+              species = speciesIds[randSeedInt(speciesIds.length)];
             } else {
               species = speciesIds[0];
             }
@@ -212,7 +210,7 @@ export class Arena {
       !!this.trainerPool[BiomePoolTier.BOSS].length &&
       (globalScene.gameMode.isTrainerBoss(waveIndex, this.biomeType, globalScene.offsetGym) || isBoss);
     console.log(isBoss, this.trainerPool);
-    const tierValue = Utils.randSeedInt(!isTrainerBoss ? 512 : 64);
+    const tierValue = randSeedInt(!isTrainerBoss ? 512 : 64);
     let tier = !isTrainerBoss
       ? tierValue >= 156
         ? BiomePoolTier.COMMON
@@ -236,7 +234,7 @@ export class Arena {
       tier--;
     }
     const tierPool = this.trainerPool[tier] || [];
-    return !tierPool.length ? TrainerType.BREEDER : tierPool[Utils.randSeedInt(tierPool.length)];
+    return !tierPool.length ? TrainerType.BREEDER : tierPool[randSeedInt(tierPool.length)];
   }
 
   getSpeciesFormIndex(species: PokemonSpecies): number {
@@ -337,9 +335,9 @@ export class Arena {
       return false;
     }
 
-    const weatherDuration = new Utils.NumberHolder(0);
+    const weatherDuration = new NumberHolder(0);
 
-    if (!Utils.isNullOrUndefined(user)) {
+    if (!isNullOrUndefined(user)) {
       weatherDuration.value = 5;
       globalScene.applyModifier(FieldEffectModifier, user.isPlayer(), user, weatherDuration);
     }
@@ -378,7 +376,6 @@ export class Arena {
       const isCherrimWithFlowerGift = p.hasAbility(Abilities.FLOWER_GIFT) && p.species.speciesId === Species.CHERRIM;
 
       if (isCastformWithForecast || isCherrimWithFlowerGift) {
-        new ShowAbilityPhase(p.getBattlerIndex());
         globalScene.triggerPokemonFormChange(p, SpeciesFormChangeWeatherTrigger);
       }
     });
@@ -395,7 +392,6 @@ export class Arena {
         p.hasAbility(Abilities.FLOWER_GIFT, false, true) && p.species.speciesId === Species.CHERRIM;
 
       if (isCastformWithForecast || isCherrimWithFlowerGift) {
-        new ShowAbilityPhase(p.getBattlerIndex());
         return globalScene.triggerPokemonFormChange(p, SpeciesFormChangeRevertWeatherFormTrigger);
       }
     });
@@ -420,9 +416,9 @@ export class Arena {
 
     const oldTerrainType = this.terrain?.terrainType || TerrainType.NONE;
 
-    const terrainDuration = new Utils.NumberHolder(0);
+    const terrainDuration = new NumberHolder(0);
 
-    if (!Utils.isNullOrUndefined(user)) {
+    if (!isNullOrUndefined(user)) {
       terrainDuration.value = 5;
       globalScene.applyModifier(FieldEffectModifier, user.isPlayer(), user, terrainDuration);
     }
@@ -1016,7 +1012,7 @@ export class ArenaBase extends Phaser.GameObjects.Container {
     if (!this.player) {
       globalScene.executeWithSeedOffset(
         () => {
-          this.propValue = propValue === undefined ? (hasProps ? Utils.randSeedInt(8) : 0) : propValue;
+          this.propValue = propValue === undefined ? (hasProps ? randSeedInt(8) : 0) : propValue;
           this.props.forEach((prop, p) => {
             const propKey = `${biomeKey}_b${hasProps ? `_${p + 1}` : ""}`;
             prop.setTexture(propKey);

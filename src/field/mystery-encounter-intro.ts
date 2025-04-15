@@ -4,9 +4,10 @@ import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounte
 import type { Species } from "#enums/species";
 import { isNullOrUndefined } from "#app/utils";
 import { getSpriteKeysFromSpecies } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
-import type { Variant } from "#app/data/variant";
+import type { Variant } from "#app/sprites/variant";
 import { doShinySparkleAnim } from "#app/field/anims";
 import PlayAnimationConfig = Phaser.Types.Animations.PlayAnimationConfig;
+import { loadPokemonVariantAssets } from "#app/sprites/pokemon-sprite";
 
 type KnownFileRoot =
   | "arenas"
@@ -233,8 +234,8 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
       this.spriteConfigs.forEach(config => {
         if (config.isPokemon) {
           globalScene.loadPokemonAtlas(config.spriteKey, config.fileRoot);
-          if (config.isShiny) {
-            shinyPromises.push(globalScene.loadPokemonVariantAssets(config.spriteKey, config.fileRoot, config.variant));
+          if (config.isShiny && !isNullOrUndefined(config.variant)) {
+            shinyPromises.push(loadPokemonVariantAssets(config.spriteKey, config.fileRoot, config.variant));
           }
         } else if (config.isItem) {
           globalScene.loadAtlas("items", "");

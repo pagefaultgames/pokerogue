@@ -1,8 +1,8 @@
 import type { CandyUpgradeNotificationChangedEvent } from "#app/events/battle-scene";
 import { BattleSceneEventType } from "#app/events/battle-scene";
 import { pokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
-import type { Variant } from "#app/data/variant";
-import { getVariantTint, getVariantIcon } from "#app/data/variant";
+import type { Variant } from "#app/sprites/variant";
+import { getVariantTint, getVariantIcon } from "#app/sprites/variant";
 import { argbFromRgba } from "@material/material-color-utilities";
 import i18next from "i18next";
 import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
@@ -43,7 +43,7 @@ import { Egg } from "#app/data/egg";
 import Overrides from "#app/overrides";
 import { SettingKeyboard } from "#app/system/settings/settings-keyboard";
 import { Passive as PassiveAttr } from "#enums/passive";
-import * as Challenge from "#app/data/challenge";
+import { applyChallenges, ChallengeType } from "#app/data/challenge";
 import MoveInfoOverlay from "#app/ui/move-info-overlay";
 import { getEggTierForSpecies } from "#app/data/egg";
 import { Device } from "#enums/devices";
@@ -78,7 +78,6 @@ import {
 import type { Nature } from "#enums/nature";
 import { PLAYER_PARTY_MAX_SIZE } from "#app/constants";
 import { achvs } from "#app/system/achv";
-import * as Utils from "../utils";
 import type { GameObjects } from "phaser";
 import { checkStarterValidForChallenge } from "#app/data/challenge";
 
@@ -2518,7 +2517,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           case Button.CYCLE_TERA:
             if (this.canCycleTera) {
               const speciesForm = getPokemonSpeciesForm(this.lastSpecies.speciesId, starterAttributes.form ?? 0);
-              if (speciesForm.type1 === this.teraCursor && !Utils.isNullOrUndefined(speciesForm.type2)) {
+              if (speciesForm.type1 === this.teraCursor && !isNullOrUndefined(speciesForm.type2)) {
                 starterAttributes.tera = speciesForm.type2!;
                 this.setSpeciesDetails(this.lastSpecies, {
                   teraType: speciesForm.type2!,
@@ -2960,7 +2959,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         valueLimit.value = 10;
     }
 
-    Challenge.applyChallenges(Challenge.ChallengeType.STARTER_POINTS, valueLimit);
+    applyChallenges(ChallengeType.STARTER_POINTS, valueLimit);
 
     return valueLimit.value;
   }
@@ -3748,7 +3747,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       ); // TODO: is this bang correct?
       this.abilityCursor = abilityIndex !== undefined ? abilityIndex : (abilityIndex = oldAbilityIndex);
       this.natureCursor = natureIndex !== undefined ? natureIndex : (natureIndex = oldNatureIndex);
-      this.teraCursor = !Utils.isNullOrUndefined(teraType) ? teraType : (teraType = species.type1);
+      this.teraCursor = !isNullOrUndefined(teraType) ? teraType : (teraType = species.type1);
       const [isInParty, partyIndex]: [boolean, number] = this.isInParty(species); // we use this to firstly check if the pokemon is in the party, and if so, to get the party index in order to update the icon image
       if (isInParty) {
         this.updatePartyIcon(species, partyIndex);
@@ -3886,7 +3885,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.canCycleTera =
           !this.statsMode &&
           globalScene.gameData.achvUnlocks.hasOwnProperty(achvs.TERASTALLIZE.id) &&
-          !Utils.isNullOrUndefined(getPokemonSpeciesForm(species.speciesId, formIndex ?? 0).type2);
+          !isNullOrUndefined(getPokemonSpeciesForm(species.speciesId, formIndex ?? 0).type2);
       }
 
       if (dexEntry.caughtAttr && species.malePercent !== null) {
@@ -4483,7 +4482,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.canCycleTera =
         !this.statsMode &&
         globalScene.gameData.achvUnlocks.hasOwnProperty(achvs.TERASTALLIZE.id) &&
-        !Utils.isNullOrUndefined(getPokemonSpeciesForm(this.lastSpecies.speciesId, formIndex ?? 0).type2);
+        !isNullOrUndefined(getPokemonSpeciesForm(this.lastSpecies.speciesId, formIndex ?? 0).type2);
       this.updateInstructions();
     }
   }
