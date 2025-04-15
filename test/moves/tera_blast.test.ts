@@ -196,7 +196,7 @@ describe("Moves - Tera Blast", () => {
     { ab: "refrigerate", ty: "ice", ab_id: Abilities.REFRIGERATE, ty_id: PokemonType.ICE },
     { ab: "pixilate", ty: "fairy", ab_id: Abilities.PIXILATE, ty_id: PokemonType.FAIRY },
     { ab: "aerilate", ty: "flying", ab_id: Abilities.AERILATE, ty_id: PokemonType.FLYING },
-  ])("should be $1 type if the user has $2", async ({ ab_id, ty_id }) => {
+  ])("should be $ty type if the user has $ab", async ({ ab_id, ty_id }) => {
     game.override.ability(ab_id).moveset([Moves.TERA_BLAST]).enemyAbility(Abilities.BALL_FETCH);
     await game.classicMode.startBattle([Species.MAGIKARP]);
     const playerPokemon = game.scene.getPlayerPokemon()!;
