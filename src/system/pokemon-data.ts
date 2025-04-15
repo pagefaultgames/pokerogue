@@ -1,7 +1,7 @@
 import { BattleType } from "../battle";
 import { globalScene } from "#app/global-scene";
 import type { Gender } from "../data/gender";
-import type { Nature } from "#enums/nature";
+import { Nature } from "#enums/nature";
 import type { PokeballType } from "#enums/pokeball";
 import { getPokemonSpecies, getPokemonSpeciesForm } from "../data/pokemon-species";
 import { Status } from "../data/status-effect";
@@ -85,43 +85,37 @@ export default class PokemonData {
     this.formIndex = Math.max(Math.min(source.formIndex, getPokemonSpecies(this.species).forms.length - 1), 0);
     this.abilityIndex = source.abilityIndex;
     this.passive = source.passive;
-    this.shiny = sourcePokemon ? sourcePokemon.isShiny() : source.shiny;
-    this.variant = sourcePokemon ? sourcePokemon.getVariant() : source.variant;
+    this.shiny = sourcePokemon?.isShiny() ?? source.shiny;
+    this.variant = sourcePokemon?.getVariant() ?? source.variant;
     this.pokeball = source.pokeball;
     this.level = source.level;
     this.exp = source.exp;
     this.gender = source.gender;
     this.stats = source.stats;
     this.ivs = source.ivs;
-    this.nature = source.nature !== undefined ? source.nature : (0 as Nature); // TODO?: I'm pretty sure this can become nullish coaclescing
-    this.friendship =
-      source.friendship !== undefined ? source.friendship : getPokemonSpecies(this.species).baseFriendship;
+    this.nature = source.nature ?? Nature.HARDY;
+    this.friendship = source.friendship ?? getPokemonSpecies(this.species).baseFriendship;
     this.metLevel = source.metLevel || 5;
-    this.metBiome = source.metBiome !== undefined ? source.metBiome : -1;
+    this.metBiome = source.metBiome ?? -1;
     this.metSpecies = source.metSpecies;
     this.metWave = source.metWave ?? (this.metBiome === -1 ? -1 : 0);
-    this.luck = (source.luck ?? source.shiny) ? source.variant + 1 : 0;
+    this.luck = source.luck ?? (source.shiny ? source.variant + 1 : 0);
     this.pokerus = !!source.pokerus;
     this.teraType = source.teraType as PokemonType;
-    this.isTerastallized = source.isTerastallized || false;
-    this.stellarTypesBoosted = source.stellarTypesBoosted || [];
+    this.isTerastallized = source.isTerastallized ?? false;
+    this.stellarTypesBoosted = source.stellarTypesBoosted ?? [];
 
     this.fusionSpecies = sourcePokemon ? sourcePokemon.fusionSpecies?.speciesId : source.fusionSpecies;
     this.fusionFormIndex = source.fusionFormIndex;
     this.fusionAbilityIndex = source.fusionAbilityIndex;
-    this.fusionShiny = sourcePokemon
-      ? sourcePokemon.summonData.illusion
-        ? sourcePokemon.summonData.illusion.basePokemon.fusionShiny
-        : sourcePokemon.fusionShiny
-      : source.fusionShiny;
-    this.fusionVariant = sourcePokemon
-      ? sourcePokemon.summonData.illusion
-        ? sourcePokemon.summonData.illusion.basePokemon.fusionVariant
-        : sourcePokemon.fusionVariant
-      : source.fusionVariant;
+    this.fusionShiny =
+      sourcePokemon?.summonData.illusion?.basePokemon.fusionShiny ?? sourcePokemon?.fusionShiny ?? source.fusionShiny;
+    this.fusionVariant =
+      sourcePokemon?.summonData.illusion?.basePokemon.fusionVariant ??
+      sourcePokemon?.fusionVariant ??
+      source.fusionVariant;
     this.fusionGender = source.fusionGender;
-    this.fusionLuck =
-      source.fusionLuck !== undefined ? source.fusionLuck : source.fusionShiny ? source.fusionVariant + 1 : 0;
+    this.fusionLuck = source.fusionLuck ?? (source.fusionShiny ? source.fusionVariant + 1 : 0);
     this.fusionCustomPokemonData = new CustomPokemonData(source.fusionCustomPokemonData);
     this.fusionTeraType = (source.fusionTeraType ?? 0) as PokemonType;
     this.usedTMs = source.usedTMs ?? [];
@@ -157,6 +151,7 @@ export default class PokemonData {
         (sourcePokemon?.status ?? source.status)
           ? new Status(source.status.effect, source.status.toxicTurnCount, source.status.sleepTurnsRemaining)
           : null;
+
       this.summonData = sourcePokemon?.summonData ?? new PokemonSummonData(source.summonData);
 
       this.summonDataSpeciesFormIndex = this.getSummonDataSpeciesFormIndex();
