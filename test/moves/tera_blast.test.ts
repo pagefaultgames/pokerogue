@@ -202,4 +202,20 @@ describe("Moves - Tera Blast", () => {
     const playerPokemon = game.scene.getPlayerPokemon()!;
     expect(playerPokemon.getMoveType(allMoves[Moves.TERA_BLAST])).toBe(ty_id);
   });
+
+  it("should not be affected by normalize when the user is terastallized with tera normal", async () => {
+    game.override.moveset([Moves.TERA_BLAST]).ability(Abilities.NORMALIZE);
+    await game.classicMode.startBattle([Species.MAGIKARP]);
+    const playerPokemon = game.scene.getPlayerPokemon()!;
+    // override the tera state for the pokemon
+    playerPokemon.isTerastallized = true;
+    playerPokemon.teraType = PokemonType.NORMAL;
+
+    const move = allMoves[Moves.TERA_BLAST];
+    const powerSpy = vi.spyOn(move, "calculateBattlePower");
+
+    game.move.select(Moves.TERA_BLAST);
+    await game.phaseInterceptor.to("BerryPhase");
+    expect(powerSpy).toHaveLastReturnedWith(move.power);
+  });
 });
