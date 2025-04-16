@@ -13,6 +13,7 @@ import { Moves } from "#enums/moves";
 import type { Species } from "#enums/species";
 import { CustomPokemonData } from "#app/data/custom-pokemon-data";
 import type { PokemonType } from "#enums/pokemon-type";
+import { loadBattlerTag } from "#app/data/battler-tags";
 
 export default class PokemonData {
   public id: number;
@@ -153,9 +154,22 @@ export default class PokemonData {
           ? new Status(source.status.effect, source.status.toxicTurnCount, source.status.sleepTurnsRemaining)
           : null);
 
-      this.summonData = sourcePokemon?.summonData ?? new PokemonSummonData(source.summonData);
+      // enemy pokemon don't use instantized summon data
+      if (this.player) {
+        this.summonData = sourcePokemon?.summonData ?? source.summonData;
+      } else {
+        console.log("GPIGIPGIPGIOPGIPIGPIGPTOGEw");
+        this.summonData = new PokemonSummonData();
+      }
 
-      this.summonDataSpeciesFormIndex = this.getSummonDataSpeciesFormIndex();
+      if (!sourcePokemon) {
+        this.summonData.moveset = source.summonData.moveset?.map(m => PokemonMove.loadMove(m));
+        this.summonData.tags = source.tags.map((t: any) => loadBattlerTag(t));
+      }
+
+      this.summonDataSpeciesFormIndex = sourcePokemon
+        ? this.getSummonDataSpeciesFormIndex()
+        : source.summonDataSpeciesFormIndex;
       this.battleData = sourcePokemon?.battleData ?? source.battleData;
     }
   }

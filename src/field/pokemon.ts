@@ -7885,14 +7885,6 @@ export class PokemonSummonData {
   public waveTurnCount = 1;
   /** The list of moves the pokemon has used since entering the battle */
   public moveHistory: TurnMove[] = [];
-
-  constructor(source?: any) {
-    if (!isNullOrUndefined(source)) {
-      Object.assign(this, source);
-      this.moveset = source.moveset?.map(m => PokemonMove.loadMove(m));
-      this.tags = source.tags.map(t => loadBattlerTag(t));
-   }
-  }
 }
 
 /**

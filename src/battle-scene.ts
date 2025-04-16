@@ -1465,7 +1465,7 @@ export default class BattleScene extends SceneBase {
       const isWaveIndexMultipleOfFiftyMinusOne = lastBattle.waveIndex % 50 === 49;
       const isNewBiome =
         isWaveIndexMultipleOfTen || isEndlessFifthWave || (isEndlessOrDaily && isWaveIndexMultipleOfFiftyMinusOne);
-      /** Whether to reset and recall pokemon*/
+      /** Whether to reset and recall pokemon */
       const resetArenaState =
         isNewBiome ||
         [BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER].includes(this.currentBattle.battleType) ||
