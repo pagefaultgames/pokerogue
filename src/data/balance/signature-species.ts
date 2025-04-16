@@ -45,7 +45,7 @@ export const signatureSpecies: SignatureSpecies = {
   CRASHER_WAKE: [Species.BUIZEL, Species.WOOPER, Species.PIPLUP, Species.MAGIKARP],
   FANTINA: [Species.MISDREAVUS, Species.DRIFLOON, Species.DUSKULL],
   BYRON: [Species.SHIELDON, Species.BRONZOR, Species.ARON],
-  CANDICE: [Species.SNEASEL, Species.SNOVER, Species.SNORUNT],
+  CANDICE: [Species.SNOVER, Species.SNORUNT, Species.SNEASEL, Species.GLACEON],
   VOLKNER: [Species.SHINX, Species.ELEKID, Species.JOLTEON, Species.REMORAID], // Tera Electric Octillery
   // Gym Leaders- Unova
   CILAN: [Species.PANSAGE, Species.FOONGUS, Species.PETILIL],
