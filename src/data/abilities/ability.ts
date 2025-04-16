@@ -4172,14 +4172,14 @@ export class RepeatBerryNextTurnAbAttr extends PostTurnAbAttr {
    * @param _args N/A
    */
   override apply(pokemon: Pokemon, _passive: boolean, _simulated: boolean, _cancelled: BooleanHolder | null, _args: any[]): void {
-    // play funni animation
+    // play berry animation
     globalScene.unshiftPhase(
       new CommonAnimPhase(pokemon.getBattlerIndex(), pokemon.getBattlerIndex(), CommonAnim.USE_ITEM),
     );
 
     // re-apply effect of all berries previously scarfed
     for (const berryType of pokemon.summonData.berriesEatenLast) {
-      getBerryEffectFunc(berryType)(pokemon);
+      getBerryEffectFunc(berryType)(pokemon); // TODO: Make this not trigger unburden
       const bMod = new BerryModifier(new BerryModifierType(berryType), pokemon.id, berryType, 1);
       globalScene.eventTarget.dispatchEvent(new BerryUsedEvent(bMod)); // trigger message
     }
