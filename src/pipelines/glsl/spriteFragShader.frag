@@ -150,7 +150,6 @@ vec3 hsv2rgb(vec3 c) {
 
 void main() {
 	vec4 texture = texture2D(uMainSampler[0], outTexCoord);
-	ivec4 colorInt = ivec4(texture*255.0);
 
 	for (int i = 0; i < 32; i++) {
 		if (baseVariantColors[i].a == 0.0)
