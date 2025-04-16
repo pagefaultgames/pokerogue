@@ -222,7 +222,7 @@ function endTrainerBattleAndShowDialogue(): Promise<void> {
           globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeAbilityTrigger);
         }
 
-        pokemon.resetBattleData();
+        pokemon.resetBattleAndWaveData();
         applyPostBattleInitAbAttrs(PostBattleInitAbAttr, pokemon);
       }
 

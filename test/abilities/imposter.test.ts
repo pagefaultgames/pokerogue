@@ -4,7 +4,7 @@ import GameManager from "#test/testUtils/gameManager";
 import { Species } from "#enums/species";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Moves } from "#enums/moves";
-import { Stat, BATTLE_STATS, EFFECTIVE_STATS } from "#enums/stat";
+import { Stat, EFFECTIVE_STATS } from "#enums/stat";
 import { Abilities } from "#enums/abilities";
 
 // TODO: Add more tests once Imposter is fully implemented
@@ -53,25 +53,11 @@ describe("Abilities - Imposter", () => {
       expect(player.getStat(s, false)).toBe(enemy.getStat(s, false));
     }
 
-    for (const s of BATTLE_STATS) {
-      expect(player.getStatStage(s)).toBe(enemy.getStatStage(s));
-    }
+    expect(player.getStatStages()).toEqual(enemy.getStatStages());
 
-    const playerMoveset = player.getMoveset();
-    const enemyMoveset = player.getMoveset();
+    expect(player.getMoveset().map(m => m.moveId)).toEqual(enemy.getMoveset().map(m => m.moveId));
 
-    expect(playerMoveset.length).toBe(enemyMoveset.length);
-    for (let i = 0; i < playerMoveset.length && i < enemyMoveset.length; i++) {
-      expect(playerMoveset[i]?.moveId).toBe(enemyMoveset[i]?.moveId);
-    }
-
-    const playerTypes = player.getTypes();
-    const enemyTypes = enemy.getTypes();
-
-    expect(playerTypes.length).toBe(enemyTypes.length);
-    for (let i = 0; i < playerTypes.length && i < enemyTypes.length; i++) {
-      expect(playerTypes[i]).toBe(enemyTypes[i]);
-    }
+    expect(player.getTypes()).toEqual(enemy.getTypes());
   });
 
   it("should copy in-battle overridden stats", async () => {
@@ -133,7 +119,6 @@ describe("Abilities - Imposter", () => {
 
     await game.classicMode.startBattle([Species.DITTO]);
 
-    const player = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;
 
     game.move.select(Moves.SPLASH);
@@ -146,7 +131,7 @@ describe("Abilities - Imposter", () => {
     await game.reload.reloadSession();
 
     const playerReloaded = game.scene.getPlayerPokemon()!;
-    const playerMoveset = player.getMoveset();
+    const playerMoveset = playerReloaded.getMoveset();
 
     expect(playerReloaded.getSpeciesForm().speciesId).toBe(enemy.getSpeciesForm().speciesId);
     expect(playerReloaded.getAbility()).toBe(enemy.getAbility());

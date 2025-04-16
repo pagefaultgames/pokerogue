@@ -71,19 +71,20 @@ export class OverridesHelper extends GameManagerHelper {
 
   /**
    * Override the wave level cap
-   * @param cap the level cap value to set; 0 uses normal level caps and negative values
-   * disable it completely
+   * @param cap the level cap value to set; negative values disable it completely
+   *
+   * Set to `0` or `null` to disable.
    * @returns `this`
    */
-  public levelCap(cap: number): this {
+  public levelCap(cap: number | null): this {
     vi.spyOn(Overrides, "LEVEL_CAP_OVERRIDE", "get").mockReturnValue(cap);
     let capStr: string;
-    if (cap > 0) {
-      capStr = `Level cap set to ${cap}!`;
+    if (!cap) {
+      capStr = "Level cap reset to default value for wave.";
     } else if (cap < 0) {
       capStr = "Level cap disabled!";
     } else {
-      capStr = "Level cap reset to default value for wave.";
+      capStr = `Level cap set to ${cap}!`;
     }
     this.log(capStr);
     return this;
@@ -96,7 +97,7 @@ export class OverridesHelper extends GameManagerHelper {
    */
   public startingHeldItems(items: ModifierOverride[]): this {
     vi.spyOn(Overrides, "STARTING_HELD_ITEMS_OVERRIDE", "get").mockReturnValue(items);
-    this.log("Player Pokemon starting held items set to:", items);
+    this.log(`Player Pokemon starting held items set to: ${items}`);
     return this;
   }
 
@@ -147,7 +148,8 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the player's starting modifiers
+   * Override the player's starting modifiers.
+   * For overriding held items, use {@linkcode startingHeldItems} instead
    * @param modifiers the modifiers to set
    * @returns `this`
    */
@@ -487,6 +489,21 @@ export class OverridesHelper extends GameManagerHelper {
       this.log(`Paralysis and Freeze forced to ${activate ? "always" : "never"} activate!`);
     } else {
       this.log("Status activation override disabled!");
+    }
+    return this;
+  }
+
+  /**
+   * Override confusion to always or never activate
+   * @param activate - `true` to force activation, `false` to force no activation, `null` to disable the override
+   * @returns `this`
+   */
+  public confusionActivation(activate: boolean | null): this {
+    vi.spyOn(Overrides, "CONFUSION_ACTIVATION_OVERRIDE", "get").mockReturnValue(activate);
+    if (activate !== null) {
+      this.log(`Confusion forced to ${activate ? "always" : "never"} activate!`);
+    } else {
+      this.log("Confusion activation override disabled!");
     }
     return this;
   }

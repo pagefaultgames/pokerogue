@@ -6,6 +6,7 @@ import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
+// TODO? Do we _really_ need 10 test files that just test for status immunity using the same attribute?
 describe("Abilities - Water Veil", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
@@ -23,7 +24,7 @@ describe("Abilities - Water Veil", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([ Moves.SPLASH ])
+      .moveset([Moves.SPLASH])
       .ability(Abilities.BALL_FETCH)
       .battleType("single")
       .disableCrits()
@@ -33,12 +34,12 @@ describe("Abilities - Water Veil", () => {
   });
 
   it("should remove burn when gained", async () => {
-    game.override.ability(Abilities.THERMAL_EXCHANGE)
+    game.override
+      .ability(Abilities.THERMAL_EXCHANGE)
       .enemyAbility(Abilities.BALL_FETCH)
       .moveset(Moves.SKILL_SWAP)
-      .enemyMoveset(Moves.SPLASH),
-
-    await game.classicMode.startBattle([ Species.FEEBAS ]);
+      .enemyMoveset(Moves.SPLASH);
+    await game.classicMode.startBattle([Species.FEEBAS]);
     const enemy = game.scene.getEnemyPokemon();
     enemy?.trySetStatus(StatusEffect.BURN);
     expect(enemy?.status?.effect).toBe(StatusEffect.BURN);

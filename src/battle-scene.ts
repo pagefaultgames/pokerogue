@@ -1465,10 +1465,12 @@ export default class BattleScene extends SceneBase {
       const isWaveIndexMultipleOfFiftyMinusOne = lastBattle.waveIndex % 50 === 49;
       const isNewBiome =
         isWaveIndexMultipleOfTen || isEndlessFifthWave || (isEndlessOrDaily && isWaveIndexMultipleOfFiftyMinusOne);
+      /** Whether to reset and recall pokemon */
       const resetArenaState =
         isNewBiome ||
         [BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER].includes(this.currentBattle.battleType) ||
         this.currentBattle.battleSpec === BattleSpec.FINAL_BOSS;
+
       for (const enemyPokemon of this.getEnemyParty()) {
         enemyPokemon.destroy();
       }
@@ -1476,27 +1478,27 @@ export default class BattleScene extends SceneBase {
       if (!isNewBiome && newWaveIndex % 10 === 5) {
         this.arena.updatePoolsForTimeOfDay();
       }
+
+      // If this is a new trainer battle or biome, recall player pokemon and reset all temporary effects
       if (resetArenaState) {
         this.arena.resetArenaEffects();
 
-        for (const pokemon of playerField) {
-          pokemon.lapseTag(BattlerTagType.COMMANDED);
-        }
-
         playerField.forEach((pokemon, p) => {
+          pokemon.lapseTag(BattlerTagType.COMMANDED);
           if (pokemon.isOnField()) {
             this.pushPhase(new ReturnPhase(p));
           }
         });
 
         for (const pokemon of this.getPlayerParty()) {
-          pokemon.resetBattleData();
+          pokemon.resetBattleAndWaveData();
           pokemon.resetTera();
           applyPostBattleInitAbAttrs(PostBattleInitAbAttr, pokemon);
           if (
             pokemon.hasSpecies(Species.TERAPAGOS) ||
             (this.gameMode.isClassic && this.currentBattle.waveIndex > 180 && this.currentBattle.waveIndex <= 190)
           ) {
+            // Reset player teras used counter if playing with Terapagos or fighting E4
             this.arena.playerTerasUsed = 0;
           }
         }
@@ -2124,12 +2126,15 @@ export default class BattleScene extends SceneBase {
   }
 
   getMaxExpLevel(ignoreLevelCap = false): number {
-    if (Overrides.LEVEL_CAP_OVERRIDE > 0) {
-      return Overrides.LEVEL_CAP_OVERRIDE;
+    const capOverride = Overrides.LEVEL_CAP_OVERRIDE ?? 0;
+    if (capOverride > 0) {
+      return capOverride;
     }
-    if (ignoreLevelCap || Overrides.LEVEL_CAP_OVERRIDE < 0) {
+
+    if (ignoreLevelCap || capOverride < 0) {
       return Number.MAX_SAFE_INTEGER;
     }
+
     const waveIndex = Math.ceil((this.currentBattle?.waveIndex || 1) / 10) * 10;
     const difficultyWaveIndex = this.gameMode.getWaveForDifficulty(waveIndex);
     const baseLevel = (1 + difficultyWaveIndex / 2 + Math.pow(difficultyWaveIndex / 25, 2)) * 1.2;
@@ -2855,7 +2860,7 @@ export default class BattleScene extends SceneBase {
       // adds to the end of PhaseQueuePrepend
       this.unshiftPhase(phase);
     } else {
-      //remember that pushPhase adds it to nextCommandPhaseQueue
+      // remember that pushPhase adds it to nextCommandPhaseQueue
       this.pushPhase(phase);
     }
   }
@@ -3043,105 +3048,93 @@ export default class BattleScene extends SceneBase {
     itemLost = true,
   ): boolean {
     const source = itemModifier.pokemonId ? itemModifier.getPokemon() : null;
-    const cancelled = new BooleanHolder(false);
 
+    // Check for effects that might block us from stealing
+    const cancelled = new BooleanHolder(false);
     if (source && source.isPlayer() !== target.isPlayer()) {
       applyAbAttrs(BlockItemTheftAbAttr, source, cancelled);
     }
-
     if (cancelled.value) {
       return false;
     }
 
+    // Create a new modifier for the reciever with the extra items
     const newItemModifier = itemModifier.clone() as PokemonHeldItemModifier;
     newItemModifier.pokemonId = target.id;
     const matchingModifier = this.findModifier(
       m => m instanceof PokemonHeldItemModifier && m.matchType(itemModifier) && m.pokemonId === target.id,
       target.isPlayer(),
-    ) as PokemonHeldItemModifier;
+    ) as PokemonHeldItemModifier | undefined;
 
-    if (matchingModifier) {
-      const maxStackCount = matchingModifier.getMaxStackCount();
-      if (matchingModifier.stackCount >= maxStackCount) {
-        return false;
-      }
-      const countTaken = Math.min(
-        transferQuantity,
-        itemModifier.stackCount,
-        maxStackCount - matchingModifier.stackCount,
-      );
-      itemModifier.stackCount -= countTaken;
-      newItemModifier.stackCount = matchingModifier.stackCount + countTaken;
+    const countTaken = Math.min(
+      transferQuantity,
+      itemModifier.stackCount,
+      matchingModifier?.getCountUnderMax() ?? Number.MAX_SAFE_INTEGER,
+    );
+
+    if (countTaken <= 0) {
+      // Can't transfer negative items
+      return false;
+    }
+
+    newItemModifier.stackCount = (matchingModifier?.stackCount ?? 0) + countTaken;
+
+    // TODO: Do we need this? IDK what it does (if anything)
+    if (source && source.isPlayer() !== target.isPlayer() && !ignoreUpdate) {
+      this.updateModifiers(source.isPlayer(), instant);
+    }
+
+    // If the old modifier is at 0 stacks, try to remove it
+    if (itemModifier.stackCount <= countTaken && source && !this.removeModifier(itemModifier, !source.isPlayer())) {
+      // Oops! Something went wrong! **BSOD**
+      return false;
+    }
+
+    // Add the new modifier to the recieving pokemon, overriding the prior one as applicable
+    if (matchingModifier && !this.removeModifier(matchingModifier, !target.isPlayer())) {
+      return false;
+    }
+
+    if (target.isPlayer()) {
+      this.addModifier(newItemModifier, ignoreUpdate, playSound, false, instant);
     } else {
-      const countTaken = Math.min(transferQuantity, itemModifier.stackCount);
-      itemModifier.stackCount -= countTaken;
-      newItemModifier.stackCount = countTaken;
+      this.addEnemyModifier(newItemModifier, ignoreUpdate, instant);
     }
 
-    const removeOld = itemModifier.stackCount === 0;
-
-    if (!removeOld || !source || this.removeModifier(itemModifier, !source.isPlayer())) {
-      const addModifier = () => {
-        if (!matchingModifier || this.removeModifier(matchingModifier, !target.isPlayer())) {
-          if (target.isPlayer()) {
-            this.addModifier(newItemModifier, ignoreUpdate, playSound, false, instant);
-            if (source && itemLost) {
-              applyPostItemLostAbAttrs(PostItemLostAbAttr, source, false);
-            }
-            return true;
-          }
-          this.addEnemyModifier(newItemModifier, ignoreUpdate, instant);
-          if (source && itemLost) {
-            applyPostItemLostAbAttrs(PostItemLostAbAttr, source, false);
-          }
-          return true;
-        }
-        return false;
-      };
-      if (source && source.isPlayer() !== target.isPlayer() && !ignoreUpdate) {
-        this.updateModifiers(source.isPlayer(), instant);
-        addModifier();
-      } else {
-        addModifier();
-      }
-      return true;
+    if (source && itemLost) {
+      applyPostItemLostAbAttrs(PostItemLostAbAttr, source, false);
     }
-    return false;
+
+    return true;
   }
 
   canTransferHeldItemModifier(itemModifier: PokemonHeldItemModifier, target: Pokemon, transferQuantity = 1): boolean {
-    const mod = itemModifier.clone() as PokemonHeldItemModifier;
-    const source = mod.pokemonId ? mod.getPokemon() : null;
-    const cancelled = new BooleanHolder(false);
-
-    if (source && source.isPlayer() !== target.isPlayer()) {
-      applyAbAttrs(BlockItemTheftAbAttr, source, cancelled);
+    const source = itemModifier.pokemonId ? itemModifier.getPokemon() : null;
+    if (!source) {
+      // TODO: WHY DO WE RETURN TRUE IF THE ITEM HAS NO OWNER
+      return true;
     }
 
+    const cancelled = new BooleanHolder(false);
+    if (source.isPlayer() !== target.isPlayer()) {
+      applyAbAttrs(BlockItemTheftAbAttr, source, cancelled);
+    }
     if (cancelled.value) {
       return false;
     }
 
     const matchingModifier = this.findModifier(
-      m => m instanceof PokemonHeldItemModifier && m.matchType(mod) && m.pokemonId === target.id,
+      m => m instanceof PokemonHeldItemModifier && m.matchType(itemModifier) && m.pokemonId === target.id,
       target.isPlayer(),
-    ) as PokemonHeldItemModifier;
+    ) as PokemonHeldItemModifier | undefined;
 
-    if (matchingModifier) {
-      const maxStackCount = matchingModifier.getMaxStackCount();
-      if (matchingModifier.stackCount >= maxStackCount) {
-        return false;
-      }
-      const countTaken = Math.min(transferQuantity, mod.stackCount, maxStackCount - matchingModifier.stackCount);
-      mod.stackCount -= countTaken;
-    } else {
-      const countTaken = Math.min(transferQuantity, mod.stackCount);
-      mod.stackCount -= countTaken;
-    }
+    const countTaken = Math.min(
+      transferQuantity,
+      itemModifier.stackCount,
+      matchingModifier?.getCountUnderMax() ?? Number.MAX_SAFE_INTEGER,
+    );
 
-    const removeOld = mod.stackCount === 0;
-
-    return !removeOld || !source || this.hasModifier(itemModifier, !source.isPlayer());
+    return itemModifier.stackCount !== countTaken || this.hasModifier(itemModifier, !source.isPlayer());
   }
 
   removePartyMemberModifiers(partyMemberIndex: number): Promise<void> {
@@ -3276,7 +3269,7 @@ export default class BattleScene extends SceneBase {
       }
     }
 
-    const modifiersClone = modifiers.slice(0);
+    const modifiersClone = modifiers.slice();
     for (const modifier of modifiersClone) {
       if (!modifier.getStackCount()) {
         modifiers.splice(modifiers.indexOf(modifier), 1);
@@ -3317,28 +3310,49 @@ export default class BattleScene extends SceneBase {
   removeModifier(modifier: PersistentModifier, enemy = false): boolean {
     const modifiers = !enemy ? this.modifiers : this.enemyModifiers;
     const modifierIndex = modifiers.indexOf(modifier);
-    if (modifierIndex > -1) {
-      modifiers.splice(modifierIndex, 1);
-      if (modifier instanceof PokemonFormChangeItemModifier) {
-        const pokemon = this.getPokemonById(modifier.pokemonId);
-        if (pokemon) {
-          modifier.apply(pokemon, false);
-        }
-      }
-      return true;
+    if (modifierIndex === -1) {
+      return false;
     }
 
-    return false;
+    modifiers.splice(modifierIndex, 1);
+    if (modifier instanceof PokemonFormChangeItemModifier) {
+      const pokemon = this.getPokemonById(modifier.pokemonId);
+      if (pokemon) {
+        modifier.apply(pokemon, false);
+      }
+    }
+    return true;
   }
 
   /**
-   * Get all of the modifiers that match `modifierType`
-   * @param modifierType The type of modifier to apply; must extend {@linkcode PersistentModifier}
-   * @param player Whether to search the player (`true`) or the enemy (`false`); Defaults to `true`
-   * @returns the list of all modifiers that matched `modifierType`.
+   * Get all modifiers of all {@linkcode Pokemon} in the given party,
+   * optionally filtering based on `modifierType` if provided.
+   * @param player Whether to search the player (`true`) or enemy (`false`) party; Defaults to `true`
+   * @returns a list of all modifiers on the given side of the field.
+   * @overload
    */
-  getModifiers<T extends PersistentModifier>(modifierType: Constructor<T>, player = true): T[] {
-    return (player ? this.modifiers : this.enemyModifiers).filter((m): m is T => m instanceof modifierType);
+  getModifiers(player?: boolean): PersistentModifier[];
+
+  /**
+   * Get all modifiers of all {@linkcode Pokemon} in the given party,
+   * optionally filtering based on `modifierType` if provided.
+   * @param modifierType The type of modifier to check against; must extend {@linkcode PersistentModifier}.
+   * If omitted, will return all {@linkcode PersistentModifier}s regardless of type.
+   * @param player Whether to search the player (`true`) or enemy (`false`) party; Defaults to `true`
+   * @returns a list of all modifiers matching `modifierType` on the given side of the field.
+   * @overload
+   */
+  getModifiers<T extends PersistentModifier>(modifierType: Constructor<T>, player?: boolean): T[];
+
+  // NOTE: Boolean typing on 1st parameter needed to satisfy "bool only" overload
+  getModifiers<T extends PersistentModifier>(modifierType?: Constructor<T> | boolean, player?: boolean) {
+    const usePlayer: boolean = player ?? (typeof modifierType !== "boolean" || modifierType); // non-bool in 1st position = true by default
+    const mods = usePlayer ? this.modifiers : this.enemyModifiers;
+
+    if (typeof modifierType === "undefined" || typeof modifierType === "boolean") {
+      return mods;
+    }
+    return mods.filter((m): m is T => m instanceof modifierType);
   }
 
   /**

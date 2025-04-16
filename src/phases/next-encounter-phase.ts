@@ -9,9 +9,10 @@ export class NextEncounterPhase extends EncounterPhase {
   doEncounter(): void {
     globalScene.playBgm(undefined, true);
 
+    // Reset all player transient wave data/intel.
     for (const pokemon of globalScene.getPlayerParty()) {
       if (pokemon) {
-        pokemon.resetBattleData();
+        pokemon.resetWaveData();
       }
     }
 

@@ -75,9 +75,12 @@ class DefaultOverrides {
   readonly ARENA_TINT_OVERRIDE: TimeOfDay | null = null;
   /** Multiplies XP gained by this value including 0. Set to null to ignore the override. */
   readonly XP_MULTIPLIER_OVERRIDE: number | null = null;
-  /** Sets the level cap to this number during experience gain calculations. Set to `0` to disable override & use normal wave-based level caps,
-  or any negative number to set it to 9 quadrillion (effectively disabling it). */
-  readonly LEVEL_CAP_OVERRIDE: number = 0;
+  /**
+  Sets the level cap to this number during experience gain calculations.
+  Set to `0` or `null` to disable override & use normal wave-based level caps,
+  or any negative number to set it to 9 quadrillion (effectively disabling it).
+  */
+  readonly LEVEL_CAP_OVERRIDE: number | null = null;
   readonly NEVER_CRIT_OVERRIDE: boolean = false;
   /** default 1000 */
   readonly STARTING_MONEY_OVERRIDE: number = 0;
@@ -102,8 +105,16 @@ class DefaultOverrides {
   readonly BYPASS_TUTORIAL_SKIP_OVERRIDE: boolean = false;
   /** Set to `true` to be able to re-earn already unlocked achievements */
   readonly ACHIEVEMENTS_REUNLOCK_OVERRIDE: boolean = false;
-  /** Set to `true` to force Paralysis and Freeze to always activate, or `false` to force them to not activate */
+  /**
+  Set to `true` to force Paralysis and Freeze to always activate,
+  or `false` to force them to not activate (or clear for freeze).
+  */
   readonly STATUS_ACTIVATION_OVERRIDE: boolean | null = null;
+  /**
+  Set to `true` to force Confusion to always trigger,
+  or `false` to force it to never trigger.
+  */
+  readonly CONFUSION_ACTIVATION_OVERRIDE: boolean|null = null;
 
   // ----------------
   // PLAYER OVERRIDES

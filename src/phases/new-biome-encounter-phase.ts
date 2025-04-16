@@ -7,15 +7,14 @@ export class NewBiomeEncounterPhase extends NextEncounterPhase {
   doEncounter(): void {
     globalScene.playBgm(undefined, true);
 
+    // reset all battle data, perform form changes, etc.
     for (const pokemon of globalScene.getPlayerParty()) {
       if (pokemon) {
-        pokemon.resetBattleData();
-        pokemon.customPokemonData.resetHitReceivedCount();
+        pokemon.resetBattleAndWaveData();
+        if (pokemon.isOnField()) {
+          applyAbAttrs(PostBiomeChangeAbAttr, pokemon, null);
+        }
       }
-    }
-
-    for (const pokemon of globalScene.getPlayerParty().filter(p => p.isOnField())) {
-      applyAbAttrs(PostBiomeChangeAbAttr, pokemon, null);
     }
 
     const enemyField = globalScene.getEnemyField();

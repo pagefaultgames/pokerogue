@@ -54,7 +54,7 @@ describe("Abilities - Quick Draw", () => {
 
     expect(pokemon.isFainted()).toBe(false);
     expect(enemy.isFainted()).toBe(true);
-    expect(pokemon.battleData.abilitiesApplied).contain(Abilities.QUICK_DRAW);
+    expect(pokemon.waveData.abilitiesApplied).contain(Abilities.QUICK_DRAW);
   }, 20000);
 
   test(
@@ -76,7 +76,7 @@ describe("Abilities - Quick Draw", () => {
 
       expect(pokemon.isFainted()).toBe(true);
       expect(enemy.isFainted()).toBe(false);
-      expect(pokemon.battleData.abilitiesApplied).not.contain(Abilities.QUICK_DRAW);
+      expect(pokemon.waveData.abilitiesApplied).not.contain(Abilities.QUICK_DRAW);
     },
   );
 
@@ -96,6 +96,6 @@ describe("Abilities - Quick Draw", () => {
 
     expect(pokemon.isFainted()).toBe(true);
     expect(enemy.isFainted()).toBe(false);
-    expect(pokemon.battleData.abilitiesApplied).contain(Abilities.QUICK_DRAW);
+    expect(pokemon.waveData.abilitiesApplied).contain(Abilities.QUICK_DRAW);
   }, 20000);
 });
