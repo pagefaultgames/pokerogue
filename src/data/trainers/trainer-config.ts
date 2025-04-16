@@ -2607,7 +2607,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setBattleBgm("battle_kanto_gym")
     .setMixedBattleBgm("battle_kanto_gym"),
   [TrainerType.GIOVANNI]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["GIOVANNI"], true, PokemonType.GROUND)
+    .initForGymLeader(signatureSpecies["GIOVANNI"], true, PokemonType.GROUND, false, -4)
     .setBattleBgm("battle_kanto_gym")
     .setMixedBattleBgm("battle_kanto_gym"),
   [TrainerType.FALKNER]: new TrainerConfig(++t)
