@@ -2217,18 +2217,6 @@ export class PostSummonMessageAbAttr extends PostSummonAbAttr {
   }
 }
 
-/**
- * Removes illusions when a Pokemon is summoned.
- */
-export class PostSummonRemoveIllusionAbAttr extends PostSummonAbAttr {
-  applyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
-    for (const pokemon of globalScene.getField(true)) {
-      pokemon.breakIllusion();
-    }
-    return true;
-  }
-}
-
 export class PostSummonUnnamedMessageAbAttr extends PostSummonAbAttr {
   //Attr doesn't force pokemon name on the message
   private message: string;
@@ -7194,8 +7182,6 @@ export function initAbilities() {
       .attr(PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr)
       .uncopiable()
       .attr(NoTransformAbilityAbAttr)
-      .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) => i18next.t("abilityTriggers:postSummonNeutralizingGas", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }))
-      .attr(PostSummonRemoveIllusionAbAttr)
       .bypassFaint(),
     new Ability(Abilities.PASTEL_VEIL, 8)
       .attr(PostSummonUserFieldRemoveStatusEffectAbAttr, StatusEffect.POISON, StatusEffect.TOXIC)
