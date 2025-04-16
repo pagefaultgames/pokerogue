@@ -2607,7 +2607,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setBattleBgm("battle_kanto_gym")
     .setMixedBattleBgm("battle_kanto_gym"),
   [TrainerType.GIOVANNI]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["GIOVANNI"], true, PokemonType.DARK)
+    .initForGymLeader(signatureSpecies["GIOVANNI"], true, PokemonType.GROUND)
     .setBattleBgm("battle_kanto_gym")
     .setMixedBattleBgm("battle_kanto_gym"),
   [TrainerType.FALKNER]: new TrainerConfig(++t)
@@ -2713,7 +2713,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setBattleBgm("battle_sinnoh_gym")
     .setMixedBattleBgm("battle_sinnoh_gym"),
   [TrainerType.VOLKNER]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["VOLKNER"], true, PokemonType.ELECTRIC)
+    .initForGymLeader(signatureSpecies["VOLKNER"], true, PokemonType.ELECTRIC, false, -4)
     .setBattleBgm("battle_sinnoh_gym")
     .setMixedBattleBgm("battle_sinnoh_gym"),
   [TrainerType.CILAN]: new TrainerConfig(++t)

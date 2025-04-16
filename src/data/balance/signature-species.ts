@@ -46,7 +46,7 @@ export const signatureSpecies: SignatureSpecies = {
   FANTINA: [Species.MISDREAVUS, Species.DRIFLOON, Species.DUSKULL],
   BYRON: [Species.SHIELDON, Species.BRONZOR, Species.ARON],
   CANDICE: [Species.SNEASEL, Species.SNOVER, Species.SNORUNT],
-  VOLKNER: [Species.SHINX, Species.ELEKID, Species.JOLTEON, Species.REMORAID],
+  VOLKNER: [Species.SHINX, Species.ELEKID, Species.JOLTEON, Species.REMORAID], // Tera Electric Octillery
   // Gym Leaders- Unova
   CILAN: [Species.PANSAGE, Species.FOONGUS, Species.PETILIL],
   CHILI: [Species.PANSEAR, Species.DARUMAKA, Species.NUMEL],
