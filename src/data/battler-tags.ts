@@ -1,12 +1,13 @@
 import { globalScene } from "#app/global-scene";
 import {
-  allAbilities,
   applyAbAttrs,
   BlockNonDirectDamageAbAttr,
   FlinchEffectAbAttr,
   ProtectStatAbAttr,
+  ConditionalUserFieldProtectStatAbAttr,
   ReverseDrainAbAttr,
-} from "#app/data/ability";
+} from "#app/data/abilities/ability";
+import { allAbilities } from "./data-lists";
 import { ChargeAnim, CommonAnim, CommonBattleAnim, MoveChargeAnim } from "#app/data/battle-anims";
 import type Move from "#app/data/moves/move";
 import {
@@ -29,7 +30,6 @@ import { CommonAnimPhase } from "#app/phases/common-anim-phase";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { MovePhase } from "#app/phases/move-phase";
 import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
-import { ShowAbilityPhase } from "#app/phases/show-ability-phase";
 import type { StatStageChangeCallback } from "#app/phases/stat-stage-change-phase";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import i18next from "#app/plugins/i18n";
@@ -42,7 +42,7 @@ import { Species } from "#enums/species";
 import { EFFECTIVE_STATS, getStatKey, Stat, type BattleStat, type EffectiveStat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { WeatherType } from "#enums/weather-type";
-import * as Utils from "../utils";
+import { isNullOrUndefined } from "#app/utils";
 
 export enum BattlerTagLapseType {
   FAINT,
@@ -302,7 +302,7 @@ export class DisabledTag extends MoveRestrictionBattlerTag {
     super.onAdd(pokemon);
 
     const move = pokemon.getLastXMoves(-1).find(m => !m.virtual);
-    if (Utils.isNullOrUndefined(move) || move.move === Moves.STRUGGLE || move.move === Moves.NONE) {
+    if (isNullOrUndefined(move) || move.move === Moves.STRUGGLE || move.move === Moves.NONE) {
       return;
     }
 
@@ -1644,7 +1644,9 @@ export class ContactDamageProtectedTag extends ProtectedTag {
       if (effectPhase instanceof MoveEffectPhase && effectPhase.move.getMove().hasFlag(MoveFlags.MAKES_CONTACT)) {
         const attacker = effectPhase.getPokemon();
         if (!attacker.hasAbilityWithAttr(BlockNonDirectDamageAbAttr)) {
-          attacker.damageAndUpdate(toDmgValue(attacker.getMaxHp() * (1 / this.damageRatio)), { result: HitResult.INDIRECT });
+          attacker.damageAndUpdate(toDmgValue(attacker.getMaxHp() * (1 / this.damageRatio)), {
+            result: HitResult.INDIRECT,
+          });
         }
       }
     }
@@ -1898,12 +1900,14 @@ export class TruantTag extends AbilityBattlerTag {
 
     if (lastMove && lastMove.move !== Moves.NONE) {
       (globalScene.getCurrentPhase() as MovePhase).cancel();
-      globalScene.unshiftPhase(new ShowAbilityPhase(pokemon.id, passive));
+      // TODO: Ability displays should be handled by the ability
+      globalScene.queueAbilityDisplay(pokemon, passive, true);
       globalScene.queueMessage(
         i18next.t("battlerTags:truantLapse", {
           pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
         }),
       );
+      globalScene.queueAbilityDisplay(pokemon, passive, false);
     }
 
     return true;
@@ -1970,7 +1974,7 @@ export class HighestStatBoostTag extends AbilityBattlerTag {
 
     let highestStat: EffectiveStat;
     EFFECTIVE_STATS.map(s =>
-      pokemon.getEffectiveStat(s, undefined, undefined, undefined, undefined, undefined, undefined, true),
+      pokemon.getEffectiveStat(s, undefined, undefined, undefined, undefined, undefined, undefined, undefined, true),
     ).reduce((highestValue: number, value: number, i: number) => {
       if (value > highestValue) {
         highestStat = EFFECTIVE_STATS[i];
@@ -2149,6 +2153,21 @@ export class TypeBoostTag extends BattlerTag {
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     return lapseType !== BattlerTagLapseType.CUSTOM || super.lapse(pokemon, lapseType);
   }
+
+  override onAdd(pokemon: Pokemon): void {
+    globalScene.queueMessage(
+      i18next.t("abilityTriggers:typeImmunityPowerBoost", {
+        pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+        typeName: i18next.t(`pokemonInfo:Type.${PokemonType[this.boostedType]}`),
+      }),
+    );
+  }
+
+  override onOverlap(pokemon: Pokemon): void {
+    globalScene.queueMessage(
+      i18next.t("abilityTriggers:moveImmunity", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }),
+    );
+  }
 }
 
 export class CritBoostTag extends BattlerTag {
@@ -2240,7 +2259,9 @@ export class SaltCuredTag extends BattlerTag {
 
       if (!cancelled.value) {
         const pokemonSteelOrWater = pokemon.isOfType(PokemonType.STEEL) || pokemon.isOfType(PokemonType.WATER);
-        pokemon.damageAndUpdate(toDmgValue(pokemonSteelOrWater ? pokemon.getMaxHp() / 4 : pokemon.getMaxHp() / 8), { result: HitResult.INDIRECT });
+        pokemon.damageAndUpdate(toDmgValue(pokemonSteelOrWater ? pokemon.getMaxHp() / 4 : pokemon.getMaxHp() / 8), {
+          result: HitResult.INDIRECT,
+        });
 
         globalScene.queueMessage(
           i18next.t("battlerTags:saltCuredLapse", {
@@ -3005,6 +3026,7 @@ export class MysteryEncounterPostSummonTag extends BattlerTag {
     if (lapseType === BattlerTagLapseType.CUSTOM) {
       const cancelled = new BooleanHolder(false);
       applyAbAttrs(ProtectStatAbAttr, pokemon, cancelled);
+      applyAbAttrs(ConditionalUserFieldProtectStatAbAttr, pokemon, cancelled, false, pokemon);
       if (!cancelled.value) {
         if (pokemon.mysteryEncounterBattleEffects) {
           pokemon.mysteryEncounterBattleEffects(pokemon);

@@ -2,14 +2,14 @@ import { getPokemonNameWithAffix } from "../messages";
 import type Pokemon from "../field/pokemon";
 import { HitResult } from "../field/pokemon";
 import { getStatusEffectHealText } from "./status-effect";
-import * as Utils from "../utils";
+import { NumberHolder, toDmgValue, randSeedInt } from "#app/utils";
 import {
   DoubleBerryEffectAbAttr,
   PostItemLostAbAttr,
   ReduceBerryUseThresholdAbAttr,
   applyAbAttrs,
   applyPostItemLostAbAttrs,
-} from "./ability";
+} from "./abilities/ability";
 import i18next from "i18next";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BerryType } from "#enums/berry-type";
@@ -43,7 +43,7 @@ export function getBerryPredicate(berryType: BerryType): BerryPredicate {
     case BerryType.APICOT:
     case BerryType.SALAC:
       return (pokemon: Pokemon) => {
-        const threshold = new Utils.NumberHolder(0.25);
+        const threshold = new NumberHolder(0.25);
         // Offset BerryType such that LIECHI -> Stat.ATK = 1, GANLON -> Stat.DEF = 2, so on and so forth
         const stat: BattleStat = berryType - BerryType.ENIGMA;
         applyAbAttrs(ReduceBerryUseThresholdAbAttr, pokemon, null, false, threshold);
@@ -51,19 +51,19 @@ export function getBerryPredicate(berryType: BerryType): BerryPredicate {
       };
     case BerryType.LANSAT:
       return (pokemon: Pokemon) => {
-        const threshold = new Utils.NumberHolder(0.25);
+        const threshold = new NumberHolder(0.25);
         applyAbAttrs(ReduceBerryUseThresholdAbAttr, pokemon, null, false, threshold);
         return pokemon.getHpRatio() < 0.25 && !pokemon.getTag(BattlerTagType.CRIT_BOOST);
       };
     case BerryType.STARF:
       return (pokemon: Pokemon) => {
-        const threshold = new Utils.NumberHolder(0.25);
+        const threshold = new NumberHolder(0.25);
         applyAbAttrs(ReduceBerryUseThresholdAbAttr, pokemon, null, false, threshold);
         return pokemon.getHpRatio() < 0.25;
       };
     case BerryType.LEPPA:
       return (pokemon: Pokemon) => {
-        const threshold = new Utils.NumberHolder(0.25);
+        const threshold = new NumberHolder(0.25);
         applyAbAttrs(ReduceBerryUseThresholdAbAttr, pokemon, null, false, threshold);
         return !!pokemon.getMoveset().find(m => !m.getPpRatio());
       };
@@ -80,7 +80,7 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
         if (pokemon.battleData) {
           pokemon.battleData.berriesEaten.push(berryType);
         }
-        const hpHealed = new Utils.NumberHolder(Utils.toDmgValue(pokemon.getMaxHp() / 4));
+        const hpHealed = new NumberHolder(toDmgValue(pokemon.getMaxHp() / 4));
         applyAbAttrs(DoubleBerryEffectAbAttr, pokemon, null, false, hpHealed);
         globalScene.unshiftPhase(
           new PokemonHealPhase(
@@ -118,7 +118,7 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
         }
         // Offset BerryType such that LIECHI -> Stat.ATK = 1, GANLON -> Stat.DEF = 2, so on and so forth
         const stat: BattleStat = berryType - BerryType.ENIGMA;
-        const statStages = new Utils.NumberHolder(1);
+        const statStages = new NumberHolder(1);
         applyAbAttrs(DoubleBerryEffectAbAttr, pokemon, null, false, statStages);
         globalScene.unshiftPhase(new StatStageChangePhase(pokemon.getBattlerIndex(), true, [stat], statStages.value));
         applyPostItemLostAbAttrs(PostItemLostAbAttr, berryOwner ?? pokemon, false);
@@ -136,8 +136,8 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
         if (pokemon.battleData) {
           pokemon.battleData.berriesEaten.push(berryType);
         }
-        const randStat = Utils.randSeedInt(Stat.SPD, Stat.ATK);
-        const stages = new Utils.NumberHolder(2);
+        const randStat = randSeedInt(Stat.SPD, Stat.ATK);
+        const stages = new NumberHolder(2);
         applyAbAttrs(DoubleBerryEffectAbAttr, pokemon, null, false, stages);
         globalScene.unshiftPhase(new StatStageChangePhase(pokemon.getBattlerIndex(), true, [randStat], stages.value));
         applyPostItemLostAbAttrs(PostItemLostAbAttr, berryOwner ?? pokemon, false);

@@ -1,4 +1,4 @@
-import { applyPostTurnAbAttrs, PostTurnAbAttr } from "#app/data/ability";
+import { applyPostTurnAbAttrs, PostTurnAbAttr } from "#app/data/abilities/ability";
 import { BattlerTagLapseType } from "#app/data/battler-tags";
 import { TerrainType } from "#app/data/terrain";
 import { WeatherType } from "#app/enums/weather-type";
@@ -18,15 +18,13 @@ import { PokemonHealPhase } from "./pokemon-heal-phase";
 import { globalScene } from "#app/global-scene";
 
 export class TurnEndPhase extends FieldPhase {
-  constructor() {
-    super();
-  }
-
   start() {
     super.start();
 
     globalScene.currentBattle.incrementTurn();
     globalScene.eventTarget.dispatchEvent(new TurnEndEvent(globalScene.currentBattle.turn));
+
+    globalScene.hideAbilityBar();
 
     const handlePokemon = (pokemon: Pokemon) => {
       if (!pokemon.switchOutStatus) {

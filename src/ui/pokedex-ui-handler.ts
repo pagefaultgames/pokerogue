@@ -1,5 +1,5 @@
-import type { Variant } from "#app/data/variant";
-import { getVariantTint, getVariantIcon } from "#app/data/variant";
+import type { Variant } from "#app/sprites/variant";
+import { getVariantTint, getVariantIcon } from "#app/sprites/variant";
 import { argbFromRgba } from "@material/material-color-utilities";
 import i18next from "i18next";
 import { starterColors } from "#app/battle-scene";
@@ -12,7 +12,7 @@ import { getStarterValueFriendshipCap, speciesStarterCosts, POKERUS_STARTER_COUN
 import { catchableSpecies } from "#app/data/balance/biomes";
 import { PokemonType } from "#enums/pokemon-type";
 import type { DexAttrProps, DexEntry, StarterAttributes, StarterPreferences } from "#app/system/game-data";
-import { AbilityAttr, DexAttr, loadStarterPreferences, saveStarterPreferences } from "#app/system/game-data";
+import { AbilityAttr, DexAttr, loadStarterPreferences } from "#app/system/game-data";
 import MessageUiHandler from "#app/ui/message-ui-handler";
 import PokemonIconAnimHandler, { PokemonIconAnimMode } from "#app/ui/pokemon-icon-anim-handler";
 import { TextStyle, addTextObject } from "#app/ui/text";
@@ -36,7 +36,7 @@ import type { Nature } from "#enums/nature";
 import { addWindow } from "./ui-theme";
 import type { OptionSelectConfig } from "./abstact-option-select-ui-handler";
 import { FilterText, FilterTextRow } from "./filter-text";
-import { allAbilities } from "#app/data/ability";
+import { allAbilities } from "#app/data/data-lists";
 import { starterPassiveAbilities } from "#app/data/balance/passives";
 import { allMoves } from "#app/data/moves/move";
 import { speciesTmMoves } from "#app/data/balance/tms";

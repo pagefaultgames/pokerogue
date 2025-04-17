@@ -8,7 +8,7 @@ import {
   PostFaintAbAttr,
   PostKnockOutAbAttr,
   PostVictoryAbAttr,
-} from "#app/data/ability";
+} from "#app/data/abilities/ability";
 import type { DestinyBondTag, GrudgeTag } from "#app/data/battler-tags";
 import { BattlerTagLapseType } from "#app/data/battler-tags";
 import { battleSpecDialogue } from "#app/data/dialogue";
@@ -209,8 +209,8 @@ export class FaintPhase extends PokemonPhase {
     }
 
     // in double battles redirect potential moves off fainted pokemon
-    if (globalScene.currentBattle.double) {
-      const allyPokemon = pokemon.getAlly();
+    const allyPokemon = pokemon.getAlly();
+    if (globalScene.currentBattle.double && !isNullOrUndefined(allyPokemon)) {
       globalScene.redirectPokemonMoves(pokemon, allyPokemon);
     }
 

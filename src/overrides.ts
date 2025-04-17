@@ -2,7 +2,7 @@ import { type PokeballCounts } from "#app/battle-scene";
 import { EvolutionItem } from "#app/data/balance/pokemon-evolutions";
 import { Gender } from "#app/data/gender";
 import { FormChangeItem } from "#app/data/pokemon-forms";
-import { Variant } from "#app/data/variant";
+import { Variant } from "#app/sprites/variant";
 import { type ModifierOverride } from "#app/modifier/modifier-type";
 import { Unlockables } from "#app/system/unlockables";
 import { Abilities } from "#enums/abilities";
@@ -254,6 +254,11 @@ class DefaultOverrides {
    * Note that, for all items in the array, `count` is not used.
    */
   readonly ITEM_REWARD_OVERRIDE: ModifierOverride[] = [];
+
+  /**
+   * If `true`, disable all non-scripted opponent trainer encounters.
+   */
+  readonly DISABLE_STANDARD_TRAINERS_OVERRIDE: boolean = false;
 }
 
 export const defaultOverrides = new DefaultOverrides();

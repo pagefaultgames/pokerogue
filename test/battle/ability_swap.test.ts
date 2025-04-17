@@ -1,4 +1,4 @@
-import { allAbilities } from "#app/data/ability";
+import { allAbilities } from "#app/data/data-lists";
 import { Stat } from "#app/enums/stat";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
@@ -63,5 +63,16 @@ describe("Test Ability Swapping", () => {
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(game.scene.getPlayerPokemon()?.getStatStage(Stat.ATK)).toBe(1); // would be 2 if passive activated again
+  });
+
+  // Pickup and Honey Gather are special cases as they're the only abilities to be Unsuppressable but not Unswappable
+  it("should be able to swap pickup", async () => {
+    game.override.ability(Abilities.PICKUP).enemyAbility(Abilities.INTIMIDATE).moveset(Moves.ROLE_PLAY);
+    await game.classicMode.startBattle([Species.FEEBAS]);
+
+    game.move.select(Moves.ROLE_PLAY);
+    await game.phaseInterceptor.to("BerryPhase");
+
+    expect(game.scene.getEnemyPokemon()?.getStatStage(Stat.ATK)).toBe(-1);
   });
 });

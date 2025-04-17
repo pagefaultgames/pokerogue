@@ -8,7 +8,9 @@ import {
   setEncounterRewards,
   transitionMysteryEncounterIntroVisuals,
 } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { trainerConfigs, TrainerPartyCompoundTemplate, TrainerPartyTemplate } from "#app/data/trainer-config";
+import { trainerConfigs } from "#app/data/trainers/trainer-config";
+import { TrainerPartyCompoundTemplate } from "#app/data/trainers/TrainerPartyTemplate";
+import { TrainerPartyTemplate } from "#app/data/trainers/TrainerPartyTemplate";
 import { ModifierTier } from "#app/modifier/modifier-tier";
 import type { PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
 import { ModifierPoolType, modifierTypes } from "#app/modifier/modifier-type";
@@ -36,7 +38,7 @@ import i18next from "i18next";
 import type { OptionSelectConfig } from "#app/ui/abstact-option-select-ui-handler";
 import type { PlayerPokemon } from "#app/field/pokemon";
 import { PokemonMove } from "#app/field/pokemon";
-import { Ability } from "#app/data/ability";
+import { Ability } from "#app/data/abilities/ability-class";
 import { BerryModifier } from "#app/modifier/modifier";
 import { BerryType } from "#enums/berry-type";
 import { BattlerIndex } from "#app/battle";

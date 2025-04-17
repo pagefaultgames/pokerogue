@@ -47,7 +47,7 @@ import {
 } from "./modifier-type";
 import { Color, ShadowColor } from "#enums/color";
 import { FRIENDSHIP_GAIN_FROM_RARE_CANDY } from "#app/data/balance/starters";
-import { applyAbAttrs, CommanderAbAttr } from "#app/data/ability";
+import { applyAbAttrs, CommanderAbAttr } from "#app/data/abilities/ability";
 import { globalScene } from "#app/global-scene";
 
 export type ModifierPredicate = (modifier: Modifier) => boolean;
@@ -2734,7 +2734,7 @@ export class PokemonMoveAccuracyBoosterModifier extends PokemonHeldItemModifier 
    * @returns always `true`
    */
   override apply(_pokemon: Pokemon, moveAccuracy: NumberHolder): boolean {
-    moveAccuracy.value = Math.min(moveAccuracy.value + this.accuracyAmount * this.getStackCount(), 100);
+    moveAccuracy.value = moveAccuracy.value + this.accuracyAmount * this.getStackCount();
 
     return true;
   }

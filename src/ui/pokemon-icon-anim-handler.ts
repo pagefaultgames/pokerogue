@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import * as Utils from "../utils";
+import { fixedInt } from "#app/utils";
 
 export enum PokemonIconAnimMode {
   NONE,
@@ -27,7 +27,7 @@ export default class PokemonIconAnimHandler {
       }
     };
     globalScene.tweens.addCounter({
-      duration: Utils.fixedInt(200),
+      duration: fixedInt(200),
       from: 0,
       to: 1,
       yoyo: true,

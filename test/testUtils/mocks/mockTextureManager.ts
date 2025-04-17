@@ -1,5 +1,5 @@
 import MockContainer from "#test/testUtils/mocks/mocksContainer/mockContainer";
-import MockImage from "#test/testUtils/mocks/mocksContainer/mockImage";
+import { MockImage } from "#test/testUtils/mocks/mocksContainer/mockImage";
 import MockNineslice from "#test/testUtils/mocks/mocksContainer/mockNineslice";
 import MockPolygon from "#test/testUtils/mocks/mocksContainer/mockPolygon";
 import MockRectangle from "#test/testUtils/mocks/mocksContainer/mockRectangle";

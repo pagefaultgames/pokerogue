@@ -1,4 +1,4 @@
-import * as Utils from "../utils";
+import { fixedInt } from "#app/utils";
 import { globalScene } from "#app/global-scene";
 import { BattleSceneEventType } from "../events/battle-scene";
 import { EaseType } from "#enums/ease-type";
@@ -75,14 +75,14 @@ export default class TimeOfDayWidget extends Phaser.GameObjects.Container {
     const rotate = {
       targets: [this.timeOfDayIconMgs[0], this.timeOfDayIconMgs[1]],
       angle: "+=90",
-      duration: Utils.fixedInt(1500),
+      duration: fixedInt(1500),
       ease: "Back.easeOut",
       paused: !this.parentVisible,
     };
     const fade = {
       targets: [this.timeOfDayIconBgs[1], this.timeOfDayIconMgs[1], this.timeOfDayIconFgs[1]],
       alpha: 0,
-      duration: Utils.fixedInt(500),
+      duration: fixedInt(500),
       ease: "Linear",
       paused: !this.parentVisible,
     };
@@ -98,14 +98,14 @@ export default class TimeOfDayWidget extends Phaser.GameObjects.Container {
     const bounce = {
       targets: [this.timeOfDayIconMgs[0], this.timeOfDayIconMgs[1]],
       angle: "+=90",
-      duration: Utils.fixedInt(2000),
+      duration: fixedInt(2000),
       ease: "Bounce.easeOut",
       paused: !this.parentVisible,
     };
     const fade = {
       targets: [this.timeOfDayIconBgs[1], this.timeOfDayIconMgs[1], this.timeOfDayIconFgs[1]],
       alpha: 0,
-      duration: Utils.fixedInt(800),
+      duration: fixedInt(800),
       ease: "Linear",
       paused: !this.parentVisible,
     };

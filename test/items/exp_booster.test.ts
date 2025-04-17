@@ -1,6 +1,6 @@
 import { Abilities } from "#app/enums/abilities";
 import { PokemonExpBoosterModifier } from "#app/modifier/modifier";
-import * as Utils from "#app/utils";
+import { NumberHolder } from "#app/utils";
 import GameManager from "#test/testUtils/gameManager";
 import Phase from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -33,7 +33,7 @@ describe("EXP Modifier Items", () => {
 
     const partyMember = game.scene.getPlayerPokemon()!;
     partyMember.exp = 100;
-    const expHolder = new Utils.NumberHolder(partyMember.exp);
+    const expHolder = new NumberHolder(partyMember.exp);
     game.scene.applyModifiers(PokemonExpBoosterModifier, true, partyMember, expHolder);
     expect(expHolder.value).toBe(440);
   }, 20000);

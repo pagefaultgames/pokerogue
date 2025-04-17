@@ -1,11 +1,11 @@
 import type { SpeciesFormEvolution } from "#app/data/balance/pokemon-evolutions";
 import { pokemonEvolutions, pokemonPrevolutions, pokemonStarters } from "#app/data/balance/pokemon-evolutions";
-import type { Variant } from "#app/data/variant";
-import { getVariantTint, getVariantIcon } from "#app/data/variant";
+import type { Variant } from "#app/sprites/variant";
+import { getVariantTint, getVariantIcon } from "#app/sprites/variant";
 import { argbFromRgba } from "@material/material-color-utilities";
 import i18next from "i18next";
 import { starterColors } from "#app/battle-scene";
-import { allAbilities } from "#app/data/ability";
+import { allAbilities } from "#app/data/data-lists";
 import { speciesEggMoves } from "#app/data/balance/egg-moves";
 import { GrowthRate, getGrowthRateColor } from "#app/data/exp";
 import { Gender, getGenderColor, getGenderSymbol } from "#app/data/gender";
@@ -54,7 +54,7 @@ import {
   toReadableString,
 } from "#app/utils";
 import type { Nature } from "#enums/nature";
-import * as Utils from "../utils";
+import { getEnumKeys } from "#app/utils";
 import { speciesTmMoves } from "#app/data/balance/tms";
 import type { BiomeTierTod } from "#app/data/balance/biomes";
 import { BiomePoolTier, catchableSpecies } from "#app/data/balance/biomes";
@@ -592,7 +592,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
     this.menuContainer.setVisible(false);
 
-    this.menuOptions = Utils.getEnumKeys(MenuOptions).map(m => Number.parseInt(MenuOptions[m]) as MenuOptions);
+    this.menuOptions = getEnumKeys(MenuOptions).map(m => Number.parseInt(MenuOptions[m]) as MenuOptions);
 
     this.optionSelectText = addBBCodeTextObject(
       0,
@@ -696,7 +696,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
     this.starterAttributes = this.initStarterPrefs();
 
-    this.menuOptions = Utils.getEnumKeys(MenuOptions).map(m => Number.parseInt(MenuOptions[m]) as MenuOptions);
+    this.menuOptions = getEnumKeys(MenuOptions).map(m => Number.parseInt(MenuOptions[m]) as MenuOptions);
 
     this.menuContainer.setVisible(true);
 
@@ -978,7 +978,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     const caughtAttr = this.isCaught();
 
     // no preferences or Pokemon wasn't caught, return empty attribute
-    if (!starterAttributes || !caughtAttr) {
+    if (!starterAttributes || !this.isSeen()) {
       return {};
     }
 
@@ -1150,15 +1150,14 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
         });
         this.blockInput = false;
       } else {
-        ui.revertMode()
-          .then(() => {
-            console.log("exitCallback", this.exitCallback);
-            if (this.exitCallback instanceof Function) {
-              const exitCallback = this.exitCallback;
-              this.exitCallback = null;
-              exitCallback();
-            }
-          });
+        ui.revertMode().then(() => {
+          console.log("exitCallback", this.exitCallback);
+          if (this.exitCallback instanceof Function) {
+            const exitCallback = this.exitCallback;
+            this.exitCallback = null;
+            exitCallback();
+          }
+        });
         success = true;
       }
     } else {
@@ -2027,6 +2026,11 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
             }
             break;
           case Button.LEFT:
+            if (this.filteredIndices && this.filteredIndices.length <= 1) {
+              ui.playError();
+              this.blockInput = false;
+              return true;
+            }
             this.blockInput = true;
             ui.setModeWithoutClear(Mode.OPTION_SELECT).then(() => {
               // Always go back to first selection after scrolling around
@@ -2062,6 +2066,11 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
             this.blockInput = false;
             break;
           case Button.RIGHT:
+            if (this.filteredIndices && this.filteredIndices.length <= 1) {
+              ui.playError();
+              this.blockInput = false;
+              return true;
+            }
             ui.setModeWithoutClear(Mode.OPTION_SELECT).then(() => {
               // Always go back to first selection after scrolling around
               if (this.previousSpecies.length === 0) {
@@ -2221,9 +2230,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
     const ui = this.getUi();
 
-    const isFormCaught = this.isFormCaught();
-
-    if ((this.isCaught() && isFormCaught) || (this.speciesStarterDexEntry?.seenAttr && cursor === 5)) {
+    if ((this.isCaught() && this.isFormCaught()) || this.isSeen()) {
       ui.showText(this.menuDescriptions[cursor]);
     } else {
       ui.showText("");
@@ -2302,7 +2309,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       }
     }
 
-    if (species && (this.speciesStarterDexEntry?.seenAttr || this.isCaught())) {
+    if (species && (this.isSeen() || this.isCaught())) {
       this.pokemonNumberText.setText(padInt(species.speciesId, 4));
 
       if (this.isCaught()) {
