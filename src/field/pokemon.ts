@@ -3852,12 +3852,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return null;
   }
 
-  getOpponents(): Pokemon[] {
+  getOpponents(onField = false): Pokemon[] {
     return (
       (this.isPlayer()
         ? globalScene.getEnemyField()
         : globalScene.getPlayerField()) as Pokemon[]
-    ).filter(p => p.isActive());
+    ).filter(p => p.isActive(onField));
   }
 
   getOpponentDescriptor(): string {
