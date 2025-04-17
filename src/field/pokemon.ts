@@ -261,6 +261,7 @@ import { MoveFlags } from "#enums/MoveFlags";
 import { timedEventManager } from "#app/global-event-manager";
 import { loadMoveAnimations } from "#app/sprites/pokemon-asset-loader";
 import { ResetStatusPhase } from "#app/phases/reset-status-phase";
+import { PokemonItemManager } from "./pokemon-item-manager";
 
 export enum LearnMoveSituation {
   MISC,
@@ -342,6 +343,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public usedTMs: Moves[];
 
   private shinySparkle: Phaser.GameObjects.Sprite;
+
+  public heldItemManager: PokemonItemManager;
 
   constructor(
     x: number,
@@ -536,6 +539,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (!dataSource) {
       this.calculateStats();
     }
+
+    this.heldItemManager = new PokemonItemManager();
   }
 
   /**
