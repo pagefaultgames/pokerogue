@@ -64,7 +64,7 @@ export const signatureSpecies: SignatureSpecies = {
   // Gym Leaders- Kalos
   VIOLA: [Species.SCATTERBUG, Species.SURSKIT, Species.CUTIEFLY, Species.DWEBBLE],
   GRANT: [Species.TYRUNT, Species.AMAURA, Species.BINACLE, Species.HISUI_AVALUGG],
-  KORRINA: [Species.LUCARIO, Species.HAWLUCHA, Species.MIENFOO, Species.PANCHAM],
+  KORRINA: [Species.LUCARIO, Species.MIENFOO, Species.HAWLUCHA, Species.PANCHAM],
   RAMOS: [Species.SKIDDO, Species.HOPPIP, Species.BELLSPROUT, [Species.PHANTUMP, Species.PUMPKABOO]],
   CLEMONT: [Species.HELIOPTILE, Species.MAGNEMITE, Species.DEDENNE, Species.SHINX],
   VALERIE: [Species.SYLVEON, Species.MAWILE, Species.MR_MIME, [Species.SPRITZEE, Species.SWIRLIX]],
@@ -78,7 +78,7 @@ export const signatureSpecies: SignatureSpecies = {
   ALLISTER: [Species.GASTLY, Species.GALAR_YAMASK, Species.GALAR_CORSOLA, Species.SINISTEA],
   OPAL: [Species.MILCERY, Species.GALAR_WEEZING, Species.TOGEPI, Species.MAWILE],
   BEDE: [Species.HATENNA, Species.GALAR_PONYTA, Species.GARDEVOIR, Species.SYLVEON],
-  GORDIE: [Species.ROLYCOLY, Species.BINACLE, Species.STONJOURNER, Species.LARVITAR],
+  GORDIE: [Species.ROLYCOLY, [Species.SHUCKLE, Species.BINACLE], Species.STONJOURNER, Species.LARVITAR],
   MELONY: [Species.LAPRAS, Species.SNOM, Species.EISCUE, [Species.GALAR_DARUMAKA, Species.GALAR_MR_MIME]],
   PIERS: [Species.GALAR_ZIGZAGOON, Species.SCRAGGY, Species.TOXEL, Species.INKAY], // Tera Dark Toxel
   MARNIE: [Species.IMPIDIMP, Species.MORPEKO, Species.PURRLOIN, Species.CROAGUNK], // Tera Dark Croagunk
