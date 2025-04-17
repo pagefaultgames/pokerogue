@@ -838,14 +838,22 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
     }
 
+    console.log("Before awaiting line 842");
     await Promise.allSettled(loadPromises);
+    console.log("After awaiting line 842");
+
+    // This must be initiated before we queue loading, otherwise the load could have finished before
+    // we reach the line of code that adds the listener, causing a deadlock.
+    const waitOnLoadPromise = new Promise<void>(resolve => globalScene.load.once(Phaser.Loader.Events.COMPLETE, resolve));
 
     // Wait for the assets we queued to load to finish loading, then...
     if (!globalScene.load.isLoading()) {
+      // push an event that will resolve when the load is complete
       globalScene.load.start();
+
     }
     // See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Using_promises#creating_a_promise_around_an_old_callback_api
-    await new Promise(resolve => globalScene.load.once(Phaser.Loader.Events.COMPLETE, resolve));
+    await waitOnLoadPromise;
 
     // With the sprites loaded, generate the animation frame information
     if (this.isPlayer()) {
@@ -874,6 +882,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (this.summonData?.speciesForm) {
       this.updateFusionPalette(true);
     }
+    console.log("Line 881");
   }
 
   /**
