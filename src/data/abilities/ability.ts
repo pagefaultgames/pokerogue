@@ -5161,7 +5161,14 @@ export class IllusionPreSummonAbAttr extends PreSummonAbAttr {
   }
 }
 
-export class IllusionBreakAbAttr extends PostDefendAbAttr {
+export class IllusionBreakAbAttr extends AbAttr {
+  override apply(pokemon: Pokemon, _passive: boolean, _simulated: boolean, _cancelled: BooleanHolder | null, _args: any[]): void {
+    pokemon.breakIllusion();
+    pokemon.summonData.illusionBroken = true;
+  }
+}
+
+export class PostDefendIllusionBreakAbAttr extends PostDefendAbAttr {
   /**
    * Destroy the illusion upon taking damage
    *
@@ -6253,7 +6260,7 @@ export function applyOnGainAbAttrs(
 }
 
 /**
- * Clears primal weather/neutralizing gas during the turn if {@linkcode pokemon}'s ability corresponds to one
+ * Applies ability attributes which activate when the ability is lost or suppressed (i.e. primal weather)
  */
 export function applyOnLoseAbAttrs(pokemon: Pokemon, passive = false, simulated = false, ...args: any[]): void {
   applySingleAbAttrs<PreLeaveFieldAbAttr>(
@@ -6265,6 +6272,17 @@ export function applyOnLoseAbAttrs(pokemon: Pokemon, passive = false, simulated 
     args,
     true,
     simulated);
+
+  applySingleAbAttrs<IllusionBreakAbAttr>(
+    pokemon,
+    passive,
+    IllusionBreakAbAttr,
+    (attr, passive) => attr.apply(pokemon, passive, simulated, null, args),
+    (attr, passive) => attr.canApply(pokemon, passive, simulated, args),
+    args,
+    true,
+    simulated
+  )
 }
 
 /**
@@ -6764,11 +6782,12 @@ export function initAbilities() {
         return isNullOrUndefined(movePhase);
       }, 1.3),
     new Ability(Abilities.ILLUSION, 5)
-      //The pokemon generate an illusion if it's available
+      // The Pokemon generate an illusion if it's available
       .attr(IllusionPreSummonAbAttr, false)
-      //The pokemon loses his illusion when he is damaged by a move
-      .attr(IllusionBreakAbAttr, true)
-      //Illusion is available again after a battle
+      .attr(IllusionBreakAbAttr)
+      // The Pokemon loses its illusion when damaged by a move
+      .attr(PostDefendIllusionBreakAbAttr, true)
+      // Illusion is available again after a battle
       .conditionalAttr((pokemon) => pokemon.isAllowedInBattle(), IllusionPostBattleAbAttr, false)
       .uncopiable()
       .bypassFaint(),
