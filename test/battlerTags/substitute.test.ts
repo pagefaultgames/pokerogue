@@ -1,5 +1,5 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import type { PokemonTurnData, TurnMove, PokemonMove } from "#app/field/pokemon";
+import type { PokemonTurnData, TurnMove } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
 import { MoveResult } from "#app/field/pokemon";
 import type BattleScene from "#app/battle-scene";
@@ -186,12 +186,8 @@ describe("BattlerTag - SubstituteTag", () => {
       vi.spyOn(mockPokemon.scene as BattleScene, "triggerPokemonBattleAnim").mockReturnValue(true);
       vi.spyOn(mockPokemon.scene as BattleScene, "queueMessage").mockReturnValue();
 
-      const pokemonMove = {
-        getMove: vi.fn().mockReturnValue(allMoves[Moves.TACKLE]) as PokemonMove["getMove"],
-      } as PokemonMove;
-
       const moveEffectPhase = {
-        move: pokemonMove,
+        move: allMoves[Moves.TACKLE],
         getUserPokemon: vi.fn().mockReturnValue(undefined) as MoveEffectPhase["getUserPokemon"],
       } as MoveEffectPhase;
 
