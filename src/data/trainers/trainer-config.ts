@@ -2579,252 +2579,252 @@ export const trainerConfigs: TrainerConfigs = {
     ),
 
   [TrainerType.BROCK]: new TrainerConfig((t = TrainerType.BROCK))
-    .initForGymLeader(signatureSpecies["BROCK"], true, PokemonType.ROCK, true, -1)
+    .initForGymLeader(signatureSpecies["BROCK"], true, PokemonType.ROCK, false, -1)
     .setBattleBgm("battle_kanto_gym")
     .setMixedBattleBgm("battle_kanto_gym"),
   [TrainerType.MISTY]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["MISTY"], false, PokemonType.WATER, true, -1)
+    .initForGymLeader(signatureSpecies["MISTY"], false, PokemonType.WATER, false, -1)
     .setBattleBgm("battle_kanto_gym")
     .setMixedBattleBgm("battle_kanto_gym"),
   [TrainerType.LT_SURGE]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["LT_SURGE"], true, PokemonType.ELECTRIC, true, -1)
+    .initForGymLeader(signatureSpecies["LT_SURGE"], true, PokemonType.ELECTRIC, false, -1)
     .setBattleBgm("battle_kanto_gym")
     .setMixedBattleBgm("battle_kanto_gym"),
   [TrainerType.ERIKA]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["ERIKA"], false, PokemonType.GRASS, true, -1)
+    .initForGymLeader(signatureSpecies["ERIKA"], false, PokemonType.GRASS, false, -1)
     .setBattleBgm("battle_kanto_gym")
     .setMixedBattleBgm("battle_kanto_gym"),
   [TrainerType.JANINE]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["JANINE"], false, PokemonType.POISON, true, -1)
+    .initForGymLeader(signatureSpecies["JANINE"], false, PokemonType.POISON, false, -1)
     .setBattleBgm("battle_kanto_gym")
     .setMixedBattleBgm("battle_kanto_gym"),
   [TrainerType.SABRINA]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["SABRINA"], false, PokemonType.PSYCHIC, true, -1)
+    .initForGymLeader(signatureSpecies["SABRINA"], false, PokemonType.PSYCHIC, false, -1)
     .setBattleBgm("battle_kanto_gym")
     .setMixedBattleBgm("battle_kanto_gym"),
   [TrainerType.BLAINE]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["BLAINE"], true, PokemonType.FIRE, true, -1)
+    .initForGymLeader(signatureSpecies["BLAINE"], true, PokemonType.FIRE, false, -1)
     .setBattleBgm("battle_kanto_gym")
     .setMixedBattleBgm("battle_kanto_gym"),
   [TrainerType.GIOVANNI]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["GIOVANNI"], true, PokemonType.GROUND, true, -2)
+    .initForGymLeader(signatureSpecies["GIOVANNI"], true, PokemonType.GROUND, false, -3)
     .setBattleBgm("battle_kanto_gym")
     .setMixedBattleBgm("battle_kanto_gym"),
   [TrainerType.FALKNER]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["FALKNER"], true, PokemonType.FLYING, true, -1)
+    .initForGymLeader(signatureSpecies["FALKNER"], true, PokemonType.FLYING, false, -1)
     .setBattleBgm("battle_johto_gym")
     .setMixedBattleBgm("battle_johto_gym"),
   [TrainerType.BUGSY]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["BUGSY"], true, PokemonType.BUG, true, -1)
+    .initForGymLeader(signatureSpecies["BUGSY"], true, PokemonType.BUG, false, -1)
     .setBattleBgm("battle_johto_gym")
     .setMixedBattleBgm("battle_johto_gym"),
   [TrainerType.WHITNEY]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["WHITNEY"], false, PokemonType.NORMAL, true, -1)
+    .initForGymLeader(signatureSpecies["WHITNEY"], false, PokemonType.NORMAL, false, -1)
     .setBattleBgm("battle_johto_gym")
     .setMixedBattleBgm("battle_johto_gym"),
   [TrainerType.MORTY]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["MORTY"], true, PokemonType.GHOST, true, -1)
+    .initForGymLeader(signatureSpecies["MORTY"], true, PokemonType.GHOST, false, -1)
     .setBattleBgm("battle_johto_gym")
     .setMixedBattleBgm("battle_johto_gym"),
   [TrainerType.CHUCK]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["CHUCK"], true, PokemonType.FIGHTING, true, -1)
+    .initForGymLeader(signatureSpecies["CHUCK"], true, PokemonType.FIGHTING, false, -1)
     .setBattleBgm("battle_johto_gym")
     .setMixedBattleBgm("battle_johto_gym"),
   [TrainerType.JASMINE]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["JASMINE"], false, PokemonType.STEEL, true, -1)
+    .initForGymLeader(signatureSpecies["JASMINE"], false, PokemonType.STEEL, false, -1)
     .setBattleBgm("battle_johto_gym")
     .setMixedBattleBgm("battle_johto_gym"),
   [TrainerType.PRYCE]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["PRYCE"], true, PokemonType.ICE, true, -1)
+    .initForGymLeader(signatureSpecies["PRYCE"], true, PokemonType.ICE, false, -1)
     .setBattleBgm("battle_johto_gym")
     .setMixedBattleBgm("battle_johto_gym"),
   [TrainerType.CLAIR]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["CLAIR"], false, PokemonType.DRAGON, true, -3)
+    .initForGymLeader(signatureSpecies["CLAIR"], false, PokemonType.DRAGON, false, -3)
     .setBattleBgm("battle_johto_gym")
     .setMixedBattleBgm("battle_johto_gym"),
   [TrainerType.ROXANNE]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["ROXANNE"], false, PokemonType.ROCK, true, -1)
+    .initForGymLeader(signatureSpecies["ROXANNE"], false, PokemonType.ROCK, false, -1)
     .setBattleBgm("battle_hoenn_gym")
     .setMixedBattleBgm("battle_hoenn_gym"),
   [TrainerType.BRAWLY]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["BRAWLY"], true, PokemonType.FIGHTING, true, -1)
+    .initForGymLeader(signatureSpecies["BRAWLY"], true, PokemonType.FIGHTING, false, -1)
     .setBattleBgm("battle_hoenn_gym")
     .setMixedBattleBgm("battle_hoenn_gym"),
   [TrainerType.WATTSON]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["WATTSON"], true, PokemonType.ELECTRIC, true, -1)
+    .initForGymLeader(signatureSpecies["WATTSON"], true, PokemonType.ELECTRIC, false, -1)
     .setBattleBgm("battle_hoenn_gym")
     .setMixedBattleBgm("battle_hoenn_gym"),
   [TrainerType.FLANNERY]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["FLANNERY"], false, PokemonType.FIRE, true, -1)
+    .initForGymLeader(signatureSpecies["FLANNERY"], false, PokemonType.FIRE, false, -1)
     .setBattleBgm("battle_hoenn_gym")
     .setMixedBattleBgm("battle_hoenn_gym"),
   [TrainerType.NORMAN]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["NORMAN"], true, PokemonType.NORMAL, true, -1)
+    .initForGymLeader(signatureSpecies["NORMAN"], true, PokemonType.NORMAL, false, -1)
     .setBattleBgm("battle_hoenn_gym")
     .setMixedBattleBgm("battle_hoenn_gym"),
   [TrainerType.WINONA]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["WINONA"], false, PokemonType.FLYING, true, -1)
+    .initForGymLeader(signatureSpecies["WINONA"], false, PokemonType.FLYING, false, -1)
     .setBattleBgm("battle_hoenn_gym")
     .setMixedBattleBgm("battle_hoenn_gym"),
   [TrainerType.TATE]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["TATE"], true, PokemonType.PSYCHIC, true, -1)
+    .initForGymLeader(signatureSpecies["TATE"], true, PokemonType.PSYCHIC, false, -1)
     .setBattleBgm("battle_hoenn_gym")
     .setMixedBattleBgm("battle_hoenn_gym")
     .setHasDouble("tate_liza_double")
     .setDoubleTrainerType(TrainerType.LIZA)
     .setDoubleTitle("gym_leader_double"),
   [TrainerType.LIZA]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["LIZA"], false, PokemonType.PSYCHIC, true, -1)
+    .initForGymLeader(signatureSpecies["LIZA"], false, PokemonType.PSYCHIC, false, -1)
     .setBattleBgm("battle_hoenn_gym")
     .setMixedBattleBgm("battle_hoenn_gym")
     .setHasDouble("liza_tate_double")
     .setDoubleTrainerType(TrainerType.TATE)
     .setDoubleTitle("gym_leader_double"),
   [TrainerType.JUAN]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["JUAN"], true, PokemonType.WATER, true, -1)
+    .initForGymLeader(signatureSpecies["JUAN"], true, PokemonType.WATER, false, -1)
     .setBattleBgm("battle_hoenn_gym")
     .setMixedBattleBgm("battle_hoenn_gym"),
   [TrainerType.ROARK]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["ROARK"], true, PokemonType.ROCK, true, -1)
+    .initForGymLeader(signatureSpecies["ROARK"], true, PokemonType.ROCK, false, -1)
     .setBattleBgm("battle_sinnoh_gym")
     .setMixedBattleBgm("battle_sinnoh_gym"),
   [TrainerType.GARDENIA]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["GARDENIA"], false, PokemonType.GRASS, true, -1)
+    .initForGymLeader(signatureSpecies["GARDENIA"], false, PokemonType.GRASS, false, -1)
     .setBattleBgm("battle_sinnoh_gym")
     .setMixedBattleBgm("battle_sinnoh_gym"),
   [TrainerType.MAYLENE]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["MAYLENE"], false, PokemonType.FIGHTING, true, -1)
+    .initForGymLeader(signatureSpecies["MAYLENE"], false, PokemonType.FIGHTING, false, -1)
     .setBattleBgm("battle_sinnoh_gym")
     .setMixedBattleBgm("battle_sinnoh_gym"),
   [TrainerType.CRASHER_WAKE]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["CRASHER_WAKE"], true, PokemonType.WATER, true, -1)
+    .initForGymLeader(signatureSpecies["CRASHER_WAKE"], true, PokemonType.WATER, false, -1)
     .setBattleBgm("battle_sinnoh_gym")
     .setMixedBattleBgm("battle_sinnoh_gym"),
   [TrainerType.FANTINA]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["FANTINA"], false, PokemonType.GHOST, true, -1)
+    .initForGymLeader(signatureSpecies["FANTINA"], false, PokemonType.GHOST, false, -1)
     .setBattleBgm("battle_sinnoh_gym")
     .setMixedBattleBgm("battle_sinnoh_gym"),
   [TrainerType.BYRON]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["BYRON"], true, PokemonType.STEEL, true, -1)
+    .initForGymLeader(signatureSpecies["BYRON"], true, PokemonType.STEEL, false, -1)
     .setBattleBgm("battle_sinnoh_gym")
     .setMixedBattleBgm("battle_sinnoh_gym"),
   [TrainerType.CANDICE]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["CANDICE"], false, PokemonType.ICE, true, -1)
+    .initForGymLeader(signatureSpecies["CANDICE"], false, PokemonType.ICE, false, -1)
     .setBattleBgm("battle_sinnoh_gym")
     .setMixedBattleBgm("battle_sinnoh_gym"),
   [TrainerType.VOLKNER]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["VOLKNER"], true, PokemonType.ELECTRIC, true, -1)
+    .initForGymLeader(signatureSpecies["VOLKNER"], true, PokemonType.ELECTRIC, false, -1)
     .setBattleBgm("battle_sinnoh_gym")
     .setMixedBattleBgm("battle_sinnoh_gym"),
   [TrainerType.CILAN]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["CILAN"], true, PokemonType.GRASS, true, -1)
+    .initForGymLeader(signatureSpecies["CILAN"], true, PokemonType.GRASS, false, -1)
     .setMixedBattleBgm("battle_unova_gym"),
   [TrainerType.CHILI]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["CHILI"], true, PokemonType.FIRE, true, -1)
+    .initForGymLeader(signatureSpecies["CHILI"], true, PokemonType.FIRE, false, -1)
     .setMixedBattleBgm("battle_unova_gym"),
   [TrainerType.CRESS]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["CRESS"], true, PokemonType.WATER, true, -1)
+    .initForGymLeader(signatureSpecies["CRESS"], true, PokemonType.WATER, false, -1)
     .setMixedBattleBgm("battle_unova_gym"),
   [TrainerType.CHEREN]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["CHEREN"], true, PokemonType.NORMAL, true, -1)
+    .initForGymLeader(signatureSpecies["CHEREN"], true, PokemonType.NORMAL, false, -1)
     .setMixedBattleBgm("battle_unova_gym"),
   [TrainerType.LENORA]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["LENORA"], false, PokemonType.NORMAL, true, -1)
+    .initForGymLeader(signatureSpecies["LENORA"], false, PokemonType.NORMAL, false, -1)
     .setMixedBattleBgm("battle_unova_gym"),
   [TrainerType.ROXIE]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["ROXIE"], false, PokemonType.POISON, true, -1)
+    .initForGymLeader(signatureSpecies["ROXIE"], false, PokemonType.POISON, false, -1)
     .setMixedBattleBgm("battle_unova_gym"),
   [TrainerType.BURGH]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["BURGH"], true, PokemonType.BUG, true, -1)
+    .initForGymLeader(signatureSpecies["BURGH"], true, PokemonType.BUG, false, -1)
     .setMixedBattleBgm("battle_unova_gym"),
   [TrainerType.ELESA]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["ELESA"], false, PokemonType.ELECTRIC, true, -1)
+    .initForGymLeader(signatureSpecies["ELESA"], false, PokemonType.ELECTRIC, false, -1)
     .setMixedBattleBgm("battle_unova_gym"),
   [TrainerType.CLAY]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["CLAY"], true, PokemonType.GROUND, true, -1)
+    .initForGymLeader(signatureSpecies["CLAY"], true, PokemonType.GROUND, false, -1)
     .setMixedBattleBgm("battle_unova_gym"),
   [TrainerType.SKYLA]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["SKYLA"], false, PokemonType.FLYING, true, -1)
+    .initForGymLeader(signatureSpecies["SKYLA"], false, PokemonType.FLYING, false, -1)
     .setMixedBattleBgm("battle_unova_gym"),
   [TrainerType.BRYCEN]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["BRYCEN"], true, PokemonType.ICE, true, -1)
+    .initForGymLeader(signatureSpecies["BRYCEN"], true, PokemonType.ICE, false, -1)
     .setMixedBattleBgm("battle_unova_gym"),
   [TrainerType.DRAYDEN]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["DRAYDEN"], true, PokemonType.DRAGON, true, -1)
+    .initForGymLeader(signatureSpecies["DRAYDEN"], true, PokemonType.DRAGON, false, -1)
     .setMixedBattleBgm("battle_unova_gym"),
   [TrainerType.MARLON]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["MARLON"], true, PokemonType.WATER, true, -1)
+    .initForGymLeader(signatureSpecies["MARLON"], true, PokemonType.WATER, false, -1)
     .setMixedBattleBgm("battle_unova_gym"),
   [TrainerType.VIOLA]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["VIOLA"], false, PokemonType.BUG, true, -1)
+    .initForGymLeader(signatureSpecies["VIOLA"], false, PokemonType.BUG, false, -1)
     .setMixedBattleBgm("battle_kalos_gym"),
   [TrainerType.GRANT]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["GRANT"], true, PokemonType.ROCK, true, -1)
+    .initForGymLeader(signatureSpecies["GRANT"], true, PokemonType.ROCK, false, -1)
     .setMixedBattleBgm("battle_kalos_gym"),
   [TrainerType.KORRINA]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["KORRINA"], false, PokemonType.FIGHTING, true, -1)
+    .initForGymLeader(signatureSpecies["KORRINA"], false, PokemonType.FIGHTING, false, -1)
     .setMixedBattleBgm("battle_kalos_gym"),
   [TrainerType.RAMOS]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["RAMOS"], true, PokemonType.GRASS, true, -1)
+    .initForGymLeader(signatureSpecies["RAMOS"], true, PokemonType.GRASS, false, -1)
     .setMixedBattleBgm("battle_kalos_gym"),
   [TrainerType.CLEMONT]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["CLEMONT"], true, PokemonType.ELECTRIC, true, -1)
+    .initForGymLeader(signatureSpecies["CLEMONT"], true, PokemonType.ELECTRIC, false, -1)
     .setMixedBattleBgm("battle_kalos_gym"),
   [TrainerType.VALERIE]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["VALERIE"], false, PokemonType.FAIRY, true, -1)
+    .initForGymLeader(signatureSpecies["VALERIE"], false, PokemonType.FAIRY, false, -1)
     .setMixedBattleBgm("battle_kalos_gym"),
   [TrainerType.OLYMPIA]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["OLYMPIA"], false, PokemonType.PSYCHIC, true, -1)
+    .initForGymLeader(signatureSpecies["OLYMPIA"], false, PokemonType.PSYCHIC, false, -1)
     .setMixedBattleBgm("battle_kalos_gym"),
   [TrainerType.WULFRIC]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["WULFRIC"], true, PokemonType.ICE, true, -1)
+    .initForGymLeader(signatureSpecies["WULFRIC"], true, PokemonType.ICE, false, -1)
     .setMixedBattleBgm("battle_kalos_gym"),
   [TrainerType.MILO]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["MILO"], true, PokemonType.GRASS, true, -1)
+    .initForGymLeader(signatureSpecies["MILO"], true, PokemonType.GRASS, false, -1)
     .setMixedBattleBgm("battle_galar_gym"),
   [TrainerType.NESSA]: new TrainerConfig(++t)
     .setName("Nessa")
-    .initForGymLeader(signatureSpecies["NESSA"], false, PokemonType.WATER, true, -1)
+    .initForGymLeader(signatureSpecies["NESSA"], false, PokemonType.WATER, false, -1)
     .setMixedBattleBgm("battle_galar_gym"),
   [TrainerType.KABU]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["KABU"], true, PokemonType.FIRE, true, -1)
+    .initForGymLeader(signatureSpecies["KABU"], true, PokemonType.FIRE, false, -1)
     .setMixedBattleBgm("battle_galar_gym"),
   [TrainerType.BEA]: new TrainerConfig(++t)
     .setName("Bea")
-    .initForGymLeader(signatureSpecies["BEA"], false, PokemonType.FIGHTING, true, -1)
+    .initForGymLeader(signatureSpecies["BEA"], false, PokemonType.FIGHTING, false, -1)
     .setMixedBattleBgm("battle_galar_gym"),
   [TrainerType.ALLISTER]: new TrainerConfig(++t)
     .setName("Allister")
-    .initForGymLeader(signatureSpecies["ALLISTER"], true, PokemonType.GHOST, true, -1)
+    .initForGymLeader(signatureSpecies["ALLISTER"], true, PokemonType.GHOST, false, -1)
     .setMixedBattleBgm("battle_galar_gym"),
   [TrainerType.OPAL]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["OPAL"], false, PokemonType.FAIRY, true, -1)
+    .initForGymLeader(signatureSpecies["OPAL"], false, PokemonType.FAIRY, false, -1)
     .setMixedBattleBgm("battle_galar_gym"),
   [TrainerType.BEDE]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["BEDE"], true, PokemonType.FAIRY, true, -1)
+    .initForGymLeader(signatureSpecies["BEDE"], true, PokemonType.FAIRY, false, -1)
     .setMixedBattleBgm("battle_galar_gym"),
   [TrainerType.GORDIE]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["GORDIE"], true, PokemonType.ROCK, true, -1)
+    .initForGymLeader(signatureSpecies["GORDIE"], true, PokemonType.ROCK, false, -1)
     .setMixedBattleBgm("battle_galar_gym"),
   [TrainerType.MELONY]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["MELONY"], false, PokemonType.ICE, true, -1)
+    .initForGymLeader(signatureSpecies["MELONY"], false, PokemonType.ICE, false, -1)
     .setMixedBattleBgm("battle_galar_gym"),
   [TrainerType.PIERS]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["PIERS"], true, PokemonType.DARK, true, -4)
+    .initForGymLeader(signatureSpecies["PIERS"], true, PokemonType.DARK, false, -4)
     .setHasDouble("piers_marnie_double")
     .setDoubleTrainerType(TrainerType.MARNIE)
     .setDoubleTitle("gym_leader_double")
     .setMixedBattleBgm("battle_galar_gym"),
   [TrainerType.MARNIE]: new TrainerConfig(++t)
     .setName("Marnie")
-    .initForGymLeader(signatureSpecies["MARNIE"], false, PokemonType.DARK, true, -4)
+    .initForGymLeader(signatureSpecies["MARNIE"], false, PokemonType.DARK, false, -4)
     .setHasDouble("marnie_piers_double")
     .setDoubleTrainerType(TrainerType.PIERS)
     .setDoubleTitle("gym_leader_double")
     .setMixedBattleBgm("battle_galar_gym"),
   [TrainerType.RAIHAN]: new TrainerConfig(++t)
     .setName("Raihan")
-    .initForGymLeader(signatureSpecies["RAIHAN"], true, PokemonType.DRAGON, true, -1)
+    .initForGymLeader(signatureSpecies["RAIHAN"], true, PokemonType.DRAGON, false, -1)
     .setMixedBattleBgm("battle_galar_gym"),
   [TrainerType.KATY]: new TrainerConfig(++t)
     .initForGymLeader(signatureSpecies["KATY"], false, PokemonType.BUG, true, -1)
