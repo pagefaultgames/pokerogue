@@ -51,7 +51,7 @@ export const signatureSpecies: SignatureSpecies = {
   CILAN: [Species.PANSAGE, Species.SNIVY, Species.MARACTUS, Species.FERROSEED],
   CHILI: [Species.PANSEAR, Species.TEPIG, Species.HEATMOR, Species.DARUMAKA],
   CRESS: [Species.PANPOUR, Species.OSHAWOTT, Species.BASCULIN, Species.TYMPOLE],
-  CHEREN: [Species.LILLIPUP, Species.PIDOVE, Species.MINCINNO, Species.BOUFFALANT],
+  CHEREN: [Species.LILLIPUP, Species.PIDOVE, Species.MINCCINO, Species.BOUFFALANT],
   LENORA: [Species.PATRAT, Species.DEERLING, Species.AUDINO, Species.BRAVIARY],
   ROXIE: [Species.VENIPEDE, Species.KOFFING, Species.TRUBBISH, Species.TOXEL],
   BURGH: [Species.SEWADDLE, Species.DWEBBLE, [Species.KARRABLAST, Species.SHELMET], Species.DURANT],
