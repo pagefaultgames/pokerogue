@@ -10,7 +10,7 @@ import {
   PostMoveUsedAbAttr,
   RedirectMoveAbAttr,
   ReduceStatusEffectDurationAbAttr,
-} from "#app/data/ability";
+} from "#app/data/abilities/ability";
 import type { DelayedAttackTag } from "#app/data/arena-tag";
 import { CommonAnim } from "#app/data/battle-anims";
 import { BattlerTagLapseType, CenterOfAttentionTag } from "#app/data/battler-tags";

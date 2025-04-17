@@ -11,7 +11,7 @@ import { initEggMoves } from "#app/data/balance/egg-moves";
 import { initPokemonForms } from "#app/data/pokemon-forms";
 import { initSpecies } from "#app/data/pokemon-species";
 import { initMoves } from "#app/data/moves/move";
-import { initAbilities } from "#app/data/ability";
+import { initAbilities } from "#app/data/abilities/ability";
 import { initAchievements } from "#app/system/achv";
 import { initTrainerTypeDialogue } from "#app/data/dialogue";
 import { initChallenges } from "#app/data/challenge";

@@ -136,7 +136,8 @@ import {
   WeakenMoveScreenTag,
 } from "#app/data/arena-tag";
 import type { SuppressAbilitiesTag } from "#app/data/arena-tag";
-import type { Ability, AbAttr } from "#app/data/ability";
+import type { Ability } from "#app/data/abilities/ability-class";
+import type { AbAttr } from "#app/data/abilities/ab-attrs/ab-attr";
 import {
   StatMultiplierAbAttr,
   BlockCritAbAttr,
@@ -151,7 +152,6 @@ import {
   StatusEffectImmunityAbAttr,
   TypeImmunityAbAttr,
   WeightMultiplierAbAttr,
-  allAbilities,
   applyAbAttrs,
   applyStatMultiplierAbAttrs,
   applyPreApplyBattlerTagAbAttrs,
@@ -188,7 +188,8 @@ import {
   applyAllyStatMultiplierAbAttrs,
   AllyStatMultiplierAbAttr,
   MoveAbilityBypassAbAttr
-} from "#app/data/ability";
+} from "#app/data/abilities/ability";
+import { allAbilities } from "#app/data/data-lists";
 import type PokemonData from "#app/system/pokemon-data";
 import { BattlerIndex } from "#app/battle";
 import { Mode } from "#app/ui/ui";
@@ -844,12 +845,17 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     await Promise.allSettled(loadPromises);
 
-    // Wait for the assets we queued to load to finish loading, then...
+    // This must be initiated before we queue loading, otherwise the load could have finished before
+    // we reach the line of code that adds the listener, causing a deadlock.
+    const waitOnLoadPromise = new Promise<void>(resolve => globalScene.load.once(Phaser.Loader.Events.COMPLETE, resolve));
+
     if (!globalScene.load.isLoading()) {
       globalScene.load.start();
     }
+
+    // Wait for the assets we queued to load to finish loading, then...
     // See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Using_promises#creating_a_promise_around_an_old_callback_api
-    await new Promise(resolve => globalScene.load.once(Phaser.Loader.Events.COMPLETE, resolve));
+    await waitOnLoadPromise;
 
     // With the sprites loaded, generate the animation frame information
     if (this.isPlayer()) {
@@ -4155,6 +4161,62 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return baseDamage;
   }
 
+
+  /** Determine the STAB multiplier for a move used against this pokemon.
+   * 
+   * @param source - The attacking {@linkcode Pokemon}
+   * @param move - The {@linkcode Move} used in the attack
+   * @param ignoreSourceAbility - If `true`, ignores the attacking Pokemon's ability effects
+   * @param simulated - If `true`, suppresses changes to game state during the calculation
+   * 
+   * @returns The STAB multiplier for the move used against this Pokemon
+   */
+  calculateStabMultiplier(source: Pokemon, move: Move, ignoreSourceAbility: boolean, simulated: boolean): number {
+    // If the move has the Typeless attribute, it doesn't get STAB (e.g. struggle)
+    if (move.hasAttr(TypelessAttr)) {
+      return 1;
+    }
+    const sourceTypes = source.getTypes();
+    const sourceTeraType = source.getTeraType();
+    const moveType = source.getMoveType(move);
+    const matchesSourceType = sourceTypes.includes(source.getMoveType(move));
+    const stabMultiplier = new NumberHolder(1);
+    if (matchesSourceType && moveType !== PokemonType.STELLAR) {
+      stabMultiplier.value += 0.5;
+    }
+
+    applyMoveAttrs(
+      CombinedPledgeStabBoostAttr,
+      source,
+      this,
+      move,
+      stabMultiplier,
+    );
+
+    if (!ignoreSourceAbility) {
+      applyAbAttrs(StabBoostAbAttr, source, null, simulated, stabMultiplier);
+    }
+
+    if (
+      source.isTerastallized &&
+      sourceTeraType === moveType &&
+      moveType !== PokemonType.STELLAR
+    ) {
+      stabMultiplier.value += 0.5;
+    }
+
+    if (
+      source.isTerastallized &&
+      source.getTeraType() === PokemonType.STELLAR &&
+      (!source.stellarTypesBoosted.includes(moveType) ||
+        source.hasSpecies(Species.TERAPAGOS))
+    ) {
+      stabMultiplier.value += matchesSourceType ? 0.5 : 0.2;
+    }
+
+    return Math.min(stabMultiplier.value, 2.25);
+  }
+
   /**
    * Calculates the damage of an attack made by another Pokemon against this Pokemon
    * @param source {@linkcode Pokemon} the attacking Pokemon
@@ -4337,70 +4399,29 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       ? 1
       : this.randSeedIntRange(85, 100) / 100;
 
-    const sourceTypes = source.getTypes();
-    const sourceTeraType = source.getTeraType();
-    const matchesSourceType = sourceTypes.includes(moveType);
+
     /** A damage multiplier for when the attack is of the attacker's type and/or Tera type. */
-    const stabMultiplier = new NumberHolder(1);
-    if (matchesSourceType && moveType !== PokemonType.STELLAR) {
-      stabMultiplier.value += 0.5;
-    }
-
-    if (!ignoreSourceAbility) {
-      applyAbAttrs(StabBoostAbAttr, source, null, simulated, stabMultiplier);
-    }
-
-    applyMoveAttrs(
-      CombinedPledgeStabBoostAttr,
-      source,
-      this,
-      move,
-      stabMultiplier,
-    );
-
-    if (
-      source.isTerastallized &&
-      sourceTeraType === moveType &&
-      moveType !== PokemonType.STELLAR
-    ) {
-      stabMultiplier.value += 0.5;
-    }
-
-    if (
-      source.isTerastallized &&
-      source.getTeraType() === PokemonType.STELLAR &&
-      (!source.stellarTypesBoosted.includes(moveType) ||
-        source.hasSpecies(Species.TERAPAGOS))
-    ) {
-      if (matchesSourceType) {
-        stabMultiplier.value += 0.5;
-      } else {
-        stabMultiplier.value += 0.2;
-      }
-    }
-
-    stabMultiplier.value = Math.min(stabMultiplier.value, 2.25);
+    const stabMultiplier = this.calculateStabMultiplier(source, move, ignoreSourceAbility, simulated);
 
     /** Halves damage if the attacker is using a physical attack while burned */
-    const burnMultiplier = new NumberHolder(1);
+    let burnMultiplier = 1;
     if (
       isPhysical &&
       source.status &&
-      source.status.effect === StatusEffect.BURN
+      source.status.effect === StatusEffect.BURN &&
+      !move.hasAttr(BypassBurnDamageReductionAttr)
     ) {
-      if (!move.hasAttr(BypassBurnDamageReductionAttr)) {
-        const burnDamageReductionCancelled = new BooleanHolder(false);
-        if (!ignoreSourceAbility) {
-          applyAbAttrs(
-            BypassBurnDamageReductionAbAttr,
-            source,
-            burnDamageReductionCancelled,
-            simulated,
-          );
-        }
-        if (!burnDamageReductionCancelled.value) {
-          burnMultiplier.value = 0.5;
-        }
+      const burnDamageReductionCancelled = new BooleanHolder(false);
+      if (!ignoreSourceAbility) {
+        applyAbAttrs(
+          BypassBurnDamageReductionAbAttr,
+          source,
+          burnDamageReductionCancelled,
+          simulated,
+        );
+      }
+      if (!burnDamageReductionCancelled.value) {
+        burnMultiplier = 0.5;
       }
     }
 
@@ -4451,9 +4472,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         glaiveRushMultiplier.value *
         criticalMultiplier.value *
         randomMultiplier *
-        stabMultiplier.value *
+        stabMultiplier *
         typeMultiplier *
-        burnMultiplier.value *
+        burnMultiplier *
         screenMultiplier.value *
         hitsTagMultiplier.value *
         mistyTerrainMultiplier,

@@ -1,4 +1,5 @@
-import { allAbilities, BypassSpeedChanceAbAttr } from "#app/data/ability";
+import { BypassSpeedChanceAbAttr } from "#app/data/abilities/ability";
+import { allAbilities } from "#app/data/data-lists";
 import { FaintPhase } from "#app/phases/faint-phase";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";

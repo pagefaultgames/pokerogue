@@ -1,4 +1,9 @@
-import { applyAbAttrs, applyPreLeaveFieldAbAttrs, PreLeaveFieldAbAttr, RunSuccessAbAttr } from "#app/data/ability";
+import {
+  applyAbAttrs,
+  applyPreLeaveFieldAbAttrs,
+  PreLeaveFieldAbAttr,
+  RunSuccessAbAttr,
+} from "#app/data/abilities/ability";
 import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import type { PlayerPokemon, EnemyPokemon } from "#app/field/pokemon";

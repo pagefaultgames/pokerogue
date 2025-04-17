@@ -69,6 +69,40 @@ describe("Moves - Tera Starstorm", () => {
     expect(enemyField.every(pokemon => pokemon.isFullHp())).toBe(false);
   });
 
+  it("targets both opponents in a double battle when used by Terapagos immediately after terastallizing", async () => {
+    await game.classicMode.startBattle([Species.TERAPAGOS]);
+
+    const terapagos = game.scene.getPlayerParty()[0];
+    terapagos.isTerastallized = false;
+
+    game.move.selectWithTera(Moves.TERA_STARSTORM, 0);
+
+    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
+
+    const enemyField = game.scene.getEnemyField();
+
+    // Terapagos in Stellar Form should hit both targets
+    await game.phaseInterceptor.to("MoveEndPhase");
+    expect(enemyField.some(pokemon => pokemon.isFullHp())).toBe(false);
+  });
+
+  it("targets only one opponent in a double battle when used by Terapagos without terastallizing", async () => {
+    await game.classicMode.startBattle([Species.TERAPAGOS]);
+
+    const terapagos = game.scene.getPlayerParty()[0];
+    terapagos.isTerastallized = false;
+
+    game.move.select(Moves.TERA_STARSTORM, 0, BattlerIndex.ENEMY);
+
+    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
+
+    const enemyField = game.scene.getEnemyField();
+
+    // Terapagos in Stellar Form should hit both targets
+    await game.phaseInterceptor.to("MoveEndPhase");
+    expect(enemyField.some(pokemon => pokemon.isFullHp())).toBe(true);
+  });
+
   it("applies the effects when Terapagos in Stellar Form is fused with another Pokemon", async () => {
     await game.classicMode.startBattle([Species.TERAPAGOS, Species.CHARMANDER, Species.MAGIKARP]);
 

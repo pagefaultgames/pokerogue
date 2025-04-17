@@ -1,228 +1,75 @@
-import type { EnemyPokemon, PokemonMove } from "../field/pokemon";
-import type Pokemon from "../field/pokemon";
-import { HitResult, MoveResult, PlayerPokemon } from "../field/pokemon";
-import { PokemonType } from "#enums/pokemon-type";
+import { HitResult, MoveResult, PlayerPokemon } from "#app/field/pokemon";
 import { BooleanHolder, NumberHolder, toDmgValue, isNullOrUndefined, randSeedItem, randSeedInt, type Constructor } from "#app/utils";
-import { getPokemonNameWithAffix } from "../messages";
-import type { Weather } from "#app/data/weather";
-import type { BattlerTag } from "./battler-tags";
-import { BattlerTagLapseType, GroundedTag } from "./battler-tags";
+import { getPokemonNameWithAffix } from "#app/messages";
+import { BattlerTagLapseType, GroundedTag } from "#app/data/battler-tags";
 import { getNonVolatileStatusEffects, getStatusEffectDescriptor, getStatusEffectHealText } from "#app/data/status-effect";
-import { Gender } from "./gender";
-import type Move from "./moves/move";
-import { AttackMove, FlinchAttr, OneHitKOAttr, HitHealAttr, allMoves, StatusMove, SelfStatusMove, VariablePowerAttr, applyMoveAttrs, VariableMoveTypeAttr, RandomMovesetMoveAttr, RandomMoveAttr, NaturePowerAttr, CopyMoveAttr, NeutralDamageAgainstFlyingTypeMultiplierAttr, FixedDamageAttr } from "./moves/move";
-import { MoveFlags } from "#enums/MoveFlags";
-import { MoveTarget } from "#enums/MoveTarget";
-import { MoveCategory } from "#enums/MoveCategory";
-import type { ArenaTrapTag, SuppressAbilitiesTag } from "./arena-tag";
-import { ArenaTagSide } from "./arena-tag";
-import { BerryModifier, HitHealModifier, PokemonHeldItemModifier } from "../modifier/modifier";
-import { TerrainType } from "./terrain";
-import { SpeciesFormChangeAbilityTrigger, SpeciesFormChangeRevertWeatherFormTrigger, SpeciesFormChangeWeatherTrigger } from "./pokemon-forms";
+import { Gender } from "#app/data/gender";
+import {
+  AttackMove,
+  FlinchAttr,
+  OneHitKOAttr,
+  HitHealAttr,
+  allMoves,
+  StatusMove,
+  SelfStatusMove,
+  VariablePowerAttr,
+  applyMoveAttrs,
+  VariableMoveTypeAttr,
+  RandomMovesetMoveAttr,
+  RandomMoveAttr,
+  NaturePowerAttr,
+  CopyMoveAttr,
+  NeutralDamageAgainstFlyingTypeMultiplierAttr,
+  FixedDamageAttr,
+} from "#app/data/moves/move";
+import { ArenaTagSide } from "#app/data/arena-tag";
+import { BerryModifier, HitHealModifier, PokemonHeldItemModifier } from "#app/modifier/modifier";
+import { TerrainType } from "#app/data/terrain";
+import { SpeciesFormChangeAbilityTrigger, SpeciesFormChangeRevertWeatherFormTrigger, SpeciesFormChangeWeatherTrigger } from "#app/data/pokemon-forms";
 import i18next from "i18next";
-import type { Localizable } from "#app/interfaces/locales";
-import { Command } from "../ui/command-ui-handler";
+import { Command } from "#app/ui/command-ui-handler";
 import { BerryModifierType } from "#app/modifier/modifier-type";
-import { getPokeballName } from "./pokeball";
-import type { BattlerIndex } from "#app/battle";
+import { getPokeballName } from "#app/data/pokeball";
 import { BattleType } from "#app/battle";
-import { Abilities } from "#enums/abilities";
-import { ArenaTagType } from "#enums/arena-tag-type";
-import { BattlerTagType } from "#enums/battler-tag-type";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
-import { Stat, type BattleStat, type EffectiveStat, BATTLE_STATS, EFFECTIVE_STATS, getStatKey } from "#app/enums/stat";
 import { MovePhase } from "#app/phases/move-phase";
 import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { globalScene } from "#app/global-scene";
-import { SwitchType } from "#app/enums/switch-type";
 import { SwitchPhase } from "#app/phases/switch-phase";
 import { SwitchSummonPhase } from "#app/phases/switch-summon-phase";
 import { BattleEndPhase } from "#app/phases/battle-end-phase";
 import { NewBattlePhase } from "#app/phases/new-battle-phase";
 import { MoveEndPhase } from "#app/phases/move-end-phase";
+import { PokemonTransformPhase } from "#app/phases/pokemon-transform-phase";
+import { allAbilities } from "#app/data/data-lists";
+import { AbAttr } from "#app/data/abilities/ab-attrs/ab-attr";
+import { Ability } from "#app/data/abilities/ability-class";
+
+// Enum imports
+import { Stat, type BattleStat , BATTLE_STATS, EFFECTIVE_STATS, getStatKey, type EffectiveStat } from "#enums/stat";
+import { PokemonType } from "#enums/pokemon-type";
 import { PokemonAnimType } from "#enums/pokemon-anim-type";
 import { StatusEffect } from "#enums/status-effect";
 import { WeatherType } from "#enums/weather-type";
-import { PokemonTransformPhase } from "#app/phases/pokemon-transform-phase";
+import { Abilities } from "#enums/abilities";
+import { ArenaTagType } from "#enums/arena-tag-type";
+import { BattlerTagType } from "#enums/battler-tag-type";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
+import { SwitchType } from "#enums/switch-type";
+import { MoveFlags } from "#enums/MoveFlags";
+import { MoveTarget } from "#enums/MoveTarget";
+import { MoveCategory } from "#enums/MoveCategory";
 
-export class Ability implements Localizable {
-  public id: Abilities;
-
-  private nameAppend: string;
-  public name: string;
-  public description: string;
-  public generation: number;
-  public isBypassFaint: boolean;
-  public isIgnorable: boolean;
-  public isSuppressable = true;
-  public isCopiable = true;
-  public isReplaceable = true;
-  public attrs: AbAttr[];
-  public conditions: AbAttrCondition[];
-
-  constructor(id: Abilities, generation: number) {
-    this.id = id;
-
-    this.nameAppend = "";
-    this.generation = generation;
-    this.attrs = [];
-    this.conditions = [];
-
-    this.isSuppressable = true;
-    this.isCopiable = true;
-    this.isReplaceable = true;
-
-    this.localize();
-  }
-
-  public get isSwappable(): boolean {
-    return this.isCopiable && this.isReplaceable;
-  }
-  localize(): void {
-    const i18nKey = Abilities[this.id].split("_").filter(f => f).map((f, i) => i ? `${f[0]}${f.slice(1).toLowerCase()}` : f.toLowerCase()).join("") as string;
-
-    this.name = this.id ? `${i18next.t(`ability:${i18nKey}.name`) as string}${this.nameAppend}` : "";
-    this.description = this.id ? i18next.t(`ability:${i18nKey}.description`) as string : "";
-  }
-
-  /**
-   * Get all ability attributes that match `attrType`
-   * @param attrType any attribute that extends {@linkcode AbAttr}
-   * @returns Array of attributes that match `attrType`, Empty Array if none match.
-   */
-  getAttrs<T extends AbAttr>(attrType: Constructor<T> ): T[] {
-    return this.attrs.filter((a): a is T => a instanceof attrType);
-  }
-
-  /**
-   * Check if an ability has an attribute that matches `attrType`
-   * @param attrType any attribute that extends {@linkcode AbAttr}
-   * @returns true if the ability has attribute `attrType`
-   */
-  hasAttr<T extends AbAttr>(attrType: Constructor<T>): boolean {
-    return this.attrs.some((attr) => attr instanceof attrType);
-  }
-
-  attr<T extends Constructor<AbAttr>>(AttrType: T, ...args: ConstructorParameters<T>): Ability {
-    const attr = new AttrType(...args);
-    this.attrs.push(attr);
-
-    return this;
-  }
-
-  conditionalAttr<T extends Constructor<AbAttr>>(condition: AbAttrCondition, AttrType: T, ...args: ConstructorParameters<T>): Ability {
-    const attr = new AttrType(...args);
-    attr.addCondition(condition);
-    this.attrs.push(attr);
-
-    return this;
-  }
-
-  bypassFaint(): Ability {
-    this.isBypassFaint = true;
-    return this;
-  }
-
-  ignorable(): Ability {
-    this.isIgnorable = true;
-    return this;
-  }
-
-  unsuppressable(): Ability {
-    this.isSuppressable = false;
-    return this;
-  }
-
-  uncopiable(): Ability {
-    this.isCopiable = false;
-    return this;
-  }
-
-  unreplaceable(): Ability {
-    this.isReplaceable = false;
-    return this;
-  }
-
-  condition(condition: AbAttrCondition): Ability {
-    this.conditions.push(condition);
-
-    return this;
-  }
-
-  partial(): this {
-    this.nameAppend += " (P)";
-    return this;
-  }
-
-  unimplemented(): this {
-    this.nameAppend += " (N)";
-    return this;
-  }
-
-  /**
-   * Internal flag used for developers to document edge cases. When using this, please be sure to document the edge case.
-   * @returns the ability
-   */
-  edgeCase(): this {
-    return this;
-  }
-}
-
-type AbAttrApplyFunc<TAttr extends AbAttr> = (attr: TAttr, passive: boolean) => void;
-type AbAttrSuccessFunc<TAttr extends AbAttr> = (attr: TAttr, passive: boolean) => boolean;
-type AbAttrCondition = (pokemon: Pokemon) => boolean;
-
-// TODO: Can this be improved?
-type PokemonAttackCondition = (user: Pokemon | null, target: Pokemon | null, move: Move) => boolean;
-type PokemonDefendCondition = (target: Pokemon, user: Pokemon, move: Move) => boolean;
-type PokemonStatStageChangeCondition = (target: Pokemon, statsChanged: BattleStat[], stages: number) => boolean;
-
-export abstract class AbAttr {
-  public showAbility: boolean;
-  private extraCondition: AbAttrCondition;
-
-  constructor(showAbility = true) {
-    this.showAbility = showAbility;
-  }
-
-  /**
-   * Applies ability effects without checking conditions
-   * @param pokemon - The pokemon to apply this ability to
-   * @param passive - Whether or not the ability is a passive
-   * @param simulated - Whether the call is simulated
-   * @param args - Extra args passed to the function. Handled by child classes.
-   * @see {@linkcode canApply}
-   */
-  apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: BooleanHolder | null, args: any[]): void {}
-
-  getTriggerMessage(_pokemon: Pokemon, _abilityName: string, ..._args: any[]): string | null {
-    return null;
-  }
-
-  getCondition(): AbAttrCondition | null {
-    return this.extraCondition || null;
-  }
-
-  addCondition(condition: AbAttrCondition): AbAttr {
-    this.extraCondition = condition;
-    return this;
-  }
-
-  /**
-   * Returns a boolean describing whether the ability can be applied under current conditions
-   * @param pokemon - The pokemon to apply this ability to
-   * @param passive - Whether or not the ability is a passive
-   * @param simulated - Whether the call is simulated
-   * @param args - Extra args passed to the function. Handled by child classes.
-   * @returns `true` if the ability can be applied, `false` otherwise
-   * @see {@linkcode apply}
-   */
-  canApply(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
-    return true;
-  }
-}
+// Type imports
+import type { EnemyPokemon, PokemonMove } from "#app/field/pokemon";
+import type Pokemon from "#app/field/pokemon";
+import type { Weather } from "#app/data/weather";
+import type { BattlerTag } from "#app/data/battler-tags";
+import type { AbAttrCondition, PokemonDefendCondition, PokemonStatStageChangeCondition, PokemonAttackCondition, AbAttrApplyFunc, AbAttrSuccessFunc } from "#app/@types/ability-types";
+import type { BattlerIndex } from "#app/battle";
+import type Move from "#app/data/moves/move";
+import type { ArenaTrapTag, SuppressAbilitiesTag } from "#app/data/arena-tag";
 
 export class BlockRecoilDamageAttr extends AbAttr {
   constructor() {
@@ -233,7 +80,7 @@ export class BlockRecoilDamageAttr extends AbAttr {
     cancelled.value = true;
   }
 
-  getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]) {
+  getTriggerMessage(pokemon: Pokemon, abilityName: string, ..._args: any[]) {
     return i18next.t("abilityTriggers:blockRecoilDamage", { pokemonName: getPokemonNameWithAffix(pokemon), abilityName: abilityName });
   }
 }
@@ -4186,7 +4033,9 @@ export class PostTurnResetStatusAbAttr extends PostTurnAbAttr {
     } else {
       this.target = pokemon;
     }
-    return !isNullOrUndefined(this.target?.status);
+
+    const effect = this.target?.status?.effect;
+    return !!effect && effect !== StatusEffect.FAINT;
   }
 
   override applyPostTurn(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): void {
@@ -6453,10 +6302,9 @@ function getPokemonWithWeatherBasedForms() {
   );
 }
 
-export const allAbilities = [ new Ability(Abilities.NONE, 3) ];
-
 export function initAbilities() {
   allAbilities.push(
+    new Ability(Abilities.NONE, 3),
     new Ability(Abilities.STENCH, 3)
       .attr(PostAttackApplyBattlerTagAbAttr, false, (user, target, move) => !move.hasAttr(FlinchAttr) && !move.hitsSubstitute(user, target) ? 10 : 0, BattlerTagType.FLINCHED),
     new Ability(Abilities.DRIZZLE, 3)
@@ -6856,8 +6704,8 @@ export function initAbilities() {
       .attr(PostDefendStealHeldItemAbAttr, (target, user, move) => move.hasFlag(MoveFlags.MAKES_CONTACT))
       .condition(getSheerForceHitDisableAbCondition()),
     new Ability(Abilities.SHEER_FORCE, 5)
-      .attr(MovePowerBoostAbAttr, (user, target, move) => move.chance >= 1, 5461 / 4096)
-      .attr(MoveEffectChanceMultiplierAbAttr, 0), // Should disable life orb, eject button, red card, kee/maranga berry if they get implemented
+      .attr(MovePowerBoostAbAttr, (user, target, move) => move.chance >= 1, 1.3)
+      .attr(MoveEffectChanceMultiplierAbAttr, 0), // This attribute does not seem to function - Should disable life orb, eject button, red card, kee/maranga berry if they get implemented
     new Ability(Abilities.CONTRARY, 5)
       .attr(StatStageChangeMultiplierAbAttr, -1)
       .ignorable(),

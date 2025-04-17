@@ -18,7 +18,7 @@ import {
   applyAbAttrs,
   applyOnGainAbAttrs,
   applyOnLoseAbAttrs,
-} from "#app/data/ability";
+} from "#app/data/abilities/ability";
 import { Stat } from "#enums/stat";
 import { CommonAnim, CommonBattleAnim } from "#app/data/battle-anims";
 import i18next from "i18next";

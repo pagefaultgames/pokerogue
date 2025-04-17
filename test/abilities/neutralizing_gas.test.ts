@@ -1,7 +1,7 @@
 import { BattlerIndex } from "#app/battle";
 import type { CommandPhase } from "#app/phases/command-phase";
 import { Command } from "#app/ui/command-ui-handler";
-import { PostSummonWeatherChangeAbAttr } from "#app/data/ability";
+import { PostSummonWeatherChangeAbAttr } from "#app/data/abilities/ability";
 import { Abilities } from "#enums/abilities";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { Moves } from "#enums/moves";
