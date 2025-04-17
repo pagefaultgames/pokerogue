@@ -219,7 +219,7 @@ export class MoveEffectPhase extends PokemonPhase {
         case HitCheckResult.NO_EFFECT:
           globalScene.queueMessage(
             i18next.t(this.move.id === Moves.SHEER_COLD ? "battle:hitResultImmune" : "battle:hitResultNoEffect", {
-              pokemonNameWithAffix: getPokemonNameWithAffix(target),
+              pokemonName: getPokemonNameWithAffix(target),
             }),
           );
         case HitCheckResult.NO_EFFECT_NO_MESSAGE:
