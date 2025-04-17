@@ -18,7 +18,7 @@ export const signatureSpecies: SignatureSpecies = {
   JANINE: [Species.VENONAT, Species.SPINARAK, Species.ZUBAT, Species.KOFFING],
   SABRINA: [Species.ABRA, Species.MR_MIME, Species.ESPEON, Species.SMOOCHUM],
   BLAINE: [Species.GROWLITHE, Species.PONYTA, Species.MAGBY, Species.VULPIX],
-  GIOVANNI: [Species.RHYHORN, Species.MEOWTH, [Species.NIDORAN_M, Species.NIDORAN_F], Species.DIGLETT], // Tera Ground Meowth
+  GIOVANNI: [Species.RHYHORN, [Species.NIDORAN_M, Species.NIDORAN_F], Species.MEOWTH, Species.DIGLETT], // Tera Ground Meowth
   // Gym Leaders- Johto
   FALKNER: [Species.PIDGEY, Species.HOOTHOOT, Species.NATU, Species.MURKROW],
   BUGSY: [Species.SCYTHER, Species.SHUCKLE, Species.YANMA, [Species.PINSIR, Species.HERACROSS]],
