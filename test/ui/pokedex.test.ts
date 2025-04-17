@@ -4,7 +4,7 @@ import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, type MockInstance, vi } from "vitest";
 import PokedexUiHandler from "#app/ui/pokedex-ui-handler";
 import { FilterTextRow } from "#app/ui/filter-text";
-import { allAbilities } from "#app/data/ability";
+import { allAbilities } from "#app/data/data-lists";
 import { Abilities } from "#enums/abilities";
 import { Species } from "#enums/species";
 import { allSpecies, getPokemonSpecies, type PokemonForm } from "#app/data/pokemon-species";
