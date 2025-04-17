@@ -405,8 +405,11 @@ export function deltaRgb(rgb1: number[], rgb2: number[]): number {
   return Math.ceil(Math.sqrt(2 * drp2 + 4 * dgp2 + 3 * dbp2 + (t * (drp2 - dbp2)) / 256));
 }
 
+// Extract out the rgb values from a hex string
+const hexRegex = /^([\da-f]{2})([\da-f]{2})([\da-f]{2})$/i;
+
 export function rgbHexToRgba(hex: string) {
-  const color = hex.match(/^([\da-f]{2})([\da-f]{2})([\da-f]{2})$/i) ?? ["000000", "00", "00", "00"];
+  const color = hex.match(hexRegex) ?? ["000000", "00", "00", "00"];
   return {
     r: Number.parseInt(color[1], 16),
     g: Number.parseInt(color[2], 16),
