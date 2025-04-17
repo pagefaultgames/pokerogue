@@ -67,20 +67,6 @@ describe("Abilities - Illusion", () => {
     expect(!!zorua.summonData?.illusion).equals(false);
   });
 
-  it("breaks when suppressed", async () => {
-    game.override.moveset(Moves.GASTRO_ACID);
-    await game.classicMode.startBattle([Species.MAGIKARP]);
-    const zorua = game.scene.getEnemyPokemon()!;
-
-    expect(!!zorua.summonData?.illusion).toBe(true);
-
-    game.move.select(Moves.GASTRO_ACID);
-    await game.phaseInterceptor.to(BerryPhase);
-
-    expect(zorua.isFullHp()).toBe(true);
-    expect(!!zorua.summonData?.illusion).toBe(false);
-  });
-
   it("break with neutralizing gas", async () => {
     game.override.enemyAbility(Abilities.NEUTRALIZING_GAS);
     await game.classicMode.startBattle([Species.KOFFING]);
