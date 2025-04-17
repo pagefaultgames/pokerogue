@@ -28,9 +28,8 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 import { Abilities } from "#enums/abilities";
-import { NON_LEGEND_PARADOX_POKEMON } from "#app/data/balance/special-species-groups";
+import { NON_LEGEND_PARADOX_POKEMON, NON_LEGEND_ULTRA_BEASTS } from "#app/data/balance/special-species-groups";
 import { timedEventManager } from "#app/global-event-manager";
-import { NON_LEGEND_ULTRA_BEASTS } from "../../balance/special-species-groups";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounters/thePokemonSalesman";
