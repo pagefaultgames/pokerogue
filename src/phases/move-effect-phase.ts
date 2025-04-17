@@ -13,7 +13,6 @@ import {
   PostDamageAbAttr,
   PostDefendAbAttr,
   ReflectStatusMoveAbAttr,
-  TypeImmunityAbAttr,
 } from "#app/data/abilities/ability";
 import { ArenaTagSide, ConditionalProtectTag } from "#app/data/arena-tag";
 import { MoveAnim } from "#app/data/battle-anims";
@@ -25,7 +24,6 @@ import {
   SubstituteTag,
   TypeBoostTag,
 } from "#app/data/battler-tags";
-import type { BattlerTag } from "#app/data/battler-tags";
 import type { MoveAttr } from "#app/data/moves/move";
 import {
   applyFilteredMoveAttrs,
