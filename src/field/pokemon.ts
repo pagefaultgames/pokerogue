@@ -844,12 +844,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     // we reach the line of code that adds the listener, causing a deadlock.
     const waitOnLoadPromise = new Promise<void>(resolve => globalScene.load.once(Phaser.Loader.Events.COMPLETE, resolve));
 
-    // Wait for the assets we queued to load to finish loading, then...
     if (!globalScene.load.isLoading()) {
-      // push an event that will resolve when the load is complete
       globalScene.load.start();
-
     }
+
+    // Wait for the assets we queued to load to finish loading, then...
     // See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Using_promises#creating_a_promise_around_an_old_callback_api
     await waitOnLoadPromise;
 
@@ -880,7 +879,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (this.summonData?.speciesForm) {
       this.updateFusionPalette(true);
     }
-    console.log("Line 881");
   }
 
   /**
