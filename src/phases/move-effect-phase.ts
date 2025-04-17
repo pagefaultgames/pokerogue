@@ -239,6 +239,7 @@ export class MoveEffectPhase extends PokemonPhase {
           break;
         case HitCheckResult.REFLECTED:
           this.queueReflectedMove(user, target);
+          break;
         case HitCheckResult.PENDING:
         case HitCheckResult.ERROR:
           throw new Error("Unexpected hit check result");
@@ -253,7 +254,8 @@ export class MoveEffectPhase extends PokemonPhase {
     const user = this.getUserPokemon();
 
     if (!user) {
-      return super.end();
+      super.end();
+      return;
     }
 
     /** If an enemy used this move, set this as last enemy that used move or ability */
@@ -267,7 +269,8 @@ export class MoveEffectPhase extends PokemonPhase {
     /** If the user was somehow removed from the field and it's not a delayed attack, end this phase */
     if (!user.isOnField()) {
       if (!isDelayedAttack) {
-        return super.end();
+        super.end();
+        return;
       }
       if (!user.scene) {
         /*
@@ -275,7 +278,8 @@ export class MoveEffectPhase extends PokemonPhase {
          * on the turn the attack would have triggered. Having access to the global scene
          * in the future may solve this entirely, so for now we just cancel the hit
          */
-        return super.end();
+        super.end();
+        return;
       }
       if (isNullOrUndefined(user.turnData)) {
         user.resetTurnData();
@@ -370,7 +374,6 @@ export class MoveEffectPhase extends PokemonPhase {
    * Callback to be called after the move animation is played
    */
   private postAnimCallback(user: Pokemon, targets: Pokemon[]) {
-    console.log("============Inside post anim callback======");
     // Add to the move history entry
     if (this.firstHit) {
       user.pushMoveHistory(this.moveHistoryEntry);
@@ -382,6 +385,7 @@ export class MoveEffectPhase extends PokemonPhase {
     } catch (e) {
       console.warn(e.message || "Unexpected error in move effect phase");
       this.end();
+      return;
     }
     // Apply queued phases
     if (this.queuedPhases.length) {
@@ -430,82 +434,6 @@ export class MoveEffectPhase extends PokemonPhase {
   }
 
   /**
-   * Apply self-targeted effects that trigger `POST_APPLY`
-   *
-   * @param user - The {@linkcode Pokemon} using this phase's invoked move
-   * @param target - {@linkcode Pokemon} the current target of this phase's invoked move
-   * @param firstHit - `true` if this is the first hit in a multi-hit attack
-   * @param lastHit - `true` if this is the last hit in a multi-hit attack
-   * @returns a function intended to be passed into a `then()` call.
-   */
-  protected applySelfTargetEffects(user: Pokemon, target: Pokemon, firstHit: boolean, lastHit: boolean): void {
-    applyFilteredMoveAttrs(
-      (attr: MoveAttr) =>
-        attr instanceof MoveEffectAttr &&
-        attr.trigger === MoveEffectTrigger.POST_APPLY &&
-        attr.selfTarget &&
-        (!attr.firstHitOnly || firstHit) &&
-        (!attr.lastHitOnly || lastHit),
-      user,
-      target,
-      this.move,
-    );
-  }
-
-  /**
-   * Applies non-self-targeted effects that trigger `POST_APPLY`
-   * (i.e. Smelling Salts curing Paralysis, and the forced switch from U-Turn, Dragon Tail, etc)
-   * @param user - The {@linkcode Pokemon} using this phase's invoked move
-   * @param target - {@linkcode Pokemon} the current target of this phase's invoked move
-   * @param firstHit - `true` if this is the first hit in a multi-hit attack
-   * @param lastHit - `true` if this is the last hit in a multi-hit attack
-   * @returns a function intended to be passed into a `then()` call.
-   */
-  protected applyPostApplyEffects(user: Pokemon, target: Pokemon, firstHit: boolean, lastHit: boolean): void {
-    applyFilteredMoveAttrs(
-      (attr: MoveAttr) =>
-        attr instanceof MoveEffectAttr &&
-        attr.trigger === MoveEffectTrigger.POST_APPLY &&
-        !attr.selfTarget &&
-        (!attr.firstHitOnly || firstHit) &&
-        (!attr.lastHitOnly || lastHit),
-      user,
-      target,
-      this.move,
-    );
-  }
-
-  /**
-   * Applies effects that trigger on HIT
-   * (i.e. Final Gambit, Power-Up Punch, Drain Punch)
-   * @param user - The {@linkcode Pokemon} using this phase's invoked move
-   * @param target - {@linkcode Pokemon} the current target of this phase's invoked move
-   * @param firstHit - `true` if this is the first hit in a multi-hit attack
-   * @param lastHit - `true` if this is the last hit in a multi-hit attack
-   * @param firstTarget - `true` if {@linkcode target} is the first target hit by this strike of {@linkcode move}
-   * @returns a function intended to be passed into a `then()` call.
-   */
-  protected applyOnHitEffects(
-    user: Pokemon,
-    target: Pokemon,
-    firstHit: boolean,
-    lastHit: boolean,
-    firstTarget: boolean,
-  ): void {
-    applyFilteredMoveAttrs(
-      (attr: MoveAttr) =>
-        attr instanceof MoveEffectAttr &&
-        attr.trigger === MoveEffectTrigger.HIT &&
-        (!attr.firstHitOnly || firstHit) &&
-        (!attr.lastHitOnly || lastHit) &&
-        (!attr.firstTargetOnly || firstTarget),
-      user,
-      target,
-      this.move,
-    );
-  }
-
-  /**
    * Applies reactive effects that occur when a Pokémon is hit.
    * (i.e. Effect Spore, Disguise, Liquid Ooze, Beak Blast)
    * @param user - The {@linkcode Pokemon} using this phase's invoked move
@@ -513,51 +441,9 @@ export class MoveEffectPhase extends PokemonPhase {
    * @param hitResult - The {@linkcode HitResult} of the attempted move
    * @returns a `Promise` intended to be passed into a `then()` call.
    */
-  protected applyOnGetHitAbEffects(user: Pokemon, target: Pokemon, hitResult: HitResult) {
-    const hitsSubstitute = this.move.hitsSubstitute(user, target);
-    if (!target.isFainted() || target.canApplyAbility()) {
-      applyPostDefendAbAttrs(PostDefendAbAttr, target, user, this.move, hitResult);
-
-      if (!this.move.hitsSubstitute(user, target)) {
-        if (!user.isPlayer() && this.move instanceof AttackMove) {
-          globalScene.applyShuffledModifiers(EnemyAttackStatusEffectChanceModifier, false, target);
-        }
-      }
-    }
-    if (!hitsSubstitute) {
-      target.lapseTags(BattlerTagLapseType.AFTER_HIT);
-    }
-  }
-
-  /**
-   * Applies all effects and attributes that require a move to connect with a target,
-   * namely reactive effects like Weak Armor, on-hit effects like that of Power-Up Punch, and item stealing effects
-   * @param user - The {@linkcode Pokemon} using this phase's invoked move
-   * @param target - {@linkcode Pokemon} the current target of this phase's invoked move
-   * @param firstHit - `true` if this is the first hit in a multi-hit attack
-   * @param lastHit - `true` if this is the last hit in a multi-hit attack
-   * @param isProtected - `true` if the target is protected by effects such as Protect
-   * @param hitResult - The {@linkcode HitResult} of the attempted move
-   * @param firstTarget - `true` if {@linkcode target} is the first target hit by this strike of {@linkcode move}
-   * @returns a function intended to be passed into a `then()` call.
-   */
-  protected applySuccessfulAttackEffects(
-    user: Pokemon,
-    target: Pokemon,
-    firstHit: boolean,
-    lastHit: boolean,
-    isProtected: boolean,
-    hitResult: HitResult,
-    firstTarget: boolean,
-  ): void {
-    if (!isProtected) {
-      this.applyOnHitEffects(user, target, firstHit, lastHit, firstTarget);
-      this.applyOnGetHitAbEffects(user, target, hitResult);
-      applyPostAttackAbAttrs(PostAttackAbAttr, user, target, this.move, hitResult);
-      if (this.move instanceof AttackMove && hitResult !== HitResult.STATUS) {
-        globalScene.applyModifiers(ContactHeldItemTransferChanceModifier, this.player, user, target);
-      }
-    }
+  protected applyOnGetHitAbEffects(user: Pokemon, target: Pokemon, hitResult: HitResult): void {
+    applyPostDefendAbAttrs(PostDefendAbAttr, target, user, this.move, hitResult);
+    target.lapseTags(BattlerTagLapseType.AFTER_HIT);
   }
 
   /**
@@ -672,7 +558,6 @@ export class MoveEffectPhase extends PokemonPhase {
     }
 
     if (!fieldTargeted && this.protectedCheck(user, target)) {
-      console.log("====== Protected ========");
       return [HitCheckResult.PROTECTED, 0];
     }
 
@@ -682,7 +567,6 @@ export class MoveEffectPhase extends PokemonPhase {
 
     // After the magic bounce check, field targeted moves are always successful
     if (fieldTargeted) {
-      console.log("====== Field targeted moves overriding hit check ========");
       return [HitCheckResult.HIT, 1];
     }
 
@@ -1024,12 +908,12 @@ export class MoveEffectPhase extends PokemonPhase {
    * Sub-method of {@linkcode applyMove} that handles the event of a target fainting.
    * @param user - The {@linkcode Pokemon} using this phase's invoked move
    * @param target - The {@linkcode Pokemon} that fainted
-   * @param preventEndure - `true` if the endure effect should be prevented
    */
-  protected onFaintTarget(user: Pokemon, target: Pokemon, preventEndure: boolean): void {
+  protected onFaintTarget(user: Pokemon, target: Pokemon): void {
     // set splice index here, so future scene queues happen before FaintedPhase
     globalScene.setPhaseQueueSplice();
-    globalScene.unshiftPhase(new FaintPhase(target.getBattlerIndex(), preventEndure, user));
+
+    globalScene.unshiftPhase(new FaintPhase(target.getBattlerIndex(), false, user));
 
     target.destroySubstitute();
     target.lapseTag(BattlerTagType.COMMANDED);
@@ -1077,7 +961,7 @@ export class MoveEffectPhase extends PokemonPhase {
     }
 
     if (target.isFainted()) {
-      this.onFaintTarget(user, target, result === HitResult.ONE_HIT_KO);
+      this.onFaintTarget(user, target);
     }
 
     return result;
