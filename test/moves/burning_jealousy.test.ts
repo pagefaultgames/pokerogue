@@ -89,7 +89,7 @@ describe("Moves - Burning Jealousy", () => {
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(allMoves[Moves.BURNING_JEALOUSY].calculateBattlePower).toHaveReturnedWith(
-      (allMoves[Moves.BURNING_JEALOUSY].power * 5461) / 4096,
+      allMoves[Moves.BURNING_JEALOUSY].power * 1.3,
     );
   });
 });
