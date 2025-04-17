@@ -2607,7 +2607,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setBattleBgm("battle_kanto_gym")
     .setMixedBattleBgm("battle_kanto_gym"),
   [TrainerType.GIOVANNI]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["GIOVANNI"], true, PokemonType.GROUND, false, -3)
+    .initForGymLeader(signatureSpecies["GIOVANNI"], true, PokemonType.GROUND, false, -2)
     .setBattleBgm("battle_kanto_gym")
     .setMixedBattleBgm("battle_kanto_gym"),
   [TrainerType.FALKNER]: new TrainerConfig(++t)
@@ -2810,7 +2810,7 @@ export const trainerConfigs: TrainerConfigs = {
     .initForGymLeader(signatureSpecies["MELONY"], false, PokemonType.ICE, false, -1)
     .setMixedBattleBgm("battle_galar_gym"),
   [TrainerType.PIERS]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["PIERS"], true, PokemonType.DARK, false, -4)
+    .initForGymLeader(signatureSpecies["PIERS"], true, PokemonType.DARK, false, -3)
     .setHasDouble("piers_marnie_double")
     .setDoubleTrainerType(TrainerType.MARNIE)
     .setDoubleTitle("gym_leader_double")
