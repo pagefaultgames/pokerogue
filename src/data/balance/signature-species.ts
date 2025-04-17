@@ -16,18 +16,18 @@ export const signatureSpecies: SignatureSpecies = {
   LT_SURGE: [Species.PICHU, Species.VOLTORB, Species.ELEKID, Species.MAGNEMITE],
   ERIKA: [Species.ODDISH, Species.BELLSPROUT, Species.TANGELA, Species.HOPPIP],
   JANINE: [Species.VENONAT, Species.SPINARAK, Species.ZUBAT, Species.KOFFING],
-  SABRINA: [Species.ABRA, Species.MR_MIME, Species.ESPEON, Species.SMOOCHUM],
+  SABRINA: [Species.ABRA, Species.MR_MIME, Species.SMOOCHUM, Species.ESPEON],
   BLAINE: [Species.GROWLITHE, Species.PONYTA, Species.MAGBY, Species.VULPIX],
-  GIOVANNI: [Species.RHYHORN, [Species.NIDORAN_M, Species.NIDORAN_F], Species.MEOWTH, Species.DIGLETT], // Tera Ground Meowth
+  GIOVANNI: [Species.RHYHORN, Species.MEOWTH, [Species.NIDORAN_M, Species.NIDORAN_F], Species.DIGLETT], // Tera Ground Meowth
   // Gym Leaders- Johto
   FALKNER: [Species.PIDGEY, Species.HOOTHOOT, Species.NATU, Species.MURKROW],
   BUGSY: [Species.SCYTHER, Species.SHUCKLE, Species.YANMA, [Species.PINSIR, Species.HERACROSS]],
-  WHITNEY: [Species.MILTANK, Species.IGGLYBUFF, Species.AIPOM, [Species.GIRAFARIG, Species.STANTLER]],
+  WHITNEY: [Species.MILTANK, Species.AIPOM, Species.IGGLYBUFF, [Species.GIRAFARIG, Species.STANTLER]],
   MORTY: [Species.GASTLY, Species.MISDREAVUS, Species.DUSKULL, Species.SABLEYE],
-  CHUCK: [Species.POLIWRATH, Species.TYROGUE, Species.MANKEY, Species.MACHOP],
+  CHUCK: [Species.POLIWRATH, Species.MANKEY, Species.TYROGUE, Species.MACHOP],
   JASMINE: [Species.STEELIX, Species.MAGNEMITE, Species.PINECO, Species.SKARMORY],
   PRYCE: [Species.SWINUB, Species.SEEL, Species.SHELLDER, Species.SNEASEL],
-  CLAIR: [Species.HORSEA, Species.DRATINI, Species.GYARADOS, Species.DRUDDIGON], // Tera Dragon Gyarados
+  CLAIR: [Species.HORSEA, Species.DRATINI, Species.MAGIKARP, Species.DRUDDIGON], // Tera Dragon Magikarp
   // Gym Leaders- Hoenn
   ROXANNE: [Species.NOSEPASS, Species.GEODUDE, [Species.ANORITH, Species.LILEEP], Species.ARON],
   BRAWLY: [Species.MAKUHITA, Species.MACHOP, Species.MEDITITE, Species.SHROOMISH],
@@ -44,20 +44,20 @@ export const signatureSpecies: SignatureSpecies = {
   MAYLENE: [Species.RIOLU, Species.MEDITITE, Species.CHIMCHAR, Species.CROAGUNK],
   CRASHER_WAKE: [Species.BUIZEL, Species.WOOPER, Species.PIPLUP, Species.MAGIKARP],
   FANTINA: [Species.MISDREAVUS, Species.DRIFLOON, Species.DUSKULL, Species.SPIRITOMB],
-  BYRON: [Species.SHIELDON, Species.BRONZOR, Species.SKARMORY, Species.ARON],
-  CANDICE: [Species.SNORUNT, Species.SNOVER, Species.SNEASEL, Species.GLACEON],
+  BYRON: [Species.SHIELDON, Species.BRONZOR, Species.ARON, Species.SKARMORY],
+  CANDICE: [Species.FROSLASS, Species.SNOVER, Species.SNEASEL, Species.GLACEON],
   VOLKNER: [Species.ELEKID, Species.SHINX, Species.JOLTEON, Species.ROTOM],
   // Gym Leaders- Unova
   CILAN: [Species.PANSAGE, Species.SNIVY, Species.MARACTUS, Species.FERROSEED],
   CHILI: [Species.PANSEAR, Species.TEPIG, Species.HEATMOR, Species.DARUMAKA],
   CRESS: [Species.PANPOUR, Species.OSHAWOTT, Species.BASCULIN, Species.TYMPOLE],
-  CHEREN: [Species.LILLIPUP, Species.PIDOVE, Species.MINCCINO, Species.BOUFFALANT],
+  CHEREN: [Species.LILLIPUP, Species.MINCCINO, Species.PIDOVE, Species.BOUFFALANT],
   LENORA: [Species.PATRAT, Species.DEERLING, Species.AUDINO, Species.BRAVIARY],
   ROXIE: [Species.VENIPEDE, Species.KOFFING, Species.TRUBBISH, Species.TOXEL],
   BURGH: [Species.SEWADDLE, Species.DWEBBLE, [Species.KARRABLAST, Species.SHELMET], Species.DURANT],
   ELESA: [Species.BLITZLE, Species.EMOLGA, Species.JOLTIK, Species.TYNAMO],
   CLAY: [Species.DRILBUR, Species.SANDILE, Species.TYMPOLE, Species.GOLETT],
-  SKYLA: [Species.DUCKLETT, Species.PIDOVE, Species.WOOBAT, [Species.RUFFLET, Species.VULLABY]],
+  SKYLA: [Species.DUCKLETT, Species.WOOBAT, [Species.RUFFLET, Species.VULLABY], Species.ARCHEN],
   BRYCEN: [Species.CRYOGONAL, Species.VANILLITE, Species.CUBCHOO, Species.GALAR_DARUMAKA],
   DRAYDEN: [Species.AXEW, Species.DRUDDIGON, Species.TRAPINCH, Species.DEINO],
   MARLON: [Species.FRILLISH, Species.TIRTOUGA, Species.WAILMER, Species.MANTYKE],
@@ -67,22 +67,22 @@ export const signatureSpecies: SignatureSpecies = {
   KORRINA: [Species.LUCARIO, Species.HAWLUCHA, Species.MIENFOO, Species.PANCHAM],
   RAMOS: [Species.SKIDDO, Species.HOPPIP, Species.BELLSPROUT, [Species.PHANTUMP, Species.PUMPKABOO]],
   CLEMONT: [Species.HELIOPTILE, Species.MAGNEMITE, Species.DEDENNE, Species.SHINX],
-  VALERIE: [Species.SYLVEON, Species.MAWILE, [Species.SPRITZEE, Species.SWIRLIX], Species.MR_MIME],
+  VALERIE: [Species.SYLVEON, Species.MAWILE, Species.MR_MIME, [Species.SPRITZEE, Species.SWIRLIX]],
   OLYMPIA: [Species.ESPURR, Species.SIGILYPH, Species.INKAY, Species.SLOWKING],
   WULFRIC: [Species.BERGMITE, Species.SNOVER, Species.CRYOGONAL, Species.AMAURA],
   // Gym Leaders- Galar
-  MILO: [Species.GOSSIFLEUR, Species.APPLIN, Species.SEEDOT, Species.LOTAD],
-  NESSA: [Species.CHEWTLE, Species.ARROKUDA, Species.WIMPOD, Species.MAREANIE],
+  MILO: [Species.GOSSIFLEUR, Species.SEEDOT, Species.APPLIN, Species.LOTAD],
+  NESSA: [Species.CHEWTLE, Species.WIMPOD, Species.ARROKUDA, Species.MAREANIE],
   KABU: [Species.SIZZLIPEDE, Species.VULPIX, Species.GROWLITHE, Species.TORKOAL],
   BEA: [Species.MACHOP, Species.GALAR_FARFETCHD, Species.CLOBBOPUS, Species.FALINKS],
   ALLISTER: [Species.GASTLY, Species.GALAR_YAMASK, Species.GALAR_CORSOLA, Species.SINISTEA],
   OPAL: [Species.MILCERY, Species.GALAR_WEEZING, Species.TOGEPI, Species.MAWILE],
   BEDE: [Species.HATENNA, Species.GALAR_PONYTA, Species.GARDEVOIR, Species.SYLVEON],
-  GORDIE: [Species.ROLYCOLY, Species.STONJOURNER, Species.BINACLE, Species.LARVITAR],
+  GORDIE: [Species.ROLYCOLY, Species.BINACLE, Species.STONJOURNER, Species.LARVITAR],
   MELONY: [Species.LAPRAS, Species.SNOM, Species.EISCUE, [Species.GALAR_DARUMAKA, Species.GALAR_MR_MIME]],
-  PIERS: [Species.GALAR_ZIGZAGOON, Species.INKAY, Species.SCRAGGY, Species.TOXEL], // Tera Dark Toxel
+  PIERS: [Species.GALAR_ZIGZAGOON, Species.SCRAGGY, Species.TOXEL, Species.INKAY], // Tera Dark Toxel
   MARNIE: [Species.IMPIDIMP, Species.MORPEKO, Species.PURRLOIN, Species.CROAGUNK], // Tera Dark Croagunk
-  RAIHAN: [Species.DURALUDON, Species.TURTONATOR, Species.GOOMY, Species.TRAPINCH],
+  RAIHAN: [Species.DURALUDON, Species.TRAPINCH, Species.GOOMY, Species.TURTONATOR],
   // Gym Leaders- Paldea; First slot is Tera
   KATY: [Species.TEDDIURSA, Species.NYMBLE, Species.TAROUNTULA, Species.RELLOR], // Tera Bug Teddiursa
   BRASSIUS: [Species.SUDOWOODO, Species.BRAMBLIN, Species.SMOLIV, Species.SUNKERN], // Tera Grass Sudowoodo
