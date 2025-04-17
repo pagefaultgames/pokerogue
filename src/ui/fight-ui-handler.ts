@@ -346,7 +346,7 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
       return undefined;
     }
 
-    const opponents = pokemon.getOpponents(true);
+    const opponents = pokemon.getOpponents();
     if (opponents.length <= 0) {
       return undefined;
     }
