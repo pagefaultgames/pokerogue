@@ -2710,9 +2710,11 @@ export class EatBerryAttr extends MoveEffectAttr {
     globalScene.updateModifiers(target.isPlayer());
   }
 
-  eatBerry(consumer: Pokemon, berryOwner?: Pokemon) {
-    // consumer eats the berry
-    getBerryEffectFunc(this.chosenBerry!.berryType)(consumer, berryOwner);
+  eatBerry(consumer: Pokemon, berryOwner: Pokemon = consumer) {
+    // consumer eats berry, owner triggers unburden and similar effects
+    getBerryEffectFunc(this.chosenBerry!.berryType)(consumer);
+    applyPostItemLostAbAttrs(PostItemLostAbAttr, berryOwner, false);
+
     applyAbAttrs(HealFromBerryUseAbAttr, consumer, new BooleanHolder(false));
 
     // Harvest doesn't track berries eaten by other pokemon

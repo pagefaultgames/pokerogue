@@ -3,13 +3,7 @@ import type Pokemon from "../field/pokemon";
 import { HitResult } from "../field/pokemon";
 import { getStatusEffectHealText } from "./status-effect";
 import { NumberHolder, toDmgValue, randSeedInt } from "#app/utils";
-import {
-  DoubleBerryEffectAbAttr,
-  PostItemLostAbAttr,
-  ReduceBerryUseThresholdAbAttr,
-  applyAbAttrs,
-  applyPostItemLostAbAttrs,
-} from "./abilities/ability";
+import { DoubleBerryEffectAbAttr, ReduceBerryUseThresholdAbAttr, applyAbAttrs } from "./abilities/ability";
 import i18next from "i18next";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BerryType } from "#enums/berry-type";
@@ -70,10 +64,10 @@ export function getBerryPredicate(berryType: BerryType): BerryPredicate {
   }
 }
 
-export type BerryEffectFunc = (pokemon: Pokemon, berryOwner?: Pokemon) => void;
+export type BerryEffectFunc = (consumer: Pokemon) => void;
 
 export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
-  return (consumer: Pokemon, berryOwner: Pokemon = consumer) => {
+  return (consumer: Pokemon) => {
     // Apply an effect pertaining to what berry we're using
     switch (berryType) {
       case BerryType.SITRUS:
@@ -111,7 +105,7 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
       case BerryType.APICOT:
       case BerryType.SALAC:
         {
-          // Offset BerryType such that LIECHI --> Stat.ATK = 1, GANLON --> Stat.DEF = 2, so on and so forth
+          // Offset BerryType such that LIECHI --> Stat.ATK = 1, GANLON --> Stat.DEF = 2, etc etc.
           const stat: BattleStat = berryType - BerryType.ENIGMA;
           const statStages = new NumberHolder(1);
           applyAbAttrs(DoubleBerryEffectAbAttr, consumer, null, false, statStages);
@@ -140,14 +134,16 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
 
       case BerryType.LEPPA:
         {
+          // Pick the first move completely out of PP, or else the first one that has any PP missing
           const ppRestoreMove =
-            consumer.getMoveset().find(m => !m.getPpRatio()) ?? consumer.getMoveset().find(m => m.getPpRatio() < 1);
-          if (ppRestoreMove !== undefined) {
-            ppRestoreMove!.ppUsed = Math.max(ppRestoreMove!.ppUsed - 10, 0);
+            consumer.getMoveset().find(m => m.ppUsed === m.getMovePp()) ??
+            consumer.getMoveset().find(m => m.ppUsed < m.getMovePp());
+          if (ppRestoreMove) {
+            ppRestoreMove.ppUsed = Math.max(ppRestoreMove.ppUsed - 10, 0);
             globalScene.queueMessage(
               i18next.t("battle:ppHealBerry", {
                 pokemonNameWithAffix: getPokemonNameWithAffix(consumer),
-                moveName: ppRestoreMove!.getName(),
+                moveName: ppRestoreMove.getName(),
                 berryName: getBerryName(berryType),
               }),
             );
@@ -157,8 +153,5 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
       default:
         console.error("Incorrect BerryType %d passed to GetBerryEffectFunc", berryType);
     }
-
-    // Trigger unburden on the mon losing the berry
-    applyPostItemLostAbAttrs(PostItemLostAbAttr, berryOwner, false);
   };
 }

@@ -76,6 +76,12 @@ export default class PokemonData {
   public mysteryEncounterPokemonData: CustomPokemonData | null;
   public fusionMysteryEncounterPokemonData: CustomPokemonData | null;
 
+  /**
+   * Construct a new {@linkcode PokemonData} instance out of a {@linkcode Pokemon}
+   * or JSON representation thereof.
+   * @param source The {@linkcode Pokemon} to convert into data (or a JSON object representing one)
+   * @param forHistory
+   */
   constructor(source: Pokemon | any, forHistory = false) {
     const sourcePokemon = source instanceof Pokemon ? source : undefined;
     this.id = source.id;
@@ -103,7 +109,7 @@ export default class PokemonData {
     this.luck = source.luck ?? (source.shiny ? source.variant + 1 : 0);
     this.pokerus = !!source.pokerus;
     this.teraType = source.teraType as PokemonType;
-    this.isTerastallized = source.isTerastallized ?? false;
+    this.isTerastallized = !!source.isTerastallized;
     this.stellarTypesBoosted = source.stellarTypesBoosted ?? [];
 
     this.fusionSpecies = sourcePokemon ? sourcePokemon.fusionSpecies?.speciesId : source.fusionSpecies;
@@ -158,7 +164,7 @@ export default class PokemonData {
       if (this.player) {
         this.summonData = sourcePokemon?.summonData ?? source.summonData;
       } else {
-        console.log("GPIGIPGIPGIOPGIPIGPIGPTOGEw");
+        console.log("this.player false!");
         this.summonData = new PokemonSummonData();
       }
 

@@ -308,7 +308,7 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
       !opponent.waveData.abilityRevealed,
       undefined,
       undefined,
-      true
+      true,
     );
     if (effectiveness === undefined) {
       return undefined;
@@ -353,7 +353,14 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
 
     const moveColors = opponents
       .map(opponent =>
-        opponent.getMoveEffectiveness(pokemon, pokemonMove.getMove(), !opponent.waveData.abilityRevealed, undefined, undefined, true),
+        opponent.getMoveEffectiveness(
+          pokemon,
+          pokemonMove.getMove(),
+          !opponent.waveData.abilityRevealed,
+          undefined,
+          undefined,
+          true,
+        ),
       )
       .sort((a, b) => b - a)
       .map(effectiveness => getTypeDamageMultiplierColor(effectiveness ?? 0, "offense"));

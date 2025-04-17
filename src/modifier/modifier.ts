@@ -47,7 +47,12 @@ import {
 } from "./modifier-type";
 import { Color, ShadowColor } from "#enums/color";
 import { FRIENDSHIP_GAIN_FROM_RARE_CANDY } from "#app/data/balance/starters";
-import { applyAbAttrs, CommanderAbAttr } from "#app/data/abilities/ability";
+import {
+  applyAbAttrs,
+  applyPostItemLostAbAttrs,
+  CommanderAbAttr,
+  PostItemLostAbAttr,
+} from "#app/data/abilities/ability";
 import { globalScene } from "#app/global-scene";
 
 export type ModifierPredicate = (modifier: Modifier) => boolean;
@@ -1872,8 +1877,9 @@ export class BerryModifier extends PokemonHeldItemModifier {
     globalScene.applyModifiers(PreserveBerryModifier, pokemon.isPlayer(), pokemon, preserve);
     this.consumed = !preserve.value;
 
-    // munch time!
+    // munch the berry and trigger unburden-like effects
     getBerryEffectFunc(this.berryType)(pokemon);
+    applyPostItemLostAbAttrs(PostItemLostAbAttr, pokemon, false);
 
     // Update berry eaten trackers for Belch, Harvest, Cud Chew, etc.
     // Don't recover it if we proc berry pouch (no item duplication)
@@ -3613,7 +3619,7 @@ export class EnemyAttackStatusEffectChanceModifier extends EnemyPersistentModifi
     super(type, stackCount);
 
     this.effect = effect;
-    //Hardcode temporarily
+    // Hardcode temporarily
     this.chance = 0.025 * (this.effect === StatusEffect.BURN || this.effect === StatusEffect.POISON ? 2 : 1);
   }
 

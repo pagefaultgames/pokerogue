@@ -145,7 +145,7 @@ describe("Abilities - Unburden", () => {
   });
 
   it("should activate when an item is stolen via defending ability", async () => {
-    game.override.enemyAbility(Abilities.PICKPOCKET).enemyHeldItems([]); // Remove opponent's full stacks of held items so it can steal player's held items
+    game.override.enemyAbility(Abilities.PICKPOCKET).enemyHeldItems([]); // Remove opponent's held items so it can steal ours
     await game.classicMode.startBattle([Species.TREECKO]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;

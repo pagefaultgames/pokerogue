@@ -4177,9 +4177,10 @@ export class RepeatBerryNextTurnAbAttr extends PostTurnAbAttr {
       new CommonAnimPhase(pokemon.getBattlerIndex(), pokemon.getBattlerIndex(), CommonAnim.USE_ITEM),
     );
 
-    // re-apply effect of all berries previously scarfed
+    // Re-apply effects of all berries previously scarfed.
+    // This technically doesn't count as "eating" a berry (for unnerve/stuff cheeks/unburden)
     for (const berryType of pokemon.summonData.berriesEatenLast) {
-      getBerryEffectFunc(berryType)(pokemon); // TODO: Make this not trigger unburden
+      getBerryEffectFunc(berryType)(pokemon);
       const bMod = new BerryModifier(new BerryModifierType(berryType), pokemon.id, berryType, 1);
       globalScene.eventTarget.dispatchEvent(new BerryUsedEvent(bMod)); // trigger message
     }
@@ -4483,7 +4484,7 @@ export class PostItemLostAbAttr extends AbAttr {
 }
 
 /**
- * Applies a Battler Tag to the Pokemon after it loses or consumes item
+ * Applies a Battler Tag to the Pokemon after it loses or consumes an item
  * @extends PostItemLostAbAttr
  */
 export class PostItemLostApplyBattlerTagAbAttr extends PostItemLostAbAttr {
@@ -5233,8 +5234,7 @@ export class PreSummonAbAttr extends AbAttr {
 
 export class IllusionPreSummonAbAttr extends PreSummonAbAttr {
   /**
-   * Apply a new illusion when summoning Zoroark if the illusion is available
-   *
+   * Apply a new illusion when summoning Zoroark if the illusion is available.
    * @param pokemon - The Pokémon with the Illusion ability.
    * @param passive - N/A
    * @param args - N/A
@@ -5248,7 +5248,7 @@ export class IllusionPreSummonAbAttr extends PreSummonAbAttr {
 
   override canApplyPreSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
     pokemon.initSummonData()
-    if(pokemon.hasTrainer()){
+    if (pokemon.hasTrainer()) {
       const party: Pokemon[] = (pokemon.isPlayer() ? globalScene.getPlayerParty() : globalScene.getEnemyParty()).filter(p => p.isAllowedInBattle());
       const lastPokemon: Pokemon = party.filter(p => p !==pokemon).at(-1) || pokemon;
       const speciesId = lastPokemon.species.speciesId;

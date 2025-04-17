@@ -307,7 +307,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public luck: number;
   public pauseEvolutions: boolean;
   public pokerus: boolean;
-  public switchOutStatus: boolean;
+  public switchOutStatus = false;
   public evoCounter: number;
   public teraType: PokemonType;
   public isTerastallized: boolean;
@@ -333,7 +333,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   /* Pokemon data types, in vague order of precedence */
 
   /** Data that resets on switch (stat stages, battler tags, etc.) */
-  public summonData: PokemonSummonData = new PokemonSummonData;
+  public summonData: PokemonSummonData;
   /** Wave data correponding to moves/ability information revealed */
   public waveData: PokemonWaveData = new PokemonWaveData;
   /** Data that resets only on battle end (hit count, harvest berries, etc.) */
@@ -353,6 +353,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   private shinySparkle: Phaser.GameObjects.Sprite;
 
+  // TODO: Rework this constructor - it's _far_ too complicated and could be modernized
+  // in a similar manner to the PokemonData constructor
   constructor(
     x: number,
     y: number,
@@ -373,38 +375,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       throw `Cannot create a player Pokemon for species '${species.getName(formIndex)}'`;
     }
 
-    const hiddenAbilityChance = new NumberHolder(
-      BASE_HIDDEN_ABILITY_CHANCE,
-    );
-    if (!this.hasTrainer()) {
-      globalScene.applyModifiers(
-        HiddenAbilityRateBoosterModifier,
-        true,
-        hiddenAbilityChance,
-      );
-    }
-
     this.species = species;
     this.pokeball = dataSource?.pokeball || PokeballType.POKEBALL;
     this.level = level;
-    this.switchOutStatus = false;
 
-    // Determine the ability index
-    if (abilityIndex !== undefined) {
-      this.abilityIndex = abilityIndex; // Use the provided ability index if it is defined
-    } else {
-      // If abilityIndex is not provided, determine it based on species and hidden ability
-      const hasHiddenAbility = !randSeedInt(hiddenAbilityChance.value);
-      const randAbilityIndex = randSeedInt(2);
-      if (species.abilityHidden && hasHiddenAbility) {
-        // If the species has a hidden ability and the hidden ability is present
-        this.abilityIndex = 2;
-      } else {
-        // If there is no hidden ability or species does not have a hidden ability
-        this.abilityIndex =
-          species.ability2 !== species.ability1 ? randAbilityIndex : 0; // Use random ability index if species has a second ability, otherwise use 0
-      }
-    }
+    this.abilityIndex = abilityIndex ?? this.generateAbilityIndex()
 
     if (formIndex !== undefined) {
       this.formIndex = formIndex;
@@ -709,6 +684,33 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.updateInfo(true);
     }
   }
+
+  /** Generate `abilityIndex` based on species and hidden ability if not pre-defined. */
+  public generateAbilityIndex(): number {
+
+    // Roll for hidden ability chance, applying any ability charms for enemy mons
+    const hiddenAbilityChance = new NumberHolder(
+      BASE_HIDDEN_ABILITY_CHANCE,
+    );
+    if (!this.hasTrainer()) {
+      globalScene.applyModifiers(
+        HiddenAbilityRateBoosterModifier,
+        true,
+        hiddenAbilityChance,
+      );
+    }
+
+    // If the roll succeeded and we have one, use HA; otherwise pick a random ability
+    const hasHiddenAbility = !randSeedInt(hiddenAbilityChance.value);
+    if (this.species.abilityHidden && hasHiddenAbility) {
+      return 2;
+    }
+
+    // only use random ability if species has a second ability
+    return this.species.ability2 !== this.species.ability1 ? randSeedInt(2) : 0;
+  }
+
+
 
   /**
    * Generate an illusion of the last pokemon in the party, as other wild pokemon in the area.

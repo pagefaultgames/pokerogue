@@ -1304,14 +1304,13 @@ export default class BattleScene extends SceneBase {
     return Math.max(doubleChance.value, 1);
   }
 
-  // TODO: ...this never actually returns `null`, right?
   newBattle(
     waveIndex?: number,
     battleType?: BattleType,
     trainerData?: TrainerData,
     double?: boolean,
     mysteryEncounterType?: MysteryEncounterType,
-  ): Battle | null {
+  ): Battle {
     const _startingWave = Overrides.STARTING_WAVE_OVERRIDE || startingWave;
     const newWaveIndex = waveIndex || (this.currentBattle?.waveIndex || _startingWave - 1) + 1;
     let newDouble: boolean | undefined;
@@ -1324,7 +1323,7 @@ export default class BattleScene extends SceneBase {
 
     const playerField = this.getPlayerField();
 
-    if (this.gameMode.isFixedBattle(newWaveIndex) && trainerData === undefined) {
+    if (this.gameMode.isFixedBattle(newWaveIndex) && !trainerData) {
       battleConfig = this.gameMode.getFixedBattle(newWaveIndex);
       newDouble = battleConfig.double;
       newBattleType = battleConfig.battleType;
@@ -3035,7 +3034,7 @@ export default class BattleScene extends SceneBase {
    * @param transferQuantity How many items of the stack to transfer. Optional, defaults to `1`
    * @param instant ??? (Optional)
    * @param ignoreUpdate ??? (Optional)
-   * @param itemLost If `true`, treat the item's current holder as losing the item (for now, this simply enables Unburden). Default is `true`.
+   * @param itemLost Whether to treat the item's current holder as losing the item (for now, this simply enables Unburden). Default: `true`.
    * @returns `true` if the transfer was successful
    */
   tryTransferHeldItemModifier(
@@ -3047,7 +3046,7 @@ export default class BattleScene extends SceneBase {
     ignoreUpdate?: boolean,
     itemLost = true,
   ): boolean {
-    const source = itemModifier.pokemonId ? itemModifier.getPokemon() : null;
+    const source = itemModifier.getPokemon();
 
     // Check for effects that might block us from stealing
     const cancelled = new BooleanHolder(false);
@@ -3058,9 +3057,7 @@ export default class BattleScene extends SceneBase {
       return false;
     }
 
-    // Create a new modifier for the reciever with the extra items
-    const newItemModifier = itemModifier.clone() as PokemonHeldItemModifier;
-    newItemModifier.pokemonId = target.id;
+    // check if we have an item already and calc how much to transfer
     const matchingModifier = this.findModifier(
       m => m instanceof PokemonHeldItemModifier && m.matchType(itemModifier) && m.pokemonId === target.id,
       target.isPlayer(),
@@ -3071,34 +3068,34 @@ export default class BattleScene extends SceneBase {
       itemModifier.stackCount,
       matchingModifier?.getCountUnderMax() ?? Number.MAX_SAFE_INTEGER,
     );
-
     if (countTaken <= 0) {
       // Can't transfer negative items
       return false;
     }
 
-    newItemModifier.stackCount = (matchingModifier?.stackCount ?? 0) + countTaken;
+    itemModifier.stackCount -= countTaken;
 
-    // TODO: Do we need this? IDK what it does (if anything)
     if (source && source.isPlayer() !== target.isPlayer() && !ignoreUpdate) {
       this.updateModifiers(source.isPlayer(), instant);
     }
 
     // If the old modifier is at 0 stacks, try to remove it
-    if (itemModifier.stackCount <= countTaken && source && !this.removeModifier(itemModifier, !source.isPlayer())) {
-      // Oops! Something went wrong! **BSOD**
+    if (itemModifier.stackCount <= 0 && source && !this.removeModifier(itemModifier, !source.isPlayer())) {
       return false;
     }
 
-    // Add the new modifier to the recieving pokemon, overriding the prior one as applicable
-    if (matchingModifier && !this.removeModifier(matchingModifier, !target.isPlayer())) {
-      return false;
-    }
-
-    if (target.isPlayer()) {
-      this.addModifier(newItemModifier, ignoreUpdate, playSound, false, instant);
+    // Add however much we took to the recieving pokemon, creating a new modifier if the target lacked one prior
+    if (matchingModifier) {
+      matchingModifier.stackCount += countTaken;
     } else {
-      this.addEnemyModifier(newItemModifier, ignoreUpdate, instant);
+      const newItemModifier = itemModifier.clone() as PokemonHeldItemModifier;
+      newItemModifier.pokemonId = target.id;
+      newItemModifier.stackCount = countTaken;
+      if (target.isPlayer()) {
+        this.addModifier(newItemModifier, ignoreUpdate, playSound, false, instant);
+      } else {
+        this.addEnemyModifier(newItemModifier, ignoreUpdate, instant);
+      }
     }
 
     if (source && itemLost) {
@@ -3109,9 +3106,10 @@ export default class BattleScene extends SceneBase {
   }
 
   canTransferHeldItemModifier(itemModifier: PokemonHeldItemModifier, target: Pokemon, transferQuantity = 1): boolean {
-    const source = itemModifier.pokemonId ? itemModifier.getPokemon() : null;
+    const source = itemModifier.getPokemon();
     if (!source) {
       // TODO: WHY DO WE RETURN TRUE IF THE ITEM HAS NO OWNER
+      // The old code still did this btw
       return true;
     }
 
@@ -3252,6 +3250,7 @@ export default class BattleScene extends SceneBase {
     [this.modifierBar, this.enemyModifierBar].map(m => m.setVisible(visible));
   }
 
+  // TODO: Document this function better - IDK what it does and it gets called a lot
   updateModifiers(player = true, instant?: boolean): void {
     const modifiers = player ? this.modifiers : (this.enemyModifiers as PersistentModifier[]);
     for (let m = 0; m < modifiers.length; m++) {

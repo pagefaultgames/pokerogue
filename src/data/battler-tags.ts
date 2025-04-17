@@ -94,7 +94,7 @@ export class BattlerTag {
   /**
    * Tick down this {@linkcode BattlerTag}'s duration.
    * @returns `true` if the tag should be kept (`turnCount` > 0`)
-  */
+   */
   lapse(_pokemon: Pokemon, _lapseType: BattlerTagLapseType): boolean {
     // TODO: Maybe flip this (return `true` if tag needs removal)
     return --this.turnCount > 0;
@@ -126,7 +126,7 @@ export class BattlerTag {
   /**
    * Helper function that retrieves the source Pokemon object
    * @returns The source {@linkcode Pokemon}, or `null` if none is found
-  */
+   */
   public getSourcePokemon(): Pokemon | null {
     return this.sourceId ? globalScene.getPokemonById(this.sourceId) : null;
   }
@@ -145,9 +145,9 @@ export interface TerrainBattlerTag {
  * in-game. This is not to be confused with {@linkcode Moves.DISABLE}.
  *
  * Descendants can override {@linkcode isMoveRestricted} to restrict moves that
- * match a condition. A restricted move gets cancelled before it is used. 
+ * match a condition. A restricted move gets cancelled before it is used.
  * Players and enemies should not be allowed to select restricted moves.
-*/
+ */
 export abstract class MoveRestrictionBattlerTag extends BattlerTag {
   constructor(
     tagType: BattlerTagType,
@@ -1016,7 +1016,7 @@ export class PowderTag extends BattlerTag {
    * @param pokemon {@linkcode Pokemon} the owner of this tag
    * @param lapseType {@linkcode BattlerTagLapseType} the type of lapse functionality to carry out
    * @returns `true` if the tag should not expire after this lapse; `false` otherwise.
-  */
+   */
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     if (lapseType === BattlerTagLapseType.PRE_MOVE) {
       const movePhase = globalScene.getCurrentPhase();
@@ -1120,7 +1120,7 @@ export class FrenzyTag extends BattlerTag {
 /**
  * Applies the effects of {@linkcode Moves.ENCORE} onto the target Pokemon.
  * Encore forces the target Pokemon to use its most-recent move for 3 turns.
-*/
+ */
 export class EncoreTag extends MoveRestrictionBattlerTag {
   public moveId: Moves;
 

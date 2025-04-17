@@ -1,11 +1,11 @@
 import { RepeatBerryNextTurnAbAttr } from "#app/data/abilities/ability";
 import { getBerryEffectFunc } from "#app/data/berry";
 import Pokemon from "#app/field/pokemon";
-import { toDmgValue } from "#app/utils";
 import { Abilities } from "#enums/abilities";
 import { BerryType } from "#enums/berry-type";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import { Stat } from "#enums/stat";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -74,42 +74,47 @@ describe("Abilities - Cud Chew", () => {
           { name: "BERRY", type: BerryType.LIECHI, count: 3 },
         ])
         .enemyMoveset(Moves.TEATIME);
-
       await game.classicMode.startBattle([Species.FARIGIRAF]);
 
       const farigiraf = game.scene.getPlayerPokemon()!;
       farigiraf.hp = 1; // needed to allow berry procs
 
       game.move.select(Moves.STUFF_CHEEKS);
-      await game.phaseInterceptor.to("BerryPhase");
+      await game.toNextTurn();
 
-      // berries tracked in turnData; not moved to battleData yet
+      // Ate 2 petayas from moves + 1 of each at turn end
       expect(farigiraf.summonData.berriesEatenLast).toEqual([
         BerryType.PETAYA,
         BerryType.PETAYA,
         BerryType.PETAYA,
         BerryType.LIECHI,
       ]);
-      expect(farigiraf.turnData.berriesEaten).toEqual([BerryType.SITRUS]);
+      expect(farigiraf.turnData.berriesEaten).toEqual([]);
 
-      await game.phaseInterceptor.to("TurnEndPhase");
+      game.move.select(Moves.STUFF_CHEEKS);
+      await game.toNextTurn();
 
-      // berries stored in battleData; not yet cleared from turnData
-      expect(farigiraf.summonData.berriesEatenLast).toEqual([BerryType.SITRUS]);
-      expect(farigiraf.turnData.berriesEaten).toEqual([BerryType.SITRUS]);
+      // previous berries moved into summon data; newly eaten berries move into turn data
+      expect(farigiraf.summonData.berriesEatenLast).toEqual([
+        BerryType.PETAYA,
+        BerryType.PETAYA,
+        BerryType.PETAYA,
+        BerryType.LIECHI,
+      ]);
+      expect(farigiraf.turnData.berriesEaten).toEqual([BerryType.PETAYA, BerryType.LIECHI, BerryType.LIECHI]);
+      expect(farigiraf.getStatStage(Stat.ATK)).toBe(4); // 1 --> 2+1
 
       await game.toNextTurn();
 
-      // turnData cleared on turn start
-      expect(farigiraf.summonData.berriesEatenLast).toEqual([BerryType.SITRUS]);
-      expect(farigiraf.turnData.berriesEaten).toEqual([]);
+      // 1st array overridden after turn end
+      expect(farigiraf.summonData.berriesEatenLast).toEqual([BerryType.PETAYA, BerryType.LIECHI, BerryType.LIECHI]);
     });
 
     it("resets array on switch", async () => {
       await game.classicMode.startBattle([Species.FARIGIRAF, Species.GIRAFARIG]);
 
       const farigiraf = game.scene.getPlayerPokemon()!;
-      farigiraf.hp = 1; // needed to allow sitrus procs
+      farigiraf.hp = 1;
 
       // eat berry turn 1, switch out turn 2
       game.move.select(Moves.SPLASH);
@@ -130,7 +135,7 @@ describe("Abilities - Cud Chew", () => {
       await game.classicMode.startBattle([Species.FARIGIRAF]);
 
       const farigiraf = game.scene.getPlayerPokemon()!;
-      farigiraf.hp = 1; // needed to allow sitrus procs
+      farigiraf.hp = 1;
 
       game.move.select(Moves.SPLASH);
       await game.phaseInterceptor.to("BerryPhase");
@@ -152,7 +157,7 @@ describe("Abilities - Cud Chew", () => {
       await game.classicMode.startBattle([Species.FARIGIRAF]);
 
       const farigiraf = game.scene.getPlayerPokemon()!;
-      farigiraf.hp = 1; // needed to allow sitrus procs
+      farigiraf.hp = 1;
 
       game.move.select(Moves.SPLASH);
       await game.toNextTurn();
@@ -180,7 +185,7 @@ describe("Abilities - Cud Chew", () => {
       await game.classicMode.startBattle([Species.FARIGIRAF]);
 
       const farigiraf = game.scene.getPlayerPokemon()!;
-      farigiraf.hp = 1; // needed to allow sitrus procs
+      farigiraf.hp = 1;
 
       game.move.select(Moves.SPLASH);
       await game.toNextTurn();
@@ -198,7 +203,7 @@ describe("Abilities - Cud Chew", () => {
       await game.classicMode.startBattle([Species.FARIGIRAF]);
 
       const farigiraf = game.scene.getPlayerPokemon()!;
-      farigiraf.hp = farigiraf.getMaxHp() / 4; // needed to allow sitrus procs without dying
+      farigiraf.hp = farigiraf.getMaxHp() / 4;
 
       game.move.select(Moves.SPLASH);
       await game.toNextTurn();
@@ -238,7 +243,8 @@ describe("Abilities - Cud Chew", () => {
       game.move.select(Moves.SPLASH);
       await game.toNextTurn();
 
-      expect(farigiraf.hp).toBeGreaterThanOrEqual(4 * toDmgValue(farigiraf.getMaxHp() / 4));
+      // Rounding errors only ever cost a maximum of 4 hp
+      expect(farigiraf.getInverseHp()).toBeLessThanOrEqual(3);
       expect(bSpy).toHaveBeenCalledTimes(2);
     });
 
@@ -247,26 +253,28 @@ describe("Abilities - Cud Chew", () => {
       await game.classicMode.startBattle([Species.FARIGIRAF]);
 
       const farigiraf = game.scene.getPlayerPokemon()!;
-      farigiraf.hp = 1; // needed to allow sitrus procs without dying
+      farigiraf.hp = 1;
 
       game.move.select(Moves.HYPER_VOICE);
       await game.toNextWave();
 
       // berry went yummy yummy in big fat giraffe tummy
       expect(farigiraf.summonData.berriesEatenLast).toEqual([BerryType.SITRUS]);
-      expect(farigiraf.hp).toBeGreaterThan(Math.trunc(farigiraf.getMaxHp() / 4));
+      expect(farigiraf.hp).toBeGreaterThan(1);
 
-      // reload and the berry should still be there...?
+      // reload and the berry should still be there
       await game.reload.reloadSession();
 
       const farigirafReloaded = game.scene.getPlayerPokemon()!;
       expect(farigirafReloaded.summonData.berriesEatenLast).toEqual([BerryType.SITRUS]);
 
-      // blow up next wave to make sure it works funsies
+      const wave1Hp = farigirafReloaded.hp;
+
+      // blow up next wave and we should proc the repeat eating
       game.move.select(Moves.HYPER_VOICE);
       await game.toNextWave();
 
-      expect(farigirafReloaded.hp).toBeGreaterThanOrEqual(2 * toDmgValue(farigiraf.getMaxHp() / 4));
+      expect(farigirafReloaded.hp).toBeGreaterThan(wave1Hp);
     });
   });
 });

@@ -1,7 +1,12 @@
 import { BattlerIndex, BattleType } from "#app/battle";
 import { globalScene } from "#app/global-scene";
 import { PLAYER_PARTY_MAX_SIZE } from "#app/constants";
-import { applyAbAttrs, SyncEncounterNatureAbAttr, applyPreSummonAbAttrs, PreSummonAbAttr } from "#app/data/abilities/ability";
+import {
+  applyAbAttrs,
+  SyncEncounterNatureAbAttr,
+  applyPreSummonAbAttrs,
+  PreSummonAbAttr,
+} from "#app/data/abilities/ability";
 import { initEncounterAnims, loadEncounterAnimAssets } from "#app/data/battle-anims";
 import { getCharVariantFromDialogue } from "#app/data/dialogue";
 import { getEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
