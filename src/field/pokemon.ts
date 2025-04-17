@@ -838,9 +838,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
     }
 
-    console.log("Before awaiting line 842");
     await Promise.allSettled(loadPromises);
-    console.log("After awaiting line 842");
 
     // This must be initiated before we queue loading, otherwise the load could have finished before
     // we reach the line of code that adds the listener, causing a deadlock.
