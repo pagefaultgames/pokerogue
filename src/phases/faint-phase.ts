@@ -35,19 +35,19 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 
 export class FaintPhase extends PokemonPhase {
   /**
-   * Whether or not enduring (for this phase's purposes, Reviver Seed) should be prevented
+   * Whether or not instant revive should be prevented
    */
-  private preventEndure: boolean;
+  private preventInstantRevive: boolean;
 
   /**
    * The source Pokemon that dealt fatal damage
    */
   private source?: Pokemon;
 
-  constructor(battlerIndex: BattlerIndex, preventEndure = false, source?: Pokemon) {
+  constructor(battlerIndex: BattlerIndex, preventInstantRevive = false, source?: Pokemon) {
     super(battlerIndex);
 
-    this.preventEndure = preventEndure;
+    this.preventInstantRevive = preventInstantRevive;
     this.source = source;
   }
 
@@ -63,7 +63,7 @@ export class FaintPhase extends PokemonPhase {
 
     faintPokemon.resetSummonData();
 
-    if (!this.preventEndure) {
+    if (!this.preventInstantRevive) {
       const instantReviveModifier = globalScene.applyModifier(
         PokemonInstantReviveModifier,
         this.player,
