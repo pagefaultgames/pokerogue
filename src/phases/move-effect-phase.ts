@@ -326,9 +326,9 @@ export class MoveEffectPhase extends PokemonPhase {
       user.turnData.hitsLeft = hitCount.value;
     }
 
-    /**
+    /*
      * Log to be entered into the user's move history once the move result is resolved.
-     * Note that `result` (a {@linkcode MoveResult}) logs whether the move was successfully
+     * Note that `result` logs whether the move was successfully
      * used in the sense of "Does it have an effect on the user?".
      */
     this.moveHistoryEntry = {
@@ -344,8 +344,6 @@ export class MoveEffectPhase extends PokemonPhase {
 
     this.firstHit = user.turnData.hitCount === user.turnData.hitsLeft;
     this.lastHit = user.turnData.hitsLeft === 1 || !targets.some(t => t.isActive(true));
-
-    // only play the animation if the move had at least one successful target
 
     // Play the animation if the move was successful against any of its targets or it has a POST_TARGET effect (like self destruct)
     if (
@@ -375,7 +373,6 @@ export class MoveEffectPhase extends PokemonPhase {
       user.pushMoveHistory(this.moveHistoryEntry);
     }
 
-    // apply the effect to each target
     try {
       this.applyToTargets(user, targets);
     } catch (e) {
@@ -383,7 +380,7 @@ export class MoveEffectPhase extends PokemonPhase {
       this.end();
       return;
     }
-    // Apply queued phases
+
     if (this.queuedPhases.length) {
       globalScene.appendToPhase(this.queuedPhases, MoveEndPhase);
     }
@@ -421,7 +418,6 @@ export class MoveEffectPhase extends PokemonPhase {
           globalScene.queueMessage(i18next.t("battle:attackHitsCount", { count: hitsTotal }));
         }
         globalScene.applyModifiers(HitHealModifier, this.player, user);
-        // Clear all cached move effectiveness values among targets
         this.getTargets().forEach(target => (target.turnData.moveEffectiveness = null));
       }
     }
@@ -514,7 +510,7 @@ export class MoveEffectPhase extends PokemonPhase {
    * 9. if accuracy is checked, whether the roll passes the accuracy check
    * @param target - The {@linkcode Pokemon} targeted by the invoked move
    * @returns a {@linkcode HitCheckEntry} containing the attack's {@linkcode HitCheckResult}
-   * and {@linkcode TypeDamageMultiplier effectiveness} against the target.
+   *  and {@linkcode TypeDamageMultiplier | effectiveness} against the target.
    */
   public hitCheck(target: Pokemon): HitCheckEntry {
     const user = this.getUserPokemon();
@@ -531,12 +527,11 @@ export class MoveEffectPhase extends PokemonPhase {
 
     const fieldTargeted = isFieldTargeted(move);
 
-    // If the target is not on the field, cancel the hit check
     if (!target.isActive(true) && !fieldTargeted) {
       return [HitCheckResult.TARGET_NOT_ON_FIELD, 0];
     }
 
-    // If the target of the move is hidden by the effects of its commander ability, then this misses
+    // Commander causes moves used against the target to miss
     if (
       !fieldTargeted &&
       globalScene.currentBattle.double &&
@@ -590,7 +585,6 @@ export class MoveEffectPhase extends PokemonPhase {
       }
     }
 
-    /** Whether accuracy checks can be skipped */
     const bypassAccuracy =
       bypassAccAndInvuln ||
       target.getTag(BattlerTagType.ALWAYS_GET_HIT) ||
@@ -739,7 +733,7 @@ export class MoveEffectPhase extends PokemonPhase {
    * @param target The {@linkcode Pokemon} targeted by the move
    * @param firstTarget Whether the target is the first to be hit by the current strike
    * @param selfTarget If defined, limits the effects triggered to either self-targeted
-   * effects (if set to `true`) or targeted effects (if set to `false`).
+   *  effects (if set to `true`) or targeted effects (if set to `false`).
    * @returns a `Promise` applying the relevant move effects.
    */
   protected triggerMoveEffects(
@@ -771,8 +765,6 @@ export class MoveEffectPhase extends PokemonPhase {
    * - {@linkcode MoveEffectTrigger.POST_APPLY | POST_APPLY} effects
    * - Invoking {@linkcode applyOnTargetEffects} if the move does not hit a substitute
    * - Triggering form changes and emergency exit / wimp out if this is the last hit
-   * - Preventing
-   *
    *
    * @param target the {@linkcode Pokemon} hit by this phase's move.
    * @param effectiveness the effectiveness of the move (as previously evaluated in {@linkcode hitCheck})
@@ -807,6 +799,10 @@ export class MoveEffectPhase extends PokemonPhase {
 
   /**
    * Sub-method of for {@linkcode applyMoveEffects} that applies damage to the target.
+   *
+   * @param user - The {@linkcode Pokemon} using this phase's invoked move
+   * @param target - The {@linkcode Pokemon} targeted by the move
+   * @param effectiveness - The effectiveness of the move against the target
    */
   protected applyMoveDamage(user: Pokemon, target: Pokemon, effectiveness: TypeDamageMultiplier): HitResult {
     const isCritical = target.getCriticalHitResult(user, this.move, false);
@@ -870,7 +866,6 @@ export class MoveEffectPhase extends PokemonPhase {
       return result;
     }
 
-    // Update achievement and stats
     if (user.isPlayer()) {
       globalScene.validateAchvs(DamageAchv, new NumberHolder(damage));
 
@@ -966,10 +961,10 @@ export class MoveEffectPhase extends PokemonPhase {
   /**
    * Applies all effects aimed at the move's target.
    * To be used when the target is successfully and directly hit by the move.
-   * @param user the {@linkcode Pokemon} using the move
-   * @param target the {@linkcode Pokemon} targeted by the move
-   * @param hitResult the {@linkcode HitResult} obtained from applying the move
-   * @param firstTarget `true` if the target is the first Pokemon hit by the attack
+   * @param user - The {@linkcode Pokemon} using the move
+   * @param target - The {@linkcode Pokemon} targeted by the move
+   * @param hitResult - The {@linkcode HitResult} obtained from applying the move
+   * @param firstTarget - `true` if the target is the first Pokemon hit by the attack
    */
   protected applyOnTargetEffects(user: Pokemon, target: Pokemon, hitResult: HitResult, firstTarget: boolean): void {
     /** Does {@linkcode hitResult} indicate that damage was dealt to the target? */
@@ -985,7 +980,7 @@ export class MoveEffectPhase extends PokemonPhase {
     this.applyOnGetHitAbEffects(user, target, hitResult);
     applyPostAttackAbAttrs(PostAttackAbAttr, user, target, this.move, hitResult);
 
-    // Apply status tokens if the user is an enemy Pokemon
+    // We assume only enemy Pokemon are able to have the EnemyAttackStatusEffectChanceModifier from tokens
     if (!user.isPlayer() && this.move instanceof AttackMove) {
       globalScene.applyShuffledModifiers(EnemyAttackStatusEffectChanceModifier, false, target);
     }
