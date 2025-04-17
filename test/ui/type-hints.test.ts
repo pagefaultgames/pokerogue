@@ -40,7 +40,7 @@ describe("UI - Type Hints", () => {
       .moveset([Moves.DRAGON_CLAW]);
     game.settings.typeHints(true); //activate type hints
 
-    await game.startBattle([Species.RAYQUAZA]);
+    await game.classicMode.startBattle([Species.RAYQUAZA]);
 
     game.onNextPrompt("CommandPhase", UiMode.COMMAND, () => {
       const { ui } = game.scene;
@@ -65,7 +65,7 @@ describe("UI - Type Hints", () => {
   it("check status move color", async () => {
     game.override.enemySpecies(Species.FLORGES).moveset([Moves.GROWL]);
 
-    await game.startBattle([Species.RAYQUAZA]);
+    await game.classicMode.startBattle([Species.RAYQUAZA]);
 
     game.onNextPrompt("CommandPhase", UiMode.COMMAND, () => {
       const { ui } = game.scene;
@@ -82,6 +82,43 @@ describe("UI - Type Hints", () => {
         .find(text => text.text === i18next.t("move:growl.name"))! as unknown as MockText;
 
       expect.soft(growlText.color).toBe(undefined);
+      ui.getHandler().processInput(Button.ACTION);
+    });
+    await game.phaseInterceptor.to(CommandPhase);
+  });
+
+  it("should show the proper hint for a move in doubles after one of the enemy pokemon flees", async () => {
+    game.override
+      .enemySpecies(Species.ABRA)
+      .moveset([Moves.SPLASH, Moves.SHADOW_BALL, Moves.SOAK])
+      .enemyMoveset([Moves.SPLASH, Moves.TELEPORT])
+      .battleType("double");
+
+    await game.classicMode.startBattle([Species.MAGIKARP, Species.MAGIKARP]);
+    game.move.select(Moves.SPLASH);
+    // Use soak to change type of remaining abra to water
+    game.move.select(Moves.SOAK, 1);
+
+    await game.forceEnemyMove(Moves.SPLASH);
+    await game.forceEnemyMove(Moves.TELEPORT);
+    await game.toNextTurn();
+
+    game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
+      const { ui } = game.scene;
+      const handler = ui.getHandler<FightUiHandler>();
+      handler.processInput(Button.ACTION); // select "Fight"
+      game.phaseInterceptor.unlock();
+    });
+
+    game.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
+      const { ui } = game.scene;
+      const movesContainer = ui.getByName<Phaser.GameObjects.Container>(FightUiHandler.MOVES_CONTAINER_NAME);
+      const shadowBallText = movesContainer
+        .getAll<Phaser.GameObjects.Text>()
+        .find(text => text.text === i18next.t("move:shadowBall.name"))! as unknown as MockText;
+      expect.soft(shadowBallText).toBeDefined();
+
+      expect.soft(shadowBallText.color).toBe(undefined);
       ui.getHandler().processInput(Button.ACTION);
     });
     await game.phaseInterceptor.to(CommandPhase);
