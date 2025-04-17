@@ -699,7 +699,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * Generate an illusion of the last pokemon in the party, as other wild pokemon in the area.
    */
   setIllusion(pokemon: Pokemon): boolean {
-    console.log("SET ILLUSION")
     if(!!this.summonData?.illusion){
       this.breakIllusion();
     }
