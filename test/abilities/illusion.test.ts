@@ -7,6 +7,7 @@ import { Moves } from "#enums/moves";
 import { Abilities } from "#enums/abilities";
 import { PokeballType } from "#app/enums/pokeball";
 import { Gender } from "#app/data/gender";
+import { BerryPhase } from "#app/phases/berry-phase";
 
 describe("Abilities - Illusion", () => {
   let phaserGame: Phaser.Game;
@@ -140,5 +141,19 @@ describe("Abilities - Illusion", () => {
     expect(zoroark.getGender(false, true)).equals(Gender.FEMALE);
     expect(zoroark.isShiny(true)).equals(true);
     expect(zoroark.getPokeball(true)).equals(PokeballType.GREAT_BALL);
+  });
+
+  it("breaks when suppressed", async () => {
+    game.override.moveset(Moves.GASTRO_ACID);
+    await game.classicMode.startBattle([Species.MAGIKARP]);
+    const zorua = game.scene.getEnemyPokemon()!;
+
+    expect(!!zorua.summonData?.illusion).toBe(true);
+
+    game.move.select(Moves.GASTRO_ACID);
+    await game.phaseInterceptor.to(BerryPhase);
+
+    expect(zorua.isFullHp()).toBe(true);
+    expect(!!zorua.summonData?.illusion).toBe(false);
   });
 });
