@@ -92,8 +92,6 @@ export class MoveEffectPhase extends PokemonPhase {
   /** The result of the hit check against each target */
   private hitChecks: HitCheckEntry[];
 
-  /** MOVE EFFECT TRIGGER CONDITIONS */
-
   /** The move history entry for the move */
   private moveHistoryEntry: TurnMove;
 
@@ -620,12 +618,12 @@ export class MoveEffectPhase extends PokemonPhase {
    * @returns `true` if the move should bypass accuracy and semi-invulnerability
    *
    * Accuracy and semi-invulnerability can be bypassed by:
-   * - An ability like {@linkcode Abilities.NO_GUARD No Guard}
-   * - A poison type using {@linkcode Moves.TOXIC Toxic}
-   * - A move like {@linkcode Moves.LOCK_ON Lock-On} or {@linkcode Moves.MIND_READER Mind Reader}.
+   * - An ability like {@linkcode Abilities.NO_GUARD | No Guard}
+   * - A poison type using {@linkcode Moves.TOXIC | Toxic}
+   * - A move like {@linkcode Moves.LOCK_ON | Lock-On} or {@linkcode Moves.MIND_READER | Mind Reader}.
    * - A field-targeted move like spikes
    *
-   * Does *not* check against effects {@linkcode Moves.GLAIVE_RUSH Glaive Rush} status (which
+   * Does *not* check against effects {@linkcode Moves.GLAIVE_RUSH | Glaive Rush} status (which
    * should not bypass semi-invulnerability), or interactions like Earthquake hitting against Dig,
    * (which should not bypass the accuracy check).
    *
@@ -770,9 +768,9 @@ export class MoveEffectPhase extends PokemonPhase {
   /**
    * Applies all move effects that trigger in the event of a successful hit:
    *
-   * - {@linkcode MoveEffectTrigger.PRE_APPLY PRE_APPLY} effects`
+   * - {@linkcode MoveEffectTrigger.PRE_APPLY | PRE_APPLY} effects`
    * - Applying damage to the target
-   * - {@linkcode MoveEffectTrigger.POST_APPLY POST_APPLY} effects
+   * - {@linkcode MoveEffectTrigger.POST_APPLY | POST_APPLY} effects
    * - Invoking {@linkcode applyOnTargetEffects} if the move does not hit a substitute
    * - Triggering form changes and emergency exit / wimp out if this is the last hit
    * - Preventing
