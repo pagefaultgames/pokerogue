@@ -1,7 +1,7 @@
 import type Pokemon from "#app/field/pokemon";
 import { globalScene } from "#app/global-scene";
 import type { Localizable } from "#app/interfaces/locales";
-import type { Constructor, NumberHolder } from "#app/utils";
+import type { NumberHolder } from "#app/utils";
 import { PokemonType } from "#enums/pokemon-type";
 import i18next from "i18next";
 
@@ -38,36 +38,37 @@ export class HeldItem implements Localizable {
   public isTransferable = true;
   public isStealable = true;
   public isSuppressable = true;
-  public attrs: HeldItemAttr[];
 
-  public name: string;
-  public description: string;
-  public icon: string;
+  public name = "";
+  public description = "";
+  public icon = "";
 
-  constructor(type: HeldItemType, maxStackCount = 1, name, description, icon) {
+  constructor(type: HeldItemType, maxStackCount = 1) {
     this.type = type;
     this.maxStackCount = maxStackCount;
 
     this.isTransferable = true;
     this.isStealable = true;
     this.isSuppressable = true;
-
-    this.name = name;
-    this.description = description;
-    this.icon = icon;
   }
 
-  //TODO: we might want to change things to make this work... otherwise it's pointless
-  // to derive from Localizable.
-  localize(): void {}
+  localize(): void {
+    this.name = this.getName();
+    this.description = this.getDescription();
+    this.icon = this.getIcon();
+  }
 
-  //  get name(): string {
-  //    return i18next.t(`modifierType:AttackTypeBoosterItem.${AttackTypeBoosterItem[this.moveType]?.toLowerCase()}`);
-  //  }
+  getName(): string {
+    return "";
+  }
 
-  //  getDescription(): string {
-  //    return
-  //  }
+  getDescription(): string {
+    return "";
+  }
+
+  getIcon(): string {
+    return "";
+  }
 
   untransferable(): HeldItem {
     this.isTransferable = false;
@@ -84,31 +85,11 @@ export class HeldItem implements Localizable {
     return this;
   }
 
-  attr<T extends Constructor<HeldItemAttr>>(AttrType: T, ...args: ConstructorParameters<T>): HeldItem {
-    const attr = new AttrType(...args);
-    this.attrs.push(attr);
-
-    return this;
-  }
-
-  /**
-   * Get all ability attributes that match `attrType`
-   * @param attrType any attribute that extends {@linkcode AbAttr}
-   * @returns Array of attributes that match `attrType`, Empty Array if none match.
-   */
-  getAttrs<T extends HeldItemAttr>(attrType: Constructor<T>): T[] {
-    return this.attrs.filter((a): a is T => a instanceof attrType);
-  }
-
-  hasAttr<T extends HeldItemAttr>(attrType: Constructor<T>): boolean {
-    return this.getAttrs(attrType).length > 0;
-  }
-
   getMaxStackCount(): number {
     return this.maxStackCount;
   }
 
-  getIcon(stackCount: number, _forSummary?: boolean): Phaser.GameObjects.Container {
+  createIcon(stackCount: number, _forSummary?: boolean): Phaser.GameObjects.Container {
     const container = globalScene.add.container(0, 0);
 
     const item = globalScene.add.sprite(0, 12, "items");
@@ -144,87 +125,84 @@ export class HeldItem implements Localizable {
   }
 }
 
-export abstract class HeldItemAttr {
-  public showItem: boolean;
-
-  constructor(showItem = false) {
-    this.showItem = showItem;
-  }
-
-  /**
-   * Applies ability effects without checking conditions
-   * @param pokemon - The pokemon to apply this ability to
-   * @param itemType - Whether or not the ability is a passive
-   * @param args - Extra args passed to the function. Handled by child classes.
-   * @see {@linkcode canApply}
-   */
-  apply(..._args: any[]): void {}
-
-  getTriggerMessage(_pokemon: Pokemon, _itemType: HeldItemType, ..._args: any[]): string | null {
-    return null;
-  }
-
-  //TODO: May need to add back some condition logic... we'll deal with that later on
+interface AttackTypeToHeldItemTypeMap {
+  [key: number]: HeldItemType;
 }
 
-export class AttackTypeBoosterHeldItemAttr extends HeldItemAttr {
+export const attackTypeToHeldItemTypeMap: AttackTypeToHeldItemTypeMap = {
+  [PokemonType.NORMAL]: HeldItemType.SILK_SCARF,
+  [PokemonType.FIGHTING]: HeldItemType.BLACK_BELT,
+  [PokemonType.FLYING]: HeldItemType.SHARP_BEAK,
+  [PokemonType.POISON]: HeldItemType.POISON_BARB,
+  [PokemonType.GROUND]: HeldItemType.SOFT_SAND,
+  [PokemonType.ROCK]: HeldItemType.HARD_STONE,
+  [PokemonType.BUG]: HeldItemType.SILVER_POWDER,
+  [PokemonType.GHOST]: HeldItemType.SPELL_TAG,
+  [PokemonType.STEEL]: HeldItemType.METAL_COAT,
+  [PokemonType.FIRE]: HeldItemType.CHARCOAL,
+  [PokemonType.WATER]: HeldItemType.MYSTIC_WATER,
+  [PokemonType.GRASS]: HeldItemType.MIRACLE_SEED,
+  [PokemonType.ELECTRIC]: HeldItemType.MAGNET,
+  [PokemonType.PSYCHIC]: HeldItemType.TWISTED_SPOON,
+  [PokemonType.ICE]: HeldItemType.NEVER_MELT_ICE,
+  [PokemonType.DRAGON]: HeldItemType.DRAGON_FANG,
+  [PokemonType.DARK]: HeldItemType.BLACK_GLASSES,
+  [PokemonType.FAIRY]: HeldItemType.FAIRY_FEATHER,
+};
+
+export class AttackTypeBoosterHeldItem extends HeldItem {
   public moveType: PokemonType;
   public powerBoost: number;
 
-  constructor(moveType: PokemonType, powerBoost: number) {
-    super();
+  constructor(type: HeldItemType, maxStackCount = 1, moveType: PokemonType, powerBoost: number) {
+    super(type, maxStackCount);
     this.moveType = moveType;
     this.powerBoost = powerBoost;
+    this.localize();
   }
 
-  override apply(stackCount: number, args: any[]): void {
-    const moveType = args[0];
-    const movePower = args[1];
+  getName(): string {
+    return i18next.t(`modifierType:AttackTypeBoosterItem.${HeldItemType[this.type]?.toLowerCase()}`);
+  }
 
+  getDescription(): string {
+    return i18next.t("modifierType:ModifierType.AttackTypeBoosterModifierType.description", {
+      moveType: i18next.t(`pokemonInfo:Type.${PokemonType[this.moveType]}`),
+    });
+  }
+
+  getIcon(): string {
+    return `${HeldItemType[this.type]?.toLowerCase()}`;
+  }
+
+  apply(stackCount: number, moveType: PokemonType, movePower: NumberHolder): void {
     if (moveType === this.moveType && movePower.value >= 1) {
-      (movePower as NumberHolder).value = Math.floor(
-        (movePower as NumberHolder).value * (1 + stackCount * this.powerBoost),
-      );
+      movePower.value = Math.floor(movePower.value * (1 + stackCount * this.powerBoost));
     }
   }
 }
 
-export function applyHeldItemAttrs(attrType: Constructor<HeldItemAttr>, pokemon: Pokemon, ...args: any[]) {
+export function applyAttackTypeBoosterHeldItem(pokemon: Pokemon, moveType: PokemonType, movePower: NumberHolder) {
   if (pokemon) {
     for (const [item, stackCount] of pokemon.heldItemManager.getHeldItems()) {
-      if (allHeldItems[item].hasAttr(attrType)) {
-        attrType.apply(stackCount, ...args);
+      if (allHeldItems[item] instanceof AttackTypeBoosterHeldItem) {
+        allHeldItems[item].apply(stackCount, moveType, movePower);
       }
     }
   }
 }
 
-export const allHeldItems = [new HeldItem(HeldItemType.NONE, 0, "", "", "")];
+type HeldItemMap = {
+  [key in HeldItemType]: HeldItem;
+};
+
+export const allHeldItems = {} as HeldItemMap;
 
 export function initHeldItems() {
-  allHeldItems.push(
-    new HeldItem(
-      HeldItemType.SILK_SCARF,
-      99,
-      i18next.t("modifierType:AttackTypeBoosterItem.silk_scarf"),
-      i18next.t("modifierType:ModifierType.AttackTypeBoosterModifierType.description", {
-        moveType: i18next.t("pokemonInfo:Type.NORMAL"),
-      }),
-      "silk_scarf",
-    ).attr(AttackTypeBoosterHeldItemAttr, PokemonType.NORMAL, 0.2),
-    new HeldItem(
-      HeldItemType.BLACK_BELT,
-      99,
-      i18next.t("modifierType:AttackTypeBoosterItem.black_belt"),
-      i18next.t("modifierType:ModifierType.AttackTypeBoosterModifierType.description", {
-        moveType: i18next.t("pokemonInfo:Type.FIGHTING"),
-      }),
-      "black_belt",
-    ).attr(AttackTypeBoosterHeldItemAttr, PokemonType.FIGHTING, 0.2),
-  );
-}
+  // SILK_SCARF, BLACK_BELT, etc...
+  for (const [typeKey, heldItemType] of Object.entries(attackTypeToHeldItemTypeMap)) {
+    const pokemonType = Number(typeKey) as PokemonType;
 
-//TODO: I hate this. Can we just make it an interface?
-export function getHeldItem(itemType: HeldItemType): HeldItem {
-  return allHeldItems.find(item => item.type === itemType)!; // TODO: is this bang correct?
+    allHeldItems[heldItemType] = new AttackTypeBoosterHeldItem(heldItemType, 99, pokemonType, 0.2);
+  }
 }
