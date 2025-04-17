@@ -33,7 +33,7 @@ export const signatureSpecies: SignatureSpecies = {
   BRAWLY: [Species.MAKUHITA, Species.MACHOP, Species.MEDITITE, Species.SHROOMISH],
   WATTSON: [Species.ELECTRIKE, Species.VOLTORB, Species.MAGNEMITE, [Species.PLUSLE, Species.MINUN]],
   FLANNERY: [Species.TORKOAL, Species.SLUGMA, Species.NUMEL, Species.HOUNDOUR],
-  NORMAN: [Species.SLAKOTH, Species.SPINDA, Species.WHISMUR, Species.KECLEON],
+  NORMAN: [Species.SLAKOTH, Species.KECLEON, Species.WHISMUR, Species.ZANGOOSE],
   WINONA: [Species.SWABLU, Species.WINGULL, Species.TROPIUS, Species.SKARMORY],
   TATE: [Species.SOLROCK, Species.NATU, Species.CHINGLING, Species.GALLADE],
   LIZA: [Species.LUNATONE, Species.SPOINK, Species.BALTOY, Species.GARDEVOIR],
