@@ -1099,7 +1099,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * @param {boolean} useIllusion - Whether we want the speciesForm of the illusion or not.
    */
-  getSpeciesForm(ignoreOverride?: boolean, useIllusion: boolean = false, cry: boolean = false): PokemonSpeciesForm {
+  getSpeciesForm(ignoreOverride?: boolean, useIllusion: boolean = false): PokemonSpeciesForm {
     const species: PokemonSpecies = useIllusion && !!this.summonData?.illusion ? getPokemonSpecies(this.summonData?.illusion.species) : this.species;
     const formIndex: integer = useIllusion && !!this.summonData?.illusion ? this.summonData?.illusion.formIndex : this.formIndex;
 
