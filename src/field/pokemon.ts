@@ -97,7 +97,6 @@ import { Gender } from "#app/data/gender";
 import { Status, getRandomStatus } from "#app/data/status-effect";
 import type {
   SpeciesFormEvolution,
-  SpeciesEvolutionCondition,
 } from "#app/data/balance/pokemon-evolutions";
 import {
   pokemonEvolutions,
@@ -2874,18 +2873,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (pokemonEvolutions.hasOwnProperty(this.species.speciesId)) {
       const evolutions = pokemonEvolutions[this.species.speciesId];
       for (const e of evolutions) {
-        if (
-          !e.item &&
-          this.level >= e.level &&
-          (isNullOrUndefined(e.preFormKey) ||
-            this.getFormKey() === e.preFormKey)
-        ) {
-          if (
-            e.condition === null ||
-            (e.condition as SpeciesEvolutionCondition).predicate(this)
-          ) {
-            return e;
-          }
+        if (e.validate(this)) {
+          return e;
         }
       }
     }
@@ -2899,18 +2888,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         this.fusionSpecies.speciesId
       ].map(e => new FusionSpeciesFormEvolution(this.species.speciesId, e));
       for (const fe of fusionEvolutions) {
-        if (
-          !fe.item &&
-          this.level >= fe.level &&
-          (isNullOrUndefined(fe.preFormKey) ||
-            this.getFusionFormKey() === fe.preFormKey)
-        ) {
-          if (
-            fe.condition === null ||
-            (fe.condition as SpeciesEvolutionCondition).predicate(this)
-          ) {
-            return fe;
-          }
+        if (fe.validate(this)) {
+          return fe;
         }
       }
     }
@@ -6843,7 +6822,7 @@ export class PlayerPokemon extends Pokemon {
     ) {
       const newEvolution = pokemonEvolutions[evoSpecies.speciesId][1];
 
-      if (newEvolution.condition?.predicate(this)) {
+      if (newEvolution.validate(this, evoSpecies.speciesId === this.species.speciesId)) {
         const newPokemon = globalScene.addPlayerPokemon(
           this.species,
           this.level,
@@ -7144,9 +7123,6 @@ export class EnemyPokemon extends Pokemon {
             pe.speciesId === speciesId &&
             (!pe.evoFormKey || pe.evoFormKey === this.getFormKey()),
         );
-        if (evolution?.condition?.enforceFunc) {
-          evolution.condition.enforceFunc(this);
-        }
         speciesId = prevolution;
       }
     }
