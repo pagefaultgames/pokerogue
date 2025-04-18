@@ -35,7 +35,7 @@ describe("Moves - Flame Burst", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleType("double");
+    game.override.battleStyle("double");
     game.override.moveset([Moves.FLAME_BURST, Moves.SPLASH]);
     game.override.disableCrits();
     game.override.ability(Abilities.UNNERVE);

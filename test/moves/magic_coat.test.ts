@@ -30,7 +30,7 @@ describe("Moves - Magic Coat", () => {
     game = new GameManager(phaserGame);
     game.override
       .ability(Abilities.BALL_FETCH)
-      .battleType("single")
+      .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)
@@ -82,7 +82,7 @@ describe("Moves - Magic Coat", () => {
   });
 
   it("should individually bounce back multi-target moves when used by both targets in doubles", async () => {
-    game.override.battleType("double");
+    game.override.battleStyle("double");
     game.override.moveset([Moves.GROWL, Moves.SPLASH]);
     await game.classicMode.startBattle([Species.MAGIKARP, Species.MAGIKARP]);
 
@@ -95,7 +95,7 @@ describe("Moves - Magic Coat", () => {
   });
 
   it("should bounce back a spread status move against both pokemon", async () => {
-    game.override.battleType("double");
+    game.override.battleStyle("double");
     game.override.moveset([Moves.GROWL, Moves.SPLASH]);
     game.override.enemyMoveset([Moves.SPLASH, Moves.MAGIC_COAT]);
     await game.classicMode.startBattle([Species.MAGIKARP, Species.MAGIKARP]);
@@ -121,7 +121,7 @@ describe("Moves - Magic Coat", () => {
   });
 
   it("should not bounce back a move that was just bounced", async () => {
-    game.override.battleType("double");
+    game.override.battleStyle("double");
     game.override.ability(Abilities.MAGIC_BOUNCE);
     game.override.moveset([Moves.GROWL, Moves.MAGIC_COAT]);
     game.override.enemyMoveset([Moves.SPLASH, Moves.MAGIC_COAT]);
@@ -159,7 +159,7 @@ describe("Moves - Magic Coat", () => {
   });
 
   it("should only bounce spikes back once when both targets use magic coat in doubles", async () => {
-    game.override.battleType("double");
+    game.override.battleStyle("double");
     await game.classicMode.startBattle([Species.MAGIKARP]);
     game.override.moveset([Moves.SPIKES]);
 
@@ -206,7 +206,7 @@ describe("Moves - Magic Coat", () => {
 
   // TODO: stomping tantrum should consider moves that were bounced.
   it.todo("should cause stomping tantrum to double in power when the last move was bounced", async () => {
-    game.override.battleType("single");
+    game.override.battleStyle("single");
     await game.classicMode.startBattle([Species.MAGIKARP]);
     game.override.moveset([Moves.STOMPING_TANTRUM, Moves.CHARM]);
 

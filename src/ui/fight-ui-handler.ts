@@ -14,7 +14,7 @@ import type { PokemonMove } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
 import type { CommandPhase } from "#app/phases/command-phase";
 import MoveInfoOverlay from "./move-info-overlay";
-import { BattleType } from "#app/battle";
+import { BattleType } from "#enums/battle-type";
 
 export default class FightUiHandler extends UiHandler implements InfoToggle {
   public static readonly MOVES_CONTAINER_NAME = "moves";

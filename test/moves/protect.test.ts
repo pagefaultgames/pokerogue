@@ -27,7 +27,7 @@ describe("Moves - Protect", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
 
-    game.override.battleType("single");
+    game.override.battleStyle("single");
 
     game.override.moveset([Moves.PROTECT]);
     game.override.enemySpecies(Species.SNORLAX);

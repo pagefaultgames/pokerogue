@@ -27,7 +27,7 @@ describe("Ability Timing", () => {
     game = new GameManager(phaserGame);
 
     game.override
-      .battleType("single")
+      .battleStyle("single")
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.INTIMIDATE)
       .ability(Abilities.BALL_FETCH);

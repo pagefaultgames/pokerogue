@@ -32,7 +32,7 @@ describe("Abilities - Healer", () => {
     game.override
       .moveset([Moves.SPLASH])
       .ability(Abilities.BALL_FETCH)
-      .battleType("double")
+      .battleStyle("double")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)

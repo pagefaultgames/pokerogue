@@ -34,7 +34,7 @@ describe("Abilities - Sand Veil", () => {
     game.override.enemyMoveset([Moves.TWISTER, Moves.TWISTER, Moves.TWISTER, Moves.TWISTER]);
     game.override.startingLevel(100);
     game.override.enemyLevel(100);
-    game.override.weather(WeatherType.SANDSTORM).battleType("double");
+    game.override.weather(WeatherType.SANDSTORM).battleStyle("double");
   });
 
   test("ability should increase the evasiveness of the source", async () => {

@@ -34,7 +34,7 @@ describe("Moves - Dynamax Cannon", () => {
 
     // Note that, for Waves 1-10, the level cap is 10
     game.override.startingWave(1);
-    game.override.battleType("single");
+    game.override.battleStyle("single");
     game.override.disableCrits();
 
     game.override.enemySpecies(Species.MAGIKARP);

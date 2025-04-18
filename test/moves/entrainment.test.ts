@@ -25,7 +25,7 @@ describe("Moves - Entrainment", () => {
     game.override
       .moveset([Moves.SPLASH, Moves.ENTRAINMENT])
       .ability(Abilities.ADAPTABILITY)
-      .battleType("single")
+      .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)

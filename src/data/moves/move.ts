@@ -75,7 +75,7 @@ import {
   PreserveBerryModifier,
 } from "../../modifier/modifier";
 import type { BattlerIndex } from "../../battle";
-import { BattleType } from "../../battle";
+import { BattleType } from "#enums/battle-type";
 import { TerrainType } from "../terrain";
 import { ModifierPoolType } from "#app/modifier/modifier-type";
 import { Command } from "../../ui/command-ui-handler";
@@ -121,6 +121,7 @@ import { MoveFlags } from "#enums/MoveFlags";
 import { MoveEffectTrigger } from "#enums/MoveEffectTrigger";
 import { MultiHitType } from "#enums/MultiHitType";
 import { invalidAssistMoves, invalidCopycatMoves, invalidMetronomeMoves, invalidMirrorMoveMoves, invalidSleepTalkMoves } from "./invalid-moves";
+import { TrainerVariant } from "#app/field/trainer";
 
 type MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => boolean;
 type UserMoveConditionFunc = (user: Pokemon, move: Move) => boolean;
@@ -6295,9 +6296,10 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
       return false;
     } else if (globalScene.currentBattle.battleType !== BattleType.WILD) { // Switch out logic for enemy trainers
       // Find indices of off-field Pokemon that are eligible to be switched into
+      const isPartnerTrainer = globalScene.currentBattle.trainer?.isPartner();
       const eligibleNewIndices: number[] = [];
       globalScene.getEnemyParty().forEach((pokemon, index) => {
-        if (pokemon.isAllowedInBattle() && !pokemon.isOnField()) {
+        if (pokemon.isAllowedInBattle() && !pokemon.isOnField() && (!isPartnerTrainer || pokemon.trainerSlot === (switchOutTarget as EnemyPokemon).trainerSlot)) {
           eligibleNewIndices.push(index);
         }
       });
@@ -6347,15 +6349,6 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
         }
       }
 
-      if (globalScene.currentBattle.waveIndex % 10 === 0) {
-        return false;
-      }
-
-      // Don't allow wild mons to flee with U-turn et al.
-      if (this.selfSwitch && !user.isPlayer() && move.category !== MoveCategory.STATUS) {
-        return false;
-      }
-
       const allyPokemon = switchOutTarget.getAlly();
 
       if (switchOutTarget.hp > 0) {
@@ -6368,13 +6361,12 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
         }
       }
 
-      if (!allyPokemon?.isActive(true)) {
-        globalScene.clearEnemyHeldItemModifiers();
+      // clear out enemy held item modifiers of the switch out target
+      globalScene.clearEnemyHeldItemModifiers(switchOutTarget);
 
-        if (switchOutTarget.hp) {
+      if (!allyPokemon?.isActive(true) && switchOutTarget.hp) {
           globalScene.pushPhase(new BattleEndPhase(false));
           globalScene.pushPhase(new NewBattlePhase());
-        }
       }
     }
 
@@ -6392,6 +6384,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
       return i18next.t("moveTriggers:cannotBeSwitchedOut", { pokemonName: getPokemonNameWithAffix(target) });
     }
   }
+
 
   getSwitchOutCondition(): MoveConditionFunc {
     return (user, target, move) => {
@@ -6416,23 +6409,23 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
 
         const blockedByAbility = new BooleanHolder(false);
         applyAbAttrs(ForceSwitchOutImmunityAbAttr, target, blockedByAbility);
-        return !blockedByAbility.value;
+        if (blockedByAbility.value) {
+          return false;
+        }
       }
 
+
       if (!player && globalScene.currentBattle.battleType === BattleType.WILD) {
-        if (this.isBatonPass()) {
-          return false;
-        }
-        // Don't allow wild opponents to flee on the boss stage since it can ruin a run early on
-        if (globalScene.currentBattle.waveIndex % 10 === 0) {
-          return false;
-        }
+        // wild pokemon cannot switch out with baton pass.
+        return !this.isBatonPass()
+                && globalScene.currentBattle.waveIndex % 10 !== 0
+                // Don't allow wild mons to flee with U-turn et al.
+                && !(this.selfSwitch && MoveCategory.STATUS !== move.category);
       }
 
       const party = player ? globalScene.getPlayerParty() : globalScene.getEnemyParty();
-      return (!player && !globalScene.currentBattle.battleType)
-        || party.filter(p => p.isAllowedInBattle()
-          && (player || (p as EnemyPokemon).trainerSlot === (switchOutTarget as EnemyPokemon).trainerSlot)).length > globalScene.currentBattle.getBattlerCount();
+      return party.filter(p => p.isAllowedInBattle() && !p.isOnField()
+          && (player || (p as EnemyPokemon).trainerSlot === (switchOutTarget as EnemyPokemon).trainerSlot)).length > 0;
     };
   }
 

@@ -25,7 +25,7 @@ describe("Moves - Endure", () => {
       .moveset([Moves.THUNDER, Moves.BULLET_SEED, Moves.TOXIC, Moves.SHEER_COLD])
       .ability(Abilities.SKILL_LINK)
       .startingLevel(100)
-      .battleType("single")
+      .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.NO_GUARD)

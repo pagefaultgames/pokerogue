@@ -22,7 +22,7 @@ describe("Items - Eviolite", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
 
-    game.override.battleType("single").startingHeldItems([{ name: "EVIOLITE" }]);
+    game.override.battleStyle("single").startingHeldItems([{ name: "EVIOLITE" }]);
   });
 
   it("should provide 50% boost to DEF and SPDEF for unevolved, unfused pokemon", async () => {

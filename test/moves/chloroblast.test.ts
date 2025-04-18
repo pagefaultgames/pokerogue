@@ -24,7 +24,7 @@ describe("Moves - Chloroblast", () => {
     game.override
       .moveset([Moves.CHLOROBLAST])
       .ability(Abilities.BALL_FETCH)
-      .battleType("single")
+      .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)
