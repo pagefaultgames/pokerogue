@@ -182,6 +182,7 @@ export class SpeciesEvolutionCondition {
   }
 
   public conditionsFulfilled(pokemon: Pokemon): boolean {
+    console.log(this.data);
     const keys = Array.isArray(this.data.key) ? this.data.key : [this.data.key];
     return keys.every(cond => {
       switch (cond) {
@@ -287,7 +288,7 @@ export class SpeciesFormEvolution {
       pokemon.level >= this.level &&
       // Check form key, using the fusion's form key if we're checking the fusion
       (isNullOrUndefined(this.preFormKey) || (forFusion ? pokemon.getFormKey() : pokemon.getFusionFormKey()) === this.preFormKey) &&
-      (this.condition === null || this.condition.conditionsFulfilled(pokemon))
+      (this.condition === null || this.condition?.conditionsFulfilled(pokemon))
     );
   }
 
@@ -298,7 +299,7 @@ export class SpeciesFormEvolution {
       pokemon.level >= this.level &&
       // Check form key, using the fusion's form key if we're checking the fusion
       (isNullOrUndefined(this.preFormKey) || (forFusion ? pokemon.getFormKey() : pokemon.getFusionFormKey()) === this.preFormKey) &&
-      (this.condition === null || this.condition.conditionsFulfilled(pokemon))
+      (this.condition === null || this.condition?.conditionsFulfilled(pokemon))
     );
   }
 
