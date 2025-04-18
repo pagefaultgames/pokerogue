@@ -7,6 +7,7 @@ import { Moves } from "#enums/moves";
 import { Abilities } from "#enums/abilities";
 import { PokeballType } from "#app/enums/pokeball";
 import { Gender } from "#app/data/gender";
+import { BerryPhase } from "#app/phases/berry-phase";
 
 describe("Abilities - Illusion", () => {
   let phaserGame: Phaser.Game;
@@ -66,7 +67,7 @@ describe("Abilities - Illusion", () => {
     expect(!!zorua.summonData?.illusion).equals(false);
   });
 
-  it("break if the ability is suppressed", async () => {
+  it("break with neutralizing gas", async () => {
     game.override.enemyAbility(Abilities.NEUTRALIZING_GAS);
     await game.classicMode.startBattle([Species.KOFFING]);
 

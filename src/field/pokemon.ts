@@ -128,6 +128,7 @@ import {
   TarShotTag,
   AutotomizedTag,
   PowerTrickTag,
+  type GrudgeTag,
 } from "../data/battler-tags";
 import { WeatherType } from "#enums/weather-type";
 import {
@@ -1106,7 +1107,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    */
   getSpeciesForm(ignoreOverride?: boolean, useIllusion: boolean = false): PokemonSpeciesForm {
     const species: PokemonSpecies = useIllusion && !!this.summonData?.illusion ? getPokemonSpecies(this.summonData?.illusion.species) : this.species;
-
     const formIndex: integer = useIllusion && !!this.summonData?.illusion ? this.summonData?.illusion.formIndex : this.formIndex;
 
     if (!ignoreOverride && this.summonData?.speciesForm) {
@@ -4754,15 +4754,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         new FaintPhase(
           this.getBattlerIndex(),
           false,
-          destinyTag,
-          grudgeTag,
           source,
         ),
       );
 
       this.destroySubstitute();
       this.lapseTag(BattlerTagType.COMMANDED);
-      this.resetSummonData();
     }
 
     return result;
@@ -4824,7 +4821,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       );
       this.destroySubstitute();
       this.lapseTag(BattlerTagType.COMMANDED);
-      this.resetSummonData();
     }
     return damage;
   }
@@ -4991,6 +4987,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     return false;
   }
+
+  /**@overload */
+  getTag(tagType: BattlerTagType.GRUDGE): GrudgeTag | nil;
 
   /** @overload */
   getTag(tagType: BattlerTagType): BattlerTag | nil;
@@ -5282,13 +5281,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     sceneOverride?: BattleScene,
   ): AnySound {
     const scene = sceneOverride ?? globalScene; // TODO: is `sceneOverride` needed?
-    const cry = this.getSpeciesForm().cry(soundConfig);
+    const cry = this.getSpeciesForm(undefined, true).cry(soundConfig);
     let duration = cry.totalDuration * 1000;
     if (
       this.fusionSpecies &&
-      this.getSpeciesForm() !== this.getFusionSpeciesForm()
+      this.getSpeciesForm(undefined, true) !== this.getFusionSpeciesForm(undefined, true)
     ) {
-      let fusionCry = this.getFusionSpeciesForm().cry(soundConfig, true);
+      let fusionCry = this.getFusionSpeciesForm(undefined, true).cry(soundConfig, true);
       duration = Math.min(duration, fusionCry.totalDuration * 1000);
       fusionCry.destroy();
       scene.time.delayedCall(fixedInt(Math.ceil(duration * 0.4)), () => {
@@ -5298,7 +5297,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             cry,
             fixedInt(Math.ceil(duration * 0.2)),
           );
-          fusionCry = this.getFusionSpeciesForm().cry(
+          fusionCry = this.getFusionSpeciesForm(undefined, true).cry(
             Object.assign(
               { seek: Math.max(fusionCry.totalDuration * 0.4, 0) },
               soundConfig,
