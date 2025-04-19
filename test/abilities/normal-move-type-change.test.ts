@@ -11,7 +11,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vite
 import { TYPE_BOOST_ITEM_BOOST_PERCENT } from "#app/constants";
 import { allAbilities } from "#app/data/data-lists";
 import { MoveTypeChangeAbAttr } from "#app/data/abilities/ability";
-import { toDmgValue } from "#app/utils";
+import { toDmgValue } from "#app/utils/common";
 
 /**
  * Tests for abilities that change the type of normal moves to
