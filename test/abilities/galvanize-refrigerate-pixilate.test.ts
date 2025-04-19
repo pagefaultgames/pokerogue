@@ -27,6 +27,7 @@ describe.each([
   { ab: Abilities.GALVANIZE, ab_name: "Galvanize", ty: PokemonType.ELECTRIC, ty_name: "electric" },
   { ab: Abilities.PIXILATE, ab_name: "Pixilate", ty: PokemonType.FAIRY, ty_name: "fairy" },
   { ab: Abilities.REFRIGERATE, ab_name: "Refrigerate", ty: PokemonType.ICE, ty_name: "ice" },
+  { ab: Abilities.AERILATE, ab_name: "Aerilate", ty: PokemonType.FLYING, ty_name: "flying" },
 ])("Abilities - $ab_name", ({ ab, ty, ty_name }) => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
