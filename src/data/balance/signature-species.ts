@@ -64,7 +64,7 @@ export const signatureSpecies: SignatureSpecies = {
   // Gym Leaders- Kalos
   VIOLA: [Species.SCATTERBUG, Species.SURSKIT, Species.CUTIEFLY, Species.BLIPBUG],
   GRANT: [Species.TYRUNT, Species.AMAURA, Species.BINACLE, Species.DWEBBLE],
-  KORRINA: [Species.LUCARIO, Species.MIENFOO, Species.HAWLUCHA, Species.PANCHAM],
+  KORRINA: [Species.RIOLU, Species.MIENFOO, Species.HAWLUCHA, Species.PANCHAM],
   RAMOS: [Species.SKIDDO, Species.HOPPIP, Species.BELLSPROUT, [Species.PHANTUMP, Species.PUMPKABOO]],
   CLEMONT: [Species.HELIOPTILE, Species.MAGNEMITE, Species.DEDENNE, Species.ROTOM],
   VALERIE: [Species.SYLVEON, Species.MAWILE, Species.MR_MIME, [Species.SPRITZEE, Species.SWIRLIX]],
@@ -85,7 +85,7 @@ export const signatureSpecies: SignatureSpecies = {
   RAIHAN: [Species.DURALUDON, Species.TRAPINCH, Species.GOOMY, Species.TURTONATOR],
   // Gym Leaders- Paldea; First slot is Tera
   KATY: [Species.TEDDIURSA, Species.NYMBLE, Species.TAROUNTULA, Species.RELLOR], // Tera Bug Teddiursa
-  BRASSIUS: [Species.SUDOWOODO, Species.BRAMBLIN, Species.SMOLIV, Species.SUNKERN], // Tera Grass Sudowoodo
+  BRASSIUS: [Species.BONSLY, Species.SMOLIV, Species.BRAMBLIN, Species.SUNKERN], // Tera Grass Bonsly
   IONO: [Species.MISDREAVUS, Species.TADBULB, Species.WATTREL, Species.MAGNEMITE], // Tera Ghost Misdreavus
   KOFU: [Species.CRABRAWLER, Species.VELUZA, Species.WIGLETT, Species.WINGULL], // Tera Water Crabrawler
   LARRY: [Species.STARLY, Species.DUNSPARCE, Species.LECHONK, Species.KOMALA], // Tera Normal Starly
