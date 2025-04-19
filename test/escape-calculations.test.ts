@@ -1,7 +1,7 @@
 import { AttemptRunPhase } from "#app/phases/attempt-run-phase";
 import type { CommandPhase } from "#app/phases/command-phase";
 import { Command } from "#app/ui/command-ui-handler";
-import { NumberHolder } from "#app/utils";
+import { NumberHolder } from "#app/utils/common";
 import { Abilities } from "#enums/abilities";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -25,7 +25,7 @@ describe("Escape chance calculations", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .battleType("single")
+      .battleStyle("single")
       .enemySpecies(Species.BULBASAUR)
       .enemyAbility(Abilities.INSOMNIA)
       .ability(Abilities.INSOMNIA);
@@ -97,7 +97,7 @@ describe("Escape chance calculations", () => {
   }, 20000);
 
   it("double non-boss opponent", async () => {
-    game.override.battleType("double");
+    game.override.battleStyle("double");
     await game.classicMode.startBattle([Species.BULBASAUR, Species.ABOMASNOW]);
 
     const playerPokemon = game.scene.getPlayerField();
@@ -262,7 +262,7 @@ describe("Escape chance calculations", () => {
   }, 20000);
 
   it("double boss opponent", async () => {
-    game.override.battleType("double");
+    game.override.battleStyle("double");
     game.override.startingWave(10);
     await game.classicMode.startBattle([Species.BULBASAUR, Species.ABOMASNOW]);
 

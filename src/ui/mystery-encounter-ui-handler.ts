@@ -1,12 +1,12 @@
 import { addBBCodeTextObject, getBBCodeFrag, TextStyle } from "./text";
-import { Mode } from "./ui";
+import { UiMode } from "#enums/ui-mode";
 import UiHandler from "./ui-handler";
 import { Button } from "#enums/buttons";
 import { addWindow, WindowVariant } from "./ui-theme";
 import type { MysteryEncounterPhase } from "../phases/mystery-encounter-phases";
 import { PartyUiMode } from "./party-ui-handler";
 import type MysteryEncounterOption from "#app/data/mystery-encounters/mystery-encounter-option";
-import { fixedInt, isNullOrUndefined } from "#app/utils";
+import { fixedInt, isNullOrUndefined } from "#app/utils/common";
 import { getPokeballAtlasKey } from "../data/pokeball";
 import type { OptionSelectSettings } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { getEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
@@ -47,7 +47,7 @@ export default class MysteryEncounterUiHandler extends UiHandler {
   protected blockInput = true;
 
   constructor() {
-    super(Mode.MYSTERY_ENCOUNTER);
+    super(UiMode.MYSTERY_ENCOUNTER);
   }
 
   override setup() {
@@ -141,8 +141,8 @@ export default class MysteryEncounterUiHandler extends UiHandler {
             ...this.overrideSettings,
             slideInDescription: false,
           };
-          globalScene.ui.setMode(Mode.PARTY, PartyUiMode.CHECK, -1, () => {
-            globalScene.ui.setMode(Mode.MYSTERY_ENCOUNTER, overrideSettings);
+          globalScene.ui.setMode(UiMode.PARTY, PartyUiMode.CHECK, -1, () => {
+            globalScene.ui.setMode(UiMode.MYSTERY_ENCOUNTER, overrideSettings);
             setTimeout(() => {
               this.setCursor(this.viewPartyIndex);
               this.unblockInput();

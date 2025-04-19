@@ -1,4 +1,4 @@
-import { Mode } from "./ui";
+import { UiMode } from "#enums/ui-mode";
 import UiHandler from "./ui-handler";
 import { Button } from "#enums/buttons";
 import { EggHatchPhase } from "#app/phases/egg-hatch-phase";
@@ -16,7 +16,7 @@ export default class EggHatchSceneHandler extends UiHandler {
   public readonly eventTarget: EventTarget = new EventTarget();
 
   constructor() {
-    super(Mode.EGG_HATCH_SCENE);
+    super(UiMode.EGG_HATCH_SCENE);
   }
 
   setup() {

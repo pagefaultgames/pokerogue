@@ -1,5 +1,5 @@
 import { HitResult, MoveResult, PlayerPokemon } from "#app/field/pokemon";
-import { BooleanHolder, NumberHolder, toDmgValue, isNullOrUndefined, randSeedItem, randSeedInt, type Constructor } from "#app/utils";
+import { BooleanHolder, NumberHolder, toDmgValue, isNullOrUndefined, randSeedItem, randSeedInt, type Constructor } from "#app/utils/common";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { BattlerTagLapseType, GroundedTag } from "#app/data/battler-tags";
 import { getNonVolatileStatusEffects, getStatusEffectDescriptor, getStatusEffectHealText } from "#app/data/status-effect";
@@ -30,7 +30,7 @@ import i18next from "i18next";
 import { Command } from "#app/ui/command-ui-handler";
 import { BerryModifierType } from "#app/modifier/modifier-type";
 import { getPokeballName } from "#app/data/pokeball";
-import { BattleType } from "#app/battle";
+import { BattleType } from "#enums/battle-type";
 import { MovePhase } from "#app/phases/move-phase";
 import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
@@ -44,6 +44,7 @@ import { PokemonTransformPhase } from "#app/phases/pokemon-transform-phase";
 import { allAbilities } from "#app/data/data-lists";
 import { AbAttr } from "#app/data/abilities/ab-attrs/ab-attr";
 import { Ability } from "#app/data/abilities/ability-class";
+import { TrainerVariant } from "#app/field/trainer";
 
 // Enum imports
 import { Stat, type BattleStat , BATTLE_STATS, EFFECTIVE_STATS, getStatKey, type EffectiveStat } from "#enums/stat";
@@ -60,6 +61,7 @@ import { SwitchType } from "#enums/switch-type";
 import { MoveFlags } from "#enums/MoveFlags";
 import { MoveTarget } from "#enums/MoveTarget";
 import { MoveCategory } from "#enums/MoveCategory";
+
 
 // Type imports
 import type { EnemyPokemon, PokemonMove } from "#app/field/pokemon";
@@ -5526,8 +5528,8 @@ class ForceSwitchOutHelper {
 
     const party = player ? globalScene.getPlayerParty() : globalScene.getEnemyParty();
     return (!player && globalScene.currentBattle.battleType === BattleType.WILD)
-      || party.filter(p => p.isAllowedInBattle()
-        && (player || (p as EnemyPokemon).trainerSlot === (switchOutTarget as EnemyPokemon).trainerSlot)).length > globalScene.currentBattle.getBattlerCount();
+      || party.filter(p => p.isAllowedInBattle() && !p.isOnField()
+        && (player || (p as EnemyPokemon).trainerSlot === (switchOutTarget as EnemyPokemon).trainerSlot)).length > 0;
   }
 
   /**

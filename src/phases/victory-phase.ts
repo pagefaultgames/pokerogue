@@ -1,5 +1,6 @@
 import type { BattlerIndex } from "#app/battle";
-import { BattleType, ClassicFixedBossWaves } from "#app/battle";
+import { ClassicFixedBossWaves } from "#app/battle";
+import { BattleType } from "#enums/battle-type";
 import type { CustomModifierSettings } from "#app/modifier/modifier-type";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import { BattleEndPhase } from "./battle-end-phase";

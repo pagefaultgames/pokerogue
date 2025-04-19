@@ -18,7 +18,7 @@ import {
   isNullOrUndefined,
   BooleanHolder,
   type Constructor,
-} from "#app/utils";
+} from "#app/utils/common";
 import type { Modifier, ModifierPredicate, TurnHeldItemTransferModifier } from "./modifier/modifier";
 import {
   ConsumableModifier,
@@ -77,7 +77,8 @@ import {
 } from "#app/data/abilities/ability";
 import { allAbilities } from "./data/data-lists";
 import type { FixedBattleConfig } from "#app/battle";
-import Battle, { BattleType } from "#app/battle";
+import Battle from "#app/battle";
+import { BattleType } from "#enums/battle-type";
 import type { GameMode } from "#app/game-mode";
 import { GameModes, getGameMode } from "#app/game-mode";
 import FieldSpritePipeline from "#app/pipelines/field-sprite";
@@ -184,21 +185,14 @@ import { HideAbilityPhase } from "#app/phases/hide-ability-phase";
 import { expSpriteKeys } from "./sprites/sprite-keys";
 import { hasExpSprite } from "./sprites/sprite-utils";
 import { timedEventManager } from "./global-event-manager";
-
-export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
+import { starterColors } from "./global-vars/starter-colors";
+import { startingWave } from "./starting-wave";
 
 const DEBUG_RNG = false;
 
 const OPP_IVS_OVERRIDE_VALIDATED: number[] = (
   Array.isArray(Overrides.OPP_IVS_OVERRIDE) ? Overrides.OPP_IVS_OVERRIDE : new Array(6).fill(Overrides.OPP_IVS_OVERRIDE)
 ).map(iv => (Number.isNaN(iv) || iv === null || iv > 31 ? -1 : iv));
-
-export const startingWave = Overrides.STARTING_WAVE_OVERRIDE || 1;
-
-export let starterColors: StarterColors;
-interface StarterColors {
-  [key: string]: [string, string];
-}
 
 export interface PokeballCounts {
   [pb: string]: number;
@@ -809,11 +803,11 @@ export default class BattleScene extends SceneBase {
   }
 
   async initStarterColors(): Promise<void> {
-    if (starterColors) {
+    if (Object.keys(starterColors).length > 0) {
+      // already initialized
       return;
     }
     const sc = await this.cachedFetch("./starter-colors.json").then(res => res.json());
-    starterColors = {};
     for (const key of Object.keys(sc)) {
       starterColors[key] = sc[key];
     }
@@ -1338,22 +1332,27 @@ export default class BattleScene extends SceneBase {
     } else {
       if (
         !this.gameMode.hasTrainers ||
+        Overrides.BATTLE_TYPE_OVERRIDE === BattleType.WILD ||
         (Overrides.DISABLE_STANDARD_TRAINERS_OVERRIDE && isNullOrUndefined(trainerData))
       ) {
         newBattleType = BattleType.WILD;
-      } else if (battleType === undefined) {
-        newBattleType = this.gameMode.isWaveTrainer(newWaveIndex, this.arena) ? BattleType.TRAINER : BattleType.WILD;
       } else {
-        newBattleType = battleType;
+        newBattleType =
+          Overrides.BATTLE_TYPE_OVERRIDE ??
+          battleType ??
+          (this.gameMode.isWaveTrainer(newWaveIndex, this.arena) ? BattleType.TRAINER : BattleType.WILD);
       }
 
       if (newBattleType === BattleType.TRAINER) {
-        const trainerType = this.arena.randomTrainerType(newWaveIndex);
+        const trainerType =
+          Overrides.RANDOM_TRAINER_OVERRIDE?.trainerType ?? this.arena.randomTrainerType(newWaveIndex);
         let doubleTrainer = false;
         if (trainerConfigs[trainerType].doubleOnly) {
           doubleTrainer = true;
         } else if (trainerConfigs[trainerType].hasDouble) {
-          doubleTrainer = !randSeedInt(this.getDoubleBattleChance(newWaveIndex, playerField));
+          doubleTrainer =
+            Overrides.RANDOM_TRAINER_OVERRIDE?.alwaysDouble ||
+            !randSeedInt(this.getDoubleBattleChance(newWaveIndex, playerField));
           // Add a check that special trainers can't be double except for tate and liza - they should use the normal double chance
           if (
             trainerConfigs[trainerType].trainerTypeDouble &&
@@ -1373,7 +1372,10 @@ export default class BattleScene extends SceneBase {
 
       // Check for mystery encounter
       // Can only occur in place of a standard (non-boss) wild battle, waves 10-180
-      if (this.isWaveMysteryEncounter(newBattleType, newWaveIndex) || newBattleType === BattleType.MYSTERY_ENCOUNTER) {
+      if (
+        !Overrides.BATTLE_TYPE_OVERRIDE &&
+        (this.isWaveMysteryEncounter(newBattleType, newWaveIndex) || newBattleType === BattleType.MYSTERY_ENCOUNTER)
+      ) {
         newBattleType = BattleType.MYSTERY_ENCOUNTER;
         // Reset to base spawn weight
         this.mysteryEncounterSaveData.encounterSpawnChance = BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT;
@@ -1383,9 +1385,9 @@ export default class BattleScene extends SceneBase {
     if (double === undefined && newWaveIndex > 1) {
       if (newBattleType === BattleType.WILD && !this.gameMode.isWaveFinal(newWaveIndex)) {
         newDouble = !randSeedInt(this.getDoubleBattleChance(newWaveIndex, playerField));
-      } else if (newBattleType === BattleType.TRAINER) {
-        newDouble = newTrainer?.variant === TrainerVariant.DOUBLE;
       }
+    } else if (double === undefined && newBattleType === BattleType.TRAINER) {
+      newDouble = newTrainer?.variant === TrainerVariant.DOUBLE;
     } else if (!battleConfig) {
       newDouble = !!double;
     }
@@ -1395,10 +1397,10 @@ export default class BattleScene extends SceneBase {
       newDouble = false;
     }
 
-    if (!isNullOrUndefined(Overrides.BATTLE_TYPE_OVERRIDE)) {
+    if (!isNullOrUndefined(Overrides.BATTLE_STYLE_OVERRIDE)) {
       let doubleOverrideForWave: "single" | "double" | null = null;
 
-      switch (Overrides.BATTLE_TYPE_OVERRIDE) {
+      switch (Overrides.BATTLE_STYLE_OVERRIDE) {
         case "double":
           doubleOverrideForWave = "double";
           break;
@@ -1418,7 +1420,7 @@ export default class BattleScene extends SceneBase {
       }
       /**
        * Override battles into single only if not fighting with trainers.
-       * @see {@link https://github.com/pagefaultgames/pokerogue/issues/1948 | GitHub Issue #1948}
+       * @see {@link https://github.com/pagefaultgames/pokerogue/issues/1948 GitHub Issue #1948}
        */
       if (newBattleType !== BattleType.TRAINER && doubleOverrideForWave === "single") {
         newDouble = false;

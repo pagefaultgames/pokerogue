@@ -1,7 +1,7 @@
 import { Species } from "#app/enums/species";
 import { StatusEffect } from "#app/enums/status-effect";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { toDmgValue } from "#app/utils";
+import { toDmgValue } from "#app/utils/common";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import GameManager from "#test/testUtils/gameManager";
@@ -25,7 +25,7 @@ describe("Abilities - Heatproof", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .battleType("single")
+      .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.CHARMANDER)
       .enemyAbility(Abilities.HEATPROOF)

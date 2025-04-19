@@ -1,5 +1,5 @@
 import type { BattlerIndex } from "#app/battle";
-import { BattleType } from "#app/battle";
+import { BattleType } from "#enums/battle-type";
 import { globalScene } from "#app/global-scene";
 import {
   applyPostFaintAbAttrs,
@@ -29,7 +29,7 @@ import { SwitchPhase } from "./switch-phase";
 import { SwitchSummonPhase } from "./switch-summon-phase";
 import { ToggleDoublePositionPhase } from "./toggle-double-position-phase";
 import { VictoryPhase } from "./victory-phase";
-import { isNullOrUndefined } from "#app/utils";
+import { isNullOrUndefined } from "#app/utils/common";
 import { FRIENDSHIP_LOSS_FROM_FAINT } from "#app/data/balance/starters";
 import { BattlerTagType } from "#enums/battler-tag-type";
 

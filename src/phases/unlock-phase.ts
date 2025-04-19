@@ -2,7 +2,7 @@ import { globalScene } from "#app/global-scene";
 import { Phase } from "#app/phase";
 import type { Unlockables } from "#app/system/unlockables";
 import { getUnlockableName } from "#app/system/unlockables";
-import { Mode } from "#app/ui/ui";
+import { UiMode } from "#enums/ui-mode";
 import i18next from "i18next";
 
 export class UnlockPhase extends Phase {
@@ -19,7 +19,7 @@ export class UnlockPhase extends Phase {
       globalScene.gameData.unlocks[this.unlockable] = true;
       // Sound loaded into game as is
       globalScene.playSound("level_up_fanfare");
-      globalScene.ui.setMode(Mode.MESSAGE);
+      globalScene.ui.setMode(UiMode.MESSAGE);
       globalScene.ui.showText(
         i18next.t("battle:unlockedSomething", {
           unlockedThing: getUnlockableName(this.unlockable),

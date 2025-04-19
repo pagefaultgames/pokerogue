@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import { fixedInt } from "#app/utils";
+import { fixedInt } from "#app/utils/common";
 
 export default class SavingIconHandler extends Phaser.GameObjects.Container {
   private icon: Phaser.GameObjects.Sprite;

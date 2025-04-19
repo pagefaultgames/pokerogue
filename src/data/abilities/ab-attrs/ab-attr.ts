@@ -1,6 +1,6 @@
 import type { AbAttrCondition } from "#app/@types/ability-types";
 import type Pokemon from "#app/field/pokemon";
-import type * as Utils from "#app/utils";
+import type { BooleanHolder } from "#app/utils/common";
 
 export abstract class AbAttr {
   public showAbility: boolean;
@@ -22,7 +22,7 @@ export abstract class AbAttr {
     _pokemon: Pokemon,
     _passive: boolean,
     _simulated: boolean,
-    _cancelled: Utils.BooleanHolder | null,
+    _cancelled: BooleanHolder | null,
     _args: any[],
   ): void {}
 
