@@ -45,7 +45,8 @@ export class MoveHelper extends GameManagerHelper {
   }
 
   /**
-   * Select the move to be used by the given Pokemon(-index). Triggers during the next {@linkcode CommandPhase}
+   * Select the move to be used by the given Pokemon(-index) to use during the next {@linkcode CommandPhase}.
+   * The moveslot selected will be the first one containing the given move and not out of PP.
    * @param move - the move to use
    * @param pkmIndex - the pokemon index. Relevant for double-battles only (defaults to 0)
    * @param targetIndex - The {@linkcode BattlerIndex} of the Pokemon to target for single-target moves, or `null` if a manual call to `selectTarget()` is required
