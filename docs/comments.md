@@ -16,7 +16,7 @@
  * @param target - The {@linkcode Pokemon} being targeted by this move
  * @param move - The {@linkcode Move} being used
  * @param args - [0]: a {@linkcode NumberHolder} for arenaAttackTypeMultiplier
- * @returns whether the function
+ * @returns whether the move effect was applied
  */
 apply(user: Pokemon, target: Pokemon, move: Move, args: [NumberHolder, ...any]): boolean {
 }
