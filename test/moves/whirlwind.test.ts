@@ -32,7 +32,7 @@ describe("Moves - Whirlwind", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .moveset([Moves.SPLASH])
+      .moveset(Moves.SPLASH)
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset([Moves.SPLASH, Moves.WHIRLWIND])
       .enemySpecies(Species.PIDGEY);
@@ -43,7 +43,7 @@ describe("Moves - Whirlwind", () => {
     { move: Moves.BOUNCE, name: "Bounce" },
     { move: Moves.SKY_DROP, name: "Sky Drop" },
   ])("should not hit a flying target: $name (=$move)", async ({ move }) => {
-    game.override.moveset([move]);
+    game.override.moveset(move);
     // Must have a pokemon in the back so that the move misses instead of fails.
     await game.classicMode.startBattle([Species.STARAPTOR, Species.MAGIKARP]);
 

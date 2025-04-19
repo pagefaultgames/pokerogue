@@ -26,11 +26,7 @@ describe("Abilities - SHIELDS DOWN", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     const moveToUse = Moves.SPLASH;
-    game.override
-      .battleStyle("single")
-      .ability(Abilities.SHIELDS_DOWN)
-      .moveset([moveToUse])
-      .enemyMoveset([Moves.TACKLE]);
+    game.override.battleStyle("single").ability(Abilities.SHIELDS_DOWN).moveset(moveToUse).enemyMoveset(Moves.TACKLE);
   });
 
   test("check if fainted pokemon switched to base form on arena reset", async () => {
@@ -61,7 +57,7 @@ describe("Abilities - SHIELDS DOWN", () => {
   });
 
   test("should ignore non-volatile status moves", async () => {
-    game.override.enemyMoveset([Moves.SPORE]);
+    game.override.enemyMoveset(Moves.SPORE);
 
     await game.classicMode.startBattle([Species.MINIOR]);
     game.move.select(Moves.SPLASH);
@@ -71,7 +67,7 @@ describe("Abilities - SHIELDS DOWN", () => {
   });
 
   test("should still ignore non-volatile status moves used by a pokemon with mold breaker", async () => {
-    game.override.enemyAbility(Abilities.MOLD_BREAKER).enemyMoveset([Moves.SPORE]);
+    game.override.enemyAbility(Abilities.MOLD_BREAKER).enemyMoveset(Moves.SPORE);
 
     await game.classicMode.startBattle([Species.MINIOR]);
 
@@ -83,7 +79,7 @@ describe("Abilities - SHIELDS DOWN", () => {
   });
 
   test("should ignore non-volatile secondary status effects", async () => {
-    game.override.enemyMoveset([Moves.NUZZLE]);
+    game.override.enemyMoveset(Moves.NUZZLE);
 
     await game.classicMode.startBattle([Species.MINIOR]);
 
@@ -94,7 +90,7 @@ describe("Abilities - SHIELDS DOWN", () => {
   });
 
   test("should ignore status moves even through mold breaker", async () => {
-    game.override.enemyMoveset([Moves.SPORE]).enemyAbility(Abilities.MOLD_BREAKER);
+    game.override.enemyMoveset(Moves.SPORE).enemyAbility(Abilities.MOLD_BREAKER);
 
     await game.classicMode.startBattle([Species.MINIOR]);
 
@@ -129,7 +125,7 @@ describe("Abilities - SHIELDS DOWN", () => {
   });
 
   test("should ignore yawn", async () => {
-    game.override.enemyMoveset([Moves.YAWN]);
+    game.override.enemyMoveset(Moves.YAWN);
 
     await game.classicMode.startBattle([Species.MAGIKARP, Species.MINIOR]);
 
@@ -141,7 +137,7 @@ describe("Abilities - SHIELDS DOWN", () => {
   });
 
   test("should not ignore volatile status effects", async () => {
-    game.override.enemyMoveset([Moves.CONFUSE_RAY]);
+    game.override.enemyMoveset(Moves.CONFUSE_RAY);
 
     await game.classicMode.startBattle([Species.MINIOR]);
 
@@ -168,8 +164,8 @@ describe("Abilities - SHIELDS DOWN", () => {
 
   test("should not prevent minior from receiving the fainted status effect in trainer battles", async () => {
     game.override
-      .enemyMoveset([Moves.TACKLE])
-      .moveset([Moves.THUNDERBOLT])
+      .enemyMoveset(Moves.TACKLE)
+      .moveset(Moves.THUNDERBOLT)
       .startingLevel(100)
       .startingWave(5)
       .enemySpecies(Species.MINIOR);

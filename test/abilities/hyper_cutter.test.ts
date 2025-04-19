@@ -46,7 +46,7 @@ describe("Abilities - Hyper Cutter", () => {
     await game.toNextTurn();
     game.move.select(Moves.SAND_ATTACK);
     await game.toNextTurn();
-    game.override.moveset([Moves.STRING_SHOT]);
+    game.override.moveset(Moves.STRING_SHOT);
     game.move.select(Moves.STRING_SHOT);
     await game.toNextTurn();
 

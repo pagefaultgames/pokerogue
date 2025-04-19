@@ -136,7 +136,7 @@ describe("Moves - Jaw Lock", () => {
   });
 
   it("should not trap either pokemon if the target is protected", async () => {
-    game.override.enemyMoveset([Moves.PROTECT]);
+    game.override.enemyMoveset(Moves.PROTECT);
 
     await game.startBattle([Species.BULBASAUR]);
 

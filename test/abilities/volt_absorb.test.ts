@@ -34,7 +34,7 @@ describe("Abilities - Volt Absorb", () => {
     const ability = Abilities.VOLT_ABSORB;
 
     game.override
-      .moveset([moveToUse])
+      .moveset(moveToUse)
       .ability(ability)
       .enemyMoveset([Moves.SPLASH, Moves.NONE, Moves.NONE, Moves.NONE])
       .enemySpecies(Species.DUSKULL);

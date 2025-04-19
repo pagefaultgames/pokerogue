@@ -23,11 +23,8 @@ describe("Moves - Double Team", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("single").moveset([Moves.DOUBLE_TEAM]).criticalHits(false).ability(Abilities.BALL_FETCH);
-    game.override
-      .enemySpecies(Species.SHUCKLE)
-      .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
+    game.override.battleStyle("single").moveset(Moves.DOUBLE_TEAM).criticalHits(false).ability(Abilities.BALL_FETCH);
+    game.override.enemySpecies(Species.SHUCKLE).enemyAbility(Abilities.BALL_FETCH).enemyMoveset(Moves.TACKLE);
   });
 
   it("raises the user's EVA stat stage by 1", async () => {

@@ -23,7 +23,7 @@ describe("Moves - Pollen Puff", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.POLLEN_PUFF])
+      .moveset(Moves.POLLEN_PUFF)
       .ability(Abilities.BALL_FETCH)
       .battleStyle("single")
       .criticalHits(false)
@@ -50,7 +50,7 @@ describe("Moves - Pollen Puff", () => {
   });
 
   it("should damage an enemy multiple times when the user has a source of multi-hit", async () => {
-    game.override.moveset([Moves.POLLEN_PUFF]).ability(Abilities.PARENTAL_BOND).enemyLevel(100);
+    game.override.moveset(Moves.POLLEN_PUFF).ability(Abilities.PARENTAL_BOND).enemyLevel(100);
     await game.classicMode.startBattle([Species.MAGIKARP]);
 
     const target = game.scene.getEnemyPokemon()!;

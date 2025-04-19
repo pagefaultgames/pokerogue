@@ -75,7 +75,7 @@ describe("Abilities - Imposter", () => {
   });
 
   it("should copy in-battle overridden stats", async () => {
-    game.override.enemyMoveset([Moves.POWER_SPLIT]);
+    game.override.enemyMoveset(Moves.POWER_SPLIT);
 
     await game.classicMode.startBattle([Species.DITTO]);
 
@@ -129,7 +129,7 @@ describe("Abilities - Imposter", () => {
   });
 
   it("should persist transformed attributes across reloads", async () => {
-    game.override.moveset([Moves.ABSORB]);
+    game.override.moveset(Moves.ABSORB);
 
     await game.classicMode.startBattle([Species.DITTO]);
 
@@ -162,7 +162,7 @@ describe("Abilities - Imposter", () => {
   });
 
   it("should stay transformed with the correct form after reload", async () => {
-    game.override.moveset([Moves.ABSORB]).enemySpecies(Species.UNOWN);
+    game.override.moveset(Moves.ABSORB).enemySpecies(Species.UNOWN);
     await game.classicMode.startBattle([Species.DITTO]);
 
     const enemy = game.scene.getEnemyPokemon()!;

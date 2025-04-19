@@ -28,10 +28,8 @@ describe("Abilities - Sand Veil", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.moveset([Moves.SPLASH]).enemySpecies(Species.MEOWSCARADA);
-    game.override
-      .enemyAbility(Abilities.INSOMNIA)
-      .enemyMoveset([Moves.TWISTER, Moves.TWISTER, Moves.TWISTER, Moves.TWISTER]);
+    game.override.moveset(Moves.SPLASH).enemySpecies(Species.MEOWSCARADA);
+    game.override.enemyAbility(Abilities.INSOMNIA).enemyMoveset(Moves.TWISTER);
     game.override.startingLevel(100).enemyLevel(100).weather(WeatherType.SANDSTORM).battleStyle("double");
   });
 

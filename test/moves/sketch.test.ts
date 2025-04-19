@@ -82,10 +82,10 @@ describe("Moves - Sketch", () => {
     const randomMoveAttr = allMoves[Moves.METRONOME].findAttr(attr => attr instanceof RandomMoveAttr) as RandomMoveAttr;
     vi.spyOn(randomMoveAttr, "getMoveOverride").mockReturnValue(Moves.FALSE_SWIPE);
 
-    game.override.enemyMoveset([Moves.METRONOME]);
+    game.override.enemyMoveset(Moves.METRONOME);
     await game.classicMode.startBattle([Species.REGIELEKI]);
     const playerPokemon = game.scene.getPlayerPokemon()!;
-    playerPokemon.moveset = [new PokemonMove(Moves.SKETCH)];
+    game.move.changeMoveset(playerPokemon, Moves.SKETCH);
 
     // Opponent uses Metronome -> False Swipe, then player uses Sketch, which should sketch Metronome
     game.move.select(Moves.SKETCH);

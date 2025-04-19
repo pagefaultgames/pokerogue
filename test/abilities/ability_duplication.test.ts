@@ -23,7 +23,7 @@ describe("Ability Duplication", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.SPLASH])
+      .moveset(Moves.SPLASH)
       .battleStyle("single")
       .ability(Abilities.HUGE_POWER)
       .enemyAbility(Abilities.BALL_FETCH)

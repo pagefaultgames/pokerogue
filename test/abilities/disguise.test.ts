@@ -65,7 +65,7 @@ describe("Abilities - Disguise", () => {
   });
 
   it("takes no damage from the first hit of a multihit move and transforms to Busted form, then takes damage from the second hit", async () => {
-    game.override.moveset([Moves.SURGING_STRIKES]).enemyLevel(5);
+    game.override.moveset(Moves.SURGING_STRIKES).enemyLevel(5);
     await game.classicMode.startBattle([Species.REGIELEKI]);
 
     const mimikyu = game.scene.getEnemyPokemon()!;
@@ -104,7 +104,7 @@ describe("Abilities - Disguise", () => {
   });
 
   it("persists form change when switched out", async () => {
-    game.override.enemyMoveset([Moves.SHADOW_SNEAK]);
+    game.override.enemyMoveset(Moves.SHADOW_SNEAK);
 
     await game.classicMode.startBattle([Species.MIMIKYU, Species.FURRET]);
 
@@ -185,7 +185,7 @@ describe("Abilities - Disguise", () => {
   });
 
   it("doesn't faint twice when fainting due to Disguise break damage, nor prevent faint from Disguise break damage if using Endure", async () => {
-    game.override.enemyMoveset([Moves.ENDURE]);
+    game.override.enemyMoveset(Moves.ENDURE);
     await game.classicMode.startBattle([Species.REGIELEKI]);
 
     const mimikyu = game.scene.getEnemyPokemon()!;
@@ -199,7 +199,7 @@ describe("Abilities - Disguise", () => {
   });
 
   it("activates when Aerilate circumvents immunity to the move's base type", async () => {
-    game.override.ability(Abilities.AERILATE).moveset([Moves.TACKLE]);
+    game.override.ability(Abilities.AERILATE).moveset(Moves.TACKLE);
 
     await game.classicMode.startBattle([Species.REGIELEKI]);
 

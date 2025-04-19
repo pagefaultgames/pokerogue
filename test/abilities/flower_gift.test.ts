@@ -179,7 +179,7 @@ describe("Abilities - Flower Gift", () => {
   });
 
   it("reverts to Overcast Form when the Flower Gift is suppressed, changes form under Harsh Sunlight/Sunny when it regains it", async () => {
-    game.override.enemyMoveset([Moves.GASTRO_ACID]).weather(WeatherType.HARSH_SUN);
+    game.override.enemyMoveset(Moves.GASTRO_ACID).weather(WeatherType.HARSH_SUN);
 
     await game.classicMode.startBattle([Species.CHERRIM, Species.MAGIKARP]);
 

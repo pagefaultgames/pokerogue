@@ -34,7 +34,7 @@ describe("Moves - BELLY DRUM", () => {
       .enemySpecies(Species.SNORLAX)
       .startingLevel(100)
       .enemyLevel(100)
-      .moveset([Moves.BELLY_DRUM])
+      .moveset(Moves.BELLY_DRUM)
       .enemyMoveset(Moves.SPLASH)
       .enemyAbility(Abilities.BALL_FETCH);
   });

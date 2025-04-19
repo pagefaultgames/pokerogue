@@ -26,7 +26,7 @@ describe("Moves - Thunder Wave", () => {
     game.override
       .battleStyle("single")
       .starterSpecies(Species.PIKACHU)
-      .moveset([Moves.THUNDER_WAVE])
+      .moveset(Moves.THUNDER_WAVE)
       .enemyMoveset(Moves.SPLASH);
   });
 

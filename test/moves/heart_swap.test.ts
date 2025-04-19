@@ -29,7 +29,7 @@ describe("Moves - Heart Swap", () => {
       .enemyMoveset(Moves.SPLASH)
       .enemySpecies(Species.INDEEDEE)
       .enemyLevel(200)
-      .moveset([Moves.HEART_SWAP])
+      .moveset(Moves.HEART_SWAP)
       .ability(Abilities.NONE);
   });
 

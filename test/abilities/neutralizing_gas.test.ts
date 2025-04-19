@@ -29,7 +29,7 @@ describe("Abilities - Neutralizing Gas", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.SPLASH])
+      .moveset(Moves.SPLASH)
       .ability(Abilities.NEUTRALIZING_GAS)
       .battleStyle("single")
       .criticalHits(false)

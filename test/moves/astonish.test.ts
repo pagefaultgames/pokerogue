@@ -32,10 +32,7 @@ describe("Moves - Astonish", () => {
       .moveset([Moves.ASTONISH, Moves.SPLASH])
       .enemySpecies(Species.BLASTOISE)
       .enemyAbility(Abilities.INSOMNIA);
-    game.override
-      .enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE])
-      .startingLevel(100)
-      .enemyLevel(100);
+    game.override.enemyMoveset(Moves.TACKLE).startingLevel(100).enemyLevel(100);
 
     vi.spyOn(allMoves[Moves.ASTONISH], "chance", "get").mockReturnValue(100);
   });

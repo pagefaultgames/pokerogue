@@ -44,7 +44,7 @@ describe("Moves - Flame Burst", () => {
       .startingWave(4)
       .enemySpecies(Species.SHUCKLE)
       .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset([Moves.SPLASH]);
+      .enemyMoveset(Moves.SPLASH);
   });
 
   it("inflicts damage to the target's ally equal to 1/16 of its max HP", async () => {

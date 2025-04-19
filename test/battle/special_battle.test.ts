@@ -26,9 +26,9 @@ describe("Test Battle Phase", () => {
     game.override
       .enemySpecies(Species.RATTATA)
       .startingLevel(2000)
-      .moveset([Moves.TACKLE])
+      .moveset(Moves.TACKLE)
       .enemyAbility(Abilities.HYDRATION);
-    game.override.ability(Abilities.HYDRATION).enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
+    game.override.ability(Abilities.HYDRATION).enemyMoveset(Moves.TACKLE);
   });
 
   it("startBattle 2vs1 boss", async () => {

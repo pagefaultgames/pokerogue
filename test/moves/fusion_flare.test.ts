@@ -24,11 +24,7 @@ describe("Moves - Fusion Flare", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override
-      .moveset([fusionFlare])
-      .startingLevel(1)
-      .enemySpecies(Species.RATTATA)
-      .enemyMoveset([Moves.REST, Moves.REST, Moves.REST, Moves.REST]);
+    game.override.moveset(fusionFlare).startingLevel(1).enemySpecies(Species.RATTATA).enemyMoveset(Moves.REST);
 
     game.override.battleStyle("single").startingWave(97).criticalHits(false);
   });

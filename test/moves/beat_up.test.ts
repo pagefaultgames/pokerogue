@@ -27,10 +27,10 @@ describe("Moves - Beat Up", () => {
       .battleStyle("single")
       .enemySpecies(Species.SNORLAX)
       .enemyLevel(100)
-      .enemyMoveset([Moves.SPLASH])
+      .enemyMoveset(Moves.SPLASH)
       .enemyAbility(Abilities.INSOMNIA)
       .startingLevel(100)
-      .moveset([Moves.BEAT_UP]);
+      .moveset(Moves.BEAT_UP);
   });
 
   it("should hit once for each healthy player Pokemon", async () => {

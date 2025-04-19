@@ -77,11 +77,11 @@ describe("Abilities - Desolate Land", () => {
   it("should lift when enemy faints", async () => {
     game.override
       .battleStyle("single")
-      .moveset([Moves.SHEER_COLD])
+      .moveset(Moves.SHEER_COLD)
       .ability(Abilities.NO_GUARD)
       .startingLevel(100)
       .enemyLevel(1)
-      .enemyMoveset([Moves.SPLASH])
+      .enemyMoveset(Moves.SPLASH)
       .enemySpecies(Species.MAGCARGO)
       .enemyHasPassiveAbility(true);
     await game.classicMode.startBattle([Species.MAGIKARP]);
@@ -118,7 +118,7 @@ describe("Abilities - Desolate Land", () => {
   it("should lift when enemy is captured", async () => {
     game.override
       .battleStyle("single")
-      .enemyMoveset([Moves.SPLASH])
+      .enemyMoveset(Moves.SPLASH)
       .enemySpecies(Species.MAGCARGO)
       .enemyHasPassiveAbility(true);
     await game.classicMode.startBattle([Species.MAGIKARP]);

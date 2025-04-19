@@ -25,10 +25,7 @@ describe("Moves - Tackle", () => {
     game = new GameManager(phaserGame);
     const moveToUse = Moves.TACKLE;
     game.override.battleStyle("single").enemySpecies(Species.MAGIKARP).startingLevel(1).startingWave(97);
-    game.override
-      .moveset([moveToUse])
-      .enemyMoveset([Moves.GROWTH, Moves.GROWTH, Moves.GROWTH, Moves.GROWTH])
-      .criticalHits(false);
+    game.override.moveset(moveToUse).enemyMoveset(Moves.GROWTH).criticalHits(false);
   });
 
   it("TACKLE against ghost", async () => {

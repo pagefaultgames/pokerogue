@@ -22,7 +22,7 @@ describe("Moves - Struggle", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.SPLASH])
+      .moveset(Moves.SPLASH)
       .ability(Abilities.BALL_FETCH)
       .battleStyle("single")
       .criticalHits(false)
@@ -32,7 +32,7 @@ describe("Moves - Struggle", () => {
   });
 
   it("should not have its power boosted by adaptability or stab", async () => {
-    game.override.moveset([Moves.STRUGGLE]).ability(Abilities.ADAPTABILITY);
+    game.override.moveset(Moves.STRUGGLE).ability(Abilities.ADAPTABILITY);
     await game.classicMode.startBattle([Species.RATTATA]);
 
     const enemy = game.scene.getEnemyPokemon()!;
@@ -48,7 +48,7 @@ describe("Moves - Struggle", () => {
   });
 
   it("should ignore type effectiveness", async () => {
-    game.override.moveset([Moves.STRUGGLE]);
+    game.override.moveset(Moves.STRUGGLE);
     await game.classicMode.startBattle([Species.GASTLY]);
 
     const enemy = game.scene.getEnemyPokemon()!;

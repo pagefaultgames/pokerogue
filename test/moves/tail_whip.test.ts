@@ -30,7 +30,7 @@ describe("Moves - Tail whip", () => {
       .enemySpecies(Species.RATTATA)
       .enemyAbility(Abilities.INSOMNIA)
       .ability(Abilities.INSOMNIA);
-    game.override.startingLevel(2000).moveset([moveToUse]).enemyMoveset(Moves.SPLASH);
+    game.override.startingLevel(2000).moveset(moveToUse).enemyMoveset(Moves.SPLASH);
   });
 
   it("should lower DEF stat stage by 1", async () => {

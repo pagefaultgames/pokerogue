@@ -32,7 +32,7 @@ describe("Moves - Hard Press", () => {
       .ability(Abilities.BALL_FETCH)
       .enemySpecies(Species.MUNCHLAX)
       .enemyAbility(Abilities.BALL_FETCH);
-    game.override.enemyMoveset(Moves.SPLASH).moveset([Moves.HARD_PRESS]);
+    game.override.enemyMoveset(Moves.SPLASH).moveset(Moves.HARD_PRESS);
     vi.spyOn(moveToCheck, "calculateBattlePower");
   });
 

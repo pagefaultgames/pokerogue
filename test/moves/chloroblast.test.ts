@@ -22,7 +22,7 @@ describe("Moves - Chloroblast", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.CHLOROBLAST])
+      .moveset(Moves.CHLOROBLAST)
       .ability(Abilities.BALL_FETCH)
       .battleStyle("single")
       .criticalHits(false)

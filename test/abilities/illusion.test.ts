@@ -109,7 +109,7 @@ describe("Abilities - Illusion", () => {
       .enemySpecies(Species.GIGALITH)
       .enemyAbility(Abilities.SAND_STREAM)
       .enemyMoveset(Moves.WILL_O_WISP)
-      .moveset([Moves.FLARE_BLITZ]);
+      .moveset(Moves.FLARE_BLITZ);
 
     await game.classicMode.startBattle([Species.ZOROARK, Species.AZUMARILL]);
 

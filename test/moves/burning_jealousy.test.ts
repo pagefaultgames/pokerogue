@@ -29,7 +29,7 @@ describe("Moves - Burning Jealousy", () => {
       .criticalHits(false)
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.ICE_SCALES)
-      .enemyMoveset([Moves.HOWL])
+      .enemyMoveset(Moves.HOWL)
       .startingLevel(10)
       .enemyLevel(10)
       .ability(Abilities.BALL_FETCH)

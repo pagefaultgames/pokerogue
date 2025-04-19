@@ -54,7 +54,7 @@ describe("Moves - Foresight", () => {
   });
 
   it("should ignore target's evasiveness boosts", async () => {
-    game.override.enemyMoveset([Moves.MINIMIZE]);
+    game.override.enemyMoveset(Moves.MINIMIZE);
     await game.startBattle();
 
     const pokemon = game.scene.getPlayerPokemon()!;

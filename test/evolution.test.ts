@@ -101,7 +101,7 @@ describe("Evolution", () => {
 
   it("should increase both HP and max HP when evolving", async () => {
     game.override
-      .moveset([Moves.SURF])
+      .moveset(Moves.SURF)
       .enemySpecies(Species.GOLEM)
       .enemyMoveset(Moves.SPLASH)
       .startingWave(21)
@@ -129,7 +129,7 @@ describe("Evolution", () => {
 
   it("should not fully heal HP when evolving", async () => {
     game.override
-      .moveset([Moves.SURF])
+      .moveset(Moves.SURF)
       .enemySpecies(Species.GOLEM)
       .enemyMoveset(Moves.SPLASH)
       .startingWave(21)

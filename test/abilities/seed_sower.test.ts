@@ -28,11 +28,11 @@ describe("Abilities - Seed Sower", () => {
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH);
 
-    game.override.starterSpecies(Species.ARBOLIVA).ability(Abilities.SEED_SOWER).moveset([Moves.SPLASH]);
+    game.override.starterSpecies(Species.ARBOLIVA).ability(Abilities.SEED_SOWER).moveset(Moves.SPLASH);
   });
 
   it("should trigger when hit with damaging move", async () => {
-    game.override.enemyMoveset([Moves.TACKLE]);
+    game.override.enemyMoveset(Moves.TACKLE);
     await game.classicMode.startBattle();
 
     game.move.select(Moves.SPLASH);
@@ -42,7 +42,7 @@ describe("Abilities - Seed Sower", () => {
   });
 
   it("should trigger even when fainting", async () => {
-    game.override.enemyMoveset([Moves.TACKLE]).enemyLevel(100).startingLevel(1);
+    game.override.enemyMoveset(Moves.TACKLE).enemyLevel(100).startingLevel(1);
     await game.classicMode.startBattle([Species.ARBOLIVA, Species.MAGIKARP]);
 
     game.move.select(Moves.SPLASH);
@@ -53,7 +53,7 @@ describe("Abilities - Seed Sower", () => {
   });
 
   it("should not trigger when targetted with status moves", async () => {
-    game.override.enemyMoveset([Moves.GROWL]);
+    game.override.enemyMoveset(Moves.GROWL);
     await game.classicMode.startBattle();
 
     game.move.select(Moves.SPLASH);

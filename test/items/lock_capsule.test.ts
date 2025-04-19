@@ -27,7 +27,7 @@ describe("Items - Lock Capsule", () => {
     game.override
       .battleStyle("single")
       .startingLevel(200)
-      .moveset([Moves.SURF])
+      .moveset(Moves.SURF)
       .enemyAbility(Abilities.BALL_FETCH)
       .startingModifiers([{ name: "LOCK_CAPSULE" }]);
   });

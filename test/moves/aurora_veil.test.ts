@@ -40,9 +40,7 @@ describe("Moves - Aurora Veil", () => {
       .ability(Abilities.NONE)
       .moveset([Moves.ABSORB, Moves.ROCK_SLIDE, Moves.TACKLE])
       .enemyLevel(100);
-    game.override
-      .enemySpecies(Species.MAGIKARP)
-      .enemyMoveset([Moves.AURORA_VEIL, Moves.AURORA_VEIL, Moves.AURORA_VEIL, Moves.AURORA_VEIL]);
+    game.override.enemySpecies(Species.MAGIKARP).enemyMoveset(Moves.AURORA_VEIL);
     game.override.criticalHits(false).weather(WeatherType.HAIL);
   });
 
@@ -118,7 +116,7 @@ describe("Moves - Aurora Veil", () => {
   });
 
   it("does not affect physical critical hits", async () => {
-    game.override.moveset([Moves.WICKED_BLOW]);
+    game.override.moveset(Moves.WICKED_BLOW);
     const moveToUse = Moves.WICKED_BLOW;
     await game.classicMode.startBattle([Species.SHUCKLE]);
 
@@ -134,7 +132,7 @@ describe("Moves - Aurora Veil", () => {
   });
 
   it("does not affect critical hits", async () => {
-    game.override.moveset([Moves.FROST_BREATH]);
+    game.override.moveset(Moves.FROST_BREATH);
     const moveToUse = Moves.FROST_BREATH;
     vi.spyOn(allMoves[Moves.FROST_BREATH], "accuracy", "get").mockReturnValue(100);
     await game.classicMode.startBattle([Species.SHUCKLE]);

@@ -30,7 +30,7 @@ describe("Moves - Focus Punch", () => {
     game.override
       .battleStyle("single")
       .ability(Abilities.UNNERVE)
-      .moveset([Moves.FOCUS_PUNCH])
+      .moveset(Moves.FOCUS_PUNCH)
       .enemySpecies(Species.GROUDON)
       .enemyAbility(Abilities.INSOMNIA)
       .enemyMoveset(Moves.SPLASH)
@@ -61,7 +61,7 @@ describe("Moves - Focus Punch", () => {
   });
 
   it("should fail if the user is hit", async () => {
-    game.override.enemyMoveset([Moves.TACKLE]);
+    game.override.enemyMoveset(Moves.TACKLE);
 
     await game.classicMode.startBattle([Species.CHARIZARD]);
 
@@ -85,7 +85,7 @@ describe("Moves - Focus Punch", () => {
   });
 
   it("should be cancelled if the user falls asleep mid-turn", async () => {
-    game.override.enemyMoveset([Moves.SPORE]);
+    game.override.enemyMoveset(Moves.SPORE);
 
     await game.classicMode.startBattle([Species.CHARIZARD]);
 
@@ -119,7 +119,7 @@ describe("Moves - Focus Punch", () => {
     expect(game.scene.phaseQueue.find(phase => phase instanceof MoveHeaderPhase)).toBeDefined();
   });
   it("should replace the 'but it failed' text when the user gets hit", async () => {
-    game.override.enemyMoveset([Moves.TACKLE]);
+    game.override.enemyMoveset(Moves.TACKLE);
     await game.classicMode.startBattle([Species.CHARIZARD]);
 
     game.move.select(Moves.FOCUS_PUNCH);

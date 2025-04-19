@@ -37,7 +37,7 @@ describe("Abilities - Supreme Overlord", () => {
       .startingLevel(1)
       .enemyAbility(Abilities.BALL_FETCH)
       .ability(Abilities.SUPREME_OVERLORD)
-      .enemyMoveset([Moves.SPLASH])
+      .enemyMoveset(Moves.SPLASH)
       .moveset([Moves.TACKLE, Moves.EXPLOSION, Moves.LUNAR_DANCE]);
 
     vi.spyOn(move, "calculateBattlePower");

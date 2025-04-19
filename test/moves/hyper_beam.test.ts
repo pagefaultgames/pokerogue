@@ -31,7 +31,7 @@ describe("Moves - Hyper Beam", () => {
       .ability(Abilities.BALL_FETCH)
       .enemySpecies(Species.SNORLAX)
       .enemyAbility(Abilities.BALL_FETCH);
-    game.override.enemyMoveset([Moves.SPLASH]).enemyLevel(100).moveset([Moves.HYPER_BEAM, Moves.TACKLE]);
+    game.override.enemyMoveset(Moves.SPLASH).enemyLevel(100).moveset([Moves.HYPER_BEAM, Moves.TACKLE]);
     vi.spyOn(allMoves[Moves.HYPER_BEAM], "accuracy", "get").mockReturnValue(100);
   });
 

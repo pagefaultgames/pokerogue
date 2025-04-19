@@ -24,9 +24,7 @@ describe("Moves - Magnet Rise", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override.battleStyle("single").starterSpecies(Species.MAGNEZONE);
-    game.override
-      .enemySpecies(Species.RATTATA)
-      .enemyMoveset([Moves.DRILL_RUN, Moves.DRILL_RUN, Moves.DRILL_RUN, Moves.DRILL_RUN]);
+    game.override.enemySpecies(Species.RATTATA).enemyMoveset(Moves.DRILL_RUN);
     game.override.criticalHits(false).enemyLevel(1).moveset([moveToUse, Moves.SPLASH, Moves.GRAVITY, Moves.BATON_PASS]);
   });
 

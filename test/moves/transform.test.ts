@@ -33,7 +33,7 @@ describe("Moves - Transform", () => {
       .enemyPassiveAbility(Abilities.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH)
       .ability(Abilities.INTIMIDATE)
-      .moveset([Moves.TRANSFORM]);
+      .moveset(Moves.TRANSFORM);
   });
 
   it("should copy species, ability, gender, all stats except HP, all stat stages, moveset, and types of target", async () => {
@@ -76,7 +76,7 @@ describe("Moves - Transform", () => {
   });
 
   it("should copy in-battle overridden stats", async () => {
-    game.override.enemyMoveset([Moves.POWER_SPLIT]);
+    game.override.enemyMoveset(Moves.POWER_SPLIT);
 
     await game.classicMode.startBattle([Species.DITTO]);
 

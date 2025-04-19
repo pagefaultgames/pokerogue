@@ -29,9 +29,7 @@ describe("Abilities - Mycelium Might", () => {
       .criticalHits(false)
       .enemySpecies(Species.SHUCKLE)
       .enemyAbility(Abilities.CLEAR_BODY);
-    game.override
-      .enemyMoveset([Moves.QUICK_ATTACK, Moves.QUICK_ATTACK, Moves.QUICK_ATTACK, Moves.QUICK_ATTACK])
-      .ability(Abilities.MYCELIUM_MIGHT);
+    game.override.enemyMoveset(Moves.QUICK_ATTACK).ability(Abilities.MYCELIUM_MIGHT);
     game.override.moveset([Moves.QUICK_ATTACK, Moves.BABY_DOLL_EYES]);
   });
 
@@ -66,7 +64,7 @@ describe("Abilities - Mycelium Might", () => {
   }, 20000);
 
   it("will still go first if a status move that is in a higher priority bracket than the opponent's move is used", async () => {
-    game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
+    game.override.enemyMoveset(Moves.TACKLE);
     await game.startBattle([Species.REGIELEKI]);
 
     const enemyPokemon = game.scene.getEnemyPokemon();

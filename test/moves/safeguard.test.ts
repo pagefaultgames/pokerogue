@@ -28,7 +28,7 @@ describe("Moves - Safeguard", () => {
     game.override
       .battleStyle("single")
       .enemySpecies(Species.DRATINI)
-      .enemyMoveset([Moves.SAFEGUARD])
+      .enemyMoveset(Moves.SAFEGUARD)
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyLevel(5)
       .starterSpecies(Species.DRATINI)
@@ -59,7 +59,7 @@ describe("Moves - Safeguard", () => {
   });
 
   it("protects from confusion", async () => {
-    game.override.moveset([Moves.CONFUSE_RAY]);
+    game.override.moveset(Moves.CONFUSE_RAY);
     await game.classicMode.startBattle();
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
@@ -125,7 +125,7 @@ describe("Moves - Safeguard", () => {
 
     expect(enemyPokemon.status?.effect).toEqual(StatusEffect.BURN);
 
-    game.override.enemyMoveset([Moves.REST]);
+    game.override.enemyMoveset(Moves.REST);
     // Force the moveset to update mid-battle
     // TODO: Remove after enemy AI rework is in
     enemyPokemon.getMoveset();
@@ -149,7 +149,7 @@ describe("Moves - Safeguard", () => {
     game.move.select(Moves.SPLASH);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
-    game.override.enemyMoveset([Moves.TACKLE]);
+    game.override.enemyMoveset(Moves.TACKLE);
     game.move.select(Moves.SPLASH);
     await game.toNextTurn();
 

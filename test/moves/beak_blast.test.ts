@@ -29,10 +29,10 @@ describe("Moves - Beak Blast", () => {
     game.override
       .battleStyle("single")
       .ability(Abilities.UNNERVE)
-      .moveset([Moves.BEAK_BLAST])
+      .moveset(Moves.BEAK_BLAST)
       .enemySpecies(Species.SNORLAX)
       .enemyAbility(Abilities.INSOMNIA)
-      .enemyMoveset([Moves.TACKLE])
+      .enemyMoveset(Moves.TACKLE)
       .startingLevel(100)
       .enemyLevel(100);
   });
@@ -70,7 +70,7 @@ describe("Moves - Beak Blast", () => {
   });
 
   it("should not burn attackers that don't make contact", async () => {
-    game.override.enemyMoveset([Moves.WATER_GUN]);
+    game.override.enemyMoveset(Moves.WATER_GUN);
 
     await game.classicMode.startBattle([Species.BLASTOISE]);
 
@@ -100,7 +100,7 @@ describe("Moves - Beak Blast", () => {
   });
 
   it("should be blocked by Protect", async () => {
-    game.override.enemyMoveset([Moves.PROTECT]);
+    game.override.enemyMoveset(Moves.PROTECT);
 
     await game.classicMode.startBattle([Species.BLASTOISE]);
 
@@ -129,7 +129,7 @@ describe("Moves - Beak Blast", () => {
   });
 
   it("should not burn a long reach enemy that hits the user with a contact move", async () => {
-    game.override.enemyAbility(Abilities.LONG_REACH).enemyMoveset([Moves.FALSE_SWIPE]).enemyLevel(100);
+    game.override.enemyAbility(Abilities.LONG_REACH).enemyMoveset(Moves.FALSE_SWIPE).enemyLevel(100);
     await game.classicMode.startBattle([Species.MAGIKARP]);
     game.move.select(Moves.BEAK_BLAST);
     await game.phaseInterceptor.to("BerryPhase", false);

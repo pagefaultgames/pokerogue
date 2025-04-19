@@ -44,7 +44,7 @@ describe("Weather - Sandstorm", () => {
   });
 
   it("does not inflict damage to a Pokemon that is underwater (Dive) or underground (Dig)", async () => {
-    game.override.moveset([Moves.DIVE]);
+    game.override.moveset(Moves.DIVE);
     await game.classicMode.startBattle([Species.MAGIKARP]);
 
     game.move.select(Moves.DIVE);

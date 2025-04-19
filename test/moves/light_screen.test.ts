@@ -39,9 +39,7 @@ describe("Moves - Light Screen", () => {
       .ability(Abilities.NONE)
       .moveset([Moves.ABSORB, Moves.DAZZLING_GLEAM, Moves.TACKLE])
       .enemyLevel(100);
-    game.override
-      .enemySpecies(Species.MAGIKARP)
-      .enemyMoveset([Moves.LIGHT_SCREEN, Moves.LIGHT_SCREEN, Moves.LIGHT_SCREEN, Moves.LIGHT_SCREEN]);
+    game.override.enemySpecies(Species.MAGIKARP).enemyMoveset(Moves.LIGHT_SCREEN);
     game.override.criticalHits(false);
   });
 
@@ -98,7 +96,7 @@ describe("Moves - Light Screen", () => {
   });
 
   it("does not affect critical hits", async () => {
-    game.override.moveset([Moves.FROST_BREATH]);
+    game.override.moveset(Moves.FROST_BREATH);
     const moveToUse = Moves.FROST_BREATH;
     vi.spyOn(allMoves[Moves.FROST_BREATH], "accuracy", "get").mockReturnValue(100);
     await game.classicMode.startBattle([Species.SHUCKLE]);

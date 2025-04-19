@@ -23,7 +23,7 @@ describe("Abilities - Wandering Spirit", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.SPLASH])
+      .moveset(Moves.SPLASH)
       .ability(Abilities.WANDERING_SPIRIT)
       .battleStyle("single")
       .criticalHits(false)

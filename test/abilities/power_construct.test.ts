@@ -28,8 +28,8 @@ describe("Abilities - POWER CONSTRUCT", () => {
     game.override
       .battleStyle("single")
       .ability(Abilities.POWER_CONSTRUCT)
-      .moveset([moveToUse])
-      .enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
+      .moveset(moveToUse)
+      .enemyMoveset(Moves.TACKLE);
   });
 
   test("check if fainted 50% Power Construct Pokemon switches to base form on arena reset", async () => {

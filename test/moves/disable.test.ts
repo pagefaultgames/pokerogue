@@ -81,7 +81,7 @@ describe("Moves - Disable", () => {
   }, 20000);
 
   it("cannot disable STRUGGLE", async () => {
-    game.override.enemyMoveset([Moves.STRUGGLE]);
+    game.override.enemyMoveset(Moves.STRUGGLE);
     await game.classicMode.startBattle();
 
     const playerMon = game.scene.getPlayerPokemon()!;
@@ -119,7 +119,7 @@ describe("Moves - Disable", () => {
   }, 20000);
 
   it("disables NATURE POWER, not the move invoked by it", async () => {
-    game.override.enemyMoveset([Moves.NATURE_POWER]);
+    game.override.enemyMoveset(Moves.NATURE_POWER);
     await game.classicMode.startBattle();
 
     const enemyMon = game.scene.getEnemyPokemon()!;

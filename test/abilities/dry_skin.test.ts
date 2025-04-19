@@ -69,7 +69,7 @@ describe("Abilities - Dry Skin", () => {
   });
 
   it("opposing fire attacks do 25% more damage", async () => {
-    game.override.moveset([Moves.FLAMETHROWER]);
+    game.override.moveset(Moves.FLAMETHROWER);
     await game.classicMode.startBattle();
 
     const enemy = game.scene.getEnemyPokemon()!;
@@ -105,7 +105,7 @@ describe("Abilities - Dry Skin", () => {
   });
 
   it("opposing water attacks do not heal if they were protected from", async () => {
-    game.override.enemyMoveset([Moves.PROTECT]);
+    game.override.enemyMoveset(Moves.PROTECT);
 
     await game.classicMode.startBattle();
 

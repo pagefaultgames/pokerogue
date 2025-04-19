@@ -30,7 +30,7 @@ describe("Abilities - Good As Gold", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.SPLASH])
+      .moveset(Moves.SPLASH)
       .ability(Abilities.GOOD_AS_GOLD)
       .battleStyle("single")
       .criticalHits(false)
@@ -40,7 +40,7 @@ describe("Abilities - Good As Gold", () => {
   });
 
   it("should block normal status moves", async () => {
-    game.override.enemyMoveset([Moves.GROWL]);
+    game.override.enemyMoveset(Moves.GROWL);
     await game.classicMode.startBattle([Species.MAGIKARP]);
 
     const player = game.scene.getPlayerPokemon()!;
@@ -54,7 +54,7 @@ describe("Abilities - Good As Gold", () => {
   });
 
   it("should block memento and prevent the user from fainting", async () => {
-    game.override.enemyMoveset([Moves.MEMENTO]);
+    game.override.enemyMoveset(Moves.MEMENTO);
     await game.classicMode.startBattle([Species.MAGIKARP]);
     game.move.select(Moves.MEMENTO);
     await game.phaseInterceptor.to("BerryPhase");
@@ -86,7 +86,7 @@ describe("Abilities - Good As Gold", () => {
   });
 
   it("should not block field targeted effects in singles", async () => {
-    game.override.battleStyle("single").enemyMoveset([Moves.SPIKES]);
+    game.override.battleStyle("single").enemyMoveset(Moves.SPIKES);
     await game.classicMode.startBattle([Species.MAGIKARP]);
 
     game.move.select(Moves.SPLASH, 0);
@@ -127,7 +127,7 @@ describe("Abilities - Good As Gold", () => {
   });
 
   it("should not block field targeted effects like rain dance", async () => {
-    game.override.battleStyle("single").enemyMoveset([Moves.RAIN_DANCE]).weather(WeatherType.NONE);
+    game.override.battleStyle("single").enemyMoveset(Moves.RAIN_DANCE).weather(WeatherType.NONE);
     await game.classicMode.startBattle([Species.MAGIKARP]);
 
     game.move.select(Moves.SPLASH, 0);

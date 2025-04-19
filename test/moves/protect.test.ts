@@ -29,10 +29,10 @@ describe("Moves - Protect", () => {
 
     game.override
       .battleStyle("single")
-      .moveset([Moves.PROTECT])
+      .moveset(Moves.PROTECT)
       .enemySpecies(Species.SNORLAX)
       .enemyAbility(Abilities.INSOMNIA);
-    game.override.enemyMoveset([Moves.TACKLE]).startingLevel(100).enemyLevel(100);
+    game.override.enemyMoveset(Moves.TACKLE).startingLevel(100).enemyLevel(100);
   });
 
   test("should protect the user from attacks", async () => {
@@ -48,7 +48,7 @@ describe("Moves - Protect", () => {
   });
 
   test("should prevent secondary effects from the opponent's attack", async () => {
-    game.override.enemyMoveset([Moves.CEASELESS_EDGE]);
+    game.override.enemyMoveset(Moves.CEASELESS_EDGE);
     vi.spyOn(allMoves[Moves.CEASELESS_EDGE], "accuracy", "get").mockReturnValue(100);
 
     await game.classicMode.startBattle([Species.CHARIZARD]);
@@ -64,7 +64,7 @@ describe("Moves - Protect", () => {
   });
 
   test("should protect the user from status moves", async () => {
-    game.override.enemyMoveset([Moves.CHARM]);
+    game.override.enemyMoveset(Moves.CHARM);
 
     await game.classicMode.startBattle([Species.CHARIZARD]);
 
@@ -78,7 +78,7 @@ describe("Moves - Protect", () => {
   });
 
   test("should stop subsequent hits of a multi-hit move", async () => {
-    game.override.enemyMoveset([Moves.TACHYON_CUTTER]);
+    game.override.enemyMoveset(Moves.TACHYON_CUTTER);
 
     await game.classicMode.startBattle([Species.CHARIZARD]);
 
@@ -94,7 +94,7 @@ describe("Moves - Protect", () => {
   });
 
   test("should fail if the user is the last to move in the turn", async () => {
-    game.override.enemyMoveset([Moves.PROTECT]);
+    game.override.enemyMoveset(Moves.PROTECT);
 
     await game.classicMode.startBattle([Species.CHARIZARD]);
 

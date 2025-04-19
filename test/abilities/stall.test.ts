@@ -27,9 +27,7 @@ describe("Abilities - Stall", () => {
       .criticalHits(false)
       .enemySpecies(Species.REGIELEKI)
       .enemyAbility(Abilities.STALL);
-    game.override
-      .enemyMoveset([Moves.QUICK_ATTACK, Moves.QUICK_ATTACK, Moves.QUICK_ATTACK, Moves.QUICK_ATTACK])
-      .moveset([Moves.QUICK_ATTACK, Moves.TACKLE]);
+    game.override.enemyMoveset(Moves.QUICK_ATTACK).moveset([Moves.QUICK_ATTACK, Moves.TACKLE]);
   });
 
   /**

@@ -111,7 +111,7 @@ describe("Moves - Parting Shot", () => {
     // TODO: fix this bug to pass the test!
     "Parting shot shouldn't allow switch out when mist is active",
     async () => {
-      game.override.enemySpecies(Species.ALTARIA).enemyAbility(Abilities.NONE).enemyMoveset([Moves.MIST]);
+      game.override.enemySpecies(Species.ALTARIA).enemyAbility(Abilities.NONE).enemyMoveset(Moves.MIST);
       await game.startBattle([Species.SNORLAX, Species.MEOWTH]);
 
       const enemyPokemon = game.scene.getEnemyPokemon()!;

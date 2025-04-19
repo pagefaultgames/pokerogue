@@ -29,7 +29,7 @@ describe("Battle order", () => {
       .enemySpecies(Species.MEWTWO)
       .enemyAbility(Abilities.INSOMNIA)
       .ability(Abilities.INSOMNIA);
-    game.override.moveset([Moves.TACKLE]);
+    game.override.moveset(Moves.TACKLE);
   });
 
   it("opponent faster than player 50 vs 150", async () => {

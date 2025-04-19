@@ -28,7 +28,7 @@ describe("Moves - Fissure", () => {
   beforeEach(async () => {
     game = new GameManager(phaserGame);
 
-    game.override.battleStyle("single").criticalHits(false).starterSpecies(Species.SNORLAX).moveset([Moves.FISSURE]);
+    game.override.battleStyle("single").criticalHits(false).starterSpecies(Species.SNORLAX).moveset(Moves.FISSURE);
     game.override
       .passiveAbility(Abilities.BALL_FETCH)
       .startingLevel(100)

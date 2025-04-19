@@ -30,7 +30,7 @@ describe("Moves - Mat Block", () => {
       .battleStyle("double")
       .moveset([Moves.MAT_BLOCK, Moves.SPLASH])
       .enemySpecies(Species.SNORLAX)
-      .enemyMoveset([Moves.TACKLE]);
+      .enemyMoveset(Moves.TACKLE);
     game.override.enemyAbility(Abilities.INSOMNIA).startingLevel(100).enemyLevel(100);
   });
 
@@ -51,7 +51,7 @@ describe("Moves - Mat Block", () => {
   });
 
   test("should not protect the user and allies from status moves", async () => {
-    game.override.enemyMoveset([Moves.GROWL]);
+    game.override.enemyMoveset(Moves.GROWL);
 
     await game.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
 

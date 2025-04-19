@@ -30,7 +30,7 @@ describe("Moves - Crafty Shield", () => {
       .battleStyle("double")
       .moveset([Moves.CRAFTY_SHIELD, Moves.SPLASH, Moves.SWORDS_DANCE])
       .enemySpecies(Species.SNORLAX)
-      .enemyMoveset([Moves.GROWL]);
+      .enemyMoveset(Moves.GROWL);
     game.override.enemyAbility(Abilities.INSOMNIA).startingLevel(100).enemyLevel(100);
   });
 
@@ -51,7 +51,7 @@ describe("Moves - Crafty Shield", () => {
   });
 
   test("should not protect the user and allies from attack moves", async () => {
-    game.override.enemyMoveset([Moves.TACKLE]);
+    game.override.enemyMoveset(Moves.TACKLE);
 
     await game.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
 
@@ -69,7 +69,7 @@ describe("Moves - Crafty Shield", () => {
   });
 
   test("should protect the user and allies from moves that ignore other protection", async () => {
-    game.override.enemySpecies(Species.DUSCLOPS).enemyMoveset([Moves.CURSE]);
+    game.override.enemySpecies(Species.DUSCLOPS).enemyMoveset(Moves.CURSE);
 
     await game.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
 

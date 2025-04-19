@@ -29,7 +29,7 @@ describe("Moves - Quick Guard", () => {
       .battleStyle("double")
       .moveset([Moves.QUICK_GUARD, Moves.SPLASH, Moves.FOLLOW_ME])
       .enemySpecies(Species.SNORLAX)
-      .enemyMoveset([Moves.QUICK_ATTACK]);
+      .enemyMoveset(Moves.QUICK_ATTACK);
     game.override.enemyAbility(Abilities.INSOMNIA).startingLevel(100).enemyLevel(100);
   });
 
@@ -47,7 +47,7 @@ describe("Moves - Quick Guard", () => {
   });
 
   test("should protect the user and allies from Prankster-boosted moves", async () => {
-    game.override.enemyAbility(Abilities.PRANKSTER).enemyMoveset([Moves.GROWL]);
+    game.override.enemyAbility(Abilities.PRANKSTER).enemyMoveset(Moves.GROWL);
 
     await game.classicMode.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
 
@@ -62,7 +62,7 @@ describe("Moves - Quick Guard", () => {
   });
 
   test("should stop subsequent hits of a multi-hit priority move", async () => {
-    game.override.enemyMoveset([Moves.WATER_SHURIKEN]);
+    game.override.enemyMoveset(Moves.WATER_SHURIKEN);
 
     await game.classicMode.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
 
@@ -79,7 +79,7 @@ describe("Moves - Quick Guard", () => {
   });
 
   test("should fail if the user is the last to move in the turn", async () => {
-    game.override.battleStyle("single").enemyMoveset([Moves.QUICK_GUARD]);
+    game.override.battleStyle("single").enemyMoveset(Moves.QUICK_GUARD);
 
     await game.classicMode.startBattle([Species.CHARIZARD]);
 

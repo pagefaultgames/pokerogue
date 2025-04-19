@@ -39,9 +39,7 @@ describe("Moves - Reflect", () => {
       .ability(Abilities.NONE)
       .moveset([Moves.ABSORB, Moves.ROCK_SLIDE, Moves.TACKLE])
       .enemyLevel(100);
-    game.override
-      .enemySpecies(Species.MAGIKARP)
-      .enemyMoveset([Moves.REFLECT, Moves.REFLECT, Moves.REFLECT, Moves.REFLECT]);
+    game.override.enemySpecies(Species.MAGIKARP).enemyMoveset(Moves.REFLECT);
     game.override.criticalHits(false);
   });
 
@@ -98,7 +96,7 @@ describe("Moves - Reflect", () => {
   });
 
   it("does not affect critical hits", async () => {
-    game.override.moveset([Moves.WICKED_BLOW]);
+    game.override.moveset(Moves.WICKED_BLOW);
     const moveToUse = Moves.WICKED_BLOW;
     await game.classicMode.startBattle([Species.SHUCKLE]);
 
@@ -115,7 +113,7 @@ describe("Moves - Reflect", () => {
   });
 
   it("does not affect critical hits", async () => {
-    game.override.moveset([Moves.WICKED_BLOW]);
+    game.override.moveset(Moves.WICKED_BLOW);
     const moveToUse = Moves.WICKED_BLOW;
     await game.classicMode.startBattle([Species.SHUCKLE]);
 

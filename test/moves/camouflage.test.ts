@@ -25,7 +25,7 @@ describe("Moves - Camouflage", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.CAMOUFLAGE])
+      .moveset(Moves.CAMOUFLAGE)
       .ability(Abilities.BALL_FETCH)
       .battleStyle("single")
       .criticalHits(false)

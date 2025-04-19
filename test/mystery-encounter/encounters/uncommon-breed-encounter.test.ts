@@ -10,7 +10,6 @@ import {
 } from "#test/mystery-encounter/encounter-test-utils";
 import { Moves } from "#enums/moves";
 import type BattleScene from "#app/battle-scene";
-import { PokemonMove } from "#app/field/pokemon";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { initSceneWithoutEncounterPhase } from "#test/testUtils/gameManagerUtils";
@@ -272,7 +271,7 @@ describe("Uncommon Breed - Mystery Encounter", () => {
       const leaveEncounterWithoutBattleSpy = vi.spyOn(EncounterPhaseUtils, "leaveEncounterWithoutBattle");
       await game.runToMysteryEncounter(MysteryEncounterType.UNCOMMON_BREED, defaultParty);
       // Mock moveset
-      scene.getPlayerParty()[0].moveset = [new PokemonMove(Moves.CHARM)];
+      game.move.changeMoveset(scene.getPlayerParty()[0], Moves.CHARM);
       await runMysteryEncounterToEnd(game, 3);
 
       expect(leaveEncounterWithoutBattleSpy).toBeCalled();

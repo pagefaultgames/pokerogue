@@ -32,7 +32,7 @@ describe("Abilities - Moxie", () => {
       .enemySpecies(Species.RATTATA)
       .enemyAbility(Abilities.MOXIE)
       .ability(Abilities.MOXIE);
-    game.override.startingLevel(2000).moveset([moveToUse]).enemyMoveset(Moves.SPLASH);
+    game.override.startingLevel(2000).moveset(moveToUse).enemyMoveset(Moves.SPLASH);
   });
 
   it("should raise ATK stat stage by 1 when winning a battle", async () => {

@@ -281,7 +281,7 @@ describe("Moves - Instruct", () => {
   });
 
   it("should not repeat enemy's move through protect", async () => {
-    game.override.moveset([Moves.INSTRUCT]);
+    game.override.moveset(Moves.INSTRUCT);
     await game.classicMode.startBattle([Species.AMOONGUSS]);
 
     const enemy = game.scene.getEnemyPokemon()!;
@@ -296,7 +296,7 @@ describe("Moves - Instruct", () => {
   });
 
   it("should not repeat enemy's charging move", async () => {
-    game.override.moveset([Moves.INSTRUCT]).enemyMoveset([Moves.SONIC_BOOM, Moves.HYPER_BEAM]);
+    game.override.moveset(Moves.INSTRUCT).enemyMoveset([Moves.SONIC_BOOM, Moves.HYPER_BEAM]);
     await game.classicMode.startBattle([Species.SHUCKLE]);
 
     const player = game.scene.getPlayerPokemon()!;

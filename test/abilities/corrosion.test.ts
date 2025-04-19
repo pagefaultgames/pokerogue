@@ -22,7 +22,7 @@ describe("Abilities - Corrosion", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.SPLASH])
+      .moveset(Moves.SPLASH)
       .battleStyle("single")
       .criticalHits(false)
       .enemySpecies(Species.GRIMER)

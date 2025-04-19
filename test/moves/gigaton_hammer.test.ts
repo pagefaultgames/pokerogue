@@ -25,7 +25,7 @@ describe("Moves - Gigaton Hammer", () => {
       .battleStyle("single")
       .enemySpecies(Species.MAGIKARP)
       .starterSpecies(Species.FEEBAS)
-      .moveset([Moves.GIGATON_HAMMER])
+      .moveset(Moves.GIGATON_HAMMER)
       .startingLevel(10)
       .enemyLevel(100)
       .enemyMoveset(Moves.SPLASH)

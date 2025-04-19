@@ -74,7 +74,7 @@ describe("Moves - Follow Me", () => {
   });
 
   test("move effect should be bypassed by Stalwart", async () => {
-    game.override.ability(Abilities.STALWART).moveset([Moves.QUICK_ATTACK]);
+    game.override.ability(Abilities.STALWART).moveset(Moves.QUICK_ATTACK);
 
     await game.classicMode.startBattle([Species.AMOONGUSS, Species.CHARIZARD]);
 
@@ -95,7 +95,7 @@ describe("Moves - Follow Me", () => {
   });
 
   test("move effect should be bypassed by Snipe Shot", async () => {
-    game.override.moveset([Moves.SNIPE_SHOT]);
+    game.override.moveset(Moves.SNIPE_SHOT);
 
     await game.classicMode.startBattle([Species.AMOONGUSS, Species.CHARIZARD]);
 

@@ -24,15 +24,11 @@ describe("Moves - Fusion Bolt", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([fusionBolt])
+      .moveset(fusionBolt)
       .startingLevel(1)
       .enemySpecies(Species.RESHIRAM)
       .enemyAbility(Abilities.ROUGH_SKIN);
-    game.override
-      .enemyMoveset([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH])
-      .battleStyle("single")
-      .startingWave(97)
-      .criticalHits(false);
+    game.override.enemyMoveset(Moves.SPLASH).battleStyle("single").startingWave(97).criticalHits(false);
   });
 
   it("should not make contact", async () => {

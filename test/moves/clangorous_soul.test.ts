@@ -32,7 +32,7 @@ describe("Moves - Clangorous Soul", () => {
       .enemySpecies(Species.SNORLAX)
       .startingLevel(100)
       .enemyLevel(100)
-      .moveset([Moves.CLANGOROUS_SOUL])
+      .moveset(Moves.CLANGOROUS_SOUL)
       .enemyMoveset(Moves.SPLASH);
   });
 

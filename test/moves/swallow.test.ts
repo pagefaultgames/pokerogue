@@ -32,10 +32,7 @@ describe("Moves - Swallow", () => {
       .enemySpecies(Species.RATTATA)
       .enemyMoveset(Moves.SPLASH)
       .enemyAbility(Abilities.NONE);
-    game.override
-      .enemyLevel(2000)
-      .moveset([Moves.SWALLOW, Moves.SWALLOW, Moves.SWALLOW, Moves.SWALLOW])
-      .ability(Abilities.NONE);
+    game.override.enemyLevel(2000).moveset(Moves.SWALLOW).ability(Abilities.NONE);
   });
 
   describe("consumes all stockpile stacks to heal (scaling with stacks)", () => {

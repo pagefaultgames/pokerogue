@@ -93,7 +93,7 @@ describe("Abilities - Steely Spirit", () => {
   });
 
   it("affects variable-type moves if their resolved type is Steel", async () => {
-    game.override.ability(Abilities.STEELY_SPIRIT).moveset([Moves.REVELATION_DANCE]);
+    game.override.ability(Abilities.STEELY_SPIRIT).moveset(Moves.REVELATION_DANCE);
 
     const revelationDance = allMoves[Moves.REVELATION_DANCE];
     vi.spyOn(revelationDance, "calculateBattlePower");

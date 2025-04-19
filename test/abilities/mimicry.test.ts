@@ -23,7 +23,7 @@ describe("Abilities - Mimicry", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.SPLASH])
+      .moveset(Moves.SPLASH)
       .ability(Abilities.MIMICRY)
       .battleStyle("single")
       .criticalHits(false)

@@ -38,7 +38,7 @@ describe("Moves - Fell Stinger", () => {
   });
 
   it("should not grant stat boost if opponent gets KO'd by recoil", async () => {
-    game.override.enemyMoveset([Moves.DOUBLE_EDGE]);
+    game.override.enemyMoveset(Moves.DOUBLE_EDGE);
 
     await game.classicMode.startBattle([Species.LEAVANNY]);
     const leadPokemon = game.scene.getPlayerPokemon()!;

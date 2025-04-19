@@ -34,7 +34,7 @@ describe("Moves - Dragon Rage", () => {
     game.override
       .battleStyle("single")
       .starterSpecies(Species.SNORLAX)
-      .moveset([Moves.DRAGON_RAGE])
+      .moveset(Moves.DRAGON_RAGE)
       .ability(Abilities.BALL_FETCH);
     game.override
       .passiveAbility(Abilities.BALL_FETCH)

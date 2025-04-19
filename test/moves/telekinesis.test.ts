@@ -31,7 +31,7 @@ describe("Moves - Telekinesis", () => {
       .enemySpecies(Species.SNORLAX)
       .enemyLevel(60)
       .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset([Moves.SPLASH]);
+      .enemyMoveset(Moves.SPLASH);
   });
 
   it("Telekinesis makes the affected vulnerable to most attacking moves regardless of accuracy", async () => {
@@ -125,8 +125,8 @@ describe("Moves - Telekinesis", () => {
 
   it("should not be baton passed onto a mega gengar", async () => {
     game.override
-      .moveset([Moves.BATON_PASS])
-      .enemyMoveset([Moves.TELEKINESIS])
+      .moveset(Moves.BATON_PASS)
+      .enemyMoveset(Moves.TELEKINESIS)
       .starterForms({ [Species.GENGAR]: 1 });
 
     await game.classicMode.startBattle([Species.MAGIKARP, Species.GENGAR]);

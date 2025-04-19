@@ -27,12 +27,10 @@ describe("Items - Leftovers", () => {
       .battleStyle("single")
       .startingLevel(2000)
       .ability(Abilities.UNNERVE)
-      .moveset([Moves.SPLASH])
+      .moveset(Moves.SPLASH)
       .enemySpecies(Species.SHUCKLE)
       .enemyAbility(Abilities.UNNERVE);
-    game.override
-      .enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE])
-      .startingHeldItems([{ name: "LEFTOVERS", count: 1 }]);
+    game.override.enemyMoveset(Moves.TACKLE).startingHeldItems([{ name: "LEFTOVERS", count: 1 }]);
   });
 
   it("leftovers works", async () => {

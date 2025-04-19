@@ -23,7 +23,7 @@ describe("Moves - False Swipe", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.FALSE_SWIPE])
+      .moveset(Moves.FALSE_SWIPE)
       .ability(Abilities.BALL_FETCH)
       .startingLevel(1000)
       .battleStyle("single")

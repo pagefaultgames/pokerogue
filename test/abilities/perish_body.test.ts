@@ -27,11 +27,11 @@ describe("Abilities - Perish Song", () => {
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH);
 
-    game.override.starterSpecies(Species.CURSOLA).ability(Abilities.PERISH_BODY).moveset([Moves.SPLASH]);
+    game.override.starterSpecies(Species.CURSOLA).ability(Abilities.PERISH_BODY).moveset(Moves.SPLASH);
   });
 
   it("should trigger when hit with damaging move", async () => {
-    game.override.enemyMoveset([Moves.AQUA_JET]);
+    game.override.enemyMoveset(Moves.AQUA_JET);
     await game.classicMode.startBattle();
     const cursola = game.scene.getPlayerPokemon();
     const magikarp = game.scene.getEnemyPokemon();
@@ -44,7 +44,7 @@ describe("Abilities - Perish Song", () => {
   });
 
   it("should trigger even when fainting", async () => {
-    game.override.enemyMoveset([Moves.AQUA_JET]).enemyLevel(100).startingLevel(1);
+    game.override.enemyMoveset(Moves.AQUA_JET).enemyLevel(100).startingLevel(1);
     await game.classicMode.startBattle([Species.CURSOLA, Species.FEEBAS]);
     const magikarp = game.scene.getEnemyPokemon();
 

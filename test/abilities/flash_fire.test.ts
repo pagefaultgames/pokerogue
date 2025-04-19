@@ -36,7 +36,7 @@ describe("Abilities - Flash Fire", () => {
   });
 
   it("immune to Fire-type moves", async () => {
-    game.override.enemyMoveset([Moves.EMBER]).moveset(Moves.SPLASH);
+    game.override.enemyMoveset(Moves.EMBER).moveset(Moves.SPLASH);
     await game.classicMode.startBattle([Species.BLISSEY]);
 
     const blissey = game.scene.getPlayerPokemon()!;
@@ -47,7 +47,7 @@ describe("Abilities - Flash Fire", () => {
   }, 20000);
 
   it("not activate if the Pokémon is protected from the Fire-type move", async () => {
-    game.override.enemyMoveset([Moves.EMBER]).moveset([Moves.PROTECT]);
+    game.override.enemyMoveset(Moves.EMBER).moveset(Moves.PROTECT);
     await game.classicMode.startBattle([Species.BLISSEY]);
 
     const blissey = game.scene.getPlayerPokemon()!;
@@ -58,7 +58,7 @@ describe("Abilities - Flash Fire", () => {
   }, 20000);
 
   it("activated by Will-O-Wisp", async () => {
-    game.override.enemyMoveset([Moves.WILL_O_WISP]).moveset(Moves.SPLASH);
+    game.override.enemyMoveset(Moves.WILL_O_WISP).moveset(Moves.SPLASH);
     await game.classicMode.startBattle([Species.BLISSEY]);
 
     const blissey = game.scene.getPlayerPokemon()!;
@@ -73,7 +73,7 @@ describe("Abilities - Flash Fire", () => {
   }, 20000);
 
   it("activated after being frozen", async () => {
-    game.override.enemyMoveset([Moves.EMBER]).moveset(Moves.SPLASH).statusEffect(StatusEffect.FREEZE);
+    game.override.enemyMoveset(Moves.EMBER).moveset(Moves.SPLASH).statusEffect(StatusEffect.FREEZE);
     await game.classicMode.startBattle([Species.BLISSEY]);
 
     const blissey = game.scene.getPlayerPokemon()!;
@@ -85,7 +85,7 @@ describe("Abilities - Flash Fire", () => {
   }, 20000);
 
   it("not passing with baton pass", async () => {
-    game.override.enemyMoveset([Moves.EMBER]).moveset([Moves.BATON_PASS]);
+    game.override.enemyMoveset(Moves.EMBER).moveset(Moves.BATON_PASS);
     await game.classicMode.startBattle([Species.BLISSEY, Species.CHANSEY]);
 
     // ensure use baton pass after enemy moved
@@ -102,7 +102,7 @@ describe("Abilities - Flash Fire", () => {
 
   it("boosts Fire-type move when the ability is activated", async () => {
     game.override
-      .enemyMoveset([Moves.FIRE_PLEDGE])
+      .enemyMoveset(Moves.FIRE_PLEDGE)
       .moveset([Moves.EMBER, Moves.SPLASH])
       .enemyAbility(Abilities.FLASH_FIRE)
       .ability(Abilities.NONE);

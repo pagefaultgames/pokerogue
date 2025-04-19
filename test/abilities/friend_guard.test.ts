@@ -30,7 +30,7 @@ describe("Moves - Friend Guard", () => {
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset([Moves.TACKLE, Moves.SPLASH, Moves.DRAGON_RAGE])
       .enemySpecies(Species.SHUCKLE)
-      .moveset([Moves.SPLASH])
+      .moveset(Moves.SPLASH)
       .startingLevel(100);
   });
 

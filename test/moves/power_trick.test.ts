@@ -30,7 +30,7 @@ describe("Moves - Power Trick", () => {
       .enemyMoveset(Moves.SPLASH)
       .enemySpecies(Species.MEW)
       .enemyLevel(200)
-      .moveset([Moves.POWER_TRICK])
+      .moveset(Moves.POWER_TRICK)
       .ability(Abilities.BALL_FETCH);
   });
 

@@ -51,7 +51,7 @@ describe("Abilities - Ice Face", () => {
   });
 
   it("takes no damage from the first hit of multihit physical move and transforms to Noice", async () => {
-    game.override.moveset([Moves.SURGING_STRIKES]).enemyLevel(1);
+    game.override.moveset(Moves.SURGING_STRIKES).enemyLevel(1);
     await game.classicMode.startBattle([Species.HITMONLEE]);
 
     game.move.select(Moves.SURGING_STRIKES);
@@ -105,7 +105,7 @@ describe("Abilities - Ice Face", () => {
   });
 
   it("transforms to Ice Face when Hail or Snow starts", async () => {
-    game.override.moveset([Moves.QUICK_ATTACK]).enemyMoveset([Moves.HAIL, Moves.HAIL, Moves.HAIL, Moves.HAIL]);
+    game.override.moveset(Moves.QUICK_ATTACK).enemyMoveset(Moves.HAIL);
 
     await game.classicMode.startBattle([Species.MAGIKARP]);
 
@@ -126,7 +126,7 @@ describe("Abilities - Ice Face", () => {
   });
 
   it("transforms to Ice Face when summoned on arena with active Snow or Hail", async () => {
-    game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]).moveset([Moves.SNOWSCAPE]);
+    game.override.enemyMoveset(Moves.TACKLE).moveset(Moves.SNOWSCAPE);
 
     await game.classicMode.startBattle([Species.EISCUE, Species.NINJASK]);
 
@@ -152,7 +152,7 @@ describe("Abilities - Ice Face", () => {
   });
 
   it("will not revert to its Ice Face if there is already Hail when it changes into Noice", async () => {
-    game.override.enemySpecies(Species.SHUCKLE).enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
+    game.override.enemySpecies(Species.SHUCKLE).enemyMoveset(Moves.TACKLE);
 
     await game.classicMode.startBattle([Species.EISCUE]);
 
@@ -171,7 +171,7 @@ describe("Abilities - Ice Face", () => {
   });
 
   it("persists form change when switched out", async () => {
-    game.override.enemyMoveset([Moves.QUICK_ATTACK, Moves.QUICK_ATTACK, Moves.QUICK_ATTACK, Moves.QUICK_ATTACK]);
+    game.override.enemyMoveset(Moves.QUICK_ATTACK);
 
     await game.classicMode.startBattle([Species.EISCUE, Species.MAGIKARP]);
 
@@ -229,7 +229,7 @@ describe("Abilities - Ice Face", () => {
   });
 
   it("cannot be suppressed", async () => {
-    game.override.moveset([Moves.GASTRO_ACID]);
+    game.override.moveset(Moves.GASTRO_ACID);
 
     await game.classicMode.startBattle([Species.MAGIKARP]);
 
@@ -245,7 +245,7 @@ describe("Abilities - Ice Face", () => {
   });
 
   it("cannot be swapped with another ability", async () => {
-    game.override.moveset([Moves.SKILL_SWAP]);
+    game.override.moveset(Moves.SKILL_SWAP);
 
     await game.classicMode.startBattle([Species.MAGIKARP]);
 
