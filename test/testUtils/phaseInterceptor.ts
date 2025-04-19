@@ -515,9 +515,9 @@ export default class PhaseInterceptor {
    * @param mode - The {@linkcode Mode} to set.
    * @param args - Additional arguments to pass to the original method.
    */
-  setOverlayMode(mode: Mode, ...args: unknown[]): Promise<void> {
+  setOverlayMode(mode: UiMode, ...args: unknown[]): Promise<void> {
     const instance = this.scene.ui;
-    console.log("setOverlayMode", `${Mode[mode]} (=${mode})`, args);
+    console.log("setOverlayMode", `${UiMode[mode]} (=${mode})`, args);
     const ret = this.originalSetOverlayMode.apply(instance, [mode, ...args]);
     return ret;
   }
