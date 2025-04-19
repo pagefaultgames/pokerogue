@@ -19,7 +19,7 @@ import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode
 import { ModifierRewardPhase } from "#app/phases/modifier-reward-phase";
 import type { PokemonHeldItemModifier } from "#app/modifier/modifier";
 import { PokemonFormChangeItemModifier } from "#app/modifier/modifier";
-import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
+import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { Challenges } from "#enums/challenges";
 
 /** i18n namespace for encounter */
