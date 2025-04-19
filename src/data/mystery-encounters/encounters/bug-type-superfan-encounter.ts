@@ -16,7 +16,7 @@ import { TrainerSlot } from "#enums/trainer-slot";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import { globalScene } from "#app/global-scene";
-import { isNullOrUndefined, randSeedInt, randSeedShuffle } from "#app/utils";
+import { isNullOrUndefined, randSeedInt, randSeedShuffle } from "#app/utils/common";
 import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";

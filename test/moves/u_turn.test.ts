@@ -23,7 +23,7 @@ describe("Moves - U-turn", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .battleType("single")
+      .battleStyle("single")
       .enemySpecies(Species.GENGAR)
       .startingLevel(90)
       .startingWave(97)

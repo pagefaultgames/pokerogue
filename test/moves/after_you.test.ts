@@ -25,7 +25,7 @@ describe("Moves - After You", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .battleType("double")
+      .battleStyle("double")
       .enemyLevel(5)
       .enemySpecies(Species.PIKACHU)
       .enemyAbility(Abilities.BALL_FETCH)

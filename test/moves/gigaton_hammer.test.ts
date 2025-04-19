@@ -22,7 +22,7 @@ describe("Moves - Gigaton Hammer", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .battleType("single")
+      .battleStyle("single")
       .enemySpecies(Species.MAGIKARP)
       .starterSpecies(Species.FEEBAS)
       .moveset([Moves.GIGATON_HAMMER])

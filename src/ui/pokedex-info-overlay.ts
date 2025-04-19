@@ -1,7 +1,7 @@
 import type { InfoToggle } from "../battle-scene";
 import { TextStyle, addTextObject } from "./text";
 import { addWindow } from "./ui-theme";
-import * as Utils from "../utils";
+import { fixedInt } from "#app/utils/common";
 import i18next from "i18next";
 import { globalScene } from "#app/global-scene";
 
@@ -128,10 +128,10 @@ export default class PokedexInfoOverlay extends Phaser.GameObjects.Container imp
       // generate scrolling effects
       this.descScroll = globalScene.tweens.add({
         targets: this.desc,
-        delay: Utils.fixedInt(2000),
+        delay: fixedInt(2000),
         loop: -1,
-        hold: Utils.fixedInt(2000),
-        duration: Utils.fixedInt((lineCount - 3) * 2000),
+        hold: fixedInt(2000),
+        duration: fixedInt((lineCount - 3) * 2000),
         y: `-=${14.83 * (72 / 96) * (lineCount - 3)}`,
       });
     }
@@ -154,7 +154,7 @@ export default class PokedexInfoOverlay extends Phaser.GameObjects.Container imp
     }
     globalScene.tweens.add({
       targets: this.desc,
-      duration: Utils.fixedInt(125),
+      duration: fixedInt(125),
       ease: "Sine.easeInOut",
       alpha: visible ? 1 : 0,
     });

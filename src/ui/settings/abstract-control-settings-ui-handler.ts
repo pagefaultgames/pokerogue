@@ -1,5 +1,5 @@
 import UiHandler from "#app/ui/ui-handler";
-import type { Mode } from "#app/ui/ui";
+import type { UiMode } from "#enums/ui-mode";
 import type { InterfaceConfig } from "#app/inputs-controller";
 import { addWindow } from "#app/ui/ui-theme";
 import { addTextObject, TextStyle } from "#app/ui/text";
@@ -74,7 +74,7 @@ export default abstract class AbstractControlSettingsUiHandler extends UiHandler
    *
    * @param mode - The UI mode.
    */
-  constructor(mode: Mode | null = null) {
+  constructor(mode: UiMode | null = null) {
     super(mode);
     this.rowsToDisplay = 8;
   }

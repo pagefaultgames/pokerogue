@@ -31,7 +31,7 @@ describe("Abilities - Supreme Overlord", () => {
     basePower = move.power;
     game = new GameManager(phaserGame);
     game.override
-      .battleType("single")
+      .battleStyle("single")
       .enemySpecies(Species.MAGIKARP)
       .enemyLevel(100)
       .startingLevel(1)

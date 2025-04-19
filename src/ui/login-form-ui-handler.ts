@@ -1,8 +1,8 @@
 import type { InputFieldConfig } from "./form-modal-ui-handler";
 import { FormModalUiHandler } from "./form-modal-ui-handler";
 import type { ModalConfig } from "./modal-ui-handler";
-import * as Utils from "../utils";
-import { Mode } from "./ui";
+import { fixedInt } from "#app/utils/common";
+import { UiMode } from "#enums/ui-mode";
 import i18next from "i18next";
 import { addTextObject, TextStyle } from "./text";
 import { addWindow } from "./ui-theme";
@@ -34,7 +34,7 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
   private infoContainer: Phaser.GameObjects.Container;
   private externalPartyBg: Phaser.GameObjects.NineSlice;
   private externalPartyTitle: Phaser.GameObjects.Text;
-  constructor(mode: Mode | null = null) {
+  constructor(mode: UiMode | null = null) {
     super(mode);
   }
 
@@ -146,9 +146,9 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
         // Prevent overlapping overrides on action modification
         this.submitAction = originalLoginAction;
         this.sanitizeInputs();
-        globalScene.ui.setMode(Mode.LOADING, { buttonActions: [] });
+        globalScene.ui.setMode(UiMode.LOADING, { buttonActions: [] });
         const onFail = error => {
-          globalScene.ui.setMode(Mode.LOGIN_FORM, Object.assign(config, { errorMessage: error?.trim() }));
+          globalScene.ui.setMode(UiMode.LOGIN_FORM, Object.assign(config, { errorMessage: error?.trim() }));
           globalScene.ui.playError();
         };
         if (!this.inputs[0].text) {
@@ -215,8 +215,8 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
     });
 
     const onFail = error => {
-      globalScene.ui.setMode(Mode.LOADING, { buttonActions: [] });
-      globalScene.ui.setModeForceTransition(Mode.LOGIN_FORM, Object.assign(config, { errorMessage: error?.trim() }));
+      globalScene.ui.setMode(UiMode.LOADING, { buttonActions: [] });
+      globalScene.ui.setModeForceTransition(UiMode.LOGIN_FORM, Object.assign(config, { errorMessage: error?.trim() }));
       globalScene.ui.playError();
     };
 
@@ -236,7 +236,7 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
             },
           });
         }
-        globalScene.ui.setOverlayMode(Mode.OPTION_SELECT, {
+        globalScene.ui.setOverlayMode(UiMode.OPTION_SELECT, {
           options: options,
           delay: 1000,
         });
@@ -283,7 +283,7 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
     this.externalPartyContainer.setAlpha(0);
     globalScene.tweens.add({
       targets: this.externalPartyContainer,
-      duration: Utils.fixedInt(1000),
+      duration: fixedInt(1000),
       ease: "Sine.easeInOut",
       y: "-=24",
       alpha: 1,
@@ -292,7 +292,7 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
     this.infoContainer.setAlpha(0);
     globalScene.tweens.add({
       targets: this.infoContainer,
-      duration: Utils.fixedInt(1000),
+      duration: fixedInt(1000),
       ease: "Sine.easeInOut",
       y: "-=24",
       alpha: 1,

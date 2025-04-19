@@ -1,6 +1,6 @@
 import { SESSION_ID_COOKIE_NAME } from "#app/constants";
 import { initLoggedInUser } from "#app/account";
-import { initAbilities } from "#app/data/ability";
+import { initAbilities } from "#app/data/abilities/ability";
 import { initBiomes } from "#app/data/balance/biomes";
 import { initEggMoves } from "#app/data/balance/egg-moves";
 import { initPokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
@@ -11,7 +11,7 @@ import { initSpecies } from "#app/data/pokemon-species";
 import { initAchievements } from "#app/system/achv";
 import { initVouchers } from "#app/system/voucher";
 import { initStatsKeys } from "#app/ui/game-stats-ui-handler";
-import { setCookie } from "#app/utils";
+import { setCookie } from "#app/utils/cookies";
 import { blobToString } from "#test/testUtils/gameManagerUtils";
 import { MockConsoleLog } from "#test/testUtils/mocks/mockConsoleLog";
 import { mockContext } from "#test/testUtils/mocks/mockContextCanvas";
@@ -21,6 +21,7 @@ import Phaser from "phaser";
 import InputText from "phaser3-rex-plugins/plugins/inputtext";
 import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import { manageListeners } from "./listenersManager";
+import { initI18n } from "#app/plugins/i18n";
 
 let wasInitialized = false;
 /**
@@ -87,6 +88,7 @@ export function initTestFile() {
   // initSpecies();
   if (!wasInitialized) {
     wasInitialized = true;
+    initI18n();
     initVouchers();
     initAchievements();
     initStatsKeys();

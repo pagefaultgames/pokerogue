@@ -1,7 +1,7 @@
 {
   "name": "pokemon-rogue-battle",
   "private": true,
-  "version": "1.8.2",
+  "version": "1.8.4",
   "type": "module",
   "scripts": {
     "start": "vite",
@@ -33,7 +33,7 @@
     "@hpcc-js/wasm": "^2.22.4",
     "@stylistic/eslint-plugin-ts": "^4.1.0",
     "@types/jsdom": "^21.1.7",
-    "@types/node": "^20.12.13",
+    "@types/node": "^22.13.14",
     "@typescript-eslint/eslint-plugin": "^8.28.0",
     "@typescript-eslint/parser": "^8.28.0",
     "@vitest/coverage-istanbul": "^3.0.9",
@@ -55,6 +55,7 @@
   },
   "dependencies": {
     "@material/material-color-utilities": "^0.2.7",
+    "compare-versions": "^6.1.1",
     "crypto-js": "^4.2.0",
     "i18next": "^24.2.2",
     "i18next-browser-languagedetector": "^8.0.4",
@@ -66,6 +67,6 @@
     "phaser3-rex-plugins": "^1.80.14"
   },
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=22.0.0"
   }
 }

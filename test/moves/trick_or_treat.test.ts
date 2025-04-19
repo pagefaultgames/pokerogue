@@ -25,7 +25,7 @@ describe("Moves - Trick Or Treat", () => {
     game.override
       .moveset([Moves.FORESTS_CURSE, Moves.TRICK_OR_TREAT])
       .ability(Abilities.BALL_FETCH)
-      .battleType("single")
+      .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)

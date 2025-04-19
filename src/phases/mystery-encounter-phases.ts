@@ -25,9 +25,8 @@ import { transitionMysteryEncounterIntroVisuals } from "../data/mystery-encounte
 import { TrainerSlot } from "#enums/trainer-slot";
 import { IvScannerModifier } from "../modifier/modifier";
 import { Phase } from "../phase";
-import { Mode } from "../ui/ui";
-import * as Utils from "../utils";
-import { isNullOrUndefined } from "../utils";
+import { UiMode } from "#enums/ui-mode";
+import { isNullOrUndefined, randSeedItem } from "#app/utils/common";
 
 /**
  * Will handle (in order):
@@ -73,7 +72,7 @@ export class MysteryEncounterPhase extends Phase {
     }
 
     // Initiates encounter dialogue window and option select
-    globalScene.ui.setMode(Mode.MYSTERY_ENCOUNTER, this.optionSelectSettings);
+    globalScene.ui.setMode(UiMode.MYSTERY_ENCOUNTER, this.optionSelectSettings);
   }
 
   /**
@@ -131,7 +130,7 @@ export class MysteryEncounterPhase extends Phase {
     const optionSelectDialogue = globalScene.currentBattle?.mysteryEncounter?.selectedOption?.dialogue;
     if (optionSelectDialogue?.selected && optionSelectDialogue.selected.length > 0) {
       // Handle intermediate dialogue (between player selection event and the onOptionSelect logic)
-      globalScene.ui.setMode(Mode.MESSAGE);
+      globalScene.ui.setMode(UiMode.MESSAGE);
       const selectedDialogue = optionSelectDialogue.selected;
       let i = 0;
       const showNextDialogue = () => {
@@ -168,7 +167,7 @@ export class MysteryEncounterPhase extends Phase {
    * Ends phase
    */
   end() {
-    globalScene.ui.setMode(Mode.MESSAGE).then(() => super.end());
+    globalScene.ui.setMode(UiMode.MESSAGE).then(() => super.end());
   }
 }
 
@@ -387,7 +386,7 @@ export class MysteryEncounterBattlePhase extends Phase {
         const trainer = globalScene.currentBattle.trainer;
         let message: string;
         globalScene.executeWithSeedOffset(
-          () => (message = Utils.randSeedItem(encounterMessages)),
+          () => (message = randSeedItem(encounterMessages)),
           globalScene.currentBattle.mysteryEncounter?.getSeedOffset(),
         );
         message = message!; // tell TS compiler it's defined now
@@ -630,7 +629,7 @@ export class PostMysteryEncounterPhase extends Phase {
         }
 
         i++;
-        globalScene.ui.setMode(Mode.MESSAGE);
+        globalScene.ui.setMode(UiMode.MESSAGE);
         if (title) {
           globalScene.ui.showDialogue(
             text ?? "",

@@ -9,10 +9,6 @@ import { Phase } from "#app/phase";
 import { globalScene } from "#app/global-scene";
 
 export class AddEnemyBuffModifierPhase extends Phase {
-  constructor() {
-    super();
-  }
-
   start() {
     super.start();
 

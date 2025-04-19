@@ -30,7 +30,7 @@ import { PokemonMove } from "#app/field/pokemon";
 import { Moves } from "#enums/moves";
 import { EncounterBattleAnim } from "#app/data/battle-anims";
 import { WeatherType } from "#enums/weather-type";
-import { isNullOrUndefined, randSeedInt } from "#app/utils";
+import { isNullOrUndefined, randSeedInt } from "#app/utils/common";
 import { StatusEffect } from "#enums/status-effect";
 import { queueEncounterMessage } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import {
@@ -46,7 +46,7 @@ import { Abilities } from "#enums/abilities";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { Stat } from "#enums/stat";
-import { Ability } from "#app/data/ability";
+import { Ability } from "#app/data/abilities/ability-class";
 import { FIRE_RESISTANT_ABILITIES } from "#app/data/mystery-encounters/requirements/requirement-groups";
 
 /** the i18n namespace for the encounter */
