@@ -1,6 +1,6 @@
 import { PokemonType } from "#enums/pokemon-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
-import { toDmgValue } from "#app/utils";
+import { toDmgValue } from "#app/utils/common";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";

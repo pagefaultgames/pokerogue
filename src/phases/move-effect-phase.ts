@@ -61,8 +61,8 @@ import {
   PokemonMultiHitModifier,
 } from "#app/modifier/modifier";
 import { PokemonPhase } from "#app/phases/pokemon-phase";
-import { BooleanHolder, isNullOrUndefined, NumberHolder } from "#app/utils";
-import type { nil } from "#app/utils";
+import { BooleanHolder, isNullOrUndefined, NumberHolder } from "#app/utils/common";
+import type { nil } from "#app/utils/common";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import type { Moves } from "#enums/moves";
 import i18next from "i18next";

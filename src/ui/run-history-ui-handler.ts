@@ -1,9 +1,9 @@
 import { globalScene } from "#app/global-scene";
 import { GameModes } from "../game-mode";
 import { TextStyle, addTextObject } from "./text";
-import { Mode } from "./ui";
+import { UiMode } from "#enums/ui-mode";
 import { addWindow } from "./ui-theme";
-import { fixedInt, formatLargeNumber } from "#app/utils";
+import { fixedInt, formatLargeNumber } from "#app/utils/common";
 import type PokemonData from "../system/pokemon-data";
 import MessageUiHandler from "./message-ui-handler";
 import i18next from "i18next";
@@ -40,7 +40,7 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
   private runContainerInitialY: number;
 
   constructor() {
-    super(Mode.RUN_HISTORY);
+    super(UiMode.RUN_HISTORY);
   }
 
   override setup() {
@@ -110,7 +110,7 @@ export default class RunHistoryUiHandler extends MessageUiHandler {
       if (button === Button.ACTION) {
         const cursor = this.cursor + this.scrollCursor;
         if (this.runs[cursor]) {
-          globalScene.ui.setOverlayMode(Mode.RUN_INFO, this.runs[cursor].entryData, RunDisplayMode.RUN_HISTORY, true);
+          globalScene.ui.setOverlayMode(UiMode.RUN_INFO, this.runs[cursor].entryData, RunDisplayMode.RUN_HISTORY, true);
         } else {
           return false;
         }

@@ -5,7 +5,7 @@ import { allMoves, FlinchAttr } from "#app/data/moves/move";
 import { PokemonType } from "#enums/pokemon-type";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { Stat } from "#enums/stat";
-import { toDmgValue } from "#app/utils";
+import { toDmgValue } from "#app/utils/common";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";

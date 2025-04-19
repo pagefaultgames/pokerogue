@@ -3,7 +3,7 @@ import { TrainerType } from "#app/enums/trainer-type";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import { vouchers } from "#app/system/voucher";
 import i18next from "i18next";
-import { randSeedItem } from "#app/utils";
+import { randSeedItem } from "#app/utils/common";
 import { BattlePhase } from "./battle-phase";
 import { ModifierRewardPhase } from "./modifier-reward-phase";
 import { MoneyRewardPhase } from "./money-reward-phase";

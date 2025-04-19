@@ -4,7 +4,7 @@ import CacheBustedLoaderPlugin from "#app/plugins/cache-busted-loader-plugin";
 import { SceneBase } from "#app/scene-base";
 import { WindowVariant, getWindowVariantSuffix } from "#app/ui/ui-theme";
 import { isMobile } from "#app/touch-controls";
-import { localPing, getEnumValues, hasAllLocalizedSprites, getEnumKeys } from "#app/utils";
+import { localPing, getEnumValues, hasAllLocalizedSprites, getEnumKeys } from "#app/utils/common";
 import { initPokemonPrevolutions, initPokemonStarters } from "#app/data/balance/pokemon-evolutions";
 import { initBiomes } from "#app/data/balance/biomes";
 import { initEggMoves } from "#app/data/balance/egg-moves";

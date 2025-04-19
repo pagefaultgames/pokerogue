@@ -3,7 +3,7 @@ import type { BattlerIndex } from "#app/battle";
 import { PERMANENT_STATS, Stat } from "#app/enums/stat";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { getTextColor, TextStyle } from "#app/ui/text";
-import { Mode } from "#app/ui/ui";
+import { UiMode } from "#enums/ui-mode";
 import i18next from "i18next";
 import { PokemonPhase } from "./pokemon-phase";
 
@@ -51,9 +51,9 @@ export class ScanIvsPhase extends PokemonPhase {
         null,
         () => {
           globalScene.ui.setMode(
-            Mode.CONFIRM,
+            UiMode.CONFIRM,
             () => {
-              globalScene.ui.setMode(Mode.MESSAGE);
+              globalScene.ui.setMode(UiMode.MESSAGE);
               globalScene.ui.clearText();
               globalScene.ui
                 .getMessageHandler()
@@ -61,7 +61,7 @@ export class ScanIvsPhase extends PokemonPhase {
                 .then(() => this.end());
             },
             () => {
-              globalScene.ui.setMode(Mode.MESSAGE);
+              globalScene.ui.setMode(UiMode.MESSAGE);
               globalScene.ui.clearText();
               this.end();
             },
