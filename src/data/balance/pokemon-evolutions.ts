@@ -3,7 +3,7 @@ import { Gender } from "#app/data/gender";
 import { PokeballType } from "#enums/pokeball";
 import type Pokemon from "#app/field/pokemon";
 import { PokemonType } from "#enums/pokemon-type";
-import { randSeedInt } from "#app/utils";
+import { randSeedInt } from "#app/utils/common";
 import { WeatherType } from "#enums/weather-type";
 import { Nature } from "#enums/nature";
 import { Biome } from "#enums/biome";
@@ -15,6 +15,7 @@ import { DamageMoneyRewardModifier, ExtraModifierModifier, MoneyMultiplierModifi
 import type { SpeciesStatBoosterModifierType } from "#app/modifier/modifier-type";
 import { speciesStarterCosts } from "./starters";
 import i18next from "i18next";
+import { initI18n } from "#app/plugins/i18n";
 
 export enum SpeciesWildEvolutionDelay {
   NONE,
@@ -95,6 +96,9 @@ export class SpeciesFormEvolution {
   public description = "";
 
   constructor(speciesId: Species, preFormKey: string | null, evoFormKey: string | null, level: number, item: EvolutionItem | null, condition: SpeciesEvolutionCondition | null, wildDelay?: SpeciesWildEvolutionDelay) {
+    if (!i18next.isInitialized) {
+      initI18n();
+    }
     this.speciesId = speciesId;
     this.preFormKey = preFormKey;
     this.evoFormKey = evoFormKey;

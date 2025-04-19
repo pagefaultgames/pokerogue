@@ -1,6 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import { Phase } from "#app/phase";
-import { Mode } from "#app/ui/ui";
+import { UiMode } from "#enums/ui-mode";
 
 export class SelectChallengePhase extends Phase {
   start() {
@@ -8,6 +8,6 @@ export class SelectChallengePhase extends Phase {
 
     globalScene.playBgm("menu");
 
-    globalScene.ui.setMode(Mode.CHALLENGE_SELECT);
+    globalScene.ui.setMode(UiMode.CHALLENGE_SELECT);
   }
 }

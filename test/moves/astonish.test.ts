@@ -27,7 +27,7 @@ describe("Moves - Astonish", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleType("single");
+    game.override.battleStyle("single");
     game.override.moveset([Moves.ASTONISH, Moves.SPLASH]);
     game.override.enemySpecies(Species.BLASTOISE);
     game.override.enemyAbility(Abilities.INSOMNIA);

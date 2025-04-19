@@ -26,7 +26,7 @@ describe("Moves - Will-O-Wisp", () => {
     game.override
       .moveset([Moves.WILL_O_WISP, Moves.SPLASH])
       .ability(Abilities.BALL_FETCH)
-      .battleType("single")
+      .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)

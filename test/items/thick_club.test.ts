@@ -2,7 +2,7 @@ import { Stat } from "#enums/stat";
 import { SpeciesStatBoosterModifier } from "#app/modifier/modifier";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import i18next from "#app/plugins/i18n";
-import { NumberHolder, randInt } from "#app/utils";
+import { NumberHolder, randInt } from "#app/utils/common";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phase from "phaser";
@@ -25,7 +25,7 @@ describe("Items - Thick Club", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
 
-    game.override.battleType("single");
+    game.override.battleStyle("single");
   });
 
   it("THICK_CLUB activates in battle correctly", async () => {

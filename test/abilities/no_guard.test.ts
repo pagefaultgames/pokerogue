@@ -33,7 +33,7 @@ describe("Abilities - No Guard", () => {
   });
 
   it("should make moves always hit regardless of move accuracy", async () => {
-    game.override.battleType("single");
+    game.override.battleStyle("single");
 
     await game.classicMode.startBattle([Species.REGIELEKI]);
 

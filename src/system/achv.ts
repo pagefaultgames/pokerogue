@@ -2,7 +2,7 @@ import type { Modifier } from "typescript";
 import { TurnHeldItemTransferModifier } from "../modifier/modifier";
 import { pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
 import i18next from "i18next";
-import { NumberHolder } from "#app/utils";
+import { NumberHolder } from "#app/utils/common";
 import { PlayerGender } from "#enums/player-gender";
 import type { Challenge } from "#app/data/challenge";
 import {

@@ -7,7 +7,7 @@ import {
   BlockNonDirectDamageAbAttr,
   applyPostWeatherLapseAbAttrs,
   PostWeatherLapseAbAttr,
-} from "#app/data/ability";
+} from "#app/data/abilities/ability";
 import { CommonAnim } from "#app/data/battle-anims";
 import type { Weather } from "#app/data/weather";
 import { getWeatherDamageMessage, getWeatherLapseMessage } from "#app/data/weather";
@@ -15,7 +15,7 @@ import { BattlerTagType } from "#app/enums/battler-tag-type";
 import { WeatherType } from "#app/enums/weather-type";
 import type Pokemon from "#app/field/pokemon";
 import { HitResult } from "#app/field/pokemon";
-import { BooleanHolder, toDmgValue } from "#app/utils";
+import { BooleanHolder, toDmgValue } from "#app/utils/common";
 import { CommonAnimPhase } from "./common-anim-phase";
 
 export class WeatherEffectPhase extends CommonAnimPhase {

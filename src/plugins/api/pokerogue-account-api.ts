@@ -6,7 +6,7 @@ import type {
 } from "#app/@types/PokerogueAccountApi";
 import { SESSION_ID_COOKIE_NAME } from "#app/constants";
 import { ApiBase } from "#app/plugins/api/api-base";
-import { removeCookie, setCookie } from "#app/utils";
+import { removeCookie, setCookie } from "#app/utils/cookies";
 
 /**
  * A wrapper for PokéRogue account API requests.

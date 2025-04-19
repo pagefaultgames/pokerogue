@@ -1,4 +1,4 @@
-import { BattleType } from "#app/battle";
+import { BattleType } from "#enums/battle-type";
 import { getPokeballAtlasKey, getPokeballTintColor } from "#app/data/pokeball";
 import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms";
 import { TrainerSlot } from "#enums/trainer-slot";
@@ -13,7 +13,7 @@ import { PostSummonPhase } from "./post-summon-phase";
 import { GameOverPhase } from "./game-over-phase";
 import { ShinySparklePhase } from "./shiny-sparkle-phase";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
-import { applyPreSummonAbAttrs, PreSummonAbAttr } from "#app/data/ability";
+import { applyPreSummonAbAttrs, PreSummonAbAttr } from "#app/data/abilities/ability";
 import { globalScene } from "#app/global-scene";
 
 export class SummonPhase extends PartyMemberPokemonPhase {

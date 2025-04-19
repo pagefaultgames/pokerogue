@@ -2,7 +2,7 @@ import type { Variant } from "#app/sprites/variant";
 import { getVariantTint, getVariantIcon } from "#app/sprites/variant";
 import { argbFromRgba } from "@material/material-color-utilities";
 import i18next from "i18next";
-import { starterColors } from "#app/battle-scene";
+import { starterColors } from "#app/global-vars/starter-colors";
 import { speciesEggMoves } from "#app/data/balance/egg-moves";
 import { pokemonFormLevelMoves, pokemonSpeciesLevelMoves } from "#app/data/balance/pokemon-level-moves";
 import type { PokemonForm } from "#app/data/pokemon-species";
@@ -16,7 +16,7 @@ import { AbilityAttr, DexAttr, loadStarterPreferences } from "#app/system/game-d
 import MessageUiHandler from "#app/ui/message-ui-handler";
 import PokemonIconAnimHandler, { PokemonIconAnimMode } from "#app/ui/pokemon-icon-anim-handler";
 import { TextStyle, addTextObject } from "#app/ui/text";
-import { Mode } from "#app/ui/ui";
+import { UiMode } from "#enums/ui-mode";
 import { SettingKeyboard } from "#app/system/settings/settings-keyboard";
 import { Passive as PassiveAttr } from "#enums/passive";
 import type { Species } from "#enums/species";
@@ -31,12 +31,12 @@ import {
   getValueReductionCandyCounts,
   getSameSpeciesEggCandyCounts,
 } from "#app/data/balance/starters";
-import { BooleanHolder, fixedInt, getLocalizedSpriteKey, padInt, randIntRange, rgbHexToRgba } from "#app/utils";
+import { BooleanHolder, fixedInt, getLocalizedSpriteKey, padInt, randIntRange, rgbHexToRgba } from "#app/utils/common";
 import type { Nature } from "#enums/nature";
 import { addWindow } from "./ui-theme";
 import type { OptionSelectConfig } from "./abstact-option-select-ui-handler";
 import { FilterText, FilterTextRow } from "./filter-text";
-import { allAbilities } from "#app/data/ability";
+import { allAbilities } from "#app/data/data-lists";
 import { starterPassiveAbilities } from "#app/data/balance/passives";
 import { allMoves } from "#app/data/moves/move";
 import { speciesTmMoves } from "#app/data/balance/tms";
@@ -231,7 +231,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
   private filteredIndices: Species[];
 
   constructor() {
-    super(Mode.POKEDEX);
+    super(UiMode.POKEDEX);
   }
 
   setup() {
@@ -1133,7 +1133,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
     } else if (this.showingTray) {
       if (button === Button.ACTION) {
         const formIndex = this.trayForms[this.trayCursor].formIndex;
-        ui.setOverlayMode(Mode.POKEDEX_PAGE, this.lastSpecies, { form: formIndex }, this.filteredIndices);
+        ui.setOverlayMode(UiMode.POKEDEX_PAGE, this.lastSpecies, { form: formIndex }, this.filteredIndices);
         success = true;
       } else {
         const numberOfForms = this.trayContainers.length;
@@ -1182,7 +1182,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
       }
     } else {
       if (button === Button.ACTION) {
-        ui.setOverlayMode(Mode.POKEDEX_PAGE, this.lastSpecies, null, this.filteredIndices);
+        ui.setOverlayMode(UiMode.POKEDEX_PAGE, this.lastSpecies, null, this.filteredIndices);
         success = true;
       } else {
         switch (button) {
@@ -2268,15 +2268,15 @@ export default class PokedexUiHandler extends MessageUiHandler {
     const ui = this.getUi();
 
     const cancel = () => {
-      ui.setMode(Mode.POKEDEX, "refresh");
+      ui.setMode(UiMode.POKEDEX, "refresh");
       this.clearText();
       this.blockInput = false;
     };
     ui.showText(i18next.t("pokedexUiHandler:confirmExit"), null, () => {
       ui.setModeWithoutClear(
-        Mode.CONFIRM,
+        UiMode.CONFIRM,
         () => {
-          ui.setMode(Mode.POKEDEX, "refresh");
+          ui.setMode(UiMode.POKEDEX, "refresh");
           this.clearText();
           this.clear();
           ui.revertMode();

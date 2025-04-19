@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import type { Arena } from "#app/field/arena";
 import { PokemonType } from "#enums/pokemon-type";
-import { BooleanHolder, NumberHolder, toDmgValue } from "#app/utils";
+import { BooleanHolder, NumberHolder, toDmgValue } from "#app/utils/common";
 import { allMoves } from "#app/data/moves/move";
 import { MoveTarget } from "#enums/MoveTarget";
 import { MoveCategory } from "#enums/MoveCategory";
@@ -18,7 +18,7 @@ import {
   applyAbAttrs,
   applyOnGainAbAttrs,
   applyOnLoseAbAttrs,
-} from "#app/data/ability";
+} from "#app/data/abilities/ability";
 import { Stat } from "#enums/stat";
 import { CommonAnim, CommonBattleAnim } from "#app/data/battle-anims";
 import i18next from "i18next";
