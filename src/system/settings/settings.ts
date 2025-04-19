@@ -957,6 +957,10 @@ export function setSetting(setting: string, value: number): boolean {
                 handler: () => changeLocaleHandler("ca-ES"),
               },
               {
+                label: "Română",
+                handler: () => changeLocaleHandler("ro")
+              },
+              {
                 label: i18next.t("settings:back"),
                 handler: () => cancelHandler(),
               },
