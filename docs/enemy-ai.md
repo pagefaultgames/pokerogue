@@ -75,7 +75,13 @@ In `getNextMove()`, the enemy Pokémon chooses a move to use in the following st
 
 As part of the move selection process, the enemy Pokémon must compute a **target score (TS)** for each legal target for each move in its move pool. The base target score for all moves is a combination of the move's **user benefit score (UBS)** and **target benefit score (TBS)**.
 
-![equation](https://latex.codecogs.com/png.image?%5Cinline%20%5Cdpi%7B100%7D%5Cbg%7Bwhite%7D%5Ctext%7BTS%7D=%5Ctext%7BUBS%7D&plus;%5Ctext%7BTBS%7D%5Ctimes%5Cleft%5C%7B%5Cbegin%7Bmatrix%7D-1&%5Ctext%7Bif%20target%20is%20an%20opponent%7D%5C%5C1&%5Ctext%7Botherwise%7D%5C%5C%5Cend%7Bmatrix%7D%5Cright.)
+$$
+\text{TS} = \text{UBS} + \text{TBS} \times
+\begin{cases}
+-1 & \text{if target is an opponent} \\
+1 & \text{otherwise}
+\end{cases}
+$$
 
 A move's UBS and TBS are computed with the respective functions in the `Move` class:
 
@@ -96,16 +102,35 @@ In addition to the base score from `Move.getTargetBenefitScore()`, attack moves 
 - The move's category (Physical/Special), and whether the user has a higher Attack or Special Attack stat.
 
 More specifically, the following steps are taken to compute the move's `attackScore`:
-1. Compute a multiplier based on the move's type effectiveness: 
+1. Compute a multiplier based on the move's type effectiveness:
 
-   ![typeMultEqn](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D%5Cbg%7Bwhite%7D%5Ctext%7BtypeMult%7D=%5Cleft%5C%7B%5Cbegin%7Bmatrix%7D2&&%5Ctext%7Bif%20move%20is%20super%20effective(or%20better)%7D%5C%5C-2&&%5Ctext%7Botherwise%7D%5C%5C%5Cend%7Bmatrix%7D%5Cright.)
+   $$
+   \text{typeMult} =
+   \begin{cases}
+   2 & \text{if move is super effective (or better)} \\
+   -2 & \text{otherwise}
+   \end{cases}
+   $$
 2. Compute a multiplier based on the move's category and the user's offensive stats:
    1. Compute the user's offensive stat ratio:
-      
-      ![statRatioEqn](https://latex.codecogs.com/png.image?%5Cinline%20%5Cdpi%7B100%7D%5Cbg%7Bwhite%7D%5Ctext%7BstatRatio%7D=%5Cleft%5C%7B%5Cbegin%7Bmatrix%7D%5Cfrac%7B%5Ctext%7BuserSpAtk%7D%7D%7B%5Ctext%7BuserAtk%7D%7D&%5Ctext%7Bif%20move%20is%20physical%7D%5C%5C%5Cfrac%7B%5Ctext%7BuserAtk%7D%7D%7B%5Ctext%7BuserSpAtk%7D%7D&%5Ctext%7Botherwise%7D%5C%5C%5Cend%7Bmatrix%7D%5Cright.)
+
+      $$
+      \text{statRatio} =
+      \begin{cases}
+      \frac{\text{userSpAtk}}{\text{userAtk}} & \text{if move is physical} \\
+      \frac{\text{userAtk}}{\text{userSpAtk}} & \text{otherwise}
+      \end{cases}
+      $$
    2. Compute the stat-based multiplier:
 
-      ![statMultEqn](https://latex.codecogs.com/png.image?%5Cinline%20%5Cdpi%7B100%7D%5Cbg%7Bwhite%7D%5Ctext%7BstatMult%7D=%5Cleft%5C%7B%5Cbegin%7Bmatrix%7D2&%5Ctext%7Bif%20statRatio%7D%5Cle%200.75%5C%5C1.5&%5Ctext%7Bif%5C;%7D0.75%5Cle%5Ctext%7BstatRatio%7D%5Cle%200.875%5C%5C1&%5Ctext%7Botherwise%7D%5C%5C%5Cend%7Bmatrix%7D%5Cright.)
+         $$
+         \text{statMult} =
+         \begin{cases}
+         2 & \text{if statRatio} \leq 0.75 \\
+         1.5 & \text{if } 0.75 \leq \text{statRatio} \leq 0.875 \\
+         1 & \text{otherwise}
+         \end{cases}
+         $$
 3. Calculate the move's `attackScore`:
 
    $\text{attackScore} = (\text{typeMult}\times \text{statMult})+\lfloor \frac{\text{power}}{5} \rfloor$
@@ -125,13 +150,26 @@ The final step to calculate an attack move's target score (TS) is to multiply th
 
 The enemy's target selection for single-target moves works in a very similar way to its move selection. Each potential target is given a **target selection score (TSS)** which is based on the move's [target benefit score](#calculating-move-and-target-scores) for that target:
 
-![TSSEqn](https://latex.codecogs.com/png.image?%5Cinline%20%5Cdpi%7B100%7D%5Cbg%7Bwhite%7D%5Ctext%7BTSS%7D=%5Ctext%7BTBS%7D%5Ctimes%5Cleft%5C%7B%5Cbegin%7Bmatrix%7D-1&%5Ctext%7Bif%20target%20is%20an%20opponent%7D%5C%5C1&%5Ctext%7Botherwise%7D%5C%5C%5Cend%7Bmatrix%7D%5Cright.)
+$$
+\text{TSS} = \text{TBS} \times
+\begin{cases}
+-1 & \text{if target is an opponent} \\
+1 & \text{otherwise}
+\end{cases}
+$$
 
 Once the TSS is calculated for each target, the target is selected as follows:
 1. Sort the targets (indexes) in decreasing order of their target selection scores (or weights). Let $t_i$ be the index of the *i*-th target in the sorted list, and let $w_i$ be that target's corresponding TSS.
 2. Normalize the weights. Let $w_n$ be the lowest-weighted target in the sorted list, then:
-   
-   ![normWeightEqn](https://latex.codecogs.com/png.image?%5Cinline%20%5Cdpi%7B100%7D%5Cbg%7Bwhite%7DW_i=%5Cleft%5C%7B%5Cbegin%7Bmatrix%7Dw_i&plus;%7Cw_n%7C&%5Ctext%7Bif%5C;%7Dw_n%5C;%5Ctext%7Bis%20negative%7D%5C%5Cw_i&%5Ctext%7Botherwise%7D%5C%5C%5Cend%7Bmatrix%7D%5Cright.)
+
+   $$
+   W_i =
+   \begin{cases}
+   w_i + |w_n| & \text{if } w_n \text{ is negative} \\
+   w_i & \text{otherwise}
+   \end{cases}
+   $$
+
 3. Remove all weights from the list such that $W_i < \frac{W_0}{2}$
 4. Generate a random integer $R=\text{rand}(0, W_{\text{total}})$ where $W_{\text{total}}$ is the sum of all the remaining weights after Step 3.
 5. For each target $(t_i, W_i)$,
@@ -172,13 +210,13 @@ Based on the enemy party's matchup scores, whether or not the trainer switches o
 Now that the enemy Pokémon with the best matchup score is on the field (assuming it survives Dachsbun's attack on the last turn), the enemy will now decide to have Excadrill use one of its moves. Assuming all of its moves are usable, we'll go through the target score calculations for each move:
 
 - **Earthquake**: In a single battle, this move is just a 100-power Ground-type physical attack with no additional effects. With no additional benefit score from attributes, the move's base target score against the player's Dachsbun is just the `attackScore` from `AttackMove.getTargetBenefitScore()`. In this case, Earthquake's `attackScore` is given by
-  
+
   $\text{attackScore}=(\text{typeMult}\times \text{statMult}) + \lfloor \frac{\text{power}}{5} \rfloor = -2\times 2 + 20 = 16$
 
   Here, `typeMult` is -2 because the move is not super effective, and `statMult` is 2 because Excadrill's Attack is significantly higher than its Sp. Atk. Accounting for STAB thanks to Excadrill's typing, the final target score for this move is **24**
 
 - **Iron Head**: This move is an 80-power Steel-type physical attack with an additional chance to cause the target to flinch. With these properties, Iron Head has a user benefit score of 0 and a target benefit score given by
-  
+
   $\text{TBS}=\text{getTargetBenefitScore(FlinchAttr)}-\text{attackScore}$
 
   Under its current implementation, the target benefit score of `FlinchAttr` is -5. Calculating the move's `attackScore`, we get:
@@ -198,7 +236,7 @@ Now that the enemy Pokémon with the best matchup score is on the field (assumin
   where `levels` is the number of stat stages added by the attribute (in this case, +2). The final score for this move is **6** (Note: because this move is self-targeted, we don't flip the sign of TBS when computing the target score).
 
 - **Crush Claw**: This move is a 75-power Normal-type physical attack with a 50 percent chance to lower the target's Defense by one stage. The additional effect is implemented by the same `StatStageChangeAttr` as Swords Dance, so we can use the same formulas from before to compute the total TBS and base target score.
-  
+
   $\text{TBS}=\text{getTargetBenefitScore(StatStageChangeAttr)}-\text{attackScore}$
 
   $\text{TBS}=(-4 + 2)-(-2\times 2 + \lfloor \frac{75}{5} \rfloor)=-2-11=-13$

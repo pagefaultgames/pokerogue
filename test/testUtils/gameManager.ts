@@ -347,7 +347,10 @@ export default class GameManager {
     }
   }
 
-  /** Emulate selecting a modifier (item) */
+  /**
+   * Emulate selecting a modifier (item) the next time the {@linkcode SelectModifierPhase} occurs.
+   * Does not actually take anything (in fact, it just skips grabbing an item).
+   */
   doSelectModifier() {
     this.onNextPrompt(
       "SelectModifierPhase",
@@ -421,7 +424,9 @@ export default class GameManager {
     await this.phaseInterceptor.to(CommandPhase);
   }
 
-  /** Emulate selecting a modifier (item) and transition to the next upcoming {@linkcode CommandPhase} */
+  /**
+   * Emulate selecting a modifier (item) and transition to the next upcoming {@linkcode CommandPhase}.
+   */
   async toNextWave() {
     this.doSelectModifier();
 
@@ -512,8 +517,9 @@ export default class GameManager {
   }
 
   /**
-   * Command an in-battle switch to another Pokemon via the main battle menu.
-   * @param pokemonIndex the index of the pokemon in your party to switch to
+   * Command an in-battle switch to another {@linkcode Pokemon} via the main battle menu.
+   * @param pokemonIndex the 0-indexed position of the party pokemon to switch to.
+   * Should generally never be called with 0 as that will just select your current active pokemon.
    */
   doSwitchPokemon(pokemonIndex: number) {
     this.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
@@ -540,7 +546,7 @@ export default class GameManager {
    * of the party UI, where you just need to navigate to a party slot and press
    * Action twice - navigating any menus that come up after you select a party member
    * is not supported.
-   * @param slot the index of the pokemon in your party to switch to
+   * @param slot the 0-indexed position of the pokemon in your party to switch to
    * @param inPhase Which phase to expect the selection to occur in. Typically
    * non-command switch actions happen in SwitchPhase.
    */
@@ -575,7 +581,8 @@ export default class GameManager {
   /**
    * Intercepts `TurnStartPhase` and mocks {@linkcode TurnStartPhase.getSpeedOrder}'s return value.
    * Used to manually modify Pokemon turn order.
-   * Note: This *DOES NOT* account for priority, only speed.
+
+   * Note: This *DOES NOT* account for priority.
    * @param {BattlerIndex[]} order The turn order to set
    * @example
    * ```ts

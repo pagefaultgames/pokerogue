@@ -72,14 +72,16 @@ async function runInteractive() {
 
   const type = typeAnswer.selectedOption.toLowerCase();
   // Convert fileName from kebab-case or camelCase to snake_case
+  // Ex: "Cud Chew/Cud-Chew" --> "cud_chew"
   const fileName = fileNameAnswer.userInput
     .replace(/-+/g, "_") // Convert kebab-case (dashes) to underscores
     .replace(/([a-z])([A-Z])/g, "$1_$2") // Convert camelCase to snake_case
     .replace(/\s+/g, "_") // Replace spaces with underscores
     .toLowerCase(); // Ensure all lowercase
-  // Format the description for the test case
 
+  // Get proper english name for test names and data name for abilities/moves
   const formattedName = fileName.replace(/_/g, " ").replace(/\b\w/g, char => char.toUpperCase());
+  const attrName = fileName.toUpperCase(); // Used for move/ability tests to override with ability/move being tested
   // Determine the directory based on the type
   let dir;
   let description;
@@ -130,8 +132,8 @@ describe("${description}", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([ Moves.SPLASH ])
-      .ability(Abilities.BALL_FETCH)
+      .moveset(Moves.${type === "move" ? attrName : "SPLASH"})
+      .ability(Abilities.${type === "ability" ? attrName : "BALL_FETCH"})
       .battleType("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
