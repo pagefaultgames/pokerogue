@@ -13,7 +13,7 @@ export const signatureSpecies: SignatureSpecies = {
   // Gym Leaders- Kanto
   BROCK: [Species.ONIX, Species.GEODUDE, [Species.KABUTO, Species.OMANYTE], Species.AERODACTYL],
   MISTY: [Species.STARYU, Species.PSYDUCK, Species.WOOPER, Species.LAPRAS],
-  LT_SURGE: [Species.PICHU, Species.VOLTORB, Species.ELEKID, Species.MAGNEMITE],
+  LT_SURGE: [Species.PICHU, Species.VOLTORB, Species.ELEKID, Species.JOLTEON],
   ERIKA: [Species.ODDISH, Species.BELLSPROUT, Species.TANGELA, Species.HOPPIP],
   JANINE: [Species.VENONAT, Species.SPINARAK, Species.ZUBAT, Species.KOFFING],
   SABRINA: [Species.ABRA, Species.MR_MIME, Species.SMOOCHUM, Species.ESPEON],
@@ -46,7 +46,7 @@ export const signatureSpecies: SignatureSpecies = {
   FANTINA: [Species.MISDREAVUS, Species.DRIFLOON, Species.DUSKULL, Species.SPIRITOMB],
   BYRON: [Species.SHIELDON, Species.BRONZOR, Species.ARON, Species.SKARMORY],
   CANDICE: [Species.FROSLASS, Species.SNOVER, Species.SNEASEL, Species.GLACEON],
-  VOLKNER: [Species.ELEKID, Species.SHINX, Species.JOLTEON, Species.ROTOM],
+  VOLKNER: [Species.ELEKID, Species.SHINX, Species.CHINCHOU, Species.ROTOM],
   // Gym Leaders- Unova
   CILAN: [Species.PANSAGE, Species.SNIVY, Species.MARACTUS, Species.FERROSEED],
   CHILI: [Species.PANSEAR, Species.TEPIG, Species.HEATMOR, Species.DARUMAKA],
