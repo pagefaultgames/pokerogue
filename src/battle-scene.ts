@@ -271,7 +271,7 @@ export default class BattleScene extends SceneBase {
    * - `2` - Skip: No level up frame nor message.
    *
    * Modes `1` and `2` are still compatible with stats display, level up, new move, etc.
-   * @default 0 - Uses the default normal experience gain display.
+   * @defaultValue 0
    */
   public expParty: ExpNotification = 0;
   public hpBarSpeed = 0;
