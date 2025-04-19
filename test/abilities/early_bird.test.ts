@@ -28,7 +28,7 @@ describe("Abilities - Early Bird", () => {
       .moveset([Moves.REST, Moves.BELLY_DRUM, Moves.SPLASH])
       .ability(Abilities.EARLY_BIRD)
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH);

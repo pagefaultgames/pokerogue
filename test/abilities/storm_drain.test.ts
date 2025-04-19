@@ -27,7 +27,7 @@ describe("Abilities - Storm Drain", () => {
       .moveset([Moves.SPLASH, Moves.WATER_GUN])
       .ability(Abilities.BALL_FETCH)
       .battleStyle("double")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH);

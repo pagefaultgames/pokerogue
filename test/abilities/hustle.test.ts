@@ -26,7 +26,7 @@ describe("Abilities - Hustle", () => {
     game.override
       .ability(Abilities.HUSTLE)
       .moveset([Moves.TACKLE, Moves.GIGA_DRAIN, Moves.FISSURE])
-      .disableCrits()
+      .criticalHits(false)
       .battleStyle("single")
       .enemyMoveset(Moves.SPLASH)
       .enemySpecies(Species.SHUCKLE)
@@ -75,8 +75,7 @@ describe("Abilities - Hustle", () => {
   });
 
   it("does not affect OHKO moves", async () => {
-    game.override.startingLevel(100);
-    game.override.enemyLevel(30);
+    game.override.startingLevel(100).enemyLevel(30);
 
     await game.classicMode.startBattle([Species.PIKACHU]);
     const pikachu = game.scene.getPlayerPokemon()!;

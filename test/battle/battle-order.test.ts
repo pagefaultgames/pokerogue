@@ -24,10 +24,11 @@ describe("Battle order", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("single");
-    game.override.enemySpecies(Species.MEWTWO);
-    game.override.enemyAbility(Abilities.INSOMNIA);
-    game.override.ability(Abilities.INSOMNIA);
+    game.override
+      .battleStyle("single")
+      .enemySpecies(Species.MEWTWO)
+      .enemyAbility(Abilities.INSOMNIA)
+      .ability(Abilities.INSOMNIA);
     game.override.moveset([Moves.TACKLE]);
   });
 

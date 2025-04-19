@@ -25,7 +25,7 @@ describe("Abilities - Super Luck", () => {
       .moveset([Moves.TACKLE])
       .ability(Abilities.SUPER_LUCK)
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH);

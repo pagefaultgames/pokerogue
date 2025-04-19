@@ -23,15 +23,17 @@ describe("Moves - Rollout", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.disableCrits();
-    game.override.battleStyle("single");
-    game.override.starterSpecies(Species.RATTATA);
-    game.override.ability(Abilities.BALL_FETCH);
-    game.override.enemySpecies(Species.BIDOOF);
-    game.override.enemyAbility(Abilities.BALL_FETCH);
-    game.override.startingLevel(100);
-    game.override.enemyLevel(100);
-    game.override.enemyMoveset(Moves.SPLASH);
+    game.override
+      .criticalHits(false)
+      .battleStyle("single")
+      .starterSpecies(Species.RATTATA)
+      .ability(Abilities.BALL_FETCH);
+    game.override
+      .enemySpecies(Species.BIDOOF)
+      .enemyAbility(Abilities.BALL_FETCH)
+      .startingLevel(100)
+      .enemyLevel(100)
+      .enemyMoveset(Moves.SPLASH);
   });
 
   it("should double it's dmg on sequential uses but reset after 5", async () => {

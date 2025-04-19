@@ -282,14 +282,14 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Force critical hits to always or never occur.
-   * @param crits - `true` to guarantee crits on eligible moves, `false` to disable crits, `null` to disable override.
+   * Force critical hit rolls to always or never suceed.
+   * @param crits - `true` to guarantee crits on eligible moves, `false` to forbid all but guaranteed crits, `null` to disable override
    * Default: `false`
    * @returns `this`
    */
-  public criticalHits(crits: boolean | null = false): this {
+  public criticalHits(crits: boolean | null): this {
     vi.spyOn(Overrides, "CRITICAL_HIT_OVERRIDE", "get").mockReturnValue(crits);
-    this.log(`Critical hits set to ${crits ? "always" : crits !== null ? "never" : "randomly"} occur!`);
+    this.log(`Critical hit rolls set to ${crits ? "always" : crits !== null ? "never" : "randomly"} succeed!`);
     return this;
   }
 

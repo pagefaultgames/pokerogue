@@ -27,7 +27,7 @@ describe("Moves - Upper Hand", () => {
       .moveset(Moves.UPPER_HAND)
       .ability(Abilities.BALL_FETCH)
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset(Moves.QUICK_ATTACK)

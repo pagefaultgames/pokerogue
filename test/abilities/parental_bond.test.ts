@@ -26,14 +26,12 @@ describe("Abilities - Parental Bond", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("single");
-    game.override.disableCrits();
-    game.override.ability(Abilities.PARENTAL_BOND);
-    game.override.enemySpecies(Species.SNORLAX);
-    game.override.enemyAbility(Abilities.FUR_COAT);
-    game.override.enemyMoveset(Moves.SPLASH);
-    game.override.startingLevel(100);
-    game.override.enemyLevel(100);
+    game.override
+      .battleStyle("single")
+      .criticalHits(false)
+      .ability(Abilities.PARENTAL_BOND)
+      .enemySpecies(Species.SNORLAX);
+    game.override.enemyAbility(Abilities.FUR_COAT).enemyMoveset(Moves.SPLASH).startingLevel(100).enemyLevel(100);
   });
 
   it("should add second strike to attack move", async () => {
@@ -61,8 +59,7 @@ describe("Abilities - Parental Bond", () => {
   });
 
   it("should apply secondary effects to both strikes", async () => {
-    game.override.moveset([Moves.POWER_UP_PUNCH]);
-    game.override.enemySpecies(Species.AMOONGUSS);
+    game.override.moveset([Moves.POWER_UP_PUNCH]).enemySpecies(Species.AMOONGUSS);
 
     await game.classicMode.startBattle([Species.MAGIKARP]);
 
@@ -148,8 +145,7 @@ describe("Abilities - Parental Bond", () => {
   });
 
   it("should not apply multiplier to counter moves", async () => {
-    game.override.moveset([Moves.COUNTER]);
-    game.override.enemyMoveset([Moves.TACKLE]);
+    game.override.moveset([Moves.COUNTER]).enemyMoveset([Moves.TACKLE]);
 
     await game.classicMode.startBattle([Species.SHUCKLE]);
 
@@ -167,9 +163,7 @@ describe("Abilities - Parental Bond", () => {
   });
 
   it("should not apply to multi-target moves", async () => {
-    game.override.battleStyle("double");
-    game.override.moveset([Moves.EARTHQUAKE]);
-    game.override.passiveAbility(Abilities.LEVITATE);
+    game.override.battleStyle("double").moveset([Moves.EARTHQUAKE]).passiveAbility(Abilities.LEVITATE);
 
     await game.classicMode.startBattle([Species.MAGIKARP, Species.FEEBAS]);
 
@@ -237,8 +231,7 @@ describe("Abilities - Parental Bond", () => {
   });
 
   it("Moves boosted by this ability and Multi-Lens should strike 3 times", async () => {
-    game.override.moveset([Moves.TACKLE]);
-    game.override.startingHeldItems([{ name: "MULTI_LENS", count: 1 }]);
+    game.override.moveset([Moves.TACKLE]).startingHeldItems([{ name: "MULTI_LENS", count: 1 }]);
 
     await game.classicMode.startBattle([Species.MAGIKARP]);
 
@@ -252,8 +245,7 @@ describe("Abilities - Parental Bond", () => {
   });
 
   it("Seismic Toss boosted by this ability and Multi-Lens should strike 3 times", async () => {
-    game.override.moveset([Moves.SEISMIC_TOSS]);
-    game.override.startingHeldItems([{ name: "MULTI_LENS", count: 1 }]);
+    game.override.moveset([Moves.SEISMIC_TOSS]).startingHeldItems([{ name: "MULTI_LENS", count: 1 }]);
 
     await game.classicMode.startBattle([Species.MAGIKARP]);
 
@@ -378,8 +370,7 @@ describe("Abilities - Parental Bond", () => {
   });
 
   it("should not cause user to hit into King's Shield more than once", async () => {
-    game.override.moveset([Moves.TACKLE]);
-    game.override.enemyMoveset([Moves.KINGS_SHIELD]);
+    game.override.moveset([Moves.TACKLE]).enemyMoveset([Moves.KINGS_SHIELD]);
 
     await game.classicMode.startBattle([Species.MAGIKARP]);
 
@@ -393,8 +384,7 @@ describe("Abilities - Parental Bond", () => {
   });
 
   it("should not cause user to hit into Storm Drain more than once", async () => {
-    game.override.moveset([Moves.WATER_GUN]);
-    game.override.enemyAbility(Abilities.STORM_DRAIN);
+    game.override.moveset([Moves.WATER_GUN]).enemyAbility(Abilities.STORM_DRAIN);
 
     await game.classicMode.startBattle([Species.MAGIKARP]);
 

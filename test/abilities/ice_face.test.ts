@@ -30,10 +30,10 @@ describe("Abilities - Ice Face", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("single");
-    game.override.enemySpecies(Species.EISCUE);
-    game.override.enemyAbility(Abilities.ICE_FACE);
-    game.override.moveset([Moves.TACKLE, Moves.ICE_BEAM, Moves.TOXIC_THREAD, Moves.HAIL]);
+    game.override.battleStyle("single").enemySpecies(Species.EISCUE);
+    game.override
+      .enemyAbility(Abilities.ICE_FACE)
+      .moveset([Moves.TACKLE, Moves.ICE_BEAM, Moves.TOXIC_THREAD, Moves.HAIL]);
   });
 
   it("takes no damage from physical move and transforms to Noice", async () => {
@@ -51,8 +51,7 @@ describe("Abilities - Ice Face", () => {
   });
 
   it("takes no damage from the first hit of multihit physical move and transforms to Noice", async () => {
-    game.override.moveset([Moves.SURGING_STRIKES]);
-    game.override.enemyLevel(1);
+    game.override.moveset([Moves.SURGING_STRIKES]).enemyLevel(1);
     await game.classicMode.startBattle([Species.HITMONLEE]);
 
     game.move.select(Moves.SURGING_STRIKES);
@@ -106,8 +105,7 @@ describe("Abilities - Ice Face", () => {
   });
 
   it("transforms to Ice Face when Hail or Snow starts", async () => {
-    game.override.moveset([Moves.QUICK_ATTACK]);
-    game.override.enemyMoveset([Moves.HAIL, Moves.HAIL, Moves.HAIL, Moves.HAIL]);
+    game.override.moveset([Moves.QUICK_ATTACK]).enemyMoveset([Moves.HAIL, Moves.HAIL, Moves.HAIL, Moves.HAIL]);
 
     await game.classicMode.startBattle([Species.MAGIKARP]);
 
@@ -128,8 +126,7 @@ describe("Abilities - Ice Face", () => {
   });
 
   it("transforms to Ice Face when summoned on arena with active Snow or Hail", async () => {
-    game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
-    game.override.moveset([Moves.SNOWSCAPE]);
+    game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]).moveset([Moves.SNOWSCAPE]);
 
     await game.classicMode.startBattle([Species.EISCUE, Species.NINJASK]);
 
@@ -155,8 +152,7 @@ describe("Abilities - Ice Face", () => {
   });
 
   it("will not revert to its Ice Face if there is already Hail when it changes into Noice", async () => {
-    game.override.enemySpecies(Species.SHUCKLE);
-    game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
+    game.override.enemySpecies(Species.SHUCKLE).enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
 
     await game.classicMode.startBattle([Species.EISCUE]);
 
@@ -199,9 +195,7 @@ describe("Abilities - Ice Face", () => {
   });
 
   it("reverts to Ice Face on arena reset", async () => {
-    game.override.startingWave(4);
-    game.override.startingLevel(4);
-    game.override.enemySpecies(Species.MAGIKARP);
+    game.override.startingWave(4).startingLevel(4).enemySpecies(Species.MAGIKARP);
     game.override.starterForms({
       [Species.EISCUE]: noiceForm,
     });

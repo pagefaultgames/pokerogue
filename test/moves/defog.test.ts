@@ -26,7 +26,7 @@ describe("Moves - Defog", () => {
       .moveset([Moves.MIST, Moves.SAFEGUARD, Moves.SPLASH])
       .ability(Abilities.BALL_FETCH)
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(Species.SHUCKLE)
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset([Moves.DEFOG, Moves.GROWL]);

@@ -7,7 +7,6 @@ import { Moves } from "#enums/moves";
 import { Abilities } from "#enums/abilities";
 import { PokeballType } from "#app/enums/pokeball";
 import { Gender } from "#app/data/gender";
-import { BerryPhase } from "#app/phases/berry-phase";
 
 describe("Abilities - Illusion", () => {
   let phaserGame: Phaser.Game;
@@ -25,13 +24,14 @@ describe("Abilities - Illusion", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("single");
-    game.override.enemySpecies(Species.ZORUA);
-    game.override.enemyAbility(Abilities.ILLUSION);
-    game.override.enemyMoveset(Moves.TACKLE);
-    game.override.enemyHeldItems([{ name: "WIDE_LENS", count: 3 }]);
-
-    game.override.moveset([Moves.WORRY_SEED, Moves.SOAK, Moves.TACKLE]);
+    game.override
+      .battleStyle("single")
+      .enemySpecies(Species.ZORUA)
+      .enemyAbility(Abilities.ILLUSION)
+      .enemyMoveset(Moves.TACKLE);
+    game.override
+      .enemyHeldItems([{ name: "WIDE_LENS", count: 3 }])
+      .moveset([Moves.WORRY_SEED, Moves.SOAK, Moves.TACKLE]);
     game.override.startingHeldItems([{ name: "WIDE_LENS", count: 3 }]);
   });
 
@@ -105,10 +105,11 @@ describe("Abilities - Illusion", () => {
   });
 
   it("does not break from indirect damage", async () => {
-    game.override.enemySpecies(Species.GIGALITH);
-    game.override.enemyAbility(Abilities.SAND_STREAM);
-    game.override.enemyMoveset(Moves.WILL_O_WISP);
-    game.override.moveset([Moves.FLARE_BLITZ]);
+    game.override
+      .enemySpecies(Species.GIGALITH)
+      .enemyAbility(Abilities.SAND_STREAM)
+      .enemyMoveset(Moves.WILL_O_WISP)
+      .moveset([Moves.FLARE_BLITZ]);
 
     await game.classicMode.startBattle([Species.ZOROARK, Species.AZUMARILL]);
 

@@ -26,7 +26,7 @@ describe("Abilities - Trace", () => {
       .moveset([Moves.SPLASH])
       .ability(Abilities.TRACE)
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH);

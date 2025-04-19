@@ -28,7 +28,7 @@ describe("Items - Scope Lens", () => {
       .moveset([Moves.POUND])
       .startingHeldItems([{ name: "SCOPE_LENS" }])
       .battleStyle("single")
-      .disableCrits();
+      .criticalHits(false);
   }, 20000);
 
   it("should raise CRIT stage by 1", async () => {

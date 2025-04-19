@@ -162,8 +162,7 @@ describe("Abilities - Imposter", () => {
   });
 
   it("should stay transformed with the correct form after reload", async () => {
-    game.override.moveset([Moves.ABSORB]);
-    game.override.enemySpecies(Species.UNOWN);
+    game.override.moveset([Moves.ABSORB]).enemySpecies(Species.UNOWN);
     await game.classicMode.startBattle([Species.DITTO]);
 
     const enemy = game.scene.getEnemyPokemon()!;

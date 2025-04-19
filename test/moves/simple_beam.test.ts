@@ -25,7 +25,7 @@ describe("Moves - Simple Beam", () => {
       .moveset([Moves.SPLASH, Moves.SIMPLE_BEAM])
       .ability(Abilities.BALL_FETCH)
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH);

@@ -27,12 +27,13 @@ describe("Moves - Clangorous Soul", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.starterSpecies(Species.MAGIKARP);
-    game.override.enemySpecies(Species.SNORLAX);
-    game.override.startingLevel(100);
-    game.override.enemyLevel(100);
-    game.override.moveset([Moves.CLANGOROUS_SOUL]);
-    game.override.enemyMoveset(Moves.SPLASH);
+    game.override
+      .starterSpecies(Species.MAGIKARP)
+      .enemySpecies(Species.SNORLAX)
+      .startingLevel(100)
+      .enemyLevel(100)
+      .moveset([Moves.CLANGOROUS_SOUL])
+      .enemyMoveset(Moves.SPLASH);
   });
 
   //Bulbapedia Reference: https://bulbapedia.bulbagarden.net/wiki/Clangorous_Soul_(move)

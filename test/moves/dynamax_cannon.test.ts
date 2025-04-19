@@ -29,16 +29,15 @@ describe("Moves - Dynamax Cannon", () => {
     dynamaxCannon = allMoves[Moves.DYNAMAX_CANNON];
     game = new GameManager(phaserGame);
 
-    game.override.moveset([dynamaxCannon.id]);
-    game.override.startingLevel(200);
+    game.override.moveset([dynamaxCannon.id]).startingLevel(200);
 
     // Note that, for Waves 1-10, the level cap is 10
-    game.override.startingWave(1);
-    game.override.battleStyle("single");
-    game.override.disableCrits();
-
-    game.override.enemySpecies(Species.MAGIKARP);
-    game.override.enemyMoveset([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
+    game.override
+      .startingWave(1)
+      .battleStyle("single")
+      .criticalHits(false)
+      .enemySpecies(Species.MAGIKARP)
+      .enemyMoveset([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
 
     vi.spyOn(dynamaxCannon, "calculateBattlePower");
   });
