@@ -14,7 +14,7 @@ import { GameManagerHelper } from "#test/testUtils/helpers/gameManagerHelper";
 import { vi } from "vitest";
 
 /**
- * Helper to handle a Pokemon's move
+ * Helper to help with move-related operations.
  */
 export class MoveHelper extends GameManagerHelper {
   /**

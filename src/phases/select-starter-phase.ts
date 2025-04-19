@@ -36,13 +36,14 @@ export class SelectStarterPhase extends Phase {
 
   /**
    * Initialize starters before starting the first battle
-   * @param starters {@linkcode Pokemon} with which to start the first battle
+   * @param starters - Array of {@linkcode Starter}s with which to start the battle
    */
   initBattle(starters: Starter[]) {
     const party = globalScene.getPlayerParty();
     const loadPokemonAssets: Promise<void>[] = [];
     starters.forEach((starter: Starter, i: number) => {
       if (!i && Overrides.STARTER_SPECIES_OVERRIDE) {
+        // Override first starter species if applicable
         starter.species = getPokemonSpecies(Overrides.STARTER_SPECIES_OVERRIDE as Species);
       }
       const starterProps = globalScene.gameData.getSpeciesDexAttrProps(starter.species, starter.dexAttr);

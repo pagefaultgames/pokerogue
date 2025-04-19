@@ -133,7 +133,7 @@ describe("${description}", () => {
       .moveset([ Moves.SPLASH ])
       .ability(Abilities.BALL_FETCH)
       .battleType("single")
-      .disableCrits()
+      .criticalHits()
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH);
