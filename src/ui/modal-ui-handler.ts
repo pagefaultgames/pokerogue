@@ -181,7 +181,7 @@ export abstract class ModalUiHandler extends UiHandler {
 
   /**
    * Adds a hover effect to a game object which changes the cursor to a `pointer` and tints it slighly
-   * @param gameObject the game object to add hover events/effects to
+   * @param gameObject - the game object to add hover events/effects to
    */
   protected addInteractionHoverEffect(
     gameObject: Phaser.GameObjects.Image | Phaser.GameObjects.NineSlice | Phaser.GameObjects.Sprite,

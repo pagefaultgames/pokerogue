@@ -66,8 +66,8 @@ export default class TargetSelectUiHandler extends UiHandler {
 
   /**
    * Determines what value to assign the main cursor based on the previous turn's target or the user's status
-   * @param cursorN the cursor associated with the user's field index
-   * @param user the Pokemon using the move
+   * @param cursorN - the cursor associated with the user's field index
+   * @param user - the Pokemon using the move
    */
   resetCursor(cursorN: number, user: Pokemon): void {
     if (!isNullOrUndefined(cursorN)) {

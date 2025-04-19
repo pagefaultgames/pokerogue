@@ -142,7 +142,7 @@ export default class PokemonHatchInfoContainer extends PokemonInfoContainer {
   /**
    * Updates the info container with the appropriate dex data and starter entry from the hatchInfo
    * Also updates the displayed name, number, egg moves and main animated sprite for the pokemon
-   * @param hatchInfo The EggHatchData of the pokemon / new hatch to show
+   * @param hatchInfo - The EggHatchData of the pokemon / new hatch to show
    */
   showHatchInfo(hatchInfo: EggHatchData) {
     this.pokemonEggMovesContainer.setVisible(true);

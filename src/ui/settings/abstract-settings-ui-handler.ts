@@ -341,7 +341,7 @@ export default class AbstractSettingsUiHandler extends MessageUiHandler {
 
   /**
    * Activate the specified setting if it is activatable.
-   * @param setting The setting to activate.
+   * @param setting - The setting to activate.
    * @returns Whether the setting was successfully activated.
    */
   activateSetting(setting: Setting): boolean {

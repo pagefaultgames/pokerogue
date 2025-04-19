@@ -110,7 +110,7 @@ const applyMigrators = (migrators: readonly SaveMigrator[], data: SaveData, save
  * Note that no transforms act on the {@linkcode data} if its version matches
  * the current version or if there are no migrations made between its version up
  * to the current version.
- * @param data {@linkcode SystemSaveData}
+ * @param data
  * @see {@link SystemVersionConverter}
  */
 export function applySystemVersionMigration(data: SystemSaveData) {
@@ -130,7 +130,7 @@ export function applySystemVersionMigration(data: SystemSaveData) {
  * Note that no transforms act on the {@linkcode data} if its version matches
  * the current version or if there are no migrations made between its version up
  * to the current version.
- * @param data {@linkcode SessionSaveData}
+ * @param data
  * @see {@link SessionVersionConverter}
  */
 export function applySessionVersionMigration(data: SessionSaveData) {
@@ -153,7 +153,7 @@ export function applySessionVersionMigration(data: SessionSaveData) {
  * Note that no transforms act on the {@linkcode data} if its version matches
  * the current version or if there are no migrations made between its version up
  * to the current version.
- * @param data Settings data object
+ * @param data - Settings data object
  * @see {@link SettingsVersionConverter}
  */
 // biome-ignore lint/complexity/noBannedTypes: TODO - refactor settings

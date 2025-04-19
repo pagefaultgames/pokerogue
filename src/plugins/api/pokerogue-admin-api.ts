@@ -13,7 +13,7 @@ export class PokerogueAdminApi extends ApiBase {
 
   /**
    * Links an account to a discord id.
-   * @param params The {@linkcode LinkAccountToDiscordIdRequest} to send
+   * @param params - The {@linkcode LinkAccountToDiscordIdRequest} to send
    * @returns `null` if successful, error message if not
    */
   public async linkAccountToDiscord(params: LinkAccountToDiscordIdRequest) {
@@ -37,7 +37,7 @@ export class PokerogueAdminApi extends ApiBase {
 
   /**
    * Unlinks an account from a discord id.
-   * @param params The {@linkcode UnlinkAccountFromDiscordIdRequest} to send
+   * @param params - The {@linkcode UnlinkAccountFromDiscordIdRequest} to send
    * @returns `null` if successful, error message if not
    */
   public async unlinkAccountFromDiscord(params: UnlinkAccountFromDiscordIdRequest) {
@@ -61,7 +61,7 @@ export class PokerogueAdminApi extends ApiBase {
 
   /**
    * Links an account to a google id.
-   * @param params The {@linkcode LinkAccountToGoogledIdRequest} to send
+   * @param params - The {@linkcode LinkAccountToGoogledIdRequest} to send
    * @returns `null` if successful, error message if not
    */
   public async linkAccountToGoogleId(params: LinkAccountToGoogledIdRequest) {
@@ -85,7 +85,7 @@ export class PokerogueAdminApi extends ApiBase {
 
   /**
    * Unlinks an account from a google id.
-   * @param params The {@linkcode UnlinkAccountFromGoogledIdRequest} to send
+   * @param params - The {@linkcode UnlinkAccountFromGoogledIdRequest} to send
    * @returns `null` if successful, error message if not
    */
   public async unlinkAccountFromGoogleId(params: UnlinkAccountFromGoogledIdRequest) {
@@ -109,7 +109,7 @@ export class PokerogueAdminApi extends ApiBase {
 
   /**
    * Search an account.
-   * @param params The {@linkcode SearchAccountRequest} to send
+   * @param params - The {@linkcode SearchAccountRequest} to send
    * @returns an array of {@linkcode SearchAccountResponse} and error. Both can be `undefined`
    */
   public async searchAccount(params: SearchAccountRequest): Promise<[data?: SearchAccountResponse, error?: string]> {

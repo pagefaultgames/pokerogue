@@ -709,7 +709,7 @@ if (isLocal) {
 
 /**
  * Return the index of a Setting
- * @param key SettingKey
+ * @param key - SettingKey
  * @returns index or -1 if doesn't exist
  */
 export function settingIndex(key: string) {
@@ -727,8 +727,8 @@ export function resetSettings() {
 
 /**
  * Updates a setting
- * @param setting string ideally from SettingKeys
- * @param value value to update setting with
+ * @param setting - string ideally from SettingKeys
+ * @param value - value to update setting with
  * @returns true if successful, false if not
  */
 export function setSetting(setting: string, value: number): boolean {

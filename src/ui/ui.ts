@@ -250,7 +250,7 @@ export default class UI extends Phaser.GameObjects.Container {
 
   /**
    * Process a player input of a button (delivering it to the current UI handler for processing)
-   * @param button The {@linkcode Button} being inputted
+   * @param button - The {@linkcode Button} being inputted
    * @returns true if the input attempt succeeds
    */
   processInput(button: Button): boolean {

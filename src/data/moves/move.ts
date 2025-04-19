@@ -184,7 +184,7 @@ export default class Move implements Localizable {
 
   /**
    * Get all move attributes that match `attrType`
-   * @param attrType any attribute that extends {@linkcode MoveAttr}
+   * @param attrType - any attribute that extends {@linkcode MoveAttr}
    * @returns Array of attributes that match `attrType`, Empty Array if none match.
    */
   getAttrs<T extends MoveAttr>(attrType: Constructor<T>): T[] {
@@ -193,7 +193,7 @@ export default class Move implements Localizable {
 
   /**
    * Check if a move has an attribute that matches `attrType`
-   * @param attrType any attribute that extends {@linkcode MoveAttr}
+   * @param attrType - any attribute that extends {@linkcode MoveAttr}
    * @returns true if the move has attribute `attrType`
    */
   hasAttr<T extends MoveAttr>(attrType: Constructor<T>): boolean {
@@ -212,8 +212,8 @@ export default class Move implements Localizable {
   /**
    * Adds a new MoveAttr to the move (appends to the attr array)
    * if the MoveAttr also comes with a condition, also adds that to the conditions array: {@linkcode MoveCondition}
-   * @param AttrType {@linkcode MoveAttr} the constructor of a MoveAttr class
-   * @param args the args needed to instantiate a the given class
+   * @param AttrType - The constructor of a MoveAttr class
+   * @param args - The args needed to instantiate a the given class
    * @returns the called object {@linkcode Move}
    */
   attr<T extends Constructor<MoveAttr>>(AttrType: T, ...args: ConstructorParameters<T>): this {
@@ -234,7 +234,7 @@ export default class Move implements Localizable {
    * Adds a new MoveAttr to the move (appends to the attr array)
    * if the MoveAttr also comes with a condition, also adds that to the conditions array: {@linkcode MoveCondition}
    * Almost identical to {@link attr}, except you are passing in a MoveAttr object, instead of a constructor and it's arguments
-   * @param attrAdd {@linkcode MoveAttr} the attribute to add
+   * @param attrAdd - The attribute to add
    * @returns the called object {@linkcode Move}
    */
   addAttr(attrAdd: MoveAttr): this {
@@ -252,8 +252,8 @@ export default class Move implements Localizable {
 
   /**
    * Sets the move target of this move
-   * @param moveTarget {@linkcode MoveTarget} the move target to set
-   * @returns the called object {@linkcode Move}
+   * @param moveTarget - the move target to set
+   * @returns `this`
    */
   target(moveTarget: MoveTarget): this {
     this.moveTarget = moveTarget;
@@ -261,9 +261,8 @@ export default class Move implements Localizable {
   }
 
   /**
-   * Getter function that returns if this Move has a MoveFlag
-   * @param flag {@linkcode MoveFlags} to check
-   * @returns boolean
+   * Return whether this Move has a MoveFlag
+   * @param flag - The flag to check
    */
   hasFlag(flag: MoveFlags): boolean {
     // internally it is taking the bitwise AND (MoveFlags are represented as bit-shifts) and returning False if result is 0 and true otherwise
@@ -271,8 +270,7 @@ export default class Move implements Localizable {
   }
 
   /**
-   * Getter function that returns if the move hits multiple targets
-   * @returns boolean
+   * Return whether the move hits multiple targets
    */
   isMultiTarget(): boolean {
     switch (this.moveTarget) {
@@ -291,8 +289,7 @@ export default class Move implements Localizable {
   }
 
   /**
-   * Getter function that returns if the move targets the user or its ally
-   * @returns boolean
+   * Return whether the move targets the user or its ally
    */
   isAllyTarget(): boolean {
     switch (this.moveTarget) {
@@ -312,12 +309,11 @@ export default class Move implements Localizable {
   }
 
   /**
-   * Checks if the move is immune to certain types.
+   * Check whether if a type is immune to the move
    * Currently looks at cases of Grass types with powder moves and Dark types with moves affected by Prankster.
-   * @param {Pokemon} user the source of this move
-   * @param {Pokemon} target the target of this move
-   * @param {PokemonType} type the type of the move's target
-   * @returns boolean
+   * @param user - The source of this move
+   * @param target - The target of this move
+   * @param type - The type of the move's target
    */
   isTypeImmune(user: Pokemon, target: Pokemon, type: PokemonType): boolean {
     if (this.moveTarget === MoveTarget.USER) {
@@ -341,9 +337,9 @@ export default class Move implements Localizable {
 
   /**
    * Checks if the move would hit its target's Substitute instead of the target itself.
-   * @param user The {@linkcode Pokemon} using this move
-   * @param target The {@linkcode Pokemon} targeted by this move
-   * @returns `true` if the move can bypass the target's Substitute; `false` otherwise.
+   * @param user - The {@linkcode Pokemon} using this move
+   * @param target - The {@linkcode Pokemon} targeted by this move
+   * @returns whether the move can bypass the target's Substitute
    */
   hitsSubstitute(user: Pokemon, target?: Pokemon): boolean {
     if ([ MoveTarget.USER, MoveTarget.USER_SIDE, MoveTarget.ENEMY_SIDE, MoveTarget.BOTH_SIDES ].includes(this.moveTarget)
@@ -362,8 +358,7 @@ export default class Move implements Localizable {
 
   /**
    * Adds a move condition to the move
-   * @param condition {@linkcode MoveCondition} or {@linkcode MoveConditionFunc}, appends to conditions array a new MoveCondition object
-   * @returns the called object {@linkcode Move}
+   * @param condition - The condition to append to the condition array
    */
   condition(condition: MoveCondition | MoveConditionFunc): this {
     if (typeof condition === "function") {
@@ -402,8 +397,8 @@ export default class Move implements Localizable {
 
   /**
    * Sets the flags of the move
-   * @param flag {@linkcode MoveFlags}
-   * @param on a boolean, if True, then "ORs" the flag onto existing ones, if False then "XORs" the flag onto existing ones
+   * @param flag - The Flag to set
+   * @param on - a boolean, if True, then "ORs" the flag onto existing ones, if False then "XORs" the flag onto existing ones
    */
   private setFlag(flag: MoveFlags, on: boolean): void {
     // bitwise OR and bitwise XOR respectively
@@ -416,7 +411,7 @@ export default class Move implements Localizable {
 
   /**
    * Sets the {@linkcode MoveFlags.MAKES_CONTACT} flag for the calling Move
-   * @param setFlag Default `true`, set to `false` if the move doesn't make contact
+   * @param setFlag - Default `true`, set to `false` if the move doesn't make contact
    * @see {@linkcode Abilities.STATIC}
    * @returns The {@linkcode Move} that called this function
    */
@@ -628,10 +623,10 @@ export default class Move implements Localizable {
    * will not consider {@linkcode Abilities.WIND_RIDER | Wind Rider }.
    *
    * To simply check whether the move has a flag, use {@linkcode hasFlag}.
-   * @param flag {@linkcode MoveFlags} MoveFlag to check on user and/or target
-   * @param user {@linkcode Pokemon} the Pokemon using the move
-   * @param target {@linkcode Pokemon} the Pokemon receiving the move
-   * @param isFollowUp (defaults to `false`) `true` if the move was used as a follow up
+   * @param flag - MoveFlag to check on user and/or target
+   * @param user - the Pokemon using the move
+   * @param target - the Pokemon receiving the move
+   * @param isFollowUp - (defaults to `false`) `true` if the move was used as a follow up
    * @returns boolean
    * @see {@linkcode hasFlag}
    */
@@ -672,9 +667,9 @@ export default class Move implements Localizable {
 
   /**
    * Applies each {@linkcode MoveCondition} function of this move to the params, determines if the move can be used prior to calling each attribute's apply()
-   * @param user {@linkcode Pokemon} to apply conditions to
-   * @param target {@linkcode Pokemon} to apply conditions to
-   * @param move {@linkcode Move} to apply conditions to
+   * @param user - to apply conditions to
+   * @param target - to apply conditions to
+   * @param move - to apply conditions to
    * @returns boolean: false if any of the apply()'s return false, else true
    */
   applyConditions(user: Pokemon, target: Pokemon, move: Move): boolean {
@@ -689,9 +684,9 @@ export default class Move implements Localizable {
 
   /**
    * Sees if a move has a custom failure text (by looking at each {@linkcode MoveAttr} of this move)
-   * @param user {@linkcode Pokemon} using the move
-   * @param target {@linkcode Pokemon} target of the move
-   * @param move {@linkcode Move} with this attribute
+   * @param user - using the move
+   * @param target - target of the move
+   * @param move - with this attribute
    * @returns string of the custom failure text, or `null` if it uses the default text ("But it failed!")
    */
   getFailedText(user: Pokemon, target: Pokemon, move: Move): string | undefined {
@@ -705,9 +700,9 @@ export default class Move implements Localizable {
 
   /**
    * Calculates the userBenefitScore across all the attributes and conditions
-   * @param user {@linkcode Pokemon} using the move
-   * @param target {@linkcode Pokemon} receiving the move
-   * @param move {@linkcode Move} using the move
+   * @param user - using the move
+   * @param target - receiving the move
+   * @param move - using the move
    * @returns integer representing the total benefitScore
    */
   getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
@@ -726,9 +721,9 @@ export default class Move implements Localizable {
 
   /**
    * Calculates the targetBenefitScore across all the attributes
-   * @param user {@linkcode Pokemon} using the move
-   * @param target {@linkcode Pokemon} receiving the move
-   * @param move {@linkcode Move} using the move
+   * @param user - using the move
+   * @param target - receiving the move
+   * @param move - using the move
    * @returns integer representing the total benefitScore
    */
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
@@ -749,8 +744,8 @@ export default class Move implements Localizable {
   /**
    * Calculates the accuracy of a move in battle based on various conditions and attributes.
    *
-   * @param user {@linkcode Pokemon} The Pokémon using the move.
-   * @param target {@linkcode Pokemon} The Pokémon being targeted by the move.
+   * @param user - The Pokémon using the move.
+   * @param target - The Pokémon being targeted by the move.
    * @returns The calculated accuracy of the move.
    */
   calculateBattleAccuracy(user: Pokemon, target: Pokemon, simulated: boolean = false) {
@@ -787,8 +782,8 @@ export default class Move implements Localizable {
   /**
    * Calculates the power of a move in battle based on various conditions and attributes.
    *
-   * @param source {@linkcode Pokemon} The Pokémon using the move.
-   * @param target {@linkcode Pokemon} The Pokémon being targeted by the move.
+   * @param source - The Pokémon using the move.
+   * @param target - The Pokémon being targeted by the move.
    * @returns The calculated power of the move.
    */
   calculateBattlePower(source: Pokemon, target: Pokemon, simulated: boolean = false): number {
@@ -902,8 +897,8 @@ export default class Move implements Localizable {
    * by enhancing effects.
    * Currently used for {@link https://bulbapedia.bulbagarden.net/wiki/Parental_Bond_(Ability) | Parental Bond}
    * and {@linkcode PokemonMultiHitModifier | Multi-Lens}.
-   * @param user The {@linkcode Pokemon} using the move
-   * @param restrictSpread `true` if the enhancing effect
+   * @param user - The {@linkcode Pokemon} using the move
+   * @param restrictSpread - `true` if the enhancing effect
    * should not affect multi-target moves (default `false`)
    */
   canBeMultiStrikeEnhanced(user: Pokemon, restrictSpread: boolean = false): boolean {
@@ -957,9 +952,9 @@ export class AttackMove extends Move {
 
   /**
    * Compute the benefit score of this move based on the offensive stat used and the move's power.
-   * @param user The Pokemon using the move
-   * @param target The Pokemon targeted by the move
-   * @param move The move being used
+   * @param user - The Pokemon using the move
+   * @param target - The Pokemon targeted by the move
+   * @param move - The move being used
    * @returns The benefit score of using this move
    */
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
@@ -1021,8 +1016,7 @@ function ChargeMove<TBase extends SubMove>(Base: TBase) {
      * Sets the text to be displayed during this move's charging phase.
      * References to the user Pokemon should be written as "{USER}", and
      * references to the target Pokemon should be written as "{TARGET}".
-     * @param chargeText the text to set
-     * @returns this {@linkcode Move} (for chaining API purposes)
+     * @param chargeText - the text to set
      */
     chargeText(chargeText: string): this {
       this._chargeText = chargeText;
@@ -1031,8 +1025,8 @@ function ChargeMove<TBase extends SubMove>(Base: TBase) {
 
     /**
      * Queues the charge text to display to the player
-     * @param user the {@linkcode Pokemon} using this move
-     * @param target the {@linkcode Pokemon} targeted by this move (optional)
+     * @param user - the {@linkcode Pokemon} using this move
+     * @param target - the {@linkcode Pokemon} targeted by this move (optional)
      */
     showChargeText(user: Pokemon, target?: Pokemon): void {
       globalScene.queueMessage(this._chargeText
@@ -1042,8 +1036,8 @@ function ChargeMove<TBase extends SubMove>(Base: TBase) {
     }
 
     /**
-     * Gets all charge attributes of the given attribute type.
-     * @param attrType any attribute that extends {@linkcode MoveAttr}
+     * Get all charge attributes of the given attribute type.
+     * @param attrType - An attribute to check against
      * @returns Array of attributes that match `attrType`, or an empty array if
      * no matches are found.
      */
@@ -1052,9 +1046,9 @@ function ChargeMove<TBase extends SubMove>(Base: TBase) {
     }
 
     /**
-     * Checks if this move has an attribute of the given type.
-     * @param attrType any attribute that extends {@linkcode MoveAttr}
-     * @returns `true` if a matching attribute is found; `false` otherwise
+     * Check whether this move has an attribute of the given type.
+     * @param attrType - any attribute that extends {@linkcode MoveAttr}
+     * @returns whether the matching attribute is found
      */
     hasChargeAttr<T extends MoveAttr>(attrType: Constructor<T>): boolean {
       return this.chargeAttrs.some((attr) => attr instanceof attrType);
@@ -1062,9 +1056,8 @@ function ChargeMove<TBase extends SubMove>(Base: TBase) {
 
     /**
      * Adds an attribute to this move to be applied during the move's charging phase
-     * @param ChargeAttrType the type of {@linkcode MoveAttr} being added
-     * @param args the parameters to construct the given {@linkcode MoveAttr} with
-     * @returns this {@linkcode Move} (for chaining API purposes)
+     * @param ChargeAttrType - The type of {@linkcode MoveAttr} being added
+     * @param args - The parameters to construct the given {@linkcode MoveAttr} with
      */
     chargeAttr<T extends Constructor<MoveAttr>>(ChargeAttrType: T, ...args: ConstructorParameters<T>): this {
       const chargeAttr = new ChargeAttrType(...args);
@@ -1082,7 +1075,6 @@ export type ChargingMove = ChargingAttackMove | ChargingSelfStatusMove;
 
 /**
  * Base class defining all {@linkcode Move} Attributes
- * @abstract
  * @see {@linkcode apply}
  */
 export abstract class MoveAttr {
@@ -1097,10 +1089,10 @@ export abstract class MoveAttr {
    * Applies move attributes
    * @see {@linkcode applyMoveAttrsInternal}
    * @virtual
-   * @param user {@linkcode Pokemon} using the move
-   * @param target {@linkcode Pokemon} target of the move
-   * @param move {@linkcode Move} with this attribute
-   * @param args Set of unique arguments needed by this attribute
+   * @param user - using the move
+   * @param target - target of the move
+   * @param move - with this attribute
+   * @param args - Set of unique arguments needed by this attribute
    * @returns true if application of the ability succeeds
    */
   apply(user: Pokemon | null, target: Pokemon | null, move: Move, args: any[]): boolean {
@@ -1117,9 +1109,9 @@ export abstract class MoveAttr {
 
   /**
    * @virtual
-   * @param user {@linkcode Pokemon} using the move
-   * @param target {@linkcode Pokemon} target of the move
-   * @param move {@linkcode Move} with this attribute
+   * @param user - using the move
+   * @param target - target of the move
+   * @param move - with this attribute
    * @returns the string representing failure of this {@linkcode Move}
    */
   getFailedText(user: Pokemon, target: Pokemon, move: Move): string | undefined {
@@ -1162,7 +1154,6 @@ interface MoveEffectAttrOptions {
 }
 
 /** Base class defining all Move Effect Attributes
- * @extends MoveAttr
  * @see {@linkcode apply}
  */
 export class MoveEffectAttr extends MoveAttr {
@@ -1224,10 +1215,10 @@ export class MoveEffectAttr extends MoveAttr {
   /**
    * Determines whether the {@linkcode Move}'s effects are valid to {@linkcode apply}
    * @virtual
-   * @param user {@linkcode Pokemon} using the move
-   * @param target {@linkcode Pokemon} target of the move
-   * @param move {@linkcode Move} with this attribute
-   * @param args Set of unique arguments needed by this attribute
+   * @param user - using the move
+   * @param target - target of the move
+   * @param move - with this attribute
+   * @param args - Set of unique arguments needed by this attribute
    * @returns true if basic application of the ability attribute should be possible
    */
   canApply(user: Pokemon, target: Pokemon, move: Move, args?: any[]) {
@@ -1244,10 +1235,10 @@ export class MoveEffectAttr extends MoveAttr {
   /**
    * Gets the used move's additional effect chance.
    * Chance is modified by {@linkcode MoveEffectChanceMultiplierAbAttr} and {@linkcode IgnoreMoveEffectsAbAttr}.
-   * @param user {@linkcode Pokemon} using this move
-   * @param target {@linkcode Pokemon | Target} of this move
-   * @param move {@linkcode Move} being used
-   * @param selfEffect `true` if move targets user.
+   * @param user - using this move
+   * @param target - of this move
+   * @param move - being used
+   * @param selfEffect - `true` if move targets user.
    * @returns Move effect chance value.
    */
   getMoveChance(user: Pokemon, target: Pokemon, move: Move, selfEffect?: Boolean, showAbility?: Boolean): number {
@@ -1361,7 +1352,6 @@ export class PreMoveMessageAttr extends MoveAttr {
  * Attribute for moves that can be conditionally interrupted to be considered to
  * have failed before their "useMove" message is displayed. Currently used by
  * Focus Punch.
- * @extends MoveAttr
  */
 export class PreUseInterruptAttr extends MoveAttr {
   protected message?: string | ((user: Pokemon, target: Pokemon, move: Move) => string);
@@ -1370,7 +1360,7 @@ export class PreUseInterruptAttr extends MoveAttr {
 
   /**
    * Create a new MoveInterruptedMessageAttr.
-   * @param message The message to display when the move is interrupted, or a function that formats the message based on the user, target, and move.
+   * @param message - The message to display when the move is interrupted, or a function that formats the message based on the user, target, and move.
    */
   constructor(message?: string | ((user: Pokemon, target: Pokemon, move: Move) => string), conditionFunc?: MoveConditionFunc) {
     super();
@@ -1380,9 +1370,9 @@ export class PreUseInterruptAttr extends MoveAttr {
 
   /**
    * Message to display when a move is interrupted.
-   * @param user {@linkcode Pokemon} using the move
-   * @param target {@linkcode Pokemon} target of the move
-   * @param move {@linkcode Move} with this attribute
+   * @param user - using the move
+   * @param target - target of the move
+   * @param move - with this attribute
    */
   override apply(user: Pokemon, target: Pokemon, move: Move): boolean {
     return this.conditionFunc(user, target, move);
@@ -1390,9 +1380,9 @@ export class PreUseInterruptAttr extends MoveAttr {
 
   /**
    * Message to display when a move is interrupted.
-   * @param user {@linkcode Pokemon} using the move
-   * @param target {@linkcode Pokemon} target of the move
-   * @param move {@linkcode Move} with this attribute
+   * @param user - using the move
+   * @param target - target of the move
+   * @param move - with this attribute
    */
   override getFailedText(user: Pokemon, target: Pokemon, move: Move): string | undefined {
     if (this.message && this.conditionFunc(user, target, move)) {
@@ -1408,7 +1398,6 @@ export class PreUseInterruptAttr extends MoveAttr {
 /**
  * Attribute for Status moves that take attack type effectiveness
  * into consideration (i.e. {@linkcode https://bulbapedia.bulbagarden.net/wiki/Thunder_Wave_(move) | Thunder Wave})
- * @extends MoveAttr
  */
 export class RespectAttackTypeImmunityAttr extends MoveAttr { }
 
@@ -1678,7 +1667,6 @@ export class RecoilAttr extends MoveEffectAttr {
 
 /**
  * Attribute used for moves which self KO the user regardless if the move hits a target
- * @extends MoveEffectAttr
  * @see {@linkcode apply}
  **/
 export class SacrificialAttr extends MoveEffectAttr {
@@ -1688,11 +1676,11 @@ export class SacrificialAttr extends MoveEffectAttr {
 
   /**
    * Deals damage to the user equal to their current hp
-   * @param user {@linkcode Pokemon} that used the move
-   * @param target {@linkcode Pokemon} target of the move
-   * @param move {@linkcode Move} with this attribute
-   * @param args N/A
-   * @returns true if the function succeeds
+   * @param user - The pokemon using the move
+   * @param target - The target of the move (unused)
+   * @param move - The move with the attribute
+   * @param args - unused
+   * @returns whether the attribute was successfully applied
    **/
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     user.damageAndUpdate(user.hp, { result: HitResult.INDIRECT, ignoreSegments: true });
@@ -1711,7 +1699,6 @@ export class SacrificialAttr extends MoveEffectAttr {
 
 /**
  * Attribute used for moves which self KO the user but only if the move hits a target
- * @extends MoveEffectAttr
  * @see {@linkcode apply}
  **/
 export class SacrificialAttrOnHit extends MoveEffectAttr {
@@ -1721,10 +1708,10 @@ export class SacrificialAttrOnHit extends MoveEffectAttr {
 
   /**
    * Deals damage to the user equal to their current hp if the move lands
-   * @param user {@linkcode Pokemon} that used the move
-   * @param target {@linkcode Pokemon} target of the move
-   * @param move {@linkcode Move} with this attribute
-   * @param args N/A
+   * @param user - that used the move
+   * @param target - target of the move
+   * @param move - with this attribute
+   * @param args - N/A
    * @returns true if the function succeeds
    **/
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -1750,7 +1737,6 @@ export class SacrificialAttrOnHit extends MoveEffectAttr {
 /**
  * Attribute used for moves which cut the user's Max HP in half.
  * Triggers using {@linkcode MoveEffectTrigger.POST_TARGET}.
- * @extends MoveEffectAttr
  * @see {@linkcode apply}
  */
 export class HalfSacrificialAttr extends MoveEffectAttr {
@@ -1760,10 +1746,10 @@ export class HalfSacrificialAttr extends MoveEffectAttr {
 
   /**
    * Cut's the user's Max HP in half and displays the appropriate recoil message
-   * @param user {@linkcode Pokemon} that used the move
-   * @param target N/A
-   * @param move {@linkcode Move} with this attribute
-   * @param args N/A
+   * @param user - that used the move
+   * @param target - N/A
+   * @param move - with this attribute
+   * @param args - N/A
    * @returns true if the function succeeds
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -1792,7 +1778,6 @@ export class HalfSacrificialAttr extends MoveEffectAttr {
 /**
  * Attribute to put in a {@link https://bulbapedia.bulbagarden.net/wiki/Substitute_(doll) | Substitute Doll}
  * for the user.
- * @extends MoveEffectAttr
  * @see {@linkcode apply}
  */
 export class AddSubstituteAttr extends MoveEffectAttr {
@@ -1810,10 +1795,10 @@ export class AddSubstituteAttr extends MoveEffectAttr {
 
   /**
    * Removes 1/4 of the user's maximum HP (rounded down) to create a substitute for the user
-   * @param user the {@linkcode Pokemon} that used the move.
-   * @param target n/a
-   * @param move the {@linkcode Move} with this attribute.
-   * @param args n/a
+   * @param user - the {@linkcode Pokemon} that used the move.
+   * @param target - n/a
+   * @param move - the {@linkcode Move} with this attribute.
+   * @param args - n/a
    * @returns true if the attribute successfully applies, false otherwise
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -1840,7 +1825,7 @@ export class AddSubstituteAttr extends MoveEffectAttr {
 
   /**
    * Get the substitute-specific failure message if one should be displayed.
-   * @param user The pokemon using the move.
+   * @param user - The pokemon using the move.
    * @returns The substitute-specific failure message if the conditions apply, otherwise `undefined`
    */
   getFailedText(user: Pokemon, _target: Pokemon, _move: Move): string | undefined {
@@ -1854,7 +1839,6 @@ export class AddSubstituteAttr extends MoveEffectAttr {
 
 /**
  * Heals the user or target by {@linkcode healRatio} depending on the value of {@linkcode selfTarget}
- * @extends MoveEffectAttr
  * @see {@linkcode apply}
  */
 export class HealAttr extends MoveEffectAttr {
@@ -1892,7 +1876,6 @@ export class HealAttr extends MoveEffectAttr {
 
 /**
  * Cures the user's party of non-volatile status conditions, ie. Heal Bell, Aromatherapy
- * @extends MoveEffectAttr
  * @see {@linkcode apply}
  */
 export class PartyStatusCureAttr extends MoveEffectAttr {
@@ -1932,8 +1915,8 @@ export class PartyStatusCureAttr extends MoveEffectAttr {
 
   /**
    * Tries to cure the status of the given {@linkcode Pokemon}
-   * @param pokemon The {@linkcode Pokemon} to cure.
-   * @param userId The ID of the (move) {@linkcode Pokemon | user}.
+   * @param pokemon - The {@linkcode Pokemon} to cure.
+   * @param userId - The ID of the (move) {@linkcode Pokemon | user}.
    */
   public cureStatus(pokemon: Pokemon, userId: number) {
     if (!pokemon.isOnField() || pokemon.id === userId) { // user always cures its own status, regardless of ability
@@ -1952,7 +1935,6 @@ export class PartyStatusCureAttr extends MoveEffectAttr {
 
 /**
  * Applies damage to the target's ally equal to 1/16 of that ally's max HP.
- * @extends MoveEffectAttr
  */
 export class FlameBurstAttr extends MoveEffectAttr {
   /**
@@ -2031,7 +2013,6 @@ export class SacrificialFullRestoreAttr extends SacrificialAttr {
 /**
  * Attribute used for moves which ignore type-based debuffs from weather, namely Hydro Steam.
  * Called during damage calculation after getting said debuff from getAttackTypeMultiplier in the Pokemon class.
- * @extends MoveAttr
  * @see {@linkcode apply}
  */
 export class IgnoreWeatherTypeDebuffAttr extends MoveAttr {
@@ -2044,10 +2025,10 @@ export class IgnoreWeatherTypeDebuffAttr extends MoveAttr {
   }
   /**
    * Changes the type-based weather modifier if this move's power would be reduced by it
-   * @param user {@linkcode Pokemon} that used the move
-   * @param target N/A
-   * @param move {@linkcode Move} with this attribute
-   * @param args [0] {@linkcode NumberHolder} for arenaAttackTypeMultiplier
+   * @param user - that used the move
+   * @param target - N/A
+   * @param move - with this attribute
+   * @param args - [0] {@linkcode NumberHolder} for arenaAttackTypeMultiplier
    * @returns true if the function succeeds
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -2110,7 +2091,6 @@ export class SandHealAttr extends WeatherHealAttr {
 /**
  * Heals the target or the user by either {@linkcode normalHealRatio} or {@linkcode boostedHealRatio}
  * depending on the evaluation of {@linkcode condition}
- * @extends HealAttr
  * @see {@linkcode apply}
  */
 export class BoostHealAttr extends HealAttr {
@@ -2129,10 +2109,10 @@ export class BoostHealAttr extends HealAttr {
   }
 
   /**
-   * @param user {@linkcode Pokemon} using the move
-   * @param target {@linkcode Pokemon} target of the move
-   * @param move {@linkcode Move} with this attribute
-   * @param args N/A
+   * @param user - using the move
+   * @param target - target of the move
+   * @param move - with this attribute
+   * @param args - N/A
    * @returns true if the move was successful
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -2144,15 +2124,14 @@ export class BoostHealAttr extends HealAttr {
 
 /**
  * Heals the target only if it is the ally
- * @extends HealAttr
  * @see {@linkcode apply}
  */
 export class HealOnAllyAttr extends HealAttr {
   /**
-   * @param user {@linkcode Pokemon} using the move
-   * @param target {@linkcode Pokemon} target of the move
-   * @param move {@linkcode Move} with this attribute
-   * @param args N/A
+   * @param user - using the move
+   * @param target - target of the move
+   * @param move - with this attribute
+   * @param args - N/A
    * @returns true if the function succeeds
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -2168,7 +2147,6 @@ export class HealOnAllyAttr extends HealAttr {
 /**
  * Heals user as a side effect of a move that hits a target.
  * Healing is based on {@linkcode healRatio} * the amount of damage dealt or a stat of the target.
- * @extends MoveEffectAttr
  * @see {@linkcode apply}
  * @see {@linkcode getUserBenefitScore}
  */
@@ -2186,10 +2164,10 @@ export class HitHealAttr extends MoveEffectAttr {
    * Heals the user the determined amount and possibly displays a message about regaining health.
    * If the target has the {@linkcode ReverseDrainAbAttr}, all healing is instead converted
    * to damage to the user.
-   * @param user {@linkcode Pokemon} using this move
-   * @param target {@linkcode Pokemon} target of this move
-   * @param move {@linkcode Move} being used
-   * @param args N/A
+   * @param user - using this move
+   * @param target - target of this move
+   * @param move - being used
+   * @param args - N/A
    * @returns true if the function succeeds
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -2221,9 +2199,9 @@ export class HitHealAttr extends MoveEffectAttr {
 
   /**
    * Used by the Enemy AI to rank an attack based on a given user
-   * @param user {@linkcode Pokemon} using this move
-   * @param target {@linkcode Pokemon} target of this move
-   * @param move {@linkcode Move} being used
+   * @param user - using this move
+   * @param target - target of this move
+   * @param move - being used
    * @returns an integer. Higher means enemy is more likely to use that move.
    */
   getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
@@ -2239,7 +2217,6 @@ export class HitHealAttr extends MoveEffectAttr {
  * Attribute used for moves that change priority in a turn given a condition,
  * e.g. Grassy Glide
  * Called when move order is calculated in {@linkcode TurnStartPhase}.
- * @extends MoveAttr
  * @see {@linkcode apply}
  */
 export class IncrementMovePriorityAttr extends MoveAttr {
@@ -2257,10 +2234,10 @@ export class IncrementMovePriorityAttr extends MoveAttr {
 
   /**
    * Increments move priority by set amount if condition passes
-   * @param user {@linkcode Pokemon} using this move
-   * @param target {@linkcode Pokemon} target of this move
-   * @param move {@linkcode Move} being used
-   * @param args [0] {@linkcode NumberHolder} for move priority.
+   * @param user - using this move
+   * @param target - target of this move
+   * @param move - being used
+   * @param args - [0] {@linkcode NumberHolder} for move priority.
    * @returns true if function succeeds
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -2278,7 +2255,6 @@ export class IncrementMovePriorityAttr extends MoveAttr {
  *
  * Applied at the beginning of {@linkcode MoveEffectPhase}.
  *
- * @extends MoveAttr
  * @see {@linkcode apply}
  */
 export class MultiHitAttr extends MoveAttr {
@@ -2303,10 +2279,10 @@ export class MultiHitAttr extends MoveAttr {
    * Set the hit count of an attack based on this attribute instance's {@linkcode MultiHitType}.
    * If the target has an immunity to this attack's types, the hit count will always be 1.
    *
-   * @param user {@linkcode Pokemon} that used the attack
-   * @param target {@linkcode Pokemon} targeted by the attack
-   * @param move {@linkcode Move} being used
-   * @param args [0] {@linkcode NumberHolder} storing the hit count of the attack
+   * @param user - that used the attack
+   * @param target - targeted by the attack
+   * @param move - being used
+   * @param args - [0] {@linkcode NumberHolder} storing the hit count of the attack
    * @returns True
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -2326,8 +2302,8 @@ export class MultiHitAttr extends MoveAttr {
    * Calculate the number of hits that an attack should have given this attribute's
    * {@linkcode MultiHitType}.
    *
-   * @param user {@linkcode Pokemon} using the attack
-   * @param target {@linkcode Pokemon} targeted by the attack
+   * @param user - using the attack
+   * @param target - targeted by the attack
    * @returns The number of hits this attack should deal
    */
   getHitCount(user: Pokemon, target: Pokemon): number {
@@ -2596,10 +2572,10 @@ export class RemoveHeldItemAttr extends MoveEffectAttr {
 
   /**
    *
-   * @param user {@linkcode Pokemon} that used the move
-   * @param target Target {@linkcode Pokemon} that the moves applies to
-   * @param move {@linkcode Move} that is used
-   * @param args N/A
+   * @param user - that used the move
+   * @param target - Target {@linkcode Pokemon} that the moves applies to
+   * @param move - that is used
+   * @param args - N/A
    * @returns {boolean} True if an item was removed
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -2669,10 +2645,10 @@ export class EatBerryAttr extends MoveEffectAttr {
   }
   /**
    * Causes the target to eat a berry.
-   * @param user {@linkcode Pokemon} Pokemon that used the move
-   * @param target {@linkcode Pokemon} Pokemon that will eat a berry
-   * @param move {@linkcode Move} The move being used
-   * @param args Unused
+   * @param user - Pokemon that used the move
+   * @param target - Pokemon that will eat a berry
+   * @param move - The move being used
+   * @param args - Unused
    * @returns {boolean} true if the function succeeds
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -2722,10 +2698,10 @@ export class StealEatBerryAttr extends EatBerryAttr {
   }
   /**
    * User steals a random berry from the target and then eats it.
-   * @param {Pokemon} user Pokemon that used the move and will eat the stolen berry
-   * @param {Pokemon} target Pokemon that will have its berry stolen
-   * @param {Move} move Move being used
-   * @param {any[]} args Unused
+   * @param user - Pokemon that used the move and will eat the stolen berry
+   * @param target - Pokemon that will have its berry stolen
+   * @param move - Move being used
+   * @param args - Unused
    * @returns {boolean} true if the function succeeds
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -2755,7 +2731,6 @@ export class StealEatBerryAttr extends EatBerryAttr {
 
 /**
  * Move attribute that signals that the move should cure a status effect
- * @extends MoveEffectAttr
  * @see {@linkcode apply()}
  */
 export class HealStatusEffectAttr extends MoveEffectAttr {
@@ -2772,9 +2747,9 @@ export class HealStatusEffectAttr extends MoveEffectAttr {
   }
 
   /**
-   * @param user {@linkcode Pokemon} source of the move
-   * @param target {@linkcode Pokemon} target of the move
-   * @param move the {@linkcode Move} being used
+   * @param user - source of the move
+   * @param target - target of the move
+   * @param move - the {@linkcode Move} being used
    * @returns true if the status is cured
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -2837,15 +2812,14 @@ export class BypassSleepAttr extends MoveAttr {
 /**
  * Attribute used for moves that bypass the burn damage reduction of physical moves, currently only facade
  * Called during damage calculation
- * @extends MoveAttr
  * @see {@linkcode apply}
  */
 export class BypassBurnDamageReductionAttr extends MoveAttr {
   /** Prevents the move's damage from being reduced by burn
-   * @param user N/A
-   * @param target N/A
-   * @param move {@linkcode Move} with this attribute
-   * @param args [0] {@linkcode BooleanHolder} for burnDamageReductionCancelled
+   * @param user - N/A
+   * @param target - N/A
+   * @param move - with this attribute
+   * @param args - [0] {@linkcode BooleanHolder} for burnDamageReductionCancelled
    * @returns true if the function succeeds
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -2947,7 +2921,6 @@ export class OneHitKOAttr extends MoveAttr {
 /**
  * Attribute that allows charge moves to resolve in 1 turn under a given condition.
  * Should only be used for {@linkcode ChargingMove | ChargingMoves} as a `chargeAttr`.
- * @extends MoveAttr
  */
 export class InstantChargeAttr extends MoveAttr {
   /** The condition in which the move with this attribute instantly charges */
@@ -2960,9 +2933,9 @@ export class InstantChargeAttr extends MoveAttr {
 
   /**
    * Flags the move with this attribute as instantly charged if this attribute's condition is met.
-   * @param user the {@linkcode Pokemon} using the move
-   * @param target n/a
-   * @param move the {@linkcode Move} associated with this attribute
+   * @param user - the {@linkcode Pokemon} using the move
+   * @param target - n/a
+   * @param move - the {@linkcode Move} associated with this attribute
    * @param args
    *  - `[0]` a {@linkcode BooleanHolder | BooleanHolder} for the "instant charge" flag
    * @returns `true` if the instant charge condition is met; `false` otherwise.
@@ -2984,7 +2957,6 @@ export class InstantChargeAttr extends MoveAttr {
 /**
  * Attribute that allows charge moves to resolve in 1 turn while specific {@linkcode WeatherType | Weather}
  * is active. Should only be used for {@linkcode ChargingMove | ChargingMoves} as a `chargeAttr`.
- * @extends InstantChargeAttr
  */
 export class WeatherInstantChargeAttr extends InstantChargeAttr {
   constructor(weatherTypes: WeatherType[]) {
@@ -3010,10 +2982,9 @@ export class OverrideMoveEffectAttr extends MoveAttr {
 /**
  * Attack Move that doesn't hit the turn it is played and doesn't allow for multiple
  * uses on the same target. Examples are Future Sight or Doom Desire.
- * @extends OverrideMoveEffectAttr
- * @param tagType The {@linkcode ArenaTagType} that will be placed on the field when the move is used
- * @param chargeAnim The {@linkcode ChargeAnim | Charging Animation} used for the move
- * @param chargeText The text to display when the move is used
+ * @param tagType - The {@linkcode ArenaTagType} that will be placed on the field when the move is used
+ * @param chargeAnim - The {@linkcode ChargeAnim | Charging Animation} used for the move
+ * @param chargeText - The text to display when the move is used
  */
 export class DelayedAttackAttr extends OverrideMoveEffectAttr {
   public tagType: ArenaTagType;
@@ -3055,7 +3026,6 @@ export class DelayedAttackAttr extends OverrideMoveEffectAttr {
 /**
  * Attribute that cancels the associated move's effects when set to be combined with the user's ally's
  * subsequent move this turn. Used for Grass Pledge, Water Pledge, and Fire Pledge.
- * @extends OverrideMoveEffectAttr
  */
 export class AwaitCombinedPledgeAttr extends OverrideMoveEffectAttr {
   constructor() {
@@ -3064,9 +3034,9 @@ export class AwaitCombinedPledgeAttr extends OverrideMoveEffectAttr {
   /**
    * If the user's ally is set to use a different move with this attribute,
    * defer this move's effects for a combined move on the ally's turn.
-   * @param user the {@linkcode Pokemon} using this move
-   * @param target n/a
-   * @param move the {@linkcode Move} being used
+   * @param user - the {@linkcode Pokemon} using this move
+   * @param target - n/a
+   * @param move - the {@linkcode Move} being used
    * @param args
    * - [0] a {@linkcode BooleanHolder} indicating whether the move's base
    * effects should be overridden this turn.
@@ -3110,7 +3080,6 @@ export class AwaitCombinedPledgeAttr extends OverrideMoveEffectAttr {
 
 /**
  * Set of optional parameters that may be applied to stat stage changing effects
- * @extends MoveEffectAttrOptions
  * @see {@linkcode StatStageChangeAttr}
  */
 interface StatStageChangeAttrOptions extends MoveEffectAttrOptions {
@@ -3123,12 +3092,11 @@ interface StatStageChangeAttrOptions extends MoveEffectAttrOptions {
 /**
  * Attribute used for moves that change stat stages
  *
- * @param stats {@linkcode BattleStat} Array of stat(s) to change
- * @param stages How many stages to change the stat(s) by, [-6, 6]
- * @param selfTarget `true` if the move is self-targetting
- * @param options {@linkcode StatStageChangeAttrOptions} Container for any optional parameters for this attribute.
+ * @param stats - Array of stat(s) to change
+ * @param stages - How many stages to change the stat(s) by, [-6, 6]
+ * @param selfTarget - `true` if the move is self-targetting
+ * @param options - Container for any optional parameters for this attribute.
  *
- * @extends MoveEffectAttr
  * @see {@linkcode apply}
  */
 export class StatStageChangeAttr extends MoveEffectAttr {
@@ -3173,10 +3141,10 @@ export class StatStageChangeAttr extends MoveEffectAttr {
 
   /**
    * Attempts to change stats of the user or target (depending on value of selfTarget) if conditions are met
-   * @param user {@linkcode Pokemon} the user of the move
-   * @param target {@linkcode Pokemon} the target of the move
-   * @param move {@linkcode Move} the move
-   * @param args unused
+   * @param user - the user of the move
+   * @param target - the target of the move
+   * @param move - the move
+   * @param args - unused
    * @returns whether stat stages were changed
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args?: any[]): boolean {
@@ -3574,7 +3542,6 @@ export class ResetStatsAttr extends MoveEffectAttr {
 /**
  * Attribute used for status moves, specifically Heart, Guard, and Power Swap,
  * that swaps the user's and target's corresponding stat stages.
- * @extends MoveEffectAttr
  * @see {@linkcode apply}
  */
 export class SwapStatStagesAttr extends MoveEffectAttr {
@@ -3590,10 +3557,10 @@ export class SwapStatStagesAttr extends MoveEffectAttr {
   /**
    * For all {@linkcode stats}, swaps the user's and target's corresponding stat
    * stage.
-   * @param user the {@linkcode Pokemon} that used the move
-   * @param target the {@linkcode Pokemon} that the move was used on
-   * @param move N/A
-   * @param args N/A
+   * @param user - the {@linkcode Pokemon} that used the move
+   * @param target - the {@linkcode Pokemon} that the move was used on
+   * @param move - N/A
+   * @param args - N/A
    * @returns true if attribute application succeeds
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any []): boolean {
@@ -3658,10 +3625,10 @@ export class VariablePowerAttr extends MoveAttr {
 export class LessPPMorePowerAttr extends VariablePowerAttr {
   /**
    * Power up moves when less PP user has
-   * @param user {@linkcode Pokemon} using this move
-   * @param target {@linkcode Pokemon} target of this move
-   * @param move {@linkcode Move} being used
-   * @param args [0] {@linkcode NumberHolder} of power
+   * @param user - using this move
+   * @param target - target of this move
+   * @param move - being used
+   * @param args - [0] {@linkcode NumberHolder} of power
    * @returns true if the function succeeds
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -3716,8 +3683,8 @@ export class MovePowerMultiplierAttr extends VariablePowerAttr {
 
 /**
  * Helper function to calculate the the base power of an ally's hit when using Beat Up.
- * @param user The Pokemon that used Beat Up.
- * @param allyIndex The party position of the ally contributing to Beat Up.
+ * @param user - The Pokemon that used Beat Up.
+ * @param allyIndex - The party position of the ally contributing to Beat Up.
  * @returns The base power of the Beat Up hit.
  */
 const beatUpFunc = (user: Pokemon, allyIndex: number): number => {
@@ -3740,10 +3707,10 @@ export class BeatUpAttr extends VariablePowerAttr {
 
   /**
    * Gets the next party member to contribute to a Beat Up hit, and calculates the base power for it.
-   * @param user Pokemon that used the move
-   * @param _target N/A
-   * @param _move Move with this attribute
-   * @param args N/A
+   * @param user - Pokemon that used the move
+   * @param _target - N/A
+   * @param _move - Move with this attribute
+   * @param args - N/A
    * @returns true if the function succeeds
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -3849,17 +3816,16 @@ export class WeightPowerAttr extends VariablePowerAttr {
 
 /**
  * Attribute used for Electro Ball move.
- * @extends VariablePowerAttr
  * @see {@linkcode apply}
  **/
 export class ElectroBallPowerAttr extends VariablePowerAttr {
   /**
    * Move that deals more damage the faster {@linkcode Stat.SPD}
    * the user is compared to the target.
-   * @param user Pokemon that used the move
-   * @param target The target of the move
-   * @param move Move with this attribute
-   * @param args N/A
+   * @param user - Pokemon that used the move
+   * @param target - The target of the move
+   * @param move - Move with this attribute
+   * @param args - N/A
    * @returns true if the function succeeds
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -3884,17 +3850,16 @@ export class ElectroBallPowerAttr extends VariablePowerAttr {
 
 /**
  * Attribute used for Gyro Ball move.
- * @extends VariablePowerAttr
  * @see {@linkcode apply}
  **/
 export class GyroBallPowerAttr extends VariablePowerAttr {
   /**
    * Move that deals more damage the slower {@linkcode Stat.SPD}
    * the user is compared to the target.
-   * @param user Pokemon that used the move
-   * @param target The target of the move
-   * @param move Move with this attribute
-   * @param args N/A
+   * @param user - Pokemon that used the move
+   * @param target - The target of the move
+   * @param move - Move with this attribute
+   * @param args - N/A
    * @returns true if the function succeeds
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -3998,10 +3963,10 @@ export class OpponentHighHpPowerAttr extends VariablePowerAttr {
 
   /**
    * Changes the base power of the move to be the target's HP ratio times the maxBasePower with a min value of 1
-   * @param user n/a
-   * @param target the Pokemon being attacked
-   * @param move n/a
-   * @param args holds the base power of the move at args[0]
+   * @param user - n/a
+   * @param target - the Pokemon being attacked
+   * @param move - n/a
+   * @param args - holds the base power of the move at args[0]
    * @returns true
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -4135,9 +4100,9 @@ export class RageFistPowerAttr extends VariablePowerAttr {
 
   /**
    * Updates the number of hits the Pokemon has taken in battle
-   * @param user Pokemon calling Rage Fist
-   * @param hitCount The number of received hits this battle
-   * @param previousHitCount The number of received hits this battle since last time Rage Fist was used
+   * @param user - Pokemon calling Rage Fist
+   * @param hitCount - The number of received hits this battle
+   * @param previousHitCount - The number of received hits this battle since last time Rage Fist was used
    */
   protected updateHitReceivedCount(user: Pokemon, hitCount: number, previousHitCount: number): void {
     user.customPokemonData.hitsRecCount += (hitCount - previousHitCount);
@@ -4147,7 +4112,7 @@ export class RageFistPowerAttr extends VariablePowerAttr {
 
 /**
  * Tallies the number of positive stages for a given {@linkcode Pokemon}.
- * @param pokemon The {@linkcode Pokemon} that is being used to calculate the count of positive stats
+ * @param pokemon - The {@linkcode Pokemon} that is being used to calculate the count of positive stats
  * @returns the amount of positive stats
  */
 const countPositiveStatStages = (pokemon: Pokemon): number => {
@@ -4160,10 +4125,10 @@ const countPositiveStatStages = (pokemon: Pokemon): number => {
 export class PositiveStatStagePowerAttr extends VariablePowerAttr {
 
   /**
-   * @param {Pokemon} user The pokemon that is being used to calculate the amount of positive stats
-   * @param {Pokemon} target N/A
-   * @param {Move} move N/A
-   * @param {any[]} args The argument for VariablePowerAttr, accumulates and sets the amount of power multiplied by stats
+   * @param user - The pokemon that is being used to calculate the amount of positive stats
+   * @param target - N/A
+   * @param move - N/A
+   * @param args - The argument for VariablePowerAttr, accumulates and sets the amount of power multiplied by stats
    * @returns {boolean} Returns true if attribute is applied
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -4184,10 +4149,10 @@ export class PunishmentPowerAttr extends VariablePowerAttr {
   private PUNISHMENT_MAX_BASE_POWER = 200;
 
   /**
-     * @param {Pokemon} user N/A
-     * @param {Pokemon} target The pokemon that the move is being used against, as well as calculating the stats for the min/max base power
-     * @param {Move} move N/A
-     * @param {any[]} args The value that is being changed due to VariablePowerAttr
+     * @param user - N/A
+     * @param target - The pokemon that the move is being used against, as well as calculating the stats for the min/max base power
+     * @param move - N/A
+     * @param args - The value that is being changed due to VariablePowerAttr
      * @returns Returns true if attribute is applied
      */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -4298,7 +4263,6 @@ const hasStockpileStacksCondition: MoveConditionFunc = (user) => {
 /**
  * Attribute used for multi-hit moves that increase power in increments of the
  * move's base power for each hit, namely Triple Kick and Triple Axel.
- * @extends VariablePowerAttr
  * @see {@linkcode apply}
  */
 export class MultiHitPowerIncrementAttr extends VariablePowerAttr {
@@ -4316,10 +4280,10 @@ export class MultiHitPowerIncrementAttr extends VariablePowerAttr {
    * the move hit. In the case that the move is extended, it will circle back to the
    * original base power of the move after incrementing past the maximum amount of
    * hits.
-   * @param user {@linkcode Pokemon} that used the move
-   * @param target {@linkcode Pokemon} that the move was used on
-   * @param move {@linkcode Move} with this attribute
-   * @param args [0] {@linkcode NumberHolder} for final calculated power of move
+   * @param user - that used the move
+   * @param target - that the move was used on
+   * @param move - with this attribute
+   * @param args - [0] {@linkcode NumberHolder} for final calculated power of move
    * @returns true if attribute application succeeds
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -4336,7 +4300,6 @@ export class MultiHitPowerIncrementAttr extends VariablePowerAttr {
  * Attribute used for moves that double in power if the given move immediately
  * preceded the move applying the attribute, namely Fusion Flare and
  * Fusion Bolt.
- * @extends VariablePowerAttr
  * @see {@linkcode apply}
  */
 export class LastMoveDoublePowerAttr extends VariablePowerAttr {
@@ -4353,10 +4316,10 @@ export class LastMoveDoublePowerAttr extends VariablePowerAttr {
    * Doubles power of move if the given move is found to precede the current
    * move with no other moves being executed in between, only ignoring failed
    * moves if any.
-   * @param user {@linkcode Pokemon} that used the move
-   * @param target N/A
-   * @param move N/A
-   * @param args [0] {@linkcode NumberHolder} that holds the resulting power of the move
+   * @param user - that used the move
+   * @param target - N/A
+   * @param move - N/A
+   * @param args - [0] {@linkcode NumberHolder} that holds the resulting power of the move
    * @returns true if attribute application succeeds, false otherwise
    */
   apply(user: Pokemon, _target: Pokemon, _move: Move, args: any[]): boolean {
@@ -4440,7 +4403,6 @@ export class CombinedPledgeStabBoostAttr extends MoveAttr {
 /**
  * Variable Power attribute for {@link https://bulbapedia.bulbagarden.net/wiki/Round_(move) | Round}.
  * Doubles power if another Pokemon has previously selected Round this turn.
- * @extends VariablePowerAttr
  */
 export class RoundPowerAttr extends VariablePowerAttr {
   override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -4461,7 +4423,6 @@ export class RoundPowerAttr extends VariablePowerAttr {
  * Attribute for the "combo" effect of {@link https://bulbapedia.bulbagarden.net/wiki/Round_(move) | Round}.
  * Preempts the next move in the turn order with the first instance of any Pokemon
  * using Round. Also marks the Pokemon using the cued Round to double the move's power.
- * @extends MoveEffectAttr
  * @see {@linkcode RoundPowerAttr}
  */
 export class CueNextRoundAttr extends MoveEffectAttr {
@@ -4498,10 +4459,10 @@ export class StatChangeBeforeDmgCalcAttr extends MoveAttr {
   /**
    * Applies Stat Changes before damage is calculated
    *
-   * @param user {@linkcode Pokemon} that called {@linkcode move}
-   * @param target {@linkcode Pokemon} that is the target of {@linkcode move}
-   * @param move {@linkcode Move} called by {@linkcode user}
-   * @param args N/A
+   * @param user - that called {@linkcode move}
+   * @param target - that is the target of {@linkcode move}
+   * @param move - called by {@linkcode user}
+   * @param args - N/A
    *
    * @returns true if stat stages where correctly applied
    */
@@ -4519,10 +4480,10 @@ export class SpectralThiefAttr extends StatChangeBeforeDmgCalcAttr {
   /**
    * steals max amount of positive stats of the target while not exceeding the limit of max 6 stat stages
    *
-   * @param user {@linkcode Pokemon} that called {@linkcode move}
-   * @param target {@linkcode Pokemon} that is the target of {@linkcode move}
-   * @param move {@linkcode Move} called by {@linkcode user}
-   * @param args N/A
+   * @param user - that called {@linkcode move}
+   * @param target - that is the target of {@linkcode move}
+   * @param move - called by {@linkcode user}
+   * @param args - N/A
    *
    * @returns true if stat stages where correctly stolen
    */
@@ -4664,16 +4625,15 @@ export class StormAccuracyAttr extends VariableAccuracyAttr {
 /**
  * Attribute used for moves which never miss
  * against Pokemon with the {@linkcode BattlerTagType.MINIMIZED}
- * @extends VariableAccuracyAttr
  * @see {@linkcode apply}
  */
 export class AlwaysHitMinimizeAttr extends VariableAccuracyAttr {
   /**
    * @see {@linkcode apply}
-   * @param user N/A
-   * @param target {@linkcode Pokemon} target of the move
-   * @param move N/A
-   * @param args [0] Accuracy of the move to be modified
+   * @param user - N/A
+   * @param target - target of the move
+   * @param move - N/A
+   * @param args - [0] Accuracy of the move to be modified
    * @returns true if the function succeeds
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -4739,7 +4699,6 @@ export class PhotonGeyserCategoryAttr extends VariableMoveCategoryAttr {
  * Note: Currently, `getEffectiveStat` does not ignore all abilities that affect stats except those
  * with the attribute of `StatMultiplierAbAttr`
  * TODO: Remove the `.partial()` tag from Tera Blast and Tera Starstorm when the above issue is resolved
- * @extends VariableMoveCategoryAttr
  */
 export class TeraMoveCategoryAttr extends VariableMoveCategoryAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -4757,15 +4716,14 @@ export class TeraMoveCategoryAttr extends VariableMoveCategoryAttr {
 
 /**
  * Increases the power of Tera Blast if the user is Terastallized into Stellar type
- * @extends VariablePowerAttr
  */
 export class TeraBlastPowerAttr extends VariablePowerAttr {
   /**
    * Sets Tera Blast's power to 100 if the user is terastallized with
    * the Stellar tera type.
-   * @param user {@linkcode Pokemon} the Pokemon using this move
-   * @param target n/a
-   * @param move {@linkcode Move} the Move with this attribute (i.e. Tera Blast)
+   * @param user - the Pokemon using this move
+   * @param target - n/a
+   * @param move - the Move with this attribute (i.e. Tera Blast)
    * @param args
    *   - [0] {@linkcode NumberHolder} the applied move's power, factoring in
    *       previously applied power modifiers.
@@ -4784,15 +4742,14 @@ export class TeraBlastPowerAttr extends VariablePowerAttr {
 
 /**
  * Change the move category to status when used on the ally
- * @extends VariableMoveCategoryAttr
  * @see {@linkcode apply}
  */
 export class StatusCategoryOnAllyAttr extends VariableMoveCategoryAttr {
   /**
-   * @param user {@linkcode Pokemon} using the move
-   * @param target {@linkcode Pokemon} target of the move
-   * @param move {@linkcode Move} with this attribute
-   * @param args [0] {@linkcode NumberHolder} The category of the move
+   * @param user - using the move
+   * @param target - target of the move
+   * @param move - with this attribute
+   * @param args - [0] {@linkcode NumberHolder} The category of the move
    * @returns true if the function succeeds
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -5008,15 +4965,14 @@ export class WeatherBallTypeAttr extends VariableMoveTypeAttr {
 /**
  * Changes the move's type to match the current terrain.
  * Has no effect if the user is not grounded.
- * @extends VariableMoveTypeAttr
  * @see {@linkcode apply}
  */
 export class TerrainPulseTypeAttr extends VariableMoveTypeAttr {
   /**
-   * @param user {@linkcode Pokemon} using this move
-   * @param target N/A
-   * @param move N/A
-   * @param args [0] {@linkcode NumberHolder} The move's type to be modified
+   * @param user - using this move
+   * @param target - N/A
+   * @param move - N/A
+   * @param args - [0] {@linkcode NumberHolder} The move's type to be modified
    * @returns true if the function succeeds
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -5052,7 +5008,6 @@ export class TerrainPulseTypeAttr extends VariableMoveTypeAttr {
 
 /**
  * Changes type based on the user's IVs
- * @extends VariableMoveTypeAttr
  */
 export class HiddenPowerTypeAttr extends VariableMoveTypeAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -5080,14 +5035,13 @@ export class HiddenPowerTypeAttr extends VariableMoveTypeAttr {
 
 /**
  * Changes the type of Tera Blast to match the user's tera type
- * @extends VariableMoveTypeAttr
  */
 export class TeraBlastTypeAttr extends VariableMoveTypeAttr {
   /**
-   * @param user {@linkcode Pokemon} the user of the move
-   * @param target {@linkcode Pokemon} N/A
-   * @param move {@linkcode Move} the move with this attribute
-   * @param args `[0]` the move's type to be modified
+   * @param user - the user of the move
+   * @param target - N/A
+   * @param move - the move with this attribute
+   * @param args - `[0]` the move's type to be modified
    * @returns `true` if the move's type was modified; `false` otherwise
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -5107,15 +5061,14 @@ export class TeraBlastTypeAttr extends VariableMoveTypeAttr {
 
 /**
  * Attribute used for Tera Starstorm that changes the move type to Stellar
- * @extends VariableMoveTypeAttr
  */
 export class TeraStarstormTypeAttr extends VariableMoveTypeAttr {
   /**
    *
-   * @param user the {@linkcode Pokemon} using the move
-   * @param target n/a
-   * @param move n/a
-   * @param args[0] {@linkcode NumberHolder} the move type
+   * @param user - the {@linkcode Pokemon} using the move
+   * @param target - n/a
+   * @param move - n/a
+   * @param args[0] - the move type
    * @returns `true` if the move type is changed to {@linkcode PokemonType.STELLAR}, `false` otherwise
    */
   override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -5153,7 +5106,6 @@ export class MatchUserTypeAttr extends VariableMoveTypeAttr {
 
 /**
  * Changes the type of a Pledge move based on the Pledge move combined with it.
- * @extends VariableMoveTypeAttr
  */
 export class CombinedPledgeTypeAttr extends VariableMoveTypeAttr {
   override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -5216,10 +5168,10 @@ export class NeutralDamageAgainstFlyingTypeMultiplierAttr extends VariableMoveTy
 export class IceNoEffectTypeAttr extends VariableMoveTypeMultiplierAttr {
   /**
    * Checks to see if the Target is Ice-Type or not. If so, the move will have no effect.
-   * @param user n/a
-   * @param target The {@linkcode Pokemon} targeted by the move
-   * @param move n/a
-   * @param args `[0]` a {@linkcode NumberHolder | NumberHolder} containing a type effectiveness multiplier
+   * @param user - n/a
+   * @param target - The {@linkcode Pokemon} targeted by the move
+   * @param move - n/a
+   * @param args - `[0]` a {@linkcode NumberHolder | NumberHolder} containing a type effectiveness multiplier
    * @returns `true` if this Ice-type immunity applies; `false` otherwise
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -5245,11 +5197,11 @@ export class FlyingTypeMultiplierAttr extends VariableMoveTypeMultiplierAttr {
  */
 export class VariableMoveTypeChartAttr extends MoveAttr {
   /**
-   * @param user {@linkcode Pokemon} using the move
-   * @param target {@linkcode Pokemon} target of the move
-   * @param move {@linkcode Move} with this attribute
-   * @param args [0] {@linkcode NumberHolder} holding the type effectiveness
-   * @param args [1] A single defensive type of the target
+   * @param user - using the move
+   * @param target - target of the move
+   * @param move - with this attribute
+   * @param args - [0] {@linkcode NumberHolder} holding the type effectiveness
+   * @param args - [1] A single defensive type of the target
    *
    * @returns true if application of the attribute succeeds
    */
@@ -5291,10 +5243,10 @@ export class SheerColdAccuracyAttr extends OneHitKOAccuracyAttr {
   /**
    * Changes the normal One Hit KO Accuracy Attr to implement the Gen VII changes,
    * where if the user is Ice-Type, it has more accuracy.
-   * @param {Pokemon} user Pokemon that is using the move; checks the Pokemon's level.
-   * @param {Pokemon} target Pokemon that is receiving the move; checks the Pokemon's level.
-   * @param {Move} move N/A
-   * @param {any[]} args Uses the accuracy argument, allowing to change it from either 0 if it doesn't pass
+   * @param user - Pokemon that is using the move; checks the Pokemon's level.
+   * @param target - Pokemon that is receiving the move; checks the Pokemon's level.
+   * @param move - N/A
+   * @param args - Uses the accuracy argument, allowing to change it from either 0 if it doesn't pass
    * the first if/else, or 30/20 depending on the type of the user Pokemon.
    * @returns Returns true if move is successful, false if misses.
    */
@@ -5408,7 +5360,6 @@ export const frenzyMissFunc: UserMoveConditionFunc = (user: Pokemon, move: Move)
 /**
  * Attribute that grants {@link https://bulbapedia.bulbagarden.net/wiki/Semi-invulnerable_turn | semi-invulnerability} to the user during
  * the associated move's charging phase. Should only be used for {@linkcode ChargingMove | ChargingMoves} as a `chargeAttr`.
- * @extends MoveEffectAttr
  */
 export class SemiInvulnerableAttr extends MoveEffectAttr {
   /** The type of {@linkcode SemiInvulnerableTag} to grant to the user */
@@ -5421,10 +5372,10 @@ export class SemiInvulnerableAttr extends MoveEffectAttr {
 
   /**
    * Grants a {@linkcode SemiInvulnerableTag} to the associated move's user.
-   * @param user the {@linkcode Pokemon} using the move
-   * @param target n/a
-   * @param move the {@linkcode Move} being used
-   * @param args n/a
+   * @param user - the {@linkcode Pokemon} using the move
+   * @param target - n/a
+   * @param move - the {@linkcode Move} being used
+   * @param args - n/a
    * @returns `true` if semi-invulnerability was successfully granted; `false` otherwise.
    */
   override apply(user: Pokemon, target: Pokemon, move: Move, args?: any[]): boolean {
@@ -5543,7 +5494,6 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
 /**
  * Adds a {@link https://bulbapedia.bulbagarden.net/wiki/Seeding | Seeding} effect to the target
  * as seen with Leech Seed and Sappy Seed.
- * @extends AddBattlerTagAttr
  */
 export class LeechSeedAttr extends AddBattlerTagAttr {
   constructor() {
@@ -5552,10 +5502,10 @@ export class LeechSeedAttr extends AddBattlerTagAttr {
 
   /**
    * Adds a Seeding effect to the target if the target does not have an active Substitute.
-   * @param user the {@linkcode Pokemon} using the move
-   * @param target the {@linkcode Pokemon} targeted by the move
-   * @param move the {@linkcode Move} invoking this effect
-   * @param args n/a
+   * @param user - the {@linkcode Pokemon} using the move
+   * @param target - the {@linkcode Pokemon} targeted by the move
+   * @param move - the {@linkcode Move} invoking this effect
+   * @param args - n/a
    * @returns `true` if the effect successfully applies; `false` otherwise
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -5566,7 +5516,6 @@ export class LeechSeedAttr extends AddBattlerTagAttr {
 
 /**
  * Adds the appropriate battler tag for Smack Down and Thousand arrows
- * @extends AddBattlerTagAttr
  */
 export class FallDownAttr extends AddBattlerTagAttr {
   constructor() {
@@ -5575,10 +5524,10 @@ export class FallDownAttr extends AddBattlerTagAttr {
 
   /**
    * Adds Grounded Tag to the target and checks if fallDown message should be displayed
-   * @param user the {@linkcode Pokemon} using the move
-   * @param target the {@linkcode Pokemon} targeted by the move
-   * @param move the {@linkcode Move} invoking this effect
-   * @param args n/a
+   * @param user - the {@linkcode Pokemon} using the move
+   * @param target - the {@linkcode Pokemon} targeted by the move
+   * @param move - the {@linkcode Move} invoking this effect
+   * @param args - n/a
    * @returns `true` if the effect successfully applies; `false` otherwise
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -5591,7 +5540,6 @@ export class FallDownAttr extends AddBattlerTagAttr {
 
 /**
  * Adds the appropriate battler tag for Gulp Missile when Surf or Dive is used.
- * @extends MoveEffectAttr
  */
 export class GulpMissileTagAttr extends MoveEffectAttr {
   constructor() {
@@ -5600,10 +5548,10 @@ export class GulpMissileTagAttr extends MoveEffectAttr {
 
   /**
    * Adds BattlerTagType from GulpMissileTag based on the Pokemon's HP ratio.
-   * @param user The Pokemon using the move.
-   * @param _target N/A
-   * @param move The move being used.
-   * @param _args N/A
+   * @param user - The Pokemon using the move.
+   * @param _target - N/A
+   * @param move - The move being used.
+   * @param _args - N/A
    * @returns Whether the BattlerTag is applied.
    */
   apply(user: Pokemon, _target: Pokemon, move: Move, _args: any[]): boolean {
@@ -5631,7 +5579,6 @@ export class GulpMissileTagAttr extends MoveEffectAttr {
 
 /**
  * Attribute to implement Jaw Lock's linked trapping effect between the user and target
- * @extends AddBattlerTagAttr
  */
 export class JawLockAttr extends AddBattlerTagAttr {
   constructor() {
@@ -5838,7 +5785,6 @@ export class FaintCountdownAttr extends AddBattlerTagAttr {
 
 /**
  * Attribute to remove all Substitutes from the field.
- * @extends MoveEffectAttr
  * @see {@link https://bulbapedia.bulbagarden.net/wiki/Tidy_Up_(move) | Tidy Up}
  * @see {@linkcode SubstituteTag}
  */
@@ -5849,10 +5795,10 @@ export class RemoveAllSubstitutesAttr extends MoveEffectAttr {
 
   /**
    * Remove's the Substitute Doll effect from all active Pokemon on the field
-   * @param user {@linkcode Pokemon} the Pokemon using this move
-   * @param target n/a
-   * @param move {@linkcode Move} the move applying this effect
-   * @param args n/a
+   * @param user - the Pokemon using this move
+   * @param target - n/a
+   * @param move - the move applying this effect
+   * @param args - n/a
    * @returns `true` if the effect successfully applies
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -5870,7 +5816,6 @@ export class RemoveAllSubstitutesAttr extends MoveEffectAttr {
  * Attribute used when a move can deal damage to {@linkcode BattlerTagType}
  * Moves that always hit but do not deal double damage: Thunder, Fissure, Sky Uppercut,
  * Smack Down, Hurricane, Thousand Arrows
- * @extends MoveAttr
 */
 export class HitsTagAttr extends MoveAttr {
   /** The {@linkcode BattlerTagType} this move hits */
@@ -5939,8 +5884,8 @@ export class AddArenaTagAttr extends MoveEffectAttr {
 
 /**
  * Generic class for removing arena tags
- * @param tagTypes: The types of tags that can be removed
- * @param selfSideTarget: Is the user removing tags from its own side?
+ * @param tagTypes: - The types of tags that can be removed
+ * @param selfSideTarget: - Is the user removing tags from its own side?
  */
 export class RemoveArenaTagsAttr extends MoveEffectAttr {
   public tagTypes: ArenaTagType[];
@@ -5984,14 +5929,13 @@ export class AddArenaTrapTagAttr extends AddArenaTagAttr {
 /**
  * Attribute used for Stone Axe and Ceaseless Edge.
  * Applies the given ArenaTrapTag when move is used.
- * @extends AddArenaTagAttr
  * @see {@linkcode apply}
  */
 export class AddArenaTrapTagHitAttr extends AddArenaTagAttr {
   /**
-   * @param user {@linkcode Pokemon} using this move
-   * @param target {@linkcode Pokemon} target of this move
-   * @param move {@linkcode Move} being used
+   * @param user - using this move
+   * @param target - target of this move
+   * @param move - being used
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const moveChance = this.getMoveChance(user, target, move, this.selfTarget, true);
@@ -6079,7 +6023,6 @@ export class RemoveScreensAttr extends MoveEffectAttr {
 }
 
 /*Swaps arena effects between the player and enemy side
-  * @extends MoveEffectAttr
   * @see {@linkcode apply}
 */
 export class SwapArenaTagsAttr extends MoveEffectAttr {
@@ -6147,7 +6090,6 @@ export class AddPledgeEffectAttr extends AddArenaTagAttr {
 
 /**
  * Attribute used for Revival Blessing.
- * @extends MoveEffectAttr
  * @see {@linkcode apply}
  */
 export class RevivalBlessingAttr extends MoveEffectAttr {
@@ -6157,10 +6099,10 @@ export class RevivalBlessingAttr extends MoveEffectAttr {
 
   /**
    *
-   * @param user {@linkcode Pokemon} using this move
-   * @param target {@linkcode Pokemon} target of this move
-   * @param move {@linkcode Move} being used
-   * @param args N/A
+   * @param user - using this move
+   * @param target - target of this move
+   * @param move - being used
+   * @param args - N/A
    * @returns Promise, true if function succeeds.
    */
   override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -6561,7 +6503,7 @@ export class CopyBiomeTypeAttr extends MoveEffectAttr {
 
   /**
    * Retrieves a type from the current terrain
-   * @param terrainType {@linkcode TerrainType}
+   * @param terrainType
    * @returns {@linkcode Type}
    */
   private getTypeForTerrain(terrainType: TerrainType): PokemonType {
@@ -6582,7 +6524,7 @@ export class CopyBiomeTypeAttr extends MoveEffectAttr {
 
   /**
    * Retrieves a type from the current biome
-   * @param biomeType {@linkcode Biome}
+   * @param biomeType
    * @returns {@linkcode Type}
    */
   private getTypeForBiome(biomeType: Biome): PokemonType {
@@ -6714,7 +6656,6 @@ export class FirstMoveTypeAttr extends MoveEffectAttr {
  * Attribute used to call a move.
  * Used by other move attributes: {@linkcode RandomMoveAttr}, {@linkcode RandomMovesetMoveAttr}, {@linkcode CopyMoveAttr}
  * @see {@linkcode apply} for move call
- * @extends OverrideMoveEffectAttr
  */
 class CallMoveAttr extends OverrideMoveEffectAttr {
   protected invalidMoves: ReadonlySet<Moves>;
@@ -6741,7 +6682,6 @@ class CallMoveAttr extends OverrideMoveEffectAttr {
  * Attribute used to call a random move.
  * Used for {@linkcode Moves.METRONOME}
  * @see {@linkcode apply} for move selection and move call
- * @extends CallMoveAttr to call a selected move
  */
 export class RandomMoveAttr extends CallMoveAttr {
   constructor(invalidMoves: ReadonlySet<Moves>) {
@@ -6760,10 +6700,10 @@ export class RandomMoveAttr extends CallMoveAttr {
    * User calls a random moveId.
    *
    * Invalid moves are indicated by what is passed in to invalidMoves: {@linkcode invalidMetronomeMoves}
-   * @param user Pokemon that used the move and will call a random move
-   * @param target Pokemon that will be targeted by the random move (if single target)
-   * @param move Move being used
-   * @param args Unused
+   * @param user - Pokemon that used the move and will call a random move
+   * @param target - Pokemon that will be targeted by the random move (if single target)
+   * @param move - Move being used
+   * @param args - Unused
    */
   override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const moveIds = getEnumValues(Moves).map(m => !this.invalidMoves.has(m) && !allMoves[m].name.endsWith(" (N)") ? m : Moves.NONE);
@@ -6783,7 +6723,6 @@ export class RandomMoveAttr extends CallMoveAttr {
  * Fails if the user has no callable moves.
  *
  * Invalid moves are indicated by what is passed in to invalidMoves: {@linkcode invalidAssistMoves} or {@linkcode invalidSleepTalkMoves}
- * @extends RandomMoveAttr to use the callMove function on a moveId
  * @see {@linkcode getCondition} for move selection
  */
 export class RandomMovesetMoveAttr extends CallMoveAttr {
@@ -6797,10 +6736,10 @@ export class RandomMovesetMoveAttr extends CallMoveAttr {
 
   /**
    * User calls a random moveId selected in {@linkcode getCondition}
-   * @param user Pokemon that used the move and will call a random move
-   * @param target Pokemon that will be targeted by the random move (if single target)
-   * @param move Move being used
-   * @param args Unused
+   * @param user - Pokemon that used the move and will call a random move
+   * @param target - Pokemon that will be targeted by the random move (if single target)
+   * @param move - Move being used
+   * @param args - Unused
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     return super.apply(user, target, allMoves[this.moveId], args);
@@ -6970,7 +6909,6 @@ export class NaturePowerAttr extends OverrideMoveEffectAttr {
  * Attribute used to copy a previously-used move.
  * Used for {@linkcode Moves.COPYCAT} and {@linkcode Moves.MIRROR_MOVE}
  * @see {@linkcode apply} for move selection and move call
- * @extends CallMoveAttr to call a selected move
  */
 export class CopyMoveAttr extends CallMoveAttr {
   private mirrorMove: boolean;
@@ -7012,10 +6950,10 @@ export class RepeatMoveAttr extends MoveEffectAttr {
   /**
    * Forces the target to re-use their last used move again
    *
-   * @param user {@linkcode Pokemon} that used the attack
-   * @param target {@linkcode Pokemon} targeted by the attack
-   * @param move N/A
-   * @param args N/A
+   * @param user - that used the attack
+   * @param target - targeted by the attack
+   * @param move - N/A
+   * @param args - N/A
    * @returns `true` if the move succeeds
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -7148,10 +7086,10 @@ export class ReducePpMoveAttr extends MoveEffectAttr {
   /**
    * Reduces the PP of the target's last-used move by an amount based on this attribute instance's {@linkcode reduction}.
    *
-   * @param user {@linkcode Pokemon} that used the attack
-   * @param target {@linkcode Pokemon} targeted by the attack
-   * @param move N/A
-   * @param args N/A
+   * @param user - that used the attack
+   * @param target - targeted by the attack
+   * @param move - N/A
+   * @param args - N/A
    * @returns `true`
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -7210,10 +7148,10 @@ export class AttackReducePpMoveAttr extends ReducePpMoveAttr {
   /**
    * Checks if the target has used a move prior to the attack. PP-reduction is applied through the super class if so.
    *
-   * @param user {@linkcode Pokemon} that used the attack
-   * @param target {@linkcode Pokemon} targeted by the attack
-   * @param move {@linkcode Move} being used
-   * @param args N/A
+   * @param user - that used the attack
+   * @param target - targeted by the attack
+   * @param move - being used
+   * @param args - N/A
    * @returns {boolean} true
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -7298,10 +7236,10 @@ export class SketchAttr extends MoveEffectAttr {
   }
   /**
    * User copies the opponent's last used move, if possible
-   * @param {Pokemon} user Pokemon that used the move and will replace Sketch with the copied move
-   * @param {Pokemon} target Pokemon that the user wants to copy a move from
-   * @param {Move} move Move being used
-   * @param {any[]} args Unused
+   * @param user - Pokemon that used the move and will replace Sketch with the copied move
+   * @param target - Pokemon that the user wants to copy a move from
+   * @param move - Move being used
+   * @param args - Unused
    * @returns {boolean} true if the function succeeds, otherwise false
    */
 
@@ -7488,7 +7426,6 @@ export class SwitchAbilitiesAttr extends MoveEffectAttr {
  * Attribute used for moves that suppress abilities like {@linkcode Moves.GASTRO_ACID}.
  * A suppressed ability cannot be activated.
  *
- * @extends MoveEffectAttr
  * @see {@linkcode apply}
  * @see {@linkcode getCondition}
  */
@@ -7516,7 +7453,6 @@ export class SuppressAbilitiesAttr extends MoveEffectAttr {
 
 /**
  * Applies the effects of {@linkcode SuppressAbilitiesAttr} if the target has already moved this turn.
- * @extends MoveEffectAttr
  * @see {@linkcode Moves.CORE_ENFORCER} (the move which uses this effect)
  */
 export class SuppressAbilitiesIfActedAttr extends MoveEffectAttr {
@@ -7563,7 +7499,6 @@ export class TransformAttr extends MoveEffectAttr {
 /**
  * Attribute used for status moves, namely Speed Swap,
  * that swaps the user's and target's corresponding stats.
- * @extends MoveEffectAttr
  * @see {@linkcode apply}
  */
 export class SwapStatAttr extends MoveEffectAttr {
@@ -7579,10 +7514,10 @@ export class SwapStatAttr extends MoveEffectAttr {
   /**
    * Swaps the user's and target's corresponding current
    * {@linkcode EffectiveStat | stat} values
-   * @param user the {@linkcode Pokemon} that used the move
-   * @param target the {@linkcode Pokemon} that the move was used on
-   * @param move N/A
-   * @param args N/A
+   * @param user - the {@linkcode Pokemon} that used the move
+   * @param target - the {@linkcode Pokemon} that the move was used on
+   * @param move - N/A
+   * @param args - N/A
    * @returns true if attribute application succeeds
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -7605,7 +7540,6 @@ export class SwapStatAttr extends MoveEffectAttr {
 /**
  * Attribute used to switch the user's own stats.
  * Used by Power Shift.
- * @extends MoveEffectAttr
  */
 export class ShiftStatAttr extends MoveEffectAttr {
   private statToSwitch: EffectiveStat;
@@ -7620,10 +7554,10 @@ export class ShiftStatAttr extends MoveEffectAttr {
 
   /**
    * Switches the user's stats based on the {@linkcode statToSwitch} and {@linkcode statToSwitchWith} attributes.
-   * @param {Pokemon} user the {@linkcode Pokemon} that used the move
-   * @param target n/a
-   * @param move n/a
-   * @param args n/a
+   * @param user - the {@linkcode Pokemon} that used the move
+   * @param target - n/a
+   * @param move - n/a
+   * @param args - n/a
    * @returns whether the effect was applied
    */
   override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -7648,9 +7582,9 @@ export class ShiftStatAttr extends MoveEffectAttr {
 
   /**
    * Encourages the user to use the move if the stat to switch with is greater than the stat to switch.
-   * @param {Pokemon} user the {@linkcode Pokemon} that used the move
-   * @param target n/a
-   * @param move n/a
+   * @param user - the {@linkcode Pokemon} that used the move
+   * @param target - n/a
+   * @param move - n/a
    * @returns number of points to add to the user's benefit score
    */
   override getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
@@ -7662,7 +7596,6 @@ export class ShiftStatAttr extends MoveEffectAttr {
  * Attribute used for status moves, namely Power Split and Guard Split,
  * that take the average of a user's and target's corresponding
  * stats and assign that average back to each corresponding stat.
- * @extends MoveEffectAttr
  * @see {@linkcode apply}
  */
 export class AverageStatsAttr extends MoveEffectAttr {
@@ -7681,10 +7614,10 @@ export class AverageStatsAttr extends MoveEffectAttr {
    * Takes the average of the user's and target's corresponding {@linkcode stat}
    * values and sets those stats to the corresponding average for both
    * temporarily.
-   * @param user the {@linkcode Pokemon} that used the move
-   * @param target the {@linkcode Pokemon} that the move was used on
-   * @param move N/A
-   * @param args N/A
+   * @param user - the {@linkcode Pokemon} that used the move
+   * @param target - the {@linkcode Pokemon} that the move was used on
+   * @param move - N/A
+   * @param args - N/A
    * @returns true if attribute application succeeds
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -7733,7 +7666,6 @@ export class MoneyAttr extends MoveEffectAttr {
 /**
  * Applies {@linkcode BattlerTagType.DESTINY_BOND} to the user.
  *
- * @extends MoveEffectAttr
  */
 export class DestinyBondAttr extends MoveEffectAttr {
   constructor() {
@@ -7742,10 +7674,10 @@ export class DestinyBondAttr extends MoveEffectAttr {
 
   /**
    * Applies {@linkcode BattlerTagType.DESTINY_BOND} to the user.
-   * @param user {@linkcode Pokemon} that is having the tag applied to.
-   * @param target {@linkcode Pokemon} N/A
-   * @param move {@linkcode Move} {@linkcode Move.DESTINY_BOND}
-   * @param {any[]} args N/A
+   * @param user - that is having the tag applied to.
+   * @param target - N/A
+   * @param move - {@linkcode Move.DESTINY_BOND}
+   * @param args - N/A
    * @returns true
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -7757,7 +7689,6 @@ export class DestinyBondAttr extends MoveEffectAttr {
 
 /**
  * Attribute to apply a battler tag to the target if they have had their stats boosted this turn.
- * @extends AddBattlerTagAttr
  */
 export class AddBattlerTagIfBoostedAttr extends AddBattlerTagAttr {
   constructor(tag: BattlerTagType) {
@@ -7765,10 +7696,10 @@ export class AddBattlerTagIfBoostedAttr extends AddBattlerTagAttr {
   }
 
   /**
-   * @param user {@linkcode Pokemon} using this move
-   * @param target {@linkcode Pokemon} target of this move
-   * @param move {@linkcode Move} being used
-   * @param {any[]} args N/A
+   * @param user - using this move
+   * @param target - target of this move
+   * @param move - being used
+   * @param args - N/A
    * @returns true
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -7781,7 +7712,6 @@ export class AddBattlerTagIfBoostedAttr extends AddBattlerTagAttr {
 
 /**
  * Attribute to apply a status effect to the target if they have had their stats boosted this turn.
- * @extends MoveEffectAttr
  */
 export class StatusIfBoostedAttr extends MoveEffectAttr {
   public effect: StatusEffect;
@@ -7792,10 +7722,10 @@ export class StatusIfBoostedAttr extends MoveEffectAttr {
   }
 
   /**
-   * @param user {@linkcode Pokemon} using this move
-   * @param target {@linkcode Pokemon} target of this move
-   * @param move {@linkcode Move} N/A
-   * @param {any[]} args N/A
+   * @param user - using this move
+   * @param target - target of this move
+   * @param move - N/A
+   * @param args - N/A
    * @returns true
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -7846,10 +7776,10 @@ export class AfterYouAttr extends MoveEffectAttr {
   /**
    * Allows the target of this move to act right after the user.
    *
-   * @param user {@linkcode Pokemon} that is using the move.
-   * @param target {@linkcode Pokemon} that will move right after this move is used.
-   * @param move {@linkcode Move} {@linkcode Moves.AFTER_YOU}
-   * @param _args N/A
+   * @param user - that is using the move.
+   * @param target - that will move right after this move is used.
+   * @param move - {@linkcode Moves.AFTER_YOU}
+   * @param _args - N/A
    * @returns true
    */
   override apply(user: Pokemon, target: Pokemon, _move: Move, _args: any[]): boolean {
@@ -7868,16 +7798,15 @@ export class AfterYouAttr extends MoveEffectAttr {
 /**
  * Move effect to force the target to move last, ignoring priority.
  * If applied to multiple targets, they move in speed order after all other moves.
- * @extends MoveEffectAttr
  */
 export class ForceLastAttr extends MoveEffectAttr {
   /**
    * Forces the target of this move to move last.
    *
-   * @param user {@linkcode Pokemon} that is using the move.
-   * @param target {@linkcode Pokemon} that will be forced to move last.
-   * @param move {@linkcode Move} {@linkcode Moves.QUASH}
-   * @param _args N/A
+   * @param user - that is using the move.
+   * @param target - that will be forced to move last.
+   * @param move - {@linkcode Moves.QUASH}
+   * @param _args - N/A
    * @returns true
    */
   override apply(user: Pokemon, target: Pokemon, _move: Move, _args: any[]): boolean {
@@ -8081,10 +8010,10 @@ export class ResistLastMoveTypeAttr extends MoveEffectAttr {
   }
   /**
    * User changes its type to a random type that resists the target's last used move
-   * @param {Pokemon} user Pokemon that used the move and will change types
-   * @param {Pokemon} target Opposing pokemon that recently used a move
-   * @param {Move} move Move being used
-   * @param {any[]} args Unused
+   * @param user - Pokemon that used the move and will change types
+   * @param target - Opposing pokemon that recently used a move
+   * @param move - Move being used
+   * @param args - Unused
    * @returns {boolean} true if the function succeeds
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -8146,7 +8075,6 @@ export class ResistLastMoveTypeAttr extends MoveEffectAttr {
  * and makes its evasiveness be ignored during accuracy
  * checks. Used by: {@linkcode Moves.ODOR_SLEUTH | Odor Sleuth}, {@linkcode Moves.MIRACLE_EYE | Miracle Eye} and {@linkcode Moves.FORESIGHT | Foresight}
  *
- * @extends AddBattlerTagAttr
  * @see {@linkcode apply}
  */
 export class ExposedMoveAttr extends AddBattlerTagAttr {
@@ -8156,10 +8084,10 @@ export class ExposedMoveAttr extends AddBattlerTagAttr {
 
   /**
    * Applies {@linkcode ExposedTag} to the target.
-   * @param user {@linkcode Pokemon} using this move
-   * @param target {@linkcode Pokemon} target of this move
-   * @param move {@linkcode Move} being used
-   * @param args N/A
+   * @param user - using this move
+   * @param target - target of this move
+   * @param move - being used
+   * @param args - N/A
    * @returns `true` if the function succeeds
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {

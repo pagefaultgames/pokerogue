@@ -69,7 +69,7 @@ export class CombinationSceneRequirement extends EncounterSceneRequirement {
 
   /**
    * Retrieves a dialogue token key/value pair for the given {@linkcode EncounterSceneRequirement | requirements}.
-   * @param pokemon The {@linkcode PlayerPokemon} to check against
+   * @param pokemon - The {@linkcode PlayerPokemon} to check against
    * @returns A dialogue token key/value pair
    * @throws An {@linkcode Error} if {@linkcode isAnd} is `true` (not supported)
    */
@@ -146,7 +146,7 @@ export class CombinationPokemonRequirement extends EncounterPokemonRequirement {
 
   /**
    * Queries the players party for all party members that are compatible with all/any requirements (depends on {@linkcode isAnd})
-   * @param partyPokemon The party of {@linkcode PlayerPokemon}
+   * @param partyPokemon - The party of {@linkcode PlayerPokemon}
    * @returns All party members that are compatible with all/any requirements (depends on {@linkcode isAnd})
    */
   override queryParty(partyPokemon: PlayerPokemon[]): PlayerPokemon[] {
@@ -159,7 +159,7 @@ export class CombinationPokemonRequirement extends EncounterPokemonRequirement {
 
   /**
    * Retrieves a dialogue token key/value pair for the given {@linkcode EncounterPokemonRequirement | requirements}.
-   * @param pokemon The {@linkcode PlayerPokemon} to check against
+   * @param pokemon - The {@linkcode PlayerPokemon} to check against
    * @returns A dialogue token key/value pair
    * @throws An {@linkcode Error} if {@linkcode isAnd} is `true` (not supported)
    */
@@ -211,7 +211,7 @@ export class WaveRangeRequirement extends EncounterSceneRequirement {
   /**
    * Used for specifying a unique wave or wave range requirement
    * If minWaveIndex and maxWaveIndex are equivalent, will check for exact wave number
-   * @param waveRange [min, max]
+   * @param waveRange - [min, max]
    */
   constructor(waveRange: [number, number]) {
     super();
@@ -243,8 +243,8 @@ export class WaveModulusRequirement extends EncounterSceneRequirement {
   /**
    * Used for specifying a modulus requirement on the wave index
    * For example, can be used to require the wave index to end with 1, 2, or 3
-   * @param waveModuli The allowed modulus results
-   * @param modulusValue The modulus calculation value
+   * @param waveModuli - The allowed modulus results
+   * @param modulusValue - The modulus calculation value
    *
    * Example:
    * new WaveModulusRequirement([1, 2, 3], 10) will check for 1st/2nd/3rd waves that are immediately after a multiple of 10 wave

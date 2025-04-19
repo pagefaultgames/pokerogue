@@ -20,7 +20,6 @@ import { globalScene } from "#app/global-scene";
 /**
  * Class representing the settings UI handler for keyboards.
  *
- * @extends AbstractControlSettingsUiHandler
  */
 export default class SettingsKeyboardUiHandler extends AbstractControlSettingsUiHandler {
   /**

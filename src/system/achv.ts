@@ -204,7 +204,7 @@ export class ChallengeAchv extends Achv {
 
 /**
  * Get the description of an achievement from the localization file with all the necessary variables filled in
- * @param localizationKey The localization key of the achievement
+ * @param localizationKey - The localization key of the achievement
  * @returns The description of the achievement
  */
 export function getAchievementDescription(localizationKey: string): string {

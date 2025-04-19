@@ -255,8 +255,8 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
 
   /**
    * Move the cursor to a new position and update the view accordingly
-   * @param cursor the new cursor position, between `0` and `SLOTS_ON_SCREEN - 1`
-   * @param prevSlotIndex index of the previous session occupied by the cursor, between `0` and `SESSION_SLOTS_COUNT - 1` - optional
+   * @param cursor - the new cursor position, between `0` and `SLOTS_ON_SCREEN - 1`
+   * @param prevSlotIndex - index of the previous session occupied by the cursor, between `0` and `SESSION_SLOTS_COUNT - 1` - optional
    * @returns `true` if the cursor position has changed | `false` if it has not
    */
   override setCursor(cursor: number, prevSlotIndex?: number): boolean {
@@ -316,7 +316,7 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
 
   /**
    * Helper function that checks if the session slot involved holds data or not
-   * @param hasData `true` if session slot contains data | 'false' if not
+   * @param hasData - `true` if session slot contains data | 'false' if not
    */
   setArrowVisibility(hasData: boolean): void {
     if (this.cursorObj) {
@@ -327,8 +327,8 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
 
   /**
    * Move the scrolling cursor to a new position and update the view accordingly
-   * @param scrollCursor the new cursor position, between `0` and `SESSION_SLOTS_COUNT - SLOTS_ON_SCREEN`
-   * @param prevSlotIndex index of the previous slot occupied by the cursor, between `0` and `SESSION_SLOTS_COUNT-1` - optional
+   * @param scrollCursor - the new cursor position, between `0` and `SESSION_SLOTS_COUNT - SLOTS_ON_SCREEN`
+   * @param prevSlotIndex - index of the previous slot occupied by the cursor, between `0` and `SESSION_SLOTS_COUNT-1` - optional
    * @returns `true` if the cursor position has changed | `false` if it has not
    */
   setScrollCursor(scrollCursor: number, prevSlotIndex?: number): boolean {

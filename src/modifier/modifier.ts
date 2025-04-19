@@ -91,8 +91,8 @@ export class ModifierBar extends Phaser.GameObjects.Container {
 
   /**
    * Method to update content displayed in {@linkcode ModifierBar}
-   * @param {PersistentModifier[]} modifiers - The list of modifiers to be displayed in the {@linkcode ModifierBar}
-   * @param {boolean} hideHeldItems - If set to "true", only modifiers not assigned to a Pokémon are displayed
+   * @param modifiers - The list of modifiers to be displayed in the {@linkcode ModifierBar}
+   * @param hideHeldItems - If set to "true", only modifiers not assigned to a Pokémon are displayed
    */
   updateModifiers(modifiers: PersistentModifier[], hideHeldItems = false) {
     this.removeAll(true);
@@ -168,7 +168,7 @@ export abstract class Modifier {
 
   /**
    * Checks if {@linkcode Modifier} should be applied
-   * @param _args parameters passed to {@linkcode Modifier.apply}
+   * @param _args - parameters passed to {@linkcode Modifier.apply}
    * @returns always `true` by default
    */
   shouldApply(..._args: Parameters<this["apply"]>): boolean {
@@ -177,7 +177,7 @@ export abstract class Modifier {
 
   /**
    * Handles applying of {@linkcode Modifier}
-   * @param args collection of all passed parameters
+   * @param args - collection of all passed parameters
    */
   abstract apply(...args: unknown[]): boolean;
 }
@@ -292,7 +292,7 @@ export class AddPokeballModifier extends ConsumableModifier {
 
   /**
    * Applies {@linkcode AddPokeballModifier}
-   * @param battleScene {@linkcode BattleScene}
+   * @param battleScene
    * @returns always `true`
    */
   override apply(): boolean {
@@ -319,7 +319,7 @@ export class AddVoucherModifier extends ConsumableModifier {
 
   /**
    * Applies {@linkcode AddVoucherModifier}
-   * @param battleScene {@linkcode BattleScene}
+   * @param battleScene
    * @returns always `true`
    */
   override apply(): boolean {
@@ -337,8 +337,6 @@ export class AddVoucherModifier extends ConsumableModifier {
  * modifier will be removed. If a modifier of the same type is to be added, it
  * will reset {@linkcode battleCount} back to {@linkcode maxBattles} of the
  * existing modifier instead of adding that modifier directly.
- * @extends PersistentModifier
- * @abstract
  * @see {@linkcode add}
  */
 export abstract class LapsingPersistentModifier extends PersistentModifier {
@@ -358,9 +356,9 @@ export abstract class LapsingPersistentModifier extends PersistentModifier {
    * Goes through existing modifiers for any that match the selected modifier,
    * which will then either add it to the existing modifiers if none were found
    * or, if one was found, it will refresh {@linkcode battleCount}.
-   * @param modifiers {@linkcode PersistentModifier} array of the player's modifiers
-   * @param _virtual N/A
-   * @param _scene N/A
+   * @param modifiers - array of the player's modifiers
+   * @param _virtual - N/A
+   * @param _scene - N/A
    * @returns `true` if the modifier was successfully added or applied, false otherwise
    */
   add(modifiers: PersistentModifier[], _virtual: boolean): boolean {
@@ -383,7 +381,7 @@ export abstract class LapsingPersistentModifier extends PersistentModifier {
 
   /**
    * Lapses the {@linkcode battleCount} by 1.
-   * @param _args passed arguments (not in use here)
+   * @param _args - passed arguments (not in use here)
    * @returns `true` if the {@linkcode battleCount} is greater than 0
    */
   public lapse(..._args: unknown[]): boolean {
@@ -450,7 +448,6 @@ export abstract class LapsingPersistentModifier extends PersistentModifier {
 /**
  * Modifier used for passive items, specifically lures, that
  * temporarily increases the chance of a double battle.
- * @extends LapsingPersistentModifier
  * @see {@linkcode apply}
  */
 export class DoubleBattleChanceBoosterModifier extends LapsingPersistentModifier {
@@ -471,7 +468,7 @@ export class DoubleBattleChanceBoosterModifier extends LapsingPersistentModifier
 
   /**
    * Increases the chance of a double battle occurring
-   * @param doubleBattleChance {@linkcode NumberHolder} for double battle chance
+   * @param doubleBattleChance - for double battle chance
    * @returns true
    */
   override apply(doubleBattleChance: NumberHolder): boolean {
@@ -487,7 +484,6 @@ export class DoubleBattleChanceBoosterModifier extends LapsingPersistentModifier
  * Modifier used for party-wide items, specifically the X items, that
  * temporarily increases the stat stage multiplier of the corresponding
  * {@linkcode TempBattleStat}.
- * @extends LapsingPersistentModifier
  * @see {@linkcode apply}
  */
 export class TempStatStageBoosterModifier extends LapsingPersistentModifier {
@@ -530,8 +526,8 @@ export class TempStatStageBoosterModifier extends LapsingPersistentModifier {
   /**
    * Checks if {@linkcode args} contains the necessary elements and if the
    * incoming stat is matches {@linkcode stat}.
-   * @param tempBattleStat {@linkcode TempBattleStat} being affected
-   * @param statLevel {@linkcode NumberHolder} that holds the resulting value of the stat stage multiplier
+   * @param tempBattleStat - being affected
+   * @param statLevel - that holds the resulting value of the stat stage multiplier
    * @returns `true` if the modifier can be applied, false otherwise
    */
   override shouldApply(tempBattleStat?: TempBattleStat, statLevel?: NumberHolder): boolean {
@@ -542,8 +538,8 @@ export class TempStatStageBoosterModifier extends LapsingPersistentModifier {
 
   /**
    * Increases the incoming stat stage matching {@linkcode stat} by {@linkcode boost}.
-   * @param _tempBattleStat {@linkcode TempBattleStat} N/A
-   * @param statLevel {@linkcode NumberHolder} that holds the resulting value of the stat stage multiplier
+   * @param _tempBattleStat - N/A
+   * @param statLevel - that holds the resulting value of the stat stage multiplier
    */
   override apply(_tempBattleStat: TempBattleStat, statLevel: NumberHolder): boolean {
     statLevel.value += this.boost;
@@ -554,7 +550,6 @@ export class TempStatStageBoosterModifier extends LapsingPersistentModifier {
 /**
  * Modifier used for party-wide items, namely Dire Hit, that
  * temporarily increments the critical-hit stage
- * @extends LapsingPersistentModifier
  * @see {@linkcode apply}
  */
 export class TempCritBoosterModifier extends LapsingPersistentModifier {
@@ -568,7 +563,7 @@ export class TempCritBoosterModifier extends LapsingPersistentModifier {
 
   /**
    * Checks if {@linkcode args} contains the necessary elements.
-   * @param critLevel {@linkcode NumberHolder} that holds the resulting critical-hit level
+   * @param critLevel - that holds the resulting critical-hit level
    * @returns `true` if the critical-hit stage boost applies successfully
    */
   override shouldApply(critLevel?: NumberHolder): boolean {
@@ -577,7 +572,7 @@ export class TempCritBoosterModifier extends LapsingPersistentModifier {
 
   /**
    * Increases the current critical-hit stage value by 1.
-   * @param critLevel {@linkcode NumberHolder} that holds the resulting critical-hit level
+   * @param critLevel - that holds the resulting critical-hit level
    * @returns `true` if the critical-hit stage boost applies successfully
    */
   override apply(critLevel: NumberHolder): boolean {
@@ -621,7 +616,7 @@ export class GigantamaxAccessModifier extends PersistentModifier {
 
   /**
    * Applies {@linkcode GigantamaxAccessModifier}
-   * @param _args N/A
+   * @param _args - N/A
    * @returns always `true`
    */
   apply(..._args: unknown[]): boolean {
@@ -640,7 +635,7 @@ export class TerastallizeAccessModifier extends PersistentModifier {
 
   /**
    * Applies {@linkcode TerastallizeAccessModifier}
-   * @param _args N/A
+   * @param _args - N/A
    * @returns always `true`
    */
   override apply(..._args: unknown[]): boolean {
@@ -674,15 +669,15 @@ export abstract class PokemonHeldItemModifier extends PersistentModifier {
 
   /**
    * Applies the {@linkcode PokemonHeldItemModifier} to the given {@linkcode Pokemon}.
-   * @param pokemon The {@linkcode Pokemon} that holds the held item
-   * @param args additional parameters
+   * @param pokemon - The {@linkcode Pokemon} that holds the held item
+   * @param args - additional parameters
    */
   abstract override apply(pokemon: Pokemon, ...args: unknown[]): boolean;
 
   /**
    * Checks if {@linkcode PokemonHeldItemModifier} should be applied.
-   * @param pokemon The {@linkcode Pokemon} that holds the item
-   * @param _args N/A
+   * @param pokemon - The {@linkcode Pokemon} that holds the item
+   * @param _args - N/A
    * @returns if {@linkcode PokemonHeldItemModifier} should be applied
    */
   override shouldApply(pokemon?: Pokemon, ..._args: unknown[]): boolean {
@@ -763,7 +758,7 @@ export abstract class LapsingPokemonHeldItemModifier extends PokemonHeldItemModi
 
   /**
    * Lapse the {@linkcode battlesLeft} counter (reduce it by 1)
-   * @param _args arguments passed (not used here)
+   * @param _args - arguments passed (not used here)
    * @returns `true` if {@linkcode battlesLeft} is not null
    */
   public lapse(..._args: unknown[]): boolean {
@@ -772,7 +767,7 @@ export abstract class LapsingPokemonHeldItemModifier extends PokemonHeldItemModi
 
   /**
    * Retrieve the {@linkcode Modifier | Modifiers} icon as a {@linkcode Phaser.GameObjects.Container | Container}
-   * @param forSummary `true` if the icon is for the summary screen
+   * @param forSummary - `true` if the icon is for the summary screen
    * @returns the icon as a {@linkcode Phaser.GameObjects.Container | Container}
    */
   public getIcon(forSummary?: boolean): Phaser.GameObjects.Container {
@@ -804,7 +799,6 @@ export abstract class LapsingPokemonHeldItemModifier extends PokemonHeldItemModi
 /**
  * Modifier used for held items, specifically vitamins like Carbos, Hp Up, etc., that
  * increase the value of a given {@linkcode PermanentStat}.
- * @extends PokemonHeldItemModifier
  * @see {@linkcode apply}
  */
 export class BaseStatModifier extends PokemonHeldItemModifier {
@@ -833,8 +827,8 @@ export class BaseStatModifier extends PokemonHeldItemModifier {
 
   /**
    * Checks if {@linkcode BaseStatModifier} should be applied to the specified {@linkcode Pokemon}.
-   * @param _pokemon the {@linkcode Pokemon} to be modified
-   * @param baseStats the base stats of the {@linkcode Pokemon}
+   * @param _pokemon - the {@linkcode Pokemon} to be modified
+   * @param baseStats - the base stats of the {@linkcode Pokemon}
    * @returns `true` if the {@linkcode Pokemon} should be modified
    */
   override shouldApply(_pokemon?: Pokemon, baseStats?: number[]): boolean {
@@ -843,8 +837,8 @@ export class BaseStatModifier extends PokemonHeldItemModifier {
 
   /**
    * Applies the {@linkcode BaseStatModifier} to the specified {@linkcode Pokemon}.
-   * @param _pokemon the {@linkcode Pokemon} to be modified
-   * @param baseStats the base stats of the {@linkcode Pokemon}
+   * @param _pokemon - the {@linkcode Pokemon} to be modified
+   * @param baseStats - the base stats of the {@linkcode Pokemon}
    * @returns always `true`
    */
   override apply(_pokemon: Pokemon, baseStats: number[]): boolean {
@@ -964,8 +958,8 @@ export class PokemonBaseStatTotalModifier extends PokemonHeldItemModifier {
 
   /**
    * Checks if {@linkcode PokemonBaseStatTotalModifier} should be applied to the specified {@linkcode Pokemon}.
-   * @param pokemon the {@linkcode Pokemon} to be modified
-   * @param baseStats the base stats of the {@linkcode Pokemon}
+   * @param pokemon - the {@linkcode Pokemon} to be modified
+   * @param baseStats - the base stats of the {@linkcode Pokemon}
    * @returns `true` if the {@linkcode Pokemon} should be modified
    */
   override shouldApply(pokemon?: Pokemon, baseStats?: number[]): boolean {
@@ -974,8 +968,8 @@ export class PokemonBaseStatTotalModifier extends PokemonHeldItemModifier {
 
   /**
    * Applies the {@linkcode PokemonBaseStatTotalModifier}
-   * @param _pokemon the {@linkcode Pokemon} to be modified
-   * @param baseStats the base stats of the {@linkcode Pokemon}
+   * @param _pokemon - the {@linkcode Pokemon} to be modified
+   * @param baseStats - the base stats of the {@linkcode Pokemon}
    * @returns always `true`
    */
   override apply(_pokemon: Pokemon, baseStats: number[]): boolean {
@@ -1031,8 +1025,8 @@ export class PokemonBaseStatFlatModifier extends PokemonHeldItemModifier {
 
   /**
    * Checks if the {@linkcode PokemonBaseStatFlatModifier} should be applied to the {@linkcode Pokemon}.
-   * @param pokemon The {@linkcode Pokemon} that holds the item
-   * @param baseStats The base stats of the {@linkcode Pokemon}
+   * @param pokemon - The {@linkcode Pokemon} that holds the item
+   * @param baseStats - The base stats of the {@linkcode Pokemon}
    * @returns `true` if the {@linkcode PokemonBaseStatFlatModifier} should be applied
    */
   override shouldApply(pokemon?: Pokemon, baseStats?: number[]): boolean {
@@ -1041,8 +1035,8 @@ export class PokemonBaseStatFlatModifier extends PokemonHeldItemModifier {
 
   /**
    * Applies the {@linkcode PokemonBaseStatFlatModifier}
-   * @param _pokemon The {@linkcode Pokemon} that holds the item
-   * @param baseStats The base stats of the {@linkcode Pokemon}
+   * @param _pokemon - The {@linkcode Pokemon} that holds the item
+   * @param baseStats - The base stats of the {@linkcode Pokemon}
    * @returns always `true`
    */
   override apply(_pokemon: Pokemon, baseStats: number[]): boolean {
@@ -1086,9 +1080,9 @@ export class PokemonIncrementingStatModifier extends PokemonHeldItemModifier {
 
   /**
    * Checks if the {@linkcode PokemonIncrementingStatModifier} should be applied to the {@linkcode Pokemon}.
-   * @param pokemon The {@linkcode Pokemon} that holds the item
-   * @param stat The affected {@linkcode Stat}
-   * @param statHolder The {@linkcode NumberHolder} that holds the stat
+   * @param pokemon - The {@linkcode Pokemon} that holds the item
+   * @param stat - The affected {@linkcode Stat}
+   * @param statHolder - The {@linkcode NumberHolder} that holds the stat
    * @returns `true` if the {@linkcode PokemonBaseStatFlatModifier} should be applied
    */
   override shouldApply(pokemon?: Pokemon, stat?: Stat, statHolder?: NumberHolder): boolean {
@@ -1097,9 +1091,9 @@ export class PokemonIncrementingStatModifier extends PokemonHeldItemModifier {
 
   /**
    * Applies the {@linkcode PokemonIncrementingStatModifier}
-   * @param _pokemon The {@linkcode Pokemon} that holds the item
-   * @param stat The affected {@linkcode Stat}
-   * @param statHolder The {@linkcode NumberHolder} that holds the stat
+   * @param _pokemon - The {@linkcode Pokemon} that holds the item
+   * @param stat - The affected {@linkcode Stat}
+   * @param statHolder - The {@linkcode NumberHolder} that holds the stat
    * @returns always `true`
    */
   override apply(_pokemon: Pokemon, stat: Stat, statHolder: NumberHolder): boolean {
@@ -1134,7 +1128,6 @@ export class PokemonIncrementingStatModifier extends PokemonHeldItemModifier {
 /**
  * Modifier used for held items that Applies {@linkcode Stat} boost(s)
  * using a multiplier.
- * @extends PokemonHeldItemModifier
  * @see {@linkcode apply}
  */
 export class StatBoosterModifier extends PokemonHeldItemModifier {
@@ -1171,9 +1164,9 @@ export class StatBoosterModifier extends PokemonHeldItemModifier {
 
   /**
    * Checks if the incoming stat is listed in {@linkcode stats}
-   * @param _pokemon the {@linkcode Pokemon} that holds the item
-   * @param _stat the {@linkcode Stat} to be boosted
-   * @param statValue {@linkcode NumberHolder} that holds the resulting value of the stat
+   * @param _pokemon - the {@linkcode Pokemon} that holds the item
+   * @param _stat - the {@linkcode Stat} to be boosted
+   * @param statValue - that holds the resulting value of the stat
    * @returns `true` if the stat could be boosted, false otherwise
    */
   override shouldApply(pokemon: Pokemon, stat: Stat, statValue: NumberHolder): boolean {
@@ -1183,9 +1176,9 @@ export class StatBoosterModifier extends PokemonHeldItemModifier {
   /**
    * Boosts the incoming stat by a {@linkcode multiplier} if the stat is listed
    * in {@linkcode stats}.
-   * @param _pokemon the {@linkcode Pokemon} that holds the item
-   * @param _stat the {@linkcode Stat} to be boosted
-   * @param statValue {@linkcode NumberHolder} that holds the resulting value of the stat
+   * @param _pokemon - the {@linkcode Pokemon} that holds the item
+   * @param _stat - the {@linkcode Stat} to be boosted
+   * @param statValue - that holds the resulting value of the stat
    * @returns `true` if the stat boost applies successfully, false otherwise
    * @see shouldApply
    */
@@ -1202,7 +1195,6 @@ export class StatBoosterModifier extends PokemonHeldItemModifier {
 /**
  * Modifier used for held items, specifically Eviolite, that apply
  * {@linkcode Stat} boost(s) using a multiplier if the holder can evolve.
- * @extends StatBoosterModifier
  * @see {@linkcode apply}
  */
 export class EvolutionStatBoosterModifier extends StatBoosterModifier {
@@ -1217,9 +1209,9 @@ export class EvolutionStatBoosterModifier extends StatBoosterModifier {
   /**
    * Checks if the stat boosts can apply and if the holder is not currently
    * Gigantamax'd.
-   * @param pokemon {@linkcode Pokemon} that holds the held item
-   * @param stat {@linkcode Stat} The {@linkcode Stat} to be boosted
-   * @param statValue {@linkcode NumberHolder} that holds the resulting value of the stat
+   * @param pokemon - that holds the held item
+   * @param stat - The {@linkcode Stat} to be boosted
+   * @param statValue - that holds the resulting value of the stat
    * @returns `true` if the stat boosts can be applied, false otherwise
    */
   override shouldApply(pokemon: Pokemon, stat: Stat, statValue: NumberHolder): boolean {
@@ -1232,9 +1224,9 @@ export class EvolutionStatBoosterModifier extends StatBoosterModifier {
    * only half of the boost if either of the fused members are fully
    * evolved. However, if they are both unevolved, the full boost
    * will apply.
-   * @param pokemon {@linkcode Pokemon} that holds the item
-   * @param _stat {@linkcode Stat} The {@linkcode Stat} to be boosted
-   * @param statValue{@linkcode NumberHolder} that holds the resulting value of the stat
+   * @param pokemon - that holds the item
+   * @param _stat - The {@linkcode Stat} to be boosted
+   * @param statValue{@linkcode - NumberHolder} that holds the resulting value of the stat
    * @returns `true` if the stat boost applies successfully, false otherwise
    * @see shouldApply
    */
@@ -1258,7 +1250,6 @@ export class EvolutionStatBoosterModifier extends StatBoosterModifier {
 /**
  * Modifier used for held items that Applies {@linkcode Stat} boost(s) using a
  * multiplier if the holder is of a specific {@linkcode Species}.
- * @extends StatBoosterModifier
  * @see {@linkcode apply}
  */
 export class SpeciesStatBoosterModifier extends StatBoosterModifier {
@@ -1307,9 +1298,9 @@ export class SpeciesStatBoosterModifier extends StatBoosterModifier {
   /**
    * Checks if the incoming stat is listed in {@linkcode stats} and if the holder's {@linkcode Species}
    * (or its fused species) is listed in {@linkcode species}.
-   * @param pokemon {@linkcode Pokemon} that holds the item
-   * @param stat {@linkcode Stat} being checked at the time
-   * @param statValue {@linkcode NumberHolder} that holds the resulting value of the stat
+   * @param pokemon - that holds the item
+   * @param stat - being checked at the time
+   * @param statValue - that holds the resulting value of the stat
    * @returns `true` if the stat could be boosted, false otherwise
    */
   override shouldApply(pokemon: Pokemon, stat: Stat, statValue: NumberHolder): boolean {
@@ -1322,8 +1313,8 @@ export class SpeciesStatBoosterModifier extends StatBoosterModifier {
 
   /**
    * Checks if either parameter is included in the corresponding lists
-   * @param speciesId {@linkcode Species} being checked
-   * @param stat {@linkcode Stat} being checked
+   * @param speciesId - being checked
+   * @param stat - being checked
    * @returns `true` if both parameters are in {@linkcode species} and {@linkcode stats} respectively, false otherwise
    */
   contains(speciesId: Species, stat: Stat): boolean {
@@ -1333,7 +1324,6 @@ export class SpeciesStatBoosterModifier extends StatBoosterModifier {
 
 /**
  * Modifier used for held items that apply critical-hit stage boost(s).
- * @extends PokemonHeldItemModifier
  * @see {@linkcode apply}
  */
 export class CritBoosterModifier extends PokemonHeldItemModifier {
@@ -1364,8 +1354,8 @@ export class CritBoosterModifier extends PokemonHeldItemModifier {
 
   /**
    * Increases the current critical-hit stage value by {@linkcode stageIncrement}.
-   * @param _pokemon {@linkcode Pokemon} N/A
-   * @param critStage {@linkcode NumberHolder} that holds the resulting critical-hit level
+   * @param _pokemon - N/A
+   * @param critStage - that holds the resulting critical-hit level
    * @returns always `true`
    */
   override apply(_pokemon: Pokemon, critStage: NumberHolder): boolean {
@@ -1381,7 +1371,6 @@ export class CritBoosterModifier extends PokemonHeldItemModifier {
 /**
  * Modifier used for held items that apply critical-hit stage boost(s)
  * if the holder is of a specific {@linkcode Species}.
- * @extends CritBoosterModifier
  * @see {@linkcode shouldApply}
  */
 export class SpeciesCritBoosterModifier extends CritBoosterModifier {
@@ -1415,8 +1404,8 @@ export class SpeciesCritBoosterModifier extends CritBoosterModifier {
   /**
    * Checks if the holder's {@linkcode Species} (or its fused species) is listed
    * in {@linkcode species}.
-   * @param pokemon {@linkcode Pokemon} that holds the held item
-   * @param critStage {@linkcode NumberHolder} that holds the resulting critical-hit level
+   * @param pokemon - that holds the held item
+   * @param critStage - that holds the resulting critical-hit level
    * @returns `true` if the critical-hit level can be incremented, false otherwise
    */
   override shouldApply(pokemon: Pokemon, critStage: NumberHolder): boolean {
@@ -1470,9 +1459,9 @@ export class AttackTypeBoosterModifier extends PokemonHeldItemModifier {
 
   /**
    * Checks if {@linkcode AttackTypeBoosterModifier} should be applied
-   * @param pokemon the {@linkcode Pokemon} that holds the held item
-   * @param moveType the {@linkcode PokemonType} of the move being used
-   * @param movePower the {@linkcode NumberHolder} that holds the power of the move
+   * @param pokemon - the {@linkcode Pokemon} that holds the held item
+   * @param moveType - the {@linkcode PokemonType} of the move being used
+   * @param movePower - the {@linkcode NumberHolder} that holds the power of the move
    * @returns `true` if boosts should be applied to the move.
    */
   override shouldApply(pokemon?: Pokemon, moveType?: PokemonType, movePower?: NumberHolder): boolean {
@@ -1485,9 +1474,9 @@ export class AttackTypeBoosterModifier extends PokemonHeldItemModifier {
 
   /**
    * Applies {@linkcode AttackTypeBoosterModifier}
-   * @param pokemon {@linkcode Pokemon} that holds the held item
-   * @param moveType {@linkcode PokemonType} of the move being used
-   * @param movePower {@linkcode NumberHolder} that holds the power of the move
+   * @param pokemon - that holds the held item
+   * @param moveType - of the move being used
+   * @param movePower - that holds the power of the move
    * @returns `true` if boosts have been applied to the move.
    */
   override apply(_pokemon: Pokemon, moveType: PokemonType, movePower: NumberHolder): boolean {
@@ -1521,8 +1510,8 @@ export class SurviveDamageModifier extends PokemonHeldItemModifier {
 
   /**
    * Checks if the {@linkcode SurviveDamageModifier} should be applied
-   * @param pokemon the {@linkcode Pokemon} that holds the item
-   * @param surviveDamage {@linkcode BooleanHolder} that holds the survive damage
+   * @param pokemon - the {@linkcode Pokemon} that holds the item
+   * @param surviveDamage - that holds the survive damage
    * @returns `true` if the {@linkcode SurviveDamageModifier} should be applied
    */
   override shouldApply(pokemon?: Pokemon, surviveDamage?: BooleanHolder): boolean {
@@ -1531,8 +1520,8 @@ export class SurviveDamageModifier extends PokemonHeldItemModifier {
 
   /**
    * Applies {@linkcode SurviveDamageModifier}
-   * @param pokemon the {@linkcode Pokemon} that holds the item
-   * @param surviveDamage {@linkcode BooleanHolder} that holds the survive damage
+   * @param pokemon - the {@linkcode Pokemon} that holds the item
+   * @param surviveDamage - that holds the survive damage
    * @returns `true` if the survive damage has been applied
    */
   override apply(pokemon: Pokemon, surviveDamage: BooleanHolder): boolean {
@@ -1567,8 +1556,8 @@ export class BypassSpeedChanceModifier extends PokemonHeldItemModifier {
 
   /**
    * Checks if {@linkcode BypassSpeedChanceModifier} should be applied
-   * @param pokemon the {@linkcode Pokemon} that holds the item
-   * @param doBypassSpeed {@linkcode BooleanHolder} that is `true` if speed should be bypassed
+   * @param pokemon - the {@linkcode Pokemon} that holds the item
+   * @param doBypassSpeed - that is `true` if speed should be bypassed
    * @returns `true` if {@linkcode BypassSpeedChanceModifier} should be applied
    */
   override shouldApply(pokemon?: Pokemon, doBypassSpeed?: BooleanHolder): boolean {
@@ -1577,8 +1566,8 @@ export class BypassSpeedChanceModifier extends PokemonHeldItemModifier {
 
   /**
    * Applies {@linkcode BypassSpeedChanceModifier}
-   * @param pokemon the {@linkcode Pokemon} that holds the item
-   * @param doBypassSpeed {@linkcode BooleanHolder} that is `true` if speed should be bypassed
+   * @param pokemon - the {@linkcode Pokemon} that holds the item
+   * @param doBypassSpeed - that is `true` if speed should be bypassed
    * @returns `true` if {@linkcode BypassSpeedChanceModifier} has been applied
    */
   override apply(pokemon: Pokemon, doBypassSpeed: BooleanHolder): boolean {
@@ -1629,8 +1618,8 @@ export class FlinchChanceModifier extends PokemonHeldItemModifier {
 
   /**
    * Checks if {@linkcode FlinchChanceModifier} should be applied
-   * @param pokemon the {@linkcode Pokemon} that holds the item
-   * @param flinched {@linkcode BooleanHolder} that is `true` if the pokemon flinched
+   * @param pokemon - the {@linkcode Pokemon} that holds the item
+   * @param flinched - that is `true` if the pokemon flinched
    * @returns `true` if {@linkcode FlinchChanceModifier} should be applied
    */
   override shouldApply(pokemon?: Pokemon, flinched?: BooleanHolder): boolean {
@@ -1639,8 +1628,8 @@ export class FlinchChanceModifier extends PokemonHeldItemModifier {
 
   /**
    * Applies {@linkcode FlinchChanceModifier}
-   * @param pokemon the {@linkcode Pokemon} that holds the item
-   * @param flinched {@linkcode BooleanHolder} that is `true` if the pokemon flinched
+   * @param pokemon - the {@linkcode Pokemon} that holds the item
+   * @param flinched - that is `true` if the pokemon flinched
    * @returns `true` if {@linkcode FlinchChanceModifier} has been applied
    */
   override apply(pokemon: Pokemon, flinched: BooleanHolder): boolean {
@@ -1669,7 +1658,7 @@ export class TurnHealModifier extends PokemonHeldItemModifier {
 
   /**
    * Applies {@linkcode TurnHealModifier}
-   * @param pokemon The {@linkcode Pokemon} that holds the item
+   * @param pokemon - The {@linkcode Pokemon} that holds the item
    * @returns `true` if the {@linkcode Pokemon} was healed
    */
   override apply(pokemon: Pokemon): boolean {
@@ -1699,7 +1688,6 @@ export class TurnHealModifier extends PokemonHeldItemModifier {
 /**
  * Modifier used for held items, namely Toxic Orb and Flame Orb, that apply a
  * set {@linkcode StatusEffect} at the end of a turn.
- * @extends PokemonHeldItemModifier
  * @see {@linkcode apply}
  */
 export class TurnStatusEffectModifier extends PokemonHeldItemModifier {
@@ -1725,7 +1713,7 @@ export class TurnStatusEffectModifier extends PokemonHeldItemModifier {
    * to prevent held item stockpiling since the item obtained first
    * would be the only item able to {@linkcode apply} successfully.
    * @override
-   * @param modifier {@linkcode Modifier} being type tested
+   * @param modifier - being type tested
    * @return `true` if {@linkcode modifier} is an instance of
    * TurnStatusEffectModifier, false otherwise
    */
@@ -1739,7 +1727,7 @@ export class TurnStatusEffectModifier extends PokemonHeldItemModifier {
 
   /**
    * Tries to inflicts the holder with the associated {@linkcode StatusEffect}.
-   * @param pokemon {@linkcode Pokemon} that holds the held item
+   * @param pokemon - that holds the held item
    * @returns `true` if the status effect was applied successfully
    */
   override apply(pokemon: Pokemon): boolean {
@@ -1766,7 +1754,7 @@ export class HitHealModifier extends PokemonHeldItemModifier {
 
   /**
    * Applies {@linkcode HitHealModifier}
-   * @param pokemon The {@linkcode Pokemon} that holds the item
+   * @param pokemon - The {@linkcode Pokemon} that holds the item
    * @returns `true` if the {@linkcode Pokemon} was healed
    */
   override apply(pokemon: Pokemon): boolean {
@@ -1803,7 +1791,7 @@ export class LevelIncrementBoosterModifier extends PersistentModifier {
 
   /**
    * Checks if {@linkcode LevelIncrementBoosterModifier} should be applied
-   * @param count {@linkcode NumberHolder} holding the level increment count
+   * @param count - holding the level increment count
    * @returns `true` if {@linkcode LevelIncrementBoosterModifier} should be applied
    */
   override shouldApply(count: NumberHolder): boolean {
@@ -1812,7 +1800,7 @@ export class LevelIncrementBoosterModifier extends PersistentModifier {
 
   /**
    * Applies {@linkcode LevelIncrementBoosterModifier}
-   * @param count {@linkcode NumberHolder} holding the level increment count
+   * @param count - holding the level increment count
    * @returns always `true`
    */
   override apply(count: NumberHolder): boolean {
@@ -1851,7 +1839,7 @@ export class BerryModifier extends PokemonHeldItemModifier {
 
   /**
    * Checks if {@linkcode BerryModifier} should be applied
-   * @param pokemon The {@linkcode Pokemon} that holds the berry
+   * @param pokemon - The {@linkcode Pokemon} that holds the berry
    * @returns `true` if {@linkcode BerryModifier} should be applied
    */
   override shouldApply(pokemon: Pokemon): boolean {
@@ -1860,7 +1848,7 @@ export class BerryModifier extends PokemonHeldItemModifier {
 
   /**
    * Applies {@linkcode BerryModifier}
-   * @param pokemon The {@linkcode Pokemon} that holds the berry
+   * @param pokemon - The {@linkcode Pokemon} that holds the berry
    * @returns always `true`
    */
   override apply(pokemon: Pokemon): boolean {
@@ -1894,8 +1882,8 @@ export class PreserveBerryModifier extends PersistentModifier {
 
   /**
    * Checks if all prequired conditions are met to apply {@linkcode PreserveBerryModifier}
-   * @param pokemon {@linkcode Pokemon} that holds the berry
-   * @param doPreserve {@linkcode BooleanHolder} that is `true` if the berry should be preserved
+   * @param pokemon - that holds the berry
+   * @param doPreserve - that is `true` if the berry should be preserved
    * @returns `true` if {@linkcode PreserveBerryModifier} should be applied
    */
   override shouldApply(pokemon?: Pokemon, doPreserve?: BooleanHolder): boolean {
@@ -1904,8 +1892,8 @@ export class PreserveBerryModifier extends PersistentModifier {
 
   /**
    * Applies {@linkcode PreserveBerryModifier}
-   * @param pokemon The {@linkcode Pokemon} that holds the berry
-   * @param doPreserve {@linkcode BooleanHolder} that is `true` if the berry should be preserved
+   * @param pokemon - The {@linkcode Pokemon} that holds the berry
+   * @param doPreserve - that is `true` if the berry should be preserved
    * @returns always `true`
    */
   override apply(pokemon: Pokemon, doPreserve: BooleanHolder): boolean {
@@ -1932,7 +1920,7 @@ export class PokemonInstantReviveModifier extends PokemonHeldItemModifier {
 
   /**
    * Applies {@linkcode PokemonInstantReviveModifier}
-   * @param pokemon The {@linkcode Pokemon} that holds the item
+   * @param pokemon - The {@linkcode Pokemon} that holds the item
    * @returns always `true`
    */
   override apply(pokemon: Pokemon): boolean {
@@ -1970,7 +1958,6 @@ export class PokemonInstantReviveModifier extends PokemonHeldItemModifier {
 /**
  * Modifier used for held items, namely White Herb, that restore adverse stat
  * stages in battle.
- * @extends PokemonHeldItemModifier
  * @see {@linkcode apply}
  */
 export class ResetNegativeStatStageModifier extends PokemonHeldItemModifier {
@@ -1985,7 +1972,7 @@ export class ResetNegativeStatStageModifier extends PokemonHeldItemModifier {
   /**
    * Goes through the holder's stat stages and, if any are negative, resets that
    * stat stage back to 0.
-   * @param pokemon {@linkcode Pokemon} that holds the item
+   * @param pokemon - that holds the item
    * @returns `true` if any stat stages were reset, false otherwise
    */
   override apply(pokemon: Pokemon): boolean {
@@ -2017,15 +2004,14 @@ export class ResetNegativeStatStageModifier extends PokemonHeldItemModifier {
 /**
  * Modifier used for held items, namely Mystical Rock, that extend the
  * duration of weather and terrain effects.
- * @extends PokemonHeldItemModifier
  * @see {@linkcode apply}
  */
 export class FieldEffectModifier extends PokemonHeldItemModifier {
   /**
    * Provides two more turns per stack to any weather or terrain effect caused
    * by the holder.
-   * @param pokemon {@linkcode Pokemon} that holds the held item
-   * @param fieldDuration {@linkcode NumberHolder} that stores the current field effect duration
+   * @param pokemon - that holds the held item
+   * @param fieldDuration - that stores the current field effect duration
    * @returns `true` if the field effect extension was applied successfully
    */
   override apply(_pokemon: Pokemon, fieldDuration: NumberHolder): boolean {
@@ -2057,8 +2043,8 @@ export abstract class ConsumablePokemonModifier extends ConsumableModifier {
 
   /**
    * Checks if {@linkcode ConsumablePokemonModifier} should be applied
-   * @param playerPokemon The {@linkcode PlayerPokemon} that consumes the item
-   * @param _args N/A
+   * @param playerPokemon - The {@linkcode PlayerPokemon} that consumes the item
+   * @param _args - N/A
    * @returns `true` if {@linkcode ConsumablePokemonModifier} should be applied
    */
   override shouldApply(playerPokemon?: PlayerPokemon, ..._args: unknown[]): boolean {
@@ -2067,8 +2053,8 @@ export abstract class ConsumablePokemonModifier extends ConsumableModifier {
 
   /**
    * Applies {@linkcode ConsumablePokemonModifier}
-   * @param playerPokemon The {@linkcode PlayerPokemon} that consumes the item
-   * @param args Additional arguments passed to {@linkcode ConsumablePokemonModifier.apply}
+   * @param playerPokemon - The {@linkcode PlayerPokemon} that consumes the item
+   * @param args - Additional arguments passed to {@linkcode ConsumablePokemonModifier.apply}
    */
   abstract override apply(playerPokemon: PlayerPokemon, ...args: unknown[]): boolean;
 
@@ -2089,7 +2075,7 @@ export class TerrastalizeModifier extends ConsumablePokemonModifier {
 
   /**
    * Checks if {@linkcode TerrastalizeModifier} should be applied
-   * @param playerPokemon The {@linkcode PlayerPokemon} that consumes the item
+   * @param playerPokemon - The {@linkcode PlayerPokemon} that consumes the item
    * @returns `true` if the {@linkcode TerrastalizeModifier} should be applied
    */
   override shouldApply(playerPokemon?: PlayerPokemon): boolean {
@@ -2103,7 +2089,7 @@ export class TerrastalizeModifier extends ConsumablePokemonModifier {
 
   /**
    * Applies {@linkcode TerrastalizeModifier}
-   * @param pokemon The {@linkcode PlayerPokemon} that consumes the item
+   * @param pokemon - The {@linkcode PlayerPokemon} that consumes the item
    * @returns `true` if hp was restored
    */
   override apply(pokemon: Pokemon): boolean {
@@ -2136,8 +2122,8 @@ export class PokemonHpRestoreModifier extends ConsumablePokemonModifier {
 
   /**
    * Checks if {@linkcode PokemonHpRestoreModifier} should be applied
-   * @param playerPokemon The {@linkcode PlayerPokemon} that consumes the item
-   * @param multiplier The multiplier of the hp restore
+   * @param playerPokemon - The {@linkcode PlayerPokemon} that consumes the item
+   * @param multiplier - The multiplier of the hp restore
    * @returns `true` if the {@linkcode PokemonHpRestoreModifier} should be applied
    */
   override shouldApply(playerPokemon?: PlayerPokemon, multiplier?: number): boolean {
@@ -2149,8 +2135,8 @@ export class PokemonHpRestoreModifier extends ConsumablePokemonModifier {
 
   /**
    * Applies {@linkcode PokemonHpRestoreModifier}
-   * @param pokemon The {@linkcode PlayerPokemon} that consumes the item
-   * @param multiplier The multiplier of the hp restore
+   * @param pokemon - The {@linkcode PlayerPokemon} that consumes the item
+   * @param multiplier - The multiplier of the hp restore
    * @returns `true` if hp was restored
    */
   override apply(pokemon: Pokemon, multiplier: number): boolean {
@@ -2176,7 +2162,7 @@ export class PokemonHpRestoreModifier extends ConsumablePokemonModifier {
 export class PokemonStatusHealModifier extends ConsumablePokemonModifier {
   /**
    * Applies {@linkcode PokemonStatusHealModifier}
-   * @param playerPokemon The {@linkcode PlayerPokemon} that gets healed from the status
+   * @param playerPokemon - The {@linkcode PlayerPokemon} that gets healed from the status
    * @returns always `true`
    */
   override apply(playerPokemon: PlayerPokemon): boolean {
@@ -2206,7 +2192,7 @@ export class PokemonPpRestoreModifier extends ConsumablePokemonMoveModifier {
 
   /**
    * Applies {@linkcode PokemonPpRestoreModifier}
-   * @param playerPokemon The {@linkcode PlayerPokemon} that should get move pp restored
+   * @param playerPokemon - The {@linkcode PlayerPokemon} that should get move pp restored
    * @returns always `true`
    */
   override apply(playerPokemon: PlayerPokemon): boolean {
@@ -2231,7 +2217,7 @@ export class PokemonAllMovePpRestoreModifier extends ConsumablePokemonModifier {
 
   /**
    * Applies {@linkcode PokemonAllMovePpRestoreModifier}
-   * @param playerPokemon The {@linkcode PlayerPokemon} that should get all move pp restored
+   * @param playerPokemon - The {@linkcode PlayerPokemon} that should get all move pp restored
    * @returns always `true`
    */
   override apply(playerPokemon: PlayerPokemon): boolean {
@@ -2256,7 +2242,7 @@ export class PokemonPpUpModifier extends ConsumablePokemonMoveModifier {
 
   /**
    * Applies {@linkcode PokemonPpUpModifier}
-   * @param playerPokemon The {@linkcode PlayerPokemon} that gets a pp up on move-slot {@linkcode moveIndex}
+   * @param playerPokemon - The {@linkcode PlayerPokemon} that gets a pp up on move-slot {@linkcode moveIndex}
    * @returns
    */
   override apply(playerPokemon: PlayerPokemon): boolean {
@@ -2281,7 +2267,7 @@ export class PokemonNatureChangeModifier extends ConsumablePokemonModifier {
 
   /**
    * Applies {@linkcode PokemonNatureChangeModifier}
-   * @param playerPokemon {@linkcode PlayerPokemon} to apply the {@linkcode Nature} change to
+   * @param playerPokemon - to apply the {@linkcode Nature} change to
    * @returns
    */
   override apply(playerPokemon: PlayerPokemon): boolean {
@@ -2295,8 +2281,8 @@ export class PokemonNatureChangeModifier extends ConsumablePokemonModifier {
 export class PokemonLevelIncrementModifier extends ConsumablePokemonModifier {
   /**
    * Applies {@linkcode PokemonLevelIncrementModifier}
-   * @param playerPokemon The {@linkcode PlayerPokemon} that should get levels incremented
-   * @param levelCount The amount of levels to increment
+   * @param playerPokemon - The {@linkcode PlayerPokemon} that should get levels incremented
+   * @param levelCount - The amount of levels to increment
    * @returns always `true`
    */
   override apply(playerPokemon: PlayerPokemon, levelCount: NumberHolder = new NumberHolder(1)): boolean {
@@ -2327,7 +2313,7 @@ export class TmModifier extends ConsumablePokemonModifier {
 
   /**
    * Applies {@linkcode TmModifier}
-   * @param playerPokemon The {@linkcode PlayerPokemon} that should learn the TM
+   * @param playerPokemon - The {@linkcode PlayerPokemon} that should learn the TM
    * @returns always `true`
    */
   override apply(playerPokemon: PlayerPokemon): boolean {
@@ -2350,7 +2336,7 @@ export class RememberMoveModifier extends ConsumablePokemonModifier {
 
   /**
    * Applies {@linkcode RememberMoveModifier}
-   * @param playerPokemon The {@linkcode PlayerPokemon} that should remember the move
+   * @param playerPokemon - The {@linkcode PlayerPokemon} that should remember the move
    * @returns always `true`
    */
   override apply(playerPokemon: PlayerPokemon, cost?: number): boolean {
@@ -2371,7 +2357,7 @@ export class EvolutionItemModifier extends ConsumablePokemonModifier {
   public override type: EvolutionItemModifierType;
   /**
    * Applies {@linkcode EvolutionItemModifier}
-   * @param playerPokemon The {@linkcode PlayerPokemon} that should evolve via item
+   * @param playerPokemon - The {@linkcode PlayerPokemon} that should evolve via item
    * @returns `true` if the evolution was successful
    */
   override apply(playerPokemon: PlayerPokemon): boolean {
@@ -2416,8 +2402,8 @@ export class FusePokemonModifier extends ConsumablePokemonModifier {
 
   /**
    * Checks if {@linkcode FusePokemonModifier} should be applied
-   * @param playerPokemon {@linkcode PlayerPokemon} that should be fused
-   * @param playerPokemon2 {@linkcode PlayerPokemon} that should be fused with {@linkcode playerPokemon}
+   * @param playerPokemon - that should be fused
+   * @param playerPokemon2 - that should be fused with {@linkcode playerPokemon}
    * @returns `true` if {@linkcode FusePokemonModifier} should be applied
    */
   override shouldApply(playerPokemon?: PlayerPokemon, playerPokemon2?: PlayerPokemon): boolean {
@@ -2428,8 +2414,8 @@ export class FusePokemonModifier extends ConsumablePokemonModifier {
 
   /**
    * Applies {@linkcode FusePokemonModifier}
-   * @param playerPokemon {@linkcode PlayerPokemon} that should be fused
-   * @param playerPokemon2 {@linkcode PlayerPokemon} that should be fused with {@linkcode playerPokemon}
+   * @param playerPokemon - that should be fused
+   * @param playerPokemon2 - that should be fused with {@linkcode playerPokemon}
    * @returns always Promise<true>
    */
   override apply(playerPokemon: PlayerPokemon, playerPokemon2: PlayerPokemon): boolean {
@@ -2483,7 +2469,7 @@ export class HealingBoosterModifier extends PersistentModifier {
 
   /**
    * Applies {@linkcode HealingBoosterModifier}
-   * @param healingMultiplier the multiplier to apply to the healing
+   * @param healingMultiplier - the multiplier to apply to the healing
    * @returns always `true`
    */
   override apply(healingMultiplier: NumberHolder): boolean {
@@ -2524,7 +2510,7 @@ export class ExpBoosterModifier extends PersistentModifier {
 
   /**
    * Applies {@linkcode ExpBoosterModifier}
-   * @param boost {@linkcode NumberHolder} holding the boost value
+   * @param boost - holding the boost value
    * @returns always `true`
    */
   override apply(boost: NumberHolder): boolean {
@@ -2566,8 +2552,8 @@ export class PokemonExpBoosterModifier extends PokemonHeldItemModifier {
 
   /**
    * Checks if {@linkcode PokemonExpBoosterModifier} should be applied
-   * @param pokemon The {@linkcode Pokemon} to apply the exp boost to
-   * @param boost {@linkcode NumberHolder} holding the exp boost value
+   * @param pokemon - The {@linkcode Pokemon} to apply the exp boost to
+   * @param boost - holding the exp boost value
    * @returns `true` if {@linkcode PokemonExpBoosterModifier} should be applied
    */
   override shouldApply(pokemon: Pokemon, boost: NumberHolder): boolean {
@@ -2576,8 +2562,8 @@ export class PokemonExpBoosterModifier extends PokemonHeldItemModifier {
 
   /**
    * Applies {@linkcode PokemonExpBoosterModifier}
-   * @param _pokemon The {@linkcode Pokemon} to apply the exp boost to
-   * @param boost {@linkcode NumberHolder} holding the exp boost value
+   * @param _pokemon - The {@linkcode Pokemon} to apply the exp boost to
+   * @param boost - holding the exp boost value
    * @returns always `true`
    */
   override apply(_pokemon: Pokemon, boost: NumberHolder): boolean {
@@ -2648,8 +2634,8 @@ export class PokemonFriendshipBoosterModifier extends PokemonHeldItemModifier {
 
   /**
    * Applies {@linkcode PokemonFriendshipBoosterModifier}
-   * @param _pokemon The {@linkcode Pokemon} to apply the friendship boost to
-   * @param friendship {@linkcode NumberHolder} holding the friendship boost value
+   * @param _pokemon - The {@linkcode Pokemon} to apply the friendship boost to
+   * @param friendship - holding the friendship boost value
    * @returns always `true`
    */
   override apply(_pokemon: Pokemon, friendship: NumberHolder): boolean {
@@ -2674,8 +2660,8 @@ export class PokemonNatureWeightModifier extends PokemonHeldItemModifier {
 
   /**
    * Applies {@linkcode PokemonNatureWeightModifier}
-   * @param _pokemon The {@linkcode Pokemon} to apply the nature weight to
-   * @param multiplier {@linkcode NumberHolder} holding the nature weight
+   * @param _pokemon - The {@linkcode Pokemon} to apply the nature weight to
+   * @param multiplier - holding the nature weight
    * @returns `true` if multiplier was applied
    */
   override apply(_pokemon: Pokemon, multiplier: NumberHolder): boolean {
@@ -2719,8 +2705,8 @@ export class PokemonMoveAccuracyBoosterModifier extends PokemonHeldItemModifier 
 
   /**
    * Checks if {@linkcode PokemonMoveAccuracyBoosterModifier} should be applied
-   * @param pokemon The {@linkcode Pokemon} to apply the move accuracy boost to
-   * @param moveAccuracy {@linkcode NumberHolder} holding the move accuracy boost
+   * @param pokemon - The {@linkcode Pokemon} to apply the move accuracy boost to
+   * @param moveAccuracy - holding the move accuracy boost
    * @returns `true` if {@linkcode PokemonMoveAccuracyBoosterModifier} should be applied
    */
   override shouldApply(pokemon?: Pokemon, moveAccuracy?: NumberHolder): boolean {
@@ -2729,8 +2715,8 @@ export class PokemonMoveAccuracyBoosterModifier extends PokemonHeldItemModifier 
 
   /**
    * Applies {@linkcode PokemonMoveAccuracyBoosterModifier}
-   * @param _pokemon The {@linkcode Pokemon} to apply the move accuracy boost to
-   * @param moveAccuracy {@linkcode NumberHolder} holding the move accuracy boost
+   * @param _pokemon - The {@linkcode Pokemon} to apply the move accuracy boost to
+   * @param moveAccuracy - holding the move accuracy boost
    * @returns always `true`
    */
   override apply(_pokemon: Pokemon, moveAccuracy: NumberHolder): boolean {
@@ -2757,10 +2743,10 @@ export class PokemonMultiHitModifier extends PokemonHeldItemModifier {
 
   /**
    * For each stack, converts 25 percent of attack damage into an additional strike.
-   * @param pokemon The {@linkcode Pokemon} using the move
-   * @param moveId The {@linkcode Moves | identifier} for the move being used
-   * @param count {@linkcode NumberHolder} holding the move's hit count for this turn
-   * @param damageMultiplier {@linkcode NumberHolder} holding a damage multiplier applied to a strike of this move
+   * @param pokemon - The {@linkcode Pokemon} using the move
+   * @param moveId - The {@linkcode Moves | identifier} for the move being used
+   * @param count - holding the move's hit count for this turn
+   * @param damageMultiplier - holding a damage multiplier applied to a strike of this move
    * @returns always `true`
    */
   override apply(
@@ -2862,8 +2848,8 @@ export class PokemonFormChangeItemModifier extends PokemonHeldItemModifier {
 
   /**
    * Applies {@linkcode PokemonFormChangeItemModifier}
-   * @param pokemon The {@linkcode Pokemon} to apply the form change item to
-   * @param active `true` if the form change item is active
+   * @param pokemon - The {@linkcode Pokemon} to apply the form change item to
+   * @param active - `true` if the form change item is active
    * @returns `true` if the form change item was applied
    */
   override apply(pokemon: Pokemon, active: boolean): boolean {
@@ -2934,7 +2920,7 @@ export class MoneyMultiplierModifier extends PersistentModifier {
 
   /**
    * Applies {@linkcode MoneyMultiplierModifier}
-   * @param multiplier {@linkcode NumberHolder} holding the money multiplier value
+   * @param multiplier - holding the money multiplier value
    * @returns always `true`
    */
   override apply(multiplier: NumberHolder): boolean {
@@ -2959,8 +2945,8 @@ export class DamageMoneyRewardModifier extends PokemonHeldItemModifier {
 
   /**
    * Applies {@linkcode DamageMoneyRewardModifier}
-   * @param pokemon The {@linkcode Pokemon} attacking
-   * @param multiplier {@linkcode NumberHolder} holding the multiplier value
+   * @param pokemon - The {@linkcode Pokemon} attacking
+   * @param multiplier - holding the multiplier value
    * @returns always `true`
    */
   override apply(_pokemon: Pokemon, multiplier: NumberHolder): boolean {
@@ -3020,7 +3006,7 @@ export class HiddenAbilityRateBoosterModifier extends PersistentModifier {
 
   /**
    * Applies {@linkcode HiddenAbilityRateBoosterModifier}
-   * @param boost {@linkcode NumberHolder} holding the boost value
+   * @param boost - holding the boost value
    * @returns always `true`
    */
   override apply(boost: NumberHolder): boolean {
@@ -3045,7 +3031,7 @@ export class ShinyRateBoosterModifier extends PersistentModifier {
 
   /**
    * Applies {@linkcode ShinyRateBoosterModifier}
-   * @param boost {@linkcode NumberHolder} holding the boost value
+   * @param boost - holding the boost value
    * @returns always `true`
    */
   override apply(boost: NumberHolder): boolean {
@@ -3070,7 +3056,7 @@ export class CriticalCatchChanceBoosterModifier extends PersistentModifier {
 
   /**
    * Applies {@linkcode CriticalCatchChanceBoosterModifier}
-   * @param boost {@linkcode NumberHolder} holding the boost value
+   * @param boost - holding the boost value
    * @returns always `true`
    */
   override apply(boost: NumberHolder): boolean {
@@ -3131,7 +3117,7 @@ export class HealShopCostModifier extends PersistentModifier {
 
   /**
    * Applies {@linkcode HealShopCostModifier}
-   * @param cost {@linkcode NumberHolder} holding the heal shop cost
+   * @param cost - holding the heal shop cost
    * @returns always `true`
    */
   apply(moneyCost: NumberHolder): boolean {
@@ -3201,8 +3187,8 @@ export class SwitchEffectTransferModifier extends PokemonHeldItemModifier {
 export abstract class HeldItemTransferModifier extends PokemonHeldItemModifier {
   /**
    * Determines the targets to transfer items from when this applies.
-   * @param pokemon the {@linkcode Pokemon} holding this item
-   * @param _args N/A
+   * @param pokemon - the {@linkcode Pokemon} holding this item
+   * @param _args - N/A
    * @returns the opponents of the source {@linkcode Pokemon}
    */
   getTargets(pokemon?: Pokemon, ..._args: unknown[]): Pokemon[] {
@@ -3212,9 +3198,9 @@ export abstract class HeldItemTransferModifier extends PokemonHeldItemModifier {
   /**
    * Steals an item from a set of target Pokemon.
    * This prioritizes high-tier held items when selecting the item to steal.
-   * @param pokemon The {@linkcode Pokemon} holding this item
-   * @param target The {@linkcode Pokemon} to steal from (optional)
-   * @param _args N/A
+   * @param pokemon - The {@linkcode Pokemon} holding this item
+   * @param target - The {@linkcode Pokemon} to steal from (optional)
+   * @param _args - N/A
    * @returns `true` if an item was stolen; false otherwise.
    */
   override apply(pokemon: Pokemon, target?: Pokemon, ..._args: unknown[]): boolean {
@@ -3331,8 +3317,8 @@ export class ContactHeldItemTransferChanceModifier extends HeldItemTransferModif
 
   /**
    * Determines the target to steal items from when this applies.
-   * @param _holderPokemon The {@linkcode Pokemon} holding this item
-   * @param targetPokemon The {@linkcode Pokemon} the holder is targeting with an attack
+   * @param _holderPokemon - The {@linkcode Pokemon} holding this item
+   * @param targetPokemon - The {@linkcode Pokemon} the holder is targeting with an attack
    * @returns The target {@linkcode Pokemon} as array for further use in `apply` implementations
    */
   override getTargets(_holderPokemon: Pokemon, targetPokemon: Pokemon): Pokemon[] {
@@ -3406,7 +3392,7 @@ export class ExtraModifierModifier extends PersistentModifier {
 
   /**
    * Applies {@linkcode ExtraModifierModifier}
-   * @param count {NumberHolder} holding the count value
+   * @param count - holding the count value
    * @returns always `true`
    */
   override apply(count: NumberHolder): boolean {
@@ -3422,7 +3408,6 @@ export class ExtraModifierModifier extends PersistentModifier {
 
 /**
  * Modifier used for timed boosts to the player's shop item rewards.
- * @extends LapsingPersistentModifier
  * @see {@linkcode apply}
  */
 export class TempExtraModifierModifier extends LapsingPersistentModifier {
@@ -3430,8 +3415,8 @@ export class TempExtraModifierModifier extends LapsingPersistentModifier {
    * Goes through existing modifiers for any that match Silver Pokeball,
    * which will then add the max count of the new item to the existing count of the current item.
    * If no existing Silver Pokeballs are found, will add a new one.
-   * @param modifiers {@linkcode PersistentModifier} array of the player's modifiers
-   * @param _virtual N/A
+   * @param modifiers - array of the player's modifiers
+   * @param _virtual - N/A
    * @returns true if the modifier was successfully added or applied, false otherwise
    */
   add(modifiers: PersistentModifier[], _virtual: boolean): boolean {
@@ -3461,7 +3446,7 @@ export class TempExtraModifierModifier extends LapsingPersistentModifier {
   /**
    * Increases the current rewards in the battle by the `stackCount`.
    * @returns `true` if the shop reward number modifier applies successfully
-   * @param count {@linkcode NumberHolder} that holds the resulting shop item reward count
+   * @param count - that holds the resulting shop item reward count
    */
   apply(count: NumberHolder): boolean {
     count.value += this.getStackCount();
@@ -3486,7 +3471,7 @@ abstract class EnemyDamageMultiplierModifier extends EnemyPersistentModifier {
 
   /**
    * Applies {@linkcode EnemyDamageMultiplierModifier}
-   * @param multiplier {NumberHolder} holding the multiplier value
+   * @param multiplier - holding the multiplier value
    * @returns always `true`
    */
   override apply(multiplier: NumberHolder): boolean {
@@ -3570,7 +3555,7 @@ export class EnemyTurnHealModifier extends EnemyPersistentModifier {
 
   /**
    * Applies {@linkcode EnemyTurnHealModifier}
-   * @param enemyPokemon The {@linkcode Pokemon} to heal
+   * @param enemyPokemon - The {@linkcode Pokemon} to heal
    * @returns `true` if the {@linkcode Pokemon} was healed
    */
   override apply(enemyPokemon: Pokemon): boolean {
@@ -3626,7 +3611,7 @@ export class EnemyAttackStatusEffectChanceModifier extends EnemyPersistentModifi
 
   /**
    * Applies {@linkcode EnemyAttackStatusEffectChanceModifier}
-   * @param enemyPokemon {@linkcode Pokemon} to apply the status effect to
+   * @param enemyPokemon - to apply the status effect to
    * @returns `true` if the {@linkcode Pokemon} was affected
    */
   override apply(enemyPokemon: Pokemon): boolean {
@@ -3666,7 +3651,7 @@ export class EnemyStatusEffectHealChanceModifier extends EnemyPersistentModifier
 
   /**
    * Applies {@linkcode EnemyStatusEffectHealChanceModifier}
-   * @param enemyPokemon The {@linkcode Pokemon} to heal
+   * @param enemyPokemon - The {@linkcode Pokemon} to heal
    * @returns `true` if the {@linkcode Pokemon} was healed
    */
   override apply(enemyPokemon: Pokemon): boolean {
@@ -3711,7 +3696,7 @@ export class EnemyEndureChanceModifier extends EnemyPersistentModifier {
 
   /**
    * Applies a chance of enduring a lethal hit of an attack
-   * @param target the {@linkcode Pokemon} to apply the {@linkcode BattlerTagType.ENDURING} chance to
+   * @param target - the {@linkcode Pokemon} to apply the {@linkcode BattlerTagType.ENDURING} chance to
    * @returns `true` if {@linkcode Pokemon} endured
    */
   override apply(target: Pokemon): boolean {
@@ -3754,7 +3739,7 @@ export class EnemyFusionChanceModifier extends EnemyPersistentModifier {
 
   /**
    * Applies {@linkcode EnemyFusionChanceModifier}
-   * @param isFusion {@linkcode BooleanHolder} that will be set to `true` if the {@linkcode EnemyPokemon} is a fusion
+   * @param isFusion - that will be set to `true` if the {@linkcode EnemyPokemon} is a fusion
    * @returns `true` if the {@linkcode EnemyPokemon} is a fusion
    */
   override apply(isFusion: BooleanHolder): boolean {
@@ -3776,7 +3761,7 @@ export class EnemyFusionChanceModifier extends EnemyPersistentModifier {
  * Uses either `MODIFIER_OVERRIDE` in overrides.ts to set {@linkcode PersistentModifier}s for either:
  *  - The player
  *  - The enemy
- * @param isPlayer {@linkcode boolean} for whether the player (`true`) or enemy (`false`) is being overridden
+ * @param isPlayer - for whether the player (`true`) or enemy (`false`) is being overridden
  */
 export function overrideModifiers(isPlayer = true): void {
   const modifiersOverride: ModifierOverride[] = isPlayer
@@ -3817,8 +3802,8 @@ export function overrideModifiers(isPlayer = true): void {
  * Uses either `HELD_ITEMS_OVERRIDE` in overrides.ts to set {@linkcode PokemonHeldItemModifier}s for either:
  *  - The first member of the player's team when starting a new game
  *  - An enemy {@linkcode Pokemon} being spawned in
- * @param pokemon {@linkcode Pokemon} whose held items are being overridden
- * @param isPlayer {@linkcode boolean} for whether the {@linkcode pokemon} is the player's (`true`) or an enemy (`false`)
+ * @param pokemon - whose held items are being overridden
+ * @param isPlayer - for whether the {@linkcode pokemon} is the player's (`true`) or an enemy (`false`)
  */
 export function overrideHeldItems(pokemon: Pokemon, isPlayer = true): void {
   const heldItemsOverride: ModifierOverride[] = isPlayer

@@ -18,11 +18,11 @@ export class SwitchPhase extends BattlePhase {
 
   /**
    * Creates a new SwitchPhase
-   * @param switchType {@linkcode SwitchType} The type of switch logic this phase implements
-   * @param fieldIndex Field index to switch out
-   * @param isModal Indicates if the switch should be forced (true) or is
+   * @param switchType - The type of switch logic this phase implements
+   * @param fieldIndex - Field index to switch out
+   * @param isModal - Indicates if the switch should be forced (true) or is
    * optional (false).
-   * @param doReturn Indicates if the party member on the field should be
+   * @param doReturn - Indicates if the party member on the field should be
    * recalled to ball or has already left the field. Passed to {@linkcode SwitchSummonPhase}.
    */
   constructor(switchType: SwitchType, fieldIndex: number, isModal: boolean, doReturn: boolean) {

@@ -60,7 +60,7 @@ export class NavigationManager {
 
   /**
    * Navigates modes based on given direction
-   * @param direction LEFT or RIGHT
+   * @param direction - LEFT or RIGHT
    */
   public navigate(direction) {
     const pos = this.modes.indexOf(this.selectedMode);
@@ -109,8 +109,8 @@ export default class NavigationMenu extends Phaser.GameObjects.Container {
 
   /**
    * Creates an instance of NavigationMenu.
-   * @param x The x position of the NavigationMenu.
-   * @param y The y position of the NavigationMenu.
+   * @param x - The x position of the NavigationMenu.
+   * @param y - The y position of the NavigationMenu.
    */
   constructor(x: number, y: number) {
     super(globalScene, x, y);
@@ -200,7 +200,7 @@ export default class NavigationMenu extends Phaser.GameObjects.Container {
 
   /**
    * Handles navigation based on the button pressed.
-   * @param button The button pressed for navigation.
+   * @param button - The button pressed for navigation.
    * @returns A boolean indicating if the navigation was handled.
    */
   navigate(button: Button): boolean {

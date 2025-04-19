@@ -60,9 +60,9 @@ export class FilterBar extends Phaser.GameObjects.Container {
 
   /**
    * Add a new filter to the FilterBar, as long that a unique DropDownColumn is provided
-   * @param column  the DropDownColumn that will be used to access the filter values
-   * @param title   the string that will get displayed in the filter bar
-   * @param dropDown the DropDown with all options for this filter
+   * @param column - the DropDownColumn that will be used to access the filter values
+   * @param title  - the string that will get displayed in the filter bar
+   * @param dropDown - the DropDown with all options for this filter
    * @returns true if successful, false if the provided column was already in use for another filter
    */
   addFilter(column: DropDownColumn, title: string, dropDown: DropDown): boolean {
@@ -87,7 +87,7 @@ export class FilterBar extends Phaser.GameObjects.Container {
 
   /**
    * Get the DropDown associated to a given filter
-   * @param col the DropDownColumn used to register the filter to retrieve
+   * @param col - the DropDownColumn used to register the filter to retrieve
    * @returns the associated DropDown if it exists, undefined otherwise
    */
   getFilter(col: DropDownColumn): DropDown {
@@ -96,7 +96,7 @@ export class FilterBar extends Phaser.GameObjects.Container {
 
   /**
    * Get the DropDownColumn associated to a given index
-   * @param index the index of the column to retrieve
+   * @param index - the index of the column to retrieve
    * @returns the associated DropDownColumn if it exists, undefined otherwise
    */
   public getColumn(index: number): DropDownColumn {
@@ -214,7 +214,7 @@ export class FilterBar extends Phaser.GameObjects.Container {
 
   /**
    * Find the nearest filter to the provided container
-   * @param container the StarterContainer to compare position against
+   * @param container - the StarterContainer to compare position against
    * @returns the index of the closest filter
    */
   getNearestFilter(container: StarterContainer): number {

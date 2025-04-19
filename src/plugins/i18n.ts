@@ -125,7 +125,7 @@ async function initFonts(language: string | undefined) {
  * *If you don't want the BBCode tag applied, just use 'number' formatter*
  * @example Input: `{{myMoneyValue, money}}`
  *          Output: `@[MONEY]{₽100,000,000}`
- * @param amount the money amount
+ * @param amount - the money amount
  * @returns a money formatted string
  */
 function i18nMoneyFormatter(amount: any): string {

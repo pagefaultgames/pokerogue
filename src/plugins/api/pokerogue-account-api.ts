@@ -36,7 +36,7 @@ export class PokerogueAccountApi extends ApiBase {
 
   /**
    * Register a new account.
-   * @param registerData The {@linkcode AccountRegisterRequest} to send
+   * @param registerData - The {@linkcode AccountRegisterRequest} to send
    * @returns An error message if something went wrong
    */
   public async register(registerData: AccountRegisterRequest) {
@@ -57,7 +57,7 @@ export class PokerogueAccountApi extends ApiBase {
   /**
    * Send a login request.
    * Sets the session cookie on success.
-   * @param loginData The {@linkcode AccountLoginRequest} to send
+   * @param loginData - The {@linkcode AccountLoginRequest} to send
    * @returns An error message if something went wrong
    */
   public async login(loginData: AccountLoginRequest) {

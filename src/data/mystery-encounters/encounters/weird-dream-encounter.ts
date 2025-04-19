@@ -496,7 +496,7 @@ async function doNewTeamPostProcess(transformations: PokemonTransformation[]) {
  * @param previousPokemon
  * @param newPokemon
  * @param speciesRootForm
- * @param forBattle Default `false`. If false, will perform achievements and dex unlocks for the player.
+ * @param forBattle - Default `false`. If false, will perform achievements and dex unlocks for the player.
  */
 async function postProcessTransformedPokemon(
   previousPokemon: PlayerPokemon,

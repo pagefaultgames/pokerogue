@@ -20,7 +20,6 @@ import { globalScene } from "#app/global-scene";
 /**
  * Class representing the settings UI handler for gamepads.
  *
- * @extends AbstractControlSettingsUiHandler
  */
 
 export default class SettingsGamepadUiHandler extends AbstractControlSettingsUiHandler {

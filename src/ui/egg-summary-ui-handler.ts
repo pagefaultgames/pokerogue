@@ -140,7 +140,7 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
   }
 
   /**
-   * @param args EggHatchData[][]
+   * @param args - EggHatchData[][]
    * args[0]: list of EggHatchData for each egg/pokemon hatched
    */
   show(args: EggHatchData[][]): boolean {

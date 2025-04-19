@@ -7,7 +7,6 @@ import type EggHatchSceneHandler from "./egg-hatch-scene-handler";
 
 /**
  * A container that displays the count of hatching eggs.
- * @extends Phaser.GameObjects.Container
  */
 export default class EggCounterContainer extends Phaser.GameObjects.Container {
   private readonly WINDOW_DEFAULT_WIDTH = 37;
@@ -63,7 +62,7 @@ export default class EggCounterContainer extends Phaser.GameObjects.Container {
   /**
    * Handles window size, the egg count to show, and whether it should be displayed.
    *
-   * @param event {@linkcode Event} being sent
+   * @param event - being sent
    */
   private onEggCountChanged(event: Event): void {
     const eggCountChangedEvent = event as EggCountChangedEvent;

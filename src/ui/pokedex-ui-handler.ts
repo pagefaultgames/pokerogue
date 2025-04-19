@@ -131,7 +131,7 @@ const speciesContainerX = 143;
 
 /**
  * Calculates the starter position for a Pokemon of a given UI index
- * @param index UI index to calculate the starter position of
+ * @param index - UI index to calculate the starter position of
  * @returns An interface with an x and y property
  */
 function calcStarterPosition(index: number): { x: number; y: number } {
@@ -655,7 +655,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
    * If somehow a preference is set for a form, variant, gender, ability or nature
    * that wasn't actually unlocked or is invalid it will be cleared here
    *
-   * @param species The species to get Starter Preferences for
+   * @param species - The species to get Starter Preferences for
    * @returns StarterAttributes for the species
    */
   initStarterPrefs(species: PokemonSpecies): StarterAttributes {
@@ -814,7 +814,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
 
   /**
    * Determines if a passive upgrade is available for the given species ID
-   * @param speciesId The ID of the species to check the passive of
+   * @param speciesId - The ID of the species to check the passive of
    * @returns true if the user has enough candies and a passive has not been unlocked already
    */
   isPassiveAvailable(speciesId: number): boolean {
@@ -829,7 +829,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
 
   /**
    * Determines if a value reduction upgrade is available for the given species ID
-   * @param speciesId The ID of the species to check the value reduction of
+   * @param speciesId - The ID of the species to check the value reduction of
    * @returns true if the user has enough candies and all value reductions have not been unlocked already
    */
   isValueReductionAvailable(speciesId: number): boolean {
@@ -846,7 +846,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
 
   /**
    * Determines if an same species egg can be bought for the given species ID
-   * @param speciesId The ID of the species to check the value reduction of
+   * @param speciesId - The ID of the species to check the value reduction of
    * @returns true if the user has enough candies
    */
   isSameSpeciesEggAvailable(speciesId: number): boolean {
@@ -860,9 +860,9 @@ export default class PokedexUiHandler extends MessageUiHandler {
 
   /**
    * Sets a bounce animation if enabled and the Pokemon has an upgrade
-   * @param icon {@linkcode Phaser.GameObjects.GameObject} to animate
-   * @param species {@linkcode PokemonSpecies} of the icon used to check for upgrades
-   * @param startPaused Should this animation be paused after it is added?
+   * @param icon - to animate
+   * @param species - of the icon used to check for upgrades
+   * @param startPaused - Should this animation be paused after it is added?
    */
   setUpgradeAnimation(icon: Phaser.GameObjects.Sprite, species: PokemonSpecies, startPaused = false): void {
     globalScene.tweens.killTweensOf(icon);
@@ -951,7 +951,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
 
   /**
    * Update the display of candy upgrade icons or animations for the given PokedexMonContainer
-   * @param pokemonContainer the container for the Pokemon to update
+   * @param pokemonContainer - the container for the Pokemon to update
    */
   updateCandyUpgradeDisplay(pokemonContainer: PokedexMonContainer) {
     if (this.isUpgradeIconEnabled()) {
@@ -2295,7 +2295,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
    * Creates a temporary dex attr props that will be used to
    * display the correct shiny, variant, and form based on the StarterPreferences
    *
-   * @param speciesId the id of the species to get props for
+   * @param speciesId - the id of the species to get props for
    * @returns the dex props
    */
   getCurrentDexProps(speciesId: number): bigint {

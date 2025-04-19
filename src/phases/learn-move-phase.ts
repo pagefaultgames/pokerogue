@@ -72,8 +72,8 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
    * > [Pokemon] wants to learn the move [MoveName]
    * > However, [Pokemon] already knows four moves.
    * > Should a move be forgotten and replaced with [MoveName]? --> `Mode.CONFIRM` -> Yes: Go to `this.forgetMoveProcess()`, No: Go to `this.rejectMoveAndEnd()`
-   * @param move The Move to be learned
-   * @param Pokemon The Pokemon learning the move
+   * @param move - The Move to be learned
+   * @param Pokemon - The Pokemon learning the move
    */
   async replaceMoveCheck(move: Move, pokemon: Pokemon) {
     const learnMovePrompt = i18next.t("battle:learnMovePrompt", {
@@ -108,8 +108,8 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
    * The game then goes `Mode.SUMMARY` to select a move to be forgotten.
    * If a player does not select a move or chooses the new move (`moveIndex === 4`), the game goes to `this.rejectMoveAndEnd()`.
    * If an old move is selected, the function then passes the `moveIndex` to `this.learnMove()`
-   * @param move The Move to be learned
-   * @param Pokemon The Pokemon learning the move
+   * @param move - The Move to be learned
+   * @param Pokemon - The Pokemon learning the move
    */
   async forgetMoveProcess(move: Move, pokemon: Pokemon) {
     globalScene.ui.setMode(this.messageMode);
@@ -143,8 +143,8 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
    *
    * If the player wishes to not teach the Pokemon the move, it displays a message and ends the phase.
    * If the player reconsiders, it repeats the process for a Pokemon with a full moveset once again.
-   * @param move The Move to be learned
-   * @param Pokemon The Pokemon learning the move
+   * @param move - The Move to be learned
+   * @param Pokemon - The Pokemon learning the move
    */
   async rejectMoveAndEnd(move: Move, pokemon: Pokemon) {
     await globalScene.ui.showTextPromise(
@@ -186,8 +186,8 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
    * > [Pokemon] forgot how to use [MoveName]
    * > And...
    * > [Pokemon] learned [MoveName]!
-   * @param move The Move to be learned
-   * @param Pokemon The Pokemon learning the move
+   * @param move - The Move to be learned
+   * @param Pokemon - The Pokemon learning the move
    */
   async learnMove(index: number, move: Move, pokemon: Pokemon, textMessage?: string) {
     if (this.learnMoveType === LearnMoveType.TM) {

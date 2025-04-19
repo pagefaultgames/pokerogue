@@ -75,7 +75,7 @@ export const normalForm: Species[] = [
 
 /**
  * Gets the {@linkcode PokemonSpecies} object associated with the {@linkcode Species} enum given
- * @param species The species to fetch
+ * @param species - The species to fetch
  * @returns The associated {@linkcode PokemonSpecies} object
  */
 export function getPokemonSpecies(species: Species | Species[]): PokemonSpecies {
@@ -229,7 +229,7 @@ export abstract class PokemonSpeciesForm {
    * Method to get the root species id of a Pokemon.
    * Magmortar.getRootSpeciesId(true) => Magmar
    * Magmortar.getRootSpeciesId(false) => Magby
-   * @param forStarter boolean to get the nonbaby form of a starter
+   * @param forStarter - boolean to get the nonbaby form of a starter
    * @returns The species
    */
   getRootSpeciesId(forStarter = false): Species {
@@ -270,7 +270,7 @@ export abstract class PokemonSpeciesForm {
 
   /**
    * Method to get the ability of a Pokemon species.
-   * @param abilityIndex Which ability to get (should only be 0-2)
+   * @param abilityIndex - Which ability to get (should only be 0-2)
    * @returns The id of the Ability
    */
   getAbility(abilityIndex: number): Abilities {
@@ -287,7 +287,7 @@ export abstract class PokemonSpeciesForm {
 
   /**
    * Method to get the passive ability of a Pokemon species
-   * @param formIndex The form index to use, defaults to form for this species instance
+   * @param formIndex - The form index to use, defaults to form for this species instance
    * @returns The id of the ability
    */
   getPassiveAbility(formIndex?: number): Abilities {
@@ -362,7 +362,7 @@ export abstract class PokemonSpeciesForm {
 
   /**
    * Gets the species' base stat amount for the given stat.
-   * @param stat  The desired stat.
+   * @param stat - The desired stat.
    * @returns The species' base stat amount.
    */
   getBaseStat(stat: Stat): number {
@@ -422,7 +422,7 @@ export abstract class PokemonSpeciesForm {
 
   /**
    * Variant Data key/index is either species id or species id followed by -formkey
-   * @param formIndex optional form index for pokemon with different forms
+   * @param formIndex - optional form index for pokemon with different forms
    * @returns species id if no additional forms, index with formkey if a pokemon with a form
    */
   getVariantDataIndex(formIndex?: number) {
@@ -860,8 +860,8 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
 
   /**
    * Find the form name for species with just one form (regional variants, Floette, Ursaluna)
-   * @param formIndex The form index to check (defaults to 0)
-   * @param append Whether to append the species name to the end (defaults to false)
+   * @param formIndex - The form index to check (defaults to 0)
+   * @param append - Whether to append the species name to the end (defaults to false)
    * @returns the pokemon-form locale key for the single form name ("Alolan Form", "Eternal Flower" etc)
    */
   getFormNameToDisplay(formIndex = 0, append = false): string {
@@ -960,7 +960,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
    * It's also used for preferredMinLevel, which is used when an evolution delay exists.
    * The calculation with evolution delay is a weighted average of the easeIn and easeOut functions where preferredMinLevel is the denominator.
    * This also means a lower value of x will lead to a higher evolution chance.
-   * @param strength {@linkcode PartyMemberStrength} The strength of the party member in question
+   * @param strength - The strength of the party member in question
    * @returns {@linkcode number} The level difference from expected evolution level tolerated for a mon to be unevolved. Lower value = higher evolution chance.
    */
   private getStrengthLevelDiff(strength: PartyMemberStrength): number {

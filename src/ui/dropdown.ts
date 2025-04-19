@@ -96,8 +96,8 @@ export class DropDownOption extends Phaser.GameObjects.Container {
    * Initialize the toggle icon based on the provided DropDownType
    * For DropDownType.SINGLE: uses a cursor arrow icon
    * For other types: uses a candy icon
-   * @param type the DropDownType to use
-   * @param visible whether the icon should be visible or not
+   * @param type - the DropDownType to use
+   * @param visible - whether the icon should be visible or not
    */
   setupToggleIcon(type: DropDownType, visible: boolean): void {
     if (type === DropDownType.SINGLE) {
@@ -157,7 +157,7 @@ export class DropDownOption extends Phaser.GameObjects.Container {
 
   /**
    * Set the option to the given state and update visuals
-   * @param newState the state to switch to
+   * @param newState - the state to switch to
    * @returns the new DropDownState
    */
   public setOptionState(newState: DropDownState): DropDownState {
@@ -173,7 +173,7 @@ export class DropDownOption extends Phaser.GameObjects.Container {
 
   /**
    * Change the option state to the one at the given index and update visuals
-   * @param index index of the state to switch to
+   * @param index - index of the state to switch to
    * @returns the new DropDownState
    */
   private setCurrentLabel(index: number): DropDownState {
@@ -205,7 +205,7 @@ export class DropDownOption extends Phaser.GameObjects.Container {
 
   /**
    * Set the current SortDirection to the provided value and update icon accordingly
-   * @param SortDirection the new SortDirection to use
+   * @param SortDirection - the new SortDirection to use
    */
   public setDirection(dir: SortDirection): void {
     this.dir = dir;
@@ -221,8 +221,8 @@ export class DropDownOption extends Phaser.GameObjects.Container {
 
   /**
    * Place the label elements (text and sprite if there is one) to the provided x and y position
-   * @param x the horizontal position
-   * @param y the vertical position
+   * @param x - the horizontal position
+   * @param y - the vertical position
    */
   setLabelPosition(x: number, y: number) {
     let textX = x;
@@ -244,8 +244,8 @@ export class DropDownOption extends Phaser.GameObjects.Container {
 
   /**
    * Place the toggle icon at the provided position
-   * @param x the horizontal position
-   * @param y the vertical position
+   * @param x - the horizontal position
+   * @param y - the vertical position
    */
   setTogglePosition(x: number, y: number) {
     if (this.toggle) {
@@ -494,7 +494,7 @@ export class DropDown extends Phaser.GameObjects.Container {
    * Update accordingly the other options if needed:
    *  - if "all" is toggled, also update all other options
    *  - for DropDownType.SINGLE, unselect the previously selected option if applicable
-   * @param index the index of the option for which to update the state
+   * @param index - the index of the option for which to update the state
    */
   toggleOptionState(index: number = this.cursor): void {
     const option: DropDownOption = this.options[index];
@@ -665,7 +665,7 @@ export class DropDown extends Phaser.GameObjects.Container {
 
   /**
    * Set all options to a specific state
-   * @param state the DropDownState to assign to each option
+   * @param state - the DropDownState to assign to each option
    */
   private setAllOptions(state: DropDownState): void {
     // For single type dropdown, setting all options is not relevant

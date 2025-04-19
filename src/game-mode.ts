@@ -70,8 +70,8 @@ export class GameMode implements GameModeConfig {
 
   /**
    * Enables challenges if they are disabled and sets the specified challenge's value
-   * @param challenge The challenge to set
-   * @param value The value to give the challenge. Impact depends on the specific challenge
+   * @param challenge - The challenge to set
+   * @param value - The value to give the challenge. Impact depends on the specific challenge
    */
   setChallengeValue(challenge: Challenges, value: number) {
     if (!this.isChallenge) {
@@ -83,7 +83,7 @@ export class GameMode implements GameModeConfig {
 
   /**
    * Helper function to see if a GameMode has a specific challenge type
-   * @param challenge the Challenges it looks for
+   * @param challenge - the Challenges it looks for
    * @returns true if the game mode has that challenge
    */
   hasChallenge(challenge: Challenges): boolean {
@@ -150,9 +150,9 @@ export class GameMode implements GameModeConfig {
   }
 
   /**
-   * Determines whether or not to generate a trainer
-   * @param waveIndex the current floor the player is on (trainer sprites fail to generate on X1 floors)
-   * @param arena the current {@linkcode Arena}
+   * Determine whether or not to generate a trainer
+   * @param waveIndex - The current floor the player is on (trainer sprites fail to generate on X1 floors)
+   * @param arena - The current {@linkcode Arena}
    * @returns `true` if a trainer should be generated, `false` otherwise
    */
   isWaveTrainer(waveIndex: number, arena: Arena): boolean {
@@ -231,7 +231,7 @@ export class GameMode implements GameModeConfig {
   /**
    * Checks if wave provided is the final for current or specified game mode
    * @param waveIndex
-   * @param modeId game mode
+   * @param modeId - game mode
    * @returns if the current wave is final for classic or daily OR a minor boss in endless
    */
   isWaveFinal(waveIndex: number, modeId: GameModes = this.modeId): boolean {
@@ -291,7 +291,7 @@ export class GameMode implements GameModeConfig {
 
   /**
    * Checks whether there is a fixed battle on this gamemode on a given wave.
-   * @param {number} waveIndex The wave to check.
+   * @param waveIndex - The wave to check.
    * @returns {boolean} If this game mode has a fixed battle on this wave
    */
   isFixedBattle(waveIndex: number): boolean {
@@ -304,7 +304,7 @@ export class GameMode implements GameModeConfig {
 
   /**
    * Returns the config for the fixed battle for a particular wave.
-   * @param {number} waveIndex The wave to check.
+   * @param waveIndex - The wave to check.
    * @returns {boolean} The fixed battle for this wave.
    */
   getFixedBattle(waveIndex: number): FixedBattleConfig {

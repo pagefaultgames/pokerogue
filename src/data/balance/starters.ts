@@ -10,7 +10,7 @@ export const FRIENDSHIP_LOSS_FROM_FAINT = 5;
 
 /**
  * Function to get the cumulative friendship threshold at which a candy is earned
- * @param starterCost The cost of the starter, found in {@linkcode speciesStarterCosts}
+ * @param starterCost - The cost of the starter, found in {@linkcode speciesStarterCosts}
  * @returns aforementioned threshold
  */
 export function getStarterValueFriendshipCap(starterCost: number): number {
@@ -633,7 +633,7 @@ const starterCandyCosts: { passive: number; costReduction: [number, number]; egg
 
 /**
  * Getter for {@linkcode starterCandyCosts} for passive unlock candy cost based on initial point cost
- * @param starterCost the default point cost of the starter found in {@linkcode speciesStarterCosts}
+ * @param starterCost - the default point cost of the starter found in {@linkcode speciesStarterCosts}
  * @returns the candy cost for passive unlock
  */
 export function getPassiveCandyCount(starterCost: number): number {
@@ -642,7 +642,7 @@ export function getPassiveCandyCount(starterCost: number): number {
 
 /**
  * Getter for {@linkcode starterCandyCosts} for value reduction unlock candy cost based on initial point cost
- * @param starterCost the default point cost of the starter found in {@linkcode speciesStarterCosts}
+ * @param starterCost - the default point cost of the starter found in {@linkcode speciesStarterCosts}
  * @returns respective candy cost for the two cost reductions as an array 2 numbers
  */
 export function getValueReductionCandyCounts(starterCost: number): [number, number] {
@@ -651,7 +651,7 @@ export function getValueReductionCandyCounts(starterCost: number): [number, numb
 
 /**
  * Getter for {@linkcode starterCandyCosts} for egg purchase candy cost based on initial point cost
- * @param starterCost the default point cost of the starter found in {@linkcode speciesStarterCosts}
+ * @param starterCost - the default point cost of the starter found in {@linkcode speciesStarterCosts}
  * @returns the candy cost for the purchasable egg
  */
 export function getSameSpeciesEggCandyCounts(starterCost: number): number {

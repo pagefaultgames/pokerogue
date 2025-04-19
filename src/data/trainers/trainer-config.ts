@@ -64,7 +64,7 @@ export class TrainerAI {
   public instantTeras: number[];
 
   /**
-   * @param canTerastallize Whether this trainer is allowed to tera
+   * @param canTerastallize - Whether this trainer is allowed to tera
    */
   constructor(teraMode: TeraAIMode = TeraAIMode.NO_TERA) {
     this.teraMode = teraMode;
@@ -81,7 +81,7 @@ export class TrainerAI {
 
   /**
    * Sets a pokemon on this AI to just instantly Tera on first move used
-   * @param index The index of the pokemon to instantly tera.
+   * @param index - The index of the pokemon to instantly tera.
    */
   public setInstantTera(index: number) {
     this.teraMode = TeraAIMode.INSTANT_TERA;
@@ -280,8 +280,8 @@ export class TrainerConfig {
 
   /**
    * Sets the configuration for trainers with genders, including the female name and encounter background music (BGM).
-   * @param {string} [nameFemale] The name of the female trainer. If 'Ivy', a localized name will be assigned.
-   * @param {TrainerType | string} [femaleEncounterBgm] The encounter BGM for the female trainer, which can be a TrainerType or a string.
+   * @param [nameFemale] - The name of the female trainer. If 'Ivy', a localized name will be assigned.
+   * @param [femaleEncounterBgm] - The encounter BGM for the female trainer, which can be a TrainerType or a string.
    * @returns {TrainerConfig} The updated TrainerConfig instance.
    **/
   setHasGenders(nameFemale?: string, femaleEncounterBgm?: TrainerType | string): TrainerConfig {
@@ -318,8 +318,8 @@ export class TrainerConfig {
 
   /**
    * Sets the configuration for trainers with double battles, including the name of the double trainer and the encounter BGM.
-   * @param nameDouble The name of the double trainer (e.g., "Ace Duo" for Trainer Class Doubles or "red_blue_double" for NAMED trainer doubles).
-   * @param doubleEncounterBgm The encounter BGM for the double trainer, which can be a TrainerType or a string.
+   * @param nameDouble - The name of the double trainer (e.g., "Ace Duo" for Trainer Class Doubles or "red_blue_double" for NAMED trainer doubles).
+   * @param doubleEncounterBgm - The encounter BGM for the double trainer, which can be a TrainerType or a string.
    * @returns {TrainerConfig} The updated TrainerConfig instance.
    */
   setHasDouble(nameDouble: string, doubleEncounterBgm?: TrainerType | string): TrainerConfig {
@@ -336,7 +336,7 @@ export class TrainerConfig {
 
   /**
    * Sets the trainer type for double battles.
-   * @param trainerTypeDouble The TrainerType of the partner in a double battle.
+   * @param trainerTypeDouble - The TrainerType of the partner in a double battle.
    * @returns {TrainerConfig} The updated TrainerConfig instance.
    */
   setDoubleTrainerType(trainerTypeDouble: TrainerType): TrainerConfig {
@@ -361,7 +361,7 @@ export class TrainerConfig {
 
   /**
    * Sets the title for double trainers
-   * @param titleDouble The key for the title in the i18n file. (e.g., "champion_double").
+   * @param titleDouble - The key for the title in the i18n file. (e.g., "champion_double").
    * @returns {TrainerConfig} The updated TrainerConfig instance.
    */
   setDoubleTitle(titleDouble: string): TrainerConfig {
@@ -470,8 +470,8 @@ export class TrainerConfig {
 
   /**
    * Sets random pokemon from the trainer's team to instant tera. Also sets Tera type to specialty type and checks for Shedinja as appropriate.
-   * @param count A callback (yucky) to see how many teras should be used
-   * @param slot Optional, a specified slot that should be terastallized. Wraps to match party size (-1 will get the last slot and so on).
+   * @param count - A callback (yucky) to see how many teras should be used
+   * @param slot - Optional, a specified slot that should be terastallized. Wraps to match party size (-1 will get the last slot and so on).
    * @returns this
    */
   setRandomTeraModifiers(count: () => number, slot?: number): TrainerConfig {
@@ -497,7 +497,7 @@ export class TrainerConfig {
 
   /**
    * Sets a specific pokemon to instantly Tera
-   * @param index The index within the team to have instant Tera.
+   * @param index - The index within the team to have instant Tera.
    * @returns this
    */
   setInstantTera(index: number): TrainerConfig {
@@ -528,10 +528,10 @@ export class TrainerConfig {
 
   /**
    * Initializes the trainer configuration for an evil team admin.
-   * @param title The title of the evil team admin.
-   * @param poolName The evil team the admin belongs to.
-   * @param {Species | Species[]} signatureSpecies The signature species for the evil team leader.
-   * @param specialtyType The specialty Type of the admin, if they have one
+   * @param title - The title of the evil team admin.
+   * @param poolName - The evil team the admin belongs to.
+   * @param signatureSpecies - The signature species for the evil team leader.
+   * @param specialtyType - The specialty Type of the admin, if they have one
    * @returns {TrainerConfig} The updated TrainerConfig instance.
    * **/
   initForEvilTeamAdmin(
@@ -575,7 +575,7 @@ export class TrainerConfig {
 
   /**
    * Initializes the trainer configuration for a Stat Trainer, as part of the Trainer's Test Mystery Encounter.
-   * @param _isMale Whether the stat trainer is Male or Female (for localization of the title).
+   * @param _isMale - Whether the stat trainer is Male or Female (for localization of the title).
    * @returns {TrainerConfig} The updated TrainerConfig instance.
    **/
   initForStatTrainer(_isMale = false): TrainerConfig {
@@ -600,9 +600,9 @@ export class TrainerConfig {
 
   /**
    * Initializes the trainer configuration for an evil team leader. Temporarily hardcoding evil leader teams though.
-   * @param {Species | Species[]} signatureSpecies The signature species for the evil team leader.
-   * @param {PokemonType} specialtyType The specialty type for the evil team Leader.
-   * @param boolean Whether or not this is the rematch fight
+   * @param signatureSpecies - The signature species for the evil team leader.
+   * @param specialtyType - The specialty type for the evil team Leader.
+   * @param boolean - Whether or not this is the rematch fight
    * @returns {TrainerConfig} The updated TrainerConfig instance.
    * **/
   initForEvilTeamLeader(
@@ -644,11 +644,11 @@ export class TrainerConfig {
 
   /**
    * Initializes the trainer configuration for a Gym Leader.
-   * @param {Species | Species[]} signatureSpecies The signature species for the Gym Leader. Added to party in reverse order.
-   * @param isMale Whether the Gym Leader is Male or Not (for localization of the title).
-   * @param {PokemonType} specialtyType The specialty type for the Gym Leader.
-   * @param ignoreMinTeraWave Whether the Gym Leader always uses Tera (true), or only Teras after {@linkcode GYM_LEADER_TERA_WAVE} (false). Defaults to false.
-   * @param teraSlot Optional, sets the party member in this slot to Terastallize. Wraps based on party size.
+   * @param signatureSpecies - The signature species for the Gym Leader. Added to party in reverse order.
+   * @param isMale - Whether the Gym Leader is Male or Not (for localization of the title).
+   * @param specialtyType - The specialty type for the Gym Leader.
+   * @param ignoreMinTeraWave - Whether the Gym Leader always uses Tera (true), or only Teras after {@linkcode GYM_LEADER_TERA_WAVE} (false). Defaults to false.
+   * @param teraSlot - Optional, sets the party member in this slot to Terastallize. Wraps based on party size.
    * @returns {TrainerConfig} The updated TrainerConfig instance.
    * **/
   initForGymLeader(
@@ -707,11 +707,11 @@ export class TrainerConfig {
 
   /**
    * Initializes the trainer configuration for an Elite Four member.
-   * @param {Species | Species[]} signatureSpecies The signature species for the Elite Four member.
-   * @param isMale Whether the Elite Four Member is Male or Female (for localization of the title).
-   * @param specialtyType {PokemonType} The specialty type for the Elite Four member.
-   * @param teraSlot Optional, sets the party member in this slot to Terastallize.
-   * @returns {TrainerConfig} The updated TrainerConfig instance.
+   * @param signatureSpecies - The signature species for the Elite Four member
+   * @param isMale - Whether the Elite Four Member is Male or Female (for localization of the title)
+   * @param specialtyType - The specialty type for the Elite Four member
+   * @param teraSlot - Optional, sets the party member in this slot to Terastallize
+   * @returns The updated TrainerConfig instance.
    **/
   initForEliteFour(
     signatureSpecies: (Species | Species[])[],
@@ -769,8 +769,8 @@ export class TrainerConfig {
 
   /**
    * Initializes the trainer configuration for a Champion.
-   * @param {Species | Species[]} signatureSpecies The signature species for the Champion.
-   * @param isMale Whether the Champion is Male or Female (for localization of the title).
+   * @param signatureSpecies - The signature species for the Champion.
+   * @param isMale - Whether the Champion is Male or Female (for localization of the title).
    * @returns {TrainerConfig} The updated TrainerConfig instance.
    **/
   initForChampion(isMale: boolean): TrainerConfig {
@@ -819,8 +819,8 @@ export class TrainerConfig {
 
   /**
    * Retrieves the title for the trainer based on the provided trainer slot and variant.
-   * @param {TrainerSlot} trainerSlot - The slot to determine which title to use. Defaults to TrainerSlot.NONE.
-   * @param {TrainerVariant} variant - The variant of the trainer to determine the specific title.
+   * @param trainerSlot - The slot to determine which title to use. Defaults to TrainerSlot.NONE.
+   * @param variant - The variant of the trainer to determine the specific title.
    * @returns {string} - The title of the trainer.
    **/
   getTitle(trainerSlot: TrainerSlot = TrainerSlot.NONE, variant: TrainerVariant): string {
