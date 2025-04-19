@@ -384,7 +384,7 @@ export class AttackTypeImmunityAbAttr extends TypeImmunityAbAttr {
    * Type immunity abilities that do not give additional benefits (HP recovery, stat boosts, etc) are not immune to status moves of the type
    * Example: Levitate
    */
-  override applyPreDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, cancelled: BooleanHolder, args: any[]): void {
+  override applyPreDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, cancelled: BooleanHolder, args: [NumberHolder, ...any]): void {
     // this is a hacky way to fix the Levitate/Thousand Arrows interaction, but it works for now...
     super.applyPreDefend(pokemon, passive, simulated, attacker, move, cancelled, args);
   }
@@ -399,7 +399,7 @@ export class TypeImmunityHealAbAttr extends TypeImmunityAbAttr {
     return super.canApplyPreDefend(pokemon, passive, simulated, attacker, move, cancelled, args);
   }
 
-  override applyPreDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, cancelled: BooleanHolder, args: any[]): void {
+  override applyPreDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, cancelled: BooleanHolder, args: [NumberHolder, ...any]): void {
     super.applyPreDefend(pokemon, passive, simulated, attacker, move, cancelled, args);
     if (!pokemon.isFullHp() && !simulated) {
       const abilityName = (!passive ? pokemon.getAbility() : pokemon.getPassiveAbility()).name;
@@ -425,7 +425,7 @@ class TypeImmunityStatStageChangeAbAttr extends TypeImmunityAbAttr {
     return super.canApplyPreDefend(pokemon, passive, simulated, attacker, move, cancelled, args);
   }
 
-  override applyPreDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, cancelled: BooleanHolder, args: any[]): void {
+  override applyPreDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, cancelled: BooleanHolder, args: [NumberHolder, ...any]): void {
     super.applyPreDefend(pokemon, passive, simulated, attacker, move, cancelled, args);
     cancelled.value = true; // Suppresses "No Effect" message
     if (!simulated) {
@@ -449,7 +449,7 @@ class TypeImmunityAddBattlerTagAbAttr extends TypeImmunityAbAttr {
     return super.canApplyPreDefend(pokemon, passive, simulated, attacker, move, cancelled, args);
   }
 
-  override applyPreDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, cancelled: BooleanHolder, args: any[]): void {
+  override applyPreDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, cancelled: BooleanHolder, args: [NumberHolder, ...any]): void {
     super.applyPreDefend(pokemon, passive, simulated, attacker, move, cancelled, args);
     cancelled.value = true; // Suppresses "No Effect" message
     if (!simulated) {
@@ -5241,10 +5241,10 @@ export class PreventBypassSpeedChanceAbAttr extends AbAttr {
   }
 
   /**
-   * @argument {boolean} bypassSpeed - determines if a Pokemon is able to bypass speed at the moment
-   * @argument {boolean} canCheckHeldItems - determines if a Pokemon has access to Quick Claw's effects or not
+   * @param Args args[0] bypassSpeed - determines if a Pokemon is able to bypass speed at the moment
+   * @param canCheckHeldItems - determines if a Pokemon has access to Quick Claw's effects or not
    */
-  override apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: BooleanHolder, args: any[]): void {
+  override apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: BooleanHolder, args: [BooleanHolder, BooleanHolder, ...any]): void {
     const bypassSpeed = args[0] as BooleanHolder;
     const canCheckHeldItems = args[1] as BooleanHolder;
     bypassSpeed.value = false;
