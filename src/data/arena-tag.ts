@@ -76,7 +76,7 @@ export abstract class ArenaTag {
   /**
    * When given a arena tag or json representing one, load the data for it.
    * This is meant to be inherited from by any arena tag with custom attributes
-   * @param {ArenaTag | any} source An arena tag
+   * @param source - An arena tag
    */
   loadTag(source: ArenaTag | any): void {
     this.turnCount = source.turnCount;
@@ -139,10 +139,10 @@ export class MistTag extends ArenaTag {
 
   /**
    * Cancels the lowering of stats
-   * @param _arena the {@linkcode Arena} containing this effect
-   * @param simulated `true` if the effect should be applied quietly
-   * @param attacker the {@linkcode Pokemon} using a move into this effect.
-   * @param cancelled a {@linkcode BooleanHolder} whose value is set to `true`
+   * @param _arena - the {@linkcode Arena} containing this effect
+   * @param simulated - `true` if the effect should be applied quietly
+   * @param attacker - the {@linkcode Pokemon} using a move into this effect.
+   * @param cancelled - a {@linkcode BooleanHolder} whose value is set to `true`
    * to flag the stat reduction as cancelled
    * @returns `true` if a stat reduction was cancelled; `false` otherwise
    */
@@ -170,7 +170,6 @@ export class MistTag extends ArenaTag {
 
 /**
  * Reduces the damage of specific move categories in the arena.
- * @extends ArenaTag
  */
 export class WeakenMoveScreenTag extends ArenaTag {
   protected weakenedCategories: MoveCategory[];
@@ -201,11 +200,11 @@ export class WeakenMoveScreenTag extends ArenaTag {
   /**
    * Applies the weakening effect to the move.
    *
-   * @param _arena the {@linkcode Arena} where the move is applied.
-   * @param _simulated n/a
-   * @param attacker the attacking {@linkcode Pokemon}
-   * @param moveCategory the attacking move's {@linkcode MoveCategory}.
-   * @param damageMultiplier A {@linkcode NumberHolder} containing the damage multiplier
+   * @param _arena - the {@linkcode Arena} where the move is applied.
+   * @param _simulated - n/a
+   * @param attacker - the attacking {@linkcode Pokemon}
+   * @param moveCategory - the attacking move's {@linkcode MoveCategory}.
+   * @param damageMultiplier - A {@linkcode NumberHolder} containing the damage multiplier
    * @returns `true` if the attacking move was weakened; `false` otherwise.
    */
   override apply(
@@ -332,13 +331,13 @@ export class ConditionalProtectTag extends ArenaTag {
   /**
    * Checks incoming moves against the condition function
    * and protects the target if conditions are met
-   * @param arena the {@linkcode Arena} containing this tag
-   * @param simulated `true` if the tag is applied quietly; `false` otherwise.
-   * @param isProtected a {@linkcode BooleanHolder} used to flag if the move is protected against
-   * @param attacker the attacking {@linkcode Pokemon}
-   * @param defender the defending {@linkcode Pokemon}
-   * @param moveId the {@linkcode Moves | identifier} for the move being used
-   * @param ignoresProtectBypass a {@linkcode BooleanHolder} used to flag if a protection effect supercedes effects that ignore protection
+   * @param arena - the {@linkcode Arena} containing this tag
+   * @param simulated - `true` if the tag is applied quietly; `false` otherwise.
+   * @param isProtected - a {@linkcode BooleanHolder} used to flag if the move is protected against
+   * @param attacker - the attacking {@linkcode Pokemon}
+   * @param defender - the defending {@linkcode Pokemon}
+   * @param moveId - the {@linkcode Moves | identifier} for the move being used
+   * @param ignoresProtectBypass - a {@linkcode BooleanHolder} used to flag if a protection effect supercedes effects that ignore protection
    * @returns `true` if this tag protected against the attack; `false` otherwise
    */
   override apply(
@@ -376,8 +375,8 @@ export class ConditionalProtectTag extends ArenaTag {
 /**
  * Condition function for {@link https://bulbapedia.bulbagarden.net/wiki/Quick_Guard_(move) Quick Guard's}
  * protection effect.
- * @param _arena {@linkcode Arena} The arena containing the protection effect
- * @param moveId {@linkcode Moves} The move to check against this condition
+ * @param _arena - The arena containing the protection effect
+ * @param moveId - The move to check against this condition
  * @returns `true` if the incoming move's priority is greater than 0.
  *   This includes moves with modified priorities from abilities (e.g. Prankster)
  */
@@ -407,8 +406,8 @@ class QuickGuardTag extends ConditionalProtectTag {
 /**
  * Condition function for {@link https://bulbapedia.bulbagarden.net/wiki/Wide_Guard_(move) Wide Guard's}
  * protection effect.
- * @param _arena {@linkcode Arena} The arena containing the protection effect
- * @param moveId {@linkcode Moves} The move to check against this condition
+ * @param _arena - The arena containing the protection effect
+ * @param moveId - The move to check against this condition
  * @returns `true` if the incoming move is multi-targeted (even if it's only used against one Pokemon).
  */
 const WideGuardConditionFunc: ProtectConditionFunc = (_arena, moveId): boolean => {
@@ -438,8 +437,8 @@ class WideGuardTag extends ConditionalProtectTag {
 /**
  * Condition function for {@link https://bulbapedia.bulbagarden.net/wiki/Mat_Block_(move) Mat Block's}
  * protection effect.
- * @param _arena {@linkcode Arena} The arena containing the protection effect.
- * @param moveId {@linkcode Moves} The move to check against this condition.
+ * @param _arena - The arena containing the protection effect.
+ * @param moveId - The move to check against this condition.
  * @returns `true` if the incoming move is not a Status move.
  */
 const MatBlockConditionFunc: ProtectConditionFunc = (_arena, moveId): boolean => {
@@ -475,8 +474,8 @@ class MatBlockTag extends ConditionalProtectTag {
 /**
  * Condition function for {@link https://bulbapedia.bulbagarden.net/wiki/Crafty_Shield_(move) Crafty Shield's}
  * protection effect.
- * @param _arena {@linkcode Arena} The arena containing the protection effect
- * @param moveId {@linkcode Moves} The move to check against this condition
+ * @param _arena - The arena containing the protection effect
+ * @param moveId - The move to check against this condition
  * @returns `true` if the incoming move is a Status move, is not a hazard, and does not target all
  * Pokemon or sides of the field.
  */
@@ -508,10 +507,10 @@ class CraftyShieldTag extends ConditionalProtectTag {
 export class NoCritTag extends ArenaTag {
   /**
    * Constructor method for the NoCritTag class
-   * @param turnCount `number` the number of turns this effect lasts
-   * @param sourceMove {@linkcode Moves} the move that created this effect
-   * @param sourceId `number` the ID of the {@linkcode Pokemon} that created this effect
-   * @param side {@linkcode ArenaTagSide} the side to which this effect belongs
+   * @param turnCount - `number` the number of turns this effect lasts
+   * @param sourceMove - the move that created this effect
+   * @param sourceId - `number` the ID of the {@linkcode Pokemon} that created this effect
+   * @param side - the side to which this effect belongs
    */
   constructor(turnCount: number, sourceMove: Moves, sourceId: number, side: ArenaTagSide) {
     super(ArenaTagType.NO_CRIT, turnCount, sourceMove, sourceId, side);
@@ -598,10 +597,10 @@ export class WeakenMoveTypeTag extends ArenaTag {
 
   /**
    * Reduces an attack's power by 0.33x if it matches this tag's weakened type.
-   * @param _arena n/a
-   * @param _simulated n/a
-   * @param type the attack's {@linkcode PokemonType}
-   * @param power a {@linkcode NumberHolder} containing the attack's power
+   * @param _arena - n/a
+   * @param _simulated - n/a
+   * @param type - the attack's {@linkcode PokemonType}
+   * @param power - a {@linkcode NumberHolder} containing the attack's power
    * @returns `true` if the attack's power was reduced; `false` otherwise.
    */
   override apply(_arena: Arena, _simulated: boolean, type: PokemonType, power: NumberHolder): boolean {
@@ -668,9 +667,9 @@ export class IonDelugeTag extends ArenaTag {
 
   /**
    * Converts Normal-type moves to Electric type
-   * @param _arena n/a
-   * @param _simulated n/a
-   * @param moveType a {@linkcode NumberHolder} containing a move's {@linkcode PokemonType}
+   * @param _arena - n/a
+   * @param _simulated - n/a
+   * @param moveType - a {@linkcode NumberHolder} containing a move's {@linkcode PokemonType}
    * @returns `true` if the given move type changed; `false` otherwise.
    */
   override apply(_arena: Arena, _simulated: boolean, moveType: NumberHolder): boolean {
@@ -715,9 +714,9 @@ export class ArenaTrapTag extends ArenaTag {
 
   /**
    * Activates the hazard effect onto a Pokemon when it enters the field
-   * @param _arena the {@linkcode Arena} containing this tag
-   * @param simulated if `true`, only checks if the hazard would activate.
-   * @param pokemon the {@linkcode Pokemon} triggering this hazard
+   * @param _arena - the {@linkcode Arena} containing this tag
+   * @param simulated - if `true`, only checks if the hazard would activate.
+   * @param pokemon - the {@linkcode Pokemon} triggering this hazard
    * @returns `true` if this hazard affects the given Pokemon; `false` otherwise.
    */
   override apply(_arena: Arena, simulated: boolean, pokemon: Pokemon): boolean {
@@ -1070,9 +1069,9 @@ export class TrickRoomTag extends ArenaTag {
 
   /**
    * Reverses Speed-based turn order for all Pokemon on the field
-   * @param _arena n/a
-   * @param _simulated n/a
-   * @param speedReversed a {@linkcode BooleanHolder} used to flag if Speed-based
+   * @param _arena - n/a
+   * @param _simulated - n/a
+   * @param speedReversed - a {@linkcode BooleanHolder} used to flag if Speed-based
    * turn order should be reversed.
    * @returns `true` if turn order is successfully reversed; `false` otherwise
    */
@@ -1267,7 +1266,7 @@ class ImprisonTag extends ArenaTrapTag {
 
   /**
    * This applies the effects of Imprison to any opposing Pokemon that switch into the field while the source Pokemon is still active
-   * @param {Pokemon} pokemon the Pokemon Imprison is applied to
+   * @param pokemon - the Pokemon Imprison is applied to
    * @returns `true`
    */
   override activateTrap(pokemon: Pokemon): boolean {
@@ -1358,9 +1357,9 @@ class WaterFirePledgeTag extends ArenaTag {
 
   /**
    * Doubles the chance for the given move's secondary effect(s) to trigger
-   * @param _arena the {@linkcode Arena} containing this tag
-   * @param _simulated n/a
-   * @param moveChance a {@linkcode NumberHolder} containing
+   * @param _arena - the {@linkcode Arena} containing this tag
+   * @param _simulated - n/a
+   * @param moveChance - a {@linkcode NumberHolder} containing
    * the move's current effect chance
    * @returns `true` if the move's effect chance was doubled (currently always `true`)
    */
@@ -1567,7 +1566,7 @@ export function getArenaTag(
 
 /**
  * When given a battler tag or json representing one, creates an actual ArenaTag object with the same data.
- * @param {ArenaTag | any} source An arena tag
+ * @param source - An arena tag
  * @return {ArenaTag} The valid arena tag
  */
 export function loadArenaTag(source: ArenaTag | any): ArenaTag {

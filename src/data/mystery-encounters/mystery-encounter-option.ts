@@ -276,9 +276,9 @@ export class MysteryEncounterOptionBuilder implements Partial<IMysteryEncounterO
   /**
    * Player is required to have certain type/s of pokemon in his party (with optional min number of pokemons with that type)
    *
-   * @param type the required type/s
-   * @param excludeFainted whether to exclude fainted pokemon
-   * @param minNumberOfPokemon number of pokemons to have that type
+   * @param type - the required type/s
+   * @param excludeFainted - whether to exclude fainted pokemon
+   * @param minNumberOfPokemon - number of pokemons to have that type
    * @param invertQuery
    * @returns
    */
@@ -296,8 +296,8 @@ export class MysteryEncounterOptionBuilder implements Partial<IMysteryEncounterO
   /**
    * Player is required to have a pokemon that can learn a certain move/moveset
    *
-   * @param move the required move/moves
-   * @param options see {@linkcode CanLearnMoveRequirementOptions}
+   * @param move - the required move/moves
+   * @param options - see {@linkcode CanLearnMoveRequirementOptions}
    * @returns
    */
   withPokemonCanLearnMoveRequirement(move: Moves | Moves[], options?: CanLearnMoveRequirementOptions) {
@@ -327,7 +327,7 @@ export class MysteryEncounterOptionBuilder implements Partial<IMysteryEncounterO
   /**
    * Set the full dialogue object to the option. Will override anything already set
    *
-   * @param dialogue see {@linkcode OptionTextDisplay}
+   * @param dialogue - see {@linkcode OptionTextDisplay}
    * @returns
    */
   withDialogue(dialogue: OptionTextDisplay) {

@@ -25,7 +25,7 @@ export class EggHatchData {
 
   /**
    * Sets the boolean for if the egg move for the hatch is a new unlock
-   * @param unlocked True if the EM is new
+   * @param unlocked - True if the EM is new
    */
   setEggMoveUnlocked(unlocked: boolean) {
     this.eggMoveUnlocked = unlocked;
@@ -78,7 +78,7 @@ export class EggHatchData {
   /**
    * Update the pokedex data corresponding with the new hatch's pokemon data
    * Also sets whether the egg move is a new unlock or not
-   * @param showMessage boolean to show messages for the new catches and egg moves (false by default)
+   * @param showMessage - boolean to show messages for the new catches and egg moves (false by default)
    * @returns
    */
   updatePokemon(showMessage = false) {

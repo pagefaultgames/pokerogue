@@ -19,7 +19,7 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
 
   /**
    * Add the sprite to be displayed at the end of messages with prompts
-   * @param container the container to add the sprite to
+   * @param container - the container to add the sprite to
    */
   initPromptSprite(container: Phaser.GameObjects.Container) {
     if (!this.prompt) {

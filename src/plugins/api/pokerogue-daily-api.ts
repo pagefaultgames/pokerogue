@@ -24,7 +24,7 @@ export class PokerogueDailyApi extends ApiBase {
 
   /**
    * Get the daily rankings for a {@linkcode ScoreboardCategory}.
-   * @param params The {@linkcode GetDailyRankingsRequest} to send
+   * @param params - The {@linkcode GetDailyRankingsRequest} to send
    */
   public async getRankings(params: GetDailyRankingsRequest) {
     try {
@@ -40,7 +40,7 @@ export class PokerogueDailyApi extends ApiBase {
 
   /**
    * Get the page count of the daily rankings for a {@linkcode ScoreboardCategory}.
-   * @param params The {@linkcode GetDailyRankingsPageCountRequest} to send.
+   * @param params - The {@linkcode GetDailyRankingsPageCountRequest} to send.
    */
   public async getRankingsPageCount(params: GetDailyRankingsPageCountRequest) {
     try {

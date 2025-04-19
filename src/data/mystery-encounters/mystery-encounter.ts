@@ -592,7 +592,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
    * Use for complex options.
    * There should be at least 2 options defined and no more than 4.
    *
-   * @param option MysteryEncounterOption to add, can use MysteryEncounterOptionBuilder to create instance
+   * @param option - MysteryEncounterOption to add, can use MysteryEncounterOptionBuilder to create instance
    * @returns
    */
   withOption(option: MysteryEncounterOption): this & Pick<IMysteryEncounter, "options"> {
@@ -610,8 +610,8 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
    * There should be at least 2 options defined and no more than 4.
    * If complex use {@linkcode MysteryEncounterBuilder.withOption}
    *
-   * @param dialogue {@linkcode OptionTextDisplay}
-   * @param callback {@linkcode OptionPhaseCallback}
+   * @param dialogue
+   * @param callback
    * @returns
    */
   withSimpleOption(
@@ -632,8 +632,8 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
    * There should be at least 2 options defined and no more than 4.
    * If complex use {@linkcode MysteryEncounterBuilder.withOption}
    *
-   * @param dialogue {@linkcode OptionTextDisplay}
-   * @param callback {@linkcode OptionPhaseCallback}
+   * @param dialogue
+   * @param callback
    * @returns
    */
   withSimpleDexProgressOption(
@@ -678,7 +678,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
 
   /**
    * Sets the localization key used by the encounter
-   * @param localizationKey the string used as the key
+   * @param localizationKey - the string used as the key
    * @returns `this`
    */
   setLocalizationKey(localizationKey: string): this {
@@ -830,8 +830,8 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
   /**
    * Specifies a wave range requirement for an encounter.
    *
-   * @param min min wave (or exact wave if only min is given)
-   * @param max optional max wave. If not given, defaults to min => exact wave
+   * @param min - min wave (or exact wave if only min is given)
+   * @param max - optional max wave. If not given, defaults to min => exact wave
    * @returns
    */
   withSceneWaveRangeRequirement(min: number, max?: number): this & Required<Pick<IMysteryEncounter, "requirements">> {
@@ -841,9 +841,9 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
   /**
    * Specifies a party size requirement for an encounter.
    *
-   * @param min min wave (or exact size if only min is given)
-   * @param max optional max size. If not given, defaults to min => exact wave
-   * @param excludeDisallowedPokemon if true, only counts allowed (legal in Challenge/unfainted) mons
+   * @param min - min wave (or exact size if only min is given)
+   * @param max - optional max size. If not given, defaults to min => exact wave
+   * @param excludeDisallowedPokemon - if true, only counts allowed (legal in Challenge/unfainted) mons
    * @returns
    */
   withScenePartySizeRequirement(
@@ -857,7 +857,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
   /**
    * Add a primary pokemon requirement
    *
-   * @param requirement {@linkcode EncounterPokemonRequirement}
+   * @param requirement
    * @returns
    */
   withPrimaryPokemonRequirement(
@@ -876,9 +876,9 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
   /**
    * Add a primary pokemon status effect requirement
    *
-   * @param statusEffect the status effect/s to check
-   * @param minNumberOfPokemon minimum number of pokemon to have the effect
-   * @param invertQuery if true will invert the query
+   * @param statusEffect - the status effect/s to check
+   * @param minNumberOfPokemon - minimum number of pokemon to have the effect
+   * @param invertQuery - if true will invert the query
    * @returns
    */
   withPrimaryPokemonStatusEffectRequirement(
@@ -894,9 +894,9 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
   /**
    * Add a primary pokemon health ratio requirement
    *
-   * @param requiredHealthRange the health range to check
-   * @param minNumberOfPokemon minimum number of pokemon to have the health range
-   * @param invertQuery if true will invert the query
+   * @param requiredHealthRange - the health range to check
+   * @param minNumberOfPokemon - minimum number of pokemon to have the health range
+   * @param invertQuery - if true will invert the query
    * @returns
    */
   withPrimaryPokemonHealthRatioRequirement(
@@ -935,7 +935,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
    * NOTE: If rewards are dependent on options selected, runtime data, etc.,
    * It may be better to programmatically set doEncounterRewards elsewhere.
    * There is a helper function in mystery-encounter utils, setEncounterRewards(), which can be called programmatically to set rewards
-   * @param doEncounterRewards Synchronous callback function to perform during rewards phase of the encounter
+   * @param doEncounterRewards - Synchronous callback function to perform during rewards phase of the encounter
    * @returns
    */
   withRewards(doEncounterRewards: () => boolean): this & Required<Pick<IMysteryEncounter, "doEncounterRewards">> {
@@ -949,7 +949,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
    * NOTE: If rewards are dependent on options selected, runtime data, etc.,
    * It may be better to programmatically set doEncounterExp elsewhere.
    * There is a helper function in mystery-encounter utils, setEncounterExp(), which can be called programmatically to set rewards
-   * @param doEncounterExp Synchronous callback function to perform during rewards phase of the encounter
+   * @param doEncounterExp - Synchronous callback function to perform during rewards phase of the encounter
    * @returns
    */
   withExp(doEncounterExp: () => boolean): this & Required<Pick<IMysteryEncounter, "doEncounterExp">> {
@@ -960,7 +960,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
    * Can be used to perform init logic before intro visuals are shown and before the MysteryEncounterPhase begins
    * Useful for performing things like procedural generation of intro sprites, etc.
    *
-   * @param onInit Synchronous callback function to perform as soon as the encounter is selected for the next phase
+   * @param onInit - Synchronous callback function to perform as soon as the encounter is selected for the next phase
    * @returns
    */
   withOnInit(onInit: () => boolean): this & Required<Pick<IMysteryEncounter, "onInit">> {
@@ -970,7 +970,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
   /**
    * Can be used to perform some extra logic (usually animations) when the enemy field is finished sliding in
    *
-   * @param onVisualsStart Synchronous callback function to perform as soon as the enemy field finishes sliding in
+   * @param onVisualsStart - Synchronous callback function to perform as soon as the enemy field finishes sliding in
    * @returns
    */
   withOnVisualsStart(onVisualsStart: () => boolean): this & Required<Pick<IMysteryEncounter, "onVisualsStart">> {
@@ -980,7 +980,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
   /**
    * Can set whether catching is allowed or not on the encounter
    * This flag can also be programmatically set inside option event functions or elsewhere
-   * @param catchAllowed If `true`, allows enemy pokemon to be caught during the encounter
+   * @param catchAllowed - If `true`, allows enemy pokemon to be caught during the encounter
    * @returns
    */
   withCatchAllowed(catchAllowed: boolean): this & Required<Pick<IMysteryEncounter, "catchAllowed">> {
@@ -989,7 +989,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
 
   /**
    * Can set whether fleeing is allowed or not on the encounter
-   * @param fleeAllowed If `false`, prevents fleeing from a wild battle (trainer battle MEs already have flee disabled)
+   * @param fleeAllowed - If `false`, prevents fleeing from a wild battle (trainer battle MEs already have flee disabled)
    * @returns
    */
   withFleeAllowed(fleeAllowed: boolean): this & Required<Pick<IMysteryEncounter, "fleeAllowed">> {
@@ -997,7 +997,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
   }
 
   /**
-   * @param hideBattleIntroMessage If `true`, will not show the trainerAppeared/wildAppeared/bossAppeared message for an encounter
+   * @param hideBattleIntroMessage - If `true`, will not show the trainerAppeared/wildAppeared/bossAppeared message for an encounter
    * @returns
    */
   withHideWildIntroMessage(
@@ -1009,7 +1009,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
   }
 
   /**
-   * @param autoHideIntroVisuals If `false`, will not hide the intro visuals that are displayed at the beginning of encounter
+   * @param autoHideIntroVisuals - If `false`, will not hide the intro visuals that are displayed at the beginning of encounter
    * @returns
    */
   withAutoHideIntroVisuals(
@@ -1019,7 +1019,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
   }
 
   /**
-   * @param enterIntroVisualsFromRight If `true`, will slide in intro visuals from the right side of the screen. If false, slides in from left, as normal
+   * @param enterIntroVisualsFromRight - If `true`, will slide in intro visuals from the right side of the screen. If false, slides in from left, as normal
    * Default false
    * @returns
    */
@@ -1034,7 +1034,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
   /**
    * Add a title for the encounter
    *
-   * @param title Title of the encounter
+   * @param title - Title of the encounter
    * @returns
    */
   withTitle(title: string): this {
@@ -1054,7 +1054,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
   /**
    * Add a description of the encounter
    *
-   * @param description Description of the encounter
+   * @param description - Description of the encounter
    * @returns
    */
   withDescription(description: string): this {
@@ -1074,7 +1074,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
   /**
    * Add a query for the encounter
    *
-   * @param query Query to use for the encounter
+   * @param query - Query to use for the encounter
    * @returns
    */
   withQuery(query: string): this {
@@ -1094,7 +1094,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
   /**
    * Add outro dialogue/s for the encounter
    *
-   * @param dialogue Outro dialogue(s)
+   * @param dialogue - Outro dialogue(s)
    * @returns
    */
   withOutroDialogue(dialogue: MysteryEncounterDialogue["outro"] = []): this {

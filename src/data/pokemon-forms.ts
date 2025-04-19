@@ -431,7 +431,6 @@ export class SpeciesDefaultFormMatchTrigger extends SpeciesFormChangeTrigger {
 /**
  * Class used for triggering form changes based on the user's Tera type.
  * Used by Ogerpon and Terapagos.
- * @extends SpeciesFormChangeTrigger
  */
 export class SpeciesFormChangeTeraTrigger extends SpeciesFormChangeTrigger {
   description = i18next.t("pokemonEvolutions:Forms.tera");
@@ -440,7 +439,6 @@ export class SpeciesFormChangeTeraTrigger extends SpeciesFormChangeTrigger {
 /**
  * Class used for triggering form changes based on the user's lapsed Tera type.
  * Used by Ogerpon and Terapagos.
- * @extends SpeciesFormChangeTrigger
  */
 export class SpeciesFormChangeLapseTeraTrigger extends SpeciesFormChangeTrigger {
   description = i18next.t("pokemonEvolutions:Forms.teraLapse");
@@ -449,7 +447,6 @@ export class SpeciesFormChangeLapseTeraTrigger extends SpeciesFormChangeTrigger 
 /**
  * Class used for triggering form changes based on weather.
  * Used by Castform and Cherrim.
- * @extends SpeciesFormChangeTrigger
  */
 export class SpeciesFormChangeWeatherTrigger extends SpeciesFormChangeTrigger {
   /** The ability that  triggers the form change */
@@ -465,10 +462,10 @@ export class SpeciesFormChangeWeatherTrigger extends SpeciesFormChangeTrigger {
   }
 
   /**
-   * Checks if the Pokemon has the required ability and is in the correct weather while
+   * Check if the Pokemon has the required ability and is in the correct weather while
    * the weather or ability is also not suppressed.
-   * @param {Pokemon} pokemon the pokemon that is trying to do the form change
-   * @returns `true` if the Pokemon can change forms, `false` otherwise
+   * @param pokemon - The pokemon that is trying to do the form change
+   * @returns whether the Pokemon can change forms
    */
   canChange(pokemon: Pokemon): boolean {
     const currentWeather = globalScene.arena.weather?.weatherType ?? WeatherType.NONE;
@@ -488,7 +485,6 @@ export class SpeciesFormChangeWeatherTrigger extends SpeciesFormChangeTrigger {
  * Class used for reverting to the original form when the weather runs out
  * or when the user loses the ability/is suppressed.
  * Used by Castform and Cherrim.
- * @extends SpeciesFormChangeTrigger
  */
 export class SpeciesFormChangeRevertWeatherFormTrigger extends SpeciesFormChangeTrigger {
   /** The ability that triggers the form change*/
@@ -506,7 +502,7 @@ export class SpeciesFormChangeRevertWeatherFormTrigger extends SpeciesFormChange
   /**
    * Checks if the Pokemon has the required ability and the weather is one that will revert
    * the Pokemon to its original form or the weather or ability is suppressed
-   * @param {Pokemon} pokemon the pokemon that is trying to do the form change
+   * @param pokemon - the pokemon that is trying to do the form change
    * @returns `true` if the Pokemon will revert to its original form, `false` otherwise
    */
   canChange(pokemon: Pokemon): boolean {
@@ -562,7 +558,7 @@ export function getSpeciesFormChangeMessage(pokemon: Pokemon, formChange: Specie
 /**
  * Gives a condition for form changing checking if a species is registered as caught in the player's dex data.
  * Used for fusion forms such as Kyurem and Necrozma.
- * @param species {@linkcode Species}
+ * @param species
  * @returns A {@linkcode SpeciesFormChangeCondition} checking if that species is registered as caught
  */
 function getSpeciesDependentFormChangeCondition(species: Species): SpeciesFormChangeCondition {

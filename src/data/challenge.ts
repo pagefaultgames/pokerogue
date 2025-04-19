@@ -115,15 +115,19 @@ export enum MoveSourceType {
 export abstract class Challenge {
   public id: Challenges; // The id of the challenge
 
-  public value: number; // The "strength" of the challenge, all challenges have a numerical value.
-  public maxValue: number; // The maximum strength of the challenge.
-  public severity: number; // The current severity of the challenge. Some challenges have multiple severities in addition to strength.
-  public maxSeverity: number; // The maximum severity of the challenge.
+  /** The "strength" of the challenge; all challenges have a numerical value */
+  public value: number;
+  /** The maximum strength of the challenge */
+  public maxValue: number;
+  /** The current severity of the challenge. Some challenges have multiple severities in addition to strength. */
+  public severity: number;
+  public maxSeverity: number;
 
   public conditions: ChallengeCondition[];
 
   /**
-   * @param id {@link Challenges} The enum value for the challenge
+   * @param id - The enum value for the challenge
+   * @param maxValue - The maximum strength of the challenge
    */
   constructor(id: Challenges, maxValue: number = Number.MAX_SAFE_INTEGER) {
     this.id = id;
@@ -136,7 +140,7 @@ export abstract class Challenge {
   }
 
   /**
-   * Reset the challenge to a base state.
+   * Reset the challenge to a base state
    */
   reset(): void {
     this.value = 0;
@@ -144,8 +148,8 @@ export abstract class Challenge {
   }
 
   /**
-   * Gets the localisation key for the challenge
-   * @returns {@link string} The i18n key for this challenge
+   * Get the localisation key for the challenge
+   * @returns The i18n key for this challenge
    */
   geti18nKey(): string {
     return Challenges[this.id]
@@ -155,18 +159,18 @@ export abstract class Challenge {
   }
 
   /**
-   * Used for unlockable challenges to check if they're unlocked.
-   * @param data {@link GameData} The save data.
-   * @returns {@link boolean} Whether this challenge is unlocked.
+   * Check whether the challenge has been unlocked
+   * @param data - The save data to check
+   * @returns Whether this challenge is unlocked
    */
   isUnlocked(data: GameData): boolean {
     return this.conditions.every(f => f(data));
   }
 
   /**
-   * Adds an unlock condition to this challenge.
-   * @param condition {@link ChallengeCondition} The condition to add.
-   * @returns {@link Challenge} This challenge
+   * Add an unlock condition to this challenge
+   * @param condition - The condition to add
+   * @returns This challenge
    */
   condition(condition: ChallengeCondition): Challenge {
     this.conditions.push(condition);
@@ -175,16 +179,16 @@ export abstract class Challenge {
   }
 
   /**
-   * @returns {@link string} The localised name of this challenge.
+   * @returns The localised name of this challenge.
    */
   getName(): string {
     return i18next.t(`challenges:${this.geti18nKey()}.name`);
   }
 
   /**
-   * Returns the textual representation of a challenge's current value.
-   * @param overrideValue {@link number} The value to check for. If undefined, gets the current value.
-   * @returns {@link string} The localised name for the current value.
+   * Return the textual representation of a challenge's current value.
+   * @param overrideValue - The value to check for. If undefined, gets the current value.
+   * @returns The localised name for the current value.
    */
   getValue(overrideValue?: number): string {
     const value = overrideValue ?? this.value;
@@ -193,8 +197,8 @@ export abstract class Challenge {
 
   /**
    * Returns the description of a challenge's current value.
-   * @param overrideValue {@link number} The value to check for. If undefined, gets the current value.
-   * @returns {@link string} The localised description for the current value.
+   * @param overrideValue - The value to check for. If undefined, gets the current value.
+   * @returns The localised description for the current value.
    */
   getDescription(overrideValue?: number): string {
     const value = overrideValue ?? this.value;
@@ -203,7 +207,7 @@ export abstract class Challenge {
 
   /**
    * Increase the value of the challenge
-   * @returns {@link boolean} Returns true if the value changed
+   * @returns whether the value changed
    */
   increaseValue(): boolean {
     if (this.value < this.maxValue) {
@@ -215,7 +219,7 @@ export abstract class Challenge {
 
   /**
    * Decrease the value of the challenge
-   * @returns {@link boolean} Returns true if the value changed
+   * @returns whether the value changed
    */
   decreaseValue(): boolean {
     if (this.value > 0) {
@@ -234,7 +238,7 @@ export abstract class Challenge {
 
   /**
    * Decrease the severity of the challenge
-   * @returns {@link boolean} Returns true if the value changed
+   * @returns whether the value changed
    */
   decreaseSeverity(): boolean {
     if (this.severity > 0) {
@@ -246,7 +250,7 @@ export abstract class Challenge {
 
   /**
    * Increase the severity of the challenge
-   * @returns {@link boolean} Returns true if the value changed
+   * @returns whether the value changed
    */
   increaseSeverity(): boolean {
     if (this.severity < this.maxSeverity) {
@@ -257,16 +261,14 @@ export abstract class Challenge {
   }
 
   /**
-   * Gets the "difficulty" value of this challenge.
-   * @returns {@link integer} The difficulty value.
+   * Get the "difficulty" value of this challenge
    */
   getDifficulty(): number {
     return this.value;
   }
 
   /**
-   * Gets the minimum difficulty added by this challenge.
-   * @returns {@link integer} The difficulty value.
+   * Gets the minimum difficulty added by this challenge
    */
   getMinDifficulty(): number {
     return 0;
@@ -274,8 +276,8 @@ export abstract class Challenge {
 
   /**
    * Clones a challenge, either from another challenge or json. Chainable.
-   * @param source The source challenge or json.
-   * @returns This challenge.
+   * @param source - The source challenge or json
+   * @returns This challenge
    */
   static loadChallenge(_source: Challenge | any): Challenge {
     throw new Error("Method not implemented! Use derived class");
@@ -283,10 +285,10 @@ export abstract class Challenge {
 
   /**
    * An apply function for STARTER_CHOICE challenges. Derived classes should alter this.
-   * @param _pokemon {@link PokemonSpecies} The pokemon to check the validity of.
-   * @param _valid {@link BooleanHolder} A BooleanHolder, the value gets set to false if the pokemon isn't allowed.
-   * @param _dexAttr {@link DexAttrProps} The dex attributes of the pokemon.
-   * @returns {@link boolean} Whether this function did anything.
+   * @param _pokemon - The pokemon to check the validity of
+   * @param _valid - A BooleanHolder, the value gets set to false if the pokemon isn't allowed
+   * @param _dexAttr - The dex attributes of the pokemon
+   * @returns - Whether this function did anything
    */
   applyStarterChoice(_pokemon: PokemonSpecies, _valid: BooleanHolder, _dexAttr: DexAttrProps): boolean {
     return false;
@@ -294,7 +296,7 @@ export abstract class Challenge {
 
   /**
    * An apply function for STARTER_POINTS challenges. Derived classes should alter this.
-   * @param _points {@link NumberHolder} The amount of points you have available.
+   * @param _points - The amount of points you have available.
    * @returns {@link boolean} Whether this function did anything.
    */
   applyStarterPoints(_points: NumberHolder): boolean {
@@ -303,9 +305,9 @@ export abstract class Challenge {
 
   /**
    * An apply function for STARTER_COST challenges. Derived classes should alter this.
-   * @param _species {@link Species} The pokemon to change the cost of.
-   * @param _cost {@link NumberHolder} The cost of the starter.
-   * @returns {@link boolean} Whether this function did anything.
+   * @param _species - The pokemon to change the cost of
+   * @param _cost - The cost of the starter
+   * @returns - Whether this function did anything
    */
   applyStarterCost(_species: Species, _cost: NumberHolder): boolean {
     return false;
@@ -313,8 +315,8 @@ export abstract class Challenge {
 
   /**
    * An apply function for STARTER_MODIFY challenges. Derived classes should alter this.
-   * @param _pokemon {@link Pokemon} The starter pokemon to modify.
-   * @returns {@link boolean} Whether this function did anything.
+   * @param _pokemon - The starter pokemon to modify.
+   * @returns - Whether this function did anything.
    */
   applyStarterModify(_pokemon: Pokemon): boolean {
     return false;
@@ -322,8 +324,8 @@ export abstract class Challenge {
 
   /**
    * An apply function for POKEMON_IN_BATTLE challenges. Derived classes should alter this.
-   * @param _pokemon {@link Pokemon} The pokemon to check the validity of.
-   * @param _valid {@link BooleanHolder} A BooleanHolder, the value gets set to false if the pokemon isn't allowed.
+   * @param _pokemon - The pokemon to check the validity of.
+   * @param _valid - Holder for the validity of the pokemon
    * @returns {@link boolean} Whether this function did anything.
    */
   applyPokemonInBattle(_pokemon: Pokemon, _valid: BooleanHolder): boolean {
@@ -332,9 +334,9 @@ export abstract class Challenge {
 
   /**
    * An apply function for FIXED_BATTLE challenges. Derived classes should alter this.
-   * @param _waveIndex {@link Number} The current wave index.
-   * @param _battleConfig {@link FixedBattleConfig} The battle config to modify.
-   * @returns {@link boolean} Whether this function did anything.
+   * @param _waveIndex - The current wave index.
+   * @param _battleConfig - The battle config to modify.
+   * @returns Whether this function did anything.
    */
   applyFixedBattle(_waveIndex: number, _battleConfig: FixedBattleConfig): boolean {
     return false;
@@ -342,7 +344,7 @@ export abstract class Challenge {
 
   /**
    * An apply function for TYPE_EFFECTIVENESS challenges. Derived classes should alter this.
-   * @param _effectiveness {@linkcode NumberHolder} The current effectiveness of the move.
+   * @param _effectiveness - The current effectiveness of the move.
    * @returns Whether this function did anything.
    */
   applyTypeEffectiveness(_effectiveness: NumberHolder): boolean {
@@ -351,11 +353,11 @@ export abstract class Challenge {
 
   /**
    * An apply function for AI_LEVEL challenges. Derived classes should alter this.
-   * @param _level {@link NumberHolder} The generated level.
-   * @param _levelCap {@link Number} The current level cap.
-   * @param _isTrainer {@link Boolean} Whether this is a trainer pokemon.
-   * @param _isBoss {@link Boolean} Whether this is a non-trainer boss pokemon.
-   * @returns {@link boolean} Whether this function did anything.
+   * @param _level - The generated level
+   * @param _levelCap - The current level cap
+   * @param _isTrainer - Whether this is a trainer pokemon
+   * @param _isBoss - Whether this is a non-trainer boss pokemon
+   * @returns Whether this function did anything
    */
   applyLevelChange(_level: NumberHolder, _levelCap: number, _isTrainer: boolean, _isBoss: boolean): boolean {
     return false;
@@ -363,9 +365,9 @@ export abstract class Challenge {
 
   /**
    * An apply function for AI_MOVE_SLOTS challenges. Derived classes should alter this.
-   * @param pokemon {@link Pokemon} The pokemon that is being considered.
-   * @param moveSlots {@link NumberHolder} The amount of move slots.
-   * @returns {@link boolean} Whether this function did anything.
+   * @param pokemon - The pokemon that is being considered
+   * @param moveSlots - The amount of move slots
+   * @returns Whether this function did anything.
    */
   applyMoveSlot(_pokemon: Pokemon, _moveSlots: NumberHolder): boolean {
     return false;
@@ -373,8 +375,8 @@ export abstract class Challenge {
 
   /**
    * An apply function for PASSIVE_ACCESS challenges. Derived classes should alter this.
-   * @param pokemon {@link Pokemon} The pokemon to change.
-   * @param hasPassive {@link BooleanHolder} Whether it should have its passive.
+   * @param pokemon - The pokemon to change
+   * @param hasPassive - Whether it should have its passive
    * @returns {@link boolean} Whether this function did anything.
    */
   applyPassiveAccess(_pokemon: Pokemon, _hasPassive: BooleanHolder): boolean {
@@ -383,7 +385,7 @@ export abstract class Challenge {
 
   /**
    * An apply function for GAME_MODE_MODIFY challenges. Derived classes should alter this.
-   * @returns {@link boolean} Whether this function did anything.
+   * @returns Whether this function did anything.
    */
   applyGameModeModify(): boolean {
     return false;
@@ -391,11 +393,11 @@ export abstract class Challenge {
 
   /**
    * An apply function for MOVE_ACCESS. Derived classes should alter this.
-   * @param _pokemon {@link Pokemon} What pokemon would learn the move.
-   * @param _moveSource {@link MoveSourceType} What source the pokemon would get the move from.
-   * @param _move {@link Moves} The move in question.
-   * @param _level {@link NumberHolder} The level threshold for access.
-   * @returns {@link boolean} Whether this function did anything.
+   * @param _pokemon - What pokemon would learn the move
+   * @param _moveSource - What source the pokemon would get the move from
+   * @param _move - The move in question
+   * @param _level - The level threshold for access
+   * @returns Whether this function did anything
    */
   applyMoveAccessLevel(_pokemon: Pokemon, _moveSource: MoveSourceType, _move: Moves, _level: NumberHolder): boolean {
     return false;
@@ -403,11 +405,11 @@ export abstract class Challenge {
 
   /**
    * An apply function for MOVE_WEIGHT. Derived classes should alter this.
-   * @param _pokemon {@link Pokemon} What pokemon would learn the move.
-   * @param _moveSource {@link MoveSourceType} What source the pokemon would get the move from.
-   * @param _move {@link Moves} The move in question.
-   * @param _weight {@link NumberHolder} The base weight of the move
-   * @returns {@link boolean} Whether this function did anything.
+   * @param _pokemon - What pokemon would learn the move
+   * @param _moveSource - What source the pokemon would get the move from
+   * @param _move - The move in question
+   * @param _weight - The base weight of the move
+   * @returns Whether this function did anything
    */
   applyMoveWeight(_pokemon: Pokemon, _moveSource: MoveSourceType, _move: Moves, _level: NumberHolder): boolean {
     return false;
@@ -415,9 +417,9 @@ export abstract class Challenge {
 
   /**
    * An apply function for FlipStats. Derived classes should alter this.
-   * @param _pokemon {@link Pokemon} What pokemon would learn the move.
-   * @param _baseStats  What are the stats to flip.
-   * @returns {@link boolean} Whether this function did anything.
+   * @param _pokemon - What pokemon would learn the move
+   * @param _baseStats -  - What are the stats to flip
+   * @returns Whether this function did anything
    */
   applyFlipStat(_pokemon: Pokemon, _baseStats: number[]) {
     return false;
@@ -658,7 +660,7 @@ export class SingleGenerationChallenge extends Challenge {
 
   /**
    * Returns the textual representation of a challenge's current value.
-   * @param {value} overrideValue The value to check for. If undefined, gets the current value.
+   * @param overrideValue - The value to check for. If undefined, gets the current value.
    * @returns {string} The localised name for the current value.
    */
   getValue(overrideValue?: number): string {
@@ -671,7 +673,7 @@ export class SingleGenerationChallenge extends Challenge {
 
   /**
    * Returns the description of a challenge's current value.
-   * @param {value} overrideValue The value to check for. If undefined, gets the current value.
+   * @param overrideValue - The value to check for. If undefined, gets the current value.
    * @returns {string} The localised description for the current value.
    */
   getDescription(overrideValue?: number): string {
@@ -750,7 +752,7 @@ export class SingleTypeChallenge extends Challenge {
 
   /**
    * Returns the textual representation of a challenge's current value.
-   * @param {value} overrideValue The value to check for. If undefined, gets the current value.
+   * @param overrideValue - The value to check for. If undefined, gets the current value.
    * @returns {string} The localised name for the current value.
    */
   getValue(overrideValue?: number): string {
@@ -762,8 +764,8 @@ export class SingleTypeChallenge extends Challenge {
 
   /**
    * Returns the description of a challenge's current value.
-   * @param {value} overrideValue The value to check for. If undefined, gets the current value.
-   * @returns {string} The localised description for the current value.
+   * @param overrideValue - The value to check for. If undefined, gets the current value.
+   * @returns The localised description for the current value.
    */
   getDescription(overrideValue?: number): string {
     if (overrideValue === undefined) {
@@ -968,12 +970,13 @@ export class LowerStarterPointsChallenge extends Challenge {
 
 /**
  * Apply all challenges that modify starter choice.
- * @param challengeType {@link ChallengeType} ChallengeType.STARTER_CHOICE
- * @param pokemon {@link PokemonSpecies} The pokemon to check the validity of.
- * @param valid {@link BooleanHolder} A BooleanHolder, the value gets set to false if the pokemon isn't allowed.
- * @param dexAttr {@link DexAttrProps} The dex attributes of the pokemon.
+ * @param challengeType - ChallengeType.STARTER_CHOICE
+ * @param pokemon - The pokemon to check the validity of.
+ * @param valid - A BooleanHolder, the value gets set to false if the pokemon isn't allowed.
+ * @param dexAttr - The dex attributes of the pokemon.
  * @returns True if any challenge was successfully applied.
  */
+
 export function applyChallenges(
   challengeType: ChallengeType.STARTER_CHOICE,
   pokemon: PokemonSpecies,
@@ -982,16 +985,16 @@ export function applyChallenges(
 ): boolean;
 /**
  * Apply all challenges that modify available total starter points.
- * @param challengeType {@link ChallengeType} ChallengeType.STARTER_POINTS
- * @param points {@link NumberHolder} The amount of points you have available.
+ * @param challengeType - ChallengeType.STARTER_POINTS
+ * @param points - The amount of points you have available.
  * @returns True if any challenge was successfully applied.
  */
 export function applyChallenges(challengeType: ChallengeType.STARTER_POINTS, points: NumberHolder): boolean;
 /**
  * Apply all challenges that modify the cost of a starter.
- * @param challengeType {@link ChallengeType} ChallengeType.STARTER_COST
- * @param species {@link Species} The pokemon to change the cost of.
- * @param points {@link NumberHolder} The cost of the pokemon.
+ * @param challengeType - ChallengeType.STARTER_COST
+ * @param species - The pokemon to change the cost of.
+ * @param points - The cost of the pokemon.
  * @returns True if any challenge was successfully applied.
  */
 export function applyChallenges(
@@ -1001,16 +1004,16 @@ export function applyChallenges(
 ): boolean;
 /**
  * Apply all challenges that modify a starter after selection.
- * @param challengeType {@link ChallengeType} ChallengeType.STARTER_MODIFY
- * @param pokemon {@link Pokemon} The starter pokemon to modify.
+ * @param challengeType - ChallengeType.STARTER_MODIFY
+ * @param pokemon - The starter pokemon to modify.
  * @returns True if any challenge was successfully applied.
  */
 export function applyChallenges(challengeType: ChallengeType.STARTER_MODIFY, pokemon: Pokemon): boolean;
 /**
  * Apply all challenges that what pokemon you can have in battle.
- * @param challengeType {@link ChallengeType} ChallengeType.POKEMON_IN_BATTLE
- * @param pokemon {@link Pokemon} The pokemon to check the validity of.
- * @param valid {@link BooleanHolder} A BooleanHolder, the value gets set to false if the pokemon isn't allowed.
+ * @param challengeType - ChallengeType.POKEMON_IN_BATTLE
+ * @param pokemon - The pokemon to check the validity of.
+ * @param valid - A BooleanHolder, the value gets set to false if the pokemon isn't allowed.
  * @returns True if any challenge was successfully applied.
  */
 export function applyChallenges(
@@ -1020,9 +1023,9 @@ export function applyChallenges(
 ): boolean;
 /**
  * Apply all challenges that modify what fixed battles there are.
- * @param challengeType {@link ChallengeType} ChallengeType.FIXED_BATTLES
- * @param waveIndex {@link Number} The current wave index.
- * @param battleConfig {@link FixedBattleConfig} The battle config to modify.
+ * @param challengeType - ChallengeType.FIXED_BATTLES
+ * @param waveIndex - The current wave index.
+ * @param battleConfig - The battle config to modify.
  * @returns True if any challenge was successfully applied.
  */
 export function applyChallenges(
@@ -1032,19 +1035,19 @@ export function applyChallenges(
 ): boolean;
 /**
  * Apply all challenges that modify type effectiveness.
- * @param challengeType {@linkcode ChallengeType} ChallengeType.TYPE_EFFECTIVENESS
- * @param effectiveness {@linkcode NumberHolder} The current effectiveness of the move.
+ * @param challengeType - ChallengeType.TYPE_EFFECTIVENESS
+ * @param effectiveness - The current effectiveness of the move.
  * @returns True if any challenge was successfully applied.
  */
 export function applyChallenges(challengeType: ChallengeType.TYPE_EFFECTIVENESS, effectiveness: NumberHolder): boolean;
 /**
  * Apply all challenges that modify what level AI are.
- * @param challengeType {@link ChallengeType} ChallengeType.AI_LEVEL
- * @param level {@link NumberHolder} The generated level of the pokemon.
- * @param levelCap {@link Number} The maximum level cap for the current wave.
- * @param isTrainer {@link Boolean} Whether this is a trainer pokemon.
- * @param isBoss {@link Boolean} Whether this is a non-trainer boss pokemon.
- * @returns True if any challenge was successfully applied.
+ * @param challengeType - ChallengeType.AI_LEVEL
+ * @param level - The generated level of the pokemon
+ * @param levelCap - The maximum level cap for the current wave
+ * @param isTrainer - Whether this is a trainer pokemon
+ * @param isBoss - Whether this is a non-trainer boss pokemon
+ * @returns True if any challenge was successfully applied
  */
 export function applyChallenges(
   challengeType: ChallengeType.AI_LEVEL,
@@ -1055,10 +1058,10 @@ export function applyChallenges(
 ): boolean;
 /**
  * Apply all challenges that modify how many move slots the AI has.
- * @param challengeType {@link ChallengeType} ChallengeType.AI_MOVE_SLOTS
- * @param pokemon {@link Pokemon} The pokemon being considered.
- * @param moveSlots {@link NumberHolder} The amount of move slots.
- * @returns True if any challenge was successfully applied.
+ * @param challengeType - ChallengeType.AI_MOVE_SLOTS
+ * @param pokemon - The pokemon being considered
+ * @param moveSlots - The amount of move slots
+ * @returns True if any challenge was successfully applied
  */
 export function applyChallenges(
   challengeType: ChallengeType.AI_MOVE_SLOTS,
@@ -1067,10 +1070,10 @@ export function applyChallenges(
 ): boolean;
 /**
  * Apply all challenges that modify whether a pokemon has its passive.
- * @param challengeType {@link ChallengeType} ChallengeType.PASSIVE_ACCESS
- * @param pokemon {@link Pokemon} The pokemon to modify.
- * @param hasPassive {@link BooleanHolder} Whether it has its passive.
- * @returns True if any challenge was successfully applied.
+ * @param challengeType - ChallengeType.PASSIVE_ACCESS
+ * @param pokemon - The pokemon to modify
+ * @param hasPassive - Whether it has its passive
+ * @returns True if any challenge was successfully applied
  */
 export function applyChallenges(
   challengeType: ChallengeType.PASSIVE_ACCESS,
@@ -1079,17 +1082,17 @@ export function applyChallenges(
 ): boolean;
 /**
  * Apply all challenges that modify the game modes settings.
- * @param challengeType {@link ChallengeType} ChallengeType.GAME_MODE_MODIFY
- * @returns True if any challenge was successfully applied.
+ * @param challengeType - The type of the challenge to apply
+ * @returns whether any challenge was successfully applied
  */
 export function applyChallenges(challengeType: ChallengeType.GAME_MODE_MODIFY): boolean;
 /**
  * Apply all challenges that modify what level a pokemon can access a move.
- * @param challengeType {@link ChallengeType} ChallengeType.MOVE_ACCESS
- * @param pokemon {@link Pokemon} What pokemon would learn the move.
- * @param moveSource {@link MoveSourceType} What source the pokemon would get the move from.
- * @param move {@link Moves} The move in question.
- * @param level {@link NumberHolder} The level threshold for access.
+ * @param challengeType - The type of the challenge to apply
+ * @param pokemon - What pokemon would learn the move
+ * @param moveSource - What source the pokemon would get the move from
+ * @param move - The move in question
+ * @param level - The level threshold for access
  * @returns True if any challenge was successfully applied.
  */
 export function applyChallenges(
@@ -1101,11 +1104,11 @@ export function applyChallenges(
 ): boolean;
 /**
  * Apply all challenges that modify what weight a pokemon gives to move generation
- * @param challengeType {@link ChallengeType} ChallengeType.MOVE_WEIGHT
- * @param pokemon {@link Pokemon} What pokemon would learn the move.
- * @param moveSource {@link MoveSourceType} What source the pokemon would get the move from.
- * @param move {@link Moves} The move in question.
- * @param weight {@link NumberHolder} The weight of the move.
+ * @param challengeType - ChallengeType.MOVE_WEIGHT
+ * @param pokemon - What pokemon would learn the move.
+ * @param moveSource - What source the pokemon would get the move from.
+ * @param move - The move in question.
+ * @param weight - The weight of the move.
  * @returns True if any challenge was successfully applied.
  */
 export function applyChallenges(
@@ -1173,7 +1176,7 @@ export function applyChallenges(challengeType: ChallengeType, ...args: any[]): b
 
 /**
  *
- * @param source A challenge to copy, or an object of a challenge's properties. Missing values are treated as defaults.
+ * @param source - A challenge to copy, or an object of a challenge's properties. Missing values are treated as defaults.
  * @returns The challenge in question.
  */
 export function copyChallenge(source: Challenge | any): Challenge {
@@ -1210,11 +1213,11 @@ export function initChallenges() {
 
 /**
  * Apply all challenges to the given starter (and form) to check its validity.
- * Differs from {@linkcode checkSpeciesValidForChallenge} which only checks form changes.
- * @param species - The {@linkcode PokemonSpecies} to check the validity of.
- * @param dexAttr - The {@linkcode DexAttrProps | dex attributes} of the species, including its form index.
- * @param soft - If `true`, allow it if it could become valid through evolution or form change.
- * @returns `true` if the species is considered valid.
+ * Differs from {@linkcode checkSpeciesValidForChallenge} which only checks form changes
+ * @param species - The {@linkcode PokemonSpecies} to check the validity of
+ * @param dexAttr - The {@linkcode DexAttrProps | dex attributes} of the species, including its form index
+ * @param soft - If `true`, allow it if it could become valid through evolution or form change
+ * @returns `true` if the species is considered valid
  */
 export function checkStarterValidForChallenge(species: PokemonSpecies, props: DexAttrProps, soft: boolean) {
   if (!soft) {
@@ -1249,11 +1252,11 @@ export function checkStarterValidForChallenge(species: PokemonSpecies, props: De
 
 /**
  * Apply all challenges to the given species (and form) to check its validity.
- * Differs from {@linkcode checkStarterValidForChallenge} which also checks evolutions.
- * @param species - The {@linkcode PokemonSpecies} to check the validity of.
- * @param dexAttr - The {@linkcode DexAttrProps | dex attributes} of the species, including its form index.
- * @param soft - If `true`, allow it if it could become valid through a form change.
- * @returns `true` if the species is considered valid.
+ * Differs from {@linkcode checkStarterValidForChallenge} which also checks evolutions
+ * @param species - The {@linkcode PokemonSpecies} to check the validity of
+ * @param dexAttr - The {@linkcode DexAttrProps | dex attributes} of the species, including its form index
+ * @param soft - If `true`, allow it if it could become valid through a form change
+ * @returns `true` if the species is considered valid
  */
 function checkSpeciesValidForChallenge(species: PokemonSpecies, props: DexAttrProps, soft: boolean) {
   const isValidForChallenge = new BooleanHolder(true);

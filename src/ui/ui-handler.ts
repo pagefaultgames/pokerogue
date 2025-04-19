@@ -13,7 +13,7 @@ export default abstract class UiHandler {
   public active = false;
 
   /**
-   * @param mode The mode of the UI element. These should be unique.
+   * @param mode - The mode of the UI element. These should be unique.
    */
   constructor(mode: UiMode | null = null) {
     this.mode = mode;
@@ -53,7 +53,7 @@ export default abstract class UiHandler {
   /**
    * Changes the style of the mouse cursor.
    * @see {@link https://developer.mozilla.org/en-US/docs/Web/CSS/cursor}
-   * @param cursorStyle cursor style to apply
+   * @param cursorStyle - cursor style to apply
    */
   protected setMouseCursorStyle(cursorStyle: "pointer" | "default") {
     globalScene.input.manager.canvas.style.cursor = cursorStyle;

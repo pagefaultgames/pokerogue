@@ -82,7 +82,7 @@ export default class RunInfoUiHandler extends UiHandler {
 
   /**
    * This takes a run's RunEntry and uses the information provided to display essential information about the player's run.
-   * @param args[0] : a RunEntry object
+   * @param args[0] - : a RunEntry object
    *
    * show() creates these UI objects in order -
    * A solid-color background used to hide RunHistoryUiHandler
@@ -461,7 +461,7 @@ export default class RunInfoUiHandler extends UiHandler {
   /**
    * This loads the enemy sprites, positions, and scales them according to the current display mode of the RunInfo UI and then adds them to the container parameter.
    * Used by {@linkcode parseRunStatus} and {@linkcode parseTrainerDefeat}
-   * @param enemyContainer a Phaser Container that should hold enemy sprites
+   * @param enemyContainer - a Phaser Container that should hold enemy sprites
    */
   private showTrainerSprites(enemyContainer: Phaser.GameObjects.Container) {
     // Creating the trainer sprite and adding it to enemyContainer
@@ -549,7 +549,7 @@ export default class RunInfoUiHandler extends UiHandler {
    * Shows information about the run like the run's mode, duration, luck, money, and player held items
    * The values for luck and money are from the end of the run, not the player's luck at the start of the run.
    * @param windowX
-   * @param windowY These two params are the coordinates of the window's bottom right corner. This is used to dynamically position Luck based on its length, creating a nice layout regardless of language / luck value.
+   * @param windowY - These two params are the coordinates of the window's bottom right corner. This is used to dynamically position Luck based on its length, creating a nice layout regardless of language / luck value.
    */
   private async parseRunInfo(windowX: number, windowY: number) {
     // Parsing and displaying the mode.
@@ -940,7 +940,7 @@ export default class RunInfoUiHandler extends UiHandler {
 
   /**
    * Changes what is displayed of the Pokemon's held items
-   * @param partyVisible {boolean}
+   * @param partyVisible
    * True -> Shows the Pokemon's default information and hides held items
    * False -> Shows the Pokemon's held items and hides default information
    */

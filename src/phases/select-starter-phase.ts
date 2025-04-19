@@ -36,7 +36,7 @@ export class SelectStarterPhase extends Phase {
 
   /**
    * Initialize starters before starting the first battle
-   * @param starters {@linkcode Pokemon} with which to start the first battle
+   * @param starters - with which to start the first battle
    */
   initBattle(starters: Starter[]) {
     const party = globalScene.getPlayerParty();

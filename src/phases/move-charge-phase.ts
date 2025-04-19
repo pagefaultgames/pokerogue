@@ -13,7 +13,6 @@ import { MoveEndPhase } from "#app/phases/move-end-phase";
 
 /**
  * Phase for the "charging turn" of two-turn moves (e.g. Dig).
- * @extends {@linkcode PokemonPhase}
  */
 export class MoveChargePhase extends PokemonPhase {
   /** The move instance that this phase applies */

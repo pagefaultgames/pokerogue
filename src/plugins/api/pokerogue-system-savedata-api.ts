@@ -14,7 +14,7 @@ export class PokerogueSystemSavedataApi extends ApiBase {
 
   /**
    * Get a system savedata.
-   * @param params The {@linkcode GetSystemSavedataRequest} to send
+   * @param params - The {@linkcode GetSystemSavedataRequest} to send
    * @returns The system savedata as `string` or `null` on error
    */
   public async get(params: GetSystemSavedataRequest) {
@@ -33,7 +33,7 @@ export class PokerogueSystemSavedataApi extends ApiBase {
   /**
    * Verify if the session is valid.
    * If not the {@linkcode SystemSaveData} is returned.
-   * @param params The {@linkcode VerifySystemSavedataRequest} to send
+   * @param params - The {@linkcode VerifySystemSavedataRequest} to send
    * @returns A {@linkcode SystemSaveData} if **NOT** valid, otherwise `null`.
    *
    * TODO: add handling for errors
@@ -58,8 +58,8 @@ export class PokerogueSystemSavedataApi extends ApiBase {
 
   /**
    * Update a system savedata.
-   * @param params The {@linkcode UpdateSystemSavedataRequest} to send
-   * @param rawSystemData The raw {@linkcode SystemSaveData}
+   * @param params - The {@linkcode UpdateSystemSavedataRequest} to send
+   * @param rawSystemData - The raw {@linkcode SystemSaveData}
    * @returns An error message if something went wrong
    */
   public async update(params: UpdateSystemSavedataRequest, rawSystemData: string) {

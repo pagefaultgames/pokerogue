@@ -500,7 +500,7 @@ function doGreedentEatBerries() {
 }
 
 /**
- * @param isEat Default false. Will "create" pile when false, and remove pile when true.
+ * @param isEat - Default false. Will "create" pile when false, and remove pile when true.
  */
 function doBerrySpritePile(isEat = false) {
   const berryAddDelay = 150;

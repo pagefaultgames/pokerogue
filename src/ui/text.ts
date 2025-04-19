@@ -286,10 +286,10 @@ export function getBBCodeFrag(content: string, textStyle: TextStyle, uiTheme: Ui
  * - "blue text" with TextStyle.SUMMARY_BLUE applied
  * - " primaryStyle text " with primaryStyle TextStyle applied
  * - "red text" with TextStyle.SUMMARY_RED applied
- * @param content string with styling that need to be applied for BBCodeTextObject
- * @param primaryStyle Primary style is required in order to escape BBCode styling properly.
- * @param uiTheme the {@linkcode UiTheme} to get TextStyle for
- * @param forWindow set to `true` if the text is to be displayed in a window ({@linkcode BattleScene.addWindow})
+ * @param content - string with styling that need to be applied for BBCodeTextObject
+ * @param primaryStyle - Primary style is required in order to escape BBCode styling properly.
+ * @param uiTheme - the {@linkcode UiTheme} to get TextStyle for
+ * @param forWindow - set to `true` if the text is to be displayed in a window ({@linkcode BattleScene.addWindow})
  *  it will replace all instances of the default MONEY TextStyle by {@linkcode TextStyle.MONEY_WINDOW}
  */
 export function getTextWithColors(

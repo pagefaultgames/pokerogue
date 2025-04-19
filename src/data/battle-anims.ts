@@ -590,8 +590,8 @@ export function initMoveAnim(move: Moves): Promise<void> {
 /**
  * Populates the default animation for the given move.
  *
- * @param move the move to populate an animation for
- * @param defaultMoveAnim the move to use as the default animation
+ * @param move - the move to populate an animation for
+ * @param defaultMoveAnim - the move to use as the default animation
  */
 function useDefaultAnim(move: Moves, defaultMoveAnim: Moves) {
   populateMoveAnim(move, moveAnims.get(defaultMoveAnim));
@@ -600,8 +600,8 @@ function useDefaultAnim(move: Moves, defaultMoveAnim: Moves) {
 /**
  * Helper method for printing a warning to the console when a move animation is missing.
  *
- * @param move the move to populate an animation for
- * @param optionalParams parameters to add to the error logging
+ * @param move - the move to populate an animation for
+ * @param optionalParams - parameters to add to the error logging
  *
  * @remarks use {@linkcode useDefaultAnim} to use a default animation
  */
@@ -612,7 +612,7 @@ function logMissingMoveAnim(move: Moves, ...optionalParams: any[]) {
 
 /**
  * Fetches animation configs to be used in a Mystery Encounter
- * @param encounterAnim one or more animations to fetch
+ * @param encounterAnim - one or more animations to fetch
  */
 export async function initEncounterAnims(encounterAnim: EncounterAnim | EncounterAnim[]): Promise<void> {
   const anims = Array.isArray(encounterAnim) ? encounterAnim : [encounterAnim];
@@ -1114,7 +1114,7 @@ export abstract class BattleAnim {
             if (spritePriorities[graphicIndex] !== frame.priority) {
               spritePriorities[graphicIndex] = frame.priority;
               /** Move the position that the moveSprite is rendered in based on the priority.
-               * @param priority The priority level to draw the sprite.
+               * @param priority - The priority level to draw the sprite.
                * - 0: Draw the sprite in front of the pokemon on the field.
                * - 1: Draw the sprite in front of the user pokemon.
                * - 2: Draw the sprite in front of its `bgSprite` (if it has one), or its

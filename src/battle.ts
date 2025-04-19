@@ -451,8 +451,8 @@ export default class Battle {
 
   /**
    * Generates a random number using the current battle's seed. Calls {@linkcode randSeedInt}
-   * @param range How large of a range of random numbers to choose from. If {@linkcode range} <= 1, returns {@linkcode min}
-   * @param min The minimum integer to pick, default `0`
+   * @param range - How large of a range of random numbers to choose from. If {@linkcode range} <= 1, returns {@linkcode min}
+   * @param min - The minimum integer to pick, default `0`
    * @returns A random integer between {@linkcode min} and ({@linkcode min} + {@linkcode range} - 1)
    */
   randSeedInt(range: number, min = 0): number {
@@ -545,9 +545,9 @@ export class FixedBattleConfig {
 
 /**
  * Helper function to generate a random trainer for evil team trainers and the elite 4/champion
- * @param trainerPool The TrainerType or list of TrainerTypes that can possibly be generated
- * @param randomGender whether or not to randomly (50%) generate a female trainer (for use with evil team grunts)
- * @param seedOffset the seed offset to use for the random generation of the trainer
+ * @param trainerPool - The TrainerType or list of TrainerTypes that can possibly be generated
+ * @param randomGender - whether or not to randomly (50%) generate a female trainer (for use with evil team grunts)
+ * @param seedOffset - the seed offset to use for the random generation of the trainer
  * @returns the generated trainer
  */
 export function getRandomTrainerFunc(

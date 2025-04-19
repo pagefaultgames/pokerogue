@@ -759,7 +759,7 @@ export default class MenuUiHandler extends MessageUiHandler {
    * Switch the message window style and size when we are replaying dialog for debug purposes
    * In "dialog test mode", the window takes the whole width of the screen and the text
    * is set up to wrap around the same way as the dialogue during the game
-   * @param isDialogMode whether to use the dialog test
+   * @param isDialogMode - whether to use the dialog test
    */
   setDialogTestMode(isDialogMode: boolean) {
     this.menuMessageBox.setVisible(!isDialogMode);

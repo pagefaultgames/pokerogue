@@ -272,7 +272,7 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
 
   /**
    * Parses the {@linkcode Event} being passed and updates the state of the fieldEffectInfo array
-   * @param event {@linkcode Event} being sent
+   * @param event - being sent
    */
   private onFieldEffectChanged(event: Event) {
     const arenaEffectChangedEvent = event as ArenaEvent;
@@ -375,7 +375,7 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
 
   /**
    * Iterates through the fieldEffectInfo array and decrements the duration of each item
-   * @param event {@linkcode Event} being sent
+   * @param event - being sent
    */
   private onTurnEnd(event: Event) {
     const turnEndEvent = event as TurnEndEvent;
@@ -405,7 +405,7 @@ export class ArenaFlyout extends Phaser.GameObjects.Container {
 
   /**
    * Animates the flyout to either show or hide it by applying a fade and translation
-   * @param visible Should the flyout be shown?
+   * @param visible - Should the flyout be shown?
    */
   public toggleFlyout(visible: boolean): void {
     globalScene.tweens.add({

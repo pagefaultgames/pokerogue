@@ -234,9 +234,9 @@ export class EggHatchPhase extends Phase {
 
   /**
    * Function that animates egg shaking
-   * @param intensity of horizontal shaking. Doubled on the first call (where count is 0)
-   * @param repeatCount the number of times this function should be called (asynchronous recursion?!?)
-   * @param count the current number of times this function has been called.
+   * @param intensity - of horizontal shaking. Doubled on the first call (where count is 0)
+   * @param repeatCount - the number of times this function should be called (asynchronous recursion?!?)
+   * @param count - the current number of times this function has been called.
    * @returns nothing since it's a Promise<void>
    */
   doEggShake(intensity: number, repeatCount?: number, count?: number): Promise<void> {
@@ -408,8 +408,8 @@ export class EggHatchPhase extends Phase {
 
   /**
    * Helper function to generate sine. (Why is this not a Utils?!?)
-   * @param index random number from 0-7 being passed in to scale pi/128
-   * @param amplitude Scaling
+   * @param index - random number from 0-7 being passed in to scale pi/128
+   * @param amplitude - Scaling
    * @returns a number
    */
   sin(index: number, amplitude: number): number {
@@ -418,8 +418,8 @@ export class EggHatchPhase extends Phase {
 
   /**
    * Animates spraying
-   * @param intensity number of times this is repeated (this is a badly named variable)
-   * @param offsetY how much to offset the Y coordinates
+   * @param intensity - number of times this is repeated (this is a badly named variable)
+   * @param offsetY - how much to offset the Y coordinates
    */
   doSpray(intensity: number, offsetY?: number) {
     globalScene.tweens.addCounter({
@@ -433,8 +433,8 @@ export class EggHatchPhase extends Phase {
 
   /**
    * Animates a particle used in the spray animation
-   * @param trigIndex Used to modify the particle's vertical speed, is a random number from 0-7
-   * @param offsetY how much to offset the Y coordinate
+   * @param trigIndex - Used to modify the particle's vertical speed, is a random number from 0-7
+   * @param offsetY - how much to offset the Y coordinate
    */
   doSprayParticle(trigIndex: number, offsetY: number) {
     const initialX = this.eggHatchBg.displayWidth / 2;

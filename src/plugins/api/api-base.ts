@@ -20,7 +20,7 @@ export abstract class ApiBase {
 
   /**
    * Send a GET request.
-   * @param path The path to send the request to.
+   * @param path - The path to send the request to.
    */
   protected async doGet(path: string) {
     return this.doFetch(path, { method: "GET" });
@@ -28,9 +28,9 @@ export abstract class ApiBase {
 
   /**
    * Send a POST request.
-   * @param path THe path to send the request to.
-   * @param bodyData The body-data to send.
-   * @param dataType The data-type of the {@linkcode bodyData}.
+   * @param path - THe path to send the request to.
+   * @param bodyData - The body-data to send.
+   * @param dataType - The data-type of the {@linkcode bodyData}.
    */
   protected async doPost<D = undefined>(path: string, bodyData?: D, dataType: DataType = "json") {
     let body: string | undefined = undefined;
@@ -59,8 +59,8 @@ export abstract class ApiBase {
 
   /**
    * A generic request helper.
-   * @param path The path to send the request to.
-   * @param config The request {@linkcode RequestInit | Configuration}.
+   * @param path - The path to send the request to.
+   * @param config - The request {@linkcode RequestInit | Configuration}.
    */
   protected async doFetch(path: string, config: RequestInit): Promise<Response> {
     config.headers = {
@@ -80,7 +80,7 @@ export abstract class ApiBase {
    * Helper to transform data to {@linkcode URLSearchParams}
    * Any key with a value of `undefined` will be ignored.
    * Any key with a value of `null` will be included.
-   * @param data the data to transform to {@linkcode URLSearchParams}
+   * @param data - the data to transform to {@linkcode URLSearchParams}
    * @returns a {@linkcode URLSearchParams} representaton of {@linkcode data}
    */
   protected toUrlSearchParams<D extends Record<string, any>>(data: D) {

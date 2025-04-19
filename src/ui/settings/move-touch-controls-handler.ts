@@ -63,7 +63,7 @@ export default class MoveTouchControlsHandler {
 
   /**
    * Changes the state of the touch controls to the given orientation.
-   * @param isLandscapeMode Whether the screen is in landscape mode.
+   * @param isLandscapeMode - Whether the screen is in landscape mode.
    */
   private async changeOrientation(isLandscapeMode: boolean) {
     this.isLandscapeMode = isLandscapeMode;
@@ -157,15 +157,15 @@ export default class MoveTouchControlsHandler {
   /**
    * Elements that are inside the left div are anchored to the left boundary of the screen.
    * The x value of the positions are considered offsets to their respective boundaries.
-   * @param element Either an element in the left div or the right div.
+   * @param element - Either an element in the left div or the right div.
    * @returns Whether the given element is inside the left div.
    */
   private isLeft = (element: HTMLElement) => document.querySelector("#touchControls .left")?.contains(element);
 
   /**
    * Start dragging the given button.
-   * @param controlGroup The button that is being dragged.
-   * @param touch The touch event that started the drag.
+   * @param controlGroup - The button that is being dragged.
+   * @param touch - The touch event that started the drag.
    */
   private startDrag = (controlGroup: HTMLElement): void => {
     this.draggingElement = controlGroup;
@@ -173,8 +173,8 @@ export default class MoveTouchControlsHandler {
 
   /**
    * Drags the currently dragged element to the given touch position.
-   * @param touch The touch event that is currently happening.
-   * @param isLeft Whether the dragged element is a left button.
+   * @param touch - The touch event that is currently happening.
+   * @param isLeft - Whether the dragged element is a left button.
    */
   private drag = (touch: Touch): void => {
     if (!this.draggingElement) {
@@ -242,7 +242,7 @@ export default class MoveTouchControlsHandler {
 
   /**
    * Updates the positions of the touch controls.
-   * @param positions The new positions of the touch controls.
+   * @param positions - The new positions of the touch controls.
    */
   private setPositions(positions: ControlPosition[]) {
     this.resetPositions();
@@ -258,8 +258,8 @@ export default class MoveTouchControlsHandler {
    * E.g. For left elements, (0, 0) is the bottom left corner of the screen and
    * for right elements, (0, 0) is the bottom right corner of the screen.
    * @param controlElement
-   * @param x Either an offset to the left or right boundary of the screen.
-   * @param y An offset to the bottom boundary of the screen.
+   * @param x - Either an offset to the left or right boundary of the screen.
+   * @param y - An offset to the bottom boundary of the screen.
    */
   private setPosition(controlElement: HTMLElement, x: number, y: number) {
     const rect = controlElement.getBoundingClientRect();
@@ -298,7 +298,7 @@ export default class MoveTouchControlsHandler {
 
   /**
    * Creates the event listeners for the configuration mode.
-   * @param controlGroups The elements that can be dragged around the screen.
+   * @param controlGroups - The elements that can be dragged around the screen.
    * @returns The event listeners for the configuration mode.
    */
   private createConfigurationEventListeners(controlGroups: HTMLDivElement[]): ConfigurationEventListeners {
@@ -324,7 +324,7 @@ export default class MoveTouchControlsHandler {
   /**
    * Creates an overlay that covers the screen and allows the user to drag the touch controls around.
    * Also enables the toolbar for saving, resetting, and canceling the changes.
-   * @param ui The UI of the game.
+   * @param ui - The UI of the game.
    */
   private createOverlay(ui: UI) {
     const container = new Phaser.GameObjects.Container(globalScene, 0, 0);
@@ -348,7 +348,7 @@ export default class MoveTouchControlsHandler {
 
   /**
    * Allows the user to configure the touch controls by dragging buttons around the screen.
-   * @param ui The UI of the game.
+   * @param ui - The UI of the game.
    */
   public enableConfigurationMode(ui: UI) {
     if (this.inConfigurationMode) {

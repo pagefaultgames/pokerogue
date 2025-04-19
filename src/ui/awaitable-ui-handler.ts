@@ -28,7 +28,7 @@ export default abstract class AwaitableUiHandler extends UiHandler {
 
   /**
    * Create a semi transparent overlay that will get shown during tutorials
-   * @param container the container to add the overlay to
+   * @param container - the container to add the overlay to
    */
   initTutorialOverlay(container: Phaser.GameObjects.Container) {
     if (!this.tutorialOverlay) {

@@ -92,9 +92,9 @@ export function getSpriteKeysFromPokemon(pokemon: Pokemon): {
 /**
  * Will never remove the player's last non-fainted Pokemon (if they only have 1).
  * Otherwise, picks a Pokemon completely at random and removes from the party
- * @param isAllowed Default `false`. If `true`, only picks from legal mons. If no legal mons are found (or there is 1, with `doNotReturnLastAllowedMon = true`), will return a mon that is not allowed.
- * @param isFainted Default `false`. If `true`, includes fainted mons.
- * @param doNotReturnLastAllowedMon Default `false`. If `true`, will never return the last unfainted pokemon in the party. Useful when this function is being used to determine what Pokemon to remove from the party (Don't want to remove last unfainted)
+ * @param isAllowed - Default `false`. If `true`, only picks from legal mons. If no legal mons are found (or there is 1, with `doNotReturnLastAllowedMon = true`), will return a mon that is not allowed.
+ * @param isFainted - Default `false`. If `true`, includes fainted mons.
+ * @param doNotReturnLastAllowedMon - Default `false`. If `true`, will never return the last unfainted pokemon in the party. Useful when this function is being used to determine what Pokemon to remove from the party (Don't want to remove last unfainted)
  * @returns
  */
 export function getRandomPlayerPokemon(
@@ -136,8 +136,8 @@ export function getRandomPlayerPokemon(
 /**
  * Ties are broken by whatever mon is closer to the front of the party
  * @param scene
- * @param isAllowed Default false. If true, only picks from legal mons.
- * @param isFainted Default false. If true, includes fainted mons.
+ * @param isAllowed - Default false. If true, only picks from legal mons.
+ * @param isFainted - Default false. If true, includes fainted mons.
  * @returns
  */
 export function getHighestLevelPlayerPokemon(isAllowed = false, isFainted = false): PlayerPokemon {
@@ -161,9 +161,9 @@ export function getHighestLevelPlayerPokemon(isAllowed = false, isFainted = fals
 /**
  * Ties are broken by whatever mon is closer to the front of the party
  * @param scene
- * @param stat Stat to search for
- * @param isAllowed Default false. If true, only picks from legal mons.
- * @param isFainted Default false. If true, includes fainted mons.
+ * @param stat - Stat to search for
+ * @param isAllowed - Default false. If true, only picks from legal mons.
+ * @param isFainted - Default false. If true, includes fainted mons.
  * @returns
  */
 export function getHighestStatPlayerPokemon(stat: PermanentStat, isAllowed = false, isFainted = false): PlayerPokemon {
@@ -187,8 +187,8 @@ export function getHighestStatPlayerPokemon(stat: PermanentStat, isAllowed = fal
 /**
  * Ties are broken by whatever mon is closer to the front of the party
  * @param scene
- * @param isAllowed Default false. If true, only picks from legal mons.
- * @param isFainted Default false. If true, includes fainted mons.
+ * @param isAllowed - Default false. If true, only picks from legal mons.
+ * @param isFainted - Default false. If true, includes fainted mons.
  * @returns
  */
 export function getLowestLevelPlayerPokemon(isAllowed = false, isFainted = false): PlayerPokemon {
@@ -212,8 +212,8 @@ export function getLowestLevelPlayerPokemon(isAllowed = false, isFainted = false
 /**
  * Ties are broken by whatever mon is closer to the front of the party
  * @param scene
- * @param isAllowed Default false. If true, only picks from legal mons.
- * @param isFainted Default false. If true, includes fainted mons.
+ * @param isAllowed - Default false. If true, only picks from legal mons.
+ * @param isFainted - Default false. If true, includes fainted mons.
  * @returns
  */
 export function getHighestStatTotalPlayerPokemon(isAllowed = false, isFainted = false): PlayerPokemon {
@@ -300,8 +300,8 @@ export function getRandomSpeciesByStarterCost(
 /**
  * Takes care of handling player pokemon KO (with all its side effects)
  *
- * @param scene the battle scene
- * @param pokemon the player pokemon to KO
+ * @param scene - the battle scene
+ * @param pokemon - the player pokemon to KO
  */
 export function koPlayerPokemon(pokemon: PlayerPokemon) {
   pokemon.hp = 0;
@@ -318,9 +318,9 @@ export function koPlayerPokemon(pokemon: PlayerPokemon) {
  * Handles applying hp changes to a player pokemon.
  * Takes care of not going below `0`, above max-hp, adding `FNT` status correctly and updating the pokemon info.
  * TODO: should we handle special cases like wonder-guard/shedinja?
- * @param scene the battle scene
- * @param pokemon the player pokemon to apply the hp change to
- * @param value the hp change amount. Positive for heal. Negative for damage
+ * @param scene - the battle scene
+ * @param pokemon - the player pokemon to apply the hp change to
+ * @param value - the hp change amount. Positive for heal. Negative for damage
  *
  */
 function applyHpChangeToPokemon(pokemon: PlayerPokemon, value: number) {
@@ -335,9 +335,9 @@ function applyHpChangeToPokemon(pokemon: PlayerPokemon, value: number) {
 
 /**
  * Handles applying damage to a player pokemon
- * @param scene the battle scene
- * @param pokemon the player pokemon to apply damage to
- * @param damage the amount of damage to apply
+ * @param scene - the battle scene
+ * @param pokemon - the player pokemon to apply damage to
+ * @param damage - the amount of damage to apply
  * @see {@linkcode applyHpChangeToPokemon}
  */
 export function applyDamageToPokemon(pokemon: PlayerPokemon, damage: number) {
@@ -355,9 +355,9 @@ export function applyDamageToPokemon(pokemon: PlayerPokemon, damage: number) {
 
 /**
  * Handles applying heal to a player pokemon
- * @param scene the battle scene
- * @param pokemon the player pokemon to apply heal to
- * @param heal the amount of heal to apply
+ * @param scene - the battle scene
+ * @param pokemon - the player pokemon to apply heal to
+ * @param heal - the amount of heal to apply
  * @see {@linkcode applyHpChangeToPokemon}
  */
 export function applyHealToPokemon(pokemon: PlayerPokemon, heal: number) {
@@ -957,7 +957,7 @@ export function getGoldenBugNetSpecies(level: number): PokemonSpecies {
 /**
  * Generates a Pokemon level for a given wave, with an option to increase/decrease by a scaling modifier
  * @param scene
- * @param levelAdditiveModifier Default 0. will add +(1 level / 10 waves * levelAdditiveModifier) to the level calculation
+ * @param levelAdditiveModifier - Default 0. will add +(1 level / 10 waves * levelAdditiveModifier) to the level calculation
  */
 export function getEncounterPokemonLevelForWave(levelAdditiveModifier = 0) {
   const currentBattle = globalScene.currentBattle;

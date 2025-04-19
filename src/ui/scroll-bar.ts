@@ -13,11 +13,11 @@ export class ScrollBar extends Phaser.GameObjects.Container {
   private maxRows: number;
 
   /**
-   * @param x the scrollbar's x position (origin: top left)
-   * @param y the scrollbar's y position (origin: top left)
-   * @param width the scrollbar's width
-   * @param height the scrollbar's height
-   * @param maxRows the maximum number of rows that can be shown at once
+   * @param x - the scrollbar's x position (origin: top left)
+   * @param y - the scrollbar's y position (origin: top left)
+   * @param width - the scrollbar's width
+   * @param height - the scrollbar's height
+   * @param maxRows - the maximum number of rows that can be shown at once
    */
   constructor(x: number, y: number, width: number, height: number, maxRows: number) {
     super(globalScene, x, y);
@@ -56,7 +56,7 @@ export class ScrollBar extends Phaser.GameObjects.Container {
   /**
    * Set the current row that is displayed
    * Moves the bar handle up or down accordingly
-   * @param scrollCursor how many times the view was scrolled down
+   * @param scrollCursor - how many times the view was scrolled down
    */
   setScrollCursor(scrollCursor: number): void {
     this.currentRow = scrollCursor;
@@ -67,7 +67,7 @@ export class ScrollBar extends Phaser.GameObjects.Container {
    * Set the total number of rows to display
    * If it's smaller than the maximum number of rows on screen the bar will get hidden
    * Otherwise the scrollbar handle gets resized based on the ratio to the maximum number of rows
-   * @param rows how many rows of data there are in total
+   * @param rows - how many rows of data there are in total
    */
   setTotalRows(rows: number): void {
     this.totalRows = rows;

@@ -87,9 +87,9 @@ export class MovePhase extends BattlePhase {
   }
 
   /**
-   * @param followUp Indicates that the move being used is a "follow-up" - for example, a move being used by Metronome or Dancer.
+   * @param followUp - Indicates that the move being used is a "follow-up" - for example, a move being used by Metronome or Dancer.
    *                 Follow-ups bypass a few failure conditions, including flinches, sleep/paralysis/freeze and volatile status checks, etc.
-   * @param reflected Indicates that the move was reflected by Magic Coat or Magic Bounce.
+   * @param reflected - Indicates that the move was reflected by Magic Coat or Magic Bounce.
    *                  Reflected moves cannot be reflected again and will not trigger Dancer.
    */
 
@@ -115,7 +115,7 @@ export class MovePhase extends BattlePhase {
 
   /**
    * Checks if the pokemon is active, if the move is usable, and that the move is targetting something.
-   * @param ignoreDisableTags `true` to not check if the move is disabled
+   * @param ignoreDisableTags - `true` to not check if the move is disabled
    * @returns `true` if all the checks pass
    */
   public canMove(ignoreDisableTags = false): boolean {

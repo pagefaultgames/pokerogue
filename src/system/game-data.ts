@@ -409,7 +409,7 @@ export class GameData {
 
   /**
    * Checks if an `Unlockable` has been unlocked.
-   * @param unlockable The Unlockable to check
+   * @param unlockable - The Unlockable to check
    * @returns `true` if the player has unlocked this `Unlockable` or an override has enabled it
    */
   public isUnlocked(unlockable: Unlockables): boolean {
@@ -663,8 +663,8 @@ export class GameData {
 
   /**
    * Saves a new entry to Run History
-   * @param runEntry: most recent SessionSaveData of the run
-   * @param isVictory: result of the run
+   * @param runEntry: - most recent SessionSaveData of the run
+   * @param isVictory: - result of the run
    * Arbitrary limit of 25 runs per player - Will delete runs, starting with the oldest one, if needed
    */
   async saveRunHistory(runEntry: SessionSaveData, isVictory: boolean): Promise<boolean> {
@@ -773,8 +773,8 @@ export class GameData {
 
   /**
    * Saves a setting to localStorage
-   * @param setting string ideally of SettingKeys
-   * @param valueIndex index of the setting's option
+   * @param setting - string ideally of SettingKeys
+   * @param valueIndex - index of the setting's option
    * @returns true
    */
   public saveSetting(setting: string, valueIndex: number): boolean {
@@ -1234,7 +1234,7 @@ export class GameData {
   /**
    * Delete the session data at the given slot when overwriting a save file
    * For deleting the session of a finished run, use {@linkcode tryClearSession}
-   * @param slotId the slot to clear
+   * @param slotId - the slot to clear
    * @returns Promise with result `true` if the session was deleted successfully, `false` otherwise
    */
   deleteSession(slotId: number): Promise<boolean> {
@@ -1971,8 +1971,8 @@ export class GameData {
    *
    * @param species
    * @param eggMoveIndex
-   * @param showMessage Default true. If true, will display message for unlocked egg move
-   * @param prependSpeciesToMessage Default false. If true, will change message from "X Egg Move Unlocked!" to "Bulbasaur X Egg Move Unlocked!"
+   * @param showMessage - Default true. If true, will display message for unlocked egg move
+   * @param prependSpeciesToMessage - Default false. If true, will change message from "X Egg Move Unlocked!" to "Bulbasaur X Egg Move Unlocked!"
    */
   setEggMoveUnlocked(
     species: PokemonSpecies,

@@ -83,9 +83,9 @@ export class FilterText extends Phaser.GameObjects.Container {
 
   /**
    * Add a new filter to the FilterBar, as long that a unique DropDownColumn is provided
-   * @param column  the DropDownColumn that will be used to access the filter values
-   * @param title   the string that will get displayed in the filter bar
-   * @param dropDown the DropDown with all options for this filter
+   * @param column - the DropDownColumn that will be used to access the filter values
+   * @param title  - the string that will get displayed in the filter bar
+   * @param dropDown - the DropDown with all options for this filter
    * @returns true if successful, false if the provided column was already in use for another filter
    */
   addFilter(row: FilterTextRow, title: string): boolean {
@@ -206,7 +206,7 @@ export class FilterText extends Phaser.GameObjects.Container {
 
   /**
    * Find the nearest filter to the provided container on the y-axis
-   * @param container the StarterContainer to compare position against
+   * @param container - the StarterContainer to compare position against
    * @returns the index of the closest filter
    */
   getNearestFilter(container: StarterContainer): number {

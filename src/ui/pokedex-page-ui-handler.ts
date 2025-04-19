@@ -937,8 +937,8 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
    * Check whether a given form is caught for a given species.
    * All forms that can be reached through a form change during battle are considered caught and show up in the dex as such.
    *
-   * @param otherSpecies The species to check; defaults to current species
-   * @param otherFormIndex The form index of the form to check; defaults to current form
+   * @param otherSpecies - The species to check; defaults to current species
+   * @param otherFormIndex - The form index of the form to check; defaults to current form
    * @returns StarterAttributes for the species
    */
   isFormCaught(otherSpecies?: PokemonSpecies, otherFormIndex?: number | undefined): boolean {
@@ -970,7 +970,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
    * If somehow a preference is set for a form, variant, gender, ability or nature
    * that wasn't actually unlocked or is invalid it will be cleared here
    *
-   * @param species The species to get Starter Preferences for
+   * @param species - The species to get Starter Preferences for
    * @returns StarterAttributes for the species
    */
   initStarterPrefs(): StarterAttributes {
@@ -1078,7 +1078,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
   /**
    * If the pokemon is an evolution, find speciesId of its starter.
-   * @param speciesId the id of the species to check
+   * @param speciesId - the id of the species to check
    * @returns the id of the corresponding starter
    */
   getStarterSpeciesId(speciesId): number {
@@ -2691,7 +2691,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
   /**
    * Creates a temporary dex attr props that will be used to display the correct shiny, variant, and form based on this.starterAttributes
    *
-   * @param speciesId the id of the species to get props for
+   * @param speciesId - the id of the species to get props for
    * @returns the dex props
    */
   getCurrentDexProps(speciesId: number): bigint {

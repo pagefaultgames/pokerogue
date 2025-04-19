@@ -123,7 +123,7 @@ const tutorialHandlers = {
  * Run through the specified tutorial if it hasn't been seen before and mark it as seen once done
  * This will show a tutorial overlay if defined in the current {@linkcode AwaitableUiHandler}
  * The main menu will also get disabled while the tutorial is running
- * @param tutorial the {@linkcode Tutorial} to play
+ * @param tutorial - the {@linkcode Tutorial} to play
  * @returns a promise with result `true` if the tutorial was run and finished, `false` otherwise
  */
 export async function handleTutorial(tutorial: Tutorial): Promise<boolean> {
@@ -160,7 +160,7 @@ export async function handleTutorial(tutorial: Tutorial): Promise<boolean> {
 
 /**
  * Show the tutorial overlay if there is one
- * @param handler the current UiHandler
+ * @param handler - the current UiHandler
  * @returns `true` once the overlay has finished appearing, or if there is no overlay
  */
 async function showTutorialOverlay(handler: UiHandler) {
@@ -181,7 +181,7 @@ async function showTutorialOverlay(handler: UiHandler) {
 
 /**
  * Hide the tutorial overlay if there is one
- * @param handler the current UiHandler
+ * @param handler - the current UiHandler
  * @returns `true` once the overlay has finished disappearing, or if there is no overlay
  */
 async function hideTutorialOverlay(handler: UiHandler) {

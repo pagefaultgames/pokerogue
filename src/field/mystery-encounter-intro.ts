@@ -327,9 +327,9 @@ export default class MysteryEncounterIntroVisuals extends Phaser.GameObjects.Con
   /**
    * Attempts to animate a given set of {@linkcode Phaser.GameObjects.Sprite}
    * @see {@linkcode Phaser.GameObjects.Sprite.play}
-   * @param sprite {@linkcode Phaser.GameObjects.Sprite} to animate
-   * @param tintSprite {@linkcode Phaser.GameObjects.Sprite} placed on top of the sprite to add a color tint
-   * @param animConfig {@linkcode Phaser.Types.Animations.PlayAnimationConfig} to pass to {@linkcode Phaser.GameObjects.Sprite.play}
+   * @param sprite - to animate
+   * @param tintSprite - placed on top of the sprite to add a color tint
+   * @param animConfig - to pass to {@linkcode Phaser.GameObjects.Sprite.play}
    * @returns true if the sprite was able to be animated
    */
   tryPlaySprite(

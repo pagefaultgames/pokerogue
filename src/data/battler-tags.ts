@@ -110,7 +110,7 @@ export class BattlerTag {
   /**
    * When given a battler tag or json representing one, load the data for it.
    * This is meant to be inherited from by any battler tag with custom attributes
-   * @param {BattlerTag | any} source A battler tag
+   * @param source - A battler tag
    */
   loadTag(source: BattlerTag | any): void {
     this.turnCount = source.turnCount;
@@ -186,9 +186,9 @@ export abstract class MoveRestrictionBattlerTag extends BattlerTag {
   /**
    * Checks if this tag is restricting a move based on a user's decisions during the target selection phase
    *
-   * @param {Moves} _move {@linkcode Moves} move ID to check restriction for
-   * @param {Pokemon} _user {@linkcode Pokemon} the user of the above move
-   * @param {Pokemon} _target {@linkcode Pokemon} the target of the above move
+   * @param _move - move ID to check restriction for
+   * @param _user - the user of the above move
+   * @param _target - the target of the above move
    * @returns {boolean} `false` unless overridden by the child tag
    */
   isMoveTargetRestricted(_move: Moves, _user: Pokemon, _target: Pokemon): boolean {
@@ -198,8 +198,8 @@ export abstract class MoveRestrictionBattlerTag extends BattlerTag {
   /**
    * Gets the text to display when the player attempts to select a move that is restricted by this tag.
    *
-   * @param {Pokemon} pokemon {@linkcode Pokemon} for which the player is attempting to select the restricted move
-   * @param {Moves} move {@linkcode Moves} ID of the move that is having its selection denied
+   * @param pokemon - for which the player is attempting to select the restricted move
+   * @param move - ID of the move that is having its selection denied
    * @returns {string} text to display when the player attempts to select the restricted move
    */
   abstract selectionDeniedText(pokemon: Pokemon, move: Moves): string;
@@ -209,8 +209,8 @@ export abstract class MoveRestrictionBattlerTag extends BattlerTag {
    * Because restriction effects also prevent selection of the move, this situation can only arise if a
    * pokemon first selects a move, then gets outsped by a pokemon using a move that restricts the selected move.
    *
-   * @param {Pokemon} _pokemon {@linkcode Pokemon} attempting to use the restricted move
-   * @param {Moves} _move {@linkcode Moves} ID of the move being interrupted
+   * @param _pokemon - attempting to use the restricted move
+   * @param _move - ID of the move being interrupted
    * @returns {string} text to display when the move is interrupted
    */
   interruptedText(_pokemon: Pokemon, _move: Moves): string {
@@ -221,7 +221,6 @@ export abstract class MoveRestrictionBattlerTag extends BattlerTag {
 /**
  * Tag representing the "Throat Chop" effect. Pokemon with this tag cannot use sound-based moves.
  * @see {@link https://bulbapedia.bulbagarden.net/wiki/Throat_Chop_(move) | Throat Chop}
- * @extends MoveRestrictionBattlerTag
  */
 export class ThroatChoppedTag extends MoveRestrictionBattlerTag {
   constructor() {
@@ -236,7 +235,7 @@ export class ThroatChoppedTag extends MoveRestrictionBattlerTag {
   /**
    * Checks if a {@linkcode Moves | move} is restricted by Throat Chop.
    * @override
-   * @param {Moves} move the {@linkcode Moves | move} to check for sound-based restriction
+   * @param move - the {@linkcode Moves | move} to check for sound-based restriction
    * @returns true if the move is sound-based
    */
   override isMoveRestricted(move: Moves): boolean {
@@ -246,8 +245,8 @@ export class ThroatChoppedTag extends MoveRestrictionBattlerTag {
   /**
    * Shows a message when the player attempts to select a move that is restricted by Throat Chop.
    * @override
-   * @param {Pokemon} _pokemon the {@linkcode Pokemon} that is attempting to select the restricted move
-   * @param {Moves} move the {@linkcode Moves | move} that is being restricted
+   * @param _pokemon - the {@linkcode Pokemon} that is attempting to select the restricted move
+   * @param move - the {@linkcode Moves | move} that is being restricted
    * @returns the message to display when the player attempts to select the restricted move
    */
   override selectionDeniedText(_pokemon: Pokemon, move: Moves): string {
@@ -259,8 +258,8 @@ export class ThroatChoppedTag extends MoveRestrictionBattlerTag {
   /**
    * Shows a message when a move is interrupted by Throat Chop.
    * @override
-   * @param {Pokemon} pokemon the interrupted {@linkcode Pokemon}
-   * @param {Moves} _move the {@linkcode Moves | move} that was interrupted
+   * @param pokemon - the interrupted {@linkcode Pokemon}
+   * @param _move - the {@linkcode Moves | move} that was interrupted
    * @returns the message to display when the move is interrupted
    */
   override interruptedText(pokemon: Pokemon, _move: Moves): string {
@@ -336,8 +335,8 @@ export class DisabledTag extends MoveRestrictionBattlerTag {
 
   /**
    * @override
-   * @param {Pokemon} pokemon {@linkcode Pokemon} attempting to use the restricted move
-   * @param {Moves} move {@linkcode Moves} ID of the move being interrupted
+   * @param pokemon - attempting to use the restricted move
+   * @param move - ID of the move being interrupted
    * @returns {string} text to display when the move is interrupted
    */
   override interruptedText(pokemon: Pokemon, move: Moves): string {
@@ -356,7 +355,6 @@ export class DisabledTag extends MoveRestrictionBattlerTag {
 
 /**
  * Tag used by Gorilla Tactics to restrict the user to using only one move.
- * @extends MoveRestrictionBattlerTag
  */
 export class GorillaTacticsTag extends MoveRestrictionBattlerTag {
   private moveId = Moves.NONE;
@@ -372,7 +370,7 @@ export class GorillaTacticsTag extends MoveRestrictionBattlerTag {
 
   /**
    * @override
-   * @param {Pokemon} pokemon the {@linkcode Pokemon} to check if the tag can be added
+   * @param pokemon - the {@linkcode Pokemon} to check if the tag can be added
    * @returns `true` if the pokemon has a valid move and no existing {@linkcode GorillaTacticsTag}; `false` otherwise
    */
   override canAdd(pokemon: Pokemon): boolean {
@@ -383,7 +381,7 @@ export class GorillaTacticsTag extends MoveRestrictionBattlerTag {
    * Ensures that move history exists on {@linkcode Pokemon} and has a valid move.
    * If so, sets the {@linkcode moveId} and increases the user's Attack by 50%.
    * @override
-   * @param {Pokemon} pokemon the {@linkcode Pokemon} to add the tag to
+   * @param pokemon - the {@linkcode Pokemon} to add the tag to
    */
   override onAdd(pokemon: Pokemon): void {
     const lastValidMove = this.getLastValidMove(pokemon);
@@ -399,7 +397,7 @@ export class GorillaTacticsTag extends MoveRestrictionBattlerTag {
   /**
    * Loads the Gorilla Tactics Battler Tag along with its unique class variable moveId
    * @override
-   * @param source Gorilla Tactics' {@linkcode BattlerTag} information
+   * @param source - Gorilla Tactics' {@linkcode BattlerTag} information
    */
   public override loadTag(source: BattlerTag | any): void {
     super.loadTag(source);
@@ -409,8 +407,8 @@ export class GorillaTacticsTag extends MoveRestrictionBattlerTag {
   /**
    *
    * @override
-   * @param {Pokemon} pokemon n/a
-   * @param {Moves} _move {@linkcode Moves} ID of the move being denied
+   * @param pokemon - n/a
+   * @param _move - ID of the move being denied
    * @returns {string} text to display when the move is denied
    */
   override selectionDeniedText(pokemon: Pokemon, _move: Moves): string {
@@ -422,7 +420,7 @@ export class GorillaTacticsTag extends MoveRestrictionBattlerTag {
 
   /**
    * Gets the last valid move from the pokemon's move history.
-   * @param {Pokemon} pokemon {@linkcode Pokemon} to get the last valid move from
+   * @param pokemon - to get the last valid move from
    * @returns {Moves | undefined} the last valid move from the pokemon's move history
    */
   getLastValidMove(pokemon: Pokemon): Moves | undefined {
@@ -492,8 +490,8 @@ export class BeakBlastChargingTag extends BattlerTag {
   /**
    * Inflicts `BURN` status on attackers that make contact, and causes this tag
    * to be removed after the source makes a move (or the turn ends, whichever comes first)
-   * @param pokemon {@linkcode Pokemon} the owner of this tag
-   * @param lapseType {@linkcode BattlerTagLapseType} the type of functionality invoked in battle
+   * @param pokemon - the owner of this tag
+   * @param lapseType - the type of functionality invoked in battle
    * @returns `true` if invoked with the `AFTER_HIT` lapse type
    */
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
@@ -536,8 +534,8 @@ export class ShellTrapTag extends BattlerTag {
 
   /**
    * "Activates" the shell trap, causing the tag owner to move next.
-   * @param pokemon {@linkcode Pokemon} the owner of this tag
-   * @param lapseType {@linkcode BattlerTagLapseType} the type of functionality invoked in battle
+   * @param pokemon - the owner of this tag
+   * @param lapseType - the type of functionality invoked in battle
    * @returns `true` if invoked with the `AFTER_HIT` lapse type
    */
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
@@ -625,7 +623,6 @@ export class TrappedTag extends BattlerTag {
  * BattlerTag implementing No Retreat's trapping effect.
  * This is treated separately from other trapping effects to prevent
  * Ghost-type Pokemon from being able to reuse the move.
- * @extends TrappedTag
  */
 class NoRetreatTag extends TrappedTag {
   constructor(sourceId: number) {
@@ -654,8 +651,8 @@ export class FlinchedTag extends BattlerTag {
 
   /**
    * Cancels the Pokemon's next Move on the turn this tag is applied
-   * @param pokemon The {@linkcode Pokemon} with this tag
-   * @param lapseType The {@linkcode BattlerTagLapseType lapse type} used for this function call
+   * @param pokemon - The {@linkcode Pokemon} with this tag
+   * @param lapseType - The {@linkcode BattlerTagLapseType lapse type} used for this function call
    * @returns `false` (This tag is always removed after applying its effects)
    */
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
@@ -780,7 +777,6 @@ export class ConfusedTag extends BattlerTag {
 
 /**
  * Tag applied to the {@linkcode Move.DESTINY_BOND} user.
- * @extends BattlerTag
  * @see {@linkcode apply}
  */
 export class DestinyBondTag extends BattlerTag {
@@ -793,8 +789,8 @@ export class DestinyBondTag extends BattlerTag {
    * or after receiving fatal damage. When the damage is fatal,
    * the attacking Pokemon is taken down as well, unless it's a boss.
    *
-   * @param {Pokemon} pokemon Pokemon that is attacking the Destiny Bond user.
-   * @param {BattlerTagLapseType} lapseType CUSTOM or PRE_MOVE
+   * @param pokemon - Pokemon that is attacking the Destiny Bond user.
+   * @param lapseType - CUSTOM or PRE_MOVE
    * @returns false if the tag source fainted or one turn has passed since the application
    */
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
@@ -923,7 +919,7 @@ export class SeedTag extends BattlerTag {
 
   /**
    * When given a battler tag or json representing one, load the data for it.
-   * @param {BattlerTag | any} source A battler tag
+   * @param source - A battler tag
    */
   loadTag(source: BattlerTag | any): void {
     super.loadTag(source);
@@ -1012,8 +1008,8 @@ export class PowderTag extends BattlerTag {
   /**
    * Applies Powder's effects before the tag owner uses a Fire-type move.
    * Also causes the tag to expire at the end of turn.
-   * @param pokemon {@linkcode Pokemon} the owner of this tag
-   * @param lapseType {@linkcode BattlerTagLapseType} the type of lapse functionality to carry out
+   * @param pokemon - the owner of this tag
+   * @param lapseType - the type of lapse functionality to carry out
    * @returns `true` if the tag should not expire after this lapse; `false` otherwise.
    */
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
@@ -1135,7 +1131,7 @@ export class EncoreTag extends MoveRestrictionBattlerTag {
 
   /**
    * When given a battler tag or json representing one, load the data for it.
-   * @param {BattlerTag | any} source A battler tag
+   * @param source - A battler tag
    */
   loadTag(source: BattlerTag | any): void {
     super.loadTag(source);
@@ -1209,8 +1205,8 @@ export class EncoreTag extends MoveRestrictionBattlerTag {
 
   /**
    * Checks if the move matches the moveId stored within the tag and returns a boolean value
-   * @param move {@linkcode Moves} the move selected
-   * @param user N/A
+   * @param move - the move selected
+   * @param user - N/A
    * @returns `true` if the move does not match with the moveId stored and as a result, restricted
    */
   override isMoveRestricted(move: Moves, _user?: Pokemon): boolean {
@@ -1252,7 +1248,6 @@ export class HelpingHandTag extends BattlerTag {
 
 /**
  * Applies the Ingrain tag to a pokemon
- * @extends TrappedTag
  */
 export class IngrainTag extends TrappedTag {
   constructor(sourceId: number) {
@@ -1261,7 +1256,7 @@ export class IngrainTag extends TrappedTag {
 
   /**
    * Check if the Ingrain tag can be added to the pokemon
-   * @param pokemon {@linkcode Pokemon} The pokemon to check if the tag can be added to
+   * @param pokemon - The pokemon to check if the tag can be added to
    * @returns boolean True if the tag can be added, false otherwise
    */
   canAdd(pokemon: Pokemon): boolean {
@@ -1420,7 +1415,7 @@ export abstract class DamagingTrapTag extends TrappedTag {
 
   /**
    * When given a battler tag or json representing one, load the data for it.
-   * @param {BattlerTag | any} source A battler tag
+   * @param source - A battler tag
    */
   loadTag(source: BattlerTag | any): void {
     super.loadTag(source);
@@ -1667,7 +1662,7 @@ export class ContactDamageProtectedTag extends ContactProtectedTag {
 
   /**
    * When given a battler tag or json representing one, load the data for it.
-   * @param {BattlerTag | any} source A battler tag
+   * @param source - A battler tag
    */
   loadTag(source: BattlerTag | any): void {
     super.loadTag(source);
@@ -1695,9 +1690,9 @@ export class DamageProtectedTag extends ContactProtectedTag {}
 
 export class ContactSetStatusProtectedTag extends DamageProtectedTag {
   /**
-   * @param sourceMove The move that caused the tag to be applied
-   * @param tagType The type of the tag
-   * @param statusEffect The status effect to apply to the attacker
+   * @param sourceMove - The move that caused the tag to be applied
+   * @param tagType - The type of the tag
+   * @param statusEffect - The status effect to apply to the attacker
    */
   constructor(
     sourceMove: Moves,
@@ -1734,7 +1729,7 @@ export class ContactStatStageChangeProtectedTag extends DamageProtectedTag {
 
   /**
    * When given a battler tag or json representing one, load the data for it.
-   * @param {BattlerTag | any} source A battler tag
+   * @param source - A battler tag
    */
   override loadTag(source: BattlerTag | any): void {
     super.loadTag(source);
@@ -1874,7 +1869,7 @@ export class AbilityBattlerTag extends BattlerTag {
 
   /**
    * When given a battler tag or json representing one, load the data for it.
-   * @param {BattlerTag | any} source A battler tag
+   * @param source - A battler tag
    */
   loadTag(source: BattlerTag | any): void {
     super.loadTag(source);
@@ -1884,7 +1879,6 @@ export class AbilityBattlerTag extends BattlerTag {
 
 /**
  * Tag used by Unburden to double speed
- * @extends AbilityBattlerTag
  */
 export class UnburdenTag extends AbilityBattlerTag {
   constructor() {
@@ -1974,7 +1968,7 @@ export class HighestStatBoostTag extends AbilityBattlerTag {
 
   /**
    * When given a battler tag or json representing one, load the data for it.
-   * @param {BattlerTag | any} source A battler tag
+   * @param source - A battler tag
    */
   loadTag(source: BattlerTag | any): void {
     super.loadTag(source);
@@ -2034,7 +2028,7 @@ export class WeatherHighestStatBoostTag extends HighestStatBoostTag implements W
 
   /**
    * When given a battler tag or json representing one, load the data for it.
-   * @param {BattlerTag | any} source A battler tag
+   * @param source - A battler tag
    */
   loadTag(source: BattlerTag | any): void {
     super.loadTag(source);
@@ -2052,7 +2046,7 @@ export class TerrainHighestStatBoostTag extends HighestStatBoostTag implements T
 
   /**
    * When given a battler tag or json representing one, load the data for it.
-   * @param {BattlerTag | any} source A battler tag
+   * @param source - A battler tag
    */
   loadTag(source: BattlerTag | any): void {
     super.loadTag(source);
@@ -2091,7 +2085,7 @@ export class TypeImmuneTag extends BattlerTag {
 
   /**
    * When given a battler tag or json representing one, load the data for it.
-   * @param {BattlerTag | any} source A battler tag
+   * @param source - A battler tag
    */
   loadTag(source: BattlerTag | any): void {
     super.loadTag(source);
@@ -2154,7 +2148,7 @@ export class TypeBoostTag extends BattlerTag {
 
   /**
    * When given a battler tag or json representing one, load the data for it.
-   * @param {BattlerTag | any} source A battler tag
+   * @param source - A battler tag
    */
   loadTag(source: BattlerTag | any): void {
     super.loadTag(source);
@@ -2215,7 +2209,6 @@ export class CritBoostTag extends BattlerTag {
 
 /**
  * Tag for the effects of Dragon Cheer, which boosts the critical hit ratio of the user's allies.
- * @extends {CritBoostTag}
  */
 export class DragonCheerTag extends CritBoostTag {
   /** The types of the user's ally when the tag is added */
@@ -2241,7 +2234,7 @@ export class SaltCuredTag extends BattlerTag {
 
   /**
    * When given a battler tag or json representing one, load the data for it.
-   * @param {BattlerTag | any} source A battler tag
+   * @param source - A battler tag
    */
   loadTag(source: BattlerTag | any): void {
     super.loadTag(source);
@@ -2298,7 +2291,7 @@ export class CursedTag extends BattlerTag {
 
   /**
    * When given a battler tag or json representing one, load the data for it.
-   * @param {BattlerTag | any} source A battler tag
+   * @param source - A battler tag
    */
   loadTag(source: BattlerTag | any): void {
     super.loadTag(source);
@@ -2427,7 +2420,7 @@ export class FormBlockDamageTag extends BattlerTag {
 
   /**
    * Determines if the tag can be added to the Pokémon.
-   * @param {Pokemon} pokemon The Pokémon to which the tag might be added.
+   * @param pokemon - The Pokémon to which the tag might be added.
    * @returns {boolean} True if the tag can be added, false otherwise.
    */
   canAdd(pokemon: Pokemon): boolean {
@@ -2437,7 +2430,7 @@ export class FormBlockDamageTag extends BattlerTag {
   /**
    * Applies the tag to the Pokémon.
    * Triggers a form change if the Pokémon is not in its defense form.
-   * @param {Pokemon} pokemon The Pokémon to which the tag is added.
+   * @param pokemon - The Pokémon to which the tag is added.
    */
   onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
@@ -2450,7 +2443,7 @@ export class FormBlockDamageTag extends BattlerTag {
   /**
    * Removes the tag from the Pokémon.
    * Triggers a form change when the tag is removed.
-   * @param {Pokemon} pokemon The Pokémon from which the tag is removed.
+   * @param pokemon - The Pokémon from which the tag is removed.
    */
   onRemove(pokemon: Pokemon): void {
     super.onRemove(pokemon);
@@ -2462,7 +2455,7 @@ export class FormBlockDamageTag extends BattlerTag {
 export class IceFaceBlockDamageTag extends FormBlockDamageTag {
   /**
    * Determines if the tag can be added to the Pokémon.
-   * @param {Pokemon} pokemon The Pokémon to which the tag might be added.
+   * @param pokemon - The Pokémon to which the tag might be added.
    * @returns {boolean} True if the tag can be added, false otherwise.
    */
   canAdd(pokemon: Pokemon): boolean {
@@ -2617,7 +2610,6 @@ export class StockpilingTag extends BattlerTag {
 
 /**
  * Battler tag for Gulp Missile used by Cramorant.
- * @extends BattlerTag
  */
 export class GulpMissileTag extends BattlerTag {
   constructor(tagType: BattlerTagType, sourceMove: Moves) {
@@ -2659,7 +2651,7 @@ export class GulpMissileTag extends BattlerTag {
 
   /**
    * Gulp Missile's initial form changes are triggered by using Surf and Dive.
-   * @param {Pokemon} pokemon The Pokemon with Gulp Missile ability.
+   * @param pokemon - The Pokemon with Gulp Missile ability.
    * @returns Whether the BattlerTag can be added.
    */
   canAdd(pokemon: Pokemon): boolean {
@@ -2691,7 +2683,6 @@ export class GulpMissileTag extends BattlerTag {
  * Applied by moves: {@linkcode Moves.ODOR_SLEUTH | Odor Sleuth},
  * {@linkcode Moves.MIRACLE_EYE | Miracle Eye} and {@linkcode Moves.FORESIGHT | Foresight}.
  *
- * @extends BattlerTag
  * @see {@linkcode ignoreImmunity}
  */
 export class ExposedTag extends BattlerTag {
@@ -2706,7 +2697,7 @@ export class ExposedTag extends BattlerTag {
 
   /**
    * When given a battler tag or json representing one, load the data for it.
-   * @param {BattlerTag | any} source A battler tag
+   * @param source - A battler tag
    */
   loadTag(source: BattlerTag | any): void {
     super.loadTag(source);
@@ -2715,8 +2706,8 @@ export class ExposedTag extends BattlerTag {
   }
 
   /**
-   * @param types {@linkcode PokemonType} of the defending Pokemon
-   * @param moveType {@linkcode PokemonType} of the move targetting it
+   * @param types - of the defending Pokemon
+   * @param moveType - of the move targetting it
    * @returns `true` if the move should be allowed to target the defender.
    */
   ignoreImmunity(type: PokemonType, moveType: PokemonType): boolean {
@@ -2728,7 +2719,6 @@ export class ExposedTag extends BattlerTag {
  * Tag that prevents HP recovery from held items and move effects. It also blocks the usage of recovery moves.
  * Applied by moves:  {@linkcode Moves.HEAL_BLOCK | Heal Block (5 turns)}, {@linkcode Moves.PSYCHIC_NOISE | Psychic Noise (2 turns)}
  *
- * @extends MoveRestrictionBattlerTag
  */
 export class HealBlockTag extends MoveRestrictionBattlerTag {
   constructor(turnCount: number, sourceMove: Moves) {
@@ -2748,7 +2738,7 @@ export class HealBlockTag extends MoveRestrictionBattlerTag {
 
   /**
    * Checks if a move is disabled under Heal Block
-   * @param {Moves} move {@linkcode Moves} the move ID
+   * @param move - The move ID
    * @returns `true` if the move has a TRIAGE_MOVE flag and is a status move
    */
   override isMoveRestricted(move: Moves): boolean {
@@ -2761,9 +2751,9 @@ export class HealBlockTag extends MoveRestrictionBattlerTag {
   /**
    * Checks if a move is disabled under Heal Block because of its choice of target
    * Implemented b/c of Pollen Puff
-   * @param {Moves} move {@linkcode Moves} the move ID
-   * @param {Pokemon} user {@linkcode Pokemon} the move user
-   * @param {Pokemon} target {@linkcode Pokemon} the target of the move
+   * @param move - The move ID
+   * @param user - The move user
+   * @param target - The target of the move
    * @returns `true` if the move cannot be used because the target is an ally
    */
   override isMoveTargetRestricted(move: Moves, user: Pokemon, target: Pokemon) {
@@ -2788,8 +2778,8 @@ export class HealBlockTag extends MoveRestrictionBattlerTag {
 
   /**
    * @override
-   * @param {Pokemon} pokemon {@linkcode Pokemon} attempting to use the restricted move
-   * @param {Moves} move {@linkcode Moves} ID of the move being interrupted
+   * @param pokemon - attempting to use the restricted move
+   * @param move - ID of the move being interrupted
    * @returns {string} text to display when the move is interrupted
    */
   override interruptedText(pokemon: Pokemon, move: Moves): string {
@@ -2816,7 +2806,6 @@ export class HealBlockTag extends MoveRestrictionBattlerTag {
 
 /**
  * Tag that doubles the type effectiveness of Fire-type moves.
- * @extends BattlerTag
  */
 export class TarShotTag extends BattlerTag {
   constructor() {
@@ -2825,7 +2814,7 @@ export class TarShotTag extends BattlerTag {
 
   /**
    * If the Pokemon is terastallized, the tag cannot be added.
-   * @param {Pokemon} pokemon the {@linkcode Pokemon} to which the tag is added
+   * @param pokemon - the {@linkcode Pokemon} to which the tag is added
    * @returns whether the tag is applied
    */
   override canAdd(pokemon: Pokemon): boolean {
@@ -2873,7 +2862,7 @@ export class AutotomizedTag extends BattlerTag {
   /**
    * Adds an autotomize count to the Pokemon. Each stack reduces weight by 100kg
    * If the Pokemon is over 0.1kg it also displays a message.
-   * @param pokemon The Pokemon that is being autotomized
+   * @param pokemon - The Pokemon that is being autotomized
    */
   onAdd(pokemon: Pokemon): void {
     const minWeight = 0.1;
@@ -3008,7 +2997,7 @@ export class SubstituteTag extends BattlerTag {
 
   /**
    * When given a battler tag or json representing one, load the data for it.
-   * @param {BattlerTag | any} source A battler tag
+   * @param source - A battler tag
    */
   loadTag(source: BattlerTag | any): void {
     super.loadTag(source);
@@ -3070,7 +3059,7 @@ export class TormentTag extends MoveRestrictionBattlerTag {
   /**
    * Adds the battler tag to the target Pokemon and defines the private class variable 'target'
    * 'Target' is used to track the Pokemon's current status
-   * @param {Pokemon} pokemon the Pokemon tormented
+   * @param pokemon - the Pokemon tormented
    */
   override onAdd(pokemon: Pokemon) {
     super.onAdd(pokemon);
@@ -3084,7 +3073,7 @@ export class TormentTag extends MoveRestrictionBattlerTag {
 
   /**
    * Torment only ends when the affected Pokemon leaves the battle field
-   * @param {Pokemon} pokemon the Pokemon under the effects of Torment
+   * @param pokemon - the Pokemon under the effects of Torment
    * @param _tagType
    * @returns `true` if still present | `false` if not
    */
@@ -3094,7 +3083,7 @@ export class TormentTag extends MoveRestrictionBattlerTag {
 
   /**
    * This checks if the current move used is identical to the last used move with a {@linkcode MoveResult} of `SUCCESS`/`MISS`
-   * @param {Moves} move the move under investigation
+   * @param move - the move under investigation
    * @returns `true` if there is valid consecutive usage | `false` if the moves are different from each other
    */
   public override isMoveRestricted(move: Moves, user: Pokemon): boolean {
@@ -3155,7 +3144,7 @@ export class TauntTag extends MoveRestrictionBattlerTag {
 
   /**
    * Checks if a move is a status move and determines its restriction status on that basis
-   * @param {Moves} move the move under investigation
+   * @param move - the move under investigation
    * @returns `true` if the move is a status move
    */
   override isMoveRestricted(move: Moves): boolean {
@@ -3196,7 +3185,7 @@ export class ImprisonTag extends MoveRestrictionBattlerTag {
   /**
    * Checks if the source of Imprison is still active
    * @override
-   * @param pokemon The pokemon this tag is attached to
+   * @param pokemon - The pokemon this tag is attached to
    * @returns `true` if the source is still active
    */
   public override lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
@@ -3213,7 +3202,7 @@ export class ImprisonTag extends MoveRestrictionBattlerTag {
   /**
    * Checks if the source of the tag has the parameter move in its moveset and that the source is still active
    * @override
-   * @param {Moves} move the move under investigation
+   * @param move - the move under investigation
    * @returns `false` if either condition is not met
    */
   public override isMoveRestricted(move: Moves, _user: Pokemon): boolean {
@@ -3315,7 +3304,6 @@ export class TelekinesisTag extends BattlerTag {
 
 /**
  * Tag that swaps the user's base ATK stat with its base DEF stat.
- * @extends BattlerTag
  */
 export class PowerTrickTag extends BattlerTag {
   constructor(sourceMove: Moves, sourceId: number) {
@@ -3342,7 +3330,7 @@ export class PowerTrickTag extends BattlerTag {
 
   /**
    * Removes the Power Trick tag and reverts any stat changes if the tag is already applied.
-   * @param {Pokemon} pokemon The {@linkcode Pokemon} that already has the Power Trick tag.
+   * @param pokemon - The {@linkcode Pokemon} that already has the Power Trick tag.
    */
   onOverlap(pokemon: Pokemon): void {
     pokemon.removeTag(this.tagType);
@@ -3350,7 +3338,7 @@ export class PowerTrickTag extends BattlerTag {
 
   /**
    * Swaps the user's base ATK stat with its base DEF stat.
-   * @param {Pokemon} pokemon The {@linkcode Pokemon} whose stats will be swapped.
+   * @param pokemon - The {@linkcode Pokemon} whose stats will be swapped.
    */
   swapStat(pokemon: Pokemon): void {
     const temp = pokemon.getStat(Stat.ATK, false);
@@ -3382,7 +3370,7 @@ export class GrudgeTag extends BattlerTag {
    * Activates Grudge's special effect on the attacking Pokemon and lapses the tag.
    * @param pokemon
    * @param lapseType
-   * @param sourcePokemon {@linkcode Pokemon} the source of the move that fainted the tag's bearer
+   * @param sourcePokemon - the source of the move that fainted the tag's bearer
    * @returns `false` if Grudge activates its effect or lapses
    */
   override lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType, sourcePokemon?: Pokemon): boolean {
@@ -3659,7 +3647,7 @@ export function getBattlerTag(
 
 /**
  * When given a battler tag or json representing one, creates an actual BattlerTag object with the same data.
- * @param {BattlerTag | any} source A battler tag
+ * @param source - A battler tag
  * @return {BattlerTag} The valid battler tag
  */
 export function loadBattlerTag(source: BattlerTag | any): BattlerTag {
@@ -3671,7 +3659,7 @@ export function loadBattlerTag(source: BattlerTag | any): BattlerTag {
 /**
  * Helper function to verify that the current phase is a MoveEffectPhase and provide quick access to commonly used fields
  *
- * @param _pokemon {@linkcode Pokemon} The Pokémon used to access the current phase
+ * @param _pokemon - The Pokémon used to access the current phase
  * @returns null if current phase is not MoveEffectPhase, otherwise Object containing the {@linkcode MoveEffectPhase}, and its
  * corresponding {@linkcode Move} and user {@linkcode Pokemon}
  */

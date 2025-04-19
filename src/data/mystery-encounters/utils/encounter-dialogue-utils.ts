@@ -9,7 +9,7 @@ import i18next from "i18next";
  * Will inject all relevant dialogue tokens that exist in the {@linkcode BattlegScene.currentBattle.mysteryEncounter.dialogueTokens}, into i18n text.
  * Also adds BBCodeText fragments for colored text, if applicable
  * @param keyOrString
- * @param primaryStyle Can define a text style to be applied to the entire string. Must be defined for BBCodeText styles to be applied correctly
+ * @param primaryStyle - Can define a text style to be applied to the entire string. Must be defined for BBCodeText styles to be applied correctly
  */
 export function getEncounterText(keyOrString?: string, primaryStyle?: TextStyle): string | null {
   if (isNullOrUndefined(keyOrString)) {

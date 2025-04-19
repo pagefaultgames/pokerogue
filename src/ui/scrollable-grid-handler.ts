@@ -30,8 +30,8 @@ export default class ScrollableGridUiHandler {
   private updateDetailsCallback?: UpdateDetailsCallbackFunction;
 
   /**
-   * @param rows the maximum number of rows shown at once
-   * @param columns the maximum number of columns shown at once
+   * @param rows - the maximum number of rows shown at once
+   * @param columns - the maximum number of columns shown at once
    */
   constructor(handler: UiHandler, rows: number, columns: number) {
     this.handler = handler;
@@ -44,7 +44,7 @@ export default class ScrollableGridUiHandler {
 
   /**
    * Set a scrollBar to get updated with the scrolling
-   * @param scrollBar {@linkcode ScrollBar}
+   * @param scrollBar
    * @returns this
    */
   withScrollBar(scrollBar: ScrollBar): ScrollableGridUiHandler {
@@ -55,7 +55,7 @@ export default class ScrollableGridUiHandler {
 
   /**
    * Set function that will get called if the whole grid needs to get updated
-   * @param callback {@linkcode UpdateGridCallbackFunction}
+   * @param callback
    * @returns this
    */
   withUpdateGridCallBack(callback: UpdateGridCallbackFunction): ScrollableGridUiHandler {
@@ -65,7 +65,7 @@ export default class ScrollableGridUiHandler {
 
   /**
    * Set function that will get called if a single element in the grid needs to get updated
-   * @param callback {@linkcode UpdateDetailsCallbackFunction}
+   * @param callback
    * @returns this
    */
   withUpdateSingleElementCallback(callback: UpdateDetailsCallbackFunction): ScrollableGridUiHandler {
@@ -74,7 +74,7 @@ export default class ScrollableGridUiHandler {
   }
 
   /**
-   * @param totalElements the total number of elements that the grid needs to display
+   * @param totalElements - the total number of elements that the grid needs to display
    */
   setTotalElements(totalElements: number) {
     this.totalElements = totalElements;
@@ -93,7 +93,7 @@ export default class ScrollableGridUiHandler {
 
   /**
    * Update the cursor and scrollCursor based on user input
-   * @param button the button that was pressed
+   * @param button - the button that was pressed
    * @returns `true` if either the cursor or scrollCursor was updated
    */
   processInput(button: Button): boolean {

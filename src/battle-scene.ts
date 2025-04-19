@@ -830,7 +830,7 @@ export default class BattleScene extends SceneBase {
    * and {@linkcode PlayerPokemon.isActive is active}
    * (aka {@linkcode PlayerPokemon.isAllowedInBattle is allowed in battle}),
    * or `undefined` if there are no valid pokemon
-   * @param includeSwitching Whether a pokemon that is currently switching out is valid, default `true`
+   * @param includeSwitching - Whether a pokemon that is currently switching out is valid, default `true`
    */
   public getPlayerPokemon(includeSwitching = true): PlayerPokemon | undefined {
     return this.getPlayerField().find(p => p.isActive() && (includeSwitching || p.switchOutStatus === false));
@@ -855,7 +855,7 @@ export default class BattleScene extends SceneBase {
    * and {@linkcode EnemyPokemon.isActive is active}
    * (aka {@linkcode EnemyPokemon.isAllowedInBattle is allowed in battle}),
    * or `undefined` if there are no valid pokemon
-   * @param includeSwitching Whether a pokemon that is currently switching out is valid, default `true`
+   * @param includeSwitching - Whether a pokemon that is currently switching out is valid, default `true`
    */
   public getEnemyPokemon(includeSwitching = true): EnemyPokemon | undefined {
     return this.getEnemyField().find(p => p.isActive() && (includeSwitching || p.switchOutStatus === false));
@@ -874,7 +874,7 @@ export default class BattleScene extends SceneBase {
   /**
    * Returns an array of Pokemon on both sides of the battle - player first, then enemy.
    * Does not actually check if the pokemon are on the field or not, and always has length 4 regardless of battle type.
-   * @param activeOnly Whether to consider only active pokemon
+   * @param activeOnly - Whether to consider only active pokemon
    * @returns array of {@linkcode Pokemon}
    */
   public getField(activeOnly = false): Pokemon[] {
@@ -888,8 +888,8 @@ export default class BattleScene extends SceneBase {
 
   /**
    * Used in doubles battles to redirect moves from one pokemon to another when one faints or is removed from the field
-   * @param removedPokemon {@linkcode Pokemon} the pokemon that is being removed from the field (flee, faint), moves to be redirected FROM
-   * @param allyPokemon {@linkcode Pokemon} the pokemon that will have the moves be redirected TO
+   * @param removedPokemon - The pokemon that is being removed from the field (flee, faint), moves to be redirected FROM
+   * @param allyPokemon - The pokemon that will have the moves be redirected TO
    */
   redirectPokemonMoves(removedPokemon: Pokemon, allyPokemon: Pokemon): void {
     // failsafe: if not a double battle just return
@@ -915,8 +915,7 @@ export default class BattleScene extends SceneBase {
 
   /**
    * Returns the ModifierBar of this scene, which is declared private and therefore not accessible elsewhere
-   * @param isEnemy Whether to return the enemy's modifier bar
-   * @returns {ModifierBar}
+   * @param isEnemy - Whether to return the enemy's modifier bar
    */
   getModifierBar(isEnemy?: boolean): ModifierBar {
     return isEnemy ? this.enemyModifierBar : this.modifierBar;
@@ -1023,7 +1022,7 @@ export default class BattleScene extends SceneBase {
    * Removes a {@linkcode PlayerPokemon} from the party, and clears modifiers for that Pokemon's id
    * Useful for MEs/Challenges that remove Pokemon from the player party temporarily or permanently
    * @param pokemon
-   * @param destroy Default true. If true, will destroy the {@linkcode PlayerPokemon} after removing
+   * @param destroy - Default true. If true, will destroy the {@linkcode PlayerPokemon} after removing
    */
   removePokemonFromPlayerParty(pokemon: PlayerPokemon, destroy = true) {
     if (!pokemon) {
@@ -1154,8 +1153,8 @@ export default class BattleScene extends SceneBase {
    * This calls {@linkcode Battle.randSeedInt}({@linkcode range}, {@linkcode min}) in `src/battle.ts`
    * which calls {@linkcode randSeedInt randSeedInt}({@linkcode range}, {@linkcode min}) in `src/utils.ts`
    *
-   * @param range How large of a range of random numbers to choose from. If {@linkcode range} <= 1, returns {@linkcode min}
-   * @param min The minimum integer to pick, default `0`
+   * @param range - How large of a range of random numbers to choose from. If {@linkcode range} <= 1, returns {@linkcode min}
+   * @param min - The minimum integer to pick, default `0`
    * @returns A random integer between {@linkcode min} and ({@linkcode min} + {@linkcode range} - 1)
    */
   randBattleSeedInt(range: number, min = 0): number {
@@ -2039,7 +2038,7 @@ export default class BattleScene extends SceneBase {
 
   /**
    * Displays the current luck value.
-   * @param duration The time for this label to fade in, if it is not already visible.
+   * @param duration - The time for this label to fade in, if it is not already visible.
    */
   updateAndShowText(duration: number): void {
     const labels = [this.luckLabelText, this.luckText];
@@ -2628,8 +2627,8 @@ export default class BattleScene extends SceneBase {
    * This method allows deferring the execution of a phase until certain conditions are met, which is useful for handling
    * situations like abilities and entry hazards that depend on specific game states.
    *
-   * @param {Phase} phase - The phase to be added to the conditional queue.
-   * @param {() => boolean} condition - A function that returns a boolean indicating whether the phase should be executed.
+   * @param phase - The phase to be added to the conditional queue.
+   * @param condition - A function that returns a boolean indicating whether the phase should be executed.
    *
    */
   pushConditionalPhase(phase: Phase, condition: () => boolean): void {
@@ -2638,8 +2637,8 @@ export default class BattleScene extends SceneBase {
 
   /**
    * Adds a phase to nextCommandPhaseQueue, as long as boolean passed in is false
-   * @param phase {@linkcode Phase} the phase to add
-   * @param defer boolean on which queue to add to, defaults to false, and adds to phaseQueue
+   * @param phase - The phase to add
+   * @param defer - boolean on which queue to add to, defaults to false, and adds to phaseQueue
    */
   pushPhase(phase: Phase, defer = false): void {
     (!defer ? this.phaseQueue : this.nextCommandPhaseQueue).push(phase);
@@ -2647,7 +2646,7 @@ export default class BattleScene extends SceneBase {
 
   /**
    * Adds Phase(s) to the end of phaseQueuePrepend, or at phaseQueuePrependSpliceIndex
-   * @param phases {@linkcode Phase} the phase(s) to add
+   * @param phases - The phase(s) to add
    */
   unshiftPhase(...phases: Phase[]): void {
     if (this.phaseQueuePrependSpliceIndex === -1) {
@@ -2759,7 +2758,7 @@ export default class BattleScene extends SceneBase {
   /**
    * Find a specific {@linkcode Phase} in the phase queue.
    *
-   * @param phaseFilter filter function to use to find the wanted phase
+   * @param phaseFilter - filter function to use to find the wanted phase
    * @returns the found phase or undefined if none found
    */
   findPhase<P extends Phase = Phase>(phaseFilter: (phase: P) => boolean): P | undefined {
@@ -2786,7 +2785,7 @@ export default class BattleScene extends SceneBase {
 
   /**
    * Will search for a specific phase in {@linkcode phaseQueuePrepend} via filter, and remove the first result if a match is found.
-   * @param phaseFilter filter function
+   * @param phaseFilter - filter function
    */
   tryRemoveUnshiftedPhase(phaseFilter: (phase: Phase) => boolean): boolean {
     const phaseIndex = this.phaseQueuePrepend.findIndex(phaseFilter);
@@ -2799,8 +2798,8 @@ export default class BattleScene extends SceneBase {
 
   /**
    * Tries to add the input phase to index before target phase in the phaseQueue, else simply calls unshiftPhase()
-   * @param phase {@linkcode Phase} the phase to be added
-   * @param targetPhase {@linkcode Phase} the type of phase to search for in phaseQueue
+   * @param phase - The phase to be added
+   * @param targetPhase - The type of phase to search for in phaseQueue
    * @returns boolean if a targetPhase was found and added
    */
   prependToPhase(phase: Phase | Phase[], targetPhase: Constructor<Phase>): boolean {
@@ -2819,8 +2818,8 @@ export default class BattleScene extends SceneBase {
 
   /**
    * Tries to add the input phase(s) to index after target phase in the {@linkcode phaseQueue}, else simply calls {@linkcode unshiftPhase()}
-   * @param phase {@linkcode Phase} the phase(s) to be added
-   * @param targetPhase {@linkcode Phase} the type of phase to search for in {@linkcode phaseQueue}
+   * @param phase - The phase(s) to be added
+   * @param targetPhase - The type of phase to search for in {@linkcode phaseQueue}
    * @returns `true` if a `targetPhase` was found to append to
    */
   appendToPhase(phase: Phase | Phase[], targetPhase: Constructor<Phase>): boolean {
@@ -2839,11 +2838,11 @@ export default class BattleScene extends SceneBase {
 
   /**
    * Adds a MessagePhase, either to PhaseQueuePrepend or nextCommandPhaseQueue
-   * @param message string for MessagePhase
-   * @param callbackDelay optional param for MessagePhase constructor
-   * @param prompt optional param for MessagePhase constructor
-   * @param promptDelay optional param for MessagePhase constructor
-   * @param defer boolean for which queue to add it to, false -> add to PhaseQueuePrepend, true -> nextCommandPhaseQueue
+   * @param message - string for MessagePhase
+   * @param callbackDelay - optional param for MessagePhase constructor
+   * @param prompt - optional param for MessagePhase constructor
+   * @param promptDelay - optional param for MessagePhase constructor
+   * @param defer - boolean for which queue to add it to, false -> add to PhaseQueuePrepend, true -> nextCommandPhaseQueue
    */
   queueMessage(
     message: string,
@@ -2864,9 +2863,9 @@ export default class BattleScene extends SceneBase {
 
   /**
    * Queues an ability bar flyout phase
-   * @param pokemon The pokemon who has the ability
-   * @param passive Whether the ability is a passive
-   * @param show Whether to show or hide the bar
+   * @param pokemon - The pokemon who has the ability
+   * @param passive - Whether the ability is a passive
+   * @param show - Whether to show or hide the bar
    */
   public queueAbilityDisplay(pokemon: Pokemon, passive: boolean, show: boolean): void {
     this.unshiftPhase(show ? new ShowAbilityPhase(pokemon.getBattlerIndex(), passive) : new HideAbilityPhase());
@@ -3026,13 +3025,13 @@ export default class BattleScene extends SceneBase {
    * If the recepient already has the maximum amount allowed for this item, the transfer is cancelled.
    * The quantity to transfer is automatically capped at how much the recepient can take before reaching the maximum stack size for the item.
    * A transfer that moves a quantity smaller than what is specified in the transferQuantity parameter is still considered successful.
-   * @param itemModifier {@linkcode PokemonHeldItemModifier} item to transfer (represents the whole stack)
-   * @param target {@linkcode Pokemon} recepient in this transfer
-   * @param playSound `true` to play a sound when transferring the item
-   * @param transferQuantity How many items of the stack to transfer. Optional, defaults to `1`
-   * @param instant ??? (Optional)
-   * @param ignoreUpdate ??? (Optional)
-   * @param itemLost If `true`, treat the item's current holder as losing the item (for now, this simply enables Unburden). Default is `true`.
+   * @param itemModifier - The item to transfer (represents the whole stack)
+   * @param target - The pokemon receiving the item in this transfer
+   * @param playSound - `true` to play a sound when transferring the item
+   * @param transferQuantity - How many items of the stack to transfer. Optional, defaults to `1`
+   * @param instant - If an item changes a display, such as the HP bar, whether changes will be animated or move instantly (Optional, defaults to false)
+   * @param ignoreUpdate - ??? (Optional)
+   * @param itemLost - If `true`, treat the item's current holder as losing the item (for now, this simply enables Unburden). Default is `true`.
    * @returns `true` if the transfer was successful
    */
   tryTransferHeldItemModifier(
@@ -3312,8 +3311,8 @@ export default class BattleScene extends SceneBase {
    * Removes a currently owned item. If the item is stacked, the entire item stack
    * gets removed. This function does NOT apply in-battle effects, such as Unburden.
    * If in-battle effects are needed, use {@linkcode Pokemon.loseHeldItem} instead.
-   * @param modifier The item to be removed.
-   * @param enemy If `true`, remove an item owned by the enemy. If `false`, remove an item owned by the player. Default is `false`.
+   * @param modifier - The item to be removed.
+   * @param enemy - If `true`, remove an item owned by the enemy. If `false`, remove an item owned by the player. Default is `false`.
    * @returns `true` if the item exists and was successfully removed, `false` otherwise.
    */
   removeModifier(modifier: PersistentModifier, enemy = false): boolean {
@@ -3335,8 +3334,8 @@ export default class BattleScene extends SceneBase {
 
   /**
    * Get all of the modifiers that match `modifierType`
-   * @param modifierType The type of modifier to apply; must extend {@linkcode PersistentModifier}
-   * @param player Whether to search the player (`true`) or the enemy (`false`); Defaults to `true`
+   * @param modifierType - The type of modifier to apply; must extend {@linkcode PersistentModifier}
+   * @param player - Whether to search the player (`true`) or the enemy (`false`); Defaults to `true`
    * @returns the list of all modifiers that matched `modifierType`.
    */
   getModifiers<T extends PersistentModifier>(modifierType: Constructor<T>, player = true): T[] {
@@ -3345,8 +3344,8 @@ export default class BattleScene extends SceneBase {
 
   /**
    * Get all of the modifiers that pass the `modifierFilter` function
-   * @param modifierFilter The function used to filter a target's modifiers
-   * @param isPlayer Whether to search the player (`true`) or the enemy (`false`); Defaults to `true`
+   * @param modifierFilter - The function used to filter a target's modifiers
+   * @param isPlayer - Whether to search the player (`true`) or the enemy (`false`); Defaults to `true`
    * @returns the list of all modifiers that passed the `modifierFilter` function
    */
   findModifiers(modifierFilter: ModifierPredicate, isPlayer = true): PersistentModifier[] {
@@ -3355,8 +3354,8 @@ export default class BattleScene extends SceneBase {
 
   /**
    * Find the first modifier that pass the `modifierFilter` function
-   * @param modifierFilter The function used to filter a target's modifiers
-   * @param player Whether to search the player (`true`) or the enemy (`false`); Defaults to `true`
+   * @param modifierFilter - The function used to filter a target's modifiers
+   * @param player - Whether to search the player (`true`) or the enemy (`false`); Defaults to `true`
    * @returns the first modifier that passed the `modifierFilter` function; `undefined` if none passed
    */
   findModifier(modifierFilter: ModifierPredicate, player = true): PersistentModifier | undefined {
@@ -3365,9 +3364,9 @@ export default class BattleScene extends SceneBase {
 
   /**
    * Apply all modifiers that match `modifierType` in a random order
-   * @param modifierType The type of modifier to apply; must extend {@linkcode PersistentModifier}
-   * @param player Whether to search the player (`true`) or the enemy (`false`); Defaults to `true`
-   * @param ...args The list of arguments needed to invoke `modifierType.apply`
+   * @param modifierType - The type of modifier to apply; must extend {@linkcode PersistentModifier}
+   * @param player - Whether to search the player (`true`) or the enemy (`false`); Defaults to `true`
+   * @param ...args - The list of arguments needed to invoke `modifierType.apply`
    * @returns the list of all modifiers that matched `modifierType` and were applied.
    */
   applyShuffledModifiers<T extends PersistentModifier>(
@@ -3397,9 +3396,9 @@ export default class BattleScene extends SceneBase {
 
   /**
    * Apply all modifiers that match `modifierType`
-   * @param modifierType The type of modifier to apply; must extend {@linkcode PersistentModifier}
-   * @param player Whether to search the player (`true`) or the enemy (`false`); Defaults to `true`
-   * @param ...args The list of arguments needed to invoke `modifierType.apply`
+   * @param modifierType - The type of modifier to apply; must extend {@linkcode PersistentModifier}
+   * @param player - Whether to search the player (`true`) or the enemy (`false`); Defaults to `true`
+   * @param ...args - The list of arguments needed to invoke `modifierType.apply`
    * @returns the list of all modifiers that matched `modifierType` and were applied.
    */
   applyModifiers<T extends PersistentModifier>(
@@ -3432,9 +3431,9 @@ export default class BattleScene extends SceneBase {
 
   /**
    * Apply the first modifier that matches `modifierType`
-   * @param modifierType The type of modifier to apply; must extend {@linkcode PersistentModifier}
-   * @param player Whether to search the player (`true`) or the enemy (`false`); Defaults to `true`
-   * @param ...args The list of arguments needed to invoke `modifierType.apply`
+   * @param modifierType - The type of modifier to apply; must extend {@linkcode PersistentModifier}
+   * @param player - Whether to search the player (`true`) or the enemy (`false`); Defaults to `true`
+   * @param ...args - The list of arguments needed to invoke `modifierType.apply`
    * @returns the first modifier that matches `modifierType` and was applied; return `null` if none matched
    */
   applyModifier<T extends PersistentModifier>(
@@ -3606,7 +3605,7 @@ export default class BattleScene extends SceneBase {
 
   /**
    * Initialized the 2nd phase of the final boss (e.g. form-change for Eternatus)
-   * @param pokemon The (enemy) pokemon
+   * @param pokemon - The (enemy) pokemon
    */
   initFinalBossPhaseTwo(pokemon: Pokemon): void {
     if (pokemon instanceof EnemyPokemon && pokemon.isBoss() && !pokemon.formIndex && pokemon.bossSegmentIndex < 1) {
@@ -3644,10 +3643,10 @@ export default class BattleScene extends SceneBase {
 
   /**
    * Updates Exp and level values for Player's party, adding new level up phases as required
-   * @param expValue raw value of exp to split among participants, OR the base multiplier to use with waveIndex
-   * @param pokemonDefeated If true, will increment Macho Brace stacks and give the party Pokemon friendship increases
-   * @param useWaveIndexMultiplier Default false. If true, will multiply expValue by a scaling waveIndex multiplier. Not needed if expValue is already scaled by level/wave
-   * @param pokemonParticipantIds Participants. If none are defined, no exp will be given. To spread evenly among the party, should pass all ids of party members.
+   * @param expValue - raw value of exp to split among participants, OR the base multiplier to use with waveIndex
+   * @param pokemonDefeated - If true, will increment Macho Brace stacks and give the party Pokemon friendship increases
+   * @param useWaveIndexMultiplier - Default false. If true, will multiply expValue by a scaling waveIndex multiplier. Not needed if expValue is already scaled by level/wave
+   * @param pokemonParticipantIds - Participants. If none are defined, no exp will be given. To spread evenly among the party, should pass all ids of party members.
    */
   applyPartyExp(
     expValue: number,
@@ -3830,8 +3829,8 @@ export default class BattleScene extends SceneBase {
 
   /**
    * Loads or generates a mystery encounter
-   * @param encounterType used to load session encounter when restarting game, etc.
-   * @param canBypass optional boolean to indicate that the request is coming from a function that needs to access a Mystery Encounter outside of gameplay requirements
+   * @param encounterType - used to load session encounter when restarting game, etc.
+   * @param canBypass - optional boolean to indicate that the request is coming from a function that needs to access a Mystery Encounter outside of gameplay requirements
    * @returns
    */
   getMysteryEncounter(encounterType?: MysteryEncounterType, canBypass?: boolean): MysteryEncounter {

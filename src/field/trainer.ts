@@ -159,8 +159,8 @@ export default class Trainer extends Phaser.GameObjects.Container {
 
   /**
    * Returns the name of the trainer based on the provided trainer slot and the option to include a title.
-   * @param {TrainerSlot} trainerSlot - The slot to determine which name to use. Defaults to TrainerSlot.NONE.
-   * @param {boolean} includeTitle - Whether to include the title in the returned name. Defaults to false.
+   * @param trainerSlot - The slot to determine which name to use. Defaults to TrainerSlot.NONE.
+   * @param includeTitle - Whether to include the title in the returned name. Defaults to false.
    * @returns {string} - The formatted name of the trainer.
    **/
   getName(trainerSlot: TrainerSlot = TrainerSlot.NONE, includeTitle = false): string {
@@ -677,9 +677,9 @@ export default class Trainer extends Phaser.GameObjects.Container {
   /**
    * Attempts to animate a given set of {@linkcode Phaser.GameObjects.Sprite}
    * @see {@linkcode Phaser.GameObjects.Sprite.play}
-   * @param sprite {@linkcode Phaser.GameObjects.Sprite} to animate
-   * @param tintSprite {@linkcode Phaser.GameObjects.Sprite} placed on top of the sprite to add a color tint
-   * @param animConfig {@linkcode Phaser.Types.Animations.PlayAnimationConfig} to pass to {@linkcode Phaser.GameObjects.Sprite.play}
+   * @param sprite - to animate
+   * @param tintSprite - placed on top of the sprite to add a color tint
+   * @param animConfig - to pass to {@linkcode Phaser.GameObjects.Sprite.play}
    * @returns true if the sprite was able to be animated
    */
   tryPlaySprite(
@@ -789,7 +789,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
 
   /**
    * Determines whether a Trainer should Terastallize their Pokemon
-   * @param pokemon {@linkcode EnemyPokemon} Trainer Pokemon in question
+   * @param pokemon - Trainer Pokemon in question
    * @returns boolean Whether the EnemyPokemon should Terastalize this turn
    */
   shouldTera(pokemon: EnemyPokemon): boolean {

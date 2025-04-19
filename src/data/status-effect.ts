@@ -124,8 +124,8 @@ export function generateRandomStatusEffect(): StatusEffect {
 
 /**
  * Returns a random non-volatile StatusEffect between the two provided
- * @param statusEffectA The first StatusEffect
- * @param statusEffectA The second StatusEffect
+ * @param statusEffectA - The first StatusEffect
+ * @param statusEffectA - The second StatusEffect
  */
 export function getRandomStatusEffect(statusEffectA: StatusEffect, statusEffectB: StatusEffect): StatusEffect {
   if (statusEffectA === StatusEffect.NONE || statusEffectA === StatusEffect.FAINT) {
@@ -140,8 +140,8 @@ export function getRandomStatusEffect(statusEffectA: StatusEffect, statusEffectB
 
 /**
  * Returns a random non-volatile StatusEffect between the two provided
- * @param statusA The first Status
- * @param statusB The second Status
+ * @param statusA - The first Status
+ * @param statusB - The second Status
  */
 export function getRandomStatus(statusA: Status | null, statusB: Status | null): Status | null {
   if (!statusA || statusA.effect === StatusEffect.NONE || statusA.effect === StatusEffect.FAINT) {
@@ -172,7 +172,7 @@ export function getNonVolatileStatusEffects(): Array<StatusEffect> {
 /**
  * Returns whether a status effect is non volatile.
  * Non-volatile status condition is a status that remains after being switched out.
- * @param status The status to check
+ * @param status - The status to check
  */
 export function isNonVolatileStatusEffect(status: StatusEffect): boolean {
   return getNonVolatileStatusEffects().includes(status);

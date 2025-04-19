@@ -124,7 +124,7 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
 
   /**
    * Links the given {@linkcode Pokemon} and subscribes to the {@linkcode BattleSceneEventType.MOVE_USED} event
-   * @param pokemon {@linkcode Pokemon} to link to this flyout
+   * @param pokemon - to link to this flyout
    */
   initInfo(pokemon: Pokemon) {
     this.pokemon = pokemon;

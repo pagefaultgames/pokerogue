@@ -539,7 +539,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * @param {boolean} useIllusion - Whether we want the fake name or the real name of the Pokemon (for Illusion ability).
+   * @param useIllusion - Whether we want the fake name or the real name of the Pokemon (for Illusion ability).
    */
   getNameToRender(useIllusion: boolean = true) {
     const name: string = (!useIllusion && !!this.summonData?.illusion) ? this.summonData?.illusion.basePokemon!.name : this.name;
@@ -618,7 +618,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Checks if a pokemon is fainted (ie: its `hp <= 0`).
    * It's usually better to call {@linkcode isAllowedInBattle()}
-   * @param checkStatus `true` to also check that the pokemon's status is {@linkcode StatusEffect.FAINT}
+   * @param checkStatus - `true` to also check that the pokemon's status is {@linkcode StatusEffect.FAINT}
    * @returns `true` if the pokemon is fainted
    */
   public isFainted(checkStatus = false): boolean {
@@ -653,7 +653,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Checks if the pokemon is allowed in battle (ie: not fainted, and allowed under any active challenges).
-   * @param onField `true` to also check if the pokemon is currently on the field, defaults to `false`
+   * @param onField - `true` to also check if the pokemon is currently on the field, defaults to `false`
    * @returns `true` if the pokemon is "active". Returns `false` if there is no active {@linkcode BattleScene}
    */
   public isActive(onField = false): boolean {
@@ -886,11 +886,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * Gracefully handle errors loading a variant sprite. Log if it fails and attempt to fall back on
    * non-experimental sprites before giving up.
    *
-   * @param cacheKey the cache key for the variant color sprite
-   * @param attemptedSpritePath the sprite path that failed to load
-   * @param useExpSprite was the attempted sprite experimental
-   * @param battleSpritePath the filename of the sprite
-   * @param optionalParams any additional params to log
+   * @param cacheKey - the cache key for the variant color sprite
+   * @param attemptedSpritePath - the sprite path that failed to load
+   * @param useExpSprite - was the attempted sprite experimental
+   * @param battleSpritePath - the filename of the sprite
+   * @param optionalParams - any additional params to log
    */
   async fallbackVariantColor(
     cacheKey: string,
@@ -908,9 +908,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Attempt to process variant sprite.
    *
-   * @param cacheKey the cache key for the variant color sprite
-   * @param useExpSprite should the experimental sprite be used
-   * @param battleSpritePath the filename of the sprite
+   * @param cacheKey - the cache key for the variant color sprite
+   * @param useExpSprite - should the experimental sprite be used
+   * @param battleSpritePath - the filename of the sprite
    */
   async populateVariantColorCache(
     cacheKey: string,
@@ -1103,7 +1103,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * @param {boolean} useIllusion - Whether we want the speciesForm of the illusion or not.
+   * @param useIllusion - Whether we want the speciesForm of the illusion or not.
    */
   getSpeciesForm(ignoreOverride?: boolean, useIllusion: boolean = false): PokemonSpeciesForm {
     const species: PokemonSpecies = useIllusion && !!this.summonData?.illusion ? getPokemonSpecies(this.summonData?.illusion.species) : this.species;
@@ -1120,7 +1120,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * @param {boolean} useIllusion - Whether we want the fusionSpeciesForm of the illusion or not.
+   * @param useIllusion - Whether we want the fusionSpeciesForm of the illusion or not.
    */
   getFusionSpeciesForm(ignoreOverride?: boolean, useIllusion: boolean = false): PokemonSpeciesForm {
     const fusionSpecies: PokemonSpecies = useIllusion && !!this.summonData?.illusion ? this.summonData?.illusion.fusionSpecies! : this.fusionSpecies!;
@@ -1218,9 +1218,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Attempts to animate a given {@linkcode Phaser.GameObjects.Sprite}
    * @see {@linkcode Phaser.GameObjects.Sprite.play}
-   * @param sprite {@linkcode Phaser.GameObjects.Sprite} to animate
-   * @param tintSprite {@linkcode Phaser.GameObjects.Sprite} placed on top of the sprite to add a color tint
-   * @param animConfig {@linkcode String} to pass to {@linkcode Phaser.GameObjects.Sprite.play}
+   * @param sprite - to animate
+   * @param tintSprite - placed on top of the sprite to add a color tint
+   * @param animConfig - to pass to {@linkcode Phaser.GameObjects.Sprite.play}
    * @returns true if the sprite was able to be animated
    */
   tryPlaySprite(
@@ -1358,7 +1358,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Retrieves the entire set of stats of the {@linkcode Pokemon}.
-   * @param bypassSummonData prefer actual stats (`true` by default) or in-battle overriden stats (`false`)
+   * @param bypassSummonData - prefer actual stats (`true` by default) or in-battle overriden stats (`false`)
    * @returns the numeric values of the {@linkcode Pokemon}'s stats
    */
   getStats(bypassSummonData = true): number[] {
@@ -1370,8 +1370,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Retrieves the corresponding {@linkcode PermanentStat} of the {@linkcode Pokemon}.
-   * @param stat the desired {@linkcode PermanentStat}
-   * @param bypassSummonData prefer actual stats (`true` by default) or in-battle overridden stats (`false`)
+   * @param stat - the desired {@linkcode PermanentStat}
+   * @param bypassSummonData - prefer actual stats (`true` by default) or in-battle overridden stats (`false`)
    * @returns the numeric value of the desired {@linkcode Stat}
    */
   getStat(stat: PermanentStat, bypassSummonData = true): number {
@@ -1389,9 +1389,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * Writes the value to the corrseponding {@linkcode PermanentStat} of the {@linkcode Pokemon}.
    *
    * Note that this does nothing if {@linkcode value} is less than 0.
-   * @param stat the desired {@linkcode PermanentStat} to be overwritten
-   * @param value the desired numeric value
-   * @param bypassSummonData write to actual stats (`true` by default) or in-battle overridden stats (`false`)
+   * @param stat - the desired {@linkcode PermanentStat} to be overwritten
+   * @param value - the desired numeric value
+   * @param bypassSummonData - write to actual stats (`true` by default) or in-battle overridden stats (`false`)
    */
   setStat(stat: PermanentStat, value: number, bypassSummonData = true): void {
     if (value >= 0) {
@@ -1413,7 +1413,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Retrieves the in-battle stage of the specified {@linkcode BattleStat}.
-   * @param stat the {@linkcode BattleStat} whose stage is desired
+   * @param stat - the {@linkcode BattleStat} whose stage is desired
    * @returns the stage of the desired {@linkcode BattleStat} if available, 0 otherwise
    */
   getStatStage(stat: BattleStat): number {
@@ -1424,8 +1424,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * Writes the value to the in-battle stage of the corresponding {@linkcode BattleStat} of the {@linkcode Pokemon}.
    *
    * Note that, if the value is not within a range of [-6, 6], it will be forced to the closest range bound.
-   * @param stat the {@linkcode BattleStat} whose stage is to be overwritten
-   * @param value the desired numeric value
+   * @param stat - the {@linkcode BattleStat} whose stage is to be overwritten
+   * @param value - the desired numeric value
    */
   setStatStage(stat: BattleStat, value: number): void {
     if (this.summonData) {
@@ -1441,8 +1441,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * Calculate the critical-hit stage of a move used against this pokemon by
    * the given source
    * 
-   * @param source the {@linkcode Pokemon} who using the move
-   * @param move the {@linkcode Move} being used
+   * @param source - the {@linkcode Pokemon} who using the move
+   * @param move - the {@linkcode Move} being used
    * @returns the final critical-hit stage value
    */
   getCritStage(source: Pokemon, move: Move): number {
@@ -1479,15 +1479,15 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * Calculates and retrieves the final value of a stat considering any held
    * items, move effects, opponent abilities, and whether there was a critical
    * hit.
-   * @param stat the desired {@linkcode EffectiveStat}
-   * @param opponent the target {@linkcode Pokemon}
-   * @param move the {@linkcode Move} being used
-   * @param ignoreAbility determines whether this Pokemon's abilities should be ignored during the stat calculation
-   * @param ignoreOppAbility during an attack, determines whether the opposing Pokemon's abilities should be ignored during the stat calculation.
-   * @param ignoreAllyAbility during an attack, determines whether the ally Pokemon's abilities should be ignored during the stat calculation.
-   * @param isCritical determines whether a critical hit has occurred or not (`false` by default)
-   * @param simulated if `true`, nullifies any effects that produce any changes to game state from triggering
-   * @param ignoreHeldItems determines whether this Pokemon's held items should be ignored during the stat calculation, default `false`
+   * @param stat - the desired {@linkcode EffectiveStat}
+   * @param opponent - the target {@linkcode Pokemon}
+   * @param move - the {@linkcode Move} being used
+   * @param ignoreAbility - determines whether this Pokemon's abilities should be ignored during the stat calculation
+   * @param ignoreOppAbility - during an attack, determines whether the opposing Pokemon's abilities should be ignored during the stat calculation.
+   * @param ignoreAllyAbility - during an attack, determines whether the ally Pokemon's abilities should be ignored during the stat calculation.
+   * @param isCritical - determines whether a critical hit has occurred or not (`false` by default)
+   * @param simulated - if `true`, nullifies any effects that produce any changes to game state from triggering
+   * @param ignoreHeldItems - determines whether this Pokemon's held items should be ignored during the stat calculation, default `false`
    * @returns the final in-battle value of a stat
    */
   getEffectiveStat(
@@ -1792,7 +1792,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * @param {boolean} useIllusion - Whether we want the fake or real gender (illusion ability).
+   * @param useIllusion - Whether we want the fake or real gender (illusion ability).
    */
   getGender(ignoreOverride?: boolean, useIllusion: boolean = false): Gender {
     if (useIllusion && !!this.summonData?.illusion) {
@@ -1804,7 +1804,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * @param {boolean} useIllusion - Whether we want the fake or real gender (illusion ability).
+   * @param useIllusion - Whether we want the fake or real gender (illusion ability).
    */
   getFusionGender(ignoreOverride?: boolean, useIllusion: boolean = false): Gender {
     if (useIllusion && !!this.summonData?.illusion) {
@@ -1816,7 +1816,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * @param {boolean} useIllusion - Whether we want the fake or real shininess (illusion ability).
+   * @param useIllusion - Whether we want the fake or real shininess (illusion ability).
    */
   isShiny(useIllusion: boolean = false): boolean {
     if (!useIllusion && !!this.summonData?.illusion) {
@@ -1840,7 +1840,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * @param {boolean} useIllusion - Whether we want the fake or real variant (illusion ability).
+   * @param useIllusion - Whether we want the fake or real variant (illusion ability).
    */
   getVariant(useIllusion: boolean = false): Variant {
     if (!useIllusion && !!this.summonData?.illusion) {
@@ -1877,7 +1877,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * @param {boolean} useIllusion - Whether we want the fake name or the real name of the Pokemon (for Illusion ability).
+   * @param useIllusion - Whether we want the fake name or the real name of the Pokemon (for Illusion ability).
    */
   getName(useIllusion: boolean = false): string {
     return (!useIllusion && !!this.summonData?.illusion && this.summonData?.illusion.basePokemon) 
@@ -1887,7 +1887,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Checks if the {@linkcode Pokemon} has a fusion with the specified {@linkcode Species}.
-   * @param species the pokemon {@linkcode Species} to check
+   * @param species - the pokemon {@linkcode Species} to check
    * @returns `true` if the {@linkcode Pokemon} has a fusion with the specified {@linkcode Species}, `false` otherwise
    */
   hasFusionSpecies(species: Species): boolean {
@@ -1896,8 +1896,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Checks if the {@linkcode Pokemon} has is the specified {@linkcode Species} or is fused with it.
-   * @param species the pokemon {@linkcode Species} to check
-   * @param formKey If provided, requires the species to be in that form
+   * @param species - the pokemon {@linkcode Species} to check
+   * @param formKey - If provided, requires the species to be in that form
    * @returns `true` if the pokemon is the species or is fused with it, `false` otherwise
    */
   hasSpecies(species: Species, formKey?: string): boolean {
@@ -2246,7 +2246,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * Sets the {@linkcode Pokemon}'s ability and activates it if it normally activates on summon
    *
    * Also clears primal weather if it is from the ability being changed
-   * @param ability New Ability
+   * @param ability - New Ability
    */
   public setTempAbility(ability: Ability, passive = false): void {
     applyOnLoseAbAttrs(this, passive);
@@ -2311,7 +2311,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * Checks whether an ability of a pokemon can be currently applied. This should rarely be
    * directly called, as {@linkcode hasAbility} and {@linkcode hasAbilityWithAttr} already call this.
    * @see {@linkcode hasAbility} {@linkcode hasAbilityWithAttr} Intended ways to check abilities in most cases
-   * @param passive If true, check if passive can be applied instead of non-passive
+   * @param passive - If true, check if passive can be applied instead of non-passive
    * @returns `true` if the ability can be applied
    */
   public canApplyAbility(passive = false): boolean {
@@ -2372,9 +2372,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * Checks whether a pokemon has the specified ability and it's in effect. Accounts for all the various
    * effects which can affect whether an ability will be present or in effect, and both passive and
    * non-passive. This is the primary way to check whether a pokemon has a particular ability.
-   * @param {Abilities} ability The ability to check for
-   * @param {boolean} canApply If false, it doesn't check whether the ability is currently active
-   * @param {boolean} ignoreOverride If true, it ignores ability changing effects
+   * @param ability - The ability to check for
+   * @param canApply - If false, it doesn't check whether the ability is currently active
+   * @param ignoreOverride - If true, it ignores ability changing effects
    * @returns {boolean} Whether the ability is present and active
    */
   public hasAbility(
@@ -2403,9 +2403,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * Accounts for all the various effects which can affect whether an ability will be present or
    * in effect, and both passive and non-passive. This is one of the two primary ways to check
    * whether a pokemon has a particular ability.
-   * @param {AbAttr} attrType The ability attribute to check for
-   * @param {boolean} canApply If false, it doesn't check whether the ability is currently active
-   * @param {boolean} ignoreOverride If true, it ignores ability changing effects
+   * @param attrType - The ability attribute to check for
+   * @param canApply - If false, it doesn't check whether the ability is currently active
+   * @param ignoreOverride - If true, it ignores ability changing effects
    * @returns {boolean} Whether an ability with that attribute is present and active
    */
   public hasAbilityWithAttr(
@@ -2578,11 +2578,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Calculates the effectiveness of a move against the Pokémon.
    * This includes modifiers from move and ability attributes.
-   * @param source {@linkcode Pokemon} The attacking Pokémon.
-   * @param move {@linkcode Move} The move being used by the attacking Pokémon.
-   * @param ignoreAbility Whether to ignore abilities that might affect type effectiveness or immunity (defaults to `false`).
-   * @param simulated Whether to apply abilities via simulated calls (defaults to `true`)
-   * @param cancelled {@linkcode BooleanHolder} Stores whether the move was cancelled by a non-type-based immunity.
+   * @param source - The attacking Pokémon.
+   * @param move - The move being used by the attacking Pokémon.
+   * @param ignoreAbility - Whether to ignore abilities that might affect type effectiveness or immunity (defaults to `false`).
+   * @param simulated - Whether to apply abilities via simulated calls (defaults to `true`)
+   * @param cancelled - Stores whether the move was cancelled by a non-type-based immunity.
    * @param useIllusion - Whether we want the attack move effectiveness on the illusion or not
    * Currently only used by {@linkcode Pokemon.apply} to determine whether a "No effect" message should be shown.
    * @returns The type damage multiplier, indicating the effectiveness of the move
@@ -2714,11 +2714,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Calculates the move's type effectiveness multiplier based on the target's type/s.
-   * @param moveType {@linkcode PokemonType} the type of the move being used
-   * @param source {@linkcode Pokemon} the Pokemon using the move
-   * @param ignoreStrongWinds whether or not this ignores strong winds (anticipation, forewarn, stealth rocks)
-   * @param simulated tag to only apply the strong winds effect message when the move is used
-   * @param move (optional) the move whose type effectiveness is to be checked. Used for applying {@linkcode VariableMoveTypeChartAttr}
+   * @param moveType - the type of the move being used
+   * @param source - the Pokemon using the move
+   * @param ignoreStrongWinds - whether or not this ignores strong winds (anticipation, forewarn, stealth rocks)
+   * @param simulated - tag to only apply the strong winds effect message when the move is used
+   * @param move - (optional) the move whose type effectiveness is to be checked. Used for applying {@linkcode VariableMoveTypeChartAttr}
    * @param useIllusion - Whether we want the attack type effectiveness on the illusion or not
    * @returns a multiplier for the type effectiveness
    */
@@ -2827,7 +2827,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Computes the given Pokemon's matchup score against this Pokemon.
    * In most cases, this score ranges from near-zero to 16, but the maximum possible matchup score is 64.
-   * @param opponent {@linkcode Pokemon} The Pokemon to compare this Pokemon against
+   * @param opponent - The Pokemon to compare this Pokemon against
    * @returns A score value based on how favorable this Pokemon is when fighting the given Pokemon
    */
   getMatchupScore(opponent: Pokemon): number {
@@ -2920,10 +2920,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Gets all level up moves in a given range for a particular pokemon.
-   * @param {number} startingLevel Don't include moves below this level
-   * @param {boolean} includeEvolutionMoves Whether to include evolution moves
-   * @param {boolean} simulateEvolutionChain Whether to include moves from prior evolutions
-   * @param {boolean} includeRelearnerMoves Whether to include moves that would require a relearner. Note the move relearner inherently allows evolution moves
+   * @param startingLevel - Don't include moves below this level
+   * @param includeEvolutionMoves - Whether to include evolution moves
+   * @param simulateEvolutionChain - Whether to include moves from prior evolutions
+   * @param includeRelearnerMoves - Whether to include moves that would require a relearner. Note the move relearner inherently allows evolution moves
    * @returns {LevelMoves} A list of moves and the levels they can be learned at
    */
   getLevelMoves(
@@ -3079,8 +3079,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * Finds all non-duplicate items from the input, and pushes them into the output.
    * Two items count as duplicate if they have the same Move, regardless of level.
    *
-   * @param levelMoves the input array to search for non-duplicates from
-   * @param ret the output array to be pushed into.
+   * @param levelMoves - the input array to search for non-duplicates from
+   * @param ret - the output array to be pushed into.
    */
   private getUniqueMoves(levelMoves: LevelMoves, ret: LevelMoves): void {
     const uniqueMoves: Moves[] = [];
@@ -3120,7 +3120,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * F is calculated as the XOR of the first 16 bits of the Pokemon's ID with the last 16 bits.
    * The XOR of E and F are then compared to the {@linkcode shinyThreshold} (or {@linkcode thresholdOverride} if set) to see whether or not to generate a shiny.
    * The base shiny odds are {@linkcode BASE_SHINY_CHANCE} / 65536
-   * @param thresholdOverride number that is divided by 2^16 (65536) to get the shiny chance, overrides {@linkcode shinyThreshold} if set (bypassing shiny rate modifiers such as Shiny Charm)
+   * @param thresholdOverride - number that is divided by 2^16 (65536) to get the shiny chance, overrides {@linkcode shinyThreshold} if set (bypassing shiny rate modifiers such as Shiny Charm)
    * @returns true if the Pokemon has been set as a shiny, false otherwise
    */
   trySetShiny(thresholdOverride?: number): boolean {
@@ -3173,8 +3173,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * If it rolls shiny, also sets a random variant and give the Pokemon the associated luck.
    *
    * The base shiny odds are {@linkcode BASE_SHINY_CHANCE} / `65536`
-   * @param thresholdOverride number that is divided by `2^16` (`65536`) to get the shiny chance, overrides {@linkcode shinyThreshold} if set (bypassing shiny rate modifiers such as Shiny Charm)
-   * @param applyModifiersToOverride If {@linkcode thresholdOverride} is set and this is true, will apply Shiny Charm and event modifiers to {@linkcode thresholdOverride}
+   * @param thresholdOverride - number that is divided by `2^16` (`65536`) to get the shiny chance, overrides {@linkcode shinyThreshold} if set (bypassing shiny rate modifiers such as Shiny Charm)
+   * @param applyModifiersToOverride - If {@linkcode thresholdOverride} is set and this is true, will apply Shiny Charm and event modifiers to {@linkcode thresholdOverride}
    * @returns `true` if the Pokemon has been set as a shiny, `false` otherwise
    */
   public trySetShinySeed(
@@ -3258,8 +3258,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * For manual use only, usually to roll a Pokemon's hidden ability chance a second time.
    *
    * The base hidden ability odds are {@linkcode BASE_HIDDEN_ABILITY_CHANCE} / `65536`
-   * @param thresholdOverride number that is divided by `2^16` (`65536`) to get the HA chance, overrides {@linkcode haThreshold} if set (bypassing HA rate modifiers such as Ability Charm)
-   * @param applyModifiersToOverride If {@linkcode thresholdOverride} is set and this is true, will apply Ability Charm to {@linkcode thresholdOverride}
+   * @param thresholdOverride - number that is divided by `2^16` (`65536`) to get the HA chance, overrides {@linkcode haThreshold} if set (bypassing HA rate modifiers such as Ability Charm)
+   * @param applyModifiersToOverride - If {@linkcode thresholdOverride} is set and this is true, will apply Ability Charm to {@linkcode thresholdOverride}
    * @returns `true` if the Pokemon has been set to have its hidden ability, `false` otherwise
    */
   public tryRerollHiddenAbilitySeed(
@@ -3807,8 +3807,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Adds experience to this PlayerPokemon, subject to wave based level caps.
-   * @param exp The amount of experience to add
-   * @param ignoreLevelCap Whether to ignore level caps when adding experience (defaults to false)
+   * @param exp - The amount of experience to add
+   * @param ignoreLevelCap - Whether to ignore level caps when adding experience (defaults to false)
    */
   addExp(exp: number, ignoreLevelCap = false) {
     const maxExpLevel = globalScene.getMaxExpLevel(ignoreLevelCap);
@@ -3837,7 +3837,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Compares if `this` and {@linkcode target} are on the same team.
-   * @param target the {@linkcode Pokemon} to compare against.
+   * @param target - the {@linkcode Pokemon} to compare against.
    * @returns `true` if the two pokemon are allies, `false` otherwise
    */
   public isOpponent(target: Pokemon): boolean {
@@ -3899,13 +3899,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    *
    * Note that this does not apply to evasion or accuracy
    * @see {@linkcode getAccuracyMultiplier}
-   * @param stat the desired {@linkcode EffectiveStat}
-   * @param opponent the target {@linkcode Pokemon}
-   * @param move the {@linkcode Move} being used
-   * @param ignoreOppAbility determines whether the effects of the opponent's abilities (i.e. Unaware) should be ignored (`false` by default)
-   * @param isCritical determines whether a critical hit has occurred or not (`false` by default)
-   * @param simulated determines whether effects are applied without altering game state (`true` by default)
-   * @param ignoreHeldItems determines whether this Pokemon's held items should be ignored during the stat calculation, default `false`
+   * @param stat - the desired {@linkcode EffectiveStat}
+   * @param opponent - the target {@linkcode Pokemon}
+   * @param move - the {@linkcode Move} being used
+   * @param ignoreOppAbility - determines whether the effects of the opponent's abilities (i.e. Unaware) should be ignored (`false` by default)
+   * @param isCritical - determines whether a critical hit has occurred or not (`false` by default)
+   * @param simulated - determines whether effects are applied without altering game state (`true` by default)
+   * @param ignoreHeldItems - determines whether this Pokemon's held items should be ignored during the stat calculation, default `false`
    * @return the stat stage multiplier to be used for effective stat calculation
    */
   getStatStageMultiplier(
@@ -3977,8 +3977,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * This method considers various factors such as the user's accuracy level, the target's evasion level,
    * abilities, and modifiers to compute the final accuracy multiplier.
    *
-   * @param target {@linkcode Pokemon} - The target Pokémon against which the move is used.
-   * @param sourceMove {@linkcode Move}  - The move being used by the user.
+   * @param target - The target Pokémon against which the move is used.
+   * @param sourceMove -  - The move being used by the user.
    * @returns The calculated accuracy multiplier.
    */
   getAccuracyMultiplier(target: Pokemon, sourceMove: Move): number {
@@ -4073,15 +4073,15 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Calculates the base damage of the given move against this Pokemon when attacked by the given source.
    * Used during damage calculation and for Shell Side Arm's forecasting effect.
-   * @param source the attacking {@linkcode Pokemon}.
-   * @param move the {@linkcode Move} used in the attack.
-   * @param moveCategory the move's {@linkcode MoveCategory} after variable-category effects are applied.
-   * @param ignoreAbility if `true`, ignores this Pokemon's defensive ability effects (defaults to `false`).
-   * @param ignoreSourceAbility if `true`, ignore's the attacking Pokemon's ability effects (defaults to `false`).
-   * @param ignoreAllyAbility if `true`, ignores the ally Pokemon's ability effects (defaults to `false`).
-   * @param ignoreSourceAllyAbility if `true`, ignores the attacking Pokemon's ally's ability effects (defaults to `false`).
-   * @param isCritical if `true`, calculates effective stats as if the hit were critical (defaults to `false`).
-   * @param simulated if `true`, suppresses changes to game state during calculation (defaults to `true`).
+   * @param source - the attacking {@linkcode Pokemon}.
+   * @param move - the {@linkcode Move} used in the attack.
+   * @param moveCategory - the move's {@linkcode MoveCategory} after variable-category effects are applied.
+   * @param ignoreAbility - if `true`, ignores this Pokemon's defensive ability effects (defaults to `false`).
+   * @param ignoreSourceAbility - if `true`, ignore's the attacking Pokemon's ability effects (defaults to `false`).
+   * @param ignoreAllyAbility - if `true`, ignores the ally Pokemon's ability effects (defaults to `false`).
+   * @param ignoreSourceAllyAbility - if `true`, ignores the attacking Pokemon's ally's ability effects (defaults to `false`).
+   * @param isCritical - if `true`, calculates effective stats as if the hit were critical (defaults to `false`).
+   * @param simulated - if `true`, suppresses changes to game state during calculation (defaults to `true`).
    * @returns The move's base damage against this Pokemon when used by the source Pokemon.
    */
   getBaseDamage(
@@ -4219,14 +4219,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Calculates the damage of an attack made by another Pokemon against this Pokemon
-   * @param source {@linkcode Pokemon} the attacking Pokemon
-   * @param move {@linkcode Pokemon} the move used in the attack
-   * @param ignoreAbility If `true`, ignores this Pokemon's defensive ability effects
-   * @param ignoreSourceAbility If `true`, ignores the attacking Pokemon's ability effects
-   * @param ignoreAllyAbility If `true`, ignores the ally Pokemon's ability effects
-   * @param ignoreSourceAllyAbility If `true`, ignores the ability effects of the attacking pokemon's ally
-   * @param isCritical If `true`, calculates damage for a critical hit.
-   * @param simulated If `true`, suppresses changes to game state during the calculation.
+   * @param source - the attacking Pokemon
+   * @param move - the move used in the attack
+   * @param ignoreAbility - If `true`, ignores this Pokemon's defensive ability effects
+   * @param ignoreSourceAbility - If `true`, ignores the attacking Pokemon's ability effects
+   * @param ignoreAllyAbility - If `true`, ignores the ally Pokemon's ability effects
+   * @param ignoreSourceAllyAbility - If `true`, ignores the ability effects of the attacking pokemon's ally
+   * @param isCritical - If `true`, calculates damage for a critical hit.
+   * @param simulated - If `true`, suppresses changes to game state during the calculation.
    * @returns a {@linkcode DamageCalculationResult} object with three fields:
    * - `cancelled`: `true` if the move was cancelled by another effect.
    * - `result`: {@linkcode HitResult} indicates the attack's type effectiveness.
@@ -4565,8 +4565,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Applies the results of a move to this pokemon
-   * @param source The {@linkcode Pokemon} using the move
-   * @param move The {@linkcode Move} being used
+   * @param source - The {@linkcode Pokemon} using the move
+   * @param move - The {@linkcode Move} being used
    * @returns The {@linkcode HitResult} of the attack
    */
   apply(source: Pokemon, move: Move): HitResult {
@@ -4772,10 +4772,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Called by damageAndUpdate()
-   * @param damage integer
-   * @param ignoreSegments boolean, not currently used
-   * @param preventEndure  used to update damage if endure or sturdy
-   * @param ignoreFaintPhase  flag on wheter to add FaintPhase if pokemon after applying damage faints
+   * @param damage - integer
+   * @param ignoreSegments - boolean, not currently used
+   * @param preventEndure - used to update damage if endure or sturdy
+   * @param ignoreFaintPhase - flag on wheter to add FaintPhase if pokemon after applying damage faints
    * @returns integer representing damage
    */
   damage(
@@ -4833,12 +4833,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Called by apply(), given the damage, adds a new DamagePhase and actually updates HP values, etc.
    * Checks for 'Indirect' HitResults to account for Endure/Reviver Seed applying correctly
-   * @param damage integer - passed to damage()
-   * @param result an enum if it's super effective, not very, etc.
-   * @param isCritical boolean if move is a critical hit
-   * @param ignoreSegments boolean, passed to damage() and not used currently
-   * @param preventEndure boolean, ignore endure properties of pokemon, passed to damage()
-   * @param ignoreFaintPhase boolean to ignore adding a FaintPhase, passsed to damage()
+   * @param damage - integer - passed to damage()
+   * @param result - an enum if it's super effective, not very, etc.
+   * @param isCritical - boolean if move is a critical hit
+   * @param ignoreSegments - boolean, passed to damage() and not used currently
+   * @param preventEndure - boolean, ignore endure properties of pokemon, passed to damage()
+   * @param ignoreFaintPhase - boolean to ignore adding a FaintPhase, passsed to damage()
    * @returns integer of damage done
    */
   damageAndUpdate(damage: number,
@@ -5099,7 +5099,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Transferring stat changes and Tags
-   * @param source {@linkcode Pokemon} the pokemon whose stats/Tags are to be passed on from, ie: the Pokemon using Baton Pass
+   * @param source - the pokemon whose stats/Tags are to be passed on from, ie: the Pokemon using Baton Pass
    */
   transferSummon(source: Pokemon): void {
     // Copy all stat stages
@@ -5134,7 +5134,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Gets whether the given move is currently disabled for this Pokemon.
    *
-   * @param {Moves} moveId {@linkcode Moves} ID of the move to check
+   * @param moveId - ID of the move to check
    * @returns {boolean} `true` if the move is disabled for this Pokemon, otherwise `false`
    *
    * @see {@linkcode MoveRestrictionBattlerTag}
@@ -5146,9 +5146,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Gets whether the given move is currently disabled for the user based on the player's target selection
    *
-   * @param {Moves} moveId {@linkcode Moves} ID of the move to check
-   * @param {Pokemon} user {@linkcode Pokemon} the move user
-   * @param {Pokemon} target {@linkcode Pokemon} the target of the move
+   * @param moveId - ID of the move to check
+   * @param user - the move user
+   * @param target - the target of the move
    *
    * @returns {boolean} `true` if the move is disabled for this Pokemon due to the player's target selection
    *
@@ -5178,9 +5178,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Gets the {@link MoveRestrictionBattlerTag} that is restricting a move, if it exists.
    *
-   * @param {Moves} moveId {@linkcode Moves} ID of the move to check
-   * @param {Pokemon} user {@linkcode Pokemon} the move user, optional and used when the target is a factor in the move's restricted status
-   * @param {Pokemon} target {@linkcode Pokemon} the target of the move, optional and used when the target is a factor in the move's restricted status
+   * @param moveId - ID of the move to check
+   * @param user - the move user, optional and used when the target is a factor in the move's restricted status
+   * @param target - the target of the move, optional and used when the target is a factor in the move's restricted status
    * @returns {MoveRestrictionBattlerTag | null} the first tag on this Pokemon that restricts the move, or `null` if the move is not restricted.
    */
   getRestrictingTag(
@@ -5224,7 +5224,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Returns a list of the most recent move entries in this Pokemon's move history.
    * The retrieved move entries are sorted in order from NEWEST to OLDEST.
-   * @param moveCount The number of move entries to retrieve.
+   * @param moveCount - The number of move entries to retrieve.
    *   If negative, retrieve the Pokemon's entire move history (equivalent to reversing the output of {@linkcode getMoveHistory()}).
    *   Default is `1`.
    * @returns A list of {@linkcode TurnMove}, as specified above.
@@ -5245,7 +5245,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * If this Pokemon is using a multi-hit move, cancels all subsequent strikes
-   * @param {Pokemon} target If specified, this only cancels subsequent strikes against the given target
+   * @param target - If specified, this only cancels subsequent strikes against the given target
    */
   stopMultiHit(target?: Pokemon): void {
     const effectPhase = globalScene.getCurrentPhase();
@@ -5519,11 +5519,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Checks if a status effect can be applied to the Pokemon.
    *
-   * @param effect The {@linkcode StatusEffect} whose applicability is being checked
-   * @param quiet Whether in-battle messages should trigger or not
-   * @param overrideStatus Whether the Pokemon's current status can be overriden
-   * @param sourcePokemon The Pokemon that is setting the status effect
-   * @param ignoreField Whether any field effects (weather, terrain, etc.) should be considered
+   * @param effect - The {@linkcode StatusEffect} whose applicability is being checked
+   * @param quiet - Whether in-battle messages should trigger or not
+   * @param overrideStatus - Whether the Pokemon's current status can be overriden
+   * @param sourcePokemon - The Pokemon that is setting the status effect
+   * @param ignoreField - Whether any field effects (weather, terrain, etc.) should be considered
    */
   canSetStatus(
     effect: StatusEffect | undefined,
@@ -5725,9 +5725,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Resets the status of a pokemon.
-   * @param revive Whether revive should be cured; defaults to true.
-   * @param confusion Whether resetStatus should include confusion or not; defaults to false.
-   * @param reloadAssets Whether to reload the assets or not; defaults to false.
+   * @param revive - Whether revive should be cured; defaults to true.
+   * @param confusion - Whether resetStatus should include confusion or not; defaults to false.
+   * @param reloadAssets - Whether to reload the assets or not; defaults to false.
    */
   resetStatus(revive = true, confusion = false, reloadAssets = false): void {
     const lastStatus = this.status?.effect;
@@ -5739,7 +5739,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Checks if this Pokemon is protected by Safeguard
-   * @param attacker the {@linkcode Pokemon} inflicting status on this Pokemon
+   * @param attacker - the {@linkcode Pokemon} inflicting status on this Pokemon
    * @returns `true` if this Pokemon is protected by Safeguard; `false` otherwise.
    */
   isSafeguarded(attacker: Pokemon): boolean {
@@ -6321,8 +6321,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * which calls {@linkcode randSeedInt randSeedInt}({@linkcode range}, {@linkcode min}) in `src/utils.ts`,
    * or it directly calls {@linkcode randSeedInt randSeedInt}({@linkcode range}, {@linkcode min}) in `src/utils.ts` if there is no current battle
    *
-   * @param range How large of a range of random numbers to choose from. If {@linkcode range} <= 1, returns {@linkcode min}
-   * @param min The minimum integer to pick, default `0`
+   * @param range - How large of a range of random numbers to choose from. If {@linkcode range} <= 1, returns {@linkcode min}
+   * @param min - The minimum integer to pick, default `0`
    * @returns A random integer between {@linkcode min} and ({@linkcode min} + {@linkcode range} - 1)
    */
   randSeedInt(range: number, min = 0): number {
@@ -6333,8 +6333,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Generates a random number using the current battle's seed, or the global seed if `globalScene.currentBattle` is falsy
-   * @param min The minimum integer to generate
-   * @param max The maximum integer to generate
+   * @param min - The minimum integer to generate
+   * @param max - The maximum integer to generate
    * @returns a random integer between {@linkcode min} and {@linkcode max} inclusive
    */
   randSeedIntRange(min: number, max: number): number {
@@ -6343,9 +6343,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Causes a Pokemon to leave the field (such as in preparation for a switch out/escape).
-   * @param clearEffects Indicates if effects should be cleared (true) or passed
+   * @param clearEffects - Indicates if effects should be cleared (true) or passed
    * to the next pokemon, such as during a baton pass (false)
-   * @param hideInfo Indicates if this should also play the animation to hide the Pokemon's
+   * @param hideInfo - Indicates if this should also play the animation to hide the Pokemon's
    * info container.
    */
   leaveField(clearEffects = true, hideInfo = true, destroy = false) {
@@ -6386,7 +6386,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Checks whether or not the Pokemon's root form has the same ability
-   * @param abilityIndex the given ability index we are checking
+   * @param abilityIndex - the given ability index we are checking
    * @returns true if the abilities are the same
    */
   hasSameAbilityInRootForm(abilityIndex: number): boolean {
@@ -6401,7 +6401,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Helper function to check if the player already owns the starter data of the Pokemon's
    * current ability
-   * @param ownedAbilityAttrs the owned abilityAttr of this Pokemon's root form
+   * @param ownedAbilityAttrs - the owned abilityAttr of this Pokemon's root form
    * @returns true if the player already has it, false otherwise
    */
   checkIfPlayerHasAbilityOfStarter(ownedAbilityAttrs: number): boolean {
@@ -6420,8 +6420,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Reduces one of this Pokemon's held item stacks by 1, and removes the item if applicable.
    * Does nothing if this Pokemon is somehow not the owner of the held item.
-   * @param heldItem The item stack to be reduced by 1.
-   * @param forBattle If `false`, do not trigger in-battle effects (such as Unburden) from losing the item. For example, set this to `false` if the Pokemon is giving away the held item for a Mystery Encounter. Default is `true`.
+   * @param heldItem - The item stack to be reduced by 1.
+   * @param forBattle - If `false`, do not trigger in-battle effects (such as Unburden) from losing the item. For example, set this to `false` if the Pokemon is giving away the held item for a Mystery Encounter. Default is `true`.
    * @returns `true` if the item was removed successfully, `false` otherwise.
    */
   public loseHeldItem(
@@ -6577,7 +6577,7 @@ export class PlayerPokemon extends Pokemon {
   /**
    * Causes this mon to leave the field (via {@linkcode leaveField}) and then
    * opens the party switcher UI to switch a new mon in
-   * @param switchType the {@linkcode SwitchType} for this switch-out. If this is
+   * @param switchType - the {@linkcode SwitchType} for this switch-out. If this is
    * `BATON_PASS` or `SHED_TAIL`, this Pokemon's effects are not cleared upon leaving
    * the field.
    */
@@ -6962,7 +6962,7 @@ export class PlayerPokemon extends Pokemon {
 
   /**
    * Returns a Promise to fuse two PlayerPokemon together
-   * @param pokemon The PlayerPokemon to fuse to this one
+   * @param pokemon - The PlayerPokemon to fuse to this one
    */
   fuse(pokemon: PlayerPokemon): void {
     this.fusionSpecies = pokemon.species;
@@ -7173,8 +7173,8 @@ export class EnemyPokemon extends Pokemon {
    * Sets the pokemons boss status. If true initializes the boss segments either from the arguments
    * or through the the Scene.getEncounterBossSegments function
    *
-   * @param boss if the pokemon is a boss
-   * @param bossSegments amount of boss segments (health-bar segments)
+   * @param boss - if the pokemon is a boss
+   * @param bossSegments - amount of boss segments (health-bar segments)
    */
   setBoss(boss = true, bossSegments = 0): void {
     if (boss) {
@@ -7453,7 +7453,7 @@ export class EnemyPokemon extends Pokemon {
 
   /**
    * Determines the Pokemon the given move would target if used by this Pokemon
-   * @param moveId {@linkcode Moves} The move to be used
+   * @param moveId - The move to be used
    * @returns The indexes of the Pokemon the given move would target
    */
   getNextTargets(moveId: Moves): BattlerIndex[] {
@@ -7651,7 +7651,7 @@ export class EnemyPokemon extends Pokemon {
    * The base boost is 1 to a random stat that's not already maxed out per broken shield
    * For Pokemon with 3 health segments or more, breaking the last shield gives +2 instead
    * For Pokemon with 5 health segments or more, breaking the last two shields give +2 each
-   * @param segmentIndex index of the segment to get down to (0 = no shield left, 1 = 1 shield left, etc.)
+   * @param segmentIndex - index of the segment to get down to (0 = no shield left, 1 = 1 shield left, etc.)
    */
   handleBossSegmentCleared(segmentIndex: number): void {
     while (
@@ -7720,8 +7720,8 @@ export class EnemyPokemon extends Pokemon {
   /**
    * Add a new pokemon to the player's party (at `slotIndex` if set).
    * The new pokemon's visibility will be set to `false`.
-   * @param pokeballType the type of pokeball the pokemon was caught with
-   * @param slotIndex an optional index to place the pokemon in the party
+   * @param pokeballType - the type of pokeball the pokemon was caught with
+   * @param slotIndex - an optional index to place the pokemon in the party
    * @returns the pokemon that was added or null if the pokemon could not be added
    */
   addToParty(pokeballType: PokeballType, slotIndex = -1) {
@@ -7986,9 +7986,9 @@ export class PokemonMove {
    * Checks whether the move can be selected or performed by a Pokemon, without consideration for the move's targets.
    * The move is unusable if it is out of PP, restricted by an effect, or unimplemented.
    *
-   * @param {Pokemon} pokemon {@linkcode Pokemon} that would be using this move
-   * @param {boolean} ignorePp If `true`, skips the PP check
-   * @param {boolean} ignoreRestrictionTags If `true`, skips the check for move restriction tags (see {@link MoveRestrictionBattlerTag})
+   * @param pokemon - that would be using this move
+   * @param ignorePp - If `true`, skips the PP check
+   * @param ignoreRestrictionTags - If `true`, skips the check for move restriction tags (see {@link MoveRestrictionBattlerTag})
    * @returns `true` if the move can be selected and used by the Pokemon, otherwise `false`.
    */
   isUsable(
@@ -8019,7 +8019,7 @@ export class PokemonMove {
 
   /**
    * Sets {@link ppUsed} for this move and ensures the value does not exceed {@link getMovePp}
-   * @param {number} count Amount of PP to use
+   * @param count - Amount of PP to use
    */
   usePp(count = 1) {
     this.ppUsed = Math.min(this.ppUsed + count, this.getMovePp());
@@ -8042,7 +8042,7 @@ export class PokemonMove {
 
   /**
    * Copies an existing move or creates a valid PokemonMove object from json representing one
-   * @param {PokemonMove | any} source The data for the move to copy
+   * @param source - The data for the move to copy
    * @return {PokemonMove} A valid pokemonmove object
    */
   static loadMove(source: PokemonMove | any): PokemonMove {

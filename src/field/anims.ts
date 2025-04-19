@@ -202,8 +202,8 @@ export function cos(index: number, amplitude: number): number {
 /**
  * Play the shiny sparkle animation and sound effect for the given sprite
  * First ensures that the animation has been properly initialized
- * @param sparkleSprite the Sprite to play the animation on
- * @param variant which shiny {@linkcode variant} to play the animation for
+ * @param sparkleSprite - the Sprite to play the animation on
+ * @param variant - which shiny {@linkcode variant} to play the animation for
  */
 export function doShinySparkleAnim(sparkleSprite: Phaser.GameObjects.Sprite, variant: Variant) {
   const keySuffix = variant ? `_${variant + 1}` : "";

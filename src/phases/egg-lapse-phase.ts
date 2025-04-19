@@ -77,7 +77,7 @@ export class EggLapsePhase extends Phase {
 
   /**
    * Hatches eggs normally one by one, showing animations
-   * @param eggsToHatch list of eggs to hatch
+   * @param eggsToHatch - list of eggs to hatch
    */
   hatchEggsRegular(eggsToHatch: Egg[]) {
     let eggsToHatchCount: number = eggsToHatch.length;
@@ -89,7 +89,7 @@ export class EggLapsePhase extends Phase {
 
   /**
    * Hatches eggs with no animations
-   * @param eggsToHatch list of eggs to hatch
+   * @param eggsToHatch - list of eggs to hatch
    */
   hatchEggsSkipped(eggsToHatch: Egg[]) {
     for (const egg of eggsToHatch) {
@@ -105,7 +105,7 @@ export class EggLapsePhase extends Phase {
   /**
    * Hatches an egg and stores it in the local EggHatchData array without animations
    * Also validates the achievements for the hatched pokemon and removes the egg
-   * @param egg egg to hatch
+   * @param egg - egg to hatch
    */
   hatchEggSilently(egg: Egg) {
     const eggIndex = globalScene.gameData.eggs.findIndex(e => e.id === egg.id);
@@ -136,7 +136,7 @@ export class EggLapsePhase extends Phase {
 
   /**
    * Generates a Pokemon and creates a new EggHatchData instance for the given egg
-   * @param egg the egg to hatch
+   * @param egg - the egg to hatch
    * @returns the hatched PlayerPokemon
    */
   generatePokemon(egg: Egg): EggHatchData {

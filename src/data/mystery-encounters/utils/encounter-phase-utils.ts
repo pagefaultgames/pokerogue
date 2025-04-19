@@ -143,7 +143,7 @@ export interface EnemyPartyConfig {
  * Generates an enemy party for a mystery encounter battle
  * This will override and replace any standard encounter generation logic
  * Useful for tailoring specific battles to mystery encounters
- * @param partyConfig Can pass various customizable attributes for the enemy party, see EnemyPartyConfig
+ * @param partyConfig - Can pass various customizable attributes for the enemy party, see EnemyPartyConfig
  */
 export async function initBattleWithEnemyConfig(partyConfig: EnemyPartyConfig): Promise<void> {
   const loaded: boolean = false;
@@ -509,7 +509,7 @@ export function updatePlayerMoney(changeValue: number, playSound = true, showMes
 /**
  * Converts modifier bullshit to an actual item
  * @param modifier
- * @param pregenArgs Can specify BerryType for berries, TM for TMs, AttackBoostType for item, etc.
+ * @param pregenArgs - Can specify BerryType for berries, TM for TMs, AttackBoostType for item, etc.
  */
 export function generateModifierType(modifier: () => ModifierType, pregenArgs?: any[]): ModifierType | null {
   const modifierId = Object.keys(modifierTypes).find(k => modifierTypes[k] === modifier);
@@ -1039,9 +1039,9 @@ export function handleMysteryEncounterTurnStartEffects(): boolean {
 /**
  * Helper function for encounters such as {@linkcode UncommonBreedEncounter} which call for a random species including event encounters.
  * If the mon is from the event encounter list, it will do an extra shiny roll.
- * @param level the level of the mon, which differs between MEs
- * @param isBoss whether the mon should be a Boss
- * @param rerollHidden whether the mon should get an extra roll for Hidden Ability
+ * @param level - the level of the mon, which differs between MEs
+ * @param isBoss - whether the mon should be a Boss
+ * @param rerollHidden - whether the mon should get an extra roll for Hidden Ability
  * @returns {@linkcode EnemyPokemon} for the requested encounter
  */
 export function getRandomEncounterSpecies(level: number, isBoss = false, rerollHidden = false): EnemyPokemon {

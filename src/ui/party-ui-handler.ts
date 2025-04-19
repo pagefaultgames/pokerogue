@@ -207,7 +207,7 @@ export default class PartyUiHandler extends MessageUiHandler {
 
   /**
    * For consistency reasons, this looks like the above filters. However this is used only internally and is always enforced for switching.
-   * @param pokemon The pokemon to check.
+   * @param pokemon - The pokemon to check.
    * @returns
    */
   private FilterChallengeLegal = (pokemon: PlayerPokemon) => {
