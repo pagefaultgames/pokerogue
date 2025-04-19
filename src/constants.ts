@@ -9,3 +9,6 @@ export const SESSION_ID_COOKIE_NAME: string = "pokerogue_sessionId";
 
 /** Max value for an integer attribute in {@linkcode SystemSaveData} */
 export const MAX_INT_ATTR_VALUE = 0x80000000;
+
+/** The raw percentage power boost for type boost items*/
+export const TYPE_BOOST_ITEM_BOOST_PERCENT = 20;
