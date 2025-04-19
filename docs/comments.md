@@ -6,35 +6,33 @@
  - Comments should not be repeating chunks of code or explaining what 'true' and 'false' means in typescript
 - Make sure comments exist on Functions, Classes, Methods, and Properties
  - This may be the most important things to comment. When someone goes to use a function/class/method/etc., having a comment reduces the need to flip back and forth between files to figure out how something works. Peek Definition is great until you're three nested functions deep.
- - The best example of this is JSDoc-style comments as seen below:
+ - The best example of this is TSDoc-style comments as seen below:
    - When formatted this way, the comment gets shown by intellisense in VS Code or similar IDEs just by hovering over the text!
    - Functions also show each the comment for parameter as you type them, making keeping track of what each one does in lengthy functions much more clear
 ```ts
 /**
- * Changes the type-based weather modifier if this move's power would be reduced by it
- * @param user The {@linkcode Pokemon} using this move
- * @param target The {@linkcode Pokemon} being targeted by this move
- * @param move The {@linkcode Move} being used
- * @param args `[0]` {@linkcode Utils.NumberHolder} for arenaAttackTypeMultiplier
- * @returns `true` if the function succeeds
+ * Change the type-based weather modifier if this move's power would be reduced by it
+ * @param user - The {@linkcode Pokemon} using this move
+ * @param target - The {@linkcode Pokemon} being targeted by this move
+ * @param move - The {@linkcode Move} being used
+ * @param args - [0]: a {@linkcode NumberHolder} for arenaAttackTypeMultiplier
+ * @returns whether the function
  */
-apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+apply(user: Pokemon, target: Pokemon, move: Move, args: [NumberHolder, ...any]): boolean {
 }
 
 /** Set to true when experimental animated sprites from Gen6+ are used */
 public experimentalSprites: boolean = false;
 
 /**
- * Cures the user's party of non-volatile status conditions, ie. Heal Bell, Aromatherapy
- * @extends MoveAttr
- * @see {@linkcode apply}
+ * Cure the user's party of non-volatile status conditions, ie. Heal Bell, Aromatherapy
  */
 export class DontHealThePartyPlsAttr extends MoveAttr {
 }
 ```
 You'll notice this contains an `{@linkcode Object}` tag for each parameter. This provides an easy type denomination and hyperlink to that type using VS Code's Intellisense. `@linkcode` is used instead of `@link` so that the text appears in monospace which is more obviously a `type` rather than a random hyperlink.
 
-If you're interested in going more in depth, you can find a reference guide for how comments like these work [here](https://jsdoc.app)
+If you're interested in going more in depth, you can find a reference guide for how comments like these work [here](https://tsdoc.org)
 
 ### What not to do:
 - Don't leave comments for code you don't understand
@@ -47,8 +45,6 @@ While other classes should be fully documented, Abilities and Moves heavily inco
 ### With this in mind, there's a few more things to keep in mind for these:
 - Do not document any parameters if the function mirrors the one they extend.
   - Keep this in mind for functions that are not the `apply` function as they are usually sparse and mostly reused
-- The class itself must be documented
-  - This must include the `@extends BaseClass` and `@see {@linkcode apply}` tags
 - Class member variables must be documented
   - You can use a single line documentation comment for these `/** i.e. a comment like this */`
 - `args` parameters must be documented if used
@@ -56,9 +52,9 @@ While other classes should be fully documented, Abilities and Moves heavily inco
 ```ts
 /**
 ...
- * @param args [0] {@linkcode Utils.NumberHolder} of arenaAttackTypeMultiplier
- *             [1] {@linkcode Utils.BooleanHolder} of cancelled
- *             [2] {@linkcode Utils.BooleanHolder} of rWeDoneYet
+ * @param args - [0] {@linkcode NumberHolder} of arenaAttackTypeMultiplier;
+ *               [1] {@linkcode BooleanHolder} of cancelled
+ *               [2] {@linkcode BooleanHolder} of rWeDoneYet
 ...
 */
 ```
