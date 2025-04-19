@@ -92,7 +92,7 @@ describe("UI - Type Hints", () => {
       .enemySpecies(Species.ABRA)
       .moveset([Moves.SPLASH, Moves.SHADOW_BALL, Moves.SOAK])
       .enemyMoveset([Moves.SPLASH, Moves.TELEPORT])
-      .battleType("double");
+      .battleStyle("double");
 
     await game.classicMode.startBattle([Species.MAGIKARP, Species.MAGIKARP]);
     game.move.select(Moves.SPLASH);
@@ -103,14 +103,14 @@ describe("UI - Type Hints", () => {
     await game.forceEnemyMove(Moves.TELEPORT);
     await game.toNextTurn();
 
-    game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
+    game.onNextPrompt("CommandPhase", UiMode.COMMAND, () => {
       const { ui } = game.scene;
       const handler = ui.getHandler<FightUiHandler>();
       handler.processInput(Button.ACTION); // select "Fight"
       game.phaseInterceptor.unlock();
     });
 
-    game.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
+    game.onNextPrompt("CommandPhase", UiMode.FIGHT, () => {
       const { ui } = game.scene;
       const movesContainer = ui.getByName<Phaser.GameObjects.Container>(FightUiHandler.MOVES_CONTAINER_NAME);
       const shadowBallText = movesContainer
