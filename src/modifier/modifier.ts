@@ -2378,18 +2378,14 @@ export class EvolutionItemModifier extends ConsumablePokemonModifier {
     let matchingEvolution = pokemonEvolutions.hasOwnProperty(playerPokemon.species.speciesId)
       ? pokemonEvolutions[playerPokemon.species.speciesId].find(
           e =>
-            e.item === this.type.evolutionItem &&
-            (e.evoFormKey === null || (e.preFormKey || "") === playerPokemon.getFormKey()) &&
-            (!e.condition || e.condition.predicate(playerPokemon)),
+            e.evoItem === this.type.evolutionItem && e.validate(playerPokemon, false, e.item!),
         )
       : null;
 
     if (!matchingEvolution && playerPokemon.isFusion()) {
       matchingEvolution = pokemonEvolutions[playerPokemon.fusionSpecies!.speciesId].find(
         e =>
-          e.item === this.type.evolutionItem && // TODO: is the bang correct?
-          (e.evoFormKey === null || (e.preFormKey || "") === playerPokemon.getFusionFormKey()) &&
-          (!e.condition || e.condition.predicate(playerPokemon)),
+          e.evoItem === this.type.evolutionItem && e.validate(playerPokemon, true, e.item!),
       );
       if (matchingEvolution) {
         matchingEvolution = new FusionSpeciesFormEvolution(playerPokemon.species.speciesId, matchingEvolution);
