@@ -1,4 +1,3 @@
-import { Mode } from "#app/ui/ui";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, type MockInstance, vi } from "vitest";
@@ -12,6 +11,7 @@ import { Button } from "#enums/buttons";
 import { DropDownColumn } from "#app/ui/filter-bar";
 import type PokemonSpecies from "#app/data/pokemon-species";
 import { PokemonType } from "#enums/pokemon-type";
+import { UiMode } from "#enums/ui-mode";
 
 /*
 Information for the `data_pokedex_tests.psrv`:
@@ -71,7 +71,7 @@ describe("UI - Pokedex", () => {
     // Open the pokedex UI.
     await game.runToTitle();
 
-    await game.phaseInterceptor.setOverlayMode(Mode.POKEDEX);
+    await game.phaseInterceptor.setOverlayMode(UiMode.POKEDEX);
 
     // Get the handler for the current UI.
     const handler = game.scene.ui.getHandler();
