@@ -3852,12 +3852,17 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return null;
   }
 
-  getOpponents(): Pokemon[] {
+  /**
+   * Returns the pokemon that oppose this one and are active
+   * 
+   * @param onField - whether to also check if the pokemon is currently on the field (defaults to true)
+   */
+  getOpponents(onField = true): Pokemon[] {
     return (
       (this.isPlayer()
         ? globalScene.getEnemyField()
         : globalScene.getPlayerField()) as Pokemon[]
-    ).filter(p => p.isActive());
+    ).filter(p => p.isActive(onField));
   }
 
   getOpponentDescriptor(): string {
