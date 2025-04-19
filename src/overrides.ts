@@ -145,7 +145,7 @@ class DefaultOverrides {
   /**
    * If defined, this will override the species of the first starter in your party.
    * default is `null` to not override
-   * @example STARTER_SPECIES_OVERRIDE = Species.Bulbasaur;
+   * @example STARTER_SPECIES_OVERRIDE = Species.BULBASAUR;
    */
   readonly STARTER_SPECIES_OVERRIDE: Species | null = null;
   /**
