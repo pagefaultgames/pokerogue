@@ -88,10 +88,10 @@ describe.each([
       await game.classicMode.startBattle();
 
       const playerPokemon = game.scene.getPlayerPokemon()!;
-      vi.spyOn(playerPokemon, "getMoveType");
+      const tySpy = vi.spyOn(playerPokemon, "getMoveType");
 
       const enemyPokemon = game.scene.getEnemyPokemon()!;
-      vi.spyOn(enemyPokemon, "apply");
+      const enemyApplySpy = vi.spyOn(enemyPokemon, "apply");
 
       enemyPokemon.hp = Math.floor(enemyPokemon.getMaxHp() * 0.8);
 
@@ -99,9 +99,12 @@ describe.each([
 
       await game.phaseInterceptor.to("BerryPhase", false);
 
-      expect(playerPokemon.getMoveType).toHaveLastReturnedWith(PokemonType.ELECTRIC);
-      expect(enemyPokemon.apply).toHaveReturnedWith(HitResult.NO_EFFECT);
+      expect(tySpy).toHaveLastReturnedWith(PokemonType.ELECTRIC);
+      expect(enemyApplySpy).toHaveReturnedWith(HitResult.NO_EFFECT);
       expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
+
+      tySpy.mockRestore();
+      enemyApplySpy.mockRestore();
     });
   }
 
@@ -157,7 +160,7 @@ describe.each([
       const enemyStartingHp = enemyPokemon.hp;
       await game.phaseInterceptor.to("MoveEffectPhase");
 
-      expect(playerPokemon.getMoveType).toHaveLastReturnedWith(ty);
+      expect(tySpy).toHaveLastReturnedWith(ty);
       expect(enemyPokemon.hp).toBeLessThan(enemyStartingHp);
     }
     tySpy.mockRestore();
