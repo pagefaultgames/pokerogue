@@ -28,7 +28,7 @@ describe("Moves - Sleep Talk", () => {
       .moveset([Moves.SPLASH, Moves.SLEEP_TALK])
       .statusEffect(StatusEffect.SLEEP)
       .ability(Abilities.BALL_FETCH)
-      .battleType("single")
+      .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)

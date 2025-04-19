@@ -1,11 +1,11 @@
 import type { EnemyPartyConfig } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import type { PlayerPokemon, PokemonMove } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
-import { capitalizeFirstLetter, isNullOrUndefined } from "#app/utils";
+import { capitalizeFirstLetter, isNullOrUndefined } from "#app/utils/common";
 import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import type { MysteryEncounterSpriteConfig } from "#app/field/mystery-encounter-intro";
 import MysteryEncounterIntroVisuals from "#app/field/mystery-encounter-intro";
-import * as Utils from "#app/utils";
+import { randSeedInt } from "#app/utils/common";
 import type { StatusEffect } from "#enums/status-effect";
 import type { OptionTextDisplay } from "./mystery-encounter-dialogue";
 import type MysteryEncounterDialogue from "./mystery-encounter-dialogue";
@@ -378,13 +378,13 @@ export default class MysteryEncounter implements IMysteryEncounter {
       }
       if (truePrimaryPool.length > 0) {
         // Always choose from the non-overlapping pokemon first
-        this.primaryPokemon = truePrimaryPool[Utils.randSeedInt(truePrimaryPool.length, 0)];
+        this.primaryPokemon = truePrimaryPool[randSeedInt(truePrimaryPool.length, 0)];
         return true;
       }
       // If there are multiple overlapping pokemon, we're okay - just choose one and take it out of the primary pokemon pool
       if (overlap.length > 1 || this.secondaryPokemon.length - overlap.length >= 1) {
         // is this working?
-        this.primaryPokemon = overlap[Utils.randSeedInt(overlap.length, 0)];
+        this.primaryPokemon = overlap[randSeedInt(overlap.length, 0)];
         this.secondaryPokemon = this.secondaryPokemon.filter(supp => supp !== this.primaryPokemon);
         return true;
       }
@@ -394,7 +394,7 @@ export default class MysteryEncounter implements IMysteryEncounter {
       return false;
     }
     // this means we CAN have the same pokemon be a primary and secondary pokemon, so just choose any qualifying one randomly.
-    this.primaryPokemon = qualified[Utils.randSeedInt(qualified.length, 0)];
+    this.primaryPokemon = qualified[randSeedInt(qualified.length, 0)];
     return true;
   }
 

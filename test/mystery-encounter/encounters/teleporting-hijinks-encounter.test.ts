@@ -10,7 +10,7 @@ import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import GameManager from "#test/testUtils/gameManager";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
-import { Mode } from "#app/ui/ui";
+import { UiMode } from "#enums/ui-mode";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import {
@@ -301,7 +301,7 @@ describe("Teleporting Hijinks - Mystery Encounter", () => {
       expect(scene.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
       await game.phaseInterceptor.run(SelectModifierPhase);
 
-      expect(scene.ui.getMode()).to.equal(Mode.MODIFIER_SELECT);
+      expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
       const modifierSelectHandler = scene.ui.handlers.find(
         h => h instanceof ModifierSelectUiHandler,
       ) as ModifierSelectUiHandler;

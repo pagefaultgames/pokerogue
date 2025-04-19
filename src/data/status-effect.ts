@@ -1,4 +1,4 @@
-import { randIntRange } from "#app/utils";
+import { randIntRange } from "#app/utils/common";
 import { StatusEffect } from "#enums/status-effect";
 import type { ParseKeys } from "i18next";
 import i18next from "i18next";

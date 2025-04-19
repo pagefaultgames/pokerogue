@@ -30,7 +30,7 @@ describe("Moves - Metronome", () => {
     game = new GameManager(phaserGame);
     game.override
       .moveset([Moves.METRONOME, Moves.SPLASH])
-      .battleType("single")
+      .battleStyle("single")
       .startingLevel(100)
       .starterSpecies(Species.REGIELEKI)
       .enemyLevel(100)
@@ -79,7 +79,7 @@ describe("Moves - Metronome", () => {
   });
 
   it("should only target ally for Aromatic Mist", async () => {
-    game.override.battleType("double");
+    game.override.battleStyle("double");
     await game.classicMode.startBattle([Species.REGIELEKI, Species.RATTATA]);
     const [leftPlayer, rightPlayer] = game.scene.getPlayerField();
     const [leftOpp, rightOpp] = game.scene.getEnemyField();

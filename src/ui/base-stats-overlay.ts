@@ -1,7 +1,7 @@
 import type { InfoToggle } from "../battle-scene";
 import { TextStyle, addTextObject } from "./text";
 import { addWindow } from "./ui-theme";
-import * as Utils from "../utils";
+import { fixedInt } from "#app/utils/common";
 import i18next from "i18next";
 import { globalScene } from "#app/global-scene";
 
@@ -93,7 +93,7 @@ export class BaseStatsOverlay extends Phaser.GameObjects.Container implements In
     }
     globalScene.tweens.add({
       targets: this.statsLabels,
-      duration: Utils.fixedInt(125),
+      duration: fixedInt(125),
       ease: "Sine.easeInOut",
       alpha: visible ? 1 : 0,
     });

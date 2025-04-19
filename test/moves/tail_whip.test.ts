@@ -25,7 +25,7 @@ describe("Moves - Tail whip", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     const moveToUse = Moves.TAIL_WHIP;
-    game.override.battleType("single");
+    game.override.battleStyle("single");
     game.override.enemySpecies(Species.RATTATA);
     game.override.enemyAbility(Abilities.INSOMNIA);
     game.override.ability(Abilities.INSOMNIA);

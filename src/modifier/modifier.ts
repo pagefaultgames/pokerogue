@@ -15,7 +15,7 @@ import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
 import type { VoucherType } from "#app/system/voucher";
 import { Command } from "#app/ui/command-ui-handler";
 import { addTextObject, TextStyle } from "#app/ui/text";
-import { BooleanHolder, hslToHex, isNullOrUndefined, NumberHolder, toDmgValue } from "#app/utils";
+import { BooleanHolder, hslToHex, isNullOrUndefined, NumberHolder, toDmgValue } from "#app/utils/common";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BerryType } from "#enums/berry-type";
 import type { Moves } from "#enums/moves";
@@ -47,7 +47,7 @@ import {
 } from "./modifier-type";
 import { Color, ShadowColor } from "#enums/color";
 import { FRIENDSHIP_GAIN_FROM_RARE_CANDY } from "#app/data/balance/starters";
-import { applyAbAttrs, CommanderAbAttr } from "#app/data/ability";
+import { applyAbAttrs, CommanderAbAttr } from "#app/data/abilities/ability";
 import { globalScene } from "#app/global-scene";
 
 export type ModifierPredicate = (modifier: Modifier) => boolean;

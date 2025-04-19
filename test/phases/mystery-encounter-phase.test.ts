@@ -3,7 +3,7 @@ import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { Species } from "#enums/species";
 import { MysteryEncounterOptionSelectedPhase, MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
-import { Mode } from "#app/ui/ui";
+import { UiMode } from "#enums/ui-mode";
 import { Button } from "#enums/buttons";
 import type MysteryEncounterUiHandler from "#app/ui/mystery-encounter-ui-handler";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
@@ -50,7 +50,7 @@ describe("Mystery Encounter Phases", () => {
         Species.VOLCARONA,
       ]);
 
-      game.onNextPrompt("MysteryEncounterPhase", Mode.MYSTERY_ENCOUNTER, () => {
+      game.onNextPrompt("MysteryEncounterPhase", UiMode.MYSTERY_ENCOUNTER, () => {
         // End phase early for test
         game.phaseInterceptor.superEndPhase();
       });
@@ -61,7 +61,7 @@ describe("Mystery Encounter Phases", () => {
         MysteryEncounterType.MYSTERIOUS_CHALLENGERS,
       );
       expect(game.scene.mysteryEncounterSaveData.encounteredEvents[0].tier).toEqual(MysteryEncounterTier.GREAT);
-      expect(game.scene.ui.getMode()).toBe(Mode.MYSTERY_ENCOUNTER);
+      expect(game.scene.ui.getMode()).toBe(UiMode.MYSTERY_ENCOUNTER);
     });
 
     it("Selects an option for MysteryEncounterPhase", async () => {
@@ -73,7 +73,7 @@ describe("Mystery Encounter Phases", () => {
         Species.VOLCARONA,
       ]);
 
-      game.onNextPrompt("MysteryEncounterPhase", Mode.MESSAGE, () => {
+      game.onNextPrompt("MysteryEncounterPhase", UiMode.MESSAGE, () => {
         const handler = game.scene.ui.getHandler() as MessageUiHandler;
         handler.processInput(Button.ACTION);
       });
@@ -89,7 +89,7 @@ describe("Mystery Encounter Phases", () => {
       await vi.waitFor(() =>
         expect(game.scene.getCurrentPhase()?.constructor.name).toBe(MysteryEncounterOptionSelectedPhase.name),
       );
-      expect(ui.getMode()).toBe(Mode.MESSAGE);
+      expect(ui.getMode()).toBe(UiMode.MESSAGE);
       expect(ui.showDialogue).toHaveBeenCalledTimes(1);
       expect(ui.showText).toHaveBeenCalledTimes(2);
       expect(ui.showDialogue).toHaveBeenCalledWith(

@@ -1,10 +1,10 @@
-import { applyAbAttrs, PreventBerryUseAbAttr, HealFromBerryUseAbAttr } from "#app/data/ability";
+import { applyAbAttrs, PreventBerryUseAbAttr, HealFromBerryUseAbAttr } from "#app/data/abilities/ability";
 import { CommonAnim } from "#app/data/battle-anims";
 import { BerryUsedEvent } from "#app/events/battle-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { BerryModifier } from "#app/modifier/modifier";
 import i18next from "i18next";
-import { BooleanHolder } from "#app/utils";
+import { BooleanHolder } from "#app/utils/common";
 import { FieldPhase } from "./field-phase";
 import { CommonAnimPhase } from "./common-anim-phase";
 import { globalScene } from "#app/global-scene";

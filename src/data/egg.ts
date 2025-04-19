@@ -4,7 +4,7 @@ import type PokemonSpecies from "#app/data/pokemon-species";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { speciesStarterCosts } from "#app/data/balance/starters";
 import { VariantTier } from "#enums/variant-tier";
-import * as Utils from "#app/utils";
+import { randInt, randomString, randSeedInt, getIvsFromId } from "#app/utils/common";
 import Overrides from "#app/overrides";
 import { pokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
 import type { PlayerPokemon } from "#app/field/pokemon";
@@ -171,7 +171,7 @@ export class Egg {
         this.checkForPityTierOverrides();
       }
 
-      this._id = eggOptions?.id ?? Utils.randInt(EGG_SEED, EGG_SEED * this._tier);
+      this._id = eggOptions?.id ?? randInt(EGG_SEED, EGG_SEED * this._tier);
 
       this._sourceType = eggOptions?.sourceType ?? undefined;
       this._hatchWaves = eggOptions?.hatchWaves ?? this.getEggTierDefaultHatchWaves();
@@ -203,7 +203,7 @@ export class Egg {
       }
     };
 
-    const seedOverride = Utils.randomString(24);
+    const seedOverride = randomString(24);
     globalScene.executeWithSeedOffset(
       () => {
         generateEggProperties(eggOptions);
@@ -248,18 +248,15 @@ export class Egg {
       let pokemonSpecies = getPokemonSpecies(this._species);
       // Special condition to have Phione eggs also have a chance of generating Manaphy
       if (this._species === Species.PHIONE && this._sourceType === EggSourceType.SAME_SPECIES_EGG) {
-        pokemonSpecies = getPokemonSpecies(
-          Utils.randSeedInt(MANAPHY_EGG_MANAPHY_RATE) ? Species.PHIONE : Species.MANAPHY,
-        );
+        pokemonSpecies = getPokemonSpecies(randSeedInt(MANAPHY_EGG_MANAPHY_RATE) ? Species.PHIONE : Species.MANAPHY);
       }
 
       // Sets the hidden ability if a hidden ability exists and
       // the override is set or the egg hits the chance
       let abilityIndex: number | undefined = undefined;
       const sameSpeciesEggHACheck =
-        this._sourceType === EggSourceType.SAME_SPECIES_EGG && !Utils.randSeedInt(SAME_SPECIES_EGG_HA_RATE);
-      const gachaEggHACheck =
-        !(this._sourceType === EggSourceType.SAME_SPECIES_EGG) && !Utils.randSeedInt(GACHA_EGG_HA_RATE);
+        this._sourceType === EggSourceType.SAME_SPECIES_EGG && !randSeedInt(SAME_SPECIES_EGG_HA_RATE);
+      const gachaEggHACheck = !(this._sourceType === EggSourceType.SAME_SPECIES_EGG) && !randSeedInt(GACHA_EGG_HA_RATE);
       if (pokemonSpecies.abilityHidden && (this._overrideHiddenAbility || sameSpeciesEggHACheck || gachaEggHACheck)) {
         abilityIndex = 2;
       }
@@ -269,7 +266,7 @@ export class Egg {
       ret.shiny = this._isShiny;
       ret.variant = this._variantTier;
 
-      const secondaryIvs = Utils.getIvsFromId(Utils.randSeedInt(4294967295));
+      const secondaryIvs = getIvsFromId(randSeedInt(4294967295));
 
       for (let s = 0; s < ret.ivs.length; s++) {
         ret.ivs[s] = Math.max(ret.ivs[s], secondaryIvs[s]);
@@ -370,7 +367,7 @@ export class Egg {
     }
 
     const tierMultiplier = this.isManaphyEgg() ? 2 : Math.pow(2, 3 - this.tier);
-    return Utils.randSeedInt(baseChance * tierMultiplier) ? Utils.randSeedInt(3) : 3;
+    return randSeedInt(baseChance * tierMultiplier) ? randSeedInt(3) : 3;
   }
 
   private getEggTierDefaultHatchWaves(eggTier?: EggTier): number {
@@ -392,7 +389,7 @@ export class Egg {
   private rollEggTier(): EggTier {
     const tierValueOffset =
       this._sourceType === EggSourceType.GACHA_LEGENDARY ? GACHA_LEGENDARY_UP_THRESHOLD_OFFSET : 0;
-    const tierValue = Utils.randInt(256);
+    const tierValue = randInt(256);
     return tierValue >= GACHA_DEFAULT_COMMON_EGG_THRESHOLD + tierValueOffset
       ? EggTier.COMMON
       : tierValue >= GACHA_DEFAULT_RARE_EGG_THRESHOLD + tierValueOffset
@@ -417,11 +414,11 @@ export class Egg {
        * when Utils.randSeedInt(8) = 1, and by making the generatePlayerPokemon() species
        * check pass when Utils.randSeedInt(8) = 0, we can tell them apart during tests.
        */
-      const rand = Utils.randSeedInt(MANAPHY_EGG_MANAPHY_RATE) !== 1;
+      const rand = randSeedInt(MANAPHY_EGG_MANAPHY_RATE) !== 1;
       return rand ? Species.PHIONE : Species.MANAPHY;
     }
     if (this.tier === EggTier.LEGENDARY && this._sourceType === EggSourceType.GACHA_LEGENDARY) {
-      if (!Utils.randSeedInt(2)) {
+      if (!randSeedInt(2)) {
         return getLegendaryGachaSpeciesForTimestamp(this.timestamp);
       }
     }
@@ -501,7 +498,7 @@ export class Egg {
 
     let species: Species;
 
-    const rand = Utils.randSeedInt(totalWeight);
+    const rand = randSeedInt(totalWeight);
     for (let s = 0; s < speciesWeights.length; s++) {
       if (rand < speciesWeights[s]) {
         species = speciesPool[s];
@@ -539,7 +536,7 @@ export class Egg {
         break;
     }
 
-    return !Utils.randSeedInt(shinyChance);
+    return !randSeedInt(shinyChance);
   }
 
   // Uses the same logic as pokemon.generateVariant(). I would like to only have this logic in one
@@ -550,7 +547,7 @@ export class Egg {
       return VariantTier.STANDARD;
     }
 
-    const rand = Utils.randSeedInt(10);
+    const rand = randSeedInt(10);
     if (rand >= SHINY_VARIANT_CHANCE) {
       return VariantTier.STANDARD; // 6/10
     }
