@@ -69,7 +69,7 @@ export const signatureSpecies: SignatureSpecies = {
   CLEMONT: [Species.HELIOPTILE, Species.MAGNEMITE, Species.DEDENNE, Species.ROTOM],
   VALERIE: [Species.SYLVEON, Species.MAWILE, Species.MR_MIME, [Species.SPRITZEE, Species.SWIRLIX]],
   OLYMPIA: [Species.ESPURR, Species.SIGILYPH, Species.INKAY, Species.SLOWKING],
-  WULFRIC: [Species.BERGMITE, Species.SNOVER, Species.CRYOGONAL, Species.AMAURA],
+  WULFRIC: [Species.BERGMITE, Species.SNOVER, Species.CRYOGONAL, Species.SWINUB],
   // Gym Leaders- Galar
   MILO: [Species.GOSSIFLEUR, Species.SEEDOT, Species.APPLIN, Species.LOTAD],
   NESSA: [Species.CHEWTLE, Species.WIMPOD, Species.ARROKUDA, Species.MAREANIE],
