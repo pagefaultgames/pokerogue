@@ -581,7 +581,7 @@ export default class GameManager {
    * Used to manually modify Pokemon turn order.
 
    * Note: This *DOES NOT* account for priority.
-   * @param {BattlerIndex[]} order The turn order to set
+   * @param order - The turn order to set
    * @example
    * ```ts
    * await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2]);
