@@ -2666,13 +2666,14 @@ export class EatBerryAttr extends MoveEffectAttr {
   constructor() {
     super(true, { trigger: MoveEffectTrigger.HIT });
   }
+
   /**
    * Causes the target to eat a berry.
-   * @param user {@linkcode Pokemon} Pokemon that used the move
-   * @param target {@linkcode Pokemon} Pokemon that will eat a berry
-   * @param move {@linkcode Move} The move being used
+   * @param user The {@linkcode Pokemon} Pokemon that used the move
+   * @param target The {@linkcode Pokemon} Pokemon that will eat the berry
+   * @param move The {@linkcode Move} being used
    * @param args Unused
-   * @returns {boolean} true if the function succeeds
+   * @returns `true` if the function succeeds
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!super.apply(user, target, move, args)) {
@@ -2681,8 +2682,11 @@ export class EatBerryAttr extends MoveEffectAttr {
 
     const heldBerries = this.getTargetHeldBerries(target);
     if (heldBerries.length <= 0) {
+      // no berries makes munchlax very sad...
       return false;
     }
+
+    // pick a random berry to gobble and check if we preserve it
     this.chosenBerry = heldBerries[user.randSeedInt(heldBerries.length)];
     const preserve = new BooleanHolder(false);
     globalScene.applyModifiers(PreserveBerryModifier, target.isPlayer(), target, preserve); // check for berry pouch preservation
@@ -2690,6 +2694,7 @@ export class EatBerryAttr extends MoveEffectAttr {
       this.reduceBerryModifier(target);
     }
     this.eatBerry(target);
+
     return true;
   }
 
@@ -2705,49 +2710,63 @@ export class EatBerryAttr extends MoveEffectAttr {
     globalScene.updateModifiers(target.isPlayer());
   }
 
-  eatBerry(consumer: Pokemon, berryOwner?: Pokemon) {
-    getBerryEffectFunc(this.chosenBerry!.berryType)(consumer, berryOwner); // consumer eats the berry
+  eatBerry(consumer: Pokemon, berryOwner: Pokemon = consumer) {
+    // consumer eats berry, owner triggers unburden and similar effects
+    getBerryEffectFunc(this.chosenBerry!.berryType)(consumer);
+    applyPostItemLostAbAttrs(PostItemLostAbAttr, berryOwner, false);
+
     applyAbAttrs(HealFromBerryUseAbAttr, consumer, new BooleanHolder(false));
+
+    // Harvest doesn't track berries eaten by other pokemon
+    consumer.recordEatenBerry(this.chosenBerry!.berryType, berryOwner !== consumer);
   }
 }
 
 /**
- *  Attribute used for moves that steal a random berry from the target. The user then eats the stolen berry.
- *  Used for Pluck & Bug Bite.
+ * Attribute used for moves that steal and eat a random berry from the target.
+ * Used for {@linkcode Moves.PLUCK} & {@linkcode Moves.BUG_BITE}.
  */
 export class StealEatBerryAttr extends EatBerryAttr {
   constructor() {
     super();
   }
+
   /**
    * User steals a random berry from the target and then eats it.
-   * @param {Pokemon} user Pokemon that used the move and will eat the stolen berry
-   * @param {Pokemon} target Pokemon that will have its berry stolen
-   * @param {Move} move Move being used
-   * @param {any[]} args Unused
-   * @returns {boolean} true if the function succeeds
+   * @param user the {@linkcode Pokemon} using the move; will eat the stolen berry
+   * @param target the {@linkcode Pokemon} having its berry stolen
+   * @param move the {@linkcode Move} being used
+   * @param args N/A
+   * @returns `true` if the function succeeds
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    // Stealing fails against substitute
     if (move.hitsSubstitute(user, target)) {
       return false;
     }
+
+    // check for abilities that block item theft
     const cancelled = new BooleanHolder(false);
-    applyAbAttrs(BlockItemTheftAbAttr, target, cancelled); // check for abilities that block item theft
+    applyAbAttrs(BlockItemTheftAbAttr, target, cancelled);
     if (cancelled.value === true) {
       return false;
     }
 
+    // check if the target even _has_ a berry in the first place
+    // TODO: Check if Pluck displays messages when used against sticky hold mons w/o berries
     const heldBerries = this.getTargetHeldBerries(target);
     if (heldBerries.length <= 0) {
       return false;
     }
-    // if the target has berries, pick a random berry and steal it
+
+    // pick a random berry and eat it
     this.chosenBerry = heldBerries[user.randSeedInt(heldBerries.length)];
     applyPostItemLostAbAttrs(PostItemLostAbAttr, target, false);
     const message = i18next.t("battle:stealEatBerry", { pokemonName: user.name, targetName: target.name, berryName: this.chosenBerry.type.name });
     globalScene.queueMessage(message);
     this.reduceBerryModifier(target);
     this.eatBerry(user, target);
+
     return true;
   }
 }
@@ -4119,30 +4138,23 @@ export class FriendshipPowerAttr extends VariablePowerAttr {
 
 /**
  * This Attribute calculates the current power of {@linkcode Moves.RAGE_FIST}.
- * The counter for power calculation does not reset on every wave but on every new arena encounter
+ * The counter for power calculation does not reset on every wave but on every new arena encounter.
+ * Self-inflicted confusion damage and hits taken by a Subsitute are ignored.
  */
 export class RageFistPowerAttr extends VariablePowerAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const { hitCount, prevHitCount } = user.battleData;
+    /* Reasons this works correctly:
+     * Confusion calls user.damageAndUpdate() directly (no counter increment),
+     * Substitute hits call user.damageAndUpdate() with a damage value of 0, also causing
+      no counter increment
+    */
+    const hitCount = user.battleData.hitCount;
     const basePower: NumberHolder = args[0];
 
-    this.updateHitReceivedCount(user, hitCount, prevHitCount);
-
-    basePower.value = 50 + (Math.min(user.customPokemonData.hitsRecCount, 6) * 50);
-
+    basePower.value = 50 * (1 + Math.min(hitCount, 6));
     return true;
   }
 
-  /**
-   * Updates the number of hits the Pokemon has taken in battle
-   * @param user Pokemon calling Rage Fist
-   * @param hitCount The number of received hits this battle
-   * @param previousHitCount The number of received hits this battle since last time Rage Fist was used
-   */
-  protected updateHitReceivedCount(user: Pokemon, hitCount: number, previousHitCount: number): void {
-    user.customPokemonData.hitsRecCount += (hitCount - previousHitCount);
-    user.battleData.prevHitCount = hitCount;
-  }
 }
 
 /**
@@ -8034,7 +8046,7 @@ export class MoveCondition {
 
 export class FirstMoveCondition extends MoveCondition {
   constructor() {
-    super((user, target, move) => user.battleSummonData?.waveTurnCount === 1);
+    super((user, target, move) => user.summonData.waveTurnCount === 1);
   }
 
   getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
@@ -8676,7 +8688,7 @@ export function initMoves() {
     new StatusMove(Moves.TRANSFORM, PokemonType.NORMAL, -1, 10, -1, 0, 1)
       .attr(TransformAttr)
       .condition((user, target, move) => !target.getTag(BattlerTagType.SUBSTITUTE))
-      .condition((user, target, move) => !target.summonData?.illusion && !user.summonData?.illusion)
+      .condition((user, target, move) => !target.summonData.illusion && !user.summonData.illusion)
       // transforming from or into fusion pokemon causes various problems (such as crashes)
       .condition((user, target, move) => !target.getTag(BattlerTagType.SUBSTITUTE) && !user.fusionSpecies && !target.fusionSpecies)
       .ignoresProtect(),
@@ -9386,6 +9398,11 @@ export function initMoves() {
     new AttackMove(Moves.NATURAL_GIFT, PokemonType.NORMAL, MoveCategory.PHYSICAL, -1, 100, 15, -1, 0, 4)
       .makesContact(false)
       .unimplemented(),
+      /*
+      NOTE: To whoever tries to implement this, reminder to push to battleData.berriesEaten
+      and enable the harvest test..
+      Do NOT push to berriesEatenLast or else cud chew will puke the berry.
+      */
     new AttackMove(Moves.FEINT, PokemonType.NORMAL, MoveCategory.PHYSICAL, 30, 100, 10, -1, 2, 4)
       .attr(RemoveBattlerTagAttr, [ BattlerTagType.PROTECTED ])
       .attr(RemoveArenaTagsAttr, [ ArenaTagType.QUICK_GUARD, ArenaTagType.WIDE_GUARD, ArenaTagType.MAT_BLOCK, ArenaTagType.CRAFTY_SHIELD ], false)
@@ -10005,7 +10022,7 @@ export function initMoves() {
       .condition(new FirstMoveCondition())
       .condition(failIfLastCondition),
     new AttackMove(Moves.BELCH, PokemonType.POISON, MoveCategory.SPECIAL, 120, 90, 10, -1, 0, 6)
-      .condition((user, target, move) => user.battleData.berriesEaten.length > 0),
+      .condition((user, target, move) => user.battleData.hasEatenBerry),
     new StatusMove(Moves.ROTOTILLER, PokemonType.GROUND, -1, 10, -1, 0, 6)
       .target(MoveTarget.ALL)
       .condition((user, target, move) => {
@@ -11132,7 +11149,6 @@ export function initMoves() {
     new AttackMove(Moves.TWIN_BEAM, PokemonType.PSYCHIC, MoveCategory.SPECIAL, 40, 100, 10, -1, 0, 9)
       .attr(MultiHitAttr, MultiHitType._2),
     new AttackMove(Moves.RAGE_FIST, PokemonType.GHOST, MoveCategory.PHYSICAL, 50, 100, 10, -1, 0, 9)
-      .edgeCase() // Counter incorrectly increases on confusion self-hits
       .attr(RageFistPowerAttr)
       .punchingMove(),
     new AttackMove(Moves.ARMOR_CANNON, PokemonType.FIRE, MoveCategory.SPECIAL, 120, 100, 5, -1, 0, 9)

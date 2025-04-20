@@ -177,11 +177,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
               }
               globalScene.currentBattle.seenEnemyPartyMemberIds.add(pokemon.id);
             }
-            addPokeballOpenParticles(
-              pokemon.x,
-              pokemon.y - 16,
-              pokemon.getPokeball(true),
-            );
+            addPokeballOpenParticles(pokemon.x, pokemon.y - 16, pokemon.getPokeball(true));
             globalScene.updateModifiers(this.player);
             globalScene.updateFieldScale();
             pokemon.showInfo();
@@ -202,7 +198,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
                 pokemon.getSprite().clearTint();
                 pokemon.resetSummonData();
                 // necessary to stay transformed during wild waves
-                if (pokemon.summonData?.speciesForm) {
+                if (pokemon.summonData.speciesForm) {
                   pokemon.loadAssets(false);
                 }
                 globalScene.time.delayedCall(1000, () => this.end());

@@ -42,7 +42,6 @@ describe("BattlerTag - SubstituteTag", () => {
           // simulate a Trapped tag set by another Pokemon, then expect the filter to catch it.
           const trapTag = new BindTag(5, 0);
           expect(tagFilter(trapTag)).toBeTruthy();
-          return true;
         }) as Pokemon["findAndRemoveTags"],
       } as unknown as Pokemon;
 

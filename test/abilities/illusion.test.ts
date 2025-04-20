@@ -39,8 +39,8 @@ describe("Abilities - Illusion", () => {
     const zoroark = game.scene.getPlayerPokemon()!;
     const zorua = game.scene.getEnemyPokemon()!;
 
-    expect(!!zoroark.summonData?.illusion).equals(true);
-    expect(!!zorua.summonData?.illusion).equals(true);
+    expect(!!zoroark.summonData.illusion).equals(true);
+    expect(!!zorua.summonData.illusion).equals(true);
   });
 
   it("break after receiving damaging move", async () => {
@@ -51,7 +51,7 @@ describe("Abilities - Illusion", () => {
 
     const zorua = game.scene.getEnemyPokemon()!;
 
-    expect(!!zorua.summonData?.illusion).equals(false);
+    expect(!!zorua.summonData.illusion).equals(false);
     expect(zorua.name).equals("Zorua");
   });
 
@@ -63,7 +63,7 @@ describe("Abilities - Illusion", () => {
 
     const zorua = game.scene.getEnemyPokemon()!;
 
-    expect(!!zorua.summonData?.illusion).equals(false);
+    expect(!!zorua.summonData.illusion).equals(false);
   });
 
   it("break if the ability is suppressed", async () => {
@@ -72,7 +72,7 @@ describe("Abilities - Illusion", () => {
 
     const zorua = game.scene.getEnemyPokemon()!;
 
-    expect(!!zorua.summonData?.illusion).equals(false);
+    expect(!!zorua.summonData.illusion).equals(false);
   });
 
   it("causes enemy AI to consider the illusion's type instead of the actual type when considering move effectiveness", async () => {
@@ -117,7 +117,7 @@ describe("Abilities - Illusion", () => {
 
     const zoroark = game.scene.getPlayerPokemon()!;
 
-    expect(!!zoroark.summonData?.illusion).equals(true);
+    expect(!!zoroark.summonData.illusion).equals(true);
   });
 
   it("copies the the name, nickname, gender, shininess, and pokeball from the illusion source", async () => {

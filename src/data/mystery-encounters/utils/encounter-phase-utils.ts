@@ -9,7 +9,7 @@ import {
 import { showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import type { AiType, PlayerPokemon } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
-import { EnemyPokemon, FieldPosition, PokemonMove, PokemonSummonData } from "#app/field/pokemon";
+import { EnemyPokemon, FieldPosition, PokemonMove } from "#app/field/pokemon";
 import type { CustomModifierSettings, ModifierType } from "#app/modifier/modifier-type";
 import {
   getPartyLuckValue,
@@ -345,11 +345,6 @@ export async function initBattleWithEnemyConfig(partyConfig: EnemyPartyConfig): 
             ? 3
             : undefined;
         enemyPokemon.status = new Status(status, 0, cureTurn);
-      }
-
-      // Set summon data fields
-      if (!enemyPokemon.summonData) {
-        enemyPokemon.summonData = new PokemonSummonData();
       }
 
       // Set ability

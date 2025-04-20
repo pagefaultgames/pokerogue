@@ -58,9 +58,10 @@ export class BattleEndPhase extends BattlePhase {
       globalScene.unshiftPhase(new GameOverPhase(true));
     }
 
+    // reset pokemon wave turn count, apply post battle effects, etc etc.
     for (const pokemon of globalScene.getField()) {
-      if (pokemon?.battleSummonData) {
-        pokemon.battleSummonData.waveTurnCount = 1;
+      if (pokemon?.summonData) {
+        pokemon.summonData.waveTurnCount = 1;
       }
     }
 
@@ -81,6 +82,7 @@ export class BattleEndPhase extends BattlePhase {
       }
     }
 
+    // lapse all post battle modifiers that should lapse
     const lapsingModifiers = globalScene.findModifiers(
       m => m instanceof LapsingPersistentModifier || m instanceof LapsingPokemonHeldItemModifier,
     ) as (LapsingPersistentModifier | LapsingPokemonHeldItemModifier)[];

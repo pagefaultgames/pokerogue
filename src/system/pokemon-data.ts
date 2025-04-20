@@ -1,19 +1,19 @@
 import { BattleType } from "../battle";
 import { globalScene } from "#app/global-scene";
 import type { Gender } from "../data/gender";
-import type { Nature } from "#enums/nature";
+import { Nature } from "#enums/nature";
 import type { PokeballType } from "#enums/pokeball";
 import { getPokemonSpecies, getPokemonSpeciesForm } from "../data/pokemon-species";
 import { Status } from "../data/status-effect";
-import Pokemon, { EnemyPokemon, PokemonMove, PokemonSummonData } from "../field/pokemon";
+import Pokemon, { EnemyPokemon, PokemonMove, PokemonSummonData, type PokemonBattleData } from "../field/pokemon";
 import { TrainerSlot } from "#enums/trainer-slot";
 import type { Variant } from "#app/sprites/variant";
-import { loadBattlerTag } from "../data/battler-tags";
 import type { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import type { Species } from "#enums/species";
 import { CustomPokemonData } from "#app/data/custom-pokemon-data";
 import type { PokemonType } from "#enums/pokemon-type";
+import { loadBattlerTag } from "#app/data/battler-tags";
 
 export default class PokemonData {
   public id: number;
@@ -62,72 +62,67 @@ export default class PokemonData {
   public boss: boolean;
   public bossSegments?: number;
 
+  // Effects that need to be preserved between waves
   public summonData: PokemonSummonData;
+  public battleData: PokemonBattleData;
   public summonDataSpeciesFormIndex: number;
 
-  /** Data that can customize a Pokemon in non-standard ways from its Species */
   public customPokemonData: CustomPokemonData;
   public fusionCustomPokemonData: CustomPokemonData;
 
-  // Deprecated attributes, needed for now to allow SessionData migration (see PR#4619 comments)
+  // Deprecated attributes, needed for now to allow SessionData migration (see PR#4619 comments).
+  // TODO: These can probably be safely deleted (what with the upgrade scripts and all)
   public natureOverride: Nature | -1;
   public mysteryEncounterPokemonData: CustomPokemonData | null;
   public fusionMysteryEncounterPokemonData: CustomPokemonData | null;
 
+  /**
+   * Construct a new {@linkcode PokemonData} instance out of a {@linkcode Pokemon}
+   * or JSON representation thereof.
+   * @param source The {@linkcode Pokemon} to convert into data (or a JSON object representing one)
+   * @param forHistory
+   */
   constructor(source: Pokemon | any, forHistory = false) {
-    const sourcePokemon = source instanceof Pokemon ? source : null;
+    const sourcePokemon = source instanceof Pokemon ? source : undefined;
     this.id = source.id;
     this.player = sourcePokemon ? sourcePokemon.isPlayer() : source.player;
     this.species = sourcePokemon ? sourcePokemon.species.speciesId : source.species;
-    this.nickname = sourcePokemon 
-    ? (!!sourcePokemon.summonData?.illusion ? sourcePokemon.summonData.illusion.basePokemon.nickname : sourcePokemon.nickname) 
-    : source.nickname;
+    this.nickname =
+      sourcePokemon?.summonData.illusion?.basePokemon.nickname ?? sourcePokemon?.nickname ?? source.nickname;
     this.formIndex = Math.max(Math.min(source.formIndex, getPokemonSpecies(this.species).forms.length - 1), 0);
     this.abilityIndex = source.abilityIndex;
     this.passive = source.passive;
-    this.shiny = sourcePokemon ? sourcePokemon.isShiny() : source.shiny;
-    this.variant = sourcePokemon ? sourcePokemon.getVariant() : source.variant;
+    this.shiny = sourcePokemon?.isShiny() ?? source.shiny;
+    this.variant = sourcePokemon?.getVariant() ?? source.variant;
     this.pokeball = source.pokeball;
     this.level = source.level;
     this.exp = source.exp;
-    if (!forHistory) {
-      this.levelExp = source.levelExp;
-    }
     this.gender = source.gender;
-    if (!forHistory) {
-      this.hp = source.hp;
-    }
     this.stats = source.stats;
     this.ivs = source.ivs;
-    this.nature = source.nature !== undefined ? source.nature : (0 as Nature);
-    this.friendship =
-      source.friendship !== undefined ? source.friendship : getPokemonSpecies(this.species).baseFriendship;
+    this.nature = source.nature ?? Nature.HARDY;
+    this.friendship = source.friendship ?? getPokemonSpecies(this.species).baseFriendship;
     this.metLevel = source.metLevel || 5;
-    this.metBiome = source.metBiome !== undefined ? source.metBiome : -1;
+    this.metBiome = source.metBiome ?? -1;
     this.metSpecies = source.metSpecies;
     this.metWave = source.metWave ?? (this.metBiome === -1 ? -1 : 0);
-    this.luck = source.luck !== undefined ? source.luck : source.shiny ? source.variant + 1 : 0;
-    if (!forHistory) {
-      this.pauseEvolutions = !!source.pauseEvolutions;
-      this.evoCounter = source.evoCounter ?? 0;
-    }
+    this.luck = source.luck ?? (source.shiny ? source.variant + 1 : 0);
     this.pokerus = !!source.pokerus;
     this.teraType = source.teraType as PokemonType;
-    this.isTerastallized = source.isTerastallized || false;
-    this.stellarTypesBoosted = source.stellarTypesBoosted || [];
+    this.isTerastallized = !!source.isTerastallized;
+    this.stellarTypesBoosted = source.stellarTypesBoosted ?? [];
 
     this.fusionSpecies = sourcePokemon ? sourcePokemon.fusionSpecies?.speciesId : source.fusionSpecies;
     this.fusionFormIndex = source.fusionFormIndex;
     this.fusionAbilityIndex = source.fusionAbilityIndex;
-    this.fusionShiny = sourcePokemon 
-    ? (!!sourcePokemon.summonData?.illusion ? sourcePokemon.summonData.illusion.basePokemon.fusionShiny : sourcePokemon.fusionShiny) 
-    : source.fusionShiny;
-    this.fusionVariant = sourcePokemon 
-    ? (!!sourcePokemon.summonData?.illusion ? sourcePokemon.summonData.illusion.basePokemon.fusionVariant : sourcePokemon.fusionVariant) 
-    : source.fusionVariant;
+    this.fusionShiny =
+      sourcePokemon?.summonData.illusion?.basePokemon.fusionShiny ?? sourcePokemon?.fusionShiny ?? source.fusionShiny;
+    this.fusionVariant =
+      sourcePokemon?.summonData.illusion?.basePokemon.fusionVariant ??
+      sourcePokemon?.fusionVariant ??
+      source.fusionVariant;
     this.fusionGender = source.fusionGender;
-    this.fusionLuck =
-      source.fusionLuck !== undefined ? source.fusionLuck : source.fusionShiny ? source.fusionVariant + 1 : 0;
+    this.fusionLuck = source.fusionLuck ?? (source.fusionShiny ? source.fusionVariant + 1 : 0);
     this.fusionCustomPokemonData = new CustomPokemonData(source.fusionCustomPokemonData);
     this.fusionTeraType = (source.fusionTeraType ?? 0) as PokemonType;
     this.usedTMs = source.usedTMs ?? [];
@@ -135,6 +130,7 @@ export default class PokemonData {
     this.customPokemonData = new CustomPokemonData(source.customPokemonData);
 
     // Deprecated, but needed for session data migration
+    // TODO: Do we really need this??
     this.natureOverride = source.natureOverride;
     this.mysteryEncounterPokemonData = source.mysteryEncounterPokemonData
       ? new CustomPokemonData(source.mysteryEncounterPokemonData)
@@ -143,51 +139,44 @@ export default class PokemonData {
       ? new CustomPokemonData(source.fusionMysteryEncounterPokemonData)
       : null;
 
+    this.moveset =
+      sourcePokemon?.moveset ??
+      (source.moveset || [new PokemonMove(Moves.TACKLE), new PokemonMove(Moves.GROWL)])
+        .filter((m: any) => !!m)
+        .map((m: any) => new PokemonMove(m.moveId, m.ppUsed, m.ppUp, m.virtual, m.maxPpOverride));
+
     if (!forHistory) {
+      this.levelExp = source.levelExp;
+      this.hp = source.hp;
+
+      this.pauseEvolutions = !!source.pauseEvolutions;
+      this.evoCounter = source.evoCounter ?? 0;
+
       this.boss = (source instanceof EnemyPokemon && !!source.bossSegments) || (!this.player && !!source.boss);
       this.bossSegments = source.bossSegments;
-    }
-
-    if (sourcePokemon) {
-      this.moveset = sourcePokemon.moveset;
-      if (!forHistory) {
-        this.status = sourcePokemon.status;
-        if (this.player && sourcePokemon.summonData) {
-          this.summonData = sourcePokemon.summonData;
-          this.summonDataSpeciesFormIndex = this.getSummonDataSpeciesFormIndex();
-        }
-      }
-    } else {
-      this.moveset = (source.moveset || [new PokemonMove(Moves.TACKLE), new PokemonMove(Moves.GROWL)])
-        .filter(m => m)
-        .map((m: any) => new PokemonMove(m.moveId, m.ppUsed, m.ppUp, m.virtual, m.maxPpOverride));
-      if (!forHistory) {
-        this.status = source.status
+      this.status =
+        sourcePokemon?.status ??
+        (source.status
           ? new Status(source.status.effect, source.status.toxicTurnCount, source.status.sleepTurnsRemaining)
-          : null;
+          : null);
+
+      // enemy pokemon don't use instantized summon data
+      if (this.player) {
+        this.summonData = sourcePokemon?.summonData ?? source.summonData;
+      } else {
+        console.log("this.player false!");
+        this.summonData = new PokemonSummonData();
       }
 
-      this.summonData = new PokemonSummonData();
-      if (!forHistory && source.summonData) {
-        this.summonData.stats = source.summonData.stats;
-        this.summonData.statStages = source.summonData.statStages;
-        this.summonData.moveQueue = source.summonData.moveQueue;
-        this.summonData.abilitySuppressed = source.summonData.abilitySuppressed;
-        this.summonData.abilitiesApplied = source.summonData.abilitiesApplied;
-
-        this.summonData.ability = source.summonData.ability;
+      if (!sourcePokemon) {
         this.summonData.moveset = source.summonData.moveset?.map(m => PokemonMove.loadMove(m));
-        this.summonData.types = source.summonData.types;
-        this.summonData.speciesForm = source.summonData.speciesForm;
-        this.summonDataSpeciesFormIndex = source.summonDataSpeciesFormIndex;
-        this.summonData.illusionBroken = source.summonData.illusionBroken;
-
-        if (source.summonData.tags) {
-          this.summonData.tags = source.summonData.tags?.map(t => loadBattlerTag(t));
-        } else {
-          this.summonData.tags = [];
-        }
+        this.summonData.tags = source.tags.map((t: any) => loadBattlerTag(t));
       }
+
+      this.summonDataSpeciesFormIndex = sourcePokemon
+        ? this.getSummonDataSpeciesFormIndex()
+        : source.summonDataSpeciesFormIndex;
+      this.battleData = sourcePokemon?.battleData ?? source.battleData;
     }
   }
 

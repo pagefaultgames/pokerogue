@@ -47,7 +47,12 @@ import {
 } from "./modifier-type";
 import { Color, ShadowColor } from "#enums/color";
 import { FRIENDSHIP_GAIN_FROM_RARE_CANDY } from "#app/data/balance/starters";
-import { applyAbAttrs, CommanderAbAttr } from "#app/data/abilities/ability";
+import {
+  applyAbAttrs,
+  applyPostItemLostAbAttrs,
+  CommanderAbAttr,
+  PostItemLostAbAttr,
+} from "#app/data/abilities/ability";
 import { globalScene } from "#app/global-scene";
 
 export type ModifierPredicate = (modifier: Modifier) => boolean;
@@ -1644,8 +1649,8 @@ export class FlinchChanceModifier extends PokemonHeldItemModifier {
    * @returns `true` if {@linkcode FlinchChanceModifier} has been applied
    */
   override apply(pokemon: Pokemon, flinched: BooleanHolder): boolean {
-    // The check for pokemon.battleSummonData is to ensure that a crash doesn't occur when a Pokemon with King's Rock procs a flinch
-    if (pokemon.battleSummonData && !flinched.value && pokemon.randSeedInt(100) < this.getStackCount() * this.chance) {
+    // The check for pokemon.summonData is to ensure that a crash doesn't occur when a Pokemon with King's Rock procs a flinch
+    if (pokemon.summonData && !flinched.value && pokemon.randSeedInt(100) < this.getStackCount() * this.chance) {
       flinched.value = true;
       return true;
     }
@@ -1866,11 +1871,15 @@ export class BerryModifier extends PokemonHeldItemModifier {
   override apply(pokemon: Pokemon): boolean {
     const preserve = new BooleanHolder(false);
     globalScene.applyModifiers(PreserveBerryModifier, pokemon.isPlayer(), pokemon, preserve);
+    this.consumed = !preserve.value;
 
+    // munch the berry and trigger unburden-like effects
     getBerryEffectFunc(this.berryType)(pokemon);
-    if (!preserve.value) {
-      this.consumed = true;
-    }
+    applyPostItemLostAbAttrs(PostItemLostAbAttr, pokemon, false);
+
+    // Update berry eaten trackers for Belch, Harvest, Cud Chew, etc.
+    // Don't recover it if we proc berry pouch (no item duplication)
+    pokemon.recordEatenBerry(this.berryType, this.consumed);
 
     return true;
   }
@@ -1909,9 +1918,7 @@ export class PreserveBerryModifier extends PersistentModifier {
    * @returns always `true`
    */
   override apply(pokemon: Pokemon, doPreserve: BooleanHolder): boolean {
-    if (!doPreserve.value) {
-      doPreserve.value = pokemon.randSeedInt(10) < this.getStackCount() * 3;
-    }
+    doPreserve.value ||= pokemon.randSeedInt(10) < this.getStackCount() * 3;
 
     return true;
   }
@@ -3608,7 +3615,7 @@ export class EnemyAttackStatusEffectChanceModifier extends EnemyPersistentModifi
     super(type, stackCount);
 
     this.effect = effect;
-    //Hardcode temporarily
+    // Hardcode temporarily
     this.chance = 0.025 * (this.effect === StatusEffect.BURN || this.effect === StatusEffect.POISON ? 2 : 1);
   }
 
@@ -3715,13 +3722,13 @@ export class EnemyEndureChanceModifier extends EnemyPersistentModifier {
    * @returns `true` if {@linkcode Pokemon} endured
    */
   override apply(target: Pokemon): boolean {
-    if (target.battleData.endured || target.randSeedInt(100) >= this.chance * this.getStackCount()) {
+    if (target.waveData.endured || target.randSeedInt(100) >= this.chance * this.getStackCount()) {
       return false;
     }
 
     target.addTag(BattlerTagType.ENDURE_TOKEN, 1);
 
-    target.battleData.endured = true;
+    target.waveData.endured = true;
 
     return true;
   }

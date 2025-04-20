@@ -28,7 +28,7 @@ describe("Moves - Rage Fist", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleType("single")
-      .moveset([Moves.RAGE_FIST, Moves.SPLASH, Moves.SUBSTITUTE])
+      .moveset([Moves.RAGE_FIST, Moves.SPLASH, Moves.SUBSTITUTE, Moves.TIDY_UP])
       .startingLevel(100)
       .enemyLevel(1)
       .enemyAbility(Abilities.BALL_FETCH)
@@ -37,7 +37,7 @@ describe("Moves - Rage Fist", () => {
     vi.spyOn(move, "calculateBattlePower");
   });
 
-  it("should have 100 more power if hit twice before calling Rage Fist", async () => {
+  it("should gain power per hit taken", async () => {
     game.override.enemySpecies(Species.MAGIKARP);
 
     await game.classicMode.startBattle([Species.MAGIKARP]);
@@ -49,7 +49,69 @@ describe("Moves - Rage Fist", () => {
     expect(move.calculateBattlePower).toHaveLastReturnedWith(150);
   });
 
-  it("should maintain its power during next battle if it is within the same arena encounter", async () => {
+  it("caps at 6 hits taken", async () => {
+    game.override.enemySpecies(Species.MAGIKARP);
+
+    await game.classicMode.startBattle([Species.MAGIKARP]);
+
+    // spam splash against magikarp hitting us 2 times per turn
+    game.move.select(Moves.SPLASH);
+    await game.toNextTurn();
+    game.move.select(Moves.SPLASH);
+    await game.toNextTurn();
+    game.move.select(Moves.SPLASH);
+    await game.toNextTurn();
+
+    game.move.select(Moves.RAGE_FIST);
+    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    await game.phaseInterceptor.to("TurnEndPhase");
+
+    // hit 8 times, but nothing else
+    expect(game.scene.getPlayerPokemon()?.battleData.hitCount).toBe(8);
+    expect(move.calculateBattlePower).toHaveLastReturnedWith(350);
+  });
+
+  it("should not count subsitute hits or confusion damage", async () => {
+    game.override.enemySpecies(Species.MAGIKARP).startingWave(4).enemyMoveset([Moves.CONFUSE_RAY, Moves.DOUBLE_KICK]);
+
+    await game.classicMode.startBattle([Species.MAGIKARP]);
+
+    game.move.select(Moves.SUBSTITUTE);
+    await game.forceEnemyMove(Moves.DOUBLE_KICK);
+    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.phaseInterceptor.to("BerryPhase");
+
+    // no increase due to substitute
+    expect(move.calculateBattlePower).toHaveLastReturnedWith(50);
+    expect(game.scene.getPlayerPokemon()?.battleData.hitCount).toBe(0);
+
+    await game.toNextTurn();
+
+    // remove substitute and get confused
+    game.move.select(Moves.TIDY_UP);
+    await game.forceEnemyMove(Moves.CONFUSE_RAY);
+    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.toNextTurn();
+
+    game.move.select(Moves.RAGE_FIST);
+    await game.move.forceStatusActivation(true);
+    await game.forceEnemyMove(Moves.SPLASH);
+    await game.phaseInterceptor.to("BerryPhase");
+
+    // didn't go up
+    expect(game.scene.getPlayerPokemon()?.battleData.hitCount).toBe(0);
+
+    await game.toNextTurn();
+
+    game.move.select(Moves.RAGE_FIST);
+    await game.move.forceStatusActivation(false);
+    await game.toNextTurn();
+
+    expect(move.calculateBattlePower).toHaveLastReturnedWith(150);
+    expect(game.scene.getPlayerPokemon()?.battleData.hitCount).toBe(2);
+  });
+
+  it("should maintain hits recieved between wild waves", async () => {
     game.override.enemySpecies(Species.MAGIKARP).startingWave(1);
 
     await game.classicMode.startBattle([Species.MAGIKARP]);
@@ -63,10 +125,11 @@ describe("Moves - Rage Fist", () => {
     await game.phaseInterceptor.to("BerryPhase", false);
 
     expect(move.calculateBattlePower).toHaveLastReturnedWith(250);
+    expect(game.scene.getPlayerPokemon()?.battleData.hitCount).toBe(4);
   });
 
-  it("should reset the hitRecCounter if we enter new trainer battle", async () => {
-    game.override.enemySpecies(Species.MAGIKARP).startingWave(4);
+  it("should reset hits recieved during trainer battles", async () => {
+    game.override.enemySpecies(Species.MAGIKARP).startingWave(19);
 
     await game.classicMode.startBattle([Species.MAGIKARP]);
 
@@ -79,18 +142,6 @@ describe("Moves - Rage Fist", () => {
     await game.phaseInterceptor.to("BerryPhase", false);
 
     expect(move.calculateBattlePower).toHaveLastReturnedWith(150);
-  });
-
-  it("should not increase the hitCounter if Substitute is hit", async () => {
-    game.override.enemySpecies(Species.MAGIKARP).startingWave(4);
-
-    await game.classicMode.startBattle([Species.MAGIKARP]);
-
-    game.move.select(Moves.SUBSTITUTE);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
-    await game.phaseInterceptor.to("MoveEffectPhase");
-
-    expect(game.scene.getPlayerPokemon()?.customPokemonData.hitsRecCount).toBe(0);
   });
 
   it("should reset the hitRecCounter if we enter new biome", async () => {

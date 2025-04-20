@@ -1,7 +1,12 @@
 import { BattlerIndex, BattleType } from "#app/battle";
 import { globalScene } from "#app/global-scene";
 import { PLAYER_PARTY_MAX_SIZE } from "#app/constants";
-import { applyAbAttrs, SyncEncounterNatureAbAttr, applyPreSummonAbAttrs, PreSummonAbAttr } from "#app/data/abilities/ability";
+import {
+  applyAbAttrs,
+  SyncEncounterNatureAbAttr,
+  applyPreSummonAbAttrs,
+  PreSummonAbAttr,
+} from "#app/data/abilities/ability";
 import { initEncounterAnims, loadEncounterAnimAssets } from "#app/data/battle-anims";
 import { getCharVariantFromDialogue } from "#app/data/dialogue";
 import { getEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
@@ -107,12 +112,6 @@ export class EncounterPhase extends BattlePhase {
       }
       if (!this.loaded) {
         if (battle.battleType === BattleType.TRAINER) {
-          //resets hitRecCount during Trainer ecnounter
-          for (const pokemon of globalScene.getPlayerParty()) {
-            if (pokemon) {
-              pokemon.customPokemonData.resetHitReceivedCount();
-            }
-          }
           battle.enemyParty[e] = battle.trainer?.genPartyMember(e)!; // TODO:: is the bang correct here?
         } else {
           let enemySpecies = globalScene.randomSpecies(battle.waveIndex, level, true);
@@ -134,7 +133,6 @@ export class EncounterPhase extends BattlePhase {
           if (globalScene.currentBattle.battleSpec === BattleSpec.FINAL_BOSS) {
             battle.enemyParty[e].ivs = new Array(6).fill(31);
           }
-          // biome-ignore lint/complexity/noForEach: Improves readability
           globalScene
             .getPlayerParty()
             .slice(0, !battle.double ? 1 : 2)
@@ -336,7 +334,7 @@ export class EncounterPhase extends BattlePhase {
 
     for (const pokemon of globalScene.getPlayerParty()) {
       if (pokemon) {
-        pokemon.resetBattleData();
+        pokemon.resetBattleAndWaveData();
       }
     }
 

@@ -51,7 +51,7 @@ export class FormChangePhase extends EvolutionPhase {
         sprite.setPipelineData("shiny", transformedPokemon.shiny);
         sprite.setPipelineData("variant", transformedPokemon.variant);
         ["spriteColors", "fusionSpriteColors"].map(k => {
-          if (transformedPokemon.summonData?.speciesForm) {
+          if (transformedPokemon.summonData.speciesForm) {
             k += "Base";
           }
           sprite.pipelineData[k] = transformedPokemon.getSprite().pipelineData[k];

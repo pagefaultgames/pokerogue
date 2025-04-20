@@ -155,7 +155,7 @@ describe("Abilities - Wimp Out", () => {
     game.doSelectPartyPokemon(1);
     await game.phaseInterceptor.to("SwitchSummonPhase", false);
 
-    expect(wimpod.summonData.abilitiesApplied).not.toContain(Abilities.WIMP_OUT);
+    expect(wimpod.waveData.abilitiesApplied).not.toContain(Abilities.WIMP_OUT);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
@@ -534,12 +534,12 @@ describe("Abilities - Wimp Out", () => {
       .enemyAbility(Abilities.WIMP_OUT)
       .startingLevel(50)
       .enemyLevel(1)
-      .enemyMoveset([ Moves.SPLASH, Moves.ENDURE ])
+      .enemyMoveset([Moves.SPLASH, Moves.ENDURE])
       .battleType("double")
-      .moveset([ Moves.DRAGON_ENERGY, Moves.SPLASH ])
+      .moveset([Moves.DRAGON_ENERGY, Moves.SPLASH])
       .startingWave(wave);
 
-    await game.classicMode.startBattle([ Species.REGIDRAGO, Species.MAGIKARP ]);
+    await game.classicMode.startBattle([Species.REGIDRAGO, Species.MAGIKARP]);
 
     // turn 1
     game.move.select(Moves.DRAGON_ENERGY, 0);
@@ -549,6 +549,5 @@ describe("Abilities - Wimp Out", () => {
 
     await game.phaseInterceptor.to("SelectModifierPhase");
     expect(game.scene.currentBattle.waveIndex).toBe(wave + 1);
-
   });
 });
