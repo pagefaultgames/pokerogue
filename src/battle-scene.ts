@@ -37,6 +37,7 @@ import {
   PokemonHpRestoreModifier,
   PokemonIncrementingStatModifier,
   RememberMoveModifier,
+  ShinyRateBoosterModifier,
 } from "./modifier/modifier";
 import { PokeballType } from "#enums/pokeball";
 import {
@@ -184,6 +185,7 @@ import { HideAbilityPhase } from "#app/phases/hide-ability-phase";
 import { expSpriteKeys } from "./sprites/sprite-keys";
 import { hasExpSprite } from "./sprites/sprite-utils";
 import { timedEventManager } from "./global-event-manager";
+import { BASE_SHINY_CHANCE } from "./data/balance/rates";
 
 export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
 
@@ -1293,6 +1295,17 @@ export default class BattleScene extends SceneBase {
         },
       });
     }
+  }
+
+  /**
+   * Applies Shiny Charms and other modifiers to check the general shiny rate
+   * @returns The chance out of 65536 to get a shiny
+   */
+  getModifiedShinyThreshold(): number {
+    const threshold = new NumberHolder(BASE_SHINY_CHANCE);
+    this.applyModifiers(ShinyRateBoosterModifier, true, threshold);
+    threshold.value *= timedEventManager.getShinyMultiplier();
+    return threshold.value;
   }
 
   getDoubleBattleChance(newWaveIndex: number, playerField: PlayerPokemon[]) {

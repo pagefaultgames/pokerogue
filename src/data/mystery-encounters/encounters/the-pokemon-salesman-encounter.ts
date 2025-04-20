@@ -39,8 +39,8 @@ const MAX_POKEMON_PRICE_MULTIPLIER = 4;
 /** Odds of shiny magikarp will be 1/value */
 const SHINY_MAGIKARP_WEIGHT = 100;
 
-/** Odds of event sale will be 1/value */
-const EVENT_THRESHOLD = 20;
+/** Odds of event sale will be value/100 */
+const EVENT_THRESHOLD = 50;
 
 /**
  * Pokemon Salesman encounter.
@@ -122,10 +122,11 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter = MysteryEncounterBui
     ) {
       // If you roll 20%, give event encounter with 2 extra shiny rolls and its HA, if it has one
       const enc = randSeedItem(validEventEncounters);
+      const thresh = globalScene.getModifiedShinyThreshold();
       species = getPokemonSpecies(enc.species);
       pokemon = new PlayerPokemon(species, 5, species.abilityHidden === Abilities.NONE ? undefined : 2, enc.formIndex);
-      pokemon.trySetShinySeed();
-      pokemon.trySetShinySeed();
+      pokemon.trySetShinySeed(thresh); // Apply event shiny boost even though it's a PlayerPokemon
+      pokemon.trySetShinySeed(thresh);
     } else {
       pokemon = new PlayerPokemon(species, 5, 2, species.formIndex);
     }

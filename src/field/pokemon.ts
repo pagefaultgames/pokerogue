@@ -3165,7 +3165,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Function that tries to set a Pokemon shiny based on seed.
    * For manual use only, usually to roll a Pokemon's shiny chance a second time.
-   * If it rolls shiny, also sets a random variant and give the Pokemon the associated luck.
+   * If it rolls shiny, or if it's already shiny, also sets a random variant and give the Pokemon the associated luck.
    *
    * The base shiny odds are {@linkcode BASE_SHINY_CHANCE} / `65536`
    * @param thresholdOverride number that is divided by `2^16` (`65536`) to get the shiny chance, overrides {@linkcode shinyThreshold} if set (bypassing shiny rate modifiers such as Shiny Charm)
@@ -3195,7 +3195,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       shinyThreshold.value = thresholdOverride;
     }
 
-    this.shiny = randSeedInt(65536) < shinyThreshold.value;
+    this.shiny = this.shiny || randSeedInt(65536) < shinyThreshold.value; // If it's already shiny, don't un-shiny it
 
     if (this.shiny) {
       this.variant = this.generateShinyVariant();
