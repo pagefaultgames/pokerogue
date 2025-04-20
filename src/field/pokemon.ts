@@ -7157,8 +7157,8 @@ export class EnemyPokemon extends Pokemon {
   initBattleInfo(): void {
     if (!this.battleInfo) {
       this.battleInfo = new EnemyBattleInfo();
+            this.battleInfo.initInfo(this);
       this.battleInfo.updateBossSegments(this);
-      this.battleInfo.initInfo(this);
     } else {
       this.battleInfo.updateBossSegments(this);
     }
