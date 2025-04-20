@@ -301,10 +301,10 @@ type damageParams = {
   effectiveness?: number;
 }
 
-/** Type for the parameters of {@linkcode Pokemon#getBaseDamage getBaseDamage} */
+/** Type for the parameters of {@linkcode Pokemon#getBaseDamage | getBaseDamage} */
 type getBaseDamageParams = Omit<damageParams, "effectiveness">
 
-/** Type for the parameters of {@linkcode Pokemon#getAttackDamage getAttackDamage} */
+/** Type for the parameters of {@linkcode Pokemon#getAttackDamage | getAttackDamage} */
 type getAttackDamageParams = Omit<damageParams, "moveCategory">;
 
 export default abstract class Pokemon extends Phaser.GameObjects.Container {
