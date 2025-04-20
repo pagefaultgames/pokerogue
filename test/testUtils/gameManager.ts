@@ -444,7 +444,7 @@ export default class GameManager {
 
   /**
    * Check if the player has won the battle.
-   * @returns whether the player has won the battle (all opposinc Pokemon have been fainted)
+   * @returns whether the player has won the battle (all opposing Pokemon have been fainted)
    */
   isVictory() {
     return this.scene.currentBattle.enemyParty.every(pokemon => pokemon.isFainted());
@@ -462,7 +462,7 @@ export default class GameManager {
 
   /**
    * Checks if the current mode matches the target mode.
-   * @param mode - The target {@linkcode Mode} to check.
+   * @param mode - The target {@linkcode UiMode} to check.
    * @returns Whether the current mode matches the target mode.
    */
   isCurrentMode(mode: UiMode) {
