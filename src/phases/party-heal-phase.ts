@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import { fixedInt } from "#app/utils";
+import { fixedInt } from "#app/utils/common";
 import { BattlePhase } from "./battle-phase";
 
 export class PartyHealPhase extends BattlePhase {

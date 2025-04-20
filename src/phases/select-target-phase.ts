@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import type { BattlerIndex } from "#app/battle";
 import { Command } from "#app/ui/command-ui-handler";
-import { Mode } from "#app/ui/ui";
+import { UiMode } from "#enums/ui-mode";
 import { CommandPhase } from "./command-phase";
 import { PokemonPhase } from "./pokemon-phase";
 import i18next from "#app/plugins/i18n";
@@ -18,8 +18,8 @@ export class SelectTargetPhase extends PokemonPhase {
 
     const turnCommand = globalScene.currentBattle.turnCommands[this.fieldIndex];
     const move = turnCommand?.move?.move;
-    globalScene.ui.setMode(Mode.TARGET_SELECT, this.fieldIndex, move, (targets: BattlerIndex[]) => {
-      globalScene.ui.setMode(Mode.MESSAGE);
+    globalScene.ui.setMode(UiMode.TARGET_SELECT, this.fieldIndex, move, (targets: BattlerIndex[]) => {
+      globalScene.ui.setMode(UiMode.MESSAGE);
       const fieldSide = globalScene.getField();
       const user = fieldSide[this.fieldIndex];
       const moveObject = allMoves[move!];

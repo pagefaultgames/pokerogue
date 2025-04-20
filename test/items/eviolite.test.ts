@@ -1,5 +1,5 @@
 import { StatBoosterModifier } from "#app/modifier/modifier";
-import { NumberHolder, randItem } from "#app/utils";
+import { NumberHolder, randItem } from "#app/utils/common";
 import { Species } from "#enums/species";
 import { Stat } from "#enums/stat";
 import GameManager from "#test/testUtils/gameManager";

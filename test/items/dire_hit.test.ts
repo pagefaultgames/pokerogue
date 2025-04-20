@@ -6,7 +6,7 @@ import Phase from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { BattleEndPhase } from "#app/phases/battle-end-phase";
 import { TempCritBoosterModifier } from "#app/modifier/modifier";
-import { Mode } from "#app/ui/ui";
+import { UiMode } from "#enums/ui-mode";
 import type ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 import { Button } from "#app/enums/buttons";
 import { CommandPhase } from "#app/phases/command-phase";
@@ -71,7 +71,7 @@ describe("Items - Dire Hit", () => {
     // Forced DIRE_HIT to spawn in the first slot with override
     game.onNextPrompt(
       "SelectModifierPhase",
-      Mode.MODIFIER_SELECT,
+      UiMode.MODIFIER_SELECT,
       () => {
         const handler = game.scene.ui.getHandler() as ModifierSelectUiHandler;
         // Traverse to first modifier slot

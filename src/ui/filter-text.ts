@@ -5,7 +5,7 @@ import { addWindow, WindowVariant } from "./ui-theme";
 import i18next from "i18next";
 import type AwaitableUiHandler from "./awaitable-ui-handler";
 import type UI from "./ui";
-import { Mode } from "./ui";
+import { UiMode } from "#enums/ui-mode";
 import { globalScene } from "#app/global-scene";
 
 export enum FilterTextRow {
@@ -154,7 +154,7 @@ export class FilterText extends Phaser.GameObjects.Container {
         this.onChange;
       },
     ];
-    ui.setOverlayMode(Mode.POKEDEX_SCAN, buttonAction, prefilledText, index);
+    ui.setOverlayMode(UiMode.POKEDEX_SCAN, buttonAction, prefilledText, index);
   }
 
   setCursor(cursor: number): void {

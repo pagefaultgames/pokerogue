@@ -8,7 +8,7 @@ import {
   shiftCharCodes,
   randSeedItem,
   randInt,
-} from "#app/utils";
+} from "#app/utils/common";
 import Trainer, { TrainerVariant } from "./field/trainer";
 import type { GameMode } from "./game-mode";
 import { MoneyMultiplierModifier, PokemonHeldItemModifier } from "./modifier/modifier";

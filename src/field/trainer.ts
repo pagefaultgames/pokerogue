@@ -11,7 +11,7 @@ import { TrainerSlot } from "#enums/trainer-slot";
 import { TrainerPoolTier } from "#enums/trainer-pool-tier";
 import { TeraAIMode } from "#enums/tera-ai-mode";
 import type { EnemyPokemon } from "#app/field/pokemon";
-import { randSeedWeightedItem, randSeedItem, randSeedInt } from "#app/utils";
+import { randSeedWeightedItem, randSeedItem, randSeedInt } from "#app/utils/common";
 import type { PersistentModifier } from "#app/modifier/modifier";
 import { ArenaTagSide, ArenaTrapTag } from "#app/data/arena-tag";
 import { getIsInitialized, initI18n } from "#app/plugins/i18n";

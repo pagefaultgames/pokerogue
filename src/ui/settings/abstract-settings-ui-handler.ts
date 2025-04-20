@@ -1,5 +1,5 @@
 import { TextStyle, addTextObject } from "#app/ui/text";
-import { Mode } from "#app/ui/ui";
+import { UiMode } from "#enums/ui-mode";
 import MessageUiHandler from "#app/ui/message-ui-handler";
 import { addWindow } from "#app/ui/ui-theme";
 import { ScrollBar } from "#app/ui/scroll-bar";
@@ -42,7 +42,7 @@ export default class AbstractSettingsUiHandler extends MessageUiHandler {
   protected settings: Array<Setting>;
   protected localStorageKey: string;
 
-  constructor(type: SettingType, mode: Mode | null = null) {
+  constructor(type: SettingType, mode: UiMode | null = null) {
     super(mode);
     this.settings = Setting.filter(s => s.type === type && !s?.isHidden?.());
     this.reloadRequired = false;
@@ -425,7 +425,7 @@ export default class AbstractSettingsUiHandler extends MessageUiHandler {
         const confirmationMessage =
           setting.options[cursor].confirmationMessage ?? i18next.t("settings:defaultConfirmMessage");
         globalScene.ui.showText(confirmationMessage, null, () => {
-          globalScene.ui.setOverlayMode(Mode.CONFIRM, confirmUpdateSetting, cancelUpdateSetting, null, null, 1, 750);
+          globalScene.ui.setOverlayMode(UiMode.CONFIRM, confirmUpdateSetting, cancelUpdateSetting, null, null, 1, 750);
         });
       } else {
         saveSetting();

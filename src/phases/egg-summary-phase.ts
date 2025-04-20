@@ -1,6 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import { Phase } from "#app/phase";
-import { Mode } from "#app/ui/ui";
+import { UiMode } from "#enums/ui-mode";
 import type { EggHatchData } from "#app/data/egg-hatch-data";
 
 /**
@@ -22,7 +22,7 @@ export class EggSummaryPhase extends Phase {
     // updates next pokemon once the current update has been completed
     const updateNextPokemon = (i: number) => {
       if (i >= this.eggHatchData.length) {
-        globalScene.ui.setModeForceTransition(Mode.EGG_HATCH_SUMMARY, this.eggHatchData).then(() => {
+        globalScene.ui.setModeForceTransition(UiMode.EGG_HATCH_SUMMARY, this.eggHatchData).then(() => {
           globalScene.fadeOutBgm(undefined, false);
         });
       } else {
@@ -39,7 +39,7 @@ export class EggSummaryPhase extends Phase {
 
   end() {
     globalScene.time.delayedCall(250, () => globalScene.setModifiersVisible(true));
-    globalScene.ui.setModeForceTransition(Mode.MESSAGE).then(() => {
+    globalScene.ui.setModeForceTransition(UiMode.MESSAGE).then(() => {
       super.end();
     });
   }

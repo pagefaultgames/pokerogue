@@ -8,7 +8,7 @@ import type Pokemon from "../field/pokemon";
 import i18next from "i18next";
 import type { DexEntry, StarterDataEntry } from "../system/game-data";
 import { DexAttr } from "../system/game-data";
-import { fixedInt } from "#app/utils";
+import { fixedInt } from "#app/utils/common";
 import ConfirmUiHandler from "./confirm-ui-handler";
 import { StatsContainer } from "./stats-container";
 import { TextStyle, addBBCodeTextObject, addTextObject, getTextColor } from "./text";

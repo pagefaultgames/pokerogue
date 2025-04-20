@@ -18,7 +18,7 @@ import {
   isNullOrUndefined,
   BooleanHolder,
   type Constructor,
-} from "#app/utils";
+} from "#app/utils/common";
 import type { Modifier, ModifierPredicate, TurnHeldItemTransferModifier } from "./modifier/modifier";
 import {
   ConsumableModifier,
@@ -185,21 +185,14 @@ import { HideAbilityPhase } from "#app/phases/hide-ability-phase";
 import { expSpriteKeys } from "./sprites/sprite-keys";
 import { hasExpSprite } from "./sprites/sprite-utils";
 import { timedEventManager } from "./global-event-manager";
-
-export const bypassLogin = import.meta.env.VITE_BYPASS_LOGIN === "1";
+import { starterColors } from "./global-vars/starter-colors";
+import { startingWave } from "./starting-wave";
 
 const DEBUG_RNG = false;
 
 const OPP_IVS_OVERRIDE_VALIDATED: number[] = (
   Array.isArray(Overrides.OPP_IVS_OVERRIDE) ? Overrides.OPP_IVS_OVERRIDE : new Array(6).fill(Overrides.OPP_IVS_OVERRIDE)
 ).map(iv => (Number.isNaN(iv) || iv === null || iv > 31 ? -1 : iv));
-
-export const startingWave = Overrides.STARTING_WAVE_OVERRIDE || 1;
-
-export let starterColors: StarterColors;
-interface StarterColors {
-  [key: string]: [string, string];
-}
 
 export interface PokeballCounts {
   [pb: string]: number;
@@ -810,11 +803,11 @@ export default class BattleScene extends SceneBase {
   }
 
   async initStarterColors(): Promise<void> {
-    if (starterColors) {
+    if (Object.keys(starterColors).length > 0) {
+      // already initialized
       return;
     }
     const sc = await this.cachedFetch("./starter-colors.json").then(res => res.json());
-    starterColors = {};
     for (const key of Object.keys(sc)) {
       starterColors[key] = sc[key];
     }

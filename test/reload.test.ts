@@ -1,7 +1,7 @@
 import { GameModes } from "#app/game-mode";
 import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
 import type OptionSelectUiHandler from "#app/ui/settings/option-select-ui-handler";
-import { Mode } from "#app/ui/ui";
+import { UiMode } from "#enums/ui-mode";
 import { Biome } from "#enums/biome";
 import { Button } from "#enums/buttons";
 import { Moves } from "#enums/moves";
@@ -58,7 +58,7 @@ describe("Reload", () => {
     // Transition from Wave 10 to Wave 11 in order to trigger biome switch
     game.move.select(Moves.SPLASH);
     await game.doKillOpponents();
-    game.onNextPrompt("SelectBiomePhase", Mode.OPTION_SELECT, () => {
+    game.onNextPrompt("SelectBiomePhase", UiMode.OPTION_SELECT, () => {
       (game.scene.time as MockClock).overrideDelay = null;
       const optionSelectUiHandler = game.scene.ui.getHandler() as OptionSelectUiHandler;
       game.scene.time.delayedCall(1010, () => optionSelectUiHandler.processInput(Button.ACTION));
