@@ -5517,7 +5517,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     );
   }
 
-  messageIsImmune(quiet: boolean, effect?: StatusEffect): void {
+  queueImmuneMessage(quiet: boolean, effect?: StatusEffect): void {
     if (!effect || quiet) {
       return;
     }
@@ -5547,7 +5547,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   ): boolean {
     if (effect !== StatusEffect.FAINT) {
       if (overrideStatus ? this.status?.effect === effect : this.status) {
-        this.messageIsImmune(quiet, effect);
+        this.queueImmuneMessage(quiet, effect);
         return false;
       }
       if (
@@ -5555,7 +5555,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         !ignoreField &&
         globalScene.arena.terrain?.terrainType === TerrainType.MISTY
       ) {
-        this.messageIsImmune(quiet, effect);
+        this.queueImmuneMessage(quiet, effect);
         return false;
       }
     }
@@ -5593,14 +5593,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
         if (this.isOfType(PokemonType.POISON) || this.isOfType(PokemonType.STEEL)) {
           if (poisonImmunity.includes(true)) {
-            this.messageIsImmune(quiet, effect);
+            this.queueImmuneMessage(quiet, effect);
             return false;
           }
         }
         break;
       case StatusEffect.PARALYSIS:
         if (this.isOfType(PokemonType.ELECTRIC)) {
-          this.messageIsImmune(quiet, effect);
+          this.queueImmuneMessage(quiet, effect);
           return false;
         }
         break;
@@ -5609,7 +5609,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           this.isGrounded() &&
           globalScene.arena.terrain?.terrainType === TerrainType.ELECTRIC
         ) {
-          this.messageIsImmune(quiet, effect);
+          this.queueImmuneMessage(quiet, effect);
           return false;
         }
         break;
@@ -5622,13 +5622,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
               globalScene.arena.weather.weatherType,
             ))
         ) {
-          this.messageIsImmune(quiet, effect);
+          this.queueImmuneMessage(quiet, effect);
           return false;
         }
         break;
       case StatusEffect.BURN:
         if (this.isOfType(PokemonType.FIRE)) {
-          this.messageIsImmune(quiet, effect);
+          this.queueImmuneMessage(quiet, effect);
           return false;
         }
         break;
@@ -5660,7 +5660,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     if (cancelled.value) {
-      this.messageIsImmune(quiet, effect);
       return false;
     }
 

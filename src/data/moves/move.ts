@@ -2442,10 +2442,6 @@ export class StatusEffectAttr extends MoveEffectAttr {
     const statusCheck = moveChance < 0 || moveChance === 100 || user.randSeedInt(100) < moveChance;
     if (statusCheck) {
       const pokemon = this.selfTarget ? user : target;
-      if (pokemon.status && !this.overrideStatus) {
-        return false;
-      }
-
       if (user !== target && move.category === MoveCategory.STATUS && !target.canSetStatus(this.effect, false, false, user, true)) {
         return false;
       }
