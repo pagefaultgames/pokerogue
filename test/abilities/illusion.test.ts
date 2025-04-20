@@ -142,4 +142,18 @@ describe("Abilities - Illusion", () => {
     expect(zoroark.isShiny(true)).equals(true);
     expect(zoroark.getPokeball(true)).equals(PokeballType.GREAT_BALL);
   });
+
+  it("breaks when suppressed", async () => {
+    game.override.moveset(Moves.GASTRO_ACID);
+    await game.classicMode.startBattle([Species.MAGIKARP]);
+    const zorua = game.scene.getEnemyPokemon()!;
+
+    expect(!!zorua.summonData?.illusion).toBe(true);
+
+    game.move.select(Moves.GASTRO_ACID);
+    await game.phaseInterceptor.to(BerryPhase);
+
+    expect(zorua.isFullHp()).toBe(true);
+    expect(!!zorua.summonData?.illusion).toBe(false);
+  });
 });
