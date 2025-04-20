@@ -1,6 +1,6 @@
 import OptionSelectUiHandler from "./settings/option-select-ui-handler";
-import { Mode } from "./ui";
-import { fixedInt, randInt, randItem } from "#app/utils";
+import { UiMode } from "#enums/ui-mode";
+import { fixedInt, randInt, randItem } from "#app/utils/common";
 import { TextStyle, addTextObject } from "./text";
 import { getSplashMessages } from "../data/splash-messages";
 import i18next from "i18next";
@@ -26,7 +26,7 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
 
   private titleStatsTimer: NodeJS.Timeout | null;
 
-  constructor(mode: Mode = Mode.TITLE) {
+  constructor(mode: UiMode = UiMode.TITLE) {
     super(mode);
   }
 

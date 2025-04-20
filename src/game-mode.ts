@@ -7,7 +7,7 @@ import type PokemonSpecies from "./data/pokemon-species";
 import { allSpecies } from "./data/pokemon-species";
 import type { Arena } from "./field/arena";
 import Overrides from "#app/overrides";
-import { randSeedInt, randSeedItem } from "#app/utils";
+import { randSeedInt, randSeedItem } from "#app/utils/common";
 import { Biome } from "#enums/biome";
 import { Species } from "#enums/species";
 import { Challenges } from "./enums/challenges";

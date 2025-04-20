@@ -1,5 +1,5 @@
 import { PokemonType } from "#enums/pokemon-type";
-import { randSeedInt, getEnumValues } from "#app/utils";
+import { randSeedInt, getEnumValues } from "#app/utils/common";
 import type { SpeciesFormEvolution } from "#app/data/balance/pokemon-evolutions";
 import { pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
 import i18next from "i18next";

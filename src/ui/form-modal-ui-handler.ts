@@ -1,10 +1,10 @@
 import type { ModalConfig } from "./modal-ui-handler";
 import { ModalUiHandler } from "./modal-ui-handler";
-import type { Mode } from "./ui";
+import type { UiMode } from "#enums/ui-mode";
 import { TextStyle, addTextInputObject, addTextObject } from "./text";
 import { WindowVariant, addWindow } from "./ui-theme";
 import type InputText from "phaser3-rex-plugins/plugins/inputtext";
-import { fixedInt } from "#app/utils";
+import { fixedInt } from "#app/utils/common";
 import { Button } from "#enums/buttons";
 import { globalScene } from "#app/global-scene";
 
@@ -21,7 +21,7 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
   protected tween: Phaser.Tweens.Tween;
   protected formLabels: Phaser.GameObjects.Text[];
 
-  constructor(mode: Mode | null = null) {
+  constructor(mode: UiMode | null = null) {
     super(mode);
 
     this.editing = false;
@@ -124,7 +124,7 @@ export abstract class FormModalUiHandler extends ModalUiHandler {
       if (this.buttonBgs.length) {
         this.buttonBgs[0].off("pointerdown");
         this.buttonBgs[0].on("pointerdown", () => {
-          if (this.submitAction) {
+          if (this.submitAction && globalScene.tweens.getTweensOf(this.modalContainer).length === 0) {
             this.submitAction();
           }
         });

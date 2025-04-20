@@ -29,7 +29,7 @@ import {
 } from "../status-effect";
 import { getTypeDamageMultiplier } from "../type";
 import { PokemonType } from "#enums/pokemon-type";
-import { BooleanHolder, NumberHolder, isNullOrUndefined, toDmgValue, randSeedItem, randSeedInt, getEnumValues, toReadableString, type Constructor } from "#app/utils";
+import { BooleanHolder, NumberHolder, isNullOrUndefined, toDmgValue, randSeedItem, randSeedInt, getEnumValues, toReadableString, type Constructor } from "#app/utils/common";
 import { WeatherType } from "#enums/weather-type";
 import type { ArenaTrapTag } from "../arena-tag";
 import { ArenaTagSide, WeakenMoveTypeTag } from "../arena-tag";
@@ -8183,7 +8183,7 @@ export type MoveTargetSet = {
 
 export function getMoveTargets(user: Pokemon, move: Moves, replaceTarget?: MoveTarget): MoveTargetSet {
   const variableTarget = new NumberHolder(0);
-  user.getOpponents().forEach(p => applyMoveAttrs(VariableTargetAttr, user, p, allMoves[move], variableTarget));
+  user.getOpponents(false).forEach(p => applyMoveAttrs(VariableTargetAttr, user, p, allMoves[move], variableTarget));
 
   let moveTarget: MoveTarget | undefined;
   if (allMoves[move].hasAttr(VariableTargetAttr)) {
@@ -8195,7 +8195,7 @@ export function getMoveTargets(user: Pokemon, move: Moves, replaceTarget?: MoveT
   } else if (move === undefined) {
     moveTarget = MoveTarget.NEAR_ENEMY;
   }
-  const opponents = user.getOpponents();
+  const opponents = user.getOpponents(false);
 
   let set: Pokemon[] = [];
   let multiple = false;
@@ -11231,6 +11231,8 @@ export function initMoves() {
     new AttackMove(Moves.TEMPER_FLARE, PokemonType.FIRE, MoveCategory.PHYSICAL, 75, 100, 10, -1, 0, 9)
       .attr(MovePowerMultiplierAttr, (user, target, move) => user.getLastXMoves(2)[1]?.result === MoveResult.MISS || user.getLastXMoves(2)[1]?.result === MoveResult.FAIL ? 2 : 1),
     new AttackMove(Moves.SUPERCELL_SLAM, PokemonType.ELECTRIC, MoveCategory.PHYSICAL, 100, 95, 15, -1, 0, 9)
+      .attr(AlwaysHitMinimizeAttr)
+      .attr(HitsTagForDoubleDamageAttr, BattlerTagType.MINIMIZED)
       .attr(MissEffectAttr, crashDamageFunc)
       .attr(NoEffectAttr, crashDamageFunc)
       .recklessMove(),

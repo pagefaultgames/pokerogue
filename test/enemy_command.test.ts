@@ -6,7 +6,7 @@ import { Moves } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
 import type { EnemyPokemon } from "#app/field/pokemon";
 import { AiType } from "#app/field/pokemon";
-import { randSeedInt } from "#app/utils";
+import { randSeedInt } from "#app/utils/common";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";

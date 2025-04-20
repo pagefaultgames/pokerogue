@@ -3,7 +3,7 @@ import type { SystemSaveData, SessionSaveData } from "#app/system/game-data";
 import { AbilityAttr, defaultStarterSpecies, DexAttr } from "#app/system/game-data";
 import { allSpecies } from "#app/data/pokemon-species";
 import { CustomPokemonData } from "#app/data/custom-pokemon-data";
-import { isNullOrUndefined } from "#app/utils";
+import { isNullOrUndefined } from "#app/utils/common";
 import type { SystemSaveMigrator } from "#app/@types/SystemSaveMigrator";
 import type { SettingsSaveMigrator } from "#app/@types/SettingsSaveMigrator";
 import type { SessionSaveMigrator } from "#app/@types/SessionSaveMigrator";

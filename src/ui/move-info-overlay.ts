@@ -2,7 +2,7 @@ import type { InfoToggle } from "#app/battle-scene";
 import { globalScene } from "#app/global-scene";
 import { TextStyle, addTextObject } from "./text";
 import { addWindow } from "./ui-theme";
-import { getLocalizedSpriteKey, fixedInt } from "#app/utils";
+import { getLocalizedSpriteKey, fixedInt } from "#app/utils/common";
 import type Move from "../data/moves/move";
 import { MoveCategory } from "#enums/MoveCategory";
 import { PokemonType } from "#enums/pokemon-type";

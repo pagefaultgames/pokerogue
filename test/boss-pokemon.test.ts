@@ -6,7 +6,7 @@ import { Abilities } from "#app/enums/abilities";
 import { Moves } from "#app/enums/moves";
 import { EFFECTIVE_STATS } from "#app/enums/stat";
 import type { EnemyPokemon } from "#app/field/pokemon";
-import { toDmgValue } from "#app/utils";
+import { toDmgValue } from "#app/utils/common";
 
 describe("Boss Pokemon / Shields", () => {
   let phaserGame: Phaser.Game;
