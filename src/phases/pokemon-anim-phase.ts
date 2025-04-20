@@ -2,7 +2,7 @@ import { globalScene } from "#app/global-scene";
 import { SubstituteTag } from "#app/data/battler-tags";
 import type Pokemon from "#app/field/pokemon";
 import { BattlePhase } from "#app/phases/battle-phase";
-import { isNullOrUndefined } from "#app/utils";
+import { isNullOrUndefined } from "#app/utils/common";
 import { PokemonAnimType } from "#enums/pokemon-anim-type";
 import { Species } from "#enums/species";
 

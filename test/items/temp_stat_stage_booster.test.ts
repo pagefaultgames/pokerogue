@@ -7,7 +7,7 @@ import { Moves } from "#app/enums/moves";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Abilities } from "#app/enums/abilities";
 import { TempStatStageBoosterModifier } from "#app/modifier/modifier";
-import { Mode } from "#app/ui/ui";
+import { UiMode } from "#enums/ui-mode";
 import { Button } from "#app/enums/buttons";
 import type ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 import { ShopCursorTarget } from "#app/enums/shop-cursor-target";
@@ -137,7 +137,7 @@ describe("Items - Temporary Stat Stage Boosters", () => {
     // Forced X_ATTACK to spawn in the first slot with override
     game.onNextPrompt(
       "SelectModifierPhase",
-      Mode.MODIFIER_SELECT,
+      UiMode.MODIFIER_SELECT,
       () => {
         const handler = game.scene.ui.getHandler() as ModifierSelectUiHandler;
         // Traverse to first modifier slot

@@ -24,12 +24,12 @@ import {
 import type ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 import { SHOP_OPTIONS_ROW_LIMIT } from "#app/ui/modifier-select-ui-handler";
 import PartyUiHandler, { PartyUiMode, PartyOption } from "#app/ui/party-ui-handler";
-import { Mode } from "#app/ui/ui";
+import { UiMode } from "#enums/ui-mode";
 import i18next from "i18next";
 import { BattlePhase } from "./battle-phase";
 import Overrides from "#app/overrides";
 import type { CustomModifierSettings } from "#app/modifier/modifier-type";
-import { isNullOrUndefined, NumberHolder } from "#app/utils";
+import { isNullOrUndefined, NumberHolder } from "#app/utils/common";
 
 export class SelectModifierPhase extends BattlePhase {
   private rerollCount: number;
@@ -92,15 +92,15 @@ export class SelectModifierPhase extends BattlePhase {
       if (rowCursor < 0 || cursor < 0) {
         globalScene.ui.showText(i18next.t("battle:skipItemQuestion"), null, () => {
           globalScene.ui.setOverlayMode(
-            Mode.CONFIRM,
+            UiMode.CONFIRM,
             () => {
               globalScene.ui.revertMode();
-              globalScene.ui.setMode(Mode.MESSAGE);
+              globalScene.ui.setMode(UiMode.MESSAGE);
               super.end();
             },
             () =>
               globalScene.ui.setMode(
-                Mode.MODIFIER_SELECT,
+                UiMode.MODIFIER_SELECT,
                 this.isPlayer(),
                 this.typeOptions,
                 modifierSelectCallback,
@@ -129,7 +129,7 @@ export class SelectModifierPhase extends BattlePhase {
                 ),
               );
               globalScene.ui.clearText();
-              globalScene.ui.setMode(Mode.MESSAGE).then(() => super.end());
+              globalScene.ui.setMode(UiMode.MESSAGE).then(() => super.end());
               if (!Overrides.WAIVE_ROLL_FEE_OVERRIDE) {
                 globalScene.money -= rerollCost;
                 globalScene.updateMoneyText();
@@ -139,7 +139,7 @@ export class SelectModifierPhase extends BattlePhase {
               break;
             case 1:
               globalScene.ui.setModeWithoutClear(
-                Mode.PARTY,
+                UiMode.PARTY,
                 PartyUiMode.MODIFIER_TRANSFER,
                 -1,
                 (fromSlotIndex: number, itemIndex: number, itemQuantity: number, toSlotIndex: number) => {
@@ -168,7 +168,7 @@ export class SelectModifierPhase extends BattlePhase {
                     );
                   } else {
                     globalScene.ui.setMode(
-                      Mode.MODIFIER_SELECT,
+                      UiMode.MODIFIER_SELECT,
                       this.isPlayer(),
                       this.typeOptions,
                       modifierSelectCallback,
@@ -180,9 +180,9 @@ export class SelectModifierPhase extends BattlePhase {
               );
               break;
             case 2:
-              globalScene.ui.setModeWithoutClear(Mode.PARTY, PartyUiMode.CHECK, -1, () => {
+              globalScene.ui.setModeWithoutClear(UiMode.PARTY, PartyUiMode.CHECK, -1, () => {
                 globalScene.ui.setMode(
-                  Mode.MODIFIER_SELECT,
+                  UiMode.MODIFIER_SELECT,
                   this.isPlayer(),
                   this.typeOptions,
                   modifierSelectCallback,
@@ -207,7 +207,7 @@ export class SelectModifierPhase extends BattlePhase {
         case 1:
           if (this.typeOptions.length === 0) {
             globalScene.ui.clearText();
-            globalScene.ui.setMode(Mode.MESSAGE);
+            globalScene.ui.setMode(UiMode.MESSAGE);
             super.end();
             return true;
           }
@@ -263,7 +263,7 @@ export class SelectModifierPhase extends BattlePhase {
           }
         } else {
           globalScene.ui.clearText();
-          globalScene.ui.setMode(Mode.MESSAGE);
+          globalScene.ui.setMode(UiMode.MESSAGE);
           super.end();
         }
       };
@@ -272,7 +272,7 @@ export class SelectModifierPhase extends BattlePhase {
         //TODO: is the bang correct?
         if (modifierType instanceof FusePokemonModifierType) {
           globalScene.ui.setModeWithoutClear(
-            Mode.PARTY,
+            UiMode.PARTY,
             PartyUiMode.SPLICE,
             -1,
             (fromSlotIndex: number, spliceSlotIndex: number) => {
@@ -282,13 +282,13 @@ export class SelectModifierPhase extends BattlePhase {
                 spliceSlotIndex < 6 &&
                 fromSlotIndex !== spliceSlotIndex
               ) {
-                globalScene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer()).then(() => {
+                globalScene.ui.setMode(UiMode.MODIFIER_SELECT, this.isPlayer()).then(() => {
                   const modifier = modifierType.newModifier(party[fromSlotIndex], party[spliceSlotIndex])!; //TODO: is the bang correct?
                   applyModifier(modifier, true);
                 });
               } else {
                 globalScene.ui.setMode(
-                  Mode.MODIFIER_SELECT,
+                  UiMode.MODIFIER_SELECT,
                   this.isPlayer(),
                   this.typeOptions,
                   modifierSelectCallback,
@@ -314,12 +314,12 @@ export class SelectModifierPhase extends BattlePhase {
                 : PartyUiMode.MODIFIER;
           const tmMoveId = isTmModifier ? (modifierType as TmModifierType).moveId : undefined;
           globalScene.ui.setModeWithoutClear(
-            Mode.PARTY,
+            UiMode.PARTY,
             partyUiMode,
             -1,
             (slotIndex: number, option: PartyOption) => {
               if (slotIndex < 6) {
-                globalScene.ui.setMode(Mode.MODIFIER_SELECT, this.isPlayer()).then(() => {
+                globalScene.ui.setMode(UiMode.MODIFIER_SELECT, this.isPlayer()).then(() => {
                   const modifier = !isMoveModifier
                     ? !isRememberMoveModifier
                       ? modifierType.newModifier(party[slotIndex])
@@ -329,7 +329,7 @@ export class SelectModifierPhase extends BattlePhase {
                 });
               } else {
                 globalScene.ui.setMode(
-                  Mode.MODIFIER_SELECT,
+                  UiMode.MODIFIER_SELECT,
                   this.isPlayer(),
                   this.typeOptions,
                   modifierSelectCallback,
@@ -352,7 +352,7 @@ export class SelectModifierPhase extends BattlePhase {
       return !cost!; // TODO: is the bang correct?
     };
     globalScene.ui.setMode(
-      Mode.MODIFIER_SELECT,
+      UiMode.MODIFIER_SELECT,
       this.isPlayer(),
       this.typeOptions,
       modifierSelectCallback,

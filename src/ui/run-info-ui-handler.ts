@@ -2,10 +2,10 @@ import { GameModes } from "../game-mode";
 import UiHandler from "./ui-handler";
 import type { SessionSaveData } from "../system/game-data";
 import { TextStyle, addTextObject, addBBCodeTextObject, getTextColor } from "./text";
-import { Mode } from "./ui";
+import { UiMode } from "#enums/ui-mode";
 import { addWindow } from "./ui-theme";
 import { getPokeballAtlasKey } from "#app/data/pokeball";
-import { formatLargeNumber, getPlayTimeString, formatMoney, formatFancyLargeNumber } from "#app/utils";
+import { formatLargeNumber, getPlayTimeString, formatMoney, formatFancyLargeNumber } from "#app/utils/common";
 import type PokemonData from "../system/pokemon-data";
 import i18next from "i18next";
 import { Button } from "../enums/buttons";
@@ -69,7 +69,7 @@ export default class RunInfoUiHandler extends UiHandler {
   private modifiersModule: any;
 
   constructor() {
-    super(Mode.RUN_INFO);
+    super(UiMode.RUN_INFO);
   }
 
   override async setup() {

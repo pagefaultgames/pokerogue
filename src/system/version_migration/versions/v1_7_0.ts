@@ -3,7 +3,7 @@ import type { SystemSaveMigrator } from "#app/@types/SystemSaveMigrator";
 import { getPokemonSpecies, getPokemonSpeciesForm } from "#app/data/pokemon-species";
 import { globalScene } from "#app/global-scene";
 import { DexAttr, type SessionSaveData, type SystemSaveData } from "#app/system/game-data";
-import { isNullOrUndefined } from "#app/utils";
+import { isNullOrUndefined } from "#app/utils/common";
 
 /**
  * If a starter is caught, but the only forms registered as caught are not starterSelectable,

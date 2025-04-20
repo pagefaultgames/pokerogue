@@ -1,6 +1,6 @@
 import type { EnemyPokemon, default as Pokemon } from "../field/pokemon";
 import { getLevelTotalExp, getLevelRelExp } from "../data/exp";
-import { getLocalizedSpriteKey, fixedInt } from "#app/utils";
+import { getLocalizedSpriteKey, fixedInt } from "#app/utils/common";
 import { addTextObject, TextStyle } from "./text";
 import { getGenderSymbol, getGenderColor, Gender } from "../data/gender";
 import { StatusEffect } from "#enums/status-effect";
@@ -619,7 +619,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
         return resolve();
       }
 
-      const gender: Gender = !!pokemon.summonData?.illusion ? pokemon.summonData?.illusion.gender : pokemon.gender;
+      const gender: Gender = pokemon.summonData?.illusion ? pokemon.summonData?.illusion.gender : pokemon.gender;
 
       this.genderText.setText(getGenderSymbol(gender));
       this.genderText.setColor(getGenderColor(gender));
@@ -796,7 +796,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     const nameSizeTest = addTextObject(0, 0, displayName, TextStyle.BATTLE_INFO);
     nameTextWidth = nameSizeTest.displayWidth;
 
-    const gender: Gender = !!pokemon.summonData?.illusion ? pokemon.summonData?.illusion.gender : pokemon.gender;
+    const gender: Gender = pokemon.summonData?.illusion ? pokemon.summonData?.illusion.gender : pokemon.gender;
     while (
       nameTextWidth >
       (this.player || !this.boss ? 60 : 98) -

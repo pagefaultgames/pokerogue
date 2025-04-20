@@ -4,7 +4,7 @@ import {
 } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import type { ModifierTypeFunc } from "#app/modifier/modifier-type";
 import { modifierTypes } from "#app/modifier/modifier-type";
-import { randSeedInt } from "#app/utils";
+import { randSeedInt } from "#app/utils/common";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Species } from "#enums/species";
 import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";

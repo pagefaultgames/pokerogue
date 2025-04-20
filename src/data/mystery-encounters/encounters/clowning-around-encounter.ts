@@ -31,9 +31,9 @@ import {
 import { PokemonType } from "#enums/pokemon-type";
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import { randSeedInt, randSeedShuffle } from "#app/utils";
+import { randSeedInt, randSeedShuffle } from "#app/utils/common";
 import { showEncounterDialogue, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
-import { Mode } from "#app/ui/ui";
+import { UiMode } from "#enums/ui-mode";
 import i18next from "i18next";
 import type { OptionSelectConfig } from "#app/ui/abstact-option-select-ui-handler";
 import type { PlayerPokemon } from "#app/field/pokemon";
@@ -437,7 +437,7 @@ async function handleSwapAbility() {
     await showEncounterDialogue(`${namespace}:option.1.apply_ability_dialogue`, `${namespace}:speaker`);
     await showEncounterText(`${namespace}:option.1.apply_ability_message`);
 
-    globalScene.ui.setMode(Mode.MESSAGE).then(() => {
+    globalScene.ui.setMode(UiMode.MESSAGE).then(() => {
       displayYesNoOptions(resolve);
     });
   });
@@ -467,7 +467,7 @@ function displayYesNoOptions(resolve) {
     maxOptions: 7,
     yOffset: 0,
   };
-  globalScene.ui.setModeWithoutClear(Mode.OPTION_SELECT, config, null, true);
+  globalScene.ui.setModeWithoutClear(UiMode.OPTION_SELECT, config, null, true);
 }
 
 function onYesAbilitySwap(resolve) {
@@ -477,11 +477,11 @@ function onYesAbilitySwap(resolve) {
 
     applyAbilityOverrideToPokemon(pokemon, encounter.misc.ability);
     encounter.setDialogueToken("chosenPokemon", pokemon.getNameToRender());
-    globalScene.ui.setMode(Mode.MESSAGE).then(() => resolve(true));
+    globalScene.ui.setMode(UiMode.MESSAGE).then(() => resolve(true));
   };
 
   const onPokemonNotSelected = () => {
-    globalScene.ui.setMode(Mode.MESSAGE).then(() => {
+    globalScene.ui.setMode(UiMode.MESSAGE).then(() => {
       displayYesNoOptions(resolve);
     });
   };
