@@ -26,7 +26,7 @@ describe("Moves - Safeguard", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .battleType("single")
+      .battleStyle("single")
       .enemySpecies(Species.DRATINI)
       .enemyMoveset([Moves.SAFEGUARD])
       .enemyAbility(Abilities.BALL_FETCH)
@@ -71,7 +71,7 @@ describe("Moves - Safeguard", () => {
   });
 
   it("protects ally from status", async () => {
-    game.override.battleType("double");
+    game.override.battleStyle("double");
 
     await game.classicMode.startBattle();
 

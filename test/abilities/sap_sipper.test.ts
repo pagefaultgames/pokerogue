@@ -29,7 +29,7 @@ describe("Abilities - Sap Sipper", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .battleType("single")
+      .battleStyle("single")
       .disableCrits()
       .ability(Abilities.SAP_SIPPER)
       .enemySpecies(Species.RATTATA)

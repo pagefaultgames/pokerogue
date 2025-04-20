@@ -27,7 +27,7 @@ describe("Moves - Dig", () => {
     game = new GameManager(phaserGame);
     game.override
       .moveset(Moves.DIG)
-      .battleType("single")
+      .battleStyle("single")
       .startingLevel(100)
       .enemySpecies(Species.SNORLAX)
       .enemyLevel(100)

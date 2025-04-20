@@ -24,7 +24,7 @@ import { BerryModifier, PokemonInstantReviveModifier } from "#app/modifier/modif
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { Moves } from "#enums/moves";
 import { BattlerTagType } from "#enums/battler-tag-type";
-import { randInt } from "#app/utils";
+import { randInt } from "#app/utils/common";
 import { BattlerIndex } from "#app/battle";
 import {
   applyModifierTypeToPlayerPokemon,

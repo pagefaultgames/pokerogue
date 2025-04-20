@@ -1,6 +1,6 @@
 import type { EnemyPokemon, default as Pokemon } from "../field/pokemon";
 import { getLevelTotalExp, getLevelRelExp } from "../data/exp";
-import { getLocalizedSpriteKey, fixedInt } from "#app/utils";
+import { getLocalizedSpriteKey, fixedInt } from "#app/utils/common";
 import { addTextObject, TextStyle } from "./text";
 import { getGenderSymbol, getGenderColor, Gender } from "../data/gender";
 import { StatusEffect } from "#enums/status-effect";

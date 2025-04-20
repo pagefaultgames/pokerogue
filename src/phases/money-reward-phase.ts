@@ -2,7 +2,7 @@ import { globalScene } from "#app/global-scene";
 import { ArenaTagType } from "#app/enums/arena-tag-type";
 import { MoneyMultiplierModifier } from "#app/modifier/modifier";
 import i18next from "i18next";
-import { NumberHolder } from "#app/utils";
+import { NumberHolder } from "#app/utils/common";
 import { BattlePhase } from "./battle-phase";
 
 export class MoneyRewardPhase extends BattlePhase {

@@ -1,9 +1,10 @@
 import type { ModalConfig } from "./modal-ui-handler";
 import { ModalUiHandler } from "./modal-ui-handler";
 import { addTextObject, TextStyle } from "./text";
-import type { Mode } from "./ui";
+import type { UiMode } from "#enums/ui-mode";
 import { updateUserInfo } from "#app/account";
-import { removeCookie, sessionIdKey } from "#app/utils";
+import { sessionIdKey } from "#app/utils/common";
+import { removeCookie } from "#app/utils/cookies";
 import i18next from "i18next";
 import { globalScene } from "#app/global-scene";
 
@@ -17,7 +18,7 @@ export default class UnavailableModalUiHandler extends ModalUiHandler {
 
   private readonly randVarianceTime = 1000 * 10;
 
-  constructor(mode: Mode | null = null) {
+  constructor(mode: UiMode | null = null) {
     super(mode);
     this.reconnectDuration = this.minTime;
   }

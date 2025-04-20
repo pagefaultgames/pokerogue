@@ -37,7 +37,7 @@ jobs:
       - name: Setup Node 22.14.1
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version-file: "pokerogue_docs/.nvmrc"
 
       - name: Checkout repository for Github Pages
         if: github.event_name == 'push'

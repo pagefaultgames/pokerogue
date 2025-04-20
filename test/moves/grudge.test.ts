@@ -25,7 +25,7 @@ describe("Moves - Grudge", () => {
     game.override
       .moveset([Moves.EMBER, Moves.SPLASH])
       .ability(Abilities.BALL_FETCH)
-      .battleType("single")
+      .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.SHEDINJA)
       .enemyAbility(Abilities.WONDER_GUARD)

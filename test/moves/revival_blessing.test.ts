@@ -1,6 +1,6 @@
 import { BattlerIndex } from "#app/battle";
 import { MoveResult } from "#app/field/pokemon";
-import { toDmgValue } from "#app/utils";
+import { toDmgValue } from "#app/utils/common";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
@@ -27,7 +27,7 @@ describe("Moves - Revival Blessing", () => {
     game.override
       .moveset([Moves.SPLASH, Moves.REVIVAL_BLESSING, Moves.MEMENTO])
       .ability(Abilities.BALL_FETCH)
-      .battleType("single")
+      .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)
@@ -88,7 +88,7 @@ describe("Moves - Revival Blessing", () => {
 
   it("should revive a player pokemon and immediately send it back out if used in the same turn it fainted in doubles", async () => {
     game.override
-      .battleType("double")
+      .battleStyle("double")
       .enemyMoveset([Moves.SPLASH, Moves.FISSURE])
       .enemyAbility(Abilities.NO_GUARD)
       .enemyLevel(100);
@@ -116,7 +116,7 @@ describe("Moves - Revival Blessing", () => {
   });
 
   it("should not summon multiple pokemon to the same slot when reviving the enemy ally in doubles", async () => {
-    game.override.battleType("double").enemyMoveset([Moves.REVIVAL_BLESSING]).moveset([Moves.SPLASH]).startingWave(25); // 2nd rival battle - must have 3+ pokemon
+    game.override.battleStyle("double").enemyMoveset([Moves.REVIVAL_BLESSING]).moveset([Moves.SPLASH]).startingWave(25); // 2nd rival battle - must have 3+ pokemon
     await game.classicMode.startBattle([Species.ARCEUS, Species.GIRATINA]);
 
     const enemyFainting = game.scene.getEnemyField()[0];

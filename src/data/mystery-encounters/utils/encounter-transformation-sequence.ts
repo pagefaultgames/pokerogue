@@ -1,5 +1,5 @@
 import type { PlayerPokemon } from "#app/field/pokemon";
-import { getFrameMs } from "#app/utils";
+import { getFrameMs } from "#app/utils/common";
 import { cos, sin } from "#app/field/anims";
 import { getTypeRgb } from "#app/data/type";
 import { globalScene } from "#app/global-scene";

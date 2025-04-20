@@ -6,7 +6,7 @@ import {
   MoveEffectChanceMultiplierAbAttr,
 } from "#app/data/abilities/ability";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
-import { NumberHolder } from "#app/utils";
+import { NumberHolder } from "#app/utils/common";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
@@ -31,7 +31,7 @@ describe("Abilities - Shield Dust", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleType("single");
+    game.override.battleStyle("single");
     game.override.enemySpecies(Species.ONIX);
     game.override.enemyAbility(Abilities.SHIELD_DUST);
     game.override.startingLevel(100);

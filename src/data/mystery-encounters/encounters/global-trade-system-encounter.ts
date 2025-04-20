@@ -23,7 +23,14 @@ import { allSpecies, getPokemonSpecies } from "#app/data/pokemon-species";
 import { getTypeRgb } from "#app/data/type";
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import { NumberHolder, isNullOrUndefined, randInt, randSeedInt, randSeedShuffle, randSeedItem } from "#app/utils";
+import {
+  NumberHolder,
+  isNullOrUndefined,
+  randInt,
+  randSeedInt,
+  randSeedShuffle,
+  randSeedItem,
+} from "#app/utils/common";
 import type { PlayerPokemon } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
 import { EnemyPokemon, PokemonMove } from "#app/field/pokemon";

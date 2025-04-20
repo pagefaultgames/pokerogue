@@ -1,6 +1,6 @@
 import i18next from "i18next";
 import type { PokeballCounts } from "#app/battle-scene";
-import { bypassLogin } from "#app/battle-scene";
+import { bypassLogin } from "#app/global-vars/bypass-login";
 import { globalScene } from "#app/global-scene";
 import type { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
@@ -8,14 +8,14 @@ import { pokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
 import type PokemonSpecies from "#app/data/pokemon-species";
 import { allSpecies, getPokemonSpecies } from "#app/data/pokemon-species";
 import { speciesStarterCosts } from "#app/data/balance/starters";
-import { randInt, getEnumKeys, isLocal, executeIf, fixedInt, randSeedItem, NumberHolder } from "#app/utils";
+import { randInt, getEnumKeys, isLocal, executeIf, fixedInt, randSeedItem, NumberHolder } from "#app/utils/common";
 import Overrides from "#app/overrides";
 import PokemonData from "#app/system/pokemon-data";
 import PersistentModifierData from "#app/system/modifier-data";
 import ArenaData from "#app/system/arena-data";
 import { Unlockables } from "#app/system/unlockables";
 import { GameModes, getGameMode } from "#app/game-mode";
-import { BattleType } from "#app/battle";
+import { BattleType } from "#enums/battle-type";
 import TrainerData from "#app/system/trainer-data";
 import { trainerConfigs } from "#app/data/trainers/trainer-config";
 import { resetSettings, setSetting, SettingKeys } from "#app/system/settings/settings";
@@ -24,7 +24,7 @@ import EggData from "#app/system/egg-data";
 import type { Egg } from "#app/data/egg";
 import { vouchers, VoucherType } from "#app/system/voucher";
 import { AES, enc } from "crypto-js";
-import { Mode } from "#app/ui/ui";
+import { UiMode } from "#enums/ui-mode";
 import { clientSessionId, loggedInUser, updateUserInfo } from "#app/account";
 import { Nature } from "#enums/nature";
 import { GameStats } from "#app/system/game-stats";
@@ -1604,7 +1604,7 @@ export class GameData {
             null,
             () => {
               globalScene.ui.setOverlayMode(
-                Mode.CONFIRM,
+                UiMode.CONFIRM,
                 () => {
                   localStorage.setItem(dataKey, encrypt(dataStr, bypassLogin));
 
