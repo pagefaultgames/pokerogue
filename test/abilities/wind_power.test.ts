@@ -23,7 +23,7 @@ describe("Abilities - Wind Power", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleType("single");
+    game.override.battleStyle("single");
     game.override.enemySpecies(Species.SHIFTRY);
     game.override.enemyAbility(Abilities.WIND_POWER);
     game.override.moveset([Moves.TAILWIND, Moves.SPLASH, Moves.PETAL_BLIZZARD, Moves.SANDSTORM]);

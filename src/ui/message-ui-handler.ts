@@ -1,6 +1,6 @@
 import AwaitableUiHandler from "./awaitable-ui-handler";
-import type { Mode } from "./ui";
-import { getFrameMs } from "#app/utils";
+import type { UiMode } from "#enums/ui-mode";
+import { getFrameMs } from "#app/utils/common";
 import { globalScene } from "#app/global-scene";
 
 export default abstract class MessageUiHandler extends AwaitableUiHandler {
@@ -11,7 +11,7 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
   public message: Phaser.GameObjects.Text;
   public prompt: Phaser.GameObjects.Sprite;
 
-  constructor(mode: Mode | null = null) {
+  constructor(mode: UiMode | null = null) {
     super(mode);
 
     this.pendingPrompt = false;

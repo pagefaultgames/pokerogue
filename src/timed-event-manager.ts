@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import { TextStyle, addTextObject } from "#app/ui/text";
-import type { nil } from "#app/utils";
-import { isNullOrUndefined } from "#app/utils";
+import type { nil } from "#app/utils/common";
+import { isNullOrUndefined } from "#app/utils/common";
 import i18next from "i18next";
 import { Species } from "#enums/species";
 import type { WeatherPoolEntry } from "#app/data/weather";

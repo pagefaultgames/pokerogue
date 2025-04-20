@@ -43,7 +43,8 @@ import { TurnStartPhase } from "#app/phases/turn-start-phase";
 import { UnavailablePhase } from "#app/phases/unavailable-phase";
 import { VictoryPhase } from "#app/phases/victory-phase";
 import { PartyHealPhase } from "#app/phases/party-heal-phase";
-import UI, { Mode } from "#app/ui/ui";
+import UI from "#app/ui/ui";
+import { UiMode } from "#enums/ui-mode";
 import { SelectBiomePhase } from "#app/phases/select-biome-phase";
 import {
   MysteryEncounterBattlePhase,
@@ -64,7 +65,7 @@ import { RevivalBlessingPhase } from "#app/phases/revival-blessing-phase";
 
 export interface PromptHandler {
   phaseTarget?: string;
-  mode?: Mode;
+  mode?: UiMode;
   callback?: () => void;
   expireFn?: () => void;
   awaitingActionInput?: boolean;
@@ -487,13 +488,13 @@ export default class PhaseInterceptor {
 
   /**
    * m2m to set mode.
-   * @param mode - The {@linkcode Mode} to set.
+   * @param mode - The {@linkcode UiMode} to set.
    * @param args - Additional arguments to pass to the original method.
    */
-  setMode(mode: Mode, ...args: unknown[]): Promise<void> {
+  setMode(mode: UiMode, ...args: unknown[]): Promise<void> {
     const currentPhase = this.scene.getCurrentPhase();
     const instance = this.scene.ui;
-    console.log("setMode", `${Mode[mode]} (=${mode})`, args);
+    console.log("setMode", `${UiMode[mode]} (=${mode})`, args);
     const ret = this.originalSetMode.apply(instance, [mode, ...args]);
     if (!this.phases[currentPhase.constructor.name]) {
       throw new Error(
@@ -546,7 +547,7 @@ export default class PhaseInterceptor {
    */
   addToNextPrompt(
     phaseTarget: string,
-    mode: Mode,
+    mode: UiMode,
     callback: () => void,
     expireFn?: () => void,
     awaitingActionInput = false,

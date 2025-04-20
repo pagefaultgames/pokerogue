@@ -11,7 +11,6 @@ attribute float inTintEffect;
 attribute vec4 inTint;
 
 varying vec2 outTexCoord;
-varying vec2 outtexFrameUv;
 varying float outTexId;
 varying vec2 outPosition;
 varying float outTintEffect;

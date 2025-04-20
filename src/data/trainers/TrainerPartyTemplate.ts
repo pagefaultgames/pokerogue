@@ -1,4 +1,4 @@
-import { startingWave } from "#app/battle-scene";
+import { startingWave } from "#app/starting-wave";
 import { globalScene } from "#app/global-scene";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 

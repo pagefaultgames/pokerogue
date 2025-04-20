@@ -2,7 +2,7 @@ import { VariantTier } from "#app/enums/variant-tier";
 import { hasExpSprite } from "#app/sprites/sprite-utils";
 import { globalScene } from "#app/global-scene";
 import type Pokemon from "#app/field/pokemon";
-import { isNullOrUndefined } from "#app/utils";
+import { isNullOrUndefined } from "#app/utils/common";
 
 export type Variant = 0 | 1 | 2;
 

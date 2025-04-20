@@ -25,7 +25,7 @@ describe("Abilities - Victory Star", () => {
     game = new GameManager(phaserGame);
     game.override
       .moveset([Moves.TACKLE, Moves.SPLASH])
-      .battleType("double")
+      .battleStyle("double")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)

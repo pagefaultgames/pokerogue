@@ -1,11 +1,11 @@
 import type { EnemyPartyConfig } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import type { PlayerPokemon, PokemonMove } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
-import { capitalizeFirstLetter, isNullOrUndefined } from "#app/utils";
+import { capitalizeFirstLetter, isNullOrUndefined } from "#app/utils/common";
 import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import type { MysteryEncounterSpriteConfig } from "#app/field/mystery-encounter-intro";
 import MysteryEncounterIntroVisuals from "#app/field/mystery-encounter-intro";
-import { randSeedInt } from "#app/utils";
+import { randSeedInt } from "#app/utils/common";
 import type { StatusEffect } from "#enums/status-effect";
 import type { OptionTextDisplay } from "./mystery-encounter-dialogue";
 import type MysteryEncounterDialogue from "./mystery-encounter-dialogue";

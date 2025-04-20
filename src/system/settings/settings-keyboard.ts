@@ -1,5 +1,5 @@
 import { Button } from "#enums/buttons";
-import { Mode } from "#app/ui/ui";
+import { UiMode } from "#enums/ui-mode";
 import type SettingsKeyboardUiHandler from "#app/ui/settings/settings-keyboard-ui-handler";
 import i18next from "i18next";
 import { globalScene } from "#app/global-scene";
@@ -174,7 +174,7 @@ export function setSettingKeyboard(setting: SettingKeyboard, value: number): boo
             (globalScene.ui.getHandler() as SettingsKeyboardUiHandler).updateBindings();
             return success;
           };
-          globalScene.ui.setOverlayMode(Mode.KEYBOARD_BINDING, {
+          globalScene.ui.setOverlayMode(UiMode.KEYBOARD_BINDING, {
             target: setting,
             cancelHandler: cancelHandler,
           });
