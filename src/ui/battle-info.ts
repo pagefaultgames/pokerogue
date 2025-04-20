@@ -193,7 +193,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       this.hpNumbersContainer.setName("container_hp");
       this.add(this.hpNumbersContainer);
 
-      const expBar = globalScene.add.image(-98, 18, "overlay_exp");
+      const expBar = globalScene.add.image(-96, 17, "overlay_exp");
       expBar.setName("overlay_exp");
       expBar.setOrigin(0);
       this.add(expBar);
@@ -202,7 +202,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       expMaskRect.setScale(6);
       expMaskRect.fillStyle(0xffffff);
       expMaskRect.beginPath();
-      expMaskRect.fillRect(127, 126, 85, 2);
+      expMaskRect.fillRect(126, 125, 85, 1);
 
       const expMask = expMaskRect.createGeometryMask();
 
@@ -557,14 +557,16 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
         this.ownedIcon,
         this.championRibbon,
         this.statusIndicator,
-        this.levelContainer,
         this.statValuesContainer,
       ].map(e => (e.x += 48 * (boss ? -1 : 1)));
-      this.hpBar.x += 38 * (boss ? -1 : 1);
+      this.hpBar.x += 51 * (boss ? -1 : 1);
       this.hpBar.y += 2 * (this.boss ? -1 : 1);
       this.hpBar.setTexture(`overlay_hp${boss ? "_boss" : ""}`);
       this.box.setTexture(this.getTextureName());
       this.statsBox.setTexture(`${this.getTextureName()}_stats`);
+      //level container padding
+      this.levelContainer.x += -16;
+      this.levelContainer.y += 0;
     }
 
     this.bossSegments = boss ? pokemon.bossSegments : 0;
