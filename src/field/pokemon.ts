@@ -3181,29 +3181,33 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     thresholdOverride?: number,
     applyModifiersToOverride?: boolean,
   ): boolean {
-    const shinyThreshold = new NumberHolder(BASE_SHINY_CHANCE);
-    if (thresholdOverride === undefined || applyModifiersToOverride) {
-      if (thresholdOverride !== undefined && applyModifiersToOverride) {
+    if (!this.shiny) {
+      const shinyThreshold = new NumberHolder(BASE_SHINY_CHANCE);
+      if (thresholdOverride === undefined || applyModifiersToOverride) {
+        if (thresholdOverride !== undefined && applyModifiersToOverride) {
+          shinyThreshold.value = thresholdOverride;
+        }
+        if (timedEventManager.isEventActive()) {
+          shinyThreshold.value *= timedEventManager.getShinyMultiplier();
+        }
+        if (!this.hasTrainer()) {
+          globalScene.applyModifiers(
+            ShinyRateBoosterModifier,
+            true,
+            shinyThreshold,
+          );
+        }
+      }
+      else {
         shinyThreshold.value = thresholdOverride;
       }
-      if (timedEventManager.isEventActive()) {
-        shinyThreshold.value *= timedEventManager.getShinyMultiplier();
-      }
-      if (!this.hasTrainer()) {
-        globalScene.applyModifiers(
-          ShinyRateBoosterModifier,
-          true,
-          shinyThreshold,
-        );
-      }
-    } else {
-      shinyThreshold.value = thresholdOverride;
+
+      this.shiny = randSeedInt(65536) < shinyThreshold.value;
     }
 
-    this.shiny = this.shiny || randSeedInt(65536) < shinyThreshold.value; // If it's already shiny, don't un-shiny it
-
     if (this.shiny) {
-      this.variant = this.generateShinyVariant();
+      this.variant = this.variant ?? 0;
+      this.variant = Math.max(this.generateShinyVariant(), this.variant) as Variant; // Don't set a variant lower than the current one
       this.luck =
         this.variant + 1 + (this.fusionShiny ? this.fusionVariant + 1 : 0);
       this.initShinySparkle();
