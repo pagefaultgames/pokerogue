@@ -347,10 +347,7 @@ export default class GameManager {
     }
   }
 
-  /**
-   * Emulate selecting a modifier (item) the next time the {@linkcode SelectModifierPhase} occurs.
-   * Does not actually take anything (in fact, it just skips grabbing an item).
-   */
+  /** Queue up button presses to skip taking an item on the next {@linkcode SelectModifierPhase} */
   doSelectModifier() {
     this.onNextPrompt(
       "SelectModifierPhase",
