@@ -425,7 +425,8 @@ export default class GameManager {
   }
 
   /**
-   * Emulate selecting a modifier (item) and transition to the next upcoming {@linkcode CommandPhase}.
+   * Queue up button presses to skip taking an item on the next {@linkcode SelectModifierPhase},
+   * and then transition to the next {@linkcode CommandPhase}.
    */
   async toNextWave() {
     this.doSelectModifier();
