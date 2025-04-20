@@ -6,7 +6,7 @@ import { Abilities } from "#app/enums/abilities";
 import { Moves } from "#app/enums/moves";
 import { EFFECTIVE_STATS } from "#app/enums/stat";
 import type { EnemyPokemon } from "#app/field/pokemon";
-import { toDmgValue } from "#app/utils";
+import { toDmgValue } from "#app/utils/common";
 
 describe("Boss Pokemon / Shields", () => {
   let phaserGame: Phaser.Game;
@@ -26,7 +26,7 @@ describe("Boss Pokemon / Shields", () => {
     game = new GameManager(phaserGame);
 
     game.override
-      .battleType("single")
+      .battleStyle("single")
       .disableTrainerWaves()
       .disableCrits()
       .enemySpecies(Species.RATTATA)
@@ -63,7 +63,7 @@ describe("Boss Pokemon / Shields", () => {
   });
 
   it("should reduce the number of shields if we are in a double battle", async () => {
-    game.override.battleType("double").startingWave(150); // Floor 150 > 2 shields / 3 health segments
+    game.override.battleStyle("double").startingWave(150); // Floor 150 > 2 shields / 3 health segments
 
     await game.classicMode.startBattle([Species.MEWTWO]);
 
@@ -105,7 +105,7 @@ describe("Boss Pokemon / Shields", () => {
   });
 
   it("breaking multiple shields at once requires extra damage", async () => {
-    game.override.battleType("double").enemyHealthSegments(5);
+    game.override.battleStyle("double").enemyHealthSegments(5);
 
     await game.classicMode.startBattle([Species.MEWTWO]);
 
@@ -140,7 +140,7 @@ describe("Boss Pokemon / Shields", () => {
   it("the number of stat stage boosts is consistent when several shields are broken at once", async () => {
     const shieldsToBreak = 4;
 
-    game.override.battleType("double").enemyHealthSegments(shieldsToBreak + 1);
+    game.override.battleStyle("double").enemyHealthSegments(shieldsToBreak + 1);
 
     await game.classicMode.startBattle([Species.MEWTWO]);
 

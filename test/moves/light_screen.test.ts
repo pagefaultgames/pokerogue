@@ -6,7 +6,7 @@ import { Abilities } from "#app/enums/abilities";
 import { ArenaTagType } from "#app/enums/arena-tag-type";
 import type Pokemon from "#app/field/pokemon";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { NumberHolder } from "#app/utils";
+import { NumberHolder } from "#app/utils/common";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -34,7 +34,7 @@ describe("Moves - Light Screen", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     globalScene = game.scene;
-    game.override.battleType("single");
+    game.override.battleStyle("single");
     game.override.ability(Abilities.NONE);
     game.override.moveset([Moves.ABSORB, Moves.DAZZLING_GLEAM, Moves.TACKLE]);
     game.override.enemyLevel(100);
@@ -61,7 +61,7 @@ describe("Moves - Light Screen", () => {
   });
 
   it("reduces damage of special attacks by a third in a double battle", async () => {
-    game.override.battleType("double");
+    game.override.battleStyle("double");
 
     const moveToUse = Moves.DAZZLING_GLEAM;
     await game.classicMode.startBattle([Species.SHUCKLE, Species.SHUCKLE]);

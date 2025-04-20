@@ -93,7 +93,7 @@ export const TheStrongStuffEncounter: MysteryEncounter = MysteryEncounterBuilder
           bossSegments: 5,
           shiny: false, // Shiny lock because shiny is rolled only if the battle option is picked
           customPokemonData: new CustomPokemonData({ spriteScale: 1.25 }),
-          nature: Nature.BOLD,
+          nature: Nature.HARDY,
           moveSet: [Moves.INFESTATION, Moves.SALT_CURE, Moves.GASTRO_ACID, Moves.HEAL_ORDER],
           modifierConfigs: [
             {
@@ -117,7 +117,7 @@ export const TheStrongStuffEncounter: MysteryEncounter = MysteryEncounterBuilder
           mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
             queueEncounterMessage(`${namespace}:option.2.stat_boost`);
             globalScene.unshiftPhase(
-              new StatStageChangePhase(pokemon.getBattlerIndex(), true, [Stat.DEF, Stat.SPDEF], 2),
+              new StatStageChangePhase(pokemon.getBattlerIndex(), true, [Stat.DEF, Stat.SPDEF], 1),
             );
           },
         },

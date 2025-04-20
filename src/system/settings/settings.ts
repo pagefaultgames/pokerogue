@@ -1,4 +1,4 @@
-import { Mode } from "#app/ui/ui";
+import { UiMode } from "#enums/ui-mode";
 import i18next from "i18next";
 import { globalScene } from "#app/global-scene";
 import { hasTouchscreen } from "#app/touch-controls";
@@ -9,7 +9,7 @@ import { EaseType } from "#enums/ease-type";
 import { MoneyFormat } from "#enums/money-format";
 import { PlayerGender } from "#enums/player-gender";
 import { ShopCursorTarget } from "#enums/shop-cursor-target";
-import { isLocal } from "#app/utils";
+import { isLocal } from "#app/utils/common";
 
 const VOLUME_OPTIONS: SettingOption[] = new Array(11).fill(null).map((_, i) =>
   i
@@ -906,7 +906,7 @@ export function setSetting(setting: string, value: number): boolean {
               return false;
             }
           };
-          globalScene.ui.setOverlayMode(Mode.OPTION_SELECT, {
+          globalScene.ui.setOverlayMode(UiMode.OPTION_SELECT, {
             options: [
               {
                 label: "English",
@@ -915,6 +915,10 @@ export function setSetting(setting: string, value: number): boolean {
               {
                 label: "Español (ES)",
                 handler: () => changeLocaleHandler("es-ES"),
+              },
+              {
+                label: "Español (LATAM)",
+                handler: () => changeLocaleHandler("es-MX"),
               },
               {
                 label: "Italiano",
@@ -948,10 +952,10 @@ export function setSetting(setting: string, value: number): boolean {
                 label: "日本語",
                 handler: () => changeLocaleHandler("ja"),
               },
-              // {
-              //   label: "Català",
-              //   handler: () => changeLocaleHandler("ca-ES")
-              // },
+              {
+                label: "Català",
+                handler: () => changeLocaleHandler("ca-ES"),
+              },
               {
                 label: i18next.t("settings:back"),
                 handler: () => cancelHandler(),

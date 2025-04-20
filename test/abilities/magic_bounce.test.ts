@@ -1,5 +1,5 @@
 import { BattlerIndex } from "#app/battle";
-import { allAbilities } from "#app/data/ability";
+import { allAbilities } from "#app/data/data-lists";
 import { ArenaTagSide } from "#app/data/arena-tag";
 import { allMoves } from "#app/data/moves/move";
 import { ArenaTagType } from "#app/enums/arena-tag-type";
@@ -30,7 +30,7 @@ describe("Abilities - Magic Bounce", () => {
     game = new GameManager(phaserGame);
     game.override
       .ability(Abilities.BALL_FETCH)
-      .battleType("single")
+      .battleStyle("single")
       .moveset([Moves.GROWL, Moves.SPLASH])
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
@@ -60,7 +60,7 @@ describe("Abilities - Magic Bounce", () => {
   });
 
   it("should individually bounce back multi-target moves", async () => {
-    game.override.battleType("double");
+    game.override.battleStyle("double");
     game.override.moveset([Moves.GROWL, Moves.SPLASH]);
     await game.classicMode.startBattle([Species.MAGIKARP, Species.MAGIKARP]);
 
@@ -114,7 +114,7 @@ describe("Abilities - Magic Bounce", () => {
   });
 
   it("should bounce back a spread status move against both pokemon", async () => {
-    game.override.battleType("double");
+    game.override.battleStyle("double");
     game.override.moveset([Moves.GROWL, Moves.SPLASH]);
     game.override.enemyMoveset([Moves.SPLASH]);
     await game.classicMode.startBattle([Species.MAGIKARP, Species.MAGIKARP]);
@@ -127,7 +127,7 @@ describe("Abilities - Magic Bounce", () => {
   });
 
   it("should only bounce spikes back once in doubles when both targets have magic bounce", async () => {
-    game.override.battleType("double");
+    game.override.battleStyle("double");
     await game.classicMode.startBattle([Species.MAGIKARP]);
     game.override.moveset([Moves.SPIKES]);
 
@@ -227,7 +227,7 @@ describe("Abilities - Magic Bounce", () => {
 
   // TODO: stomping tantrum should consider moves that were bounced.
   it.todo("should cause stomping tantrum to double in power when the last move was bounced", async () => {
-    game.override.battleType("single");
+    game.override.battleStyle("single");
     await game.classicMode.startBattle([Species.MAGIKARP]);
     game.override.moveset([Moves.STOMPING_TANTRUM, Moves.CHARM]);
 
@@ -309,7 +309,7 @@ describe("Abilities - Magic Bounce", () => {
   });
 
   it("should always apply the leftmost available target's magic bounce when bouncing moves like sticky webs in doubles", async () => {
-    game.override.battleType("double");
+    game.override.battleStyle("double");
     game.override.moveset([Moves.STICKY_WEB, Moves.SPLASH, Moves.TRICK_ROOM]);
 
     await game.classicMode.startBattle([Species.MAGIKARP, Species.MAGIKARP]);

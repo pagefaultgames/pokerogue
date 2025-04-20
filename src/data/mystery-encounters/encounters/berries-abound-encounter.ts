@@ -13,7 +13,7 @@ import type { PlayerPokemon } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
 import type { BerryModifierType, ModifierTypeOption } from "#app/modifier/modifier-type";
 import { ModifierPoolType, modifierTypes, regenerateModifierPoolThresholds } from "#app/modifier/modifier-type";
-import { randSeedInt } from "#app/utils";
+import { randSeedInt } from "#app/utils/common";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { globalScene } from "#app/global-scene";

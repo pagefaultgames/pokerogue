@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import type { Arena } from "#app/field/arena";
 import { PokemonType } from "#enums/pokemon-type";
-import { BooleanHolder, NumberHolder, toDmgValue } from "#app/utils";
+import { BooleanHolder, NumberHolder, toDmgValue } from "#app/utils/common";
 import { allMoves } from "#app/data/moves/move";
 import { MoveTarget } from "#enums/MoveTarget";
 import { MoveCategory } from "#enums/MoveCategory";
@@ -18,7 +18,7 @@ import {
   applyAbAttrs,
   applyOnGainAbAttrs,
   applyOnLoseAbAttrs,
-} from "#app/data/ability";
+} from "#app/data/abilities/ability";
 import { Stat } from "#enums/stat";
 import { CommonAnim, CommonBattleAnim } from "#app/data/battle-anims";
 import i18next from "i18next";
@@ -28,7 +28,6 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import { Moves } from "#enums/moves";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
-import { ShowAbilityPhase } from "#app/phases/show-ability-phase";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { CommonAnimPhase } from "#app/phases/common-anim-phase";
 
@@ -788,7 +787,7 @@ class SpikesTag extends ArenaTrapTag {
             pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
           }),
         );
-        pokemon.damageAndUpdate(damage, HitResult.OTHER);
+        pokemon.damageAndUpdate(damage, { result: HitResult.INDIRECT });
         if (pokemon.turnData) {
           pokemon.turnData.damageTaken += damage;
         }
@@ -982,7 +981,7 @@ class StealthRockTag extends ArenaTrapTag {
           pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
         }),
       );
-      pokemon.damageAndUpdate(damage, HitResult.OTHER);
+      pokemon.damageAndUpdate(damage, { result: HitResult.INDIRECT });
       if (pokemon.turnData) {
         pokemon.turnData.damageTaken += damage;
       }
@@ -1160,9 +1159,11 @@ class TailwindTag extends ArenaTag {
         );
       }
       // Raise attack by one stage if party member has WIND_RIDER ability
+      // TODO: Ability displays should be handled by the ability
       if (pokemon.hasAbility(Abilities.WIND_RIDER)) {
-        globalScene.unshiftPhase(new ShowAbilityPhase(pokemon.getBattlerIndex()));
+        globalScene.queueAbilityDisplay(pokemon, false, true);
         globalScene.unshiftPhase(new StatStageChangePhase(pokemon.getBattlerIndex(), true, [Stat.ATK], 1, true));
+        globalScene.queueAbilityDisplay(pokemon, false, false);
       }
     }
   }
@@ -1327,7 +1328,7 @@ class FireGrassPledgeTag extends ArenaTag {
         globalScene.unshiftPhase(
           new CommonAnimPhase(pokemon.getBattlerIndex(), pokemon.getBattlerIndex(), CommonAnim.MAGMA_STORM),
         );
-        pokemon.damageAndUpdate(toDmgValue(pokemon.getMaxHp() / 8));
+        pokemon.damageAndUpdate(toDmgValue(pokemon.getMaxHp() / 8), { result: HitResult.INDIRECT });
       });
 
     return super.lapse(arena);

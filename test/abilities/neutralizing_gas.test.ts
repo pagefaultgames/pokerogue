@@ -1,5 +1,7 @@
 import { BattlerIndex } from "#app/battle";
-import { PostSummonWeatherChangeAbAttr } from "#app/data/ability";
+import type { CommandPhase } from "#app/phases/command-phase";
+import { Command } from "#app/ui/command-ui-handler";
+import { PostSummonWeatherChangeAbAttr } from "#app/data/abilities/ability";
 import { Abilities } from "#enums/abilities";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { Moves } from "#enums/moves";
@@ -29,7 +31,7 @@ describe("Abilities - Neutralizing Gas", () => {
     game.override
       .moveset([Moves.SPLASH])
       .ability(Abilities.NEUTRALIZING_GAS)
-      .battleType("single")
+      .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)
@@ -103,7 +105,7 @@ describe("Abilities - Neutralizing Gas", () => {
   });
 
   it("should only deactivate when all setters are off the field", async () => {
-    game.override.enemyMoveset([Moves.ENTRAINMENT, Moves.SPLASH]).battleType("double");
+    game.override.enemyMoveset([Moves.ENTRAINMENT, Moves.SPLASH]).battleStyle("double");
 
     await game.classicMode.startBattle([Species.ACCELGOR, Species.ACCELGOR]);
     game.move.select(Moves.SPLASH, 0);
@@ -146,7 +148,7 @@ describe("Abilities - Neutralizing Gas", () => {
   });
 
   it("should deactivate upon catching a wild pokemon", async () => {
-    game.override.battleType("single").enemyAbility(Abilities.NEUTRALIZING_GAS).ability(Abilities.BALL_FETCH);
+    game.override.battleStyle("single").enemyAbility(Abilities.NEUTRALIZING_GAS).ability(Abilities.BALL_FETCH);
     await game.classicMode.startBattle([Species.MAGIKARP]);
     expect(game.scene.arena.getTag(ArenaTagType.NEUTRALIZING_GAS)).toBeDefined();
 
@@ -157,12 +159,23 @@ describe("Abilities - Neutralizing Gas", () => {
     expect(game.scene.arena.getTag(ArenaTagType.NEUTRALIZING_GAS)).toBeUndefined();
   });
 
+  it("should deactivate after fleeing from a wild pokemon", async () => {
+    game.override.enemyAbility(Abilities.NEUTRALIZING_GAS).ability(Abilities.BALL_FETCH);
+    await game.classicMode.startBattle([Species.MAGIKARP]);
+    expect(game.scene.arena.getTag(ArenaTagType.NEUTRALIZING_GAS)).toBeDefined();
+
+    vi.spyOn(game.scene.getPlayerPokemon()!, "randSeedInt").mockReturnValue(0);
+
+    const commandPhase = game.scene.getCurrentPhase() as CommandPhase;
+    commandPhase.handleCommand(Command.RUN, 0);
+    await game.phaseInterceptor.to("BerryPhase");
+
+    expect(game.scene.arena.getTag(ArenaTagType.NEUTRALIZING_GAS)).toBeUndefined();
+  });
+
   it("should not activate abilities of pokemon no longer on the field", async () => {
-    game.override
-      .battleType("single")
-      .ability(Abilities.NEUTRALIZING_GAS)
-      .enemyAbility(Abilities.DELTA_STREAM);
-    await game.classicMode.startBattle([ Species.MAGIKARP ]);
+    game.override.battleStyle("single").ability(Abilities.NEUTRALIZING_GAS).enemyAbility(Abilities.DELTA_STREAM);
+    await game.classicMode.startBattle([Species.MAGIKARP]);
 
     const enemy = game.scene.getEnemyPokemon()!;
     const weatherChangeAttr = enemy.getAbilityAttrs(PostSummonWeatherChangeAbAttr, false)[0];

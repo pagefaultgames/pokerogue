@@ -5,8 +5,7 @@ import { allMoves } from "#app/data/moves/move";
 import { MAX_PER_TYPE_POKEBALLS } from "#app/data/pokeball";
 import { type FormChangeItem, SpeciesFormChangeItemTrigger } from "#app/data/pokemon-forms";
 import { getStatusEffectHealText } from "#app/data/status-effect";
-import type { PlayerPokemon } from "#app/field/pokemon";
-import Pokemon from "#app/field/pokemon";
+import Pokemon, { type PlayerPokemon } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import Overrides from "#app/overrides";
 import { EvolutionPhase } from "#app/phases/evolution-phase";
@@ -16,7 +15,7 @@ import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
 import type { VoucherType } from "#app/system/voucher";
 import { Command } from "#app/ui/command-ui-handler";
 import { addTextObject, TextStyle } from "#app/ui/text";
-import { BooleanHolder, hslToHex, isNullOrUndefined, NumberHolder, toDmgValue } from "#app/utils";
+import { BooleanHolder, hslToHex, isNullOrUndefined, NumberHolder, toDmgValue } from "#app/utils/common";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BerryType } from "#enums/berry-type";
 import type { Moves } from "#enums/moves";
@@ -48,7 +47,7 @@ import {
 } from "./modifier-type";
 import { Color, ShadowColor } from "#enums/color";
 import { FRIENDSHIP_GAIN_FROM_RARE_CANDY } from "#app/data/balance/starters";
-import { applyAbAttrs, CommanderAbAttr } from "#app/data/ability";
+import { applyAbAttrs, CommanderAbAttr } from "#app/data/abilities/ability";
 import { globalScene } from "#app/global-scene";
 
 export type ModifierPredicate = (modifier: Modifier) => boolean;
@@ -2015,6 +2014,38 @@ export class ResetNegativeStatStageModifier extends PokemonHeldItemModifier {
   }
 }
 
+/**
+ * Modifier used for held items, namely Mystical Rock, that extend the
+ * duration of weather and terrain effects.
+ * @extends PokemonHeldItemModifier
+ * @see {@linkcode apply}
+ */
+export class FieldEffectModifier extends PokemonHeldItemModifier {
+  /**
+   * Provides two more turns per stack to any weather or terrain effect caused
+   * by the holder.
+   * @param pokemon {@linkcode Pokemon} that holds the held item
+   * @param fieldDuration {@linkcode NumberHolder} that stores the current field effect duration
+   * @returns `true` if the field effect extension was applied successfully
+   */
+  override apply(_pokemon: Pokemon, fieldDuration: NumberHolder): boolean {
+    fieldDuration.value += 2 * this.stackCount;
+    return true;
+  }
+
+  override matchType(modifier: Modifier): boolean {
+    return modifier instanceof FieldEffectModifier;
+  }
+
+  override clone(): FieldEffectModifier {
+    return new FieldEffectModifier(this.type, this.pokemonId, this.stackCount);
+  }
+
+  override getMaxHeldItemCount(_pokemon?: Pokemon): number {
+    return 2;
+  }
+}
+
 export abstract class ConsumablePokemonModifier extends ConsumableModifier {
   public pokemonId: number;
 
@@ -2703,7 +2734,7 @@ export class PokemonMoveAccuracyBoosterModifier extends PokemonHeldItemModifier 
    * @returns always `true`
    */
   override apply(_pokemon: Pokemon, moveAccuracy: NumberHolder): boolean {
-    moveAccuracy.value = Math.min(moveAccuracy.value + this.accuracyAmount * this.getStackCount(), 100);
+    moveAccuracy.value = moveAccuracy.value + this.accuracyAmount * this.getStackCount();
 
     return true;
   }

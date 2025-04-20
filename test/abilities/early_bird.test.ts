@@ -27,7 +27,7 @@ describe("Abilities - Early Bird", () => {
     game.override
       .moveset([Moves.REST, Moves.BELLY_DRUM, Moves.SPLASH])
       .ability(Abilities.EARLY_BIRD)
-      .battleType("single")
+      .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)

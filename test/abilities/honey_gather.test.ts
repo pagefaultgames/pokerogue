@@ -28,7 +28,7 @@ describe("Abilities - Honey Gather", () => {
       .startingLevel(100)
       .ability(Abilities.HONEY_GATHER)
       .passiveAbility(Abilities.RUN_AWAY)
-      .battleType("single")
+      .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)

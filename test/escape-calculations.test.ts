@@ -1,7 +1,7 @@
 import { AttemptRunPhase } from "#app/phases/attempt-run-phase";
 import type { CommandPhase } from "#app/phases/command-phase";
 import { Command } from "#app/ui/command-ui-handler";
-import * as Utils from "#app/utils";
+import { NumberHolder } from "#app/utils/common";
 import { Abilities } from "#enums/abilities";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -25,7 +25,7 @@ describe("Escape chance calculations", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .battleType("single")
+      .battleStyle("single")
       .enemySpecies(Species.BULBASAUR)
       .enemyAbility(Abilities.INSOMNIA)
       .ability(Abilities.INSOMNIA);
@@ -45,7 +45,7 @@ describe("Escape chance calculations", () => {
 
     await game.phaseInterceptor.to(AttemptRunPhase, false);
     const phase = game.scene.getCurrentPhase() as AttemptRunPhase;
-    const escapePercentage = new Utils.NumberHolder(0);
+    const escapePercentage = new NumberHolder(0);
 
     // this sets up an object for multiple attempts. The pokemonSpeedRatio is your speed divided by the enemy speed, the escapeAttempts are the number of escape attempts and the expectedEscapeChance is the chance it should be escaping
     const escapeChances: {
@@ -97,7 +97,7 @@ describe("Escape chance calculations", () => {
   }, 20000);
 
   it("double non-boss opponent", async () => {
-    game.override.battleType("double");
+    game.override.battleStyle("double");
     await game.classicMode.startBattle([Species.BULBASAUR, Species.ABOMASNOW]);
 
     const playerPokemon = game.scene.getPlayerField();
@@ -118,7 +118,7 @@ describe("Escape chance calculations", () => {
 
     await game.phaseInterceptor.to(AttemptRunPhase, false);
     const phase = game.scene.getCurrentPhase() as AttemptRunPhase;
-    const escapePercentage = new Utils.NumberHolder(0);
+    const escapePercentage = new NumberHolder(0);
 
     // this sets up an object for multiple attempts. The pokemonSpeedRatio is your speed divided by the enemy speed, the escapeAttempts are the number of escape attempts and the expectedEscapeChance is the chance it should be escaping
     const escapeChances: {
@@ -197,7 +197,7 @@ describe("Escape chance calculations", () => {
 
     await game.phaseInterceptor.to(AttemptRunPhase, false);
     const phase = game.scene.getCurrentPhase() as AttemptRunPhase;
-    const escapePercentage = new Utils.NumberHolder(0);
+    const escapePercentage = new NumberHolder(0);
 
     // this sets up an object for multiple attempts. The pokemonSpeedRatio is your speed divided by the enemy speed, the escapeAttempts are the number of escape attempts and the expectedEscapeChance is the chance it should be escaping
     const escapeChances: {
@@ -262,7 +262,7 @@ describe("Escape chance calculations", () => {
   }, 20000);
 
   it("double boss opponent", async () => {
-    game.override.battleType("double");
+    game.override.battleStyle("double");
     game.override.startingWave(10);
     await game.classicMode.startBattle([Species.BULBASAUR, Species.ABOMASNOW]);
 
@@ -284,7 +284,7 @@ describe("Escape chance calculations", () => {
 
     await game.phaseInterceptor.to(AttemptRunPhase, false);
     const phase = game.scene.getCurrentPhase() as AttemptRunPhase;
-    const escapePercentage = new Utils.NumberHolder(0);
+    const escapePercentage = new NumberHolder(0);
 
     // this sets up an object for multiple attempts. The pokemonSpeedRatio is your speed divided by the enemy speed, the escapeAttempts are the number of escape attempts and the expectedEscapeChance is the chance it should be escaping
     const escapeChances: {

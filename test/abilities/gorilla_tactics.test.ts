@@ -23,7 +23,7 @@ describe("Abilities - Gorilla Tactics", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .battleType("single")
+      .battleStyle("single")
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset([Moves.SPLASH, Moves.DISABLE])
       .enemySpecies(Species.MAGIKARP)

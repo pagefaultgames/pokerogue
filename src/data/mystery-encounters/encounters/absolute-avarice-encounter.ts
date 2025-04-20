@@ -24,14 +24,14 @@ import { BerryModifier, PokemonInstantReviveModifier } from "#app/modifier/modif
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { Moves } from "#enums/moves";
 import { BattlerTagType } from "#enums/battler-tag-type";
-import { randInt } from "#app/utils";
+import { randInt } from "#app/utils/common";
 import { BattlerIndex } from "#app/battle";
 import {
   applyModifierTypeToPlayerPokemon,
   catchPokemon,
   getHighestLevelPlayerPokemon,
 } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
-import { TrainerSlot } from "#app/data/trainer-config";
+import { TrainerSlot } from "#enums/trainer-slot";
 import { PokeballType } from "#enums/pokeball";
 import type HeldModifierConfig from "#app/interfaces/held-modifier-config";
 import type { BerryType } from "#enums/berry-type";

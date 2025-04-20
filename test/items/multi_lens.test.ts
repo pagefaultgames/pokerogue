@@ -27,7 +27,7 @@ describe("Items - Multi Lens", () => {
       .moveset([Moves.TACKLE, Moves.TRAILBLAZE, Moves.TACHYON_CUTTER, Moves.FUTURE_SIGHT])
       .ability(Abilities.BALL_FETCH)
       .startingHeldItems([{ name: "MULTI_LENS" }])
-      .battleType("single")
+      .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.SNORLAX)
       .enemyAbility(Abilities.BALL_FETCH)
@@ -99,7 +99,7 @@ describe("Items - Multi Lens", () => {
   });
 
   it("should enhance multi-target moves", async () => {
-    game.override.battleType("double").moveset([Moves.SWIFT, Moves.SPLASH]);
+    game.override.battleStyle("double").moveset([Moves.SWIFT, Moves.SPLASH]);
 
     await game.classicMode.startBattle([Species.MAGIKARP, Species.FEEBAS]);
 
@@ -210,5 +210,22 @@ describe("Items - Multi Lens", () => {
 
     // TODO: Update hit count to 1 once Future Sight is fixed to not activate held items if user is off the field
     expect(enemyPokemon.damageAndUpdate).toHaveBeenCalledTimes(2);
+  });
+
+  it("should not allow Pollen Puff to heal ally more than once", async () => {
+    game.override.battleStyle("double").moveset([Moves.POLLEN_PUFF, Moves.ENDURE]);
+    await game.classicMode.startBattle([Species.BULBASAUR, Species.OMANYTE]);
+
+    const [, rightPokemon] = game.scene.getPlayerField();
+
+    rightPokemon.damageAndUpdate(rightPokemon.hp - 1);
+
+    game.move.select(Moves.POLLEN_PUFF, 0, BattlerIndex.PLAYER_2);
+    game.move.select(Moves.ENDURE, 1);
+
+    await game.toNextTurn();
+
+    // Pollen Puff heals with a ratio of 0.5, as long as Pollen Puff triggers only once the pokemon will always be <= (0.5 * Max HP) + 1
+    expect(rightPokemon.hp).toBeLessThanOrEqual(0.5 * rightPokemon.getMaxHp() + 1);
   });
 });

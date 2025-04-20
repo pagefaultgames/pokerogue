@@ -9,17 +9,14 @@ import {
   setEncounterRewards,
   transitionMysteryEncounterIntroVisuals,
 } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import {
-  getRandomPartyMemberFunc,
-  trainerConfigs,
-  TrainerPartyCompoundTemplate,
-  TrainerPartyTemplate,
-  TrainerSlot,
-} from "#app/data/trainer-config";
+import { getRandomPartyMemberFunc, trainerConfigs } from "#app/data/trainers/trainer-config";
+import { TrainerPartyCompoundTemplate } from "#app/data/trainers/TrainerPartyTemplate";
+import { TrainerPartyTemplate } from "#app/data/trainers/TrainerPartyTemplate";
+import { TrainerSlot } from "#enums/trainer-slot";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import { globalScene } from "#app/global-scene";
-import { isNullOrUndefined, randSeedInt, randSeedShuffle } from "#app/utils";
+import { isNullOrUndefined, randSeedInt, randSeedShuffle } from "#app/utils/common";
 import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";

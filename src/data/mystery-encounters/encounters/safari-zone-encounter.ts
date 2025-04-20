@@ -10,12 +10,12 @@ import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounte
 import { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import type MysteryEncounterOption from "#app/data/mystery-encounters/mystery-encounter-option";
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
-import { TrainerSlot } from "#app/data/trainer-config";
+import { TrainerSlot } from "#enums/trainer-slot";
 import { HiddenAbilityRateBoosterModifier, IvScannerModifier } from "#app/modifier/modifier";
 import type { EnemyPokemon } from "#app/field/pokemon";
 import { PokeballType } from "#enums/pokeball";
 import { PlayerGender } from "#enums/player-gender";
-import { NumberHolder, randSeedInt } from "#app/utils";
+import { NumberHolder, randSeedInt } from "#app/utils/common";
 import type PokemonSpecies from "#app/data/pokemon-species";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { MoneyRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";

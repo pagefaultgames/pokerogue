@@ -42,7 +42,7 @@ describe("Abilities - Gulp Missile", () => {
     game = new GameManager(phaserGame);
     game.override
       .disableCrits()
-      .battleType("single")
+      .battleStyle("single")
       .moveset([Moves.SURF, Moves.DIVE, Moves.SPLASH, Moves.SUBSTITUTE])
       .enemySpecies(Species.SNORLAX)
       .enemyAbility(Abilities.BALL_FETCH)

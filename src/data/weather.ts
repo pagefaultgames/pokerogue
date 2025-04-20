@@ -5,12 +5,13 @@ import type Pokemon from "../field/pokemon";
 import { PokemonType } from "#enums/pokemon-type";
 import type Move from "./moves/move";
 import { AttackMove } from "./moves/move";
-import * as Utils from "../utils";
-import { SuppressWeatherEffectAbAttr } from "./ability";
+import { randSeedInt } from "#app/utils/common";
+import { SuppressWeatherEffectAbAttr } from "./abilities/ability";
 import { TerrainType, getTerrainName } from "./terrain";
 import i18next from "i18next";
 import { globalScene } from "#app/global-scene";
 import type { Arena } from "#app/field/arena";
+import { timedEventManager } from "#app/global-event-manager";
 
 export class Weather {
   public weatherType: WeatherType;
@@ -405,8 +406,8 @@ export function getRandomWeatherType(arena: Arena): WeatherType {
       break;
   }
 
-  if (arena.biomeType === Biome.TOWN && globalScene.eventManager.isEventActive()) {
-    globalScene.eventManager.getWeather()?.map(w => weatherPool.push(w));
+  if (arena.biomeType === Biome.TOWN && timedEventManager.isEventActive()) {
+    timedEventManager.getWeather()?.map(w => weatherPool.push(w));
   }
 
   if (weatherPool.length > 1) {
@@ -415,7 +416,7 @@ export function getRandomWeatherType(arena: Arena): WeatherType {
       totalWeight += w.weight;
     }
 
-    const rand = Utils.randSeedInt(totalWeight);
+    const rand = randSeedInt(totalWeight);
     let w = 0;
     for (const weather of weatherPool) {
       w += weather.weight;

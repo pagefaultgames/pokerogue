@@ -1,5 +1,5 @@
 import { BattlerIndex } from "#app/battle";
-import { toDmgValue } from "#app/utils";
+import { toDmgValue } from "#app/utils/common";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
@@ -27,7 +27,7 @@ describe("Abilities - Disguise", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .battleType("single")
+      .battleStyle("single")
       .enemySpecies(Species.MIMIKYU)
       .enemyMoveset(Moves.SPLASH)
       .starterSpecies(Species.REGIELEKI)

@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import * as Utils from "#app/utils";
+import { fixedInt } from "#app/utils/common";
 import { BattlePhase } from "./battle-phase";
 
 export class PartyHealPhase extends BattlePhase {
@@ -23,12 +23,12 @@ export class PartyHealPhase extends BattlePhase {
         pokemon.hp = pokemon.getMaxHp();
         pokemon.resetStatus();
         for (const move of pokemon.moveset) {
-          move!.ppUsed = 0; // TODO: is this bang correct?
+          move.ppUsed = 0;
         }
         pokemon.updateInfo(true);
       }
       const healSong = globalScene.playSoundWithoutBgm("heal");
-      globalScene.time.delayedCall(Utils.fixedInt(healSong.totalDuration * 1000), () => {
+      globalScene.time.delayedCall(fixedInt(healSong.totalDuration * 1000), () => {
         healSong.destroy();
         if (this.resumeBgm && bgmPlaying) {
           globalScene.playBgm();

@@ -3,6 +3,7 @@ import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { allMoves } from "#app/data/moves/move";
+import type Move from "#app/data/moves/move";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -10,7 +11,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vite
 describe("Moves - Rage Fist", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
-  const move = allMoves[Moves.RAGE_FIST];
+  let move: Move;
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({
@@ -23,9 +24,10 @@ describe("Moves - Rage Fist", () => {
   });
 
   beforeEach(() => {
+    move = allMoves[Moves.RAGE_FIST];
     game = new GameManager(phaserGame);
     game.override
-      .battleType("single")
+      .battleStyle("single")
       .moveset([Moves.RAGE_FIST, Moves.SPLASH, Moves.SUBSTITUTE])
       .startingLevel(100)
       .enemyLevel(1)

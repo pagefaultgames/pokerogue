@@ -1,13 +1,14 @@
-import { BattlerIndex, BattleType } from "#app/battle";
+import { BattlerIndex } from "#app/battle";
+import { BattleType } from "#enums/battle-type";
 import { globalScene } from "#app/global-scene";
 import { PLAYER_PARTY_MAX_SIZE } from "#app/constants";
-import { applyAbAttrs, SyncEncounterNatureAbAttr } from "#app/data/ability";
+import { applyAbAttrs, SyncEncounterNatureAbAttr, applyPreSummonAbAttrs, PreSummonAbAttr } from "#app/data/abilities/ability";
 import { initEncounterAnims, loadEncounterAnimAssets } from "#app/data/battle-anims";
 import { getCharVariantFromDialogue } from "#app/data/dialogue";
 import { getEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { doTrainerExclamation } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { getGoldenBugNetSpecies } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
-import { TrainerSlot } from "#app/data/trainer-config";
+import { TrainerSlot } from "#enums/trainer-slot";
 import { getRandomWeatherType } from "#app/data/weather";
 import { EncounterPhaseEvent } from "#app/events/battle-scene";
 import type Pokemon from "#app/field/pokemon";
@@ -28,8 +29,8 @@ import { SummonPhase } from "#app/phases/summon-phase";
 import { ToggleDoublePositionPhase } from "#app/phases/toggle-double-position-phase";
 import { achvs } from "#app/system/achv";
 import { handleTutorial, Tutorial } from "#app/tutorial";
-import { Mode } from "#app/ui/ui";
-import { randSeedInt, randSeedItem } from "#app/utils";
+import { UiMode } from "#enums/ui-mode";
+import { randSeedInt, randSeedItem } from "#app/utils/common";
 import { BattleSpec } from "#enums/battle-spec";
 import { Biome } from "#enums/biome";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
@@ -43,10 +44,10 @@ import { getNatureName } from "#app/data/nature";
 export class EncounterPhase extends BattlePhase {
   private loaded: boolean;
 
-  constructor(loaded?: boolean) {
+  constructor(loaded = false) {
     super();
 
-    this.loaded = !!loaded;
+    this.loaded = loaded;
   }
 
   start() {
@@ -259,6 +260,9 @@ export class EncounterPhase extends BattlePhase {
         }
         if (e < (battle.double ? 2 : 1)) {
           if (battle.battleType === BattleType.WILD) {
+            for (const pokemon of globalScene.getField()) {
+              applyPreSummonAbAttrs(PreSummonAbAttr, pokemon, []);
+            }
             globalScene.field.add(enemyPokemon);
             battle.seenEnemyPartyMemberIds.add(enemyPokemon.id);
             const playerPokemon = globalScene.getPlayerPokemon();
@@ -294,7 +298,7 @@ export class EncounterPhase extends BattlePhase {
         globalScene.currentBattle.trainer!.genAI(globalScene.getEnemyParty());
       }
 
-      globalScene.ui.setMode(Mode.MESSAGE).then(() => {
+      globalScene.ui.setMode(UiMode.MESSAGE).then(() => {
         if (!this.loaded) {
           this.trySetWeatherIfNewBiome(); // Set weather before session gets saved
           // Game syncs to server on waves X1 and X6 (As of 1.2.0)
@@ -545,7 +549,7 @@ export class EncounterPhase extends BattlePhase {
     const enemyField = globalScene.getEnemyField();
 
     enemyField.forEach((enemyPokemon, e) => {
-      if (enemyPokemon.isShiny()) {
+      if (enemyPokemon.isShiny(true)) {
         globalScene.unshiftPhase(new ShinySparklePhase(BattlerIndex.ENEMY + e));
       }
       /** This sets Eternatus' held item to be untransferrable, preventing it from being stolen  */
@@ -684,7 +688,7 @@ export class EncounterPhase extends BattlePhase {
    */
   trySetWeatherIfNewBiome(): void {
     if (!this.loaded) {
-      globalScene.arena.trySetWeather(getRandomWeatherType(globalScene.arena), false);
+      globalScene.arena.trySetWeather(getRandomWeatherType(globalScene.arena));
     }
   }
 }

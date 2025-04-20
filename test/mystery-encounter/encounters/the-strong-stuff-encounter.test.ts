@@ -18,7 +18,7 @@ import { Nature } from "#enums/nature";
 import { BerryType } from "#enums/berry-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { PokemonMove } from "#app/field/pokemon";
-import { Mode } from "#app/ui/ui";
+import { UiMode } from "#enums/ui-mode";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 import { BerryModifier, PokemonBaseStatTotalModifier } from "#app/modifier/modifier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
@@ -114,7 +114,7 @@ describe("The Strong Stuff - Mystery Encounter", () => {
             bossSegments: 5,
             shiny: false,
             customPokemonData: new CustomPokemonData({ spriteScale: 1.25 }),
-            nature: Nature.BOLD,
+            nature: Nature.HARDY,
             moveSet: [Moves.INFESTATION, Moves.SALT_CURE, Moves.GASTRO_ACID, Moves.HEAL_ORDER],
             modifierConfigs: expect.any(Array),
             tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
@@ -198,7 +198,7 @@ describe("The Strong Stuff - Mystery Encounter", () => {
       expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(enemyField.length).toBe(1);
       expect(enemyField[0].species.speciesId).toBe(Species.SHUCKLE);
-      expect(enemyField[0].summonData.statStages).toEqual([0, 2, 0, 2, 0, 0, 0]);
+      expect(enemyField[0].summonData.statStages).toEqual([0, 1, 0, 1, 0, 0, 0]);
       const shuckleItems = enemyField[0].getHeldItems();
       expect(shuckleItems.length).toBe(5);
       expect(shuckleItems.find(m => m instanceof BerryModifier && m.berryType === BerryType.SITRUS)?.stackCount).toBe(
@@ -236,7 +236,7 @@ describe("The Strong Stuff - Mystery Encounter", () => {
       expect(scene.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
       await game.phaseInterceptor.run(SelectModifierPhase);
 
-      expect(scene.ui.getMode()).to.equal(Mode.MODIFIER_SELECT);
+      expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
       const modifierSelectHandler = scene.ui.handlers.find(
         h => h instanceof ModifierSelectUiHandler,
       ) as ModifierSelectUiHandler;

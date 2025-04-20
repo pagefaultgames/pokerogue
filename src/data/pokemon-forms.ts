@@ -3,7 +3,7 @@ import type Pokemon from "../field/pokemon";
 import { StatusEffect } from "#enums/status-effect";
 import { allMoves } from "./moves/move";
 import { MoveCategory } from "#enums/MoveCategory";
-import type { Constructor, nil } from "#app/utils";
+import type { Constructor, nil } from "#app/utils/common";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
@@ -363,7 +363,7 @@ export class SpeciesFormChangeMoveLearnedTrigger extends SpeciesFormChangeTrigge
   }
 
   canChange(pokemon: Pokemon): boolean {
-    return !!pokemon.moveset.filter(m => m?.moveId === this.move).length === this.known;
+    return !!pokemon.moveset.filter(m => m.moveId === this.move).length === this.known;
   }
 }
 

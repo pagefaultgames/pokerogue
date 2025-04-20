@@ -19,11 +19,12 @@ import { achvs } from "#app/system/achv";
 import type { PartyOption } from "#app/ui/party-ui-handler";
 import { PartyUiMode } from "#app/ui/party-ui-handler";
 import { SummaryUiMode } from "#app/ui/summary-ui-handler";
-import { Mode } from "#app/ui/ui";
+import { UiMode } from "#enums/ui-mode";
 import type { PokeballType } from "#enums/pokeball";
 import { StatusEffect } from "#enums/status-effect";
 import i18next from "i18next";
 import { globalScene } from "#app/global-scene";
+import { Gender } from "#app/data/gender";
 
 export class AttemptCapturePhase extends PokemonPhase {
   private pokeballType: PokeballType;
@@ -294,7 +295,7 @@ export class AttemptCapturePhase extends PokemonPhase {
                 () => {
                   globalScene.pokemonInfoContainer.makeRoomForConfirmUi(1, true);
                   globalScene.ui.setMode(
-                    Mode.CONFIRM,
+                    UiMode.CONFIRM,
                     () => {
                       const newPokemon = globalScene.addPlayerPokemon(
                         pokemon.species,
@@ -309,12 +310,12 @@ export class AttemptCapturePhase extends PokemonPhase {
                         pokemon,
                       );
                       globalScene.ui.setMode(
-                        Mode.SUMMARY,
+                        UiMode.SUMMARY,
                         newPokemon,
                         0,
                         SummaryUiMode.DEFAULT,
                         () => {
-                          globalScene.ui.setMode(Mode.MESSAGE).then(() => {
+                          globalScene.ui.setMode(UiMode.MESSAGE).then(() => {
                             promptRelease();
                           });
                         },
@@ -322,12 +323,32 @@ export class AttemptCapturePhase extends PokemonPhase {
                       );
                     },
                     () => {
+                      const attributes = {
+                        shiny: pokemon.shiny,
+                        variant: pokemon.variant,
+                        form: pokemon.formIndex,
+                        female: pokemon.gender === Gender.FEMALE,
+                      };
+                      globalScene.ui.setOverlayMode(
+                        UiMode.POKEDEX_PAGE,
+                        pokemon.species,
+                        attributes,
+                        null,
+                        null,
+                        () => {
+                          globalScene.ui.setMode(UiMode.MESSAGE).then(() => {
+                            promptRelease();
+                          });
+                        },
+                      );
+                    },
+                    () => {
                       globalScene.ui.setMode(
-                        Mode.PARTY,
+                        UiMode.PARTY,
                         PartyUiMode.RELEASE,
                         this.fieldIndex,
                         (slotIndex: number, _option: PartyOption) => {
-                          globalScene.ui.setMode(Mode.MESSAGE).then(() => {
+                          globalScene.ui.setMode(UiMode.MESSAGE).then(() => {
                             if (slotIndex < 6) {
                               addToParty(slotIndex);
                             } else {
@@ -338,7 +359,7 @@ export class AttemptCapturePhase extends PokemonPhase {
                       );
                     },
                     () => {
-                      globalScene.ui.setMode(Mode.MESSAGE).then(() => {
+                      globalScene.ui.setMode(UiMode.MESSAGE).then(() => {
                         removePokemon();
                         end();
                       });

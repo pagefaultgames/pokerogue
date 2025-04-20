@@ -1,8 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import type { BiomeTierTrainerPools, PokemonPools } from "#app/data/balance/biomes";
 import { biomePokemonPools, BiomePoolTier, biomeTrainerPools } from "#app/data/balance/biomes";
-import type { Constructor } from "#app/utils";
-import * as Utils from "#app/utils";
+import { randSeedInt, NumberHolder, isNullOrUndefined, type Constructor } from "#app/utils/common";
 import type PokemonSpecies from "#app/data/pokemon-species";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import {
@@ -27,7 +26,7 @@ import {
   PostTerrainChangeAbAttr,
   PostWeatherChangeAbAttr,
   TerrainEventTypeChangeAbAttr,
-} from "#app/data/ability";
+} from "#app/data/abilities/ability";
 import type Pokemon from "#app/field/pokemon";
 import Overrides from "#app/overrides";
 import { TagAddedEvent, TagRemovedEvent, TerrainChangedEvent, WeatherChangedEvent } from "#app/events/arena";
@@ -40,8 +39,8 @@ import { TrainerType } from "#enums/trainer-type";
 import { Abilities } from "#enums/abilities";
 import { SpeciesFormChangeRevertWeatherFormTrigger, SpeciesFormChangeWeatherTrigger } from "#app/data/pokemon-forms";
 import { CommonAnimPhase } from "#app/phases/common-anim-phase";
-import { ShowAbilityPhase } from "#app/phases/show-ability-phase";
 import { WeatherType } from "#enums/weather-type";
+import { FieldEffectModifier } from "#app/modifier/modifier";
 
 export class Arena {
   public biomeType: Biome;
@@ -124,7 +123,7 @@ export class Arena {
     if (typeof luckValue !== "undefined") {
       luckModifier = luckValue * (isBossSpecies ? 0.5 : 2);
     }
-    const tierValue = Utils.randSeedInt(randVal - luckModifier);
+    const tierValue = randSeedInt(randVal - luckModifier);
     let tier = !isBossSpecies
       ? tierValue >= 156
         ? BiomePoolTier.COMMON
@@ -153,7 +152,7 @@ export class Arena {
     if (!tierPool.length) {
       ret = globalScene.randomSpecies(waveIndex, level);
     } else {
-      const entry = tierPool[Utils.randSeedInt(tierPool.length)];
+      const entry = tierPool[randSeedInt(tierPool.length)];
       let species: Species;
       if (typeof entry === "number") {
         species = entry as Species;
@@ -164,7 +163,7 @@ export class Arena {
           if (level >= levelThreshold) {
             const speciesIds = entry[levelThreshold];
             if (speciesIds.length > 1) {
-              species = speciesIds[Utils.randSeedInt(speciesIds.length)];
+              species = speciesIds[randSeedInt(speciesIds.length)];
             } else {
               species = speciesIds[0];
             }
@@ -211,7 +210,7 @@ export class Arena {
       !!this.trainerPool[BiomePoolTier.BOSS].length &&
       (globalScene.gameMode.isTrainerBoss(waveIndex, this.biomeType, globalScene.offsetGym) || isBoss);
     console.log(isBoss, this.trainerPool);
-    const tierValue = Utils.randSeedInt(!isTrainerBoss ? 512 : 64);
+    const tierValue = randSeedInt(!isTrainerBoss ? 512 : 64);
     let tier = !isTrainerBoss
       ? tierValue >= 156
         ? BiomePoolTier.COMMON
@@ -235,7 +234,7 @@ export class Arena {
       tier--;
     }
     const tierPool = this.trainerPool[tier] || [];
-    return !tierPool.length ? TrainerType.BREEDER : tierPool[Utils.randSeedInt(tierPool.length)];
+    return !tierPool.length ? TrainerType.BREEDER : tierPool[randSeedInt(tierPool.length)];
   }
 
   getSpeciesFormIndex(species: PokemonSpecies): number {
@@ -311,10 +310,10 @@ export class Arena {
   /**
    * Attempts to set a new weather to the battle
    * @param weather {@linkcode WeatherType} new {@linkcode WeatherType} to set
-   * @param hasPokemonSource boolean if the new weather is from a pokemon
+   * @param user {@linkcode Pokemon} that caused the weather effect
    * @returns true if new weather set, false if no weather provided or attempting to set the same weather as currently in use
    */
-  trySetWeather(weather: WeatherType, hasPokemonSource: boolean): boolean {
+  trySetWeather(weather: WeatherType, user?: Pokemon): boolean {
     if (Overrides.WEATHER_OVERRIDE) {
       return this.trySetWeatherOverride(Overrides.WEATHER_OVERRIDE);
     }
@@ -336,7 +335,14 @@ export class Arena {
       return false;
     }
 
-    this.weather = weather ? new Weather(weather, hasPokemonSource ? 5 : 0) : null;
+    const weatherDuration = new NumberHolder(0);
+
+    if (!isNullOrUndefined(user)) {
+      weatherDuration.value = 5;
+      globalScene.applyModifier(FieldEffectModifier, user.isPlayer(), user, weatherDuration);
+    }
+
+    this.weather = weather ? new Weather(weather, weatherDuration.value) : null;
     this.eventTarget.dispatchEvent(
       new WeatherChangedEvent(oldWeatherType, this.weather?.weatherType!, this.weather?.turnsLeft!),
     ); // TODO: is this bang correct?
@@ -370,7 +376,6 @@ export class Arena {
       const isCherrimWithFlowerGift = p.hasAbility(Abilities.FLOWER_GIFT) && p.species.speciesId === Species.CHERRIM;
 
       if (isCastformWithForecast || isCherrimWithFlowerGift) {
-        new ShowAbilityPhase(p.getBattlerIndex());
         globalScene.triggerPokemonFormChange(p, SpeciesFormChangeWeatherTrigger);
       }
     });
@@ -387,7 +392,6 @@ export class Arena {
         p.hasAbility(Abilities.FLOWER_GIFT, false, true) && p.species.speciesId === Species.CHERRIM;
 
       if (isCastformWithForecast || isCherrimWithFlowerGift) {
-        new ShowAbilityPhase(p.getBattlerIndex());
         return globalScene.triggerPokemonFormChange(p, SpeciesFormChangeRevertWeatherFormTrigger);
       }
     });
@@ -398,14 +402,29 @@ export class Arena {
     return !(this.terrain?.terrainType === (terrain || undefined));
   }
 
-  trySetTerrain(terrain: TerrainType, hasPokemonSource: boolean, ignoreAnim = false): boolean {
+  /**
+   * Attempts to set a new terrain effect to the battle
+   * @param terrain {@linkcode TerrainType} new {@linkcode TerrainType} to set
+   * @param ignoreAnim boolean if the terrain animation should be ignored
+   * @param user {@linkcode Pokemon} that caused the terrain effect
+   * @returns true if new terrain set, false if no terrain provided or attempting to set the same terrain as currently in use
+   */
+  trySetTerrain(terrain: TerrainType, ignoreAnim = false, user?: Pokemon): boolean {
     if (!this.canSetTerrain(terrain)) {
       return false;
     }
 
     const oldTerrainType = this.terrain?.terrainType || TerrainType.NONE;
 
-    this.terrain = terrain ? new Terrain(terrain, hasPokemonSource ? 5 : 0) : null;
+    const terrainDuration = new NumberHolder(0);
+
+    if (!isNullOrUndefined(user)) {
+      terrainDuration.value = 5;
+      globalScene.applyModifier(FieldEffectModifier, user.isPlayer(), user, terrainDuration);
+    }
+
+    this.terrain = terrain ? new Terrain(terrain, terrainDuration.value) : null;
+
     this.eventTarget.dispatchEvent(
       new TerrainChangedEvent(oldTerrainType, this.terrain?.terrainType!, this.terrain?.turnsLeft!),
     ); // TODO: are those bangs correct?
@@ -802,9 +821,9 @@ export class Arena {
   resetArenaEffects(): void {
     // Don't reset weather if a Biome's permanent weather is active
     if (this.weather?.turnsLeft !== 0) {
-      this.trySetWeather(WeatherType.NONE, false);
+      this.trySetWeather(WeatherType.NONE);
     }
-    this.trySetTerrain(TerrainType.NONE, false, true);
+    this.trySetTerrain(TerrainType.NONE, true);
     this.resetPlayerFaintCount();
     this.removeAllTags();
   }
@@ -993,7 +1012,7 @@ export class ArenaBase extends Phaser.GameObjects.Container {
     if (!this.player) {
       globalScene.executeWithSeedOffset(
         () => {
-          this.propValue = propValue === undefined ? (hasProps ? Utils.randSeedInt(8) : 0) : propValue;
+          this.propValue = propValue === undefined ? (hasProps ? randSeedInt(8) : 0) : propValue;
           this.props.forEach((prop, p) => {
             const propKey = `${biomeKey}_b${hasProps ? `_${p + 1}` : ""}`;
             prop.setTexture(propKey);

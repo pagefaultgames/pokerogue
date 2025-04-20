@@ -1,13 +1,9 @@
 import { globalScene } from "#app/global-scene";
-import { applyAbAttrs, PostBiomeChangeAbAttr } from "#app/data/ability";
+import { applyAbAttrs, PostBiomeChangeAbAttr } from "#app/data/abilities/ability";
 import { getRandomWeatherType } from "#app/data/weather";
 import { NextEncounterPhase } from "./next-encounter-phase";
 
 export class NewBiomeEncounterPhase extends NextEncounterPhase {
-  constructor() {
-    super();
-  }
-
   doEncounter(): void {
     globalScene.playBgm(undefined, true);
 
@@ -45,6 +41,6 @@ export class NewBiomeEncounterPhase extends NextEncounterPhase {
    * Set biome weather.
    */
   trySetWeatherIfNewBiome(): void {
-    globalScene.arena.trySetWeather(getRandomWeatherType(globalScene.arena), false);
+    globalScene.arena.trySetWeather(getRandomWeatherType(globalScene.arena));
   }
 }

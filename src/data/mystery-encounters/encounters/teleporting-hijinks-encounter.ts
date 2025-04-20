@@ -7,7 +7,7 @@ import {
   transitionMysteryEncounterIntroVisuals,
   updatePlayerMoney,
 } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { randSeedInt } from "#app/utils";
+import { randSeedInt } from "#app/utils/common";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { globalScene } from "#app/global-scene";
 import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
@@ -24,7 +24,7 @@ import { Biome } from "#enums/biome";
 import { getBiomeKey } from "#app/field/arena";
 import { PokemonType } from "#enums/pokemon-type";
 import { getPartyLuckValue, modifierTypes } from "#app/modifier/modifier-type";
-import { TrainerSlot } from "#app/data/trainer-config";
+import { TrainerSlot } from "#enums/trainer-slot";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";

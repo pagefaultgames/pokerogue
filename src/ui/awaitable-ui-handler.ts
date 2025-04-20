@@ -1,4 +1,4 @@
-import type { Mode } from "./ui";
+import type { UiMode } from "#enums/ui-mode";
 import UiHandler from "./ui-handler";
 import { Button } from "#enums/buttons";
 import { globalScene } from "#app/global-scene";
@@ -9,7 +9,7 @@ export default abstract class AwaitableUiHandler extends UiHandler {
   public tutorialActive = false;
   public tutorialOverlay: Phaser.GameObjects.Rectangle;
 
-  constructor(mode: Mode | null = null) {
+  constructor(mode: UiMode | null = null) {
     super(mode);
   }
 

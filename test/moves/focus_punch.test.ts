@@ -28,7 +28,7 @@ describe("Moves - Focus Punch", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .battleType("single")
+      .battleStyle("single")
       .ability(Abilities.UNNERVE)
       .moveset([Moves.FOCUS_PUNCH])
       .enemySpecies(Species.GROUDON)
