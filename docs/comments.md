@@ -52,9 +52,10 @@ While other classes should be fully documented, Abilities and Moves heavily inco
 ```ts
 /**
 ...
- * @param args - [0] {@linkcode NumberHolder} of arenaAttackTypeMultiplier;
- *               [1] {@linkcode BooleanHolder} of cancelled
- *               [2] {@linkcode BooleanHolder} of rWeDoneYet
+ * @param args -
+ * - `[0]` {@linkcode NumberHolder} `paramA` - paramA description here
+ * - `[1]` {@linkcode BooleanHolder} `paramB` - paramB description here
+ * - `[2]` {@linkcode BooleanHolder} `paramC` - paramC description here
 ...
 */
 ```
