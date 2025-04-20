@@ -24,7 +24,7 @@ describe("Moves - Tackle", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     const moveToUse = Moves.TACKLE;
-    game.override.battleType("single");
+    game.override.battleStyle("single");
     game.override.enemySpecies(Species.MAGIKARP);
     game.override.startingLevel(1);
     game.override.startingWave(97);

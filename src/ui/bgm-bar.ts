@@ -1,6 +1,6 @@
 import { addTextObject, TextStyle } from "./text";
 import i18next from "i18next";
-import { formatText } from "#app/utils";
+import { formatText } from "#app/utils/common";
 import { globalScene } from "#app/global-scene";
 
 const hiddenX = -150;

@@ -23,7 +23,7 @@ describe("Moves - Disable", () => {
   beforeEach(async () => {
     game = new GameManager(phaserGame);
     game.override
-      .battleType("single")
+      .battleStyle("single")
       .ability(Abilities.BALL_FETCH)
       .enemyAbility(Abilities.BALL_FETCH)
       .moveset([Moves.DISABLE, Moves.SPLASH])

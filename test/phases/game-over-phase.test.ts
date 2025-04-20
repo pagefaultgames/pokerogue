@@ -27,7 +27,7 @@ describe("Game Over Phase", () => {
     game.override
       .moveset([Moves.MEMENTO, Moves.ICE_BEAM, Moves.SPLASH])
       .ability(Abilities.BALL_FETCH)
-      .battleType("single")
+      .battleStyle("single")
       .disableCrits()
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH)

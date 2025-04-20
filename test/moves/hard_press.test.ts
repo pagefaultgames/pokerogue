@@ -27,7 +27,7 @@ describe("Moves - Hard Press", () => {
   beforeEach(() => {
     moveToCheck = allMoves[Moves.HARD_PRESS];
     game = new GameManager(phaserGame);
-    game.override.battleType("single");
+    game.override.battleStyle("single");
     game.override.ability(Abilities.BALL_FETCH);
     game.override.enemySpecies(Species.MUNCHLAX);
     game.override.enemyAbility(Abilities.BALL_FETCH);

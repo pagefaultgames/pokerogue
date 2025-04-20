@@ -55,7 +55,7 @@ import {
   getStarterValueFriendshipCap,
   speciesStarterCosts,
 } from "#app/data/balance/starters";
-import { NumberHolder, randSeedInt, getIvsFromId, BooleanHolder, randSeedItem, isNullOrUndefined, getEnumValues, toDmgValue, fixedInt, rgbaToInt, rgbHexToRgba, rgbToHsv, deltaRgb, isBetween, type nil, type Constructor } from "#app/utils";
+import { NumberHolder, randSeedInt, getIvsFromId, BooleanHolder, randSeedItem, isNullOrUndefined, getEnumValues, toDmgValue, fixedInt, rgbaToInt, rgbHexToRgba, rgbToHsv, deltaRgb, isBetween, type nil, type Constructor } from "#app/utils/common";
 import type { TypeDamageMultiplier } from "#app/data/type";
 import { getTypeDamageMultiplier, getTypeRgb } from "#app/data/type";
 import { PokemonType } from "#enums/pokemon-type";
@@ -193,7 +193,7 @@ import {
 import { allAbilities } from "#app/data/data-lists";
 import type PokemonData from "#app/system/pokemon-data";
 import { BattlerIndex } from "#app/battle";
-import { Mode } from "#app/ui/ui";
+import { UiMode } from "#enums/ui-mode";
 import type { PartyOption } from "#app/ui/party-ui-handler";
 import PartyUiHandler, { PartyUiMode } from "#app/ui/party-ui-handler";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
@@ -1107,7 +1107,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    */
   getSpeciesForm(ignoreOverride?: boolean, useIllusion: boolean = false): PokemonSpeciesForm {
     const species: PokemonSpecies = useIllusion && !!this.summonData?.illusion ? getPokemonSpecies(this.summonData?.illusion.species) : this.species;
-
     const formIndex: integer = useIllusion && !!this.summonData?.illusion ? this.summonData?.illusion.formIndex : this.formIndex;
 
     if (!ignoreOverride && this.summonData?.speciesForm) {
@@ -3853,12 +3852,17 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return null;
   }
 
-  getOpponents(): Pokemon[] {
+  /**
+   * Returns the pokemon that oppose this one and are active
+   * 
+   * @param onField - whether to also check if the pokemon is currently on the field (defaults to true)
+   */
+  getOpponents(onField = true): Pokemon[] {
     return (
       (this.isPlayer()
         ? globalScene.getEnemyField()
         : globalScene.getPlayerField()) as Pokemon[]
-    ).filter(p => p.isActive());
+    ).filter(p => p.isActive(onField));
   }
 
   getOpponentDescriptor(): string {
@@ -5282,13 +5286,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     sceneOverride?: BattleScene,
   ): AnySound {
     const scene = sceneOverride ?? globalScene; // TODO: is `sceneOverride` needed?
-    const cry = this.getSpeciesForm().cry(soundConfig);
+    const cry = this.getSpeciesForm(undefined, true).cry(soundConfig);
     let duration = cry.totalDuration * 1000;
     if (
       this.fusionSpecies &&
-      this.getSpeciesForm() !== this.getFusionSpeciesForm()
+      this.getSpeciesForm(undefined, true) !== this.getFusionSpeciesForm(undefined, true)
     ) {
-      let fusionCry = this.getFusionSpeciesForm().cry(soundConfig, true);
+      let fusionCry = this.getFusionSpeciesForm(undefined, true).cry(soundConfig, true);
       duration = Math.min(duration, fusionCry.totalDuration * 1000);
       fusionCry.destroy();
       scene.time.delayedCall(fixedInt(Math.ceil(duration * 0.4)), () => {
@@ -5298,7 +5302,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             cry,
             fixedInt(Math.ceil(duration * 0.2)),
           );
-          fusionCry = this.getFusionSpeciesForm().cry(
+          fusionCry = this.getFusionSpeciesForm(undefined, true).cry(
             Object.assign(
               { seek: Math.max(fusionCry.totalDuration * 0.4, 0) },
               soundConfig,
@@ -6582,7 +6586,7 @@ export class PlayerPokemon extends Pokemon {
       this.leaveField(switchType === SwitchType.SWITCH);
 
       globalScene.ui.setMode(
-        Mode.PARTY,
+        UiMode.PARTY,
         PartyUiMode.FAINT_SWITCH,
         this.getFieldIndex(),
         (slotIndex: number, option: PartyOption) => {
@@ -6600,7 +6604,7 @@ export class PlayerPokemon extends Pokemon {
               MoveEndPhase,
             );
           }
-          globalScene.ui.setMode(Mode.MESSAGE).then(resolve);
+          globalScene.ui.setMode(UiMode.MESSAGE).then(resolve);
         },
         PartyUiHandler.FilterNonFainted,
       );

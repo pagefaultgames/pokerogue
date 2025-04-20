@@ -22,7 +22,7 @@ describe("Moves - Gastro Acid", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleType("double");
+    game.override.battleStyle("double");
     game.override.startingLevel(1);
     game.override.enemyLevel(100);
     game.override.ability(Abilities.NONE);
@@ -61,7 +61,7 @@ describe("Moves - Gastro Acid", () => {
   });
 
   it("fails if used on an enemy with an already-suppressed ability", async () => {
-    game.override.battleType("single");
+    game.override.battleStyle("single");
 
     await game.startBattle();
 

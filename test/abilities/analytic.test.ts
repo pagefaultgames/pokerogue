@@ -1,5 +1,5 @@
 import { BattlerIndex } from "#app/battle";
-import { isBetween, toDmgValue } from "#app/utils";
+import { isBetween, toDmgValue } from "#app/utils/common";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
@@ -26,7 +26,7 @@ describe("Abilities - Analytic", () => {
     game.override
       .moveset([Moves.SPLASH, Moves.TACKLE])
       .ability(Abilities.ANALYTIC)
-      .battleType("single")
+      .battleStyle("single")
       .disableCrits()
       .startingLevel(200)
       .enemyLevel(200)
@@ -53,7 +53,7 @@ describe("Abilities - Analytic", () => {
   });
 
   it("should increase damage only if the user moves last in doubles", async () => {
-    game.override.battleType("double");
+    game.override.battleStyle("double");
     await game.classicMode.startBattle([Species.GENGAR, Species.SHUCKLE]);
 
     const [enemy] = game.scene.getEnemyField();

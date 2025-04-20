@@ -1,7 +1,7 @@
-import { Mode } from "./ui";
+import { UiMode } from "#enums/ui-mode";
 import { TextStyle, addTextObject, getEggTierTextTint, getTextStyleOptions } from "./text";
 import MessageUiHandler from "./message-ui-handler";
-import { getEnumValues, getEnumKeys, fixedInt, randSeedShuffle } from "#app/utils";
+import { getEnumValues, getEnumKeys, fixedInt, randSeedShuffle } from "#app/utils/common";
 import type { IEggOptions } from "../data/egg";
 import { Egg, getLegendaryGachaSpeciesForTimestamp } from "../data/egg";
 import { VoucherType, getVoucherTypeIcon } from "../system/voucher";
@@ -41,7 +41,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
   private scale = 0.1666666667;
 
   constructor() {
-    super(Mode.EGG_GACHA);
+    super(UiMode.EGG_GACHA);
 
     this.gachaContainers = [];
     this.gachaKnobs = [];

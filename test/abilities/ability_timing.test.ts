@@ -2,7 +2,7 @@ import { BattleStyle } from "#app/enums/battle-style";
 import { CommandPhase } from "#app/phases/command-phase";
 import { TurnInitPhase } from "#app/phases/turn-init-phase";
 import i18next from "#app/plugins/i18n";
-import { Mode } from "#app/ui/ui";
+import { UiMode } from "#enums/ui-mode";
 import { Abilities } from "#enums/abilities";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -27,7 +27,7 @@ describe("Ability Timing", () => {
     game = new GameManager(phaserGame);
 
     game.override
-      .battleType("single")
+      .battleStyle("single")
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.INTIMIDATE)
       .ability(Abilities.BALL_FETCH);
@@ -40,9 +40,9 @@ describe("Ability Timing", () => {
 
     game.onNextPrompt(
       "CheckSwitchPhase",
-      Mode.CONFIRM,
+      UiMode.CONFIRM,
       () => {
-        game.setMode(Mode.MESSAGE);
+        game.setMode(UiMode.MESSAGE);
         game.endPhase();
       },
       () => game.isCurrentPhase(CommandPhase) || game.isCurrentPhase(TurnInitPhase),

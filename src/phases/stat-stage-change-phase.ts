@@ -17,7 +17,7 @@ import type Pokemon from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { ResetNegativeStatStageModifier } from "#app/modifier/modifier";
 import { handleTutorial, Tutorial } from "#app/tutorial";
-import { NumberHolder, BooleanHolder, isNullOrUndefined } from "#app/utils";
+import { NumberHolder, BooleanHolder, isNullOrUndefined } from "#app/utils/common";
 import i18next from "i18next";
 import { PokemonPhase } from "./pokemon-phase";
 import { Stat, type BattleStat, getStatKey, getStatStageChangeDescriptionKey } from "#enums/stat";
