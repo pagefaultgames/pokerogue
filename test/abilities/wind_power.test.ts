@@ -23,10 +23,10 @@ describe("Abilities - Wind Power", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("single");
-    game.override.enemySpecies(Species.SHIFTRY);
-    game.override.enemyAbility(Abilities.WIND_POWER);
-    game.override.moveset([Moves.TAILWIND, Moves.SPLASH, Moves.PETAL_BLIZZARD, Moves.SANDSTORM]);
+    game.override.battleStyle("single").enemySpecies(Species.SHIFTRY);
+    game.override
+      .enemyAbility(Abilities.WIND_POWER)
+      .moveset([Moves.TAILWIND, Moves.SPLASH, Moves.PETAL_BLIZZARD, Moves.SANDSTORM]);
     game.override.enemyMoveset(Moves.SPLASH);
   });
 
@@ -43,8 +43,7 @@ describe("Abilities - Wind Power", () => {
   });
 
   it("it becomes charged when Tailwind takes effect on its side", async () => {
-    game.override.ability(Abilities.WIND_POWER);
-    game.override.enemySpecies(Species.MAGIKARP);
+    game.override.ability(Abilities.WIND_POWER).enemySpecies(Species.MAGIKARP);
 
     await game.startBattle([Species.SHIFTRY]);
     const shiftry = game.scene.getPlayerPokemon()!;
@@ -58,8 +57,7 @@ describe("Abilities - Wind Power", () => {
   });
 
   it("does not become charged when Tailwind takes effect on opposing side", async () => {
-    game.override.enemySpecies(Species.MAGIKARP);
-    game.override.ability(Abilities.WIND_POWER);
+    game.override.enemySpecies(Species.MAGIKARP).ability(Abilities.WIND_POWER);
 
     await game.startBattle([Species.SHIFTRY]);
     const magikarp = game.scene.getEnemyPokemon()!;

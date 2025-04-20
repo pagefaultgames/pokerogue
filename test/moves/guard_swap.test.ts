@@ -29,7 +29,7 @@ describe("Moves - Guard Swap", () => {
       .enemyMoveset(Moves.SPLASH)
       .enemySpecies(Species.INDEEDEE)
       .enemyLevel(200)
-      .moveset([Moves.GUARD_SWAP])
+      .moveset(Moves.GUARD_SWAP)
       .ability(Abilities.NONE);
   });
 

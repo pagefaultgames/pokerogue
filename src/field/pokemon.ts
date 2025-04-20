@@ -798,13 +798,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const loadPromises: Promise<void>[] = [];
     // Assets for moves
     loadPromises.push(loadMoveAnimations(this.getMoveset().map(m => m.getMove().id)));
-  
+
     // Load the assets for the species form
     const formIndex = !!this.summonData?.illusion && useIllusion ? this.summonData?.illusion.formIndex : this.formIndex;
     loadPromises.push(
       this.getSpeciesForm(false, useIllusion).loadAssets(
-        this.getGender(useIllusion) === Gender.FEMALE, 
-        formIndex, 
+        this.getGender(useIllusion) === Gender.FEMALE,
+        formIndex,
         this.isShiny(useIllusion),
         this.getVariant(useIllusion)
       ),
@@ -821,9 +821,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       const fusionShiny = !!this.summonData?.illusion && !useIllusion ? this.summonData?.illusion.basePokemon!.fusionShiny : this.fusionShiny;
       const fusionVariant = !!this.summonData?.illusion && !useIllusion ? this.summonData?.illusion.basePokemon!.fusionVariant : this.fusionVariant;
       loadPromises.push(this.getFusionSpeciesForm(false, useIllusion).loadAssets(
-        this.getFusionGender(false, useIllusion) === Gender.FEMALE, 
-        fusionFormIndex, 
-        fusionShiny, 
+        this.getFusionGender(false, useIllusion) === Gender.FEMALE,
+        fusionFormIndex,
+        fusionShiny,
         fusionVariant
       ));
       globalScene.loadPokemonAtlas(
@@ -989,9 +989,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   getSpriteId(ignoreOverride?: boolean): string {
     const formIndex: integer = !!this.summonData?.illusion ?  this.summonData?.illusion.formIndex! : this.formIndex;
     return this.getSpeciesForm(ignoreOverride, true).getSpriteId(
-      this.getGender(ignoreOverride, true) === Gender.FEMALE, 
-      formIndex, 
-      this.shiny, 
+      this.getGender(ignoreOverride, true) === Gender.FEMALE,
+      formIndex,
+      this.shiny,
       this.variant
     );
   }
@@ -1004,10 +1004,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const formIndex: integer = !!this.summonData?.illusion ?  this.summonData?.illusion.formIndex! : this.formIndex;
 
     return this.getSpeciesForm(ignoreOverride, true).getSpriteId(
-      this.getGender(ignoreOverride, true) === Gender.FEMALE, 
-      formIndex, 
-      this.shiny, 
-      this.variant, 
+      this.getGender(ignoreOverride, true) === Gender.FEMALE,
+      formIndex,
+      this.shiny,
+      this.variant,
       back
     );
   }
@@ -1028,9 +1028,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   getFusionSpriteId(ignoreOverride?: boolean): string {
     const fusionFormIndex: integer = !!this.summonData?.illusion ?  this.summonData?.illusion.fusionFormIndex! : this.fusionFormIndex;
     return this.getFusionSpeciesForm(ignoreOverride, true).getSpriteId(
-      this.getFusionGender(ignoreOverride, true) === Gender.FEMALE, 
-      fusionFormIndex, 
-      this.fusionShiny, 
+      this.getFusionGender(ignoreOverride, true) === Gender.FEMALE,
+      fusionFormIndex,
+      this.fusionShiny,
       this.fusionVariant
     );
   }
@@ -1043,10 +1043,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const fusionFormIndex: integer = !!this.summonData?.illusion ?  this.summonData?.illusion.fusionFormIndex! : this.fusionFormIndex;
 
     return this.getFusionSpeciesForm(ignoreOverride, true).getSpriteId(
-      this.getFusionGender(ignoreOverride, true) === Gender.FEMALE, 
-      fusionFormIndex, 
-      this.fusionShiny, 
-      this.fusionVariant, 
+      this.getFusionGender(ignoreOverride, true) === Gender.FEMALE,
+      fusionFormIndex,
+      this.fusionShiny,
+      this.fusionVariant,
       back
     );
   }
@@ -1068,16 +1068,16 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   getIconAtlasKey(ignoreOverride?: boolean): string {
     const formIndex: integer = !!this.summonData?.illusion ?  this.summonData?.illusion.formIndex : this.formIndex;
     return this.getSpeciesForm(ignoreOverride, true).getIconAtlasKey(
-      formIndex, 
-      this.shiny, 
+      formIndex,
+      this.shiny,
       this.variant
     );
   }
 
   getFusionIconAtlasKey(ignoreOverride?: boolean): string {
     return this.getFusionSpeciesForm(ignoreOverride, true).getIconAtlasKey(
-      this.fusionFormIndex, 
-      this.fusionShiny, 
+      this.fusionFormIndex,
+      this.fusionShiny,
       this.fusionVariant
     );
   }
@@ -1085,9 +1085,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   getIconId(ignoreOverride?: boolean): string {
     const formIndex: integer = !!this.summonData?.illusion ?  this.summonData?.illusion.formIndex : this.formIndex;
     return this.getSpeciesForm(ignoreOverride, true).getIconId(
-      this.getGender(ignoreOverride, true) === Gender.FEMALE, 
-      formIndex, 
-      this.shiny, 
+      this.getGender(ignoreOverride, true) === Gender.FEMALE,
+      formIndex,
+      this.shiny,
       this.variant
     );
   }
@@ -1095,9 +1095,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   getFusionIconId(ignoreOverride?: boolean): string {
     const fusionFormIndex: integer = !!this.summonData?.illusion ?  this.summonData?.illusion.fusionFormIndex! : this.fusionFormIndex;
     return this.getFusionSpeciesForm(ignoreOverride, true).getIconId(
-      this.getFusionGender(ignoreOverride, true) === Gender.FEMALE, 
-      fusionFormIndex, 
-      this.fusionShiny, 
+      this.getFusionGender(ignoreOverride, true) === Gender.FEMALE,
+      fusionFormIndex,
+      this.fusionShiny,
       this.fusionVariant
     );
   }
@@ -1130,7 +1130,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       return this.summonData.fusionSpeciesForm;
     }
     if (
-      !fusionSpecies?.forms?.length || 
+      !fusionSpecies?.forms?.length ||
       fusionFormIndex >= fusionSpecies?.forms.length
     ) {
       return fusionSpecies;
@@ -1440,7 +1440,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Calculate the critical-hit stage of a move used against this pokemon by
    * the given source
-   * 
+   *
    * @param source the {@linkcode Pokemon} who using the move
    * @param move the {@linkcode Move} being used
    * @returns the final critical-hit stage value
@@ -1827,7 +1827,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * 
+   *
    * @param useIllusion - Whether we want the fake or real shininess (illusion ability).
    * @returns `true` if the {@linkcode Pokemon} is shiny and the fusion is shiny as well, `false` otherwise
    */
@@ -1844,20 +1844,20 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    */
   getVariant(useIllusion: boolean = false): Variant {
     if (!useIllusion && !!this.summonData?.illusion) {
-      return !this.isFusion(false) 
-      ? this.summonData?.illusion.basePokemon!.variant 
+      return !this.isFusion(false)
+      ? this.summonData?.illusion.basePokemon!.variant
       : Math.max(this.variant, this.fusionVariant) as Variant;
     } else {
-      return !this.isFusion(true) 
-      ? this.variant 
+      return !this.isFusion(true)
+      ? this.variant
       : Math.max(this.variant, this.fusionVariant) as Variant;
     }
   }
 
   getBaseVariant(doubleShiny: boolean): Variant {
     if (doubleShiny) {
-      return !!this.summonData?.illusion 
-      ? this.summonData?.illusion.basePokemon!.variant 
+      return !!this.summonData?.illusion
+      ? this.summonData?.illusion.basePokemon!.variant
       : this.variant;
     } else {
       return this.getVariant();
@@ -1880,8 +1880,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param {boolean} useIllusion - Whether we want the fake name or the real name of the Pokemon (for Illusion ability).
    */
   getName(useIllusion: boolean = false): string {
-    return (!useIllusion && !!this.summonData?.illusion && this.summonData?.illusion.basePokemon) 
-    ? this.summonData?.illusion.basePokemon.name 
+    return (!useIllusion && !!this.summonData?.illusion && this.summonData?.illusion.basePokemon)
+    ? this.summonData?.illusion.basePokemon.name
     : this.name;
   }
 
@@ -2001,9 +2001,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @returns array of {@linkcode PokemonType}
    */
   public getTypes(
-    includeTeraType = false, 
-    forDefend: boolean = false, 
-    ignoreOverride?: boolean, 
+    includeTeraType = false,
+    forDefend: boolean = false,
+    ignoreOverride?: boolean,
     useIllusion: boolean | "AUTO" = "AUTO"
   ): PokemonType[] {
     const types: PokemonType[] = [];
@@ -2022,9 +2022,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
       const doIllusion: boolean = (useIllusion === "AUTO") ? !forDefend : useIllusion;
       if (
-        !ignoreOverride && 
-        this.summonData?.types && 
-        this.summonData.types.length > 0 && 
+        !ignoreOverride &&
+        this.summonData?.types &&
+        this.summonData.types.length > 0 &&
         (!this.summonData?.illusion || !doIllusion)
       ) {
         this.summonData.types.forEach(t => types.push(t));
@@ -2605,14 +2605,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const moveType = source.getMoveType(move);
 
     const typeMultiplier = new NumberHolder(
-      move.category !== MoveCategory.STATUS || 
+      move.category !== MoveCategory.STATUS ||
       move.hasAttr(RespectAttackTypeImmunityAttr)
       ? this.getAttackTypeEffectiveness(
-        moveType, 
-        source, 
-        false, 
-        simulated, 
-        move, 
+        moveType,
+        source,
+        false,
+        simulated,
+        move,
         useIllusion
       )
       : 1);
@@ -2723,11 +2723,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @returns a multiplier for the type effectiveness
    */
   getAttackTypeEffectiveness(
-    moveType: PokemonType, 
-    source?: Pokemon, 
-    ignoreStrongWinds: boolean = false, 
-    simulated: boolean = true, 
-    move?: Move, 
+    moveType: PokemonType,
+    source?: Pokemon,
+    ignoreStrongWinds: boolean = false,
+    simulated: boolean = true,
+    move?: Move,
     useIllusion: boolean = false
   ): TypeDamageMultiplier {
     if (moveType === PokemonType.STELLAR) {
@@ -4163,12 +4163,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
 
   /** Determine the STAB multiplier for a move used against this pokemon.
-   * 
+   *
    * @param source - The attacking {@linkcode Pokemon}
    * @param move - The {@linkcode Move} used in the attack
    * @param ignoreSourceAbility - If `true`, ignores the attacking Pokemon's ability effects
    * @param simulated - If `true`, suppresses changes to game state during the calculation
-   * 
+   *
    * @returns The STAB multiplier for the move used against this Pokemon
    */
   calculateStabMultiplier(source: Pokemon, move: Move, ignoreSourceAbility: boolean, simulated: boolean): number {
@@ -4594,36 +4594,39 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
       return typeMultiplier === 0 ? HitResult.NO_EFFECT : HitResult.STATUS;
     }
-    /** Determines whether the attack critically hits */
-    let isCritical: boolean;
-    const critOnly = new BooleanHolder(false);
-    const critAlways = source.getTag(BattlerTagType.ALWAYS_CRIT);
-    applyMoveAttrs(CritOnlyAttr, source, this, move, critOnly);
+
+    // Check for guaranteed crits from moves, abilities or other effects
+    const alwaysCrit = new BooleanHolder(false);
+    applyMoveAttrs(CritOnlyAttr, source, this, move, alwaysCrit);
     applyAbAttrs(
       ConditionalCritAbAttr,
       source,
       null,
       false,
-      critOnly,
+      alwaysCrit,
       this,
       move,
     );
-    if (critOnly.value || critAlways) {
-      isCritical = true;
-    } else {
-      const critChance = [24, 8, 2, 1][
-        Math.max(0, Math.min(this.getCritStage(source, move), 3))
-      ];
-      isCritical =
-        critChance === 1 || !globalScene.randBattleSeedInt(critChance);
+    const alwaysCritTag = !!source.getTag(BattlerTagType.ALWAYS_CRIT);
+    const critChance = [24, 8, 2, 1][
+      Math.max(0, Math.min(this.getCritStage(source, move), 3))
+    ];
+
+    let isCritical = alwaysCrit.value || alwaysCritTag || critChance === 1;
+
+    if (!isCritical) {
+      // If we aren't already guaranteed to crit, do a random roll and check overrides
+      isCritical = !globalScene.randBattleSeedInt(critChance)
+      if (Overrides.CRITICAL_HIT_OVERRIDE !== null) {
+        isCritical = Overrides.CRITICAL_HIT_OVERRIDE;
+      }
     }
 
-    const noCritTag = globalScene.arena.getTagOnSide(NoCritTag, defendingSide);
+    // apply crit block effects
     const blockCrit = new BooleanHolder(false);
     applyAbAttrs(BlockCritAbAttr, this, null, false, blockCrit);
-    if (noCritTag || blockCrit.value || Overrides.NEVER_CRIT_OVERRIDE) {
-      isCritical = false;
-    }
+    const noCritTag = !!globalScene.arena.getTagOnSide(NoCritTag, defendingSide);
+    isCritical &&= noCritTag || blockCrit.value;
 
     /**
      * Applies stat changes from {@linkcode move} and gives it to {@linkcode source}
@@ -4691,12 +4694,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
          * We explicitly require to ignore the faint phase here, as we want to show the messages
          * about the critical hit and the super effective/not very effective messages before the faint phase.
          */
-        const damage = this.damageAndUpdate(isBlockedBySubstitute ? 0 : dmg, 
-          { 
-            result: result as DamageResult, 
-            isCritical, 
-            ignoreFaintPhase: true, 
-            source 
+        const damage = this.damageAndUpdate(isBlockedBySubstitute ? 0 : dmg,
+          {
+            result: result as DamageResult,
+            isCritical,
+            ignoreFaintPhase: true,
+            source
           });
 
       if (damage > 0) {
@@ -4843,25 +4846,25 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    */
   damageAndUpdate(damage: number,
     {
-      result = HitResult.EFFECTIVE, 
-      isCritical = false, 
-      ignoreSegments = false, 
-      ignoreFaintPhase = false, 
+      result = HitResult.EFFECTIVE,
+      isCritical = false,
+      ignoreSegments = false,
+      ignoreFaintPhase = false,
       source = undefined,
     }:
     {
-      result?: DamageResult, 
-      isCritical?: boolean, 
-      ignoreSegments?: boolean, 
-      ignoreFaintPhase?: boolean, 
+      result?: DamageResult,
+      isCritical?: boolean,
+      ignoreSegments?: boolean,
+      ignoreFaintPhase?: boolean,
       source?: Pokemon,
     } = {}
   ): number {
     const isIndirectDamage = [ HitResult.INDIRECT, HitResult.INDIRECT_KO ].includes(result);
     const damagePhase = new DamageAnimPhase(
-      this.getBattlerIndex(), 
-      damage, 
-      result as DamageResult, 
+      this.getBattlerIndex(),
+      damage,
+      result as DamageResult,
       isCritical
     );
     globalScene.unshiftPhase(damagePhase);
@@ -5056,23 +5059,24 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       });
   }
 
-  removeTag(tagType: BattlerTagType): boolean {
-    if (!this.summonData) {
-      return false;
-    }
+  /**
+   * Remove the first tag matching the given {@linkcode BattlerTagType}.
+   * @param tagType the {@linkcode BattlerTagType} to search for and remove
+   */
+  removeTag(tagType: BattlerTagType): void {
     const tags = this.summonData.tags;
     const tag = tags.find(t => t.tagType === tagType);
     if (tag) {
       tag.onRemove(this);
       tags.splice(tags.indexOf(tag), 1);
     }
-    return !!tag;
   }
 
-  findAndRemoveTags(tagFilter: (tag: BattlerTag) => boolean): boolean {
-    if (!this.summonData) {
-      return false;
-    }
+  /**
+   * Find and remove all {@linkcode BattlerTag}s matching the given function.
+   * @param tagFilter a function dictating which tags to remove
+  */
+  findAndRemoveTags(tagFilter: (tag: BattlerTag) => boolean): void {
     const tags = this.summonData.tags;
     const tagsToRemove = tags.filter(t => tagFilter(t));
     for (const tag of tagsToRemove) {
@@ -5080,7 +5084,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       tag.onRemove(this);
       tags.splice(tags.indexOf(tag), 1);
     }
-    return true;
   }
 
   removeTagsBySourceId(sourceId: number): void {
@@ -5541,6 +5544,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         !ignoreField &&
         globalScene.arena.terrain?.terrainType === TerrainType.MISTY
       ) {
+        // Misty terrain prevents status application
         return false;
       }
     }
@@ -5550,6 +5554,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       sourcePokemon !== this &&
       this.isSafeguarded(sourcePokemon)
     ) {
+      // Safeguard blocks all non-self inflicted status effects
       return false;
     }
 
@@ -5558,14 +5563,15 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     switch (effect) {
       case StatusEffect.POISON:
       case StatusEffect.TOXIC:
-        // Check if the Pokemon is immune to Poison/Toxic or if the source pokemon is canceling the immunity
-        const poisonImmunity = types.map(defType => {
-          // Check if the Pokemon is not immune to Poison/Toxic
+        // Check whether any of the Pokemon's types is immune to Poison/Toxic
+        // and not being ignored by the source pokemon's ability
+        const typeImmune = types.some(defType => {
           if (defType !== PokemonType.POISON && defType !== PokemonType.STEEL) {
+            // type not immune to poison
             return false;
           }
 
-          // Check if the source Pokemon has an ability that cancels the Poison/Toxic immunity
+          // Check if the source Pokemon has an ability that cancels the immunity
           const cancelImmunity = new BooleanHolder(false);
           if (sourcePokemon) {
             applyAbAttrs(
@@ -5576,18 +5582,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
               effect,
               defType,
             );
-            if (cancelImmunity.value) {
-              return false;
-            }
           }
 
-          return true;
+          return !cancelImmunity.value;
         });
 
-        if (this.isOfType(PokemonType.POISON) || this.isOfType(PokemonType.STEEL)) {
-          if (poisonImmunity.includes(true)) {
-            return false;
-          }
+        if (typeImmune) {
+          return false;
         }
         break;
       case StatusEffect.PARALYSIS:
@@ -5622,6 +5623,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         break;
     }
 
+    // Check any status immunity abilities from the user or its allies
     const cancelled = new BooleanHolder(false);
     applyPreSetStatusAbAttrs(
       StatusEffectImmunityAbAttr,
@@ -5643,12 +5645,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         quiet, this, sourcePokemon,
       )
       if (cancelled.value) {
-        break;
+        return false;
       }
-    }
-
-    if (cancelled.value) {
-      return false;
     }
 
     return true;
@@ -6418,28 +6416,29 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Reduces one of this Pokemon's held item stacks by 1, and removes the item if applicable.
+   * Reduces one of this Pokemon's held item stacks by 1, removing it if applicable.
    * Does nothing if this Pokemon is somehow not the owner of the held item.
-   * @param heldItem The item stack to be reduced by 1.
-   * @param forBattle If `false`, do not trigger in-battle effects (such as Unburden) from losing the item. For example, set this to `false` if the Pokemon is giving away the held item for a Mystery Encounter. Default is `true`.
-   * @returns `true` if the item was removed successfully, `false` otherwise.
+   * @param heldItem The item stack to be reduced.
+   * @param forBattle - Whether to trigger in-battle effects (such as Unburden) after losing the item. Default: `true`
+   * Set this to `false` if the Pokemon is giving away the held item for a Mystery Encounter or similar.
+   * @returns Whether the item was removed successfully.
    */
   public loseHeldItem(
     heldItem: PokemonHeldItemModifier,
     forBattle = true,
   ): boolean {
-    if (heldItem.pokemonId === -1 || heldItem.pokemonId === this.id) {
-      heldItem.stackCount--;
-      if (heldItem.stackCount <= 0) {
-        globalScene.removeModifier(heldItem, !this.isPlayer());
-      }
-      if (forBattle) {
-        applyPostItemLostAbAttrs(PostItemLostAbAttr, this, false);
-      }
-      return true;
-    } else {
+    if (heldItem.pokemonId !== -1 && heldItem.pokemonId !== this.id) {
       return false;
     }
+
+    if (heldItem.stackCount-- <= 0) {
+      globalScene.removeModifier(heldItem, !this.isPlayer());
+    }
+    if (forBattle) {
+      applyPostItemLostAbAttrs(PostItemLostAbAttr, this, false);
+    }
+
+    return true;
   }
 }
 
@@ -7008,6 +7007,8 @@ export class PlayerPokemon extends Pokemon {
     if (partyMemberIndex > fusedPartyMemberIndex) {
       partyMemberIndex--;
     }
+
+    // combine the two mons' held items
     const fusedPartyMemberHeldModifiers = globalScene.findModifiers(
       m => m instanceof PokemonHeldItemModifier && m.pokemonId === pokemon.id,
       true,
@@ -7929,8 +7930,8 @@ export type DamageResult =
   | HitResult.SUPER_EFFECTIVE
   | HitResult.NOT_VERY_EFFECTIVE
   | HitResult.ONE_HIT_KO
-  | HitResult.CONFUSION 
-  | HitResult.INDIRECT_KO 
+  | HitResult.CONFUSION
+  | HitResult.INDIRECT_KO
   | HitResult.INDIRECT;
 
 /** Interface containing the results of a damage calculation for a given move */
@@ -7947,8 +7948,8 @@ export interface DamageCalculationResult {
  * Wrapper class for the {@linkcode Move} class for Pokemon to interact with.
  * These are the moves assigned to a {@linkcode Pokemon} object.
  * It links to {@linkcode Move} class via the move ID.
- * Compared to {@linkcode Move}, this class also tracks if a move has received.
- * PP Ups, amount of PP used, and things like that.
+ * Compared to {@linkcode Move}, this class also tracks things like
+ * PP Ups recieved, PP used, etc.
  * @see {@linkcode isUsable} - checks if move is restricted, out of PP, or not implemented.
  * @see {@linkcode getMove} - returns {@linkcode Move} object by looking it up via ID.
  * @see {@linkcode usePp} - removes a point of PP from the move.

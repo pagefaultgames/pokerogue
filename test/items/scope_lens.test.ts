@@ -25,10 +25,10 @@ describe("Items - Scope Lens", () => {
     game.override
       .enemySpecies(Species.MAGIKARP)
       .enemyMoveset(Moves.SPLASH)
-      .moveset([Moves.POUND])
+      .moveset(Moves.POUND)
       .startingHeldItems([{ name: "SCOPE_LENS" }])
       .battleStyle("single")
-      .disableCrits();
+      .criticalHits(false);
   }, 20000);
 
   it("should raise CRIT stage by 1", async () => {

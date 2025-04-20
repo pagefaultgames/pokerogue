@@ -29,7 +29,7 @@ describe("Abilities - Beast Boost", () => {
       .enemyAbility(Abilities.BEAST_BOOST)
       .ability(Abilities.BEAST_BOOST)
       .startingLevel(2000)
-      .moveset([Moves.FLAMETHROWER])
+      .moveset(Moves.FLAMETHROWER)
       .enemyMoveset(Moves.SPLASH);
   });
 
@@ -50,7 +50,7 @@ describe("Abilities - Beast Boost", () => {
   }, 20000);
 
   it("should use in-battle overriden stats when determining the stat stage to raise by 1", async () => {
-    game.override.enemyMoveset([Moves.GUARD_SPLIT]);
+    game.override.enemyMoveset(Moves.GUARD_SPLIT);
 
     await game.classicMode.startBattle([Species.SLOWBRO]);
 

@@ -26,10 +26,11 @@ describe("Moves - Parting Shot", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("single");
-    game.override.moveset([Moves.PARTING_SHOT, Moves.SPLASH]);
-    game.override.enemyMoveset(Moves.SPLASH);
-    game.override.startingLevel(5);
+    game.override
+      .battleStyle("single")
+      .moveset([Moves.PARTING_SHOT, Moves.SPLASH])
+      .enemyMoveset(Moves.SPLASH)
+      .startingLevel(5);
     game.override.enemyLevel(5);
   });
 
@@ -110,7 +111,7 @@ describe("Moves - Parting Shot", () => {
     // TODO: fix this bug to pass the test!
     "Parting shot shouldn't allow switch out when mist is active",
     async () => {
-      game.override.enemySpecies(Species.ALTARIA).enemyAbility(Abilities.NONE).enemyMoveset([Moves.MIST]);
+      game.override.enemySpecies(Species.ALTARIA).enemyAbility(Abilities.NONE).enemyMoveset(Moves.MIST);
       await game.startBattle([Species.SNORLAX, Species.MEOWTH]);
 
       const enemyPokemon = game.scene.getEnemyPokemon()!;

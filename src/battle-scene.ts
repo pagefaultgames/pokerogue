@@ -1298,14 +1298,14 @@ export default class BattleScene extends SceneBase {
     return Math.max(doubleChance.value, 1);
   }
 
-  // TODO: ...this never actually returns `null`, right?
+  // TODO: Refactor this. It is _way_ longer than it has any right to be
   newBattle(
     waveIndex?: number,
     battleType?: BattleType,
     trainerData?: TrainerData,
     double?: boolean,
     mysteryEncounterType?: MysteryEncounterType,
-  ): Battle | null {
+  ): Battle {
     const _startingWave = Overrides.STARTING_WAVE_OVERRIDE || startingWave;
     const newWaveIndex = waveIndex || (this.currentBattle?.waveIndex || _startingWave - 1) + 1;
     let newDouble: boolean | undefined;
@@ -1318,7 +1318,7 @@ export default class BattleScene extends SceneBase {
 
     const playerField = this.getPlayerField();
 
-    if (this.gameMode.isFixedBattle(newWaveIndex) && trainerData === undefined) {
+    if (this.gameMode.isFixedBattle(newWaveIndex) && !trainerData) {
       battleConfig = this.gameMode.getFixedBattle(newWaveIndex);
       newDouble = battleConfig.double;
       newBattleType = battleConfig.battleType;
@@ -1467,10 +1467,12 @@ export default class BattleScene extends SceneBase {
       const isWaveIndexMultipleOfFiftyMinusOne = lastBattle.waveIndex % 50 === 49;
       const isNewBiome =
         isWaveIndexMultipleOfTen || isEndlessFifthWave || (isEndlessOrDaily && isWaveIndexMultipleOfFiftyMinusOne);
+      /** Whether to reset and recall pokemon */
       const resetArenaState =
         isNewBiome ||
         [BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER].includes(this.currentBattle.battleType) ||
         this.currentBattle.battleSpec === BattleSpec.FINAL_BOSS;
+
       for (const enemyPokemon of this.getEnemyParty()) {
         enemyPokemon.destroy();
       }
@@ -1843,7 +1845,7 @@ export default class BattleScene extends SceneBase {
   }
 
   resetSeed(waveIndex?: number): void {
-    const wave = waveIndex || this.currentBattle?.waveIndex || 0;
+    const wave = waveIndex ?? this.currentBattle?.waveIndex ?? 0;
     this.waveSeed = shiftCharCodes(this.seed, wave);
     Phaser.Math.RND.sow([this.waveSeed]);
     console.log("Wave Seed:", this.waveSeed, wave);
@@ -2126,12 +2128,15 @@ export default class BattleScene extends SceneBase {
   }
 
   getMaxExpLevel(ignoreLevelCap = false): number {
-    if (Overrides.LEVEL_CAP_OVERRIDE > 0) {
-      return Overrides.LEVEL_CAP_OVERRIDE;
+    const capOverride = Overrides.LEVEL_CAP_OVERRIDE ?? 0;
+    if (capOverride > 0) {
+      return capOverride;
     }
-    if (ignoreLevelCap || Overrides.LEVEL_CAP_OVERRIDE < 0) {
+
+    if (ignoreLevelCap || capOverride < 0) {
       return Number.MAX_SAFE_INTEGER;
     }
+
     const waveIndex = Math.ceil((this.currentBattle?.waveIndex || 1) / 10) * 10;
     const difficultyWaveIndex = this.gameMode.getWaveForDifficulty(waveIndex);
     const baseLevel = (1 + difficultyWaveIndex / 2 + Math.pow(difficultyWaveIndex / 25, 2)) * 1.2;
@@ -2857,7 +2862,7 @@ export default class BattleScene extends SceneBase {
       // adds to the end of PhaseQueuePrepend
       this.unshiftPhase(phase);
     } else {
-      //remember that pushPhase adds it to nextCommandPhaseQueue
+      // remember that pushPhase adds it to nextCommandPhaseQueue
       this.pushPhase(phase);
     }
   }
@@ -3026,14 +3031,14 @@ export default class BattleScene extends SceneBase {
    * If the recepient already has the maximum amount allowed for this item, the transfer is cancelled.
    * The quantity to transfer is automatically capped at how much the recepient can take before reaching the maximum stack size for the item.
    * A transfer that moves a quantity smaller than what is specified in the transferQuantity parameter is still considered successful.
-   * @param itemModifier {@linkcode PokemonHeldItemModifier} item to transfer (represents the whole stack)
-   * @param target {@linkcode Pokemon} recepient in this transfer
-   * @param playSound `true` to play a sound when transferring the item
-   * @param transferQuantity How many items of the stack to transfer. Optional, defaults to `1`
-   * @param instant ??? (Optional)
-   * @param ignoreUpdate ??? (Optional)
-   * @param itemLost If `true`, treat the item's current holder as losing the item (for now, this simply enables Unburden). Default is `true`.
-   * @returns `true` if the transfer was successful
+   * @param itemModifier - {@linkcode PokemonHeldItemModifier} to transfer (represents whole stack)
+   * @param target - Recipient {@linkcode Pokemon} recieving items
+   * @param playSound - Whether to play a sound when transferring the item
+   * @param transferQuantity - How many items of the stack to transfer. Optional, defaults to `1`
+   * @param instant - ??? (Optional)
+   * @param ignoreUpdate - ??? (Optional)
+   * @param itemLost - Whether to treat the item's current holder as losing the item (for now, this simply enables Unburden). Default: `true`.
+   * @returns Whether the transfer was successful
    */
   tryTransferHeldItemModifier(
     itemModifier: PokemonHeldItemModifier,
@@ -3044,106 +3049,92 @@ export default class BattleScene extends SceneBase {
     ignoreUpdate?: boolean,
     itemLost = true,
   ): boolean {
-    const source = itemModifier.pokemonId ? itemModifier.getPokemon() : null;
-    const cancelled = new BooleanHolder(false);
+    const source = itemModifier.getPokemon();
 
+    // Check for effects that might block us from stealing
+    const cancelled = new BooleanHolder(false);
     if (source && source.isPlayer() !== target.isPlayer()) {
       applyAbAttrs(BlockItemTheftAbAttr, source, cancelled);
     }
-
     if (cancelled.value) {
       return false;
     }
 
-    const newItemModifier = itemModifier.clone() as PokemonHeldItemModifier;
-    newItemModifier.pokemonId = target.id;
+    // check if we have an item already and calc how much to transfer
     const matchingModifier = this.findModifier(
       m => m instanceof PokemonHeldItemModifier && m.matchType(itemModifier) && m.pokemonId === target.id,
       target.isPlayer(),
-    ) as PokemonHeldItemModifier;
+    ) as PokemonHeldItemModifier | undefined;
+    const countTaken = Math.min(
+      transferQuantity,
+      itemModifier.stackCount,
+      matchingModifier?.getCountUnderMax() ?? Number.MAX_SAFE_INTEGER,
+    );
+    if (countTaken <= 0) {
+      // Can't transfer negative items
+      return false;
+    }
 
+    itemModifier.stackCount -= countTaken;
+
+    if (source && source.isPlayer() !== target.isPlayer() && !ignoreUpdate) {
+      this.updateModifiers(source.isPlayer(), instant);
+    }
+
+    // If the old modifier is at 0 stacks, try to remove it
+    if (itemModifier.stackCount <= 0 && source && !this.removeModifier(itemModifier, !source.isPlayer())) {
+      return false;
+    }
+
+    // Add however much we took to the recieving pokemon, creating a new modifier if the target lacked one prio
     if (matchingModifier) {
-      const maxStackCount = matchingModifier.getMaxStackCount();
-      if (matchingModifier.stackCount >= maxStackCount) {
-        return false;
-      }
-      const countTaken = Math.min(
-        transferQuantity,
-        itemModifier.stackCount,
-        maxStackCount - matchingModifier.stackCount,
-      );
-      itemModifier.stackCount -= countTaken;
-      newItemModifier.stackCount = matchingModifier.stackCount + countTaken;
+      matchingModifier.stackCount += countTaken;
     } else {
-      const countTaken = Math.min(transferQuantity, itemModifier.stackCount);
-      itemModifier.stackCount -= countTaken;
+      const newItemModifier = itemModifier.clone() as PokemonHeldItemModifier;
+      newItemModifier.pokemonId = target.id;
       newItemModifier.stackCount = countTaken;
-    }
-
-    const removeOld = itemModifier.stackCount === 0;
-
-    if (!removeOld || !source || this.removeModifier(itemModifier, !source.isPlayer())) {
-      const addModifier = () => {
-        if (!matchingModifier || this.removeModifier(matchingModifier, !target.isPlayer())) {
-          if (target.isPlayer()) {
-            this.addModifier(newItemModifier, ignoreUpdate, playSound, false, instant);
-            if (source && itemLost) {
-              applyPostItemLostAbAttrs(PostItemLostAbAttr, source, false);
-            }
-            return true;
-          }
-          this.addEnemyModifier(newItemModifier, ignoreUpdate, instant);
-          if (source && itemLost) {
-            applyPostItemLostAbAttrs(PostItemLostAbAttr, source, false);
-          }
-          return true;
-        }
-        return false;
-      };
-      if (source && source.isPlayer() !== target.isPlayer() && !ignoreUpdate) {
-        this.updateModifiers(source.isPlayer(), instant);
-        addModifier();
+      if (target.isPlayer()) {
+        this.addModifier(newItemModifier, ignoreUpdate, playSound, false, instant);
       } else {
-        addModifier();
+        this.addEnemyModifier(newItemModifier, ignoreUpdate, instant);
       }
-      return true;
     }
-    return false;
+
+    if (source && itemLost) {
+      applyPostItemLostAbAttrs(PostItemLostAbAttr, source, false);
+    }
+
+    return true;
   }
 
   canTransferHeldItemModifier(itemModifier: PokemonHeldItemModifier, target: Pokemon, transferQuantity = 1): boolean {
-    const mod = itemModifier.clone() as PokemonHeldItemModifier;
-    const source = mod.pokemonId ? mod.getPokemon() : null;
-    const cancelled = new BooleanHolder(false);
-
-    if (source && source.isPlayer() !== target.isPlayer()) {
-      applyAbAttrs(BlockItemTheftAbAttr, source, cancelled);
+    const source = itemModifier.getPokemon();
+    if (!source) {
+      // TODO: WHY DO WE RETURN TRUE IF THE ITEM HAS NO OWNER
+      // The old code still did this btw
+      return true;
     }
 
+    // Check theft prevention
+    // TODO: Verify whether sticky hold procs on friendly fire ally theft
+    const cancelled = new BooleanHolder(false);
+    if (source.isPlayer() !== target.isPlayer()) {
+      applyAbAttrs(BlockItemTheftAbAttr, source, cancelled);
+    }
     if (cancelled.value) {
       return false;
     }
 
     const matchingModifier = this.findModifier(
-      m => m instanceof PokemonHeldItemModifier && m.matchType(mod) && m.pokemonId === target.id,
+      m => m instanceof PokemonHeldItemModifier && m.matchType(itemModifier) && m.pokemonId === target.id,
       target.isPlayer(),
-    ) as PokemonHeldItemModifier;
-
-    if (matchingModifier) {
-      const maxStackCount = matchingModifier.getMaxStackCount();
-      if (matchingModifier.stackCount >= maxStackCount) {
-        return false;
-      }
-      const countTaken = Math.min(transferQuantity, mod.stackCount, maxStackCount - matchingModifier.stackCount);
-      mod.stackCount -= countTaken;
-    } else {
-      const countTaken = Math.min(transferQuantity, mod.stackCount);
-      mod.stackCount -= countTaken;
-    }
-
-    const removeOld = mod.stackCount === 0;
-
-    return !removeOld || !source || this.hasModifier(itemModifier, !source.isPlayer());
+    ) as PokemonHeldItemModifier | undefined;
+    const countTaken = Math.min(
+      transferQuantity,
+      itemModifier.stackCount,
+      matchingModifier?.getCountUnderMax() ?? Number.MAX_SAFE_INTEGER,
+    );
+    return itemModifier.stackCount !== countTaken || this.hasModifier(itemModifier, !source.isPlayer());
   }
 
   removePartyMemberModifiers(partyMemberIndex: number): Promise<void> {
@@ -3319,28 +3310,49 @@ export default class BattleScene extends SceneBase {
   removeModifier(modifier: PersistentModifier, enemy = false): boolean {
     const modifiers = !enemy ? this.modifiers : this.enemyModifiers;
     const modifierIndex = modifiers.indexOf(modifier);
-    if (modifierIndex > -1) {
-      modifiers.splice(modifierIndex, 1);
-      if (modifier instanceof PokemonFormChangeItemModifier) {
-        const pokemon = this.getPokemonById(modifier.pokemonId);
-        if (pokemon) {
-          modifier.apply(pokemon, false);
-        }
-      }
-      return true;
+    if (modifierIndex === -1) {
+      return false;
     }
 
-    return false;
+    modifiers.splice(modifierIndex, 1);
+    if (modifier instanceof PokemonFormChangeItemModifier) {
+      const pokemon = this.getPokemonById(modifier.pokemonId);
+      if (pokemon) {
+        modifier.apply(pokemon, false);
+      }
+    }
+    return true;
   }
 
   /**
-   * Get all of the modifiers that match `modifierType`
-   * @param modifierType The type of modifier to apply; must extend {@linkcode PersistentModifier}
-   * @param player Whether to search the player (`true`) or the enemy (`false`); Defaults to `true`
-   * @returns the list of all modifiers that matched `modifierType`.
+   * Get all modifiers of all {@linkcode Pokemon} in the given party,
+   * optionally filtering based on `modifierType` if provided.
+   * @param player Whether to search the player (`true`) or enemy (`false`) party; Defaults to `true`
+   * @returns a list of all modifiers on the given side of the field.
+   * @overload
    */
-  getModifiers<T extends PersistentModifier>(modifierType: Constructor<T>, player = true): T[] {
-    return (player ? this.modifiers : this.enemyModifiers).filter((m): m is T => m instanceof modifierType);
+  getModifiers(player?: boolean): PersistentModifier[];
+
+  /**
+   * Get all modifiers of all {@linkcode Pokemon} in the given party,
+   * optionally filtering based on `modifierType` if provided.
+   * @param modifierType The type of modifier to check against; must extend {@linkcode PersistentModifier}.
+   * If omitted, will return all {@linkcode PersistentModifier}s regardless of type.
+   * @param player Whether to search the player (`true`) or enemy (`false`) party; Defaults to `true`
+   * @returns a list of all modifiers matching `modifierType` on the given side of the field.
+   * @overload
+   */
+  getModifiers<T extends PersistentModifier>(modifierType: Constructor<T>, player?: boolean): T[];
+
+  // NOTE: Boolean typing on 1st parameter needed to satisfy "bool only" overload
+  getModifiers<T extends PersistentModifier>(modifierType?: Constructor<T> | boolean, player?: boolean) {
+    const usePlayer: boolean = player ?? (typeof modifierType !== "boolean" || modifierType); // non-bool in 1st position = true by default
+    const mods = usePlayer ? this.modifiers : this.enemyModifiers;
+
+    if (typeof modifierType === "undefined" || typeof modifierType === "boolean") {
+      return mods;
+    }
+    return mods.filter((m): m is T => m instanceof modifierType);
   }
 
   /**
@@ -3711,7 +3723,7 @@ export default class BattleScene extends SceneBase {
           expMultiplier *= 1.5;
         }
         if (Overrides.XP_MULTIPLIER_OVERRIDE !== null) {
-          expMultiplier = Overrides.XP_MULTIPLIER_OVERRIDE;
+          expMultiplier = Math.max(Overrides.XP_MULTIPLIER_OVERRIDE, 0);
         }
         const pokemonExp = new NumberHolder(expValue * expMultiplier);
         this.applyModifiers(PokemonExpBoosterModifier, true, partyMember, pokemonExp);
@@ -3802,17 +3814,13 @@ export default class BattleScene extends SceneBase {
         sessionEncounterRate +
         Math.min(currentRunDiffFromAvg * ANTI_VARIANCE_WEIGHT_MODIFIER, MYSTERY_ENCOUNTER_SPAWN_MAX_WEIGHT / 2);
 
-      const successRate = isNullOrUndefined(Overrides.MYSTERY_ENCOUNTER_RATE_OVERRIDE)
-        ? favoredEncounterRate
-        : Overrides.MYSTERY_ENCOUNTER_RATE_OVERRIDE!;
+      const successRate = Overrides.MYSTERY_ENCOUNTER_RATE_OVERRIDE ?? favoredEncounterRate;
 
-      // If the most recent ME was 3 or fewer waves ago, can never spawn a ME
+      // MEs can only spawn 3 or more waves after the previous ME, barring overrides
       const canSpawn =
-        encounteredEvents.length === 0 ||
-        waveIndex - encounteredEvents[encounteredEvents.length - 1].waveIndex > 3 ||
-        !isNullOrUndefined(Overrides.MYSTERY_ENCOUNTER_RATE_OVERRIDE);
+        encounteredEvents.length === 0 || waveIndex - encounteredEvents[encounteredEvents.length - 1].waveIndex > 3;
 
-      if (canSpawn) {
+      if (canSpawn || Overrides.MYSTERY_ENCOUNTER_RATE_OVERRIDE !== null) {
         let roll = MYSTERY_ENCOUNTER_SPAWN_MAX_WEIGHT;
         // Always rolls the check on the same offset to ensure no RNG changes from reloading session
         this.executeWithSeedOffset(

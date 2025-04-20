@@ -26,16 +26,12 @@ describe("Moves - Crafty Shield", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
 
-    game.override.battleStyle("double");
-
-    game.override.moveset([Moves.CRAFTY_SHIELD, Moves.SPLASH, Moves.SWORDS_DANCE]);
-
-    game.override.enemySpecies(Species.SNORLAX);
-    game.override.enemyMoveset([Moves.GROWL]);
-    game.override.enemyAbility(Abilities.INSOMNIA);
-
-    game.override.startingLevel(100);
-    game.override.enemyLevel(100);
+    game.override
+      .battleStyle("double")
+      .moveset([Moves.CRAFTY_SHIELD, Moves.SPLASH, Moves.SWORDS_DANCE])
+      .enemySpecies(Species.SNORLAX)
+      .enemyMoveset(Moves.GROWL);
+    game.override.enemyAbility(Abilities.INSOMNIA).startingLevel(100).enemyLevel(100);
   });
 
   test("should protect the user and allies from status moves", async () => {
@@ -55,7 +51,7 @@ describe("Moves - Crafty Shield", () => {
   });
 
   test("should not protect the user and allies from attack moves", async () => {
-    game.override.enemyMoveset([Moves.TACKLE]);
+    game.override.enemyMoveset(Moves.TACKLE);
 
     await game.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
 
@@ -73,8 +69,7 @@ describe("Moves - Crafty Shield", () => {
   });
 
   test("should protect the user and allies from moves that ignore other protection", async () => {
-    game.override.enemySpecies(Species.DUSCLOPS);
-    game.override.enemyMoveset([Moves.CURSE]);
+    game.override.enemySpecies(Species.DUSCLOPS).enemyMoveset(Moves.CURSE);
 
     await game.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
 

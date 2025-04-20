@@ -17,7 +17,6 @@ import { Moves } from "#enums/moves";
 import { DancingLessonsEncounter } from "#app/data/mystery-encounters/encounters/dancing-lessons-encounter";
 import { UiMode } from "#enums/ui-mode";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
-import { PokemonMove } from "#app/field/pokemon";
 import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
 import { CommandPhase } from "#app/phases/command-phase";
 import { MovePhase } from "#app/phases/move-phase";
@@ -41,10 +40,11 @@ describe("Dancing Lessons - Mystery Encounter", () => {
   beforeEach(async () => {
     game = new GameManager(phaserGame);
     scene = game.scene;
-    game.override.mysteryEncounterChance(100);
-    game.override.startingWave(defaultWave);
-    game.override.startingBiome(defaultBiome);
-    game.override.disableTrainerWaves();
+    game.override
+      .mysteryEncounterChance(100)
+      .startingWave(defaultWave)
+      .startingBiome(defaultBiome)
+      .disableTrainerWaves();
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
       new Map<Biome, MysteryEncounterType[]>([
@@ -74,8 +74,7 @@ describe("Dancing Lessons - Mystery Encounter", () => {
   });
 
   it("should not spawn outside of proper biomes", async () => {
-    game.override.mysteryEncounterTier(MysteryEncounterTier.GREAT);
-    game.override.startingBiome(Biome.SPACE);
+    game.override.mysteryEncounterTier(MysteryEncounterTier.GREAT).startingBiome(Biome.SPACE);
     await game.runToMysteryEncounter();
 
     expect(game.scene.currentBattle.mysteryEncounter?.encounterType).not.toBe(MysteryEncounterType.DANCING_LESSONS);
@@ -201,7 +200,7 @@ describe("Dancing Lessons - Mystery Encounter", () => {
     it("should add Oricorio to the party", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.DANCING_LESSONS, defaultParty);
       const partyCountBefore = scene.getPlayerParty().length;
-      scene.getPlayerParty()[0].moveset = [new PokemonMove(Moves.DRAGON_DANCE)];
+      game.move.changeMoveset(scene.getPlayerParty()[0], Moves.DRAGON_DANCE);
       await runMysteryEncounterToEnd(game, 3, { pokemonNo: 1, optionNo: 1 });
       const partyCountAfter = scene.getPlayerParty().length;
 
@@ -240,7 +239,7 @@ describe("Dancing Lessons - Mystery Encounter", () => {
       const leaveEncounterWithoutBattleSpy = vi.spyOn(EncounterPhaseUtils, "leaveEncounterWithoutBattle");
 
       await game.runToMysteryEncounter(MysteryEncounterType.DANCING_LESSONS, defaultParty);
-      scene.getPlayerParty()[0].moveset = [new PokemonMove(Moves.DRAGON_DANCE)];
+      game.move.changeMoveset(scene.getPlayerParty()[0], Moves.DRAGON_DANCE);
       await runMysteryEncounterToEnd(game, 3, { pokemonNo: 1, optionNo: 1 });
 
       expect(leaveEncounterWithoutBattleSpy).toBeCalled();

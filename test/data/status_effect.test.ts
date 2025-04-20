@@ -322,7 +322,7 @@ describe("Status Effects", () => {
         .enemySpecies(Species.MAGIKARP)
         .enemyMoveset(Moves.SPLASH)
         .enemyAbility(Abilities.BALL_FETCH)
-        .moveset([Moves.QUICK_ATTACK])
+        .moveset(Moves.QUICK_ATTACK)
         .ability(Abilities.BALL_FETCH)
         .statusEffect(StatusEffect.PARALYSIS);
     });
@@ -356,10 +356,10 @@ describe("Status Effects", () => {
     beforeEach(() => {
       game = new GameManager(phaserGame);
       game.override
-        .moveset([Moves.SPLASH])
+        .moveset(Moves.SPLASH)
         .ability(Abilities.BALL_FETCH)
         .battleStyle("single")
-        .disableCrits()
+        .criticalHits(false)
         .enemySpecies(Species.MAGIKARP)
         .enemyAbility(Abilities.BALL_FETCH)
         .enemyMoveset(Moves.SPLASH);
@@ -412,10 +412,10 @@ describe("Status Effects", () => {
     beforeEach(() => {
       game = new GameManager(phaserGame);
       game.override
-        .moveset([Moves.SPLASH])
+        .moveset(Moves.SPLASH)
         .ability(Abilities.BALL_FETCH)
         .battleStyle("single")
-        .disableCrits()
+        .criticalHits(false)
         .enemySpecies(Species.MAGIKARP)
         .enemyAbility(Abilities.BALL_FETCH)
         .enemyMoveset(Moves.NUZZLE)

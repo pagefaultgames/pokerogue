@@ -30,7 +30,7 @@ describe("Moves - Aroma Veil", () => {
       .enemyMoveset([Moves.HEAL_BLOCK, Moves.IMPRISON, Moves.SPLASH])
       .enemySpecies(Species.SHUCKLE)
       .ability(Abilities.AROMA_VEIL)
-      .moveset([Moves.GROWL]);
+      .moveset(Moves.GROWL);
   });
 
   it("Aroma Veil protects the Pokemon's side against most Move Restriction Battler Tags", async () => {

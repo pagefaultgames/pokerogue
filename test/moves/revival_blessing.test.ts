@@ -28,7 +28,7 @@ describe("Moves - Revival Blessing", () => {
       .moveset([Moves.SPLASH, Moves.REVIVAL_BLESSING, Moves.MEMENTO])
       .ability(Abilities.BALL_FETCH)
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH);
@@ -116,7 +116,7 @@ describe("Moves - Revival Blessing", () => {
   });
 
   it("should not summon multiple pokemon to the same slot when reviving the enemy ally in doubles", async () => {
-    game.override.battleStyle("double").enemyMoveset([Moves.REVIVAL_BLESSING]).moveset([Moves.SPLASH]).startingWave(25); // 2nd rival battle - must have 3+ pokemon
+    game.override.battleStyle("double").enemyMoveset(Moves.REVIVAL_BLESSING).moveset(Moves.SPLASH).startingWave(25); // 2nd rival battle - must have 3+ pokemon
     await game.classicMode.startBattle([Species.ARCEUS, Species.GIRATINA]);
 
     const enemyFainting = game.scene.getEnemyField()[0];

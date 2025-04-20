@@ -31,7 +31,7 @@ describe("Moves - Baton Pass", () => {
       .moveset([Moves.BATON_PASS, Moves.NASTY_PLOT, Moves.SPLASH])
       .ability(Abilities.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH)
-      .disableCrits();
+      .criticalHits(false);
   });
 
   it("transfers all stat stages when player uses it", async () => {
@@ -68,7 +68,7 @@ describe("Moves - Baton Pass", () => {
 
     // round 2 - baton pass
     game.scene.getEnemyPokemon()!.hp = 100;
-    game.override.enemyMoveset([Moves.BATON_PASS]);
+    game.override.enemyMoveset(Moves.BATON_PASS);
     // Force moveset to update mid-battle
     // TODO: replace with enemy ai control function when it's added
     game.scene.getEnemyParty()[0].getMoveset();
@@ -90,7 +90,7 @@ describe("Moves - Baton Pass", () => {
   }, 20000);
 
   it("doesn't transfer effects that aren't transferrable", async () => {
-    game.override.enemyMoveset([Moves.SALT_CURE]);
+    game.override.enemyMoveset(Moves.SALT_CURE);
     await game.classicMode.startBattle([Species.PIKACHU, Species.FEEBAS]);
 
     const [player1, player2] = game.scene.getPlayerParty();

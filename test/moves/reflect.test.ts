@@ -34,13 +34,13 @@ describe("Moves - Reflect", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     globalScene = game.scene;
-    game.override.battleStyle("single");
-    game.override.ability(Abilities.NONE);
-    game.override.moveset([Moves.ABSORB, Moves.ROCK_SLIDE, Moves.TACKLE]);
-    game.override.enemyLevel(100);
-    game.override.enemySpecies(Species.MAGIKARP);
-    game.override.enemyMoveset([Moves.REFLECT, Moves.REFLECT, Moves.REFLECT, Moves.REFLECT]);
-    game.override.disableCrits();
+    game.override
+      .battleStyle("single")
+      .ability(Abilities.NONE)
+      .moveset([Moves.ABSORB, Moves.ROCK_SLIDE, Moves.TACKLE])
+      .enemyLevel(100);
+    game.override.enemySpecies(Species.MAGIKARP).enemyMoveset(Moves.REFLECT);
+    game.override.criticalHits(false);
   });
 
   it("reduces damage of physical attacks by half in a single battle", async () => {
@@ -96,7 +96,7 @@ describe("Moves - Reflect", () => {
   });
 
   it("does not affect critical hits", async () => {
-    game.override.moveset([Moves.WICKED_BLOW]);
+    game.override.moveset(Moves.WICKED_BLOW);
     const moveToUse = Moves.WICKED_BLOW;
     await game.classicMode.startBattle([Species.SHUCKLE]);
 
@@ -113,7 +113,7 @@ describe("Moves - Reflect", () => {
   });
 
   it("does not affect critical hits", async () => {
-    game.override.moveset([Moves.WICKED_BLOW]);
+    game.override.moveset(Moves.WICKED_BLOW);
     const moveToUse = Moves.WICKED_BLOW;
     await game.classicMode.startBattle([Species.SHUCKLE]);
 

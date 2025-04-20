@@ -26,15 +26,15 @@ describe("Moves - Alluring Voice", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.ICE_SCALES)
-      .enemyMoveset([Moves.HOWL])
+      .enemyMoveset(Moves.HOWL)
       .startingLevel(10)
       .enemyLevel(10)
       .starterSpecies(Species.FEEBAS)
       .ability(Abilities.BALL_FETCH)
-      .moveset([Moves.ALLURING_VOICE]);
+      .moveset(Moves.ALLURING_VOICE);
   });
 
   it("should confuse the opponent if their stat stages were raised", async () => {

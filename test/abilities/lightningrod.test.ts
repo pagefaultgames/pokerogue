@@ -27,7 +27,7 @@ describe("Abilities - Lightningrod", () => {
       .moveset([Moves.SPLASH, Moves.SHOCK_WAVE])
       .ability(Abilities.BALL_FETCH)
       .battleStyle("double")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH);

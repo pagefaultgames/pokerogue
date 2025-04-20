@@ -24,15 +24,13 @@ describe("Abilities - Sturdy", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("single");
+    game.override
+      .battleStyle("single")
+      .starterSpecies(Species.LUCARIO)
+      .startingLevel(100)
+      .moveset([Moves.CLOSE_COMBAT, Moves.FISSURE]);
 
-    game.override.starterSpecies(Species.LUCARIO);
-    game.override.startingLevel(100);
-    game.override.moveset([Moves.CLOSE_COMBAT, Moves.FISSURE]);
-
-    game.override.enemySpecies(Species.ARON);
-    game.override.enemyLevel(5);
-    game.override.enemyAbility(Abilities.STURDY);
+    game.override.enemySpecies(Species.ARON).enemyLevel(5).enemyAbility(Abilities.STURDY);
   });
 
   test("Sturdy activates when user is at full HP", async () => {

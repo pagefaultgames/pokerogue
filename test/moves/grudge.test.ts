@@ -26,7 +26,7 @@ describe("Moves - Grudge", () => {
       .moveset([Moves.EMBER, Moves.SPLASH])
       .ability(Abilities.BALL_FETCH)
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(Species.SHEDINJA)
       .enemyAbility(Abilities.WONDER_GUARD)
       .enemyMoveset([Moves.GRUDGE, Moves.SPLASH]);
@@ -68,7 +68,7 @@ describe("Moves - Grudge", () => {
   it("should not reduce the opponent's PP if the user dies to weather/indirect damage", async () => {
     // Opponent will be reduced to 1 HP by False Swipe, then faint to Sandstorm
     game.override
-      .moveset([Moves.FALSE_SWIPE])
+      .moveset(Moves.FALSE_SWIPE)
       .startingLevel(100)
       .ability(Abilities.SAND_STREAM)
       .enemySpecies(Species.RATTATA);

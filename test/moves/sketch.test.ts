@@ -1,7 +1,7 @@
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import { MoveResult, PokemonMove } from "#app/field/pokemon";
+import { MoveResult } from "#app/field/pokemon";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -28,17 +28,17 @@ describe("Moves - Sketch", () => {
     game.override
       .ability(Abilities.BALL_FETCH)
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(Species.SHUCKLE)
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH);
   });
 
-  it("Sketch should not fail even if a previous Sketch failed to retrieve a valid move and ran out of PP", async () => {
+  it("should not fail even if a previous Sketch failed to retrieve a valid move and ran out of PP", async () => {
     await game.classicMode.startBattle([Species.REGIELEKI]);
     const playerPokemon = game.scene.getPlayerPokemon()!;
     // can't use normal moveset override because we need to check moveset changes
-    playerPokemon.moveset = [new PokemonMove(Moves.SKETCH), new PokemonMove(Moves.SKETCH)];
+    game.move.changeMoveset(playerPokemon, [Moves.SKETCH, Moves.SKETCH]);
 
     game.move.select(Moves.SKETCH);
     await game.phaseInterceptor.to("TurnEndPhase");
@@ -60,7 +60,7 @@ describe("Moves - Sketch", () => {
     await game.classicMode.startBattle([Species.REGIELEKI]);
     const playerPokemon = game.scene.getPlayerPokemon()!;
     const enemyPokemon = game.scene.getEnemyPokemon()!;
-    playerPokemon.moveset = [new PokemonMove(Moves.SKETCH), new PokemonMove(Moves.GROWL)];
+    game.move.changeMoveset(playerPokemon, [Moves.SKETCH, Moves.GROWL]);
 
     game.move.select(Moves.GROWL);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
@@ -82,10 +82,10 @@ describe("Moves - Sketch", () => {
     const randomMoveAttr = allMoves[Moves.METRONOME].findAttr(attr => attr instanceof RandomMoveAttr) as RandomMoveAttr;
     vi.spyOn(randomMoveAttr, "getMoveOverride").mockReturnValue(Moves.FALSE_SWIPE);
 
-    game.override.enemyMoveset([Moves.METRONOME]);
+    game.override.enemyMoveset(Moves.METRONOME);
     await game.classicMode.startBattle([Species.REGIELEKI]);
     const playerPokemon = game.scene.getPlayerPokemon()!;
-    playerPokemon.moveset = [new PokemonMove(Moves.SKETCH)];
+    game.move.changeMoveset(playerPokemon, Moves.SKETCH);
 
     // Opponent uses Metronome -> False Swipe, then player uses Sketch, which should sketch Metronome
     game.move.select(Moves.SKETCH);

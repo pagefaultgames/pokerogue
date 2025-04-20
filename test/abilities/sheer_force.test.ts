@@ -30,14 +30,14 @@ describe("Abilities - Sheer Force", () => {
       .ability(Abilities.SHEER_FORCE)
       .enemySpecies(Species.ONIX)
       .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset([Moves.SPLASH])
-      .disableCrits();
+      .enemyMoveset(Moves.SPLASH)
+      .criticalHits(false);
   });
 
   const SHEER_FORCE_MULT = 1.3;
 
   it("Sheer Force should boost the power of the move but disable secondary effects", async () => {
-    game.override.moveset([Moves.AIR_SLASH]);
+    game.override.moveset(Moves.AIR_SLASH);
     await game.classicMode.startBattle([Species.SHUCKLE]);
 
     const airSlashMove = allMoves[Moves.AIR_SLASH];
@@ -56,7 +56,7 @@ describe("Abilities - Sheer Force", () => {
   });
 
   it("Sheer Force does not affect the base damage or secondary effects of binding moves", async () => {
-    game.override.moveset([Moves.BIND]);
+    game.override.moveset(Moves.BIND);
     await game.classicMode.startBattle([Species.SHUCKLE]);
 
     const bindMove = allMoves[Moves.BIND];
@@ -72,7 +72,7 @@ describe("Abilities - Sheer Force", () => {
   }, 20000);
 
   it("Sheer Force does not boost the base damage of moves with no secondary effect", async () => {
-    game.override.moveset([Moves.TACKLE]);
+    game.override.moveset(Moves.TACKLE);
     await game.classicMode.startBattle([Species.PIDGEOT]);
 
     const tackleMove = allMoves[Moves.TACKLE];
@@ -88,7 +88,7 @@ describe("Abilities - Sheer Force", () => {
 
   it("Sheer Force can disable the on-hit activation of specific abilities", async () => {
     game.override
-      .moveset([Moves.HEADBUTT])
+      .moveset(Moves.HEADBUTT)
       .enemySpecies(Species.SQUIRTLE)
       .enemyLevel(10)
       .enemyAbility(Abilities.COLOR_CHANGE);
@@ -137,11 +137,7 @@ describe("Abilities - Sheer Force", () => {
   });
 
   it("Sheer Force should disable Meloetta's transformation from Relic Song", async () => {
-    game.override
-      .ability(Abilities.SHEER_FORCE)
-      .moveset([Moves.RELIC_SONG])
-      .enemyMoveset([Moves.SPLASH])
-      .enemyLevel(100);
+    game.override.ability(Abilities.SHEER_FORCE).moveset(Moves.RELIC_SONG).enemyMoveset(Moves.SPLASH).enemyLevel(100);
     await game.classicMode.startBattle([Species.MELOETTA]);
 
     const playerPokemon = game.scene.getPlayerPokemon();

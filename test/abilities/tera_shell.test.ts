@@ -26,10 +26,10 @@ describe("Abilities - Tera Shell", () => {
     game.override
       .battleStyle("single")
       .ability(Abilities.TERA_SHELL)
-      .moveset([Moves.SPLASH])
+      .moveset(Moves.SPLASH)
       .enemySpecies(Species.SNORLAX)
       .enemyAbility(Abilities.INSOMNIA)
-      .enemyMoveset([Moves.MACH_PUNCH])
+      .enemyMoveset(Moves.MACH_PUNCH)
       .startingLevel(100)
       .enemyLevel(100);
   });
@@ -54,7 +54,7 @@ describe("Abilities - Tera Shell", () => {
   });
 
   it("should not override type immunities", async () => {
-    game.override.enemyMoveset([Moves.SHADOW_SNEAK]);
+    game.override.enemyMoveset(Moves.SHADOW_SNEAK);
 
     await game.classicMode.startBattle([Species.SNORLAX]);
 
@@ -68,7 +68,7 @@ describe("Abilities - Tera Shell", () => {
   });
 
   it("should not override type multipliers less than 0.5x", async () => {
-    game.override.enemyMoveset([Moves.QUICK_ATTACK]);
+    game.override.enemyMoveset(Moves.QUICK_ATTACK);
 
     await game.classicMode.startBattle([Species.AGGRON]);
 
@@ -82,7 +82,7 @@ describe("Abilities - Tera Shell", () => {
   });
 
   it("should not affect the effectiveness of fixed-damage moves", async () => {
-    game.override.enemyMoveset([Moves.DRAGON_RAGE]);
+    game.override.enemyMoveset(Moves.DRAGON_RAGE);
 
     await game.classicMode.startBattle([Species.CHARIZARD]);
 
@@ -97,7 +97,7 @@ describe("Abilities - Tera Shell", () => {
   });
 
   it("should change the effectiveness of all strikes of a multi-strike move", async () => {
-    game.override.enemyMoveset([Moves.DOUBLE_HIT]);
+    game.override.enemyMoveset(Moves.DOUBLE_HIT);
 
     await game.classicMode.startBattle([Species.SNORLAX]);
 

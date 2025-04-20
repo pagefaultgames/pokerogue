@@ -34,13 +34,13 @@ describe("Moves - Light Screen", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     globalScene = game.scene;
-    game.override.battleStyle("single");
-    game.override.ability(Abilities.NONE);
-    game.override.moveset([Moves.ABSORB, Moves.DAZZLING_GLEAM, Moves.TACKLE]);
-    game.override.enemyLevel(100);
-    game.override.enemySpecies(Species.MAGIKARP);
-    game.override.enemyMoveset([Moves.LIGHT_SCREEN, Moves.LIGHT_SCREEN, Moves.LIGHT_SCREEN, Moves.LIGHT_SCREEN]);
-    game.override.disableCrits();
+    game.override
+      .battleStyle("single")
+      .ability(Abilities.NONE)
+      .moveset([Moves.ABSORB, Moves.DAZZLING_GLEAM, Moves.TACKLE])
+      .enemyLevel(100);
+    game.override.enemySpecies(Species.MAGIKARP).enemyMoveset(Moves.LIGHT_SCREEN);
+    game.override.criticalHits(false);
   });
 
   it("reduces damage of special attacks by half in a single battle", async () => {
@@ -96,7 +96,7 @@ describe("Moves - Light Screen", () => {
   });
 
   it("does not affect critical hits", async () => {
-    game.override.moveset([Moves.FROST_BREATH]);
+    game.override.moveset(Moves.FROST_BREATH);
     const moveToUse = Moves.FROST_BREATH;
     vi.spyOn(allMoves[Moves.FROST_BREATH], "accuracy", "get").mockReturnValue(100);
     await game.classicMode.startBattle([Species.SHUCKLE]);

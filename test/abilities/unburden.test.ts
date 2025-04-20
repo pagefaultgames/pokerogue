@@ -80,7 +80,7 @@ describe("Abilities - Unburden", () => {
   });
 
   it("should activate when a berry is eaten, even if Berry Pouch preserves the berry", async () => {
-    game.override.enemyMoveset(Moves.FALSE_SWIPE).startingModifier([{ name: "BERRY_POUCH", count: 5850 }]);
+    game.override.enemyMoveset(Moves.FALSE_SWIPE).startingModifiers([{ name: "BERRY_POUCH", count: 5850 }]);
     await game.classicMode.startBattle([Species.TREECKO]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
@@ -317,7 +317,7 @@ describe("Abilities - Unburden", () => {
   });
 
   it("should activate when a reviver seed is used", async () => {
-    game.override.startingHeldItems([{ name: "REVIVER_SEED" }]).enemyMoveset([Moves.WING_ATTACK]);
+    game.override.startingHeldItems([{ name: "REVIVER_SEED" }]).enemyMoveset(Moves.WING_ATTACK);
     await game.classicMode.startBattle([Species.TREECKO]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;

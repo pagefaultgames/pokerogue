@@ -24,14 +24,11 @@ describe("Abilities - Screen Cleaner", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("single");
-    game.override.ability(Abilities.SCREEN_CLEANER);
-    game.override.enemySpecies(Species.SHUCKLE);
+    game.override.battleStyle("single").ability(Abilities.SCREEN_CLEANER).enemySpecies(Species.SHUCKLE);
   });
 
   it("removes Aurora Veil", async () => {
-    game.override.moveset([Moves.HAIL]);
-    game.override.enemyMoveset([Moves.AURORA_VEIL, Moves.AURORA_VEIL, Moves.AURORA_VEIL, Moves.AURORA_VEIL]);
+    game.override.moveset(Moves.HAIL).enemyMoveset(Moves.AURORA_VEIL);
 
     await game.startBattle([Species.MAGIKARP, Species.MAGIKARP]);
 
@@ -48,7 +45,7 @@ describe("Abilities - Screen Cleaner", () => {
   });
 
   it("removes Light Screen", async () => {
-    game.override.enemyMoveset([Moves.LIGHT_SCREEN, Moves.LIGHT_SCREEN, Moves.LIGHT_SCREEN, Moves.LIGHT_SCREEN]);
+    game.override.enemyMoveset(Moves.LIGHT_SCREEN);
 
     await game.startBattle([Species.MAGIKARP, Species.MAGIKARP]);
 
@@ -65,7 +62,7 @@ describe("Abilities - Screen Cleaner", () => {
   });
 
   it("removes Reflect", async () => {
-    game.override.enemyMoveset([Moves.REFLECT, Moves.REFLECT, Moves.REFLECT, Moves.REFLECT]);
+    game.override.enemyMoveset(Moves.REFLECT);
 
     await game.startBattle([Species.MAGIKARP, Species.MAGIKARP]);
 

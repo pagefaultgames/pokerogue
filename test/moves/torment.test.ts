@@ -29,7 +29,7 @@ describe("Moves - Torment", () => {
       .enemyMoveset([Moves.TORMENT, Moves.SPLASH])
       .enemySpecies(Species.SHUCKLE)
       .enemyLevel(30)
-      .moveset([Moves.TACKLE])
+      .moveset(Moves.TACKLE)
       .ability(Abilities.BALL_FETCH);
   });
 

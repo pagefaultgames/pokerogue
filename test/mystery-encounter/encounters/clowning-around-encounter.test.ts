@@ -55,10 +55,11 @@ describe("Clowning Around - Mystery Encounter", () => {
   beforeEach(async () => {
     game = new GameManager(phaserGame);
     scene = game.scene;
-    game.override.mysteryEncounterChance(100);
-    game.override.startingWave(defaultWave);
-    game.override.startingBiome(defaultBiome);
-    game.override.disableTrainerWaves();
+    game.override
+      .mysteryEncounterChance(100)
+      .startingWave(defaultWave)
+      .startingBiome(defaultBiome)
+      .disableTrainerWaves();
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
       new Map<Biome, MysteryEncounterType[]>([[Biome.CAVE, [MysteryEncounterType.CLOWNING_AROUND]]]),
@@ -264,7 +265,7 @@ describe("Clowning Around - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.CLOWNING_AROUND, defaultParty);
 
       // Set some moves on party for attack type booster generation
-      scene.getPlayerParty()[0].moveset = [new PokemonMove(Moves.TACKLE), new PokemonMove(Moves.THIEF)];
+      game.move.changeMoveset(scene.getPlayerParty()[0], [Moves.TACKLE, Moves.THIEF]);
 
       // 2 Sitrus Berries on lead
       scene.modifiers = [];
@@ -349,9 +350,9 @@ describe("Clowning Around - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.CLOWNING_AROUND, defaultParty);
 
       // Same type moves on lead
-      scene.getPlayerParty()[0].moveset = [new PokemonMove(Moves.ICE_BEAM), new PokemonMove(Moves.SURF)];
+      game.move.changeMoveset(scene.getPlayerParty()[0], [Moves.ICE_BEAM, Moves.SURF]);
       // Different type moves on second
-      scene.getPlayerParty()[1].moveset = [new PokemonMove(Moves.GRASS_KNOT), new PokemonMove(Moves.ELECTRO_BALL)];
+      game.move.changeMoveset(scene.getPlayerParty()[1], [Moves.GRASS_KNOT, Moves.ELECTRO_BALL]);
       // No moves on third
       scene.getPlayerParty()[2].moveset = [];
       await runMysteryEncounterToEnd(game, 3);

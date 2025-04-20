@@ -47,9 +47,10 @@ describe("Abilities - Flower Gift", () => {
     allyAbility = Abilities.BALL_FETCH,
     enemyAbility = Abilities.BALL_FETCH,
   ): Promise<[number, number]> => {
-    game.override.battleStyle("double");
-    game.override.moveset([Moves.SPLASH, Moves.SUNNY_DAY, move, Moves.HEAL_PULSE]);
-    game.override.enemyMoveset([Moves.SPLASH, Moves.HEAL_PULSE]);
+    game.override
+      .battleStyle("double")
+      .moveset([Moves.SPLASH, Moves.SUNNY_DAY, move, Moves.HEAL_PULSE])
+      .enemyMoveset([Moves.SPLASH, Moves.HEAL_PULSE]);
     const target_index = allyAttacker ? BattlerIndex.ENEMY : BattlerIndex.PLAYER_2;
     const attacker_index = allyAttacker ? BattlerIndex.PLAYER_2 : BattlerIndex.ENEMY;
     const ally_move = allyAttacker ? move : Moves.SPLASH;
@@ -178,7 +179,7 @@ describe("Abilities - Flower Gift", () => {
   });
 
   it("reverts to Overcast Form when the Flower Gift is suppressed, changes form under Harsh Sunlight/Sunny when it regains it", async () => {
-    game.override.enemyMoveset([Moves.GASTRO_ACID]).weather(WeatherType.HARSH_SUN);
+    game.override.enemyMoveset(Moves.GASTRO_ACID).weather(WeatherType.HARSH_SUN);
 
     await game.classicMode.startBattle([Species.CHERRIM, Species.MAGIKARP]);
 

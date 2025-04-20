@@ -42,10 +42,11 @@ describe("Fun And Games! - Mystery Encounter", () => {
   beforeEach(async () => {
     game = new GameManager(phaserGame);
     scene = game.scene;
-    game.override.mysteryEncounterChance(100);
-    game.override.startingWave(defaultWave);
-    game.override.startingBiome(defaultBiome);
-    game.override.disableTrainerWaves();
+    game.override
+      .mysteryEncounterChance(100)
+      .startingWave(defaultWave)
+      .startingBiome(defaultBiome)
+      .disableTrainerWaves();
 
     const biomeMap = new Map<Biome, MysteryEncounterType[]>([[Biome.VOLCANO, [MysteryEncounterType.FIGHT_OR_FLIGHT]]]);
     HUMAN_TRANSITABLE_BIOMES.forEach(biome => {
@@ -79,8 +80,7 @@ describe("Fun And Games! - Mystery Encounter", () => {
   });
 
   it("should not spawn outside of CIVILIZATIONN biomes", async () => {
-    game.override.mysteryEncounterTier(MysteryEncounterTier.GREAT);
-    game.override.startingBiome(Biome.VOLCANO);
+    game.override.mysteryEncounterTier(MysteryEncounterTier.GREAT).startingBiome(Biome.VOLCANO);
     await game.runToMysteryEncounter();
 
     expect(scene.currentBattle?.mysteryEncounter?.encounterType).not.toBe(MysteryEncounterType.FUN_AND_GAMES);
@@ -138,7 +138,7 @@ describe("Fun And Games! - Mystery Encounter", () => {
 
     it("should get 3 turns to attack the Wobbuffet for a reward", async () => {
       scene.money = 20000;
-      game.override.moveset([Moves.TACKLE]);
+      game.override.moveset(Moves.TACKLE);
       await game.runToMysteryEncounter(MysteryEncounterType.FUN_AND_GAMES, defaultParty);
       await runMysteryEncounterToEnd(game, 1, { pokemonNo: 1 }, true);
 
@@ -195,7 +195,7 @@ describe("Fun And Games! - Mystery Encounter", () => {
 
     it("should have Wide Lens item in rewards if Wubboffet is at 15-33% HP remaining", async () => {
       scene.money = 20000;
-      game.override.moveset([Moves.SPLASH]);
+      game.override.moveset(Moves.SPLASH);
       await game.runToMysteryEncounter(MysteryEncounterType.FUN_AND_GAMES, defaultParty);
       await runMysteryEncounterToEnd(game, 1, { pokemonNo: 1 }, true);
 
@@ -225,7 +225,7 @@ describe("Fun And Games! - Mystery Encounter", () => {
 
     it("should have Scope Lens item in rewards if Wubboffet is at 3-15% HP remaining", async () => {
       scene.money = 20000;
-      game.override.moveset([Moves.SPLASH]);
+      game.override.moveset(Moves.SPLASH);
       await game.runToMysteryEncounter(MysteryEncounterType.FUN_AND_GAMES, defaultParty);
       await runMysteryEncounterToEnd(game, 1, { pokemonNo: 1 }, true);
 
@@ -255,7 +255,7 @@ describe("Fun And Games! - Mystery Encounter", () => {
 
     it("should have Multi Lens item in rewards if Wubboffet is at <3% HP remaining", async () => {
       scene.money = 20000;
-      game.override.moveset([Moves.SPLASH]);
+      game.override.moveset(Moves.SPLASH);
       await game.runToMysteryEncounter(MysteryEncounterType.FUN_AND_GAMES, defaultParty);
       await runMysteryEncounterToEnd(game, 1, { pokemonNo: 1 }, true);
 

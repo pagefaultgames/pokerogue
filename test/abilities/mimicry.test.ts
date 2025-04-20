@@ -23,10 +23,10 @@ describe("Abilities - Mimicry", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.SPLASH])
+      .moveset(Moves.SPLASH)
       .ability(Abilities.MIMICRY)
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(Species.MAGIKARP)
       .enemyMoveset(Moves.SPLASH);
   });

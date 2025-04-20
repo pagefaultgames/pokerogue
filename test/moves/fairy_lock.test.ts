@@ -27,7 +27,7 @@ describe("Moves - Fairy Lock", () => {
       .moveset([Moves.FAIRY_LOCK, Moves.SPLASH])
       .ability(Abilities.BALL_FETCH)
       .battleStyle("double")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset([Moves.SPLASH, Moves.U_TURN]);

@@ -24,13 +24,12 @@ describe("Moves - Make It Rain", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("double");
-    game.override.moveset([Moves.MAKE_IT_RAIN, Moves.SPLASH]);
-    game.override.enemySpecies(Species.SNORLAX);
-    game.override.enemyAbility(Abilities.INSOMNIA);
-    game.override.enemyMoveset(Moves.SPLASH);
-    game.override.startingLevel(100);
-    game.override.enemyLevel(100);
+    game.override
+      .battleStyle("double")
+      .moveset([Moves.MAKE_IT_RAIN, Moves.SPLASH])
+      .enemySpecies(Species.SNORLAX)
+      .enemyAbility(Abilities.INSOMNIA);
+    game.override.enemyMoveset(Moves.SPLASH).startingLevel(100).enemyLevel(100);
   });
 
   it("should only lower SPATK stat stage by 1 once in a double battle", async () => {

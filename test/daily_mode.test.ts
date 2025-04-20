@@ -60,7 +60,7 @@ describe("Shop modifications", async () => {
       .battleStyle("single")
       .startingLevel(100) // Avoid levelling up
       .disableTrainerWaves()
-      .moveset([Moves.SPLASH])
+      .moveset(Moves.SPLASH)
       .enemyMoveset(Moves.SPLASH);
     game.modifiers.addCheck("EVIOLITE").addCheck("MINI_BLACK_HOLE");
     vi.spyOn(pokerogueApi.daily, "getSeed").mockResolvedValue("test-seed");

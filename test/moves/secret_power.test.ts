@@ -31,10 +31,10 @@ describe("Moves - Secret Power", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.SECRET_POWER])
+      .moveset(Moves.SECRET_POWER)
       .ability(Abilities.BALL_FETCH)
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(Species.MAGIKARP)
       .enemyLevel(60)
       .enemyAbility(Abilities.BALL_FETCH);
@@ -64,7 +64,7 @@ describe("Moves - Secret Power", () => {
     game.override
       .moveset([Moves.FIRE_PLEDGE, Moves.WATER_PLEDGE, Moves.SECRET_POWER, Moves.SPLASH])
       .ability(Abilities.SERENE_GRACE)
-      .enemyMoveset([Moves.SPLASH])
+      .enemyMoveset(Moves.SPLASH)
       .battleStyle("double");
     await game.classicMode.startBattle([Species.BLASTOISE, Species.CHARIZARD]);
 

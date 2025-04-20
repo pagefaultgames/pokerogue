@@ -28,7 +28,7 @@ describe("Abilities - Protosynthesis", () => {
       .moveset([Moves.SPLASH, Moves.TACKLE])
       .ability(Abilities.PROTOSYNTHESIS)
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH);
@@ -37,7 +37,7 @@ describe("Abilities - Protosynthesis", () => {
   it("should not consider temporary items when determining which stat to boost", async () => {
     // Mew has uniform base stats
     game.override
-      .startingModifier([{ name: "TEMP_STAT_STAGE_BOOSTER", type: Stat.DEF }])
+      .startingModifiers([{ name: "TEMP_STAT_STAGE_BOOSTER", type: Stat.DEF }])
       .enemyMoveset(Moves.SUNNY_DAY)
       .startingLevel(100)
       .enemyLevel(100);

@@ -14,7 +14,6 @@ import { CIVILIZATION_ENCOUNTER_BIOMES } from "#app/data/mystery-encounters/myst
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { PartTimerEncounter } from "#app/data/mystery-encounters/encounters/part-timer-encounter";
-import { PokemonMove } from "#app/field/pokemon";
 import { Moves } from "#enums/moves";
 import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
 
@@ -36,10 +35,11 @@ describe("Part-Timer - Mystery Encounter", () => {
   beforeEach(async () => {
     game = new GameManager(phaserGame);
     scene = game.scene;
-    game.override.mysteryEncounterChance(100);
-    game.override.startingWave(defaultWave);
-    game.override.startingBiome(defaultBiome);
-    game.override.disableTrainerWaves();
+    game.override
+      .mysteryEncounterChance(100)
+      .startingWave(defaultWave)
+      .startingBiome(defaultBiome)
+      .disableTrainerWaves();
 
     const biomeMap = new Map<Biome, MysteryEncounterType[]>([
       [Biome.VOLCANO, [MysteryEncounterType.MYSTERIOUS_CHALLENGERS]],
@@ -76,8 +76,7 @@ describe("Part-Timer - Mystery Encounter", () => {
   });
 
   it("should not spawn outside of CIVILIZATION_ENCOUNTER_BIOMES", async () => {
-    game.override.mysteryEncounterTier(MysteryEncounterTier.COMMON);
-    game.override.startingBiome(Biome.VOLCANO);
+    game.override.mysteryEncounterTier(MysteryEncounterTier.COMMON).startingBiome(Biome.VOLCANO);
     await game.runToMysteryEncounter();
 
     expect(scene.currentBattle?.mysteryEncounter?.encounterType).not.toBe(MysteryEncounterType.PART_TIMER);
@@ -259,7 +258,7 @@ describe("Part-Timer - Mystery Encounter", () => {
 
       await game.runToMysteryEncounter(MysteryEncounterType.PART_TIMER, defaultParty);
       // Mock moveset
-      scene.getPlayerParty()[0].moveset = [new PokemonMove(Moves.ATTRACT)];
+      game.move.changeMoveset(scene.getPlayerParty()[0], Moves.ATTRACT);
       await runMysteryEncounterToEnd(game, 3);
 
       expect(EncounterPhaseUtils.updatePlayerMoney).toHaveBeenCalledWith(scene.getWaveMoneyAmount(2.5), true, false);

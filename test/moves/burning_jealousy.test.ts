@@ -26,19 +26,18 @@ describe("Moves - Burning Jealousy", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.ICE_SCALES)
-      .enemyMoveset([Moves.HOWL])
+      .enemyMoveset(Moves.HOWL)
       .startingLevel(10)
       .enemyLevel(10)
-      .starterSpecies(Species.FEEBAS)
       .ability(Abilities.BALL_FETCH)
       .moveset([Moves.BURNING_JEALOUSY, Moves.GROWL]);
   });
 
   it("should burn the opponent if their stat stages were raised", async () => {
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle([Species.FEEBAS]);
 
     const enemy = game.scene.getEnemyPokemon()!;
 
@@ -50,7 +49,7 @@ describe("Moves - Burning Jealousy", () => {
   });
 
   it("should still burn the opponent if their stat stages were both raised and lowered in the same turn", async () => {
-    game.override.starterSpecies(0).battleStyle("double");
+    game.override.battleStyle("double");
     await game.classicMode.startBattle([Species.FEEBAS, Species.ABRA]);
 
     const enemy = game.scene.getEnemyPokemon()!;
@@ -65,7 +64,7 @@ describe("Moves - Burning Jealousy", () => {
 
   it("should ignore stat stages raised by IMPOSTER", async () => {
     game.override.enemySpecies(Species.DITTO).enemyAbility(Abilities.IMPOSTER).enemyMoveset(Moves.SPLASH);
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle([Species.FEEBAS]);
 
     const enemy = game.scene.getEnemyPokemon()!;
 
@@ -82,14 +81,12 @@ describe("Moves - Burning Jealousy", () => {
 
   it("should be boosted by Sheer Force even if opponent didn't raise stat stages", async () => {
     game.override.ability(Abilities.SHEER_FORCE).enemyMoveset(Moves.SPLASH);
-    vi.spyOn(allMoves[Moves.BURNING_JEALOUSY], "calculateBattlePower");
-    await game.classicMode.startBattle();
+    const spy = vi.spyOn(allMoves[Moves.BURNING_JEALOUSY], "calculateBattlePower");
+    await game.classicMode.startBattle([Species.FEEBAS]);
 
     game.move.select(Moves.BURNING_JEALOUSY);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(allMoves[Moves.BURNING_JEALOUSY].calculateBattlePower).toHaveReturnedWith(
-      allMoves[Moves.BURNING_JEALOUSY].power * 1.3,
-    );
+    expect(spy).toHaveReturnedWith(allMoves[Moves.BURNING_JEALOUSY].power * 1.3);
   });
 });

@@ -25,15 +25,15 @@ describe("Moves - Lash Out", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.FUR_COAT)
-      .enemyMoveset([Moves.GROWL])
+      .enemyMoveset(Moves.GROWL)
       .startingLevel(10)
       .enemyLevel(10)
       .starterSpecies(Species.FEEBAS)
       .ability(Abilities.BALL_FETCH)
-      .moveset([Moves.LASH_OUT]);
+      .moveset(Moves.LASH_OUT);
   });
 
   it("should deal double damage if the user's stat stages were lowered this turn", async () => {

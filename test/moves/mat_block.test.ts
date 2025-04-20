@@ -26,16 +26,12 @@ describe("Moves - Mat Block", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
 
-    game.override.battleStyle("double");
-
-    game.override.moveset([Moves.MAT_BLOCK, Moves.SPLASH]);
-
-    game.override.enemySpecies(Species.SNORLAX);
-    game.override.enemyMoveset([Moves.TACKLE]);
-    game.override.enemyAbility(Abilities.INSOMNIA);
-
-    game.override.startingLevel(100);
-    game.override.enemyLevel(100);
+    game.override
+      .battleStyle("double")
+      .moveset([Moves.MAT_BLOCK, Moves.SPLASH])
+      .enemySpecies(Species.SNORLAX)
+      .enemyMoveset(Moves.TACKLE);
+    game.override.enemyAbility(Abilities.INSOMNIA).startingLevel(100).enemyLevel(100);
   });
 
   test("should protect the user and allies from attack moves", async () => {
@@ -55,7 +51,7 @@ describe("Moves - Mat Block", () => {
   });
 
   test("should not protect the user and allies from status moves", async () => {
-    game.override.enemyMoveset([Moves.GROWL]);
+    game.override.enemyMoveset(Moves.GROWL);
 
     await game.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
 

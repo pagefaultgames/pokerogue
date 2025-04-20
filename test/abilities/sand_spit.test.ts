@@ -22,19 +22,17 @@ describe("Abilities - Sand Spit", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("single");
-    game.override.disableCrits();
+    game.override
+      .battleStyle("single")
+      .criticalHits(false)
+      .enemySpecies(Species.MAGIKARP)
+      .enemyAbility(Abilities.BALL_FETCH);
 
-    game.override.enemySpecies(Species.MAGIKARP);
-    game.override.enemyAbility(Abilities.BALL_FETCH);
-
-    game.override.starterSpecies(Species.SILICOBRA);
-    game.override.ability(Abilities.SAND_SPIT);
-    game.override.moveset([Moves.SPLASH, Moves.COIL]);
+    game.override.starterSpecies(Species.SILICOBRA).ability(Abilities.SAND_SPIT).moveset([Moves.SPLASH, Moves.COIL]);
   });
 
   it("should trigger when hit with damaging move", async () => {
-    game.override.enemyMoveset([Moves.TACKLE]);
+    game.override.enemyMoveset(Moves.TACKLE);
     await game.classicMode.startBattle();
 
     game.move.select(Moves.SPLASH);
@@ -44,7 +42,7 @@ describe("Abilities - Sand Spit", () => {
   }, 20000);
 
   it("should trigger even when fainting", async () => {
-    game.override.enemyMoveset([Moves.TACKLE]).enemyLevel(100).startingLevel(1);
+    game.override.enemyMoveset(Moves.TACKLE).enemyLevel(100).startingLevel(1);
     await game.classicMode.startBattle([Species.SILICOBRA, Species.MAGIKARP]);
 
     game.move.select(Moves.SPLASH);
@@ -55,7 +53,7 @@ describe("Abilities - Sand Spit", () => {
   });
 
   it("should not trigger when targetted with status moves", async () => {
-    game.override.enemyMoveset([Moves.GROWL]);
+    game.override.enemyMoveset(Moves.GROWL);
     await game.classicMode.startBattle();
 
     game.move.select(Moves.COIL);

@@ -29,7 +29,7 @@ describe("Moves - Speed Swap", () => {
       .enemyMoveset(Moves.SPLASH)
       .enemySpecies(Species.MEW)
       .enemyLevel(200)
-      .moveset([Moves.SPEED_SWAP])
+      .moveset(Moves.SPEED_SWAP)
       .ability(Abilities.NONE);
   });
 

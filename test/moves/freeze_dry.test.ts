@@ -208,7 +208,7 @@ describe("Moves - Freeze-Dry", () => {
   });
 
   it("should deal 2x damage to water type under Electrify", async () => {
-    game.override.enemyMoveset([Moves.ELECTRIFY]);
+    game.override.enemyMoveset(Moves.ELECTRIFY);
     await game.classicMode.startBattle();
 
     const enemy = game.scene.getEnemyPokemon()!;
@@ -222,7 +222,7 @@ describe("Moves - Freeze-Dry", () => {
   });
 
   it("should deal 4x damage to water/flying type under Electrify", async () => {
-    game.override.enemyMoveset([Moves.ELECTRIFY]).enemySpecies(Species.GYARADOS);
+    game.override.enemyMoveset(Moves.ELECTRIFY).enemySpecies(Species.GYARADOS);
     await game.classicMode.startBattle();
 
     const enemy = game.scene.getEnemyPokemon()!;
@@ -236,7 +236,7 @@ describe("Moves - Freeze-Dry", () => {
   });
 
   it("should deal 0x damage to water/ground type under Electrify", async () => {
-    game.override.enemyMoveset([Moves.ELECTRIFY]).enemySpecies(Species.BARBOACH);
+    game.override.enemyMoveset(Moves.ELECTRIFY).enemySpecies(Species.BARBOACH);
     await game.classicMode.startBattle();
 
     const enemy = game.scene.getEnemyPokemon()!;
@@ -250,7 +250,7 @@ describe("Moves - Freeze-Dry", () => {
   });
 
   it("should deal 0.25x damage to Grass/Dragon type under Electrify", async () => {
-    game.override.enemyMoveset([Moves.ELECTRIFY]).enemySpecies(Species.FLAPPLE);
+    game.override.enemyMoveset(Moves.ELECTRIFY).enemySpecies(Species.FLAPPLE);
     await game.classicMode.startBattle();
 
     const enemy = game.scene.getEnemyPokemon()!;
@@ -264,7 +264,7 @@ describe("Moves - Freeze-Dry", () => {
   });
 
   it("should deal 2x damage to Water type during inverse battle", async () => {
-    game.override.moveset([Moves.FREEZE_DRY]).enemySpecies(Species.MAGIKARP);
+    game.override.moveset(Moves.FREEZE_DRY).enemySpecies(Species.MAGIKARP);
     game.challengeMode.addChallenge(Challenges.INVERSE_BATTLE, 1, 1);
 
     await game.challengeMode.startBattle();
@@ -280,7 +280,7 @@ describe("Moves - Freeze-Dry", () => {
   });
 
   it("should deal 2x damage to Water type during inverse battle under Normalize", async () => {
-    game.override.moveset([Moves.FREEZE_DRY]).ability(Abilities.NORMALIZE).enemySpecies(Species.MAGIKARP);
+    game.override.moveset(Moves.FREEZE_DRY).ability(Abilities.NORMALIZE).enemySpecies(Species.MAGIKARP);
     game.challengeMode.addChallenge(Challenges.INVERSE_BATTLE, 1, 1);
 
     await game.challengeMode.startBattle();
@@ -296,7 +296,7 @@ describe("Moves - Freeze-Dry", () => {
   });
 
   it("should deal 2x damage to Water type during inverse battle under Electrify", async () => {
-    game.override.moveset([Moves.FREEZE_DRY]).enemySpecies(Species.MAGIKARP).enemyMoveset([Moves.ELECTRIFY]);
+    game.override.moveset(Moves.FREEZE_DRY).enemySpecies(Species.MAGIKARP).enemyMoveset(Moves.ELECTRIFY);
     game.challengeMode.addChallenge(Challenges.INVERSE_BATTLE, 1, 1);
 
     await game.challengeMode.startBattle();
@@ -312,7 +312,7 @@ describe("Moves - Freeze-Dry", () => {
   });
 
   it("should deal 1x damage to water/flying type during inverse battle under Electrify", async () => {
-    game.override.enemyMoveset([Moves.ELECTRIFY]).enemySpecies(Species.GYARADOS);
+    game.override.enemyMoveset(Moves.ELECTRIFY).enemySpecies(Species.GYARADOS);
 
     game.challengeMode.addChallenge(Challenges.INVERSE_BATTLE, 1, 1);
 

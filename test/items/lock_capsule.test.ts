@@ -27,9 +27,9 @@ describe("Items - Lock Capsule", () => {
     game.override
       .battleStyle("single")
       .startingLevel(200)
-      .moveset([Moves.SURF])
+      .moveset(Moves.SURF)
       .enemyAbility(Abilities.BALL_FETCH)
-      .startingModifier([{ name: "LOCK_CAPSULE" }]);
+      .startingModifiers([{ name: "LOCK_CAPSULE" }]);
   });
 
   it("doesn't set the cost of common tier items to 0", async () => {

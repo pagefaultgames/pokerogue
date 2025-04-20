@@ -27,7 +27,7 @@ describe("Moves - Obstruct", () => {
       .enemyMoveset(Moves.TACKLE)
       .enemyAbility(Abilities.BALL_FETCH)
       .ability(Abilities.BALL_FETCH)
-      .moveset([Moves.OBSTRUCT])
+      .moveset(Moves.OBSTRUCT)
       .starterSpecies(Species.FEEBAS);
   });
 

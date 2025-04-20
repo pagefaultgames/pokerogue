@@ -24,10 +24,10 @@ describe("Abilities - Mold Breaker", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.SPLASH])
+      .moveset(Moves.SPLASH)
       .ability(Abilities.MOLD_BREAKER)
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH);
@@ -37,7 +37,7 @@ describe("Abilities - Mold Breaker", () => {
     game.override
       .enemyMoveset(Moves.SPLASH)
       .ability(Abilities.MOLD_BREAKER)
-      .moveset([Moves.ERUPTION])
+      .moveset(Moves.ERUPTION)
       .startingLevel(100)
       .enemyLevel(2);
     await game.classicMode.startBattle([Species.MAGIKARP]);

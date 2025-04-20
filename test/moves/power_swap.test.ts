@@ -29,7 +29,7 @@ describe("Moves - Power Swap", () => {
       .enemyMoveset(Moves.SPLASH)
       .enemySpecies(Species.INDEEDEE)
       .enemyLevel(200)
-      .moveset([Moves.POWER_SWAP])
+      .moveset(Moves.POWER_SWAP)
       .ability(Abilities.NONE);
   });
 

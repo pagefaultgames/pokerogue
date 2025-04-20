@@ -30,7 +30,7 @@ describe("Moves - Fell Stinger", () => {
       .battleStyle("single")
       .moveset([Moves.FELL_STINGER, Moves.SALT_CURE, Moves.BIND, Moves.LEECH_SEED])
       .startingLevel(50)
-      .disableCrits()
+      .criticalHits(false)
       .enemyAbility(Abilities.STURDY)
       .enemySpecies(Species.HYPNO)
       .enemyMoveset(Moves.SPLASH)
@@ -38,7 +38,7 @@ describe("Moves - Fell Stinger", () => {
   });
 
   it("should not grant stat boost if opponent gets KO'd by recoil", async () => {
-    game.override.enemyMoveset([Moves.DOUBLE_EDGE]);
+    game.override.enemyMoveset(Moves.DOUBLE_EDGE);
 
     await game.classicMode.startBattle([Species.LEAVANNY]);
     const leadPokemon = game.scene.getPlayerPokemon()!;

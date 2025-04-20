@@ -27,9 +27,9 @@ describe("Moves - U-turn", () => {
       .enemySpecies(Species.GENGAR)
       .startingLevel(90)
       .startingWave(97)
-      .moveset([Moves.U_TURN])
+      .moveset(Moves.U_TURN)
       .enemyMoveset(Moves.SPLASH)
-      .disableCrits();
+      .criticalHits(false);
   });
 
   it("triggers regenerator a single time when a regenerator user switches out with u-turn", async () => {

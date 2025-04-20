@@ -88,8 +88,7 @@ describe("Abilities - Intimidate", () => {
   }, 20000);
 
   it("should not activate again if there is no switch or new entry", async () => {
-    game.override.startingWave(2);
-    game.override.moveset([Moves.SPLASH]);
+    game.override.startingWave(2).moveset(Moves.SPLASH);
     await game.classicMode.startBattle([Species.MIGHTYENA, Species.POOCHYENA]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
@@ -106,7 +105,7 @@ describe("Abilities - Intimidate", () => {
   }, 20000);
 
   it("should lower ATK stat stage by 1 for every switch", async () => {
-    game.override.moveset([Moves.SPLASH]).enemyMoveset([Moves.VOLT_SWITCH]).startingWave(5);
+    game.override.moveset(Moves.SPLASH).enemyMoveset(Moves.VOLT_SWITCH).startingWave(5);
     await game.classicMode.startBattle([Species.MIGHTYENA, Species.POOCHYENA]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;

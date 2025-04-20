@@ -23,11 +23,11 @@ describe("Moves - Psycho Shift", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.PSYCHO_SHIFT])
+      .moveset(Moves.PSYCHO_SHIFT)
       .ability(Abilities.BALL_FETCH)
       .statusEffect(StatusEffect.POISON)
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(Species.MAGIKARP)
       .enemyLevel(20)
       .enemyAbility(Abilities.SYNCHRONIZE)

@@ -22,10 +22,10 @@ describe("Abilities - Super Luck", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.TACKLE])
+      .moveset(Moves.TACKLE)
       .ability(Abilities.SUPER_LUCK)
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH);

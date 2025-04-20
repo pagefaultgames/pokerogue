@@ -29,7 +29,7 @@ describe("Moves - Lucky Chant", () => {
       .moveset([Moves.LUCKY_CHANT, Moves.SPLASH, Moves.FOLLOW_ME])
       .enemySpecies(Species.SNORLAX)
       .enemyAbility(Abilities.INSOMNIA)
-      .enemyMoveset([Moves.FLOWER_TRICK])
+      .enemyMoveset(Moves.FLOWER_TRICK)
       .startingLevel(100)
       .enemyLevel(100);
   });
@@ -77,7 +77,7 @@ describe("Moves - Lucky Chant", () => {
   });
 
   it("should prevent critical hits from field effects", async () => {
-    game.override.enemyMoveset([Moves.TACKLE]);
+    game.override.enemyMoveset(Moves.TACKLE);
 
     await game.startBattle([Species.CHARIZARD]);
 

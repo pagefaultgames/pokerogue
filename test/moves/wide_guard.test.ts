@@ -25,16 +25,12 @@ describe("Moves - Wide Guard", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
 
-    game.override.battleStyle("double");
-
-    game.override.moveset([Moves.WIDE_GUARD, Moves.SPLASH, Moves.SURF]);
-
-    game.override.enemySpecies(Species.SNORLAX);
-    game.override.enemyMoveset([Moves.SWIFT]);
-    game.override.enemyAbility(Abilities.INSOMNIA);
-
-    game.override.startingLevel(100);
-    game.override.enemyLevel(100);
+    game.override
+      .battleStyle("double")
+      .moveset([Moves.WIDE_GUARD, Moves.SPLASH, Moves.SURF])
+      .enemySpecies(Species.SNORLAX)
+      .enemyMoveset(Moves.SWIFT);
+    game.override.enemyAbility(Abilities.INSOMNIA).startingLevel(100).enemyLevel(100);
   });
 
   test("should protect the user and allies from multi-target attack moves", async () => {
@@ -54,7 +50,7 @@ describe("Moves - Wide Guard", () => {
   });
 
   test("should protect the user and allies from multi-target status moves", async () => {
-    game.override.enemyMoveset([Moves.GROWL]);
+    game.override.enemyMoveset(Moves.GROWL);
 
     await game.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
 
@@ -72,7 +68,7 @@ describe("Moves - Wide Guard", () => {
   });
 
   test("should not protect the user and allies from single-target moves", async () => {
-    game.override.enemyMoveset([Moves.TACKLE]);
+    game.override.enemyMoveset(Moves.TACKLE);
 
     await game.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
 
@@ -90,7 +86,7 @@ describe("Moves - Wide Guard", () => {
   });
 
   test("should protect the user from its ally's multi-target move", async () => {
-    game.override.enemyMoveset([Moves.SPLASH]);
+    game.override.enemyMoveset(Moves.SPLASH);
 
     await game.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
 

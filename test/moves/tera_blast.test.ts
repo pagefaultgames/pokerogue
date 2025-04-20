@@ -35,9 +35,9 @@ describe("Moves - Tera Blast", () => {
 
     game.override
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .starterSpecies(Species.FEEBAS)
-      .moveset([Moves.TERA_BLAST])
+      .moveset(Moves.TERA_BLAST)
       .ability(Abilities.BALL_FETCH)
       .enemySpecies(Species.MAGIKARP)
       .enemyMoveset(Moves.SPLASH)
@@ -126,7 +126,7 @@ describe("Moves - Tera Blast", () => {
   });
 
   it("should stay as a special move if ATK turns lower than SPATK mid-turn", async () => {
-    game.override.enemyMoveset([Moves.CHARM]);
+    game.override.enemyMoveset(Moves.CHARM);
     await game.startBattle();
 
     const playerPokemon = game.scene.getPlayerPokemon()!;

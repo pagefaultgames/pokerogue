@@ -28,7 +28,7 @@ describe("Moves - Power Split", () => {
       .enemyAbility(Abilities.NONE)
       .enemySpecies(Species.MEW)
       .enemyLevel(200)
-      .moveset([Moves.POWER_SPLIT])
+      .moveset(Moves.POWER_SPLIT)
       .ability(Abilities.NONE);
   });
 
@@ -53,7 +53,7 @@ describe("Moves - Power Split", () => {
   }, 20000);
 
   it("should be idempotent", async () => {
-    game.override.enemyMoveset([Moves.POWER_SPLIT]);
+    game.override.enemyMoveset(Moves.POWER_SPLIT);
     await game.startBattle([Species.INDEEDEE]);
 
     const player = game.scene.getPlayerPokemon()!;

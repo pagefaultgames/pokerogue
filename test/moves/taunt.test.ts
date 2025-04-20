@@ -27,7 +27,7 @@ describe("Moves - Taunt", () => {
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset([Moves.TAUNT, Moves.SPLASH])
       .enemySpecies(Species.SHUCKLE)
-      .moveset([Moves.GROWL]);
+      .moveset(Moves.GROWL);
   });
 
   it("Pokemon should not be able to use Status Moves", async () => {

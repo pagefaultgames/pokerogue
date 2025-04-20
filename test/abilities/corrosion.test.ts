@@ -22,9 +22,9 @@ describe("Abilities - Corrosion", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.SPLASH])
+      .moveset(Moves.SPLASH)
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(Species.GRIMER)
       .enemyAbility(Abilities.CORROSION)
       .enemyMoveset(Moves.TOXIC);

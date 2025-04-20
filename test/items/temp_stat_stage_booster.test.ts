@@ -35,7 +35,7 @@ describe("Items - Temporary Stat Stage Boosters", () => {
       .enemyMoveset(Moves.SPLASH)
       .enemyAbility(Abilities.BALL_FETCH)
       .moveset([Moves.TACKLE, Moves.SPLASH, Moves.HONE_CLAWS, Moves.BELLY_DRUM])
-      .startingModifier([{ name: "TEMP_STAT_STAGE_BOOSTER", type: Stat.ATK }]);
+      .startingModifiers([{ name: "TEMP_STAT_STAGE_BOOSTER", type: Stat.ATK }]);
   });
 
   it("should provide a x1.3 stat stage multiplier", async () => {
@@ -53,7 +53,7 @@ describe("Items - Temporary Stat Stage Boosters", () => {
   }, 20000);
 
   it("should increase existing ACC stat stage by 1 for X_ACCURACY only", async () => {
-    game.override.startingModifier([{ name: "TEMP_STAT_STAGE_BOOSTER", type: Stat.ACC }]).ability(Abilities.SIMPLE);
+    game.override.startingModifiers([{ name: "TEMP_STAT_STAGE_BOOSTER", type: Stat.ACC }]).ability(Abilities.SIMPLE);
 
     await game.classicMode.startBattle([Species.PIKACHU]);
 
@@ -95,7 +95,7 @@ describe("Items - Temporary Stat Stage Boosters", () => {
   }, 20000);
 
   it("should not increase past maximum stat stage multiplier", async () => {
-    game.override.startingModifier([
+    game.override.startingModifiers([
       { name: "TEMP_STAT_STAGE_BOOSTER", type: Stat.ACC },
       { name: "TEMP_STAT_STAGE_BOOSTER", type: Stat.ATK },
     ]);

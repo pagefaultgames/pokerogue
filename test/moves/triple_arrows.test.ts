@@ -31,7 +31,7 @@ describe("Moves - Triple Arrows", () => {
     game = new GameManager(phaserGame);
     game.override
       .ability(Abilities.BALL_FETCH)
-      .moveset([Moves.TRIPLE_ARROWS])
+      .moveset(Moves.TRIPLE_ARROWS)
       .battleStyle("single")
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.STURDY)

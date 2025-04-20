@@ -36,7 +36,7 @@ describe("Moves - Jaw Lock", () => {
       .moveset([Moves.JAW_LOCK, Moves.SPLASH])
       .startingLevel(100)
       .enemyLevel(100)
-      .disableCrits();
+      .criticalHits(false);
   });
 
   it("should trap the move's user and target", async () => {
@@ -136,7 +136,7 @@ describe("Moves - Jaw Lock", () => {
   });
 
   it("should not trap either pokemon if the target is protected", async () => {
-    game.override.enemyMoveset([Moves.PROTECT]);
+    game.override.enemyMoveset(Moves.PROTECT);
 
     await game.startBattle([Species.BULBASAUR]);
 

@@ -26,10 +26,11 @@ describe("Abilities - Battery", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("double");
-    game.override.enemySpecies(Species.SHUCKLE);
-    game.override.enemyAbility(Abilities.BALL_FETCH);
-    game.override.moveset([Moves.TACKLE, Moves.BREAKING_SWIPE, Moves.SPLASH, Moves.DAZZLING_GLEAM]);
+    game.override
+      .battleStyle("double")
+      .enemySpecies(Species.SHUCKLE)
+      .enemyAbility(Abilities.BALL_FETCH)
+      .moveset([Moves.TACKLE, Moves.BREAKING_SWIPE, Moves.SPLASH, Moves.DAZZLING_GLEAM]);
     game.override.enemyMoveset(Moves.SPLASH);
   });
 
