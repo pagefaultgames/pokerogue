@@ -1,13 +1,11 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import Phaser from "phaser";
-import GameManager from "#test/testUtils/gameManager";
-import { Species } from "#enums/species";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { Moves } from "#enums/moves";
-import { Abilities } from "#enums/abilities";
-import { PokeballType } from "#app/enums/pokeball";
 import { Gender } from "#app/data/gender";
-import { BerryPhase } from "#app/phases/berry-phase";
+import { PokeballType } from "#app/enums/pokeball";
+import { Abilities } from "#enums/abilities";
+import { Moves } from "#enums/moves";
+import { Species } from "#enums/species";
+import GameManager from "#test/testUtils/gameManager";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Abilities - Illusion", () => {
   let phaserGame: Phaser.Game;
@@ -48,7 +46,7 @@ describe("Abilities - Illusion", () => {
     await game.classicMode.startBattle([Species.AXEW]);
     game.move.select(Moves.TACKLE);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     const zorua = game.scene.getEnemyPokemon()!;
 
@@ -60,7 +58,7 @@ describe("Abilities - Illusion", () => {
     await game.classicMode.startBattle([Species.AXEW]);
     game.move.select(Moves.WORRY_SEED);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     const zorua = game.scene.getEnemyPokemon()!;
 
@@ -114,7 +112,7 @@ describe("Abilities - Illusion", () => {
 
     game.move.select(Moves.FLARE_BLITZ);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     const zoroark = game.scene.getPlayerPokemon()!;
 
@@ -132,7 +130,7 @@ describe("Abilities - Illusion", () => {
 
     game.doSwitchPokemon(1);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     const zoroark = game.scene.getPlayerPokemon()!;
 
@@ -151,7 +149,7 @@ describe("Abilities - Illusion", () => {
     expect(!!zorua.summonData?.illusion).toBe(true);
 
     game.move.select(Moves.GASTRO_ACID);
-    await game.phaseInterceptor.to(BerryPhase);
+    await game.phaseInterceptor.to("BerryPhase");
 
     expect(zorua.isFullHp()).toBe(true);
     expect(!!zorua.summonData?.illusion).toBe(false);
