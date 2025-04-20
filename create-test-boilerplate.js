@@ -134,7 +134,7 @@ describe("${description}", () => {
     game.override
       .moveset(Moves.${type === "move" ? attrName : "SPLASH"})
       .ability(Abilities.${type === "ability" ? attrName : "BALL_FETCH"})
-      .battleType("single")
+      .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)
