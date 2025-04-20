@@ -516,8 +516,8 @@ export default class GameManager {
 
   /**
    * Command an in-battle switch to another {@linkcode Pokemon} via the main battle menu.
-   * @param pokemonIndex the 0-indexed position of the party pokemon to switch to.
-   * Should generally never be called with 0 as that will just select your current active pokemon.
+   * @param pokemonIndex - The 0-indexed position of the party pokemon to switch to.
+   * Should never be called with 0 as that will select the currently active pokemon.
    */
   doSwitchPokemon(pokemonIndex: number) {
     this.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
