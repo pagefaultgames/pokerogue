@@ -30,8 +30,6 @@ import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 import { Abilities } from "#enums/abilities";
 import { NON_LEGEND_PARADOX_POKEMON, NON_LEGEND_ULTRA_BEASTS } from "#app/data/balance/special-species-groups";
 import { timedEventManager } from "#app/global-event-manager";
-import { BASE_SHINY_CHANCE } from "#app/data/balance/rates";
-import { ShinyRateBoosterModifier } from "#app/modifier/modifier";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounters/thePokemonSalesman";
@@ -124,13 +122,10 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter = MysteryEncounterBui
     ) {
       // If you roll 20%, give event encounter with 2 extra shiny rolls and its HA, if it has one
       const enc = randSeedItem(validEventEncounters);
-      const threshold = new NumberHolder(BASE_SHINY_CHANCE);
-      globalScene.applyModifiers(ShinyRateBoosterModifier, true, threshold);
-      threshold.value *= timedEventManager.getShinyMultiplier();
       species = getPokemonSpecies(enc.species);
       pokemon = new PlayerPokemon(species, 5, species.abilityHidden === Abilities.NONE ? undefined : 2, enc.formIndex);
-      pokemon.trySetShinySeed(threshold.value); // Apply event shiny boost even though it's a PlayerPokemon
-      pokemon.trySetShinySeed(threshold.value); // Try again
+      pokemon.trySetShinySeed();
+      pokemon.trySetShinySeed();
     } else {
       pokemon = new PlayerPokemon(species, 5, 2, species.formIndex);
     }
