@@ -30,7 +30,7 @@ describe("Inverse Battle", () => {
     game.challengeMode.addChallenge(Challenges.INVERSE_BATTLE, 1, 1);
 
     game.override
-      .battleType("single")
+      .battleStyle("single")
       .starterSpecies(Species.FEEBAS)
       .ability(Abilities.BALL_FETCH)
       .enemySpecies(Species.MAGIKARP)

@@ -1,13 +1,13 @@
 import PokemonInfoContainer from "#app/ui/pokemon-info-container";
 import { Gender } from "#app/data/gender";
 import { PokemonType } from "#enums/pokemon-type";
-import { rgbHexToRgba, padInt } from "#app/utils";
+import { rgbHexToRgba, padInt } from "#app/utils/common";
 import { TextStyle, addTextObject } from "#app/ui/text";
 import { speciesEggMoves } from "#app/data/balance/egg-moves";
 import { allMoves } from "#app/data/moves/move";
 import { Species } from "#enums/species";
 import { getEggTierForSpecies } from "#app/data/egg";
-import { starterColors } from "#app/battle-scene";
+import { starterColors } from "#app/global-vars/starter-colors";
 import { globalScene } from "#app/global-scene";
 import { argbFromRgba } from "@material/material-color-utilities";
 import type { EggHatchData } from "#app/data/egg-hatch-data";

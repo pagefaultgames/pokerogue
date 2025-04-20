@@ -4,13 +4,13 @@ import { getPlayerShopModifierTypeOptionsForWave, TmModifierType } from "../modi
 import { getPokeballAtlasKey } from "#app/data/pokeball";
 import { addTextObject, getTextStyleOptions, getModifierTierTextTint, getTextColor, TextStyle } from "./text";
 import AwaitableUiHandler from "./awaitable-ui-handler";
-import { Mode } from "./ui";
+import { UiMode } from "#enums/ui-mode";
 import { LockModifierTiersModifier, PokemonHeldItemModifier, HealShopCostModifier } from "../modifier/modifier";
 import { handleTutorial, Tutorial } from "../tutorial";
 import { Button } from "#enums/buttons";
 import MoveInfoOverlay from "./move-info-overlay";
 import { allMoves } from "../data/moves/move";
-import { formatMoney, NumberHolder } from "#app/utils";
+import { formatMoney, NumberHolder } from "#app/utils/common";
 import Overrides from "#app/overrides";
 import i18next from "i18next";
 import { ShopCursorTarget } from "#app/enums/shop-cursor-target";
@@ -50,7 +50,7 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
   private cursorObj: Phaser.GameObjects.Image | null;
 
   constructor() {
-    super(Mode.CONFIRM);
+    super(UiMode.CONFIRM);
 
     this.options = [];
     this.shopOptionsRows = [];

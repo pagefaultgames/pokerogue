@@ -25,7 +25,7 @@ describe("Abilities - Mimicry", () => {
     game.override
       .moveset([Moves.SPLASH])
       .ability(Abilities.MIMICRY)
-      .battleType("single")
+      .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyMoveset(Moves.SPLASH);

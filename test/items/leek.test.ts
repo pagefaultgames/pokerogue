@@ -1,5 +1,5 @@
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { randInt } from "#app/utils";
+import { randInt } from "#app/utils/common";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -29,7 +29,7 @@ describe("Items - Leek", () => {
       .startingHeldItems([{ name: "LEEK" }])
       .moveset([Moves.TACKLE])
       .disableCrits()
-      .battleType("single");
+      .battleStyle("single");
   });
 
   it("should raise CRIT stage by 2 when held by FARFETCHD", async () => {

@@ -25,7 +25,7 @@ describe("Moves - Quash", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .battleType("double")
+      .battleStyle("double")
       .enemyLevel(1)
       .enemySpecies(Species.SLOWPOKE)
       .enemyAbility(Abilities.BALL_FETCH)

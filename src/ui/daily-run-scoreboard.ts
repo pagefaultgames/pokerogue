@@ -1,6 +1,6 @@
 import i18next from "i18next";
 import { globalScene } from "#app/global-scene";
-import { getEnumKeys, executeIf } from "#app/utils";
+import { getEnumKeys, executeIf } from "#app/utils/common";
 import { TextStyle, addTextObject } from "./text";
 import { WindowVariant, addWindow } from "./ui-theme";
 import { pokerogueApi } from "#app/plugins/api/pokerogue-api";

@@ -117,10 +117,8 @@ describe("A Trainer's Test - Mystery Encounter", () => {
           i18next.t("trainerNames:marley"),
           i18next.t("trainerNames:mira"),
           i18next.t("trainerNames:riley"),
-        ]
-          .map(name => name.toLowerCase())
-          .includes(scene.currentBattle.trainer!.config.name),
-      ).toBeTruthy();
+        ].map(name => name.toLowerCase()),
+      ).toContain(scene.currentBattle.trainer!.config.name.toLowerCase());
       expect(enemyField[0]).toBeDefined();
     });
 

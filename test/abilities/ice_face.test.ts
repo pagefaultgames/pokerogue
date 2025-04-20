@@ -30,7 +30,7 @@ describe("Abilities - Ice Face", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleType("single");
+    game.override.battleStyle("single");
     game.override.enemySpecies(Species.EISCUE);
     game.override.enemyAbility(Abilities.ICE_FACE);
     game.override.moveset([Moves.TACKLE, Moves.ICE_BEAM, Moves.TOXIC_THREAD, Moves.HAIL]);

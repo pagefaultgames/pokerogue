@@ -1,7 +1,7 @@
 import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
 import type { UserInfo } from "#app/@types/UserInfo";
-import { bypassLogin } from "#app/battle-scene";
-import { randomString } from "#app/utils";
+import { bypassLogin } from "./global-vars/bypass-login";
+import { randomString } from "#app/utils/common";
 
 export let loggedInUser: UserInfo | null = null;
 // This is a random string that is used to identify the client session - unique per session (tab or window) so that the game will only save on the one that the server is expecting

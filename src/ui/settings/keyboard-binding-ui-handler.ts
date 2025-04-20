@@ -1,12 +1,12 @@
 import AbstractBindingUiHandler from "./abstract-binding-ui-handler";
-import type { Mode } from "../ui";
+import type { UiMode } from "#enums/ui-mode";
 import { getKeyWithKeycode } from "#app/configs/inputs/configHandler";
 import { Device } from "#enums/devices";
 import { addTextObject, TextStyle } from "#app/ui/text";
 import { globalScene } from "#app/global-scene";
 
 export default class KeyboardBindingUiHandler extends AbstractBindingUiHandler {
-  constructor(mode: Mode | null = null) {
+  constructor(mode: UiMode | null = null) {
     super(mode);
     // Listen to gamepad button down events to initiate binding.
     globalScene.input.keyboard?.on("keydown", this.onKeyDown, this);

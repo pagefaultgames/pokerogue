@@ -2,7 +2,7 @@ import type { GameObjects } from "phaser";
 import { globalScene } from "#app/global-scene";
 import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
 import type { Species } from "#enums/species";
-import { isNullOrUndefined } from "#app/utils";
+import { isNullOrUndefined } from "#app/utils/common";
 import { getSpriteKeysFromSpecies } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import type { Variant } from "#app/sprites/variant";
 import { doShinySparkleAnim } from "#app/field/anims";
