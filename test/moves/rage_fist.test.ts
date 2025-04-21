@@ -137,7 +137,7 @@ describe("Moves - Rage Fist", () => {
     expect(ironHands.battleData.hitCount).toBe(0);
   });
 
-  it("should reset the hitRecCounter if we enter new biome", async () => {
+  it("should reset hits recieved before new biome", async () => {
     game.override.enemySpecies(Species.MAGIKARP).startingWave(10);
 
     await game.classicMode.startBattle([Species.MAGIKARP]);
@@ -153,7 +153,7 @@ describe("Moves - Rage Fist", () => {
     expect(move.calculateBattlePower).toHaveLastReturnedWith(150);
   });
 
-  it("should not reset the hitRecCounter if switched out", async () => {
+  it("should not reset if switched out or on reload", async () => {
     game.override.enemyMoveset(Moves.TACKLE);
 
     const getPartyHitCount = () =>
@@ -188,5 +188,14 @@ describe("Moves - Rage Fist", () => {
     expect(charizard).toBeDefined();
     expect(charizard.species.speciesId).toBe(Species.CHARIZARD);
     expect(move.calculateBattlePower).toHaveLastReturnedWith(150);
+
+    // go to new wave, reload game and beat up another poor sap
+    await game.toNextWave();
+
+    await game.reload.reloadSession();
+
+    game.move.select(Moves.RAGE_FIST);
+    await game.phaseInterceptor.to("MoveEndPhase");
+    expect(move.calculateBattlePower).toHaveLastReturnedWith(250);
   });
 });

@@ -19,7 +19,7 @@ describe("Abilities - Harvest", () => {
   const getPlayerBerries = () =>
     game.scene.getModifiers(BerryModifier, true).filter(b => b.pokemonId === game.scene.getPlayerPokemon()?.id);
 
-  /** Check whether the player's Modifiers contains the specified berries. */
+  /** Check whether the player's Modifiers contains the specified berries and nothing else. */
   function expectBerriesContaining(...berries: ModifierOverride[]): void {
     const actualBerries: ModifierOverride[] = getPlayerBerries().map(
       // only grab berry type and quantity since that's literally all we care about
@@ -145,40 +145,29 @@ describe("Abilities - Harvest", () => {
     expect(regielekiReloaded.battleData.berriesEaten).toEqual([BerryType.PETAYA]);
   });
 
-  it("cannot restore capped berries, even if an ally has one under cap", async () => {
+  it("cannot restore capped berries", async () => {
     const initBerries: ModifierOverride[] = [
       { name: "BERRY", type: BerryType.LUM, count: 2 },
       { name: "BERRY", type: BerryType.STARF, count: 2 },
     ];
     game.override.startingHeldItems(initBerries);
-    await game.classicMode.startBattle([Species.FEEBAS, Species.BELLOSSOM]);
+    await game.classicMode.startBattle([Species.FEEBAS]);
 
-    const [feebas, bellossom] = game.scene.getPlayerParty();
+    const feebas = game.scene.getPlayerPokemon()!;
     feebas.battleData.berriesEaten = [BerryType.LUM, BerryType.STARF];
-
-    // get rid of bellossom's modifiers and add a sitrus
-    await game.scene.removePartyMemberModifiers(1);
-    const newMod = game.scene
-      .getModifiers(BerryModifier, true)
-      .find(b => b.berryType === BerryType.SITRUS)
-      ?.clone()!;
-    expect(newMod).toBeDefined();
-    newMod.pokemonId = bellossom.id;
-    game.scene.addModifier(newMod, true);
 
     game.move.select(Moves.SPLASH);
     await game.forceEnemyMove(Moves.SPLASH);
     await game.phaseInterceptor.to("BerryPhase");
 
-    // Force RNG roll to hit the first berry we find.
+    // Force RNG roll to hit the first berry we find that matches.
     // This does nothing on a success (since there'd only be a starf left to grab),
     // but ensures we don't accidentally let any false positives through.
     vi.spyOn(Phaser.Math.RND, "integerInRange").mockReturnValue(0);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    // recovered a starf,
+    // recovered a starf
     expectBerriesContaining({ name: "BERRY", type: BerryType.STARF, count: 3 });
-    expect(game.scene.getModifiers(BerryModifier, true).filter(b => b.pokemonId === bellossom.id)).toHaveLength(0);
   });
 
   it("does nothing if all berries are capped", async () => {

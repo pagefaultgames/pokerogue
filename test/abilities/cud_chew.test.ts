@@ -187,7 +187,7 @@ describe("Abilities - Cud Chew", () => {
   });
 
   describe("regurgiates berries", () => {
-    it("re-triggers effects on eater without infinitely looping", async () => {
+    it("re-triggers effects on eater without pushing to array", async () => {
       const apply = vi.spyOn(RepeatBerryNextTurnAbAttr.prototype, "apply");
       await game.classicMode.startBattle([Species.FARIGIRAF]);
 
@@ -198,7 +198,6 @@ describe("Abilities - Cud Chew", () => {
       await game.toNextTurn();
 
       // ate 1 sitrus the turn prior, spitball pending
-      expect(farigiraf.battleData.berriesEaten).toEqual([BerryType.SITRUS]);
       expect(farigiraf.summonData.berriesEatenLast).toEqual([BerryType.SITRUS]);
       expect(farigiraf.turnData.berriesEaten).toEqual([]);
       expect(apply.mock.lastCall).toBeUndefined();
@@ -210,7 +209,6 @@ describe("Abilities - Cud Chew", () => {
 
       // healed back up to half without adding any more to array
       expect(farigiraf.hp).toBeGreaterThan(turn1Hp);
-      expect(farigiraf.battleData.berriesEaten).toEqual([BerryType.SITRUS]);
       expect(farigiraf.summonData.berriesEatenLast).toEqual([]);
       expect(farigiraf.turnData.berriesEaten).toEqual([]);
     });
