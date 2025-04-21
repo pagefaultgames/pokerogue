@@ -27,7 +27,7 @@ import {
 } from "#app/data/balance/pokemon-level-moves";
 import type { Stat } from "#enums/stat";
 import type { Variant, VariantSet } from "#app/sprites/variant";
-import { populateVariantColorCache, variantData } from "#app/sprites/variant";
+import { populateVariantColorCache, variantColorCache, variantData } from "#app/sprites/variant";
 import { speciesStarterCosts, POKERUS_STARTER_COUNT } from "#app/data/balance/starters";
 import { SpeciesFormKey } from "#enums/species-form-key";
 import { starterPassiveAbilities } from "#app/data/balance/passives";
@@ -594,6 +594,34 @@ export abstract class PokemonSpeciesForm {
     return true;
   }
 
+  /**
+   * Load the variant colors for the species into the variant color cache
+   *
+   * @param spriteKey - The sprite key to use
+   * @param female - Whether to get
+   *
+   */
+  async loadVariantColors(spriteKey: string, female: boolean, variant: Variant, formIndex?: number): Promise<void> {
+    const baseSpriteKey = this.getBaseSpriteKey(female, formIndex);
+
+    if (variantColorCache.hasOwnProperty(baseSpriteKey)) {
+      // Variant colors have already been loaded
+      return;
+    }
+
+    const variantInfo = variantData[this.getVariantDataIndex(formIndex)];
+    // Do nothing if there is no variant information or the variant does not have color replacements
+    if (!variantInfo || variantInfo[variant] !== 1) {
+      return;
+    }
+
+    await populateVariantColorCache(
+      "pkmn__" + baseSpriteKey,
+      globalScene.experimentalSprites && hasExpSprite(spriteKey),
+      baseSpriteKey,
+    );
+  }
+
   async loadAssets(
     female: boolean,
     formIndex?: number,
@@ -606,15 +634,9 @@ export abstract class PokemonSpeciesForm {
     const spriteKey = this.getSpriteKey(female, formIndex, shiny, variant, back);
     globalScene.loadPokemonAtlas(spriteKey, this.getSpriteAtlasPath(female, formIndex, shiny, variant, back));
     globalScene.load.audio(this.getCryKey(formIndex), `audio/${this.getCryKey(formIndex)}.m4a`);
-
-    const baseSpriteKey = this.getBaseSpriteKey(female, formIndex);
-
-    // Force the variant color cache to be loaded for the form
-    await populateVariantColorCache(
-      "pkmn__" + baseSpriteKey,
-      globalScene.experimentalSprites && hasExpSprite(spriteKey),
-      baseSpriteKey,
-    );
+    if (!isNullOrUndefined(variant)) {
+      await this.loadVariantColors(spriteKey, female, variant, formIndex);
+    }
     return new Promise<void>(resolve => {
       globalScene.load.once(Phaser.Loader.Events.COMPLETE, () => {
         const originalWarn = console.warn;
