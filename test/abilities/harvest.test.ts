@@ -167,7 +167,10 @@ describe("Abilities - Harvest", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
 
     // recovered a starf
-    expectBerriesContaining({ name: "BERRY", type: BerryType.STARF, count: 3 });
+    expectBerriesContaining(
+      { name: "BERRY", type: BerryType.LUM, count: 2 },
+      { name: "BERRY", type: BerryType.STARF, count: 3 },
+    );
   });
 
   it("does nothing if all berries are capped", async () => {
