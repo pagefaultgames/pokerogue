@@ -194,8 +194,9 @@ describe("Moves - Rage Fist", () => {
 
     await game.reload.reloadSession();
 
+    // outsped and oneshot means power rmains same as prior
     game.move.select(Moves.RAGE_FIST);
     await game.phaseInterceptor.to("MoveEndPhase");
-    expect(move.calculateBattlePower).toHaveLastReturnedWith(250);
+    expect(move.calculateBattlePower).toHaveLastReturnedWith(150);
   });
 });
