@@ -82,14 +82,12 @@ export class FaintPhase extends PokemonPhase {
      * For EXP_SHARE purposes, if the current pokemon faints as the combat ends and it was the ONLY player pokemon
      * involved in combat, it needs to be counted as a participant so the other party pokemon can get their EXP,
      * so the fainted pokemon has been included.
-    */
-    globalScene.getPlayerField().forEach((pokemon, i) => {
-      if (pokemon?.isActive() || pokemon?.isFainted()) {
-        if (pokemon.isPlayer()) {
-          globalScene.currentBattle.addParticipant(pokemon as PlayerPokemon);
-        }
+     */
+    for (const pokemon of globalScene.getPlayerField()) {
+      if (pokemon.isActive() || pokemon.isFainted()) {
+        globalScene.currentBattle.addParticipant(pokemon);
       }
-    });
+    }
 
     if (!this.tryOverrideForBattleSpec()) {
       this.doFaint();
