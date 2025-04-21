@@ -1,6 +1,5 @@
 import type { Abilities } from "#enums/abilities";
 import type { PokemonType } from "#enums/pokemon-type";
-import { isNullOrUndefined } from "#app/utils/common";
 import type { Nature } from "#enums/nature";
 
 /**
@@ -15,12 +14,10 @@ export class CustomPokemonData {
   public types: PokemonType[];
 
   constructor(data?: CustomPokemonData | Partial<CustomPokemonData>) {
-    if (!isNullOrUndefined(data)) {
-      this.spriteScale = data.spriteScale ?? 1;
-      this.ability = data.ability ?? -1;
-      this.passive = data.passive || data.spriteScale;
-      this.spriteScale = this.spriteScale || data.spriteScale;
-      this.types = data.types || this.types;
-    }
+    this.spriteScale = data?.spriteScale ?? 1;
+    this.ability = data?.ability ?? -1;
+    this.passive = data?.passive ?? -1;
+    this.nature = data?.nature ?? -1;
+    this.types = data?.types ?? [];
   }
 }
