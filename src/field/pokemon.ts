@@ -332,11 +332,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   public customPokemonData: CustomPokemonData = new CustomPokemonData;
 
-  /**
-  * TODO: Figure out if we can remove this thing
-  */
-  private summonDataPrimer: PokemonSummonData | null;
-
   /* Pokemon data types, in vaguely decreasing order of precedence */
 
   /**
@@ -1130,16 +1125,17 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Get this {@linkcode Pokemon}'s {@linkcode PokemonSpeciesForm}.
-   * @param ignoreOverride - ?????; default `false`.
+   * @param ignoreOverride - Whether to ignore overridden species from {@linkcode Moves.TRANSFORM}, default `false`.
+   * This overrides `useIllusion` if `true`.
    * @param useIllusion - `true` to use the speciesForm of the illusion; default `false`.
    */
   getSpeciesForm(ignoreOverride: boolean = false, useIllusion: boolean = false): PokemonSpeciesForm {
-    const species: PokemonSpecies = useIllusion && this.summonData.illusion ? getPokemonSpecies(this.summonData.illusion.species) : this.species;
-    const formIndex = useIllusion && this.summonData.illusion ? this.summonData.illusion.formIndex : this.formIndex;
-
     if (!ignoreOverride && this.summonData.speciesForm) {
       return this.summonData.speciesForm;
     }
+
+    const species: PokemonSpecies = useIllusion && this.summonData.illusion ? getPokemonSpecies(this.summonData.illusion.species) : this.species;
+    const formIndex = useIllusion && this.summonData.illusion ? this.summonData.illusion.formIndex : this.formIndex;
 
     if (species.forms && species.forms.length > 0) {
       return species.forms[formIndex];
@@ -5780,14 +5776,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return false;
   }
 
-  primeSummonData(summonDataPrimer: PokemonSummonData): void {
-    this.summonDataPrimer = summonDataPrimer;
-  }
-
-  // For PreSummonAbAttr to get access to summonData
-  initSummonData(): void {
-    this.summonData = this.summonData ?? this.summonDataPrimer ?? new PokemonSummonData()
-  }
 
   resetSummonData(): void {
     const illusion: IllusionData | null = this.summonData.illusion;
@@ -5797,9 +5785,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
     this.summonData = new PokemonSummonData();
     this.setSwitchOutStatus(false);
-    if (!this.battleData) {
-      this.resetBattleAndWaveData();
-    }
     if (this.getTag(BattlerTagType.SEEDED)) {
       this.lapseTag(BattlerTagType.SEEDED);
     }
@@ -5811,30 +5796,22 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       );
     }
 
-    if (this.summonDataPrimer) {
-      for (const k of Object.keys(this.summonDataPrimer)) {
-        if (this.summonDataPrimer[k]) {
-          this.summonData[k] = this.summonDataPrimer[k];
-        }
-      }
-      // If this Pokemon has a Substitute when loading in, play an animation to add its sprite
-      if (this.getTag(SubstituteTag)) {
-        globalScene.triggerPokemonBattleAnim(
-          this,
-          PokemonAnimType.SUBSTITUTE_ADD,
-        );
-        this.getTag(SubstituteTag)!.sourceInFocus = false;
-      }
+    // If this Pokemon has a Substitute when loading in, play an animation to add its sprite
+    if (this.getTag(SubstituteTag)) {
+      globalScene.triggerPokemonBattleAnim(
+        this,
+        PokemonAnimType.SUBSTITUTE_ADD,
+      );
+      this.getTag(SubstituteTag)!.sourceInFocus = false;
+    }
 
-      // If this Pokemon has Commander and Dondozo as an active ally, hide this Pokemon's sprite.
-      if (
-        this.hasAbilityWithAttr(CommanderAbAttr) &&
-        globalScene.currentBattle.double &&
-        this.getAlly()?.species.speciesId === Species.DONDOZO
-      ) {
-        this.setVisible(false);
-      }
-      this.summonDataPrimer = null;
+    // If this Pokemon has Commander and Dondozo as an active ally, hide this Pokemon's sprite.
+    if (
+      this.hasAbilityWithAttr(CommanderAbAttr) &&
+      globalScene.currentBattle.double &&
+      this.getAlly()?.species.speciesId === Species.DONDOZO
+    ) {
+      this.setVisible(false);
     }
     this.summonData.illusion = illusion
     this.updateInfo();
@@ -7942,8 +7919,8 @@ export class PokemonBattleData {
   constructor(source?: PokemonBattleData | Partial<PokemonBattleData>) {
     if (!isNullOrUndefined(source)) {
       this.hitCount = source.hitCount ?? 0;
-      this.hasEatenBerry = source.hasEatenBerry ?? this.hasEatenBerry;
-      this.berriesEaten = source.berriesEaten ?? this.berriesEaten;
+      this.hasEatenBerry = source.hasEatenBerry ?? false;
+      this.berriesEaten = source.berriesEaten ?? [];
     }
   }
 }

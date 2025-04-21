@@ -167,17 +167,14 @@ export default class PokemonData {
           false,
           this,
         );
-    if (this.summonData) {
-      // when loading from saved session, recover summonData.speciesFrom and form index species object
-      // used to stay transformed on reload session
 
-      if (this.summonData.speciesForm) {
-        this.summonData.speciesForm = getPokemonSpeciesForm(
-          this.summonData.speciesForm.speciesId,
-          this.summonDataSpeciesFormIndex,
-        );
-      }
-      ret.primeSummonData(this.summonData);
+    // when loading from saved session, recover summonData.speciesFrom and form index species object
+    // used to stay transformed on reload session
+    if (this.summonData.speciesForm) {
+      this.summonData.speciesForm = getPokemonSpeciesForm(
+        this.summonData.speciesForm.speciesId,
+        this.summonDataSpeciesFormIndex,
+      );
     }
     return ret;
   }

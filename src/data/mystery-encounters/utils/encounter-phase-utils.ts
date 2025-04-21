@@ -385,13 +385,10 @@ export async function initBattleWithEnemyConfig(partyConfig: EnemyPartyConfig): 
         }
       }
 
-      // mysteryEncounterBattleEffects will only be used IFF MYSTERY_ENCOUNTER_POST_SUMMON tag is applied
+      // mysteryEncounterBattleEffects will only be used if MYSTERY_ENCOUNTER_POST_SUMMON tag is applied
       if (config.mysteryEncounterBattleEffects) {
         enemyPokemon.mysteryEncounterBattleEffects = config.mysteryEncounterBattleEffects;
       }
-
-      // Requires re-priming summon data to update everything properly
-      enemyPokemon.primeSummonData(enemyPokemon.summonData);
 
       if (enemyPokemon.isShiny() && !enemyPokemon["shinySparkle"]) {
         enemyPokemon.initShinySparkle();
