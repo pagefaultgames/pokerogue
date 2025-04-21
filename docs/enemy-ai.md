@@ -80,8 +80,8 @@ As part of the move selection process, the enemy Pokémon must compute a **targe
 A move's UBS and TBS are computed with the respective functions in the `Move` class:
 
 ```ts
-getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer;
-getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): integer;
+getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): number;
+getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): number;
 ```
 
 Logically, these functions are very similar &ndash; they add up their respective benefit scores from each of the move's attributes (as determined by `attr.getUserBenefitScore`, and `attr.getTargetBenefitScore`, respectively) and return the total benefit score. However, there are two key functional differences in how the UBS and TBS of a move are handled:

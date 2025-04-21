@@ -1,3 +1,5 @@
+import { globalScene } from "#app/global-scene";
+
 /**
  * A vertical scrollbar element that resizes dynamically based on the current scrolling
  * and number of elements that can be shown on screen
@@ -11,15 +13,14 @@ export class ScrollBar extends Phaser.GameObjects.Container {
   private maxRows: number;
 
   /**
-   * @param scene the current scene
    * @param x the scrollbar's x position (origin: top left)
    * @param y the scrollbar's y position (origin: top left)
    * @param width the scrollbar's width
    * @param height the scrollbar's height
    * @param maxRows the maximum number of rows that can be shown at once
    */
-  constructor(scene: Phaser.Scene, x: number, y: number, width: number, height: number, maxRows: number) {
-    super(scene, x, y);
+  constructor(x: number, y: number, width: number, height: number, maxRows: number) {
+    super(globalScene, x, y);
 
     this.maxRows = maxRows;
     this.totalRows = maxRows;
@@ -28,15 +29,26 @@ export class ScrollBar extends Phaser.GameObjects.Container {
     const borderSize = 2;
     width = Math.max(width, 4);
 
-    this.bg = scene.add.nineslice(0, 0, "scroll_bar", undefined, width, height, borderSize, borderSize, borderSize, borderSize);
+    this.bg = globalScene.add.nineslice(
+      0,
+      0,
+      "scroll_bar",
+      undefined,
+      width,
+      height,
+      borderSize,
+      borderSize,
+      borderSize,
+      borderSize,
+    );
     this.bg.setOrigin(0, 0);
     this.add(this.bg);
 
-    this.handleBody = scene.add.rectangle(1, 1, width - 2, 4, 0xaaaaaa);
+    this.handleBody = globalScene.add.rectangle(1, 1, width - 2, 4, 0xaaaaaa);
     this.handleBody.setOrigin(0, 0);
     this.add(this.handleBody);
 
-    this.handleBottom = scene.add.nineslice(1, 1, "scroll_bar_handle", undefined, width - 2, 2, 2, 0, 0, 0);
+    this.handleBottom = globalScene.add.nineslice(1, 1, "scroll_bar_handle", undefined, width - 2, 2, 2, 0, 0, 0);
     this.handleBottom.setOrigin(0, 0);
     this.add(this.handleBottom);
   }
@@ -59,14 +71,16 @@ export class ScrollBar extends Phaser.GameObjects.Container {
    */
   setTotalRows(rows: number): void {
     this.totalRows = rows;
-    this.handleBody.height = (this.bg.displayHeight - 1 - this.handleBottom.displayHeight) * this.maxRows / this.totalRows;
+    this.handleBody.height =
+      ((this.bg.displayHeight - 1 - this.handleBottom.displayHeight) * this.maxRows) / this.totalRows;
     this.updateHandlePosition();
 
     this.setVisible(this.totalRows > this.maxRows);
   }
 
   private updateHandlePosition(): void {
-    this.handleBody.y = 1 + (this.bg.displayHeight - 1 - this.handleBottom.displayHeight) / this.totalRows * this.currentRow;
+    this.handleBody.y =
+      1 + ((this.bg.displayHeight - 1 - this.handleBottom.displayHeight) / this.totalRows) * this.currentRow;
     this.handleBottom.y = this.handleBody.y + this.handleBody.displayHeight;
   }
 }

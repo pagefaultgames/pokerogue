@@ -23,7 +23,7 @@ const pad_xbox360 = {
     LC_N: 12,
     LC_S: 13,
     LC_W: 14,
-    LC_E: 15
+    LC_E: 15,
   },
   icons: {
     RC_S: "XB_Letter_A_OL.png",
@@ -51,15 +51,15 @@ const pad_xbox360 = {
     [SettingGamepad.Button_Action]: Button.ACTION,
     [SettingGamepad.Button_Cancel]: Button.CANCEL,
     [SettingGamepad.Button_Cycle_Nature]: Button.CYCLE_NATURE,
-    [SettingGamepad.Button_Cycle_Variant]: Button.V,
+    [SettingGamepad.Button_Cycle_Tera]: Button.CYCLE_TERA,
     [SettingGamepad.Button_Menu]: Button.MENU,
     [SettingGamepad.Button_Stats]: Button.STATS,
-    [SettingGamepad.Button_Cycle_Form]:  Button.CYCLE_FORM,
+    [SettingGamepad.Button_Cycle_Form]: Button.CYCLE_FORM,
     [SettingGamepad.Button_Cycle_Shiny]: Button.CYCLE_SHINY,
     [SettingGamepad.Button_Cycle_Gender]: Button.CYCLE_GENDER,
     [SettingGamepad.Button_Cycle_Ability]: Button.CYCLE_ABILITY,
     [SettingGamepad.Button_Speed_Up]: Button.SPEED_UP,
-    [SettingGamepad.Button_Slow_Down]: Button.SLOW_DOWN
+    [SettingGamepad.Button_Slow_Down]: Button.SLOW_DOWN,
   },
   default: {
     LC_N: SettingGamepad.Button_Up,
@@ -69,7 +69,7 @@ const pad_xbox360 = {
     RC_S: SettingGamepad.Button_Action,
     RC_E: SettingGamepad.Button_Cancel,
     RC_W: SettingGamepad.Button_Cycle_Nature,
-    RC_N: SettingGamepad.Button_Cycle_Variant,
+    RC_N: SettingGamepad.Button_Cycle_Tera,
     START: SettingGamepad.Button_Menu,
     SELECT: SettingGamepad.Button_Stats,
     LB: SettingGamepad.Button_Cycle_Form,
@@ -77,7 +77,7 @@ const pad_xbox360 = {
     LT: SettingGamepad.Button_Cycle_Gender,
     RT: SettingGamepad.Button_Cycle_Ability,
     LS: SettingGamepad.Button_Speed_Up,
-    RS: SettingGamepad.Button_Slow_Down
+    RS: SettingGamepad.Button_Slow_Down,
   },
 };
 

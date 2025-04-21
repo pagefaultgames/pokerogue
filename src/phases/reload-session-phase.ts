@@ -1,24 +1,24 @@
-import BattleScene from "#app/battle-scene";
+import { globalScene } from "#app/global-scene";
 import { Phase } from "#app/phase";
-import { Mode } from "#app/ui/ui";
-import * as Utils from "#app/utils";
+import { UiMode } from "#enums/ui-mode";
+import { fixedInt } from "#app/utils/common";
 
 export class ReloadSessionPhase extends Phase {
-  private systemDataStr: string | null;
+  private systemDataStr?: string;
 
-  constructor(scene: BattleScene, systemDataStr?: string) {
-    super(scene);
+  constructor(systemDataStr?: string) {
+    super();
 
-    this.systemDataStr = systemDataStr ?? null;
+    this.systemDataStr = systemDataStr;
   }
 
   start(): void {
-    this.scene.ui.setMode(Mode.SESSION_RELOAD);
+    globalScene.ui.setMode(UiMode.SESSION_RELOAD);
 
     let delayElapsed = false;
     let loaded = false;
 
-    this.scene.time.delayedCall(Utils.fixedInt(1500), () => {
+    globalScene.time.delayedCall(fixedInt(1500), () => {
       if (loaded) {
         this.end();
       } else {
@@ -26,14 +26,16 @@ export class ReloadSessionPhase extends Phase {
       }
     });
 
-    this.scene.gameData.clearLocalData();
+    globalScene.gameData.clearLocalData();
 
-    (this.systemDataStr ? this.scene.gameData.initSystem(this.systemDataStr) : this.scene.gameData.loadSystem()).then(() => {
-      if (delayElapsed) {
-        this.end();
-      } else {
-        loaded = true;
-      }
-    });
+    (this.systemDataStr ? globalScene.gameData.initSystem(this.systemDataStr) : globalScene.gameData.loadSystem()).then(
+      () => {
+        if (delayElapsed) {
+          this.end();
+        } else {
+          loaded = true;
+        }
+      },
+    );
   }
 }

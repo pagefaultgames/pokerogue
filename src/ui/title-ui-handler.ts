@@ -1,16 +1,21 @@
-import BattleScene from "../battle-scene";
 import OptionSelectUiHandler from "./settings/option-select-ui-handler";
-import { Mode } from "./ui";
-import * as Utils from "../utils";
-import { TextStyle, addTextObject, getTextStyleOptions } from "./text";
+import { UiMode } from "#enums/ui-mode";
+import { fixedInt, randInt, randItem } from "#app/utils/common";
+import { TextStyle, addTextObject } from "./text";
 import { getSplashMessages } from "../data/splash-messages";
 import i18next from "i18next";
 import { TimedEventDisplay } from "#app/timed-event-manager";
 import { version } from "../../package.json";
+import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
+import { globalScene } from "#app/global-scene";
+import type { Species } from "#enums/species";
+import { getPokemonSpecies } from "#app/data/pokemon-species";
+import { PlayerGender } from "#enums/player-gender";
+import { timedEventManager } from "#app/global-event-manager";
 
 export default class TitleUiHandler extends OptionSelectUiHandler {
   /** If the stats can not be retrieved, use this fallback value */
-  private static readonly BATTLES_WON_FALLBACK: number = -99999999;
+  private static readonly BATTLES_WON_FALLBACK: number = -1;
 
   private titleContainer: Phaser.GameObjects.Container;
   private playerCountLabel: Phaser.GameObjects.Text;
@@ -21,8 +26,8 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
 
   private titleStatsTimer: NodeJS.Timeout | null;
 
-  constructor(scene: BattleScene, mode: Mode = Mode.TITLE) {
-    super(scene, mode);
+  constructor(mode: UiMode = UiMode.TITLE) {
+    super(mode);
   }
 
   setup() {
@@ -30,60 +35,66 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
 
     const ui = this.getUi();
 
-    this.titleContainer = this.scene.add.container(0, -(this.scene.game.canvas.height / 6));
+    this.titleContainer = globalScene.add.container(0, -(globalScene.game.canvas.height / 6));
     this.titleContainer.setName("title");
     this.titleContainer.setAlpha(0);
     ui.add(this.titleContainer);
 
-    const logo = this.scene.add.image((this.scene.game.canvas.width / 6) / 2, 8, "logo");
+    const logo = globalScene.add.image(globalScene.game.canvas.width / 6 / 2, 8, "logo");
     logo.setOrigin(0.5, 0);
     this.titleContainer.add(logo);
 
-    if (this.scene.eventManager.isEventActive()) {
-      this.eventDisplay = new TimedEventDisplay(this.scene, 0, 0, this.scene.eventManager.activeEvent());
+    if (timedEventManager.isEventActive()) {
+      this.eventDisplay = new TimedEventDisplay(0, 0, timedEventManager.activeEvent());
       this.eventDisplay.setup();
       this.titleContainer.add(this.eventDisplay);
     }
 
     this.playerCountLabel = addTextObject(
-      this.scene,
-      (this.scene.game.canvas.width / 6) - 2,
-      (this.scene.game.canvas.height / 6) - 13 - 576 * getTextStyleOptions(TextStyle.WINDOW, this.scene.uiTheme).scale,
+      // Actual y position will be determined after the title menu has been populated with options
+      globalScene.game.canvas.width / 6 - 2,
+      0,
       `? ${i18next.t("menu:playersOnline")}`,
       TextStyle.MESSAGE,
-      { fontSize: "54px" }
+      { fontSize: "54px" },
     );
     this.playerCountLabel.setOrigin(1, 0);
     this.titleContainer.add(this.playerCountLabel);
 
-    this.splashMessageText = addTextObject(this.scene, logo.x + 64, logo.y + logo.displayHeight - 8, "", TextStyle.MONEY, { fontSize: "54px" });
+    this.splashMessageText = addTextObject(logo.x + 64, logo.y + logo.displayHeight - 8, "", TextStyle.MONEY, {
+      fontSize: "54px",
+    });
     this.splashMessageText.setOrigin(0.5, 0.5);
     this.splashMessageText.setAngle(-20);
     this.titleContainer.add(this.splashMessageText);
 
     const originalSplashMessageScale = this.splashMessageText.scale;
 
-    this.scene.tweens.add({
+    globalScene.tweens.add({
       targets: this.splashMessageText,
-      duration: Utils.fixedInt(350),
+      duration: fixedInt(350),
       scale: originalSplashMessageScale * 1.25,
       loop: -1,
       yoyo: true,
     });
 
-    this.appVersionText = addTextObject(this.scene, logo.x - 60, logo.y + logo.displayHeight + 4, "", TextStyle.MONEY, { fontSize: "54px" });
+    this.appVersionText = addTextObject(logo.x - 60, logo.y + logo.displayHeight + 4, "", TextStyle.MONEY, {
+      fontSize: "54px",
+    });
     this.appVersionText.setOrigin(0.5, 0.5);
     this.appVersionText.setAngle(0);
     this.titleContainer.add(this.appVersionText);
   }
 
   updateTitleStats(): void {
-    Utils.apiFetch("game/titlestats")
-      .then(request => request.json())
+    pokerogueApi
+      .getGameTitleStats()
       .then(stats => {
-        this.playerCountLabel.setText(`${stats.playerCount} ${i18next.t("menu:playersOnline")}`);
-        if (this.splashMessage === "splashMessages:battlesWon") {
-          this.splashMessageText.setText(i18next.t(this.splashMessage, { count: stats.battleCount }));
+        if (stats) {
+          this.playerCountLabel.setText(`${stats.playerCount} ${i18next.t("menu:playersOnline")}`);
+          if (this.splashMessage === "splashMessages:battlesWon") {
+            this.splashMessageText.setText(i18next.t(this.splashMessage, { count: stats.battleCount }));
+          }
         }
       })
       .catch(err => {
@@ -91,21 +102,54 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
       });
   }
 
+  /** Used solely to display a random Pokémon name in a splash message. */
+  randomPokemon(): void {
+    const rand = randInt(1025, 1);
+    const pokemon = getPokemonSpecies(rand as Species);
+    if (
+      this.splashMessage === "splashMessages:underratedPokemon" ||
+      this.splashMessage === "splashMessages:dontTalkAboutThePokemonIncident" ||
+      this.splashMessage === "splashMessages:aWildPokemonAppeared" ||
+      this.splashMessage === "splashMessages:aprilFools.removedPokemon"
+    ) {
+      this.splashMessageText.setText(i18next.t(this.splashMessage, { pokemonName: pokemon.name }));
+    }
+  }
+
+  /** Used for a specific April Fools splash message. */
+  genderSplash(): void {
+    if (this.splashMessage === "splashMessages:aprilFools.helloKyleAmber") {
+      globalScene.gameData.gender === PlayerGender.MALE
+        ? this.splashMessageText.setText(i18next.t(this.splashMessage, { name: i18next.t("trainerNames:player_m") }))
+        : this.splashMessageText.setText(i18next.t(this.splashMessage, { name: i18next.t("trainerNames:player_f") }));
+    }
+  }
+
   show(args: any[]): boolean {
     const ret = super.show(args);
 
     if (ret) {
-      this.splashMessage = Utils.randItem(getSplashMessages());
-      this.splashMessageText.setText(i18next.t(this.splashMessage, { count: TitleUiHandler.BATTLES_WON_FALLBACK }));
+      // Moving player count to top of the menu
+      this.playerCountLabel.setY(globalScene.game.canvas.height / 6 - 13 - this.getWindowHeight());
+
+      this.splashMessage = randItem(getSplashMessages());
+      this.splashMessageText.setText(
+        i18next.t(this.splashMessage, {
+          count: TitleUiHandler.BATTLES_WON_FALLBACK,
+        }),
+      );
 
       this.appVersionText.setText("v" + version);
 
       const ui = this.getUi();
 
-      if (this.scene.eventManager.isEventActive()) {
-        this.eventDisplay.setWidth(this.scene.scaledCanvas.width - this.optionSelectBg.width - this.optionSelectBg.x);
+      if (timedEventManager.isEventActive()) {
+        this.eventDisplay.setWidth(globalScene.scaledCanvas.width - this.optionSelectBg.width - this.optionSelectBg.x);
         this.eventDisplay.show();
       }
+
+      this.randomPokemon();
+      this.genderSplash();
 
       this.updateTitleStats();
 
@@ -113,11 +157,11 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
         this.updateTitleStats();
       }, 60000);
 
-      this.scene.tweens.add({
-        targets: [ this.titleContainer, ui.getMessageHandler().bg ],
-        duration: Utils.fixedInt(325),
-        alpha: (target: any) => target === this.titleContainer ? 1 : 0,
-        ease: "Sine.easeInOut"
+      globalScene.tweens.add({
+        targets: [this.titleContainer, ui.getMessageHandler().bg],
+        duration: fixedInt(325),
+        alpha: (target: any) => (target === this.titleContainer ? 1 : 0),
+        ease: "Sine.easeInOut",
       });
     }
 
@@ -134,11 +178,11 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
     this.titleStatsTimer && clearInterval(this.titleStatsTimer);
     this.titleStatsTimer = null;
 
-    this.scene.tweens.add({
-      targets: [ this.titleContainer, ui.getMessageHandler().bg ],
-      duration: Utils.fixedInt(325),
-      alpha: (target: any) => target === this.titleContainer ? 0 : 1,
-      ease: "Sine.easeInOut"
+    globalScene.tweens.add({
+      targets: [this.titleContainer, ui.getMessageHandler().bg],
+      duration: fixedInt(325),
+      alpha: (target: any) => (target === this.titleContainer ? 0 : 1),
+      ease: "Sine.easeInOut",
     });
   }
 }

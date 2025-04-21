@@ -4,8 +4,8 @@
 			"image": "hau.png",
 			"format": "RGBA8888",
 			"size": {
-				"w": 70,
-				"h": 70
+				"w": 71,
+				"h": 71
 			},
 			"scale": 1,
 			"frames": [
@@ -14,20 +14,20 @@
 					"rotated": false,
 					"trimmed": false,
 					"sourceSize": {
-						"w": 80,
-						"h": 80
+						"w": 24,
+						"h": 71
 					},
 					"spriteSourceSize": {
-						"x": 27,
-						"y": 9,
-						"w": 29,
-						"h": 70
+						"x": 0,
+						"y": 0,
+						"w": 24,
+						"h": 71
 					},
 					"frame": {
 						"x": 0,
 						"y": 0,
-						"w": 29,
-						"h": 70
+						"w": 24,
+						"h": 71
 					}
 				}
 			]
@@ -36,6 +36,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "3.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:688d6d27e686efec45b144ba4544f248:676457a4e9dfbcad0510f6e7bfa73514:d4c7e8b349477c2295b49b0e99b91bb3$"
+		"smartupdate": "$TexturePacker:SmartUpdate:0d500afd9a36f32a23b5a316dcf397d9:aa5d3e58d6df67b90e484ec7f345a4cf:d4c7e8b349477c2295b49b0e99b91bb3$"
 	}
 }
