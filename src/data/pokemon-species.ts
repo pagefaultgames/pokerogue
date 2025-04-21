@@ -404,7 +404,7 @@ export abstract class PokemonSpeciesForm {
   }
 
   /** Compute the sprite ID of the pokemon form. */
-  getSpriteId(female: boolean, formIndex?: number, shiny?: boolean, variant = 0, back?: boolean): string {
+  getSpriteId(female: boolean, formIndex?: number, shiny?: boolean, variant = 0, back = false): string {
     const baseSpriteKey = this.getBaseSpriteKey(female, formIndex);
 
     let config = variantData;
@@ -598,11 +598,21 @@ export abstract class PokemonSpeciesForm {
    * Load the variant colors for the species into the variant color cache
    *
    * @param spriteKey - The sprite key to use
-   * @param female - Whether to get
+   * @param female - Whether to load female instead of male
+   * @param back - Whether the back sprite is being loaded
    *
    */
-  async loadVariantColors(spriteKey: string, female: boolean, variant: Variant, formIndex?: number): Promise<void> {
-    const baseSpriteKey = this.getBaseSpriteKey(female, formIndex);
+  async loadVariantColors(
+    spriteKey: string,
+    female: boolean,
+    variant: Variant,
+    back = false,
+    formIndex?: number,
+  ): Promise<void> {
+    let baseSpriteKey = this.getBaseSpriteKey(female, formIndex);
+    if (back) {
+      baseSpriteKey = "back__" + baseSpriteKey;
+    }
 
     if (variantColorCache.hasOwnProperty(baseSpriteKey)) {
       // Variant colors have already been loaded
@@ -618,7 +628,7 @@ export abstract class PokemonSpeciesForm {
     await populateVariantColorCache(
       "pkmn__" + baseSpriteKey,
       globalScene.experimentalSprites && hasExpSprite(spriteKey),
-      baseSpriteKey,
+      baseSpriteKey.replace("__", "/"),
     );
   }
 
@@ -635,7 +645,7 @@ export abstract class PokemonSpeciesForm {
     globalScene.loadPokemonAtlas(spriteKey, this.getSpriteAtlasPath(female, formIndex, shiny, variant, back));
     globalScene.load.audio(this.getCryKey(formIndex), `audio/${this.getCryKey(formIndex)}.m4a`);
     if (!isNullOrUndefined(variant)) {
-      await this.loadVariantColors(spriteKey, female, variant, formIndex);
+      await this.loadVariantColors(spriteKey, female, variant, back, formIndex);
     }
     return new Promise<void>(resolve => {
       globalScene.load.once(Phaser.Loader.Events.COMPLETE, () => {
