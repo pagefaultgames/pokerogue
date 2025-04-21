@@ -650,7 +650,7 @@ export default class Move implements Localizable {
         break;
       case MoveFlags.IGNORE_ABILITIES:
         if (user.hasAbilityWithAttr(MoveAbilityBypassAbAttr)) {
-          const abilityEffectsIgnored = new BooleanHolder(false); 
+          const abilityEffectsIgnored = new BooleanHolder(false);
           applyAbAttrs(MoveAbilityBypassAbAttr, user, abilityEffectsIgnored, false, this);
           if (abilityEffectsIgnored.value) {
             return true;
@@ -2663,7 +2663,7 @@ export class RemoveHeldItemAttr extends MoveEffectAttr {
  * Attribute that causes targets of the move to eat a berry. Used for Teatime, Stuff Cheeks
  */
 export class EatBerryAttr extends MoveEffectAttr {
-  protected chosenBerry: BerryModifier | undefined;
+  protected chosenBerry: BerryModifier;
   constructor() {
     super(true, { trigger: MoveEffectTrigger.HIT });
   }
@@ -2713,13 +2713,13 @@ export class EatBerryAttr extends MoveEffectAttr {
 
   eatBerry(consumer: Pokemon, berryOwner: Pokemon = consumer) {
     // consumer eats berry, owner triggers unburden and similar effects
-    getBerryEffectFunc(this.chosenBerry!.berryType)(consumer);
+    // These are the same under normal circumstances
+    getBerryEffectFunc(this.chosenBerry.berryType)(consumer);
     applyPostItemLostAbAttrs(PostItemLostAbAttr, berryOwner, false);
-
     applyAbAttrs(HealFromBerryUseAbAttr, consumer, new BooleanHolder(false));
 
     // Harvest doesn't track berries eaten by other pokemon
-    consumer.recordEatenBerry(this.chosenBerry!.berryType, berryOwner !== consumer);
+    consumer.recordEatenBerry(this.chosenBerry.berryType, berryOwner !== consumer);
   }
 }
 

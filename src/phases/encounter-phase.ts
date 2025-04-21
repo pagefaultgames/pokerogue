@@ -334,8 +334,9 @@ export class EncounterPhase extends BattlePhase {
     }
 
     for (const pokemon of globalScene.getPlayerParty()) {
+      // Only reset wave data, not battle data
       if (pokemon) {
-        pokemon.resetBattleAndWaveData();
+        pokemon.resetWaveData();
       }
     }
 

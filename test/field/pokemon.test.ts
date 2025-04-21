@@ -213,7 +213,8 @@ describe("Spec - Pokemon", () => {
     });
   });
 
-  it("should be more or less equivalent when converting to and from PokemonData", async () => {
+  // TODO: Remove/rework after save data overhaul
+  it("should preserve common fields when converting to and from PokemonData", async () => {
     await game.classicMode.startBattle([Species.ALAKAZAM]);
     const alakazam = game.scene.getPlayerPokemon()!;
     expect(alakazam).toBeDefined();
@@ -233,7 +234,7 @@ describe("Spec - Pokemon", () => {
       alakaData,
     );
     for (const key of Object.keys(alakazam).filter(k => k in alakaData)) {
-      expect(alakazam[key]).toEqual(alaka2["key"]);
+      expect(alakazam[key]).toEqual(alaka2[key]);
     }
   });
 });

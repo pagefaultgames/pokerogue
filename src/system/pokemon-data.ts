@@ -74,17 +74,12 @@ export default class PokemonData {
   public customPokemonData: CustomPokemonData;
   public fusionCustomPokemonData: CustomPokemonData;
 
-  // Deprecated attributes, needed for now to allow SessionData migration (see PR#4619 comments).
-  // TODO: These can probably be safely deleted (what with the upgrade scripts and all)
-  public natureOverride: Nature | -1;
-  public mysteryEncounterPokemonData: CustomPokemonData | null;
-  public fusionMysteryEncounterPokemonData: CustomPokemonData | null;
-
   /**
    * Construct a new {@linkcode PokemonData} instance out of a {@linkcode Pokemon}
    * or JSON representation thereof.
    * @param source The {@linkcode Pokemon} to convert into data (or a JSON object representing one)
    */
+  // TODO: Remove any from type signature
   constructor(source: Pokemon | any) {
     const sourcePokemon = source instanceof Pokemon ? source : undefined;
     this.id = source.id;
@@ -141,7 +136,7 @@ export default class PokemonData {
     this.evoCounter = source.evoCounter ?? 0;
 
     this.boss = (source instanceof EnemyPokemon && !!source.bossSegments) || (!this.player && !!source.boss);
-    this.bossSegments = source.bossSegments;
+    this.bossSegments = source.bossSegments ?? 0;
     this.status =
       sourcePokemon?.status ??
       (source.status
@@ -149,11 +144,11 @@ export default class PokemonData {
         : null);
 
     this.summonData = source.summonData;
+    this.battleData = source.battleData;
 
     this.summonDataSpeciesFormIndex = sourcePokemon
       ? this.getSummonDataSpeciesFormIndex()
       : source.summonDataSpeciesFormIndex;
-    this.battleData = sourcePokemon?.battleData ?? source.battleData;
   }
 
   toPokemon(battleType?: BattleType, partyMemberIndex = 0, double = false): Pokemon {

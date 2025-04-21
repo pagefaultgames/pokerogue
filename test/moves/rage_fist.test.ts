@@ -72,20 +72,17 @@ describe("Moves - Rage Fist", () => {
   });
 
   it("should not count subsitute hits or confusion damage", async () => {
-    game.override.enemySpecies(Species.MAGIKARP).startingWave(4).enemyMoveset([Moves.CONFUSE_RAY, Moves.DOUBLE_KICK]);
+    game.override.enemySpecies(Species.SHUCKLE).enemyMoveset([Moves.CONFUSE_RAY, Moves.DOUBLE_KICK]);
 
     await game.classicMode.startBattle([Species.MAGIKARP]);
 
     game.move.select(Moves.SUBSTITUTE);
     await game.forceEnemyMove(Moves.DOUBLE_KICK);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
-    await game.phaseInterceptor.to("BerryPhase");
+    await game.toNextTurn();
 
     // no increase due to substitute
-    expect(move.calculateBattlePower).toHaveLastReturnedWith(50);
     expect(game.scene.getPlayerPokemon()?.battleData.hitCount).toBe(0);
-
-    await game.toNextTurn();
 
     // remove substitute and get confused
     game.move.select(Moves.TIDY_UP);
@@ -94,8 +91,8 @@ describe("Moves - Rage Fist", () => {
     await game.toNextTurn();
 
     game.move.select(Moves.RAGE_FIST);
-    await game.move.forceStatusActivation(true);
-    await game.forceEnemyMove(Moves.SPLASH);
+    await game.move.forceConfusionActivation(true);
+    await game.forceEnemyMove(Moves.DOUBLE_KICK);
     await game.phaseInterceptor.to("BerryPhase");
 
     // didn't go up
@@ -104,7 +101,8 @@ describe("Moves - Rage Fist", () => {
     await game.toNextTurn();
 
     game.move.select(Moves.RAGE_FIST);
-    await game.move.forceStatusActivation(false);
+    await game.forceEnemyMove(Moves.DOUBLE_KICK);
+    await game.move.forceConfusionActivation(false);
     await game.toNextTurn();
 
     expect(move.calculateBattlePower).toHaveLastReturnedWith(150);

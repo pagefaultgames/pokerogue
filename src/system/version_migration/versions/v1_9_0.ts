@@ -14,7 +14,7 @@ import { PokeballType } from "#enums/pokeball";
 const migratePartyData: SessionSaveMigrator = {
   version: "1.9.0",
   migrate: (data: SessionSaveData): void => {
-    data.party = data.party.map(pkmnData => {
+    const mapParty = (pkmnData: PokemonData) => {
       // this stuff is copied straight from the constructor fwiw
       pkmnData.moveset = pkmnData.moveset.filter(m => !!m) ?? [
         new PokemonMove(Moves.TACKLE),
@@ -28,8 +28,11 @@ const migratePartyData: SessionSaveMigrator = {
       ) {
         pkmnData.battleData.hitCount = pkmnData.customPokemonData?.["hitsRecCount"];
       }
-      return new PokemonData(pkmnData);
-    });
+      pkmnData = new PokemonData(pkmnData);
+    };
+
+    data.party.forEach(mapParty);
+    data.enemyParty.forEach(mapParty);
   },
 };
 

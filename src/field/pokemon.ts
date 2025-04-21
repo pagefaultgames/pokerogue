@@ -331,14 +331,17 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   */
   private summonDataPrimer: PokemonSummonData | null;
 
-  /* Pokemon data types, in vague order of precedence */
+  /* Pokemon data types, in vaguely decreasing order of precedence */
 
-  /** Data that resets on switch (stat stages, battler tags, etc.) */
+  /**
+   * Data that resets only on *battle* end (hit count, harvest berries, etc.)
+   * Kept between waves.
+   */
+  public battleData: PokemonBattleData = new PokemonBattleData;
+  /** Data that resets on switch or battle end (stat stages, battler tags, etc.) */
   public summonData: PokemonSummonData = new PokemonSummonData;
   /** Wave data correponding to moves/ability information revealed */
   public waveData: PokemonWaveData = new PokemonWaveData;
-  /** Data that resets only on battle end (hit count, harvest berries, etc.) */
-  public battleData: PokemonBattleData = new PokemonBattleData;
   /** Per-turn data like hit count & flinch tracking */
   public turnData: PokemonTurnData = new PokemonTurnData;
 
@@ -5844,9 +5847,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-  Reset a {@linkcode Pokemon}'s {@linkcode PokemonWaveData | waveData}.
-  Called once per new wave start as well as by {@linkcode resetBattleAndWaveData}.
-  */
+   * Reset a {@linkcode Pokemon}'s {@linkcode PokemonWaveData | waveData}.
+   * Called once per new wave start as well as by {@linkcode resetBattleAndWaveData}.
+   */
   resetWaveData(): void {
     this.waveData = new PokemonWaveData();
   }
