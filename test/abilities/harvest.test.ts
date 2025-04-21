@@ -254,7 +254,7 @@ describe("Abilities - Harvest", () => {
       game.move.select(Moves.SPLASH);
       await game.phaseInterceptor.to("TurnEndPhase", false);
 
-      // won;t trigger harvest since we didn't lose the berry (it just doesn't ever add it to the array)
+      // won't trigger harvest since we didn't lose the berry (it just doesn't ever add it to the array)
       expect(game.scene.getPlayerPokemon()?.battleData.berriesEaten).toEqual([]);
       expectBerriesContaining(...initBerries);
     });

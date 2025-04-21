@@ -1,6 +1,7 @@
 import { RepeatBerryNextTurnAbAttr } from "#app/data/abilities/ability";
 import { getBerryEffectFunc } from "#app/data/berry";
 import Pokemon from "#app/field/pokemon";
+import { globalScene } from "#app/global-scene";
 import { Abilities } from "#enums/abilities";
 import { BerryType } from "#enums/berry-type";
 import { Moves } from "#enums/moves";
@@ -63,6 +64,37 @@ describe("Abilities - Cud Chew", () => {
       // turnData cleared on turn start
       expect(farigiraf.summonData.berriesEatenLast).toEqual([BerryType.SITRUS]);
       expect(farigiraf.turnData.berriesEaten).toEqual([]);
+    });
+
+    it("shouldn't show ability popup for end-of-turn storage", async () => {
+      const abDisplaySpy = vi.spyOn(globalScene, "queueAbilityDisplay");
+      await game.classicMode.startBattle([Species.FARIGIRAF]);
+
+      const farigiraf = game.scene.getPlayerPokemon()!;
+      farigiraf.hp = 1; // needed to allow sitrus procs
+
+      game.move.select(Moves.SPLASH);
+      await game.phaseInterceptor.to("TurnEndPhase");
+
+      // doesn't trigger since cud chew hasn't eaten berry yet
+      expect(abDisplaySpy).not.toHaveBeenCalledWith(farigiraf);
+      await game.toNextTurn();
+
+      game.move.select(Moves.SPLASH);
+      await game.phaseInterceptor.to("BerryPhase");
+
+      // globalScene.queueAbilityDisplay should be called twice: once to show cud chew before regurgitating berries,
+      // once to hide after finishing application
+      expect(abDisplaySpy).toBeCalledTimes(2);
+      expect(abDisplaySpy.mock.calls[0][0]).toBe(farigiraf);
+      expect(abDisplaySpy.mock.calls[0][2]).toBe(true);
+      expect(abDisplaySpy.mock.calls[1][0]).toBe(farigiraf);
+      expect(abDisplaySpy.mock.calls[1][2]).toBe(false);
+
+      await game.phaseInterceptor.to("TurnEndPhase");
+
+      // not called again at turn end
+      expect(abDisplaySpy).toBeCalledTimes(2);
     });
 
     it("can store multiple berries across 2 turns with teatime", async () => {

@@ -279,6 +279,12 @@ export enum FieldPosition {
 }
 
 export default abstract class Pokemon extends Phaser.GameObjects.Container {
+  /**
+   * This pokemon's {@link https://bulbapedia.bulbagarden.net/wiki/Personality_value | Personality value/PID},
+   * used to determine various parameters of this Pokemon.
+   * Represented as a random 32-bit unsigned integer.
+   * TODO: Stop treating this like a unique ID and stop treating 0 as no pokemon
+   */
   public id: number;
   public name: string;
   public nickname: string;
@@ -324,7 +330,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public fusionCustomPokemonData: CustomPokemonData | null;
   public fusionTeraType: PokemonType;
 
-  public customPokemonData: CustomPokemonData = new CustomPokemonData();
+  public customPokemonData: CustomPokemonData = new CustomPokemonData;
 
   /**
   * TODO: Figure out if we can remove this thing
@@ -7892,7 +7898,7 @@ export class PokemonSummonData {
   public gender: Gender;
   public fusionGender: Gender;
   public stats: number[] = [0, 0, 0, 0, 0, 0];
-  public moveset: PokemonMove[];
+  public moveset: PokemonMove[] | null;
   public illusionBroken: boolean = false;
 
   // If not initialized this value will not be populated from save data.
@@ -7915,6 +7921,8 @@ export class PokemonSummonData {
   constructor(source?: PokemonSummonData | Partial<PokemonSummonData>) {
     if (!isNullOrUndefined(source)) {
       Object.assign(this, source)
+      this.moveset &&= this.moveset.map(m => PokemonMove.loadMove(m))
+      this.tags &&= this.tags.map(t => loadBattlerTag(t))
     }
   }
 }

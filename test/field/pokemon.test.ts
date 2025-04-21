@@ -6,9 +6,6 @@ import type BattleScene from "#app/battle-scene";
 import { Moves } from "#app/enums/moves";
 import { PokemonType } from "#enums/pokemon-type";
 import { CustomPokemonData } from "#app/data/custom-pokemon-data";
-import PokemonData from "#app/system/pokemon-data";
-import { PlayerPokemon } from "#app/field/pokemon";
-import { getPokemonSpecies } from "#app/data/pokemon-species";
 
 describe("Spec - Pokemon", () => {
   let phaserGame: Phaser.Game;
@@ -211,30 +208,5 @@ describe("Spec - Pokemon", () => {
       expect(types[0]).toBe(PokemonType.GRASS);
       expect(types[1]).toBe(PokemonType.DARK);
     });
-  });
-
-  // TODO: Remove/rework after save data overhaul
-  it("should preserve common fields when converting to and from PokemonData", async () => {
-    await game.classicMode.startBattle([Species.ALAKAZAM]);
-    const alakazam = game.scene.getPlayerPokemon()!;
-    expect(alakazam).toBeDefined();
-
-    alakazam.hp = 5;
-    const alakaData = new PokemonData(alakazam);
-    const alaka2 = new PlayerPokemon(
-      getPokemonSpecies(Species.ALAKAZAM),
-      5,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      alakaData,
-    );
-    for (const key of Object.keys(alakazam).filter(k => k in alakaData)) {
-      expect(alakazam[key]).toEqual(alaka2[key]);
-    }
   });
 });

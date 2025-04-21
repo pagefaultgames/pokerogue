@@ -2,14 +2,14 @@ import { BattleType } from "#enums/battle-type";
 import { globalScene } from "#app/global-scene";
 import type { Gender } from "../data/gender";
 import { Nature } from "#enums/nature";
-import type { PokeballType } from "#enums/pokeball";
+import { PokeballType } from "#enums/pokeball";
 import { getPokemonSpecies, getPokemonSpeciesForm } from "../data/pokemon-species";
 import type { Status } from "../data/status-effect";
 import Pokemon, { EnemyPokemon, PokemonBattleData, PokemonMove, PokemonSummonData } from "../field/pokemon";
 import { TrainerSlot } from "#enums/trainer-slot";
 import type { Variant } from "#app/sprites/variant";
 import type { Biome } from "#enums/biome";
-import { Moves } from "#enums/moves";
+import type { Moves } from "#enums/moves";
 import type { Species } from "#enums/species";
 import { CustomPokemonData } from "#app/data/custom-pokemon-data";
 import type { PokemonType } from "#enums/pokemon-type";
@@ -59,11 +59,11 @@ export default class PokemonData {
   public fusionTeraType: PokemonType;
 
   public boss: boolean;
-  public bossSegments?: number;
+  public bossSegments: number;
 
   // Effects that need to be preserved between waves
-  public summonData: PokemonSummonData = new PokemonSummonData();
-  public battleData: PokemonBattleData = new PokemonBattleData();
+  public summonData: PokemonSummonData;
+  public battleData: PokemonBattleData;
   public summonDataSpeciesFormIndex: number;
 
   public customPokemonData: CustomPokemonData;
@@ -87,7 +87,7 @@ export default class PokemonData {
     this.passive = source.passive;
     this.shiny = sourcePokemon?.isShiny() ?? source.shiny;
     this.variant = sourcePokemon?.getVariant() ?? source.variant;
-    this.pokeball = source.pokeball;
+    this.pokeball = source.pokeball ?? PokeballType.POKEBALL;
     this.level = source.level;
     this.exp = source.exp;
     this.levelExp = source.levelExp;
@@ -98,7 +98,7 @@ export default class PokemonData {
 
     // TODO: Can't we move some of this verification stuff to an upgrade script?
     this.nature = source.nature ?? Nature.HARDY;
-    this.moveset = source.moveset ?? [new PokemonMove(Moves.TACKLE), new PokemonMove(Moves.GROWL)];
+    this.moveset = source.moveset.map((m: any) => PokemonMove.loadMove(m));
     this.status = source.status ?? null;
     this.friendship = source.friendship ?? getPokemonSpecies(this.species).baseFriendship;
     this.metLevel = source.metLevel || 5;

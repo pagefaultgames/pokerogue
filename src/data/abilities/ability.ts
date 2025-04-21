@@ -3273,13 +3273,13 @@ export class ConditionalUserFieldStatusEffectImmunityAbAttr extends UserFieldSta
 
 /**
  * Conditionally provides immunity to stat drop effects to the user's field.
- * 
+ *
  * Used by {@linkcode Abilities.FLOWER_VEIL | Flower Veil}.
  */
 export class ConditionalUserFieldProtectStatAbAttr extends PreStatStageChangeAbAttr {
   /** {@linkcode BattleStat} to protect or `undefined` if **all** {@linkcode BattleStat} are protected */
   protected protectedStat?: BattleStat;
-  
+
   /** If the method evaluates to true, the stat will be protected. */
   protected condition: (target: Pokemon) => boolean;
 
@@ -3296,7 +3296,7 @@ export class ConditionalUserFieldProtectStatAbAttr extends PreStatStageChangeAbA
    * @param stat The stat being affected
    * @param cancelled Holds whether the stat change was already prevented.
    * @param args Args[0] is the target pokemon of the stat change.
-   * @returns 
+   * @returns
    */
   override canApplyPreStatStageChange(pokemon: Pokemon, passive: boolean, simulated: boolean, stat: BattleStat, cancelled: BooleanHolder, args: [Pokemon, ...any]): boolean {
     const target = args[0];
@@ -3428,7 +3428,7 @@ export class BonusCritAbAttr extends AbAttr {
 
   /**
    * Apply the bonus crit ability by increasing the value in the provided number holder by 1
-   * 
+   *
    * @param pokemon The pokemon with the BonusCrit ability (unused)
    * @param passive Unused
    * @param simulated Unused
@@ -3581,7 +3581,7 @@ export class PreWeatherEffectAbAttr extends AbAttr {
     args: any[]): boolean {
     return true;
   }
-  
+
   applyPreWeatherEffect(
     pokemon: Pokemon,
     passive: boolean,
@@ -4143,25 +4143,24 @@ export class PostTurnRestoreBerryAbAttr extends PostTurnAbAttr {
   * Used by {@linkcode Abilities.CUD_CHEW}.
 */
 export class RepeatBerryNextTurnAbAttr extends PostTurnAbAttr {
-  constructor() {
-    super(true);
-  }
+  // no need for constructor; all it does is set `showAbility` which we override before triggering anyways
 
   /**
    * @returns `true` if the pokemon ate anything last turn
    */
   override canApply(pokemon: Pokemon, _passive: boolean, _simulated: boolean, _args: any[]): boolean {
+    this.showAbility = true; // force ability popup if ability triggers
     return !!pokemon.summonData.berriesEatenLast.length;
   }
 
   /**
    * Cause this {@linkcode Pokemon} to regurgitate and eat all berries
    * inside its `berriesEatenLast` array.
-   * @param pokemon The pokemon having the tummy ache
-   * @param _passive N/A
-   * @param _simulated N/A
-   * @param _cancelled N/A
-   * @param _args N/A
+   * @param pokemon - The pokemon having the tummy ache
+   * @param _passive - N/A
+   * @param _simulated - N/A
+   * @param _cancelled - N/A
+   * @param _args - N/A
    */
   override apply(pokemon: Pokemon, _passive: boolean, _simulated: boolean, _cancelled: BooleanHolder | null, _args: any[]): void {
     // play berry animation
@@ -4182,6 +4181,7 @@ export class RepeatBerryNextTurnAbAttr extends PostTurnAbAttr {
    * @returns `true` if the pokemon ate anything this turn (we move it into `battleData`)
    */
   override canApplyPostTurn(pokemon: Pokemon, _passive: boolean, _simulated: boolean, _args: any[]): boolean {
+    this.showAbility = false; // don't show popup for turn end berry moving (should ideally be hidden)
     return !!pokemon.turnData.berriesEaten.length;
   }
 

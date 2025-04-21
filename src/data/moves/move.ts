@@ -2694,7 +2694,9 @@ export class EatBerryAttr extends MoveEffectAttr {
     if (!preserve.value) {
       this.reduceBerryModifier(target);
     }
-    this.eatBerry(target);
+
+    // Don't update harvest for berries preserved via Berry pouch (no item dupes lol)
+    this.eatBerry(target, undefined, !preserve.value);
 
     return true;
   }
@@ -2711,15 +2713,21 @@ export class EatBerryAttr extends MoveEffectAttr {
     globalScene.updateModifiers(target.isPlayer());
   }
 
-  eatBerry(consumer: Pokemon, berryOwner: Pokemon = consumer) {
-    // consumer eats berry, owner triggers unburden and similar effects
-    // These are the same under normal circumstances
+
+  /**
+   * Internal function to apply berry effects.
+   *
+   * @param consumer - The {@linkcode Pokemon} eating the berry; assumed to also be owner if `berryOwner` is omitted
+   * @param berryOwner - The {@linkcode Pokemon} whose berry is being eaten; defaults to `consumer` if not specified.
+   * @param updateHarvest - Whether to prevent harvest from tracking berries;
+   * defaults to whether `consumer` equals `berryOwner` (i.e. consuming own berry).
+   */
+   eatBerry(consumer: Pokemon, berryOwner: Pokemon = consumer, updateHarvest = consumer === berryOwner) {
+     // consumer eats berry, owner triggers unburden and similar effects
     getBerryEffectFunc(this.chosenBerry.berryType)(consumer);
     applyPostItemLostAbAttrs(PostItemLostAbAttr, berryOwner, false);
     applyAbAttrs(HealFromBerryUseAbAttr, consumer, new BooleanHolder(false));
-
-    // Harvest doesn't track berries eaten by other pokemon
-    consumer.recordEatenBerry(this.chosenBerry.berryType, berryOwner !== consumer);
+    consumer.recordEatenBerry(this.chosenBerry.berryType, updateHarvest);
   }
 }
 
