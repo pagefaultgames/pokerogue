@@ -280,6 +280,7 @@ export class EncounterPhase extends BattlePhase {
       });
 
       if (!this.loaded && battle.battleType !== BattleType.MYSTERY_ENCOUNTER) {
+        // generate modifiers for MEs, overriding prior ones as applicable
         regenerateModifierPoolThresholds(
           globalScene.getEnemyField(),
           battle.battleType === BattleType.TRAINER ? ModifierPoolType.TRAINER : ModifierPoolType.WILD,
@@ -292,8 +293,8 @@ export class EncounterPhase extends BattlePhase {
         }
       }
 
-      if (battle.battleType === BattleType.TRAINER) {
-        globalScene.currentBattle.trainer!.genAI(globalScene.getEnemyParty());
+      if (battle.battleType === BattleType.TRAINER && globalScene.currentBattle.trainer) {
+        globalScene.currentBattle.trainer.genAI(globalScene.getEnemyParty());
       }
 
       globalScene.ui.setMode(UiMode.MESSAGE).then(() => {
@@ -336,7 +337,7 @@ export class EncounterPhase extends BattlePhase {
     for (const pokemon of globalScene.getPlayerParty()) {
       // Only reset wave data, not battle data
       if (pokemon) {
-        pokemon.resetWaveData();
+        pokemon.resetBattleAndWaveData();
       }
     }
 

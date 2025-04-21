@@ -4,17 +4,12 @@ import type { Gender } from "../data/gender";
 import { Nature } from "#enums/nature";
 import type { PokeballType } from "#enums/pokeball";
 import { getPokemonSpecies, getPokemonSpeciesForm } from "../data/pokemon-species";
-import { Status } from "../data/status-effect";
-import Pokemon, {
-  EnemyPokemon,
-  type PokemonMove,
-  type PokemonSummonData,
-  type PokemonBattleData,
-} from "../field/pokemon";
+import type { Status } from "../data/status-effect";
+import Pokemon, { EnemyPokemon, PokemonBattleData, PokemonMove, PokemonSummonData } from "../field/pokemon";
 import { TrainerSlot } from "#enums/trainer-slot";
 import type { Variant } from "#app/sprites/variant";
 import type { Biome } from "#enums/biome";
-import type { Moves } from "#enums/moves";
+import { Moves } from "#enums/moves";
 import type { Species } from "#enums/species";
 import { CustomPokemonData } from "#app/data/custom-pokemon-data";
 import type { PokemonType } from "#enums/pokemon-type";
@@ -67,8 +62,8 @@ export default class PokemonData {
   public bossSegments?: number;
 
   // Effects that need to be preserved between waves
-  public summonData: PokemonSummonData;
-  public battleData: PokemonBattleData;
+  public summonData: PokemonSummonData = new PokemonSummonData();
+  public battleData: PokemonBattleData = new PokemonBattleData();
   public summonDataSpeciesFormIndex: number;
 
   public customPokemonData: CustomPokemonData;
@@ -79,14 +74,14 @@ export default class PokemonData {
    * or JSON representation thereof.
    * @param source The {@linkcode Pokemon} to convert into data (or a JSON object representing one)
    */
-  // TODO: Remove any from type signature
+  // TODO: Remove any from type signature in favor of 2 separate method funcs
   constructor(source: Pokemon | any) {
     const sourcePokemon = source instanceof Pokemon ? source : undefined;
+
     this.id = source.id;
-    this.player = sourcePokemon ? sourcePokemon.isPlayer() : source.player;
-    this.species = sourcePokemon ? sourcePokemon.species.speciesId : source.species;
-    this.nickname =
-      sourcePokemon?.summonData.illusion?.basePokemon.nickname ?? sourcePokemon?.nickname ?? source.nickname;
+    this.player = sourcePokemon?.isPlayer() ?? source.player;
+    this.species = sourcePokemon?.species.speciesId ?? source.species;
+    this.nickname = sourcePokemon?.summonData.illusion?.basePokemon.nickname ?? source.nickname;
     this.formIndex = Math.max(Math.min(source.formIndex, getPokemonSpecies(this.species).forms.length - 1), 0);
     this.abilityIndex = source.abilityIndex;
     this.passive = source.passive;
@@ -95,60 +90,49 @@ export default class PokemonData {
     this.pokeball = source.pokeball;
     this.level = source.level;
     this.exp = source.exp;
+    this.levelExp = source.levelExp;
     this.gender = source.gender;
+    this.hp = source.hp;
     this.stats = source.stats;
     this.ivs = source.ivs;
+
+    // TODO: Can't we move some of this verification stuff to an upgrade script?
     this.nature = source.nature ?? Nature.HARDY;
+    this.moveset = source.moveset ?? [new PokemonMove(Moves.TACKLE), new PokemonMove(Moves.GROWL)];
+    this.status = source.status ?? null;
     this.friendship = source.friendship ?? getPokemonSpecies(this.species).baseFriendship;
     this.metLevel = source.metLevel || 5;
     this.metBiome = source.metBiome ?? -1;
     this.metSpecies = source.metSpecies;
     this.metWave = source.metWave ?? (this.metBiome === -1 ? -1 : 0);
     this.luck = source.luck ?? (source.shiny ? source.variant + 1 : 0);
+    this.pauseEvolutions = !!source.pauseEvolutions;
     this.pokerus = !!source.pokerus;
+    this.usedTMs = source.usedTMs ?? [];
+    this.evoCounter = source.evoCounter ?? 0;
     this.teraType = source.teraType as PokemonType;
     this.isTerastallized = !!source.isTerastallized;
     this.stellarTypesBoosted = source.stellarTypesBoosted ?? [];
 
-    this.fusionSpecies = sourcePokemon ? sourcePokemon.fusionSpecies?.speciesId : source.fusionSpecies;
+    this.fusionSpecies = sourcePokemon?.fusionSpecies?.speciesId ?? source.fusionSpecies;
     this.fusionFormIndex = source.fusionFormIndex;
     this.fusionAbilityIndex = source.fusionAbilityIndex;
-    this.fusionShiny =
-      sourcePokemon?.summonData.illusion?.basePokemon.fusionShiny ?? sourcePokemon?.fusionShiny ?? source.fusionShiny;
-    this.fusionVariant =
-      sourcePokemon?.summonData.illusion?.basePokemon.fusionVariant ??
-      sourcePokemon?.fusionVariant ??
-      source.fusionVariant;
+    this.fusionShiny = sourcePokemon?.summonData.illusion?.basePokemon.fusionShiny ?? source.fusionShiny;
+    this.fusionVariant = sourcePokemon?.summonData.illusion?.basePokemon.fusionVariant ?? source.fusionVariant;
     this.fusionGender = source.fusionGender;
     this.fusionLuck = source.fusionLuck ?? (source.fusionShiny ? source.fusionVariant + 1 : 0);
-    this.fusionCustomPokemonData = new CustomPokemonData(source.fusionCustomPokemonData);
     this.fusionTeraType = (source.fusionTeraType ?? 0) as PokemonType;
-    this.usedTMs = source.usedTMs ?? [];
-
-    this.customPokemonData = new CustomPokemonData(source.customPokemonData);
-
-    this.moveset = sourcePokemon?.moveset ?? source.moveset;
-
-    this.levelExp = source.levelExp;
-    this.hp = source.hp;
-
-    this.pauseEvolutions = !!source.pauseEvolutions;
-    this.evoCounter = source.evoCounter ?? 0;
 
     this.boss = (source instanceof EnemyPokemon && !!source.bossSegments) || (!this.player && !!source.boss);
     this.bossSegments = source.bossSegments ?? 0;
-    this.status =
-      sourcePokemon?.status ??
-      (source.status
-        ? new Status(source.status.effect, source.status.toxicTurnCount, source.status.sleepTurnsRemaining)
-        : null);
 
-    this.summonData = source.summonData;
-    this.battleData = source.battleData;
+    this.summonData = new PokemonSummonData(source.summonData);
+    this.battleData = new PokemonBattleData(source.battleData);
+    this.summonDataSpeciesFormIndex =
+      sourcePokemon?.summonData.speciesForm?.formIndex ?? source.summonDataSpeciesFormIndex;
 
-    this.summonDataSpeciesFormIndex = sourcePokemon
-      ? this.getSummonDataSpeciesFormIndex()
-      : source.summonDataSpeciesFormIndex;
+    this.customPokemonData = new CustomPokemonData(source.customPokemonData);
+    this.fusionCustomPokemonData = new CustomPokemonData(source.fusionCustomPokemonData);
   }
 
   toPokemon(battleType?: BattleType, partyMemberIndex = 0, double = false): Pokemon {
@@ -196,17 +180,5 @@ export default class PokemonData {
       ret.primeSummonData(this.summonData);
     }
     return ret;
-  }
-
-  /**
-   * Method to save summon data species form index
-   * Necessary in case the pokemon is transformed
-   * to reload the correct form
-   */
-  getSummonDataSpeciesFormIndex(): number {
-    if (this.summonData.speciesForm) {
-      return this.summonData.speciesForm.formIndex;
-    }
-    return 0;
   }
 }

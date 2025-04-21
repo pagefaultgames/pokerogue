@@ -468,16 +468,6 @@ export function truncateString(str: string, maxLength = 10) {
 }
 
 /**
- * Perform a deep copy of an object.
- * @param values - The object to be deep copied.
- * @returns A new object that is a deep copy of the input.
- */
-export function deepCopy(values: object): object {
-  // Convert the object to a JSON string and parse it back to an object to perform a deep copy
-  return JSON.parse(JSON.stringify(values));
-}
-
-/**
  * Convert a space-separated string into a capitalized and underscored string.
  * @param input - The string to be converted.
  * @returns The converted string with words capitalized and separated by underscores.

@@ -7,6 +7,7 @@ import type Move from "#app/data/moves/move";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { BattleType } from "#enums/battle-type";
 
 describe("Moves - Rage Fist", () => {
   let phaserGame: Phaser.Game;
@@ -126,18 +127,31 @@ describe("Moves - Rage Fist", () => {
     expect(game.scene.getPlayerPokemon()?.battleData.hitCount).toBe(4);
   });
 
-  it("should reset hits recieved during trainer battles", async () => {
-    game.override.enemySpecies(Species.MAGIKARP).startingWave(19);
+  it("should reset hits recieved before trainer battles", async () => {
+    game.override.enemySpecies(Species.MAGIKARP).moveset(Moves.DOUBLE_IRON_BASH);
+    await game.classicMode.startBattle([Species.MARSHADOW]);
 
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    const marshadow = game.scene.getPlayerPokemon()!;
+    expect(marshadow).toBeDefined();
 
+    // beat up a magikarp
     game.move.select(Moves.RAGE_FIST);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    await game.phaseInterceptor.to("TurnEndPhase");
+
+    expect(game.isVictory()).toBe(true);
+    expect(marshadow.battleData.hitCount).toBe(2);
+    expect(move.calculateBattlePower).toHaveLastReturnedWith(150);
+
+    game.override.battleType(BattleType.TRAINER);
     await game.toNextWave();
 
+    expect(game.scene.lastEnemyTrainer).not.toBeNull();
+    expect(marshadow.battleData.hitCount).toBe(0);
+
     game.move.select(Moves.RAGE_FIST);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
-    await game.phaseInterceptor.to("BerryPhase", false);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(move.calculateBattlePower).toHaveLastReturnedWith(150);
   });
