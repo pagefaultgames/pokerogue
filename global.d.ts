@@ -10,5 +10,5 @@ declare global {
    * 
    * To set up your own server in a test see `game_data.test.ts`
    */
-  var i18nServer: SetupServerApi;
+  var server: SetupServerApi;
 }

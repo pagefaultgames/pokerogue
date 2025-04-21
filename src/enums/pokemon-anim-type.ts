@@ -12,5 +12,15 @@ export enum PokemonAnimType {
    * Removes a Pokemon's Substitute doll from the field.
    * The Pokemon then moves back to its original position.
    */
-  SUBSTITUTE_REMOVE
+  SUBSTITUTE_REMOVE,
+  /**
+   * Brings Tatsugiri and Dondozo to the center of the field, with
+   * Tatsugiri jumping into the Dondozo's mouth
+   */
+  COMMANDER_APPLY,
+  /**
+   * Dondozo "spits out" Tatsugiri, moving Tatsugiri back to its original
+   * field position.
+   */
+  COMMANDER_REMOVE
 }

@@ -93,7 +93,7 @@ export function getIconWithSettingName(config, settingName) {
 }
 
 export function getIconForLatestInput(configs, source, devices, settingName) {
-  let config;
+  let config: any; // TODO: refine type
   if (source === "gamepad") {
     config = configs[devices[Device.GAMEPAD]];
   } else {
@@ -102,7 +102,7 @@ export function getIconForLatestInput(configs, source, devices, settingName) {
   const icon = getIconWithSettingName(config, settingName);
   if (!icon) {
     const isAlt = settingName.includes("ALT_");
-    let altSettingName;
+    let altSettingName: string;
     if (isAlt) {
       altSettingName = settingName.split("ALT_").splice(1)[0];
     } else {
@@ -115,7 +115,10 @@ export function getIconForLatestInput(configs, source, devices, settingName) {
 
 export function assign(config, settingNameTarget, keycode): boolean {
   // first, we need to check if this keycode is already used on another settingName
-  if (!canIAssignThisKey(config, getKeyWithKeycode(config, keycode)) || !canIOverrideThisSetting(config, settingNameTarget)) {
+  if (
+    !canIAssignThisKey(config, getKeyWithKeycode(config, keycode)) ||
+    !canIOverrideThisSetting(config, settingNameTarget)
+  ) {
     return false;
   }
   const previousSettingName = getSettingNameWithKeycode(config, keycode);

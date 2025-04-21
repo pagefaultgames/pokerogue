@@ -1,0 +1,111 @@
+{
+  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+  "vcs": {
+    "enabled": false,
+    "clientKind": "git",
+    "useIgnoreFile": true,
+    "defaultBranch": "beta"
+  },
+  "formatter": {
+    "enabled": true,
+    "useEditorconfig": true,
+    "indentStyle": "space",
+    "ignore": ["src/enums/*", "src/data/balance/*"],
+    "lineWidth": 120
+  },
+  "files": {
+    "ignoreUnknown": true,
+    // Adding folders to the ignore list is GREAT for performance because it prevents biome from descending into them
+    // and having to verify whether each individual file is ignored
+    "ignore": [
+      "**/*.d.ts",
+      "dist/*",
+      "build/*",
+      "coverage/*",
+      "public/*",
+      ".github/*",
+      "node_modules/*",
+      ".vscode/*",
+      "*.css", // TODO?
+      "*.html", // TODO?
+      "src/overrides.ts",
+      // TODO: these files are too big and complex, ignore them until their respective refactors
+      "src/data/moves/move.ts",
+      "src/data/abilities/ability.ts",
+      "src/field/pokemon.ts",
+
+      // this file is just too big:
+      "src/data/balance/tms.ts"
+    ]
+  },
+  "organizeImports": { "enabled": false },
+  "linter": {
+    "ignore": [
+      "src/phases/move-effect-phase.ts" // TODO: unignore after move-effect-phase refactor
+    ],
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "correctness": {
+        "noUndeclaredVariables": "off",
+        "noUnusedVariables": "error",
+        "noSwitchDeclarations": "warn", // TODO: refactor and make this an error
+        "noVoidTypeReturn": "warn", // TODO: Refactor and make this an error
+        "noUnusedImports": "error"
+      },
+      "style": {
+        "noVar": "error",
+        "useEnumInitializers": "off",
+        "useBlockStatements": "error",
+        "useConst": "error",
+        "useImportType": "error",
+        "noNonNullAssertion": "off", // TODO: Turn this on ASAP and fix all non-null assertions
+        "noParameterAssign": "off",
+        "useExponentiationOperator": "off",
+        "useDefaultParameterLast": "off", // TODO: Fix spots in the codebase where this flag would be triggered, and then enable
+        "useSingleVarDeclarator": "off",
+        "useNodejsImportProtocol": "off",
+        "useTemplate": "off", // string concatenation is faster: https://stackoverflow.com/questions/29055518/are-es6-template-literals-faster-than-string-concatenation
+        "noNamespaceImport": "error"
+      },
+      "suspicious": {
+        "noDoubleEquals": "error",
+        "noExplicitAny": "off",
+        "noAssignInExpressions": "off",
+        "noPrototypeBuiltins": "off",
+        "noFallthroughSwitchClause": "off",
+        "noImplicitAnyLet": "info", // TODO: Refactor and make this an error
+        "noRedeclare": "off", // TODO: Refactor and make this an error
+        "noGlobalIsNan": "off",
+        "noAsyncPromiseExecutor": "warn" // TODO: Refactor and make this an error
+      },
+      "complexity": {
+        "noExcessiveCognitiveComplexity": "warn",
+        "useLiteralKeys": "off",
+        "noForEach": "off", // Foreach vs for of is not that simple.
+        "noUselessSwitchCase": "off", // Explicit > Implicit
+        "noUselessConstructor": "warn", // TODO: Refactor and make this an error
+        "noBannedTypes": "warn" // TODO: Refactor and make this an error
+      }
+    }
+  },
+  "javascript": {
+    "formatter": { "quoteStyle": "double", "arrowParentheses": "asNeeded" }
+  },
+  "overrides": [
+    {
+      "include": ["test/**/*.test.ts"],
+      "javascript": { "globals": [] },
+      "linter": {
+        "rules": {
+          "performance": {
+            "noDelete": "off"
+          },
+          "style": {
+            "noNamespaceImport": "off"
+          }
+        }
+      }
+    }
+  ]
+}

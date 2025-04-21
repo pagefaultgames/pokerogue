@@ -1,4 +1,4 @@
-import { TOptions } from "i18next";
+import type { TOptions } from "i18next";
 
 // Module declared to make referencing keys in the localization files type-safe.
 declare module "i18next" {

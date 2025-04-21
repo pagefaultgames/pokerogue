@@ -1,8 +1,9 @@
 import path from "path"; // vite externalize in production, see https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility
 
 /**
- * ### maps namespaces that deviate from the file-name
- * @description expects file-name as value and custom-namespace as key
+ * Maps namespaces that deviate from the file-name
+ * 
+ * @remarks expects file-name as value and custom-namespace as key
  * */
 export const namespaceMap = {
   titles: "trainer-titles",
@@ -17,14 +18,14 @@ export const namespaceMap = {
 };
 
 /**
- * Transforms a kebab-case string into a camelCase string
- * @param str The kebabCase string
+ * Transform a kebab-case string into a camelCase string
+ * @param str - The kebabCase string
  * @returns A camelCase string
  *
  * @source {@link https://stackoverflow.com/a/23013726}
  */
 export function kebabCaseToCamelCase(str: string): string {
-  return str.replace(/-./g, (x)=> x[1].toUpperCase());
+  return str.replace(/-./g, x => x[1].toUpperCase());
 }
 
 /**
@@ -34,7 +35,7 @@ export function kebabCaseToCamelCase(str: string): string {
  *
  * @source {@link https://stackoverflow.com/a/23013726}
  */
-export function objectSwap(json: {[key: string]: string}): {[value: string]: string} {
+export function objectSwap(json: { [key: string]: string }): { [value: string]: string } {
   const ret = {};
   for (const key in json) {
     ret[json[key]] = key;
@@ -42,7 +43,7 @@ export function objectSwap(json: {[key: string]: string}): {[value: string]: str
   return ret;
 }
 
-export function isFileInsideDir(file, dir) {
+export function isFileInsideDir(file: string, dir: string): boolean {
   const filePath = path.normalize(file);
   const dirPath = path.normalize(dir);
   return filePath.startsWith(dirPath);

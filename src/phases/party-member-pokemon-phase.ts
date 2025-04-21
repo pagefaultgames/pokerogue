@@ -1,24 +1,22 @@
-import BattleScene from "#app/battle-scene";
-import Pokemon from "#app/field/pokemon";
+import { globalScene } from "#app/global-scene";
+import type Pokemon from "#app/field/pokemon";
 import { FieldPhase } from "./field-phase";
 
 export abstract class PartyMemberPokemonPhase extends FieldPhase {
-  protected partyMemberIndex: integer;
-  protected fieldIndex: integer;
+  protected partyMemberIndex: number;
+  protected fieldIndex: number;
   protected player: boolean;
 
-  constructor(scene: BattleScene, partyMemberIndex: integer, player: boolean) {
-    super(scene);
+  constructor(partyMemberIndex: number, player: boolean) {
+    super();
 
     this.partyMemberIndex = partyMemberIndex;
-    this.fieldIndex = partyMemberIndex < this.scene.currentBattle.getBattlerCount()
-      ? partyMemberIndex
-      : -1;
+    this.fieldIndex = partyMemberIndex < globalScene.currentBattle.getBattlerCount() ? partyMemberIndex : -1;
     this.player = player;
   }
 
   getParty(): Pokemon[] {
-    return this.player ? this.scene.getParty() : this.scene.getEnemyParty();
+    return this.player ? globalScene.getPlayerParty() : globalScene.getEnemyParty();
   }
 
   getPokemon(): Pokemon {
