@@ -5,15 +5,19 @@ import { Nature } from "#enums/nature";
 import type { PokeballType } from "#enums/pokeball";
 import { getPokemonSpecies, getPokemonSpeciesForm } from "../data/pokemon-species";
 import { Status } from "../data/status-effect";
-import Pokemon, { EnemyPokemon, PokemonMove, PokemonSummonData, type PokemonBattleData } from "../field/pokemon";
+import Pokemon, {
+  EnemyPokemon,
+  type PokemonMove,
+  type PokemonSummonData,
+  type PokemonBattleData,
+} from "../field/pokemon";
 import { TrainerSlot } from "#enums/trainer-slot";
 import type { Variant } from "#app/sprites/variant";
 import type { Biome } from "#enums/biome";
-import { Moves } from "#enums/moves";
+import type { Moves } from "#enums/moves";
 import type { Species } from "#enums/species";
 import { CustomPokemonData } from "#app/data/custom-pokemon-data";
 import type { PokemonType } from "#enums/pokemon-type";
-import { loadBattlerTag } from "#app/data/battler-tags";
 
 export default class PokemonData {
   public id: number;
@@ -80,9 +84,8 @@ export default class PokemonData {
    * Construct a new {@linkcode PokemonData} instance out of a {@linkcode Pokemon}
    * or JSON representation thereof.
    * @param source The {@linkcode Pokemon} to convert into data (or a JSON object representing one)
-   * @param forHistory
    */
-  constructor(source: Pokemon | any, forHistory = false) {
+  constructor(source: Pokemon | any) {
     const sourcePokemon = source instanceof Pokemon ? source : undefined;
     this.id = source.id;
     this.player = sourcePokemon ? sourcePokemon.isPlayer() : source.player;
@@ -129,55 +132,28 @@ export default class PokemonData {
 
     this.customPokemonData = new CustomPokemonData(source.customPokemonData);
 
-    // Deprecated, but needed for session data migration
-    // TODO: Do we really need this??
-    this.natureOverride = source.natureOverride;
-    this.mysteryEncounterPokemonData = source.mysteryEncounterPokemonData
-      ? new CustomPokemonData(source.mysteryEncounterPokemonData)
-      : null;
-    this.fusionMysteryEncounterPokemonData = source.fusionMysteryEncounterPokemonData
-      ? new CustomPokemonData(source.fusionMysteryEncounterPokemonData)
-      : null;
+    this.moveset = sourcePokemon?.moveset ?? source.moveset;
 
-    this.moveset =
-      sourcePokemon?.moveset ??
-      (source.moveset || [new PokemonMove(Moves.TACKLE), new PokemonMove(Moves.GROWL)])
-        .filter((m: any) => !!m)
-        .map((m: any) => new PokemonMove(m.moveId, m.ppUsed, m.ppUp, m.virtual, m.maxPpOverride));
+    this.levelExp = source.levelExp;
+    this.hp = source.hp;
 
-    if (!forHistory) {
-      this.levelExp = source.levelExp;
-      this.hp = source.hp;
+    this.pauseEvolutions = !!source.pauseEvolutions;
+    this.evoCounter = source.evoCounter ?? 0;
 
-      this.pauseEvolutions = !!source.pauseEvolutions;
-      this.evoCounter = source.evoCounter ?? 0;
+    this.boss = (source instanceof EnemyPokemon && !!source.bossSegments) || (!this.player && !!source.boss);
+    this.bossSegments = source.bossSegments;
+    this.status =
+      sourcePokemon?.status ??
+      (source.status
+        ? new Status(source.status.effect, source.status.toxicTurnCount, source.status.sleepTurnsRemaining)
+        : null);
 
-      this.boss = (source instanceof EnemyPokemon && !!source.bossSegments) || (!this.player && !!source.boss);
-      this.bossSegments = source.bossSegments;
-      this.status =
-        sourcePokemon?.status ??
-        (source.status
-          ? new Status(source.status.effect, source.status.toxicTurnCount, source.status.sleepTurnsRemaining)
-          : null);
+    this.summonData = source.summonData;
 
-      // enemy pokemon don't use instantized summon data
-      if (this.player) {
-        this.summonData = sourcePokemon?.summonData ?? source.summonData;
-      } else {
-        console.log("this.player false!");
-        this.summonData = new PokemonSummonData();
-      }
-
-      if (!sourcePokemon) {
-        this.summonData.moveset = source.summonData.moveset?.map(m => PokemonMove.loadMove(m));
-        this.summonData.tags = source.tags.map((t: any) => loadBattlerTag(t));
-      }
-
-      this.summonDataSpeciesFormIndex = sourcePokemon
-        ? this.getSummonDataSpeciesFormIndex()
-        : source.summonDataSpeciesFormIndex;
-      this.battleData = sourcePokemon?.battleData ?? source.battleData;
-    }
+    this.summonDataSpeciesFormIndex = sourcePokemon
+      ? this.getSummonDataSpeciesFormIndex()
+      : source.summonDataSpeciesFormIndex;
+    this.battleData = sourcePokemon?.battleData ?? source.battleData;
   }
 
   toPokemon(battleType?: BattleType, partyMemberIndex = 0, double = false): Pokemon {

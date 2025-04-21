@@ -31,7 +31,7 @@ describe("Abilities - Cud Chew", () => {
       .moveset([Moves.BUG_BITE, Moves.SPLASH, Moves.HYPER_VOICE, Moves.STUFF_CHEEKS])
       .startingHeldItems([{ name: "BERRY", type: BerryType.SITRUS, count: 1 }])
       .ability(Abilities.CUD_CHEW)
-      .battleType("single")
+      .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)

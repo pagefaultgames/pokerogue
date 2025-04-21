@@ -334,7 +334,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   /* Pokemon data types, in vague order of precedence */
 
   /** Data that resets on switch (stat stages, battler tags, etc.) */
-  public summonData: PokemonSummonData;
+  public summonData: PokemonSummonData = new PokemonSummonData;
   /** Wave data correponding to moves/ability information revealed */
   public waveData: PokemonWaveData = new PokemonWaveData;
   /** Data that resets only on battle end (hit count, harvest berries, etc.) */
@@ -354,8 +354,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   private shinySparkle: Phaser.GameObjects.Sprite;
 
-  // TODO: Rework this constructor - it's _far_ too complicated and could be modernized
-  // in a similar manner to the PokemonData constructor
+  // TODO: Rework this eventually
   constructor(
     x: number,
     y: number,

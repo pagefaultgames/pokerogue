@@ -1,7 +1,7 @@
 import type Pokemon from "#app/field/pokemon";
 import { BerryModifier, PreserveBerryModifier } from "#app/modifier/modifier";
 import type { ModifierOverride } from "#app/modifier/modifier-type";
-import type { BooleanHolder } from "#app/utils";
+import type { BooleanHolder } from "#app/utils/common";
 import { Abilities } from "#enums/abilities";
 import { BerryType } from "#enums/berry-type";
 import { Moves } from "#enums/moves";
@@ -45,7 +45,7 @@ describe("Abilities - Harvest", () => {
       .moveset([Moves.SPLASH, Moves.NATURAL_GIFT, Moves.FALSE_SWIPE, Moves.GASTRO_ACID])
       .ability(Abilities.HARVEST)
       .startingLevel(100)
-      .battleType("single")
+      .battleStyle("single")
       .disableCrits()
       .statusActivation(false) // Since we're using nuzzle to proc both enigma and sitrus berries
       .weather(WeatherType.SUNNY) // guaranteed recovery

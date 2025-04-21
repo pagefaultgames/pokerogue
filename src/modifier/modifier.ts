@@ -237,6 +237,10 @@ export abstract class PersistentModifier extends Modifier {
 
   abstract getMaxStackCount(forThreshold?: boolean): number;
 
+  getCountUnderMax(): number {
+    return this.getMaxStackCount() - this.getStackCount();
+  }
+
   isIconVisible(): boolean {
     return true;
   }
@@ -658,7 +662,9 @@ export class TerastallizeAccessModifier extends PersistentModifier {
 }
 
 export abstract class PokemonHeldItemModifier extends PersistentModifier {
+  /** The ID of the {@linkcode Pokemon} that this item belongs to. */
   public pokemonId: number;
+  /** Whether this item can be transfered to or stolen by another Pokemon. */
   public isTransferable = true;
 
   constructor(type: ModifierType, pokemonId: number, stackCount?: number) {

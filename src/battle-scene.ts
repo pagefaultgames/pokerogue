@@ -7,7 +7,6 @@ import type PokemonSpecies from "#app/data/pokemon-species";
 import { allSpecies, getPokemonSpecies } from "#app/data/pokemon-species";
 import {
   fixedInt,
-  deepMergeObjects,
   getIvsFromId,
   randSeedInt,
   getEnumValues,
@@ -19,6 +18,7 @@ import {
   BooleanHolder,
   type Constructor,
 } from "#app/utils/common";
+import { deepMergeSpriteData } from "#app/utils/data";
 import type { Modifier, ModifierPredicate, TurnHeldItemTransferModifier } from "./modifier/modifier";
 import {
   ConsumableModifier,
@@ -788,7 +788,7 @@ export default class BattleScene extends SceneBase {
       return;
     }
     const expVariantData = await this.cachedFetch("./images/pokemon/variant/_exp_masterlist.json").then(r => r.json());
-    deepMergeObjects(variantData, expVariantData);
+    deepMergeSpriteData(variantData, expVariantData);
   }
 
   cachedFetch(url: string, init?: RequestInit): Promise<Response> {
@@ -836,6 +836,7 @@ export default class BattleScene extends SceneBase {
     return this.getPlayerField().find(p => p.isActive() && (includeSwitching || p.switchOutStatus === false));
   }
 
+  // TODO: Add `undefined` to return type
   /**
    * Returns an array of PlayerPokemon of length 1 or 2 depending on if in a double battle or not.
    * Does not actually check if the pokemon are on the field or not.
@@ -851,9 +852,9 @@ export default class BattleScene extends SceneBase {
   }
 
   /**
-   * @returns The first {@linkcode EnemyPokemon} that is {@linkcode getEnemyField on the field}
-   * and {@linkcode EnemyPokemon.isActive is active}
-   * (aka {@linkcode EnemyPokemon.isAllowedInBattle is allowed in battle}),
+   * @returns The first {@linkcode EnemyPokemon} that is {@linkcode getEnemyField | on the field}
+   * and {@linkcode EnemyPokemon.isActive | is active}
+   * (aka {@linkcode EnemyPokemon.isAllowedInBattle | is allowed in battle}),
    * or `undefined` if there are no valid pokemon
    * @param includeSwitching Whether a pokemon that is currently switching out is valid, default `true`
    */
@@ -1298,14 +1299,13 @@ export default class BattleScene extends SceneBase {
     return Math.max(doubleChance.value, 1);
   }
 
-  // TODO: ...this never actually returns `null`, right?
   newBattle(
     waveIndex?: number,
     battleType?: BattleType,
     trainerData?: TrainerData,
     double?: boolean,
     mysteryEncounterType?: MysteryEncounterType,
-  ): Battle | null {
+  ): Battle {
     const _startingWave = Overrides.STARTING_WAVE_OVERRIDE || startingWave;
     const newWaveIndex = waveIndex || (this.currentBattle?.waveIndex || _startingWave - 1) + 1;
     let newDouble: boolean | undefined;
@@ -1492,7 +1492,7 @@ export default class BattleScene extends SceneBase {
         });
 
         for (const pokemon of this.getPlayerParty()) {
-          pokemon.resetBattleData();
+          pokemon.resetBattleAndWaveData();
           pokemon.resetTera();
           applyPostBattleInitAbAttrs(PostBattleInitAbAttr, pokemon);
           if (
@@ -3261,6 +3261,7 @@ export default class BattleScene extends SceneBase {
     [this.modifierBar, this.enemyModifierBar].map(m => m.setVisible(visible));
   }
 
+  // TODO: Document this - IDK what it does and it gets called a lot
   updateModifiers(player = true, instant?: boolean): void {
     const modifiers = player ? this.modifiers : (this.enemyModifiers as PersistentModifier[]);
     for (let m = 0; m < modifiers.length; m++) {
@@ -3313,8 +3314,8 @@ export default class BattleScene extends SceneBase {
    * gets removed. This function does NOT apply in-battle effects, such as Unburden.
    * If in-battle effects are needed, use {@linkcode Pokemon.loseHeldItem} instead.
    * @param modifier The item to be removed.
-   * @param enemy If `true`, remove an item owned by the enemy. If `false`, remove an item owned by the player. Default is `false`.
-   * @returns `true` if the item exists and was successfully removed, `false` otherwise.
+   * @param enemy `true` to remove an item owned by the enemy rather than the player; default `false`.
+   * @returns `true` if the item exists and was successfully removed, `false` otherwise
    */
   removeModifier(modifier: PersistentModifier, enemy = false): boolean {
     const modifiers = !enemy ? this.modifiers : this.enemyModifiers;

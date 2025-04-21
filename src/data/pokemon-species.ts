@@ -33,6 +33,7 @@ import { SpeciesFormKey } from "#enums/species-form-key";
 import { starterPassiveAbilities } from "#app/data/balance/passives";
 import { loadPokemonVariantAssets } from "#app/sprites/pokemon-sprite";
 import { hasExpSprite } from "#app/sprites/sprite-utils";
+import { Gender } from "./gender";
 
 export enum Region {
   NORMAL,
@@ -844,6 +845,23 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
       }
     }
     return this.name;
+  }
+
+  /**
+   * Pick and return a random {@linkcode Gender} for a {@linkcode Pokemon}.
+   * @param id The personality value of the pokemon being generated.
+   * @returns THe selected gender for this Pokemon, rolled based on its PID.
+   */
+  generateGender(id: number): Gender {
+    if (isNullOrUndefined(this.malePercent)) {
+      return Gender.GENDERLESS;
+    }
+
+    const genderChance = (id % 256) * 0.390625;
+    if (genderChance < this.malePercent) {
+      return Gender.MALE;
+    }
+    return Gender.FEMALE;
   }
 
   /**

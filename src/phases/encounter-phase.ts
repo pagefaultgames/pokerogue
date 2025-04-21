@@ -188,7 +188,7 @@ export class EncounterPhase extends BattlePhase {
       ];
       const moveset: string[] = [];
       for (const move of enemyPokemon.getMoveset()) {
-        moveset.push(move!.getName()); // TODO: remove `!` after moveset-null removal PR
+        moveset.push(move.getName());
       }
 
       console.log(
@@ -550,7 +550,7 @@ export class EncounterPhase extends BattlePhase {
       if (enemyPokemon.isShiny(true)) {
         globalScene.unshiftPhase(new ShinySparklePhase(BattlerIndex.ENEMY + e));
       }
-      /** This sets Eternatus' held item to be untransferrable, preventing it from being stolen  */
+      /** This sets Eternatus' held item to be untransferrable, preventing it from being stolen */
       if (
         enemyPokemon.species.speciesId === Species.ETERNATUS &&
         (globalScene.gameMode.isBattleClassicFinalBoss(globalScene.currentBattle.waveIndex) ||
