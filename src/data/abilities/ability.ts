@@ -4058,11 +4058,11 @@ export class PostTurnRestoreBerryAbAttr extends PostTurnAbAttr {
   }
 
   override canApplyPostTurn(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
-    // check if we have at least 1 recoverable berry
+    // check if we have at least 1 recoverable berry (at least 1 berry in berriesEaten is not capped)
     const cappedBerries = new Set(
       globalScene.getModifiers(BerryModifier, pokemon.isPlayer()).filter(
         (bm) => bm.pokemonId === pokemon.id && bm.getCountUnderMax() < 1
-      ).map((bm) => bm.berryType)
+      ).map(bm => bm.berryType)
     );
 
     const hasBerryUnderCap = pokemon.battleData.berriesEaten.some(
@@ -4156,7 +4156,7 @@ export class RepeatBerryNextTurnAbAttr extends PostTurnAbAttr {
   /**
    * Cause this {@linkcode Pokemon} to regurgitate and eat all berries
    * inside its `berriesEatenLast` array.
-   * @param pokemon - The pokemon having the tummy ache
+   * @param pokemon - The {@linkcode Pokemon} having a bad tummy ache
    * @param _passive - N/A
    * @param _simulated - N/A
    * @param _cancelled - N/A
@@ -4175,19 +4175,22 @@ export class RepeatBerryNextTurnAbAttr extends PostTurnAbAttr {
       const bMod = new BerryModifier(new BerryModifierType(berryType), pokemon.id, berryType, 1);
       globalScene.eventTarget.dispatchEvent(new BerryUsedEvent(bMod)); // trigger message
     }
+
+    // uncomment to make cheek pouch work with cud chew
+    // applyAbAttrs(HealFromBerryUseAbAttr, pokemon, new BooleanHolder(false));
   }
 
   /**
-   * @returns `true` if the pokemon ate anything this turn (we move it into `battleData`)
+   * @returns always `true`
    */
   override canApplyPostTurn(pokemon: Pokemon, _passive: boolean, _simulated: boolean, _args: any[]): boolean {
     this.showAbility = false; // don't show popup for turn end berry moving (should ideally be hidden)
-    return !!pokemon.turnData.berriesEaten.length;
+    return true;
   }
 
   /**
-   * Move this {@linkcode Pokemon}'s `berriesEaten` array inside `PokemonTurnData`
-   * into its `summonData`.
+   * Move this {@linkcode Pokemon}'s `berriesEaten` array from `PokemonTurnData`
+   * into `PokemonSummonData`.
    * @param pokemon The {@linkcode Pokemon} having a nice snack
    * @param _passive N/A
    * @param _simulated N/A

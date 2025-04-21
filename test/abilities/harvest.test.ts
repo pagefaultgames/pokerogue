@@ -36,7 +36,6 @@ describe("Abilities - Harvest", () => {
 
   afterEach(() => {
     game.phaseInterceptor.restoreOg();
-    vi.resetAllMocks();
   });
 
   beforeEach(() => {
@@ -146,15 +145,26 @@ describe("Abilities - Harvest", () => {
     expect(regielekiReloaded.battleData.berriesEaten).toEqual([BerryType.PETAYA]);
   });
 
-  it("cannot restore capped berries", async () => {
+  it("cannot restore capped berries, even if an ally has one under cap", async () => {
     const initBerries: ModifierOverride[] = [
       { name: "BERRY", type: BerryType.LUM, count: 2 },
       { name: "BERRY", type: BerryType.STARF, count: 2 },
     ];
     game.override.startingHeldItems(initBerries);
-    await game.classicMode.startBattle([Species.FEEBAS]);
-    const player = game.scene.getPlayerPokemon()!;
-    player.battleData.berriesEaten = [BerryType.LUM, BerryType.STARF];
+    await game.classicMode.startBattle([Species.FEEBAS, Species.BELLOSSOM]);
+
+    const [feebas, bellossom] = game.scene.getPlayerParty();
+    feebas.battleData.berriesEaten = [BerryType.LUM, BerryType.STARF];
+
+    // get rid of bellossom's modifiers and add a sitrus
+    await game.scene.removePartyMemberModifiers(1);
+    const newMod = game.scene
+      .getModifiers(BerryModifier, true)
+      .find(b => b.berryType === BerryType.SITRUS)
+      ?.clone()!;
+    expect(newMod).toBeDefined();
+    newMod.pokemonId = bellossom.id;
+    game.scene.addModifier(newMod, true);
 
     game.move.select(Moves.SPLASH);
     await game.forceEnemyMove(Moves.SPLASH);
@@ -166,7 +176,9 @@ describe("Abilities - Harvest", () => {
     vi.spyOn(Phaser.Math.RND, "integerInRange").mockReturnValue(0);
     await game.phaseInterceptor.to("TurnEndPhase");
 
+    // recovered a starf,
     expectBerriesContaining({ name: "BERRY", type: BerryType.STARF, count: 3 });
+    expect(game.scene.getModifiers(BerryModifier, true).filter(b => b.pokemonId === bellossom.id)).toHaveLength(0);
   });
 
   it("does nothing if all berries are capped", async () => {

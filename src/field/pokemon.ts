@@ -406,7 +406,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       dataSource?.exp || getLevelTotalExp(this.level, species.growthRate);
     this.levelExp = dataSource?.levelExp || 0;
 
-    // TODO?: Maybe instead of using such a giant if statement, maybe some optional chaining/null coaclescing would look better
     if (dataSource) {
       this.id = dataSource.id;
       this.hp = dataSource.hp;
@@ -454,8 +453,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.customPokemonData = new CustomPokemonData(
         dataSource.customPokemonData,
       );
-      this.summonData = dataSource.summonData;
-      this.battleData = dataSource.battleData;
       this.teraType = dataSource.teraType;
       this.isTerastallized = dataSource.isTerastallized;
       this.stellarTypesBoosted = dataSource.stellarTypesBoosted ?? [];
@@ -523,6 +520,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.isTerastallized = false;
       this.stellarTypesBoosted = [];
     }
+
+    this.summonData = new PokemonSummonData(dataSource?.summonData);
+    this.battleData = new PokemonBattleData(dataSource?.battleData);
 
     this.generateName();
 
