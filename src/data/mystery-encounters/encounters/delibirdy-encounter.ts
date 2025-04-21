@@ -32,11 +32,12 @@ import { modifierTypes } from "#app/modifier/modifier-type";
 import { ModifierRewardPhase } from "#app/phases/modifier-reward-phase";
 import i18next from "#app/plugins/i18n";
 import type { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
-import { randSeedItem } from "#app/utils";
+import { randSeedItem } from "#app/utils/common";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Species } from "#enums/species";
+import { timedEventManager } from "#app/global-event-manager";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounters/delibirdy";
@@ -56,7 +57,7 @@ const OPTION_3_DISALLOWED_MODIFIERS = [
 const DELIBIRDY_MONEY_PRICE_MULTIPLIER = 2;
 
 const doEventReward = () => {
-  const event_buff = globalScene.eventManager.getDelibirdyBuff();
+  const event_buff = timedEventManager.getDelibirdyBuff();
   if (event_buff.length > 0) {
     const candidates = event_buff.filter(c => {
       const mtype = generateModifierType(modifierTypes[c]);

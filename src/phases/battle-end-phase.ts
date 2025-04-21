@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import { applyPostBattleAbAttrs, PostBattleAbAttr } from "#app/data/ability";
+import { applyPostBattleAbAttrs, PostBattleAbAttr } from "#app/data/abilities/ability";
 import { LapsingPersistentModifier, LapsingPokemonHeldItemModifier } from "#app/modifier/modifier";
 import { BattlePhase } from "./battle-phase";
 import { GameOverPhase } from "./game-over-phase";
@@ -16,6 +16,25 @@ export class BattleEndPhase extends BattlePhase {
 
   start() {
     super.start();
+
+    // cull any extra `BattleEnd` phases from the queue.
+    globalScene.phaseQueue = globalScene.phaseQueue.filter(phase => {
+      if (phase instanceof BattleEndPhase) {
+        this.isVictory ||= phase.isVictory;
+        return false;
+      }
+      return true;
+    });
+    // `phaseQueuePrepend` is private, so we have to use this inefficient loop.
+    while (
+      globalScene.tryRemoveUnshiftedPhase(phase => {
+        if (phase instanceof BattleEndPhase) {
+          this.isVictory ||= phase.isVictory;
+          return true;
+        }
+        return false;
+      })
+    ) {}
 
     globalScene.gameData.gameStats.battles++;
     if (
@@ -54,6 +73,13 @@ export class BattleEndPhase extends BattlePhase {
     }
 
     globalScene.clearEnemyHeldItemModifiers();
+    for (const p of globalScene.getEnemyParty()) {
+      try {
+        p.destroy();
+      } catch {
+        console.warn("Unable to destroy stale pokemon object in BattleEndPhase:", p);
+      }
+    }
 
     const lapsingModifiers = globalScene.findModifiers(
       m => m instanceof LapsingPersistentModifier || m instanceof LapsingPokemonHeldItemModifier,

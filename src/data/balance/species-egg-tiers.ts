@@ -169,7 +169,7 @@ export const speciesEggTiers = {
   [Species.CACNEA]: EggTier.COMMON,
   [Species.SWABLU]: EggTier.COMMON,
   [Species.ZANGOOSE]: EggTier.RARE,
-  [Species.SEVIPER]: EggTier.COMMON,
+  [Species.SEVIPER]: EggTier.RARE,
   [Species.LUNATONE]: EggTier.COMMON,
   [Species.SOLROCK]: EggTier.COMMON,
   [Species.BARBOACH]: EggTier.COMMON,

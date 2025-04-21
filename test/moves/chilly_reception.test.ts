@@ -24,11 +24,11 @@ describe("Moves - Chilly Reception", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .battleType("single")
+      .battleStyle("single")
       .moveset([Moves.CHILLY_RECEPTION, Moves.SNOWSCAPE])
       .enemyMoveset(Array(4).fill(Moves.SPLASH))
-      .enemyAbility(Abilities.NONE)
-      .ability(Abilities.NONE);
+      .enemyAbility(Abilities.BALL_FETCH)
+      .ability(Abilities.BALL_FETCH);
   });
 
   it("should still change the weather if user can't switch out", async () => {
@@ -70,9 +70,8 @@ describe("Moves - Chilly Reception", () => {
   // enemy uses another move and weather doesn't change
   it("check case - enemy not selecting chilly reception doesn't change weather ", async () => {
     game.override
-      .battleType("single")
+      .battleStyle("single")
       .enemyMoveset([Moves.CHILLY_RECEPTION, Moves.TACKLE])
-      .enemyAbility(Abilities.NONE)
       .moveset(Array(4).fill(Moves.SPLASH));
 
     await game.classicMode.startBattle([Species.SLOWKING, Species.MEOWTH]);
@@ -86,10 +85,9 @@ describe("Moves - Chilly Reception", () => {
 
   it("enemy trainer - expected behavior ", async () => {
     game.override
-      .battleType("single")
+      .battleStyle("single")
       .startingWave(8)
       .enemyMoveset(Array(4).fill(Moves.CHILLY_RECEPTION))
-      .enemyAbility(Abilities.NONE)
       .enemySpecies(Species.MAGIKARP)
       .moveset([Moves.SPLASH, Moves.THUNDERBOLT]);
 

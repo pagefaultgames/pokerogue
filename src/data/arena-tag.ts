@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import type { Arena } from "#app/field/arena";
 import { PokemonType } from "#enums/pokemon-type";
-import { BooleanHolder, NumberHolder, toDmgValue } from "#app/utils";
+import { BooleanHolder, NumberHolder, toDmgValue } from "#app/utils/common";
 import { allMoves } from "#app/data/moves/move";
 import { MoveTarget } from "#enums/MoveTarget";
 import { MoveCategory } from "#enums/MoveCategory";
@@ -18,7 +18,7 @@ import {
   applyAbAttrs,
   applyOnGainAbAttrs,
   applyOnLoseAbAttrs,
-} from "#app/data/ability";
+} from "#app/data/abilities/ability";
 import { Stat } from "#enums/stat";
 import { CommonAnim, CommonBattleAnim } from "#app/data/battle-anims";
 import i18next from "i18next";
@@ -28,7 +28,6 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import { Moves } from "#enums/moves";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
-import { ShowAbilityPhase } from "#app/phases/show-ability-phase";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { CommonAnimPhase } from "#app/phases/common-anim-phase";
 
@@ -64,7 +63,7 @@ export abstract class ArenaTag {
     }
   }
 
-  onOverlap(_arena: Arena): void {}
+  onOverlap(_arena: Arena, _source: Pokemon | null): void {}
 
   lapse(_arena: Arena): boolean {
     return this.turnCount < 1 || !!--this.turnCount;
@@ -706,7 +705,7 @@ export class ArenaTrapTag extends ArenaTag {
     this.maxLayers = maxLayers;
   }
 
-  onOverlap(arena: Arena): void {
+  onOverlap(arena: Arena, _source: Pokemon | null): void {
     if (this.layers < this.maxLayers) {
       this.layers++;
 
@@ -788,7 +787,7 @@ class SpikesTag extends ArenaTrapTag {
             pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
           }),
         );
-        pokemon.damageAndUpdate(damage, HitResult.OTHER);
+        pokemon.damageAndUpdate(damage, { result: HitResult.INDIRECT });
         if (pokemon.turnData) {
           pokemon.turnData.damageTaken += damage;
         }
@@ -982,7 +981,7 @@ class StealthRockTag extends ArenaTrapTag {
           pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
         }),
       );
-      pokemon.damageAndUpdate(damage, HitResult.OTHER);
+      pokemon.damageAndUpdate(damage, { result: HitResult.INDIRECT });
       if (pokemon.turnData) {
         pokemon.turnData.damageTaken += damage;
       }
@@ -1160,9 +1159,11 @@ class TailwindTag extends ArenaTag {
         );
       }
       // Raise attack by one stage if party member has WIND_RIDER ability
+      // TODO: Ability displays should be handled by the ability
       if (pokemon.hasAbility(Abilities.WIND_RIDER)) {
-        globalScene.unshiftPhase(new ShowAbilityPhase(pokemon.getBattlerIndex()));
+        globalScene.queueAbilityDisplay(pokemon, false, true);
         globalScene.unshiftPhase(new StatStageChangePhase(pokemon.getBattlerIndex(), true, [Stat.ATK], 1, true));
+        globalScene.queueAbilityDisplay(pokemon, false, false);
       }
     }
   }
@@ -1327,7 +1328,7 @@ class FireGrassPledgeTag extends ArenaTag {
         globalScene.unshiftPhase(
           new CommonAnimPhase(pokemon.getBattlerIndex(), pokemon.getBattlerIndex(), CommonAnim.MAGMA_STORM),
         );
-        pokemon.damageAndUpdate(toDmgValue(pokemon.getMaxHp() / 8));
+        pokemon.damageAndUpdate(toDmgValue(pokemon.getMaxHp() / 8), { result: HitResult.INDIRECT });
       });
 
     return super.lapse(arena);
@@ -1427,11 +1428,7 @@ export class SuppressAbilitiesTag extends ArenaTag {
   public override onAdd(_arena: Arena): void {
     const pokemon = this.getSourcePokemon();
     if (pokemon) {
-      globalScene.queueMessage(
-        i18next.t("arenaTag:neutralizingGasOnAdd", {
-          pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-        }),
-      );
+      this.playActivationMessage(pokemon);
 
       for (const fieldPokemon of globalScene.getField(true)) {
         if (fieldPokemon && fieldPokemon.id !== pokemon.id) {
@@ -1441,8 +1438,9 @@ export class SuppressAbilitiesTag extends ArenaTag {
     }
   }
 
-  public override onOverlap(_arena: Arena): void {
+  public override onOverlap(_arena: Arena, source: Pokemon | null): void {
     this.sourceCount++;
+    this.playActivationMessage(source);
   }
 
   public onSourceLeave(arena: Arena): void {
@@ -1480,6 +1478,16 @@ export class SuppressAbilitiesTag extends ArenaTag {
 
   public isBeingRemoved() {
     return this.beingRemoved;
+  }
+
+  private playActivationMessage(pokemon: Pokemon | null) {
+    if (pokemon) {
+      globalScene.queueMessage(
+        i18next.t("arenaTag:neutralizingGasOnAdd", {
+          pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+        }),
+      );
+    }
   }
 }
 

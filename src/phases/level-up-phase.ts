@@ -6,7 +6,7 @@ import { EvolutionPhase } from "#app/phases/evolution-phase";
 import { LearnMovePhase } from "#app/phases/learn-move-phase";
 import { PlayerPartyMemberPokemonPhase } from "#app/phases/player-party-member-pokemon-phase";
 import { LevelAchv } from "#app/system/achv";
-import { NumberHolder } from "#app/utils";
+import { NumberHolder } from "#app/utils/common";
 import i18next from "i18next";
 
 export class LevelUpPhase extends PlayerPartyMemberPokemonPhase {
@@ -71,6 +71,7 @@ export class LevelUpPhase extends PlayerPartyMemberPokemonPhase {
     if (!this.pokemon.pauseEvolutions) {
       const evolution = this.pokemon.getEvolution();
       if (evolution) {
+        this.pokemon.breakIllusion();
         globalScene.unshiftPhase(new EvolutionPhase(this.pokemon, evolution, this.lastLevel));
       }
     }

@@ -7,7 +7,7 @@ import type PokemonSpecies from "./data/pokemon-species";
 import { allSpecies } from "./data/pokemon-species";
 import type { Arena } from "./field/arena";
 import Overrides from "#app/overrides";
-import * as Utils from "./utils";
+import { randSeedInt, randSeedItem } from "#app/utils/common";
 import { Biome } from "#enums/biome";
 import { Species } from "#enums/species";
 import { Challenges } from "./enums/challenges";
@@ -66,6 +66,19 @@ export class GameMode implements GameModeConfig {
       this.challenges = allChallenges.map(c => copyChallenge(c));
     }
     this.battleConfig = battleConfig || {};
+  }
+
+  /**
+   * Enables challenges if they are disabled and sets the specified challenge's value
+   * @param challenge The challenge to set
+   * @param value The value to give the challenge. Impact depends on the specific challenge
+   */
+  setChallengeValue(challenge: Challenges, value: number) {
+    if (!this.isChallenge) {
+      this.isChallenge = true;
+      this.challenges = allChallenges.map(c => copyChallenge(c));
+    }
+    this.challenges.filter((chal: Challenge) => chal.id === challenge).map((chal: Challenge) => (chal.value = value));
   }
 
   /**
@@ -173,7 +186,7 @@ export class GameMode implements GameModeConfig {
           if (w < waveIndex) {
             globalScene.executeWithSeedOffset(() => {
               const waveTrainerChance = arena.getTrainerChance();
-              if (!Utils.randSeedInt(waveTrainerChance)) {
+              if (!randSeedInt(waveTrainerChance)) {
                 allowTrainerBattle = false;
               }
             }, w);
@@ -183,7 +196,7 @@ export class GameMode implements GameModeConfig {
           }
         }
       }
-      return Boolean(allowTrainerBattle && trainerChance && !Utils.randSeedInt(trainerChance));
+      return Boolean(allowTrainerBattle && trainerChance && !randSeedInt(trainerChance));
     }
     return false;
   }
@@ -209,7 +222,7 @@ export class GameMode implements GameModeConfig {
           s.speciesId !== Species.ETERNATUS &&
           s.speciesId !== Species.ARCEUS,
       );
-      return Utils.randSeedItem(allFinalBossSpecies);
+      return randSeedItem(allFinalBossSpecies);
     }
 
     return null;
@@ -285,7 +298,7 @@ export class GameMode implements GameModeConfig {
     const dummyConfig = new FixedBattleConfig();
     return (
       this.battleConfig.hasOwnProperty(waveIndex) ||
-      applyChallenges(this, ChallengeType.FIXED_BATTLES, waveIndex, dummyConfig)
+      applyChallenges(ChallengeType.FIXED_BATTLES, waveIndex, dummyConfig)
     );
   }
 
@@ -296,7 +309,7 @@ export class GameMode implements GameModeConfig {
    */
   getFixedBattle(waveIndex: number): FixedBattleConfig {
     const challengeConfig = new FixedBattleConfig();
-    if (applyChallenges(this, ChallengeType.FIXED_BATTLES, waveIndex, challengeConfig)) {
+    if (applyChallenges(ChallengeType.FIXED_BATTLES, waveIndex, challengeConfig)) {
       return challengeConfig;
     }
     return this.battleConfig[waveIndex];

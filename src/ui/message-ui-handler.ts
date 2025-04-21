@@ -1,6 +1,6 @@
 import AwaitableUiHandler from "./awaitable-ui-handler";
-import type { Mode } from "./ui";
-import * as Utils from "../utils";
+import type { UiMode } from "#enums/ui-mode";
+import { getFrameMs } from "#app/utils/common";
 import { globalScene } from "#app/global-scene";
 
 export default abstract class MessageUiHandler extends AwaitableUiHandler {
@@ -11,7 +11,7 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
   public message: Phaser.GameObjects.Text;
   public prompt: Phaser.GameObjects.Sprite;
 
-  constructor(mode: Mode | null = null) {
+  constructor(mode: UiMode | null = null) {
     super(mode);
 
     this.pendingPrompt = false;
@@ -76,6 +76,12 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
     const fadeMap = new Map<number, number>();
     const actionPattern = /@(c|d|s|f)\{(.*?)\}/;
     let actionMatch: RegExpExecArray | null;
+    const pokename: string[] = [];
+    const repname = ["#POKEMON1", "#POKEMON2"];
+    for (let p = 0; p < globalScene.getPlayerField().length; p++) {
+      pokename.push(globalScene.getPlayerField()[p].getNameToRender());
+      text = text.split(pokename[p]).join(repname[p]);
+    }
     while ((actionMatch = actionPattern.exec(text))) {
       switch (actionMatch[1]) {
         case "c":
@@ -94,6 +100,9 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
       text = text.slice(0, actionMatch.index) + text.slice(actionMatch.index + actionMatch[2].length + 4);
     }
 
+    for (let p = 0; p < globalScene.getPlayerField().length; p++) {
+      text = text.split(repname[p]).join(pokename[p]);
+    }
     if (text) {
       // Predetermine overflow line breaks to avoid words breaking while displaying
       const textWords = text.split(" ");
@@ -174,7 +183,7 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
           if (charDelay) {
             this.textTimer!.paused = true; // TODO: is the bang correct?
             globalScene.tweens.addCounter({
-              duration: Utils.getFrameMs(charDelay),
+              duration: getFrameMs(charDelay),
               onComplete: () => {
                 this.textTimer!.paused = false; // TODO: is the bang correct?
                 advance();
@@ -184,7 +193,7 @@ export default abstract class MessageUiHandler extends AwaitableUiHandler {
             this.textTimer!.paused = true;
             globalScene.time.delayedCall(150, () => {
               globalScene.ui.fadeOut(750).then(() => {
-                const delay = Utils.getFrameMs(charFade);
+                const delay = getFrameMs(charFade);
                 globalScene.time.delayedCall(delay, () => {
                   globalScene.ui.fadeIn(500).then(() => {
                     this.textTimer!.paused = false;

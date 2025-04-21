@@ -1,5 +1,5 @@
 import { BattlerIndex } from "#app/battle";
-import { PostItemLostAbAttr } from "#app/data/ability";
+import { PostItemLostAbAttr } from "#app/data/abilities/ability";
 import { allMoves, StealHeldItemChanceAttr } from "#app/data/moves/move";
 import type Pokemon from "#app/field/pokemon";
 import type { ContactHeldItemTransferChanceModifier } from "#app/modifier/modifier";
@@ -41,7 +41,7 @@ describe("Abilities - Unburden", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .battleType("single")
+      .battleStyle("single")
       .startingLevel(1)
       .ability(Abilities.UNBURDEN)
       .moveset([Moves.SPLASH, Moves.KNOCK_OFF, Moves.PLUCK, Moves.FALSE_SWIPE])
@@ -231,7 +231,7 @@ describe("Abilities - Unburden", () => {
   });
 
   it("should deactivate temporarily when a neutralizing gas user is on the field", async () => {
-    game.override.battleType("double").ability(Abilities.NONE); // Disable ability override so that we can properly set abilities below
+    game.override.battleStyle("double").ability(Abilities.NONE); // Disable ability override so that we can properly set abilities below
     await game.classicMode.startBattle([Species.TREECKO, Species.MEOWTH, Species.WEEZING]);
 
     const [treecko, _meowth, weezing] = game.scene.getPlayerParty();
@@ -359,7 +359,7 @@ describe("Abilities - Unburden", () => {
   // test for `.bypassFaint()` - doubles
   it("shouldn't persist when revived by revival blessing if activated while fainting", async () => {
     game.override
-      .battleType("double")
+      .battleStyle("double")
       .enemyMoveset([Moves.SPLASH, Moves.THIEF])
       .moveset([Moves.SPLASH, Moves.REVIVAL_BLESSING])
       .startingHeldItems([{ name: "WIDE_LENS" }]);

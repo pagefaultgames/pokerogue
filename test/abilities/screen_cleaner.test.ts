@@ -24,7 +24,7 @@ describe("Abilities - Screen Cleaner", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleType("single");
+    game.override.battleStyle("single");
     game.override.ability(Abilities.SCREEN_CLEANER);
     game.override.enemySpecies(Species.SHUCKLE);
   });

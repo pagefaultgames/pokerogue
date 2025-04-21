@@ -1,5 +1,5 @@
 import type { BattlerIndex } from "#app/battle";
-import { BattleType } from "#app/battle";
+import { BattleType } from "#enums/battle-type";
 import { globalScene } from "#app/global-scene";
 import {
   applyPostFaintAbAttrs,
@@ -8,8 +8,7 @@ import {
   PostFaintAbAttr,
   PostKnockOutAbAttr,
   PostVictoryAbAttr,
-} from "#app/data/ability";
-import type { DestinyBondTag, GrudgeTag } from "#app/data/battler-tags";
+} from "#app/data/abilities/ability";
 import { BattlerTagLapseType } from "#app/data/battler-tags";
 import { battleSpecDialogue } from "#app/data/dialogue";
 import { allMoves, PostVictoryStatStageChangeAttr } from "#app/data/moves/move";
@@ -30,8 +29,9 @@ import { SwitchPhase } from "./switch-phase";
 import { SwitchSummonPhase } from "./switch-summon-phase";
 import { ToggleDoublePositionPhase } from "./toggle-double-position-phase";
 import { VictoryPhase } from "./victory-phase";
-import { isNullOrUndefined } from "#app/utils";
+import { isNullOrUndefined } from "#app/utils/common";
 import { FRIENDSHIP_LOSS_FROM_FAINT } from "#app/data/balance/starters";
+import { BattlerTagType } from "#enums/battler-tag-type";
 
 export class FaintPhase extends PokemonPhase {
   /**
@@ -40,32 +40,14 @@ export class FaintPhase extends PokemonPhase {
   private preventEndure: boolean;
 
   /**
-   * Destiny Bond tag belonging to the currently fainting Pokemon, if applicable
-   */
-  private destinyTag?: DestinyBondTag | null;
-
-  /**
-   * Grudge tag belonging to the currently fainting Pokemon, if applicable
-   */
-  private grudgeTag?: GrudgeTag | null;
-
-  /**
    * The source Pokemon that dealt fatal damage
    */
   private source?: Pokemon;
 
-  constructor(
-    battlerIndex: BattlerIndex,
-    preventEndure = false,
-    destinyTag?: DestinyBondTag | null,
-    grudgeTag?: GrudgeTag | null,
-    source?: Pokemon,
-  ) {
+  constructor(battlerIndex: BattlerIndex, preventEndure = false, source?: Pokemon) {
     super(battlerIndex);
 
     this.preventEndure = preventEndure;
-    this.destinyTag = destinyTag;
-    this.grudgeTag = grudgeTag;
     this.source = source;
   }
 
@@ -74,13 +56,12 @@ export class FaintPhase extends PokemonPhase {
 
     const faintPokemon = this.getPokemon();
 
-    if (!isNullOrUndefined(this.destinyTag) && !isNullOrUndefined(this.source)) {
-      this.destinyTag.lapse(this.source, BattlerTagLapseType.CUSTOM);
+    if (this.source) {
+      faintPokemon.getTag(BattlerTagType.DESTINY_BOND)?.lapse(this.source, BattlerTagLapseType.CUSTOM);
+      faintPokemon.getTag(BattlerTagType.GRUDGE)?.lapse(faintPokemon, BattlerTagLapseType.CUSTOM, this.source);
     }
 
-    if (!isNullOrUndefined(this.grudgeTag) && !isNullOrUndefined(this.source)) {
-      this.grudgeTag.lapse(faintPokemon, BattlerTagLapseType.CUSTOM, this.source);
-    }
+    faintPokemon.resetSummonData();
 
     if (!this.preventEndure) {
       const instantReviveModifier = globalScene.applyModifier(
@@ -216,8 +197,8 @@ export class FaintPhase extends PokemonPhase {
     }
 
     // in double battles redirect potential moves off fainted pokemon
-    if (globalScene.currentBattle.double) {
-      const allyPokemon = pokemon.getAlly();
+    const allyPokemon = pokemon.getAlly();
+    if (globalScene.currentBattle.double && !isNullOrUndefined(allyPokemon)) {
       globalScene.redirectPokemonMoves(pokemon, allyPokemon);
     }
 
@@ -265,7 +246,7 @@ export class FaintPhase extends PokemonPhase {
           } else {
             // Final boss' HP threshold has been bypassed; cancel faint and force check for 2nd phase
             enemy.hp++;
-            globalScene.unshiftPhase(new DamageAnimPhase(enemy.getBattlerIndex(), 0, HitResult.OTHER));
+            globalScene.unshiftPhase(new DamageAnimPhase(enemy.getBattlerIndex(), 0, HitResult.INDIRECT));
             this.end();
           }
           return true;

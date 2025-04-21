@@ -38,7 +38,7 @@ export default class RenameFormUiHandler extends FormModalUiHandler {
     if (super.show(args)) {
       const config = args[0] as ModalConfig;
       if (args[1] && typeof (args[1] as PlayerPokemon).getNameToRender === "function") {
-        this.inputs[0].text = (args[1] as PlayerPokemon).getNameToRender();
+        this.inputs[0].text = (args[1] as PlayerPokemon).getNameToRender(false);
       } else {
         this.inputs[0].text = args[1];
       }

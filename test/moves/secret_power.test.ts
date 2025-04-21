@@ -11,7 +11,8 @@ import { StatusEffect } from "#enums/status-effect";
 import { BattlerIndex } from "#app/battle";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { ArenaTagSide } from "#app/data/arena-tag";
-import { allAbilities, MoveEffectChanceMultiplierAbAttr } from "#app/data/ability";
+import { MoveEffectChanceMultiplierAbAttr } from "#app/data/abilities/ability";
+import { allAbilities } from "#app/data/data-lists";
 
 describe("Moves - Secret Power", () => {
   let phaserGame: Phaser.Game;
@@ -32,7 +33,7 @@ describe("Moves - Secret Power", () => {
     game.override
       .moveset([Moves.SECRET_POWER])
       .ability(Abilities.BALL_FETCH)
-      .battleType("single")
+      .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyLevel(60)
@@ -64,7 +65,7 @@ describe("Moves - Secret Power", () => {
       .moveset([Moves.FIRE_PLEDGE, Moves.WATER_PLEDGE, Moves.SECRET_POWER, Moves.SPLASH])
       .ability(Abilities.SERENE_GRACE)
       .enemyMoveset([Moves.SPLASH])
-      .battleType("double");
+      .battleStyle("double");
     await game.classicMode.startBattle([Species.BLASTOISE, Species.CHARIZARD]);
 
     const sereneGraceAttr = allAbilities[Abilities.SERENE_GRACE].getAttrs(MoveEffectChanceMultiplierAbAttr)[0];

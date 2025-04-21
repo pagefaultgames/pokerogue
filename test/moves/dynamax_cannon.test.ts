@@ -3,6 +3,7 @@ import { allMoves } from "#app/data/moves/move";
 import { DamageAnimPhase } from "#app/phases/damage-anim-phase";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { Moves } from "#enums/moves";
+import type Move from "#app/data/moves/move";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -12,7 +13,7 @@ describe("Moves - Dynamax Cannon", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
-  const dynamaxCannon = allMoves[Moves.DYNAMAX_CANNON];
+  let dynamaxCannon: Move;
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({
@@ -25,6 +26,7 @@ describe("Moves - Dynamax Cannon", () => {
   });
 
   beforeEach(() => {
+    dynamaxCannon = allMoves[Moves.DYNAMAX_CANNON];
     game = new GameManager(phaserGame);
 
     game.override.moveset([dynamaxCannon.id]);
@@ -32,7 +34,7 @@ describe("Moves - Dynamax Cannon", () => {
 
     // Note that, for Waves 1-10, the level cap is 10
     game.override.startingWave(1);
-    game.override.battleType("single");
+    game.override.battleStyle("single");
     game.override.disableCrits();
 
     game.override.enemySpecies(Species.MAGIKARP);
