@@ -18,7 +18,7 @@ export class PokerogueSessionSavedataApi extends ApiBase {
   /**
    * Mark a session as cleared aka "newclear".\
    * *This is **NOT** the same as {@linkcode clear | clear()}.*
-   * @param params The {@linkcode NewClearSessionSavedataRequest} to send
+   * @param params - The {@linkcode NewClearSessionSavedataRequest} to send
    * @returns The raw savedata as `string`.
    */
   public async newclear(params: NewClearSessionSavedataRequest) {
@@ -36,7 +36,7 @@ export class PokerogueSessionSavedataApi extends ApiBase {
 
   /**
    * Get a session savedata.
-   * @param params The {@linkcode GetSessionSavedataRequest} to send
+   * @param params - The {@linkcode GetSessionSavedataRequest} to send
    * @returns The session as `string`
    */
   public async get(params: GetSessionSavedataRequest) {
@@ -53,8 +53,8 @@ export class PokerogueSessionSavedataApi extends ApiBase {
 
   /**
    * Update a session savedata.
-   * @param params The {@linkcode UpdateSessionSavedataRequest} to send
-   * @param rawSavedata The raw savedata (as `string`)
+   * @param params - The {@linkcode UpdateSessionSavedataRequest} to send
+   * @param rawSavedata - The raw savedata (as `string`)
    * @returns An error message if something went wrong
    */
   public async update(params: UpdateSessionSavedataRequest, rawSavedata: string) {
@@ -72,7 +72,7 @@ export class PokerogueSessionSavedataApi extends ApiBase {
 
   /**
    * Delete a session savedata slot.
-   * @param params The {@linkcode DeleteSessionSavedataRequest} to send
+   * @param params - The {@linkcode DeleteSessionSavedataRequest} to send
    * @returns An error message if something went wrong
    */
   public async delete(params: DeleteSessionSavedataRequest) {
@@ -93,8 +93,8 @@ export class PokerogueSessionSavedataApi extends ApiBase {
   /**
    * Clears the session savedata of the given slot.\
    * *This is **NOT** the same as {@linkcode newclear | newclear()}.*
-   * @param params The {@linkcode ClearSessionSavedataRequest} to send
-   * @param sessionData The {@linkcode SessionSaveData} object
+   * @param params - The {@linkcode ClearSessionSavedataRequest} to send
+   * @param sessionData - The {@linkcode SessionSaveData} object
    */
   public async clear(params: ClearSessionSavedataRequest, sessionData: SessionSaveData) {
     try {

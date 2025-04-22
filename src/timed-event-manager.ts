@@ -488,7 +488,7 @@ export class TimedEventManager {
   /**
    * Gets all the modifier types associated with a certain wave during an event
    * @see EventWaveReward
-   * @param wave the wave to check for associated rewards
+   * @param wave - the wave to check for associated rewards
    * @returns array of strings of the event modifier reward types
    */
   getFixedBattleEventRewards(wave: number): string[] {

@@ -222,7 +222,7 @@ export default class GameChallengesUiHandler extends UiHandler {
 
   /**
    * Adds the default text color to the description text
-   * @param text text to set to the BBCode description
+   * @param text - text to set to the BBCode description
    */
   setDescription(text: string): void {
     this.descriptionText.setText(`[color=${Color.ORANGE}][shadow=${ShadowColor.ORANGE}]${text}`);

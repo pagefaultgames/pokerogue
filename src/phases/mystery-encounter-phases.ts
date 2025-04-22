@@ -43,7 +43,7 @@ export class MysteryEncounterPhase extends Phase {
 
   /**
    * Mostly useful for having repeated queries during a single encounter, where the queries and options may differ each time
-   * @param optionSelectSettings allows overriding the typical options of an encounter with new ones
+   * @param optionSelectSettings - allows overriding the typical options of an encounter with new ones
    */
   constructor(optionSelectSettings?: OptionSelectSettings) {
     super();

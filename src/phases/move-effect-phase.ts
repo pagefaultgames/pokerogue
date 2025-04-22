@@ -78,7 +78,7 @@ export class MoveEffectPhase extends PokemonPhase {
   protected reflected = false;
 
   /**
-   * @param reflected Indicates that the move was reflected by the user due to magic coat or magic bounce
+   * @param reflected - Indicates that the move was reflected by the user due to magic coat or magic bounce
    */
   constructor(battlerIndex: BattlerIndex, targets: BattlerIndex[], move: PokemonMove, reflected = false) {
     super(battlerIndex);

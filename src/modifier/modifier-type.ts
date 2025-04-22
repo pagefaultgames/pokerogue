@@ -230,10 +230,10 @@ export class ModifierType {
    * It checks the weight of the item and will use the first tier for which the weight is greater than 0
    * This is to allow items to be in multiple item pools depending on the conditions, for example for events
    * If all tiers have a weight of 0 for the item, the first tier where the item was found is used
-   * @param poolType Default 'ModifierPoolType.PLAYER'. Which pool to lookup item tier from
-   * @param party optional. Needed to check the weight of modifiers with conditional weight (see {@linkcode WeightedModifierTypeWeightFunc})
+   * @param poolType - Default 'ModifierPoolType.PLAYER'. Which pool to lookup item tier from
+   * @param party - optional. Needed to check the weight of modifiers with conditional weight (see {@linkcode WeightedModifierTypeWeightFunc})
    *  if not provided or empty, the weight check will be ignored
-   * @param rerollCount Default `0`. Used to check the weight of modifiers with conditional weight (see {@linkcode WeightedModifierTypeWeightFunc})
+   * @param rerollCount - Default `0`. Used to check the weight of modifiers with conditional weight (see {@linkcode WeightedModifierTypeWeightFunc})
    */
   withTierFromPool(
     poolType: ModifierPoolType = ModifierPoolType.PLAYER,
@@ -863,7 +863,6 @@ export type SpeciesStatBoosterItem = keyof typeof SpeciesStatBoosterModifierType
 
 /**
  * Modifier type for {@linkcode SpeciesStatBoosterModifier}
- * @extends PokemonHeldItemModifierType
  * @implements GeneratedPersistentModifierType
  */
 export class SpeciesStatBoosterModifierType
@@ -1428,7 +1427,6 @@ class TempStatStageBoosterModifierTypeGenerator extends ModifierTypeGenerator {
  * Modifier type generator for {@linkcode SpeciesStatBoosterModifierType}, which
  * encapsulates the logic for weighting the most useful held item from
  * the current list of {@linkcode items}.
- * @extends ModifierTypeGenerator
  */
 class SpeciesStatBoosterModifierTypeGenerator extends ModifierTypeGenerator {
   /** Object comprised of the currently available species-based stat boosting held items */
@@ -1788,7 +1786,7 @@ function skipInClassicAfterWave(wave: number, defaultWeight: number): WeightedMo
 /**
  * High order function that returns a WeightedModifierTypeWeightFunc that will only be applied on
  * classic and it will skip a ModifierType if it is the last wave pull.
- * @param defaultWeight ModifierType default weight
+ * @param defaultWeight - ModifierType default weight
  * @returns A WeightedModifierTypeWeightFunc
  */
 function skipInLastClassicWaveOrDefault(defaultWeight: number): WeightedModifierTypeWeightFunc {
@@ -1798,8 +1796,8 @@ function skipInLastClassicWaveOrDefault(defaultWeight: number): WeightedModifier
 /**
  * High order function that returns a WeightedModifierTypeWeightFunc to ensure Lures don't spawn on Classic 199
  * or if the lure still has over 60% of its duration left
- * @param maxBattles The max battles the lure type in question lasts. 10 for green, 15 for Super, 30 for Max
- * @param weight The desired weight for the lure when it does spawn
+ * @param maxBattles - The max battles the lure type in question lasts. 10 for green, 15 for Super, 30 for Max
+ * @param weight - The desired weight for the lure when it does spawn
  * @returns A WeightedModifierTypeWeightFunc
  */
 function lureWeightFunc(maxBattles: number, weight: number): WeightedModifierTypeWeightFunc {
@@ -2399,7 +2397,7 @@ interface ModifierPool {
 
 /**
  * Used to check if the player has max of a given ball type in Classic
- * @param ballType The {@linkcode PokeballType} being checked
+ * @param ballType - The {@linkcode PokeballType} being checked
  * @returns boolean: true if the player has the maximum of a given ball type
  */
 function hasMaximumBalls(ballType: PokeballType): boolean {
@@ -3287,10 +3285,10 @@ export function getModifierTypeFuncById(id: string): ModifierTypeFunc {
 
 /**
  * Generates modifier options for a {@linkcode SelectModifierPhase}
- * @param count Determines the number of items to generate
- * @param party Party is required for generating proper modifier pools
- * @param modifierTiers (Optional) If specified, rolls items in the specified tiers. Commonly used for tier-locking with Lock Capsule.
- * @param customModifierSettings (Optional) If specified, can customize the item shop rewards further.
+ * @param count - Determines the number of items to generate
+ * @param party - Party is required for generating proper modifier pools
+ * @param modifierTiers - (Optional) If specified, rolls items in the specified tiers. Commonly used for tier-locking with Lock Capsule.
+ * @param customModifierSettings - (Optional) If specified, can customize the item shop rewards further.
  *  - `guaranteedModifierTypeOptions?: ModifierTypeOption[]` If specified, will override the first X items to be specific modifier options (these should be pre-genned).
  *  - `guaranteedModifierTypeFuncs?: ModifierTypeFunc[]` If specified, will override the next X items to be auto-generated from specific modifier functions (these don't have to be pre-genned).
  *  - `guaranteedModifierTiers?: ModifierTier[]` If specified, will override the next X items to be the specified tier. These can upgrade with luck.
@@ -3375,11 +3373,11 @@ export function getPlayerModifierTypeOptions(
 
 /**
  * Will generate a {@linkcode ModifierType} from the {@linkcode ModifierPoolType.PLAYER} pool, attempting to retry duplicated items up to retryCount
- * @param existingOptions Currently generated options
- * @param retryCount How many times to retry before allowing a dupe item
- * @param party Current player party, used to calculate items in the pool
- * @param tier If specified will generate item of tier
- * @param allowLuckUpgrades `true` to allow items to upgrade tiers (the little animation that plays and is affected by luck)
+ * @param existingOptions - Currently generated options
+ * @param retryCount - How many times to retry before allowing a dupe item
+ * @param party - Current player party, used to calculate items in the pool
+ * @param tier - If specified will generate item of tier
+ * @param allowLuckUpgrades - `true` to allow items to upgrade tiers (the little animation that plays and is affected by luck)
  */
 function getModifierTypeOptionWithRetry(
   existingOptions: ModifierTypeOption[],
@@ -3412,8 +3410,8 @@ function getModifierTypeOptionWithRetry(
  * Replaces the {@linkcode ModifierType} of the entries within {@linkcode options} with any
  * {@linkcode ModifierOverride} entries listed in {@linkcode Overrides.ITEM_REWARD_OVERRIDE}
  * up to the smallest amount of entries between {@linkcode options} and the override array.
- * @param options Array of naturally rolled {@linkcode ModifierTypeOption}s
- * @param party Array of the player's current party
+ * @param options - Array of naturally rolled {@linkcode ModifierTypeOption}s
+ * @param party - Array of the player's current party
  */
 export function overridePlayerModifierTypeOptions(options: ModifierTypeOption[], party: PlayerPokemon[]) {
   const minLength = Math.min(options.length, Overrides.ITEM_REWARD_OVERRIDE.length);
@@ -3553,12 +3551,12 @@ export function getDailyRunStarterModifiers(party: PlayerPokemon[]): PokemonHeld
 
 /**
  * Generates a ModifierType from the specified pool
- * @param party party of the trainer using the item
- * @param poolType PLAYER/WILD/TRAINER
- * @param tier If specified, will override the initial tier of an item (can still upgrade with luck)
- * @param upgradeCount If defined, means that this is a new ModifierType being generated to override another via luck upgrade. Used for recursive logic
- * @param retryCount Max allowed tries before the next tier down is checked for a valid ModifierType
- * @param allowLuckUpgrades Default true. If false, will not allow ModifierType to randomly upgrade to next tier
+ * @param party - party of the trainer using the item
+ * @param poolType - PLAYER/WILD/TRAINER
+ * @param tier - If specified, will override the initial tier of an item (can still upgrade with luck)
+ * @param upgradeCount - If defined, means that this is a new ModifierType being generated to override another via luck upgrade. Used for recursive logic
+ * @param retryCount - Max allowed tries before the next tier down is checked for a valid ModifierType
+ * @param allowLuckUpgrades - Default true. If false, will not allow ModifierType to randomly upgrade to next tier
  */
 function getNewModifierTypeOption(
   party: Pokemon[],
@@ -3700,7 +3698,7 @@ export class ModifierTypeOption {
 
 /**
  * Calculates the team's luck value.
- * @param party The player's party.
+ * @param party - The player's party.
  * @returns A number between 0 and 14 based on the party's total luck value, or a random number between 0 and 14 if the player is in Daily Run mode.
  */
 export function getPartyLuckValue(party: Pokemon[]): number {

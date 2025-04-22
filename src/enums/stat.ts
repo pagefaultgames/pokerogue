@@ -41,8 +41,8 @@ export type TempBattleStat = typeof TEMP_BATTLE_STATS[number];
 /**
  * Provides the translation key corresponding to the amount of stat stages and whether those stat stages
  * are positive or negative.
- * @param stages the amount of stages
- * @param isIncrease dictates a negative (`false`) or a positive (`true`) stat stage change
+ * @param stages - the amount of stages
+ * @param isIncrease - dictates a negative (`false`) or a positive (`true`) stat stage change
  * @returns the translation key fitting the conditions described by {@linkcode stages} and {@linkcode isIncrease}
  */
 export function getStatStageChangeDescriptionKey(stages: number, isIncrease: boolean) {
@@ -60,7 +60,7 @@ export function getStatStageChangeDescriptionKey(stages: number, isIncrease: boo
 
 /**
  * Provides the translation key corresponding to a given stat which can be translated into its full name.
- * @param stat the {@linkcode Stat} to be translated
+ * @param stat - the {@linkcode Stat} to be translated
  * @returns the translation key corresponding to the given {@linkcode Stat}
  */
 export function getStatKey(stat: Stat) {
@@ -69,7 +69,7 @@ export function getStatKey(stat: Stat) {
 
 /**
  * Provides the translation key corresponding to a given stat which can be translated into its shortened name.
- * @param stat the {@linkcode Stat} to be translated
+ * @param stat - the {@linkcode Stat} to be translated
  * @returns the translation key corresponding to the given {@linkcode Stat}
  */
 export function getShortenedStatKey(stat: PermanentStat) {

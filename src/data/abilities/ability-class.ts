@@ -51,7 +51,7 @@ export class Ability implements Localizable {
 
   /**
    * Get all ability attributes that match `attrType`
-   * @param attrType any attribute that extends {@linkcode AbAttr}
+   * @param attrType - any attribute that extends {@linkcode AbAttr}
    * @returns Array of attributes that match `attrType`, Empty Array if none match.
    */
   getAttrs<T extends AbAttr>(attrType: Constructor<T>): T[] {
@@ -60,7 +60,7 @@ export class Ability implements Localizable {
 
   /**
    * Check if an ability has an attribute that matches `attrType`
-   * @param attrType any attribute that extends {@linkcode AbAttr}
+   * @param attrType - any attribute that extends {@linkcode AbAttr}
    * @returns true if the ability has attribute `attrType`
    */
   hasAttr<T extends AbAttr>(attrType: Constructor<T>): boolean {

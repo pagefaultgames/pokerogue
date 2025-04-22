@@ -76,8 +76,8 @@ export function padInt(value: number, length: number, padWith?: string): string 
 
 /**
  * Returns a random integer between min and min + range
- * @param range The amount of possible numbers
- * @param min The starting number
+ * @param range - The amount of possible numbers
+ * @param min - The starting number
  */
 export function randInt(range: number, min = 0): number {
   if (range === 1) {
@@ -88,8 +88,8 @@ export function randInt(range: number, min = 0): number {
 
 /**
  * Generates a random number using the global seed, or the current battle's seed if called via `Battle.randSeedInt`
- * @param range How large of a range of random numbers to choose from. If {@linkcode range} <= 1, returns {@linkcode min}
- * @param min The minimum integer to pick, default `0`
+ * @param range - How large of a range of random numbers to choose from. If {@linkcode range} <= 1, returns {@linkcode min}
+ * @param min - The minimum integer to pick, default `0`
  * @returns A random integer between {@linkcode min} and ({@linkcode min} + {@linkcode range} - 1)
  */
 export function randSeedInt(range: number, min = 0): number {
@@ -101,8 +101,8 @@ export function randSeedInt(range: number, min = 0): number {
 
 /**
  * Returns a random integer between min and max (non-inclusive)
- * @param min The lowest number
- * @param max The highest number
+ * @param min - The lowest number
+ * @param max - The highest number
  */
 export function randIntRange(min: number, max: number): number {
   return randInt(max - min, min);
@@ -122,7 +122,7 @@ export function randSeedWeightedItem<T>(items: T[]): T {
 
 /**
  * Shuffle a list using the seeded rng. Utilises the Fisher-Yates algorithm.
- * @param {Array} items An array of items.
+ * @param items - An array of items.
  * @returns {Array} A new shuffled array of items.
  */
 export function randSeedShuffle<T>(items: T[]): T[] {
@@ -160,7 +160,7 @@ export function getPlayTimeString(totalSeconds: number): string {
 /**
  * Generates IVs from a given {@linkcode id} by extracting 5 bits at a time
  * starting from the least significant bit up to the 30th most significant bit.
- * @param id 32-bit number
+ * @param id - 32-bit number
  * @returns An array of six numbers corresponding to 5-bit chunks from {@linkcode id}
  */
 export function getIvsFromId(id: number): number[] {
@@ -322,7 +322,7 @@ export function fixedInt(value: number): number {
 
 /**
  * Formats a string to title case
- * @param unformattedText Text to be formatted
+ * @param unformattedText - Text to be formatted
  * @returns the formatted string
  */
 export function formatText(unformattedText: string): string {
@@ -354,8 +354,8 @@ export function rgbToHsv(r: number, g: number, b: number) {
 
 /**
  * Compare color difference in RGB
- * @param {Array} rgb1 First RGB color in array
- * @param {Array} rgb2 Second RGB color in array
+ * @param rgb1 - First RGB color in array
+ * @param rgb2 - Second RGB color in array
  */
 export function deltaRgb(rgb1: number[], rgb2: number[]): number {
   const [r1, g1, b1] = rgb1;
@@ -390,9 +390,9 @@ export function rgbaToInt(rgba: number[]): number {
  * HSV color's corresponding hex code.
  *
  * Sourced from {@link https://stackoverflow.com/a/44134328}.
- * @param h Hue in degrees, must be in a range of [0, 360]
- * @param s Saturation percentage, must be in a range of [0, 1]
- * @param l Ligthness percentage, must be in a range of [0, 1]
+ * @param h - Hue in degrees, must be in a range of [0, 360]
+ * @param s - Saturation percentage, must be in a range of [0, 1]
+ * @param l - Ligthness percentage, must be in a range of [0, 1]
  * @returns a string of the corresponding color hex code with a "#" prefix
  */
 export function hslToHex(h: number, s: number, l: number): string {
@@ -440,7 +440,7 @@ export function hasAllLocalizedSprites(lang?: string): boolean {
 
 /**
  * Prints the type and name of all game objects in a container for debugging purposes
- * @param container container with game objects inside it
+ * @param container - container with game objects inside it
  */
 export function printContainerList(container: Phaser.GameObjects.Container): void {
   console.log(
@@ -542,7 +542,7 @@ export function toDmgValue(value: number, minValue = 1) {
 
 /**
  * Helper method to localize a sprite key (e.g. for types)
- * @param baseKey the base key of the sprite (e.g. `type`)
+ * @param baseKey - the base key of the sprite (e.g. `type`)
  * @returns the localized sprite key
  */
 export function getLocalizedSpriteKey(baseKey: string) {
@@ -551,9 +551,9 @@ export function getLocalizedSpriteKey(baseKey: string) {
 
 /**
  * Check if a number is **inclusive** between two numbers
- * @param num the number to check
- * @param min the minimum value (included)
- * @param max the maximum value (included)
+ * @param num - the number to check
+ * @param min - the minimum value (included)
+ * @param max - the maximum value (included)
  * @returns `true` if number is **inclusive** between min and max
  */
 export function isBetween(num: number, min: number, max: number): boolean {
@@ -563,7 +563,7 @@ export function isBetween(num: number, min: number, max: number): boolean {
 /**
  * Helper method to return the animation filename for a given move
  *
- * @param move the move for which the animation filename is needed
+ * @param move - the move for which the animation filename is needed
  */
 export function animationFileName(move: Moves): string {
   return Moves[move].toLowerCase().replace(/\_/g, "-");
@@ -571,7 +571,7 @@ export function animationFileName(move: Moves): string {
 
 /**
  * Transforms a camelCase string into a kebab-case string
- * @param str The camelCase string
+ * @param str - The camelCase string
  * @returns A kebab-case string
  *
  * @source {@link https://stackoverflow.com/a/67243723/}

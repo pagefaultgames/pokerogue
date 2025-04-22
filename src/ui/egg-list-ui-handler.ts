@@ -165,7 +165,7 @@ export default class EggListUiHandler extends MessageUiHandler {
 
   /**
    * Update the information panel with the information of the given egg
-   * @param index which egg in the list to display the info for
+   * @param index - which egg in the list to display the info for
    */
   private setEggDetails(index: number): void {
     const egg = globalScene.gameData.eggs[index];

@@ -21,9 +21,9 @@ export class HatchedPokemonContainer extends Phaser.GameObjects.Container {
   public eggMoveIcon: Phaser.GameObjects.Image;
 
   /**
-   * @param x x position
-   * @param y y position
-   * @param hatchData the {@linkcode EggHatchData} to load the icons and sprites for
+   * @param x - x position
+   * @param y - y position
+   * @param hatchData - the {@linkcode EggHatchData} to load the icons and sprites for
    */
   constructor(x: number, y: number, hatchData: EggHatchData) {
     super(globalScene, x, y);
@@ -80,8 +80,8 @@ export class HatchedPokemonContainer extends Phaser.GameObjects.Container {
    * Update the Pokemon's sprite and icons based on new hatch data
    * Animates the pokemon icon if it has a new form or shiny variant
    *
-   * @param hatchData the {@linkcode EggHatchData} to base the icons on
-   * @param iconAnimHandler the {@linkcode PokemonIconAnimHandler} to use to animate the sprites
+   * @param hatchData - the {@linkcode EggHatchData} to base the icons on
+   * @param iconAnimHandler - the {@linkcode PokemonIconAnimHandler} to use to animate the sprites
    */
   updateAndAnimate(hatchData: EggHatchData, iconAnimHandler: PokemonIconAnimHandler) {
     const displayPokemon = hatchData.pokemon;
@@ -120,10 +120,10 @@ export class HatchedPokemonContainer extends Phaser.GameObjects.Container {
 
   /**
    * Check if the given Pokemon icon exists, otherwise replace it with a default one
-   * @param female `true` to get the female icon
-   * @param formIndex the form index
-   * @param shiny whether the Pokemon is shiny
-   * @param variant the shiny variant
+   * @param female - `true` to get the female icon
+   * @param formIndex - the form index
+   * @param shiny - whether the Pokemon is shiny
+   * @param variant - the shiny variant
    */
   private checkIconId(female: boolean, formIndex: number, shiny: boolean, variant: number) {
     if (this.icon.frame.name !== this.species.getIconId(female, formIndex, shiny, variant)) {

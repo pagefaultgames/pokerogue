@@ -23,7 +23,7 @@ export class PokerogueSavedataApi extends ApiBase {
 
   /**
    * Update all savedata
-   * @param bodyData The {@linkcode UpdateAllSavedataRequest | request data} to send
+   * @param bodyData - The {@linkcode UpdateAllSavedataRequest | request data} to send
    * @returns An error message if something went wrong
    */
   public async updateAll(bodyData: UpdateAllSavedataRequest) {

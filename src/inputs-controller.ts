@@ -229,7 +229,7 @@ export class InputsController {
   /**
    * Initializes the chosen gamepad by setting its identifier in the local storage and updating the UI to reflect the chosen gamepad.
    * If a gamepad name is provided, it uses that as the chosen gamepad; otherwise, it defaults to the currently chosen gamepad.
-   * @param gamepadName Optional parameter to specify the name of the gamepad to initialize as chosen.
+   * @param gamepadName - Optional parameter to specify the name of the gamepad to initialize as chosen.
    */
   initChosenGamepad(gamepadName?: string): void {
     if (gamepadName) {
@@ -242,7 +242,7 @@ export class InputsController {
   /**
    * Initializes the chosen keyboard layout by setting its identifier in the local storage and updating the UI to reflect the chosen layout.
    * If a layout name is provided, it uses that as the chosen layout; otherwise, it defaults to the currently chosen layout.
-   * @param layoutKeyboard Optional parameter to specify the name of the keyboard layout to initialize as chosen.
+   * @param layoutKeyboard - Optional parameter to specify the name of the keyboard layout to initialize as chosen.
    */
   initChosenLayoutKeyboard(layoutKeyboard?: string): void {
     if (layoutKeyboard) {
@@ -258,7 +258,7 @@ export class InputsController {
    * disconnections, it would be impossible to determine the connection status of gamepads. This method ensures
    * that disconnected gamepads are recognized and can be appropriately hidden in the gamepad selection menu.
    *
-   * @param thisGamepad The gamepad that has been disconnected.
+   * @param thisGamepad - The gamepad that has been disconnected.
    */
   onDisconnect(thisGamepad: Phaser.Input.Gamepad.Gamepad): void {
     this.disconnectedGamepads.push(thisGamepad.id);
@@ -269,7 +269,7 @@ export class InputsController {
    * It removes the reconnected gamepad's identifier from the `disconnectedGamepads` array,
    * effectively updating its status to connected.
    *
-   * @param thisGamepad The gamepad that has been reconnected.
+   * @param thisGamepad - The gamepad that has been reconnected.
    */
   onReconnect(thisGamepad: Phaser.Input.Gamepad.Gamepad): void {
     this.disconnectedGamepads = this.disconnectedGamepads.filter(g => g !== thisGamepad.id);
@@ -281,7 +281,7 @@ export class InputsController {
    * and ensures these configurations are saved. If the connected gamepad is the currently chosen one,
    * it reinitializes the chosen gamepad settings.
    *
-   * @param thisGamepad The gamepad that is being set up.
+   * @param thisGamepad - The gamepad that is being set up.
    */
   setupGamepad(_thisGamepad: Phaser.Input.Gamepad.Gamepad): void {
     const allGamepads = this.getGamepadsName();
@@ -343,7 +343,7 @@ export class InputsController {
   /**
    * Handles the keydown event for the keyboard.
    *
-   * @param event The keyboard event.
+   * @param event - The keyboard event.
    */
   keyboardKeyDown(event): void {
     this.lastSource = "keyboard";
@@ -371,7 +371,7 @@ export class InputsController {
   /**
    * Handles the keyup event for the keyboard.
    *
-   * @param event The keyboard event.
+   * @param event - The keyboard event.
    */
   keyboardKeyUp(event): void {
     this.lastSource = "keyboard";
@@ -392,9 +392,9 @@ export class InputsController {
    * It checks if gamepad support is enabled and if the event comes from the chosen gamepad. If so, it maps the button press to a specific
    * action using a custom configuration, emits an event for the button press, and records the time of the action.
    *
-   * @param pad The gamepad on which the button was pressed.
-   * @param button The specific button that was pressed.
-   * @param value The intensity or value of the button press, if applicable.
+   * @param pad - The gamepad on which the button was pressed.
+   * @param button - The specific button that was pressed.
+   * @param value - The intensity or value of the button press, if applicable.
    */
   gamepadButtonDown(pad: Phaser.Input.Gamepad.Gamepad, button: Phaser.Input.Gamepad.Button, _value: number): void {
     if (!this.configs[this.selectedDevice[Device.KEYBOARD]]?.padID) {
@@ -444,9 +444,9 @@ export class InputsController {
    * If conditions are met, it identifies the configured action for the button, emits an event signaling the button release,
    * and clears the record of the button.
    *
-   * @param pad The gamepad from which the button was released.
-   * @param button The specific button that was released.
-   * @param value The intensity or value of the button release, if applicable.
+   * @param pad - The gamepad from which the button was released.
+   * @param button - The specific button that was released.
+   * @param value - The intensity or value of the button release, if applicable.
    */
   gamepadButtonUp(pad: Phaser.Input.Gamepad.Gamepad, button: Phaser.Input.Gamepad.Button, _value: number): void {
     if (!pad) {
@@ -473,7 +473,7 @@ export class InputsController {
    * based on substrings in the identifier and returns predefined configurations for recognized models.
    * If no specific configuration matches, it defaults to a generic gamepad configuration.
    *
-   * @param id The identifier string of the gamepad.
+   * @param id - The identifier string of the gamepad.
    * @returns InterfaceConfig The configuration object corresponding to the identified gamepad type.
    */
   getConfig(id: string): InterfaceConfig {
@@ -498,7 +498,7 @@ export class InputsController {
   /**
    * Retrieves the configuration object for a keyboard layout based on its identifier.
    *
-   * @param id The identifier string of the keyboard layout.
+   * @param id - The identifier string of the keyboard layout.
    * @returns InterfaceConfig The configuration object corresponding to the identified keyboard layout.
    */
   getConfigKeyboard(id: string): InterfaceConfig {
@@ -563,8 +563,8 @@ export class InputsController {
    * Injects a custom mapping configuration into the configuration for a specific gamepad.
    * If the device does not have an existing configuration, it initializes one first.
    *
-   * @param selectedDevice The identifier of the device to configure.
-   * @param mappingConfigs The mapping configuration to apply to the device.
+   * @param selectedDevice - The identifier of the device to configure.
+   * @param mappingConfigs - The mapping configuration to apply to the device.
    */
   injectConfig(selectedDevice: string, mappingConfigs): void {
     if (!this.configs[selectedDevice]) {
@@ -593,9 +593,9 @@ export class InputsController {
   /**
    * Swaps a binding in the configuration.
    *
-   * @param config The configuration object.
-   * @param settingName The name of the setting to swap.
-   * @param pressedButton The button that was pressed.
+   * @param config - The configuration object.
+   * @param settingName - The name of the setting to swap.
+   * @param pressedButton - The button that was pressed.
    */
   assignBinding(config, settingName, pressedButton): boolean {
     this.deactivatePressedKey();

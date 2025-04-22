@@ -292,7 +292,7 @@ export class Arena {
 
   /**
    * Sets weather to the override specified in overrides.ts
-   * @param weather new {@linkcode WeatherType} to set
+   * @param weather - new {@linkcode WeatherType} to set
    * @returns true to force trySetWeather to return true
    */
   trySetWeatherOverride(weather: WeatherType): boolean {
@@ -309,8 +309,8 @@ export class Arena {
 
   /**
    * Attempts to set a new weather to the battle
-   * @param weather {@linkcode WeatherType} new {@linkcode WeatherType} to set
-   * @param user {@linkcode Pokemon} that caused the weather effect
+   * @param weather - new {@linkcode WeatherType} to set
+   * @param user - that caused the weather effect
    * @returns true if new weather set, false if no weather provided or attempting to set the same weather as currently in use
    */
   trySetWeather(weather: WeatherType, user?: Pokemon): boolean {
@@ -404,9 +404,9 @@ export class Arena {
 
   /**
    * Attempts to set a new terrain effect to the battle
-   * @param terrain {@linkcode TerrainType} new {@linkcode TerrainType} to set
-   * @param ignoreAnim boolean if the terrain animation should be ignored
-   * @param user {@linkcode Pokemon} that caused the terrain effect
+   * @param terrain - new {@linkcode TerrainType} to set
+   * @param ignoreAnim - boolean if the terrain animation should be ignored
+   * @param user - that caused the terrain effect
    * @returns true if new terrain set, false if no terrain provided or attempting to set the same terrain as currently in use
    */
   trySetTerrain(terrain: TerrainType, ignoreAnim = false, user?: Pokemon): boolean {
@@ -638,10 +638,10 @@ export class Arena {
 
   /**
    * Applies each `ArenaTag` in this Arena, based on which side (self, enemy, or both) is passed in as a parameter
-   * @param tagType Either an {@linkcode ArenaTagType} string, or an actual {@linkcode ArenaTag} class to filter which ones to apply
-   * @param side {@linkcode ArenaTagSide} which side's arena tags to apply
-   * @param simulated if `true`, this applies arena tags without changing game state
-   * @param args array of parameters that the called upon tags may need
+   * @param tagType - Either an {@linkcode ArenaTagType} string, or an actual {@linkcode ArenaTag} class to filter which ones to apply
+   * @param side - which side's arena tags to apply
+   * @param simulated - if `true`, this applies arena tags without changing game state
+   * @param args - array of parameters that the called upon tags may need
    */
   applyTagsForSide(
     tagType: ArenaTagType | Constructor<ArenaTag>,
@@ -662,9 +662,9 @@ export class Arena {
   /**
    * Applies the specified tag to both sides (ie: both user and trainer's tag that match the Tag specified)
    * by calling {@linkcode applyTagsForSide()}
-   * @param tagType Either an {@linkcode ArenaTagType} string, or an actual {@linkcode ArenaTag} class to filter which ones to apply
-   * @param simulated if `true`, this applies arena tags without changing game state
-   * @param args array of parameters that the called upon tags may need
+   * @param tagType - Either an {@linkcode ArenaTagType} string, or an actual {@linkcode ArenaTag} class to filter which ones to apply
+   * @param simulated - if `true`, this applies arena tags without changing game state
+   * @param args - array of parameters that the called upon tags may need
    */
   applyTags(tagType: ArenaTagType | Constructor<ArenaTag>, simulated: boolean, ...args: unknown[]): void {
     this.applyTagsForSide(tagType, ArenaTagSide.BOTH, simulated, ...args);
@@ -672,13 +672,13 @@ export class Arena {
 
   /**
    * Adds a new tag to the arena
-   * @param tagType {@linkcode ArenaTagType} the tag being added
-   * @param turnCount How many turns the tag lasts
-   * @param sourceMove {@linkcode Moves} the move the tag came from, or `undefined` if not from a move
-   * @param sourceId The ID of the pokemon in play the tag came from (see {@linkcode BattleScene.getPokemonById})
-   * @param side {@linkcode ArenaTagSide} which side(s) the tag applies to
-   * @param quiet If a message should be queued on screen to announce the tag being added
-   * @param targetIndex The {@linkcode BattlerIndex} of the target pokemon
+   * @param tagType - the tag being added
+   * @param turnCount - How many turns the tag lasts
+   * @param sourceMove - the move the tag came from, or `undefined` if not from a move
+   * @param sourceId - The ID of the pokemon in play the tag came from (see {@linkcode BattleScene.getPokemonById})
+   * @param side - which side(s) the tag applies to
+   * @param quiet - If a message should be queued on screen to announce the tag being added
+   * @param targetIndex - The {@linkcode BattlerIndex} of the target pokemon
    * @returns `false` if there already exists a tag of this type in the Arena
    */
   addTag(
@@ -720,7 +720,7 @@ export class Arena {
 
   /**
    * Attempts to get a tag from the Arena via {@linkcode getTagOnSide} that applies to both sides
-   * @param tagType The {@linkcode ArenaTagType} or {@linkcode ArenaTag} to get
+   * @param tagType - The {@linkcode ArenaTagType} or {@linkcode ArenaTag} to get
    * @returns either the {@linkcode ArenaTag}, or `undefined` if it isn't there
    */
   getTag(tagType: ArenaTagType | Constructor<ArenaTag>): ArenaTag | undefined {
@@ -735,8 +735,8 @@ export class Arena {
    * Attempts to get a tag from the Arena from a specific side (the tag passed in has to either apply to both sides, or the specific side only)
    *
    * eg: `MIST` only applies to the user's side, while `MUD_SPORT` applies to both user and enemy side
-   * @param tagType The {@linkcode ArenaTagType} or {@linkcode ArenaTag} to get
-   * @param side The {@linkcode ArenaTagSide} to look at
+   * @param tagType - The {@linkcode ArenaTagType} or {@linkcode ArenaTag} to get
+   * @param side - The {@linkcode ArenaTagSide} to look at
    * @returns either the {@linkcode ArenaTag}, or `undefined` if it isn't there
    */
   getTagOnSide(tagType: ArenaTagType | Constructor<ArenaTag>, side: ArenaTagSide): ArenaTag | undefined {
@@ -751,7 +751,7 @@ export class Arena {
 
   /**
    * Uses {@linkcode findTagsOnSide} to filter (using the parameter function) for specific tags that apply to both sides
-   * @param tagPredicate a function mapping {@linkcode ArenaTag}s to `boolean`s
+   * @param tagPredicate - a function mapping {@linkcode ArenaTag}s to `boolean`s
    * @returns array of {@linkcode ArenaTag}s from which the Arena's tags return true and apply to both sides
    */
   findTags(tagPredicate: (t: ArenaTag) => boolean): ArenaTag[] {
@@ -760,8 +760,8 @@ export class Arena {
 
   /**
    * Returns specific tags from the arena that pass the `tagPredicate` function passed in as a parameter, and apply to the given side
-   * @param tagPredicate a function mapping {@linkcode ArenaTag}s to `boolean`s
-   * @param side The {@linkcode ArenaTagSide} to look at
+   * @param tagPredicate - a function mapping {@linkcode ArenaTag}s to `boolean`s
+   * @param side - The {@linkcode ArenaTagSide} to look at
    * @returns array of {@linkcode ArenaTag}s from which the Arena's tags return `true` and apply to the given side
    */
   findTagsOnSide(tagPredicate: (t: ArenaTag) => boolean, side: ArenaTagSide): ArenaTag[] {

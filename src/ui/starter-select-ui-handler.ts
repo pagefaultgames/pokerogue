@@ -171,7 +171,7 @@ const randomSelectionWindowHeight = 20;
 
 /**
  * Calculates the starter position for a Pokemon of a given UI index
- * @param index UI index to calculate the starter position of
+ * @param index - UI index to calculate the starter position of
  * @returns An interface with an x and y property
  */
 function calcStarterPosition(index: number, scrollCursor = 0): { x: number; y: number } {
@@ -185,7 +185,7 @@ function calcStarterPosition(index: number, scrollCursor = 0): { x: number; y: n
 
 /**
  * Calculates the y position for the icon of stater pokemon selected for the team
- * @param index index of the Pokemon in the team (0-5)
+ * @param index - index of the Pokemon in the team (0-5)
  * @returns the y position to use for the icon
  */
 function calcStarterIconY(index: number) {
@@ -196,8 +196,8 @@ function calcStarterIconY(index: number) {
 
 /**
  * Finds the index of the team Pokemon closest vertically to the given y position
- * @param y the y position to find closest starter Pokemon
- * @param teamSize how many Pokemon are in the team (0-6)
+ * @param y - the y position to find closest starter Pokemon
+ * @param teamSize - how many Pokemon are in the team (0-6)
  * @returns index of the closest Pokemon in the team container
  */
 function findClosestStarterIndex(y: number, teamSize = 6): number {
@@ -215,8 +215,8 @@ function findClosestStarterIndex(y: number, teamSize = 6): number {
 
 /**
  * Finds the row of the filtered Pokemon closest vertically to the given Pokemon in the team
- * @param index index of the Pokemon in the team (0-5)
- * @param numberOfRows the number of rows to check against
+ * @param index - index of the Pokemon in the team (0-5)
+ * @param numberOfRows - the number of rows to check against
  * @returns index of the row closest vertically to the given Pokemon
  */
 function findClosestStarterRow(index: number, numberOfRows: number) {
@@ -1227,7 +1227,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
    * If somehow a preference is set for a form, variant, gender, ability or nature
    * that wasn't actually unlocked or is invalid it will be cleared here
    *
-   * @param species The species to get Starter Preferences for
+   * @param species - The species to get Starter Preferences for
    * @returns StarterAttributes for the species
    */
   initStarterPrefs(species: PokemonSpecies): StarterAttributes {
@@ -1386,7 +1386,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
   /**
    * Determines if a passive upgrade is available for the given species ID
-   * @param speciesId The ID of the species to check the passive of
+   * @param speciesId - The ID of the species to check the passive of
    * @returns true if the user has enough candies and a passive has not been unlocked already
    */
   isPassiveAvailable(speciesId: number): boolean {
@@ -1401,7 +1401,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
   /**
    * Determines if a value reduction upgrade is available for the given species ID
-   * @param speciesId The ID of the species to check the value reduction of
+   * @param speciesId - The ID of the species to check the value reduction of
    * @returns true if the user has enough candies and all value reductions have not been unlocked already
    */
   isValueReductionAvailable(speciesId: number): boolean {
@@ -1417,7 +1417,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
   /**
    * Determines if an same species egg can be bought for the given species ID
-   * @param speciesId The ID of the species to check the value reduction of
+   * @param speciesId - The ID of the species to check the value reduction of
    * @returns true if the user has enough candies
    */
   isSameSpeciesEggAvailable(speciesId: number): boolean {
@@ -1429,9 +1429,9 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
   /**
    * Sets a bounce animation if enabled and the Pokemon has an upgrade
-   * @param icon {@linkcode Phaser.GameObjects.GameObject} to animate
-   * @param species {@linkcode PokemonSpecies} of the icon used to check for upgrades
-   * @param startPaused Should this animation be paused after it is added?
+   * @param icon - to animate
+   * @param species - of the icon used to check for upgrades
+   * @param startPaused - Should this animation be paused after it is added?
    */
   setUpgradeAnimation(icon: Phaser.GameObjects.Sprite, species: PokemonSpecies, startPaused = false): void {
     globalScene.tweens.killTweensOf(icon);
@@ -1520,7 +1520,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
   /**
    * Update the display of candy upgrade icons or animations for the given StarterContainer
-   * @param starterContainer the container for the Pokemon to update
+   * @param starterContainer - the container for the Pokemon to update
    */
   updateCandyUpgradeDisplay(starterContainer: StarterContainer) {
     if (this.isUpgradeIconEnabled()) {
@@ -1533,7 +1533,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
   /**
    * Processes an {@linkcode CandyUpgradeNotificationChangedEvent} sent when the corresponding setting changes
-   * @param event {@linkcode Event} sent by the callback
+   * @param event - sent by the callback
    */
   onCandyUpgradeDisplayChanged(event: Event): void {
     const candyUpgradeDisplayEvent = event as CandyUpgradeNotificationChangedEvent;
@@ -4400,7 +4400,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
    * Creates a temporary dex attr props that will be used to check whether a pokemon is valid for a challenge
    * and to display the correct shiny, variant, and form based on the StarterPreferences
    *
-   * @param speciesId the id of the species to get props for
+   * @param speciesId - the id of the species to get props for
    * @returns the dex props
    */
   getCurrentDexProps(speciesId: number): bigint {
