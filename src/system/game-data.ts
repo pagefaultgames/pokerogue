@@ -1194,13 +1194,18 @@ export class GameData {
             }
           }
 
+          // load modifier data
+
+          if (globalScene.modifiers.length) {
+            console.warn("Existing modifiers not cleared on session load, deleting...");
+            globalScene.modifiers = [];
+          }
           for (const modifierData of sessionData.modifiers) {
             const modifier = modifierData.toModifier(Modifier[modifierData.className]);
             if (modifier) {
               globalScene.addModifier(modifier, true);
             }
           }
-
           globalScene.updateModifiers(true);
 
           for (const enemyModifierData of sessionData.enemyModifiers) {
@@ -1338,12 +1343,12 @@ export class GameData {
   }
 
   parseSessionData(dataStr: string): SessionSaveData {
-    // TODO: Add add `null`/`undefined` to the corresponding type signatures for this
+    // TODO: Add `null`/`undefined` to the corresponding type signatures for this
     // (or prevent them from being null)
     // If the value is able to *not exist*, it should say so in the code
 
     const sessionData = JSON.parse(dataStr, (k: string, v: any) => {
-      // TODO: Move this into migrate script
+      // TODO: Add pre-parse migrate scripts
       switch (k) {
         case "party":
         case "enemyParty": {
@@ -1452,7 +1457,7 @@ export class GameData {
           encrypt(JSON.stringify(sessionData), bypassLogin),
         );
 
-        console.debug("Session data saved");
+        console.debug("Session data saved!");
 
         if (!bypassLogin && sync) {
           pokerogueApi.savedata.updateAll(request).then(error => {

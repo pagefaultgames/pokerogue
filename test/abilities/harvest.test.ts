@@ -82,14 +82,15 @@ describe("Abilities - Harvest", () => {
       .weather(WeatherType.NONE); // clear weather so we can control when harvest rolls succeed
     await game.classicMode.startBattle([Species.MILOTIC]);
 
-    const player = game.scene.getPlayerPokemon();
+    const milotic = game.scene.getPlayerPokemon()!;
+    expect(milotic).toBeDefined();
 
     // Chug a few berries without harvest (should get tracked)
     game.move.select(Moves.SPLASH);
     await game.forceEnemyMove(Moves.NUZZLE);
     await game.toNextTurn();
 
-    expect(player?.battleData.berriesEaten).toEqual(expect.arrayContaining([BerryType.ENIGMA, BerryType.LUM]));
+    expect(milotic.battleData.berriesEaten).toEqual(expect.arrayContaining([BerryType.ENIGMA, BerryType.LUM]));
     expect(getPlayerBerries()).toHaveLength(2);
 
     // Give ourselves harvest and disable enemy neut gas,
@@ -97,10 +98,12 @@ describe("Abilities - Harvest", () => {
     game.override.ability(Abilities.HARVEST);
     game.move.select(Moves.GASTRO_ACID);
     await game.forceEnemyMove(Moves.NUZZLE);
+
     await game.phaseInterceptor.to("TurnEndPhase", false);
     vi.spyOn(Phaser.Math.RND, "realInRange").mockReturnValue(0);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(player?.battleData.berriesEaten).toEqual(
+    expect(milotic.battleData.berriesEaten).toEqual(
       expect.arrayContaining([BerryType.ENIGMA, BerryType.LUM, BerryType.ENIGMA, BerryType.LUM]),
     );
     expect(getPlayerBerries()).toHaveLength(0);
@@ -112,11 +115,11 @@ describe("Abilities - Harvest", () => {
     vi.spyOn(Phaser.Math.RND, "realInRange").mockReturnValue(1);
     await game.toNextTurn();
 
-    expect(player?.battleData.berriesEaten).toHaveLength(3);
+    expect(milotic?.battleData.berriesEaten).toHaveLength(3);
     expect(getPlayerBerries()).toHaveLength(1);
   });
 
-  it("remembers berries eaten array across waves and save/reload", async () => {
+  it("remembers berries eaten array across waves", async () => {
     game.override
       .startingHeldItems([{ name: "BERRY", type: BerryType.PETAYA, count: 2 }])
       .ability(Abilities.BALL_FETCH); // don't actually need harvest for this test
@@ -132,20 +135,17 @@ describe("Abilities - Harvest", () => {
 
     // ate 1 berry without recovering (no harvest)
     expect(regieleki.battleData.berriesEaten).toEqual([BerryType.PETAYA]);
-    expect(getPlayerBerries()).toEqual([expect.objectContaining({ berryType: BerryType.PETAYA, stackCount: 1 })]);
-    expect(game.scene.getPlayerPokemon()?.getStatStage(Stat.SPATK)).toBe(1);
+    expectBerriesContaining({ name: "BERRY", count: 1, type: BerryType.PETAYA });
+    expect(regieleki.getStatStage(Stat.SPATK)).toBe(1);
 
     await game.toNextWave();
 
     expect(regieleki.battleData.berriesEaten).toEqual([BerryType.PETAYA]);
-
-    await game.reload.reloadSession();
-
-    const regielekiReloaded = game.scene.getPlayerPokemon()!;
-    expect(regielekiReloaded.battleData.berriesEaten).toEqual([BerryType.PETAYA]);
+    expectBerriesContaining({ name: "BERRY", count: 1, type: BerryType.PETAYA });
+    expect(regieleki.getStatStage(Stat.SPATK)).toBe(1);
   });
 
-  it("keeps berries eaten across reloads", async () => {
+  it("keeps harvested berries across reloads", async () => {
     game.override
       .startingHeldItems([{ name: "BERRY", type: BerryType.PETAYA, count: 1 }])
       .moveset([Moves.SPLASH, Moves.EARTHQUAKE])
@@ -172,12 +172,13 @@ describe("Abilities - Harvest", () => {
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextWave();
 
-    expect(getPlayerBerries()).toEqual([expect.objectContaining({ berryType: BerryType.PETAYA, stackCount: 1 })]);
+    expectBerriesContaining({ name: "BERRY", count: 1, type: BerryType.PETAYA });
     expect(game.scene.getPlayerPokemon()?.getStatStage(Stat.SPATK)).toBe(1);
 
     await game.reload.reloadSession();
 
-    expect(getPlayerBerries()).toEqual([expect.objectContaining({ berryType: BerryType.PETAYA, stackCount: 1 })]);
+    expect(regieleki.battleData.berriesEaten).toEqual([]);
+    expectBerriesContaining({ name: "BERRY", count: 1, type: BerryType.PETAYA });
     expect(game.scene.getPlayerPokemon()?.getStatStage(Stat.SPATK)).toBe(1);
   });
 

@@ -27,14 +27,17 @@ const migratePartyData: SessionSaveMigrator = {
       // only edit summondata moveset if exists
       pkmnData.summonData.moveset &&= pkmnData.summonData.moveset.filter(m => !!m);
 
-      if (
-        pkmnData.customPokemonData &&
-        "hitsRecCount" in pkmnData.customPokemonData &&
-        typeof pkmnData.customPokemonData["hitsRecCount"] === "number"
-      ) {
-        // transfer old hit count stat to battleData.
-        // No need to reset it as new Pokemon
-        pkmnData.battleData.hitCount = pkmnData.customPokemonData["hitsRecCount"];
+      if (pkmnData.customPokemonData) {
+        // revert all "-1" sprite scales to a minimum value of 1
+        pkmnData.customPokemonData.spriteScale = Math.max(1, pkmnData.customPokemonData.spriteScale);
+        if (
+          "hitsRecCount" in pkmnData.customPokemonData &&
+          typeof pkmnData.customPokemonData["hitsRecCount"] === "number"
+        ) {
+          // transfer old hit count stat to battleData.
+          pkmnData.battleData.hitCount = pkmnData.customPokemonData["hitsRecCount"];
+          pkmnData.customPokemonData["hitsRecCount"] = null;
+        }
       }
       return pkmnData;
     };

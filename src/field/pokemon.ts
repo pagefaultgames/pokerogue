@@ -1183,12 +1183,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       formKey === "ruchbah-starmobile" ||
       formKey === "caph-starmobile"
     ) {
+      // G-Max and starmobiles have flat 1.5x scale
       return 1.5;
     }
-    if (this.customPokemonData.spriteScale > 0) {
-      return this.customPokemonData.spriteScale;
-    }
-    return 1;
+    return this.customPokemonData.spriteScale;
   }
 
   /** Resets the pokemon's field sprite properties, including position, alpha, and scale */
