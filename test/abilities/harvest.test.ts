@@ -95,13 +95,12 @@ describe("Abilities - Harvest", () => {
 
     // Give ourselves harvest and disable enemy neut gas,
     // but force our roll to fail so we don't accidentally recover anything
+    vi.spyOn(PostTurnRestoreBerryAbAttr.prototype, "canApplyPostTurn").mockReturnValueOnce(false);
     game.override.ability(Abilities.HARVEST);
     game.move.select(Moves.GASTRO_ACID);
     await game.forceEnemyMove(Moves.NUZZLE);
 
-    await game.phaseInterceptor.to("TurnEndPhase", false);
-    vi.spyOn(PostTurnRestoreBerryAbAttr.prototype, "canApplyPostTurn").mockReturnValue(false);
-    await game.phaseInterceptor.to("TurnEndPhase");
+    await game.toNextTurn();
 
     expect(milotic.battleData.berriesEaten).toEqual(
       expect.arrayContaining([BerryType.ENIGMA, BerryType.LUM, BerryType.ENIGMA, BerryType.LUM]),
@@ -111,11 +110,9 @@ describe("Abilities - Harvest", () => {
     // proc a high roll and we _should_ get a berry back!
     game.move.select(Moves.SPLASH);
     await game.forceEnemyMove(Moves.SPLASH);
-    await game.phaseInterceptor.to("TurnEndPhase", false);
-    vi.spyOn(Phaser.Math.RND, "realInRange").mockReturnValue(1);
     await game.toNextTurn();
 
-    expect(milotic?.battleData.berriesEaten).toHaveLength(3);
+    expect(milotic.battleData.berriesEaten).toHaveLength(3);
     expect(getPlayerBerries()).toHaveLength(1);
   });
 
