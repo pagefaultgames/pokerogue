@@ -84,7 +84,7 @@ export class FaintPhase extends PokemonPhase {
      * so the fainted pokemon has been included.
      */
     for (const pokemon of globalScene.getPlayerField()) {
-      if (pokemon.isActive() || pokemon.isFainted()) {
+      if (pokemon?.isActive() || pokemon?.isFainted()) {
         globalScene.currentBattle.addParticipant(pokemon);
       }
     }
