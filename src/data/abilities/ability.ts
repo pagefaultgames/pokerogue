@@ -4113,6 +4113,7 @@ export class PostTurnRestoreBerryAbAttr extends PostTurnAbAttr {
     const chosenBerryType = berriesEaten[randomIdx];
     pokemon.battleData.berriesEaten.splice(randomIdx, 1); // Remove berry from memory
     const chosenBerry = new BerryModifierType(chosenBerryType);
+    chosenBerry.id = "BERRY" // needed to prevent item deletion; remove after modifier rework
 
     // Add the randomly chosen berry or update the existing one
     const berryModifier = globalScene.findModifier(
