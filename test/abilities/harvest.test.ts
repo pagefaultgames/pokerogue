@@ -1,4 +1,5 @@
 import { BattlerIndex } from "#app/battle";
+import { PostTurnRestoreBerryAbAttr } from "#app/data/abilities/ability";
 import type Pokemon from "#app/field/pokemon";
 import { BerryModifier, PreserveBerryModifier } from "#app/modifier/modifier";
 import type { ModifierOverride } from "#app/modifier/modifier-type";
@@ -72,14 +73,13 @@ describe("Abilities - Harvest", () => {
 
   it("tracks berries eaten while disabled/not present", async () => {
     // Note: this also checks for harvest not being present as neutralizing gas works by making
-    // the game consider all other pokemon to *not* have any ability.
+    // the game consider all other pokemon to *not* have their respective abilities.
     game.override
       .startingHeldItems([
         { name: "BERRY", type: BerryType.ENIGMA, count: 2 },
         { name: "BERRY", type: BerryType.LUM, count: 2 },
       ])
-      .enemyAbility(Abilities.NEUTRALIZING_GAS)
-      .weather(WeatherType.NONE); // clear weather so we can control when harvest rolls succeed
+      .enemyAbility(Abilities.NEUTRALIZING_GAS);
     await game.classicMode.startBattle([Species.MILOTIC]);
 
     const milotic = game.scene.getPlayerPokemon()!;
@@ -100,7 +100,7 @@ describe("Abilities - Harvest", () => {
     await game.forceEnemyMove(Moves.NUZZLE);
 
     await game.phaseInterceptor.to("TurnEndPhase", false);
-    vi.spyOn(Phaser.Math.RND, "realInRange").mockReturnValue(0);
+    vi.spyOn(PostTurnRestoreBerryAbAttr.prototype, "canApplyPostTurn").mockReturnValue(false);
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(milotic.battleData.berriesEaten).toEqual(
