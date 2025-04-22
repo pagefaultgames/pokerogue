@@ -1,3 +1,4 @@
+import { BattlerIndex } from "#app/battle";
 import type Pokemon from "#app/field/pokemon";
 import { BerryModifier, PreserveBerryModifier } from "#app/modifier/modifier";
 import type { ModifierOverride } from "#app/modifier/modifier-type";
@@ -115,8 +116,7 @@ describe("Abilities - Harvest", () => {
     expect(getPlayerBerries()).toHaveLength(1);
   });
 
-  // TODO: Figure out why this is borking...???
-  it("remembers berries eaten tracker across waves and save/reload", async () => {
+  it("remembers berries eaten array across waves and save/reload", async () => {
     game.override
       .startingHeldItems([{ name: "BERRY", type: BerryType.PETAYA, count: 2 }])
       .ability(Abilities.BALL_FETCH); // don't actually need harvest for this test
@@ -143,6 +143,42 @@ describe("Abilities - Harvest", () => {
 
     const regielekiReloaded = game.scene.getPlayerPokemon()!;
     expect(regielekiReloaded.battleData.berriesEaten).toEqual([BerryType.PETAYA]);
+  });
+
+  it("keeps berries eaten across reloads", async () => {
+    game.override
+      .startingHeldItems([{ name: "BERRY", type: BerryType.PETAYA, count: 1 }])
+      .moveset([Moves.SPLASH, Moves.EARTHQUAKE])
+      .enemyMoveset([Moves.SUPER_FANG, Moves.HEAL_PULSE])
+      .enemyAbility(Abilities.COMPOUND_EYES);
+    await game.classicMode.startBattle([Species.REGIELEKI]);
+
+    const regieleki = game.scene.getPlayerPokemon()!;
+    regieleki.hp = regieleki.getMaxHp() / 4 + 1;
+
+    game.move.select(Moves.SPLASH);
+    await game.forceEnemyMove(Moves.SUPER_FANG);
+    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    await game.toNextTurn();
+
+    // ate 1 berry and recovered it
+    expect(regieleki.battleData.berriesEaten).toEqual([]);
+    expect(getPlayerBerries()).toEqual([expect.objectContaining({ berryType: BerryType.PETAYA, stackCount: 1 })]);
+    expect(game.scene.getPlayerPokemon()?.getStatStage(Stat.SPATK)).toBe(1);
+
+    // heal up so harvest doesn't proc and kill enemy
+    game.move.select(Moves.EARTHQUAKE);
+    await game.forceEnemyMove(Moves.HEAL_PULSE);
+    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    await game.toNextWave();
+
+    expect(getPlayerBerries()).toEqual([expect.objectContaining({ berryType: BerryType.PETAYA, stackCount: 1 })]);
+    expect(game.scene.getPlayerPokemon()?.getStatStage(Stat.SPATK)).toBe(1);
+
+    await game.reload.reloadSession();
+
+    expect(getPlayerBerries()).toEqual([expect.objectContaining({ berryType: BerryType.PETAYA, stackCount: 1 })]);
+    expect(game.scene.getPlayerPokemon()?.getStatStage(Stat.SPATK)).toBe(1);
   });
 
   it("cannot restore capped berries", async () => {
