@@ -3172,6 +3172,7 @@ export class PreSetStatusAbAttr extends AbAttr {
  */
 export class PreSetStatusEffectImmunityAbAttr extends PreSetStatusAbAttr {
   protected immuneEffects: StatusEffect[];
+  private lastEffect: StatusEffect;
 
   /**
    * @param immuneEffects - The status effects to which the Pokémon is immune.
@@ -3197,6 +3198,7 @@ export class PreSetStatusEffectImmunityAbAttr extends PreSetStatusAbAttr {
    */
   override applyPreSetStatus(pokemon: Pokemon, passive: boolean, simulated: boolean, effect: StatusEffect, cancelled: BooleanHolder, args: any[]): void {
     cancelled.value = true;
+    this.lastEffect = effect;
   }
 
   getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
@@ -3204,7 +3206,7 @@ export class PreSetStatusEffectImmunityAbAttr extends PreSetStatusAbAttr {
       i18next.t("abilityTriggers:statusEffectImmunityWithName", {
         pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
         abilityName,
-        statusEffectName: getStatusEffectDescriptor(args[0] as StatusEffect)
+        statusEffectName: getStatusEffectDescriptor(this.lastEffect)
       }) :
       i18next.t("abilityTriggers:statusEffectImmunity", {
         pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
