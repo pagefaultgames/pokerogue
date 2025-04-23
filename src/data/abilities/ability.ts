@@ -72,6 +72,7 @@ import type { AbAttrCondition, PokemonDefendCondition, PokemonStatStageChangeCon
 import type { BattlerIndex } from "#app/battle";
 import type Move from "#app/data/moves/move";
 import type { ArenaTrapTag, SuppressAbilitiesTag } from "#app/data/arena-tag";
+import { SelectBiomePhase } from "#app/phases/select-biome-phase";
 
 export class BlockRecoilDamageAttr extends AbAttr {
   constructor() {
@@ -5483,6 +5484,11 @@ class ForceSwitchOutHelper {
 
         if (switchOutTarget.hp) {
           globalScene.pushPhase(new BattleEndPhase(false));
+
+          if (globalScene.gameMode.hasRandomBiomes || globalScene.isNewBiome()) {
+            globalScene.pushPhase(new SelectBiomePhase());
+          }
+
           globalScene.pushPhase(new NewBattlePhase());
         }
       }

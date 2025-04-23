@@ -15,6 +15,7 @@ import { TrainerVictoryPhase } from "./trainer-victory-phase";
 import { handleMysteryEncounterVictory } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { globalScene } from "#app/global-scene";
 import { timedEventManager } from "#app/global-event-manager";
+import { SelectBiomePhase } from "./select-biome-phase";
 
 export class VictoryPhase extends PokemonPhase {
   /** If true, indicates that the phase is intended for EXP purposes only, and not to continue a battle to next phase */
@@ -111,6 +112,11 @@ export class VictoryPhase extends PokemonPhase {
             globalScene.pushPhase(new AddEnemyBuffModifierPhase());
           }
         }
+
+        if (globalScene.gameMode.hasRandomBiomes || globalScene.isNewBiome()) {
+          globalScene.pushPhase(new SelectBiomePhase());
+        }
+
         globalScene.pushPhase(new NewBattlePhase());
       } else {
         globalScene.currentBattle.battleType = BattleType.CLEAR;
