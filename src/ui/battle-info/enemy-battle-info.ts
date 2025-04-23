@@ -5,6 +5,7 @@ import { addTextObject, TextStyle } from "#app/ui/text";
 import { addWindow, WindowVariant } from "#app/ui/ui-theme";
 import { Stat } from "#enums/stat";
 import type { EnemyPokemon } from "#app/field/pokemon";
+import i18next from "i18next";
 
 export class EnemyBattleInfo extends BattleInfo {
   protected player: false = false;
@@ -56,6 +57,46 @@ export class EnemyBattleInfo extends BattleInfo {
   override initInfo(pokemon: EnemyPokemon): void {
     this.flyoutMenu.initInfo(pokemon);
     super.initInfo(pokemon);
+
+    if (this.nameText.visible) {
+      this.nameText
+        .on("pointerover", () =>
+          globalScene.ui.showTooltip(
+            "",
+            i18next.t("battleInfo:generation", {
+              generation: i18next.t(`starterSelectUiHandler:gen${pokemon.species.generation}`),
+            }),
+          ),
+        )
+        .on("pointerout", () => globalScene.ui.hideTooltip());
+    }
+
+    const dexEntry = globalScene.gameData.dexData[pokemon.species.speciesId];
+    this.ownedIcon.setVisible(!!dexEntry.caughtAttr);
+    const opponentPokemonDexAttr = pokemon.getDexAttr();
+    if (
+      globalScene.gameMode.isClassic &&
+      globalScene.gameData.starterData[pokemon.species.getRootSpeciesId()].classicWinCount > 0 &&
+      globalScene.gameData.starterData[pokemon.species.getRootSpeciesId(true)].classicWinCount > 0
+    ) {
+      this.championRibbon.setVisible(true);
+    }
+
+    // Check if Player owns all genders and forms of the Pokemon
+    const missingDexAttrs = (dexEntry.caughtAttr & opponentPokemonDexAttr) < opponentPokemonDexAttr;
+
+    const ownedAbilityAttrs = globalScene.gameData.starterData[pokemon.species.getRootSpeciesId()].abilityAttr;
+
+    // Check if the player owns ability for the root form
+    const playerOwnsThisAbility = pokemon.checkIfPlayerHasAbilityOfStarter(ownedAbilityAttrs);
+
+    if (missingDexAttrs || !playerOwnsThisAbility) {
+      this.ownedIcon.setTint(0x808080);
+    }
+
+    if (this.boss) {
+      this.updateBossSegmentDividers(pokemon as EnemyPokemon);
+    }
   }
 
   /**
@@ -85,6 +126,63 @@ export class EnemyBattleInfo extends BattleInfo {
       this.effectivenessContainer?.setVisible(false);
     } else {
       this.updateEffectiveness(this.currentEffectiveness);
+    }
+  }
+
+  updateBossSegments(pokemon: EnemyPokemon): void {
+    const boss = !!pokemon.bossSegments;
+
+    if (boss !== this.boss) {
+      this.boss = boss;
+
+      [
+        this.nameText,
+        this.genderText,
+        this.teraIcon,
+        this.splicedIcon,
+        this.shinyIcon,
+        this.ownedIcon,
+        this.championRibbon,
+        this.statusIndicator,
+        this.levelContainer,
+        this.statValuesContainer,
+      ].map(e => (e.x += 48 * (boss ? -1 : 1)));
+      this.hpBar.x += 38 * (boss ? -1 : 1);
+      this.hpBar.y += 2 * (this.boss ? -1 : 1);
+      this.hpBar.setTexture(`overlay_hp${boss ? "_boss" : ""}`);
+      this.box.setTexture(this.getTextureName());
+      this.statsBox.setTexture(`${this.getTextureName()}_stats`);
+    }
+
+    this.bossSegments = boss ? pokemon.bossSegments : 0;
+    this.updateBossSegmentDividers(pokemon);
+  }
+
+  updateBossSegmentDividers(pokemon: EnemyPokemon): void {
+    while (this.hpBarSegmentDividers.length) {
+      this.hpBarSegmentDividers.pop()?.destroy();
+    }
+
+    if (this.boss && this.bossSegments > 1) {
+      const uiTheme = globalScene.uiTheme;
+      const maxHp = pokemon.getMaxHp();
+      for (let s = 1; s < this.bossSegments; s++) {
+        const dividerX = (Math.round((maxHp / this.bossSegments) * s) / maxHp) * this.hpBar.width;
+        const divider = globalScene.add.rectangle(
+          0,
+          0,
+          1,
+          this.hpBar.height - (uiTheme ? 0 : 1),
+          pokemon.bossSegmentIndex >= s ? 0xffffff : 0x404040,
+        );
+        divider.setOrigin(0.5, 0);
+        divider.setName("hpBar_divider_" + s.toString());
+        this.add(divider);
+        this.moveBelow(divider as Phaser.GameObjects.GameObject, this.statsContainer);
+
+        divider.setPositionRelative(this.hpBar, dividerX, uiTheme ? 0 : 1);
+        this.hpBarSegmentDividers.push(divider);
+      }
     }
   }
 
