@@ -83,6 +83,11 @@ export class PlayerBattleInfo extends BattleInfo {
     toggledElements.forEach(el => el.setVisible(!mini));
   }
 
+  /**
+   * Updates the Hp Number text (that is the "HP/Max HP" text that appears below the player's health bar)
+   * while the health bar is tweening.
+   * @param pokemon - The Pokemon the health bar belongs to.
+   */
   protected override onHpTweenUpdate(pokemon: PlayerPokemon): void {
     const tweenHp = Math.ceil(this.hpBar.scaleX * pokemon.getMaxHp());
     this.setHpNumbers(tweenHp, pokemon.getMaxHp());
@@ -155,6 +160,10 @@ export class PlayerBattleInfo extends BattleInfo {
     });
   }
 
+  /** Updates the info on the info bar.
+   * In addition to performing all the steps of {@linkcode BattleInfo.updateInfo},
+   * it also updates the EXP Bar
+   */
   override async updateInfo(pokemon: PlayerPokemon, instant?: boolean): Promise<void> {
     await super.updateInfo(pokemon, instant);
     const isLevelCapped = pokemon.level >= globalScene.getMaxExpLevel();

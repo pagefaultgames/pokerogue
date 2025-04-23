@@ -11,7 +11,6 @@ import { PlayerBattleInfo } from "#app/ui/battle-info/player-battle-info";
 import type Move from "#app/data/moves/move";
 import {
   HighCritAttr,
-  StatChangeBeforeDmgCalcAttr,
   HitsTagAttr,
   applyMoveAttrs,
   FixedDamageAttr,
