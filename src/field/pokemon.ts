@@ -6,9 +6,9 @@ import type { Variant } from "#app/sprites/variant";
 import { populateVariantColors, variantColorCache } from "#app/sprites/variant";
 import { variantData } from "#app/sprites/variant";
 import BattleInfo, {
-  PlayerBattleInfo,
-  EnemyBattleInfo,
-} from "#app/ui/battle-info";
+} from "#app/ui/battle-info/battle-info";
+import { EnemyBattleInfo } from "#app/ui/battle-info/enemy-battle-info";
+import { PlayerBattleInfo } from "#app/ui/battle-info/player-battle-info";
 import type Move from "#app/data/moves/move";
 import {
   HighCritAttr,
@@ -3824,20 +3824,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.battleInfo.updateInfo(this, instant);
   }
 
-  /**
-   * Show or hide the type effectiveness multiplier window
-   * Passing undefined will hide the window
-   */
-  updateEffectiveness(effectiveness?: string) {
-    this.battleInfo.updateEffectiveness(effectiveness);
-  }
-
   toggleStats(visible: boolean): void {
     this.battleInfo.toggleStats(visible);
-  }
-
-  toggleFlyout(visible: boolean): void {
-    this.battleInfo.toggleFlyout(visible);
   }
 
   /**
@@ -6297,6 +6285,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
 export class PlayerPokemon extends Pokemon {
   public compatibleTms: Moves[];
+  protected battleInfo: PlayerBattleInfo;
 
   constructor(
     species: PokemonSpecies,
@@ -6916,6 +6905,7 @@ export class EnemyPokemon extends Pokemon {
   public bossSegments: number;
   public bossSegmentIndex: number;
   public initialTeamIndex: number;
+  protected battleInfo: EnemyBattleInfo;
   /** To indicate if the instance was populated with a dataSource -> e.g. loaded & populated from session data */
   public readonly isPopulatedFromDataSource: boolean;
 
@@ -7019,6 +7009,19 @@ export class EnemyPokemon extends Pokemon {
     } else {
       this.battleInfo.updateBossSegments(this);
     }
+  }
+
+  toggleFlyout(visible: boolean): void {
+    this.battleInfo.toggleFlyout(visible);
+  }
+  
+
+  /**
+   * Show or hide the type effectiveness multiplier window
+   * Passing undefined will hide the window
+   */
+  updateEffectiveness(effectiveness?: string) {
+    this.battleInfo.updateEffectiveness(effectiveness);
   }
 
   /**
