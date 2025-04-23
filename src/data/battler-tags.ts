@@ -2641,7 +2641,7 @@ export class GulpMissileTag extends BattlerTag {
         return false;
       }
 
-      if (moveEffectPhase.move.getMove().hitsSubstitute(attacker, pokemon)) {
+      if (moveEffectPhase.move.hitsSubstitute(attacker, pokemon)) {
         return true;
       }
 
@@ -2997,7 +2997,7 @@ export class SubstituteTag extends BattlerTag {
       if (!attacker) {
         return;
       }
-      const move = moveEffectPhase.move.getMove();
+      const move = moveEffectPhase.move;
       const firstHit = attacker.turnData.hitCount === attacker.turnData.hitsLeft;
 
       if (firstHit && move.hitsSubstitute(attacker, pokemon)) {
@@ -3685,7 +3685,7 @@ function getMoveEffectPhaseData(_pokemon: Pokemon): { phase: MoveEffectPhase; at
     return {
       phase: phase,
       attacker: phase.getPokemon(),
-      move: phase.move.getMove(),
+      move: phase.move,
     };
   }
   return null;
