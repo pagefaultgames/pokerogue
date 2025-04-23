@@ -1,6 +1,5 @@
 import Phaser from "phaser";
 import type { MockGameObject } from "../mockGameObject";
-import Sprite = Phaser.GameObjects.Sprite;
 import Frame = Phaser.Textures.Frame;
 
 export default class MockSprite implements MockGameObject {
@@ -21,6 +20,7 @@ export default class MockSprite implements MockGameObject {
     Phaser.GameObjects.Sprite.prototype.setInteractive = this.setInteractive;
     // @ts-ignore
     Phaser.GameObjects.Sprite.prototype.setTexture = this.setTexture;
+    // @ts-ignore
     Phaser.GameObjects.Sprite.prototype.setSizeToFrame = this.setSizeToFrame;
     // @ts-ignore
     Phaser.GameObjects.Sprite.prototype.setFrame = this.setFrame;
@@ -42,8 +42,8 @@ export default class MockSprite implements MockGameObject {
     return this;
   }
 
-  setSizeToFrame(_frame?: boolean | Frame): Sprite {
-    return {} as Sprite;
+  setSizeToFrame(_frame?: boolean | Frame): this {
+    return this;
   }
 
   setPipeline(obj): this {
@@ -62,12 +62,12 @@ export default class MockSprite implements MockGameObject {
     return this;
   }
 
-  setScale(scale): this {
+  setScale(scale = 1): this {
     this.phaserSprite.setScale(scale);
     return this;
   }
 
-  setOrigin(x, y): this {
+  setOrigin(x = 0.5, y = x): this {
     this.phaserSprite.setOrigin(x, y);
     return this;
   }
