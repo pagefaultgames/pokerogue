@@ -14,11 +14,12 @@ export class PlayerBattleInfo extends BattleInfo {
     expBar.setOrigin(0);
     this.add(expBar);
 
-    const expMaskRect = globalScene.make.graphics({});
-    expMaskRect.setScale(6);
-    expMaskRect.fillStyle(0xffffff);
-    expMaskRect.beginPath();
-    expMaskRect.fillRect(127, 126, 85, 2);
+    const expMaskRect = globalScene.make
+      .graphics({})
+      .setScale(6)
+      .fillStyle(0xffffff)
+      .beginPath()
+      .fillRect(127, 126, 85, 2);
 
     const expMask = expMaskRect.createGeometryMask();
 
