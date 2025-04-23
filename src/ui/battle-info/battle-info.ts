@@ -35,8 +35,6 @@ export default abstract class BattleInfo extends Phaser.GameObjects.Container {
   protected box: Phaser.GameObjects.Sprite;
   protected nameText: Phaser.GameObjects.Text;
   protected genderText: Phaser.GameObjects.Text;
-  protected ownedIcon: Phaser.GameObjects.Sprite;
-  protected championRibbon: Phaser.GameObjects.Sprite;
   protected teraIcon: Phaser.GameObjects.Sprite;
   protected shinyIcon: Phaser.GameObjects.Sprite;
   protected fusionShinyIcon: Phaser.GameObjects.Sprite;
@@ -388,7 +386,7 @@ export default abstract class BattleInfo extends Phaser.GameObjects.Container {
 
     this.shinyIcon.setVisible(pokemon.isShiny());
 
-    this.initTypes(pokemon.getTypes(true));
+    this.initTypes(pokemon.getTypes(true, false, undefined, true));
 
     const stats = this.statOrder.map(() => 0);
 
@@ -424,91 +422,109 @@ export default abstract class BattleInfo extends Phaser.GameObjects.Container {
     this.baseY = this.y;
   }
 
+  //#region Update methods and helpers
+
+  updateStatusIcon(pokemon: Pokemon, xOffset = 0) {
+    if (this.lastStatus !== (pokemon.status?.effect || StatusEffect.NONE)) {
+      this.lastStatus = pokemon.status?.effect || StatusEffect.NONE;
+
+      if (this.lastStatus !== StatusEffect.NONE) {
+        this.statusIndicator.setFrame(StatusEffect[this.lastStatus].toLowerCase());
+      }
+
+      this.statusIndicator.setVisible(!!this.lastStatus).setPositionRelative(this.nameText, xOffset, 11.5);
+    }
+  }
+  /** Update the pokemon name inside the container ,*/
+  protected updateName(name: string): boolean {
+    if (this.lastName === name) {
+      return false;
+    }
+    this.nameText.setText(name).setPositionRelative(this.box, -this.nameText.displayWidth, 0);
+    this.lastName = name;
+
+    return true;
+  }
+
+  protected updateTeraType(ty: PokemonType): boolean {
+    if (this.lastTeraType === ty) {
+      return false;
+    }
+
+    this.teraIcon
+      .setVisible(ty !== PokemonType.UNKNOWN)
+      .setTintFill(Phaser.Display.Color.GetColor(...getTypeRgb(ty)))
+      .setPositionRelative(this.nameText, this.nameText.displayWidth + this.genderText.displayWidth + 1, 2);
+    this.lastTeraType = ty;
+
+    return true;
+  }
+
+  updateTypes(types: PokemonType[]): void {
+    this.type1Icon
+      .setTexture(`pbinfo_${this.player ? "player" : "enemy"}_type${types.length > 1 ? "1" : ""}`)
+      .setFrame(PokemonType[types[0]].toLowerCase());
+    this.type2Icon.setVisible(types.length > 1);
+    this.type3Icon.setVisible(types.length > 2);
+    if (types.length > 1) {
+      this.type2Icon.setFrame(PokemonType[types[1]].toLowerCase());
+    }
+    if (types.length > 2) {
+      this.type3Icon.setFrame(PokemonType[types[2]].toLowerCase());
+    }
+  }
+
+  /**
+   * Called by {@linkcode updateInfo} to update the position of the tera, spliced, and shiny icons
+   * @param isFusion - Whether the pokemon is a fusion or not
+   */
+  protected updateIconDisplay(isFusion: boolean): void {
+    this.teraIcon.setPositionRelative(this.nameText, this.nameText.displayWidth + this.genderText.displayWidth + 1, 2);
+    this.splicedIcon
+      .setVisible(isFusion)
+      .setPositionRelative(
+        this.nameText,
+        this.nameText.displayWidth +
+          this.genderText.displayWidth +
+          1 +
+          (this.teraIcon.visible ? this.teraIcon.displayWidth + 1 : 0),
+        1.5,
+      );
+    this.shinyIcon.setPositionRelative(
+      this.nameText,
+      this.nameText.displayWidth +
+        this.genderText.displayWidth +
+        1 +
+        (this.teraIcon.visible ? this.teraIcon.displayWidth + 1 : 0) +
+        (this.splicedIcon.visible ? this.splicedIcon.displayWidth + 1 : 0),
+      2.5,
+    );
+  }
+
   updateInfo(pokemon: Pokemon, instant?: boolean): Promise<void> {
     return new Promise(resolve => {
       if (!globalScene) {
         return resolve();
       }
 
-      const gender = pokemon.summonData.illusion?.gender ?? pokemon.gender;
+      const gender: Gender = pokemon.summonData.illusion?.gender ?? pokemon.gender;
 
-      this.genderText.setText(getGenderSymbol(gender));
-      this.genderText.setColor(getGenderColor(gender));
+      this.genderText.setText(getGenderSymbol(gender)).setColor(getGenderColor(gender));
 
-      const nameUpdated = this.lastName !== pokemon.getNameToRender();
+      const nameUpdated = this.updateName(pokemon.getNameToRender());
 
-      if (nameUpdated) {
-        this.updateNameText(pokemon);
-        this.genderText.setPositionRelative(this.nameText, this.nameText.displayWidth, 0);
-      }
-
-      const teraType = pokemon.isTerastallized ? pokemon.getTeraType() : PokemonType.UNKNOWN;
-      const teraTypeUpdated = this.lastTeraType !== teraType;
-
-      if (teraTypeUpdated) {
-        this.teraIcon.setVisible(teraType !== PokemonType.UNKNOWN);
-        this.teraIcon.setPositionRelative(
-          this.nameText,
-          this.nameText.displayWidth + this.genderText.displayWidth + 1,
-          2,
-        );
-        this.teraIcon.setTintFill(Phaser.Display.Color.GetColor(...getTypeRgb(teraType)));
-        this.lastTeraType = teraType;
-      }
+      const teraTypeUpdated = this.updateTeraType(
+        pokemon.isTerastallized ? pokemon.getTeraType() : PokemonType.UNKNOWN,
+      );
 
       const isFusion = pokemon.isFusion(true);
 
       if (nameUpdated || teraTypeUpdated) {
-        this.splicedIcon.setVisible(isFusion);
-
-        this.teraIcon.setPositionRelative(
-          this.nameText,
-          this.nameText.displayWidth + this.genderText.displayWidth + 1,
-          2,
-        );
-        this.splicedIcon.setPositionRelative(
-          this.nameText,
-          this.nameText.displayWidth +
-            this.genderText.displayWidth +
-            1 +
-            (this.teraIcon.visible ? this.teraIcon.displayWidth + 1 : 0),
-          1.5,
-        );
-        this.shinyIcon.setPositionRelative(
-          this.nameText,
-          this.nameText.displayWidth +
-            this.genderText.displayWidth +
-            1 +
-            (this.teraIcon.visible ? this.teraIcon.displayWidth + 1 : 0) +
-            (this.splicedIcon.visible ? this.splicedIcon.displayWidth + 1 : 0),
-          2.5,
-        );
+        this.updateIconDisplay(isFusion);
       }
 
-      if (this.lastStatus !== (pokemon.status?.effect || StatusEffect.NONE)) {
-        this.lastStatus = pokemon.status?.effect || StatusEffect.NONE;
-
-        if (this.lastStatus !== StatusEffect.NONE) {
-          this.statusIndicator.setFrame(StatusEffect[this.lastStatus].toLowerCase());
-        }
-
-        const offsetX = !this.player ? (this.ownedIcon.visible ? 8 : 0) + (this.championRibbon.visible ? 8 : 0) : 0;
-        this.statusIndicator.setPositionRelative(this.nameText, offsetX, 11.5);
-
-        this.statusIndicator.setVisible(!!this.lastStatus);
-      }
-
-      const types = pokemon.getTypes(true, false, undefined, true);
-      this.type1Icon.setTexture(`pbinfo_${this.player ? "player" : "enemy"}_type${types.length > 1 ? "1" : ""}`);
-      this.type1Icon.setFrame(PokemonType[types[0]].toLowerCase());
-      this.type2Icon.setVisible(types.length > 1);
-      this.type3Icon.setVisible(types.length > 2);
-      if (types.length > 1) {
-        this.type2Icon.setFrame(PokemonType[types[1]].toLowerCase());
-      }
-      if (types.length > 2) {
-        this.type3Icon.setFrame(PokemonType[types[2]].toLowerCase());
-      }
+      this.updateStatusIcon(pokemon);
+      this.updateTypes(pokemon.getTypes(true, false, undefined, true));
 
       const updateHpFrame = () => {
         const hpFrame = this.hpBar.scaleX > 0.5 ? "high" : this.hpBar.scaleX > 0.25 ? "medium" : "low";
@@ -605,6 +621,7 @@ export default abstract class BattleInfo extends Phaser.GameObjects.Container {
       resolve();
     });
   }
+  //#endregion
 
   updateNameText(pokemon: Pokemon): void {
     let displayName = pokemon.getNameToRender().replace(/[♂♀]/g, "");
