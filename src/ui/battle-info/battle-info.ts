@@ -46,7 +46,6 @@ export default abstract class BattleInfo extends Phaser.GameObjects.Container {
   protected statusIndicator: Phaser.GameObjects.Sprite;
   protected levelContainer: Phaser.GameObjects.Container;
   protected hpBar: Phaser.GameObjects.Image;
-  protected hpBarSegmentDividers: Phaser.GameObjects.Rectangle[];
   protected levelNumbersContainer: Phaser.GameObjects.Container;
   protected hpNumbersContainer: Phaser.GameObjects.Container;
   protected type1Icon: Phaser.GameObjects.Sprite;
@@ -164,8 +163,6 @@ export default abstract class BattleInfo extends Phaser.GameObjects.Container {
     this.hpBar.setName("hp_bar");
     this.hpBar.setOrigin(0);
     this.add(this.hpBar);
-
-    this.hpBarSegmentDividers = [];
 
     this.levelNumbersContainer = globalScene.add.container(9.5, globalScene.uiTheme ? 0 : -0.5);
     this.levelNumbersContainer.setName("container_level");
