@@ -1,6 +1,8 @@
 import { startingWave } from "#app/starting-wave";
 import { globalScene } from "#app/global-scene";
 import { PartyMemberStrength } from "#enums/party-member-strength";
+import { GameModes } from "#app/game-mode";
+import { ClassicFixedBossWaves } from "#enums/fixed-boss-waves";
 
 export class TrainerPartyTemplate {
   public size: number;
@@ -165,6 +167,11 @@ export const trainerPartyTemplates = {
     new TrainerPartyTemplate(1, PartyMemberStrength.STRONGER),
   ),
   GYM_LEADER_5: new TrainerPartyCompoundTemplate(
+    new TrainerPartyTemplate(4, PartyMemberStrength.AVERAGE),
+    new TrainerPartyTemplate(1, PartyMemberStrength.STRONG),
+    new TrainerPartyTemplate(1, PartyMemberStrength.STRONGER),
+  ),
+  GYM_LEADER_6: new TrainerPartyCompoundTemplate(
     new TrainerPartyTemplate(3, PartyMemberStrength.AVERAGE),
     new TrainerPartyTemplate(2, PartyMemberStrength.STRONG),
     new TrainerPartyTemplate(1, PartyMemberStrength.STRONGER),
@@ -222,19 +229,18 @@ export const trainerPartyTemplates = {
  */
 export function getEvilGruntPartyTemplate(): TrainerPartyTemplate {
   const waveIndex = globalScene.currentBattle?.waveIndex;
-  if (waveIndex < 40) {
-    return trainerPartyTemplates.TWO_AVG;
+  switch (waveIndex) {
+    case ClassicFixedBossWaves.EVIL_GRUNT_1:
+      return trainerPartyTemplates.TWO_AVG;
+    case ClassicFixedBossWaves.EVIL_GRUNT_2:
+      return trainerPartyTemplates.THREE_AVG;
+    case ClassicFixedBossWaves.EVIL_GRUNT_3:
+      return trainerPartyTemplates.TWO_AVG_ONE_STRONG;
+    case ClassicFixedBossWaves.EVIL_ADMIN_1:
+      return trainerPartyTemplates.GYM_LEADER_4; // 3avg 1 strong 1 stronger
+    default:
+      return trainerPartyTemplates.GYM_LEADER_6; // 3 avg 2 strong 1 stronger
   }
-  if (waveIndex < 63) {
-    return trainerPartyTemplates.THREE_AVG;
-  }
-  if (waveIndex < 65) {
-    return trainerPartyTemplates.TWO_AVG_ONE_STRONG;
-  }
-  if (waveIndex < 112) {
-    return trainerPartyTemplates.GYM_LEADER_4; // 3avg 1 strong 1 stronger
-  }
-  return trainerPartyTemplates.GYM_LEADER_5; // 3 avg 2 strong 1 stronger
 }
 
 export function getWavePartyTemplate(...templates: TrainerPartyTemplate[]) {
@@ -245,11 +251,40 @@ export function getWavePartyTemplate(...templates: TrainerPartyTemplate[]) {
 }
 
 export function getGymLeaderPartyTemplate() {
-  return getWavePartyTemplate(
-    trainerPartyTemplates.GYM_LEADER_1,
-    trainerPartyTemplates.GYM_LEADER_2,
-    trainerPartyTemplates.GYM_LEADER_3,
-    trainerPartyTemplates.GYM_LEADER_4,
-    trainerPartyTemplates.GYM_LEADER_5,
-  );
+  const { currentBattle, gameMode } = globalScene;
+  switch (gameMode.modeId) {
+    case GameModes.DAILY:
+      if (currentBattle?.waveIndex <= 20) {
+        return trainerPartyTemplates.GYM_LEADER_2
+      }
+      return trainerPartyTemplates.GYM_LEADER_3;
+    case GameModes.CHALLENGE: // In the future, there may be a ChallengeType to call here. For now, use classic's.
+    case GameModes.CLASSIC:
+      if (currentBattle?.waveIndex <= 20) {
+        return trainerPartyTemplates.GYM_LEADER_1; // 1 avg 1 strong
+      }
+      else if (currentBattle?.waveIndex <= 30) {
+        return trainerPartyTemplates.GYM_LEADER_2; // 1 avg 1 strong 1 stronger
+      }
+      else if (currentBattle?.waveIndex <= 60) { // 50 and 60
+        return trainerPartyTemplates.GYM_LEADER_3; // 2 avg 1 strong 1 stronger
+      }
+      else if (currentBattle?.waveIndex <= 80) {
+        return trainerPartyTemplates.GYM_LEADER_4; // 3 avg 1 strong 1 stronger
+      }
+      else if (currentBattle?.waveIndex <= 90) {
+        return trainerPartyTemplates.GYM_LEADER_5; // 4 avg 1 strong 1 stronger
+      }
+      // 110+
+      return trainerPartyTemplates.GYM_LEADER_6; // 3 avg 2 strong 1 stronger
+    default:
+      return getWavePartyTemplate(
+        trainerPartyTemplates.GYM_LEADER_1,
+        trainerPartyTemplates.GYM_LEADER_2,
+        trainerPartyTemplates.GYM_LEADER_3,
+        trainerPartyTemplates.GYM_LEADER_4,
+        trainerPartyTemplates.GYM_LEADER_5,
+        trainerPartyTemplates.GYM_LEADER_6,
+      );
+  }
 }
