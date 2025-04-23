@@ -22,6 +22,7 @@ export default class MockSprite implements MockGameObject {
     // @ts-ignore
     Phaser.GameObjects.Sprite.prototype.setTexture = this.setTexture;
     Phaser.GameObjects.Sprite.prototype.setSizeToFrame = this.setSizeToFrame;
+    // @ts-ignore
     Phaser.GameObjects.Sprite.prototype.setFrame = this.setFrame;
     // Phaser.GameObjects.Sprite.prototype.disable = this.disable;
 
@@ -37,7 +38,7 @@ export default class MockSprite implements MockGameObject {
     };
   }
 
-  setTexture(_key: string, _frame?: string | number) {
+  setTexture(_key: string, _frame?: string | number): this {
     return this;
   }
 
@@ -45,38 +46,47 @@ export default class MockSprite implements MockGameObject {
     return {} as Sprite;
   }
 
-  setPipeline(obj) {
+  setPipeline(obj): this {
     // Sets the pipeline of this Game Object.
-    return this.phaserSprite.setPipeline(obj);
+    this.phaserSprite.setPipeline(obj);
+    return this;
   }
 
-  off(_event, _callback, _source) {}
+  off(_event, _callback, _source): this {
+    return this;
+  }
 
-  setTintFill(color) {
+  setTintFill(color): this {
     // Sets the tint fill color.
-    return this.phaserSprite.setTintFill(color);
+    this.phaserSprite.setTintFill(color);
+    return this;
   }
 
-  setScale(scale) {
-    return this.phaserSprite.setScale(scale);
+  setScale(scale): this {
+    this.phaserSprite.setScale(scale);
+    return this;
   }
 
-  setOrigin(x, y) {
-    return this.phaserSprite.setOrigin(x, y);
+  setOrigin(x, y): this {
+    this.phaserSprite.setOrigin(x, y);
+    return this;
   }
 
-  setSize(width, height) {
+  setSize(width, height): this {
     // Sets the size of this Game Object.
-    return this.phaserSprite.setSize(width, height);
+    this.phaserSprite.setSize(width, height);
+    return this;
   }
 
-  once(event, callback, source) {
-    return this.phaserSprite.once(event, callback, source);
+  once(event, callback, source): this {
+    this.phaserSprite.once(event, callback, source);
+    return this;
   }
 
-  removeFromDisplayList() {
+  removeFromDisplayList(): this {
     // same as remove or destroy
-    return this.phaserSprite.removeFromDisplayList();
+    this.phaserSprite.removeFromDisplayList();
+    return this;
   }
 
   addedToScene() {
@@ -84,97 +94,116 @@ export default class MockSprite implements MockGameObject {
     return this.phaserSprite.addedToScene();
   }
 
-  setVisible(visible) {
-    return this.phaserSprite.setVisible(visible);
+  setVisible(visible): this {
+    this.phaserSprite.setVisible(visible);
+    return this;
   }
 
-  setPosition(x, y) {
-    return this.phaserSprite.setPosition(x, y);
+  setPosition(x, y): this {
+    this.phaserSprite.setPosition(x, y);
+    return this;
   }
 
-  setRotation(radians) {
-    return this.phaserSprite.setRotation(radians);
+  setRotation(radians): this {
+    this.phaserSprite.setRotation(radians);
+    return this;
   }
 
-  stop() {
-    return this.phaserSprite.stop();
+  stop(): this {
+    this.phaserSprite.stop();
+    return this;
   }
 
-  setInteractive = () => null;
-
-  on(event, callback, source) {
-    return this.phaserSprite.on(event, callback, source);
+  setInteractive(): this {
+    return this;
   }
 
-  setAlpha(alpha) {
-    return this.phaserSprite.setAlpha(alpha);
+  on(event, callback, source): this {
+    this.phaserSprite.on(event, callback, source);
+    return this;
   }
 
-  setTint(color) {
+  setAlpha(alpha): this {
+    this.phaserSprite.setAlpha(alpha);
+    return this;
+  }
+
+  setTint(color): this {
     // Sets the tint of this Game Object.
-    return this.phaserSprite.setTint(color);
+    this.phaserSprite.setTint(color);
+    return this;
   }
 
-  setFrame(frame, _updateSize?: boolean, _updateOrigin?: boolean) {
+  setFrame(frame, _updateSize?: boolean, _updateOrigin?: boolean): this {
     // Sets the frame this Game Object will use to render with.
     this.frame = frame;
-    return frame;
+    return this;
   }
 
   setPositionRelative(source, x, y) {
     /// Sets the position of this Game Object to be a relative position from the source Game Object.
-    return this.phaserSprite.setPositionRelative(source, x, y);
+    this.phaserSprite.setPositionRelative(source, x, y);
   }
 
-  setY(y) {
-    return this.phaserSprite.setY(y);
+  setY(y: number): this {
+    this.phaserSprite.setY(y);
+    return this;
   }
 
-  setCrop(x, y, width, height) {
+  setCrop(x: number, y: number, width: number, height: number): this {
     // Sets the crop size of this Game Object.
-    return this.phaserSprite.setCrop(x, y, width, height);
+    this.phaserSprite.setCrop(x, y, width, height);
+    return this;
   }
 
-  clearTint() {
+  clearTint(): this {
     // Clears any previously set tint.
-    return this.phaserSprite.clearTint();
+    this.phaserSprite.clearTint();
+    return this;
   }
 
-  disableInteractive() {
+  disableInteractive(): this {
     // Disables Interactive features of this Game Object.
-    return null;
+    return this;
   }
 
   apply() {
-    return this.phaserSprite.apply();
+    this.phaserSprite.apply();
+    return this;
   }
 
-  play() {
+  play(): this {
     // return this.phaserSprite.play();
     return this;
   }
 
-  setPipelineData(key, value) {
+  setPipelineData(key: string, value: any): this {
     this.pipelineData[key] = value;
+    return this;
   }
 
   destroy() {
     return this.phaserSprite.destroy();
   }
 
-  setName(name) {
-    return this.phaserSprite.setName(name);
+  setName(name: string): this {
+    this.phaserSprite.setName(name);
+    return this;
   }
 
-  setAngle(angle) {
-    return this.phaserSprite.setAngle(angle);
+  setAngle(angle): this {
+    this.phaserSprite.setAngle(angle);
+    return this;
   }
 
-  setMask() {}
+  setMask(): this {
+    return this;
+  }
 
-  add(obj) {
+  add(obj): this {
     // Adds a child to this Game Object.
     this.list.push(obj);
+    return this;
   }
 
   removeAll() {
@@ -182,16 +211,18 @@ export default class MockSprite implements MockGameObject {
     this.list = [];
   }
 
-  addAt(obj, index) {
+  addAt(obj, index): this {
     // Adds a Game Object to this Container at the given index.
     this.list.splice(index, 0, obj);
+    return this;
   }
 
-  remove(obj) {
+  remove(obj): this {
     const index = this.list.indexOf(obj);
     if (index !== -1) {
       this.list.splice(index, 1);
     }
+    return this;
   }
 
   getIndex(obj) {
@@ -205,5 +236,10 @@ export default class MockSprite implements MockGameObject {
 
   getAll() {
     return this.list;
+  }
+
+  copyPosition(obj): this {
+    this.phaserSprite.copyPosition(obj);
+    return this;
   }
 }

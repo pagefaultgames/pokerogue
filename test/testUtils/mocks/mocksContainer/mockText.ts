@@ -107,42 +107,51 @@ export default class MockText implements MockGameObject {
     }
   }
 
-  setScale(_scale) {
+  setScale(_scale): this {
     // return this.phaserText.setScale(scale);
+    return this;
   }
 
-  setShadow(_shadowXpos, _shadowYpos, _shadowColor) {
+  setShadow(_shadowXpos, _shadowYpos, _shadowColor): this {
     // Sets the shadow settings for this Game Object.
     // return this.phaserText.setShadow(shadowXpos, shadowYpos, shadowColor);
+    return this;
   }
 
-  setLineSpacing(_lineSpacing) {
+  setLineSpacing(_lineSpacing): this {
     // Sets the line spacing value of this Game Object.
     // return this.phaserText.setLineSpacing(lineSpacing);
+    return this;
   }
 
-  setOrigin(_x, _y) {
+  setOrigin(_x, _y): this {
     // return this.phaserText.setOrigin(x, y);
+    return this;
   }
 
-  once(_event, _callback, _source) {
+  once(_event, _callback, _source): this {
     // return this.phaserText.once(event, callback, source);
+    return this;
   }
 
   off(_event, _callback, _obj) {}
 
   removedFromScene() {}
 
-  addToDisplayList() {}
-
-  setStroke(_color, _thickness) {
-    // Sets the stroke color and thickness.
-    // return this.phaserText.setStroke(color, thickness);
+  addToDisplayList(): this {
+    return this;
   }
 
-  removeFromDisplayList() {
+  setStroke(_color, _thickness): this {
+    // Sets the stroke color and thickness.
+    // return this.phaserText.setStroke(color, thickness);
+    return this;
+  }
+
+  removeFromDisplayList(): this {
     // same as remove or destroy
     // return this.phaserText.removeFromDisplayList();
+    return this;
   }
 
   addedToScene() {
@@ -154,12 +163,14 @@ export default class MockText implements MockGameObject {
     // return this.phaserText.setVisible(visible);
   }
 
-  setY(_y) {
+  setY(_y): this {
     // return this.phaserText.setY(y);
+    return this;
   }
 
-  setX(_x) {
+  setX(_x): this {
     // return this.phaserText.setX(x);
+    return this;
   }
 
   /**
@@ -169,17 +180,21 @@ export default class MockText implements MockGameObject {
    * @param z The z position of this Game Object. Default 0.
    * @param w The w position of this Game Object. Default 0.
    */
-  setPosition(_x?: number, _y?: number, _z?: number, _w?: number) {}
+  setPosition(_x?: number, _y?: number, _z?: number, _w?: number): this {
+    return this;
+  }
 
-  setText(text) {
+  setText(text): this {
     // Sets the text this Game Object will display.
     // return this.phaserText.setText\(text);
     this.text = text;
+    return this;
   }
 
-  setAngle(_angle) {
+  setAngle(_angle): this {
     // Sets the angle of this Game Object.
     // return this.phaserText.setAngle(angle);
+    return this;
   }
 
   setPositionRelative(_source, _x, _y) {
@@ -187,9 +202,10 @@ export default class MockText implements MockGameObject {
     // return this.phaserText.setPositionRelative(source, x, y);
   }
 
-  setShadowOffset(_offsetX, _offsetY) {
+  setShadowOffset(_offsetX, _offsetY): this {
     // Sets the shadow offset values.
     // return this.phaserText.setShadowOffset(offsetX, offsetY);
+    return this;
   }
 
   setWordWrapWidth(width) {
@@ -197,9 +213,10 @@ export default class MockText implements MockGameObject {
     this.wordWrapWidth = width;
   }
 
-  setFontSize(_fontSize) {
+  setFontSize(_fontSize): this {
     // Sets the font size of this Game Object.
     // return this.phaserText.setFontSize(fontSize);
+    return this;
   }
 
   getBounds() {
@@ -209,25 +226,31 @@ export default class MockText implements MockGameObject {
     };
   }
 
-  setColor(color: string) {
+  setColor(color: string): this {
     this.color = color;
+    return this;
   }
 
-  setInteractive = () => null;
+  setInteractive(): this {
+    return this;
+  }
 
-  setShadowColor(_color) {
+  setShadowColor(_color): this {
     // Sets the shadow color.
     // return this.phaserText.setShadowColor(color);
+    return this;
   }
 
-  setTint(_color) {
+  setTint(_color): this {
     // Sets the tint of this Game Object.
     // return this.phaserText.setTint(color);
+    return this;
   }
 
-  setStrokeStyle(_thickness, _color) {
+  setStrokeStyle(_thickness, _color): this {
     // Sets the stroke style for the graphics.
     // return this.phaserText.setStrokeStyle(thickness, color);
+    return this;
   }
 
   destroy() {
@@ -235,20 +258,24 @@ export default class MockText implements MockGameObject {
     this.list = [];
   }
 
-  setAlpha(_alpha) {
+  setAlpha(_alpha): this {
     // return this.phaserText.setAlpha(alpha);
+    return this;
   }
 
-  setName(name: string) {
+  setName(name: string): this {
     this.name = name;
+    return this;
   }
 
-  setAlign(_align) {
+  setAlign(_align): this {
     // return this.phaserText.setAlign(align);
+    return this;
   }
 
-  setMask() {
+  setMask(): this {
     /// Sets the mask that this Game Object will use to render with.
+    return this;
   }
 
   getBottomLeft() {
@@ -265,37 +292,43 @@ export default class MockText implements MockGameObject {
     };
   }
 
-  disableInteractive() {
+  disableInteractive(): this {
     // Disables interaction with this Game Object.
+    return this;
   }
 
-  clearTint() {
+  clearTint(): this {
     // Clears tint on this Game Object.
+    return this;
   }
 
-  add(obj) {
+  add(obj): this {
     // Adds a child to this Game Object.
     this.list.push(obj);
+    return this;
   }
 
-  removeAll() {
+  removeAll(): this {
     // Removes all Game Objects from this Container.
     this.list = [];
+    return this;
   }
 
-  addAt(obj, index) {
+  addAt(obj, index): this {
     // Adds a Game Object to this Container at the given index.
     this.list.splice(index, 0, obj);
+    return this;
   }
 
-  remove(obj) {
+  remove(obj): this {
     const index = this.list.indexOf(obj);
     if (index !== -1) {
       this.list.splice(index, 1);
     }
+    return this;
   }
 
-  getIndex(obj) {
+  getIndex(obj): number {
     const index = this.list.indexOf(obj);
     return index || -1;
   }
