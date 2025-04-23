@@ -95,17 +95,13 @@ export class PlayerBattleInfo extends BattleInfo {
     this.updateHpFrame();
   }
 
-  async updatePokemonExp(pokemon: PlayerPokemon, instant?: boolean, levelDurationMultiplier = 1): Promise<void> {
+  updatePokemonExp(pokemon: PlayerPokemon, instant?: boolean, levelDurationMultiplier = 1): Promise<void> {
     const levelUp = this.lastLevel < pokemon.level;
     const relLevelExp = getLevelRelExp(this.lastLevel + 1, pokemon.species.growthRate);
     const levelExp = levelUp ? relLevelExp : pokemon.levelExp;
     let ratio = relLevelExp ? levelExp / relLevelExp : 0;
     if (this.lastLevel >= globalScene.getMaxExpLevel(true)) {
-      if (levelUp) {
-        ratio = 1;
-      } else {
-        ratio = 0;
-      }
+      ratio = levelUp ? 1 : 0;
       instant = true;
     }
     const durationMultiplier = Phaser.Tweens.Builders.GetEaseFunction("Sine.easeIn")(
