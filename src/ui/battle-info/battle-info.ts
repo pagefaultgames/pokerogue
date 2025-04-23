@@ -293,19 +293,17 @@ export default abstract class BattleInfo extends Phaser.GameObjects.Container {
       return;
     }
 
-    let shinyDescriptor = " (" + getShinyDescriptor(baseVariant);
-    if (doubleShiny) {
-      shinyDescriptor += "/" + getShinyDescriptor(pokemon.fusionVariant);
+    let shinyDescriptor = "";
+    if (doubleShiny || baseVariant) {
+      shinyDescriptor = " (" + getShinyDescriptor(baseVariant);
+      if (doubleShiny) {
+        shinyDescriptor += "/" + getShinyDescriptor(pokemon.fusionVariant);
+      }
+      shinyDescriptor += ")";
     }
-    shinyDescriptor += ")";
 
     this.shinyIcon
-      .on("pointerover", () =>
-        globalScene.ui.showTooltip(
-          "",
-          `${i18next.t("common:shinyOnHover")}${shinyDescriptor ? ` (${shinyDescriptor})` : ""}`,
-        ),
-      )
+      .on("pointerover", () => globalScene.ui.showTooltip("", i18next.t("common:shinyOnHover") + shinyDescriptor))
       .on("pointerout", () => globalScene.ui.hideTooltip());
   }
 
