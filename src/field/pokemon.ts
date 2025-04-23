@@ -8,7 +8,7 @@ import { variantData } from "#app/sprites/variant";
 import BattleInfo, {
   PlayerBattleInfo,
   EnemyBattleInfo,
-} from "#app/ui/battle-info";
+} from "#app/ui/battle-info/battle-info";
 import type Move from "#app/data/moves/move";
 import {
   HighCritAttr,
