@@ -1,5 +1,4 @@
 import type { default as Pokemon } from "../../field/pokemon";
-import { getLevelRelExp } from "../../data/exp";
 import { getLocalizedSpriteKey, fixedInt, getShinyDescriptor } from "#app/utils/common";
 import { addTextObject, TextStyle } from "../text";
 import { getGenderSymbol, getGenderColor, Gender } from "../../data/gender";
@@ -10,7 +9,6 @@ import { PokemonType } from "#enums/pokemon-type";
 import { getVariantTint } from "#app/sprites/variant";
 import { Stat } from "#enums/stat";
 import i18next from "i18next";
-import { ExpGainsSpeed } from "#app/enums/exp-gains-speed";
 
 export default abstract class BattleInfo extends Phaser.GameObjects.Container {
   public static readonly EXP_GAINS_DURATION_BASE = 1650;
@@ -403,43 +401,7 @@ export default abstract class BattleInfo extends Phaser.GameObjects.Container {
     return `pbinfo_${this.player ? "player" : "enemy"}${!this.player && this.boss ? "_boss" : this.mini ? "_mini" : ""}`;
   }
 
-  setMini(mini: boolean): void {
-    if (this.mini === mini) {
-      return;
-    }
-
-    this.mini = mini;
-
-    this.box.setTexture(this.getTextureName());
-    this.statsBox.setTexture(`${this.getTextureName()}_stats`);
-
-    if (this.player) {
-      this.y -= 12 * (mini ? 1 : -1);
-      this.baseY = this.y;
-    }
-
-    const offsetElements = [
-      this.nameText,
-      this.genderText,
-      this.teraIcon,
-      this.splicedIcon,
-      this.shinyIcon,
-      this.statusIndicator,
-      this.levelContainer,
-    ];
-    offsetElements.forEach(el => (el.y += 1.5 * (mini ? -1 : 1)));
-
-    [this.type1Icon, this.type2Icon, this.type3Icon].forEach(el => {
-      el.x += 4 * (mini ? 1 : -1);
-      el.y += -8 * (mini ? 1 : -1);
-    });
-
-    this.statValuesContainer.x += 2 * (mini ? 1 : -1);
-    this.statValuesContainer.y += -7 * (mini ? 1 : -1);
-
-    const toggledElements = [this.hpNumbersContainer, this.expBar];
-    toggledElements.forEach(el => el.setVisible(!mini));
-  }
+  setMini(_mini: boolean): void {}
 
   toggleStats(visible: boolean): void {
     globalScene.tweens.add({
@@ -678,69 +640,8 @@ export default abstract class BattleInfo extends Phaser.GameObjects.Container {
     }
   }
 
-  updatePokemonExp(pokemon: Pokemon, instant?: boolean, levelDurationMultiplier = 1): Promise<void> {
-    return new Promise(resolve => {
-      const levelUp = this.lastLevel < pokemon.level;
-      const relLevelExp = getLevelRelExp(this.lastLevel + 1, pokemon.species.growthRate);
-      const levelExp = levelUp ? relLevelExp : pokemon.levelExp;
-      let ratio = relLevelExp ? levelExp / relLevelExp : 0;
-      if (this.lastLevel >= globalScene.getMaxExpLevel(true)) {
-        if (levelUp) {
-          ratio = 1;
-        } else {
-          ratio = 0;
-        }
-        instant = true;
-      }
-      const durationMultiplier = Phaser.Tweens.Builders.GetEaseFunction("Sine.easeIn")(
-        1 - Math.max(this.lastLevel - 100, 0) / 150,
-      );
-      let duration =
-        this.visible && !instant
-          ? ((levelExp - this.lastLevelExp) / relLevelExp) *
-            BattleInfo.EXP_GAINS_DURATION_BASE *
-            durationMultiplier *
-            levelDurationMultiplier
-          : 0;
-      const speed = globalScene.expGainsSpeed;
-      if (speed && speed >= ExpGainsSpeed.DEFAULT) {
-        duration = speed >= ExpGainsSpeed.SKIP ? ExpGainsSpeed.DEFAULT : duration / Math.pow(2, speed);
-      }
-      if (ratio === 1) {
-        this.lastLevelExp = 0;
-        this.lastLevel++;
-      } else {
-        this.lastExp = pokemon.exp;
-        this.lastLevelExp = pokemon.levelExp;
-      }
-      if (duration) {
-        globalScene.playSound("se/exp");
-      }
-      globalScene.tweens.add({
-        targets: this.expMaskRect,
-        ease: "Sine.easeIn",
-        x: ratio * 510,
-        duration: duration,
-        onComplete: () => {
-          if (!globalScene) {
-            return resolve();
-          }
-          if (duration) {
-            globalScene.sound.stopByKey("se/exp");
-          }
-          if (ratio === 1) {
-            globalScene.playSound("se/level_up");
-            this.setLevel(this.lastLevel);
-            globalScene.time.delayedCall(500 * levelDurationMultiplier, () => {
-              this.expMaskRect.x = 0;
-              this.updateInfo(pokemon, instant).then(() => resolve());
-            });
-            return;
-          }
-          resolve();
-        },
-      });
-    });
+  async updatePokemonExp(_pokemon: Pokemon, _instant: boolean, _levelDurationMultiplier): Promise<void> {
+    return;
   }
 
   setLevel(level: number): void {
@@ -773,11 +674,11 @@ export default abstract class BattleInfo extends Phaser.GameObjects.Container {
   }
 
   updateStats(stats: number[]): void {
-    this.statOrder.map((s, i) => {
+    for (const [i, s] of this.statOrder.entries()) {
       if (s !== Stat.HP) {
         this.statNumbers[i].setFrame(stats[s - 1].toString());
       }
-    });
+    }
   }
 
   getBaseY(): number {

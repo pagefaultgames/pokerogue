@@ -188,6 +188,4 @@ export class EnemyBattleInfo extends BattleInfo {
       }
     }
   }
-
-  setMini(_mini: boolean): void {} // Always mini
 }
