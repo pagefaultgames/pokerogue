@@ -6398,10 +6398,21 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
     return (user, target, move) => {
       const switchOutTarget = (this.selfSwitch ? user : target);
       const player = switchOutTarget instanceof PlayerPokemon;
+      const forceSwitchAttr = move.getAttrs(ForceSwitchOutAttr).find(attr => attr.switchType === SwitchType.FORCE_SWITCH);
 
       if (!this.selfSwitch) {
         if (move.hitsSubstitute(user, target)) {
           return false;
+        }
+
+        // Check if the move is Roar or Whirlwind and if there is a trainer with only Pokémon left.
+        if (forceSwitchAttr && globalScene.currentBattle.trainer) {
+        const enemyParty = globalScene.getEnemyParty();
+        // Filter out any Pokémon that are not allowed in battle (e.g. fainted ones)
+        const remainingPokemon = enemyParty.filter(p => p.hp > 0 && p.isAllowedInBattle());
+          if (remainingPokemon.length <= 1) {
+            return false;
+          }
         }
 
         // Dondozo with an allied Tatsugiri in its mouth cannot be forced out
