@@ -90,11 +90,7 @@ export class PlayerBattleInfo extends BattleInfo {
     this.updateHpFrame();
   }
 
-  override async updatePokemonExp(
-    pokemon: PlayerPokemon,
-    instant?: boolean,
-    levelDurationMultiplier = 1,
-  ): Promise<void> {
+  async updatePokemonExp(pokemon: PlayerPokemon, instant?: boolean, levelDurationMultiplier = 1): Promise<void> {
     const levelUp = this.lastLevel < pokemon.level;
     const relLevelExp = getLevelRelExp(this.lastLevel + 1, pokemon.species.growthRate);
     const levelExp = levelUp ? relLevelExp : pokemon.levelExp;
