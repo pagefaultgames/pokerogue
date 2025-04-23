@@ -3170,7 +3170,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Function that tries to set a Pokemon shiny based on seed.
    * For manual use only, usually to roll a Pokemon's shiny chance a second time.
-   * If it rolls shiny, also sets a random variant and give the Pokemon the associated luck.
+   * If it rolls shiny, or if it's already shiny, also sets a random variant and give the Pokemon the associated luck.
    *
    * The base shiny odds are {@linkcode BASE_SHINY_CHANCE} / `65536`
    * @param thresholdOverride number that is divided by `2^16` (`65536`) to get the shiny chance, overrides {@linkcode shinyThreshold} if set (bypassing shiny rate modifiers such as Shiny Charm)
@@ -3181,29 +3181,31 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     thresholdOverride?: number,
     applyModifiersToOverride?: boolean,
   ): boolean {
-    const shinyThreshold = new NumberHolder(BASE_SHINY_CHANCE);
-    if (thresholdOverride === undefined || applyModifiersToOverride) {
-      if (thresholdOverride !== undefined && applyModifiersToOverride) {
-        shinyThreshold.value = thresholdOverride;
-      }
-      if (timedEventManager.isEventActive()) {
-        shinyThreshold.value *= timedEventManager.getShinyMultiplier();
-      }
-      if (!this.hasTrainer()) {
+    if (!this.shiny) {
+      const shinyThreshold = new NumberHolder(BASE_SHINY_CHANCE);
+      if (thresholdOverride === undefined || applyModifiersToOverride) {
+        if (thresholdOverride !== undefined && applyModifiersToOverride) {
+          shinyThreshold.value = thresholdOverride;
+        }
+        if (timedEventManager.isEventActive()) {
+          shinyThreshold.value *= timedEventManager.getShinyMultiplier();
+        }
         globalScene.applyModifiers(
           ShinyRateBoosterModifier,
           true,
           shinyThreshold,
         );
       }
-    } else {
-      shinyThreshold.value = thresholdOverride;
+      else {
+        shinyThreshold.value = thresholdOverride;
+      }
+
+      this.shiny = randSeedInt(65536) < shinyThreshold.value;
     }
 
-    this.shiny = randSeedInt(65536) < shinyThreshold.value;
-
     if (this.shiny) {
-      this.variant = this.generateShinyVariant();
+      this.variant = this.variant ?? 0;
+      this.variant = Math.max(this.generateShinyVariant(), this.variant) as Variant; // Don't set a variant lower than the current one
       this.luck =
         this.variant + 1 + (this.fusionShiny ? this.fusionVariant + 1 : 0);
       this.initShinySparkle();
