@@ -105,7 +105,7 @@ describe("Abilities - Dancer", () => {
     await game.forceEnemyMove(Moves.SPLASH, BattlerIndex.PLAYER);
     await game.forceEnemyMove(Moves.INSTRUCT, BattlerIndex.PLAYER);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY_2, BattlerIndex.ENEMY]);
-    await game.phaseInterceptor.to("TurnEndPhase"); // Oricorio rev dance
+    await game.phaseInterceptor.to("MovePhase"); // Oricorio rev dance
     await game.phaseInterceptor.to("MovePhase"); // Feebas fiery dance
     await game.phaseInterceptor.to("MovePhase"); // Oricorio fiery dance (from dancer)
 
