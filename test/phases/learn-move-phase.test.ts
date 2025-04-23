@@ -4,7 +4,7 @@ import GameManager from "#test/testUtils/gameManager";
 import { Species } from "#enums/species";
 import { Moves } from "#enums/moves";
 import { LearnMovePhase } from "#app/phases/learn-move-phase";
-import { Mode } from "#app/ui/ui";
+import { UiMode } from "#enums/ui-mode";
 import { Button } from "#app/enums/buttons";
 
 describe("Learn Move Phase", () => {
@@ -52,10 +52,10 @@ describe("Learn Move Phase", () => {
     await game.doKillOpponents();
 
     // queue up inputs to confirm dialog boxes
-    game.onNextPrompt("LearnMovePhase", Mode.CONFIRM, () => {
+    game.onNextPrompt("LearnMovePhase", UiMode.CONFIRM, () => {
       game.scene.ui.processInput(Button.ACTION);
     });
-    game.onNextPrompt("LearnMovePhase", Mode.SUMMARY, () => {
+    game.onNextPrompt("LearnMovePhase", UiMode.SUMMARY, () => {
       for (let x = 0; x < moveSlotNum; x++) {
         game.scene.ui.processInput(Button.DOWN);
       }
@@ -84,16 +84,16 @@ describe("Learn Move Phase", () => {
     await game.doKillOpponents();
 
     // queue up inputs to confirm dialog boxes
-    game.onNextPrompt("LearnMovePhase", Mode.CONFIRM, () => {
+    game.onNextPrompt("LearnMovePhase", UiMode.CONFIRM, () => {
       game.scene.ui.processInput(Button.ACTION);
     });
-    game.onNextPrompt("LearnMovePhase", Mode.SUMMARY, () => {
+    game.onNextPrompt("LearnMovePhase", UiMode.SUMMARY, () => {
       for (let x = 0; x < 4; x++) {
         game.scene.ui.processInput(Button.DOWN); // moves down 4 times to the 5th move slot
       }
       game.scene.ui.processInput(Button.ACTION);
     });
-    game.onNextPrompt("LearnMovePhase", Mode.CONFIRM, () => {
+    game.onNextPrompt("LearnMovePhase", UiMode.CONFIRM, () => {
       game.scene.ui.processInput(Button.ACTION);
     });
     await game.phaseInterceptor.to(LearnMovePhase);

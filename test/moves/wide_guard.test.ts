@@ -25,7 +25,7 @@ describe("Moves - Wide Guard", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
 
-    game.override.battleType("double");
+    game.override.battleStyle("double");
 
     game.override.moveset([Moves.WIDE_GUARD, Moves.SPLASH, Moves.SURF]);
 

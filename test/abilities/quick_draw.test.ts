@@ -1,4 +1,5 @@
-import { allAbilities, BypassSpeedChanceAbAttr } from "#app/data/ability";
+import { BypassSpeedChanceAbAttr } from "#app/data/abilities/ability";
+import { allAbilities } from "#app/data/data-lists";
 import { FaintPhase } from "#app/phases/faint-phase";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
@@ -23,7 +24,7 @@ describe("Abilities - Quick Draw", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleType("single");
+    game.override.battleStyle("single");
 
     game.override.starterSpecies(Species.MAGIKARP);
     game.override.ability(Abilities.QUICK_DRAW);

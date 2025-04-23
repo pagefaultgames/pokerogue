@@ -9,7 +9,7 @@ import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { allMoves } from "#app/data/moves/move";
 import { BattlerTagType } from "#enums/battler-tag-type";
-import { allAbilities } from "#app/data/ability";
+import { allAbilities } from "#app/data/data-lists";
 
 describe("Abilities - Flower Veil", () => {
   let phaserGame: Phaser.Game;
@@ -31,7 +31,7 @@ describe("Abilities - Flower Veil", () => {
       .moveset([Moves.SPLASH])
       .enemySpecies(Species.BULBASAUR)
       .ability(Abilities.FLOWER_VEIL)
-      .battleType("single")
+      .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)
@@ -63,7 +63,7 @@ describe("Abilities - Flower Veil", () => {
   });
 
   it("should prevent drowsiness from yawn for a grass user and its grass allies", async () => {
-    game.override.enemyMoveset([Moves.YAWN]).moveset([Moves.SPLASH]).battleType("double");
+    game.override.enemyMoveset([Moves.YAWN]).moveset([Moves.SPLASH]).battleStyle("double");
     await game.classicMode.startBattle([Species.BULBASAUR, Species.BULBASAUR]);
 
     // Clear the ability of the ally to isolate the test
@@ -81,7 +81,7 @@ describe("Abilities - Flower Veil", () => {
   });
 
   it("should prevent status conditions from moves like Thunder Wave for a grass user and its grass allies", async () => {
-    game.override.enemyMoveset([Moves.THUNDER_WAVE]).moveset([Moves.SPLASH]).battleType("double");
+    game.override.enemyMoveset([Moves.THUNDER_WAVE]).moveset([Moves.SPLASH]).battleStyle("double");
     vi.spyOn(allMoves[Moves.THUNDER_WAVE], "accuracy", "get").mockReturnValue(100);
     await game.classicMode.startBattle([Species.BULBASAUR]);
 
@@ -93,7 +93,7 @@ describe("Abilities - Flower Veil", () => {
   });
 
   it("should not prevent status conditions for a non-grass user and its non-grass allies", async () => {
-    game.override.enemyMoveset([Moves.THUNDER_WAVE]).moveset([Moves.SPLASH]).battleType("double");
+    game.override.enemyMoveset([Moves.THUNDER_WAVE]).moveset([Moves.SPLASH]).battleStyle("double");
     await game.classicMode.startBattle([Species.MAGIKARP, Species.MAGIKARP]);
     const [user, ally] = game.scene.getPlayerField();
     vi.spyOn(allMoves[Moves.THUNDER_WAVE], "accuracy", "get").mockReturnValue(100);
@@ -113,7 +113,7 @@ describe("Abilities - Flower Veil", () => {
    *******************************************/
 
   it("should prevent the status drops from enemies for the a grass user and its grass allies", async () => {
-    game.override.enemyMoveset([Moves.GROWL]).moveset([Moves.SPLASH]).battleType("double");
+    game.override.enemyMoveset([Moves.GROWL]).moveset([Moves.SPLASH]).battleStyle("double");
     await game.classicMode.startBattle([Species.BULBASAUR, Species.BULBASAUR]);
     const [user, ally] = game.scene.getPlayerField();
     // Clear the ally ability to isolate the test
@@ -126,7 +126,7 @@ describe("Abilities - Flower Veil", () => {
   });
 
   it("should not prevent status drops for a non-grass user and its non-grass allies", async () => {
-    game.override.enemyMoveset([Moves.GROWL]).moveset([Moves.SPLASH]).battleType("double");
+    game.override.enemyMoveset([Moves.GROWL]).moveset([Moves.SPLASH]).battleStyle("double");
     await game.classicMode.startBattle([Species.MAGIKARP, Species.MAGIKARP]);
     const [user, ally] = game.scene.getPlayerField();
     // Clear the ally ability to isolate the test
@@ -139,7 +139,7 @@ describe("Abilities - Flower Veil", () => {
   });
 
   it("should not prevent self-inflicted stat drops from moves like Close Combat for a user or its allies", async () => {
-    game.override.moveset([Moves.CLOSE_COMBAT]).battleType("double");
+    game.override.moveset([Moves.CLOSE_COMBAT]).battleStyle("double");
     await game.classicMode.startBattle([Species.BULBASAUR, Species.BULBASAUR]);
     const [user, ally] = game.scene.getPlayerField();
     // Clear the ally ability to isolate the test

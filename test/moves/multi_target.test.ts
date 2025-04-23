@@ -1,7 +1,7 @@
 import { BattlerIndex } from "#app/battle";
 import { Abilities } from "#app/enums/abilities";
 import { Species } from "#app/enums/species";
-import { toDmgValue } from "#app/utils";
+import { toDmgValue } from "#app/utils/common";
 import { Moves } from "#enums/moves";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -25,7 +25,7 @@ describe("Multi-target damage reduction", () => {
     game = new GameManager(phaserGame);
     game.override
       .disableCrits()
-      .battleType("double")
+      .battleStyle("double")
       .enemyLevel(100)
       .startingLevel(100)
       .enemySpecies(Species.POLIWAG)

@@ -1,6 +1,6 @@
-import { starterColors } from "#app/battle-scene";
+import { starterColors } from "#app/global-vars/starter-colors";
 import { globalScene } from "#app/global-scene";
-import { Mode } from "#app/ui/ui";
+import { UiMode } from "#enums/ui-mode";
 import UiHandler from "#app/ui/ui-handler";
 import {
   getLocalizedSpriteKey,
@@ -11,7 +11,7 @@ import {
   isNullOrUndefined,
   toReadableString,
   formatStat,
-} from "#app/utils";
+} from "#app/utils/common";
 import type { PlayerPokemon, PokemonMove } from "#app/field/pokemon";
 import { getStarterValueFriendshipCap, speciesStarterCosts } from "#app/data/balance/starters";
 import { argbFromRgba } from "@material/material-color-utilities";
@@ -31,7 +31,7 @@ import { loggedInUser } from "#app/account";
 import type { Variant } from "#app/sprites/variant";
 import { getVariantTint } from "#app/sprites/variant";
 import { Button } from "#enums/buttons";
-import type { Ability } from "#app/data/ability";
+import type { Ability } from "#app/data/abilities/ability-class";
 import i18next from "i18next";
 import { modifierSortFunc } from "#app/modifier/modifier";
 import { PlayerGender } from "#enums/player-gender";
@@ -128,7 +128,7 @@ export default class SummaryUiHandler extends UiHandler {
   private selectCallback: Function | null;
 
   constructor() {
-    super(Mode.SUMMARY);
+    super(UiMode.SUMMARY);
   }
 
   setup() {
@@ -510,7 +510,7 @@ export default class SummaryUiHandler extends UiHandler {
     }
 
     const ui = this.getUi();
-    const fromPartyMode = ui.handlers[Mode.PARTY].active;
+    const fromPartyMode = ui.handlers[UiMode.PARTY].active;
     let success = false;
     let error = false;
 
@@ -610,9 +610,9 @@ export default class SummaryUiHandler extends UiHandler {
           }
 
           if (!fromPartyMode) {
-            ui.setMode(Mode.MESSAGE);
+            ui.setMode(UiMode.MESSAGE);
           } else {
-            ui.setMode(Mode.PARTY);
+            ui.setMode(UiMode.PARTY);
           }
         }
         success = true;

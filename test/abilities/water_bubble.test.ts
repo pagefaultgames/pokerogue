@@ -23,9 +23,9 @@ describe("Abilities - Water Bubble", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([ Moves.SPLASH ])
+      .moveset([Moves.SPLASH])
       .ability(Abilities.BALL_FETCH)
-      .battleType("single")
+      .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)
@@ -33,12 +33,12 @@ describe("Abilities - Water Bubble", () => {
   });
 
   it("should remove burn when gained", async () => {
-    game.override.ability(Abilities.THERMAL_EXCHANGE)
+    game.override
+      .ability(Abilities.THERMAL_EXCHANGE)
       .enemyAbility(Abilities.BALL_FETCH)
       .moveset(Moves.SKILL_SWAP)
-      .enemyMoveset(Moves.SPLASH),
-
-    await game.classicMode.startBattle([ Species.FEEBAS ]);
+      .enemyMoveset(Moves.SPLASH);
+    await game.classicMode.startBattle([Species.FEEBAS]);
     const enemy = game.scene.getEnemyPokemon();
     enemy?.trySetStatus(StatusEffect.BURN);
     expect(enemy?.status?.effect).toBe(StatusEffect.BURN);

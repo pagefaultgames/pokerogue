@@ -3,7 +3,7 @@ import { TrainerType } from "#app/enums/trainer-type";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import { vouchers } from "#app/system/voucher";
 import i18next from "i18next";
-import { randSeedItem } from "#app/utils";
+import { randSeedItem } from "#app/utils/common";
 import { BattlePhase } from "./battle-phase";
 import { ModifierRewardPhase } from "./modifier-reward-phase";
 import { MoneyRewardPhase } from "./money-reward-phase";
@@ -24,12 +24,6 @@ export class TrainerVictoryPhase extends BattlePhase {
     const modifierRewardFuncs = globalScene.currentBattle.trainer?.config.modifierRewardFuncs!; // TODO: is this bang correct?
     for (const modifierRewardFunc of modifierRewardFuncs) {
       globalScene.unshiftPhase(new ModifierRewardPhase(modifierRewardFunc));
-    }
-
-    if (timedEventManager.isEventActive()) {
-      for (const rewardFunc of globalScene.currentBattle.trainer?.config.eventRewardFuncs!) {
-        globalScene.unshiftPhase(new ModifierRewardPhase(rewardFunc));
-      }
     }
 
     const trainerType = globalScene.currentBattle.trainer?.config.trainerType!; // TODO: is this bang correct?
