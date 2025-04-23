@@ -651,7 +651,7 @@ export default class Move implements Localizable {
         break;
       case MoveFlags.IGNORE_ABILITIES:
         if (user.hasAbilityWithAttr(MoveAbilityBypassAbAttr)) {
-          const abilityEffectsIgnored = new BooleanHolder(false); 
+          const abilityEffectsIgnored = new BooleanHolder(false);
           applyAbAttrs(MoveAbilityBypassAbAttr, user, abilityEffectsIgnored, false, this);
           if (abilityEffectsIgnored.value) {
             return true;
@@ -3166,7 +3166,7 @@ export class StatStageChangeAttr extends MoveEffectAttr {
   private get showMessage () {
     return this.options?.showMessage ?? true;
   }
-  
+
   /**
    * Attempts to change stats of the user or target (depending on value of selfTarget) if conditions are met
    * @param user {@linkcode Pokemon} the user of the move
@@ -6681,7 +6681,9 @@ export class FirstMoveTypeAttr extends MoveEffectAttr {
 class CallMoveAttr extends OverrideMoveEffectAttr {
   protected invalidMoves: ReadonlySet<Moves>;
   protected hasTarget: boolean;
+
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    // Get eligible targets for move, failing if we can't target anything
     const replaceMoveTarget = move.moveTarget === MoveTarget.NEAR_OTHER ? MoveTarget.NEAR_ENEMY : undefined;
     const moveTargets = getMoveTargets(user, move.id, replaceMoveTarget);
     if (moveTargets.targets.length === 0) {
@@ -6689,11 +6691,15 @@ class CallMoveAttr extends OverrideMoveEffectAttr {
       console.log("CallMoveAttr failed due to no targets.");
       return false;
     }
+
+    // Spread moves and ones with only 1 valid target will use their normal targeting.
+    // If not, target the Mirror Move recipient or else a random mon in our target list
     const targets = moveTargets.multiple || moveTargets.targets.length === 1
       ? moveTargets.targets
       : [ this.hasTarget ? target.getBattlerIndex() : moveTargets.targets[user.randSeedInt(moveTargets.targets.length)] ]; // account for Mirror Move having a target already
     user.getMoveQueue().push({ move: move.id, targets: targets, virtual: true, ignorePP: true });
     globalScene.unshiftPhase(new LoadMoveAnimPhase(move.id));
+    // TODO: Check how mirror move works with dancer
     globalScene.unshiftPhase(new MovePhase(user, targets, new PokemonMove(move.id, 0, 0, true), true, true));
     return true;
   }
@@ -6942,27 +6948,22 @@ export class CopyMoveAttr extends CallMoveAttr {
     this.invalidMoves = invalidMoves;
   }
 
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+  apply(user: Pokemon, target: Pokemon, _move: Move, args: any[]): boolean {
     this.hasTarget = this.mirrorMove;
     const lastMove = this.mirrorMove ? target.getLastXMoves()[0].move : globalScene.currentBattle.lastMove;
     return super.apply(user, target, allMoves[lastMove], args);
   }
 
   getCondition(): MoveConditionFunc {
-    return (user, target, move) => {
-      if (this.mirrorMove) {
-        const lastMove = target.getLastXMoves()[0]?.move;
-        return !!lastMove && !this.invalidMoves.has(lastMove);
-      } else {
-        const lastMove = globalScene.currentBattle.lastMove;
-        return lastMove !== undefined && !this.invalidMoves.has(lastMove);
-      }
+    return (_user, target, _move) => {
+      const lastMove = this.mirrorMove ? target.getLastXMoves()[0]?.move : globalScene.currentBattle.lastMove;
+      return !!lastMove && !this.invalidMoves.has(lastMove);
     };
   }
 }
 
 /**
- * Attribute used for moves that causes the target to repeat their last used move.
+ * Attribute used for moves that cause the target to repeat their last used move.
  *
  * Used for [Instruct](https://bulbapedia.bulbagarden.net/wiki/Instruct_(move)).
 */

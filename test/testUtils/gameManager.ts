@@ -381,7 +381,8 @@ export default class GameManager {
    * Forces the next enemy selecting a move to use the given move in its moveset against the
    * given target (if applicable).
    * @param moveId {@linkcode Moves} the move the enemy will use
-   * @param target {@linkcode BattlerIndex} the target on which the enemy will use the given move
+   * @param target {@linkcode BattlerIndex} the target on which the enemy will use the given move;
+   * will use normal targeting logic if omitted
    */
   async forceEnemyMove(moveId: Moves, target?: BattlerIndex) {
     // Wait for the next EnemyCommandPhase to start

@@ -1,4 +1,4 @@
-import { HitResult, MoveResult, PlayerPokemon } from "#app/field/pokemon";
+import { HitResult, MoveResult, PlayerPokemon, type TurnMove } from "#app/field/pokemon";
 import { BooleanHolder, NumberHolder, toDmgValue, isNullOrUndefined, randSeedItem, randSeedInt, type Constructor } from "#app/utils/common";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { BattlerTagLapseType, GroundedTag } from "#app/data/battler-tags";
@@ -72,6 +72,8 @@ import type { AbAttrCondition, PokemonDefendCondition, PokemonStatStageChangeCon
 import type { BattlerIndex } from "#app/battle";
 import type Move from "#app/data/moves/move";
 import type { ArenaTrapTag, SuppressAbilitiesTag } from "#app/data/arena-tag";
+import type { HitCheckEntry } from "#app/phases/move-effect-phase";
+import { HitCheckResult } from "#enums/hit-check-result";
 
 export class BlockRecoilDamageAttr extends AbAttr {
   constructor() {
@@ -4196,6 +4198,7 @@ export class PostTurnHurtIfSleepingAbAttr extends PostTurnAbAttr {
   override canApplyPostTurn(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
     return pokemon.getOpponents().some(opp => (opp.status?.effect === StatusEffect.SLEEP || opp.hasAbility(Abilities.COMATOSE)) && !opp.hasAbilityWithAttr(BlockNonDirectDamageAbAttr) && !opp.switchOutStatus);
   }
+
   /**
    * Deals damage to all sleeping opponents equal to 1/8 of their max hp (min 1)
    * @param pokemon Pokemon that has this ability
@@ -4286,81 +4289,131 @@ export class PostBiomeChangeTerrainChangeAbAttr extends PostBiomeChangeAbAttr {
 }
 
 /**
- * Triggers just after a move is used either by the opponent or the player
+ * Triggers after a move is used by either the opponent or the player
  * @extends AbAttr
  */
 export class PostMoveUsedAbAttr extends AbAttr {
+  /**
+   * Check whether this ability can be applied after a move is used.
+   * @param pokemon - The {@linkcode Pokemon} with the ability
+   * @param move - The {@linkcode PokemonMove} having been used
+   * @param source - The {@linkcode Pokemon} who used the move
+   * @param targets - Array of {@linkcode BattlerIndex}es containing Pokemon targeted by move.
+   * @param hitChecks - Array of {@linkcode HitCheckEntry | HitCheckEntries} containing results of move usage
+   * @param simulated - Whether the ability call is simulated
+   * @param args - Extra arguments passed to the function. Handled by child classes.
+   * @returns `true` if the ability can be applied, `false` otherwise.
+   * Normally checks if move successfully applied against at least 1 target (can be overridden to change)
+   * @see {@linkcode applyPostMoveUsed}
+   */
   canApplyPostMoveUsed(
     pokemon: Pokemon,
     move: PokemonMove,
     source: Pokemon,
     targets: BattlerIndex[],
+    hitChecks: HitCheckEntry[],
     simulated: boolean,
     args: any[]): boolean {
-    return true;
+    return !!targets.length // move has targets
+      && hitChecks.some(hr => hr[0] === HitCheckResult.HIT); // successfully affected at least 1 target
   }
 
   applyPostMoveUsed(
-    pokemon: Pokemon,
-    move: PokemonMove,
-    source: Pokemon,
-    targets: BattlerIndex[],
-    simulated: boolean,
-    args: any[],
+    _pokemon: Pokemon,
+    _move: PokemonMove,
+    _source: Pokemon,
+    _targets: BattlerIndex[],
+    _hitChecks: HitCheckEntry[],
+    _simulated: boolean,
+    _args: any[],
   ): void {}
 }
 
 /**
- * Triggers after a dance move is used either by the opponent or the player
+ * Triggers after a dance move is used either by the opponent or the player.
  * @extends PostMoveUsedAbAttr
  */
 export class PostDancingMoveAbAttr extends PostMoveUsedAbAttr {
-  override canApplyPostMoveUsed(dancer: Pokemon, move: PokemonMove, source: Pokemon, targets: BattlerIndex[], simulated: boolean, args: any[]): boolean {
-    // List of tags that prevent the Dancer from replicating the move
-    const forbiddenTags = [ BattlerTagType.FLYING, BattlerTagType.UNDERWATER,
-      BattlerTagType.UNDERGROUND, BattlerTagType.HIDDEN ];
-    // The move to replicate cannot come from the Dancer
-    return source.getBattlerIndex() !== dancer.getBattlerIndex()
-    && !dancer.summonData.tags.some(tag => forbiddenTags.includes(tag.tagType));
+
+  /**
+   * Check whether this ability can be applied after a move is used.
+   * @param pokemon - The {@linkcode Pokemon} with the ability
+   * @param move - The {@linkcode PokemonMove} having been used
+   * @param source - The {@linkcode Pokemon} who used the move
+   * @param targets - Array of {@linkcode BattlerIndex}es containing Pokemon targeted by move.
+   * @param hitResults - Array of {@linkcode HitCheckEntry | HitCheckEntries} containing results of move usage
+   * @param _simulated - N/A
+   * @param _args - N/A
+   * @returns `true` if the ability can be applied, `false` otherwise
+   * @see {@linkcode applyPostMoveUsed}
+  */
+  canApplyPostMoveUsed(
+    pokemon: Pokemon,
+    move: PokemonMove,
+    source: Pokemon,
+    targets: BattlerIndex[],
+    hitResults: HitCheckEntry[],
+    _simulated: boolean,
+    _args: any[],
+  ): boolean {
+    // Set of all tags that prevent dancer from replicating the move
+    const forbiddenTags: ReadonlySet<BattlerTagType> = new Set([
+      BattlerTagType.FLYING,
+      BattlerTagType.UNDERWATER,
+      BattlerTagType.UNDERGROUND,
+      BattlerTagType.HIDDEN,
+    ]);
+
+    return super.canApplyPostMoveUsed(pokemon, move, source, targets, hitResults, _simulated, _args)
+      && move.getMove().hasFlag(MoveFlags.DANCE_MOVE) // move is dance move
+      && source.getBattlerIndex() !== pokemon.getBattlerIndex() // Move comes from another pokemon
+      && !pokemon.summonData.tags.some(tag => forbiddenTags.has(tag.tagType)); // user able to perform attack
   }
 
   /**
-   * Resolves the Dancer ability by replicating the move used by the source of the dance
-   * either on the source itself or on the target of the dance
-   * @param dancer {@linkcode Pokemon} with Dancer ability
-   * @param move {@linkcode PokemonMove} Dancing move used by the source
-   * @param source {@linkcode Pokemon} that used the dancing move
-   * @param targets {@linkcode BattlerIndex}Targets of the dancing move
-   * @param args N/A
+   * Resolves the {@linkcode Abilities.DANCER | Dancer} ability by replicating other Pokemon's dance moves
+   * on either this Pokemon or the user of the move.
+   * @param dancer - The {@linkcode Pokemon} with Dancer
+   * @param move - The {@linkcode PokemonMove} having been used
+   * @param source - The {@linkcode Pokemon} who used the move
+   * @param targets - Array of {@linkcode BattlerIndex}es containing Pokemon targeted by move
+   * @param hitResults - N/A
+   * @param simulated - Whether the ability call is simulated
+   * @param _args - N/A
    */
   override applyPostMoveUsed(
     dancer: Pokemon,
     move: PokemonMove,
     source: Pokemon,
     targets: BattlerIndex[],
+    _hitResults: HitCheckEntry[],
     simulated: boolean,
-    args: any[]): void {
-    if (!simulated) {
-      const m = move.getMove();
-      const newMove = new PokemonMove(m.id, 0, 0, true) // mark new move as virtual for instruct & co
+    _args: any[],
+  ): void {
+    if (simulated) {
+      return;
+    }
 
-      // If the move is an AttackMove or a StatusMove the Dancer must replicate the move on the source of the Dance
-      if (m instanceof AttackMove || m instanceof StatusMove) {
-        const target = this.getTarget(dancer, source, targets);
-        globalScene.unshiftPhase(new MovePhase(dancer, target, newMove, true, true));
-      } else if (m instanceof SelfStatusMove) {
-        // If the move is a SelfStatusMove (ie. Swords Dance) the Dancer should replicate it on itself
-        globalScene.unshiftPhase(new MovePhase(dancer, [ dancer.getBattlerIndex() ], newMove, true, true));
-      }
+    const newMove = new PokemonMove(move.moveId, 0, 0, true) // mark new move as virtual to not proc instruct & co.
+    const m = move.getMove();
+
+    // Attack and status moves are replicated on the source of the Dance, while
+    // self-targeted status moves (Swords Dance & co.) are replicated on the user
+    // TODO: Somehow make this check for status without also causing infinite loops
+    if (m instanceof AttackMove || m instanceof StatusMove) {
+      const target = this.getTarget(dancer, source, targets);
+      globalScene.unshiftPhase(new MovePhase(dancer, target, newMove, true, true));
+    } else if (m instanceof SelfStatusMove) {
+      globalScene.unshiftPhase(new MovePhase(dancer, [ dancer.getBattlerIndex() ], newMove, true, true));
     }
   }
 
   /**
-   * Get the correct targets of Dancer ability
+   * Get the correct targets of Dancer ability.
    *
-   * @param dancer {@linkcode Pokemon} Pokemon with Dancer ability
-   * @param source {@linkcode Pokemon} Source of the dancing move
-   * @param targets {@linkcode BattlerIndex} Targets of the dancing move
+   * @param dancer - The {@linkcode Pokemon} with Dancer
+   * @param source - The {@linkcode Pokemon} that used the dancing move
+   * @param targets - Array of {@linkcode BattlerIndex}es containing targets of copied move
    */
   getTarget(dancer: Pokemon, source: Pokemon, targets: BattlerIndex[]) : BattlerIndex[] {
     if (dancer.isPlayer()) {
@@ -5671,6 +5724,7 @@ export class PostDamageForceSwitchAbAttr extends PostDamageAbAttr {
     this.helper.switchOutLogic(pokemon);
   }
 }
+
 function applyAbAttrsInternal<TAttr extends AbAttr>(
   attrType: Constructor<TAttr>,
   pokemon: Pokemon | null,
@@ -5765,14 +5819,15 @@ export function applyPostMoveUsedAbAttrs(
   move: PokemonMove,
   source: Pokemon,
   targets: BattlerIndex[],
+  hitChecks: HitCheckEntry[],
   simulated = false,
   ...args: any[]
 ): void {
   applyAbAttrsInternal<PostMoveUsedAbAttr>(
     attrType,
     pokemon,
-    (attr, passive) => attr.applyPostMoveUsed(pokemon, move, source, targets, simulated, args),
-    (attr, passive) => attr.canApplyPostMoveUsed(pokemon, move, source, targets, simulated, args),
+    (attr, passive) => attr.applyPostMoveUsed(pokemon, move, source, targets, hitChecks, simulated, args),
+    (attr, passive) => attr.canApplyPostMoveUsed(pokemon, move, source, targets, hitChecks, simulated, args),
     args,
     simulated,
   );
@@ -7055,7 +7110,8 @@ export function initAbilities() {
       .attr(PostFaintHPDamageAbAttr)
       .bypassFaint(),
     new Ability(Abilities.DANCER, 7)
-      .attr(PostDancingMoveAbAttr),
+      .attr(PostDancingMoveAbAttr)
+      .partial(), // Doesn't take into account para/confuse failures due to `followUp` being used to prevent infinite loops
     new Ability(Abilities.BATTERY, 7)
       .attr(AllyMoveCategoryPowerBoostAbAttr, [ MoveCategory.SPECIAL ], 1.3),
     new Ability(Abilities.FLUFFY, 7)

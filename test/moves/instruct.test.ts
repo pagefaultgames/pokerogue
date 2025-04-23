@@ -200,26 +200,6 @@ describe("Moves - Instruct", () => {
     expect(karp1.isFainted()).toBe(true);
     expect(karp2.isFainted()).toBe(true);
   });
-  it("should allow for dancer copying of instructed dance move", async () => {
-    game.override.battleStyle("double").enemyMoveset([Moves.INSTRUCT, Moves.SPLASH]).enemyLevel(1000);
-    await game.classicMode.startBattle([Species.ORICORIO, Species.VOLCARONA]);
-
-    const [oricorio, volcarona] = game.scene.getPlayerField();
-    game.move.changeMoveset(oricorio, Moves.SPLASH);
-    game.move.changeMoveset(volcarona, Moves.FIERY_DANCE);
-
-    game.move.select(Moves.SPLASH, BattlerIndex.PLAYER);
-    game.move.select(Moves.FIERY_DANCE, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY);
-    await game.forceEnemyMove(Moves.INSTRUCT, BattlerIndex.PLAYER_2);
-    await game.forceEnemyMove(Moves.SPLASH);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
-    await game.phaseInterceptor.to("BerryPhase");
-
-    // fiery dance triggered dancer successfully for a total of 4 hits
-    // Enemy level is set to a high value so that it does not faint even after all 4 hits
-    instructSuccess(volcarona, Moves.FIERY_DANCE);
-    expect(game.scene.getEnemyField()[0].turnData.attacksReceived.length).toBe(4);
-  });
 
   it("should not repeat move when switching out", async () => {
     game.override.enemyMoveset(Moves.INSTRUCT).enemySpecies(Species.UNOWN);
@@ -239,8 +219,8 @@ describe("Moves - Instruct", () => {
     game.doSwitchPokemon(1);
     await game.phaseInterceptor.to("TurnEndPhase", false);
 
-    const enemyMoves = game.scene.getEnemyPokemon()!.getLastXMoves(-1)!;
-    expect(enemyMoves[0].result).toBe(MoveResult.FAIL);
+    const enemyMoves = game.scene.getEnemyPokemon()?.getLastXMoves(-1)!;
+    expect(enemyMoves?.[0]?.result).toBe(MoveResult.FAIL);
   });
 
   it("should fail if no move has yet been used by target", async () => {

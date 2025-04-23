@@ -2,12 +2,10 @@ import { BattlerIndex } from "#app/battle";
 import { globalScene } from "#app/global-scene";
 import {
   applyAbAttrs,
-  applyPostMoveUsedAbAttrs,
   applyPreAttackAbAttrs,
   BlockRedirectAbAttr,
   IncreasePpAbAttr,
   PokemonTypeChangeAbAttr,
-  PostMoveUsedAbAttr,
   RedirectMoveAbAttr,
   ReduceStatusEffectDurationAbAttr,
 } from "#app/data/abilities/ability";
@@ -156,7 +154,7 @@ export class MovePhase extends BattlePhase {
         this.showMoveText();
         this.showFailedText();
       }
-      return this.end();
+      this.end();
     }
 
     this.pokemon.turnData.acted = true;
@@ -329,7 +327,7 @@ export class MovePhase extends BattlePhase {
       if (fail) {
         this.showMoveText();
         this.showFailedText();
-        return this.end();
+        this.end();
       }
     }
 
@@ -435,14 +433,6 @@ export class MovePhase extends BattlePhase {
 
       // Remove the user from its semi-invulnerable state (if applicable)
       this.pokemon.lapseTags(BattlerTagLapseType.MOVE_EFFECT);
-    }
-
-    // Handle Dancer, which triggers immediately after a move is used (rather than waiting on `this.end()`).
-    // Note that the `!this.followUp` check here prevents an infinite Dancer loop.
-    if (this.move.getMove().hasFlag(MoveFlags.DANCE_MOVE) && !this.followUp) {
-      globalScene.getField(true).forEach(pokemon => {
-        applyPostMoveUsedAbAttrs(PostMoveUsedAbAttr, pokemon, this.move, this.pokemon, this.targets);
-      });
     }
   }
 

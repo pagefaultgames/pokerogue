@@ -6,12 +6,14 @@ import {
   applyPostAttackAbAttrs,
   applyPostDamageAbAttrs,
   applyPostDefendAbAttrs,
+  applyPostMoveUsedAbAttrs,
   applyPreAttackAbAttrs,
   IgnoreMoveEffectsAbAttr,
   MaxMultiHitAbAttr,
   PostAttackAbAttr,
   PostDamageAbAttr,
   PostDefendAbAttr,
+  PostMoveUsedAbAttr,
   ReflectStatusMoveAbAttr,
 } from "#app/data/abilities/ability";
 import { ArenaTagSide, ConditionalProtectTag } from "#app/data/arena-tag";
@@ -48,7 +50,7 @@ import { MoveTarget } from "#enums/MoveTarget";
 import { MoveCategory } from "#enums/MoveCategory";
 import { SpeciesFormChangePostMoveTrigger } from "#app/data/pokemon-forms";
 import { PokemonType } from "#enums/pokemon-type";
-import { DamageResult, PokemonMove, type TurnMove } from "#app/field/pokemon";
+import { type DamageResult, PokemonMove, type TurnMove } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
 import { HitResult, MoveResult } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
@@ -72,14 +74,14 @@ import { ShowAbilityPhase } from "./show-ability-phase";
 import { MovePhase } from "./move-phase";
 import { MoveEndPhase } from "./move-end-phase";
 import { HideAbilityPhase } from "#app/phases/hide-ability-phase";
-import { TypeDamageMultiplier } from "#app/data/type";
+import type { TypeDamageMultiplier } from "#app/data/type";
 import { HitCheckResult } from "#enums/hit-check-result";
 import type Move from "#app/data/moves/move";
 import { isFieldTargeted } from "#app/data/moves/move-utils";
 import { FaintPhase } from "./faint-phase";
 import { DamageAchv } from "#app/system/achv";
 
-type HitCheckEntry = [HitCheckResult, TypeDamageMultiplier];
+export type HitCheckEntry = [HitCheckResult, TypeDamageMultiplier];
 
 export class MoveEffectPhase extends PokemonPhase {
   public move: Move;
@@ -399,12 +401,13 @@ export class MoveEffectPhase extends PokemonPhase {
 
   public override end(): void {
     const user = this.getUserPokemon();
+
     /**
      * If this phase isn't for the invoked move's last strike,
      * unshift another MoveEffectPhase for the next strike.
      * Otherwise, queue a message indicating the number of times the move has struck
      * (if the move has struck more than once), then apply the heal from Shell Bell
-     * to the user.
+     * to the user & proc dancer-like effects.
      */
     if (user) {
       if (user.turnData.hitsLeft && --user.turnData.hitsLeft >= 1 && this.getFirstTarget()?.isActive()) {
@@ -419,6 +422,19 @@ export class MoveEffectPhase extends PokemonPhase {
         }
         globalScene.applyModifiers(HitHealModifier, this.player, user);
         this.getTargets().forEach(target => (target.turnData.moveEffectiveness = null));
+
+        // proc dancer
+        console.log("AJJFJJJF");
+        globalScene.getField(true).forEach(p =>
+          applyPostMoveUsedAbAttrs(
+            PostMoveUsedAbAttr,
+            p,
+            user.getMoveset().find(m => m.moveId === this.move.id)!, // TODO: is this bang correct?
+            user,
+            this.targets,
+            this.hitChecks,
+          ),
+        );
       }
     }
 
@@ -813,7 +829,7 @@ export class MoveEffectPhase extends PokemonPhase {
      */
     applyMoveAttrs(StatChangeBeforeDmgCalcAttr, user, target, this.move);
 
-    const { result: result, damage: dmg } = target.getAttackDamage({
+    const { result, damage: dmg } = target.getAttackDamage({
       source: user,
       move: this.move,
       ignoreAbility: false,
