@@ -63,40 +63,56 @@ describe("Abilities - Dancer", () => {
     expect(oricorio.moveset[1]?.ppUsed).toBe(0);
   });
 
-  // TODO: Enable after Dancer rework to not push to move history
-  it.todo("should not count as the last move used for mirror move/instruct", async () => {
+  // TODO: Enable once i figure stuff out
+  it.todo("should copy copied dance moves from mirror move", async () => {
     game.override
       .moveset([Moves.FIERY_DANCE, Moves.REVELATION_DANCE])
-      .enemyMoveset([Moves.INSTRUCT, Moves.MIRROR_MOVE, Moves.SPLASH])
+      .enemyMoveset([Moves.MIRROR_MOVE, Moves.SPLASH])
       .enemySpecies(Species.SHUCKLE)
       .enemyLevel(10);
     await game.classicMode.startBattle([Species.ORICORIO, Species.FEEBAS]);
 
-    const [oricorio] = game.scene.getPlayerField();
-    const [, shuckle2] = game.scene.getEnemyField();
+    const [, shuckle2] = game.scene.getPlayerParty();
 
     game.move.select(Moves.REVELATION_DANCE, BattlerIndex.PLAYER, BattlerIndex.ENEMY_2);
     game.move.select(Moves.FIERY_DANCE, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY_2);
-    await game.forceEnemyMove(Moves.INSTRUCT, BattlerIndex.PLAYER);
+    await game.forceEnemyMove(Moves.SPLASH, BattlerIndex.PLAYER);
     await game.forceEnemyMove(Moves.MIRROR_MOVE, BattlerIndex.PLAYER);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY_2, BattlerIndex.ENEMY]);
-    await game.phaseInterceptor.to("MovePhase"); // Oricorio rev dance
+
+    await game.phaseInterceptor.to("TurnEndPhase"); // Oricorio rev dance
     await game.phaseInterceptor.to("MovePhase"); // Feebas fiery dance
     await game.phaseInterceptor.to("MovePhase"); // Oricorio fiery dance (from dancer)
-    await game.phaseInterceptor.to("MoveEndPhase", false);
-    // dancer copied move doesn't appear in move history
-    expect(oricorio.getLastXMoves(-1)[0].move).toBe(Moves.REVELATION_DANCE);
 
-    await game.phaseInterceptor.to("MovePhase"); // shuckle 2 mirror moves oricorio
-    await game.phaseInterceptor.to("MovePhase"); // calls instructed rev dance
-    let currentPhase = game.scene.getCurrentPhase() as MovePhase;
+    await game.phaseInterceptor.to("MovePhase"); // shuckle 2 copies oricorio
+    await game.phaseInterceptor.to("MovePhase"); // copied move used
+
+    const currentPhase = game.scene.getCurrentPhase() as MovePhase;
     expect(currentPhase.pokemon).toBe(shuckle2);
     expect(currentPhase.move.moveId).toBe(Moves.REVELATION_DANCE);
+  });
 
-    await game.phaseInterceptor.to("MovePhase"); // shuckle 1 instructs oricorio
-    await game.phaseInterceptor.to("MovePhase");
-    currentPhase = game.scene.getCurrentPhase() as MovePhase;
-    expect(currentPhase.pokemon).toBe(oricorio);
+  it("should not count as the last move used for instruct", async () => {
+    game.override
+      .moveset([Moves.FIERY_DANCE, Moves.REVELATION_DANCE])
+      .enemyMoveset([Moves.INSTRUCT, Moves.SPLASH])
+      .enemySpecies(Species.SHUCKLE)
+      .enemyLevel(10);
+    await game.classicMode.startBattle([Species.ORICORIO, Species.FEEBAS]);
+
+    game.move.select(Moves.REVELATION_DANCE, BattlerIndex.PLAYER, BattlerIndex.ENEMY_2);
+    game.move.select(Moves.FIERY_DANCE, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY_2);
+    await game.forceEnemyMove(Moves.SPLASH, BattlerIndex.PLAYER);
+    await game.forceEnemyMove(Moves.INSTRUCT, BattlerIndex.PLAYER);
+    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY_2, BattlerIndex.ENEMY]);
+    await game.phaseInterceptor.to("TurnEndPhase"); // Oricorio rev dance
+    await game.phaseInterceptor.to("MovePhase"); // Feebas fiery dance
+    await game.phaseInterceptor.to("MovePhase"); // Oricorio fiery dance (from dancer)
+
+    await game.phaseInterceptor.to("MovePhase"); // shuckle 2 instructs oricorio
+    await game.phaseInterceptor.to("MovePhase"); // instructed move used
+    const currentPhase = game.scene.getCurrentPhase() as MovePhase;
+    expect(currentPhase.pokemon).toBe(game.scene.getPlayerPokemon());
     expect(currentPhase.move.moveId).toBe(Moves.REVELATION_DANCE);
   });
 });

@@ -64,8 +64,8 @@ import { MoveCategory } from "#enums/MoveCategory";
 
 
 // Type imports
-import type { EnemyPokemon, PokemonMove } from "#app/field/pokemon";
-import type Pokemon from "#app/field/pokemon";
+import { EnemyPokemon, PokemonMove } from "#app/field/pokemon";
+import Pokemon from "#app/field/pokemon";
 import type { Weather } from "#app/data/weather";
 import type { BattlerTag } from "#app/data/battler-tags";
 import type { AbAttrCondition, PokemonDefendCondition, PokemonStatStageChangeCondition, PokemonAttackCondition, AbAttrApplyFunc, AbAttrSuccessFunc } from "#app/@types/ability-types";
@@ -3262,13 +3262,13 @@ export class ConditionalUserFieldStatusEffectImmunityAbAttr extends UserFieldSta
 
 /**
  * Conditionally provides immunity to stat drop effects to the user's field.
- * 
+ *
  * Used by {@linkcode Abilities.FLOWER_VEIL | Flower Veil}.
  */
 export class ConditionalUserFieldProtectStatAbAttr extends PreStatStageChangeAbAttr {
   /** {@linkcode BattleStat} to protect or `undefined` if **all** {@linkcode BattleStat} are protected */
   protected protectedStat?: BattleStat;
-  
+
   /** If the method evaluates to true, the stat will be protected. */
   protected condition: (target: Pokemon) => boolean;
 
@@ -3285,7 +3285,7 @@ export class ConditionalUserFieldProtectStatAbAttr extends PreStatStageChangeAbA
    * @param stat The stat being affected
    * @param cancelled Holds whether the stat change was already prevented.
    * @param args Args[0] is the target pokemon of the stat change.
-   * @returns 
+   * @returns
    */
   override canApplyPreStatStageChange(pokemon: Pokemon, passive: boolean, simulated: boolean, stat: BattleStat, cancelled: BooleanHolder, args: [Pokemon, ...any]): boolean {
     const target = args[0];
@@ -3417,7 +3417,7 @@ export class BonusCritAbAttr extends AbAttr {
 
   /**
    * Apply the bonus crit ability by increasing the value in the provided number holder by 1
-   * 
+   *
    * @param pokemon The pokemon with the BonusCrit ability (unused)
    * @param passive Unused
    * @param simulated Unused
@@ -3570,7 +3570,7 @@ export class PreWeatherEffectAbAttr extends AbAttr {
     args: any[]): boolean {
     return true;
   }
-  
+
   applyPreWeatherEffect(
     pokemon: Pokemon,
     passive: boolean,
@@ -4341,13 +4341,16 @@ export class PostDancingMoveAbAttr extends PostMoveUsedAbAttr {
     simulated: boolean,
     args: any[]): void {
     if (!simulated) {
+      const m = move.getMove();
+      const newMove = new PokemonMove(m.id, 0, 0, true) // mark new move as virtual for instruct & co
+
       // If the move is an AttackMove or a StatusMove the Dancer must replicate the move on the source of the Dance
-      if (move.getMove() instanceof AttackMove || move.getMove() instanceof StatusMove) {
+      if (m instanceof AttackMove || m instanceof StatusMove) {
         const target = this.getTarget(dancer, source, targets);
-        globalScene.unshiftPhase(new MovePhase(dancer, target, move, true, true));
-      } else if (move.getMove() instanceof SelfStatusMove) {
+        globalScene.unshiftPhase(new MovePhase(dancer, target, newMove, true, true));
+      } else if (m instanceof SelfStatusMove) {
         // If the move is a SelfStatusMove (ie. Swords Dance) the Dancer should replicate it on itself
-        globalScene.unshiftPhase(new MovePhase(dancer, [ dancer.getBattlerIndex() ], move, true, true));
+        globalScene.unshiftPhase(new MovePhase(dancer, [ dancer.getBattlerIndex() ], newMove, true, true));
       }
     }
   }
@@ -5057,7 +5060,7 @@ export class PostSummonStatStageChangeOnArenaAbAttr extends PostSummonStatStageC
 /**
  * Takes no damage from the first hit of a damaging move.
  * This is used in the Disguise and Ice Face abilities.
- * 
+ *
  * Does not apply to a user's substitute
  * @extends ReceivedMoveDamageMultiplierAbAttr
  */
@@ -5150,7 +5153,7 @@ export class IllusionPreSummonAbAttr extends PreSummonAbAttr {
 
       // If the last conscious Pokémon in the party is a Terastallized Ogerpon or Terapagos, Illusion will not activate.
       // Illusion will also not activate if the Pokémon with Illusion is Terastallized and the last Pokémon in the party is Ogerpon or Terapagos.
-      if ( 
+      if (
         lastPokemon === pokemon ||
         ((speciesId === Species.OGERPON || speciesId === Species.TERAPAGOS) && (lastPokemon.isTerastallized || pokemon.isTerastallized))
       ) {
