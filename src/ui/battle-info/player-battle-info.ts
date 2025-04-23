@@ -1,8 +1,12 @@
+import { getLevelTotalExp } from "#app/data/exp";
+import type { PlayerPokemon } from "#app/field/pokemon";
 import { globalScene } from "#app/global-scene";
 import { Stat } from "#enums/stat";
 import BattleInfo from "./battle-info";
 
 export class PlayerBattleInfo extends BattleInfo {
+  protected player: true = true;
+
   override get statOrder(): Stat[] {
     return [Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.ACC, Stat.EVA, Stat.SPD];
   }
@@ -28,5 +32,15 @@ export class PlayerBattleInfo extends BattleInfo {
 
     this.expBar = expBar;
     this.expMaskRect = expMaskRect;
+  }
+
+  override initInfo(pokemon: PlayerPokemon): void {
+    super.initInfo(pokemon);
+    this.setHpNumbers(pokemon.hp, pokemon.getMaxHp());
+    this.expMaskRect.x = (pokemon.levelExp / getLevelTotalExp(pokemon.level, pokemon.species.growthRate)) * 510;
+    this.lastExp = pokemon.exp;
+    this.lastLevelExp = pokemon.levelExp;
+
+    this.statValuesContainer.setPosition(8, 7);
   }
 }
