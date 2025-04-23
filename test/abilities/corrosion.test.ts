@@ -23,7 +23,7 @@ describe("Abilities - Corrosion", () => {
     game = new GameManager(phaserGame);
     game.override
       .moveset([Moves.SPLASH])
-      .battleType("single")
+      .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.GRIMER)
       .enemyAbility(Abilities.CORROSION)

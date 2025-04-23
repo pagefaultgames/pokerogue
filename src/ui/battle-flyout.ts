@@ -1,6 +1,6 @@
 import type { default as Pokemon } from "../field/pokemon";
 import { addTextObject, TextStyle } from "./text";
-import * as Utils from "../utils";
+import { fixedInt } from "#app/utils/common";
 import { globalScene } from "#app/global-scene";
 import type Move from "#app/data/moves/move";
 import type { BerryUsedEvent, MoveUsedEvent } from "../events/battle-scene";
@@ -201,7 +201,7 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
     globalScene.tweens.add({
       targets: this.flyoutParent,
       x: visible ? this.anchorX : this.anchorX - this.translationX,
-      duration: Utils.fixedInt(125),
+      duration: fixedInt(125),
       ease: "Sine.easeInOut",
       alpha: visible ? 1 : 0,
     });

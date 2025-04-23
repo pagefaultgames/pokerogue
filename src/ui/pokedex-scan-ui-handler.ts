@@ -3,10 +3,10 @@ import { FormModalUiHandler } from "./form-modal-ui-handler";
 import type { ModalConfig } from "./modal-ui-handler";
 import type { PlayerPokemon } from "#app/field/pokemon";
 import type { OptionSelectItem } from "./abstact-option-select-ui-handler";
-import { isNullOrUndefined } from "#app/utils";
-import { Mode } from "./ui";
+import { isNullOrUndefined } from "#app/utils/common";
+import { UiMode } from "#enums/ui-mode";
 import { FilterTextRow } from "./filter-text";
-import { allAbilities } from "#app/data/ability";
+import { allAbilities } from "#app/data/data-lists";
 import { allMoves } from "#app/data/moves/move";
 import { allSpecies } from "#app/data/pokemon-species";
 import i18next from "i18next";
@@ -115,7 +115,7 @@ export default class PokedexScanUiHandler extends FormModalUiHandler {
     input.on("keydown", (inputObject, evt: KeyboardEvent) => {
       if (
         ["escape", "space"].some(v => v === evt.key.toLowerCase() || v === evt.code.toLowerCase()) &&
-        ui.getMode() === Mode.AUTO_COMPLETE
+        ui.getMode() === UiMode.AUTO_COMPLETE
       ) {
         // Delete autocomplete list and recovery focus.
         inputObject.on("blur", () => inputObject.node.focus(), { once: true });
@@ -125,7 +125,7 @@ export default class PokedexScanUiHandler extends FormModalUiHandler {
 
     input.on("textchange", (inputObject, evt: InputEvent) => {
       // Delete autocomplete.
-      if (ui.getMode() === Mode.AUTO_COMPLETE) {
+      if (ui.getMode() === UiMode.AUTO_COMPLETE) {
         ui.revertMode();
       }
 
@@ -154,7 +154,7 @@ export default class PokedexScanUiHandler extends FormModalUiHandler {
           maxOptions: 5,
           modalContainer: this.modalContainer,
         };
-        ui.setOverlayMode(Mode.AUTO_COMPLETE, modalOpts);
+        ui.setOverlayMode(UiMode.AUTO_COMPLETE, modalOpts);
       }
     });
 
@@ -168,7 +168,7 @@ export default class PokedexScanUiHandler extends FormModalUiHandler {
         this.inputs[0].text = args[1];
       }
       this.submitAction = _ => {
-        if (ui.getMode() === Mode.POKEDEX_SCAN) {
+        if (ui.getMode() === UiMode.POKEDEX_SCAN) {
           this.sanitizeInputs();
           const outputName = this.reducedKeys.includes(this.inputs[0].text) ? this.inputs[0].text : "";
           const sanitizedName = btoa(unescape(encodeURIComponent(outputName)));

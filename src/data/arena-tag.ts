@@ -1,13 +1,13 @@
 import { globalScene } from "#app/global-scene";
 import type { Arena } from "#app/field/arena";
 import { PokemonType } from "#enums/pokemon-type";
-import { BooleanHolder, NumberHolder, toDmgValue } from "#app/utils";
+import { BooleanHolder, NumberHolder, toDmgValue } from "#app/utils/common";
 import { allMoves } from "#app/data/moves/move";
 import { MoveTarget } from "#enums/MoveTarget";
 import { MoveCategory } from "#enums/MoveCategory";
 import { getPokemonNameWithAffix } from "#app/messages";
 import type Pokemon from "#app/field/pokemon";
-import { HitResult, PokemonMove } from "#app/field/pokemon";
+import { HitResult } from "#app/field/pokemon";
 import { StatusEffect } from "#enums/status-effect";
 import type { BattlerIndex } from "#app/battle";
 import {
@@ -18,7 +18,7 @@ import {
   applyAbAttrs,
   applyOnGainAbAttrs,
   applyOnLoseAbAttrs,
-} from "#app/data/ability";
+} from "#app/data/abilities/ability";
 import { Stat } from "#enums/stat";
 import { CommonAnim, CommonBattleAnim } from "#app/data/battle-anims";
 import i18next from "i18next";
@@ -335,7 +335,7 @@ export class ConditionalProtectTag extends ArenaTag {
    * @param arena the {@linkcode Arena} containing this tag
    * @param simulated `true` if the tag is applied quietly; `false` otherwise.
    * @param isProtected a {@linkcode BooleanHolder} used to flag if the move is protected against
-   * @param attacker the attacking {@linkcode Pokemon}
+   * @param _attacker the attacking {@linkcode Pokemon}
    * @param defender the defending {@linkcode Pokemon}
    * @param moveId the {@linkcode Moves | identifier} for the move being used
    * @param ignoresProtectBypass a {@linkcode BooleanHolder} used to flag if a protection effect supercedes effects that ignore protection
@@ -345,7 +345,7 @@ export class ConditionalProtectTag extends ArenaTag {
     arena: Arena,
     simulated: boolean,
     isProtected: BooleanHolder,
-    attacker: Pokemon,
+    _attacker: Pokemon,
     defender: Pokemon,
     moveId: Moves,
     ignoresProtectBypass: BooleanHolder,
@@ -354,8 +354,6 @@ export class ConditionalProtectTag extends ArenaTag {
       if (!isProtected.value) {
         isProtected.value = true;
         if (!simulated) {
-          attacker.stopMultiHit(defender);
-
           new CommonBattleAnim(CommonAnim.PROTECT, defender).play();
           globalScene.queueMessage(
             i18next.t("arenaTag:conditionalProtectApply", {
@@ -899,7 +897,7 @@ export class DelayedAttackTag extends ArenaTag {
 
     if (!ret) {
       globalScene.unshiftPhase(
-        new MoveEffectPhase(this.sourceId!, [this.targetIndex], new PokemonMove(this.sourceMove!, 0, 0, true)),
+        new MoveEffectPhase(this.sourceId!, [this.targetIndex], allMoves[this.sourceMove!], false, true),
       ); // TODO: are those bangs correct?
     }
 

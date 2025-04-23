@@ -5,7 +5,7 @@ import { allMoves, CritOnlyAttr } from "#app/data/moves/move";
 import { ArenaTagType } from "#app/enums/arena-tag-type";
 import type Pokemon from "#app/field/pokemon";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { NumberHolder } from "#app/utils";
+import { NumberHolder } from "#app/utils/common";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
@@ -35,7 +35,7 @@ describe("Moves - Aurora Veil", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     globalScene = game.scene;
-    game.override.battleType("single");
+    game.override.battleStyle("single");
     game.override.ability(Abilities.NONE);
     game.override.moveset([Moves.ABSORB, Moves.ROCK_SLIDE, Moves.TACKLE]);
     game.override.enemyLevel(100);
@@ -62,7 +62,7 @@ describe("Moves - Aurora Veil", () => {
   });
 
   it("reduces damage of physical attacks by a third in a double battle", async () => {
-    game.override.battleType("double");
+    game.override.battleStyle("double");
 
     const moveToUse = Moves.ROCK_SLIDE;
     await game.classicMode.startBattle([Species.SHUCKLE, Species.SHUCKLE]);
@@ -98,7 +98,7 @@ describe("Moves - Aurora Veil", () => {
   });
 
   it("reduces damage of special attacks by a third in a double battle", async () => {
-    game.override.battleType("double");
+    game.override.battleStyle("double");
 
     const moveToUse = Moves.DAZZLING_GLEAM;
     await game.classicMode.startBattle([Species.SHUCKLE, Species.SHUCKLE]);
