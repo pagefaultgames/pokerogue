@@ -13,7 +13,7 @@ import type BattleFlyout from "../battle-flyout";
 import i18next from "i18next";
 import { ExpGainsSpeed } from "#app/enums/exp-gains-speed";
 
-export default class BattleInfo extends Phaser.GameObjects.Container {
+export default abstract class BattleInfo extends Phaser.GameObjects.Container {
   public static readonly EXP_GAINS_DURATION_BASE = 1650;
 
   protected baseY: number;
@@ -71,18 +71,9 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
 
   public flyoutMenu?: BattleFlyout;
 
-  protected statOrder: Stat[];
-  protected readonly statOrderPlayer = [Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.ACC, Stat.EVA, Stat.SPD];
-  protected readonly statOrderEnemy = [
-    Stat.HP,
-    Stat.ATK,
-    Stat.DEF,
-    Stat.SPATK,
-    Stat.SPDEF,
-    Stat.ACC,
-    Stat.EVA,
-    Stat.SPD,
-  ];
+  get statOrder(): Stat[] {
+    return [];
+  }
 
   constructor(x: number, y: number, player: boolean) {
     super(globalScene, x, y);
@@ -201,9 +192,8 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     const startingX = this.player ? -this.statsBox.width + 8 : -this.statsBox.width + 5;
     const paddingX = this.player ? 4 : 2;
     const statOverflow = this.player ? 1 : 0;
-    this.statOrder = this.player ? this.statOrderPlayer : this.statOrderEnemy; // this tells us whether or not to use the player or enemy battle stat order
 
-    this.statOrder.map((s, i) => {
+    for (const [i, s] of this.statOrder.entries()) {
       // we do a check for i > statOverflow to see when the stat labels go onto the next column
       // For enemies, we have HP (i=0) by itself then a new column, so we check for i > 0
       // For players, we don't have HP, so we start with i = 0 and i = 1 for our first column, and so need to check for i > 1
@@ -241,7 +231,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
         statLabel.setVisible(false);
         statNumber.setVisible(false);
       }
-    });
+    }
 
     this.type1Icon = globalScene.add.sprite(
       player ? -139 : -15,

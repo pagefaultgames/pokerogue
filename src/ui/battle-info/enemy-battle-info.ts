@@ -3,8 +3,25 @@ import { globalScene } from "#app/global-scene";
 import BattleFlyout from "../battle-flyout";
 import { addTextObject, TextStyle } from "#app/ui/text";
 import { addWindow, WindowVariant } from "#app/ui/ui-theme";
+import { Stat } from "#enums/stat";
 
 export class EnemyBattleInfo extends BattleInfo {
+  protected player: false = false;
+  protected championRibbon: Phaser.GameObjects.Sprite;
+  protected ownedIcon: Phaser.GameObjects.Sprite;
+  public flyoutMenu: BattleFlyout;
+
+  // #region Type effectiveness hint objects
+  protected effectivenessContainer: Phaser.GameObjects.Container;
+  protected effectivenessWindow: Phaser.GameObjects.NineSlice;
+  protected effectivenessText: Phaser.GameObjects.Text;
+  protected currentEffectiveness?: string;
+  // #endregion
+
+  override get statOrder(): Stat[] {
+    return [Stat.HP, Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.ACC, Stat.EVA, Stat.SPD];
+  }
+
   constructor() {
     super(140, -141, false);
 
