@@ -961,7 +961,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
     const isFormCaught = (caughtAttr & globalScene.gameData.getFormAttr(formIndex ?? 0)) > 0n;
 
-    console.log(caughtAttr.toString(2), species.getFullUnlocksData().toString(2));
     return isFormCaught;
   }
 
@@ -1159,7 +1158,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
         this.blockInput = false;
       } else {
         ui.revertMode().then(() => {
-          console.log("exitCallback", this.exitCallback);
           if (this.exitCallback instanceof Function) {
             const exitCallback = this.exitCallback;
             this.exitCallback = null;
@@ -2467,7 +2465,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
       const isFormCaught = this.isFormCaught();
       const isFormSeen = this.isSeen();
-      console.log("isCaught:", isFormCaught, "isSeen:", isFormSeen);
 
       this.shinyOverlay.setVisible(shiny ?? false); // TODO: is false the correct default?
       this.pokemonNumberText.setColor(this.getTextColor(shiny ? TextStyle.SUMMARY_GOLD : TextStyle.SUMMARY, false));
