@@ -43,7 +43,6 @@ export default abstract class BattleInfo extends Phaser.GameObjects.Container {
   protected levelContainer: Phaser.GameObjects.Container;
   protected hpBar: Phaser.GameObjects.Image;
   protected levelNumbersContainer: Phaser.GameObjects.Container;
-  protected hpNumbersContainer: Phaser.GameObjects.Container;
   protected type1Icon: Phaser.GameObjects.Sprite;
   protected type2Icon: Phaser.GameObjects.Sprite;
   protected type3Icon: Phaser.GameObjects.Sprite;
@@ -501,125 +500,105 @@ export default abstract class BattleInfo extends Phaser.GameObjects.Container {
     );
   }
 
-  updateInfo(pokemon: Pokemon, instant?: boolean): Promise<void> {
-    return new Promise(resolve => {
-      if (!globalScene) {
-        return resolve();
-      }
+  //#region Hp Bar Display handling
+  /**
+   * Called every time the hp frame is updated by the tween
+   * @param pokemon - The pokemon object attached to this battle info
+   */
+  protected updateHpFrame(): void {
+    const hpFrame = this.hpBar.scaleX > 0.5 ? "high" : this.hpBar.scaleX > 0.25 ? "medium" : "low";
+    if (hpFrame !== this.lastHpFrame) {
+      this.hpBar.setFrame(hpFrame);
+      this.lastHpFrame = hpFrame;
+    }
+  }
 
-      const gender: Gender = pokemon.summonData.illusion?.gender ?? pokemon.gender;
+  /**
+   * Called by every frame in the hp animation tween created in {@linkcode updatePokemonHp}
+   * @param _pokemon - The pokemon the battle-info bar belongs to
+   */
+  protected onHpTweenUpdate(_pokemon: Pokemon): void {
+    this.updateHpFrame();
+  }
 
-      this.genderText.setText(getGenderSymbol(gender)).setColor(getGenderColor(gender));
-
-      const nameUpdated = this.updateName(pokemon.getNameToRender());
-
-      const teraTypeUpdated = this.updateTeraType(
-        pokemon.isTerastallized ? pokemon.getTeraType() : PokemonType.UNKNOWN,
-      );
-
-      const isFusion = pokemon.isFusion(true);
-
-      if (nameUpdated || teraTypeUpdated) {
-        this.updateIconDisplay(isFusion);
-      }
-
-      this.updateStatusIcon(pokemon);
-      this.updateTypes(pokemon.getTypes(true, false, undefined, true));
-
-      const updateHpFrame = () => {
-        const hpFrame = this.hpBar.scaleX > 0.5 ? "high" : this.hpBar.scaleX > 0.25 ? "medium" : "low";
-        if (hpFrame !== this.lastHpFrame) {
-          this.hpBar.setFrame(hpFrame);
-          this.lastHpFrame = hpFrame;
-        }
-      };
-
-      const updatePokemonHp = () => {
-        let duration = !instant ? Phaser.Math.Clamp(Math.abs(this.lastHp - pokemon.hp) * 5, 250, 5000) : 0;
-        const speed = globalScene.hpBarSpeed;
-        if (speed) {
-          duration = speed >= 3 ? 0 : duration / Math.pow(2, speed);
-        }
-        globalScene.tweens.add({
-          targets: this.hpBar,
-          ease: "Sine.easeOut",
-          scaleX: pokemon.getHpRatio(true),
-          duration: duration,
-          onUpdate: () => {
-            if (this.player && this.lastHp !== pokemon.hp) {
-              const tweenHp = Math.ceil(this.hpBar.scaleX * pokemon.getMaxHp());
-              this.setHpNumbers(tweenHp, pokemon.getMaxHp());
-              this.lastHp = tweenHp;
-            }
-
-            updateHpFrame();
-          },
-          onComplete: () => {
-            updateHpFrame();
-            // If, after tweening, the hp is different from the original (due to rounding), force the hp number display
-            // to update to the correct value.
-            if (this.player && this.lastHp !== pokemon.hp) {
-              this.setHpNumbers(pokemon.hp, pokemon.getMaxHp());
-              this.lastHp = pokemon.hp;
-            }
-            resolve();
-          },
-        });
-        if (!this.player) {
-          this.lastHp = pokemon.hp;
-        }
-        this.lastMaxHp = pokemon.getMaxHp();
-      };
-
-      if (this.player) {
-        const isLevelCapped = pokemon.level >= globalScene.getMaxExpLevel();
-
-        if (this.lastExp !== pokemon.exp || this.lastLevel !== pokemon.level) {
-          const originalResolve = resolve;
-          const durationMultipler = Math.max(
-            Phaser.Tweens.Builders.GetEaseFunction("Cubic.easeIn")(
-              1 - Math.min(pokemon.level - this.lastLevel, 10) / 10,
-            ),
-            0.1,
-          );
-          resolve = () => this.updatePokemonExp(pokemon, false, durationMultipler).then(() => originalResolve());
-        } else if (isLevelCapped !== this.lastLevelCapped) {
-          this.setLevel(pokemon.level);
-        }
-
-        this.lastLevelCapped = isLevelCapped;
-      }
-
-      if (this.lastHp !== pokemon.hp || this.lastMaxHp !== pokemon.getMaxHp()) {
-        return updatePokemonHp();
-      }
-      if (!this.player && this.lastLevel !== pokemon.level) {
-        this.setLevel(pokemon.level);
-        this.lastLevel = pokemon.level;
-      }
-
-      const stats = pokemon.getStatStages();
-      const statsStr = stats.join("");
-
-      if (this.lastStats !== statsStr) {
-        this.updateStats(stats);
-        this.lastStats = statsStr;
-      }
-
-      this.shinyIcon.setVisible(pokemon.isShiny(true));
-
-      const doubleShiny = isFusion && pokemon.shiny && pokemon.fusionShiny;
-      const baseVariant = !doubleShiny ? pokemon.getVariant(true) : pokemon.variant;
-      this.shinyIcon.setTint(getVariantTint(baseVariant));
-
-      this.fusionShinyIcon.setVisible(doubleShiny);
-      if (isFusion) {
-        this.fusionShinyIcon.setTint(getVariantTint(pokemon.fusionVariant));
-      }
-      this.fusionShinyIcon.setPosition(this.shinyIcon.x, this.shinyIcon.y);
-
-      resolve();
+  /** Update the pokemonHp bar */
+  protected updatePokemonHp(pokemon: Pokemon, resolve: (r: void | PromiseLike<void>) => void, instant?: boolean): void {
+    let duration = !instant ? Phaser.Math.Clamp(Math.abs(this.lastHp - pokemon.hp) * 5, 250, 5000) : 0;
+    const speed = globalScene.hpBarSpeed;
+    if (speed) {
+      duration = speed >= 3 ? 0 : duration / Math.pow(2, speed);
+    }
+    globalScene.tweens.add({
+      targets: this.hpBar,
+      ease: "Sine.easeOut",
+      scaleX: pokemon.getHpRatio(true),
+      duration: duration,
+      onUpdate: () => {
+        this.onHpTweenUpdate(pokemon);
+      },
+      onComplete: () => {
+        this.updateHpFrame();
+        resolve();
+      },
     });
+    this.lastMaxHp = pokemon.getMaxHp();
+  }
+
+  //#endregion
+
+  async updateInfo(pokemon: Pokemon, instant?: boolean): Promise<void> {
+    let resolve: (r: void | PromiseLike<void>) => void = () => {};
+    const promise = new Promise<void>(r => (resolve = r));
+    if (!globalScene) {
+      return resolve();
+    }
+
+    const gender: Gender = pokemon.summonData?.illusion?.gender ?? pokemon.gender;
+
+    this.genderText.setText(getGenderSymbol(gender));
+    this.genderText.setColor(getGenderColor(gender));
+
+    const nameUpdated = this.updateName(pokemon.getNameToRender());
+
+    const teraTypeUpdated = this.updateTeraType(pokemon.isTerastallized ? pokemon.getTeraType() : PokemonType.UNKNOWN);
+
+    const isFusion = pokemon.isFusion(true);
+
+    if (nameUpdated || teraTypeUpdated) {
+      this.updateIconDisplay(isFusion);
+    }
+
+    this.updateStatusIcon(pokemon);
+
+    if (this.lastHp !== pokemon.hp || this.lastMaxHp !== pokemon.getMaxHp()) {
+      return this.updatePokemonHp(pokemon, resolve, instant);
+    }
+    if (!this.player && this.lastLevel !== pokemon.level) {
+      this.setLevel(pokemon.level);
+      this.lastLevel = pokemon.level;
+    }
+
+    const stats = pokemon.getStatStages();
+    const statsStr = stats.join("");
+
+    if (this.lastStats !== statsStr) {
+      this.updateStats(stats);
+      this.lastStats = statsStr;
+    }
+
+    this.shinyIcon.setVisible(pokemon.isShiny(true));
+
+    const doubleShiny = isFusion && pokemon.shiny && pokemon.fusionShiny;
+    const baseVariant = !doubleShiny ? pokemon.getVariant(true) : pokemon.variant;
+    this.shinyIcon.setTint(getVariantTint(baseVariant));
+
+    this.fusionShinyIcon.setVisible(doubleShiny).setPosition(this.shinyIcon.x, this.shinyIcon.y);
+    if (isFusion) {
+      this.fusionShinyIcon.setTint(getVariantTint(pokemon.fusionVariant));
+    }
+
+    resolve();
+    await promise;
   }
   //#endregion
 
@@ -671,23 +650,6 @@ export default abstract class BattleInfo extends Phaser.GameObjects.Container {
       );
     }
     this.levelContainer.setX((this.player ? -41 : -50) - 8 * Math.max(levelStr.length - 3, 0));
-  }
-
-  setHpNumbers(hp: number, maxHp: number): void {
-    if (!this.player || !globalScene) {
-      return;
-    }
-    this.hpNumbersContainer.removeAll(true);
-    const hpStr = hp.toString();
-    const maxHpStr = maxHp.toString();
-    let offset = 0;
-    for (let i = maxHpStr.length - 1; i >= 0; i--) {
-      this.hpNumbersContainer.add(globalScene.add.image(offset++ * -8, 0, "numbers", maxHpStr[i]));
-    }
-    this.hpNumbersContainer.add(globalScene.add.image(offset++ * -8, 0, "numbers", "/"));
-    for (let i = hpStr.length - 1; i >= 0; i--) {
-      this.hpNumbersContainer.add(globalScene.add.image(offset++ * -8, 0, "numbers", hpStr[i]));
-    }
   }
 
   updateStats(stats: number[]): void {
