@@ -24,7 +24,7 @@ describe("Abilities - Liquid Ooze", () => {
     game.override
       .moveset([Moves.SPLASH, Moves.GIGA_DRAIN])
       .ability(Abilities.BALL_FETCH)
-      .battleType("single")
+      .battleStyle("single")
       .disableCrits()
       .enemyLevel(20)
       .enemySpecies(Species.MAGIKARP)
