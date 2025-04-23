@@ -32,7 +32,7 @@ describe("UI - Battle Info", () => {
     game = new GameManager(phaserGame);
     game.override
       .moveset([Moves.GUILLOTINE, Moves.SPLASH])
-      .battleType("single")
+      .battleStyle("single")
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH)
       .enemySpecies(Species.CATERPIE);

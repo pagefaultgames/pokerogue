@@ -1,6 +1,6 @@
 import { addTextObject, TextStyle } from "./text";
 import i18next from "i18next";
-import * as Utils from "#app/utils";
+import { formatText } from "#app/utils/common";
 import { globalScene } from "#app/global-scene";
 
 const hiddenX = -150;
@@ -100,7 +100,7 @@ export default class BgmBar extends Phaser.GameObjects.Container {
 
   getRealBgmName(bgmName: string): string {
     return i18next.t([`bgmName:${bgmName}`, "bgmName:missing_entries"], {
-      name: Utils.formatText(bgmName),
+      name: formatText(bgmName),
     });
   }
 }

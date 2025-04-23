@@ -2,10 +2,6 @@ import { globalScene } from "#app/global-scene";
 import { EncounterPhase } from "./encounter-phase";
 
 export class NextEncounterPhase extends EncounterPhase {
-  constructor() {
-    super();
-  }
-
   start() {
     super.start();
   }

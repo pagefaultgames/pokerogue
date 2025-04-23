@@ -1,15 +1,18 @@
+import type { SessionSaveMigrator } from "#app/@types/SessionSaveMigrator";
+import type { SystemSaveMigrator } from "#app/@types/SystemSaveMigrator";
 import { getPokemonSpecies, getPokemonSpeciesForm } from "#app/data/pokemon-species";
 import { globalScene } from "#app/global-scene";
 import { DexAttr, type SessionSaveData, type SystemSaveData } from "#app/system/game-data";
-import * as Utils from "#app/utils";
+import { isNullOrUndefined } from "#app/utils/common";
 
-export const systemMigrators = [
-  /**
-   * If a starter is caught, but the only forms registered as caught are not starterSelectable,
-   * unlock the default form.
-   * @param data {@linkcode SystemSaveData}
-   */
-  function migrateUnselectableForms(data: SystemSaveData) {
+/**
+ * If a starter is caught, but the only forms registered as caught are not starterSelectable,
+ * unlock the default form.
+ * @param data - {@linkcode SystemSaveData}
+ */
+const migrateUnselectableForms: SystemSaveMigrator = {
+  version: "1.7.0",
+  migrate: (data: SystemSaveData): void => {
     if (data.starterData && data.dexData) {
       Object.keys(data.starterData).forEach(sd => {
         const caughtAttr = data.dexData[sd]?.caughtAttr;
@@ -30,12 +33,13 @@ export const systemMigrators = [
       });
     }
   },
-] as const;
+};
 
-export const settingsMigrators = [] as const;
+export const systemMigrators: Readonly<SystemSaveMigrator[]> = [migrateUnselectableForms] as const;
 
-export const sessionMigrators = [
-  function migrateTera(data: SessionSaveData) {
+const migrateTera: SessionSaveMigrator = {
+  version: "1.7.0",
+  migrate: (data: SessionSaveData): void => {
     for (let i = 0; i < data.modifiers.length; ) {
       if (data.modifiers[i].className === "TerastallizeModifier") {
         data.party.forEach(p => {
@@ -63,15 +67,17 @@ export const sessionMigrators = [
     }
 
     data.party.forEach(p => {
-      if (Utils.isNullOrUndefined(p.teraType)) {
+      if (isNullOrUndefined(p.teraType)) {
         p.teraType = getPokemonSpeciesForm(p.species, p.formIndex).type1;
       }
     });
 
     data.enemyParty.forEach(p => {
-      if (Utils.isNullOrUndefined(p.teraType)) {
+      if (isNullOrUndefined(p.teraType)) {
         p.teraType = getPokemonSpeciesForm(p.species, p.formIndex).type1;
       }
     });
   },
-] as const;
+};
+
+export const sessionMigrators: Readonly<SessionSaveMigrator[]> = [migrateTera] as const;

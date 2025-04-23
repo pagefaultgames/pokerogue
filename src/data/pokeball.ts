@@ -1,6 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import { CriticalCatchChanceBoosterModifier } from "#app/modifier/modifier";
-import { NumberHolder } from "#app/utils";
+import { NumberHolder } from "#app/utils/common";
 import { PokeballType } from "#enums/pokeball";
 import i18next from "i18next";
 

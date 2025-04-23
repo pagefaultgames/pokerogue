@@ -1,6 +1,6 @@
 import type { OptionSelectConfig } from "./abstact-option-select-ui-handler";
 import AbstractOptionSelectUiHandler from "./abstact-option-select-ui-handler";
-import { Mode } from "./ui";
+import { UiMode } from "#enums/ui-mode";
 import i18next from "i18next";
 import { Button } from "#enums/buttons";
 import { globalScene } from "#app/global-scene";
@@ -12,7 +12,7 @@ export default class ConfirmUiHandler extends AbstractOptionSelectUiHandler {
   private switchCheckCursor: number;
 
   constructor() {
-    super(Mode.CONFIRM);
+    super(UiMode.CONFIRM);
   }
 
   getWindowWidth(): number {
