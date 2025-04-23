@@ -167,11 +167,6 @@ export const trainerPartyTemplates = {
     new TrainerPartyTemplate(1, PartyMemberStrength.STRONGER),
   ),
   GYM_LEADER_5: new TrainerPartyCompoundTemplate(
-    new TrainerPartyTemplate(4, PartyMemberStrength.AVERAGE),
-    new TrainerPartyTemplate(1, PartyMemberStrength.STRONG),
-    new TrainerPartyTemplate(1, PartyMemberStrength.STRONGER),
-  ),
-  GYM_LEADER_6: new TrainerPartyCompoundTemplate(
     new TrainerPartyTemplate(3, PartyMemberStrength.AVERAGE),
     new TrainerPartyTemplate(2, PartyMemberStrength.STRONG),
     new TrainerPartyTemplate(1, PartyMemberStrength.STRONGER),
@@ -239,7 +234,7 @@ export function getEvilGruntPartyTemplate(): TrainerPartyTemplate {
     case ClassicFixedBossWaves.EVIL_ADMIN_1:
       return trainerPartyTemplates.GYM_LEADER_4; // 3avg 1 strong 1 stronger
     default:
-      return trainerPartyTemplates.GYM_LEADER_6; // 3 avg 2 strong 1 stronger
+      return trainerPartyTemplates.GYM_LEADER_5; // 3 avg 2 strong 1 stronger
   }
 }
 
@@ -269,14 +264,11 @@ export function getGymLeaderPartyTemplate() {
       else if (currentBattle?.waveIndex <= 60) { // 50 and 60
         return trainerPartyTemplates.GYM_LEADER_3; // 2 avg 1 strong 1 stronger
       }
-      else if (currentBattle?.waveIndex <= 80) {
+      else if (currentBattle?.waveIndex <= 90) { // 80 and 90
         return trainerPartyTemplates.GYM_LEADER_4; // 3 avg 1 strong 1 stronger
       }
-      else if (currentBattle?.waveIndex <= 90) {
-        return trainerPartyTemplates.GYM_LEADER_5; // 4 avg 1 strong 1 stronger
-      }
       // 110+
-      return trainerPartyTemplates.GYM_LEADER_6; // 3 avg 2 strong 1 stronger
+      return trainerPartyTemplates.GYM_LEADER_5; // 3 avg 2 strong 1 stronger
     default:
       return getWavePartyTemplate(
         trainerPartyTemplates.GYM_LEADER_1,
@@ -284,7 +276,6 @@ export function getGymLeaderPartyTemplate() {
         trainerPartyTemplates.GYM_LEADER_3,
         trainerPartyTemplates.GYM_LEADER_4,
         trainerPartyTemplates.GYM_LEADER_5,
-        trainerPartyTemplates.GYM_LEADER_6,
       );
   }
 }
