@@ -970,17 +970,3 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     this.y = this.baseY;
   }
 }
-
-export class PlayerBattleInfo extends BattleInfo {
-  constructor() {
-    super(Math.floor(globalScene.game.canvas.width / 6) - 10, -72, true);
-  }
-}
-
-export class EnemyBattleInfo extends BattleInfo {
-  constructor() {
-    super(140, -141, false);
-  }
-
-  setMini(_mini: boolean): void {} // Always mini
-}
