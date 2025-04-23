@@ -2672,7 +2672,6 @@ export class RemoveHeldItemAttr extends MoveEffectAttr {
  */
 export class EatBerryAttr extends MoveEffectAttr {
   protected chosenBerry: BerryModifier;
-  protected chosenBerry: BerryModifier | undefined;
   constructor(selfTarget: boolean) {
     super(selfTarget);
   }
@@ -3197,7 +3196,7 @@ export class StatStageChangeAttr extends MoveEffectAttr {
   private get showMessage () {
     return this.options?.showMessage ?? true;
   }
-  
+
   /**
    * Attempts to change stats of the user or target (depending on value of selfTarget) if conditions are met
    * @param user {@linkcode Pokemon} the user of the move
