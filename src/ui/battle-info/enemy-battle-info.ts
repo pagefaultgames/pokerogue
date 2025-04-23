@@ -198,25 +198,7 @@ export class EnemyBattleInfo extends BattleInfo {
     resolve: (r: void | PromiseLike<void>) => void,
     instant?: boolean,
   ): void {
-    let duration = !instant ? Phaser.Math.Clamp(Math.abs(this.lastHp - pokemon.hp) * 5, 250, 5000) : 0;
-    const speed = globalScene.hpBarSpeed;
-    if (speed) {
-      duration = speed >= 3 ? 0 : duration / Math.pow(2, speed);
-    }
-    globalScene.tweens.add({
-      targets: this.hpBar,
-      ease: "Sine.easeOut",
-      scaleX: pokemon.getHpRatio(true),
-      duration: duration,
-      onUpdate: () => {
-        this.updateHpFrame();
-      },
-      onComplete: () => {
-        this.updateHpFrame();
-        resolve();
-      },
-    });
+    super.updatePokemonHp(pokemon, resolve, instant);
     this.lastHp = pokemon.hp;
-    this.lastMaxHp = pokemon.getMaxHp();
   }
 }
