@@ -7,6 +7,7 @@ import BattleInfo from "./battle-info";
 
 export class PlayerBattleInfo extends BattleInfo {
   protected player: true = true;
+  protected hpNumbersContainer: Phaser.GameObjects.Container;
 
   override get statOrder(): Stat[] {
     return [Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.ACC, Stat.EVA, Stat.SPD];
@@ -43,6 +44,50 @@ export class PlayerBattleInfo extends BattleInfo {
     this.lastLevelExp = pokemon.levelExp;
 
     this.statValuesContainer.setPosition(8, 7);
+  }
+  override setMini(mini: boolean): void {
+    if (this.mini === mini) {
+      return;
+    }
+
+    this.mini = mini;
+
+    this.box.setTexture(this.getTextureName());
+    this.statsBox.setTexture(`${this.getTextureName()}_stats`);
+
+    if (this.player) {
+      this.y -= 12 * (mini ? 1 : -1);
+      this.baseY = this.y;
+    }
+
+    const offsetElements = [
+      this.nameText,
+      this.genderText,
+      this.teraIcon,
+      this.splicedIcon,
+      this.shinyIcon,
+      this.statusIndicator,
+      this.levelContainer,
+    ];
+    offsetElements.forEach(el => (el.y += 1.5 * (mini ? -1 : 1)));
+
+    [this.type1Icon, this.type2Icon, this.type3Icon].forEach(el => {
+      el.x += 4 * (mini ? 1 : -1);
+      el.y += -8 * (mini ? 1 : -1);
+    });
+
+    this.statValuesContainer.x += 2 * (mini ? 1 : -1);
+    this.statValuesContainer.y += -7 * (mini ? 1 : -1);
+
+    const toggledElements = [this.hpNumbersContainer, this.expBar];
+    toggledElements.forEach(el => el.setVisible(!mini));
+  }
+
+  protected override onHpTweenUpdate(pokemon: PlayerPokemon): void {
+    const tweenHp = Math.ceil(this.hpBar.scaleX * pokemon.getMaxHp());
+    this.setHpNumbers(tweenHp, pokemon.getMaxHp());
+    this.lastHp = tweenHp;
+    this.updateHpFrame();
   }
 
   override async updatePokemonExp(
@@ -114,41 +159,42 @@ export class PlayerBattleInfo extends BattleInfo {
     });
   }
 
-  setMini(mini: boolean): void {
-    if (this.mini === mini) {
+  override async updateInfo(pokemon: PlayerPokemon, instant?: boolean): Promise<void> {
+    await super.updateInfo(pokemon, instant);
+    const isLevelCapped = pokemon.level >= globalScene.getMaxExpLevel();
+    const oldLevelCapped = this.lastLevelCapped;
+    this.lastLevelCapped = isLevelCapped;
+
+    if (this.lastExp !== pokemon.exp || this.lastLevel !== pokemon.level) {
+      const durationMultipler = Math.max(
+        Phaser.Tweens.Builders.GetEaseFunction("Cubic.easeIn")(1 - Math.min(pokemon.level - this.lastLevel, 10) / 10),
+        0.1,
+      );
+      await this.updatePokemonExp(pokemon, false, durationMultipler);
+    } else if (isLevelCapped !== oldLevelCapped) {
+      this.setLevel(pokemon.level);
+    }
+  }
+
+  /**
+   * Set the HP numbers text, that is the "HP/Max HP" text that appears below the player's health bar.
+   * @param hp - The current HP of the player.
+   * @param maxHp - The maximum HP of the player.
+   */
+  setHpNumbers(hp: number, maxHp: number): void {
+    if (!globalScene) {
       return;
     }
-
-    this.mini = mini;
-
-    this.box.setTexture(this.getTextureName());
-    this.statsBox.setTexture(`${this.getTextureName()}_stats`);
-
-    if (this.player) {
-      this.y -= 12 * (mini ? 1 : -1);
-      this.baseY = this.y;
+    this.hpNumbersContainer.removeAll(true);
+    const hpStr = hp.toString();
+    const maxHpStr = maxHp.toString();
+    let offset = 0;
+    for (let i = maxHpStr.length - 1; i >= 0; i--) {
+      this.hpNumbersContainer.add(globalScene.add.image(offset++ * -8, 0, "numbers", maxHpStr[i]));
     }
-
-    const offsetElements = [
-      this.nameText,
-      this.genderText,
-      this.teraIcon,
-      this.splicedIcon,
-      this.shinyIcon,
-      this.statusIndicator,
-      this.levelContainer,
-    ];
-    offsetElements.forEach(el => (el.y += 1.5 * (mini ? -1 : 1)));
-
-    [this.type1Icon, this.type2Icon, this.type3Icon].forEach(el => {
-      el.x += 4 * (mini ? 1 : -1);
-      el.y += -8 * (mini ? 1 : -1);
-    });
-
-    this.statValuesContainer.x += 2 * (mini ? 1 : -1);
-    this.statValuesContainer.y += -7 * (mini ? 1 : -1);
-
-    const toggledElements = [this.hpNumbersContainer, this.expBar];
-    toggledElements.forEach(el => el.setVisible(!mini));
+    this.hpNumbersContainer.add(globalScene.add.image(offset++ * -8, 0, "numbers", "/"));
+    for (let i = hpStr.length - 1; i >= 0; i--) {
+      this.hpNumbersContainer.add(globalScene.add.image(offset++ * -8, 0, "numbers", hpStr[i]));
+    }
   }
 }
