@@ -75,6 +75,49 @@ export default abstract class BattleInfo extends Phaser.GameObjects.Container {
     return [];
   }
 
+  /** Helper method used by the constructor to create the tera and shiny icons next to the name */
+  private constructIcons() {
+    const hitArea = new Phaser.Geom.Rectangle(0, 0, 12, 15);
+    const hitCallback = Phaser.Geom.Rectangle.Contains;
+
+    this.teraIcon = globalScene.add
+      .sprite(0, 0, "icon_tera")
+      .setName("icon_tera")
+      .setVisible(false)
+      .setOrigin(0, 0)
+      .setScale(0.5)
+      .setInteractive(hitArea, hitCallback);
+    this.teraIcon.setPositionRelative(this.nameText, 0, 2);
+
+    this.shinyIcon = globalScene.add
+      .sprite(0, 0, "shiny_star")
+      .setName("icon_shiny")
+      .setVisible(false)
+      .setOrigin(0, 0)
+      .setScale(0.5)
+      .setInteractive(hitArea, hitCallback);
+    this.shinyIcon.setPositionRelative(this.nameText, 0, 2);
+
+    this.fusionShinyIcon = globalScene.add
+      .sprite(0, 0, "shiny_star_2")
+      .setName("icon_fusion_shiny")
+      .setVisible(false)
+      .setOrigin(0, 0)
+      .setScale(0.5)
+      .copyPosition(this.shinyIcon);
+
+    this.splicedIcon = globalScene.add
+      .sprite(0, 0, "icon_spliced")
+      .setName("icon_spliced")
+      .setVisible(false)
+      .setOrigin(0, 0)
+      .setScale(0.5)
+      .setInteractive(hitArea, hitCallback);
+    this.splicedIcon.setPositionRelative(this.nameText, 0, 2);
+
+    this.add([this.teraIcon, this.shinyIcon, this.fusionShinyIcon, this.splicedIcon]);
+  }
+
   constructor(x: number, y: number, player: boolean) {
     super(globalScene, x, y);
     this.baseY = y;
@@ -111,40 +154,7 @@ export default abstract class BattleInfo extends Phaser.GameObjects.Container {
     this.genderText.setPositionRelative(this.nameText, 0, 2);
     this.add(this.genderText);
 
-    this.teraIcon = globalScene.add.sprite(0, 0, "icon_tera");
-    this.teraIcon.setName("icon_tera");
-    this.teraIcon.setVisible(false);
-    this.teraIcon.setOrigin(0, 0);
-    this.teraIcon.setScale(0.5);
-    this.teraIcon.setPositionRelative(this.nameText, 0, 2);
-    this.teraIcon.setInteractive(new Phaser.Geom.Rectangle(0, 0, 12, 15), Phaser.Geom.Rectangle.Contains);
-    this.add(this.teraIcon);
-
-    this.shinyIcon = globalScene.add.sprite(0, 0, "shiny_star");
-    this.shinyIcon.setName("icon_shiny");
-    this.shinyIcon.setVisible(false);
-    this.shinyIcon.setOrigin(0, 0);
-    this.shinyIcon.setScale(0.5);
-    this.shinyIcon.setPositionRelative(this.nameText, 0, 2);
-    this.shinyIcon.setInteractive(new Phaser.Geom.Rectangle(0, 0, 12, 15), Phaser.Geom.Rectangle.Contains);
-    this.add(this.shinyIcon);
-
-    this.fusionShinyIcon = globalScene.add.sprite(0, 0, "shiny_star_2");
-    this.fusionShinyIcon.setName("icon_fusion_shiny");
-    this.fusionShinyIcon.setVisible(false);
-    this.fusionShinyIcon.setOrigin(0, 0);
-    this.fusionShinyIcon.setScale(0.5);
-    this.fusionShinyIcon.setPosition(this.shinyIcon.x, this.shinyIcon.y);
-    this.add(this.fusionShinyIcon);
-
-    this.splicedIcon = globalScene.add.sprite(0, 0, "icon_spliced");
-    this.splicedIcon.setName("icon_spliced");
-    this.splicedIcon.setVisible(false);
-    this.splicedIcon.setOrigin(0, 0);
-    this.splicedIcon.setScale(0.5);
-    this.splicedIcon.setPositionRelative(this.nameText, 0, 2);
-    this.splicedIcon.setInteractive(new Phaser.Geom.Rectangle(0, 0, 12, 15), Phaser.Geom.Rectangle.Contains);
-    this.add(this.splicedIcon);
+    this.constructIcons();
 
     this.statusIndicator = globalScene.add.sprite(0, 0, getLocalizedSpriteKey("statuses"));
     this.statusIndicator.setName("icon_status");
