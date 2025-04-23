@@ -1,6 +1,6 @@
 import type { default as Pokemon } from "../../field/pokemon";
-import { getLevelTotalExp, getLevelRelExp } from "../../data/exp";
-import { getLocalizedSpriteKey, fixedInt } from "#app/utils/common";
+import { getLevelRelExp } from "../../data/exp";
+import { getLocalizedSpriteKey, fixedInt, getShinyDescriptor } from "#app/utils/common";
 import { addTextObject, TextStyle } from "../text";
 import { getGenderSymbol, getGenderColor, Gender } from "../../data/gender";
 import { StatusEffect } from "#enums/status-effect";
@@ -265,103 +265,73 @@ export default abstract class BattleInfo extends Phaser.GameObjects.Container {
     return this.statValuesContainer;
   }
 
-  initInfo(pokemon: Pokemon) {
-    this.updateNameText(pokemon);
-    const nameTextWidth = this.nameText.displayWidth;
+  //#region Initialization methods
 
-    this.name = pokemon.getNameToRender();
-    this.box.name = pokemon.getNameToRender();
-
-    this.genderText.setText(getGenderSymbol(pokemon.gender));
-    this.genderText.setColor(getGenderColor(pokemon.gender));
-    this.genderText.setPositionRelative(this.nameText, nameTextWidth, 0);
-
-    this.lastTeraType = pokemon.getTeraType();
-
-    this.teraIcon.setPositionRelative(this.nameText, nameTextWidth + this.genderText.displayWidth + 1, 2);
-    this.teraIcon.setVisible(pokemon.isTerastallized);
-    this.teraIcon.on("pointerover", () => {
-      if (pokemon.isTerastallized) {
-        globalScene.ui.showTooltip(
-          "",
-          i18next.t("fightUiHandler:teraHover", {
-            type: i18next.t(`pokemonInfo:Type.${PokemonType[this.lastTeraType]}`),
-          }),
-        );
-      }
-    });
-    this.teraIcon.on("pointerout", () => globalScene.ui.hideTooltip());
-
-    const isFusion = pokemon.isFusion(true);
-
+  initSplicedIcon(pokemon: Pokemon, baseWidth: number) {
     this.splicedIcon.setPositionRelative(
       this.nameText,
-      nameTextWidth + this.genderText.displayWidth + 1 + (this.teraIcon.visible ? this.teraIcon.displayWidth + 1 : 0),
+      baseWidth + this.genderText.displayWidth + 1 + (this.teraIcon.visible ? this.teraIcon.displayWidth + 1 : 0),
       2.5,
     );
-    this.splicedIcon.setVisible(isFusion);
-    if (this.splicedIcon.visible) {
-      this.splicedIcon.on("pointerover", () =>
+    this.splicedIcon.setVisible(pokemon.isFusion(true));
+    if (!this.splicedIcon.visible) {
+      return;
+    }
+    this.splicedIcon
+      .on("pointerover", () =>
         globalScene.ui.showTooltip(
           "",
           `${pokemon.species.getName(pokemon.formIndex)}/${pokemon.fusionSpecies?.getName(pokemon.fusionFormIndex)}`,
         ),
-      );
-      this.splicedIcon.on("pointerout", () => globalScene.ui.hideTooltip());
-    }
+      )
+      .on("pointerout", () => globalScene.ui.hideTooltip());
+  }
 
-    const doubleShiny = isFusion && pokemon.shiny && pokemon.fusionShiny;
+  /** Called by {@linkcode initInfo} to initialize the shiny icon
+   * @param pokemon - The pokemon object attached to this battle info
+   * @param baseXOffset - The x offset to use for the shiny icon
+   * @param doubleShiny - Whether the pokemon is shiny and its fusion species is also shiny
+   */
+  protected initShinyIcon(pokemon: Pokemon, xOffset: number, doubleShiny: boolean) {
     const baseVariant = !doubleShiny ? pokemon.getVariant(true) : pokemon.variant;
 
     this.shinyIcon.setPositionRelative(
       this.nameText,
-      nameTextWidth +
+      xOffset +
         this.genderText.displayWidth +
         1 +
         (this.teraIcon.visible ? this.teraIcon.displayWidth + 1 : 0) +
         (this.splicedIcon.visible ? this.splicedIcon.displayWidth + 1 : 0),
       2.5,
     );
-    this.shinyIcon.setTexture(`shiny_star${doubleShiny ? "_1" : ""}`);
-    this.shinyIcon.setVisible(pokemon.isShiny());
-    this.shinyIcon.setTint(getVariantTint(baseVariant));
-    if (this.shinyIcon.visible) {
-      const shinyDescriptor =
-        doubleShiny || baseVariant
-          ? `${baseVariant === 2 ? i18next.t("common:epicShiny") : baseVariant === 1 ? i18next.t("common:rareShiny") : i18next.t("common:commonShiny")}${doubleShiny ? `/${pokemon.fusionVariant === 2 ? i18next.t("common:epicShiny") : pokemon.fusionVariant === 1 ? i18next.t("common:rareShiny") : i18next.t("common:commonShiny")}` : ""}`
-          : "";
-      this.shinyIcon.on("pointerover", () =>
-        globalScene.ui.showTooltip(
-          "",
-          `${i18next.t("common:shinyOnHover")}${shinyDescriptor ? ` (${shinyDescriptor})` : ""}`,
-        ),
-      );
-      this.shinyIcon.on("pointerout", () => globalScene.ui.hideTooltip());
+    this.shinyIcon
+      .setTexture(`shiny_star${doubleShiny ? "_1" : ""}`)
+      .setVisible(pokemon.isShiny())
+      .setTint(getVariantTint(baseVariant));
+
+    if (!this.shinyIcon.visible) {
+      return;
     }
 
-    this.fusionShinyIcon.setPosition(this.shinyIcon.x, this.shinyIcon.y);
-    this.fusionShinyIcon.setVisible(doubleShiny);
-    if (isFusion) {
-      this.fusionShinyIcon.setTint(getVariantTint(pokemon.fusionVariant));
+    let shinyDescriptor = "";
+    if (doubleShiny || baseVariant) {
+      shinyDescriptor = " (" + getShinyDescriptor(baseVariant);
+      if (doubleShiny) {
+        shinyDescriptor += "/" + getShinyDescriptor(pokemon.fusionVariant);
+      }
+      shinyDescriptor += ")";
     }
 
-    this.hpBar.setScale(pokemon.getHpRatio(true), 1);
-    this.lastHpFrame = this.hpBar.scaleX > 0.5 ? "high" : this.hpBar.scaleX > 0.25 ? "medium" : "low";
-    this.hpBar.setFrame(this.lastHpFrame);
-    if (this.player) {
-      this.setHpNumbers(pokemon.hp, pokemon.getMaxHp());
-    }
-    this.lastHp = pokemon.hp;
-    this.lastMaxHp = pokemon.getMaxHp();
+    this.shinyIcon
+      .on("pointerover", () => globalScene.ui.showTooltip("", i18next.t("common:shinyOnHover") + shinyDescriptor))
+      .on("pointerout", () => globalScene.ui.hideTooltip());
+  }
 
-    this.setLevel(pokemon.level);
-    this.lastLevel = pokemon.level;
-
-    this.shinyIcon.setVisible(pokemon.isShiny());
-
-    const types = pokemon.getTypes(true, false, undefined, true);
-    this.type1Icon.setTexture(`pbinfo_${this.player ? "player" : "enemy"}_type${types.length > 1 ? "1" : ""}`);
-    this.type1Icon.setFrame(PokemonType[types[0]].toLowerCase());
+  /** Called by {@linkcode initInfo} to initialize the type icons beside the battle info */
+  initTypes(types: PokemonType[]) {
+    this.type1Icon
+      .setTexture(`pbinfo_${this.player ? "player" : "enemy"}_type${types.length > 1 ? "1" : ""}`)
+      .setFrame(PokemonType[types[0]].toLowerCase());
     this.type2Icon.setVisible(types.length > 1);
     this.type3Icon.setVisible(types.length > 2);
     if (types.length > 1) {
@@ -370,20 +340,67 @@ export default abstract class BattleInfo extends Phaser.GameObjects.Container {
     if (types.length > 2) {
       this.type3Icon.setFrame(PokemonType[types[2]].toLowerCase());
     }
+  }
 
-    if (this.player) {
-      this.expMaskRect.x = (pokemon.levelExp / getLevelTotalExp(pokemon.level, pokemon.species.growthRate)) * 510;
-      this.lastExp = pokemon.exp;
-      this.lastLevelExp = pokemon.levelExp;
+  initInfo(pokemon: Pokemon) {
+    this.updateNameText(pokemon);
+    const nameTextWidth = this.nameText.displayWidth;
 
-      this.statValuesContainer.setPosition(8, 7);
+    this.name = pokemon.getNameToRender();
+    this.box.name = pokemon.getNameToRender();
+
+    this.genderText
+      .setText(getGenderSymbol(pokemon.gender))
+      .setColor(getGenderColor(pokemon.gender))
+      .setPositionRelative(this.nameText, nameTextWidth, 0);
+
+    this.lastTeraType = pokemon.getTeraType();
+
+    this.teraIcon
+      .setVisible(pokemon.isTerastallized)
+      .on("pointerover", () => {
+        if (pokemon.isTerastallized) {
+          globalScene.ui.showTooltip(
+            "",
+            i18next.t("fightUiHandler:teraHover", {
+              type: i18next.t(`pokemonInfo:Type.${PokemonType[this.lastTeraType]}`),
+            }),
+          );
+        }
+      })
+      .on("pointerout", () => globalScene.ui.hideTooltip())
+      .setPositionRelative(this.nameText, nameTextWidth + this.genderText.displayWidth + 1, 2);
+
+    const isFusion = pokemon.isFusion(true);
+    this.initSplicedIcon(pokemon, nameTextWidth);
+
+    const doubleShiny = isFusion && pokemon.shiny && pokemon.fusionShiny;
+    this.initShinyIcon(pokemon, nameTextWidth, doubleShiny);
+
+    this.fusionShinyIcon.setVisible(doubleShiny).copyPosition(this.shinyIcon);
+    if (isFusion) {
+      this.fusionShinyIcon.setTint(getVariantTint(pokemon.fusionVariant));
     }
+
+    this.hpBar.setScale(pokemon.getHpRatio(true), 1);
+    this.lastHpFrame = this.hpBar.scaleX > 0.5 ? "high" : this.hpBar.scaleX > 0.25 ? "medium" : "low";
+    this.hpBar.setFrame(this.lastHpFrame);
+    this.lastHp = pokemon.hp;
+    this.lastMaxHp = pokemon.getMaxHp();
+
+    this.setLevel(pokemon.level);
+    this.lastLevel = pokemon.level;
+
+    this.shinyIcon.setVisible(pokemon.isShiny());
+
+    this.initTypes(pokemon.getTypes(true));
 
     const stats = this.statOrder.map(() => 0);
 
     this.lastStats = stats.join("");
     this.updateStats(stats);
   }
+  //#endregion
 
   getTextureName(): string {
     return `pbinfo_${this.player ? "player" : "enemy"}${!this.player && this.boss ? "_boss" : this.mini ? "_mini" : ""}`;
