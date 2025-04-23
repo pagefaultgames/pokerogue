@@ -5,7 +5,7 @@ import { globalScene } from "#app/global-scene";
 import type { Variant } from "#app/sprites/variant";
 import { populateVariantColors, variantColorCache } from "#app/sprites/variant";
 import { variantData } from "#app/sprites/variant";
-import BattleInfo, { PlayerBattleInfo, EnemyBattleInfo } from "#app/ui/battle-info";
+import BattleInfo, { PlayerBattleInfo, EnemyBattleInfo } from "#app/ui/battle-info/battle-info";
 import type Move from "#app/data/moves/move";
 import {
   HighCritAttr,
