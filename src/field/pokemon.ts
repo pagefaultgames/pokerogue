@@ -5508,6 +5508,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 }
 
 export class PlayerPokemon extends Pokemon {
+  protected battleInfo: PlayerBattleInfo;
   public compatibleTms: Moves[];
 
   constructor(

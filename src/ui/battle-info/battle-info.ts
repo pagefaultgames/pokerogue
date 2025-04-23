@@ -68,7 +68,7 @@ export default abstract class BattleInfo extends Phaser.GameObjects.Container {
       .sprite(0, 0, "icon_tera")
       .setName("icon_tera")
       .setVisible(false)
-      .setOrigin(0, 0)
+      .setOrigin(0)
       .setScale(0.5)
       .setInteractive(hitArea, hitCallback);
     this.teraIcon.setPositionRelative(this.nameText, 0, 2);
@@ -77,7 +77,7 @@ export default abstract class BattleInfo extends Phaser.GameObjects.Container {
       .sprite(0, 0, "shiny_star")
       .setName("icon_shiny")
       .setVisible(false)
-      .setOrigin(0, 0)
+      .setOrigin(0)
       .setScale(0.5)
       .setInteractive(hitArea, hitCallback);
     this.shinyIcon.setPositionRelative(this.nameText, 0, 2);
@@ -86,7 +86,7 @@ export default abstract class BattleInfo extends Phaser.GameObjects.Container {
       .sprite(0, 0, "shiny_star_2")
       .setName("icon_fusion_shiny")
       .setVisible(false)
-      .setOrigin(0, 0)
+      .setOrigin(0)
       .setScale(0.5)
       .copyPosition(this.shinyIcon);
 
@@ -94,7 +94,7 @@ export default abstract class BattleInfo extends Phaser.GameObjects.Container {
       .sprite(0, 0, "icon_spliced")
       .setName("icon_spliced")
       .setVisible(false)
-      .setOrigin(0, 0)
+      .setOrigin(0)
       .setScale(0.5)
       .setInteractive(hitArea, hitCallback);
     this.splicedIcon.setPositionRelative(this.nameText, 0, 2);
@@ -122,55 +122,52 @@ export default abstract class BattleInfo extends Phaser.GameObjects.Container {
     // Initially invisible and shown via Pokemon.showInfo
     this.setVisible(false);
 
-    this.box = globalScene.add.sprite(0, 0, this.getTextureName());
-    this.box.setName("box");
-    this.box.setOrigin(1, 0.5);
+    this.box = globalScene.add.sprite(0, 0, this.getTextureName()).setName("box").setOrigin(1, 0.5);
     this.add(this.box);
 
-    this.nameText = addTextObject(player ? -115 : -124, player ? -15.2 : -11.2, "", TextStyle.BATTLE_INFO);
-    this.nameText.setName("text_name");
-    this.nameText.setOrigin(0, 0);
+    this.nameText = addTextObject(player ? -115 : -124, player ? -15.2 : -11.2, "", TextStyle.BATTLE_INFO)
+      .setName("text_name")
+      .setOrigin(0);
     this.add(this.nameText);
 
-    this.genderText = addTextObject(0, 0, "", TextStyle.BATTLE_INFO);
-    this.genderText.setName("text_gender");
-    this.genderText.setOrigin(0, 0);
+    this.genderText = addTextObject(0, 0, "", TextStyle.BATTLE_INFO).setName("text_gender").setOrigin(0);
     this.genderText.setPositionRelative(this.nameText, 0, 2);
     this.add(this.genderText);
 
     this.constructIcons();
 
-    this.statusIndicator = globalScene.add.sprite(0, 0, getLocalizedSpriteKey("statuses"));
-    this.statusIndicator.setName("icon_status");
-    this.statusIndicator.setVisible(false);
-    this.statusIndicator.setOrigin(0, 0);
+    this.statusIndicator = globalScene.add
+      .sprite(0, 0, getLocalizedSpriteKey("statuses"))
+      .setName("icon_status")
+      .setVisible(false)
+      .setOrigin(0);
     this.statusIndicator.setPositionRelative(this.nameText, 0, 11.5);
     this.add(this.statusIndicator);
 
-    this.levelContainer = globalScene.add.container(player ? -41 : -50, player ? -10 : -5);
-    this.levelContainer.setName("container_level");
+    this.levelContainer = globalScene.add.container(player ? -41 : -50, player ? -10 : -5).setName("container_level");
     this.add(this.levelContainer);
 
     const levelOverlay = globalScene.add.image(0, 0, "overlay_lv");
     this.levelContainer.add(levelOverlay);
 
-    this.hpBar = globalScene.add.image(player ? -61 : -71, player ? -1 : 4.5, "overlay_hp");
-    this.hpBar.setName("hp_bar");
-    this.hpBar.setOrigin(0);
+    this.hpBar = globalScene.add
+      .image(player ? -61 : -71, player ? -1 : 4.5, "overlay_hp")
+      .setName("hp_bar")
+      .setOrigin(0);
     this.add(this.hpBar);
 
-    this.levelNumbersContainer = globalScene.add.container(9.5, globalScene.uiTheme ? 0 : -0.5);
-    this.levelNumbersContainer.setName("container_level");
+    this.levelNumbersContainer = globalScene.add
+      .container(9.5, globalScene.uiTheme ? 0 : -0.5)
+      .setName("container_level");
     this.levelContainer.add(this.levelNumbersContainer);
 
-    this.statsContainer = globalScene.add.container(0, 0);
-    this.statsContainer.setName("container_stats");
-    this.statsContainer.setAlpha(0);
+    this.statsContainer = globalScene.add.container(0, 0).setName("container_stats").setAlpha(0);
     this.add(this.statsContainer);
 
-    this.statsBox = globalScene.add.sprite(0, 0, `${this.getTextureName()}_stats`);
-    this.statsBox.setName("box_stats");
-    this.statsBox.setOrigin(1, 0.5);
+    this.statsBox = globalScene.add
+      .sprite(0, 0, `${this.getTextureName()}_stats`)
+      .setName("box_stats")
+      .setOrigin(1, 0.5);
     this.statsContainer.add(this.statsBox);
 
     const statLabels: Phaser.GameObjects.Sprite[] = [];
@@ -202,20 +199,17 @@ export default abstract class BattleInfo extends Phaser.GameObjects.Container {
         statY = baseY + (!!(i % 2) === this.player ? 10 : 0); // we compare i % 2 against this.player to tell us where to place the label; because this.battleStatOrder for enemies has HP, this.battleStatOrder[1]=ATK, but for players this.battleStatOrder[0]=ATK, so this comparing i % 2 to this.player fixes this issue for us
       }
 
-      const statLabel = globalScene.add.sprite(statX, statY, "pbinfo_stat", Stat[s]);
-      statLabel.setName("icon_stat_label_" + i.toString());
-      statLabel.setOrigin(0, 0);
+      const statLabel = globalScene.add
+        .sprite(statX, statY, "pbinfo_stat", Stat[s])
+        .setName("icon_stat_label_" + i.toString())
+        .setOrigin(0);
       statLabels.push(statLabel);
       this.statValuesContainer.add(statLabel);
 
-      const statNumber = globalScene.add.sprite(
-        statX + statLabel.width,
-        statY,
-        "pbinfo_stat_numbers",
-        this.statOrder[i] !== Stat.HP ? "3" : "empty",
-      );
-      statNumber.setName("icon_stat_number_" + i.toString());
-      statNumber.setOrigin(0, 0);
+      const statNumber = globalScene.add
+        .sprite(statX + statLabel.width, statY, "pbinfo_stat_numbers", this.statOrder[i] !== Stat.HP ? "3" : "empty")
+        .setName("icon_stat_number_" + i.toString())
+        .setOrigin(0);
       this.statNumbers.push(statNumber);
       this.statValuesContainer.add(statNumber);
 
@@ -225,31 +219,22 @@ export default abstract class BattleInfo extends Phaser.GameObjects.Container {
       }
     }
 
-    this.type1Icon = globalScene.add.sprite(
-      player ? -139 : -15,
-      player ? -17 : -15.5,
-      `pbinfo_${player ? "player" : "enemy"}_type1`,
-    );
-    this.type1Icon.setName("icon_type_1");
-    this.type1Icon.setOrigin(0, 0);
+    this.type1Icon = globalScene.add
+      .sprite(player ? -139 : -15, player ? -17 : -15.5, `pbinfo_${player ? "player" : "enemy"}_type1`)
+      .setName("icon_type_1")
+      .setOrigin(0);
     this.add(this.type1Icon);
 
-    this.type2Icon = globalScene.add.sprite(
-      player ? -139 : -15,
-      player ? -1 : -2.5,
-      `pbinfo_${player ? "player" : "enemy"}_type2`,
-    );
-    this.type2Icon.setName("icon_type_2");
-    this.type2Icon.setOrigin(0, 0);
+    this.type2Icon = globalScene.add
+      .sprite(player ? -139 : -15, player ? -1 : -2.5, `pbinfo_${player ? "player" : "enemy"}_type2`)
+      .setName("icon_type_2")
+      .setOrigin(0);
     this.add(this.type2Icon);
 
-    this.type3Icon = globalScene.add.sprite(
-      player ? -154 : 0,
-      player ? -17 : -15.5,
-      `pbinfo_${player ? "player" : "enemy"}_type`,
-    );
-    this.type3Icon.setName("icon_type_3");
-    this.type3Icon.setOrigin(0, 0);
+    this.type3Icon = globalScene.add
+      .sprite(player ? -154 : 0, player ? -17 : -15.5, `pbinfo_${player ? "player" : "enemy"}_type`)
+      .setName("icon_type_3")
+      .setOrigin(0);
     this.add(this.type3Icon);
   }
 
@@ -423,6 +408,10 @@ export default abstract class BattleInfo extends Phaser.GameObjects.Container {
 
   //#region Update methods and helpers
 
+  /** Update the status icon to match the pokemon's current status
+   * @param pokemon - The pokemon object attached to this battle info
+   * @param xOffset - The offset from the name text
+   */
   updateStatusIcon(pokemon: Pokemon, xOffset = 0) {
     if (this.lastStatus !== (pokemon.status?.effect || StatusEffect.NONE)) {
       this.lastStatus = pokemon.status?.effect || StatusEffect.NONE;
@@ -434,6 +423,7 @@ export default abstract class BattleInfo extends Phaser.GameObjects.Container {
       this.statusIndicator.setVisible(!!this.lastStatus).setPositionRelative(this.nameText, xOffset, 11.5);
     }
   }
+
   /** Update the pokemon name inside the container ,*/
   protected updateName(name: string): boolean {
     if (this.lastName === name) {
@@ -555,8 +545,7 @@ export default abstract class BattleInfo extends Phaser.GameObjects.Container {
 
     const gender: Gender = pokemon.summonData?.illusion?.gender ?? pokemon.gender;
 
-    this.genderText.setText(getGenderSymbol(gender));
-    this.genderText.setColor(getGenderColor(gender));
+    this.genderText.setText(getGenderSymbol(gender)).setColor(getGenderColor(gender));
 
     const nameUpdated = this.updateName(pokemon.getNameToRender());
 
@@ -634,10 +623,6 @@ export default abstract class BattleInfo extends Phaser.GameObjects.Container {
         Phaser.Geom.Rectangle.Contains,
       );
     }
-  }
-
-  async updatePokemonExp(_pokemon: Pokemon, _instant: boolean, _levelDurationMultiplier): Promise<void> {
-    return;
   }
 
   setLevel(level: number): void {

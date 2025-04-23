@@ -126,7 +126,7 @@ export class EnemyBattleInfo extends BattleInfo {
     this.flyoutMenu.toggleFlyout(visible);
 
     if (visible) {
-      this.effectivenessContainer?.setVisible(false);
+      this.effectivenessContainer.setVisible(false);
     } else {
       this.updateEffectiveness(this.currentEffectiveness);
     }
