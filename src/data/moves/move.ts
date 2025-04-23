@@ -123,6 +123,7 @@ import { MoveEffectTrigger } from "#enums/MoveEffectTrigger";
 import { MultiHitType } from "#enums/MultiHitType";
 import { invalidAssistMoves, invalidCopycatMoves, invalidMetronomeMoves, invalidMirrorMoveMoves, invalidSleepTalkMoves } from "./invalid-moves";
 import { TrainerVariant } from "#app/field/trainer";
+import { SelectBiomePhase } from "#app/phases/select-biome-phase";
 
 type MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => boolean;
 type UserMoveConditionFunc = (user: Pokemon, move: Move) => boolean;
@@ -6332,6 +6333,11 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
 
       if (!allyPokemon?.isActive(true) && switchOutTarget.hp) {
           globalScene.pushPhase(new BattleEndPhase(false));
+                    
+          if (globalScene.gameMode.hasRandomBiomes || globalScene.isNewBiome()) {
+            globalScene.pushPhase(new SelectBiomePhase());
+          }
+          
           globalScene.pushPhase(new NewBattlePhase());
       }
     }
