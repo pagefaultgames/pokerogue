@@ -277,6 +277,36 @@ export enum FieldPosition {
   RIGHT,
 }
 
+/** Base typeclass for damage parameter methods, used for DRY */
+type damageParams = {
+  /** The attacking {@linkcode Pokemon} */
+  source: Pokemon;
+  /** The move used in the attack */
+  move: Move;
+  /** The move's {@linkcode MoveCategory} after variable-category effects are applied */
+  moveCategory: MoveCategory;
+  /** If `true`, ignores this Pokemon's defensive ability effects */
+  ignoreAbility?: boolean;
+  /** If `true`, ignores the attacking Pokemon's ability effects */
+  ignoreSourceAbility?: boolean;
+  /** If `true`, ignores the ally Pokemon's ability effects */
+  ignoreAllyAbility?: boolean;
+  /** If `true`, ignores the ability effects of the attacking pokemon's ally */
+  ignoreSourceAllyAbility?: boolean;
+  /** If `true`, calculates damage for a critical hit */
+  isCritical?: boolean;
+  /** If `true`, suppresses changes to game state during the calculation */
+  simulated?: boolean;
+  /** If defined, used in place of calculated effectiveness values */
+  effectiveness?: number;
+}
+
+/** Type for the parameters of {@linkcode Pokemon#getBaseDamage | getBaseDamage} */
+type getBaseDamageParams = Omit<damageParams, "effectiveness">
+
+/** Type for the parameters of {@linkcode Pokemon#getAttackDamage | getAttackDamage} */
+type getAttackDamageParams = Omit<damageParams, "moveCategory">;
+
 export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public id: number;
   public name: string;
@@ -1441,25 +1471,16 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * Calculate the critical-hit stage of a move used against this pokemon by
    * the given source
    * 
-   * @param source the {@linkcode Pokemon} who using the move
-   * @param move the {@linkcode Move} being used
-   * @returns the final critical-hit stage value
+   * @param source - The {@linkcode Pokemon} who using the move
+   * @param move - The {@linkcode Move} being used
+   * @returns The final critical-hit stage value
    */
   getCritStage(source: Pokemon, move: Move): number {
     const critStage = new NumberHolder(0);
     applyMoveAttrs(HighCritAttr, source, this, move, critStage);
-    globalScene.applyModifiers(
-      CritBoosterModifier,
-      source.isPlayer(),
-      source,
-      critStage,
-    );
-    globalScene.applyModifiers(
-      TempCritBoosterModifier,
-      source.isPlayer(),
-      critStage,
-    );
-    applyAbAttrs(BonusCritAbAttr, source, null, false, critStage)
+    globalScene.applyModifiers(CritBoosterModifier, source.isPlayer(), source, critStage);
+    globalScene.applyModifiers(TempCritBoosterModifier, source.isPlayer(), critStage);
+    applyAbAttrs(BonusCritAbAttr, source, null, false, critStage);
     const critBoostTag = source.getTag(CritBoostTag);
     if (critBoostTag) {
       if (critBoostTag instanceof DragonCheerTag) {
@@ -1473,6 +1494,19 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     console.log(`crit stage: +${critStage.value}`);
     return critStage.value;
+  }
+
+  /**
+   * Calculates the category of a move when used by this pokemon after
+   * category-changing move effects are applied.
+   * @param target - The {@linkcode Pokemon} using the move
+   * @param move - The {@linkcode Move} being used
+   * @returns The given move's final category
+   */
+  getMoveCategory(target: Pokemon, move: Move): MoveCategory {
+    const moveCategory = new NumberHolder(move.category);
+    applyMoveAttrs(VariableMoveCategoryAttr, this, target, move, moveCategory);
+    return moveCategory.value;
   }
 
   /**
@@ -2584,7 +2618,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param simulated Whether to apply abilities via simulated calls (defaults to `true`)
    * @param cancelled {@linkcode BooleanHolder} Stores whether the move was cancelled by a non-type-based immunity.
    * @param useIllusion - Whether we want the attack move effectiveness on the illusion or not
-   * Currently only used by {@linkcode Pokemon.apply} to determine whether a "No effect" message should be shown.
    * @returns The type damage multiplier, indicating the effectiveness of the move
    */
   getMoveEffectiveness(
@@ -3170,7 +3203,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Function that tries to set a Pokemon shiny based on seed.
    * For manual use only, usually to roll a Pokemon's shiny chance a second time.
-   * If it rolls shiny, also sets a random variant and give the Pokemon the associated luck.
+   * If it rolls shiny, or if it's already shiny, also sets a random variant and give the Pokemon the associated luck.
    *
    * The base shiny odds are {@linkcode BASE_SHINY_CHANCE} / `65536`
    * @param thresholdOverride number that is divided by `2^16` (`65536`) to get the shiny chance, overrides {@linkcode shinyThreshold} if set (bypassing shiny rate modifiers such as Shiny Charm)
@@ -3181,29 +3214,31 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     thresholdOverride?: number,
     applyModifiersToOverride?: boolean,
   ): boolean {
-    const shinyThreshold = new NumberHolder(BASE_SHINY_CHANCE);
-    if (thresholdOverride === undefined || applyModifiersToOverride) {
-      if (thresholdOverride !== undefined && applyModifiersToOverride) {
-        shinyThreshold.value = thresholdOverride;
-      }
-      if (timedEventManager.isEventActive()) {
-        shinyThreshold.value *= timedEventManager.getShinyMultiplier();
-      }
-      if (!this.hasTrainer()) {
+    if (!this.shiny) {
+      const shinyThreshold = new NumberHolder(BASE_SHINY_CHANCE);
+      if (thresholdOverride === undefined || applyModifiersToOverride) {
+        if (thresholdOverride !== undefined && applyModifiersToOverride) {
+          shinyThreshold.value = thresholdOverride;
+        }
+        if (timedEventManager.isEventActive()) {
+          shinyThreshold.value *= timedEventManager.getShinyMultiplier();
+        }
         globalScene.applyModifiers(
           ShinyRateBoosterModifier,
           true,
           shinyThreshold,
         );
       }
-    } else {
-      shinyThreshold.value = thresholdOverride;
+      else {
+        shinyThreshold.value = thresholdOverride;
+      }
+
+      this.shiny = randSeedInt(65536) < shinyThreshold.value;
     }
 
-    this.shiny = randSeedInt(65536) < shinyThreshold.value;
-
     if (this.shiny) {
-      this.variant = this.generateShinyVariant();
+      this.variant = this.variant ?? 0;
+      this.variant = Math.max(this.generateShinyVariant(), this.variant) as Variant; // Don't set a variant lower than the current one
       this.luck =
         this.variant + 1 + (this.fusionShiny ? this.fusionVariant + 1 : 0);
       this.initShinySparkle();
@@ -4073,27 +4108,28 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Calculates the base damage of the given move against this Pokemon when attacked by the given source.
    * Used during damage calculation and for Shell Side Arm's forecasting effect.
-   * @param source the attacking {@linkcode Pokemon}.
-   * @param move the {@linkcode Move} used in the attack.
-   * @param moveCategory the move's {@linkcode MoveCategory} after variable-category effects are applied.
-   * @param ignoreAbility if `true`, ignores this Pokemon's defensive ability effects (defaults to `false`).
-   * @param ignoreSourceAbility if `true`, ignore's the attacking Pokemon's ability effects (defaults to `false`).
-   * @param ignoreAllyAbility if `true`, ignores the ally Pokemon's ability effects (defaults to `false`).
-   * @param ignoreSourceAllyAbility if `true`, ignores the attacking Pokemon's ally's ability effects (defaults to `false`).
-   * @param isCritical if `true`, calculates effective stats as if the hit were critical (defaults to `false`).
-   * @param simulated if `true`, suppresses changes to game state during calculation (defaults to `true`).
+   * @param source - The attacking {@linkcode Pokemon}.
+   * @param move - The {@linkcode Move} used in the attack.
+   * @param moveCategory - The move's {@linkcode MoveCategory} after variable-category effects are applied.
+   * @param ignoreAbility - If `true`, ignores this Pokemon's defensive ability effects (defaults to `false`).
+   * @param ignoreSourceAbility - If `true`, ignore's the attacking Pokemon's ability effects (defaults to `false`).
+   * @param ignoreAllyAbility - If `true`, ignores the ally Pokemon's ability effects (defaults to `false`).
+   * @param ignoreSourceAllyAbility - If `true`, ignores the attacking Pokemon's ally's ability effects (defaults to `false`).
+   * @param isCritical - if `true`, calculates effective stats as if the hit were critical (defaults to `false`).
+   * @param simulated - if `true`, suppresses changes to game state during calculation (defaults to `true`).
    * @returns The move's base damage against this Pokemon when used by the source Pokemon.
    */
   getBaseDamage(
-    source: Pokemon,
-    move: Move,
-    moveCategory: MoveCategory,
+    {
+    source,
+    move,
+    moveCategory,
     ignoreAbility = false,
     ignoreSourceAbility = false,
     ignoreAllyAbility = false,
     ignoreSourceAllyAbility = false,
     isCritical = false,
-    simulated = true,
+    simulated = true}: getBaseDamageParams
   ): number {
     const isPhysical = moveCategory === MoveCategory.PHYSICAL;
 
@@ -4220,27 +4256,27 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Calculates the damage of an attack made by another Pokemon against this Pokemon
    * @param source {@linkcode Pokemon} the attacking Pokemon
-   * @param move {@linkcode Pokemon} the move used in the attack
+   * @param move The {@linkcode Move} used in the attack
    * @param ignoreAbility If `true`, ignores this Pokemon's defensive ability effects
    * @param ignoreSourceAbility If `true`, ignores the attacking Pokemon's ability effects
    * @param ignoreAllyAbility If `true`, ignores the ally Pokemon's ability effects
    * @param ignoreSourceAllyAbility If `true`, ignores the ability effects of the attacking pokemon's ally
    * @param isCritical If `true`, calculates damage for a critical hit.
    * @param simulated If `true`, suppresses changes to game state during the calculation.
-   * @returns a {@linkcode DamageCalculationResult} object with three fields:
-   * - `cancelled`: `true` if the move was cancelled by another effect.
-   * - `result`: {@linkcode HitResult} indicates the attack's type effectiveness.
-   * - `damage`: `number` the attack's final damage output.
+   * @param effectiveness If defined, used in place of calculated effectiveness values
+   * @returns The {@linkcode DamageCalculationResult}
    */
   getAttackDamage(
-    source: Pokemon,
-    move: Move,
-    ignoreAbility = false,
-    ignoreSourceAbility = false,
-    ignoreAllyAbility = false,
-    ignoreSourceAllyAbility = false,
-    isCritical = false,
-    simulated = true,
+    {
+      source,
+      move,
+      ignoreAbility = false,
+      ignoreSourceAbility = false,
+      ignoreAllyAbility = false,
+      ignoreSourceAllyAbility = false,
+      isCritical = false,
+      simulated = true,
+      effectiveness}: getAttackDamageParams,
   ): DamageCalculationResult {
     const damage = new NumberHolder(0);
     const defendingSide = this.isPlayer()
@@ -4270,7 +4306,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
      *
      * Note that the source's abilities are not ignored here
      */
-    const typeMultiplier = this.getMoveEffectiveness(
+    const typeMultiplier = effectiveness ?? this.getMoveEffectiveness(
       source,
       move,
       ignoreAbility,
@@ -4342,7 +4378,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
      * The attack's base damage, as determined by the source's level, move power
      * and Attack stat as well as this Pokemon's Defense stat
      */
-    const baseDamage = this.getBaseDamage(
+    const baseDamage = this.getBaseDamage({
       source,
       move,
       moveCategory,
@@ -4352,7 +4388,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       ignoreSourceAllyAbility,
       isCritical,
       simulated,
-    );
+    });
 
     /** 25% damage debuff on moves hitting more than one non-fainted target (regardless of immunities) */
     const { targets, multiple } = getMoveTargets(source, move.id);
@@ -4563,211 +4599,36 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     };
   }
 
-  /**
-   * Applies the results of a move to this pokemon
-   * @param source The {@linkcode Pokemon} using the move
-   * @param move The {@linkcode Move} being used
-   * @returns The {@linkcode HitResult} of the attack
-   */
-  apply(source: Pokemon, move: Move): HitResult {
-    const defendingSide = this.isPlayer()
-      ? ArenaTagSide.PLAYER
-      : ArenaTagSide.ENEMY;
-    const moveCategory = new NumberHolder(move.category);
-    applyMoveAttrs(VariableMoveCategoryAttr, source, this, move, moveCategory);
-    if (moveCategory.value === MoveCategory.STATUS) {
-      const cancelled = new BooleanHolder(false);
-      const typeMultiplier = this.getMoveEffectiveness(
-        source,
-        move,
-        false,
-        false,
-        cancelled,
-      );
-
-      if (!cancelled.value && typeMultiplier === 0) {
-        globalScene.queueMessage(
-          i18next.t("battle:hitResultNoEffect", {
-            pokemonName: getPokemonNameWithAffix(this),
-          }),
-        );
-      }
-      return typeMultiplier === 0 ? HitResult.NO_EFFECT : HitResult.STATUS;
+  /** Calculate whether the given move critically hits this pokemon 
+   * @param source - The {@linkcode Pokemon} using the move
+   * @param move - The {@linkcode Move} being used
+   * @param simulated - If `true`, suppresses changes to game state during calculation (defaults to `true`)
+   * @returns whether the move critically hits the pokemon
+  */
+  getCriticalHitResult(source: Pokemon, move: Move, simulated: boolean = true): boolean {
+    const defendingSide = this.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
+    const noCritTag = globalScene.arena.getTagOnSide(NoCritTag, defendingSide);
+    if (noCritTag || Overrides.NEVER_CRIT_OVERRIDE || move.hasAttr(FixedDamageAttr)) {
+      return false;
     }
-    /** Determines whether the attack critically hits */
-    let isCritical: boolean;
-    const critOnly = new BooleanHolder(false);
-    const critAlways = source.getTag(BattlerTagType.ALWAYS_CRIT);
-    applyMoveAttrs(CritOnlyAttr, source, this, move, critOnly);
-    applyAbAttrs(
-      ConditionalCritAbAttr,
-      source,
-      null,
-      false,
-      critOnly,
-      this,
-      move,
-    );
-    if (critOnly.value || critAlways) {
-      isCritical = true;
-    } else {
+    const isCritical = new BooleanHolder(false);
+
+    if (source.getTag(BattlerTagType.ALWAYS_CRIT)) {
+      isCritical.value = true;
+    }
+    applyMoveAttrs(CritOnlyAttr, source, this, move, isCritical);
+    applyAbAttrs(ConditionalCritAbAttr, source, null, simulated, isCritical, this, move);
+    if (!isCritical.value) {
       const critChance = [24, 8, 2, 1][
         Math.max(0, Math.min(this.getCritStage(source, move), 3))
       ];
-      isCritical =
-        critChance === 1 || !globalScene.randBattleSeedInt(critChance);
+      isCritical.value = critChance === 1 || !globalScene.randBattleSeedInt(critChance);
     }
 
-    const noCritTag = globalScene.arena.getTagOnSide(NoCritTag, defendingSide);
-    const blockCrit = new BooleanHolder(false);
-    applyAbAttrs(BlockCritAbAttr, this, null, false, blockCrit);
-    if (noCritTag || blockCrit.value || Overrides.NEVER_CRIT_OVERRIDE) {
-      isCritical = false;
-    }
+    applyAbAttrs(BlockCritAbAttr, this, null, simulated, isCritical);
 
-    /**
-     * Applies stat changes from {@linkcode move} and gives it to {@linkcode source}
-     * before damage calculation
-     */
-    applyMoveAttrs(StatChangeBeforeDmgCalcAttr, source, this, move);
-
-    const {
-      cancelled,
-      result,
-      damage: dmg,
-    } = this.getAttackDamage(source, move, false, false, false, false, isCritical, false);
-
-    const typeBoost = source.findTag(
-      t =>
-        t instanceof TypeBoostTag && t.boostedType === source.getMoveType(move),
-    ) as TypeBoostTag;
-    if (typeBoost?.oneUse) {
-      source.removeTag(typeBoost.tagType);
-    }
-
-    if (
-      cancelled ||
-      result === HitResult.IMMUNE ||
-      result === HitResult.NO_EFFECT
-    ) {
-      source.stopMultiHit(this);
-
-      if (!cancelled) {
-        if (result === HitResult.IMMUNE) {
-          globalScene.queueMessage(
-            i18next.t("battle:hitResultImmune", {
-              pokemonName: getPokemonNameWithAffix(this),
-            }),
-          );
-        } else {
-          globalScene.queueMessage(
-            i18next.t("battle:hitResultNoEffect", {
-              pokemonName: getPokemonNameWithAffix(this),
-            }),
-          );
-        }
-      }
-      return result;
-    }
-
-      // In case of fatal damage, this tag would have gotten cleared before we could lapse it.
-      const destinyTag = this.getTag(BattlerTagType.DESTINY_BOND);
-      const grudgeTag = this.getTag(BattlerTagType.GRUDGE);
-
-    if (dmg) {
-      this.lapseTags(BattlerTagLapseType.HIT);
-
-      const substitute = this.getTag(SubstituteTag);
-      const isBlockedBySubstitute =
-        !!substitute && move.hitsSubstitute(source, this);
-      if (isBlockedBySubstitute) {
-        substitute.hp -= dmg;
-      }
-      if (!this.isPlayer() && dmg >= this.hp) {
-        globalScene.applyModifiers(EnemyEndureChanceModifier, false, this);
-      }
-
-        /**
-         * We explicitly require to ignore the faint phase here, as we want to show the messages
-         * about the critical hit and the super effective/not very effective messages before the faint phase.
-         */
-        const damage = this.damageAndUpdate(isBlockedBySubstitute ? 0 : dmg, 
-          { 
-            result: result as DamageResult, 
-            isCritical, 
-            ignoreFaintPhase: true, 
-            source 
-          });
-
-      if (damage > 0) {
-        if (source.isPlayer()) {
-          globalScene.validateAchvs(DamageAchv, new NumberHolder(damage));
-          if (damage > globalScene.gameData.gameStats.highestDamage) {
-            globalScene.gameData.gameStats.highestDamage = damage;
-          }
-        }
-        source.turnData.totalDamageDealt += damage;
-        source.turnData.singleHitDamageDealt = damage;
-        this.turnData.damageTaken += damage;
-        this.battleData.hitCount++;
-
-        const attackResult = {
-          move: move.id,
-          result: result as DamageResult,
-          damage: damage,
-          critical: isCritical,
-          sourceId: source.id,
-          sourceBattlerIndex: source.getBattlerIndex(),
-        };
-        this.turnData.attacksReceived.unshift(attackResult);
-        if (source.isPlayer() && !this.isPlayer()) {
-          globalScene.applyModifiers(
-            DamageMoneyRewardModifier,
-            true,
-            source,
-            new NumberHolder(damage),
-          );
-        }
-      }
-    }
-
-    if (isCritical) {
-      globalScene.queueMessage(i18next.t("battle:hitResultCriticalHit"));
-    }
-
-    // want to include is.Fainted() in case multi hit move ends early, still want to render message
-    if (source.turnData.hitsLeft === 1 || this.isFainted()) {
-      switch (result) {
-        case HitResult.SUPER_EFFECTIVE:
-          globalScene.queueMessage(i18next.t("battle:hitResultSuperEffective"));
-          break;
-        case HitResult.NOT_VERY_EFFECTIVE:
-          globalScene.queueMessage(
-            i18next.t("battle:hitResultNotVeryEffective"),
-          );
-          break;
-        case HitResult.ONE_HIT_KO:
-          globalScene.queueMessage(i18next.t("battle:hitResultOneHitKO"));
-          break;
-      }
-    }
-
-    if (this.isFainted()) {
-      // set splice index here, so future scene queues happen before FaintedPhase
-      globalScene.setPhaseQueueSplice();
-      globalScene.unshiftPhase(
-        new FaintPhase(
-          this.getBattlerIndex(),
-          false,
-          source,
-        ),
-      );
-
-      this.destroySubstitute();
-      this.lapseTag(BattlerTagType.COMMANDED);
-    }
-
-    return result;
+    return isCritical.value;
+    
   }
 
   /**
@@ -4831,7 +4692,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Called by apply(), given the damage, adds a new DamagePhase and actually updates HP values, etc.
+   * Given the damage, adds a new DamagePhase and update HP values, etc.
+   * 
    * Checks for 'Indirect' HitResults to account for Endure/Reviver Seed applying correctly
    * @param damage integer - passed to damage()
    * @param result an enum if it's super effective, not very, etc.
@@ -5134,8 +4996,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Gets whether the given move is currently disabled for this Pokemon.
    *
-   * @param {Moves} moveId {@linkcode Moves} ID of the move to check
-   * @returns {boolean} `true` if the move is disabled for this Pokemon, otherwise `false`
+   * @param moveId - The {@linkcode Moves} ID of the move to check
+   * @returns `true` if the move is disabled for this Pokemon, otherwise `false`
    *
    * @see {@linkcode MoveRestrictionBattlerTag}
    */
@@ -5146,9 +5008,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Gets whether the given move is currently disabled for the user based on the player's target selection
    *
-   * @param {Moves} moveId {@linkcode Moves} ID of the move to check
-   * @param {Pokemon} user {@linkcode Pokemon} the move user
-   * @param {Pokemon} target {@linkcode Pokemon} the target of the move
+   * @param moveId - The {@linkcode Moves} ID of the move to check
+   * @param user - The move user
+   * @param target - The target of the move
    *
    * @returns {boolean} `true` if the move is disabled for this Pokemon due to the player's target selection
    *
@@ -5178,10 +5040,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Gets the {@link MoveRestrictionBattlerTag} that is restricting a move, if it exists.
    *
-   * @param {Moves} moveId {@linkcode Moves} ID of the move to check
-   * @param {Pokemon} user {@linkcode Pokemon} the move user, optional and used when the target is a factor in the move's restricted status
-   * @param {Pokemon} target {@linkcode Pokemon} the target of the move, optional and used when the target is a factor in the move's restricted status
-   * @returns {MoveRestrictionBattlerTag | null} the first tag on this Pokemon that restricts the move, or `null` if the move is not restricted.
+   * @param moveId - {@linkcode Moves} ID of the move to check
+   * @param user - {@linkcode Pokemon} the move user, optional and used when the target is a factor in the move's restricted status
+   * @param target - {@linkcode Pokemon} the target of the move, optional and used when the target is a factor in the move's restricted status
+   * @returns The first tag on this Pokemon that restricts the move, or `null` if the move is not restricted.
    */
   getRestrictingTag(
     moveId: Moves,
@@ -5241,20 +5103,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   getMoveQueue(): TurnMove[] {
     return this.summonData.moveQueue;
-  }
-
-  /**
-   * If this Pokemon is using a multi-hit move, cancels all subsequent strikes
-   * @param {Pokemon} target If specified, this only cancels subsequent strikes against the given target
-   */
-  stopMultiHit(target?: Pokemon): void {
-    const effectPhase = globalScene.getCurrentPhase();
-    if (
-      effectPhase instanceof MoveEffectPhase &&
-      effectPhase.getUserPokemon() === this
-    ) {
-      effectPhase.stopMultiHit(target);
-    }
   }
 
   changeForm(formChange: SpeciesFormChange): Promise<void> {
@@ -5674,7 +5522,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
      * cancel the attack's subsequent hits.
      */
     if (effect === StatusEffect.SLEEP || effect === StatusEffect.FREEZE) {
-      this.stopMultiHit();
+      const currentPhase = globalScene.getCurrentPhase();
+      if (currentPhase instanceof MoveEffectPhase && currentPhase.getUserPokemon() === this) {
+        this.turnData.hitCount = 1;
+        this.turnData.hitsLeft = 1;
+      }
     }
 
     if (asPhase) {
@@ -7309,14 +7161,15 @@ export class EnemyPokemon extends Pokemon {
                   ].includes(move.id);
                 return (
                   doesNotFail &&
-                  p.getAttackDamage(
-                    this,
+                  p.getAttackDamage({
+                    source: this,
                     move,
-                    !p.battleData.abilityRevealed,
-                    false,
-                    !p.getAlly()?.battleData.abilityRevealed,
-                    false,
+                    ignoreAbility: !p.battleData.abilityRevealed,
+                    ignoreSourceAbility: false,
+                    ignoreAllyAbility: !p.getAlly()?.battleData.abilityRevealed,
+                    ignoreSourceAllyAbility: false,
                     isCritical,
+                  }
                   ).damage >= p.hp
                 );
               })
