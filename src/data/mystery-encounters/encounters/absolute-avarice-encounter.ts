@@ -37,7 +37,7 @@ import type HeldModifierConfig from "#app/interfaces/held-modifier-config";
 import type { BerryType } from "#enums/berry-type";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { Stat } from "#enums/stat";
-import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
+import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import i18next from "i18next";
 
 /** the i18n namespace for this encounter */

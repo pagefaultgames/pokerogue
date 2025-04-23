@@ -22,7 +22,7 @@ import { EggTier } from "#enums/egg-type";
 import { PartyHealPhase } from "#app/phases/party-heal-phase";
 import { ModifierTier } from "#app/modifier/modifier-tier";
 import { modifierTypes } from "#app/modifier/modifier-type";
-import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
+import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/aTrainersTest";

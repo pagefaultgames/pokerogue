@@ -37,10 +37,9 @@ import { addWindow } from "./ui-theme";
 import type { OptionSelectConfig } from "./abstact-option-select-ui-handler";
 import { FilterText, FilterTextRow } from "./filter-text";
 import { allAbilities } from "#app/data/data-lists";
-import { starterPassiveAbilities } from "#app/data/balance/passives";
 import { allMoves } from "#app/data/moves/move";
 import { speciesTmMoves } from "#app/data/balance/tms";
-import { pokemonPrevolutions, pokemonStarters } from "#app/data/balance/pokemon-evolutions";
+import { pokemonStarters } from "#app/data/balance/pokemon-evolutions";
 import { Biome } from "#enums/biome";
 import { globalScene } from "#app/global-scene";
 
@@ -174,7 +173,6 @@ export default class PokedexUiHandler extends MessageUiHandler {
   private scrollCursor: number;
   private oldCursor = -1;
 
-  private allSpecies: PokemonSpecies[] = [];
   private lastSpecies: PokemonSpecies;
   private speciesLoaded: Map<Species, boolean> = new Map<Species, boolean>();
   private pokerusSpecies: PokemonSpecies[] = [];
@@ -493,12 +491,11 @@ export default class PokedexUiHandler extends MessageUiHandler {
 
     for (const species of allSpecies) {
       this.speciesLoaded.set(species.speciesId, false);
-      this.allSpecies.push(species);
     }
 
     // Here code to declare 81 containers
     for (let i = 0; i < 81; i++) {
-      const pokemonContainer = new PokedexMonContainer(this.allSpecies[i]).setVisible(false);
+      const pokemonContainer = new PokedexMonContainer(allSpecies[i]).setVisible(false);
       const pos = calcStarterPosition(i);
       pokemonContainer.setPosition(pos.x, pos.y);
       this.iconAnimHandler.addOrUpdate(pokemonContainer.icon, PokemonIconAnimMode.NONE);
@@ -1342,7 +1339,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
 
     this.filteredPokemonData = [];
 
-    this.allSpecies.forEach(species => {
+    allSpecies.forEach(species => {
       const starterId = this.getStarterSpeciesId(species.speciesId);
 
       const currentDexAttr = this.getCurrentDexProps(species.speciesId);
@@ -1412,12 +1409,11 @@ export default class PokedexUiHandler extends MessageUiHandler {
 
       // Ability filter
       const abilities = [species.ability1, species.ability2, species.abilityHidden].map(a => allAbilities[a].name);
-      const passiveId = starterPassiveAbilities.hasOwnProperty(species.speciesId)
-        ? species.speciesId
-        : starterPassiveAbilities.hasOwnProperty(starterId)
-          ? starterId
-          : pokemonPrevolutions[starterId];
-      const passives = starterPassiveAbilities[passiveId];
+      // get the passive ability for the species
+      const passives = [species.getPassiveAbility()];
+      for (const form of species.forms) {
+        passives.push(form.getPassiveAbility());
+      }
 
       const selectedAbility1 = this.filterText.getValue(FilterTextRow.ABILITY_1);
       const fitsFormAbility1 = species.forms.some(form =>
