@@ -280,15 +280,14 @@ export function getGymLeaderPartyTemplate() {
       else { // 110+
         return trainerPartyTemplates.GYM_LEADER_6; // 3 avg 2 strong 1 stronger
       }
+    default:
+      return getWavePartyTemplate(
+        trainerPartyTemplates.GYM_LEADER_1,
+        trainerPartyTemplates.GYM_LEADER_2,
+        trainerPartyTemplates.GYM_LEADER_3,
+        trainerPartyTemplates.GYM_LEADER_4,
+        trainerPartyTemplates.GYM_LEADER_5,
+        trainerPartyTemplates.GYM_LEADER_6,
+      );
   }
-
-  // This shouldn't happen but just in case
-  return getWavePartyTemplate(
-    trainerPartyTemplates.GYM_LEADER_1,
-    trainerPartyTemplates.GYM_LEADER_2,
-    trainerPartyTemplates.GYM_LEADER_3,
-    trainerPartyTemplates.GYM_LEADER_4,
-    trainerPartyTemplates.GYM_LEADER_5,
-    trainerPartyTemplates.GYM_LEADER_6,
-  );
 }
