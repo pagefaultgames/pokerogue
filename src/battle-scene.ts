@@ -187,6 +187,7 @@ import { hasExpSprite } from "./sprites/sprite-utils";
 import { timedEventManager } from "./global-event-manager";
 import { starterColors } from "./global-vars/starter-colors";
 import { startingWave } from "./starting-wave";
+import { json } from "stream/consumers";
 
 const DEBUG_RNG = false;
 
@@ -413,16 +414,17 @@ export default class BattleScene extends SceneBase {
       experimental = this.experimentalSprites;
     }
     const variant = atlasPath.includes("variant/") || /_[0-3]$/.test(atlasPath);
-    if (experimental) {
-      experimental = hasExpSprite(key);
-    }
+    const shiny = atlasPath.includes("shiny/");
     if (variant) {
       atlasPath = atlasPath.replace("variant/", "");
     }
+    if (shiny) {
+      atlasPath = atlasPath.replace("shiny/", "");
+    }
     this.load.atlas(
       key,
-      `images/pokemon/${variant ? "variant/" : ""}${experimental ? "exp/" : ""}${atlasPath}.png`,
-      `images/pokemon/${variant ? "variant/" : ""}${experimental ? "exp/" : ""}${atlasPath}.json`,
+      `images/pokemon/${variant ? "variant/" : ""}${experimental ? "exp/" : ""}${shiny ? "shiny/": ""}${atlasPath}.png`,
+      `images/pokemon/${experimental ? "exp/" : ""}${variant ? atlasPath.replace(/_[0-3]/, "") : atlasPath}.json`,
     );
   }
 
