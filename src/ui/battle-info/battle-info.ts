@@ -9,72 +9,80 @@ import { getTypeRgb } from "#app/data/type";
 import { PokemonType } from "#enums/pokemon-type";
 import { getVariantTint } from "#app/sprites/variant";
 import { Stat } from "#enums/stat";
-import BattleFlyout from "../battle-flyout";
-import { WindowVariant, addWindow } from "../ui-theme";
+import type BattleFlyout from "../battle-flyout";
 import i18next from "i18next";
 import { ExpGainsSpeed } from "#app/enums/exp-gains-speed";
 
 export default class BattleInfo extends Phaser.GameObjects.Container {
   public static readonly EXP_GAINS_DURATION_BASE = 1650;
 
-  private baseY: number;
+  protected baseY: number;
 
-  private player: boolean;
-  private mini: boolean;
-  private boss: boolean;
-  private bossSegments: number;
-  private offset: boolean;
-  private lastName: string | null;
-  private lastTeraType: PokemonType;
-  private lastStatus: StatusEffect;
-  private lastHp: number;
-  private lastMaxHp: number;
-  private lastHpFrame: string | null;
-  private lastExp: number;
-  private lastLevelExp: number;
-  private lastLevel: number;
-  private lastLevelCapped: boolean;
-  private lastStats: string;
+  protected player: boolean;
+  protected mini: boolean;
+  protected boss: boolean;
+  protected bossSegments: number;
+  protected offset: boolean;
+  protected lastName: string | null;
+  protected lastTeraType: PokemonType;
+  protected lastStatus: StatusEffect;
+  protected lastHp: number;
+  protected lastMaxHp: number;
+  protected lastHpFrame: string | null;
+  protected lastExp: number;
+  protected lastLevelExp: number;
+  protected lastLevel: number;
+  protected lastLevelCapped: boolean;
+  protected lastStats: string;
 
-  private box: Phaser.GameObjects.Sprite;
-  private nameText: Phaser.GameObjects.Text;
-  private genderText: Phaser.GameObjects.Text;
-  private ownedIcon: Phaser.GameObjects.Sprite;
-  private championRibbon: Phaser.GameObjects.Sprite;
-  private teraIcon: Phaser.GameObjects.Sprite;
-  private shinyIcon: Phaser.GameObjects.Sprite;
-  private fusionShinyIcon: Phaser.GameObjects.Sprite;
-  private splicedIcon: Phaser.GameObjects.Sprite;
-  private statusIndicator: Phaser.GameObjects.Sprite;
-  private levelContainer: Phaser.GameObjects.Container;
-  private hpBar: Phaser.GameObjects.Image;
-  private hpBarSegmentDividers: Phaser.GameObjects.Rectangle[];
-  private levelNumbersContainer: Phaser.GameObjects.Container;
-  private hpNumbersContainer: Phaser.GameObjects.Container;
-  private type1Icon: Phaser.GameObjects.Sprite;
-  private type2Icon: Phaser.GameObjects.Sprite;
-  private type3Icon: Phaser.GameObjects.Sprite;
-  private expBar: Phaser.GameObjects.Image;
+  protected box: Phaser.GameObjects.Sprite;
+  protected nameText: Phaser.GameObjects.Text;
+  protected genderText: Phaser.GameObjects.Text;
+  protected ownedIcon: Phaser.GameObjects.Sprite;
+  protected championRibbon: Phaser.GameObjects.Sprite;
+  protected teraIcon: Phaser.GameObjects.Sprite;
+  protected shinyIcon: Phaser.GameObjects.Sprite;
+  protected fusionShinyIcon: Phaser.GameObjects.Sprite;
+  protected splicedIcon: Phaser.GameObjects.Sprite;
+  protected statusIndicator: Phaser.GameObjects.Sprite;
+  protected levelContainer: Phaser.GameObjects.Container;
+  protected hpBar: Phaser.GameObjects.Image;
+  protected hpBarSegmentDividers: Phaser.GameObjects.Rectangle[];
+  protected levelNumbersContainer: Phaser.GameObjects.Container;
+  protected hpNumbersContainer: Phaser.GameObjects.Container;
+  protected type1Icon: Phaser.GameObjects.Sprite;
+  protected type2Icon: Phaser.GameObjects.Sprite;
+  protected type3Icon: Phaser.GameObjects.Sprite;
+  protected expBar: Phaser.GameObjects.Image;
 
   // #region Type effectiveness hint objects
-  private effectivenessContainer: Phaser.GameObjects.Container;
-  private effectivenessWindow: Phaser.GameObjects.NineSlice;
-  private effectivenessText: Phaser.GameObjects.Text;
-  private currentEffectiveness?: string;
+  protected effectivenessContainer: Phaser.GameObjects.Container;
+  protected effectivenessWindow: Phaser.GameObjects.NineSlice;
+  protected effectivenessText: Phaser.GameObjects.Text;
+  protected currentEffectiveness?: string;
   // #endregion
 
   public expMaskRect: Phaser.GameObjects.Graphics;
 
-  private statsContainer: Phaser.GameObjects.Container;
-  private statsBox: Phaser.GameObjects.Sprite;
-  private statValuesContainer: Phaser.GameObjects.Container;
-  private statNumbers: Phaser.GameObjects.Sprite[];
+  protected statsContainer: Phaser.GameObjects.Container;
+  protected statsBox: Phaser.GameObjects.Sprite;
+  protected statValuesContainer: Phaser.GameObjects.Container;
+  protected statNumbers: Phaser.GameObjects.Sprite[];
 
   public flyoutMenu?: BattleFlyout;
 
-  private statOrder: Stat[];
-  private readonly statOrderPlayer = [Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.ACC, Stat.EVA, Stat.SPD];
-  private readonly statOrderEnemy = [Stat.HP, Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.ACC, Stat.EVA, Stat.SPD];
+  protected statOrder: Stat[];
+  protected readonly statOrderPlayer = [Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.ACC, Stat.EVA, Stat.SPD];
+  protected readonly statOrderEnemy = [
+    Stat.HP,
+    Stat.ATK,
+    Stat.DEF,
+    Stat.SPATK,
+    Stat.SPDEF,
+    Stat.ACC,
+    Stat.EVA,
+    Stat.SPD,
+  ];
 
   constructor(x: number, y: number, player: boolean) {
     super(globalScene, x, y);
@@ -111,22 +119,6 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     this.genderText.setOrigin(0, 0);
     this.genderText.setPositionRelative(this.nameText, 0, 2);
     this.add(this.genderText);
-
-    if (!this.player) {
-      this.ownedIcon = globalScene.add.sprite(0, 0, "icon_owned");
-      this.ownedIcon.setName("icon_owned");
-      this.ownedIcon.setVisible(false);
-      this.ownedIcon.setOrigin(0, 0);
-      this.ownedIcon.setPositionRelative(this.nameText, 0, 11.75);
-      this.add(this.ownedIcon);
-
-      this.championRibbon = globalScene.add.sprite(0, 0, "champion_ribbon");
-      this.championRibbon.setName("icon_champion_ribbon");
-      this.championRibbon.setVisible(false);
-      this.championRibbon.setOrigin(0, 0);
-      this.championRibbon.setPositionRelative(this.nameText, 8, 11.75);
-      this.add(this.championRibbon);
-    }
 
     this.teraIcon = globalScene.add.sprite(0, 0, "icon_tera");
     this.teraIcon.setName("icon_tera");
@@ -187,30 +179,6 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     this.levelNumbersContainer = globalScene.add.container(9.5, globalScene.uiTheme ? 0 : -0.5);
     this.levelNumbersContainer.setName("container_level");
     this.levelContainer.add(this.levelNumbersContainer);
-
-    if (this.player) {
-      this.hpNumbersContainer = globalScene.add.container(-15, 10);
-      this.hpNumbersContainer.setName("container_hp");
-      this.add(this.hpNumbersContainer);
-
-      const expBar = globalScene.add.image(-98, 18, "overlay_exp");
-      expBar.setName("overlay_exp");
-      expBar.setOrigin(0);
-      this.add(expBar);
-
-      const expMaskRect = globalScene.make.graphics({});
-      expMaskRect.setScale(6);
-      expMaskRect.fillStyle(0xffffff);
-      expMaskRect.beginPath();
-      expMaskRect.fillRect(127, 126, 85, 2);
-
-      const expMask = expMaskRect.createGeometryMask();
-
-      expBar.setMask(expMask);
-
-      this.expBar = expBar;
-      this.expMaskRect = expMaskRect;
-    }
 
     this.statsContainer = globalScene.add.container(0, 0);
     this.statsContainer.setName("container_stats");
@@ -275,13 +243,6 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
       }
     });
 
-    if (!this.player) {
-      this.flyoutMenu = new BattleFlyout(this.player);
-      this.add(this.flyoutMenu);
-
-      this.moveBelow<Phaser.GameObjects.GameObject>(this.flyoutMenu, this.box);
-    }
-
     this.type1Icon = globalScene.add.sprite(
       player ? -139 : -15,
       player ? -17 : -15.5,
@@ -308,19 +269,6 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     this.type3Icon.setName("icon_type_3");
     this.type3Icon.setOrigin(0, 0);
     this.add(this.type3Icon);
-
-    if (!this.player) {
-      this.effectivenessContainer = globalScene.add.container(0, 0);
-      this.effectivenessContainer.setPositionRelative(this.type1Icon, 22, 4);
-      this.effectivenessContainer.setVisible(false);
-      this.add(this.effectivenessContainer);
-
-      this.effectivenessText = addTextObject(5, 4.5, "", TextStyle.BATTLE_INFO);
-      this.effectivenessWindow = addWindow(0, 0, 0, 20, undefined, false, undefined, undefined, WindowVariant.XTHIN);
-
-      this.effectivenessContainer.add(this.effectivenessWindow);
-      this.effectivenessContainer.add(this.effectivenessText);
-    }
   }
 
   getStatsValueContainer(): Phaser.GameObjects.Container {
