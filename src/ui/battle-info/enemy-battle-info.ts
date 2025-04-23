@@ -178,8 +178,7 @@ export class EnemyBattleInfo extends BattleInfo {
           this.hpBar.height - (uiTheme ? 0 : 1),
           pokemon.bossSegmentIndex >= s ? 0xffffff : 0x404040,
         );
-        divider.setOrigin(0.5, 0);
-        divider.setName("hpBar_divider_" + s.toString());
+        divider.setOrigin(0.5, 0).setName("hpBar_divider_" + s.toString());
         this.add(divider);
         this.moveBelow(divider as Phaser.GameObjects.GameObject, this.statsContainer);
 
