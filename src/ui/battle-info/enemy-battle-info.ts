@@ -192,4 +192,13 @@ export class EnemyBattleInfo extends BattleInfo {
   override updateStatusIcon(pokemon: EnemyPokemon): void {
     super.updateStatusIcon(pokemon, (this.ownedIcon.visible ? 8 : 0) + (this.championRibbon.visible ? 8 : 0));
   }
+
+  protected override updatePokemonHp(
+    pokemon: EnemyPokemon,
+    resolve: (r: void | PromiseLike<void>) => void,
+    instant?: boolean,
+  ): void {
+    super.updatePokemonHp(pokemon, resolve, instant);
+    this.lastHp = pokemon.hp;
+  }
 }
