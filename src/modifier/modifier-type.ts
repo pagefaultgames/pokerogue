@@ -128,6 +128,8 @@ import { getStatKey, Stat, TEMP_BATTLE_STATS } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import i18next from "i18next";
 import { timedEventManager } from "#app/global-event-manager";
+import type { HeldItemType } from "./held-items";
+import { allHeldItems, attackTypeToHeldItemTypeMap } from "./held-items";
 
 const outputModifierData = false;
 const useMaxWeightForOutput = false;
@@ -804,54 +806,33 @@ export class BerryModifierType extends PokemonHeldItemModifierType implements Ge
   }
 }
 
-enum AttackTypeBoosterItem {
-  SILK_SCARF,
-  BLACK_BELT,
-  SHARP_BEAK,
-  POISON_BARB,
-  SOFT_SAND,
-  HARD_STONE,
-  SILVER_POWDER,
-  SPELL_TAG,
-  METAL_COAT,
-  CHARCOAL,
-  MYSTIC_WATER,
-  MIRACLE_SEED,
-  MAGNET,
-  TWISTED_SPOON,
-  NEVER_MELT_ICE,
-  DRAGON_FANG,
-  BLACK_GLASSES,
-  FAIRY_FEATHER,
-}
-
 export class AttackTypeBoosterModifierType
   extends PokemonHeldItemModifierType
   implements GeneratedPersistentModifierType
 {
   public moveType: PokemonType;
   public boostPercent: number;
+  public heldItemId: HeldItemType;
 
   constructor(moveType: PokemonType, boostPercent: number) {
+    const heldItemId = attackTypeToHeldItemTypeMap[moveType];
     super(
       "",
-      `${AttackTypeBoosterItem[moveType]?.toLowerCase()}`,
+      allHeldItems[heldItemId].getIcon(),
       (_type, args) => new AttackTypeBoosterModifier(this, (args[0] as Pokemon).id, moveType, boostPercent),
     );
 
     this.moveType = moveType;
     this.boostPercent = boostPercent;
+    this.heldItemId = heldItemId; // Not good, but temporary
   }
 
   get name(): string {
-    return i18next.t(`modifierType:AttackTypeBoosterItem.${AttackTypeBoosterItem[this.moveType]?.toLowerCase()}`);
+    return allHeldItems[this.heldItemId].getName();
   }
 
   getDescription(): string {
-    // TODO: Need getTypeName?
-    return i18next.t("modifierType:ModifierType.AttackTypeBoosterModifierType.description", {
-      moveType: i18next.t(`pokemonInfo:Type.${PokemonType[this.moveType]}`),
-    });
+    return allHeldItems[this.heldItemId].getDescription();
   }
 
   getPregenArgs(): any[] {
