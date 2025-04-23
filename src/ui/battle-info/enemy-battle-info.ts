@@ -4,14 +4,17 @@ import BattleFlyout from "../battle-flyout";
 import { addTextObject, TextStyle } from "#app/ui/text";
 import { addWindow, WindowVariant } from "#app/ui/ui-theme";
 import { Stat } from "#enums/stat";
-import type { EnemyPokemon } from "#app/field/pokemon";
 import i18next from "i18next";
+import type { EnemyPokemon } from "#app/field/pokemon";
+import type { GameObjects } from "phaser";
 
 export class EnemyBattleInfo extends BattleInfo {
   protected player: false = false;
   protected championRibbon: Phaser.GameObjects.Sprite;
   protected ownedIcon: Phaser.GameObjects.Sprite;
   protected flyoutMenu: BattleFlyout;
+
+  protected hpBarSegmentDividers: GameObjects.Rectangle[] = [];
 
   // #region Type effectiveness hint objects
   protected effectivenessContainer: Phaser.GameObjects.Container;
