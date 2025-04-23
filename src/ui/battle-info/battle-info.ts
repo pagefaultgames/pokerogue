@@ -1,16 +1,16 @@
-import type { EnemyPokemon, default as Pokemon } from "../field/pokemon";
-import { getLevelTotalExp, getLevelRelExp } from "../data/exp";
+import type { EnemyPokemon, default as Pokemon } from "../../field/pokemon";
+import { getLevelTotalExp, getLevelRelExp } from "../../data/exp";
 import { getLocalizedSpriteKey, fixedInt } from "#app/utils/common";
-import { addTextObject, TextStyle } from "./text";
-import { getGenderSymbol, getGenderColor, Gender } from "../data/gender";
+import { addTextObject, TextStyle } from "../text";
+import { getGenderSymbol, getGenderColor, Gender } from "../../data/gender";
 import { StatusEffect } from "#enums/status-effect";
 import { globalScene } from "#app/global-scene";
 import { getTypeRgb } from "#app/data/type";
 import { PokemonType } from "#enums/pokemon-type";
 import { getVariantTint } from "#app/sprites/variant";
 import { Stat } from "#enums/stat";
-import BattleFlyout from "./battle-flyout";
-import { WindowVariant, addWindow } from "./ui-theme";
+import BattleFlyout from "../battle-flyout";
+import { WindowVariant, addWindow } from "../ui-theme";
 import i18next from "i18next";
 import { ExpGainsSpeed } from "#app/enums/exp-gains-speed";
 
