@@ -14,6 +14,7 @@ import { BattleEndPhase } from "./battle-end-phase";
 import { NewBattlePhase } from "./new-battle-phase";
 import { PokemonPhase } from "./pokemon-phase";
 import { globalScene } from "#app/global-scene";
+import { SelectBiomePhase } from "./select-biome-phase";
 
 export class AttemptRunPhase extends PokemonPhase {
   /** For testing purposes: this is to force the pokemon to fail and escape */
@@ -59,6 +60,11 @@ export class AttemptRunPhase extends PokemonPhase {
       });
 
       globalScene.pushPhase(new BattleEndPhase(false));
+
+      if (globalScene.gameMode.hasRandomBiomes || globalScene.isNewBiome()) {
+        globalScene.pushPhase(new SelectBiomePhase());
+      }
+
       globalScene.pushPhase(new NewBattlePhase());
     } else {
       playerPokemon.turnData.failedRunAway = true;
