@@ -9,7 +9,6 @@ import { getTypeRgb } from "#app/data/type";
 import { PokemonType } from "#enums/pokemon-type";
 import { getVariantTint } from "#app/sprites/variant";
 import { Stat } from "#enums/stat";
-import type BattleFlyout from "../battle-flyout";
 import i18next from "i18next";
 import { ExpGainsSpeed } from "#app/enums/exp-gains-speed";
 
@@ -55,21 +54,12 @@ export default abstract class BattleInfo extends Phaser.GameObjects.Container {
   protected type3Icon: Phaser.GameObjects.Sprite;
   protected expBar: Phaser.GameObjects.Image;
 
-  // #region Type effectiveness hint objects
-  protected effectivenessContainer: Phaser.GameObjects.Container;
-  protected effectivenessWindow: Phaser.GameObjects.NineSlice;
-  protected effectivenessText: Phaser.GameObjects.Text;
-  protected currentEffectiveness?: string;
-  // #endregion
-
   public expMaskRect: Phaser.GameObjects.Graphics;
 
   protected statsContainer: Phaser.GameObjects.Container;
   protected statsBox: Phaser.GameObjects.Sprite;
   protected statValuesContainer: Phaser.GameObjects.Container;
   protected statNumbers: Phaser.GameObjects.Sprite[];
-
-  public flyoutMenu?: BattleFlyout;
 
   get statOrder(): Stat[] {
     return [];
@@ -281,8 +271,6 @@ export default abstract class BattleInfo extends Phaser.GameObjects.Container {
 
     this.name = pokemon.getNameToRender();
     this.box.name = pokemon.getNameToRender();
-
-    this.flyoutMenu?.initInfo(pokemon);
 
     this.genderText.setText(getGenderSymbol(pokemon.gender));
     this.genderText.setColor(getGenderColor(pokemon.gender));
@@ -875,39 +863,6 @@ export default abstract class BattleInfo extends Phaser.GameObjects.Container {
         this.statNumbers[i].setFrame(stats[s - 1].toString());
       }
     });
-  }
-
-  /**
-   * Request the flyoutMenu to toggle if available and hides or shows the effectiveness window where necessary
-   */
-  toggleFlyout(visible: boolean): void {
-    this.flyoutMenu?.toggleFlyout(visible);
-
-    if (visible) {
-      this.effectivenessContainer?.setVisible(false);
-    } else {
-      this.updateEffectiveness(this.currentEffectiveness);
-    }
-  }
-
-  /**
-   * Show or hide the type effectiveness multiplier window
-   * Passing undefined will hide the window
-   */
-  updateEffectiveness(effectiveness?: string) {
-    if (this.player) {
-      return;
-    }
-    this.currentEffectiveness = effectiveness;
-
-    if (!globalScene.typeHints || effectiveness === undefined || this.flyoutMenu?.flyoutVisible) {
-      this.effectivenessContainer.setVisible(false);
-      return;
-    }
-
-    this.effectivenessText.setText(effectiveness);
-    this.effectivenessWindow.width = 10 + this.effectivenessText.displayWidth;
-    this.effectivenessContainer.setVisible(true);
   }
 
   getBaseY(): number {

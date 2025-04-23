@@ -4,12 +4,13 @@ import BattleFlyout from "../battle-flyout";
 import { addTextObject, TextStyle } from "#app/ui/text";
 import { addWindow, WindowVariant } from "#app/ui/ui-theme";
 import { Stat } from "#enums/stat";
+import type { EnemyPokemon } from "#app/field/pokemon";
 
 export class EnemyBattleInfo extends BattleInfo {
   protected player: false = false;
   protected championRibbon: Phaser.GameObjects.Sprite;
   protected ownedIcon: Phaser.GameObjects.Sprite;
-  public flyoutMenu: BattleFlyout;
+  protected flyoutMenu: BattleFlyout;
 
   // #region Type effectiveness hint objects
   protected effectivenessContainer: Phaser.GameObjects.Container;
@@ -50,6 +51,41 @@ export class EnemyBattleInfo extends BattleInfo {
     this.effectivenessWindow = addWindow(0, 0, 0, 20, undefined, false, undefined, undefined, WindowVariant.XTHIN);
 
     this.effectivenessContainer.add([this.effectivenessWindow, this.effectivenessText]);
+  }
+
+  override initInfo(pokemon: EnemyPokemon): void {
+    this.flyoutMenu.initInfo(pokemon);
+    super.initInfo(pokemon);
+  }
+
+  /**
+   * Show or hide the type effectiveness multiplier window
+   * Passing undefined will hide the window
+   */
+  updateEffectiveness(effectiveness?: string) {
+    this.currentEffectiveness = effectiveness;
+
+    if (!globalScene.typeHints || effectiveness === undefined || this.flyoutMenu.flyoutVisible) {
+      this.effectivenessContainer.setVisible(false);
+      return;
+    }
+
+    this.effectivenessText.setText(effectiveness);
+    this.effectivenessWindow.width = 10 + this.effectivenessText.displayWidth;
+    this.effectivenessContainer.setVisible(true);
+  }
+
+  /**
+   * Request the flyoutMenu to toggle if available and hides or shows the effectiveness window where necessary
+   */
+  toggleFlyout(visible: boolean): void {
+    this.flyoutMenu.toggleFlyout(visible);
+
+    if (visible) {
+      this.effectivenessContainer?.setVisible(false);
+    } else {
+      this.updateEffectiveness(this.currentEffectiveness);
+    }
   }
 
   setMini(_mini: boolean): void {} // Always mini
