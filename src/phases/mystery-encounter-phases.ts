@@ -27,6 +27,7 @@ import { IvScannerModifier } from "../modifier/modifier";
 import { Phase } from "../phase";
 import { UiMode } from "#enums/ui-mode";
 import { isNullOrUndefined, randSeedItem } from "#app/utils/common";
+import { SelectBiomePhase } from "./select-biome-phase";
 
 /**
  * Will handle (in order):
@@ -612,6 +613,10 @@ export class PostMysteryEncounterPhase extends Phase {
    */
   continueEncounter() {
     const endPhase = () => {
+      if (globalScene.gameMode.hasRandomBiomes || globalScene.isNewBiome()) {
+        globalScene.pushPhase(new SelectBiomePhase());
+      }
+
       globalScene.pushPhase(new NewBattlePhase());
       this.end();
     };

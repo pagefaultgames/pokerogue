@@ -248,6 +248,7 @@ import { PLAYER_PARTY_MAX_SIZE } from "#app/constants";
 import { CustomPokemonData } from "#app/data/custom-pokemon-data";
 import { SwitchType } from "#enums/switch-type";
 import { SpeciesFormKey } from "#enums/species-form-key";
+import {getStatusEffectOverlapText } from "#app/data/status-effect";
 import {
   BASE_HIDDEN_ABILITY_CHANCE,
   BASE_SHINY_CHANCE,
@@ -5364,6 +5365,18 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     );
   }
 
+  queueImmuneMessage(quiet: boolean, effect?: StatusEffect): void {
+    if (!effect || quiet) {
+      return;
+    }
+    const message = effect && this.status?.effect === effect
+    ? getStatusEffectOverlapText(effect ?? StatusEffect.NONE, getPokemonNameWithAffix(this))
+    : i18next.t("abilityTriggers:moveImmunity", { 
+        pokemonNameWithAffix: getPokemonNameWithAffix(this),
+      });
+    globalScene.queueMessage(message);
+  }
+
   /**
    * Checks if a status effect can be applied to the Pokemon.
    *
@@ -5382,6 +5395,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   ): boolean {
     if (effect !== StatusEffect.FAINT) {
       if (overrideStatus ? this.status?.effect === effect : this.status) {
+        this.queueImmuneMessage(quiet, effect);
         return false;
       }
       if (
@@ -5389,16 +5403,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         !ignoreField &&
         globalScene.arena.terrain?.terrainType === TerrainType.MISTY
       ) {
+        this.queueImmuneMessage(quiet, effect);
         return false;
       }
-    }
-
-    if (
-      sourcePokemon &&
-      sourcePokemon !== this &&
-      this.isSafeguarded(sourcePokemon)
-    ) {
-      return false;
     }
 
     const types = this.getTypes(true, true);
@@ -5429,17 +5436,19 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             }
           }
 
-          return true;
+            return true;
         });
 
         if (this.isOfType(PokemonType.POISON) || this.isOfType(PokemonType.STEEL)) {
           if (poisonImmunity.includes(true)) {
+            this.queueImmuneMessage(quiet, effect);
             return false;
           }
         }
         break;
       case StatusEffect.PARALYSIS:
         if (this.isOfType(PokemonType.ELECTRIC)) {
+          this.queueImmuneMessage(quiet, effect);
           return false;
         }
         break;
@@ -5448,6 +5457,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           this.isGrounded() &&
           globalScene.arena.terrain?.terrainType === TerrainType.ELECTRIC
         ) {
+          this.queueImmuneMessage(quiet, effect);
           return false;
         }
         break;
@@ -5460,11 +5470,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
               globalScene.arena.weather.weatherType,
             ))
         ) {
+          this.queueImmuneMessage(quiet, effect);
           return false;
         }
         break;
       case StatusEffect.BURN:
         if (this.isOfType(PokemonType.FIRE)) {
+          this.queueImmuneMessage(quiet, effect);
           return false;
         }
         break;
@@ -5499,6 +5511,19 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       return false;
     }
 
+    if (
+      sourcePokemon &&
+      sourcePokemon !== this &&
+      this.isSafeguarded(sourcePokemon)
+    ) {
+      if(!quiet){ 
+        globalScene.queueMessage(
+          i18next.t("moveTriggers:safeguard", { targetName: getPokemonNameWithAffix(this) 
+        }));
+      }
+      return false;
+    }
+
     return true;
   }
 
@@ -5510,7 +5535,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     sourceText: string | null = null,
     overrideStatus?: boolean
   ): boolean {
-    if (!this.canSetStatus(effect, asPhase, overrideStatus, sourcePokemon)) {
+    if (!this.canSetStatus(effect, false, overrideStatus, sourcePokemon)) {
       return false;
     }
     if (this.isFainted() && effect !== StatusEffect.FAINT) {

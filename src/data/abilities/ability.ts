@@ -74,6 +74,7 @@ import type Move from "#app/data/moves/move";
 import type { ArenaTrapTag, SuppressAbilitiesTag } from "#app/data/arena-tag";
 import type { HitCheckEntry } from "#app/phases/move-effect-phase";
 import { HitCheckResult } from "#enums/hit-check-result";
+import { SelectBiomePhase } from "#app/phases/select-biome-phase";
 
 export class BlockRecoilDamageAttr extends AbAttr {
   constructor() {
@@ -5539,6 +5540,11 @@ class ForceSwitchOutHelper {
 
         if (switchOutTarget.hp) {
           globalScene.pushPhase(new BattleEndPhase(false));
+
+          if (globalScene.gameMode.hasRandomBiomes || globalScene.isNewBiome()) {
+            globalScene.pushPhase(new SelectBiomePhase());
+          }
+
           globalScene.pushPhase(new NewBattlePhase());
         }
       }
@@ -7280,7 +7286,7 @@ export function initAbilities() {
     new Ability(Abilities.CURIOUS_MEDICINE, 8)
       .attr(PostSummonClearAllyStatStagesAbAttr),
     new Ability(Abilities.TRANSISTOR, 8)
-      .attr(MoveTypePowerBoostAbAttr, PokemonType.ELECTRIC),
+      .attr(MoveTypePowerBoostAbAttr, PokemonType.ELECTRIC, 1.3),
     new Ability(Abilities.DRAGONS_MAW, 8)
       .attr(MoveTypePowerBoostAbAttr, PokemonType.DRAGON),
     new Ability(Abilities.CHILLING_NEIGH, 8)

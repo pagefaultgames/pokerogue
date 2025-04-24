@@ -186,7 +186,7 @@ describe("Abilities - Disguise", () => {
     await game.toNextTurn();
     game.move.select(Moves.SPLASH);
     await game.doKillOpponents();
-    await game.phaseInterceptor.to("PartyHealPhase");
+    await game.phaseInterceptor.to("QuietFormChangePhase");
 
     expect(mimikyu1.formIndex).toBe(disguisedForm);
   });
