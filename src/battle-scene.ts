@@ -151,7 +151,6 @@ import { NextEncounterPhase } from "#app/phases/next-encounter-phase";
 import { PokemonAnimPhase } from "#app/phases/pokemon-anim-phase";
 import { QuietFormChangePhase } from "#app/phases/quiet-form-change-phase";
 import { ReturnPhase } from "#app/phases/return-phase";
-import { SelectBiomePhase } from "#app/phases/select-biome-phase";
 import { ShowTrainerPhase } from "#app/phases/show-trainer-phase";
 import { SummonPhase } from "#app/phases/summon-phase";
 import { SwitchPhase } from "#app/phases/switch-phase";
@@ -1300,6 +1299,16 @@ export default class BattleScene extends SceneBase {
     return Math.max(doubleChance.value, 1);
   }
 
+  isNewBiome(currentBattle = this.currentBattle) {
+    const isWaveIndexMultipleOfTen = !(currentBattle.waveIndex % 10);
+    const isEndlessOrDaily = this.gameMode.hasShortBiomes || this.gameMode.isDaily;
+    const isEndlessFifthWave = this.gameMode.hasShortBiomes && currentBattle.waveIndex % 5 === 0;
+    const isWaveIndexMultipleOfFiftyMinusOne = currentBattle.waveIndex % 50 === 49;
+    const isNewBiome =
+      isWaveIndexMultipleOfTen || isEndlessFifthWave || (isEndlessOrDaily && isWaveIndexMultipleOfFiftyMinusOne);
+    return isNewBiome;
+  }
+
   // TODO: ...this never actually returns `null`, right?
   newBattle(
     waveIndex?: number,
@@ -1387,9 +1396,9 @@ export default class BattleScene extends SceneBase {
     if (double === undefined && newWaveIndex > 1) {
       if (newBattleType === BattleType.WILD && !this.gameMode.isWaveFinal(newWaveIndex)) {
         newDouble = !randSeedInt(this.getDoubleBattleChance(newWaveIndex, playerField));
+      } else if (newBattleType === BattleType.TRAINER) {
+        newDouble = newTrainer?.variant === TrainerVariant.DOUBLE;
       }
-    } else if (double === undefined && newBattleType === BattleType.TRAINER) {
-      newDouble = newTrainer?.variant === TrainerVariant.DOUBLE;
     } else if (!battleConfig) {
       newDouble = !!double;
     }
@@ -1463,12 +1472,7 @@ export default class BattleScene extends SceneBase {
     }
 
     if (!waveIndex && lastBattle) {
-      const isWaveIndexMultipleOfTen = !(lastBattle.waveIndex % 10);
-      const isEndlessOrDaily = this.gameMode.hasShortBiomes || this.gameMode.isDaily;
-      const isEndlessFifthWave = this.gameMode.hasShortBiomes && lastBattle.waveIndex % 5 === 0;
-      const isWaveIndexMultipleOfFiftyMinusOne = lastBattle.waveIndex % 50 === 49;
-      const isNewBiome =
-        isWaveIndexMultipleOfTen || isEndlessFifthWave || (isEndlessOrDaily && isWaveIndexMultipleOfFiftyMinusOne);
+      const isNewBiome = this.isNewBiome(lastBattle);
       const resetArenaState =
         isNewBiome ||
         [BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER].includes(this.currentBattle.battleType) ||
@@ -1517,7 +1521,6 @@ export default class BattleScene extends SceneBase {
       if (!this.gameMode.hasRandomBiomes && !isNewBiome) {
         this.pushPhase(new NextEncounterPhase());
       } else {
-        this.pushPhase(new SelectBiomePhase());
         this.pushPhase(new NewBiomeEncounterPhase());
 
         const newMaxExpLevel = this.getMaxExpLevel();
