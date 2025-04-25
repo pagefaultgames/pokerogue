@@ -19,6 +19,10 @@ export class SwitchBiomePhase extends BattlePhase {
       return this.end();
     }
 
+    // Before switching biomes, make sure to set the last encounter for other phases that need it too.
+    globalScene.lastEnemyTrainer = globalScene.currentBattle?.trainer ?? null;
+    globalScene.lastMysteryEncounter = globalScene.currentBattle?.mysteryEncounter;
+
     globalScene.tweens.add({
       targets: [globalScene.arenaEnemy, globalScene.lastEnemyTrainer],
       x: "+=300",
