@@ -488,6 +488,7 @@ export abstract class PokemonSpeciesForm {
           if (formSpriteKey.startsWith("behemoth")) {
             formSpriteKey = "crowned";
           }
+          break;
         default:
           ret += `-${formSpriteKey}`;
           break;

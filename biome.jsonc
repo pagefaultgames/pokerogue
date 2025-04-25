@@ -38,6 +38,9 @@
       "src/data/balance/tms.ts"
     ]
   },
+
+  // While it'd be nice to enable consistent sorting, this stuff screws with circular import resolution order
+  // TODO: Remove if we ever get down to 0 circular imports
   "organizeImports": { "enabled": false },
   "linter": {
     "ignore": [
@@ -55,13 +58,13 @@
       },
       "style": {
         "noVar": "error",
-        "useEnumInitializers": "off",
+        "useEnumInitializers": "off", // have fun explicitly numbering all 1000+ species, moves, etc. lol
         "useBlockStatements": "error",
         "useConst": "error",
         "useImportType": "error",
         "noNonNullAssertion": "off", // TODO: Turn this on ASAP and fix all non-null assertions
         "noParameterAssign": "off",
-        "useExponentiationOperator": "off",
+        "useExponentiationOperator": "off", // Too typo-prone and easy to mixup with standard multiplication
         "useDefaultParameterLast": "off", // TODO: Fix spots in the codebase where this flag would be triggered, and then enable
         "useSingleVarDeclarator": "off",
         "useNodejsImportProtocol": "off",
@@ -70,10 +73,10 @@
       },
       "suspicious": {
         "noDoubleEquals": "error",
-        "noExplicitAny": "off",
+        "noExplicitAny": "off", // TODO: Refactor and make this an error after save data refactored
         "noAssignInExpressions": "off",
         "noPrototypeBuiltins": "off",
-        "noFallthroughSwitchClause": "off",
+        "noFallthroughSwitchClause": "off", // Handled by ESLint due to not supporting simple "falls through" commenst
         "noImplicitAnyLet": "info", // TODO: Refactor and make this an error
         "noRedeclare": "off", // TODO: Refactor and make this an error
         "noGlobalIsNan": "off",
