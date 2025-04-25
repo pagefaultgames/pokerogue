@@ -3224,7 +3224,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.GOLISOPOD ]))
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.EISCUE ])) // Tera Water Eiscue
     .setPartyMemberFunc(3, getRandomPartyMemberFunc([ Species.PELIPPER ], TrainerSlot.TRAINER, true, p => {
-      p.abilityIndex = 1;
+      p.abilityIndex = 1; // Drizzle
       p.generateAndPopulateMoveset();
     }))
     .setPartyMemberFunc(4, getRandomPartyMemberFunc([ Species.TOXAPEX ]))
@@ -3327,7 +3327,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(3, getRandomPartyMemberFunc([ Species.TALONFLAME ], TrainerSlot.TRAINER, true, p => {
         p.generateAndPopulateMoveset();
         if (!p.moveset.some(move => !isNullOrUndefined(move) && move.moveId === Moves.SUNNY_DAY)) {
-          // Check if Techno Blast is in the moveset, if not, replace the third move with Sunny Day.
+          // Check if Sunny Day is in the moveset, if not, replace the third move with Sunny Day.
           p.moveset[2] = new PokemonMove(Moves.TECHNO_BLAST);
         }
       }),
