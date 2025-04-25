@@ -2961,7 +2961,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setBattleBgm("battle_johto_gym")
     .setMixedBattleBgm("battle_johto_gym")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([ Species.UMBREON ]))
-    .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.GENGAR ], TrainerSlot.TRAINER, true, p => { // Tera Dragon Dhelmise
+    .setPartyMemberFunc(2, getRandomPartyMemberFunc([ Species.GENGAR ], TrainerSlot.TRAINER, true, p => { // Tera Dark Gengar
         p.generateAndPopulateMoveset();
         if (!p.moveset.some(move => !isNullOrUndefined(move) && move.moveId === Moves.DARK_PULSE)) {
           // Check if Dark Pulse is in the moveset, if not, replace the third move with Dark Pulse.
