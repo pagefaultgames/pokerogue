@@ -94,69 +94,54 @@ export const signatureSpecies: SignatureSpecies = {
   GRUSHA: [Species.SWABLU, Species.CETODDLE, Species.SNOM, Species.CUBCHOO], // Tera Ice Swablu
 
   // Elite Four- Kanto
-  LORELEI: [
-    Species.JYNX,
-    [Species.SLOWBRO, Species.GALAR_SLOWBRO],
-    Species.LAPRAS,
-    [Species.CLOYSTER, Species.ALOLA_SANDSLASH],
-  ],
-  BRUNO: [Species.MACHAMP, Species.HITMONCHAN, Species.HITMONLEE, [Species.GOLEM, Species.ALOLA_GOLEM]],
-  AGATHA: [Species.GENGAR, [Species.ARBOK, Species.WEEZING], Species.CROBAT, Species.ALOLA_MAROWAK],
-  LANCE: [Species.DRAGONITE, Species.GYARADOS, Species.AERODACTYL, Species.ALOLA_EXEGGUTOR],
+  LORELEI: [],
+  BRUNO: [],
+  AGATHA: [],
+  LANCE: [],
   // Elite Four- Johto (Bruno included)
-  WILL: [Species.XATU, Species.JYNX, [Species.SLOWBRO, Species.SLOWKING], Species.EXEGGUTOR],
-  KOGA: [[Species.MUK, Species.WEEZING], [Species.VENOMOTH, Species.ARIADOS], Species.CROBAT, Species.TENTACRUEL],
-  KAREN: [Species.UMBREON, Species.HONCHKROW, Species.HOUNDOOM, Species.WEAVILE],
+  WILL: [],
+  KOGA: [],
+  KAREN: [],
   // Elite Four- Hoenn
-  SIDNEY: [
-    [Species.SHIFTRY, Species.CACTURNE],
-    [Species.SHARPEDO, Species.CRAWDAUNT],
-    Species.ABSOL,
-    Species.MIGHTYENA,
-  ],
-  PHOEBE: [Species.SABLEYE, Species.DUSKNOIR, Species.BANETTE, [Species.DRIFBLIM, Species.MISMAGIUS]],
-  GLACIA: [Species.GLALIE, Species.WALREIN, Species.FROSLASS, Species.ABOMASNOW],
-  DRAKE: [Species.ALTARIA, Species.SALAMENCE, Species.FLYGON, Species.KINGDRA],
+  SIDNEY: [],
+  PHOEBE: [],
+  GLACIA: [],
+  DRAKE: [],
   // Elite Four- Sinnoh
-  AARON: [[Species.SCIZOR, Species.KLEAVOR], Species.HERACROSS, [Species.VESPIQUEN, Species.YANMEGA], Species.DRAPION],
-  BERTHA: [Species.WHISCASH, Species.HIPPOWDON, Species.GLISCOR, Species.RHYPERIOR],
-  FLINT: [
-    [Species.RAPIDASH, Species.FLAREON],
-    Species.MAGMORTAR,
-    [Species.STEELIX, Species.LOPUNNY],
-    Species.INFERNAPE,
-  ], // Tera Fire Steelix or Lopunny
-  LUCIAN: [Species.MR_MIME, Species.GALLADE, Species.BRONZONG, [Species.ALAKAZAM, Species.ESPEON]],
+  AARON: [],
+  BERTHA: [],
+  FLINT: [],
+  LUCIAN: [],
   // Elite Four- Unova
-  SHAUNTAL: [Species.COFAGRIGUS, Species.CHANDELURE, Species.GOLURK, Species.JELLICENT],
-  MARSHAL: [Species.CONKELDURR, Species.MIENSHAO, Species.THROH, Species.SAWK],
-  GRIMSLEY: [Species.LIEPARD, Species.KINGAMBIT, Species.SCRAFTY, Species.KROOKODILE],
-  CAITLIN: [Species.MUSHARNA, Species.GOTHITELLE, Species.SIGILYPH, Species.REUNICLUS],
+  SHAUNTAL: [],
+  MARSHAL: [],
+  GRIMSLEY: [],
+  CAITLIN: [],
   // Elite Four- Kalos
-  MALVA: [Species.PYROAR, Species.TORKOAL, Species.CHANDELURE, Species.TALONFLAME],
-  SIEBOLD: [Species.CLAWITZER, Species.GYARADOS, Species.BARBARACLE, Species.STARMIE],
-  WIKSTROM: [Species.KLEFKI, Species.PROBOPASS, Species.SCIZOR, Species.AEGISLASH],
-  DRASNA: [Species.DRAGALGE, Species.DRUDDIGON, Species.ALTARIA, Species.NOIVERN],
+  MALVA: [],
+  SIEBOLD: [],
+  WIKSTROM: [],
+  DRASNA: [],
   // Elite Four- Alola
-  HALA: [Species.HARIYAMA, Species.BEWEAR, Species.CRABOMINABLE, [Species.POLIWRATH, Species.ANNIHILAPE]],
-  MOLAYNE: [Species.KLEFKI, Species.MAGNEZONE, Species.METAGROSS, Species.ALOLA_DUGTRIO],
-  OLIVIA: [Species.RELICANTH, Species.CARBINK, Species.ALOLA_GOLEM, Species.LYCANROC],
-  ACEROLA: [[Species.BANETTE, Species.DRIFBLIM], Species.MIMIKYU, Species.DHELMISE, Species.PALOSSAND],
-  KAHILI: [[Species.BRAVIARY, Species.MANDIBUZZ], Species.HAWLUCHA, Species.ORICORIO, Species.TOUCANNON],
+  HALA: [],
+  MOLAYNE: [],
+  OLIVIA: [],
+  ACEROLA: [],
+  KAHILI: [],
   // Elite Four- Galar
-  MARNIE_ELITE: [Species.MORPEKO, Species.LIEPARD, [Species.TOXICROAK, Species.SCRAFTY], Species.GRIMMSNARL],
-  NESSA_ELITE: [Species.GOLISOPOD, [Species.QUAGSIRE, Species.PELIPPER], Species.TOXAPEX, Species.DREDNAW],
-  BEA_ELITE: [Species.HAWLUCHA, [Species.GRAPPLOCT, Species.SIRFETCHD], Species.FALINKS, Species.MACHAMP],
-  ALLISTER_ELITE: [Species.DUSKNOIR, [Species.POLTEAGEIST, Species.RUNERIGUS], Species.CURSOLA, Species.GENGAR],
-  RAIHAN_ELITE: [Species.GOODRA, [Species.TORKOAL, Species.TURTONATOR], Species.FLYGON, Species.ARCHALUDON],
+  MARNIE_ELITE: [],
+  NESSA_ELITE: [],
+  BEA_ELITE: [],
+  ALLISTER_ELITE: [],
+  RAIHAN_ELITE: [],
   // Elite Four- Paldea
-  RIKA: [Species.CLODSIRE, [Species.DUGTRIO, Species.DONPHAN], Species.CAMERUPT, Species.WHISCASH], // Tera Ground Clodsire
-  POPPY: [Species.TINKATON, Species.BRONZONG, Species.CORVIKNIGHT, Species.COPPERAJAH], // Tera Steel Tinkaton
-  LARRY_ELITE: [Species.FLAMIGO, Species.STARAPTOR, [Species.ALTARIA, Species.TROPIUS], Species.ORICORIO], // Tera Flying Flamigo; random Oricorio
-  HASSEL: [Species.BAXCALIBUR, [Species.FLAPPLE, Species.APPLETUN], Species.DRAGALGE, Species.NOIVERN], // Tera Dragon Baxcalibur
+  RIKA: [],
+  POPPY: [],
+  LARRY_ELITE: [],
+  HASSEL: [],
   // Elite Four- BBL
-  CRISPIN: [Species.BLAZIKEN, Species.MAGMORTAR, [Species.CAMERUPT, Species.TALONFLAME], Species.ROTOM], // Tera Fire Blaziken; Heat Rotom
-  AMARYS: [Species.METAGROSS, Species.SCIZOR, Species.EMPOLEON, Species.SKARMORY], // Tera Steel Metagross
-  LACEY: [Species.EXCADRILL, Species.PRIMARINA, [Species.WHIMSICOTT, Species.ALCREMIE], Species.GRANBULL], // Tera Fairy Excadrill
-  DRAYTON: [Species.ARCHALUDON, Species.DRAGONITE, Species.HAXORUS, Species.SCEPTILE], // Tera Dragon Archaludon
+  CRISPIN: [],
+  AMARYS: [],
+  LACEY: [],
+  DRAYTON: [],
 };
