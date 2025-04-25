@@ -42,7 +42,7 @@ export const SlumberingSnorlaxEncounter: MysteryEncounter = MysteryEncounterBuil
   MysteryEncounterType.SLUMBERING_SNORLAX,
 )
   .withEncounterTier(MysteryEncounterTier.GREAT)
-  .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
+  .withSceneWaveRangeRequirement(15, 150)
   .withCatchAllowed(true)
   .withHideWildIntroMessage(true)
   .withFleeAllowed(false)
@@ -72,16 +72,25 @@ export const SlumberingSnorlaxEncounter: MysteryEncounter = MysteryEncounterBuil
       species: bossSpecies,
       isBoss: true,
       shiny: false, // Shiny lock because shiny is rolled only if the battle option is picked
-      status: [StatusEffect.SLEEP, 5], // Extra turns on timer for Snorlax's start of fight moves
-      moveSet: [Moves.REST, Moves.SLEEP_TALK, Moves.CRUNCH, Moves.GIGA_IMPACT],
+      status: [StatusEffect.SLEEP, 6], // Extra turns on timer for Snorlax's start of fight moves
+      moveSet: [Moves.BODY_SLAM, Moves.CRUNCH, Moves.SLEEP_TALK, Moves.REST],
       modifierConfigs: [
         {
           modifier: generateModifierType(modifierTypes.BERRY, [BerryType.SITRUS]) as PokemonHeldItemModifierType,
-          stackCount: 2,
         },
         {
           modifier: generateModifierType(modifierTypes.BERRY, [BerryType.ENIGMA]) as PokemonHeldItemModifierType,
-          stackCount: 2,
+        },
+        {
+          modifier: generateModifierType(modifierTypes.BASE_STAT_BOOSTER, [Stat.HP]) as PokemonHeldItemModifierType,
+        },
+        {
+          modifier: generateModifierType(modifierTypes.SOOTHE_BELL) as PokemonHeldItemModifierType,
+          stackCount: randSeedInt(2, 0),
+        },
+        {
+          modifier: generateModifierType(modifierTypes.LUCKY_EGG) as PokemonHeldItemModifierType,
+          stackCount: randSeedInt(2, 0),
         },
       ],
       customPokemonData: new CustomPokemonData({ spriteScale: 1.25 }),
@@ -122,12 +131,6 @@ export const SlumberingSnorlaxEncounter: MysteryEncounter = MysteryEncounterBuil
         fillRemaining: true,
       });
       encounter.startOfBattleEffects.push(
-        {
-          sourceBattlerIndex: BattlerIndex.ENEMY,
-          targets: [BattlerIndex.PLAYER],
-          move: new PokemonMove(Moves.SNORE),
-          ignorePp: true,
-        },
         {
           sourceBattlerIndex: BattlerIndex.ENEMY,
           targets: [BattlerIndex.PLAYER],
