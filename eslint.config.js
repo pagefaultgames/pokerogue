@@ -18,9 +18,9 @@ export default tseslint.config(
       "@typescript-eslint": tseslint.plugin,
     },
     rules: {
-      // Prevent fallthrough on switch without an explicit "falls through" comment.
+      // Prevent fallthrough on switch without an explicit "falls through" comment with explanatino.
       // Note: Move to biome if/when they add "falls through" comments
-      "no-fallthrough": ["error", { commentPattern: "falls through" }],
+      "no-fallthrough": ["error", { commentPattern: "^ falls through" }],
       "no-undef": "off", // Disables the rule that disallows the use of undeclared variables (TypeScript handles this)
       "no-extra-semi": "error", // Disallows unnecessary semicolons for TypeScript-specific syntax
       "import-x/extensions": ["error", "never", { json: "always" }], // Enforces no extension for imports unless json
