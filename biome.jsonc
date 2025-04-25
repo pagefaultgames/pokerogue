@@ -76,7 +76,7 @@
         "noExplicitAny": "off", // TODO: Refactor and make this an error after save data refactored
         "noAssignInExpressions": "off",
         "noPrototypeBuiltins": "off",
-        "noFallthroughSwitchClause": "off", // Handled by ESLint due to not supporting simple "falls through" commenst
+        "noFallthroughSwitchClause": "error", // Prevent accidental automatic fallthroughs in switch cases (use disable comment if needed)
         "noImplicitAnyLet": "info", // TODO: Refactor and make this an error
         "noRedeclare": "off", // TODO: Refactor and make this an error
         "noGlobalIsNan": "off",

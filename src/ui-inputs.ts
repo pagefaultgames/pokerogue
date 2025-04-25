@@ -181,7 +181,7 @@ export class UiInputs {
         if (!messageHandler.pendingPrompt || messageHandler.isTextAnimationInProgress()) {
           return;
         }
-        // falls through
+        // biome-ignore lint/suspicious/noFallthroughSwitchClause: falls through to show menu overlay
       }
       case UiMode.TITLE:
       case UiMode.COMMAND:
