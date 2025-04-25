@@ -222,7 +222,6 @@ export class MoveEffectPhase extends PokemonPhase {
               pokemonName: getPokemonNameWithAffix(target),
             }),
           );
-        // falls through to play msg
         case HitCheckResult.NO_EFFECT_NO_MESSAGE:
         case HitCheckResult.PROTECTED:
         case HitCheckResult.TARGET_NOT_ON_FIELD:

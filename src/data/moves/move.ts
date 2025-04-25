@@ -1512,7 +1512,7 @@ export class TargetHalfHpDamageAttr extends FixedDamageAttr {
     switch (user.turnData.hitCount - user.turnData.hitsLeft) {
       case 0:
         // first hit of move; update initialHp tracker
-        this.initialHp = target.hp; // falls through
+        this.initialHp = target.hp;
       default:
         // multi lens added hit; use initialHp tracker to ensure correct damage
         (args[0] as NumberHolder).value = toDmgValue(this.initialHp / 2);
