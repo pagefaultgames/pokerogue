@@ -3328,7 +3328,7 @@ export const trainerConfigs: TrainerConfigs = {
         p.generateAndPopulateMoveset();
         if (!p.moveset.some(move => !isNullOrUndefined(move) && move.moveId === Moves.SUNNY_DAY)) {
           // Check if Sunny Day is in the moveset, if not, replace the third move with Sunny Day.
-          p.moveset[2] = new PokemonMove(Moves.TECHNO_BLAST);
+          p.moveset[2] = new PokemonMove(Moves.SUNNY_DAY);
         }
       }),
     )
