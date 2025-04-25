@@ -4,12 +4,19 @@ export type SignatureSpecies = {
   [key in string]: (Species | Species[])[];
 };
 
-/*
+/**
  * The signature species for each Gym Leader, Elite Four member, and Champion.
  * The key is the trainer type, and the value is an array of Species or Species arrays.
  * This is in a separate const so it can be accessed from other places and not just the trainerConfigs
+ * 
+ * @remarks
+ * The `Proxy` object allows us to define a handler that will intercept 
+ * the property access and return an empty array if the property does not exist in the object.
+ * 
+ * This means that accessing `signatureSpecies` will not throw an error if the property does not exist,
+ * but instead default to an empty array.
  */
-export const signatureSpecies: SignatureSpecies = {
+export const signatureSpecies: SignatureSpecies = new Proxy({
   // Gym Leaders- Kanto
   BROCK: [Species.ONIX, Species.GEODUDE, [Species.OMANYTE, Species.KABUTO], Species.AERODACTYL],
   MISTY: [Species.STARYU, Species.PSYDUCK, Species.WOOPER, Species.LAPRAS],
@@ -92,56 +99,8 @@ export const signatureSpecies: SignatureSpecies = {
   RYME: [Species.TOXEL, Species.GREAVARD, Species.SHUPPET, Species.MIMIKYU], // Tera Ghost Toxel
   TULIP: [Species.FLABEBE, Species.FLITTLE, Species.RALTS, Species.GIRAFARIG], // Tera Psychic Flabebe
   GRUSHA: [Species.SWABLU, Species.CETODDLE, Species.SNOM, Species.CUBCHOO], // Tera Ice Swablu
-
-  // Elite Four- Kanto
-  LORELEI: [],
-  BRUNO: [],
-  AGATHA: [],
-  LANCE: [],
-  // Elite Four- Johto (Bruno included)
-  WILL: [],
-  KOGA: [],
-  KAREN: [],
-  // Elite Four- Hoenn
-  SIDNEY: [],
-  PHOEBE: [],
-  GLACIA: [],
-  DRAKE: [],
-  // Elite Four- Sinnoh
-  AARON: [],
-  BERTHA: [],
-  FLINT: [],
-  LUCIAN: [],
-  // Elite Four- Unova
-  SHAUNTAL: [],
-  MARSHAL: [],
-  GRIMSLEY: [],
-  CAITLIN: [],
-  // Elite Four- Kalos
-  MALVA: [],
-  SIEBOLD: [],
-  WIKSTROM: [],
-  DRASNA: [],
-  // Elite Four- Alola
-  HALA: [],
-  MOLAYNE: [],
-  OLIVIA: [],
-  ACEROLA: [],
-  KAHILI: [],
-  // Elite Four- Galar
-  MARNIE_ELITE: [],
-  NESSA_ELITE: [],
-  BEA_ELITE: [],
-  ALLISTER_ELITE: [],
-  RAIHAN_ELITE: [],
-  // Elite Four- Paldea
-  RIKA: [],
-  POPPY: [],
-  LARRY_ELITE: [],
-  HASSEL: [],
-  // Elite Four- BBL
-  CRISPIN: [],
-  AMARYS: [],
-  LACEY: [],
-  DRAYTON: [],
-};
+}, {
+  get(target, prop: string) {
+    return target[prop as keyof SignatureSpecies] ?? [];
+  }
+});
