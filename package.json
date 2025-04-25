@@ -64,8 +64,7 @@
     "json-stable-stringify": "^1.2.0",
     "jszip": "^3.10.1",
     "phaser": "^3.88.2",
-    "phaser3-rex-plugins": "^1.80.15",
-    "save-dev": "^0.0.1-security"
+    "phaser3-rex-plugins": "^1.80.15"
   },
   "engines": {
     "node": ">=22.0.0"
