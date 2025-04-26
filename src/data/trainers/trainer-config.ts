@@ -3299,7 +3299,7 @@ export const trainerConfigs: TrainerConfigs = {
       }),
     ),
   [TrainerType.KAHILI]: new TrainerConfig(++t)
-    .initForEliteFour(signatureSpecies["KAHILI"], false, PokemonType.FLYING)
+    .initForEliteFour(signatureSpecies["KAHILI"], false, PokemonType.FLYING, 2)
     .setMixedBattleBgm("battle_alola_elite")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([Species.HAWLUCHA]))
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([Species.DECIDUEYE], TrainerSlot.TRAINER, true, p => { // Tera Flying Decidueye
