@@ -330,14 +330,12 @@ describe("Moves - Instruct", () => {
     await game.classicMode.startBattle([Species.LUCARIO, Species.BANETTE]);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
-    enemyPokemon.battleSummonData.moveHistory = [
-      {
-        move: Moves.WHIRLWIND,
-        targets: [BattlerIndex.PLAYER],
-        result: MoveResult.SUCCESS,
-        virtual: false,
-      },
-    ];
+    enemyPokemon.pushMoveHistory({
+      move: Moves.WHIRLWIND,
+      targets: [BattlerIndex.PLAYER],
+      result: MoveResult.SUCCESS,
+      virtual: false,
+    });
 
     game.move.select(Moves.INSTRUCT);
     await game.forceEnemyMove(Moves.SPLASH);
@@ -357,11 +355,19 @@ describe("Moves - Instruct", () => {
       .enemyMoveset([Moves.SPLASH, Moves.PSYCHIC_TERRAIN]);
     await game.classicMode.startBattle([Species.BANETTE, Species.KLEFKI]);
 
+    const banette = game.scene.getPlayerPokemon()!;
+
     game.move.select(Moves.QUICK_ATTACK, BattlerIndex.PLAYER, BattlerIndex.ENEMY); // succeeds due to terrain no
     game.move.select(Moves.SPLASH, BattlerIndex.PLAYER_2);
     await game.forceEnemyMove(Moves.SPLASH);
     await game.forceEnemyMove(Moves.PSYCHIC_TERRAIN);
     await game.toNextTurn();
+    expect(banette.getLastXMoves(-1)[0]).toEqual({
+      move: Moves.QUICK_ATTACK,
+      targets: [BattlerIndex.ENEMY],
+      result: MoveResult.SUCCESS,
+      virtual: false,
+    });
 
     game.move.select(Moves.SPLASH, BattlerIndex.PLAYER);
     game.move.select(Moves.INSTRUCT, BattlerIndex.PLAYER_2, BattlerIndex.PLAYER);
@@ -369,31 +375,42 @@ describe("Moves - Instruct", () => {
     await game.phaseInterceptor.to("TurnEndPhase", false);
 
     // quick attack failed when instructed
-    const banette = game.scene.getPlayerPokemon()!;
     expect(banette.getLastXMoves(-1)[1].move).toBe(Moves.QUICK_ATTACK);
     expect(banette.getLastXMoves(-1)[1].result).toBe(MoveResult.FAIL);
   });
 
-  it("should still work w/ prankster in psychic terrain", async () => {
-    game.override.battleStyle("double").enemyMoveset([Moves.SPLASH, Moves.PSYCHIC_TERRAIN]);
+  it("should still work with prankster in psychic terrain", async () => {
+    game.override
+      .battleStyle("double")
+      .ability(Abilities.PRANKSTER)
+      .enemyMoveset(Moves.SPLASH)
+      .enemyAbility(Abilities.PSYCHIC_SURGE);
     await game.classicMode.startBattle([Species.BANETTE, Species.KLEFKI]);
 
-    const [banette, klefki] = game.scene.getPlayerField()!;
-    game.move.changeMoveset(banette, [Moves.VINE_WHIP, Moves.SPLASH]);
-    game.move.changeMoveset(klefki, [Moves.INSTRUCT, Moves.SPLASH]);
-
-    game.move.select(Moves.VINE_WHIP, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
-    game.move.select(Moves.SPLASH, BattlerIndex.PLAYER_2);
-    await game.forceEnemyMove(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.PSYCHIC_TERRAIN);
-    await game.toNextTurn();
+    const [banette, klefki] = game.scene.getPlayerField();
+    game.move.changeMoveset(banette, [Moves.VINE_WHIP]);
+    game.move.changeMoveset(klefki, Moves.INSTRUCT);
+    banette.pushMoveHistory({
+      move: Moves.VINE_WHIP,
+      targets: [BattlerIndex.ENEMY],
+      result: MoveResult.SUCCESS,
+      virtual: false,
+    });
 
     game.move.select(Moves.SPLASH, BattlerIndex.PLAYER);
     game.move.select(Moves.INSTRUCT, BattlerIndex.PLAYER_2, BattlerIndex.PLAYER); // copies vine whip
     await game.setTurnOrder([BattlerIndex.PLAYER_2, BattlerIndex.PLAYER, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
     await game.phaseInterceptor.to("TurnEndPhase", false);
+
+    // Klefki instructing a non-priority move succeeds, ignoring the priority of Instruct itself
     expect(banette.getLastXMoves(-1)[1].move).toBe(Moves.VINE_WHIP);
     expect(banette.getLastXMoves(-1)[2].move).toBe(Moves.VINE_WHIP);
+    expect(klefki.getLastXMoves(-1)[0]).toEqual({
+      move: Moves.INSTRUCT,
+      targets: [BattlerIndex.PLAYER],
+      result: MoveResult.SUCCESS,
+      virtual: false,
+    });
     expect(banette.getMoveset().find(m => m?.moveId === Moves.VINE_WHIP)?.ppUsed).toBe(2);
   });
 
@@ -403,7 +420,8 @@ describe("Moves - Instruct", () => {
       .moveset([Moves.BREAKING_SWIPE, Moves.INSTRUCT, Moves.SPLASH])
       .enemyMoveset(Moves.SONIC_BOOM)
       .enemySpecies(Species.AXEW)
-      .startingLevel(500);
+      .startingLevel(500)
+      .enemyLevel(1);
     await game.classicMode.startBattle([Species.KORAIDON, Species.KLEFKI]);
 
     const koraidon = game.scene.getPlayerField()[0]!;
@@ -418,9 +436,10 @@ describe("Moves - Instruct", () => {
     game.move.select(Moves.INSTRUCT, BattlerIndex.PLAYER_2, BattlerIndex.PLAYER);
     await game.setTurnOrder([BattlerIndex.PLAYER_2, BattlerIndex.PLAYER, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
     await game.phaseInterceptor.to("TurnEndPhase", false);
+
     // did not take damage since enemies died beforehand;
     // last move used hit both enemies
-    expect(koraidon.getInverseHp()).toBe(0);
+    expect(koraidon.hp).toBe(koraidon.getMaxHp());
     expect(koraidon.getLastXMoves(-1)[1].targets?.sort()).toEqual([BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
   });
 
@@ -430,7 +449,8 @@ describe("Moves - Instruct", () => {
       .moveset([Moves.BRUTAL_SWING, Moves.INSTRUCT, Moves.SPLASH])
       .enemySpecies(Species.AXEW)
       .enemyMoveset(Moves.SONIC_BOOM)
-      .startingLevel(500);
+      .startingLevel(500)
+      .enemyLevel(1);
     await game.classicMode.startBattle([Species.KORAIDON, Species.KLEFKI]);
 
     const koraidon = game.scene.getPlayerField()[0]!;
@@ -438,18 +458,21 @@ describe("Moves - Instruct", () => {
     game.move.select(Moves.BRUTAL_SWING);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("TurnEndPhase", false);
-    expect(koraidon.getInverseHp()).toBe(0);
+
+    expect(koraidon.hp).toBe(koraidon.getMaxHp());
     expect(koraidon.getLastXMoves(-1)[0].targets).toEqual([BattlerIndex.ENEMY]);
+
     await game.toNextWave();
 
     game.move.select(Moves.SPLASH, BattlerIndex.PLAYER);
     game.move.select(Moves.INSTRUCT, BattlerIndex.PLAYER_2, BattlerIndex.PLAYER);
     await game.setTurnOrder([BattlerIndex.PLAYER_2, BattlerIndex.PLAYER, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
     await game.phaseInterceptor.to("TurnEndPhase", false);
+
     // did not take damage since enemies died beforehand;
     // last move used hit everything around it
     expect(koraidon.getInverseHp()).toBe(0);
-    expect(koraidon.getLastXMoves(-1)[1].targets?.sort()).toEqual([
+    expect(koraidon.getLastXMoves(-1)[1].targets).toEqual([
       BattlerIndex.PLAYER_2,
       BattlerIndex.ENEMY,
       BattlerIndex.ENEMY_2,

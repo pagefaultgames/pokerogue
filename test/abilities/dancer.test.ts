@@ -1,5 +1,6 @@
 import { BattlerIndex } from "#app/battle";
-import type { MovePhase } from "#app/phases/move-phase";
+import type Pokemon from "#app/field/pokemon";
+import { MovePhase } from "#app/phases/move-phase";
 import { Abilities } from "#enums/abilities";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Moves } from "#enums/moves";
@@ -12,6 +13,19 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 describe("Abilities - Dancer", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
+
+  /**
+   * Check that the {@linkcode Pokemon} using a move in the current {@linkcode MovePhase} */
+  function checkCurrentMoveUser(pokemon: Pokemon | undefined, move: Moves, targets?: BattlerIndex[]) {
+    const currentPhase = game.scene.getCurrentPhase() as MovePhase;
+    expect(currentPhase).not.toBeNull();
+    expect(currentPhase).toBeInstanceOf(MovePhase);
+    expect.soft(currentPhase.pokemon).toBe(pokemon);
+    expect.soft(currentPhase.move.moveId).toBe(move);
+    if (targets) {
+      expect.soft(currentPhase.targets).toEqual(targets);
+    }
+  }
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({
@@ -44,21 +58,15 @@ describe("Abilities - Dancer", () => {
     await game.phaseInterceptor.to("MovePhase"); // feebas uses swords dance
     await game.phaseInterceptor.to("MovePhase", false); // oricorio copies swords dance
 
-    let currentPhase = game.scene.getCurrentPhase() as MovePhase;
-    expect(currentPhase.pokemon).toBe(oricorio);
-    expect(currentPhase.move.moveId).toBe(Moves.SWORDS_DANCE);
-    expect(currentPhase.targets).toEqual([BattlerIndex.PLAYER]);
+    checkCurrentMoveUser(oricorio, Moves.SWORDS_DANCE, [BattlerIndex.PLAYER]);
 
     await game.phaseInterceptor.to("MovePhase"); // shuckle 1 copies swords dance
-    await game.phaseInterceptor.to("MovePhase"); // shuckle 2 copies swords dance
+    await game.phaseInterceptor.to("MovePhase", false); // shuckle 2 copies swords dance
 
     await game.phaseInterceptor.to("MovePhase"); // shuckle 1 uses victory dance
     await game.phaseInterceptor.to("MovePhase", false); // oricorio copies victory dance
 
-    currentPhase = game.scene.getCurrentPhase() as MovePhase;
-    expect(currentPhase.pokemon).toBe(oricorio);
-    expect(currentPhase.move.moveId).toBe(Moves.VICTORY_DANCE);
-    expect(currentPhase.targets).toEqual([BattlerIndex.PLAYER]);
+    checkCurrentMoveUser(oricorio, Moves.VICTORY_DANCE, [BattlerIndex.PLAYER]);
 
     await game.phaseInterceptor.to("BerryPhase"); // finish the turn
 
@@ -88,26 +96,17 @@ describe("Abilities - Dancer", () => {
     await game.phaseInterceptor.to("MovePhase", false); // oricorio copies rev dance
 
     // Since our ally used rev dance, oricorio should target the same slot as them
-    let currentPhase = game.scene.getCurrentPhase() as MovePhase;
-    expect(currentPhase.pokemon).toBe(oricorio);
-    expect(currentPhase.move.moveId).toBe(Moves.REVELATION_DANCE);
-    expect(currentPhase.targets).toEqual([BattlerIndex.ENEMY_2]);
+    checkCurrentMoveUser(oricorio, Moves.REVELATION_DANCE, [BattlerIndex.ENEMY_2]);
 
     await game.phaseInterceptor.to("MovePhase"); // shuckle 1 uses fiery dance
     await game.phaseInterceptor.to("MovePhase", false); // oricorio copies fiery dance
 
-    currentPhase = game.scene.getCurrentPhase() as MovePhase;
-    expect.soft(currentPhase.pokemon).toBe(oricorio);
-    expect.soft(currentPhase.move.moveId).toBe(Moves.FIERY_DANCE);
-    expect.soft(currentPhase.targets).toEqual([BattlerIndex.ENEMY]);
+    checkCurrentMoveUser(oricorio, Moves.FIERY_DANCE, [BattlerIndex.ENEMY]);
 
     await game.phaseInterceptor.to("MovePhase"); // shuckle 2 uses fiery dance
     await game.phaseInterceptor.to("MovePhase", false); // oricorio copies fiery dance
 
-    currentPhase = game.scene.getCurrentPhase() as MovePhase;
-    expect.soft(currentPhase.pokemon).toBe(oricorio);
-    expect.soft(currentPhase.move.moveId).toBe(Moves.FIERY_DANCE);
-    expect.soft(currentPhase.targets).toEqual([BattlerIndex.ENEMY_2]);
+    checkCurrentMoveUser(oricorio, Moves.FIERY_DANCE, [BattlerIndex.ENEMY_2]);
   });
 
   // TODO: Fix sometime
@@ -130,7 +129,7 @@ describe("Abilities - Dancer", () => {
     await game.forceEnemyMove(Moves.FEATHER_DANCE);
     await game.toNextTurn();
 
-    // wasn't copied; already at -6
+    // wasn't copied due to failing at -6
     expect(oricorio.getStatStage(Stat.ATK)).toBe(-6);
     expect(groudon.getStatStage(Stat.ATK)).toBe(0);
 
@@ -144,7 +143,7 @@ describe("Abilities - Dancer", () => {
     expect(oricorio.getStatStage(Stat.ATK)).toBe(0);
     expect(groudon.getStatStage(Stat.ATK)).toBe(0);
 
-    // Rev dance while immune
+    // Enemy uses ground-type rev dance immune
     game.move.select(Moves.SPLASH);
     await game.forceEnemyMove(Moves.REVELATION_DANCE);
     await game.toNextTurn();
@@ -154,7 +153,7 @@ describe("Abilities - Dancer", () => {
     expect(groudon.hp).toBe(groudon.getMaxHp());
   });
 
-  // TODO: Enable once confusion override from Cud chew PR gets merged
+  // TODO: Enable once confusion override from Cud Chew PR gets merged
   it.todo("should trigger confusion self-damage, even if protected", async () => {
     game.override
       .battleStyle("single")
@@ -181,7 +180,8 @@ describe("Abilities - Dancer", () => {
     // await game.move.forceConfusionActivation(true); // force confusion proc during swords dance copy
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    // took damage from confusion instead of using move
+    // took damage from confusion instead of using move;
+    // enemy remains confused
     expect(oricorio.hp).toBeLessThan(oricorio.getMaxHp());
     expect(oricorio.getTag(BattlerTagType.CONFUSED)).toBeDefined();
     expect(game.scene.getEnemyPokemon()?.getTag(BattlerTagType.CONFUSED)).toBeUndefined();
@@ -207,9 +207,7 @@ describe("Abilities - Dancer", () => {
     await game.phaseInterceptor.to("MovePhase"); // shuckle 2 copies oricorio
     await game.phaseInterceptor.to("MovePhase", false); // copied move used
 
-    const currentPhase = game.scene.getCurrentPhase() as MovePhase;
-    expect(currentPhase.pokemon).toBe(shuckle2);
-    expect(currentPhase.move.moveId).toBe(Moves.REVELATION_DANCE); // change to fiery dance if i am in fact wrong
+    checkCurrentMoveUser(shuckle2, Moves.REVELATION_DANCE); // change to fiery dance if i am in fact wrong
   });
 
   it("should not count as the last move used for instruct", async () => {
@@ -229,8 +227,6 @@ describe("Abilities - Dancer", () => {
     await game.phaseInterceptor.to("MovePhase"); // shuckle 2 instructs oricorio
     await game.phaseInterceptor.to("MovePhase", false); // instructed move used
 
-    const currentPhase = game.scene.getCurrentPhase() as MovePhase;
-    expect(currentPhase.pokemon).toBe(game.scene.getPlayerPokemon());
-    expect(currentPhase.move.moveId).toBe(Moves.REVELATION_DANCE);
+    checkCurrentMoveUser(game.scene.getPlayerPokemon(), Moves.REVELATION_DANCE);
   });
 });

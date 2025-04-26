@@ -5088,7 +5088,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * Returns a list of the most recent move entries in this Pokemon's move history.
    * The retrieved move entries are sorted in order from NEWEST to OLDEST.
    * @param moveCount The number of move entries to retrieve.
-   *   If negative, retrieve the Pokemon's entire move history (equivalent to reversing the output of {@linkcode getMoveHistory()}).
+   *   If negative, retrieves the Pokemon's entire move history (equivalent to reversing the output of {@linkcode getMoveHistory()}).
    *   Default is `1`.
    * @returns A list of {@linkcode TurnMove}, as specified above.
    */
@@ -5371,7 +5371,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
     const message = effect && this.status?.effect === effect
     ? getStatusEffectOverlapText(effect ?? StatusEffect.NONE, getPokemonNameWithAffix(this))
-    : i18next.t("abilityTriggers:moveImmunity", { 
+    : i18next.t("abilityTriggers:moveImmunity", {
         pokemonNameWithAffix: getPokemonNameWithAffix(this),
       });
     globalScene.queueMessage(message);
@@ -5516,9 +5516,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       sourcePokemon !== this &&
       this.isSafeguarded(sourcePokemon)
     ) {
-      if(!quiet){ 
+      if(!quiet){
         globalScene.queueMessage(
-          i18next.t("moveTriggers:safeguard", { targetName: getPokemonNameWithAffix(this) 
+          i18next.t("moveTriggers:safeguard", { targetName: getPokemonNameWithAffix(this)
         }));
       }
       return false;
