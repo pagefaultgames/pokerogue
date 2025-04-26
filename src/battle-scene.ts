@@ -1394,9 +1394,9 @@ export default class BattleScene extends SceneBase {
     if (double === undefined && newWaveIndex > 1) {
       if (newBattleType === BattleType.WILD && !this.gameMode.isWaveFinal(newWaveIndex)) {
         newDouble = !randSeedInt(this.getDoubleBattleChance(newWaveIndex, playerField));
+      } else if (newBattleType === BattleType.TRAINER) {
+        newDouble = newTrainer?.variant === TrainerVariant.DOUBLE;
       }
-    } else if (double === undefined && newBattleType === BattleType.TRAINER) {
-      newDouble = newTrainer?.variant === TrainerVariant.DOUBLE;
     } else if (!battleConfig) {
       newDouble = !!double;
     }
