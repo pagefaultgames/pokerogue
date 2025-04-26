@@ -54,7 +54,7 @@ Some things to consider:
 - Some rules are currently disabled or marked as warnings (`warn`) to allow for gradual refactoring without blocking development. **Do not write new code that triggers these warnings.**
 - The linter is configured to ignore specific files and folders (such as excessively large files or ones in need of refactoring) to improve performance and focus on actionable areas.
 
-Any questions about linting rules can be brought up in the `#dev-corner` channel in the discord. We are willing to discuss adding or changing existing rules, though not w
+Any questions about linting rules should be brought up in the `#dev-corner` channel in the discord. 
 
 [^1]: A complete list of rules can be found in the `biome.jsonc` file in the project root.
 
