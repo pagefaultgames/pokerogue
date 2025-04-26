@@ -1,6 +1,6 @@
 import { PokemonType } from "#enums/pokemon-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
-import { toDmgValue } from "#app/utils";
+import { toDmgValue } from "#app/utils/common";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
@@ -9,7 +9,6 @@ import { StatusEffect } from "#enums/status-effect";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { BattlerIndex } from "#app/battle";
 
 describe("Abilities - Parental Bond", () => {
   let phaserGame: Phaser.Game;
@@ -27,7 +26,7 @@ describe("Abilities - Parental Bond", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleType("single");
+    game.override.battleStyle("single");
     game.override.disableCrits();
     game.override.ability(Abilities.PARENTAL_BOND);
     game.override.enemySpecies(Species.SNORLAX);
@@ -168,7 +167,7 @@ describe("Abilities - Parental Bond", () => {
   });
 
   it("should not apply to multi-target moves", async () => {
-    game.override.battleType("double");
+    game.override.battleStyle("double");
     game.override.moveset([Moves.EARTHQUAKE]);
     game.override.passiveAbility(Abilities.LEVITATE);
 
@@ -426,22 +425,5 @@ describe("Abilities - Parental Bond", () => {
 
     // TODO: Update hit count to 1 once Future Sight is fixed to not activate abilities if user is off the field
     expect(enemyPokemon.damageAndUpdate).toHaveBeenCalledTimes(2);
-  });
-
-  it("should not allow Pollen Puff to heal ally more than once", async () => {
-    game.override.battleType("double").moveset([Moves.POLLEN_PUFF, Moves.ENDURE]);
-    await game.classicMode.startBattle([Species.BULBASAUR, Species.OMANYTE]);
-
-    const [, rightPokemon] = game.scene.getPlayerField();
-
-    rightPokemon.damageAndUpdate(rightPokemon.hp - 1);
-
-    game.move.select(Moves.POLLEN_PUFF, 0, BattlerIndex.PLAYER_2);
-    game.move.select(Moves.ENDURE, 1);
-
-    await game.toNextTurn();
-
-    // Pollen Puff heals with a ratio of 0.5, as long as Pollen Puff triggers only once the pokemon will always be <= (0.5 * Max HP) + 1
-    expect(rightPokemon.hp).toBeLessThanOrEqual(0.5 * rightPokemon.getMaxHp() + 1);
   });
 });

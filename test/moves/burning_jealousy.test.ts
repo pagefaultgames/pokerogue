@@ -25,7 +25,7 @@ describe("Moves - Burning Jealousy", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .battleType("single")
+      .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.ICE_SCALES)
@@ -50,7 +50,7 @@ describe("Moves - Burning Jealousy", () => {
   });
 
   it("should still burn the opponent if their stat stages were both raised and lowered in the same turn", async () => {
-    game.override.starterSpecies(0).battleType("double");
+    game.override.starterSpecies(0).battleStyle("double");
     await game.classicMode.startBattle([Species.FEEBAS, Species.ABRA]);
 
     const enemy = game.scene.getEnemyPokemon()!;
@@ -89,7 +89,7 @@ describe("Moves - Burning Jealousy", () => {
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(allMoves[Moves.BURNING_JEALOUSY].calculateBattlePower).toHaveReturnedWith(
-      (allMoves[Moves.BURNING_JEALOUSY].power * 5461) / 4096,
+      allMoves[Moves.BURNING_JEALOUSY].power * 1.3,
     );
   });
 });

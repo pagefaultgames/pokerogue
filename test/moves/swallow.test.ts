@@ -27,7 +27,7 @@ describe("Moves - Swallow", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
 
-    game.override.battleType("single");
+    game.override.battleStyle("single");
 
     game.override.enemySpecies(Species.RATTATA);
     game.override.enemyMoveset(Moves.SPLASH);

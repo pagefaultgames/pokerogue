@@ -1,6 +1,6 @@
 import OptionSelectUiHandler from "./settings/option-select-ui-handler";
-import { Mode } from "./ui";
-import * as Utils from "../utils";
+import { UiMode } from "#enums/ui-mode";
+import { fixedInt, randInt, randItem } from "#app/utils/common";
 import { TextStyle, addTextObject } from "./text";
 import { getSplashMessages } from "../data/splash-messages";
 import i18next from "i18next";
@@ -11,6 +11,7 @@ import { globalScene } from "#app/global-scene";
 import type { Species } from "#enums/species";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { PlayerGender } from "#enums/player-gender";
+import { timedEventManager } from "#app/global-event-manager";
 
 export default class TitleUiHandler extends OptionSelectUiHandler {
   /** If the stats can not be retrieved, use this fallback value */
@@ -25,7 +26,7 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
 
   private titleStatsTimer: NodeJS.Timeout | null;
 
-  constructor(mode: Mode = Mode.TITLE) {
+  constructor(mode: UiMode = UiMode.TITLE) {
     super(mode);
   }
 
@@ -43,8 +44,8 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
     logo.setOrigin(0.5, 0);
     this.titleContainer.add(logo);
 
-    if (globalScene.eventManager.isEventActive()) {
-      this.eventDisplay = new TimedEventDisplay(0, 0, globalScene.eventManager.activeEvent());
+    if (timedEventManager.isEventActive()) {
+      this.eventDisplay = new TimedEventDisplay(0, 0, timedEventManager.activeEvent());
       this.eventDisplay.setup();
       this.titleContainer.add(this.eventDisplay);
     }
@@ -71,7 +72,7 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
 
     globalScene.tweens.add({
       targets: this.splashMessageText,
-      duration: Utils.fixedInt(350),
+      duration: fixedInt(350),
       scale: originalSplashMessageScale * 1.25,
       loop: -1,
       yoyo: true,
@@ -103,7 +104,7 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
 
   /** Used solely to display a random Pokémon name in a splash message. */
   randomPokemon(): void {
-    const rand = Utils.randInt(1025, 1);
+    const rand = randInt(1025, 1);
     const pokemon = getPokemonSpecies(rand as Species);
     if (
       this.splashMessage === "splashMessages:underratedPokemon" ||
@@ -131,7 +132,7 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
       // Moving player count to top of the menu
       this.playerCountLabel.setY(globalScene.game.canvas.height / 6 - 13 - this.getWindowHeight());
 
-      this.splashMessage = Utils.randItem(getSplashMessages());
+      this.splashMessage = randItem(getSplashMessages());
       this.splashMessageText.setText(
         i18next.t(this.splashMessage, {
           count: TitleUiHandler.BATTLES_WON_FALLBACK,
@@ -142,7 +143,7 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
 
       const ui = this.getUi();
 
-      if (globalScene.eventManager.isEventActive()) {
+      if (timedEventManager.isEventActive()) {
         this.eventDisplay.setWidth(globalScene.scaledCanvas.width - this.optionSelectBg.width - this.optionSelectBg.x);
         this.eventDisplay.show();
       }
@@ -158,7 +159,7 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
 
       globalScene.tweens.add({
         targets: [this.titleContainer, ui.getMessageHandler().bg],
-        duration: Utils.fixedInt(325),
+        duration: fixedInt(325),
         alpha: (target: any) => (target === this.titleContainer ? 1 : 0),
         ease: "Sine.easeInOut",
       });
@@ -179,7 +180,7 @@ export default class TitleUiHandler extends OptionSelectUiHandler {
 
     globalScene.tweens.add({
       targets: [this.titleContainer, ui.getMessageHandler().bg],
-      duration: Utils.fixedInt(325),
+      duration: fixedInt(325),
       alpha: (target: any) => (target === this.titleContainer ? 0 : 1),
       ease: "Sine.easeInOut",
     });

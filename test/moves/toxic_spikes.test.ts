@@ -28,7 +28,7 @@ describe("Moves - Toxic Spikes", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .battleType("single")
+      .battleStyle("single")
       .startingWave(5)
       .enemySpecies(Species.RATTATA)
       .enemyAbility(Abilities.BALL_FETCH)

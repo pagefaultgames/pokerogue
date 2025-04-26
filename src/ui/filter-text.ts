@@ -5,7 +5,7 @@ import { addWindow, WindowVariant } from "./ui-theme";
 import i18next from "i18next";
 import type AwaitableUiHandler from "./awaitable-ui-handler";
 import type UI from "./ui";
-import { Mode } from "./ui";
+import { UiMode } from "#enums/ui-mode";
 import { globalScene } from "#app/global-scene";
 
 export enum FilterTextRow {
@@ -20,7 +20,6 @@ export class FilterText extends Phaser.GameObjects.Container {
   private window: Phaser.GameObjects.NineSlice;
   private labels: Phaser.GameObjects.Text[] = [];
   private selections: Phaser.GameObjects.Text[] = [];
-  private selectionStrings: string[] = [];
   private rows: FilterTextRow[] = [];
   public cursorObj: Phaser.GameObjects.Image;
   public numFilters = 0;
@@ -112,8 +111,6 @@ export class FilterText extends Phaser.GameObjects.Container {
     this.selections.push(filterTypesSelection);
     this.add(filterTypesSelection);
 
-    this.selectionStrings.push("");
-
     this.calcFilterPositions();
     this.numFilters++;
 
@@ -122,7 +119,6 @@ export class FilterText extends Phaser.GameObjects.Container {
 
   resetSelection(index: number): void {
     this.selections[index].setText(this.defaultText);
-    this.selectionStrings[index] = "";
     this.onChange();
   }
 
@@ -154,7 +150,7 @@ export class FilterText extends Phaser.GameObjects.Container {
         this.onChange;
       },
     ];
-    ui.setOverlayMode(Mode.POKEDEX_SCAN, buttonAction, prefilledText, index);
+    ui.setOverlayMode(UiMode.POKEDEX_SCAN, buttonAction, prefilledText, index);
   }
 
   setCursor(cursor: number): void {
@@ -202,6 +198,17 @@ export class FilterText extends Phaser.GameObjects.Container {
 
   getValue(row: number): string {
     return this.selections[row].getWrappedText()[0];
+  }
+
+  /**
+   * Forcibly set the selection text for a specific filter row and then call the `onChange` function
+   *
+   * @param row - The filter row to set the text for
+   * @param value - The text to set for the filter row
+   */
+  setValue(row: FilterTextRow, value: string) {
+    this.selections[row].setText(value);
+    this.onChange();
   }
 
   /**

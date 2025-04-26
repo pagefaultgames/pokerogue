@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import { PokemonMove } from "#app/field/pokemon";
-import * as Utils from "#app/utils";
+import { toReadableString, isNullOrUndefined, randSeedItem, randSeedInt } from "#app/utils/common";
 import { pokemonEvolutions, pokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { tmSpecies } from "#app/data/balance/tms";
@@ -32,6 +32,7 @@ import { TeraAIMode } from "#enums/tera-ai-mode";
 import { TrainerPoolTier } from "#enums/trainer-pool-tier";
 import { TrainerSlot } from "#enums/trainer-slot";
 import { TrainerType } from "#enums/trainer-type";
+import { timedEventManager } from "#app/global-event-manager";
 
 // Type imports
 import type { PokemonSpeciesFilter } from "#app/data/pokemon-species";
@@ -115,7 +116,6 @@ export class TrainerConfig {
   public modifierRewardFuncs: ModifierTypeFunc[] = [];
   public partyTemplates: TrainerPartyTemplate[];
   public partyTemplateFunc: PartyTemplateFunc;
-  public eventRewardFuncs: ModifierTypeFunc[] = [];
   public partyMemberFuncs: PartyMemberFuncs = {};
   public speciesPools: TrainerTierPools;
   public speciesFilter: PokemonSpeciesFilter;
@@ -138,7 +138,7 @@ export class TrainerConfig {
   constructor(trainerType: TrainerType, allowLegendaries?: boolean) {
     this.trainerType = trainerType;
     this.trainerAI = new TrainerAI();
-    this.name = Utils.toReadableString(TrainerType[this.getDerivedType()]);
+    this.name = toReadableString(TrainerType[this.getDerivedType()]);
     this.battleBgm = "battle_trainer";
     this.mixedBattleBgm = "battle_trainer";
     this.victoryBgm = "victory_trainer";
@@ -481,10 +481,10 @@ export class TrainerConfig {
         .fill(null)
         .map((_, i) => i)
         .filter(i => shedinjaCanTera || party[i].species.speciesId !== Species.SHEDINJA); // Shedinja can only Tera on Bug specialty type (or no specialty type)
-      const setPartySlot = !Utils.isNullOrUndefined(slot) ? Phaser.Math.Wrap(slot, 0, party.length) : -1; // If we have a tera slot defined, wrap it to party size.
+      const setPartySlot = !isNullOrUndefined(slot) ? Phaser.Math.Wrap(slot, 0, party.length) : -1; // If we have a tera slot defined, wrap it to party size.
       for (let t = 0; t < Math.min(count(), party.length); t++) {
         const randomIndex =
-          partyMemberIndexes.indexOf(setPartySlot) > -1 ? setPartySlot : Utils.randSeedItem(partyMemberIndexes);
+          partyMemberIndexes.indexOf(setPartySlot) > -1 ? setPartySlot : randSeedItem(partyMemberIndexes);
         partyMemberIndexes.splice(partyMemberIndexes.indexOf(randomIndex), 1);
         if (this.hasSpecialtyType()) {
           party[randomIndex].teraType = this.specialtyType;
@@ -516,16 +516,6 @@ export class TrainerConfig {
   //   return ret;
   // }
 
-  setEventModifierRewardFuncs(...modifierTypeFuncs: (() => ModifierTypeFunc)[]): TrainerConfig {
-    this.eventRewardFuncs = modifierTypeFuncs.map(func => () => {
-      const modifierTypeFunc = func();
-      const modifierType = modifierTypeFunc();
-      modifierType.withIdFromFunc(modifierTypeFunc);
-      return modifierType;
-    });
-    return this;
-  }
-
   setModifierRewardFuncs(...modifierTypeFuncs: (() => ModifierTypeFunc)[]): TrainerConfig {
     this.modifierRewardFuncs = modifierTypeFuncs.map(func => () => {
       const modifierTypeFunc = func();
@@ -554,7 +544,7 @@ export class TrainerConfig {
       initI18n();
     }
 
-    if (!Utils.isNullOrUndefined(specialtyType)) {
+    if (!isNullOrUndefined(specialtyType)) {
       this.setSpecialtyType(specialtyType);
     }
 
@@ -635,7 +625,7 @@ export class TrainerConfig {
       }
       this.setPartyMemberFunc(-(s + 1), getRandomPartyMemberFunc(speciesPool));
     });
-    if (!Utils.isNullOrUndefined(specialtyType)) {
+    if (!isNullOrUndefined(specialtyType)) {
       this.setSpeciesFilter(p => p.isOfType(specialtyType));
       this.setSpecialtyType(specialtyType);
     }
@@ -748,7 +738,7 @@ export class TrainerConfig {
     });
 
     // Set species filter and specialty type if provided, otherwise filter by base total.
-    if (!Utils.isNullOrUndefined(specialtyType)) {
+    if (!isNullOrUndefined(specialtyType)) {
       this.setSpeciesFilter(p => p.isOfType(specialtyType) && p.baseTotal >= ELITE_FOUR_MINIMUM_BST);
       this.setSpecialtyType(specialtyType);
     } else {
@@ -926,7 +916,7 @@ export class TrainerConfig {
    * @returns true if specialtyType is defined and not Type.UNKNOWN
    */
   hasSpecialtyType(): boolean {
-    return !Utils.isNullOrUndefined(this.specialtyType) && this.specialtyType !== PokemonType.UNKNOWN;
+    return !isNullOrUndefined(this.specialtyType) && this.specialtyType !== PokemonType.UNKNOWN;
   }
 
   /**
@@ -1005,7 +995,7 @@ export function getRandomPartyMemberFunc(
   postProcess?: (enemyPokemon: EnemyPokemon) => void,
 ) {
   return (level: number, strength: PartyMemberStrength) => {
-    let species = Utils.randSeedItem(speciesPool);
+    let species = randSeedItem(speciesPool);
     if (!ignoreEvolution) {
       species = getPokemonSpecies(species).getTrainerSpeciesForLevel(
         level,
@@ -1328,7 +1318,16 @@ export const trainerConfigs: TrainerConfigs = {
       [TrainerPoolTier.RARE]: [Species.BELLOSSOM, Species.HITMONTOP, Species.MIME_JR, Species.ORICORIO],
       [TrainerPoolTier.SUPER_RARE]: [Species.QUAXLY, Species.JANGMO_O],
     }),
-  [TrainerType.DEPOT_AGENT]: new TrainerConfig(++t).setMoneyMultiplier(1.45).setEncounterBgm(TrainerType.CLERK),
+  [TrainerType.DEPOT_AGENT]: new TrainerConfig(++t)
+    .setMoneyMultiplier(1.45)
+    .setEncounterBgm(TrainerType.CLERK)
+    .setPartyTemplates(
+      trainerPartyTemplates.TWO_AVG,
+      trainerPartyTemplates.THREE_WEAK,
+      trainerPartyTemplates.THREE_AVG,
+      trainerPartyTemplates.FOUR_WEAK,
+    )
+    .setSpeciesFilter(s => s.isOfType(PokemonType.GROUND)),
   [TrainerType.DOCTOR]: new TrainerConfig(++t)
     .setHasGenders("Nurse", "lass")
     .setHasDouble("Medical Team")
@@ -1379,7 +1378,6 @@ export const trainerConfigs: TrainerConfigs = {
         Species.CHINCHOU,
         Species.CORSOLA,
         Species.WAILMER,
-        Species.BARBOACH,
         Species.CLAMPERL,
         Species.LUVDISC,
         Species.MANTYKE,
@@ -2235,12 +2233,7 @@ export const trainerConfigs: TrainerConfigs = {
         Species.PHANTUMP,
         Species.PUMPKABOO,
       ],
-      [TrainerPoolTier.RARE]: [
-        Species.SNEASEL, 
-        Species.LITWICK, 
-        Species.PAWNIARD, 
-        Species.NOIBAT,
-      ],
+      [TrainerPoolTier.RARE]: [Species.SNEASEL, Species.LITWICK, Species.PAWNIARD, Species.NOIBAT],
       [TrainerPoolTier.SUPER_RARE]: [Species.SLIGGOO, Species.HISUI_SLIGGOO, Species.HISUI_AVALUGG],
     }),
   [TrainerType.BRYONY]: new TrainerConfig(++t)
@@ -2586,252 +2579,252 @@ export const trainerConfigs: TrainerConfigs = {
     ),
 
   [TrainerType.BROCK]: new TrainerConfig((t = TrainerType.BROCK))
-    .initForGymLeader(signatureSpecies["BROCK"], true, PokemonType.ROCK)
+    .initForGymLeader(signatureSpecies["BROCK"], true, PokemonType.ROCK, false, -1)
     .setBattleBgm("battle_kanto_gym")
     .setMixedBattleBgm("battle_kanto_gym"),
   [TrainerType.MISTY]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["MISTY"], false, PokemonType.WATER)
+    .initForGymLeader(signatureSpecies["MISTY"], false, PokemonType.WATER, false, -1)
     .setBattleBgm("battle_kanto_gym")
     .setMixedBattleBgm("battle_kanto_gym"),
   [TrainerType.LT_SURGE]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["LT_SURGE"], true, PokemonType.ELECTRIC)
+    .initForGymLeader(signatureSpecies["LT_SURGE"], true, PokemonType.ELECTRIC, false, -1)
     .setBattleBgm("battle_kanto_gym")
     .setMixedBattleBgm("battle_kanto_gym"),
   [TrainerType.ERIKA]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["ERIKA"], false, PokemonType.GRASS)
+    .initForGymLeader(signatureSpecies["ERIKA"], false, PokemonType.GRASS, false, -1)
     .setBattleBgm("battle_kanto_gym")
     .setMixedBattleBgm("battle_kanto_gym"),
   [TrainerType.JANINE]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["JANINE"], false, PokemonType.POISON)
+    .initForGymLeader(signatureSpecies["JANINE"], false, PokemonType.POISON, false, -1)
     .setBattleBgm("battle_kanto_gym")
     .setMixedBattleBgm("battle_kanto_gym"),
   [TrainerType.SABRINA]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["SABRINA"], false, PokemonType.PSYCHIC)
+    .initForGymLeader(signatureSpecies["SABRINA"], false, PokemonType.PSYCHIC, false, -1)
     .setBattleBgm("battle_kanto_gym")
     .setMixedBattleBgm("battle_kanto_gym"),
   [TrainerType.BLAINE]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["BLAINE"], true, PokemonType.FIRE)
+    .initForGymLeader(signatureSpecies["BLAINE"], true, PokemonType.FIRE, false, -1)
     .setBattleBgm("battle_kanto_gym")
     .setMixedBattleBgm("battle_kanto_gym"),
   [TrainerType.GIOVANNI]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["GIOVANNI"], true, PokemonType.DARK)
+    .initForGymLeader(signatureSpecies["GIOVANNI"], true, PokemonType.GROUND, false, -2)
     .setBattleBgm("battle_kanto_gym")
     .setMixedBattleBgm("battle_kanto_gym"),
   [TrainerType.FALKNER]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["FALKNER"], true, PokemonType.FLYING)
+    .initForGymLeader(signatureSpecies["FALKNER"], true, PokemonType.FLYING, false, -1)
     .setBattleBgm("battle_johto_gym")
     .setMixedBattleBgm("battle_johto_gym"),
   [TrainerType.BUGSY]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["BUGSY"], true, PokemonType.BUG)
+    .initForGymLeader(signatureSpecies["BUGSY"], true, PokemonType.BUG, false, -1)
     .setBattleBgm("battle_johto_gym")
     .setMixedBattleBgm("battle_johto_gym"),
   [TrainerType.WHITNEY]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["WHITNEY"], false, PokemonType.NORMAL)
+    .initForGymLeader(signatureSpecies["WHITNEY"], false, PokemonType.NORMAL, false, -1)
     .setBattleBgm("battle_johto_gym")
     .setMixedBattleBgm("battle_johto_gym"),
   [TrainerType.MORTY]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["MORTY"], true, PokemonType.GHOST)
+    .initForGymLeader(signatureSpecies["MORTY"], true, PokemonType.GHOST, false, -1)
     .setBattleBgm("battle_johto_gym")
     .setMixedBattleBgm("battle_johto_gym"),
   [TrainerType.CHUCK]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["CHUCK"], true, PokemonType.FIGHTING)
+    .initForGymLeader(signatureSpecies["CHUCK"], true, PokemonType.FIGHTING, false, -1)
     .setBattleBgm("battle_johto_gym")
     .setMixedBattleBgm("battle_johto_gym"),
   [TrainerType.JASMINE]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["JASMINE"], false, PokemonType.STEEL)
+    .initForGymLeader(signatureSpecies["JASMINE"], false, PokemonType.STEEL, false, -1)
     .setBattleBgm("battle_johto_gym")
     .setMixedBattleBgm("battle_johto_gym"),
   [TrainerType.PRYCE]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["PRYCE"], true, PokemonType.ICE)
+    .initForGymLeader(signatureSpecies["PRYCE"], true, PokemonType.ICE, false, -1)
     .setBattleBgm("battle_johto_gym")
     .setMixedBattleBgm("battle_johto_gym"),
   [TrainerType.CLAIR]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["CLAIR"], false, PokemonType.DRAGON)
+    .initForGymLeader(signatureSpecies["CLAIR"], false, PokemonType.DRAGON, false, -3)
     .setBattleBgm("battle_johto_gym")
     .setMixedBattleBgm("battle_johto_gym"),
   [TrainerType.ROXANNE]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["ROXANNE"], false, PokemonType.ROCK)
+    .initForGymLeader(signatureSpecies["ROXANNE"], false, PokemonType.ROCK, false, -1)
     .setBattleBgm("battle_hoenn_gym")
     .setMixedBattleBgm("battle_hoenn_gym"),
   [TrainerType.BRAWLY]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["BRAWLY"], true, PokemonType.FIGHTING)
+    .initForGymLeader(signatureSpecies["BRAWLY"], true, PokemonType.FIGHTING, false, -1)
     .setBattleBgm("battle_hoenn_gym")
     .setMixedBattleBgm("battle_hoenn_gym"),
   [TrainerType.WATTSON]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["WATTSON"], true, PokemonType.ELECTRIC)
+    .initForGymLeader(signatureSpecies["WATTSON"], true, PokemonType.ELECTRIC, false, -1)
     .setBattleBgm("battle_hoenn_gym")
     .setMixedBattleBgm("battle_hoenn_gym"),
   [TrainerType.FLANNERY]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["FLANNERY"], false, PokemonType.FIRE)
+    .initForGymLeader(signatureSpecies["FLANNERY"], false, PokemonType.FIRE, false, -1)
     .setBattleBgm("battle_hoenn_gym")
     .setMixedBattleBgm("battle_hoenn_gym"),
   [TrainerType.NORMAN]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["NORMAN"], true, PokemonType.NORMAL)
+    .initForGymLeader(signatureSpecies["NORMAN"], true, PokemonType.NORMAL, false, -1)
     .setBattleBgm("battle_hoenn_gym")
     .setMixedBattleBgm("battle_hoenn_gym"),
   [TrainerType.WINONA]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["WINONA"], false, PokemonType.FLYING)
+    .initForGymLeader(signatureSpecies["WINONA"], false, PokemonType.FLYING, false, -1)
     .setBattleBgm("battle_hoenn_gym")
     .setMixedBattleBgm("battle_hoenn_gym"),
   [TrainerType.TATE]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["TATE"], true, PokemonType.PSYCHIC)
+    .initForGymLeader(signatureSpecies["TATE"], true, PokemonType.PSYCHIC, false, -1)
     .setBattleBgm("battle_hoenn_gym")
     .setMixedBattleBgm("battle_hoenn_gym")
     .setHasDouble("tate_liza_double")
     .setDoubleTrainerType(TrainerType.LIZA)
     .setDoubleTitle("gym_leader_double"),
   [TrainerType.LIZA]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["LIZA"], false, PokemonType.PSYCHIC)
+    .initForGymLeader(signatureSpecies["LIZA"], false, PokemonType.PSYCHIC, false, -1)
     .setBattleBgm("battle_hoenn_gym")
     .setMixedBattleBgm("battle_hoenn_gym")
     .setHasDouble("liza_tate_double")
     .setDoubleTrainerType(TrainerType.TATE)
     .setDoubleTitle("gym_leader_double"),
   [TrainerType.JUAN]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["JUAN"], true, PokemonType.WATER)
+    .initForGymLeader(signatureSpecies["JUAN"], true, PokemonType.WATER, false, -1)
     .setBattleBgm("battle_hoenn_gym")
     .setMixedBattleBgm("battle_hoenn_gym"),
   [TrainerType.ROARK]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["ROARK"], true, PokemonType.ROCK)
+    .initForGymLeader(signatureSpecies["ROARK"], true, PokemonType.ROCK, false, -1)
     .setBattleBgm("battle_sinnoh_gym")
     .setMixedBattleBgm("battle_sinnoh_gym"),
   [TrainerType.GARDENIA]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["GARDENIA"], false, PokemonType.GRASS)
+    .initForGymLeader(signatureSpecies["GARDENIA"], false, PokemonType.GRASS, false, -1)
     .setBattleBgm("battle_sinnoh_gym")
     .setMixedBattleBgm("battle_sinnoh_gym"),
   [TrainerType.MAYLENE]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["MAYLENE"], false, PokemonType.FIGHTING)
+    .initForGymLeader(signatureSpecies["MAYLENE"], false, PokemonType.FIGHTING, false, -1)
     .setBattleBgm("battle_sinnoh_gym")
     .setMixedBattleBgm("battle_sinnoh_gym"),
   [TrainerType.CRASHER_WAKE]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["CRASHER_WAKE"], true, PokemonType.WATER)
+    .initForGymLeader(signatureSpecies["CRASHER_WAKE"], true, PokemonType.WATER, false, -1)
     .setBattleBgm("battle_sinnoh_gym")
     .setMixedBattleBgm("battle_sinnoh_gym"),
   [TrainerType.FANTINA]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["FANTINA"], false, PokemonType.GHOST)
+    .initForGymLeader(signatureSpecies["FANTINA"], false, PokemonType.GHOST, false, -1)
     .setBattleBgm("battle_sinnoh_gym")
     .setMixedBattleBgm("battle_sinnoh_gym"),
   [TrainerType.BYRON]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["BYRON"], true, PokemonType.STEEL)
+    .initForGymLeader(signatureSpecies["BYRON"], true, PokemonType.STEEL, false, -1)
     .setBattleBgm("battle_sinnoh_gym")
     .setMixedBattleBgm("battle_sinnoh_gym"),
   [TrainerType.CANDICE]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["CANDICE"], false, PokemonType.ICE)
+    .initForGymLeader(signatureSpecies["CANDICE"], false, PokemonType.ICE, false, -1)
     .setBattleBgm("battle_sinnoh_gym")
     .setMixedBattleBgm("battle_sinnoh_gym"),
   [TrainerType.VOLKNER]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["VOLKNER"], true, PokemonType.ELECTRIC)
+    .initForGymLeader(signatureSpecies["VOLKNER"], true, PokemonType.ELECTRIC, false, -1)
     .setBattleBgm("battle_sinnoh_gym")
     .setMixedBattleBgm("battle_sinnoh_gym"),
   [TrainerType.CILAN]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["CILAN"], true, PokemonType.GRASS)
+    .initForGymLeader(signatureSpecies["CILAN"], true, PokemonType.GRASS, false, -1)
     .setMixedBattleBgm("battle_unova_gym"),
   [TrainerType.CHILI]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["CHILI"], true, PokemonType.FIRE)
+    .initForGymLeader(signatureSpecies["CHILI"], true, PokemonType.FIRE, false, -1)
     .setMixedBattleBgm("battle_unova_gym"),
   [TrainerType.CRESS]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["CRESS"], true, PokemonType.WATER)
+    .initForGymLeader(signatureSpecies["CRESS"], true, PokemonType.WATER, false, -1)
     .setMixedBattleBgm("battle_unova_gym"),
   [TrainerType.CHEREN]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["CHEREN"], true, PokemonType.NORMAL)
+    .initForGymLeader(signatureSpecies["CHEREN"], true, PokemonType.NORMAL, false, -1)
     .setMixedBattleBgm("battle_unova_gym"),
   [TrainerType.LENORA]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["LENORA"], false, PokemonType.NORMAL)
+    .initForGymLeader(signatureSpecies["LENORA"], false, PokemonType.NORMAL, false, -1)
     .setMixedBattleBgm("battle_unova_gym"),
   [TrainerType.ROXIE]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["ROXIE"], false, PokemonType.POISON)
+    .initForGymLeader(signatureSpecies["ROXIE"], false, PokemonType.POISON, false, -1)
     .setMixedBattleBgm("battle_unova_gym"),
   [TrainerType.BURGH]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["BURGH"], true, PokemonType.BUG)
+    .initForGymLeader(signatureSpecies["BURGH"], true, PokemonType.BUG, false, -1)
     .setMixedBattleBgm("battle_unova_gym"),
   [TrainerType.ELESA]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["ELESA"], false, PokemonType.ELECTRIC)
+    .initForGymLeader(signatureSpecies["ELESA"], false, PokemonType.ELECTRIC, false, -1)
     .setMixedBattleBgm("battle_unova_gym"),
   [TrainerType.CLAY]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["CLAY"], true, PokemonType.GROUND)
+    .initForGymLeader(signatureSpecies["CLAY"], true, PokemonType.GROUND, false, -1)
     .setMixedBattleBgm("battle_unova_gym"),
   [TrainerType.SKYLA]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["SKYLA"], false, PokemonType.FLYING)
+    .initForGymLeader(signatureSpecies["SKYLA"], false, PokemonType.FLYING, false, -1)
     .setMixedBattleBgm("battle_unova_gym"),
   [TrainerType.BRYCEN]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["BRYCEN"], true, PokemonType.ICE)
+    .initForGymLeader(signatureSpecies["BRYCEN"], true, PokemonType.ICE, false, -1)
     .setMixedBattleBgm("battle_unova_gym"),
   [TrainerType.DRAYDEN]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["DRAYDEN"], true, PokemonType.DRAGON)
+    .initForGymLeader(signatureSpecies["DRAYDEN"], true, PokemonType.DRAGON, false, -1)
     .setMixedBattleBgm("battle_unova_gym"),
   [TrainerType.MARLON]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["MARLON"], true, PokemonType.WATER)
+    .initForGymLeader(signatureSpecies["MARLON"], true, PokemonType.WATER, false, -1)
     .setMixedBattleBgm("battle_unova_gym"),
   [TrainerType.VIOLA]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["VIOLA"], false, PokemonType.BUG)
+    .initForGymLeader(signatureSpecies["VIOLA"], false, PokemonType.BUG, false, -1)
     .setMixedBattleBgm("battle_kalos_gym"),
   [TrainerType.GRANT]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["GRANT"], true, PokemonType.ROCK)
+    .initForGymLeader(signatureSpecies["GRANT"], true, PokemonType.ROCK, false, -1)
     .setMixedBattleBgm("battle_kalos_gym"),
   [TrainerType.KORRINA]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["KORRINA"], false, PokemonType.FIGHTING)
+    .initForGymLeader(signatureSpecies["KORRINA"], false, PokemonType.FIGHTING, false, -1)
     .setMixedBattleBgm("battle_kalos_gym"),
   [TrainerType.RAMOS]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["RAMOS"], true, PokemonType.GRASS)
+    .initForGymLeader(signatureSpecies["RAMOS"], true, PokemonType.GRASS, false, -1)
     .setMixedBattleBgm("battle_kalos_gym"),
   [TrainerType.CLEMONT]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["CLEMONT"], true, PokemonType.ELECTRIC)
+    .initForGymLeader(signatureSpecies["CLEMONT"], true, PokemonType.ELECTRIC, false, -1)
     .setMixedBattleBgm("battle_kalos_gym"),
   [TrainerType.VALERIE]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["VALERIE"], false, PokemonType.FAIRY)
+    .initForGymLeader(signatureSpecies["VALERIE"], false, PokemonType.FAIRY, false, -1)
     .setMixedBattleBgm("battle_kalos_gym"),
   [TrainerType.OLYMPIA]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["OLYMPIA"], false, PokemonType.PSYCHIC)
+    .initForGymLeader(signatureSpecies["OLYMPIA"], false, PokemonType.PSYCHIC, false, -1)
     .setMixedBattleBgm("battle_kalos_gym"),
   [TrainerType.WULFRIC]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["WULFRIC"], true, PokemonType.ICE)
+    .initForGymLeader(signatureSpecies["WULFRIC"], true, PokemonType.ICE, false, -1)
     .setMixedBattleBgm("battle_kalos_gym"),
   [TrainerType.MILO]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["MILO"], true, PokemonType.GRASS)
+    .initForGymLeader(signatureSpecies["MILO"], true, PokemonType.GRASS, false, -1)
     .setMixedBattleBgm("battle_galar_gym"),
   [TrainerType.NESSA]: new TrainerConfig(++t)
     .setName("Nessa")
-    .initForGymLeader(signatureSpecies["NESSA"], false, PokemonType.WATER)
+    .initForGymLeader(signatureSpecies["NESSA"], false, PokemonType.WATER, false, -1)
     .setMixedBattleBgm("battle_galar_gym"),
   [TrainerType.KABU]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["KABU"], true, PokemonType.FIRE)
+    .initForGymLeader(signatureSpecies["KABU"], true, PokemonType.FIRE, false, -1)
     .setMixedBattleBgm("battle_galar_gym"),
   [TrainerType.BEA]: new TrainerConfig(++t)
     .setName("Bea")
-    .initForGymLeader(signatureSpecies["BEA"], false, PokemonType.FIGHTING)
+    .initForGymLeader(signatureSpecies["BEA"], false, PokemonType.FIGHTING, false, -1)
     .setMixedBattleBgm("battle_galar_gym"),
   [TrainerType.ALLISTER]: new TrainerConfig(++t)
     .setName("Allister")
-    .initForGymLeader(signatureSpecies["ALLISTER"], true, PokemonType.GHOST)
+    .initForGymLeader(signatureSpecies["ALLISTER"], true, PokemonType.GHOST, false, -1)
     .setMixedBattleBgm("battle_galar_gym"),
   [TrainerType.OPAL]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["OPAL"], false, PokemonType.FAIRY)
+    .initForGymLeader(signatureSpecies["OPAL"], false, PokemonType.FAIRY, false, -1)
     .setMixedBattleBgm("battle_galar_gym"),
   [TrainerType.BEDE]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["BEDE"], true, PokemonType.FAIRY)
+    .initForGymLeader(signatureSpecies["BEDE"], true, PokemonType.FAIRY, false, -1)
     .setMixedBattleBgm("battle_galar_gym"),
   [TrainerType.GORDIE]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["GORDIE"], true, PokemonType.ROCK)
+    .initForGymLeader(signatureSpecies["GORDIE"], true, PokemonType.ROCK, false, -1)
     .setMixedBattleBgm("battle_galar_gym"),
   [TrainerType.MELONY]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["MELONY"], false, PokemonType.ICE)
+    .initForGymLeader(signatureSpecies["MELONY"], false, PokemonType.ICE, false, -1)
     .setMixedBattleBgm("battle_galar_gym"),
   [TrainerType.PIERS]: new TrainerConfig(++t)
-    .initForGymLeader(signatureSpecies["PIERS"], true, PokemonType.DARK)
+    .initForGymLeader(signatureSpecies["PIERS"], true, PokemonType.DARK, false, -3)
     .setHasDouble("piers_marnie_double")
     .setDoubleTrainerType(TrainerType.MARNIE)
     .setDoubleTitle("gym_leader_double")
     .setMixedBattleBgm("battle_galar_gym"),
   [TrainerType.MARNIE]: new TrainerConfig(++t)
     .setName("Marnie")
-    .initForGymLeader(signatureSpecies["MARNIE"], false, PokemonType.DARK)
+    .initForGymLeader(signatureSpecies["MARNIE"], false, PokemonType.DARK, false, -4)
     .setHasDouble("marnie_piers_double")
     .setDoubleTrainerType(TrainerType.PIERS)
     .setDoubleTitle("gym_leader_double")
     .setMixedBattleBgm("battle_galar_gym"),
   [TrainerType.RAIHAN]: new TrainerConfig(++t)
     .setName("Raihan")
-    .initForGymLeader(signatureSpecies["RAIHAN"], true, PokemonType.DRAGON)
+    .initForGymLeader(signatureSpecies["RAIHAN"], true, PokemonType.DRAGON, false, -1)
     .setMixedBattleBgm("battle_galar_gym"),
   [TrainerType.KATY]: new TrainerConfig(++t)
     .initForGymLeader(signatureSpecies["KATY"], false, PokemonType.BUG, true, -1)
@@ -3553,7 +3546,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(
       5,
       getRandomPartyMemberFunc([Species.URSHIFU], TrainerSlot.TRAINER, true, p => {
-        p.formIndex = Utils.randSeedInt(2, 2); // Random G-Max Urshifu
+        p.formIndex = randSeedInt(2, 2); // Random G-Max Urshifu
         p.generateAndPopulateMoveset();
         p.generateName();
         p.gender = Gender.MALE;
@@ -3663,10 +3656,10 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(
       4,
       getRandomPartyMemberFunc([Species.OGERPON], TrainerSlot.TRAINER, true, p => {
-        p.formIndex = Utils.randSeedInt(4); // Random Ogerpon Tera Mask
+        p.formIndex = randSeedInt(4); // Random Ogerpon Tera Mask
         p.generateAndPopulateMoveset();
         p.pokeball = PokeballType.ULTRA_BALL;
-        if (!p.moveset.some(move => !Utils.isNullOrUndefined(move) && move.moveId === Moves.IVY_CUDGEL)) {
+        if (!p.moveset.some(move => !isNullOrUndefined(move) && move.moveId === Moves.IVY_CUDGEL)) {
           // Check if Ivy Cudgel is in the moveset, if not, replace the first move with Ivy Cudgel.
           p.moveset[0] = new PokemonMove(Moves.IVY_CUDGEL);
         }
@@ -3695,11 +3688,6 @@ export const trainerConfigs: TrainerConfigs = {
     .setModifierRewardFuncs(
       () => modifierTypes.SUPER_EXP_CHARM,
       () => modifierTypes.EXP_SHARE,
-    )
-    .setEventModifierRewardFuncs(
-      () => modifierTypes.SHINY_CHARM,
-      () => modifierTypes.ABILITY_CHARM,
-      () => modifierTypes.CATCHING_CHARM,
     )
     .setPartyMemberFunc(
       0,
@@ -3768,7 +3756,6 @@ export const trainerConfigs: TrainerConfigs = {
     .setMixedBattleBgm("battle_rival")
     .setPartyTemplates(trainerPartyTemplates.RIVAL_2)
     .setModifierRewardFuncs(() => modifierTypes.EXP_SHARE)
-    .setEventModifierRewardFuncs(() => modifierTypes.SHINY_CHARM)
     .setPartyMemberFunc(
       0,
       getRandomPartyMemberFunc(
@@ -4077,7 +4064,7 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([Species.RAYQUAZA], TrainerSlot.TRAINER, true, p => {
         p.setBoss(true, 3);
         p.pokeball = PokeballType.MASTER_BALL;
-        p.shiny = true;
+        p.shiny = timedEventManager.getClassicTrainerShinyChance() === 0;
         p.variant = 1;
       }),
     )
@@ -4174,7 +4161,7 @@ export const trainerConfigs: TrainerConfigs = {
         p.setBoss();
         p.generateAndPopulateMoveset();
         p.pokeball = PokeballType.MASTER_BALL;
-        p.shiny = true;
+        p.shiny = timedEventManager.getClassicTrainerShinyChance() === 0;
         p.variant = 1;
         p.formIndex = 1; // Mega Rayquaza
         p.generateName();
@@ -4721,10 +4708,10 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(
       2,
       getRandomPartyMemberFunc([Species.SILVALLY], TrainerSlot.TRAINER, true, p => {
-        p.formIndex = Utils.randSeedInt(18); // Random Silvally Form
+        p.formIndex = randSeedInt(18); // Random Silvally Form
         p.generateAndPopulateMoveset();
         p.pokeball = PokeballType.ROGUE_BALL;
-        if (!p.moveset.some(move => !Utils.isNullOrUndefined(move) && move.moveId === Moves.MULTI_ATTACK)) {
+        if (!p.moveset.some(move => !isNullOrUndefined(move) && move.moveId === Moves.MULTI_ATTACK)) {
           // Check if Multi Attack is in the moveset, if not, replace the first move with Multi Attack.
           p.moveset[0] = new PokemonMove(Moves.MULTI_ATTACK);
         }
@@ -4841,8 +4828,8 @@ export const trainerConfigs: TrainerConfigs = {
         p.setBoss(true, 2);
         p.generateAndPopulateMoveset();
         p.pokeball = PokeballType.ULTRA_BALL;
-        p.formIndex = Utils.randSeedInt(4, 1); // Shock, Burn, Chill, or Douse Drive
-        if (!p.moveset.some(move => !Utils.isNullOrUndefined(move) && move.moveId === Moves.TECHNO_BLAST)) {
+        p.formIndex = randSeedInt(4, 1); // Shock, Burn, Chill, or Douse Drive
+        if (!p.moveset.some(move => !isNullOrUndefined(move) && move.moveId === Moves.TECHNO_BLAST)) {
           // Check if Techno Blast is in the moveset, if not, replace the first move with Techno Blast.
           p.moveset[2] = new PokemonMove(Moves.TECHNO_BLAST);
         }
@@ -5014,7 +5001,7 @@ export const trainerConfigs: TrainerConfigs = {
       1,
       getRandomPartyMemberFunc([Species.ROTOM], TrainerSlot.TRAINER, true, p => {
         p.generateAndPopulateMoveset();
-        p.formIndex = Utils.randSeedInt(5, 1); // Heat, Wash, Frost, Fan, or Mow
+        p.formIndex = randSeedInt(5, 1); // Heat, Wash, Frost, Fan, or Mow
       }),
     )
     .setPartyMemberFunc(
@@ -5027,7 +5014,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(
       3,
       getRandomPartyMemberFunc([Species.REVAVROOM], TrainerSlot.TRAINER, true, p => {
-        p.formIndex = Utils.randSeedInt(5, 1); // Random Starmobile form
+        p.formIndex = randSeedInt(5, 1); // Random Starmobile form
         p.generateAndPopulateMoveset();
         p.pokeball = PokeballType.ROGUE_BALL;
       }),

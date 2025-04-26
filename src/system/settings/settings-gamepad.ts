@@ -1,6 +1,6 @@
 import type SettingsGamepadUiHandler from "../../ui/settings/settings-gamepad-ui-handler";
-import { Mode } from "../../ui/ui";
-import { truncateString } from "../../utils";
+import { UiMode } from "#enums/ui-mode";
+import { truncateString } from "../../utils/common";
 import { Button } from "#enums/buttons";
 import { SettingKeyboard } from "#app/system/settings/settings-keyboard";
 import { globalScene } from "#app/global-scene";
@@ -107,7 +107,7 @@ export function setSettingGamepad(setting: SettingGamepad, value: number): boole
             (globalScene.ui.getHandler() as SettingsGamepadUiHandler).updateBindings();
             return success;
           };
-          globalScene.ui.setOverlayMode(Mode.GAMEPAD_BINDING, {
+          globalScene.ui.setOverlayMode(UiMode.GAMEPAD_BINDING, {
             target: setting,
             cancelHandler: cancelHandler,
           });
@@ -133,7 +133,7 @@ export function setSettingGamepad(setting: SettingGamepad, value: number): boole
             cancelHandler();
             return true;
           };
-          globalScene.ui.setOverlayMode(Mode.OPTION_SELECT, {
+          globalScene.ui.setOverlayMode(UiMode.OPTION_SELECT, {
             options: [
               ...gp.map((g: string) => ({
                 label: truncateString(g, 30), // Truncate the gamepad name for display
