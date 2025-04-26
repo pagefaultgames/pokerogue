@@ -21,15 +21,18 @@ describe("Moves - Recoil Moves", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("single");
-    game.override.enemySpecies(Species.PIDOVE);
-    game.override.startingLevel(1);
-    game.override.enemyLevel(100);
-    game.override.enemyMoveset([Moves.SUBSTITUTE, Moves.SUBSTITUTE, Moves.SUBSTITUTE, Moves.SUBSTITUTE]);
-    game.override.disableCrits();
+    game.override
+      .battleStyle("single")
+      .enemySpecies(Species.PIDOVE)
+      .startingLevel(1)
+      .enemyLevel(100)
+      .enemyMoveset(Moves.SUBSTITUTE)
+      .disableCrits()
+      .ability(Abilities.NO_GUARD)
+      .enemyAbility(Abilities.BALL_FETCH);
   });
 
-  describe.each([
+  it.each([
     { moveName: "Double Edge", moveId: Moves.DOUBLE_EDGE },
     { moveName: "Brave Bird", moveId: Moves.BRAVE_BIRD },
     { moveName: "Flare Blitz", moveId: Moves.FLARE_BLITZ },
@@ -43,41 +46,34 @@ describe("Moves - Recoil Moves", () => {
     { moveName: "Wave Crash", moveId: Moves.WAVE_CRASH },
     { moveName: "Wild Charge", moveId: Moves.WILD_CHARGE },
     { moveName: "Wood Hammer", moveId: Moves.WOOD_HAMMER },
-  ])("Moves - $moveName", ({ moveId }) => {
-    it("against SUBSTITUTE does recoil", async () => {
-      game.override.ability(Abilities.NO_GUARD);
-      await game.classicMode.startBattle([Species.TOGEPI]);
+  ])("$moveName causes recoil damage when hitting a substitute", async ({ moveId }) => {
+    game.override.moveset([moveId]);
+    await game.classicMode.startBattle([Species.TOGEPI]);
 
-      game.override.moveset([moveId]);
-      game.move.select(moveId);
-      await game.toNextTurn();
-
-      const playerPokemon = game.scene.getPlayerPokemon()!;
-      expect(playerPokemon.hp).toBeLessThan(playerPokemon.getMaxHp());
-    });
-  });
-
-  it("against SUBSTITUTE recoils properly in double battles", async () => {
-    game.override.battleStyle("double");
-    game.override.enemySpecies(Species.PIDOVE);
-    game.override.startingLevel(1);
-    game.override.enemyLevel(100);
-    game.override.enemyMoveset([Moves.SUBSTITUTE]);
-    game.override.disableCrits();
-    game.override.ability(Abilities.NO_GUARD);
-    await game.classicMode.startBattle([Species.TOGEPI, Species.TOGEPI]);
-    game.override.moveset([Moves.DOUBLE_EDGE]);
-    game.move.select(Moves.DOUBLE_EDGE, 0);
-    game.move.select(Moves.DOUBLE_EDGE, 1);
-    await game.forceEnemyMove(Moves.SUBSTITUTE, 0);
-    await game.forceEnemyMove(Moves.SUBSTITUTE, 1);
-    await game.phaseInterceptor.to("TurnEndPhase", false);
-    await await game.toNextTurn();
-
-    console.log(game.scene.getPlayerParty()[0].hp);
-    console.log(game.scene.getPlayerParty()[1].hp);
+    game.move.select(moveId);
+    await game.toNextTurn();
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
     expect(playerPokemon.hp).toBeLessThan(playerPokemon.getMaxHp());
+  });
+
+  it("causes recoil damage when hitting a substitute in a double battle", async () => {
+    game.override.battleStyle("double").moveset([Moves.DOUBLE_EDGE]);
+
+    await game.classicMode.startBattle([Species.TOGEPI, Species.TOGEPI]);
+
+    const [playerPokemon1, playerPokemon2] = game.scene.getPlayerField();
+
+    game.move.select(Moves.DOUBLE_EDGE, 0);
+    game.move.select(Moves.DOUBLE_EDGE, 1);
+
+    await game.phaseInterceptor.to("TurnEndPhase", false);
+    await game.toNextTurn();
+
+    console.log(playerPokemon1.hp);
+    console.log(playerPokemon2.hp);
+
+    expect(playerPokemon1.hp).toBeLessThan(playerPokemon1.getMaxHp());
+    expect(playerPokemon2.hp).toBeLessThan(playerPokemon2.getMaxHp());
   });
 });
