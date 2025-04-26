@@ -99,10 +99,10 @@
       "linter": {
         "rules": {
           "performance": {
-            "noDelete": "off"
+            "noDelete": "off" // ????
           },
           "style": {
-            "noNamespaceImport": "off"
+            "noNamespaceImport": "off" // TODO: Refactor and mark as fixed
           }
         }
       }
