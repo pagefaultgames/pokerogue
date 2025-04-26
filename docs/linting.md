@@ -1,40 +1,34 @@
-# ESLint
+# Biome
+
 ## Key Features
 
 1. **Automation**:
-   - A pre-commit hook has been added to automatically run ESLint on the added or modified files, ensuring code quality before commits.
+   - A pre-commit hook has been added to automatically run Biome on the added or modified files, ensuring code quality before commits.
 
 2. **Manual Usage**:
-   - If you prefer not to use the pre-commit hook, you can manually run ESLint to automatically fix issues using the command:
+   - If you prefer not to use the pre-commit hook, you can manually run biome to automatically fix issues using the command:
+
      ```sh
-     npx eslint --fix . or npm run eslint
+     npx @biomejs/biome --write
      ```
+
    - Running this command will lint all files in the repository.
 
 3. **GitHub Action**:
-   - A GitHub Action has been added to automatically run ESLint on every push and pull request, ensuring code quality in the CI/CD pipeline.
+   - A GitHub Action has been added to automatically run Biome on every push and pull request, ensuring code quality in the CI/CD pipeline.
 
-## Summary of ESLint Rules
+If you are getting linting errors from biome and want to see which files they are coming from, you can find that out by running biome in a way that is configured to only show the errors for that specific rule: ``npx @biomejs/biome lint --only=category/ruleName``
 
-1. **General Rules**:
-   - **Equality**: Use `===` and `!==` instead of `==` and `!=` (`eqeqeq`).
-   - **Indentation**: Enforce 2-space indentation (`indent`).
-   - **Quotes**: Use doublequotes for strings (`quotes`).
-   - **Variable Declarations**: 
-     - Disallow `var`; use `let` or `const` (`no-var`).
-     - Prefer `const` for variables that are never reassigned (`prefer-const`).
-   - **Unused Variables**: Allow unused function parameters but enforce error for other unused variables (`@typescript-eslint/no-unused-vars`).
-   - **End of Line**: Ensure at least one newline at the end of files (`eol-last`).
-   - **Curly Braces**: Enforce the use of curly braces for all control statements (`curly`).
-   - **Brace Style**: Use one true brace style (`1tbs`) for TypeScript-specific syntax (`@typescript-eslint/brace-style`).
+## Summary of Biome Rules
 
-2. **TypeScript-Specific Rules**:
-   - **Semicolons**:
-     - Enforce semicolons for TypeScript-specific syntax (`@typescript-eslint/semi`).
-     - Disallow unnecessary semicolons (`@typescript-eslint/no-extra-semi`).
+We use the [recommended ruleset](https://biomejs.dev/linter/rules/) for Biome, with some customizations to better suit our project's needs.
 
-## Benefits
+For a complete list of rules and their configurations, refer to the `biome.jsonc` file in the project root.
 
-- **Consistency**: Ensures consistent coding style across the project.
-- **Code Quality**: Helps catch potential errors and improve overall code quality.
-- **Readability**: Makes the codebase easier to read and maintain.
+Some things to consider:
+
+- We have disabled rules that prioritize style over performance, such as `useTemplate`
+- Some rules are currently marked as warnings (`warn`) to allow for gradual refactoring without blocking development. Do not write new code that triggers these warnings.
+- The linter is configured to ignore specific files and folders, such as large or complex files that are pending refactors, to improve performance and focus on actionable areas.
+
+Formatting is also handled by Biome. You should not have to worry about manually formatting your code.
