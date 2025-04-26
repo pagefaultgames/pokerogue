@@ -14,7 +14,6 @@ dist-ssr
 
 # Editor directories and files
 .vscode/*
-*.code-workspace
 .idea
 .DS_Store
 *.suo
