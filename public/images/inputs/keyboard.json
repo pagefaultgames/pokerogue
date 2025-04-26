@@ -516,8 +516,36 @@
     "trimmed": true,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 28, "h": 11 },
     "sourceSize": { "w": 28, "h": 11 }
+   },
+   "BACK_SLASH.png": {
+    "frame": { "x": 147, "y": 66, "w": 12, "h": 11 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 12, "h": 11 },
+    "sourceSize": { "w": 12, "h": 11 }
+   },
+   "FORWARD_SLASH.png": {
+    "frame": { "x": 144, "y": 55, "w": 12, "h": 11 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 12, "h": 11 },
+    "sourceSize": { "w": 12, "h": 11 }
+   },
+   "COMMA.png": {
+    "frame": { "x": 144, "y": 44, "w": 12, "h": 11 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 12, "h": 11 },
+    "sourceSize": { "w": 12, "h": 11 }
+   },
+   "PERIOD.png": {
+    "frame": { "x": 143, "y": 22, "w": 11, "h": 11 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 11, "h": 11 },
+    "sourceSize": { "w": 11, "h": 11 }
    }
- },
+  },
  "meta": {
   "app": "https://www.aseprite.org/",
   "version": "1.3.7-dev",
