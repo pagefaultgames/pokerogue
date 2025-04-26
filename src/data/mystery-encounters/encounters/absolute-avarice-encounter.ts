@@ -52,8 +52,8 @@ export const AbsoluteAvariceEncounter: MysteryEncounter = MysteryEncounterBuilde
   MysteryEncounterType.ABSOLUTE_AVARICE,
 )
   .withEncounterTier(MysteryEncounterTier.GREAT)
-  .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
-  .withSceneRequirement(new PersistentModifierRequirement("BerryModifier", 4)) // Must have at least 4 berries to spawn
+  .withSceneWaveRangeRequirement(20, 180)
+  .withSceneRequirement(new PersistentModifierRequirement("BerryModifier", 6)) // Must have at least 4 berries to spawn
   .withFleeAllowed(false)
   .withIntroSpriteConfigs([
     {
@@ -220,9 +220,9 @@ export const AbsoluteAvariceEncounter: MysteryEncounter = MysteryEncounterBuilde
 
     // Do NOT remove the real berries yet or else it will be persisted in the session data
 
-    // SpDef buff below wave 50, +1 to all stats otherwise
+    // +1 SpDef below wave 50, SpDef and Speed otherwise
     const statChangesForBattle: (Stat.ATK | Stat.DEF | Stat.SPATK | Stat.SPDEF | Stat.SPD | Stat.ACC | Stat.EVA)[] =
-      globalScene.currentBattle.waveIndex < 50 ? [Stat.SPDEF] : [Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD];
+      globalScene.currentBattle.waveIndex < 50 ? [Stat.SPDEF] : [Stat.SPDEF, Stat.SPD];
 
     // Calculate boss mon
     const config: EnemyPartyConfig = {
@@ -233,7 +233,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter = MysteryEncounterBuilde
           isBoss: true,
           bossSegments: 3,
           shiny: false, // Shiny lock because of consistency issues between the different options
-          moveSet: [Moves.THRASH, Moves.BODY_PRESS, Moves.STUFF_CHEEKS, Moves.CRUNCH],
+          moveSet: [Moves.THRASH, Moves.CRUNCH, Moves.BODY_PRESS, Moves.STUFF_CHEEKS],
           modifierConfigs: bossModifierConfigs,
           tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
           mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
