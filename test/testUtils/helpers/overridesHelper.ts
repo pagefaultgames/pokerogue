@@ -14,7 +14,7 @@ import { StatusEffect } from "#enums/status-effect";
 import type { WeatherType } from "#enums/weather-type";
 import { expect, vi } from "vitest";
 import { GameManagerHelper } from "./gameManagerHelper";
-import { makeArray, shiftCharCodes } from "#app/utils/common";
+import { coerceArray, shiftCharCodes } from "#app/utils/common";
 import type { RandomTrainerOverride } from "#app/overrides";
 import type { BattleType } from "#enums/battle-type";
 
@@ -202,7 +202,7 @@ export class OverridesHelper extends GameManagerHelper {
    */
   public moveset(moveset: Moves | Moves[]): this {
     vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue(moveset);
-    moveset = makeArray(moveset);
+    moveset = coerceArray(moveset);
     const movesetStr = moveset.map(moveId => Moves[moveId]).join(", ");
     this.log(`Player Pokemon moveset set to ${movesetStr} (=[${moveset.join(", ")}])!`);
     return this;
@@ -380,7 +380,7 @@ export class OverridesHelper extends GameManagerHelper {
    */
   public enemyMoveset(moveset: Moves | Moves[]): this {
     vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue(moveset);
-    moveset = makeArray(moveset);
+    moveset = coerceArray(moveset);
     const movesetStr = moveset.map(moveId => Moves[moveId]).join(", ");
     this.log(`Enemy Pokemon moveset set to ${movesetStr} (=[${moveset.join(", ")}])!`);
     return this;

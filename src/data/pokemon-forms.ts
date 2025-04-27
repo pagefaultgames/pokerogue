@@ -3,7 +3,7 @@ import type Pokemon from "../field/pokemon";
 import { StatusEffect } from "#enums/status-effect";
 import { allMoves } from "./moves/move";
 import { MoveCategory } from "#enums/MoveCategory";
-import { makeArray, type Constructor, type nil } from "#app/utils/common";
+import { coerceArray, type Constructor, type nil } from "#app/utils/common";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
@@ -327,7 +327,7 @@ export class SpeciesFormChangeStatusEffectTrigger extends SpeciesFormChangeTrigg
 
   constructor(statusEffects: StatusEffect | StatusEffect[], invert = false) {
     super();
-    this.statusEffects = makeArray(statusEffects);
+    this.statusEffects = coerceArray(statusEffects);
     this.invert = invert;
     this.description = i18next.t("pokemonEvolutions:Forms.statusEffect");
   }
