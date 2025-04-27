@@ -74,6 +74,7 @@ export const SlumberingSnorlaxEncounter: MysteryEncounter = MysteryEncounterBuil
       isBoss: true,
       shiny: false, // Shiny lock because shiny is rolled only if the battle option is picked
       status: [StatusEffect.SLEEP, 6], // Extra turns on timer for Snorlax's start of fight moves
+      nature: Nature.DOCILE,
       moveSet: [Moves.BODY_SLAM, Moves.CRUNCH, Moves.SLEEP_TALK, Moves.REST],
       modifierConfigs: [
         {
