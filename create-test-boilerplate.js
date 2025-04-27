@@ -71,7 +71,7 @@ async function runInteractive() {
   const fileNameAnswer = await promptFileName(typeAnswer.selectedOption);
 
   const type = typeAnswer.selectedOption.toLowerCase();
-  // Convert fileName from kebab-case or camelCase to snake_case
+  // Convert fileName to kebab-case
   // Ex: "Cud Chew/Cud-Chew" --> "cud-chew"
   const fileName = fileNameAnswer.userInput
     .replace(/([a-z])([A-Z])/g, "$1_$2") // Convert camelCase to snake_case
