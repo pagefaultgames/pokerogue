@@ -145,25 +145,37 @@ const POOL_3_POKEMON: { species: Species; formIndex?: number }[] = [
 const POOL_4_POKEMON = [Species.GENESECT, Species.SLITHER_WING, Species.BUZZWOLE, Species.PHEROMOSA];
 
 const PHYSICAL_TUTOR_MOVES = [
+  Moves.PIN_MISSILE,
   Moves.MEGAHORN,
   Moves.X_SCISSOR,
   Moves.ATTACK_ORDER,
-  Moves.PIN_MISSILE,
-  Moves.FIRST_IMPRESSION,
+  Moves.BUG_BITE,
+  Moves.FIRST_IMPRESSION
 ];
 
-const SPECIAL_TUTOR_MOVES = [Moves.SILVER_WIND, Moves.BUG_BUZZ, Moves.SIGNAL_BEAM, Moves.POLLEN_PUFF];
+const SPECIAL_TUTOR_MOVES = [
+  Moves.SILVER_WIND,
+  Moves.SIGNAL_BEAM,
+  Moves.BUG_BUZZ,
+  Moves.POLLEN_PUFF,
+  Moves.STRUGGLE_BUG
+];
 
-const STATUS_TUTOR_MOVES = [Moves.STRING_SHOT, Moves.STICKY_WEB, Moves.SILK_TRAP, Moves.RAGE_POWDER, Moves.HEAL_ORDER];
+const STATUS_TUTOR_MOVES = [
+  Moves.STRING_SHOT,
+  Moves.RAGE_POWDER,
+  Moves.STICKY_WEB,
+  Moves.POWDER,
+  Moves.SILK_TRAP
+];
 
 const MISC_TUTOR_MOVES = [
-  Moves.BUG_BITE,
   Moves.LEECH_LIFE,
-  Moves.DEFEND_ORDER,
-  Moves.QUIVER_DANCE,
-  Moves.TAIL_GLOW,
-  Moves.INFESTATION,
   Moves.U_TURN,
+  Moves.DEFEND_ORDER,
+  Moves.HEAL_ORDER,
+  Moves.QUIVER_DANCE,
+  Moves.INFESTATION
 ];
 
 /**
