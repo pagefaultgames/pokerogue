@@ -3,9 +3,11 @@ import type Pokemon from "#app/field/pokemon";
 import { MovePhase } from "#app/phases/move-phase";
 import { Abilities } from "#enums/abilities";
 import { BattlerTagType } from "#enums/battler-tag-type";
+import { BerryType } from "#enums/berry-type";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { Stat } from "#enums/stat";
+import { StatusEffect } from "#enums/status-effect";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -195,6 +197,27 @@ describe("Abilities - Dancer", () => {
     expect(oricorio.hp).toBeLessThan(oricorio.getMaxHp());
     expect(oricorio.getTag(BattlerTagType.CONFUSED)).toBeDefined();
     expect(game.scene.getEnemyPokemon()?.getTag(BattlerTagType.CONFUSED)).toBeUndefined();
+  });
+
+  it("should trigger while asleep", async () => {
+    game.override
+      .battleStyle("single")
+      .startingHeldItems([{ name: "BERRY", count: 2, type: BerryType.LUM }])
+      .moveset(Moves.SPLASH)
+      .enemyMoveset(Moves.SWORDS_DANCE)
+      .statusEffect(StatusEffect.SLEEP);
+    await game.classicMode.startBattle([Species.ORICORIO]);
+
+    const oricorio = game.scene.getPlayerPokemon()!;
+    expect(oricorio).toBeDefined();
+
+    // Protect, then copy swords dance
+    game.move.select(Moves.FEATHER_DANCE);
+    await game.forceEnemyMove(Moves.SWORDS_DANCE);
+    await game.toNextTurn();
+
+    expect(oricorio.getLastXMoves(-1)[0]).toBe(expect.objectContaining({ move: Moves.NONE }));
+    expect(game.scene.getEnemyPokemon()?.getStatStage(Stat.ATK)).toBe(0);
   });
 
   // TODO: Enable once interaction is confirmed

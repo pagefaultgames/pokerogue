@@ -92,7 +92,12 @@ export class MoveEffectPhase extends PokemonPhase {
   /** The result of the hit check against each target */
   private hitChecks: HitCheckEntry[];
 
-  /** The move history entry for the move */
+  /**
+   * Log to be entered into the user's move history once the move result is resolved.
+
+   * Note that `result` logs whether the move was successfully
+   * used in the sense of "Does it have an effect on the user?".
+   */
   private moveHistoryEntry: TurnMove;
 
   /** Is this the first strike of a move? */
@@ -113,6 +118,7 @@ export class MoveEffectPhase extends PokemonPhase {
     this.virtual = virtual;
 
     this.reflected = reflected;
+
     /**
      * In double battles, if the right Pokemon selects a spread move and the left Pokemon dies
      * with no party members available to switch in, then the right Pokemon takes the index
@@ -183,7 +189,6 @@ export class MoveEffectPhase extends PokemonPhase {
    * Queue the phaes that should occur when the target reflects the move back to the user
    * @param user - The {@linkcode Pokemon} using this phase's invoked move
    * @param target - The {@linkcode Pokemon} that is reflecting the move
-   *
    */
   private queueReflectedMove(user: Pokemon, target: Pokemon): void {
     const newTargets = this.move.isMultiTarget()
@@ -205,7 +210,7 @@ export class MoveEffectPhase extends PokemonPhase {
   /**
    * Apply the move to each of the resolved targets.
    * @param targets - The resolved set of targets of the move
-   * @throws Error if there was an unexpected hit check result
+   * @throws - Error if there was an unexpected hit check result
    */
   private applyToTargets(user: Pokemon, targets: Pokemon[]): void {
     for (const [i, target] of targets.entries()) {
@@ -227,6 +232,7 @@ export class MoveEffectPhase extends PokemonPhase {
         case HitCheckResult.NO_EFFECT_NO_MESSAGE:
         case HitCheckResult.PROTECTED:
         case HitCheckResult.TARGET_NOT_ON_FIELD:
+          // Apply effects for ineffective moves (eg High Jump Kick crash dmg)
           applyMoveAttrs(NoEffectAttr, user, target, this.move);
           break;
         case HitCheckResult.MISS:
@@ -328,11 +334,7 @@ export class MoveEffectPhase extends PokemonPhase {
       user.turnData.hitsLeft = hitCount.value;
     }
 
-    /*
-     * Log to be entered into the user's move history once the move result is resolved.
-     * Note that `result` logs whether the move was successfully
-     * used in the sense of "Does it have an effect on the user?".
-     */
+    // Update Move history entry with data
     this.moveHistoryEntry = {
       move: this.move.id,
       targets: this.targets,
@@ -401,36 +403,38 @@ export class MoveEffectPhase extends PokemonPhase {
 
   public override end(): void {
     const user = this.getUserPokemon();
-
-    /**
-     * If this phase isn't for the invoked move's last strike,
-     * unshift another MoveEffectPhase for the next strike.
-     * Otherwise, queue a message indicating the number of times the move has struck
-     * (if the move has struck more than once), then apply the heal from Shell Bell
-     * to the user & proc dancer-like effects.
-     */
-    if (user) {
-      if (user.turnData.hitsLeft && --user.turnData.hitsLeft >= 1 && this.getFirstTarget()?.isActive()) {
-        globalScene.unshiftPhase(this.getNewHitPhase());
-      } else {
-        // Queue message for number of hits made by multi-move
-        // If multi-hit attack only hits once, still want to render a message
-        const hitsTotal = user.turnData.hitCount - Math.max(user.turnData.hitsLeft, 0);
-        if (hitsTotal > 1 || (user.turnData.hitsLeft && user.turnData.hitsLeft > 0)) {
-          // If there are multiple hits, or if there are hits of the multi-hit move left
-          globalScene.queueMessage(i18next.t("battle:attackHitsCount", { count: hitsTotal }));
-        }
-        globalScene.applyModifiers(HitHealModifier, this.player, user);
-        this.getTargets().forEach(target => (target.turnData.moveEffectiveness = null));
-
-        console.log(user.getMoveset());
-        globalScene.getField(true).forEach(p =>
-          // proc dancer
-          applyPostMoveUsedAbAttrs(PostMoveUsedAbAttr, p, this.move, user, this.targets, this.hitChecks),
-        );
-      }
+    if (!user) {
+      super.end();
+      return;
     }
 
+    /**
+     * If this phase isn't for the invoked move's last strike (and we still have something to hit)
+     * unshift another MoveEffectPhase for the next strike before ending this phase.
+     */
+    if (--user.turnData.hitsLeft >= 1 && this.getFirstTarget()) {
+      globalScene.unshiftPhase(this.getNewHitPhase());
+      super.end();
+      return;
+    }
+
+    /** All hits of the move have resolved by now.
+     * Queue message for multi-strike moves before applying Shell Bell & proccing Dancer-like effects.
+     */
+    const hitsTotal = user.turnData.hitCount - Math.max(user.turnData.hitsLeft, 0);
+    if (hitsTotal > 1 || user.turnData.hitsLeft > 0) {
+      // Queue message if multiple hits occurred or
+      globalScene.queueMessage(i18next.t("battle:attackHitsCount", { count: hitsTotal }));
+    }
+
+    globalScene.applyModifiers(HitHealModifier, this.player, user);
+    this.getTargets().forEach(target => (target.turnData.moveEffectiveness = null));
+
+    console.log(user.getMoveset());
+    globalScene.getField(true).forEach(p =>
+      // proc dancer
+      applyPostMoveUsedAbAttrs(PostMoveUsedAbAttr, p, this.move, user, this.targets, this.hitChecks),
+    );
     super.end();
   }
 
@@ -674,12 +678,17 @@ export class MoveEffectPhase extends PokemonPhase {
     return (this.player ? globalScene.getPlayerField() : globalScene.getEnemyField())[this.fieldIndex];
   }
 
-  /** @returns An array of all {@linkcode Pokemon} targeted by this phase's invoked move */
+  /**
+   * @returns - An array of {@linkcode Pokemon} that are:
+   * - On-field
+   *
+   * - Targeted by this phase's invoked move
+   */
   public getTargets(): Pokemon[] {
     return globalScene.getField(true).filter(p => this.targets.indexOf(p.getBattlerIndex()) > -1);
   }
 
-  /** @returns The first target of this phase's invoked move */
+  /** @returns - The first target of this phase's invoked move. */
   public getFirstTarget(): Pokemon | undefined {
     return this.getTargets()[0];
   }

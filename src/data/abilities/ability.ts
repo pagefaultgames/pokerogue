@@ -2,7 +2,7 @@ import { HitResult, MoveResult, PlayerPokemon, type TurnMove } from "#app/field/
 import { BooleanHolder, NumberHolder, toDmgValue, isNullOrUndefined, randSeedItem, randSeedInt, type Constructor } from "#app/utils/common";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { BattlerTagLapseType, GroundedTag } from "#app/data/battler-tags";
-import { getNonVolatileStatusEffects, getStatusEffectDescriptor, getStatusEffectHealText } from "#app/data/status-effect";
+import { getNonVolatileStatusEffects, getStatusEffectDescriptor, getStatusEffectHealText, type Status } from "#app/data/status-effect";
 import { Gender } from "#app/data/gender";
 import {
   AttackMove,
@@ -1305,42 +1305,43 @@ export class PokemonTypeChangeAbAttr extends PreAttackAbAttr {
 }
 
 /**
- * Class for abilities that convert single-strike moves to two-strike moves (i.e. Parental Bond).
- * @param damageMultiplier the damage multiplier for the second strike, relative to the first.
- */
+ * Class for abilities that add additional strikes to single-target moves.
+ * Used by {@linkcode Moves.PARENTAL_BOND | Parental Bond}.
+*/
 export class AddSecondStrikeAbAttr extends PreAttackAbAttr {
   private damageMultiplier: number;
 
-  constructor(damageMultiplier: number) {
+  /**
+   * @param damageMultiplier - The damage multiplier for the added strike, relative to the first.
+  */
+ constructor(damageMultiplier: number) {
     super(false);
 
     this.damageMultiplier = damageMultiplier;
   }
 
   override canApplyPreAttack(pokemon: Pokemon, passive: boolean, simulated: boolean, defender: Pokemon | null, move: Move, args: any[]): boolean {
-    return move.canBeMultiStrikeEnhanced(pokemon, true);
+    // Parental bond can't enhance spread moves
+    return move.canBeMultiStrikeEnhanced(pokemon, false);
   }
 
   /**
-   * If conditions are met, this doubles the move's hit count (via args[1])
-   * or multiplies the damage of secondary strikes (via args[2])
-   * @param pokemon the {@linkcode Pokemon} using the move
-   * @param passive n/a
-   * @param defender n/a
-   * @param move the {@linkcode Move} used by the ability source
-   * @param args Additional arguments:
-   * - `[0]` the number of strikes this move currently has ({@linkcode NumberHolder})
-   * - `[1]` the damage multiplier for the current strike ({@linkcode NumberHolder})
+   * Applies the ability attribute by increasing hit count
+   * @param pokemon - The {@linkcode Pokemon} using the move
+   * @param passive - Unused
+   * @param defender - Unused
+   * @param move - The {@linkcode Move} being used
+   * @param args:
+   * - `[0]` - A {@linkcode NumberHolder} holding the move's current strike count
+   * - `[1]` - A {@linkcode NumberHolder} holding the current strike's damage multiplier.
    */
-  override applyPreAttack(pokemon: Pokemon, passive: boolean, simulated: boolean, defender: Pokemon, move: Move, args: any[]): void {
-    const hitCount = args[0] as NumberHolder;
-    const multiplier = args[1] as NumberHolder;
-    if (hitCount?.value) {
-      hitCount.value += 1;
+  override applyPreAttack(pokemon: Pokemon, passive: boolean, simulated: boolean, defender: Pokemon, move: Move, args: [NumberHolder, NumberHolder, ...any]): void {
+    if (args[0]?.value) {
+      args[0].value += 1;
     }
 
-    if (multiplier?.value && pokemon.turnData.hitsLeft === 1) {
-      multiplier.value = this.damageMultiplier;
+    if (args[1]?.value) {
+      args[1].value = this.damageMultiplier;
     }
   }
 }
@@ -4303,7 +4304,7 @@ export class PostMoveUsedAbAttr extends AbAttr {
    * @param hitChecks - Array of {@linkcode HitCheckEntry | HitCheckEntries} containing results of move usage
    * @param simulated - Whether the ability call is simulated
    * @param args - Extra arguments passed to the function. Handled by child classes.
-   * @returns `true` if the ability can be applied, `false` otherwise.
+   * @returns Whether the ability can be successfully applied.
    * Normally checks if move was used by another pokemon and was successfully applied
    * against at least 1 target; can be overridden to change effect
    * @see {@linkcode applyPostMoveUsed}
@@ -4317,8 +4318,8 @@ export class PostMoveUsedAbAttr extends AbAttr {
     simulated: boolean,
     args: any[],
   ): boolean {
-    return source !== pokemon // not used by ourself
-      && !!targets.length // move has targets
+    return source.getBattlerIndex() !== pokemon.getBattlerIndex() // not used by ourself
+      && !!targets.length // move had targets to hit
       && hitChecks.some(hr => hr[0] === HitCheckResult.HIT); // successfully affected at least 1 target
   }
 
@@ -4401,12 +4402,11 @@ export class PostDancingMoveAbAttr extends PostMoveUsedAbAttr {
 
     // Attack and status moves are replicated on the source of the Dance, while
     // self-targeted status moves (Swords Dance & co.) are replicated on the user
-    // TODO: Somehow make this check for status without also causing infinite loops
     if (move instanceof AttackMove || move instanceof StatusMove) {
       const target = this.getTarget(dancer, source, targets);
-      globalScene.unshiftPhase(new MovePhase(dancer, target, newMove, true, true));
+      globalScene.unshiftPhase(new MovePhase(dancer, target, newMove, 'status-only'));
     } else if (move instanceof SelfStatusMove) {
-      globalScene.unshiftPhase(new MovePhase(dancer, [ dancer.getBattlerIndex() ], newMove, true, true));
+      globalScene.unshiftPhase(new MovePhase(dancer, [ dancer.getBattlerIndex() ], newMove, 'status-only'));
     }
   }
 
@@ -4825,34 +4825,31 @@ export class RedirectTypeMoveAbAttr extends RedirectMoveAbAttr {
   }
 }
 
+// TODO: Rework this - currently it's just an empty class used as a marker
 export class BlockRedirectAbAttr extends AbAttr { }
 
 /**
- * Used by Early Bird, makes the pokemon wake up faster
- * @param statusEffect - The {@linkcode StatusEffect} to check for
- * @see {@linkcode apply}
+ * Decrements a {@linkcode Pokemon}'s sleep turn counter by 2 whenever it would be decreased by 1.
+ * Used by {@linkcode Abilities.EARLY_BIRD}.
  */
-export class ReduceStatusEffectDurationAbAttr extends AbAttr {
-  private statusEffect: StatusEffect;
-
-  constructor(statusEffect: StatusEffect) {
+export class ReduceSleepDurationAbAttr extends AbAttr {
+  constructor() {
     super(false);
-
-    this.statusEffect = statusEffect;
   }
 
-  override canApply(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
-    return args[1] instanceof NumberHolder && args[0] === this.statusEffect;
+  override canApply(pokemon: Pokemon, passive: boolean, simulated: boolean, args: [Status, ...any]): boolean {
+    // Sleep is the only duration-based status effect
+    return args[0].effect === StatusEffect.SLEEP;
   }
 
   /**
    * Reduces the number of sleep turns remaining by an extra 1 when applied
-   * @param args - The args passed to the `AbAttr`:
-   * - `[0]` - The {@linkcode StatusEffect} of the Pokemon
-   * - `[1]` - The number of turns remaining until the status is healed
+   * @param args `[0]` - The Pokemon's current {@linkcode Status}
    */
-  override apply(_pokemon: Pokemon, _passive: boolean, _simulated: boolean, _cancelled: BooleanHolder, args: any[]): void {
-    args[1].value -= 1;
+  override apply(_pokemon: Pokemon, _passive: boolean, _simulated: boolean, _cancelled: BooleanHolder, args: [Status, ...any]): void {
+    if (args[0].sleepTurnsRemaining) {
+      args[0].sleepTurnsRemaining--
+    }
   }
 }
 
@@ -6537,7 +6534,7 @@ export function initAbilities() {
       .attr(ReceivedTypeDamageMultiplierAbAttr, PokemonType.ICE, 0.5)
       .ignorable(),
     new Ability(Abilities.EARLY_BIRD, 3)
-      .attr(ReduceStatusEffectDurationAbAttr, StatusEffect.SLEEP),
+      .attr(ReduceSleepDurationAbAttr),
     new Ability(Abilities.FLAME_BODY, 3)
       .attr(PostDefendContactApplyStatusEffectAbAttr, 30, StatusEffect.BURN)
       .bypassFaint(),
@@ -7117,8 +7114,7 @@ export function initAbilities() {
       .attr(PostFaintHPDamageAbAttr)
       .bypassFaint(),
     new Ability(Abilities.DANCER, 7)
-      .attr(PostDancingMoveAbAttr)
-      .partial(), // Doesn't take into account para/confuse failures due to `followUp` being used to prevent infinite loops
+      .attr(PostDancingMoveAbAttr),
     new Ability(Abilities.BATTERY, 7)
       .attr(AllyMoveCategoryPowerBoostAbAttr, [ MoveCategory.SPECIAL ], 1.3),
     new Ability(Abilities.FLUFFY, 7)

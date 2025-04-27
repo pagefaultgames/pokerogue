@@ -7,7 +7,6 @@ import {
   IncreasePpAbAttr,
   PokemonTypeChangeAbAttr,
   RedirectMoveAbAttr,
-  ReduceStatusEffectDurationAbAttr,
 } from "#app/data/abilities/ability";
 import type { DelayedAttackTag } from "#app/data/arena-tag";
 import { CommonAnim } from "#app/data/battle-anims";
@@ -53,7 +52,7 @@ export class MovePhase extends BattlePhase {
   protected _pokemon: Pokemon;
   protected _move: PokemonMove;
   protected _targets: BattlerIndex[];
-  protected followUp: boolean;
+  protected followUp: boolean | "status-only";
   protected ignorePp: boolean;
   protected forcedLast: boolean;
   protected failed = false;
@@ -85,17 +84,20 @@ export class MovePhase extends BattlePhase {
   }
 
   /**
-   * @param followUp Indicates that the move being used is a "follow-up" - for example, a move being used by Metronome or Dancer.
-   *                 Follow-ups bypass a few failure conditions, including flinches, sleep/paralysis/freeze and volatile status checks, etc.
-   * @param reflected Indicates that the move was reflected by Magic Coat or Magic Bounce.
-   *                  Reflected moves cannot be reflected again and will not trigger Dancer.
+   * @param followUp - Indicates that the move being used is a "follow-up" move - for example, one called by a move or ability.
+   * Follow-ups bypass a few failure conditions, including flinches, volatile status checks and all
+   * {@linkcode BattlerTagLapseType.MOVE} effects (i.e. Confusion, Infatuation and Truant).
+   * Follow-up moves are also ignored by the aforementioend move-calling moves and abilities to prevent infinite loops.
+   *
+   * If set to `status-only`, will still trigger status checks and flinches but otherwise be considered "follow-up".
+   * @param reflected - Indicates that the move was reflected by Magic Coat or Magic Bounce.
+   * Reflected moves cannot be reflected again, nor will they trigger Dancer.
    */
-
   constructor(
     pokemon: Pokemon,
     targets: BattlerIndex[],
     move: PokemonMove,
-    followUp = false,
+    followUp: boolean | "status-only" = false,
     ignorePp = false,
     reflected = false,
     forcedLast = false,
@@ -124,12 +126,12 @@ export class MovePhase extends BattlePhase {
     );
   }
 
-  /**Signifies the current move should fail but still use PP */
+  /** Signifies the current move should fail but still use PP */
   public fail(): void {
     this.failed = true;
   }
 
-  /**Signifies the current move should cancel and retain PP */
+  /** Signifies the current move should cancel and retain PP */
   public cancel(): void {
     this.cancelled = true;
   }
@@ -137,7 +139,7 @@ export class MovePhase extends BattlePhase {
   /**
    * Shows whether the current move has been forced to the end of the turn
    * Needed for speed order, see {@linkcode Moves.QUASH}
-   * */
+   */
   public isForcedLast(): boolean {
     return this.forcedLast;
   }
@@ -170,7 +172,7 @@ export class MovePhase extends BattlePhase {
       if (
         this.move
           .getMove()
-          .doesFlagEffectApply({ flag: MoveFlags.IGNORE_ABILITIES, user: this.pokemon, isFollowUp: this.followUp })
+          .doesFlagEffectApply({ flag: MoveFlags.IGNORE_ABILITIES, user: this.pokemon, isFollowUp: !!this.followUp })
       ) {
         globalScene.arena.setIgnoreAbilities(true, this.pokemon.getBattlerIndex());
       }
@@ -222,78 +224,91 @@ export class MovePhase extends BattlePhase {
    * Handles {@link StatusEffect.SLEEP Sleep}/{@link StatusEffect.PARALYSIS Paralysis}/{@link StatusEffect.FREEZE Freeze} rolls and side effects.
    */
   protected resolvePreMoveStatusEffects(): void {
-    if (!this.followUp && this.pokemon.status && !this.pokemon.status.isPostTurn()) {
-      this.pokemon.status.incrementTurn();
-      let activated = false;
-      let healed = false;
+    // Skip for "true" follow ups, lack of status or post turn statues (e.g. Poison/Toxic)
+    if (this.followUp === true || !this.pokemon.status || this.pokemon.status.isPostTurn()) {
+      return;
+    }
 
-      switch (this.pokemon.status.effect) {
-        case StatusEffect.PARALYSIS:
-          activated =
-            (!this.pokemon.randSeedInt(4) || Overrides.STATUS_ACTIVATION_OVERRIDE === true) &&
-            Overrides.STATUS_ACTIVATION_OVERRIDE !== false;
-          break;
-        case StatusEffect.SLEEP: {
-          applyMoveAttrs(BypassSleepAttr, this.pokemon, null, this.move.getMove());
-          const turnsRemaining = new NumberHolder(this.pokemon.status.sleepTurnsRemaining ?? 0);
-          applyAbAttrs(
-            ReduceStatusEffectDurationAbAttr,
-            this.pokemon,
-            null,
-            false,
-            this.pokemon.status.effect,
-            turnsRemaining,
-          );
-          this.pokemon.status.sleepTurnsRemaining = turnsRemaining.value;
-          healed = this.pokemon.status.sleepTurnsRemaining <= 0;
-          activated = !healed && !this.pokemon.getTag(BattlerTagType.BYPASS_SLEEP);
+    // Increment sleep turn count and toxic turn count if not virtual.
+    // Needed to prevent dancer from ticking down sleep.
+    // TODO: Check if we actually need this after testing rounds
+    if (!this.followUp) {
+      this.pokemon.status.decrementSleepTurnCount(this.pokemon);
+    }
+
+    /** Whether to prevent us from using the move */
+    let activated = false;
+    /** Whether to cure the status */
+    let healed = false;
+
+    switch (this.pokemon.status.effect) {
+      case StatusEffect.PARALYSIS:
+        // 20% chance to proc each turn (unless status override is set)
+        activated = this.pokemon.randSeedInt(4) === 0;
+        if (Overrides.STATUS_ACTIVATION_OVERRIDE !== null) {
+          activated = Overrides.STATUS_ACTIVATION_OVERRIDE;
+        }
+        break;
+      case StatusEffect.SLEEP: {
+        healed = (this.pokemon.status.sleepTurnsRemaining ?? 1) <= 0;
+        // Check for Snore and Sleep Talk - they apply the BYPASS_SLEEP tag for 1 turn to allow use while asleep
+        applyMoveAttrs(BypassSleepAttr, this.pokemon, null, this.move.getMove());
+        if (this.pokemon.getTag(BattlerTagType.BYPASS_SLEEP)) {
+          // Komala is love, Komala is life, Komala will **MURDER YOU IN ITS SLEEP**
           break;
         }
-        case StatusEffect.FREEZE:
-          healed =
-            !!this.move
-              .getMove()
-              .findAttr(
-                attr => attr instanceof HealStatusEffectAttr && attr.selfTarget && attr.isOfEffect(StatusEffect.FREEZE),
-              ) ||
-            (!this.pokemon.randSeedInt(5) && Overrides.STATUS_ACTIVATION_OVERRIDE !== true) ||
-            Overrides.STATUS_ACTIVATION_OVERRIDE === false;
-
-          activated = !healed;
-          break;
+        activated = !healed;
+        break;
       }
+      case StatusEffect.FREEZE:
+        // Unfreeze if using a move that thaws the user or if a 20% roll succeeds;
+        // all other cases remain frozen
+        healed =
+          !!this.move
+            .getMove()
+            .findAttr(
+              attr => attr instanceof HealStatusEffectAttr && attr.selfTarget && attr.isOfEffect(StatusEffect.FREEZE),
+            ) || this.pokemon.randSeedInt(5) === 0;
+        if (Overrides.STATUS_ACTIVATION_OVERRIDE !== null) {
+          healed = Overrides.STATUS_ACTIVATION_OVERRIDE;
+        }
 
-      if (activated) {
-        this.cancel();
-        globalScene.queueMessage(
-          getStatusEffectActivationText(this.pokemon.status.effect, getPokemonNameWithAffix(this.pokemon)),
-        );
-        globalScene.unshiftPhase(
-          new CommonAnimPhase(
-            this.pokemon.getBattlerIndex(),
-            undefined,
-            CommonAnim.POISON + (this.pokemon.status.effect - 1),
-          ),
-        );
-      } else if (healed) {
-        globalScene.queueMessage(
-          getStatusEffectHealText(this.pokemon.status.effect, getPokemonNameWithAffix(this.pokemon)),
-        );
-        this.pokemon.resetStatus();
-        this.pokemon.updateInfo();
-      }
+        activated = !healed;
+        break;
+    }
+
+    if (activated) {
+      // Cancel move activation and play effect
+      this.cancel();
+      globalScene.queueMessage(
+        getStatusEffectActivationText(this.pokemon.status.effect, getPokemonNameWithAffix(this.pokemon)),
+      );
+      globalScene.unshiftPhase(
+        new CommonAnimPhase(
+          this.pokemon.getBattlerIndex(),
+          undefined,
+          CommonAnim.POISON + (this.pokemon.status.effect - 1), // offset anim # by effect #
+        ),
+      );
+    } else if (healed) {
+      // cure status and play effect
+      globalScene.queueMessage(
+        getStatusEffectHealText(this.pokemon.status.effect, getPokemonNameWithAffix(this.pokemon)),
+      );
+      this.pokemon.resetStatus();
+      this.pokemon.updateInfo();
     }
   }
 
   /**
-   * Lapse {@linkcode BattlerTagLapseType.PRE_MOVE PRE_MOVE} tags that trigger before a move is used, regardless of whether or not it failed.
-   * Also lapse {@linkcode BattlerTagLapseType.MOVE MOVE} tags if the move should be successful.
+   * Lapse {@linkcode BattlerTagLapseType.PRE_MOVE  | PRE_MOVE} tags that trigger before a move is used, regardless of whether or not it failed.
+   * Also lapse {@linkcode BattlerTagLapseType.MOVE | MOVE} tags if the move should be successful.
    */
   protected lapsePreMoveAndMoveTags(): void {
     this.pokemon.lapseTags(BattlerTagLapseType.PRE_MOVE);
 
     // TODO: does this intentionally happen before the no targets/Moves.NONE on queue cancellation case is checked?
-    if (!this.followUp && this.canMove() && !this.cancelled) {
+    if (this.followUp !== "status-only" && this.canMove() && !this.cancelled) {
       this.pokemon.lapseTags(BattlerTagLapseType.MOVE);
     }
   }
@@ -469,7 +484,7 @@ export class MovePhase extends BattlePhase {
    */
   public end(): void {
     globalScene.unshiftPhase(
-      new MoveEndPhase(this.pokemon.getBattlerIndex(), this.getActiveTargetPokemon(), this.followUp),
+      new MoveEndPhase(this.pokemon.getBattlerIndex(), this.getActiveTargetPokemon(), !!this.followUp),
     );
 
     super.end();
@@ -626,18 +641,19 @@ export class MovePhase extends BattlePhase {
   }
 
   /**
-   * Displays the move's usage text to the player, unless it's a charge turn (ie: {@link Moves.SOLAR_BEAM Solar Beam}),
-   * the pokemon is on a recharge turn (ie: {@link Moves.HYPER_BEAM Hyper Beam}), or a 2-turn move was interrupted (ie: {@link Moves.FLY Fly}).
+   * Displays the move's usage text to the player as applicable for the move being used.
    */
   public showMoveText(): void {
-    if (this.move.moveId === Moves.NONE) {
+    // No text for Moves.NONE, recharging/2-turn moves or interrupted moves
+    if (
+      this.move.moveId === Moves.NONE ||
+      this.pokemon.getTag(BattlerTagType.RECHARGING) ||
+      this.pokemon.getTag(BattlerTagType.INTERRUPTED)
+    ) {
       return;
     }
 
-    if (this.pokemon.getTag(BattlerTagType.RECHARGING) || this.pokemon.getTag(BattlerTagType.INTERRUPTED)) {
-      return;
-    }
-
+    // Play message for magic bounce
     globalScene.queueMessage(
       i18next.t(this.reflected ? "battle:magicCoatActivated" : "battle:useMove", {
         pokemonNameWithAffix: getPokemonNameWithAffix(this.pokemon),

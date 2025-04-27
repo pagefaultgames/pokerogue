@@ -2761,7 +2761,7 @@ export class PokemonMultiHitModifier extends PokemonHeldItemModifier {
    * @param moveId The {@linkcode Moves | identifier} for the move being used
    * @param count {@linkcode NumberHolder} holding the move's hit count for this turn
    * @param damageMultiplier {@linkcode NumberHolder} holding a damage multiplier applied to a strike of this move
-   * @returns always `true`
+   * @returns - Whether the move's hit count was successfully increased
    */
   override apply(
     pokemon: Pokemon,
@@ -2770,15 +2770,9 @@ export class PokemonMultiHitModifier extends PokemonHeldItemModifier {
     damageMultiplier: NumberHolder | null = null,
   ): boolean {
     const move = allMoves[moveId];
-    /**
-     * The move must meet Parental Bond's restrictions for this item
-     * to apply. This means
-     * - Only attacks are boosted
-     * - Multi-strike moves, charge moves, and self-sacrificial moves are not boosted
-     *   (though Multi-Lens can still affect moves boosted by Parental Bond)
-     * - Multi-target moves are not boosted *unless* they can only hit a single Pokemon
-     * - Fling, Uproar, Rollout, Ice Ball, and Endeavor are not boosted
-     */
+
+    // Check if move can be enhanced or not.
+    // We intentionally allow spread moves to be enhanced with Multi Lens (unlike PB)
     if (!move.canBeMultiStrikeEnhanced(pokemon)) {
       return false;
     }
