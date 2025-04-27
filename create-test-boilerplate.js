@@ -74,7 +74,7 @@ async function runInteractive() {
   // Convert fileName to kebab-case
   // Ex: "Cud Chew/Cud-Chew" --> "cud-chew"
   const fileName = fileNameAnswer.userInput
-    .replace(/([a-z])([A-Z])/g, "$1_$2") // Convert camelCase to snake_case
+    .replace(/([a-z])([A-Z])/g, "$1-$2") // Convert camelCase to kebab-case
     .replace(/\s+/g, "-") // Replace spaces with underscores
     .toLowerCase(); // Ensure all lowercase
 
