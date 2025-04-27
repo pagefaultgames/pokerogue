@@ -77,6 +77,7 @@ import type { AbAttrCondition, PokemonDefendCondition, PokemonStatStageChangeCon
 import type { BattlerIndex } from "#app/battle";
 import type Move from "#app/data/moves/move";
 import type { ArenaTrapTag, SuppressAbilitiesTag } from "#app/data/arena-tag";
+import { SelectBiomePhase } from "#app/phases/select-biome-phase";
 
 export class BlockRecoilDamageAttr extends AbAttr {
   constructor() {
@@ -3176,6 +3177,7 @@ export class PreSetStatusAbAttr extends AbAttr {
  */
 export class PreSetStatusEffectImmunityAbAttr extends PreSetStatusAbAttr {
   protected immuneEffects: StatusEffect[];
+  private lastEffect: StatusEffect;
 
   /**
    * @param immuneEffects - The status effects to which the Pokémon is immune.
@@ -3201,6 +3203,7 @@ export class PreSetStatusEffectImmunityAbAttr extends PreSetStatusAbAttr {
    */
   override applyPreSetStatus(pokemon: Pokemon, passive: boolean, simulated: boolean, effect: StatusEffect, cancelled: BooleanHolder, args: any[]): void {
     cancelled.value = true;
+    this.lastEffect = effect;
   }
 
   getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
@@ -3208,7 +3211,7 @@ export class PreSetStatusEffectImmunityAbAttr extends PreSetStatusAbAttr {
       i18next.t("abilityTriggers:statusEffectImmunityWithName", {
         pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
         abilityName,
-        statusEffectName: getStatusEffectDescriptor(args[0] as StatusEffect)
+        statusEffectName: getStatusEffectDescriptor(this.lastEffect)
       }) :
       i18next.t("abilityTriggers:statusEffectImmunity", {
         pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
@@ -5576,6 +5579,11 @@ class ForceSwitchOutHelper {
 
         if (switchOutTarget.hp) {
           globalScene.pushPhase(new BattleEndPhase(false));
+
+          if (globalScene.gameMode.hasRandomBiomes || globalScene.isNewBiome()) {
+            globalScene.pushPhase(new SelectBiomePhase());
+          }
+
           globalScene.pushPhase(new NewBattlePhase());
         }
       }
@@ -7310,7 +7318,7 @@ export function initAbilities() {
     new Ability(Abilities.CURIOUS_MEDICINE, 8)
       .attr(PostSummonClearAllyStatStagesAbAttr),
     new Ability(Abilities.TRANSISTOR, 8)
-      .attr(MoveTypePowerBoostAbAttr, PokemonType.ELECTRIC),
+      .attr(MoveTypePowerBoostAbAttr, PokemonType.ELECTRIC, 1.3),
     new Ability(Abilities.DRAGONS_MAW, 8)
       .attr(MoveTypePowerBoostAbAttr, PokemonType.DRAGON),
     new Ability(Abilities.CHILLING_NEIGH, 8)

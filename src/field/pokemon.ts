@@ -249,6 +249,7 @@ import { PLAYER_PARTY_MAX_SIZE } from "#app/constants";
 import { CustomPokemonData } from "#app/data/custom-pokemon-data";
 import { SwitchType } from "#enums/switch-type";
 import { SpeciesFormKey } from "#enums/species-form-key";
+import {getStatusEffectOverlapText } from "#app/data/status-effect";
 import {
   BASE_HIDDEN_ABILITY_CHANCE,
   BASE_SHINY_CHANCE,
@@ -4618,7 +4619,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     };
   }
 
-  /** Calculate whether the given move critically hits this pokemon 
+  /** Calculate whether the given move critically hits this pokemon
    * @param source - The {@linkcode Pokemon} using the move
    * @param move - The {@linkcode Move} being used
    * @param simulated - If `true`, suppresses changes to game state during calculation (defaults to `true`)
@@ -4647,7 +4648,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     applyAbAttrs(BlockCritAbAttr, this, null, simulated, isCritical);
 
     return isCritical.value;
-    
+
   }
 
   /**
@@ -4713,7 +4714,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Given the damage, adds a new DamagePhase and update HP values, etc.
-   * 
+   *
    * Checks for 'Indirect' HitResults to account for Endure/Reviver Seed applying correctly
    * @param damage integer - passed to damage()
    * @param result an enum if it's super effective, not very, etc.
@@ -5385,6 +5386,18 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     );
   }
 
+  queueImmuneMessage(quiet: boolean, effect?: StatusEffect): void {
+    if (!effect || quiet) {
+      return;
+    }
+    const message = effect && this.status?.effect === effect
+    ? getStatusEffectOverlapText(effect ?? StatusEffect.NONE, getPokemonNameWithAffix(this))
+    : i18next.t("abilityTriggers:moveImmunity", {
+        pokemonNameWithAffix: getPokemonNameWithAffix(this),
+      });
+    globalScene.queueMessage(message);
+  }
+
   /**
    * Checks if a status effect can be applied to the Pokemon.
    *
@@ -5403,7 +5416,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   ): boolean {
     if (effect !== StatusEffect.FAINT) {
       if (overrideStatus ? this.status?.effect === effect : this.status) {
-        // Only 1 non-volatile status per pokemon (subsequent attempts always fail)
+        this.queueImmuneMessage(quiet, effect);
         return false;
       }
       if (
@@ -5411,18 +5424,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         !ignoreField &&
         globalScene.arena.terrain?.terrainType === TerrainType.MISTY
       ) {
-        // Misty terrain prevents status application
+        this.queueImmuneMessage(quiet, effect);
         return false;
       }
-    }
-
-    if (
-      sourcePokemon &&
-      sourcePokemon !== this &&
-      this.isSafeguarded(sourcePokemon)
-    ) {
-      // Safeguard blocks all non-self inflicted status effects
-      return false;
     }
 
     const types = this.getTypes(true, true);
@@ -5430,15 +5434,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     switch (effect) {
       case StatusEffect.POISON:
       case StatusEffect.TOXIC:
-        // Check whether any of the Pokemon's types is immune to Poison/Toxic
-        // and not being ignored by the source pokemon's ability
-        const typeImmune = types.some(defType => {
+        // Check if the Pokemon is immune to Poison/Toxic or if the source pokemon is canceling the immunity
+        const poisonImmunity = types.map(defType => {
+          // Check if the Pokemon is not immune to Poison/Toxic
           if (defType !== PokemonType.POISON && defType !== PokemonType.STEEL) {
-            // type not immune to poison
             return false;
           }
 
-          // Check if the source Pokemon has an ability that cancels the immunity
+          // Check if the source Pokemon has an ability that cancels the Poison/Toxic immunity
           const cancelImmunity = new BooleanHolder(false);
           if (sourcePokemon) {
             applyAbAttrs(
@@ -5449,17 +5452,24 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
               effect,
               defType,
             );
+            if (cancelImmunity.value) {
+              return false;
+            }
           }
 
-          return !cancelImmunity.value;
+            return true;
         });
 
-        if (typeImmune) {
-          return false;
+        if (this.isOfType(PokemonType.POISON) || this.isOfType(PokemonType.STEEL)) {
+          if (poisonImmunity.includes(true)) {
+            this.queueImmuneMessage(quiet, effect);
+            return false;
+          }
         }
         break;
       case StatusEffect.PARALYSIS:
         if (this.isOfType(PokemonType.ELECTRIC)) {
+          this.queueImmuneMessage(quiet, effect);
           return false;
         }
         break;
@@ -5468,6 +5478,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           this.isGrounded() &&
           globalScene.arena.terrain?.terrainType === TerrainType.ELECTRIC
         ) {
+          this.queueImmuneMessage(quiet, effect);
           return false;
         }
         break;
@@ -5480,17 +5491,18 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
               globalScene.arena.weather.weatherType,
             ))
         ) {
+          this.queueImmuneMessage(quiet, effect);
           return false;
         }
         break;
       case StatusEffect.BURN:
         if (this.isOfType(PokemonType.FIRE)) {
+          this.queueImmuneMessage(quiet, effect);
           return false;
         }
         break;
     }
 
-    // Check any status immunity abilities from the user or its allies
     const cancelled = new BooleanHolder(false);
     applyPreSetStatusAbAttrs(
       StatusEffectImmunityAbAttr,
@@ -5512,8 +5524,25 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         quiet, this, sourcePokemon,
       )
       if (cancelled.value) {
-        return false;
+        break;
       }
+    }
+
+    if (cancelled.value) {
+      return false;
+    }
+
+    if (
+      sourcePokemon &&
+      sourcePokemon !== this &&
+      this.isSafeguarded(sourcePokemon)
+    ) {
+      if(!quiet){
+        globalScene.queueMessage(
+          i18next.t("moveTriggers:safeguard", { targetName: getPokemonNameWithAffix(this)
+        }));
+      }
+      return false;
     }
 
     return true;
@@ -5527,7 +5556,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     sourceText: string | null = null,
     overrideStatus?: boolean
   ): boolean {
-    if (!this.canSetStatus(effect, asPhase, overrideStatus, sourcePokemon)) {
+    if (!this.canSetStatus(effect, false, overrideStatus, sourcePokemon)) {
       return false;
     }
     if (this.isFainted() && effect !== StatusEffect.FAINT) {

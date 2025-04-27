@@ -163,6 +163,7 @@ describe("Moves - Whirlwind", () => {
 
   it("should not pull in the other trainer's pokemon in a partner trainer battle", async () => {
     game.override
+      .startingWave(2)
       .battleType(BattleType.TRAINER)
       .randomTrainer({
         trainerType: TrainerType.BREEDER,
