@@ -423,17 +423,10 @@ export class MoveEffectPhase extends PokemonPhase {
         globalScene.applyModifiers(HitHealModifier, this.player, user);
         this.getTargets().forEach(target => (target.turnData.moveEffectiveness = null));
 
-        // proc dancer
-        console.log("AJJFJJJF");
+        console.log(user.getMoveset());
         globalScene.getField(true).forEach(p =>
-          applyPostMoveUsedAbAttrs(
-            PostMoveUsedAbAttr,
-            p,
-            user.getMoveset().find(m => m.moveId === this.move.id)!, // TODO: is this bang correct?
-            user,
-            this.targets,
-            this.hitChecks,
-          ),
+          // proc dancer
+          applyPostMoveUsedAbAttrs(PostMoveUsedAbAttr, p, this.move, user, this.targets, this.hitChecks),
         );
       }
     }

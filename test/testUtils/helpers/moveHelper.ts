@@ -131,7 +131,7 @@ export class MoveHelper extends GameManagerHelper {
    */
   public async learnMove(move: Moves | number, partyIndex = 0, moveSlotIndex = 0) {
     return new Promise<void>(async (resolve, reject) => {
-      this.game.scene.pushPhase(new LearnMovePhase(partyIndex, move));
+      this.game.scene.unshiftPhase(new LearnMovePhase(partyIndex, move));
 
       // if slots are full, queue up inputs to replace existing moves
       if (this.game.scene.getPlayerParty()[partyIndex].moveset.filter(m => m).length === 4) {

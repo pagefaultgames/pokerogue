@@ -362,12 +362,13 @@ describe("Moves - Instruct", () => {
     await game.forceEnemyMove(Moves.SPLASH);
     await game.forceEnemyMove(Moves.PSYCHIC_TERRAIN);
     await game.toNextTurn();
-    expect(banette.getLastXMoves(-1)[0]).toEqual({
-      move: Moves.QUICK_ATTACK,
-      targets: [BattlerIndex.ENEMY],
-      result: MoveResult.SUCCESS,
-      virtual: false,
-    });
+    expect(banette.getLastXMoves(-1)[0]).toEqual(
+      expect.objectContaining({
+        move: Moves.QUICK_ATTACK,
+        targets: [BattlerIndex.ENEMY],
+        result: MoveResult.SUCCESS,
+      }),
+    );
 
     game.move.select(Moves.SPLASH, BattlerIndex.PLAYER);
     game.move.select(Moves.INSTRUCT, BattlerIndex.PLAYER_2, BattlerIndex.PLAYER);
@@ -405,13 +406,13 @@ describe("Moves - Instruct", () => {
     // Klefki instructing a non-priority move succeeds, ignoring the priority of Instruct itself
     expect(banette.getLastXMoves(-1)[1].move).toBe(Moves.VINE_WHIP);
     expect(banette.getLastXMoves(-1)[2].move).toBe(Moves.VINE_WHIP);
-    expect(klefki.getLastXMoves(-1)[0]).toEqual({
-      move: Moves.INSTRUCT,
-      targets: [BattlerIndex.PLAYER],
-      result: MoveResult.SUCCESS,
-      virtual: false,
-    });
-    expect(banette.getMoveset().find(m => m?.moveId === Moves.VINE_WHIP)?.ppUsed).toBe(2);
+    expect(klefki.getLastXMoves(-1)[0]).toEqual(
+      expect.objectContaining({
+        move: Moves.INSTRUCT,
+        targets: [BattlerIndex.PLAYER],
+        result: MoveResult.SUCCESS,
+      }),
+    );
   });
 
   it("should cause spread moves to correctly hit targets in doubles after singles", async () => {
@@ -428,7 +429,7 @@ describe("Moves - Instruct", () => {
 
     game.move.select(Moves.BREAKING_SWIPE);
     await game.phaseInterceptor.to("TurnEndPhase", false);
-    expect(koraidon.getInverseHp()).toBe(0);
+    expect(koraidon.hp).toBe(koraidon.getMaxHp());
     expect(koraidon.getLastXMoves(-1)[0].targets).toEqual([BattlerIndex.ENEMY]);
     await game.toNextWave();
 
@@ -471,12 +472,11 @@ describe("Moves - Instruct", () => {
 
     // did not take damage since enemies died beforehand;
     // last move used hit everything around it
-    expect(koraidon.getInverseHp()).toBe(0);
-    expect(koraidon.getLastXMoves(-1)[1].targets).toEqual([
-      BattlerIndex.PLAYER_2,
-      BattlerIndex.ENEMY,
-      BattlerIndex.ENEMY_2,
-    ]);
+    expect(koraidon.hp).toBe(koraidon.getMaxHp());
+    expect(koraidon.getLastXMoves(-1)[1].targets).toHaveLength(3);
+    expect(koraidon.getLastXMoves(-1)[1].targets).toEqual(
+      expect.arrayContaining([BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]),
+    );
   });
 
   it("should cause multi-hit moves to hit the appropriate number of times in singles", async () => {

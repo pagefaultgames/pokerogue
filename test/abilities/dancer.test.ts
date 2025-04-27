@@ -15,7 +15,9 @@ describe("Abilities - Dancer", () => {
   let game: GameManager;
 
   /**
-   * Check that the {@linkcode Pokemon} using a move in the current {@linkcode MovePhase} */
+   * Check that the specified {@linkcode Pokemon} is using the specified move
+   * in the current {@linkcode MovePhase} against the specified targets.
+   */
   function checkCurrentMoveUser(pokemon: Pokemon | undefined, move: Moves, targets?: BattlerIndex[]) {
     const currentPhase = game.scene.getCurrentPhase() as MovePhase;
     expect(currentPhase).not.toBeNull();
@@ -23,7 +25,8 @@ describe("Abilities - Dancer", () => {
     expect.soft(currentPhase.pokemon).toBe(pokemon);
     expect.soft(currentPhase.move.moveId).toBe(move);
     if (targets) {
-      expect.soft(currentPhase.targets).toEqual(targets);
+      expect.soft(currentPhase.targets).toHaveLength(targets.length);
+      expect.soft(currentPhase.targets).toEqual(expect.arrayContaining(targets));
     }
   }
 
@@ -43,34 +46,42 @@ describe("Abilities - Dancer", () => {
   });
 
   // Reference Link: https://bulbapedia.bulbagarden.net/wiki/Dancer_(Ability)
+
   it("should copy dance moves in speed order without consuming extra PP", async () => {
     game.override.enemyAbility(Abilities.DANCER).enemyMoveset(Moves.VICTORY_DANCE);
     await game.classicMode.startBattle([Species.ORICORIO, Species.FEEBAS]);
 
-    const [oricorio, feebas] = game.scene.getPlayerField();
+    const [oricorio, feebas, shuckle1, shuckle2] = game.scene.getField();
+
     game.move.changeMoveset(oricorio, [Moves.SWORDS_DANCE, Moves.VICTORY_DANCE, Moves.SPLASH]);
     game.move.changeMoveset(feebas, [Moves.SWORDS_DANCE, Moves.SPLASH]);
+    shuckle2.setStat(Stat.SPD, shuckle1.getStat(Stat.SPD) - 1); // set shuckle 2 slower than shuckle 1 for dancer resolution
 
     game.move.select(Moves.SPLASH, BattlerIndex.PLAYER);
     game.move.select(Moves.REVELATION_DANCE, BattlerIndex.PLAYER_2);
-    await game.setTurnOrder([BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.PLAYER, BattlerIndex.ENEMY_2]);
+    await game.setTurnOrder([BattlerIndex.PLAYER_2, BattlerIndex.PLAYER, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
 
     await game.phaseInterceptor.to("MovePhase"); // feebas uses swords dance
     await game.phaseInterceptor.to("MovePhase", false); // oricorio copies swords dance
-
     checkCurrentMoveUser(oricorio, Moves.SWORDS_DANCE, [BattlerIndex.PLAYER]);
 
-    await game.phaseInterceptor.to("MovePhase"); // shuckle 1 copies swords dance
+    await game.phaseInterceptor.to("MovePhase", false); // shuckle 1 copies swords dance
+    checkCurrentMoveUser(shuckle1, Moves.SWORDS_DANCE, [BattlerIndex.ENEMY]);
+
     await game.phaseInterceptor.to("MovePhase", false); // shuckle 2 copies swords dance
+    checkCurrentMoveUser(shuckle2, Moves.SWORDS_DANCE, [BattlerIndex.ENEMY_2]);
+
+    await game.phaseInterceptor.to("MovePhase"); // Oricorio uses splash
 
     await game.phaseInterceptor.to("MovePhase"); // shuckle 1 uses victory dance
     await game.phaseInterceptor.to("MovePhase", false); // oricorio copies victory dance
-
     checkCurrentMoveUser(oricorio, Moves.VICTORY_DANCE, [BattlerIndex.PLAYER]);
+
+    // ...
 
     await game.phaseInterceptor.to("BerryPhase"); // finish the turn
 
-    // doesn't use PP if copied move is also in moveset
+    // shpuldn't use PP if copied move is also in moveset
     expect(oricorio.moveset[0]?.ppUsed).toBe(0);
     expect(oricorio.moveset[1]?.ppUsed).toBe(0);
     expect(oricorio.getStatStage(Stat.ATK)).toBe(4); // 2 from swords dance, 1x2 from victory dance
@@ -83,11 +94,11 @@ describe("Abilities - Dancer", () => {
     const oricorio = game.scene.getPlayerPokemon()!;
     expect(oricorio).toBeDefined();
 
-    // oricorio uses splash, everyone else uses rev dance
+    // oricorio uses splash, everyone else dances like crazy
     game.move.select(Moves.SPLASH, BattlerIndex.PLAYER);
     game.move.select(Moves.REVELATION_DANCE, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY_2);
     await game.forceEnemyMove(Moves.FIERY_DANCE, BattlerIndex.PLAYER);
-    await game.forceEnemyMove(Moves.FIERY_DANCE, BattlerIndex.PLAYER);
+    await game.forceEnemyMove(Moves.FIERY_DANCE, BattlerIndex.PLAYER_2);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
 
     await game.phaseInterceptor.to("MovePhase"); // oricorio splash
@@ -95,7 +106,7 @@ describe("Abilities - Dancer", () => {
     await game.phaseInterceptor.to("MovePhase"); // feebas uses rev dance on shuckle #2
     await game.phaseInterceptor.to("MovePhase", false); // oricorio copies rev dance
 
-    // Since our ally used rev dance, oricorio should target the same slot as them
+    // Since our ally used rev dance, oricorio should target the same slot as they did
     checkCurrentMoveUser(oricorio, Moves.REVELATION_DANCE, [BattlerIndex.ENEMY_2]);
 
     await game.phaseInterceptor.to("MovePhase"); // shuckle 1 uses fiery dance
@@ -109,8 +120,7 @@ describe("Abilities - Dancer", () => {
     checkCurrentMoveUser(oricorio, Moves.FIERY_DANCE, [BattlerIndex.ENEMY_2]);
   });
 
-  // TODO: Fix sometime
-  it.todo("should not trigger on failed/ineffective moves", async () => {
+  it("should not trigger on failed/ineffective moves", async () => {
     game.override
       .battleStyle("single")
       .moveset([Moves.SPLASH, Moves.PROTECT])
@@ -159,7 +169,7 @@ describe("Abilities - Dancer", () => {
       .battleStyle("single")
       .moveset([Moves.PROTECT, Moves.SPLASH])
       .enemyMoveset([Moves.TEETER_DANCE, Moves.SWORDS_DANCE]);
-    /* .confusionActivation(false); // disable confusion unless forced by mocks*/
+    /*       .confusionActivation(false); // disable confusion unless forced by mocks */
     await game.classicMode.startBattle([Species.ORICORIO]);
 
     const oricorio = game.scene.getPlayerPokemon()!;
