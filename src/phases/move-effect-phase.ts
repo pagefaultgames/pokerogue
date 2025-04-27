@@ -137,11 +137,11 @@ export class MoveEffectPhase extends PokemonPhase {
    * Compute targets and the results of hit checks of the invoked move against all targets,
    * organized by battler index.
    *
-   * **This is *not* a pure function**; it has the following side effects
-   * - `this.hitChecks` - The results of the hit checks against each target
-   * - `this.moveHistoryEntry` - Sets success or failure based on the hit check results
-   * - user.turnData.hitCount and user.turnData.hitsLeft - Both set to 1 if the
-   *   move was unsuccessful against all targets
+   * **This is *not* a pure function** and has the following side effects:
+   * - Sets `this.hitChecks` to the results of the hit checks against each target
+   * - Sets success/failure of `this.moveHistoryEntry` based on the hit check results
+   * - Sets `user.turnData.hitCount` and `user.turnData.hitsLeft` to 1 if the move
+   * was unsuccessful against all targets (effectively canceling it)
    *
    * @returns The targets of the invoked move
    * @see {@linkcode hitCheck}
@@ -285,6 +285,7 @@ export class MoveEffectPhase extends PokemonPhase {
         super.end();
         return;
       }
+      // TODO: Remove after cud chew PR gets merged
       if (isNullOrUndefined(user.turnData)) {
         user.resetTurnData();
       }
@@ -418,7 +419,8 @@ export class MoveEffectPhase extends PokemonPhase {
       return;
     }
 
-    /** All hits of the move have resolved by now.
+    /**
+     * All hits of the move have resolved by now.
      * Queue message for multi-strike moves before applying Shell Bell & proccing Dancer-like effects.
      */
     const hitsTotal = user.turnData.hitCount - Math.max(user.turnData.hitsLeft, 0);
@@ -681,7 +683,7 @@ export class MoveEffectPhase extends PokemonPhase {
   /**
    * @returns - An array of {@linkcode Pokemon} that are:
    * - On-field
-   *
+   * - Non-fainted
    * - Targeted by this phase's invoked move
    */
   public getTargets(): Pokemon[] {
@@ -758,7 +760,7 @@ export class MoveEffectPhase extends PokemonPhase {
     user: Pokemon,
     target: Pokemon | null,
     firstTarget?: boolean | null,
-    selfTarget?: boolean,
+    selfTarget = false,
   ): void {
     return applyFilteredMoveAttrs(
       (attr: MoveAttr) =>

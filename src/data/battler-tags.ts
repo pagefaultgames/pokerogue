@@ -493,8 +493,8 @@ export class BeakBlastChargingTag extends BattlerTag {
   /**
    * Inflicts `BURN` status on attackers that make contact, and causes this tag
    * to be removed after the source makes a move (or the turn ends, whichever comes first)
-   * @param pokemon {@linkcode Pokemon} the owner of this tag
-   * @param lapseType {@linkcode BattlerTagLapseType} the type of functionality invoked in battle
+   * @param pokemon - The {@linkcode Pokemon} owning this tag
+   * @param lapseType - The {@linkcode BattlerTagLapseType} dictating what to lapse
    * @returns `true` if invoked with the `AFTER_HIT` lapse type
    */
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
@@ -1694,11 +1694,14 @@ export class ContactDamageProtectedTag extends ContactProtectedTag {
 /** Base class for `BattlerTag`s that block damaging moves but not status moves */
 export class DamageProtectedTag extends ContactProtectedTag {}
 
+/**
+ * BattlerTag to apply status upon a contact move making contact with a protected pokemon.
+ */
 export class ContactSetStatusProtectedTag extends DamageProtectedTag {
   /**
-   * @param sourceMove The move that caused the tag to be applied
-   * @param tagType The type of the tag
-   * @param statusEffect The status effect to apply to the attacker
+   * @param sourceMove - The {@linkcode Moves | move} that applied the tag
+   * @param tagType - The {@linkcode BattlerTagType} to add
+   * @param statusEffect - The {@linkcode StatusEffect} to apply to the attacker
    */
   constructor(
     sourceMove: Moves,
@@ -1710,8 +1713,8 @@ export class ContactSetStatusProtectedTag extends DamageProtectedTag {
 
   /**
    * Set the status effect on the attacker
-   * @param attacker - The pokemon using the contact move
-   * @param user - The pokemon that is being attacked and has the tag
+   * @param attacker - The {@linkcode Pokemon} using the contact move
+   * @param user - The {@linkcode Pokemon} being attacked with this tag
    */
   override onContact(attacker: Pokemon, user: Pokemon): void {
     attacker.trySetStatus(this.statusEffect, true, user);
