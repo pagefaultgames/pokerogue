@@ -532,7 +532,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * @param {boolean} useIllusion - Whether we want the fake name or the real name of the Pokemon (for Illusion ability).
+   * @param useIllusion - Whether we want the fake name or the real name of the Pokemon (for Illusion ability).
    */
   getNameToRender(useIllusion = true) {
     const name: string =
