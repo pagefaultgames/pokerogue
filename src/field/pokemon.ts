@@ -1775,7 +1775,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (doubleShiny) {
       return this.summonData.illusion?.basePokemon?.variant ?? this.variant;
     }
-
     return this.getVariant();
   }
 
