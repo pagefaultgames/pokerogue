@@ -12,6 +12,7 @@ import { Moves } from "#enums/moves";
 import { getMovePosition } from "#test/testUtils/gameManagerUtils";
 import { GameManagerHelper } from "#test/testUtils/helpers/gameManagerHelper";
 import { vi } from "vitest";
+import { makeArray } from "#app/utils/common";
 
 /**
  * Helper to handle a Pokemon's move
@@ -121,9 +122,7 @@ export class MoveHelper extends GameManagerHelper {
    * @param moveset - The {@linkcode Moves} (single or array) to change the Pokemon's moveset to
    */
   public changeMoveset(pokemon: Pokemon, moveset: Moves | Moves[]): void {
-    if (!Array.isArray(moveset)) {
-      moveset = [moveset];
-    }
+    moveset = makeArray(moveset);
     pokemon.moveset = [];
     moveset.forEach(move => {
       pokemon.moveset.push(new PokemonMove(move));

@@ -566,3 +566,10 @@ export function animationFileName(move: Moves): string {
 export function camelCaseToKebabCase(str: string): string {
   return str.replace(/[A-Z]+(?![a-z])|[A-Z]/g, (s, o) => (o ? "-" : "") + s.toLowerCase());
 }
+
+export function makeArray<T>(input: T | T[]): T[] {
+  if (!Array.isArray(input)) {
+    return [input];
+  }
+  return input;
+}
