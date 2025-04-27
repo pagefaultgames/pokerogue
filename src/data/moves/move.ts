@@ -2459,14 +2459,7 @@ export class StatusEffectAttr extends MoveEffectAttr {
     const statusCheck = moveChance < 0 || moveChance === 100 || user.randSeedInt(100) < moveChance;
     if (statusCheck) {
       const pokemon = this.selfTarget ? user : target;
-      if (pokemon.status && !this.overrideStatus) {
-        return false;
-      }
-
-      if (user !== target && target.isSafeguarded(user)) {
-        if (move.category === MoveCategory.STATUS) {
-          globalScene.queueMessage(i18next.t("moveTriggers:safeguard", { targetName: getPokemonNameWithAffix(target) }));
-        }
+      if (user !== target && move.category === MoveCategory.STATUS && !target.canSetStatus(this.effect, false, false, user, true)) {
         return false;
       }
       if (((!pokemon.status || this.overrideStatus) || (pokemon.status.effect === this.effect && moveChance < 0))
@@ -7672,20 +7665,6 @@ export class AverageStatsAttr extends MoveEffectAttr {
   }
 }
 
-export class DiscourageFrequentUseAttr extends MoveAttr {
-  getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
-    const lastMoves = user.getLastXMoves(4);
-    console.log(lastMoves);
-    for (let m = 0; m < lastMoves.length; m++) {
-      if (lastMoves[m].move === move.id) {
-        return (4 - (m + 1)) * -10;
-      }
-    }
-
-    return 0;
-  }
-}
-
 export class MoneyAttr extends MoveEffectAttr {
   constructor() {
     super(true, {firstHitOnly: true });
@@ -10524,8 +10503,7 @@ export function initMoves() {
         } else {
           return 1;
         }
-      })
-      .attr(DiscourageFrequentUseAttr),
+      }),
 
     new AttackMove(Moves.SNIPE_SHOT, PokemonType.WATER, MoveCategory.SPECIAL, 80, 100, 15, -1, 0, 8)
       .attr(HighCritAttr)
