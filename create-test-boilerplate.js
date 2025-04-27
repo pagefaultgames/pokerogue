@@ -75,7 +75,7 @@ async function runInteractive() {
   // Ex: "Cud Chew/Cud-Chew" --> "cud-chew"
   const fileName = fileNameAnswer.userInput
     .replace(/([a-z])([A-Z])/g, "$1-$2") // Convert camelCase to kebab-case
-    .replace(/\s+/g, "-") // Replace spaces with underscores
+    .replace(/\s+/g, "-") // Replace spaces with dashes
     .toLowerCase(); // Ensure all lowercase
 
   // Get proper english name for test names and data name for abilities/moves
