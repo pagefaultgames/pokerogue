@@ -945,7 +945,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
    *
    * @param otherSpecies The species to check; defaults to current species
    * @param otherFormIndex The form index of the form to check; defaults to current form
-   * @returns boolean
+   * @returns `true` if the form is caught
    */
   isFormCaught(otherSpecies?: PokemonSpecies, otherFormIndex?: number | undefined): boolean {
     if (globalScene.dexForDevs) {
