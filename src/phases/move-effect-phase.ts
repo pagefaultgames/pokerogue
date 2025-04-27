@@ -752,7 +752,6 @@ export class MoveEffectPhase extends PokemonPhase {
    * @param firstTarget Whether the target is the first to be hit by the current strike
    * @param selfTarget If defined, limits the effects triggered to either self-targeted
    *  effects (if set to `true`) or targeted effects (if set to `false`).
-   * @returns a `Promise` applying the relevant move effects.
    */
   protected triggerMoveEffects(
     triggerType: MoveEffectTrigger,
@@ -801,6 +800,7 @@ export class MoveEffectPhase extends PokemonPhase {
 
     const hitResult = this.applyMove(user, target, effectiveness);
 
+    // Apply effects to the user (always) and the target (if not blocked by substitute).
     this.triggerMoveEffects(MoveEffectTrigger.POST_APPLY, user, target, firstTarget, true);
     if (!this.move.hitsSubstitute(user, target)) {
       this.applyOnTargetEffects(user, target, hitResult, firstTarget);

@@ -5376,8 +5376,10 @@ export class FrenzyAttr extends MoveEffectAttr {
       return false;
     }
 
+    // If frenzy is not in effect, start rampaging for somewhere between 2-3 turns.
+    // If frenzy is already in effect, tick down the tag.
     if (!user.getTag(BattlerTagType.FRENZY) && !user.getMoveQueue().length) {
-      const turnCount = user.randSeedIntRange(1, 2);
+      const turnCount = user.randSeedIntRange(1, 2); // this excludes current use
       new Array(turnCount).fill(null).map(() => user.getMoveQueue().push({ move: move.id, targets: [ target.getBattlerIndex() ], ignorePP: true }));
       user.addTag(BattlerTagType.FRENZY, turnCount, move.id, user.id);
     } else {

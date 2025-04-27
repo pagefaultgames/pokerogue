@@ -7703,6 +7703,7 @@ export interface AttackMoveResult {
 export class PokemonSummonData {
   /** [Atk, Def, SpAtk, SpDef, Spd, Acc, Eva] */
   public statStages: number[] = [0, 0, 0, 0, 0, 0, 0];
+  /** A queue of moves yet to be executed; used by charging and frenzy moves */
   public moveQueue: TurnMove[] = [];
   public tags: BattlerTag[] = [];
   public abilitySuppressed = false;

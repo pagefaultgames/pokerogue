@@ -270,7 +270,7 @@ export class MovePhase extends BattlePhase {
               attr => attr instanceof HealStatusEffectAttr && attr.selfTarget && attr.isOfEffect(StatusEffect.FREEZE),
             ) || this.pokemon.randSeedInt(5) === 0;
         if (Overrides.STATUS_ACTIVATION_OVERRIDE !== null) {
-          healed = Overrides.STATUS_ACTIVATION_OVERRIDE;
+          healed = !Overrides.STATUS_ACTIVATION_OVERRIDE; // true = frozen, false = heal
         }
 
         activated = !healed;
@@ -316,44 +316,29 @@ export class MovePhase extends BattlePhase {
   protected useMove(): void {
     const targets = this.getActiveTargetPokemon();
     const moveQueue = this.pokemon.getMoveQueue();
+    const move = this.move.getMove();
 
     // form changes happen even before we know that the move wll execute.
     globalScene.triggerPokemonFormChange(this.pokemon, SpeciesFormChangePreMoveTrigger);
 
-    const isDelayedAttack = this.move.getMove().hasAttr(DelayedAttackAttr);
+    const isDelayedAttack = move.hasAttr(DelayedAttackAttr);
     if (isDelayedAttack) {
-      // Check the player side arena if future sight is active
-      const futureSightTags = globalScene.arena.findTags(t => t.tagType === ArenaTagType.FUTURE_SIGHT);
-      const doomDesireTags = globalScene.arena.findTags(t => t.tagType === ArenaTagType.DOOM_DESIRE);
-      let fail = false;
+      // Check the player side arena if another delayed attack is active and hitting the same slot
+      const delayedAttackTags = globalScene.arena.findTags(t =>
+        [ArenaTagType.FUTURE_SIGHT, ArenaTagType.DOOM_DESIRE].includes(t.tagType),
+      ) as DelayedAttackTag[];
       const currentTargetIndex = targets[0].getBattlerIndex();
-      for (const tag of futureSightTags) {
-        if ((tag as DelayedAttackTag).targetIndex === currentTargetIndex) {
-          fail = true;
-          break;
-        }
-      }
-      for (const tag of doomDesireTags) {
-        if ((tag as DelayedAttackTag).targetIndex === currentTargetIndex) {
-          fail = true;
-          break;
-        }
-      }
-      if (fail) {
+
+      if (delayedAttackTags.some(tag => tag.targetIndex === currentTargetIndex)) {
         this.showMoveText();
-        this.showFailedText();
-        this.end();
+        this.failMove();
+        return;
       }
     }
 
-    let success = true;
-    // Check if there are any attributes that can interrupt the move, overriding the fail message.
-    for (const move of this.move.getMove().getAttrs(PreUseInterruptAttr)) {
-      if (move.apply(this.pokemon, targets[0], this.move.getMove())) {
-        success = false;
-        break;
-      }
-    }
+    // Check if the move has any attributes that can interrupt its own use before displaying text.
+    // We assume that any such self-interrupting effects will have a unique message for doing so.
+    let success = !move.getAttrs(PreUseInterruptAttr).some(attr => attr.apply(this.pokemon, targets[0], move));
 
     if (success) {
       this.showMoveText();
@@ -373,7 +358,7 @@ export class MovePhase extends BattlePhase {
       const ppUsed = 1 + this.getPpIncreaseFromPressure(targets);
 
       this.move.usePp(ppUsed);
-      globalScene.eventTarget.dispatchEvent(new MoveUsedEvent(this.pokemon?.id, this.move.getMove(), this.move.ppUsed));
+      globalScene.eventTarget.dispatchEvent(new MoveUsedEvent(this.pokemon?.id, move, this.move.ppUsed));
     }
 
     /**
@@ -387,68 +372,68 @@ export class MovePhase extends BattlePhase {
      * TODO: These steps are straightforward, but the implementation below is extremely convoluted.
      */
 
-    const move = this.move.getMove();
-
     /**
      * Move conditions assume the move has a single target
      * TODO: is this sustainable?
      */
-    let failedDueToTerrain = false;
-    let failedDueToWeather = false;
-    if (success) {
-      const passesConditions = move.applyConditions(this.pokemon, targets[0], move);
-      failedDueToWeather = globalScene.arena.isMoveWeatherCancelled(this.pokemon, move);
-      failedDueToTerrain = globalScene.arena.isMoveTerrainCancelled(this.pokemon, this.targets, move);
-      success = passesConditions && !failedDueToWeather && !failedDueToTerrain;
+    const passesConditions = move.applyConditions(this.pokemon, targets[0], move);
+    const failedDueToWeather = globalScene.arena.isMoveWeatherCancelled(this.pokemon, move);
+    const failedDueToTerrain = globalScene.arena.isMoveTerrainCancelled(this.pokemon, this.targets, move);
+    success &&= passesConditions && !failedDueToWeather && !failedDueToTerrain;
+
+    // Update the battle's "last move" pointer, unless we're currently mimicking a move
+    // or the move failed
+    if (!allMoves[this.move.moveId].hasAttr(CopyMoveAttr) && success) {
+      globalScene.currentBattle.lastMove = this.move.moveId;
     }
 
-    // Update the battle's "last move" pointer, unless we're currently mimicking a move.
-    if (!allMoves[this.move.moveId].hasAttr(CopyMoveAttr)) {
-      // The last move used is unaffected by moves that fail
-      if (success) {
-        globalScene.currentBattle.lastMove = this.move.moveId;
-      }
-    }
-
-    /**
-     * If the move has not failed, trigger ability-based user type changes and then execute it.
-     *
-     * Notably, Roar, Whirlwind, Trick-or-Treat, and Forest's Curse will trigger these type changes even
-     * if the move fails.
-     */
+    // If the move has not failed, trigger ability-based user type changes and then execute its effects.
     if (success) {
-      const move = this.move.getMove();
       applyPreAttackAbAttrs(PokemonTypeChangeAbAttr, this.pokemon, null, move);
       globalScene.unshiftPhase(
         new MoveEffectPhase(this.pokemon.getBattlerIndex(), this.targets, move, this.reflected, this.move.virtual),
       );
     } else {
-      if ([Moves.ROAR, Moves.WHIRLWIND, Moves.TRICK_OR_TREAT, Moves.FORESTS_CURSE].includes(this.move.moveId)) {
-        applyPreAttackAbAttrs(PokemonTypeChangeAbAttr, this.pokemon, null, this.move.getMove());
-      }
-
-      this.pokemon.pushMoveHistory({
-        move: this.move.moveId,
-        targets: this.targets,
-        result: MoveResult.FAIL,
-        virtual: this.move.virtual,
-      });
-
-      const failureMessage = move.getFailedText(this.pokemon, targets[0], move);
-      let failedText: string | undefined;
-      if (failureMessage) {
-        failedText = failureMessage;
-      } else if (failedDueToTerrain) {
-        failedText = getTerrainBlockMessage(targets[0], globalScene.arena.getTerrainType());
-      } else if (failedDueToWeather) {
-        failedText = getWeatherBlockMessage(globalScene.arena.getWeatherType());
-      }
-
-      this.showFailedText(failedText);
-
-      // Remove the user from its semi-invulnerable state (if applicable)
-      this.pokemon.lapseTags(BattlerTagLapseType.MOVE_EFFECT);
+      this.failMove(failedDueToWeather, failedDueToTerrain);
     }
+  }
+
+  /**
+   * Fail the move currently being used.
+   * Handles failure messages, pushing to move history, etc.
+   * Notably, Roar, Whirlwind, Trick-or-Treat, and Forest's Curse will trigger type changes even on failure.
+   * @param failedDueToWeather - Whether the move failed due to weather (default `false`)
+   * @param failedDueToTerrain - Whether the move failed due to terrain (default `false`)
+   */
+  protected failMove(failedDueToWeather = false, failedDueToTerrain = false) {
+    const move = this.move.getMove();
+    const targets = this.getActiveTargetPokemon();
+
+    if ([Moves.ROAR, Moves.WHIRLWIND, Moves.TRICK_OR_TREAT, Moves.FORESTS_CURSE].includes(this.move.moveId)) {
+      applyPreAttackAbAttrs(PokemonTypeChangeAbAttr, this.pokemon, null, move);
+    }
+
+    this.pokemon.pushMoveHistory({
+      move: this.move.moveId,
+      targets: this.targets,
+      result: MoveResult.FAIL,
+      virtual: this.move.virtual,
+    });
+
+    const failureMessage = move.getFailedText(this.pokemon, targets[0], move);
+    let failedText: string | undefined;
+    if (failureMessage) {
+      failedText = failureMessage;
+    } else if (failedDueToTerrain) {
+      failedText = getTerrainBlockMessage(targets[0], globalScene.arena.getTerrainType());
+    } else if (failedDueToWeather) {
+      failedText = getWeatherBlockMessage(globalScene.arena.getWeatherType());
+    }
+
+    this.showFailedText(failedText);
+
+    // Remove the user from its semi-invulnerable state (if applicable)
+    this.pokemon.lapseTags(BattlerTagLapseType.MOVE_EFFECT);
   }
 
   /** Queues a {@linkcode MoveChargePhase} for this phase's invoked move. */
@@ -567,33 +552,36 @@ export class MovePhase extends BattlePhase {
   }
 
   /**
-   * Counter-attacking moves pass in `[`{@linkcode BattlerIndex.ATTACKER}`]` into the constructor's `targets` param.
-   * This function modifies `this.targets` to reflect the actual battler index of the user's last
-   * attacker.
+   * Update the targets of any counter-attacking moves with `[`{@linkcode BattlerIndex.ATTACKER}`]` set
+   * to reflect the actual battler index of the user's last attacker.
    *
-   * If there is no last attacker, or they are no longer on the field, a message is displayed and the
+   * If there is no last attacker or they are no longer on the field, a message is displayed and the
    * move is marked for failure.
    */
   protected resolveCounterAttackTarget(): void {
-    if (this.targets.length === 1 && this.targets[0] === BattlerIndex.ATTACKER) {
-      if (this.pokemon.turnData.attacksReceived.length) {
-        this.targets[0] = this.pokemon.turnData.attacksReceived[0].sourceBattlerIndex;
+    if (this.targets.length !== 1 || this.targets[0] !== BattlerIndex.ATTACKER) {
+      return;
+    }
 
-        // account for metal burst and comeuppance hitting remaining targets in double battles
-        // counterattack will redirect to remaining ally if original attacker faints
-        if (globalScene.currentBattle.double && this.move.getMove().hasFlag(MoveFlags.REDIRECT_COUNTER)) {
-          if (globalScene.getField()[this.targets[0]].hp === 0) {
-            const opposingField = this.pokemon.isPlayer() ? globalScene.getEnemyField() : globalScene.getPlayerField();
-            this.targets[0] = opposingField.find(p => p.hp > 0)?.getBattlerIndex() ?? BattlerIndex.ATTACKER;
-          }
-        }
-      }
+    if (this.pokemon.turnData.attacksReceived.length) {
+      this.targets[0] = this.pokemon.turnData.attacksReceived[0].sourceBattlerIndex;
 
-      if (this.targets[0] === BattlerIndex.ATTACKER) {
-        this.fail();
-        this.showMoveText();
-        this.showFailedText();
+      // account for metal burst and comeuppance hitting remaining targets in double battles
+      // counterattack will redirect to remaining ally if original attacker faints
+      if (
+        globalScene.currentBattle.double &&
+        this.move.getMove().hasFlag(MoveFlags.REDIRECT_COUNTER) &&
+        globalScene.getField()[this.targets[0]].hp === 0
+      ) {
+        const opposingField = this.pokemon.isPlayer() ? globalScene.getEnemyField() : globalScene.getPlayerField();
+        this.targets[0] = opposingField.find(p => p.hp > 0)?.getBattlerIndex() ?? BattlerIndex.ATTACKER;
       }
+    }
+
+    if (this.targets[0] === BattlerIndex.ATTACKER) {
+      this.fail();
+      this.showMoveText();
+      this.showFailedText();
     }
   }
 

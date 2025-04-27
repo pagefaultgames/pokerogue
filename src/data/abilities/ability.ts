@@ -7114,7 +7114,8 @@ export function initAbilities() {
       .attr(PostFaintHPDamageAbAttr)
       .bypassFaint(),
     new Ability(Abilities.DANCER, 7)
-      .attr(PostDancingMoveAbAttr),
+      .attr(PostDancingMoveAbAttr)
+      .edgeCase(), // Does not interact with Petal Dance very well.
     new Ability(Abilities.BATTERY, 7)
       .attr(AllyMoveCategoryPowerBoostAbAttr, [ MoveCategory.SPECIAL ], 1.3),
     new Ability(Abilities.FLUFFY, 7)
