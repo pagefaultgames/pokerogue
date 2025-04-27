@@ -1,4 +1,4 @@
-import { makeArray } from "#app/utils/common";
+import { coerceArray } from "#app/utils/common";
 
 let manifest: object;
 
@@ -12,7 +12,7 @@ export default class CacheBustedLoaderPlugin extends Phaser.Loader.LoaderPlugin 
   }
 
   addFile(file): void {
-    file = makeArray(file);
+    file = coerceArray(file);
 
     file.forEach(item => {
       if (manifest) {
