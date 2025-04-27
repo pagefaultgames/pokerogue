@@ -7028,9 +7028,12 @@ export class EnemyPokemon extends Pokemon {
       }
 
       if (this.hasTrainer() && globalScene.currentBattle) {
-        for (const index in this.ivs) {
-          this.ivs[index] = Math.max(this.ivs[index], Math.floor(globalScene.currentBattle.waveIndex / 10));
+        const { waveIndex } = globalScene.currentBattle;
+        const ivs: number[] = [];
+        while (ivs.length < 6) {
+          ivs.push(this.randSeedIntRange(Math.floor(waveIndex / 10), 31));
         }
+        this.ivs = ivs;
       }
     }
 
