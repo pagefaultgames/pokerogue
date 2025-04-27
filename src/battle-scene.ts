@@ -17,6 +17,7 @@ import {
   isNullOrUndefined,
   BooleanHolder,
   type Constructor,
+  makeArray,
 } from "#app/utils/common";
 import { deepMergeSpriteData } from "#app/utils/data";
 import type { Modifier, ModifierPredicate, TurnHeldItemTransferModifier } from "./modifier/modifier";
@@ -2808,9 +2809,7 @@ export default class BattleScene extends SceneBase {
    * @returns boolean if a targetPhase was found and added
    */
   prependToPhase(phase: Phase | Phase[], targetPhase: Constructor<Phase>): boolean {
-    if (!Array.isArray(phase)) {
-      phase = [phase];
-    }
+    phase = makeArray(phase);
     const targetIndex = this.phaseQueue.findIndex(ph => ph instanceof targetPhase);
 
     if (targetIndex !== -1) {
@@ -2828,9 +2827,7 @@ export default class BattleScene extends SceneBase {
    * @returns `true` if a `targetPhase` was found to append to
    */
   appendToPhase(phase: Phase | Phase[], targetPhase: Constructor<Phase>): boolean {
-    if (!Array.isArray(phase)) {
-      phase = [phase];
-    }
+    phase = makeArray(phase);
     const targetIndex = this.phaseQueue.findIndex(ph => ph instanceof targetPhase);
 
     if (targetIndex !== -1 && this.phaseQueue.length > targetIndex) {
