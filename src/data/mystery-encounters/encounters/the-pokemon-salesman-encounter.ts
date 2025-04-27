@@ -3,7 +3,7 @@ import {
   transitionMysteryEncounterIntroVisuals,
   updatePlayerMoney,
 } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { isNullOrUndefined, NumberHolder, randSeedInt, randSeedItem } from "#app/utils/common";
+import { isNullOrUndefined, randSeedInt, randSeedItem } from "#app/utils/common";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { globalScene } from "#app/global-scene";
 import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
@@ -111,15 +111,15 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter = MysteryEncounterBui
     if (
       r === 0 ||
       ((isNullOrUndefined(species.abilityHidden) || species.abilityHidden === Abilities.NONE) &&
-        (validEventEncounters.length === 0))
+        validEventEncounters.length === 0)
     ) {
       // If you roll 1%, give shiny Magikarp with random variant
       species = getPokemonSpecies(Species.MAGIKARP);
       pokemon = new PlayerPokemon(species, 5, 2, undefined, undefined, true);
     }
     else if (
-      (validEventEncounters.length > 0 && (r <= EVENT_THRESHOLD ||
-      (isNullOrUndefined(species.abilityHidden) || species.abilityHidden === Abilities.NONE)))
+      validEventEncounters.length > 0 &&
+      (r <= EVENT_THRESHOLD || isNullOrUndefined(species.abilityHidden) || species.abilityHidden === Abilities.NONE)
     ) {
       tries = 0;
       do {
