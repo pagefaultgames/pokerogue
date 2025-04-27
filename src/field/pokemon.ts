@@ -41,6 +41,7 @@ import {
   type nil,
   type Constructor,
   randSeedIntRange,
+  makeArray,
 } from "#app/utils/common";
 import type { TypeDamageMultiplier } from "#app/data/type";
 import { getTypeDamageMultiplier, getTypeRgb } from "#app/data/type";
@@ -1774,9 +1775,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     let overrideArray: MoveId | Array<MoveId> = this.isPlayer()
       ? Overrides.MOVESET_OVERRIDE
       : Overrides.OPP_MOVESET_OVERRIDE;
-    if (!Array.isArray(overrideArray)) {
-      overrideArray = [overrideArray];
-    }
+    overrideArray = makeArray(overrideArray);
     if (overrideArray.length > 0) {
       if (!this.isPlayer()) {
         this.moveset = [];

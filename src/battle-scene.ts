@@ -17,6 +17,7 @@ import {
   isNullOrUndefined,
   BooleanHolder,
   type Constructor,
+  makeArray,
 } from "#app/utils/common";
 import { deepMergeSpriteData } from "#app/utils/data";
 import type { Modifier, ModifierPredicate, TurnHeldItemTransferModifier } from "./modifier/modifier";

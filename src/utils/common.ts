@@ -611,3 +611,10 @@ export function getShinyDescriptor(variant: Variant): string {
       return i18next.t("common:commonShiny");
   }
 }
+
+export function makeArray<T>(input: T | T[]): T[] {
+  if (!Array.isArray(input)) {
+    return [input];
+  }
+  return input;
+}

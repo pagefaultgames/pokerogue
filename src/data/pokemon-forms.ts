@@ -1,7 +1,7 @@
 import type Pokemon from "../field/pokemon";
 import { allMoves } from "./data-lists";
 import { MoveCategory } from "#enums/MoveCategory";
-import type { Constructor, nil } from "#app/utils/common";
+import { makeArray, type Constructor, type nil } from "#app/utils/common";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
