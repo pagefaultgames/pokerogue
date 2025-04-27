@@ -91,6 +91,19 @@
         "noUselessSwitchCase": "off", // Explicit > Implicit
         "noUselessConstructor": "warn", // TODO: Refactor and make this an error
         "noBannedTypes": "warn" // TODO: Refactor and make this an error
+      },
+      "nursery": {
+        "noRestrictedTypes": {
+          "level": "error",
+          "options": {
+            "types": {
+              "integer": {
+                "message": "This is an alias for 'number' that can provide false impressions of what values can actually be contained in this variable. Use 'number' instead.",
+                "use": "number"
+              }
+            }
+          }
+        }
       }
     }
   },
