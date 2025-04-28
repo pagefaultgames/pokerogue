@@ -140,7 +140,7 @@ describe("Absolute Avarice - Mystery Encounter", () => {
       expect(enemyField[0].species.speciesId).toBe(Species.GREEDENT);
       const moveset = enemyField[0].moveset.map(m => m.moveId);
       expect(moveset?.length).toBe(4);
-      expect(moveset).toEqual([Moves.BODY_SLAM, Moves.CRUNCH, Moves.SLEEP_TALK, Moves.REST]);
+      expect(moveset).toEqual([Moves.THRASH, Moves.CRUNCH, Moves.BODY_PRESS, Moves.SLACK_OFF]);
 
       const movePhases = phaseSpy.mock.calls.filter(p => p[0] instanceof MovePhase).map(p => p[0]);
       expect(movePhases.length).toBe(1);
