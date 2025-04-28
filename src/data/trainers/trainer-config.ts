@@ -48,7 +48,27 @@ import type {
   TrainerTierPools,
   TrainerConfigs,
   PartyMemberFuncs,
+  TrainerPartyConfigs,
 } from "./typedefs";
+
+export interface TrainerPartyMemberConfig {
+  species: Species | Species[],
+  formIndex?: number,
+  abilityIndex?: number,
+  ability?: Abilities, // Using this will try to get the ability index on its own, useful for 2 mons sharing an ability
+  moves?: Moves[], // Up to 4 moves to set on the mon before move generation
+  teraType?: PokemonType,
+  instantTera?: boolean,
+  isBoss?: boolean,
+  bossBars?: number,
+  ball?: PokeballType,
+  vitamins?: number[] // Quantity of vitamins for each stat
+}
+
+export type TrainerPartySetSlot = [
+  slot: number,
+  config: TrainerPartyMemberConfig | TrainerPartyMemberConfig[]
+]
 
 /** Minimum BST for Pokemon generated onto the Elite Four's teams */
 const ELITE_FOUR_MINIMUM_BST = 460;
@@ -1037,6 +1057,39 @@ function getSpeciesFilterRandomPartyMemberFunc(
 
     return globalScene.addEnemyPokemon(species, level, trainerSlot, undefined, false, undefined, postProcess);
   };
+}
+
+export const trainerPartyConfigs: TrainerPartyConfigs = {
+  [TrainerType.LORELEI]: [
+    [ 0, {
+      species: Species.DEWGONG,
+      ability: Abilities.THICK_FAT,
+    }],
+    [ 2, {
+      species: [Species.SLOWBRO, Species.GALAR_SLOWBRO ],
+      teraType: PokemonType.ICE,
+      instantTera: true,
+      moves: [Moves.ICE_BEAM],
+    }],
+    [ 3, {species: Species.JYNX}],
+    [ 4, {species: [Species.CLOYSTER, Species.ALOLA_SANDSLASH]}],
+    [ 5, {species: Species.LAPRAS, isBoss: true, bossBars: 2}]
+  ],
+  [TrainerType.LANCE]: [
+    [ 0, {species: Species.KINGDRA}],
+    [ 2, [{
+      species: Species.GYARADOS,
+      moves: [Moves.OUTRAGE]
+      },
+      {
+      species: Species.AERODACTYL,
+      moves: [Moves.DRAGON_CLAW]
+      }]
+    ],
+    [ 3, {species: Species.ALOLA_EXEGGUTOR}],
+    [ 4, {species: Species.SALAMENCE}],
+    [ 5, {species: Species.DRAGONITE, isBoss: true, bossBars: 2}]
+  ]
 }
 
 export const trainerConfigs: TrainerConfigs = {
