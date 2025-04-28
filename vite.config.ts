@@ -1,9 +1,14 @@
+import InlineEnum from "unplugin-inline-enum/vite";
 import { defineConfig, loadEnv, type Rollup, type UserConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 import { minifyJsonPlugin } from "./src/plugins/vite/vite-minify-json-plugin";
 
 export const defaultConfig: UserConfig = {
-  plugins: [tsconfigPaths(), minifyJsonPlugin(["images", "battle-anims"], true)],
+  plugins: [
+    tsconfigPaths(),
+    minifyJsonPlugin(["images", "battle-anims"], true),
+    InlineEnum({ scanPattern: ["**/*.{cts,mts,ts,tsx}", "!**/*.d.ts"] }),
+  ],
   clearScreen: false,
   appType: "mpa",
   build: {
