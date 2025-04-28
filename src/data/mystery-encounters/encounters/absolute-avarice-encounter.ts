@@ -232,7 +232,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter = MysteryEncounterBuilde
           isBoss: true,
           bossSegments: 3,
           shiny: false, // Shiny lock because of consistency issues between the different options
-          moveSet: [Moves.THRASH, Moves.CRUNCH, Moves.BODY_PRESS, Moves.STUFF_CHEEKS],
+          moveSet: [Moves.THRASH, Moves.CRUNCH, Moves.BODY_PRESS, Moves.SLACK_OFF],
           modifierConfigs: bossModifierConfigs,
           tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
           mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
