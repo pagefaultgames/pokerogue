@@ -7665,20 +7665,6 @@ export class AverageStatsAttr extends MoveEffectAttr {
   }
 }
 
-export class DiscourageFrequentUseAttr extends MoveAttr {
-  getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
-    const lastMoves = user.getLastXMoves(4);
-    console.log(lastMoves);
-    for (let m = 0; m < lastMoves.length; m++) {
-      if (lastMoves[m].move === move.id) {
-        return (4 - (m + 1)) * -10;
-      }
-    }
-
-    return 0;
-  }
-}
-
 export class MoneyAttr extends MoveEffectAttr {
   constructor() {
     super(true, {firstHitOnly: true });
@@ -10517,8 +10503,7 @@ export function initMoves() {
         } else {
           return 1;
         }
-      })
-      .attr(DiscourageFrequentUseAttr),
+      }),
 
     new AttackMove(Moves.SNIPE_SHOT, PokemonType.WATER, MoveCategory.SPECIAL, 80, 100, 15, -1, 0, 8)
       .attr(HighCritAttr)
