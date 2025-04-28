@@ -39,7 +39,7 @@
     ]
   },
 
-  // While it'd be nice to enable consistent sorting, this stuff screws with circular import resolution order
+  // While it'd be nice to enable consistent sorting, enabling this causes issues due to circular import resolution order
   // TODO: Remove if we ever get down to 0 circular imports
   "organizeImports": { "enabled": false },
   "linter": {
