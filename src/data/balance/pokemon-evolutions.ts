@@ -154,29 +154,41 @@ export class SpeciesEvolutionCondition {
       switch(cond) {
         case EvoCondKey.FRIENDSHIP:
           str.push(i18next.t("pokemonEvolutions:friendship"));
+          break;
         case EvoCondKey.TIME:
           str.push(i18next.t(`pokemonEvolutions:timeOfDay.${TimeOfDay[this.data.time![0]]}`));
+          break;
         case EvoCondKey.MOVE_TYPE:
           str.push(i18next.t("pokemonEvolutions:moveType", {type: i18next.t(`pokemonInfo:Type.${this.data.moveType!}`)}));
+          break;
         case EvoCondKey.PARTY_TYPE:
           str.push(i18next.t("pokemonEvolutions:partyType", {type: i18next.t(`pokemonInfo:Type.${this.data.partyType!}`)}));
+          break;
         case EvoCondKey.GENDER:
           str.push(i18next.t(`pokemonEvolutions:gender.${Gender[this.data.gender!]}`));
+          break;
         case EvoCondKey.MOVE:
         case EvoCondKey.TYROGUE:
           str.push(i18next.t("pokemonEvolutions:move", {move: allMoves[this.data.move!].name}));
+          break;
         case EvoCondKey.BIOME:
           str.push(i18next.t("pokemonEvolutions:biome"));
+          break;
         case EvoCondKey.NATURE:
           str.push(i18next.t("pokemonEvolutions:nature"));
+          break;
         case EvoCondKey.WEATHER:
           str.push(i18next.t("pokemonEvolutions:weather"));
+          break;
         case EvoCondKey.SHEDINJA:
           str.push(i18next.t("pokemonEvolutions:shedinja"));
+          break;
         case EvoCondKey.EVO_COUNTER:
           str.push(i18next.t("pokemonEvolutions:treasure"));
+          break;
         case EvoCondKey.SPECIES_CAUGHT:
           str.push(i18next.t("pokemonEvolutions:caught", {species: getPokemonSpecies(this.data.speciesCaught!).name}));
+          break;
       }
     });
     return str.join(i18next.t("pokemonEvolutions:connector"));
@@ -207,8 +219,8 @@ export class SpeciesEvolutionCondition {
             ).length >= this.data.evoCount!;
         case EvoCondKey.GENDER:
           return pokemon.gender === this.data.gender;
-        case EvoCondKey.SHEDINJA:
-          return globalScene.getPlayerParty().length < 6 && globalScene.pokeballCounts[PokeballType.POKEBALL] > 0;
+        case EvoCondKey.SHEDINJA: // Shedinja cannot be evolved into directly
+          return false;
         case EvoCondKey.BIOME:
           return this.data.biome?.includes(globalScene.arena.biomeType);
         case EvoCondKey.WEATHER:
@@ -228,6 +240,10 @@ export class SpeciesEvolutionCondition {
       }
     });
   }
+}
+
+export function validateShedinjaEvo(): boolean {
+  return globalScene.getPlayerParty().length < 6 && globalScene.pokeballCounts[PokeballType.POKEBALL] > 0;
 }
 
 export class SpeciesFormEvolution {
@@ -253,26 +269,25 @@ export class SpeciesFormEvolution {
   }
 
   get description(): string {
-    if (this.desc.length > 0) {
-      return this.desc;
+    if (this.desc.length === 0) {
+      const strings: string[] = [];
+      if (this.level > 1) {
+        strings.push(i18next.t("pokemonEvolutions:level") + ` ${this.level}`);
+      }
+      if (this.item) {
+        const itemDescription = i18next.t(`modifierType:EvolutionItem.${EvolutionItem[this.item].toUpperCase()}`);
+        const rarity = this.item > 50 ? i18next.t("pokemonEvolutions:ULTRA") : i18next.t("pokemonEvolutions:GREAT");
+        strings.push(i18next.t("pokemonEvolutions:using") + itemDescription + ` (${rarity})`);
+      }
+      if (this.condition) {
+        strings.push(this.condition.description);
+      }
+      this.desc = strings
+        .filter(str => str !== "")
+        .map((str, index) => index > 0 ? str[0].toLowerCase() + str.slice(1) : str)
+        .join(i18next.t("pokemonEvolutions:connector"));
     }
-    const strings: string[] = [];
-    if (this.level > 1) {
-      strings.push(i18next.t("pokemonEvolutions:level") + ` ${this.level}`);
-    }
-    if (this.item) {
-      const itemDescription = i18next.t(`modifierType:EvolutionItem.${EvolutionItem[this.item].toUpperCase()}`);
-      const rarity = this.item > 50 ? i18next.t("pokemonEvolutions:ULTRA") : i18next.t("pokemonEvolutions:GREAT");
-      strings.push(i18next.t("pokemonEvolutions:using") + itemDescription + ` (${rarity})`);
-    }
-    if (this.condition) {
-      strings.push(this.condition.description);
-    }
-    return strings
-      .filter(str => str !== "")
-      .map((str, index) => index > 0 ? str[0].toLowerCase() + str.slice(1) : str)
-      .join(i18next.t("pokemonEvolutions:connector"));
-
+    return this.desc;
   }
 
   /**
@@ -284,12 +299,11 @@ export class SpeciesFormEvolution {
    */
   public validate(pokemon: Pokemon, forFusion: boolean = false, item?: EvolutionItem): boolean {
     return (
-      // If an item is given, check if it's the right one
-      item === this.item &&
       pokemon.level >= this.level &&
       // Check form key, using the fusion's form key if we're checking the fusion
-      (isNullOrUndefined(this.preFormKey) || (forFusion ? pokemon.getFormKey() : pokemon.getFusionFormKey()) === this.preFormKey) &&
-      (this.condition === null || this.condition?.conditionsFulfilled(pokemon))
+      (isNullOrUndefined(this.preFormKey) || (forFusion ? pokemon.getFusionFormKey() : pokemon.getFormKey()) === this.preFormKey) &&
+      (isNullOrUndefined(this.condition) || this.condition?.conditionsFulfilled(pokemon)) &&
+      ((item ?? EvolutionItem.NONE) === (this.item ?? EvolutionItem.NONE))
     );
   }
 

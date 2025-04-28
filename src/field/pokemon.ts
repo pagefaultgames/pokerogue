@@ -99,6 +99,7 @@ import {
   pokemonEvolutions,
   pokemonPrevolutions,
   FusionSpeciesFormEvolution,
+  validateShedinjaEvo,
 } from "#app/data/balance/pokemon-evolutions";
 import {
   reverseCompatibleTms,
@@ -6667,10 +6668,8 @@ export class PlayerPokemon extends Pokemon {
         });
       };
       if (preEvolution.speciesId === Species.GIMMIGHOUL) {
-        const evotracker =
-          this.getHeldItems().filter(m => m instanceof EvoTrackerModifier)[0] ??
-          null;
-        if (evotracker) {
+        const evotracker = this.getHeldItems().find(m => m instanceof EvoTrackerModifier);
+        if (!isNullOrUndefined(evotracker)) {
           globalScene.removeModifier(evotracker);
         }
       }
@@ -6699,7 +6698,7 @@ export class PlayerPokemon extends Pokemon {
     ) {
       const newEvolution = pokemonEvolutions[evoSpecies.speciesId][1];
 
-      if (newEvolution.validate(this, evoSpecies.speciesId === this.species.speciesId)) {
+      if (validateShedinjaEvo()) {
         const newPokemon = globalScene.addPlayerPokemon(
           this.species,
           this.level,
