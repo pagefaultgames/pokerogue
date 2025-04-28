@@ -80,14 +80,14 @@ import type Move from "#app/data/moves/move";
 import { isFieldTargeted } from "#app/data/moves/move-utils";
 import { FaintPhase } from "./faint-phase";
 import { DamageAchv } from "#app/system/achv";
+import { MoveUseType } from "#enums/move-use-type";
 
 export type HitCheckEntry = [HitCheckResult, TypeDamageMultiplier];
 
 export class MoveEffectPhase extends PokemonPhase {
   public move: Move;
-  private virtual = false;
   protected targets: BattlerIndex[];
-  protected reflected = false;
+  protected useType: MoveUseType;
 
   /** The result of the hit check against each target */
   private hitChecks: HitCheckEntry[];
@@ -109,15 +109,14 @@ export class MoveEffectPhase extends PokemonPhase {
   private queuedPhases: Phase[] = [];
 
   /**
-   * @param reflected Indicates that the move was reflected by the user due to magic coat or magic bounce
-   * @param virtual Indicates that the move is a virtual move (i.e. called by metronome)
+   * @param followUp - Indicates that the move is the result of {@link https://bulbapedia.bulbagarden.net/wiki/Category:Moves_that_call_other_moves | Move-calling Moves})
+   *
+   * @param reflected - Indicates that the move was reflected due to {@linkcode Moves.MAGIC_COAT} or {@linkcode Abilities.MAGIC_BOUNCE}.
    */
-  constructor(battlerIndex: BattlerIndex, targets: BattlerIndex[], move: Move, reflected = false, virtual = false) {
+  constructor(battlerIndex: BattlerIndex, targets: BattlerIndex[], move: Move, useType: MoveUseType) {
     super(battlerIndex);
     this.move = move;
-    this.virtual = virtual;
-
-    this.reflected = reflected;
+    this.useType = useType;
 
     /**
      * In double battles, if the right Pokemon selects a spread move and the left Pokemon dies
@@ -202,13 +201,11 @@ export class MoveEffectPhase extends PokemonPhase {
       this.queuedPhases.push(new HideAbilityPhase());
     }
 
-    this.queuedPhases.push(
-      new MovePhase(target, newTargets, new PokemonMove(this.move.id, 0, 0, true), true, true, true),
-    );
+    this.queuedPhases.push(new MovePhase(target, newTargets, new PokemonMove(this.move.id), MoveUseType.REFLECTED));
   }
 
   /**
-   * Apply the move to each of the resolved targets.
+   * Apply the move to each of its resolved targets.
    * @param targets - The resolved set of targets of the move
    * @throws - Error if there was an unexpected hit check result
    */
@@ -299,7 +296,14 @@ export class MoveEffectPhase extends PokemonPhase {
     const move = this.move;
 
     // Assume single target for override
-    applyMoveAttrs(OverrideMoveEffectAttr, user, this.getFirstTarget() ?? null, move, overridden, this.virtual);
+    applyMoveAttrs(
+      OverrideMoveEffectAttr,
+      user,
+      this.getFirstTarget() ?? null,
+      move,
+      overridden,
+      this.useType >= MoveUseType.FOLLOW_UP,
+    );
 
     // If other effects were overriden, stop this phase before they can be applied
     if (overridden.value) {
@@ -309,8 +313,8 @@ export class MoveEffectPhase extends PokemonPhase {
     // Lapse `MOVE_EFFECT` effects (i.e. semi-invulnerability) when applicable
     user.lapseTags(BattlerTagLapseType.MOVE_EFFECT);
 
-    // If the user is acting again (such as due to Instruct), reset hitsLeft/hitCount so that
-    // the move executes correctly (ensures all hits of a multi-hit are properly calculated)
+    // If the user is acting again (such as due to Instruct or Dancer), reset hitsLeft/hitCount and
+    // recalculate hit count for multi-hit moves.
     if (user.turnData.hitsLeft === 0 && user.turnData.hitCount > 0 && user.turnData.extraTurns > 0) {
       user.turnData.hitsLeft = -1;
       user.turnData.hitCount = 0;
@@ -340,7 +344,7 @@ export class MoveEffectPhase extends PokemonPhase {
       move: this.move.id,
       targets: this.targets,
       result: MoveResult.PENDING,
-      virtual: this.virtual,
+      useType: this.useType,
     };
 
     const fieldMove = isFieldTargeted(move);
@@ -567,7 +571,11 @@ export class MoveEffectPhase extends PokemonPhase {
       return [HitCheckResult.PROTECTED, 0];
     }
 
-    if (!this.reflected && move.doesFlagEffectApply({ flag: MoveFlags.REFLECTABLE, user, target })) {
+    // Reflected moves cannot be reflected again
+    if (
+      this.useType < MoveUseType.REFLECTED &&
+      move.doesFlagEffectApply({ flag: MoveFlags.REFLECTABLE, user, target })
+    ) {
       return [HitCheckResult.REFLECTED, 0];
     }
 
@@ -732,7 +740,7 @@ export class MoveEffectPhase extends PokemonPhase {
 
   /** @returns A new `MoveEffectPhase` with the same properties as this phase */
   protected getNewHitPhase(): MoveEffectPhase {
-    return new MoveEffectPhase(this.battlerIndex, this.targets, this.move, this.reflected, this.virtual);
+    return new MoveEffectPhase(this.battlerIndex, this.targets, this.move, this.useType);
   }
 
   /** Removes all substitutes that were broken by this phase's invoked move */

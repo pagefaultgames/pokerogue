@@ -75,6 +75,7 @@ import type { ArenaTrapTag, SuppressAbilitiesTag } from "#app/data/arena-tag";
 import type { HitCheckEntry } from "#app/phases/move-effect-phase";
 import { HitCheckResult } from "#enums/hit-check-result";
 import { SelectBiomePhase } from "#app/phases/select-biome-phase";
+import { MoveUseType } from "#enums/move-use-type";
 
 export class BlockRecoilDamageAttr extends AbAttr {
   constructor() {
@@ -4398,16 +4399,14 @@ export class PostDancingMoveAbAttr extends PostMoveUsedAbAttr {
       return;
     }
 
-    const newMove = new PokemonMove(move.id, 0, 0, true) // mark new move as virtual to not proc instruct & co.
-
+    dancer.turnData.extraTurns++;
     // Attack and status moves are replicated on the source of the Dance, while
     // self-targeted status moves (Swords Dance & co.) are replicated on the user
-    if (move instanceof AttackMove || move instanceof StatusMove) {
-      const target = this.getTarget(dancer, source, targets);
-      globalScene.unshiftPhase(new MovePhase(dancer, target, newMove, 'status-only'));
-    } else if (move instanceof SelfStatusMove) {
-      globalScene.unshiftPhase(new MovePhase(dancer, [ dancer.getBattlerIndex() ], newMove, 'status-only'));
-    }
+    const moveTargets: BattlerIndex[] =
+      move instanceof AttackMove || move instanceof StatusMove
+      ? this.getTarget(dancer, source, targets)
+      : [ dancer.getBattlerIndex() ];
+    globalScene.unshiftPhase(new MovePhase(dancer, moveTargets, new PokemonMove(move.id), MoveUseType.INDIRECT));
   }
 
   /**
