@@ -2879,7 +2879,7 @@ export const trainerConfigs: TrainerConfigs = {
     .initForEliteFour(signatureSpecies["BRUNO"], true, PokemonType.FIGHTING, 2)
     .setBattleBgm("battle_kanto_gym")
     .setMixedBattleBgm("battle_kanto_gym")
-    .setPartyMemberFunc(0, getRandomPartyMemberFunc([Species.HITMONCHAN, Species.HITMONLEE, Species.HITMONTOP]))
+    .setPartyMemberFunc(0, getRandomPartyMemberFunc([Species.HITMONLEE, Species.HITMONCHAN, Species.HITMONTOP]))
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([Species.STEELIX], TrainerSlot.TRAINER, true, p => { // Tera Fighting Steelix
         p.generateAndPopulateMoveset();
         if (!p.moveset.some(move => !isNullOrUndefined(move) && move.moveId === Moves.BODY_PRESS)) { // Check if Body Press is in the moveset, if not, replace the third move with Body Press.
@@ -2901,7 +2901,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setBattleBgm("battle_kanto_gym")
     .setMixedBattleBgm("battle_kanto_gym")
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([Species.MISMAGIUS]))
-    .setPartyMemberFunc(2, getRandomPartyMemberFunc([Species.WEEZING, Species.ARBOK], TrainerSlot.TRAINER, true, p => { // Tera Ghost Arbok/Weezing
+    .setPartyMemberFunc(2, getRandomPartyMemberFunc([Species.ARBOK, Species.WEEZING], TrainerSlot.TRAINER, true, p => { // Tera Ghost Arbok/Weezing
         p.generateAndPopulateMoveset();
         if (!p.moveset.some(move => !isNullOrUndefined(move) && move.moveId === Moves.TERA_BLAST)) { // Check if Tera Blast is in the moveset, if not, replace the third move with Tera Blast.
           p.moveset[2] = new PokemonMove(Moves.TERA_BLAST);
@@ -2942,7 +2942,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(0, getRandomPartyMemberFunc([Species.JYNX]))
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([Species.SLOWKING, Species.GALAR_SLOWKING])) // Tera Psychic Slowking/G-Slowking
     .setPartyMemberFunc(3, getRandomPartyMemberFunc([Species.EXEGGUTOR]))
-    .setPartyMemberFunc(4, getRandomPartyMemberFunc([Species.FARIGIRAF, Species.WYRDEER]))
+    .setPartyMemberFunc(4, getRandomPartyMemberFunc([Species.WYRDEER, Species.FARIGIRAF]))
     .setPartyMemberFunc(5, getRandomPartyMemberFunc([Species.XATU], TrainerSlot.TRAINER, true, p => {
         p.setBoss(true, 2);
         p.generateAndPopulateMoveset();
@@ -3110,7 +3110,7 @@ export const trainerConfigs: TrainerConfigs = {
     .initForEliteFour(signatureSpecies["LUCIAN"], true, PokemonType.PSYCHIC, 2)
     .setBattleBgm("battle_sinnoh_gym")
     .setMixedBattleBgm("battle_sinnoh_gym")
-    .setPartyMemberFunc(0, getRandomPartyMemberFunc([Species.ALAKAZAM, Species.ESPEON]))
+    .setPartyMemberFunc(0, getRandomPartyMemberFunc([Species.ESPEON, Species.ALAKAZAM]))
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([Species.FARIGIRAF])) // Tera Psychic Farigiraf
     .setPartyMemberFunc(3, getRandomPartyMemberFunc([Species.BRONZONG]))
     .setPartyMemberFunc(4, getRandomPartyMemberFunc([Species.MR_RIME, Species.HISUI_BRAVIARY]))
@@ -3232,9 +3232,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([Species.GARCHOMP])) // Tera Dragon Garchomp
     .setPartyMemberFunc(3, getRandomPartyMemberFunc([Species.ALTARIA]))
     .setPartyMemberFunc(4, getRandomPartyMemberFunc([Species.DRUDDIGON]))
-    .setPartyMemberFunc(
-      5,
-      getRandomPartyMemberFunc([Species.NOIVERN], TrainerSlot.TRAINER, true, p => {
+    .setPartyMemberFunc(5, getRandomPartyMemberFunc([Species.NOIVERN], TrainerSlot.TRAINER, true, p => {
         p.setBoss(true, 2);
         p.generateAndPopulateMoveset();
       }),
@@ -3279,7 +3277,7 @@ export const trainerConfigs: TrainerConfigs = {
     )
     .setPartyMemberFunc(2, getRandomPartyMemberFunc([Species.PROBOPASS])) // Tera Rock Probopass
     .setPartyMemberFunc(3, getRandomPartyMemberFunc([Species.ALOLA_GOLEM]))
-    .setPartyMemberFunc(4, getRandomPartyMemberFunc([Species.CARBINK, Species.RELICANTH]))
+    .setPartyMemberFunc(4, getRandomPartyMemberFunc([Species.RELICANTH, Species.CARBINK]))
     .setPartyMemberFunc(5, getRandomPartyMemberFunc([Species.LYCANROC], TrainerSlot.TRAINER, true, p => {
         p.setBoss(true, 2);
         p.formIndex = 1;
