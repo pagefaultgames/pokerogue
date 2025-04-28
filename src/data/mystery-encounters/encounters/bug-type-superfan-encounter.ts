@@ -145,12 +145,12 @@ const POOL_3_POKEMON: { species: Species; formIndex?: number }[] = [
 const POOL_4_POKEMON = [Species.GENESECT, Species.SLITHER_WING, Species.BUZZWOLE, Species.PHEROMOSA];
 
 const PHYSICAL_TUTOR_MOVES = [
-  Moves.PIN_MISSILE,
   Moves.MEGAHORN,
   Moves.X_SCISSOR,
   Moves.ATTACK_ORDER,
   Moves.BUG_BITE,
-  Moves.FIRST_IMPRESSION
+  Moves.FIRST_IMPRESSION,
+  Moves.LUNGE
 ];
 
 const SPECIAL_TUTOR_MOVES = [
@@ -163,19 +163,19 @@ const SPECIAL_TUTOR_MOVES = [
 
 const STATUS_TUTOR_MOVES = [
   Moves.STRING_SHOT,
+  Moves.DEFEND_ORDER,
   Moves.RAGE_POWDER,
   Moves.STICKY_WEB,
-  Moves.POWDER,
   Moves.SILK_TRAP
 ];
 
 const MISC_TUTOR_MOVES = [
   Moves.LEECH_LIFE,
   Moves.U_TURN,
-  Moves.DEFEND_ORDER,
   Moves.HEAL_ORDER,
   Moves.QUIVER_DANCE,
-  Moves.INFESTATION
+  Moves.INFESTATION,
+  Moves.POUNCE
 ];
 
 /**
