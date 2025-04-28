@@ -58,7 +58,7 @@
       },
       "style": {
         "noVar": "error",
-        "useEnumInitializers": "off", // have fun explicitly numbering all 1000+ species, moves, etc. lol
+        "useEnumInitializers": "off", // large enums like Moves would make this cumbersome 
         "useBlockStatements": "error",
         "useConst": "error",
         "useImportType": "error",
