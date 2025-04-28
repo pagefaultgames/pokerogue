@@ -1,7 +1,7 @@
 {
   "name": "pokemon-rogue-battle",
   "private": true,
-  "version": "1.8.4",
+  "version": "1.8.5",
   "type": "module",
   "scripts": {
     "start": "vite",
@@ -63,8 +63,8 @@
     "i18next-korean-postposition-processor": "^1.0.0",
     "json-stable-stringify": "^1.2.0",
     "jszip": "^3.10.1",
-    "phaser": "^3.70.0",
-    "phaser3-rex-plugins": "^1.80.14"
+    "phaser": "^3.88.2",
+    "phaser3-rex-plugins": "^1.80.15"
   },
   "engines": {
     "node": ">=22.0.0"

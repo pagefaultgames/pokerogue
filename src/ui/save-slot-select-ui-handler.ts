@@ -6,10 +6,10 @@ import { GameMode } from "../game-mode";
 import * as Modifier from "#app/modifier/modifier";
 import type { SessionSaveData } from "../system/game-data";
 import type PokemonData from "../system/pokemon-data";
-import { isNullOrUndefined, fixedInt, getPlayTimeString, formatLargeNumber } from "#app/utils";
+import { isNullOrUndefined, fixedInt, getPlayTimeString, formatLargeNumber } from "#app/utils/common";
 import MessageUiHandler from "./message-ui-handler";
 import { TextStyle, addTextObject } from "./text";
-import { Mode } from "./ui";
+import { UiMode } from "#enums/ui-mode";
 import { addWindow } from "./ui-theme";
 import { RunDisplayMode } from "#app/ui/run-info-ui-handler";
 
@@ -40,7 +40,7 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
   private sessionSlotsContainerInitialY: number;
 
   constructor() {
-    super(Mode.SAVE_SLOT);
+    super(UiMode.SAVE_SLOT);
   }
 
   setup() {
@@ -122,13 +122,13 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
                 this.saveSlotSelectCallback = null;
                 ui.revertMode();
                 ui.showText("", 0);
-                ui.setMode(Mode.MESSAGE);
+                ui.setMode(UiMode.MESSAGE);
                 originalCallback?.(cursor);
               };
               if (this.sessionSlots[cursor].hasData) {
                 ui.showText(i18next.t("saveSlotSelectUiHandler:overwriteData"), null, () => {
                   ui.setOverlayMode(
-                    Mode.CONFIRM,
+                    UiMode.CONFIRM,
                     () => {
                       globalScene.gameData.deleteSession(cursor).then(response => {
                         if (response === false) {
@@ -198,7 +198,7 @@ export default class SaveSlotSelectUiHandler extends MessageUiHandler {
         case Button.RIGHT:
           if (this.sessionSlots[cursorPosition].hasData && this.sessionSlots[cursorPosition].saveData) {
             globalScene.ui.setOverlayMode(
-              Mode.RUN_INFO,
+              UiMode.RUN_INFO,
               this.sessionSlots[cursorPosition].saveData,
               RunDisplayMode.SESSION_PREVIEW,
             );

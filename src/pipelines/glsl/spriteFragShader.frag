@@ -31,9 +31,9 @@ uniform vec2 texSize;
 uniform float yOffset;
 uniform float yShadowOffset;
 uniform vec4 tone;
-uniform ivec4 baseVariantColors[32];
+uniform vec4 baseVariantColors[32];
 uniform vec4 variantColors[32];
-uniform ivec4 spriteColors[32];
+uniform vec4 spriteColors[32];
 uniform ivec4 fusionSpriteColors[32];
 
 const vec3 lumaF = vec3(.299, .587, .114);
@@ -69,7 +69,6 @@ float hue2rgb(float f1, float f2, float hue) {
 
 vec3 rgb2hsl(vec3 color) {
 	vec3 hsl;
-	
 	float fmin = min(min(color.r, color.g), color.b);
 	float fmax = max(max(color.r, color.g), color.b);
 	float delta = fmax - fmin;
@@ -152,34 +151,23 @@ vec3 hsv2rgb(vec3 c) {
 void main() {
 	vec4 texture = texture2D(uMainSampler[0], outTexCoord);
 
-	ivec4 colorInt = ivec4(texture*255.0);
-
 	for (int i = 0; i < 32; i++) {
-		if (baseVariantColors[i][3] == 0)
+		if (baseVariantColors[i].a == 0.0)
 			break;
-		// abs value is broken in this version of gles with highp
-		ivec3 diffs = ivec3(
-			(colorInt.r > baseVariantColors[i].r) ? colorInt.r - baseVariantColors[i].r : baseVariantColors[i].r - colorInt.r,
-			(colorInt.g > baseVariantColors[i].g) ? colorInt.g - baseVariantColors[i].g : baseVariantColors[i].g - colorInt.g,
-			(colorInt.b > baseVariantColors[i].b) ? colorInt.b - baseVariantColors[i].b : baseVariantColors[i].b - colorInt.b
-		);
-		// Set color threshold to be within 3 points for each channel
-		bvec3 threshold = lessThan(diffs, ivec3(3));
-
-		if (texture.a > 0.0 && all(threshold)) {
+		if (texture.a > 0.0 && all(lessThan(abs(texture.rgb - baseVariantColors[i].rgb), vec3(1.0/255.0)))) {
 			texture.rgb = variantColors[i].rgb;
 			break;
 		}
 	}
 
 	for (int i = 0; i < 32; i++) {
-		if (spriteColors[i][3] == 0)
+		if (spriteColors[i][3] == 0.0)
 			break;
-		if (texture.a > 0.0 && colorInt.r == spriteColors[i].r && colorInt.g == spriteColors[i].g && colorInt.b == spriteColors[i].b) {
-			vec3 fusionColor = vec3(float(fusionSpriteColors[i].r) / 255.0, float(fusionSpriteColors[i].g) / 255.0, float(fusionSpriteColors[i].b) / 255.0);
-			vec3 bg = vec3(spriteColors[i].rgb) / 255.0;
+		if (texture.a > 0.0 && all(lessThan(abs(texture.rgb - spriteColors[i].rgb), vec3(1.0/255.0)))) {
+			vec3 fusionColor = vec3(fusionSpriteColors[i].rgb) / 255.0;
+			vec3 bg = spriteColors[i].rgb;
 			float gray = (bg.r + bg.g + bg.b) / 3.0;
-			bg = vec3(gray, gray, gray);
+			bg = vec3(gray);
 			vec3 fg = fusionColor;
 			texture.rgb = mix(1.0 - 2.0 * (1.0 - bg) * (1.0 - fg), 2.0 * bg * fg, step(bg, vec3(0.5)));
 			break;
@@ -192,7 +180,7 @@ void main() {
 	vec4 color = texture * texel;
 
 	if (color.a > 0.0 && teraColor.r > 0.0 && teraColor.g > 0.0 && teraColor.b > 0.0) {
-		vec2 relUv = vec2((outTexCoord.x - texFrameUv.x) / (size.x / texSize.x), (outTexCoord.y - texFrameUv.y) / (size.y / texSize.y));
+		vec2 relUv = (outTexCoord.xy - texFrameUv.xy) / (size.xy / texSize.xy);
 		vec2 teraTexCoord = vec2(relUv.x * (size.x / 200.0), relUv.y * (size.y / 120.0));
 		vec4 teraCol = texture2D(uMainSampler[1], teraTexCoord);
 		float floorValue = 86.0 / 255.0;
@@ -265,8 +253,8 @@ void main() {
 
 		if ((spriteY >= 0.9 && (color.a == 0.0 || yOverflow))) {
 			float shadowSpriteY = (spriteY - 0.9) * (1.0 / 0.15);
-			if (distance(vec2(spriteX, shadowSpriteY), vec2(0.5, 0.5)) < 0.5) {
-				color = vec4(vec3(0.0, 0.0, 0.0), 0.5);
+			if (distance(vec2(spriteX, shadowSpriteY), vec2(0.5)) < 0.5) {
+				color = vec4(vec3(0.0), 0.5);
 			} else if (yOverflow) {
 				discard;
 			}

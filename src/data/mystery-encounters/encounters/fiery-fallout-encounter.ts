@@ -30,7 +30,7 @@ import { PokemonMove } from "#app/field/pokemon";
 import { Moves } from "#enums/moves";
 import { EncounterBattleAnim } from "#app/data/battle-anims";
 import { WeatherType } from "#enums/weather-type";
-import { isNullOrUndefined, randSeedInt } from "#app/utils";
+import { isNullOrUndefined, randSeedInt } from "#app/utils/common";
 import { StatusEffect } from "#enums/status-effect";
 import { queueEncounterMessage } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import {
@@ -41,7 +41,7 @@ import {
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { EncounterAnim } from "#enums/encounter-anims";
-import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
+import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { Abilities } from "#enums/abilities";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";

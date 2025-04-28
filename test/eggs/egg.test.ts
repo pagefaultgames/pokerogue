@@ -5,7 +5,7 @@ import { EggSourceType } from "#app/enums/egg-source-types";
 import { EggTier } from "#app/enums/egg-type";
 import { VariantTier } from "#app/enums/variant-tier";
 import EggData from "#app/system/egg-data";
-import * as Utils from "#app/utils";
+import * as Utils from "#app/utils/common";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";

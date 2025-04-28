@@ -9,7 +9,7 @@ import { WeatherType } from "#enums/weather-type";
 import type { PlayerPokemon } from "#app/field/pokemon";
 import { AttackTypeBoosterModifier } from "#app/modifier/modifier";
 import type { AttackTypeBoosterModifierType } from "#app/modifier/modifier-type";
-import { isNullOrUndefined } from "#app/utils";
+import { isNullOrUndefined } from "#app/utils/common";
 import type { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import type { MysteryEncounterType } from "#enums/mystery-encounter-type";

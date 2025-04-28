@@ -15,7 +15,7 @@ import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
 import type { VoucherType } from "#app/system/voucher";
 import { Command } from "#app/ui/command-ui-handler";
 import { addTextObject, TextStyle } from "#app/ui/text";
-import { BooleanHolder, hslToHex, isNullOrUndefined, NumberHolder, toDmgValue } from "#app/utils";
+import { BooleanHolder, hslToHex, isNullOrUndefined, NumberHolder, toDmgValue } from "#app/utils/common";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BerryType } from "#enums/berry-type";
 import type { Moves } from "#enums/moves";

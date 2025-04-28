@@ -24,8 +24,7 @@ describe("Abilities - Super Luck", () => {
     game.override
       .moveset([Moves.TACKLE])
       .ability(Abilities.SUPER_LUCK)
-      .battleType("single")
-      .disableCrits()
+      .battleStyle("single")
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH);

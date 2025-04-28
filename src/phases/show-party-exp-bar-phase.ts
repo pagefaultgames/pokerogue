@@ -2,7 +2,7 @@ import { globalScene } from "#app/global-scene";
 import { ExpGainsSpeed } from "#app/enums/exp-gains-speed";
 import { ExpNotification } from "#app/enums/exp-notification";
 import { ExpBoosterModifier } from "#app/modifier/modifier";
-import { NumberHolder } from "#app/utils";
+import { NumberHolder } from "#app/utils/common";
 import { HidePartyExpBarPhase } from "./hide-party-exp-bar-phase";
 import { LevelUpPhase } from "./level-up-phase";
 import { PlayerPartyMemberPokemonPhase } from "./player-party-member-pokemon-phase";

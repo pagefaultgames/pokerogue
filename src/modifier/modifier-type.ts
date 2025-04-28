@@ -114,7 +114,7 @@ import {
   NumberHolder,
   padInt,
   randSeedInt,
-} from "#app/utils";
+} from "#app/utils/common";
 import { Abilities } from "#enums/abilities";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BerryType } from "#enums/berry-type";

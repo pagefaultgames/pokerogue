@@ -25,7 +25,7 @@ describe("Moves - Role Play", () => {
     game.override
       .moveset([Moves.SPLASH, Moves.ROLE_PLAY])
       .ability(Abilities.ADAPTABILITY)
-      .battleType("single")
+      .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)

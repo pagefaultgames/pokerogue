@@ -3,7 +3,7 @@ import { Gender } from "#app/data/gender";
 import { PokeballType } from "#enums/pokeball";
 import type Pokemon from "#app/field/pokemon";
 import { PokemonType } from "#enums/pokemon-type";
-import { isNullOrUndefined, randSeedInt } from "#app/utils";
+import { isNullOrUndefined, randSeedInt } from "#app/utils/common";
 import { WeatherType } from "#enums/weather-type";
 import { Nature } from "#enums/nature";
 import { Biome } from "#enums/biome";
@@ -14,6 +14,7 @@ import { DamageMoneyRewardModifier, ExtraModifierModifier, MoneyMultiplierModifi
 import { SpeciesFormKey } from "#enums/species-form-key";
 import { speciesStarterCosts } from "./starters";
 import i18next from "i18next";
+import { initI18n } from "#app/plugins/i18n";
 import { allMoves } from "../moves/move";
 import { getPokemonSpecies } from "../pokemon-species";
 
