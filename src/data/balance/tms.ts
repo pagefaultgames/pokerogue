@@ -35127,6 +35127,7 @@ export const tmSpecies: TmSpecies = {
     Species.TYMPOLE,
     Species.PALPITOAD,
     Species.SEISMITOAD,
+    Species.BASCULIN,
     Species.SANDILE,
     Species.KROKOROK,
     Species.KROOKODILE,
@@ -35260,10 +35261,6 @@ export const tmSpecies: TmSpecies = {
       "shadow",
     ],
     Species.BLOODMOON_URSALUNA,
-    [
-      Species.BASCULIN,
-      "white-striped",
-    ],
   ],
   [Moves.HEAT_WAVE]: [
     Species.CHARMANDER,
