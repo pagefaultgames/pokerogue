@@ -1350,7 +1350,6 @@ export class GameData {
     // TODO: Add `null`/`undefined` to the corresponding type signatures for this
     // (or prevent them from being null)
     // If the value is able to *not exist*, it should say so in the code
-
     const sessionData = JSON.parse(dataStr, (k: string, v: any) => {
       // TODO: Add pre-parse migrate scripts
       switch (k) {
