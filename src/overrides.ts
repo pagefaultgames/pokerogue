@@ -113,7 +113,7 @@ class DefaultOverrides {
    * Set to `true` to force confusion to always trigger,
    * or `false` to force it to never trigger.
    */
-  readonly CONFUSION_ACTIVATION_OVERRIDE: boolean|null = null;
+  readonly CONFUSION_ACTIVATION_OVERRIDE: boolean | null = null;
 
   // ----------------
   // PLAYER OVERRIDES
