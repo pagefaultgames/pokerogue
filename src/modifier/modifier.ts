@@ -748,6 +748,10 @@ export abstract class PokemonHeldItemModifier extends PersistentModifier {
     return this.getMaxHeldItemCount(pokemon);
   }
 
+  getSpecies(): Species | null {
+    return null;
+  }
+
   abstract getMaxHeldItemCount(pokemon?: Pokemon): number;
 }
 
@@ -920,6 +924,10 @@ export class EvoTrackerModifier extends PokemonHeldItemModifier {
   getMaxHeldItemCount(pokemon: Pokemon): number {
     return 999;
   }
+
+  override getSpecies(): Species {
+    return this.species;
+  }
 }
 
 export class EvoTrackerMoveUseModifier extends PokemonHeldItemModifier {
@@ -977,6 +985,64 @@ export class EvoTrackerMoveUseModifier extends PokemonHeldItemModifier {
 
   getMaxHeldItemCount(pokemon: Pokemon): number {
     return 999;
+  }
+
+  override getSpecies(): Species {
+    return this.species;
+  }
+}
+
+export class EvoTrackerRecoilModifier extends PokemonHeldItemModifier {
+  protected species: Species;
+  protected required: number;
+  public isTransferable = false;
+
+  constructor(type: ModifierType, pokemonId: number, species: Species, required: number, stackCount?: number) {
+    super(type, pokemonId, stackCount);
+    this.species = species;
+    this.required = required;
+  }
+
+  matchType(modifier: Modifier): boolean {
+    return (
+      modifier instanceof EvoTrackerRecoilModifier && modifier.species === this.species && modifier.required === this.required
+    );
+  }
+
+  clone(): PersistentModifier {
+    return new EvoTrackerRecoilModifier(this.type, this.pokemonId, this.species, this.required, this.stackCount);
+  }
+
+  getArgs(): any[] {
+    return super.getArgs().concat([this.species, this.required]);
+  }
+
+  /**
+   * Applies the {@linkcode EvoTrackerModifier}
+   * @returns always `true`
+   */
+  override apply(): boolean {
+    return true;
+  }
+
+  
+  getIconStackText(virtual?: boolean): Phaser.GameObjects.BitmapText | null {
+    const text = globalScene.add.bitmapText(10, 15, "item-count", (this.getStackCount()).toString(), 11);
+    text.letterSpacing = -0.5;
+    if (this.getStackCount() >= this.required) {
+      text.setTint(0xf89890);
+    }
+    text.setOrigin(0, 0);
+
+    return text;
+  }
+
+  getMaxHeldItemCount(pokemon: Pokemon): number {
+    return 9999;
+  }
+
+  override getSpecies(): Species {
+    return this.species;
   }
 }
 

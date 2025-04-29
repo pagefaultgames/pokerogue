@@ -70,6 +70,7 @@ import { allAbilities } from "../data-lists";
 import {
   AttackTypeBoosterModifier,
   BerryModifier,
+  EvoTrackerRecoilModifier,
   PokemonHeldItemModifier,
   PokemonMoveAccuracyBoosterModifier,
   PokemonMultiHitModifier,
@@ -78,7 +79,7 @@ import {
 import type { BattlerIndex } from "../../battle";
 import { BattleType } from "#enums/battle-type";
 import { TerrainType } from "../terrain";
-import { ModifierPoolType } from "#app/modifier/modifier-type";
+import { ModifierPoolType, modifierTypes } from "#app/modifier/modifier-type";
 import { Command } from "../../ui/command-ui-handler";
 import i18next from "i18next";
 import type { Localizable } from "#app/interfaces/locales";
@@ -1680,12 +1681,10 @@ export class RecoilAttr extends MoveEffectAttr {
     globalScene.queueMessage(i18next.t("moveTriggers:hitWithRecoil", { pokemonName: getPokemonNameWithAffix(user) }));
     user.turnData.damageTaken += recoilDamage;
     if (!user.isFainted() && user.hasSpecies(Species.BASCULIN, "white-striped")) {
-      if (isNullOrUndefined(user.evoCounter)) {
-        user.evoCounter = recoilDamage;
-      }
-      else {
-        user.evoCounter += recoilDamage;
-      }
+      const modifier = modifierTypes.EVOLUTION_TRACKER_BASCULIN()
+        .withIdFromFunc(modifierTypes.EVOLUTION_TRACKER_BASCULIN)
+        .newModifier(user, recoilDamage) as EvoTrackerRecoilModifier;
+      globalScene.addModifier(modifier);
     }
 
     return true;

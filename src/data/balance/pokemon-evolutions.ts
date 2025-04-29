@@ -10,11 +10,10 @@ import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { TimeOfDay } from "#enums/time-of-day";
-import { DamageMoneyRewardModifier, EvoTrackerModifier, EvoTrackerMoveUseModifier, ExtraModifierModifier, MoneyMultiplierModifier, PersistentModifier, TempExtraModifierModifier } from "#app/modifier/modifier";
+import { EvoTrackerModifier, EvoTrackerMoveUseModifier, EvoTrackerRecoilModifier, PersistentModifier} from "#app/modifier/modifier";
 import { SpeciesFormKey } from "#enums/species-form-key";
 import { speciesStarterCosts } from "./starters";
 import i18next from "i18next";
-import { initI18n } from "#app/plugins/i18n";
 import { allMoves } from "../moves/move";
 import { getPokemonSpecies } from "../pokemon-species";
 
@@ -246,25 +245,7 @@ export class SpeciesEvolutionCondition {
             m.shouldApply(pokemon, this.data.move!) &&
             m.getStackCount() >= this.data.evoCount!);
         case EvoCondKey.RECOIL_DAMAGE_COUNT:
-          return pokemon.evoCounter >= this.data.evoCount!;
-      }
-    });
-  }
-
-  public postEvolve(pokemon: Pokemon): void {
-    const keys = Array.isArray(this.data.key) ? this.data.key : [this.data.key];
-    keys.map(cond => {
-      let modifier: PersistentModifier | undefined;
-      switch (cond) {
-        case EvoCondKey.EVO_TREASURE_TRACKER:
-          modifier = globalScene.findModifier(m => m instanceof EvoTrackerModifier && m.pokemonId === pokemon.id);
-          break;
-        case EvoCondKey.MOVE_USE_COUNT:
-          modifier = globalScene.findModifier(m => m instanceof EvoTrackerMoveUseModifier && m.shouldApply(pokemon, this.data.move!));
-          break;
-      }
-      if (!isNullOrUndefined(modifier)) {
-        globalScene.removeModifier(modifier);
+          return pokemon.getHeldItems().some(m => m instanceof EvoTrackerRecoilModifier && m.getStackCount() >= this.data.evoCount!);
       }
     });
   }
@@ -344,12 +325,6 @@ export class SpeciesFormEvolution {
       (isNullOrUndefined(this.preFormKey) || (forFusion ? pokemon.getFormKey() : pokemon.getFusionFormKey()) === this.preFormKey) &&
       (this.condition === null || this.condition?.conditionsFulfilled(pokemon))
     );
-  }
-
-  public postEvolve(pokemon: Pokemon): void {
-    if (!isNullOrUndefined(this.condition)) {
-      this.condition.postEvolve(pokemon);
-    }
   }
 
   public get evoItem(): EvolutionItem {
