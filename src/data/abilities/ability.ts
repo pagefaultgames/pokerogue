@@ -4045,7 +4045,13 @@ export class PostTurnResetStatusAbAttr extends PostTurnAbAttr {
  */
 export class PostTurnRestoreBerryAbAttr extends PostTurnAbAttr {
   /**
-   * @param procChance - Chance to create an item
+   * Array containing all {@linkcode BerryType | BerryTypes} that are under cap and able to be restored.
+   * Stored inside the class for a minor performance boost
+   */
+  private berriesUnderCap: BerryType[]
+
+  /**
+   * @param procChance - function providing chance to restore an item
    * @see {@linkcode createEatenBerry()}
    */
   constructor(
@@ -4054,19 +4060,19 @@ export class PostTurnRestoreBerryAbAttr extends PostTurnAbAttr {
     super();
   }
 
-  override canApplyPostTurn(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
-    // check if we have at least 1 recoverable berry (at least 1 berry in berriesEaten is not capped)
+  override canApplyPostTurn(pokemon: Pokemon, _passive: boolean, _simulated: boolean, _args: any[]): boolean {
+    // Ensure we have at least 1 recoverable berry (at least 1 berry in berriesEaten is not capped)
     const cappedBerries = new Set(
       globalScene.getModifiers(BerryModifier, pokemon.isPlayer()).filter(
-        (bm) => bm.pokemonId === pokemon.id && bm.getCountUnderMax() < 1
+        bm => bm.pokemonId === pokemon.id && bm.getCountUnderMax() < 1
       ).map(bm => bm.berryType)
     );
 
-    const hasBerryUnderCap = pokemon.battleData.berriesEaten.some(
-      (bt) => !cappedBerries.has(bt)
+    this.berriesUnderCap = pokemon.battleData.berriesEaten.filter(
+      bt => !cappedBerries.has(bt)
     );
 
-    if (!hasBerryUnderCap) {
+    if (!this.berriesUnderCap.length) {
       return false;
     }
 
@@ -4076,41 +4082,22 @@ export class PostTurnRestoreBerryAbAttr extends PostTurnAbAttr {
   }
 
   override applyPostTurn(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): void {
-    this.createEatenBerry(pokemon, simulated);
+    if (!simulated) {
+      this.createEatenBerry(pokemon);
+    }
   }
 
   /**
-   * Create a new berry chosen randomly from the berries the pokemon ate this battle
-   * @param pokemon The pokemon with this ability
-   * @param simulated whether the associated ability call is simulated
+   * Create a new berry chosen randomly from all berries the pokemon ate this battle
+   * @param pokemon - The {@linkcode Pokemon} with this ability
    * @returns `true` if a new berry was created
    */
-  createEatenBerry(pokemon: Pokemon, simulated: boolean): boolean {
-    // get all berries we just ate that are under cap
-    const cappedBerries = new Set(
-      globalScene.getModifiers(BerryModifier, pokemon.isPlayer()).filter(
-        (bm) => bm.pokemonId === pokemon.id && bm.getCountUnderMax() < 1
-      ).map((bm) => bm.berryType)
-    );
-
-    const berriesEaten = pokemon.battleData.berriesEaten.filter(
-      (bt) => !cappedBerries.has(bt)
-    );
-
-    if (!berriesEaten.length) {
-      return false;
-    }
-
-    if (simulated) {
-      return true;
-    }
-
-    // Pick a random berry to yoink
-    const randomIdx = randSeedInt(berriesEaten.length);
-    const chosenBerryType = berriesEaten[randomIdx];
+  createEatenBerry(pokemon: Pokemon): boolean {
+    // Pick a random available berry to yoink
+    const randomIdx = randSeedInt(this.berriesUnderCap.length);
+    const chosenBerryType = this.berriesUnderCap[randomIdx];
     pokemon.battleData.berriesEaten.splice(randomIdx, 1); // Remove berry from memory
     const chosenBerry = new BerryModifierType(chosenBerryType);
-    chosenBerry.id = "BERRY" // needed to prevent item deletion; remove after modifier rework
 
     // Add the randomly chosen berry or update the existing one
     const berryModifier = globalScene.findModifier(
@@ -4121,7 +4108,6 @@ export class PostTurnRestoreBerryAbAttr extends PostTurnAbAttr {
     if (berryModifier) {
       berryModifier.stackCount++
     } else {
-      // make new modifier
       const newBerry = new BerryModifier(chosenBerry, pokemon.id, chosenBerryType, 1);
       if (pokemon.isPlayer()) {
         globalScene.addModifier(newBerry);
@@ -4141,19 +4127,19 @@ export class PostTurnRestoreBerryAbAttr extends PostTurnAbAttr {
   * Used by {@linkcode Abilities.CUD_CHEW}.
 */
 export class RepeatBerryNextTurnAbAttr extends PostTurnAbAttr {
-  // no need for constructor; all it does is set `showAbility` which we override before triggering anyways
-
   /**
    * @returns `true` if the pokemon ate anything last turn
    */
   override canApply(pokemon: Pokemon, _passive: boolean, _simulated: boolean, _args: any[]): boolean {
-    this.showAbility = true; // force ability popup if ability triggers
+    // force ability popup for ability triggers on normal turns.
+    // Still not used if ability doesn't proc
+    this.showAbility = true;
     return !!pokemon.summonData.berriesEatenLast.length;
   }
 
   /**
-   * Cause this {@linkcode Pokemon} to regurgitate and eat all berries
-   * inside its `berriesEatenLast` array.
+   * Cause this {@linkcode Pokemon} to regurgitate and eat all berries inside its `berriesEatenLast` array.
+   * Triggers a berry use animation, but does *not* count for other berry or item-related abilities.
    * @param pokemon - The {@linkcode Pokemon} having a bad tummy ache
    * @param _passive - N/A
    * @param _simulated - N/A
@@ -4161,13 +4147,12 @@ export class RepeatBerryNextTurnAbAttr extends PostTurnAbAttr {
    * @param _args - N/A
    */
   override apply(pokemon: Pokemon, _passive: boolean, _simulated: boolean, _cancelled: BooleanHolder | null, _args: any[]): void {
-    // play berry animation
     globalScene.unshiftPhase(
       new CommonAnimPhase(pokemon.getBattlerIndex(), pokemon.getBattlerIndex(), CommonAnim.USE_ITEM),
     );
 
     // Re-apply effects of all berries previously scarfed.
-    // This technically doesn't count as "eating" a berry (for unnerve/stuff cheeks/unburden)
+    // This doesn't count as "eating" a berry (for unnerve/stuff cheeks/unburden) as no item is consumed.
     for (const berryType of pokemon.summonData.berriesEatenLast) {
       getBerryEffectFunc(berryType)(pokemon);
       const bMod = new BerryModifier(new BerryModifierType(berryType), pokemon.id, berryType, 1);
@@ -4179,7 +4164,7 @@ export class RepeatBerryNextTurnAbAttr extends PostTurnAbAttr {
   }
 
   /**
-   * @returns always `true`
+   * @returns always `true` as we always want to move berries into summon data
    */
   override canApplyPostTurn(pokemon: Pokemon, _passive: boolean, _simulated: boolean, _args: any[]): boolean {
     this.showAbility = false; // don't show popup for turn end berry moving (should ideally be hidden)
@@ -4188,11 +4173,12 @@ export class RepeatBerryNextTurnAbAttr extends PostTurnAbAttr {
 
   /**
    * Move this {@linkcode Pokemon}'s `berriesEaten` array from `PokemonTurnData`
-   * into `PokemonSummonData`.
-   * @param pokemon The {@linkcode Pokemon} having a nice snack
-   * @param _passive N/A
-   * @param _simulated N/A
-   * @param _args N/A
+   * into `PokemonSummonData` on turn end.
+   * Both arrays are cleared on switch.
+   * @param pokemon - The {@linkcode Pokemon} having a nice snack
+   * @param _passive - N/A
+   * @param _simulated - N/A
+   * @param _args - N/A
    */
   override applyPostTurn(pokemon: Pokemon, _passive: boolean, _simulated: boolean, _args: any[]): void {
     pokemon.summonData.berriesEatenLast = pokemon.turnData.berriesEaten;
@@ -4565,8 +4551,19 @@ export class DoubleBerryEffectAbAttr extends AbAttr {
   }
 }
 
+/**
+ * Attribute to prevent opposing berry use while on the field.
+ * Used by {@linkcode Abilities.UNNERVE}, {@linkcode Abilities.AS_ONE_GLASTRIER} and {@linkcode Abilities.AS_ONE_SPECTRIER}
+ */
 export class PreventBerryUseAbAttr extends AbAttr {
-  override apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: BooleanHolder, args: any[]): void {
+  /**
+   * Prevent use of opposing berries.
+   * @param _pokemon - Unused
+   * @param _passive - Unused
+   * @param _simulated - Unused
+   * @param cancelled - {@linkcode BooleanHolder} containing whether to block berry use
+   */
+  override apply(_pokemon: Pokemon, _passive: boolean, _simulated: boolean, cancelled: BooleanHolder): void {
     cancelled.value = true;
   }
 }
@@ -5156,7 +5153,7 @@ export class PostSummonStatStageChangeOnArenaAbAttr extends PostSummonStatStageC
 /**
  * Takes no damage from the first hit of a damaging move.
  * This is used in the Disguise and Ice Face abilities.
- * 
+ *
  * Does not apply to a user's substitute
  * @extends ReceivedMoveDamageMultiplierAbAttr
  */

@@ -240,6 +240,7 @@ export class SwitchSummonPhase extends SummonPhase {
       }
     }
 
+    // No need (or particular use) resetting turn data here on initial send in
     if (this.switchType !== SwitchType.INITIAL_SWITCH) {
       pokemon.resetTurnData();
       pokemon.turnData.switchedInThisTurn = true;

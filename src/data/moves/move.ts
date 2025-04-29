@@ -2535,10 +2535,10 @@ export class PsychoShiftEffectAttr extends MoveEffectAttr {
     return !target.status && target.canSetStatus(user.status?.effect, true, false, user) ? -10 : 0;
   }
 }
+
 /**
- * The following needs to be implemented for Thief
- * "If the user faints due to the target's Ability (Rough Skin or Iron Barbs) or held Rocky Helmet, it cannot remove the target's held item."
- * "If Knock Off causes a Pokémon with the Sticky Hold Ability to faint, it can now remove that Pokémon's held item."
+ * Attribute to steal items upon this move's use.
+ * Used for {@linkcode Moves.THIEF} and {@linkcode Moves.COVET}.
  */
 export class StealHeldItemChanceAttr extends MoveEffectAttr {
   private chance: number;
@@ -2553,18 +2553,22 @@ export class StealHeldItemChanceAttr extends MoveEffectAttr {
     if (rand > this.chance) {
       return false;
     }
+
     const heldItems = this.getTargetHeldItems(target).filter((i) => i.isTransferable);
-    if (heldItems.length) {
-      const poolType = target.isPlayer() ? ModifierPoolType.PLAYER : target.hasTrainer() ? ModifierPoolType.TRAINER : ModifierPoolType.WILD;
-      const highestItemTier = heldItems.map((m) => m.type.getOrInferTier(poolType)).reduce((highestTier, tier) => Math.max(tier!, highestTier), 0); // TODO: is the bang after tier correct?
-      const tierHeldItems = heldItems.filter((m) => m.type.getOrInferTier(poolType) === highestItemTier);
-      const stolenItem = tierHeldItems[user.randSeedInt(tierHeldItems.length)];
-      if (globalScene.tryTransferHeldItemModifier(stolenItem, user, false)) {
-        globalScene.queueMessage(i18next.t("moveTriggers:stoleItem", { pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target), itemName: stolenItem.type.name }));
-        return true;
-      }
+    if (!heldItems.length) {
+      return false;
     }
-    return false;
+
+    const poolType = target.isPlayer() ? ModifierPoolType.PLAYER : target.hasTrainer() ? ModifierPoolType.TRAINER : ModifierPoolType.WILD;
+    const highestItemTier = heldItems.map((m) => m.type.getOrInferTier(poolType)).reduce((highestTier, tier) => Math.max(tier!, highestTier), 0); // TODO: is the bang after tier correct?
+    const tierHeldItems = heldItems.filter((m) => m.type.getOrInferTier(poolType) === highestItemTier);
+    const stolenItem = tierHeldItems[user.randSeedInt(tierHeldItems.length)];
+    if (!globalScene.tryTransferHeldItemModifier(stolenItem, user, false)) {
+      return false;
+    }
+
+    globalScene.queueMessage(i18next.t("moveTriggers:stoleItem", { pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target), itemName: stolenItem.type.name }));
+    return true;
   }
 
   getTargetHeldItems(target: Pokemon): PokemonHeldItemModifier[] {
@@ -2588,58 +2592,62 @@ export class StealHeldItemChanceAttr extends MoveEffectAttr {
  * Used for Incinerate and Knock Off.
  * Not Implemented Cases: (Same applies for Thief)
  * "If the user faints due to the target's Ability (Rough Skin or Iron Barbs) or held Rocky Helmet, it cannot remove the target's held item."
- * "If Knock Off causes a Pokémon with the Sticky Hold Ability to faint, it can now remove that Pokémon's held item."
+ * "If the Pokémon is knocked out by the attack, Sticky Hold does not protect the held item.""
  */
 export class RemoveHeldItemAttr extends MoveEffectAttr {
 
-  /** Optional restriction for item pool to berries only i.e. Differentiating Incinerate and Knock Off */
+  /** Optional restriction for item pool to berries only; i.e. Incinerate */
   private berriesOnly: boolean;
 
-  constructor(berriesOnly: boolean) {
+  constructor(berriesOnly: boolean = false) {
     super(false);
     this.berriesOnly = berriesOnly;
   }
 
   /**
-   *
-   * @param user {@linkcode Pokemon} that used the move
-   * @param target Target {@linkcode Pokemon} that the moves applies to
-   * @param move {@linkcode Move} that is used
+   * Attempt to permanently remove a held
+   * @param user - The {@linkcode Pokemon} that used the move
+   * @param target - The {@linkcode Pokemon} targeted by the move
+   * @param move - N/A
    * @param args N/A
-   * @returns True if an item was removed
+   * @returns `true` if an item was able to be removed
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!this.berriesOnly && target.isPlayer()) { // "Wild Pokemon cannot knock off Player Pokemon's held items" (See Bulbapedia)
       return false;
     }
 
+    // Check for abilities that block item theft
+    // TODO: This should not trigger if the target would faint beforehand
     const cancelled = new BooleanHolder(false);
-    applyAbAttrs(BlockItemTheftAbAttr, target, cancelled); // Check for abilities that block item theft
+    applyAbAttrs(BlockItemTheftAbAttr, target, cancelled);
 
-    if (cancelled.value === true) {
+    if (cancelled.value) {
       return false;
     }
 
-    // Considers entire transferrable item pool by default (Knock Off). Otherwise berries only if specified (Incinerate).
+    // Considers entire transferrable item pool by default (Knock Off).
+    // Otherwise only consider berries (Incinerate).
     let heldItems = this.getTargetHeldItems(target).filter(i => i.isTransferable);
 
     if (this.berriesOnly) {
       heldItems = heldItems.filter(m => m instanceof BerryModifier && m.pokemonId === target.id, target.isPlayer());
     }
 
-    if (heldItems.length) {
-      const removedItem = heldItems[user.randSeedInt(heldItems.length)];
+    if (!heldItems.length) {
+      return false;
+    }
 
-      // Decrease item amount and update icon
-      target.loseHeldItem(removedItem);
-      globalScene.updateModifiers(target.isPlayer());
+    const removedItem = heldItems[user.randSeedInt(heldItems.length)];
 
+    // Decrease item amount and update icon
+    target.loseHeldItem(removedItem);
+    globalScene.updateModifiers(target.isPlayer());
 
-      if (this.berriesOnly) {
-        globalScene.queueMessage(i18next.t("moveTriggers:incineratedItem", { pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target), itemName: removedItem.type.name }));
-      } else {
-        globalScene.queueMessage(i18next.t("moveTriggers:knockedOffItem", { pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target), itemName: removedItem.type.name }));
-      }
+    if (this.berriesOnly) {
+      globalScene.queueMessage(i18next.t("moveTriggers:incineratedItem", { pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target), itemName: removedItem.type.name }));
+    } else {
+      globalScene.queueMessage(i18next.t("moveTriggers:knockedOffItem", { pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target), itemName: removedItem.type.name }));
     }
 
     return true;
@@ -6349,11 +6357,11 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
 
       if (!allyPokemon?.isActive(true) && switchOutTarget.hp) {
           globalScene.pushPhase(new BattleEndPhase(false));
-                    
+
           if (globalScene.gameMode.hasRandomBiomes || globalScene.isNewBiome()) {
             globalScene.pushPhase(new SelectBiomePhase());
           }
-          
+
           globalScene.pushPhase(new NewBattlePhase());
       }
     }
@@ -8711,7 +8719,10 @@ export function initMoves() {
       .attr(MultiHitPowerIncrementAttr, 3)
       .checkAllHits(),
     new AttackMove(Moves.THIEF, PokemonType.DARK, MoveCategory.PHYSICAL, 60, 100, 25, -1, 0, 2)
-      .attr(StealHeldItemChanceAttr, 0.3),
+      .attr(StealHeldItemChanceAttr, 0.3)
+      .edgeCase(),
+      // Should not be able to steal held item if user faints due to Rough Skin, Iron Barbs, etc.
+      // Should be able to steal items from pokemon with Sticky Hold if the damage causes them to faint
     new StatusMove(Moves.SPIDER_WEB, PokemonType.BUG, -1, 10, -1, 0, 2)
       .condition(failIfGhostTypeCondition)
       .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, false, true, 1)
@@ -9098,7 +9109,10 @@ export function initMoves() {
       .reflectable(),
     new AttackMove(Moves.KNOCK_OFF, PokemonType.DARK, MoveCategory.PHYSICAL, 65, 100, 20, -1, 0, 3)
       .attr(MovePowerMultiplierAttr, (user, target, move) => target.getHeldItems().filter(i => i.isTransferable).length > 0 ? 1.5 : 1)
-      .attr(RemoveHeldItemAttr, false),
+      .attr(RemoveHeldItemAttr, false)
+      .edgeCase(),
+      // Should not be able to remove held item if user faints due to Rough Skin, Iron Barbs, etc.
+      // Should be able to remove items from pokemon with Sticky Hold if the damage causes them to faint
     new AttackMove(Moves.ENDEAVOR, PokemonType.NORMAL, MoveCategory.PHYSICAL, -1, 100, 5, -1, 0, 3)
       .attr(MatchHpAttr)
       .condition(failOnBossCondition),
@@ -9286,7 +9300,10 @@ export function initMoves() {
       .attr(HighCritAttr)
       .attr(StatusEffectAttr, StatusEffect.POISON),
     new AttackMove(Moves.COVET, PokemonType.NORMAL, MoveCategory.PHYSICAL, 60, 100, 25, -1, 0, 3)
-      .attr(StealHeldItemChanceAttr, 0.3),
+      .attr(StealHeldItemChanceAttr, 0.3)
+      .edgeCase(),
+      // Should not be able to steal held item if user faints due to Rough Skin, Iron Barbs, etc.
+      // Should be able to steal items from pokemon with Sticky Hold if the damage causes them to faint
     new AttackMove(Moves.VOLT_TACKLE, PokemonType.ELECTRIC, MoveCategory.PHYSICAL, 120, 100, 15, 10, 0, 3)
       .attr(RecoilAttr, false, 0.33)
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS)
@@ -9797,7 +9814,9 @@ export function initMoves() {
       .hidesTarget(),
     new AttackMove(Moves.INCINERATE, PokemonType.FIRE, MoveCategory.SPECIAL, 60, 100, 15, -1, 0, 5)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
-      .attr(RemoveHeldItemAttr, true),
+      .attr(RemoveHeldItemAttr, true)
+      .edgeCase(),
+      // Should be able to remove items from pokemon with Sticky Hold if the damage causes them to faint
     new StatusMove(Moves.QUASH, PokemonType.DARK, 100, 15, -1, 0, 5)
       .condition(failIfSingleBattle)
       .condition((user, target, move) => !target.turnData.acted)

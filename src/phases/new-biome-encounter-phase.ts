@@ -7,7 +7,8 @@ export class NewBiomeEncounterPhase extends NextEncounterPhase {
   doEncounter(): void {
     globalScene.playBgm(undefined, true);
 
-    // reset all battle data, perform form changes, etc.
+    // Reset all battle and wave data, perform form changes, etc.
+    // We do this because new biomes are considered "arena transitions" akin to MEs and trainer battles
     for (const pokemon of globalScene.getPlayerParty()) {
       if (pokemon) {
         pokemon.resetBattleAndWaveData();

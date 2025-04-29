@@ -15,7 +15,10 @@ import { CommonAnimPhase } from "./common-anim-phase";
 import { globalScene } from "#app/global-scene";
 import type Pokemon from "#app/field/pokemon";
 
-/** The phase after attacks where the pokemon eat berries */
+/**
+ * The phase after attacks where the pokemon eat berries.
+ * Also triggers Cud Chew's "repeat berry use" effects
+ */
 export class BerryPhase extends FieldPhase {
   start() {
     super.start();
@@ -30,18 +33,17 @@ export class BerryPhase extends FieldPhase {
 
   /**
    * Attempt to eat all of a given {@linkcode Pokemon}'s berries once.
-   * @param pokemon The {@linkcode Pokemon} to check
+   * @param pokemon - The {@linkcode Pokemon} to check
    */
   eatBerries(pokemon: Pokemon): void {
-    // check if we even have anything to eat
     const hasUsableBerry = !!globalScene.findModifier(m => {
       return m instanceof BerryModifier && m.shouldApply(pokemon);
     }, pokemon.isPlayer());
+
     if (!hasUsableBerry) {
       return;
     }
 
-    // Check if any opponents have unnerve to block us from eating berries
     const cancelled = new BooleanHolder(false);
     pokemon.getOpponents().map(opp => applyAbAttrs(PreventBerryUseAbAttr, opp, cancelled));
     if (cancelled.value) {
@@ -57,7 +59,6 @@ export class BerryPhase extends FieldPhase {
       new CommonAnimPhase(pokemon.getBattlerIndex(), pokemon.getBattlerIndex(), CommonAnim.USE_ITEM),
     );
 
-    // try to apply all berry modifiers for this pokemon
     for (const berryModifier of globalScene.applyModifiers(BerryModifier, pokemon.isPlayer(), pokemon)) {
       if (berryModifier.consumed) {
         berryModifier.consumed = false;
@@ -66,8 +67,6 @@ export class BerryPhase extends FieldPhase {
       // No need to track berries being eaten; already done inside applyModifiers
       globalScene.eventTarget.dispatchEvent(new BerryUsedEvent(berryModifier));
     }
-
-    // update held modifiers and such
     globalScene.updateModifiers(pokemon.isPlayer());
 
     // Abilities.CHEEK_POUCH only works once per round of nom noms

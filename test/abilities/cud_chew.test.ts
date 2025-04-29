@@ -126,7 +126,7 @@ describe("Abilities - Cud Chew", () => {
       game.move.select(Moves.STUFF_CHEEKS);
       await game.toNextTurn();
 
-      // Ate 2 petayas from moves + 1 of each at turn end; all 4 get moved on turn end
+      // Ate 2 petayas from moves + 1 of each at turn end; all 4 get tallied on turn end
       expect(farigiraf.summonData.berriesEatenLast).toEqual([
         BerryType.PETAYA,
         BerryType.PETAYA,
@@ -145,7 +145,7 @@ describe("Abilities - Cud Chew", () => {
       expect(farigiraf.getStatStage(Stat.ATK)).toBe(4); // 1+2+1
     });
 
-    it("resets array on switch", async () => {
+    it("should reset both arrays on switch", async () => {
       await game.classicMode.startBattle([Species.FARIGIRAF, Species.GIRAFARIG]);
 
       const farigiraf = game.scene.getPlayerPokemon()!;
@@ -157,9 +157,17 @@ describe("Abilities - Cud Chew", () => {
 
       const turn1Hp = farigiraf.hp;
       game.doSwitchPokemon(1);
-      await game.phaseInterceptor.to("TurnEndPhase");
+      await game.toNextTurn();
 
       // summonData got cleared due to switch, turnData got cleared due to turn end
+      expect(farigiraf.summonData.berriesEatenLast).toEqual([]);
+      expect(farigiraf.turnData.berriesEaten).toEqual([]);
+      expect(farigiraf.hp).toEqual(turn1Hp);
+
+      game.doSwitchPokemon(1);
+      await game.toNextTurn();
+
+      // TurnData gets cleared while switching in
       expect(farigiraf.summonData.berriesEatenLast).toEqual([]);
       expect(farigiraf.turnData.berriesEaten).toEqual([]);
       expect(farigiraf.hp).toEqual(turn1Hp);

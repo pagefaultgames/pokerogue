@@ -676,9 +676,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Checks if the pokemon is allowed in battle (ie: not fainted, and allowed under any active challenges).
-   * @param onField `true` to also check if the pokemon is currently on the field, defaults to `false`
-   * @returns `true` if the pokemon is "active". Returns `false` if there is no active {@linkcode BattleScene}
+   * Checks if this {@linkcode Pokemon} is allowed in battle (ie: not fainted, and allowed under any active challenges).
+   * @param onField `true` to also check if the pokemon is currently on the field; default `false`
+   * @returns `true` if the pokemon is "active", as described above.
+   * Returns `false` if there is no active {@linkcode BattleScene} or the pokemon is disallowed.
    */
   public isActive(onField = false): boolean {
     if (!globalScene) {
@@ -5696,9 +5697,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-  Reset a {@linkcode Pokemon}'s per-battle {@linkcode PokemonBattleData | battleData},
-  as well as any transient {@linkcode PokemonWaveData | waveData} for the current wave.
-  Called before a new battle starts.
+   * Reset a {@linkcode Pokemon}'s per-battle {@linkcode PokemonBattleData | battleData},
+   * as well as any transient {@linkcode PokemonWaveData | waveData} for the current wave.
+   * Should be called once per arena transition (new biome/trainer battle/Mystery Encounter).
   */
   resetBattleAndWaveData(): void {
     this.battleData = new PokemonBattleData();
@@ -5707,7 +5708,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Reset a {@linkcode Pokemon}'s {@linkcode PokemonWaveData | waveData}.
-   * Called once per new wave start as well as by {@linkcode resetBattleAndWaveData}.
+   * Should be called upon starting a new wave in addition to whenever an arena transition occurs.
+   * @see {@linkcode resetBattleAndWaveData()}
    */
   resetWaveData(): void {
     this.waveData = new PokemonWaveData();
@@ -6046,7 +6048,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     let fusionPaletteColors: Map<number, number>;
 
     const originalRandom = Math.random;
-    Math.random = randSeedFloat;
+    Math.random = () => randSeedFloat();
 
     globalScene.executeWithSeedOffset(
       () => {
@@ -7788,11 +7790,11 @@ export class PokemonSummonData {
  * Resets at the start of a new battle (but not on switch).
  */
 export class PokemonBattleData {
-  /** counts the hits the pokemon received during this battle; used for {@linkcode Moves.RAGE_FIST} */
+  /** Counter tracking direct hits this Pokemon has received during this battle; used for {@linkcode Moves.RAGE_FIST} */
   public hitCount = 0;
-  /** Whether this has eaten a berry this battle; used for {@linkcode Moves.BELCH} */
+  /** Whether this Pokemon has eaten a berry this battle; used for {@linkcode Moves.BELCH} */
   public hasEatenBerry: boolean = false;
-  /** A list of all berries eaten in this current battle; used by {@linkcode Abilities.HARVEST} */
+  /** Array containing all berries eaten in this current battle; used by {@linkcode Abilities.HARVEST} */
   public berriesEaten: BerryType[] = [];
 
   constructor(source?: PokemonBattleData | Partial<PokemonBattleData>) {
