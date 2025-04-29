@@ -7768,16 +7768,26 @@ export class PokemonSummonData {
   /** Array containing all berries eaten in the last turn; used by {@linkcode Abilities.CUD_CHEW} */
   public berriesEatenLast: BerryType[] = [];
 
-  /** The number of turns the pokemon has passed since entering the battle */
+  /**
+   * The number of turns this pokemon has spent in the active position since entering the battle.
+   * Currently exclusively used for positioning the battle cursor.
+   */
   public turnCount = 1;
-  /** The number of turns the pokemon has passed since the start of the wave */
+  /**
+   * The number of turns this pokemon has spent in the active position since starting a new wave.
+   * Used for most "first turn only" conditions ({@linkcode Moves.FAKE_OUT | Fake Out}, {@linkcode Moves.FIRST_IMPRESSION | First Impression}, etc.)
+   */
   public waveTurnCount = 1;
-  /** The list of moves the pokemon has used since entering the battle */
+  /**
+   * An array of all moves this pokemon has used since entering the battle.
+   * Used for most moves and abilities that check prior move usage or copy already-used moves.
+   */
   public moveHistory: TurnMove[] = [];
 
   constructor(source?: PokemonSummonData | Partial<PokemonSummonData>) {
     if (!isNullOrUndefined(source)) {
       Object.assign(this, source)
+      // TODO: Do we need these mapping statements?
       this.moveset &&= this.moveset.map(m => PokemonMove.loadMove(m))
       this.tags &&= this.tags.map(t => loadBattlerTag(t))
     }

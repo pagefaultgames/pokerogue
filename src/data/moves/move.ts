@@ -7781,17 +7781,27 @@ export class StatusIfBoostedAttr extends MoveEffectAttr {
   }
 }
 
+/**
+ * Attribute to fail move usage unless all of the user's other moves have been used at least once.
+ * Used by {@linkcode Moves.LAST_RESORT}.
+ */
 export class LastResortAttr extends MoveAttr {
+  // TODO: Verify behavior as Bulbapedia page is _extremely_ poorly documented
   getCondition(): MoveConditionFunc {
-    return (user: Pokemon, target: Pokemon, move: Move) => {
-      const uniqueUsedMoveIds = new Set<Moves>();
-      const movesetMoveIds = user.getMoveset().map(m => m.moveId);
-      user.getMoveHistory().map(m => {
-        if (m.move !== move.id && movesetMoveIds.find(mm => mm === m.move)) {
-          uniqueUsedMoveIds.add(m.move);
-        }
-      });
-      return uniqueUsedMoveIds.size >= movesetMoveIds.length - 1;
+    return (user: Pokemon, _target: Pokemon, move: Move) => {
+      const movesInMoveset = new Set<Moves>(user.getMoveset().map(m => m.moveId));
+      if (!movesInMoveset.delete(move.id) || !movesInMoveset.size) {
+        return false; // Last resort fails if used when not in user's moveset or no other moves exist
+      }
+
+      const movesInHistory = new Set(
+        user.getMoveHistory()
+        .filter(m => !m.virtual) // TODO: Change to (m) => m < MoveUseType.INDIRECT after Dancer PR refactors virtual into enum
+        .map(m => m.move)
+      );
+
+      // Since `Set.intersection()` is only present in ESNext, we have to coerce it to an array to check inclusion
+      return [...movesInMoveset].every(m => movesInHistory.has(m))
     };
   }
 }
@@ -9009,6 +9019,7 @@ export function initMoves() {
       .soundBased()
       .target(MoveTarget.RANDOM_NEAR_ENEMY)
       .partial(), // Does not lock the user, does not stop Pokemon from sleeping
+      // Likely can make use of FrenzyAttr and an ArenaTag (just without the FrenzyMissFunc)
     new SelfStatusMove(Moves.STOCKPILE, PokemonType.NORMAL, -1, 20, -1, 0, 3)
       .condition(user => (user.getTag(StockpilingTag)?.stockpiledCount ?? 0) < 3)
       .attr(AddBattlerTagAttr, BattlerTagType.STOCKPILING, true),
@@ -9444,7 +9455,8 @@ export function initMoves() {
       .makesContact(true)
       .attr(PunishmentPowerAttr),
     new AttackMove(Moves.LAST_RESORT, PokemonType.NORMAL, MoveCategory.PHYSICAL, 140, 100, 5, -1, 0, 4)
-      .attr(LastResortAttr),
+      .attr(LastResortAttr)
+      .edgeCase(), // May or may not need to ignore remotely called moves depending on how it works
     new StatusMove(Moves.WORRY_SEED, PokemonType.GRASS, 100, 10, -1, 0, 4)
       .attr(AbilityChangeAttr, Abilities.INSOMNIA)
       .reflectable(),

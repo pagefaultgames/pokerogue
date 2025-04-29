@@ -67,7 +67,8 @@ export class SwitchSummonPhase extends SummonPhase {
         !(this.player ? globalScene.getPlayerParty() : globalScene.getEnemyParty())[this.slotIndex])
     ) {
       if (this.player) {
-        return this.switchAndSummon();
+        this.switchAndSummon();
+        return;
       }
       globalScene.time.delayedCall(750, () => this.switchAndSummon());
       return;
