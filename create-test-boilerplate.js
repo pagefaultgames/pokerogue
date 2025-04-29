@@ -71,16 +71,15 @@ async function runInteractive() {
   const fileNameAnswer = await promptFileName(typeAnswer.selectedOption);
 
   const type = typeAnswer.selectedOption.toLowerCase();
-  // Convert fileName to kebab-case
-  // Ex: "Cud Chew/Cud-Chew" --> "cud-chew"
+  // Convert fileName from kebab-case or camelCase to snake_case
   const fileName = fileNameAnswer.userInput
-    .replace(/([a-z])([A-Z])/g, "$1-$2") // Convert camelCase to kebab-case
-    .replace(/\s+/g, "-") // Replace spaces with dashes
+    .replace(/-+/g, "_") // Convert kebab-case (dashes) to underscores
+    .replace(/([a-z])([A-Z])/g, "$1_$2") // Convert camelCase to snake_case
+    .replace(/\s+/g, "_") // Replace spaces with underscores
     .toLowerCase(); // Ensure all lowercase
+  // Format the description for the test case
 
-  // Get proper english name for test names and data name for abilities/moves
-  const formattedName = fileName.replace(/-/g, " ").replace(/\b\w/g, char => char.toUpperCase());
-  const attrName = fileName.replace(/-+/g, "_").toUpperCase(); // enum names are snake case, fullcaps
+  const formattedName = fileName.replace(/_/g, " ").replace(/\b\w/g, char => char.toUpperCase());
   // Determine the directory based on the type
   let dir;
   let description;
@@ -131,9 +130,9 @@ describe("${description}", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset(Moves.${type === "move" ? attrName : "SPLASH"})
-      .ability(Abilities.${type === "ability" ? attrName : "BALL_FETCH"})
-      .battleStyle("single")
+      .moveset([ Moves.SPLASH ])
+      .ability(Abilities.BALL_FETCH)
+      .battleType("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)
