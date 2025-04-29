@@ -186,7 +186,7 @@ export class MovePhase extends BattlePhase {
 
     this.lapsePreMoveAndMoveTags();
 
-    if (!this.failed && !this.cancelled) {
+    if (!(this.failed || this.cancelled)) {
       this.resolveFinalPreMoveCancellationChecks();
     }
 
