@@ -53,7 +53,6 @@ export class BerryPhase extends FieldPhase {
       return;
     }
 
-    // Play every endless player's least favorite animation
     globalScene.unshiftPhase(
       new CommonAnimPhase(pokemon.getBattlerIndex(), pokemon.getBattlerIndex(), CommonAnim.USE_ITEM),
     );
