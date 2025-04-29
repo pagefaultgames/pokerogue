@@ -4072,7 +4072,7 @@ export class PostTurnRestoreBerryAbAttr extends PostTurnAbAttr {
 
     // Clamp procChance to [0, 1]. Skip if didn't proc (less than pass)
     const pass = Phaser.Math.RND.realInRange(0, 1);
-    return Math.max(Math.min(this.procChance(pokemon), 1), 0) >= pass;
+    return Phaser.Math.Clamp(this.procChance(pokemon), 0, 1) >= pass;
   }
 
   override applyPostTurn(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): void {
