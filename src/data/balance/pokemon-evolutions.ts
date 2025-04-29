@@ -10,7 +10,7 @@ import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { TimeOfDay } from "#enums/time-of-day";
-import { DamageMoneyRewardModifier, ExtraModifierModifier, MoneyMultiplierModifier, TempExtraModifierModifier } from "#app/modifier/modifier";
+import { DamageMoneyRewardModifier, EvoTrackerModifier, ExtraModifierModifier, MoneyMultiplierModifier, TempExtraModifierModifier } from "#app/modifier/modifier";
 import { SpeciesFormKey } from "#enums/species-form-key";
 import { speciesStarterCosts } from "./starters";
 import i18next from "i18next";
@@ -95,7 +95,7 @@ export enum EvoCondKey {
   BIOME,
   TYROGUE,
   SHEDINJA,
-  EVO_COUNTER,
+  EVO_TREASURE_TRACKER,
   RANDOM_FORM,
   SPECIES_CAUGHT,
   GENDER,
@@ -137,7 +137,7 @@ export class SpeciesEvolutionCondition {
         (cond === EvoCondKey.MOVE_TYPE && isNullOrUndefined(this.data.moveType)) ||
         (cond === EvoCondKey.PARTY_TYPE && isNullOrUndefined(this.data.partyType)) ||
         (cond === EvoCondKey.GENDER && isNullOrUndefined(this.data.gender)) ||
-        (cond === EvoCondKey.EVO_COUNTER && isNullOrUndefined(this.data.evoCount)) ||
+        (cond === EvoCondKey.EVO_TREASURE_TRACKER && isNullOrUndefined(this.data.evoCount)) ||
         (cond === EvoCondKey.RANDOM_FORM && isNullOrUndefined(this.data.randomFormChance)) ||
         (cond === EvoCondKey.GENDER && isNullOrUndefined(this.data.gender)) ||
         (cond === EvoCondKey.SPECIES_CAUGHT && isNullOrUndefined(this.data.speciesCaught))
@@ -183,7 +183,7 @@ export class SpeciesEvolutionCondition {
         case EvoCondKey.SHEDINJA:
           str.push(i18next.t("pokemonEvolutions:shedinja"));
           break;
-        case EvoCondKey.EVO_COUNTER:
+        case EvoCondKey.EVO_TREASURE_TRACKER:
           str.push(i18next.t("pokemonEvolutions:treasure"));
           break;
         case EvoCondKey.SPECIES_CAUGHT:
@@ -209,14 +209,8 @@ export class SpeciesEvolutionCondition {
           return pokemon.moveset.some(m => m.getMove().type === this.data.moveType);
         case EvoCondKey.PARTY_TYPE:
           return !!globalScene.getPlayerParty().find(p => p.getTypes(false, false, true).indexOf(this.data.partyType!) > -1)
-        case EvoCondKey.EVO_COUNTER:
-          return pokemon.evoCounter
-            + pokemon.getHeldItems().filter(m => m instanceof DamageMoneyRewardModifier).length
-            + globalScene.findModifiers(m => 
-              m instanceof MoneyMultiplierModifier
-              || m instanceof ExtraModifierModifier
-              || m instanceof TempExtraModifierModifier
-            ).length >= this.data.evoCount!;
+        case EvoCondKey.EVO_TREASURE_TRACKER:
+          return pokemon.getHeldItems().some(m => m instanceof EvoTrackerModifier && m.getStackCount() >= this.data.evoCount!);
         case EvoCondKey.GENDER:
           return pokemon.gender === this.data.gender;
         case EvoCondKey.SHEDINJA: // Shedinja cannot be evolved into directly
@@ -1865,8 +1859,8 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.FROSMOTH, 1, null, {key: [EvoCondKey.FRIENDSHIP, EvoCondKey.TIME], friendship: 90, time: [TimeOfDay.DUSK, TimeOfDay.NIGHT]}, SpeciesWildEvolutionDelay.MEDIUM)
   ],
   [Species.GIMMIGHOUL]: [
-    new SpeciesFormEvolution(Species.GHOLDENGO, "chest", "", 1, null, {key: EvoCondKey.EVO_COUNTER, evoCount: 10}, SpeciesWildEvolutionDelay.VERY_LONG),
-    new SpeciesFormEvolution(Species.GHOLDENGO, "roaming", "", 1, null, {key: EvoCondKey.EVO_COUNTER, evoCount: 10}, SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesFormEvolution(Species.GHOLDENGO, "chest", "", 1, null, {key: EvoCondKey.EVO_TREASURE_TRACKER, evoCount: 10}, SpeciesWildEvolutionDelay.VERY_LONG),
+    new SpeciesFormEvolution(Species.GHOLDENGO, "roaming", "", 1, null, {key: EvoCondKey.EVO_TREASURE_TRACKER, evoCount: 10}, SpeciesWildEvolutionDelay.VERY_LONG)
   ]
 };
 

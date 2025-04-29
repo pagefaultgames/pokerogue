@@ -895,24 +895,19 @@ export class EvoTrackerModifier extends PokemonHeldItemModifier {
   }
 
   getIconStackText(virtual?: boolean): Phaser.GameObjects.BitmapText | null {
-    if (this.getMaxStackCount() === 1 || (virtual && !this.virtualStackCount)) {
-      return null;
-    }
-
     const pokemon = globalScene.getPokemonById(this.pokemonId);
 
-    this.stackCount = pokemon
-      ? pokemon.evoCounter +
-        pokemon.getHeldItems().filter(m => m instanceof DamageMoneyRewardModifier).length +
+    this.virtualStackCount = pokemon
+      ? pokemon.getHeldItems().filter(m => m instanceof DamageMoneyRewardModifier).length +
         globalScene.findModifiers(
           m =>
             m instanceof MoneyMultiplierModifier ||
             m instanceof ExtraModifierModifier ||
             m instanceof TempExtraModifierModifier,
         ).length
-      : this.stackCount;
+      : 0;
 
-    const text = globalScene.add.bitmapText(10, 15, "item-count", this.stackCount.toString(), 11);
+    const text = globalScene.add.bitmapText(10, 15, "item-count", this.getStackCount().toString(), 11);
     text.letterSpacing = -0.5;
     if (this.getStackCount() >= this.required) {
       text.setTint(0xf89890);
@@ -2905,11 +2900,10 @@ export class MoneyRewardModifier extends ConsumableModifier {
 
     globalScene.getPlayerParty().map(p => {
       if (p.species?.speciesId === Species.GIMMIGHOUL || p.fusionSpecies?.speciesId === Species.GIMMIGHOUL) {
-        p.evoCounter
-          ? (p.evoCounter += Math.min(Math.floor(this.moneyMultiplier), 3))
-          : (p.evoCounter = Math.min(Math.floor(this.moneyMultiplier), 3));
+        const factor = Math.min(Math.floor(this.moneyMultiplier), 3);
         const modifier = getModifierType(modifierTypes.EVOLUTION_TRACKER_GIMMIGHOUL).newModifier(
           p,
+          factor
         ) as EvoTrackerModifier;
         globalScene.addModifier(modifier);
       }
