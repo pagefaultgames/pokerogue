@@ -41,7 +41,6 @@ A full list of flags and options can be found on [their website](https://biomejs
 
 - `--write` will cause Biome to write all "safe" fixes and formatting changes directly to your files (rather than just complaining and doing nothing).
 - `--changed` and `--staged` will only perform checks on all changed or staged files respectively. Biome sources this info from the relevant version control system (in this case Git).
-- `--only=XXX` will filter reported lint issues to a specific category or rule name. Useful for checking errors after Lefthook flags your code (summary screen doesn't show exact line numbers).
 - `diagnostic-level=XXX` will only show diagnostics with at least the given severity level (`info/warn/error`). Useful to only focus on errors causing a failed workflow run or similar.
 
 ## Linting Rules
@@ -54,11 +53,13 @@ Some things to consider:
 - Some rules are currently disabled or marked as warnings (`warn`) to allow for gradual refactoring without blocking development. **Do not write new code that triggers these warnings.**
 - The linter is configured to ignore specific files and folders (such as excessively large files or ones in need of refactoring) to improve performance and focus on actionable areas.
 
-Any questions about linting rules should be brought up in the `#dev-corner` channel in the discord. 
+Any questions about linting rules should be brought up in the `#dev-corner` channel in the discord.
 
 [^1]: A complete list of rules can be found in the `biome.jsonc` file in the project root.
 
 ## What about ESLint?
 
 <!-- Remove if/when we finally ditch eslint for good -->
-Our project migrated away from ESLint around March 2025 due to it simply not scaling well enough with the codebase's ever-growing size. The [existing eslint rules](../eslint.config.js) are considered _deprecated_, only kept due to Biome lacking the corresponding rules.
+Our project migrated away from ESLint around March 2025 due to it simply not scaling well enough with the codebase's ever-growing size. The [existing eslint rules](../eslint.config.js) are considered _deprecated_, only kept due to Biome lacking the corresponding rules in its current ruleset.
+
+No additional ESLint rules should be added under any circumstances - even the few currently in circulation take longer to run than the entire Biome formatting/linting suite combined.
