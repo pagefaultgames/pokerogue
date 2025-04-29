@@ -336,7 +336,8 @@ export class EncounterPhase extends BattlePhase {
     }
 
     for (const pokemon of globalScene.getPlayerParty()) {
-      // Only reset wave data, not battle data
+      // Currently, a new wave is not considered a new battle if there is no arena reset
+      // Therefore, we only reset wave data here
       if (pokemon) {
         pokemon.resetWaveData();
       }
