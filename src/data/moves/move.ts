@@ -652,7 +652,7 @@ export default class Move implements Localizable {
         break;
       case MoveFlags.IGNORE_ABILITIES:
         if (user.hasAbilityWithAttr(MoveAbilityBypassAbAttr)) {
-          const abilityEffectsIgnored = new BooleanHolder(false); 
+          const abilityEffectsIgnored = new BooleanHolder(false);
           applyAbAttrs(MoveAbilityBypassAbAttr, user, abilityEffectsIgnored, false, this);
           if (abilityEffectsIgnored.value) {
             return true;
@@ -3160,7 +3160,7 @@ export class StatStageChangeAttr extends MoveEffectAttr {
   private get showMessage () {
     return this.options?.showMessage ?? true;
   }
-  
+
   /**
    * Attempts to change stats of the user or target (depending on value of selfTarget) if conditions are met
    * @param user {@linkcode Pokemon} the user of the move
@@ -6326,11 +6326,11 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
 
       if (!allyPokemon?.isActive(true) && switchOutTarget.hp) {
           globalScene.pushPhase(new BattleEndPhase(false));
-                    
+
           if (globalScene.gameMode.hasRandomBiomes || globalScene.isNewBiome()) {
             globalScene.pushPhase(new SelectBiomePhase());
           }
-          
+
           globalScene.pushPhase(new NewBattlePhase());
       }
     }

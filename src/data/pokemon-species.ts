@@ -488,6 +488,7 @@ export abstract class PokemonSpeciesForm {
           if (formSpriteKey.startsWith("behemoth")) {
             formSpriteKey = "crowned";
           }
+          // biome-ignore lint/suspicious/no-fallthrough: Falls through
         default:
           ret += `-${formSpriteKey}`;
           break;
