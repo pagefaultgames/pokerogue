@@ -4123,7 +4123,6 @@ export class PostTurnRestoreBerryAbAttr extends PostTurnAbAttr {
     } else {
       // make new modifier
       const newBerry = new BerryModifier(chosenBerry, pokemon.id, chosenBerryType, 1);
-      // console.log(newBerry);
       if (pokemon.isPlayer()) {
         globalScene.addModifier(newBerry);
       } else {
