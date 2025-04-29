@@ -5724,7 +5724,6 @@ export const tmSpecies: TmSpecies = {
     Species.SCOLIPEDE,
     Species.WHIMSICOTT,
     Species.LILLIGANT,
-    Species.BASCULIN,
     Species.KROOKODILE,
     Species.DARMANITAN,
     Species.CRUSTLE,
@@ -6023,6 +6022,11 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_DECIDUEYE,
     Species.PALDEA_TAUROS,
     Species.BLOODMOON_URSALUNA,
+    [
+      Species.BASCULIN,
+      "blue-striped",
+      "red-striped",
+    ]
   ],
   [Moves.LOW_KICK]: [
     Species.SANDSHREW,
@@ -19335,7 +19339,6 @@ export const tmSpecies: TmSpecies = {
     Species.CONKELDURR,
     Species.THROH,
     Species.SAWK,
-    Species.BASCULIN,
     Species.DARMANITAN,
     Species.SCRAFTY,
     Species.ESCAVALIER,
@@ -19449,6 +19452,11 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_BRAVIARY,
     Species.HISUI_DECIDUEYE,
     Species.PALDEA_TAUROS,
+    [
+      Species.BASCULIN,
+      "blue-striped",
+      "red-striped",
+    ],
   ],
   [Moves.SPITE]: [
     Species.EKANS,
@@ -35119,7 +35127,6 @@ export const tmSpecies: TmSpecies = {
     Species.TYMPOLE,
     Species.PALPITOAD,
     Species.SEISMITOAD,
-    Species.BASCULIN,
     Species.SANDILE,
     Species.KROKOROK,
     Species.KROOKODILE,
@@ -35253,6 +35260,10 @@ export const tmSpecies: TmSpecies = {
       "shadow",
     ],
     Species.BLOODMOON_URSALUNA,
+    [
+      Species.BASCULIN,
+      "white-striped",
+    ],
   ],
   [Moves.HEAT_WAVE]: [
     Species.CHARMANDER,
@@ -51341,7 +51352,6 @@ export const tmSpecies: TmSpecies = {
     Species.SCOLIPEDE,
     Species.WHIMSICOTT,
     Species.LILLIGANT,
-    Species.BASCULIN,
     Species.KROOKODILE,
     Species.DARMANITAN,
     Species.CRUSTLE,
@@ -51655,6 +51665,11 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_DECIDUEYE,
     Species.PALDEA_TAUROS,
     Species.BLOODMOON_URSALUNA,
+    [
+      Species.BASCULIN,
+      "blue-striped",
+      "red-striped",
+    ],
   ],
   [Moves.NASTY_PLOT]: [
     Species.PIKACHU,
