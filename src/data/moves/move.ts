@@ -1679,6 +1679,14 @@ export class RecoilAttr extends MoveEffectAttr {
     user.damageAndUpdate(recoilDamage, { result: HitResult.INDIRECT, ignoreSegments: true });
     globalScene.queueMessage(i18next.t("moveTriggers:hitWithRecoil", { pokemonName: getPokemonNameWithAffix(user) }));
     user.turnData.damageTaken += recoilDamage;
+    if (!user.isFainted() && user.hasSpecies(Species.BASCULIN, "white-striped")) {
+      if (isNullOrUndefined(user.evoCounter)) {
+        user.evoCounter = recoilDamage;
+      }
+      else {
+        user.evoCounter += recoilDamage;
+      }
+    }
 
     return true;
   }

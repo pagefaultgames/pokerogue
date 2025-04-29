@@ -100,7 +100,8 @@ export enum EvoCondKey {
   SPECIES_CAUGHT,
   GENDER,
   NATURE,
-  MOVE_USE_COUNT
+  MOVE_USE_COUNT,
+  RECOIL_DAMAGE_COUNT,
 }
 
 export interface EvolutionConditionData {
@@ -138,7 +139,7 @@ export class SpeciesEvolutionCondition {
         (cond === EvoCondKey.MOVE_TYPE && isNullOrUndefined(this.data.moveType)) ||
         (cond === EvoCondKey.PARTY_TYPE && isNullOrUndefined(this.data.partyType)) ||
         (cond === EvoCondKey.GENDER && isNullOrUndefined(this.data.gender)) ||
-        (cond === EvoCondKey.EVO_TREASURE_TRACKER && isNullOrUndefined(this.data.evoCount)) ||
+        ((cond === EvoCondKey.EVO_TREASURE_TRACKER || cond === EvoCondKey.RECOIL_DAMAGE_COUNT) && isNullOrUndefined(this.data.evoCount)) ||
         (cond === EvoCondKey.RANDOM_FORM && isNullOrUndefined(this.data.randomFormChance)) ||
         (cond === EvoCondKey.GENDER && isNullOrUndefined(this.data.gender)) ||
         (cond === EvoCondKey.SPECIES_CAUGHT && isNullOrUndefined(this.data.speciesCaught)) ||
@@ -194,6 +195,9 @@ export class SpeciesEvolutionCondition {
         case EvoCondKey.MOVE_USE_COUNT:
           str.push(i18next.t("pokemonEvolutions:useMoveCount", {move: allMoves[this.data.move!].name, count: this.data.evoCount!}));
           break;
+        case EvoCondKey.RECOIL_DAMAGE_COUNT:
+          str.push(i18next.t("pokemonEvolutions:recoil"));
+          break;
       }
     });
     return str.join(i18next.t("pokemonEvolutions:connector"));
@@ -237,6 +241,7 @@ export class SpeciesEvolutionCondition {
         case EvoCondKey.SPECIES_CAUGHT:
           return !!globalScene.gameData.dexData[this.data.speciesCaught!].caughtAttr;
         case EvoCondKey.MOVE_USE_COUNT:
+        case EvoCondKey.RECOIL_DAMAGE_COUNT:
           return pokemon.evoCounter >= this.data.evoCount!;
       }
     });
@@ -1606,8 +1611,8 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.LILLIGANT, 1, EvolutionItem.SUN_STONE, null, SpeciesWildEvolutionDelay.LONG)
   ],
   [Species.BASCULIN]: [
-    new SpeciesFormEvolution(Species.BASCULEGION, "white-striped", "female", 40, null, {key: EvoCondKey.GENDER, gender: Gender.FEMALE}, SpeciesWildEvolutionDelay.VERY_LONG),
-    new SpeciesFormEvolution(Species.BASCULEGION, "white-striped", "male", 40, null, {key: EvoCondKey.GENDER, gender: Gender.MALE}, SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesFormEvolution(Species.BASCULEGION, "white-striped", "female", 1, null, {key: [EvoCondKey.GENDER, EvoCondKey.RECOIL_DAMAGE_COUNT], gender: Gender.FEMALE, evoCount: 294}, SpeciesWildEvolutionDelay.VERY_LONG),
+    new SpeciesFormEvolution(Species.BASCULEGION, "white-striped", "male", 1, null, {key: [EvoCondKey.GENDER, EvoCondKey.RECOIL_DAMAGE_COUNT], gender: Gender.MALE, evoCount: 294}, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.MINCCINO]: [
     new SpeciesEvolution(Species.CINCCINO, 1, EvolutionItem.SHINY_STONE, null, SpeciesWildEvolutionDelay.LONG)
