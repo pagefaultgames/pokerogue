@@ -335,7 +335,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public pauseEvolutions: boolean;
   public pokerus: boolean;
   public switchOutStatus: boolean;
-  public evoCounter: number;
   public teraType: PokemonType;
   public isTerastallized: boolean;
   public stellarTypesBoosted: PokemonType[];
@@ -465,7 +464,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.metWave = dataSource.metWave ?? (this.metBiome === -1 ? -1 : 0);
       this.pauseEvolutions = dataSource.pauseEvolutions;
       this.pokerus = !!dataSource.pokerus;
-      this.evoCounter = dataSource.evoCounter ?? 0;
       this.fusionSpecies =
         dataSource.fusionSpecies instanceof PokemonSpecies
           ? dataSource.fusionSpecies
@@ -6728,7 +6726,6 @@ export class PlayerPokemon extends Pokemon {
         newPokemon.fusionLuck = this.fusionLuck;
         newPokemon.fusionTeraType = this.fusionTeraType;
         newPokemon.usedTMs = this.usedTMs;
-        newPokemon.evoCounter = this.evoCounter;
 
         globalScene.getPlayerParty().push(newPokemon);
         newPokemon.evolve(
@@ -6824,7 +6821,6 @@ export class PlayerPokemon extends Pokemon {
     this.fusionGender = pokemon.gender;
     this.fusionLuck = pokemon.luck;
     this.fusionCustomPokemonData = pokemon.customPokemonData;
-    this.evoCounter = Math.max(pokemon.evoCounter, this.evoCounter);
     if (pokemon.pauseEvolutions || this.pauseEvolutions) {
       this.pauseEvolutions = true;
     }
