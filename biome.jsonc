@@ -99,10 +99,10 @@
       "linter": {
         "rules": {
           "performance": {
-            "noDelete": "off" // ????
+            "noDelete": "off" // TODO: evaluate if this is necessary for the test(s) to function
           },
           "style": {
-            "noNamespaceImport": "off" // TODO: Refactor and mark as fixed
+            "noNamespaceImport": "off" // this is required for `vi.spyOn` to work in some tests
           }
         }
       }
