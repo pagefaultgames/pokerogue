@@ -5530,7 +5530,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     turnsRemaining = 0,
     sourceText: string | null = null,
     overrideStatus?: boolean,
-    quiet = false,
+    quiet = true,
   ): boolean {
     if (!this.canSetStatus(effect, quiet, overrideStatus, sourcePokemon)) {
       return false;
