@@ -79,7 +79,7 @@
         "noExplicitAny": "off",
         "noAssignInExpressions": "off",
         "noPrototypeBuiltins": "off",
-        "noFallthroughSwitchClause": "error", // Preventsw accidental automatic fallthroughs in switch cases (use disable comment if needed)
+        "noFallthroughSwitchClause": "error", // Prevents accidental automatic fallthroughs in switch cases (use disable comment if needed)
         "noImplicitAnyLet": "warn", // TODO: Refactor and make this an error
         "noRedeclare": "info", // TODO: Refactor and make this an error
         "noGlobalIsNan": "off",
