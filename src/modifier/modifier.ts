@@ -918,15 +918,64 @@ export class EvoTrackerModifier extends PokemonHeldItemModifier {
   }
 
   getMaxHeldItemCount(pokemon: Pokemon): number {
-    this.stackCount =
-      pokemon.evoCounter +
-      pokemon.getHeldItems().filter(m => m instanceof DamageMoneyRewardModifier).length +
-      globalScene.findModifiers(
-        m =>
-          m instanceof MoneyMultiplierModifier ||
-          m instanceof ExtraModifierModifier ||
-          m instanceof TempExtraModifierModifier,
-      ).length;
+    return 999;
+  }
+}
+
+export class EvoTrackerMoveUseModifier extends PokemonHeldItemModifier {
+  protected species: Species;
+  protected move: Moves;
+  protected required: number;
+  public isTransferable = false;
+
+  constructor(type: ModifierType, pokemonId: number, species: Species, move: Moves, required: number, stackCount?: number) {
+    super(type, pokemonId, stackCount);
+    this.species = species;
+    this.move = move;
+    this.required = required;
+  }
+
+  matchType(modifier: Modifier): boolean {
+    return (
+      modifier instanceof EvoTrackerMoveUseModifier &&
+      modifier.species === this.species &&
+      modifier.move === this.move &&
+      modifier.required === this.required
+    );
+  }
+
+  clone(): PersistentModifier {
+    return new EvoTrackerMoveUseModifier(this.type, this.pokemonId, this.species, this.move, this.required, this.stackCount);
+  }
+
+  getArgs(): any[] {
+    return super.getArgs().concat([this.species, this.move, this.required]);
+  }
+
+  /**
+   * Applies the {@linkcode EvoTrackerMoveUseModifier}
+   * @returns always `true`
+   */
+  override apply(): boolean {
+    return true;
+  }
+
+  getIconStackText(virtual?: boolean): Phaser.GameObjects.BitmapText | null {
+    const text = globalScene.add.bitmapText(10, 15, "item-count", this.getStackCount().toString(), 11);
+    text.letterSpacing = -0.5;
+    if (this.getStackCount() >= this.required) {
+      text.setTint(0xf89890);
+    }
+    text.setOrigin(0, 0);
+
+    return text;
+  }
+
+  override shouldApply(pokemon?: Pokemon, move?: Moves): boolean {
+    return move === this.move;
+  }
+
+  getMaxHeldItemCount(pokemon: Pokemon): number {
     return 999;
   }
 }

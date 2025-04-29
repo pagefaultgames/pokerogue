@@ -98,6 +98,7 @@ import {
   TempExtraModifierModifier,
   CriticalCatchChanceBoosterModifier,
   FieldEffectModifier,
+  EvoTrackerMoveUseModifier,
 } from "#app/modifier/modifier";
 import { ModifierTier } from "#app/modifier/modifier-tier";
 import Overrides from "#app/overrides";
@@ -1897,6 +1898,20 @@ export const modifierTypes = {
       "modifierType:ModifierType.EVOLUTION_TRACKER_GIMMIGHOUL",
       "relic_gold",
       (type, args) => new EvoTrackerModifier(type, (args[0] as Pokemon).id, Species.GIMMIGHOUL, 10, (args[1] as number ?? 1)),
+    ),
+  
+  EVOLUTION_TRACKER_PRIMEAPE: () =>
+    new PokemonHeldItemModifierType(
+      "modifierType:ModifierType.EVOLUTION_TRACKER_PRIMEAPE",
+      "tm_ghost",
+      (type, args) => new EvoTrackerMoveUseModifier(type, (args[0] as Pokemon).id, Species.PRIMEAPE, Moves.RAGE_FIST, 10)
+    ),
+
+  EVOLUTION_TRACKER_STANTLER: () =>
+    new PokemonHeldItemModifierType(
+      "modifierType:ModifierType.EVOLUTION_TRACKER_STANTLER",
+      "tm_psychic",
+      (type, args) => new EvoTrackerMoveUseModifier(type, (args[0] as Pokemon).id, Species.STANTLER, Moves.PSYSHIELD_BASH, 10)
     ),
 
   MEGA_BRACELET: () =>

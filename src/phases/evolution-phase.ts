@@ -343,6 +343,7 @@ export class EvolutionPhase extends Phase {
       this.evolutionHandler.canCancel = false;
 
       this.pokemon.evolve(this.evolution, this.pokemon.species).then(() => {
+        this.evolution?.postEvolve(this.pokemon);
         const learnSituation: LearnMoveSituation = this.fusionSpeciesEvolved
           ? LearnMoveSituation.EVOLUTION_FUSED
           : this.pokemon.fusionSpecies
