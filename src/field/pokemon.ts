@@ -1412,9 +1412,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Retrieves the entire set of stats of the {@linkcode Pokemon}.
-   * @param bypassSummonData prefer actual stats (`true` by default) or in-battle overriden stats (`false`)
-   * @returns the numeric values of the {@linkcode Pokemon}'s stats
+   * Retrieves the entire set of stats of this {@linkcode Pokemon}.
+   * @param bypassSummonData - whether to use actual stats or in-battle overriden stats from Transform; default `true`
+   * @returns the numeric values of this {@linkcode Pokemon}'s stats
    */
   getStats(bypassSummonData = true): number[] {
     if (!bypassSummonData && this.summonData.stats) {
@@ -4973,13 +4973,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   transferTagsBySourceId(sourceId: number, newSourceId: number): void {
-    if (!this.summonData) {
-      return;
-    }
-    const tags = this.summonData.tags;
-    tags
-      .filter(t => t.sourceId === sourceId)
-      .forEach(t => (t.sourceId = newSourceId));
+    this.summonData.tags
+    .filter(t => t.sourceId === sourceId)
+    .forEach(t => (t.sourceId = newSourceId));
   }
 
   /**
@@ -5664,6 +5660,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
     this.summonData = new PokemonSummonData();
     this.setSwitchOutStatus(false);
+    // TODO: Why do we remove leech seed on resetting summon data? That should be a BattlerTag thing...
     if (this.getTag(BattlerTagType.SEEDED)) {
       this.lapseTag(BattlerTagType.SEEDED);
     }
@@ -7749,15 +7746,16 @@ export class PokemonSummonData {
   public moveQueue: TurnMove[] = [];
   public tags: BattlerTag[] = [];
   public abilitySuppressed = false;
+
+  // Overrides for transform
   public speciesForm: PokemonSpeciesForm | null = null;
   public fusionSpeciesForm: PokemonSpeciesForm | null = null;
-  public ability: Abilities = Abilities.NONE;
-  public passiveAbility: Abilities = Abilities.NONE;
-  public gender: Gender;
-  public fusionGender: Gender;
+  public ability: Abilities | undefined;
+  public passiveAbility: Abilities | undefined;
+  public gender: Gender | undefined;
+  public fusionGender: Gender | undefined;
   public stats: number[] = [0, 0, 0, 0, 0, 0];
   public moveset: PokemonMove[] | null;
-  public illusionBroken: boolean = false;
 
   // If not initialized this value will not be populated from save data.
   public types: PokemonType[] = [];
@@ -7765,6 +7763,7 @@ export class PokemonSummonData {
 
   /** Data pertaining to this pokemon's illusion. */
   public illusion: IllusionData | null = null;
+  public illusionBroken: boolean = false;
 
   /** Array containing all berries eaten in the last turn; used by {@linkcode Abilities.CUD_CHEW} */
   public berriesEatenLast: BerryType[] = [];

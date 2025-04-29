@@ -3631,14 +3631,10 @@ export class SuppressWeatherEffectAbAttr extends PreWeatherEffectAbAttr {
  * Condition function to applied to abilities related to Sheer Force.
  * Checks if last move used against target was affected by a Sheer Force user and:
  * Disables: Color Change, Pickpocket, Berserk, Anger Shell
- * @returns {AbAttrCondition} If false disables the ability which the condition is applied to.
+ * @returns An {@linkcode AbAttrCondition} to disable the ability under the proper conditions.
  */
 function getSheerForceHitDisableAbCondition(): AbAttrCondition {
   return (pokemon: Pokemon) => {
-    if (!pokemon.turnData) {
-      return true;
-    }
-
     const lastReceivedAttack = pokemon.turnData.attacksReceived[0];
     if (!lastReceivedAttack) {
       return true;
@@ -3649,7 +3645,7 @@ function getSheerForceHitDisableAbCondition(): AbAttrCondition {
       return true;
     }
 
-    /**if the last move chance is greater than or equal to cero, and the last attacker's ability is sheer force*/
+    /** `true` if the last move's chance is above 0 and the last attacker's ability is sheer force */
     const SheerForceAffected = allMoves[lastReceivedAttack.move].chance >= 0 && lastAttacker.hasAbility(Abilities.SHEER_FORCE);
 
     return !SheerForceAffected;
@@ -5695,6 +5691,7 @@ export class PostDamageForceSwitchAbAttr extends PostDamageAbAttr {
     this.hpRatio = hpRatio;
   }
 
+  // TODO: Refactor to use more early returns
   public override canApplyPostDamage(
     pokemon: Pokemon,
     damage: number,
@@ -5722,6 +5719,7 @@ export class PostDamageForceSwitchAbAttr extends PostDamageAbAttr {
         if (fordbiddenDefendingMoves.includes(enemyLastMoveUsed.move) || enemyLastMoveUsed.move === Moves.SKY_DROP && enemyLastMoveUsed.result === MoveResult.OTHER) {
           return false;
         // Will not activate if the Pokémon's HP falls below half by a move affected by Sheer Force.
+        // TODO: Make this use the sheer force disable condition
         } else if (allMoves[enemyLastMoveUsed.move].chance >= 0 && source.hasAbility(Abilities.SHEER_FORCE)) {
           return false;
         // Activate only after the last hit of multistrike moves

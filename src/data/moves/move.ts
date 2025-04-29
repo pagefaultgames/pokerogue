@@ -4388,10 +4388,10 @@ export class LastMoveDoublePowerAttr extends VariablePowerAttr {
       const userAlly = user.getAlly();
       const enemyAlly = enemy?.getAlly();
 
-      if (!isNullOrUndefined(userAlly) && userAlly.turnData.acted) {
+      if (userAlly?.turnData.acted) {
         pokemonActed.push(userAlly);
       }
-      if (!isNullOrUndefined(enemyAlly) && enemyAlly.turnData.acted) {
+      if (enemyAlly?.turnData.acted) {
         pokemonActed.push(enemyAlly);
       }
     }
@@ -4459,13 +4459,10 @@ export class CombinedPledgeStabBoostAttr extends MoveAttr {
  * @extends VariablePowerAttr
  */
 export class RoundPowerAttr extends VariablePowerAttr {
-  override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+  override apply(user: Pokemon, target: Pokemon, move: Move, args: [NumberHolder]): boolean {
     const power = args[0];
-    if (!(power instanceof NumberHolder)) {
-      return false;
-    }
 
-    if (user.turnData?.joinedRound) {
+    if (user.turnData.joinedRound) {
       power.value *= 2;
       return true;
     }

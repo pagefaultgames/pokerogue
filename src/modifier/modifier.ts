@@ -1649,13 +1649,14 @@ export class FlinchChanceModifier extends PokemonHeldItemModifier {
   }
 
   /**
-   * Applies {@linkcode FlinchChanceModifier}
-   * @param pokemon the {@linkcode Pokemon} that holds the item
-   * @param flinched {@linkcode BooleanHolder} that is `true` if the pokemon flinched
-   * @returns `true` if {@linkcode FlinchChanceModifier} has been applied
+   * Applies {@linkcode FlinchChanceModifier} to randomly flinch targets hit.
+   * @param pokemon - The {@linkcode Pokemon} that holds the item
+   * @param flinched - A {@linkcode BooleanHolder} holding whether the pokemon has flinched
+   * @returns `true` if {@linkcode FlinchChanceModifier} was applied successfully
    */
   override apply(pokemon: Pokemon, flinched: BooleanHolder): boolean {
     // The check for pokemon.summonData is to ensure that a crash doesn't occur when a Pokemon with King's Rock procs a flinch
+    // TODO: Since summonData is always defined now, we can probably remove this
     if (pokemon.summonData && !flinched.value && pokemon.randSeedInt(100) < this.getStackCount() * this.chance) {
       flinched.value = true;
       return true;
@@ -1782,6 +1783,7 @@ export class HitHealModifier extends PokemonHeldItemModifier {
    */
   override apply(pokemon: Pokemon): boolean {
     if (pokemon.turnData.totalDamageDealt && !pokemon.isFullHp()) {
+      // TODO: this shouldn't be undefined AFAIK
       globalScene.unshiftPhase(
         new PokemonHealPhase(
           pokemon.getBattlerIndex(),
