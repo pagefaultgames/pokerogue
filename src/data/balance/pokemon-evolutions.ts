@@ -99,7 +99,8 @@ export enum EvoCondKey {
   RANDOM_FORM,
   SPECIES_CAUGHT,
   GENDER,
-  NATURE
+  NATURE,
+  MOVE_USE_COUNT
 }
 
 export interface EvolutionConditionData {
@@ -140,7 +141,8 @@ export class SpeciesEvolutionCondition {
         (cond === EvoCondKey.EVO_TREASURE_TRACKER && isNullOrUndefined(this.data.evoCount)) ||
         (cond === EvoCondKey.RANDOM_FORM && isNullOrUndefined(this.data.randomFormChance)) ||
         (cond === EvoCondKey.GENDER && isNullOrUndefined(this.data.gender)) ||
-        (cond === EvoCondKey.SPECIES_CAUGHT && isNullOrUndefined(this.data.speciesCaught))
+        (cond === EvoCondKey.SPECIES_CAUGHT && isNullOrUndefined(this.data.speciesCaught)) ||
+        (cond === EvoCondKey.MOVE_USE_COUNT && (isNullOrUndefined(this.data.move) || isNullOrUndefined(this.data.evoCount)))
       ) {
         console.log("Error! Missing data for evo condition: ", EvoCondKey[cond]);
       }
@@ -189,6 +191,9 @@ export class SpeciesEvolutionCondition {
         case EvoCondKey.SPECIES_CAUGHT:
           str.push(i18next.t("pokemonEvolutions:caught", {species: getPokemonSpecies(this.data.speciesCaught!).name}));
           break;
+        case EvoCondKey.MOVE_USE_COUNT:
+          str.push(i18next.t("pokemonEvolutions:useMoveCount", {move: allMoves[this.data.move!].name, count: this.data.evoCount!}));
+          break;
       }
     });
     return str.join(i18next.t("pokemonEvolutions:connector"));
@@ -231,6 +236,8 @@ export class SpeciesEvolutionCondition {
           return ret;
         case EvoCondKey.SPECIES_CAUGHT:
           return !!globalScene.gameData.dexData[this.data.speciesCaught!].caughtAttr;
+        case EvoCondKey.MOVE_USE_COUNT:
+          return pokemon.evoCounter >= this.data.evoCount!;
       }
     });
   }
@@ -1555,7 +1562,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.MAMOSWINE, 1, null, {key: EvoCondKey.MOVE, move: Moves.ANCIENT_POWER}, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.STANTLER]: [
-    new SpeciesEvolution(Species.WYRDEER, 25, null, {key: EvoCondKey.MOVE, move: Moves.PSYSHIELD_BASH}, SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesEvolution(Species.WYRDEER, 1, null, {key: EvoCondKey.MOVE_USE_COUNT, move: Moves.PSYSHIELD_BASH, evoCount: 10}, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.LOMBRE]: [
     new SpeciesEvolution(Species.LUDICOLO, 1, EvolutionItem.WATER_STONE, null, SpeciesWildEvolutionDelay.LONG)
@@ -1801,7 +1808,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.ALOLA_GOLEM, 1, EvolutionItem.LINKING_CORD, null, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.PRIMEAPE]: [
-    new SpeciesEvolution(Species.ANNIHILAPE, 35, null, {key: EvoCondKey.MOVE, move: Moves.RAGE_FIST}, SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesEvolution(Species.ANNIHILAPE, 1, null, {key: EvoCondKey.MOVE_USE_COUNT, move: Moves.RAGE_FIST, evoCount: 10}, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.GOLBAT]: [
     new SpeciesEvolution(Species.CROBAT, 1, null, {key: EvoCondKey.FRIENDSHIP, friendship: 120}, SpeciesWildEvolutionDelay.VERY_LONG)

@@ -78,6 +78,7 @@ import type Move from "#app/data/moves/move";
 import { isFieldTargeted } from "#app/data/moves/move-utils";
 import { FaintPhase } from "./faint-phase";
 import { DamageAchv } from "#app/system/achv";
+import { Species } from "#enums/species";
 
 type HitCheckEntry = [HitCheckResult, TypeDamageMultiplier];
 
@@ -789,6 +790,18 @@ export class MoveEffectPhase extends PokemonPhase {
     }
     if (this.lastHit) {
       globalScene.triggerPokemonFormChange(user, SpeciesFormChangePostMoveTrigger);
+
+      // Increment evo counter for Primeape and Stantler
+      if (
+        ((user.hasSpecies(Species.PRIMEAPE) && this.move.id === Moves.RAGE_FIST) ||
+        (user.hasSpecies(Species.STANTLER) && this.move.id === Moves.PSYSHIELD_BASH))) {
+          if (isNullOrUndefined(user.evoCounter)) {
+            user.evoCounter = 1;
+          }
+          else {
+            user.evoCounter++;
+          }
+      }
 
       // Multi-hit check for Wimp Out/Emergency Exit
       if (user.turnData.hitCount > 1) {
