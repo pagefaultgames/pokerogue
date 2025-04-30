@@ -28,7 +28,6 @@ describe("Abilities - Intimidate", () => {
       .enemySpecies(Species.RATTATA)
       .enemyAbility(Abilities.INTIMIDATE)
       .ability(Abilities.INTIMIDATE)
-      .passiveAbility(Abilities.NO_GUARD)
       .moveset(Moves.SPLASH)
       .enemyMoveset(Moves.SPLASH);
   });
@@ -81,7 +80,7 @@ describe("Abilities - Intimidate", () => {
     expect(playerPokemon.getStatStage(Stat.ATK)).toBe(-1);
   });
 
-  it("should NOT trigger on moves that switch user out during wild battles", async () => {
+  it("should NOT trigger on switching moves used by wild Pokemon", async () => {
     game.override.enemyMoveset(Moves.VOLT_SWITCH).battleType(BattleType.WILD);
     await game.classicMode.startBattle([Species.MIGHTYENA]);
 
@@ -90,25 +89,25 @@ describe("Abilities - Intimidate", () => {
 
     game.move.select(Moves.SPLASH);
     await game.toNextTurn();
-    expect(playerPokemon.getStatStage(Stat.ATK)).toBe(-1);
-
-    game.move.select(Moves.SPLASH);
-    await game.toNextTurn();
+    // doesn't lower attack due to not actually switching out
     expect(playerPokemon.getStatStage(Stat.ATK)).toBe(-1);
   });
 
   it("should trigger on moves that switch user/target out during trainer battles", async () => {
     game.override
       .moveset([Moves.SPLASH, Moves.DRAGON_TAIL])
-      .enemyMoveset([Moves.SPLASH, Moves.VOLT_SWITCH])
-      .battleType(BattleType.TRAINER);
+      .enemyMoveset([Moves.SPLASH, Moves.TELEPORT])
+      .battleType(BattleType.TRAINER)
+      .startingWave(8)
+      .passiveAbility(Abilities.NO_GUARD);
+
     await game.classicMode.startBattle([Species.MIGHTYENA]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
     expect(playerPokemon.getStatStage(Stat.ATK)).toBe(-1);
 
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.VOLT_SWITCH);
+    await game.forceEnemyMove(Moves.TELEPORT);
     await game.toNextTurn();
     expect(playerPokemon.getStatStage(Stat.ATK)).toBe(-2);
 
