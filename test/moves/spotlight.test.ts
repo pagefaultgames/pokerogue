@@ -22,13 +22,14 @@ describe("Moves - Spotlight", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("double");
-    game.override.starterSpecies(Species.AMOONGUSS);
-    game.override.enemySpecies(Species.SNORLAX);
-    game.override.startingLevel(100);
-    game.override.enemyLevel(100);
-    game.override.moveset([Moves.FOLLOW_ME, Moves.RAGE_POWDER, Moves.SPOTLIGHT, Moves.QUICK_ATTACK]);
-    game.override.enemyMoveset([Moves.FOLLOW_ME, Moves.SPLASH]);
+    game.override
+      .battleStyle("double")
+      .starterSpecies(Species.AMOONGUSS)
+      .enemySpecies(Species.SNORLAX)
+      .startingLevel(100)
+      .enemyLevel(100)
+      .moveset([Moves.FOLLOW_ME, Moves.RAGE_POWDER, Moves.SPOTLIGHT, Moves.QUICK_ATTACK])
+      .enemyMoveset([Moves.FOLLOW_ME, Moves.SPLASH]);
   });
 
   test("move should redirect attacks to the target", async () => {

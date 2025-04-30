@@ -28,13 +28,15 @@ describe("Abilities - Sand Veil", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.moveset([Moves.SPLASH]);
-    game.override.enemySpecies(Species.MEOWSCARADA);
-    game.override.enemyAbility(Abilities.INSOMNIA);
-    game.override.enemyMoveset([Moves.TWISTER, Moves.TWISTER, Moves.TWISTER, Moves.TWISTER]);
-    game.override.startingLevel(100);
-    game.override.enemyLevel(100);
-    game.override.weather(WeatherType.SANDSTORM).battleStyle("double");
+    game.override
+      .moveset([Moves.SPLASH])
+      .enemySpecies(Species.MEOWSCARADA)
+      .enemyAbility(Abilities.INSOMNIA)
+      .enemyMoveset([Moves.TWISTER, Moves.TWISTER, Moves.TWISTER, Moves.TWISTER])
+      .startingLevel(100)
+      .enemyLevel(100)
+      .weather(WeatherType.SANDSTORM)
+      .battleStyle("double");
   });
 
   test("ability should increase the evasiveness of the source", async () => {

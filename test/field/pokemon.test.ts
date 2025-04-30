@@ -82,9 +82,7 @@ describe("Spec - Pokemon", () => {
     let scene: BattleScene;
 
     beforeEach(async () => {
-      game.override.enemySpecies(Species.ZUBAT);
-      game.override.starterSpecies(Species.ABRA);
-      game.override.enableStarterFusion();
+      game.override.enemySpecies(Species.ZUBAT).starterSpecies(Species.ABRA).enableStarterFusion();
       scene = game.scene;
     });
 
@@ -140,8 +138,7 @@ describe("Spec - Pokemon", () => {
     });
 
     it("Fusing mons with one and two types", async () => {
-      game.override.starterSpecies(Species.CHARMANDER);
-      game.override.starterFusionSpecies(Species.HOUNDOUR);
+      game.override.starterSpecies(Species.CHARMANDER).starterFusionSpecies(Species.HOUNDOUR);
       await game.classicMode.startBattle();
       const pokemon = scene.getPlayerParty()[0];
 
@@ -151,8 +148,7 @@ describe("Spec - Pokemon", () => {
     });
 
     it("Fusing mons with two and one types", async () => {
-      game.override.starterSpecies(Species.NUMEL);
-      game.override.starterFusionSpecies(Species.CHARMANDER);
+      game.override.starterSpecies(Species.NUMEL).starterFusionSpecies(Species.CHARMANDER);
       await game.classicMode.startBattle();
       const pokemon = scene.getPlayerParty()[0];
 
@@ -162,8 +158,7 @@ describe("Spec - Pokemon", () => {
     });
 
     it("Fusing two mons with two types", async () => {
-      game.override.starterSpecies(Species.NATU);
-      game.override.starterFusionSpecies(Species.HOUNDOUR);
+      game.override.starterSpecies(Species.NATU).starterFusionSpecies(Species.HOUNDOUR);
       await game.classicMode.startBattle();
       const pokemon = scene.getPlayerParty()[0];
 

@@ -25,16 +25,14 @@ describe("Moves - Quick Guard", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
 
-    game.override.battleStyle("double");
-
-    game.override.moveset([Moves.QUICK_GUARD, Moves.SPLASH, Moves.FOLLOW_ME]);
-
-    game.override.enemySpecies(Species.SNORLAX);
-    game.override.enemyMoveset([Moves.QUICK_ATTACK]);
-    game.override.enemyAbility(Abilities.INSOMNIA);
-
-    game.override.startingLevel(100);
-    game.override.enemyLevel(100);
+    game.override
+      .battleStyle("double")
+      .moveset([Moves.QUICK_GUARD, Moves.SPLASH, Moves.FOLLOW_ME])
+      .enemySpecies(Species.SNORLAX)
+      .enemyMoveset([Moves.QUICK_ATTACK])
+      .enemyAbility(Abilities.INSOMNIA)
+      .startingLevel(100)
+      .enemyLevel(100);
   });
 
   test("should protect the user and allies from priority moves", async () => {
@@ -51,8 +49,7 @@ describe("Moves - Quick Guard", () => {
   });
 
   test("should protect the user and allies from Prankster-boosted moves", async () => {
-    game.override.enemyAbility(Abilities.PRANKSTER);
-    game.override.enemyMoveset([Moves.GROWL]);
+    game.override.enemyAbility(Abilities.PRANKSTER).enemyMoveset([Moves.GROWL]);
 
     await game.classicMode.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
 
@@ -84,8 +81,7 @@ describe("Moves - Quick Guard", () => {
   });
 
   test("should fail if the user is the last to move in the turn", async () => {
-    game.override.battleStyle("single");
-    game.override.enemyMoveset([Moves.QUICK_GUARD]);
+    game.override.battleStyle("single").enemyMoveset([Moves.QUICK_GUARD]);
 
     await game.classicMode.startBattle([Species.CHARIZARD]);
 
