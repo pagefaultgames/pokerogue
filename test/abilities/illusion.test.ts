@@ -33,16 +33,16 @@ describe("Abilities - Illusion", () => {
       .startingHeldItems([{ name: "WIDE_LENS", count: 3 }]);
   });
 
-  it("creates illusion at the start", async () => {
-    await game.classicMode.startBattle([Species.ZOROARK, Species.FEEBAS]);
+  it("creates illusion at battle start", async () => {
+    await game.classicMode.startBattle([Species.ZOROARK, Species.AXEW]);
     const zoroark = game.scene.getPlayerPokemon()!;
     const zorua = game.scene.getEnemyPokemon()!;
 
-    expect(!!zoroark.summonData?.illusion).equals(true);
-    expect(!!zorua.summonData?.illusion).equals(true);
+    expect(zoroark.summonData?.illusion).toBeTruthy();
+    expect(zorua.summonData?.illusion).toBeTruthy();
   });
 
-  it("break after receiving damaging move", async () => {
+  it("breaks after receiving damaging move", async () => {
     await game.classicMode.startBattle([Species.FEEBAS]);
     game.move.select(Moves.TACKLE);
 
@@ -50,11 +50,11 @@ describe("Abilities - Illusion", () => {
 
     const zorua = game.scene.getEnemyPokemon()!;
 
-    expect(!!zorua.summonData?.illusion).equals(false);
-    expect(zorua.name).equals("Zorua");
+    expect(zorua.summonData?.illusion).toBeFalsy();
+    expect(zorua.name).toBe("Zorua");
   });
 
-  it("break after getting ability changed", async () => {
+  it("breaks after getting ability changed", async () => {
     await game.classicMode.startBattle([Species.FEEBAS]);
     game.move.select(Moves.WORRY_SEED);
 
@@ -62,16 +62,15 @@ describe("Abilities - Illusion", () => {
 
     const zorua = game.scene.getEnemyPokemon()!;
 
-    expect(!!zorua.summonData?.illusion).equals(false);
+    expect(zorua.summonData?.illusion).toBeFalsy();
   });
 
-  it("break with neutralizing gas", async () => {
+  it("breaks with neutralizing gas", async () => {
     game.override.enemyAbility(Abilities.NEUTRALIZING_GAS);
     await game.classicMode.startBattle([Species.KOFFING]);
 
     const zorua = game.scene.getEnemyPokemon()!;
-
-    expect(!!zorua.summonData?.illusion).equals(false);
+    expect(zorua.summonData?.illusion).toBeFalsy();
   });
 
   it("causes enemy AI to consider the illusion's type instead of the actual type when considering move effectiveness", async () => {
@@ -99,7 +98,7 @@ describe("Abilities - Illusion", () => {
       psychic,
       true,
     );
-    expect(psychicEffectiveness).above(flameThrowerEffectiveness);
+    expect(psychicEffectiveness).toBeGreaterThan(flameThrowerEffectiveness);
   });
 
   it("does not break from indirect damage", async () => {
@@ -107,7 +106,7 @@ describe("Abilities - Illusion", () => {
       .enemySpecies(Species.GIGALITH)
       .enemyAbility(Abilities.SAND_STREAM)
       .enemyMoveset(Moves.WILL_O_WISP)
-      .moveset([Moves.FLARE_BLITZ]);
+      .moveset(Moves.FLARE_BLITZ);
 
     await game.classicMode.startBattle([Species.ZOROARK, Species.AZUMARILL]);
 
@@ -117,13 +116,12 @@ describe("Abilities - Illusion", () => {
 
     const zoroark = game.scene.getPlayerPokemon()!;
 
-    expect(!!zoroark.summonData?.illusion).equals(true);
+    expect(zoroark.summonData?.illusion).toBeTruthy();
   });
 
   it("copies the the name, nickname, gender, shininess, and pokeball from the illusion source", async () => {
     game.override.enemyMoveset(Moves.SPLASH);
     await game.classicMode.startBattle([Species.ABRA, Species.ZOROARK, Species.AXEW]);
-
     const axew = game.scene.getPlayerParty().at(2)!;
     axew.shiny = true;
     axew.nickname = btoa(unescape(encodeURIComponent("axew nickname")));
@@ -136,11 +134,11 @@ describe("Abilities - Illusion", () => {
 
     const zoroark = game.scene.getPlayerPokemon()!;
 
-    expect(zoroark.name).equals("Axew");
-    expect(zoroark.getNameToRender()).equals("axew nickname");
-    expect(zoroark.getGender(false, true)).equals(Gender.FEMALE);
-    expect(zoroark.isShiny(true)).equals(true);
-    expect(zoroark.getPokeball(true)).equals(PokeballType.GREAT_BALL);
+    expect(zoroark.name).toBe("Axew");
+    expect(zoroark.getNameToRender()).toBe("axew nickname");
+    expect(zoroark.getGender(false, true)).toBe(Gender.FEMALE);
+    expect(zoroark.isShiny(true)).toBe(true);
+    expect(zoroark.getPokeball(true)).toBe(PokeballType.GREAT_BALL);
   });
 
   it("breaks when suppressed", async () => {
@@ -148,12 +146,12 @@ describe("Abilities - Illusion", () => {
     await game.classicMode.startBattle([Species.MAGIKARP]);
     const zorua = game.scene.getEnemyPokemon()!;
 
-    expect(!!zorua.summonData?.illusion).toBe(true);
+    expect(zorua.summonData?.illusion).toBeTruthy();
 
     game.move.select(Moves.GASTRO_ACID);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(zorua.isFullHp()).toBe(true);
-    expect(!!zorua.summonData?.illusion).toBe(false);
+    expect(zorua.summonData?.illusion).toBeFalsy();
   });
 });
