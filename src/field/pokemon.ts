@@ -7793,7 +7793,6 @@ export class PokemonSummonData {
   constructor(source?: PokemonSummonData | Partial<PokemonSummonData>) {
     if (!isNullOrUndefined(source)) {
       Object.assign(this, source)
-      // TODO: Do we need these mapping statements?
       this.moveset &&= this.moveset.map(m => PokemonMove.loadMove(m))
       this.tags &&= this.tags.map(t => loadBattlerTag(t))
     }
