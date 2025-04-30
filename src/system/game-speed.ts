@@ -26,6 +26,8 @@ export function initGameSpeed() {
     return originalAddEvent.apply(this, [config]);
   };
   const originalTweensAdd = this.tweens.add;
+
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: This isn't bad
   this.tweens.add = function (
     config:
       | Phaser.Types.Tweens.TweenBuilderConfig
@@ -33,8 +35,11 @@ export function initGameSpeed() {
       | Phaser.Tweens.Tween
       | Phaser.Tweens.TweenChain,
   ) {
+    if (config.completeDelay) {
+      config.completeDelay = transformValue(config.completeDelay as number | FixedInt);
+    }
     if (config.loopDelay) {
-      config.loopDelay = transformValue(config.loopDelay as number);
+      config.loopDelay = transformValue(config.loopDelay as number | FixedInt);
     }
 
     if (!(config instanceof Phaser.Tweens.TweenChain)) {
@@ -44,7 +49,7 @@ export function initGameSpeed() {
 
       if (!(config instanceof Phaser.Tweens.Tween)) {
         if (config.delay) {
-          config.delay = transformValue(config.delay as number);
+          config.delay = transformValue(config.delay as number | FixedInt);
         }
         if (config.repeatDelay) {
           config.repeatDelay = transformValue(config.repeatDelay);
@@ -52,11 +57,13 @@ export function initGameSpeed() {
         if (config.hold) {
           config.hold = transformValue(config.hold);
         }
+        1;
       }
     }
     return originalTweensAdd.apply(this, [config]);
   };
   const originalTweensChain = this.tweens.chain;
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: This isn't bad
   this.tweens.chain = function (config: Phaser.Types.Tweens.TweenChainBuilderConfig): Phaser.Tweens.TweenChain {
     if (config.tweens) {
       for (const t of config.tweens) {
@@ -64,16 +71,19 @@ export function initGameSpeed() {
           t.duration = transformValue(t.duration);
         }
         if (t.delay) {
-          t.delay = transformValue(t.delay as number);
+          t.delay = transformValue(t.delay);
         }
         if (t.repeatDelay) {
           t.repeatDelay = transformValue(t.repeatDelay);
         }
         if (t.loopDelay) {
-          t.loopDelay = transformValue(t.loopDelay as number);
+          t.loopDelay = transformValue(t.loopDelay);
         }
         if (t.hold) {
           t.hold = transformValue(t.hold);
+        }
+        if (t.completeDelay) {
+          t.completeDelay = transformValue(t.completeDelay);
         }
       }
     }
@@ -91,10 +101,13 @@ export function initGameSpeed() {
       config.repeatDelay = transformValue(config.repeatDelay);
     }
     if (config.loopDelay) {
-      config.loopDelay = transformValue(config.loopDelay as number);
+      config.loopDelay = transformValue(config.loopDelay);
     }
     if (config.hold) {
       config.hold = transformValue(config.hold);
+    }
+    if (config.completeDelay) {
+      config.completeDelay = transformValue(config.completeDelay as number | FixedInt);
     }
     return originalAddCounter.apply(this, [config]);
   };

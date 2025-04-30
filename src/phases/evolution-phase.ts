@@ -49,7 +49,7 @@ export class EvolutionPhase extends Phase {
    * @param lastLevel - The level at which the Pokemon is evolving
    * @param canCancel - Whether the evolution can be cancelled by the player
    */
-  constructor(pokemon: PlayerPokemon, evolution: SpeciesFormEvolution | null, lastLevel: number, canCancel = false) {
+  constructor(pokemon: PlayerPokemon, evolution: SpeciesFormEvolution | null, lastLevel: number, canCancel = true) {
     super();
 
     this.pokemon = pokemon;
@@ -115,7 +115,7 @@ export class EvolutionPhase extends Phase {
    *
    * @returns The sprite object that was passed in
    */
-  private configureSprite(pokemon: Pokemon, sprite: Phaser.GameObjects.Sprite, setPipeline = true): typeof sprite {
+  protected configureSprite(pokemon: Pokemon, sprite: Phaser.GameObjects.Sprite, setPipeline = true): typeof sprite {
     const spriteKey = this.pokemon.getSpriteKey(true);
     try {
       sprite.play(spriteKey);
@@ -263,7 +263,7 @@ export class EvolutionPhase extends Phase {
   private prepareForCycle(evolvedPokemon: Pokemon): void {
     globalScene.time.delayedCall(1500, () => {
       this.pokemonEvoTintSprite.setScale(0.25).setVisible(true);
-      this.evolutionHandler.canCancel = true;
+      this.evolutionHandler.canCancel = this.canCancel;
       this.doCycle(1).then(success => {
         if (success) {
           this.handleSuccessEvolution(evolvedPokemon);
@@ -510,34 +510,39 @@ export class EvolutionPhase extends Phase {
     });
   }
 
-  doCycle(l: number, lastCycle = 15): Promise<boolean> {
+  /**
+   * Return a tween chain that cycles the evolution sprites
+   */
+  doCycle(cycles: number, lastCycle = 15): Promise<boolean> {
     return new Promise(resolve => {
-      const isLastCycle = l === lastCycle;
-      globalScene.tweens.add({
-        targets: this.pokemonTintSprite,
-        scale: 0.25,
-        ease: "Cubic.easeInOut",
-        duration: 500 / l,
-        yoyo: !isLastCycle,
-      });
-      globalScene.tweens.add({
-        targets: this.pokemonEvoTintSprite,
-        scale: 1,
-        ease: "Cubic.easeInOut",
-        duration: 500 / l,
-        yoyo: !isLastCycle,
-        onComplete: () => {
-          if (this.evolutionHandler.cancelled) {
-            return resolve(false);
-          }
-          if (l < lastCycle) {
-            this.doCycle(l + 0.5, lastCycle).then(success => resolve(success));
-          } else {
-            this.pokemonTintSprite.setVisible(false);
-            resolve(true);
-          }
+      const isLastCycle = cycles === lastCycle;
+      globalScene.tweens.addMultiple([
+        {
+          targets: this.pokemonTintSprite,
+          scale: 0.25,
+          ease: "Cubic.easeInOut",
+          duration: 500 / cycles,
+          yoyo: !isLastCycle,
         },
-      });
+        {
+          targets: this.pokemonEvoTintSprite,
+          scale: 1,
+          ease: "Cubic.easeInOut",
+          duration: 500 / cycles,
+          yoyo: !isLastCycle,
+          onComplete: () => {
+            if (this.evolutionHandler.cancelled) {
+              return resolve(false);
+            }
+            if (cycles < lastCycle) {
+              this.doCycle(cycles + 0.5, lastCycle).then(success => resolve(success));
+            } else {
+              this.pokemonTintSprite.setVisible(false);
+              resolve(true);
+            }
+          },
+        },
+      ]);
     });
   }
 
