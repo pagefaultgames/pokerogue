@@ -26,14 +26,15 @@ describe("Moves - Ceaseless Edge", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("single");
-    game.override.enemySpecies(Species.RATTATA);
-    game.override.enemyAbility(Abilities.RUN_AWAY);
-    game.override.enemyPassiveAbility(Abilities.RUN_AWAY);
-    game.override.startingLevel(100);
-    game.override.enemyLevel(100);
-    game.override.moveset([Moves.CEASELESS_EDGE, Moves.SPLASH, Moves.ROAR]);
-    game.override.enemyMoveset(Moves.SPLASH);
+    game.override
+      .battleStyle("single")
+      .enemySpecies(Species.RATTATA)
+      .enemyAbility(Abilities.RUN_AWAY)
+      .enemyPassiveAbility(Abilities.RUN_AWAY)
+      .startingLevel(100)
+      .enemyLevel(100)
+      .moveset([Moves.CEASELESS_EDGE, Moves.SPLASH, Moves.ROAR])
+      .enemyMoveset(Moves.SPLASH);
     vi.spyOn(allMoves[Moves.CEASELESS_EDGE], "accuracy", "get").mockReturnValue(100);
   });
 
@@ -81,8 +82,7 @@ describe("Moves - Ceaseless Edge", () => {
   });
 
   test("trainer - move should hit twice, apply two layers of spikes, force switch opponent - opponent takes damage", async () => {
-    game.override.startingHeldItems([{ name: "MULTI_LENS" }]);
-    game.override.startingWave(25);
+    game.override.startingHeldItems([{ name: "MULTI_LENS" }]).startingWave(25);
 
     await game.classicMode.startBattle([Species.ILLUMISE]);
 

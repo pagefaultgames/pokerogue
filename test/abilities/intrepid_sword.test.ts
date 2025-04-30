@@ -22,10 +22,11 @@ describe("Abilities - Intrepid Sword", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("single");
-    game.override.enemySpecies(Species.ZACIAN);
-    game.override.enemyAbility(Abilities.INTREPID_SWORD);
-    game.override.ability(Abilities.INTREPID_SWORD);
+    game.override
+      .battleStyle("single")
+      .enemySpecies(Species.ZACIAN)
+      .enemyAbility(Abilities.INTREPID_SWORD)
+      .ability(Abilities.INTREPID_SWORD);
   });
 
   it("should raise ATK stat stage by 1 on entry", async () => {

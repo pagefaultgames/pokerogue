@@ -26,14 +26,15 @@ describe("Moves - Tidy Up", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("single");
-    game.override.enemySpecies(Species.MAGIKARP);
-    game.override.enemyAbility(Abilities.BALL_FETCH);
-    game.override.enemyMoveset(Moves.SPLASH);
-    game.override.starterSpecies(Species.FEEBAS);
-    game.override.ability(Abilities.BALL_FETCH);
-    game.override.moveset([Moves.TIDY_UP]);
-    game.override.startingLevel(50);
+    game.override
+      .battleStyle("single")
+      .enemySpecies(Species.MAGIKARP)
+      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyMoveset(Moves.SPLASH)
+      .starterSpecies(Species.FEEBAS)
+      .ability(Abilities.BALL_FETCH)
+      .moveset([Moves.TIDY_UP])
+      .startingLevel(50);
   });
 
   it("spikes are cleared", async () => {

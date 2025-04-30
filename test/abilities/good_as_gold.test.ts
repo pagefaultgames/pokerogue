@@ -63,9 +63,10 @@ describe("Abilities - Good As Gold", () => {
   });
 
   it("should not block any status moves that target the field, one side, or all pokemon", async () => {
-    game.override.battleStyle("double");
-    game.override.enemyMoveset([Moves.STEALTH_ROCK, Moves.HAZE]);
-    game.override.moveset([Moves.SWORDS_DANCE, Moves.SAFEGUARD]);
+    game.override
+      .battleStyle("double")
+      .enemyMoveset([Moves.STEALTH_ROCK, Moves.HAZE])
+      .moveset([Moves.SWORDS_DANCE, Moves.SAFEGUARD]);
     await game.classicMode.startBattle([Species.MAGIKARP, Species.FEEBAS]);
     const [good_as_gold, ball_fetch] = game.scene.getPlayerField();
 
@@ -85,8 +86,7 @@ describe("Abilities - Good As Gold", () => {
   });
 
   it("should not block field targeted effects in singles", async () => {
-    game.override.battleStyle("single");
-    game.override.enemyMoveset([Moves.SPIKES]);
+    game.override.battleStyle("single").enemyMoveset([Moves.SPIKES]);
     await game.classicMode.startBattle([Species.MAGIKARP]);
 
     game.move.select(Moves.SPLASH, 0);
@@ -96,8 +96,7 @@ describe("Abilities - Good As Gold", () => {
   });
 
   it("should block the ally's helping hand", async () => {
-    game.override.battleStyle("double");
-    game.override.moveset([Moves.HELPING_HAND, Moves.TACKLE]);
+    game.override.battleStyle("double").moveset([Moves.HELPING_HAND, Moves.TACKLE]);
     await game.classicMode.startBattle([Species.MAGIKARP, Species.FEEBAS]);
 
     game.move.select(Moves.HELPING_HAND, 0);
@@ -129,8 +128,7 @@ describe("Abilities - Good As Gold", () => {
   });
 
   it("should not block field targeted effects like rain dance", async () => {
-    game.override.battleStyle("single");
-    game.override.enemyMoveset([Moves.RAIN_DANCE]);
+    game.override.battleStyle("single").enemyMoveset([Moves.RAIN_DANCE]);
     await game.classicMode.startBattle([Species.MAGIKARP]);
 
     game.move.use(Moves.SPLASH, 0);

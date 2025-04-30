@@ -66,8 +66,7 @@ describe("Abilities - Disguise", () => {
   });
 
   it("takes no damage from the first hit of a multihit move and transforms to Busted form, then takes damage from the second hit", async () => {
-    game.override.moveset([Moves.SURGING_STRIKES]);
-    game.override.enemyLevel(5);
+    game.override.moveset([Moves.SURGING_STRIKES]).enemyLevel(5);
     await game.classicMode.startBattle();
 
     const mimikyu = game.scene.getEnemyPokemon()!;
@@ -106,8 +105,7 @@ describe("Abilities - Disguise", () => {
   });
 
   it("persists form change when switched out", async () => {
-    game.override.enemyMoveset([Moves.SHADOW_SNEAK]);
-    game.override.starterSpecies(0);
+    game.override.enemyMoveset([Moves.SHADOW_SNEAK]).starterSpecies(0);
 
     await game.classicMode.startBattle([Species.MIMIKYU, Species.FURRET]);
 
@@ -131,8 +129,7 @@ describe("Abilities - Disguise", () => {
   });
 
   it("persists form change when wave changes with no arena reset", async () => {
-    game.override.starterSpecies(0);
-    game.override.starterForms({
+    game.override.starterSpecies(0).starterForms({
       [Species.MIMIKYU]: bustedForm,
     });
     await game.classicMode.startBattle([Species.FURRET, Species.MIMIKYU]);
@@ -148,11 +145,12 @@ describe("Abilities - Disguise", () => {
   });
 
   it("reverts to Disguised form on arena reset", async () => {
-    game.override.startingWave(4);
-    game.override.starterSpecies(Species.MIMIKYU);
-    game.override.starterForms({
-      [Species.MIMIKYU]: bustedForm,
-    });
+    game.override
+      .startingWave(4)
+      .starterSpecies(Species.MIMIKYU)
+      .starterForms({
+        [Species.MIMIKYU]: bustedForm,
+      });
 
     await game.classicMode.startBattle();
 
@@ -168,11 +166,12 @@ describe("Abilities - Disguise", () => {
   });
 
   it("reverts to Disguised form on biome change when fainted", async () => {
-    game.override.startingWave(10);
-    game.override.starterSpecies(0);
-    game.override.starterForms({
-      [Species.MIMIKYU]: bustedForm,
-    });
+    game.override
+      .startingWave(10)
+      .starterSpecies(0)
+      .starterForms({
+        [Species.MIMIKYU]: bustedForm,
+      });
 
     await game.classicMode.startBattle([Species.MIMIKYU, Species.FURRET]);
 
@@ -206,8 +205,7 @@ describe("Abilities - Disguise", () => {
   });
 
   it("activates when Aerilate circumvents immunity to the move's base type", async () => {
-    game.override.ability(Abilities.AERILATE);
-    game.override.moveset([Moves.TACKLE]);
+    game.override.ability(Abilities.AERILATE).moveset([Moves.TACKLE]);
 
     await game.classicMode.startBattle();
 

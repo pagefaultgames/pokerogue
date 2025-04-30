@@ -26,14 +26,14 @@ describe("Moves - Hyper Beam", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
 
-    game.override.battleStyle("single");
-    game.override.ability(Abilities.BALL_FETCH);
-    game.override.enemySpecies(Species.SNORLAX);
-    game.override.enemyAbility(Abilities.BALL_FETCH);
-    game.override.enemyMoveset([Moves.SPLASH]);
-    game.override.enemyLevel(100);
-
-    game.override.moveset([Moves.HYPER_BEAM, Moves.TACKLE]);
+    game.override
+      .battleStyle("single")
+      .ability(Abilities.BALL_FETCH)
+      .enemySpecies(Species.SNORLAX)
+      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyMoveset([Moves.SPLASH])
+      .enemyLevel(100)
+      .moveset([Moves.HYPER_BEAM, Moves.TACKLE]);
     vi.spyOn(allMoves[Moves.HYPER_BEAM], "accuracy", "get").mockReturnValue(100);
   });
 

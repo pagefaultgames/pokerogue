@@ -31,19 +31,18 @@ describe("Moves - Dragon Rage", () => {
   beforeEach(async () => {
     game = new GameManager(phaserGame);
 
-    game.override.battleStyle("single");
-
-    game.override.starterSpecies(Species.SNORLAX);
-    game.override.moveset([Moves.DRAGON_RAGE]);
-    game.override.ability(Abilities.BALL_FETCH);
-    game.override.passiveAbility(Abilities.BALL_FETCH);
-    game.override.startingLevel(100);
-
-    game.override.enemySpecies(Species.SNORLAX);
-    game.override.enemyMoveset(Moves.SPLASH);
-    game.override.enemyAbility(Abilities.BALL_FETCH);
-    game.override.enemyPassiveAbility(Abilities.BALL_FETCH);
-    game.override.enemyLevel(100);
+    game.override
+      .battleStyle("single")
+      .starterSpecies(Species.SNORLAX)
+      .moveset([Moves.DRAGON_RAGE])
+      .ability(Abilities.BALL_FETCH)
+      .passiveAbility(Abilities.BALL_FETCH)
+      .startingLevel(100)
+      .enemySpecies(Species.SNORLAX)
+      .enemyMoveset(Moves.SPLASH)
+      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyPassiveAbility(Abilities.BALL_FETCH)
+      .enemyLevel(100);
 
     await game.classicMode.startBattle();
 
@@ -101,8 +100,7 @@ describe("Moves - Dragon Rage", () => {
   });
 
   it("ignores damage modification from abilities, for example ICE_SCALES", async () => {
-    game.override.disableCrits();
-    game.override.enemyAbility(Abilities.ICE_SCALES);
+    game.override.disableCrits().enemyAbility(Abilities.ICE_SCALES);
 
     game.move.select(Moves.DRAGON_RAGE);
     await game.phaseInterceptor.to(TurnEndPhase);

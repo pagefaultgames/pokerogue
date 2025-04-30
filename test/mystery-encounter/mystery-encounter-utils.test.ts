@@ -51,9 +51,7 @@ describe("Mystery Encounter Utils", () => {
       game.override.seed("random");
 
       let result = getRandomPlayerPokemon();
-      expect(result.species.speciesId).toBe(Species.MANAPHY);
-
-      game.override.seed("random2");
+      expect(result.species.speciesId).toBe(Species.MANAPHY).seed("random2");
 
       result = getRandomPlayerPokemon();
       expect(result.species.speciesId).toBe(Species.ARCEUS);
@@ -71,9 +69,7 @@ describe("Mystery Encounter Utils", () => {
       game.override.seed("random");
 
       let result = getRandomPlayerPokemon();
-      expect(result.species.speciesId).toBe(Species.MANAPHY);
-
-      game.override.seed("random2");
+      expect(result.species.speciesId).toBe(Species.MANAPHY).seed("random2");
 
       result = getRandomPlayerPokemon();
       expect(result.species.speciesId).toBe(Species.ARCEUS);
@@ -90,9 +86,7 @@ describe("Mystery Encounter Utils", () => {
       game.override.seed("random");
 
       let result = getRandomPlayerPokemon(true);
-      expect(result.species.speciesId).toBe(Species.MANAPHY);
-
-      game.override.seed("random2");
+      expect(result.species.speciesId).toBe(Species.MANAPHY).seed("random2");
 
       result = getRandomPlayerPokemon(true);
       expect(result.species.speciesId).toBe(Species.MANAPHY);
@@ -109,9 +103,7 @@ describe("Mystery Encounter Utils", () => {
       game.override.seed("random");
 
       let result = getRandomPlayerPokemon(true, false);
-      expect(result.species.speciesId).toBe(Species.MANAPHY);
-
-      game.override.seed("random2");
+      expect(result.species.speciesId).toBe(Species.MANAPHY).seed("random2");
 
       result = getRandomPlayerPokemon(true, false);
       expect(result.species.speciesId).toBe(Species.MANAPHY);
@@ -128,9 +120,7 @@ describe("Mystery Encounter Utils", () => {
       game.override.seed("random");
 
       let result = getRandomPlayerPokemon(true, false, true);
-      expect(result.species.speciesId).toBe(Species.ARCEUS);
-
-      game.override.seed("random2");
+      expect(result.species.speciesId).toBe(Species.ARCEUS).seed("random2");
 
       result = getRandomPlayerPokemon(true, false, true);
       expect(result.species.speciesId).toBe(Species.ARCEUS);

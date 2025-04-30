@@ -51,8 +51,7 @@ describe("Abilities - Unseen Fist", () => {
     await testUnseenFistHitResult(game, Moves.BULLDOZE, Moves.WIDE_GUARD, false));
 
   it("should cause a contact move to ignore Protect, but not Substitute", async () => {
-    game.override.enemyLevel(1);
-    game.override.moveset([Moves.TACKLE]);
+    game.override.enemyLevel(1).moveset([Moves.TACKLE]);
 
     await game.classicMode.startBattle();
 

@@ -22,14 +22,13 @@ describe("Moves - Lunar Blessing", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
 
-    game.override.battleStyle("double");
-
-    game.override.enemySpecies(Species.SHUCKLE);
-    game.override.enemyMoveset(Moves.SPLASH);
-    game.override.enemyAbility(Abilities.BALL_FETCH);
-
-    game.override.moveset([Moves.LUNAR_BLESSING, Moves.SPLASH]);
-    game.override.ability(Abilities.BALL_FETCH);
+    game.override
+      .battleStyle("double")
+      .enemySpecies(Species.SHUCKLE)
+      .enemyMoveset(Moves.SPLASH)
+      .enemyAbility(Abilities.BALL_FETCH)
+      .moveset([Moves.LUNAR_BLESSING, Moves.SPLASH])
+      .ability(Abilities.BALL_FETCH);
   });
 
   it("should restore 25% HP of the user and its ally", async () => {
