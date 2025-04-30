@@ -137,7 +137,7 @@ describe("A Trainer's Test - Mystery Encounter", () => {
       expect(eggsAfter).toBeDefined();
       expect(eggsBeforeLength + 1).toBe(eggsAfter.length);
       const eggTier = eggsAfter[eggsAfter.length - 1].tier;
-      expect(eggTier === EggTier.EPIC || eggTier === EggTier.LEGENDARY).toBeTruthy();
+      expect(eggTier).toBe(EggTier.EPIC || eggTier === EggTier.LEGENDARY);
     });
   });
 
