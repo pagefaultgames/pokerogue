@@ -812,7 +812,6 @@ export default class Move implements Localizable {
     const typeChangeMovePowerMultiplier = new NumberHolder(1);
     const typeChangeHolder = new NumberHolder(this.type);
 
-    // apply move type changing ability attributes
     applyPreAttackAbAttrs(MoveTypeChangeAbAttr, source, target, this, true, typeChangeHolder, typeChangeMovePowerMultiplier);
 
     const sourceTeraType = source.getTeraType();

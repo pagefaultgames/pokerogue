@@ -18,6 +18,7 @@ import { toDmgValue } from "#app/utils/common";
  * a different type and boost their power
  *
  * Includes
+ * - Aerialate
  * - Galvanize
  * - Pixilate
  * - Refrigerate
