@@ -4603,11 +4603,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     };
   }
 
-  /** Calculate whether the given move critically hits this pokemon
+  /** Determine whether the given move will critically hit this Pokemon.
    * @param source - The {@linkcode Pokemon} using the move
    * @param move - The {@linkcode Move} being used
-   * @param simulated - If `true`, suppresses changes to game state during calculation (defaults to `true`)
-   * @returns whether the move critically hits the pokemon
+   * @param simulated - Whether to suppress changes to game state during calculations; default `true`
+   * @returns Whether the move will critically hit the defender.
   */
   getCriticalHitResult(source: Pokemon, move: Move, simulated: boolean = true): boolean {
     if (move.hasAttr(FixedDamageAttr)) {
