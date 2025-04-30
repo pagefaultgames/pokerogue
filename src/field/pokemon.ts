@@ -7806,7 +7806,7 @@ export class PokemonBattleData {
   public hitCount = 0;
   /** Whether this Pokemon has eaten a berry this battle; used for {@linkcode Moves.BELCH} */
   public hasEatenBerry: boolean = false;
-  /** Array containing all berries eaten in this current battle; used by {@linkcode Abilities.HARVEST} */
+  /** Array containing all berries eaten and not yet recovered during this current battle; used by {@linkcode Abilities.HARVEST} */
   public berriesEaten: BerryType[] = [];
 
   constructor(source?: PokemonBattleData | Partial<PokemonBattleData>) {
@@ -7823,7 +7823,7 @@ export class PokemonBattleData {
  * Resets on new wave/battle start.
  */
 export class PokemonWaveData {
-  /** whether the pokemon has endured due to a {@linkcode BattlerTagType.ENDURE_TOKEN} */
+  /** Whether the pokemon has endured due to a {@linkcode BattlerTagType.ENDURE_TOKEN} */
   public endured = false;
   /**
    * A set of all the abilities this {@linkcode Pokemon} has used in this wave.
@@ -7835,13 +7835,13 @@ export class PokemonWaveData {
 }
 
 /**
-Temporary data for a {@linkcode Pokemon}.
-Resets at the start of a new turn.
-*/
+ * Temporary data for a {@linkcode Pokemon}.
+ * Resets at the start of a new turn, as well as on switch.
+ */
 export class PokemonTurnData {
   public flinched = false;
   public acted = false;
-  /** How many times the move should hit the target(s) */
+  /** How many times the current move should hit the target(s) */
   public hitCount = 0;
   /**
    * - `-1` = Calculate how many hits are left
@@ -7867,8 +7867,8 @@ export class PokemonTurnData {
   public extraTurns = 0;
   /**
    * All berries eaten by this pokemon in this turn.
-   * Saved into {@linkcode PokemonBattleData | BattleData} by {@linkcode Pe at turn end.
-   * @see {@linkcode PokemonsummonData.berriesEatenLast}
+   * Saved into {@linkcode PokemonSummonData | SummonData} by {@linkcode Abilities.CUD_CHEW) on turn end.
+   * @see {@linkcode PokemonSummonData.berriesEatenLast}
   */
   public berriesEaten: BerryType[] = []
 }
