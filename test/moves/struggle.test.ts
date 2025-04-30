@@ -43,8 +43,6 @@ describe("Moves - Struggle", () => {
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(stabSpy).toHaveReturnedWith(1);
-
-    stabSpy.mockRestore();
   });
 
   it("should ignore type effectiveness", async () => {
@@ -55,11 +53,8 @@ describe("Moves - Struggle", () => {
     game.move.select(Moves.STRUGGLE);
 
     const moveEffectivenessSpy = vi.spyOn(enemy, "getMoveEffectiveness");
-
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(moveEffectivenessSpy).toHaveReturnedWith(1);
-
-    moveEffectivenessSpy.mockRestore();
   });
 });
