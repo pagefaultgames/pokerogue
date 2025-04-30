@@ -305,7 +305,7 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
       ) as ModifierSelectUiHandler;
       expect(modifierSelectHandler.options.length).toEqual(1);
       expect(modifierSelectHandler.options[0].modifierTypeOption.type.id).toBe("MYSTERY_ENCOUNTER_MACHO_BRACE");
-    }, 15000);
+    });
   });
 
   describe("Option 2 - Refuse the Challenge", () => {

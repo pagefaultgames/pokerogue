@@ -36,7 +36,7 @@ describe("Abilities - Contrary", () => {
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
     expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(1);
-  }, 20000);
+  });
 
   describe("With Clear Body", () => {
     it("should apply positive effects", async () => {

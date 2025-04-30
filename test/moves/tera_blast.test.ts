@@ -61,7 +61,7 @@ describe("Moves - Tera Blast", () => {
     await game.phaseInterceptor.to("MoveEffectPhase");
 
     expect(spy).toHaveReturnedWith(2);
-  }, 20000);
+  });
 
   it("increases power if user is Stellar tera type", async () => {
     await game.classicMode.startBattle();
@@ -75,7 +75,7 @@ describe("Moves - Tera Blast", () => {
     await game.phaseInterceptor.to("MoveEffectPhase");
 
     expect(moveToCheck.calculateBattlePower).toHaveReturnedWith(100);
-  }, 20000);
+  });
 
   it("is super effective against terastallized targets if user is Stellar tera type", async () => {
     await game.classicMode.startBattle();
@@ -189,5 +189,5 @@ describe("Moves - Tera Blast", () => {
 
     expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(-1);
     expect(playerPokemon.getStatStage(Stat.ATK)).toBe(-1);
-  }, 20000);
+  });
 });

@@ -45,7 +45,7 @@ describe("Moves - Fake Out", () => {
     await game.toNextTurn();
 
     expect(enemy.hp).toBe(postTurnOneHp);
-  }, 20000);
+  });
 
   // This is a PokeRogue buff to Fake Out
   it("can be used at the start of every wave even if the pokemon wasn't recalled", async () => {
@@ -61,7 +61,7 @@ describe("Moves - Fake Out", () => {
     await game.toNextTurn();
 
     expect(game.scene.getEnemyPokemon()!.isFullHp()).toBe(false);
-  }, 20000);
+  });
 
   it("can be used again if recalled and sent back out", async () => {
     game.override.startingWave(4);
@@ -95,5 +95,5 @@ describe("Moves - Fake Out", () => {
     await game.toNextTurn();
 
     expect(enemy2.hp).toBeLessThan(enemy2.getMaxHp());
-  }, 20000);
+  });
 });

@@ -102,7 +102,7 @@ describe("Items - Metal Powder", () => {
     game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.DEF, defValue);
 
     expect(defValue.value / defStat).toBe(2);
-  }, 20000);
+  });
 
   it("METAL_POWDER held by fused DITTO (base)", async () => {
     await game.classicMode.startBattle([Species.DITTO, Species.MAROWAK]);
@@ -135,7 +135,7 @@ describe("Items - Metal Powder", () => {
     game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.DEF, defValue);
 
     expect(defValue.value / defStat).toBe(2);
-  }, 20000);
+  });
 
   it("METAL_POWDER held by fused DITTO (part)", async () => {
     await game.classicMode.startBattle([Species.MAROWAK, Species.DITTO]);
@@ -168,7 +168,7 @@ describe("Items - Metal Powder", () => {
     game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.DEF, defValue);
 
     expect(defValue.value / defStat).toBe(2);
-  }, 20000);
+  });
 
   it("METAL_POWDER not held by DITTO", async () => {
     await game.classicMode.startBattle([Species.MAROWAK]);
@@ -191,5 +191,5 @@ describe("Items - Metal Powder", () => {
     game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.DEF, defValue);
 
     expect(defValue.value / defStat).toBe(1);
-  }, 20000);
+  });
 });

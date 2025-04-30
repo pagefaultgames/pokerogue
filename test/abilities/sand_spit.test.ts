@@ -41,7 +41,7 @@ describe("Abilities - Sand Spit", () => {
     await game.toNextTurn();
 
     expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.SANDSTORM);
-  }, 20000);
+  });
 
   it("should trigger even when fainting", async () => {
     game.override.enemyMoveset([Moves.TACKLE]).enemyLevel(100).startingLevel(1);
@@ -62,5 +62,5 @@ describe("Abilities - Sand Spit", () => {
     await game.toNextTurn();
 
     expect(game.scene.arena.weather?.weatherType).not.toBe(WeatherType.SANDSTORM);
-  }, 20000);
+  });
 });

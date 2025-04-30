@@ -55,7 +55,7 @@ describe("Moves - Baton Pass", () => {
     playerPokemon = game.scene.getPlayerPokemon()!;
     expect(playerPokemon.species.speciesId).toEqual(Species.SHUCKLE);
     expect(playerPokemon.getStatStage(Stat.SPATK)).toEqual(2);
-  }, 20000);
+  });
 
   it("passes stat stage buffs when AI uses it", async () => {
     // arrange
@@ -87,7 +87,7 @@ describe("Moves - Baton Pass", () => {
       "SummonPhase",
       "PostSummonPhase",
     ]);
-  }, 20000);
+  });
 
   it("doesn't transfer effects that aren't transferrable", async () => {
     game.override.enemyMoveset([Moves.SALT_CURE]);
@@ -103,7 +103,7 @@ describe("Moves - Baton Pass", () => {
     await game.toNextTurn();
 
     expect(player2.findTag(t => t.tagType === BattlerTagType.SALT_CURED)).toBeUndefined();
-  }, 20000);
+  });
 
   it("doesn't allow binding effects from the user to persist", async () => {
     game.override.moveset([Moves.FIRE_SPIN, Moves.BATON_PASS]);
