@@ -202,47 +202,25 @@ describe("Test Battle Phase", () => {
     await game.phaseInterceptor.runFrom(SelectGenderPhase).to(SummonPhase);
   }, 20000);
 
-  it("2vs1", async () => {
-    game.override.battleStyle("single");
-    game.override.enemySpecies(Species.MIGHTYENA);
-    game.override.enemyAbility(Abilities.HYDRATION);
-    game.override.ability(Abilities.HYDRATION);
-    await game.classicMode.startBattle([Species.BLASTOISE, Species.CHARIZARD]);
-    expect(game.scene.ui?.getMode()).toBe(UiMode.COMMAND);
-    expect(game.scene.getCurrentPhase()!.constructor.name).toBe(CommandPhase.name);
-  }, 20000);
+  it.each([
+    { name: "1v1", double: false, qty: 1 },
+    { name: "2v1", double: false, qty: 2 },
+    { name: "2v2", double: true, qty: 2 },
+    { name: "4v2", double: true, qty: 4 },
+  ])("should not crash when starting $1 battle", async ({ double, qty }) => {
+    game.override
+      .battleStyle(double ? "double" : "single")
+      .enemySpecies(Species.MIGHTYENA)
+      .enemyAbility(Abilities.HYDRATION)
+      .ability(Abilities.HYDRATION);
 
-  it("1vs1", async () => {
-    game.override.battleStyle("single");
-    game.override.enemySpecies(Species.MIGHTYENA);
-    game.override.enemyAbility(Abilities.HYDRATION);
-    game.override.ability(Abilities.HYDRATION);
-    await game.classicMode.startBattle([Species.BLASTOISE]);
-    expect(game.scene.ui?.getMode()).toBe(UiMode.COMMAND);
-    expect(game.scene.getCurrentPhase()!.constructor.name).toBe(CommandPhase.name);
-  }, 20000);
+    await game.classicMode.startBattle(
+      [Species.BLASTOISE, Species.CHARIZARD, Species.DARKRAI, Species.GABITE].slice(qty),
+    );
 
-  it("2vs2", async () => {
-    game.override.battleStyle("double");
-    game.override.enemySpecies(Species.MIGHTYENA);
-    game.override.enemyAbility(Abilities.HYDRATION);
-    game.override.ability(Abilities.HYDRATION);
-    game.override.startingWave(3);
-    await game.classicMode.startBattle([Species.BLASTOISE, Species.CHARIZARD]);
     expect(game.scene.ui?.getMode()).toBe(UiMode.COMMAND);
-    expect(game.scene.getCurrentPhase()!.constructor.name).toBe(CommandPhase.name);
-  }, 20000);
-
-  it("4vs2", async () => {
-    game.override.battleStyle("double");
-    game.override.enemySpecies(Species.MIGHTYENA);
-    game.override.enemyAbility(Abilities.HYDRATION);
-    game.override.ability(Abilities.HYDRATION);
-    game.override.startingWave(3);
-    await game.classicMode.startBattle([Species.BLASTOISE, Species.CHARIZARD, Species.DARKRAI, Species.GABITE]);
-    expect(game.scene.ui?.getMode()).toBe(UiMode.COMMAND);
-    expect(game.scene.getCurrentPhase()!.constructor.name).toBe(CommandPhase.name);
-  }, 20000);
+    expect(game.scene.getCurrentPhase()).toBeInstanceOf(CommandPhase.name);
+  });
 
   it("kill opponent pokemon", async () => {
     const moveToUse = Moves.SPLASH;
@@ -310,7 +288,6 @@ describe("Test Battle Phase", () => {
     const moveToUse = Moves.TAKE_DOWN;
     game.override
       .battleStyle("single")
-      .starterSpecies(Species.SAWK)
       .enemySpecies(Species.RATTATA)
       .startingWave(1)
       .startingLevel(100)
@@ -318,7 +295,7 @@ describe("Test Battle Phase", () => {
       .enemyMoveset(Moves.SPLASH)
       .startingHeldItems([{ name: "TEMP_STAT_STAGE_BOOSTER", type: Stat.ACC }]);
 
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle([Species.SAWK]);
     game.scene.getPlayerPokemon()!.hp = 1;
     game.move.select(moveToUse);
 
