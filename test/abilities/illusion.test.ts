@@ -23,18 +23,18 @@ describe("Abilities - Illusion", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("single");
-    game.override.enemySpecies(Species.ZORUA);
-    game.override.enemyAbility(Abilities.ILLUSION);
-    game.override.enemyMoveset(Moves.TACKLE);
-    game.override.enemyHeldItems([{ name: "WIDE_LENS", count: 3 }]);
-
-    game.override.moveset([Moves.WORRY_SEED, Moves.SOAK, Moves.TACKLE]);
-    game.override.startingHeldItems([{ name: "WIDE_LENS", count: 3 }]);
+    game.override
+      .battleStyle("single")
+      .enemySpecies(Species.ZORUA)
+      .enemyAbility(Abilities.ILLUSION)
+      .enemyMoveset(Moves.TACKLE)
+      .enemyHeldItems([{ name: "WIDE_LENS", count: 3 }])
+      .moveset([Moves.WORRY_SEED, Moves.SOAK, Moves.TACKLE])
+      .startingHeldItems([{ name: "WIDE_LENS", count: 3 }]);
   });
 
   it("creates illusion at the start", async () => {
-    await game.classicMode.startBattle([Species.ZOROARK, Species.AXEW]);
+    await game.classicMode.startBattle([Species.ZOROARK, Species.FEEBAS]);
     const zoroark = game.scene.getPlayerPokemon()!;
     const zorua = game.scene.getEnemyPokemon()!;
 
@@ -43,7 +43,7 @@ describe("Abilities - Illusion", () => {
   });
 
   it("break after receiving damaging move", async () => {
-    await game.classicMode.startBattle([Species.AXEW]);
+    await game.classicMode.startBattle([Species.FEEBAS]);
     game.move.select(Moves.TACKLE);
 
     await game.phaseInterceptor.to("TurnEndPhase");
@@ -55,7 +55,7 @@ describe("Abilities - Illusion", () => {
   });
 
   it("break after getting ability changed", async () => {
-    await game.classicMode.startBattle([Species.AXEW]);
+    await game.classicMode.startBattle([Species.FEEBAS]);
     game.move.select(Moves.WORRY_SEED);
 
     await game.phaseInterceptor.to("TurnEndPhase");
@@ -76,7 +76,7 @@ describe("Abilities - Illusion", () => {
 
   it("causes enemy AI to consider the illusion's type instead of the actual type when considering move effectiveness", async () => {
     game.override.enemyMoveset([Moves.FLAMETHROWER, Moves.PSYCHIC, Moves.TACKLE]);
-    await game.classicMode.startBattle([Species.ZOROARK, Species.AXEW]);
+    await game.classicMode.startBattle([Species.ZOROARK, Species.FEEBAS]);
 
     const enemy = game.scene.getEnemyPokemon()!;
     const zoroark = game.scene.getPlayerPokemon()!;
