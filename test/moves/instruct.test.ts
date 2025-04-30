@@ -336,7 +336,7 @@ describe("Moves - Instruct", () => {
     game.move.select(Moves.ELECTRO_DRIFT);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("FaintPhase");
-    await game.move.learnMove(Moves.ELECTROWEB);
+    await game.move.changeMoveset[Moves.ELECTROWEB];
     await game.toNextWave();
 
     game.move.select(Moves.SPLASH);
