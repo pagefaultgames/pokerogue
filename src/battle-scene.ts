@@ -3264,7 +3264,7 @@ export default class BattleScene extends SceneBase {
     [this.modifierBar, this.enemyModifierBar].map(m => m.setVisible(visible));
   }
 
-  // TODO: Document this - IDK what it does and it gets called a lot
+  // TODO: Document this
   updateModifiers(player = true, instant?: boolean): void {
     const modifiers = player ? this.modifiers : (this.enemyModifiers as PersistentModifier[]);
     for (let m = 0; m < modifiers.length; m++) {
