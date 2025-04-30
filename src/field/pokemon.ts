@@ -865,7 +865,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       );
     }
     if (this.getFusionSpeciesForm()) {
-      // TODO: why is fusionFormIndex using illusion if defined but fusionShiny/variant aren't?
       const fusionFormIndex = useIllusion && this.summonData.illusion ? this.summonData.illusion.fusionFormIndex : this.fusionFormIndex;
       const fusionShiny = !useIllusion && this.summonData.illusion?.basePokemon ? this.summonData.illusion.basePokemon.fusionShiny : this.fusionShiny;
       const fusionVariant = !useIllusion && this.summonData.illusion?.basePokemon ? this.summonData.illusion.basePokemon.fusionVariant : this.fusionVariant;
