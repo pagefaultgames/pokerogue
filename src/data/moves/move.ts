@@ -2695,7 +2695,6 @@ export class EatBerryAttr extends MoveEffectAttr {
 
     const heldBerries = this.getTargetHeldBerries(pokemon);
     if (heldBerries.length <= 0) {
-      // no berries makes munchlax very sad...
       return false;
     }
 
