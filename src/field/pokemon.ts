@@ -369,7 +369,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   /** Data that resets on switch or battle end (stat stages, battler tags, etc.) */
   public summonData: PokemonSummonData = new PokemonSummonData;
   /** Wave data correponding to moves/ability information revealed */
-  public waveData: PokemonWaveData = new PokemonWaveData;
+  public waveData: PokemonWaveData = new PokemonWaveData();
   /** Per-turn data like hit count & flinch tracking */
   public turnData: PokemonTurnData = new PokemonTurnData;
 
