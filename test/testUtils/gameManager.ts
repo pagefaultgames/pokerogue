@@ -32,6 +32,7 @@ import type PartyUiHandler from "#app/ui/party-ui-handler";
 import type TargetSelectUiHandler from "#app/ui/target-select-ui-handler";
 import { UiMode } from "#enums/ui-mode";
 import { isNullOrUndefined } from "#app/utils/common";
+import { BattleStyle } from "#enums/battle-style";
 import { Button } from "#enums/buttons";
 import { ExpGainsSpeed } from "#enums/exp-gains-speed";
 import { ExpNotification } from "#enums/exp-notification";
@@ -164,7 +165,6 @@ export default class GameManager {
    * @param mode - The mode to wait for.
    * @param callback - The callback function to execute on next prompt.
    * @param expireFn - Optional function to determine if the prompt has expired.
-   * @see - {@linkcode PhaseInterceptor.addToNextPrompt}
    */
   onNextPrompt(
     phaseTarget: string,
@@ -269,6 +269,42 @@ export default class GameManager {
     if (!isNullOrUndefined(encounterType)) {
       expect(this.scene.currentBattle?.mysteryEncounter?.encounterType).toBe(encounterType);
     }
+  }
+
+  /**
+   * @deprecated Use `game.classicMode.startBattle()` or `game.dailyMode.startBattle()` instead
+   *
+   * Transitions to the start of a battle.
+   * @param species - Optional array of species to start the battle with.
+   * @returns A promise that resolves when the battle is started.
+   */
+  async startBattle(species?: Species[]) {
+    await this.classicMode.runToSummon(species);
+
+    if (this.scene.battleStyle === BattleStyle.SWITCH) {
+      this.onNextPrompt(
+        "CheckSwitchPhase",
+        UiMode.CONFIRM,
+        () => {
+          this.setMode(UiMode.MESSAGE);
+          this.endPhase();
+        },
+        () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(TurnInitPhase),
+      );
+
+      this.onNextPrompt(
+        "CheckSwitchPhase",
+        UiMode.CONFIRM,
+        () => {
+          this.setMode(UiMode.MESSAGE);
+          this.endPhase();
+        },
+        () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(TurnInitPhase),
+      );
+    }
+
+    await this.phaseInterceptor.to(CommandPhase);
+    console.log("==================[New Turn]==================");
   }
 
   /**
