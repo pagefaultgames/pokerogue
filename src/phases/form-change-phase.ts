@@ -131,11 +131,11 @@ export class FormChangePhase extends EvolutionPhase {
   private beginTweens(preName: string, transformedPokemon: Pokemon): void {
     globalScene.tweens.chain({
       // Starts 250ms after sprites have been configured
-      delay: 250,
       targets: null,
       tweens: [
         // Step 1: Fade in the background overlay
         {
+          delay: 250,
           targets: this.evolutionBgOverlay,
           alpha: 1,
           duration: 1500,
