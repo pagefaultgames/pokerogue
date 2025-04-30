@@ -50,7 +50,7 @@ describe("Moves - Spit Up", () => {
       const stacksToSetup = 1;
       const expectedPower = 100;
 
-      await game.startBattle([Species.ABOMASNOW]);
+      await game.classicMode.startBattle([Species.ABOMASNOW]);
 
       const pokemon = game.scene.getPlayerPokemon()!;
       pokemon.addTag(BattlerTagType.STOCKPILING);
@@ -72,7 +72,7 @@ describe("Moves - Spit Up", () => {
       const stacksToSetup = 2;
       const expectedPower = 200;
 
-      await game.startBattle([Species.ABOMASNOW]);
+      await game.classicMode.startBattle([Species.ABOMASNOW]);
 
       const pokemon = game.scene.getPlayerPokemon()!;
       pokemon.addTag(BattlerTagType.STOCKPILING);
@@ -95,7 +95,7 @@ describe("Moves - Spit Up", () => {
       const stacksToSetup = 3;
       const expectedPower = 300;
 
-      await game.startBattle([Species.ABOMASNOW]);
+      await game.classicMode.startBattle([Species.ABOMASNOW]);
 
       const pokemon = game.scene.getPlayerPokemon()!;
       pokemon.addTag(BattlerTagType.STOCKPILING);
@@ -117,7 +117,7 @@ describe("Moves - Spit Up", () => {
   });
 
   it("fails without stacks", async () => {
-    await game.startBattle([Species.ABOMASNOW]);
+    await game.classicMode.startBattle([Species.ABOMASNOW]);
 
     const pokemon = game.scene.getPlayerPokemon()!;
 
@@ -138,7 +138,7 @@ describe("Moves - Spit Up", () => {
 
   describe("restores stat boosts granted by stacks", () => {
     it("decreases stats based on stored values (both boosts equal)", async () => {
-      await game.startBattle([Species.ABOMASNOW]);
+      await game.classicMode.startBattle([Species.ABOMASNOW]);
 
       const pokemon = game.scene.getPlayerPokemon()!;
       pokemon.addTag(BattlerTagType.STOCKPILING);
@@ -169,7 +169,7 @@ describe("Moves - Spit Up", () => {
     });
 
     it("decreases stats based on stored values (different boosts)", async () => {
-      await game.startBattle([Species.ABOMASNOW]);
+      await game.classicMode.startBattle([Species.ABOMASNOW]);
 
       const pokemon = game.scene.getPlayerPokemon()!;
       pokemon.addTag(BattlerTagType.STOCKPILING);

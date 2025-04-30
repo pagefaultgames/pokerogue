@@ -41,7 +41,7 @@ describe("Abilities - Quick Draw", () => {
   });
 
   test("makes pokemon going first in its priority bracket", async () => {
-    await game.startBattle();
+    await game.classicMode.startBattle();
 
     const pokemon = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;
@@ -63,7 +63,7 @@ describe("Abilities - Quick Draw", () => {
       retry: 5,
     },
     async () => {
-      await game.startBattle();
+      await game.classicMode.startBattle();
 
       const pokemon = game.scene.getPlayerPokemon()!;
       const enemy = game.scene.getEnemyPokemon()!;
@@ -83,7 +83,7 @@ describe("Abilities - Quick Draw", () => {
   test("does not increase priority", async () => {
     game.override.enemyMoveset([Moves.EXTREME_SPEED]);
 
-    await game.startBattle();
+    await game.classicMode.startBattle();
 
     const pokemon = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;
