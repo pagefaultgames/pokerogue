@@ -4952,7 +4952,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Find and remove all {@linkcode BattlerTag}s matching the given function.
    * @param tagFilter a function dictating which tags to remove
-  */
+   */
   findAndRemoveTags(tagFilter: (tag: BattlerTag) => boolean): void {
     const tags = this.summonData.tags;
     const tagsToRemove = tags.filter(t => tagFilter(t));
