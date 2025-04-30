@@ -36,16 +36,18 @@ export class BerryPhase extends FieldPhase {
    * @param pokemon - The {@linkcode Pokemon} to check
    */
   eatBerries(pokemon: Pokemon): void {
-    const hasUsableBerry = !!globalScene.findModifier(m => {
-      return m instanceof BerryModifier && m.shouldApply(pokemon);
-    }, pokemon.isPlayer());
+    const hasUsableBerry = !!globalScene.findModifier(
+      m => m instanceof BerryModifier && m.shouldApply(pokemon),
+      pokemon.isPlayer(),
+    );
 
     if (!hasUsableBerry) {
       return;
     }
 
+    // TODO: If both opponents on field have unnerve, which one displays its message?
     const cancelled = new BooleanHolder(false);
-    pokemon.getOpponents().map(opp => applyAbAttrs(PreventBerryUseAbAttr, opp, cancelled));
+    pokemon.getOpponents().forEach(opp => applyAbAttrs(PreventBerryUseAbAttr, opp, cancelled));
     if (cancelled.value) {
       globalScene.queueMessage(
         i18next.t("abilityTriggers:preventBerryUse", {
@@ -60,11 +62,11 @@ export class BerryPhase extends FieldPhase {
     );
 
     for (const berryModifier of globalScene.applyModifiers(BerryModifier, pokemon.isPlayer(), pokemon)) {
+      // No need to track berries being eaten; already done inside applyModifiers
       if (berryModifier.consumed) {
         berryModifier.consumed = false;
         pokemon.loseHeldItem(berryModifier);
       }
-      // No need to track berries being eaten; already done inside applyModifiers
       globalScene.eventTarget.dispatchEvent(new BerryUsedEvent(berryModifier));
     }
     globalScene.updateModifiers(pokemon.isPlayer());

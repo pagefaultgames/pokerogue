@@ -8003,13 +8003,18 @@ export class MoveCondition {
   }
 }
 
+/**
+ * Condition to allow a move's use only on the first turn this Pokemon is sent into battle
+ * (or the start of a new wave, whichever comes first).
+ */
+
 export class FirstMoveCondition extends MoveCondition {
   constructor() {
-    super((user, target, move) => user.summonData.waveTurnCount === 1);
+    super((user, _target, _move) => user.summonData.waveTurnCount === 1);
   }
 
-  getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
-    return this.apply(user, target, move) ? 10 : -20;
+  getUserBenefitScore(user: Pokemon, _target: Pokemon, _move: Move): number {
+    return this.apply(user, _target, _move) ? 10 : -20;
   }
 }
 

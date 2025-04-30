@@ -21,11 +21,11 @@ const migratePartyData: SessionSaveMigrator = {
         pkmnData.status.sleepTurnsRemaining,
       );
       // remove empty moves from moveset
-      pkmnData.moveset = (pkmnData.moveset ?? [new PokemonMove(Moves.TACKLE), new PokemonMove(Moves.GROWL)]).filter(
-        m => !!m,
-      );
+      pkmnData.moveset = (pkmnData.moveset ?? [new PokemonMove(Moves.TACKLE), new PokemonMove(Moves.GROWL)])
+        .filter(m => !!m)
+        .map(m => PokemonMove.loadMove(m));
       // only edit summondata moveset if exists
-      pkmnData.summonData.moveset &&= pkmnData.summonData.moveset.filter(m => !!m);
+      pkmnData.summonData.moveset &&= pkmnData.summonData.moveset.filter(m => !!m).map(m => PokemonMove.loadMove(m));
 
       if (pkmnData.customPokemonData) {
         // revert all "-1" sprite scales to a minimum value of 1

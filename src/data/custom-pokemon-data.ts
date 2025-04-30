@@ -7,6 +7,7 @@ import type { Nature } from "#enums/nature";
  * Includes abilities, nature, changed types, etc.
  */
 export class CustomPokemonData {
+  /** The scale at which to render this Pokemon's sprite. */
   public spriteScale = 1;
   public ability: Abilities | -1;
   public passive: Abilities | -1;
