@@ -74,7 +74,7 @@ describe("Weird Dream - Mystery Encounter", () => {
     expect(WeirdDreamEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}:title`);
     expect(WeirdDreamEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}:description`);
     expect(WeirdDreamEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}:query`);
-    expect(WeirdDreamEncounter.options.length).toBe(3);
+    expect(WeirdDreamEncounter.options).toHaveLength(3);
   });
 
   it("should initialize fully", async () => {
@@ -126,14 +126,14 @@ describe("Weird Dream - Mystery Encounter", () => {
       for (let i = 0; i < pokemonAfter.length; i++) {
         const newPokemon = pokemonAfter[i];
         expect(newPokemon.getSpeciesForm().speciesId).not.toBe(pokemonPrior[i].getSpeciesForm().speciesId);
-        expect(newPokemon.customPokemonData?.types.length).toBe(2);
+        expect(newPokemon.customPokemonData?.types).toHaveLength(2);
       }
 
       const plus90To110 = bstDiff.filter(bst => bst > 80);
       const plus40To50 = bstDiff.filter(bst => bst < 80);
 
-      expect(plus90To110.length).toBe(2);
-      expect(plus40To50.length).toBe(1);
+      expect(plus90To110).toHaveLength(2);
+      expect(plus40To50).toHaveLength(1);
     });
 
     it("should have 1 Memory Mushroom, 5 Rogue Balls, and 3 Mints in rewards", async () => {
@@ -187,8 +187,8 @@ describe("Weird Dream - Mystery Encounter", () => {
 
       const enemyField = scene.getEnemyField();
       expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
-      expect(enemyField.length).toBe(1);
-      expect(scene.getEnemyParty().length).toBe(scene.getPlayerParty().length);
+      expect(enemyField).toHaveLength(1);
+      expect(scene.getEnemyParty()).toHaveLength(scene.getPlayerParty().length);
     });
 
     it("should have 2 Rogue/2 Ultra/2 Great items in rewards", async () => {

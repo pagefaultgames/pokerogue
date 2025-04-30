@@ -78,7 +78,7 @@ describe("Fiery Fallout - Mystery Encounter", () => {
     expect(FieryFalloutEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}:title`);
     expect(FieryFalloutEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}:description`);
     expect(FieryFalloutEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}:query`);
-    expect(FieryFalloutEncounter.options.length).toBe(3);
+    expect(FieryFalloutEncounter.options).toHaveLength(3);
   });
 
   it("should not spawn outside of volcano biome", async () => {
@@ -162,14 +162,14 @@ describe("Fiery Fallout - Mystery Encounter", () => {
 
       const enemyField = scene.getEnemyField();
       expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
-      expect(enemyField.length).toBe(2);
+      expect(enemyField).toHaveLength(2);
       expect(enemyField[0].species.speciesId).toBe(Species.VOLCARONA);
       expect(enemyField[1].species.speciesId).toBe(Species.VOLCARONA);
       expect(enemyField[0].gender).not.toEqual(enemyField[1].gender); // Should be opposite gender
 
       const movePhases = phaseSpy.mock.calls.filter(p => p[0] instanceof MovePhase).map(p => p[0]);
-      expect(movePhases.length).toBe(2);
-      expect(movePhases.filter(p => (p as MovePhase).move.moveId === Moves.FIRE_SPIN).length).toBe(2); // Fire spin used twice before battle
+      expect(movePhases).toHaveLength(2);
+      expect(movePhases.filter(p => (p as MovePhase).move.moveId === Moves.FIRE_SPIN)).toHaveLength(2); // Fire spin used twice before battle
     });
 
     it("should give attack type boosting item to lead pokemon", async () => {

@@ -66,7 +66,7 @@ describe("Global Trade System - Mystery Encounter", () => {
     expect(GlobalTradeSystemEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}:title`);
     expect(GlobalTradeSystemEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}:description`);
     expect(GlobalTradeSystemEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}:query`);
-    expect(GlobalTradeSystemEncounter.options.length).toBe(4);
+    expect(GlobalTradeSystemEncounter.options).toHaveLength(4);
   });
 
   it("should not loop infinitely when generating trade options for extreme BST non-legendaries", async () => {
@@ -80,7 +80,7 @@ describe("Global Trade System - Mystery Encounter", () => {
     expect(GlobalTradeSystemEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}:title`);
     expect(GlobalTradeSystemEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}:description`);
     expect(GlobalTradeSystemEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}:query`);
-    expect(GlobalTradeSystemEncounter.options.length).toBe(4);
+    expect(GlobalTradeSystemEncounter.options).toHaveLength(4);
   });
 
   it("should not spawn outside of CIVILIZATION_ENCOUNTER_BIOMES", async () => {

@@ -61,7 +61,7 @@ describe("Moves - Transform", () => {
     const playerMoveset = player.getMoveset();
     const enemyMoveset = enemy.getMoveset();
 
-    expect(playerMoveset.length).toBe(enemyMoveset.length);
+    expect(playerMoveset).toHaveLength(enemyMoveset.length);
     for (let i = 0; i < playerMoveset.length && i < enemyMoveset.length; i++) {
       expect(playerMoveset[i]?.moveId).toBe(enemyMoveset[i]?.moveId);
     }
@@ -69,7 +69,7 @@ describe("Moves - Transform", () => {
     const playerTypes = player.getTypes();
     const enemyTypes = enemy.getTypes();
 
-    expect(playerTypes.length).toBe(enemyTypes.length);
+    expect(playerTypes).toHaveLength(enemyTypes.length);
     for (let i = 0; i < playerTypes.length && i < enemyTypes.length; i++) {
       expect(playerTypes[i]).toBe(enemyTypes[i]);
     }

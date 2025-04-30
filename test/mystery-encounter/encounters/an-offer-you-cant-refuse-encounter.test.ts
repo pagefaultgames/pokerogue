@@ -73,7 +73,7 @@ describe("An Offer You Can't Refuse - Mystery Encounter", () => {
       `${namespace}:description`,
     );
     expect(AnOfferYouCantRefuseEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}:query`);
-    expect(AnOfferYouCantRefuseEncounter.options.length).toBe(3);
+    expect(AnOfferYouCantRefuseEncounter.options).toHaveLength(3);
   });
 
   it("should not spawn outside of HUMAN_TRANSITABLE_BIOMES", async () => {
@@ -158,7 +158,7 @@ describe("An Offer You Can't Refuse - Mystery Encounter", () => {
 
       await runMysteryEncounterToEnd(game, 1);
 
-      expect(scene.getPlayerParty().length).toBe(initialPartySize - 1);
+      expect(scene.getPlayerParty()).toHaveLength(initialPartySize - 1);
       expect(scene.getPlayerParty().find(p => p.name === pokemonName)).toBeUndefined();
     });
 

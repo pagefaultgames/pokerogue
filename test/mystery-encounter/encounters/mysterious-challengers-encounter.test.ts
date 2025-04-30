@@ -72,7 +72,7 @@ describe("Mysterious Challengers - Mystery Encounter", () => {
       `${namespace}:description`,
     );
     expect(MysteriousChallengersEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}:query`);
-    expect(MysteriousChallengersEncounter.options.length).toBe(3);
+    expect(MysteriousChallengersEncounter.options).toHaveLength(3);
   });
 
   it("should not spawn outside of HUMAN_TRANSITABLE_BIOMES", async () => {
@@ -96,7 +96,7 @@ describe("Mysterious Challengers - Mystery Encounter", () => {
     const onInitResult = onInit!();
 
     expect(encounter.enemyPartyConfigs).toBeDefined();
-    expect(encounter.enemyPartyConfigs.length).toBe(3);
+    expect(encounter.enemyPartyConfigs).toHaveLength(3);
     expect(encounter.enemyPartyConfigs).toEqual([
       {
         trainerConfig: expect.any(TrainerConfig),
@@ -127,7 +127,7 @@ describe("Mysterious Challengers - Mystery Encounter", () => {
       ),
     );
     expect(encounter.spriteConfigs).toBeDefined();
-    expect(encounter.spriteConfigs.length).toBe(3);
+    expect(encounter.spriteConfigs).toHaveLength(3);
     expect(onInitResult).toBe(true);
   });
 

@@ -72,7 +72,7 @@ describe("Delibird-y - Mystery Encounter", () => {
     expect(DelibirdyEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}:title`);
     expect(DelibirdyEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}:description`);
     expect(DelibirdyEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}:query`);
-    expect(DelibirdyEncounter.options.length).toBe(3);
+    expect(DelibirdyEncounter.options).toHaveLength(3);
   });
 
   it("should not spawn if player does not have enough money", async () => {

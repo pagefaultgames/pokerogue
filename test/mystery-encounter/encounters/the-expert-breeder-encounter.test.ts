@@ -77,7 +77,7 @@ describe("The Expert Pokémon Breeder - Mystery Encounter", () => {
       `${namespace}:description`,
     );
     expect(TheExpertPokemonBreederEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}:query`);
-    expect(TheExpertPokemonBreederEncounter.options.length).toBe(3);
+    expect(TheExpertPokemonBreederEncounter.options).toHaveLength(3);
   });
 
   it("should not spawn outside of HUMAN_TRANSITABLE_BIOMES", async () => {
@@ -103,11 +103,11 @@ describe("The Expert Pokémon Breeder - Mystery Encounter", () => {
     const onInitResult = onInit!();
 
     expect(encounter.enemyPartyConfigs).toBeDefined();
-    expect(encounter.enemyPartyConfigs.length).toBe(1);
+    expect(encounter.enemyPartyConfigs).toHaveLength(1);
     expect(encounter.enemyPartyConfigs[0].trainerType).toBe(TrainerType.EXPERT_POKEMON_BREEDER);
-    expect(encounter.enemyPartyConfigs[0].pokemonConfigs?.length).toBe(3);
+    expect(encounter.enemyPartyConfigs[0].pokemonConfigs).toHaveLength(3);
     expect(encounter.spriteConfigs).toBeDefined();
-    expect(encounter.spriteConfigs.length).toBe(2);
+    expect(encounter.spriteConfigs).toHaveLength(2);
     expect(onInitResult).toBe(true);
   });
 
@@ -159,7 +159,7 @@ describe("The Expert Pokémon Breeder - Mystery Encounter", () => {
       expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(scene.currentBattle.trainer).toBeDefined();
       expect(scene.currentBattle.mysteryEncounter?.encounterMode).toBe(MysteryEncounterMode.TRAINER_BATTLE);
-      expect(scene.getPlayerParty().length).toBe(1);
+      expect(scene.getPlayerParty()).toHaveLength(1);
     });
 
     it("Should reward the player with friendship and eggs based on pokemon selected", async () => {
@@ -182,8 +182,8 @@ describe("The Expert Pokémon Breeder - Mystery Encounter", () => {
       const rareEggs = scene.currentBattle.mysteryEncounter!.misc.pokemon1RareEggs;
       expect(eggsAfter).toBeDefined();
       expect(eggsBeforeLength + commonEggs + rareEggs).toBe(eggsAfter.length);
-      expect(eggsAfter.filter(egg => egg.tier === EggTier.COMMON).length).toBe(commonEggs);
-      expect(eggsAfter.filter(egg => egg.tier === EggTier.RARE).length).toBe(rareEggs);
+      expect(eggsAfter.filter(egg => egg.tier === EggTier.COMMON)).toHaveLength(commonEggs);
+      expect(eggsAfter.filter(egg => egg.tier === EggTier.RARE)).toHaveLength(rareEggs);
 
       game.phaseInterceptor.superEndPhase();
       await game.phaseInterceptor.to(PostMysteryEncounterPhase);
@@ -244,7 +244,7 @@ describe("The Expert Pokémon Breeder - Mystery Encounter", () => {
       expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(scene.currentBattle.trainer).toBeDefined();
       expect(scene.currentBattle.mysteryEncounter?.encounterMode).toBe(MysteryEncounterMode.TRAINER_BATTLE);
-      expect(scene.getPlayerParty().length).toBe(1);
+      expect(scene.getPlayerParty()).toHaveLength(1);
     });
 
     it("Should reward the player with friendship and eggs based on pokemon selected", async () => {
@@ -267,8 +267,8 @@ describe("The Expert Pokémon Breeder - Mystery Encounter", () => {
       const rareEggs = scene.currentBattle.mysteryEncounter!.misc.pokemon2RareEggs;
       expect(eggsAfter).toBeDefined();
       expect(eggsBeforeLength + commonEggs + rareEggs).toBe(eggsAfter.length);
-      expect(eggsAfter.filter(egg => egg.tier === EggTier.COMMON).length).toBe(commonEggs);
-      expect(eggsAfter.filter(egg => egg.tier === EggTier.RARE).length).toBe(rareEggs);
+      expect(eggsAfter.filter(egg => egg.tier === EggTier.COMMON)).toHaveLength(commonEggs);
+      expect(eggsAfter.filter(egg => egg.tier === EggTier.RARE)).toHaveLength(rareEggs);
 
       game.phaseInterceptor.superEndPhase();
       await game.phaseInterceptor.to(PostMysteryEncounterPhase);
@@ -326,7 +326,7 @@ describe("The Expert Pokémon Breeder - Mystery Encounter", () => {
       expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(scene.currentBattle.trainer).toBeDefined();
       expect(scene.currentBattle.mysteryEncounter?.encounterMode).toBe(MysteryEncounterMode.TRAINER_BATTLE);
-      expect(scene.getPlayerParty().length).toBe(1);
+      expect(scene.getPlayerParty()).toHaveLength(1);
     });
 
     it("Should reward the player with friendship and eggs based on pokemon selected", async () => {
@@ -349,8 +349,8 @@ describe("The Expert Pokémon Breeder - Mystery Encounter", () => {
       const rareEggs = scene.currentBattle.mysteryEncounter!.misc.pokemon3RareEggs;
       expect(eggsAfter).toBeDefined();
       expect(eggsBeforeLength + commonEggs + rareEggs).toBe(eggsAfter.length);
-      expect(eggsAfter.filter(egg => egg.tier === EggTier.COMMON).length).toBe(commonEggs);
-      expect(eggsAfter.filter(egg => egg.tier === EggTier.RARE).length).toBe(rareEggs);
+      expect(eggsAfter.filter(egg => egg.tier === EggTier.COMMON)).toHaveLength(commonEggs);
+      expect(eggsAfter.filter(egg => egg.tier === EggTier.RARE)).toHaveLength(rareEggs);
 
       game.phaseInterceptor.superEndPhase();
       await game.phaseInterceptor.to(PostMysteryEncounterPhase);
