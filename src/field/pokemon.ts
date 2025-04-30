@@ -5104,8 +5104,20 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
+   * Return the most recently {@linkcode TurnMove} this Pokemon used that is:
+   * - Not {@linkcode Moves.NONE}
+   * - Non-virtual ({@linkcode MoveUseType} < {@linkcode MoveUseType.INDIRECT})
+   * @param ignoreStruggle - Whether to additionally ignore {@linkcode Moves.STRUGGLE}; default `false`
+   * @returns The last move this pokemon used satisfying the above conditions,
+   * or `undefined` if no regular moves have been used since switching in
+   */
+  getLastNonVirtualMove(ignoreStruggle = false): TurnMove | undefined {
+    return this.getLastXMoves(-1).find(m => m.move !== Moves.NONE && m.useType < MoveUseType.INDIRECT && (!ignoreStruggle || m.move !== Moves.STRUGGLE));
+  }
+
+  /**
    * Return this pokemon's move queue, consisting of all the moves it is slated to perform.
-   * @returns
+   * @returns An array of {@linkcode TurnMove}, as described above
    */
   getMoveQueue(): TurnMove[] {
     return this.summonData.moveQueue;
@@ -7119,7 +7131,7 @@ export class EnemyPokemon extends Pokemon {
         (moveIndex > -1 &&
         this.getMoveset()[moveIndex].isUsable(
           this,
-          (queuedMove.useType ?? MoveUseType.NORMAL) >= MoveUseType.IGNORE_PP )
+          queuedMove.useType >= MoveUseType.IGNORE_PP )
         )
       ) {
       return queuedMove;
@@ -7142,7 +7154,8 @@ export class EnemyPokemon extends Pokemon {
         if (encoreMove) {
           return {
             move: encoreMove.moveId,
-            targets: this.getNextTargets(encoreMove.moveId), useType: MoveUseType.NORMAL
+            targets: this.getNextTargets(encoreMove.moveId),
+            useType: MoveUseType.NORMAL
           };
         }
       }

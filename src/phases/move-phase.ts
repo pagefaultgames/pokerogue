@@ -155,18 +155,17 @@ export class MovePhase extends BattlePhase {
     this.pokemon.turnData.acted = true;
 
     // Reset hit-related turn data when starting follow-up moves (e.g. Metronomed moves, Dancer repeats)
-    if (this.useType >= MoveUseType.FOLLOW_UP) {
+    if (this.useType >= MoveUseType.INDIRECT) {
       this.pokemon.turnData.hitsLeft = -1;
       this.pokemon.turnData.hitCount = 0;
     }
 
     // Check move to see if arena.ignoreAbilities should be true.
-    // TODO: Why do we ignore follow up attacks????
     if (
       this.move.getMove().doesFlagEffectApply({
         flag: MoveFlags.IGNORE_ABILITIES,
         user: this.pokemon,
-        isFollowUp: this.useType >= MoveUseType.FOLLOW_UP, // Only really to be complete ATM just
+        isFollowUp: this.useType >= MoveUseType.INDIRECT, // Sunsteel strike and co. don't work when called indirectly
       })
     ) {
       globalScene.arena.setIgnoreAbilities(true, this.pokemon.getBattlerIndex());
@@ -219,20 +218,19 @@ export class MovePhase extends BattlePhase {
    */
   protected resolvePreMoveStatusEffects(): void {
     // Skip for follow ups/reflected moves, no condition or status or post turn statues (e.g. Poison/Toxic)
-    if (
-      !this.pokemon.status ||
-      this.pokemon.status.isPostTurn() ||
-      this.useType === MoveUseType.FOLLOW_UP ||
-      this.useType === MoveUseType.REFLECTED
-    ) {
+    if (!this.pokemon.status || this.pokemon.status.isPostTurn() || this.useType >= MoveUseType.FOLLOW_UP) {
       return;
     }
 
     // Increment sleep turn count if not used via Dancer.
-    // TODO: Check if we actually need this after testing rounds
+    // TODO: Confirm if dancer removes sleep/freeze
     if (this.useType !== MoveUseType.INDIRECT) {
       this.pokemon.status.decrementSleepTurnCount(this.pokemon);
-    }
+    } /* else {
+      // Dancer thaws out or wakes up target
+      this.pokemon.resetStatus(false);
+      return;
+    */
 
     /** Whether to prevent us from using the move */
     let activated = false;

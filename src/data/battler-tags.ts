@@ -43,6 +43,7 @@ import { EFFECTIVE_STATS, getStatKey, Stat, type BattleStat, type EffectiveStat 
 import { StatusEffect } from "#enums/status-effect";
 import { WeatherType } from "#enums/weather-type";
 import { isNullOrUndefined } from "#app/utils/common";
+import { MoveUseType } from "#enums/move-use-type";
 
 export enum BattlerTagLapseType {
   FAINT,
@@ -303,8 +304,9 @@ export class DisabledTag extends MoveRestrictionBattlerTag {
   override onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
 
-    const move = pokemon.getLastXMoves(-1).find(m => !m.virtual);
-    if (isNullOrUndefined(move) || move.move === Moves.STRUGGLE || move.move === Moves.NONE) {
+    // TODO Review interaction with a mid-turn struggle
+    const move = pokemon.getLastNonVirtualMove(true);
+    if (isNullOrUndefined(move)) {
       return;
     }
 
@@ -377,7 +379,7 @@ export class GorillaTacticsTag extends MoveRestrictionBattlerTag {
    * @returns `true` if the pokemon has a valid move and no existing {@linkcode GorillaTacticsTag}; `false` otherwise
    */
   override canAdd(pokemon: Pokemon): boolean {
-    return this.getLastValidMove(pokemon) !== undefined && !pokemon.getTag(GorillaTacticsTag);
+    return !isNullOrUndefined(pokemon.getLastNonVirtualMove(true)) && !pokemon.getTag(GorillaTacticsTag);
   }
 
   /**
@@ -387,13 +389,12 @@ export class GorillaTacticsTag extends MoveRestrictionBattlerTag {
    * @param {Pokemon} pokemon the {@linkcode Pokemon} to add the tag to
    */
   override onAdd(pokemon: Pokemon): void {
-    const lastValidMove = this.getLastValidMove(pokemon);
-
+    const lastValidMove = pokemon.getLastNonVirtualMove(true); // TODO: Check if should work with struggle or not
     if (!lastValidMove) {
       return;
     }
 
-    this.moveId = lastValidMove;
+    this.moveId = lastValidMove.move;
     pokemon.setStat(Stat.ATK, pokemon.getStat(Stat.ATK, false) * 1.5, false);
   }
 
@@ -420,17 +421,6 @@ export class GorillaTacticsTag extends MoveRestrictionBattlerTag {
       pokemonName: getPokemonNameWithAffix(pokemon),
     });
   }
-
-  /**
-   * Gets the last valid move from the pokemon's move history.
-   * @param {Pokemon} pokemon {@linkcode Pokemon} to get the last valid move from
-   * @returns {Moves | undefined} the last valid move from the pokemon's move history
-   */
-  getLastValidMove(pokemon: Pokemon): Moves | undefined {
-    const move = pokemon.getLastXMoves().find(m => m.move !== Moves.NONE && m.move !== Moves.STRUGGLE && !m.virtual);
-
-    return move?.move;
-  }
 }
 
 /**
@@ -445,7 +435,7 @@ export class RechargingTag extends BattlerTag {
     super.onAdd(pokemon);
 
     // Queue a placeholder move for the Pokemon to "use" next turn
-    pokemon.getMoveQueue().push({ move: Moves.NONE, targets: [] });
+    pokemon.getMoveQueue().push({ move: Moves.NONE, targets: [], useType: MoveUseType.NORMAL });
   }
 
   /** Cancels the source's move this turn and queues a "__ must recharge!" message */
@@ -694,6 +684,7 @@ export class InterruptedTag extends BattlerTag {
       move: Moves.NONE,
       result: MoveResult.OTHER,
       targets: [],
+      useType: MoveUseType.NORMAL,
     });
   }
 
@@ -1121,6 +1112,7 @@ export class FrenzyTag extends BattlerTag {
  * Applies the effects of the move Encore onto the target Pokemon
  * Encore forces the target Pokemon to use its most-recent move for 3 turns
  */
+// TODO: Refactor and fix the bugs involving struggle and lock ons
 export class EncoreTag extends MoveRestrictionBattlerTag {
   public moveId: Moves;
 
@@ -1144,29 +1136,26 @@ export class EncoreTag extends MoveRestrictionBattlerTag {
   }
 
   canAdd(pokemon: Pokemon): boolean {
-    const lastMoves = pokemon.getLastXMoves(1);
-    if (!lastMoves.length) {
+    const lastMove = pokemon.getLastNonVirtualMove(false);
+    if (!lastMove) {
       return false;
     }
 
-    const repeatableMove = lastMoves[0];
+    const unEncoreableMoves = new Set<Moves>([
+      Moves.MIMIC,
+      Moves.MIRROR_MOVE,
+      Moves.TRANSFORM,
+      Moves.STRUGGLE,
+      Moves.SKETCH,
+      Moves.SLEEP_TALK,
+      Moves.ENCORE,
+    ]);
 
-    if (!repeatableMove.move || repeatableMove.virtual) {
+    if (unEncoreableMoves.has(lastMove.move)) {
       return false;
     }
 
-    switch (repeatableMove.move) {
-      case Moves.MIMIC:
-      case Moves.MIRROR_MOVE:
-      case Moves.TRANSFORM:
-      case Moves.STRUGGLE:
-      case Moves.SKETCH:
-      case Moves.SLEEP_TALK:
-      case Moves.ENCORE:
-        return false;
-    }
-
-    this.moveId = repeatableMove.move;
+    this.moveId = lastMove.move;
 
     return true;
   }

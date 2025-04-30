@@ -295,14 +295,16 @@ export class MoveEffectPhase extends PokemonPhase {
     const overridden = new BooleanHolder(false);
     const move = this.move;
 
-    // Assume single target for override
+    // Apply effects to override a move effect.
+    // Assuming single target here works as this is (currently)
+    // only used for Future Sight and Pledge moves
     applyMoveAttrs(
       OverrideMoveEffectAttr,
       user,
       this.getFirstTarget() ?? null,
       move,
       overridden,
-      this.useType >= MoveUseType.FOLLOW_UP,
+      this.useType >= MoveUseType.INDIRECT,
     );
 
     // If other effects were overriden, stop this phase before they can be applied

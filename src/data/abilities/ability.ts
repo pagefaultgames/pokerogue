@@ -5664,38 +5664,32 @@ export class PostDamageForceSwitchAbAttr extends PostDamageAbAttr {
     simulated: boolean,
     args: any[],
     source?: Pokemon): boolean {
-    const moveHistory = pokemon.getMoveHistory();
+    const lastMove = pokemon.getLastXMoves()[0];
     // Will not activate when the Pokémon's HP is lowered by cutting its own HP
-    const fordbiddenAttackingMoves = [ Moves.BELLY_DRUM, Moves.SUBSTITUTE, Moves.CURSE, Moves.PAIN_SPLIT ];
-    if (moveHistory.length > 0) {
-      const lastMoveUsed = moveHistory[moveHistory.length - 1];
-      if (fordbiddenAttackingMoves.includes(lastMoveUsed.move)) {
-        return false;
-      }
+    const forbiddenAttackingMoves = new Set<Moves>([ Moves.BELLY_DRUM, Moves.SUBSTITUTE, Moves.CURSE, Moves.PAIN_SPLIT ]);
+    if (isNullOrUndefined(lastMove) || forbiddenAttackingMoves.has(lastMove.move)) {
+      return false;
     }
 
     // Dragon Tail and Circle Throw switch out Pokémon before the Ability activates.
-    const fordbiddenDefendingMoves = [ Moves.DRAGON_TAIL, Moves.CIRCLE_THROW ];
-    if (source) {
-      const enemyMoveHistory = source.getMoveHistory();
-      if (enemyMoveHistory.length > 0) {
-        const enemyLastMoveUsed = enemyMoveHistory[enemyMoveHistory.length - 1];
-        // Will not activate if the Pokémon's HP falls below half while it is in the air during Sky Drop.
-        if (fordbiddenDefendingMoves.includes(enemyLastMoveUsed.move) || enemyLastMoveUsed.move === Moves.SKY_DROP && enemyLastMoveUsed.result === MoveResult.OTHER) {
-          return false;
-        // Will not activate if the Pokémon's HP falls below half by a move affected by Sheer Force.
-        } else if (allMoves[enemyLastMoveUsed.move].chance >= 0 && source.hasAbility(Abilities.SHEER_FORCE)) {
-          return false;
-        // Activate only after the last hit of multistrike moves
-        } else if (source.turnData.hitsLeft > 1) {
+    const forbiddenDefendingMoves = [ Moves.DRAGON_TAIL, Moves.CIRCLE_THROW ];
+    if (!isNullOrUndefined(source?.getLastXMoves()[0])) {
+      const enemyLastMoveUsed = source.getLastXMoves()[0] // i hate ts compiler
+
+      if (
+        forbiddenDefendingMoves.includes(enemyLastMoveUsed.move) || // move in banlist
+        (enemyLastMoveUsed.move === Moves.SKY_DROP && enemyLastMoveUsed.result === MoveResult.OTHER) || // not in air due to sky drop
+        source.turnData.hitsLeft > 1
+      ) { // not in middle of attacking move (procs at end)
           return false;
         }
+
         if (source.turnData.hitCount > 1) {
           damage = pokemon.turnData.damageTaken;
         }
       }
-    }
 
+    // TODO: Why do we do this?
     if (pokemon.hp + damage >= pokemon.getMaxHp() * this.hpRatio) {
       const shellBellHeal = calculateShellBellRecovery(pokemon);
       if (pokemon.hp - shellBellHeal < pokemon.getMaxHp() * this.hpRatio) {

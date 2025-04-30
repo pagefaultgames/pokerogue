@@ -27,7 +27,7 @@ export class PokerogueSessionSavedataApi extends ApiBase {
       const response = await this.doGet(`/savedata/session/newclear?${urlSearchParams}`);
       const json = await response.json();
 
-      return Boolean(json);
+      return !!json;
     } catch (err) {
       console.warn("Could not newclear session!", err);
       return false;
