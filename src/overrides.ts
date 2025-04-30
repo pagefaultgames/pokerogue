@@ -48,7 +48,7 @@ const overrides = {} satisfies Partial<InstanceType<OverridesType>>;
 /**
  * If you need to add Overrides values for local testing do that inside {@linkcode overrides}
  * ---
- * Defaults for Overrides that are used when testing different in-game situations.
+ * Defaults for Overrides that are used when testing different in game situations
  *
  * If an override name starts with "STARTING", it will only apply when a new run begins.
  */
@@ -56,15 +56,10 @@ class DefaultOverrides {
   // -----------------
   // OVERALL OVERRIDES
   // -----------------
-
-  /** Overrides run initial RNG seed. If empty or `null`, defaults to a random string of 24 characters. */
-  readonly SEED_OVERRIDE: string | null = null;
-  /**
-   * Overrides starting RNG seed used for daily run generation.
-   * If empty or `null`, defaults to a base-64 representation of the current clock date.
-   */
+  /** a specific seed (default: a random string of 24 characters) */
+  readonly SEED_OVERRIDE: string = "";
   readonly DAILY_RUN_SEED_OVERRIDE: string | null = null;
-  readonly WEATHER_OVERRIDE: WeatherType | null = null;
+  readonly WEATHER_OVERRIDE: WeatherType = WeatherType.NONE;
   /**
    * If `null`, ignore this override.
    *
@@ -80,17 +75,11 @@ class DefaultOverrides {
   readonly STARTING_WAVE_OVERRIDE: number = 0;
   readonly STARTING_BIOME_OVERRIDE: Biome = Biome.TOWN;
   readonly ARENA_TINT_OVERRIDE: TimeOfDay | null = null;
-  /**
-   * Overrides the XP multiplier used during experience gain calculations.
-   * Set to `0` or lower to disable XP gains completely, or `null` to disable the override.
-  */
+  /** Multiplies XP gained by this value including 0. Set to null to ignore the override. */
   readonly XP_MULTIPLIER_OVERRIDE: number | null = null;
-  /**
-   * Overrides the level cap used during experience gain calculations.
-   * Set to `0` or `null` to disable override & use normal wave-based level caps,
-   * or any negative number to set to `Number.MAX_SAFE_INTEGER` (effectively disabling it).
-  */
-  readonly LEVEL_CAP_OVERRIDE: number | null = null;
+  /** Sets the level cap to this number during experience gain calculations. Set to `0` to disable override & use normal wave-based level caps,
+  or any negative number to set it to 9 quadrillion (effectively disabling it). */
+  readonly LEVEL_CAP_OVERRIDE: number = 0;
   /**
    * If defined, overrides random critical hit rolls to always or never succeed.
    * Ignored if the move is guaranteed to always/never crit.
@@ -127,7 +116,7 @@ class DefaultOverrides {
   // ----------------
   /**
    * Set the form index of any starter in the party whose `speciesId` is inside this override
-   * @see {@linkcode allSpecies} in `src/data/pokemon-species.ts` for form indices
+   * @see {@link allSpecies} in `src/data/pokemon-species.ts` for form indexes
    * @example
    * ```
    * const STARTER_FORM_OVERRIDES = {
@@ -137,26 +126,23 @@ class DefaultOverrides {
    */
   readonly STARTER_FORM_OVERRIDES: Partial<Record<Species, number>> = {};
 
-  /**
-   * Override player party starting level.
-   * Defaults to normal starting levels for game mode if `0` or less.
-   */
+  /** default 5 or 20 for Daily */
   readonly STARTING_LEVEL_OVERRIDE: number = 0;
   /**
-   * If defined, this will override the species of the first starter in your party.
-   * default is `null` to not override
-   * @example STARTER_SPECIES_OVERRIDE = Species.BULBASAUR;
+   * SPECIES OVERRIDE
+   * will only apply to the first starter in your party or each enemy pokemon
+   * default is 0 to not override
+   * @example SPECIES_OVERRIDE = Species.Bulbasaur;
    */
-  readonly STARTER_SPECIES_OVERRIDE: Species | null = null;
+  readonly STARTER_SPECIES_OVERRIDE: Species | number = 0;
   /**
-   * Set to `true` to force your starter to be a random fusion (similar to Spliced Endless)
+   * This will force your starter to be a random fusion
    */
   readonly STARTER_FUSION_OVERRIDE: boolean = false;
   /**
-   * Overrides player random fusion species (à la Spliced Endless) if starter fusion is enabled.
-   * Set to `null` to disable and use random fusion species.
+   * This will override the species of the fusion
    */
-  readonly STARTER_FUSION_SPECIES_OVERRIDE: Species | null = null;
+  readonly STARTER_FUSION_SPECIES_OVERRIDE: Species | number = 0;
   readonly ABILITY_OVERRIDE: Abilities = Abilities.NONE;
   readonly PASSIVE_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
   readonly HAS_PASSIVE_ABILITY_OVERRIDE: boolean | null = null;
@@ -169,14 +155,13 @@ class DefaultOverrides {
   // --------------------------
   // OPPONENT / ENEMY OVERRIDES
   // --------------------------
-  readonly OPP_SPECIES_OVERRIDE: Species | null = null;
+  readonly OPP_SPECIES_OVERRIDE: Species | number = 0;
   /**
-   * Set to `true` to force all enemy pokemon to be random fusions (similar to Spliced Endless/Fusion Tokens).
+   * This will make all opponents fused Pokemon
    */
   readonly OPP_FUSION_OVERRIDE: boolean = false;
   /**
-   * Overrides enemy random fusion species (à la Spliced Endless) for enemies with fusions.
-   * Set to `null` to disable and use random fusion species.
+   * This will override the species of the fusion only when the opponent is already a fusion
    */
   readonly OPP_FUSION_SPECIES_OVERRIDE: Species | number = 0;
   readonly OPP_LEVEL_OVERRIDE: number = 0;
@@ -191,7 +176,8 @@ class DefaultOverrides {
   readonly OPP_IVS_OVERRIDE: number | number[] = [];
   readonly OPP_FORM_OVERRIDES: Partial<Record<Species, number>> = {};
   /**
-   * Overrides enemy Pokemon's health segments
+   * Override to give the enemy Pokemon a given amount of health segments
+   *
    * 0 (default): the health segments will be handled normally based on wave, level and species
    * 1: the Pokemon will have a single health segment and therefore will not be a boss
    * 2+: the Pokemon will be a boss with the given number of health segments
@@ -214,9 +200,7 @@ class DefaultOverrides {
   // -------------------------
 
   /**
-   * Override chance of encountering a Mystery Encounter (out of 256).
-   * Also disables the required 3 wave gap between successive MEs if defined.
-   * Ranges from `0` (never) to `256` (always); set to `null` to disable the override
+   * `1` (almost never) to `256` (always), set to `null` to disable the override
    *
    * Note: Make sure `STARTING_WAVE_OVERRIDE > 10`, otherwise MEs won't trigger
    */
@@ -270,8 +254,8 @@ class DefaultOverrides {
   /**
    * Override array of {@linkcode ModifierOverride}s used to replace the generated item rolls after a wave.
    *
-   * If less entries are listed than rolled, the remaining entries will be randomly generated as normal.
-   * If more entries are listed than rolled, any excess items are ignored.
+   * If less entries are listed than rolled, only those entries will be used to replace the corresponding items while the rest randomly generated.
+   * If more entries are listed than rolled, only the first X entries will be used, where X is the number of items rolled.
    *
    * Note that, for all items in the array, `count` is not used.
    */
