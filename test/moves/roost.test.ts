@@ -25,12 +25,13 @@ describe("Moves - Roost", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("single");
-    game.override.enemySpecies(Species.RELICANTH);
-    game.override.startingLevel(100);
-    game.override.enemyLevel(100);
-    game.override.enemyMoveset(Moves.EARTHQUAKE);
-    game.override.moveset([Moves.ROOST, Moves.BURN_UP, Moves.DOUBLE_SHOCK]);
+    game.override
+      .battleStyle("single")
+      .enemySpecies(Species.RELICANTH)
+      .startingLevel(100)
+      .enemyLevel(100)
+      .enemyMoveset(Moves.EARTHQUAKE)
+      .moveset([Moves.ROOST, Moves.BURN_UP, Moves.DOUBLE_SHOCK]);
   });
 
   /**

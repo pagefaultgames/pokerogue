@@ -33,15 +33,14 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
     fusionFlare = allMoves[Moves.FUSION_FLARE];
     fusionBolt = allMoves[Moves.FUSION_BOLT];
     game = new GameManager(phaserGame);
-    game.override.moveset([fusionFlare.id, fusionBolt.id]);
-    game.override.startingLevel(1);
-
-    game.override.enemySpecies(Species.RESHIRAM);
-    game.override.enemyMoveset([Moves.REST, Moves.REST, Moves.REST, Moves.REST]);
-
-    game.override.battleStyle("double");
-    game.override.startingWave(97);
-    game.override.disableCrits();
+    game.override
+      .moveset([fusionFlare.id, fusionBolt.id])
+      .startingLevel(1)
+      .enemySpecies(Species.RESHIRAM)
+      .enemyMoveset([Moves.REST, Moves.REST, Moves.REST, Moves.REST])
+      .battleStyle("double")
+      .startingWave(97)
+      .disableCrits();
 
     vi.spyOn(fusionFlare, "calculateBattlePower");
     vi.spyOn(fusionBolt, "calculateBattlePower");

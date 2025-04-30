@@ -25,11 +25,12 @@ describe("Abilities - Sweet Veil", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("double");
-    game.override.moveset([Moves.SPLASH, Moves.REST, Moves.YAWN]);
-    game.override.enemySpecies(Species.MAGIKARP);
-    game.override.enemyAbility(Abilities.BALL_FETCH);
-    game.override.enemyMoveset([Moves.POWDER, Moves.POWDER, Moves.POWDER, Moves.POWDER]);
+    game.override
+      .battleStyle("double")
+      .moveset([Moves.SPLASH, Moves.REST, Moves.YAWN])
+      .enemySpecies(Species.MAGIKARP)
+      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyMoveset([Moves.POWDER, Moves.POWDER, Moves.POWDER, Moves.POWDER]);
   });
 
   it("prevents the user and its allies from falling asleep", async () => {
@@ -68,10 +69,7 @@ describe("Abilities - Sweet Veil", () => {
   });
 
   it("prevents the user and its allies already drowsy due to Yawn from falling asleep.", async () => {
-    game.override.enemySpecies(Species.PIKACHU);
-    game.override.enemyLevel(5);
-    game.override.startingLevel(5);
-    game.override.enemyMoveset(Moves.SPLASH);
+    game.override.enemySpecies(Species.PIKACHU).enemyLevel(5).startingLevel(5).enemyMoveset(Moves.SPLASH);
 
     await game.classicMode.startBattle([Species.SHUCKLE, Species.SHUCKLE, Species.SWIRLIX]);
 

@@ -129,8 +129,7 @@ describe("Moves - Beak Blast", () => {
   });
 
   it("should not burn a long reach enemy that hits the user with a contact move", async () => {
-    game.override.enemyAbility(Abilities.LONG_REACH);
-    game.override.enemyMoveset([Moves.FALSE_SWIPE]).enemyLevel(100);
+    game.override.enemyAbility(Abilities.LONG_REACH).enemyMoveset([Moves.FALSE_SWIPE]).enemyLevel(100);
     await game.classicMode.startBattle([Species.MAGIKARP]);
     game.move.select(Moves.BEAK_BLAST);
     await game.phaseInterceptor.to("BerryPhase", false);

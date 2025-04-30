@@ -103,10 +103,11 @@ describe("Abilities - Illusion", () => {
   });
 
   it("does not break from indirect damage", async () => {
-    game.override.enemySpecies(Species.GIGALITH);
-    game.override.enemyAbility(Abilities.SAND_STREAM);
-    game.override.enemyMoveset(Moves.WILL_O_WISP);
-    game.override.moveset([Moves.FLARE_BLITZ]);
+    game.override
+      .enemySpecies(Species.GIGALITH)
+      .enemyAbility(Abilities.SAND_STREAM)
+      .enemyMoveset(Moves.WILL_O_WISP)
+      .moveset([Moves.FLARE_BLITZ]);
 
     await game.classicMode.startBattle([Species.ZOROARK, Species.AZUMARILL]);
 
@@ -122,6 +123,7 @@ describe("Abilities - Illusion", () => {
   it("copies the the name, nickname, gender, shininess, and pokeball from the illusion source", async () => {
     game.override.enemyMoveset(Moves.SPLASH);
     await game.classicMode.startBattle([Species.ABRA, Species.ZOROARK, Species.AXEW]);
+
     const axew = game.scene.getPlayerParty().at(2)!;
     axew.shiny = true;
     axew.nickname = btoa(unescape(encodeURIComponent("axew nickname")));

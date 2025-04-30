@@ -33,11 +33,12 @@ describe("Field Trip - Mystery Encounter", () => {
   beforeEach(async () => {
     game = new GameManager(phaserGame);
     scene = game.scene;
-    game.override.mysteryEncounterChance(100);
-    game.override.startingWave(defaultWave);
-    game.override.startingBiome(defaultBiome);
-    game.override.disableTrainerWaves();
-    game.override.moveset([Moves.TACKLE, Moves.UPROAR, Moves.SWORDS_DANCE]);
+    game.override
+      .mysteryEncounterChance(100)
+      .startingWave(defaultWave)
+      .startingBiome(defaultBiome)
+      .disableTrainerWaves()
+      .moveset([Moves.TACKLE, Moves.UPROAR, Moves.SWORDS_DANCE]);
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
       new Map<Biome, MysteryEncounterType[]>([[Biome.CAVE, [MysteryEncounterType.FIELD_TRIP]]]),

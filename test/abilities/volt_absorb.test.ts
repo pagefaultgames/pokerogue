@@ -26,19 +26,19 @@ describe("Abilities - Volt Absorb", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("single");
-    game.override.disableCrits();
+    game.override.battleStyle("single").disableCrits();
   });
 
   it("does not activate when CHARGE is used", async () => {
     const moveToUse = Moves.CHARGE;
     const ability = Abilities.VOLT_ABSORB;
 
-    game.override.moveset([moveToUse]);
-    game.override.ability(ability);
-    game.override.enemyMoveset([Moves.SPLASH, Moves.NONE, Moves.NONE, Moves.NONE]);
-    game.override.enemySpecies(Species.DUSKULL);
-    game.override.enemyAbility(Abilities.BALL_FETCH);
+    game.override
+      .moveset([moveToUse])
+      .ability(ability)
+      .enemyMoveset([Moves.SPLASH, Moves.NONE, Moves.NONE, Moves.NONE])
+      .enemySpecies(Species.DUSKULL)
+      .enemyAbility(Abilities.BALL_FETCH);
 
     await game.classicMode.startBattle();
 
@@ -54,10 +54,11 @@ describe("Abilities - Volt Absorb", () => {
   });
 
   it("should activate regardless of accuracy checks", async () => {
-    game.override.moveset(Moves.THUNDERBOLT);
-    game.override.enemyMoveset(Moves.SPLASH);
-    game.override.enemySpecies(Species.MAGIKARP);
-    game.override.enemyAbility(Abilities.VOLT_ABSORB);
+    game.override
+      .moveset(Moves.THUNDERBOLT)
+      .enemyMoveset(Moves.SPLASH)
+      .enemySpecies(Species.MAGIKARP)
+      .enemyAbility(Abilities.VOLT_ABSORB);
 
     await game.classicMode.startBattle();
 
@@ -74,10 +75,11 @@ describe("Abilities - Volt Absorb", () => {
   });
 
   it("regardless of accuracy should not trigger on pokemon in semi invulnerable state", async () => {
-    game.override.moveset(Moves.THUNDERBOLT);
-    game.override.enemyMoveset(Moves.DIVE);
-    game.override.enemySpecies(Species.MAGIKARP);
-    game.override.enemyAbility(Abilities.VOLT_ABSORB);
+    game.override
+      .moveset(Moves.THUNDERBOLT)
+      .enemyMoveset(Moves.DIVE)
+      .enemySpecies(Species.MAGIKARP)
+      .enemyAbility(Abilities.VOLT_ABSORB);
 
     await game.classicMode.startBattle();
 
