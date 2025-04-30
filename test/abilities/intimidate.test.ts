@@ -62,7 +62,7 @@ describe("Abilities - Intimidate", () => {
     expect(playerPokemon.species.speciesId).toBe(Species.POOCHYENA);
     expect(playerPokemon.getStatStage(Stat.ATK)).toBe(0);
     expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(-2);
-  }, 20000);
+  });
 
   it("should lower ATK stat stage by 1 for every enemy Pokemon in a double battle on entry", async () => {
     game.override.battleStyle("double").startingWave(3);
@@ -85,7 +85,7 @@ describe("Abilities - Intimidate", () => {
     expect(enemyField[1].getStatStage(Stat.ATK)).toBe(-2);
     expect(playerField[0].getStatStage(Stat.ATK)).toBe(-2);
     expect(playerField[1].getStatStage(Stat.ATK)).toBe(-2);
-  }, 20000);
+  });
 
   it("should not activate again if there is no switch or new entry", async () => {
     game.override.startingWave(2);
@@ -103,7 +103,7 @@ describe("Abilities - Intimidate", () => {
 
     expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(-1);
     expect(playerPokemon.getStatStage(Stat.ATK)).toBe(-1);
-  }, 20000);
+  });
 
   it("should lower ATK stat stage by 1 for every switch", async () => {
     game.override.moveset([Moves.SPLASH]).enemyMoveset([Moves.VOLT_SWITCH]).startingWave(5);
@@ -130,5 +130,5 @@ describe("Abilities - Intimidate", () => {
 
     expect(playerPokemon.getStatStage(Stat.ATK)).toBe(-3);
     expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(0);
-  }, 200000);
+  });
 });

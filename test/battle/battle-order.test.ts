@@ -48,7 +48,7 @@ describe("Battle order", () => {
     const order = phase.getCommandOrder();
     expect(order[0]).toBe(enemyPokemonIndex);
     expect(order[1]).toBe(playerPokemonIndex);
-  }, 20000);
+  });
 
   it("Player faster than opponent 150 vs 50", async () => {
     await game.classicMode.startBattle([Species.BULBASAUR]);
@@ -67,7 +67,7 @@ describe("Battle order", () => {
     const order = phase.getCommandOrder();
     expect(order[0]).toBe(playerPokemonIndex);
     expect(order[1]).toBe(enemyPokemonIndex);
-  }, 20000);
+  });
 
   it("double - both opponents faster than player 50/50 vs 150/150", async () => {
     game.override.battleStyle("double");
@@ -111,11 +111,10 @@ describe("Battle order", () => {
 
     const phase = game.scene.getCurrentPhase() as TurnStartPhase;
     const order = phase.getCommandOrder();
+    // enemy 2 should be first, followed by some other assortment of the other 3 pokemon
     expect(order[0]).toBe(enemyIndices[1]);
-    expect(order.slice(1, 4).includes(enemyIndices[0])).toBe(true);
-    expect(order.slice(1, 4).includes(playerIndices[0])).toBe(true);
-    expect(order.slice(1, 4).includes(playerIndices[1])).toBe(true);
-  }, 20000);
+    expect(order.slice(1, 4)).toEqual(expect.arrayContaining([enemyIndices[0], ...playerIndices]));
+  });
 
   it("double - speed tie 100/150 vs 100/150", async () => {
     game.override.battleStyle("double");
@@ -136,9 +135,8 @@ describe("Battle order", () => {
 
     const phase = game.scene.getCurrentPhase() as TurnStartPhase;
     const order = phase.getCommandOrder();
-    expect(order.slice(0, 2).includes(playerIndices[1])).toBe(true);
-    expect(order.slice(0, 2).includes(enemyIndices[1])).toBe(true);
-    expect(order.slice(2, 4).includes(playerIndices[0])).toBe(true);
-    expect(order.slice(2, 4).includes(enemyIndices[0])).toBe(true);
-  }, 20000);
+    // P2/E2 should be randomly first/second, then P1/E1 randomly 3rd/4th
+    expect(order.slice(0, 2)).toStrictEqual(expect.arrayContaining([playerIndices[1], enemyIndices[1]]));
+    expect(order.slice(2, 4)).toStrictEqual(expect.arrayContaining([playerIndices[0], enemyIndices[0]]));
+  });
 });

@@ -63,7 +63,7 @@ describe("Abilities - Mycelium Might", () => {
 
     // Despite the opponent's ability (Clear Body), its ATK stat stage is still reduced.
     expect(enemyPokemon?.getStatStage(Stat.ATK)).toBe(-1);
-  }, 20000);
+  });
 
   it("will still go first if a status move that is in a higher priority bracket than the opponent's move is used", async () => {
     game.override.enemyMoveset(Moves.TACKLE);
@@ -86,7 +86,7 @@ describe("Abilities - Mycelium Might", () => {
     await game.phaseInterceptor.to(TurnEndPhase);
     // Despite the opponent's ability (Clear Body), its ATK stat stage is still reduced.
     expect(enemyPokemon?.getStatStage(Stat.ATK)).toBe(-1);
-  }, 20000);
+  });
 
   it("will not affect non-status moves", async () => {
     await game.classicMode.startBattle([Species.REGIELEKI]);
@@ -105,5 +105,5 @@ describe("Abilities - Mycelium Might", () => {
     // This means that the commandOrder should be identical to the speedOrder
     expect(speedOrder).toEqual([playerIndex, enemyIndex]);
     expect(commandOrder).toEqual([playerIndex, enemyIndex]);
-  }, 20000);
+  });
 });

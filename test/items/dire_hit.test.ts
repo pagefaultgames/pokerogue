@@ -37,7 +37,7 @@ describe("Items - Dire Hit", () => {
       .moveset([Moves.POUND])
       .startingHeldItems([{ name: "DIRE_HIT" }])
       .battleStyle("single");
-  }, 20000);
+  });
 
   it("should raise CRIT stage by 1", async () => {
     await game.classicMode.startBattle([Species.GASTLY]);
@@ -51,7 +51,7 @@ describe("Items - Dire Hit", () => {
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(enemyPokemon.getCritStage).toHaveReturnedWith(1);
-  }, 20000);
+  });
 
   it("should renew how many battles are left of existing DIRE_HIT when picking up new DIRE_HIT", async () => {
     game.override.itemRewards([{ name: "DIRE_HIT" }]);
@@ -93,5 +93,5 @@ describe("Items - Dire Hit", () => {
       }
     }
     expect(count).toBe(1);
-  }, 20000);
+  });
 });
