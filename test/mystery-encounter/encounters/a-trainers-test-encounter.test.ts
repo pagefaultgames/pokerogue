@@ -69,7 +69,7 @@ describe("A Trainer's Test - Mystery Encounter", () => {
     expect(ATrainersTestEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}:title`);
     expect(ATrainersTestEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}:description`);
     expect(ATrainersTestEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}:query`);
-    expect(ATrainersTestEncounter.options.length).toBe(2);
+    expect(ATrainersTestEncounter.options).toHaveLength(2);
   });
 
   it("should initialize fully ", async () => {
@@ -107,7 +107,7 @@ describe("A Trainer's Test - Mystery Encounter", () => {
 
       const enemyField = scene.getEnemyField();
       expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
-      expect(enemyField.length).toBe(1);
+      expect(enemyField).toHaveLength(1);
       expect(scene.currentBattle.trainer).toBeDefined();
       expect(
         [
@@ -167,7 +167,7 @@ describe("A Trainer's Test - Mystery Encounter", () => {
       await runMysteryEncounterToEnd(game, 2);
 
       const partyHealPhases = phaseSpy.mock.calls.filter(p => p[0] instanceof PartyHealPhase).map(p => p[0]);
-      expect(partyHealPhases.length).toBe(1);
+      expect(partyHealPhases).toHaveLength(1);
     });
 
     it("Should reward the player with a Rare egg", async () => {

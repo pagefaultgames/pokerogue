@@ -79,7 +79,7 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
       `${namespace}:description`,
     );
     expect(TheWinstrateChallengeEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}:query`);
-    expect(TheWinstrateChallengeEncounter.options.length).toBe(2);
+    expect(TheWinstrateChallengeEncounter.options).toHaveLength(2);
   });
 
   it("should not spawn outside of HUMAN_TRANSITABLE_BIOMES", async () => {
@@ -103,7 +103,7 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
     const onInitResult = onInit!();
 
     expect(encounter.enemyPartyConfigs).toBeDefined();
-    expect(encounter.enemyPartyConfigs.length).toBe(5);
+    expect(encounter.enemyPartyConfigs).toHaveLength(5);
     expect(encounter.enemyPartyConfigs).toEqual([
       {
         trainerType: TrainerType.VITO,
@@ -236,7 +236,7 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
       },
     ]);
     expect(encounter.spriteConfigs).toBeDefined();
-    expect(encounter.spriteConfigs.length).toBe(5);
+    expect(encounter.spriteConfigs).toHaveLength(5);
     expect(onInitResult).toBe(true);
   });
 
@@ -264,31 +264,31 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
       expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(scene.currentBattle.trainer).toBeDefined();
       expect(scene.currentBattle.trainer!.config.trainerType).toBe(TrainerType.VICTOR);
-      expect(scene.currentBattle.mysteryEncounter?.enemyPartyConfigs.length).toBe(4);
+      expect(scene.currentBattle.mysteryEncounter?.enemyPartyConfigs).toHaveLength(4);
       expect(scene.currentBattle.mysteryEncounter?.encounterMode).toBe(MysteryEncounterMode.TRAINER_BATTLE);
 
       await skipBattleToNextBattle(game);
       expect(scene.currentBattle.trainer).toBeDefined();
       expect(scene.currentBattle.trainer!.config.trainerType).toBe(TrainerType.VICTORIA);
-      expect(scene.currentBattle.mysteryEncounter?.enemyPartyConfigs.length).toBe(3);
+      expect(scene.currentBattle.mysteryEncounter?.enemyPartyConfigs).toHaveLength(3);
       expect(scene.currentBattle.mysteryEncounter?.encounterMode).toBe(MysteryEncounterMode.TRAINER_BATTLE);
 
       await skipBattleToNextBattle(game);
       expect(scene.currentBattle.trainer).toBeDefined();
       expect(scene.currentBattle.trainer!.config.trainerType).toBe(TrainerType.VIVI);
-      expect(scene.currentBattle.mysteryEncounter?.enemyPartyConfigs.length).toBe(2);
+      expect(scene.currentBattle.mysteryEncounter?.enemyPartyConfigs).toHaveLength(2);
       expect(scene.currentBattle.mysteryEncounter?.encounterMode).toBe(MysteryEncounterMode.TRAINER_BATTLE);
 
       await skipBattleToNextBattle(game);
       expect(scene.currentBattle.trainer).toBeDefined();
       expect(scene.currentBattle.trainer!.config.trainerType).toBe(TrainerType.VICKY);
-      expect(scene.currentBattle.mysteryEncounter?.enemyPartyConfigs.length).toBe(1);
+      expect(scene.currentBattle.mysteryEncounter?.enemyPartyConfigs).toHaveLength(1);
       expect(scene.currentBattle.mysteryEncounter?.encounterMode).toBe(MysteryEncounterMode.TRAINER_BATTLE);
 
       await skipBattleToNextBattle(game);
       expect(scene.currentBattle.trainer).toBeDefined();
       expect(scene.currentBattle.trainer!.config.trainerType).toBe(TrainerType.VITO);
-      expect(scene.currentBattle.mysteryEncounter?.enemyPartyConfigs.length).toBe(0);
+      expect(scene.currentBattle.mysteryEncounter?.enemyPartyConfigs).toHaveLength(0);
       expect(scene.currentBattle.mysteryEncounter?.encounterMode).toBe(MysteryEncounterMode.TRAINER_BATTLE);
 
       // Should have Macho Brace in the rewards
@@ -330,7 +330,7 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
       await runMysteryEncounterToEnd(game, 2);
 
       const partyHealPhases = phaseSpy.mock.calls.filter(p => p[0] instanceof PartyHealPhase).map(p => p[0]);
-      expect(partyHealPhases.length).toBe(1);
+      expect(partyHealPhases).toHaveLength(1);
     });
 
     it("should have a Rarer Candy in the rewards", async () => {

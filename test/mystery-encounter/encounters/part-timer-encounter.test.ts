@@ -71,7 +71,7 @@ describe("Part-Timer - Mystery Encounter", () => {
     expect(PartTimerEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}:title`);
     expect(PartTimerEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}:description`);
     expect(PartTimerEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}:query`);
-    expect(PartTimerEncounter.options.length).toBe(3);
+    expect(PartTimerEncounter.options).toHaveLength(3);
   });
 
   it("should not spawn outside of CIVILIZATION_ENCOUNTER_BIOMES", async () => {

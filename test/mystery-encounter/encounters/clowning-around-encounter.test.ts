@@ -86,7 +86,7 @@ describe("Clowning Around - Mystery Encounter", () => {
     expect(ClowningAroundEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}:title`);
     expect(ClowningAroundEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}:description`);
     expect(ClowningAroundEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}:query`);
-    expect(ClowningAroundEncounter.options.length).toBe(3);
+    expect(ClowningAroundEncounter.options).toHaveLength(3);
   });
 
   it("should not run below wave 80", async () => {
@@ -124,7 +124,7 @@ describe("Clowning Around - Mystery Encounter", () => {
       isBoss: true,
       moveSet: [Moves.TRICK, Moves.HYPNOSIS, Moves.SHADOW_BALL, Moves.MIND_BLOWN],
     });
-    expect(config.pokemonConfigs?.[1].customPokemonData?.types.length).toBe(2);
+    expect(config.pokemonConfigs?.[1].customPokemonData?.types).toHaveLength(2);
     expect([
       Abilities.STURDY,
       Abilities.PICKUP,
@@ -173,7 +173,7 @@ describe("Clowning Around - Mystery Encounter", () => {
 
       const enemyField = scene.getEnemyField();
       expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
-      expect(enemyField.length).toBe(2);
+      expect(enemyField).toHaveLength(2);
       expect(enemyField[0].species.speciesId).toBe(Species.MR_MIME);
       expect(enemyField[0].moveset).toEqual([
         new PokemonMove(Moves.TEETER_DANCE),
@@ -191,9 +191,9 @@ describe("Clowning Around - Mystery Encounter", () => {
 
       // Should have used moves pre-battle
       const movePhases = phaseSpy.mock.calls.filter(p => p[0] instanceof MovePhase).map(p => p[0]);
-      expect(movePhases.length).toBe(3);
-      expect(movePhases.filter(p => (p as MovePhase).move.moveId === Moves.ROLE_PLAY).length).toBe(1);
-      expect(movePhases.filter(p => (p as MovePhase).move.moveId === Moves.TAUNT).length).toBe(2);
+      expect(movePhases).toHaveLength(3);
+      expect(movePhases.filter(p => (p as MovePhase).move.moveId === Moves.ROLE_PLAY)).toHaveLength(1);
+      expect(movePhases.filter(p => (p as MovePhase).move.moveId === Moves.TAUNT)).toHaveLength(2);
     });
 
     it("should let the player gain the ability after battle completion", async () => {
@@ -305,7 +305,7 @@ describe("Clowning Around - Mystery Encounter", () => {
       expect(rogueCountAfter).toBe(7);
 
       const secondItemsAfter = scene.getPlayerParty()[1].getHeldItems();
-      expect(secondItemsAfter.length).toBe(1);
+      expect(secondItemsAfter).toHaveLength(1);
       expect(secondItemsAfter[0].type.id).toBe("SOUL_DEW");
       expect(secondItemsAfter[0]?.stackCount).toBe(5);
     });
@@ -359,14 +359,14 @@ describe("Clowning Around - Mystery Encounter", () => {
       const secondaryTypesAfter = scene.getPlayerParty()[1].getTypes();
       const thirdTypesAfter = scene.getPlayerParty()[2].getTypes();
 
-      expect(leadTypesAfter.length).toBe(2);
+      expect(leadTypesAfter).toHaveLength(2);
       expect(leadTypesAfter[0]).toBe(PokemonType.WATER);
       expect([PokemonType.WATER, PokemonType.ICE].includes(leadTypesAfter[1])).toBeFalsy();
-      expect(secondaryTypesAfter.length).toBe(2);
+      expect(secondaryTypesAfter).toHaveLength(2);
       expect(secondaryTypesAfter[0]).toBe(PokemonType.GHOST);
       expect([PokemonType.GHOST, PokemonType.POISON].includes(secondaryTypesAfter[1])).toBeFalsy();
       expect([PokemonType.GRASS, PokemonType.ELECTRIC].includes(secondaryTypesAfter[1])).toBeTruthy();
-      expect(thirdTypesAfter.length).toBe(2);
+      expect(thirdTypesAfter).toHaveLength(2);
       expect(thirdTypesAfter[0]).toBe(PokemonType.PSYCHIC);
       expect(secondaryTypesAfter[1]).not.toBe(PokemonType.PSYCHIC);
     });

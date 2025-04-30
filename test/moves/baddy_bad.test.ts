@@ -36,6 +36,6 @@ describe("Moves - Baddy Bad", () => {
     game.move.select(Moves.BADDY_BAD);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(game.scene.arena.tags.length).toBe(0);
+    expect(game.scene.arena.tags).toHaveLength(0);
   });
 });

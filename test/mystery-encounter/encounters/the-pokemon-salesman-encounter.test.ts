@@ -74,7 +74,7 @@ describe("The Pokemon Salesman - Mystery Encounter", () => {
     expect(title).toBe(`${namespace}:title`);
     expect(description).toMatch(new RegExp(`^${namespace}\\:description(_shiny)?$`));
     expect(query).toBe(`${namespace}:query`);
-    expect(options.length).toBe(2);
+    expect(options).toHaveLength(2);
   });
 
   it("should not spawn outside of HUMAN_TRANSITABLE_BIOMES", async () => {
@@ -150,7 +150,7 @@ describe("The Pokemon Salesman - Mystery Encounter", () => {
 
       await runMysteryEncounterToEnd(game, 1);
 
-      expect(scene.getPlayerParty().length).toBe(initialPartySize + 1);
+      expect(scene.getPlayerParty()).toHaveLength(initialPartySize + 1);
 
       const newlyPurchasedPokemon = scene.getPlayerParty()[scene.getPlayerParty().length - 1];
       expect(newlyPurchasedPokemon.name).toBe(pokemonName);

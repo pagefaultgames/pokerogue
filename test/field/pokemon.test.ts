@@ -134,7 +134,7 @@ describe("Spec - Pokemon", () => {
 
       const types = pokemon.getTypes();
       expect(types[0]).toBe(PokemonType.PSYCHIC);
-      expect(types.length).toBe(1);
+      expect(types).toHaveLength(1);
     });
 
     it("Fusing mons with one and two types", async () => {

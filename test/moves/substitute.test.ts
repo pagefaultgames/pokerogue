@@ -309,7 +309,7 @@ describe("Moves - Substitute", () => {
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    expect(leadPokemon.getHeldItems().length).toBe(1);
+    expect(leadPokemon.getHeldItems()).toHaveLength(1);
   });
 
   it("should prevent the user's items from being removed", async () => {
@@ -326,7 +326,7 @@ describe("Moves - Substitute", () => {
 
     await game.phaseInterceptor.to("MoveEndPhase", false);
 
-    expect(enemyPokemon.getHeldItems().length).toBe(enemyNumItems);
+    expect(enemyPokemon.getHeldItems()).toHaveLength(enemyNumItems);
   });
 
   it("move effect should prevent the user's berries from being stolen and eaten", async () => {
@@ -346,7 +346,7 @@ describe("Moves - Substitute", () => {
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    expect(leadPokemon.getHeldItems().length).toBe(1);
+    expect(leadPokemon.getHeldItems()).toHaveLength(1);
     expect(enemyPokemon.hp).toBe(enemyPostAttackHp);
   });
 

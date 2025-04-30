@@ -51,12 +51,12 @@ describe("Moves - Focus Punch", () => {
     await game.phaseInterceptor.to(MessagePhase);
 
     expect(enemyPokemon.hp).toBe(enemyStartingHp);
-    expect(leadPokemon.getMoveHistory().length).toBe(0);
+    expect(leadPokemon.getMoveHistory()).toHaveLength(0);
 
     await game.phaseInterceptor.to(BerryPhase, false);
 
     expect(enemyPokemon.hp).toBeLessThan(enemyStartingHp);
-    expect(leadPokemon.getMoveHistory().length).toBe(1);
+    expect(leadPokemon.getMoveHistory()).toHaveLength(1);
     expect(leadPokemon.turnData.totalDamageDealt).toBe(enemyStartingHp - enemyPokemon.hp);
   });
 
@@ -75,12 +75,12 @@ describe("Moves - Focus Punch", () => {
     await game.phaseInterceptor.to(MessagePhase);
 
     expect(enemyPokemon.hp).toBe(enemyStartingHp);
-    expect(leadPokemon.getMoveHistory().length).toBe(0);
+    expect(leadPokemon.getMoveHistory()).toHaveLength(0);
 
     await game.phaseInterceptor.to(BerryPhase, false);
 
     expect(enemyPokemon.hp).toBe(enemyStartingHp);
-    expect(leadPokemon.getMoveHistory().length).toBe(1);
+    expect(leadPokemon.getMoveHistory()).toHaveLength(1);
     expect(leadPokemon.turnData.totalDamageDealt).toBe(0);
   });
 
@@ -96,11 +96,11 @@ describe("Moves - Focus Punch", () => {
 
     await game.phaseInterceptor.to(MessagePhase); // Header message
 
-    expect(leadPokemon.getMoveHistory().length).toBe(0);
+    expect(leadPokemon.getMoveHistory()).toHaveLength(0);
 
     await game.phaseInterceptor.to(BerryPhase, false);
 
-    expect(leadPokemon.getMoveHistory().length).toBe(1);
+    expect(leadPokemon.getMoveHistory()).toHaveLength(1);
     expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
   });
 

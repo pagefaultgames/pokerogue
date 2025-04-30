@@ -74,7 +74,7 @@ describe("Fun And Games! - Mystery Encounter", () => {
     expect(FunAndGamesEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}:title`);
     expect(FunAndGamesEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}:description`);
     expect(FunAndGamesEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}:query`);
-    expect(FunAndGamesEncounter.options.length).toBe(2);
+    expect(FunAndGamesEncounter.options).toHaveLength(2);
   });
 
   it("should not spawn outside of CIVILIZATIONN biomes", async () => {

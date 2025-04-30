@@ -102,7 +102,7 @@ describe("Moves - Toxic Spikes", () => {
 
     expect(muk.isFullHp()).toBe(true);
     expect(muk.status?.effect).toBeUndefined();
-    expect(game.scene.arena.tags.length).toBe(0);
+    expect(game.scene.arena.tags).toHaveLength(0);
   });
 
   it("shouldn't create multiple layers per use in doubles", async () => {

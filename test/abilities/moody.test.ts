@@ -45,7 +45,7 @@ describe("Abilities - Moody", () => {
     );
 
     expect(changedStats).toBeTruthy();
-    expect(changedStats.length).toBe(2);
+    expect(changedStats).toHaveLength(2);
     expect(changedStats[0] !== changedStats[1]).toBeTruthy();
   });
 
@@ -64,7 +64,7 @@ describe("Abilities - Moody", () => {
     const increasedStat = EFFECTIVE_STATS.filter(s => playerPokemon.getStatStage(s) === -4);
 
     expect(increasedStat).toBeTruthy();
-    expect(increasedStat.length).toBe(1);
+    expect(increasedStat).toHaveLength(1);
   });
 
   it("should only decrease one stat stage by 1 stage if all stat stages are at 6", async () => {
@@ -82,6 +82,6 @@ describe("Abilities - Moody", () => {
     const decreasedStat = EFFECTIVE_STATS.filter(s => playerPokemon.getStatStage(s) === 5);
 
     expect(decreasedStat).toBeTruthy();
-    expect(decreasedStat.length).toBe(1);
+    expect(decreasedStat).toHaveLength(1);
   });
 });

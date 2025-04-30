@@ -69,7 +69,7 @@ describe("Teleporting Hijinks - Mystery Encounter", () => {
     expect(TeleportingHijinksEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}:title`);
     expect(TeleportingHijinksEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}:description`);
     expect(TeleportingHijinksEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}:query`);
-    expect(TeleportingHijinksEncounter.options.length).toBe(3);
+    expect(TeleportingHijinksEncounter.options).toHaveLength(3);
   });
 
   it("should run in waves that are X1", async () => {
