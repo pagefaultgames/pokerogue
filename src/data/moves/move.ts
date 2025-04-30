@@ -8618,7 +8618,9 @@ export function initMoves() {
       .condition((user, target, move) => !target.summonData?.illusion && !user.summonData?.illusion)
       // transforming from or into fusion pokemon causes various problems (such as crashes)
       .condition((user, target, move) => !target.getTag(BattlerTagType.SUBSTITUTE) && !user.fusionSpecies && !target.fusionSpecies)
-      .ignoresProtect(),
+      .ignoresProtect()
+      // Transforming should copy the target's rage fist hit count
+      .edgeCase(),
     new AttackMove(Moves.BUBBLE, PokemonType.WATER, MoveCategory.SPECIAL, 40, 100, 30, 10, 0, 1)
       .attr(StatStageChangeAttr, [ Stat.SPD ], -1)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
