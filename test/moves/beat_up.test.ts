@@ -35,7 +35,7 @@ describe("Moves - Beat Up", () => {
   });
 
   it("should hit once for each healthy player Pokemon", async () => {
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.MAGIKARP,
       Species.BULBASAUR,
       Species.CHARMANDER,
@@ -63,7 +63,7 @@ describe("Moves - Beat Up", () => {
   });
 
   it("should not count player Pokemon with status effects towards hit count", async () => {
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.MAGIKARP,
       Species.BULBASAUR,
       Species.CHARMANDER,
