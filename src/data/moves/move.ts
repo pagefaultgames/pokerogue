@@ -2761,11 +2761,6 @@ export class StealEatBerryAttr extends EatBerryAttr {
    * @returns `true` if the function succeeds
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    // Stealing fails against substitute
-    if (move.hitsSubstitute(user, target)) {
-      return false;
-    }
-
     // check for abilities that block item theft
     const cancelled = new BooleanHolder(false);
     applyAbAttrs(BlockItemTheftAbAttr, target, cancelled);
