@@ -56,8 +56,6 @@ describe("Abilities - Galvanize", () => {
     expect(spy).toHaveReturnedWith(1);
     expect(move.calculateBattlePower).toHaveReturnedWith(48);
     expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
-
-    spy.mockRestore();
   });
 
   it("should cause Normal-type attacks to activate Volt Absorb", async () => {
