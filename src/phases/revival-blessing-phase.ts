@@ -32,7 +32,7 @@ export class RevivalBlessingPhase extends BattlePhase {
           }
 
           pokemon.resetTurnData();
-          pokemon.resetStatus();
+          pokemon.resetStatus(true, false, false, false);
           pokemon.heal(Math.min(toDmgValue(0.5 * pokemon.getMaxHp()), pokemon.getMaxHp()));
           globalScene.queueMessage(
             i18next.t("moveTriggers:revivalBlessing", {

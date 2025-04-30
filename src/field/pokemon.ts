@@ -5602,13 +5602,44 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param revive Whether revive should be cured; defaults to true.
    * @param confusion Whether resetStatus should include confusion or not; defaults to false.
    * @param reloadAssets Whether to reload the assets or not; defaults to false.
+   * @param asPhase Whether to reset the status in a phase or immediately
    */
-  resetStatus(revive = true, confusion = false, reloadAssets = false): void {
+  resetStatus(revive = true, confusion = false, reloadAssets = false, asPhase = true): void {
     const lastStatus = this.status?.effect;
     if (!revive && lastStatus === StatusEffect.FAINT) {
       return;
     }
-    globalScene.unshiftPhase(new ResetStatusPhase(this, confusion, reloadAssets));
+
+    if (asPhase) {
+      globalScene.unshiftPhase(new ResetStatusPhase(this, confusion, reloadAssets));
+    } else {
+      this.clearStatus(confusion, reloadAssets);
+    }
+  }
+
+  /**
+   * Performs the action of clearing a Pokemon's status
+   * 
+   * This is a helper to {@linkcode resetStatus}, which should be called directly instead of this method
+   */
+  public clearStatus(confusion: boolean, reloadAssets: boolean) {
+    const lastStatus = this.status?.effect;
+    this.status = null;
+    if (lastStatus === StatusEffect.SLEEP) {
+      this.setFrameRate(10);
+      if (this.getTag(BattlerTagType.NIGHTMARE)) {
+        this.lapseTag(BattlerTagType.NIGHTMARE);
+      }
+    }
+    if (confusion) {
+      if (this.getTag(BattlerTagType.CONFUSED)) {
+        this.lapseTag(BattlerTagType.CONFUSED);
+      }
+    }
+    if (reloadAssets) {
+      this.loadAssets(false).then(() => this.playAnim());
+    }
+    this.updateInfo(true);
   }
 
   /**
