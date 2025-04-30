@@ -25,17 +25,17 @@ describe("Abilities - POWER CONSTRUCT", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     const moveToUse = Moves.SPLASH;
-    game.override.battleStyle("single");
-    game.override.ability(Abilities.POWER_CONSTRUCT);
-    game.override.moveset([moveToUse]);
-    game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
+    game.override
+      .battleStyle("single")
+      .ability(Abilities.POWER_CONSTRUCT)
+      .moveset([moveToUse])
+      .enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
   });
 
   test("check if fainted 50% Power Construct Pokemon switches to base form on arena reset", async () => {
     const baseForm = 2,
       completeForm = 4;
-    game.override.startingWave(4);
-    game.override.starterForms({
+    game.override.startingWave(4).starterForms({
       [Species.ZYGARDE]: completeForm,
     });
 
@@ -61,8 +61,7 @@ describe("Abilities - POWER CONSTRUCT", () => {
   test("check if fainted 10% Power Construct Pokemon switches to base form on arena reset", async () => {
     const baseForm = 3,
       completeForm = 5;
-    game.override.startingWave(4);
-    game.override.starterForms({
+    game.override.startingWave(4).starterForms({
       [Species.ZYGARDE]: completeForm,
     });
 

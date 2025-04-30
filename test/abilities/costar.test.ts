@@ -24,10 +24,11 @@ describe("Abilities - COSTAR", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("double");
-    game.override.ability(Abilities.COSTAR);
-    game.override.moveset([Moves.SPLASH, Moves.NASTY_PLOT]);
-    game.override.enemyMoveset(Moves.SPLASH);
+    game.override
+      .battleStyle("double")
+      .ability(Abilities.COSTAR)
+      .moveset([Moves.SPLASH, Moves.NASTY_PLOT])
+      .enemyMoveset(Moves.SPLASH);
   });
 
   test("ability copies positive stat stages", async () => {

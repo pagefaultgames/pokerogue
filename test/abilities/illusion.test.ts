@@ -136,6 +136,7 @@ describe("Abilities - Illusion", () => {
   it("copies the the name, nickname, gender, shininess, and pokeball from the illusion source", async () => {
     game.override.enemyMoveset(Moves.SPLASH);
     await game.classicMode.startBattle([Species.ABRA, Species.ZOROARK, Species.AXEW]);
+
     const axew = game.scene.getPlayerParty().at(2)!;
     axew.shiny = true;
     axew.nickname = btoa(unescape(encodeURIComponent("axew nickname")));

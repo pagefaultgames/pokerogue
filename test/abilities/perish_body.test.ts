@@ -21,19 +21,18 @@ describe("Abilities - Perish Song", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("single");
-    game.override.disableCrits();
-
-    game.override.enemySpecies(Species.MAGIKARP);
-    game.override.enemyAbility(Abilities.BALL_FETCH);
-
-    game.override.starterSpecies(Species.CURSOLA);
-    game.override.ability(Abilities.PERISH_BODY);
-    game.override.moveset([Moves.SPLASH]);
+    game.override
+      .battleStyle("single")
+      .disableCrits()
+      .enemySpecies(Species.MAGIKARP)
+      .enemyAbility(Abilities.BALL_FETCH)
+      .starterSpecies(Species.CURSOLA)
+      .ability(Abilities.PERISH_BODY)
+      .moveset([Moves.SPLASH])
+      .enemyMoveset([Moves.AQUA_JET]);
   });
 
   it("should trigger when hit with damaging move", async () => {
-    game.override.enemyMoveset([Moves.AQUA_JET]);
     await game.classicMode.startBattle();
     const cursola = game.scene.getPlayerPokemon();
     const magikarp = game.scene.getEnemyPokemon();
@@ -46,7 +45,7 @@ describe("Abilities - Perish Song", () => {
   });
 
   it("should trigger even when fainting", async () => {
-    game.override.enemyMoveset([Moves.AQUA_JET]).enemyLevel(100).startingLevel(1);
+    game.override.enemyLevel(100).startingLevel(1);
     await game.classicMode.startBattle([Species.CURSOLA, Species.FEEBAS]);
     const magikarp = game.scene.getEnemyPokemon();
 
@@ -87,9 +86,10 @@ describe("Abilities - Perish Song", () => {
   });
 
   it("should activate if cursola already has perish song, but not reset its counter", async () => {
-    game.override.enemyMoveset([Moves.PERISH_SONG, Moves.AQUA_JET, Moves.SPLASH]);
-    game.override.moveset([Moves.WHIRLWIND, Moves.SPLASH]);
-    game.override.startingWave(5);
+    game.override
+      .enemyMoveset([Moves.PERISH_SONG, Moves.AQUA_JET, Moves.SPLASH])
+      .moveset([Moves.WHIRLWIND, Moves.SPLASH])
+      .startingWave(5);
     await game.classicMode.startBattle([Species.CURSOLA]);
     const cursola = game.scene.getPlayerPokemon();
 

@@ -59,28 +59,23 @@ describe("Moves - Baton Pass", () => {
 
   it("passes stat stage buffs when AI uses it", async () => {
     // arrange
-    game.override.startingWave(5).enemyMoveset(new Array(4).fill([Moves.NASTY_PLOT]));
+    game.override.startingWave(5).enemyMoveset([Moves.NASTY_PLOT, Moves.BATON_PASS]);
     await game.classicMode.startBattle([Species.RAICHU, Species.SHUCKLE]);
 
     // round 1 - ai buffs
     game.move.select(Moves.SPLASH);
+    await game.forceEnemyMove(Moves.NASTY_PLOT);
     await game.toNextTurn();
 
     // round 2 - baton pass
-    game.scene.getEnemyPokemon()!.hp = 100;
-    game.override.enemyMoveset([Moves.BATON_PASS]);
-    // Force moveset to update mid-battle
-    // TODO: replace with enemy ai control function when it's added
-    game.scene.getEnemyParty()[0].getMoveset();
     game.move.select(Moves.SPLASH);
+    await game.forceEnemyMove(Moves.BATON_PASS);
     await game.phaseInterceptor.to("PostSummonPhase", false);
 
-    // assert
     // check buffs are still there
-    expect(game.scene.getEnemyPokemon()!.getStatStage(Stat.SPATK)).toEqual(2);
+    expect(game.scene.getEnemyPokemon()?.getStatStage(Stat.SPATK)).toEqual(2);
     // confirm that a switch actually happened. can't use species because I
     // can't find a way to override trainer parties with more than 1 pokemon species
-    expect(game.scene.getEnemyPokemon()!.hp).not.toEqual(100);
     expect(game.phaseInterceptor.log.slice(-4)).toEqual([
       "MoveEffectPhase",
       "SwitchSummonPhase",

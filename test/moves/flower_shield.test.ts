@@ -26,11 +26,12 @@ describe("Moves - Flower Shield", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.ability(Abilities.NONE);
-    game.override.enemyAbility(Abilities.NONE);
-    game.override.battleStyle("single");
-    game.override.moveset([Moves.FLOWER_SHIELD, Moves.SPLASH]);
-    game.override.enemyMoveset(Moves.SPLASH);
+    game.override
+      .ability(Abilities.NONE)
+      .enemyAbility(Abilities.NONE)
+      .battleStyle("single")
+      .moveset([Moves.FLOWER_SHIELD, Moves.SPLASH])
+      .enemyMoveset(Moves.SPLASH);
   });
 
   it("raises DEF stat stage by 1 for all Grass-type Pokemon on the field by one stage - single battle", async () => {
@@ -74,9 +75,7 @@ describe("Moves - Flower Shield", () => {
    * See semi-vulnerable state tags. {@linkcode SemiInvulnerableTag}
    */
   it("does not raise DEF stat stage for a Pokemon in semi-vulnerable state", async () => {
-    game.override.enemySpecies(Species.PARAS);
-    game.override.enemyMoveset([Moves.DIG, Moves.DIG, Moves.DIG, Moves.DIG]);
-    game.override.enemyLevel(50);
+    game.override.enemySpecies(Species.PARAS).enemyMoveset([Moves.DIG, Moves.DIG, Moves.DIG, Moves.DIG]).enemyLevel(50);
 
     await game.classicMode.startBattle([Species.CHERRIM]);
     const paras = game.scene.getEnemyPokemon()!;

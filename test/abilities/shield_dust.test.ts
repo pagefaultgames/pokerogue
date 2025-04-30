@@ -31,12 +31,13 @@ describe("Abilities - Shield Dust", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("single");
-    game.override.enemySpecies(Species.ONIX);
-    game.override.enemyAbility(Abilities.SHIELD_DUST);
-    game.override.startingLevel(100);
-    game.override.moveset(Moves.AIR_SLASH);
-    game.override.enemyMoveset(Moves.TACKLE);
+    game.override
+      .battleStyle("single")
+      .enemySpecies(Species.ONIX)
+      .enemyAbility(Abilities.SHIELD_DUST)
+      .startingLevel(100)
+      .moveset(Moves.AIR_SLASH)
+      .enemyMoveset(Moves.TACKLE);
   });
 
   it("Shield Dust", async () => {

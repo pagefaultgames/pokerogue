@@ -110,34 +110,32 @@ describe("Moves - Safeguard", () => {
     game.move.select(Moves.SPLASH);
     await game.toNextTurn();
 
-    expect(enemyPokemon.status?.effect).toEqual(StatusEffect.SLEEP);
+    expect(enemyPokemon.status?.effect).toBe(StatusEffect.SLEEP);
   });
 
   it("doesn't protect from self-inflicted via Rest or Flame Orb", async () => {
-    game.override.enemyHeldItems([{ name: "FLAME_ORB" }]);
+    game.override.enemyHeldItems([{ name: "FLAME_ORB" }]).enemyMoveset([Moves.SAFEGUARD, Moves.REST]);
     await game.classicMode.startBattle();
     const enemyPokemon = game.scene.getEnemyPokemon()!;
+    enemyPokemon.hp = 1;
 
     game.move.select(Moves.SPLASH);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    await game.forceEnemyMove(Moves.SAFEGUARD);
     await game.toNextTurn();
-    enemyPokemon.damageAndUpdate(1);
 
-    expect(enemyPokemon.status?.effect).toEqual(StatusEffect.BURN);
+    expect(enemyPokemon.status?.effect).toBe(StatusEffect.BURN);
 
-    game.override.enemyMoveset([Moves.REST]);
-    // Force the moveset to update mid-battle
-    // TODO: Remove after enemy AI rework is in
-    enemyPokemon.getMoveset();
+    enemyPokemon.resetStatus();
+
     game.move.select(Moves.SPLASH);
-    enemyPokemon.damageAndUpdate(1);
+    await game.forceEnemyMove(Moves.REST);
     await game.toNextTurn();
 
-    expect(enemyPokemon.status?.effect).toEqual(StatusEffect.SLEEP);
+    expect(enemyPokemon.status?.effect).toBe(StatusEffect.SLEEP);
   });
 
   it("protects from ability-inflicted status", async () => {
-    game.override.ability(Abilities.STATIC);
+    game.override.ability(Abilities.STATIC).enemyMoveset([Moves.SAFEGUARD, Moves.TACKLE]);
     vi.spyOn(
       allAbilities[Abilities.STATIC].getAttrs(PostDefendContactApplyStatusEffectAbAttr)[0],
       "chance",
@@ -147,10 +145,11 @@ describe("Moves - Safeguard", () => {
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
     game.move.select(Moves.SPLASH);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    await game.forceEnemyMove(Moves.SAFEGUARD);
     await game.toNextTurn();
-    game.override.enemyMoveset([Moves.TACKLE]);
+
     game.move.select(Moves.SPLASH);
+    await game.forceEnemyMove(Moves.TACKLE);
     await game.toNextTurn();
 
     expect(enemyPokemon.status).toBeUndefined();

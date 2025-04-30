@@ -24,14 +24,13 @@ describe("Abilities - Screen Cleaner", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("single");
-    game.override.ability(Abilities.SCREEN_CLEANER);
-    game.override.enemySpecies(Species.SHUCKLE);
+    game.override.battleStyle("single").ability(Abilities.SCREEN_CLEANER).enemySpecies(Species.SHUCKLE);
   });
 
   it("removes Aurora Veil", async () => {
-    game.override.moveset([Moves.HAIL]);
-    game.override.enemyMoveset([Moves.AURORA_VEIL, Moves.AURORA_VEIL, Moves.AURORA_VEIL, Moves.AURORA_VEIL]);
+    game.override
+      .moveset([Moves.HAIL])
+      .enemyMoveset([Moves.AURORA_VEIL, Moves.AURORA_VEIL, Moves.AURORA_VEIL, Moves.AURORA_VEIL]);
 
     await game.classicMode.startBattle([Species.MAGIKARP, Species.MAGIKARP]);
 

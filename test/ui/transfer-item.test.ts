@@ -26,17 +26,18 @@ describe("UI - Transfer Items", () => {
 
   beforeEach(async () => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("single");
-    game.override.startingLevel(100);
-    game.override.startingWave(1);
-    game.override.startingHeldItems([
-      { name: "BERRY", count: 1, type: BerryType.SITRUS },
-      { name: "BERRY", count: 2, type: BerryType.APICOT },
-      { name: "BERRY", count: 2, type: BerryType.LUM },
-    ]);
-    game.override.moveset([Moves.DRAGON_CLAW]);
-    game.override.enemySpecies(Species.MAGIKARP);
-    game.override.enemyMoveset([Moves.SPLASH]);
+    game.override
+      .battleStyle("single")
+      .startingLevel(100)
+      .startingWave(1)
+      .startingHeldItems([
+        { name: "BERRY", count: 1, type: BerryType.SITRUS },
+        { name: "BERRY", count: 2, type: BerryType.APICOT },
+        { name: "BERRY", count: 2, type: BerryType.LUM },
+      ])
+      .moveset([Moves.DRAGON_CLAW])
+      .enemySpecies(Species.MAGIKARP)
+      .enemyMoveset([Moves.SPLASH]);
 
     await game.classicMode.startBattle([Species.RAYQUAZA, Species.RAYQUAZA, Species.RAYQUAZA]);
 

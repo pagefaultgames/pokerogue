@@ -22,12 +22,13 @@ describe("Moves - Rage Powder", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("double");
-    game.override.enemySpecies(Species.SNORLAX);
-    game.override.startingLevel(100);
-    game.override.enemyLevel(100);
-    game.override.moveset([Moves.FOLLOW_ME, Moves.RAGE_POWDER, Moves.SPOTLIGHT, Moves.QUICK_ATTACK]);
-    game.override.enemyMoveset([Moves.RAGE_POWDER, Moves.TACKLE, Moves.SPLASH]);
+    game.override
+      .battleStyle("double")
+      .enemySpecies(Species.SNORLAX)
+      .startingLevel(100)
+      .enemyLevel(100)
+      .moveset([Moves.FOLLOW_ME, Moves.RAGE_POWDER, Moves.SPOTLIGHT, Moves.QUICK_ATTACK])
+      .enemyMoveset([Moves.RAGE_POWDER, Moves.TACKLE, Moves.SPLASH]);
   });
 
   test("move effect should be bypassed by Grass type", async () => {

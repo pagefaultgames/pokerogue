@@ -24,12 +24,13 @@ describe("Abilities - Unseen Fist", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("single");
-    game.override.starterSpecies(Species.URSHIFU);
-    game.override.enemySpecies(Species.SNORLAX);
-    game.override.enemyMoveset([Moves.PROTECT, Moves.PROTECT, Moves.PROTECT, Moves.PROTECT]);
-    game.override.startingLevel(100);
-    game.override.enemyLevel(100);
+    game.override
+      .battleStyle("single")
+      .starterSpecies(Species.URSHIFU)
+      .enemySpecies(Species.SNORLAX)
+      .enemyMoveset([Moves.PROTECT, Moves.PROTECT, Moves.PROTECT, Moves.PROTECT])
+      .startingLevel(100)
+      .enemyLevel(100);
   });
 
   it("should cause a contact move to ignore Protect", async () =>
@@ -50,8 +51,7 @@ describe("Abilities - Unseen Fist", () => {
     await testUnseenFistHitResult(game, Moves.BULLDOZE, Moves.WIDE_GUARD, false));
 
   it("should cause a contact move to ignore Protect, but not Substitute", async () => {
-    game.override.enemyLevel(1);
-    game.override.moveset([Moves.TACKLE]);
+    game.override.enemyLevel(1).moveset([Moves.TACKLE]);
 
     await game.classicMode.startBattle();
 
@@ -73,8 +73,7 @@ async function testUnseenFistHitResult(
   protectMove: Moves,
   shouldSucceed = true,
 ): Promise<void> {
-  game.override.moveset([attackMove]);
-  game.override.enemyMoveset([protectMove, protectMove, protectMove, protectMove]);
+  game.override.moveset([attackMove]).enemyMoveset([protectMove, protectMove, protectMove, protectMove]);
 
   await game.classicMode.startBattle();
 

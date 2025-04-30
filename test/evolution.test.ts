@@ -28,12 +28,11 @@ describe("Evolution", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
 
-    game.override.battleStyle("single");
-
-    game.override.enemySpecies(Species.MAGIKARP);
-    game.override.enemyAbility(Abilities.BALL_FETCH);
-
-    game.override.startingLevel(60);
+    game.override
+      .battleStyle("single")
+      .enemySpecies(Species.MAGIKARP)
+      .enemyAbility(Abilities.BALL_FETCH)
+      .startingLevel(60);
   });
 
   it("should keep hidden ability after evolving", async () => {

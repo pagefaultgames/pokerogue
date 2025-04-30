@@ -23,14 +23,15 @@ describe("Items - Leftovers", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("single");
-    game.override.startingLevel(2000);
-    game.override.ability(Abilities.UNNERVE);
-    game.override.moveset([Moves.SPLASH]);
-    game.override.enemySpecies(Species.SHUCKLE);
-    game.override.enemyAbility(Abilities.UNNERVE);
-    game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
-    game.override.startingHeldItems([{ name: "LEFTOVERS", count: 1 }]);
+    game.override
+      .battleStyle("single")
+      .startingLevel(2000)
+      .ability(Abilities.UNNERVE)
+      .moveset([Moves.SPLASH])
+      .enemySpecies(Species.SHUCKLE)
+      .enemyAbility(Abilities.UNNERVE)
+      .enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE])
+      .startingHeldItems([{ name: "LEFTOVERS", count: 1 }]);
   });
 
   it("leftovers works", async () => {

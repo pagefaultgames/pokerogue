@@ -34,8 +34,7 @@ describe("Abilities - ZERO TO HERO", () => {
   });
 
   it("should swap to base form on arena reset", async () => {
-    game.override.startingWave(4);
-    game.override.starterForms({
+    game.override.startingWave(4).starterForms({
       [Species.PALAFIN]: heroForm,
     });
 

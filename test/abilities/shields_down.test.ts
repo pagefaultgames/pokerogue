@@ -26,17 +26,17 @@ describe("Abilities - SHIELDS DOWN", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     const moveToUse = Moves.SPLASH;
-    game.override.battleStyle("single");
-    game.override.ability(Abilities.SHIELDS_DOWN);
-    game.override.moveset([moveToUse]);
-    game.override.enemyMoveset([Moves.TACKLE]);
+    game.override
+      .battleStyle("single")
+      .ability(Abilities.SHIELDS_DOWN)
+      .moveset([moveToUse])
+      .enemyMoveset([Moves.TACKLE]);
   });
 
   test("check if fainted pokemon switched to base form on arena reset", async () => {
     const meteorForm = 0,
       coreForm = 7;
-    game.override.startingWave(4);
-    game.override.starterForms({
+    game.override.startingWave(4).starterForms({
       [Species.MINIOR]: coreForm,
     });
 
@@ -70,8 +70,7 @@ describe("Abilities - SHIELDS DOWN", () => {
   });
 
   test("should still ignore non-volatile status moves used by a pokemon with mold breaker", async () => {
-    game.override.enemyAbility(Abilities.MOLD_BREAKER);
-    game.override.enemyMoveset([Moves.SPORE]);
+    game.override.enemyAbility(Abilities.MOLD_BREAKER).enemyMoveset([Moves.SPORE]);
 
     await game.classicMode.startBattle([Species.MINIOR]);
 
@@ -94,8 +93,7 @@ describe("Abilities - SHIELDS DOWN", () => {
   });
 
   test("should ignore status moves even through mold breaker", async () => {
-    game.override.enemyMoveset([Moves.SPORE]);
-    game.override.enemyAbility(Abilities.MOLD_BREAKER);
+    game.override.enemyMoveset([Moves.SPORE]).enemyAbility(Abilities.MOLD_BREAKER);
 
     await game.classicMode.startBattle([Species.MINIOR]);
 
@@ -108,8 +106,9 @@ describe("Abilities - SHIELDS DOWN", () => {
 
   // toxic spikes currently does not poison flying types when gravity is in effect
   test.todo("should become poisoned by toxic spikes when grounded", async () => {
-    game.override.enemyMoveset([Moves.GRAVITY, Moves.TOXIC_SPIKES, Moves.SPLASH]);
-    game.override.moveset([Moves.GRAVITY, Moves.SPLASH]);
+    game.override
+      .enemyMoveset([Moves.GRAVITY, Moves.TOXIC_SPIKES, Moves.SPLASH])
+      .moveset([Moves.GRAVITY, Moves.SPLASH]);
 
     await game.classicMode.startBattle([Species.MAGIKARP, Species.MINIOR]);
 
@@ -155,9 +154,7 @@ describe("Abilities - SHIELDS DOWN", () => {
 
   // the `NoTransformAbilityAbAttr` attribute is not checked anywhere, so this test cannot pass.
   test.todo("ditto should not be immune to status after transforming", async () => {
-    game.override.enemySpecies(Species.DITTO);
-    game.override.enemyAbility(Abilities.IMPOSTER);
-    game.override.moveset([Moves.SPLASH, Moves.SPORE]);
+    game.override.enemySpecies(Species.DITTO).enemyAbility(Abilities.IMPOSTER).moveset([Moves.SPLASH, Moves.SPORE]);
 
     await game.classicMode.startBattle([Species.MINIOR]);
 
@@ -169,11 +166,12 @@ describe("Abilities - SHIELDS DOWN", () => {
   });
 
   test("should not prevent minior from receiving the fainted status effect in trainer battles", async () => {
-    game.override.enemyMoveset([Moves.TACKLE]);
-    game.override.moveset([Moves.THUNDERBOLT]);
-    game.override.startingLevel(100);
-    game.override.startingWave(5);
-    game.override.enemySpecies(Species.MINIOR);
+    game.override
+      .enemyMoveset([Moves.TACKLE])
+      .moveset([Moves.THUNDERBOLT])
+      .startingLevel(100)
+      .startingWave(5)
+      .enemySpecies(Species.MINIOR);
     await game.classicMode.startBattle([Species.REGIELEKI]);
     const minior = game.scene.getEnemyPokemon()!;
 
