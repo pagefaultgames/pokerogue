@@ -94,7 +94,7 @@ describe("Escape chance calculations", () => {
       phase.attemptRunAway(playerPokemon, enemyField, escapePercentage);
       expect(escapePercentage.value).toBe(escapeChances[i].expectedEscapeChance);
     }
-  }, 20000);
+  });
 
   it("double non-boss opponent", async () => {
     game.override.battleStyle("double");
@@ -180,7 +180,7 @@ describe("Escape chance calculations", () => {
         escapeChances[i].pokemonSpeedRatio * totalEnemySpeed,
       );
     }
-  }, 20000);
+  });
 
   it("single boss opponent", async () => {
     game.override.startingWave(10);
@@ -259,7 +259,7 @@ describe("Escape chance calculations", () => {
       phase.attemptRunAway(playerPokemon, enemyField, escapePercentage);
       expect(escapePercentage.value).toBe(escapeChances[i].expectedEscapeChance);
     }
-  }, 20000);
+  });
 
   it("double boss opponent", async () => {
     game.override.battleStyle("double");
@@ -358,5 +358,5 @@ describe("Escape chance calculations", () => {
         escapeChances[i].pokemonSpeedRatio * totalEnemySpeed,
       );
     }
-  }, 20000);
+  });
 });

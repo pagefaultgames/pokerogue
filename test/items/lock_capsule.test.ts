@@ -49,5 +49,5 @@ describe("Items - Lock Capsule", () => {
 
     game.doSelectModifier();
     await game.phaseInterceptor.to("SelectModifierPhase");
-  }, 20000);
+  });
 });

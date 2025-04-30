@@ -46,7 +46,7 @@ describe("Moves - Tidy Up", () => {
     game.move.select(Moves.TIDY_UP);
     await game.phaseInterceptor.to(MoveEndPhase);
     expect(game.scene.arena.getTag(ArenaTagType.SPIKES)).toBeUndefined();
-  }, 20000);
+  });
 
   it("stealth rocks are cleared", async () => {
     game.override.moveset([Moves.STEALTH_ROCK, Moves.TIDY_UP]);
@@ -58,7 +58,7 @@ describe("Moves - Tidy Up", () => {
     game.move.select(Moves.TIDY_UP);
     await game.phaseInterceptor.to(MoveEndPhase);
     expect(game.scene.arena.getTag(ArenaTagType.STEALTH_ROCK)).toBeUndefined();
-  }, 20000);
+  });
 
   it("toxic spikes are cleared", async () => {
     game.override.moveset([Moves.TOXIC_SPIKES, Moves.TIDY_UP]);
@@ -70,7 +70,7 @@ describe("Moves - Tidy Up", () => {
     game.move.select(Moves.TIDY_UP);
     await game.phaseInterceptor.to(MoveEndPhase);
     expect(game.scene.arena.getTag(ArenaTagType.TOXIC_SPIKES)).toBeUndefined();
-  }, 20000);
+  });
 
   it("sticky webs are cleared", async () => {
     game.override.moveset([Moves.STICKY_WEB, Moves.TIDY_UP]);
@@ -83,7 +83,7 @@ describe("Moves - Tidy Up", () => {
     game.move.select(Moves.TIDY_UP);
     await game.phaseInterceptor.to(MoveEndPhase);
     expect(game.scene.arena.getTag(ArenaTagType.STICKY_WEB)).toBeUndefined();
-  }, 20000);
+  });
 
   it("substitutes are cleared", async () => {
     game.override.moveset([Moves.SUBSTITUTE, Moves.TIDY_UP]);
@@ -101,7 +101,7 @@ describe("Moves - Tidy Up", () => {
       expect(p).toBeDefined();
       expect(p!.getTag(SubstituteTag)).toBeUndefined();
     });
-  }, 20000);
+  });
 
   it("user's stats are raised with no traps set", async () => {
     await game.classicMode.startBattle();
@@ -116,5 +116,5 @@ describe("Moves - Tidy Up", () => {
 
     expect(playerPokemon.getStatStage(Stat.ATK)).toBe(1);
     expect(playerPokemon.getStatStage(Stat.SPD)).toBe(1);
-  }, 20000);
+  });
 });

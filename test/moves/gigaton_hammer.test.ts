@@ -52,7 +52,7 @@ describe("Moves - Gigaton Hammer", () => {
     const enemy2 = game.scene.getEnemyPokemon()!;
 
     expect(enemy2.hp).toBe(enemy2.getMaxHp());
-  }, 20000);
+  });
 
   it("can be used again if recalled and sent back out", async () => {
     game.override.startingWave(4);
@@ -75,5 +75,5 @@ describe("Moves - Gigaton Hammer", () => {
     const enemy2 = game.scene.getEnemyPokemon()!;
 
     expect(enemy2.hp).toBeLessThan(enemy2.getMaxHp());
-  }, 20000);
+  });
 });

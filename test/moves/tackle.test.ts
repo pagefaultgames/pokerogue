@@ -42,7 +42,7 @@ describe("Moves - Tackle", () => {
     await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(TurnEndPhase);
     const hpLost = hpOpponent - game.scene.currentBattle.enemyParty[0].hp;
     expect(hpLost).toBe(0);
-  }, 20000);
+  });
 
   it("TACKLE against not resistant", async () => {
     const moveToUse = Moves.TACKLE;
@@ -57,5 +57,5 @@ describe("Moves - Tackle", () => {
     const hpLost = hpOpponent - game.scene.currentBattle.enemyParty[0].hp;
     expect(hpLost).toBeGreaterThan(0);
     expect(hpLost).toBeLessThan(4);
-  }, 20000);
+  });
 });
