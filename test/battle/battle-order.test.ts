@@ -87,11 +87,9 @@ describe("Battle order", () => {
 
     const phase = game.scene.getCurrentPhase() as TurnStartPhase;
     const order = phase.getCommandOrder();
-    expect(order.slice(0, 2).includes(enemyIndices[0])).toBe(true);
-    expect(order.slice(0, 2).includes(enemyIndices[1])).toBe(true);
-    expect(order.slice(2, 4).includes(playerIndices[0])).toBe(true);
-    expect(order.slice(2, 4).includes(playerIndices[1])).toBe(true);
-  }, 20000);
+    expect(order.slice(0, 2)).toStrictEqual(expect.arrayContaining(enemyIndices));
+    expect(order.slice(2, 4)).toStrictEqual(expect.arrayContaining(playerIndices));
+  });
 
   it("double - speed tie except 1 - 100/100 vs 100/150", async () => {
     game.override.battleStyle("double");
@@ -111,10 +109,9 @@ describe("Battle order", () => {
 
     const phase = game.scene.getCurrentPhase() as TurnStartPhase;
     const order = phase.getCommandOrder();
+    // fastest pokemon goes first, followed by a random slower mon
     expect(order[0]).toBe(enemyIndices[1]);
-    expect(order.slice(1, 4).includes(enemyIndices[0])).toBe(true);
-    expect(order.slice(1, 4).includes(playerIndices[0])).toBe(true);
-    expect(order.slice(1, 4).includes(playerIndices[1])).toBe(true);
+    expect(order.slice(1, 4)).toStrictEqual(expect.arrayContaining([enemyIndices[0], ...playerIndices]));
   }, 20000);
 
   it("double - speed tie 100/150 vs 100/150", async () => {
@@ -136,9 +133,7 @@ describe("Battle order", () => {
 
     const phase = game.scene.getCurrentPhase() as TurnStartPhase;
     const order = phase.getCommandOrder();
-    expect(order.slice(0, 2).includes(playerIndices[1])).toBe(true);
-    expect(order.slice(0, 2).includes(enemyIndices[1])).toBe(true);
-    expect(order.slice(2, 4).includes(playerIndices[0])).toBe(true);
-    expect(order.slice(2, 4).includes(enemyIndices[0])).toBe(true);
+    expect(order.slice(0, 2)).toStrictEqual(expect.arrayContaining([playerIndices[1], enemyIndices[1]]));
+    expect(order.slice(2, 4)).toStrictEqual(expect.arrayContaining([playerIndices[0], enemyIndices[0]]));
   }, 20000);
 });
