@@ -4920,7 +4920,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * removing any whose durations fall below 0.
    * @param tagType the {@linkcode BattlerTagLapseType} to tick down
    */
-
   lapseTags(lapseType: BattlerTagLapseType): void {
     const tags = this.summonData.tags;
     tags
