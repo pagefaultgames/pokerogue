@@ -36,5 +36,5 @@ describe("Abilities - Simple", () => {
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
     expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(-2);
-  }, 20000);
+  });
 });

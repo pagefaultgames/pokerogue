@@ -55,7 +55,7 @@ describe("Abilities - Quick Draw", () => {
     expect(pokemon.isFainted()).toBe(false);
     expect(enemy.isFainted()).toBe(true);
     expect(pokemon.waveData.abilitiesApplied).contain(Abilities.QUICK_DRAW);
-  }, 20000);
+  });
 
   test(
     "does not triggered by non damage moves",
@@ -97,5 +97,5 @@ describe("Abilities - Quick Draw", () => {
     expect(pokemon.isFainted()).toBe(true);
     expect(enemy.isFainted()).toBe(false);
     expect(pokemon.waveData.abilitiesApplied).contain(Abilities.QUICK_DRAW);
-  }, 20000);
+  });
 });

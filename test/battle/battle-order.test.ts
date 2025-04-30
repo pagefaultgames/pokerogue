@@ -48,7 +48,7 @@ describe("Battle order", () => {
     const order = phase.getCommandOrder();
     expect(order[0]).toBe(enemyPokemonIndex);
     expect(order[1]).toBe(playerPokemonIndex);
-  }, 20000);
+  });
 
   it("Player faster than opponent 150 vs 50", async () => {
     await game.classicMode.startBattle([Species.BULBASAUR]);
@@ -67,7 +67,7 @@ describe("Battle order", () => {
     const order = phase.getCommandOrder();
     expect(order[0]).toBe(playerPokemonIndex);
     expect(order[1]).toBe(enemyPokemonIndex);
-  }, 20000);
+  });
 
   it("double - both opponents faster than player 50/50 vs 150/150", async () => {
     game.override.battleStyle("double");
@@ -112,7 +112,7 @@ describe("Battle order", () => {
     // fastest pokemon goes first, followed by a random slower mon
     expect(order[0]).toBe(enemyIndices[1]);
     expect(order.slice(1, 4)).toStrictEqual(expect.arrayContaining([enemyIndices[0], ...playerIndices]));
-  }, 20000);
+  });
 
   it("double - speed tie 100/150 vs 100/150", async () => {
     game.override.battleStyle("double");
@@ -135,5 +135,5 @@ describe("Battle order", () => {
     const order = phase.getCommandOrder();
     expect(order.slice(0, 2)).toStrictEqual(expect.arrayContaining([playerIndices[1], enemyIndices[1]]));
     expect(order.slice(2, 4)).toStrictEqual(expect.arrayContaining([playerIndices[0], enemyIndices[0]]));
-  }, 20000);
+  });
 });

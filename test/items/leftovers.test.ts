@@ -55,5 +55,5 @@ describe("Items - Leftovers", () => {
     // Check if leftovers heal us
     await game.phaseInterceptor.to(TurnEndPhase);
     expect(leadPokemon.hp).toBeGreaterThan(leadHpAfterDamage);
-  }, 20000);
+  });
 });

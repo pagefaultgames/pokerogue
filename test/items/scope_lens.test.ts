@@ -28,7 +28,7 @@ describe("Items - Scope Lens", () => {
       .moveset([Moves.POUND])
       .startingHeldItems([{ name: "SCOPE_LENS" }])
       .battleStyle("single");
-  }, 20000);
+  });
 
   it("should raise CRIT stage by 1", async () => {
     await game.classicMode.startBattle([Species.GASTLY]);
@@ -42,5 +42,5 @@ describe("Items - Scope Lens", () => {
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(enemyPokemon.getCritStage).toHaveReturnedWith(1);
-  }, 20000);
+  });
 });

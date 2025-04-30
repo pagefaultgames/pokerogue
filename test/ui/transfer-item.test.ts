@@ -76,7 +76,7 @@ describe("UI - Transfer Items", () => {
     });
 
     await game.phaseInterceptor.to("SelectModifierPhase");
-  }, 20000);
+  });
 
   it("check transfer option for pokemon to transfer to", async () => {
     game.onNextPrompt("SelectModifierPhase", UiMode.PARTY, () => {
@@ -97,5 +97,5 @@ describe("UI - Transfer Items", () => {
     });
 
     await game.phaseInterceptor.to("SelectModifierPhase");
-  }, 20000);
+  });
 });

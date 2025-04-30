@@ -48,7 +48,7 @@ describe("Abilities - Moxie", () => {
     await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(VictoryPhase);
 
     expect(playerPokemon.getStatStage(Stat.ATK)).toBe(1);
-  }, 20000);
+  });
 
   // TODO: Activate this test when MOXIE is corrected to work on faint and not on battle victory
   it.todo(
