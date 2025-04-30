@@ -2734,7 +2734,7 @@ export class EatBerryAttr extends MoveEffectAttr {
    * @param updateHarvest - Whether to prevent harvest from tracking berries;
    * defaults to whether `consumer` equals `berryOwner` (i.e. consuming own berry).
    */
-   eatBerry(consumer: Pokemon, berryOwner: Pokemon = consumer, updateHarvest = consumer === berryOwner) {
+   protected eatBerry(consumer: Pokemon, berryOwner: Pokemon = consumer, updateHarvest = consumer === berryOwner) {
      // consumer eats berry, owner triggers unburden and similar effects
     getBerryEffectFunc(this.chosenBerry.berryType)(consumer);
     applyPostItemLostAbAttrs(PostItemLostAbAttr, berryOwner, false);
