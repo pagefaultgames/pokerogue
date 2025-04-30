@@ -23,6 +23,8 @@ export class EvolutionPhase extends Phase {
   protected pokemon: PlayerPokemon;
   protected lastLevel: number;
 
+  protected evoChain: Phaser.Tweens.TweenChain | null = null;
+
   private preEvolvedPokemonName: string;
 
   private evolution: SpeciesFormEvolution | null;
@@ -116,7 +118,7 @@ export class EvolutionPhase extends Phase {
    * @returns The sprite object that was passed in
    */
   protected configureSprite(pokemon: Pokemon, sprite: Phaser.GameObjects.Sprite, setPipeline = true): typeof sprite {
-    const spriteKey = this.pokemon.getSpriteKey(true);
+    const spriteKey = pokemon.getSpriteKey(true);
     try {
       sprite.play(spriteKey);
     } catch (err: unknown) {
@@ -264,11 +266,11 @@ export class EvolutionPhase extends Phase {
     globalScene.time.delayedCall(1500, () => {
       this.pokemonEvoTintSprite.setScale(0.25).setVisible(true);
       this.evolutionHandler.canCancel = this.canCancel;
-      this.doCycle(1).then(success => {
-        if (success) {
-          this.handleSuccessEvolution(evolvedPokemon);
-        } else {
+      this.doCycle(1, undefined, () => {
+        if (this.evolutionHandler.cancelled) {
           this.handleFailedEvolution(evolvedPokemon);
+        } else {
+          this.handleSuccessEvolution(evolvedPokemon);
         }
       });
     });
@@ -474,7 +476,6 @@ export class EvolutionPhase extends Phase {
 
   doSpiralUpward() {
     let f = 0;
-
     globalScene.tweens.addCounter({
       repeat: 64,
       duration: getFrameMs(1),
@@ -513,36 +514,38 @@ export class EvolutionPhase extends Phase {
   /**
    * Return a tween chain that cycles the evolution sprites
    */
-  doCycle(cycles: number, lastCycle = 15): Promise<boolean> {
-    return new Promise(resolve => {
-      const isLastCycle = cycles === lastCycle;
-      globalScene.tweens.addMultiple([
-        {
-          targets: this.pokemonTintSprite,
-          scale: 0.25,
-          ease: "Cubic.easeInOut",
-          duration: 500 / cycles,
-          yoyo: !isLastCycle,
+  doCycle(cycles: number, lastCycle = 15, onComplete = () => {}): void {
+    // Make our tween start both at the same time
+    const tweens: Phaser.Types.Tweens.TweenBuilderConfig[] = [];
+    for (let i = cycles; i <= lastCycle; i += 0.5) {
+      tweens.push({
+        targets: [this.pokemonTintSprite, this.pokemonEvoTintSprite],
+        scale: (_target, _key, _value, targetIndex: number, _totalTargets, _tween) => (targetIndex === 0 ? 0.25 : 1),
+        ease: "Cubic.easeInOut",
+        duration: 500 / i,
+        yoyo: i !== lastCycle,
+        onComplete: () => {
+          if (this.evolutionHandler.cancelled) {
+            // cause the tween chain to complete instantly, skipping the remaining tweens.
+            this.pokemonEvoTintSprite.setScale(1);
+            this.pokemonEvoTintSprite.setVisible(false);
+            this.evoChain?.complete?.();
+            return;
+          }
+          if (i === lastCycle) {
+            this.pokemonEvoTintSprite.setScale(1);
+          }
         },
-        {
-          targets: this.pokemonEvoTintSprite,
-          scale: 1,
-          ease: "Cubic.easeInOut",
-          duration: 500 / cycles,
-          yoyo: !isLastCycle,
-          onComplete: () => {
-            if (this.evolutionHandler.cancelled) {
-              return resolve(false);
-            }
-            if (cycles < lastCycle) {
-              this.doCycle(cycles + 0.5, lastCycle).then(success => resolve(success));
-            } else {
-              this.pokemonTintSprite.setVisible(false);
-              resolve(true);
-            }
-          },
-        },
-      ]);
+      });
+    }
+
+    this.evoChain = globalScene.tweens.chain({
+      targets: null,
+      tweens,
+      onComplete: () => {
+        this.evoChain = null;
+        onComplete();
+      },
     });
   }
 

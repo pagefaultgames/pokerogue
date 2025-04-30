@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import { FixedInt, fixedInt } from "#app/utils/common";
+import { fixedInt } from "#app/utils/common";
 import { achvs } from "../system/achv";
 import type { SpeciesFormChange } from "../data/pokemon-forms";
 import { getSpeciesFormChangeMessage } from "#app/data/pokemon-forms/form-change-triggers";
@@ -146,7 +146,7 @@ export class FormChangePhase extends EvolutionPhase {
               targets: this.evolutionBgOverlay,
               alpha: 0,
               duration: 250,
-              delay: fixedInt(1000),
+              delay: 1000,
             });
             this.evolutionBg.setVisible(true).play();
           },
@@ -167,13 +167,13 @@ export class FormChangePhase extends EvolutionPhase {
       ],
 
       // Step 3: Commence the form change animation via doCycle then continue the animation chain with afterCycle
-      completeDelay: new FixedInt(1100),
+      completeDelay: 1100,
       onComplete: () => {
         globalScene.playSound("se/beam");
         this.doArcDownward();
         globalScene.time.delayedCall(1000, () => {
           this.pokemonEvoTintSprite.setScale(0.25).setVisible(true);
-          this.doCycle(1, 1).then(() => this.afterCycle(preName, transformedPokemon));
+          this.doCycle(1, 1, () => this.afterCycle(preName, transformedPokemon));
         });
       },
     });
