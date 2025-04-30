@@ -371,7 +371,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   /** Wave data correponding to moves/ability information revealed */
   public waveData: PokemonWaveData = new PokemonWaveData();
   /** Per-turn data like hit count & flinch tracking */
-  public turnData: PokemonTurnData = new PokemonTurnData;
+  public turnData: PokemonTurnData = new PokemonTurnData();
 
   /** Used by Mystery Encounters to execute pokemon-specific logic (such as stat boosts) at start of battle */
   public mysteryEncounterBattleEffects?: (pokemon: Pokemon) => void;
