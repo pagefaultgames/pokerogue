@@ -24,7 +24,7 @@ export function initGameSpeed() {
 
   // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Complexity is necessary here
   const mutateProperties = (obj: any, allowArray = false) => {
-    // We do not mutate Tweens or TweenChains
+    // We do not mutate Tweens or TweenChain objects themselves.
     if (obj instanceof Phaser.Tweens.Tween || obj instanceof Phaser.Tweens.TweenChain) {
       return;
     }
@@ -42,9 +42,9 @@ export function initGameSpeed() {
         obj[prop] = transformValue(objProp);
       }
     }
-    // If the object has a 'tweens' property, then it is a tween chain
+    // If the object has a 'tweens' property that is an array, then it is a tween chain
     // and we need to mutate its properties as well
-    if (obj.tweens) {
+    if (obj.tweens && Array.isArray(obj.tweens)) {
       for (const tween of obj.tweens) {
         mutateProperties(tween);
       }
@@ -83,11 +83,11 @@ export function initGameSpeed() {
     return originalAddCounter.apply(this, [config]);
   } as typeof originalAddCounter;
 
-  // const originalCreate: TweenManager["create"] = this.tweens.create;
-  // this.tweens.create = function (config: Phaser.Types.Tweens.TweenBuilderConfig) {
-  //   mutateProperties(config, true);
-  //   return originalCreate.apply(this, [config]);
-  // } as typeof originalCreate;
+  const originalCreate: TweenManager["create"] = this.tweens.create;
+  this.tweens.create = function (config: Phaser.Types.Tweens.TweenBuilderConfig) {
+    mutateProperties(config, true);
+    return originalCreate.apply(this, [config]);
+  } as typeof originalCreate;
 
   const originalAddMultiple: TweenManager["addMultiple"] = this.tweens.addMultiple;
   this.tweens.addMultiple = function (config: Phaser.Types.Tweens.TweenBuilderConfig[]) {
