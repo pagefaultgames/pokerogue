@@ -25,7 +25,6 @@ describe("Egg Generation Tests", () => {
 
   afterEach(() => {
     game.phaseInterceptor.restoreOg();
-    vi.restoreAllMocks();
   });
 
   beforeEach(async () => {
