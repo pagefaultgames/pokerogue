@@ -54,7 +54,7 @@ describe("Abilities - No Guard", () => {
   });
 
   it("should guarantee double battle with any one LURE", async () => {
-    game.override.startingModifier([{ name: "LURE" }]).startingWave(2);
+    game.override.startingModifiers([{ name: "LURE" }]).startingWave(2);
 
     await game.classicMode.startBattle();
 
