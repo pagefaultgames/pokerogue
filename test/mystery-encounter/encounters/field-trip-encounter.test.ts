@@ -67,7 +67,7 @@ describe("Field Trip - Mystery Encounter", () => {
     expect(FieldTripEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}:title`);
     expect(FieldTripEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}:description`);
     expect(FieldTripEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}:query`);
-    expect(FieldTripEncounter.options.length).toBe(3);
+    expect(FieldTripEncounter.options).toHaveLength(3);
   });
 
   describe("Option 1 - Show off a physical move", () => {

@@ -443,7 +443,7 @@ describe("UI - Pokedex", () => {
     let filteredPokemon = pokedexHandler.filteredPokemonData.map(pokemon => pokemon.species.speciesId);
 
     // Red shiny
-    expect(filteredPokemon.length).toBe(1);
+    expect(filteredPokemon).toHaveLength(1);
     expect(filteredPokemon[0], "tier 1 shiny").toBe(Species.CATERPIE);
 
     // tier 2 shiny
@@ -452,14 +452,14 @@ describe("UI - Pokedex", () => {
 
     // @ts-expect-error - `filteredPokemonData` is private
     filteredPokemon = pokedexHandler.filteredPokemonData.map(pokemon => pokemon.species.speciesId);
-    expect(filteredPokemon.length).toBe(1);
+    expect(filteredPokemon).toHaveLength(1);
     expect(filteredPokemon[0], "tier 2 shiny").toBe(Species.RATTATA);
 
     filter.toggleOptionState(2);
     filter.toggleOptionState(1);
     // @ts-expect-error - `filteredPokemonData` is private
     filteredPokemon = pokedexHandler.filteredPokemonData.map(pokemon => pokemon.species.speciesId);
-    expect(filteredPokemon.length).toBe(1);
+    expect(filteredPokemon).toHaveLength(1);
     expect(filteredPokemon[0], "tier 3 shiny").toBe(Species.EKANS);
 
     // filter by no shiny
@@ -468,7 +468,7 @@ describe("UI - Pokedex", () => {
 
     // @ts-expect-error - `filteredPokemonData` is private
     filteredPokemon = pokedexHandler.filteredPokemonData.map(pokemon => pokemon.species.speciesId);
-    expect(filteredPokemon.length).toBe(27);
+    expect(filteredPokemon).toHaveLength(27);
     expect(filteredPokemon, "not shiny").not.toContain(Species.CATERPIE);
     expect(filteredPokemon, "not shiny").not.toContain(Species.RATTATA);
     expect(filteredPokemon, "not shiny").not.toContain(Species.EKANS);

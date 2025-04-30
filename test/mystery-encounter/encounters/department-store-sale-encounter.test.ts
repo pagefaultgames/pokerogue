@@ -69,7 +69,7 @@ describe("Department Store Sale - Mystery Encounter", () => {
       `${namespace}:description`,
     );
     expect(DepartmentStoreSaleEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}:query`);
-    expect(DepartmentStoreSaleEncounter.options.length).toBe(4);
+    expect(DepartmentStoreSaleEncounter.options).toHaveLength(4);
   });
 
   it("should not spawn outside of CIVILIZATION_ENCOUNTER_BIOMES", async () => {

@@ -193,7 +193,7 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
     expect(BugTypeSuperfanEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}:title`);
     expect(BugTypeSuperfanEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}:description`);
     expect(BugTypeSuperfanEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}:query`);
-    expect(BugTypeSuperfanEncounter.options.length).toBe(3);
+    expect(BugTypeSuperfanEncounter.options).toHaveLength(3);
   });
 
   it("should initialize fully", async () => {
@@ -238,7 +238,7 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
 
       const enemyParty = scene.getEnemyParty();
       expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
-      expect(enemyParty.length).toBe(2);
+      expect(enemyParty).toHaveLength(2);
       expect(scene.currentBattle.trainer?.config.trainerType).toBe(TrainerType.BUG_TYPE_SUPERFAN);
       expect(enemyParty[0].species.speciesId).toBe(Species.BEEDRILL);
       expect(enemyParty[1].species.speciesId).toBe(Species.BUTTERFREE);
@@ -251,7 +251,7 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
 
       const enemyParty = scene.getEnemyParty();
       expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
-      expect(enemyParty.length).toBe(3);
+      expect(enemyParty).toHaveLength(3);
       expect(scene.currentBattle.trainer?.config.trainerType).toBe(TrainerType.BUG_TYPE_SUPERFAN);
       expect(enemyParty[0].species.speciesId).toBe(Species.BEEDRILL);
       expect(enemyParty[1].species.speciesId).toBe(Species.BUTTERFREE);
@@ -265,7 +265,7 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
 
       const enemyParty = scene.getEnemyParty();
       expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
-      expect(enemyParty.length).toBe(4);
+      expect(enemyParty).toHaveLength(4);
       expect(scene.currentBattle.trainer?.config.trainerType).toBe(TrainerType.BUG_TYPE_SUPERFAN);
       expect(enemyParty[0].species.speciesId).toBe(Species.BEEDRILL);
       expect(enemyParty[1].species.speciesId).toBe(Species.BUTTERFREE);
@@ -280,7 +280,7 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
 
       const enemyParty = scene.getEnemyParty();
       expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
-      expect(enemyParty.length).toBe(5);
+      expect(enemyParty).toHaveLength(5);
       expect(scene.currentBattle.trainer?.config.trainerType).toBe(TrainerType.BUG_TYPE_SUPERFAN);
       expect(enemyParty[0].species.speciesId).toBe(Species.BEEDRILL);
       expect(enemyParty[1].species.speciesId).toBe(Species.BUTTERFREE);
@@ -296,7 +296,7 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
 
       const enemyParty = scene.getEnemyParty();
       expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
-      expect(enemyParty.length).toBe(5);
+      expect(enemyParty).toHaveLength(5);
       expect(scene.currentBattle.trainer?.config.trainerType).toBe(TrainerType.BUG_TYPE_SUPERFAN);
       expect(enemyParty[0].species.speciesId).toBe(Species.BEEDRILL);
       expect(enemyParty[0].formIndex).toBe(1);
@@ -314,7 +314,7 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
 
       const enemyParty = scene.getEnemyParty();
       expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
-      expect(enemyParty.length).toBe(5);
+      expect(enemyParty).toHaveLength(5);
       expect(scene.currentBattle.trainer?.config.trainerType).toBe(TrainerType.BUG_TYPE_SUPERFAN);
       expect(enemyParty[0].species.speciesId).toBe(Species.BEEDRILL);
       expect(enemyParty[0].formIndex).toBe(1);
@@ -332,7 +332,7 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
 
       const enemyParty = scene.getEnemyParty();
       expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
-      expect(enemyParty.length).toBe(5);
+      expect(enemyParty).toHaveLength(5);
       expect(scene.currentBattle.trainer?.config.trainerType).toBe(TrainerType.BUG_TYPE_SUPERFAN);
       expect(enemyParty[0].species.speciesId).toBe(Species.BEEDRILL);
       expect(enemyParty[0].formIndex).toBe(1);
@@ -350,7 +350,7 @@ describe("Bug-Type Superfan - Mystery Encounter", () => {
 
       const enemyParty = scene.getEnemyParty();
       expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
-      expect(enemyParty.length).toBe(5);
+      expect(enemyParty).toHaveLength(5);
       expect(scene.currentBattle.trainer?.config.trainerType).toBe(TrainerType.BUG_TYPE_SUPERFAN);
       expect(enemyParty[0].species.speciesId).toBe(Species.BEEDRILL);
       expect(enemyParty[0].formIndex).toBe(1);

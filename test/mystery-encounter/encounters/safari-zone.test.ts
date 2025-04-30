@@ -67,7 +67,7 @@ describe("Safari Zone - Mystery Encounter", () => {
     expect(SafariZoneEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}:title`);
     expect(SafariZoneEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}:description`);
     expect(SafariZoneEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}:query`);
-    expect(SafariZoneEncounter.options.length).toBe(2);
+    expect(SafariZoneEncounter.options).toHaveLength(2);
   });
 
   it("should not spawn outside of the forest, swamp, or jungle biomes", async () => {

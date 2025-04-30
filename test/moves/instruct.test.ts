@@ -118,7 +118,7 @@ describe("Moves - Instruct", () => {
     await game.phaseInterceptor.to("BerryPhase");
 
     instructSuccess(enemy, Moves.GIGATON_HAMMER);
-    expect(game.scene.getPlayerPokemon()!.turnData.attacksReceived.length).toBe(2);
+    expect(game.scene.getPlayerPokemon()!.turnData.attacksReceived).toHaveLength(2);
   });
 
   it("should add moves to move queue for copycat", async () => {
@@ -135,7 +135,7 @@ describe("Moves - Instruct", () => {
 
     instructSuccess(enemy1, Moves.WATER_GUN);
     // amoonguss gets hit by water gun thrice; once by original attack, once by instructed use and once by copycat
-    expect(game.scene.getPlayerPokemon()!.turnData.attacksReceived.length).toBe(3);
+    expect(game.scene.getPlayerPokemon()!.turnData.attacksReceived).toHaveLength(3);
   });
 
   it("should respect enemy's status condition", async () => {
@@ -175,7 +175,7 @@ describe("Moves - Instruct", () => {
 
     const playerMoves = game.scene.getPlayerPokemon()!.getLastXMoves(-1)!;
     expect(playerMoves[0].result).toBe(MoveResult.FAIL);
-    expect(enemyPokemon.getMoveHistory().length).toBe(1);
+    expect(enemyPokemon.getMoveHistory()).toHaveLength(1);
   });
 
   it("should redirect attacking moves if enemy faints", async () => {
@@ -218,7 +218,7 @@ describe("Moves - Instruct", () => {
     // fiery dance triggered dancer successfully for a total of 4 hits
     // Enemy level is set to a high value so that it does not faint even after all 4 hits
     instructSuccess(volcarona, Moves.FIERY_DANCE);
-    expect(game.scene.getEnemyField()[0].turnData.attacksReceived.length).toBe(4);
+    expect(game.scene.getEnemyField()[0].turnData.attacksReceived).toHaveLength(4);
   });
 
   it("should not repeat move when switching out", async () => {
@@ -492,14 +492,14 @@ describe("Moves - Instruct", () => {
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(bulbasaur.turnData.attacksReceived.length).toBe(10);
+    expect(bulbasaur.turnData.attacksReceived).toHaveLength(10);
 
     await game.toNextTurn();
     game.move.select(Moves.INSTRUCT);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(bulbasaur.turnData.attacksReceived.length).toBe(10);
+    expect(bulbasaur.turnData.attacksReceived).toHaveLength(10);
   });
 
   it("should cause multi-hit moves to hit the appropriate number of times in doubles", async () => {
@@ -526,7 +526,7 @@ describe("Moves - Instruct", () => {
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(ivysaur.turnData.attacksReceived.length).toBe(15);
+    expect(ivysaur.turnData.attacksReceived).toHaveLength(15);
 
     await game.toNextTurn();
     game.move.select(Moves.INSTRUCT, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
@@ -536,6 +536,6 @@ describe("Moves - Instruct", () => {
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER, BattlerIndex.PLAYER_2]);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(ivysaur.turnData.attacksReceived.length).toBe(15);
+    expect(ivysaur.turnData.attacksReceived).toHaveLength(15);
   });
 });

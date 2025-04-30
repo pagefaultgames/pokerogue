@@ -77,7 +77,7 @@ describe("The Strong Stuff - Mystery Encounter", () => {
     expect(TheStrongStuffEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}:title`);
     expect(TheStrongStuffEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}:description`);
     expect(TheStrongStuffEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}:query`);
-    expect(TheStrongStuffEncounter.options.length).toBe(2);
+    expect(TheStrongStuffEncounter.options).toHaveLength(2);
   });
 
   it("should not spawn outside of CAVE biome", async () => {
@@ -193,11 +193,11 @@ describe("The Strong Stuff - Mystery Encounter", () => {
 
       const enemyField = scene.getEnemyField();
       expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
-      expect(enemyField.length).toBe(1);
+      expect(enemyField).toHaveLength(1);
       expect(enemyField[0].species.speciesId).toBe(Species.SHUCKLE);
       expect(enemyField[0].summonData.statStages).toEqual([0, 1, 0, 1, 0, 0, 0]);
       const shuckleItems = enemyField[0].getHeldItems();
-      expect(shuckleItems.length).toBe(5);
+      expect(shuckleItems).toHaveLength(5);
       expect(shuckleItems.find(m => m instanceof BerryModifier && m.berryType === BerryType.SITRUS)?.stackCount).toBe(
         1,
       );
@@ -220,9 +220,9 @@ describe("The Strong Stuff - Mystery Encounter", () => {
 
       // Should have used moves pre-battle
       const movePhases = phaseSpy.mock.calls.filter(p => p[0] instanceof MovePhase).map(p => p[0]);
-      expect(movePhases.length).toBe(2);
-      expect(movePhases.filter(p => (p as MovePhase).move.moveId === Moves.GASTRO_ACID).length).toBe(1);
-      expect(movePhases.filter(p => (p as MovePhase).move.moveId === Moves.STEALTH_ROCK).length).toBe(1);
+      expect(movePhases).toHaveLength(2);
+      expect(movePhases.filter(p => (p as MovePhase).move.moveId === Moves.GASTRO_ACID)).toHaveLength(1);
+      expect(movePhases.filter(p => (p as MovePhase).move.moveId === Moves.STEALTH_ROCK)).toHaveLength(1);
     });
 
     it("should have Soul Dew in rewards", async () => {
