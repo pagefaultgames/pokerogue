@@ -41,8 +41,6 @@ describe("SelectModifierPhase", () => {
 
   afterEach(() => {
     game.phaseInterceptor.restoreOg();
-
-    vi.clearAllMocks();
   });
 
   it("should start a select modifier phase", async () => {

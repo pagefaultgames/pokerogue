@@ -30,13 +30,13 @@ describe("Abilities - Super Luck", () => {
       .enemyMoveset(Moves.SPLASH);
   });
 
-  it("should increase the crit stage of a user by 1", async () => {
+  it("should increase the user's crit stage by 1", async () => {
     await game.classicMode.startBattle([Species.MAGIKARP]);
     const enemy = game.scene.getEnemyPokemon()!;
-    const fn = vi.spyOn(enemy, "getCritStage");
+    const critSpy = vi.spyOn(enemy, "getCritStage"); // crit stage is called on enemy
+
     game.move.select(Moves.TACKLE);
     await game.phaseInterceptor.to("BerryPhase");
-    expect(fn).toHaveReturnedWith(1);
-    fn.mockRestore();
+    expect(critSpy).toHaveReturnedWith(1);
   });
 });
