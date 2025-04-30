@@ -365,7 +365,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * Data that resets only on *battle* end (hit count, harvest berries, etc.)
    * Kept between waves.
    */
-  public battleData: PokemonBattleData = new PokemonBattleData;
+  public battleData: PokemonBattleData = new PokemonBattleData();
   /** Data that resets on switch or battle end (stat stages, battler tags, etc.) */
   public summonData: PokemonSummonData = new PokemonSummonData;
   /** Wave data correponding to moves/ability information revealed */
