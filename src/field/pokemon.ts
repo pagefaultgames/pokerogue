@@ -357,7 +357,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public fusionCustomPokemonData: CustomPokemonData | null;
   public fusionTeraType: PokemonType;
 
-  public customPokemonData: CustomPokemonData = new CustomPokemonData;
+  public customPokemonData: CustomPokemonData = new CustomPokemonData();
 
   /* Pokemon data types, in vaguely decreasing order of precedence */
 
