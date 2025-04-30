@@ -326,23 +326,23 @@ describe("Moves - Instruct", () => {
   });
 
   it("should not repeat move since forgotten by target", async () => {
-    game.override.enemyLevel(5).xpMultiplier(0).enemySpecies(Species.WURMPLE).enemyMoveset(Moves.INSTRUCT);
+    game.override.enemyLevel(5).enemySpecies(Species.WURMPLE).enemyMoveset(Moves.INSTRUCT);
     await game.classicMode.startBattle([Species.REGIELEKI]);
 
     const regieleki = game.scene.getPlayerPokemon()!;
-    // fill out moveset with random moves
-    game.move.changeMoveset(regieleki, [Moves.ELECTRO_DRIFT, Moves.SPLASH, Moves.ICE_BEAM, Moves.ANCIENT_POWER]);
 
+    // use electro drift to KO, then replace it with electroweb
+    game.move.changeMoveset(regieleki, [Moves.ELECTRO_DRIFT, Moves.SPLASH]);
     game.move.select(Moves.ELECTRO_DRIFT);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("FaintPhase");
-    await game.move.learnMove(Moves.ELECTROWEB);
+    game.move.changeMoveset(regieleki, [Moves.ELECTROWEB, Moves.SPLASH]);
     await game.toNextWave();
 
     game.move.select(Moves.SPLASH);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("TurnEndPhase", false);
-    expect(game.scene.getEnemyField()[0].getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+    expect(game.scene.getEnemyPokemon()?.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
   });
 
   it("should disregard priority of instructed move on use", async () => {

@@ -26,7 +26,7 @@ describe("Abilities - Wandering Spirit", () => {
       .moveset([Moves.SPLASH])
       .ability(Abilities.WANDERING_SPIRIT)
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset(Moves.TACKLE);

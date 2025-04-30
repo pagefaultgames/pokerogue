@@ -26,7 +26,7 @@ describe("Moves - Mist", () => {
       .moveset([Moves.MIST, Moves.SPLASH])
       .ability(Abilities.BALL_FETCH)
       .battleStyle("double")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(Species.SNORLAX)
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset(Moves.GROWL);

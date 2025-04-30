@@ -79,9 +79,11 @@ export default class PokemonData {
     this.id = source.id;
     this.player = sourcePokemon ? sourcePokemon.isPlayer() : source.player;
     this.species = sourcePokemon ? sourcePokemon.species.speciesId : source.species;
-    this.nickname = sourcePokemon 
-    ? (!!sourcePokemon.summonData?.illusion ? sourcePokemon.summonData.illusion.basePokemon.nickname : sourcePokemon.nickname) 
-    : source.nickname;
+    this.nickname = sourcePokemon
+      ? !!sourcePokemon.summonData?.illusion
+        ? sourcePokemon.summonData.illusion.basePokemon.nickname
+        : sourcePokemon.nickname
+      : source.nickname;
     this.formIndex = Math.max(Math.min(source.formIndex, getPokemonSpecies(this.species).forms.length - 1), 0);
     this.abilityIndex = source.abilityIndex;
     this.passive = source.passive;
@@ -119,12 +121,16 @@ export default class PokemonData {
     this.fusionSpecies = sourcePokemon ? sourcePokemon.fusionSpecies?.speciesId : source.fusionSpecies;
     this.fusionFormIndex = source.fusionFormIndex;
     this.fusionAbilityIndex = source.fusionAbilityIndex;
-    this.fusionShiny = sourcePokemon 
-    ? (!!sourcePokemon.summonData?.illusion ? sourcePokemon.summonData.illusion.basePokemon.fusionShiny : sourcePokemon.fusionShiny) 
-    : source.fusionShiny;
-    this.fusionVariant = sourcePokemon 
-    ? (!!sourcePokemon.summonData?.illusion ? sourcePokemon.summonData.illusion.basePokemon.fusionVariant : sourcePokemon.fusionVariant) 
-    : source.fusionVariant;
+    this.fusionShiny = sourcePokemon
+      ? !!sourcePokemon.summonData?.illusion
+        ? sourcePokemon.summonData.illusion.basePokemon.fusionShiny
+        : sourcePokemon.fusionShiny
+      : source.fusionShiny;
+    this.fusionVariant = sourcePokemon
+      ? !!sourcePokemon.summonData?.illusion
+        ? sourcePokemon.summonData.illusion.basePokemon.fusionVariant
+        : sourcePokemon.fusionVariant
+      : source.fusionVariant;
     this.fusionGender = source.fusionGender;
     this.fusionLuck =
       source.fusionLuck !== undefined ? source.fusionLuck : source.fusionShiny ? source.fusionVariant + 1 : 0;

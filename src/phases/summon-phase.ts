@@ -177,11 +177,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
               }
               globalScene.currentBattle.seenEnemyPartyMemberIds.add(pokemon.id);
             }
-            addPokeballOpenParticles(
-              pokemon.x,
-              pokemon.y - 16,
-              pokemon.getPokeball(true),
-            );
+            addPokeballOpenParticles(pokemon.x, pokemon.y - 16, pokemon.getPokeball(true));
             globalScene.updateModifiers(this.player);
             globalScene.updateFieldScale();
             pokemon.showInfo();

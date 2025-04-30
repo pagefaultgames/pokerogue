@@ -25,7 +25,7 @@ describe("Abilities - Mycelium Might", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override.battleStyle("single");
-    game.override.disableCrits();
+    game.override.criticalHits(false);
     game.override.enemySpecies(Species.SHUCKLE);
     game.override.enemyAbility(Abilities.CLEAR_BODY);
     game.override.enemyMoveset([Moves.QUICK_ATTACK, Moves.QUICK_ATTACK, Moves.QUICK_ATTACK, Moves.QUICK_ATTACK]);

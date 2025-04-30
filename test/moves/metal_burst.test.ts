@@ -28,7 +28,7 @@ describe("Moves - Metal Burst", () => {
       .ability(Abilities.PURE_POWER)
       .startingLevel(10)
       .battleStyle("double")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(Species.PICHU)
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset(Moves.TACKLE);

@@ -41,7 +41,7 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
 
     game.override.battleStyle("double");
     game.override.startingWave(97);
-    game.override.disableCrits();
+    game.override.criticalHits(false);
 
     vi.spyOn(fusionFlare, "calculateBattlePower");
     vi.spyOn(fusionBolt, "calculateBattlePower");

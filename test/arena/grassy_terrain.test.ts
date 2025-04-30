@@ -23,7 +23,7 @@ describe("Arena - Grassy Terrain", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemyLevel(1)
       .enemySpecies(Species.SHUCKLE)
       .enemyAbility(Abilities.STURDY)

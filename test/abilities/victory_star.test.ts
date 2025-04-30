@@ -26,7 +26,7 @@ describe("Abilities - Victory Star", () => {
     game.override
       .moveset([Moves.TACKLE, Moves.SPLASH])
       .battleStyle("double")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH);

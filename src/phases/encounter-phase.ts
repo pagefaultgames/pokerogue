@@ -140,7 +140,6 @@ export class EncounterPhase extends BattlePhase {
           if (globalScene.currentBattle.battleSpec === BattleSpec.FINAL_BOSS) {
             battle.enemyParty[e].ivs = new Array(6).fill(31);
           }
-          // biome-ignore lint/complexity/noForEach: Improves readability
           globalScene
             .getPlayerParty()
             .slice(0, !battle.double ? 1 : 2)
