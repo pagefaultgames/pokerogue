@@ -7742,9 +7742,9 @@ export interface AttackMoveResult {
 }
 
 /**
-Persistent in-battle data for a {@linkcode Pokemon}.
-Resets on switch or new battle.
-*/
+ * Persistent in-battle data for a {@linkcode Pokemon}.
+ * Resets on switch or new battle.
+ */
 export class PokemonSummonData {
   /** [Atk, Def, SpAtk, SpDef, Spd, Acc, Eva] */
   public statStages: number[] = [0, 0, 0, 0, 0, 0, 0];
