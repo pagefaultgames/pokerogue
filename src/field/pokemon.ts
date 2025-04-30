@@ -718,7 +718,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /** Generate `abilityIndex` based on species and hidden ability if not pre-defined. */
-  public generateAbilityIndex(): number {
+  private generateAbilityIndex(): number {
 
     // Roll for hidden ability chance, applying any ability charms for enemy mons
     const hiddenAbilityChance = new NumberHolder(
