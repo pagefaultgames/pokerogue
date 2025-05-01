@@ -1103,19 +1103,19 @@ export class PokemonIncrementingStatModifier extends PokemonHeldItemModifier {
    * @returns always `true`
    */
   override apply(_pokemon: Pokemon, stat: Stat, statHolder: NumberHolder): boolean {
-    // Modifies the passed in stat number holder by +1 per stack for HP, +2 per stack for other stats
-    // If the Macho Brace is at max stacks (50), adds additional 5% to total HP and 10% to other stats
+    // Modifies the passed in stat number holder by +2 per stack for HP, +1 per stack for other stats
+    // If the Macho Brace is at max stacks (50), adds additional 10% to total HP and 5% to other stats
     const isHp = stat === Stat.HP;
 
     if (isHp) {
-      statHolder.value += this.stackCount;
-      if (this.stackCount === this.getMaxHeldItemCount()) {
-        statHolder.value = Math.floor(statHolder.value * 1.05);
-      }
-    } else {
       statHolder.value += 2 * this.stackCount;
       if (this.stackCount === this.getMaxHeldItemCount()) {
         statHolder.value = Math.floor(statHolder.value * 1.1);
+      }
+    } else {
+      statHolder.value += this.stackCount;
+      if (this.stackCount === this.getMaxHeldItemCount()) {
+        statHolder.value = Math.floor(statHolder.value * 1.05);
       }
     }
 
