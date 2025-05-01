@@ -21,7 +21,7 @@ export class CustomPokemonData {
   public hitsRecCount: number | null = null;
 
   constructor(data?: CustomPokemonData | Partial<CustomPokemonData>) {
-    this.spriteScale = data?.spriteScale ?? 1;
+    this.spriteScale = data?.spriteScale ?? -1;
     this.ability = data?.ability ?? -1;
     this.passive = data?.passive ?? -1;
     this.nature = data?.nature ?? -1;
