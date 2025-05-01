@@ -5665,12 +5665,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
     this.summonData = new PokemonSummonData();
     this.tempSummonData = new PokemonTempSummonData();
-
     this.setSwitchOutStatus(false);
-    // TODO: Why do we tick down leech seed on switch
-    if (this.getTag(BattlerTagType.SEEDED)) {
-      this.lapseTag(BattlerTagType.SEEDED);
-    }
     if (globalScene) {
       globalScene.triggerPokemonFormChange(
         this,
@@ -7792,9 +7787,22 @@ export class PokemonSummonData {
   public moveHistory: TurnMove[] = [];
 
   constructor(source?: PokemonSummonData | Partial<PokemonSummonData>) {
-    if (!isNullOrUndefined(source)) {
-      Object.assign(this, source)
-      this.tags &&= this.tags.map(t => loadBattlerTag(t))
+    if (isNullOrUndefined(source)) {
+      return;
+    }
+
+    // TODO: Rework this into an actual generic function for use elsewhere
+    for (const [key, value] of Object.entries(source)) {
+      if (isNullOrUndefined(value) && this.hasOwnProperty(key)) {
+        continue;
+      }
+
+      if (key === "tags") {
+        // load battler tags
+        this.tags = value.map((t: BattlerTag) => loadBattlerTag(t));
+        continue;
+      }
+      this[key] = value;
     }
   }
 }
