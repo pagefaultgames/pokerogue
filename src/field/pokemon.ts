@@ -368,6 +368,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public battleData: PokemonBattleData = new PokemonBattleData();
   /** Data that resets on switch or battle end (stat stages, battler tags, etc.) */
   public summonData: PokemonSummonData = new PokemonSummonData();
+  /** Similar to {@linkcode PokemonSummonData}, but is reset on reload (not saved to file). */
+  public tempSummonData: PokemonTempSummonData = new PokemonTempSummonData();
   /** Wave data correponding to moves/ability information revealed */
   public waveData: PokemonWaveData = new PokemonWaveData();
   /** Per-turn data like hit count & flinch tracking */
@@ -1427,7 +1429,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   getStat(stat: PermanentStat, bypassSummonData = true): number {
     if (
       !bypassSummonData &&
-      this.summonData &&
       this.summonData.stats[stat] !== 0
     ) {
       return this.summonData.stats[stat];
@@ -2156,10 +2157,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
     }
 
-    // the type added to Pokemon from moves like Forest's Curse or Trick Or Treat
+    // check type added to Pokemon from moves like Forest's Curse or Trick Or Treat
     if (
       !ignoreOverride &&
-      this.summonData &&
       this.summonData.addedType &&
       !types.includes(this.summonData.addedType)
     ) {
@@ -4967,9 +4967,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   transferTagsBySourceId(sourceId: number, newSourceId: number): void {
-    this.summonData.tags
-    .filter(t => t.sourceId === sourceId)
-    .forEach(t => (t.sourceId = newSourceId));
+    this.summonData.tags.forEach(t => {
+      if (t.sourceId === sourceId) {
+        t.sourceId = newSourceId;
+      }
+    })
   }
 
   /**
@@ -5646,7 +5648,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return false;
   }
 
-
+  /**
+   * Reset this Pokemon's {@linkcode PokemonSummonData | SummonData} and {@linkcode PokemonTempSummonData | TempSummonData}
+   * in preparation for switching pokemon, as well as removing any relevant on-switch tags.
+   */
   resetSummonData(): void {
     const illusion: IllusionData | null = this.summonData.illusion;
     if (this.summonData.speciesForm) {
@@ -5654,8 +5659,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.updateFusionPalette();
     }
     this.summonData = new PokemonSummonData();
+    this.tempSummonData = new PokemonTempSummonData();
+
     this.setSwitchOutStatus(false);
-    // TODO: Why do we remove leech seed on resetting summon data? That should be a BattlerTag thing...
+    // TODO: Why do we tick down leech seed on switch
     if (this.getTag(BattlerTagType.SEEDED)) {
       this.lapseTag(BattlerTagType.SEEDED);
     }
@@ -7751,7 +7758,8 @@ export class PokemonSummonData {
   public tags: BattlerTag[] = [];
   public abilitySuppressed = false;
 
-  // Overrides for transform
+  // Overrides for transform.
+  // TODO: Move these into a separate class & add rage fist hit count
   public speciesForm: PokemonSpeciesForm | null = null;
   public fusionSpeciesForm: PokemonSpeciesForm | null = null;
   public ability: Abilities | undefined;
@@ -7773,16 +7781,6 @@ export class PokemonSummonData {
   public berriesEatenLast: BerryType[] = [];
 
   /**
-   * The number of turns this pokemon has spent in the active position since entering the battle.
-   * Currently exclusively used for positioning the battle cursor.
-   */
-  public turnCount = 1;
-  /**
-   * The number of turns this pokemon has spent in the active position since starting a new wave.
-   * Used for most "first turn only" conditions ({@linkcode Moves.FAKE_OUT | Fake Out}, {@linkcode Moves.FIRST_IMPRESSION | First Impression}, etc.)
-   */
-  public waveTurnCount = 1;
-  /**
    * An array of all moves this pokemon has used since entering the battle.
    * Used for most moves and abilities that check prior move usage or copy already-used moves.
    */
@@ -7794,6 +7792,26 @@ export class PokemonSummonData {
       this.tags &&= this.tags.map(t => loadBattlerTag(t))
     }
   }
+}
+
+ // TODO: Merge this inside `summmonData` but exclude from save if/when a save data serializer is added
+export class PokemonTempSummonData {
+  /**
+   * The number of turns this pokemon has spent without switching out.
+   * Only currently used for positioning the battle cursor.
+   */
+  turnCount: number = 1;
+
+    /**
+   * The number of turns this pokemon has spent in the active position since the start of the wave
+   * without switching out.
+   * Reset on switch and new wave, but not stored in `SummonData` to avoid being written to the save file.
+
+   * Used to evaluate "first turn only" conditions such as
+   * {@linkcode Moves.FAKE_OUT | Fake Out} and {@linkcode Moves.FIRST_IMPRESSION | First Impression}).
+   */
+  waveTurnCount = 1;
+
 }
 
 /**
@@ -7819,7 +7837,7 @@ export class PokemonBattleData {
 
 /**
  * Temporary data for a {@linkcode Pokemon}.
- * Resets on new wave/battle start.
+ * Resets on new wave/battle start (but not on switch).
  */
 export class PokemonWaveData {
   /** Whether the pokemon has endured due to a {@linkcode BattlerTagType.ENDURE_TOKEN} */
@@ -7866,7 +7884,7 @@ export class PokemonTurnData {
   public extraTurns = 0;
   /**
    * All berries eaten by this pokemon in this turn.
-   * Saved into {@linkcode PokemonSummonData | SummonData} by {@linkcode Abilities.CUD_CHEW) on turn end.
+   * Saved into {@linkcode PokemonSummonData | SummonData} by {@linkcode Abilities.CUD_CHEW} on turn end.
    * @see {@linkcode PokemonSummonData.berriesEatenLast}
   */
   public berriesEaten: BerryType[] = []

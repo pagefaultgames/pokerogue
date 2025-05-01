@@ -794,7 +794,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     const nameSizeTest = addTextObject(0, 0, displayName, TextStyle.BATTLE_INFO);
     nameTextWidth = nameSizeTest.displayWidth;
 
-    const gender = pokemon.summonData?.illusion?.gender ?? pokemon.gender;
+    const gender = pokemon.summonData.illusion?.gender ?? pokemon.gender;
     while (
       nameTextWidth >
       (this.player || !this.boss ? 60 : 98) -

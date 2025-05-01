@@ -8010,7 +8010,7 @@ export class MoveCondition {
 
 export class FirstMoveCondition extends MoveCondition {
   constructor() {
-    super((user, _target, _move) => user.summonData.waveTurnCount === 1);
+    super((user, _target, _move) => user.tempSummonData.waveTurnCount === 1);
   }
 
   getUserBenefitScore(user: Pokemon, _target: Pokemon, _move: Move): number {
