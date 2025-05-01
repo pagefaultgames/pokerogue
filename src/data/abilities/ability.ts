@@ -3289,7 +3289,7 @@ export class ConditionalUserFieldProtectStatAbAttr extends PreStatStageChangeAbA
    * @param stat - The {@linkcode Stat} being affected
    * @param cancelled - {@linkcode BooleanHolder} containing whether the stat change was already prevented
    * @param args - `[0]` the target pokemon of the stat change
-   * @returns
+   * @returns  `true` if the ability can be applied
   */
   override canApplyPreStatStageChange(pokemon: Pokemon, passive: boolean, simulated: boolean, stat: BattleStat, cancelled: BooleanHolder, args: [Pokemon, ...any]): boolean {
     const target = args[0];
