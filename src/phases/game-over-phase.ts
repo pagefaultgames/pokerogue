@@ -31,6 +31,7 @@ import ChallengeData from "#app/system/challenge-data";
 import TrainerData from "#app/system/trainer-data";
 import ArenaData from "#app/system/arena-data";
 import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
+import { MessagePhase } from "./message-phase";
 
 export class GameOverPhase extends BattlePhase {
   private isVictory: boolean;
@@ -122,7 +123,7 @@ export class GameOverPhase extends BattlePhase {
       globalScene.disableMenu = true;
       globalScene.time.delayedCall(1000, () => {
         let firstClear = false;
-        if (this.isVictory && newClear) {
+        if (this.isVictory) {
           if (globalScene.gameMode.isClassic) {
             firstClear = globalScene.validateAchv(achvs.CLASSIC_VICTORY);
             globalScene.validateAchv(achvs.UNEVOLVED_CLASSIC_VICTORY);
@@ -226,7 +227,17 @@ export class GameOverPhase extends BattlePhase {
           isVictory: this.isVictory,
           clientSessionId: clientSessionId,
         })
-        .then(success => doGameOver(!!success));
+        .then(success => doGameOver(!globalScene.gameMode.isDaily || !!success))
+        .catch(_err => {
+          globalScene.clearPhaseQueue();
+          globalScene.clearPhaseQueueSplice();
+          globalScene.unshiftPhase(new MessagePhase(i18next.t("menu:serverCommunicationFailed"), 2500));
+          // force the game to reload after 2 seconds.
+          setTimeout(() => {
+            window.location.reload();
+          }, 2000);
+          this.end();
+        });
     } else if (this.isVictory) {
       globalScene.gameData.offlineNewClear().then(result => {
         doGameOver(result);
