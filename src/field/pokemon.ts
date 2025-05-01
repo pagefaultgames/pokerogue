@@ -1216,6 +1216,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       return 1.5;
     }
 
+    // TODO: Rather than using -1 as a default... why don't we just change it to 1????????
     if (this.customPokemonData.spriteScale <= 0) {
       return 1;
     }
