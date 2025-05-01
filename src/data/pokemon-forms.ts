@@ -3,7 +3,7 @@ import type Pokemon from "../field/pokemon";
 import { StatusEffect } from "#enums/status-effect";
 import { allMoves } from "./moves/move";
 import { MoveCategory } from "#enums/MoveCategory";
-import { isNullOrUndefined, type Constructor, type nil } from "#app/utils/common";
+import type { Constructor, nil } from "#app/utils/common";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
@@ -369,10 +369,12 @@ export class SpeciesFormChangeMoveLearnedTrigger extends SpeciesFormChangeTrigge
 
 export abstract class SpeciesFormChangeMoveTrigger extends SpeciesFormChangeTrigger {
   public movePredicate: (m: Moves) => boolean;
+  public used: boolean;
 
-  constructor(move: Moves | ((m: Moves) => boolean)) {
+  constructor(move: Moves | ((m: Moves) => boolean), used = true) {
     super();
     this.movePredicate = typeof move === "function" ? move : (m: Moves) => m === move;
+    this.used = used;
   }
 }
 
@@ -381,7 +383,7 @@ export class SpeciesFormChangePreMoveTrigger extends SpeciesFormChangeMoveTrigge
 
   canChange(pokemon: Pokemon): boolean {
     const command = globalScene.currentBattle.turnCommands[pokemon.getBattlerIndex()];
-    return !isNullOrUndefined(command?.move) && this.movePredicate(command.move.move);
+    return !!command?.move && this.movePredicate(command.move.move) === this.used;
   }
 }
 
@@ -389,7 +391,9 @@ export class SpeciesFormChangePostMoveTrigger extends SpeciesFormChangeMoveTrigg
   description = i18next.t("pokemonEvolutions:Forms.postMove");
 
   canChange(pokemon: Pokemon): boolean {
-    return this.movePredicate(pokemon.getLastXMoves()[0].move);
+    return (
+      pokemon.summonData && !!pokemon.getLastXMoves(1).filter(m => this.movePredicate(m.move)).length === this.used
+    );
   }
 }
 
