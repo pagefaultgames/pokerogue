@@ -6,7 +6,7 @@ import type Pokemon from "#app/field/pokemon";
 import { PokemonMove } from "#app/field/pokemon";
 import { BypassSpeedChanceModifier } from "#app/modifier/modifier";
 import { Command } from "#app/ui/command-ui-handler";
-import { randSeedShuffle, BooleanHolder } from "#app/utils";
+import { randSeedShuffle, BooleanHolder } from "#app/utils/common";
 import { AttemptCapturePhase } from "./attempt-capture-phase";
 import { AttemptRunPhase } from "./attempt-run-phase";
 import { BerryPhase } from "./berry-phase";

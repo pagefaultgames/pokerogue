@@ -24,7 +24,7 @@ describe("Moves - Throat Chop", () => {
     game = new GameManager(phaserGame);
     game.override
       .moveset(Array(4).fill(Moves.GROWL))
-      .battleType("single")
+      .battleStyle("single")
       .ability(Abilities.BALL_FETCH)
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset(Array(4).fill(Moves.THROAT_CHOP))

@@ -1,5 +1,5 @@
 import { expect, describe, it, beforeAll } from "vitest";
-import { randomString, padInt } from "./utils";
+import { randomString, padInt } from "#app/utils/common";
 
 import Phaser from "phaser";
 

@@ -3,7 +3,7 @@ import type { Species } from "#enums/species";
 import { globalScene } from "#app/global-scene";
 import { PlayerPokemon } from "#app/field/pokemon";
 import type { Starter } from "#app/ui/starter-select-ui-handler";
-import { randSeedGauss, randSeedInt, randSeedItem, getEnumValues } from "#app/utils";
+import { randSeedGauss, randSeedInt, randSeedItem, getEnumValues } from "#app/utils/common";
 import type { PokemonSpeciesForm } from "#app/data/pokemon-species";
 import PokemonSpecies, { getPokemonSpecies, getPokemonSpeciesForm } from "#app/data/pokemon-species";
 import { speciesStarterCosts } from "#app/data/balance/starters";

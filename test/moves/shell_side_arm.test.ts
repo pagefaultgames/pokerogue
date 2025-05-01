@@ -30,7 +30,7 @@ describe("Moves - Shell Side Arm", () => {
     game = new GameManager(phaserGame);
     game.override
       .moveset([Moves.SHELL_SIDE_ARM, Moves.SPLASH])
-      .battleType("single")
+      .battleStyle("single")
       .startingLevel(100)
       .enemyLevel(100)
       .enemyAbility(Abilities.BALL_FETCH)

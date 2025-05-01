@@ -16,7 +16,7 @@ import { TrainerSlot } from "#enums/trainer-slot";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import { globalScene } from "#app/global-scene";
-import { isNullOrUndefined, randSeedInt, randSeedShuffle } from "#app/utils";
+import { isNullOrUndefined, randSeedInt, randSeedShuffle } from "#app/utils/common";
 import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
@@ -52,7 +52,7 @@ import i18next from "i18next";
 import MoveInfoOverlay from "#app/ui/move-info-overlay";
 import { allMoves } from "#app/data/moves/move";
 import { ModifierTier } from "#app/modifier/modifier-tier";
-import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
+import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { getSpriteKeysFromSpecies } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 
 /** the i18n namespace for the encounter */

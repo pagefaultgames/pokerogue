@@ -5,7 +5,7 @@ import { StatusEffect } from "#enums/status-effect";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi, type MockInstance } from "vitest";
-import { isNullOrUndefined } from "#app/utils";
+import { isNullOrUndefined } from "#app/utils/common";
 import { PostTurnResetStatusAbAttr } from "#app/data/abilities/ability";
 import { allAbilities } from "#app/data/data-lists";
 import type Pokemon from "#app/field/pokemon";
@@ -32,7 +32,7 @@ describe("Abilities - Healer", () => {
     game.override
       .moveset([Moves.SPLASH])
       .ability(Abilities.BALL_FETCH)
-      .battleType("double")
+      .battleStyle("double")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)

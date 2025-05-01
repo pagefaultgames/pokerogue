@@ -8,7 +8,7 @@ import {
   shiftCharCodes,
   randSeedItem,
   randInt,
-} from "#app/utils";
+} from "#app/utils/common";
 import Trainer, { TrainerVariant } from "./field/trainer";
 import type { GameMode } from "./game-mode";
 import { MoneyMultiplierModifier, PokemonHeldItemModifier } from "./modifier/modifier";
@@ -30,36 +30,8 @@ import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import type { CustomModifierSettings } from "#app/modifier/modifier-type";
 import { ModifierTier } from "#app/modifier/modifier-tier";
 import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
-
-export enum ClassicFixedBossWaves {
-  TOWN_YOUNGSTER = 5,
-  RIVAL_1 = 8,
-  RIVAL_2 = 25,
-  EVIL_GRUNT_1 = 35,
-  RIVAL_3 = 55,
-  EVIL_GRUNT_2 = 62,
-  EVIL_GRUNT_3 = 64,
-  EVIL_ADMIN_1 = 66,
-  RIVAL_4 = 95,
-  EVIL_GRUNT_4 = 112,
-  EVIL_ADMIN_2 = 114,
-  EVIL_BOSS_1 = 115,
-  RIVAL_5 = 145,
-  EVIL_BOSS_2 = 165,
-  ELITE_FOUR_1 = 182,
-  ELITE_FOUR_2 = 184,
-  ELITE_FOUR_3 = 186,
-  ELITE_FOUR_4 = 188,
-  CHAMPION = 190,
-  RIVAL_6 = 195,
-}
-
-export enum BattleType {
-  WILD,
-  TRAINER,
-  CLEAR,
-  MYSTERY_ENCOUNTER,
-}
+import { BattleType } from "#enums/battle-type";
+import { ClassicFixedBossWaves } from "#enums/fixed-boss-waves";
 
 export enum BattlerIndex {
   ATTACKER = -1,

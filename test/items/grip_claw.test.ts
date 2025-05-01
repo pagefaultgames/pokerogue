@@ -27,7 +27,7 @@ describe("Items - Grip Claw", () => {
     game = new GameManager(phaserGame);
 
     game.override
-      .battleType("double")
+      .battleStyle("double")
       .moveset([Moves.TACKLE, Moves.SPLASH, Moves.ATTRACT])
       .startingHeldItems([{ name: "GRIP_CLAW", count: 1 }])
       .enemySpecies(Species.SNORLAX)
@@ -101,7 +101,7 @@ describe("Items - Grip Claw", () => {
 
   it("should not allow Pollen Puff to steal items when healing ally", async () => {
     game.override
-      .battleType("double")
+      .battleStyle("double")
       .moveset([Moves.POLLEN_PUFF, Moves.ENDURE])
       .startingHeldItems([
         { name: "GRIP_CLAW", count: 1 },

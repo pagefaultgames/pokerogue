@@ -7,7 +7,7 @@ import GameManager from "#test/testUtils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { runMysteryEncounterToEnd } from "#test/mystery-encounter/encounter-test-utils";
 import type BattleScene from "#app/battle-scene";
-import { Mode } from "#app/ui/ui";
+import { UiMode } from "#enums/ui-mode";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { initSceneWithoutEncounterPhase } from "#test/testUtils/gameManagerUtils";
@@ -299,7 +299,7 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
       expect(scene.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
       await game.phaseInterceptor.run(SelectModifierPhase);
 
-      expect(scene.ui.getMode()).to.equal(Mode.MODIFIER_SELECT);
+      expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
       const modifierSelectHandler = scene.ui.handlers.find(
         h => h instanceof ModifierSelectUiHandler,
       ) as ModifierSelectUiHandler;
@@ -341,7 +341,7 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
       expect(scene.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
       await game.phaseInterceptor.run(SelectModifierPhase);
 
-      expect(scene.ui.getMode()).to.equal(Mode.MODIFIER_SELECT);
+      expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
       const modifierSelectHandler = scene.ui.handlers.find(
         h => h instanceof ModifierSelectUiHandler,
       ) as ModifierSelectUiHandler;
@@ -359,7 +359,7 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
 async function skipBattleToNextBattle(game: GameManager, isFinalBattle = false) {
   game.scene.clearPhaseQueue();
   game.scene.clearPhaseQueueSplice();
-  const commandUiHandler = game.scene.ui.handlers[Mode.COMMAND];
+  const commandUiHandler = game.scene.ui.handlers[UiMode.COMMAND];
   commandUiHandler.clear();
   game.scene.getEnemyParty().forEach(p => {
     p.hp = 0;

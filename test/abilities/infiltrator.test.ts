@@ -30,7 +30,7 @@ describe("Abilities - Infiltrator", () => {
     game.override
       .moveset([Moves.TACKLE, Moves.WATER_GUN, Moves.SPORE, Moves.BABY_DOLL_EYES])
       .ability(Abilities.INFILTRATOR)
-      .battleType("single")
+      .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.SNORLAX)
       .enemyAbility(Abilities.BALL_FETCH)
@@ -61,11 +61,11 @@ describe("Abilities - Infiltrator", () => {
     const player = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;
 
-    const preScreenDmg = enemy.getAttackDamage(player, allMoves[move]).damage;
+    const preScreenDmg = enemy.getAttackDamage({ source: player, move: allMoves[move] }).damage;
 
     game.scene.arena.addTag(tagType, 1, Moves.NONE, enemy.id, ArenaTagSide.ENEMY, true);
 
-    const postScreenDmg = enemy.getAttackDamage(player, allMoves[move]).damage;
+    const postScreenDmg = enemy.getAttackDamage({ source: player, move: allMoves[move] }).damage;
 
     expect(postScreenDmg).toBe(preScreenDmg);
     expect(player.battleData.abilitiesApplied[0]).toBe(Abilities.INFILTRATOR);

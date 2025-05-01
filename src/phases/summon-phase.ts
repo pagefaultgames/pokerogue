@@ -1,4 +1,4 @@
-import { BattleType } from "#app/battle";
+import { BattleType } from "#enums/battle-type";
 import { getPokeballAtlasKey, getPokeballTintColor } from "#app/data/pokeball";
 import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms";
 import { TrainerSlot } from "#enums/trainer-slot";
