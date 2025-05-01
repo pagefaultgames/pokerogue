@@ -310,6 +310,45 @@ const timedEvents: TimedEvent[] = [
       },
     ],
   },
+  {
+    name: "Shining Spring",
+    eventType: EventType.SHINY,
+    startDate: new Date(Date.UTC(2025, 4, 1)),
+    endDate: new Date(Date.UTC(2025, 4, 12)),
+    bannerKey: "spr25event",
+    scale: 0.21,
+    availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "es-MX", "pt-BR", "zh-CN"],
+    shinyMultiplier: 2,
+    upgradeUnlockedVouchers: true,
+    eventEncounters: [
+      { species: Species.HOPPIP },
+      { species: Species.CELEBI },
+      { species: Species.VOLBEAT },
+      { species: Species.ILLUMISE },
+      { species: Species.SPOINK },
+      { species: Species.LILEEP },
+      { species: Species.SHINX },
+      { species: Species.PACHIRISU },
+      { species: Species.CHERUBI },
+      { species: Species.MUNCHLAX },
+      { species: Species.TEPIG },
+      { species: Species.DARUMAKA },
+      { species: Species.ARCHEN },
+      { species: Species.DEERLING, formIndex: 0 }, // Spring Deerling
+      { species: Species.CLAUNCHER },
+      { species: Species.WISHIWASHI },
+      { species: Species.MUDBRAY },
+      { species: Species.DRAMPA },
+      { species: Species.JANGMO_O },
+      { species: Species.APPLIN },
+    ],
+    classicWaveRewards: [
+      { wave: 8, type: "SHINY_CHARM" },
+      { wave: 8, type: "ABILITY_CHARM" },
+      { wave: 8, type: "CATCHING_CHARM" },
+      { wave: 25, type: "SHINY_CHARM" },
+    ],
+  }
 ];
 
 export class TimedEventManager {
