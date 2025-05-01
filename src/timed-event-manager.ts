@@ -332,6 +332,9 @@ const timedEvents: TimedEvent[] = [
       { species: Species.CHERUBI },
       { species: Species.MUNCHLAX },
       { species: Species.TEPIG },
+      { species: Species.PANSAGE },
+      { species: Species.PANSEAR },
+      { species: Species.PANPOUR },
       { species: Species.DARUMAKA },
       { species: Species.ARCHEN },
       { species: Species.DEERLING, formIndex: 0 }, // Spring Deerling
