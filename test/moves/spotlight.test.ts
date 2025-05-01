@@ -22,7 +22,7 @@ describe("Moves - Spotlight", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleType("double");
+    game.override.battleStyle("double");
     game.override.starterSpecies(Species.AMOONGUSS);
     game.override.enemySpecies(Species.SNORLAX);
     game.override.startingLevel(100);

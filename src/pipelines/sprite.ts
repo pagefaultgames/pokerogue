@@ -3,7 +3,7 @@ import MysteryEncounterIntroVisuals from "#app/field/mystery-encounter-intro";
 import Pokemon from "#app/field/pokemon";
 import Trainer from "#app/field/trainer";
 import { globalScene } from "#app/global-scene";
-import { rgbHexToRgba } from "#app/utils";
+import { rgbHexToRgba } from "#app/utils/common";
 import FieldSpritePipeline from "./field-sprite";
 import spriteFragShader from "./glsl/spriteFragShader.frag?raw";
 import spriteVertShader from "./glsl/spriteShader.vert?raw";

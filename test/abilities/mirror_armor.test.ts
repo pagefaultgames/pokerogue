@@ -27,7 +27,7 @@ describe("Ability - Mirror Armor", () => {
     game = new GameManager(phaserGame);
 
     game.override
-      .battleType("single")
+      .battleStyle("single")
       .enemySpecies(Species.RATTATA)
       .enemyMoveset([Moves.SPLASH, Moves.STICKY_WEB, Moves.TICKLE, Moves.OCTOLOCK])
       .enemyAbility(Abilities.BALL_FETCH)
@@ -71,7 +71,7 @@ describe("Ability - Mirror Armor", () => {
   });
 
   it("Player side + double battle Intimidate - opponents each lose -2 atk", async () => {
-    game.override.battleType("double");
+    game.override.battleStyle("double");
     game.override.ability(Abilities.MIRROR_ARMOR);
     game.override.enemyAbility(Abilities.INTIMIDATE);
     await game.classicMode.startBattle([Species.BULBASAUR, Species.CHARMANDER]);
@@ -93,7 +93,7 @@ describe("Ability - Mirror Armor", () => {
   });
 
   it("Enemy side + double battle Intimidate - players each lose -2 atk", async () => {
-    game.override.battleType("double");
+    game.override.battleStyle("double");
     game.override.enemyAbility(Abilities.MIRROR_ARMOR);
     game.override.ability(Abilities.INTIMIDATE);
     await game.classicMode.startBattle([Species.BULBASAUR, Species.CHARMANDER]);
@@ -134,7 +134,7 @@ describe("Ability - Mirror Armor", () => {
   });
 
   it("Player side + double battle Intimidate + Tickle - opponents each lose -3 atk, -1 def", async () => {
-    game.override.battleType("double");
+    game.override.battleStyle("double");
     game.override.ability(Abilities.MIRROR_ARMOR);
     game.override.enemyAbility(Abilities.INTIMIDATE);
     await game.classicMode.startBattle([Species.BULBASAUR, Species.CHARMANDER]);
@@ -288,7 +288,7 @@ describe("Ability - Mirror Armor", () => {
   });
 
   it("Double battle + sticky web applied player side - player switches out and enemy 1 should lose -1 speed", async () => {
-    game.override.battleType("double");
+    game.override.battleStyle("double");
     game.override.ability(Abilities.MIRROR_ARMOR);
     await game.classicMode.startBattle([Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE]);
 

@@ -33,7 +33,7 @@ import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
 import type { StatStageChangeCallback } from "#app/phases/stat-stage-change-phase";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import i18next from "#app/plugins/i18n";
-import { BooleanHolder, getFrameMs, NumberHolder, toDmgValue } from "#app/utils";
+import { BooleanHolder, getFrameMs, NumberHolder, toDmgValue } from "#app/utils/common";
 import { Abilities } from "#enums/abilities";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Moves } from "#enums/moves";
@@ -42,7 +42,7 @@ import { Species } from "#enums/species";
 import { EFFECTIVE_STATS, getStatKey, Stat, type BattleStat, type EffectiveStat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { WeatherType } from "#enums/weather-type";
-import { isNullOrUndefined } from "#app/utils";
+import { isNullOrUndefined } from "#app/utils/common";
 
 export enum BattlerTagLapseType {
   FAINT,
@@ -2637,7 +2637,7 @@ export class GulpMissileTag extends BattlerTag {
         return false;
       }
 
-      if (moveEffectPhase.move.getMove().hitsSubstitute(attacker, pokemon)) {
+      if (moveEffectPhase.move.hitsSubstitute(attacker, pokemon)) {
         return true;
       }
 
@@ -2993,7 +2993,7 @@ export class SubstituteTag extends BattlerTag {
       if (!attacker) {
         return;
       }
-      const move = moveEffectPhase.move.getMove();
+      const move = moveEffectPhase.move;
       const firstHit = attacker.turnData.hitCount === attacker.turnData.hitsLeft;
 
       if (firstHit && move.hitsSubstitute(attacker, pokemon)) {
@@ -3681,7 +3681,7 @@ function getMoveEffectPhaseData(_pokemon: Pokemon): { phase: MoveEffectPhase; at
     return {
       phase: phase,
       attacker: phase.getPokemon(),
-      move: phase.move.getMove(),
+      move: phase.move,
     };
   }
   return null;

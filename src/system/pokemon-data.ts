@@ -1,4 +1,4 @@
-import { BattleType } from "../battle";
+import { BattleType } from "#enums/battle-type";
 import { globalScene } from "#app/global-scene";
 import type { Gender } from "../data/gender";
 import type { Nature } from "#enums/nature";

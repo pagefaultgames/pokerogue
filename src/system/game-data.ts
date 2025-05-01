@@ -1,6 +1,6 @@
 import i18next from "i18next";
 import type { PokeballCounts } from "#app/battle-scene";
-import { bypassLogin } from "#app/battle-scene";
+import { bypassLogin } from "#app/global-vars/bypass-login";
 import { globalScene } from "#app/global-scene";
 import type { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
@@ -8,14 +8,14 @@ import { pokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
 import type PokemonSpecies from "#app/data/pokemon-species";
 import { allSpecies, getPokemonSpecies } from "#app/data/pokemon-species";
 import { speciesStarterCosts } from "#app/data/balance/starters";
-import { randInt, getEnumKeys, isLocal, executeIf, fixedInt, randSeedItem, NumberHolder } from "#app/utils";
+import { randInt, getEnumKeys, isLocal, executeIf, fixedInt, randSeedItem, NumberHolder } from "#app/utils/common";
 import Overrides from "#app/overrides";
 import PokemonData from "#app/system/pokemon-data";
 import PersistentModifierData from "#app/system/modifier-data";
 import ArenaData from "#app/system/arena-data";
 import { Unlockables } from "#app/system/unlockables";
 import { GameModes, getGameMode } from "#app/game-mode";
-import { BattleType } from "#app/battle";
+import { BattleType } from "#enums/battle-type";
 import TrainerData from "#app/system/trainer-data";
 import { trainerConfigs } from "#app/data/trainers/trainer-config";
 import { resetSettings, setSetting, SettingKeys } from "#app/system/settings/settings";
@@ -24,7 +24,7 @@ import EggData from "#app/system/egg-data";
 import type { Egg } from "#app/data/egg";
 import { vouchers, VoucherType } from "#app/system/voucher";
 import { AES, enc } from "crypto-js";
-import { Mode } from "#app/ui/ui";
+import { UiMode } from "#enums/ui-mode";
 import { clientSessionId, loggedInUser, updateUserInfo } from "#app/account";
 import { Nature } from "#enums/nature";
 import { GameStats } from "#app/system/game-stats";
@@ -462,8 +462,13 @@ export class GameData {
 
       if (!bypassLogin) {
         pokerogueApi.savedata.system.get({ clientSessionId }).then(saveDataOrErr => {
-          if (!saveDataOrErr || saveDataOrErr.length === 0 || saveDataOrErr[0] !== "{") {
-            if (saveDataOrErr?.startsWith("sql: no rows in result set")) {
+          if (
+            typeof saveDataOrErr === "number" ||
+            !saveDataOrErr ||
+            saveDataOrErr.length === 0 ||
+            saveDataOrErr[0] !== "{"
+          ) {
+            if (saveDataOrErr === 404) {
               globalScene.queueMessage(
                 "Save data could not be found. If this is a new account, you can safely ignore this message.",
                 null,
@@ -471,7 +476,7 @@ export class GameData {
               );
               return resolve(true);
             }
-            if (saveDataOrErr?.includes("Too many connections")) {
+            if (typeof saveDataOrErr === "string" && saveDataOrErr?.includes("Too many connections")) {
               globalScene.queueMessage(
                 "Too many people are trying to connect and the server is overloaded. Please try again later.",
                 null,
@@ -479,7 +484,6 @@ export class GameData {
               );
               return resolve(false);
             }
-            console.error(saveDataOrErr);
             return resolve(false);
           }
 
@@ -1430,7 +1434,7 @@ export class GameData {
         const systemData = useCachedSystem
           ? this.parseSystemData(decrypt(localStorage.getItem(`data_${loggedInUser?.username}`)!, bypassLogin))
           : this.getSystemSaveData(); // TODO: is this bang correct?
-        
+
         const request = {
           system: systemData,
           session: sessionData,
@@ -1500,7 +1504,7 @@ export class GameData {
         link.remove();
       };
       if (!bypassLogin && dataType < GameDataType.SETTINGS) {
-        let promise: Promise<string | null> = Promise.resolve(null);
+        let promise: Promise<string | null | number> = Promise.resolve(null);
 
         if (dataType === GameDataType.SYSTEM) {
           promise = pokerogueApi.savedata.system.get({ clientSessionId });
@@ -1512,7 +1516,7 @@ export class GameData {
         }
 
         promise.then(response => {
-          if (!response?.length || response[0] !== "{") {
+          if (typeof response === "number" || !response?.length || response[0] !== "{") {
             console.error(response);
             resolve(false);
             return;
@@ -1604,7 +1608,7 @@ export class GameData {
             null,
             () => {
               globalScene.ui.setOverlayMode(
-                Mode.CONFIRM,
+                UiMode.CONFIRM,
                 () => {
                   localStorage.setItem(dataKey, encrypt(dataStr, bypassLogin));
 

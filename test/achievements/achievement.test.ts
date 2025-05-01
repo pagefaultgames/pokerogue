@@ -10,7 +10,7 @@ import {
   RibbonAchv,
   achvs,
 } from "#app/system/achv";
-import { NumberHolder } from "#app/utils";
+import { NumberHolder } from "#app/utils/common";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";

@@ -25,7 +25,7 @@ describe("Moves - Lunar Dance", () => {
     game = new GameManager(phaserGame);
     game.override
       .statusEffect(StatusEffect.BURN)
-      .battleType("double")
+      .battleStyle("double")
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH);
   });

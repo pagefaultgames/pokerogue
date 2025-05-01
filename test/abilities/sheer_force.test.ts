@@ -26,7 +26,7 @@ describe("Abilities - Sheer Force", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .battleType("single")
+      .battleStyle("single")
       .ability(Abilities.SHEER_FORCE)
       .enemySpecies(Species.ONIX)
       .enemyAbility(Abilities.BALL_FETCH)

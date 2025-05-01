@@ -5,7 +5,7 @@ import type Pokemon from "../field/pokemon";
 import { PokemonType } from "#enums/pokemon-type";
 import type Move from "./moves/move";
 import { AttackMove } from "./moves/move";
-import { randSeedInt } from "#app/utils";
+import { randSeedInt } from "#app/utils/common";
 import { SuppressWeatherEffectAbAttr } from "./abilities/ability";
 import { TerrainType, getTerrainName } from "./terrain";
 import i18next from "i18next";
@@ -369,6 +369,7 @@ export function getRandomWeatherType(arena: Arena): WeatherType {
       if (hasSun) {
         weatherPool.push({ weatherType: WeatherType.SUNNY, weight: 2 });
       }
+      break;
     case Biome.VOLCANO:
       weatherPool = [
         {
