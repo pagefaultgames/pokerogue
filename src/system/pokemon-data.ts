@@ -45,7 +45,6 @@ export default class PokemonData {
   public pauseEvolutions: boolean;
   public pokerus: boolean;
   public usedTMs: Moves[];
-  public evoCounter: number;
   public teraType: PokemonType;
   public isTerastallized: boolean;
   public stellarTypesBoosted: PokemonType[];
@@ -109,7 +108,6 @@ export default class PokemonData {
     this.luck = source.luck !== undefined ? source.luck : source.shiny ? source.variant + 1 : 0;
     if (!forHistory) {
       this.pauseEvolutions = !!source.pauseEvolutions;
-      this.evoCounter = source.evoCounter ?? 0;
     }
     this.pokerus = !!source.pokerus;
     this.teraType = source.teraType as PokemonType;

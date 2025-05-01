@@ -98,6 +98,8 @@ import {
   TempExtraModifierModifier,
   CriticalCatchChanceBoosterModifier,
   FieldEffectModifier,
+  EvoTrackerMoveUseModifier,
+  EvoTrackerRecoilModifier,
 } from "#app/modifier/modifier";
 import { ModifierTier } from "#app/modifier/modifier-tier";
 import Overrides from "#app/overrides";
@@ -1214,9 +1216,7 @@ export class EvolutionItemModifierType extends PokemonModifierType implements Ge
           pokemonEvolutions.hasOwnProperty(pokemon.species.speciesId) &&
           pokemonEvolutions[pokemon.species.speciesId].filter(
             e =>
-              e.item === this.evolutionItem &&
-              (!e.condition || e.condition.predicate(pokemon)) &&
-              (e.preFormKey === null || e.preFormKey === pokemon.getFormKey()),
+              e.validate(pokemon, false, this.evolutionItem),
           ).length &&
           pokemon.getFormKey() !== SpeciesFormKey.GIGANTAMAX
         ) {
@@ -1228,9 +1228,7 @@ export class EvolutionItemModifierType extends PokemonModifierType implements Ge
           pokemonEvolutions.hasOwnProperty(pokemon.fusionSpecies.speciesId) &&
           pokemonEvolutions[pokemon.fusionSpecies.speciesId].filter(
             e =>
-              e.item === this.evolutionItem &&
-              (!e.condition || e.condition.predicate(pokemon)) &&
-              (e.preFormKey === null || e.preFormKey === pokemon.getFusionFormKey()),
+              e.validate(pokemon, true, this.evolutionItem),
           ).length &&
           pokemon.getFusionFormKey() !== SpeciesFormKey.GIGANTAMAX
         ) {
@@ -1566,9 +1564,7 @@ class EvolutionItemModifierTypeGenerator extends ModifierTypeGenerator {
             const evolutions = pokemonEvolutions[p.species.speciesId];
             return evolutions.filter(
               e =>
-                e.item !== EvolutionItem.NONE &&
-                (e.evoFormKey === null || (e.preFormKey || "") === p.getFormKey()) &&
-                (!e.condition || e.condition.predicate(p)),
+                e.isValidItemEvolution(p),
             );
           }),
         party
@@ -1585,14 +1581,12 @@ class EvolutionItemModifierTypeGenerator extends ModifierTypeGenerator {
             const evolutions = pokemonEvolutions[p.fusionSpecies!.speciesId];
             return evolutions.filter(
               e =>
-                e.item !== EvolutionItem.NONE &&
-                (e.evoFormKey === null || (e.preFormKey || "") === p.getFusionFormKey()) &&
-                (!e.condition || e.condition.predicate(p)),
+                e.validate(p, true),
             );
           }),
       ]
         .flat()
-        .flatMap(e => e.item)
+        .flatMap(e => e.evoItem)
         .filter(i => (!!i && i > 50) === rare);
 
       if (!evolutionItemPool.length) {
@@ -1904,7 +1898,28 @@ export const modifierTypes = {
     new PokemonHeldItemModifierType(
       "modifierType:ModifierType.EVOLUTION_TRACKER_GIMMIGHOUL",
       "relic_gold",
-      (type, args) => new EvoTrackerModifier(type, (args[0] as Pokemon).id, Species.GIMMIGHOUL, 10),
+      (type, args) => new EvoTrackerModifier(type, (args[0] as Pokemon).id, Species.GIMMIGHOUL, 10, (args[1] as number ?? 1)),
+    ),
+  
+  EVOLUTION_TRACKER_PRIMEAPE: () =>
+    new PokemonHeldItemModifierType(
+      "modifierType:ModifierType.EVOLUTION_TRACKER_PRIMEAPE",
+      "tm_ghost",
+      (type, args) => new EvoTrackerMoveUseModifier(type, (args[0] as Pokemon).id, Species.PRIMEAPE, Moves.RAGE_FIST, 10)
+    ),
+
+  EVOLUTION_TRACKER_STANTLER: () =>
+    new PokemonHeldItemModifierType(
+      "modifierType:ModifierType.EVOLUTION_TRACKER_STANTLER",
+      "tm_psychic",
+      (type, args) => new EvoTrackerMoveUseModifier(type, (args[0] as Pokemon).id, Species.STANTLER, Moves.PSYSHIELD_BASH, 10)
+    ),
+
+  EVOLUTION_TRACKER_BASCULIN: () =>
+    new PokemonHeldItemModifierType(
+      "modifierType:ModifierType.EVOLUTION_TRACKER_BASCULIN",
+      "tm_water",
+      (type, args) => new EvoTrackerRecoilModifier(type, (args[0] as Pokemon).id, Species.BASCULIN, 294, (args[1] as number ?? 1))
     ),
 
   MEGA_BRACELET: () =>
