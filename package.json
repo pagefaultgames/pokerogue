@@ -9,7 +9,7 @@
     "build": "vite build",
     "build:beta": "vite build --mode beta",
     "preview": "vite preview",
-    "test": "vitest run",
+    "test": "vitest run --no-isolate",
     "test:cov": "vitest run --coverage --no-isolate",
     "test:watch": "vitest watch --coverage --no-isolate",
     "test:silent": "vitest run --silent --no-isolate",
