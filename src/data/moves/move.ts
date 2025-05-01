@@ -652,7 +652,7 @@ export default class Move implements Localizable {
         break;
       case MoveFlags.IGNORE_ABILITIES:
         if (user.hasAbilityWithAttr(MoveAbilityBypassAbAttr)) {
-          const abilityEffectsIgnored = new BooleanHolder(false); 
+          const abilityEffectsIgnored = new BooleanHolder(false);
           applyAbAttrs(MoveAbilityBypassAbAttr, user, abilityEffectsIgnored, false, this);
           if (abilityEffectsIgnored.value) {
             return true;
@@ -2463,7 +2463,7 @@ export class StatusEffectAttr extends MoveEffectAttr {
         return false;
       }
       if (((!pokemon.status || this.overrideStatus) || (pokemon.status.effect === this.effect && moveChance < 0))
-        && pokemon.trySetStatus(this.effect, true, user, this.turnsRemaining, null, this.overrideStatus)) {
+        && pokemon.trySetStatus(this.effect, true, user, this.turnsRemaining, null, this.overrideStatus, false)) {
         applyPostAttackAbAttrs(ConfusionOnStatusEffectAbAttr, user, target, move, null, false, this.effect);
         return true;
       }
@@ -3160,7 +3160,7 @@ export class StatStageChangeAttr extends MoveEffectAttr {
   private get showMessage () {
     return this.options?.showMessage ?? true;
   }
-  
+
   /**
    * Attempts to change stats of the user or target (depending on value of selfTarget) if conditions are met
    * @param user {@linkcode Pokemon} the user of the move
@@ -6326,11 +6326,11 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
 
       if (!allyPokemon?.isActive(true) && switchOutTarget.hp) {
           globalScene.pushPhase(new BattleEndPhase(false));
-                    
+
           if (globalScene.gameMode.hasRandomBiomes || globalScene.isNewBiome()) {
             globalScene.pushPhase(new SelectBiomePhase());
           }
-          
+
           globalScene.pushPhase(new NewBattlePhase());
       }
     }
@@ -7665,20 +7665,6 @@ export class AverageStatsAttr extends MoveEffectAttr {
   }
 }
 
-export class DiscourageFrequentUseAttr extends MoveAttr {
-  getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
-    const lastMoves = user.getLastXMoves(4);
-    console.log(lastMoves);
-    for (let m = 0; m < lastMoves.length; m++) {
-      if (lastMoves[m].move === move.id) {
-        return (4 - (m + 1)) * -10;
-      }
-    }
-
-    return 0;
-  }
-}
-
 export class MoneyAttr extends MoveEffectAttr {
   constructor() {
     super(true, {firstHitOnly: true });
@@ -8632,7 +8618,9 @@ export function initMoves() {
       .condition((user, target, move) => !target.summonData?.illusion && !user.summonData?.illusion)
       // transforming from or into fusion pokemon causes various problems (such as crashes)
       .condition((user, target, move) => !target.getTag(BattlerTagType.SUBSTITUTE) && !user.fusionSpecies && !target.fusionSpecies)
-      .ignoresProtect(),
+      .ignoresProtect()
+      // Transforming should copy the target's rage fist hit count
+      .edgeCase(),
     new AttackMove(Moves.BUBBLE, PokemonType.WATER, MoveCategory.SPECIAL, 40, 100, 30, 10, 0, 1)
       .attr(StatStageChangeAttr, [ Stat.SPD ], -1)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
@@ -10517,8 +10505,7 @@ export function initMoves() {
         } else {
           return 1;
         }
-      })
-      .attr(DiscourageFrequentUseAttr),
+      }),
 
     new AttackMove(Moves.SNIPE_SHOT, PokemonType.WATER, MoveCategory.SPECIAL, 80, 100, 15, -1, 0, 8)
       .attr(HighCritAttr)

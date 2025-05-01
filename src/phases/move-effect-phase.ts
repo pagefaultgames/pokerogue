@@ -864,7 +864,7 @@ export class MoveEffectPhase extends PokemonPhase {
         });
 
     if (isCritical) {
-      globalScene.queueMessage(i18next.t("battle:criticalHit"));
+      globalScene.queueMessage(i18next.t("battle:hitResultCriticalHit"));
     }
 
     if (damage <= 0) {

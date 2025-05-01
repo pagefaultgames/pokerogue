@@ -57,9 +57,7 @@ describe("Pokerogue Session Savedata API", () => {
     it("should return false and report a warning on ERROR", async () => {
       server.use(http.get(`${apiBase}/savedata/session/newclear`, () => HttpResponse.error()));
 
-      const success = await sessionSavedataApi.newclear(params);
-
-      expect(success).toBe(false);
+      await expect(sessionSavedataApi.newclear(params)).rejects.toThrow("Could not newclear session!");
       expect(console.warn).toHaveBeenCalledWith("Could not newclear session!", expect.any(Error));
     });
   });

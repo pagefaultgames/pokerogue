@@ -12,7 +12,6 @@ import BattleInfo, {
 import type Move from "#app/data/moves/move";
 import {
   HighCritAttr,
-  StatChangeBeforeDmgCalcAttr,
   HitsTagAttr,
   applyMoveAttrs,
   FixedDamageAttr,
@@ -70,10 +69,8 @@ import {
   EFFECTIVE_STATS,
 } from "#enums/stat";
 import {
-  DamageMoneyRewardModifier,
   EnemyDamageBoosterModifier,
   EnemyDamageReducerModifier,
-  EnemyEndureChanceModifier,
   EnemyFusionChanceModifier,
   HiddenAbilityRateBoosterModifier,
   BaseStatModifier,
@@ -119,7 +116,6 @@ import {
   TypeImmuneTag,
   getBattlerTag,
   SemiInvulnerableTag,
-  TypeBoostTag,
   MoveRestrictionBattlerTag,
   ExposedTag,
   DragonCheerTag,
@@ -188,7 +184,7 @@ import {
   PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr,
   applyAllyStatMultiplierAbAttrs,
   AllyStatMultiplierAbAttr,
-  MoveAbilityBypassAbAttr
+  MoveAbilityBypassAbAttr,
 } from "#app/data/abilities/ability";
 import { allAbilities } from "#app/data/data-lists";
 import type PokemonData from "#app/system/pokemon-data";
@@ -202,7 +198,7 @@ import {
   EVOLVE_MOVE,
   RELEARN_MOVE,
 } from "#app/data/balance/pokemon-level-moves";
-import { DamageAchv, achvs } from "#app/system/achv";
+import { achvs } from "#app/system/achv";
 import type { StarterDataEntry, StarterMoveset } from "#app/system/game-data";
 import { DexAttr } from "#app/system/game-data";
 import {
@@ -248,7 +244,7 @@ import { PLAYER_PARTY_MAX_SIZE } from "#app/constants";
 import { CustomPokemonData } from "#app/data/custom-pokemon-data";
 import { SwitchType } from "#enums/switch-type";
 import { SpeciesFormKey } from "#enums/species-form-key";
-import {getStatusEffectOverlapText } from "#app/data/status-effect";
+import { getStatusEffectOverlapText } from "#app/data/status-effect";
 import {
   BASE_HIDDEN_ABILITY_CHANCE,
   BASE_SHINY_CHANCE,
@@ -5533,9 +5529,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     sourcePokemon: Pokemon | null = null,
     turnsRemaining = 0,
     sourceText: string | null = null,
-    overrideStatus?: boolean
+    overrideStatus?: boolean,
+    quiet = true,
   ): boolean {
-    if (!this.canSetStatus(effect, false, overrideStatus, sourcePokemon)) {
+    if (!this.canSetStatus(effect, quiet, overrideStatus, sourcePokemon)) {
       return false;
     }
     if (this.isFainted() && effect !== StatusEffect.FAINT) {
@@ -7029,6 +7026,15 @@ export class EnemyPokemon extends Pokemon {
           evolution.condition.enforceFunc(this);
         }
         speciesId = prevolution;
+      }
+
+      if (this.hasTrainer() && globalScene.currentBattle) {
+        const { waveIndex } = globalScene.currentBattle;
+        const ivs: number[] = [];
+        while (ivs.length < 6) {
+          ivs.push(this.randSeedIntRange(Math.floor(waveIndex / 10), 31));
+        }
+        this.ivs = ivs;
       }
     }
 
