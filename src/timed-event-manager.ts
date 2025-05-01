@@ -313,7 +313,7 @@ const timedEvents: TimedEvent[] = [
   {
     name: "Shining Spring",
     eventType: EventType.SHINY,
-    startDate: new Date(Date.UTC(2025, 4, 1)),
+    startDate: new Date(Date.UTC(2025, 4, 2)),
     endDate: new Date(Date.UTC(2025, 4, 12)),
     bannerKey: "spr25event",
     scale: 0.21,
