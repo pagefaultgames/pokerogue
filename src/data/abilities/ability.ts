@@ -3408,8 +3408,12 @@ export class BlockCritAbAttr extends AbAttr {
     super(false);
   }
 
-  override apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: BooleanHolder, args: any[]): void {
-    (args[0] as BooleanHolder).value = true;
+  /**
+   * Apply the block crit ability by setting the value in the provided boolean holder to false
+   * @param args - [0] is a boolean holder representing whether the attack can crit
+   */
+  override apply(_pokemon: Pokemon, _passive: boolean, _simulated: boolean, _cancelled: BooleanHolder, args: [BooleanHolder, ...any]): void {
+    (args[0]).value = false;
   }
 }
 
