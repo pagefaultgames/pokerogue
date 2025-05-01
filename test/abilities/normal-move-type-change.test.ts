@@ -4,7 +4,6 @@ import { PokemonType } from "#enums/pokemon-type";
 import { Abilities } from "#app/enums/abilities";
 import { Moves } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
-import { HitResult } from "#app/field/pokemon";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -25,11 +24,11 @@ import { toDmgValue } from "#app/utils/common";
  */
 
 describe.each([
-  { ab: Abilities.GALVANIZE, ab_name: "Galvanize", ty: PokemonType.ELECTRIC, ty_name: "electric" },
-  { ab: Abilities.PIXILATE, ab_name: "Pixilate", ty: PokemonType.FAIRY, ty_name: "fairy" },
-  { ab: Abilities.REFRIGERATE, ab_name: "Refrigerate", ty: PokemonType.ICE, ty_name: "ice" },
-  { ab: Abilities.AERILATE, ab_name: "Aerilate", ty: PokemonType.FLYING, ty_name: "flying" },
-])("Abilities - $ab_name", ({ ab, ty, ty_name }) => {
+  { ab: Abilities.GALVANIZE, ab_name: "Galvanize", ty: PokemonType.ELECTRIC, tyName: "electric" },
+  { ab: Abilities.PIXILATE, ab_name: "Pixilate", ty: PokemonType.FAIRY, tyName: "fairy" },
+  { ab: Abilities.REFRIGERATE, ab_name: "Refrigerate", ty: PokemonType.ICE, tyName: "ice" },
+  { ab: Abilities.AERILATE, ab_name: "Aerilate", ty: PokemonType.FLYING, tyName: "flying" },
+])("Abilities - $ab_name", ({ ab, ty, tyName }) => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
@@ -58,14 +57,14 @@ describe.each([
       .enemyLevel(100);
   });
 
-  it(`should change Normal-type attacks to ${ty_name} type and boost their power`, async () => {
+  it(`should change Normal-type attacks to ${tyName} type and boost their power`, async () => {
     await game.classicMode.startBattle();
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
     const typeSpy = vi.spyOn(playerPokemon, "getMoveType");
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
-    const enemySpy = vi.spyOn(enemyPokemon, "apply");
+    const enemySpy = vi.spyOn(enemyPokemon, "getMoveEffectiveness");
     const powerSpy = vi.spyOn(allMoves[Moves.TACKLE], "calculateBattlePower");
 
     game.move.select(Moves.TACKLE);
@@ -73,13 +72,9 @@ describe.each([
     await game.phaseInterceptor.to("BerryPhase", false);
 
     expect(typeSpy).toHaveLastReturnedWith(ty);
-    expect(enemySpy).toHaveReturnedWith(HitResult.EFFECTIVE);
+    expect(enemySpy).toHaveReturnedWith(1);
     expect(powerSpy).toHaveReturnedWith(48);
     expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
-
-    typeSpy.mockRestore();
-    powerSpy.mockRestore();
-    enemySpy.mockRestore();
   });
 
   // Galvanize specifically would like to check for volt absorb's activation
@@ -93,7 +88,7 @@ describe.each([
       const tySpy = vi.spyOn(playerPokemon, "getMoveType");
 
       const enemyPokemon = game.scene.getEnemyPokemon()!;
-      const enemyApplySpy = vi.spyOn(enemyPokemon, "apply");
+      const enemyEffectivenessSpy = vi.spyOn(enemyPokemon, "getMoveEffectiveness");
 
       enemyPokemon.hp = Math.floor(enemyPokemon.getMaxHp() * 0.8);
 
@@ -102,11 +97,8 @@ describe.each([
       await game.phaseInterceptor.to("BerryPhase", false);
 
       expect(tySpy).toHaveLastReturnedWith(PokemonType.ELECTRIC);
-      expect(enemyApplySpy).toHaveReturnedWith(HitResult.NO_EFFECT);
+      expect(enemyEffectivenessSpy).toHaveReturnedWith(0);
       expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
-
-      tySpy.mockRestore();
-      enemyApplySpy.mockRestore();
     });
   }
 
@@ -117,7 +109,7 @@ describe.each([
     { moveName: "Weather Ball", move: Moves.WEATHER_BALL, expected_ty: PokemonType.NORMAL },
     { moveName: "Multi Attack", move: Moves.MULTI_ATTACK, expected_ty: PokemonType.NORMAL },
     { moveName: "Techno Blast", move: Moves.TECHNO_BLAST, expected_ty: PokemonType.NORMAL },
-  ])("should not change the type of $moveName", async ({ move, expected_ty }) => {
+  ])("should not change the type of $moveName", async ({ move, expected_ty: expectedTy }) => {
     game.override
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)
@@ -127,18 +119,12 @@ describe.each([
     await game.classicMode.startBattle([Species.MAGIKARP]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
-    const ty_spy = vi.spyOn(playerPokemon, "getMoveType");
-
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
-    const enemy_spy = vi.spyOn(enemyPokemon, "apply");
+    const tySpy = vi.spyOn(playerPokemon, "getMoveType");
 
     game.move.select(move);
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    expect(playerPokemon.getMoveType).toHaveLastReturnedWith(expected_ty);
-
-    ty_spy.mockRestore();
-    enemy_spy.mockRestore();
+    expect(tySpy).toHaveLastReturnedWith(expectedTy);
   });
 
   it("should affect all hits of a Normal-type multi-hit move", async () => {
@@ -148,7 +134,6 @@ describe.each([
     const tySpy = vi.spyOn(playerPokemon, "getMoveType");
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
-    const enemySpy = vi.spyOn(enemyPokemon, "apply");
 
     game.move.select(Moves.FURY_SWIPES);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
@@ -165,8 +150,6 @@ describe.each([
       expect(tySpy).toHaveLastReturnedWith(ty);
       expect(enemyPokemon.hp).toBeLessThan(enemyStartingHp);
     }
-    tySpy.mockRestore();
-    enemySpy.mockRestore();
   });
 
   it("should not be affected by silk scarf after changing the move's type", async () => {
@@ -186,8 +169,6 @@ describe.each([
     await game.phaseInterceptor.to("BerryPhase", false);
     expect(typeSpy, "type was not changed").toHaveLastReturnedWith(ty);
     expect(powerSpy).toHaveLastReturnedWith(toDmgValue(testMoveInstance.power * boost));
-
-    powerSpy.mockRestore();
   });
 
   it("should be affected by the type boosting item after changing the move's type", async () => {
@@ -205,7 +186,5 @@ describe.each([
     game.move.select(Moves.TACKLE);
     await game.phaseInterceptor.to("BerryPhase", false);
     expect(spy).toHaveLastReturnedWith(toDmgValue(tackle.power * boost * (1 + TYPE_BOOST_ITEM_BOOST_PERCENT / 100)));
-
-    spy.mockRestore();
   });
 });

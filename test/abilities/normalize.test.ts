@@ -42,8 +42,6 @@ describe("Abilities - Normalize", () => {
     game.move.select(Moves.TACKLE);
     await game.phaseInterceptor.to("BerryPhase");
     expect(powerSpy).toHaveLastReturnedWith(toDmgValue(allMoves[Moves.TACKLE].power * 1.2));
-
-    powerSpy.mockRestore();
   });
 
   it("should not apply the old type boost item after changing a move's type", async () => {
@@ -57,8 +55,6 @@ describe("Abilities - Normalize", () => {
 
     // It should return with 1.2 (that is, only the power boost from the ability)
     expect(powerSpy).toHaveLastReturnedWith(toDmgValue(allMoves[Moves.LEAFAGE].power * 1.2));
-
-    powerSpy.mockRestore();
   });
 
   it("should apply silk scarf's power boost after changing a move's type", async () => {
@@ -74,8 +70,6 @@ describe("Abilities - Normalize", () => {
     expect(powerSpy).toHaveLastReturnedWith(
       toDmgValue(allMoves[Moves.LEAFAGE].power * 1.2 * (1 + TYPE_BOOST_ITEM_BOOST_PERCENT / 100)),
     );
-
-    powerSpy.mockRestore();
   });
 
   it.each([
@@ -94,7 +88,5 @@ describe("Abilities - Normalize", () => {
     game.move.select(move);
     await game.phaseInterceptor.to("BerryPhase");
     expect(powerSpy).toHaveLastReturnedWith(allMoves[move].power);
-
-    powerSpy.mockRestore();
   });
 });
