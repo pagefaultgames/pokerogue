@@ -149,16 +149,14 @@ export class MovePhase extends BattlePhase {
 
     console.log(Moves[this.move.moveId]);
 
-    // If the move is unusable (e.g. running out of PP due to a mid-turn Spite),
-    // display failure text and return early.
+    // Check if move is unusable (e.g. because it's out of PP due to a mid-turn Spite).
     if (!this.canMove(true)) {
       if (this.pokemon.isActive(true)) {
         this.fail();
         this.showMoveText();
         this.showFailedText();
       }
-      this.end();
-      return;
+      return this.end();
     }
 
     this.pokemon.turnData.acted = true;

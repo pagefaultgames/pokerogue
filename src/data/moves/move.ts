@@ -121,13 +121,8 @@ import { MoveTarget } from "#enums/MoveTarget";
 import { MoveFlags } from "#enums/MoveFlags";
 import { MoveEffectTrigger } from "#enums/MoveEffectTrigger";
 import { MultiHitType } from "#enums/MultiHitType";
-import {
-  invalidAssistMoves,
-  invalidCopycatMoves,
-  invalidMetronomeMoves,
-  invalidMirrorMoveMoves,
-  invalidSleepTalkMoves,
-} from "./invalid-moves";
+import { invalidAssistMoves, invalidCopycatMoves, invalidMetronomeMoves, invalidMirrorMoveMoves, invalidSleepTalkMoves } from "./invalid-moves";
+import { TrainerVariant } from "#app/field/trainer";
 import { SelectBiomePhase } from "#app/phases/select-biome-phase";
 
 type MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => boolean;
@@ -390,10 +385,8 @@ export default class Move implements Localizable {
   }
 
   /**
-   * Mark a move as partially implemented.
-   * Partial moves are expected to have their core functionality implemented, but may lack
-   * certain notable features or interactions with other moves or abilities.
-   * @returns `this`
+   * Marks the move as "partial": appends texts to the move name
+   * @returns the called object {@linkcode Move}
    */
   partial(): this {
     this.nameAppend += " (P)";
@@ -401,10 +394,8 @@ export default class Move implements Localizable {
   }
 
   /**
-   * Mark a move as unimplemented.
-   * Unimplemented moves are ones which have _none_ of their basic functionality enabled,
-   * and are effectively barred from use by the AI.
-   * @returns `this`
+   * Marks the move as "unimplemented": appends texts to the move name
+   * @returns the called object {@linkcode Move}
    */
   unimplemented(): this {
     this.nameAppend += " (N)";
@@ -920,28 +911,29 @@ export default class Move implements Localizable {
   }
 
   /**
-   * Returns `true` if this move can be given additional strikes from enhancing effects.
-   * Currently used by {@link https://bulbapedia.bulbagarden.net/wiki/Parental_Bond_(Ability) | Parental Bond}
-   * as well as the {@linkcode PokemonMultiHitModifier | Multi Lens} held item.
-   * @param user - The {@linkcode Pokemon} using the move
-   * @param restrictSpread - Whether the enhancement should ignore multi-target moves (default `false`)
-   * @returns - Wheher this move can be given additional strikes.
+   * Returns `true` if this move can be given additional strikes
+   * by enhancing effects.
+   * Currently used for {@link https://bulbapedia.bulbagarden.net/wiki/Parental_Bond_(Ability) | Parental Bond}
+   * and {@linkcode PokemonMultiHitModifier | Multi-Lens}.
+   * @param user The {@linkcode Pokemon} using the move
+   * @param restrictSpread `true` if the enhancing effect
+   * should not affect multi-target moves (default `false`)
    */
   canBeMultiStrikeEnhanced(user: Pokemon, restrictSpread: boolean = false): boolean {
     // Multi-strike enhancers...
 
-    // ...cannot enhance spread targets unless specified,
+    // ...cannot enhance moves that hit multiple targets
     const { targets, multiple } = getMoveTargets(user, this.id);
-    const exceptMultiTarget = restrictSpread && multiple && targets.length > 1;
+    const isMultiTarget = multiple && targets.length > 1;
 
-    // ...cannot enhance multi-hit or sacrificial moves,
+    // ...cannot enhance multi-hit or sacrificial moves
     const exceptAttrs: Constructor<MoveAttr>[] = [
       MultiHitAttr,
       SacrificialAttr,
       SacrificialAttrOnHit
     ];
 
-    // ...cannot enhance certain locking or consumable moves,
+    // ...and cannot enhance these specific moves
     const exceptMoves: Moves[] = [
       Moves.FLING,
       Moves.UPROAR,
@@ -952,9 +944,9 @@ export default class Move implements Localizable {
 
     // ...and cannot enhance Pollen Puff when targeting an ally.
     const ally = user.getAlly();
-    const exceptPollenPuffAlly = this.id === Moves.POLLEN_PUFF && !isNullOrUndefined(ally) && targets.includes(ally.getBattlerIndex())
+    const exceptPollenPuffAlly: boolean = this.id === Moves.POLLEN_PUFF && !isNullOrUndefined(ally) && targets.includes(ally.getBattlerIndex())
 
-    return !exceptMultiTarget
+    return (!restrictSpread || !isMultiTarget)
       && !this.isChargingMove()
       && !exceptAttrs.some(attr => this.hasAttr(attr))
       && !exceptMoves.some(id => this.id === id)
@@ -2517,12 +2509,9 @@ export class PsychoShiftEffectAttr extends MoveEffectAttr {
   }
 
   /**
-   * Applies the effect of {@linkcode Moves.PSYCHO_SHIFT} to its target.
-   * Psycho Shift takes the user's status effect and passes it onto the target.
-   * The user is then healed after the move has been successfully executed.
-   * @param user - The {@linkcode Pokemon} using the move
-   * @param target - The {@linkcode Pokemon} targeted by the move.
-   * @returns - Whether the effect was successfully applied to the target.
+   * Applies the effect of Psycho Shift to its target
+   * Psycho Shift takes the user's status effect and passes it onto the target. The user is then healed after the move has been successfully executed.
+   * @returns `true` if Psycho Shift's effect is able to be applied to the target
    */
   apply(user: Pokemon, target: Pokemon, _move: Move, _args: any[]): boolean {
     const statusToApply: StatusEffect | undefined = user.status?.effect ?? (user.hasAbility(Abilities.COMATOSE) ? StatusEffect.SLEEP : undefined);
@@ -6972,10 +6961,9 @@ export class CopyMoveAttr extends CallMoveAttr {
 }
 
 /**
- * Attribute used for moves that cause the target to repeat their last used move.
+ * Attribute used for moves that causes the target to repeat their last used move.
  *
- * Used by {@linkcode Moves.INSTRUCT | Instruct}.
- * @see [Instruct on Bulbapedia](https://bulbapedia.bulbagarden.net/wiki/Instruct_(move))
+ * Used for [Instruct](https://bulbapedia.bulbagarden.net/wiki/Instruct_(move)).
 */
 export class RepeatMoveAttr extends MoveEffectAttr {
   constructor() {

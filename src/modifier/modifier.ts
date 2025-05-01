@@ -60,7 +60,7 @@ export const modifierSortFunc = (a: Modifier, b: Modifier): number => {
   const aId = a instanceof PokemonHeldItemModifier && a.pokemonId ? a.pokemonId : 4294967295;
   const bId = b instanceof PokemonHeldItemModifier && b.pokemonId ? b.pokemonId : 4294967295;
 
-  // First sort by pokemonID
+  //First sort by pokemonID
   if (aId < bId) {
     return 1;
   }
@@ -727,14 +727,14 @@ export abstract class PokemonHeldItemModifier extends PersistentModifier {
   }
 
   getPokemon(): Pokemon | undefined {
-    return globalScene.getPokemonById(this.pokemonId) ?? undefined;
+    return this.pokemonId ? (globalScene.getPokemonById(this.pokemonId) ?? undefined) : undefined;
   }
 
   getScoreMultiplier(): number {
     return 1;
   }
 
-  getMaxStackCount(forThreshold = false): number {
+  getMaxStackCount(forThreshold?: boolean): number {
     const pokemon = this.getPokemon();
     if (!pokemon) {
       return 0;
@@ -746,10 +746,6 @@ export abstract class PokemonHeldItemModifier extends PersistentModifier {
         .reduce((stackCount: number, maxStackCount: number) => Math.max(stackCount, maxStackCount), 0);
     }
     return this.getMaxHeldItemCount(pokemon);
-  }
-
-  getCountUnderMax(): number {
-    return this.getMaxHeldItemCount() - this.getStackCount();
   }
 
   abstract getMaxHeldItemCount(pokemon?: Pokemon): number;
@@ -3612,7 +3608,7 @@ export class EnemyAttackStatusEffectChanceModifier extends EnemyPersistentModifi
     super(type, stackCount);
 
     this.effect = effect;
-    // Hardcode temporarily
+    //Hardcode temporarily
     this.chance = 0.025 * (this.effect === StatusEffect.BURN || this.effect === StatusEffect.POISON ? 2 : 1);
   }
 

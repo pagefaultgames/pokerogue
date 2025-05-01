@@ -409,7 +409,7 @@ export async function applyModifierTypeToPlayerPokemon(
       m.type.id === modType.id &&
       m.pokemonId === pokemon.id &&
       m.matchType(modifier),
-  ) as PokemonHeldItemModifier | undefined;
+  ) as PokemonHeldItemModifier;
 
   // At max stacks
   if (existing && existing.getStackCount() >= existing.getMaxStackCount()) {

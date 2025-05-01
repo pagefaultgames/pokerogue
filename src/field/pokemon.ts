@@ -566,7 +566,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * @param useIllusion - Whether to use the fake or real name of the Pokemon (for Illusion); default `true`
+   * @param {boolean} useIllusion - Whether we want the fake name or the real name of the Pokemon (for Illusion ability).
    */
   getNameToRender(useIllusion: boolean = true) {
     const name: string = (!useIllusion && !!this.summonData?.illusion) ? this.summonData?.illusion.basePokemon!.name : this.name;
@@ -1507,16 +1507,16 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * Calculates and retrieves the final value of a stat considering any held
    * items, move effects, opponent abilities, and whether there was a critical
    * hit.
-   * @param stat - The desired {@linkcode EffectiveStat | Stat} to check.
-   * @param opponent - The {@linkcode Pokemon} being targeted, if applicable.
-   * @param move - The {@linkcode Move} being used, if any. Used to check ability ignoring effects and similar.
-   * @param ignoreAbility - Whether to ignore ability effects of the user; default `false`.
-   * @param ignoreOppAbility - Whether to ignore ability effects of the target; default `false`.
-   * @param ignoreAllyAbility - Whether to ignore ability effects of the user's allies; default `false`.
-   * @param isCritical - Whether a critical hit has occurred or not; default `false`.
-   * @param simulated - Whether to nullify any effects that produce changes to game state during calculations; default `true`
-   * @param ignoreHeldItems - Whether to ignore the user's held items during stat calculation; default `false`.
-   * @returns The final in-battle value of a stat
+   * @param stat the desired {@linkcode EffectiveStat}
+   * @param opponent the target {@linkcode Pokemon}
+   * @param move the {@linkcode Move} being used
+   * @param ignoreAbility determines whether this Pokemon's abilities should be ignored during the stat calculation
+   * @param ignoreOppAbility during an attack, determines whether the opposing Pokemon's abilities should be ignored during the stat calculation.
+   * @param ignoreAllyAbility during an attack, determines whether the ally Pokemon's abilities should be ignored during the stat calculation.
+   * @param isCritical determines whether a critical hit has occurred or not (`false` by default)
+   * @param simulated if `true`, nullifies any effects that produce any changes to game state from triggering
+   * @param ignoreHeldItems determines whether this Pokemon's held items should be ignored during the stat calculation, default `false`
+   * @returns the final in-battle value of a stat
    */
   getEffectiveStat(
     stat: EffectiveStat,
@@ -1552,13 +1552,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         fieldApplied,
         simulated,
       );
-
-      // TODO: us breaking early effectively makes the entire point of having a "stack effects" toggle useless...
       if (fieldApplied.value) {
         break;
       }
     }
-
     if (!ignoreAbility) {
       applyStatMultiplierAbAttrs(
         StatMultiplierAbAttr,
@@ -1571,14 +1568,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     const ally = this.getAlly();
     if (!isNullOrUndefined(ally)) {
-      applyAllyStatMultiplierAbAttrs(
-        AllyStatMultiplierAbAttr,
-        ally,
-        stat,
-        statValue,
-        simulated,
-        this,
-        move?.hasFlag(MoveFlags.IGNORE_ABILITIES) || ignoreAllyAbility);
+      applyAllyStatMultiplierAbAttrs(AllyStatMultiplierAbAttr, ally, stat, statValue, simulated, this, move?.hasFlag(MoveFlags.IGNORE_ABILITIES) || ignoreAllyAbility);
     }
 
     let ret =
@@ -3938,10 +3928,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    *
    * Note that this does not apply to evasion or accuracy
    * @see {@linkcode getAccuracyMultiplier}
-   * @param stat - The {@linkcode EffectiveStat} to calculate
-   * @param opponent - The {@linkcode Pokemon} being targeted
-   * @param move - The {@linkcode Move} being used
-   * @param ignoreOppAbility  determines whether the effects of the opponent's abilities (i.e. Unaware) should be ignored (`false` by default)
+   * @param stat the desired {@linkcode EffectiveStat}
+   * @param opponent the target {@linkcode Pokemon}
+   * @param move the {@linkcode Move} being used
+   * @param ignoreOppAbility determines whether the effects of the opponent's abilities (i.e. Unaware) should be ignored (`false` by default)
    * @param isCritical determines whether a critical hit has occurred or not (`false` by default)
    * @param simulated determines whether effects are applied without altering game state (`true` by default)
    * @param ignoreHeldItems determines whether this Pokemon's held items should be ignored during the stat calculation, default `false`
@@ -5104,21 +5094,21 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Returns a list of the most recent move entries in this {@linkcode Pokemon}'s move history.
+   * Returns a list of the most recent move entries in this Pokemon's move history.
    * The retrieved move entries are sorted in order from NEWEST to OLDEST.
    * @param moveCount The number of move entries to retrieve.
-   * If negative or `0`, retrieves the Pokemon's entire move history (equivalent to reversing the output of {@linkcode getMoveHistory()}).
-   * Default is `1`.
-   * @returns An array of {@linkcode TurnMove}, as specified above.
+   *   If negative, retrieve the Pokemon's entire move history (equivalent to reversing the output of {@linkcode getMoveHistory()}).
+   *   Default is `1`.
+   * @returns A list of {@linkcode TurnMove}, as specified above.
    */
   getLastXMoves(moveCount = 1): TurnMove[] {
     const moveHistory = this.getMoveHistory();
-    if (moveCount > 0) {
+    if (moveCount >= 0) {
       return moveHistory
         .slice(Math.max(moveHistory.length - moveCount, 0))
         .reverse();
     }
-    return moveHistory.slice().reverse();
+    return moveHistory.slice(0).reverse();
   }
 
   getMoveQueue(): TurnMove[] {
@@ -6315,29 +6305,28 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Reduces one of this Pokemon's held item stacks by 1, removing it if applicable.
+   * Reduces one of this Pokemon's held item stacks by 1, and removes the item if applicable.
    * Does nothing if this Pokemon is somehow not the owner of the held item.
-   * @param heldItem The item stack to be reduced.
-   * @param forBattle - Whether to trigger in-battle effects (such as Unburden) after losing the item. Default: `true`
-   * Set this to `false` if the Pokemon is giving away the held item for a Mystery Encounter or similar.
-   * @returns Whether the item was removed successfully.
+   * @param heldItem The item stack to be reduced by 1.
+   * @param forBattle If `false`, do not trigger in-battle effects (such as Unburden) from losing the item. For example, set this to `false` if the Pokemon is giving away the held item for a Mystery Encounter. Default is `true`.
+   * @returns `true` if the item was removed successfully, `false` otherwise.
    */
   public loseHeldItem(
     heldItem: PokemonHeldItemModifier,
     forBattle = true,
   ): boolean {
-    if (heldItem.pokemonId !== -1 && heldItem.pokemonId !== this.id) {
+    if (heldItem.pokemonId === -1 || heldItem.pokemonId === this.id) {
+      heldItem.stackCount--;
+      if (heldItem.stackCount <= 0) {
+        globalScene.removeModifier(heldItem, !this.isPlayer());
+      }
+      if (forBattle) {
+        applyPostItemLostAbAttrs(PostItemLostAbAttr, this, false);
+      }
+      return true;
+    } else {
       return false;
     }
-
-    if (--heldItem.stackCount <= 0) {
-      globalScene.removeModifier(heldItem, !this.isPlayer());
-    }
-    if (forBattle) {
-      applyPostItemLostAbAttrs(PostItemLostAbAttr, this, false);
-    }
-
-    return true;
   }
 }
 
@@ -6906,8 +6895,6 @@ export class PlayerPokemon extends Pokemon {
     if (partyMemberIndex > fusedPartyMemberIndex) {
       partyMemberIndex--;
     }
-
-    // combine the two mons' held items
     const fusedPartyMemberHeldModifiers = globalScene.findModifiers(
       m => m instanceof PokemonHeldItemModifier && m.pokemonId === pokemon.id,
       true,
@@ -7857,8 +7844,8 @@ export interface DamageCalculationResult {
  * Wrapper class for the {@linkcode Move} class for Pokemon to interact with.
  * These are the moves assigned to a {@linkcode Pokemon} object.
  * It links to {@linkcode Move} class via the move ID.
- * Compared to {@linkcode Move}, this class also tracks things like
- * PP Ups recieved, PP used, etc.
+ * Compared to {@linkcode Move}, this class also tracks if a move has received.
+ * PP Ups, amount of PP used, and things like that.
  * @see {@linkcode isUsable} - checks if move is restricted, out of PP, or not implemented.
  * @see {@linkcode getMove} - returns {@linkcode Move} object by looking it up via ID.
  * @see {@linkcode usePp} - removes a point of PP from the move.

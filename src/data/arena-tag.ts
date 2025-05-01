@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import type { Arena } from "#app/field/arena";
 import { PokemonType } from "#enums/pokemon-type";
-import { BooleanHolder, isNullOrUndefined, NumberHolder, toDmgValue } from "#app/utils/common";
+import { BooleanHolder, NumberHolder, toDmgValue } from "#app/utils/common";
 import { allMoves } from "#app/data/moves/move";
 import { MoveTarget } from "#enums/MoveTarget";
 import { MoveCategory } from "#enums/MoveCategory";
@@ -90,8 +90,7 @@ export abstract class ArenaTag {
    * @returns The source {@linkcode Pokemon} or `null` if none is found
    */
   public getSourcePokemon(): Pokemon | null {
-    // need null/undefined check since 0 is a valid PID
-    return !isNullOrUndefined(this.sourceId) ? globalScene.getPokemonById(this.sourceId) : null;
+    return this.sourceId ? globalScene.getPokemonById(this.sourceId) : null;
   }
 
   /**

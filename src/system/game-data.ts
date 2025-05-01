@@ -1018,8 +1018,8 @@ export class GameData {
       gameMode: globalScene.gameMode.modeId,
       party: globalScene.getPlayerParty().map(p => new PokemonData(p)),
       enemyParty: globalScene.getEnemyParty().map(p => new PokemonData(p)),
-      modifiers: globalScene.getModifiers().map(m => new PersistentModifierData(m, true)),
-      enemyModifiers: globalScene.getModifiers(false).map(m => new PersistentModifierData(m, false)),
+      modifiers: globalScene.findModifiers(() => true).map(m => new PersistentModifierData(m, true)),
+      enemyModifiers: globalScene.findModifiers(() => true, false).map(m => new PersistentModifierData(m, false)),
       arena: new ArenaData(globalScene.arena),
       pokeballCounts: globalScene.pokeballCounts,
       money: Math.floor(globalScene.money),
@@ -1085,7 +1085,7 @@ export class GameData {
     return new Promise(async (resolve, reject) => {
       try {
         const initSessionFromData = async (sessionData: SessionSaveData) => {
-          console.log(sessionData);
+          console.debug(sessionData);
 
           globalScene.gameMode = getGameMode(sessionData.gameMode || GameModes.CLASSIC);
           if (sessionData.challenges) {
@@ -1342,68 +1342,68 @@ export class GameData {
   }
 
   parseSessionData(dataStr: string): SessionSaveData {
-    // TODO: Add `null`/`undefined` to the corresponding type signatures for this
-    // (or ideally prevent them from being nullish in the first place)
-    // If the value is able to *not exist*, it should say so in the code
-
     const sessionData = JSON.parse(dataStr, (k: string, v: any) => {
-      // TODO: Move this into migrate script
-      switch (k) {
-        case "party":
-        case "enemyParty": {
-          const ret: PokemonData[] = [];
-          for (const pd of v ?? []) {
-            ret.push(new PokemonData(pd));
-          }
-          return ret;
+      if (k === "party" || k === "enemyParty") {
+        const ret: PokemonData[] = [];
+        if (v === null) {
+          v = [];
         }
-
-        case "trainer":
-          return v ? new TrainerData(v) : null;
-
-        case "modifiers":
-        case "enemyModifiers": {
-          const ret: PersistentModifierData[] = [];
-          for (const md of v ?? []) {
-            if (md?.className === "ExpBalanceModifier") {
-              // Temporarily limit EXP Balance until it gets reworked
-              md.stackCount = Math.min(md.stackCount, 4);
-            }
-
-            if (
-              md instanceof Modifier.EnemyAttackStatusEffectChanceModifier &&
-              (md.effect === StatusEffect.FREEZE || md.effect === StatusEffect.SLEEP)
-            ) {
-              // Discard any old "sleep/freeze chance tokens".
-              // TODO: make this migrate script
-              continue;
-            }
-
-            ret.push(new PersistentModifierData(md, k === "modifiers"));
-          }
-          return ret;
+        for (const pd of v) {
+          ret.push(new PokemonData(pd));
         }
-
-        case "arena":
-          return new ArenaData(v);
-
-        case "challenges": {
-          const ret: ChallengeData[] = [];
-          for (const c of v ?? []) {
-            ret.push(new ChallengeData(c));
-          }
-          return ret;
-        }
-
-        case "mysteryEncounterType":
-          return v as MysteryEncounterType;
-
-        case "mysteryEncounterSaveData":
-          return new MysteryEncounterSaveData(v);
-
-        default:
-          return v;
+        return ret;
       }
+
+      if (k === "trainer") {
+        return v ? new TrainerData(v) : null;
+      }
+
+      if (k === "modifiers" || k === "enemyModifiers") {
+        const player = k === "modifiers";
+        const ret: PersistentModifierData[] = [];
+        if (v === null) {
+          v = [];
+        }
+        for (const md of v) {
+          if (md?.className === "ExpBalanceModifier") {
+            // Temporarily limit EXP Balance until it gets reworked
+            md.stackCount = Math.min(md.stackCount, 4);
+          }
+          if (
+            (md instanceof Modifier.EnemyAttackStatusEffectChanceModifier && md.effect === StatusEffect.FREEZE) ||
+            md.effect === StatusEffect.SLEEP
+          ) {
+            continue;
+          }
+          ret.push(new PersistentModifierData(md, player));
+        }
+        return ret;
+      }
+
+      if (k === "arena") {
+        return new ArenaData(v);
+      }
+
+      if (k === "challenges") {
+        const ret: ChallengeData[] = [];
+        if (v === null) {
+          v = [];
+        }
+        for (const c of v) {
+          ret.push(new ChallengeData(c));
+        }
+        return ret;
+      }
+
+      if (k === "mysteryEncounterType") {
+        return v as MysteryEncounterType;
+      }
+
+      if (k === "mysteryEncounterSaveData") {
+        return new MysteryEncounterSaveData(v);
+      }
+
+      return v;
     }) as SessionSaveData;
 
     applySessionVersionMigration(sessionData);
