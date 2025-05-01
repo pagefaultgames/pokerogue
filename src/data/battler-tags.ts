@@ -47,14 +47,13 @@ import { MoveUseType } from "#enums/move-use-type";
 
 export enum BattlerTagLapseType {
   FAINT,
-  /** Tag lapses while using a (non-follow up) move, potentially halting its execution. */
   MOVE,
   PRE_MOVE,
   AFTER_MOVE,
   MOVE_EFFECT,
   TURN_END,
   HIT,
-  /** Tag lapses after being hit, applying its effects even if the user faints */
+  /** Tag lapses AFTER_HIT, applying its effects even if the user faints */
   AFTER_HIT,
   CUSTOM,
 }

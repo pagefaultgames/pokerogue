@@ -3,6 +3,7 @@ import type Pokemon from "#app/field/pokemon";
 import { MoveResult } from "#app/field/pokemon";
 import type { MovePhase } from "#app/phases/move-phase";
 import { Abilities } from "#enums/abilities";
+import { MoveUseType } from "#enums/move-use-type";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -208,13 +209,12 @@ describe("Moves - Instruct", () => {
     const amoonguss = game.scene.getPlayerPokemon()!;
     game.move.changeMoveset(amoonguss, Moves.SEED_BOMB);
 
-    amoonguss.battleSummonData.moveHistory = [
-      {
-        move: Moves.SEED_BOMB,
-        targets: [BattlerIndex.ENEMY],
-        result: MoveResult.SUCCESS,
-      },
-    ];
+    amoonguss.pushMoveHistory({
+      move: Moves.SEED_BOMB,
+      targets: [BattlerIndex.ENEMY],
+      result: MoveResult.SUCCESS,
+      useType: MoveUseType.NORMAL,
+    });
 
     game.doSwitchPokemon(1);
     await game.phaseInterceptor.to("TurnEndPhase", false);
@@ -281,14 +281,12 @@ describe("Moves - Instruct", () => {
 
     const player = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;
-    enemy.battleSummonData.moveHistory = [
-      {
-        move: Moves.SONIC_BOOM,
-        targets: [BattlerIndex.PLAYER],
-        result: MoveResult.SUCCESS,
-        virtual: false,
-      },
-    ];
+    enemy.pushMoveHistory({
+      move: Moves.SONIC_BOOM,
+      targets: [BattlerIndex.PLAYER],
+      result: MoveResult.SUCCESS,
+      useType: MoveUseType.NORMAL,
+    });
 
     game.move.select(Moves.INSTRUCT);
     await game.forceEnemyMove(Moves.HYPER_BEAM);
@@ -334,7 +332,7 @@ describe("Moves - Instruct", () => {
       move: Moves.WHIRLWIND,
       targets: [BattlerIndex.PLAYER],
       result: MoveResult.SUCCESS,
-      virtual: false,
+      useType: MoveUseType.NORMAL,
     });
 
     game.move.select(Moves.INSTRUCT);
@@ -395,7 +393,7 @@ describe("Moves - Instruct", () => {
       move: Moves.VINE_WHIP,
       targets: [BattlerIndex.ENEMY],
       result: MoveResult.SUCCESS,
-      virtual: false,
+      useType: MoveUseType.NORMAL,
     });
 
     game.move.select(Moves.SPLASH, BattlerIndex.PLAYER);

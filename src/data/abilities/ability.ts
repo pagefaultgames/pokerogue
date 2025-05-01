@@ -1306,43 +1306,42 @@ export class PokemonTypeChangeAbAttr extends PreAttackAbAttr {
 }
 
 /**
- * Class for abilities that add additional strikes to single-target moves.
- * Used by {@linkcode Moves.PARENTAL_BOND | Parental Bond}.
-*/
+ * Class for abilities that convert single-strike moves to two-strike moves (i.e. Parental Bond).
+ * @param damageMultiplier the damage multiplier for the second strike, relative to the first.
+ */
 export class AddSecondStrikeAbAttr extends PreAttackAbAttr {
   private damageMultiplier: number;
 
-  /**
-   * @param damageMultiplier - The damage multiplier for the added strike, relative to the first.
-  */
- constructor(damageMultiplier: number) {
+  constructor(damageMultiplier: number) {
     super(false);
 
     this.damageMultiplier = damageMultiplier;
   }
 
   override canApplyPreAttack(pokemon: Pokemon, passive: boolean, simulated: boolean, defender: Pokemon | null, move: Move, args: any[]): boolean {
-    // Parental bond can't enhance spread moves
-    return move.canBeMultiStrikeEnhanced(pokemon, false);
+    return move.canBeMultiStrikeEnhanced(pokemon, true);
   }
 
   /**
-   * Applies the ability attribute by increasing hit count
-   * @param pokemon - The {@linkcode Pokemon} using the move
-   * @param passive - Unused
-   * @param defender - Unused
-   * @param move - The {@linkcode Move} being used
-   * @param args:
-   * - `[0]` - A {@linkcode NumberHolder} holding the move's current strike count
-   * - `[1]` - A {@linkcode NumberHolder} holding the current strike's damage multiplier.
+   * If conditions are met, this doubles the move's hit count (via args[1])
+   * or multiplies the damage of secondary strikes (via args[2])
+   * @param pokemon the {@linkcode Pokemon} using the move
+   * @param passive n/a
+   * @param defender n/a
+   * @param move the {@linkcode Move} used by the ability source
+   * @param args Additional arguments:
+   * - `[0]` the number of strikes this move currently has ({@linkcode NumberHolder})
+   * - `[1]` the damage multiplier for the current strike ({@linkcode NumberHolder})
    */
-  override applyPreAttack(pokemon: Pokemon, passive: boolean, simulated: boolean, defender: Pokemon, move: Move, args: [NumberHolder, NumberHolder, ...any]): void {
-    if (args[0]?.value) {
-      args[0].value += 1;
+  override applyPreAttack(pokemon: Pokemon, passive: boolean, simulated: boolean, defender: Pokemon, move: Move, args: any[]): void {
+    const hitCount = args[0] as NumberHolder;
+    const multiplier = args[1] as NumberHolder;
+    if (hitCount?.value) {
+      hitCount.value += 1;
     }
 
-    if (args[1]?.value) {
-      args[1].value = this.damageMultiplier;
+    if (multiplier?.value && pokemon.turnData.hitsLeft === 1) {
+      multiplier.value = this.damageMultiplier;
     }
   }
 }
@@ -2288,7 +2287,7 @@ export class PostSummonStatStageChangeAbAttr extends PostSummonAbAttr {
   private selfTarget: boolean;
   private intimidate: boolean;
 
-  constructor(stats: BattleStat[], stages: number, selfTarget: boolean = false, intimidate?: boolean) {
+  constructor(stats: BattleStat[], stages: number, selfTarget?: boolean, intimidate?: boolean) {
     super(true);
 
     this.stats = stats;
@@ -4292,8 +4291,7 @@ export class PostBiomeChangeTerrainChangeAbAttr extends PostBiomeChangeAbAttr {
 }
 
 /**
- * Triggers after a move is used by either side of the field.
- * @extends AbAttr
+ * TAttribute to trigger effects after a move is used by either side of the field.
  */
 export class PostMoveUsedAbAttr extends AbAttr {
   /**
@@ -4305,7 +4303,7 @@ export class PostMoveUsedAbAttr extends AbAttr {
    * @param hitChecks - Array of {@linkcode HitCheckEntry | HitCheckEntries} containing results of move usage
    * @param simulated - Whether the ability call is simulated
    * @param args - Extra arguments passed to the function. Handled by child classes.
-   * @returns Whether the ability can be successfully applied.
+   * @returns `true` if the ability can be applied, `false` otherwise.
    * Normally checks if move was used by another pokemon and was successfully applied
    * against at least 1 target; can be overridden to change effect
    * @see {@linkcode applyPostMoveUsed}
@@ -4319,8 +4317,8 @@ export class PostMoveUsedAbAttr extends AbAttr {
     simulated: boolean,
     args: any[],
   ): boolean {
-    return source.getBattlerIndex() !== pokemon.getBattlerIndex() // not used by ourself
-      && !!targets.length // move had targets to hit
+    return source !== pokemon // not used by ourself
+      && !!targets.length // move has targets
       && hitChecks.some(hr => hr[0] === HitCheckResult.HIT); // successfully affected at least 1 target
   }
 
@@ -4828,7 +4826,7 @@ export class RedirectTypeMoveAbAttr extends RedirectMoveAbAttr {
 export class BlockRedirectAbAttr extends AbAttr { }
 
 /**
- * Decrements a {@linkcode Pokemon}'s sleep turn counter by 2 whenever it would be decreased by 1.
+ * Decrements a {@linkcode Pokemon}'s sleep turn counter by an additional 1 whenever it would be decremented.
  * Used by {@linkcode Abilities.EARLY_BIRD}.
  */
 export class ReduceSleepDurationAbAttr extends AbAttr {

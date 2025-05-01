@@ -427,22 +427,26 @@ export class MoveEffectPhase extends PokemonPhase {
 
     /**
      * All hits of the move have resolved by now.
-     * Queue message for multi-strike moves before applying Shell Bell & proccing Dancer-like effects.
+     * Queue message for multi-strike moves before applying Shell Bell heals & proccing Dancer-like effects.
      */
     const hitsTotal = user.turnData.hitCount - Math.max(user.turnData.hitsLeft, 0);
     if (hitsTotal > 1 || user.turnData.hitsLeft > 0) {
-      // Queue message if multiple hits occurred or
+      // Queue message if multiple hits occurred or were slated to occur (such as a Triple Axel miss)
       globalScene.queueMessage(i18next.t("battle:attackHitsCount", { count: hitsTotal }));
     }
 
     globalScene.applyModifiers(HitHealModifier, this.player, user);
-    this.getTargets().forEach(target => (target.turnData.moveEffectiveness = null));
+    this.getTargets().forEach(target => {
+      target.turnData.moveEffectiveness = null;
+    });
 
-    console.log(user.getMoveset());
-    globalScene.getField(true).forEach(p =>
-      // proc dancer
-      applyPostMoveUsedAbAttrs(PostMoveUsedAbAttr, p, this.move, user, this.targets, this.hitChecks),
-    );
+    // Dancer does not proc on other dancer moves, nor for either occurrence of a reflected move.
+    // (This blocks copying on the follow-up reflected use; the initial use gets blocked by hit checks)
+    if (this.useType !== MoveUseType.INDIRECT && this.useType !== MoveUseType.REFLECTED) {
+      globalScene
+        .getField(true)
+        .forEach(p => applyPostMoveUsedAbAttrs(PostMoveUsedAbAttr, p, this.move, user, this.targets, this.hitChecks));
+    }
     super.end();
   }
 
