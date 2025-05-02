@@ -369,6 +369,7 @@ export function getRandomWeatherType(arena: Arena): WeatherType {
       if (hasSun) {
         weatherPool.push({ weatherType: WeatherType.SUNNY, weight: 2 });
       }
+      break;
     case Biome.VOLCANO:
       weatherPool = [
         {

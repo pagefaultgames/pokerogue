@@ -1,6 +1,10 @@
 import { globalScene } from "#app/global-scene";
 import { EncounterPhase } from "./encounter-phase";
 
+/**
+ * The phase between defeating an encounter and starting another wild wave.
+ * Handles generating, loading and preparing for it.
+ */
 export class NextEncounterPhase extends EncounterPhase {
   start() {
     super.start();
@@ -9,9 +13,12 @@ export class NextEncounterPhase extends EncounterPhase {
   doEncounter(): void {
     globalScene.playBgm(undefined, true);
 
+    // Reset all player transient wave data/intel before starting a new wild encounter.
+    // We exclusively reset wave data here as wild waves are considered one continuous "battle"
+    // for lack of an arena transition.
     for (const pokemon of globalScene.getPlayerParty()) {
       if (pokemon) {
-        pokemon.resetBattleData();
+        pokemon.resetWaveData();
       }
     }
 

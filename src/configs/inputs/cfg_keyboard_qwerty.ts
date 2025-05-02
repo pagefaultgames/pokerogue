@@ -31,6 +31,7 @@ const cfg_keyboard_qwerty = {
     KEY_X: Phaser.Input.Keyboard.KeyCodes.X,
     KEY_Y: Phaser.Input.Keyboard.KeyCodes.Y,
     KEY_Z: Phaser.Input.Keyboard.KeyCodes.Z,
+
     KEY_0: Phaser.Input.Keyboard.KeyCodes.ZERO,
     KEY_1: Phaser.Input.Keyboard.KeyCodes.ONE,
     KEY_2: Phaser.Input.Keyboard.KeyCodes.TWO,
@@ -41,11 +42,7 @@ const cfg_keyboard_qwerty = {
     KEY_7: Phaser.Input.Keyboard.KeyCodes.SEVEN,
     KEY_8: Phaser.Input.Keyboard.KeyCodes.EIGHT,
     KEY_9: Phaser.Input.Keyboard.KeyCodes.NINE,
-    KEY_CTRL: Phaser.Input.Keyboard.KeyCodes.CTRL,
-    KEY_DEL: Phaser.Input.Keyboard.KeyCodes.DELETE,
-    KEY_END: Phaser.Input.Keyboard.KeyCodes.END,
-    KEY_ENTER: Phaser.Input.Keyboard.KeyCodes.ENTER,
-    KEY_ESC: Phaser.Input.Keyboard.KeyCodes.ESC,
+
     KEY_F1: Phaser.Input.Keyboard.KeyCodes.F1,
     KEY_F2: Phaser.Input.Keyboard.KeyCodes.F2,
     KEY_F3: Phaser.Input.Keyboard.KeyCodes.F3,
@@ -58,24 +55,41 @@ const cfg_keyboard_qwerty = {
     KEY_F10: Phaser.Input.Keyboard.KeyCodes.F10,
     KEY_F11: Phaser.Input.Keyboard.KeyCodes.F11,
     KEY_F12: Phaser.Input.Keyboard.KeyCodes.F12,
-    KEY_HOME: Phaser.Input.Keyboard.KeyCodes.HOME,
-    KEY_INSERT: Phaser.Input.Keyboard.KeyCodes.INSERT,
+
     KEY_PAGE_DOWN: Phaser.Input.Keyboard.KeyCodes.PAGE_DOWN,
     KEY_PAGE_UP: Phaser.Input.Keyboard.KeyCodes.PAGE_UP,
+
+    KEY_CTRL: Phaser.Input.Keyboard.KeyCodes.CTRL,
+    KEY_DEL: Phaser.Input.Keyboard.KeyCodes.DELETE,
+    KEY_END: Phaser.Input.Keyboard.KeyCodes.END,
+    KEY_ENTER: Phaser.Input.Keyboard.KeyCodes.ENTER,
+    KEY_ESC: Phaser.Input.Keyboard.KeyCodes.ESC,
+    KEY_HOME: Phaser.Input.Keyboard.KeyCodes.HOME,
+    KEY_INSERT: Phaser.Input.Keyboard.KeyCodes.INSERT,
+
     KEY_PLUS: Phaser.Input.Keyboard.KeyCodes.NUMPAD_ADD, // Assuming numpad plus
     KEY_MINUS: Phaser.Input.Keyboard.KeyCodes.NUMPAD_SUBTRACT, // Assuming numpad minus
     KEY_QUOTATION: Phaser.Input.Keyboard.KeyCodes.QUOTES,
     KEY_SHIFT: Phaser.Input.Keyboard.KeyCodes.SHIFT,
+
     KEY_SPACE: Phaser.Input.Keyboard.KeyCodes.SPACE,
     KEY_TAB: Phaser.Input.Keyboard.KeyCodes.TAB,
     KEY_TILDE: Phaser.Input.Keyboard.KeyCodes.BACKTICK,
+
     KEY_ARROW_UP: Phaser.Input.Keyboard.KeyCodes.UP,
     KEY_ARROW_DOWN: Phaser.Input.Keyboard.KeyCodes.DOWN,
     KEY_ARROW_LEFT: Phaser.Input.Keyboard.KeyCodes.LEFT,
     KEY_ARROW_RIGHT: Phaser.Input.Keyboard.KeyCodes.RIGHT,
+
     KEY_LEFT_BRACKET: Phaser.Input.Keyboard.KeyCodes.OPEN_BRACKET,
     KEY_RIGHT_BRACKET: Phaser.Input.Keyboard.KeyCodes.CLOSED_BRACKET,
+
     KEY_SEMICOLON: Phaser.Input.Keyboard.KeyCodes.SEMICOLON,
+    KEY_COMMA: Phaser.Input.Keyboard.KeyCodes.COMMA,
+    KEY_PERIOD: Phaser.Input.Keyboard.KeyCodes.PERIOD,
+    KEY_BACK_SLASH: Phaser.Input.Keyboard.KeyCodes.BACK_SLASH,
+    KEY_FORWARD_SLASH: Phaser.Input.Keyboard.KeyCodes.FORWARD_SLASH,
+
     KEY_BACKSPACE: Phaser.Input.Keyboard.KeyCodes.BACKSPACE,
     KEY_ALT: Phaser.Input.Keyboard.KeyCodes.ALT,
   },
@@ -160,6 +174,10 @@ const cfg_keyboard_qwerty = {
     KEY_RIGHT_BRACKET: "RIGHT_BRACKET.png",
 
     KEY_SEMICOLON: "SEMICOLON.png",
+    KEY_COMMA: "COMMA.png",
+    KEY_PERIOD: "PERIOD.png",
+    KEY_BACK_SLASH: "BACK_SLASH.png",
+    KEY_FORWARD_SLASH: "FORWARD_SLASH.png",
 
     KEY_BACKSPACE: "BACK.png",
     KEY_ALT: "ALT.png",

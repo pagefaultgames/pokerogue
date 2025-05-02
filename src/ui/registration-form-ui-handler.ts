@@ -102,9 +102,9 @@ export default class RegistrationFormUiHandler extends FormModalUiHandler {
           // Prevent overlapping overrides on action modification
           this.submitAction = originalRegistrationAction;
           this.sanitizeInputs();
-        globalScene.ui.setMode(UiMode.LOADING, { buttonActions: [] });
+          globalScene.ui.setMode(UiMode.LOADING, { buttonActions: [] });
           const onFail = error => {
-          globalScene.ui.setMode(UiMode.REGISTRATION_FORM, Object.assign(config, { errorMessage: error?.trim() }));
+            globalScene.ui.setMode(UiMode.REGISTRATION_FORM, Object.assign(config, { errorMessage: error?.trim() }));
             globalScene.ui.playError();
             const errorMessageFontSize = languageSettings[i18next.resolvedLanguage!]?.errorMessageFontSize;
             if (errorMessageFontSize) {

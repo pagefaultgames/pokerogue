@@ -129,7 +129,7 @@ describe("Moves - Toxic Spikes", () => {
     await game.phaseInterceptor.to("BattleEndPhase");
     await game.toNextWave();
 
-    const sessionData: SessionSaveData = gameData["getSessionSaveData"]();
+    const sessionData: SessionSaveData = gameData.getSessionSaveData();
     localStorage.setItem("sessionTestData", encrypt(JSON.stringify(sessionData), true));
     const recoveredData: SessionSaveData = gameData.parseSessionData(
       decrypt(localStorage.getItem("sessionTestData")!, true),

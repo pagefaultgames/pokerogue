@@ -15,14 +15,17 @@ export class PokerogueSystemSavedataApi extends ApiBase {
   /**
    * Get a system savedata.
    * @param params The {@linkcode GetSystemSavedataRequest} to send
-   * @returns The system savedata as `string` or `null` on error
+   * @returns The system savedata as `string` or either the status code or `null` on error
    */
-  public async get(params: GetSystemSavedataRequest) {
+  public async get(params: GetSystemSavedataRequest): Promise<string | number | null> {
     try {
       const urlSearchParams = this.toUrlSearchParams(params);
       const response = await this.doGet(`/savedata/system/get?${urlSearchParams}`);
       const rawSavedata = await response.text();
-
+      if (!response.ok) {
+        console.warn("Could not get system savedata!", response.status, rawSavedata);
+        return response.status;
+      }
       return rawSavedata;
     } catch (err) {
       console.warn("Could not get system savedata!", err);

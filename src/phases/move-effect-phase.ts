@@ -282,10 +282,6 @@ export class MoveEffectPhase extends PokemonPhase {
         super.end();
         return;
       }
-      // TODO: Remove after cud chew PR gets merged
-      if (isNullOrUndefined(user.turnData)) {
-        user.resetTurnData();
-      }
     }
 
     /**
@@ -893,7 +889,7 @@ export class MoveEffectPhase extends PokemonPhase {
         });
 
     if (isCritical) {
-      globalScene.queueMessage(i18next.t("battle:criticalHit"));
+      globalScene.queueMessage(i18next.t("battle:hitResultCriticalHit"));
     }
 
     if (damage <= 0) {

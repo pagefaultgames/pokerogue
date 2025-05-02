@@ -209,4 +209,19 @@ describe("Spec - Pokemon", () => {
       expect(types[1]).toBe(PokemonType.DARK);
     });
   });
+
+  it.each([5, 25, 55, 95, 145, 195])(
+    "should set minimum IVs for enemy trainer pokemon based on wave (%i)",
+    async wave => {
+      game.override.startingWave(wave);
+      await game.classicMode.startBattle([Species.FEEBAS]);
+      const { waveIndex } = game.scene.currentBattle;
+
+      for (const pokemon of game.scene.getEnemyParty()) {
+        for (const index in pokemon.ivs) {
+          expect(pokemon.ivs[index]).toBeGreaterThanOrEqual(Math.floor(waveIndex / 10));
+        }
+      }
+    },
+  );
 });

@@ -292,6 +292,13 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     starterSelectBg.setOrigin(0, 0);
     this.starterSelectContainer.add(starterSelectBg);
 
+    this.pokemonSprite = globalScene.add.sprite(53, 63, "pkmn__sub");
+    this.pokemonSprite.setPipeline(globalScene.spritePipeline, {
+      tone: [0.0, 0.0, 0.0, 0.0],
+      ignoreTimeTint: true,
+    });
+    this.starterSelectContainer.add(this.pokemonSprite);
+
     this.shinyOverlay = globalScene.add.image(6, 6, "summary_overlay_shiny");
     this.shinyOverlay.setOrigin(0, 0);
     this.shinyOverlay.setVisible(false);
@@ -342,13 +349,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     }
 
     this.starterSelectContainer.add(starterBoxContainer);
-
-    this.pokemonSprite = globalScene.add.sprite(53, 63, "pkmn__sub");
-    this.pokemonSprite.setPipeline(globalScene.spritePipeline, {
-      tone: [0.0, 0.0, 0.0, 0.0],
-      ignoreTimeTint: true,
-    });
-    this.starterSelectContainer.add(this.pokemonSprite);
 
     this.type1Icon = globalScene.add.sprite(8, 98, getLocalizedSpriteKey("types"));
     this.type1Icon.setScale(0.5);
@@ -921,16 +921,22 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     return biomes;
   }
 
+  /**
+   * Return the caughtAttr of a given species, sanitized.
+   *
+   * @param otherSpecies The species to check; defaults to current species
+   * @returns caught DexAttr for the species
+   */
   isCaught(otherSpecies?: PokemonSpecies): bigint {
+    const species = otherSpecies ? otherSpecies : this.species;
+
     if (globalScene.dexForDevs) {
-      return 255n;
+      species.getFullUnlocksData();
     }
 
-    const species = otherSpecies ? otherSpecies : this.species;
     const dexEntry = globalScene.gameData.dexData[species.speciesId];
-    const starterDexEntry = globalScene.gameData.dexData[this.getStarterSpeciesId(species.speciesId)];
 
-    return (dexEntry?.caughtAttr ?? 0n) & (starterDexEntry?.caughtAttr ?? 0n) & species.getFullUnlocksData();
+    return (dexEntry?.caughtAttr ?? 0n) & species.getFullUnlocksData();
   }
 
   /**
@@ -939,7 +945,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
    *
    * @param otherSpecies The species to check; defaults to current species
    * @param otherFormIndex The form index of the form to check; defaults to current form
-   * @returns StarterAttributes for the species
+   * @returns `true` if the form is caught
    */
   isFormCaught(otherSpecies?: PokemonSpecies, otherFormIndex?: number | undefined): boolean {
     if (globalScene.dexForDevs) {
@@ -954,6 +960,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     }
 
     const isFormCaught = (caughtAttr & globalScene.gameData.getFormAttr(formIndex ?? 0)) > 0n;
+
     return isFormCaught;
   }
 
@@ -1151,7 +1158,6 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
         this.blockInput = false;
       } else {
         ui.revertMode().then(() => {
-          console.log("exitCallback", this.exitCallback);
           if (this.exitCallback instanceof Function) {
             const exitCallback = this.exitCallback;
             this.exitCallback = null;

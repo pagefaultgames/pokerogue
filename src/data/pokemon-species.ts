@@ -33,6 +33,7 @@ import { SpeciesFormKey } from "#enums/species-form-key";
 import { starterPassiveAbilities } from "#app/data/balance/passives";
 import { loadPokemonVariantAssets } from "#app/sprites/pokemon-sprite";
 import { hasExpSprite } from "#app/sprites/sprite-utils";
+import { Gender } from "./gender";
 
 export enum Region {
   NORMAL,
@@ -485,6 +486,7 @@ export abstract class PokemonSpeciesForm {
           break;
         case Species.ZACIAN:
         case Species.ZAMAZENTA:
+          // biome-ignore lint/suspicious/noFallthroughSwitchClause: Falls through
           if (formSpriteKey.startsWith("behemoth")) {
             formSpriteKey = "crowned";
           }
@@ -748,7 +750,7 @@ export abstract class PokemonSpeciesForm {
     let paletteColors: Map<number, number> = new Map();
 
     const originalRandom = Math.random;
-    Math.random = () => Phaser.Math.RND.realInRange(0, 1);
+    Math.random = Phaser.Math.RND.frac;
 
     globalScene.executeWithSeedOffset(
       () => {
@@ -876,6 +878,21 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
       }
     }
     return this.name;
+  }
+
+  /**
+   * Pick and return a random {@linkcode Gender} for a {@linkcode Pokemon}.
+   * @returns A randomly rolled gender based on this Species' {@linkcode malePercent}.
+   */
+  generateGender(): Gender {
+    if (isNullOrUndefined(this.malePercent)) {
+      return Gender.GENDERLESS;
+    }
+
+    if (Phaser.Math.RND.realInRange(0, 1) <= this.malePercent) {
+      return Gender.MALE;
+    }
+    return Gender.FEMALE;
   }
 
   /**
