@@ -7,7 +7,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vite
 import { BattlerIndex } from "#app/battle";
 import { allAbilities } from "#app/data/data-lists";
 import { allMoves } from "#app/data/moves/move";
-import { MoveCategory } from "#enums/MoveCategory";
+import { MoveCategory } from "#enums/move-category";
 
 describe("Moves - Friend Guard", () => {
   let phaserGame: Phaser.Game;

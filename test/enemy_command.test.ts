@@ -1,6 +1,6 @@
 import type BattleScene from "#app/battle-scene";
 import { allMoves } from "#app/data/moves/move";
-import { MoveCategory } from "#enums/MoveCategory";
+import { MoveCategory } from "#enums/move-category";
 import { Abilities } from "#app/enums/abilities";
 import { Moves } from "#app/enums/moves";
 import { Species } from "#app/enums/species";

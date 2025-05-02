@@ -1,6 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import { AttackMove, BeakBlastHeaderAttr, DelayedAttackAttr, SelfStatusMove, allMoves } from "./moves/move";
-import { MoveFlags } from "#enums/MoveFlags";
+import { MoveFlags } from "#enums/move-flags";
 import type Pokemon from "../field/pokemon";
 import { type nil, getFrameMs, getEnumKeys, getEnumValues, animationFileName } from "../utils/common";
 import type { BattlerIndex } from "../battle";

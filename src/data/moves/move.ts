@@ -116,11 +116,11 @@ import { LoadMoveAnimPhase } from "#app/phases/load-move-anim-phase";
 import { PokemonTransformPhase } from "#app/phases/pokemon-transform-phase";
 import { MoveAnimPhase } from "#app/phases/move-anim-phase";
 import { loggedInUser } from "#app/account";
-import { MoveCategory } from "#enums/MoveCategory";
-import { MoveTarget } from "#enums/MoveTarget";
-import { MoveFlags } from "#enums/MoveFlags";
-import { MoveEffectTrigger } from "#enums/MoveEffectTrigger";
-import { MultiHitType } from "#enums/MultiHitType";
+import { MoveCategory } from "#enums/move-category";
+import { MoveTarget } from "#enums/move-target";
+import { MoveFlags } from "#enums/move-flags";
+import { MoveEffectTrigger } from "#enums/move-effect-trigger";
+import { MultiHitType } from "#enums/multi-hit-yype";
 import { invalidAssistMoves, invalidCopycatMoves, invalidMetronomeMoves, invalidMirrorMoveMoves, invalidSleepTalkMoves } from "./invalid-moves";
 import { SelectBiomePhase } from "#app/phases/select-biome-phase";
 
