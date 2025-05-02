@@ -241,7 +241,7 @@ export default class Move implements Localizable {
    * Adds a new MoveAttr to the move (appends to the attr array)
    * if the MoveAttr also comes with a condition, also adds that to the {@linkcode MoveCondition} array
    * Almost identical to {@linkcode attr}, except you are passing in an already instantized {@linkcode MoveAttr} object
-   * as opposed to a of a constructor and its arguments
+   * as opposed to a constructor and its arguments
    * @param attrAdd- The {@linkcode MoveAttr} to add
    * @returns `this`
    */
@@ -926,7 +926,7 @@ export default class Move implements Localizable {
    * Currently used by {@link https://bulbapedia.bulbagarden.net/wiki/Parental_Bond_(Ability) | Parental Bond}
    * as well as the {@linkcode PokemonMultiHitModifier | Multi Lens} held item.
    * @param user - The {@linkcode Pokemon} using the move
-   * @param allowSpread - Whether the enhancement should work on multi-target moves (default `true`).
+   * @param allowSpread - Whether the enhancement should allow multi-target moves (default `true`).
    * Multi-target moves will always be allowed if only 1 legal target is present.
    * @returns - Whether this move can be given additional strikes.
    */

@@ -2317,7 +2317,7 @@ export class PostSummonStatStageChangeAbAttr extends PostSummonAbAttr {
   private selfTarget: boolean;
   private intimidate: boolean;
 
-  constructor(stats: BattleStat[], stages: number, selfTarget?: boolean, intimidate?: boolean) {
+  constructor(stats: BattleStat[], stages: number, selfTarget: boolean = false, intimidate?: boolean) {
     super(true);
 
     this.stats = stats;
@@ -4917,9 +4917,8 @@ export class RedirectTypeMoveAbAttr extends RedirectMoveAbAttr {
 export class BlockRedirectAbAttr extends AbAttr { }
 
 /**
- * Used by Early Bird, makes the pokemon wake up faster
- * @param statusEffect - The {@linkcode StatusEffect} to check for
- * @see {@linkcode apply}
+ * Decrements a {@linkcode Pokemon}'s sleep turn counter by 2 whenever it would be decreased by 1.
+ * Used by {@linkcode Abilities.EARLY_BIRD}.
  */
 export class ReduceStatusEffectDurationAbAttr extends AbAttr {
   private statusEffect: StatusEffect;
