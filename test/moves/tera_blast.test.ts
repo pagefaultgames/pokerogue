@@ -75,7 +75,7 @@ describe("Moves - Tera Blast", () => {
     await game.phaseInterceptor.to("MoveEffectPhase");
 
     expect(moveToCheck.calculateBattlePower).toHaveReturnedWith(100);
-  }, 20000);
+  });
 
   it("is super effective against terastallized targets if user is Stellar tera type", async () => {
     await game.classicMode.startBattle();
@@ -189,5 +189,33 @@ describe("Moves - Tera Blast", () => {
 
     expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(-1);
     expect(playerPokemon.getStatStage(Stat.ATK)).toBe(-1);
-  }, 20000);
+  });
+
+  it.each([
+    { ab: "galvanize", ty: "electric", ab_id: Abilities.GALVANIZE, ty_id: PokemonType.ELECTRIC },
+    { ab: "refrigerate", ty: "ice", ab_id: Abilities.REFRIGERATE, ty_id: PokemonType.ICE },
+    { ab: "pixilate", ty: "fairy", ab_id: Abilities.PIXILATE, ty_id: PokemonType.FAIRY },
+    { ab: "aerilate", ty: "flying", ab_id: Abilities.AERILATE, ty_id: PokemonType.FLYING },
+  ])("should be $ty type if the user has $ab", async ({ ab_id, ty_id }) => {
+    game.override.ability(ab_id).moveset([Moves.TERA_BLAST]).enemyAbility(Abilities.BALL_FETCH);
+    await game.classicMode.startBattle([Species.MAGIKARP]);
+    const playerPokemon = game.scene.getPlayerPokemon()!;
+    expect(playerPokemon.getMoveType(allMoves[Moves.TERA_BLAST])).toBe(ty_id);
+  });
+
+  it("should not be affected by normalize when the user is terastallized with tera normal", async () => {
+    game.override.moveset([Moves.TERA_BLAST]).ability(Abilities.NORMALIZE);
+    await game.classicMode.startBattle([Species.MAGIKARP]);
+    const playerPokemon = game.scene.getPlayerPokemon()!;
+    // override the tera state for the pokemon
+    playerPokemon.isTerastallized = true;
+    playerPokemon.teraType = PokemonType.NORMAL;
+
+    const move = allMoves[Moves.TERA_BLAST];
+    const powerSpy = vi.spyOn(move, "calculateBattlePower");
+
+    game.move.select(Moves.TERA_BLAST);
+    await game.phaseInterceptor.to("BerryPhase");
+    expect(powerSpy).toHaveLastReturnedWith(move.power);
+  });
 });

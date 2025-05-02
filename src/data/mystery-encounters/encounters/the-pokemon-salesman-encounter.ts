@@ -106,7 +106,7 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter = MysteryEncounterBui
      * If an event with more than 1 valid event encounter species is active, you have 20% chance to get one of those
      * If the rolled species has no HA, and there are valid event encounters, you will get one of those
      * If the rolled species has no HA and there are no valid event encounters, you will get Shiny Magikarp
-     * Mons rolled from the event encounter pool get 2 extra shiny rolls
+     * Mons rolled from the event encounter pool get 3 extra shiny rolls
      */
     if (
       r === 0 ||
@@ -120,10 +120,11 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter = MysteryEncounterBui
       (validEventEncounters.length > 0 && (r <= EVENT_THRESHOLD ||
       (isNullOrUndefined(species.abilityHidden) || species.abilityHidden === Abilities.NONE)))
     ) {
-      // If you roll 20%, give event encounter with 2 extra shiny rolls and its HA, if it has one
+      // If you roll 20%, give event encounter with 3 extra shiny rolls and its HA, if it has one
       const enc = randSeedItem(validEventEncounters);
       species = getPokemonSpecies(enc.species);
       pokemon = new PlayerPokemon(species, 5, species.abilityHidden === Abilities.NONE ? undefined : 2, enc.formIndex);
+      pokemon.trySetShinySeed();
       pokemon.trySetShinySeed();
       pokemon.trySetShinySeed();
     } else {

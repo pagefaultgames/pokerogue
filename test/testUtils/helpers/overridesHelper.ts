@@ -523,6 +523,21 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
+   * Override confusion to always or never activate
+   * @param activate - `true` to force activation, `false` to force no activation, `null` to disable the override
+   * @returns `this`
+   */
+  public confusionActivation(activate: boolean | null): this {
+    vi.spyOn(Overrides, "CONFUSION_ACTIVATION_OVERRIDE", "get").mockReturnValue(activate);
+    if (activate !== null) {
+      this.log(`Confusion forced to ${activate ? "always" : "never"} activate!`);
+    } else {
+      this.log("Confusion activation override disabled!");
+    }
+    return this;
+  }
+
+  /**
    * Override the encounter chance for a mystery encounter.
    * @param percentage - The encounter chance in %
    * @returns `this`

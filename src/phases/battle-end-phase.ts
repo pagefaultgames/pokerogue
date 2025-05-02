@@ -59,8 +59,8 @@ export class BattleEndPhase extends BattlePhase {
     }
 
     for (const pokemon of globalScene.getField()) {
-      if (pokemon?.battleSummonData) {
-        pokemon.battleSummonData.waveTurnCount = 1;
+      if (pokemon) {
+        pokemon.tempSummonData.waveTurnCount = 1;
       }
     }
 

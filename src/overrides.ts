@@ -104,8 +104,16 @@ class DefaultOverrides {
   readonly BYPASS_TUTORIAL_SKIP_OVERRIDE: boolean = false;
   /** Set to `true` to be able to re-earn already unlocked achievements */
   readonly ACHIEVEMENTS_REUNLOCK_OVERRIDE: boolean = false;
-  /** Set to `true` to force Paralysis and Freeze to always activate, or `false` to force them to not activate */
+  /**
+   * Set to `true` to force Paralysis and Freeze to always activate,
+   * or `false` to force them to not activate (or clear for freeze).
+   */
   readonly STATUS_ACTIVATION_OVERRIDE: boolean | null = null;
+  /**
+   * Set to `true` to force confusion to always trigger,
+   * or `false` to force it to never trigger.
+   */
+  readonly CONFUSION_ACTIVATION_OVERRIDE: boolean | null = null;
 
   // ----------------
   // PLAYER OVERRIDES

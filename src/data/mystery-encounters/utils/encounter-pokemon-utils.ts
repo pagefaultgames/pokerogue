@@ -1031,9 +1031,6 @@ export function applyAbilityOverrideToPokemon(pokemon: Pokemon, ability: Abiliti
     }
     pokemon.fusionCustomPokemonData.ability = ability;
   } else {
-    if (!pokemon.customPokemonData) {
-      pokemon.customPokemonData = new CustomPokemonData();
-    }
     pokemon.customPokemonData.ability = ability;
   }
 }

@@ -14,7 +14,6 @@ import {
   SelfStatusMove,
   VariablePowerAttr,
   applyMoveAttrs,
-  VariableMoveTypeAttr,
   RandomMovesetMoveAttr,
   RandomMoveAttr,
   NaturePowerAttr,
@@ -61,6 +60,11 @@ import { SwitchType } from "#enums/switch-type";
 import { MoveFlags } from "#enums/MoveFlags";
 import { MoveTarget } from "#enums/MoveTarget";
 import { MoveCategory } from "#enums/MoveCategory";
+import type { BerryType } from "#enums/berry-type";
+import { CommonAnimPhase } from "#app/phases/common-anim-phase";
+import { CommonAnim } from "../battle-anims";
+import { getBerryEffectFunc } from "../berry";
+import { BerryUsedEvent } from "#app/events/battle-scene";
 
 
 // Type imports
@@ -73,6 +77,7 @@ import type { BattlerIndex } from "#app/battle";
 import type Move from "#app/data/moves/move";
 import type { ArenaTrapTag, SuppressAbilitiesTag } from "#app/data/arena-tag";
 import { SelectBiomePhase } from "#app/phases/select-biome-phase";
+import { noAbilityTypeOverrideMoves } from "../moves/invalid-moves";
 
 export class BlockRecoilDamageAttr extends AbAttr {
   constructor() {
@@ -1241,12 +1246,39 @@ export class MoveTypeChangeAbAttr extends PreAttackAbAttr {
     super(false);
   }
 
-  override canApplyPreAttack(pokemon: Pokemon, passive: boolean, simulated: boolean, defender: Pokemon | null, move: Move, args: any[]): boolean {
-    return (this.condition && this.condition(pokemon, defender, move)) ?? false;
+  /**
+   * Determine if the move type change attribute can be applied
+   * 
+   * Can be applied if:
+   * - The ability's condition is met, e.g. pixilate only boosts normal moves,
+   * - The move is not forbidden from having its type changed by an ability, e.g. {@linkcode Moves.MULTI_ATTACK}
+   * - The user is not terastallized and using tera blast
+   * - The user is not a terastallized terapagos with tera stellar using tera starstorm
+   * @param pokemon - The pokemon that has the move type changing ability and is using the attacking move
+   * @param _passive - Unused
+   * @param _simulated - Unused
+   * @param _defender - The pokemon being attacked (unused)
+   * @param move - The move being used
+   * @param _args - args[0] holds the type that the move is changed to, args[1] holds the multiplier
+   * @returns whether the move type change attribute can be applied
+   */
+  override canApplyPreAttack(pokemon: Pokemon, _passive: boolean, _simulated: boolean, _defender: Pokemon | null, move: Move, _args: [NumberHolder?, NumberHolder?, ...any]): boolean {
+    return (!this.condition || this.condition(pokemon, _defender, move)) &&
+            !noAbilityTypeOverrideMoves.has(move.id) && 
+            (!pokemon.isTerastallized ||
+              (move.id !== Moves.TERA_BLAST &&
+              (move.id !== Moves.TERA_STARSTORM || pokemon.getTeraType() !== PokemonType.STELLAR || !pokemon.hasSpecies(Species.TERAPAGOS))));
   }
 
-  // TODO: Decouple this into two attributes (type change / power boost)
-  override applyPreAttack(pokemon: Pokemon, passive: boolean, simulated: boolean, defender: Pokemon, move: Move, args: any[]): void {
+  /**
+   * @param pokemon - The pokemon that has the move type changing ability and is using the attacking move
+   * @param passive - Unused
+   * @param simulated - Unused
+   * @param defender - The pokemon being attacked (unused)
+   * @param move - The move being used
+   * @param args - args[0] holds the type that the move is changed to, args[1] holds the multiplier
+   */
+  override applyPreAttack(pokemon: Pokemon, passive: boolean, simulated: boolean, defender: Pokemon, move: Move, args: [NumberHolder?, NumberHolder?, ...any]): void {
     if (args[0] && args[0] instanceof NumberHolder) {
       args[0].value = this.newType;
     }
@@ -2685,7 +2717,7 @@ export class PostSummonTransformAbAttr extends PostSummonAbAttr {
     const targets = pokemon.getOpponents();
     const target = this.getTarget(targets);
 
-    if (!!target.summonData?.illusion) {
+    if (target.summonData.illusion) {
       return false;
     }
 
@@ -3284,14 +3316,14 @@ export class ConditionalUserFieldProtectStatAbAttr extends PreStatStageChangeAbA
 
   /**
    * Determine whether the {@linkcode ConditionalUserFieldProtectStatAbAttr} can be applied.
-   * @param pokemon - The pokemon with the ability
-   * @param passive - unused
-   * @param simulated - Unused
-   * @param stat - The {@linkcode Stat} being affected
-   * @param cancelled - {@linkcode BooleanHolder} containing whether the stat change was already prevented
-   * @param args - `[0]` the target pokemon of the stat change
-   * @returns  `true` if the ability can be applied
-  */
+   * @param pokemon The pokemon with the ability
+   * @param passive unused
+   * @param simulated Unused
+   * @param stat The stat being affected
+   * @param cancelled Holds whether the stat change was already prevented.
+   * @param args Args[0] is the target pokemon of the stat change.
+   * @returns
+   */
   override canApplyPreStatStageChange(pokemon: Pokemon, passive: boolean, simulated: boolean, stat: BattleStat, cancelled: BooleanHolder, args: [Pokemon, ...any]): boolean {
     const target = args[0];
     if (!target) {
@@ -3425,12 +3457,13 @@ export class BonusCritAbAttr extends AbAttr {
   }
 
   /**
-   * Apply the bonus crit ability by increasing crit stage by 1.
-   * @param pokemon - The pokemon with the ability (unused)
-   * @param passive - Unused
-   * @param simulated - Unused
-   * @param cancelled - Unused
-   * @param args `[0]` - A {@linkcode NumberHolder} containing crit stage
+   * Apply the bonus crit ability by increasing the value in the provided number holder by 1
+   *
+   * @param pokemon The pokemon with the BonusCrit ability (unused)
+   * @param passive Unused
+   * @param simulated Unused
+   * @param cancelled Unused
+   * @param args Args[0] is a number holder containing the crit stage.
    */
   override apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: BooleanHolder, args: [NumberHolder]): void {
     args[0].value += 1;
@@ -3636,14 +3669,10 @@ export class SuppressWeatherEffectAbAttr extends PreWeatherEffectAbAttr {
  * Condition function to applied to abilities related to Sheer Force.
  * Checks if last move used against target was affected by a Sheer Force user and:
  * Disables: Color Change, Pickpocket, Berserk, Anger Shell
- * @returns {AbAttrCondition} If false disables the ability which the condition is applied to.
+ * @returns An {@linkcode AbAttrCondition} to disable the ability under the proper conditions.
  */
 function getSheerForceHitDisableAbCondition(): AbAttrCondition {
   return (pokemon: Pokemon) => {
-    if (!pokemon.turnData) {
-      return true;
-    }
-
     const lastReceivedAttack = pokemon.turnData.attacksReceived[0];
     if (!lastReceivedAttack) {
       return true;
@@ -3654,7 +3683,7 @@ function getSheerForceHitDisableAbCondition(): AbAttrCondition {
       return true;
     }
 
-    /**if the last move chance is greater than or equal to cero, and the last attacker's ability is sheer force*/
+    /** `true` if the last move's chance is above 0 and the last attacker's ability is sheer force */
     const SheerForceAffected = allMoves[lastReceivedAttack.move].chance >= 0 && lastAttacker.hasAbility(Abilities.SHEER_FORCE);
 
     return !SheerForceAffected;
@@ -3724,7 +3753,7 @@ function getAnticipationCondition(): AbAttrCondition {
  */
 function getOncePerBattleCondition(ability: Abilities): AbAttrCondition {
   return (pokemon: Pokemon) => {
-    return !pokemon.battleData?.abilitiesApplied.includes(ability);
+    return !pokemon.waveData.abilitiesApplied.has(ability);
   };
 }
 
@@ -4013,7 +4042,7 @@ export class PostTurnStatusHealAbAttr extends PostTurnAbAttr {
 
 /**
  * After the turn ends, resets the status of either the ability holder or their ally
- * @param allyTarget - Whether to target ally, defaults to `false` (self-target)
+ * @param allyTarget Whether to target ally, defaults to false (self-target)
  */
 export class PostTurnResetStatusAbAttr extends PostTurnAbAttr {
   private allyTarget: boolean;
@@ -4045,79 +4074,153 @@ export class PostTurnResetStatusAbAttr extends PostTurnAbAttr {
 }
 
 /**
- * After the turn ends, try to create an extra item
+ * Attribute to try and restore eaten berries after the turn ends.
+ * Used by {@linkcode Abilities.HARVEST}.
  */
-export class PostTurnLootAbAttr extends PostTurnAbAttr {
+export class PostTurnRestoreBerryAbAttr extends PostTurnAbAttr {
   /**
-   * @param itemType - The type of item to create
-   * @param procChance - Chance to create an item
-   * @see {@linkcode applyPostTurn()}
+   * Array containing all {@linkcode BerryType | BerryTypes} that are under cap and able to be restored.
+   * Stored inside the class for a minor performance boost
+   */
+  private berriesUnderCap: BerryType[]
+
+  /**
+   * @param procChance - function providing chance to restore an item
+   * @see {@linkcode createEatenBerry()}
    */
   constructor(
-    /** Extend itemType to add more options */
-    private itemType: "EATEN_BERRIES" | "HELD_BERRIES",
     private procChance: (pokemon: Pokemon) => number
   ) {
     super();
   }
 
-  override canApplyPostTurn(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
-    // Clamp procChance to [0, 1]. Skip if didn't proc (less than pass)
-    const pass = Phaser.Math.RND.realInRange(0, 1);
-    return !(Math.max(Math.min(this.procChance(pokemon), 1), 0) < pass) && this.itemType === "EATEN_BERRIES" && !!pokemon.battleData.berriesEaten;
-  }
+  override canApplyPostTurn(pokemon: Pokemon, _passive: boolean, _simulated: boolean, _args: any[]): boolean {
+    // Ensure we have at least 1 recoverable berry (at least 1 berry in berriesEaten is not capped)
+    const cappedBerries = new Set(
+      globalScene.getModifiers(BerryModifier, pokemon.isPlayer()).filter(
+        bm => bm.pokemonId === pokemon.id && bm.getCountUnderMax() < 1
+      ).map(bm => bm.berryType)
+    );
 
-  override applyPostTurn(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): void {
-    this.createEatenBerry(pokemon, simulated);
-  }
+    this.berriesUnderCap = pokemon.battleData.berriesEaten.filter(
+      bt => !cappedBerries.has(bt)
+    );
 
-  /**
-   * Create a new berry chosen randomly from the berries the pokemon ate this battle
-   * @param pokemon The pokemon with this ability
-   * @param simulated whether the associated ability call is simulated
-   * @returns whether a new berry was created
-   */
-  createEatenBerry(pokemon: Pokemon, simulated: boolean): boolean {
-    const berriesEaten = pokemon.battleData.berriesEaten;
-
-    if (!berriesEaten.length) {
+    if (!this.berriesUnderCap.length) {
       return false;
     }
 
-    if (simulated) {
-      return true;
+    // Clamp procChance to [0, 1]. Skip if didn't proc (less than pass)
+    const pass = Phaser.Math.RND.realInRange(0, 1);
+    return Phaser.Math.Clamp(this.procChance(pokemon), 0, 1) >= pass;
+  }
+
+  override applyPostTurn(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): void {
+    if (!simulated) {
+      this.createEatenBerry(pokemon);
     }
+  }
 
-    const randomIdx = randSeedInt(berriesEaten.length);
-    const chosenBerryType = berriesEaten[randomIdx];
+  /**
+   * Create a new berry chosen randomly from all berries the pokemon ate this battle
+   * @param pokemon - The {@linkcode Pokemon} with this ability
+   * @returns `true` if a new berry was created
+   */
+  createEatenBerry(pokemon: Pokemon): boolean {
+    // Pick a random available berry to yoink
+    const randomIdx = randSeedInt(this.berriesUnderCap.length);
+    const chosenBerryType = this.berriesUnderCap[randomIdx];
+    pokemon.battleData.berriesEaten.splice(randomIdx, 1); // Remove berry from memory
     const chosenBerry = new BerryModifierType(chosenBerryType);
-    berriesEaten.splice(randomIdx); // Remove berry from memory
 
+    // Add the randomly chosen berry or update the existing one
     const berryModifier = globalScene.findModifier(
-      (m) => m instanceof BerryModifier && m.berryType === chosenBerryType,
+      (m) => m instanceof BerryModifier && m.berryType === chosenBerryType && m.pokemonId == pokemon.id,
       pokemon.isPlayer()
     ) as BerryModifier | undefined;
 
-    if (!berryModifier) {
+    if (berryModifier) {
+      berryModifier.stackCount++
+    } else {
       const newBerry = new BerryModifier(chosenBerry, pokemon.id, chosenBerryType, 1);
       if (pokemon.isPlayer()) {
         globalScene.addModifier(newBerry);
       } else {
         globalScene.addEnemyModifier(newBerry);
       }
-    } else if (berryModifier.stackCount < berryModifier.getMaxHeldItemCount(pokemon)) {
-      berryModifier.stackCount++;
     }
 
-    globalScene.queueMessage(i18next.t("abilityTriggers:postTurnLootCreateEatenBerry", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), berryName: chosenBerry.name }));
     globalScene.updateModifiers(pokemon.isPlayer());
-
+    globalScene.queueMessage(i18next.t("abilityTriggers:postTurnLootCreateEatenBerry", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), berryName: chosenBerry.name }));
     return true;
   }
 }
 
 /**
- * Attribute used for {@linkcode Abilities.MOODY}
+  * Attribute to track and re-trigger last turn's berries at the end of the `BerryPhase`.
+  * Used by {@linkcode Abilities.CUD_CHEW}.
+*/
+export class RepeatBerryNextTurnAbAttr extends PostTurnAbAttr {
+  /**
+   * @returns `true` if the pokemon ate anything last turn
+   */
+  override canApply(pokemon: Pokemon, _passive: boolean, _simulated: boolean, _args: any[]): boolean {
+    // force ability popup for ability triggers on normal turns.
+    // Still not used if ability doesn't proc
+    this.showAbility = true;
+    return !!pokemon.summonData.berriesEatenLast.length;
+  }
+
+  /**
+   * Cause this {@linkcode Pokemon} to regurgitate and eat all berries inside its `berriesEatenLast` array.
+   * Triggers a berry use animation, but does *not* count for other berry or item-related abilities.
+   * @param pokemon - The {@linkcode Pokemon} having a bad tummy ache
+   * @param _passive - N/A
+   * @param _simulated - N/A
+   * @param _cancelled - N/A
+   * @param _args - N/A
+   */
+  override apply(pokemon: Pokemon, _passive: boolean, _simulated: boolean, _cancelled: BooleanHolder | null, _args: any[]): void {
+    globalScene.unshiftPhase(
+      new CommonAnimPhase(pokemon.getBattlerIndex(), pokemon.getBattlerIndex(), CommonAnim.USE_ITEM),
+    );
+
+    // Re-apply effects of all berries previously scarfed.
+    // This doesn't count as "eating" a berry (for unnerve/stuff cheeks/unburden) as no item is consumed.
+    for (const berryType of pokemon.summonData.berriesEatenLast) {
+      getBerryEffectFunc(berryType)(pokemon);
+      const bMod = new BerryModifier(new BerryModifierType(berryType), pokemon.id, berryType, 1);
+      globalScene.eventTarget.dispatchEvent(new BerryUsedEvent(bMod)); // trigger message
+    }
+
+    // uncomment to make cheek pouch work with cud chew
+    // applyAbAttrs(HealFromBerryUseAbAttr, pokemon, new BooleanHolder(false));
+  }
+
+  /**
+   * @returns always `true` as we always want to move berries into summon data
+   */
+  override canApplyPostTurn(pokemon: Pokemon, _passive: boolean, _simulated: boolean, _args: any[]): boolean {
+    this.showAbility = false; // don't show popup for turn end berry moving (should ideally be hidden)
+    return true;
+  }
+
+  /**
+   * Move this {@linkcode Pokemon}'s `berriesEaten` array from `PokemonTurnData`
+   * into `PokemonSummonData` on turn end.
+   * Both arrays are cleared on switch.
+   * @param pokemon - The {@linkcode Pokemon} having a nice snack
+   * @param _passive - N/A
+   * @param _simulated - N/A
+   * @param _args - N/A
+   */
+  override applyPostTurn(pokemon: Pokemon, _passive: boolean, _simulated: boolean, _args: any[]): void {
+    pokemon.summonData.berriesEatenLast = pokemon.turnData.berriesEaten;
+  }
+}
+
+/**
+ * Attribute used for {@linkcode Abilities.MOODY} to randomly raise and lower stats at turn end.
  */
 export class MoodyAbAttr extends PostTurnAbAttr {
   constructor() {
@@ -4211,11 +4314,11 @@ export class PostTurnHurtIfSleepingAbAttr extends PostTurnAbAttr {
     return pokemon.getOpponents().some(opp => (opp.status?.effect === StatusEffect.SLEEP || opp.hasAbility(Abilities.COMATOSE)) && !opp.hasAbilityWithAttr(BlockNonDirectDamageAbAttr) && !opp.switchOutStatus);
   }
   /**
-   * Damages all sleeping opponents on turn end equal to 1/8 of their respective max hp (min 1)
-   * @param pokemon - The {@linkcode Pokemon} with this ability
-   * @param passive - Unused
-   * @param simulated - `true` if applying in a simulated call
-   * @param args - Unused
+   * Deals damage to all sleeping opponents equal to 1/8 of their max hp (min 1)
+   * @param pokemon {@linkcode Pokemon} with this ability
+   * @param passive N/A
+   * @param simulated `true` if applying in a simulated call.
+   * @param args N/A
    */
   override applyPostTurn(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): void {
     if (simulated) {
@@ -4500,8 +4603,19 @@ export class DoubleBerryEffectAbAttr extends AbAttr {
   }
 }
 
+/**
+ * Attribute to prevent opposing berry use while on the field.
+ * Used by {@linkcode Abilities.UNNERVE}, {@linkcode Abilities.AS_ONE_GLASTRIER} and {@linkcode Abilities.AS_ONE_SPECTRIER}
+ */
 export class PreventBerryUseAbAttr extends AbAttr {
-  override apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: BooleanHolder, args: any[]): void {
+  /**
+   * Prevent use of opposing berries.
+   * @param _pokemon - Unused
+   * @param _passive - Unused
+   * @param _simulated - Unused
+   * @param cancelled - {@linkcode BooleanHolder} containing whether to block berry use
+   */
+  override apply(_pokemon: Pokemon, _passive: boolean, _simulated: boolean, cancelled: BooleanHolder): void {
     cancelled.value = true;
   }
 }
@@ -5176,8 +5290,7 @@ export class IllusionPreSummonAbAttr extends PreSummonAbAttr {
   }
 
   override canApplyPreSummon(pokemon: Pokemon, passive: boolean, args: any[]): boolean {
-    pokemon.initSummondata()
-    if(pokemon.hasTrainer()){
+    if (pokemon.hasTrainer()) {
       const party: Pokemon[] = (pokemon.isPlayer() ? globalScene.getPlayerParty() : globalScene.getEnemyParty()).filter(p => p.isAllowedInBattle());
       const lastPokemon: Pokemon = party.filter(p => p !==pokemon).at(-1) || pokemon;
       const speciesId = lastPokemon.species.speciesId;
@@ -5221,7 +5334,7 @@ export class PostDefendIllusionBreakAbAttr extends PostDefendAbAttr {
 
   override canApplyPostDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, hitResult: HitResult, args: any[]): boolean {
     const breakIllusion: HitResult[] = [ HitResult.EFFECTIVE, HitResult.SUPER_EFFECTIVE, HitResult.NOT_VERY_EFFECTIVE, HitResult.ONE_HIT_KO ];
-    return breakIllusion.includes(hitResult) && !!pokemon.summonData?.illusion
+    return breakIllusion.includes(hitResult) && !!pokemon.summonData.illusion
   }
 }
 
@@ -5442,11 +5555,8 @@ function applySingleAbAttrs<TAttr extends AbAttr>(
       globalScene.queueAbilityDisplay(pokemon, passive, false);
     }
 
-    if (pokemon.summonData && !pokemon.summonData.abilitiesApplied.includes(ability.id)) {
-      pokemon.summonData.abilitiesApplied.push(ability.id);
-    }
-    if (pokemon.battleData && !simulated && !pokemon.battleData.abilitiesApplied.includes(ability.id)) {
-      pokemon.battleData.abilitiesApplied.push(ability.id);
+    if (!simulated) {
+      pokemon.waveData.abilitiesApplied.add(ability.id);
     }
 
     globalScene.clearPhaseQueueSplice();
@@ -5637,6 +5747,7 @@ export class PostDamageForceSwitchAbAttr extends PostDamageAbAttr {
     this.hpRatio = hpRatio;
   }
 
+  // TODO: Refactor to use more early returns
   public override canApplyPostDamage(
     pokemon: Pokemon,
     damage: number,
@@ -5664,6 +5775,7 @@ export class PostDamageForceSwitchAbAttr extends PostDamageAbAttr {
         if (fordbiddenDefendingMoves.includes(enemyLastMoveUsed.move) || enemyLastMoveUsed.move === Moves.SKY_DROP && enemyLastMoveUsed.result === MoveResult.OTHER) {
           return false;
         // Will not activate if the Pokémon's HP falls below half by a move affected by Sheer Force.
+        // TODO: Make this use the sheer force disable condition
         } else if (allMoves[enemyLastMoveUsed.move].chance >= 0 && source.hasAbility(Abilities.SHEER_FORCE)) {
           return false;
         // Activate only after the last hit of multistrike moves
@@ -6326,17 +6438,14 @@ export function applyOnLoseAbAttrs(pokemon: Pokemon, passive = false, simulated 
 
 /**
  * Sets the ability of a Pokémon as revealed.
- *
  * @param pokemon - The Pokémon whose ability is being revealed.
  */
 function setAbilityRevealed(pokemon: Pokemon): void {
-  if (pokemon.battleData) {
-    pokemon.battleData.abilityRevealed = true;
-  }
+  pokemon.waveData.abilityRevealed = true;
 }
 
 /**
- * Returns the Pokemon with weather-based forms
+ * Returns all Pokemon on field with weather-based forms
  */
 function getPokemonWithWeatherBasedForms() {
   return globalScene.getField(true).filter(p =>
@@ -6657,9 +6766,7 @@ export function initAbilities() {
       .conditionalAttr(pokemon => pokemon.status ? pokemon.status.effect === StatusEffect.PARALYSIS : false, StatMultiplierAbAttr, Stat.SPD, 2)
       .conditionalAttr(pokemon => !!pokemon.status || pokemon.hasAbility(Abilities.COMATOSE), StatMultiplierAbAttr, Stat.SPD, 1.5),
     new Ability(Abilities.NORMALIZE, 4)
-      .attr(MoveTypeChangeAbAttr, PokemonType.NORMAL, 1.2, (user, target, move) => {
-        return ![ Moves.MULTI_ATTACK, Moves.REVELATION_DANCE, Moves.TERRAIN_PULSE, Moves.HIDDEN_POWER, Moves.WEATHER_BALL, Moves.NATURAL_GIFT, Moves.JUDGMENT, Moves.TECHNO_BLAST ].includes(move.id);
-      }),
+      .attr(MoveTypeChangeAbAttr, PokemonType.NORMAL, 1.2),
     new Ability(Abilities.SNIPER, 4)
       .attr(MultCritAbAttr, 1.5),
     new Ability(Abilities.MAGIC_GUARD, 4)
@@ -6787,8 +6894,7 @@ export function initAbilities() {
       .attr(MovePowerBoostAbAttr, (user, target, move) => move.category === MoveCategory.SPECIAL && user?.status?.effect === StatusEffect.BURN, 1.5),
     new Ability(Abilities.HARVEST, 5)
       .attr(
-        PostTurnLootAbAttr,
-        "EATEN_BERRIES",
+        PostTurnRestoreBerryAbAttr,
         /** Rate is doubled when under sun {@link https://dex.pokemonshowdown.com/abilities/harvest} */
         (pokemon) => 0.5 * (getWeatherCondition(WeatherType.SUNNY, WeatherType.HARSH_SUN)(pokemon) ? 2 : 1)
       )
@@ -6910,7 +7016,7 @@ export function initAbilities() {
       .attr(HealFromBerryUseAbAttr, 1 / 3),
     new Ability(Abilities.PROTEAN, 6)
       .attr(PokemonTypeChangeAbAttr),
-    //.condition((p) => !p.summonData?.abilitiesApplied.includes(Abilities.PROTEAN)), //Gen 9 Implementation
+    //.condition((p) => !p.summonData.abilitiesApplied.includes(Abilities.PROTEAN)), //Gen 9 Implementation
     new Ability(Abilities.FUR_COAT, 6)
       .attr(ReceivedMoveDamageMultiplierAbAttr, (target, user, move) => move.category === MoveCategory.PHYSICAL, 0.5)
       .ignorable(),
@@ -6924,7 +7030,7 @@ export function initAbilities() {
     new Ability(Abilities.STRONG_JAW, 6)
       .attr(MovePowerBoostAbAttr, (user, target, move) => move.hasFlag(MoveFlags.BITING_MOVE), 1.5),
     new Ability(Abilities.REFRIGERATE, 6)
-      .attr(MoveTypeChangeAbAttr, PokemonType.ICE, 1.2, (user, target, move) => move.type === PokemonType.NORMAL && !move.hasAttr(VariableMoveTypeAttr)),
+      .attr(MoveTypeChangeAbAttr, PokemonType.ICE, 1.2, (user, target, move) => move.type === PokemonType.NORMAL),
     new Ability(Abilities.SWEET_VEIL, 6)
       .attr(UserFieldStatusEffectImmunityAbAttr, StatusEffect.SLEEP)
       .attr(PostSummonUserFieldRemoveStatusEffectAbAttr, StatusEffect.SLEEP)
@@ -6948,11 +7054,11 @@ export function initAbilities() {
     new Ability(Abilities.TOUGH_CLAWS, 6)
       .attr(MovePowerBoostAbAttr, (user, target, move) => move.hasFlag(MoveFlags.MAKES_CONTACT), 1.3),
     new Ability(Abilities.PIXILATE, 6)
-      .attr(MoveTypeChangeAbAttr, PokemonType.FAIRY, 1.2, (user, target, move) => move.type === PokemonType.NORMAL && !move.hasAttr(VariableMoveTypeAttr)),
+      .attr(MoveTypeChangeAbAttr, PokemonType.FAIRY, 1.2, (user, target, move) => move.type === PokemonType.NORMAL),
     new Ability(Abilities.GOOEY, 6)
       .attr(PostDefendStatStageChangeAbAttr, (target, user, move) => move.hasFlag(MoveFlags.MAKES_CONTACT), Stat.SPD, -1, false),
     new Ability(Abilities.AERILATE, 6)
-      .attr(MoveTypeChangeAbAttr, PokemonType.FLYING, 1.2, (user, target, move) => move.type === PokemonType.NORMAL && !move.hasAttr(VariableMoveTypeAttr)),
+      .attr(MoveTypeChangeAbAttr, PokemonType.FLYING, 1.2, (user, target, move) => move.type === PokemonType.NORMAL),
     new Ability(Abilities.PARENTAL_BOND, 6)
       .attr(AddSecondStrikeAbAttr, 0.25),
     new Ability(Abilities.DARK_AURA, 6)
@@ -7029,7 +7135,7 @@ export function initAbilities() {
     new Ability(Abilities.TRIAGE, 7)
       .attr(ChangeMovePriorityAbAttr, (pokemon, move) => move.hasFlag(MoveFlags.TRIAGE_MOVE), 3),
     new Ability(Abilities.GALVANIZE, 7)
-      .attr(MoveTypeChangeAbAttr, PokemonType.ELECTRIC, 1.2, (user, target, move) => move.type === PokemonType.NORMAL && !move.hasAttr(VariableMoveTypeAttr)),
+      .attr(MoveTypeChangeAbAttr, PokemonType.ELECTRIC, 1.2, (_user, _target, move) => move.type === PokemonType.NORMAL),
     new Ability(Abilities.SURGE_SURFER, 7)
       .conditionalAttr(getTerrainCondition(TerrainType.ELECTRIC), StatMultiplierAbAttr, Stat.SPD, 2),
     new Ability(Abilities.SCHOOLING, 7)
@@ -7156,7 +7262,7 @@ export function initAbilities() {
       .attr(PostSummonStatStageChangeAbAttr, [ Stat.DEF ], 1, true),
     new Ability(Abilities.LIBERO, 8)
       .attr(PokemonTypeChangeAbAttr),
-    //.condition((p) => !p.summonData?.abilitiesApplied.includes(Abilities.LIBERO)), //Gen 9 Implementation
+    //.condition((p) => !p.summonData.abilitiesApplied.includes(Abilities.LIBERO)), //Gen 9 Implementation
     new Ability(Abilities.BALL_FETCH, 8)
       .attr(FetchBallAbAttr)
       .condition(getOncePerBattleCondition(Abilities.BALL_FETCH)),
@@ -7371,7 +7477,7 @@ export function initAbilities() {
     new Ability(Abilities.OPPORTUNIST, 9)
       .attr(StatStageChangeCopyAbAttr),
     new Ability(Abilities.CUD_CHEW, 9)
-      .unimplemented(),
+      .attr(RepeatBerryNextTurnAbAttr),
     new Ability(Abilities.SHARPNESS, 9)
       .attr(MovePowerBoostAbAttr, (user, target, move) => move.hasFlag(MoveFlags.SLICING_MOVE), 1.5),
     new Ability(Abilities.SUPREME_OVERLORD, 9)

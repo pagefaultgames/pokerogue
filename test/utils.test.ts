@@ -1,5 +1,6 @@
 import { expect, describe, it, beforeAll } from "vitest";
 import { randomString, padInt } from "#app/utils/common";
+import { deepMergeSpriteData } from "#app/utils/data";
 
 import Phaser from "phaser";
 
@@ -9,6 +10,7 @@ describe("utils", () => {
       type: Phaser.HEADLESS,
     });
   });
+
   describe("randomString", () => {
     it("should return a string of the specified length", () => {
       const str = randomString(10);
@@ -44,6 +46,35 @@ describe("utils", () => {
     it("should return inputted value when zero length is entered", () => {
       const result = padInt(1, 0);
       expect(result).toBe("1");
+    });
+  });
+  describe("deepMergeSpriteData", () => {
+    it("should merge two objects' common properties", () => {
+      const dest = { a: 1, b: 2 };
+      const source = { a: 3, b: 3, e: 4 };
+      deepMergeSpriteData(dest, source);
+      expect(dest).toEqual({ a: 3, b: 3 });
+    });
+
+    it("does nothing for identical objects", () => {
+      const dest = { a: 1, b: 2 };
+      const source = { a: 1, b: 2 };
+      deepMergeSpriteData(dest, source);
+      expect(dest).toEqual({ a: 1, b: 2 });
+    });
+
+    it("should preserve missing and mistyped properties", () => {
+      const dest = { a: 1, c: 56, d: "test" };
+      const source = { a: "apple", b: 3, d: "no hablo español" };
+      deepMergeSpriteData(dest, source);
+      expect(dest).toEqual({ a: 1, c: 56, d: "no hablo español" });
+    });
+
+    it("should copy arrays verbatim even with mismatches", () => {
+      const dest = { a: 1, b: [{ d: 1 }, { d: 2 }, { d: 3 }] };
+      const source = { a: 3, b: [{ c: [4, 5] }, { p: [7, 8] }], e: 4 };
+      deepMergeSpriteData(dest, source);
+      expect(dest).toEqual({ a: 3, b: [{ c: [4, 5] }, { p: [7, 8] }] });
     });
   });
 });
