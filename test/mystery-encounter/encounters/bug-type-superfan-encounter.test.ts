@@ -118,7 +118,6 @@ const POOL_4_POKEMON = [Species.GENESECT, Species.SLITHER_WING, Species.BUZZWOLE
 
 const PHYSICAL_TUTOR_MOVES = [
   Moves.MEGAHORN,
-  Moves.X_SCISSOR,
   Moves.ATTACK_ORDER,
   Moves.BUG_BITE,
   Moves.FIRST_IMPRESSION,
@@ -147,7 +146,6 @@ const MISC_TUTOR_MOVES = [
   Moves.HEAL_ORDER,
   Moves.QUIVER_DANCE,
   Moves.INFESTATION,
-  Moves.POUNCE
 ];
 
 describe("Bug-Type Superfan - Mystery Encounter", () => {
