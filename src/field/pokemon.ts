@@ -9,7 +9,7 @@ import BattleInfo, {
   PlayerBattleInfo,
   EnemyBattleInfo,
 } from "#app/ui/battle-info";
-import Move from "#app/data/moves/move";
+import type Move from "#app/data/moves/move";
 import {
   HighCritAttr,
   HitsTagAttr,
