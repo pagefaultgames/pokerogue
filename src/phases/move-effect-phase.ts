@@ -277,9 +277,6 @@ export class MoveEffectPhase extends PokemonPhase {
         super.end();
         return;
       }
-      if (isNullOrUndefined(user.turnData)) {
-        user.resetTurnData();
-      }
     }
 
     /**
