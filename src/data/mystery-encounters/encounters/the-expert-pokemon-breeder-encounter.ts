@@ -482,9 +482,9 @@ function getPartyConfig(): EnemyPartyConfig {
         abilityIndex: 1, // Magic Guard
         shiny: false,
         nature: Nature.ADAMANT,
-        moveSet: [Moves.METEOR_MASH, Moves.FIRE_PUNCH, Moves.ICE_PUNCH, Moves.THUNDER_PUNCH],
+        moveSet: [Moves.FIRE_PUNCH, Moves.ICE_PUNCH, Moves.THUNDER_PUNCH, Moves.METEOR_MASH],
         ivs: [31, 31, 31, 31, 31, 31],
-        tera: PokemonType.STEEL,
+        tera: PokemonType.FAIRY,
       },
     ],
   };
