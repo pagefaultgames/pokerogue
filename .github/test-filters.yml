@@ -4,6 +4,7 @@ all:
   - "public/**"
   # Workflows that can impact tests
   - ".github/workflows/test*.yml"
+  - ".github/test-filters.yml"
   # top-level files
   - "package*.json"
   - ".nvrmc" # Updates to node version can break tests
