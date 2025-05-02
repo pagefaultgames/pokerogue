@@ -874,7 +874,8 @@ export default class BattleScene extends SceneBase {
   /**
    * Returns an array of Pokemon on both sides of the battle - player first, then enemy.
    * Does not actually check if the pokemon are on the field or not, and always has length 4 regardless of battle type.
-   * @param activeOnly - Whether to consider only active pokemon; default `false`
+   * @param activeOnly - Whether to consider only active pokemon (as described by {@linkcode Pokemon.isActive()}); default `false`.
+   * If `true`, will also elide all `null` values from the array.
    * @returns An array of {@linkcode Pokemon}, as described above.
    */
   public getField(activeOnly = false): Pokemon[] {
@@ -887,9 +888,9 @@ export default class BattleScene extends SceneBase {
   }
 
   /**
-   * Used in doubles battles to redirect moves from one pokemon to another when one faints or is removed from the field
-   * @param removedPokemon {@linkcode Pokemon} the pokemon that is being removed from the field (flee, faint), moves to be redirected FROM
-   * @param allyPokemon {@linkcode Pokemon} the pokemon that will have the moves be redirected TO
+   * Attempt to redirect a move in double battles from a fainted/removed Pokemon to its ally.
+   * @param removedPokemon - The {@linkcode Pokemon} having been removed from the field.
+   * @param allyPokemon - The {@linkcode Pokemon} allied with the removed Pokemon; will have moves redirected to it
    */
   redirectPokemonMoves(removedPokemon: Pokemon, allyPokemon: Pokemon): void {
     // failsafe: if not a double battle just return
@@ -915,10 +916,10 @@ export default class BattleScene extends SceneBase {
 
   /**
    * Returns the ModifierBar of this scene, which is declared private and therefore not accessible elsewhere
-   * @param isEnemy Whether to return the enemy's modifier bar
-   * @returns {ModifierBar}
+   * @param isEnemy - Whether to return the enemy modifier bar instead of the player bar; default `false`
+   * @returns The {@linkcode ModifierBar} for the given side of the field
    */
-  getModifierBar(isEnemy?: boolean): ModifierBar {
+  getModifierBar(isEnemy = false): ModifierBar {
     return isEnemy ? this.enemyModifierBar : this.modifierBar;
   }
 
@@ -3327,9 +3328,9 @@ export default class BattleScene extends SceneBase {
    * Remove a currently owned item. If the item is stacked, the entire item stack
    * gets removed. This function does NOT apply in-battle effects, such as Unburden.
    * If in-battle effects are needed, use {@linkcode Pokemon.loseHeldItem} instead.
-   * @param modifier The item to be removed.
-   * @param enemy `true` to remove an item owned by the enemy rather than the player; default `false`.
-   * @returns `true` if the item exists and was successfully removed, `false` otherwise
+   * @param modifier - The item to be removed.
+   * @param enemy - Whether to remove from the enemy (`true`) or player (`false`) party; default `false`.
+   * @returns Whether the item exists and was successfully removed
    */
   removeModifier(modifier: PersistentModifier, enemy = false): boolean {
     const modifiers = !enemy ? this.modifiers : this.enemyModifiers;
