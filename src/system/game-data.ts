@@ -1018,8 +1018,8 @@ export class GameData {
       gameMode: globalScene.gameMode.modeId,
       party: globalScene.getPlayerParty().map(p => new PokemonData(p)),
       enemyParty: globalScene.getEnemyParty().map(p => new PokemonData(p)),
-      modifiers: globalScene.findModifiers(() => true).map(m => new PersistentModifierData(m, true)),
-      enemyModifiers: globalScene.findModifiers(() => true, false).map(m => new PersistentModifierData(m, false)),
+      modifiers: globalScene.getModifiers().map(m => new PersistentModifierData(m, true)),
+      enemyModifiers: globalScene.getModifiers(false).map(m => new PersistentModifierData(m, false)),
       arena: new ArenaData(globalScene.arena),
       pokeballCounts: globalScene.pokeballCounts,
       money: Math.floor(globalScene.money),
@@ -1342,68 +1342,68 @@ export class GameData {
   }
 
   parseSessionData(dataStr: string): SessionSaveData {
+    // TODO: Add `null`/`undefined` to the corresponding type signatures for this
+    // (or ideally prevent them from being nullish in the first place)
+    // If the value is able to *not exist*, it should say so in the code
+
     const sessionData = JSON.parse(dataStr, (k: string, v: any) => {
-      if (k === "party" || k === "enemyParty") {
-        const ret: PokemonData[] = [];
-        if (v === null) {
-          v = [];
-        }
-        for (const pd of v) {
-          ret.push(new PokemonData(pd));
-        }
-        return ret;
-      }
-
-      if (k === "trainer") {
-        return v ? new TrainerData(v) : null;
-      }
-
-      if (k === "modifiers" || k === "enemyModifiers") {
-        const player = k === "modifiers";
-        const ret: PersistentModifierData[] = [];
-        if (v === null) {
-          v = [];
-        }
-        for (const md of v) {
-          if (md?.className === "ExpBalanceModifier") {
-            // Temporarily limit EXP Balance until it gets reworked
-            md.stackCount = Math.min(md.stackCount, 4);
+      // TODO: Move this into migrate script
+      switch (k) {
+        case "party":
+        case "enemyParty": {
+          const ret: PokemonData[] = [];
+          for (const pd of v ?? []) {
+            ret.push(new PokemonData(pd));
           }
-          if (
-            (md instanceof Modifier.EnemyAttackStatusEffectChanceModifier && md.effect === StatusEffect.FREEZE) ||
-            md.effect === StatusEffect.SLEEP
-          ) {
-            continue;
+          return ret;
+        }
+
+        case "trainer":
+          return v ? new TrainerData(v) : null;
+
+        case "modifiers":
+        case "enemyModifiers": {
+          const ret: PersistentModifierData[] = [];
+          for (const md of v ?? []) {
+            if (md?.className === "ExpBalanceModifier") {
+              // Temporarily limit EXP Balance until it gets reworked
+              md.stackCount = Math.min(md.stackCount, 4);
+            }
+
+            if (
+              md instanceof Modifier.EnemyAttackStatusEffectChanceModifier &&
+              (md.effect === StatusEffect.FREEZE || md.effect === StatusEffect.SLEEP)
+            ) {
+              // Discard any old "sleep/freeze chance tokens".
+              // TODO: make this migrate script
+              continue;
+            }
+
+            ret.push(new PersistentModifierData(md, k === "modifiers"));
           }
-          ret.push(new PersistentModifierData(md, player));
+          return ret;
         }
-        return ret;
-      }
 
-      if (k === "arena") {
-        return new ArenaData(v);
-      }
+        case "arena":
+          return new ArenaData(v);
 
-      if (k === "challenges") {
-        const ret: ChallengeData[] = [];
-        if (v === null) {
-          v = [];
+        case "challenges": {
+          const ret: ChallengeData[] = [];
+          for (const c of v ?? []) {
+            ret.push(new ChallengeData(c));
+          }
+          return ret;
         }
-        for (const c of v) {
-          ret.push(new ChallengeData(c));
-        }
-        return ret;
-      }
 
-      if (k === "mysteryEncounterType") {
-        return v as MysteryEncounterType;
-      }
+        case "mysteryEncounterType":
+          return v as MysteryEncounterType;
 
-      if (k === "mysteryEncounterSaveData") {
-        return new MysteryEncounterSaveData(v);
-      }
+        case "mysteryEncounterSaveData":
+          return new MysteryEncounterSaveData(v);
 
-      return v;
+        default:
+          return v;
+      }
     }) as SessionSaveData;
 
     applySessionVersionMigration(sessionData);

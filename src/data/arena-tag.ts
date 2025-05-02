@@ -90,7 +90,8 @@ export abstract class ArenaTag {
    * @returns The source {@linkcode Pokemon} or `null` if none is found
    */
   public getSourcePokemon(): Pokemon | null {
-    return this.sourceId ? globalScene.getPokemonById(this.sourceId) : null;
+    // need null/undefined check since 0 is a valid PID
+    return !isNullOrUndefined(this.sourceId) ? globalScene.getPokemonById(this.sourceId) : null;
   }
 
   /**

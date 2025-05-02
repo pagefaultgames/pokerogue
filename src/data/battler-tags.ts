@@ -46,13 +46,14 @@ import { isNullOrUndefined } from "#app/utils/common";
 
 export enum BattlerTagLapseType {
   FAINT,
+  /** Tag lapses while using a (non-follow up) move, potentially halting its execution. */
   MOVE,
   PRE_MOVE,
   AFTER_MOVE,
   MOVE_EFFECT,
   TURN_END,
   HIT,
-  /** Tag lapses AFTER_HIT, applying its effects even if the user faints */
+  /** Tag lapses after being hit, applying its effects even if the user faints */
   AFTER_HIT,
   CUSTOM,
 }
@@ -108,9 +109,9 @@ export class BattlerTag {
   }
 
   /**
-   * When given a battler tag or json representing one, load the data for it.
-   * This is meant to be inherited from by any battler tag with custom attributes
-   * @param {BattlerTag | any} source A battler tag
+   * Load the data for a given {@linkcode BattlerTag} or JSON representation thereof.
+   * Should be inherited from by any battler tag with custom attributes.
+   * @param source - The {@linkcode BattlerTag} to load
    */
   loadTag(source: BattlerTag | any): void {
     this.turnCount = source.turnCount;
@@ -120,7 +121,7 @@ export class BattlerTag {
 
   /**
    * Helper function that retrieves the source Pokemon object
-   * @returns The source {@linkcode Pokemon} or `null` if none is found
+   * @returns - The source {@linkcode Pokemon}, or `null` if none is found
    */
   public getSourcePokemon(): Pokemon | null {
     return this.sourceId ? globalScene.getPokemonById(this.sourceId) : null;
@@ -137,11 +138,11 @@ export interface TerrainBattlerTag {
 
 /**
  * Base class for tags that restrict the usage of moves. This effect is generally referred to as "disabling" a move
- * in-game. This is not to be confused with {@linkcode Moves.DISABLE}.
+ * in-game (not to be confused with {@linkcode Moves.DISABLE}).
  *
  * Descendants can override {@linkcode isMoveRestricted} to restrict moves that
- * match a condition. A restricted move gets cancelled before it is used. Players and enemies should not be allowed
- * to select restricted moves.
+ * match a condition. A restricted move gets cancelled before it is used.
+ * Players and enemies should not be allowed to select restricted moves.
  */
 export abstract class MoveRestrictionBattlerTag extends BattlerTag {
   constructor(
