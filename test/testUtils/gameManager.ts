@@ -579,9 +579,8 @@ export default class GameManager {
   /**
    * Intercepts `TurnStartPhase` and mocks {@linkcode TurnStartPhase.getSpeedOrder}'s return value.
    * Used to manually modify Pokemon turn order.
-
    * Note: This *DOES NOT* account for priority.
-   * @param order - The turn order to set
+   * @param order - The turn order to set as an array of {@linkcode BattlerIndex}es.
    * @example
    * ```ts
    * await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2]);
