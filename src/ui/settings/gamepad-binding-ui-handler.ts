@@ -1,7 +1,7 @@
 import AbstractBindingUiHandler from "./abstract-binding-ui-handler";
 import type { UiMode } from "#enums/ui-mode";
 import { Device } from "#enums/devices";
-import { getIconWithSettingName, getKeyWithKeycode } from "#app/configs/inputs/configHandler";
+import { getIconWithSettingName, getKeyWithKeycode } from "#app/configs/inputs/config-handler";
 import { addTextObject, TextStyle } from "#app/ui/text";
 import { globalScene } from "#app/global-scene";
 

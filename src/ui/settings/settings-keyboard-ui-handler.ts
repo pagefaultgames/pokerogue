@@ -1,5 +1,5 @@
 import { UiMode } from "#enums/ui-mode";
-import cfg_keyboard_qwerty from "#app/configs/inputs/cfg_keyboard_qwerty";
+import cfg_keyboard_qwerty from "#app/configs/inputs/cfg-keyboard-qwerty";
 import {
   setSettingKeyboard,
   SettingKeyboard,
@@ -11,7 +11,7 @@ import { reverseValueToKeySetting, truncateString } from "#app/utils/common";
 import AbstractControlSettingsUiHandler from "#app/ui/settings/abstract-control-settings-ui-handler";
 import type { InterfaceConfig } from "#app/inputs-controller";
 import { addTextObject, TextStyle } from "#app/ui/text";
-import { deleteBind } from "#app/configs/inputs/configHandler";
+import { deleteBind } from "#app/configs/inputs/config-handler";
 import { Device } from "#enums/devices";
 import { NavigationManager } from "#app/ui/settings/navigationMenu";
 import i18next from "i18next";

@@ -1,5 +1,5 @@
-import cfg_keyboard_qwerty from "#app/configs/inputs/cfg_keyboard_qwerty";
-import pad_xbox360 from "#app/configs/inputs/pad_xbox360";
+import cfg_keyboard_qwerty from "#app/configs/inputs/cfg-keyboard-qwerty";
+import pad_xbox360 from "#app/configs/inputs/pad-xbox360";
 import GameManager from "#test/testUtils/gameManager";
 import InputsHandler from "#test/testUtils/inputsHandler";
 import Phaser from "phaser";

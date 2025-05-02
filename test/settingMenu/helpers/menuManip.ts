@@ -9,7 +9,7 @@ import {
   getKeyWithKeycode,
   getKeyWithSettingName,
   getSettingNameWithKeycode,
-} from "#app/configs/inputs/configHandler";
+} from "#app/configs/inputs/config-handler";
 import { SettingKeyboard } from "#app/system/settings/settings-keyboard";
 import { expect } from "vitest";
 
