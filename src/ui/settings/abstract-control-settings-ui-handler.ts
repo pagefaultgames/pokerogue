@@ -5,7 +5,7 @@ import { addWindow } from "#app/ui/ui-theme";
 import { addTextObject, TextStyle } from "#app/ui/text";
 import { ScrollBar } from "#app/ui/scroll-bar";
 import { getIconWithSettingName } from "#app/configs/inputs/config-handler";
-import NavigationMenu, { NavigationManager } from "#app/ui/settings/navigationMenu";
+import NavigationMenu, { NavigationManager } from "#app/ui/settings/navigation-menu";
 import type { Device } from "#enums/devices";
 import { Button } from "#enums/buttons";
 import i18next from "i18next";

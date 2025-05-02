@@ -56,7 +56,7 @@ import { Device } from "#enums/devices";
 import MysteryEncounterUiHandler from "./mystery-encounter-ui-handler";
 import PokedexScanUiHandler from "./pokedex-scan-ui-handler";
 import PokedexPageUiHandler from "./pokedex-page-ui-handler";
-import { NavigationManager } from "./settings/navigationMenu";
+import { NavigationManager } from "./settings/navigation-menu";
 import { UiMode } from "#enums/ui-mode";
 
 const transitionModes = [

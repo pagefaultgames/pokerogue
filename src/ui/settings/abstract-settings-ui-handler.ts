@@ -5,7 +5,7 @@ import { addWindow } from "#app/ui/ui-theme";
 import { ScrollBar } from "#app/ui/scroll-bar";
 import { Button } from "#enums/buttons";
 import type { InputsIcons } from "#app/ui/settings/abstract-control-settings-ui-handler";
-import NavigationMenu, { NavigationManager } from "#app/ui/settings/navigationMenu";
+import NavigationMenu, { NavigationManager } from "#app/ui/settings/navigation-menu";
 import type { SettingType } from "#app/system/settings/settings";
 import { Setting, SettingKeys } from "#app/system/settings/settings";
 import i18next from "i18next";

@@ -13,7 +13,7 @@ import type { InterfaceConfig } from "#app/inputs-controller";
 import { addTextObject, TextStyle } from "#app/ui/text";
 import { deleteBind } from "#app/configs/inputs/config-handler";
 import { Device } from "#enums/devices";
-import { NavigationManager } from "#app/ui/settings/navigationMenu";
+import { NavigationManager } from "#app/ui/settings/navigation-menu";
 import i18next from "i18next";
 import { globalScene } from "#app/global-scene";
 
