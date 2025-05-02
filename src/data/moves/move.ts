@@ -29,7 +29,7 @@ import {
 } from "../status-effect";
 import { getTypeDamageMultiplier } from "../type";
 import { PokemonType } from "#enums/pokemon-type";
-import { BooleanHolder, NumberHolder, isNullOrUndefined, toDmgValue, randSeedItem, randSeedInt, getEnumValues, toReadableString, type Constructor, randSeedFloat } from "#app/utils/common";
+import { BooleanHolder, NumberHolder, isNullOrUndefined, toDmgValue, randSeedItem, randSeedInt, getEnumValues, toReadableString, type Constructor } from "#app/utils/common";
 import { WeatherType } from "#enums/weather-type";
 import type { ArenaTrapTag } from "../arena-tag";
 import { ArenaTagSide, WeakenMoveTypeTag } from "../arena-tag";
@@ -2549,8 +2549,8 @@ export class StealHeldItemChanceAttr extends MoveEffectAttr {
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const rand = randSeedFloat();
-    if (rand > this.chance) {
+    const rand = Phaser.Math.RND.realInRange(0, 1);
+    if (rand >= this.chance) {
       return false;
     }
 

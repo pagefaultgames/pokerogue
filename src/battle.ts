@@ -8,7 +8,6 @@ import {
   shiftCharCodes,
   randSeedItem,
   randInt,
-  randSeedFloat,
 } from "#app/utils/common";
 import Trainer, { TrainerVariant } from "./field/trainer";
 import type { GameMode } from "./game-mode";
@@ -151,7 +150,7 @@ export default class Battle {
   randSeedGaussForLevel(value: number): number {
     let rand = 0;
     for (let i = value; i > 0; i--) {
-      rand += randSeedFloat();
+      rand += Phaser.Math.RND.realInRange(0, 1);
     }
     return rand / value;
   }
