@@ -4291,7 +4291,7 @@ export class PostBiomeChangeTerrainChangeAbAttr extends PostBiomeChangeAbAttr {
 }
 
 /**
- * TAttribute to trigger effects after a move is used by either side of the field.
+ * Attribute to trigger effects after a move is used by either side of the field.
  */
 export class PostMoveUsedAbAttr extends AbAttr {
   /**
@@ -4303,7 +4303,7 @@ export class PostMoveUsedAbAttr extends AbAttr {
    * @param hitChecks - Array of {@linkcode HitCheckEntry | HitCheckEntries} containing results of move usage
    * @param simulated - Whether the ability call is simulated
    * @param args - Extra arguments passed to the function. Handled by child classes.
-   * @returns `true` if the ability can be applied, `false` otherwise.
+   * @returns Whether the ability can be successfully applied.
    * Normally checks if move was used by another pokemon and was successfully applied
    * against at least 1 target; can be overridden to change effect
    * @see {@linkcode applyPostMoveUsed}
@@ -4317,8 +4317,8 @@ export class PostMoveUsedAbAttr extends AbAttr {
     simulated: boolean,
     args: any[],
   ): boolean {
-    return source !== pokemon // not used by ourself
-      && !!targets.length // move has targets
+    return source.getBattlerIndex() !== pokemon.getBattlerIndex() // not used by ourself
+      && !!targets.length // move had targets to hit
       && hitChecks.some(hr => hr[0] === HitCheckResult.HIT); // successfully affected at least 1 target
   }
 
@@ -4826,7 +4826,7 @@ export class RedirectTypeMoveAbAttr extends RedirectMoveAbAttr {
 export class BlockRedirectAbAttr extends AbAttr { }
 
 /**
- * Decrements a {@linkcode Pokemon}'s sleep turn counter by an additional 1 whenever it would be decremented.
+ * Decrements a {@linkcode Pokemon}'s sleep turn counter by 2 whenever it would be decreased by 1.
  * Used by {@linkcode Abilities.EARLY_BIRD}.
  */
 export class ReduceSleepDurationAbAttr extends AbAttr {
