@@ -17,8 +17,8 @@ import { initSceneWithoutEncounterPhase } from "#test/testUtils/gameManagerUtils
 import { ModifierTier } from "#app/modifier/modifier-tier";
 import { MysteriousChallengersEncounter } from "#app/data/mystery-encounters/encounters/mysterious-challengers-encounter";
 import { TrainerConfig } from "#app/data/trainers/trainer-config";
-import { TrainerPartyCompoundTemplate } from "#app/data/trainers/TrainerPartyTemplate";
-import { TrainerPartyTemplate } from "#app/data/trainers/TrainerPartyTemplate";
+import { TrainerPartyCompoundTemplate } from "#app/data/trainers/trainer-party-template";
+import { TrainerPartyTemplate } from "#app/data/trainers/trainer-party-template";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";

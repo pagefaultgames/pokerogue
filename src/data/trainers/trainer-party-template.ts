@@ -250,7 +250,7 @@ export function getGymLeaderPartyTemplate() {
   switch (gameMode.modeId) {
     case GameModes.DAILY:
       if (currentBattle?.waveIndex <= 20) {
-        return trainerPartyTemplates.GYM_LEADER_2
+        return trainerPartyTemplates.GYM_LEADER_2;
       }
       return trainerPartyTemplates.GYM_LEADER_3;
     case GameModes.CHALLENGE: // In the future, there may be a ChallengeType to call here. For now, use classic's.
@@ -258,13 +258,15 @@ export function getGymLeaderPartyTemplate() {
       if (currentBattle?.waveIndex <= 20) {
         return trainerPartyTemplates.GYM_LEADER_1; // 1 avg 1 strong
       }
-      else if (currentBattle?.waveIndex <= 30) {
+      if (currentBattle?.waveIndex <= 30) {
         return trainerPartyTemplates.GYM_LEADER_2; // 1 avg 1 strong 1 stronger
       }
-      else if (currentBattle?.waveIndex <= 60) { // 50 and 60
+      if (currentBattle?.waveIndex <= 60) {
+        // 50 and 60
         return trainerPartyTemplates.GYM_LEADER_3; // 2 avg 1 strong 1 stronger
       }
-      else if (currentBattle?.waveIndex <= 90) { // 80 and 90
+      if (currentBattle?.waveIndex <= 90) {
+        // 80 and 90
         return trainerPartyTemplates.GYM_LEADER_4; // 3 avg 1 strong 1 stronger
       }
       // 110+

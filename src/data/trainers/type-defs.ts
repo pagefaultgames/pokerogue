@@ -3,7 +3,7 @@ import type { PersistentModifier } from "#app/modifier/modifier";
 import type { PartyMemberStrength } from "#enums/party-member-strength";
 import type { Species } from "#enums/species";
 import type { TrainerConfig } from "./trainer-config";
-import type { TrainerPartyTemplate } from "./TrainerPartyTemplate";
+import type { TrainerPartyTemplate } from "./trainer-party-template";
 
 export type PartyTemplateFunc = () => TrainerPartyTemplate;
 export type PartyMemberFunc = (level: number, strength: PartyMemberStrength) => EnemyPokemon;
