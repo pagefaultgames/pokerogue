@@ -5395,55 +5395,49 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Check whether a given non-volatile status condition can be applied to this Pokemon.
-   * @param effect - The {@linkcode StatusEffect} whose applicability is being checked, or `undefined` to check for all statuses in general
-   * @param quiet - Whether to supress any in-battle messages created; default `false`
-   * @param overrideStatus - Whether the Pokemon's current status can be overriden; default `false`
-   * @param sourcePokemon - The {@linkcode Pokemon} that is setting the status effect, if any; used to resolve relevant attacking abilities
-   * @param ignoreField - Whether to ignore field effects (weather, terrain, etc.) when setting status; default `false`
-   * @returns Whether the status was sucessfully applied
+   * Checks if a status effect can be applied to the Pokemon.
+   *
+   * @param effect The {@linkcode StatusEffect} whose applicability is being checked
+   * @param quiet Whether in-battle messages should trigger or not
+   * @param overrideStatus Whether the Pokemon's current status can be overriden
+   * @param sourcePokemon The Pokemon that is setting the status effect
+   * @param ignoreField Whether any field effects (weather, terrain, etc.) should be considered
    */
   canSetStatus(
-    effect: StatusEffect,
+    effect: StatusEffect | undefined,
     quiet = false,
     overrideStatus = false,
     sourcePokemon: Pokemon | null = null,
     ignoreField = false,
   ): boolean {
-    // TODO: Check the order of operations of these messages...
     if (effect !== StatusEffect.FAINT) {
       if (overrideStatus ? this.status?.effect === effect : this.status) {
-        // only 1 status effect per pokemon (unless we're set to override it)
         this.queueImmuneMessage(quiet, effect);
         return false;
       }
-
       if (
         this.isGrounded() &&
         !ignoreField &&
         globalScene.arena.terrain?.terrainType === TerrainType.MISTY
       ) {
-        // Misty terrain prevents status application
         this.queueImmuneMessage(quiet, effect);
         return false;
       }
     }
 
-    // Check whether our types or some other effect blocks status application
     const types = this.getTypes(true, true);
-    let failed = false;
+
     switch (effect) {
       case StatusEffect.POISON:
       case StatusEffect.TOXIC:
-        // Check whether any of the Pokemon's types is immune to Poison/Toxic
-        // and not being ignored by the source pokemon's ability
-        failed = types.some(defType => {
+        // Check if the Pokemon is immune to Poison/Toxic or if the source pokemon is canceling the immunity
+        const poisonImmunity = types.map(defType => {
+          // Check if the Pokemon is not immune to Poison/Toxic
           if (defType !== PokemonType.POISON && defType !== PokemonType.STEEL) {
-            // type not innately immune to poison
             return false;
           }
 
-          // Check if the source Pokemon has an ability that cancels the immunity
+          // Check if the source Pokemon has an ability that cancels the Poison/Toxic immunity
           const cancelImmunity = new BooleanHolder(false);
           if (sourcePokemon) {
             applyAbAttrs(
@@ -5454,39 +5448,57 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
               effect,
               defType,
             );
+            if (cancelImmunity.value) {
+              return false;
+            }
           }
-          return !cancelImmunity.value;
+
+            return true;
         });
 
+        if (this.isOfType(PokemonType.POISON) || this.isOfType(PokemonType.STEEL)) {
+          if (poisonImmunity.includes(true)) {
+            this.queueImmuneMessage(quiet, effect);
+            return false;
+          }
+        }
         break;
       case StatusEffect.PARALYSIS:
-        failed = this.isOfType(PokemonType.ELECTRIC)
+        if (this.isOfType(PokemonType.ELECTRIC)) {
+          this.queueImmuneMessage(quiet, effect);
+          return false;
+        }
         break;
       case StatusEffect.SLEEP:
-        failed = this.isGrounded() && globalScene.arena.terrain?.terrainType === TerrainType.ELECTRIC
+        if (
+          this.isGrounded() &&
+          globalScene.arena.terrain?.terrainType === TerrainType.ELECTRIC
+        ) {
+          this.queueImmuneMessage(quiet, effect);
+          return false;
+        }
         break;
       case StatusEffect.FREEZE:
-        failed =
+        if (
           this.isOfType(PokemonType.ICE) ||
           (!ignoreField &&
-            !isNullOrUndefined(globalScene?.arena?.weather?.weatherType) &&
+            globalScene?.arena?.weather?.weatherType &&
             [WeatherType.SUNNY, WeatherType.HARSH_SUN].includes(
               globalScene.arena.weather.weatherType,
-            )) // ice types and pokemon under effects of harsh sunlight aren't frozen
-
+            ))
+        ) {
+          this.queueImmuneMessage(quiet, effect);
+          return false;
+        }
         break;
       case StatusEffect.BURN:
-        failed = this.isOfType(PokemonType.FIRE)
-          // fire types can't be burnt
+        if (this.isOfType(PokemonType.FIRE)) {
+          this.queueImmuneMessage(quiet, effect);
+          return false;
+        }
         break;
     }
 
-    if (failed) {
-      this.queueImmuneMessage(quiet, effect);
-      return false;
-    }
-
-    // Check any status immunity abilities from the user or its allies
     const cancelled = new BooleanHolder(false);
     applyPreSetStatusAbAttrs(
       StatusEffectImmunityAbAttr,
@@ -5498,31 +5510,33 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (cancelled.value) {
       return false;
     }
+
     for (const pokemon of this.getAlliedField()) {
       applyPreSetStatusAbAttrs(
         UserFieldStatusEffectImmunityAbAttr,
         pokemon,
         effect,
         cancelled,
-        quiet,
-        this,
-        sourcePokemon,
+        quiet, this, sourcePokemon,
       )
       if (cancelled.value) {
-        return false;
+        break;
       }
     }
 
-    // Apply safeguard
+    if (cancelled.value) {
+      return false;
+    }
+
     if (
       sourcePokemon &&
       sourcePokemon !== this &&
       this.isSafeguarded(sourcePokemon)
     ) {
-      if (!quiet) {
+      if(!quiet){
         globalScene.queueMessage(
-          i18next.t("moveTriggers:safeguard", { targetName: getPokemonNameWithAffix(this) })
-        );
+          i18next.t("moveTriggers:safeguard", { targetName: getPokemonNameWithAffix(this)
+        }));
       }
       return false;
     }
@@ -5530,28 +5544,17 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return true;
   }
 
-  /**
-   * Attempt to set this Pokemon's non-volatile status condition.
-   * @param effect - The {@linkcode StatusEffect} to set
-   * @param asPhase - Whether to set the status effect as part of a new {@linkcode ObtainStatusEffectPhase}; default `false`
-   * @param sourcePokemon - The {@linkcode Pokemon} causing the status, if any; used to resolve relevant attacking abilities
-   * @param sourceText - Text to play for the source of the ability; only used if `asPhase=true`
-   * @param overrideStatus - Whether to allow overriding one status effect with a different type of effect; default `false`
-   * @returns Whether the status was successfully applied
-   */
   trySetStatus(
-    effect: StatusEffect,
+    effect?: StatusEffect,
     asPhase = false,
     sourcePokemon: Pokemon | null = null,
+    turnsRemaining = 0,
     sourceText: string | null = null,
-    overrideStatus: boolean = false
+    overrideStatus?: boolean
   ): boolean {
-    // TODO: Refactor and split into 2 functions: 1 with and without phase
-    // Abort if cannot status due to type immunity, existing status etc.
     if (!this.canSetStatus(effect, false, overrideStatus, sourcePokemon)) {
       return false;
     }
-
     if (this.isFainted() && effect !== StatusEffect.FAINT) {
       return false;
     }
@@ -5560,13 +5563,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
      * If this Pokemon falls asleep or freezes in the middle of a multi-hit attack,
      * cancel the attack's subsequent hits.
      */
-    const currentPhase = globalScene.getCurrentPhase();
-    if (
-      (effect === StatusEffect.SLEEP || effect === StatusEffect.FREEZE) &&
-      currentPhase instanceof MoveEffectPhase &&
-      currentPhase.getUserPokemon() === this) {
+    if (effect === StatusEffect.SLEEP || effect === StatusEffect.FREEZE) {
+      const currentPhase = globalScene.getCurrentPhase();
+      if (currentPhase instanceof MoveEffectPhase && currentPhase.getUserPokemon() === this) {
         this.turnData.hitCount = 1;
         this.turnData.hitsLeft = 1;
+      }
     }
 
     if (asPhase) {
@@ -5577,6 +5579,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         new ObtainStatusEffectPhase(
           this.getBattlerIndex(),
           effect,
+          turnsRemaining,
           sourceText,
           sourcePokemon,
         ),
@@ -5584,9 +5587,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       return true;
     }
 
-    const sleepTurns = new NumberHolder(0);
+    let sleepTurnsRemaining: NumberHolder;
+
     if (effect === StatusEffect.SLEEP) {
-      sleepTurns.value = this.randSeedIntRange(2, 4);
+      sleepTurnsRemaining = new NumberHolder(this.randSeedIntRange(2, 4));
+
       this.setFrameRate(4);
 
       // If the user is invulnerable, lets remove their invulnerability when they fall asleep
@@ -5605,7 +5610,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
     }
 
-    this.status = new Status(effect, 0, sleepTurns.value)
+    sleepTurnsRemaining = sleepTurnsRemaining!; // tell TS compiler it's defined
+    effect = effect!; // If `effect` is undefined then `trySetStatus()` will have already returned early via the `canSetStatus()` call
+    this.status = new Status(effect, 0, sleepTurnsRemaining?.value);
 
     return true;
   }

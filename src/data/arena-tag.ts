@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import type { Arena } from "#app/field/arena";
 import { PokemonType } from "#enums/pokemon-type";
-import { BooleanHolder, isNullOrUndefined, NumberHolder, toDmgValue } from "#app/utils/common";
+import { BooleanHolder, NumberHolder, toDmgValue } from "#app/utils/common";
 import { allMoves } from "#app/data/moves/move";
 import { MoveTarget } from "#enums/MoveTarget";
 import { MoveCategory } from "#enums/MoveCategory";
@@ -805,27 +805,25 @@ class SpikesTag extends ArenaTrapTag {
  * Pokémon summoned into this trap remove it entirely.
  */
 class ToxicSpikesTag extends ArenaTrapTag {
-  private neutralized = false;
+  private neutralized: boolean;
 
   constructor(sourceId: number, side: ArenaTagSide) {
     super(ArenaTagType.TOXIC_SPIKES, Moves.TOXIC_SPIKES, sourceId, side, 2);
+    this.neutralized = false;
   }
 
   onAdd(arena: Arena, quiet = false): void {
     super.onAdd(arena);
 
-    const source = !isNullOrUndefined(this.sourceId) ? globalScene.getPokemonById(this.sourceId) : null;
-    if (quiet || isNullOrUndefined(source)) {
-      // can't play message without a pokemon to do it
-      return;
+    const source = this.sourceId ? globalScene.getPokemonById(this.sourceId) : null;
+    if (!quiet && source) {
+      globalScene.queueMessage(
+        i18next.t("arenaTag:toxicSpikesOnAdd", {
+          moveName: this.getMoveName(),
+          opponentDesc: source.getOpponentDescriptor(),
+        }),
+      );
     }
-
-    globalScene.queueMessage(
-      i18next.t("arenaTag:toxicSpikesOnAdd", {
-        moveName: this.getMoveName(),
-        opponentDesc: source.getOpponentDescriptor(),
-      }),
-    );
   }
 
   onRemove(arena: Arena): void {
@@ -835,37 +833,32 @@ class ToxicSpikesTag extends ArenaTrapTag {
   }
 
   override activateTrap(pokemon: Pokemon, simulated: boolean): boolean {
-    if (!pokemon.isGrounded()) {
-      // flying targets immune to toxic spikes (but also can't nullify it)
-      return false;
-    }
-
-    if (simulated) {
-      return true;
-    }
-
-    if (pokemon.isOfType(PokemonType.POISON)) {
-      // remove toxic spikes on grounded switch in
-      this.neutralized = true;
-      if (globalScene.arena.removeTag(this.tagType)) {
-        globalScene.queueMessage(
-          i18next.t("arenaTag:toxicSpikesActivateTrapPoison", {
-            pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-            moveName: this.getMoveName(),
-          }),
-        );
+    if (pokemon.isGrounded()) {
+      if (simulated) {
         return true;
       }
-      return false;
+      if (pokemon.isOfType(PokemonType.POISON)) {
+        this.neutralized = true;
+        if (globalScene.arena.removeTag(this.tagType)) {
+          globalScene.queueMessage(
+            i18next.t("arenaTag:toxicSpikesActivateTrapPoison", {
+              pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+              moveName: this.getMoveName(),
+            }),
+          );
+          return true;
+        }
+      } else if (!pokemon.status) {
+        const toxic = this.layers > 1;
+        if (
+          pokemon.trySetStatus(!toxic ? StatusEffect.POISON : StatusEffect.TOXIC, true, null, 0, this.getMoveName())
+        ) {
+          return true;
+        }
+      }
     }
 
-    // attempt to status the target
-    return pokemon.trySetStatus(
-      this.layers > 1 ? StatusEffect.TOXIC : StatusEffect.POISON, // 2+ layers = toxic
-      true,
-      null,
-      this.getMoveName(),
-    );
+    return false;
   }
 
   getMatchupScoreMultiplier(pokemon: Pokemon): number {

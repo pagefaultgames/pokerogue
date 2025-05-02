@@ -1187,7 +1187,7 @@ export class MoveEffectAttr extends MoveAttr {
    */
   protected options?: MoveEffectAttrOptions;
 
-  constructor(selfTarget: boolean = false, options?: MoveEffectAttrOptions) {
+  constructor(selfTarget?: boolean, options?: MoveEffectAttrOptions) {
     super(selfTarget);
     this.options = options;
   }
@@ -1878,7 +1878,7 @@ export class HealAttr extends MoveEffectAttr {
   /** Should an animation be shown? */
   private showAnim: boolean;
 
-  constructor(healRatio?: number, showAnim?: boolean, selfTarget: boolean = false) {
+  constructor(healRatio?: number, showAnim?: boolean, selfTarget?: boolean) {
     super(selfTarget === undefined || selfTarget);
 
     this.healRatio = healRatio || 1;
@@ -2144,7 +2144,7 @@ export class BoostHealAttr extends HealAttr {
   /** The lambda expression to check against when boosting the healing value */
   private condition?: MoveConditionFunc;
 
-  constructor(normalHealRatio: number = 0.5, boostedHealRatio: number = 2 / 3, showAnim?: boolean, selfTarget: boolean = false, condition?: MoveConditionFunc) {
+  constructor(normalHealRatio: number = 0.5, boostedHealRatio: number = 2 / 3, showAnim?: boolean, selfTarget?: boolean, condition?: MoveConditionFunc) {
     super(normalHealRatio, showAnim, selfTarget);
     this.normalHealRatio = normalHealRatio;
     this.boostedHealRatio = boostedHealRatio;
@@ -2456,28 +2456,31 @@ export class WaterShurikenMultiHitTypeAttr extends ChangeMultiHitTypeAttr {
 
 export class StatusEffectAttr extends MoveEffectAttr {
   public effect: StatusEffect;
+  public turnsRemaining?: number;
   public overrideStatus: boolean = false;
 
-  constructor(effect: StatusEffect, selfTarget: boolean = false, overrideStatus: boolean = false) {
+  constructor(effect: StatusEffect, selfTarget?: boolean, turnsRemaining?: number, overrideStatus: boolean = false) {
     super(selfTarget);
 
     this.effect = effect;
+    this.turnsRemaining = turnsRemaining;
     this.overrideStatus = overrideStatus;
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const moveChance = this.getMoveChance(user, target, move, this.selfTarget, true);
-    const statusCheck = moveChance < 0 || moveChance >= 100 || user.randSeedInt(100) < moveChance;
-    if (!statusCheck) {
-      return false;
+    const statusCheck = moveChance < 0 || moveChance === 100 || user.randSeedInt(100) < moveChance;
+    if (statusCheck) {
+      const pokemon = this.selfTarget ? user : target;
+      if (user !== target && move.category === MoveCategory.STATUS && !target.canSetStatus(this.effect, false, false, user, true)) {
+        return false;
+      }
+      if (((!pokemon.status || this.overrideStatus) || (pokemon.status.effect === this.effect && moveChance < 0))
+        && pokemon.trySetStatus(this.effect, true, user, this.turnsRemaining, null, this.overrideStatus)) {
+        applyPostAttackAbAttrs(ConfusionOnStatusEffectAbAttr, user, target, move, null, false, this.effect);
+        return true;
+      }
     }
-
-    const pokemon = this.selfTarget ? user : target;
-    if (pokemon.trySetStatus(this.effect, true, user, null, this.overrideStatus)) {
-      applyPostAttackAbAttrs(ConfusionOnStatusEffectAbAttr, user, target, move, null, false, this.effect);
-      return true;
-    }
-
     return false;
   }
 
@@ -2490,38 +2493,11 @@ export class StatusEffectAttr extends MoveEffectAttr {
   }
 }
 
-/**
- * Attribute for moves which influct a fixed sleep duration.
- * Used by {@linkcode Moves.REST}.
- */
-export class FixedSleepDurationStatusEffectAttr extends StatusEffectAttr {
-  public turnCount: number
-
-  constructor(turnCount: number, selfTarget = false, overrideStatus = false) {
-    // It's fine to fix sleep as the statusEffect - it's the only one on a timer
-    super(StatusEffect.SLEEP, selfTarget, overrideStatus);
-    this.turnCount = turnCount;
-  }
-
-  override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (!super.apply(user, target, move, args)) {
-      return false;
-    }
-
-    // should neve happen but makes compiler happy
-    if (isNullOrUndefined(user.status?.sleepTurnsRemaining)) {
-      return false;
-    }
-
-    user.status.sleepTurnsRemaining = this.turnCount;
-    return true;
-  }
-}
 export class MultiStatusEffectAttr extends StatusEffectAttr {
   public effects: StatusEffect[];
 
-  constructor(effects: StatusEffect[], selfTarget: boolean = false, overrideStatus?: boolean) {
-    super(effects[0], selfTarget, overrideStatus);
+  constructor(effects: StatusEffect[], selfTarget?: boolean, turnsRemaining?: number, overrideStatus?: boolean) {
+    super(effects[0], selfTarget, turnsRemaining, overrideStatus);
     this.effects = effects;
   }
 
@@ -2551,31 +2527,25 @@ export class PsychoShiftEffectAttr extends MoveEffectAttr {
    * @returns `true` if Psycho Shift's effect is able to be applied to the target
    */
   apply(user: Pokemon, target: Pokemon, _move: Move, _args: any[]): boolean {
-    const statusToApply: StatusEffect | undefined = user.status?.effect ??
-      user.hasAbility(Abilities.COMATOSE) ? StatusEffect.SLEEP : undefined;
+    const statusToApply: StatusEffect | undefined = user.status?.effect ?? (user.hasAbility(Abilities.COMATOSE) ? StatusEffect.SLEEP : undefined);
 
-    if (isNullOrUndefined(statusToApply)) {
+    if (target.status) {
       return false;
+    } else {
+      const canSetStatus = target.canSetStatus(statusToApply, true, false, user);
+      const trySetStatus = canSetStatus ? target.trySetStatus(statusToApply, true, user) : false;
+
+      if (trySetStatus && user.status) {
+        // PsychoShiftTag is added to the user if move succeeds so that the user is healed of its status effect after its move
+        user.addTag(BattlerTagType.PSYCHO_SHIFT);
+      }
+
+      return trySetStatus;
     }
-
-    const canSetStatus = target.canSetStatus(statusToApply, true, false, user);
-    if (!canSetStatus) {
-      return false;
-    }
-
-
-    const statusSet = target.trySetStatus(statusToApply, true, user);
-    if (statusSet) {
-      // PsychoShiftTag is added to the user if move succeeds so that the user is healed of its status effect after its move
-      user.addTag(BattlerTagType.PSYCHO_SHIFT);
-      return true
-    }
-
-    return false;
   }
 
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
-    return user.status?.effect && target.canSetStatus(user.status?.effect, true, false, user) ? -10 : 0;
+    return !target.status && target.canSetStatus(user.status?.effect, true, false, user) ? -10 : 0;
   }
 }
 /**
@@ -3207,7 +3177,7 @@ export class StatStageChangeAttr extends MoveEffectAttr {
    */
   protected override options?: StatStageChangeAttrOptions;
 
-  constructor(stats: BattleStat[], stages: number, selfTarget: boolean = false, options?: StatStageChangeAttrOptions) {
+  constructor(stats: BattleStat[], stages: number, selfTarget?: boolean, options?: StatStageChangeAttrOptions) {
     super(selfTarget, options);
     this.stats = stats;
     this.stages = stages;
@@ -3446,7 +3416,7 @@ export class PostVictoryStatStageChangeAttr extends MoveAttr {
   private condition?: MoveConditionFunc;
   private showMessage: boolean;
 
-  constructor(stats: BattleStat[], stages: number, selfTarget: boolean = false, condition?: MoveConditionFunc, showMessage: boolean = true, firstHitOnly: boolean = false) {
+  constructor(stats: BattleStat[], stages: number, selfTarget?: boolean, condition?: MoveConditionFunc, showMessage: boolean = true, firstHitOnly: boolean = false) {
     super();
     this.stats = stats;
     this.stages = stages;
@@ -5784,7 +5754,7 @@ export class FlinchAttr extends AddBattlerTagAttr {
 }
 
 export class ConfuseAttr extends AddBattlerTagAttr {
-  constructor(selfTarget: boolean = false) {
+  constructor(selfTarget?: boolean) {
     super(BattlerTagType.CONFUSED, selfTarget, false, 2, 5);
   }
 
@@ -7396,7 +7366,7 @@ export class SketchAttr extends MoveEffectAttr {
 export class AbilityChangeAttr extends MoveEffectAttr {
   public ability: Abilities;
 
-  constructor(ability: Abilities, selfTarget: boolean = false) {
+  constructor(ability: Abilities, selfTarget?: boolean) {
     super(selfTarget);
 
     this.ability = ability;
@@ -8732,9 +8702,9 @@ export function initMoves() {
       .attr(MultiHitAttr, MultiHitType._2)
       .makesContact(false),
     new SelfStatusMove(Moves.REST, PokemonType.PSYCHIC, -1, 5, -1, 0, 1)
-      .attr(FixedSleepDurationStatusEffectAttr, 3, true, true)
+      .attr(StatusEffectAttr, StatusEffect.SLEEP, true, 3, true)
       .attr(HealAttr, 1, true)
-      .condition((user) => !user.isFullHp() && user.canSetStatus(StatusEffect.SLEEP, true, true, user))
+      .condition((user, target, move) => !user.isFullHp() && user.canSetStatus(StatusEffect.SLEEP, true, true, user))
       .triageMove(),
     new AttackMove(Moves.ROCK_SLIDE, PokemonType.ROCK, MoveCategory.PHYSICAL, 75, 90, 10, 30, 0, 1)
       .attr(FlinchAttr)
