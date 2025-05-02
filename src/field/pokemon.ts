@@ -685,8 +685,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * Returns `false` if there is no active {@linkcode BattleScene} or the pokemon is disallowed.
    */
   public isActive(onField = false): boolean {
+    if (!globalScene) {
+      return false;
+    }
+    return this.isAllowedInBattle() && (!onField || this.isOnField());
   }
 
+  getDexAttr(): bigint {
     let ret = 0n;
     ret |= this.gender !== Gender.FEMALE ? DexAttr.MALE : DexAttr.FEMALE;
     ret |= !this.shiny ? DexAttr.NON_SHINY : DexAttr.SHINY;
