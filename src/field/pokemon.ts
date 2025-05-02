@@ -2591,8 +2591,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       null,
       move,
       simulated,
-      moveTypeHolder,
+      moveTypeHolder
     );
+
+    // If the user is terastallized and the move is tera blast, or tera starstorm that is stellar type,
+    // then bypass the check for ion deluge and electrify
+    if (this.isTerastallized && (move.id === Moves.TERA_BLAST || move.id === Moves.TERA_STARSTORM && moveTypeHolder.value === PokemonType.STELLAR)) {
+      return moveTypeHolder.value as PokemonType;
+    }
 
     globalScene.arena.applyTags(
       ArenaTagType.ION_DELUGE,
