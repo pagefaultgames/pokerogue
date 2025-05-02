@@ -4,9 +4,9 @@ import { AbilityAttr, defaultStarterSpecies, DexAttr } from "#app/system/game-da
 import { allSpecies } from "#app/data/pokemon-species";
 import { CustomPokemonData } from "#app/data/custom-pokemon-data";
 import { isNullOrUndefined } from "#app/utils/common";
-import type { SystemSaveMigrator } from "#app/@types/SystemSaveMigrator";
-import type { SettingsSaveMigrator } from "#app/@types/SettingsSaveMigrator";
-import type { SessionSaveMigrator } from "#app/@types/SessionSaveMigrator";
+import type { SystemSaveMigrator } from "#app/@types/system-save-migrator";
+import type { SettingsSaveMigrator } from "#app/@types/settings-save-migrator";
+import type { SessionSaveMigrator } from "#app/@types/session-save-migrator";
 
 /**
  * Migrate ability starter data if empty for caught species.

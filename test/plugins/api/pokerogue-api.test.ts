@@ -1,4 +1,4 @@
-import type { TitleStatsResponse } from "#app/@types/PokerogueApi";
+import type { TitleStatsResponse } from "#app/@types/pokerogue-api";
 import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
 import { getApiBaseUrl } from "#test/testUtils/testUtils";
 import { http, HttpResponse } from "msw";

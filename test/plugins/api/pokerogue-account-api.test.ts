@@ -1,4 +1,4 @@
-import type { AccountInfoResponse } from "#app/@types/PokerogueAccountApi";
+import type { AccountInfoResponse } from "#app/@types/pokerogue-account-api";
 import { SESSION_ID_COOKIE_NAME } from "#app/constants";
 import { PokerogueAccountApi } from "#app/plugins/api/pokerogue-account-api";
 import { getApiBaseUrl } from "#test/testUtils/testUtils";

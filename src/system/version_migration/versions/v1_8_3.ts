@@ -1,4 +1,4 @@
-import type { SystemSaveMigrator } from "#app/@types/SystemSaveMigrator";
+import type { SystemSaveMigrator } from "#app/@types/system-save-migrator";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { DexAttr, type SystemSaveData } from "#app/system/game-data";
 import { Species } from "#enums/species";

@@ -3,7 +3,7 @@ import type {
   AccountLoginRequest,
   AccountLoginResponse,
   AccountRegisterRequest,
-} from "#app/@types/PokerogueAccountApi";
+} from "#app/@types/pokerogue-account-api";
 import { SESSION_ID_COOKIE_NAME } from "#app/constants";
 import { ApiBase } from "#app/plugins/api/api-base";
 import { removeCookie, setCookie } from "#app/utils/cookies";

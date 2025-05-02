@@ -3,7 +3,7 @@ import type {
   UpdateSystemSavedataRequest,
   VerifySystemSavedataRequest,
   VerifySystemSavedataResponse,
-} from "#app/@types/PokerogueSystemSavedataApi";
+} from "#app/@types/pokerogue-system-save-data-api";
 import { PokerogueSystemSavedataApi } from "#app/plugins/api/pokerogue-system-savedata-api";
 import type { SystemSaveData } from "#app/system/game-data";
 import { initServerForApiTests } from "#test/testUtils/testFileInitialization";

@@ -1,4 +1,4 @@
-import type { UpdateAllSavedataRequest } from "#app/@types/PokerogueSavedataApi";
+import type { UpdateAllSavedataRequest } from "#app/@types/pokerogue-save-data-api";
 import { MAX_INT_ATTR_VALUE } from "#app/constants";
 import { ApiBase } from "#app/plugins/api/api-base";
 import { PokerogueSessionSavedataApi } from "#app/plugins/api/pokerogue-session-savedata-api";

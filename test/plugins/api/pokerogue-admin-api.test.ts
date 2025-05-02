@@ -5,7 +5,7 @@ import type {
   SearchAccountResponse,
   UnlinkAccountFromDiscordIdRequest,
   UnlinkAccountFromGoogledIdRequest,
-} from "#app/@types/PokerogueAdminApi";
+} from "#app/@types/pokerogue-admin-api";
 import { PokerogueAdminApi } from "#app/plugins/api/pokerogue-admin-api";
 import { getApiBaseUrl } from "#test/testUtils/testUtils";
 import { http, HttpResponse } from "msw";

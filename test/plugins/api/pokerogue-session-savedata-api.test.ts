@@ -5,7 +5,7 @@ import type {
   GetSessionSavedataRequest,
   NewClearSessionSavedataRequest,
   UpdateSessionSavedataRequest,
-} from "#app/@types/PokerogueSessionSavedataApi";
+} from "#app/@types/pokerogue-session-save-data-api";
 import { PokerogueSessionSavedataApi } from "#app/plugins/api/pokerogue-session-savedata-api";
 import type { SessionSaveData } from "#app/system/game-data";
 import { getApiBaseUrl } from "#test/testUtils/testUtils";

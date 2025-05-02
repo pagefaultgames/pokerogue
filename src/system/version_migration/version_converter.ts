@@ -1,6 +1,6 @@
-import type { SessionSaveMigrator } from "#app/@types/SessionSaveMigrator";
-import type { SettingsSaveMigrator } from "#app/@types/SettingsSaveMigrator";
-import type { SystemSaveMigrator } from "#app/@types/SystemSaveMigrator";
+import type { SessionSaveMigrator } from "#app/@types/session-save-migrator";
+import type { SettingsSaveMigrator } from "#app/@types/settings-save-migrator";
+import type { SystemSaveMigrator } from "#app/@types/system-save-migrator";
 import type { SessionSaveData, SystemSaveData } from "#app/system/game-data";
 import { compareVersions } from "compare-versions";
 import { version } from "../../../package.json";

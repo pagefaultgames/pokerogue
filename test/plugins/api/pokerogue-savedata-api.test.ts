@@ -1,4 +1,4 @@
-import type { UpdateAllSavedataRequest } from "#app/@types/PokerogueSavedataApi";
+import type { UpdateAllSavedataRequest } from "#app/@types/pokerogue-save-data-api";
 import { PokerogueSavedataApi } from "#app/plugins/api/pokerogue-savedata-api";
 import { getApiBaseUrl } from "#test/testUtils/testUtils";
 import { http, HttpResponse } from "msw";
