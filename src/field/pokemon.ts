@@ -4593,7 +4593,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     };
   }
 
-  /** Determine whether the given move will critically hit this Pokemon.
+  /** Determine whether the given move will score a critical hit **against** this Pokemon.
    * @param source - The {@linkcode Pokemon} using the move
    * @param move - The {@linkcode Move} being used
    * @param simulated - Whether to suppress changes to game state during calculations; default `true`
@@ -4601,7 +4601,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   */
   getCriticalHitResult(source: Pokemon, move: Move, simulated: boolean = true): boolean {
     if (move.hasAttr(FixedDamageAttr)) {
-      // fixed damage moves (Dragon Rage, etc.) cannot crit
+      // fixed damage moves (Dragon Rage, etc.) will nevet crit
       return false;
     }
 
@@ -4623,13 +4623,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     let isCritical = alwaysCrit.value || alwaysCritTag || critChance === 1;
 
-    // If we aren't already guaranteed to crit, do a random roll and check overrides
-    if (!isCritical) {
-      isCritical = Overrides.CRITICAL_HIT_OVERRIDE ??
-        globalScene.randBattleSeedInt(critChance) === 0
-    }
+    // If we aren't already guaranteed to crit, do a random roll & check overrides
+    isCritical ||= Overrides.CRITICAL_HIT_OVERRIDE ?? 
+      globalScene.randBattleSeedInt(critChance) === 0
 
-    // apply crit block effects from lucky chant & shell armor
+
+    // apply crit block effects from lucky chant & co.
     const blockCrit = new BooleanHolder(false);
     applyAbAttrs(BlockCritAbAttr, this, null, false, blockCrit);
     const blockCritTag = globalScene.arena.getTagOnSide(
