@@ -5670,15 +5670,19 @@ export class PostDamageForceSwitchAbAttr extends PostDamageAbAttr {
     }
 
     // Dragon Tail and Circle Throw switch out Pokémon before the Ability activates.
-    const forbiddenDefendingMoves = [ Moves.DRAGON_TAIL, Moves.CIRCLE_THROW ];
-    if (!isNullOrUndefined(source?.getLastXMoves()[0])) {
-      const enemyLastMoveUsed = source.getLastXMoves()[0] // i hate ts compiler
-
-      if (
-        forbiddenDefendingMoves.includes(enemyLastMoveUsed.move) || // move in banlist
-        (enemyLastMoveUsed.move === Moves.SKY_DROP && enemyLastMoveUsed.result === MoveResult.OTHER) || // not in air due to sky drop
-        source.turnData.hitsLeft > 1
-      ) { // not in middle of attacking move (procs at end)
+    const fordbiddenDefendingMoves = [ Moves.DRAGON_TAIL, Moves.CIRCLE_THROW ];
+    if (source) {
+      const enemyMoveHistory = source.getMoveHistory();
+      if (enemyMoveHistory.length > 0) {
+        const enemyLastMoveUsed = enemyMoveHistory[enemyMoveHistory.length - 1];
+        // Will not activate if the Pokémon's HP falls below half while it is in the air during Sky Drop.
+        if (fordbiddenDefendingMoves.includes(enemyLastMoveUsed.move) || enemyLastMoveUsed.move === Moves.SKY_DROP && enemyLastMoveUsed.result === MoveResult.OTHER) {
+          return false;
+          // Will not activate if the Pokémon's HP falls below half by a move affected by Sheer Force.
+        } else if (allMoves[enemyLastMoveUsed.move].chance >= 0 && source.hasAbility(Abilities.SHEER_FORCE)) {
+          return false;
+          // Activate only after the last hit of multistrike moves
+        } else if (source.turnData.hitsLeft > 1) {
           return false;
         }
 
@@ -5687,16 +5691,17 @@ export class PostDamageForceSwitchAbAttr extends PostDamageAbAttr {
         }
       }
 
-    // TODO: Why do we do this?
-    if (pokemon.hp + damage >= pokemon.getMaxHp() * this.hpRatio) {
-      const shellBellHeal = calculateShellBellRecovery(pokemon);
-      if (pokemon.hp - shellBellHeal < pokemon.getMaxHp() * this.hpRatio) {
-        for (const opponent of pokemon.getOpponents()) {
-          if (!this.helper.getSwitchOutCondition(pokemon, opponent)) {
-            return false;
+      // TODO: Why do we do this?
+      if (pokemon.hp + damage >= pokemon.getMaxHp() * this.hpRatio) {
+        const shellBellHeal = calculateShellBellRecovery(pokemon);
+        if (pokemon.hp - shellBellHeal < pokemon.getMaxHp() * this.hpRatio) {
+          for (const opponent of pokemon.getOpponents()) {
+            if (!this.helper.getSwitchOutCondition(pokemon, opponent)) {
+              return false;
+            }
           }
+          return true;
         }
-        return true;
       }
     }
 

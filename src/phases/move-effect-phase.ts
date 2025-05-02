@@ -416,7 +416,7 @@ export class MoveEffectPhase extends PokemonPhase {
     }
 
     /**
-     * If this phase isn't for the invoked move's last strike (and we still have something to hit)
+     * If this phase isn't for the invoked move's last strike (and we still have something to hit),
      * unshift another MoveEffectPhase for the next strike before ending this phase.
      */
     if (--user.turnData.hitsLeft >= 1 && this.getFirstTarget()) {
@@ -695,8 +695,8 @@ export class MoveEffectPhase extends PokemonPhase {
   }
 
   /**
-   * @returns - An array of {@linkcode Pokemon} that are:
-   * - On-field
+   * @returns An array of {@linkcode Pokemon} that are:
+   * - On-field and active
    * - Non-fainted
    * - Targeted by this phase's invoked move
    */
@@ -704,7 +704,7 @@ export class MoveEffectPhase extends PokemonPhase {
     return globalScene.getField(true).filter(p => this.targets.indexOf(p.getBattlerIndex()) > -1);
   }
 
-  /** @returns - The first target of this phase's invoked move. */
+  /** @returns The first active, non-fainted target of this phase's invoked move. */
   public getFirstTarget(): Pokemon | undefined {
     return this.getTargets()[0];
   }

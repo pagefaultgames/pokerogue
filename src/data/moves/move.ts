@@ -2299,7 +2299,7 @@ export class IncrementMovePriorityAttr extends MoveAttr {
 /**
  * Attribute used for attack moves that hit multiple times per use, e.g. Bullet Seed.
  *
- * Applied at the beginning of {@linkcode MoveEffectPhase}.
+ * Applied at the beginning of `MoveEffectPhase`.
  *
  * @extends MoveAttr
  * @see {@linkcode apply}
@@ -2310,10 +2310,10 @@ export class MultiHitAttr extends MoveAttr {
   /** This move's current multi-hit type. It may be temporarily modified by abilities (e.g., Battle Bond). */
   private multiHitType: MultiHitType;
 
-  constructor(multiHitType?: MultiHitType) {
+  constructor(multiHitType: MultiHitType = MultiHitType._2_TO_5) {
     super();
 
-    this.intrinsicMultiHitType = multiHitType !== undefined ? multiHitType : MultiHitType._2_TO_5;
+    this.intrinsicMultiHitType = multiHitType;
     this.multiHitType = this.intrinsicMultiHitType;
   }
 
@@ -2378,10 +2378,12 @@ export class MultiHitAttr extends MoveAttr {
         return 10;
       case MultiHitType.BEAT_UP:
         const party = user.isPlayer() ? globalScene.getPlayerParty() : globalScene.getEnemyParty();
-        // No status means the ally pokemon can contribute to Beat Up
-        return party.reduce((total, pokemon) => {
-          return total + (pokemon.id === user.id ? 1 : pokemon?.status && pokemon.status.effect !== StatusEffect.NONE ? 0 : 1);
-        }, 0);
+        // Only count ally pokemon that are non-statused
+        return party.reduce((total, pokemon) => total + (
+          pokemon.id === user.id
+            ? 1
+            : (!isNullOrUndefined(pokemon.status) && pokemon.status.effect !== StatusEffect.NONE ? 0 : 1)),
+        0);
     }
   }
 
@@ -2411,6 +2413,7 @@ export class MultiHitAttr extends MoveAttr {
         break;
       case MultiHitType.BEAT_UP:
         // Estimate that half of the party can contribute to beat up.
+        // TODO: The AI should be able to check this manually?
         expectedHits = Math.max(1, partySize / 2);
         break;
     }
@@ -2434,7 +2437,15 @@ export class ChangeMultiHitTypeAttr extends MoveAttr {
 }
 
 export class WaterShurikenMultiHitTypeAttr extends ChangeMultiHitTypeAttr {
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+  /**
+   * Change Water Shuriken from a 2-5 hit move to a 3-hit move if used by Battle Bond Greninja.
+   * @param user - The {@linkcode Pokemon} using the move
+   * @param target - The {@linkcode Pokemon} targeted by the move
+   * @param move - The {@linkcode Move} being used (assumed to be {@linkcode Moves.WATER_SHURIKEN})
+   * @param args `[0]` - A {@linkcode NumberHolder} containing Water Shuriken's current {@linkcode MultiHitType}.
+   * @returns `true` if the effect was successfully applied
+   */
+  apply(user: Pokemon, target: Pokemon, move: Move, args: [NumberHolder]): boolean {
     if (user.species.speciesId === Species.GRENINJA && user.hasAbility(Abilities.BATTLE_BOND) && user.formIndex === 2) {
       (args[0] as NumberHolder).value = MultiHitType._3;
       return true;
@@ -6390,11 +6401,11 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
 
       if (!allyPokemon?.isActive(true) && switchOutTarget.hp) {
           globalScene.pushPhase(new BattleEndPhase(false));
-                    
+
           if (globalScene.gameMode.hasRandomBiomes || globalScene.isNewBiome()) {
             globalScene.pushPhase(new SelectBiomePhase());
           }
-          
+
           globalScene.pushPhase(new NewBattlePhase());
       }
     }
