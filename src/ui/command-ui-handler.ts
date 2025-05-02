@@ -86,7 +86,7 @@ export default class CommandUiHandler extends UiHandler {
       this.teraButton.setFrame(PokemonType[globalScene.getField()[this.fieldIndex].getTeraType()].toLowerCase());
     } else {
       this.teraButton.setVisible(false);
-      if (this.cursor === Command.TERA) {
+      if (this.getCursor() === Command.TERA) {
         this.setCursor(Command.FIGHT);
       }
     }
