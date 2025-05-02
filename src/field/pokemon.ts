@@ -566,14 +566,16 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * @param useIllusion - Whether to use the fake or real name of the Pokemon (for Illusion); default `true`
+   * Return the name that will be displayed when this Pokemon is sent out into battle.
+   * @param useIllusion - Whether to consider the Pokemon's illusion's name/nickname; default `true`
+   * @returns The name to render for this {@linkcode Pokemon}.
    */
-  getNameToRender(useIllusion: boolean = true) {
+  getNameToRender(useIllusion: boolean = true): string {
     const name: string = (!useIllusion && !!this.summonData?.illusion) ? this.summonData?.illusion.basePokemon!.name : this.name;
     const nickname: string = (!useIllusion && !!this.summonData?.illusion) ? this.summonData?.illusion.basePokemon!.nickname : this.nickname;
     try {
       if (nickname) {
-        return decodeURIComponent(escape(atob(nickname)));
+        return decodeURIComponent(escape(atob(nickname))); // TODO: Remove `atob` and `escape`... eventually...
       }
       return name;
     } catch (err) {
@@ -582,12 +584,15 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
   }
 
-  getPokeball(useIllusion = false){
-    if(useIllusion){
-      return this.summonData?.illusion?.pokeball ?? this.pokeball
-    } else {
-      return this.pokeball
-    }
+  /**
+   * Return this Pokemon's {@linkcode PokeballType}.
+   * @param useIllusion - Whether to consider the PokeballType of this pokemon's illusion; default `false`
+   * @returns The {@linkcode PokeballType} that will be shown when this Pokemon is sent out into battle.
+   */
+  getPokeball(useIllusion = false): PokeballType {
+    return useIllusion && this.summonData?.illusion
+      ? this.summonData.illusion.pokeball
+      : this.pokeball;
   }
 
   init(): void {
@@ -644,9 +649,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Checks if a pokemon is fainted (ie: its `hp <= 0`).
-   * It's usually better to call {@linkcode isAllowedInBattle()}
-   * @param checkStatus `true` to also check that the pokemon's status is {@linkcode StatusEffect.FAINT}
-   * @returns `true` if the pokemon is fainted
+   * Usually should not be called directly in favor of consulting {@linkcode isAllowedInBattle()}.
+   * @param checkStatus - Whether to also check that the pokemon's status is {@linkcode StatusEffect.FAINT}; default `false`
+   * @returns Whether this Pokemon is fainted, as described above.
    */
   public isFainted(checkStatus = false): boolean {
     return (
@@ -656,8 +661,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Check if this pokemon is both not fainted and allowed to be in battle based on currently active challenges.
-   * @returns {boolean} `true` if pokemon is allowed in battle
+   * Check if this pokemon is both not fainted and allowed to be used based on currently active challenges.
+   * @returns Whether this Pokemon is allowed to partake in battle.
    */
   public isAllowedInBattle(): boolean {
     return !this.isFainted() && this.isAllowedInChallenge();
@@ -665,8 +670,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Check if this pokemon is allowed based on any active challenges.
-   * It's usually better to call {@linkcode isAllowedInBattle()}
-   * @returns {boolean} `true` if pokemon is allowed in battle
+   * Usually should not be called directly in favor of consulting {@linkcode isAllowedInBattle()}.
+   * @returns Whether this Pokemon is allowed under the current challenge conditions.
    */
   public isAllowedInChallenge(): boolean {
     const challengeAllowed = new BooleanHolder(true);
@@ -680,8 +685,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Checks if the pokemon is allowed in battle (ie: not fainted, and allowed under any active challenges).
-   * @param onField `true` to also check if the pokemon is currently on the field, defaults to `false`
-   * @returns `true` if the pokemon is "active". Returns `false` if there is no active {@linkcode BattleScene}
+   * @param onField - Whether to also check if the pokemon is currently on the field, defaults to `false`
+   * @returns Whether this pokemon is considered "active". Returns `false` if there is no active {@linkcode BattleScene}.
    */
   public isActive(onField = false): boolean {
     if (!globalScene) {
@@ -818,7 +823,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   abstract getBattlerIndex(): BattlerIndex;
 
   /**
-   * @param useIllusion - Whether we want the illusion or not.
+   * Load all assets needed for this Pokemon's use in battle
+   * @param ignoreOverride - Whether to ignore overrides caused by {@linkcode Moves.TRANSFORM | Transform}; default `true`
+   * @param useIllusion - Whether to consider this pokemon's active illusion; default `false`
+   * @returns A promise that resolves once all the corresponding assets have been loaded.
    */
   async loadAssets(ignoreOverride = true, useIllusion: boolean = false): Promise<void> {
     /** Promises that are loading assets and can be run concurrently. */
@@ -933,11 +941,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Attempt to process variant sprite.
-   *
-   * @param cacheKey the cache key for the variant color sprite
-   * @param useExpSprite should the experimental sprite be used
-   * @param battleSpritePath the filename of the sprite
+   * Attempt to process variant sprite color caches.
+   * @param cacheKey - the cache key for the variant color sprite
+   * @param useExpSprite - Whether experimental sprites should be used if present
+   * @param battleSpritePath - the filename of the sprite
    */
   async populateVariantColorCache(
     cacheKey: string,
@@ -1000,7 +1007,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.fusionSpecies.forms[this.fusionFormIndex].formKey;
   }
 
-  getSpriteAtlasPath(ignoreOverride?: boolean): string {
+
+  // TODO: Add more documentation for all these attributes.
+  // THey may be all similar, but what each one actually _does_ is quite unclear at first glance
+
+  getSpriteAtlasPath(ignoreOverride = false): string {
     const spriteId = this.getSpriteId(ignoreOverride).replace(/\_{2}/g, "/");
     return `${/_[1-3]$/.test(spriteId) ? "variant/" : ""}${spriteId}`;
   }
@@ -1130,9 +1141,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * @param {boolean} useIllusion - Whether we want the speciesForm of the illusion or not.
+   * Return this Pokemon's {@linkcode PokemonSpeciesForm | SpeciesForm}.
+   * @param ignoreOverride - Whether to ignore species overrides caused by {@linkcode Moves.TRANSFORM | Transform}; default `false`
+   * @param useIllusion - Whether to consider the species of this Pokemon's illusion; default `false`.
+   * @returns This Pokemon's {@linkcode PokemonSpeciesForm}.
    */
-  getSpeciesForm(ignoreOverride?: boolean, useIllusion: boolean = false): PokemonSpeciesForm {
+  getSpeciesForm(ignoreOverride = false, useIllusion = false): PokemonSpeciesForm {
     const species: PokemonSpecies = useIllusion && !!this.summonData?.illusion ? getPokemonSpecies(this.summonData?.illusion.species) : this.species;
     const formIndex: integer = useIllusion && !!this.summonData?.illusion ? this.summonData?.illusion.formIndex : this.formIndex;
 
@@ -1147,9 +1161,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * @param {boolean} useIllusion - Whether we want the fusionSpeciesForm of the illusion or not.
+   * Return the {@linkcode PokemonSpeciesForm | SpeciesForm} of this Pokemon's fusion counterpart.
+   * @param ignoreOverride - Whether to ignore species overrides caused by {@linkcode Moves.TRANSFORM | Transform}; default `false`
+   * @param useIllusion - Whether to consider the species of this Pokemon's illusion; default `false`.
+   * @returns The {@linkcode PokemonSpeciesForm} of this Pokemon's fusion counterpart.
    */
-  getFusionSpeciesForm(ignoreOverride?: boolean, useIllusion: boolean = false): PokemonSpeciesForm {
+  getFusionSpeciesForm(ignoreOverride = false, useIllusion = false): PokemonSpeciesForm {
     const fusionSpecies: PokemonSpecies = useIllusion && !!this.summonData?.illusion ? this.summonData?.illusion.fusionSpecies! : this.fusionSpecies!;
     const fusionFormIndex: integer = useIllusion && !!this.summonData?.illusion ? this.summonData?.illusion.fusionFormIndex! : this.fusionFormIndex;
 
@@ -1833,9 +1850,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * @param {boolean} useIllusion - Whether we want the fake or real gender (illusion ability).
+   * Return this Pokemon's {@linkcode Gender}.
+   * @param ignoreOverride - Whether to ignore overrides caused by {@linkcode Moves.TRANSFORM | Transform}; default `false`
+   * @param useIllusion - Whether to consider the gender of this pokemon's illusion; default `false`
+   * @returns the {@linkcode Gender} of this {@linkcode Pokemon}.
    */
-  getGender(ignoreOverride?: boolean, useIllusion: boolean = false): Gender {
+  getGender(ignoreOverride = false, useIllusion = false): Gender {
     if (useIllusion && !!this.summonData?.illusion) {
       return this.summonData?.illusion.gender!;
     } else if (!ignoreOverride && this.summonData?.gender !== undefined) {
@@ -1845,9 +1865,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * @param {boolean} useIllusion - Whether we want the fake or real gender (illusion ability).
-   */
-  getFusionGender(ignoreOverride?: boolean, useIllusion: boolean = false): Gender {
+   * Return the {@linkcode Gender} of this Pokemon's fusion constituent.
+   * @param ignoreOverride - Whether to ignore overrides caused by {@linkcode Moves.TRANSFORM | Transform}; default `false`
+   * @param useIllusion - Whether to count the gender of this pokemon's illusion; default `false`
+   * @returns the {@linkcode Gender} of this {@linkcode Pokemon}'s fusion.
+  */
+  getFusionGender(ignoreOverride = false, useIllusion = false): Gender {
     if (useIllusion && !!this.summonData?.illusion) {
       return this.summonData?.illusion.fusionGender!;
     } else if (!ignoreOverride && this.summonData?.fusionGender !== undefined) {
@@ -1954,7 +1977,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   abstract isBoss(): boolean;
 
-  getMoveset(ignoreOverride?: boolean): PokemonMove[] {
+  /**
+   * Return all the {@linkcode PokemonMove}s that make up this Pokemon's moveset.
+   * Takes into account player/enemy moveset overrides (which will also override PP count).
+   * @param ignoreOverride - Whether to ignore any moveset overrides caused by {@linkcode Moves.TRANSFORM | Transform}; default `true`
+   * @returns An array of {@linkcode PokemonMove}, as described above.
+   */
+  getMoveset(ignoreOverride = false): PokemonMove[] {
     const ret =
       !ignoreOverride && this.summonData?.moveset
         ? this.summonData.moveset
@@ -2034,18 +2063,19 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Gets the types of a pokemon
-   * @param includeTeraType - `true` to include tera-formed type; Default: `false`
-   * @param forDefend - `true` if the pokemon is defending from an attack; Default: `false`
-   * @param ignoreOverride - If `true`, ignore ability changing effects; Default: `false`
-   * @param useIllusion - `true` to return the types of the illusion instead of the actual types; "AUTO" will depend on forDefend param; Default: "AUTO"
-   * @returns array of {@linkcode PokemonType}
+   * Evaluate and return this Pokemon's typing.
+   * @param includeTeraType - Whether to use this Pokemon's tera type if Terastallized; default `false`
+   * @param forDefend - Whether this Pokemon is currently receiving an attack; default `false`
+   * @param ignoreOverride - Whether to ignore ability-altering effects from {@linkcode Moves.TRANSFORM}; default `false`
+   * @param useIllusion - Whether to use the types of this Pokemon illusion instead of the actual types;
+   * defaults to whether this pokemon is not defending (`forDefend === false`)
+   * @returns An array of {@linkcode PokemonType}s corresponding to this Pokemon's typing (real or percieved).
    */
   public getTypes(
     includeTeraType = false,
-    forDefend: boolean = false,
-    ignoreOverride?: boolean,
-    useIllusion: boolean | "AUTO" = "AUTO"
+    forDefend = false,
+    ignoreOverride = false,
+    useIllusion: boolean = !forDefend
   ): PokemonType[] {
     const types: PokemonType[] = [];
 
@@ -2061,17 +2091,16 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
     if (!types.length || !includeTeraType) {
 
-      const doIllusion: boolean = (useIllusion === "AUTO") ? !forDefend : useIllusion;
       if (
         !ignoreOverride &&
         this.summonData?.types &&
         this.summonData.types.length > 0 &&
-        (!this.summonData?.illusion || !doIllusion)
+        (!this.summonData?.illusion || !useIllusion)
       ) {
         this.summonData.types.forEach(t => types.push(t));
       } else {
-        const speciesForm = this.getSpeciesForm(ignoreOverride, doIllusion);
-        const fusionSpeciesForm = this.getFusionSpeciesForm(ignoreOverride, doIllusion);
+        const speciesForm = this.getSpeciesForm(ignoreOverride, useIllusion);
+        const fusionSpeciesForm = this.getFusionSpeciesForm(ignoreOverride, useIllusion);
         const customTypes = this.customPokemonData.types?.length > 0;
 
         // First type, checking for "permanently changed" types from ME
@@ -2142,12 +2171,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     // remove UNKNOWN if other types are present
     if (types.length > 1 && types.includes(PokemonType.UNKNOWN)) {
       const index = types.indexOf(PokemonType.UNKNOWN);
-      if (index !== -1) {
-        types.splice(index, 1);
-      }
+      types.splice(index, 1);
     }
 
-    // the type added to Pokemon from moves like Forest's Curse or Trick Or Treat
+    // Use the added type from Forest's Curse and Trick Or Treat if present
     if (
       !ignoreOverride &&
       this.summonData &&
@@ -2166,12 +2193,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Checks if the pokemon's typing includes the specified type
-   * @param type - {@linkcode PokemonType} to check
-   * @param includeTeraType - `true` to include tera-formed type; Default: `true`
-   * @param forDefend - `true` if the pokemon is defending from an attack; Default: `false`
-   * @param ignoreOverride - If `true`, ignore ability changing effects; Default: `false`
-   * @returns `true` if the Pokemon's type matches
+   * Check if this Pokemon's typing includes the specified type.
+   * @param type - The {@linkcode PokemonType} to check
+   * @param includeTeraType - Whether to use this Pokemon's tera type if Terastallized; default `false`
+   * @param forDefend - Whether this Pokemon is currently receiving an attack; default `false`
+   * @param ignoreOverride - Whether to ignore ability-altering effects from {@linkcode Moves.TRANSFORM}; default `false`
+   * @returns Whether this Pokemon is of the specified type.
    */
   public isOfType(
     type: PokemonType,
@@ -2179,9 +2206,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     forDefend = false,
     ignoreOverride = false,
   ): boolean {
-    return this.getTypes(includeTeraType, forDefend, ignoreOverride).some(
-      t => t === type,
-    );
+    return this.getTypes(includeTeraType, forDefend, ignoreOverride).includes(type);
   }
 
   /**
@@ -2189,7 +2214,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * This should rarely be called, most of the time {@linkcode hasAbility} or {@linkcode hasAbilityWithAttr} are better used as
    * those check both the passive and non-passive abilities and account for ability suppression.
    * @see {@linkcode hasAbility} {@linkcode hasAbilityWithAttr} Intended ways to check abilities in most cases
-   * @param ignoreOverride - If `true`, ignore ability changing effects; Default: `false`
+   * @param ignoreOverride - Whether to ignore ability-altering effects from {@linkcode Moves.TRANSFORM}; default `false`
    * @returns The non-passive {@linkcode Ability} of the pokemon
    */
   public getAbility(ignoreOverride = false): Ability {
