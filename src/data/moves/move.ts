@@ -810,8 +810,9 @@ export default class Move implements Localizable {
 
     const power = new NumberHolder(this.power);
     const typeChangeMovePowerMultiplier = new NumberHolder(1);
+    const typeChangeHolder = new NumberHolder(this.type);
 
-    applyPreAttackAbAttrs(MoveTypeChangeAbAttr, source, target, this, true, null, typeChangeMovePowerMultiplier);
+    applyPreAttackAbAttrs(MoveTypeChangeAbAttr, source, target, this, true, typeChangeHolder, typeChangeMovePowerMultiplier);
 
     const sourceTeraType = source.getTeraType();
     if (source.isTerastallized && sourceTeraType === this.type && power.value < 60 && this.priority <= 0 && !this.hasAttr(MultiHitAttr) && !globalScene.findModifier(m => m instanceof PokemonMultiHitModifier && m.pokemonId === source.id)) {
@@ -841,7 +842,7 @@ export default class Move implements Localizable {
 
     power.value *= typeChangeMovePowerMultiplier.value;
 
-    const typeBoost = source.findTag(t => t instanceof TypeBoostTag && t.boostedType === this.type) as TypeBoostTag;
+    const typeBoost = source.findTag(t => t instanceof TypeBoostTag && t.boostedType === typeChangeHolder.value) as TypeBoostTag;
     if (typeBoost) {
       power.value *= typeBoost.boostValue;
     }
@@ -849,8 +850,8 @@ export default class Move implements Localizable {
     applyMoveAttrs(VariablePowerAttr, source, target, this, power);
 
     if (!this.hasAttr(TypelessAttr)) {
-      globalScene.arena.applyTags(WeakenMoveTypeTag, simulated, this.type, power);
-      globalScene.applyModifiers(AttackTypeBoosterModifier, source.isPlayer(), source, this.type, power);
+      globalScene.arena.applyTags(WeakenMoveTypeTag, simulated, typeChangeHolder.value, power);
+      globalScene.applyModifiers(AttackTypeBoosterModifier, source.isPlayer(), source, typeChangeHolder.value, power);
     }
 
     if (source.getTag(HelpingHandTag)) {
@@ -4826,7 +4827,12 @@ export class FormChangeItemTypeAttr extends VariableMoveTypeAttr {
       return true;
     }
 
-    return false;
+    // Force move to have its original typing if it changed
+    if (moveType.value === move.type) {
+      return false;
+    }
+    moveType.value = move.type
+    return true;
   }
 }
 
@@ -4977,7 +4983,11 @@ export class WeatherBallTypeAttr extends VariableMoveTypeAttr {
           moveType.value = PokemonType.ICE;
           break;
         default:
-          return false;
+          if (moveType.value === move.type) {
+            return false;
+          }
+          moveType.value = move.type;
+          break;
       }
       return true;
     }
@@ -5025,7 +5035,12 @@ export class TerrainPulseTypeAttr extends VariableMoveTypeAttr {
         moveType.value = PokemonType.PSYCHIC;
         break;
       default:
-        return false;
+        if (moveType.value === move.type) {
+          return false;
+        }
+        // force move to have its original typing if it was changed
+        moveType.value = move.type;
+        break;
     }
     return true;
   }
@@ -6130,7 +6145,7 @@ export class RevivalBlessingAttr extends MoveEffectAttr {
       const faintedPokemon = globalScene.getEnemyParty().filter((p) => p.isFainted() && !p.isBoss());
       const pokemon = faintedPokemon[user.randSeedInt(faintedPokemon.length)];
       const slotIndex = globalScene.getEnemyParty().findIndex((p) => pokemon.id === p.id);
-      pokemon.resetStatus();
+      pokemon.resetStatus(true, false, false, true);
       pokemon.heal(Math.min(toDmgValue(0.5 * pokemon.getMaxHp()), pokemon.getMaxHp()));
       globalScene.queueMessage(i18next.t("moveTriggers:revivalBlessing", { pokemonName: getPokemonNameWithAffix(pokemon) }), 0, true);
       const allyPokemon = user.getAlly();

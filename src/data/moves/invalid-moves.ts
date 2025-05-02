@@ -240,3 +240,18 @@ export const invalidMirrorMoveMoves: ReadonlySet<Moves> = new Set([
   Moves.WATER_SPORT,
   Moves.WIDE_GUARD,
 ]);
+
+/** Set of moves that can never have their type overridden by an ability like Pixilate or Normalize
+ *
+ * Excludes tera blast and tera starstorm, as these are only conditionally forbidden
+ */
+export const noAbilityTypeOverrideMoves: ReadonlySet<Moves> = new Set([
+  Moves.WEATHER_BALL,
+  Moves.JUDGMENT,
+  Moves.REVELATION_DANCE,
+  Moves.MULTI_ATTACK,
+  Moves.TERRAIN_PULSE,
+  Moves.NATURAL_GIFT,
+  Moves.TECHNO_BLAST,
+  Moves.HIDDEN_POWER,
+]);
