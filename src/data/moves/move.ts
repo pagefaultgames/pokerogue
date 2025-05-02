@@ -122,7 +122,6 @@ import { MoveFlags } from "#enums/MoveFlags";
 import { MoveEffectTrigger } from "#enums/MoveEffectTrigger";
 import { MultiHitType } from "#enums/MultiHitType";
 import { invalidAssistMoves, invalidCopycatMoves, invalidMetronomeMoves, invalidMirrorMoveMoves, invalidSleepTalkMoves } from "./invalid-moves";
-import { TrainerVariant } from "#app/field/trainer";
 import { SelectBiomePhase } from "#app/phases/select-biome-phase";
 
 type MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => boolean;
@@ -1803,10 +1802,7 @@ export class HalfSacrificialAttr extends MoveEffectAttr {
 }
 
 /**
- * Attribute to put in a {@link https://bulbapedia.bulbagarden.net/wiki/Substitute_(doll) | Substitute Doll}
- * for the user.
- * @extends MoveEffectAttr
- * @see {@linkcode apply}
+ * Attribute to put in a {@link https://bulbapedia.bulbagarden.net/wiki/Substitute_(doll) | Substitute Doll} for the user.
  */
 export class AddSubstituteAttr extends MoveEffectAttr {
   /** The ratio of the user's max HP that is required to apply this effect */
@@ -1823,11 +1819,11 @@ export class AddSubstituteAttr extends MoveEffectAttr {
 
   /**
    * Removes 1/4 of the user's maximum HP (rounded down) to create a substitute for the user
-   * @param user the {@linkcode Pokemon} that used the move.
-   * @param target n/a
-   * @param move the {@linkcode Move} with this attribute.
-   * @param args n/a
-   * @returns true if the attribute successfully applies, false otherwise
+   * @param user - The {@linkcode Pokemon} that used the move.
+   * @param target - n/a
+   * @param move - The {@linkcode Move} with this attribute.
+   * @param args - n/a
+   * @returns `true` if the attribute successfully applies, `false` otherwise
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!super.apply(user, target, move, args)) {
@@ -1848,12 +1844,12 @@ export class AddSubstituteAttr extends MoveEffectAttr {
   }
 
   getCondition(): MoveConditionFunc {
-    return (user, target, move) => !user.getTag(SubstituteTag) && user.hp > (this.roundUp ? Math.ceil(user.getMaxHp() * this.hpCost) : Math.floor(user.getMaxHp() * this.hpCost)) && user.getMaxHp() > 1;
+    return (user, _target, _move) => !user.getTag(SubstituteTag) && user.hp > (this.roundUp ? Math.ceil(user.getMaxHp() * this.hpCost) : Math.floor(user.getMaxHp() * this.hpCost)) && user.getMaxHp() > 1;
   }
 
   /**
    * Get the substitute-specific failure message if one should be displayed.
-   * @param user The pokemon using the move.
+   * @param user - The pokemon using the move.
    * @returns The substitute-specific failure message if the conditions apply, otherwise `undefined`
    */
   getFailedText(user: Pokemon, _target: Pokemon, _move: Move): string | undefined {
