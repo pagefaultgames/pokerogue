@@ -28,6 +28,7 @@ export class Status {
 
   /**
    * Tick down this status effect's sleep turns remaining if it is {@linkcode StatusEffect.SLEEP}.
+   * Takes into account Early Bird's increase to sleep wakeup speed.
    * @param pokemon - The {@linkcode Pokemon} being woken up
    */
   decrementSleepTurnCount(pokemon: Pokemon): void {

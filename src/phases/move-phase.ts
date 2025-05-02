@@ -222,15 +222,15 @@ export class MovePhase extends BattlePhase {
       return;
     }
 
-    // Increment sleep turn count if not used via Dancer.
     // TODO: Confirm if dancer removes sleep/freeze
-    if (this.useType !== MoveUseType.INDIRECT) {
-      this.pokemon.status.decrementSleepTurnCount(this.pokemon);
-    } /* else {
+    if (this.useType === MoveUseType.INDIRECT) {
       // Dancer thaws out or wakes up target
       this.pokemon.resetStatus(false);
       return;
-    */
+    }
+
+    // Decrement sleep turn count if not used via Dancer.
+    this.pokemon.status.decrementSleepTurnCount(this.pokemon);
 
     /** Whether to prevent us from using the move */
     let activated = false;
