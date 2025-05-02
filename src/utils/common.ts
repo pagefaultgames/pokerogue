@@ -515,8 +515,8 @@ export function capitalizeString(str: string, sep: string, lowerFirstChar = true
   return null;
 }
 
-export function isNullOrUndefined(object: any): object is undefined | null {
-  return null === object || undefined === object;
+export function isNullOrUndefined(object: any): object is null | undefined {
+  return object === null || object === undefined;
 }
 
 /**
@@ -550,14 +550,14 @@ export function getLocalizedSpriteKey(baseKey: string) {
 }
 
 /**
- * Check if a number is **inclusive** between two numbers
- * @param num the number to check
- * @param min the minimum value (included)
- * @param max the maximum value (included)
- * @returns `true` if number is **inclusive** between min and max
+ * Check if a number is **inclusively** between two numbers
+ * @param num - the number to check
+ * @param min - the minimum value (inclusive)
+ * @param max - the maximum value (inclusive)
+ * @returns Whether num is no less than min and no greater than max
  */
 export function isBetween(num: number, min: number, max: number): boolean {
-  return num >= min && num <= max;
+  return min <= num && num <= max;
 }
 
 /**
