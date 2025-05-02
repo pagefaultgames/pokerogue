@@ -424,6 +424,7 @@ export async function initBattleWithEnemyConfig(partyConfig: EnemyPartyConfig): 
     console.log(
       `Pokemon: ${getPokemonNameWithAffix(enemyPokemon)}`,
       `| Species ID: ${enemyPokemon.species.speciesId}`,
+      `| Level: ${enemyPokemon.level}`,
       `| Nature: ${getNatureName(enemyPokemon.nature, true, true, true)}`,
     );
     console.log(`Stats (IVs): ${stats}`);
@@ -1075,8 +1076,8 @@ export function getRandomEncounterSpecies(level: number, isBoss = false, rerollH
     ret.formIndex = formIndex;
   }
 
-  //Reroll shiny for event encounters
-  if (isEventEncounter && !ret.shiny) {
+  //Reroll shiny or variant for event encounters
+  if (isEventEncounter) {
     ret.trySetShinySeed();
   }
   //Reroll hidden ability

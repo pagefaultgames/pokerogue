@@ -462,8 +462,13 @@ export class GameData {
 
       if (!bypassLogin) {
         pokerogueApi.savedata.system.get({ clientSessionId }).then(saveDataOrErr => {
-          if (!saveDataOrErr || saveDataOrErr.length === 0 || saveDataOrErr[0] !== "{") {
-            if (saveDataOrErr?.startsWith("sql: no rows in result set")) {
+          if (
+            typeof saveDataOrErr === "number" ||
+            !saveDataOrErr ||
+            saveDataOrErr.length === 0 ||
+            saveDataOrErr[0] !== "{"
+          ) {
+            if (saveDataOrErr === 404) {
               globalScene.queueMessage(
                 "Save data could not be found. If this is a new account, you can safely ignore this message.",
                 null,
@@ -471,7 +476,7 @@ export class GameData {
               );
               return resolve(true);
             }
-            if (saveDataOrErr?.includes("Too many connections")) {
+            if (typeof saveDataOrErr === "string" && saveDataOrErr?.includes("Too many connections")) {
               globalScene.queueMessage(
                 "Too many people are trying to connect and the server is overloaded. Please try again later.",
                 null,
@@ -479,7 +484,6 @@ export class GameData {
               );
               return resolve(false);
             }
-            console.error(saveDataOrErr);
             return resolve(false);
           }
 
@@ -1500,7 +1504,7 @@ export class GameData {
         link.remove();
       };
       if (!bypassLogin && dataType < GameDataType.SETTINGS) {
-        let promise: Promise<string | null> = Promise.resolve(null);
+        let promise: Promise<string | null | number> = Promise.resolve(null);
 
         if (dataType === GameDataType.SYSTEM) {
           promise = pokerogueApi.savedata.system.get({ clientSessionId });
@@ -1512,7 +1516,7 @@ export class GameData {
         }
 
         promise.then(response => {
-          if (!response?.length || response[0] !== "{") {
+          if (typeof response === "number" || !response?.length || response[0] !== "{") {
             console.error(response);
             resolve(false);
             return;
