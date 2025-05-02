@@ -2201,9 +2201,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     // remove UNKNOWN if other types are present
-    if (types.length > 1 && types.includes(PokemonType.UNKNOWN)) {
+    if (types.length > 1) {
       const index = types.indexOf(PokemonType.UNKNOWN);
-      types.splice(index, 1);
+      if (index !== -1) {
+        types.splice(index, 1);
+      }
     }
 
     // check type added to Pokemon from moves like Forest's Curse or Trick Or Treat
@@ -2467,13 +2469,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Checks whether a pokemon has the specified ability and it's in effect. Accounts for all the various
-   * effects which can affect whether an ability will be present or in effect, and both passive and
-   * non-passive. This is the primary way to check whether a pokemon has a particular ability.
-   * @param ability The ability to check for
+   * Check whether a pokemon has the specified ability in effect, either as a normal or passive ability.
+   * Accounts for all the various effects which can disable or modify abilities.
+   * @param ability - The {@linkcode Abilities | Ability} to check for
    * @param canApply - Whether to check if the ability is currently active; default `true`
-   * @param ignoreOverride Whether to ignore ability changing effects; default `false`
-   * @returns `true` if the ability is present and active
+   * @param ignoreOverride - Whether to ignore any overrides caused by {@linkcode Moves.TRANSFORM | Transform}; default `false`
+   * @returns Whether this {@linkcode Pokemon} has the given ability
    */
   public hasAbility(
     ability: Abilities,
@@ -2497,14 +2498,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Checks whether a pokemon has an ability with the specified attribute and it's in effect.
-   * Accounts for all the various effects which can affect whether an ability will be present or
-   * in effect, and both passive and non-passive. This is one of the two primary ways to check
-   * whether a pokemon has a particular ability.
-   * @param attrType The {@link AbAttr | ability attribute} to check for
+   * Check whether this pokemon has an ability with the specified attribute in effect, either as a normal or passive ability.
+   * Accounts for all the various effects which can disable or modify abilities.
+   * @param attrType - The {@linkcode AbAttr | attribute} to check for
    * @param canApply - Whether to check if the ability is currently active; default `true`
-   * @param ignoreOverride Whether to ignore ability changing effects; default `false`
-   * @returns `true` if an ability with the given {@linkcode AbAttr} is present and active
+   * @param ignoreOverride - Whether to ignore any overrides caused by {@linkcode Moves.TRANSFORM | Transform}; default `false`
+   * @returns Whether this Pokemon has an ability with the given {@linkcode AbAttr}.
    */
   public hasAbilityWithAttr(
     attrType: Constructor<AbAttr>,
@@ -2536,7 +2535,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const autotomizedTag = this.getTag(AutotomizedTag);
     let weightRemoved = 0;
     if (!isNullOrUndefined(autotomizedTag)) {
-      weightRemoved = 100 * autotomizedTag!.autotomizeCount;
+      weightRemoved = 100 * autotomizedTag.autotomizeCount;
     }
     const minWeight = 0.1;
     const weight = new NumberHolder(this.species.weight - weightRemoved);
@@ -5140,6 +5139,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return null;
   }
 
+  /**
+   * Return this Pokemon's move history.
+   * Entries are sorted in order of OLDEST to NEWEST
+   * @returns An array of {@linkcode TurnMove}, as described above.
+   * @see {@linkcode getLastXMoves}
+   */
   public getMoveHistory(): TurnMove[] {
     return this.summonData.moveHistory;
   }
@@ -5153,13 +5158,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Returns a list of the most recent move entries in this {@linkcode Pokemon}'s move history.
+   * Return a list of the most recent move entries in this {@linkcode Pokemon}'s move history.
    * The retrieved move entries are sorted in order from NEWEST to OLDEST.
-   * @param moveCount The number of move entries to retrieve.
-   * If negative or `0`, retrieves the Pokemon's entire move history (equivalent to reversing the output of {@linkcode getMoveHistory()}).
+   * @param moveCount - The maximum number of move entries to retrieve.
+   * If negative, retrieves the Pokemon's entire move history (equivalent to reversing the output of {@linkcode getMoveHistory()}).
    * Default is `1`.
    * @returns An array of {@linkcode TurnMove}, as specified above.
    */
+  // TODO: Update documentation in dancer PR to mention "getLastNonVirtualMove"
   getLastXMoves(moveCount = 1): TurnMove[] {
     const moveHistory = this.getMoveHistory();
     if (moveCount > 0) {
@@ -6392,26 +6398,27 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * Does nothing if this Pokemon is somehow not the owner of the held item.
    * @param heldItem The item stack to be reduced.
    * @param forBattle - Whether to trigger in-battle effects (such as Unburden) after losing the item. Default: `true`
-   * Set this to `false` if the Pokemon is giving away the held item for a Mystery Encounter or similar.
+   * Should be `false` for all item loss occurring outside of battle (MEs, etc.).
    * @returns Whether the item was removed successfully.
    */
   public loseHeldItem(
     heldItem: PokemonHeldItemModifier,
     forBattle = true,
   ): boolean {
+    // TODO: What does a -1 pokemon id mean?
     if (heldItem.pokemonId !== -1 && heldItem.pokemonId !== this.id) {
       return false;
     }
 
-      heldItem.stackCount--;
-      if (heldItem.stackCount <= 0) {
-        globalScene.removeModifier(heldItem, !this.isPlayer());
-      }
-      if (forBattle) {
-        applyPostItemLostAbAttrs(PostItemLostAbAttr, this, false);
-      }
+    heldItem.stackCount--;
+    if (heldItem.stackCount <= 0) {
+      globalScene.removeModifier(heldItem, !this.isPlayer());
+    }
+    if (forBattle) {
+      applyPostItemLostAbAttrs(PostItemLostAbAttr, this, false);
+    }
 
-      return true;
+    return true;
   }
 
   /**

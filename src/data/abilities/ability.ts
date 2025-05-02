@@ -362,7 +362,6 @@ export class TypeImmunityAbAttr extends PreDefendAbAttr {
    * @param move {@linkcode Move} The attacking move.
    * @param cancelled {@linkcode BooleanHolder} - A holder for a boolean value indicating if the move was cancelled.
    * @param args [0] {@linkcode NumberHolder} gets set to 0 if move is immuned by an ability.
-   * @param args [1] - Whether the move is simulated.
    */
   override applyPreDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, cancelled: BooleanHolder, args: any[]): void {
     (args[0] as NumberHolder).value = 0;
@@ -1260,7 +1259,7 @@ export class MoveTypeChangeAbAttr extends PreAttackAbAttr {
    * @param _defender - Unused
    * @param move - The {@linkcode Move} being used
    * @param _args - Unused
-   * @returnsWwhether the move type change attribute can be applied
+   * @returns whether the move type change attribute can be applied
    */
   override canApplyPreAttack(pokemon: Pokemon, _passive: boolean, _simulated: boolean, _defender: Pokemon | null, move: Move, _args: [NumberHolder?, NumberHolder?]): boolean {
     return (!this.condition || this.condition(pokemon, _defender, move)) &&
@@ -1281,9 +1280,13 @@ export class MoveTypeChangeAbAttr extends PreAttackAbAttr {
    * `[0]` - A {@linkcode NumberHolder} holding the move's type
    * `[1]` - A {@linkcode NumberHolder} containing the move's power
    */
-  override applyPreAttack(_pokemon: Pokemon, _passive: boolean, _simulated: boolean, _defender: Pokemon, _move: Move, args: [NumberHolder, NumberHolder]): void {
-    args[0].value = this.newType;
-    args[1].value *= this.powerMultiplier;
+  override applyPreAttack(_pokemon: Pokemon, _passive: boolean, _simulated: boolean, _defender: Pokemon, _move: Move, args: [NumberHolder?, NumberHolder?]): void {
+    if (!isNullOrUndefined(args[0])) {
+      args[0].value = this.newType;
+    }
+    if (!isNullOrUndefined(args[1])) {
+      args[1].value *= this.powerMultiplier;
+    }
   }
 }
 
@@ -4306,7 +4309,6 @@ export class PostTurnFormChangeAbAttr extends PostTurnAbAttr {
 
 /**
  * Attribute used for abilities (Bad Dreams) that damages sleeping opponents during turn end.
- * @extends PostTurnAbAttr
  */
 export class PostTurnHurtIfSleepingAbAttr extends PostTurnAbAttr {
   override canApplyPostTurn(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {

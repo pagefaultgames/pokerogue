@@ -3315,8 +3315,8 @@ export default class BattleScene extends SceneBase {
 
   /**
    * Check whether a given {@linkcode PersistentModifier} exists on a given side of the field.
-   * @param modifier - The {@linkcode PersistentModifier} to check the existence of
-   * @param enemy - Whether to check the enemy party (`true`) or player party (`false). Default is `false`.
+   * @param modifier - The {@linkcode PersistentModifier} to check the existence of.
+   * @param enemy - Whether to check the enemy (`true`) or player (`false`) party. Default is `false`.
    * @returns Whether the specified modifier exists on the given side of the field.
    * @remarks This also compares `pokemonId`s to confirm a match (and therefore owners).
    */
@@ -3353,7 +3353,7 @@ export default class BattleScene extends SceneBase {
    * Get all modifiers of all {@linkcode Pokemon} in the given party,
    * optionally filtering based on `modifierType` if provided.
    * @param player Whether to search the player (`true`) or enemy (`false`) party; Defaults to `true`
-   * @returns a list of all modifiers on the given side of the field.
+   * @returns An array containing all {@linkcode PersistentModifier}s on the given side of the field.
    * @overload
    */
   getModifiers(player?: boolean): PersistentModifier[];
@@ -3364,7 +3364,7 @@ export default class BattleScene extends SceneBase {
    * @param modifierType The type of modifier to check against; must extend {@linkcode PersistentModifier}.
    * If omitted, will return all {@linkcode PersistentModifier}s regardless of type.
    * @param player Whether to search the player (`true`) or enemy (`false`) party; Defaults to `true`
-   * @returns a list of all modifiers matching `modifierType` on the given side of the field.
+   * @returns An array containing all modifiers matching `modifierType` on the given side of the field.
    * @overload
    */
   getModifiers<T extends PersistentModifier>(modifierType: Constructor<T>, player?: boolean): T[];

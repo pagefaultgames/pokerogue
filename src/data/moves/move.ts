@@ -930,12 +930,12 @@ export default class Move implements Localizable {
    * Multi-target moves will always be allowed if only 1 legal target is present.
    * @returns - Whether this move can be given additional strikes.
    */
-  canBeMultiStrikeEnhanced(user: Pokemon, allowSpread: boolean = true): boolean {
+  canBeMultiStrikeEnhanced(user: Pokemon, allowSpread = true): boolean {
     // Multi-strike enhancers...
 
     // ...cannot enhance spread moves hitting multiple targets unless specified,
     const { targets, multiple } = getMoveTargets(user, this.id);
-    const exceptMultiTarget = allowSpread && multiple && targets.length > 1;
+    const exceptMultiTarget = !allowSpread && multiple && targets.length > 1;
 
     // ...cannot enhance multi-hit or sacrificial moves,
     const exceptAttrs: Constructor<MoveAttr>[] = [

@@ -2776,11 +2776,11 @@ export class PokemonMultiHitModifier extends PokemonHeldItemModifier {
   }
 
   /**
-   * For each stack, converts 25 percent of attack damage into an additional strike.
-   * @param pokemon The {@linkcode Pokemon} using the move
-   * @param moveId The {@linkcode Moves | identifier} for the move being used
-   * @param count {@linkcode NumberHolder} holding the move's hit count for this turn
-   * @param damageMultiplier {@linkcode NumberHolder} holding a damage multiplier applied to a strike of this move
+   * For each stack, converts 25% of attack damage into an additional strike.
+   * @param pokemon - The {@linkcode Pokemon} using the move
+   * @param moveId - The {@linkcode Moves | ID of the move} being used
+   * @param count - A {@linkcode NumberHolder} holding the move's current hit count
+   * @param damageMultiplier - A {@linkcode NumberHolder} holding the current strike's damage multiplier
    * @returns - Whether the move's hit count was successfully increased
    */
   override apply(
@@ -2824,6 +2824,7 @@ export class PokemonMultiHitModifier extends PokemonHeldItemModifier {
       damageMultiplier.value *= 1 - 0.25 * this.getStackCount();
       return true;
     }
+
     if (pokemon.turnData.hitCount - pokemon.turnData.hitsLeft !== this.getStackCount() + 1) {
       // Deal 25% damage for each remaining Multi Lens hit
       damageMultiplier.value *= 0.25;

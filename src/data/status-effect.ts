@@ -2,8 +2,6 @@ import { randIntRange } from "#app/utils/common";
 import { StatusEffect } from "#enums/status-effect";
 import type { ParseKeys } from "i18next";
 import i18next from "i18next";
-import { applyAbAttrs, ReduceSleepDurationAbAttr } from "./abilities/ability";
-import type Pokemon from "#app/field/pokemon";
 
 export class Status {
   public effect: StatusEffect;
