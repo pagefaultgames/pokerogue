@@ -1953,7 +1953,7 @@ export class PokemonInstantReviveModifier extends PokemonHeldItemModifier {
     );
 
     // Remove the Pokemon's FAINT status
-    pokemon.resetStatus(true, false, true);
+    pokemon.resetStatus(true, false, true, false);
 
     // Reapply Commander on the Pokemon's side of the field, if applicable
     const field = pokemon.isPlayer() ? globalScene.getPlayerField() : globalScene.getEnemyField();
@@ -2161,7 +2161,7 @@ export class PokemonHpRestoreModifier extends ConsumablePokemonModifier {
         restorePoints = Math.floor(restorePoints * multiplier);
       }
       if (this.fainted || this.healStatus) {
-        pokemon.resetStatus(true, true);
+        pokemon.resetStatus(true, true, false, false);
       }
       pokemon.hp = Math.min(
         pokemon.hp +
@@ -2181,7 +2181,7 @@ export class PokemonStatusHealModifier extends ConsumablePokemonModifier {
    * @returns always `true`
    */
   override apply(playerPokemon: PlayerPokemon): boolean {
-    playerPokemon.resetStatus(true, true);
+    playerPokemon.resetStatus(true, true, false, false);
     return true;
   }
 }
