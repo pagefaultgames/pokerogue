@@ -5,8 +5,8 @@ import { SettingKeyboard } from "#app/system/settings/settings-keyboard";
 import { deepCopy } from "#app/utils/data";
 import { Button } from "#enums/buttons";
 import { Device } from "#enums/devices";
-import { InGameManip } from "#test/settingMenu/helpers/inGameManip";
-import { MenuManip } from "#test/settingMenu/helpers/menuManip";
+import { InGameManip } from "#test/setting-menu/helpers/in-game-manip";
+import { MenuManip } from "#test/setting-menu/helpers/menu-manip";
 import { beforeEach, describe, expect, it } from "vitest";
 
 describe("Test Rebinding", () => {
