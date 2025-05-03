@@ -2,7 +2,7 @@ import * as MysteryEncounters from "#app/data/mystery-encounters/mystery-encount
 import { Biome } from "#app/enums/biome";
 import { MysteryEncounterType } from "#app/enums/mystery-encounter-type";
 import { Species } from "#app/enums/species";
-import GameManager from "#test/testUtils/gameManager";
+import GameManager from "#test/test-utils/game-manager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   runMysteryEncounterToEnd,
@@ -15,7 +15,7 @@ import { PokemonMove } from "#app/field/pokemon";
 import { UiMode } from "#enums/ui-mode";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
-import { initSceneWithoutEncounterPhase } from "#test/testUtils/gameManagerUtils";
+import { initSceneWithoutEncounterPhase } from "#test/test-utils/game-manager-utils";
 import { TrainerType } from "#enums/trainer-type";
 import { MysteryEncounterPhase, MysteryEncounterRewardsPhase } from "#app/phases/mystery-encounter-phases";
 import { ContactHeldItemTransferChanceModifier } from "#app/modifier/modifier";
@@ -116,20 +116,14 @@ const POOL_3_POKEMON: { species: Species; formIndex?: number }[] = [
 
 const POOL_4_POKEMON = [Species.GENESECT, Species.SLITHER_WING, Species.BUZZWOLE, Species.PHEROMOSA];
 
-const PHYSICAL_TUTOR_MOVES = [
-  Moves.MEGAHORN,
-  Moves.ATTACK_ORDER,
-  Moves.BUG_BITE,
-  Moves.FIRST_IMPRESSION,
-  Moves.LUNGE
-];
+const PHYSICAL_TUTOR_MOVES = [Moves.MEGAHORN, Moves.ATTACK_ORDER, Moves.BUG_BITE, Moves.FIRST_IMPRESSION, Moves.LUNGE];
 
 const SPECIAL_TUTOR_MOVES = [
   Moves.SILVER_WIND,
   Moves.SIGNAL_BEAM,
   Moves.BUG_BUZZ,
   Moves.POLLEN_PUFF,
-  Moves.STRUGGLE_BUG
+  Moves.STRUGGLE_BUG,
 ];
 
 const STATUS_TUTOR_MOVES = [
@@ -137,16 +131,10 @@ const STATUS_TUTOR_MOVES = [
   Moves.DEFEND_ORDER,
   Moves.RAGE_POWDER,
   Moves.STICKY_WEB,
-  Moves.SILK_TRAP
+  Moves.SILK_TRAP,
 ];
 
-const MISC_TUTOR_MOVES = [
-  Moves.LEECH_LIFE,
-  Moves.U_TURN,
-  Moves.HEAL_ORDER,
-  Moves.QUIVER_DANCE,
-  Moves.INFESTATION,
-];
+const MISC_TUTOR_MOVES = [Moves.LEECH_LIFE, Moves.U_TURN, Moves.HEAL_ORDER, Moves.QUIVER_DANCE, Moves.INFESTATION];
 
 describe("Bug-Type Superfan - Mystery Encounter", () => {
   let phaserGame: Phaser.Game;

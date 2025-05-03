@@ -41,8 +41,8 @@ import {
   VariableMoveTypeChartAttr,
   HpSplitAttr,
 } from "#app/data/moves/move";
-import { MoveTarget } from "#enums/MoveTarget";
-import { MoveCategory } from "#enums/MoveCategory";
+import { MoveTarget } from "#enums/move-target";
+import { MoveCategory } from "#enums/move-category";
 import type { PokemonSpeciesForm } from "#app/data/pokemon-species";
 import {
   default as PokemonSpecies,
@@ -255,7 +255,7 @@ import {
 import { Nature } from "#enums/nature";
 import { StatusEffect } from "#enums/status-effect";
 import { doShinySparkleAnim } from "#app/field/anims";
-import { MoveFlags } from "#enums/MoveFlags";
+import { MoveFlags } from "#enums/move-flags";
 import { timedEventManager } from "#app/global-event-manager";
 import { loadMoveAnimations } from "#app/sprites/pokemon-asset-loader";
 import { ResetStatusPhase } from "#app/phases/reset-status-phase";

@@ -1,6 +1,6 @@
 import { LoadingScene } from "#app/loading-scene";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import GameManager from "#test/testUtils/gameManager";
+import GameManager from "#test/test-utils/game-manager";
 
 describe("BattleScene", () => {
   let phaserGame: Phaser.Game;

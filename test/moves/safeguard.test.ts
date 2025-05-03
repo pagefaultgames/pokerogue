@@ -3,7 +3,7 @@ import { PostDefendContactApplyStatusEffectAbAttr } from "#app/data/abilities/ab
 import { allAbilities } from "#app/data/data-lists";
 import { Abilities } from "#app/enums/abilities";
 import { StatusEffect } from "#app/enums/status-effect";
-import GameManager from "#test/testUtils/gameManager";
+import GameManager from "#test/test-utils/game-manager";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";

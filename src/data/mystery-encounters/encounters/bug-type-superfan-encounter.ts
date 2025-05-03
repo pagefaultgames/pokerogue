@@ -10,8 +10,8 @@ import {
   transitionMysteryEncounterIntroVisuals,
 } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { getRandomPartyMemberFunc, trainerConfigs } from "#app/data/trainers/trainer-config";
-import { TrainerPartyCompoundTemplate } from "#app/data/trainers/TrainerPartyTemplate";
-import { TrainerPartyTemplate } from "#app/data/trainers/TrainerPartyTemplate";
+import { TrainerPartyCompoundTemplate } from "#app/data/trainers/trainer-party-template";
+import { TrainerPartyTemplate } from "#app/data/trainers/trainer-party-template";
 import { TrainerSlot } from "#enums/trainer-slot";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PartyMemberStrength } from "#enums/party-member-strength";
@@ -144,20 +144,14 @@ const POOL_3_POKEMON: { species: Species; formIndex?: number }[] = [
 
 const POOL_4_POKEMON = [Species.GENESECT, Species.SLITHER_WING, Species.BUZZWOLE, Species.PHEROMOSA];
 
-const PHYSICAL_TUTOR_MOVES = [
-  Moves.MEGAHORN,
-  Moves.ATTACK_ORDER,
-  Moves.BUG_BITE,
-  Moves.FIRST_IMPRESSION,
-  Moves.LUNGE
-];
+const PHYSICAL_TUTOR_MOVES = [Moves.MEGAHORN, Moves.ATTACK_ORDER, Moves.BUG_BITE, Moves.FIRST_IMPRESSION, Moves.LUNGE];
 
 const SPECIAL_TUTOR_MOVES = [
   Moves.SILVER_WIND,
   Moves.SIGNAL_BEAM,
   Moves.BUG_BUZZ,
   Moves.POLLEN_PUFF,
-  Moves.STRUGGLE_BUG
+  Moves.STRUGGLE_BUG,
 ];
 
 const STATUS_TUTOR_MOVES = [
@@ -165,16 +159,10 @@ const STATUS_TUTOR_MOVES = [
   Moves.DEFEND_ORDER,
   Moves.RAGE_POWDER,
   Moves.STICKY_WEB,
-  Moves.SILK_TRAP
+  Moves.SILK_TRAP,
 ];
 
-const MISC_TUTOR_MOVES = [
-  Moves.LEECH_LIFE,
-  Moves.U_TURN,
-  Moves.HEAL_ORDER,
-  Moves.QUIVER_DANCE,
-  Moves.INFESTATION,
-];
+const MISC_TUTOR_MOVES = [Moves.LEECH_LIFE, Moves.U_TURN, Moves.HEAL_ORDER, Moves.QUIVER_DANCE, Moves.INFESTATION];
 
 /**
  * Wave breakpoints that determine how strong to make the Bug-Type Superfan's team

@@ -55,7 +55,7 @@ import {
   applySessionVersionMigration,
   applySystemVersionMigration,
   applySettingsVersionMigration,
-} from "./version_migration/version_converter";
+} from "./version-migration/version-converter";
 import { MysteryEncounterSaveData } from "#app/data/mystery-encounters/mystery-encounter-save-data";
 import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { pokerogueApi } from "#app/plugins/api/pokerogue-api";

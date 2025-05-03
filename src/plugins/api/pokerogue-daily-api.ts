@@ -1,4 +1,4 @@
-import type { GetDailyRankingsPageCountRequest, GetDailyRankingsRequest } from "#app/@types/PokerogueDailyApi";
+import type { GetDailyRankingsPageCountRequest, GetDailyRankingsRequest } from "#app/@types/pokerogue-daily-api";
 import { ApiBase } from "#app/plugins/api/api-base";
 import type { RankingEntry } from "#app/ui/daily-run-scoreboard";
 

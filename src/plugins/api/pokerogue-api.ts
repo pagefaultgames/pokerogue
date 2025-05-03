@@ -1,4 +1,4 @@
-import type { TitleStatsResponse } from "#app/@types/PokerogueApi";
+import type { TitleStatsResponse } from "#app/@types/pokerogue-api";
 import { ApiBase } from "#app/plugins/api/api-base";
 import { PokerogueAccountApi } from "#app/plugins/api/pokerogue-account-api";
 import { PokerogueAdminApi } from "#app/plugins/api/pokerogue-admin-api";

@@ -17,10 +17,10 @@ import {
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { PokemonType } from "#enums/pokemon-type";
 import { MessagePhase } from "#app/phases/message-phase";
-import GameManager from "#test/testUtils/gameManager";
+import GameManager from "#test/test-utils/game-manager";
 import { Species } from "#enums/species";
 import { StatusEffect } from "#enums/status-effect";
-import { initSceneWithoutEncounterPhase } from "#test/testUtils/gameManagerUtils";
+import { initSceneWithoutEncounterPhase } from "#test/test-utils/game-manager-utils";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 

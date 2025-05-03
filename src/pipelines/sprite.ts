@@ -5,8 +5,8 @@ import Trainer from "#app/field/trainer";
 import { globalScene } from "#app/global-scene";
 import { rgbHexToRgba } from "#app/utils/common";
 import FieldSpritePipeline from "./field-sprite";
-import spriteFragShader from "./glsl/spriteFragShader.frag?raw";
-import spriteVertShader from "./glsl/spriteShader.vert?raw";
+import spriteFragShader from "./glsl/sprite-frag-shader.frag?raw";
+import spriteVertShader from "./glsl/sprite-shader.vert?raw";
 
 export default class SpritePipeline extends FieldSpritePipeline {
   private _tone: number[];

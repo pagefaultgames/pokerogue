@@ -4,7 +4,7 @@ import { SubstituteTag, TrappedTag } from "#app/data/battler-tags";
 import { allMoves, StealHeldItemChanceAttr } from "#app/data/moves/move";
 import { MoveResult } from "#app/field/pokemon";
 import type { CommandPhase } from "#app/phases/command-phase";
-import GameManager from "#test/testUtils/gameManager";
+import GameManager from "#test/test-utils/game-manager";
 import { Command } from "#app/ui/command-ui-handler";
 import { UiMode } from "#enums/ui-mode";
 import { Abilities } from "#enums/abilities";

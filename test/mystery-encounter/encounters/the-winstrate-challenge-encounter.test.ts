@@ -3,14 +3,14 @@ import { HUMAN_TRANSITABLE_BIOMES } from "#app/data/mystery-encounters/mystery-e
 import { Biome } from "#enums/biome";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Species } from "#enums/species";
-import GameManager from "#test/testUtils/gameManager";
+import GameManager from "#test/test-utils/game-manager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { runMysteryEncounterToEnd } from "#test/mystery-encounter/encounter-test-utils";
 import type BattleScene from "#app/battle-scene";
 import { UiMode } from "#enums/ui-mode";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
-import { initSceneWithoutEncounterPhase } from "#test/testUtils/gameManagerUtils";
+import { initSceneWithoutEncounterPhase } from "#test/test-utils/game-manager-utils";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 import MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";

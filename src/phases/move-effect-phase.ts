@@ -42,10 +42,10 @@ import {
   StatChangeBeforeDmgCalcAttr,
   ToxicAccuracyAttr,
 } from "#app/data/moves/move";
-import { MoveEffectTrigger } from "#enums/MoveEffectTrigger";
-import { MoveFlags } from "#enums/MoveFlags";
-import { MoveTarget } from "#enums/MoveTarget";
-import { MoveCategory } from "#enums/MoveCategory";
+import { MoveEffectTrigger } from "#enums/move-effect-trigger";
+import { MoveFlags } from "#enums/move-flags";
+import { MoveTarget } from "#enums/move-target";
+import { MoveCategory } from "#enums/move-category";
 import { SpeciesFormChangePostMoveTrigger } from "#app/data/pokemon-forms";
 import { PokemonType } from "#enums/pokemon-type";
 import { DamageResult, PokemonMove, type TurnMove } from "#app/field/pokemon";

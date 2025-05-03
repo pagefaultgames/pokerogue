@@ -9,8 +9,8 @@ import {
   transitionMysteryEncounterIntroVisuals,
 } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { trainerConfigs } from "#app/data/trainers/trainer-config";
-import { TrainerPartyCompoundTemplate } from "#app/data/trainers/TrainerPartyTemplate";
-import { TrainerPartyTemplate } from "#app/data/trainers/TrainerPartyTemplate";
+import { TrainerPartyCompoundTemplate } from "#app/data/trainers/trainer-party-template";
+import { TrainerPartyTemplate } from "#app/data/trainers/trainer-party-template";
 import { ModifierTier } from "#app/modifier/modifier-tier";
 import type { PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
 import { ModifierPoolType, modifierTypes } from "#app/modifier/modifier-type";
@@ -44,7 +44,7 @@ import { BerryType } from "#enums/berry-type";
 import { BattlerIndex } from "#app/battle";
 import { Moves } from "#enums/moves";
 import { EncounterBattleAnim } from "#app/data/battle-anims";
-import { MoveCategory } from "#enums/MoveCategory";
+import { MoveCategory } from "#enums/move-category";
 import { CustomPokemonData } from "#app/data/custom-pokemon-data";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { EncounterAnim } from "#enums/encounter-anims";

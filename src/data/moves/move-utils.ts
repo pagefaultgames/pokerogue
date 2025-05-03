@@ -1,4 +1,4 @@
-import { MoveTarget } from "#enums/MoveTarget";
+import { MoveTarget } from "#enums/move-target";
 import type Move from "./move";
 
 /**

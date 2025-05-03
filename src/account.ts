@@ -1,5 +1,5 @@
 import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
-import type { UserInfo } from "#app/@types/UserInfo";
+import type { UserInfo } from "#app/@types/user-Info";
 import { bypassLogin } from "./global-vars/bypass-login";
 import { randomString } from "#app/utils/common";
 

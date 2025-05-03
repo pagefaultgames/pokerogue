@@ -3,7 +3,7 @@ import type { UiMode } from "#enums/ui-mode";
 import { addWindow } from "../ui-theme";
 import { addTextObject, TextStyle } from "../text";
 import { Button } from "#enums/buttons";
-import { NavigationManager } from "#app/ui/settings/navigationMenu";
+import { NavigationManager } from "#app/ui/settings/navigation-menu";
 import i18next from "i18next";
 import { globalScene } from "#app/global-scene";
 
