@@ -340,7 +340,6 @@ const timedEvents: TimedEvent[] = [
       { species: Species.DEERLING, formIndex: 0 }, // Spring Deerling
       { species: Species.CLAUNCHER },
       { species: Species.WISHIWASHI },
-      { species: Species.MUDBRAY },
       { species: Species.DRAMPA },
       { species: Species.JANGMO_O },
       { species: Species.APPLIN },
@@ -351,7 +350,7 @@ const timedEvents: TimedEvent[] = [
       { wave: 8, type: "CATCHING_CHARM" },
       { wave: 25, type: "SHINY_CHARM" },
     ],
-  }
+  },
 ];
 
 export class TimedEventManager {
