@@ -18,7 +18,7 @@ import { UiMode } from "#enums/ui-mode";
 import { isNullOrUndefined } from "#app/utils/common";
 import { Button } from "#enums/buttons";
 import { StatusEffect } from "#enums/status-effect";
-import type GameManager from "#test/testUtils/gameManager";
+import type GameManager from "#test/test-utils/game-manager";
 import { expect, vi } from "vitest";
 
 /**

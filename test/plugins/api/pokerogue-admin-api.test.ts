@@ -7,10 +7,10 @@ import type {
   UnlinkAccountFromGoogledIdRequest,
 } from "#app/@types/pokerogue-admin-api";
 import { PokerogueAdminApi } from "#app/plugins/api/pokerogue-admin-api";
-import { getApiBaseUrl } from "#test/testUtils/testUtils";
+import { getApiBaseUrl } from "#test/test-utils/test-utils";
 import { http, HttpResponse } from "msw";
 import { beforeAll, afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { initServerForApiTests } from "#test/testUtils/testFileInitialization";
+import { initServerForApiTests } from "#test/test-utils/test-file-initialization";
 import type { SetupServerApi } from "msw/node";
 
 const apiBase = getApiBaseUrl();

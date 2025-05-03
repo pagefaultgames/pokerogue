@@ -7,7 +7,7 @@ import { TitlePhase } from "#app/phases/title-phase";
 import { TurnInitPhase } from "#app/phases/turn-init-phase";
 import type SaveSlotSelectUiHandler from "#app/ui/save-slot-select-ui-handler";
 import { UiMode } from "#enums/ui-mode";
-import { GameManagerHelper } from "./gameManagerHelper";
+import { GameManagerHelper } from "./game-manager-helper";
 
 /**
  * Helper to handle daily mode specifics

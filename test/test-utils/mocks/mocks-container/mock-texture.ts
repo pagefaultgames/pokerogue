@@ -1,5 +1,5 @@
-import type MockTextureManager from "#test/testUtils/mocks/mockTextureManager";
-import type { MockGameObject } from "../mockGameObject";
+import type MockTextureManager from "#test/test-utils/mocks/mock-texture-manager";
+import type { MockGameObject } from "../mock-game-object";
 
 /**
  * Stub for Phaser.Textures.Texture object

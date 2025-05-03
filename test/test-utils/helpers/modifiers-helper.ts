@@ -1,5 +1,5 @@
 import { expect } from "vitest";
-import { GameManagerHelper } from "./gameManagerHelper";
+import { GameManagerHelper } from "./game-manager-helper";
 import type { ModifierTypeKeys } from "#app/modifier/modifier-type";
 import { itemPoolChecks } from "#app/modifier/modifier-type";
 

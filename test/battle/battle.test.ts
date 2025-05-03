@@ -16,8 +16,8 @@ import { SwitchPhase } from "#app/phases/switch-phase";
 import { TitlePhase } from "#app/phases/title-phase";
 import { TurnInitPhase } from "#app/phases/turn-init-phase";
 import { VictoryPhase } from "#app/phases/victory-phase";
-import GameManager from "#test/testUtils/gameManager";
-import { generateStarter } from "#test/testUtils/gameManagerUtils";
+import GameManager from "#test/test-utils/game-manager";
+import { generateStarter } from "#test/test-utils/game-manager-utils";
 import { UiMode } from "#enums/ui-mode";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
@@ -118,7 +118,7 @@ describe("Test Battle Phase", () => {
   }, 20000);
 
   it("load 100% data file", async () => {
-    await game.importData("./test/testUtils/saves/everything.prsv");
+    await game.importData("./test/test-utils/saves/everything.prsv");
     const caughtCount = Object.keys(game.scene.gameData.dexData).filter(key => {
       const species = game.scene.gameData.dexData[key];
       return species.caughtAttr !== 0n;

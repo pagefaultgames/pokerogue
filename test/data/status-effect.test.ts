@@ -11,8 +11,8 @@ import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { StatusEffect } from "#enums/status-effect";
-import GameManager from "#test/testUtils/gameManager";
-import { mockI18next } from "#test/testUtils/testUtils";
+import GameManager from "#test/test-utils/game-manager";
+import { mockI18next } from "#test/test-utils/test-utils";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const pokemonName = "PKM";

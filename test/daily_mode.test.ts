@@ -6,7 +6,7 @@ import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 import { Species } from "#enums/species";
 import { UiMode } from "#enums/ui-mode";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import GameManager from "#test/testUtils/gameManager";
+import GameManager from "#test/test-utils/game-manager";
 
 //const TIMEOUT = 20 * 1000;
 

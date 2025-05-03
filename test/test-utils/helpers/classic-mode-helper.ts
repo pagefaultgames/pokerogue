@@ -1,40 +1,25 @@
 import { BattleStyle } from "#app/enums/battle-style";
 import type { Species } from "#app/enums/species";
+import { GameModes, getGameMode } from "#app/game-mode";
 import overrides from "#app/overrides";
+import { CommandPhase } from "#app/phases/command-phase";
 import { EncounterPhase } from "#app/phases/encounter-phase";
 import { SelectStarterPhase } from "#app/phases/select-starter-phase";
-import { UiMode } from "#enums/ui-mode";
-import { generateStarter } from "../gameManagerUtils";
-import { GameManagerHelper } from "./gameManagerHelper";
-import type { Challenge } from "#app/data/challenge";
-import { CommandPhase } from "#app/phases/command-phase";
 import { TurnInitPhase } from "#app/phases/turn-init-phase";
-import type { Challenges } from "#enums/challenges";
-import { copyChallenge } from "data/challenge";
+import { UiMode } from "#enums/ui-mode";
+import { generateStarter } from "../game-manager-utils";
+import { GameManagerHelper } from "./game-manager-helper";
 
 /**
- * Helper to handle Challenge mode specifics
+ * Helper to handle classic mode specifics
  */
-export class ChallengeModeHelper extends GameManagerHelper {
-  challenges: Challenge[] = [];
-
+export class ClassicModeHelper extends GameManagerHelper {
   /**
-   * Adds a challenge to the challenge mode helper.
-   * @param id - The challenge id.
-   * @param value - The challenge value.
-   * @param severity - The challenge severity.
-   */
-  addChallenge(id: Challenges, value: number, severity: number) {
-    const challenge = copyChallenge({ id, value, severity });
-    this.challenges.push(challenge);
-  }
-
-  /**
-   * Runs the Challenge game to the summon phase.
-   * @param gameMode - Optional game mode to set.
+   * Runs the classic game to the summon phase.
+   * @param species - Optional array of species to summon.
    * @returns A promise that resolves when the summon phase is reached.
    */
-  async runToSummon(species?: Species[]) {
+  async runToSummon(species?: Species[]): Promise<void> {
     await this.game.runToTitle();
 
     if (this.game.override.disableShinies) {
@@ -42,14 +27,14 @@ export class ChallengeModeHelper extends GameManagerHelper {
     }
 
     this.game.onNextPrompt("TitlePhase", UiMode.TITLE, () => {
-      this.game.scene.gameMode.challenges = this.challenges;
+      this.game.scene.gameMode = getGameMode(GameModes.CLASSIC);
       const starters = generateStarter(this.game.scene, species);
       const selectStarterPhase = new SelectStarterPhase();
       this.game.scene.pushPhase(new EncounterPhase(false));
       selectStarterPhase.initBattle(starters);
     });
 
-    await this.game.phaseInterceptor.run(EncounterPhase);
+    await this.game.phaseInterceptor.to(EncounterPhase);
     if (overrides.OPP_HELD_ITEMS_OVERRIDE.length === 0 && this.game.override.removeEnemyStartingItems) {
       this.game.removeEnemyHeldItems();
     }
@@ -60,7 +45,7 @@ export class ChallengeModeHelper extends GameManagerHelper {
    * @param species - Optional array of species to start the battle with.
    * @returns A promise that resolves when the battle is started.
    */
-  async startBattle(species?: Species[]) {
+  async startBattle(species?: Species[]): Promise<void> {
     await this.runToSummon(species);
 
     if (this.game.scene.battleStyle === BattleStyle.SWITCH) {

@@ -1,6 +1,6 @@
 import { PlayerGender } from "#app/enums/player-gender";
 import { BattleStyle } from "#app/enums/battle-style";
-import { GameManagerHelper } from "./gameManagerHelper";
+import { GameManagerHelper } from "./game-manager-helper";
 import { ExpGainsSpeed } from "#app/enums/exp-gains-speed";
 
 /**

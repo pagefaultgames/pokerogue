@@ -6,8 +6,8 @@ import type {
 } from "#app/@types/pokerogue-system-save-data-api";
 import { PokerogueSystemSavedataApi } from "#app/plugins/api/pokerogue-system-savedata-api";
 import type { SystemSaveData } from "#app/system/game-data";
-import { initServerForApiTests } from "#test/testUtils/testFileInitialization";
-import { getApiBaseUrl } from "#test/testUtils/testUtils";
+import { initServerForApiTests } from "#test/test-utils/test-file-initialization";
+import { getApiBaseUrl } from "#test/test-utils/test-utils";
 import { http, HttpResponse } from "msw";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import type { SetupServerApi } from "msw/node";

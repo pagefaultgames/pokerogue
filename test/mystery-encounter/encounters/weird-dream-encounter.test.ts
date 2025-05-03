@@ -2,7 +2,7 @@ import * as MysteryEncounters from "#app/data/mystery-encounters/mystery-encount
 import { Biome } from "#app/enums/biome";
 import { MysteryEncounterType } from "#app/enums/mystery-encounter-type";
 import { Species } from "#app/enums/species";
-import GameManager from "#test/testUtils/gameManager";
+import GameManager from "#test/test-utils/game-manager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import {
@@ -14,7 +14,7 @@ import { UiMode } from "#enums/ui-mode";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
-import { initSceneWithoutEncounterPhase } from "#test/testUtils/gameManagerUtils";
+import { initSceneWithoutEncounterPhase } from "#test/test-utils/game-manager-utils";
 import { WeirdDreamEncounter } from "#app/data/mystery-encounters/encounters/weird-dream-encounter";
 import * as EncounterTransformationSequence from "#app/data/mystery-encounters/utils/encounter-transformation-sequence";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";

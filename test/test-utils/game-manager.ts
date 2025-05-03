@@ -22,8 +22,8 @@ import { TitlePhase } from "#app/phases/title-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { TurnInitPhase } from "#app/phases/turn-init-phase";
 import { TurnStartPhase } from "#app/phases/turn-start-phase";
-import ErrorInterceptor from "#test/testUtils/errorInterceptor";
-import type InputsHandler from "#test/testUtils/inputsHandler";
+import ErrorInterceptor from "#test/test-utils/error-interceptor";
+import type InputsHandler from "#test/test-utils/inputs-handler";
 import type BallUiHandler from "#app/ui/ball-ui-handler";
 import type BattleMessageUiHandler from "#app/ui/battle-message-ui-handler";
 import type CommandUiHandler from "#app/ui/command-ui-handler";
@@ -40,24 +40,24 @@ import type { Moves } from "#enums/moves";
 import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PlayerGender } from "#enums/player-gender";
 import type { Species } from "#enums/species";
-import { generateStarter, waitUntil } from "#test/testUtils/gameManagerUtils";
-import GameWrapper from "#test/testUtils/gameWrapper";
-import { ChallengeModeHelper } from "#test/testUtils/helpers/challengeModeHelper";
-import { ClassicModeHelper } from "#test/testUtils/helpers/classicModeHelper";
-import { DailyModeHelper } from "#test/testUtils/helpers/dailyModeHelper";
-import { ModifierHelper } from "#test/testUtils/helpers/modifiersHelper";
-import { MoveHelper } from "#test/testUtils/helpers/moveHelper";
-import { OverridesHelper } from "#test/testUtils/helpers/overridesHelper";
-import { ReloadHelper } from "#test/testUtils/helpers/reloadHelper";
-import { SettingsHelper } from "#test/testUtils/helpers/settingsHelper";
-import PhaseInterceptor from "#test/testUtils/phaseInterceptor";
-import TextInterceptor from "#test/testUtils/TextInterceptor";
+import { generateStarter, waitUntil } from "#test/test-utils/game-manager-utils";
+import GameWrapper from "#test/test-utils/game-wrapper";
+import { ChallengeModeHelper } from "#test/test-utils/helpers/challenge-mode-helper";
+import { ClassicModeHelper } from "#test/test-utils/helpers/classic-mode-helper";
+import { DailyModeHelper } from "#test/test-utils/helpers/daily-mode-helper";
+import { ModifierHelper } from "#test/test-utils/helpers/modifiers-helper";
+import { MoveHelper } from "#test/test-utils/helpers/move-helper";
+import { OverridesHelper } from "#test/test-utils/helpers/overrides-helper";
+import { ReloadHelper } from "#test/test-utils/helpers/reload-helper";
+import { SettingsHelper } from "#test/test-utils/helpers/settings-helper";
+import PhaseInterceptor from "#test/test-utils/phase-interceptor";
+import TextInterceptor from "#test/test-utils/text-interceptor";
 import { AES, enc } from "crypto-js";
 import fs from "node:fs";
 import { expect, vi } from "vitest";
 import { globalScene } from "#app/global-scene";
 import type StarterSelectUiHandler from "#app/ui/starter-select-ui-handler";
-import { MockFetch } from "#test/testUtils/mocks/mockFetch";
+import { MockFetch } from "#test/test-utils/mocks/mock-fetch";
 
 /**
  * Class to manage the game state and transitions between phases.
@@ -541,8 +541,8 @@ export default class GameManager {
   }
 
   /**
-   * Select a pokemon from the party menu during the given phase. 
-   * Only really handles the basic case of "navigate to party slot and press Action twice" - 
+   * Select a pokemon from the party menu during the given phase.
+   * Only really handles the basic case of "navigate to party slot and press Action twice" -
    * any menus that come up afterwards are ignored and must be handled separately by the caller.
    * @param slot - The 0-indexed position of the pokemon in your party to switch to
    * @param inPhase - Which phase to expect the selection to occur in. Defaults to `SwitchPhase`

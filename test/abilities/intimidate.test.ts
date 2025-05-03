@@ -1,9 +1,9 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import Phaser from "phaser";
-import GameManager from "#test/testUtils/gameManager";
+import GameManager from "#test/test-utils/game-manager";
 import { UiMode } from "#enums/ui-mode";
 import { Stat } from "#enums/stat";
-import { getMovePosition } from "#test/testUtils/gameManagerUtils";
+import { getMovePosition } from "#test/test-utils/game-manager-utils";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";

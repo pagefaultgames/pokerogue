@@ -5,7 +5,7 @@ import { Species } from "#app/enums/species";
 import { BerryPhase } from "#app/phases/berry-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import GameManager from "#test/testUtils/gameManager";
+import GameManager from "#test/test-utils/game-manager";
 
 describe("Moves - Lucky Chant", () => {
   let phaserGame: Phaser.Game;

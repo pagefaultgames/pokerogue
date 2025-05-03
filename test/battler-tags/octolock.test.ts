@@ -3,7 +3,7 @@ import type Pokemon from "#app/field/pokemon";
 import { BattlerTagLapseType, OctolockTag, TrappedTag } from "#app/data/battler-tags";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { Stat } from "#enums/stat";
-import GameManager from "#test/testUtils/gameManager";
+import GameManager from "#test/test-utils/game-manager";
 
 describe("BattlerTag - OctolockTag", () => {
   describe("lapse behavior", () => {

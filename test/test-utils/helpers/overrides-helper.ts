@@ -13,7 +13,7 @@ import { Species } from "#enums/species";
 import { StatusEffect } from "#enums/status-effect";
 import type { WeatherType } from "#enums/weather-type";
 import { expect, vi } from "vitest";
-import { GameManagerHelper } from "./gameManagerHelper";
+import { GameManagerHelper } from "./game-manager-helper";
 import { shiftCharCodes } from "#app/utils/common";
 import type { RandomTrainerOverride } from "#app/overrides";
 import type { BattleType } from "#enums/battle-type";

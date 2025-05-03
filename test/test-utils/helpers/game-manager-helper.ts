@@ -1,4 +1,4 @@
-import type GameManager from "../gameManager";
+import type GameManager from "../game-manager";
 
 /**
  * Base class for defining all game helpers.

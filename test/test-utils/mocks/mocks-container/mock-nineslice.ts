@@ -1,4 +1,4 @@
-import MockContainer from "#test/testUtils/mocks/mocksContainer/mockContainer";
+import MockContainer from "#test/test-utils/mocks/mocks-container/mock-container";
 
 export default class MockNineslice extends MockContainer {
   private texture;

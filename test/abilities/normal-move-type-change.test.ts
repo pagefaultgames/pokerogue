@@ -4,7 +4,7 @@ import { PokemonType } from "#enums/pokemon-type";
 import { Abilities } from "#app/enums/abilities";
 import { Moves } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
-import GameManager from "#test/testUtils/gameManager";
+import GameManager from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { TYPE_BOOST_ITEM_BOOST_PERCENT } from "#app/constants";

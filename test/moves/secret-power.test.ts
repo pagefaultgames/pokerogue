@@ -4,7 +4,7 @@ import { Moves } from "#enums/moves";
 import { Stat } from "#enums/stat";
 import { allMoves } from "#app/data/moves/move";
 import { Species } from "#enums/species";
-import GameManager from "#test/testUtils/gameManager";
+import GameManager from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { StatusEffect } from "#enums/status-effect";

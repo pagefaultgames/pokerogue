@@ -2,7 +2,7 @@ import { Moves } from "#enums/moves";
 import { BattlerIndex } from "#app/battle";
 import { Species } from "#enums/species";
 import { Abilities } from "#enums/abilities";
-import GameManager from "#test/testUtils/gameManager";
+import GameManager from "#test/test-utils/game-manager";
 import { allMoves } from "#app/data/moves/move";
 import type Move from "#app/data/moves/move";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";

@@ -8,10 +8,10 @@ import type {
 } from "#app/@types/pokerogue-session-save-data-api";
 import { PokerogueSessionSavedataApi } from "#app/plugins/api/pokerogue-session-savedata-api";
 import type { SessionSaveData } from "#app/system/game-data";
-import { getApiBaseUrl } from "#test/testUtils/testUtils";
+import { getApiBaseUrl } from "#test/test-utils/test-utils";
 import { http, HttpResponse } from "msw";
 import { beforeAll, afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { initServerForApiTests } from "#test/testUtils/testFileInitialization";
+import { initServerForApiTests } from "#test/test-utils/test-file-initialization";
 import type { SetupServerApi } from "msw/node";
 
 const apiBase = getApiBaseUrl();

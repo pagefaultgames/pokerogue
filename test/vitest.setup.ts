@@ -1,7 +1,7 @@
 import "vitest-canvas-mock";
 import { afterAll, beforeAll, vi } from "vitest";
 
-import { initTestFile } from "./testUtils/testFileInitialization";
+import { initTestFile } from "./test-utils/test-file-initialization";
 
 /** Set the timezone to UTC for tests. */
 

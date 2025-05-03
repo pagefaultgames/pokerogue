@@ -4,7 +4,7 @@ import { modifierTypes } from "#app/modifier/modifier-type";
 import i18next from "#app/plugins/i18n";
 import { NumberHolder, randInt } from "#app/utils/common";
 import { Species } from "#enums/species";
-import GameManager from "#test/testUtils/gameManager";
+import GameManager from "#test/test-utils/game-manager";
 import Phase from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 

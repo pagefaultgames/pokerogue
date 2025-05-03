@@ -4,7 +4,7 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { allMoves } from "#app/data/moves/move";
 import type Move from "#app/data/moves/move";
-import GameManager from "#test/testUtils/gameManager";
+import GameManager from "#test/test-utils/game-manager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { BattleType } from "#enums/battle-type";

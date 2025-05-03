@@ -1,12 +1,12 @@
 import type { AccountInfoResponse } from "#app/@types/pokerogue-account-api";
 import { SESSION_ID_COOKIE_NAME } from "#app/constants";
 import { PokerogueAccountApi } from "#app/plugins/api/pokerogue-account-api";
-import { getApiBaseUrl } from "#test/testUtils/testUtils";
+import { getApiBaseUrl } from "#test/test-utils/test-utils";
 import * as CookieUtils from "#app/utils/cookies";
 import * as cookies from "#app/utils/cookies";
 import { http, HttpResponse } from "msw";
 import { beforeAll, afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { initServerForApiTests } from "#test/testUtils/testFileInitialization";
+import { initServerForApiTests } from "#test/test-utils/test-file-initialization";
 import type { SetupServerApi } from "msw/node";
 
 const apiBase = getApiBaseUrl();
