@@ -184,21 +184,14 @@ export class TurnStartPhase extends FieldPhase {
                 pokemon,
                 turnCommand.targets || turnCommand.move!.targets,
                 move,
-                false,
-                queuedMove.ignorePP,
+                queuedMove.useType,
               ); //TODO: is the bang correct here?
               globalScene.pushPhase(playerPhase);
             }
           } else {
             globalScene.pushPhase(
-              new MovePhase(
-                pokemon,
-                turnCommand.targets || turnCommand.move!.targets,
-                move,
-                false,
-                queuedMove.ignorePP,
-              ),
-            ); //TODO: is the bang correct here?
+              new MovePhase(pokemon, turnCommand.targets || turnCommand.move!.targets, move, queuedMove.useType),
+            ); // TODO: is the bang correct here?
           }
           break;
         case Command.BALL:

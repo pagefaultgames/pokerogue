@@ -439,7 +439,7 @@ export class RechargingTag extends BattlerTag {
   onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
 
-    // Queue a placeholder move for the Pokemon to "use" next turn
+    // Queue a placeholder move for the Pokemon to "use" next turn.
     pokemon.getMoveQueue().push({ move: Moves.NONE, targets: [], useType: MoveUseType.NORMAL });
   }
 

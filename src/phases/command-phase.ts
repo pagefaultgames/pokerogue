@@ -23,6 +23,7 @@ import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import { isNullOrUndefined } from "#app/utils/common";
 import { ArenaTagSide } from "#app/data/arena-tag";
 import { ArenaTagType } from "#app/enums/arena-tag-type";
+import { MoveUseType } from "#enums/move-use-type";
 
 export class CommandPhase extends FieldPhase {
   protected fieldIndex: number;
@@ -80,7 +81,7 @@ export class CommandPhase extends FieldPhase {
     ) {
       globalScene.currentBattle.turnCommands[this.fieldIndex] = {
         command: Command.FIGHT,
-        move: { move: Moves.NONE, targets: [] },
+        move: { move: Moves.NONE, targets: [], useType: MoveUseType.NORMAL },
         skip: true,
       };
     }
@@ -99,22 +100,24 @@ export class CommandPhase extends FieldPhase {
 
     const moveQueue = playerPokemon.getMoveQueue();
 
+    // TODO: WHY WHAT HOBGTVIEUUUUUUUU
     while (
       moveQueue.length &&
       moveQueue[0] &&
       moveQueue[0].move &&
-      !moveQueue[0].virtual &&
+      moveQueue[0].useType < MoveUseType.INDIRECT &&
       (!playerPokemon.getMoveset().find(m => m.moveId === moveQueue[0].move) ||
         !playerPokemon
           .getMoveset()
           [playerPokemon.getMoveset().findIndex(m => m.moveId === moveQueue[0].move)].isUsable(
             playerPokemon,
-            moveQueue[0].ignorePP,
+            moveQueue[0].useType >= MoveUseType.IGNORE_PP,
           ))
     ) {
       moveQueue.shift();
     }
 
+    // TODO: Refactor this. I did a few simple find/replace matches but this is just ABHORRENTLY structured
     if (moveQueue.length > 0) {
       const queuedMove = moveQueue[0];
       if (!queuedMove.move) {
@@ -122,10 +125,13 @@ export class CommandPhase extends FieldPhase {
       } else {
         const moveIndex = playerPokemon.getMoveset().findIndex(m => m.moveId === queuedMove.move);
         if (
-          (moveIndex > -1 && playerPokemon.getMoveset()[moveIndex].isUsable(playerPokemon, queuedMove.ignorePP)) ||
-          queuedMove.virtual
+          (moveIndex > -1 &&
+            playerPokemon
+              .getMoveset()
+              [moveIndex].isUsable(playerPokemon, queuedMove.useType >= MoveUseType.IGNORE_PP)) ||
+          queuedMove.useType < MoveUseType.INDIRECT
         ) {
-          this.handleCommand(Command.FIGHT, moveIndex, queuedMove.ignorePP, queuedMove);
+          this.handleCommand(Command.FIGHT, moveIndex, queuedMove.useType, queuedMove);
         } else {
           globalScene.ui.setMode(UiMode.COMMAND, this.fieldIndex);
         }
@@ -143,6 +149,7 @@ export class CommandPhase extends FieldPhase {
     }
   }
 
+  // TODO: Remove `args` and clean this thing the F up
   handleCommand(command: Command, cursor: number, ...args: any[]): boolean {
     const playerPokemon = globalScene.getPlayerField()[this.fieldIndex];
     let success = false;
@@ -171,7 +178,7 @@ export class CommandPhase extends FieldPhase {
           const turnCommand: TurnCommand = {
             command: Command.FIGHT,
             cursor: cursor,
-            move: { move: moveId, targets: [], ignorePP: args[0] },
+            move: { move: moveId, targets: [], useType: args[0] },
             args: args,
           };
           const preTurnCommand: TurnCommand = {

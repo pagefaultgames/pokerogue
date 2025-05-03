@@ -4,21 +4,23 @@ import type Pokemon from "#app/field/pokemon";
 import { FieldPhase } from "./field-phase";
 
 export abstract class PokemonPhase extends FieldPhase {
-  protected battlerIndex: BattlerIndex | number;
+  protected battlerIndex: BattlerIndex;
   public player: boolean;
   public fieldIndex: number;
 
-  constructor(battlerIndex?: BattlerIndex | number) {
+  constructor(battlerIndex?: BattlerIndex) {
     super();
 
     battlerIndex =
       battlerIndex ??
       globalScene
         .getField()
-        .find(p => p?.isActive())! // TODO: is the bang correct here?
-        .getBattlerIndex();
+        .find(p => p?.isActive())
+        ?.getBattlerIndex();
     if (battlerIndex === undefined) {
-      console.warn("There are no Pokemon on the field!"); // TODO: figure out a suitable fallback behavior
+      // TODO: figure out a suitable fallback behavior
+      console.warn("There are no Pokemon on the field!");
+      battlerIndex = BattlerIndex.PLAYER;
     }
 
     this.battlerIndex = battlerIndex;

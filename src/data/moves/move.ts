@@ -3700,31 +3700,42 @@ export class HpSplitAttr extends MoveEffectAttr {
   }
 }
 
+/**
+ * Attribute to change move power based on various conditions.
+ */
 export class VariablePowerAttr extends MoveAttr {
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    //const power = args[0] as Utils.NumberHolder;
+  /**
+   * Attempt to change this move's base power based on certain conditions.
+   * @param user - The {@linkcode Pokemon} using this move
+   * @param target - The {@linkcode Pokemon} being targeted by this move
+   * @param move - The {@linkcode Move} being used
+   * @param args `[0]` - A {@linkcode NumberHolder} containing move base power
+   * @returns Whether the attribute was successfully applied
+   */
+  apply(user: Pokemon, target: Pokemon, move: Move, args: [NumberHolder]): boolean {
     return false;
   }
 }
 
+/**
+ * Attribute to change move power based on a move's remaining PP count.
+ * Used by {@linkcode Moves.TRUMP_CARD}.
+ */
 export class LessPPMorePowerAttr extends VariablePowerAttr {
   /**
-   * Power up moves when less PP user has
-   * @param user {@linkcode Pokemon} using this move
-   * @param target {@linkcode Pokemon} target of this move
-   * @param move {@linkcode Move} being used
-   * @param args [0] {@linkcode NumberHolder} of power
+   * Increase power the less PP the move has.
+   * @param user - The {@linkcode Pokemon} using this move
+   * @param target - The {@linkcode Pokemon} targeted by this move
+   * @param move - The {@linkcode Move} being used
+   * @param args `[0]` {@linkcode NumberHolder} containing move base power
    * @returns true if the function succeeds
    */
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: [NumberHolder]): boolean {
     const ppMax = move.pp;
-    const ppUsed = user.moveset.find((m) => m.moveId === move.id)?.ppUsed ?? 0;
+    const ppUsed = user.moveset.find(m => m.moveId === move.id)?.ppUsed ?? 0;
 
-    let ppRemains = ppMax - ppUsed;
-    /** Reduce to 0 to avoid negative numbers if user has 1PP before attack and target has Ability.PRESSURE */
-    if (ppRemains < 0) {
-      ppRemains = 0;
-    }
+    /** Reduce to 0 to avoid negative power with 1 PP against pressure mons */
+    let ppRemains = Math.max(ppMax - ppUsed, 0);
 
     const power = args[0] as NumberHolder;
 
@@ -3758,7 +3769,15 @@ export class MovePowerMultiplierAttr extends VariablePowerAttr {
     this.powerMultiplierFunc = powerMultiplier;
   }
 
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+  /**
+   * Multiply this move's base power based on its {@linkcode powerMultiplierFunc}.
+   * @param user - The {@linkcode Pokemon} using the move
+   * @param target - The {@linkcode Pokemon} being targeted by the move
+   * @param move - The {@linkcode Move} being used
+   * @param args `[0]` - A {@linkcode NumberHolder} containing this move's power
+   * @returns always `true`
+   */
+  apply(user: Pokemon, target: Pokemon, move: Move, args: [NumberHolder]): boolean {
     const power = args[0] as NumberHolder;
     power.value *= this.powerMultiplierFunc(user, target, move);
 
@@ -3824,9 +3843,11 @@ const doublePowerChanceMessageFunc = (user: Pokemon, target: Pokemon, move: Move
 
 export class DoublePowerChanceAttr extends VariablePowerAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    let rand: number;
+    let rand: number = 0; // compiler doesn't know we assign rand here
+    // TODO: Why do we execute with seed offset
     globalScene.executeWithSeedOffset(() => rand = randSeedInt(100), globalScene.currentBattle.turn << 6, globalScene.waveSeed);
-    if (rand! < move.chance) {
+
+    if (rand <= move.chance) {
       const power = args[0] as NumberHolder;
       power.value *= 2;
       return true;
@@ -3836,29 +3857,31 @@ export class DoublePowerChanceAttr extends VariablePowerAttr {
   }
 }
 
-// TODO: Refactor to ...NOT use a while loop
 export abstract class ConsecutiveUsePowerMultiplierAttr extends MovePowerMultiplierAttr {
   constructor(limit: number, resetOnFail: boolean, resetOnLimit?: boolean, ...comboMoves: Moves[]) {
-    super((user: Pokemon, target: Pokemon, move: Move): number => {
-      const moveHistory = user.getLastXMoves(limit + 1).slice(1);
+    super((user: Pokemon, _target: Pokemon, move: Move): number => {
+      const moveHistory = user.getLastXMoves(-1).slice(1, limit+1); // don't count the first history entry (ie the current move)
 
-      let count = 0;
-      let turnMove: TurnMove | undefined;
+      let count = 1;
 
-      while (
-        (
-          (turnMove = moveHistory.shift())?.move === move.id
-          || (comboMoves.length && comboMoves.includes(turnMove?.move ?? Moves.NONE))
-        )
-        && (!resetOnFail || turnMove?.result === MoveResult.SUCCESS)
-      ) {
-        if (count < (limit - 1)) {
-          count++;
-        } else if (resetOnLimit) {
-          count = 0;
-        } else {
+      for (const tm of moveHistory) {
+        if (
+          !(tm.move === move.id || comboMoves.includes(tm.move))
+          || (resetOnFail && tm.result !== MoveResult.SUCCESS)
+        ) {
           break;
         }
+
+        if (count < limit - 1) {
+          count++;
+          continue;
+        }
+
+        if (resetOnLimit) {
+          count = 0;
+        }
+
+        break;
       }
 
       return this.getMultiplier(count);
@@ -4038,7 +4061,7 @@ export class HpPowerAttr extends VariablePowerAttr {
 
 /**
  * Attribute used for moves whose base power scales with the opponent's HP
- * Used for Crush Grip, Wring Out, and Hard Press
+ * Used for {@linkcode Moves.CRUSH_GRIP}, {@linkcode Moves.WRING_OUT}, and {@linkcode Moves.HARD_PRESS}
  * maxBasePower 100 for Hard Press, 120 for others
  */
 export class OpponentHighHpPowerAttr extends VariablePowerAttr {
@@ -4064,15 +4087,27 @@ export class OpponentHighHpPowerAttr extends VariablePowerAttr {
   }
 }
 
+/**
+ * Attribute to double this move's power if the target hasn't acted yet in the current turn.
+ * Used by {@linkcode Moves.BOLT_BEAK} and {@linkcode Moves.FISHIOUS_REND}
+ */
 export class FirstAttackDoublePowerAttr extends VariablePowerAttr {
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    console.log(target.getLastXMoves(1), globalScene.currentBattle.turn);
-    if (!target.getLastXMoves(1).find(m => m.turn === globalScene.currentBattle.turn)) {
-      (args[0] as NumberHolder).value *= 2;
-      return true;
+  /**
+   * Double this move's power if the user is acting before the target.
+   * @param user - Unused
+   * @param target - The {@linkcode Pokemon} being targeted by this move
+   * @param move - Unused
+   * @param args `[0]` - A {@linkcode NumberHolder} containing move base power
+   * @returns Whether the attribute was successfully applied
+   */
+  apply(_user: Pokemon, target: Pokemon, move: Move, args: [NumberHolder]): boolean {
+    const lastMove: TurnMove | undefined = target.getLastXMoves()[0]; // undefined needed as array might be empty
+    if (lastMove?.turn === globalScene.currentBattle.turn) {
+      return false;
     }
 
-    return false;
+    args[0].value *= 2;
+    return true;
   }
 }
 
@@ -7025,6 +7060,7 @@ export class CopyMoveAttr extends CallMoveAttr {
 
   apply(user: Pokemon, target: Pokemon, _move: Move, args: any[]): boolean {
     this.hasTarget = this.mirrorMove;
+    // TODO: Confirm mirror move interaction with full para-induced blockage
     const lastMove = this.mirrorMove ? target.getLastXMoves()[0].move : globalScene.currentBattle.lastMove;
     return super.apply(user, target, allMoves[lastMove], args);
   }
@@ -7831,19 +7867,20 @@ export class LastResortAttr extends MoveAttr {
   // TODO: Verify behavior as Bulbapedia page is _extremely_ poorly documented
   getCondition(): MoveConditionFunc {
     return (user: Pokemon, _target: Pokemon, move: Move) => {
-      const movesInMoveset = new Set<Moves>(user.getMoveset().map(m => m.moveId));
-      if (!movesInMoveset.delete(move.id) || !movesInMoveset.size) {
+      const otherMovesInMoveset = new Set<Moves>(user.getMoveset().map(m => m.moveId));
+      if (!otherMovesInMoveset.delete(move.id) || !otherMovesInMoveset.size) {
         return false; // Last resort fails if used when not in user's moveset or no other moves exist
       }
 
-      const movesInHistory = new Set(
+      const movesInHistory = new Set<Moves>(
         user.getMoveHistory()
-        .filter(m => !m.virtual) // TODO: Change to (m) => m < MoveUseType.INDIRECT after Dancer PR refactors virtual into enum
+        .filter(m => m.useType < MoveUseType.INDIRECT) // Last resort ignores virtual moves
         .map(m => m.move)
       );
 
-      // Since `Set.intersection()` is only present in ESNext, we have to coerce it to an array to check inclusion
-      return [...movesInMoveset].every(m => movesInHistory.has(m))
+      // Since `Set.intersection()` is only present in ESNext, we have to do this to check inclusion
+      // grumble mumble grumble mumble...
+      return [...otherMovesInMoveset].every(m => movesInHistory.has(m))
     };
   }
 }
@@ -8077,8 +8114,7 @@ export class UpperHandCondition extends MoveCondition {
     super((user, target, move) => {
       const targetCommand = globalScene.currentBattle.turnCommands[target.getBattlerIndex()];
 
-      return !!targetCommand
-        && targetCommand.command === Command.FIGHT
+      return targetCommand?.command === Command.FIGHT
         && !target.turnData.acted
         && !!targetCommand.move?.move
         && allMoves[targetCommand.move.move].category !== MoveCategory.STATUS
@@ -8111,6 +8147,7 @@ export class ResistLastMoveTypeAttr extends MoveEffectAttr {
   constructor() {
     super(true);
   }
+
   /**
    * User changes its type to a random type that resists the target's last used move
    * @param {Pokemon} user Pokemon that used the move and will change types
@@ -8124,8 +8161,8 @@ export class ResistLastMoveTypeAttr extends MoveEffectAttr {
       return false;
     }
 
-    // TODO: Don't jsut grab the target's last move (status failurs)
-    const [ targetMove ] = target.getLastXMoves(1); // target's most recent move
+    // TODO: Confirm how this interacts with status-induced failures
+    const targetMove = target.getLastXMoves(1)[0]; // target's most recent move
     if (!targetMove) {
       return false;
     }

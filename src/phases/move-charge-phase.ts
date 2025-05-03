@@ -10,10 +10,10 @@ import { MovePhase } from "#app/phases/move-phase";
 import { PokemonPhase } from "#app/phases/pokemon-phase";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveEndPhase } from "#app/phases/move-end-phase";
+import { MoveUseType } from "#enums/move-use-type";
 
 /**
  * Phase for the "charging turn" of two-turn moves (e.g. Dig).
- * @extends {@linkcode PokemonPhase}
  */
 export class MoveChargePhase extends PokemonPhase {
   /** The move instance that this phase applies */
@@ -21,10 +21,21 @@ export class MoveChargePhase extends PokemonPhase {
   /** The field index targeted by the move (Charging moves assume single target) */
   public targetIndex: BattlerIndex;
 
-  constructor(battlerIndex: BattlerIndex, targetIndex: BattlerIndex, move: PokemonMove) {
+  /** The {@linkcode MoveUseType} of the move that triggered the charge; passed on from move phase */
+  private useType: MoveUseType;
+
+  /**
+   * Create a new MoveChargePhase.
+   * @param battlerIndex - The {@linkcode BattlerIndex} of the user.
+   * @param targetIndex - The {@linkcode BattlerIndex} of the target.
+   * @param move - The {@linkcode PokemonMove} being used
+   * @param useType - The move's {@linkcode MoveUseType}
+   */
+  constructor(battlerIndex: BattlerIndex, targetIndex: BattlerIndex, move: PokemonMove, useType: MoveUseType) {
     super(battlerIndex);
     this.move = move;
     this.targetIndex = targetIndex;
+    this.useType = Math.max(useType, MoveUseType.IGNORE_PP);
   }
 
   public override start() {
@@ -64,9 +75,9 @@ export class MoveChargePhase extends PokemonPhase {
         // this MoveEndPhase will be duplicated by the queued MovePhase if not removed
         globalScene.tryRemovePhase(phase => phase instanceof MoveEndPhase && phase.getPokemon() === user);
         // queue a new MovePhase for this move's attack phase
-        globalScene.unshiftPhase(new MovePhase(user, [this.targetIndex], this.move, false));
+        globalScene.unshiftPhase(new MovePhase(user, [this.targetIndex], this.move));
       } else {
-        user.getMoveQueue().push({ move: move.id, targets: [this.targetIndex] });
+        user.getMoveQueue().push({ move: move.id, targets: [this.targetIndex], useType: this.useType });
       }
 
       // Add this move's charging phase to the user's move history
@@ -74,6 +85,7 @@ export class MoveChargePhase extends PokemonPhase {
         move: this.move.moveId,
         targets: [this.targetIndex],
         result: MoveResult.OTHER,
+        useType: this.useType,
       });
     }
     super.end();

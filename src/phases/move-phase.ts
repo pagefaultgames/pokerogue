@@ -440,7 +440,9 @@ export class MovePhase extends BattlePhase {
       applyPreAttackAbAttrs(PokemonTypeChangeAbAttr, this.pokemon, null, this.move.getMove());
 
       this.showMoveText();
-      globalScene.unshiftPhase(new MoveChargePhase(this.pokemon.getBattlerIndex(), this.targets[0], this.move));
+      globalScene.unshiftPhase(
+        new MoveChargePhase(this.pokemon.getBattlerIndex(), this.targets[0], this.move, this.useType),
+      );
       return;
     }
 

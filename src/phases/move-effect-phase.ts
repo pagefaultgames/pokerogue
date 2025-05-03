@@ -109,9 +109,7 @@ export class MoveEffectPhase extends PokemonPhase {
   private queuedPhases: Phase[] = [];
 
   /**
-   * @param followUp - Indicates that the move is the result of {@link https://bulbapedia.bulbagarden.net/wiki/Category:Moves_that_call_other_moves | Move-calling Moves})
-   *
-   * @param reflected - Indicates that the move was reflected due to {@linkcode Moves.MAGIC_COAT} or {@linkcode Abilities.MAGIC_BOUNCE}.
+   * @param useType - The {@linkcode MoveUseType} corresponding to how this move was used.
    */
   constructor(battlerIndex: BattlerIndex, targets: BattlerIndex[], move: Move, useType: MoveUseType) {
     super(battlerIndex);
