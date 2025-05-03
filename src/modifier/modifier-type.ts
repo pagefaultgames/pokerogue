@@ -790,6 +790,7 @@ export class BerryModifierType extends PokemonHeldItemModifierType implements Ge
     );
 
     this.berryType = berryType;
+    this.id = "BERRY"; // needed to prevent harvest item deletion; remove after modifier rework
   }
 
   get name(): string {

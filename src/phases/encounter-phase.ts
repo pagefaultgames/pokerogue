@@ -113,12 +113,6 @@ export class EncounterPhase extends BattlePhase {
       }
       if (!this.loaded) {
         if (battle.battleType === BattleType.TRAINER) {
-          //resets hitRecCount during Trainer ecnounter
-          for (const pokemon of globalScene.getPlayerParty()) {
-            if (pokemon) {
-              pokemon.customPokemonData.resetHitReceivedCount();
-            }
-          }
           battle.enemyParty[e] = battle.trainer?.genPartyMember(e)!; // TODO:: is the bang correct here?
         } else {
           let enemySpecies = globalScene.randomSpecies(battle.waveIndex, level, true);
@@ -140,7 +134,6 @@ export class EncounterPhase extends BattlePhase {
           if (globalScene.currentBattle.battleSpec === BattleSpec.FINAL_BOSS) {
             battle.enemyParty[e].ivs = new Array(6).fill(31);
           }
-          // biome-ignore lint/complexity/noForEach: Improves readability
           globalScene
             .getPlayerParty()
             .slice(0, !battle.double ? 1 : 2)
@@ -195,7 +188,7 @@ export class EncounterPhase extends BattlePhase {
       ];
       const moveset: string[] = [];
       for (const move of enemyPokemon.getMoveset()) {
-        moveset.push(move!.getName()); // TODO: remove `!` after moveset-null removal PR
+        moveset.push(move.getName());
       }
 
       console.log(
@@ -288,6 +281,7 @@ export class EncounterPhase extends BattlePhase {
       });
 
       if (!this.loaded && battle.battleType !== BattleType.MYSTERY_ENCOUNTER) {
+        // generate modifiers for MEs, overriding prior ones as applicable
         regenerateModifierPoolThresholds(
           globalScene.getEnemyField(),
           battle.battleType === BattleType.TRAINER ? ModifierPoolType.TRAINER : ModifierPoolType.WILD,
@@ -300,8 +294,8 @@ export class EncounterPhase extends BattlePhase {
         }
       }
 
-      if (battle.battleType === BattleType.TRAINER) {
-        globalScene.currentBattle.trainer!.genAI(globalScene.getEnemyParty());
+      if (battle.battleType === BattleType.TRAINER && globalScene.currentBattle.trainer) {
+        globalScene.currentBattle.trainer.genAI(globalScene.getEnemyParty());
       }
 
       globalScene.ui.setMode(UiMode.MESSAGE).then(() => {
@@ -342,8 +336,10 @@ export class EncounterPhase extends BattlePhase {
     }
 
     for (const pokemon of globalScene.getPlayerParty()) {
+      // Currently, a new wave is not considered a new battle if there is no arena reset
+      // Therefore, we only reset wave data here
       if (pokemon) {
-        pokemon.resetBattleData();
+        pokemon.resetWaveData();
       }
     }
 
@@ -558,7 +554,7 @@ export class EncounterPhase extends BattlePhase {
       if (enemyPokemon.isShiny(true)) {
         globalScene.unshiftPhase(new ShinySparklePhase(BattlerIndex.ENEMY + e));
       }
-      /** This sets Eternatus' held item to be untransferrable, preventing it from being stolen  */
+      /** This sets Eternatus' held item to be untransferrable, preventing it from being stolen */
       if (
         enemyPokemon.species.speciesId === Species.ETERNATUS &&
         (globalScene.gameMode.isBattleClassicFinalBoss(globalScene.currentBattle.waveIndex) ||
