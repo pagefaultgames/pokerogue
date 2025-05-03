@@ -81,7 +81,7 @@ describe("Moves - Order Up", () => {
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    expect(dondozo.battleData.abilitiesApplied.has(Abilities.SHEER_FORCE)).toBeTruthy();
+    expect(dondozo.waveData.abilitiesApplied.has(Abilities.SHEER_FORCE)).toBeTruthy();
     expect(dondozo.getStatStage(Stat.ATK)).toBe(3);
   });
 });
