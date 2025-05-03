@@ -703,6 +703,7 @@ export class Arena {
     }
 
     // creates a new tag object
+    // TODO: check if we can remove the `|| 0` since turn count should never be nullish
     const newTag = getArenaTag(tagType, turnCount || 0, sourceMove, sourceId, targetIndex, side);
     if (newTag) {
       newTag.onAdd(this, quiet);

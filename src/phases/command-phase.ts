@@ -86,7 +86,8 @@ export class CommandPhase extends FieldPhase {
     }
 
     // Checks if the Pokemon is under the effects of Encore. If so, Encore can end early if the encored move has no more PP.
-    const encoreTag = this.getPokemon().getTag(BattlerTagType.ENCORE) as EncoreTag;
+    // TODO: Why do we handle this here of all places
+    const encoreTag = this.getPokemon().getTag(BattlerTagType.ENCORE) as EncoreTag | undefined;
     if (encoreTag) {
       this.getPokemon().lapseTag(BattlerTagType.ENCORE);
     }
@@ -95,42 +96,9 @@ export class CommandPhase extends FieldPhase {
       return this.end();
     }
 
-    const playerPokemon = globalScene.getPlayerField()[this.fieldIndex];
-
-    const moveQueue = playerPokemon.getMoveQueue();
-
-    while (
-      moveQueue.length &&
-      moveQueue[0] &&
-      moveQueue[0].move &&
-      !moveQueue[0].virtual &&
-      (!playerPokemon.getMoveset().find(m => m.moveId === moveQueue[0].move) ||
-        !playerPokemon
-          .getMoveset()
-          [playerPokemon.getMoveset().findIndex(m => m.moveId === moveQueue[0].move)].isUsable(
-            playerPokemon,
-            moveQueue[0].ignorePP,
-          ))
-    ) {
-      moveQueue.shift();
-    }
-
-    if (moveQueue.length > 0) {
-      const queuedMove = moveQueue[0];
-      if (!queuedMove.move) {
-        this.handleCommand(Command.FIGHT, -1);
-      } else {
-        const moveIndex = playerPokemon.getMoveset().findIndex(m => m.moveId === queuedMove.move);
-        if (
-          (moveIndex > -1 && playerPokemon.getMoveset()[moveIndex].isUsable(playerPokemon, queuedMove.ignorePP)) ||
-          queuedMove.virtual
-        ) {
-          this.handleCommand(Command.FIGHT, moveIndex, queuedMove.ignorePP, queuedMove);
-        } else {
-          globalScene.ui.setMode(UiMode.COMMAND, this.fieldIndex);
-        }
-      }
-    } else {
+    // If we have a move queued up, attempt to execute it, giving control to the player otherwise.
+    const usedQueuedMove = this.tryExecuteQueuedMove();
+    if (!usedQueuedMove) {
       if (
         globalScene.currentBattle.isBattleMysteryEncounter() &&
         globalScene.currentBattle.mysteryEncounter?.skipToFightInput
@@ -143,8 +111,64 @@ export class CommandPhase extends FieldPhase {
     }
   }
 
+  /**
+   * Attempt to execute the first usable move in this Pokemon's MoveQueue.
+   * @returns Whether a queued move was successfully used.
+   */
+  private tryExecuteQueuedMove(): boolean {
+    const playerPokemon = this.getPokemon();
+    const moveset = playerPokemon.getMoveset();
+    const moveQueue = playerPokemon.getMoveQueue();
+
+    this.clearUnusableQueueMoves();
+
+    if (!moveQueue.length) {
+      // no moves queued up means we obv can't do anything
+      return false;
+    }
+
+    const queuedMove = moveQueue[0];
+    if (queuedMove.move === Moves.NONE) {
+      this.handleCommand(Command.FIGHT, -1);
+      return true;
+    }
+    const moveIndex = moveset.findIndex(m => m.moveId === queuedMove.move);
+    if (moveIndex === -1 || (!queuedMove.virtual && !moveset[moveIndex].isUsable(playerPokemon, queuedMove.ignorePP))) {
+      globalScene.ui.setMode(UiMode.COMMAND, this.fieldIndex);
+    } else {
+      this.handleCommand(Command.FIGHT, moveIndex, queuedMove.ignorePP, queuedMove);
+    }
+    return true;
+  }
+
+  /**
+   * Clear out all unusable moves from the front of the currently acting pokemon's move queue.
+   * TODO: Clarify why we need to do this...???
+   */
+  private clearUnusableQueueMoves() {
+    const playerPokemon = this.getPokemon();
+    const moveQueue = playerPokemon.getMoveQueue();
+
+    let entriesToDelete = 0;
+    for (const queuedMove of moveQueue) {
+      const movesetQueuedMove = playerPokemon.getMoveset().find(m => m.moveId === queuedMove.move);
+      if (
+        queuedMove.move !== Moves.NONE &&
+        !queuedMove.virtual &&
+        !movesetQueuedMove?.isUsable(playerPokemon, queuedMove.ignorePP)
+      ) {
+        entriesToDelete++;
+      } else {
+        break;
+      }
+    }
+
+    moveQueue.splice(0, entriesToDelete);
+  }
+
+  // TODO: Remove `args` and clean this thing up (perhaps with overloads).
   handleCommand(command: Command, cursor: number, ...args: any[]): boolean {
-    const playerPokemon = globalScene.getPlayerField()[this.fieldIndex];
+    const playerPokemon = this.getPokemon();
     let success = false;
 
     switch (command) {

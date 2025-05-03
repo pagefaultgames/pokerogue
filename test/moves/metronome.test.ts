@@ -39,11 +39,11 @@ describe("Moves - Metronome", () => {
       .enemyAbility(Abilities.BALL_FETCH);
   });
 
-  it("should have one semi-invulnerable turn and deal damage on the second turn when a semi-invulnerable move is called", async () => {
+  it("should become semi-invulnerable as normal when using phasing moves", async () => {
     await game.classicMode.startBattle();
     const player = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;
-    vi.spyOn(randomMoveAttr, "getMoveOverride").mockReturnValue(Moves.DIVE);
+    vi.spyOn(randomMoveAttr, "getMove").mockReturnValue(Moves.DIVE);
 
     game.move.select(Moves.METRONOME);
     await game.toNextTurn();
@@ -55,10 +55,10 @@ describe("Moves - Metronome", () => {
     expect(enemy.isFullHp()).toBeFalsy();
   });
 
-  it("should apply secondary effects of a move", async () => {
+  it("should apply secondary effects", async () => {
     await game.classicMode.startBattle();
     const player = game.scene.getPlayerPokemon()!;
-    vi.spyOn(randomMoveAttr, "getMoveOverride").mockReturnValue(Moves.WOOD_HAMMER);
+    vi.spyOn(randomMoveAttr, "getMove").mockReturnValue(Moves.WOOD_HAMMER);
 
     game.move.select(Moves.METRONOME);
     await game.toNextTurn();
@@ -69,7 +69,7 @@ describe("Moves - Metronome", () => {
   it("should recharge after using recharge move", async () => {
     await game.classicMode.startBattle();
     const player = game.scene.getPlayerPokemon()!;
-    vi.spyOn(randomMoveAttr, "getMoveOverride").mockReturnValue(Moves.HYPER_BEAM);
+    vi.spyOn(randomMoveAttr, "getMove").mockReturnValue(Moves.HYPER_BEAM);
     vi.spyOn(allMoves[Moves.HYPER_BEAM], "accuracy", "get").mockReturnValue(100);
 
     game.move.select(Moves.METRONOME);
@@ -83,7 +83,7 @@ describe("Moves - Metronome", () => {
     await game.classicMode.startBattle([Species.REGIELEKI, Species.RATTATA]);
     const [leftPlayer, rightPlayer] = game.scene.getPlayerField();
     const [leftOpp, rightOpp] = game.scene.getEnemyField();
-    vi.spyOn(randomMoveAttr, "getMoveOverride").mockReturnValue(Moves.AROMATIC_MIST);
+    vi.spyOn(randomMoveAttr, "getMove").mockReturnValue(Moves.AROMATIC_MIST);
 
     game.move.select(Moves.METRONOME, 0);
     await game.phaseInterceptor.to(CommandPhase);
@@ -96,9 +96,9 @@ describe("Moves - Metronome", () => {
     expect(rightOpp.getStatStage(Stat.SPDEF)).toBe(0);
   });
 
-  it("should cause opponent to flee, and not crash for Roar", async () => {
+  it("should cause opponent to flee when using Roar", async () => {
     await game.classicMode.startBattle();
-    vi.spyOn(randomMoveAttr, "getMoveOverride").mockReturnValue(Moves.ROAR);
+    vi.spyOn(randomMoveAttr, "getMove").mockReturnValue(Moves.ROAR);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
@@ -107,8 +107,9 @@ describe("Moves - Metronome", () => {
 
     const isVisible = enemyPokemon.visible;
     const hasFled = enemyPokemon.switchOutStatus;
-    expect(!isVisible && hasFled).toBe(true);
+    expect(isVisible).toBe(false);
+    expect(hasFled).toBe(true);
 
-    await game.phaseInterceptor.to("CommandPhase");
+    expect(await game.toNextTurn()).not.toThrowError(); // Check no crash
   });
 });

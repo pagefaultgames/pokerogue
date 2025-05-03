@@ -45,6 +45,7 @@ import { StatusEffect } from "#enums/status-effect";
 import { WeatherType } from "#enums/weather-type";
 import { isNullOrUndefined } from "#app/utils/common";
 
+// TODO: Explain what a battlerTagLapseType actually is
 export enum BattlerTagLapseType {
   FAINT,
   /** Tag lapses while using a (non-follow up) move, potentially halting its execution. */
@@ -95,10 +96,13 @@ export class BattlerTag {
 
   /**
    * Tick down this {@linkcode BattlerTag}'s duration.
+   * @param _pokemon - The {@linkcode Pokemon} whom this tag belongs to.
+   * Unused by default but can be used by super classes.
+   * @param _lapseType - The {@linkcode BattlerTagLapseType} being lapsed.
+   * Unused by default but can be used by super classes.
    * @returns `true` if the tag should be kept (`turnCount` > 0`)
    */
   lapse(_pokemon: Pokemon, _lapseType: BattlerTagLapseType): boolean {
-    // TODO: Maybe flip this (return `true` if tag needs removal)
     return --this.turnCount > 0;
   }
 

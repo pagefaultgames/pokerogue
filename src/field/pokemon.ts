@@ -8082,13 +8082,13 @@ export class PokemonMove {
   }
 
   /**
-   * Checks whether the move can be selected or performed by a Pokemon, without consideration for the move's targets.
+   * Checks whether this move can be selected/performed by a Pokemon, without consideration for the move's targets.
    * The move is unusable if it is out of PP, restricted by an effect, or unimplemented.
    *
-   * @param {Pokemon} pokemon {@linkcode Pokemon} that would be using this move
-   * @param {boolean} ignorePp If `true`, skips the PP check
-   * @param {boolean} ignoreRestrictionTags If `true`, skips the check for move restriction tags (see {@link MoveRestrictionBattlerTag})
-   * @returns `true` if the move can be selected and used by the Pokemon, otherwise `false`.
+   * @param pokemon - The {@linkcode Pokemon} attempting to use this move
+   * @param ignorePp - Whether to ignore checking if the move is out of PP; default `false`
+   * @param ignoreRestrictionTags - Whether to skip checks for {@linkcode MoveRestrictionBattlerTag}s; default `false`
+   * @returns Whether this {@linkcode PokemonMove} can be selected by this Pokemon.
    */
   isUsable(
     pokemon: Pokemon,
@@ -8096,7 +8096,7 @@ export class PokemonMove {
     ignoreRestrictionTags = false,
   ): boolean {
     if (
-      this.moveId &&
+      this.moveId !== Moves.NONE &&
       !ignoreRestrictionTags &&
       pokemon.isMoveRestricted(this.moveId, pokemon)
     ) {
