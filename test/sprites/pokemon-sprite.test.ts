@@ -1,4 +1,4 @@
-import { getAppRootDir } from "#test/sprites/spritesUtils";
+import { getAppRootDir } from "#test/sprites/sprites-utils";
 import fs from "fs";
 import path from "path";
 import { beforeAll, describe, expect, it } from "vitest";
