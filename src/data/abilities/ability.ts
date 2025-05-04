@@ -1,5 +1,5 @@
 import { HitResult, MoveResult, PlayerPokemon } from "#app/field/pokemon";
-import { BooleanHolder, NumberHolder, toDmgValue, isNullOrUndefined, randSeedItem, randSeedInt, type Constructor } from "#app/utils/common";
+import { BooleanHolder, NumberHolder, toDmgValue, isNullOrUndefined, randSeedItem, randSeedInt, type Constructor, randSeedFloat } from "#app/utils/common";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { BattlerTagLapseType, GroundedTag } from "#app/data/battler-tags";
 import { getNonVolatileStatusEffects, getStatusEffectDescriptor, getStatusEffectHealText } from "#app/data/status-effect";
@@ -1247,7 +1247,7 @@ export class MoveTypeChangeAbAttr extends PreAttackAbAttr {
 
   /**
    * Determine if the move type change attribute can be applied
-   * 
+   *
    * Can be applied if:
    * - The ability's condition is met, e.g. pixilate only boosts normal moves,
    * - The move is not forbidden from having its type changed by an ability, e.g. {@linkcode Moves.MULTI_ATTACK}
@@ -1263,7 +1263,7 @@ export class MoveTypeChangeAbAttr extends PreAttackAbAttr {
    */
   override canApplyPreAttack(pokemon: Pokemon, _passive: boolean, _simulated: boolean, _defender: Pokemon | null, move: Move, _args: [NumberHolder?, NumberHolder?, ...any]): boolean {
     return (!this.condition || this.condition(pokemon, _defender, move)) &&
-            !noAbilityTypeOverrideMoves.has(move.id) && 
+            !noAbilityTypeOverrideMoves.has(move.id) &&
             (!pokemon.isTerastallized ||
               (move.id !== Moves.TERA_BLAST &&
               (move.id !== Moves.TERA_STARSTORM || pokemon.getTeraType() !== PokemonType.STELLAR || !pokemon.hasSpecies(Species.TERAPAGOS))));
@@ -4104,8 +4104,8 @@ export class PostTurnRestoreBerryAbAttr extends PostTurnAbAttr {
     }
 
     // Clamp procChance to [0, 1]. Skip if didn't proc (less than pass)
-    const pass = Phaser.Math.RND.realInRange(0, 1);
-    return Phaser.Math.Clamp(this.procChance(pokemon), 0, 1) >= pass;
+    const pass = randSeedFloat();
+    return this.procChance(pokemon) >= pass;
   }
 
   override applyPostTurn(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): void {

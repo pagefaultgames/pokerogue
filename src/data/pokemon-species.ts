@@ -8,7 +8,14 @@ import type { AnySound } from "#app/battle-scene";
 import { globalScene } from "#app/global-scene";
 import type { GameMode } from "#app/game-mode";
 import { DexAttr, type StarterMoveset } from "#app/system/game-data";
-import { isNullOrUndefined, capitalizeString, randSeedInt, randSeedGauss, randSeedItem } from "#app/utils/common";
+import {
+  isNullOrUndefined,
+  capitalizeString,
+  randSeedInt,
+  randSeedGauss,
+  randSeedItem,
+  randSeedFloat,
+} from "#app/utils/common";
 import { uncatchableSpecies } from "#app/data/balance/biomes";
 import { speciesEggMoves } from "#app/data/balance/egg-moves";
 import { GrowthRate } from "#app/data/exp";
@@ -750,7 +757,7 @@ export abstract class PokemonSpeciesForm {
     let paletteColors: Map<number, number> = new Map();
 
     const originalRandom = Math.random;
-    Math.random = Phaser.Math.RND.frac;
+    Math.random = randSeedFloat;
 
     globalScene.executeWithSeedOffset(
       () => {
@@ -773,6 +780,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
   readonly mythical: boolean;
   readonly species: string;
   readonly growthRate: GrowthRate;
+  /** The chance (as a decimal) for this Species to be male, or `null` for genderless species */
   readonly malePercent: number | null;
   readonly genderDiffs: boolean;
   readonly canChangeForm: boolean;
@@ -889,7 +897,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
       return Gender.GENDERLESS;
     }
 
-    if (Phaser.Math.RND.realInRange(0, 1) <= this.malePercent) {
+    if (randSeedFloat() <= this.malePercent) {
       return Gender.MALE;
     }
     return Gender.FEMALE;
@@ -1138,7 +1146,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
       }
     }
 
-    if (noEvolutionChance === 1 || Phaser.Math.RND.realInRange(0, 1) < noEvolutionChance) {
+    if (noEvolutionChance === 1 || randSeedFloat() <= noEvolutionChance) {
       return this.speciesId;
     }
 
