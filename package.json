@@ -1,7 +1,7 @@
 {
   "name": "pokemon-rogue-battle",
   "private": true,
-  "version": "1.8.4",
+  "version": "1.9.0",
   "type": "module",
   "scripts": {
     "start": "vite",
@@ -9,7 +9,7 @@
     "build": "vite build",
     "build:beta": "vite build --mode beta",
     "preview": "vite preview",
-    "test": "vitest run",
+    "test": "vitest run --no-isolate",
     "test:cov": "vitest run --coverage --no-isolate",
     "test:watch": "vitest watch --coverage --no-isolate",
     "test:silent": "vitest run --silent --no-isolate",
@@ -48,7 +48,7 @@
     "typedoc": "^0.28.1",
     "typescript": "^5.8.2",
     "typescript-eslint": "^8.28.0",
-    "vite": "^6.2.0",
+    "vite": "^6.3.4",
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^3.0.9",
     "vitest-canvas-mock": "^0.3.3"
@@ -63,8 +63,8 @@
     "i18next-korean-postposition-processor": "^1.0.0",
     "json-stable-stringify": "^1.2.0",
     "jszip": "^3.10.1",
-    "phaser": "^3.70.0",
-    "phaser3-rex-plugins": "^1.80.14"
+    "phaser": "^3.88.2",
+    "phaser3-rex-plugins": "^1.80.15"
   },
   "engines": {
     "node": ">=22.0.0"

@@ -122,7 +122,6 @@ import { MoveFlags } from "#enums/MoveFlags";
 import { MoveEffectTrigger } from "#enums/MoveEffectTrigger";
 import { MultiHitType } from "#enums/MultiHitType";
 import { invalidAssistMoves, invalidCopycatMoves, invalidMetronomeMoves, invalidMirrorMoveMoves, invalidSleepTalkMoves } from "./invalid-moves";
-import { TrainerVariant } from "#app/field/trainer";
 import { SelectBiomePhase } from "#app/phases/select-biome-phase";
 
 type MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => boolean;
@@ -652,7 +651,7 @@ export default class Move implements Localizable {
         break;
       case MoveFlags.IGNORE_ABILITIES:
         if (user.hasAbilityWithAttr(MoveAbilityBypassAbAttr)) {
-          const abilityEffectsIgnored = new BooleanHolder(false); 
+          const abilityEffectsIgnored = new BooleanHolder(false);
           applyAbAttrs(MoveAbilityBypassAbAttr, user, abilityEffectsIgnored, false, this);
           if (abilityEffectsIgnored.value) {
             return true;
@@ -811,8 +810,9 @@ export default class Move implements Localizable {
 
     const power = new NumberHolder(this.power);
     const typeChangeMovePowerMultiplier = new NumberHolder(1);
+    const typeChangeHolder = new NumberHolder(this.type);
 
-    applyPreAttackAbAttrs(MoveTypeChangeAbAttr, source, target, this, true, null, typeChangeMovePowerMultiplier);
+    applyPreAttackAbAttrs(MoveTypeChangeAbAttr, source, target, this, true, typeChangeHolder, typeChangeMovePowerMultiplier);
 
     const sourceTeraType = source.getTeraType();
     if (source.isTerastallized && sourceTeraType === this.type && power.value < 60 && this.priority <= 0 && !this.hasAttr(MultiHitAttr) && !globalScene.findModifier(m => m instanceof PokemonMultiHitModifier && m.pokemonId === source.id)) {
@@ -842,7 +842,7 @@ export default class Move implements Localizable {
 
     power.value *= typeChangeMovePowerMultiplier.value;
 
-    const typeBoost = source.findTag(t => t instanceof TypeBoostTag && t.boostedType === this.type) as TypeBoostTag;
+    const typeBoost = source.findTag(t => t instanceof TypeBoostTag && t.boostedType === typeChangeHolder.value) as TypeBoostTag;
     if (typeBoost) {
       power.value *= typeBoost.boostValue;
     }
@@ -850,8 +850,8 @@ export default class Move implements Localizable {
     applyMoveAttrs(VariablePowerAttr, source, target, this, power);
 
     if (!this.hasAttr(TypelessAttr)) {
-      globalScene.arena.applyTags(WeakenMoveTypeTag, simulated, this.type, power);
-      globalScene.applyModifiers(AttackTypeBoosterModifier, source.isPlayer(), source, this.type, power);
+      globalScene.arena.applyTags(WeakenMoveTypeTag, simulated, typeChangeHolder.value, power);
+      globalScene.applyModifiers(AttackTypeBoosterModifier, source.isPlayer(), source, typeChangeHolder.value, power);
     }
 
     if (source.getTag(HelpingHandTag)) {
@@ -1803,10 +1803,7 @@ export class HalfSacrificialAttr extends MoveEffectAttr {
 }
 
 /**
- * Attribute to put in a {@link https://bulbapedia.bulbagarden.net/wiki/Substitute_(doll) | Substitute Doll}
- * for the user.
- * @extends MoveEffectAttr
- * @see {@linkcode apply}
+ * Attribute to put in a {@link https://bulbapedia.bulbagarden.net/wiki/Substitute_(doll) | Substitute Doll} for the user.
  */
 export class AddSubstituteAttr extends MoveEffectAttr {
   /** The ratio of the user's max HP that is required to apply this effect */
@@ -1823,11 +1820,11 @@ export class AddSubstituteAttr extends MoveEffectAttr {
 
   /**
    * Removes 1/4 of the user's maximum HP (rounded down) to create a substitute for the user
-   * @param user the {@linkcode Pokemon} that used the move.
-   * @param target n/a
-   * @param move the {@linkcode Move} with this attribute.
-   * @param args n/a
-   * @returns true if the attribute successfully applies, false otherwise
+   * @param user - The {@linkcode Pokemon} that used the move.
+   * @param target - n/a
+   * @param move - The {@linkcode Move} with this attribute.
+   * @param args - n/a
+   * @returns `true` if the attribute successfully applies, `false` otherwise
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!super.apply(user, target, move, args)) {
@@ -1848,12 +1845,12 @@ export class AddSubstituteAttr extends MoveEffectAttr {
   }
 
   getCondition(): MoveConditionFunc {
-    return (user, target, move) => !user.getTag(SubstituteTag) && user.hp > (this.roundUp ? Math.ceil(user.getMaxHp() * this.hpCost) : Math.floor(user.getMaxHp() * this.hpCost)) && user.getMaxHp() > 1;
+    return (user, _target, _move) => !user.getTag(SubstituteTag) && user.hp > (this.roundUp ? Math.ceil(user.getMaxHp() * this.hpCost) : Math.floor(user.getMaxHp() * this.hpCost)) && user.getMaxHp() > 1;
   }
 
   /**
    * Get the substitute-specific failure message if one should be displayed.
-   * @param user The pokemon using the move.
+   * @param user - The pokemon using the move.
    * @returns The substitute-specific failure message if the conditions apply, otherwise `undefined`
    */
   getFailedText(user: Pokemon, _target: Pokemon, _move: Move): string | undefined {
@@ -2463,7 +2460,7 @@ export class StatusEffectAttr extends MoveEffectAttr {
         return false;
       }
       if (((!pokemon.status || this.overrideStatus) || (pokemon.status.effect === this.effect && moveChance < 0))
-        && pokemon.trySetStatus(this.effect, true, user, this.turnsRemaining, null, this.overrideStatus)) {
+        && pokemon.trySetStatus(this.effect, true, user, this.turnsRemaining, null, this.overrideStatus, false)) {
         applyPostAttackAbAttrs(ConfusionOnStatusEffectAbAttr, user, target, move, null, false, this.effect);
         return true;
       }
@@ -2535,10 +2532,10 @@ export class PsychoShiftEffectAttr extends MoveEffectAttr {
     return !target.status && target.canSetStatus(user.status?.effect, true, false, user) ? -10 : 0;
   }
 }
+
 /**
- * The following needs to be implemented for Thief
- * "If the user faints due to the target's Ability (Rough Skin or Iron Barbs) or held Rocky Helmet, it cannot remove the target's held item."
- * "If Knock Off causes a Pokémon with the Sticky Hold Ability to faint, it can now remove that Pokémon's held item."
+ * Attribute to steal items upon this move's use.
+ * Used for {@linkcode Moves.THIEF} and {@linkcode Moves.COVET}.
  */
 export class StealHeldItemChanceAttr extends MoveEffectAttr {
   private chance: number;
@@ -2553,18 +2550,22 @@ export class StealHeldItemChanceAttr extends MoveEffectAttr {
     if (rand >= this.chance) {
       return false;
     }
+
     const heldItems = this.getTargetHeldItems(target).filter((i) => i.isTransferable);
-    if (heldItems.length) {
-      const poolType = target.isPlayer() ? ModifierPoolType.PLAYER : target.hasTrainer() ? ModifierPoolType.TRAINER : ModifierPoolType.WILD;
-      const highestItemTier = heldItems.map((m) => m.type.getOrInferTier(poolType)).reduce((highestTier, tier) => Math.max(tier!, highestTier), 0); // TODO: is the bang after tier correct?
-      const tierHeldItems = heldItems.filter((m) => m.type.getOrInferTier(poolType) === highestItemTier);
-      const stolenItem = tierHeldItems[user.randSeedInt(tierHeldItems.length)];
-      if (globalScene.tryTransferHeldItemModifier(stolenItem, user, false)) {
-        globalScene.queueMessage(i18next.t("moveTriggers:stoleItem", { pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target), itemName: stolenItem.type.name }));
-        return true;
-      }
+    if (!heldItems.length) {
+      return false;
     }
-    return false;
+
+    const poolType = target.isPlayer() ? ModifierPoolType.PLAYER : target.hasTrainer() ? ModifierPoolType.TRAINER : ModifierPoolType.WILD;
+    const highestItemTier = heldItems.map((m) => m.type.getOrInferTier(poolType)).reduce((highestTier, tier) => Math.max(tier!, highestTier), 0); // TODO: is the bang after tier correct?
+    const tierHeldItems = heldItems.filter((m) => m.type.getOrInferTier(poolType) === highestItemTier);
+    const stolenItem = tierHeldItems[user.randSeedInt(tierHeldItems.length)];
+    if (!globalScene.tryTransferHeldItemModifier(stolenItem, user, false)) {
+      return false;
+    }
+
+    globalScene.queueMessage(i18next.t("moveTriggers:stoleItem", { pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target), itemName: stolenItem.type.name }));
+    return true;
   }
 
   getTargetHeldItems(target: Pokemon): PokemonHeldItemModifier[] {
@@ -2588,58 +2589,62 @@ export class StealHeldItemChanceAttr extends MoveEffectAttr {
  * Used for Incinerate and Knock Off.
  * Not Implemented Cases: (Same applies for Thief)
  * "If the user faints due to the target's Ability (Rough Skin or Iron Barbs) or held Rocky Helmet, it cannot remove the target's held item."
- * "If Knock Off causes a Pokémon with the Sticky Hold Ability to faint, it can now remove that Pokémon's held item."
+ * "If the Pokémon is knocked out by the attack, Sticky Hold does not protect the held item.""
  */
 export class RemoveHeldItemAttr extends MoveEffectAttr {
 
-  /** Optional restriction for item pool to berries only i.e. Differentiating Incinerate and Knock Off */
+  /** Optional restriction for item pool to berries only; i.e. Incinerate */
   private berriesOnly: boolean;
 
-  constructor(berriesOnly: boolean) {
+  constructor(berriesOnly: boolean = false) {
     super(false);
     this.berriesOnly = berriesOnly;
   }
 
   /**
-   *
-   * @param user {@linkcode Pokemon} that used the move
-   * @param target Target {@linkcode Pokemon} that the moves applies to
-   * @param move {@linkcode Move} that is used
+   * Attempt to permanently remove a held
+   * @param user - The {@linkcode Pokemon} that used the move
+   * @param target - The {@linkcode Pokemon} targeted by the move
+   * @param move - N/A
    * @param args N/A
-   * @returns True if an item was removed
+   * @returns `true` if an item was able to be removed
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!this.berriesOnly && target.isPlayer()) { // "Wild Pokemon cannot knock off Player Pokemon's held items" (See Bulbapedia)
       return false;
     }
 
+    // Check for abilities that block item theft
+    // TODO: This should not trigger if the target would faint beforehand
     const cancelled = new BooleanHolder(false);
-    applyAbAttrs(BlockItemTheftAbAttr, target, cancelled); // Check for abilities that block item theft
+    applyAbAttrs(BlockItemTheftAbAttr, target, cancelled);
 
-    if (cancelled.value === true) {
+    if (cancelled.value) {
       return false;
     }
 
-    // Considers entire transferrable item pool by default (Knock Off). Otherwise berries only if specified (Incinerate).
+    // Considers entire transferrable item pool by default (Knock Off).
+    // Otherwise only consider berries (Incinerate).
     let heldItems = this.getTargetHeldItems(target).filter(i => i.isTransferable);
 
     if (this.berriesOnly) {
       heldItems = heldItems.filter(m => m instanceof BerryModifier && m.pokemonId === target.id, target.isPlayer());
     }
 
-    if (heldItems.length) {
-      const removedItem = heldItems[user.randSeedInt(heldItems.length)];
+    if (!heldItems.length) {
+      return false;
+    }
 
-      // Decrease item amount and update icon
-      target.loseHeldItem(removedItem);
-      globalScene.updateModifiers(target.isPlayer());
+    const removedItem = heldItems[user.randSeedInt(heldItems.length)];
 
+    // Decrease item amount and update icon
+    target.loseHeldItem(removedItem);
+    globalScene.updateModifiers(target.isPlayer());
 
-      if (this.berriesOnly) {
-        globalScene.queueMessage(i18next.t("moveTriggers:incineratedItem", { pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target), itemName: removedItem.type.name }));
-      } else {
-        globalScene.queueMessage(i18next.t("moveTriggers:knockedOffItem", { pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target), itemName: removedItem.type.name }));
-      }
+    if (this.berriesOnly) {
+      globalScene.queueMessage(i18next.t("moveTriggers:incineratedItem", { pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target), itemName: removedItem.type.name }));
+    } else {
+      globalScene.queueMessage(i18next.t("moveTriggers:knockedOffItem", { pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target), itemName: removedItem.type.name }));
     }
 
     return true;
@@ -2665,17 +2670,18 @@ export class RemoveHeldItemAttr extends MoveEffectAttr {
  * Attribute that causes targets of the move to eat a berry. Used for Teatime, Stuff Cheeks
  */
 export class EatBerryAttr extends MoveEffectAttr {
-  protected chosenBerry: BerryModifier | undefined;
+  protected chosenBerry: BerryModifier;
   constructor(selfTarget: boolean) {
     super(selfTarget);
   }
+
   /**
    * Causes the target to eat a berry.
-   * @param user {@linkcode Pokemon} Pokemon that used the move
-   * @param target {@linkcode Pokemon} Pokemon that will eat a berry
-   * @param move {@linkcode Move} The move being used
+   * @param user The {@linkcode Pokemon} Pokemon that used the move
+   * @param target The {@linkcode Pokemon} Pokemon that will eat the berry
+   * @param move The {@linkcode Move} being used
    * @param args Unused
-   * @returns {boolean} true if the function succeeds
+   * @returns `true` if the function succeeds
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!super.apply(user, target, move, args)) {
@@ -2688,6 +2694,8 @@ export class EatBerryAttr extends MoveEffectAttr {
     if (heldBerries.length <= 0) {
       return false;
     }
+
+    // pick a random berry to gobble and check if we preserve it
     this.chosenBerry = heldBerries[user.randSeedInt(heldBerries.length)];
     const preserve = new BooleanHolder(false);
     // check for berry pouch preservation
@@ -2695,7 +2703,10 @@ export class EatBerryAttr extends MoveEffectAttr {
     if (!preserve.value) {
       this.reduceBerryModifier(pokemon);
     }
-    this.eatBerry(pokemon);
+
+    // Don't update harvest for berries preserved via Berry pouch (no item dupes lol)
+    this.eatBerry(target, undefined, !preserve.value);
+
     return true;
   }
 
@@ -2711,46 +2722,64 @@ export class EatBerryAttr extends MoveEffectAttr {
     globalScene.updateModifiers(target.isPlayer());
   }
 
-  eatBerry(consumer: Pokemon, berryOwner?: Pokemon) {
-    getBerryEffectFunc(this.chosenBerry!.berryType)(consumer, berryOwner); // consumer eats the berry
+
+  /**
+   * Internal function to apply berry effects.
+   *
+   * @param consumer - The {@linkcode Pokemon} eating the berry; assumed to also be owner if `berryOwner` is omitted
+   * @param berryOwner - The {@linkcode Pokemon} whose berry is being eaten; defaults to `consumer` if not specified.
+   * @param updateHarvest - Whether to prevent harvest from tracking berries;
+   * defaults to whether `consumer` equals `berryOwner` (i.e. consuming own berry).
+   */
+   protected eatBerry(consumer: Pokemon, berryOwner: Pokemon = consumer, updateHarvest = consumer === berryOwner) {
+     // consumer eats berry, owner triggers unburden and similar effects
+    getBerryEffectFunc(this.chosenBerry.berryType)(consumer);
+    applyPostItemLostAbAttrs(PostItemLostAbAttr, berryOwner, false);
     applyAbAttrs(HealFromBerryUseAbAttr, consumer, new BooleanHolder(false));
+    consumer.recordEatenBerry(this.chosenBerry.berryType, updateHarvest);
   }
 }
 
 /**
- *  Attribute used for moves that steal a random berry from the target. The user then eats the stolen berry.
- *  Used for Pluck & Bug Bite.
+ * Attribute used for moves that steal and eat a random berry from the target.
+ * Used for {@linkcode Moves.PLUCK} & {@linkcode Moves.BUG_BITE}.
  */
 export class StealEatBerryAttr extends EatBerryAttr {
   constructor() {
     super(false);
   }
+
   /**
    * User steals a random berry from the target and then eats it.
-   * @param user - Pokemon that used the move and will eat the stolen berry
-   * @param target - Pokemon that will have its berry stolen
-   * @param move - Move being used
-   * @param args Unused
-   * @returns  true if the function succeeds
+   * @param user - The {@linkcode Pokemon} using the move; will eat the stolen berry
+   * @param target - The {@linkcode Pokemon} having its berry stolen
+   * @param move - The {@linkcode Move} being used
+   * @param args N/A
+   * @returns `true` if the function succeeds
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    // check for abilities that block item theft
     const cancelled = new BooleanHolder(false);
-    applyAbAttrs(BlockItemTheftAbAttr, target, cancelled); // check for abilities that block item theft
+    applyAbAttrs(BlockItemTheftAbAttr, target, cancelled);
     if (cancelled.value === true) {
       return false;
     }
 
+    // check if the target even _has_ a berry in the first place
+    // TODO: Check on cart if Pluck displays messages when used against sticky hold mons w/o berries
     const heldBerries = this.getTargetHeldBerries(target);
     if (heldBerries.length <= 0) {
       return false;
     }
-    // if the target has berries, pick a random berry and steal it
+
+    // pick a random berry and eat it
     this.chosenBerry = heldBerries[user.randSeedInt(heldBerries.length)];
     applyPostItemLostAbAttrs(PostItemLostAbAttr, target, false);
     const message = i18next.t("battle:stealEatBerry", { pokemonName: user.name, targetName: target.name, berryName: this.chosenBerry.type.name });
     globalScene.queueMessage(message);
     this.reduceBerryModifier(target);
     this.eatBerry(user, target);
+
     return true;
   }
 }
@@ -3160,7 +3189,7 @@ export class StatStageChangeAttr extends MoveEffectAttr {
   private get showMessage () {
     return this.options?.showMessage ?? true;
   }
-  
+
   /**
    * Attempts to change stats of the user or target (depending on value of selfTarget) if conditions are met
    * @param user {@linkcode Pokemon} the user of the move
@@ -3453,7 +3482,8 @@ export class CutHpStatStageBoostAttr extends StatStageChangeAttr {
 /**
  * Attribute implementing the stat boosting effect of {@link https://bulbapedia.bulbagarden.net/wiki/Order_Up_(move) | Order Up}.
  * If the user has a Pokemon with {@link https://bulbapedia.bulbagarden.net/wiki/Commander_(Ability) | Commander} in their mouth,
- * one of the user's stats are increased by 1 stage, depending on the "commanding" Pokemon's form.
+ * one of the user's stats are increased by 1 stage, depending on the "commanding" Pokemon's form. This effect does not respect
+ * effect chance, but Order Up itself may be boosted by Sheer Force.
  */
 export class OrderUpStatBoostAttr extends MoveEffectAttr {
   constructor() {
@@ -4103,30 +4133,23 @@ export class FriendshipPowerAttr extends VariablePowerAttr {
 
 /**
  * This Attribute calculates the current power of {@linkcode Moves.RAGE_FIST}.
- * The counter for power calculation does not reset on every wave but on every new arena encounter
+ * The counter for power calculation does not reset on every wave but on every new arena encounter.
+ * Self-inflicted confusion damage and hits taken by a Subsitute are ignored.
  */
 export class RageFistPowerAttr extends VariablePowerAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const { hitCount, prevHitCount } = user.battleData;
+    /* Reasons this works correctly:
+     * Confusion calls user.damageAndUpdate() directly (no counter increment),
+     * Substitute hits call user.damageAndUpdate() with a damage value of 0, also causing
+      no counter increment
+    */
+    const hitCount = user.battleData.hitCount;
     const basePower: NumberHolder = args[0];
 
-    this.updateHitReceivedCount(user, hitCount, prevHitCount);
-
-    basePower.value = 50 + (Math.min(user.customPokemonData.hitsRecCount, 6) * 50);
-
+    basePower.value = 50 * (1 + Math.min(hitCount, 6));
     return true;
   }
 
-  /**
-   * Updates the number of hits the Pokemon has taken in battle
-   * @param user Pokemon calling Rage Fist
-   * @param hitCount The number of received hits this battle
-   * @param previousHitCount The number of received hits this battle since last time Rage Fist was used
-   */
-  protected updateHitReceivedCount(user: Pokemon, hitCount: number, previousHitCount: number): void {
-    user.customPokemonData.hitsRecCount += (hitCount - previousHitCount);
-    user.battleData.prevHitCount = hitCount;
-  }
 }
 
 /**
@@ -4357,10 +4380,10 @@ export class LastMoveDoublePowerAttr extends VariablePowerAttr {
       const userAlly = user.getAlly();
       const enemyAlly = enemy?.getAlly();
 
-      if (!isNullOrUndefined(userAlly) && userAlly.turnData.acted) {
+      if (userAlly?.turnData.acted) {
         pokemonActed.push(userAlly);
       }
-      if (!isNullOrUndefined(enemyAlly) && enemyAlly.turnData.acted) {
+      if (enemyAlly?.turnData.acted) {
         pokemonActed.push(enemyAlly);
       }
     }
@@ -4428,13 +4451,10 @@ export class CombinedPledgeStabBoostAttr extends MoveAttr {
  * @extends VariablePowerAttr
  */
 export class RoundPowerAttr extends VariablePowerAttr {
-  override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+  override apply(user: Pokemon, target: Pokemon, move: Move, args: [NumberHolder]): boolean {
     const power = args[0];
-    if (!(power instanceof NumberHolder)) {
-      return false;
-    }
 
-    if (user.turnData?.joinedRound) {
+    if (user.turnData.joinedRound) {
       power.value *= 2;
       return true;
     }
@@ -4830,7 +4850,12 @@ export class FormChangeItemTypeAttr extends VariableMoveTypeAttr {
       return true;
     }
 
-    return false;
+    // Force move to have its original typing if it changed
+    if (moveType.value === move.type) {
+      return false;
+    }
+    moveType.value = move.type
+    return true;
   }
 }
 
@@ -4981,7 +5006,11 @@ export class WeatherBallTypeAttr extends VariableMoveTypeAttr {
           moveType.value = PokemonType.ICE;
           break;
         default:
-          return false;
+          if (moveType.value === move.type) {
+            return false;
+          }
+          moveType.value = move.type;
+          break;
       }
       return true;
     }
@@ -5029,7 +5058,12 @@ export class TerrainPulseTypeAttr extends VariableMoveTypeAttr {
         moveType.value = PokemonType.PSYCHIC;
         break;
       default:
-        return false;
+        if (moveType.value === move.type) {
+          return false;
+        }
+        // force move to have its original typing if it was changed
+        moveType.value = move.type;
+        break;
     }
     return true;
   }
@@ -6134,7 +6168,7 @@ export class RevivalBlessingAttr extends MoveEffectAttr {
       const faintedPokemon = globalScene.getEnemyParty().filter((p) => p.isFainted() && !p.isBoss());
       const pokemon = faintedPokemon[user.randSeedInt(faintedPokemon.length)];
       const slotIndex = globalScene.getEnemyParty().findIndex((p) => pokemon.id === p.id);
-      pokemon.resetStatus();
+      pokemon.resetStatus(true, false, false, true);
       pokemon.heal(Math.min(toDmgValue(0.5 * pokemon.getMaxHp()), pokemon.getMaxHp()));
       globalScene.queueMessage(i18next.t("moveTriggers:revivalBlessing", { pokemonName: getPokemonNameWithAffix(pokemon) }), 0, true);
       const allyPokemon = user.getAlly();
@@ -6326,11 +6360,11 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
 
       if (!allyPokemon?.isActive(true) && switchOutTarget.hp) {
           globalScene.pushPhase(new BattleEndPhase(false));
-                    
+
           if (globalScene.gameMode.hasRandomBiomes || globalScene.isNewBiome()) {
             globalScene.pushPhase(new SelectBiomePhase());
           }
-          
+
           globalScene.pushPhase(new NewBattlePhase());
       }
     }
@@ -7665,20 +7699,6 @@ export class AverageStatsAttr extends MoveEffectAttr {
   }
 }
 
-export class DiscourageFrequentUseAttr extends MoveAttr {
-  getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
-    const lastMoves = user.getLastXMoves(4);
-    console.log(lastMoves);
-    for (let m = 0; m < lastMoves.length; m++) {
-      if (lastMoves[m].move === move.id) {
-        return (4 - (m + 1)) * -10;
-      }
-    }
-
-    return 0;
-  }
-}
-
 export class MoneyAttr extends MoveEffectAttr {
   constructor() {
     super(true, {firstHitOnly: true });
@@ -7767,17 +7787,27 @@ export class StatusIfBoostedAttr extends MoveEffectAttr {
   }
 }
 
+/**
+ * Attribute to fail move usage unless all of the user's other moves have been used at least once.
+ * Used by {@linkcode Moves.LAST_RESORT}.
+ */
 export class LastResortAttr extends MoveAttr {
+  // TODO: Verify behavior as Bulbapedia page is _extremely_ poorly documented
   getCondition(): MoveConditionFunc {
-    return (user: Pokemon, target: Pokemon, move: Move) => {
-      const uniqueUsedMoveIds = new Set<Moves>();
-      const movesetMoveIds = user.getMoveset().map(m => m.moveId);
-      user.getMoveHistory().map(m => {
-        if (m.move !== move.id && movesetMoveIds.find(mm => mm === m.move)) {
-          uniqueUsedMoveIds.add(m.move);
-        }
-      });
-      return uniqueUsedMoveIds.size >= movesetMoveIds.length - 1;
+    return (user: Pokemon, _target: Pokemon, move: Move) => {
+      const movesInMoveset = new Set<Moves>(user.getMoveset().map(m => m.moveId));
+      if (!movesInMoveset.delete(move.id) || !movesInMoveset.size) {
+        return false; // Last resort fails if used when not in user's moveset or no other moves exist
+      }
+
+      const movesInHistory = new Set(
+        user.getMoveHistory()
+        .filter(m => !m.virtual) // TODO: Change to (m) => m < MoveUseType.INDIRECT after Dancer PR refactors virtual into enum
+        .map(m => m.move)
+      );
+
+      // Since `Set.intersection()` is only present in ESNext, we have to coerce it to an array to check inclusion
+      return [...movesInMoveset].every(m => movesInHistory.has(m))
     };
   }
 }
@@ -7985,13 +8015,18 @@ export class MoveCondition {
   }
 }
 
+/**
+ * Condition to allow a move's use only on the first turn this Pokemon is sent into battle
+ * (or the start of a new wave, whichever comes first).
+ */
+
 export class FirstMoveCondition extends MoveCondition {
   constructor() {
-    super((user, target, move) => user.battleSummonData?.waveTurnCount === 1);
+    super((user, _target, _move) => user.tempSummonData.waveTurnCount === 1);
   }
 
-  getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
-    return this.apply(user, target, move) ? 10 : -20;
+  getUserBenefitScore(user: Pokemon, _target: Pokemon, _move: Move): number {
+    return this.apply(user, _target, _move) ? 10 : -20;
   }
 }
 
@@ -8629,10 +8664,12 @@ export function initMoves() {
     new StatusMove(Moves.TRANSFORM, PokemonType.NORMAL, -1, 10, -1, 0, 1)
       .attr(TransformAttr)
       .condition((user, target, move) => !target.getTag(BattlerTagType.SUBSTITUTE))
-      .condition((user, target, move) => !target.summonData?.illusion && !user.summonData?.illusion)
+      .condition((user, target, move) => !target.summonData.illusion && !user.summonData.illusion)
       // transforming from or into fusion pokemon causes various problems (such as crashes)
       .condition((user, target, move) => !target.getTag(BattlerTagType.SUBSTITUTE) && !user.fusionSpecies && !target.fusionSpecies)
-      .ignoresProtect(),
+      .ignoresProtect()
+      // Transforming should copy the target's rage fist hit count
+      .edgeCase(),
     new AttackMove(Moves.BUBBLE, PokemonType.WATER, MoveCategory.SPECIAL, 40, 100, 30, 10, 0, 1)
       .attr(StatStageChangeAttr, [ Stat.SPD ], -1)
       .target(MoveTarget.ALL_NEAR_ENEMIES),
@@ -8702,7 +8739,10 @@ export function initMoves() {
       .attr(MultiHitPowerIncrementAttr, 3)
       .checkAllHits(),
     new AttackMove(Moves.THIEF, PokemonType.DARK, MoveCategory.PHYSICAL, 60, 100, 25, -1, 0, 2)
-      .attr(StealHeldItemChanceAttr, 0.3),
+      .attr(StealHeldItemChanceAttr, 0.3)
+      .edgeCase(),
+      // Should not be able to steal held item if user faints due to Rough Skin, Iron Barbs, etc.
+      // Should be able to steal items from pokemon with Sticky Hold if the damage causes them to faint
     new StatusMove(Moves.SPIDER_WEB, PokemonType.BUG, -1, 10, -1, 0, 2)
       .condition(failIfGhostTypeCondition)
       .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, false, true, 1)
@@ -8992,6 +9032,7 @@ export function initMoves() {
       .soundBased()
       .target(MoveTarget.RANDOM_NEAR_ENEMY)
       .partial(), // Does not lock the user, does not stop Pokemon from sleeping
+      // Likely can make use of FrenzyAttr and an ArenaTag (just without the FrenzyMissFunc)
     new SelfStatusMove(Moves.STOCKPILE, PokemonType.NORMAL, -1, 20, -1, 0, 3)
       .condition(user => (user.getTag(StockpilingTag)?.stockpiledCount ?? 0) < 3)
       .attr(AddBattlerTagAttr, BattlerTagType.STOCKPILING, true),
@@ -9089,7 +9130,10 @@ export function initMoves() {
       .reflectable(),
     new AttackMove(Moves.KNOCK_OFF, PokemonType.DARK, MoveCategory.PHYSICAL, 65, 100, 20, -1, 0, 3)
       .attr(MovePowerMultiplierAttr, (user, target, move) => target.getHeldItems().filter(i => i.isTransferable).length > 0 ? 1.5 : 1)
-      .attr(RemoveHeldItemAttr, false),
+      .attr(RemoveHeldItemAttr, false)
+      .edgeCase(),
+      // Should not be able to remove held item if user faints due to Rough Skin, Iron Barbs, etc.
+      // Should be able to remove items from pokemon with Sticky Hold if the damage causes them to faint
     new AttackMove(Moves.ENDEAVOR, PokemonType.NORMAL, MoveCategory.PHYSICAL, -1, 100, 5, -1, 0, 3)
       .attr(MatchHpAttr)
       .condition(failOnBossCondition),
@@ -9277,7 +9321,10 @@ export function initMoves() {
       .attr(HighCritAttr)
       .attr(StatusEffectAttr, StatusEffect.POISON),
     new AttackMove(Moves.COVET, PokemonType.NORMAL, MoveCategory.PHYSICAL, 60, 100, 25, -1, 0, 3)
-      .attr(StealHeldItemChanceAttr, 0.3),
+      .attr(StealHeldItemChanceAttr, 0.3)
+      .edgeCase(),
+      // Should not be able to steal held item if user faints due to Rough Skin, Iron Barbs, etc.
+      // Should be able to steal items from pokemon with Sticky Hold if the damage causes them to faint
     new AttackMove(Moves.VOLT_TACKLE, PokemonType.ELECTRIC, MoveCategory.PHYSICAL, 120, 100, 15, 10, 0, 3)
       .attr(RecoilAttr, false, 0.33)
       .attr(StatusEffectAttr, StatusEffect.PARALYSIS)
@@ -9339,6 +9386,11 @@ export function initMoves() {
     new AttackMove(Moves.NATURAL_GIFT, PokemonType.NORMAL, MoveCategory.PHYSICAL, -1, 100, 15, -1, 0, 4)
       .makesContact(false)
       .unimplemented(),
+      /*
+      NOTE: To whoever tries to implement this, reminder to push to battleData.berriesEaten
+      and enable the harvest test..
+      Do NOT push to berriesEatenLast or else cud chew will puke the berry.
+      */
     new AttackMove(Moves.FEINT, PokemonType.NORMAL, MoveCategory.PHYSICAL, 30, 100, 10, -1, 2, 4)
       .attr(RemoveBattlerTagAttr, [ BattlerTagType.PROTECTED ])
       .attr(RemoveArenaTagsAttr, [ ArenaTagType.QUICK_GUARD, ArenaTagType.WIDE_GUARD, ArenaTagType.MAT_BLOCK, ArenaTagType.CRAFTY_SHIELD ], false)
@@ -9416,7 +9468,8 @@ export function initMoves() {
       .makesContact(true)
       .attr(PunishmentPowerAttr),
     new AttackMove(Moves.LAST_RESORT, PokemonType.NORMAL, MoveCategory.PHYSICAL, 140, 100, 5, -1, 0, 4)
-      .attr(LastResortAttr),
+      .attr(LastResortAttr)
+      .edgeCase(), // May or may not need to ignore remotely called moves depending on how it works
     new StatusMove(Moves.WORRY_SEED, PokemonType.GRASS, 100, 10, -1, 0, 4)
       .attr(AbilityChangeAttr, Abilities.INSOMNIA)
       .reflectable(),
@@ -9783,7 +9836,9 @@ export function initMoves() {
       .hidesTarget(),
     new AttackMove(Moves.INCINERATE, PokemonType.FIRE, MoveCategory.SPECIAL, 60, 100, 15, -1, 0, 5)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
-      .attr(RemoveHeldItemAttr, true),
+      .attr(RemoveHeldItemAttr, true)
+      .edgeCase(),
+      // Should be able to remove items from pokemon with Sticky Hold if the damage causes them to faint
     new StatusMove(Moves.QUASH, PokemonType.DARK, 100, 15, -1, 0, 5)
       .condition(failIfSingleBattle)
       .condition((user, target, move) => !target.turnData.acted)
@@ -9958,7 +10013,7 @@ export function initMoves() {
       .condition(new FirstMoveCondition())
       .condition(failIfLastCondition),
     new AttackMove(Moves.BELCH, PokemonType.POISON, MoveCategory.SPECIAL, 120, 90, 10, -1, 0, 6)
-      .condition((user, target, move) => user.battleData.berriesEaten.length > 0),
+      .condition((user, target, move) => user.battleData.hasEatenBerry),
     new StatusMove(Moves.ROTOTILLER, PokemonType.GROUND, -1, 10, -1, 0, 6)
       .target(MoveTarget.ALL)
       .condition((user, target, move) => {
@@ -10517,8 +10572,7 @@ export function initMoves() {
         } else {
           return 1;
         }
-      })
-      .attr(DiscourageFrequentUseAttr),
+      }),
 
     new AttackMove(Moves.SNIPE_SHOT, PokemonType.WATER, MoveCategory.SPECIAL, 80, 100, 15, -1, 0, 8)
       .attr(HighCritAttr)
@@ -10971,7 +11025,7 @@ export function initMoves() {
       .makesContact(false),
     new AttackMove(Moves.LUMINA_CRASH, PokemonType.PSYCHIC, MoveCategory.SPECIAL, 80, 100, 10, 100, 0, 9)
       .attr(StatStageChangeAttr, [ Stat.SPDEF ], -2),
-    new AttackMove(Moves.ORDER_UP, PokemonType.DRAGON, MoveCategory.PHYSICAL, 80, 100, 10, -1, 0, 9)
+    new AttackMove(Moves.ORDER_UP, PokemonType.DRAGON, MoveCategory.PHYSICAL, 80, 100, 10, 100, 0, 9)
       .attr(OrderUpStatBoostAttr)
       .makesContact(false),
     new AttackMove(Moves.JET_PUNCH, PokemonType.WATER, MoveCategory.PHYSICAL, 60, 100, 15, -1, 1, 9)
@@ -11085,7 +11139,6 @@ export function initMoves() {
     new AttackMove(Moves.TWIN_BEAM, PokemonType.PSYCHIC, MoveCategory.SPECIAL, 40, 100, 10, -1, 0, 9)
       .attr(MultiHitAttr, MultiHitType._2),
     new AttackMove(Moves.RAGE_FIST, PokemonType.GHOST, MoveCategory.PHYSICAL, 50, 100, 10, -1, 0, 9)
-      .edgeCase() // Counter incorrectly increases on confusion self-hits
       .attr(RageFistPowerAttr)
       .punchingMove(),
     new AttackMove(Moves.ARMOR_CANNON, PokemonType.FIRE, MoveCategory.SPECIAL, 120, 100, 5, -1, 0, 9)
