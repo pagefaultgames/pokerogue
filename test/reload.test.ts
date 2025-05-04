@@ -51,7 +51,7 @@ describe("Reload", () => {
       .battleStyle("single")
       .startingLevel(100) // Avoid levelling up
       .disableTrainerWaves()
-      .moveset([Moves.SPLASH])
+      .moveset(Moves.SPLASH)
       .enemyMoveset(Moves.SPLASH);
     await game.dailyMode.startBattle();
 

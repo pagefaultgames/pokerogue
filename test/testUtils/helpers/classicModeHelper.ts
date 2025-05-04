@@ -43,6 +43,8 @@ export class ClassicModeHelper extends GameManagerHelper {
   /**
    * Transitions to the start of a battle.
    * @param species - Optional array of species to start the battle with.
+   * If omitted, will select 3 daily run starters with a fixed seed of "test"
+   * (see `generateDailyRunStarters` in `daily-run.ts` for more info).
    * @returns A promise that resolves when the battle is started.
    */
   async startBattle(species?: Species[]): Promise<void> {
