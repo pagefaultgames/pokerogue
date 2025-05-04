@@ -6485,7 +6485,7 @@ export class RemoveTypeAttr extends MoveEffectAttr {
       return false;
     }
 
-    const userTypes = user.getTypes(true);
+    const userTypes = user.getTypes(true, false, undefined, false);
     const modifiedTypes = userTypes.filter(type => type !== this.removedType);
     if (modifiedTypes.length === 0) {
       modifiedTypes.push(PokemonType.UNKNOWN);
