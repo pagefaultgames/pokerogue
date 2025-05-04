@@ -29,8 +29,14 @@ describe("Moves - Dynamax Cannon", () => {
     dynamaxCannon = allMoves[Moves.DYNAMAX_CANNON];
     game = new GameManager(phaserGame);
 
-    game.override.moveset([dynamaxCannon.id]);
-    game.override.startingLevel(200);
+    game.override
+      .moveset(Moves.DYNAMAX_CANNON)
+      .startingLevel(200)
+      .levelCap(10)
+      .battleStyle("single")
+      .disableCrits()
+      .enemySpecies(Species.MAGIKARP)
+      .enemyMoveset(Moves.SPLASH);
 
     // Note that, for Waves 1-10, the level cap is 10
     game.override.startingWave(1);

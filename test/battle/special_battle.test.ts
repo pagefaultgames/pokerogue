@@ -23,12 +23,13 @@ describe("Test Battle Phase", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.enemySpecies(Species.RATTATA);
-    game.override.startingLevel(2000);
-    game.override.moveset([Moves.TACKLE]);
-    game.override.enemyAbility(Abilities.HYDRATION);
-    game.override.ability(Abilities.HYDRATION);
-    game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
+    game.override
+      .enemySpecies(Species.RATTATA)
+      .startingLevel(2000)
+      .moveset([Moves.TACKLE])
+      .enemyAbility(Abilities.HYDRATION)
+      .ability(Abilities.HYDRATION)
+      .enemyMoveset(Moves.TACKLE);
   });
 
   it("startBattle 2vs1 boss", async () => {

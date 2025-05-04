@@ -25,11 +25,12 @@ describe("Abilities - Sweet Veil", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("double");
-    game.override.moveset([Moves.SPLASH, Moves.REST, Moves.YAWN]);
-    game.override.enemySpecies(Species.MAGIKARP);
-    game.override.enemyAbility(Abilities.BALL_FETCH);
-    game.override.enemyMoveset([Moves.POWDER, Moves.POWDER, Moves.POWDER, Moves.POWDER]);
+    game.override
+      .battleStyle("double")
+      .moveset([Moves.SPLASH, Moves.REST, Moves.YAWN])
+      .enemySpecies(Species.MAGIKARP)
+      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyMoveset(Moves.POWDER);
   });
 
   it("prevents the user and its allies from falling asleep", async () => {
@@ -56,8 +57,8 @@ describe("Abilities - Sweet Veil", () => {
   });
 
   it("causes Yawn to fail if used on the user or its allies", async () => {
-    game.override.enemyMoveset([Moves.YAWN, Moves.YAWN, Moves.YAWN, Moves.YAWN]);
-    await game.startBattle([Species.SWIRLIX, Species.MAGIKARP]);
+    game.override.enemyMoveset(Moves.YAWN);
+    await game.classicMode.startBattle([Species.SWIRLIX, Species.MAGIKARP]);
 
     game.move.select(Moves.SPLASH);
     game.move.select(Moves.SPLASH, 1);

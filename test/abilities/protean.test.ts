@@ -29,11 +29,12 @@ describe("Abilities - Protean", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("single");
-    game.override.ability(Abilities.PROTEAN);
-    game.override.startingLevel(100);
-    game.override.enemySpecies(Species.RATTATA);
-    game.override.enemyMoveset([Moves.ENDURE, Moves.ENDURE, Moves.ENDURE, Moves.ENDURE]);
+    game.override
+      .battleStyle("single")
+      .ability(Abilities.PROTEAN)
+      .startingLevel(100)
+      .enemySpecies(Species.RATTATA)
+      .enemyMoveset(Moves.ENDURE);
   });
 
   test("ability applies and changes a pokemon's type", async () => {
@@ -173,8 +174,7 @@ describe("Abilities - Protean", () => {
   });
 
   test("ability applies correctly even if the pokemon's move is protected against", async () => {
-    game.override.moveset([Moves.TACKLE]);
-    game.override.enemyMoveset([Moves.PROTECT, Moves.PROTECT, Moves.PROTECT, Moves.PROTECT]);
+    game.override.moveset([Moves.TACKLE]).enemyMoveset(Moves.PROTECT);
 
     await game.startBattle([Species.MAGIKARP]);
 

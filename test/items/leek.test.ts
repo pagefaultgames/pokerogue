@@ -25,7 +25,7 @@ describe("Items - Leek", () => {
 
     game.override
       .enemySpecies(Species.MAGIKARP)
-      .enemyMoveset([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH])
+      .enemyMoveset(Moves.SPLASH)
       .startingHeldItems([{ name: "LEEK" }])
       .moveset([Moves.TACKLE])
       .battleStyle("single");

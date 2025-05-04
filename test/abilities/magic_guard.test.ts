@@ -1,11 +1,12 @@
+import { BattlerIndex } from "#app/battle";
 import { ArenaTagSide, getArenaTag } from "#app/data/arena-tag";
 import { getStatusEffectCatchRateMultiplier } from "#app/data/status-effect";
-import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Abilities } from "#enums/abilities";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { WeatherType } from "#enums/weather-type";
 import GameManager from "#test/testUtils/gameManager";
@@ -55,7 +56,7 @@ describe("Abilities - Magic Guard", () => {
 
     game.move.select(Moves.SPLASH);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     /**
      * Expect:
@@ -66,30 +67,36 @@ describe("Abilities - Magic Guard", () => {
     expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
   });
 
-  it("ability should prevent damage caused by status effects but other non-damage effects still apply", async () => {
-    //Toxic keeps track of the turn counters -> important that Magic Guard keeps track of post-Toxic turns
-    game.override.statusEffect(StatusEffect.POISON);
-
-    await game.startBattle([Species.MAGIKARP]);
+  it("should retain catch boost, toxic turn count and burn attack drops", async () => {
+    game.override.statusEffect(StatusEffect.TOXIC);
+    await game.classicMode.startBattle([Species.MAGIKARP]);
 
     const leadPokemon = game.scene.getPlayerPokemon()!;
 
     game.move.select(Moves.SPLASH);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
-    await game.phaseInterceptor.to(TurnEndPhase);
-
-    /**
-     * Expect:
-     * - The player Pokemon (with Magic Guard) has not taken damage from poison
-     * - The Pokemon's CatchRateMultiplier should be 1.5
-     */
     expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp());
+    expect(leadPokemon.status).toBeTruthy();
+    expect(leadPokemon.status!.toxicTurnCount).toBeGreaterThan(0);
     expect(getStatusEffectCatchRateMultiplier(leadPokemon.status!.effect)).toBe(1.5);
+
+    await game.toNextTurn();
+
+    // give ourselves burn and ensure our attack indeed dropped
+
+    const prevAtk = leadPokemon.getEffectiveStat(Stat.ATK);
+    leadPokemon.resetStatus();
+    expect(leadPokemon.status).toBeFalsy();
+
+    leadPokemon.trySetStatus(StatusEffect.BURN);
+    expect(leadPokemon.status).toBeTruthy();
+    const burntAtk = leadPokemon.getEffectiveStat(Stat.ATK);
+    expect(burntAtk).toBeCloseTo(prevAtk / 2, 1);
   });
 
   it("ability effect should not persist when the ability is replaced", async () => {
-    game.override.enemyMoveset([Moves.WORRY_SEED, Moves.WORRY_SEED, Moves.WORRY_SEED, Moves.WORRY_SEED]);
-    game.override.statusEffect(StatusEffect.POISON);
+    game.override.enemyMoveset(Moves.WORRY_SEED).statusEffect(StatusEffect.POISON);
 
     await game.startBattle([Species.MAGIKARP]);
 
@@ -97,7 +104,7 @@ describe("Abilities - Magic Guard", () => {
 
     game.move.select(Moves.SPLASH);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     /**
      * Expect:
@@ -116,7 +123,7 @@ describe("Abilities - Magic Guard", () => {
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     /**
      * Expect:
@@ -141,7 +148,7 @@ describe("Abilities - Magic Guard", () => {
     const toxicStartCounter = enemyPokemon.status!.toxicTurnCount;
     //should be 0
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     /**
      * Expect:
@@ -166,7 +173,7 @@ describe("Abilities - Magic Guard", () => {
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     /**
      * Expect:
@@ -191,7 +198,7 @@ describe("Abilities - Magic Guard", () => {
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     /**
      * Expect:
@@ -216,7 +223,7 @@ describe("Abilities - Magic Guard", () => {
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     /**
      * Expect:
@@ -238,7 +245,7 @@ describe("Abilities - Magic Guard", () => {
     game.move.select(Moves.HIGH_JUMP_KICK);
     await game.move.forceMiss();
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     /**
      * Expect:
@@ -255,7 +262,7 @@ describe("Abilities - Magic Guard", () => {
 
     game.move.select(Moves.TAKE_DOWN);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     /**
      * Expect:
@@ -272,7 +279,7 @@ describe("Abilities - Magic Guard", () => {
 
     game.move.select(Moves.STRUGGLE);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     /**
      * Expect:
@@ -281,8 +288,7 @@ describe("Abilities - Magic Guard", () => {
     expect(leadPokemon.hp).toBeLessThan(leadPokemon.getMaxHp());
   });
 
-  //This tests different move attributes than the recoil tests above
-  it("Magic Guard prevents self-damage from attacking moves", async () => {
+  it("should prevent self-damage from attacking moves", async () => {
     game.override.moveset([Moves.STEEL_BEAM]);
     await game.startBattle([Species.MAGIKARP]);
 
@@ -290,7 +296,7 @@ describe("Abilities - Magic Guard", () => {
 
     game.move.select(Moves.STEEL_BEAM);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     /**
      * Expect:
@@ -299,17 +305,19 @@ describe("Abilities - Magic Guard", () => {
     expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp());
   });
 
-  /*
-  it("Magic Guard does not prevent self-damage from confusion", async () => {
-    await game.startBattle([Species.MAGIKARP]);
+  it("should not prevent self-damage from confusion", async () => {
+    game.override.enemyMoveset(Moves.CONFUSE_RAY).confusionActivation(true);
+    await game.classicMode.startBattle([Species.MAGIKARP]);
 
     game.move.select(Moves.CHARM);
+    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
+
+    expect(game.scene.getPlayerPokemon()!.isFullHp()).toBe(false);
   });
-*/
 
-  it("Magic Guard does not prevent self-damage from non-attacking moves", async () => {
+  it("should not prevent self-damage from non-attacking moves", async () => {
     game.override.moveset([Moves.BELLY_DRUM]);
     await game.startBattle([Species.MAGIKARP]);
 
@@ -317,7 +325,7 @@ describe("Abilities - Magic Guard", () => {
 
     game.move.select(Moves.BELLY_DRUM);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     /**
      * Expect:
@@ -327,11 +335,7 @@ describe("Abilities - Magic Guard", () => {
   });
 
   it("Magic Guard prevents damage from abilities with PostTurnHurtIfSleepingAbAttr", async () => {
-    //Tests the ability Bad Dreams
-    game.override.statusEffect(StatusEffect.SLEEP);
-    //enemy pokemon is given Spore just in case player pokemon somehow awakens during test
-    game.override.enemyMoveset([Moves.SPORE, Moves.SPORE, Moves.SPORE, Moves.SPORE]);
-    game.override.enemyAbility(Abilities.BAD_DREAMS);
+    game.override.statusEffect(StatusEffect.SLEEP).enemyMoveset(Moves.SPORE).enemyAbility(Abilities.BAD_DREAMS);
 
     await game.startBattle([Species.MAGIKARP]);
 
@@ -339,7 +343,7 @@ describe("Abilities - Magic Guard", () => {
 
     game.move.select(Moves.SPLASH);
 
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     /**
      * Expect:
@@ -350,10 +354,8 @@ describe("Abilities - Magic Guard", () => {
     expect(leadPokemon.status!.effect).toBe(StatusEffect.SLEEP);
   });
 
-  it("Magic Guard prevents damage from abilities with PostFaintContactDamageAbAttr", async () => {
-    //Tests the abilities Innards Out/Aftermath
-    game.override.moveset([Moves.TACKLE]);
-    game.override.enemyAbility(Abilities.AFTERMATH);
+  it("should prevent damage from abilities with PostFaintContactDamageAbAttr", async () => {
+    game.override.moveset([Moves.TACKLE]).enemyAbility(Abilities.AFTERMATH);
 
     await game.startBattle([Species.MAGIKARP]);
 
@@ -363,7 +365,7 @@ describe("Abilities - Magic Guard", () => {
     enemyPokemon.hp = 1;
 
     game.move.select(Moves.TACKLE);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     /**
      * Expect:
@@ -386,7 +388,7 @@ describe("Abilities - Magic Guard", () => {
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
     game.move.select(Moves.TACKLE);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     /**
      * Expect:
@@ -409,7 +411,7 @@ describe("Abilities - Magic Guard", () => {
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
     game.move.select(Moves.ABSORB);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     /**
      * Expect:
@@ -428,7 +430,7 @@ describe("Abilities - Magic Guard", () => {
     await game.startBattle([Species.MAGIKARP]);
     const leadPokemon = game.scene.getPlayerPokemon()!;
     game.move.select(Moves.SPLASH);
-    await game.phaseInterceptor.to(TurnEndPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     /**
      * Expect:
