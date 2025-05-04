@@ -4,15 +4,12 @@ import { GameModes, getGameMode } from "#app/game-mode";
 import { CommandPhase } from "#app/phases/command-phase";
 import { DamageAnimPhase } from "#app/phases/damage-anim-phase";
 import { EncounterPhase } from "#app/phases/encounter-phase";
-import { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
 import { LoginPhase } from "#app/phases/login-phase";
 import { NextEncounterPhase } from "#app/phases/next-encounter-phase";
 import { SelectGenderPhase } from "#app/phases/select-gender-phase";
-import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import { SelectStarterPhase } from "#app/phases/select-starter-phase";
 import { SummonPhase } from "#app/phases/summon-phase";
 import { TitlePhase } from "#app/phases/title-phase";
-import { TurnInitPhase } from "#app/phases/turn-init-phase";
 import GameManager from "#test/testUtils/gameManager";
 import { generateStarter } from "#test/testUtils/gameManagerUtils";
 import { UiMode } from "#enums/ui-mode";
@@ -89,14 +86,15 @@ describe("Test - Battle Phase", () => {
 
   it("do attack wave 3 - single battle - regular - OHKO", async () => {
     game.override
-      .enemySpecies(Species.RATTATA)
-      .startingLevel(2000)
-      .startingWave(3)
       .battleStyle("single")
-      .enemyMoveset(Moves.TACKLE);
+      .startingWave(3)
+      .startingLevel(2000)
+      .moveset(Moves.TACKLE)
+      .enemySpecies(Species.RATTATA);
     await game.classicMode.startBattle([Species.MEWTWO]);
+
     game.move.select(Moves.TACKLE);
-    await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(SelectModifierPhase, false);
+    await game.toNextWave();
   });
 
   it("do attack wave 3 - single battle - regular - NO OHKO with opponent using non damage attack", async () => {
@@ -104,13 +102,14 @@ describe("Test - Battle Phase", () => {
       .enemySpecies(Species.RATTATA)
       .startingLevel(5)
       .startingWave(3)
-      .moveset([Moves.TACKLE])
+      .moveset(Moves.TACKLE)
       .enemyAbility(Abilities.HYDRATION)
       .enemyMoveset(Moves.TAIL_WHIP)
       .battleStyle("single");
     await game.classicMode.startBattle([Species.MEWTWO]);
+
     game.move.select(Moves.TACKLE);
-    await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(TurnInitPhase, false);
+    await game.toNextWave();
   });
 
   it("load 100% data file", async () => {
@@ -124,9 +123,11 @@ describe("Test - Battle Phase", () => {
 
   it("start battle with selected team", async () => {
     await game.classicMode.startBattle([Species.CHARIZARD, Species.CHANSEY, Species.MEW]);
-    expect(game.scene.getPlayerParty()[0].species.speciesId).toBe(Species.CHARIZARD);
-    expect(game.scene.getPlayerParty()[1].species.speciesId).toBe(Species.CHANSEY);
-    expect(game.scene.getPlayerParty()[2].species.speciesId).toBe(Species.MEW);
+    expect(game.scene.getPlayerParty().map(pm => pm.species.speciesId)).toEqual([
+      Species.CHARIZARD,
+      Species.CHANSEY,
+      Species.MEW,
+    ]);
   });
 
   it("test remove random battle seed int", async () => {
