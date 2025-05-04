@@ -9,7 +9,7 @@ import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi, type MockInstance } from "vitest";
 
-describe("Moves - Moongeist Beam", () => {
+describe("Moves - Ability Ignores", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
   let flagSpy: MockInstance<
@@ -35,7 +35,7 @@ describe("Moves - Moongeist Beam", () => {
     game = new GameManager(phaserGame);
     game.override
       .moveset([Moves.MOONGEIST_BEAM, Moves.METRONOME])
-      .ability(Abilities.BALL_FETCH)
+      .ability(Abilities.STURDY)
       .startingLevel(200)
       .battleStyle("single")
       .disableCrits()
@@ -48,23 +48,23 @@ describe("Moves - Moongeist Beam", () => {
 
   /*** Check whether the enemy pokemon's ability was successfully ignored or not. */
   function expectEnemyAbilityIgnored(ignored: boolean) {
-    expect(game.scene.getEnemyPokemon()!.isFainted()).toBe(ignored);
-
     const lastPlayerIgnoreCheckIndex = flagSpy.mock.calls
       .reverse()
       .findIndex(
         ([value]) => value.flag === MoveFlags.IGNORE_ABILITIES && value.user.id === game.scene.getPlayerPokemon()?.id,
       );
-
     expect(flagSpy).toHaveNthReturnedWith(lastPlayerIgnoreCheckIndex, ignored);
   }
 
   it("should ignore enemy abilities", async () => {
     await game.classicMode.startBattle([Species.MILOTIC]);
 
+    const enemy = game.scene.getEnemyPokemon()!;
+
     game.move.select(Moves.MOONGEIST_BEAM);
     await game.phaseInterceptor.to("BerryPhase");
 
+    expect(enemy.isFainted()).toBe(true);
     expectEnemyAbilityIgnored(true);
   });
 
