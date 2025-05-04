@@ -9,7 +9,7 @@ import { WeatherType } from "#enums/weather-type";
 import type { PlayerPokemon } from "#app/field/pokemon";
 import { AttackTypeBoosterModifier } from "#app/modifier/modifier";
 import type { AttackTypeBoosterModifierType } from "#app/modifier/modifier-type";
-import { isNullOrUndefined } from "#app/utils/common";
+import { coerceArray, isNullOrUndefined } from "#app/utils/common";
 import type { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
@@ -270,7 +270,7 @@ export class TimeOfDayRequirement extends EncounterSceneRequirement {
 
   constructor(timeOfDay: TimeOfDay | TimeOfDay[]) {
     super();
-    this.requiredTimeOfDay = Array.isArray(timeOfDay) ? timeOfDay : [timeOfDay];
+    this.requiredTimeOfDay = coerceArray(timeOfDay);
   }
 
   override meetsRequirement(): boolean {
@@ -296,7 +296,7 @@ export class WeatherRequirement extends EncounterSceneRequirement {
 
   constructor(weather: WeatherType | WeatherType[]) {
     super();
-    this.requiredWeather = Array.isArray(weather) ? weather : [weather];
+    this.requiredWeather = coerceArray(weather);
   }
 
   override meetsRequirement(): boolean {
@@ -366,7 +366,7 @@ export class PersistentModifierRequirement extends EncounterSceneRequirement {
   constructor(heldItem: string | string[], minNumberOfItems = 1) {
     super();
     this.minNumberOfItems = minNumberOfItems;
-    this.requiredHeldItemModifiers = Array.isArray(heldItem) ? heldItem : [heldItem];
+    this.requiredHeldItemModifiers = coerceArray(heldItem);
   }
 
   override meetsRequirement(): boolean {
@@ -432,7 +432,7 @@ export class SpeciesRequirement extends EncounterPokemonRequirement {
     super();
     this.minNumberOfPokemon = minNumberOfPokemon;
     this.invertQuery = invertQuery;
-    this.requiredSpecies = Array.isArray(species) ? species : [species];
+    this.requiredSpecies = coerceArray(species);
   }
 
   override meetsRequirement(): boolean {
@@ -472,7 +472,7 @@ export class NatureRequirement extends EncounterPokemonRequirement {
     super();
     this.minNumberOfPokemon = minNumberOfPokemon;
     this.invertQuery = invertQuery;
-    this.requiredNature = Array.isArray(nature) ? nature : [nature];
+    this.requiredNature = coerceArray(nature);
   }
 
   override meetsRequirement(): boolean {
@@ -510,7 +510,7 @@ export class TypeRequirement extends EncounterPokemonRequirement {
     this.excludeFainted = excludeFainted;
     this.minNumberOfPokemon = minNumberOfPokemon;
     this.invertQuery = invertQuery;
-    this.requiredType = Array.isArray(type) ? type : [type];
+    this.requiredType = coerceArray(type);
   }
 
   override meetsRequirement(): boolean {
@@ -564,7 +564,7 @@ export class MoveRequirement extends EncounterPokemonRequirement {
     this.excludeDisallowedPokemon = excludeDisallowedPokemon;
     this.minNumberOfPokemon = minNumberOfPokemon;
     this.invertQuery = invertQuery;
-    this.requiredMoves = Array.isArray(moves) ? moves : [moves];
+    this.requiredMoves = coerceArray(moves);
   }
 
   override meetsRequirement(): boolean {
@@ -615,7 +615,7 @@ export class CompatibleMoveRequirement extends EncounterPokemonRequirement {
     super();
     this.minNumberOfPokemon = minNumberOfPokemon;
     this.invertQuery = invertQuery;
-    this.requiredMoves = Array.isArray(learnableMove) ? learnableMove : [learnableMove];
+    this.requiredMoves = coerceArray(learnableMove);
   }
 
   override meetsRequirement(): boolean {
@@ -671,7 +671,7 @@ export class AbilityRequirement extends EncounterPokemonRequirement {
     this.excludeDisallowedPokemon = excludeDisallowedPokemon;
     this.minNumberOfPokemon = minNumberOfPokemon;
     this.invertQuery = invertQuery;
-    this.requiredAbilities = Array.isArray(abilities) ? abilities : [abilities];
+    this.requiredAbilities = coerceArray(abilities);
   }
 
   override meetsRequirement(): boolean {
@@ -716,7 +716,7 @@ export class StatusEffectRequirement extends EncounterPokemonRequirement {
     super();
     this.minNumberOfPokemon = minNumberOfPokemon;
     this.invertQuery = invertQuery;
-    this.requiredStatusEffect = Array.isArray(statusEffect) ? statusEffect : [statusEffect];
+    this.requiredStatusEffect = coerceArray(statusEffect);
   }
 
   override meetsRequirement(): boolean {
@@ -791,7 +791,7 @@ export class CanFormChangeWithItemRequirement extends EncounterPokemonRequiremen
     super();
     this.minNumberOfPokemon = minNumberOfPokemon;
     this.invertQuery = invertQuery;
-    this.requiredFormChangeItem = Array.isArray(formChangeItem) ? formChangeItem : [formChangeItem];
+    this.requiredFormChangeItem = coerceArray(formChangeItem);
   }
 
   override meetsRequirement(): boolean {
@@ -852,7 +852,7 @@ export class CanEvolveWithItemRequirement extends EncounterPokemonRequirement {
     super();
     this.minNumberOfPokemon = minNumberOfPokemon;
     this.invertQuery = invertQuery;
-    this.requiredEvolutionItem = Array.isArray(evolutionItems) ? evolutionItems : [evolutionItems];
+    this.requiredEvolutionItem = coerceArray(evolutionItems);
   }
 
   override meetsRequirement(): boolean {
@@ -919,7 +919,7 @@ export class HeldItemRequirement extends EncounterPokemonRequirement {
     super();
     this.minNumberOfPokemon = minNumberOfPokemon;
     this.invertQuery = invertQuery;
-    this.requiredHeldItemModifiers = Array.isArray(heldItem) ? heldItem : [heldItem];
+    this.requiredHeldItemModifiers = coerceArray(heldItem);
     this.requireTransferable = requireTransferable;
   }
 
@@ -983,7 +983,7 @@ export class AttackTypeBoosterHeldItemTypeRequirement extends EncounterPokemonRe
     super();
     this.minNumberOfPokemon = minNumberOfPokemon;
     this.invertQuery = invertQuery;
-    this.requiredHeldItemTypes = Array.isArray(heldItemTypes) ? heldItemTypes : [heldItemTypes];
+    this.requiredHeldItemTypes = coerceArray(heldItemTypes);
     this.requireTransferable = requireTransferable;
   }
 
