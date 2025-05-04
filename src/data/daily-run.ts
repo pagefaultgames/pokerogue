@@ -31,6 +31,7 @@ export function getDailyRunStarters(seed: string): Starter[] {
       const startingLevel = globalScene.gameMode.getStartingLevel();
 
       if (/\d{18}$/.test(seed)) {
+        // If seed is all digits, parse them 6 at a time to get starter numbers.
         for (let s = 0; s < 3; s++) {
           const offset = 6 + s * 6;
           const starterSpeciesForm = getPokemonSpeciesForm(

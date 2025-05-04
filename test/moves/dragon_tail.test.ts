@@ -156,7 +156,7 @@ describe("Moves - Dragon Tail", () => {
     // Make sure the enemy has a fainted Pokemon in their party and not on the field
     const faintedEnemy = game.scene.getEnemyParty().find(p => !p.isAllowedInBattle());
     expect(faintedEnemy).toBeDefined();
-    expect(game.scene.getEnemyField().length).toBe(1);
+    expect(game.scene.getEnemyField()).toHaveLength(1);
   });
 
   it("should not cause a softlock when activating an opponent trainer's reviver seed", async () => {
@@ -174,7 +174,7 @@ describe("Moves - Dragon Tail", () => {
     const enemy = game.scene.getEnemyPokemon()!;
     expect(enemy).toBeDefined();
     expect(enemy.hp).toBe(Math.floor(enemy.getMaxHp() / 2));
-    expect(game.scene.getEnemyField().length).toBe(1);
+    expect(game.scene.getEnemyField()).toHaveLength(1);
   });
 
   it("should not cause a softlock when activating a player's reviver seed", async () => {
@@ -192,7 +192,7 @@ describe("Moves - Dragon Tail", () => {
     const dratini = game.scene.getPlayerPokemon()!;
     expect(dratini).toBeDefined();
     expect(dratini.hp).toBe(Math.floor(dratini.getMaxHp() / 2));
-    expect(game.scene.getPlayerField().length).toBe(1);
+    expect(game.scene.getPlayerField()).toHaveLength(1);
   });
 
   it("should force switches randomly", async () => {

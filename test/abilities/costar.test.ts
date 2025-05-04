@@ -24,16 +24,17 @@ describe("Abilities - COSTAR", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("double");
-    game.override.ability(Abilities.COSTAR);
-    game.override.moveset([Moves.SPLASH, Moves.NASTY_PLOT]);
-    game.override.enemyMoveset(Moves.SPLASH);
+    game.override
+      .battleStyle("double")
+      .ability(Abilities.COSTAR)
+      .moveset([Moves.SPLASH, Moves.NASTY_PLOT])
+      .enemyMoveset(Moves.SPLASH);
   });
 
   test("ability copies positive stat stages", async () => {
     game.override.enemyAbility(Abilities.BALL_FETCH);
 
-    await game.startBattle([Species.MAGIKARP, Species.MAGIKARP, Species.FLAMIGO]);
+    await game.classicMode.startBattle([Species.MAGIKARP, Species.MAGIKARP, Species.FLAMIGO]);
 
     let [leftPokemon, rightPokemon] = game.scene.getPlayerField();
 
@@ -58,7 +59,7 @@ describe("Abilities - COSTAR", () => {
   test("ability copies negative stat stages", async () => {
     game.override.enemyAbility(Abilities.INTIMIDATE);
 
-    await game.startBattle([Species.MAGIKARP, Species.MAGIKARP, Species.FLAMIGO]);
+    await game.classicMode.startBattle([Species.MAGIKARP, Species.MAGIKARP, Species.FLAMIGO]);
 
     let [leftPokemon, rightPokemon] = game.scene.getPlayerField();
 

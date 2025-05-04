@@ -27,17 +27,18 @@ describe("Moves - Hard Press", () => {
   beforeEach(() => {
     moveToCheck = allMoves[Moves.HARD_PRESS];
     game = new GameManager(phaserGame);
-    game.override.battleStyle("single");
-    game.override.ability(Abilities.BALL_FETCH);
-    game.override.enemySpecies(Species.MUNCHLAX);
-    game.override.enemyAbility(Abilities.BALL_FETCH);
-    game.override.enemyMoveset(Moves.SPLASH);
-    game.override.moveset([Moves.HARD_PRESS]);
+    game.override
+      .battleStyle("single")
+      .ability(Abilities.BALL_FETCH)
+      .enemySpecies(Species.MUNCHLAX)
+      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyMoveset(Moves.SPLASH)
+      .moveset([Moves.HARD_PRESS]);
     vi.spyOn(moveToCheck, "calculateBattlePower");
   });
 
   it("should return 100 power if target HP ratio is at 100%", async () => {
-    await game.startBattle([Species.PIKACHU]);
+    await game.classicMode.startBattle([Species.PIKACHU]);
 
     game.move.select(Moves.HARD_PRESS);
     await game.phaseInterceptor.to(MoveEffectPhase);
@@ -46,7 +47,7 @@ describe("Moves - Hard Press", () => {
   });
 
   it("should return 50 power if target HP ratio is at 50%", async () => {
-    await game.startBattle([Species.PIKACHU]);
+    await game.classicMode.startBattle([Species.PIKACHU]);
     const targetHpRatio = 0.5;
     const enemy = game.scene.getEnemyPokemon()!;
 
@@ -59,7 +60,7 @@ describe("Moves - Hard Press", () => {
   });
 
   it("should return 1 power if target HP ratio is at 1%", async () => {
-    await game.startBattle([Species.PIKACHU]);
+    await game.classicMode.startBattle([Species.PIKACHU]);
     const targetHpRatio = 0.01;
     const enemy = game.scene.getEnemyPokemon()!;
 
@@ -72,7 +73,7 @@ describe("Moves - Hard Press", () => {
   });
 
   it("should return 1 power if target HP ratio is less than 1%", async () => {
-    await game.startBattle([Species.PIKACHU]);
+    await game.classicMode.startBattle([Species.PIKACHU]);
     const targetHpRatio = 0.005;
     const enemy = game.scene.getEnemyPokemon()!;
 

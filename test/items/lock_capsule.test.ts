@@ -29,7 +29,7 @@ describe("Items - Lock Capsule", () => {
       .startingLevel(200)
       .moveset([Moves.SURF])
       .enemyAbility(Abilities.BALL_FETCH)
-      .startingModifier([{ name: "LOCK_CAPSULE" }]);
+      .startingModifiers([{ name: "LOCK_CAPSULE" }]);
   });
 
   it("doesn't set the cost of common tier items to 0", async () => {
@@ -49,5 +49,5 @@ describe("Items - Lock Capsule", () => {
 
     game.doSelectModifier();
     await game.phaseInterceptor.to("SelectModifierPhase");
-  }, 20000);
+  });
 });

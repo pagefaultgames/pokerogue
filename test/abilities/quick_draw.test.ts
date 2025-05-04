@@ -24,16 +24,15 @@ describe("Abilities - Quick Draw", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("single");
-
-    game.override.starterSpecies(Species.MAGIKARP);
-    game.override.ability(Abilities.QUICK_DRAW);
-    game.override.moveset([Moves.TACKLE, Moves.TAIL_WHIP]);
-
-    game.override.enemyLevel(100);
-    game.override.enemySpecies(Species.MAGIKARP);
-    game.override.enemyAbility(Abilities.BALL_FETCH);
-    game.override.enemyMoveset([Moves.TACKLE]);
+    game.override
+      .battleStyle("single")
+      .starterSpecies(Species.MAGIKARP)
+      .ability(Abilities.QUICK_DRAW)
+      .moveset([Moves.TACKLE, Moves.TAIL_WHIP])
+      .enemyLevel(100)
+      .enemySpecies(Species.MAGIKARP)
+      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyMoveset([Moves.TACKLE]);
 
     vi.spyOn(allAbilities[Abilities.QUICK_DRAW].getAttrs(BypassSpeedChanceAbAttr)[0], "chance", "get").mockReturnValue(
       100,
@@ -41,7 +40,7 @@ describe("Abilities - Quick Draw", () => {
   });
 
   test("makes pokemon going first in its priority bracket", async () => {
-    await game.startBattle();
+    await game.classicMode.startBattle();
 
     const pokemon = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;
@@ -55,7 +54,7 @@ describe("Abilities - Quick Draw", () => {
     expect(pokemon.isFainted()).toBe(false);
     expect(enemy.isFainted()).toBe(true);
     expect(pokemon.waveData.abilitiesApplied).contain(Abilities.QUICK_DRAW);
-  }, 20000);
+  });
 
   test(
     "does not triggered by non damage moves",
@@ -63,7 +62,7 @@ describe("Abilities - Quick Draw", () => {
       retry: 5,
     },
     async () => {
-      await game.startBattle();
+      await game.classicMode.startBattle();
 
       const pokemon = game.scene.getPlayerPokemon()!;
       const enemy = game.scene.getEnemyPokemon()!;
@@ -83,7 +82,7 @@ describe("Abilities - Quick Draw", () => {
   test("does not increase priority", async () => {
     game.override.enemyMoveset([Moves.EXTREME_SPEED]);
 
-    await game.startBattle();
+    await game.classicMode.startBattle();
 
     const pokemon = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;
@@ -97,5 +96,5 @@ describe("Abilities - Quick Draw", () => {
     expect(pokemon.isFainted()).toBe(true);
     expect(enemy.isFainted()).toBe(false);
     expect(pokemon.waveData.abilitiesApplied).contain(Abilities.QUICK_DRAW);
-  }, 20000);
+  });
 });

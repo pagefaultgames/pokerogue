@@ -24,26 +24,25 @@ describe("Abilities - Sturdy", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("single");
-
-    game.override.starterSpecies(Species.LUCARIO);
-    game.override.startingLevel(100);
-    game.override.moveset([Moves.CLOSE_COMBAT, Moves.FISSURE]);
-
-    game.override.enemySpecies(Species.ARON);
-    game.override.enemyLevel(5);
-    game.override.enemyAbility(Abilities.STURDY);
+    game.override
+      .battleStyle("single")
+      .starterSpecies(Species.LUCARIO)
+      .startingLevel(100)
+      .moveset([Moves.CLOSE_COMBAT, Moves.FISSURE])
+      .enemySpecies(Species.ARON)
+      .enemyLevel(5)
+      .enemyAbility(Abilities.STURDY);
   });
 
   test("Sturdy activates when user is at full HP", async () => {
-    await game.startBattle();
+    await game.classicMode.startBattle();
     game.move.select(Moves.CLOSE_COMBAT);
     await game.phaseInterceptor.to(MoveEndPhase);
     expect(game.scene.getEnemyParty()[0].hp).toBe(1);
   });
 
   test("Sturdy doesn't activate when user is not at full HP", async () => {
-    await game.startBattle();
+    await game.classicMode.startBattle();
 
     const enemyPokemon: EnemyPokemon = game.scene.getEnemyParty()[0];
     enemyPokemon.hp = enemyPokemon.getMaxHp() - 1;
@@ -56,7 +55,7 @@ describe("Abilities - Sturdy", () => {
   });
 
   test("Sturdy pokemon should be immune to OHKO moves", async () => {
-    await game.startBattle();
+    await game.classicMode.startBattle();
     game.move.select(Moves.FISSURE);
     await game.phaseInterceptor.to(MoveEndPhase);
 
@@ -67,7 +66,7 @@ describe("Abilities - Sturdy", () => {
   test("Sturdy is ignored by pokemon with `Abilities.MOLD_BREAKER`", async () => {
     game.override.ability(Abilities.MOLD_BREAKER);
 
-    await game.startBattle();
+    await game.classicMode.startBattle();
     game.move.select(Moves.CLOSE_COMBAT);
     await game.phaseInterceptor.to(DamageAnimPhase);
 

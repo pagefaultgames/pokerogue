@@ -61,7 +61,7 @@ describe("Moves - Fake Out", () => {
 
     const corv = game.scene.getEnemyPokemon()!;
     expect(corv).toBeDefined();
-    expect(corv?.hp).toBeLessThan(corv?.getMaxHp());
+    expect(corv.hp).toBeLessThan(corv.getMaxHp());
   });
 
   // This is a PokeRogue buff to Fake Out

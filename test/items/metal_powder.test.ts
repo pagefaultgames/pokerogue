@@ -82,7 +82,7 @@ describe("Items - Metal Powder", () => {
   });
 
   it("METAL_POWDER held by DITTO", async () => {
-    await game.startBattle([Species.DITTO]);
+    await game.classicMode.startBattle([Species.DITTO]);
 
     const partyMember = game.scene.getPlayerParty()[0];
 
@@ -102,10 +102,10 @@ describe("Items - Metal Powder", () => {
     game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.DEF, defValue);
 
     expect(defValue.value / defStat).toBe(2);
-  }, 20000);
+  });
 
   it("METAL_POWDER held by fused DITTO (base)", async () => {
-    await game.startBattle([Species.DITTO, Species.MAROWAK]);
+    await game.classicMode.startBattle([Species.DITTO, Species.MAROWAK]);
 
     const partyMember = game.scene.getPlayerParty()[0];
     const ally = game.scene.getPlayerParty()[1];
@@ -135,10 +135,10 @@ describe("Items - Metal Powder", () => {
     game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.DEF, defValue);
 
     expect(defValue.value / defStat).toBe(2);
-  }, 20000);
+  });
 
   it("METAL_POWDER held by fused DITTO (part)", async () => {
-    await game.startBattle([Species.MAROWAK, Species.DITTO]);
+    await game.classicMode.startBattle([Species.MAROWAK, Species.DITTO]);
 
     const partyMember = game.scene.getPlayerParty()[0];
     const ally = game.scene.getPlayerParty()[1];
@@ -168,10 +168,10 @@ describe("Items - Metal Powder", () => {
     game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.DEF, defValue);
 
     expect(defValue.value / defStat).toBe(2);
-  }, 20000);
+  });
 
   it("METAL_POWDER not held by DITTO", async () => {
-    await game.startBattle([Species.MAROWAK]);
+    await game.classicMode.startBattle([Species.MAROWAK]);
 
     const partyMember = game.scene.getPlayerParty()[0];
 
@@ -191,5 +191,5 @@ describe("Items - Metal Powder", () => {
     game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.DEF, defValue);
 
     expect(defValue.value / defStat).toBe(1);
-  }, 20000);
+  });
 });

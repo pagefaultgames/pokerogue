@@ -56,10 +56,7 @@ describe("Moves - Transform", () => {
     }
 
     expect(player.getStatStages()).toEqual(enemy.getStatStages());
-
-    // move IDs are equal
     expect(player.getMoveset().map(m => m.moveId)).toEqual(enemy.getMoveset().map(m => m.moveId));
-
     expect(player.getTypes()).toEqual(enemy.getTypes());
   });
 
@@ -154,8 +151,7 @@ describe("Moves - Transform", () => {
   });
 
   it("should stay transformed with the correct form after reload", async () => {
-    game.override.enemyMoveset([]).moveset([]);
-    game.override.enemySpecies(Species.DARMANITAN);
+    game.override.enemyMoveset([]).moveset([]).enemySpecies(Species.DARMANITAN);
 
     await game.classicMode.startBattle([Species.DITTO]);
 

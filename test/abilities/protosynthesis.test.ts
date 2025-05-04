@@ -37,7 +37,7 @@ describe("Abilities - Protosynthesis", () => {
   it("should not consider temporary items when determining which stat to boost", async () => {
     // Mew has uniform base stats
     game.override
-      .startingModifier([{ name: "TEMP_STAT_STAGE_BOOSTER", type: Stat.DEF }])
+      .startingModifiers([{ name: "TEMP_STAT_STAGE_BOOSTER", type: Stat.DEF }])
       .enemyMoveset(Moves.SUNNY_DAY)
       .startingLevel(100)
       .enemyLevel(100);

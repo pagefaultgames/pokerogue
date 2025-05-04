@@ -22,15 +22,14 @@ describe("Abilities - Sand Spit", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("single");
-    game.override.disableCrits();
-
-    game.override.enemySpecies(Species.MAGIKARP);
-    game.override.enemyAbility(Abilities.BALL_FETCH);
-
-    game.override.starterSpecies(Species.SILICOBRA);
-    game.override.ability(Abilities.SAND_SPIT);
-    game.override.moveset([Moves.SPLASH, Moves.COIL]);
+    game.override
+      .battleStyle("single")
+      .disableCrits()
+      .enemySpecies(Species.MAGIKARP)
+      .enemyAbility(Abilities.BALL_FETCH)
+      .starterSpecies(Species.SILICOBRA)
+      .ability(Abilities.SAND_SPIT)
+      .moveset([Moves.SPLASH, Moves.COIL]);
   });
 
   it("should trigger when hit with damaging move", async () => {
@@ -41,7 +40,7 @@ describe("Abilities - Sand Spit", () => {
     await game.toNextTurn();
 
     expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.SANDSTORM);
-  }, 20000);
+  });
 
   it("should trigger even when fainting", async () => {
     game.override.enemyMoveset([Moves.TACKLE]).enemyLevel(100).startingLevel(1);
@@ -62,5 +61,5 @@ describe("Abilities - Sand Spit", () => {
     await game.toNextTurn();
 
     expect(game.scene.arena.weather?.weatherType).not.toBe(WeatherType.SANDSTORM);
-  }, 20000);
+  });
 });

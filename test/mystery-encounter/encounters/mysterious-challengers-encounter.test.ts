@@ -43,10 +43,11 @@ describe("Mysterious Challengers - Mystery Encounter", () => {
   beforeEach(async () => {
     game = new GameManager(phaserGame);
     scene = game.scene;
-    game.override.mysteryEncounterChance(100);
-    game.override.startingWave(defaultWave);
-    game.override.startingBiome(defaultBiome);
-    game.override.disableTrainerWaves();
+    game.override
+      .mysteryEncounterChance(100)
+      .startingWave(defaultWave)
+      .startingBiome(defaultBiome)
+      .disableTrainerWaves();
 
     const biomeMap = new Map<Biome, MysteryEncounterType[]>([[Biome.VOLCANO, [MysteryEncounterType.FIGHT_OR_FLIGHT]]]);
     HUMAN_TRANSITABLE_BIOMES.forEach(biome => {
@@ -57,8 +58,6 @@ describe("Mysterious Challengers - Mystery Encounter", () => {
 
   afterEach(() => {
     game.phaseInterceptor.restoreOg();
-    vi.clearAllMocks();
-    vi.resetAllMocks();
   });
 
   it("should have the correct properties", async () => {
@@ -73,12 +72,11 @@ describe("Mysterious Challengers - Mystery Encounter", () => {
       `${namespace}:description`,
     );
     expect(MysteriousChallengersEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}:query`);
-    expect(MysteriousChallengersEncounter.options.length).toBe(3);
+    expect(MysteriousChallengersEncounter.options).toHaveLength(3);
   });
 
   it("should not spawn outside of HUMAN_TRANSITABLE_BIOMES", async () => {
-    game.override.mysteryEncounterTier(MysteryEncounterTier.GREAT);
-    game.override.startingBiome(Biome.VOLCANO);
+    game.override.mysteryEncounterTier(MysteryEncounterTier.GREAT).startingBiome(Biome.VOLCANO);
     await game.runToMysteryEncounter();
 
     expect(scene.currentBattle?.mysteryEncounter?.encounterType).not.toBe(MysteryEncounterType.MYSTERIOUS_CHALLENGERS);
@@ -98,7 +96,7 @@ describe("Mysterious Challengers - Mystery Encounter", () => {
     const onInitResult = onInit!();
 
     expect(encounter.enemyPartyConfigs).toBeDefined();
-    expect(encounter.enemyPartyConfigs.length).toBe(3);
+    expect(encounter.enemyPartyConfigs).toHaveLength(3);
     expect(encounter.enemyPartyConfigs).toEqual([
       {
         trainerConfig: expect.any(TrainerConfig),
@@ -129,7 +127,7 @@ describe("Mysterious Challengers - Mystery Encounter", () => {
       ),
     );
     expect(encounter.spriteConfigs).toBeDefined();
-    expect(encounter.spriteConfigs.length).toBe(3);
+    expect(encounter.spriteConfigs).toHaveLength(3);
     expect(onInitResult).toBe(true);
   });
 

@@ -27,28 +27,28 @@ describe("Items - Double Battle Chance Boosters", () => {
   });
 
   it("should guarantee double battle with 2 unique tiers", async () => {
-    game.override.startingModifier([{ name: "LURE" }, { name: "SUPER_LURE" }]).startingWave(2);
+    game.override.startingModifiers([{ name: "LURE" }, { name: "SUPER_LURE" }]).startingWave(2);
 
     await game.classicMode.startBattle();
 
-    expect(game.scene.getEnemyField().length).toBe(2);
+    expect(game.scene.getEnemyField()).toHaveLength(2);
   });
 
   it("should guarantee double boss battle with 3 unique tiers", async () => {
-    game.override.startingModifier([{ name: "LURE" }, { name: "SUPER_LURE" }, { name: "MAX_LURE" }]).startingWave(10);
+    game.override.startingModifiers([{ name: "LURE" }, { name: "SUPER_LURE" }, { name: "MAX_LURE" }]).startingWave(10);
 
     await game.classicMode.startBattle();
 
     const enemyField = game.scene.getEnemyField();
 
-    expect(enemyField.length).toBe(2);
+    expect(enemyField).toHaveLength(2);
     expect(enemyField[0].isBoss()).toBe(true);
     expect(enemyField[1].isBoss()).toBe(true);
   });
 
   it("should renew how many battles are left of existing booster when picking up new booster of same tier", async () => {
     game.override
-      .startingModifier([{ name: "LURE" }])
+      .startingModifiers([{ name: "LURE" }])
       .itemRewards([{ name: "LURE" }])
       .moveset(Moves.SPLASH)
       .startingLevel(200);

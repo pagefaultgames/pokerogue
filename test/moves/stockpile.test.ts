@@ -27,19 +27,18 @@ describe("Moves - Stockpile", () => {
     beforeEach(() => {
       game = new GameManager(phaserGame);
 
-      game.override.battleStyle("single");
-
-      game.override.enemySpecies(Species.RATTATA);
-      game.override.enemyMoveset(Moves.SPLASH);
-      game.override.enemyAbility(Abilities.NONE);
-
-      game.override.startingLevel(2000);
-      game.override.moveset([Moves.STOCKPILE, Moves.SPLASH]);
-      game.override.ability(Abilities.NONE);
+      game.override
+        .battleStyle("single")
+        .enemySpecies(Species.RATTATA)
+        .enemyMoveset(Moves.SPLASH)
+        .enemyAbility(Abilities.NONE)
+        .startingLevel(2000)
+        .moveset([Moves.STOCKPILE, Moves.SPLASH])
+        .ability(Abilities.NONE);
     });
 
     it("gains a stockpile stack and raises user's DEF and SPDEF stat stages by 1 on each use, fails at max stacks (3)", async () => {
-      await game.startBattle([Species.ABOMASNOW]);
+      await game.classicMode.startBattle([Species.ABOMASNOW]);
 
       const user = game.scene.getPlayerPokemon()!;
 
@@ -83,7 +82,7 @@ describe("Moves - Stockpile", () => {
     });
 
     it("gains a stockpile stack even if user's DEF and SPDEF stat stages are at +6", async () => {
-      await game.startBattle([Species.ABOMASNOW]);
+      await game.classicMode.startBattle([Species.ABOMASNOW]);
 
       const user = game.scene.getPlayerPokemon()!;
 
