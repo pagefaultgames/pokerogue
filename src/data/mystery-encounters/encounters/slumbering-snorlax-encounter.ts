@@ -133,14 +133,12 @@ export const SlumberingSnorlaxEncounter: MysteryEncounter = MysteryEncounterBuil
         guaranteedModifierTypeFuncs: [modifierTypes.LEFTOVERS],
         fillRemaining: true,
       });
-      encounter.startOfBattleEffects.push(
-        {
-          sourceBattlerIndex: BattlerIndex.ENEMY,
-          targets: [BattlerIndex.PLAYER],
-          move: new PokemonMove(Moves.SNORE),
-          ignorePp: true,
-        },
-      );
+      encounter.startOfBattleEffects.push({
+        sourceBattlerIndex: BattlerIndex.ENEMY,
+        targets: [BattlerIndex.PLAYER],
+        move: new PokemonMove(Moves.SNORE),
+        ignorePp: true,
+      });
       await initBattleWithEnemyConfig(encounter.enemyPartyConfigs[0]);
     },
   )

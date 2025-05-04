@@ -85,7 +85,11 @@ describe("Abilities - Magic Guard", () => {
   });
 
   it("should prevent burn damage but not attack drop", async () => {
-    game.override.moveset(Moves.WILL_O_WISP).enemyMoveset(Moves.TACKLE).enemyPassiveAbility(Abilities.NO_GUARD);
+    game.override
+      .moveset(Moves.WILL_O_WISP)
+      .enemyMoveset(Moves.TACKLE)
+      .enemyAbility(Abilities.MAGIC_GUARD)
+      .enemyPassiveAbility(Abilities.NO_GUARD);
     await game.classicMode.startBattle([Species.GRANBULL]);
 
     const granbull = game.scene.getPlayerPokemon()!;
