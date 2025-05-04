@@ -51,6 +51,10 @@ export enum BattlerTagLapseType {
   MOVE,
   PRE_MOVE,
   AFTER_MOVE,
+  /**
+   * TODO: Stop treating this like a catch-all "semi invulnerability" tag;
+   * we may want to use this for other stuff later
+   */
   MOVE_EFFECT,
   TURN_END,
   HIT,
@@ -61,7 +65,7 @@ export enum BattlerTagLapseType {
 
 export class BattlerTag {
   public tagType: BattlerTagType;
-  public lapseTypes: BattlerTagLapseType[];
+  public lapseTypes: BattlerTagLapseType[]; // TODO: Make this a set
   public turnCount: number;
   public sourceMove: Moves;
   public sourceId?: number;
@@ -94,7 +98,7 @@ export class BattlerTag {
   onOverlap(_pokemon: Pokemon): void {}
 
   /**
-   * Tick down this {@linkcode BattlerTag}'s duration.
+   * Trigger and tick down this {@linkcode BattlerTag}'s duration.
    * @returns `true` if the tag should be kept (`turnCount` > 0`)
    */
   lapse(_pokemon: Pokemon, _lapseType: BattlerTagLapseType): boolean {
@@ -151,17 +155,6 @@ export interface TerrainBattlerTag {
  * Players and enemies should not be allowed to select restricted moves.
  */
 export abstract class MoveRestrictionBattlerTag extends BattlerTag {
-  constructor(
-    tagType: BattlerTagType,
-    lapseType: BattlerTagLapseType | BattlerTagLapseType[],
-    turnCount: number,
-    sourceMove?: Moves,
-    sourceId?: number,
-  ) {
-    super(tagType, lapseType, turnCount, sourceMove, sourceId);
-  }
-
-  /** @override */
   override lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     if (lapseType === BattlerTagLapseType.PRE_MOVE) {
       // Cancel the affected pokemon's selected move
@@ -1476,10 +1469,6 @@ export class WrapTag extends DamagingTrapTag {
 }
 
 export abstract class VortexTrapTag extends DamagingTrapTag {
-  constructor(tagType: BattlerTagType, commonAnim: CommonAnim, turnCount: number, sourceMove: Moves, sourceId: number) {
-    super(tagType, commonAnim, turnCount, sourceMove, sourceId);
-  }
-
   getTrapMessage(pokemon: Pokemon): string {
     return i18next.t("battlerTags:vortexOnTrap", {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
@@ -3422,7 +3411,8 @@ export class PsychoShiftTag extends BattlerTag {
 }
 
 /**
- * Tag associated with the move Magic Coat.
+ * Tag associated with {@linkcode Moves.MAGIC_COAT | Magic Coat} that reflects certain status moves directed at the user.
+ * TODO: Move Reflection code out of `move-effect-phase` and into here
  */
 export class MagicCoatTag extends BattlerTag {
   constructor() {

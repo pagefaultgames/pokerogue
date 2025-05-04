@@ -377,19 +377,20 @@ export class MovePhase extends BattlePhase {
     const failedDueToTerrain = globalScene.arena.isMoveTerrainCancelled(this.pokemon, this.targets, move);
     success &&= passesConditions && !failedDueToWeather && !failedDueToTerrain;
 
-    // Update the battle's "last move" pointer, unless we're currently mimicking a move
-    // or the move failed
-    if (!allMoves[this.move.moveId].hasAttr(CopyMoveAttr) && success) {
+    if (!success) {
+      this.failMove(failedDueToWeather, failedDueToTerrain);
+      return;
+    }
+
+    // Update the battle's "last move" pointer unless we're currently mimicking a move or triggering Dancer.
+    // TODO: Research how Copycat interacts with the final attacking turn of Future Sight and co.
+    if (!allMoves[this.move.moveId].hasAttr(CopyMoveAttr) && this.useType !== MoveUseType.INDIRECT) {
       globalScene.currentBattle.lastMove = this.move.moveId;
     }
 
-    // If the move has not failed, trigger ability-based user type changes and then execute its effects.
-    if (success) {
-      applyPreAttackAbAttrs(PokemonTypeChangeAbAttr, this.pokemon, null, move);
-      globalScene.unshiftPhase(new MoveEffectPhase(this.pokemon.getBattlerIndex(), this.targets, move, this.useType));
-    } else {
-      this.failMove(failedDueToWeather, failedDueToTerrain);
-    }
+    // trigger ability-based user type changes and then execute move effects.
+    applyPreAttackAbAttrs(PokemonTypeChangeAbAttr, this.pokemon, null, move);
+    globalScene.unshiftPhase(new MoveEffectPhase(this.pokemon.getBattlerIndex(), this.targets, move, this.useType));
   }
 
   /**

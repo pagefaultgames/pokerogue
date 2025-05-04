@@ -422,6 +422,7 @@ export default class GameManager {
   /** Transition to the next upcoming {@linkcode CommandPhase} */
   async toNextTurn() {
     await this.phaseInterceptor.to(CommandPhase);
+    console.log("==================[New Turn]==================");
   }
 
   /**
@@ -431,6 +432,7 @@ export default class GameManager {
   async toNextWave() {
     this.doSelectModifier();
 
+    // forcibly end the message box for switching pokemon
     this.onNextPrompt(
       "CheckSwitchPhase",
       UiMode.CONFIRM,
@@ -441,7 +443,8 @@ export default class GameManager {
       () => this.isCurrentPhase(TurnInitPhase),
     );
 
-    await this.toNextTurn();
+    await this.phaseInterceptor.to(CommandPhase);
+    console.log("==================[New Wave]==================");
   }
 
   /**

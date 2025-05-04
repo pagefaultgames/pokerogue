@@ -123,6 +123,7 @@ describe("Moves - Last Resort", () => {
       expect.objectContaining({
         move: Moves.SLEEP_TALK,
         result: MoveResult.SUCCESS,
+        useType: MoveUseType.NORMAL,
       }),
     ]);
   });

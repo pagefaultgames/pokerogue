@@ -643,7 +643,9 @@ export default class Move implements Localizable {
     target?: Pokemon;
     isFollowUp?: boolean;
   }): boolean {
-    // special cases below, eg: if the move flag is MAKES_CONTACT, and the user pokemon has an ability that ignores contact (like "Long Reach"), then overrides and move does not make contact
+    // Handle special cases
+
+    // Abilities that ignores contact (Long Reach) and substitute blockages
     switch (flag) {
       case MoveFlags.MAKES_CONTACT:
         if (user.hasAbilityWithAttr(IgnoreContactAbAttr) || this.hitsSubstitute(user, target)) {
@@ -1501,7 +1503,7 @@ export class TargetHalfHpDamageAttr extends FixedDamageAttr {
     super(0);
   }
 
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: [NumberHolder]): boolean {
     // first, determine if the hit is coming from multi lens or not
     const lensCount = user.getHeldItems().find(i => i instanceof PokemonMultiHitModifier)?.getStackCount() ?? 0;
     if (lensCount <= 0) {
@@ -1517,11 +1519,11 @@ export class TargetHalfHpDamageAttr extends FixedDamageAttr {
         this.initialHp = target.hp;
       default:
         // multi lens added hit; use initialHp tracker to ensure correct damage
-        (args[0] as NumberHolder).value = toDmgValue(this.initialHp / 2);
+        args[0].value = toDmgValue(this.initialHp / 2);
         return true;
       case lensCount + 1:
         // parental bond added hit; calc damage as normal
-        (args[0] as NumberHolder).value = toDmgValue(target.hp / 2);
+        args[0].value = toDmgValue(target.hp / 2);
         return true;
     }
   }
@@ -3785,20 +3787,6 @@ export class MovePowerMultiplierAttr extends VariablePowerAttr {
   }
 }
 
-// Stomping Tantrum ignores all dancer invoked moves.
-const stompingTantrumDoublePowerFunc = (user: Pokemon): number => {
-  // TODO: Does this include Copycat???
-  const lastNonDancerMove = user.getLastXMoves(-1).filter(m => m.useType !== MoveUseType.INDIRECT)[1] as TurnMove | undefined;
-  if (!lastNonDancerMove) {
-    return 1;
-  }
-
-  return lastNonDancerMove.result === MoveResult.MISS || user.getLastXMoves(2)[1]?.result === MoveResult.FAIL ? 2 : 1),
-
-  return 1
-}
-
-
 /**
  * Helper function to calculate the the base power of an ally's hit when using Beat Up.
  * @param user The Pokemon that used Beat Up.
@@ -5492,9 +5480,12 @@ export class FrenzyAttr extends MoveEffectAttr {
     }
 
     // If move is being used via Dancer, skip frenzy application entirely.
-    // Applies to Petal Dance and _literally_ nothing else/
+    // Applies to Petal Dance and _literally_ nothing else.
+    // TODO: If Dancer turns off any other things, perhaps separate it into a separate condition...?
     const currentMove = user.getLastXMoves(1)[0];
-    if (currentMove.move !== Moves.NONE && currentMove.useType === MoveUseType.INDIRECT) {}
+    if (currentMove.move !== Moves.NONE && currentMove.useType === MoveUseType.INDIRECT) {
+      return true;
+    }
 
     // If frenzy is not in effect and we don't have anything queued up,
     // add 1-2 extra instances of the move to the move queue.
@@ -7082,14 +7073,15 @@ export class CopyMoveAttr extends CallMoveAttr {
   apply(user: Pokemon, target: Pokemon, _move: Move, args: any[]): boolean {
     this.hasTarget = this.mirrorMove;
     // TODO: Confirm mirror move interaction with full para-induced blockage
-    const lastMove = this.mirrorMove ? target.getLastXMoves()[0].move : globalScene.currentBattle.lastMove;
+    // TODO: Confirm whether Mirror Move and co. can copy struggle
+    const lastMove = this.mirrorMove ? target.getLastNonVirtualMove(false, true)!.move : globalScene.currentBattle.lastMove;
     return super.apply(user, target, allMoves[lastMove], args);
   }
 
   getCondition(): MoveConditionFunc {
     return (_user, target, _move) => {
-      const lastMove = this.mirrorMove ? target.getLastXMoves()[0]?.move : globalScene.currentBattle.lastMove;
-      return !!lastMove && !this.invalidMoves.has(lastMove);
+      const lastMove = this.mirrorMove ? target.getLastNonVirtualMove(false, true)?.move : globalScene.currentBattle.lastMove;
+      return !isNullOrUndefined(lastMove) && !this.invalidMoves.has(lastMove);
     };
   }
 }
@@ -7105,34 +7097,41 @@ export class RepeatMoveAttr extends MoveEffectAttr {
   }
 
   /**
-   * Forces the target to re-use their last used move again
-   *
-   * @param user {@linkcode Pokemon} that used the attack
-   * @param target {@linkcode Pokemon} targeted by the attack
-   * @param move N/A
-   * @param args N/A
+   * Forces the target to re-use their last used move again.
+   * @param user - The {@linkcode Pokemon} using the attack
+   * @param target - The {@linkcode Pokemon} being targeted by the attack
    * @returns `true` if the move succeeds
    */
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+  apply(user: Pokemon, target: Pokemon): boolean {
     // get the last move used (excluding status based failures) as well as the corresponding moveset slot
-    const lastMove = target.getLastNonVirtualMove()!;
-    const movesetMove = target.getMoveset().find(m => m.moveId === lastMove.move)!;
+    // TODO: How does instruct work when copying a move called via Copycat that the user itself knows
+    const lastMove = target.getLastNonVirtualMove();
+    const movesetMove = target.getMoveset().find(m => m.moveId === lastMove?.move)
+
+    // never happens due to condition func, but makes TS compiler not sad
+    if (!lastMove || !movesetMove) {
+      return false;
+    }
+
     // If the last move used can hit more than one target or has variable targets,
-    // re-compute the targets for the attack
-    // (mainly for alternating double/single battle shenanigans)
-    // Rampaging moves (e.g. Outrage) are not included due to being incompatible with Instruct
-    // TODO: Fix this once dragon darts gets smart targeting
+    // re-compute the targets for the attack (mainly for alternating double/single battles)
+    // Rampaging moves (e.g. Outrage) are not included due to being incompatible with Instruct,
+    // nor is Dragon Darts (due to handling its smart targeting entirely within `MoveEffectPhase`)
     let moveTargets = movesetMove.getMove().isMultiTarget() ? getMoveTargets(target, lastMove.move).targets : lastMove.targets;
 
-    /** In the event the instructed move's only target is a fainted opponent, redirect it to an alive ally if possible.
-    Normally, all yet-unexecuted move phases would swap over when the enemy in question faints
-    (see `redirectPokemonMoves` in `battle-scene.ts`),
-    but since instruct adds a new move phase pre-emptively, we need to handle this interaction manually.
-    */
+    // In the event the instructed move's only target is a fainted opponent, redirect it to an alive ally if possible.
+    // Normally, all yet-unexecuted move phases would swap targets after any foe faints or flees (see `redirectPokemonMoves` in `battle-scene.ts`),
+    // but since Instruct adds a new move phase _after_ all that occurs, we need to handle this interaction manually.
     const firstTarget = globalScene.getField()[moveTargets[0]];
-    if (globalScene.currentBattle.double && moveTargets.length === 1 && firstTarget.isFainted() && firstTarget !== target.getAlly()) {
+    if (
+      globalScene.currentBattle.double // double battle
+      && moveTargets.length === 1
+      && firstTarget.isFainted()
+      && firstTarget !== target.getAlly()
+    ) {
       const ally = firstTarget.getAlly();
-      if (!isNullOrUndefined(ally) && ally.isActive()) { // ally exists, is not dead and can sponge the blast
+      if (!isNullOrUndefined(ally) && ally.isActive()) {
+        // ally exists, is not dead and can sponge the blast
         moveTargets = [ ally.getBattlerIndex() ];
       }
     }
@@ -7147,7 +7146,8 @@ export class RepeatMoveAttr extends MoveEffectAttr {
   }
 
   getCondition(): MoveConditionFunc {
-    return (user, target, move) => {
+    return (_user, target, _move) => {
+      // TODO: Check instruct behavior with struggle - ignore, fail or success
       const lastMove = target.getLastNonVirtualMove();
       const movesetMove = target.getMoveset().find(m => m.moveId === lastMove?.move);
       const uninstructableMoves = [
@@ -7207,8 +7207,7 @@ export class RepeatMoveAttr extends MoveEffectAttr {
 
       if (!lastMove?.move // no move to instruct
         || !movesetMove // called move not in target's moveset (forgetting the move, etc.)
-        || movesetMove.ppUsed === movesetMove.getMovePp() // move out of pp
-        || allMoves[lastMove.move].isChargingMove() // called move is a charging/recharging move
+        || !movesetMove.isUsable(target) // Move unusable due to PP shortage or similar
         || uninstructableMoves.includes(lastMove.move)) { // called move is in the banlist
         return false;
       }
@@ -8681,7 +8680,8 @@ export function initMoves() {
     new SelfStatusMove(Moves.METRONOME, PokemonType.NORMAL, -1, 10, -1, 0, 1)
       .attr(RandomMoveAttr, invalidMetronomeMoves),
     new StatusMove(Moves.MIRROR_MOVE, PokemonType.FLYING, -1, 20, -1, 0, 1)
-      .attr(CopyMoveAttr, true, invalidMirrorMoveMoves),
+      .attr(CopyMoveAttr, true, invalidMirrorMoveMoves)
+      .edgeCase(), // May or may not have incorrect interactions with Struggle
     new AttackMove(Moves.SELF_DESTRUCT, PokemonType.NORMAL, MoveCategory.PHYSICAL, 200, 100, 5, -1, 0, 1)
       .attr(SacrificialAttr)
       .makesContact(false)
@@ -9550,7 +9550,8 @@ export function initMoves() {
       .target(MoveTarget.NEAR_ENEMY)
       .unimplemented(),
     new SelfStatusMove(Moves.COPYCAT, PokemonType.NORMAL, -1, 20, -1, 0, 4)
-      .attr(CopyMoveAttr, false, invalidCopycatMoves),
+    .attr(CopyMoveAttr, false, invalidCopycatMoves)
+      .edgeCase(), // May or may not have incorrect interactions with Struggle
     new StatusMove(Moves.POWER_SWAP, PokemonType.PSYCHIC, -1, 10, 100, 0, 4)
       .attr(SwapStatStagesAttr, [ Stat.ATK, Stat.SPATK ])
       .ignoresSubstitute(),
@@ -9920,7 +9921,13 @@ export function initMoves() {
       .chargeAttr(SemiInvulnerableAttr, BattlerTagType.FLYING)
       .condition(failOnGravityCondition)
       .condition((user, target, move) => !target.getTag(BattlerTagType.SUBSTITUTE))
-      .partial(), // Should immobilize the target, Flying types should take no damage. cf https://bulbapedia.bulbagarden.net/wiki/Sky_Drop_(move) and https://www.smogon.com/dex/sv/moves/sky-drop/
+      .partial(),
+      /* Cf https://bulbapedia.bulbagarden.net/wiki/Sky_Drop_(move) and https://www.smogon.com/dex/sv/moves/sky-drop/:
+       * Should immobilize and give target semi-invulnerability
+       * Flying types should take no damage
+       * Should fail on targets above a certain weight threshold
+       * Should remove all redirection effects on successful takeoff (Rage Poweder, etc.)
+      */
     new SelfStatusMove(Moves.SHIFT_GEAR, PokemonType.STEEL, -1, 10, -1, 0, 5)
       .attr(StatStageChangeAttr, [ Stat.ATK ], 1, true)
       .attr(StatStageChangeAttr, [ Stat.SPD ], 2, true),
@@ -10491,10 +10498,10 @@ export function initMoves() {
     new StatusMove(Moves.INSTRUCT, PokemonType.PSYCHIC, -1, 15, -1, 0, 7)
       .ignoresSubstitute()
       .attr(RepeatMoveAttr)
-      // incorrect interactions with Gigaton Hammer, Blood Moon & Torment
-      // Also has incorrect interactions with Dancer due to the latter
-      // erroneously adding copied moves to move history.
       .edgeCase(),
+      // incorrect interactions with Gigaton Hammer, Blood Moon & Torment due to them making moves _fail on use_,
+      // not merely unselectable.
+      // Also my or may not have incorrect interactions with Struggle (needs verification).
     new AttackMove(Moves.BEAK_BLAST, PokemonType.FLYING, MoveCategory.PHYSICAL, 100, 100, 15, -1, -3, 7)
       .attr(BeakBlastHeaderAttr)
       .ballBombMove()
@@ -10551,7 +10558,11 @@ export function initMoves() {
       .bitingMove()
       .attr(RemoveScreensAttr),
     new AttackMove(Moves.STOMPING_TANTRUM, PokemonType.GROUND, MoveCategory.PHYSICAL, 75, 100, 10, -1, 0, 7)
-      .attr(MovePowerMultiplierAttr, stompingTantrumDoublePowerFunc),
+      .attr(MovePowerMultiplierAttr, (user) => {
+        // TODO: Verify if Stomping Tantrum skips dancer moves and/or copied moves
+        const lastNonDancerMove = user.getLastXMoves(-1).filter(m => m.useType !== MoveUseType.INDIRECT)[1] as TurnMove | undefined;
+        return lastNonDancerMove && (lastNonDancerMove.result === MoveResult.MISS || lastNonDancerMove.result === MoveResult.FAIL) ? 2 : 1
+      }),
     new AttackMove(Moves.SHADOW_BONE, PokemonType.GHOST, MoveCategory.PHYSICAL, 85, 100, 10, 20, 0, 7)
       .attr(StatStageChangeAttr, [ Stat.DEF ], -1)
       .makesContact(false),

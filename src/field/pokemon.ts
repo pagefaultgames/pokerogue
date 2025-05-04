@@ -5114,7 +5114,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Returns a list of the most recent move entries in this Pokemon's move history.
    * The retrieved move entries are sorted in order from NEWEST to OLDEST.
-   * @param moveCount The number of move entries to retrieve.
+   * @param moveCount The number of move entries to retrieve.\
    *   If negative, retrieves the Pokemon's entire move history (equivalent to reversing the output of {@linkcode getMoveHistory()}).
    *   Default is `1`.
    * @returns A list of {@linkcode TurnMove}, as specified above.
@@ -5130,15 +5130,22 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Return the most recently {@linkcode TurnMove} this Pokemon used that is:
+   * Return the most recently executed {@linkcode TurnMove} this {@linkcode Pokemon} has used that is:
    * - Not {@linkcode Moves.NONE}
-   * - Non-virtual ({@linkcode MoveUseType} < {@linkcode MoveUseType.INDIRECT})
+   * - Non-virtual ({@linkcode MoveUseType | useType} < {@linkcode MoveUseType.INDIRECT})
    * @param ignoreStruggle - Whether to additionally ignore {@linkcode Moves.STRUGGLE}; default `false`
-   * @returns The last move this pokemon used satisfying the above conditions,
-   * or `undefined` if no regular moves have been used since switching in
+   * @param ignoreFollowUp - Whether to ignore moves with a use type of {@linkcode MoveUseType.FOLLOW_UP}
+   * (Copycat, Mirror Move, etc.); default `true`
+   * @returns The last move this Pokemon has used satisfying the aforementioned conditions,
+   * or `undefined` if no applicable moves have been used since switching in.
    */
-  getLastNonVirtualMove(ignoreStruggle = false): TurnMove | undefined {
-    return this.getLastXMoves(-1).find(m => m.move !== Moves.NONE && m.useType < MoveUseType.INDIRECT && (!ignoreStruggle || m.move !== Moves.STRUGGLE));
+  getLastNonVirtualMove(ignoreStruggle = false, ignoreFollowUp = true): TurnMove | undefined {
+    return this.getLastXMoves(-1).find(m =>
+      m.move !== Moves.NONE
+      && (m.useType < MoveUseType.INDIRECT ||
+        (!ignoreFollowUp && m.useType === MoveUseType.FOLLOW_UP))
+      && (!ignoreStruggle || m.move !== Moves.STRUGGLE)
+    );
   }
 
   /**
@@ -7955,7 +7962,7 @@ export class PokemonTurnData {
   /**
    * The amount of times this Pokemon has acted again and used a move in the current turn.
    * Used to make sure multi-hits occur properly when the user is
-   * forced to act again in the same turn
+   * forced to act again in the same turn, and must be incremented by any effects that grant extra turns.
    */
   public extraTurns = 0;
   /**
@@ -8065,6 +8072,7 @@ export class PokemonMove {
     ignorePp = false,
     ignoreRestrictionTags = false,
   ): boolean {
+    // TODO: Add Sky Drop's 1 turn stall
     if (
       this.moveId &&
       !ignoreRestrictionTags &&

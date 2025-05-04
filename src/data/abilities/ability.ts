@@ -4505,14 +4505,15 @@ export class PostDancingMoveAbAttr extends PostMoveUsedAbAttr {
       return;
     }
 
-    dancer.turnData.extraTurns++;
     // Attack and status moves are replicated on the source of the Dance, while
     // self-targeted status moves (Swords Dance & co.) are replicated on the user
     const moveTargets: BattlerIndex[] =
       move instanceof AttackMove || move instanceof StatusMove
       ? this.getTarget(dancer, source, targets)
       : [ dancer.getBattlerIndex() ];
-    globalScene.unshiftPhase(new MovePhase(dancer, moveTargets, new PokemonMove(move.id), MoveUseType.INDIRECT));
+
+    dancer.turnData.extraTurns++;
+    globalScene.appendToPhase(new MovePhase(dancer, moveTargets, new PokemonMove(move.id), MoveUseType.INDIRECT), MoveEndPhase);
   }
 
   /**
@@ -7224,8 +7225,7 @@ export function initAbilities() {
       .attr(PostFaintHPDamageAbAttr)
       .bypassFaint(),
     new Ability(Abilities.DANCER, 7)
-      .attr(PostDancingMoveAbAttr)
-      .edgeCase(), // Does not interact with Petal Dance very well.
+      .attr(PostDancingMoveAbAttr),
     new Ability(Abilities.BATTERY, 7)
       .attr(AllyMoveCategoryPowerBoostAbAttr, [ MoveCategory.SPECIAL ], 1.3),
     new Ability(Abilities.FLUFFY, 7)

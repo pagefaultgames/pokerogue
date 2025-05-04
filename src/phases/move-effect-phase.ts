@@ -105,7 +105,10 @@ export class MoveEffectPhase extends PokemonPhase {
   /** Is this the last strike of a move? */
   private lastHit: boolean;
 
-  /** Phases queued during moves */
+  /**
+   * Phases queued during moves; used to add a new MovePhase for reflected moves after triggering.
+   * TODO: Remove this and move the reflection logic to ability-side
+   */
   private queuedPhases: Phase[] = [];
 
   /**
@@ -186,6 +189,7 @@ export class MoveEffectPhase extends PokemonPhase {
    * Queue the phaes that should occur when the target reflects the move back to the user
    * @param user - The {@linkcode Pokemon} using this phase's invoked move
    * @param target - The {@linkcode Pokemon} that is reflecting the move
+   * TODO: Rework this to use `onApply` of Magic Coat
    */
   private queueReflectedMove(user: Pokemon, target: Pokemon): void {
     const newTargets = this.move.isMultiTarget()
