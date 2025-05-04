@@ -1,7 +1,6 @@
 import { Egg } from "#app/data/egg";
 import { EggSourceType } from "#app/enums/egg-source-types";
 import { EggTier } from "#app/enums/egg-type";
-import { randSeedFloat } from "#app/utils/common";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -10,7 +9,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vite
 describe("Manaphy Eggs", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
-  const EGG_HATCH_COUNT = 48;
+  const EGG_HATCH_COUNT: number = 48;
   let rngSweepProgress = 0;
 
   beforeAll(() => {
@@ -34,7 +33,9 @@ describe("Manaphy Eggs", () => {
      * possible RNG outcomes. This will let us quickly and consistently find
      * the probability of each RNG outcome.
      */
-    vi.fn(randSeedFloat).mockImplementation(() => rngSweepProgress);
+    vi.spyOn(Phaser.Math.RND, "realInRange").mockImplementation((min: number, max: number) => {
+      return rngSweepProgress * (max - min) + min;
+    });
   });
 
   it("should have correct Manaphy rates and Rare Egg Move rates, from the egg gacha", () => {

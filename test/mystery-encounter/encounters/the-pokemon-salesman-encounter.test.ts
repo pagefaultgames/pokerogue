@@ -21,7 +21,6 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { initSceneWithoutEncounterPhase } from "#test/testUtils/gameManagerUtils";
 import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
 import { NON_LEGEND_PARADOX_POKEMON } from "#app/data/balance/special-species-groups";
-import { randSeedFloat } from "#app/utils/common";
 
 const namespace = "mysteryEncounters/thePokemonSalesman";
 const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
@@ -196,7 +195,9 @@ describe("The Pokemon Salesman - Mystery Encounter", () => {
       const NUM_ROLLS = 2000; // As long as this is greater than total number of species, this should cover all possible RNG rolls
       let rngSweepProgress = 0; // Will simulate full range of RNG rolls by steadily increasing from 0 to 1
 
-      vi.fn(randSeedFloat).mockImplementation(() => rngSweepProgress);
+      vi.spyOn(Phaser.Math.RND, "realInRange").mockImplementation((min: number, max: number) => {
+        return rngSweepProgress * (max - min) + min;
+      });
       vi.spyOn(Phaser.Math.RND, "shuffle").mockImplementation((arr: any[]) => arr);
 
       for (let i = 0; i < NUM_ROLLS; i++) {
