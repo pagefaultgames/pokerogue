@@ -5154,7 +5154,7 @@ export class MatchUserTypeAttr extends VariableMoveTypeAttr {
     if (!(moveType instanceof NumberHolder)) {
       return false;
     }
-    const userTypes = user.getTypes(true);
+    const userTypes = user.getTypes(true, false, undefined, false);
 
     if (userTypes.includes(PokemonType.STELLAR)) { // will not change to stellar type
       const nonTeraTypes = user.getTypes();
