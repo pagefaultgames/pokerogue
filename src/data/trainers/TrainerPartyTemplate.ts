@@ -227,18 +227,16 @@ export function getEvilGruntPartyTemplate(): TrainerPartyTemplate {
   if (waveIndex <= ClassicFixedBossWaves.EVIL_GRUNT_1){
     return trainerPartyTemplates.TWO_AVG;
   }
-  else if (waveIndex <= ClassicFixedBossWaves.EVIL_GRUNT_2){
+  if (waveIndex <= ClassicFixedBossWaves.EVIL_GRUNT_2){
     return trainerPartyTemplates.THREE_AVG;
   }
-  else if (waveIndex <= ClassicFixedBossWaves.EVIL_GRUNT_3){
+  if (waveIndex <= ClassicFixedBossWaves.EVIL_GRUNT_3){
     return trainerPartyTemplates.TWO_AVG_ONE_STRONG;
   }
-  else if (waveIndex <= ClassicFixedBossWaves.EVIL_ADMIN_1){
+  if (waveIndex <= ClassicFixedBossWaves.EVIL_ADMIN_1){
     return trainerPartyTemplates.GYM_LEADER_4; // 3avg 1 strong 1 stronger
   }
-  else {
-    return trainerPartyTemplates.GYM_LEADER_5; // 3 avg 2 strong 1 stronger
-  }
+  return trainerPartyTemplates.GYM_LEADER_5; // 3 avg 2 strong 1 stronger
 }
 
 export function getWavePartyTemplate(...templates: TrainerPartyTemplate[]) {
