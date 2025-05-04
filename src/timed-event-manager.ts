@@ -313,8 +313,8 @@ const timedEvents: TimedEvent[] = [
   {
     name: "Shining Spring",
     eventType: EventType.SHINY,
-    startDate: new Date(Date.UTC(2025, 4, 2)),
-    endDate: new Date(Date.UTC(2025, 4, 12)),
+    startDate: new Date(Date.UTC(2025, 4, 3)),
+    endDate: new Date(Date.UTC(2025, 4, 13)),
     bannerKey: "spr25event",
     scale: 0.21,
     availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "es-MX", "pt-BR", "zh-CN"],
@@ -340,7 +340,6 @@ const timedEvents: TimedEvent[] = [
       { species: Species.DEERLING, formIndex: 0 }, // Spring Deerling
       { species: Species.CLAUNCHER },
       { species: Species.WISHIWASHI },
-      { species: Species.MUDBRAY },
       { species: Species.DRAMPA },
       { species: Species.JANGMO_O },
       { species: Species.APPLIN },
@@ -351,7 +350,7 @@ const timedEvents: TimedEvent[] = [
       { wave: 8, type: "CATCHING_CHARM" },
       { wave: 25, type: "SHINY_CHARM" },
     ],
-  }
+  },
 ];
 
 export class TimedEventManager {
