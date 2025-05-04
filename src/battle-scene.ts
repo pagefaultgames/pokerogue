@@ -2129,12 +2129,13 @@ export default class BattleScene extends SceneBase {
   }
 
   getMaxExpLevel(ignoreLevelCap = false): number {
-    if (Overrides.LEVEL_CAP_OVERRIDE > 0) {
-      return Overrides.LEVEL_CAP_OVERRIDE;
+    if (Overrides.LEVEL_CAP_OVERRIDE) {
+      return Overrides.LEVEL_CAP_OVERRIDE > 0 ? Overrides.LEVEL_CAP_OVERRIDE : Number.MAX_SAFE_INTEGER;
     }
-    if (ignoreLevelCap || Overrides.LEVEL_CAP_OVERRIDE < 0) {
+    if (ignoreLevelCap) {
       return Number.MAX_SAFE_INTEGER;
     }
+
     const waveIndex = Math.ceil((this.currentBattle?.waveIndex || 1) / 10) * 10;
     const difficultyWaveIndex = this.gameMode.getWaveForDifficulty(waveIndex);
     const baseLevel = (1 + difficultyWaveIndex / 2 + Math.pow(difficultyWaveIndex / 25, 2)) * 1.2;

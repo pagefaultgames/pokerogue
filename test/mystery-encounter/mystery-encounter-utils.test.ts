@@ -51,7 +51,9 @@ describe("Mystery Encounter Utils", () => {
       game.override.seed("random");
 
       let result = getRandomPlayerPokemon();
-      expect(result.species.speciesId).toBe(Species.MANAPHY).seed("random2");
+      expect(result.species.speciesId).toBe(Species.MANAPHY);
+
+      game.override.seed("random2");
 
       result = getRandomPlayerPokemon();
       expect(result.species.speciesId).toBe(Species.ARCEUS);
@@ -69,7 +71,9 @@ describe("Mystery Encounter Utils", () => {
       game.override.seed("random");
 
       let result = getRandomPlayerPokemon();
-      expect(result.species.speciesId).toBe(Species.MANAPHY).seed("random2");
+      expect(result.species.speciesId).toBe(Species.MANAPHY);
+
+      game.override.seed("random2");
 
       result = getRandomPlayerPokemon();
       expect(result.species.speciesId).toBe(Species.ARCEUS);
@@ -86,7 +90,9 @@ describe("Mystery Encounter Utils", () => {
       game.override.seed("random");
 
       let result = getRandomPlayerPokemon(true);
-      expect(result.species.speciesId).toBe(Species.MANAPHY).seed("random2");
+      expect(result.species.speciesId).toBe(Species.MANAPHY);
+
+      game.override.seed("random2");
 
       result = getRandomPlayerPokemon(true);
       expect(result.species.speciesId).toBe(Species.MANAPHY);
@@ -103,7 +109,9 @@ describe("Mystery Encounter Utils", () => {
       game.override.seed("random");
 
       let result = getRandomPlayerPokemon(true, false);
-      expect(result.species.speciesId).toBe(Species.MANAPHY).seed("random2");
+      expect(result.species.speciesId).toBe(Species.MANAPHY);
+
+      game.override.seed("random2");
 
       result = getRandomPlayerPokemon(true, false);
       expect(result.species.speciesId).toBe(Species.MANAPHY);
@@ -120,7 +128,9 @@ describe("Mystery Encounter Utils", () => {
       game.override.seed("random");
 
       let result = getRandomPlayerPokemon(true, false, true);
-      expect(result.species.speciesId).toBe(Species.ARCEUS).seed("random2");
+      expect(result.species.speciesId).toBe(Species.ARCEUS);
+
+      game.override.seed("random2");
 
       result = getRandomPlayerPokemon(true, false, true);
       expect(result.species.speciesId).toBe(Species.ARCEUS);
@@ -240,6 +250,7 @@ describe("Mystery Encounter Utils", () => {
 
     it("gets species of specified types", () => {
       // Only 9 tiers are: Kyogre, Groudon, Rayquaza, Arceus, Zacian, Koraidon, Miraidon, Terapagos
+      // TODO: This has to be changed
       const result = getRandomSpeciesByStarterCost(9, undefined, [PokemonType.GROUND]);
       const pokeSpecies = getPokemonSpecies(result);
       expect(pokeSpecies.speciesId).toBe(Species.GROUDON);

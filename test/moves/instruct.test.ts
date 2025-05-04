@@ -102,7 +102,7 @@ describe("Moves - Instruct", () => {
     await game.phaseInterceptor.to("TurnEndPhase", false);
 
     instructSuccess(shuckle, Moves.SONIC_BOOM);
-    expect(game.scene.getEnemyField()[0].getInverseHp()).toBe(40);
+    expect(game.scene.getEnemyPokemon()!.getInverseHp()).toBe(40);
   });
 
   // TODO: Enable test case once gigaton hammer (and blood moon) are reworked
@@ -156,7 +156,7 @@ describe("Moves - Instruct", () => {
 
     const moveHistory = game.scene.getEnemyPokemon()?.getLastXMoves(-1)!;
     expect(moveHistory.map(m => m.move)).toEqual([Moves.SONIC_BOOM, Moves.NONE, Moves.SONIC_BOOM]);
-    expect(game.scene.getPlayerPokemon()?.getInverseHp()).toBe(40);
+    expect(game.scene.getPlayerPokemon()!.getInverseHp()).toBe(40);
   });
 
   it("should not repeat enemy's out of pp move", async () => {
@@ -182,7 +182,7 @@ describe("Moves - Instruct", () => {
     game.override.battleStyle("double").enemyMoveset(Moves.SPLASH).enemySpecies(Species.MAGIKARP).enemyLevel(1);
     await game.classicMode.startBattle([Species.HISUI_ELECTRODE, Species.KOMMO_O]);
 
-    const [electrode, kommo_o] = game.scene.getPlayerField()!;
+    const [electrode, kommo_o] = game.scene.getPlayerField();
     game.move.changeMoveset(electrode, Moves.CHLOROBLAST);
     game.move.changeMoveset(kommo_o, Moves.INSTRUCT);
 
@@ -335,14 +335,13 @@ describe("Moves - Instruct", () => {
 
     game.move.select(Moves.ELECTRO_DRIFT);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
-    await game.phaseInterceptor.to("FaintPhase");
-    await game.move.changeMoveset[Moves.ELECTROWEB];
     await game.toNextWave();
 
+    await game.move.changeMoveset(regieleki, [Moves.ELECTROWEB]);
     game.move.select(Moves.SPLASH);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("TurnEndPhase", false);
-    expect(game.scene.getEnemyField()[0].getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+    expect(game.scene.getEnemyPokemon()!.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
   });
 
   it("should disregard priority of instructed move on use", async () => {
