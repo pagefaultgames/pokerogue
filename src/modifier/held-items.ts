@@ -1,7 +1,7 @@
 import type Pokemon from "#app/field/pokemon";
 import { globalScene } from "#app/global-scene";
 import type { Localizable } from "#app/interfaces/locales";
-import type { NumberHolder } from "#app/utils";
+import type { NumberHolder } from "#app/utils/common";
 import { PokemonType } from "#enums/pokemon-type";
 import i18next from "i18next";
 
@@ -93,7 +93,7 @@ export class HeldItem implements Localizable {
     const container = globalScene.add.container(0, 0);
 
     const item = globalScene.add.sprite(0, 12, "items");
-    item.setFrame(this.icon);
+    item.setFrame(this.getIcon());
     item.setOrigin(0, 0.5);
     container.add(item);
 
