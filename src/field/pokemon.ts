@@ -406,7 +406,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     super(globalScene, x, y);
 
     if (!species.isObtainable() && this.isPlayer()) {
-      throw `Cannot create a player Pokemon for species '${species.getName(formIndex)}'`;
+      throw `Cannot create a player Pokemon for species "${species.getName(formIndex)}"`;
     }
 
     this.species = species;

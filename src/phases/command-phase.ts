@@ -100,7 +100,6 @@ export class CommandPhase extends FieldPhase {
 
     const moveQueue = playerPokemon.getMoveQueue();
 
-    // TODO: WHY WHAT HOBGTVIEUUUUUUUU
     while (
       moveQueue.length &&
       moveQueue[0] &&
@@ -149,7 +148,10 @@ export class CommandPhase extends FieldPhase {
     }
   }
 
-  // TODO: Remove `args` and clean this thing the F up
+  /**
+   * TODO: Remove `args` and clean this thing up
+   * Code will need to be copied over from pkty except replacing the `virtual` and `ignorePP` args with a corresponding `MoveUseType`.
+   */
   handleCommand(command: Command, cursor: number, ...args: any[]): boolean {
     const playerPokemon = globalScene.getPlayerField()[this.fieldIndex];
     let success = false;
@@ -161,7 +163,7 @@ export class CommandPhase extends FieldPhase {
         const turnMove: TurnMove | undefined = args.length === 2 ? (args[1] as TurnMove) : undefined;
         if (
           cursor === -1 ||
-          playerPokemon.trySelectMove(cursor, args[0] as boolean) ||
+          playerPokemon.trySelectMove(cursor, (args[0] as MoveUseType) >= MoveUseType.IGNORE_PP) ||
           (useStruggle = cursor > -1 && !playerPokemon.getMoveset().filter(m => m.isUsable(playerPokemon)).length)
         ) {
           let moveId: Moves;

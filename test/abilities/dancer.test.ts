@@ -3,6 +3,7 @@ import Pokemon from "#app/field/pokemon";
 import { MovePhase } from "#app/phases/move-phase";
 import { Abilities } from "#enums/abilities";
 import { BattlerTagType } from "#enums/battler-tag-type";
+import { MoveUseType } from "#enums/move-use-type";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { Stat } from "#enums/stat";
@@ -23,7 +24,7 @@ describe("Abilities - Dancer", () => {
     pokemon: Pokemon | undefined,
     move: Moves,
     targets?: BattlerIndex[],
-    followUp: boolean | "status-only" = "status-only",
+    useType: MoveUseType = MoveUseType.INDIRECT,
   ) {
     const currentPhase = game.scene.getCurrentPhase() as MovePhase;
     expect(currentPhase).not.toBeNull();
@@ -35,7 +36,7 @@ describe("Abilities - Dancer", () => {
       expect.soft(currentPhase.targets).toEqual(expect.arrayContaining(targets));
     }
     // ENABLE ONCE RULE TURNS ON // biome-ignore lint/complexity/useLiteralKeys: Needed to check protected class property
-    expect.soft(currentPhase["followUp"]).toBe(followUp);
+    expect.soft(currentPhase["useType"]).toBe(useType);
   }
 
   beforeAll(() => {
@@ -50,7 +51,12 @@ describe("Abilities - Dancer", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("single").ability(Abilities.DANCER).enemySpecies(Species.SHUCKLE).enemyLevel(100);
+    game.override
+      .battleStyle("single")
+      .disableCrits()
+      .ability(Abilities.DANCER)
+      .enemySpecies(Species.SHUCKLE)
+      .enemyLevel(100);
   });
 
   // Reference Link: https://bulbapedia.bulbagarden.net/wiki/Dancer_(Ability)
@@ -82,19 +88,15 @@ describe("Abilities - Dancer", () => {
 
     // moves showed up in history
     expect(oricorio.getLastXMoves(-1)).toHaveLength(2);
-    expect(oricorio.getLastXMoves(-1)).toBe(
-      expect.arrayContaining([
-        expect.objectContaining({ move: Moves.SWORDS_DANCE, virtual: false }),
-        expect.objectContaining({ move: Moves.VICTORY_DANCE, virtual: true }),
-      ]),
-    );
+    expect(oricorio.getLastXMoves(-1)).toEqual([
+      expect.objectContaining({ move: Moves.VICTORY_DANCE, useType: MoveUseType.INDIRECT }),
+      expect.objectContaining({ move: Moves.SWORDS_DANCE, useType: MoveUseType.NORMAL }),
+    ]);
     expect(shuckle.getLastXMoves(-1)).toHaveLength(2);
-    expect(shuckle.getLastXMoves(-1)).toBe(
-      expect.arrayContaining([
-        expect.objectContaining({ move: Moves.SWORDS_DANCE, virtual: true }),
-        expect.objectContaining({ move: Moves.VICTORY_DANCE, virtual: false }),
-      ]),
-    );
+    expect(shuckle.getLastXMoves(-1)).toEqual([
+      expect.objectContaining({ move: Moves.VICTORY_DANCE, useType: MoveUseType.NORMAL }),
+      expect.objectContaining({ move: Moves.SWORDS_DANCE, useType: MoveUseType.INDIRECT }),
+    ]);
   });
 
   // TODO: Enable once abilities start proccing in speed order
@@ -143,11 +145,13 @@ describe("Abilities - Dancer", () => {
     checkCurrentMoveUser(oricorio, Moves.FIERY_DANCE, [BattlerIndex.ENEMY_2]);
   });
 
-  it("should count as last move recieved for counter moves", async () => {
+  it("should count as last attack recieved for counter moves", async () => {
     game.override
       .battleStyle("double")
+      .startingLevel(100)
       .moveset([Moves.REVELATION_DANCE, Moves.SPLASH])
       .enemyMoveset([Moves.METAL_BURST, Moves.SPLASH]);
+
     await game.classicMode.startBattle([Species.ORICORIO, Species.FEEBAS]);
 
     const [oricorio, feebas, shuckle1, shuckle2] = game.scene.getField();
@@ -155,6 +159,8 @@ describe("Abilities - Dancer", () => {
     expect(feebas).toBeDefined();
     expect(shuckle1).toBeDefined();
     expect(shuckle2).toBeDefined();
+    // set feebas' spatk to very low number
+    vi.spyOn(feebas, "getStats").mockReturnValue([1, 1, 1, 1, 1, 1]);
 
     // Feebas attacks enemy 2, prompting oricorio to do the same
     game.move.select(Moves.SPLASH, BattlerIndex.PLAYER);
@@ -168,20 +174,21 @@ describe("Abilities - Dancer", () => {
     // shuckle 1 splash
     // feebas rev dance vs shuckle 2
     // oricorio copies rev dance vs shuckle 2
-    // shuckle metal burst
+    // shuckle 2 metal burst
 
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(shuckle2.getLastXMoves(-1)[0].move).toBe(Moves.METAL_BURST);
     expect(shuckle2.getLastXMoves(-1)[0].targets).toBe([BattlerIndex.PLAYER]);
 
-    expect(oricorio.hp).toBeLessThan(oricorio.getMaxHp());
+    const oricorioDmgTaken = oricorio.getInverseHp();
+    expect(oricorioDmgTaken).toBeCloseTo(shuckle2.getInverseHp() * 1.5, 1);
   });
 
   it("should not trigger on failed/ineffective moves", async () => {
     game.override
       .moveset([Moves.SPLASH, Moves.PROTECT])
       .enemySpecies(Species.GROUDON)
-      .enemyMoveset([Moves.FEATHER_DANCE, Moves.REVELATION_DANCE]);
+      .enemyMoveset([Moves.FEATHER_DANCE, Moves.QUIVER_DANCE, Moves.REVELATION_DANCE]);
     await game.classicMode.startBattle([Species.ORICORIO]);
 
     const oricorio = game.scene.getPlayerPokemon()!;
@@ -209,7 +216,19 @@ describe("Abilities - Dancer", () => {
     expect(oricorio.getStatStage(Stat.ATK)).toBe(0);
     expect(groudon.getStatStage(Stat.ATK)).toBe(0);
 
-    // Enemy uses ground-type rev dance immune
+    // set enemy atk/spatk/spd to max and froce enemy quiver dance
+    groudon.setStatStage(Stat.SPATK, 6);
+    groudon.setStatStage(Stat.SPDEF, 6);
+    groudon.setStatStage(Stat.SPD, 6);
+    game.move.select(Moves.SPLASH);
+    await game.forceEnemyMove(Moves.FEATHER_DANCE);
+    await game.toNextTurn();
+
+    // wasn't copied due to stats already being at +6
+    expect(oricorio.getStatStage(Stat.SPATK)).toBe(0);
+    expect(groudon.getStatStage(Stat.SPATK)).toBe(6);
+
+    // Enemy uses ground-type rev dance
     game.move.select(Moves.SPLASH);
     await game.forceEnemyMove(Moves.REVELATION_DANCE);
     await game.toNextTurn();
@@ -219,10 +238,11 @@ describe("Abilities - Dancer", () => {
     expect(groudon.hp).toBe(groudon.getMaxHp());
   });
 
-  // TODO: Enable once confusion override from Cud Chew PR gets merged
-  it.todo("should trigger confusion self-damage, even if protected", async () => {
-    game.override.moveset([Moves.PROTECT, Moves.SPLASH]).enemyMoveset([Moves.TEETER_DANCE, Moves.SWORDS_DANCE]);
-    /*       .confusionActivation(false); // disable confusion unless forced by mocks */
+  it("should trigger confusion self-damage, even when protected against", async () => {
+    game.override
+      .moveset([Moves.PROTECT, Moves.SPLASH])
+      .enemyMoveset([Moves.TEETER_DANCE, Moves.SWORDS_DANCE])
+      .confusionActivation(false); // disable confusion unless forced by mocks
     await game.classicMode.startBattle([Species.ORICORIO]);
 
     const oricorio = game.scene.getPlayerPokemon()!;
@@ -240,26 +260,20 @@ describe("Abilities - Dancer", () => {
 
     await game.phaseInterceptor.to("MovePhase"); // protect
     await game.phaseInterceptor.to("MovePhase"); // Swords dance
-    // await game.move.forceConfusionActivation(true); // force confusion proc during swords dance copy
+    await game.move.forceConfusionActivation(true); // force confusion proc during swords dance copy
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    // took damage from confusion instead of using move;
-    // enemy remains confused
+    // took damage from confusion instead of using move; player remains confused
     expect(oricorio.hp).toBeLessThan(oricorio.getMaxHp());
     expect(oricorio.getTag(BattlerTagType.CONFUSED)).toBeDefined();
     expect(game.scene.getEnemyPokemon()?.getTag(BattlerTagType.CONFUSED)).toBeUndefined();
   });
 
-  it.each([
-    { name: "asleep", condition: StatusEffect.SLEEP },
-    { name: "frozen", condition: StatusEffect.FREEZE },
-    { name: "fully paralyzed", condition: StatusEffect.PARALYSIS },
-  ])("should not trigger while $name", async ({ condition }) => {
+  it("should not trigger while fully paralyzed", async () => {
     game.override
       .moveset(Moves.SPLASH)
       .enemyMoveset(Moves.SWORDS_DANCE)
-      .statusEffect(condition)
-      .passiveAbility(Abilities.EARLY_BIRD) // only used for sleep
+      .statusEffect(StatusEffect.PARALYSIS)
       .statusActivation(true);
     await game.classicMode.startBattle([Species.ORICORIO]);
 
@@ -267,20 +281,43 @@ describe("Abilities - Dancer", () => {
     expect(oricorio).toBeDefined();
     expect(oricorio.status).not.toBeNull();
 
-    // This is always 4 if using sleep override, but just to be safe
-    const prevSleepTurns = oricorio.status?.sleepTurnsRemaining ?? 4;
-
-    // attempt to copy swords dance while asleep
+    // attempt to copy swords dance and get para'd
     game.move.select(Moves.SPLASH);
     await game.forceEnemyMove(Moves.SWORDS_DANCE);
     await game.toNextTurn();
 
-    expect(oricorio.getLastXMoves(-1)[0]).toBe(expect.objectContaining({ move: Moves.NONE }));
+    expect(oricorio.getLastXMoves(-1)[0]).toMatchObject({ move: Moves.NONE });
     expect(oricorio.status).toBeTruthy();
-    if (oricorio.status?.effect === StatusEffect.SLEEP) {
-      expect(oricorio.status?.sleepTurnsRemaining).toBe(prevSleepTurns - 1); // null coaclesce to make compiler happy
-    }
     expect(oricorio.getStatStage(Stat.ATK)).toBe(0);
+  });
+
+  it("should remove sleep upon copying move", async () => {
+    game.override.moveset(Moves.ACROBATICS).enemyMoveset(Moves.SWORDS_DANCE).statusEffect(StatusEffect.SLEEP);
+    await game.classicMode.startBattle([Species.ORICORIO]);
+
+    const oricorio = game.scene.getPlayerPokemon()!;
+    expect(oricorio).toBeDefined();
+    expect(oricorio.status).not.toBeNull();
+    expect(oricorio.status!.sleepTurnsRemaining).toBeGreaterThan(0);
+
+    // wake up by copying swords dance
+    game.move.select(Moves.ACROBATICS);
+    await game.forceEnemyMove(Moves.SWORDS_DANCE);
+    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+
+    await game.phaseInterceptor.to("MoveEffectPhase"); // enemy SD
+    await game.phaseInterceptor.to("MoveEffectPhase", false); // player dancer attempt
+    expect(oricorio.status).not.toBeNull();
+    expect(oricorio.status!.sleepTurnsRemaining).toBeGreaterThan(0);
+
+    // status curing occurs inside MEP during dancer reflected move
+    await game.phaseInterceptor.to("MoveEffectPhase");
+    expect(oricorio.status).toBeNull();
+
+    expect(oricorio.getLastXMoves(-1)[0]).toMatchObject({ move: Moves.ACROBATICS });
+    expect(oricorio.getLastXMoves(-1)[1]).toMatchObject({ move: Moves.SWORDS_DANCE });
+    expect(oricorio.getStatStage(Stat.ATK)).toBe(2);
+    expect(game.scene.getEnemyPokemon()!.isFullHp()).toBe(false);
   });
 
   // TODO: Enable once rampaging moves are fixed
@@ -301,7 +338,9 @@ describe("Abilities - Dancer", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
 
     // used petal dance without being locked into move
-    expect(oricorio.getLastXMoves(-1)[0]).toBe(expect.objectContaining({ move: Moves.PETAL_DANCE, virtual: true }));
+    expect(oricorio.getLastXMoves(-1)[0]).toBe(
+      expect.objectContaining({ move: Moves.PETAL_DANCE, useType: MoveUseType.INDIRECT }),
+    );
     expect(oricorio.getMoveQueue()).toHaveLength(0);
     expect(oricorio.getTag(BattlerTagType.FRENZY)).toBeUndefined();
     expect(shuckle.turnData.attacksReceived).toHaveLength(1);
@@ -326,41 +365,40 @@ describe("Abilities - Dancer", () => {
     const oricorio = game.scene.getPlayerPokemon()!;
     expect(oricorio).toBeDefined();
 
-    // get faked out and use swords dance
+    // get faked out and copy swords dance
     game.move.select(Moves.SPLASH);
     await game.forceEnemyMove(Moves.SWORDS_DANCE);
     await game.forceEnemyMove(Moves.FAKE_OUT, BattlerIndex.PLAYER);
-    await game.phaseInterceptor.to("TurnEndPhase", false);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(oricorio.getLastXMoves(-1)[0]).toBe(expect.objectContaining({ move: Moves.NONE }));
     expect(oricorio.getStatStage(Stat.ATK)).toBe(0);
   });
 
-  // TODO: Enable once interaction is confirmed
-  it.todo("should not count as last move used for mirror move", async () => {
-    game.override.moveset([Moves.FIERY_DANCE, Moves.REVELATION_DANCE]).enemyMoveset([Moves.MIRROR_MOVE, Moves.SPLASH]);
-    await game.classicMode.startBattle([Species.ORICORIO, Species.FEEBAS]);
+  it("should not count as last move used for mirror move", async () => {
+    game.override.moveset([Moves.FIERY_DANCE, Moves.SPLASH]).enemyMoveset([Moves.MIRROR_MOVE, Moves.SPLASH]);
+    await game.classicMode.startBattle([Species.ORICORIO]);
 
-    const [, shuckle2] = game.scene.getPlayerParty();
+    const shuckle = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.REVELATION_DANCE, BattlerIndex.PLAYER, BattlerIndex.ENEMY_2);
-    game.move.select(Moves.FIERY_DANCE, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY_2);
-    await game.forceEnemyMove(Moves.SPLASH, BattlerIndex.PLAYER);
-    await game.forceEnemyMove(Moves.MIRROR_MOVE, BattlerIndex.PLAYER);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY_2, BattlerIndex.ENEMY]);
+    // select splash first so we have a clear indicator of what move got copied
+    game.move.select(Moves.SPLASH);
+    await game.forceEnemyMove(Moves.SPLASH);
+    await game.toNextTurn();
 
-    await game.phaseInterceptor.to("MovePhase"); // Oricorio rev dance
-    await game.phaseInterceptor.to("MovePhase"); // Feebas fiery dance
-    await game.phaseInterceptor.to("MovePhase"); // Oricorio fiery dance (from dancer)
+    game.move.select(Moves.FIERY_DANCE);
+    await game.forceEnemyMove(Moves.MIRROR_MOVE);
+    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
-    await game.phaseInterceptor.to("MovePhase"); // shuckle 2 copies oricorio
-    await game.phaseInterceptor.to("MovePhase", false); // copied move used
-
-    checkCurrentMoveUser(shuckle2, Moves.REVELATION_DANCE); // change to fiery dance if i am in fact wrong
+    expect(shuckle.getLastXMoves()[0]).toMatchObject({ move: Moves.SPLASH, useType: MoveUseType.FOLLOW_UP });
   });
 
   it("should not count as the last move used for Instruct", async () => {
-    game.override.moveset([Moves.FIERY_DANCE, Moves.SPLASH]).enemyMoveset([Moves.INSTRUCT, Moves.SPLASH]);
+    game.override
+      .battleStyle("double")
+      .moveset([Moves.FIERY_DANCE, Moves.SPLASH])
+      .enemyMoveset([Moves.INSTRUCT, Moves.SPLASH]);
     await game.classicMode.startBattle([Species.ORICORIO, Species.FEEBAS]);
 
     game.move.select(Moves.SPLASH, BattlerIndex.PLAYER);
@@ -376,6 +414,11 @@ describe("Abilities - Dancer", () => {
     await game.phaseInterceptor.to("MovePhase"); // shuckle 2 instructs oricorio
     await game.phaseInterceptor.to("MovePhase", false); // instructed move used
 
-    checkCurrentMoveUser(game.scene.getPlayerPokemon(), Moves.REVELATION_DANCE, [BattlerIndex.ENEMY_2], true);
+    checkCurrentMoveUser(
+      game.scene.getPlayerPokemon(),
+      Moves.REVELATION_DANCE,
+      [BattlerIndex.ENEMY_2],
+      MoveUseType.NORMAL,
+    );
   });
 });

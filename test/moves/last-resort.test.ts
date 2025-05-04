@@ -118,7 +118,7 @@ describe("Moves - Last Resort", () => {
       expect.objectContaining({
         move: Moves.LAST_RESORT,
         result: MoveResult.SUCCESS,
-        virtual: true,
+        useType: MoveUseType.FOLLOW_UP,
       }),
       expect.objectContaining({
         move: Moves.SLEEP_TALK,

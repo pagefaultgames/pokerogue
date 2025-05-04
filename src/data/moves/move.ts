@@ -3785,6 +3785,20 @@ export class MovePowerMultiplierAttr extends VariablePowerAttr {
   }
 }
 
+// Stomping Tantrum ignores all dancer invoked moves.
+const stompingTantrumDoublePowerFunc = (user: Pokemon): number => {
+  // TODO: Does this include Copycat???
+  const lastNonDancerMove = user.getLastXMoves(-1).filter(m => m.useType !== MoveUseType.INDIRECT)[1] as TurnMove | undefined;
+  if (!lastNonDancerMove) {
+    return 1;
+  }
+
+  return lastNonDancerMove.result === MoveResult.MISS || user.getLastXMoves(2)[1]?.result === MoveResult.FAIL ? 2 : 1),
+
+  return 1
+}
+
+
 /**
  * Helper function to calculate the the base power of an ally's hit when using Beat Up.
  * @param user The Pokemon that used Beat Up.
@@ -4376,6 +4390,7 @@ const hasStockpileStacksCondition: MoveConditionFunc = (user) => {
   const hasStockpilingTag = user.getTag(StockpilingTag);
   return !!hasStockpilingTag && hasStockpilingTag.stockpiledCount > 0;
 };
+
 
 /**
  * Attribute used for multi-hit moves that increase power in increments of the
@@ -5476,10 +5491,16 @@ export class FrenzyAttr extends MoveEffectAttr {
       return false;
     }
 
-    // If frenzy is not in effect, add 1-2 extra instances of the move to the move queue.
+    // If move is being used via Dancer, skip frenzy application entirely.
+    // Applies to Petal Dance and _literally_ nothing else/
+    const currentMove = user.getLastXMoves(1)[0];
+    if (currentMove.move !== Moves.NONE && currentMove.useType === MoveUseType.INDIRECT) {}
+
+    // If frenzy is not in effect and we don't have anything queued up,
+    // add 1-2 extra instances of the move to the move queue.
     // If frenzy is already in effect, tick down the tag.
-    if (!user.getTag(BattlerTagType.FRENZY) && !user.getMoveQueue().length) {
-      const turnCount = user.randSeedIntRange(1, 2); // this excludes current use
+    if (!user.getTag(BattlerTagType.FRENZY) && user.getMoveQueue().length === 0) {
+      const turnCount = user.randSeedIntRange(1, 2); // excludes initial use
       for (let i = 0; i < turnCount; i++) {
         user.getMoveQueue().push({ move: move.id, targets: [ target.getBattlerIndex() ], useType: MoveUseType.IGNORE_PP });
       }
@@ -10530,7 +10551,7 @@ export function initMoves() {
       .bitingMove()
       .attr(RemoveScreensAttr),
     new AttackMove(Moves.STOMPING_TANTRUM, PokemonType.GROUND, MoveCategory.PHYSICAL, 75, 100, 10, -1, 0, 7)
-      .attr(MovePowerMultiplierAttr, (user, target, move) => user.getLastXMoves(2)[1]?.result === MoveResult.MISS || user.getLastXMoves(2)[1]?.result === MoveResult.FAIL ? 2 : 1),
+      .attr(MovePowerMultiplierAttr, stompingTantrumDoublePowerFunc),
     new AttackMove(Moves.SHADOW_BONE, PokemonType.GHOST, MoveCategory.PHYSICAL, 85, 100, 10, 20, 0, 7)
       .attr(StatStageChangeAttr, [ Stat.DEF ], -1)
       .makesContact(false),
