@@ -1,6 +1,6 @@
 import i18next from "i18next";
 import type { PokeballCounts } from "#app/battle-scene";
-import { bypassLogin } from "#app/battle-scene";
+import { bypassLogin } from "#app/global-vars/bypass-login";
 import { globalScene } from "#app/global-scene";
 import type { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
@@ -8,14 +8,14 @@ import { pokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
 import type PokemonSpecies from "#app/data/pokemon-species";
 import { allSpecies, getPokemonSpecies } from "#app/data/pokemon-species";
 import { speciesStarterCosts } from "#app/data/balance/starters";
-import * as Utils from "#app/utils";
+import { randInt, getEnumKeys, isLocal, executeIf, fixedInt, randSeedItem, NumberHolder } from "#app/utils/common";
 import Overrides from "#app/overrides";
 import PokemonData from "#app/system/pokemon-data";
 import PersistentModifierData from "#app/system/modifier-data";
 import ArenaData from "#app/system/arena-data";
 import { Unlockables } from "#app/system/unlockables";
 import { GameModes, getGameMode } from "#app/game-mode";
-import { BattleType } from "#app/battle";
+import { BattleType } from "#enums/battle-type";
 import TrainerData from "#app/system/trainer-data";
 import { trainerConfigs } from "#app/data/trainers/trainer-config";
 import { resetSettings, setSetting, SettingKeys } from "#app/system/settings/settings";
@@ -24,7 +24,7 @@ import EggData from "#app/system/egg-data";
 import type { Egg } from "#app/data/egg";
 import { vouchers, VoucherType } from "#app/system/voucher";
 import { AES, enc } from "crypto-js";
-import { Mode } from "#app/ui/ui";
+import { UiMode } from "#enums/ui-mode";
 import { clientSessionId, loggedInUser, updateUserInfo } from "#app/account";
 import { Nature } from "#enums/nature";
 import { GameStats } from "#app/system/game-stats";
@@ -32,11 +32,12 @@ import { Tutorial } from "#app/tutorial";
 import { speciesEggMoves } from "#app/data/balance/egg-moves";
 import { allMoves } from "#app/data/moves/move";
 import { TrainerVariant } from "#app/field/trainer";
-import type { Variant } from "#app/data/variant";
+import type { Variant } from "#app/sprites/variant";
 import { setSettingGamepad, SettingGamepad, settingGamepadDefaults } from "#app/system/settings/settings-gamepad";
 import type { SettingKeyboard } from "#app/system/settings/settings-keyboard";
 import { setSettingKeyboard } from "#app/system/settings/settings-keyboard";
 import { TagAddedEvent, TerrainChangedEvent, WeatherChangedEvent } from "#app/events/arena";
+// biome-ignore lint/style/noNamespaceImport: Something weird is going on here and I don't want to touch it
 import * as Modifier from "#app/modifier/modifier";
 import { StatusEffect } from "#enums/status-effect";
 import ChallengeData from "#app/system/challenge-data";
@@ -360,8 +361,8 @@ export class GameData {
     this.loadSettings();
     this.loadGamepadSettings();
     this.loadMappingConfigs();
-    this.trainerId = Utils.randInt(65536);
-    this.secretId = Utils.randInt(65536);
+    this.trainerId = randInt(65536);
+    this.secretId = randInt(65536);
     this.starterData = {};
     this.gameStats = new GameStats();
     this.runHistory = {};
@@ -593,7 +594,7 @@ export class GameData {
         }
 
         if (systemData.voucherCounts) {
-          Utils.getEnumKeys(VoucherType).forEach(key => {
+          getEnumKeys(VoucherType).forEach(key => {
             const index = VoucherType[key];
             this.voucherCounts[index] = systemData.voucherCounts[index] || 0;
           });
@@ -621,7 +622,7 @@ export class GameData {
    * At the moment, only retrievable from locale cache
    */
   async getRunHistoryData(): Promise<RunHistoryData> {
-    if (!Utils.isLocal) {
+    if (!isLocal) {
       /**
        * Networking Code DO NOT DELETE!
        * Note: Might have to be migrated to `pokerogue-api.ts`
@@ -1039,6 +1040,7 @@ export class GameData {
   }
 
   getSession(slotId: number): Promise<SessionSaveData | null> {
+    // biome-ignore lint/suspicious/noAsyncPromiseExecutor: <explanation>
     return new Promise(async (resolve, reject) => {
       if (slotId < 0) {
         return resolve(null);
@@ -1079,6 +1081,7 @@ export class GameData {
   }
 
   loadSession(slotId: number, sessionData?: SessionSaveData): Promise<boolean> {
+    // biome-ignore lint/suspicious/noAsyncPromiseExecutor: <explanation>
     return new Promise(async (resolve, reject) => {
       try {
         const initSessionFromData = async (sessionData: SessionSaveData) => {
@@ -1142,7 +1145,7 @@ export class GameData {
               ? trainerConfig?.doubleOnly || sessionData.trainer?.variant === TrainerVariant.DOUBLE
               : sessionData.enemyParty.length > 1,
             mysteryEncounterType,
-          )!; // TODO: is this bang correct?
+          );
           battle.enemyLevels = sessionData.enemyParty.map(p => p.level);
 
           globalScene.arena.init();
@@ -1195,13 +1198,16 @@ export class GameData {
             }
           }
 
+          if (globalScene.modifiers.length) {
+            console.warn("Existing modifiers not cleared on session load, deleting...");
+            globalScene.modifiers = [];
+          }
           for (const modifierData of sessionData.modifiers) {
             const modifier = modifierData.toModifier(Modifier[modifierData.className]);
             if (modifier) {
               globalScene.addModifier(modifier, true);
             }
           }
-
           globalScene.updateModifiers(true);
 
           for (const enemyModifierData of sessionData.enemyModifiers) {
@@ -1339,68 +1345,67 @@ export class GameData {
   }
 
   parseSessionData(dataStr: string): SessionSaveData {
+    // TODO: Add `null`/`undefined` to the corresponding type signatures for this
+    // (or prevent them from being null)
+    // If the value is able to *not exist*, it should say so in the code
     const sessionData = JSON.parse(dataStr, (k: string, v: any) => {
-      if (k === "party" || k === "enemyParty") {
-        const ret: PokemonData[] = [];
-        if (v === null) {
-          v = [];
-        }
-        for (const pd of v) {
-          ret.push(new PokemonData(pd));
-        }
-        return ret;
-      }
-
-      if (k === "trainer") {
-        return v ? new TrainerData(v) : null;
-      }
-
-      if (k === "modifiers" || k === "enemyModifiers") {
-        const player = k === "modifiers";
-        const ret: PersistentModifierData[] = [];
-        if (v === null) {
-          v = [];
-        }
-        for (const md of v) {
-          if (md?.className === "ExpBalanceModifier") {
-            // Temporarily limit EXP Balance until it gets reworked
-            md.stackCount = Math.min(md.stackCount, 4);
+      // TODO: Add pre-parse migrate scripts
+      switch (k) {
+        case "party":
+        case "enemyParty": {
+          const ret: PokemonData[] = [];
+          for (const pd of v ?? []) {
+            ret.push(new PokemonData(pd));
           }
-          if (
-            (md instanceof Modifier.EnemyAttackStatusEffectChanceModifier && md.effect === StatusEffect.FREEZE) ||
-            md.effect === StatusEffect.SLEEP
-          ) {
-            continue;
+          return ret;
+        }
+
+        case "trainer":
+          return v ? new TrainerData(v) : null;
+
+        case "modifiers":
+        case "enemyModifiers": {
+          const ret: PersistentModifierData[] = [];
+          for (const md of v ?? []) {
+            if (md?.className === "ExpBalanceModifier") {
+              // Temporarily limit EXP Balance until it gets reworked
+              md.stackCount = Math.min(md.stackCount, 4);
+            }
+
+            if (
+              md instanceof Modifier.EnemyAttackStatusEffectChanceModifier &&
+              (md.effect === StatusEffect.FREEZE || md.effect === StatusEffect.SLEEP)
+            ) {
+              // Discard any old "sleep/freeze chance tokens".
+              // TODO: make this migrate script
+              continue;
+            }
+
+            ret.push(new PersistentModifierData(md, k === "modifiers"));
           }
-          ret.push(new PersistentModifierData(md, player));
+          return ret;
         }
-        return ret;
-      }
 
-      if (k === "arena") {
-        return new ArenaData(v);
-      }
+        case "arena":
+          return new ArenaData(v);
 
-      if (k === "challenges") {
-        const ret: ChallengeData[] = [];
-        if (v === null) {
-          v = [];
+        case "challenges": {
+          const ret: ChallengeData[] = [];
+          for (const c of v ?? []) {
+            ret.push(new ChallengeData(c));
+          }
+          return ret;
         }
-        for (const c of v) {
-          ret.push(new ChallengeData(c));
-        }
-        return ret;
-      }
 
-      if (k === "mysteryEncounterType") {
-        return v as MysteryEncounterType;
-      }
+        case "mysteryEncounterType":
+          return v as MysteryEncounterType;
 
-      if (k === "mysteryEncounterSaveData") {
-        return new MysteryEncounterSaveData(v);
-      }
+        case "mysteryEncounterSaveData":
+          return new MysteryEncounterSaveData(v);
 
-      return v;
+        default:
+          return v;
+      }
     }) as SessionSaveData;
 
     applySessionVersionMigration(sessionData);
@@ -1410,7 +1415,7 @@ export class GameData {
 
   saveAll(skipVerification = false, sync = false, useCachedSession = false, useCachedSystem = false): Promise<boolean> {
     return new Promise<boolean>(resolve => {
-      Utils.executeIf(!skipVerification, updateUserInfo).then(success => {
+      executeIf(!skipVerification, updateUserInfo).then(success => {
         if (success !== null && !success) {
           return resolve(false);
         }
@@ -1427,7 +1432,6 @@ export class GameData {
               ),
             ) // TODO: is this bang correct?
           : this.getSessionSaveData();
-
         const maxIntAttrValue = 0x80000000;
         const systemData = useCachedSystem
           ? this.parseSystemData(decrypt(localStorage.getItem(`data_${loggedInUser?.username}`)!, bypassLogin))
@@ -1449,13 +1453,12 @@ export class GameData {
             bypassLogin,
           ),
         );
-
         localStorage.setItem(
           `sessionData${globalScene.sessionSlotId ? globalScene.sessionSlotId : ""}_${loggedInUser?.username}`,
           encrypt(JSON.stringify(sessionData), bypassLogin),
         );
 
-        console.debug("Session data saved");
+        console.debug("Session data saved!");
 
         if (!bypassLogin && sync) {
           pokerogueApi.savedata.updateAll(request).then(error => {
@@ -1590,7 +1593,7 @@ export class GameData {
           }
 
           const displayError = (error: string) =>
-            globalScene.ui.showText(error, null, () => globalScene.ui.showText("", 0), Utils.fixedInt(1500));
+            globalScene.ui.showText(error, null, () => globalScene.ui.showText("", 0), fixedInt(1500));
           dataName = dataName!; // tell TS compiler that dataName is defined!
 
           if (!valid) {
@@ -1598,7 +1601,7 @@ export class GameData {
               `Your ${dataName} data could not be loaded. It may be corrupted.`,
               null,
               () => globalScene.ui.showText("", 0),
-              Utils.fixedInt(1500),
+              fixedInt(1500),
             );
           }
 
@@ -1607,7 +1610,7 @@ export class GameData {
             null,
             () => {
               globalScene.ui.setOverlayMode(
-                Mode.CONFIRM,
+                UiMode.CONFIRM,
                 () => {
                   localStorage.setItem(dataKey, encrypt(dataStr, bypassLogin));
 
@@ -1691,7 +1694,7 @@ export class GameData {
       () => {
         const neutralNatures = [Nature.HARDY, Nature.DOCILE, Nature.SERIOUS, Nature.BASHFUL, Nature.QUIRKY];
         for (let s = 0; s < defaultStarterSpecies.length; s++) {
-          defaultStarterNatures.push(Utils.randSeedItem(neutralNatures));
+          defaultStarterNatures.push(randSeedItem(neutralNatures));
         }
       },
       0,
@@ -2192,7 +2195,7 @@ export class GameData {
       value = decrementValue(value);
     }
 
-    const cost = new Utils.NumberHolder(value);
+    const cost = new NumberHolder(value);
     applyChallenges(ChallengeType.STARTER_COST, speciesId, cost);
 
     return cost.value;
@@ -2220,7 +2223,7 @@ export class GameData {
         entry.hatchedCount = 0;
       }
       if (!entry.hasOwnProperty("natureAttr") || (entry.caughtAttr && !entry.natureAttr)) {
-        entry.natureAttr = this.defaultDexData?.[k].natureAttr || 1 << Utils.randInt(25, 1);
+        entry.natureAttr = this.defaultDexData?.[k].natureAttr || 1 << randInt(25, 1);
       }
     }
   }

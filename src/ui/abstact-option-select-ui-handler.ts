@@ -1,9 +1,9 @@
 import { globalScene } from "#app/global-scene";
 import { TextStyle, addBBCodeTextObject, getTextColor, getTextStyleOptions } from "./text";
-import { Mode } from "./ui";
+import { UiMode } from "#enums/ui-mode";
 import UiHandler from "./ui-handler";
 import { addWindow } from "./ui-theme";
-import * as Utils from "../utils";
+import { rgbHexToRgba, fixedInt } from "#app/utils/common";
 import { argbFromRgba } from "@material/material-color-utilities";
 import { Button } from "#enums/buttons";
 import BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
@@ -56,7 +56,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
   protected defaultTextStyle: TextStyle = TextStyle.WINDOW;
   protected textContent: string;
 
-  constructor(mode: Mode | null) {
+  constructor(mode: UiMode | null) {
     super(mode);
   }
 
@@ -70,7 +70,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
     const ui = this.getUi();
 
     this.optionSelectContainer = globalScene.add.container(globalScene.game.canvas.width / 6 - 1, -48);
-    this.optionSelectContainer.setName(`option-select-${this.mode ? Mode[this.mode] : "UNKNOWN"}`);
+    this.optionSelectContainer.setName(`option-select-${this.mode ? UiMode[this.mode] : "UNKNOWN"}`);
     this.optionSelectContainer.setVisible(false);
     ui.add(this.optionSelectContainer);
 
@@ -120,7 +120,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
 
     // Setting the initial text to establish the width of the select object. We consider all options, even ones that are not displayed,
     // Except in the case of autocomplete, where we don't want to set up a text element with potentially hundreds of lines.
-    const optionsForWidth = globalScene.ui.getMode() === Mode.AUTO_COMPLETE ? optionsWithScroll : options;
+    const optionsForWidth = globalScene.ui.getMode() === UiMode.AUTO_COMPLETE ? optionsWithScroll : options;
     this.optionSelectText = addBBCodeTextObject(
       0,
       0,
@@ -178,8 +178,8 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
           itemOverlayIcon.setPositionRelative(this.optionSelectText, 36 * this.scale, 7 + i * (114 * this.scale - 3));
 
           if (option.itemArgs) {
-            itemIcon.setTint(argbFromRgba(Utils.rgbHexToRgba(option.itemArgs[0])));
-            itemOverlayIcon.setTint(argbFromRgba(Utils.rgbHexToRgba(option.itemArgs[1])));
+            itemIcon.setTint(argbFromRgba(rgbHexToRgba(option.itemArgs[0])));
+            itemOverlayIcon.setTint(argbFromRgba(rgbHexToRgba(option.itemArgs[1])));
           }
         }
       }
@@ -207,7 +207,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
       this.blockInput = true;
       this.optionSelectTextContainer.setAlpha(0.5);
       this.cursorObj?.setAlpha(0.8);
-      globalScene.time.delayedCall(Utils.fixedInt(this.config.delay), () => this.unblockInput());
+      globalScene.time.delayedCall(fixedInt(this.config.delay), () => this.unblockInput());
     }
 
     if (this.config?.supportHover) {
@@ -250,7 +250,7 @@ export default abstract class AbstractOptionSelectUiHandler extends UiHandler {
       } else {
         ui.playError();
       }
-    } else if (button === Button.SUBMIT && ui.getMode() === Mode.AUTO_COMPLETE) {
+    } else if (button === Button.SUBMIT && ui.getMode() === UiMode.AUTO_COMPLETE) {
       // this is here to differentiate between a Button.SUBMIT vs Button.ACTION within the autocomplete handler
       // this is here because Button.ACTION is picked up as z on the keyboard, meaning if you're typing and hit z, it'll select the option you've chosen
       success = true;

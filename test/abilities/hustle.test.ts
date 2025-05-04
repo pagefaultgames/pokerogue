@@ -27,7 +27,7 @@ describe("Abilities - Hustle", () => {
       .ability(Abilities.HUSTLE)
       .moveset([Moves.TACKLE, Moves.GIGA_DRAIN, Moves.FISSURE])
       .disableCrits()
-      .battleType("single")
+      .battleStyle("single")
       .enemyMoveset(Moves.SPLASH)
       .enemySpecies(Species.SHUCKLE)
       .enemyAbility(Abilities.BALL_FETCH);

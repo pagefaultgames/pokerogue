@@ -1,4 +1,5 @@
-import Battle, { BattleType } from "#app/battle";
+import Battle from "#app/battle";
+import { BattleType } from "#enums/battle-type";
 import type BattleScene from "#app/battle-scene";
 import { getDailyRunStarters } from "#app/data/daily-run";
 import { Gender } from "#app/data/gender";

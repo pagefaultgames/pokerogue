@@ -23,7 +23,7 @@ import i18next from "i18next";
 
 const namespace = "mysteryEncounters/absoluteAvarice";
 const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
-const defaultBiome = Biome.PLAINS;
+const defaultBiome = Biome.TALL_GRASS;
 const defaultWave = 45;
 
 describe("Absolute Avarice - Mystery Encounter", () => {
@@ -45,7 +45,7 @@ describe("Absolute Avarice - Mystery Encounter", () => {
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
       new Map<Biome, MysteryEncounterType[]>([
-        [Biome.PLAINS, [MysteryEncounterType.ABSOLUTE_AVARICE]],
+        [Biome.TALL_GRASS, [MysteryEncounterType.ABSOLUTE_AVARICE]],
         [Biome.VOLCANO, [MysteryEncounterType.MYSTERIOUS_CHALLENGERS]],
       ]),
     );
@@ -91,6 +91,7 @@ describe("Absolute Avarice - Mystery Encounter", () => {
     game.override.startingHeldItems([
       { name: "BERRY", count: 2, type: BerryType.SITRUS },
       { name: "BERRY", count: 3, type: BerryType.GANLON },
+      { name: "BERRY", count: 2, type: BerryType.APICOT },
     ]);
 
     await game.runToMysteryEncounter();
@@ -102,6 +103,7 @@ describe("Absolute Avarice - Mystery Encounter", () => {
     game.override.startingHeldItems([
       { name: "BERRY", count: 2, type: BerryType.SITRUS },
       { name: "BERRY", count: 3, type: BerryType.GANLON },
+      { name: "BERRY", count: 2, type: BerryType.APICOT },
     ]);
 
     await game.runToMysteryEncounter(MysteryEncounterType.ABSOLUTE_AVARICE, defaultParty);
@@ -138,7 +140,7 @@ describe("Absolute Avarice - Mystery Encounter", () => {
       expect(enemyField[0].species.speciesId).toBe(Species.GREEDENT);
       const moveset = enemyField[0].moveset.map(m => m.moveId);
       expect(moveset?.length).toBe(4);
-      expect(moveset).toEqual([Moves.THRASH, Moves.BODY_PRESS, Moves.STUFF_CHEEKS, Moves.CRUNCH]);
+      expect(moveset).toEqual([Moves.THRASH, Moves.CRUNCH, Moves.BODY_PRESS, Moves.SLACK_OFF]);
 
       const movePhases = phaseSpy.mock.calls.filter(p => p[0] instanceof MovePhase).map(p => p[0]);
       expect(movePhases.length).toBe(1);

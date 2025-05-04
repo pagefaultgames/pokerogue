@@ -1,6 +1,6 @@
 import { addTextObject, TextStyle } from "./text";
 import PartyUiHandler, { PartyUiMode } from "./party-ui-handler";
-import { Mode } from "./ui";
+import { UiMode } from "#enums/ui-mode";
 import UiHandler from "./ui-handler";
 import i18next from "i18next";
 import { Button } from "#enums/buttons";
@@ -30,7 +30,7 @@ export default class CommandUiHandler extends UiHandler {
   protected cursor2 = 0;
 
   constructor() {
-    super(Mode.COMMAND);
+    super(UiMode.COMMAND);
   }
 
   setup() {
@@ -86,7 +86,7 @@ export default class CommandUiHandler extends UiHandler {
       this.teraButton.setFrame(PokemonType[globalScene.getField()[this.fieldIndex].getTeraType()].toLowerCase());
     } else {
       this.teraButton.setVisible(false);
-      if (this.cursor === Command.TERA) {
+      if (this.getCursor() === Command.TERA) {
         this.setCursor(Command.FIGHT);
       }
     }
@@ -124,18 +124,18 @@ export default class CommandUiHandler extends UiHandler {
         switch (cursor) {
           // Fight
           case Command.FIGHT:
-            ui.setMode(Mode.FIGHT, (globalScene.getCurrentPhase() as CommandPhase).getFieldIndex());
+            ui.setMode(UiMode.FIGHT, (globalScene.getCurrentPhase() as CommandPhase).getFieldIndex());
             success = true;
             break;
           // Ball
           case Command.BALL:
-            ui.setModeWithoutClear(Mode.BALL);
+            ui.setModeWithoutClear(UiMode.BALL);
             success = true;
             break;
           // Pokemon
           case Command.POKEMON:
             ui.setMode(
-              Mode.PARTY,
+              UiMode.PARTY,
               PartyUiMode.SWITCH,
               (globalScene.getCurrentPhase() as CommandPhase).getPokemon().getFieldIndex(),
               null,
@@ -149,7 +149,7 @@ export default class CommandUiHandler extends UiHandler {
             success = true;
             break;
           case Command.TERA:
-            ui.setMode(Mode.FIGHT, (globalScene.getCurrentPhase() as CommandPhase).getFieldIndex(), Command.TERA);
+            ui.setMode(UiMode.FIGHT, (globalScene.getCurrentPhase() as CommandPhase).getFieldIndex(), Command.TERA);
             success = true;
             break;
         }

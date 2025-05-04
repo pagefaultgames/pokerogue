@@ -16,7 +16,7 @@ import {
   ClearTerrainAbAttr,
   ClearWeatherAbAttr,
   PostTeraFormChangeStatChangeAbAttr,
-} from "#app/data/ability";
+} from "#app/data/abilities/ability";
 
 export class QuietFormChangePhase extends BattlePhase {
   protected pokemon: Pokemon;
@@ -74,7 +74,7 @@ export class QuietFormChangePhase extends BattlePhase {
         isTerastallized: this.pokemon.isTerastallized,
       });
       ["spriteColors", "fusionSpriteColors"].map(k => {
-        if (this.pokemon.summonData?.speciesForm) {
+        if (this.pokemon.summonData.speciesForm) {
           k += "Base";
         }
         sprite.pipelineData[k] = this.pokemon.getSprite().pipelineData[k];

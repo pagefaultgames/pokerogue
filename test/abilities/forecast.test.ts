@@ -1,5 +1,5 @@
 import { BattlerIndex } from "#app/battle";
-import { allAbilities } from "#app/data/ability";
+import { allAbilities } from "#app/data/data-lists";
 import { Abilities } from "#app/enums/abilities";
 import { WeatherType } from "#app/enums/weather-type";
 import { DamageAnimPhase } from "#app/phases/damage-anim-phase";
@@ -75,7 +75,7 @@ describe("Abilities - Forecast", () => {
     async () => {
       game.override
         .moveset([Moves.RAIN_DANCE, Moves.SUNNY_DAY, Moves.SNOWSCAPE, Moves.SPLASH])
-        .battleType("double")
+        .battleStyle("double")
         .starterForms({
           [Species.KYOGRE]: 1,
           [Species.GROUDON]: 1,

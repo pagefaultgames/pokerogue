@@ -1,5 +1,5 @@
 import type Phaser from "phaser";
-import { Mode } from "./ui/ui";
+import { UiMode } from "#enums/ui-mode";
 import type { InputsController } from "./inputs-controller";
 import type MessageUiHandler from "./ui/message-ui-handler";
 import StarterSelectUiHandler from "./ui/starter-select-ui-handler";
@@ -176,22 +176,24 @@ export class UiInputs {
       return;
     }
     switch (globalScene.ui?.getMode()) {
-      case Mode.MESSAGE:
+      case UiMode.MESSAGE: {
         const messageHandler = globalScene.ui.getHandler<MessageUiHandler>();
         if (!messageHandler.pendingPrompt || messageHandler.isTextAnimationInProgress()) {
           return;
         }
-      case Mode.TITLE:
-      case Mode.COMMAND:
-      case Mode.MODIFIER_SELECT:
-      case Mode.MYSTERY_ENCOUNTER:
-        globalScene.ui.setOverlayMode(Mode.MENU);
+        // biome-ignore lint/suspicious/noFallthroughSwitchClause: falls through to show menu overlay
+      }
+      case UiMode.TITLE:
+      case UiMode.COMMAND:
+      case UiMode.MODIFIER_SELECT:
+      case UiMode.MYSTERY_ENCOUNTER:
+        globalScene.ui.setOverlayMode(UiMode.MENU);
         break;
-      case Mode.STARTER_SELECT:
-      case Mode.POKEDEX_PAGE:
+      case UiMode.STARTER_SELECT:
+      case UiMode.POKEDEX_PAGE:
         this.buttonTouch();
         break;
-      case Mode.MENU:
+      case UiMode.MENU:
         globalScene.ui.revertMode();
         globalScene.playSound("ui/select");
         break;
@@ -227,7 +229,7 @@ export class UiInputs {
         SettingKeys.Game_Speed,
         Setting[settingGameSpeed].options.findIndex(item => item.label === `${globalScene.gameSpeed}x`) + 1,
       );
-      if (globalScene.ui?.getMode() === Mode.SETTINGS) {
+      if (globalScene.ui?.getMode() === UiMode.SETTINGS) {
         (globalScene.ui.getHandler() as SettingsUiHandler).show([]);
       }
     } else if (!up && globalScene.gameSpeed > 1) {
@@ -238,7 +240,7 @@ export class UiInputs {
           0,
         ),
       );
-      if (globalScene.ui?.getMode() === Mode.SETTINGS) {
+      if (globalScene.ui?.getMode() === UiMode.SETTINGS) {
         (globalScene.ui.getHandler() as SettingsUiHandler).show([]);
       }
     }

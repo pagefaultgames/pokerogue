@@ -1,19 +1,112 @@
-import type { SessionSaveData, SystemSaveData } from "../game-data";
+import type { SessionSaveMigrator } from "#app/@types/SessionSaveMigrator";
+import type { SettingsSaveMigrator } from "#app/@types/SettingsSaveMigrator";
+import type { SystemSaveMigrator } from "#app/@types/SystemSaveMigrator";
+import type { SessionSaveData, SystemSaveData } from "#app/system/game-data";
+import { compareVersions } from "compare-versions";
 import { version } from "../../../package.json";
 
+/*
+// template for save migrator creation
+// versions/vA_B_C.ts
+
+// The version for each migrator should match the filename, ie: `vA_B_C.ts` -> `version: "A.B.C"
+// This is the target version (aka the version we're ending up on after the migrators are run)
+
+// The name for each migrator should match its purpose. For example, if you're fixing
+// the ability index of a pokemon, it might be called `migratePokemonAbilityIndex`
+
+const systemMigratorA: SystemSaveMigrator = {
+  version: "A.B.C",
+  migrate: (data: SystemSaveData): void => {
+    // migration code goes here
+  },
+};
+
+export const systemMigrators: Readonly<SystemSaveMigrator[]> = [systemMigratorA] as const;
+
+const sessionMigratorA: SessionSaveMigrator = {
+  version: "A.B.C",
+  migrate: (data: SessionSaveData): void => {
+    // migration code goes here
+  },
+};
+
+export const sessionMigrators: Readonly<SessionSaveMigrator[]> = [sessionMigratorA] as const;
+
+const settingsMigratorA: SettingsSaveMigrator = {
+  version: "A.B.C",
+  // biome-ignore lint/complexity/noBannedTypes: TODO - refactor settings
+  migrate: (data: Object): void => {
+    // migration code goes here
+  },
+};
+
+export const settingsMigrators: Readonly<SettingsSaveMigrator[]> = [settingsMigratorA] as const;
+*/
+
+// --- vA.B.C PATCHES --- //
+// import * as vA_B_C from "./versions/vA_B_C";
+
 // --- v1.0.4 (and below) PATCHES --- //
+// biome-ignore lint/style/noNamespaceImport: Convenience (TODO: make this a file-wide ignore when Biome supports those)
 import * as v1_0_4 from "./versions/v1_0_4";
 
-// --- v1.1.0 PATCHES --- //
-import * as v1_1_0 from "./versions/v1_1_0";
-
 // --- v1.7.0 PATCHES --- //
+// biome-ignore lint/style/noNamespaceImport: Convenience
 import * as v1_7_0 from "./versions/v1_7_0";
 
 // --- v1.8.3 PATCHES --- //
+// biome-ignore lint/style/noNamespaceImport: Convenience
 import * as v1_8_3 from "./versions/v1_8_3";
 
-const LATEST_VERSION = version.split(".").map(value => Number.parseInt(value));
+// --- v1.9.0 PATCHES --- //
+// biome-ignore lint/style/noNamespaceImport: Convenience
+import * as v1_9_0 from "./versions/v1_9_0";
+
+/** Current game version */
+const LATEST_VERSION = version;
+
+type SaveMigrator = SystemSaveMigrator | SessionSaveMigrator | SettingsSaveMigrator;
+
+// biome-ignore lint/complexity/noBannedTypes: TODO - refactor settings
+type SaveData = SystemSaveData | SessionSaveData | Object;
+
+// To add a new set of migrators, create a new `.push()` line like so:
+// `systemMigrators.push(...vA_B_C.systemMigrators);`
+
+/** All system save migrators */
+const systemMigrators: SystemSaveMigrator[] = [];
+systemMigrators.push(...v1_0_4.systemMigrators);
+systemMigrators.push(...v1_7_0.systemMigrators);
+systemMigrators.push(...v1_8_3.systemMigrators);
+
+/** All session save migrators */
+const sessionMigrators: SessionSaveMigrator[] = [];
+sessionMigrators.push(...v1_0_4.sessionMigrators);
+sessionMigrators.push(...v1_7_0.sessionMigrators);
+sessionMigrators.push(...v1_9_0.sessionMigrators);
+
+/** All settings migrators */
+const settingsMigrators: SettingsSaveMigrator[] = [];
+settingsMigrators.push(...v1_0_4.settingsMigrators);
+
+/** Sorts migrators by their stated version, ensuring they are applied in order from oldest to newest */
+const sortMigrators = (migrators: SaveMigrator[]): void => {
+  migrators.sort((a, b) => compareVersions(a.version, b.version));
+};
+
+sortMigrators(systemMigrators);
+sortMigrators(sessionMigrators);
+sortMigrators(settingsMigrators);
+
+const applyMigrators = (migrators: readonly SaveMigrator[], data: SaveData, saveVersion: string) => {
+  for (const migrator of migrators) {
+    const isMigratorVersionHigher = compareVersions(saveVersion, migrator.version) === -1;
+    if (isMigratorVersionHigher) {
+      migrator.migrate(data as any);
+    }
+  }
+};
 
 /**
  * Converts incoming {@linkcode SystemSaveData} that has a version below the
@@ -26,12 +119,12 @@ const LATEST_VERSION = version.split(".").map(value => Number.parseInt(value));
  * @see {@link SystemVersionConverter}
  */
 export function applySystemVersionMigration(data: SystemSaveData) {
-  const curVersion = data.gameVersion.split(".").map(value => Number.parseInt(value));
+  const prevVersion = data.gameVersion;
+  const isCurrentVersionHigher = compareVersions(prevVersion, LATEST_VERSION) === -1;
 
-  if (!curVersion.every((value, index) => value === LATEST_VERSION[index])) {
-    const converter = new SystemVersionConverter();
-    converter.applyStaticPreprocessors(data);
-    converter.applyMigration(data, curVersion);
+  if (isCurrentVersionHigher) {
+    applyMigrators(systemMigrators, data, prevVersion);
+    console.log(`System data successfully migrated to v${LATEST_VERSION}!`);
   }
 }
 
@@ -46,12 +139,15 @@ export function applySystemVersionMigration(data: SystemSaveData) {
  * @see {@link SessionVersionConverter}
  */
 export function applySessionVersionMigration(data: SessionSaveData) {
-  const curVersion = data.gameVersion.split(".").map(value => Number.parseInt(value));
+  const prevVersion = data.gameVersion;
+  const isCurrentVersionHigher = compareVersions(prevVersion, LATEST_VERSION) === -1;
 
-  if (!curVersion.every((value, index) => value === LATEST_VERSION[index])) {
-    const converter = new SessionVersionConverter();
-    converter.applyStaticPreprocessors(data);
-    converter.applyMigration(data, curVersion);
+  if (isCurrentVersionHigher) {
+    // Always sanitize money as a safeguard
+    data.money = Math.floor(data.money);
+
+    applyMigrators(sessionMigrators, data, prevVersion);
+    console.log(`Session data successfully migrated to v${LATEST_VERSION}!`);
   }
 }
 
@@ -65,156 +161,13 @@ export function applySessionVersionMigration(data: SessionSaveData) {
  * @param data Settings data object
  * @see {@link SettingsVersionConverter}
  */
+// biome-ignore lint/complexity/noBannedTypes: TODO - refactor settings
 export function applySettingsVersionMigration(data: Object) {
-  const gameVersion: string = data.hasOwnProperty("gameVersion") ? data["gameVersion"] : "1.0.0";
-  const curVersion = gameVersion.split(".").map(value => Number.parseInt(value));
+  const prevVersion: string = data.hasOwnProperty("gameVersion") ? data["gameVersion"] : "1.0.0";
+  const isCurrentVersionHigher = compareVersions(prevVersion, LATEST_VERSION) === -1;
 
-  if (!curVersion.every((value, index) => value === LATEST_VERSION[index])) {
-    const converter = new SettingsVersionConverter();
-    converter.applyStaticPreprocessors(data);
-    converter.applyMigration(data, curVersion);
-  }
-}
-
-/**
- * Abstract class encapsulating the logic for migrating data from a given version up to
- * the current version listed in `package.json`.
- *
- * Note that, for any version converter, the corresponding `applyMigration`
- * function would only need to be changed once when the first migration for a
- * given version is introduced. Similarly, a version file (within the `versions`
- * folder) would only need to be created for a version once with the appropriate
- * array nomenclature.
- */
-abstract class VersionConverter {
-  /**
-   * Iterates through an array of designated migration functions that are each
-   * called one by one to transform the data.
-   * @param data The data to be operated on
-   * @param migrationArr An array of functions that will transform the incoming data
-   */
-  callMigrators(data: any, migrationArr: readonly any[]) {
-    for (const migrate of migrationArr) {
-      migrate(data);
-    }
-  }
-
-  /**
-   * Applies any version-agnostic data sanitation as defined within the function
-   * body.
-   * @param data The data to be operated on
-   */
-  applyStaticPreprocessors(_data: any): void {}
-
-  /**
-   * Uses the current version the incoming data to determine the starting point
-   * of the migration which will cascade up to the latest version, calling the
-   * necessary migration functions in the process.
-   * @param data The data to be operated on
-   * @param curVersion [0] Current major version
-   *                   [1] Current minor version
-   *                   [2] Current patch version
-   */
-  abstract applyMigration(data: any, curVersion: number[]): void;
-}
-
-/**
- * Class encapsulating the logic for migrating {@linkcode SessionSaveData} from
- * a given version up to the current version listed in `package.json`.
- * @extends VersionConverter
- */
-class SessionVersionConverter extends VersionConverter {
-  override applyStaticPreprocessors(data: SessionSaveData): void {
-    // Always sanitize money as a safeguard
-    data.money = Math.floor(data.money);
-  }
-
-  override applyMigration(data: SessionSaveData, curVersion: number[]): void {
-    const [curMajor, curMinor, curPatch] = curVersion;
-
-    if (curMajor === 1) {
-      if (curMinor === 0) {
-        if (curPatch <= 5) {
-          console.log("Applying v1.0.4 session data migration!");
-          this.callMigrators(data, v1_0_4.sessionMigrators);
-        }
-      }
-      if (curMinor <= 1) {
-        console.log("Applying v1.1.0 session data migration!");
-        this.callMigrators(data, v1_1_0.sessionMigrators);
-      }
-      if (curMinor < 7) {
-        console.log("Applying v1.7.0 session data migration!");
-        this.callMigrators(data, v1_7_0.sessionMigrators);
-      }
-    }
-
-    console.log(`Session data successfully migrated to v${version}!`);
-  }
-}
-
-/**
- * Class encapsulating the logic for migrating {@linkcode SystemSaveData} from
- * a given version up to the current version listed in `package.json`.
- * @extends VersionConverter
- */
-class SystemVersionConverter extends VersionConverter {
-  override applyMigration(data: SystemSaveData, curVersion: number[]): void {
-    const [curMajor, curMinor, curPatch] = curVersion;
-
-    if (curMajor === 1) {
-      if (curMinor === 0) {
-        if (curPatch <= 4) {
-          console.log("Applying v1.0.4 system data migraton!");
-          this.callMigrators(data, v1_0_4.systemMigrators);
-        }
-      }
-      if (curMinor <= 1) {
-        console.log("Applying v1.1.0 system data migraton!");
-        this.callMigrators(data, v1_1_0.systemMigrators);
-      }
-      if (curMinor < 7) {
-        console.log("Applying v1.7.0 system data migration!");
-        this.callMigrators(data, v1_7_0.systemMigrators);
-      }
-      if (curMinor === 8) {
-        if (curPatch <= 2) {
-          console.log("Applying v1.8.3 system data migration!");
-          this.callMigrators(data, v1_8_3.systemMigrators);
-        }
-      }
-    }
-
-    console.log(`System data successfully migrated to v${version}!`);
-  }
-}
-
-/**
- * Class encapsulating the logic for migrating settings data from
- * a given version up to the current version listed in `package.json`.
- * @extends VersionConverter
- */
-class SettingsVersionConverter extends VersionConverter {
-  override applyMigration(data: Object, curVersion: number[]): void {
-    const [curMajor, curMinor, curPatch] = curVersion;
-
-    if (curMajor === 1) {
-      if (curMinor === 0) {
-        if (curPatch <= 4) {
-          console.log("Applying v1.0.4 settings data migraton!");
-          this.callMigrators(data, v1_0_4.settingsMigrators);
-        }
-      }
-      if (curMinor <= 1) {
-        console.log("Applying v1.1.0 settings data migraton!");
-        this.callMigrators(data, v1_1_0.settingsMigrators);
-      }
-      if (curMinor < 7) {
-        console.log("Applying v1.7.0 settings data migration!");
-        this.callMigrators(data, v1_7_0.settingsMigrators);
-      }
-    }
-
-    console.log(`Settings data successfully migrated to v${version}!`);
+  if (isCurrentVersionHigher) {
+    applyMigrators(settingsMigrators, data, prevVersion);
+    console.log(`Settings successfully migrated to v${LATEST_VERSION}!`);
   }
 }
