@@ -1,25 +1,15 @@
 import { BattlerIndex } from "#app/battle";
-import Move, { RandomMoveAttr } from "#app/data/moves/move";
-import type Pokemon from "#app/field/pokemon";
+import { RandomMoveAttr } from "#app/data/moves/move";
 import { Abilities } from "#enums/abilities";
-import { MoveFlags } from "#enums/MoveFlags";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi, type MockInstance } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Moves - Ability Ignores", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
-  let flagSpy: MockInstance<
-    ({
-      flag,
-      user,
-      target,
-      isFollowUp,
-    }: { flag: MoveFlags; user: Pokemon; target?: Pokemon; isFollowUp?: boolean }) => boolean
-  >;
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({
@@ -42,19 +32,7 @@ describe("Moves - Ability Ignores", () => {
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.STURDY)
       .enemyMoveset(Moves.SPLASH);
-
-    flagSpy = vi.spyOn(Move.prototype, "doesFlagEffectApply");
   });
-
-  /*** Check whether the enemy pokemon's ability was successfully ignored or not. */
-  function expectEnemyAbilityIgnored(ignored: boolean) {
-    const lastPlayerIgnoreCheckIndex = flagSpy.mock.calls
-      .reverse()
-      .findIndex(
-        ([value]) => value.flag === MoveFlags.IGNORE_ABILITIES && value.user.id === game.scene.getPlayerPokemon()?.id,
-      );
-    expect(flagSpy).toHaveNthReturnedWith(lastPlayerIgnoreCheckIndex, ignored);
-  }
 
   it("should ignore enemy abilities", async () => {
     await game.classicMode.startBattle([Species.MILOTIC]);
@@ -65,17 +43,17 @@ describe("Moves - Ability Ignores", () => {
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(enemy.isFainted()).toBe(true);
-    expectEnemyAbilityIgnored(true);
   });
 
   it("should not ignore enemy abilities when called by metronome", async () => {
     await game.classicMode.startBattle([Species.MILOTIC]);
     vi.spyOn(RandomMoveAttr.prototype, "getMove").mockReturnValue(Moves.PHOTON_GEYSER);
 
+    const enemy = game.scene.getEnemyPokemon()!;
     game.move.select(Moves.METRONOME);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expectEnemyAbilityIgnored(false);
+    expect(enemy.isFainted()).toBe(false);
     expect(game.scene.getPlayerPokemon()?.getLastXMoves()[0].move).toBe(Moves.PHOTON_GEYSER);
   });
 
@@ -84,11 +62,12 @@ describe("Moves - Ability Ignores", () => {
 
     await game.classicMode.startBattle([Species.MILOTIC]);
 
+    const enemy = game.scene.getEnemyPokemon()!;
     game.move.select(Moves.MIRROR_MOVE);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expectEnemyAbilityIgnored(false);
+    expect(enemy.isFainted()).toBe(false);
     expect(game.scene.getPlayerPokemon()?.getLastXMoves()[0].move).toBe(Moves.SUNSTEEL_STRIKE);
   });
 });

@@ -270,12 +270,11 @@ export default class Move implements Localizable {
 
   /**
    * Getter function that returns if this Move has a MoveFlag
-   * @param flag {@linkcode MoveFlags} to check
-   * @returns boolean
+   * @param flag - The {@linkcode MoveFlags} to check
+   * @returns Whether this Move has the specified flag..
    */
   hasFlag(flag: MoveFlags): boolean {
-    // internally it is taking the bitwise AND (MoveFlags are represented as bit-shifts) and returning False if result is 0 and true otherwise
-    return !!(this.flags & flag);
+    return (this.flags & flag) !== MoveFlags.NONE; // Flags
   }
 
   /**

@@ -307,10 +307,11 @@ type getAttackDamageParams = Omit<damageParams, "moveCategory">;
 
 export default abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
-   * This pokemon's {@link https://bulbapedia.bulbagarden.net/wiki/Personality_value | Personality value/PID},
-   * used to determine various parameters of this Pokemon.
-   * Represented as a random 32-bit unsigned integer.
-   * TODO: Stop treating this like a unique ID and stop treating 0 as no pokemon
+   * This pokemon's {@link https://bulbapedia.bulbagarden.net/wiki/Personality_value | Personality value/PID},.
+   * represented as a random 32-bit unsigned integer (0 - 4.2 billion).
+
+   * TODO: Either stop treating this like a unique ID or stop using it to generate stuff. \
+   * TODO: Stop treating IDs of `0` as "no pokemon"
    */
   public id: number;
   public name: string;
