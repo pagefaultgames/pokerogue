@@ -27,7 +27,7 @@ describe("Moves - Magnet Rise", () => {
       .battleStyle("single")
       .starterSpecies(Species.MAGNEZONE)
       .enemySpecies(Species.RATTATA)
-      .enemyMoveset([Moves.DRILL_RUN, Moves.DRILL_RUN, Moves.DRILL_RUN, Moves.DRILL_RUN])
+      .enemyMoveset(Moves.DRILL_RUN)
       .disableCrits()
       .enemyLevel(1)
       .moveset([moveToUse, Moves.SPLASH, Moves.GRAVITY, Moves.BATON_PASS]);

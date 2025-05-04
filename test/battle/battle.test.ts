@@ -26,7 +26,7 @@ import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { Biome } from "#app/enums/biome";
 
-describe("Test Battle Phase", () => {
+describe("Test - Battle Phase", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
@@ -95,7 +95,7 @@ describe("Test Battle Phase", () => {
       .startingLevel(2000)
       .startingWave(3)
       .battleStyle("single")
-      .enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
+      .enemyMoveset(Moves.TACKLE);
     await game.classicMode.startBattle([Species.MEWTWO]);
     game.move.select(Moves.TACKLE);
     await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(SelectModifierPhase, false);
@@ -108,7 +108,7 @@ describe("Test Battle Phase", () => {
       .startingWave(3)
       .moveset([Moves.TACKLE])
       .enemyAbility(Abilities.HYDRATION)
-      .enemyMoveset([Moves.TAIL_WHIP, Moves.TAIL_WHIP, Moves.TAIL_WHIP, Moves.TAIL_WHIP])
+      .enemyMoveset(Moves.TAIL_WHIP)
       .battleStyle("single");
     await game.classicMode.startBattle([Species.MEWTWO]);
     game.move.select(Moves.TACKLE);
@@ -205,7 +205,7 @@ describe("Test Battle Phase", () => {
     { name: "2v1", double: false, qty: 2 },
     { name: "2v2", double: true, qty: 2 },
     { name: "4v2", double: true, qty: 4 },
-  ])("should not crash when starting $1 battle", async ({ double, qty }) => {
+  ])("should not crash when starting $name battle", async ({ double, qty }) => {
     game.override
       .battleStyle(double ? "double" : "single")
       .enemySpecies(Species.MIGHTYENA)
@@ -213,11 +213,11 @@ describe("Test Battle Phase", () => {
       .ability(Abilities.HYDRATION);
 
     await game.classicMode.startBattle(
-      [Species.BLASTOISE, Species.CHARIZARD, Species.DARKRAI, Species.GABITE].slice(qty),
+      [Species.BLASTOISE, Species.CHARIZARD, Species.DARKRAI, Species.GABITE].slice(0, qty),
     );
 
     expect(game.scene.ui?.getMode()).toBe(UiMode.COMMAND);
-    expect(game.scene.getCurrentPhase()).toBeInstanceOf(CommandPhase.name);
+    expect(game.scene.getCurrentPhase()!.constructor.name).toBe(CommandPhase.name);
   });
 
   it("kill opponent pokemon", async () => {
@@ -231,7 +231,7 @@ describe("Test Battle Phase", () => {
       .startingLevel(2000)
       .startingWave(3)
       .moveset([moveToUse])
-      .enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
+      .enemyMoveset(Moves.TACKLE);
     await game.classicMode.startBattle([Species.DARMANITAN, Species.CHARIZARD]);
 
     game.move.select(moveToUse);
@@ -250,7 +250,7 @@ describe("Test Battle Phase", () => {
       .startingLevel(2000)
       .startingWave(3)
       .moveset([moveToUse])
-      .enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
+      .enemyMoveset(Moves.TACKLE);
     await game.classicMode.startBattle([Species.MEWTWO]);
     const turn = game.scene.currentBattle.turn;
     game.move.select(moveToUse);
@@ -270,7 +270,7 @@ describe("Test Battle Phase", () => {
       .startingWave(3)
       .startingBiome(Biome.LAKE)
       .moveset([moveToUse])
-      .enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
+      .enemyMoveset(Moves.TACKLE);
     await game.classicMode.startBattle();
     const waveIndex = game.scene.currentBattle.waveIndex;
     game.move.select(moveToUse);

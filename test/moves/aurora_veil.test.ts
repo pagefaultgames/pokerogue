@@ -42,7 +42,7 @@ describe("Moves - Aurora Veil", () => {
       .moveset([Moves.ABSORB, Moves.ROCK_SLIDE, Moves.TACKLE])
       .enemyLevel(100)
       .enemySpecies(Species.MAGIKARP)
-      .enemyMoveset([Moves.AURORA_VEIL, Moves.AURORA_VEIL, Moves.AURORA_VEIL, Moves.AURORA_VEIL])
+      .enemyMoveset(Moves.AURORA_VEIL)
       .disableCrits()
       .weather(WeatherType.HAIL);
   });

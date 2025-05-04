@@ -28,7 +28,7 @@ describe("Moves - Fusion Flare", () => {
       .moveset([fusionFlare])
       .startingLevel(1)
       .enemySpecies(Species.RATTATA)
-      .enemyMoveset([Moves.REST, Moves.REST, Moves.REST, Moves.REST])
+      .enemyMoveset(Moves.REST)
       .battleStyle("single")
       .startingWave(97)
       .disableCrits();

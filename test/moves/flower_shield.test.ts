@@ -75,7 +75,7 @@ describe("Moves - Flower Shield", () => {
    * See semi-vulnerable state tags. {@linkcode SemiInvulnerableTag}
    */
   it("does not raise DEF stat stage for a Pokemon in semi-vulnerable state", async () => {
-    game.override.enemySpecies(Species.PARAS).enemyMoveset([Moves.DIG, Moves.DIG, Moves.DIG, Moves.DIG]).enemyLevel(50);
+    game.override.enemySpecies(Species.PARAS).enemyMoveset(Moves.DIG).enemyLevel(50);
 
     await game.classicMode.startBattle([Species.CHERRIM]);
     const paras = game.scene.getEnemyPokemon()!;

@@ -28,7 +28,7 @@ describe("Moves - Fusion Bolt", () => {
       .startingLevel(1)
       .enemySpecies(Species.RESHIRAM)
       .enemyAbility(Abilities.ROUGH_SKIN)
-      .enemyMoveset([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH])
+      .enemyMoveset(Moves.SPLASH)
       .battleStyle("single")
       .startingWave(97)
       .disableCrits();

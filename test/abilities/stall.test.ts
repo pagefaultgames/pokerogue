@@ -27,7 +27,7 @@ describe("Abilities - Stall", () => {
       .disableCrits()
       .enemySpecies(Species.REGIELEKI)
       .enemyAbility(Abilities.STALL)
-      .enemyMoveset([Moves.QUICK_ATTACK, Moves.QUICK_ATTACK, Moves.QUICK_ATTACK, Moves.QUICK_ATTACK])
+      .enemyMoveset(Moves.QUICK_ATTACK)
       .moveset([Moves.QUICK_ATTACK, Moves.TACKLE]);
   });
 

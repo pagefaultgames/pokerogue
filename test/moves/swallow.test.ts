@@ -33,7 +33,7 @@ describe("Moves - Swallow", () => {
       .enemyMoveset(Moves.SPLASH)
       .enemyAbility(Abilities.NONE)
       .enemyLevel(2000)
-      .moveset([Moves.SWALLOW, Moves.SWALLOW, Moves.SWALLOW, Moves.SWALLOW])
+      .moveset(Moves.SWALLOW)
       .ability(Abilities.NONE);
   });
 

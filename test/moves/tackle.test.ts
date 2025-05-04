@@ -30,7 +30,7 @@ describe("Moves - Tackle", () => {
       .startingLevel(1)
       .startingWave(97)
       .moveset([moveToUse])
-      .enemyMoveset([Moves.GROWTH, Moves.GROWTH, Moves.GROWTH, Moves.GROWTH])
+      .enemyMoveset(Moves.GROWTH)
       .disableCrits();
   });
 

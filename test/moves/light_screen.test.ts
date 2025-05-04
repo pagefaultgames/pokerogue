@@ -41,7 +41,7 @@ describe("Moves - Light Screen", () => {
       .moveset([Moves.ABSORB, Moves.DAZZLING_GLEAM, Moves.TACKLE])
       .enemyLevel(100)
       .enemySpecies(Species.MAGIKARP)
-      .enemyMoveset([Moves.LIGHT_SCREEN, Moves.LIGHT_SCREEN, Moves.LIGHT_SCREEN, Moves.LIGHT_SCREEN])
+      .enemyMoveset(Moves.LIGHT_SCREEN)
       .disableCrits();
   });
 
