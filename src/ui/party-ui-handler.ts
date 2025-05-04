@@ -1581,7 +1581,7 @@ class PartySlot extends Phaser.GameObjects.Container {
         fusionShinyStar.setOrigin(0, 0);
         fusionShinyStar.setPosition(shinyStar.x, shinyStar.y);
         fusionShinyStar.setTint(
-          getVariantTint(this.pokemon.summonData?.illusion?.basePokemon.fusionVariant ?? this.pokemon.fusionVariant),
+          getVariantTint(this.pokemon.summonData.illusion?.basePokemon.fusionVariant ?? this.pokemon.fusionVariant),
         );
 
         slotInfoContainer.add(fusionShinyStar);

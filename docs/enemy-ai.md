@@ -37,12 +37,12 @@ The `EnemyCommandPhase` follows this process to determine whether or not an enem
 1. If the Pokémon has a move already queued (e.g. they are recharging after using Hyper Beam), or they are trapped (e.g. by Bind or Arena Trap), skip to resolving a `FIGHT` command (see next section).
 2. For each Pokémon in the enemy's party, [compute their matchup scores](#calculating-matchup-scores) against the active player Pokémon. If there are two active player Pokémon in the battle, add their matchup scores together.
 3. Take the party member with the highest matchup score and apply a multiplier to the score that reduces the score based on how frequently the enemy trainer has switched Pokémon in the current battle.
-   - The multiplier scales off of a counter that increments when the enemy trainer chooses to switch a Pokémon and decrements when they choose to use a move.
+  - The multiplier scales off of a counter that increments when the enemy trainer chooses to switch a Pokémon and decrements when they choose to use a move.
 4. Compare the result of Step 3 with the active enemy Pokémon's matchup score. If the party member's matchup score is at least three times that of the active Pokémon, switch to that party member.
-   - "Boss" trainers only require the party member's matchup score to be at least two times that of the active Pokémon, so they are more likely to switch than other trainers. The full list of boss trainers in the game is as follows:
-     - All gym leaders, Elite 4 members, and Champions
-     - All Evil Team leaders
-     - The last three Rival Fights (on waves 95, 145, and 195)
+  - "Boss" trainers only require the party member's matchup score to be at least two times that of the active Pokémon, so they are more likely to switch than other trainers. The full list of boss trainers in the game is as follows:
+    - All gym leaders, Elite 4 members, and Champions
+    - All Evil Team leaders
+    - The last three Rival Fights (on waves 95, 145, and 195)
 5. If the enemy decided to switch, send a switch `turnCommand` and end this `EnemyCommandPhase`; otherwise, move on to resolving a `FIGHT` enemy command.
 
 ## Step 2: Selecting a Move
@@ -54,28 +54,35 @@ At this point, the enemy (a wild or trainer Pokémon) has decided against switch
 In `getNextMove()`, the enemy Pokémon chooses a move to use in the following steps:
 1. If the Pokémon has a move in its Move Queue (e.g. the second turn of a charging move), and the queued move is still usable, use that move against the given target.
 2. Filter out any moves it can't use within its moveset. The remaining moves make up the enemy's **move pool** for the turn.
-   1. A move can be unusable if it has no PP left or it has been disabled by another move or effect
-   2. If the enemy's move pool is empty, use Struggle.
+  1. A move can be unusable if it has no PP left or it has been disabled by another move or effect.
+  2. If the enemy's move pool is empty, use Struggle.
 3. Calculate the **move score** of each move in the enemy's move pool.
-   1. A move's move score is equivalent to the move's maximum **target score** among all of the move's possible targets on the field ([more on this later](#calculating-move-and-target-scores)).
-   2. A move's move score is set to -20 if at least one of these conditions are met:
-      - The move is unimplemented (or, more precisely, the move's name ends with "&nbsp;(N)").
-      - Conditions for the move to succeed are not met (unless the move is Sucker Punch, Upper Hand, or Thunderclap, as those moves' conditions can't be resolved before the turn starts).
-      - The move's target scores are 0 or `NaN` for each target. In this case, the game assumes the target score calculation for that move is unimplemented.
+  1. A move's move score is equivalent to the move's maximum **target score** among all of the move's possible targets on the field ([more on this later](#calculating-move-and-target-scores)).
+  2. A move's move score is set to -20 if at least one of these conditions are met:
+    - The move is unimplemented (or, more precisely, the move's name ends with "(N)").
+    - Conditions for the move to succeed are not met (unless the move is Sucker Punch, Upper Hand or Thunderclap, as those moves' conditions can't be resolved until after the turn starts).
+    - The move's target scores are 0 or `NaN` for each target. In this case, the game assumes the target score calculation for that move is unimplemented.
 4. Sort the move pool in descending order of move scores.
 5. From here, the enemy's move selection varies based on its `aiType`. If the enemy is a Boss Pokémon or has a Trainer, it uses the `SMART` AI type; otherwise, it uses the `SMART_RANDOM` AI type.
-   1. Let $m_i$ be the *i*-th move in the sorted move pool $M$:
-      - If `aiType === SMART_RANDOM`, the enemy has a 5/8 chance of selecting $m_0$ and a 3/8 chance of advancing to the next best move $m_1$, where it then repeats this roll. This process stops when a move is selected or the last move in the move pool is reached.
-      - If `aiType === SMART`, a similar loop is used to decide between selecting the move $m_i$ and advancing to the next iteration with the move $m_{i+1}$. However, instead of using a flat probability, the following conditions need to be met to advance from selecting $m_i$ to $m_{i+1}$:
-        - $\text{sign}(s_i) = \text{sign}(s_{i+1})$, where $s_i$ is the move score of $m_i$.
-        - $\text{randInt}(0, 100) < \text{round}(\frac{s_{i+1}}{s_i}\times 50)$. In other words: if the scores of $m_i$ and $m_{i+1}$ have the same sign, the chance to advance to the next iteration with $m_{i+1}$ is proportional to how close the scores are to each other. The probability to advance to the next iteration is at most 50 percent (when $s_i$ and $s_{i+1}$ are equal).
+  1. Let $m_i$ be the *i*-th move in the sorted move pool $M$:
+    - If `aiType === SMART_RANDOM`, the enemy has a 5/8 chance of selecting $m_0$ and a 3/8 chance of advancing to the next best move $m_1$, where it then repeats this roll. This process stops when a move is selected or the last move in the move pool is reached.
+    - If `aiType === SMART`, a similar loop is used to decide between selecting the move $m_i$ and advancing to the next iteration with the move $m_{i+1}$. However, instead of using a flat probability, the following conditions need to be met to advance from selecting $m_i$ to $m_{i+1}$:
+      - $\text{sign}(s_i) = \text{sign}(s_{i+1})$, where $s_i$ is the move score of $m_i$.
+      - $\text{randInt}(0, 100) < \text{round}(\frac{s_{i+1}}{s_i}\times 50)$. In other words: if the scores of $m_i$ and $m_{i+1}$ have the same sign, the chance to advance to the next iteration with $m_{i+1}$ is proportional to how close the scores are to each other. The probability to advance to the next iteration is at most 50 percent (when $s_i$ and $s_{i+1}$ are equal).
 6. The enemy will use the move selected in Step 5 against the target(s) with the highest [**target selection score (TSS)**](#choosing-targets-with-getnexttargets)
 
 ### Calculating Move and Target Scores
 
-As part of the move selection process, the enemy Pokémon must compute a **target score (TS)** for each legal target for each move in its move pool. The base target score for all moves is a combination of the move's **user benefit score (UBS)** and **target benefit score (TBS)**.
+As part of the move selection process, the enemy Pokémon must compute a **target score (TS)** for each legal target for each move in its move pool. The base target score is a combination of the move's **user benefit score (UBS)** and **target benefit score (TBS)**, representing how much the move helps or hinders the user and/or its target(s).
 
-![equation](https://latex.codecogs.com/png.image?%5Cinline%20%5Cdpi%7B100%7D%5Cbg%7Bwhite%7D%5Ctext%7BTS%7D=%5Ctext%7BUBS%7D&plus;%5Ctext%7BTBS%7D%5Ctimes%5Cleft%5C%7B%5Cbegin%7Bmatrix%7D-1&%5Ctext%7Bif%20target%20is%20an%20opponent%7D%5C%5C1&%5Ctext%7Botherwise%7D%5C%5C%5Cend%7Bmatrix%7D%5Cright.)
+$$
+\text{TS} = \text{UBS} + \left( \text{TBS} \times
+\begin{cases}
+-1 & \text{if target is an opponent} \\
+1 & \text{otherwise}
+\end{cases}
+\right)
+$$
 
 A move's UBS and TBS are computed with the respective functions in the `Move` class:
 
@@ -96,19 +103,38 @@ In addition to the base score from `Move.getTargetBenefitScore()`, attack moves 
 - The move's category (Physical/Special), and whether the user has a higher Attack or Special Attack stat.
 
 More specifically, the following steps are taken to compute the move's `attackScore`:
-1. Compute a multiplier based on the move's type effectiveness: 
+1. Compute a multiplier based on the move's type effectiveness:
 
-   ![typeMultEqn](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D%5Cbg%7Bwhite%7D%5Ctext%7BtypeMult%7D=%5Cleft%5C%7B%5Cbegin%7Bmatrix%7D2&&%5Ctext%7Bif%20move%20is%20super%20effective(or%20better)%7D%5C%5C-2&&%5Ctext%7Botherwise%7D%5C%5C%5Cend%7Bmatrix%7D%5Cright.)
+  $$
+  \text{typeMult} =
+  \begin{cases}
+  2 & \text{if move is super effective (or better)} \\
+  -2 & \text{otherwise}
+  \end{cases}
+  $$
 2. Compute a multiplier based on the move's category and the user's offensive stats:
-   1. Compute the user's offensive stat ratio:
-      
-      ![statRatioEqn](https://latex.codecogs.com/png.image?%5Cinline%20%5Cdpi%7B100%7D%5Cbg%7Bwhite%7D%5Ctext%7BstatRatio%7D=%5Cleft%5C%7B%5Cbegin%7Bmatrix%7D%5Cfrac%7B%5Ctext%7BuserSpAtk%7D%7D%7B%5Ctext%7BuserAtk%7D%7D&%5Ctext%7Bif%20move%20is%20physical%7D%5C%5C%5Cfrac%7B%5Ctext%7BuserAtk%7D%7D%7B%5Ctext%7BuserSpAtk%7D%7D&%5Ctext%7Botherwise%7D%5C%5C%5Cend%7Bmatrix%7D%5Cright.)
-   2. Compute the stat-based multiplier:
+  1. Compute the user's offensive stat ratio:
 
-      ![statMultEqn](https://latex.codecogs.com/png.image?%5Cinline%20%5Cdpi%7B100%7D%5Cbg%7Bwhite%7D%5Ctext%7BstatMult%7D=%5Cleft%5C%7B%5Cbegin%7Bmatrix%7D2&%5Ctext%7Bif%20statRatio%7D%5Cle%200.75%5C%5C1.5&%5Ctext%7Bif%5C;%7D0.75%5Cle%5Ctext%7BstatRatio%7D%5Cle%200.875%5C%5C1&%5Ctext%7Botherwise%7D%5C%5C%5Cend%7Bmatrix%7D%5Cright.)
+    $$
+    \text{statRatio} =
+    \begin{cases}
+    \frac{\text{userSpAtk}}{\text{userAtk}} & \text{if move is physical} \\
+    \frac{\text{userAtk}}{\text{userSpAtk}} & \text{otherwise}
+    \end{cases}
+    $$
+  2. Compute the stat-based multiplier:
+
+      $$
+      \text{statMult} =
+      \begin{cases}
+      2 & \text{if statRatio} \leq 0.75 \\
+      1.5 & \text{if } 0.75 \leq \text{statRatio} \leq 0.875 \\
+      1 & \text{otherwise}
+      \end{cases}
+      $$
 3. Calculate the move's `attackScore`:
 
-   $\text{attackScore} = (\text{typeMult}\times \text{statMult})+\lfloor \frac{\text{power}}{5} \rfloor$
+  $\text{attackScore} = (\text{typeMult}\times \text{statMult})+\lfloor \frac{\text{power}}{5} \rfloor$
 
 The maximum total multiplier in `attackScore` ($\text{typeMult}\times \text{statMult}$) is 4, which occurs for attacks that are super effective against the target and are categorically aligned with the user's offensive stats (e.g. the move is physical, and the user has much higher Attack than Sp. Atk). The minimum total multiplier of -4 occurs (somewhat confusingly) for attacks that are not super effective but are categorically aligned with the user's offensive stats.
 
@@ -125,18 +151,31 @@ The final step to calculate an attack move's target score (TS) is to multiply th
 
 The enemy's target selection for single-target moves works in a very similar way to its move selection. Each potential target is given a **target selection score (TSS)** which is based on the move's [target benefit score](#calculating-move-and-target-scores) for that target:
 
-![TSSEqn](https://latex.codecogs.com/png.image?%5Cinline%20%5Cdpi%7B100%7D%5Cbg%7Bwhite%7D%5Ctext%7BTSS%7D=%5Ctext%7BTBS%7D%5Ctimes%5Cleft%5C%7B%5Cbegin%7Bmatrix%7D-1&%5Ctext%7Bif%20target%20is%20an%20opponent%7D%5C%5C1&%5Ctext%7Botherwise%7D%5C%5C%5Cend%7Bmatrix%7D%5Cright.)
+$$
+\text{TSS} = \text{TBS} \times
+\begin{cases}
+-1 & \text{if target is an opponent} \\
+1 & \text{otherwise}
+\end{cases}
+$$
 
 Once the TSS is calculated for each target, the target is selected as follows:
 1. Sort the targets (indexes) in decreasing order of their target selection scores (or weights). Let $t_i$ be the index of the *i*-th target in the sorted list, and let $w_i$ be that target's corresponding TSS.
 2. Normalize the weights. Let $w_n$ be the lowest-weighted target in the sorted list, then:
-   
-   ![normWeightEqn](https://latex.codecogs.com/png.image?%5Cinline%20%5Cdpi%7B100%7D%5Cbg%7Bwhite%7DW_i=%5Cleft%5C%7B%5Cbegin%7Bmatrix%7Dw_i&plus;%7Cw_n%7C&%5Ctext%7Bif%5C;%7Dw_n%5C;%5Ctext%7Bis%20negative%7D%5C%5Cw_i&%5Ctext%7Botherwise%7D%5C%5C%5Cend%7Bmatrix%7D%5Cright.)
+
+  $$
+  W_i =
+  \begin{cases}
+  w_i + |w_n| & \text{if } w_n \text{ is negative} \\
+  w_i & \text{otherwise}
+  \end{cases}
+  $$
+
 3. Remove all weights from the list such that $W_i < \frac{W_0}{2}$
 4. Generate a random integer $R=\text{rand}(0, W_{\text{total}})$ where $W_{\text{total}}$ is the sum of all the remaining weights after Step 3.
 5. For each target $(t_i, W_i)$,
-   1. if $R \le \sum_{j=0}^{i} W_i$, or if $t_i$ is the last target in the list, **return** $t_i$
-   2. otherwise, advance to the next target $t_{i+1}$ and repeat this check.
+  1. if $R \le \sum_{j=0}^{i} W_i$, or if $t_i$ is the last target in the list, **return** $t_i$
+  2. otherwise, advance to the next target $t_{i+1}$ and repeat this check.
 
 Once the target is selected, the enemy has successfully determined its next action for the turn, and its corresponding `EnemyCommandPhase` ends. From here, the `TurnStartPhase` processes the enemy's commands alongside the player's commands and begins to resolve the turn.
 
@@ -145,15 +184,15 @@ Once the target is selected, the enemy has successfully determined its next acti
 Suppose you enter a single battle against an enemy trainer with the following Pokémon in their party:
 
 1. An [Excadrill](https://bulbapedia.bulbagarden.net/wiki/Excadrill_(Pok%C3%A9mon)) with the Ability Sand Force and the following moveset
-   1. Earthquake
-   2. Iron Head
-   3. Crush Claw
-   4. Swords Dance
+  1. Earthquake
+  2. Iron Head
+  3. Crush Claw
+  4. Swords Dance
 2. A [Heatmor](https://bulbapedia.bulbagarden.net/wiki/Heatmor_(Pok%C3%A9mon)) with the Ability Flash Fire and the following moveset
-   1. Fire Lash
-   2. Inferno
-   3. Hone Claws
-   4. Shadow Claw
+  1. Fire Lash
+  2. Inferno
+  3. Hone Claws
+  4. Shadow Claw
 
 The enemy trainer leads with their Heatmor, and you lead with a [Dachsbun](https://bulbapedia.bulbagarden.net/wiki/Dachsbun_(Pok%C3%A9mon)) with the Ability Well-Baked Body. We'll cover the enemy's behavior over the next two turns.
 
@@ -172,13 +211,13 @@ Based on the enemy party's matchup scores, whether or not the trainer switches o
 Now that the enemy Pokémon with the best matchup score is on the field (assuming it survives Dachsbun's attack on the last turn), the enemy will now decide to have Excadrill use one of its moves. Assuming all of its moves are usable, we'll go through the target score calculations for each move:
 
 - **Earthquake**: In a single battle, this move is just a 100-power Ground-type physical attack with no additional effects. With no additional benefit score from attributes, the move's base target score against the player's Dachsbun is just the `attackScore` from `AttackMove.getTargetBenefitScore()`. In this case, Earthquake's `attackScore` is given by
-  
+
   $\text{attackScore}=(\text{typeMult}\times \text{statMult}) + \lfloor \frac{\text{power}}{5} \rfloor = -2\times 2 + 20 = 16$
 
   Here, `typeMult` is -2 because the move is not super effective, and `statMult` is 2 because Excadrill's Attack is significantly higher than its Sp. Atk. Accounting for STAB thanks to Excadrill's typing, the final target score for this move is **24**
 
 - **Iron Head**: This move is an 80-power Steel-type physical attack with an additional chance to cause the target to flinch. With these properties, Iron Head has a user benefit score of 0 and a target benefit score given by
-  
+
   $\text{TBS}=\text{getTargetBenefitScore(FlinchAttr)}-\text{attackScore}$
 
   Under its current implementation, the target benefit score of `FlinchAttr` is -5. Calculating the move's `attackScore`, we get:
@@ -198,7 +237,7 @@ Now that the enemy Pokémon with the best matchup score is on the field (assumin
   where `levels` is the number of stat stages added by the attribute (in this case, +2). The final score for this move is **6** (Note: because this move is self-targeted, we don't flip the sign of TBS when computing the target score).
 
 - **Crush Claw**: This move is a 75-power Normal-type physical attack with a 50 percent chance to lower the target's Defense by one stage. The additional effect is implemented by the same `StatStageChangeAttr` as Swords Dance, so we can use the same formulas from before to compute the total TBS and base target score.
-  
+
   $\text{TBS}=\text{getTargetBenefitScore(StatStageChangeAttr)}-\text{attackScore}$
 
   $\text{TBS}=(-4 + 2)-(-2\times 2 + \lfloor \frac{75}{5} \rfloor)=-2-11=-13$

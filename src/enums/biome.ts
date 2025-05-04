@@ -1,4 +1,5 @@
 export enum Biome {
+  // TODO: Should -1 be part of the enum signature (for "unknown place")
   TOWN,
   PLAINS,
   GRASS,

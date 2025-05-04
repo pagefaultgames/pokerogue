@@ -7,6 +7,7 @@ on:
     branches:
       - main # Trigger on push events to the main branch
       - beta # Trigger on push events to the beta branch
+      - release # Trigger on push events to the release branch
     # go upvote https://github.com/actions/runner/issues/1182 and yell at microsoft until they fix this or ditch yml for workflows
     paths:
       # src and test files
@@ -32,6 +33,7 @@ on:
     branches:
       - main # Trigger on pull request events targeting the main branch
       - beta # Trigger on pull request events targeting the beta branch
+      - release # Trigger on pull request events targeting the release branch
     paths: # go upvote https://github.com/actions/runner/issues/1182 and yell at microsoft because until then we have to duplicate this
       # src and test files
       - "src/**"

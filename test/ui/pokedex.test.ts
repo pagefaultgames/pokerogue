@@ -12,6 +12,8 @@ import { DropDownColumn } from "#app/ui/filter-bar";
 import type PokemonSpecies from "#app/data/pokemon-species";
 import { PokemonType } from "#enums/pokemon-type";
 import { UiMode } from "#enums/ui-mode";
+import PokedexPageUiHandler from "#app/ui/pokedex-page-ui-handler";
+import type { StarterAttributes } from "#app/system/game-data";
 
 /*
 Information for the `data_pokedex_tests.psrv`:
@@ -78,6 +80,26 @@ describe("UI - Pokedex", () => {
     expect(handler).toBeInstanceOf(PokedexUiHandler);
 
     return handler as PokedexUiHandler;
+  }
+
+  /**
+   * Run the game to open the pokedex UI.
+   * @returns The handler for the pokedex UI.
+   */
+  async function runToPokedexPage(
+    species: PokemonSpecies,
+    starterAttributes: StarterAttributes = {},
+  ): Promise<PokedexPageUiHandler> {
+    // Open the pokedex UI.
+    await game.runToTitle();
+
+    await game.phaseInterceptor.setOverlayMode(UiMode.POKEDEX_PAGE, species, starterAttributes);
+
+    // Get the handler for the current UI.
+    const handler = game.scene.ui.getHandler();
+    expect(handler).toBeInstanceOf(PokedexPageUiHandler);
+
+    return handler as PokedexPageUiHandler;
   }
 
   /**
@@ -489,4 +511,37 @@ describe("UI - Pokedex", () => {
       expect(selectedPokemon).toEqual(pokedexHandler.lastSpecies.speciesId);
     },
   );
+
+  /****************************
+   *    Tests for Pokédex Pages    *
+   ****************************/
+
+  it("should show caught battle form as caught", async () => {
+    await game.importData("./test/testUtils/saves/data_pokedex_tests_v2.prsv");
+    const pageHandler = await runToPokedexPage(getPokemonSpecies(Species.VENUSAUR), { form: 1 });
+
+    // @ts-expect-error - `species` is private
+    expect(pageHandler.species.speciesId).toEqual(Species.VENUSAUR);
+
+    // @ts-expect-error - `formIndex` is private
+    expect(pageHandler.formIndex).toEqual(1);
+
+    expect(pageHandler.isFormCaught()).toEqual(true);
+    expect(pageHandler.isSeen()).toEqual(true);
+  });
+
+  //TODO: check tint of the sprite
+  it("should show uncaught battle form as seen", async () => {
+    await game.importData("./test/testUtils/saves/data_pokedex_tests_v2.prsv");
+    const pageHandler = await runToPokedexPage(getPokemonSpecies(Species.VENUSAUR), { form: 2 });
+
+    // @ts-expect-error - `species` is private
+    expect(pageHandler.species.speciesId).toEqual(Species.VENUSAUR);
+
+    // @ts-expect-error - `formIndex` is private
+    expect(pageHandler.formIndex).toEqual(2);
+
+    expect(pageHandler.isFormCaught()).toEqual(false);
+    expect(pageHandler.isSeen()).toEqual(true);
+  });
 });
