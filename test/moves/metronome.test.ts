@@ -1,7 +1,9 @@
+import { BattlerIndex } from "#app/battle";
 import { RechargingTag, SemiInvulnerableTag } from "#app/data/battler-tags";
 import { allMoves, RandomMoveAttr } from "#app/data/moves/move";
 import { Abilities } from "#app/enums/abilities";
 import { Stat } from "#app/enums/stat";
+import { MoveResult } from "#app/field/pokemon";
 import { CommandPhase } from "#app/phases/command-phase";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
@@ -55,7 +57,7 @@ describe("Moves - Metronome", () => {
     expect(enemy.isFullHp()).toBeFalsy();
   });
 
-  it("should apply secondary effects", async () => {
+  it("should apply secondary effects of the called move", async () => {
     await game.classicMode.startBattle();
     const player = game.scene.getPlayerPokemon()!;
     vi.spyOn(randomMoveAttr, "getMove").mockReturnValue(Moves.WOOD_HAMMER);
@@ -64,6 +66,20 @@ describe("Moves - Metronome", () => {
     await game.toNextTurn();
 
     expect(player.isFullHp()).toBeFalsy();
+  });
+
+  it("should count as last move used for Copycat/Mirror Move", async () => {
+    game.override.enemyMoveset(Moves.MIRROR_MOVE);
+    vi.spyOn(randomMoveAttr, "getMove").mockReturnValue(Moves.ABSORB);
+    await game.classicMode.startBattle();
+
+    game.move.select(Moves.METRONOME);
+    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.toNextTurn();
+
+    expect(game.scene.getPlayerPokemon()!.isFullHp()).toBeFalsy();
+    expect(game.scene.getEnemyPokemon()!.isFullHp()).toBeFalsy();
+    expect(game.scene.getEnemyPokemon()!.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
   });
 
   it("should recharge after using recharge move", async () => {
@@ -110,6 +126,6 @@ describe("Moves - Metronome", () => {
     expect(isVisible).toBe(false);
     expect(hasFled).toBe(true);
 
-    expect(await game.toNextTurn()).not.toThrowError(); // Check no crash
+    expect(async () => await game.toNextTurn()).not.toThrowError(); // Check no crash
   });
 });

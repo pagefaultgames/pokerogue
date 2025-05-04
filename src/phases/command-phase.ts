@@ -132,8 +132,9 @@ export class CommandPhase extends FieldPhase {
       this.handleCommand(Command.FIGHT, -1);
       return true;
     }
+    // TODO: Is this move index check necessary?
     const moveIndex = moveset.findIndex(m => m.moveId === queuedMove.move);
-    if (moveIndex === -1 || (!queuedMove.virtual && !moveset[moveIndex].isUsable(playerPokemon, queuedMove.ignorePP))) {
+    if (!queuedMove.virtual && moveIndex === -1) {
       globalScene.ui.setMode(UiMode.COMMAND, this.fieldIndex);
     } else {
       this.handleCommand(Command.FIGHT, moveIndex, queuedMove.ignorePP, queuedMove);
