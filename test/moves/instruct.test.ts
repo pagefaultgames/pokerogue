@@ -337,7 +337,7 @@ describe("Moves - Instruct", () => {
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toNextWave();
 
-    await game.move.changeMoveset(regieleki, [Moves.ELECTROWEB]);
+    game.move.changeMoveset(regieleki, [Moves.ELECTROWEB]);
     game.move.select(Moves.SPLASH);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("TurnEndPhase", false);
