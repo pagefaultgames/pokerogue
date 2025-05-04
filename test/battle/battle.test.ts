@@ -1,7 +1,6 @@
 import { allSpecies } from "#app/data/pokemon-species";
 import { Stat } from "#enums/stat";
 import { GameModes, getGameMode } from "#app/game-mode";
-import { BattleEndPhase } from "#app/phases/battle-end-phase";
 import { CommandPhase } from "#app/phases/command-phase";
 import { DamageAnimPhase } from "#app/phases/damage-anim-phase";
 import { EncounterPhase } from "#app/phases/encounter-phase";
@@ -12,7 +11,6 @@ import { SelectGenderPhase } from "#app/phases/select-gender-phase";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import { SelectStarterPhase } from "#app/phases/select-starter-phase";
 import { SummonPhase } from "#app/phases/summon-phase";
-import { SwitchPhase } from "#app/phases/switch-phase";
 import { TitlePhase } from "#app/phases/title-phase";
 import { TurnInitPhase } from "#app/phases/turn-init-phase";
 import GameManager from "#test/testUtils/gameManager";
@@ -283,21 +281,20 @@ describe("Test - Battle Phase", () => {
   });
 
   it("does not force switch if active pokemon faints at same time as enemy mon and is revived in post-battle", async () => {
-    const moveToUse = Moves.TAKE_DOWN;
     game.override
       .battleStyle("single")
       .enemySpecies(Species.RATTATA)
       .startingWave(1)
       .startingLevel(100)
-      .moveset([moveToUse])
+      .moveset([Moves.TAKE_DOWN])
       .enemyMoveset(Moves.SPLASH)
       .startingHeldItems([{ name: "TEMP_STAT_STAGE_BOOSTER", type: Stat.ACC }]);
 
-    await game.classicMode.startBattle([Species.SAWK]);
+    await game.classicMode.startBattle([Species.SAWK, Species.SAWK]);
     game.scene.getPlayerPokemon()!.hp = 1;
-    game.move.select(moveToUse);
+    game.move.select(Moves.TAKE_DOWN);
 
-    await game.phaseInterceptor.to(BattleEndPhase);
+    await game.phaseInterceptor.to("BattleEndPhase");
     game.doRevivePokemon(0); // pretend max revive was picked
     game.doSelectModifier();
 
@@ -309,6 +306,6 @@ describe("Test - Battle Phase", () => {
       },
       () => game.isCurrentPhase(NextEncounterPhase),
     );
-    await game.phaseInterceptor.to(SwitchPhase);
+    await game.phaseInterceptor.to("SwitchPhase");
   });
 });
