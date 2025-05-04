@@ -1557,9 +1557,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param ignoreOppAbility - Whether to ignore ability effects of the target; default `false`.
    * @param ignoreAllyAbility - Whether to ignore ability effects of the user's allies; default `false`.
    * @param isCritical - Whether a critical hit has occurred or not; default `false`.
+   * If `true`, will nullify offensive stat drops or defensive stat boosts.
    * @param simulated - Whether to nullify any effects that produce changes to game state during calculations; default `true`
    * @param ignoreHeldItems - Whether to ignore the user's held items during stat calculation; default `false`.
-   * @returns The final in-battle value of a stat
+   * @returns The final in-battle value for the given stat.
    */
   getEffectiveStat(
     stat: EffectiveStat,
