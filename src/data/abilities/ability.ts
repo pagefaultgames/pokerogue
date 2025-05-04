@@ -1,5 +1,5 @@
 import { HitResult, MoveResult, PlayerPokemon } from "#app/field/pokemon";
-import { BooleanHolder, NumberHolder, toDmgValue, isNullOrUndefined, randSeedItem, randSeedInt, type Constructor } from "#app/utils/common";
+import { BooleanHolder, NumberHolder, toDmgValue, isNullOrUndefined, randSeedItem, randSeedInt, type Constructor, coerceArray } from "#app/utils/common";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { BattlerTagLapseType, GroundedTag } from "#app/data/battler-tags";
 import { getNonVolatileStatusEffects, getStatusEffectDescriptor, getStatusEffectHealText } from "#app/data/status-effect";
@@ -43,10 +43,9 @@ import { PokemonTransformPhase } from "#app/phases/pokemon-transform-phase";
 import { allAbilities } from "#app/data/data-lists";
 import { AbAttr } from "#app/data/abilities/ab-attrs/ab-attr";
 import { Ability } from "#app/data/abilities/ability-class";
-import { TrainerVariant } from "#app/field/trainer";
 
 // Enum imports
-import { Stat, type BattleStat , BATTLE_STATS, EFFECTIVE_STATS, getStatKey, type EffectiveStat } from "#enums/stat";
+import { Stat, type BattleStat, BATTLE_STATS, EFFECTIVE_STATS, getStatKey, type EffectiveStat } from "#enums/stat";
 import { PokemonType } from "#enums/pokemon-type";
 import { PokemonAnimType } from "#enums/pokemon-anim-type";
 import { StatusEffect } from "#enums/status-effect";
@@ -3377,7 +3376,7 @@ export class PreApplyBattlerTagImmunityAbAttr extends PreApplyBattlerTagAbAttr {
   constructor(immuneTagTypes: BattlerTagType | BattlerTagType[]) {
     super(true);
 
-    this.immuneTagTypes = Array.isArray(immuneTagTypes) ? immuneTagTypes : [ immuneTagTypes ];
+    this.immuneTagTypes = coerceArray(immuneTagTypes);
   }
 
   override canApplyPreApplyBattlerTag(pokemon: Pokemon, passive: boolean, simulated: boolean, tag: BattlerTag, cancelled: BooleanHolder, args: any[]): boolean {
@@ -4934,9 +4933,7 @@ export class FlinchStatStageChangeAbAttr extends FlinchEffectAbAttr {
   constructor(stats: BattleStat[], stages: number) {
     super();
 
-    this.stats = Array.isArray(stats)
-      ? stats
-      : [ stats ];
+    this.stats = stats;
     this.stages = stages;
   }
 

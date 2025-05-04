@@ -31,7 +31,7 @@ import type { OptionSelectConfig, OptionSelectItem } from "#app/ui/abstact-optio
 import type { PartyOption, PokemonSelectFilter } from "#app/ui/party-ui-handler";
 import { PartyUiMode } from "#app/ui/party-ui-handler";
 import { UiMode } from "#enums/ui-mode";
-import { isNullOrUndefined, randSeedInt, randomString, randSeedItem } from "#app/utils/common";
+import { isNullOrUndefined, randSeedInt, randomString, randSeedItem, coerceArray } from "#app/utils/common";
 import type { BattlerTagType } from "#enums/battler-tag-type";
 import { Biome } from "#enums/biome";
 import type { TrainerType } from "#enums/trainer-type";
@@ -461,7 +461,7 @@ export async function initBattleWithEnemyConfig(partyConfig: EnemyPartyConfig): 
  * @param moves
  */
 export function loadCustomMovesForEncounter(moves: Moves | Moves[]) {
-  moves = Array.isArray(moves) ? moves : [moves];
+  moves = coerceArray(moves);
   return Promise.all(moves.map(move => initMoveAnim(move))).then(() => loadMoveAnimAssets(moves));
 }
 
@@ -804,7 +804,7 @@ export function setEncounterRewards(
  * @param useWaveIndex - set to false when directly passing the the full exp value instead of baseExpValue
  */
 export function setEncounterExp(participantId: number | number[], baseExpValue: number, useWaveIndex = true) {
-  const participantIds = Array.isArray(participantId) ? participantId : [participantId];
+  const participantIds = coerceArray(participantId);
 
   globalScene.currentBattle.mysteryEncounter!.doEncounterExp = () => {
     globalScene.unshiftPhase(new PartyExpPhase(baseExpValue, useWaveIndex, new Set(participantIds)));
