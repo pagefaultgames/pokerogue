@@ -26,64 +26,71 @@ describe("Moves - Fake Out", () => {
       .moveset([Moves.FAKE_OUT, Moves.SPLASH])
       .enemyMoveset(Moves.SPLASH)
       .enemyLevel(10)
-      .startingLevel(10) // prevent LevelUpPhase from happening
+      .startingLevel(1) // prevent LevelUpPhase from happening
       .disableCrits();
   });
 
-  it("can only be used on the first turn a pokemon is sent out in a battle", async () => {
+  it("should only work the first turn a pokemon is sent out in a battle", async () => {
     await game.classicMode.startBattle([Species.FEEBAS]);
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    const corv = game.scene.getEnemyPokemon()!;
 
     game.move.select(Moves.FAKE_OUT);
     await game.toNextTurn();
 
-    expect(enemy.hp).toBeLessThan(enemy.getMaxHp());
-    const postTurnOneHp = enemy.hp;
+    expect(corv.hp).toBeLessThan(corv.getMaxHp());
+    const postTurnOneHp = corv.hp;
 
     game.move.select(Moves.FAKE_OUT);
     await game.toNextTurn();
 
-    expect(enemy.hp).toBe(postTurnOneHp);
+    expect(corv.hp).toBe(postTurnOneHp);
   });
 
   // This is a PokeRogue buff to Fake Out
-  it("can be used at the start of every wave even if the pokemon wasn't recalled", async () => {
+  it("should succeed at the start of each new wave, even if user wasn't recalled", async () => {
     await game.classicMode.startBattle([Species.FEEBAS]);
 
-    const enemy = game.scene.getEnemyPokemon()!;
-    enemy.damageAndUpdate(enemy.getMaxHp() - 1);
-
+    // set hp to 1 for easy knockout
+    game.scene.getEnemyPokemon()!.hp = 1;
     game.move.select(Moves.FAKE_OUT);
     await game.toNextWave();
 
     game.move.select(Moves.FAKE_OUT);
     await game.toNextTurn();
 
-    expect(game.scene.getEnemyPokemon()!.isFullHp()).toBe(false);
+    const corv = game.scene.getEnemyPokemon()!;
+    expect(corv).toBeDefined();
+    expect(corv.hp).toBeLessThan(corv.getMaxHp());
   });
 
-  it("can be used again if recalled and sent back out", async () => {
-    game.override.startingWave(4);
-    await game.classicMode.startBattle([Species.FEEBAS, Species.MAGIKARP]);
+  // This is a PokeRogue buff to Fake Out
+  it("should succeed at the start of each new wave, even if user wasn't recalled", async () => {
+    await game.classicMode.startBattle([Species.FEEBAS]);
 
-    const enemy1 = game.scene.getEnemyPokemon()!;
-
+    // set hp to 1 for easy knockout
+    game.scene.getEnemyPokemon()!.hp = 1;
     game.move.select(Moves.FAKE_OUT);
-    await game.phaseInterceptor.to("MoveEndPhase");
-
-    expect(enemy1.hp).toBeLessThan(enemy1.getMaxHp());
-
-    await game.doKillOpponents();
     await game.toNextWave();
 
     game.move.select(Moves.FAKE_OUT);
     await game.toNextTurn();
 
-    const enemy2 = game.scene.getEnemyPokemon()!;
+    const corv = game.scene.getEnemyPokemon()!;
+    expect(corv).toBeDefined();
+    expect(corv.hp).toBeLessThan(corv.getMaxHp());
+  });
 
-    expect(enemy2.hp).toBeLessThan(enemy2.getMaxHp());
-    enemy2.hp = enemy2.getMaxHp();
+  it("should succeed if recalled and sent back out", async () => {
+    await game.classicMode.startBattle([Species.FEEBAS, Species.MAGIKARP]);
+
+    game.move.select(Moves.FAKE_OUT);
+    await game.toNextTurn();
+
+    const corv = game.scene.getEnemyPokemon()!;
+
+    expect(corv.hp).toBeLessThan(corv.getMaxHp());
+    corv.hp = corv.getMaxHp();
 
     game.doSwitchPokemon(1);
     await game.toNextTurn();
@@ -94,6 +101,6 @@ describe("Moves - Fake Out", () => {
     game.move.select(Moves.FAKE_OUT);
     await game.toNextTurn();
 
-    expect(enemy2.hp).toBeLessThan(enemy2.getMaxHp());
+    expect(corv.hp).toBeLessThan(corv.getMaxHp());
   });
 });
