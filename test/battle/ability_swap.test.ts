@@ -1,4 +1,4 @@
-import { allAbilities } from "#app/data/ability";
+import { allAbilities } from "#app/data/data-lists";
 import { Stat } from "#app/enums/stat";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
@@ -26,7 +26,7 @@ describe("Test Ability Swapping", () => {
     game.override
       .moveset([Moves.SPLASH])
       .ability(Abilities.BALL_FETCH)
-      .battleType("single")
+      .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)

@@ -23,7 +23,7 @@ describe("Abilities - Wind Rider", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .battleType("single")
+      .battleStyle("single")
       .enemySpecies(Species.SHIFTRY)
       .enemyAbility(Abilities.WIND_RIDER)
       .moveset([Moves.TAILWIND, Moves.SPLASH, Moves.PETAL_BLIZZARD, Moves.SANDSTORM])

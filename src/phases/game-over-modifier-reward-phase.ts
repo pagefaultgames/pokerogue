@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import { Mode } from "#app/ui/ui";
+import { UiMode } from "#enums/ui-mode";
 import i18next from "i18next";
 import { ModifierRewardPhase } from "./modifier-reward-phase";
 
@@ -10,7 +10,7 @@ export class GameOverModifierRewardPhase extends ModifierRewardPhase {
       globalScene.addModifier(newModifier);
       // Sound loaded into game as is
       globalScene.playSound("level_up_fanfare");
-      globalScene.ui.setMode(Mode.MESSAGE);
+      globalScene.ui.setMode(UiMode.MESSAGE);
       globalScene.ui.fadeIn(250).then(() => {
         globalScene.ui.showText(
           i18next.t("battle:rewardGain", {

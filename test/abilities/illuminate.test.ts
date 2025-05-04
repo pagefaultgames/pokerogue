@@ -29,7 +29,7 @@ describe("Abilities - Illuminate", () => {
   });
 
   it("should prevent ACC stat stage from being lowered", async () => {
-    game.override.battleType("single");
+    game.override.battleStyle("single");
 
     await game.classicMode.startBattle();
 

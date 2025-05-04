@@ -1,4 +1,5 @@
-import { allAbilities, BypassSpeedChanceAbAttr } from "#app/data/ability";
+import { BypassSpeedChanceAbAttr } from "#app/data/abilities/ability";
+import { allAbilities } from "#app/data/data-lists";
 import { FaintPhase } from "#app/phases/faint-phase";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
@@ -23,7 +24,7 @@ describe("Abilities - Quick Draw", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleType("single");
+    game.override.battleStyle("single");
 
     game.override.starterSpecies(Species.MAGIKARP);
     game.override.ability(Abilities.QUICK_DRAW);
@@ -53,7 +54,7 @@ describe("Abilities - Quick Draw", () => {
 
     expect(pokemon.isFainted()).toBe(false);
     expect(enemy.isFainted()).toBe(true);
-    expect(pokemon.battleData.abilitiesApplied).contain(Abilities.QUICK_DRAW);
+    expect(pokemon.waveData.abilitiesApplied).contain(Abilities.QUICK_DRAW);
   }, 20000);
 
   test(
@@ -75,7 +76,7 @@ describe("Abilities - Quick Draw", () => {
 
       expect(pokemon.isFainted()).toBe(true);
       expect(enemy.isFainted()).toBe(false);
-      expect(pokemon.battleData.abilitiesApplied).not.contain(Abilities.QUICK_DRAW);
+      expect(pokemon.waveData.abilitiesApplied).not.contain(Abilities.QUICK_DRAW);
     },
   );
 
@@ -95,6 +96,6 @@ describe("Abilities - Quick Draw", () => {
 
     expect(pokemon.isFainted()).toBe(true);
     expect(enemy.isFainted()).toBe(false);
-    expect(pokemon.battleData.abilitiesApplied).contain(Abilities.QUICK_DRAW);
+    expect(pokemon.waveData.abilitiesApplied).contain(Abilities.QUICK_DRAW);
   }, 20000);
 });

@@ -24,7 +24,7 @@ describe("Abilities - Synchronize", () => {
     game = new GameManager(phaserGame);
 
     game.override
-      .battleType("single")
+      .battleStyle("single")
       .startingLevel(100)
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.SYNCHRONIZE)

@@ -32,7 +32,7 @@ describe("Moves - Instruct", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .battleType("single")
+      .battleStyle("single")
       .enemySpecies(Species.SHUCKLE)
       .enemyAbility(Abilities.NO_GUARD)
       .enemyLevel(100)
@@ -89,7 +89,7 @@ describe("Moves - Instruct", () => {
   });
 
   it("should repeat ally's attack on enemy", async () => {
-    game.override.battleType("double").enemyMoveset(Moves.SPLASH);
+    game.override.battleStyle("double").enemyMoveset(Moves.SPLASH);
     await game.classicMode.startBattle([Species.AMOONGUSS, Species.SHUCKLE]);
 
     const [amoonguss, shuckle] = game.scene.getPlayerField();
@@ -122,7 +122,7 @@ describe("Moves - Instruct", () => {
   });
 
   it("should add moves to move queue for copycat", async () => {
-    game.override.battleType("double").moveset(Moves.INSTRUCT).enemyLevel(5);
+    game.override.battleStyle("double").moveset(Moves.INSTRUCT).enemyLevel(5);
     await game.classicMode.startBattle([Species.AMOONGUSS]);
 
     const [enemy1, enemy2] = game.scene.getEnemyField()!;
@@ -179,7 +179,7 @@ describe("Moves - Instruct", () => {
   });
 
   it("should redirect attacking moves if enemy faints", async () => {
-    game.override.battleType("double").enemyMoveset(Moves.SPLASH).enemySpecies(Species.MAGIKARP).enemyLevel(1);
+    game.override.battleStyle("double").enemyMoveset(Moves.SPLASH).enemySpecies(Species.MAGIKARP).enemyLevel(1);
     await game.classicMode.startBattle([Species.HISUI_ELECTRODE, Species.KOMMO_O]);
 
     const [electrode, kommo_o] = game.scene.getPlayerField()!;
@@ -201,7 +201,7 @@ describe("Moves - Instruct", () => {
     expect(karp2.isFainted()).toBe(true);
   });
   it("should allow for dancer copying of instructed dance move", async () => {
-    game.override.battleType("double").enemyMoveset([Moves.INSTRUCT, Moves.SPLASH]).enemyLevel(1000);
+    game.override.battleStyle("double").enemyMoveset([Moves.INSTRUCT, Moves.SPLASH]).enemyLevel(1000);
     await game.classicMode.startBattle([Species.ORICORIO, Species.VOLCARONA]);
 
     const [oricorio, volcarona] = game.scene.getPlayerField();
@@ -228,7 +228,7 @@ describe("Moves - Instruct", () => {
     const amoonguss = game.scene.getPlayerPokemon()!;
     game.move.changeMoveset(amoonguss, Moves.SEED_BOMB);
 
-    amoonguss.battleSummonData.moveHistory = [
+    amoonguss.summonData.moveHistory = [
       {
         move: Moves.SEED_BOMB,
         targets: [BattlerIndex.ENEMY],
@@ -256,7 +256,7 @@ describe("Moves - Instruct", () => {
   });
 
   it("should attempt to call enemy's disabled move, but move use itself should fail", async () => {
-    game.override.moveset([Moves.INSTRUCT, Moves.DISABLE]).battleType("double");
+    game.override.moveset([Moves.INSTRUCT, Moves.DISABLE]).battleStyle("double");
     await game.classicMode.startBattle([Species.AMOONGUSS, Species.DROWZEE]);
 
     const [enemy1, enemy2] = game.scene.getEnemyField();
@@ -301,7 +301,7 @@ describe("Moves - Instruct", () => {
 
     const player = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;
-    enemy.battleSummonData.moveHistory = [
+    enemy.summonData.moveHistory = [
       {
         move: Moves.SONIC_BOOM,
         targets: [BattlerIndex.PLAYER],
@@ -350,7 +350,7 @@ describe("Moves - Instruct", () => {
     await game.classicMode.startBattle([Species.LUCARIO, Species.BANETTE]);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
-    enemyPokemon.battleSummonData.moveHistory = [
+    enemyPokemon.summonData.moveHistory = [
       {
         move: Moves.WHIRLWIND,
         targets: [BattlerIndex.PLAYER],
@@ -372,7 +372,7 @@ describe("Moves - Instruct", () => {
 
   it("should respect moves' original priority for psychic terrain", async () => {
     game.override
-      .battleType("double")
+      .battleStyle("double")
       .moveset([Moves.QUICK_ATTACK, Moves.SPLASH, Moves.INSTRUCT])
       .enemyMoveset([Moves.SPLASH, Moves.PSYCHIC_TERRAIN]);
     await game.classicMode.startBattle([Species.BANETTE, Species.KLEFKI]);
@@ -395,7 +395,7 @@ describe("Moves - Instruct", () => {
   });
 
   it("should still work w/ prankster in psychic terrain", async () => {
-    game.override.battleType("double").enemyMoveset([Moves.SPLASH, Moves.PSYCHIC_TERRAIN]);
+    game.override.battleStyle("double").enemyMoveset([Moves.SPLASH, Moves.PSYCHIC_TERRAIN]);
     await game.classicMode.startBattle([Species.BANETTE, Species.KLEFKI]);
 
     const [banette, klefki] = game.scene.getPlayerField()!;
@@ -419,7 +419,7 @@ describe("Moves - Instruct", () => {
 
   it("should cause spread moves to correctly hit targets in doubles after singles", async () => {
     game.override
-      .battleType("even-doubles")
+      .battleStyle("even-doubles")
       .moveset([Moves.BREAKING_SWIPE, Moves.INSTRUCT, Moves.SPLASH])
       .enemyMoveset(Moves.SONIC_BOOM)
       .enemySpecies(Species.AXEW)
@@ -446,7 +446,7 @@ describe("Moves - Instruct", () => {
 
   it("should cause AoE moves to correctly hit everyone in doubles after singles", async () => {
     game.override
-      .battleType("even-doubles")
+      .battleStyle("even-doubles")
       .moveset([Moves.BRUTAL_SWING, Moves.INSTRUCT, Moves.SPLASH])
       .enemySpecies(Species.AXEW)
       .enemyMoveset(Moves.SONIC_BOOM)
@@ -504,7 +504,7 @@ describe("Moves - Instruct", () => {
 
   it("should cause multi-hit moves to hit the appropriate number of times in doubles", async () => {
     game.override
-      .battleType("double")
+      .battleStyle("double")
       .enemyAbility(Abilities.SKILL_LINK)
       .moveset([Moves.SPLASH, Moves.INSTRUCT])
       .enemyMoveset([Moves.BULLET_SEED, Moves.SPLASH])

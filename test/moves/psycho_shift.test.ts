@@ -26,7 +26,7 @@ describe("Moves - Psycho Shift", () => {
       .moveset([Moves.PSYCHO_SHIFT])
       .ability(Abilities.BALL_FETCH)
       .statusEffect(StatusEffect.POISON)
-      .battleType("single")
+      .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyLevel(20)

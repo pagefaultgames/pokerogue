@@ -26,7 +26,7 @@ describe("Abilities - Sheer Force", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .battleType("single")
+      .battleStyle("single")
       .ability(Abilities.SHEER_FORCE)
       .enemySpecies(Species.ONIX)
       .enemyAbility(Abilities.BALL_FETCH)
@@ -34,7 +34,7 @@ describe("Abilities - Sheer Force", () => {
       .disableCrits();
   });
 
-  const SHEER_FORCE_MULT = 5461 / 4096;
+  const SHEER_FORCE_MULT = 1.3;
 
   it("Sheer Force should boost the power of the move but disable secondary effects", async () => {
     game.override.moveset([Moves.AIR_SLASH]);

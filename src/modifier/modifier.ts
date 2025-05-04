@@ -15,7 +15,7 @@ import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
 import type { VoucherType } from "#app/system/voucher";
 import { Command } from "#app/ui/command-ui-handler";
 import { addTextObject, TextStyle } from "#app/ui/text";
-import { BooleanHolder, hslToHex, isNullOrUndefined, NumberHolder, toDmgValue } from "#app/utils";
+import { BooleanHolder, hslToHex, isNullOrUndefined, NumberHolder, toDmgValue } from "#app/utils/common";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BerryType } from "#enums/berry-type";
 import type { Moves } from "#enums/moves";
@@ -47,7 +47,12 @@ import {
 } from "./modifier-type";
 import { Color, ShadowColor } from "#enums/color";
 import { FRIENDSHIP_GAIN_FROM_RARE_CANDY } from "#app/data/balance/starters";
-import { applyAbAttrs, CommanderAbAttr } from "#app/data/ability";
+import {
+  applyAbAttrs,
+  applyPostItemLostAbAttrs,
+  CommanderAbAttr,
+  PostItemLostAbAttr,
+} from "#app/data/abilities/ability";
 import { globalScene } from "#app/global-scene";
 
 export type ModifierPredicate = (modifier: Modifier) => boolean;
@@ -231,6 +236,10 @@ export abstract class PersistentModifier extends Modifier {
   }
 
   abstract getMaxStackCount(forThreshold?: boolean): number;
+
+  getCountUnderMax(): number {
+    return this.getMaxStackCount() - this.getStackCount();
+  }
 
   isIconVisible(): boolean {
     return true;
@@ -653,7 +662,9 @@ export class TerastallizeAccessModifier extends PersistentModifier {
 }
 
 export abstract class PokemonHeldItemModifier extends PersistentModifier {
+  /** The ID of the {@linkcode Pokemon} that this item belongs to. */
   public pokemonId: number;
+  /** Whether this item can be transfered to or stolen by another Pokemon. */
   public isTransferable = true;
 
   constructor(type: ModifierType, pokemonId: number, stackCount?: number) {
@@ -1103,19 +1114,19 @@ export class PokemonIncrementingStatModifier extends PokemonHeldItemModifier {
    * @returns always `true`
    */
   override apply(_pokemon: Pokemon, stat: Stat, statHolder: NumberHolder): boolean {
-    // Modifies the passed in stat number holder by +1 per stack for HP, +2 per stack for other stats
-    // If the Macho Brace is at max stacks (50), adds additional 5% to total HP and 10% to other stats
+    // Modifies the passed in stat number holder by +2 per stack for HP, +1 per stack for other stats
+    // If the Macho Brace is at max stacks (50), adds additional 10% to total HP and 5% to other stats
     const isHp = stat === Stat.HP;
 
     if (isHp) {
-      statHolder.value += this.stackCount;
-      if (this.stackCount === this.getMaxHeldItemCount()) {
-        statHolder.value = Math.floor(statHolder.value * 1.05);
-      }
-    } else {
       statHolder.value += 2 * this.stackCount;
       if (this.stackCount === this.getMaxHeldItemCount()) {
         statHolder.value = Math.floor(statHolder.value * 1.1);
+      }
+    } else {
+      statHolder.value += this.stackCount;
+      if (this.stackCount === this.getMaxHeldItemCount()) {
+        statHolder.value = Math.floor(statHolder.value * 1.05);
       }
     }
 
@@ -1479,7 +1490,8 @@ export class AttackTypeBoosterModifier extends PokemonHeldItemModifier {
     return (
       super.shouldApply(pokemon, moveType, movePower) &&
       typeof moveType === "number" &&
-      movePower instanceof NumberHolder
+      movePower instanceof NumberHolder &&
+      this.moveType === moveType
     );
   }
 
@@ -1638,14 +1650,15 @@ export class FlinchChanceModifier extends PokemonHeldItemModifier {
   }
 
   /**
-   * Applies {@linkcode FlinchChanceModifier}
-   * @param pokemon the {@linkcode Pokemon} that holds the item
-   * @param flinched {@linkcode BooleanHolder} that is `true` if the pokemon flinched
-   * @returns `true` if {@linkcode FlinchChanceModifier} has been applied
+   * Applies {@linkcode FlinchChanceModifier} to randomly flinch targets hit.
+   * @param pokemon - The {@linkcode Pokemon} that holds the item
+   * @param flinched - A {@linkcode BooleanHolder} holding whether the pokemon has flinched
+   * @returns `true` if {@linkcode FlinchChanceModifier} was applied successfully
    */
   override apply(pokemon: Pokemon, flinched: BooleanHolder): boolean {
-    // The check for pokemon.battleSummonData is to ensure that a crash doesn't occur when a Pokemon with King's Rock procs a flinch
-    if (pokemon.battleSummonData && !flinched.value && pokemon.randSeedInt(100) < this.getStackCount() * this.chance) {
+    // The check for pokemon.summonData is to ensure that a crash doesn't occur when a Pokemon with King's Rock procs a flinch
+    // TODO: Since summonData is always defined now, we can probably remove this
+    if (pokemon.summonData && !flinched.value && pokemon.randSeedInt(100) < this.getStackCount() * this.chance) {
       flinched.value = true;
       return true;
     }
@@ -1771,6 +1784,7 @@ export class HitHealModifier extends PokemonHeldItemModifier {
    */
   override apply(pokemon: Pokemon): boolean {
     if (pokemon.turnData.totalDamageDealt && !pokemon.isFullHp()) {
+      // TODO: this shouldn't be undefined AFAIK
       globalScene.unshiftPhase(
         new PokemonHealPhase(
           pokemon.getBattlerIndex(),
@@ -1866,11 +1880,15 @@ export class BerryModifier extends PokemonHeldItemModifier {
   override apply(pokemon: Pokemon): boolean {
     const preserve = new BooleanHolder(false);
     globalScene.applyModifiers(PreserveBerryModifier, pokemon.isPlayer(), pokemon, preserve);
+    this.consumed = !preserve.value;
 
+    // munch the berry and trigger unburden-like effects
     getBerryEffectFunc(this.berryType)(pokemon);
-    if (!preserve.value) {
-      this.consumed = true;
-    }
+    applyPostItemLostAbAttrs(PostItemLostAbAttr, pokemon, false);
+
+    // Update berry eaten trackers for Belch, Harvest, Cud Chew, etc.
+    // Don't recover it if we proc berry pouch (no item duplication)
+    pokemon.recordEatenBerry(this.berryType, this.consumed);
 
     return true;
   }
@@ -1909,9 +1927,7 @@ export class PreserveBerryModifier extends PersistentModifier {
    * @returns always `true`
    */
   override apply(pokemon: Pokemon, doPreserve: BooleanHolder): boolean {
-    if (!doPreserve.value) {
-      doPreserve.value = pokemon.randSeedInt(10) < this.getStackCount() * 3;
-    }
+    doPreserve.value ||= pokemon.randSeedInt(10) < this.getStackCount() * 3;
 
     return true;
   }
@@ -1952,7 +1968,7 @@ export class PokemonInstantReviveModifier extends PokemonHeldItemModifier {
     );
 
     // Remove the Pokemon's FAINT status
-    pokemon.resetStatus(true, false, true);
+    pokemon.resetStatus(true, false, true, false);
 
     // Reapply Commander on the Pokemon's side of the field, if applicable
     const field = pokemon.isPlayer() ? globalScene.getPlayerField() : globalScene.getEnemyField();
@@ -2160,7 +2176,7 @@ export class PokemonHpRestoreModifier extends ConsumablePokemonModifier {
         restorePoints = Math.floor(restorePoints * multiplier);
       }
       if (this.fainted || this.healStatus) {
-        pokemon.resetStatus(true, true);
+        pokemon.resetStatus(true, true, false, false);
       }
       pokemon.hp = Math.min(
         pokemon.hp +
@@ -2180,7 +2196,7 @@ export class PokemonStatusHealModifier extends ConsumablePokemonModifier {
    * @returns always `true`
    */
   override apply(playerPokemon: PlayerPokemon): boolean {
-    playerPokemon.resetStatus(true, true);
+    playerPokemon.resetStatus(true, true, false, false);
     return true;
   }
 }
@@ -2734,7 +2750,7 @@ export class PokemonMoveAccuracyBoosterModifier extends PokemonHeldItemModifier 
    * @returns always `true`
    */
   override apply(_pokemon: Pokemon, moveAccuracy: NumberHolder): boolean {
-    moveAccuracy.value = Math.min(moveAccuracy.value + this.accuracyAmount * this.getStackCount(), 100);
+    moveAccuracy.value = moveAccuracy.value + this.accuracyAmount * this.getStackCount();
 
     return true;
   }
@@ -3608,7 +3624,7 @@ export class EnemyAttackStatusEffectChanceModifier extends EnemyPersistentModifi
     super(type, stackCount);
 
     this.effect = effect;
-    //Hardcode temporarily
+    // Hardcode temporarily
     this.chance = 0.025 * (this.effect === StatusEffect.BURN || this.effect === StatusEffect.POISON ? 2 : 1);
   }
 
@@ -3715,13 +3731,13 @@ export class EnemyEndureChanceModifier extends EnemyPersistentModifier {
    * @returns `true` if {@linkcode Pokemon} endured
    */
   override apply(target: Pokemon): boolean {
-    if (target.battleData.endured || target.randSeedInt(100) >= this.chance * this.getStackCount()) {
+    if (target.waveData.endured || target.randSeedInt(100) >= this.chance * this.getStackCount()) {
       return false;
     }
 
     target.addTag(BattlerTagType.ENDURE_TOKEN, 1);
 
-    target.battleData.endured = true;
+    target.waveData.endured = true;
 
     return true;
   }

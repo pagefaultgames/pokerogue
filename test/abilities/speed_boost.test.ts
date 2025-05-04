@@ -27,7 +27,7 @@ describe("Abilities - Speed Boost", () => {
     game = new GameManager(phaserGame);
 
     game.override
-      .battleType("single")
+      .battleStyle("single")
       .enemySpecies(Species.SHUCKLE)
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyLevel(100)

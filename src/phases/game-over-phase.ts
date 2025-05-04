@@ -1,5 +1,5 @@
 import { clientSessionId } from "#app/account";
-import { BattleType } from "#app/battle";
+import { BattleType } from "#enums/battle-type";
 import { globalScene } from "#app/global-scene";
 import { pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
 import { getCharVariantFromDialogue } from "#app/data/dialogue";
@@ -19,8 +19,8 @@ import { SummonPhase } from "#app/phases/summon-phase";
 import { UnlockPhase } from "#app/phases/unlock-phase";
 import { achvs, ChallengeAchv } from "#app/system/achv";
 import { Unlockables } from "#app/system/unlockables";
-import { Mode } from "#app/ui/ui";
-import * as Utils from "#app/utils";
+import { UiMode } from "#enums/ui-mode";
+import { isLocal, isLocalServerConnected } from "#app/utils/common";
 import { PlayerGender } from "#enums/player-gender";
 import { TrainerType } from "#enums/trainer-type";
 import i18next from "i18next";
@@ -31,6 +31,7 @@ import ChallengeData from "#app/system/challenge-data";
 import TrainerData from "#app/system/trainer-data";
 import ArenaData from "#app/system/arena-data";
 import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
+import { MessagePhase } from "./message-phase";
 
 export class GameOverPhase extends BattlePhase {
   private isVictory: boolean;
@@ -78,7 +79,7 @@ export class GameOverPhase extends BattlePhase {
     } else {
       globalScene.ui.showText(i18next.t("battle:retryBattle"), null, () => {
         globalScene.ui.setMode(
-          Mode.CONFIRM,
+          UiMode.CONFIRM,
           () => {
             globalScene.ui.fadeOut(1250).then(() => {
               globalScene.reset();
@@ -122,7 +123,7 @@ export class GameOverPhase extends BattlePhase {
       globalScene.disableMenu = true;
       globalScene.time.delayedCall(1000, () => {
         let firstClear = false;
-        if (this.isVictory && newClear) {
+        if (this.isVictory) {
           if (globalScene.gameMode.isClassic) {
             firstClear = globalScene.validateAchv(achvs.CLASSIC_VICTORY);
             globalScene.validateAchv(achvs.UNEVOLVED_CLASSIC_VICTORY);
@@ -219,14 +220,24 @@ export class GameOverPhase extends BattlePhase {
     /* Added a local check to see if the game is running offline
       If Online, execute apiFetch as intended
       If Offline, execute offlineNewClear() only for victory, a localStorage implementation of newClear daily run checks */
-    if (!Utils.isLocal || Utils.isLocalServerConnected) {
+    if (!isLocal || isLocalServerConnected) {
       pokerogueApi.savedata.session
         .newclear({
           slot: globalScene.sessionSlotId,
           isVictory: this.isVictory,
           clientSessionId: clientSessionId,
         })
-        .then(success => doGameOver(!!success));
+        .then(success => doGameOver(!globalScene.gameMode.isDaily || !!success))
+        .catch(_err => {
+          globalScene.clearPhaseQueue();
+          globalScene.clearPhaseQueueSplice();
+          globalScene.unshiftPhase(new MessagePhase(i18next.t("menu:serverCommunicationFailed"), 2500));
+          // force the game to reload after 2 seconds.
+          setTimeout(() => {
+            window.location.reload();
+          }, 2000);
+          this.end();
+        });
     } else if (this.isVictory) {
       globalScene.gameData.offlineNewClear().then(result => {
         doGameOver(result);
