@@ -691,6 +691,7 @@ export class Arena {
     targetIndex?: BattlerIndex,
   ): boolean {
     const existingTag = this.getTagOnSide(tagType, side);
+    // TODO: Change this for future sight
     if (existingTag) {
       existingTag.onOverlap(this, globalScene.getPokemonById(sourceId));
 

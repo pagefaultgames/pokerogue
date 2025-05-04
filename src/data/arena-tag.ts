@@ -68,10 +68,11 @@ export abstract class ArenaTag {
   onOverlap(_arena: Arena, _source: Pokemon | null): void {}
 
   /**
-   * Tick down this {@linkcode ArenaTag}'s duration.
+   * Trigger this {@linkcode ArenaTag}'s effect, reducing its duration as applicable.
+   * Will ignore duration of all tags with durations alwrea
    * @param _arena - The {@linkcode Arena} at the moment the tag is being lapsed.
    * Unused by default but can be used by super classes.
-   * @returns `true` if the tag should be kept
+   * @returns `true` if this tag should be kept; `false` if it should be removed.
    */
   lapse(_arena: Arena): boolean {
     // TODO: Rather than treating negative duration tags as being indefinite,
@@ -1228,6 +1229,7 @@ class NoneTag extends ArenaTag {
     super(ArenaTagType.NONE, 0);
   }
 }
+
 /**
  * This arena tag facilitates the application of the move Imprison
  * Imprison remains in effect as long as the source Pokemon is active and present on the field.
@@ -1240,7 +1242,6 @@ class ImprisonTag extends ArenaTrapTag {
 
   /**
    * This function applies the effects of Imprison to the opposing Pokemon already present on the field.
-   * @param arena
    */
   override onAdd() {
     const source = this.getSourcePokemon();
