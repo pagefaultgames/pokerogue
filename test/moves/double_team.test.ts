@@ -30,7 +30,7 @@ describe("Moves - Double Team", () => {
       .ability(Abilities.BALL_FETCH)
       .enemySpecies(Species.SHUCKLE)
       .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
+      .enemyMoveset(Moves.TACKLE);
   });
 
   it("raises the user's EVA stat stage by 1", async () => {

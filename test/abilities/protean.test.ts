@@ -34,7 +34,7 @@ describe("Abilities - Protean", () => {
       .ability(Abilities.PROTEAN)
       .startingLevel(100)
       .enemySpecies(Species.RATTATA)
-      .enemyMoveset([Moves.ENDURE, Moves.ENDURE, Moves.ENDURE, Moves.ENDURE]);
+      .enemyMoveset(Moves.ENDURE);
   });
 
   test("ability applies and changes a pokemon's type", async () => {
@@ -172,7 +172,7 @@ describe("Abilities - Protean", () => {
   });
 
   test("ability applies correctly even if the pokemon's move is protected against", async () => {
-    game.override.moveset([Moves.TACKLE]).enemyMoveset([Moves.PROTECT, Moves.PROTECT, Moves.PROTECT, Moves.PROTECT]);
+    game.override.moveset([Moves.TACKLE]).enemyMoveset(Moves.PROTECT);
 
     await game.classicMode.startBattle([Species.MAGIKARP]);
 

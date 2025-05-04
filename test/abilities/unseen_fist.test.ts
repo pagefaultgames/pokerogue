@@ -28,7 +28,7 @@ describe("Abilities - Unseen Fist", () => {
       .battleStyle("single")
       .starterSpecies(Species.URSHIFU)
       .enemySpecies(Species.SNORLAX)
-      .enemyMoveset([Moves.PROTECT, Moves.PROTECT, Moves.PROTECT, Moves.PROTECT])
+      .enemyMoveset(Moves.PROTECT)
       .startingLevel(100)
       .enemyLevel(100);
   });
@@ -73,7 +73,7 @@ async function testUnseenFistHitResult(
   protectMove: Moves,
   shouldSucceed = true,
 ): Promise<void> {
-  game.override.moveset([attackMove]).enemyMoveset([protectMove, protectMove, protectMove, protectMove]);
+  game.override.moveset([attackMove]).enemyMoveset(protectMove);
 
   await game.classicMode.startBattle();
 

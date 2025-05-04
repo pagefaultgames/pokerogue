@@ -32,7 +32,7 @@ describe("Abilities - Sand Veil", () => {
       .moveset([Moves.SPLASH])
       .enemySpecies(Species.MEOWSCARADA)
       .enemyAbility(Abilities.INSOMNIA)
-      .enemyMoveset([Moves.TWISTER, Moves.TWISTER, Moves.TWISTER, Moves.TWISTER])
+      .enemyMoveset(Moves.TWISTER)
       .startingLevel(100)
       .enemyLevel(100)
       .weather(WeatherType.SANDSTORM)

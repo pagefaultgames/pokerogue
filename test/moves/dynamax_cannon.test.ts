@@ -36,7 +36,7 @@ describe("Moves - Dynamax Cannon", () => {
       .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
-      .enemyMoveset([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
+      .enemyMoveset(Moves.SPLASH);
 
     vi.spyOn(allMoves[Moves.DYNAMAX_CANNON], "calculateBattlePower");
   });

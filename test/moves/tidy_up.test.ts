@@ -38,9 +38,7 @@ describe("Moves - Tidy Up", () => {
   });
 
   it("spikes are cleared", async () => {
-    game.override
-      .moveset([Moves.SPIKES, Moves.TIDY_UP])
-      .enemyMoveset([Moves.SPIKES, Moves.SPIKES, Moves.SPIKES, Moves.SPIKES]);
+    game.override.moveset([Moves.SPIKES, Moves.TIDY_UP]).enemyMoveset(Moves.SPIKES);
     await game.classicMode.startBattle();
 
     game.move.select(Moves.SPIKES);
@@ -51,9 +49,7 @@ describe("Moves - Tidy Up", () => {
   });
 
   it("stealth rocks are cleared", async () => {
-    game.override
-      .moveset([Moves.STEALTH_ROCK, Moves.TIDY_UP])
-      .enemyMoveset([Moves.STEALTH_ROCK, Moves.STEALTH_ROCK, Moves.STEALTH_ROCK, Moves.STEALTH_ROCK]);
+    game.override.moveset([Moves.STEALTH_ROCK, Moves.TIDY_UP]).enemyMoveset(Moves.STEALTH_ROCK);
     await game.classicMode.startBattle();
 
     game.move.select(Moves.STEALTH_ROCK);
@@ -64,9 +60,7 @@ describe("Moves - Tidy Up", () => {
   });
 
   it("toxic spikes are cleared", async () => {
-    game.override
-      .moveset([Moves.TOXIC_SPIKES, Moves.TIDY_UP])
-      .enemyMoveset([Moves.TOXIC_SPIKES, Moves.TOXIC_SPIKES, Moves.TOXIC_SPIKES, Moves.TOXIC_SPIKES]);
+    game.override.moveset([Moves.TOXIC_SPIKES, Moves.TIDY_UP]).enemyMoveset(Moves.TOXIC_SPIKES);
     await game.classicMode.startBattle();
 
     game.move.select(Moves.TOXIC_SPIKES);
@@ -77,9 +71,7 @@ describe("Moves - Tidy Up", () => {
   });
 
   it("sticky webs are cleared", async () => {
-    game.override
-      .moveset([Moves.STICKY_WEB, Moves.TIDY_UP])
-      .enemyMoveset([Moves.STICKY_WEB, Moves.STICKY_WEB, Moves.STICKY_WEB, Moves.STICKY_WEB]);
+    game.override.moveset([Moves.STICKY_WEB, Moves.TIDY_UP]).enemyMoveset(Moves.STICKY_WEB);
 
     await game.classicMode.startBattle();
 
@@ -91,9 +83,7 @@ describe("Moves - Tidy Up", () => {
   });
 
   it("substitutes are cleared", async () => {
-    game.override
-      .moveset([Moves.SUBSTITUTE, Moves.TIDY_UP])
-      .enemyMoveset([Moves.SUBSTITUTE, Moves.SUBSTITUTE, Moves.SUBSTITUTE, Moves.SUBSTITUTE]);
+    game.override.moveset([Moves.SUBSTITUTE, Moves.TIDY_UP]).enemyMoveset(Moves.SUBSTITUTE);
 
     await game.classicMode.startBattle();
 
