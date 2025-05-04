@@ -45,13 +45,13 @@ describe("Moves - Lucky Chant", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(critSpy).toHaveLastReturnedWith(true);
-    const firstTurnDamage = charizard.turnData.damageTaken;
+    const firstTurnDamage = charizard.getInverseHp();
 
     game.move.select(Moves.LUCKY_CHANT);
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(critSpy).toHaveLastReturnedWith(false);
-    const secondTurnDamage = charizard.turnData.damageTaken;
+    const secondTurnDamage = charizard.getInverseHp() - firstTurnDamage;
     expect(secondTurnDamage).toBeLessThan(firstTurnDamage);
   });
 
@@ -86,14 +86,14 @@ describe("Moves - Lucky Chant", () => {
     game.move.select(Moves.SPLASH, BattlerIndex.PLAYER_2);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    const firstTurnDamage = charizard.turnData.damageTaken;
+    const firstTurnDamage = charizard.getInverseHp();
 
     game.move.select(Moves.FOLLOW_ME, BattlerIndex.PLAYER);
     game.move.select(Moves.LUCKY_CHANT, BattlerIndex.PLAYER_2);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    const secondTurnDamage = charizard.turnData.damageTaken;
+    const secondTurnDamage = charizard.getInverseHp() - firstTurnDamage;
     expect(secondTurnDamage).toBeLessThan(firstTurnDamage);
   });
 
@@ -109,12 +109,12 @@ describe("Moves - Lucky Chant", () => {
     game.move.select(Moves.SPLASH);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    const firstTurnDamage = charizard.turnData.damageTaken;
+    const firstTurnDamage = charizard.getInverseHp();
 
     game.move.select(Moves.LUCKY_CHANT);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    const secondTurnDamage = charizard.turnData.damageTaken;
+    const secondTurnDamage = charizard.getInverseHp() - firstTurnDamage;
     expect(secondTurnDamage).toBeLessThan(firstTurnDamage);
   });
 });
