@@ -9,6 +9,7 @@ import { StatusEffect } from "#enums/status-effect";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { randSeedFloat } from "#app/utils/common";
 
 describe("Double Battles", () => {
   const DOUBLE_CHANCE = 8; // Normal chance of double battle is 1/8
@@ -62,9 +63,7 @@ describe("Double Battles", () => {
     let doubleCount = 0;
     let singleCount = 0;
 
-    vi.spyOn(Phaser.Math.RND, "realInRange").mockImplementation((min: number, max: number) => {
-      return rngSweepProgress * (max - min) + min;
-    });
+    vi.fn(randSeedFloat).mockImplementation(() => rngSweepProgress);
 
     game.override
       .enemyMoveset(Moves.SPLASH)

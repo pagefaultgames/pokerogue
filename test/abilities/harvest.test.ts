@@ -160,7 +160,7 @@ describe("Abilities - Harvest", () => {
 
     // ate 1 berry and recovered it
     expect(regieleki.battleData.berriesEaten).toEqual([]);
-    expect(getPlayerBerries()).toEqual([expect.objectContaining({ berryType: BerryType.PETAYA, stackCount: 1 })]);
+    expectBerriesContaining({ name: "BERRY", type: BerryType.PETAYA, count: 1 });
     expect(game.scene.getPlayerPokemon()?.getStatStage(Stat.SPATK)).toBe(1);
 
     // heal up so harvest doesn't proc and kill enemy
