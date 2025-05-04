@@ -32,7 +32,7 @@ describe("Moves - Astonish", () => {
       .moveset([Moves.ASTONISH, Moves.SPLASH])
       .enemySpecies(Species.BLASTOISE)
       .enemyAbility(Abilities.INSOMNIA)
-      .enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE])
+      .enemyMoveset(Moves.TACKLE)
       .startingLevel(100)
       .enemyLevel(100);
 

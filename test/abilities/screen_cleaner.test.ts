@@ -28,9 +28,7 @@ describe("Abilities - Screen Cleaner", () => {
   });
 
   it("removes Aurora Veil", async () => {
-    game.override
-      .moveset([Moves.HAIL])
-      .enemyMoveset([Moves.AURORA_VEIL, Moves.AURORA_VEIL, Moves.AURORA_VEIL, Moves.AURORA_VEIL]);
+    game.override.moveset([Moves.HAIL]).enemyMoveset(Moves.AURORA_VEIL);
 
     await game.classicMode.startBattle([Species.MAGIKARP, Species.MAGIKARP]);
 
@@ -47,7 +45,7 @@ describe("Abilities - Screen Cleaner", () => {
   });
 
   it("removes Light Screen", async () => {
-    game.override.enemyMoveset([Moves.LIGHT_SCREEN, Moves.LIGHT_SCREEN, Moves.LIGHT_SCREEN, Moves.LIGHT_SCREEN]);
+    game.override.enemyMoveset(Moves.LIGHT_SCREEN);
 
     await game.classicMode.startBattle([Species.MAGIKARP, Species.MAGIKARP]);
 
@@ -64,7 +62,7 @@ describe("Abilities - Screen Cleaner", () => {
   });
 
   it("removes Reflect", async () => {
-    game.override.enemyMoveset([Moves.REFLECT, Moves.REFLECT, Moves.REFLECT, Moves.REFLECT]);
+    game.override.enemyMoveset(Moves.REFLECT);
 
     await game.classicMode.startBattle([Species.MAGIKARP, Species.MAGIKARP]);
 

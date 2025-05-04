@@ -29,7 +29,7 @@ describe("Test Battle Phase", () => {
       .moveset([Moves.TACKLE])
       .enemyAbility(Abilities.HYDRATION)
       .ability(Abilities.HYDRATION)
-      .enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
+      .enemyMoveset(Moves.TACKLE);
   });
 
   it("startBattle 2vs1 boss", async () => {

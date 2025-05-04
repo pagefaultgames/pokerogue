@@ -40,7 +40,7 @@ describe("Moves - Reflect", () => {
       .moveset([Moves.ABSORB, Moves.ROCK_SLIDE, Moves.TACKLE])
       .enemyLevel(100)
       .enemySpecies(Species.MAGIKARP)
-      .enemyMoveset([Moves.REFLECT, Moves.REFLECT, Moves.REFLECT, Moves.REFLECT])
+      .enemyMoveset(Moves.REFLECT)
       .disableCrits();
   });
 

@@ -30,7 +30,7 @@ describe("Items - Leftovers", () => {
       .moveset([Moves.SPLASH])
       .enemySpecies(Species.SHUCKLE)
       .enemyAbility(Abilities.UNNERVE)
-      .enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE])
+      .enemyMoveset(Moves.TACKLE)
       .startingHeldItems([{ name: "LEFTOVERS", count: 1 }]);
   });
 
