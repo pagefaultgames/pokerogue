@@ -5148,12 +5148,21 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Return this pokemon's move queue, consisting of all the moves it is slated to perform.
+   * Return this Pokemon's move queue, consisting of all the moves it is slated to perform.
    * @returns An array of {@linkcode TurnMove}, as described above
    */
   getMoveQueue(): TurnMove[] {
     return this.summonData.moveQueue;
   }
+
+  /**
+   * Add a new entry to the end of this Pokemon's move queue.
+   * @param queuedMove - A {@linkcode TurnMove} to push to this Pokemon's queue.
+   */
+  pushMoveQueue(queuedMove: TurnMove): void {
+    this.summonData.moveQueue.push(queuedMove);
+  }
+
 
   changeForm(formChange: SpeciesFormChange): Promise<void> {
     return new Promise(resolve => {
@@ -7821,7 +7830,12 @@ export interface AttackMoveResult {
 export class PokemonSummonData {
   /** [Atk, Def, SpAtk, SpDef, Spd, Acc, Eva] */
   public statStages: number[] = [0, 0, 0, 0, 0, 0, 0];
-  /** A queue of moves yet to be executed; used by charging and frenzy moves */
+  /**
+   * A queue of moves yet to be executed, used by charging, recharging and frenzy moves.
+   * So long as this array is nonempty, this Pokemon's corresponding `CommandPhase` will be skipped over entirely
+   * in favor of using the queued move.
+   * TODO: Clean up a lot of the code surrounding the move queue. It's intertwined with the 
+   */
   public moveQueue: TurnMove[] = [];
   public tags: BattlerTag[] = [];
   public abilitySuppressed = false;

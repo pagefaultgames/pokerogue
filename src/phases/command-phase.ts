@@ -157,6 +157,7 @@ export class CommandPhase extends FieldPhase {
     let success = false;
 
     switch (command) {
+      // TODO: We don't need 2 args for this - moveUseType is carried over from queuedMove
       case Command.TERA:
       case Command.FIGHT:
         let useStruggle = false;

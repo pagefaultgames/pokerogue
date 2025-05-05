@@ -27,16 +27,16 @@ export class TurnStartPhase extends FieldPhase {
   /**
    * This orders the active Pokemon on the field by speed into an BattlerIndex array and returns that array.
    * It also checks for Trick Room and reverses the array if it is present.
-   * @returns {@linkcode BattlerIndex[]} the battle indices of all pokemon on the field ordered by speed
+   * @returns An array of {@linkcode BattlerIndex}es containing all on-field pokemon sorted in speed order.
    */
   getSpeedOrder(): BattlerIndex[] {
     const playerField = globalScene.getPlayerField().filter(p => p.isActive()) as Pokemon[];
     const enemyField = globalScene.getEnemyField().filter(p => p.isActive()) as Pokemon[];
 
-    // We shuffle the list before sorting so speed ties produce random results
+    // Shuffle the list before sorting so speed ties produce random results
+    // This is seeded with the current turn to prevent an inconsistency with variable turn order
+    // based on how long since you last reloaded
     let orderedTargets: Pokemon[] = playerField.concat(enemyField);
-    // We seed it with the current turn to prevent an inconsistency where it
-    // was varying based on how long since you last reloaded
     globalScene.executeWithSeedOffset(
       () => {
         orderedTargets = randSeedShuffle(orderedTargets);
@@ -45,11 +45,11 @@ export class TurnStartPhase extends FieldPhase {
       globalScene.waveSeed,
     );
 
-    // Next, a check for Trick Room is applied to determine sort order.
+    // check for Trick Room is applied and reverse sort order if active.
+    // Notably, Pokerogue does NOT have the "outspeed trick room" glitch.
     const speedReversed = new BooleanHolder(false);
     globalScene.arena.applyTags(TrickRoomTag, false, speedReversed);
 
-    // Adjust the sort function based on whether Trick Room is active.
     orderedTargets.sort((a: Pokemon, b: Pokemon) => {
       const aSpeed = a?.getEffectiveStat(Stat.SPD) ?? 0;
       const bSpeed = b?.getEffectiveStat(Stat.SPD) ?? 0;
@@ -120,7 +120,8 @@ export class TurnStartPhase extends FieldPhase {
         }
       }
 
-      // If there is no difference between the move's calculated priorities, the game checks for differences in battlerBypassSpeed and returns the result.
+      // If there is no difference between the move's calculated priorities,
+      // check for differences in battlerBypassSpeed and returns the result.
       if (battlerBypassSpeed[a].value !== battlerBypassSpeed[b].value) {
         return battlerBypassSpeed[a].value ? -1 : 1;
       }
@@ -133,6 +134,7 @@ export class TurnStartPhase extends FieldPhase {
     return moveOrder;
   }
 
+  // TODO: Refactor this alongside `command-phase.ts`
   start() {
     super.start();
 
@@ -176,18 +178,10 @@ export class TurnStartPhase extends FieldPhase {
           if (move.getMove().hasAttr(MoveHeaderAttr)) {
             globalScene.unshiftPhase(new MoveHeaderPhase(pokemon, move));
           }
-          if (pokemon.isPlayer()) {
-            if (turnCommand.cursor === -1) {
-              globalScene.pushPhase(new MovePhase(pokemon, turnCommand.targets || turnCommand.move!.targets, move)); //TODO: is the bang correct here?
-            } else {
-              const playerPhase = new MovePhase(
-                pokemon,
-                turnCommand.targets || turnCommand.move!.targets,
-                move,
-                queuedMove.useType,
-              ); //TODO: is the bang correct here?
-              globalScene.pushPhase(playerPhase);
-            }
+          if (pokemon.isPlayer() && turnCommand.cursor === -1) {
+            globalScene.pushPhase(
+              new MovePhase(pokemon, turnCommand.targets || turnCommand.move!.targets, move, turnCommand.move!.useType),
+            ); //TODO: is the bang correct here?
           } else {
             globalScene.pushPhase(
               new MovePhase(pokemon, turnCommand.targets || turnCommand.move!.targets, move, queuedMove.useType),

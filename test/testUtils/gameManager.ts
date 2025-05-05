@@ -419,7 +419,14 @@ export default class GameManager {
     };
   }
 
-  /** Transition to the next upcoming {@linkcode CommandPhase} */
+  /**
+   * Transition to the next upcoming {@linkcode CommandPhase}.
+   * @returns A promise that resolves once the next {@linkcode CommandPhase} has been reached.
+
+   * @remarks
+   * If all active player Pokemon are using a rampaging, charging, recharging or other move that
+   * disables user input, this **will not resolve** until they are fully finished executing.
+   */
   async toNextTurn() {
     await this.phaseInterceptor.to(CommandPhase);
     console.log("==================[New Turn]==================");

@@ -2356,6 +2356,9 @@ export class PostSummonStatStageChangeAbAttr extends PostSummonAbAttr {
   }
 }
 
+/**
+ * Attribute to heal the user's allies upon entering
+ */
 export class PostSummonAllyHealAbAttr extends PostSummonAbAttr {
   private healRatio: number;
   private showAnim: boolean;
@@ -2363,7 +2366,7 @@ export class PostSummonAllyHealAbAttr extends PostSummonAbAttr {
   constructor(healRatio: number, showAnim = false) {
     super();
 
-    this.healRatio = healRatio || 4;
+    this.healRatio = healRatio || 0.25;
     this.showAnim = showAnim;
   }
 
@@ -2375,7 +2378,7 @@ export class PostSummonAllyHealAbAttr extends PostSummonAbAttr {
     const target = pokemon.getAlly();
     if (!simulated && !isNullOrUndefined(target)) {
       globalScene.unshiftPhase(new PokemonHealPhase(target.getBattlerIndex(),
-        toDmgValue(pokemon.getMaxHp() / this.healRatio), i18next.t("abilityTriggers:postSummonAllyHeal", { pokemonNameWithAffix: getPokemonNameWithAffix(target), pokemonName: pokemon.name }), true, !this.showAnim));
+        toDmgValue(pokemon.getMaxHp() * this.healRatio), i18next.t("abilityTriggers:postSummonAllyHeal", { pokemonNameWithAffix: getPokemonNameWithAffix(target), pokemonName: pokemon.name }), true, !this.showAnim));
     }
   }
 }
@@ -4512,6 +4515,7 @@ export class PostDancingMoveAbAttr extends PostMoveUsedAbAttr {
       ? this.getTarget(dancer, source, targets)
       : [ dancer.getBattlerIndex() ];
 
+      // Append to phase is used here to ensure multiple dancers proc in successive order
     dancer.turnData.extraTurns++;
     globalScene.appendToPhase(new MovePhase(dancer, moveTargets, new PokemonMove(move.id), MoveUseType.INDIRECT), MoveEndPhase);
   }
@@ -4999,6 +5003,7 @@ export class FlinchStatStageChangeAbAttr extends FlinchEffectAbAttr {
   }
 }
 
+// TODO: Move PP increasing property from `move-phase` into the ability class
 export class IncreasePpAbAttr extends AbAttr { }
 
 export class ForceSwitchOutImmunityAbAttr extends AbAttr {
@@ -7536,7 +7541,7 @@ export function initAbilities() {
     new Ability(Abilities.SUPERSWEET_SYRUP, 9)
       .attr(PostSummonStatStageChangeAbAttr, [ Stat.EVA ], -1),
     new Ability(Abilities.HOSPITALITY, 9)
-      .attr(PostSummonAllyHealAbAttr, 4, true),
+      .attr(PostSummonAllyHealAbAttr, 0.25, true),
     new Ability(Abilities.TOXIC_CHAIN, 9)
       .attr(PostAttackApplyStatusEffectAbAttr, false, 30, StatusEffect.TOXIC),
     new Ability(Abilities.EMBODY_ASPECT_TEAL, 9)

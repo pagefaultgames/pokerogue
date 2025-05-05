@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import type { BattlerIndex } from "#app/battle";
 import { MoveChargeAnim } from "#app/data/battle-anims";
-import { applyMoveChargeAttrs, MoveEffectAttr, InstantChargeAttr } from "#app/data/moves/move";
+import { applyMoveChargeAttrs, MoveEffectAttr, InstantChargeAttr, type ChargingMove } from "#app/data/moves/move";
 import type { PokemonMove } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
 import { MoveResult } from "#app/field/pokemon";
@@ -10,7 +10,7 @@ import { MovePhase } from "#app/phases/move-phase";
 import { PokemonPhase } from "#app/phases/pokemon-phase";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveEndPhase } from "#app/phases/move-end-phase";
-import { MoveUseType } from "#enums/move-use-type";
+import type { MoveUseType } from "#enums/move-use-type";
 
 /**
  * Phase for the "charging turn" of two-turn moves (e.g. Dig).
@@ -35,7 +35,7 @@ export class MoveChargePhase extends PokemonPhase {
     super(battlerIndex);
     this.move = move;
     this.targetIndex = targetIndex;
-    this.useType = Math.max(useType, MoveUseType.IGNORE_PP);
+    this.useType = useType;
   }
 
   public override start() {
@@ -64,31 +64,27 @@ export class MoveChargePhase extends PokemonPhase {
   /** Checks the move's instant charge conditions, then ends this phase. */
   public override end() {
     const user = this.getUserPokemon();
-    const move = this.move.getMove();
+    const move = this.move.getMove() as ChargingMove;
 
-    if (move.isChargingMove()) {
-      const instantCharge = new BooleanHolder(false);
+    const instantCharge = new BooleanHolder(false);
+    applyMoveChargeAttrs(InstantChargeAttr, user, null, move, instantCharge);
 
-      applyMoveChargeAttrs(InstantChargeAttr, user, null, move, instantCharge);
-
-      if (instantCharge.value) {
-        // this MoveEndPhase will be duplicated by the queued MovePhase if not removed
-        globalScene.tryRemovePhase(phase => phase instanceof MoveEndPhase && phase.getPokemon() === user);
-        // queue a new MovePhase for this move's attack phase
-        globalScene.unshiftPhase(new MovePhase(user, [this.targetIndex], this.move));
-      } else {
-        user.getMoveQueue().push({ move: move.id, targets: [this.targetIndex], useType: this.useType });
-      }
-
-      // Add this move's charging phase to the user's move history
-      user.pushMoveHistory({
-        move: this.move.moveId,
-        targets: [this.targetIndex],
-        result: MoveResult.OTHER,
-        useType: this.useType,
-      });
+    // If instantly charging, remove the pending MoveEndPhase and queue a new MovePhase for the "attack" portion of the move.
+    // Otherwise, add the attack portion to the user's move queue to execute next turn.
+    if (instantCharge.value) {
+      globalScene.tryRemovePhase(phase => phase instanceof MoveEndPhase && phase.getPokemon() === user);
+      globalScene.unshiftPhase(new MovePhase(user, [this.targetIndex], this.move, this.useType));
+    } else {
+      user.pushMoveQueue({ move: move.id, targets: [this.targetIndex], useType: this.useType });
     }
-    super.end();
+
+    // Add this move's charging phase to the user's move history
+    user.pushMoveHistory({
+      move: this.move.moveId,
+      targets: [this.targetIndex],
+      result: MoveResult.OTHER,
+      useType: this.useType,
+    });
   }
 
   public getUserPokemon(): Pokemon {

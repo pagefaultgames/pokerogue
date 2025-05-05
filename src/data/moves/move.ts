@@ -5482,13 +5482,15 @@ export class FrenzyAttr extends MoveEffectAttr {
 
     // TODO: Disable if used via dancer
 
+    // TODO: Add support for moves that don't add the frenzy tag (Uproar, Rollout, etc.)
+
     // If frenzy is not in effect and we don't have anything queued up,
     // add 1-2 extra instances of the move to the move queue.
     // If frenzy is already in effect, tick down the tag.
     if (!user.getTag(BattlerTagType.FRENZY) && user.getMoveQueue().length === 0) {
       const turnCount = user.randSeedIntRange(1, 2); // excludes initial use
       for (let i = 0; i < turnCount; i++) {
-        user.getMoveQueue().push({ move: move.id, targets: [ target.getBattlerIndex() ], useType: MoveUseType.IGNORE_PP });
+        user.pushMoveQueue({ move: move.id, targets: [ target.getBattlerIndex() ], useType: MoveUseType.IGNORE_PP });
       }
       user.addTag(BattlerTagType.FRENZY, turnCount, move.id, user.id);
     } else {
@@ -7135,7 +7137,7 @@ export class RepeatMoveAttr extends MoveEffectAttr {
       targetPokemonName: getPokemonNameWithAffix(target)
     }));
     target.turnData.extraTurns++;
-    globalScene.appendToPhase(new MovePhase(target, moveTargets, movesetMove), MoveEndPhase);
+    globalScene.appendToPhase(new MovePhase(target, moveTargets, movesetMove, MoveUseType.NORMAL), MoveEndPhase);
     return true;
   }
 
@@ -7916,27 +7918,26 @@ export class VariableTargetAttr extends MoveAttr {
 }
 
 /**
- * Attribute for {@linkcode Moves.AFTER_YOU}
+ * Attribute to cause the target to move immediately after the user.
  *
- * [After You - Move | Bulbapedia](https://bulbapedia.bulbagarden.net/wiki/After_You_(move))
+ * Used by {@linkcode Moves.AFTER_YOU}.
  */
 export class AfterYouAttr extends MoveEffectAttr {
   /**
-   * Allows the target of this move to act right after the user.
-   *
-   * @param user {@linkcode Pokemon} that is using the move.
-   * @param target {@linkcode Pokemon} that will move right after this move is used.
-   * @param move {@linkcode Move} {@linkcode Moves.AFTER_YOU}
+   * Cause the target of this move to act right after the user.
+   * @param user - unused
+   * @param target - The {@linkcode Pokemon} targeted by this move
+   * @param _move {- Unused
    * @param _args N/A
    * @returns true
    */
   override apply(user: Pokemon, target: Pokemon, _move: Move, _args: any[]): boolean {
     globalScene.queueMessage(i18next.t("moveTriggers:afterYou", { targetName: getPokemonNameWithAffix(target) }));
 
-    //Will find next acting phase of the targeted pokémon, delete it and queue it next on successful delete.
-    const nextAttackPhase = globalScene.findPhase<MovePhase>((phase) => phase.pokemon === target);
-    if (nextAttackPhase && globalScene.tryRemovePhase((phase: MovePhase) => phase.pokemon === target)) {
-      globalScene.prependToPhase(new MovePhase(target, [ ...nextAttackPhase.targets ], nextAttackPhase.move), MovePhase);
+    // Will find next acting phase of the targeted pokémon, delete it and queue it right after us.
+    const targetNextPhase = globalScene.findPhase<MovePhase>(phase => phase.pokemon === target);
+    if (targetNextPhase && globalScene.tryRemovePhase((phase: MovePhase) => phase.pokemon === target)) {
+      globalScene.prependToPhase(targetNextPhase, MovePhase);
     }
 
     return true;
@@ -7946,7 +7947,6 @@ export class AfterYouAttr extends MoveEffectAttr {
 /**
  * Move effect to force the target to move last, ignoring priority.
  * If applied to multiple targets, they move in speed order after all other moves.
- * @extends MoveEffectAttr
  */
 export class ForceLastAttr extends MoveEffectAttr {
   /**
@@ -7961,6 +7961,7 @@ export class ForceLastAttr extends MoveEffectAttr {
   override apply(user: Pokemon, target: Pokemon, _move: Move, _args: any[]): boolean {
     globalScene.queueMessage(i18next.t("moveTriggers:forceLast", { targetPokemonName: getPokemonNameWithAffix(target) }));
 
+    // TODO: Refactor this to be more readable
     const targetMovePhase = globalScene.findPhase<MovePhase>((phase) => phase.pokemon === target);
     if (targetMovePhase && !targetMovePhase.isForcedLast() && globalScene.tryRemovePhase((phase: MovePhase) => phase.pokemon === target)) {
       // Finding the phase to insert the move in front of -
@@ -7973,7 +7974,7 @@ export class ForceLastAttr extends MoveEffectAttr {
         globalScene.phaseQueue.splice(
           globalScene.phaseQueue.indexOf(prependPhase),
           0,
-          new MovePhase(target, [ ...targetMovePhase.targets ], targetMovePhase.move, MoveUseType.NORMAL, true)
+          new MovePhase(target, [ ...targetMovePhase.targets ], targetMovePhase.move, targetMovePhase.useType, true)
         );
       }
     }
@@ -7981,12 +7982,18 @@ export class ForceLastAttr extends MoveEffectAttr {
   }
 }
 
-/** Returns whether a {@linkcode MovePhase} has been forced last and the corresponding pokemon is slower than {@linkcode target} */
+/**
+ * Returns whether a {@linkcode MovePhase} has been forced last and the corresponding pokemon is slower than {@linkcode target}.
+
+ * TODO:
+   - Make this a class method
+   - Make this look at speed order from TurnStartPhase
+*/
 const phaseForcedSlower = (phase: MovePhase, target: Pokemon, trickRoom: boolean): boolean => {
   let slower: boolean;
   // quashed pokemon still have speed ties
   if (phase.pokemon.getEffectiveStat(Stat.SPD) === target.getEffectiveStat(Stat.SPD)) {
-    slower = !!target.randSeedInt(2);
+    slower = !target.randSeedInt(2);
   } else {
     slower = !trickRoom ? phase.pokemon.getEffectiveStat(Stat.SPD) < target.getEffectiveStat(Stat.SPD) : phase.pokemon.getEffectiveStat(Stat.SPD) > target.getEffectiveStat(Stat.SPD);
   }

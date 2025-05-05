@@ -341,7 +341,6 @@ describe("Abilities - Dancer", () => {
     expect(game.scene.getEnemyPokemon()!.isFullHp()).toBe(false);
   });
 
-  // TODO: Fix eventually
   it.todo("should not lock user into Petal Dance or reduce its duration", async () => {
     game.override.enemyMoveset(Moves.PETAL_DANCE);
     await game.classicMode.startBattle([Species.ORICORIO]);

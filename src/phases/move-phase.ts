@@ -97,16 +97,11 @@ export class MovePhase extends BattlePhase {
    * Create a new MovePhase for using moves.
    * @param pokemon - The {@linkcode Pokemon} using the move
    * @param move - The {@linkcode PokemonMove} to use
-   * @param useType - The {@linkcode MoveUseType} corresponding to this move's means of execution; default `MoveUseType.NORMAL`
+   * @param useType - The {@linkcode MoveUseType} corresponding to this move's means of execution (usually `MoveUseType.NORMAL`).
+   * Not marked optional to ensure callers correctly pass on `useTypes`.
    * @param forcedLast - Whether to force this phase to occur last in order (for {@linkcode Moves.QUASH}); default `false`
    */
-  constructor(
-    pokemon: Pokemon,
-    targets: BattlerIndex[],
-    move: PokemonMove,
-    useType: MoveUseType = MoveUseType.NORMAL,
-    forcedLast = false,
-  ) {
+  constructor(pokemon: Pokemon, targets: BattlerIndex[], move: PokemonMove, useType: MoveUseType, forcedLast = false) {
     super();
 
     this.pokemon = pokemon;
@@ -193,6 +188,7 @@ export class MovePhase extends BattlePhase {
       this.resolveFinalPreMoveCancellationChecks();
     }
 
+    // Cancel, charge or use the move as applicable.
     if (this.cancelled || this.failed) {
       this.handlePreMoveFailures();
     } else if (this.move.getMove().isChargingMove() && !this.pokemon.getTag(BattlerTagType.CHARGING)) {
@@ -211,7 +207,7 @@ export class MovePhase extends BattlePhase {
 
     if (
       (targets.length === 0 && !this.move.getMove().hasAttr(AddArenaTrapTagAttr)) ||
-      (moveQueue.length && moveQueue[0].move === Moves.NONE)
+      moveQueue[0]?.move === Moves.NONE
     ) {
       this.showMoveText();
       this.showFailedText();
@@ -352,7 +348,9 @@ export class MovePhase extends BattlePhase {
       this.showMoveText();
     }
 
-    // Clear out any two turn moves once they've been used
+    // Clear out any two turn moves once they've been used.
+    // TODO: Refactor move queues and remove this assignment;
+    // Move queues should be handled by the calling `CommandPhase`
     this.useType = moveQueue.shift()?.useType ?? this.useType;
 
     if (this.pokemon.getTag(BattlerTagType.CHARGING)?.sourceMove === this.move.moveId) {
@@ -439,28 +437,32 @@ export class MovePhase extends BattlePhase {
     this.pokemon.lapseTags(BattlerTagLapseType.MOVE_EFFECT);
   }
 
-  /** Queues a {@linkcode MoveChargePhase} for this phase's invoked move. */
+  /**
+   * Queue a {@linkcode MoveChargePhase} for this phase's invoked move.
+   * Does NOT consume PP (occurs on the 2nd strike of the move)
+   */
   protected chargeMove() {
     const move = this.move.getMove();
     const targets = this.getActiveTargetPokemon();
 
-    if (move.applyConditions(this.pokemon, targets[0], move)) {
-      // Protean and Libero apply on the charging turn of charge moves
-      applyPreAttackAbAttrs(PokemonTypeChangeAbAttr, this.pokemon, null, this.move.getMove());
+    this.showMoveText();
 
-      this.showMoveText();
-      globalScene.unshiftPhase(
-        new MoveChargePhase(this.pokemon.getBattlerIndex(), this.targets[0], this.move, this.useType),
-      );
-      return;
+    // Conditions currently assume single target
+    // TODO: Is this sustainable?
+    if (!move.applyConditions(this.pokemon, targets[0], move)) {
+      this.failMove();
     }
 
-    this.showMoveText();
-    this.failMove();
+    // Protean and Libero apply on the charging turn of charge moves
+    applyPreAttackAbAttrs(PokemonTypeChangeAbAttr, this.pokemon, null, this.move.getMove());
+
+    globalScene.unshiftPhase(
+      new MoveChargePhase(this.pokemon.getBattlerIndex(), this.targets[0], this.move, this.useType),
+    );
   }
 
   /**
-   * Queues a {@linkcode MoveEndPhase} and then ends the phase
+   * Queue a {@linkcode MoveEndPhase} and then end this phase.
    */
   public end(): void {
     globalScene.unshiftPhase(
@@ -475,7 +477,7 @@ export class MovePhase extends BattlePhase {
   }
 
   /**
-   * Applies PP increasing abilities (currently only {@link Abilities.PRESSURE Pressure}) if they exist on the target pokemon.
+   * Applies PP increasing abilities (currently only {@linkcode Abilities.PRESSURE | Pressure}) if they exist on the target pokemon.
    * Note that targets must include only active pokemon.
    *
    * TODO: This hardcodes the PP increase at 1 per opponent, rather than deferring to the ability.
@@ -627,6 +629,7 @@ export class MovePhase extends BattlePhase {
     this.pokemon.lapseTags(BattlerTagLapseType.MOVE_EFFECT);
     this.pokemon.lapseTags(BattlerTagLapseType.AFTER_MOVE);
 
+    // This clears out 2 turn moves after they've been used
     this.pokemon.getMoveQueue().shift();
   }
 
