@@ -53,10 +53,12 @@ export class MovePhase extends BattlePhase {
   protected _pokemon: Pokemon;
   protected _move: PokemonMove;
   protected _targets: BattlerIndex[];
-  protected useType: MoveUseType;
+  protected _useType: MoveUseType;
   protected forcedLast: boolean;
 
+  /** Whether the current move should fail but still use PP */
   protected failed = false;
+  /** Whether the current move should cancel and retain PP */
   protected cancelled = false;
 
   public get pokemon(): Pokemon {
@@ -73,6 +75,14 @@ export class MovePhase extends BattlePhase {
 
   protected set move(move: PokemonMove) {
     this._move = move;
+  }
+
+  public get useType(): MoveUseType {
+    return this._useType;
+  }
+
+  protected set useType(useType: MoveUseType) {
+    this._useType = useType;
   }
 
   public get targets(): BattlerIndex[] {
@@ -217,19 +227,21 @@ export class MovePhase extends BattlePhase {
    * Handles {@link StatusEffect.SLEEP Sleep}/{@link StatusEffect.PARALYSIS Paralysis}/{@link StatusEffect.FREEZE Freeze} rolls and side effects.
    */
   protected resolvePreMoveStatusEffects(): void {
-    // Skip for follow ups/reflected moves, no condition or status or post turn statues (e.g. Poison/Toxic)
-    if (!this.pokemon.status || this.pokemon.status.isPostTurn() || this.useType >= MoveUseType.FOLLOW_UP) {
+    // Skip for follow ups/reflected moves, no status condition or post turn statuses (e.g. Poison/Toxic)
+    if (!this.pokemon.status || this.pokemon.status?.isPostTurn() || this.useType >= MoveUseType.FOLLOW_UP) {
       return;
     }
 
-    // TODO: Confirm if dancer removes sleep/freeze
-    if (this.useType === MoveUseType.INDIRECT) {
-      // Dancer thaws out or wakes up target
+    if (
+      this.useType === MoveUseType.INDIRECT &&
+      [StatusEffect.SLEEP, StatusEffect.FREEZE].includes(this.pokemon.status.effect)
+    ) {
+      // Dancer thaws out or wakes up a frozen/sleeping user prior to use
       this.pokemon.resetStatus(false);
       return;
     }
 
-    // Decrement sleep turn count if not used via Dancer.
+    // Decrement sleep turn count, triggering Early Bird as applicable.
     this.pokemon.status.decrementSleepTurnCount(this.pokemon);
 
     /** Whether to prevent us from using the move */
@@ -260,14 +272,14 @@ export class MovePhase extends BattlePhase {
         // Unfreeze if using a move that thaws the user or if a 20% roll succeeds;
         // all other cases remain frozen
         healed =
-          !!this.move
-            .getMove()
-            .findAttr(
-              attr => attr instanceof HealStatusEffectAttr && attr.selfTarget && attr.isOfEffect(StatusEffect.FREEZE),
-            ) || this.pokemon.randSeedInt(5) === 0;
-        if (Overrides.STATUS_ACTIVATION_OVERRIDE !== null) {
-          healed = !Overrides.STATUS_ACTIVATION_OVERRIDE; // true = frozen, false = thaw
-        }
+          Overrides.STATUS_ACTIVATION_OVERRIDE !== null
+            ? Overrides.STATUS_ACTIVATION_OVERRIDE
+            : !!this.move
+                .getMove()
+                .findAttr(
+                  attr =>
+                    attr instanceof HealStatusEffectAttr && attr.selfTarget && attr.isOfEffect(StatusEffect.FREEZE),
+                ) || this.pokemon.randSeedInt(5) === 0;
 
         activated = !healed;
         break;
@@ -340,10 +352,8 @@ export class MovePhase extends BattlePhase {
       this.showMoveText();
     }
 
-    if (moveQueue.length > 0) {
-      // Using .shift here clears out two turn moves once they've been used
-      this.useType = moveQueue.shift()!.useType; // this bang IS correct - TS doesn't know the array is nonempty
-    }
+    // Clear out any two turn moves once they've been used
+    this.useType = moveQueue.shift()?.useType ?? this.useType;
 
     if (this.pokemon.getTag(BattlerTagType.CHARGING)?.sourceMove === this.move.moveId) {
       this.pokemon.lapseTag(BattlerTagType.CHARGING);
@@ -364,8 +374,6 @@ export class MovePhase extends BattlePhase {
      * - The target's `ForceSwitchOutImmunityAbAttr` is not triggered (see {@linkcode Move.prototype.applyConditions})
      * - Weather does not block the move
      * - Terrain does not block the move
-     *
-     * TODO: These steps are straightforward, but the implementation below is extremely convoluted.
      */
 
     /**
@@ -578,8 +586,8 @@ export class MovePhase extends BattlePhase {
 
   /**
    * Handles the case where the move was cancelled or failed:
-   * - Uses PP if the move failed (not cancelled) and should use PP (failed moves are not affected by {@link Abilities.PRESSURE Pressure})
-   * - Records a cancelled OR failed move in move history, so abilities like {@link Abilities.TRUANT Truant} don't trigger on the
+   * - Uses PP if the move failed (not cancelled) and should use PP (failed moves are not affected by {@link Abilities.PRESSURE | Pressure})
+   * - Records a cancelled OR failed move in move history, so abilities like {@link Abilities.TRUANT | Truant} don't trigger on the
    *   next turn and soft-lock.
    * - Lapses `MOVE_EFFECT` tags:
    *   - Semi-invulnerable battler tags (Fly/Dive/etc.) are intended to lapse on move effects, but also need
@@ -587,37 +595,39 @@ export class MovePhase extends BattlePhase {
    *
    *     TODO: ...this seems weird.
    * - Lapses `AFTER_MOVE` tags:
-   *   - This handles the effects of {@link Moves.SUBSTITUTE Substitute}
+   *   - This handles the effects of {@link Moves.SUBSTITUTE | Substitute}
    * - Removes the second turn of charge moves
    */
   protected handlePreMoveFailures(): void {
-    if (this.cancelled || this.failed) {
-      if (this.failed) {
-        const ppUsed = this.useType >= MoveUseType.IGNORE_PP ? 0 : 1;
-
-        if (ppUsed) {
-          this.move.usePp();
-        }
-
-        globalScene.eventTarget.dispatchEvent(new MoveUsedEvent(this.pokemon?.id, this.move.getMove(), ppUsed));
-      }
-
-      if (this.cancelled && this.pokemon.summonData.tags?.find(t => t.tagType === BattlerTagType.FRENZY)) {
-        frenzyMissFunc(this.pokemon, this.move.getMove());
-      }
-
-      this.pokemon.pushMoveHistory({
-        move: Moves.NONE,
-        result: MoveResult.FAIL,
-        targets: this.targets,
-        useType: this.useType,
-      });
-
-      this.pokemon.lapseTags(BattlerTagLapseType.MOVE_EFFECT);
-      this.pokemon.lapseTags(BattlerTagLapseType.AFTER_MOVE);
-
-      this.pokemon.getMoveQueue().shift();
+    if (!this.cancelled && !this.failed) {
+      return;
     }
+
+    if (this.failed) {
+      const ppUsed = this.useType >= MoveUseType.IGNORE_PP ? 0 : 1;
+
+      if (ppUsed) {
+        this.move.usePp();
+      }
+
+      globalScene.eventTarget.dispatchEvent(new MoveUsedEvent(this.pokemon?.id, this.move.getMove(), ppUsed));
+    }
+
+    if (this.cancelled && this.pokemon.summonData.tags?.find(t => t.tagType === BattlerTagType.FRENZY)) {
+      frenzyMissFunc(this.pokemon, this.move.getMove());
+    }
+
+    this.pokemon.pushMoveHistory({
+      move: Moves.NONE,
+      result: MoveResult.FAIL,
+      targets: this.targets,
+      useType: this.useType,
+    });
+
+    this.pokemon.lapseTags(BattlerTagLapseType.MOVE_EFFECT);
+    this.pokemon.lapseTags(BattlerTagLapseType.AFTER_MOVE);
+
+    this.pokemon.getMoveQueue().shift();
   }
 
   /**
@@ -634,6 +644,7 @@ export class MovePhase extends BattlePhase {
     }
 
     // Play message for magic bounce
+    // TODO: This should be done by the ability...
     globalScene.queueMessage(
       i18next.t(this.useType === MoveUseType.REFLECTED ? "battle:magicCoatActivated" : "battle:useMove", {
         pokemonNameWithAffix: getPokemonNameWithAffix(this.pokemon),

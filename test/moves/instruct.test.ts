@@ -1,14 +1,16 @@
 import { BattlerIndex } from "#app/battle";
+import { allMoves } from "#app/data/moves/move";
 import type Pokemon from "#app/field/pokemon";
 import { MoveResult } from "#app/field/pokemon";
 import type { MovePhase } from "#app/phases/move-phase";
 import { Abilities } from "#enums/abilities";
+import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveUseType } from "#enums/move-use-type";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Moves - Instruct", () => {
   let phaserGame: Phaser.Game;
@@ -150,7 +152,7 @@ describe("Moves - Instruct", () => {
     game.move.select(Moves.INSTRUCT);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("MovePhase");
-    // force enemy's instructed move to bork and then immediately thaw out
+    // force enemy's instructed move (and only the instructed move) to bork
     await game.move.forceStatusActivation(true);
     await game.move.forceStatusActivation(false);
     await game.phaseInterceptor.to("TurnEndPhase", false);
@@ -158,6 +160,43 @@ describe("Moves - Instruct", () => {
     const moveHistory = game.scene.getEnemyPokemon()?.getLastXMoves(-1)!;
     expect(moveHistory.map(m => m.move)).toEqual([Moves.SONIC_BOOM, Moves.NONE, Moves.SONIC_BOOM]);
     expect(game.scene.getPlayerPokemon()?.getInverseHp()).toBe(40);
+  });
+
+  it("should trigger (and do nothing) after enemy flinches", async () => {
+    game.override
+      .battleStyle("double")
+      .moveset([Moves.INSTRUCT, Moves.SPLASH, Moves.AIR_SLASH])
+      .enemyMoveset(Moves.SONIC_BOOM);
+    // Mock air slash to always crit
+    vi.spyOn(allMoves[Moves.AIR_SLASH], "chance", "get").mockReturnValue(100);
+    await game.classicMode.startBattle([Species.AMOONGUSS, Species.TOGEKISS]);
+
+    const amoonguss = game.scene.getPlayerPokemon()!;
+
+    game.move.select(Moves.SPLASH, BattlerIndex.PLAYER);
+    game.move.select(Moves.SPLASH, BattlerIndex.PLAYER_2);
+    await game.forceEnemyMove(Moves.SONIC_BOOM, BattlerIndex.PLAYER);
+    await game.killPokemon(game.scene.getEnemyField()[1]); // only need 1 enemy
+    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER, BattlerIndex.PLAYER_2]);
+    await game.toNextTurn();
+
+    game.move.select(Moves.INSTRUCT, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
+    game.move.select(Moves.AIR_SLASH, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY);
+    await game.forceEnemyMove(Moves.SONIC_BOOM, BattlerIndex.PLAYER);
+    await game.setTurnOrder([BattlerIndex.PLAYER_2, BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.phaseInterceptor.to("TurnEndPhase", false);
+
+    expect(amoonguss.getLastXMoves()[0]).toMatchObject({
+      move: Moves.INSTRUCT,
+      targets: [BattlerIndex.ENEMY],
+      result: MoveResult.SUCCESS,
+    });
+
+    // 2nd sonic boom was interrupted before its use
+    const enemy = game.scene.getEnemyPokemon()!;
+    expect(enemy.getLastXMoves(-1).map(m => m.move)).toEqual([Moves.NONE, Moves.NONE, Moves.SONIC_BOOM]);
+    expect(enemy.getTag(BattlerTagType.FLINCHED)).toBeTruthy();
+    expect(amoonguss.getInverseHp()).toBe(20);
   });
 
   it("should not repeat enemy's out of pp move", async () => {
@@ -378,6 +417,39 @@ describe("Moves - Instruct", () => {
     expect(banette.getLastXMoves(-1)[1].result).toBe(MoveResult.FAIL);
   });
 
+  // TODO: Enable once Sky Drop is fully implemented
+  it.todo("should not work against Sky Dropped targets, even if user/target have No Guard", async () => {
+    game.override.battleStyle("double").ability(Abilities.NO_GUARD).enemyMoveset([Moves.ASTONISH, Moves.SKY_DROP]);
+    await game.classicMode.startBattle([Species.BANETTE, Species.KLEFKI]);
+
+    const [banette, klefki] = game.scene.getPlayerField();
+    game.move.changeMoveset(banette, Moves.VINE_WHIP);
+    game.move.changeMoveset(klefki, Moves.INSTRUCT);
+    banette.pushMoveHistory({
+      move: Moves.VINE_WHIP,
+      targets: [BattlerIndex.ENEMY],
+      result: MoveResult.SUCCESS,
+      useType: MoveUseType.NORMAL,
+    });
+
+    // Attempt to instruct banette after having been sent airborne
+    game.move.select(Moves.VINE_WHIP, BattlerIndex.PLAYER);
+    game.move.select(Moves.INSTRUCT, BattlerIndex.PLAYER_2, BattlerIndex.PLAYER);
+    await game.forceEnemyMove(Moves.SKY_DROP, BattlerIndex.PLAYER);
+    await game.forceEnemyMove(Moves.ASTONISH, BattlerIndex.PLAYER);
+    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER_2, BattlerIndex.PLAYER, BattlerIndex.ENEMY_2]);
+    await game.phaseInterceptor.to("TurnEndPhase", false);
+
+    // Klefki instruct fails due to banette being airborne, even though it got hit prior
+    expect(banette.visible).toBe(false);
+    expect(banette.isFullHp()).toBe(false);
+    expect(klefki.getLastXMoves(-1)[0]).toMatchObject({
+      move: Moves.INSTRUCT,
+      targets: [BattlerIndex.PLAYER],
+      result: MoveResult.FAIL,
+    });
+  });
+
   it("should still work with prankster in psychic terrain", async () => {
     game.override
       .battleStyle("double")
@@ -396,7 +468,7 @@ describe("Moves - Instruct", () => {
       useType: MoveUseType.NORMAL,
     });
 
-    game.move.select(Moves.SPLASH, BattlerIndex.PLAYER);
+    game.move.select(Moves.VINE_WHIP, BattlerIndex.PLAYER);
     game.move.select(Moves.INSTRUCT, BattlerIndex.PLAYER_2, BattlerIndex.PLAYER); // copies vine whip
     await game.setTurnOrder([BattlerIndex.PLAYER_2, BattlerIndex.PLAYER, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
     await game.phaseInterceptor.to("TurnEndPhase", false);

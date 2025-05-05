@@ -7225,7 +7225,8 @@ export function initAbilities() {
       .attr(PostFaintHPDamageAbAttr)
       .bypassFaint(),
     new Ability(Abilities.DANCER, 7)
-      .attr(PostDancingMoveAbAttr),
+      .attr(PostDancingMoveAbAttr)
+      .edgeCase(), // Incorrectly locks user into petal dance and ticks down its duration
     new Ability(Abilities.BATTERY, 7)
       .attr(AllyMoveCategoryPowerBoostAbAttr, [ MoveCategory.SPECIAL ], 1.3),
     new Ability(Abilities.FLUFFY, 7)

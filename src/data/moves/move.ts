@@ -1567,9 +1567,9 @@ export class CounterDamageAttr extends FixedDamageAttr {
     this.multiplier = multiplier;
   }
 
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const damage = user.turnData.attacksReceived.filter(ar => this.moveFilter(allMoves[ar.move])).reduce((total: number, ar: AttackMoveResult) => total + ar.damage, 0);
-    (args[0] as NumberHolder).value = toDmgValue(damage * this.multiplier);
+  apply(user: Pokemon, target: Pokemon, move: Move, args: [NumberHolder]): boolean {
+    const damage = user.turnData.attacksReceived.filter(ar => this.moveFilter(allMoves[ar.move])).reduce((total, ar) => total + ar.damage, 0);
+    args[0].value = toDmgValue(damage * this.multiplier);
 
     return true;
   }
@@ -1922,7 +1922,7 @@ export class PartyStatusCureAttr extends MoveEffectAttr {
     this.abilityCondition = abilityCondition;
   }
 
-  //The same as MoveEffectAttr.canApply, except it doesn't check for the target's HP.
+  // The same as MoveEffectAttr.canApply, except it doesn't check for the target's HP.
   canApply(user: Pokemon, target: Pokemon, move: Move, args: any[]) {
     const isTargetValid =
       (this.selfTarget && user.hp && !user.getTag(BattlerTagType.FRENZY)) ||
@@ -5479,13 +5479,7 @@ export class FrenzyAttr extends MoveEffectAttr {
       return false;
     }
 
-    // If move is being used via Dancer, skip frenzy application entirely.
-    // Applies to Petal Dance and _literally_ nothing else.
-    // TODO: If Dancer turns off any other things, perhaps separate it into a separate condition...?
-    const currentMove = user.getLastXMoves(1)[0];
-    if (currentMove.move !== Moves.NONE && currentMove.useType === MoveUseType.INDIRECT) {
-      return true;
-    }
+    // TODO: Disable if used via dancer
 
     // If frenzy is not in effect and we don't have anything queued up,
     // add 1-2 extra instances of the move to the move queue.

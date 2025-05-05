@@ -632,7 +632,7 @@ class NoRetreatTag extends TrappedTag {
  */
 export class FlinchedTag extends BattlerTag {
   constructor(sourceMove: Moves) {
-    super(BattlerTagType.FLINCHED, [BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.TURN_END], 0, sourceMove);
+    super(BattlerTagType.FLINCHED, [BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.TURN_END], 1, sourceMove);
   }
 
   onAdd(pokemon: Pokemon): void {
@@ -642,10 +642,10 @@ export class FlinchedTag extends BattlerTag {
   }
 
   /**
-   * Cancels the Pokemon's next Move on the turn this tag is applied
-   * @param pokemon The {@linkcode Pokemon} with this tag
-   * @param lapseType The {@linkcode BattlerTagLapseType lapse type} used for this function call
-   * @returns `false` (This tag is always removed after applying its effects)
+   * Cancels the Pokemon's subsequent Move on the turn this tag is applied
+   * @param pokemon - The {@linkcode Pokemon} with this tag
+   * @param lapseType - The {@linkcode BattlerTagLapseType | lapse type} used for this function call
+   * @returns Whether the tag was removed. Flinches only go away on turn end.
    */
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     if (lapseType === BattlerTagLapseType.PRE_MOVE) {
@@ -655,6 +655,7 @@ export class FlinchedTag extends BattlerTag {
           pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
         }),
       );
+      return true;
     }
 
     return super.lapse(pokemon, lapseType);
@@ -1887,13 +1888,15 @@ export class TruantTag extends AbilityBattlerTag {
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     if (!pokemon.hasAbility(Abilities.TRUANT)) {
+      // remove tag if mon lacks it
       return super.lapse(pokemon, lapseType);
     }
-    const passive = pokemon.getAbility().id !== Abilities.TRUANT;
 
-    const lastMove = pokemon.getLastXMoves().find(() => true);
+    const lastMove = pokemon.getLastXMoves()[0];
 
     if (lastMove && lastMove.move !== Moves.NONE) {
+      // ignore if just slacked off OR first turn of battle
+      const passive = pokemon.getAbility().id !== Abilities.TRUANT;
       (globalScene.getCurrentPhase() as MovePhase).cancel();
       // TODO: Ability displays should be handled by the ability
       globalScene.queueAbilityDisplay(pokemon, passive, true);

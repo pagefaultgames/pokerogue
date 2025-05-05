@@ -3790,8 +3790,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           ui =>
             ui instanceof BattleInfo &&
             (ui as BattleInfo) instanceof PlayerBattleInfo === this.isPlayer(),
-        )
-        .find(() => true);
+        )[0] as Phaser.GameObjects.GameObject | undefined;
       if (!otherBattleInfo || !this.getFieldIndex()) {
         globalScene.fieldUI.sendToBack(this.battleInfo);
         globalScene.sendTextToBack(); // Push the top right text objects behind everything else
@@ -7938,7 +7937,6 @@ export class PokemonWaveData {
  * Resets at the start of a new turn, as well as on switch.
  */
 export class PokemonTurnData {
-  public flinched = false;
   public acted = false;
   /** How many times the current move should hit the target(s) */
   public hitCount = 0;

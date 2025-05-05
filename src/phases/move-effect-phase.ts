@@ -454,7 +454,6 @@ export class MoveEffectPhase extends PokemonPhase {
    * @param user - The {@linkcode Pokemon} using this phase's invoked move
    * @param target - {@linkcode Pokemon} the current target of this phase's invoked move
    * @param hitResult - The {@linkcode HitResult} of the attempted move
-   * @returns a `Promise` intended to be passed into a `then()` call.
    */
   protected applyOnGetHitAbEffects(user: Pokemon, target: Pokemon, hitResult: HitResult): void {
     applyPostDefendAbAttrs(PostDefendAbAttr, target, user, this.move, hitResult);
@@ -466,7 +465,6 @@ export class MoveEffectPhase extends PokemonPhase {
    * @param user - The {@linkcode Pokemon} using this phase's invoked move
    * @param target - {@linkcode Pokemon} the current target of this phase's invoked move
    * @param dealsDamage - `true` if the attempted move successfully dealt damage
-   * @returns a function intended to be passed into a `then()` call.
    */
   protected applyHeldItemFlinchCheck(user: Pokemon, target: Pokemon, dealsDamage: boolean): void {
     if (this.move.hasAttr(FlinchAttr)) {
@@ -486,8 +484,9 @@ export class MoveEffectPhase extends PokemonPhase {
    * @param user - The {@linkcode Pokemon} using this phase's invoked move
    * @param target - {@linkcode Pokemon} the target to check for protection
    * @param move - The {@linkcode Move} being used
+   * @returns Whether the pokemon was protected
    */
-  private protectedCheck(user: Pokemon, target: Pokemon) {
+  private protectedCheck(user: Pokemon, target: Pokemon): boolean {
     /** The {@linkcode ArenaTagSide} to which the target belongs */
     const targetSide = target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
     /** Has the invoked move been cancelled by conditional protection (e.g Quick Guard)? */
@@ -508,14 +507,17 @@ export class MoveEffectPhase extends PokemonPhase {
       );
     }
 
+    // TODO: Break up this chunky boolean to make it more palatable
     return (
       ![MoveTarget.ENEMY_SIDE, MoveTarget.BOTH_SIDES].includes(this.move.moveTarget) &&
       (bypassIgnoreProtect.value || !this.move.doesFlagEffectApply({ flag: MoveFlags.IGNORE_PROTECT, user, target })) &&
-      (hasConditionalProtectApplied.value ||
+      !!(
+        hasConditionalProtectApplied.value ||
         (!target.findTags(t => t instanceof DamageProtectedTag).length &&
           target.findTags(t => t instanceof ProtectedTag).find(t => target.lapseTag(t.tagType))) ||
         (this.move.category !== MoveCategory.STATUS &&
-          target.findTags(t => t instanceof DamageProtectedTag).find(t => target.lapseTag(t.tagType))))
+          target.findTags(t => t instanceof DamageProtectedTag).find(t => target.lapseTag(t.tagType)))
+      )
     );
   }
 
@@ -653,22 +655,19 @@ export class MoveEffectPhase extends PokemonPhase {
     if (!user) {
       return false;
     }
-    if (user.hasAbilityWithAttr(AlwaysHitAbAttr) || target.hasAbilityWithAttr(AlwaysHitAbAttr)) {
-      return true;
+
+    switch (true) {
+      // No Guard
+      case user.hasAbilityWithAttr(AlwaysHitAbAttr) || target.hasAbilityWithAttr(AlwaysHitAbAttr):
+      // Toxic as poison type
+      case this.move.hasAttr(ToxicAccuracyAttr) && user.isOfType(PokemonType.POISON):
+      // Lock On/Mind Reader
+      case !!user.getTag(BattlerTagType.IGNORE_ACCURACY):
+      // Spikes and company
+      case isFieldTargeted(this.move):
+        return true;
     }
-    if (this.move.hasAttr(ToxicAccuracyAttr) && user.isOfType(PokemonType.POISON)) {
-      return true;
-    }
-    // TODO: Fix lock on / mind reader check.
-    if (
-      user.getTag(BattlerTagType.IGNORE_ACCURACY) &&
-      (user.getLastXMoves().find(() => true)?.targets || []).indexOf(target.getBattlerIndex()) !== -1
-    ) {
-      return true;
-    }
-    if (isFieldTargeted(this.move)) {
-      return true;
-    }
+    return false;
   }
 
   /**

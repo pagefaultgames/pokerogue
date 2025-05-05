@@ -512,9 +512,9 @@ export default class GameManager {
    * @returns A promise that resolves once the fainted pokemon's FaintPhase finishes running.
    */
   async killPokemon(pokemon: PlayerPokemon | EnemyPokemon) {
+    pokemon.hp = 0;
+    this.scene.unshiftPhase(new FaintPhase(pokemon.getBattlerIndex(), true));
     return new Promise<void>(async (resolve, reject) => {
-      pokemon.hp = 0;
-      this.scene.pushPhase(new FaintPhase(pokemon.getBattlerIndex(), true));
       await this.phaseInterceptor.to(FaintPhase).catch(e => reject(e));
       resolve();
     });
