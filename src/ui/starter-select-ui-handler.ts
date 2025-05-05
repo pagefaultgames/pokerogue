@@ -596,6 +596,13 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.iconAnimHandler = new PokemonIconAnimHandler();
     this.iconAnimHandler.setup();
 
+    this.pokemonSprite = globalScene.add.sprite(53, 63, "pkmn__sub");
+    this.pokemonSprite.setPipeline(globalScene.spritePipeline, {
+      tone: [0.0, 0.0, 0.0, 0.0],
+      ignoreTimeTint: true,
+    });
+    this.starterSelectContainer.add(this.pokemonSprite);
+
     this.pokemonNumberText = addTextObject(17, 1, "0000", TextStyle.SUMMARY);
     this.pokemonNumberText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonNumberText);
@@ -824,13 +831,6 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       this.iconAnimHandler.addOrUpdate(icon, PokemonIconAnimMode.PASSIVE);
       return icon;
     });
-
-    this.pokemonSprite = globalScene.add.sprite(53, 63, "pkmn__sub");
-    this.pokemonSprite.setPipeline(globalScene.spritePipeline, {
-      tone: [0.0, 0.0, 0.0, 0.0],
-      ignoreTimeTint: true,
-    });
-    this.starterSelectContainer.add(this.pokemonSprite);
 
     this.type1Icon = globalScene.add.sprite(8, 98, getLocalizedSpriteKey("types"));
     this.type1Icon.setScale(0.5);

@@ -10,7 +10,7 @@ import {
 import { showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import type { AiType, PlayerPokemon } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
-import { EnemyPokemon, FieldPosition, PokemonMove, PokemonSummonData } from "#app/field/pokemon";
+import { EnemyPokemon, FieldPosition, PokemonMove } from "#app/field/pokemon";
 import type { CustomModifierSettings, ModifierType } from "#app/modifier/modifier-type";
 import {
   getPartyLuckValue,
@@ -348,11 +348,6 @@ export async function initBattleWithEnemyConfig(partyConfig: EnemyPartyConfig): 
         enemyPokemon.status = new Status(status, 0, cureTurn);
       }
 
-      // Set summon data fields
-      if (!enemyPokemon.summonData) {
-        enemyPokemon.summonData = new PokemonSummonData();
-      }
-
       // Set ability
       if (!isNullOrUndefined(config.abilityIndex)) {
         enemyPokemon.abilityIndex = config.abilityIndex;
@@ -390,13 +385,10 @@ export async function initBattleWithEnemyConfig(partyConfig: EnemyPartyConfig): 
         }
       }
 
-      // mysteryEncounterBattleEffects will only be used IFF MYSTERY_ENCOUNTER_POST_SUMMON tag is applied
+      // mysteryEncounterBattleEffects will only be used if MYSTERY_ENCOUNTER_POST_SUMMON tag is applied
       if (config.mysteryEncounterBattleEffects) {
         enemyPokemon.mysteryEncounterBattleEffects = config.mysteryEncounterBattleEffects;
       }
-
-      // Requires re-priming summon data to update everything properly
-      enemyPokemon.primeSummonData(enemyPokemon.summonData);
 
       if (enemyPokemon.isShiny() && !enemyPokemon["shinySparkle"]) {
         enemyPokemon.initShinySparkle();
@@ -424,6 +416,7 @@ export async function initBattleWithEnemyConfig(partyConfig: EnemyPartyConfig): 
     console.log(
       `Pokemon: ${getPokemonNameWithAffix(enemyPokemon)}`,
       `| Species ID: ${enemyPokemon.species.speciesId}`,
+      `| Level: ${enemyPokemon.level}`,
       `| Nature: ${getNatureName(enemyPokemon.nature, true, true, true)}`,
     );
     console.log(`Stats (IVs): ${stats}`);

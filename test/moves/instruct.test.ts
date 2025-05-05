@@ -228,7 +228,7 @@ describe("Moves - Instruct", () => {
     const amoonguss = game.scene.getPlayerPokemon()!;
     game.move.changeMoveset(amoonguss, Moves.SEED_BOMB);
 
-    amoonguss.battleSummonData.moveHistory = [
+    amoonguss.summonData.moveHistory = [
       {
         move: Moves.SEED_BOMB,
         targets: [BattlerIndex.ENEMY],
@@ -301,7 +301,7 @@ describe("Moves - Instruct", () => {
 
     const player = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;
-    enemy.battleSummonData.moveHistory = [
+    enemy.summonData.moveHistory = [
       {
         move: Moves.SONIC_BOOM,
         targets: [BattlerIndex.PLAYER],
@@ -350,7 +350,7 @@ describe("Moves - Instruct", () => {
     await game.classicMode.startBattle([Species.LUCARIO, Species.BANETTE]);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
-    enemyPokemon.battleSummonData.moveHistory = [
+    enemyPokemon.summonData.moveHistory = [
       {
         move: Moves.WHIRLWIND,
         targets: [BattlerIndex.PLAYER],
