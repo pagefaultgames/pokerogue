@@ -727,6 +727,10 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
           },
           onComplete: () => {
             updateHpFrame();
+            if (this.player && this.lastHp !== pokemon.hp) {
+              this.setHpNumbers(pokemon.hp, pokemon.getMaxHp());
+              this.lastHp = pokemon.hp;
+            }
             resolve();
           },
         });
