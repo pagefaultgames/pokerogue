@@ -763,7 +763,26 @@ class ModifierOption extends Phaser.GameObjects.Container {
     this.add(this.itemContainer);
 
     const getItem = () => {
-      const item = globalScene.add.sprite(0, 0, "items", this.modifierTypeOption.type?.iconImage);
+      const iconKey = this.modifierTypeOption.type?.iconImage;
+      const item = globalScene.add.sprite(0, 0, "items", iconKey);
+      item.setVisible(false);
+
+      const showItemSprite = () => {
+        if (globalScene.textures.get("items").has(iconKey)) {
+          item.setFrame(iconKey);
+        } else {
+          item.setTexture("default_icon");
+        }
+        item.setVisible(true);
+      };
+
+      if (globalScene.textures.get("items").has(iconKey)) {
+        showItemSprite();
+      } else {
+        globalScene.load.once("complete", showItemSprite);
+        globalScene.load.start();
+      }
+
       return item;
     };
 
