@@ -7067,9 +7067,8 @@ export class CopyMoveAttr extends CallMoveAttr {
 
   apply(user: Pokemon, target: Pokemon, _move: Move, args: any[]): boolean {
     this.hasTarget = this.mirrorMove;
-    // TODO: Confirm mirror move interaction with full para-induced blockage
     // TODO: Confirm whether Mirror Move and co. can copy struggle
-    const lastMove = this.mirrorMove ? target.getLastNonVirtualMove(false, true)!.move : globalScene.currentBattle.lastMove;
+    const lastMove = this.mirrorMove ? target.getLastNonVirtualMove(false, false)!.move : globalScene.currentBattle.lastMove;
     return super.apply(user, target, allMoves[lastMove], args);
   }
 
@@ -8482,8 +8481,9 @@ export function initMoves() {
       .attr(FixedDamageAttr, 20),
     new StatusMove(Moves.DISABLE, PokemonType.NORMAL, 100, 20, -1, 0, 1)
       .attr(AddBattlerTagAttr, BattlerTagType.DISABLED, false, true)
-      .condition((user, target, move) => {
-        return target.getLastNonVirtualMove()?.move !== Moves.STRUGGLE;
+      .condition((_user, target, _move) => {
+        const lastNonVirtualMove = target.getLastNonVirtualMove();
+        return !isNullOrUndefined(lastNonVirtualMove) && lastNonVirtualMove.move !== Moves.STRUGGLE;
       })
       .ignoresSubstitute()
       .reflectable(),
