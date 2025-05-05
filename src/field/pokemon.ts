@@ -4764,6 +4764,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       isIndirectDamage,
       ignoreFaintPhase,
     );
+    // Ensure the battle-info bar's HP is updated, though only if the battle info is visible
+    // TODO: When battle-info UI is refactored, make this only update the HP bar
+    if (this.battleInfo.visible) {
+      this.updateInfo();
+    }
     // Damage amount may have changed, but needed to be queued before calling damage function
     damagePhase.updateAmount(damage);
     /**
