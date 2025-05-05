@@ -727,6 +727,12 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
           },
           onComplete: () => {
             updateHpFrame();
+            // If, after tweening, the hp is different from the original (due to rounding), force the hp number display
+            // to update to the correct value.
+            if (this.player && this.lastHp !== pokemon.hp) {
+              this.setHpNumbers(pokemon.hp, pokemon.getMaxHp());
+              this.lastHp = pokemon.hp;
+            }
             resolve();
           },
         });
