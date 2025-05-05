@@ -465,7 +465,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
 
     this.shinyIcon.setVisible(pokemon.isShiny());
 
-    const types = pokemon.getTypes(true);
+    const types = pokemon.getTypes(true, false, undefined, true);
     this.type1Icon.setTexture(`pbinfo_${this.player ? "player" : "enemy"}_type${types.length > 1 ? "1" : ""}`);
     this.type1Icon.setFrame(PokemonType[types[0]].toLowerCase());
     this.type2Icon.setVisible(types.length > 1);
@@ -685,7 +685,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
         this.statusIndicator.setVisible(!!this.lastStatus);
       }
 
-      const types = pokemon.getTypes(true);
+      const types = pokemon.getTypes(true, false, undefined, true);
       this.type1Icon.setTexture(`pbinfo_${this.player ? "player" : "enemy"}_type${types.length > 1 ? "1" : ""}`);
       this.type1Icon.setFrame(PokemonType[types[0]].toLowerCase());
       this.type2Icon.setVisible(types.length > 1);

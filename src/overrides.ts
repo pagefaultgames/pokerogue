@@ -174,7 +174,7 @@ class DefaultOverrides {
   readonly OPP_HAS_PASSIVE_ABILITY_OVERRIDE: boolean | null = null;
   readonly OPP_STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
   readonly OPP_GENDER_OVERRIDE: Gender | null = null;
-  readonly OPP_MOVESET_OVERRIDE: Moves | Array<Moves> = [];
+  readonly OPP_MOVESET_OVERRIDE: Moves | Array<Moves> = [Moves.THUNDER_WAVE, Moves.THUNDER_WAVE, Moves.THUNDER_WAVE, Moves.THUNDER_WAVE];
   readonly OPP_SHINY_OVERRIDE: boolean | null = null;
   readonly OPP_VARIANT_OVERRIDE: Variant | null = null;
   readonly OPP_IVS_OVERRIDE: number | number[] = [];
