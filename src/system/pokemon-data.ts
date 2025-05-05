@@ -4,7 +4,7 @@ import type { Gender } from "../data/gender";
 import { Nature } from "#enums/nature";
 import { PokeballType } from "#enums/pokeball";
 import { getPokemonSpecies, getPokemonSpeciesForm } from "../data/pokemon-species";
-import type { Status } from "../data/status-effect";
+import { Status } from "../data/status-effect";
 import Pokemon, { EnemyPokemon, PokemonBattleData, PokemonMove, PokemonSummonData } from "../field/pokemon";
 import { TrainerSlot } from "#enums/trainer-slot";
 import type { Variant } from "#app/sprites/variant";
@@ -105,7 +105,9 @@ export default class PokemonData {
     // TODO: Can't we move some of this verification stuff to an upgrade script?
     this.nature = source.nature ?? Nature.HARDY;
     this.moveset = source.moveset.map((m: any) => PokemonMove.loadMove(m));
-    this.status = source.status ?? null;
+    this.status = source.status
+      ? new Status(source.status.effect, source.status.toxicTurnCount, source.status.sleepTurnsRemaining)
+      : null;
     this.friendship = source.friendship ?? getPokemonSpecies(this.species).baseFriendship;
     this.metLevel = source.metLevel || 5;
     this.metBiome = source.metBiome ?? -1;
