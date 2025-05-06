@@ -873,6 +873,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
     const tweenChain: Phaser.Types.Tweens.TweenChainBuilderConfig = {
       targets: icon,
       loop: -1,
+      paused: startPaused,
       // Make the initial bounce a little randomly delayed
       delay: randIntRange(0, 50) * 5,
       loopDelay: 1000,
@@ -894,19 +895,14 @@ export default class PokedexUiHandler extends MessageUiHandler {
       ],
     };
 
-    const isPassiveAvailable = this.isPassiveAvailable(species.speciesId);
-    const isValueReductionAvailable = this.isValueReductionAvailable(species.speciesId);
-    const isSameSpeciesEggAvailable = this.isSameSpeciesEggAvailable(species.speciesId);
-
-    // 'Passives Only' mode
-    if (globalScene.candyUpgradeNotification === 1) {
-      if (isPassiveAvailable) {
-        globalScene.tweens.chain(tweenChain).paused = startPaused;
-      }
-      // 'On' mode
-    } else if (globalScene.candyUpgradeNotification === 2) {
-      if (isPassiveAvailable || isValueReductionAvailable || isSameSpeciesEggAvailable) {
-        globalScene.tweens.chain(tweenChain).paused = startPaused;
+    if (
+      this.isPassiveAvailable(species.speciesId) ||
+      (globalScene.candyUpgradeNotification === 2 &&
+        (this.isValueReductionAvailable(species.speciesId) || this.isSameSpeciesEggAvailable(species.speciesId)))
+    ) {
+      const chain = globalScene.tweens.chain(tweenChain);
+      if (!startPaused) {
+        chain.play();
       }
     }
   }
@@ -2040,7 +2036,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
       this.checkIconId(lastSpeciesIcon, container.species, props.female, props.formIndex, props.shiny, props.variant);
       this.iconAnimHandler.addOrUpdate(lastSpeciesIcon, PokemonIconAnimMode.NONE);
       // Resume the animation for the previously selected species
-      globalScene.tweens.getTweensOf(lastSpeciesIcon).forEach(tween => tween.resume());
+      globalScene.tweens.getTweensOf(lastSpeciesIcon).forEach(tween => tween.play());
     }
   }
 
