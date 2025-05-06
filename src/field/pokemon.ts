@@ -1115,40 +1115,45 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     );
   }
 
-  getIconAtlasKey(ignoreOverride?: boolean): string {
-    const formIndex = this.summonData.illusion?.formIndex ?? this.formIndex;
-    return this.getSpeciesForm(ignoreOverride, true).getIconAtlasKey(
+  getIconAtlasKey(ignoreOverride?: boolean, useIllusion: boolean = true): string {
+    const formIndex = useIllusion && this.summonData.illusion?.formIndex ? this.summonData.illusion?.formIndex : this.formIndex;
+    const variant = !useIllusion && !!this.summonData.illusion ? this.summonData.illusion?.basePokemon.variant : this.variant;
+    return this.getSpeciesForm(ignoreOverride, useIllusion).getIconAtlasKey(
       formIndex,
-      this.shiny,
-      this.variant
+      this.isBaseShiny(useIllusion),
+      variant
     );
   }
 
-  getFusionIconAtlasKey(ignoreOverride?: boolean): string {
-    return this.getFusionSpeciesForm(ignoreOverride, true).getIconAtlasKey(
-      this.fusionFormIndex,
-      this.fusionShiny,
-      this.fusionVariant
-    );
-  }
-
-  getIconId(ignoreOverride?: boolean): string {
-    const formIndex = this.summonData.illusion?.formIndex ?? this.formIndex;
-    return this.getSpeciesForm(ignoreOverride, true).getIconId(
-      this.getGender(ignoreOverride, true) === Gender.FEMALE,
-      formIndex,
-      this.shiny,
-      this.variant
-    );
-  }
-
-  getFusionIconId(ignoreOverride?: boolean): string {
-    const fusionFormIndex = this.summonData.illusion?.fusionFormIndex ?? this.fusionFormIndex;
-    return this.getFusionSpeciesForm(ignoreOverride, true).getIconId(
-      this.getFusionGender(ignoreOverride, true) === Gender.FEMALE,
+  getFusionIconAtlasKey(ignoreOverride?: boolean, useIllusion: boolean = true): string {
+    const fusionFormIndex = useIllusion && this.summonData.illusion?.fusionFormIndex ? this.summonData.illusion?.fusionFormIndex : this.fusionFormIndex;
+    const fusionVariant = !useIllusion && !!this.summonData.illusion ? this.summonData.illusion?.basePokemon.fusionVariant : this.fusionVariant;
+    return this.getFusionSpeciesForm(ignoreOverride, useIllusion).getIconAtlasKey(
       fusionFormIndex,
-      this.fusionShiny,
-      this.fusionVariant
+      this.isFusionShiny(),
+      fusionVariant
+    );
+  }
+
+  getIconId(ignoreOverride?: boolean, useIllusion: boolean = true): string {
+    const formIndex = useIllusion && this.summonData.illusion?.formIndex ? this.summonData.illusion?.formIndex : this.formIndex;
+    const variant = !useIllusion && !!this.summonData.illusion ? this.summonData.illusion?.basePokemon.variant : this.variant;
+    return this.getSpeciesForm(ignoreOverride, useIllusion).getIconId(
+      this.getGender(ignoreOverride, useIllusion) === Gender.FEMALE,
+      formIndex,
+      this.isBaseShiny(),
+      variant
+    );
+  }
+
+  getFusionIconId(ignoreOverride?: boolean, useIllusion: boolean = true): string {
+    const fusionFormIndex = useIllusion && this.summonData.illusion?.fusionFormIndex ? this.summonData.illusion?.fusionFormIndex : this.fusionFormIndex;
+    const fusionVariant = !useIllusion && !!this.summonData.illusion ? this.summonData.illusion?.basePokemon.fusionVariant : this.fusionVariant;
+    return this.getFusionSpeciesForm(ignoreOverride, useIllusion).getIconId(
+      this.getFusionGender(ignoreOverride, useIllusion) === Gender.FEMALE,
+      fusionFormIndex,
+      this.isFusionShiny(),
+      fusionVariant
     );
   }
 
@@ -1885,6 +1890,22 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
   }
 
+  isBaseShiny(useIllusion: boolean = false){
+    if (!useIllusion && this.summonData.illusion) {
+      return !!this.summonData.illusion.basePokemon?.shiny;
+    } else {
+      return this.shiny;
+    }
+  }
+
+  isFusionShiny(useIllusion: boolean = false){
+    if (!useIllusion && this.summonData.illusion) {
+      return !!this.summonData.illusion.basePokemon?.fusionShiny;
+    } else {
+      return this.isFusion(useIllusion) && this.fusionShiny;
+    }
+  }
+
   /**
    *
    * @param useIllusion - Whether we want the fake or real shininess (illusion ability).
@@ -2053,14 +2074,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param includeTeraType - `true` to include tera-formed type; Default: `false`
    * @param forDefend - `true` if the pokemon is defending from an attack; Default: `false`
    * @param ignoreOverride - If `true`, ignore ability changing effects; Default: `false`
-   * @param useIllusion - `true` to return the types of the illusion instead of the actual types; "AUTO" will depend on forDefend param; Default: "AUTO"
+   * @param useIllusion - `true` to return the types of the illusion instead of the actual types; Default: `false`
    * @returns array of {@linkcode PokemonType}
    */
   public getTypes(
     includeTeraType = false,
     forDefend: boolean = false,
-    ignoreOverride?: boolean,
-    useIllusion: boolean | "AUTO" = "AUTO"
+    ignoreOverride: boolean = false,
+    useIllusion: boolean = false
   ): PokemonType[] {
     const types: PokemonType[] = [];
 
@@ -2076,17 +2097,16 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
     if (!types.length || !includeTeraType) {
 
-      const doIllusion: boolean = (useIllusion === "AUTO") ? !forDefend : useIllusion;
       if (
         !ignoreOverride &&
         this.summonData.types &&
         this.summonData.types.length > 0 &&
-        (!this.summonData.illusion || !doIllusion)
+        (!this.summonData.illusion || !useIllusion)
       ) {
         this.summonData.types.forEach(t => types.push(t));
       } else {
-        const speciesForm = this.getSpeciesForm(ignoreOverride, doIllusion);
-        const fusionSpeciesForm = this.getFusionSpeciesForm(ignoreOverride, doIllusion);
+        const speciesForm = this.getSpeciesForm(ignoreOverride, useIllusion);
+        const fusionSpeciesForm = this.getFusionSpeciesForm(ignoreOverride, useIllusion);
         const customTypes = this.customPokemonData.types?.length > 0;
 
         // First type, checking for "permanently changed" types from ME
