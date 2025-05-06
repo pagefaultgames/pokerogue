@@ -3148,6 +3148,7 @@ let enemyIgnoredPoolIndexes = {};
 let enemyBuffModifierPoolThresholds = {};
 // biome-ignore lint/correctness/noUnusedVariables: TODO explain why this is marked as OK
 let enemyBuffIgnoredPoolIndexes = {};
+let lockModifierTiers: boolean | undefined = undefined;
 
 export function getModifierPoolForType(poolType: ModifierPoolType): ModifierPool {
   let pool: ModifierPool;
@@ -3311,7 +3312,10 @@ export function getPlayerModifierTypeOptions(
 ): ModifierTypeOption[] {
   const options: ModifierTypeOption[] = [];
   const retryCount = Math.min(count * 5, 50);
+  // init lockModifierTiers
+  lockModifierTiers = undefined;
   if (!customModifierSettings) {
+    lockModifierTiers = !!modifierTiers && modifierTiers.length > 0;
     new Array(count).fill(0).map((_, i) => {
       options.push(
         getModifierTypeOptionWithRetry(
@@ -3640,7 +3644,7 @@ function getNewModifierTypeOption(
       }
       tier += upgradeCount;
     }
-  } else if (retryCount === 10 && tier) {
+  } else if (retryCount === 10 && tier && lockModifierTiers !== true) {
     retryCount = 0;
     tier--;
   }
