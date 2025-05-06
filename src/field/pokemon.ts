@@ -1892,7 +1892,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   isBaseShiny(useIllusion: boolean = false){
     if (!useIllusion && this.summonData.illusion) {
-      return this.summonData.illusion.basePokemon?.shiny || false;
+      return !!this.summonData.illusion.basePokemon?.shiny;
     } else {
       return this.shiny;
     }
@@ -1900,7 +1900,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   isFusionShiny(useIllusion: boolean = false){
     if (!useIllusion && this.summonData.illusion) {
-      return this.summonData.illusion.basePokemon?.fusionShiny || false;
+      return !!this.summonData.illusion.basePokemon?.fusionShiny;
     } else {
       return this.isFusion(useIllusion) && this.fusionShiny;
     }
