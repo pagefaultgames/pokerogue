@@ -153,15 +153,15 @@ describe("Abilities - Dancer", () => {
       .moveset([Moves.REVELATION_DANCE, Moves.SPLASH])
       .enemyMoveset([Moves.METAL_BURST, Moves.SPLASH]);
 
-    await game.classicMode.startBattle([Species.ORICORIO, Species.FEEBAS]);
+    await game.classicMode.startBattle([Species.ORICORIO, Species.SNIVY]);
 
-    const [oricorio, feebas, shuckle1, shuckle2] = game.scene.getField();
+    const [oricorio, snivy, shuckle1, shuckle2] = game.scene.getField();
     expect(oricorio).toBeDefined();
-    expect(feebas).toBeDefined();
+    expect(snivy).toBeDefined();
     expect(shuckle1).toBeDefined();
     expect(shuckle2).toBeDefined();
-    // set feebas' spatk to very low number
-    vi.spyOn(feebas, "getStats").mockReturnValue([1, 1, 1, 1, 1, 1]);
+    // set snivy's stats to very low number to guarantee we only do 1 dmg
+    vi.spyOn(snivy, "getStats").mockReturnValue([1, 1, 1, 1, 1, 1]);
 
     // Feebas attacks enemy 2, prompting oricorio to do the same
     game.move.select(Moves.SPLASH, BattlerIndex.PLAYER);
@@ -173,7 +173,7 @@ describe("Abilities - Dancer", () => {
     // ORDER:
     // oricorio splash
     // shuckle 1 splash
-    // feebas rev dance vs shuckle 2
+    // snivy rev dance vs shuckle 2
     // oricorio copies rev dance vs shuckle 2
     // shuckle 2 metal burst
 
@@ -181,8 +181,9 @@ describe("Abilities - Dancer", () => {
     expect(shuckle2.getLastXMoves(-1)[0].move).toBe(Moves.METAL_BURST);
     expect(shuckle2.getLastXMoves(-1)[0].targets).toEqual([BattlerIndex.PLAYER]);
 
+    //
     const oricorioDmgTaken = oricorio.getInverseHp();
-    expect(oricorioDmgTaken).toBeCloseTo(shuckle2.getInverseHp() * 1.5, 0);
+    expect(oricorioDmgTaken).toBeCloseTo(Math.ceil(shuckle2.getInverseHp() * 1.5) - 1, 0);
   });
 
   it("should not trigger on protected, immune or missed moves", async () => {

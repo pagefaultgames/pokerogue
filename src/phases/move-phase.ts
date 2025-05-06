@@ -207,7 +207,7 @@ export class MovePhase extends BattlePhase {
 
     if (
       (targets.length === 0 && !this.move.getMove().hasAttr(AddArenaTrapTagAttr)) ||
-      moveQueue[0]?.move === Moves.NONE
+      (moveQueue.length > 0 && moveQueue[0].move === Moves.NONE)
     ) {
       this.showMoveText();
       this.showFailedText();
@@ -421,17 +421,17 @@ export class MovePhase extends BattlePhase {
       useType: this.useType,
     });
 
-    const failureMessage = move.getFailedText(this.pokemon, targets[0], move);
-    let failedText: string | undefined;
-    if (failureMessage) {
-      failedText = failureMessage;
-    } else if (failedDueToTerrain) {
-      failedText = getTerrainBlockMessage(targets[0], globalScene.arena.getTerrainType());
-    } else if (failedDueToWeather) {
-      failedText = getWeatherBlockMessage(globalScene.arena.getWeatherType());
-    }
+    // Use move-specific failure messages if present before checking terrain/weather blockage
+    // and falling back to the classic "But it failed!".
+    const failureMessage =
+      move.getFailedText(this.pokemon, targets[0], move) ??
+      (failedDueToTerrain
+        ? getTerrainBlockMessage(targets[0], globalScene.arena.getTerrainType())
+        : failedDueToWeather
+          ? getWeatherBlockMessage(globalScene.arena.getWeatherType())
+          : i18next.t("battle:attackFailed"));
 
-    this.showFailedText(failedText);
+    this.showFailedText(failureMessage);
 
     // Remove the user from its semi-invulnerable state (if applicable)
     this.pokemon.lapseTags(BattlerTagLapseType.MOVE_EFFECT);
@@ -607,10 +607,7 @@ export class MovePhase extends BattlePhase {
 
     if (this.failed) {
       const ppUsed = this.useType >= MoveUseType.IGNORE_PP ? 0 : 1;
-
-      if (ppUsed) {
-        this.move.usePp();
-      }
+      this.move.usePp(ppUsed);
 
       globalScene.eventTarget.dispatchEvent(new MoveUsedEvent(this.pokemon?.id, this.move.getMove(), ppUsed));
     }
@@ -646,8 +643,8 @@ export class MovePhase extends BattlePhase {
       return;
     }
 
-    // Play message for magic bounce
-    // TODO: This should be done by the ability...
+    // Play message for magic coat reflection
+    // TODO: This should be done by the move...
     globalScene.queueMessage(
       i18next.t(this.useType === MoveUseType.REFLECTED ? "battle:magicCoatActivated" : "battle:useMove", {
         pokemonNameWithAffix: getPokemonNameWithAffix(this.pokemon),
@@ -658,6 +655,11 @@ export class MovePhase extends BattlePhase {
     applyMoveAttrs(PreMoveMessageAttr, this.pokemon, this.pokemon.getOpponents(false)[0], this.move.getMove());
   }
 
+  /**
+   * Display the text for a move failing to execute.
+   * @param failedText - The failure text to display; defaults to `"battle:attackFailed"` locale key
+   * ("But it failed!" in english)
+   */
   public showFailedText(failedText: string = i18next.t("battle:attackFailed")): void {
     globalScene.queueMessage(failedText);
   }

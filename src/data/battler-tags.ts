@@ -155,6 +155,7 @@ export interface TerrainBattlerTag {
  * Players and enemies should not be allowed to select restricted moves.
  */
 export abstract class MoveRestrictionBattlerTag extends BattlerTag {
+  /** @override */
   override lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     if (lapseType === BattlerTagLapseType.PRE_MOVE) {
       // Cancel the affected pokemon's selected move
@@ -300,10 +301,13 @@ export class DisabledTag extends MoveRestrictionBattlerTag {
    * and showing a message.
    */
   override onAdd(pokemon: Pokemon): void {
-    super.onAdd(pokemon);
+    // Disable fails against struggle or an empty move history, but we still need the nullish check
+    // for cursed body
+    const move = pokemon.getLastNonVirtualMove();
+    if (isNullOrUndefined(move)) {
+      return;
+    }
 
-    // This is guaranteed to be valid as Disable fails against struggle or an empty move history
-    const move = pokemon.getLastNonVirtualMove()!;
     this.moveId = move.move;
 
     globalScene.queueMessage(
@@ -385,7 +389,7 @@ export class GorillaTacticsTag extends MoveRestrictionBattlerTag {
    */
   override onAdd(pokemon: Pokemon): void {
     const lastValidMove = pokemon.getLastNonVirtualMove(true); // TODO: Check if should work with struggle or not
-    if (!lastValidMove) {
+    if (isNullOrUndefined(lastValidMove)) {
       return;
     }
 
@@ -430,7 +434,7 @@ export class RechargingTag extends BattlerTag {
     super.onAdd(pokemon);
 
     // Queue a placeholder move for the Pokemon to "use" next turn.
-    pokemon.getMoveQueue().push({ move: Moves.NONE, targets: [], useType: MoveUseType.NORMAL });
+    pokemon.pushMoveQueue({ move: Moves.NONE, targets: [], useType: MoveUseType.NORMAL });
   }
 
   /** Cancels the source's move this turn and queues a "__ must recharge!" message */
@@ -1885,7 +1889,7 @@ export class TruantTag extends AbilityBattlerTag {
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     if (!pokemon.hasAbility(Abilities.TRUANT)) {
-      // remove tag if mon lacks it
+      // remove tag if mon lacks ability
       return super.lapse(pokemon, lapseType);
     }
 

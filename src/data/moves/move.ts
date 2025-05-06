@@ -662,7 +662,7 @@ export default class Move implements Localizable {
           }
         }
         // Sunsteel strike, Moongeist beam, and photon geyser will not ignore abilities if invoked
-        // by another move, such as via metronome.
+        // by another move, such as metronome/dancer.
         return this.hasFlag(MoveFlags.IGNORE_ABILITIES) && !isFollowUp;
       case MoveFlags.IGNORE_PROTECT:
         if (user.hasAbilityWithAttr(IgnoreProtectOnContactAbAttr)
@@ -708,7 +708,7 @@ export default class Move implements Localizable {
    * @param user {@linkcode Pokemon} using the move
    * @param target {@linkcode Pokemon} target of the move
    * @param move {@linkcode Move} with this attribute
-   * @returns string of the custom failure text, or `null` if it uses the default text ("But it failed!")
+   * @returns string of the custom failure text, or `undefined` if it uses the default text ("But it failed!")
    */
   getFailedText(user: Pokemon, target: Pokemon, move: Move): string | undefined {
     for (const attr of this.attrs) {
@@ -1106,6 +1106,9 @@ export abstract class MoveAttr {
   /** Should this {@linkcode Move} target the user? */
   public selfTarget: boolean;
 
+  /**
+   * @param selfTarget - Whether the current attribute should target the user; default `false`
+   */
   constructor(selfTarget: boolean = false) {
     this.selfTarget = selfTarget;
   }
@@ -1183,13 +1186,21 @@ interface MoveEffectAttrOptions {
  * @see {@linkcode apply}
  */
 export class MoveEffectAttr extends MoveAttr {
+  // TODO: Rather than making options optional and using getters to enforce defaults,
+  // just make a constructor for options that creates those defaults
+  // smh my head
+
   /**
    * A container for this attribute's optional parameters
    * @see {@linkcode MoveEffectAttrOptions} for supported params.
    */
   protected options?: MoveEffectAttrOptions;
 
-  constructor(selfTarget?: boolean, options?: MoveEffectAttrOptions) {
+  /**
+   * @param selfTarget - Whether the current attribute should target the user; default `false`
+   * @param options - Optional container of {@linkcode MoveEffectAttrOptions}
+   */
+  constructor(selfTarget = false, options?: MoveEffectAttrOptions) {
     super(selfTarget);
     this.options = options;
   }
@@ -1506,9 +1517,9 @@ export class TargetHalfHpDamageAttr extends FixedDamageAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: [NumberHolder]): boolean {
     // first, determine if the hit is coming from multi lens or not
     const lensCount = user.getHeldItems().find(i => i instanceof PokemonMultiHitModifier)?.getStackCount() ?? 0;
-    if (lensCount <= 0) {
+    if (lensCount === 0) {
       // no multi lenses; we can just halve the target's hp and call it a day
-      (args[0] as NumberHolder).value = toDmgValue(target.hp / 2);
+      args[0].value = toDmgValue(target.hp / 2);
       return true;
     }
 
@@ -1517,6 +1528,7 @@ export class TargetHalfHpDamageAttr extends FixedDamageAttr {
       case 0:
         // first hit of move; update initialHp tracker
         this.initialHp = target.hp;
+        // biome-ignore lint/suspicious/noFallthroughSwitchClause: falls through
       default:
         // multi lens added hit; use initialHp tracker to ensure correct damage
         args[0].value = toDmgValue(this.initialHp / 2);
@@ -1872,16 +1884,15 @@ export class AddSubstituteAttr extends MoveEffectAttr {
  * @see {@linkcode apply}
  */
 export class HealAttr extends MoveEffectAttr {
-  /** The percentage of {@linkcode Stat.HP} to heal */
+  /** The percentage of {@linkcode Stat.HP | HP} to heal as a decimal within the range [0, 1]. */
   private healRatio: number;
   /** Should an animation be shown? */
   private showAnim: boolean;
 
-  constructor(healRatio?: number, showAnim?: boolean, selfTarget?: boolean) {
-    super(selfTarget === undefined || selfTarget);
-
-    this.healRatio = healRatio || 1;
-    this.showAnim = !!showAnim;
+  constructor(healRatio = 1, showAnim = false, selfTarget = true) {
+    super(selfTarget);
+    this.healRatio = healRatio;
+    this.showAnim = showAnim;
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -2136,9 +2147,9 @@ export class SandHealAttr extends WeatherHealAttr {
  * @see {@linkcode apply}
  */
 export class BoostHealAttr extends HealAttr {
-  /** Healing received when {@linkcode condition} is false */
+  /** Healing % received when {@linkcode condition} is false */
   private normalHealRatio: number;
-  /** Healing received when {@linkcode condition} is true */
+  /** Healing % received when {@linkcode condition} is true */
   private boostedHealRatio: number;
   /** The lambda expression to check against when boosting the healing value */
   private condition?: MoveConditionFunc;
@@ -3713,7 +3724,8 @@ export class VariablePowerAttr extends MoveAttr {
    * @param target - The {@linkcode Pokemon} being targeted by this move
    * @param move - The {@linkcode Move} being used
    * @param args `[0]` - A {@linkcode NumberHolder} containing move base power
-   * @returns Whether the attribute was successfully applied
+   * @returns Whether the attribute was successfully applied;
+   * defaults to `false` unless overridden.
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: [NumberHolder]): boolean {
     return false;
@@ -3730,18 +3742,17 @@ export class LessPPMorePowerAttr extends VariablePowerAttr {
    * @param user - The {@linkcode Pokemon} using this move
    * @param target - The {@linkcode Pokemon} targeted by this move
    * @param move - The {@linkcode Move} being used
-   * @param args `[0]` {@linkcode NumberHolder} containing move base power
-   * @returns true if the function succeeds
+   * @param args `[0]` - {@linkcode NumberHolder} containing move base power
+   * @returns `true`
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: [NumberHolder]): boolean {
     const ppMax = move.pp;
     const ppUsed = user.moveset.find(m => m.moveId === move.id)?.ppUsed ?? 0;
 
-    /** Reduce to 0 to avoid negative power with 1 PP against pressure mons */
+    /** Clamp to 0 to avoid negative power with 1 PP against pressure mons */
     let ppRemains = Math.max(ppMax - ppUsed, 0);
 
-    const power = args[0] as NumberHolder;
-
+    const power = args[0];
     switch (ppRemains) {
       case 0:
         power.value = 200;
@@ -7355,6 +7366,7 @@ export class MovesetCopyMoveAttr extends OverrideMoveEffectAttr {
       return false;
     }
 
+    // Populate summon data with a copy of the current moveset, replacing the copying move with the copied move
     user.summonData.moveset = user.getMoveset().slice(0);
     user.summonData.moveset[thisMoveIndex] = new PokemonMove(copiedMove.id);
 
@@ -7925,11 +7937,11 @@ export class VariableTargetAttr extends MoveAttr {
 export class AfterYouAttr extends MoveEffectAttr {
   /**
    * Cause the target of this move to act right after the user.
-   * @param user - unused
+   * @param user - Unused
    * @param target - The {@linkcode Pokemon} targeted by this move
-   * @param _move {- Unused
-   * @param _args N/A
-   * @returns true
+   * @param _move - Unused
+   * @param _args - Unused
+   * @returns `true`
    */
   override apply(user: Pokemon, target: Pokemon, _move: Move, _args: any[]): boolean {
     globalScene.queueMessage(i18next.t("moveTriggers:afterYou", { targetName: getPokemonNameWithAffix(target) }));
@@ -8182,7 +8194,7 @@ export class ResistLastMoveTypeAttr extends MoveEffectAttr {
       return false;
     }
 
-    // TODO: Confirm how this interacts with status-induced failures
+    // TODO: Confirm how this interacts with status-induced failures and called moves
     const targetMove = target.getLastXMoves(1)[0]; // target's most recent move
     if (!targetMove) {
       return false;
@@ -8225,6 +8237,7 @@ export class ResistLastMoveTypeAttr extends MoveEffectAttr {
   }
 
   getCondition(): MoveConditionFunc {
+    // TODO: Does this count dancer?
     return (user, target, move) => {
       return target.getLastXMoves(-1).some(tm => tm.move !== Moves.NONE);
     };

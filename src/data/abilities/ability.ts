@@ -1071,7 +1071,7 @@ export class PostDefendMoveDisableAbAttr extends PostDefendAbAttr {
   }
 
   override canApplyPostDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, hitResult: HitResult | null, args: any[]): boolean {
-    return attacker.getTag(BattlerTagType.DISABLED) === null
+    return !isNullOrUndefined(attacker.getTag(BattlerTagType.DISABLED))
       && move.doesFlagEffectApply({flag: MoveFlags.MAKES_CONTACT, user: attacker, target: pokemon}) && (this.chance === -1 || pokemon.randSeedInt(100) < this.chance);
   }
 
@@ -2125,11 +2125,11 @@ export class PostIntimidateStatStageChangeAbAttr extends AbAttr {
   private stages: number;
   private overwrites: boolean;
 
-  constructor(stats: BattleStat[], stages: number, overwrites?: boolean) {
+  constructor(stats: BattleStat[], stages: number, overwrites = false) {
     super(true);
     this.stats = stats;
     this.stages = stages;
-    this.overwrites = !!overwrites;
+    this.overwrites = overwrites;
   }
 
   override apply(pokemon: Pokemon, passive: boolean, simulated:boolean, cancelled: BooleanHolder, args: any[]): void {
@@ -2217,7 +2217,7 @@ export class PostSummonAddArenaTagAbAttr extends PostSummonAbAttr {
   private sourceId: number;
 
 
-  constructor(showAbility: boolean, tagType: ArenaTagType, turnCount: number, side?: ArenaTagSide, quiet?: boolean) {
+  constructor(showAbility: boolean, tagType: ArenaTagType, turnCount: number, side: ArenaTagSide = ArenaTagSide.BOTH, quiet = false) {
     super(showAbility);
     this.tagType = tagType;
     this.turnCount = turnCount;
@@ -2270,7 +2270,7 @@ export class PostSummonAddBattlerTagAbAttr extends PostSummonAbAttr {
   private tagType: BattlerTagType;
   private turnCount: number;
 
-  constructor(tagType: BattlerTagType, turnCount: number, showAbility?: boolean) {
+  constructor(tagType: BattlerTagType, turnCount: number, showAbility = true) {
     super(showAbility);
 
     this.tagType = tagType;
@@ -2319,7 +2319,7 @@ export class PostSummonStatStageChangeAbAttr extends PostSummonAbAttr {
   private selfTarget: boolean;
   private intimidate: boolean;
 
-  constructor(stats: BattleStat[], stages: number, selfTarget?: boolean, intimidate?: boolean) {
+  constructor(stats: BattleStat[], stages: number, selfTarget = false, intimidate = false) {
     super(true);
 
     this.stats = stats;
@@ -2337,27 +2337,30 @@ export class PostSummonStatStageChangeAbAttr extends PostSummonAbAttr {
       // we unshift the StatStageChangePhase to put it right after the showAbility and not at the end of the
       // phase list (which could be after CommandPhase for example)
       globalScene.unshiftPhase(new StatStageChangePhase(pokemon.getBattlerIndex(), true, this.stats, this.stages));
-    } else {
-      for (const opponent of pokemon.getOpponents()) {
-        const cancelled = new BooleanHolder(false);
-        if (this.intimidate) {
-          applyAbAttrs(IntimidateImmunityAbAttr, opponent, cancelled, simulated);
-          applyAbAttrs(PostIntimidateStatStageChangeAbAttr, opponent, cancelled, simulated);
+      return;
+    }
 
-          if (opponent.getTag(BattlerTagType.SUBSTITUTE)) {
-            cancelled.value = true;
-          }
+    // Apply the stat change to all non-immune opponents
+    for (const opponent of pokemon.getOpponents()) {
+      const cancelled = new BooleanHolder(false);
+      if (this.intimidate) {
+        applyAbAttrs(IntimidateImmunityAbAttr, opponent, cancelled, simulated);
+        applyAbAttrs(PostIntimidateStatStageChangeAbAttr, opponent, cancelled, simulated);
+
+        if (opponent.getTag(BattlerTagType.SUBSTITUTE)) {
+          cancelled.value = true;
         }
-        if (!cancelled.value) {
-          globalScene.unshiftPhase(new StatStageChangePhase(opponent.getBattlerIndex(), false, this.stats, this.stages));
-        }
+      }
+      if (!cancelled.value) {
+        globalScene.unshiftPhase(new StatStageChangePhase(opponent.getBattlerIndex(), false, this.stats, this.stages));
       }
     }
   }
 }
 
 /**
- * Attribute to heal the user's allies upon entering
+ * Attribute to heal the user's allies upon entering battle.
+ * Used by {@linkcode Abilities.HOSPITALITY}.
  */
 export class PostSummonAllyHealAbAttr extends PostSummonAbAttr {
   private healRatio: number;
@@ -2366,7 +2369,7 @@ export class PostSummonAllyHealAbAttr extends PostSummonAbAttr {
   constructor(healRatio: number, showAnim = false) {
     super();
 
-    this.healRatio = healRatio || 0.25;
+    this.healRatio = healRatio || 4;
     this.showAnim = showAnim;
   }
 
@@ -2378,7 +2381,7 @@ export class PostSummonAllyHealAbAttr extends PostSummonAbAttr {
     const target = pokemon.getAlly();
     if (!simulated && !isNullOrUndefined(target)) {
       globalScene.unshiftPhase(new PokemonHealPhase(target.getBattlerIndex(),
-        toDmgValue(pokemon.getMaxHp() * this.healRatio), i18next.t("abilityTriggers:postSummonAllyHeal", { pokemonNameWithAffix: getPokemonNameWithAffix(target), pokemonName: pokemon.name }), true, !this.showAnim));
+        toDmgValue(pokemon.getMaxHp() / this.healRatio), i18next.t("abilityTriggers:postSummonAllyHeal", { pokemonNameWithAffix: getPokemonNameWithAffix(target), pokemonName: pokemon.name }), true, !this.showAnim));
     }
   }
 }
@@ -3502,7 +3505,7 @@ export class MultCritAbAttr extends AbAttr {
 export class ConditionalCritAbAttr extends AbAttr {
   private condition: PokemonAttackCondition;
 
-  constructor(condition: PokemonAttackCondition, checkUser?: boolean) {
+  constructor(condition: PokemonAttackCondition) {
     super(false);
 
     this.condition = condition;
@@ -3649,10 +3652,10 @@ export class BlockWeatherDamageAttr extends PreWeatherDamageAbAttr {
 export class SuppressWeatherEffectAbAttr extends PreWeatherEffectAbAttr {
   public affectsImmutable: boolean;
 
-  constructor(affectsImmutable?: boolean) {
+  constructor(affectsImmutable = false) {
     super(true);
 
-    this.affectsImmutable = !!affectsImmutable;
+    this.affectsImmutable = affectsImmutable;
   }
 
   override canApplyPreWeatherEffect(pokemon: Pokemon, passive: Boolean, simulated: boolean, weather: Weather, cancelled: BooleanHolder, args: any[]): boolean {
@@ -7541,7 +7544,7 @@ export function initAbilities() {
     new Ability(Abilities.SUPERSWEET_SYRUP, 9)
       .attr(PostSummonStatStageChangeAbAttr, [ Stat.EVA ], -1),
     new Ability(Abilities.HOSPITALITY, 9)
-      .attr(PostSummonAllyHealAbAttr, 0.25, true),
+      .attr(PostSummonAllyHealAbAttr, 4, true),
     new Ability(Abilities.TOXIC_CHAIN, 9)
       .attr(PostAttackApplyStatusEffectAbAttr, false, 30, StatusEffect.TOXIC),
     new Ability(Abilities.EMBODY_ASPECT_TEAL, 9)

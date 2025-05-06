@@ -3235,8 +3235,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * If it rolls shiny, or if it's already shiny, also sets a random variant and give the Pokemon the associated luck.
    *
    * The base shiny odds are {@linkcode BASE_SHINY_CHANCE} / `65536`
-   * @param thresholdOverride number that is divided by `2^16` (`65536`) to get the shiny chance, overrides {@linkcode shinyThreshold} if set (bypassing shiny rate modifiers such as Shiny Charm)
-   * @param applyModifiersToOverride If {@linkcode thresholdOverride} is set and this is true, will apply Shiny Charm and event modifiers to {@linkcode thresholdOverride}
+   * @param thresholdOverride - number that is divided by `2^16` (`65536`) to get the shiny chance, overrides {@linkcode shinyThreshold} if set (bypassing shiny rate modifiers such as Shiny Charm)
+   * @param applyModifiersToOverride - Whether to apply Shiny Charm and event modifiers to {@linkcode thresholdOverride}.
+   * Does nothing if {@linkcode thresholdOverride} is not set.
    * @returns `true` if the Pokemon has been set as a shiny, `false` otherwise
    */
   public trySetShinySeed(
@@ -4885,7 +4886,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**@overload */
-  getTag(tagType: BattlerTagType.GRUDGE): GrudgeTag | nil;
+  getTag(tagType: BattlerTagType.GRUDGE): GrudgeTag | undefined;
 
   /** @overload */
   getTag(tagType: BattlerTagType): BattlerTag | undefined;
@@ -5633,22 +5634,19 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     if (effect === StatusEffect.SLEEP) {
       sleepTurnsRemaining = new NumberHolder(this.randSeedIntRange(2, 4));
-
       this.setFrameRate(4);
 
-      // If the user is invulnerable, lets remove their invulnerability when they fall asleep
-      const invulnerableTags = [
+      // If the user is invulnerable, remove their invulnerability when they fall asleep
+      // and remove the upcoming attack from the move queue.
+      const tag = [
         BattlerTagType.UNDERGROUND,
         BattlerTagType.UNDERWATER,
         BattlerTagType.HIDDEN,
         BattlerTagType.FLYING,
-      ];
-
-      const tag = invulnerableTags.find(t => this.getTag(t));
-
+      ].find(t => this.getTag(t));
       if (tag) {
         this.removeTag(tag);
-        this.getMoveQueue().pop();
+        this.getMoveQueue().shift();
       }
     }
 
@@ -7834,7 +7832,7 @@ export class PokemonSummonData {
    * A queue of moves yet to be executed, used by charging, recharging and frenzy moves.
    * So long as this array is nonempty, this Pokemon's corresponding `CommandPhase` will be skipped over entirely
    * in favor of using the queued move.
-   * TODO: Clean up a lot of the code surrounding the move queue. It's intertwined with the 
+   * TODO: Clean up a lot of the code surrounding the move queue. It's intertwined with the
    */
   public moveQueue: TurnMove[] = [];
   public tags: BattlerTag[] = [];
@@ -8110,7 +8108,7 @@ export class PokemonMove {
    * Increments this move's {@linkcode ppUsed} variable (up to a maximum of {@link getMovePp}).
    * @param count - Amount of PP to consume; default `1`
    */
-  usePp(count: number = 1) {
+  usePp(count = 1) {
     this.ppUsed = Math.min(this.ppUsed + count, this.getMovePp());
   }
 

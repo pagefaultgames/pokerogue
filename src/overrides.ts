@@ -152,7 +152,7 @@ class DefaultOverrides {
   readonly HAS_PASSIVE_ABILITY_OVERRIDE: boolean | null = null;
   /**
    * If set, will be added to each newly caught/obtained player Pokemon.
-   * @remarks If set to {@linkcode StatusEffect.SLEEP}, will always have a constant duration of 4 turns.
+   * @remarks If this is set to {@linkcode StatusEffect.SLEEP}, it will always have a constant duration of 4 turns.
    */
   readonly STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
   readonly GENDER_OVERRIDE: Gender | null = null;

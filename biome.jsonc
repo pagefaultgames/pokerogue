@@ -113,7 +113,7 @@
       }
     },
 
-    // Overrides to prevent unused import removal inside `overrides.ts` and enums files
+    // Overrides to prevent unused import removal inside `overrides.ts` and enums files (for jsdoc)
     {
       "include": ["src/overrides.ts", "src/enums/*"],
       "linter": {
