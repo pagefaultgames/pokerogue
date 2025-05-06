@@ -5155,7 +5155,7 @@ export class MatchUserTypeAttr extends VariableMoveTypeAttr {
     if (!(moveType instanceof NumberHolder)) {
       return false;
     }
-    const userTypes = user.getTypes(true, false, undefined, false);
+    const userTypes = user.getTypes(true);
 
     if (userTypes.includes(PokemonType.STELLAR)) { // will not change to stellar type
       const nonTeraTypes = user.getTypes();
@@ -5670,7 +5670,7 @@ export class JawLockAttr extends AddBattlerTagAttr {
 export class CurseAttr extends MoveEffectAttr {
 
   apply(user: Pokemon, target: Pokemon, move:Move, args: any[]): boolean {
-    if (user.getTypes(true, false, undefined, false).includes(PokemonType.GHOST)) {
+    if (user.getTypes(true).includes(PokemonType.GHOST)) {
       if (target.getTag(BattlerTagType.CURSED)) {
         globalScene.queueMessage(i18next.t("battle:attackFailed"));
         return false;
@@ -6485,7 +6485,7 @@ export class RemoveTypeAttr extends MoveEffectAttr {
       return false;
     }
 
-    const userTypes = user.getTypes(true, false, undefined, false);
+    const userTypes = user.getTypes(true);
     const modifiedTypes = userTypes.filter(type => type !== this.removedType);
     if (modifiedTypes.length === 0) {
       modifiedTypes.push(PokemonType.UNKNOWN);
@@ -6512,7 +6512,7 @@ export class CopyTypeAttr extends MoveEffectAttr {
       return false;
     }
 
-    const targetTypes = target.getTypes(true, false, undefined, false);
+    const targetTypes = target.getTypes(true);
     if (targetTypes.includes(PokemonType.UNKNOWN) && targetTypes.indexOf(PokemonType.UNKNOWN) > -1) {
       targetTypes[targetTypes.indexOf(PokemonType.UNKNOWN)] = PokemonType.NORMAL;
     }
@@ -6684,7 +6684,7 @@ export class AddTypeAttr extends MoveEffectAttr {
   }
 
   getCondition(): MoveConditionFunc {
-    return (user, target, move) => !target.isTerastallized && !target.getTypes(false, false, undefined, false).includes(this.type);
+    return (user, target, move) => !target.isTerastallized && !target.getTypes().includes(this.type);
   }
 }
 
@@ -8055,7 +8055,7 @@ export class UpperHandCondition extends MoveCondition {
 export class hitsSameTypeAttr extends VariableMoveTypeMultiplierAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const multiplier = args[0] as NumberHolder;
-    if (!user.getTypes(false, false, undefined, false).some(type => target.getTypes(false, false, undefined, false).includes(type))) {
+    if (!user.getTypes().some(type => target.getTypes().includes(type))) {
       multiplier.value = 0;
       return true;
     }
@@ -8098,7 +8098,7 @@ export class ResistLastMoveTypeAttr extends MoveEffectAttr {
     if (moveData.type === PokemonType.STELLAR || moveData.type === PokemonType.UNKNOWN) {
       return false;
     }
-    const userTypes = user.getTypes(false, false, undefined, false);
+    const userTypes = user.getTypes();
     const validTypes = this.getTypeResistances(globalScene.gameMode, moveData.type).filter(t => !userTypes.includes(t)); // valid types are ones that are not already the user's types
     if (!validTypes.length) {
       return false;
@@ -8239,7 +8239,7 @@ export function getMoveTargets(user: Pokemon, move: Moves, replaceTarget?: MoveT
       break;
     case MoveTarget.CURSE:
       const extraTargets = !isNullOrUndefined(ally) ? [ ally ] : [];
-      set = user.getTypes(true, false, undefined, false).includes(PokemonType.GHOST) ? (opponents.concat(extraTargets)) : [ user ];
+      set = user.getTypes(true).includes(PokemonType.GHOST) ? (opponents.concat(extraTargets)) : [ user ];
       break;
   }
 
@@ -10077,7 +10077,7 @@ export function initMoves() {
       .condition(failIfLastCondition),
     new StatusMove(Moves.FLOWER_SHIELD, PokemonType.FAIRY, -1, 10, -1, 0, 6)
       .target(MoveTarget.ALL)
-      .attr(StatStageChangeAttr, [ Stat.DEF ], 1, false, { condition: (user, target, move) => target.getTypes(false, false, undefined, false).includes(PokemonType.GRASS) && !target.getTag(SemiInvulnerableTag) }),
+      .attr(StatStageChangeAttr, [ Stat.DEF ], 1, false, { condition: (user, target, move) => target.getTypes().includes(PokemonType.GRASS) && !target.getTag(SemiInvulnerableTag) }),
     new StatusMove(Moves.GRASSY_TERRAIN, PokemonType.GRASS, -1, 10, -1, 0, 6)
       .attr(TerrainChangeAttr, TerrainType.GRASSY)
       .target(MoveTarget.BOTH_SIDES),
@@ -10365,7 +10365,7 @@ export function initMoves() {
       .attr(PositiveStatStagePowerAttr),
     new AttackMove(Moves.BURN_UP, PokemonType.FIRE, MoveCategory.SPECIAL, 130, 100, 5, -1, 0, 7)
       .condition((user) => {
-        const userTypes = user.getTypes(true, false, undefined, false);
+        const userTypes = user.getTypes(true);
         return userTypes.includes(PokemonType.FIRE);
       })
       .attr(HealStatusEffectAttr, true, StatusEffect.FREEZE)
@@ -11150,7 +11150,7 @@ export function initMoves() {
       .triageMove(),
     new AttackMove(Moves.DOUBLE_SHOCK, PokemonType.ELECTRIC, MoveCategory.PHYSICAL, 120, 100, 5, -1, 0, 9)
       .condition((user) => {
-        const userTypes = user.getTypes(true, false, undefined, false);
+        const userTypes = user.getTypes(true);
         return userTypes.includes(PokemonType.ELECTRIC);
       })
       .attr(AddBattlerTagAttr, BattlerTagType.DOUBLE_SHOCKED, true, false)

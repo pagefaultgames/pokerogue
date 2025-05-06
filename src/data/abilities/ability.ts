@@ -43,10 +43,9 @@ import { PokemonTransformPhase } from "#app/phases/pokemon-transform-phase";
 import { allAbilities } from "#app/data/data-lists";
 import { AbAttr } from "#app/data/abilities/ab-attrs/ab-attr";
 import { Ability } from "#app/data/abilities/ability-class";
-import { TrainerVariant } from "#app/field/trainer";
 
 // Enum imports
-import { Stat, type BattleStat , BATTLE_STATS, EFFECTIVE_STATS, getStatKey, type EffectiveStat } from "#enums/stat";
+import { Stat, type BattleStat, BATTLE_STATS, EFFECTIVE_STATS, getStatKey, type EffectiveStat } from "#enums/stat";
 import { PokemonType } from "#enums/pokemon-type";
 import { PokemonAnimType } from "#enums/pokemon-anim-type";
 import { StatusEffect } from "#enums/status-effect";
@@ -6574,7 +6573,7 @@ export function initAbilities() {
       .ignorable(),
     new Ability(Abilities.MAGNET_PULL, 3)
       .attr(ArenaTrapAbAttr, (user, target) => {
-        if (target.getTypes(true, false, undefined, false).includes(PokemonType.STEEL) || (target.getTypes(true).includes(PokemonType.STELLAR) && target.getTypes().includes(PokemonType.STEEL))) {
+        if (target.getTypes(true).includes(PokemonType.STEEL) || (target.getTypes(true).includes(PokemonType.STELLAR) && target.getTypes().includes(PokemonType.STEEL))) {
           return true;
         }
         return false;
@@ -6976,16 +6975,16 @@ export function initAbilities() {
       .ignorable(),
     new Ability(Abilities.FLOWER_VEIL, 6)
       .attr(ConditionalUserFieldStatusEffectImmunityAbAttr, (target: Pokemon, source: Pokemon | null) => {
-        return source ? target.getTypes(false, false, undefined, false).includes(PokemonType.GRASS) && target.id !== source.id : false;
+        return source ? target.getTypes().includes(PokemonType.GRASS) && target.id !== source.id : false;
       })
       .attr(ConditionalUserFieldBattlerTagImmunityAbAttr,
         (target: Pokemon) => {
-          return target.getTypes(false, false, undefined, false).includes(PokemonType.GRASS);
+          return target.getTypes().includes(PokemonType.GRASS);
         },
         [ BattlerTagType.DROWSY ],
       )
       .attr(ConditionalUserFieldProtectStatAbAttr, (target: Pokemon) => {
-        return target.getTypes(false, false, undefined, false).includes(PokemonType.GRASS);
+        return target.getTypes().includes(PokemonType.GRASS);
       })
       .ignorable(),
     new Ability(Abilities.CHEEK_POUCH, 6)
