@@ -3287,8 +3287,6 @@ export function getModifierTypeFuncById(id: string): ModifierTypeFunc {
   return modifierTypes[id];
 }
 
-let lockModifierTiers: null | boolean = null;
-
 /**
  * Generates modifier options for a {@linkcode SelectModifierPhase}
  * @param count Determines the number of items to generate
@@ -3314,7 +3312,6 @@ export function getPlayerModifierTypeOptions(
   const options: ModifierTypeOption[] = [];
   const retryCount = Math.min(count * 5, 50);
   if (!customModifierSettings) {
-    lockModifierTiers = !!modifierTiers && modifierTiers.length >= count;
     new Array(count).fill(0).map((_, i) => {
       options.push(
         getModifierTypeOptionWithRetry(
@@ -3325,8 +3322,6 @@ export function getPlayerModifierTypeOptions(
         ),
       );
     });
-    // init lockModifierTiers
-    lockModifierTiers = null;
   } else {
     // Guaranteed mod options first
     if (
@@ -3645,7 +3640,7 @@ function getNewModifierTypeOption(
       }
       tier += upgradeCount;
     }
-  } else if (retryCount === 10 && tier && lockModifierTiers !== true) {
+  } else if (retryCount >= 100 && tier) {
     retryCount = 0;
     tier--;
   }
