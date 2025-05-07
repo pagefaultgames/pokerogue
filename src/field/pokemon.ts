@@ -7859,6 +7859,11 @@ export class PokemonSummonData {
         continue;
       }
 
+      if (key === "moveset") {
+        this.moveset = value.map((m: any) => PokemonMove.loadMove(m));
+        continue;
+      }
+
       if (key === "tags") {
         // load battler tags
         this.tags = value.map((t: BattlerTag) => loadBattlerTag(t));
