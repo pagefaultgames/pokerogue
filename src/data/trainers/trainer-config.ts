@@ -52,17 +52,16 @@ import type {
 } from "./typedefs";
 
 export interface TrainerPartyMemberConfig {
-  species: Species | Species[],
+  species: Species,
   formIndex?: number,
+  gender?: Gender,
   abilityIndex?: number,
-  ability?: Abilities, // Using this will try to get the ability index on its own, useful for 2 mons sharing an ability
   moves?: Moves[], // Up to 4 moves to set on the mon before move generation
   teraType?: PokemonType,
   instantTera?: boolean,
   isBoss?: boolean,
   bossBars?: number,
   ball?: PokeballType,
-  vitamins?: number[] // Quantity of vitamins for each stat
 }
 
 export type TrainerPartySetSlot = [
@@ -1063,91 +1062,195 @@ export const trainerPartyConfigs: TrainerPartyConfigs = {
   [TrainerType.LORELEI]: [
     [ 0, {
       species: Species.DEWGONG,
-      ability: Abilities.THICK_FAT,
+      abilityIndex: 0, // Thick Fat
     }],
-    [ 2, {
-      species: [Species.SLOWBRO, Species.GALAR_SLOWBRO ],
+    [ 2, [{
+      species: Species.SLOWBRO,
       teraType: PokemonType.ICE,
       instantTera: true,
       moves: [Moves.ICE_BEAM],
-    }],
+    }, {
+      species: Species.GALAR_SLOWBRO,
+      teraType: PokemonType.ICE,
+      instantTera: true,
+      moves: [Moves.ICE_BEAM],
+    }]],
     [ 3, {species: Species.JYNX}],
-    [ 4, {species: [Species.CLOYSTER, Species.ALOLA_SANDSLASH]}],
+    [ 4, [{species: Species.CLOYSTER}, {species: Species.ALOLA_SANDSLASH}]],
     [ 5, {species: Species.LAPRAS, isBoss: true, bossBars: 2}]
   ],
   [TrainerType.BRUNO]: [
-    [0, {species: [Species.HITMONLEE, Species.HITMONCHAN, Species.HITMONTOP]}],
+    [0, [{species: Species.HITMONLEE}, {species: Species.HITMONCHAN}, {species: Species.HITMONTOP}]],
     [2, {
       species: Species.STEELIX,
       instantTera: true,
       teraType: PokemonType.FIGHTING,
-      moves: [Moves.BODY_PRESS]
+      moves: [Moves.BODY_PRESS],
     }],
     [3, {species: Species.POLIWRATH}],
     [4, {species: Species.ANNIHILAPE}],
     [5, {
       species: Species.MACHAMP,
       isBoss: true,
-      bossBars: 2
+      bossBars: 2,
     }]
   ],
   [TrainerType.AGATHA]: [
     [0, {species: Species.MISMAGIUS}],
-    [2, {
-      species: [Species.ARBOK, Species.WEEZING],
+    [2, [{
+      species: Species.ARBOK,
       abilityIndex: 0,
       teraType: PokemonType.GHOST,
       instantTera: true,
-      moves: [Moves.TERA_BLAST]
-    }],
+      moves: [Moves.TERA_BLAST],
+    }, {
+      species: Species.WEEZING,
+      abilityIndex: 0,
+      teraType: PokemonType.GHOST,
+      instantTera: true,
+      moves: [Moves.TERA_BLAST],
+    }]],
     [3, {species: Species.ALOLA_MAROWAK}],
     [4, {species: Species.CURSOLA}],
     [5, {
       species: Species.GENGAR,
       isBoss: true,
-      bossBars: 2
+      bossBars: 2,
     }]
   ],
   [TrainerType.LANCE]: [
     [ 0, {species: Species.KINGDRA}],
     [ 2, [{
         species: Species.GYARADOS,
-        moves: [Moves.OUTRAGE],
+        moves: [Moves.SCALE_SHOT],
         instantTera: true,
-        teraType: PokemonType.DRAGON
+        teraType: PokemonType.DRAGON,
       },
       {
         species: Species.AERODACTYL,
         moves: [Moves.DRAGON_CLAW],
         instantTera: true,
-        teraType: PokemonType.DRAGON
+        teraType: PokemonType.DRAGON,
       }]
     ],
     [ 3, {species: Species.ALOLA_EXEGGUTOR}],
     [ 4, {species: Species.SALAMENCE}],
     [ 5, {species: Species.DRAGONITE, isBoss: true, bossBars: 2}]
   ],
+
+  [TrainerType.BLUE]: [
+    [0, {species: Species.ALAKAZAM}],
+    [1, {species: Species.MACHAMP}],
+    [2, {species: Species.HO_OH, ball: PokeballType.MASTER_BALL}],
+    [3, [{
+      species: Species.RHYPERIOR,
+      teraType: PokemonType.ROCK,
+      instantTera: true,
+    }, {
+      species: Species.ELECTIVIRE,
+      teraType: PokemonType.ELECTRIC,
+      instantTera: true,
+    }]],
+    [4, [{
+      species: Species.ARCANINE,
+      isBoss: true,
+      bossBars: 2,
+    }, {
+      species: Species.EXEGGUTOR,
+      isBoss: true,
+      bossBars: 2,
+    }, {
+      species: Species.GYARADOS,
+      isBoss: true,
+      bossBars: 2,
+    }]],
+    [5, {
+      species: Species.PIDGEOT,
+      formIndex: 1, // Mega Pidgeot
+    }]
+  ],
+
+  [TrainerType.RED]: [
+    [0, {
+      species: Species.PIKACHU,
+      formIndex: 8, // G-Max Pikachu
+    }],
+    [1, [{species: Species.ESPEON}, {species: Species.UMBREON}, {species: Species.SYLVEON}]],
+    [2, {species: Species.LUGIA, ball: PokeballType.MASTER_BALL}],
+    [3, [{
+      species: Species.MEGANIUM,
+      teraType: PokemonType.GRASS,
+      instantTera: true,
+    }, {
+      species: Species.TYPHLOSION,
+      teraType: PokemonType.FIRE,
+      instantTera: true,
+    }, {
+      species: Species.FERALIGATR,
+      teraType: PokemonType.WATER,
+      instantTera: true,
+    }]],
+    [4, {species: Species.SNORLAX, isBoss: true, bossBars: 2}],
+    [5, [{species: Species.VENUSAUR, formIndex: 1}, {species: Species.CHARIZARD, formIndex: 1}, {species: Species.BLASTOISE, formIndex: 1}]]
+  ],
+
+  [TrainerType.LANCE_CHAMPION]: [
+    [0, [{species: Species.GYARADOS}, {species: Species.KINGDRA}]],
+    [1, {species: Species.AERODACTYL}],
+    [2, {species: Species.SALAMENCE, formIndex: 1}],
+    [3, {species: Species.CHARIZARD}],
+    [4, [{
+      species: Species.TYRANITAR,
+      abilityIndex: 2, // Unnerve
+      teraType: PokemonType.DRAGON,
+      instantTera: true,
+      moves: [Moves.DRAGON_CLAW]
+    }, {
+      species: Species.GARCHOMP,
+      abilityIndex: 2, // Rough Skin
+      teraType: PokemonType.DRAGON,
+      instantTera: true,
+    }, {
+      species: Species.KOMMO_O,
+      abilityIndex: 1, // Soundproof
+      teraType: PokemonType.DRAGON,
+      instantTera: true,
+    }]],
+    [5, {
+      species: Species.DRAGONITE,
+      abilityIndex: 2, // Multiscale
+      isBoss: true,
+      bossBars: 2,
+      moves: [Moves.EXTREME_SPEED],
+    }]
+  ],
+
   [TrainerType.AARON]: [
     [0, {species: Species.YANMEGA}],
     [2, {species: Species.HERACROSS}],
     [3, {species: Species.VESPIQUEN}],
-    [4, {species: [Species.SCIZOR, Species.KLEAVOR]}],
+    [4, [{species: Species.SCIZOR}, {species: Species.KLEAVOR}]],
     [5, {
       species: Species.DRAPION,
       teraType: PokemonType.BUG,
-      abilityIndex: 1,
+      abilityIndex: 1, // Sniper
       instantTera: true,
       isBoss: true,
       bossBars: 2,
-      moves: [Moves.X_SCISSOR]
+      moves: [Moves.X_SCISSOR],
     }]
   ],
   [TrainerType.BERTHA]: [
     [0, {species: Species.WHISCASH}],
     [2, {species: Species.HIPPOWDON, abilityIndex: 0, instantTera: true}],
     [3, {species: Species.GLISCOR}],
-    [4, {species: [Species.MAMOSWINE, Species.URSALUNA]}],
-    [5, {species: Species.RHYPERIOR, abilityIndex: 1, isBoss: true, bossBars: 2}]
+    [4, [{species: Species.MAMOSWINE}, {species: Species.URSALUNA}]],
+    [5, {
+      species: Species.RHYPERIOR,
+      abilityIndex: 1, // Solid Rock
+      isBoss: true,
+      bossBars: 2,
+    }]
   ],
   [TrainerType.FLINT]: [
     [ 0, {species: Species.RAPIDASH}],
@@ -1155,34 +1258,80 @@ export const trainerPartyConfigs: TrainerPartyConfigs = {
       species: Species.STEELIX,
       teraType: PokemonType.FIRE,
       instantTera: true,
-      moves: [Moves.FIRE_FANG]
+      moves: [Moves.FIRE_FANG],
     },
     {
       species: Species.LOPUNNY,
       teraType: PokemonType.FIRE,
       instantTera: true,
-      moves: [Moves.FIRE_PUNCH]
+      moves: [Moves.FIRE_PUNCH],
     }]],
-    [ 3, {species: [Species.ARCANINE, Species.HISUI_ARCANINE]}],
+    [ 3, [{species: Species.ARCANINE}, {species: Species.HISUI_ARCANINE}]],
     [ 4, {species: Species.INFERNAPE}],
     [ 5, {
       species: Species.MAGMORTAR,
       isBoss: true,
-      bossBars: 2
+      bossBars: 2,
     }]
   ],
   [TrainerType.LUCIAN]: [
-    [0, {species: [Species.ESPEON, Species.ALAKAZAM]}],
-    [2, {species: Species.FARIGIRAF, teraType: PokemonType.PSYCHIC, instantTera: true}],
+    [0, [{species: Species.FARIGIRAF}]],
+    [2, [{
+      species: Species.ESPEON,
+      teraType: PokemonType.PSYCHIC,
+      instantTera: true,
+    }, {
+      species: Species.ALAKAZAM,
+      teraType: PokemonType.PSYCHIC,
+      instantTera: true,
+    }]],
     [3, {species: Species.BRONZONG}],
-    [4, {species: [Species.MR_RIME, Species.HISUI_BRAVIARY]}],
+    [4, [{species: Species.MR_RIME}, {species: Species.HISUI_BRAVIARY}]],
     [5, {
       species: Species.GALLADE,
       abilityIndex: 1,
       isBoss: true,
-      bossBars: 2
+      bossBars: 2,
     }]
-  ]
+  ],
+
+  [TrainerType.CYNTHIA]: [
+    [0, {species: Species.SPIRITOMB}],
+    [1, {species: Species.LUCARIO}],
+    [2, {species: Species.GIRATINA, ball: PokeballType.MASTER_BALL}],
+    [3, [{
+      species: Species.MILOTIC,
+      teraType: PokemonType.WATER,
+      instantTera: true,
+    }, {
+      species: Species.ROSERADE,
+      teraType: PokemonType.GRASS,
+      instantTera: true,
+    }, {
+      species: Species.HISUI_ARCANINE,
+      teraType: PokemonType.FIRE,
+      instantTera: true,
+    }]],
+    [4, {
+      species: Species.TOGEKISS,
+      abilityIndex: 1, // Serene Grace
+      isBoss: true,
+      bossBars: 2,
+      moves: [Moves.RELIC_SONG],
+    }],
+    [5, {
+      species: Species.GARCHOMP,
+      formIndex: 1,
+    }]
+  ],
+
+  [TrainerType.SHAUNTAL]: [
+    [0, {species: Species.COFAGRIGUS}],
+    [2, {species: Species.GOLURK, teraType: PokemonType.GHOST, instantTera: true}],
+    [3, {species: Species.JELLICENT}],
+    [4, [{species: Species.MISMAGIUS}, {species: Species.FROSLASS}]],
+    [5, {species: Species.CHANDELURE, isBoss: true, bossBars: 2}]
+  ],
 }
 
 export const trainerConfigs: TrainerConfigs = {
