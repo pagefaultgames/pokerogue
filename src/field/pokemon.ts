@@ -3264,11 +3264,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     applyModifiersToOverride?: boolean,
   ): boolean {
     if (!this.shiny) {
-      const shinyThreshold = new NumberHolder(BASE_SHINY_CHANCE);
-      if (thresholdOverride === undefined || applyModifiersToOverride) {
-        if (thresholdOverride !== undefined && applyModifiersToOverride) {
-          shinyThreshold.value = thresholdOverride;
-        }
+      const shinyThreshold = new NumberHolder(thresholdOverride ?? BASE_SHINY_CHANCE);
+      if (applyModifiersToOverride) {
         if (timedEventManager.isEventActive()) {
           shinyThreshold.value *= timedEventManager.getShinyMultiplier();
         }
@@ -3277,9 +3274,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           true,
           shinyThreshold,
         );
-      }
-      else {
-        shinyThreshold.value = thresholdOverride;
       }
 
       this.shiny = randSeedInt(65536) < shinyThreshold.value;
@@ -3353,11 +3347,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (!this.species.abilityHidden) {
       return false;
     }
-    const haThreshold = new NumberHolder(BASE_HIDDEN_ABILITY_CHANCE);
-    if (thresholdOverride === undefined || applyModifiersToOverride) {
-      if (thresholdOverride !== undefined && applyModifiersToOverride) {
-        haThreshold.value = thresholdOverride;
-      }
+    const haThreshold = new NumberHolder(thresholdOverride ?? BASE_HIDDEN_ABILITY_CHANCE);
+    if (applyModifiersToOverride) {
       if (!this.hasTrainer()) {
         globalScene.applyModifiers(
           HiddenAbilityRateBoosterModifier,
@@ -3365,8 +3356,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           haThreshold,
         );
       }
-    } else {
-      haThreshold.value = thresholdOverride;
     }
 
     if (randSeedInt(65536) < haThreshold.value) {
