@@ -1,8 +1,10 @@
+import { BattlerIndex } from "#app/battle";
 import { RechargingTag, SemiInvulnerableTag } from "#app/data/battler-tags";
 import { allMoves, RandomMoveAttr } from "#app/data/moves/move";
 import { Abilities } from "#app/enums/abilities";
 import { Stat } from "#app/enums/stat";
 import { CommandPhase } from "#app/phases/command-phase";
+import { BattlerTagType } from "#enums/battler-tag-type";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -32,7 +34,6 @@ describe("Moves - Metronome", () => {
       .moveset([Moves.METRONOME, Moves.SPLASH])
       .battleStyle("single")
       .startingLevel(100)
-      .starterSpecies(Species.REGIELEKI)
       .enemyLevel(100)
       .enemySpecies(Species.SHUCKLE)
       .enemyMoveset(Moves.SPLASH)
@@ -40,7 +41,7 @@ describe("Moves - Metronome", () => {
   });
 
   it("should have one semi-invulnerable turn and deal damage on the second turn when a semi-invulnerable move is called", async () => {
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle([Species.REGIELEKI]);
     const player = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;
     vi.spyOn(randomMoveAttr, "getMoveOverride").mockReturnValue(Moves.DIVE);
@@ -56,7 +57,7 @@ describe("Moves - Metronome", () => {
   });
 
   it("should apply secondary effects of a move", async () => {
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle([Species.REGIELEKI]);
     const player = game.scene.getPlayerPokemon()!;
     vi.spyOn(randomMoveAttr, "getMoveOverride").mockReturnValue(Moves.WOOD_HAMMER);
 
@@ -67,7 +68,7 @@ describe("Moves - Metronome", () => {
   });
 
   it("should recharge after using recharge move", async () => {
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle([Species.REGIELEKI]);
     const player = game.scene.getPlayerPokemon()!;
     vi.spyOn(randomMoveAttr, "getMoveOverride").mockReturnValue(Moves.HYPER_BEAM);
     vi.spyOn(allMoves[Moves.HYPER_BEAM], "accuracy", "get").mockReturnValue(100);
@@ -76,6 +77,36 @@ describe("Moves - Metronome", () => {
     await game.toNextTurn();
 
     expect(player.getTag(RechargingTag)).toBeTruthy();
+  });
+
+  it("should charge when calling charging moves while still maintaining follow-up status", async () => {
+    game.override.moveset([]).enemyMoveset(Moves.SPITE);
+    vi.spyOn(randomMoveAttr, "getMoveOverride").mockReturnValue(Moves.SOLAR_BEAM);
+    await game.classicMode.startBattle([Species.REGIELEKI]);
+
+    const player = game.scene.getPlayerPokemon()!;
+    game.move.changeMoveset(player, [Moves.METRONOME, Moves.SOLAR_BEAM]);
+
+    const [metronomeMove, solarBeamMove] = player.getMoveset();
+    expect(metronomeMove).toBeDefined();
+    expect(solarBeamMove).toBeDefined();
+
+    game.move.select(Moves.METRONOME);
+    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.phaseInterceptor.to("TurnEndPhase");
+
+    expect(player.getTag(BattlerTagType.CHARGING)).toBeTruthy();
+    const turn1PpUsed = metronomeMove.ppUsed;
+    expect.soft(turn1PpUsed).toBeGreaterThan(1);
+    expect(solarBeamMove.ppUsed).toBe(0);
+
+    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.toNextTurn();
+
+    expect(player.getTag(BattlerTagType.CHARGING)).toBeFalsy();
+    const turn2PpUsed = metronomeMove.ppUsed - turn1PpUsed;
+    expect(turn2PpUsed).toBeGreaterThan(1);
+    expect(solarBeamMove.ppUsed).toBe(0);
   });
 
   it("should only target ally for Aromatic Mist", async () => {
@@ -97,7 +128,7 @@ describe("Moves - Metronome", () => {
   });
 
   it("should cause opponent to flee, and not crash for Roar", async () => {
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle([Species.REGIELEKI]);
     vi.spyOn(randomMoveAttr, "getMoveOverride").mockReturnValue(Moves.ROAR);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;

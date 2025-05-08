@@ -71,6 +71,6 @@ export class ClassicModeHelper extends GameManagerHelper {
     }
 
     await this.game.phaseInterceptor.to(CommandPhase);
-    console.log("==================[New Turn]==================");
+    console.log("==================[New Battle]==================");
   }
 }
