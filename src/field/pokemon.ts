@@ -186,6 +186,7 @@ import {
   applyAllyStatMultiplierAbAttrs,
   AllyStatMultiplierAbAttr,
   MoveAbilityBypassAbAttr,
+  PreSummonAbAttr,
 } from "#app/data/abilities/ability";
 import { allAbilities } from "#app/data/data-lists";
 import type PokemonData from "#app/system/pokemon-data";
@@ -2414,8 +2415,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const suppressAbilitiesTag = arena.getTag(
       ArenaTagType.NEUTRALIZING_GAS,
     ) as SuppressAbilitiesTag;
+    const suppressOffField = ability.hasAttr(PreSummonAbAttr);
     if (
-      this.isOnField() &&
+      (this.isOnField() || suppressOffField) &&
       suppressAbilitiesTag &&
       !suppressAbilitiesTag.isBeingRemoved()
     ) {
