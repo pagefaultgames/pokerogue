@@ -3608,10 +3608,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (this.isBoss()) {
       movePool = movePool.filter(m => !allMoves[m[0]].hasAttr(SacrificialAttr) && !allMoves[m[0]].hasAttr(HpSplitAttr));
     }
-    // Shinies never get self ko moves
-    else if (this.isShiny()) {
-      movePool = movePool.filter(m => !allMoves[m[0]].hasAttr(SacrificialAttr));
-    }
     // No one gets Memento or Final Gambit
     movePool = movePool.filter(
       m => !allMoves[m[0]].hasAttr(SacrificialAttrOnHit),
@@ -3719,7 +3715,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         // Other damaging moves 2x weight if 0-1 damaging moves, 0.5x if 2, 0.125x if 3. These weights get 20x if STAB.
         // Status moves remain unchanged on weight, this encourages 1-2
         movePool = baseWeights
-          .filter(m => !this.moveset.some(mo => m[0] === mo.moveId))
+          .filter(m => !this.moveset.some(
+            mo => 
+              m[0] === mo.moveId ||
+              (allMoves[m[0]].hasAttr(SacrificialAttr) && mo.getMove().hasAttr(SacrificialAttr)) // Only one self-KO move allowed
+          ))
           .map(m => {
             let ret: number;
             if (
@@ -3750,7 +3750,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           });
       } else {
         // Non-trainer pokemon just use normal weights
-        movePool = baseWeights.filter(m => !this.moveset.some(mo => m[0] === mo.moveId));
+        movePool = baseWeights.filter(m => !this.moveset.some(
+          mo => 
+            m[0] === mo.moveId ||
+            (allMoves[m[0]].hasAttr(SacrificialAttr) && mo.getMove().hasAttr(SacrificialAttr)) // Only one self-KO move allowed
+        ));
       }
       const totalWeight = movePool.reduce((v, m) => v + m[1], 0);
       let rand = randSeedInt(totalWeight);
@@ -7069,6 +7073,7 @@ export class EnemyPokemon extends Pokemon {
     }
 
     if (!dataSource) {
+      this.generateAndPopulateMoveset();
       if (shinyLock || Overrides.OPP_SHINY_OVERRIDE === false) {
         this.shiny = false;
       } else {
@@ -7086,8 +7091,6 @@ export class EnemyPokemon extends Pokemon {
           this.variant = Overrides.OPP_VARIANT_OVERRIDE;
         }
       }
-
-      this.generateAndPopulateMoveset();
 
       this.luck =
         (this.shiny ? this.variant + 1 : 0) +
