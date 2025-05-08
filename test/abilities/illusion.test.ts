@@ -65,13 +65,27 @@ describe("Abilities - Illusion", () => {
     expect(!!zorua.summonData.illusion).equals(false);
   });
 
-  it("break with neutralizing gas", async () => {
+  it("breaks with neutralizing gas", async () => {
     game.override.enemyAbility(Abilities.NEUTRALIZING_GAS);
     await game.classicMode.startBattle([Species.KOFFING]);
 
     const zorua = game.scene.getEnemyPokemon()!;
 
     expect(!!zorua.summonData.illusion).equals(false);
+  });
+
+  it("does not activate if neutralizing gas is active", async () => {
+    game.override
+      .enemyAbility(Abilities.NEUTRALIZING_GAS)
+      .ability(Abilities.ILLUSION)
+      .moveset(Moves.SPLASH)
+      .enemyMoveset(Moves.SPLASH);
+    await game.classicMode.startBattle([Species.MAGIKARP, Species.FEEBAS, Species.MAGIKARP]);
+
+    game.doSwitchPokemon(1);
+    await game.toNextTurn();
+
+    expect(game.scene.getPlayerPokemon()!.summonData.illusion).toBeFalsy();
   });
 
   it("causes enemy AI to consider the illusion's type instead of the actual type when considering move effectiveness", async () => {
