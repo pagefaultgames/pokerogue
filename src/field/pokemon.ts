@@ -3497,11 +3497,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
       let weight = levelMove[0];
       // Evolution Moves
-      if (weight === 0) {
+      if (weight === EVOLVE_MOVE) {
         weight = 50;
       }
-      // Assume level 1 moves with 80+ BP are "move reminder" moves and bump their weight
-      if (weight === 1 && allMoves[levelMove[1]].power >= 80) {
+      // Assume level 1 moves with 80+ BP are "move reminder" moves and bump their weight. Trainers use actual relearn moves.
+      if (weight === 1 && allMoves[levelMove[1]].power >= 80 || weight === RELEARN_MOVE && this.hasTrainer()) {
         weight = 40;
       }
       if (
@@ -3606,9 +3606,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     // Bosses never get self ko moves or Pain Split
     if (this.isBoss()) {
-      movePool = movePool.filter(m => !allMoves[m[0]].hasAttr(SacrificialAttr));
-      movePool = movePool.filter(m => !allMoves[m[0]].hasAttr(HpSplitAttr));
+      movePool = movePool.filter(m => !allMoves[m[0]].hasAttr(SacrificialAttr) && !allMoves[m[0]].hasAttr(HpSplitAttr));
     }
+    // Shinies never get self ko moves
+    else if (this.isShiny()) {
+      movePool = movePool.filter(m => !allMoves[m[0]].hasAttr(SacrificialAttr));
+    }
+    // No one gets Memento or Final Gambit
     movePool = movePool.filter(
       m => !allMoves[m[0]].hasAttr(SacrificialAttrOnHit),
     );
@@ -3619,10 +3623,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       movePool = movePool.map(m => [
         m[0],
         m[1] * (allMoves[m[0]].hasAttr(SacrificialAttr) ? 0.5 : 1),
-      ]);
-      movePool = movePool.map(m => [
-        m[0],
-        m[1] * (allMoves[m[0]].hasAttr(SacrificialAttrOnHit) ? 0.5 : 1),
       ]);
       // Trainers get a weight bump to stat buffing moves
       movePool = movePool.map(m => [
@@ -3684,10 +3684,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     ]);
 
     /** The higher this is the more the game weights towards higher level moves. At `0` all moves are equal weight. */
-    let weightMultiplier = 0.9;
-    if (this.hasTrainer()) {
-      weightMultiplier += 0.7;
-    }
+    let weightMultiplier = 1.6;
     if (this.isBoss()) {
       weightMultiplier += 0.4;
     }
@@ -3696,37 +3693,21 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       Math.ceil(Math.pow(m[1], weightMultiplier) * 100),
     ]);
 
-    // Trainers and bosses always force a stab move
-    if (this.hasTrainer() || this.isBoss()) {
-      const stabMovePool = baseWeights.filter(
-        m =>
-          allMoves[m[0]].category !== MoveCategory.STATUS &&
-          this.isOfType(allMoves[m[0]].type),
-      );
+    // All Pokemon force a STAB move first
+    const stabMovePool = baseWeights.filter(
+      m =>
+        allMoves[m[0]].category !== MoveCategory.STATUS &&
+        this.isOfType(allMoves[m[0]].type),
+    );
 
-      if (stabMovePool.length) {
-        const totalWeight = stabMovePool.reduce((v, m) => v + m[1], 0);
-        let rand = randSeedInt(totalWeight);
-        let index = 0;
-        while (rand > stabMovePool[index][1]) {
-          rand -= stabMovePool[index++][1];
-        }
-        this.moveset.push(new PokemonMove(stabMovePool[index][0], 0, 0));
+    if (stabMovePool.length) {
+      const totalWeight = stabMovePool.reduce((v, m) => v + m[1], 0);
+      let rand = randSeedInt(totalWeight);
+      let index = 0;
+      while (rand > stabMovePool[index][1]) {
+        rand -= stabMovePool[index++][1];
       }
-    } else {
-      // Normal wild pokemon just force a random damaging move
-      const attackMovePool = baseWeights.filter(
-        m => allMoves[m[0]].category !== MoveCategory.STATUS,
-      );
-      if (attackMovePool.length) {
-        const totalWeight = attackMovePool.reduce((v, m) => v + m[1], 0);
-        let rand = randSeedInt(totalWeight);
-        let index = 0;
-        while (rand > attackMovePool[index][1]) {
-          rand -= attackMovePool[index++][1];
-        }
-        this.moveset.push(new PokemonMove(attackMovePool[index][0], 0, 0));
-      }
+      this.moveset.push(new PokemonMove(stabMovePool[index][0], 0, 0));
     }
 
     while (
@@ -7088,8 +7069,6 @@ export class EnemyPokemon extends Pokemon {
     }
 
     if (!dataSource) {
-      this.generateAndPopulateMoveset();
-
       if (shinyLock || Overrides.OPP_SHINY_OVERRIDE === false) {
         this.shiny = false;
       } else {
@@ -7107,6 +7086,8 @@ export class EnemyPokemon extends Pokemon {
           this.variant = Overrides.OPP_VARIANT_OVERRIDE;
         }
       }
+
+      this.generateAndPopulateMoveset();
 
       this.luck =
         (this.shiny ? this.variant + 1 : 0) +
