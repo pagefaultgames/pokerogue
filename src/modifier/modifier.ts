@@ -710,7 +710,7 @@ export abstract class PokemonHeldItemModifier extends PersistentModifier {
     if (!forSummary) {
       const pokemon = this.getPokemon();
       if (pokemon) {
-        const pokemonIcon = globalScene.addPokemonIcon(pokemon, -2, 10, 0, 0.5);
+        const pokemonIcon = globalScene.addPokemonIcon(pokemon, -2, 10, 0, 0.5, undefined, true);
         container.add(pokemonIcon);
         container.setName(pokemon.id.toString());
       }

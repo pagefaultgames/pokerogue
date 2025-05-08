@@ -186,6 +186,7 @@ import {
   applyAllyStatMultiplierAbAttrs,
   AllyStatMultiplierAbAttr,
   MoveAbilityBypassAbAttr,
+  PreSummonAbAttr,
 } from "#app/data/abilities/ability";
 import { allAbilities } from "#app/data/data-lists";
 import type PokemonData from "#app/system/pokemon-data";
@@ -1125,40 +1126,45 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     );
   }
 
-  getIconAtlasKey(ignoreOverride?: boolean): string {
-    const formIndex = this.summonData.illusion?.formIndex ?? this.formIndex;
-    return this.getSpeciesForm(ignoreOverride, true).getIconAtlasKey(
+  getIconAtlasKey(ignoreOverride?: boolean, useIllusion: boolean = true): string {
+    const formIndex = useIllusion && this.summonData.illusion?.formIndex ? this.summonData.illusion?.formIndex : this.formIndex;
+    const variant = !useIllusion && !!this.summonData.illusion ? this.summonData.illusion?.basePokemon.variant : this.variant;
+    return this.getSpeciesForm(ignoreOverride, useIllusion).getIconAtlasKey(
       formIndex,
-      this.shiny,
-      this.variant
+      this.isBaseShiny(useIllusion),
+      variant
     );
   }
 
-  getFusionIconAtlasKey(ignoreOverride?: boolean): string {
-    return this.getFusionSpeciesForm(ignoreOverride, true).getIconAtlasKey(
-      this.fusionFormIndex,
-      this.fusionShiny,
-      this.fusionVariant
-    );
-  }
-
-  getIconId(ignoreOverride?: boolean): string {
-    const formIndex = this.summonData.illusion?.formIndex ?? this.formIndex;
-    return this.getSpeciesForm(ignoreOverride, true).getIconId(
-      this.getGender(ignoreOverride, true) === Gender.FEMALE,
-      formIndex,
-      this.shiny,
-      this.variant
-    );
-  }
-
-  getFusionIconId(ignoreOverride?: boolean): string {
-    const fusionFormIndex = this.summonData.illusion?.fusionFormIndex ?? this.fusionFormIndex;
-    return this.getFusionSpeciesForm(ignoreOverride, true).getIconId(
-      this.getFusionGender(ignoreOverride, true) === Gender.FEMALE,
+  getFusionIconAtlasKey(ignoreOverride?: boolean, useIllusion: boolean = true): string {
+    const fusionFormIndex = useIllusion && this.summonData.illusion?.fusionFormIndex ? this.summonData.illusion?.fusionFormIndex : this.fusionFormIndex;
+    const fusionVariant = !useIllusion && !!this.summonData.illusion ? this.summonData.illusion?.basePokemon.fusionVariant : this.fusionVariant;
+    return this.getFusionSpeciesForm(ignoreOverride, useIllusion).getIconAtlasKey(
       fusionFormIndex,
-      this.fusionShiny,
-      this.fusionVariant
+      this.isFusionShiny(),
+      fusionVariant
+    );
+  }
+
+  getIconId(ignoreOverride?: boolean, useIllusion: boolean = true): string {
+    const formIndex = useIllusion && this.summonData.illusion?.formIndex ? this.summonData.illusion?.formIndex : this.formIndex;
+    const variant = !useIllusion && !!this.summonData.illusion ? this.summonData.illusion?.basePokemon.variant : this.variant;
+    return this.getSpeciesForm(ignoreOverride, useIllusion).getIconId(
+      this.getGender(ignoreOverride, useIllusion) === Gender.FEMALE,
+      formIndex,
+      this.isBaseShiny(),
+      variant
+    );
+  }
+
+  getFusionIconId(ignoreOverride?: boolean, useIllusion: boolean = true): string {
+    const fusionFormIndex = useIllusion && this.summonData.illusion?.fusionFormIndex ? this.summonData.illusion?.fusionFormIndex : this.fusionFormIndex;
+    const fusionVariant = !useIllusion && !!this.summonData.illusion ? this.summonData.illusion?.basePokemon.fusionVariant : this.fusionVariant;
+    return this.getFusionSpeciesForm(ignoreOverride, useIllusion).getIconId(
+      this.getFusionGender(ignoreOverride, useIllusion) === Gender.FEMALE,
+      fusionFormIndex,
+      this.isFusionShiny(),
+      fusionVariant
     );
   }
 
@@ -1917,6 +1923,22 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.shiny || (this.isFusion(useIllusion) && this.fusionShiny);
   }
 
+  isBaseShiny(useIllusion: boolean = false){
+    if (!useIllusion && this.summonData.illusion) {
+      return !!this.summonData.illusion.basePokemon?.shiny;
+    } else {
+      return this.shiny;
+    }
+  }
+
+  isFusionShiny(useIllusion: boolean = false){
+    if (!useIllusion && this.summonData.illusion) {
+      return !!this.summonData.illusion.basePokemon?.fusionShiny;
+    } else {
+      return this.isFusion(useIllusion) && this.fusionShiny;
+    }
+  }
+
   /**
    * Check whether this Pokemon is doubly shiny (both normal and fusion are shiny).
    * @param useIllusion - Whether to consider this pokemon's illusion if present; default `false`
@@ -2101,15 +2123,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param includeTeraType - Whether to use this Pokemon's tera type if Terastallized; default `false`
    * @param forDefend - Whether this Pokemon is currently receiving an attack; default `false`
    * @param ignoreOverride - Whether to ignore any overrides caused by {@linkcode Moves.TRANSFORM | Transform}; default `false`
-   * @param useIllusion - Whether to consider this Pokemon's illusion if present;
-   * defaults to whether this pokemon is not defending (`forDefend === false`)
+   * @param useIllusion - Whether to consider this Pokemon's illusion if present; default `false`
    * @returns An array of {@linkcode PokemonType}s corresponding to this Pokemon's typing (real or percieved).
    */
   public getTypes(
     includeTeraType = false,
     forDefend = false,
     ignoreOverride = false,
-    useIllusion = !forDefend
+    useIllusion = false,
   ): PokemonType[] {
     const types: PokemonType[] = [];
 
@@ -2441,8 +2462,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const suppressAbilitiesTag = arena.getTag(
       ArenaTagType.NEUTRALIZING_GAS,
     ) as SuppressAbilitiesTag;
+    const suppressOffField = ability.hasAttr(PreSummonAbAttr);
     if (
-      this.isOnField() &&
+      (this.isOnField() || suppressOffField) &&
       suppressAbilitiesTag &&
       !suppressAbilitiesTag.isBeingRemoved()
     ) {
@@ -4808,6 +4830,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       isIndirectDamage,
       ignoreFaintPhase,
     );
+    // Ensure the battle-info bar's HP is updated, though only if the battle info is visible
+    // TODO: When battle-info UI is refactored, make this only update the HP bar
+    if (this.battleInfo.visible) {
+      this.updateInfo();
+    }
     // Damage amount may have changed, but needed to be queued before calling damage function
     damagePhase.updateAmount(damage);
     /**
@@ -7885,6 +7912,11 @@ export class PokemonSummonData {
     // TODO: Rework this into an actual generic function for use elsewhere
     for (const [key, value] of Object.entries(source)) {
       if (isNullOrUndefined(value) && this.hasOwnProperty(key)) {
+        continue;
+      }
+
+      if (key === "moveset") {
+        this.moveset = value.map((m: any) => PokemonMove.loadMove(m));
         continue;
       }
 
