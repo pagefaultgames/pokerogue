@@ -277,9 +277,6 @@ export class MoveEffectPhase extends PokemonPhase {
         super.end();
         return;
       }
-      if (isNullOrUndefined(user.turnData)) {
-        user.resetTurnData();
-      }
     }
 
     /**
@@ -952,7 +949,7 @@ export class MoveEffectPhase extends PokemonPhase {
 
     const result = this.applyMoveDamage(user, target, effectiveness);
 
-    if (user.turnData.hitsLeft === 1 && target.isFainted()) {
+    if (user.turnData.hitsLeft === 1 || target.isFainted()) {
       this.queueHitResultMessage(result);
     }
 

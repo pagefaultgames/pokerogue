@@ -222,7 +222,8 @@ function endTrainerBattleAndShowDialogue(): Promise<void> {
           globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeAbilityTrigger);
         }
 
-        pokemon.resetBattleData();
+        // Each trainer battle is supposed to be a new fight, so reset all per-battle activation effects
+        pokemon.resetBattleAndWaveData();
         applyPostBattleInitAbAttrs(PostBattleInitAbAttr, pokemon);
       }
 

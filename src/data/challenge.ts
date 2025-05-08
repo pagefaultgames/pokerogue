@@ -1,4 +1,5 @@
-import { BooleanHolder, type NumberHolder, randSeedItem, deepCopy } from "#app/utils/common";
+import { BooleanHolder, type NumberHolder, randSeedItem } from "#app/utils/common";
+import { deepCopy } from "#app/utils/data";
 import i18next from "i18next";
 import type { DexAttrProps, GameData } from "#app/system/game-data";
 import { defaultStarterSpecies } from "#app/system/game-data";

@@ -465,7 +465,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
 
     this.shinyIcon.setVisible(pokemon.isShiny());
 
-    const types = pokemon.getTypes(true);
+    const types = pokemon.getTypes(true, false, undefined, true);
     this.type1Icon.setTexture(`pbinfo_${this.player ? "player" : "enemy"}_type${types.length > 1 ? "1" : ""}`);
     this.type1Icon.setFrame(PokemonType[types[0]].toLowerCase());
     this.type2Icon.setVisible(types.length > 1);
@@ -617,7 +617,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
         return resolve();
       }
 
-      const gender: Gender = pokemon.summonData?.illusion ? pokemon.summonData?.illusion.gender : pokemon.gender;
+      const gender = pokemon.summonData.illusion?.gender ?? pokemon.gender;
 
       this.genderText.setText(getGenderSymbol(gender));
       this.genderText.setColor(getGenderColor(gender));
@@ -685,7 +685,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
         this.statusIndicator.setVisible(!!this.lastStatus);
       }
 
-      const types = pokemon.getTypes(true);
+      const types = pokemon.getTypes(true, false, undefined, true);
       this.type1Icon.setTexture(`pbinfo_${this.player ? "player" : "enemy"}_type${types.length > 1 ? "1" : ""}`);
       this.type1Icon.setFrame(PokemonType[types[0]].toLowerCase());
       this.type2Icon.setVisible(types.length > 1);
@@ -727,6 +727,12 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
           },
           onComplete: () => {
             updateHpFrame();
+            // If, after tweening, the hp is different from the original (due to rounding), force the hp number display
+            // to update to the correct value.
+            if (this.player && this.lastHp !== pokemon.hp) {
+              this.setHpNumbers(pokemon.hp, pokemon.getMaxHp());
+              this.lastHp = pokemon.hp;
+            }
             resolve();
           },
         });
@@ -794,7 +800,7 @@ export default class BattleInfo extends Phaser.GameObjects.Container {
     const nameSizeTest = addTextObject(0, 0, displayName, TextStyle.BATTLE_INFO);
     nameTextWidth = nameSizeTest.displayWidth;
 
-    const gender: Gender = pokemon.summonData?.illusion ? pokemon.summonData?.illusion.gender : pokemon.gender;
+    const gender = pokemon.summonData.illusion?.gender ?? pokemon.gender;
     while (
       nameTextWidth >
       (this.player || !this.boss ? 60 : 98) -
