@@ -131,7 +131,7 @@ describe("Abilities - Sap Sipper", () => {
     const moveToUse = Moves.METRONOME;
 
     const randomMoveAttr = allMoves[Moves.METRONOME].findAttr(attr => attr instanceof RandomMoveAttr) as RandomMoveAttr;
-    vi.spyOn(randomMoveAttr, "getMoveOverride").mockReturnValue(Moves.BULLET_SEED);
+    vi.spyOn(randomMoveAttr, "getMove").mockReturnValue(Moves.BULLET_SEED);
 
     game.override.moveset(moveToUse);
 

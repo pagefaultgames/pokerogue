@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import type { Arena } from "#app/field/arena";
 import { PokemonType } from "#enums/pokemon-type";
-import { BooleanHolder, NumberHolder, toDmgValue } from "#app/utils/common";
+import { BooleanHolder, isNullOrUndefined, NumberHolder, toDmgValue } from "#app/utils/common";
 import { allMoves } from "#app/data/moves/move";
 import { MoveTarget } from "#enums/MoveTarget";
 import { MoveCategory } from "#enums/MoveCategory";
@@ -37,6 +37,8 @@ export enum ArenaTagSide {
   ENEMY,
 }
 
+// TODO: Add a class for tags that explicitly REQUIRE a source move (as currently we have a lot of bangs)
+
 export abstract class ArenaTag {
   constructor(
     public tagType: ArenaTagType,
@@ -65,8 +67,17 @@ export abstract class ArenaTag {
 
   onOverlap(_arena: Arena, _source: Pokemon | null): void {}
 
+  /**
+   * Trigger this {@linkcode ArenaTag}'s effect, reducing its duration as applicable.
+   * Will ignore duration of all tags with durations alwrea
+   * @param _arena - The {@linkcode Arena} at the moment the tag is being lapsed.
+   * Unused by default but can be used by super classes.
+   * @returns `true` if this tag should be kept; `false` if it should be removed.
+   */
   lapse(_arena: Arena): boolean {
-    return this.turnCount < 1 || !!--this.turnCount;
+    // TODO: Rather than treating negative duration tags as being indefinite,
+    // make all duration based classes inherit from their own sub-class
+    return this.turnCount < 1 || --this.turnCount > 0;
   }
 
   getMoveName(): string | null {
@@ -90,7 +101,8 @@ export abstract class ArenaTag {
    * @returns The source {@linkcode Pokemon} or `null` if none is found
    */
   public getSourcePokemon(): Pokemon | null {
-    return this.sourceId ? globalScene.getPokemonById(this.sourceId) : null;
+    // need null/undefined check since 0 is a valid PID
+    return !isNullOrUndefined(this.sourceId) ? globalScene.getPokemonById(this.sourceId) : null;
   }
 
   /**
@@ -870,6 +882,7 @@ class ToxicSpikesTag extends ArenaTrapTag {
  * Arena Tag class for delayed attacks, such as {@linkcode Moves.FUTURE_SIGHT} or {@linkcode Moves.DOOM_DESIRE}.
  * Delays the attack's effect by a set amount of turns, usually 3 (including the turn the move is used),
  * and deals damage after the turn count is reached.
+  // TODO: Add class for tags that can have multiple instances up and edit `arena.addTag` appropriately
  */
 export class DelayedAttackTag extends ArenaTag {
   public targetIndex: BattlerIndex;
@@ -888,15 +901,17 @@ export class DelayedAttackTag extends ArenaTag {
   }
 
   lapse(arena: Arena): boolean {
-    const ret = super.lapse(arena);
+    const stillWaiting = super.lapse(arena);
 
-    if (!ret) {
-      globalScene.unshiftPhase(
-        new MoveEffectPhase(this.sourceId!, [this.targetIndex], allMoves[this.sourceMove!], false, true),
-      ); // TODO: are those bangs correct?
+    if (stillWaiting) {
+      return true;
     }
 
-    return ret;
+    globalScene.unshiftPhase(
+      new MoveEffectPhase(this.sourceId!, [this.targetIndex], allMoves[this.sourceMove!], false, true),
+    ); // TODO: are those bangs correct?
+
+    return false;
   }
 
   onRemove(_arena: Arena): void {}
@@ -1214,6 +1229,7 @@ class NoneTag extends ArenaTag {
     super(ArenaTagType.NONE, 0);
   }
 }
+
 /**
  * This arena tag facilitates the application of the move Imprison
  * Imprison remains in effect as long as the source Pokemon is active and present on the field.
@@ -1226,7 +1242,6 @@ class ImprisonTag extends ArenaTrapTag {
 
   /**
    * This function applies the effects of Imprison to the opposing Pokemon already present on the field.
-   * @param arena
    */
   override onAdd() {
     const source = this.getSourcePokemon();

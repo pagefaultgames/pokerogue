@@ -121,7 +121,13 @@ import { MoveTarget } from "#enums/MoveTarget";
 import { MoveFlags } from "#enums/MoveFlags";
 import { MoveEffectTrigger } from "#enums/MoveEffectTrigger";
 import { MultiHitType } from "#enums/MultiHitType";
-import { invalidAssistMoves, invalidCopycatMoves, invalidMetronomeMoves, invalidMirrorMoveMoves, invalidSleepTalkMoves } from "./invalid-moves";
+import {
+  invalidAssistMoves,
+  invalidCopycatMoves,
+  invalidMetronomeMoves,
+  invalidMirrorMoveMoves,
+  invalidSleepTalkMoves,
+} from "./invalid-moves";
 import { SelectBiomePhase } from "#app/phases/select-biome-phase";
 
 type MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => boolean;
@@ -203,7 +209,7 @@ export default class Move implements Localizable {
 
   /**
    * Takes as input a boolean function and returns the first MoveAttr in attrs that matches true
-   * @param attrPredicate
+   * @param attrPredicate = Th
    * @returns the first {@linkcode MoveAttr} element in attrs that makes the input function return true
    */
   findAttr(attrPredicate: (attr: MoveAttr) => boolean): MoveAttr {
@@ -212,13 +218,13 @@ export default class Move implements Localizable {
 
   /**
    * Adds a new MoveAttr to the move (appends to the attr array)
-   * if the MoveAttr also comes with a condition, also adds that to the conditions array: {@linkcode MoveCondition}
-   * @param AttrType {@linkcode MoveAttr} the constructor of a MoveAttr class
-   * @param args the args needed to instantiate a the given class
-   * @returns the called object {@linkcode Move}
+   * if the MoveAttr also comes with a condition, also adds that to the {@linkcode MoveCondition} array
+   * @param attrType - The constructor of a {@linkcode MoveAttr} class to add
+   * @param args - Any additional arguments needed to instantiate the given class
+   * @returns `this`
    */
-  attr<T extends Constructor<MoveAttr>>(AttrType: T, ...args: ConstructorParameters<T>): this {
-    const attr = new AttrType(...args);
+  attr<T extends Constructor<MoveAttr>>(attrType: T, ...args: ConstructorParameters<T>): this {
+    const attr = new attrType(...args);
     this.attrs.push(attr);
     let attrCondition = attr.getCondition();
     if (attrCondition) {
@@ -233,10 +239,11 @@ export default class Move implements Localizable {
 
   /**
    * Adds a new MoveAttr to the move (appends to the attr array)
-   * if the MoveAttr also comes with a condition, also adds that to the conditions array: {@linkcode MoveCondition}
-   * Almost identical to {@link attr}, except you are passing in a MoveAttr object, instead of a constructor and it's arguments
-   * @param attrAdd {@linkcode MoveAttr} the attribute to add
-   * @returns the called object {@linkcode Move}
+   * if the MoveAttr also comes with a condition, also adds that to the {@linkcode MoveCondition} array
+   * Almost identical to {@linkcode attr}, except you are passing in an already instantized {@linkcode MoveAttr} object
+   * as opposed to a constructor and its arguments
+   * @param attrAdd- The {@linkcode MoveAttr} to add
+   * @returns `this`
    */
   addAttr(attrAdd: MoveAttr): this {
     this.attrs.push(attrAdd);
@@ -263,12 +270,11 @@ export default class Move implements Localizable {
 
   /**
    * Getter function that returns if this Move has a MoveFlag
-   * @param flag {@linkcode MoveFlags} to check
-   * @returns boolean
+   * @param flag - The {@linkcode MoveFlags} to check
+   * @returns Whether this Move has the specified flag..
    */
   hasFlag(flag: MoveFlags): boolean {
-    // internally it is taking the bitwise AND (MoveFlags are represented as bit-shifts) and returning False if result is 0 and true otherwise
-    return !!(this.flags & flag);
+    return (this.flags & flag) !== MoveFlags.NONE; // Flags
   }
 
   /**
@@ -384,8 +390,10 @@ export default class Move implements Localizable {
   }
 
   /**
-   * Marks the move as "partial": appends texts to the move name
-   * @returns the called object {@linkcode Move}
+   * Mark a move as partially implemented.
+   * Partial moves are expected to have their core functionality implemented, but may lack
+   * certain notable features or interactions with other moves or abilities.
+   * @returns `this`
    */
   partial(): this {
     this.nameAppend += " (P)";
@@ -393,8 +401,10 @@ export default class Move implements Localizable {
   }
 
   /**
-   * Marks the move as "unimplemented": appends texts to the move name
-   * @returns the called object {@linkcode Move}
+   * Mark a move as unimplemented.
+   * Unimplemented moves are ones which have _none_ of their basic functionality enabled,
+   * and are effectively barred from use by the AI.
+   * @returns `this`
    */
   unimplemented(): this {
     this.nameAppend += " (N)";
@@ -911,29 +921,29 @@ export default class Move implements Localizable {
   }
 
   /**
-   * Returns `true` if this move can be given additional strikes
-   * by enhancing effects.
-   * Currently used for {@link https://bulbapedia.bulbagarden.net/wiki/Parental_Bond_(Ability) | Parental Bond}
-   * and {@linkcode PokemonMultiHitModifier | Multi-Lens}.
-   * @param user The {@linkcode Pokemon} using the move
-   * @param restrictSpread `true` if the enhancing effect
-   * should not affect multi-target moves (default `false`)
+   * Returns `true` if this move can be given additional strikes from enhancing effects.
+   * Currently used by {@link https://bulbapedia.bulbagarden.net/wiki/Parental_Bond_(Ability) | Parental Bond}
+   * as well as the {@linkcode PokemonMultiHitModifier | Multi Lens} held item.
+   * @param user - The {@linkcode Pokemon} using the move
+   * @param allowSpread - Whether the enhancement should allow multi-target moves (default `true`).
+   * Multi-target moves will always be allowed if only 1 legal target is present.
+   * @returns - Whether this move can be given additional strikes.
    */
-  canBeMultiStrikeEnhanced(user: Pokemon, restrictSpread: boolean = false): boolean {
+  canBeMultiStrikeEnhanced(user: Pokemon, allowSpread = true): boolean {
     // Multi-strike enhancers...
 
-    // ...cannot enhance moves that hit multiple targets
+    // ...cannot enhance spread moves hitting multiple targets unless specified,
     const { targets, multiple } = getMoveTargets(user, this.id);
-    const isMultiTarget = multiple && targets.length > 1;
+    const exceptMultiTarget = !allowSpread && multiple && targets.length > 1;
 
-    // ...cannot enhance multi-hit or sacrificial moves
+    // ...cannot enhance multi-hit or sacrificial moves,
     const exceptAttrs: Constructor<MoveAttr>[] = [
       MultiHitAttr,
       SacrificialAttr,
       SacrificialAttrOnHit
     ];
 
-    // ...and cannot enhance these specific moves
+    // ...cannot enhance certain locking or consumable moves,
     const exceptMoves: Moves[] = [
       Moves.FLING,
       Moves.UPROAR,
@@ -944,9 +954,9 @@ export default class Move implements Localizable {
 
     // ...and cannot enhance Pollen Puff when targeting an ally.
     const ally = user.getAlly();
-    const exceptPollenPuffAlly: boolean = this.id === Moves.POLLEN_PUFF && !isNullOrUndefined(ally) && targets.includes(ally.getBattlerIndex())
+    const exceptPollenPuffAlly = this.id === Moves.POLLEN_PUFF && !isNullOrUndefined(ally) && targets.includes(ally.getBattlerIndex())
 
-    return (!restrictSpread || !isMultiTarget)
+    return !exceptMultiTarget
       && !this.isChargingMove()
       && !exceptAttrs.some(attr => this.hasAttr(attr))
       && !exceptMoves.some(id => this.id === id)
@@ -961,7 +971,7 @@ export class AttackMove extends Move {
 
     /**
      * {@link https://bulbapedia.bulbagarden.net/wiki/Freeze_(status_condition)}
-     * > All damaging Fire-type moves can now thaw a frozen target, regardless of whether or not they have a chance to burn;
+     * All damaging Fire-type moves can now thaw a frozen target, regardless of whether or not they have a chance to burn
      */
     if (this.type === PokemonType.FIRE) {
       this.addAttr(new HealStatusEffectAttr(false, StatusEffect.FREEZE));
@@ -2507,9 +2517,12 @@ export class PsychoShiftEffectAttr extends MoveEffectAttr {
   }
 
   /**
-   * Applies the effect of Psycho Shift to its target
-   * Psycho Shift takes the user's status effect and passes it onto the target. The user is then healed after the move has been successfully executed.
-   * @returns `true` if Psycho Shift's effect is able to be applied to the target
+   * Applies the effect of {@linkcode Moves.PSYCHO_SHIFT} to its target.
+   * Psycho Shift takes the user's status effect and passes it onto the target.
+   * The user is then healed after the move has been successfully executed.
+   * @param user - The {@linkcode Pokemon} using the move
+   * @param target - The {@linkcode Pokemon} targeted by the move.
+   * @returns - Whether the effect was successfully applied to the target.
    */
   apply(user: Pokemon, target: Pokemon, _move: Move, _args: any[]): boolean {
     const statusToApply: StatusEffect | undefined = user.status?.effect ?? (user.hasAbility(Abilities.COMATOSE) ? StatusEffect.SLEEP : undefined);
@@ -2841,6 +2854,10 @@ export class HealStatusEffectAttr extends MoveEffectAttr {
   }
 }
 
+/**
+ * Attribute to add the {@linkcode BattlerTagType.BYPASS_SLEEP | BYPASS_SLEEP Battler Tag} for 1 turnto the user before move use.
+ * Used by {@linkcode Moves.SNORE} and {@linkcode Moves.SLEEP_TALK}.
+ */
 export class BypassSleepAttr extends MoveAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (user.status?.effect === StatusEffect.SLEEP) {
@@ -5360,7 +5377,10 @@ export class NoEffectAttr extends MoveAttr {
   }
 }
 
-const crashDamageFunc = (user: Pokemon, move: Move) => {
+/**
+ * Function to deal Crash Damage (1/2 max hp) to the user on apply.
+ */
+const crashDamageFunc: UserMoveConditionFunc = (user: Pokemon, move: Move) => {
   const cancelled = new BooleanHolder(false);
   applyAbAttrs(BlockNonDirectDamageAbAttr, user, cancelled);
   if (cancelled.value) {
@@ -6709,18 +6729,25 @@ export class FirstMoveTypeAttr extends MoveEffectAttr {
 /**
  * Attribute used to call a move.
  * Used by other move attributes: {@linkcode RandomMoveAttr}, {@linkcode RandomMovesetMoveAttr}, {@linkcode CopyMoveAttr}
- * @see {@linkcode apply} for move call
- * @extends OverrideMoveEffectAttr
  */
 class CallMoveAttr extends OverrideMoveEffectAttr {
   protected invalidMoves: ReadonlySet<Moves>;
   protected hasTarget: boolean;
+
+  /**
+   * Apply the attribute to copy a specified move.
+   * @param user - The {@linkcode Pokemon} using the move
+   * @param target - The {@linkcode Pokemon} being targeted
+   * @param move - The {@linkcode Move} being used
+   * @param args - unused
+   * @returns Whether the attribute was successfully applied
+   */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const replaceMoveTarget = move.moveTarget === MoveTarget.NEAR_OTHER ? MoveTarget.NEAR_ENEMY : undefined;
     const moveTargets = getMoveTargets(user, move.id, replaceMoveTarget);
     if (moveTargets.targets.length === 0) {
+      // no message = fail
       globalScene.queueMessage(i18next.t("battle:attackFailed"));
-      console.log("CallMoveAttr failed due to no targets.");
       return false;
     }
     const targets = moveTargets.multiple || moveTargets.targets.length === 1
@@ -6734,10 +6761,8 @@ class CallMoveAttr extends OverrideMoveEffectAttr {
 }
 
 /**
- * Attribute used to call a random move.
- * Used for {@linkcode Moves.METRONOME}
- * @see {@linkcode apply} for move selection and move call
- * @extends CallMoveAttr to call a selected move
+ * Attribute to call a random move.
+ * Used for {@linkcode Moves.METRONOME}.
  */
 export class RandomMoveAttr extends CallMoveAttr {
   constructor(invalidMoves: ReadonlySet<Moves>) {
@@ -6746,29 +6771,27 @@ export class RandomMoveAttr extends CallMoveAttr {
   }
 
   /**
-   * This function exists solely to allow tests to override the randomly selected move by mocking this function.
+   * Pick a random move to execute.
+   * Exported to allow tests to override move choice.
    */
-  public getMoveOverride(): Moves | null {
-    return null;
+  getMove(user: Pokemon): Moves {
+    const moveIds = getEnumValues(Moves).filter(m => !this.invalidMoves.has(m) && !allMoves[m].name.endsWith(" (N)"));
+    return moveIds[user.randSeedInt(moveIds.length)];
   }
 
   /**
-   * User calls a random moveId.
-   *
-   * Invalid moves are indicated by what is passed in to invalidMoves: {@linkcode invalidMetronomeMoves}
-   * @param user Pokemon that used the move and will call a random move
-   * @param target Pokemon that will be targeted by the random move (if single target)
-   * @param move Move being used
-   * @param args Unused
+   * User calls a random moveId, excluding unimplemented moves and ones
+   * in its {@linkcode invalidMetronomeMoves | exclusion list}.
+
+   * @param user - The {@linkcode Pokemon} using the move
+   * @param target - The {@linkcode Pokemon} being targeted (for single target moves)
+   * @param move - The {@linkcode Move} being used
+   * @param args - Unused
+   * @returns Whether a random move was successfully called
    */
   override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const moveIds = getEnumValues(Moves).map(m => !this.invalidMoves.has(m) && !allMoves[m].name.endsWith(" (N)") ? m : Moves.NONE);
-    let moveId: Moves = Moves.NONE;
-    do {
-      moveId = this.getMoveOverride() ?? moveIds[user.randSeedInt(moveIds.length)];
-    }
-    while (moveId === Moves.NONE);
-    return super.apply(user, target, allMoves[moveId], args);
+    const randomMove = this.getMove(user);
+    return super.apply(user, target, allMoves[randomMove], args);
   }
 }
 
@@ -6998,7 +7021,8 @@ export class CopyMoveAttr extends CallMoveAttr {
 /**
  * Attribute used for moves that causes the target to repeat their last used move.
  *
- * Used for [Instruct](https://bulbapedia.bulbagarden.net/wiki/Instruct_(move)).
+ * Used by {@linkcode Moves.INSTRUCT | Instruct}.
+ * @see [Instruct on Bulbapedia](https://bulbapedia.bulbagarden.net/wiki/Instruct_(move))
 */
 export class RepeatMoveAttr extends MoveEffectAttr {
   constructor() {

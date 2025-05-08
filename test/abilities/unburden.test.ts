@@ -2,7 +2,7 @@ import { BattlerIndex } from "#app/battle";
 import { PostItemLostAbAttr } from "#app/data/abilities/ability";
 import { allMoves, StealHeldItemChanceAttr } from "#app/data/moves/move";
 import type Pokemon from "#app/field/pokemon";
-import type { ContactHeldItemTransferChanceModifier } from "#app/modifier/modifier";
+import { BerryModifier, type ContactHeldItemTransferChanceModifier } from "#app/modifier/modifier";
 import { Abilities } from "#enums/abilities";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BerryType } from "#enums/berry-type";
@@ -22,10 +22,7 @@ describe("Abilities - Unburden", () => {
    */
   function getHeldItemCount(pokemon: Pokemon): number {
     const stackCounts = pokemon.getHeldItems().map(m => m.getStackCount());
-    if (stackCounts.length) {
-      return stackCounts.reduce((a, b) => a + b);
-    }
-    return 0;
+    return stackCounts.reduce((a, b) => a + b, 0);
   }
 
   beforeAll(() => {
@@ -165,6 +162,27 @@ describe("Abilities - Unburden", () => {
     await game.classicMode.startBattle([Species.TREECKO]);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyHeldItemCt = getHeldItemCount(enemyPokemon);
+    const initialEnemySpeed = enemyPokemon.getStat(Stat.SPD);
+
+    // Player uses Thief and steals the opponent's item
+    game.move.select(Moves.THIEF);
+    await game.toNextTurn();
+
+    expect(getHeldItemCount(enemyPokemon)).toBeLessThan(enemyHeldItemCt);
+    expect(enemyPokemon.getEffectiveStat(Stat.SPD)).toBe(initialEnemySpeed * 2);
+  });
+
+  it("should activate on item theft with PID of 0", async () => {
+    game.override.moveset([Moves.THIEF, Moves.SPLASH]).startingHeldItems([]);
+    // Override enemy pokemon PID to be 0
+    await game.classicMode.startBattle([Species.TREECKO]);
+
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    enemyPokemon.id = 0;
+    game.scene.getModifiers(BerryModifier, false).forEach(modifier => {
+      modifier.pokemonId = enemyPokemon.id;
+    });
     const enemyHeldItemCt = getHeldItemCount(enemyPokemon);
     const initialEnemySpeed = enemyPokemon.getStat(Stat.SPD);
 
@@ -317,7 +335,7 @@ describe("Abilities - Unburden", () => {
   });
 
   it("should activate when a reviver seed is used", async () => {
-    game.override.startingHeldItems([{ name: "REVIVER_SEED" }]).enemyMoveset([Moves.WING_ATTACK]);
+    game.override.startingHeldItems([{ name: "REVIVER_SEED" }]).enemyMoveset(Moves.WING_ATTACK);
     await game.classicMode.startBattle([Species.TREECKO]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;

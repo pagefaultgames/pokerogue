@@ -32,15 +32,15 @@ describe("Moves - Gastro Acid", () => {
     game.override.enemyAbility(Abilities.WATER_ABSORB);
   });
 
-  it("suppresses effect of ability", async () => {
+  it("suppresses the effect of the target's ability", async () => {
     /*
-     * Expected flow (enemies have WATER ABSORD, can only use SPLASH)
+     * Expected flow (enemies have WATER ABSORB, can only use SPLASH)
      * - player mon 1 uses GASTRO ACID, player mon 2 uses SPLASH
      * - both player mons use WATER GUN on their respective enemy mon
      * - player mon 1 should have dealt damage, player mon 2 should have not
      */
 
-    await game.startBattle();
+    await game.classicMode.startBattle([Species.SQUIRTLE, Species.SOBBLE]);
 
     game.move.select(Moves.GASTRO_ACID, 0, BattlerIndex.ENEMY);
     game.move.select(Moves.SPLASH, 1);
@@ -55,6 +55,9 @@ describe("Moves - Gastro Acid", () => {
     game.move.select(Moves.WATER_GUN, 1, BattlerIndex.ENEMY_2);
 
     await game.phaseInterceptor.to("TurnEndPhase");
+
+    expect(enemyField[0].summonData.abilitySuppressed).toBe(true);
+    expect(enemyField[1].summonData.abilitySuppressed).toBe(false);
 
     expect(enemyField[0].hp).toBeLessThan(enemyField[0].getMaxHp());
     expect(enemyField[1].isFullHp()).toBe(true);
