@@ -1045,7 +1045,7 @@ export default class BattleScene extends SceneBase {
     y: number,
     originX = 0.5,
     originY = 0.5,
-    ignoreOverride = false,
+    ignoreOverride = true,
     useIllusion = false,
   ): Phaser.GameObjects.Container {
     const container = this.add.container(x, y);
@@ -1053,9 +1053,9 @@ export default class BattleScene extends SceneBase {
 
     const icon = this.add.sprite(0, 0, pokemon.getIconAtlasKey(ignoreOverride, useIllusion));
     icon.setName(`sprite-${pokemon.name}-icon`);
-    icon.setFrame(pokemon.getIconId(true, useIllusion));
+    icon.setFrame(pokemon.getIconId(ignoreOverride, useIllusion));
     // Temporary fix to show pokemon's default icon if variant icon doesn't exist
-    if (icon.frame.name !== pokemon.getIconId(true, useIllusion)) {
+    if (icon.frame.name !== pokemon.getIconId(ignoreOverride, useIllusion)) {
       console.log(`${pokemon.name}'s variant icon does not exist. Replacing with default.`);
       const temp = pokemon.shiny;
       pokemon.shiny = false;
@@ -1071,7 +1071,7 @@ export default class BattleScene extends SceneBase {
       const fusionIcon = this.add.sprite(0, 0, pokemon.getFusionIconAtlasKey(ignoreOverride, useIllusion));
       fusionIcon.setName("sprite-fusion-icon");
       fusionIcon.setOrigin(0.5, 0);
-      fusionIcon.setFrame(pokemon.getFusionIconId(true, useIllusion));
+      fusionIcon.setFrame(pokemon.getFusionIconId(ignoreOverride, useIllusion));
 
       const originalWidth = icon.width;
       const originalHeight = icon.height;
