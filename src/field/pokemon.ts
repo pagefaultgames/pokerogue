@@ -909,7 +909,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       const originalWarn = console.warn;
       // Ignore warnings for missing frames, because there will be a lot
       console.warn = () => {};
-      // NEED REVIEW: is `this.isPlayer()` always the correct check for whether to get the front of back sprite?
       const battleSpriteKey = this.getBattleSpriteKey(this.isPlayer(), ignoreOverride);
       const battleFrameNames = globalScene.anims.generateFrameNames(battleSpriteKey, {
         zeroPad: 4,
