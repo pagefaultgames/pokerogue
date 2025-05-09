@@ -909,19 +909,22 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       const originalWarn = console.warn;
       // Ignore warnings for missing frames, because there will be a lot
       console.warn = () => {};
-      const battleFrameNames = globalScene.anims.generateFrameNames(this.getBattleSpriteKey(), {
+      const battleSpriteKey = this.getBattleSpriteKey(this.isPlayer(), ignoreOverride);
+      const battleFrameNames = globalScene.anims.generateFrameNames(battleSpriteKey, {
         zeroPad: 4,
         suffix: ".png",
         start: 1,
         end: 400,
       });
       console.warn = originalWarn;
-      globalScene.anims.create({
-        key: this.getBattleSpriteKey(),
-        frames: battleFrameNames,
-        frameRate: 10,
-        repeat: -1,
-      });
+      if (!globalScene.anims.exists(battleSpriteKey)) {
+        globalScene.anims.create({
+          key: battleSpriteKey,
+          frames: battleFrameNames,
+          frameRate: 10,
+          repeat: -1,
+        });
+      }
     }
     // With everything loaded, now begin playing the animation.
     this.playAnim();
