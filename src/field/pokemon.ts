@@ -7862,7 +7862,7 @@ export class PokemonSummonData {
       }
 
       if (key === "moveset") {
-        this.moveset = value.map((m: any) => PokemonMove.loadMove(m));
+        this.moveset = value?.map((m: any) => PokemonMove.loadMove(m));
         continue;
       }
 
