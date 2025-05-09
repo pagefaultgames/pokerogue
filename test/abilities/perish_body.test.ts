@@ -22,7 +22,7 @@ describe("Abilities - Perish Song", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override.battleStyle("single");
-    game.override.disableCrits();
+    game.override.criticalHits(false);
 
     game.override.enemySpecies(Species.MAGIKARP);
     game.override.enemyAbility(Abilities.BALL_FETCH);

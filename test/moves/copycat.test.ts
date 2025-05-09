@@ -32,7 +32,7 @@ describe("Moves - Copycat", () => {
       .moveset([Moves.COPYCAT, Moves.SPIKY_SHIELD, Moves.SWORDS_DANCE, Moves.SPLASH])
       .ability(Abilities.BALL_FETCH)
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .starterSpecies(Species.FEEBAS)
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)

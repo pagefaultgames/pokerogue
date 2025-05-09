@@ -27,7 +27,7 @@ describe("Abilities - Parental Bond", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override.battleStyle("single");
-    game.override.disableCrits();
+    game.override.criticalHits(false);
     game.override.ability(Abilities.PARENTAL_BOND);
     game.override.enemySpecies(Species.SNORLAX);
     game.override.enemyAbility(Abilities.FUR_COAT);

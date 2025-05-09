@@ -26,7 +26,7 @@ describe("Moves - Endure", () => {
       .ability(Abilities.SKILL_LINK)
       .startingLevel(100)
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.NO_GUARD)
       .enemyMoveset(Moves.ENDURE);

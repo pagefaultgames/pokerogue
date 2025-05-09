@@ -28,7 +28,7 @@ describe("Moves - Mirror Move", () => {
       .moveset([Moves.MIRROR_MOVE, Moves.SPLASH])
       .ability(Abilities.BALL_FETCH)
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH);

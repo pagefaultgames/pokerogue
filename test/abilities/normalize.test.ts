@@ -29,7 +29,7 @@ describe("Abilities - Normalize", () => {
       .moveset([Moves.TACKLE])
       .ability(Abilities.NORMALIZE)
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH);

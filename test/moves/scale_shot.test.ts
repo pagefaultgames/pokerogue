@@ -31,7 +31,7 @@ describe("Moves - Scale Shot", () => {
     game.override
       .moveset([Moves.SCALE_SHOT])
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .ability(Abilities.NO_GUARD)
       .passiveAbility(Abilities.SKILL_LINK)
       .enemyMoveset(Moves.SPLASH)

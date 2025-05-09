@@ -32,7 +32,7 @@ describe("Abilities - Flower Veil", () => {
       .enemySpecies(Species.BULBASAUR)
       .ability(Abilities.FLOWER_VEIL)
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH);

@@ -25,7 +25,7 @@ describe("Moves - Double Team", () => {
     game = new GameManager(phaserGame);
     game.override.battleStyle("single");
     game.override.moveset([Moves.DOUBLE_TEAM]);
-    game.override.disableCrits();
+    game.override.criticalHits(false);
     game.override.ability(Abilities.BALL_FETCH);
     game.override.enemySpecies(Species.SHUCKLE);
     game.override.enemyAbility(Abilities.BALL_FETCH);

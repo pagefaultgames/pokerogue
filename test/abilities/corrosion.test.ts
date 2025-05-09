@@ -24,7 +24,7 @@ describe("Abilities - Corrosion", () => {
     game.override
       .moveset([Moves.SPLASH])
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(Species.GRIMER)
       .enemyAbility(Abilities.CORROSION)
       .enemyMoveset(Moves.TOXIC);
