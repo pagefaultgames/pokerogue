@@ -188,7 +188,7 @@ export default class PokemonData {
     // when loading from saved session, recover summonData.speciesFrom and form index species object
     // used to stay transformed on reload session
     if (this.summonData.speciesForm) {
-      this.summonData.speciesForm = getPokemonSpeciesForm(
+      ret.summonData.speciesForm = getPokemonSpeciesForm(
         this.summonData.speciesForm.speciesId,
         this.summonDataSpeciesFormIndex,
       );
