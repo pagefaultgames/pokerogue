@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import { fixedInt } from "#app/utils/common";
+import { fixedInt, coerceArray } from "#app/utils/common";
 
 export enum PokemonIconAnimMode {
   NONE,
@@ -49,9 +49,7 @@ export default class PokemonIconAnimHandler {
   }
 
   addOrUpdate(icons: PokemonIcon | PokemonIcon[], mode: PokemonIconAnimMode): void {
-    if (!Array.isArray(icons)) {
-      icons = [icons];
-    }
+    icons = coerceArray(icons);
     for (const i of icons) {
       if (this.icons.has(i) && this.icons.get(i) === mode) {
         continue;
@@ -66,9 +64,7 @@ export default class PokemonIconAnimHandler {
   }
 
   remove(icons: PokemonIcon | PokemonIcon[]): void {
-    if (!Array.isArray(icons)) {
-      icons = [icons];
-    }
+    icons = coerceArray(icons);
     for (const i of icons) {
       if (this.toggled) {
         const icon = this.icons.get(i);
