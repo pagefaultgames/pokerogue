@@ -38,6 +38,7 @@ import type { BerryType } from "#enums/berry-type";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { Stat } from "#enums/stat";
 import i18next from "i18next";
+import { MoveUseType } from "#enums/move-use-type";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounters/absoluteAvarice";
@@ -303,7 +304,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter = MysteryEncounterBuilde
           sourceBattlerIndex: BattlerIndex.ENEMY,
           targets: [BattlerIndex.ENEMY],
           move: new PokemonMove(Moves.STUFF_CHEEKS),
-          ignorePp: true,
+          useType: MoveUseType.IGNORE_PP,
         });
 
         await transitionMysteryEncounterIntroVisuals(true, true, 500);

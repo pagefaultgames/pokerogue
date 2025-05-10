@@ -18,6 +18,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vite
 const pokemonName = "PKM";
 const sourceText = "SOURCE";
 
+// TODO: Make this a giant it.each
 describe("Status Effect Messages", () => {
   describe("NONE", () => {
     const statusEffect = StatusEffect.NONE;
@@ -390,7 +391,7 @@ describe("Status Effects", () => {
       game.move.select(Moves.SPLASH);
       await game.toNextTurn();
 
-      expect(player.status?.effect).toBeUndefined();
+      expect(player.status).toBeFalsy();
       expect(player.getLastXMoves(1)[0].result).toBe(MoveResult.SUCCESS);
     });
   });

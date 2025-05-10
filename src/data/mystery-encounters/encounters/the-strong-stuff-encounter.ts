@@ -29,6 +29,7 @@ import { CustomPokemonData } from "#app/data/custom-pokemon-data";
 import { Stat } from "#enums/stat";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
+import { MoveUseType } from "#enums/move-use-type";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/theStrongStuff";
@@ -211,13 +212,13 @@ export const TheStrongStuffEncounter: MysteryEncounter = MysteryEncounterBuilder
           sourceBattlerIndex: BattlerIndex.ENEMY,
           targets: [BattlerIndex.PLAYER],
           move: new PokemonMove(Moves.GASTRO_ACID),
-          ignorePp: true,
+          useType: MoveUseType.IGNORE_PP,
         },
         {
           sourceBattlerIndex: BattlerIndex.ENEMY,
           targets: [BattlerIndex.PLAYER],
           move: new PokemonMove(Moves.STEALTH_ROCK),
-          ignorePp: true,
+          useType: MoveUseType.IGNORE_PP,
         },
       );
 

@@ -38,6 +38,7 @@ import { BerryModifier } from "#app/modifier/modifier";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { Stat } from "#enums/stat";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
+import { MoveUseType } from "#enums/move-use-type";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/uncommonBreed";
@@ -178,7 +179,7 @@ export const UncommonBreedEncounter: MysteryEncounter = MysteryEncounterBuilder.
           sourceBattlerIndex: BattlerIndex.ENEMY,
           targets: [target],
           move: pokemonMove,
-          ignorePp: true,
+          useType: MoveUseType.IGNORE_PP,
         });
       }
 
