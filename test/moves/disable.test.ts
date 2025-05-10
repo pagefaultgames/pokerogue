@@ -1,8 +1,10 @@
 import { BattlerIndex } from "#app/battle";
 import { MoveResult } from "#app/field/pokemon";
 import { Abilities } from "#enums/abilities";
+import { MoveUseType } from "#enums/move-use-type";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
+import { Stat } from "#enums/stat";
 import GameManager from "#test/testUtils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -28,25 +30,31 @@ describe("Moves - Disable", () => {
       .enemyAbility(Abilities.BALL_FETCH)
       .moveset([Moves.DISABLE, Moves.SPLASH])
       .enemyMoveset(Moves.SPLASH)
-      .starterSpecies(Species.PIKACHU)
       .enemySpecies(Species.SHUCKLE);
   });
 
-  it("restricts moves", async () => {
-    await game.classicMode.startBattle();
+  it("should restrict the last move used", async () => {
+    game.override.enemyMoveset([Moves.GROWL, Moves.SPLASH]);
+    await game.classicMode.startBattle([Species.PIKACHU]);
 
     const enemyMon = game.scene.getEnemyPokemon()!;
 
+    game.move.select(Moves.SPLASH);
+    await game.forceEnemyMove(Moves.GROWL);
+    await game.toNextTurn();
+
     game.move.select(Moves.DISABLE);
+    await game.forceEnemyMove(Moves.SPLASH);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
-    expect(enemyMon.getMoveHistory()).toHaveLength(1);
+    expect(enemyMon.getLastXMoves(-1)).toHaveLength(1);
     expect(enemyMon.isMoveRestricted(Moves.SPLASH)).toBe(true);
+    expect(enemyMon.isMoveRestricted(Moves.GROWL)).toBe(false);
   });
 
-  it("fails if enemy has no move history", async () => {
-    await game.classicMode.startBattle();
+  it("should fail if enemy has no move history", async () => {
+    await game.classicMode.startBattle([Species.PIKACHU]);
 
     const playerMon = game.scene.getPlayerPokemon()!;
     const enemyMon = game.scene.getEnemyPokemon()!;
@@ -55,15 +63,15 @@ describe("Moves - Disable", () => {
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toNextTurn();
 
-    expect(playerMon.getMoveHistory()[0]).toMatchObject({
+    expect(playerMon.getLastXMoves()[0]).toMatchObject({
       move: Moves.DISABLE,
       result: MoveResult.FAIL,
     });
     expect(enemyMon.isMoveRestricted(Moves.SPLASH)).toBe(false);
-  }, 20000);
+  });
 
   it("causes STRUGGLE if all usable moves are disabled", async () => {
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle([Species.PIKACHU]);
 
     const enemyMon = game.scene.getEnemyPokemon()!;
 
@@ -74,15 +82,14 @@ describe("Moves - Disable", () => {
     game.move.select(Moves.SPLASH);
     await game.toNextTurn();
 
-    const enemyHistory = enemyMon.getMoveHistory();
+    const enemyHistory = enemyMon.getLastXMoves(-1);
     expect(enemyHistory).toHaveLength(2);
-    expect(enemyHistory[0].move).toBe(Moves.SPLASH);
-    expect(enemyHistory[1].move).toBe(Moves.STRUGGLE);
-  }, 20000);
+    expect(enemyHistory.map(m => m.move)).toEqual([Moves.STRUGGLE, Moves.SPLASH]);
+  });
 
   it("cannot disable STRUGGLE", async () => {
     game.override.enemyMoveset([Moves.STRUGGLE]);
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle([Species.PIKACHU]);
 
     const playerMon = game.scene.getPlayerPokemon()!;
     const enemyMon = game.scene.getEnemyPokemon()!;
@@ -94,33 +101,39 @@ describe("Moves - Disable", () => {
     expect(playerMon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
     expect(enemyMon.getLastXMoves()[0].move).toBe(Moves.STRUGGLE);
     expect(enemyMon.isMoveRestricted(Moves.STRUGGLE)).toBe(false);
-  }, 20000);
+  });
 
-  it("interrupts target's move when target moves after", async () => {
-    await game.classicMode.startBattle();
+  it("should interrupt target's move if used first", async () => {
+    await game.classicMode.startBattle([Species.PIKACHU]);
 
     const enemyMon = game.scene.getEnemyPokemon()!;
+    // add splash to enemy move history
+    enemyMon.pushMoveHistory({
+      move: Moves.SPLASH,
+      targets: [BattlerIndex.ENEMY],
+      useType: MoveUseType.NORMAL,
+    });
 
-    game.move.select(Moves.SPLASH);
-    await game.toNextTurn();
-
-    // Both mons just used Splash last turn; now have player use Disable.
     game.move.select(Moves.DISABLE);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toNextTurn();
 
-    const enemyHistory = enemyMon.getMoveHistory();
+    const enemyHistory = enemyMon.getLastXMoves(-1);
     expect(enemyHistory).toHaveLength(2);
     expect(enemyHistory[0]).toMatchObject({
       move: Moves.SPLASH,
-      result: MoveResult.SUCCESS,
+      result: MoveResult.FAIL,
     });
-    expect(enemyHistory[1].result).toBe(MoveResult.FAIL);
-  }, 20000);
+  });
 
-  it("disables NATURE POWER, not the move invoked by it", async () => {
-    game.override.enemyMoveset([Moves.NATURE_POWER]);
-    await game.classicMode.startBattle();
+  it.each([
+    { name: "Nature Power", moveId: Moves.NATURE_POWER },
+    { name: "Mirror Move", moveId: Moves.MIRROR_MOVE },
+    { name: "Copycat", moveId: Moves.COPYCAT },
+    { name: "Copycat", moveId: Moves.COPYCAT },
+  ])("should ignore virtual moves called by $name", async ({ moveId }) => {
+    game.override.enemyMoveset(moveId);
+    await game.classicMode.startBattle([Species.PIKACHU]);
 
     const enemyMon = game.scene.getEnemyPokemon()!;
 
@@ -128,27 +141,38 @@ describe("Moves - Disable", () => {
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
-    expect(enemyMon.isMoveRestricted(Moves.NATURE_POWER)).toBe(true);
-    expect(enemyMon.isMoveRestricted(enemyMon.getLastXMoves(2)[0].move)).toBe(false);
-  }, 20000);
+    expect.soft(enemyMon.isMoveRestricted(moveId), `calling move ${Moves[moveId]} was not disabled`).toBe(true);
+    const calledMove = enemyMon.getLastXMoves()[0].move;
+    expect(
+      enemyMon.isMoveRestricted(calledMove),
+      `called move ${Moves[calledMove]} (from ${Moves[moveId]}) was incorrectly disabled`,
+    ).toBe(false);
+  });
 
-  it("disables most recent move", async () => {
-    game.override.enemyMoveset([Moves.SPLASH, Moves.TACKLE]);
-    await game.classicMode.startBattle();
+  it("should ignore dancer copied moves, even if also in moveset", async () => {
+    game.override
+      .enemyAbility(Abilities.DANCER)
+      .moveset([Moves.DISABLE, Moves.SWORDS_DANCE])
+      .enemyMoveset([Moves.SPLASH, Moves.SWORDS_DANCE]);
 
-    const enemyMon = game.scene.getEnemyPokemon()!;
+    await game.classicMode.startBattle([Species.PIKACHU]);
 
-    game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.SPLASH, BattlerIndex.PLAYER);
+    game.move.select(Moves.SWORDS_DANCE);
+    await game.forceEnemyMove(Moves.SPLASH);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
     game.move.select(Moves.DISABLE);
-    await game.forceEnemyMove(Moves.TACKLE, BattlerIndex.PLAYER);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
-    await game.toNextTurn();
+    await game.forceEnemyMove(Moves.SWORDS_DANCE);
+    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(enemyMon.isMoveRestricted(Moves.TACKLE)).toBe(true);
-    expect(enemyMon.isMoveRestricted(Moves.SPLASH)).toBe(false);
-  }, 20000);
+    // Dancer-induced Swords Dance was ignored in favor of splash,
+    // leaving the subsequent _normal_ swords dance free to work as normal
+    const shuckle = game.scene.getEnemyPokemon()!;
+    expect.soft(shuckle.isMoveRestricted(Moves.SPLASH)).toBe(true);
+    expect.soft(shuckle.isMoveRestricted(Moves.SWORDS_DANCE)).toBe(false);
+    expect(shuckle.getLastXMoves()[0]).toMatchObject({ move: Moves.SWORDS_DANCE, result: MoveResult.SUCCESS });
+    expect(shuckle.getStatStage(Stat.ATK)).toBe(2);
+  });
 });

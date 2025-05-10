@@ -7,7 +7,6 @@ import { Species } from "#enums/species";
 import { BerryPhase } from "#app/phases/berry-phase";
 import { MoveResult, PokemonMove } from "#app/field/pokemon";
 import { PokemonType } from "#enums/pokemon-type";
-import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { StatusEffect } from "#enums/status-effect";
 import { BattlerIndex } from "#app/battle";
 
@@ -168,10 +167,10 @@ describe("Moves - Powder", () => {
     game.move.select(Moves.FIERY_DANCE, 0, BattlerIndex.ENEMY);
     game.move.select(Moves.POWDER, 1, BattlerIndex.ENEMY);
 
-    await game.phaseInterceptor.to(MoveEffectPhase);
+    await game.phaseInterceptor.to("MoveEffectPhase");
     const enemyStartingHp = enemyPokemon.hp;
 
-    await game.phaseInterceptor.to(BerryPhase, false);
+    await game.phaseInterceptor.to("BerryPhase");
 
     // player should not take damage
     expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
@@ -182,7 +181,7 @@ describe("Moves - Powder", () => {
     );
   });
 
-  it("should cancel Fiery Dance, then prevent it from triggering Dancer", async () => {
+  it("should cancel Fiery Dance and prevent it from triggering Dancer", async () => {
     game.override.ability(Abilities.DANCER).enemyMoveset(Moves.FIERY_DANCE);
 
     await game.classicMode.startBattle([Species.CHARIZARD]);

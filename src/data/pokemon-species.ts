@@ -76,13 +76,14 @@ export const normalForm: Species[] = [
 
 /**
  * Gets the {@linkcode PokemonSpecies} object associated with the {@linkcode Species} enum given
- * @param species The species to fetch
- * @returns The associated {@linkcode PokemonSpecies} object
+ * @param species - The {@linkcode Species} to fetch.
+ * If an array of `Species` is passed (such as for named trainer spawn pools),
+ * one will be selected at random.
+ * @returns The {@linkcode PokemonSpecies} object associated with the given species.
  */
 export function getPokemonSpecies(species: Species | Species[]): PokemonSpecies {
-  // If a special pool (named trainers) is used here it CAN happen that they have a array as species (which means choose one of those two). So we catch that with this code block
   if (Array.isArray(species)) {
-    // Pick a random species from the list
+    // TODO: can't we just use normal int number gen rather than this junk
     species = species[Math.floor(Math.random() * species.length)];
   }
   if (species >= 2000) {

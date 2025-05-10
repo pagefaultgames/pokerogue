@@ -24,9 +24,9 @@ export class MoveEndPhase extends PokemonPhase {
     if (!this.wasFollowUp && pokemon?.isActive(true)) {
       pokemon.lapseTags(BattlerTagLapseType.AFTER_MOVE);
     }
-    globalScene.arena.setIgnoreAbilities(false);
 
     // Remove effects which were set on a Pokemon which removes them on summon (i.e. via Mold Breaker)
+    globalScene.arena.setIgnoreAbilities(false);
     for (const target of this.targets) {
       if (target) {
         applyPostSummonAbAttrs(PostSummonRemoveEffectAbAttr, target);

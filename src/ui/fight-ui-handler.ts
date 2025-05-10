@@ -15,6 +15,7 @@ import type Pokemon from "#app/field/pokemon";
 import type { CommandPhase } from "#app/phases/command-phase";
 import MoveInfoOverlay from "./move-info-overlay";
 import { BattleType } from "#enums/battle-type";
+import { MoveUseType } from "#enums/move-use-type";
 
 export default class FightUiHandler extends UiHandler implements InfoToggle {
   public static readonly MOVES_CONTAINER_NAME = "moves";
@@ -138,51 +139,58 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
     return true;
   }
 
+  /**
+   * Process the player inputting the selected {@linkcode Button}.
+   * @param button - The {@linkcode Button} being pressed
+   * @returns Whether the input was successful (ie did anything).
+   */
   processInput(button: Button): boolean {
     const ui = this.getUi();
-
+    const cursor = this.getCursor();
     let success = false;
 
-    const cursor = this.getCursor();
-
-    if (button === Button.CANCEL || button === Button.ACTION) {
-      if (button === Button.ACTION) {
-        if ((globalScene.getCurrentPhase() as CommandPhase).handleCommand(this.fromCommand, cursor, false)) {
+    switch (button) {
+      case Button.CANCEL:
+        {
+          // Attempts to back out of the move selection pane are blocked in certain MEs
+          const { battleType, mysteryEncounter } = globalScene.currentBattle;
+          if (battleType === BattleType.MYSTERY_ENCOUNTER || !mysteryEncounter?.skipToFightInput) {
+            ui.setMode(UiMode.COMMAND, this.fieldIndex);
+            success = true;
+          }
+        }
+        break;
+      case Button.ACTION:
+        if (
+          (globalScene.getCurrentPhase() as CommandPhase).handleCommand(this.fromCommand, cursor, MoveUseType.NORMAL)
+        ) {
           success = true;
         } else {
           ui.playError();
         }
-      } else {
-        // Cannot back out of fight menu if skipToFightInput is enabled
-        const { battleType, mysteryEncounter } = globalScene.currentBattle;
-        if (battleType !== BattleType.MYSTERY_ENCOUNTER || !mysteryEncounter?.skipToFightInput) {
-          ui.setMode(UiMode.COMMAND, this.fieldIndex);
-          success = true;
+        break;
+      case Button.UP:
+        if (cursor >= 2) {
+          success = this.setCursor(cursor - 2);
         }
-      }
-    } else {
-      switch (button) {
-        case Button.UP:
-          if (cursor >= 2) {
-            success = this.setCursor(cursor - 2);
-          }
-          break;
-        case Button.DOWN:
-          if (cursor < 2) {
-            success = this.setCursor(cursor + 2);
-          }
-          break;
-        case Button.LEFT:
-          if (cursor % 2 === 1) {
-            success = this.setCursor(cursor - 1);
-          }
-          break;
-        case Button.RIGHT:
-          if (cursor % 2 === 0) {
-            success = this.setCursor(cursor + 1);
-          }
-          break;
-      }
+        break;
+      case Button.DOWN:
+        if (cursor < 2) {
+          success = this.setCursor(cursor + 2);
+        }
+        break;
+      case Button.LEFT:
+        if (cursor % 2 === 1) {
+          success = this.setCursor(cursor - 1);
+        }
+        break;
+      case Button.RIGHT:
+        if (cursor % 2 === 0) {
+          success = this.setCursor(cursor + 1);
+        }
+        break;
+      default:
+      // other inputs do nothing while in fight menu
     }
 
     if (success) {
