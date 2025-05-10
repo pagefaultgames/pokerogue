@@ -3,7 +3,7 @@ import {
   transitionMysteryEncounterIntroVisuals,
   updatePlayerMoney,
 } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { isNullOrUndefined, randSeedInt } from "#app/utils";
+import { isNullOrUndefined, NumberHolder, randSeedInt, randSeedItem } from "#app/utils/common";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { globalScene } from "#app/global-scene";
 import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
@@ -26,9 +26,10 @@ import { showEncounterDialogue } from "#app/data/mystery-encounters/utils/encoun
 import PokemonData from "#app/system/pokemon-data";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
+import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { Abilities } from "#enums/abilities";
-import { NON_LEGEND_PARADOX_POKEMON } from "#app/data/balance/special-species-groups";
+import { NON_LEGEND_PARADOX_POKEMON, NON_LEGEND_ULTRA_BEASTS } from "#app/data/balance/special-species-groups";
+import { timedEventManager } from "#app/global-event-manager";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounters/thePokemonSalesman";
@@ -37,6 +38,9 @@ const MAX_POKEMON_PRICE_MULTIPLIER = 4;
 
 /** Odds of shiny magikarp will be 1/value */
 const SHINY_MAGIKARP_WEIGHT = 100;
+
+/** Odds of event sale will be value/100 */
+const EVENT_THRESHOLD = 50;
 
 /**
  * Pokemon Salesman encounter.
@@ -82,16 +86,74 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter = MysteryEncounterBui
       tries++;
     }
 
+    const r = randSeedInt(SHINY_MAGIKARP_WEIGHT);
+
+    let validEventEncounters = timedEventManager
+      .getEventEncounters()
+      .filter(
+        s =>
+          !getPokemonSpecies(s.species).legendary &&
+          !getPokemonSpecies(s.species).subLegendary &&
+          !getPokemonSpecies(s.species).mythical &&
+          !NON_LEGEND_PARADOX_POKEMON.includes(s.species) &&
+          !NON_LEGEND_ULTRA_BEASTS.includes(s.species),
+      );
+
     let pokemon: PlayerPokemon;
+    /**
+     * Mon is determined as follows:
+     * If you roll the 1% for Shiny Magikarp, you get Magikarp with a random variant
+     * If an event with more than 1 valid event encounter species is active, you have 20% chance to get one of those
+     * If the rolled species has no HA, and there are valid event encounters, you will get one of those
+     * If the rolled species has no HA and there are no valid event encounters, you will get Shiny Magikarp
+     * Mons rolled from the event encounter pool get 3 extra shiny rolls
+     */
     if (
-      randSeedInt(SHINY_MAGIKARP_WEIGHT) === 0 ||
-      isNullOrUndefined(species.abilityHidden) ||
-      species.abilityHidden === Abilities.NONE
+      r === 0 ||
+      ((isNullOrUndefined(species.abilityHidden) || species.abilityHidden === Abilities.NONE) &&
+        (validEventEncounters.length === 0))
     ) {
-      // If no HA mon found or you roll 1%, give shiny Magikarp with random variant
+      // If you roll 1%, give shiny Magikarp with random variant
       species = getPokemonSpecies(Species.MAGIKARP);
-      pokemon = new PlayerPokemon(species, 5, 2, species.formIndex, undefined, true);
-    } else {
+      pokemon = new PlayerPokemon(species, 5, 2, undefined, undefined, true);
+    }
+    else if (
+      (validEventEncounters.length > 0 && (r <= EVENT_THRESHOLD ||
+      (isNullOrUndefined(species.abilityHidden) || species.abilityHidden === Abilities.NONE)))
+    ) {
+      tries = 0;
+      do {
+        // If you roll 20%, give event encounter with 3 extra shiny rolls and its HA, if it has one
+        const enc = randSeedItem(validEventEncounters);
+        species = getPokemonSpecies(enc.species);
+        pokemon = new PlayerPokemon(species, 5, species.abilityHidden === Abilities.NONE ? undefined : 2, enc.formIndex);
+        pokemon.trySetShinySeed();
+        pokemon.trySetShinySeed();
+        pokemon.trySetShinySeed();
+        if (pokemon.shiny || pokemon.abilityIndex === 2) {
+          break;
+        }
+        tries++;
+      } while (tries < 6);
+      if (!pokemon.shiny && pokemon.abilityIndex !== 2) {
+        // If, after 6 tries, you STILL somehow don't have an HA or shiny mon, pick from only the event mons that have an HA.
+        if (validEventEncounters.some(s => !!getPokemonSpecies(s.species).abilityHidden)) {
+          validEventEncounters.filter(s => !!getPokemonSpecies(s.species).abilityHidden);
+          const enc = randSeedItem(validEventEncounters);
+          species = getPokemonSpecies(enc.species);
+          pokemon = new PlayerPokemon(species, 5, 2, enc.formIndex);
+          pokemon.trySetShinySeed();
+          pokemon.trySetShinySeed();
+          pokemon.trySetShinySeed();
+        }
+        else {
+          // If there's, and this would never happen, no eligible event encounters with a hidden ability, just do Magikarp
+          species = getPokemonSpecies(Species.MAGIKARP);
+          pokemon = new PlayerPokemon(species, 5, 2, undefined, undefined, true);
+        }
+      }
+    }
+    else {
       pokemon = new PlayerPokemon(species, 5, 2, species.formIndex);
     }
     pokemon.generateAndPopulateMoveset();

@@ -2,11 +2,11 @@ import { globalScene } from "#app/global-scene";
 import { AttackMove, BeakBlastHeaderAttr, DelayedAttackAttr, SelfStatusMove, allMoves } from "./moves/move";
 import { MoveFlags } from "#enums/MoveFlags";
 import type Pokemon from "../field/pokemon";
-import { type nil, getFrameMs, getEnumKeys, getEnumValues, animationFileName } from "../utils";
+import { type nil, getFrameMs, getEnumKeys, getEnumValues, animationFileName } from "../utils/common";
 import type { BattlerIndex } from "../battle";
 import { Moves } from "#enums/moves";
 import { SubstituteTag } from "./battler-tags";
-import { isNullOrUndefined } from "../utils";
+import { isNullOrUndefined } from "../utils/common";
 import Phaser from "phaser";
 import { EncounterAnim } from "#enums/encounter-anims";
 
@@ -1132,7 +1132,6 @@ export abstract class BattleAnim {
                 if (priority === 0) {
                   // Place the sprite in front of the pokemon on the field.
                   targetSprite = globalScene.getEnemyField().find(p => p) ?? globalScene.getPlayerField().find(p => p);
-                  console.log(typeof targetSprite);
                   moveFunc = globalScene.field.moveBelow;
                 } else if (priority === 2 && this.bgSprite) {
                   moveFunc = globalScene.field.moveAbove;
@@ -1428,7 +1427,8 @@ export class MoveAnim extends BattleAnim {
   public move: Moves;
 
   constructor(move: Moves, user: Pokemon, target: BattlerIndex, playOnEmptyField = false) {
-    super(user, globalScene.getField()[target], playOnEmptyField);
+    // Set target to the user pokemon if no target is found to avoid crashes
+    super(user, globalScene.getField()[target] ?? user, playOnEmptyField);
 
     this.move = move;
   }

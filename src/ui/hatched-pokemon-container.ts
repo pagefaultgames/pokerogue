@@ -1,6 +1,6 @@
 import type { EggHatchData } from "#app/data/egg-hatch-data";
 import { Gender } from "#app/data/gender";
-import { getVariantTint } from "#app/data/variant";
+import { getVariantTint } from "#app/sprites/variant";
 import { DexAttr } from "#app/system/game-data";
 import { globalScene } from "#app/global-scene";
 import type PokemonSpecies from "#app/data/pokemon-species";

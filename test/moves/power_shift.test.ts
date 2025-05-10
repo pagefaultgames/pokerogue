@@ -23,7 +23,7 @@ describe("Moves - Power Shift", () => {
     game = new GameManager(phaserGame);
     game.override
       .moveset([Moves.POWER_SHIFT, Moves.BULK_UP])
-      .battleType("single")
+      .battleStyle("single")
       .ability(Abilities.BALL_FETCH)
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH);

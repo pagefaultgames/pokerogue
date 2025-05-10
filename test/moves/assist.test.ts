@@ -29,7 +29,7 @@ describe("Moves - Assist", () => {
     // because the normal moveset override doesn't allow for accurate testing of moveset changes
     game.override
       .ability(Abilities.BALL_FETCH)
-      .battleType("double")
+      .battleStyle("double")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyLevel(100)

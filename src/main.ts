@@ -93,7 +93,7 @@ const startGame = async (manifest?: any) => {
     dom: {
       createContainer: true,
     },
-    pixelArt: true,
+    antialias: false,
     pipeline: [InvertPostFX] as unknown as Phaser.Types.Core.PipelineConfig,
     scene: [LoadingScene, BattleScene],
     version: version,

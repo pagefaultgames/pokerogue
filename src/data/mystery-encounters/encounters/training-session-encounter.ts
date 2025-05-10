@@ -1,5 +1,5 @@
-import type { Ability } from "#app/data/ability";
-import { allAbilities } from "#app/data/ability";
+import type { Ability } from "#app/data/abilities/ability-class";
+import { allAbilities } from "#app/data/data-lists";
 import type { EnemyPartyConfig } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import {
   initBattleWithEnemyConfig,
@@ -15,7 +15,7 @@ import type { PokemonHeldItemModifier } from "#app/modifier/modifier";
 import { AbilityAttr } from "#app/system/game-data";
 import PokemonData from "#app/system/pokemon-data";
 import type { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
-import { isNullOrUndefined, randSeedShuffle } from "#app/utils";
+import { isNullOrUndefined, randSeedShuffle } from "#app/utils/common";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { globalScene } from "#app/global-scene";
@@ -28,7 +28,7 @@ import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode
 import type HeldModifierConfig from "#app/interfaces/held-modifier-config";
 import i18next from "i18next";
 import { getStatKey } from "#enums/stat";
-import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
+import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { isPokemonValidForEncounterOptionSelection } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import type { Nature } from "#enums/nature";
 

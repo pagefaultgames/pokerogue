@@ -25,7 +25,7 @@ describe("Moves - Baton Pass", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .battleType("single")
+      .battleStyle("single")
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)
       .moveset([Moves.BATON_PASS, Moves.NASTY_PLOT, Moves.SPLASH])

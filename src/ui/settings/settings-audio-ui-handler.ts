@@ -1,4 +1,4 @@
-import type { Mode } from "../ui";
+import type { UiMode } from "#enums/ui-mode";
 import AbstractSettingsUiHandler from "./abstract-settings-ui-handler";
 import { SettingType } from "#app/system/settings/settings";
 ("#app/inputs-controller");
@@ -9,7 +9,7 @@ export default class SettingsAudioUiHandler extends AbstractSettingsUiHandler {
    *
    * @param mode - The UI mode, optional.
    */
-  constructor(mode: Mode | null = null) {
+  constructor(mode: UiMode | null = null) {
     super(SettingType.AUDIO, mode);
     this.title = "Audio";
     this.localStorageKey = "settings";
