@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import { TextStyle, addTextObject } from "#app/ui/text";
-import type { nil } from "#app/utils";
-import { isNullOrUndefined } from "#app/utils";
+import type { nil } from "#app/utils/common";
+import { isNullOrUndefined } from "#app/utils/common";
 import i18next from "i18next";
 import { Species } from "#enums/species";
 import type { WeatherPoolEntry } from "#app/data/weather";
@@ -308,6 +308,47 @@ const timedEvents: TimedEvent[] = [
         challenge: Challenges.INVERSE_BATTLE,
         value: 1,
       },
+    ],
+  },
+  {
+    name: "Shining Spring",
+    eventType: EventType.SHINY,
+    startDate: new Date(Date.UTC(2025, 4, 3)),
+    endDate: new Date(Date.UTC(2025, 4, 13)),
+    bannerKey: "spr25event",
+    scale: 0.21,
+    availableLangs: ["en", "de", "it", "fr", "ja", "ko", "es-ES", "es-MX", "pt-BR", "zh-CN"],
+    shinyMultiplier: 2,
+    upgradeUnlockedVouchers: true,
+    eventEncounters: [
+      { species: Species.HOPPIP },
+      { species: Species.CELEBI },
+      { species: Species.VOLBEAT },
+      { species: Species.ILLUMISE },
+      { species: Species.SPOINK },
+      { species: Species.LILEEP },
+      { species: Species.SHINX },
+      { species: Species.PACHIRISU },
+      { species: Species.CHERUBI },
+      { species: Species.MUNCHLAX },
+      { species: Species.TEPIG },
+      { species: Species.PANSAGE },
+      { species: Species.PANSEAR },
+      { species: Species.PANPOUR },
+      { species: Species.DARUMAKA },
+      { species: Species.ARCHEN },
+      { species: Species.DEERLING, formIndex: 0 }, // Spring Deerling
+      { species: Species.CLAUNCHER },
+      { species: Species.WISHIWASHI },
+      { species: Species.DRAMPA },
+      { species: Species.JANGMO_O },
+      { species: Species.APPLIN },
+    ],
+    classicWaveRewards: [
+      { wave: 8, type: "SHINY_CHARM" },
+      { wave: 8, type: "ABILITY_CHARM" },
+      { wave: 8, type: "CATCHING_CHARM" },
+      { wave: 25, type: "SHINY_CHARM" },
     ],
   },
 ];

@@ -26,7 +26,7 @@ describe("Abilities - Serene Grace", () => {
     game = new GameManager(phaserGame);
     game.override
       .disableCrits()
-      .battleType("single")
+      .battleStyle("single")
       .ability(Abilities.SERENE_GRACE)
       .moveset([Moves.AIR_SLASH])
       .enemySpecies(Species.ALOLA_GEODUDE)

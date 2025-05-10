@@ -27,7 +27,7 @@ describe("Moves - Beak Blast", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .battleType("single")
+      .battleStyle("single")
       .ability(Abilities.UNNERVE)
       .moveset([Moves.BEAK_BLAST])
       .enemySpecies(Species.SNORLAX)
@@ -38,7 +38,7 @@ describe("Moves - Beak Blast", () => {
   });
 
   it("should add a charge effect that burns attackers on contact", async () => {
-    await game.startBattle([Species.BLASTOISE]);
+    await game.classicMode.startBattle([Species.BLASTOISE]);
 
     const leadPokemon = game.scene.getPlayerPokemon()!;
     const enemyPokemon = game.scene.getEnemyPokemon()!;
@@ -55,7 +55,7 @@ describe("Moves - Beak Blast", () => {
   it("should still charge and burn opponents if the user is sleeping", async () => {
     game.override.statusEffect(StatusEffect.SLEEP);
 
-    await game.startBattle([Species.BLASTOISE]);
+    await game.classicMode.startBattle([Species.BLASTOISE]);
 
     const leadPokemon = game.scene.getPlayerPokemon()!;
     const enemyPokemon = game.scene.getEnemyPokemon()!;
@@ -72,7 +72,7 @@ describe("Moves - Beak Blast", () => {
   it("should not burn attackers that don't make contact", async () => {
     game.override.enemyMoveset([Moves.WATER_GUN]);
 
-    await game.startBattle([Species.BLASTOISE]);
+    await game.classicMode.startBattle([Species.BLASTOISE]);
 
     const leadPokemon = game.scene.getPlayerPokemon()!;
     const enemyPokemon = game.scene.getEnemyPokemon()!;
@@ -89,7 +89,7 @@ describe("Moves - Beak Blast", () => {
   it("should only hit twice with Multi-Lens", async () => {
     game.override.startingHeldItems([{ name: "MULTI_LENS", count: 1 }]);
 
-    await game.startBattle([Species.BLASTOISE]);
+    await game.classicMode.startBattle([Species.BLASTOISE]);
 
     const leadPokemon = game.scene.getPlayerPokemon()!;
 
@@ -102,7 +102,7 @@ describe("Moves - Beak Blast", () => {
   it("should be blocked by Protect", async () => {
     game.override.enemyMoveset([Moves.PROTECT]);
 
-    await game.startBattle([Species.BLASTOISE]);
+    await game.classicMode.startBattle([Species.BLASTOISE]);
 
     const leadPokemon = game.scene.getPlayerPokemon()!;
     const enemyPokemon = game.scene.getEnemyPokemon()!;
@@ -115,5 +115,26 @@ describe("Moves - Beak Blast", () => {
     await game.phaseInterceptor.to(TurnEndPhase);
     expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
     expect(leadPokemon.getTag(BattlerTagType.BEAK_BLAST_CHARGING)).toBeUndefined();
+  });
+
+  it("should still burn the enemy if the user is knocked out", async () => {
+    game.override.ability(Abilities.BALL_FETCH);
+    await game.classicMode.startBattle([Species.MAGIKARP, Species.MAGIKARP]);
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const user = game.scene.getPlayerPokemon()!;
+    user.hp = 1;
+    game.move.select(Moves.BEAK_BLAST);
+    await game.phaseInterceptor.to("BerryPhase", false);
+    expect(enemyPokemon.status?.effect).toBe(StatusEffect.BURN);
+  });
+
+  it("should not burn a long reach enemy that hits the user with a contact move", async () => {
+    game.override.enemyAbility(Abilities.LONG_REACH);
+    game.override.enemyMoveset([Moves.FALSE_SWIPE]).enemyLevel(100);
+    await game.classicMode.startBattle([Species.MAGIKARP]);
+    game.move.select(Moves.BEAK_BLAST);
+    await game.phaseInterceptor.to("BerryPhase", false);
+    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    expect(enemyPokemon.status?.effect).not.toBe(StatusEffect.BURN);
   });
 });

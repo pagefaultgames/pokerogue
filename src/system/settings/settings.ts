@@ -1,4 +1,4 @@
-import { Mode } from "#app/ui/ui";
+import { UiMode } from "#enums/ui-mode";
 import i18next from "i18next";
 import { globalScene } from "#app/global-scene";
 import { hasTouchscreen } from "#app/touch-controls";
@@ -9,7 +9,7 @@ import { EaseType } from "#enums/ease-type";
 import { MoneyFormat } from "#enums/money-format";
 import { PlayerGender } from "#enums/player-gender";
 import { ShopCursorTarget } from "#enums/shop-cursor-target";
-import { isLocal } from "#app/utils";
+import { isLocal } from "#app/utils/common";
 
 const VOLUME_OPTIONS: SettingOption[] = new Array(11).fill(null).map((_, i) =>
   i
@@ -804,6 +804,7 @@ export function setSetting(setting: string, value: number): boolean {
       break;
     case SettingKeys.Candy_Upgrade_Display:
       globalScene.candyUpgradeDisplay = value;
+      break;
     case SettingKeys.Money_Format:
       switch (Setting[index].options[value].value) {
         case "Normal":
@@ -906,7 +907,7 @@ export function setSetting(setting: string, value: number): boolean {
               return false;
             }
           };
-          globalScene.ui.setOverlayMode(Mode.OPTION_SELECT, {
+          globalScene.ui.setOverlayMode(UiMode.OPTION_SELECT, {
             options: [
               {
                 label: "English",

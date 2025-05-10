@@ -59,7 +59,7 @@ export class Terrain {
           // Cancels move if the move has positive priority and targets a Pokemon grounded on the Psychic Terrain
           return (
             move.getPriority(user) > 0 &&
-            user.getOpponents().some(o => targets.includes(o.getBattlerIndex()) && o.isGrounded())
+            user.getOpponents(true).some(o => targets.includes(o.getBattlerIndex()) && o.isGrounded())
           );
         }
     }

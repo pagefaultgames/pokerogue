@@ -1,5 +1,11 @@
 import { globalScene } from "#app/global-scene";
-import { applyPreSwitchOutAbAttrs, PostDamageForceSwitchAbAttr, PreSwitchOutAbAttr } from "#app/data/ability";
+import {
+  applyPreSummonAbAttrs,
+  applyPreSwitchOutAbAttrs,
+  PostDamageForceSwitchAbAttr,
+  PreSummonAbAttr,
+  PreSwitchOutAbAttr,
+} from "#app/data/abilities/ability";
 import { allMoves, ForceSwitchOutAttr } from "#app/data/moves/move";
 import { getPokeballTintColor } from "#app/data/pokeball";
 import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms";
@@ -23,14 +29,14 @@ export class SwitchSummonPhase extends SummonPhase {
 
   /**
    * Constructor for creating a new SwitchSummonPhase
-   * @param switchType the type of switch behavior
-   * @param fieldIndex integer representing position on the battle field
-   * @param slotIndex integer for the index of pokemon (in party of 6) to switch into
-   * @param doReturn boolean whether to render "comeback" dialogue
-   * @param player boolean if the switch is from the player
+   * @param switchType - The type of switch behavior
+   * @param fieldIndex - Position on the battle field
+   * @param slotIndex - The index of pokemon (in party of 6) to switch into
+   * @param doReturn - Whether to render "comeback" dialogue
+   * @param player - Whether the switch came from the player or enemy; default `true`
    */
-  constructor(switchType: SwitchType, fieldIndex: number, slotIndex: number, doReturn: boolean, player?: boolean) {
-    super(fieldIndex, player !== undefined ? player : true);
+  constructor(switchType: SwitchType, fieldIndex: number, slotIndex: number, doReturn: boolean, player = true) {
+    super(fieldIndex, player);
 
     this.switchType = switchType;
     this.slotIndex = slotIndex;
@@ -61,7 +67,8 @@ export class SwitchSummonPhase extends SummonPhase {
         !(this.player ? globalScene.getPlayerParty() : globalScene.getEnemyParty())[this.slotIndex])
     ) {
       if (this.player) {
-        return this.switchAndSummon();
+        this.switchAndSummon();
+        return;
       }
       globalScene.time.delayedCall(750, () => this.switchAndSummon());
       return;
@@ -99,7 +106,7 @@ export class SwitchSummonPhase extends SummonPhase {
     );
     globalScene.playSound("se/pb_rel");
     pokemon.hideInfo();
-    pokemon.tint(getPokeballTintColor(pokemon.pokeball), 1, 250, "Sine.easeIn");
+    pokemon.tint(getPokeballTintColor(pokemon.getPokeball(true)), 1, 250, "Sine.easeIn");
     globalScene.tweens.add({
       targets: pokemon,
       duration: 250,
@@ -114,13 +121,23 @@ export class SwitchSummonPhase extends SummonPhase {
 
   switchAndSummon() {
     const party = this.player ? this.getParty() : globalScene.getEnemyParty();
-    const switchedInPokemon = party[this.slotIndex];
+    const switchedInPokemon: Pokemon | undefined = party[this.slotIndex];
     this.lastPokemon = this.getPokemon();
+
+    applyPreSummonAbAttrs(PreSummonAbAttr, switchedInPokemon);
     applyPreSwitchOutAbAttrs(PreSwitchOutAbAttr, this.lastPokemon);
-    if (this.switchType === SwitchType.BATON_PASS && switchedInPokemon) {
-      (this.player ? globalScene.getEnemyField() : globalScene.getPlayerField()).forEach(enemyPokemon =>
+    if (!switchedInPokemon) {
+      this.end();
+      return;
+    }
+
+    if (this.switchType === SwitchType.BATON_PASS) {
+      // If switching via baton pass, update opposing tags coming from the prior pokemon
+      (this.player ? globalScene.getEnemyField() : globalScene.getPlayerField()).forEach((enemyPokemon: Pokemon) =>
         enemyPokemon.transferTagsBySourceId(this.lastPokemon.id, switchedInPokemon.id),
       );
+
+      // If the recipient pokemon lacks a baton, give our baton to it during the swap
       if (
         !globalScene.findModifier(
           m =>
@@ -133,14 +150,8 @@ export class SwitchSummonPhase extends SummonPhase {
             m instanceof SwitchEffectTransferModifier &&
             (m as SwitchEffectTransferModifier).pokemonId === this.lastPokemon.id,
         ) as SwitchEffectTransferModifier;
-        if (
-          batonPassModifier &&
-          !globalScene.findModifier(
-            m =>
-              m instanceof SwitchEffectTransferModifier &&
-              (m as SwitchEffectTransferModifier).pokemonId === switchedInPokemon.id,
-          )
-        ) {
+
+        if (batonPassModifier) {
           globalScene.tryTransferHeldItemModifier(
             batonPassModifier,
             switchedInPokemon,
@@ -153,49 +164,48 @@ export class SwitchSummonPhase extends SummonPhase {
         }
       }
     }
-    if (switchedInPokemon) {
-      party[this.slotIndex] = this.lastPokemon;
-      party[this.fieldIndex] = switchedInPokemon;
-      const showTextAndSummon = () => {
-        globalScene.ui.showText(
-          this.player
-            ? i18next.t("battle:playerGo", {
-                pokemonName: getPokemonNameWithAffix(switchedInPokemon),
-              })
-            : i18next.t("battle:trainerGo", {
-                trainerName: globalScene.currentBattle.trainer?.getName(
-                  !(this.fieldIndex % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER,
-                ),
-                pokemonName: this.getPokemon().getNameToRender(),
-              }),
-        );
-        /**
-         * If this switch is passing a Substitute, make the switched Pokemon match the returned Pokemon's state as it left.
-         * Otherwise, clear any persisting tags on the returned Pokemon.
-         */
-        if (this.switchType === SwitchType.BATON_PASS || this.switchType === SwitchType.SHED_TAIL) {
-          const substitute = this.lastPokemon.getTag(SubstituteTag);
-          if (substitute) {
-            switchedInPokemon.x += this.lastPokemon.getSubstituteOffset()[0];
-            switchedInPokemon.y += this.lastPokemon.getSubstituteOffset()[1];
-            switchedInPokemon.setAlpha(0.5);
-          }
-        } else {
-          switchedInPokemon.resetSummonData();
+
+    party[this.slotIndex] = this.lastPokemon;
+    party[this.fieldIndex] = switchedInPokemon;
+    const showTextAndSummon = () => {
+      globalScene.ui.showText(
+        this.player
+          ? i18next.t("battle:playerGo", {
+              pokemonName: getPokemonNameWithAffix(switchedInPokemon),
+            })
+          : i18next.t("battle:trainerGo", {
+              trainerName: globalScene.currentBattle.trainer?.getName(
+                !(this.fieldIndex % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER,
+              ),
+              pokemonName: this.getPokemon().getNameToRender(),
+            }),
+      );
+
+      /**
+       * If this switch is passing a Substitute, make the switched Pokemon matches the returned Pokemon's state as it left.
+       * Otherwise, clear any persisting tags on the returned Pokemon.
+       */
+      if (this.switchType === SwitchType.BATON_PASS || this.switchType === SwitchType.SHED_TAIL) {
+        const substitute = this.lastPokemon.getTag(SubstituteTag);
+        if (substitute) {
+          switchedInPokemon.x += this.lastPokemon.getSubstituteOffset()[0];
+          switchedInPokemon.y += this.lastPokemon.getSubstituteOffset()[1];
+          switchedInPokemon.setAlpha(0.5);
         }
-        this.summon();
-      };
-      if (this.player) {
-        showTextAndSummon();
       } else {
-        globalScene.time.delayedCall(1500, () => {
-          this.hideEnemyTrainer();
-          globalScene.pbTrayEnemy.hide();
-          showTextAndSummon();
-        });
+        switchedInPokemon.resetSummonData();
       }
+      this.summon();
+    };
+
+    if (this.player) {
+      showTextAndSummon();
     } else {
-      this.end();
+      globalScene.time.delayedCall(1500, () => {
+        this.hideEnemyTrainer();
+        globalScene.pbTrayEnemy.hide();
+        showTextAndSummon();
+      });
     }
   }
 
@@ -213,15 +223,15 @@ export class SwitchSummonPhase extends SummonPhase {
     const lastPokemonHasForceSwitchAbAttr =
       this.lastPokemon.hasAbilityWithAttr(PostDamageForceSwitchAbAttr) && !this.lastPokemon.isFainted();
 
-    // Compensate for turn spent summoning
-    // Or compensate for force switch move if switched out pokemon is not fainted
+    // Compensate for turn spent summoning/forced switch if switched out pokemon is not fainted.
+    // Needed as we increment turn counters in `TurnEndPhase`.
     if (
       currentCommand === Command.POKEMON ||
       lastPokemonIsForceSwitchedAndNotFainted ||
       lastPokemonHasForceSwitchAbAttr
     ) {
-      pokemon.battleSummonData.turnCount--;
-      pokemon.battleSummonData.waveTurnCount--;
+      pokemon.tempSummonData.turnCount--;
+      pokemon.tempSummonData.waveTurnCount--;
     }
 
     if (this.switchType === SwitchType.BATON_PASS && pokemon) {
@@ -233,12 +243,13 @@ export class SwitchSummonPhase extends SummonPhase {
       }
     }
 
+    // Reset turn data if not initial switch (since it gets initialized to an empty object on turn start)
     if (this.switchType !== SwitchType.INITIAL_SWITCH) {
       pokemon.resetTurnData();
       pokemon.turnData.switchedInThisTurn = true;
     }
 
-    this.lastPokemon?.resetSummonData();
+    this.lastPokemon.resetSummonData();
 
     globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeActiveTrigger, true);
     // Reverts to weather-based forms when weather suppressors (Cloud Nine/Air Lock) are switched out

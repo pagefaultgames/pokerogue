@@ -12,7 +12,7 @@ import {
 } from "#app/data/mystery-encounters/mystery-encounter-requirements";
 import type { CanLearnMoveRequirementOptions } from "./requirements/can-learn-move-requirement";
 import { CanLearnMoveRequirement } from "./requirements/can-learn-move-requirement";
-import { isNullOrUndefined, randSeedInt } from "#app/utils";
+import { isNullOrUndefined, randSeedInt } from "#app/utils/common";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 
 // biome-ignore lint/suspicious/noConfusingVoidType: void unions in callbacks are OK

@@ -1,4 +1,4 @@
-import { applyAbAttrs, BypassSpeedChanceAbAttr, PreventBypassSpeedChanceAbAttr } from "#app/data/ability";
+import { applyAbAttrs, BypassSpeedChanceAbAttr, PreventBypassSpeedChanceAbAttr } from "#app/data/abilities/ability";
 import { allMoves, MoveHeaderAttr } from "#app/data/moves/move";
 import { Abilities } from "#app/enums/abilities";
 import { Stat } from "#app/enums/stat";
@@ -6,7 +6,7 @@ import type Pokemon from "#app/field/pokemon";
 import { PokemonMove } from "#app/field/pokemon";
 import { BypassSpeedChanceModifier } from "#app/modifier/modifier";
 import { Command } from "#app/ui/command-ui-handler";
-import * as Utils from "#app/utils";
+import { randSeedShuffle, BooleanHolder } from "#app/utils/common";
 import { AttemptCapturePhase } from "./attempt-capture-phase";
 import { AttemptRunPhase } from "./attempt-run-phase";
 import { BerryPhase } from "./berry-phase";
@@ -24,10 +24,6 @@ import { globalScene } from "#app/global-scene";
 import { TeraPhase } from "./tera-phase";
 
 export class TurnStartPhase extends FieldPhase {
-  constructor() {
-    super();
-  }
-
   /**
    * This orders the active Pokemon on the field by speed into an BattlerIndex array and returns that array.
    * It also checks for Trick Room and reverses the array if it is present.
@@ -43,14 +39,14 @@ export class TurnStartPhase extends FieldPhase {
     // was varying based on how long since you last reloaded
     globalScene.executeWithSeedOffset(
       () => {
-        orderedTargets = Utils.randSeedShuffle(orderedTargets);
+        orderedTargets = randSeedShuffle(orderedTargets);
       },
       globalScene.currentBattle.turn,
       globalScene.waveSeed,
     );
 
     // Next, a check for Trick Room is applied to determine sort order.
-    const speedReversed = new Utils.BooleanHolder(false);
+    const speedReversed = new BooleanHolder(false);
     globalScene.arena.applyTags(TrickRoomTag, false, speedReversed);
 
     // Adjust the sort function based on whether Trick Room is active.
@@ -76,19 +72,16 @@ export class TurnStartPhase extends FieldPhase {
     // This occurs before the main loop because of battles with more than two Pokemon
     const battlerBypassSpeed = {};
 
-    globalScene
-      .getField(true)
-      .filter(p => p.summonData)
-      .map(p => {
-        const bypassSpeed = new Utils.BooleanHolder(false);
-        const canCheckHeldItems = new Utils.BooleanHolder(true);
-        applyAbAttrs(BypassSpeedChanceAbAttr, p, null, false, bypassSpeed);
-        applyAbAttrs(PreventBypassSpeedChanceAbAttr, p, null, false, bypassSpeed, canCheckHeldItems);
-        if (canCheckHeldItems.value) {
-          globalScene.applyModifiers(BypassSpeedChanceModifier, p.isPlayer(), p, bypassSpeed);
-        }
-        battlerBypassSpeed[p.getBattlerIndex()] = bypassSpeed;
-      });
+    globalScene.getField(true).map(p => {
+      const bypassSpeed = new BooleanHolder(false);
+      const canCheckHeldItems = new BooleanHolder(true);
+      applyAbAttrs(BypassSpeedChanceAbAttr, p, null, false, bypassSpeed);
+      applyAbAttrs(PreventBypassSpeedChanceAbAttr, p, null, false, bypassSpeed, canCheckHeldItems);
+      if (canCheckHeldItems.value) {
+        globalScene.applyModifiers(BypassSpeedChanceModifier, p.isPlayer(), p, bypassSpeed);
+      }
+      battlerBypassSpeed[p.getBattlerIndex()] = bypassSpeed;
+    });
 
     // The function begins sorting orderedTargets based on command priority, move priority, and possible speed bypasses.
     // Non-FIGHT commands (SWITCH, BALL, RUN) have a higher command priority and will always occur before any FIGHT commands.

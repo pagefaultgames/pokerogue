@@ -18,7 +18,7 @@ import { TurnInitPhase } from "#app/phases/turn-init-phase";
 import { VictoryPhase } from "#app/phases/victory-phase";
 import GameManager from "#test/testUtils/gameManager";
 import { generateStarter } from "#test/testUtils/gameManagerUtils";
-import { Mode } from "#app/ui/ui";
+import { UiMode } from "#enums/ui-mode";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { PlayerGender } from "#enums/player-gender";
@@ -49,7 +49,7 @@ describe("Test Battle Phase", () => {
   it("test phase interceptor with prompt", async () => {
     await game.phaseInterceptor.run(LoginPhase);
 
-    game.onNextPrompt("SelectGenderPhase", Mode.OPTION_SELECT, () => {
+    game.onNextPrompt("SelectGenderPhase", UiMode.OPTION_SELECT, () => {
       game.scene.gameData.gender = PlayerGender.MALE;
       game.endPhase();
     });
@@ -57,36 +57,36 @@ describe("Test Battle Phase", () => {
     await game.phaseInterceptor.run(SelectGenderPhase);
 
     await game.phaseInterceptor.run(TitlePhase);
-    await game.waitMode(Mode.TITLE);
+    await game.waitMode(UiMode.TITLE);
 
-    expect(game.scene.ui?.getMode()).toBe(Mode.TITLE);
+    expect(game.scene.ui?.getMode()).toBe(UiMode.TITLE);
     expect(game.scene.gameData.gender).toBe(PlayerGender.MALE);
   }, 20000);
 
   it("test phase interceptor with prompt with preparation for a future prompt", async () => {
     await game.phaseInterceptor.run(LoginPhase);
 
-    game.onNextPrompt("SelectGenderPhase", Mode.OPTION_SELECT, () => {
+    game.onNextPrompt("SelectGenderPhase", UiMode.OPTION_SELECT, () => {
       game.scene.gameData.gender = PlayerGender.MALE;
       game.endPhase();
     });
 
-    game.onNextPrompt("CheckSwitchPhase", Mode.CONFIRM, () => {
-      game.setMode(Mode.MESSAGE);
+    game.onNextPrompt("CheckSwitchPhase", UiMode.CONFIRM, () => {
+      game.setMode(UiMode.MESSAGE);
       game.endPhase();
     });
     await game.phaseInterceptor.run(SelectGenderPhase);
 
     await game.phaseInterceptor.run(TitlePhase);
-    await game.waitMode(Mode.TITLE);
+    await game.waitMode(UiMode.TITLE);
 
-    expect(game.scene.ui?.getMode()).toBe(Mode.TITLE);
+    expect(game.scene.ui?.getMode()).toBe(UiMode.TITLE);
     expect(game.scene.gameData.gender).toBe(PlayerGender.MALE);
   }, 20000);
 
   it("newGame one-liner", async () => {
     await game.startBattle();
-    expect(game.scene.ui?.getMode()).toBe(Mode.COMMAND);
+    expect(game.scene.ui?.getMode()).toBe(UiMode.COMMAND);
     expect(game.scene.getCurrentPhase()!.constructor.name).toBe(CommandPhase.name);
   }, 20000);
 
@@ -94,7 +94,7 @@ describe("Test Battle Phase", () => {
     game.override.starterSpecies(Species.MEWTWO);
     game.override.enemySpecies(Species.RATTATA);
     game.override.startingLevel(2000);
-    game.override.startingWave(3).battleType("single");
+    game.override.startingWave(3).battleStyle("single");
     game.override.moveset([Moves.TACKLE]);
     game.override.enemyAbility(Abilities.HYDRATION);
     game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
@@ -111,7 +111,7 @@ describe("Test Battle Phase", () => {
     game.override.moveset([Moves.TACKLE]);
     game.override.enemyAbility(Abilities.HYDRATION);
     game.override.enemyMoveset([Moves.TAIL_WHIP, Moves.TAIL_WHIP, Moves.TAIL_WHIP, Moves.TAIL_WHIP]);
-    game.override.battleType("single");
+    game.override.battleStyle("single");
     await game.startBattle();
     game.move.select(Moves.TACKLE);
     await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(TurnInitPhase, false);
@@ -156,7 +156,7 @@ describe("Test Battle Phase", () => {
     await game.phaseInterceptor.run(LoginPhase);
     game.onNextPrompt(
       "SelectGenderPhase",
-      Mode.OPTION_SELECT,
+      UiMode.OPTION_SELECT,
       () => {
         game.scene.gameData.gender = PlayerGender.MALE;
         game.endPhase();
@@ -171,7 +171,7 @@ describe("Test Battle Phase", () => {
     await game.phaseInterceptor.run(LoginPhase);
     game.onNextPrompt(
       "SelectGenderPhase",
-      Mode.OPTION_SELECT,
+      UiMode.OPTION_SELECT,
       () => {
         game.scene.gameData.gender = PlayerGender.MALE;
         game.endPhase();
@@ -185,14 +185,14 @@ describe("Test Battle Phase", () => {
     await game.phaseInterceptor.run(LoginPhase);
     game.onNextPrompt(
       "SelectGenderPhase",
-      Mode.OPTION_SELECT,
+      UiMode.OPTION_SELECT,
       () => {
         game.scene.gameData.gender = PlayerGender.MALE;
         game.endPhase();
       },
       () => game.isCurrentPhase(TitlePhase),
     );
-    game.onNextPrompt("TitlePhase", Mode.TITLE, () => {
+    game.onNextPrompt("TitlePhase", UiMode.TITLE, () => {
       game.scene.gameMode = getGameMode(GameModes.CLASSIC);
       const starters = generateStarter(game.scene);
       const selectStarterPhase = new SelectStarterPhase();
@@ -203,50 +203,50 @@ describe("Test Battle Phase", () => {
   }, 20000);
 
   it("2vs1", async () => {
-    game.override.battleType("single");
+    game.override.battleStyle("single");
     game.override.enemySpecies(Species.MIGHTYENA);
     game.override.enemyAbility(Abilities.HYDRATION);
     game.override.ability(Abilities.HYDRATION);
     await game.startBattle([Species.BLASTOISE, Species.CHARIZARD]);
-    expect(game.scene.ui?.getMode()).toBe(Mode.COMMAND);
+    expect(game.scene.ui?.getMode()).toBe(UiMode.COMMAND);
     expect(game.scene.getCurrentPhase()!.constructor.name).toBe(CommandPhase.name);
   }, 20000);
 
   it("1vs1", async () => {
-    game.override.battleType("single");
+    game.override.battleStyle("single");
     game.override.enemySpecies(Species.MIGHTYENA);
     game.override.enemyAbility(Abilities.HYDRATION);
     game.override.ability(Abilities.HYDRATION);
     await game.startBattle([Species.BLASTOISE]);
-    expect(game.scene.ui?.getMode()).toBe(Mode.COMMAND);
+    expect(game.scene.ui?.getMode()).toBe(UiMode.COMMAND);
     expect(game.scene.getCurrentPhase()!.constructor.name).toBe(CommandPhase.name);
   }, 20000);
 
   it("2vs2", async () => {
-    game.override.battleType("double");
+    game.override.battleStyle("double");
     game.override.enemySpecies(Species.MIGHTYENA);
     game.override.enemyAbility(Abilities.HYDRATION);
     game.override.ability(Abilities.HYDRATION);
     game.override.startingWave(3);
     await game.startBattle([Species.BLASTOISE, Species.CHARIZARD]);
-    expect(game.scene.ui?.getMode()).toBe(Mode.COMMAND);
+    expect(game.scene.ui?.getMode()).toBe(UiMode.COMMAND);
     expect(game.scene.getCurrentPhase()!.constructor.name).toBe(CommandPhase.name);
   }, 20000);
 
   it("4vs2", async () => {
-    game.override.battleType("double");
+    game.override.battleStyle("double");
     game.override.enemySpecies(Species.MIGHTYENA);
     game.override.enemyAbility(Abilities.HYDRATION);
     game.override.ability(Abilities.HYDRATION);
     game.override.startingWave(3);
     await game.startBattle([Species.BLASTOISE, Species.CHARIZARD, Species.DARKRAI, Species.GABITE]);
-    expect(game.scene.ui?.getMode()).toBe(Mode.COMMAND);
+    expect(game.scene.ui?.getMode()).toBe(UiMode.COMMAND);
     expect(game.scene.getCurrentPhase()!.constructor.name).toBe(CommandPhase.name);
   }, 20000);
 
   it("kill opponent pokemon", async () => {
     const moveToUse = Moves.SPLASH;
-    game.override.battleType("single");
+    game.override.battleStyle("single");
     game.override.starterSpecies(Species.MEWTWO);
     game.override.enemySpecies(Species.RATTATA);
     game.override.enemyAbility(Abilities.HYDRATION);
@@ -266,7 +266,7 @@ describe("Test Battle Phase", () => {
 
   it("to next turn", async () => {
     const moveToUse = Moves.SPLASH;
-    game.override.battleType("single");
+    game.override.battleStyle("single");
     game.override.starterSpecies(Species.MEWTWO);
     game.override.enemySpecies(Species.RATTATA);
     game.override.enemyAbility(Abilities.HYDRATION);
@@ -285,7 +285,7 @@ describe("Test Battle Phase", () => {
   it("does not set new weather if staying in same biome", async () => {
     const moveToUse = Moves.SPLASH;
     game.override
-      .battleType("single")
+      .battleStyle("single")
       .starterSpecies(Species.MEWTWO)
       .enemySpecies(Species.RATTATA)
       .enemyAbility(Abilities.HYDRATION)
@@ -309,7 +309,7 @@ describe("Test Battle Phase", () => {
   it("does not force switch if active pokemon faints at same time as enemy mon and is revived in post-battle", async () => {
     const moveToUse = Moves.TAKE_DOWN;
     game.override
-      .battleType("single")
+      .battleStyle("single")
       .starterSpecies(Species.SAWK)
       .enemySpecies(Species.RATTATA)
       .startingWave(1)
@@ -328,7 +328,7 @@ describe("Test Battle Phase", () => {
 
     game.onNextPrompt(
       "SwitchPhase",
-      Mode.PARTY,
+      UiMode.PARTY,
       () => {
         expect.fail("Switch was forced");
       },

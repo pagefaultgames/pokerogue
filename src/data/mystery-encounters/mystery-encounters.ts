@@ -226,9 +226,9 @@ const anyBiomeEncounters: MysteryEncounterType[] = [
  */
 export const mysteryEncountersByBiome = new Map<Biome, MysteryEncounterType[]>([
   [Biome.TOWN, []],
-  [Biome.PLAINS, [MysteryEncounterType.SLUMBERING_SNORLAX, MysteryEncounterType.ABSOLUTE_AVARICE]],
+  [Biome.PLAINS, [MysteryEncounterType.SLUMBERING_SNORLAX]],
   [Biome.GRASS, [MysteryEncounterType.SLUMBERING_SNORLAX, MysteryEncounterType.ABSOLUTE_AVARICE]],
-  [Biome.TALL_GRASS, [MysteryEncounterType.ABSOLUTE_AVARICE]],
+  [Biome.TALL_GRASS, [MysteryEncounterType.SLUMBERING_SNORLAX, MysteryEncounterType.ABSOLUTE_AVARICE]],
   [Biome.METROPOLIS, []],
   [Biome.FOREST, [MysteryEncounterType.SAFARI_ZONE, MysteryEncounterType.ABSOLUTE_AVARICE]],
   [Biome.SEA, [MysteryEncounterType.LOST_AT_SEA]],

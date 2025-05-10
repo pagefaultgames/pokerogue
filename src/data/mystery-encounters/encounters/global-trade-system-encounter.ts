@@ -23,7 +23,14 @@ import { allSpecies, getPokemonSpecies } from "#app/data/pokemon-species";
 import { getTypeRgb } from "#app/data/type";
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import { NumberHolder, isNullOrUndefined, randInt, randSeedInt, randSeedShuffle, randSeedItem } from "#app/utils";
+import {
+  NumberHolder,
+  isNullOrUndefined,
+  randInt,
+  randSeedInt,
+  randSeedShuffle,
+  randSeedItem,
+} from "#app/utils/common";
 import type { PlayerPokemon } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
 import { EnemyPokemon, PokemonMove } from "#app/field/pokemon";
@@ -41,7 +48,7 @@ import { Gender, getGenderSymbol } from "#app/data/gender";
 import { getNatureName } from "#app/data/nature";
 import { getPokeballAtlasKey, getPokeballTintColor } from "#app/data/pokeball";
 import { getEncounterText, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
-import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
+import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { addPokemonDataToDexAndValidateAchievements } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import type { PokeballType } from "#enums/pokeball";
 import { doShinySparkleAnim } from "#app/field/anims";
@@ -677,7 +684,7 @@ function doPokemonTradeSequence(tradedPokemon: PlayerPokemon, receivedPokemon: P
       sprite.setPipelineData("shiny", tradedPokemon.shiny);
       sprite.setPipelineData("variant", tradedPokemon.variant);
       ["spriteColors", "fusionSpriteColors"].map(k => {
-        if (tradedPokemon.summonData?.speciesForm) {
+        if (tradedPokemon.summonData.speciesForm) {
           k += "Base";
         }
         sprite.pipelineData[k] = tradedPokemon.getSprite().pipelineData[k];
@@ -703,7 +710,7 @@ function doPokemonTradeSequence(tradedPokemon: PlayerPokemon, receivedPokemon: P
       sprite.setPipelineData("shiny", receivedPokemon.shiny);
       sprite.setPipelineData("variant", receivedPokemon.variant);
       ["spriteColors", "fusionSpriteColors"].map(k => {
-        if (receivedPokemon.summonData?.speciesForm) {
+        if (receivedPokemon.summonData.speciesForm) {
           k += "Base";
         }
         sprite.pipelineData[k] = receivedPokemon.getSprite().pipelineData[k];

@@ -27,7 +27,7 @@ describe("Abilities - Protosynthesis", () => {
     game.override
       .moveset([Moves.SPLASH, Moves.TACKLE])
       .ability(Abilities.PROTOSYNTHESIS)
-      .battleType("single")
+      .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)
