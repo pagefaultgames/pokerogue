@@ -2,6 +2,7 @@ import { BattlerIndex } from "#app/battle";
 import { Abilities } from "#app/enums/abilities";
 import { MoveResult } from "#app/field/pokemon";
 import { MovePhase } from "#app/phases/move-phase";
+import { MoveUseType } from "#enums/move-use-type";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -59,5 +60,35 @@ describe("Moves - After You", () => {
     await game.phaseInterceptor.to(MovePhase);
 
     expect(game.scene.getPlayerField()[1].getLastXMoves(1)[0].result).toBe(MoveResult.FAIL);
+  });
+
+  it("should maintain PP ignore status of rampaging moves", async () => {
+    game.override.moveset([]);
+    await game.classicMode.startBattle([Species.ACCELGOR, Species.RATTATA]);
+
+    const [accelgor, rattata] = game.scene.getPlayerField();
+    expect(accelgor).toBeDefined();
+    expect(rattata).toBeDefined();
+
+    game.move.changeMoveset(accelgor, [Moves.SPLASH, Moves.AFTER_YOU]);
+    game.move.changeMoveset(rattata, Moves.OUTRAGE);
+
+    game.move.select(Moves.SPLASH, BattlerIndex.PLAYER);
+    game.move.select(Moves.OUTRAGE, BattlerIndex.PLAYER_2);
+    await game.toNextTurn();
+
+    const outrageMove = rattata.getMoveset().find(m => m.moveId === Moves.OUTRAGE);
+    expect(outrageMove?.ppUsed).toBe(1);
+
+    game.move.select(Moves.AFTER_YOU, BattlerIndex.PLAYER, BattlerIndex.PLAYER_2);
+    await game.phaseInterceptor.to("TurnEndPhase");
+
+    expect(accelgor.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
+    expect(outrageMove?.ppUsed).toBe(1);
+    expect(rattata.getLastXMoves()[0]).toMatchObject({
+      move: Moves.OUTRAGE,
+      result: MoveResult.SUCCESS,
+      useType: MoveUseType.IGNORE_PP,
+    });
   });
 });

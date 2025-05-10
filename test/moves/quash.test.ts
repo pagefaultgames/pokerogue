@@ -7,6 +7,7 @@ import { MoveResult } from "#app/field/pokemon";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { describe, beforeAll, afterEach, beforeEach, it, expect } from "vitest";
+import { MoveUseType } from "#enums/move-use-type";
 
 describe("Moves - Quash", () => {
   let phaserGame: Phaser.Game;
@@ -49,13 +50,43 @@ describe("Moves - Quash", () => {
 
   it("fails if the target has already moved", async () => {
     await game.classicMode.startBattle([Species.ACCELGOR, Species.RATTATA]);
-    game.move.select(Moves.SPLASH, 0);
-    game.move.select(Moves.QUASH, 1, BattlerIndex.PLAYER);
+    game.move.select(Moves.SPLASH, BattlerIndex.PLAYER);
+    game.move.select(Moves.QUASH, BattlerIndex.PLAYER_2, BattlerIndex.PLAYER);
 
     await game.phaseInterceptor.to("MoveEndPhase");
     await game.phaseInterceptor.to("MoveEndPhase");
 
     expect(game.scene.getPlayerField()[1].getLastXMoves(1)[0].result).toBe(MoveResult.FAIL);
+  });
+
+  it("should maintain PP ignore status of rampaging moves", async () => {
+    game.override.moveset([]);
+    await game.classicMode.startBattle([Species.ACCELGOR, Species.RATTATA]);
+
+    const [accelgor, rattata] = game.scene.getPlayerField();
+    expect(accelgor).toBeDefined();
+    expect(rattata).toBeDefined();
+
+    game.move.changeMoveset(accelgor, [Moves.SPLASH, Moves.QUASH]);
+    game.move.changeMoveset(rattata, Moves.OUTRAGE);
+
+    game.move.select(Moves.SPLASH, BattlerIndex.PLAYER);
+    game.move.select(Moves.OUTRAGE, BattlerIndex.PLAYER_2);
+    await game.toNextTurn();
+
+    const outrageMove = rattata.getMoveset().find(m => m.moveId === Moves.OUTRAGE);
+    expect(outrageMove?.ppUsed).toBe(1);
+
+    game.move.select(Moves.QUASH, BattlerIndex.PLAYER, BattlerIndex.PLAYER_2);
+    await game.phaseInterceptor.to("TurnEndPhase");
+
+    expect(accelgor.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
+    expect(outrageMove?.ppUsed).toBe(1);
+    expect(rattata.getLastXMoves()[0]).toMatchObject({
+      move: Moves.OUTRAGE,
+      result: MoveResult.SUCCESS,
+      useType: MoveUseType.IGNORE_PP,
+    });
   });
 
   it("makes multiple quashed targets move in speed order at the end of the turn", async () => {

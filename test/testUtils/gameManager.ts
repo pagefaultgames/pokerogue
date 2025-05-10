@@ -58,6 +58,7 @@ import { expect, vi } from "vitest";
 import { globalScene } from "#app/global-scene";
 import type StarterSelectUiHandler from "#app/ui/starter-select-ui-handler";
 import { MockFetch } from "#test/testUtils/mocks/mockFetch";
+import { MoveUseType } from "#enums/move-use-type";
 
 /**
  * Class to manage the game state and transitions between phases.
@@ -396,6 +397,7 @@ export default class GameManager {
         target !== undefined && !legalTargets.multiple && legalTargets.targets.includes(target)
           ? [target]
           : enemy.getNextTargets(moveId),
+      useType: MoveUseType.NORMAL,
     });
 
     /**
@@ -417,9 +419,17 @@ export default class GameManager {
     };
   }
 
-  /** Transition to the next upcoming {@linkcode CommandPhase} */
+  /**
+   * Transition to the next upcoming {@linkcode CommandPhase}.
+   * @returns A promise that resolves once the next {@linkcode CommandPhase} has been reached.
+
+   * @remarks
+   * If all active player Pokemon are using a rampaging, charging, recharging or other move that
+   * disables user input, this **will not resolve** until at least 1 player pokemon becomes actionable.
+   */
   async toNextTurn() {
     await this.phaseInterceptor.to(CommandPhase);
+    console.log("==================[New Turn]==================");
   }
 
   /**
@@ -429,6 +439,7 @@ export default class GameManager {
   async toNextWave() {
     this.doSelectModifier();
 
+    // forcibly end the message box for switching pokemon
     this.onNextPrompt(
       "CheckSwitchPhase",
       UiMode.CONFIRM,
@@ -439,7 +450,8 @@ export default class GameManager {
       () => this.isCurrentPhase(TurnInitPhase),
     );
 
-    await this.toNextTurn();
+    await this.phaseInterceptor.to(CommandPhase);
+    console.log("==================[New Wave]==================");
   }
 
   /**
@@ -507,9 +519,9 @@ export default class GameManager {
    * @returns A promise that resolves once the fainted pokemon's FaintPhase finishes running.
    */
   async killPokemon(pokemon: PlayerPokemon | EnemyPokemon) {
+    pokemon.hp = 0;
+    this.scene.unshiftPhase(new FaintPhase(pokemon.getBattlerIndex(), true));
     return new Promise<void>(async (resolve, reject) => {
-      pokemon.hp = 0;
-      this.scene.pushPhase(new FaintPhase(pokemon.getBattlerIndex(), true));
       await this.phaseInterceptor.to(FaintPhase).catch(e => reject(e));
       resolve();
     });
@@ -541,8 +553,8 @@ export default class GameManager {
   }
 
   /**
-   * Select a pokemon from the party menu during the given phase. 
-   * Only really handles the basic case of "navigate to party slot and press Action twice" - 
+   * Select a pokemon from the party menu during the given phase.
+   * Only really handles the basic case of "navigate to party slot and press Action twice" -
    * any menus that come up afterwards are ignored and must be handled separately by the caller.
    * @param slot - The 0-indexed position of the pokemon in your party to switch to
    * @param inPhase - Which phase to expect the selection to occur in. Defaults to `SwitchPhase`

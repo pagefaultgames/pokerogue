@@ -1,6 +1,6 @@
 import { Moves } from "#enums/moves";
 
-/** Set of moves that cannot be called by {@linkcode Moves.METRONOME Metronome} */
+/** Set of moves that cannot be called by {@linkcode Moves.METRONOME | Metronome} */
 export const invalidMetronomeMoves: ReadonlySet<Moves> = new Set([
   Moves.AFTER_YOU,
   Moves.ASSIST,
@@ -254,4 +254,18 @@ export const noAbilityTypeOverrideMoves: ReadonlySet<Moves> = new Set([
   Moves.NATURAL_GIFT,
   Moves.TECHNO_BLAST,
   Moves.HIDDEN_POWER,
+]);
+
+/** Set of all moves that cannot be copied by {@linkcode Moves.SKETCH}. */
+export const invalidSketchMoves: ReadonlySet<Moves> = new Set([
+  Moves.NONE,
+  Moves.CHATTER,
+  Moves.MIRROR_MOVE,
+  Moves.SLEEP_TALK,
+  Moves.STRUGGLE,
+  Moves.SKETCH,
+  Moves.REVIVAL_BLESSING,
+  Moves.TERA_STARSTORM,
+  Moves.BREAKNECK_BLITZ__PHYSICAL,
+  Moves.BREAKNECK_BLITZ__SPECIAL,
 ]);

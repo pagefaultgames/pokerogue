@@ -1,5 +1,4 @@
 import { allMoves } from "#app/data/moves/move";
-import { CommandPhase } from "#app/phases/command-phase";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
@@ -34,13 +33,9 @@ describe("Moves - Rollout", () => {
     game.override.enemyMoveset(Moves.SPLASH);
   });
 
-  it("should double it's dmg on sequential uses but reset after 5", async () => {
-    game.override.moveset([Moves.ROLLOUT]);
-    vi.spyOn(allMoves[Moves.ROLLOUT], "accuracy", "get").mockReturnValue(100); //always hit
-
-    const variance = 5;
-    const turns = 6;
-    const dmgHistory: number[] = [];
+  it("should double dmg on sequential uses but reset after 5", async () => {
+    game.override.moveset(Moves.ROLLOUT);
+    vi.spyOn(allMoves[Moves.ROLLOUT], "accuracy", "get").mockReturnValue(100); // always hit
 
     await game.startBattle();
 
@@ -49,14 +44,13 @@ describe("Moves - Rollout", () => {
 
     const enemyPkm = game.scene.getEnemyParty()[0];
     vi.spyOn(enemyPkm, "stats", "get").mockReturnValue([500000, 1, 1, 1, 1, 1]); // HP, ATK, DEF, SPATK, SPDEF, SPD
-    vi.spyOn(enemyPkm, "getHeldItems").mockReturnValue([]); //no berries
 
-    enemyPkm.hp = enemyPkm.getMaxHp();
     let previousHp = enemyPkm.hp;
+    const dmgHistory: number[] = [];
 
-    for (let i = 0; i < turns; i++) {
+    for (let i = 0; i < 6; i++) {
       game.move.select(Moves.ROLLOUT);
-      await game.phaseInterceptor.to(CommandPhase);
+      await game.toNextTurn();
 
       dmgHistory.push(previousHp - enemyPkm.hp);
       previousHp = enemyPkm.hp;
@@ -64,16 +58,12 @@ describe("Moves - Rollout", () => {
 
     const [turn1Dmg, turn2Dmg, turn3Dmg, turn4Dmg, turn5Dmg, turn6Dmg] = dmgHistory;
 
-    expect(turn2Dmg).toBeGreaterThanOrEqual(turn1Dmg * 2 - variance);
-    expect(turn2Dmg).toBeLessThanOrEqual(turn1Dmg * 2 + variance);
-    expect(turn3Dmg).toBeGreaterThanOrEqual(turn2Dmg * 2 - variance);
-    expect(turn3Dmg).toBeLessThanOrEqual(turn2Dmg * 2 + variance);
-    expect(turn4Dmg).toBeGreaterThanOrEqual(turn3Dmg * 2 - variance);
-    expect(turn4Dmg).toBeLessThanOrEqual(turn3Dmg * 2 + variance);
-    expect(turn5Dmg).toBeGreaterThanOrEqual(turn4Dmg * 2 - variance);
-    expect(turn5Dmg).toBeLessThanOrEqual(turn4Dmg * 2 + variance);
-    // reset
-    expect(turn6Dmg).toBeGreaterThanOrEqual(turn1Dmg - variance);
-    expect(turn6Dmg).toBeLessThanOrEqual(turn1Dmg + variance);
+    // 2 sig figs precision is more than enough
+    expect(turn2Dmg).toBeCloseTo(turn1Dmg * 2);
+    expect(turn3Dmg).toBeCloseTo(turn2Dmg * 2);
+    expect(turn4Dmg).toBeCloseTo(turn3Dmg * 2);
+    expect(turn5Dmg).toBeCloseTo(turn4Dmg * 2);
+    // reset on turn 6
+    expect(turn6Dmg).toBeCloseTo(turn1Dmg);
   });
 });

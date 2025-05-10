@@ -42,8 +42,8 @@ describe("Moves - Dig", () => {
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
     game.move.select(Moves.DIG);
-
     await game.phaseInterceptor.to("TurnEndPhase");
+
     expect(playerPokemon.getTag(BattlerTagType.UNDERGROUND)).toBeDefined();
     expect(enemyPokemon.getLastXMoves(1)[0].result).toBe(MoveResult.MISS);
     expect(playerPokemon.hp).toBe(playerPokemon.getMaxHp());
@@ -53,9 +53,22 @@ describe("Moves - Dig", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(playerPokemon.getTag(BattlerTagType.UNDERGROUND)).toBeUndefined();
     expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
+    expect(playerPokemon.getMoveQueue()).toHaveLength(0);
     expect(playerPokemon.getMoveHistory()).toHaveLength(2);
+  });
 
-    const playerDig = playerPokemon.getMoveset().find(mv => mv && mv.moveId === Moves.DIG);
+  it("should deduct PP only on the 2nd turn of the move", async () => {
+    await game.classicMode.startBattle([Species.MAGIKARP]);
+
+    const playerPokemon = game.scene.getPlayerPokemon()!;
+
+    game.move.select(Moves.DIG);
+    await game.phaseInterceptor.to("TurnEndPhase");
+
+    const playerDig = playerPokemon.getMoveset().find(mv => mv?.moveId === Moves.DIG);
+    expect(playerDig?.ppUsed).toBe(0);
+
+    await game.phaseInterceptor.to("TurnEndPhase");
     expect(playerDig?.ppUsed).toBe(1);
   });
 

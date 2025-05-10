@@ -1,11 +1,11 @@
-import type { PlayerPokemon, PokemonMove } from "#app/field/pokemon";
+import type { PlayerPokemon, PokemonMove, TurnMove } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
 import { MoveResult } from "#app/field/pokemon";
 import { addBBCodeTextObject, addTextObject, getTextColor, TextStyle } from "#app/ui/text";
 import { Command } from "#app/ui/command-ui-handler";
 import MessageUiHandler from "#app/ui/message-ui-handler";
 import { UiMode } from "#enums/ui-mode";
-import { BooleanHolder, toReadableString, randInt, getLocalizedSpriteKey } from "#app/utils/common";
+import { BooleanHolder, toReadableString, randInt, getLocalizedSpriteKey, isNullOrUndefined } from "#app/utils/common";
 import {
   PokemonFormChangeItemModifier,
   PokemonHeldItemModifier,
@@ -1027,12 +1027,12 @@ export default class PartyUiHandler extends MessageUiHandler {
                   (m as SwitchEffectTransferModifier).pokemonId === globalScene.getPlayerField()[this.fieldIndex].id,
               );
 
-            const moveHistory = globalScene.getPlayerField()[this.fieldIndex].getMoveHistory();
+            const lastMove: TurnMove | undefined = globalScene.getPlayerField()[this.fieldIndex].getLastXMoves()[0];
             const isBatonPassMove =
               this.partyUiMode === PartyUiMode.FAINT_SWITCH &&
-              moveHistory.length &&
-              allMoves[moveHistory[moveHistory.length - 1].move].getAttrs(ForceSwitchOutAttr)[0]?.isBatonPass() &&
-              moveHistory[moveHistory.length - 1].result === MoveResult.SUCCESS;
+              !isNullOrUndefined(lastMove) &&
+              allMoves[lastMove.move].getAttrs(ForceSwitchOutAttr)[0]?.isBatonPass() &&
+              lastMove.result === MoveResult.SUCCESS;
 
             // isBatonPassMove and allowBatonModifierSwitch shouldn't ever be true
             // at the same time, because they both explicitly check for a mutually
