@@ -2335,18 +2335,18 @@ export class PostSummonStatStageChangeAbAttr extends PostSummonAbAttr {
       // phase list (which could be after CommandPhase for example)
       globalScene.unshiftPhase(new StatStageChangePhase(pokemon.getBattlerIndex(), true, this.stats, this.stages));
     } else {
-    for (const opponent of pokemon.getOpponents()) {
-      const cancelled = new BooleanHolder(false);
-      if (this.intimidate) {
-        applyAbAttrs(IntimidateImmunityAbAttr, opponent, cancelled, simulated);
-        applyAbAttrs(PostIntimidateStatStageChangeAbAttr, opponent, cancelled, simulated);
+      for (const opponent of pokemon.getOpponents()) {
+        const cancelled = new BooleanHolder(false);
+        if (this.intimidate) {
+          applyAbAttrs(IntimidateImmunityAbAttr, opponent, cancelled, simulated);
+          applyAbAttrs(PostIntimidateStatStageChangeAbAttr, opponent, cancelled, simulated);
 
-        if (opponent.getTag(BattlerTagType.SUBSTITUTE)) {
-          cancelled.value = true;
+          if (opponent.getTag(BattlerTagType.SUBSTITUTE)) {
+            cancelled.value = true;
+          }
         }
-      }
-      if (!cancelled.value) {
-        globalScene.unshiftPhase(new StatStageChangePhase(opponent.getBattlerIndex(), false, this.stats, this.stages));
+        if (!cancelled.value) {
+          globalScene.unshiftPhase(new StatStageChangePhase(opponent.getBattlerIndex(), false, this.stats, this.stages));
         }
       }
     }
@@ -4399,12 +4399,12 @@ export class PostBiomeChangeTerrainChangeAbAttr extends PostBiomeChangeAbAttr {
  * @extends AbAttr
  */
 export class PostMoveUsedAbAttr extends AbAttr {
-    canApplyPostMoveUsed(
+  canApplyPostMoveUsed(
     pokemon: Pokemon,
     move: PokemonMove,
     source: Pokemon,
     targets: BattlerIndex[],
-        simulated: boolean,
+    simulated: boolean,
     args: any[]): boolean {
     return true;
   }
@@ -4414,7 +4414,7 @@ export class PostMoveUsedAbAttr extends AbAttr {
     move: PokemonMove,
     source: Pokemon,
     targets: BattlerIndex[],
-        simulated: boolean,
+    simulated: boolean,
     args: any[],
   ): void {}
 }
@@ -4899,7 +4899,7 @@ export class BlockRedirectAbAttr extends AbAttr { }
  * @see {@linkcode apply}
  */
 export class ReduceStatusEffectDurationAbAttr extends AbAttr {
-private statusEffect: StatusEffect;
+  private statusEffect: StatusEffect;
 
   constructor(statusEffect: StatusEffect) {
     super(false);
@@ -4908,7 +4908,7 @@ private statusEffect: StatusEffect;
   }
 
   override canApply(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
-        return args[1] instanceof NumberHolder && args[0] === this.statusEffect;
+    return args[1] instanceof NumberHolder && args[0] === this.statusEffect;
   }
 
   /**
@@ -5557,7 +5557,7 @@ class ForceSwitchOutHelper {
      * - If the Pokémon is still alive (hp > 0), and if so, it leaves the field and a new SwitchPhase is initiated.
      */
     if (switchOutTarget instanceof PlayerPokemon) {
-      if (globalScene.getPlayerParty().every(p => !p.isActive(true))) {
+      if (globalScene.getPlayerParty().filter((p) => p.isAllowedInBattle() && !p.isOnField()).length < 1) {
         return false;
       }
 
@@ -5890,7 +5890,7 @@ export function applyPostMoveUsedAbAttrs(
   move: PokemonMove,
   source: Pokemon,
   targets: BattlerIndex[],
-    simulated = false,
+  simulated = false,
   ...args: any[]
 ): void {
   applyAbAttrsInternal<PostMoveUsedAbAttr>(
@@ -6901,8 +6901,8 @@ export function initAbilities() {
     new Ability(Abilities.ANALYTIC, 5)
       .attr(MovePowerBoostAbAttr, (user, target, move) => {
         // Boost power if all other Pokemon have already moved (no other moves are slated to execute)
-        const laterMovePhase = globalScene.findPhase((phase) => phase instanceof MovePhase && phase.pokemon.id !== user?.id);
-        return isNullOrUndefined(laterMovePhase);
+        const movePhase = globalScene.findPhase((phase) => phase instanceof MovePhase && phase.pokemon.id !== user?.id);
+        return isNullOrUndefined(movePhase);
       }, 1.3),
     new Ability(Abilities.ILLUSION, 5)
       // The Pokemon generate an illusion if it's available

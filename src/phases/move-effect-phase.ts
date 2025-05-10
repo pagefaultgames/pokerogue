@@ -135,11 +135,11 @@ export class MoveEffectPhase extends PokemonPhase {
    * Compute targets and the results of hit checks of the invoked move against all targets,
    * organized by battler index.
    *
-   * **This is *not* a pure function** and has the following side effects:
-   * - Sets `this.hitChecks` to the results of the hit checks against each target
-   * - Sets success/failure of `this.moveHistoryEntry` based on the hit check results
-   * - Sets `user.turnData.hitCount` and `user.turnData.hitsLeft` to 1 if the move
-   * was unsuccessful against all targets (effectively canceling it)
+   * **This is *not* a pure function**; it has the following side effects
+   * - `this.hitChecks` - The results of the hit checks against each target
+   * - `this.moveHistoryEntry` - Sets success or failure based on the hit check results
+   * - user.turnData.hitCount and user.turnData.hitsLeft - Both set to 1 if the
+   *   move was unsuccessful against all targets
    *
    * @returns The targets of the invoked move
    * @see {@linkcode hitCheck}
@@ -205,9 +205,9 @@ export class MoveEffectPhase extends PokemonPhase {
   }
 
   /**
-   * Apply the move to each of its resolved targets.
+   * Apply the move to each of the resolved targets.
    * @param targets - The resolved set of targets of the move
-   * @throws - Error if there was an unexpected hit check result
+   * @throws Error if there was an unexpected hit check result
    */
   private applyToTargets(user: Pokemon, targets: Pokemon[]): void {
     for (const [i, target] of targets.entries()) {
@@ -229,7 +229,6 @@ export class MoveEffectPhase extends PokemonPhase {
         case HitCheckResult.NO_EFFECT_NO_MESSAGE:
         case HitCheckResult.PROTECTED:
         case HitCheckResult.TARGET_NOT_ON_FIELD:
-          // Apply effects for ineffective moves (e.g. High Jump Kick crash dmg)
           applyMoveAttrs(NoEffectAttr, user, target, this.move);
           break;
         case HitCheckResult.MISS:
@@ -643,19 +642,22 @@ export class MoveEffectPhase extends PokemonPhase {
     if (!user) {
       return false;
     }
-
-    switch (true) {
-      // No Guard
-      case user.hasAbilityWithAttr(AlwaysHitAbAttr) || target.hasAbilityWithAttr(AlwaysHitAbAttr):
-      // Toxic as poison type
-      case this.move.hasAttr(ToxicAccuracyAttr) && user.isOfType(PokemonType.POISON):
-      // Lock On/Mind Reader
-      case !!user.getTag(BattlerTagType.IGNORE_ACCURACY):
-      // Spikes and company
-      case isFieldTargeted(this.move):
-        return true;
+    if (user.hasAbilityWithAttr(AlwaysHitAbAttr) || target.hasAbilityWithAttr(AlwaysHitAbAttr)) {
+      return true;
     }
-    return false;
+    if (this.move.hasAttr(ToxicAccuracyAttr) && user.isOfType(PokemonType.POISON)) {
+      return true;
+    }
+    // TODO: Fix lock on / mind reader check.
+    if (
+      user.getTag(BattlerTagType.IGNORE_ACCURACY) &&
+      (user.getLastXMoves().find(() => true)?.targets || []).indexOf(target.getBattlerIndex()) !== -1
+    ) {
+      return true;
+    }
+    if (isFieldTargeted(this.move)) {
+      return true;
+    }
   }
 
   /**

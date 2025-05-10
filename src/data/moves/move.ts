@@ -702,10 +702,10 @@ export default class Move implements Localizable {
 
   /**
    * Sees if a move has a custom failure text (by looking at each {@linkcode MoveAttr} of this move)
-   * @param user - The {@linkcode Pokemon} using this move
-   * @param target - The {@linkcode Pokemon} targeted by this move
-   * @param move - The {@linkcode Move} being used
-   * @returns A string containing the custom failure text, or `undefined` if no custom text exists.
+   * @param user {@linkcode Pokemon} using the move
+   * @param target {@linkcode Pokemon} target of the move
+   * @param move {@linkcode Move} with this attribute
+   * @returns string of the custom failure text, or `null` if it uses the default text ("But it failed!")
    */
   getFailedText(user: Pokemon, target: Pokemon, move: Move): string | undefined {
     for (const attr of this.attrs) {
@@ -1186,7 +1186,7 @@ export class MoveEffectAttr extends MoveAttr {
    */
   protected options?: MoveEffectAttrOptions;
 
-    constructor(selfTarget?: boolean, options?: MoveEffectAttrOptions) {
+  constructor(selfTarget?: boolean, options?: MoveEffectAttrOptions) {
     super(selfTarget);
     this.options = options;
   }
@@ -1373,8 +1373,8 @@ export class PreMoveMessageAttr extends MoveAttr {
 
 /**
  * Attribute for moves that can be conditionally interrupted to be considered to
- * have failed before their "useMove" message is displayed.
- * Currently used by {@linkcode Moves.FOCUS_PUNCH}.
+ * have failed before their "useMove" message is displayed. Currently used by
+ * Focus Punch.
  * @extends MoveAttr
  */
 export class PreUseInterruptAttr extends MoveAttr {
@@ -1383,40 +1383,38 @@ export class PreUseInterruptAttr extends MoveAttr {
   protected conditionFunc: MoveConditionFunc;
 
   /**
-   * Create a new PreUseInterruptAttr.
-   * @param message - Custom failure text to display when the move is interrupted, either as a string or a function producing one.
-   * If ommitted, will display the default failure text upon cancellation.
-   * @param conditionFunc - A {@linkcode MoveConditionFunc} that returns `true` if the move should be canceled.
+   * Create a new MoveInterruptedMessageAttr.
+   * @param message The message to display when the move is interrupted, or a function that formats the message based on the user, target, and move.
    */
-  constructor(message: string | undefined | ((user: Pokemon, target: Pokemon, move: Move) => string), conditionFunc: MoveConditionFunc) {
+  constructor(message?: string | ((user: Pokemon, target: Pokemon, move: Move) => string), conditionFunc?: MoveConditionFunc) {
     super();
     this.message = message;
-    this.conditionFunc = conditionFunc;
+    this.conditionFunc = conditionFunc ?? (() => true);
   }
 
   /**
-   * Conditionally cancel this pokemon's current move.
-   * @param user - The {@linkcode Pokemon} using this move
-   * @param target - The {@linkcode Pokemon} targeted by this move
-   * @param move - The {@linkcode Move} being used
-   * @returns `true` if the move should be cancelled.
+   * Message to display when a move is interrupted.
+   * @param user {@linkcode Pokemon} using the move
+   * @param target {@linkcode Pokemon} target of the move
+   * @param move {@linkcode Move} with this attribute
    */
   override apply(user: Pokemon, target: Pokemon, move: Move): boolean {
     return this.conditionFunc(user, target, move);
   }
 
   /**
-   * Obtain the text displayed upon this move's interruption.
-   * @param user - The {@linkcode Pokemon} using this move
-   * @param target - The {@linkcode Pokemon} targeted by this move
-   * @param move - The {@linkcode Move} being used
-   * @returns A string containing the custom failure text, or `undefined` if no custom text exists.
+   * Message to display when a move is interrupted.
+   * @param user {@linkcode Pokemon} using the move
+   * @param target {@linkcode Pokemon} target of the move
+   * @param move {@linkcode Move} with this attribute
    */
   override getFailedText(user: Pokemon, target: Pokemon, move: Move): string | undefined {
-    if (this.conditionFunc(user, target, move)) {
-      return typeof this.message !== "function"
-        ? this.message
-        : this.message(user, target, move);
+    if (this.message && this.conditionFunc(user, target, move)) {
+      const message =
+        typeof this.message === "string"
+          ? (this.message as string)
+          : this.message(user, target, move);
+      return message;
     }
   }
 }
@@ -1516,7 +1514,7 @@ export class TargetHalfHpDamageAttr extends FixedDamageAttr {
       case 0:
         // first hit of move; update initialHp tracker
         this.initialHp = target.hp;
-              default:
+      default:
         // multi lens added hit; use initialHp tracker to ensure correct damage
         (args[0] as NumberHolder).value = toDmgValue(this.initialHp / 2);
         return true;
@@ -3059,17 +3057,7 @@ export class DelayedAttackAttr extends OverrideMoveEffectAttr {
     this.chargeText = chargeText;
   }
 
-  /**
-   * Apply the delayed attack, either setting it up or triggering the attack.
-   * @param user - The {@linkcode Pokemon} using the move
-   * @param target - The {@linkcode Pokemon} being targeted
-   * @param move - The {@linkcode Move} being used
-   * @param args -
-   * `[0]` - {@linkcode BooleanHolder} containing whether the move was overriden
-   * `[1]` - Whether the move is supposed to set up a delayed attack (`true`) or activate (`false`)
-   * @returns always `true`
-   */
-  apply(user: Pokemon, target: Pokemon, move: Move, args: [BooleanHolder, boolean]): boolean {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     // Edge case for the move applied on a pokemon that has fainted
     if (!target) {
       return true;
@@ -3105,9 +3093,9 @@ export class AwaitCombinedPledgeAttr extends OverrideMoveEffectAttr {
   /**
    * If the user's ally is set to use a different move with this attribute,
    * defer this move's effects for a combined move on the ally's turn.
-   * @param user - The {@linkcode Pokemon} using the move
-   * @param target - Unused
-   * @param move - The {@linkcode Move} being used
+   * @param user the {@linkcode Pokemon} using this move
+   * @param target n/a
+   * @param move the {@linkcode Move} being used
    * @param args
    * - [0] a {@linkcode BooleanHolder} indicating whether the move's base
    * effects should be overridden this turn.
@@ -3696,7 +3684,7 @@ export class LessPPMorePowerAttr extends VariablePowerAttr {
     const ppMax = move.pp;
     const ppUsed = user.moveset.find((m) => m.moveId === move.id)?.ppUsed ?? 0;
 
-let ppRemains = ppMax - ppUsed;
+    let ppRemains = ppMax - ppUsed;
     /** Reduce to 0 to avoid negative numbers if user has 1PP before attack and target has Ability.PRESSURE */
     if (ppRemains < 0) {
       ppRemains = 0;
@@ -3814,30 +3802,26 @@ export class DoublePowerChanceAttr extends VariablePowerAttr {
 
 export abstract class ConsecutiveUsePowerMultiplierAttr extends MovePowerMultiplierAttr {
   constructor(limit: number, resetOnFail: boolean, resetOnLimit?: boolean, ...comboMoves: Moves[]) {
-    super((user: Pokemon, _target: Pokemon, move: Move): number => {
-      const moveHistory = user.getLastXMoves(-1).slice(1, limit+1); // don't count the first history entry (ie the current move)
+    super((user: Pokemon, target: Pokemon, move: Move): number => {
+      const moveHistory = user.getLastXMoves(limit + 1).slice(1);
 
-      let count = 1;
+      let count = 0;
+      let turnMove: TurnMove | undefined;
 
-      // TODO: Confirm whether mirror moving an echoed voice counts for and/or resets a boost
-      for (const tm of moveHistory) {
-        if (
-          !(tm.move === move.id || comboMoves.includes(tm.move))
-          || (resetOnFail && tm.result !== MoveResult.SUCCESS)
-        ) {
+      while (
+        (
+          (turnMove = moveHistory.shift())?.move === move.id
+          || (comboMoves.length && comboMoves.includes(turnMove?.move ?? Moves.NONE))
+        )
+        && (!resetOnFail || turnMove?.result === MoveResult.SUCCESS)
+      ) {
+        if (count < (limit - 1)) {
+          count++;
+        } else if (resetOnLimit) {
+          count = 0;
+        } else {
           break;
         }
-
-        if (count < limit - 1) {
-          count++;
-          continue;
-        }
-
-        if (resetOnLimit) {
-          count = 0;
-        }
-
-        break;
       }
 
       return this.getMultiplier(count);
@@ -4017,7 +4001,7 @@ export class HpPowerAttr extends VariablePowerAttr {
 
 /**
  * Attribute used for moves whose base power scales with the opponent's HP
- * Used for {@linkcode Moves.CRUSH_GRIP}, {@linkcode Moves.WRING_OUT}, and {@linkcode Moves.HARD_PRESS}
+ * Used for Crush Grip, Wring Out, and Hard Press
  * maxBasePower 100 for Hard Press, 120 for others
  */
 export class OpponentHighHpPowerAttr extends VariablePowerAttr {
@@ -4332,7 +4316,6 @@ const hasStockpileStacksCondition: MoveConditionFunc = (user) => {
   const hasStockpilingTag = user.getTag(StockpilingTag);
   return !!hasStockpilingTag && hasStockpilingTag.stockpiledCount > 0;
 };
-
 
 /**
  * Attribute used for multi-hit moves that increase power in increments of the
@@ -5434,17 +5417,11 @@ export class FrenzyAttr extends MoveEffectAttr {
     }
 
     // TODO: Disable if used via dancer
-
     // TODO: Add support for moves that don't add the frenzy tag (Uproar, Rollout, etc.)
 
-    // If frenzy is not in effect and we don't have anything queued up,
-    // add 1-2 extra instances of the move to the move queue.
-    // If frenzy is already in effect, tick down the tag.
-    if (!user.getTag(BattlerTagType.FRENZY) && user.getMoveQueue().length === 0) {
-      const turnCount = user.randSeedIntRange(1, 2); // excludes initial use
-      for (let i = 0; i < turnCount; i++) {
-        user.pushMoveQueue({ move: move.id, targets: [ target.getBattlerIndex() ], useType: MoveUseType.IGNORE_PP });
-      }
+    if (!user.getTag(BattlerTagType.FRENZY) && !user.getMoveQueue().length) {
+      const turnCount = user.randSeedIntRange(1, 2);
+      new Array(turnCount).fill(null).map(() => user.getMoveQueue().push({ move: move.id, targets: [ target.getBattlerIndex() ], ignorePP: true }));
       user.addTag(BattlerTagType.FRENZY, turnCount, move.id, user.id);
     } else {
       applyMoveAttrs(AddBattlerTagAttr, user, target, move, args);
@@ -5817,24 +5794,23 @@ export class ProtectAttr extends AddBattlerTagAttr {
     super(tagType, true);
   }
 
-  /**
-   * Condition to fail a protect usage based on random chance.
-   * Chance starts at 100% and is thirded for each prior successful proctect usage.
-   * @returns a function that fails the function if its proc chance roll fails
-   */
   getCondition(): MoveConditionFunc {
     return ((user, target, move): boolean => {
-      const lastMoves = user.getLastXMoves(-1)
+      let timesUsed = 0;
+      const moveHistory = user.getLastXMoves();
+      let turnMove: TurnMove | undefined;
 
-      let threshold = 1;
-      for (const tm of lastMoves) {
-        if (!allMoves[tm.move].hasAttr(ProtectAttr) || tm.result !== MoveResult.SUCCESS) {
+      while (moveHistory.length) {
+        turnMove = moveHistory.shift();
+        if (!allMoves[turnMove?.move ?? Moves.NONE].hasAttr(ProtectAttr) || turnMove?.result !== MoveResult.SUCCESS) {
           break;
         }
-        threshold *= 3;
+        timesUsed++;
       }
-
-      return threshold === 1 || user.randSeedInt(threshold) === 0;
+      if (timesUsed) {
+        return !user.randSeedInt(Math.pow(3, timesUsed));
+      }
+      return true;
     });
   }
 }
@@ -7334,14 +7310,13 @@ export class SketchAttr extends MoveEffectAttr {
   constructor() {
     super(true);
   }
-
   /**
-   * User copies the opponent's last used move, if possible.
-   * @param user - The {@linkcode Pokemon} using the move
-   * @param target - The {@linkcode Pokemon} being targeted by the move
-   * @param move - The {@linkcoed Move} being used
-   * @param args - Unused
-   * @returns Whether a move was successfully learnt
+   * User copies the opponent's last used move, if possible
+   * @param {Pokemon} user Pokemon that used the move and will replace Sketch with the copied move
+   * @param {Pokemon} target Pokemon that the user wants to copy a move from
+   * @param {Move} move Move being used
+   * @param {any[]} args Unused
+   * @returns {boolean} true if the function succeeds, otherwise false
    */
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -7881,6 +7856,7 @@ export class AfterYouAttr extends MoveEffectAttr {
 /**
  * Move effect to force the target to move last, ignoring priority.
  * If applied to multiple targets, they move in speed order after all other moves.
+ * @extends MoveEffectAttr
  */
 export class ForceLastAttr extends MoveEffectAttr {
   /**
@@ -7927,7 +7903,7 @@ const phaseForcedSlower = (phase: MovePhase, target: Pokemon, trickRoom: boolean
   let slower: boolean;
   // quashed pokemon still have speed ties
   if (phase.pokemon.getEffectiveStat(Stat.SPD) === target.getEffectiveStat(Stat.SPD)) {
-    slower = !target.randSeedInt(2);
+    slower = target.randSeedInt(2) === 0;
   } else {
     slower = !trickRoom ? phase.pokemon.getEffectiveStat(Stat.SPD) < target.getEffectiveStat(Stat.SPD) : phase.pokemon.getEffectiveStat(Stat.SPD) > target.getEffectiveStat(Stat.SPD);
   }

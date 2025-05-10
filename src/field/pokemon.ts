@@ -642,7 +642,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Checks if a pokemon is fainted (ie: its `hp <= 0`).
    * It's usually better to call {@linkcode isAllowedInBattle()}
-   * @param checkStatus - Whether to also check the pokemon's status for {@linkcode StatusEffect.FAINT}; default `false`
+   * @param checkStatus `true` to also check that the pokemon's status is {@linkcode StatusEffect.FAINT}
    * @returns `true` if the pokemon is fainted
    */
   public isFainted(checkStatus = false): boolean {
@@ -3256,9 +3256,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * If it rolls shiny, or if it's already shiny, also sets a random variant and give the Pokemon the associated luck.
    *
    * The base shiny odds are {@linkcode BASE_SHINY_CHANCE} / `65536`
-   * @param thresholdOverride - number that is divided by `2^16` (`65536`) to get the shiny chance, overrides {@linkcode shinyThreshold} if set (bypassing shiny rate modifiers such as Shiny Charm)
-   * @param applyModifiersToOverride - Whether to apply Shiny Charm and event modifiers to {@linkcode thresholdOverride}.
-   * Does nothing if {@linkcode thresholdOverride} is not set.
+   * @param thresholdOverride number that is divided by `2^16` (`65536`) to get the shiny chance, overrides {@linkcode shinyThreshold} if set (bypassing shiny rate modifiers such as Shiny Charm)
+   * @param applyModifiersToOverride If {@linkcode thresholdOverride} is set and this is true, will apply Shiny Charm and event modifiers to {@linkcode thresholdOverride}
    * @returns `true` if the Pokemon has been set as a shiny, `false` otherwise
    */
   public trySetShinySeed(
@@ -3812,7 +3811,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           ui =>
             ui instanceof BattleInfo &&
             (ui as BattleInfo) instanceof PlayerBattleInfo === this.isPlayer(),
-        )[0] as Phaser.GameObjects.GameObject | undefined;
+        )
+        .find(() => true);
       if (!otherBattleInfo || !this.getFieldIndex()) {
         globalScene.fieldUI.sendToBack(this.battleInfo);
         globalScene.sendTextToBack(); // Push the top right text objects behind everything else
@@ -5140,8 +5140,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Returns a list of the most recent move entries in this Pokemon's move history.
    * The retrieved move entries are sorted in order from NEWEST to OLDEST.
-   * @param moveCount The number of move entries to retrieve.\
-   *   If negative, retrieves the Pokemon's entire move history (equivalent to reversing the output of {@linkcode getMoveHistory()}).
+   * @param moveCount The number of move entries to retrieve.
+   *   If negative, retrieve the Pokemon's entire move history (equivalent to reversing the output of {@linkcode getMoveHistory()}).
    *   Default is `1`.
    * @returns A list of {@linkcode TurnMove}, as specified above.
    */
@@ -5660,19 +5660,22 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     if (effect === StatusEffect.SLEEP) {
       sleepTurnsRemaining = new NumberHolder(this.randSeedIntRange(2, 4));
+
       this.setFrameRate(4);
 
-      // If the user is invulnerable, remove their invulnerability when they fall asleep
-      // and remove the upcoming attack from the move queue.
-      const tag = [
+      // If the user is invulnerable, lets remove their invulnerability when they fall asleep
+      const invulnerableTags = [
         BattlerTagType.UNDERGROUND,
         BattlerTagType.UNDERWATER,
         BattlerTagType.HIDDEN,
         BattlerTagType.FLYING,
-      ].find(t => this.getTag(t));
+      ];
+
+      const tag = invulnerableTags.find(t => this.getTag(t));
+
       if (tag) {
         this.removeTag(tag);
-        this.getMoveQueue().shift();
+        this.getMoveQueue().pop();
       }
     }
 
@@ -8137,10 +8140,10 @@ export class PokemonMove {
   }
 
   /**
-   * Increments this move's {@linkcode ppUsed} variable (up to a maximum of {@link getMovePp}).
-   * @param count - Amount of PP to consume; default `1`
+   * Sets {@link ppUsed} for this move and ensures the value does not exceed {@link getMovePp}
+   * @param count Amount of PP to use
    */
-  usePp(count = 1) {
+  usePp(count: number = 1) {
     this.ppUsed = Math.min(this.ppUsed + count, this.getMovePp());
   }
 
