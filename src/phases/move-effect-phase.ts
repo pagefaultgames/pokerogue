@@ -769,7 +769,7 @@ export class MoveEffectPhase extends PokemonPhase {
    * @param effectiveness - The effectiveness of the move (as previously evaluated in {@linkcode hitCheck})
    * @param firstTarget - Whether this is the first target successfully struck by the move
    */
-  protected applyMoveEffects(target: Pokemon, effectiveness: TypeDamageMultiplier, firstTarget): void {
+  protected applyMoveEffects(target: Pokemon, effectiveness: TypeDamageMultiplier, firstTarget: boolean): void {
     const user = this.getUserPokemon();
     if (isNullOrUndefined(user)) {
       return;
