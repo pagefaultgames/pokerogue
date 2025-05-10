@@ -16,7 +16,7 @@ import { TrainerSlot } from "#enums/trainer-slot";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import { globalScene } from "#app/global-scene";
-import { isNullOrUndefined, randSeedInt, randSeedShuffle } from "#app/utils";
+import { isNullOrUndefined, randSeedInt, randSeedShuffle } from "#app/utils/common";
 import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
@@ -52,7 +52,7 @@ import i18next from "i18next";
 import MoveInfoOverlay from "#app/ui/move-info-overlay";
 import { allMoves } from "#app/data/moves/move";
 import { ModifierTier } from "#app/modifier/modifier-tier";
-import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
+import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { getSpriteKeysFromSpecies } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 
 /** the i18n namespace for the encounter */
@@ -146,24 +146,34 @@ const POOL_4_POKEMON = [Species.GENESECT, Species.SLITHER_WING, Species.BUZZWOLE
 
 const PHYSICAL_TUTOR_MOVES = [
   Moves.MEGAHORN,
-  Moves.X_SCISSOR,
   Moves.ATTACK_ORDER,
-  Moves.PIN_MISSILE,
+  Moves.BUG_BITE,
   Moves.FIRST_IMPRESSION,
+  Moves.LUNGE
 ];
 
-const SPECIAL_TUTOR_MOVES = [Moves.SILVER_WIND, Moves.BUG_BUZZ, Moves.SIGNAL_BEAM, Moves.POLLEN_PUFF];
+const SPECIAL_TUTOR_MOVES = [
+  Moves.SILVER_WIND,
+  Moves.SIGNAL_BEAM,
+  Moves.BUG_BUZZ,
+  Moves.POLLEN_PUFF,
+  Moves.STRUGGLE_BUG
+];
 
-const STATUS_TUTOR_MOVES = [Moves.STRING_SHOT, Moves.STICKY_WEB, Moves.SILK_TRAP, Moves.RAGE_POWDER, Moves.HEAL_ORDER];
+const STATUS_TUTOR_MOVES = [
+  Moves.STRING_SHOT,
+  Moves.DEFEND_ORDER,
+  Moves.RAGE_POWDER,
+  Moves.STICKY_WEB,
+  Moves.SILK_TRAP
+];
 
 const MISC_TUTOR_MOVES = [
-  Moves.BUG_BITE,
   Moves.LEECH_LIFE,
-  Moves.DEFEND_ORDER,
-  Moves.QUIVER_DANCE,
-  Moves.TAIL_GLOW,
-  Moves.INFESTATION,
   Moves.U_TURN,
+  Moves.HEAL_ORDER,
+  Moves.QUIVER_DANCE,
+  Moves.INFESTATION,
 ];
 
 /**

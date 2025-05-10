@@ -1,5 +1,5 @@
 import type { PlayerPokemon } from "#app/field/pokemon";
-import { getFrameMs } from "#app/utils";
+import { getFrameMs } from "#app/utils/common";
 import { cos, sin } from "#app/field/anims";
 import { getTypeRgb } from "#app/data/type";
 import { globalScene } from "#app/global-scene";
@@ -88,7 +88,7 @@ export function doPokemonTransformationSequence(
       sprite.setPipelineData("shiny", previousPokemon.shiny);
       sprite.setPipelineData("variant", previousPokemon.variant);
       ["spriteColors", "fusionSpriteColors"].map(k => {
-        if (previousPokemon.summonData?.speciesForm) {
+        if (previousPokemon.summonData.speciesForm) {
           k += "Base";
         }
         sprite.pipelineData[k] = previousPokemon.getSprite().pipelineData[k];
@@ -108,7 +108,7 @@ export function doPokemonTransformationSequence(
       sprite.setPipelineData("shiny", transformPokemon.shiny);
       sprite.setPipelineData("variant", transformPokemon.variant);
       ["spriteColors", "fusionSpriteColors"].map(k => {
-        if (transformPokemon.summonData?.speciesForm) {
+        if (transformPokemon.summonData.speciesForm) {
           k += "Base";
         }
         sprite.pipelineData[k] = transformPokemon.getSprite().pipelineData[k];

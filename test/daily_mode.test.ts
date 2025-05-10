@@ -4,7 +4,7 @@ import { MapModifier } from "#app/modifier/modifier";
 import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 import { Species } from "#enums/species";
-import { Mode } from "#app/ui/ui";
+import { UiMode } from "#enums/ui-mode";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import GameManager from "#test/testUtils/gameManager";
 
@@ -57,7 +57,7 @@ describe("Shop modifications", async () => {
     game.override
       .startingWave(9)
       .startingBiome(Biome.ICE_CAVE)
-      .battleType("single")
+      .battleStyle("single")
       .startingLevel(100) // Avoid levelling up
       .disableTrainerWaves()
       .moveset([Moves.SPLASH])
@@ -76,7 +76,7 @@ describe("Shop modifications", async () => {
     game.move.select(Moves.SPLASH);
     await game.doKillOpponents();
     await game.phaseInterceptor.to("BattleEndPhase");
-    game.onNextPrompt("SelectModifierPhase", Mode.MODIFIER_SELECT, () => {
+    game.onNextPrompt("SelectModifierPhase", UiMode.MODIFIER_SELECT, () => {
       expect(game.scene.ui.getHandler()).toBeInstanceOf(ModifierSelectUiHandler);
       game.modifiers.testCheck("EVIOLITE", false).testCheck("MINI_BLACK_HOLE", false);
     });
@@ -87,7 +87,7 @@ describe("Shop modifications", async () => {
     game.move.select(Moves.SPLASH);
     await game.doKillOpponents();
     await game.phaseInterceptor.to("BattleEndPhase");
-    game.onNextPrompt("SelectModifierPhase", Mode.MODIFIER_SELECT, () => {
+    game.onNextPrompt("SelectModifierPhase", UiMode.MODIFIER_SELECT, () => {
       expect(game.scene.ui.getHandler()).toBeInstanceOf(ModifierSelectUiHandler);
       game.modifiers.testCheck("EVIOLITE", true).testCheck("MINI_BLACK_HOLE", true);
     });

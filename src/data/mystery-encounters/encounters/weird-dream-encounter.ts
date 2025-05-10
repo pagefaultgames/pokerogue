@@ -17,13 +17,12 @@ import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode
 import type { PlayerPokemon } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
 import { PokemonMove } from "#app/field/pokemon";
-import { NumberHolder, isNullOrUndefined, randSeedInt, randSeedShuffle } from "#app/utils";
+import { NumberHolder, isNullOrUndefined, randSeedInt, randSeedShuffle } from "#app/utils/common";
 import type PokemonSpecies from "#app/data/pokemon-species";
 import { allSpecies, getPokemonSpecies } from "#app/data/pokemon-species";
 import type { PokemonHeldItemModifier } from "#app/modifier/modifier";
 import { HiddenAbilityRateBoosterModifier, PokemonFormChangeItemModifier } from "#app/modifier/modifier";
 import { achvs } from "#app/system/achv";
-import { CustomPokemonData } from "#app/data/custom-pokemon-data";
 import { showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import type { PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
 import { modifierTypes } from "#app/modifier/modifier-type";
@@ -601,9 +600,6 @@ async function postProcessTransformedPokemon(
     newType = randSeedInt(18) as PokemonType;
   }
   newTypes.push(newType);
-  if (!newPokemon.customPokemonData) {
-    newPokemon.customPokemonData = new CustomPokemonData();
-  }
   newPokemon.customPokemonData.types = newTypes;
 
   // Enable passive if previous had it

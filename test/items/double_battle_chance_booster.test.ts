@@ -5,7 +5,7 @@ import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { ShopCursorTarget } from "#app/enums/shop-cursor-target";
-import { Mode } from "#app/ui/ui";
+import { UiMode } from "#enums/ui-mode";
 import type ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 import { Button } from "#app/enums/buttons";
 
@@ -69,7 +69,7 @@ describe("Items - Double Battle Chance Boosters", () => {
     // Forced LURE to spawn in the first slot with override
     game.onNextPrompt(
       "SelectModifierPhase",
-      Mode.MODIFIER_SELECT,
+      UiMode.MODIFIER_SELECT,
       () => {
         const handler = game.scene.ui.getHandler() as ModifierSelectUiHandler;
         // Traverse to first modifier slot

@@ -2,14 +2,14 @@ import { GameModes } from "../game-mode";
 import UiHandler from "./ui-handler";
 import type { SessionSaveData } from "../system/game-data";
 import { TextStyle, addTextObject, addBBCodeTextObject, getTextColor } from "./text";
-import { Mode } from "./ui";
+import { UiMode } from "#enums/ui-mode";
 import { addWindow } from "./ui-theme";
 import { getPokeballAtlasKey } from "#app/data/pokeball";
-import * as Utils from "../utils";
+import { formatLargeNumber, getPlayTimeString, formatMoney, formatFancyLargeNumber } from "#app/utils/common";
 import type PokemonData from "../system/pokemon-data";
 import i18next from "i18next";
 import { Button } from "../enums/buttons";
-import { BattleType } from "../battle";
+import { BattleType } from "#enums/battle-type";
 import { TrainerVariant } from "../field/trainer";
 import { Challenges } from "#enums/challenges";
 import { getLuckString, getLuckTextTint } from "../modifier/modifier-type";
@@ -18,8 +18,9 @@ import { getTypeRgb } from "#app/data/type";
 import { PokemonType } from "#enums/pokemon-type";
 import { TypeColor, TypeShadow } from "#app/enums/color";
 import { getNatureStatMultiplier, getNatureName } from "../data/nature";
-import { getVariantTint } from "#app/data/variant";
-import * as Modifier from "../modifier/modifier";
+import { getVariantTint } from "#app/sprites/variant";
+// biome-ignore lint/style/noNamespaceImport: See `src/system/game-data.ts`
+import * as Modifier from "#app/modifier/modifier";
 import type { Species } from "#enums/species";
 import { PlayerGender } from "#enums/player-gender";
 import { SettingKeyboard } from "#app/system/settings/settings-keyboard";
@@ -68,7 +69,7 @@ export default class RunInfoUiHandler extends UiHandler {
   private modifiersModule: any;
 
   constructor() {
-    super(Mode.RUN_INFO);
+    super(UiMode.RUN_INFO);
   }
 
   override async setup() {
@@ -411,7 +412,7 @@ export default class RunInfoUiHandler extends UiHandler {
     const enemyLevel = addTextObject(
       36,
       26,
-      `${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatLargeNumber(enemy.level, 1000)}`,
+      `${i18next.t("saveSlotSelectUiHandler:lv")}${formatLargeNumber(enemy.level, 1000)}`,
       enemyLevelStyle,
       { fontSize: "44px", color: "#f8f8f8" },
     );
@@ -441,7 +442,7 @@ export default class RunInfoUiHandler extends UiHandler {
       const enemyLevel = addTextObject(
         36,
         26,
-        `${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatLargeNumber(enemy.level, 1000)}`,
+        `${i18next.t("saveSlotSelectUiHandler:lv")}${formatLargeNumber(enemy.level, 1000)}`,
         bossStatus ? TextStyle.PARTY_RED : TextStyle.PARTY,
         { fontSize: "44px", color: "#f8f8f8" },
       );
@@ -527,7 +528,7 @@ export default class RunInfoUiHandler extends UiHandler {
       const enemyLevel = addTextObject(
         43 * (e % 3),
         27 * (pokemonRowHeight + 1),
-        `${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatLargeNumber(enemy.level, 1000)}`,
+        `${i18next.t("saveSlotSelectUiHandler:lv")}${formatLargeNumber(enemy.level, 1000)}`,
         isBoss ? TextStyle.PARTY_RED : TextStyle.PARTY,
         { fontSize: "54px" },
       );
@@ -606,9 +607,9 @@ export default class RunInfoUiHandler extends UiHandler {
       fontSize: "50px",
       lineSpacing: lineSpacing,
     });
-    const runTime = Utils.getPlayTimeString(this.runInfo.playTime);
+    const runTime = getPlayTimeString(this.runInfo.playTime);
     runInfoText.appendText(`${i18next.t("runHistory:runLength")}: ${runTime}`, false);
-    const runMoney = Utils.formatMoney(globalScene.moneyFormat, this.runInfo.money);
+    const runMoney = formatMoney(globalScene.moneyFormat, this.runInfo.money);
     const moneyTextColor = getTextColor(TextStyle.MONEY_WINDOW, false, globalScene.uiTheme);
     runInfoText.appendText(
       `[color=${moneyTextColor}]${i18next.t("battleScene:moneyOwned", { formattedMoney: runMoney })}[/color]`,
@@ -770,7 +771,7 @@ export default class RunInfoUiHandler extends UiHandler {
         lineSpacing: lineSpacing,
       });
       pokeInfoText.appendText(
-        `${i18next.t("saveSlotSelectUiHandler:lv")}${Utils.formatFancyLargeNumber(pokemon.level, 1)} - ${pNatureName}`,
+        `${i18next.t("saveSlotSelectUiHandler:lv")}${formatFancyLargeNumber(pokemon.level, 1)} - ${pNatureName}`,
       );
       pokeInfoText.appendText(pAbilityInfo);
       pokeInfoText.appendText(pPassiveInfo);
@@ -780,7 +781,7 @@ export default class RunInfoUiHandler extends UiHandler {
       // Colored Arrows (Red/Blue) are placed by stats that are boosted from natures
       const pokeStatTextContainer = globalScene.add.container(-35, 6);
       const pStats: string[] = [];
-      pokemon.stats.forEach(element => pStats.push(Utils.formatFancyLargeNumber(element, 1)));
+      pokemon.stats.forEach(element => pStats.push(formatFancyLargeNumber(element, 1)));
       for (let i = 0; i < pStats.length; i++) {
         const isMult = getNatureStatMultiplier(pNature, i);
         pStats[i] = isMult < 1 ? pStats[i] + "[color=#40c8f8]↓[/color]" : pStats[i];

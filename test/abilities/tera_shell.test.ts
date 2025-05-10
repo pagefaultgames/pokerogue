@@ -2,7 +2,6 @@ import { BattlerIndex } from "#app/battle";
 import { Abilities } from "#app/enums/abilities";
 import { Moves } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
-import { HitResult } from "#app/field/pokemon";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -24,7 +23,7 @@ describe("Abilities - Tera Shell", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .battleType("single")
+      .battleStyle("single")
       .ability(Abilities.TERA_SHELL)
       .moveset([Moves.SPLASH])
       .enemySpecies(Species.SNORLAX)
@@ -87,13 +86,15 @@ describe("Abilities - Tera Shell", () => {
     await game.classicMode.startBattle([Species.CHARIZARD]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
-    vi.spyOn(playerPokemon, "apply");
+    const spy = vi.spyOn(playerPokemon, "getMoveEffectiveness");
 
     game.move.select(Moves.SPLASH);
 
     await game.phaseInterceptor.to("BerryPhase", false);
-    expect(playerPokemon.apply).toHaveLastReturnedWith(HitResult.EFFECTIVE);
+    expect(spy).toHaveLastReturnedWith(1);
     expect(playerPokemon.hp).toBe(playerPokemon.getMaxHp() - 40);
+
+    spy.mockRestore();
   });
 
   it("should change the effectiveness of all strikes of a multi-strike move", async () => {
@@ -102,7 +103,7 @@ describe("Abilities - Tera Shell", () => {
     await game.classicMode.startBattle([Species.SNORLAX]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
-    vi.spyOn(playerPokemon, "apply");
+    const spy = vi.spyOn(playerPokemon, "getMoveEffectiveness");
 
     game.move.select(Moves.SPLASH);
 
@@ -110,8 +111,9 @@ describe("Abilities - Tera Shell", () => {
     await game.move.forceHit();
     for (let i = 0; i < 2; i++) {
       await game.phaseInterceptor.to("MoveEffectPhase");
-      expect(playerPokemon.apply).toHaveLastReturnedWith(HitResult.NOT_VERY_EFFECTIVE);
+      expect(spy).toHaveLastReturnedWith(0.5);
     }
-    expect(playerPokemon.apply).toHaveReturnedTimes(2);
+    expect(spy).toHaveReturnedTimes(2);
+    spy.mockRestore();
   });
 });

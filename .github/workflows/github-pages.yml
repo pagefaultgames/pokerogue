@@ -24,7 +24,7 @@ jobs:
 
     steps:
       - name: Checkout repository for Typedoc
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           submodules: 'recursive'
           path: pokerogue_docs
@@ -34,14 +34,14 @@ jobs:
           sudo apt update
           sudo apt install -y git openssh-client
 
-      - name: Setup Node 20.13.1
-        uses: actions/setup-node@v1
+      - name: Setup Node 22.14.1
+        uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version-file: "pokerogue_docs/.nvmrc"
 
       - name: Checkout repository for Github Pages
         if: github.event_name == 'push'
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           path: pokerogue_gh
           ref: gh-pages

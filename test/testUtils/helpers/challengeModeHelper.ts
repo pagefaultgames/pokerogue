@@ -3,7 +3,7 @@ import type { Species } from "#app/enums/species";
 import overrides from "#app/overrides";
 import { EncounterPhase } from "#app/phases/encounter-phase";
 import { SelectStarterPhase } from "#app/phases/select-starter-phase";
-import { Mode } from "#app/ui/ui";
+import { UiMode } from "#enums/ui-mode";
 import { generateStarter } from "../gameManagerUtils";
 import { GameManagerHelper } from "./gameManagerHelper";
 import type { Challenge } from "#app/data/challenge";
@@ -41,7 +41,7 @@ export class ChallengeModeHelper extends GameManagerHelper {
       this.game.override.shiny(false).enemyShiny(false);
     }
 
-    this.game.onNextPrompt("TitlePhase", Mode.TITLE, () => {
+    this.game.onNextPrompt("TitlePhase", UiMode.TITLE, () => {
       this.game.scene.gameMode.challenges = this.challenges;
       const starters = generateStarter(this.game.scene, species);
       const selectStarterPhase = new SelectStarterPhase();
@@ -66,9 +66,9 @@ export class ChallengeModeHelper extends GameManagerHelper {
     if (this.game.scene.battleStyle === BattleStyle.SWITCH) {
       this.game.onNextPrompt(
         "CheckSwitchPhase",
-        Mode.CONFIRM,
+        UiMode.CONFIRM,
         () => {
-          this.game.setMode(Mode.MESSAGE);
+          this.game.setMode(UiMode.MESSAGE);
           this.game.endPhase();
         },
         () => this.game.isCurrentPhase(CommandPhase) || this.game.isCurrentPhase(TurnInitPhase),
@@ -76,9 +76,9 @@ export class ChallengeModeHelper extends GameManagerHelper {
 
       this.game.onNextPrompt(
         "CheckSwitchPhase",
-        Mode.CONFIRM,
+        UiMode.CONFIRM,
         () => {
-          this.game.setMode(Mode.MESSAGE);
+          this.game.setMode(UiMode.MESSAGE);
           this.game.endPhase();
         },
         () => this.game.isCurrentPhase(CommandPhase) || this.game.isCurrentPhase(TurnInitPhase),

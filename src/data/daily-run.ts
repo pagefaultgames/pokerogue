@@ -3,7 +3,7 @@ import type { Species } from "#enums/species";
 import { globalScene } from "#app/global-scene";
 import { PlayerPokemon } from "#app/field/pokemon";
 import type { Starter } from "#app/ui/starter-select-ui-handler";
-import * as Utils from "#app/utils";
+import { randSeedGauss, randSeedInt, randSeedItem, getEnumValues } from "#app/utils/common";
 import type { PokemonSpeciesForm } from "#app/data/pokemon-species";
 import PokemonSpecies, { getPokemonSpecies, getPokemonSpeciesForm } from "#app/data/pokemon-species";
 import { speciesStarterCosts } from "#app/data/balance/starters";
@@ -43,8 +43,8 @@ export function getDailyRunStarters(seed: string): Starter[] {
       }
 
       const starterCosts: number[] = [];
-      starterCosts.push(Math.min(Math.round(3.5 + Math.abs(Utils.randSeedGauss(1))), 8));
-      starterCosts.push(Utils.randSeedInt(9 - starterCosts[0], 1));
+      starterCosts.push(Math.min(Math.round(3.5 + Math.abs(randSeedGauss(1))), 8));
+      starterCosts.push(randSeedInt(9 - starterCosts[0], 1));
       starterCosts.push(10 - (starterCosts[0] + starterCosts[1]));
 
       for (let c = 0; c < starterCosts.length; c++) {
@@ -52,7 +52,7 @@ export function getDailyRunStarters(seed: string): Starter[] {
         const costSpecies = Object.keys(speciesStarterCosts)
           .map(s => Number.parseInt(s) as Species)
           .filter(s => speciesStarterCosts[s] === cost);
-        const randPkmSpecies = getPokemonSpecies(Utils.randSeedItem(costSpecies));
+        const randPkmSpecies = getPokemonSpecies(randSeedItem(costSpecies));
         const starterSpecies = getPokemonSpecies(
           randPkmSpecies.getTrainerSpeciesForLevel(startingLevel, true, PartyMemberStrength.STRONGER),
         );
@@ -143,7 +143,7 @@ const dailyBiomeWeights: BiomeWeights = {
 };
 
 export function getDailyStartingBiome(): Biome {
-  const biomes = Utils.getEnumValues(Biome).filter(b => b !== Biome.TOWN && b !== Biome.END);
+  const biomes = getEnumValues(Biome).filter(b => b !== Biome.TOWN && b !== Biome.END);
 
   let totalWeight = 0;
   const biomeThresholds: number[] = [];
@@ -155,7 +155,7 @@ export function getDailyStartingBiome(): Biome {
     biomeThresholds.push(totalWeight);
   }
 
-  const randInt = Utils.randSeedInt(totalWeight);
+  const randInt = randSeedInt(totalWeight);
 
   for (let i = 0; i < biomes.length; i++) {
     if (randInt < biomeThresholds[i]) {
@@ -164,5 +164,5 @@ export function getDailyStartingBiome(): Biome {
   }
 
   // Fallback in case something went wrong
-  return biomes[Utils.randSeedInt(biomes.length)];
+  return biomes[randSeedInt(biomes.length)];
 }

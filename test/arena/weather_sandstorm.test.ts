@@ -25,7 +25,7 @@ describe("Weather - Sandstorm", () => {
     game = new GameManager(phaserGame);
     game.override
       .weather(WeatherType.SANDSTORM)
-      .battleType("single")
+      .battleStyle("single")
       .moveset(Moves.SPLASH)
       .enemyMoveset(Moves.SPLASH)
       .enemySpecies(Species.MAGIKARP);
@@ -60,7 +60,7 @@ describe("Weather - Sandstorm", () => {
 
   it("does not inflict damage to Rock, Ground and Steel type Pokemon", async () => {
     game.override
-      .battleType("double")
+      .battleStyle("double")
       .enemySpecies(Species.SANDSHREW)
       .ability(Abilities.BALL_FETCH)
       .enemyAbility(Abilities.BALL_FETCH);
