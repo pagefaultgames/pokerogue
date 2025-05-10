@@ -7895,7 +7895,7 @@ export class ForceLastAttr extends MoveEffectAttr {
   override apply(user: Pokemon, target: Pokemon, _move: Move, _args: any[]): boolean {
     globalScene.queueMessage(i18next.t("moveTriggers:forceLast", { targetPokemonName: getPokemonNameWithAffix(target) }));
 
-    // TODO: Refactor this to be more readable
+    // TODO: Refactor this to be more readable and less janky
     const targetMovePhase = globalScene.findPhase<MovePhase>((phase) => phase.pokemon === target);
     if (targetMovePhase && !targetMovePhase.isForcedLast() && globalScene.tryRemovePhase((phase: MovePhase) => phase.pokemon === target)) {
       // Finding the phase to insert the move in front of -

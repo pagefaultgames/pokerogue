@@ -5161,7 +5161,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * - Non-virtual ({@linkcode MoveUseType | useType} < {@linkcode MoveUseType.INDIRECT})
    * @param ignoreStruggle - Whether to additionally ignore {@linkcode Moves.STRUGGLE}; default `false`
    * @param ignoreFollowUp - Whether to ignore moves with a use type of {@linkcode MoveUseType.FOLLOW_UP}
-   * (Copycat, Mirror Move, etc.); default `true`
+   * (Copycat, Mirror Move, etc.); default `true`.
    * @returns The last move this Pokemon has used satisfying the aforementioned conditions,
    * or `undefined` if no applicable moves have been used since switching in.
    */
@@ -7250,12 +7250,13 @@ export class EnemyPokemon extends Pokemon {
       const moveIndex = this.getMoveset().findIndex(m => m.moveId === queuedMove.move);
       // If the queued move was called indirectly, ignore all PP and usability checks.
       // Otherwise, ensure that the move being used is actually usable
+      // TODO: Virtual moves shouldn't use the move queue
       if (
         queuedMove.useType >= MoveUseType.INDIRECT ||
         (moveIndex > -1 &&
         this.getMoveset()[moveIndex].isUsable(
           this,
-          queuedMove.useType >= MoveUseType.IGNORE_PP )
+          queuedMove.useType >= MoveUseType.IGNORE_PP)
         )
       ) {
       return queuedMove;

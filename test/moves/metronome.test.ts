@@ -3,8 +3,10 @@ import { RechargingTag, SemiInvulnerableTag } from "#app/data/battler-tags";
 import { allMoves, RandomMoveAttr } from "#app/data/moves/move";
 import { Abilities } from "#app/enums/abilities";
 import { Stat } from "#app/enums/stat";
+import { MoveResult } from "#app/field/pokemon";
 import { CommandPhase } from "#app/phases/command-phase";
 import { BattlerTagType } from "#enums/battler-tag-type";
+import { MoveUseType } from "#enums/move-use-type";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -79,7 +81,7 @@ describe("Moves - Metronome", () => {
     expect(player.getTag(RechargingTag)).toBeTruthy();
   });
 
-  it("should charge when calling charging moves while still maintaining follow-up status", async () => {
+  it("should charge for charging moves while still maintaining follow-up status", async () => {
     game.override.moveset([]).enemyMoveset(Moves.SPITE);
     vi.spyOn(randomMoveAttr, "getMoveOverride").mockReturnValue(Moves.SOLAR_BEAM);
     await game.classicMode.startBattle([Species.REGIELEKI]);
@@ -107,6 +109,11 @@ describe("Moves - Metronome", () => {
     const turn2PpUsed = metronomeMove.ppUsed - turn1PpUsed;
     expect(turn2PpUsed).toBeGreaterThan(1);
     expect(solarBeamMove.ppUsed).toBe(0);
+    expect(player.getLastXMoves()[0]).toMatchObject({
+      move: Moves.SOLAR_BEAM,
+      result: MoveResult.SUCCESS,
+      useType: MoveUseType.FOLLOW_UP,
+    });
   });
 
   it("should only target ally for Aromatic Mist", async () => {

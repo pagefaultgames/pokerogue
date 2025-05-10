@@ -123,7 +123,7 @@ export class MovePhase extends BattlePhase {
     return (
       this.pokemon.isActive(true) &&
       this.move.isUsable(this.pokemon, this.useType >= MoveUseType.IGNORE_PP, ignoreDisableTags) &&
-      !!this.targets.length
+      this.targets.length > 0
     );
   }
 

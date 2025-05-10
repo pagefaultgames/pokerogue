@@ -311,10 +311,9 @@ export class DisabledTag extends MoveRestrictionBattlerTag {
    * and showing a message.
    */
   override onAdd(pokemon: Pokemon): void {
-    // Disable fails against struggle or an empty move history, but we still need the nullish check
-    // for cursed body
+    // Disable fails against struggle or an empty move history
     const move = pokemon.getLastNonVirtualMove();
-    if (isNullOrUndefined(move)) {
+    if (isNullOrUndefined(move) || move.move === Moves.STRUGGLE) {
       return;
     }
 
@@ -368,7 +367,6 @@ export class DisabledTag extends MoveRestrictionBattlerTag {
 
 /**
  * Tag used by Gorilla Tactics to restrict the user to using only one move.
- * @extends MoveRestrictionBattlerTag
  */
 export class GorillaTacticsTag extends MoveRestrictionBattlerTag {
   private moveId = Moves.NONE;
@@ -383,27 +381,27 @@ export class GorillaTacticsTag extends MoveRestrictionBattlerTag {
   }
 
   /**
-   * @override
-   * @param {Pokemon} pokemon the {@linkcode Pokemon} to check if the tag can be added
-   * @returns `true` if the pokemon has a valid move and no existing {@linkcode GorillaTacticsTag}; `false` otherwise
+   * Ensures that move history exists on {@linkcode Pokemon} and has a valid move to lock into.
+   * @param pokemon - the {@linkcode Pokemon} to add the tag to
+   * @returns `true` if the tag can be added
    */
   override canAdd(pokemon: Pokemon): boolean {
-    return !isNullOrUndefined(pokemon.getLastNonVirtualMove(true)) && !pokemon.getTag(GorillaTacticsTag);
+    // Choice items ignore struggle
+    // TODO: Check if struggle also gets the 50% power boost
+    const lastSelectedMove = pokemon.getLastNonVirtualMove(false);
+    return (
+      (isNullOrUndefined(lastSelectedMove) || lastSelectedMove.move === Moves.STRUGGLE) &&
+      !pokemon.getTag(GorillaTacticsTag)
+    );
   }
 
   /**
-   * Ensures that move history exists on {@linkcode Pokemon} and has a valid move.
-   * If so, sets the {@linkcode moveId} and increases the user's Attack by 50%.
-   * @override
-   * @param {Pokemon} pokemon the {@linkcode Pokemon} to add the tag to
+   * Sets this tag's {@linkcode moveId} and increases the user's Attack by 50%.
+   * @param pokemon - The {@linkcode Pokemon} to add the tag to
    */
   override onAdd(pokemon: Pokemon): void {
-    const lastValidMove = pokemon.getLastNonVirtualMove(true); // TODO: Check if should work with struggle or not
-    if (isNullOrUndefined(lastValidMove)) {
-      return;
-    }
-
-    this.moveId = lastValidMove.move;
+    super.onAdd(pokemon);
+    this.moveId = pokemon.getLastNonVirtualMove(false)!.move; // `canAdd` returns false if no move
     pokemon.setStat(Stat.ATK, pokemon.getStat(Stat.ATK, false) * 1.5, false);
   }
 
@@ -418,11 +416,10 @@ export class GorillaTacticsTag extends MoveRestrictionBattlerTag {
   }
 
   /**
-   *
    * @override
-   * @param {Pokemon} pokemon n/a
-   * @param {Moves} _move {@linkcode Moves} ID of the move being denied
-   * @returns {string} text to display when the move is denied
+   * @param pokemon - The {@linkcode Pokemon} attempting to select a move
+   * @param _move - Unused
+   * @returns The text to display when the move is rendered unselectable
    */
   override selectionDeniedText(pokemon: Pokemon, _move: Moves): string {
     return i18next.t("battle:canOnlyUseMove", {
