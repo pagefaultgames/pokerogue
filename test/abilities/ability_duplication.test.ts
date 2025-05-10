@@ -24,7 +24,7 @@ describe("Ability Duplication", () => {
     game = new GameManager(phaserGame);
     game.override
       .moveset([Moves.SPLASH])
-      .battleType("single")
+      .battleStyle("single")
       .ability(Abilities.HUGE_POWER)
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH);

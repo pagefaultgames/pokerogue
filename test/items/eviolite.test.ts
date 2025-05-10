@@ -1,5 +1,5 @@
 import { StatBoosterModifier } from "#app/modifier/modifier";
-import { NumberHolder, randItem } from "#app/utils";
+import { NumberHolder, randItem } from "#app/utils/common";
 import { Species } from "#enums/species";
 import { Stat } from "#enums/stat";
 import GameManager from "#test/testUtils/gameManager";
@@ -22,7 +22,7 @@ describe("Items - Eviolite", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
 
-    game.override.battleType("single").startingHeldItems([{ name: "EVIOLITE" }]);
+    game.override.battleStyle("single").startingHeldItems([{ name: "EVIOLITE" }]);
   });
 
   it("should provide 50% boost to DEF and SPDEF for unevolved, unfused pokemon", async () => {

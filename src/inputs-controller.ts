@@ -1,12 +1,12 @@
 import Phaser from "phaser";
-import * as Utils from "./utils";
-import { deepCopy } from "./utils";
+import { getEnumValues } from "#app/utils/common";
+import { deepCopy } from "#app/utils/data";
 import pad_generic from "./configs/inputs/pad_generic";
 import pad_unlicensedSNES from "./configs/inputs/pad_unlicensedSNES";
 import pad_xbox360 from "./configs/inputs/pad_xbox360";
 import pad_dualshock from "./configs/inputs/pad_dualshock";
 import pad_procon from "./configs/inputs/pad_procon";
-import { Mode } from "./ui/ui";
+import { UiMode } from "#enums/ui-mode";
 import type SettingsGamepadUiHandler from "./ui/settings/settings-gamepad-ui-handler";
 import type SettingsKeyboardUiHandler from "./ui/settings/settings-keyboard-ui-handler";
 import cfg_keyboard_qwerty from "./configs/inputs/cfg_keyboard_qwerty";
@@ -102,7 +102,7 @@ export class InputsController {
       [Device.KEYBOARD]: "default",
     };
 
-    for (const b of Utils.getEnumValues(Button)) {
+    for (const b of getEnumValues(Button)) {
       this.interactions[b] = {
         pressTime: false,
         isPressed: false,
@@ -236,7 +236,7 @@ export class InputsController {
     if (gamepadName) {
       this.selectedDevice[Device.GAMEPAD] = gamepadName.toLowerCase();
     }
-    const handler = globalScene.ui?.handlers[Mode.SETTINGS_GAMEPAD] as SettingsGamepadUiHandler;
+    const handler = globalScene.ui?.handlers[UiMode.SETTINGS_GAMEPAD] as SettingsGamepadUiHandler;
     handler?.updateChosenGamepadDisplay();
   }
 
@@ -249,7 +249,7 @@ export class InputsController {
     if (layoutKeyboard) {
       this.selectedDevice[Device.KEYBOARD] = layoutKeyboard.toLowerCase();
     }
-    const handler = globalScene.ui?.handlers[Mode.SETTINGS_KEYBOARD] as SettingsKeyboardUiHandler;
+    const handler = globalScene.ui?.handlers[UiMode.SETTINGS_KEYBOARD] as SettingsKeyboardUiHandler;
     handler?.updateChosenKeyboardDisplay();
   }
 
@@ -297,7 +297,7 @@ export class InputsController {
       globalScene.gameData?.saveMappingConfigs(gamepadID, this.configs[gamepadID]);
     }
     this.lastSource = "gamepad";
-    const handler = globalScene.ui?.handlers[Mode.SETTINGS_GAMEPAD] as SettingsGamepadUiHandler;
+    const handler = globalScene.ui?.handlers[UiMode.SETTINGS_GAMEPAD] as SettingsGamepadUiHandler;
     handler?.updateChosenGamepadDisplay();
   }
 
@@ -407,7 +407,7 @@ export class InputsController {
     this.lastSource = "gamepad";
     if (
       !this.selectedDevice[Device.GAMEPAD] ||
-      (globalScene.ui.getMode() !== Mode.GAMEPAD_BINDING &&
+      (globalScene.ui.getMode() !== UiMode.GAMEPAD_BINDING &&
         this.selectedDevice[Device.GAMEPAD] !== pad.id.toLowerCase())
     ) {
       this.setChosenGamepad(pad.id);

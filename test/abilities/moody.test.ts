@@ -24,7 +24,7 @@ describe("Abilities - Moody", () => {
     game = new GameManager(phaserGame);
 
     game.override
-      .battleType("single")
+      .battleStyle("single")
       .enemySpecies(Species.RATTATA)
       .enemyAbility(Abilities.BALL_FETCH)
       .ability(Abilities.MOODY)

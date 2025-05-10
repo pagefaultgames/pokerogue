@@ -1,5 +1,5 @@
 import { BattlerIndex } from "#app/battle";
-import { allAbilities } from "#app/data/ability";
+import { allAbilities } from "#app/data/data-lists";
 import { ArenaTagSide } from "#app/data/arena-tag";
 import { ArenaTagType } from "#app/enums/arena-tag-type";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
@@ -32,7 +32,7 @@ describe("Abilities - Good As Gold", () => {
     game.override
       .moveset([Moves.SPLASH])
       .ability(Abilities.GOOD_AS_GOLD)
-      .battleType("single")
+      .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)
@@ -49,7 +49,7 @@ describe("Abilities - Good As Gold", () => {
 
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(player.battleData.abilitiesApplied[0]).toBe(Abilities.GOOD_AS_GOLD);
+    expect(player.waveData.abilitiesApplied).toContain(Abilities.GOOD_AS_GOLD);
     expect(player.getStatStage(Stat.ATK)).toBe(0);
   });
 
@@ -63,7 +63,7 @@ describe("Abilities - Good As Gold", () => {
   });
 
   it("should not block any status moves that target the field, one side, or all pokemon", async () => {
-    game.override.battleType("double");
+    game.override.battleStyle("double");
     game.override.enemyMoveset([Moves.STEALTH_ROCK, Moves.HAZE]);
     game.override.moveset([Moves.SWORDS_DANCE, Moves.SAFEGUARD]);
     await game.classicMode.startBattle([Species.MAGIKARP, Species.FEEBAS]);
@@ -85,7 +85,7 @@ describe("Abilities - Good As Gold", () => {
   });
 
   it("should not block field targeted effects in singles", async () => {
-    game.override.battleType("single");
+    game.override.battleStyle("single");
     game.override.enemyMoveset([Moves.SPIKES]);
     await game.classicMode.startBattle([Species.MAGIKARP]);
 
@@ -96,7 +96,7 @@ describe("Abilities - Good As Gold", () => {
   });
 
   it("should block the ally's helping hand", async () => {
-    game.override.battleType("double");
+    game.override.battleStyle("double");
     game.override.moveset([Moves.HELPING_HAND, Moves.TACKLE]);
     await game.classicMode.startBattle([Species.MAGIKARP, Species.FEEBAS]);
 
@@ -108,7 +108,7 @@ describe("Abilities - Good As Gold", () => {
   });
 
   it("should block the ally's heal bell, but only if the good as gold user is on the field", async () => {
-    game.override.battleType("double");
+    game.override.battleStyle("double");
     game.override.moveset([Moves.HEAL_BELL, Moves.SPLASH]);
     game.override.statusEffect(StatusEffect.BURN);
     await game.classicMode.startBattle([Species.MAGIKARP, Species.FEEBAS, Species.ABRA]);
@@ -130,7 +130,7 @@ describe("Abilities - Good As Gold", () => {
   });
 
   it("should not block field targeted effects like rain dance", async () => {
-    game.override.battleType("single");
+    game.override.battleStyle("single");
     game.override.enemyMoveset([Moves.RAIN_DANCE]);
     game.override.weather(WeatherType.NONE);
     await game.classicMode.startBattle([Species.MAGIKARP]);

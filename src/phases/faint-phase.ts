@@ -1,5 +1,5 @@
 import type { BattlerIndex } from "#app/battle";
-import { BattleType } from "#app/battle";
+import { BattleType } from "#enums/battle-type";
 import { globalScene } from "#app/global-scene";
 import {
   applyPostFaintAbAttrs,
@@ -8,8 +8,7 @@ import {
   PostFaintAbAttr,
   PostKnockOutAbAttr,
   PostVictoryAbAttr,
-} from "#app/data/ability";
-import type { DestinyBondTag, GrudgeTag } from "#app/data/battler-tags";
+} from "#app/data/abilities/ability";
 import { BattlerTagLapseType } from "#app/data/battler-tags";
 import { battleSpecDialogue } from "#app/data/dialogue";
 import { allMoves, PostVictoryStatStageChangeAttr } from "#app/data/moves/move";
@@ -30,42 +29,25 @@ import { SwitchPhase } from "./switch-phase";
 import { SwitchSummonPhase } from "./switch-summon-phase";
 import { ToggleDoublePositionPhase } from "./toggle-double-position-phase";
 import { VictoryPhase } from "./victory-phase";
-import { isNullOrUndefined } from "#app/utils";
+import { isNullOrUndefined } from "#app/utils/common";
 import { FRIENDSHIP_LOSS_FROM_FAINT } from "#app/data/balance/starters";
+import { BattlerTagType } from "#enums/battler-tag-type";
 
 export class FaintPhase extends PokemonPhase {
   /**
-   * Whether or not enduring (for this phase's purposes, Reviver Seed) should be prevented
+   * Whether or not instant revive should be prevented
    */
-  private preventEndure: boolean;
-
-  /**
-   * Destiny Bond tag belonging to the currently fainting Pokemon, if applicable
-   */
-  private destinyTag?: DestinyBondTag | null;
-
-  /**
-   * Grudge tag belonging to the currently fainting Pokemon, if applicable
-   */
-  private grudgeTag?: GrudgeTag | null;
+  private preventInstantRevive: boolean;
 
   /**
    * The source Pokemon that dealt fatal damage
    */
   private source?: Pokemon;
 
-  constructor(
-    battlerIndex: BattlerIndex,
-    preventEndure = false,
-    destinyTag?: DestinyBondTag | null,
-    grudgeTag?: GrudgeTag | null,
-    source?: Pokemon,
-  ) {
+  constructor(battlerIndex: BattlerIndex, preventInstantRevive = false, source?: Pokemon) {
     super(battlerIndex);
 
-    this.preventEndure = preventEndure;
-    this.destinyTag = destinyTag;
-    this.grudgeTag = grudgeTag;
+    this.preventInstantRevive = preventInstantRevive;
     this.source = source;
   }
 
@@ -74,15 +56,14 @@ export class FaintPhase extends PokemonPhase {
 
     const faintPokemon = this.getPokemon();
 
-    if (!isNullOrUndefined(this.destinyTag) && !isNullOrUndefined(this.source)) {
-      this.destinyTag.lapse(this.source, BattlerTagLapseType.CUSTOM);
+    if (this.source) {
+      faintPokemon.getTag(BattlerTagType.DESTINY_BOND)?.lapse(this.source, BattlerTagLapseType.CUSTOM);
+      faintPokemon.getTag(BattlerTagType.GRUDGE)?.lapse(faintPokemon, BattlerTagLapseType.CUSTOM, this.source);
     }
 
-    if (!isNullOrUndefined(this.grudgeTag) && !isNullOrUndefined(this.source)) {
-      this.grudgeTag.lapse(faintPokemon, BattlerTagLapseType.CUSTOM, this.source);
-    }
+    faintPokemon.resetSummonData();
 
-    if (!this.preventEndure) {
+    if (!this.preventInstantRevive) {
       const instantReviveModifier = globalScene.applyModifier(
         PokemonInstantReviveModifier,
         this.player,
@@ -137,7 +118,7 @@ export class FaintPhase extends PokemonPhase {
 
     pokemon.resetTera();
 
-    if (pokemon.turnData?.attacksReceived?.length) {
+    if (pokemon.turnData.attacksReceived?.length) {
       const lastAttack = pokemon.turnData.attacksReceived[0];
       applyPostFaintAbAttrs(
         PostFaintAbAttr,
@@ -155,7 +136,7 @@ export class FaintPhase extends PokemonPhase {
     for (const p of alivePlayField) {
       applyPostKnockOutAbAttrs(PostKnockOutAbAttr, p, pokemon);
     }
-    if (pokemon.turnData?.attacksReceived?.length) {
+    if (pokemon.turnData.attacksReceived?.length) {
       const defeatSource = this.source;
 
       if (defeatSource?.isOnField()) {

@@ -1,24 +1,24 @@
 import { globalScene } from "#app/global-scene";
 import { Phase } from "#app/phase";
-import { Mode } from "#app/ui/ui";
-import * as Utils from "#app/utils";
+import { UiMode } from "#enums/ui-mode";
+import { fixedInt } from "#app/utils/common";
 
 export class ReloadSessionPhase extends Phase {
-  private systemDataStr: string | null;
+  private systemDataStr?: string;
 
   constructor(systemDataStr?: string) {
     super();
 
-    this.systemDataStr = systemDataStr ?? null;
+    this.systemDataStr = systemDataStr;
   }
 
   start(): void {
-    globalScene.ui.setMode(Mode.SESSION_RELOAD);
+    globalScene.ui.setMode(UiMode.SESSION_RELOAD);
 
     let delayElapsed = false;
     let loaded = false;
 
-    globalScene.time.delayedCall(Utils.fixedInt(1500), () => {
+    globalScene.time.delayedCall(fixedInt(1500), () => {
       if (loaded) {
         this.end();
       } else {

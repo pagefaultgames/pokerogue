@@ -10,14 +10,14 @@ import {
   ReflectStatStageChangeAbAttr,
   StatStageChangeCopyAbAttr,
   StatStageChangeMultiplierAbAttr,
-} from "#app/data/ability";
+} from "#app/data/abilities/ability";
 import { ArenaTagSide, MistTag } from "#app/data/arena-tag";
 import type { ArenaTag } from "#app/data/arena-tag";
 import type Pokemon from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { ResetNegativeStatStageModifier } from "#app/modifier/modifier";
 import { handleTutorial, Tutorial } from "#app/tutorial";
-import { NumberHolder, BooleanHolder, isNullOrUndefined } from "#app/utils";
+import { NumberHolder, BooleanHolder, isNullOrUndefined } from "#app/utils/common";
 import i18next from "i18next";
 import { PokemonPhase } from "./pokemon-phase";
 import { Stat, type BattleStat, getStatKey, getStatStageChangeDescriptionKey } from "#enums/stat";
@@ -217,16 +217,8 @@ export class StatStageChangePhase extends PokemonPhase {
 
       for (const s of filteredStats) {
         if (stages.value > 0 && pokemon.getStatStage(s) < 6) {
-          if (!pokemon.turnData) {
-            // Temporary fix for missing turn data struct on turn 1
-            pokemon.resetTurnData();
-          }
           pokemon.turnData.statStagesIncreased = true;
         } else if (stages.value < 0 && pokemon.getStatStage(s) > -6) {
-          if (!pokemon.turnData) {
-            // Temporary fix for missing turn data struct on turn 1
-            pokemon.resetTurnData();
-          }
           pokemon.turnData.statStagesDecreased = true;
         }
 

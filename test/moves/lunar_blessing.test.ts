@@ -22,7 +22,7 @@ describe("Moves - Lunar Blessing", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
 
-    game.override.battleType("double");
+    game.override.battleStyle("double");
 
     game.override.enemySpecies(Species.SHUCKLE);
     game.override.enemyMoveset(Moves.SPLASH);

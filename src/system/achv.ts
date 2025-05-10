@@ -2,7 +2,7 @@ import type { Modifier } from "typescript";
 import { TurnHeldItemTransferModifier } from "../modifier/modifier";
 import { pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
 import i18next from "i18next";
-import * as Utils from "../utils";
+import { NumberHolder } from "#app/utils/common";
 import { PlayerGender } from "#enums/player-gender";
 import type { Challenge } from "#app/data/challenge";
 import {
@@ -138,7 +138,7 @@ export class DamageAchv extends Achv {
       "",
       iconImage,
       score,
-      (args: any[]) => (args[0] instanceof Utils.NumberHolder ? args[0].value : args[0]) >= this.damageAmount,
+      (args: any[]) => (args[0] instanceof NumberHolder ? args[0].value : args[0]) >= this.damageAmount,
     );
     this.damageAmount = damageAmount;
   }
@@ -154,7 +154,7 @@ export class HealAchv extends Achv {
       "",
       iconImage,
       score,
-      (args: any[]) => (args[0] instanceof Utils.NumberHolder ? args[0].value : args[0]) >= this.healAmount,
+      (args: any[]) => (args[0] instanceof NumberHolder ? args[0].value : args[0]) >= this.healAmount,
     );
     this.healAmount = healAmount;
   }
@@ -170,7 +170,7 @@ export class LevelAchv extends Achv {
       "",
       iconImage,
       score,
-      (args: any[]) => (args[0] instanceof Utils.NumberHolder ? args[0].value : args[0]) >= this.level,
+      (args: any[]) => (args[0] instanceof NumberHolder ? args[0].value : args[0]) >= this.level,
     );
     this.level = level;
   }
