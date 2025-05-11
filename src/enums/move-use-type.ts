@@ -15,22 +15,23 @@ export enum MoveUseType {
   NORMAL,
 
   /**
-  * Identical to {@linkcode MoveUseType.NORMAL}, except the move **does not consume PP** on use
-  * and **will not fail** if none is left before its execution.
-  * PP can still be reduced by other effects (such as Spite or Eerie Spell).
-  */
+   * This move was called by an effect that ignores PP, such as a consecutively executed move.
+   * Identical to {@linkcode MoveUseType.NORMAL}, except the move **does not consume PP** on use
+   * and **will not fail** if none is left before its execution.
+   * PP can still be reduced by other effects (such as Spite or Eerie Spell).
+   */
   IGNORE_PP,
 
   /**
-    * This move was called indirectly by another effect other than Instruct or the user's previous move.
-    * Currently only used by {@linkcode PostDancingMoveAbAttr | Dancer}.
+   * This move was called indirectly by an out-of-turn effect other than Instruct or the user's previous move.
+   * Currently only used by {@linkcode PostDancingMoveAbAttr | Dancer}.
 
-    * Indirect moves ignore PP checks similar to {@linkcode MoveUseType.IGNORE_PP}, but additionally **cannot be copied**
-    * by all move-copying effects (barring reflection).
-    * They are also **"skipped over" by most moveset and move history-related effects** (PP reduction, Last Resort, etc).
+   * Indirect moves ignore PP checks similar to {@linkcode MoveUseType.IGNORE_PP}, but additionally **cannot be copied**
+   * by all move-copying effects (barring reflection).
+   * They are also **"skipped over" by most moveset and move history-related effects** (PP reduction, Last Resort, etc).
 
-    * They still respect the user's volatile status conditions and confusion (though will uniquely _cure freeze and sleep before use_).
-    */
+   * They still respect the user's volatile status conditions and confusion (though will uniquely _cure freeze and sleep before use_).
+   */
   INDIRECT,
 
   /**
@@ -56,3 +57,9 @@ export enum MoveUseType {
    */
   REFLECTED
 }
+
+/**
+ * Comment block to prevent auto-import removal.
+ * {@linkcode BattlerTagLapseType}
+ * {@linkcode PostDancingMoveAbAttr}
+ */

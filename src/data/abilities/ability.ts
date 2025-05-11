@@ -4454,10 +4454,10 @@ export class PostDancingMoveAbAttr extends PostMoveUsedAbAttr {
        // TODO: fix in main dancer PR (currently keeping this purely semantic rather than actually fixing bug)
       if (move.getMove() instanceof AttackMove || move.getMove() instanceof StatusMove) {
         const target = this.getTarget(dancer, source, targets);
-        globalScene.unshiftPhase(new MovePhase(dancer, target, move, MoveUseType.FOLLOW_UP));
+        globalScene.unshiftPhase(new MovePhase(dancer, target, move, MoveUseType.INDIRECT));
       } else if (move.getMove() instanceof SelfStatusMove) {
         // If the move is a SelfStatusMove (ie. Swords Dance) the Dancer should replicate it on itself
-        globalScene.unshiftPhase(new MovePhase(dancer, [ dancer.getBattlerIndex() ], move, MoveUseType.FOLLOW_UP))
+        globalScene.unshiftPhase(new MovePhase(dancer, [ dancer.getBattlerIndex() ], move, MoveUseType.INDIRECT))
       }
     }
   }

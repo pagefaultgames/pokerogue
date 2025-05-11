@@ -1,4 +1,5 @@
 import { BattlerIndex } from "#app/battle";
+import { RandomMoveAttr } from "#app/data/moves/move";
 import type Pokemon from "#app/field/pokemon";
 import { MoveResult } from "#app/field/pokemon";
 import type { MovePhase } from "#app/phases/move-phase";
@@ -8,7 +9,7 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Moves - Instruct", () => {
   let phaserGame: Phaser.Game;
@@ -139,6 +140,22 @@ describe("Moves - Instruct", () => {
     expect(game.scene.getPlayerPokemon()!.turnData.attacksReceived.length).toBe(3);
   });
 
+  it("should fail on metronomed moves, even if also in moveset", async () => {
+    game.override.moveset(Moves.INSTRUCT);
+    vi.spyOn(RandomMoveAttr.prototype, "getMoveOverride").mockReturnValue(Moves.ABSORB);
+    await game.classicMode.startBattle([Species.AMOONGUSS]);
+
+    const enemy = game.scene.getEnemyPokemon()!;
+    game.move.changeMoveset(enemy, [Moves.METRONOME, Moves.ABSORB]);
+
+    game.move.select(Moves.INSTRUCT);
+    await game.forceEnemyMove(Moves.METRONOME);
+    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    await game.phaseInterceptor.to("BerryPhase");
+
+    expect(game.scene.getPlayerPokemon()!.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+  });
+
   it("should respect enemy's status condition", async () => {
     game.override.moveset([Moves.INSTRUCT, Moves.THUNDER_WAVE]).enemyMoveset(Moves.SONIC_BOOM);
     await game.classicMode.startBattle([Species.AMOONGUSS]);
@@ -249,15 +266,9 @@ describe("Moves - Instruct", () => {
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER_2, BattlerIndex.PLAYER, BattlerIndex.ENEMY_2]);
     await game.phaseInterceptor.to("TurnEndPhase", false);
 
-    expect(game.scene.getPlayerField()[0].getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
-    const enemyMove = game.scene.getEnemyField()[0]!.getLastXMoves()[0];
-    expect(enemyMove.result).toBe(MoveResult.FAIL);
-    expect(
-      game.scene
-        .getEnemyField()[0]
-        .getMoveset()
-        .find(m => m?.moveId === Moves.SONIC_BOOM)?.ppUsed,
-    ).toBe(1);
+    expect(game.scene.getPlayerPokemon()!.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
+    expect(enemy1.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+    expect(enemy1.getMoveset().find(m => m.moveId === Moves.SONIC_BOOM)?.ppUsed).toBe(1);
   });
 
   it("should not repeat enemy's move through protect", async () => {

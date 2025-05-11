@@ -58,9 +58,11 @@ describe("Moves - Dig", () => {
   });
 
   it("should deduct PP only on the 2nd turn of the move", async () => {
+    game.override.moveset([]);
     await game.classicMode.startBattle([Species.MAGIKARP]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
+    game.move.changeMoveset(playerPokemon, Moves.DIG);
 
     game.move.select(Moves.DIG);
     await game.phaseInterceptor.to("TurnEndPhase");

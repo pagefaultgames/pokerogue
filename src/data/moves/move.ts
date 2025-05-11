@@ -5419,9 +5419,13 @@ export class FrenzyAttr extends MoveEffectAttr {
     // TODO: Disable if used via dancer
     // TODO: Add support for moves that don't add the frenzy tag (Uproar, Rollout, etc.)
 
-    if (!user.getTag(BattlerTagType.FRENZY) && !user.getMoveQueue().length) {
+    // If frenzy is not active, add a tag and push 1-2 extra turns of attacks to the user's move queue.
+    // Otherwise, tick down the existing tag.
+    if (!user.getTag(BattlerTagType.FRENZY) && user.getMoveQueue().length === 0) {
       const turnCount = user.randSeedIntRange(1, 2);
-      new Array(turnCount).fill(null).map(() => user.getMoveQueue().push({ move: move.id, targets: [ target.getBattlerIndex() ], ignorePP: true }));
+      for (let x = 0; x < turnCount; x++) {
+        user.pushMoveQueue({move: move.id, targets: [target.getBattlerIndex()], useType: MoveUseType.IGNORE_PP})
+      }
       user.addTag(BattlerTagType.FRENZY, turnCount, move.id, user.id);
     } else {
       applyMoveAttrs(AddBattlerTagAttr, user, target, move, args);
@@ -6746,7 +6750,9 @@ class CallMoveAttr extends OverrideMoveEffectAttr {
     // If not, target the Mirror Move recipient or else a random enemy in our target list
     const targets = moveTargets.multiple || moveTargets.targets.length === 1
       ? moveTargets.targets
-      : [ this.hasTarget ? target.getBattlerIndex() : moveTargets.targets[user.randSeedInt(moveTargets.targets.length)] ]; // account for Mirror Move having a target already
+      : [this.hasTarget
+        ? target.getBattlerIndex()
+        : moveTargets.targets[user.randSeedInt(moveTargets.targets.length)]];
     globalScene.unshiftPhase(new LoadMoveAnimPhase(move.id));
     globalScene.unshiftPhase(new MovePhase(user, targets, new PokemonMove(move.id), MoveUseType.FOLLOW_UP));
     return true;
@@ -7083,6 +7089,7 @@ export class RepeatMoveAttr extends MoveEffectAttr {
         Moves.PETAL_DANCE,
         Moves.THRASH,
         Moves.ICE_BALL,
+        Moves.UPROAR,
         // Multi-turn Moves
         Moves.BIDE,
         Moves.SHELL_TRAP,
@@ -7120,8 +7127,17 @@ export class RepeatMoveAttr extends MoveEffectAttr {
         Moves.SOLAR_BEAM,
         Moves.SOLAR_BLADE,
         Moves.METEOR_BEAM,
-        // Other moves
+        // Copying/Move-Calling moves
+        Moves.ASSIST,
+        Moves.COPYCAT,
+        Moves.ME_FIRST,
+        Moves.METRONOME,
+        Moves.MIRROR_MOVE,
+        Moves.NATURE_POWER,
+        Moves.SLEEP_TALK,
+        Moves.SNATCH,
         Moves.INSTRUCT,
+        // Misc moves
         Moves.KINGS_SHIELD,
         Moves.SKETCH,
         Moves.TRANSFORM,
@@ -7132,7 +7148,8 @@ export class RepeatMoveAttr extends MoveEffectAttr {
 
       if (!lastMove?.move // no move to instruct
         || !movesetMove // called move not in target's moveset (forgetting the move, etc.)
-        || !movesetMove.isUsable(target) // Move unusable due to PP shortage or similar
+        || movesetMove.ppUsed === movesetMove.getMovePp() // move out of pp
+        || allMoves[lastMove.move].isChargingMove() // called move is a charging/recharging move
         || uninstructableMoves.includes(lastMove.move)) { // called move is in the banlist
         return false;
       }

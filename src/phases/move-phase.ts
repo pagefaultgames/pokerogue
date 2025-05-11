@@ -150,7 +150,8 @@ export class MovePhase extends BattlePhase {
 
     console.log(Moves[this.move.moveId], MoveUseType[this.useType]);
 
-    // Check if move is unusable (e.g. because it's out of PP due to a mid-turn Spite).
+    // Check if move is unusable (e.g. running out of PP due to a mid-turn Spite
+    // or the user no longer being on field).
     if (!this.canMove(true)) {
       if (this.pokemon.isActive(true)) {
         this.fail();
@@ -241,6 +242,7 @@ export class MovePhase extends BattlePhase {
       return;
     }
 
+    this.pokemon.status.incrementTurn();
     /** Whether to prevent us from using the move */
     let activated = false;
     /** Whether to cure the status */

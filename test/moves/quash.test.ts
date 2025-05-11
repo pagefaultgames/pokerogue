@@ -72,7 +72,7 @@ describe("Moves - Quash", () => {
 
     game.move.select(Moves.SPLASH, BattlerIndex.PLAYER);
     game.move.select(Moves.OUTRAGE, BattlerIndex.PLAYER_2);
-    await game.toNextTurn();
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     const outrageMove = rattata.getMoveset().find(m => m.moveId === Moves.OUTRAGE);
     expect(outrageMove?.ppUsed).toBe(1);

@@ -86,6 +86,8 @@ export class MoveChargePhase extends PokemonPhase {
       result: MoveResult.OTHER,
       useType: this.useType,
     });
+
+    super.end();
   }
 
   public getUserPokemon(): Pokemon {
