@@ -26,7 +26,7 @@ describe("Abilities - Aura Break", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .moveset([Moves.MOONBLAST, Moves.DARK_PULSE, Moves.MOONBLAST, Moves.DARK_PULSE])
+      .moveset([Moves.MOONBLAST, Moves.DARK_PULSE])
       .enemyMoveset(Moves.SPLASH)
       .enemyAbility(Abilities.AURA_BREAK)
       .enemySpecies(Species.SHUCKLE);
