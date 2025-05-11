@@ -120,7 +120,7 @@ describe("Moves - Powder", () => {
   });
 
   it("should not prevent the target from thawing out with Flame Wheel", async () => {
-    game.override.enemyMoveset(Array(4).fill(Moves.FLAME_WHEEL)).enemyStatusEffect(StatusEffect.FREEZE);
+    game.override.enemyMoveset(Moves.FLAME_WHEEL).enemyStatusEffect(StatusEffect.FREEZE);
 
     await game.classicMode.startBattle([Species.CHARIZARD]);
 
@@ -198,7 +198,7 @@ describe("Moves - Powder", () => {
   });
 
   it("should cancel Revelation Dance if it becomes a Fire-type move", async () => {
-    game.override.enemySpecies(Species.CHARIZARD).enemyMoveset(Array(4).fill(Moves.REVELATION_DANCE));
+    game.override.enemySpecies(Species.CHARIZARD).enemyMoveset(Moves.REVELATION_DANCE);
 
     await game.classicMode.startBattle([Species.CHARIZARD]);
 
@@ -212,7 +212,7 @@ describe("Moves - Powder", () => {
   });
 
   it("should cancel Shell Trap and damage the target, even if the move would fail", async () => {
-    game.override.enemyMoveset(Array(4).fill(Moves.SHELL_TRAP));
+    game.override.enemyMoveset(Moves.SHELL_TRAP);
 
     await game.classicMode.startBattle([Species.CHARIZARD]);
 
