@@ -4649,10 +4649,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   /** Determine whether the given move will score a critical hit **against** this Pokemon.
    * @param source - The {@linkcode Pokemon} using the move
    * @param move - The {@linkcode Move} being used
-   * @param simulated - Whether to suppress changes to game state during calculations; default `true`
    * @returns Whether the move will critically hit the defender.
   */
-  getCriticalHitResult(source: Pokemon, move: Move, simulated: boolean = true): boolean {
+  getCriticalHitResult(source: Pokemon, move: Move): boolean {
     if (move.hasAttr(FixedDamageAttr)) {
       // fixed damage moves (Dragon Rage, etc.) will nevet crit
       return false;
