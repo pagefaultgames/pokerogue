@@ -128,7 +128,7 @@ export class CommandPhase extends FieldPhase {
             playerPokemon
               .getMoveset()
               [moveIndex].isUsable(playerPokemon, queuedMove.useType >= MoveUseType.IGNORE_PP)) ||
-          queuedMove.useType < MoveUseType.INDIRECT
+          queuedMove.useType >= MoveUseType.INDIRECT
         ) {
           this.handleCommand(Command.FIGHT, moveIndex, queuedMove.useType, queuedMove);
         } else {
