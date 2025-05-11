@@ -4,7 +4,11 @@ import type Pokemon from "#app/field/pokemon";
 import { FieldPhase } from "./field-phase";
 
 export abstract class PokemonPhase extends FieldPhase {
-  protected battlerIndex: BattlerIndex;
+  /**
+   * The battler index this phase refers to, or the pokemon ID if greater than 3.
+   * TODO: Make this either use IDs or `BattlerIndex`es, not a weird mix of both
+   */
+  protected battlerIndex: BattlerIndex | number;
   public player: boolean;
   public fieldIndex: number;
 

@@ -5423,13 +5423,11 @@ export class FrenzyAttr extends MoveEffectAttr {
     // Otherwise, tick down the existing tag.
     if (!user.getTag(BattlerTagType.FRENZY) && user.getMoveQueue().length === 0) {
       const turnCount = user.randSeedIntRange(1, 2);
-      for (let x = 0; x < turnCount; x++) {
-        user.pushMoveQueue({move: move.id, targets: [target.getBattlerIndex()], useType: MoveUseType.IGNORE_PP})
-      }
+      new Array(turnCount).fill(null).map(() => user.getMoveQueue().push({ move: move.id, targets: [ target.getBattlerIndex() ], useType: MoveUseType.IGNORE_PP }));
       user.addTag(BattlerTagType.FRENZY, turnCount, move.id, user.id);
     } else {
       applyMoveAttrs(AddBattlerTagAttr, user, target, move, args);
-      user.lapseTag(BattlerTagType.FRENZY);
+      user.lapseTag(BattlerTagType.FRENZY); // if FRENZY is already in effect (moveQueue.length > 0), lapse the tag
     }
 
     return true;

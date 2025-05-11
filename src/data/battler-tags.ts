@@ -385,9 +385,10 @@ export class GorillaTacticsTag extends MoveRestrictionBattlerTag {
   override canAdd(pokemon: Pokemon): boolean {
     // Choice items ignore struggle
     // TODO: Check if struggle also gets the 50% power boost
-    const lastSelectedMove = pokemon.getLastNonVirtualMove(false);
+    const lastSelectedMove = pokemon.getLastNonVirtualMove();
     return (
-      (isNullOrUndefined(lastSelectedMove) || lastSelectedMove.move === Moves.STRUGGLE) &&
+      !isNullOrUndefined(lastSelectedMove) &&
+      lastSelectedMove.move !== Moves.STRUGGLE &&
       !pokemon.getTag(GorillaTacticsTag)
     );
   }
@@ -398,7 +399,7 @@ export class GorillaTacticsTag extends MoveRestrictionBattlerTag {
    */
   override onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
-    this.moveId = pokemon.getLastNonVirtualMove(false)!.move; // `canAdd` returns false if no move
+    this.moveId = pokemon.getLastNonVirtualMove()!.move; // `canAdd` returns false if no move
     pokemon.setStat(Stat.ATK, pokemon.getStat(Stat.ATK, false) * 1.5, false);
   }
 

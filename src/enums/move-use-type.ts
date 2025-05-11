@@ -51,9 +51,6 @@ export enum MoveUseType {
    * Reflected moves ignore all the same cancellation checks as {@linkcode MoveUseType.INDIRECT}
    * and retain the same copy prevention as {@linkcode MoveUseType.FOLLOW_UP}, but additionally
    * **cannot be reflected by other reflecting effects**.
-
-   * Also used for the "attack" portion of Future Sight and Doom Desire
-   * (in which case the reflection blockage is completely irrelevant.)
    */
   REFLECTED
 }

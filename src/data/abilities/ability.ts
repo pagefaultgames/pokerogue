@@ -1068,7 +1068,7 @@ export class PostDefendMoveDisableAbAttr extends PostDefendAbAttr {
   }
 
   override canApplyPostDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, hitResult: HitResult | null, args: any[]): boolean {
-    return !isNullOrUndefined(attacker.getTag(BattlerTagType.DISABLED))
+    return isNullOrUndefined(attacker.getTag(BattlerTagType.DISABLED))
       && move.doesFlagEffectApply({flag: MoveFlags.MAKES_CONTACT, user: attacker, target: pokemon}) && (this.chance === -1 || pokemon.randSeedInt(100) < this.chance);
   }
 

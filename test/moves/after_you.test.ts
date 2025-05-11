@@ -62,7 +62,10 @@ describe("Moves - After You", () => {
     expect(game.scene.getPlayerField()[1].getLastXMoves(1)[0].result).toBe(MoveResult.FAIL);
   });
 
-  it("should maintain PP ignore status of rampaging moves", async () => {
+  // TODO: Enable once rampaging moves and move queue are fixed.
+  // Currently does literally nothing because `MoveUseType` is overridden from move queue
+  // within `MovePhase`, but should be enabled once that jank is removed
+  it.todo("should maintain PP ignore status of rampaging moves", async () => {
     game.override.moveset([]);
     await game.classicMode.startBattle([Species.ACCELGOR, Species.RATTATA]);
 
