@@ -45,7 +45,7 @@ describe("Berries Abound - Mystery Encounter", () => {
       .startingWave(defaultWave)
       .startingBiome(defaultBiome)
       .disableTrainerWaves()
-      .startingModifiers([])
+      .startingModifier([])
       .startingHeldItems([])
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyPassiveAbility(Abilities.BALL_FETCH);

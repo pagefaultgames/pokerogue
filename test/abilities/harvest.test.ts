@@ -286,7 +286,7 @@ describe("Abilities - Harvest", () => {
       );
 
       const initBerries: ModifierOverride[] = [{ name: "BERRY", type: BerryType.PETAYA, count: 1 }];
-      game.override.startingHeldItems(initBerries).startingModifiers([{ name: "BERRY_POUCH", count: 1 }]);
+      game.override.startingHeldItems(initBerries).startingModifier([{ name: "BERRY_POUCH", count: 1 }]);
       await game.classicMode.startBattle([Species.FEEBAS]);
 
       game.move.select(Moves.SPLASH);

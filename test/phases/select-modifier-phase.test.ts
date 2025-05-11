@@ -109,7 +109,7 @@ describe("SelectModifierPhase", () => {
   });
 
   it.todo("should generate random modifiers of same tier for reroll with reroll lock", async () => {
-    game.override.startingModifiers([{ name: "LOCK_CAPSULE" }]);
+    game.override.startingModifier([{ name: "LOCK_CAPSULE" }]);
     await game.classicMode.startBattle([Species.ABRA, Species.VOLCARONA]);
     scene.money = 1000000;
     // Just use fully random seed for this test

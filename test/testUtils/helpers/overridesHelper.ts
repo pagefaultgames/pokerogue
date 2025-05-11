@@ -103,7 +103,7 @@ export class OverridesHelper extends GameManagerHelper {
   /**
    * Override the player pokemon's starting held items.
    * @param modifiers - Array of {@linkcode ModifierOverride | modifiers} to set
-   * @remarks Use {@linkcode startingModifiers} for non-held item modifiers
+   * @remarks Use {@linkcode startingModifier} for non-held item modifiers
    * @returns `this`
    */
   public startingHeldItems(items: ModifierOverride[]): this {
@@ -179,7 +179,7 @@ export class OverridesHelper extends GameManagerHelper {
    * @see {@linkcode startingHeldItems}
    * @returns `this`
    */
-  public startingModifiers(modifiers: ModifierOverride[]): this {
+  public startingModifier(modifiers: ModifierOverride[]): this {
     vi.spyOn(Overrides, "STARTING_MODIFIER_OVERRIDE", "get").mockReturnValue(modifiers);
     this.log(`Player starting modifiers set to ${modifiers}`);
     return this;
