@@ -1023,14 +1023,22 @@ export function isPokemonValidForEncounterOptionSelection(
 /**
  * Permanently overrides the ability (not passive) of a pokemon.
  * If the pokemon is a fusion, instead overrides the fused pokemon's ability.
+ * @param ability
+ * @param pokemon
+ * @param flagAcceptAbility
  */
-export function applyAbilityOverrideToPokemon(pokemon: Pokemon, ability: Abilities) {
-  if (pokemon.isFusion()) {
-    if (!pokemon.fusionCustomPokemonData) {
-      pokemon.fusionCustomPokemonData = new CustomPokemonData();
-    }
-    pokemon.fusionCustomPokemonData.ability = ability;
-  } else {
-    pokemon.customPokemonData.ability = ability;
+export function applyAbilityOverrideToPokemon(pokemon: Pokemon, ability: Abilities, flagAcceptAbility: boolean) {
+  const isFusion = pokemon.isFusion();
+  const data = isFusion
+    ? (pokemon.fusionCustomPokemonData ??= new CustomPokemonData())
+    : (pokemon.customPokemonData ??= new CustomPokemonData());
+
+  const shouldOverride = data.ability !== ability || flagAcceptAbility;
+
+  if (shouldOverride) {
+    data.ability = ability;
+    return true;
   }
+
+  return false;
 }

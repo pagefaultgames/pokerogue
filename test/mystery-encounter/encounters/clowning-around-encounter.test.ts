@@ -37,6 +37,7 @@ import { CommandPhase } from "#app/phases/command-phase";
 import { MovePhase } from "#app/phases/move-phase";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import { NewBattlePhase } from "#app/phases/new-battle-phase";
+import { allAbilities } from "#app/data/data-lists";
 
 const namespace = "mysteryEncounters/clowningAround";
 const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
@@ -233,6 +234,59 @@ describe("Clowning Around - Mystery Encounter", () => {
 
       const leadPokemon = scene.getPlayerParty()[0];
       expect(leadPokemon.customPokemonData?.ability).toBe(abilityToTrain);
+    });
+
+    it("should let the player know their pokemon already has the ability and accept it", async () => {
+      await game.runToMysteryEncounter(MysteryEncounterType.CLOWNING_AROUND, defaultParty);
+      await runMysteryEncounterToEnd(game, 1, undefined, true);
+      await skipBattleRunMysteryEncounterRewardsPhase(game);
+      await game.phaseInterceptor.to(SelectModifierPhase, false);
+      expect(scene.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
+      await game.phaseInterceptor.run(SelectModifierPhase);
+
+      const leadPokemon = scene.getPlayerParty()[0];
+      // offer Prankster abiliy for winning the battle
+      const abilityToTrain = Abilities.PRANKSTER;
+
+      game.onNextPrompt("PostMysteryEncounterPhase", UiMode.MESSAGE, () => {
+        game.scene.ui.getHandler().processInput(Button.ACTION);
+      });
+
+      // Give fto the first Pokemon the Prankster ability
+      vi.spyOn(leadPokemon, "getAbility").mockReturnValue(allAbilities[Abilities.PRANKSTER]);
+
+      // Run to ability train option selection
+      const optionSelectUiHandler = game.scene.ui.handlers[UiMode.OPTION_SELECT] as OptionSelectUiHandler;
+      vi.spyOn(optionSelectUiHandler, "show");
+      const partyUiHandler = game.scene.ui.handlers[UiMode.PARTY] as PartyUiHandler;
+      vi.spyOn(partyUiHandler, "show");
+      const optionSelectUiHandlerRepeatedAbility = game.scene.ui.handlers[
+        UiMode.OPTION_SELECT
+      ] as OptionSelectUiHandler;
+      vi.spyOn(optionSelectUiHandlerRepeatedAbility, "show");
+      game.endPhase();
+      await game.phaseInterceptor.to(PostMysteryEncounterPhase);
+      expect(scene.getCurrentPhase()?.constructor.name).toBe(PostMysteryEncounterPhase.name);
+
+      // Wait for Yes/No confirmation to appear -> accepting the Ability
+      await vi.waitFor(() => expect(optionSelectUiHandler.show).toHaveBeenCalled());
+      // Select "Yes" on train ability
+      optionSelectUiHandler.processInput(Button.ACTION);
+      // Select first pokemon in party to train
+      await vi.waitFor(() => expect(partyUiHandler.show).toHaveBeenCalled());
+      partyUiHandler.processInput(Button.ACTION);
+      // Click "Select" on Pokemon
+      partyUiHandler.processInput(Button.ACTION);
+      // Wait for Yes/No confirmation to appear -> Accepting the Ability, besides being repeated
+      await vi.waitFor(() => expect(optionSelectUiHandlerRepeatedAbility.show).toHaveBeenCalled());
+      // Select "Yes" on train the same ability as before
+      optionSelectUiHandlerRepeatedAbility.processInput(Button.ACTION);
+
+      // Stop next battle before it runs
+      await game.phaseInterceptor.to(NewBattlePhase, false);
+      //game.override.ability(Abilities.PRANKSTER);
+
+      expect(leadPokemon.getAbility().id).toBe(abilityToTrain);
     });
   });
 
