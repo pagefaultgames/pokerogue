@@ -5,35 +5,58 @@ import type { NumberHolder } from "#app/utils/common";
 import { PokemonType } from "#enums/pokemon-type";
 import i18next from "i18next";
 
-export enum HeldItemType {
-  NONE,
+export const HeldItems = {
+  NONE: 0x0000,
 
-  SITRUS_BERRY = 1,
-  LEPPA_BERRY,
+  SITRUS_BERRY: 0x0101,
+  LEPPA_BERRY: 0x0102,
 
-  SILK_SCARF = 101,
-  BLACK_BELT,
-  SHARP_BEAK,
-  POISON_BARB,
-  SOFT_SAND,
-  HARD_STONE,
-  SILVER_POWDER,
-  SPELL_TAG,
-  METAL_COAT,
-  CHARCOAL,
-  MYSTIC_WATER,
-  MIRACLE_SEED,
-  MAGNET,
-  TWISTED_SPOON,
-  NEVER_MELT_ICE,
-  DRAGON_FANG,
-  BLACK_GLASSES,
-  FAIRY_FEATHER,
-}
+  SILK_SCARF: 0x0201,
+  BLACK_BELT: 0x0202,
+  SHARP_BEAK: 0x0203,
+  POISON_BARB: 0x0204,
+  SOFT_SAND: 0x0205,
+  HARD_STONE: 0x0206,
+  SILVER_POWDER: 0x0207,
+  SPELL_TAG: 0x0208,
+  METAL_COAT: 0x0209,
+  CHARCOAL: 0x020a,
+  MYSTIC_WATER: 0x020b,
+  MIRACLE_SEED: 0x020c,
+  MAGNET: 0x020d,
+  TWISTED_SPOON: 0x020e,
+  NEVER_MELT_ICE: 0x020f,
+  DRAGON_FANG: 0x0210,
+  BLACK_GLASSES: 0x0211,
+  FAIRY_FEATHER: 0x0212,
+
+  REVIVER_SEED: 0x0301,
+  SOOTHE_BELL: 0x0302,
+  SOUL_DEW: 0x0303,
+  GOLDEN_PUNCH: 0x0304,
+  GRIP_CLAW: 0x0305,
+  BATON: 0x0306,
+  FOCUS_BAND: 0x0307,
+  QUICK_CLAW: 0x0308,
+  KINGS_ROCK: 0x0309,
+  LEFTOVERS: 0x030a,
+  SHELL_BELL: 0x030b,
+};
+
+export type HeldItems = (typeof HeldItems)[keyof typeof HeldItems];
+
+export const HeldItemCategories = {
+  NONE: 0x0000,
+  BERRY: 0x0100,
+  ATTACK_TYPE_BOOSTER: 0x0200,
+  BASE_STAT_BOOSTER: 0x0400,
+};
+
+export type HeldItemCategories = (typeof HeldItemCategories)[keyof typeof HeldItemCategories];
 
 export class HeldItem implements Localizable {
   //  public pokemonId: number;
-  public type: HeldItemType;
+  public type: HeldItems;
   public maxStackCount: number;
   public isTransferable = true;
   public isStealable = true;
@@ -43,7 +66,7 @@ export class HeldItem implements Localizable {
   public description = "";
   public icon = "";
 
-  constructor(type: HeldItemType, maxStackCount = 1) {
+  constructor(type: HeldItems, maxStackCount = 1) {
     this.type = type;
     this.maxStackCount = maxStackCount;
 
@@ -125,36 +148,36 @@ export class HeldItem implements Localizable {
   }
 }
 
-interface AttackTypeToHeldItemTypeMap {
-  [key: number]: HeldItemType;
+interface AttackTypeToHeldItemMap {
+  [key: number]: HeldItems;
 }
 
-export const attackTypeToHeldItemTypeMap: AttackTypeToHeldItemTypeMap = {
-  [PokemonType.NORMAL]: HeldItemType.SILK_SCARF,
-  [PokemonType.FIGHTING]: HeldItemType.BLACK_BELT,
-  [PokemonType.FLYING]: HeldItemType.SHARP_BEAK,
-  [PokemonType.POISON]: HeldItemType.POISON_BARB,
-  [PokemonType.GROUND]: HeldItemType.SOFT_SAND,
-  [PokemonType.ROCK]: HeldItemType.HARD_STONE,
-  [PokemonType.BUG]: HeldItemType.SILVER_POWDER,
-  [PokemonType.GHOST]: HeldItemType.SPELL_TAG,
-  [PokemonType.STEEL]: HeldItemType.METAL_COAT,
-  [PokemonType.FIRE]: HeldItemType.CHARCOAL,
-  [PokemonType.WATER]: HeldItemType.MYSTIC_WATER,
-  [PokemonType.GRASS]: HeldItemType.MIRACLE_SEED,
-  [PokemonType.ELECTRIC]: HeldItemType.MAGNET,
-  [PokemonType.PSYCHIC]: HeldItemType.TWISTED_SPOON,
-  [PokemonType.ICE]: HeldItemType.NEVER_MELT_ICE,
-  [PokemonType.DRAGON]: HeldItemType.DRAGON_FANG,
-  [PokemonType.DARK]: HeldItemType.BLACK_GLASSES,
-  [PokemonType.FAIRY]: HeldItemType.FAIRY_FEATHER,
+export const attackTypeToHeldItem: AttackTypeToHeldItemMap = {
+  [PokemonType.NORMAL]: HeldItems.SILK_SCARF,
+  [PokemonType.FIGHTING]: HeldItems.BLACK_BELT,
+  [PokemonType.FLYING]: HeldItems.SHARP_BEAK,
+  [PokemonType.POISON]: HeldItems.POISON_BARB,
+  [PokemonType.GROUND]: HeldItems.SOFT_SAND,
+  [PokemonType.ROCK]: HeldItems.HARD_STONE,
+  [PokemonType.BUG]: HeldItems.SILVER_POWDER,
+  [PokemonType.GHOST]: HeldItems.SPELL_TAG,
+  [PokemonType.STEEL]: HeldItems.METAL_COAT,
+  [PokemonType.FIRE]: HeldItems.CHARCOAL,
+  [PokemonType.WATER]: HeldItems.MYSTIC_WATER,
+  [PokemonType.GRASS]: HeldItems.MIRACLE_SEED,
+  [PokemonType.ELECTRIC]: HeldItems.MAGNET,
+  [PokemonType.PSYCHIC]: HeldItems.TWISTED_SPOON,
+  [PokemonType.ICE]: HeldItems.NEVER_MELT_ICE,
+  [PokemonType.DRAGON]: HeldItems.DRAGON_FANG,
+  [PokemonType.DARK]: HeldItems.BLACK_GLASSES,
+  [PokemonType.FAIRY]: HeldItems.FAIRY_FEATHER,
 };
 
 export class AttackTypeBoosterHeldItem extends HeldItem {
   public moveType: PokemonType;
   public powerBoost: number;
 
-  constructor(type: HeldItemType, maxStackCount = 1, moveType: PokemonType, powerBoost: number) {
+  constructor(type: HeldItems, maxStackCount = 1, moveType: PokemonType, powerBoost: number) {
     super(type, maxStackCount);
     this.moveType = moveType;
     this.powerBoost = powerBoost;
@@ -162,7 +185,7 @@ export class AttackTypeBoosterHeldItem extends HeldItem {
   }
 
   getName(): string {
-    return i18next.t(`modifierType:AttackTypeBoosterItem.${HeldItemType[this.type]?.toLowerCase()}`);
+    return i18next.t(`modifierType:AttackTypeBoosterItem.${HeldItems[this.type]?.toLowerCase()}`);
   }
 
   getDescription(): string {
@@ -172,7 +195,7 @@ export class AttackTypeBoosterHeldItem extends HeldItem {
   }
 
   getIcon(): string {
-    return `${HeldItemType[this.type]?.toLowerCase()}`;
+    return `${HeldItems[this.type]?.toLowerCase()}`;
   }
 
   apply(stackCount: number, moveType: PokemonType, movePower: NumberHolder): void {
@@ -192,17 +215,12 @@ export function applyAttackTypeBoosterHeldItem(pokemon: Pokemon, moveType: Pokem
   }
 }
 
-type HeldItemMap = {
-  [key in HeldItemType]: HeldItem;
-};
-
-export const allHeldItems = {} as HeldItemMap;
+export const allHeldItems = {};
 
 export function initHeldItems() {
   // SILK_SCARF, BLACK_BELT, etc...
-  for (const [typeKey, heldItemType] of Object.entries(attackTypeToHeldItemTypeMap)) {
+  for (const [typeKey, heldItemType] of Object.entries(attackTypeToHeldItem)) {
     const pokemonType = Number(typeKey) as PokemonType;
-
     allHeldItems[heldItemType] = new AttackTypeBoosterHeldItem(heldItemType, 99, pokemonType, 0.2);
   }
 }

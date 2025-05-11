@@ -128,8 +128,8 @@ import { getStatKey, Stat, TEMP_BATTLE_STATS } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import i18next from "i18next";
 import { timedEventManager } from "#app/global-event-manager";
-import type { HeldItemType } from "./held-items";
-import { allHeldItems, attackTypeToHeldItemTypeMap } from "./held-items";
+import type { HeldItems } from "./held-items";
+import { allHeldItems, attackTypeToHeldItem } from "./held-items";
 
 const outputModifierData = false;
 const useMaxWeightForOutput = false;
@@ -812,10 +812,10 @@ export class AttackTypeBoosterModifierType
 {
   public moveType: PokemonType;
   public boostPercent: number;
-  public heldItemId: HeldItemType;
+  public heldItemId: HeldItems;
 
   constructor(moveType: PokemonType, boostPercent: number) {
-    const heldItemId = attackTypeToHeldItemTypeMap[moveType];
+    const heldItemId = attackTypeToHeldItem[moveType];
     super(
       "",
       allHeldItems[heldItemId].getIcon(),

@@ -2,7 +2,7 @@
 import { globalScene } from "#app/global-scene";
 import type { PokeballType } from "#enums/pokeball";
 import i18next from "i18next";
-import { allHeldItems, type HeldItem } from "./held-items";
+import { allHeldItems, type HeldItems } from "./held-items";
 import { getPokeballCatchMultiplier, getPokeballName, MAX_PER_TYPE_POKEBALLS } from "#app/data/pokeball";
 import type Pokemon from "#app/field/pokemon";
 
@@ -77,8 +77,9 @@ export class PartySelectReward extends Reward {
 }
 
 export class HeldItemReward extends PartySelectReward {
-  private itemId;
-  constructor(itemId: HeldItem) {
+  private itemId: HeldItems;
+
+  constructor(itemId: HeldItems) {
     super();
     this.itemId = itemId;
   }
@@ -103,38 +104,14 @@ export class HeldItemReward extends PartySelectReward {
 
 
 
-export class RewardGenerator {
-  options: number[];
-  optionWeights: number[];
-
-  constructor(options: number[]) {
-    this.options = options;
-  }
-}
 
 
-export class PokeballRewardGenerator extends RewardGenerator{
 
-  constructor(
-    options: PokeballType[],
-    condition?: (party: Pokemon[], option: number) => boolean, 
-    getOptionWeight?: (party: Pokemon[], option: number) => number,
-  ) {
-    super(options);
 
-    this.isAvailable = isAvailable;
-    this.getOptionWeight = getOptionWeight;
-  }
 
-  isAvailable(): boolean {
-    
-  }
 
-  optionWeights() {
 
-  }
 
-}
 
 
 
@@ -162,12 +139,6 @@ export class RewardManager {
     this.rewardPool = rewardPool;
   }
 
-
-
-
-
-
-
-
 }
-  * */
+
+*/

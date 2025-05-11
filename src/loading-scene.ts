@@ -21,6 +21,7 @@ import { initVouchers } from "#app/system/voucher";
 import { Biome } from "#enums/biome";
 import { initMysteryEncounters } from "#app/data/mystery-encounters/mystery-encounters";
 import { timedEventManager } from "./global-event-manager";
+import { initHeldItems } from "./modifier/held-items";
 
 export class LoadingScene extends SceneBase {
   public static readonly KEY = "loading";
@@ -375,6 +376,7 @@ export class LoadingScene extends SceneBase {
     initSpecies();
     initMoves();
     initAbilities();
+    initHeldItems();
     initChallenges();
     initMysteryEncounters();
   }
