@@ -2921,7 +2921,10 @@ export default class BattleScene extends SceneBase {
     instant?: boolean,
     cost?: number,
   ): boolean {
-    if (!modifier) {
+    // We check against modifier.type to stop a bug related to loading in a pokemon that has a form change item, which prior to some patch
+    // that changed form change modifiers worked, had previously set the `type` field to null.
+    // TODO: This is not the right place to check for this; it should ideally go in a session migrator.
+    if (!modifier || !modifier.type) {
       return false;
     }
     let success = false;
