@@ -41,7 +41,6 @@ describe("Abilities - Early Bird", () => {
 
     game.move.select(Moves.BELLY_DRUM);
     await game.toNextTurn();
-
     game.move.select(Moves.REST);
     await game.toNextTurn();
 
