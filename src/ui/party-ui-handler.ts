@@ -774,10 +774,14 @@ export default class PartyUiHandler extends MessageUiHandler {
           }
           this.showOptions();
           ui.playSelect();
-        } else if (this.partyUiMode === PartyUiMode.FAINT_SWITCH || this.partyUiMode === PartyUiMode.REVIVAL_BLESSING) {
-          ui.playError();
-        } else {
-          return this.processInput(Button.CANCEL);
+        }
+        // Pressing return button
+        if (this.cursor === 6) {
+          if (this.partyUiMode === PartyUiMode.FAINT_SWITCH || this.partyUiMode === PartyUiMode.REVIVAL_BLESSING) {
+            ui.playError();
+          } else {
+            return this.processInput(Button.CANCEL);
+          }
         }
         return true;
       }
