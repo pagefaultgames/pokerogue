@@ -28,7 +28,6 @@
       ".vscode/*",
       "*.css", // TODO?
       "*.html", // TODO?
-      "src/overrides.ts",
       // TODO: these files are too big and complex, ignore them until their respective refactors
       "src/data/moves/move.ts",
       "src/data/abilities/ability.ts",
@@ -114,7 +113,7 @@
       }
     },
 
-    // Overrides to prevent unused import removal inside `overrides.ts` and enums files (for jsdoc)
+    // Overrides to prevent unused import removal inside `overrides.ts` and enums files (for TSDoc linkcodes)
     {
       "include": ["src/overrides.ts", "src/enums/*"],
       "linter": {
