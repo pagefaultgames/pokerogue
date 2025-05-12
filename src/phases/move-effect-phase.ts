@@ -98,6 +98,8 @@ export class MoveEffectPhase extends PokemonPhase {
   /** Is this the last strike of a move? */
   private lastHit: boolean;
 
+  private faintPhases: FaintPhase[] = [];
+
   /** Phases queued during moves */
   private queuedPhases: Phase[] = [];
 
@@ -242,6 +244,11 @@ export class MoveEffectPhase extends PokemonPhase {
         case HitCheckResult.ERROR:
           throw new Error("Unexpected hit check result");
       }
+    }
+
+    // Append the faint phases after resolving all move effects so that the faint phase happens after any message phases
+    if (this.faintPhases.length) {
+      globalScene.unshiftPhase(...this.faintPhases);
     }
   }
 
@@ -900,7 +907,7 @@ export class MoveEffectPhase extends PokemonPhase {
     // set splice index here, so future scene queues happen before FaintedPhase
     globalScene.setPhaseQueueSplice();
 
-    globalScene.unshiftPhase(new FaintPhase(target.getBattlerIndex(), false, user));
+    this.faintPhases.push(new FaintPhase(target.getBattlerIndex(), false, user));
 
     target.destroySubstitute();
     target.lapseTag(BattlerTagType.COMMANDED);
