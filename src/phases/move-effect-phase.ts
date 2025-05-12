@@ -246,7 +246,10 @@ export class MoveEffectPhase extends PokemonPhase {
       }
     }
 
-    // Append the faint phases after resolving all move effects so that the faint phase happens after any message phases
+    // Faint phases are unshifted after applying the move effects to all targets in order
+    // to ensure that all move effect messages and related phases occur _before_ the faint phase
+    // Note that this must occur before POST_TARGET effects are triggered in order for the faint phase to correctly
+    // occur before the user of self-destruct faints
     if (this.faintPhases.length) {
       globalScene.unshiftPhase(...this.faintPhases);
     }
