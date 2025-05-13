@@ -24,17 +24,13 @@ describe("Moves - Make It Rain", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("double");
-    game.override.moveset([Moves.MAKE_IT_RAIN, Moves.SPLASH]);
-    game.override.enemySpecies(Species.SNORLAX);
-    game.override.enemyAbility(Abilities.INSOMNIA);
-    game.override.enemyMoveset(Moves.SPLASH);
-    game.override.startingLevel(100);
-    game.override.enemyLevel(100);
+    game.override.battleStyle("double").moveset([Moves.MAKE_IT_RAIN, Moves.SPLASH]);
+    game.override.enemySpecies(Species.SNORLAX).enemyAbility(Abilities.INSOMNIA);
+    game.override.enemyMoveset(Moves.SPLASH).startingLevel(100).enemyLevel(100);
   });
 
   it("should only lower SPATK stat stage by 1 once in a double battle", async () => {
-    await game.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
+    await game.classicMode.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
 
@@ -50,7 +46,7 @@ describe("Moves - Make It Rain", () => {
     game.override.enemyLevel(1); // ensures the enemy will faint
     game.override.battleStyle("single");
 
-    await game.startBattle([Species.CHARIZARD]);
+    await game.classicMode.startBattle([Species.CHARIZARD]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
     const enemyPokemon = game.scene.getEnemyPokemon()!;
@@ -66,7 +62,7 @@ describe("Moves - Make It Rain", () => {
   it("should reduce Sp. Atk. once after KOing two enemies", async () => {
     game.override.enemyLevel(1); // ensures the enemy will faint
 
-    await game.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
+    await game.classicMode.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
     const enemyPokemon = game.scene.getEnemyField();
@@ -81,7 +77,7 @@ describe("Moves - Make It Rain", () => {
   });
 
   it("should lower SPATK stat stage by 1 if it only hits the second target", async () => {
-    await game.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
+    await game.classicMode.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
 

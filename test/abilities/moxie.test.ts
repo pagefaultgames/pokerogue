@@ -27,18 +27,19 @@ describe("Abilities - Moxie", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     const moveToUse = Moves.AERIAL_ACE;
-    game.override.battleStyle("single");
-    game.override.enemySpecies(Species.RATTATA);
-    game.override.enemyAbility(Abilities.MOXIE);
-    game.override.ability(Abilities.MOXIE);
-    game.override.startingLevel(2000);
-    game.override.moveset([moveToUse]);
-    game.override.enemyMoveset(Moves.SPLASH);
+    game.override
+      .battleStyle("single")
+      .enemySpecies(Species.RATTATA)
+      .enemyAbility(Abilities.MOXIE)
+      .ability(Abilities.MOXIE)
+      .startingLevel(2000)
+      .moveset([moveToUse])
+      .enemyMoveset(Moves.SPLASH);
   });
 
   it("should raise ATK stat stage by 1 when winning a battle", async () => {
     const moveToUse = Moves.AERIAL_ACE;
-    await game.startBattle([Species.MIGHTYENA, Species.MIGHTYENA]);
+    await game.classicMode.startBattle([Species.MIGHTYENA, Species.MIGHTYENA]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
 
@@ -48,7 +49,7 @@ describe("Abilities - Moxie", () => {
     await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(VictoryPhase);
 
     expect(playerPokemon.getStatStage(Stat.ATK)).toBe(1);
-  }, 20000);
+  });
 
   // TODO: Activate this test when MOXIE is corrected to work on faint and not on battle victory
   it.todo(
@@ -56,7 +57,7 @@ describe("Abilities - Moxie", () => {
     async () => {
       game.override.battleStyle("double");
       const moveToUse = Moves.AERIAL_ACE;
-      await game.startBattle([Species.MIGHTYENA, Species.MIGHTYENA]);
+      await game.classicMode.startBattle([Species.MIGHTYENA, Species.MIGHTYENA]);
 
       const [firstPokemon, secondPokemon] = game.scene.getPlayerField();
 

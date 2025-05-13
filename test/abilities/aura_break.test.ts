@@ -24,11 +24,12 @@ describe("Abilities - Aura Break", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("single");
-    game.override.moveset([Moves.MOONBLAST, Moves.DARK_PULSE, Moves.MOONBLAST, Moves.DARK_PULSE]);
-    game.override.enemyMoveset(Moves.SPLASH);
-    game.override.enemyAbility(Abilities.AURA_BREAK);
-    game.override.enemySpecies(Species.SHUCKLE);
+    game.override
+      .battleStyle("single")
+      .moveset([Moves.MOONBLAST, Moves.DARK_PULSE])
+      .enemyMoveset(Moves.SPLASH)
+      .enemyAbility(Abilities.AURA_BREAK)
+      .enemySpecies(Species.SHUCKLE);
   });
 
   it("reverses the effect of Fairy Aura", async () => {

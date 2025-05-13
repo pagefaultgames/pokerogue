@@ -28,12 +28,11 @@ describe("Evolution", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
 
-    game.override.battleStyle("single");
-
-    game.override.enemySpecies(Species.MAGIKARP);
-    game.override.enemyAbility(Abilities.BALL_FETCH);
-
-    game.override.startingLevel(60);
+    game.override
+      .battleStyle("single")
+      .enemySpecies(Species.MAGIKARP)
+      .enemyAbility(Abilities.BALL_FETCH)
+      .startingLevel(60);
   });
 
   it("should keep hidden ability after evolving", async () => {
@@ -110,7 +109,7 @@ describe("Evolution", () => {
       .startingLevel(16)
       .enemyLevel(50);
 
-    await game.startBattle([Species.TOTODILE]);
+    await game.classicMode.startBattle([Species.TOTODILE]);
 
     const totodile = game.scene.getPlayerPokemon()!;
     const hpBefore = totodile.hp;
@@ -138,7 +137,7 @@ describe("Evolution", () => {
       .startingLevel(13)
       .enemyLevel(30);
 
-    await game.startBattle([Species.CYNDAQUIL]);
+    await game.classicMode.startBattle([Species.CYNDAQUIL]);
 
     const cyndaquil = game.scene.getPlayerPokemon()!;
     cyndaquil.hp = Math.floor(cyndaquil.getMaxHp() / 2);
@@ -171,7 +170,7 @@ describe("Evolution", () => {
      * If the value is 0, it's a 3 family maushold, whereas if the value is
      * 1, 2 or 3, it's a 4 family maushold
      */
-    await game.startBattle([Species.TANDEMAUS]); // starts us off with a tandemaus
+    await game.classicMode.startBattle([Species.TANDEMAUS]); // starts us off with a tandemaus
     const playerPokemon = game.scene.getPlayerPokemon()!;
     playerPokemon.level = 25; // tandemaus evolves at level 25
     vi.spyOn(Utils, "randSeedInt").mockReturnValue(0); // setting the random generator to be 0 to force a three family maushold

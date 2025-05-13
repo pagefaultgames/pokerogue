@@ -32,7 +32,6 @@ import type PartyUiHandler from "#app/ui/party-ui-handler";
 import type TargetSelectUiHandler from "#app/ui/target-select-ui-handler";
 import { UiMode } from "#enums/ui-mode";
 import { isNullOrUndefined } from "#app/utils/common";
-import { BattleStyle } from "#enums/battle-style";
 import { Button } from "#enums/buttons";
 import { ExpGainsSpeed } from "#enums/exp-gains-speed";
 import { ExpNotification } from "#enums/exp-notification";
@@ -272,42 +271,6 @@ export default class GameManager {
   }
 
   /**
-   * @deprecated Use `game.classicMode.startBattle()` or `game.dailyMode.startBattle()` instead
-   *
-   * Transitions to the start of a battle.
-   * @param species - Optional array of species to start the battle with.
-   * @returns A promise that resolves when the battle is started.
-   */
-  async startBattle(species?: Species[]) {
-    await this.classicMode.runToSummon(species);
-
-    if (this.scene.battleStyle === BattleStyle.SWITCH) {
-      this.onNextPrompt(
-        "CheckSwitchPhase",
-        UiMode.CONFIRM,
-        () => {
-          this.setMode(UiMode.MESSAGE);
-          this.endPhase();
-        },
-        () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(TurnInitPhase),
-      );
-
-      this.onNextPrompt(
-        "CheckSwitchPhase",
-        UiMode.CONFIRM,
-        () => {
-          this.setMode(UiMode.MESSAGE);
-          this.endPhase();
-        },
-        () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(TurnInitPhase),
-      );
-    }
-
-    await this.phaseInterceptor.to(CommandPhase);
-    console.log("==================[New Turn]==================");
-  }
-
-  /**
    * Emulate a player's target selection after a move is chosen, usually called automatically by {@linkcode MoveHelper.select}.
    * Will trigger during the next {@linkcode SelectTargetPhase}
    * @param targetIndex - The {@linkcode BattlerIndex} of the attack target, or `undefined` for multi-target attacks
@@ -541,8 +504,8 @@ export default class GameManager {
   }
 
   /**
-   * Select a pokemon from the party menu during the given phase. 
-   * Only really handles the basic case of "navigate to party slot and press Action twice" - 
+   * Select a pokemon from the party menu during the given phase.
+   * Only really handles the basic case of "navigate to party slot and press Action twice" -
    * any menus that come up afterwards are ignored and must be handled separately by the caller.
    * @param slot - The 0-indexed position of the pokemon in your party to switch to
    * @param inPhase - Which phase to expect the selection to occur in. Defaults to `SwitchPhase`

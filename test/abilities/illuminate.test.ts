@@ -49,6 +49,6 @@ describe("Abilities - Illuminate", () => {
 
     await game.classicMode.startBattle();
 
-    expect(game.scene.getEnemyField().length).toBe(2);
+    expect(game.scene.getEnemyField()).toHaveLength(2);
   });
 });

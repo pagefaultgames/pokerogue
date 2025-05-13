@@ -85,8 +85,7 @@ describe("Abilities - ZEN MODE", () => {
   });
 
   it("should switch to base form on arena reset", async () => {
-    game.override.startingWave(4);
-    game.override.starterForms({
+    game.override.startingWave(4).starterForms({
       [Species.DARMANITAN]: zenForm,
     });
 

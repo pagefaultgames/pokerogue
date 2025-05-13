@@ -14,7 +14,7 @@ describe("utils", () => {
   describe("randomString", () => {
     it("should return a string of the specified length", () => {
       const str = randomString(10);
-      expect(str.length).toBe(10);
+      expect(str).toHaveLength(10);
     });
 
     it("should work with seed", () => {

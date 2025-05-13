@@ -39,10 +39,11 @@ describe("The Pokemon Salesman - Mystery Encounter", () => {
   beforeEach(async () => {
     game = new GameManager(phaserGame);
     scene = game.scene;
-    game.override.mysteryEncounterChance(100);
-    game.override.startingWave(defaultWave);
-    game.override.startingBiome(defaultBiome);
-    game.override.disableTrainerWaves();
+    game.override
+      .mysteryEncounterChance(100)
+      .startingWave(defaultWave)
+      .startingBiome(defaultBiome)
+      .disableTrainerWaves();
 
     const biomeMap = new Map<Biome, MysteryEncounterType[]>([
       [Biome.VOLCANO, [MysteryEncounterType.MYSTERIOUS_CHALLENGERS]],
@@ -55,8 +56,6 @@ describe("The Pokemon Salesman - Mystery Encounter", () => {
 
   afterEach(() => {
     game.phaseInterceptor.restoreOg();
-    vi.clearAllMocks();
-    vi.resetAllMocks();
   });
 
   it("should have the correct properties", async () => {
@@ -75,12 +74,11 @@ describe("The Pokemon Salesman - Mystery Encounter", () => {
     expect(title).toBe(`${namespace}:title`);
     expect(description).toMatch(new RegExp(`^${namespace}\\:description(_shiny)?$`));
     expect(query).toBe(`${namespace}:query`);
-    expect(options.length).toBe(2);
+    expect(options).toHaveLength(2);
   });
 
   it("should not spawn outside of HUMAN_TRANSITABLE_BIOMES", async () => {
-    game.override.mysteryEncounterTier(MysteryEncounterTier.ULTRA);
-    game.override.startingBiome(Biome.VOLCANO);
+    game.override.mysteryEncounterTier(MysteryEncounterTier.ULTRA).startingBiome(Biome.VOLCANO);
     await game.runToMysteryEncounter();
 
     expect(scene.currentBattle?.mysteryEncounter?.encounterType).not.toBe(MysteryEncounterType.THE_POKEMON_SALESMAN);
@@ -152,7 +150,7 @@ describe("The Pokemon Salesman - Mystery Encounter", () => {
 
       await runMysteryEncounterToEnd(game, 1);
 
-      expect(scene.getPlayerParty().length).toBe(initialPartySize + 1);
+      expect(scene.getPlayerParty()).toHaveLength(initialPartySize + 1);
 
       const newlyPurchasedPokemon = scene.getPlayerParty()[scene.getPlayerParty().length - 1];
       expect(newlyPurchasedPokemon.name).toBe(pokemonName);

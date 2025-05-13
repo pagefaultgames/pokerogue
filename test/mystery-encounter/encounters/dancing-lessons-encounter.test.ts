@@ -41,10 +41,11 @@ describe("Dancing Lessons - Mystery Encounter", () => {
   beforeEach(async () => {
     game = new GameManager(phaserGame);
     scene = game.scene;
-    game.override.mysteryEncounterChance(100);
-    game.override.startingWave(defaultWave);
-    game.override.startingBiome(defaultBiome);
-    game.override.disableTrainerWaves();
+    game.override
+      .mysteryEncounterChance(100)
+      .startingWave(defaultWave)
+      .startingBiome(defaultBiome)
+      .disableTrainerWaves();
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
       new Map<Biome, MysteryEncounterType[]>([
@@ -56,8 +57,6 @@ describe("Dancing Lessons - Mystery Encounter", () => {
 
   afterEach(() => {
     game.phaseInterceptor.restoreOg();
-    vi.clearAllMocks();
-    vi.resetAllMocks();
   });
 
   it("should have the correct properties", async () => {
@@ -70,12 +69,11 @@ describe("Dancing Lessons - Mystery Encounter", () => {
     expect(DancingLessonsEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}:title`);
     expect(DancingLessonsEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}:description`);
     expect(DancingLessonsEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}:query`);
-    expect(DancingLessonsEncounter.options.length).toBe(3);
+    expect(DancingLessonsEncounter.options).toHaveLength(3);
   });
 
   it("should not spawn outside of proper biomes", async () => {
-    game.override.mysteryEncounterTier(MysteryEncounterTier.GREAT);
-    game.override.startingBiome(Biome.SPACE);
+    game.override.mysteryEncounterTier(MysteryEncounterTier.GREAT).startingBiome(Biome.SPACE);
     await game.runToMysteryEncounter();
 
     expect(game.scene.currentBattle.mysteryEncounter?.encounterType).not.toBe(MysteryEncounterType.DANCING_LESSONS);
@@ -109,15 +107,15 @@ describe("Dancing Lessons - Mystery Encounter", () => {
 
       const enemyField = scene.getEnemyField();
       expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
-      expect(enemyField.length).toBe(1);
+      expect(enemyField).toHaveLength(1);
       expect(enemyField[0].species.speciesId).toBe(Species.ORICORIO);
       expect(enemyField[0].summonData.statStages).toEqual([1, 1, 1, 1, 0, 0, 0]);
       const moveset = enemyField[0].moveset.map(m => m.moveId);
       expect(moveset.some(m => m === Moves.REVELATION_DANCE)).toBeTruthy();
 
       const movePhases = phaseSpy.mock.calls.filter(p => p[0] instanceof MovePhase).map(p => p[0]);
-      expect(movePhases.length).toBe(1);
-      expect(movePhases.filter(p => (p as MovePhase).move.moveId === Moves.REVELATION_DANCE).length).toBe(1); // Revelation Dance used before battle
+      expect(movePhases).toHaveLength(1);
+      expect(movePhases.filter(p => (p as MovePhase).move.moveId === Moves.REVELATION_DANCE)).toHaveLength(1); // Revelation Dance used before battle
     });
 
     it("should have a Baton in the rewards after battle", async () => {
@@ -165,8 +163,8 @@ describe("Dancing Lessons - Mystery Encounter", () => {
       await runMysteryEncounterToEnd(game, 2, { pokemonNo: 1 });
 
       const movePhases = phaseSpy.mock.calls.filter(p => p[0] instanceof LearnMovePhase).map(p => p[0]);
-      expect(movePhases.length).toBe(1);
-      expect(movePhases.filter(p => (p as LearnMovePhase)["moveId"] === Moves.REVELATION_DANCE).length).toBe(1); // Revelation Dance taught to pokemon
+      expect(movePhases).toHaveLength(1);
+      expect(movePhases.filter(p => (p as LearnMovePhase)["moveId"] === Moves.REVELATION_DANCE)).toHaveLength(1); // Revelation Dance taught to pokemon
     });
 
     it("should leave encounter without battle", async () => {

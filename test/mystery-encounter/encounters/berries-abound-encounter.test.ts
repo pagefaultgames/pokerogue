@@ -57,8 +57,6 @@ describe("Berries Abound - Mystery Encounter", () => {
 
   afterEach(() => {
     game.phaseInterceptor.restoreOg();
-    vi.clearAllMocks();
-    vi.resetAllMocks();
   });
 
   it("should have the correct properties", async () => {
@@ -71,7 +69,7 @@ describe("Berries Abound - Mystery Encounter", () => {
     expect(BerriesAboundEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}:title`);
     expect(BerriesAboundEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}:description`);
     expect(BerriesAboundEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}:query`);
-    expect(BerriesAboundEncounter.options.length).toBe(3);
+    expect(BerriesAboundEncounter.options).toHaveLength(3);
   });
 
   it("should initialize fully", async () => {
@@ -117,7 +115,7 @@ describe("Berries Abound - Mystery Encounter", () => {
 
       const enemyField = scene.getEnemyField();
       expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
-      expect(enemyField.length).toBe(1);
+      expect(enemyField).toHaveLength(1);
       expect(enemyField[0].species.speciesId).toBe(speciesToSpawn);
     });
 
@@ -191,7 +189,7 @@ describe("Berries Abound - Mystery Encounter", () => {
 
       const enemyField = scene.getEnemyField();
       expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
-      expect(enemyField.length).toBe(1);
+      expect(enemyField).toHaveLength(1);
       expect(enemyField[0].species.speciesId).toBe(speciesToSpawn);
 
       // Should be enraged
@@ -215,7 +213,7 @@ describe("Berries Abound - Mystery Encounter", () => {
 
       const enemyField = scene.getEnemyField();
       expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
-      expect(enemyField.length).toBe(1);
+      expect(enemyField).toHaveLength(1);
       expect(enemyField[0].species.speciesId).toBe(speciesToSpawn);
 
       // Should be enraged

@@ -50,7 +50,7 @@ describe("Items - Temporary Stat Stage Boosters", () => {
     await game.phaseInterceptor.runFrom("EnemyCommandPhase").to(TurnEndPhase);
 
     expect(partyMember.getStatStageMultiplier).toHaveReturnedWith(1.3);
-  }, 20000);
+  });
 
   it("should increase existing ACC stat stage by 1 for X_ACCURACY only", async () => {
     game.override.startingModifier([{ name: "TEMP_STAT_STAGE_BOOSTER", type: Stat.ACC }]).ability(Abilities.SIMPLE);
@@ -72,7 +72,7 @@ describe("Items - Temporary Stat Stage Boosters", () => {
 
     // ACC at +3 stat stages yields a x2 multiplier
     expect(partyMember.getAccuracyMultiplier).toHaveReturnedWith(2);
-  }, 20000);
+  });
 
   it("should increase existing stat stage multiplier by 3/10 for the rest of the boosters", async () => {
     await game.classicMode.startBattle([Species.PIKACHU]);
@@ -92,7 +92,7 @@ describe("Items - Temporary Stat Stage Boosters", () => {
 
     // ATK at +1 stat stage yields a x1.5 multiplier, add 0.3 from X_ATTACK
     expect(partyMember.getStatStageMultiplier).toHaveReturnedWith(1.8);
-  }, 20000);
+  });
 
   it("should not increase past maximum stat stage multiplier", async () => {
     game.override.startingModifier([
@@ -116,7 +116,7 @@ describe("Items - Temporary Stat Stage Boosters", () => {
 
     expect(partyMember.getAccuracyMultiplier).toHaveReturnedWith(3);
     expect(partyMember.getStatStageMultiplier).toHaveReturnedWith(4);
-  }, 20000);
+  });
 
   it("should renew how many battles are left of existing booster when picking up new booster of same type", async () => {
     game.override.startingLevel(200).itemRewards([{ name: "TEMP_STAT_STAGE_BOOSTER", type: Stat.ATK }]);
@@ -161,5 +161,5 @@ describe("Items - Temporary Stat Stage Boosters", () => {
       }
     }
     expect(count).toBe(1);
-  }, 20000);
+  });
 });

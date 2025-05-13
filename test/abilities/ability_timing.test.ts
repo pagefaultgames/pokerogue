@@ -50,5 +50,5 @@ describe("Ability Timing", () => {
 
     await game.phaseInterceptor.to("MessagePhase");
     expect(i18next.t).toHaveBeenCalledWith("battle:statFell", expect.objectContaining({ count: 1 }));
-  }, 5000);
+  });
 });

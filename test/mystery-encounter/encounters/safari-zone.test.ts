@@ -38,10 +38,11 @@ describe("Safari Zone - Mystery Encounter", () => {
   beforeEach(async () => {
     game = new GameManager(phaserGame);
     scene = game.scene;
-    game.override.mysteryEncounterChance(100);
-    game.override.startingWave(defaultWave);
-    game.override.startingBiome(defaultBiome);
-    game.override.disableTrainerWaves();
+    game.override
+      .mysteryEncounterChance(100)
+      .startingWave(defaultWave)
+      .startingBiome(defaultBiome)
+      .disableTrainerWaves();
 
     const biomeMap = new Map<Biome, MysteryEncounterType[]>([
       [Biome.VOLCANO, [MysteryEncounterType.FIGHT_OR_FLIGHT]],
@@ -54,8 +55,6 @@ describe("Safari Zone - Mystery Encounter", () => {
 
   afterEach(() => {
     game.phaseInterceptor.restoreOg();
-    vi.clearAllMocks();
-    vi.resetAllMocks();
   });
 
   it("should have the correct properties", async () => {
@@ -68,12 +67,11 @@ describe("Safari Zone - Mystery Encounter", () => {
     expect(SafariZoneEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}:title`);
     expect(SafariZoneEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}:description`);
     expect(SafariZoneEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}:query`);
-    expect(SafariZoneEncounter.options.length).toBe(2);
+    expect(SafariZoneEncounter.options).toHaveLength(2);
   });
 
   it("should not spawn outside of the forest, swamp, or jungle biomes", async () => {
-    game.override.mysteryEncounterTier(MysteryEncounterTier.GREAT);
-    game.override.startingBiome(Biome.VOLCANO);
+    game.override.mysteryEncounterTier(MysteryEncounterTier.GREAT).startingBiome(Biome.VOLCANO);
     await game.runToMysteryEncounter();
 
     expect(scene.currentBattle?.mysteryEncounter?.encounterType).not.toBe(MysteryEncounterType.SAFARI_ZONE);

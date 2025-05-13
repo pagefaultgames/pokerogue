@@ -34,7 +34,7 @@ describe("Abilities - Hyper Cutter", () => {
   // Reference Link: https://bulbapedia.bulbagarden.net/wiki/Hyper_Cutter_(Ability)
 
   it("only prevents ATK drops", async () => {
-    await game.startBattle();
+    await game.classicMode.startBattle();
 
     const enemy = game.scene.getEnemyPokemon()!;
 
