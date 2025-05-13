@@ -3629,9 +3629,9 @@ export default class BattleScene extends SceneBase {
           ) as TurnHeldItemTransferModifier;
           finalBossMBH.setTransferrableFalse();
           this.addEnemyModifier(finalBossMBH, false, true);
-          pokemon.generateAndPopulateMoveset(1);
           this.setFieldScale(0.75);
           this.triggerPokemonFormChange(pokemon, SpeciesFormChangeManualTrigger, false);
+          pokemon.generateAndPopulateMoveset();
           this.currentBattle.double = true;
           const availablePartyMembers = this.getPlayerParty().filter(p => p.isAllowedInBattle());
           if (availablePartyMembers.length > 1) {

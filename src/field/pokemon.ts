@@ -3481,8 +3481,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /** Generates a semi-random moveset for a Pokemon */
-  public generateAndPopulateMoveset(): void {
-    this.moveset = [];
+  public generateAndPopulateMoveset(...presetMoves: Moves[]): void {
+    this.moveset = presetMoves.map(m => new PokemonMove(m));
+    if (presetMoves.length === 4) {
+      return; // Return early if all moves are set
+    }
     let movePool: [Moves, number][] = [];
     const allLevelMoves = this.getLevelMoves(1, true, true);
     if (!allLevelMoves) {
@@ -3669,6 +3672,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             )),
     ]);
 
+    // Filter out preset moves, do it here so they still have an impact on the weight of other moves
+    movePool = movePool.filter(m => !this.moveset.some(
+      pm => pm.moveId === m[0]
+    ));
+
     // Weight damaging moves against the lower stat. This uses a non-linear relationship.
     // If the higher stat is 1 - 1.09x higher, no change. At higher stat ~1.38x lower stat, off-stat moves have half weight.
     // One third weight at ~1.58x higher, one quarter weight at ~1.73x higher, one fifth at ~1.87x, and one tenth at ~2.35x higher.
@@ -3700,7 +3708,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     ]);
 
     // Trainers and bosses always force a stab move
-    if (this.hasTrainer() || this.isBoss()) {
+    if ((this.hasTrainer() || this.isBoss()) && !presetMoves.some(m => this.isOfType(allMoves[m].type))) {
       const stabMovePool = baseWeights.filter(
         m =>
           allMoves[m[0]].category !== MoveCategory.STATUS &&
@@ -7177,37 +7185,35 @@ export class EnemyPokemon extends Pokemon {
     }
   }
 
-  generateAndPopulateMoveset(formIndex?: number): void {
-    switch (true) {
-      case this.species.speciesId === Species.SMEARGLE:
-        this.moveset = [
-          new PokemonMove(Moves.SKETCH),
-          new PokemonMove(Moves.SKETCH),
-          new PokemonMove(Moves.SKETCH),
-          new PokemonMove(Moves.SKETCH),
-        ];
-        break;
-      case this.species.speciesId === Species.ETERNATUS:
-        this.moveset = (formIndex !== undefined ? formIndex : this.formIndex)
-          ? [
-              new PokemonMove(Moves.DYNAMAX_CANNON),
-              new PokemonMove(Moves.CROSS_POISON),
-              new PokemonMove(Moves.FLAMETHROWER),
-              new PokemonMove(Moves.RECOVER, 0, -4),
-            ]
-          : [
-              new PokemonMove(Moves.ETERNABEAM),
-              new PokemonMove(Moves.SLUDGE_BOMB),
-              new PokemonMove(Moves.FLAMETHROWER),
-              new PokemonMove(Moves.COSMIC_POWER),
-            ];
-        if (globalScene.gameMode.hasChallenge(Challenges.INVERSE_BATTLE)) {
-          this.moveset[2] = new PokemonMove(Moves.THUNDERBOLT);
-        }
-        break;
-      default:
-        super.generateAndPopulateMoveset();
-        break;
+  generateAndPopulateMoveset(...presetMoves: Moves[]): void {
+    if (this.species.speciesId === Species.SMEARGLE) {
+      this.moveset = [
+        new PokemonMove(Moves.SKETCH),
+        new PokemonMove(Moves.SKETCH),
+        new PokemonMove(Moves.SKETCH),
+        new PokemonMove(Moves.SKETCH),
+      ];
+    }
+    else if (this.species.speciesId === Species.ETERNATUS) {
+      this.moveset = this.formIndex === 1
+        ? [
+            new PokemonMove(Moves.DYNAMAX_CANNON),
+            new PokemonMove(Moves.CROSS_POISON),
+            new PokemonMove(Moves.FLAMETHROWER),
+            new PokemonMove(Moves.RECOVER, 0, -4),
+          ]
+        : [
+            new PokemonMove(Moves.ETERNABEAM),
+            new PokemonMove(Moves.SLUDGE_BOMB),
+            new PokemonMove(Moves.FLAMETHROWER),
+            new PokemonMove(Moves.COSMIC_POWER),
+          ];
+      if (globalScene.gameMode.hasChallenge(Challenges.INVERSE_BATTLE)) {
+        this.moveset[2] = new PokemonMove(Moves.THUNDERBOLT);
+      }
+    }
+    else {
+      super.generateAndPopulateMoveset(...presetMoves);
     }
   }
 
