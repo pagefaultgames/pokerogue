@@ -731,7 +731,7 @@ export default class PartyUiHandler extends MessageUiHandler {
         this.clearOptions();
       }
 
-      if (this.selectCallback && this.partyUiMode !== PartyUiMode.CHECK) {
+      if (this.selectCallback) {
         if (option === PartyOption.TRANSFER) {
           if (this.transferCursor !== this.cursor) {
             if (this.transferAll) {
@@ -756,8 +756,10 @@ export default class PartyUiHandler extends MessageUiHandler {
             }
           }
           this.clearTransfer();
+          ui.playSelect();
           return true;
         }
+
         if (this.partyUiMode === PartyUiMode.SPLICE) {
           if (option === PartyOption.SPLICE) {
             (this.selectCallback as PartyModifierSpliceSelectCallback)(this.transferCursor, this.cursor);
@@ -766,11 +768,15 @@ export default class PartyUiHandler extends MessageUiHandler {
             this.startTransfer();
           }
           this.clearOptions();
+          ui.playSelect();
           return true;
         }
-        const selectCallback = this.selectCallback;
-        this.selectCallback = null;
-        selectCallback(this.cursor, option);
+
+        if (this.partyUiMode !== PartyUiMode.CHECK) {
+          const selectCallback = this.selectCallback;
+          this.selectCallback = null;
+          selectCallback(this.cursor, option);
+        }
       } else {
         if (option >= PartyOption.FORM_CHANGE_ITEM && globalScene.getCurrentPhase() instanceof SelectModifierPhase) {
           if (this.partyUiMode === PartyUiMode.CHECK) {
