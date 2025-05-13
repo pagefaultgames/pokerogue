@@ -1075,6 +1075,35 @@ export default class PartyUiHandler extends MessageUiHandler {
     this.setCursor(0);
   }
 
+  allowBatonModifierSwitch(): boolean {
+    return !!(
+      this.partyUiMode !== PartyUiMode.FAINT_SWITCH &&
+      globalScene.findModifier(
+        m =>
+          m instanceof SwitchEffectTransferModifier &&
+          (m as SwitchEffectTransferModifier).pokemonId === globalScene.getPlayerField()[this.fieldIndex].id,
+      )
+    );
+  }
+
+  isBatonPassMove(): boolean {
+    const moveHistory = globalScene.getPlayerField()[this.fieldIndex].getMoveHistory();
+    return !!(
+      this.partyUiMode === PartyUiMode.FAINT_SWITCH &&
+      moveHistory.length &&
+      allMoves[moveHistory[moveHistory.length - 1].move].getAttrs(ForceSwitchOutAttr)[0]?.isBatonPass() &&
+      moveHistory[moveHistory.length - 1].result === MoveResult.SUCCESS
+    );
+  }
+
+  getItemModifiers(pokemon: Pokemon): PokemonHeldItemModifier[] {
+    return this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER
+      ? (globalScene.findModifiers(
+          m => m instanceof PokemonHeldItemModifier && m.isTransferable && m.pokemonId === pokemon.id,
+        ) as PokemonHeldItemModifier[])
+      : [];
+  }
+
   updateOptions(): void {
     const pokemon = globalScene.getPlayerParty()[this.cursor];
 
@@ -1086,12 +1115,7 @@ export default class PartyUiHandler extends MessageUiHandler {
       this.moveInfoOverlay.show(allMoves[learnableLevelMoves[0]]);
     }
 
-    const itemModifiers =
-      this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER
-        ? (globalScene.findModifiers(
-            m => m instanceof PokemonHeldItemModifier && m.isTransferable && m.pokemonId === pokemon.id,
-          ) as PokemonHeldItemModifier[])
-        : [];
+    const itemModifiers = this.getItemModifiers(pokemon);
 
     if (this.options.length) {
       this.options.splice(0, this.options.length);
@@ -1111,20 +1135,8 @@ export default class PartyUiHandler extends MessageUiHandler {
         case PartyUiMode.FAINT_SWITCH:
         case PartyUiMode.POST_BATTLE_SWITCH:
           if (this.cursor >= globalScene.currentBattle.getBattlerCount()) {
-            const allowBatonModifierSwitch =
-              this.partyUiMode !== PartyUiMode.FAINT_SWITCH &&
-              globalScene.findModifier(
-                m =>
-                  m instanceof SwitchEffectTransferModifier &&
-                  (m as SwitchEffectTransferModifier).pokemonId === globalScene.getPlayerField()[this.fieldIndex].id,
-              );
-
-            const moveHistory = globalScene.getPlayerField()[this.fieldIndex].getMoveHistory();
-            const isBatonPassMove =
-              this.partyUiMode === PartyUiMode.FAINT_SWITCH &&
-              moveHistory.length &&
-              allMoves[moveHistory[moveHistory.length - 1].move].getAttrs(ForceSwitchOutAttr)[0]?.isBatonPass() &&
-              moveHistory[moveHistory.length - 1].result === MoveResult.SUCCESS;
+            const allowBatonModifierSwitch = this.allowBatonModifierSwitch();
+            const isBatonPassMove = this.isBatonPassMove();
 
             // isBatonPassMove and allowBatonModifierSwitch shouldn't ever be true
             // at the same time, because they both explicitly check for a mutually
@@ -1216,8 +1228,8 @@ export default class PartyUiHandler extends MessageUiHandler {
     }
 
     this.optionsScrollTotal = this.options.length;
-    let optionStartIndex = this.optionsScrollCursor;
-    let optionEndIndex = Math.min(
+    const optionStartIndex = this.optionsScrollCursor;
+    const optionEndIndex = Math.min(
       this.optionsScrollTotal,
       optionStartIndex + (!optionStartIndex || this.optionsScrollCursor + 8 >= this.optionsScrollTotal ? 8 : 7),
     );
@@ -1237,13 +1249,19 @@ export default class PartyUiHandler extends MessageUiHandler {
 
     this.options.push(PartyOption.CANCEL);
 
+    this.updateOptionsWindow();
+  }
+
+  updateOptionsWindow(): void {
+    const pokemon = globalScene.getPlayerParty()[this.cursor];
+
     this.optionsBg = addWindow(0, 0, 0, 16 * this.options.length + 13);
     this.optionsBg.setOrigin(1, 1);
 
     this.optionsContainer.add(this.optionsBg);
 
-    optionStartIndex = 0;
-    optionEndIndex = this.options.length;
+    const optionStartIndex = 0;
+    const optionEndIndex = this.options.length;
 
     let widestOptionWidth = 0;
     const optionTexts: BBCodeText[] = [];
@@ -1276,6 +1294,7 @@ export default class PartyUiHandler extends MessageUiHandler {
             }
             break;
           default:
+            const formChangeItemModifiers = this.getFormChangeItemsModifiers(pokemon);
             if (formChangeItemModifiers && option >= PartyOption.FORM_CHANGE_ITEM) {
               const modifier = formChangeItemModifiers[option - PartyOption.FORM_CHANGE_ITEM];
               optionName = `${modifier.active ? i18next.t("partyUiHandler:DEACTIVATE") : i18next.t("partyUiHandler:ACTIVATE")} ${modifier.type.name}`;
@@ -1291,6 +1310,7 @@ export default class PartyUiHandler extends MessageUiHandler {
             break;
         }
       } else if (this.partyUiMode === PartyUiMode.REMEMBER_MOVE_MODIFIER) {
+        const learnableLevelMoves = pokemon.getLearnableLevelMoves();
         const move = learnableLevelMoves[option];
         optionName = allMoves[move].name;
         altText = !pokemon
@@ -1300,6 +1320,7 @@ export default class PartyUiHandler extends MessageUiHandler {
       } else if (option === PartyOption.ALL) {
         optionName = i18next.t("partyUiHandler:ALL");
       } else {
+        const itemModifiers = this.getItemModifiers(pokemon);
         const itemModifier = itemModifiers[option];
         optionName = itemModifier.type.name;
       }
@@ -1313,6 +1334,7 @@ export default class PartyUiHandler extends MessageUiHandler {
       optionText.setOrigin(0, 0);
 
       /** For every item that has stack bigger than 1, display the current quantity selection */
+      const itemModifiers = this.getItemModifiers(pokemon);
       const itemModifier = itemModifiers[option];
       if (
         this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER &&
