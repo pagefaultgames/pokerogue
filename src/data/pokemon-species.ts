@@ -27,12 +27,13 @@ import {
 } from "#app/data/balance/pokemon-level-moves";
 import type { Stat } from "#enums/stat";
 import type { Variant, VariantSet } from "#app/sprites/variant";
-import { populateVariantColorCache, variantData } from "#app/sprites/variant";
+import { populateVariantColorCache, variantColorCache, variantData } from "#app/sprites/variant";
 import { speciesStarterCosts, POKERUS_STARTER_COUNT } from "#app/data/balance/starters";
 import { SpeciesFormKey } from "#enums/species-form-key";
 import { starterPassiveAbilities } from "#app/data/balance/passives";
 import { loadPokemonVariantAssets } from "#app/sprites/pokemon-sprite";
 import { hasExpSprite } from "#app/sprites/sprite-utils";
+import { Gender } from "./gender";
 
 export enum Region {
   NORMAL,
@@ -404,7 +405,7 @@ export abstract class PokemonSpeciesForm {
   }
 
   /** Compute the sprite ID of the pokemon form. */
-  getSpriteId(female: boolean, formIndex?: number, shiny?: boolean, variant = 0, back?: boolean): string {
+  getSpriteId(female: boolean, formIndex?: number, shiny?: boolean, variant = 0, back = false): string {
     const baseSpriteKey = this.getBaseSpriteKey(female, formIndex);
 
     let config = variantData;
@@ -485,6 +486,7 @@ export abstract class PokemonSpeciesForm {
           break;
         case Species.ZACIAN:
         case Species.ZAMAZENTA:
+          // biome-ignore lint/suspicious/noFallthroughSwitchClause: Falls through
           if (formSpriteKey.startsWith("behemoth")) {
             formSpriteKey = "crowned";
           }
@@ -594,6 +596,44 @@ export abstract class PokemonSpeciesForm {
     return true;
   }
 
+  /**
+   * Load the variant colors for the species into the variant color cache
+   *
+   * @param spriteKey - The sprite key to use
+   * @param female - Whether to load female instead of male
+   * @param back - Whether the back sprite is being loaded
+   *
+   */
+  async loadVariantColors(
+    spriteKey: string,
+    female: boolean,
+    variant: Variant,
+    back = false,
+    formIndex?: number,
+  ): Promise<void> {
+    let baseSpriteKey = this.getBaseSpriteKey(female, formIndex);
+    if (back) {
+      baseSpriteKey = "back__" + baseSpriteKey;
+    }
+
+    if (variantColorCache.hasOwnProperty(baseSpriteKey)) {
+      // Variant colors have already been loaded
+      return;
+    }
+
+    const variantInfo = variantData[this.getVariantDataIndex(formIndex)];
+    // Do nothing if there is no variant information or the variant does not have color replacements
+    if (!variantInfo || variantInfo[variant] !== 1) {
+      return;
+    }
+
+    await populateVariantColorCache(
+      "pkmn__" + baseSpriteKey,
+      globalScene.experimentalSprites && hasExpSprite(spriteKey),
+      baseSpriteKey.replace("__", "/"),
+    );
+  }
+
   async loadAssets(
     female: boolean,
     formIndex?: number,
@@ -606,15 +646,9 @@ export abstract class PokemonSpeciesForm {
     const spriteKey = this.getSpriteKey(female, formIndex, shiny, variant, back);
     globalScene.loadPokemonAtlas(spriteKey, this.getSpriteAtlasPath(female, formIndex, shiny, variant, back));
     globalScene.load.audio(this.getCryKey(formIndex), `audio/${this.getCryKey(formIndex)}.m4a`);
-
-    const baseSpriteKey = this.getBaseSpriteKey(female, formIndex);
-
-    // Force the variant color cache to be loaded for the form
-    await populateVariantColorCache(
-      "pkmn__" + baseSpriteKey,
-      globalScene.experimentalSprites && hasExpSprite(spriteKey),
-      baseSpriteKey,
-    );
+    if (!isNullOrUndefined(variant)) {
+      await this.loadVariantColors(spriteKey, female, variant, back, formIndex);
+    }
     return new Promise<void>(resolve => {
       globalScene.load.once(Phaser.Loader.Events.COMPLETE, () => {
         const originalWarn = console.warn;
@@ -716,7 +750,7 @@ export abstract class PokemonSpeciesForm {
     let paletteColors: Map<number, number> = new Map();
 
     const originalRandom = Math.random;
-    Math.random = () => Phaser.Math.RND.realInRange(0, 1);
+    Math.random = Phaser.Math.RND.frac;
 
     globalScene.executeWithSeedOffset(
       () => {
@@ -844,6 +878,21 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
       }
     }
     return this.name;
+  }
+
+  /**
+   * Pick and return a random {@linkcode Gender} for a {@linkcode Pokemon}.
+   * @returns A randomly rolled gender based on this Species' {@linkcode malePercent}.
+   */
+  generateGender(): Gender {
+    if (isNullOrUndefined(this.malePercent)) {
+      return Gender.GENDERLESS;
+    }
+
+    if (Phaser.Math.RND.realInRange(0, 1) <= this.malePercent) {
+      return Gender.MALE;
+    }
+    return Gender.FEMALE;
   }
 
   /**

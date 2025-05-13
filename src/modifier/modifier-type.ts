@@ -128,6 +128,7 @@ import { getStatKey, Stat, TEMP_BATTLE_STATS } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import i18next from "i18next";
 import { timedEventManager } from "#app/global-event-manager";
+import { TYPE_BOOST_ITEM_BOOST_PERCENT } from "#app/constants";
 
 const outputModifierData = false;
 const useMaxWeightForOutput = false;
@@ -789,6 +790,7 @@ export class BerryModifierType extends PokemonHeldItemModifierType implements Ge
     );
 
     this.berryType = berryType;
+    this.id = "BERRY"; // needed to prevent harvest item deletion; remove after modifier rework
   }
 
   get name(): string {
@@ -1329,7 +1331,7 @@ class AttackTypeBoosterModifierTypeGenerator extends ModifierTypeGenerator {
   constructor() {
     super((party: Pokemon[], pregenArgs?: any[]) => {
       if (pregenArgs && pregenArgs.length === 1 && pregenArgs[0] in PokemonType) {
-        return new AttackTypeBoosterModifierType(pregenArgs[0] as PokemonType, 20);
+        return new AttackTypeBoosterModifierType(pregenArgs[0] as PokemonType, TYPE_BOOST_ITEM_BOOST_PERCENT);
       }
 
       const attackMoveTypes = party.flatMap(p =>
@@ -1377,7 +1379,7 @@ class AttackTypeBoosterModifierTypeGenerator extends ModifierTypeGenerator {
         weight += typeWeight;
       }
 
-      return new AttackTypeBoosterModifierType(type!, 20);
+      return new AttackTypeBoosterModifierType(type!, TYPE_BOOST_ITEM_BOOST_PERCENT);
     });
   }
 }
@@ -3659,7 +3661,7 @@ function getNewModifierTypeOption(
       }
       tier += upgradeCount;
     }
-  } else if (retryCount === 10 && tier) {
+  } else if (retryCount >= 100 && tier) {
     retryCount = 0;
     tier--;
   }

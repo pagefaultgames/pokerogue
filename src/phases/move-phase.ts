@@ -404,9 +404,10 @@ export class MovePhase extends BattlePhase {
      * if the move fails.
      */
     if (success) {
-      applyPreAttackAbAttrs(PokemonTypeChangeAbAttr, this.pokemon, null, this.move.getMove());
+      const move = this.move.getMove();
+      applyPreAttackAbAttrs(PokemonTypeChangeAbAttr, this.pokemon, null, move);
       globalScene.unshiftPhase(
-        new MoveEffectPhase(this.pokemon.getBattlerIndex(), this.targets, this.move, this.reflected),
+        new MoveEffectPhase(this.pokemon.getBattlerIndex(), this.targets, move, this.reflected, this.move.virtual),
       );
     } else {
       if ([Moves.ROAR, Moves.WHIRLWIND, Moves.TRICK_OR_TREAT, Moves.FORESTS_CURSE].includes(this.move.moveId)) {
@@ -617,7 +618,7 @@ export class MovePhase extends BattlePhase {
         globalScene.eventTarget.dispatchEvent(new MoveUsedEvent(this.pokemon?.id, this.move.getMove(), ppUsed));
       }
 
-      if (this.cancelled && this.pokemon.summonData?.tags?.find(t => t.tagType === BattlerTagType.FRENZY)) {
+      if (this.cancelled && this.pokemon.summonData.tags?.find(t => t.tagType === BattlerTagType.FRENZY)) {
         frenzyMissFunc(this.pokemon, this.move.getMove());
       }
 

@@ -217,16 +217,8 @@ export class StatStageChangePhase extends PokemonPhase {
 
       for (const s of filteredStats) {
         if (stages.value > 0 && pokemon.getStatStage(s) < 6) {
-          if (!pokemon.turnData) {
-            // Temporary fix for missing turn data struct on turn 1
-            pokemon.resetTurnData();
-          }
           pokemon.turnData.statStagesIncreased = true;
         } else if (stages.value < 0 && pokemon.getStatStage(s) > -6) {
-          if (!pokemon.turnData) {
-            // Temporary fix for missing turn data struct on turn 1
-            pokemon.resetTurnData();
-          }
           pokemon.turnData.statStagesDecreased = true;
         }
 

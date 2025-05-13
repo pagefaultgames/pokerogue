@@ -40,25 +40,9 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
 
   setup(): void {
     super.setup();
+
     this.buildExternalPartyContainer();
-
-    this.infoContainer = globalScene.add.container(0, 0);
-
-    this.usernameInfoImage = this.buildInteractableImage("settings_icon", "username-info-icon", {
-      x: 20,
-      scale: 0.5,
-    });
-
-    this.saveDownloadImage = this.buildInteractableImage("saving_icon", "save-download-icon", {
-      x: 0,
-      scale: 0.75,
-    });
-
-    this.infoContainer.add(this.usernameInfoImage);
-    this.infoContainer.add(this.saveDownloadImage);
-    this.getUi().add(this.infoContainer);
-    this.infoContainer.setVisible(false);
-    this.infoContainer.disableInteractive();
+    this.buildInfoContainer();
   }
 
   private buildExternalPartyContainer() {
@@ -82,6 +66,26 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
     this.externalPartyContainer.add(this.googleImage);
     this.externalPartyContainer.add(this.discordImage);
     this.externalPartyContainer.setVisible(false);
+  }
+
+  private buildInfoContainer() {
+    this.infoContainer = globalScene.add.container(0, 0);
+
+    this.usernameInfoImage = this.buildInteractableImage("settings_icon", "username-info-icon", {
+      x: 20,
+      scale: 0.5,
+    });
+
+    this.saveDownloadImage = this.buildInteractableImage("saving_icon", "save-download-icon", {
+      x: 0,
+      scale: 0.75,
+    });
+
+    this.infoContainer.add(this.usernameInfoImage);
+    this.infoContainer.add(this.saveDownloadImage);
+    this.getUi().add(this.infoContainer);
+    this.infoContainer.setVisible(false);
+    this.infoContainer.disableInteractive();
   }
 
   override getModalTitle(_config?: ModalConfig): string {
@@ -143,27 +147,29 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
       this.processExternalProvider(config);
       const originalLoginAction = this.submitAction;
       this.submitAction = _ => {
-        // Prevent overlapping overrides on action modification
-        this.submitAction = originalLoginAction;
-        this.sanitizeInputs();
+        if (globalScene.tweens.getTweensOf(this.modalContainer).length === 0) {
+          // Prevent overlapping overrides on action modification
+          this.submitAction = originalLoginAction;
+          this.sanitizeInputs();
         globalScene.ui.setMode(UiMode.LOADING, { buttonActions: [] });
-        const onFail = error => {
+          const onFail = error => {
           globalScene.ui.setMode(UiMode.LOGIN_FORM, Object.assign(config, { errorMessage: error?.trim() }));
-          globalScene.ui.playError();
-        };
-        if (!this.inputs[0].text) {
-          return onFail(i18next.t("menu:emptyUsername"));
-        }
-
-        const [usernameInput, passwordInput] = this.inputs;
-
-        pokerogueApi.account.login({ username: usernameInput.text, password: passwordInput.text }).then(error => {
-          if (!error && originalLoginAction) {
-            originalLoginAction();
-          } else {
-            onFail(error);
+            globalScene.ui.playError();
+          };
+          if (!this.inputs[0].text) {
+            return onFail(i18next.t("menu:emptyUsername"));
           }
-        });
+
+          const [usernameInput, passwordInput] = this.inputs;
+
+          pokerogueApi.account.login({ username: usernameInput.text, password: passwordInput.text }).then(error => {
+            if (!error && originalLoginAction) {
+              originalLoginAction();
+            } else {
+              onFail(error);
+            }
+          });
+        }
       };
 
       return true;
@@ -221,34 +227,36 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
     };
 
     this.usernameInfoImage.on("pointerdown", () => {
-      const localStorageKeys = Object.keys(localStorage); // this gets the keys for localStorage
-      const keyToFind = "data_";
-      const dataKeys = localStorageKeys.filter(ls => ls.indexOf(keyToFind) >= 0);
-      if (dataKeys.length > 0 && dataKeys.length <= 2) {
-        const options: OptionSelectItem[] = [];
-        for (let i = 0; i < dataKeys.length; i++) {
-          options.push({
-            label: dataKeys[i].replace(keyToFind, ""),
-            handler: () => {
-              globalScene.ui.revertMode();
-              this.infoContainer.disableInteractive();
-              return true;
-            },
-          });
-        }
+      if (globalScene.tweens.getTweensOf(this.infoContainer).length === 0) {
+        const localStorageKeys = Object.keys(localStorage); // this gets the keys for localStorage
+        const keyToFind = "data_";
+        const dataKeys = localStorageKeys.filter(ls => ls.indexOf(keyToFind) >= 0);
+        if (dataKeys.length > 0 && dataKeys.length <= 2) {
+          const options: OptionSelectItem[] = [];
+          for (let i = 0; i < dataKeys.length; i++) {
+            options.push({
+              label: dataKeys[i].replace(keyToFind, ""),
+              handler: () => {
+                globalScene.ui.revertMode();
+                this.infoContainer.disableInteractive();
+                return true;
+              },
+            });
+          }
         globalScene.ui.setOverlayMode(UiMode.OPTION_SELECT, {
-          options: options,
-          delay: 1000,
-        });
-        this.infoContainer.setInteractive(
-          new Phaser.Geom.Rectangle(0, 0, globalScene.game.canvas.width, globalScene.game.canvas.height),
-          Phaser.Geom.Rectangle.Contains,
-        );
-      } else {
-        if (dataKeys.length > 2) {
-          return onFail(this.ERR_TOO_MANY_SAVES);
+            options: options,
+            delay: 1000,
+          });
+          this.infoContainer.setInteractive(
+            new Phaser.Geom.Rectangle(0, 0, globalScene.game.canvas.width, globalScene.game.canvas.height),
+            Phaser.Geom.Rectangle.Contains,
+          );
+        } else {
+          if (dataKeys.length > 2) {
+            return onFail(this.ERR_TOO_MANY_SAVES);
+          }
+          return onFail(this.ERR_NO_SAVES);
         }
-        return onFail(this.ERR_NO_SAVES);
       }
     });
 

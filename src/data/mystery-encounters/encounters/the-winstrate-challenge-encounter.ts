@@ -32,7 +32,7 @@ import { ShowTrainerPhase } from "#app/phases/show-trainer-phase";
 import { ReturnPhase } from "#app/phases/return-phase";
 import i18next from "i18next";
 import { ModifierTier } from "#app/modifier/modifier-tier";
-import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
+import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { BattlerTagType } from "#enums/battler-tag-type";
 
 /** the i18n namespace for the encounter */
@@ -222,7 +222,8 @@ function endTrainerBattleAndShowDialogue(): Promise<void> {
           globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeAbilityTrigger);
         }
 
-        pokemon.resetBattleData();
+        // Each trainer battle is supposed to be a new fight, so reset all per-battle activation effects
+        pokemon.resetBattleAndWaveData();
         applyPostBattleInitAbAttrs(PostBattleInitAbAttr, pokemon);
       }
 
