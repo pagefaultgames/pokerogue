@@ -186,6 +186,7 @@ import { hasExpSprite } from "./sprites/sprite-utils";
 import { timedEventManager } from "./global-event-manager";
 import { starterColors } from "./global-vars/starter-colors";
 import { startingWave } from "./starting-wave";
+import { PokemonPregenData } from "#app/system/pokemon-data";
 
 const DEBUG_RNG = false;
 
@@ -977,6 +978,7 @@ export default class BattleScene extends SceneBase {
     shinyLock = false,
     dataSource?: PokemonData,
     postProcess?: (enemyPokemon: EnemyPokemon) => void,
+    pregenData?: PokemonPregenData,
   ): EnemyPokemon {
     if (Overrides.OPP_LEVEL_OVERRIDE > 0) {
       level = Overrides.OPP_LEVEL_OVERRIDE;
@@ -987,12 +989,12 @@ export default class BattleScene extends SceneBase {
       boss = this.getEncounterBossSegments(this.currentBattle.waveIndex, level, species) > 1;
     }
 
-    const pokemon = new EnemyPokemon(species, level, trainerSlot, boss, shinyLock, dataSource);
+    const pokemon = new EnemyPokemon(species, level, trainerSlot, boss, shinyLock, dataSource, pregenData);
     if (Overrides.OPP_FUSION_OVERRIDE) {
       pokemon.generateFusionSpecies();
     }
 
-    if (boss && !dataSource) {
+    if (boss && !dataSource && !pregenData?.ivs) {
       const secondaryIvs = getIvsFromId(randSeedInt(4294967296));
 
       for (let s = 0; s < pokemon.ivs.length; s++) {

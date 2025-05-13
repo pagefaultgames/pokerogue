@@ -38,7 +38,7 @@ import { timedEventManager } from "#app/global-event-manager";
 import type { PokemonSpeciesFilter } from "#app/data/pokemon-species";
 import type PokemonSpecies from "#app/data/pokemon-species";
 import type { ModifierTypeFunc } from "#app/modifier/modifier-type";
-import type { EnemyPokemon } from "#app/field/pokemon";
+import { EnemyPokemon } from "#app/field/pokemon";
 import type { EvilTeam } from "./evil-admin-trainer-pools";
 import type {
   PartyMemberFunc,
@@ -50,6 +50,9 @@ import type {
   PartyMemberFuncs,
   TrainerPartyConfigs,
 } from "./typedefs";
+import PokemonData, { PokemonPregenData } from "#app/system/pokemon-data";
+import { Variant } from "#app/sprites/variant";
+import { Nature } from "#enums/nature";
 
 export interface TrainerPartyMemberConfig {
   species: Species,
@@ -62,6 +65,10 @@ export interface TrainerPartyMemberConfig {
   isBoss?: boolean,
   bossBars?: number,
   ball?: PokeballType,
+  shiny?: boolean,
+  variant?: Variant,
+  ivs?: number[],
+  nature?: Nature,
 }
 
 export type TrainerPartySetSlot = [
@@ -724,6 +731,44 @@ export class TrainerConfig {
     return this;
   }
 
+  initPartyMemberFuncFromConfig(cfgs: TrainerPartyMemberConfig[], postProcess?: (Pokemon) => void) {
+    return (level: number, strength: PartyMemberStrength) => {
+      let cfg: TrainerPartyMemberConfig = cfgs[0];
+      if (cfgs.length > 1) {
+        cfg = randSeedItem(cfgs);
+      }
+      cfg.teraType = cfg.teraType ?? this.specialtyType;
+      const moveset = cfg.moves?.map(m => new PokemonMove(m));
+      const monPregenData: PokemonPregenData = {
+        player: false,
+        species: cfg.species,
+        formIndex: cfg.formIndex,
+        abilityIndex: cfg.abilityIndex,
+        shiny: cfg.shiny,
+        variant: cfg.variant,
+        pokeball: cfg.ball,
+        boss: cfg.isBoss,
+        bossSegments: cfg.bossBars,
+        nature: cfg.nature,
+        ivs: cfg.ivs,
+        gender: cfg.gender,
+        teraType: cfg.teraType,
+        moveset: moveset,
+        level: level,
+      }
+      return globalScene.addEnemyPokemon(
+        getPokemonSpecies(cfg.species),
+        level,
+        TrainerSlot.TRAINER,
+        cfg.isBoss,
+        false,
+        undefined,
+        postProcess,
+        monPregenData
+      );
+    }
+  }
+
   /**
    * Initializes the trainer configuration for an Elite Four member.
    * @param signatureSpecies - The signature species for the Elite Four member.
@@ -745,6 +790,20 @@ export class TrainerConfig {
 
     // Set the party templates for the Elite Four.
     this.setPartyTemplates(trainerPartyTemplates.ELITE_FOUR);
+
+    trainerPartyConfigs[this.trainerType].forEach((slot, s) => {
+      const cfg = Array.isArray(slot[1]) ? slot[1] : [slot[1]];
+      if (s === 5) {
+        cfg.forEach(c => {
+          c.isBoss = true;
+          c.bossBars = 2;
+        });
+      }
+      if (cfg.some(c => c.teraType || c.instantTera)) {
+        this.setInstantTera(s);
+      }
+      this.setPartyMemberFunc(slot[0], this.initPartyMemberFuncFromConfig(cfg));
+    });
 
     // Set up party members with their corresponding species.
     signatureSpecies.forEach((speciesPool, s) => {

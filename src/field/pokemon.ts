@@ -260,6 +260,7 @@ import { MoveFlags } from "#enums/MoveFlags";
 import { timedEventManager } from "#app/global-event-manager";
 import { loadMoveAnimations } from "#app/sprites/pokemon-asset-loader";
 import { ResetStatusPhase } from "#app/phases/reset-status-phase";
+import { PokemonPregenData } from "#app/system/pokemon-data";
 
 export enum LearnMoveSituation {
   MISC,
@@ -402,6 +403,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     ivs?: number[],
     nature?: Nature,
     dataSource?: Pokemon | PokemonData,
+    pregenData?: PokemonPregenData,
   ) {
     super(globalScene, x, y);
 
@@ -409,8 +411,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       throw `Cannot create a player Pokemon for species '${species.getName(formIndex)}'`;
     }
 
+    const partialData = dataSource ?? pregenData;
+
     this.species = species;
-    this.pokeball = dataSource?.pokeball || PokeballType.POKEBALL;
+    this.pokeball = partialData?.pokeball || PokeballType.POKEBALL;
     this.level = level;
 
     this.abilityIndex = abilityIndex ?? this.generateAbilityIndex()
@@ -428,7 +432,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.variant = variant;
     }
     this.exp =
-      dataSource?.exp || getLevelTotalExp(this.level, species.growthRate);
+      dataSource?.exp ||  getLevelTotalExp(this.level, species.growthRate);
     this.levelExp = dataSource?.levelExp || 0;
 
     if (dataSource) {
@@ -481,7 +485,67 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.teraType = dataSource.teraType;
       this.isTerastallized = dataSource.isTerastallized;
       this.stellarTypesBoosted = dataSource.stellarTypesBoosted ?? [];
-    } else {
+    }
+    else if (pregenData) {
+      this.id = randSeedInt(4294967296);
+      this.ivs = pregenData.ivs ?? getIvsFromId(this.id);
+
+      if (this.gender === undefined) {
+        this.generateGender();
+      }
+
+      if (this.formIndex === undefined) {
+        this.formIndex = globalScene.getSpeciesFormIndex(
+          species,
+          this.gender,
+          this.nature,
+          this.isPlayer(),
+        );
+      }
+
+      if (this.shiny === undefined) {
+        this.trySetShiny();
+      }
+
+      if (this.variant === undefined) {
+        this.variant = this.shiny ? this.generateShinyVariant() : 0;
+      }
+
+      if (nature !== undefined) {
+        this.setNature(nature);
+      } else {
+        this.generateNature();
+      }
+
+      if (pregenData.fusionSpecies) {
+        this.fusionSpecies = getPokemonSpecies(pregenData.fusionSpecies);
+        this.fusionAbilityIndex = pregenData.fusionAbilityIndex ?? 0;
+        this.fusionFormIndex = pregenData.fusionFormIndex ?? 0;
+        this.fusionGender = pregenData.fusionGender ?? 0;
+        this.fusionShiny = !!pregenData.fusionShiny;
+        this.fusionVariant = pregenData.fusionVariant ?? 0;
+      }
+
+      this.friendship = pregenData.friendship ?? species.baseFriendship;
+      this.metLevel = level;
+      this.metBiome = globalScene.currentBattle
+        ? globalScene.arena.biomeType
+        : -1;
+      this.metSpecies = species.speciesId;
+      this.metWave = globalScene.currentBattle
+        ? globalScene.currentBattle.waveIndex
+        : -1;
+      this.pokerus = !!pregenData.pokerus;
+      this.luck = pregenData.luck ??
+        (this.shiny ? this.variant + 1 : 0) +
+        (this.fusionShiny ? this.fusionVariant + 1 : 0);
+      this.fusionLuck = pregenData.fusionLuck ?? this.luck;
+      this.nickname = pregenData.nickname ?? "";
+      this.teraType = pregenData.teraType ?? randSeedItem(this.getTypes(false, false, true));
+      this.isTerastallized = false;
+      this.stellarTypesBoosted = [];
+    }
+    else {
       this.id = randSeedInt(4294967296);
       this.ivs = ivs || getIvsFromId(this.id);
 
@@ -7057,27 +7121,29 @@ export class EnemyPokemon extends Pokemon {
     boss: boolean,
     shinyLock = false,
     dataSource?: PokemonData,
+    pregenData?: PokemonPregenData,
   ) {
     super(
       236,
       84,
       species,
       level,
-      dataSource?.abilityIndex,
-      dataSource?.formIndex,
-      dataSource?.gender,
-      !shinyLock && dataSource ? dataSource.shiny : false,
-      !shinyLock && dataSource ? dataSource.variant : undefined,
-      undefined,
+      dataSource?.abilityIndex ?? pregenData?.abilityIndex,
+      dataSource?.formIndex ?? pregenData?.formIndex,
+      dataSource?.gender ?? pregenData?.gender,
+      !shinyLock ? dataSource?.shiny ?? pregenData?.shiny : false,
+      !shinyLock ? dataSource?.variant ?? pregenData?.variant : undefined,
+      dataSource?.ivs ?? pregenData?.ivs ?? undefined,
       dataSource ? dataSource.nature : undefined,
       dataSource,
+      pregenData,
     );
 
     this.trainerSlot = trainerSlot;
     this.initialTeamIndex = globalScene.currentBattle?.enemyParty.length ?? 0;
-    this.isPopulatedFromDataSource = !!dataSource; // if a dataSource is provided, then it was populated from dataSource
+    this.isPopulatedFromDataSource = !!dataSource || !!pregenData; // if a dataSource is provided, then it was populated from dataSource
     if (boss) {
-      this.setBoss(boss, dataSource?.bossSegments);
+      this.setBoss(boss, dataSource?.bossSegments ?? pregenData?.bossSegments);
     }
 
     if (Overrides.OPP_STATUS_OVERRIDE) {
@@ -7098,9 +7164,14 @@ export class EnemyPokemon extends Pokemon {
       this.formIndex = Overrides.OPP_FORM_OVERRIDES[speciesId];
     }
 
-    if (!dataSource) {
+    if (pregenData && pregenData.presetMoves) {
+      this.generateAndPopulateMoveset(...pregenData.presetMoves);
+    }
+    else if (!dataSource) {
       this.generateAndPopulateMoveset();
+    }
 
+    if (!dataSource && !pregenData) {
       if (shinyLock || Overrides.OPP_SHINY_OVERRIDE === false) {
         this.shiny = false;
       } else {

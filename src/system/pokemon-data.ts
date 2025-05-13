@@ -14,6 +14,43 @@ import type { Species } from "#enums/species";
 import { CustomPokemonData } from "#app/data/custom-pokemon-data";
 import type { PokemonType } from "#enums/pokemon-type";
 
+export interface PokemonPregenData {
+  player: boolean;
+  species: Species;
+  nickname?: string;
+  formIndex?: number;
+  abilityIndex?: number;
+  passive?: boolean;
+  shiny?: boolean;
+  variant?: Variant;
+  pokeball?: PokeballType;
+  level?: number;
+  gender?: Gender;
+  ivs?: number[];
+  nature?: Nature;
+  moveset?: PokemonMove[];
+  presetMoves?: Moves[];
+  friendship?: number;
+  luck?: number;
+  pokerus?: boolean;
+  teraType?: PokemonType;
+
+  fusionSpecies?: Species;
+  fusionFormIndex?: number;
+  fusionAbilityIndex?: number;
+  fusionShiny?: boolean;
+  fusionVariant?: Variant;
+  fusionGender?: Gender;
+  fusionLuck?: number;
+  fusionTeraType?: PokemonType;
+
+  boss?: boolean;
+  bossSegments?: number;
+
+  customPokemonData?: CustomPokemonData;
+  fusionCustomPokemonData?: CustomPokemonData;
+}
+
 export default class PokemonData {
   public id: number;
   public player: boolean;
