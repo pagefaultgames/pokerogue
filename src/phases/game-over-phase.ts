@@ -294,10 +294,10 @@ export class GameOverPhase extends BattlePhase {
       enemyParty: globalScene.getEnemyParty().map(p => new PokemonData(p)),
       modifiers: preWaveSessionData
         ? preWaveSessionData.modifiers
-        : globalScene.findModifiers(() => true).map(m => new PersistentModifierData(m, true)),
+        : globalScene.getModifiers().map(m => new PersistentModifierData(m, true)),
       enemyModifiers: preWaveSessionData
         ? preWaveSessionData.enemyModifiers
-        : globalScene.findModifiers(() => true, false).map(m => new PersistentModifierData(m, false)),
+        : globalScene.getModifiers(false).map(m => new PersistentModifierData(m, false)),
       arena: new ArenaData(globalScene.arena),
       pokeballCounts: globalScene.pokeballCounts,
       money: Math.floor(globalScene.money),

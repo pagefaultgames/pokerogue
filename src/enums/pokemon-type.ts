@@ -1,4 +1,5 @@
 export enum PokemonType {
+  /** {@link https://bulbapedia.bulbagarden.net/wiki/None} */
   UNKNOWN = -1,
   NORMAL = 0,
   FIGHTING,

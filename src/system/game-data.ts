@@ -1020,8 +1020,8 @@ export class GameData {
       gameMode: globalScene.gameMode.modeId,
       party: globalScene.getPlayerParty().map(p => new PokemonData(p)),
       enemyParty: globalScene.getEnemyParty().map(p => new PokemonData(p)),
-      modifiers: globalScene.findModifiers(() => true).map(m => new PersistentModifierData(m, true)),
-      enemyModifiers: globalScene.findModifiers(() => true, false).map(m => new PersistentModifierData(m, false)),
+      modifiers: globalScene.getModifiers().map(m => new PersistentModifierData(m, true)),
+      enemyModifiers: globalScene.getModifiers(false).map(m => new PersistentModifierData(m, false)),
       arena: new ArenaData(globalScene.arena),
       pokeballCounts: globalScene.pokeballCounts,
       money: Math.floor(globalScene.money),
@@ -1351,7 +1351,8 @@ export class GameData {
     // (or prevent them from being null)
     // If the value is able to *not exist*, it should say so in the code
     const sessionData = JSON.parse(dataStr, (k: string, v: any) => {
-      // TODO: Add pre-parse migrate scripts
+      // TODO: Move this to occur _after_ migrate scripts (and refactor all non-assignment duties into migrate scripts)
+      // This should ideally be just a giant assign block
       switch (k) {
         case "party":
         case "enemyParty": {

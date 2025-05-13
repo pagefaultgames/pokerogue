@@ -110,7 +110,7 @@ describe("Items - Multi Lens", () => {
 
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
 
-    await game.phaseInterceptor.to("MoveEndPhase");
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(magikarp.turnData.hitCount).toBe(2);
   });

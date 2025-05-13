@@ -2,6 +2,7 @@ import { Moves } from "#enums/moves";
 
 /** Set of moves that cannot be called by {@linkcode Moves.METRONOME Metronome} */
 export const invalidMetronomeMoves: ReadonlySet<Moves> = new Set([
+  Moves.NONE,
   Moves.AFTER_YOU,
   Moves.ASSIST,
   Moves.BANEFUL_BUNKER,
