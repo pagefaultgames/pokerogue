@@ -1,10 +1,8 @@
+import { coerceArray } from "#app/utils/common";
+
 let manifest: object;
 
 export default class CacheBustedLoaderPlugin extends Phaser.Loader.LoaderPlugin {
-  constructor(scene: Phaser.Scene) {
-    super(scene);
-  }
-
   get manifest() {
     return manifest;
   }
@@ -14,9 +12,7 @@ export default class CacheBustedLoaderPlugin extends Phaser.Loader.LoaderPlugin 
   }
 
   addFile(file): void {
-    if (!Array.isArray(file)) {
-      file = [file];
-    }
+    file = coerceArray(file);
 
     file.forEach(item => {
       if (manifest) {
