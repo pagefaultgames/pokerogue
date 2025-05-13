@@ -49,7 +49,7 @@ describe("Abilities - Good As Gold", () => {
 
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(player.battleData.abilitiesApplied[0]).toBe(Abilities.GOOD_AS_GOLD);
+    expect(player.waveData.abilitiesApplied).toContain(Abilities.GOOD_AS_GOLD);
     expect(player.getStatStage(Stat.ATK)).toBe(0);
   });
 

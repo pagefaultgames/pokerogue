@@ -176,11 +176,13 @@ export class UiInputs {
       return;
     }
     switch (globalScene.ui?.getMode()) {
-      case UiMode.MESSAGE:
+      case UiMode.MESSAGE: {
         const messageHandler = globalScene.ui.getHandler<MessageUiHandler>();
         if (!messageHandler.pendingPrompt || messageHandler.isTextAnimationInProgress()) {
           return;
         }
+        // biome-ignore lint/suspicious/noFallthroughSwitchClause: falls through to show menu overlay
+      }
       case UiMode.TITLE:
       case UiMode.COMMAND:
       case UiMode.MODIFIER_SELECT:
