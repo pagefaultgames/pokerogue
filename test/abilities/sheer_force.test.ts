@@ -31,7 +31,7 @@ describe("Abilities - Sheer Force", () => {
       .enemySpecies(Species.ONIX)
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset([Moves.SPLASH])
-      .disableCrits();
+      .criticalHits(false);
   });
 
   const SHEER_FORCE_MULT = 1.3;

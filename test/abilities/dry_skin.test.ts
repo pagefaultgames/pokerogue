@@ -23,7 +23,7 @@ describe("Abilities - Dry Skin", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemyAbility(Abilities.DRY_SKIN)
       .enemyMoveset(Moves.SPLASH)
       .enemySpecies(Species.CHARMANDER)

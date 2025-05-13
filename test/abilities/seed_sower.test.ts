@@ -23,7 +23,7 @@ describe("Abilities - Seed Sower", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override.battleStyle("single");
-    game.override.disableCrits();
+    game.override.criticalHits(false);
 
     game.override.enemySpecies(Species.MAGIKARP);
     game.override.enemyAbility(Abilities.BALL_FETCH);

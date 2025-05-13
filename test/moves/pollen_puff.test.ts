@@ -26,7 +26,7 @@ describe("Moves - Pollen Puff", () => {
       .moveset([Moves.POLLEN_PUFF])
       .ability(Abilities.BALL_FETCH)
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH);

@@ -32,7 +32,7 @@ describe("Moves - Fusion Flare", () => {
 
     game.override.battleStyle("single");
     game.override.startingWave(97);
-    game.override.disableCrits();
+    game.override.criticalHits(false);
   });
 
   it("should thaw freeze status condition", async () => {

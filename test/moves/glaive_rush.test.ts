@@ -24,7 +24,7 @@ describe("Moves - Glaive Rush", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset([Moves.GLAIVE_RUSH])

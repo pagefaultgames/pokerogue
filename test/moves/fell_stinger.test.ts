@@ -30,7 +30,7 @@ describe("Moves - Fell Stinger", () => {
       .battleStyle("single")
       .moveset([Moves.FELL_STINGER, Moves.SALT_CURE, Moves.BIND, Moves.LEECH_SEED])
       .startingLevel(50)
-      .disableCrits()
+      .criticalHits(false)
       .enemyAbility(Abilities.STURDY)
       .enemySpecies(Species.HYPNO)
       .enemyMoveset(Moves.SPLASH)

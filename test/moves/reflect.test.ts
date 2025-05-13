@@ -40,7 +40,7 @@ describe("Moves - Reflect", () => {
     game.override.enemyLevel(100);
     game.override.enemySpecies(Species.MAGIKARP);
     game.override.enemyMoveset([Moves.REFLECT, Moves.REFLECT, Moves.REFLECT, Moves.REFLECT]);
-    game.override.disableCrits();
+    game.override.criticalHits(false);
   });
 
   it("reduces damage of physical attacks by half in a single battle", async () => {

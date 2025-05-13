@@ -41,7 +41,7 @@ describe("Moves - Aurora Veil", () => {
     game.override.enemyLevel(100);
     game.override.enemySpecies(Species.MAGIKARP);
     game.override.enemyMoveset([Moves.AURORA_VEIL, Moves.AURORA_VEIL, Moves.AURORA_VEIL, Moves.AURORA_VEIL]);
-    game.override.disableCrits();
+    game.override.criticalHits(false);
     game.override.weather(WeatherType.HAIL);
   });
 

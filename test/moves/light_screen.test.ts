@@ -40,7 +40,7 @@ describe("Moves - Light Screen", () => {
     game.override.enemyLevel(100);
     game.override.enemySpecies(Species.MAGIKARP);
     game.override.enemyMoveset([Moves.LIGHT_SCREEN, Moves.LIGHT_SCREEN, Moves.LIGHT_SCREEN, Moves.LIGHT_SCREEN]);
-    game.override.disableCrits();
+    game.override.criticalHits(false);
   });
 
   it("reduces damage of special attacks by half in a single battle", async () => {

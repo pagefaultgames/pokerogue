@@ -39,7 +39,7 @@ describe("Abilities - Wimp Out", () => {
       .enemyLevel(70)
       .moveset([Moves.SPLASH, Moves.FALSE_SWIPE, Moves.ENDURE])
       .enemyMoveset(Moves.FALSE_SWIPE)
-      .disableCrits();
+      .criticalHits(false);
   });
 
   function confirmSwitch(): void {

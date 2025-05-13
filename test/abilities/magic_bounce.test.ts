@@ -32,7 +32,7 @@ describe("Abilities - Magic Bounce", () => {
       .ability(Abilities.BALL_FETCH)
       .battleStyle("single")
       .moveset([Moves.GROWL, Moves.SPLASH])
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.MAGIC_BOUNCE)
       .enemyMoveset(Moves.SPLASH);
