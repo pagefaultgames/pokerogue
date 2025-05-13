@@ -113,7 +113,7 @@
       }
     },
 
-    // Overrides to prevent unused import removal inside `overrides.ts` and enums files (for jsdoc)
+    // Overrides to prevent unused import removal inside `overrides.ts` and enums files (for TSDoc linkcodes)
     {
       "include": ["src/overrides.ts", "src/enums/*"],
       "linter": {
@@ -122,7 +122,7 @@
             "noUnusedImports": "off"
           },
           "style": {
-            "useImportType": "off"
+            "useImportType": "error"
           }
         }
       }

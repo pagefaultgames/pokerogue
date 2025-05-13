@@ -871,7 +871,6 @@ class ToxicSpikesTag extends ArenaTrapTag {
  * Arena Tag class for delayed attacks, such as {@linkcode Moves.FUTURE_SIGHT} or {@linkcode Moves.DOOM_DESIRE}.
  * Delays the attack's effect by a set amount of turns, usually 3 (including the turn the move is used),
  * and deals damage after the turn count is reached.
- * TODO: Move to a battler tag to allow for per-target checks
  */
 export class DelayedAttackTag extends ArenaTag {
   public targetIndex: BattlerIndex;
@@ -893,8 +892,11 @@ export class DelayedAttackTag extends ArenaTag {
     const ret = super.lapse(arena);
 
     if (!ret) {
+      // TODO: When does Future Sight add to move history: on the turn it's used or actually hits?
+      // We currently only add the entry on the turn of the _attack_ and always make it a follow up
+      // (meaning it's never targetable by Spite)
       globalScene.unshiftPhase(
-        new MoveEffectPhase(this.sourceId!, [this.targetIndex], allMoves[this.sourceMove!], MoveUseType.REFLECTED), // Reflected ensures this doesn't check status, use PP or be copied
+        new MoveEffectPhase(this.sourceId!, [this.targetIndex], allMoves[this.sourceMove!], MoveUseType.FOLLOW_UP),
       ); // TODO: are those bangs correct?
     }
 

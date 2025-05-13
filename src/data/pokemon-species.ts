@@ -83,7 +83,7 @@ export const normalForm: Species[] = [
  */
 export function getPokemonSpecies(species: Species | Species[]): PokemonSpecies {
   if (Array.isArray(species)) {
-    // TODO: can't we just use normal int number gen rather than this junk
+    // TODO: this should not be handled by this function
     species = species[Math.floor(Math.random() * species.length)];
   }
   if (species >= 2000) {

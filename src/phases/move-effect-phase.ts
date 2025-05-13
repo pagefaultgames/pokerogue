@@ -233,7 +233,6 @@ export class MoveEffectPhase extends PokemonPhase {
         case HitCheckResult.NO_EFFECT_NO_MESSAGE:
         case HitCheckResult.PROTECTED:
         case HitCheckResult.TARGET_NOT_ON_FIELD:
-          // Apply effects for ineffective moves (eg High Jump Kick crash dmg)
           applyMoveAttrs(NoEffectAttr, user, target, this.move);
           break;
         case HitCheckResult.MISS:
@@ -297,7 +296,8 @@ export class MoveEffectPhase extends PokemonPhase {
 
     // Apply effects to override a move effect.
     // Assuming single target here works as this is (currently)
-    // only used for Future Sight and Pledge moves
+    // only used for Future Sight and Pledge moves.
+    // TODO: change if any other move effect overrides are introduced
     applyMoveAttrs(
       OverrideMoveEffectAttr,
       user,
@@ -341,7 +341,6 @@ export class MoveEffectPhase extends PokemonPhase {
       user.turnData.hitsLeft = hitCount.value;
     }
 
-    // Update Move history entry with data
     this.moveHistoryEntry = {
       move: this.move.id,
       targets: this.targets,
@@ -513,13 +512,11 @@ export class MoveEffectPhase extends PokemonPhase {
     return (
       ![MoveTarget.ENEMY_SIDE, MoveTarget.BOTH_SIDES].includes(this.move.moveTarget) &&
       (bypassIgnoreProtect.value || !this.move.doesFlagEffectApply({ flag: MoveFlags.IGNORE_PROTECT, user, target })) &&
-      !!(
-        hasConditionalProtectApplied.value ||
+      (hasConditionalProtectApplied.value ||
         (!target.findTags(t => t instanceof DamageProtectedTag).length &&
-          target.findTags(t => t instanceof ProtectedTag).find(t => target.lapseTag(t.tagType))) ||
+          target.findTags(t => t instanceof ProtectedTag).some(t => target.lapseTag(t.tagType))) ||
         (this.move.category !== MoveCategory.STATUS &&
-          target.findTags(t => t instanceof DamageProtectedTag).find(t => target.lapseTag(t.tagType)))
-      )
+          target.findTags(t => t instanceof DamageProtectedTag).some(t => target.lapseTag(t.tagType))))
     );
   }
 
@@ -657,19 +654,22 @@ export class MoveEffectPhase extends PokemonPhase {
     if (!user) {
       return false;
     }
-
-    switch (true) {
-      // No Guard
-      case user.hasAbilityWithAttr(AlwaysHitAbAttr) || target.hasAbilityWithAttr(AlwaysHitAbAttr):
-      // Toxic as poison type
-      case this.move.hasAttr(ToxicAccuracyAttr) && user.isOfType(PokemonType.POISON):
-      // Lock On/Mind Reader
-      case !!user.getTag(BattlerTagType.IGNORE_ACCURACY):
-      // Spikes and company
-      case isFieldTargeted(this.move):
-        return true;
+    if (user.hasAbilityWithAttr(AlwaysHitAbAttr) || target.hasAbilityWithAttr(AlwaysHitAbAttr)) {
+      return true;
     }
-    return false;
+    if (this.move.hasAttr(ToxicAccuracyAttr) && user.isOfType(PokemonType.POISON)) {
+      return true;
+    }
+    // TODO: Fix lock on / mind reader check.
+    if (
+      user.getTag(BattlerTagType.IGNORE_ACCURACY) &&
+      (user.getLastXMoves().find(() => true)?.targets || []).indexOf(target.getBattlerIndex()) !== -1
+    ) {
+      return true;
+    }
+    if (isFieldTargeted(this.move)) {
+      return true;
+    }
   }
 
   /**

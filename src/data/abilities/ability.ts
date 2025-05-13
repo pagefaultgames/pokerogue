@@ -1070,7 +1070,7 @@ export class PostDefendMoveDisableAbAttr extends PostDefendAbAttr {
   }
 
   override canApplyPostDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, hitResult: HitResult | null, args: any[]): boolean {
-    return !isNullOrUndefined(attacker.getTag(BattlerTagType.DISABLED))
+    return isNullOrUndefined(attacker.getTag(BattlerTagType.DISABLED))
       && move.doesFlagEffectApply({flag: MoveFlags.MAKES_CONTACT, user: attacker, target: pokemon}) && (this.chance === -1 || pokemon.randSeedInt(100) < this.chance);
   }
 
@@ -5605,6 +5605,7 @@ class ForceSwitchOutHelper {
    *
    * @param pokemon The {@linkcode Pokemon} attempting to switch out.
    * @returns `true` if the switch is successful
+   * TODO: Make this actually cancel pending move phases on the switched out target
    */
   public switchOutLogic(pokemon: Pokemon): boolean {
     const switchOutTarget = pokemon;
@@ -5792,7 +5793,7 @@ export class PostDamageForceSwitchAbAttr extends PostDamageAbAttr {
     const lastMove = pokemon.getLastXMoves()[0];
     // Will not activate when the Pokémon's HP is lowered by cutting its own HP
     const forbiddenAttackingMoves = new Set<Moves>([ Moves.BELLY_DRUM, Moves.SUBSTITUTE, Moves.CURSE, Moves.PAIN_SPLIT ]);
-    if (isNullOrUndefined(lastMove) || forbiddenAttackingMoves.has(lastMove.move)) {
+    if (!isNullOrUndefined(lastMove) && forbiddenAttackingMoves.has(lastMove.move)) {
       return false;
     }
 
@@ -5809,11 +5810,10 @@ export class PostDamageForceSwitchAbAttr extends PostDamageAbAttr {
         // TODO: Make this use the sheer force disable condition
         } else if (allMoves[enemyLastMoveUsed.move].chance >= 0 && source.hasAbility(Abilities.SHEER_FORCE)) {
           return false;
-          // Activate only after the last hit of multistrike moves
+        // Activate only after the last hit of multistrike moves
         } else if (source.turnData.hitsLeft > 1) {
           return false;
         }
-
         if (source.turnData.hitCount > 1) {
           damage = pokemon.turnData.damageTaken;
         }
@@ -6958,6 +6958,7 @@ export function initAbilities() {
       .ignorable(),
     new Ability(Abilities.ANALYTIC, 5)
       .attr(MovePowerBoostAbAttr, (user, target, move) => {
+        // Boost power if all other Pokemon have already moved (no other moves are slated to execute)
         const movePhase = globalScene.findPhase((phase) => phase instanceof MovePhase && phase.pokemon.id !== user?.id);
         return isNullOrUndefined(movePhase);
       }, 1.3),

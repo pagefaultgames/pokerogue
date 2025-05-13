@@ -155,6 +155,16 @@ export interface TerrainBattlerTag {
  * Players and enemies should not be allowed to select restricted moves.
  */
 export abstract class MoveRestrictionBattlerTag extends BattlerTag {
+  constructor(
+    tagType: BattlerTagType,
+    lapseType: BattlerTagLapseType | BattlerTagLapseType[],
+    turnCount: number,
+    sourceMove?: Moves,
+    sourceId?: number,
+  ) {
+    super(tagType, lapseType, turnCount, sourceMove, sourceId);
+  }
+
   /** @override */
   override lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     if (lapseType === BattlerTagLapseType.PRE_MOVE) {
@@ -301,10 +311,10 @@ export class DisabledTag extends MoveRestrictionBattlerTag {
    * and showing a message.
    */
   override onAdd(pokemon: Pokemon): void {
-    // Disable fails against struggle or an empty move history, but we still need the nullish check
-    // for cursed body
+    // Disable fails against struggle or an empty move history, but we still need to check for
+    // Cursed Body
     const move = pokemon.getLastNonVirtualMove();
-    if (isNullOrUndefined(move)) {
+    if (isNullOrUndefined(move) || move.move === Moves.STRUGGLE) {
       return;
     }
 
@@ -373,27 +383,28 @@ export class GorillaTacticsTag extends MoveRestrictionBattlerTag {
   }
 
   /**
-   * @override
-   * @param {Pokemon} pokemon the {@linkcode Pokemon} to check if the tag can be added
-   * @returns `true` if the pokemon has a valid move and no existing {@linkcode GorillaTacticsTag}; `false` otherwise
+   * Ensures that move history exists on {@linkcode Pokemon} and has a valid move to lock into.
+   * @param pokemon - the {@linkcode Pokemon} to add the tag to
+   * @returns `true` if the tag can be added
    */
   override canAdd(pokemon: Pokemon): boolean {
-    return !isNullOrUndefined(pokemon.getLastNonVirtualMove(true)) && !pokemon.getTag(GorillaTacticsTag);
+    // Choice items ignore struggle
+    // TODO: Check if struggle also gets the 50% power boost
+    const lastSelectedMove = pokemon.getLastNonVirtualMove();
+    return (
+      !isNullOrUndefined(lastSelectedMove) &&
+      lastSelectedMove.move !== Moves.STRUGGLE &&
+      !pokemon.getTag(GorillaTacticsTag)
+    );
   }
 
   /**
-   * Ensures that move history exists on {@linkcode Pokemon} and has a valid move.
-   * If so, sets the {@linkcode moveId} and increases the user's Attack by 50%.
-   * @override
-   * @param {Pokemon} pokemon the {@linkcode Pokemon} to add the tag to
+   * Sets this tag's {@linkcode moveId} and increases the user's Attack by 50%.
+   * @param pokemon - The {@linkcode Pokemon} to add the tag to
    */
   override onAdd(pokemon: Pokemon): void {
-    const lastValidMove = pokemon.getLastNonVirtualMove(true); // TODO: Check if should work with struggle or not
-    if (isNullOrUndefined(lastValidMove)) {
-      return;
-    }
-
-    this.moveId = lastValidMove.move;
+    super.onAdd(pokemon);
+    this.moveId = pokemon.getLastNonVirtualMove()!.move; // `canAdd` returns false if no move
     pokemon.setStat(Stat.ATK, pokemon.getStat(Stat.ATK, false) * 1.5, false);
   }
 
@@ -643,10 +654,10 @@ export class FlinchedTag extends BattlerTag {
   }
 
   /**
-   * Cancels the Pokemon's subsequent Move on the turn this tag is applied
+   * Cancels all subsequent moves used by this Pokemon this turn.
    * @param pokemon - The {@linkcode Pokemon} with this tag
    * @param lapseType - The {@linkcode BattlerTagLapseType | lapse type} used for this function call
-   * @returns Whether the tag was removed. Flinches only go away on turn end.
+   * @returns Whether the tag should remain active.
    */
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     if (lapseType === BattlerTagLapseType.PRE_MOVE) {
@@ -1004,42 +1015,49 @@ export class PowderTag extends BattlerTag {
   }
 
   /**
-   * Applies Powder's effects before the tag owner uses a Fire-type move.
-   * Also causes the tag to expire at the end of turn.
-   * @param pokemon {@linkcode Pokemon} the owner of this tag
-   * @param lapseType {@linkcode BattlerTagLapseType} the type of lapse functionality to carry out
-   * @returns `true` if the tag should not expire after this lapse; `false` otherwise.
+   * Applies Powder's effects before the tag owner uses a Fire-type move, damaging and canceling its action.
+   * Lasts until the end of the turn.
+   * @param pokemon - The {@linkcode Pokemon} with this tag.
+   * @param lapseType - The {@linkcode BattlerTagLapseType} dictating how this tag is being activated
+   * @returns `true` if the tag should remain active.
    */
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
-    if (lapseType === BattlerTagLapseType.PRE_MOVE) {
-      const movePhase = globalScene.getCurrentPhase();
-      if (movePhase instanceof MovePhase) {
-        const move = movePhase.move.getMove();
-        const weather = globalScene.arena.weather;
-        if (
-          pokemon.getMoveType(move) === PokemonType.FIRE &&
-          !(weather && weather.weatherType === WeatherType.HEAVY_RAIN && !weather.isEffectSuppressed())
-        ) {
-          movePhase.fail();
-          movePhase.showMoveText();
+    if (lapseType !== BattlerTagLapseType.PRE_MOVE) {
+      return super.lapse(pokemon, lapseType);
+    }
 
-          globalScene.unshiftPhase(
-            new CommonAnimPhase(pokemon.getBattlerIndex(), pokemon.getBattlerIndex(), CommonAnim.POWDER),
-          );
+    if (!(globalScene.getCurrentPhase() instanceof MovePhase)) {
+      return false;
+    }
 
-          const cancelDamage = new BooleanHolder(false);
-          applyAbAttrs(BlockNonDirectDamageAbAttr, pokemon, cancelDamage);
-          if (!cancelDamage.value) {
-            pokemon.damageAndUpdate(Math.floor(pokemon.getMaxHp() / 4), { result: HitResult.INDIRECT });
-          }
-
-          // "When the flame touched the powder\non the Pokémon, it exploded!"
-          globalScene.queueMessage(i18next.t("battlerTags:powderLapse", { moveName: move.name }));
-        }
-      }
+    const movePhase = globalScene.getCurrentPhase() as MovePhase;
+    const move = movePhase.move.getMove();
+    const weather = globalScene.arena.weather;
+    if (
+      pokemon.getMoveType(move) !== PokemonType.FIRE ||
+      (weather?.weatherType === WeatherType.HEAVY_RAIN && !weather.isEffectSuppressed()) // Heavy rain takes priority over powder
+    ) {
       return true;
     }
-    return super.lapse(pokemon, lapseType);
+
+    // Disable the target's fire type move and damage it (subject to Magic Guard)
+    movePhase.showMoveText();
+    movePhase.fail();
+
+    globalScene.unshiftPhase(
+      new CommonAnimPhase(pokemon.getBattlerIndex(), pokemon.getBattlerIndex(), CommonAnim.POWDER),
+    );
+
+    const cancelDamage = new BooleanHolder(false);
+    applyAbAttrs(BlockNonDirectDamageAbAttr, pokemon, cancelDamage);
+    if (!cancelDamage.value) {
+      pokemon.damageAndUpdate(Math.floor(pokemon.getMaxHp() / 4), { result: HitResult.INDIRECT });
+    }
+
+    // "When the flame touched the powder\non the Pokémon, it exploded!"
+    globalScene.queueMessage(i18next.t("battlerTags:powderLapse", { moveName: move.name }));
+
+    return true;
   }
 }
 
@@ -1171,6 +1189,7 @@ export class EncoreTag extends MoveRestrictionBattlerTag {
     if (movePhase) {
       const movesetMove = pokemon.getMoveset().find(m => m.moveId === this.moveId);
       if (movesetMove) {
+        // TODO: Check encore + calling move interactions and change to `pokemon.getLastNonVirtualMove()` if needed
         const lastMove = pokemon.getLastXMoves(1)[0];
         globalScene.tryReplacePhase(
           m => m instanceof MovePhase && m.pokemon === pokemon,
@@ -1471,6 +1490,10 @@ export class WrapTag extends DamagingTrapTag {
 }
 
 export abstract class VortexTrapTag extends DamagingTrapTag {
+  constructor(tagType: BattlerTagType, commonAnim: CommonAnim, turnCount: number, sourceMove: Moves, sourceId: number) {
+    super(tagType, commonAnim, turnCount, sourceMove, sourceId);
+  }
+
   getTrapMessage(pokemon: Pokemon): string {
     return i18next.t("battlerTags:vortexOnTrap", {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),

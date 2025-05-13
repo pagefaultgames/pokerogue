@@ -120,7 +120,7 @@ export class CommandPhase extends FieldPhase {
     if (moveQueue.length > 0) {
       const queuedMove = moveQueue[0];
       if (!queuedMove.move) {
-        this.handleCommand(Command.FIGHT, -1);
+        this.handleCommand(Command.FIGHT, -1, MoveUseType.NORMAL);
       } else {
         const moveIndex = playerPokemon.getMoveset().findIndex(m => m.moveId === queuedMove.move);
         if (
@@ -128,7 +128,7 @@ export class CommandPhase extends FieldPhase {
             playerPokemon
               .getMoveset()
               [moveIndex].isUsable(playerPokemon, queuedMove.useType >= MoveUseType.IGNORE_PP)) ||
-          queuedMove.useType < MoveUseType.INDIRECT
+          queuedMove.useType >= MoveUseType.INDIRECT
         ) {
           this.handleCommand(Command.FIGHT, moveIndex, queuedMove.useType, queuedMove);
         } else {

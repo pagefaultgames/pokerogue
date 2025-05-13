@@ -120,7 +120,7 @@ export class MovePhase extends BattlePhase {
     return (
       this.pokemon.isActive(true) &&
       this.move.isUsable(this.pokemon, this.useType >= MoveUseType.IGNORE_PP, ignoreDisableTags) &&
-      !!this.targets.length
+      this.targets.length > 0
     );
   }
 
@@ -147,7 +147,8 @@ export class MovePhase extends BattlePhase {
 
     console.log(Moves[this.move.moveId], MoveUseType[this.useType]);
 
-    // Check if move is unusable (e.g. because it's out of PP due to a mid-turn Spite).
+    // Check if move is unusable (e.g. running out of PP due to a mid-turn Spite
+    // or the user no longer being on field).
     if (!this.canMove(true)) {
       if (this.pokemon.isActive(true)) {
         this.fail();
@@ -155,6 +156,7 @@ export class MovePhase extends BattlePhase {
         this.showFailedText();
       }
       this.end();
+      return;
     }
 
     this.pokemon.turnData.acted = true;
@@ -220,7 +222,7 @@ export class MovePhase extends BattlePhase {
   }
 
   /**
-   * Handles {@link StatusEffect.SLEEP Sleep}/{@link StatusEffect.PARALYSIS Paralysis}/{@link StatusEffect.FREEZE Freeze} rolls and side effects.
+   * Handles {@link StatusEffect.SLEEP | Sleep}/{@link StatusEffect.PARALYSIS | Paralysis}/{@link StatusEffect.FREEZE | Freeze} rolls and side effects.
    */
   protected resolvePreMoveStatusEffects(): void {
     // Skip for follow ups/reflected moves, no status condition or post turn statuses (e.g. Poison/Toxic)
@@ -306,12 +308,13 @@ export class MovePhase extends BattlePhase {
 
   /**
    * Lapse {@linkcode BattlerTagLapseType.PRE_MOVE  | PRE_MOVE} tags that trigger before a move is used, regardless of whether or not it failed.
-   * Also lapse {@linkcode BattlerTagLapseType.MOVE | MOVE} tags if the move should be successful.
+   * Also lapse {@linkcode BattlerTagLapseType.MOVE | MOVE} tags if the move is successful and not called indirectly.
    */
   protected lapsePreMoveAndMoveTags(): void {
     this.pokemon.lapseTags(BattlerTagLapseType.PRE_MOVE);
 
     // TODO: does this intentionally happen before the no targets/Moves.NONE on queue cancellation case is checked?
+    // (In other words, check if truant can proc on a move w/o targets)
     if (this.useType < MoveUseType.FOLLOW_UP && this.canMove() && !this.cancelled) {
       this.pokemon.lapseTags(BattlerTagLapseType.MOVE);
     }
@@ -327,7 +330,7 @@ export class MovePhase extends BattlePhase {
 
     const isDelayedAttack = move.hasAttr(DelayedAttackAttr);
     if (isDelayedAttack) {
-      // Check the player side arena if another delayed attack is active and hitting the same slot
+      // Check the player side arena if another delayed attack is active and hitting the same slot.
       const delayedAttackTags = globalScene.arena.findTags(t =>
         [ArenaTagType.FUTURE_SIGHT, ArenaTagType.DOOM_DESIRE].includes(t.tagType),
       ) as DelayedAttackTag[];
@@ -340,25 +343,22 @@ export class MovePhase extends BattlePhase {
       }
     }
 
-    // Check if the move has any attributes that can interrupt its own use before displaying text.
-    // We assume that any such self-interrupting effects will have a unique message for doing so.
+    // Check if the move has any attributes that can interrupt its own use **before** displaying text.
     let success = !move.getAttrs(PreUseInterruptAttr).some(attr => attr.apply(this.pokemon, targets[0], move));
-
     if (success) {
       this.showMoveText();
     }
 
     // Clear out any two turn moves once they've been used.
     // TODO: Refactor move queues and remove this assignment;
-    // Move queues should be handled by the calling `CommandPhase`
+    // Move queues should be handled by the calling `CommandPhase` or a manager for it
     this.useType = moveQueue.shift()?.useType ?? this.useType;
-
     if (this.pokemon.getTag(BattlerTagType.CHARGING)?.sourceMove === this.move.moveId) {
       this.pokemon.lapseTag(BattlerTagType.CHARGING);
     }
 
-    // "commit" to using the move, deducting PP.
     if (this.useType < MoveUseType.IGNORE_PP) {
+      // "commit" to using the move, deducting PP.
       const ppUsed = 1 + this.getPpIncreaseFromPressure(targets);
 
       this.move.usePp(ppUsed);
@@ -445,18 +445,17 @@ export class MovePhase extends BattlePhase {
     const move = this.move.getMove();
     const targets = this.getActiveTargetPokemon();
 
+    this.showMoveText();
+
     // Conditions currently assume single target
     // TODO: Is this sustainable?
     if (!move.applyConditions(this.pokemon, targets[0], move)) {
-      this.showMoveText();
       this.failMove();
       return;
     }
 
     // Protean and Libero apply on the charging turn of charge moves
     applyPreAttackAbAttrs(PokemonTypeChangeAbAttr, this.pokemon, null, this.move.getMove());
-
-    this.showMoveText();
 
     globalScene.unshiftPhase(
       new MoveChargePhase(this.pokemon.getBattlerIndex(), this.targets[0], this.move, this.useType),
@@ -629,6 +628,7 @@ export class MovePhase extends BattlePhase {
     this.pokemon.lapseTags(BattlerTagLapseType.AFTER_MOVE);
 
     // This clears out 2 turn moves after they've been used
+    // TODO: Remove post move queue refactor
     this.pokemon.getMoveQueue().shift();
   }
 

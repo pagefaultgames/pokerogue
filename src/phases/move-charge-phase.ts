@@ -49,7 +49,8 @@ export class MoveChargePhase extends PokemonPhase {
     // immediately end this phase.
     if (!target || !move.isChargingMove()) {
       console.warn("Invalid parameters for MoveChargePhase");
-      return super.end();
+      super.end();
+      return;
     }
 
     new MoveChargeAnim(move.chargeAnim, move.id, user).play(false, () => {

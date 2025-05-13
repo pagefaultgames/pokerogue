@@ -1506,8 +1506,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Calculate the critical-hit stage of a move used against this pokemon by
    * the given source
-   *
-   * @param source - The {@linkcode Pokemon} who using the move
+   * @param source - The {@linkcode Pokemon} using the move
    * @param move - The {@linkcode Move} being used
    * @returns The final critical-hit stage value
    */
@@ -5144,8 +5143,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Returns a list of the most recent move entries in this Pokemon's move history.
    * The retrieved move entries are sorted in order from NEWEST to OLDEST.
-   * @param moveCount The number of move entries to retrieve.\
-   *   If negative, retrieves the Pokemon's entire move history (equivalent to reversing the output of {@linkcode getMoveHistory()}).
+   * @param moveCount - The number of move entries to retrieve.
+   * If negative, retrieve the Pokemon's entire move history (equivalent to reversing the output of {@linkcode getMoveHistory()}).
    *   Default is `1`.
    * @returns A list of {@linkcode TurnMove}, as specified above.
    */
@@ -5165,7 +5164,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * - Non-virtual ({@linkcode MoveUseType | useType} < {@linkcode MoveUseType.INDIRECT})
    * @param ignoreStruggle - Whether to additionally ignore {@linkcode Moves.STRUGGLE}; default `false`
    * @param ignoreFollowUp - Whether to ignore moves with a use type of {@linkcode MoveUseType.FOLLOW_UP}
-   * (Copycat, Mirror Move, etc.); default `true`
+   * (Copycat, Mirror Move, etc.); default `true`.
    * @returns The last move this Pokemon has used satisfying the aforementioned conditions,
    * or `undefined` if no applicable moves have been used since switching in.
    */
@@ -7254,12 +7253,13 @@ export class EnemyPokemon extends Pokemon {
       const moveIndex = this.getMoveset().findIndex(m => m.moveId === queuedMove.move);
       // If the queued move was called indirectly, ignore all PP and usability checks.
       // Otherwise, ensure that the move being used is actually usable
+      // TODO: Virtual moves shouldn't use the move queue
       if (
         queuedMove.useType >= MoveUseType.INDIRECT ||
         (moveIndex > -1 &&
         this.getMoveset()[moveIndex].isUsable(
           this,
-          queuedMove.useType >= MoveUseType.IGNORE_PP )
+          queuedMove.useType >= MoveUseType.IGNORE_PP)
         )
       ) {
       return queuedMove;
@@ -7290,7 +7290,7 @@ export class EnemyPokemon extends Pokemon {
       switch (this.aiType) {
         case AiType.RANDOM: // No enemy should spawn with this AI type in-game
           const moveId = movePool[globalScene.randBattleSeedInt(movePool.length)].moveId;
-          return { move: moveId, targets: this.getNextTargets(moveId) ,  useType: MoveUseType.NORMAL};
+          return { move: moveId, targets: this.getNextTargets(moveId),  useType: MoveUseType.NORMAL };
         case AiType.SMART_RANDOM:
         case AiType.SMART:
           /**
@@ -7862,14 +7862,13 @@ export class PokemonSummonData {
    * A queue of moves yet to be executed, used by charging, recharging and frenzy moves.
    * So long as this array is nonempty, this Pokemon's corresponding `CommandPhase` will be skipped over entirely
    * in favor of using the queued move.
-   * It is typically safe to assume only 1 type of queued move will be queued at a time (until we get frenzy hyper beam)
-   * TODO: Clean up a lot of the code surrounding the move queue. It should be shifted SOLELY in command phase (with exceptions for canceling queued moves)
+   * TODO: Clean up a lot of the code surrounding the move queue. It's intertwined with the
    */
   public moveQueue: TurnMove[] = [];
   public tags: BattlerTag[] = [];
   public abilitySuppressed = false;
 
-  // Overrides for transform and company.
+  // Overrides for transform.
   // TODO: Move these into a separate class & add rage fist hit count
   public speciesForm: PokemonSpeciesForm | null = null;
   public fusionSpeciesForm: PokemonSpeciesForm | null = null;

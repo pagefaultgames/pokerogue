@@ -135,6 +135,7 @@ export class TurnStartPhase extends FieldPhase {
   }
 
   // TODO: Refactor this alongside `CommandPhase.handleCommand` to use SEPARATE METHODS
+  // Also need a clearer distinction between "turn command" and queued moves
   start() {
     super.start();
 

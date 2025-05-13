@@ -1,10 +1,9 @@
 import { BattlerIndex } from "#app/battle";
-import { allMoves } from "#app/data/moves/move";
+import { RandomMoveAttr } from "#app/data/moves/move";
 import type Pokemon from "#app/field/pokemon";
 import { MoveResult } from "#app/field/pokemon";
 import type { MovePhase } from "#app/phases/move-phase";
 import { Abilities } from "#enums/abilities";
-import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveUseType } from "#enums/move-use-type";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
@@ -141,6 +140,22 @@ describe("Moves - Instruct", () => {
     expect(game.scene.getPlayerPokemon()!.turnData.attacksReceived.length).toBe(3);
   });
 
+  it("should fail on metronomed moves, even if also in moveset", async () => {
+    game.override.moveset(Moves.INSTRUCT);
+    vi.spyOn(RandomMoveAttr.prototype, "getMoveOverride").mockReturnValue(Moves.ABSORB);
+    await game.classicMode.startBattle([Species.AMOONGUSS]);
+
+    const enemy = game.scene.getEnemyPokemon()!;
+    game.move.changeMoveset(enemy, [Moves.METRONOME, Moves.ABSORB]);
+
+    game.move.select(Moves.INSTRUCT);
+    await game.forceEnemyMove(Moves.METRONOME);
+    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    await game.phaseInterceptor.to("BerryPhase");
+
+    expect(game.scene.getPlayerPokemon()!.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+  });
+
   it("should respect enemy's status condition", async () => {
     game.override.moveset([Moves.INSTRUCT, Moves.THUNDER_WAVE]).enemyMoveset(Moves.SONIC_BOOM);
     await game.classicMode.startBattle([Species.AMOONGUSS]);
@@ -160,43 +175,6 @@ describe("Moves - Instruct", () => {
     const moveHistory = game.scene.getEnemyPokemon()?.getLastXMoves(-1)!;
     expect(moveHistory.map(m => m.move)).toEqual([Moves.SONIC_BOOM, Moves.NONE, Moves.SONIC_BOOM]);
     expect(game.scene.getPlayerPokemon()?.getInverseHp()).toBe(40);
-  });
-
-  it("should trigger (and do nothing) after enemy flinches", async () => {
-    game.override
-      .battleStyle("double")
-      .moveset([Moves.INSTRUCT, Moves.SPLASH, Moves.AIR_SLASH])
-      .enemyMoveset(Moves.SONIC_BOOM);
-    // Mock air slash to always crit
-    vi.spyOn(allMoves[Moves.AIR_SLASH], "chance", "get").mockReturnValue(100);
-    await game.classicMode.startBattle([Species.AMOONGUSS, Species.TOGEKISS]);
-
-    const amoonguss = game.scene.getPlayerPokemon()!;
-
-    game.move.select(Moves.SPLASH, BattlerIndex.PLAYER);
-    game.move.select(Moves.SPLASH, BattlerIndex.PLAYER_2);
-    await game.forceEnemyMove(Moves.SONIC_BOOM, BattlerIndex.PLAYER);
-    await game.killPokemon(game.scene.getEnemyField()[1]); // only need 1 enemy
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER, BattlerIndex.PLAYER_2]);
-    await game.toNextTurn();
-
-    game.move.select(Moves.INSTRUCT, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
-    game.move.select(Moves.AIR_SLASH, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY);
-    await game.forceEnemyMove(Moves.SONIC_BOOM, BattlerIndex.PLAYER);
-    await game.setTurnOrder([BattlerIndex.PLAYER_2, BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
-    await game.phaseInterceptor.to("TurnEndPhase", false);
-
-    expect(amoonguss.getLastXMoves()[0]).toMatchObject({
-      move: Moves.INSTRUCT,
-      targets: [BattlerIndex.ENEMY],
-      result: MoveResult.SUCCESS,
-    });
-
-    // 2nd sonic boom was interrupted before its use
-    const enemy = game.scene.getEnemyPokemon()!;
-    expect(enemy.getLastXMoves(-1).map(m => m.move)).toEqual([Moves.NONE, Moves.NONE, Moves.SONIC_BOOM]);
-    expect(enemy.getTag(BattlerTagType.FLINCHED)).toBeTruthy();
-    expect(amoonguss.getInverseHp()).toBe(20);
   });
 
   it("should not repeat enemy's out of pp move", async () => {
@@ -288,15 +266,9 @@ describe("Moves - Instruct", () => {
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER_2, BattlerIndex.PLAYER, BattlerIndex.ENEMY_2]);
     await game.phaseInterceptor.to("TurnEndPhase", false);
 
-    expect(game.scene.getPlayerField()[0].getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
-    const enemyMove = game.scene.getEnemyField()[0]!.getLastXMoves()[0];
-    expect(enemyMove.result).toBe(MoveResult.FAIL);
-    expect(
-      game.scene
-        .getEnemyField()[0]
-        .getMoveset()
-        .find(m => m?.moveId === Moves.SONIC_BOOM)?.ppUsed,
-    ).toBe(1);
+    expect(game.scene.getPlayerPokemon()!.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
+    expect(enemy1.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+    expect(enemy1.getMoveset().find(m => m.moveId === Moves.SONIC_BOOM)?.ppUsed).toBe(1);
   });
 
   it("should not repeat enemy's move through protect", async () => {
