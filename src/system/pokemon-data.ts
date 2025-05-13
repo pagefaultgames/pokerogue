@@ -116,7 +116,6 @@ export default class PokemonData {
     this.pauseEvolutions = !!source.pauseEvolutions;
     this.pokerus = !!source.pokerus;
     this.usedTMs = source.usedTMs ?? [];
-    this.evoCounter = source.evoCounter ?? 0;
     this.teraType = source.teraType as PokemonType;
     this.isTerastallized = !!source.isTerastallized;
     this.stellarTypesBoosted = source.stellarTypesBoosted ?? [];
