@@ -1444,6 +1444,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
     const tweenChain: Phaser.Types.Tweens.TweenChainBuilderConfig = {
       targets: icon,
+      paused: startPaused,
       loop: -1,
       // Make the initial bounce a little randomly delayed
       delay: randIntRange(0, 50) * 5,
@@ -1451,14 +1452,14 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       tweens: [
         {
           targets: icon,
-          y: 2 - 5,
+          y: "-=5",
           duration: fixedInt(125),
           ease: "Cubic.easeOut",
           yoyo: true,
         },
         {
           targets: icon,
-          y: 2 - 3,
+          y: "-=3",
           duration: fixedInt(150),
           ease: "Cubic.easeOut",
           yoyo: true,
@@ -1466,19 +1467,14 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       ],
     };
 
-    const isPassiveAvailable = this.isPassiveAvailable(species.speciesId);
-    const isValueReductionAvailable = this.isValueReductionAvailable(species.speciesId);
-    const isSameSpeciesEggAvailable = this.isSameSpeciesEggAvailable(species.speciesId);
-
-    // 'Passives Only' mode
-    if (globalScene.candyUpgradeNotification === 1) {
-      if (isPassiveAvailable) {
-        globalScene.tweens.chain(tweenChain).paused = startPaused;
-      }
-      // 'On' mode
-    } else if (globalScene.candyUpgradeNotification === 2) {
-      if (isPassiveAvailable || isValueReductionAvailable || isSameSpeciesEggAvailable) {
-        globalScene.tweens.chain(tweenChain).paused = startPaused;
+    if (
+      this.isPassiveAvailable(species.speciesId) ||
+      (globalScene.candyUpgradeNotification === 2 &&
+        (this.isValueReductionAvailable(species.speciesId) || this.isSameSpeciesEggAvailable(species.speciesId)))
+    ) {
+      const chain = globalScene.tweens.chain(tweenChain);
+      if (!startPaused) {
+        chain.play();
       }
     }
   }
@@ -3478,7 +3474,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
       // Resume the animation for the previously selected species
       const icon = this.starterContainers[speciesIndex].icon;
-      globalScene.tweens.getTweensOf(icon).forEach(tween => tween.resume());
+      globalScene.tweens.getTweensOf(icon).forEach(tween => tween.play());
     }
 
     this.lastSpecies = species!; // TODO: is this bang correct?
