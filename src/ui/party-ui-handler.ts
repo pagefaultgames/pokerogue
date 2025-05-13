@@ -764,6 +764,7 @@ export default class PartyUiHandler extends MessageUiHandler {
           if (option === PartyOption.SPLICE) {
             (this.selectCallback as PartyModifierSpliceSelectCallback)(this.transferCursor, this.cursor);
             this.clearTransfer();
+            // TODO: Surely this else should specify some other option too...
           } else {
             this.startTransfer();
           }
@@ -778,6 +779,7 @@ export default class PartyUiHandler extends MessageUiHandler {
           selectCallback(this.cursor, option);
         }
       } else {
+        // TODO: Where is the value for option set in this case?
         if (option >= PartyOption.FORM_CHANGE_ITEM && globalScene.getCurrentPhase() instanceof SelectModifierPhase) {
           if (this.partyUiMode === PartyUiMode.CHECK) {
             const formChangeItemModifiers = this.getFormChangeItemsModifiers(pokemon);
@@ -785,6 +787,7 @@ export default class PartyUiHandler extends MessageUiHandler {
             modifier.active = !modifier.active;
             globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeItemTrigger, false, true);
           }
+          // TODO: Not clear at all... why are we passing the baton here?
         } else if (this.cursor) {
           (globalScene.getCurrentPhase() as CommandPhase).handleCommand(
             Command.POKEMON,
