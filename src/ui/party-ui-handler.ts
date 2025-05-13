@@ -669,6 +669,13 @@ export default class PartyUiHandler extends MessageUiHandler {
     const ui = this.getUi();
     const option = this.options[this.optionsCursor];
 
+    // Button.CANCEL has no special behavior for any option
+    if (button === Button.CANCEL || option === PartyOption.CANCEL) {
+      this.clearOptions();
+      ui.playSelect();
+      return true;
+    }
+
     // TODO: Careful about using success for the return values here
     if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER) {
       success = this.processModifierTransferModeInput(button);
@@ -684,116 +691,114 @@ export default class PartyUiHandler extends MessageUiHandler {
 
     if (button === Button.ACTION) {
       const pokemon = globalScene.getPlayerParty()[this.cursor];
-      if (
-        ![
-          PartyOption.SUMMARY,
-          PartyOption.POKEDEX,
-          PartyOption.UNPAUSE_EVOLUTION,
-          PartyOption.UNSPLICE,
-          PartyOption.RELEASE,
-          PartyOption.CANCEL,
-          PartyOption.RENAME,
-        ].includes(option) ||
-        (option === PartyOption.RELEASE && this.partyUiMode === PartyUiMode.RELEASE)
-      ) {
-        const filterResult = this.getFilterResult(option, pokemon);
-        if (filterResult === null) {
-          if (this.partyUiMode !== PartyUiMode.SPLICE) {
-            this.clearOptions();
-          }
-          if (this.selectCallback && this.partyUiMode !== PartyUiMode.CHECK) {
-            if (option === PartyOption.TRANSFER) {
-              if (this.transferCursor !== this.cursor) {
-                if (this.transferAll) {
-                  this.getTransferrableItemsFromPokemon(globalScene.getPlayerParty()[this.transferCursor]).forEach(
-                    (_, i, array) => {
-                      const invertedIndex = array.length - 1 - i;
-                      (this.selectCallback as PartyModifierTransferSelectCallback)(
-                        this.transferCursor,
-                        invertedIndex,
-                        this.transferQuantitiesMax[invertedIndex],
-                        this.cursor,
-                      );
-                    },
-                  );
-                } else {
-                  (this.selectCallback as PartyModifierTransferSelectCallback)(
-                    this.transferCursor,
-                    this.transferOptionCursor,
-                    this.transferQuantities[this.transferOptionCursor],
-                    this.cursor,
-                  );
-                }
-              }
-              this.clearTransfer();
-            } else if (this.partyUiMode === PartyUiMode.SPLICE) {
-              if (option === PartyOption.SPLICE) {
-                (this.selectCallback as PartyModifierSpliceSelectCallback)(this.transferCursor, this.cursor);
-                this.clearTransfer();
-              } else {
-                this.startTransfer();
-              }
-              this.clearOptions();
-            } else if (option === PartyOption.RELEASE) {
-              this.doRelease(this.cursor);
-            } else {
-              const selectCallback = this.selectCallback;
-              this.selectCallback = null;
-              selectCallback(this.cursor, option);
-            }
-          } else {
-            if (
-              option >= PartyOption.FORM_CHANGE_ITEM &&
-              globalScene.getCurrentPhase() instanceof SelectModifierPhase
-            ) {
-              if (this.partyUiMode === PartyUiMode.CHECK) {
-                const formChangeItemModifiers = this.getFormChangeItemsModifiers(pokemon);
-                const modifier = formChangeItemModifiers[option - PartyOption.FORM_CHANGE_ITEM];
-                modifier.active = !modifier.active;
-                globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeItemTrigger, false, true);
-              }
-            } else if (this.cursor) {
-              (globalScene.getCurrentPhase() as CommandPhase).handleCommand(
-                Command.POKEMON,
-                this.cursor,
-                option === PartyOption.PASS_BATON,
-              );
-            }
-          }
-          if (
-            this.partyUiMode !== PartyUiMode.MODIFIER &&
-            this.partyUiMode !== PartyUiMode.TM_MODIFIER &&
-            this.partyUiMode !== PartyUiMode.MOVE_MODIFIER
-          ) {
-            ui.playSelect();
-          }
-          return true;
-        }
-        this.clearOptions();
-        this.showText(filterResult as string, undefined, () => this.showText("", 0), undefined, true);
-      } else if (option === PartyOption.SUMMARY) {
+
+      if (option === PartyOption.SUMMARY) {
         return this.processSummaryOption(pokemon);
-      } else if (option === PartyOption.POKEDEX) {
+      }
+      if (option === PartyOption.POKEDEX) {
         return this.processPokedexOption(pokemon);
-      } else if (option === PartyOption.UNPAUSE_EVOLUTION) {
+      }
+      if (option === PartyOption.UNPAUSE_EVOLUTION) {
         return this.processUnpauseEvolutionOption(pokemon);
-      } else if (option === PartyOption.UNSPLICE) {
+      }
+      if (option === PartyOption.UNSPLICE) {
         return this.processUnspliceOption(pokemon);
-      } else if (option === PartyOption.RELEASE) {
-        return this.processReleaseOption(pokemon);
-      } else if (option === PartyOption.RENAME) {
+      }
+      if (option === PartyOption.RENAME) {
         return this.processRenameOption(pokemon);
-      } else if (option === PartyOption.CANCEL) {
-        return this.processOptionMenuInput(Button.CANCEL);
-      } else if (option === PartyOption.SELECT) {
+      }
+      // TODO: Figure out why we need this edge case
+      if (option === PartyOption.RELEASE && this.partyUiMode !== PartyUiMode.RELEASE) {
+        return this.processReleaseOption(pokemon);
+      }
+      if (option === PartyOption.SELECT) {
         ui.playSelect();
         return true;
       }
-    } else if (button === Button.CANCEL) {
-      this.clearOptions();
-      ui.playSelect();
+
+      const filterResult = this.getFilterResult(option, pokemon);
+      if (filterResult) {
+        this.clearOptions();
+        this.showText(filterResult as string, undefined, () => this.showText("", 0), undefined, true);
+      }
+
+      // This is always going to return
+      if (this.partyUiMode !== PartyUiMode.SPLICE) {
+        this.clearOptions();
+      }
+
+      if (this.selectCallback && this.partyUiMode !== PartyUiMode.CHECK) {
+        if (option === PartyOption.TRANSFER) {
+          if (this.transferCursor !== this.cursor) {
+            if (this.transferAll) {
+              this.getTransferrableItemsFromPokemon(globalScene.getPlayerParty()[this.transferCursor]).forEach(
+                (_, i, array) => {
+                  const invertedIndex = array.length - 1 - i;
+                  (this.selectCallback as PartyModifierTransferSelectCallback)(
+                    this.transferCursor,
+                    invertedIndex,
+                    this.transferQuantitiesMax[invertedIndex],
+                    this.cursor,
+                  );
+                },
+              );
+            } else {
+              (this.selectCallback as PartyModifierTransferSelectCallback)(
+                this.transferCursor,
+                this.transferOptionCursor,
+                this.transferQuantities[this.transferOptionCursor],
+                this.cursor,
+              );
+            }
+          }
+          this.clearTransfer();
+          return true;
+        }
+        if (this.partyUiMode === PartyUiMode.SPLICE) {
+          if (option === PartyOption.SPLICE) {
+            (this.selectCallback as PartyModifierSpliceSelectCallback)(this.transferCursor, this.cursor);
+            this.clearTransfer();
+          } else {
+            this.startTransfer();
+          }
+          this.clearOptions();
+          return true;
+        }
+        if (option === PartyOption.RELEASE) {
+          this.doRelease(this.cursor);
+          return true;
+        }
+        const selectCallback = this.selectCallback;
+        this.selectCallback = null;
+        selectCallback(this.cursor, option);
+      } else {
+        if (option >= PartyOption.FORM_CHANGE_ITEM && globalScene.getCurrentPhase() instanceof SelectModifierPhase) {
+          if (this.partyUiMode === PartyUiMode.CHECK) {
+            const formChangeItemModifiers = this.getFormChangeItemsModifiers(pokemon);
+            const modifier = formChangeItemModifiers[option - PartyOption.FORM_CHANGE_ITEM];
+            modifier.active = !modifier.active;
+            globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeItemTrigger, false, true);
+          }
+        } else if (this.cursor) {
+          (globalScene.getCurrentPhase() as CommandPhase).handleCommand(
+            Command.POKEMON,
+            this.cursor,
+            option === PartyOption.PASS_BATON,
+          );
+        }
+      }
+
+      if (
+        this.partyUiMode !== PartyUiMode.MODIFIER &&
+        this.partyUiMode !== PartyUiMode.TM_MODIFIER &&
+        this.partyUiMode !== PartyUiMode.MOVE_MODIFIER
+      ) {
+        ui.playSelect();
+      }
       return true;
-    } else if (button === Button.UP || button === Button.DOWN) {
+    }
+
+    if (button === Button.UP || button === Button.DOWN) {
       success = this.moveOptionCursor(button);
     }
 
