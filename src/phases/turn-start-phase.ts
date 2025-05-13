@@ -45,8 +45,8 @@ export class TurnStartPhase extends FieldPhase {
       globalScene.waveSeed,
     );
 
-    // check for Trick Room is applied and reverse sort order if active.
-    // Notably, Pokerogue does NOT have the "outspeed trick room" glitch.
+    // Check for Trick Room and reverse sort order if active.
+    // Notably, Pokerogue does NOT have the "outspeed trick room" glitch at >1809 spd.
     const speedReversed = new BooleanHolder(false);
     globalScene.arena.applyTags(TrickRoomTag, false, speedReversed);
 
@@ -72,7 +72,7 @@ export class TurnStartPhase extends FieldPhase {
     // This occurs before the main loop because of battles with more than two Pokemon
     const battlerBypassSpeed = {};
 
-    globalScene.getField(true).map(p => {
+    globalScene.getField(true).forEach(p => {
       const bypassSpeed = new BooleanHolder(false);
       const canCheckHeldItems = new BooleanHolder(true);
       applyAbAttrs(BypassSpeedChanceAbAttr, p, null, false, bypassSpeed);

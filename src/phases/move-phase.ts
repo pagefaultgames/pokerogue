@@ -388,7 +388,7 @@ export class MovePhase extends BattlePhase {
       return;
     }
 
-    // Update the battle's "last move" pointer unless we're currently mimicking a move or triggering Dancer.
+    // Update the battle's "last move" pointer, unless we're currently mimicking a move or triggering Dancer.
     // TODO: Research how Copycat interacts with the final attacking turn of Future Sight and co.
     if (!allMoves[this.move.moveId].hasAttr(CopyMoveAttr) && this.useType !== MoveUseType.INDIRECT) {
       globalScene.currentBattle.lastMove = this.move.moveId;
@@ -445,16 +445,18 @@ export class MovePhase extends BattlePhase {
     const move = this.move.getMove();
     const targets = this.getActiveTargetPokemon();
 
-    this.showMoveText();
-
     // Conditions currently assume single target
     // TODO: Is this sustainable?
     if (!move.applyConditions(this.pokemon, targets[0], move)) {
+      this.showMoveText();
       this.failMove();
+      return;
     }
 
     // Protean and Libero apply on the charging turn of charge moves
     applyPreAttackAbAttrs(PokemonTypeChangeAbAttr, this.pokemon, null, this.move.getMove());
+
+    this.showMoveText();
 
     globalScene.unshiftPhase(
       new MoveChargePhase(this.pokemon.getBattlerIndex(), this.targets[0], this.move, this.useType),

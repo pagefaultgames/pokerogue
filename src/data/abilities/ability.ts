@@ -4494,7 +4494,7 @@ export class PostDancingMoveAbAttr extends PostMoveUsedAbAttr {
    * @param source - The {@linkcode Pokemon} who used the move
    * @param targets - Array of {@linkcode BattlerIndex}es containing Pokemon targeted by move
    * @param hitResults - N/A
-   * @param simulated - Whether the ability call is simulated
+   * @param simulated - Whether the ability call is simulated (which should never happen fwiw)
    * @param _args - N/A
    */
   override applyPostMoveUsed(
@@ -4510,15 +4510,15 @@ export class PostDancingMoveAbAttr extends PostMoveUsedAbAttr {
       return;
     }
 
-    // Attack and status moves are replicated on the source of the Dance, while
-    // self-targeted status moves (Swords Dance & co.) are replicated on the user
+    // Self-targeted status moves (Swords Dance & co.) are replicated on the user;
+    // all other moves target the source of the dance (or the move's prior target if allied)
     const moveTargets: BattlerIndex[] =
       move instanceof AttackMove || move instanceof StatusMove
       ? this.getTarget(dancer, source, targets)
       : [ dancer.getBattlerIndex() ];
 
-      // Append to phase is used here to ensure multiple dancers proc in successive order
     dancer.turnData.extraTurns++;
+    // Append to phase is used here to ensure multiple dancers proc in successive order _without_ interrupting one another
     globalScene.appendToPhase(new MovePhase(dancer, moveTargets, new PokemonMove(move.id), MoveUseType.INDIRECT), MoveEndPhase);
   }
 
@@ -4530,10 +4530,10 @@ export class PostDancingMoveAbAttr extends PostMoveUsedAbAttr {
    * @param targets - Array of {@linkcode BattlerIndex}es containing targets of copied move
    */
   getTarget(dancer: Pokemon, source: Pokemon, targets: BattlerIndex[]) : BattlerIndex[] {
-    if (dancer.isPlayer()) {
-      return source.isPlayer() ? targets : [ source.getBattlerIndex() ];
-    }
-    return source.isPlayer() ? [ source.getBattlerIndex() ] : targets;
+    // TODO: Check dancer targeting if the ally KOs their original target
+    return dancer.isPlayer() === source.isPlayer()
+      ? targets // moves copied from allies will attack the ally's prior target
+      : [ source.getBattlerIndex() ];
   }
 }
 
@@ -4972,7 +4972,7 @@ export class ReduceSleepDurationAbAttr extends AbAttr {
    * Reduces the number of sleep turns remaining by an extra 1 when applied
    * @param args `[0]` - The Pokemon's current {@linkcode Status}
    */
-  override apply(_pokemon: Pokemon, _passive: boolean, _simulated: boolean, _cancelled: BooleanHolder, args: [Status, ...any]): void {
+  override apply(_pokemon: Pokemon, _passive: boolean, _simulated: boolean, _cancelled: BooleanHolder, args: [Status]): void {
     if (args[0].sleepTurnsRemaining) {
       args[0].sleepTurnsRemaining--
     }

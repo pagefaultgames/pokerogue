@@ -704,11 +704,12 @@ export default class Move implements Localizable {
   }
 
   /**
-   * Sees if a move has a custom failure text (by looking at each {@linkcode MoveAttr} of this move)
-   * @param user {@linkcode Pokemon} using the move
-   * @param target {@linkcode Pokemon} target of the move
-   * @param move {@linkcode Move} with this attribute
-   * @returns string of the custom failure text, or `undefined` if it uses the default text ("But it failed!")
+   * Return the custom failure text for a given move by checking each of its {@linkcode MoveAttr}s in turn.
+   * @param user - The {@linkcode Pokemon} using the move
+   * @param target - The {@linkcode Pokemon} being targeted by this move
+   * @param move - The {@linkcode Move} being used
+   * @returns A string containing text to be displayed upon failure of this {@linkcode Move},
+   * or `undefined` to use the default message ("But it failed!" in english)
    */
   getFailedText(user: Pokemon, target: Pokemon, move: Move): string | undefined {
     for (const attr of this.attrs) {
@@ -717,39 +718,40 @@ export default class Move implements Localizable {
         return failedText;
       }
     }
+    return undefined;
   }
 
   /**
-   * Calculates the userBenefitScore across all the attributes and conditions
-   * @param user {@linkcode Pokemon} using the move
-   * @param target {@linkcode Pokemon} receiving the move
-   * @param move {@linkcode Move} using the move
-   * @returns integer representing the total benefitScore
+   * Calculate the total userBenefitScore for this move's attributes and conditions,
+   * a numerical representation of how much it helps/hurts the **user**.
+   * @param user - The {@linkcode Pokemon} using the move
+   * @param target - The {@linkcode Pokemon} being targeted by this move
+   * @param move - The {@linkcode Move} being used
+   * @returns The summation of the userBenefitScores of all this {@linkcode Move}'s
+   * {@linkcode MoveAttr | MoveAttrs} and {@linkcode MoveCondition | MoveConditions}.
    */
   getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
-    let score = 0;
+    const attrScore = this.attrs.reduce((score, attr) =>
+      score += attr.getUserBenefitScore(user, target, move), 0)
+    const condScore = this.conditions.reduce((score, conditions) =>
+      score += conditions.getUserBenefitScore(user, target, move), 0)
 
-    for (const attr of this.attrs) {
-      score += attr.getUserBenefitScore(user, target, move);
-    }
-
-    for (const condition of this.conditions) {
-      score += condition.getUserBenefitScore(user, target, move);
-    }
-
-    return score;
+    return attrScore + condScore;
   }
 
   /**
-   * Calculates the targetBenefitScore across all the attributes
-   * @param user {@linkcode Pokemon} using the move
-   * @param target {@linkcode Pokemon} receiving the move
-   * @param move {@linkcode Move} using the move
-   * @returns integer representing the total benefitScore
+   * Calculate the total targetBenefitScore for this move's attributes and conditions,
+   * a numerical representation of how much it helps/hurts the **target**.
+   * @param user - The {@linkcode Pokemon} using the move
+   * @param target - The {@linkcode Pokemon} being targeted by this move
+   * @param move - The {@linkcode Move} being used
+   * @returns The summation of the targetBenefitScore of all this {@linkcode Move}'s
+   * {@linkcode MoveAttr | MoveAttrs}.
    */
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
     let score = 0;
 
+    // Prevent targeting a commanded pokemon
     if (target.getAlly()?.getTag(BattlerTagType.COMMANDED)?.getSourcePokemon() === target) {
       return 20 * (target.isPlayer() === user.isPlayer() ? -1 : 1); // always -20 with how the AI handles this score
     }
@@ -1136,14 +1138,15 @@ export abstract class MoveAttr {
   }
 
   /**
-   * @virtual
-   * @param user {@linkcode Pokemon} using the move
-   * @param target {@linkcode Pokemon} target of the move
-   * @param move {@linkcode Move} with this attribute
-   * @returns the string representing failure of this {@linkcode Move}
+   * Return the failure text for this MoveAttr.
+   * @param user - The {@linkcode Pokemon} using the move
+   * @param target - The {@linkcode Pokemon} being targeted by this move
+   * @param move - The {@linkcode Move} being used
+   * @returns A string containing text to be displayed on failure of this {@linkcode Move},
+   * or `undefined` to use the default message ("But it failed!" in english)
    */
   getFailedText(user: Pokemon, target: Pokemon, move: Move): string | undefined {
-    return;
+    return undefined;
   }
 
   /**
@@ -1587,7 +1590,7 @@ export class CounterDamageAttr extends FixedDamageAttr {
   }
 
   getCondition(): MoveConditionFunc {
-    return (user, target, move) => !!user.turnData.attacksReceived.filter(ar => this.moveFilter(allMoves[ar.move])).length;
+    return (user, target, move) => user.turnData.attacksReceived.some(ar => this.moveFilter(allMoves[ar.move]));
   }
 }
 
@@ -6830,7 +6833,7 @@ class CallMoveAttr extends OverrideMoveEffectAttr {
     const targets = moveTargets.multiple || moveTargets.targets.length === 1
       ? moveTargets.targets
       : [ this.hasTarget ? target.getBattlerIndex() : moveTargets.targets[user.randSeedInt(moveTargets.targets.length)] ]; // account for Mirror Move having a target already
-    globalScene.unshiftPhase(new LoadMoveAnimPhase(move.id));
+      globalScene.unshiftPhase(new LoadMoveAnimPhase(move.id));
     globalScene.unshiftPhase(new MovePhase(user, targets, new PokemonMove(move.id), MoveUseType.FOLLOW_UP));
     return true;
   }
@@ -8157,9 +8160,9 @@ export class UpperHandCondition extends MoveCondition {
   }
 }
 
-export class hitsSameTypeAttr extends VariableMoveTypeMultiplierAttr {
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const multiplier = args[0] as NumberHolder;
+export class HitsSameTypeAttr extends VariableMoveTypeMultiplierAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: [NumberHolder]): boolean {
+    const multiplier = args[0];
     if (!user.getTypes().some(type => target.getTypes().includes(type))) {
       multiplier.value = 0;
       return true;
@@ -9865,7 +9868,7 @@ export function initMoves() {
     new AttackMove(Moves.SYNCHRONOISE, PokemonType.PSYCHIC, MoveCategory.SPECIAL, 120, 100, 10, -1, 0, 5)
       .target(MoveTarget.ALL_NEAR_OTHERS)
       .condition(unknownTypeCondition)
-      .attr(hitsSameTypeAttr),
+      .attr(HitsSameTypeAttr),
     new AttackMove(Moves.ELECTRO_BALL, PokemonType.ELECTRIC, MoveCategory.SPECIAL, -1, 100, 10, -1, 0, 5)
       .attr(ElectroBallPowerAttr)
       .ballBombMove(),

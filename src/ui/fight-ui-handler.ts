@@ -150,16 +150,15 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
     let success = false;
 
     switch (button) {
-      case Button.CANCEL:
-        {
-          // Attempts to back out of the move selection pane are blocked in certain MEs
-          const { battleType, mysteryEncounter } = globalScene.currentBattle;
-          if (battleType === BattleType.MYSTERY_ENCOUNTER || !mysteryEncounter?.skipToFightInput) {
-            ui.setMode(UiMode.COMMAND, this.fieldIndex);
-            success = true;
-          }
+      case Button.CANCEL: {
+        // Attempts to back out of the move selection pane are blocked in certain MEs
+        const { battleType, mysteryEncounter } = globalScene.currentBattle;
+        if (battleType === BattleType.MYSTERY_ENCOUNTER || !mysteryEncounter?.skipToFightInput) {
+          ui.setMode(UiMode.COMMAND, this.fieldIndex);
+          success = true;
         }
         break;
+      }
       case Button.ACTION:
         if (
           (globalScene.getCurrentPhase() as CommandPhase).handleCommand(this.fromCommand, cursor, MoveUseType.NORMAL)

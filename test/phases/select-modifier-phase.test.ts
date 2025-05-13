@@ -33,6 +33,7 @@ describe("SelectModifierPhase", () => {
     scene = game.scene;
 
     game.override
+      .battleStyle("single")
       .moveset([Moves.FISSURE, Moves.SPLASH])
       .ability(Abilities.NO_GUARD)
       .startingLevel(200)
@@ -51,7 +52,7 @@ describe("SelectModifierPhase", () => {
     scene.unshiftPhase(selectModifierPhase);
     await game.phaseInterceptor.to(SelectModifierPhase);
 
-    expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
+    expect(scene.ui.getMode()).toBe(UiMode.MODIFIER_SELECT);
   });
 
   it("should generate random modifiers", async () => {
@@ -59,11 +60,11 @@ describe("SelectModifierPhase", () => {
     game.move.select(Moves.FISSURE);
     await game.phaseInterceptor.to("SelectModifierPhase");
 
-    expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
+    expect(scene.ui.getMode()).toBe(UiMode.MODIFIER_SELECT);
     const modifierSelectHandler = scene.ui.handlers.find(
       h => h instanceof ModifierSelectUiHandler,
     ) as ModifierSelectUiHandler;
-    expect(modifierSelectHandler.options.length).toEqual(3);
+    expect(modifierSelectHandler.options.length).toBe(3);
   });
 
   it("should modify reroll cost", async () => {
@@ -84,7 +85,7 @@ describe("SelectModifierPhase", () => {
 
     const cost1 = selectModifierPhase1.getRerollCost(false);
     const cost2 = selectModifierPhase2.getRerollCost(false);
-    expect(cost2).toEqual(cost1 * 2);
+    expect(cost2).toBe(cost1 * 2);
   });
 
   it.todo("should generate random modifiers from reroll", async () => {
@@ -101,13 +102,13 @@ describe("SelectModifierPhase", () => {
     const modifierSelectHandler = scene.ui.handlers.find(
       h => h instanceof ModifierSelectUiHandler,
     ) as ModifierSelectUiHandler;
-    expect(modifierSelectHandler.options.length).toEqual(3);
+    expect(modifierSelectHandler.options.length).toBe(3);
 
     modifierSelectHandler.processInput(Button.ACTION);
 
     expect(scene.money).toBe(1000000 - 250);
-    expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
-    expect(modifierSelectHandler.options.length).toEqual(3);
+    expect(scene.ui.getMode()).toBe(UiMode.MODIFIER_SELECT);
+    expect(modifierSelectHandler.options.length).toBe(3);
   });
 
   it.todo("should generate random modifiers of same tier for reroll with reroll lock", async () => {

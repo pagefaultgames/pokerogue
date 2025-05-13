@@ -4687,11 +4687,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Called by damageAndUpdate()
-   * @param damage integer
-   * @param ignoreSegments boolean, not currently used
-   * @param preventEndure used to update damage if endure or sturdy
-   * @param ignoreFaintPhas  flag on whether to add FaintPhase if pokemon after applying damage faints
-   * @returns integer representing damage dealt
+   * @param damage - The amount of unmitigated damage to deal (before factoring in max HP).
+   * @param ignoreSegments - Whether to ignore boss bars; default `false` and not currently used
+   * @param preventEndure - Whether to apply endure and sturdy; default `false`
+   * @param ignoreFaintPhase - Whether to unshift a FaintPhase if this pokemon faints after taking damage; default `false`
+   * @returns The amount of damage actually dealt to the target.
    */
   damage(
     damage: number,
@@ -7862,13 +7862,14 @@ export class PokemonSummonData {
    * A queue of moves yet to be executed, used by charging, recharging and frenzy moves.
    * So long as this array is nonempty, this Pokemon's corresponding `CommandPhase` will be skipped over entirely
    * in favor of using the queued move.
-   * TODO: Clean up a lot of the code surrounding the move queue. It's intertwined with the
+   * It is typically safe to assume only 1 type of queued move will be queued at a time (until we get frenzy hyper beam)
+   * TODO: Clean up a lot of the code surrounding the move queue. It should be shifted SOLELY in command phase (with exceptions for canceling queued moves)
    */
   public moveQueue: TurnMove[] = [];
   public tags: BattlerTag[] = [];
   public abilitySuppressed = false;
 
-  // Overrides for transform.
+  // Overrides for transform and company.
   // TODO: Move these into a separate class & add rage fist hit count
   public speciesForm: PokemonSpeciesForm | null = null;
   public fusionSpeciesForm: PokemonSpeciesForm | null = null;
