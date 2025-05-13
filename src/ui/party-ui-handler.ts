@@ -440,6 +440,10 @@ export default class PartyUiHandler extends MessageUiHandler {
     const ui = this.getUi();
     this.clearOptions();
     ui.playSelect();
+    if (this.partyUiMode === PartyUiMode.RELEASE) {
+      this.doRelease(this.cursor);
+      return true;
+    }
     if (this.cursor >= globalScene.currentBattle.getBattlerCount() || !pokemon.isAllowedInBattle()) {
       this.blockInput = true;
       this.showText(
@@ -708,7 +712,7 @@ export default class PartyUiHandler extends MessageUiHandler {
         return this.processRenameOption(pokemon);
       }
       // TODO: Figure out why we need this edge case
-      if (option === PartyOption.RELEASE && this.partyUiMode !== PartyUiMode.RELEASE) {
+      if (option === PartyOption.RELEASE) {
         return this.processReleaseOption(pokemon);
       }
       if (option === PartyOption.SELECT) {
@@ -762,10 +766,6 @@ export default class PartyUiHandler extends MessageUiHandler {
             this.startTransfer();
           }
           this.clearOptions();
-          return true;
-        }
-        if (option === PartyOption.RELEASE) {
-          this.doRelease(this.cursor);
           return true;
         }
         const selectCallback = this.selectCallback;
