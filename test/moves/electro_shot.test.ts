@@ -80,7 +80,7 @@ describe("Moves - Electro Shot", () => {
     expect(playerPokemon.getTag(BattlerTagType.CHARGING)).toBeUndefined();
     expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
     expect(playerPokemon.getMoveHistory()).toHaveLength(2);
-    expect(playerPokemon.getLastXMoves(1)[0].result).toBe(MoveResult.SUCCESS);
+    expect(playerPokemon.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
 
     const playerElectroShot = playerPokemon.getMoveset().find(mv => mv && mv.moveId === Moves.ELECTRO_SHOT);
     expect(playerElectroShot?.ppUsed).toBe(1);
