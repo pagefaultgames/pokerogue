@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import type { BiomeTierTrainerPools, PokemonPools } from "#app/data/balance/biomes";
 import { biomePokemonPools, BiomePoolTier, biomeTrainerPools } from "#app/data/balance/biomes";
-import { randSeedInt, NumberHolder, isNullOrUndefined, type Constructor } from "#app/utils";
+import { randSeedInt, NumberHolder, isNullOrUndefined, type Constructor } from "#app/utils/common";
 import type PokemonSpecies from "#app/data/pokemon-species";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import {
@@ -26,7 +26,7 @@ import {
   PostTerrainChangeAbAttr,
   PostWeatherChangeAbAttr,
   TerrainEventTypeChangeAbAttr,
-} from "#app/data/ability";
+} from "#app/data/abilities/ability";
 import type Pokemon from "#app/field/pokemon";
 import Overrides from "#app/overrides";
 import { TagAddedEvent, TagRemovedEvent, TerrainChangedEvent, WeatherChangedEvent } from "#app/events/arena";

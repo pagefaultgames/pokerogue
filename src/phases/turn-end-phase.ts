@@ -1,4 +1,4 @@
-import { applyPostTurnAbAttrs, PostTurnAbAttr } from "#app/data/ability";
+import { applyPostTurnAbAttrs, PostTurnAbAttr } from "#app/data/abilities/ability";
 import { BattlerTagLapseType } from "#app/data/battler-tags";
 import { TerrainType } from "#app/data/terrain";
 import { WeatherType } from "#app/enums/weather-type";
@@ -54,11 +54,10 @@ export class TurnEndPhase extends FieldPhase {
       }
 
       globalScene.applyModifiers(TurnStatusEffectModifier, pokemon.isPlayer(), pokemon);
-
       globalScene.applyModifiers(TurnHeldItemTransferModifier, pokemon.isPlayer(), pokemon);
 
-      pokemon.battleSummonData.turnCount++;
-      pokemon.battleSummonData.waveTurnCount++;
+      pokemon.tempSummonData.turnCount++;
+      pokemon.tempSummonData.waveTurnCount++;
     };
 
     this.executeForAll(handlePokemon);

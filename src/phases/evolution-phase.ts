@@ -5,8 +5,8 @@ import { globalScene } from "#app/global-scene";
 import type { SpeciesFormEvolution } from "#app/data/balance/pokemon-evolutions";
 import { FusionSpeciesFormEvolution } from "#app/data/balance/pokemon-evolutions";
 import type EvolutionSceneHandler from "#app/ui/evolution-scene-handler";
-import { fixedInt, getFrameMs, randInt } from "#app/utils";
-import { Mode } from "#app/ui/ui";
+import { fixedInt, getFrameMs, randInt } from "#app/utils/common";
+import { UiMode } from "#enums/ui-mode";
 import { cos, sin } from "#app/field/anims";
 import type { PlayerPokemon } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
@@ -53,7 +53,7 @@ export class EvolutionPhase extends Phase {
   }
 
   setMode(): Promise<void> {
-    return globalScene.ui.setModeForceTransition(Mode.EVOLUTION_SCENE);
+    return globalScene.ui.setModeForceTransition(UiMode.EVOLUTION_SCENE);
   }
 
   start() {
@@ -146,7 +146,7 @@ export class EvolutionPhase extends Phase {
         sprite.setPipelineData("shiny", this.pokemon.shiny);
         sprite.setPipelineData("variant", this.pokemon.variant);
         ["spriteColors", "fusionSpriteColors"].map(k => {
-          if (this.pokemon.summonData?.speciesForm) {
+          if (this.pokemon.summonData.speciesForm) {
             k += "Base";
           }
           sprite.pipelineData[k] = this.pokemon.getSprite().pipelineData[k];
@@ -178,7 +178,7 @@ export class EvolutionPhase extends Phase {
             sprite.setPipelineData("shiny", evolvedPokemon.shiny);
             sprite.setPipelineData("variant", evolvedPokemon.variant);
             ["spriteColors", "fusionSpriteColors"].map(k => {
-              if (evolvedPokemon.summonData?.speciesForm) {
+              if (evolvedPokemon.summonData.speciesForm) {
                 k += "Base";
               }
               sprite.pipelineData[k] = evolvedPokemon.getSprite().pipelineData[k];
@@ -280,7 +280,7 @@ export class EvolutionPhase extends Phase {
               this.end();
             };
             globalScene.ui.setOverlayMode(
-              Mode.CONFIRM,
+              UiMode.CONFIRM,
               () => {
                 globalScene.ui.revertMode();
                 this.pokemon.pauseEvolutions = true;

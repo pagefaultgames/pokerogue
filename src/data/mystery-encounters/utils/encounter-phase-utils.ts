@@ -1,5 +1,6 @@
 import type Battle from "#app/battle";
-import { BattlerIndex, BattleType } from "#app/battle";
+import { BattlerIndex } from "#app/battle";
+import { BattleType } from "#enums/battle-type";
 import { biomeLinks, BiomePoolTier } from "#app/data/balance/biomes";
 import type MysteryEncounterOption from "#app/data/mystery-encounters/mystery-encounter-option";
 import {
@@ -9,7 +10,7 @@ import {
 import { showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import type { AiType, PlayerPokemon } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
-import { EnemyPokemon, FieldPosition, PokemonMove, PokemonSummonData } from "#app/field/pokemon";
+import { EnemyPokemon, FieldPosition, PokemonMove } from "#app/field/pokemon";
 import type { CustomModifierSettings, ModifierType } from "#app/modifier/modifier-type";
 import {
   getPartyLuckValue,
@@ -29,8 +30,8 @@ import type PokemonData from "#app/system/pokemon-data";
 import type { OptionSelectConfig, OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
 import type { PartyOption, PokemonSelectFilter } from "#app/ui/party-ui-handler";
 import { PartyUiMode } from "#app/ui/party-ui-handler";
-import { Mode } from "#app/ui/ui";
-import { isNullOrUndefined, randSeedInt, randomString, randSeedItem } from "#app/utils";
+import { UiMode } from "#enums/ui-mode";
+import { isNullOrUndefined, randSeedInt, randomString, randSeedItem } from "#app/utils/common";
 import type { BattlerTagType } from "#enums/battler-tag-type";
 import { Biome } from "#enums/biome";
 import type { TrainerType } from "#enums/trainer-type";
@@ -347,11 +348,6 @@ export async function initBattleWithEnemyConfig(partyConfig: EnemyPartyConfig): 
         enemyPokemon.status = new Status(status, 0, cureTurn);
       }
 
-      // Set summon data fields
-      if (!enemyPokemon.summonData) {
-        enemyPokemon.summonData = new PokemonSummonData();
-      }
-
       // Set ability
       if (!isNullOrUndefined(config.abilityIndex)) {
         enemyPokemon.abilityIndex = config.abilityIndex;
@@ -389,13 +385,10 @@ export async function initBattleWithEnemyConfig(partyConfig: EnemyPartyConfig): 
         }
       }
 
-      // mysteryEncounterBattleEffects will only be used IFF MYSTERY_ENCOUNTER_POST_SUMMON tag is applied
+      // mysteryEncounterBattleEffects will only be used if MYSTERY_ENCOUNTER_POST_SUMMON tag is applied
       if (config.mysteryEncounterBattleEffects) {
         enemyPokemon.mysteryEncounterBattleEffects = config.mysteryEncounterBattleEffects;
       }
-
-      // Requires re-priming summon data to update everything properly
-      enemyPokemon.primeSummonData(enemyPokemon.summonData);
 
       if (enemyPokemon.isShiny() && !enemyPokemon["shinySparkle"]) {
         enemyPokemon.initShinySparkle();
@@ -423,6 +416,7 @@ export async function initBattleWithEnemyConfig(partyConfig: EnemyPartyConfig): 
     console.log(
       `Pokemon: ${getPokemonNameWithAffix(enemyPokemon)}`,
       `| Species ID: ${enemyPokemon.species.speciesId}`,
+      `| Level: ${enemyPokemon.level}`,
       `| Nature: ${getNatureName(enemyPokemon.nature, true, true, true)}`,
     );
     console.log(`Stats (IVs): ${stats}`);
@@ -562,7 +556,7 @@ export function selectPokemonForOption(
 
     // Open party screen to choose pokemon
     globalScene.ui.setMode(
-      Mode.PARTY,
+      UiMode.PARTY,
       PartyUiMode.SELECT,
       -1,
       (slotIndex: number, _option: PartyOption) => {
@@ -580,7 +574,7 @@ export function selectPokemonForOption(
             }
 
             // There is a second option to choose after selecting the Pokemon
-            globalScene.ui.setMode(Mode.MESSAGE).then(() => {
+            globalScene.ui.setMode(UiMode.MESSAGE).then(() => {
               const displayOptions = () => {
                 // Always appends a cancel option to bottom of options
                 const fullOptions = secondaryOptions
@@ -622,7 +616,7 @@ export function selectPokemonForOption(
                 if (fullOptions[0].onHover) {
                   fullOptions[0].onHover();
                 }
-                globalScene.ui.setModeWithoutClear(Mode.OPTION_SELECT, config, null, true);
+                globalScene.ui.setModeWithoutClear(UiMode.OPTION_SELECT, config, null, true);
               };
 
               const textPromptKey =
@@ -672,20 +666,20 @@ export function selectOptionThenPokemon(
     const modeToSetOnExit = globalScene.ui.getMode();
 
     const displayOptions = (config: OptionSelectConfig) => {
-      globalScene.ui.setMode(Mode.MESSAGE).then(() => {
+      globalScene.ui.setMode(UiMode.MESSAGE).then(() => {
         if (!optionSelectPromptKey) {
           // Do hover over the starting selection option
           if (fullOptions[0].onHover) {
             fullOptions[0].onHover();
           }
-          globalScene.ui.setMode(Mode.OPTION_SELECT, config);
+          globalScene.ui.setMode(UiMode.OPTION_SELECT, config);
         } else {
           showEncounterText(optionSelectPromptKey).then(() => {
             // Do hover over the starting selection option
             if (fullOptions[0].onHover) {
               fullOptions[0].onHover();
             }
-            globalScene.ui.setMode(Mode.OPTION_SELECT, config);
+            globalScene.ui.setMode(UiMode.OPTION_SELECT, config);
           });
         }
       });
@@ -694,7 +688,7 @@ export function selectOptionThenPokemon(
     const selectPokemonAfterOption = (selectedOptionIndex: number) => {
       // Open party screen to choose a Pokemon
       globalScene.ui.setMode(
-        Mode.PARTY,
+        UiMode.PARTY,
         PartyUiMode.SELECT,
         -1,
         (slotIndex: number, _option: PartyOption) => {
@@ -1074,8 +1068,8 @@ export function getRandomEncounterSpecies(level: number, isBoss = false, rerollH
     ret.formIndex = formIndex;
   }
 
-  //Reroll shiny for event encounters
-  if (isEventEncounter && !ret.shiny) {
+  //Reroll shiny or variant for event encounters
+  if (isEventEncounter) {
     ret.trySetShinySeed();
   }
   //Reroll hidden ability

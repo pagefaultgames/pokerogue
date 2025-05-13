@@ -23,7 +23,7 @@ describe("Abilities - Wonder Skin", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleType("single");
+    game.override.battleStyle("single");
     game.override.moveset([Moves.TACKLE, Moves.CHARM]);
     game.override.ability(Abilities.BALL_FETCH);
     game.override.enemySpecies(Species.SHUCKLE);

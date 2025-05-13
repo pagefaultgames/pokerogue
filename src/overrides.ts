@@ -2,10 +2,11 @@ import { type PokeballCounts } from "#app/battle-scene";
 import { EvolutionItem } from "#app/data/balance/pokemon-evolutions";
 import { Gender } from "#app/data/gender";
 import { FormChangeItem } from "#app/data/pokemon-forms";
-import { Variant } from "#app/sprites/variant";
 import { type ModifierOverride } from "#app/modifier/modifier-type";
+import { Variant } from "#app/sprites/variant";
 import { Unlockables } from "#app/system/unlockables";
 import { Abilities } from "#enums/abilities";
+import { BattleType } from "#enums/battle-type";
 import { BerryType } from "#enums/berry-type";
 import { Biome } from "#enums/biome";
 import { EggTier } from "#enums/egg-type";
@@ -18,6 +19,7 @@ import { Species } from "#enums/species";
 import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { TimeOfDay } from "#enums/time-of-day";
+import { TrainerType } from "#enums/trainer-type";
 import { VariantTier } from "#enums/variant-tier";
 import { WeatherType } from "#enums/weather-type";
 
@@ -41,7 +43,7 @@ import { WeatherType } from "#enums/weather-type";
  * }
  * ```
  */
-const overrides = {} satisfies Partial<InstanceType<typeof DefaultOverrides>>;
+const overrides = {} satisfies Partial<InstanceType<OverridesType>>;
 
 /**
  * If you need to add Overrides values for local testing do that inside {@linkcode overrides}
@@ -69,7 +71,7 @@ class DefaultOverrides {
    *
    * If `"odd-doubles"`, follow the `"double"` rule on odd wave numbers, and follow the `"single"` rule on even wave numbers.
    */
-  readonly BATTLE_TYPE_OVERRIDE: BattleStyle | null = null;
+  readonly BATTLE_STYLE_OVERRIDE: BattleStyle | null = null;
   readonly STARTING_WAVE_OVERRIDE: number = 0;
   readonly STARTING_BIOME_OVERRIDE: Biome = Biome.TOWN;
   readonly ARENA_TINT_OVERRIDE: TimeOfDay | null = null;
@@ -102,8 +104,16 @@ class DefaultOverrides {
   readonly BYPASS_TUTORIAL_SKIP_OVERRIDE: boolean = false;
   /** Set to `true` to be able to re-earn already unlocked achievements */
   readonly ACHIEVEMENTS_REUNLOCK_OVERRIDE: boolean = false;
-  /** Set to `true` to force Paralysis and Freeze to always activate, or `false` to force them to not activate */
+  /**
+   * Set to `true` to force Paralysis and Freeze to always activate,
+   * or `false` to force them to not activate (or clear for freeze).
+   */
   readonly STATUS_ACTIVATION_OVERRIDE: boolean | null = null;
+  /**
+   * Set to `true` to force confusion to always trigger,
+   * or `false` to force it to never trigger.
+   */
+  readonly CONFUSION_ACTIVATION_OVERRIDE: boolean | null = null;
 
   // ----------------
   // PLAYER OVERRIDES
@@ -259,6 +269,16 @@ class DefaultOverrides {
    * If `true`, disable all non-scripted opponent trainer encounters.
    */
   readonly DISABLE_STANDARD_TRAINERS_OVERRIDE: boolean = false;
+
+  /**
+   * Set all non-scripted waves to use the selected battle type.
+   * 
+   * Ignored if set to {@linkcode BattleType.TRAINER} and `DISABLE_STANDARD_TRAINERS_OVERRIDE` is `true`.
+   */
+  readonly BATTLE_TYPE_OVERRIDE: Exclude<BattleType, BattleType.CLEAR> | null = null;
+
+  /** Force all random trainer types to be the provided type. */
+  readonly RANDOM_TRAINER_OVERRIDE: RandomTrainerOverride | null = null;
 }
 
 export const defaultOverrides = new DefaultOverrides();
@@ -269,3 +289,13 @@ export default {
 } satisfies InstanceType<typeof DefaultOverrides>;
 
 export type BattleStyle = "double" | "single" | "even-doubles" | "odd-doubles";
+
+export type RandomTrainerOverride = {
+  /** The Type of trainer to force */
+  trainerType: Exclude<TrainerType, TrainerType.UNKNOWN>,
+  /* If the selected trainer type has a double version, it will always use its double version. */
+  alwaysDouble?: boolean
+}
+
+/** The type of the {@linkcode DefaultOverrides} class */
+export type OverridesType = typeof DefaultOverrides;

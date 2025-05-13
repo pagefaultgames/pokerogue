@@ -1,6 +1,6 @@
 import i18next from "i18next";
 import type { PokeballCounts } from "#app/battle-scene";
-import { bypassLogin } from "#app/battle-scene";
+import { bypassLogin } from "#app/global-vars/bypass-login";
 import { globalScene } from "#app/global-scene";
 import type { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
@@ -8,14 +8,14 @@ import { pokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
 import type PokemonSpecies from "#app/data/pokemon-species";
 import { allSpecies, getPokemonSpecies } from "#app/data/pokemon-species";
 import { speciesStarterCosts } from "#app/data/balance/starters";
-import { randInt, getEnumKeys, isLocal, executeIf, fixedInt, randSeedItem, NumberHolder } from "#app/utils";
+import { randInt, getEnumKeys, isLocal, executeIf, fixedInt, randSeedItem, NumberHolder } from "#app/utils/common";
 import Overrides from "#app/overrides";
 import PokemonData from "#app/system/pokemon-data";
 import PersistentModifierData from "#app/system/modifier-data";
 import ArenaData from "#app/system/arena-data";
 import { Unlockables } from "#app/system/unlockables";
 import { GameModes, getGameMode } from "#app/game-mode";
-import { BattleType } from "#app/battle";
+import { BattleType } from "#enums/battle-type";
 import TrainerData from "#app/system/trainer-data";
 import { trainerConfigs } from "#app/data/trainers/trainer-config";
 import { resetSettings, setSetting, SettingKeys } from "#app/system/settings/settings";
@@ -24,7 +24,7 @@ import EggData from "#app/system/egg-data";
 import type { Egg } from "#app/data/egg";
 import { vouchers, VoucherType } from "#app/system/voucher";
 import { AES, enc } from "crypto-js";
-import { Mode } from "#app/ui/ui";
+import { UiMode } from "#enums/ui-mode";
 import { clientSessionId, loggedInUser, updateUserInfo } from "#app/account";
 import { Nature } from "#enums/nature";
 import { GameStats } from "#app/system/game-stats";
@@ -118,15 +118,17 @@ export function getDataTypeKey(dataType: GameDataType, slotId = 0): string {
 }
 
 export function encrypt(data: string, bypassLogin: boolean): string {
-  return (bypassLogin ? (data: string) => btoa(data) : (data: string) => AES.encrypt(data, saveKey))(
-    data,
-  ) as unknown as string; // TODO: is this correct?
+  return (bypassLogin
+    ? (data: string) => btoa(encodeURIComponent(data))
+    : (data: string) => AES.encrypt(data, saveKey))(data) as unknown as string; // TODO: is this correct?
 }
 
 export function decrypt(data: string, bypassLogin: boolean): string {
-  return (bypassLogin ? (data: string) => atob(data) : (data: string) => AES.decrypt(data, saveKey).toString(enc.Utf8))(
-    data,
-  );
+  return (
+    bypassLogin
+      ? (data: string) => decodeURIComponent(atob(data))
+      : (data: string) => AES.decrypt(data, saveKey).toString(enc.Utf8)
+  )(data);
 }
 
 export interface SystemSaveData {
@@ -462,8 +464,13 @@ export class GameData {
 
       if (!bypassLogin) {
         pokerogueApi.savedata.system.get({ clientSessionId }).then(saveDataOrErr => {
-          if (!saveDataOrErr || saveDataOrErr.length === 0 || saveDataOrErr[0] !== "{") {
-            if (saveDataOrErr?.startsWith("sql: no rows in result set")) {
+          if (
+            typeof saveDataOrErr === "number" ||
+            !saveDataOrErr ||
+            saveDataOrErr.length === 0 ||
+            saveDataOrErr[0] !== "{"
+          ) {
+            if (saveDataOrErr === 404) {
               globalScene.queueMessage(
                 "Save data could not be found. If this is a new account, you can safely ignore this message.",
                 null,
@@ -471,7 +478,7 @@ export class GameData {
               );
               return resolve(true);
             }
-            if (saveDataOrErr?.includes("Too many connections")) {
+            if (typeof saveDataOrErr === "string" && saveDataOrErr?.includes("Too many connections")) {
               globalScene.queueMessage(
                 "Too many people are trying to connect and the server is overloaded. Please try again later.",
                 null,
@@ -479,7 +486,6 @@ export class GameData {
               );
               return resolve(false);
             }
-            console.error(saveDataOrErr);
             return resolve(false);
           }
 
@@ -1104,7 +1110,7 @@ export class GameData {
           for (const p of sessionData.party) {
             const pokemon = p.toPokemon() as PlayerPokemon;
             pokemon.setVisible(false);
-            loadPokemonAssets.push(pokemon.loadAssets());
+            loadPokemonAssets.push(pokemon.loadAssets(false));
             party.push(pokemon);
           }
 
@@ -1141,7 +1147,7 @@ export class GameData {
               ? trainerConfig?.doubleOnly || sessionData.trainer?.variant === TrainerVariant.DOUBLE
               : sessionData.enemyParty.length > 1,
             mysteryEncounterType,
-          )!; // TODO: is this bang correct?
+          );
           battle.enemyLevels = sessionData.enemyParty.map(p => p.level);
 
           globalScene.arena.init();
@@ -1194,13 +1200,16 @@ export class GameData {
             }
           }
 
+          if (globalScene.modifiers.length) {
+            console.warn("Existing modifiers not cleared on session load, deleting...");
+            globalScene.modifiers = [];
+          }
           for (const modifierData of sessionData.modifiers) {
             const modifier = modifierData.toModifier(Modifier[modifierData.className]);
             if (modifier) {
               globalScene.addModifier(modifier, true);
             }
           }
-
           globalScene.updateModifiers(true);
 
           for (const enemyModifierData of sessionData.enemyModifiers) {
@@ -1338,68 +1347,67 @@ export class GameData {
   }
 
   parseSessionData(dataStr: string): SessionSaveData {
+    // TODO: Add `null`/`undefined` to the corresponding type signatures for this
+    // (or prevent them from being null)
+    // If the value is able to *not exist*, it should say so in the code
     const sessionData = JSON.parse(dataStr, (k: string, v: any) => {
-      if (k === "party" || k === "enemyParty") {
-        const ret: PokemonData[] = [];
-        if (v === null) {
-          v = [];
-        }
-        for (const pd of v) {
-          ret.push(new PokemonData(pd));
-        }
-        return ret;
-      }
-
-      if (k === "trainer") {
-        return v ? new TrainerData(v) : null;
-      }
-
-      if (k === "modifiers" || k === "enemyModifiers") {
-        const player = k === "modifiers";
-        const ret: PersistentModifierData[] = [];
-        if (v === null) {
-          v = [];
-        }
-        for (const md of v) {
-          if (md?.className === "ExpBalanceModifier") {
-            // Temporarily limit EXP Balance until it gets reworked
-            md.stackCount = Math.min(md.stackCount, 4);
+      // TODO: Add pre-parse migrate scripts
+      switch (k) {
+        case "party":
+        case "enemyParty": {
+          const ret: PokemonData[] = [];
+          for (const pd of v ?? []) {
+            ret.push(new PokemonData(pd));
           }
-          if (
-            (md instanceof Modifier.EnemyAttackStatusEffectChanceModifier && md.effect === StatusEffect.FREEZE) ||
-            md.effect === StatusEffect.SLEEP
-          ) {
-            continue;
+          return ret;
+        }
+
+        case "trainer":
+          return v ? new TrainerData(v) : null;
+
+        case "modifiers":
+        case "enemyModifiers": {
+          const ret: PersistentModifierData[] = [];
+          for (const md of v ?? []) {
+            if (md?.className === "ExpBalanceModifier") {
+              // Temporarily limit EXP Balance until it gets reworked
+              md.stackCount = Math.min(md.stackCount, 4);
+            }
+
+            if (
+              md instanceof Modifier.EnemyAttackStatusEffectChanceModifier &&
+              (md.effect === StatusEffect.FREEZE || md.effect === StatusEffect.SLEEP)
+            ) {
+              // Discard any old "sleep/freeze chance tokens".
+              // TODO: make this migrate script
+              continue;
+            }
+
+            ret.push(new PersistentModifierData(md, k === "modifiers"));
           }
-          ret.push(new PersistentModifierData(md, player));
+          return ret;
         }
-        return ret;
-      }
 
-      if (k === "arena") {
-        return new ArenaData(v);
-      }
+        case "arena":
+          return new ArenaData(v);
 
-      if (k === "challenges") {
-        const ret: ChallengeData[] = [];
-        if (v === null) {
-          v = [];
+        case "challenges": {
+          const ret: ChallengeData[] = [];
+          for (const c of v ?? []) {
+            ret.push(new ChallengeData(c));
+          }
+          return ret;
         }
-        for (const c of v) {
-          ret.push(new ChallengeData(c));
-        }
-        return ret;
-      }
 
-      if (k === "mysteryEncounterType") {
-        return v as MysteryEncounterType;
-      }
+        case "mysteryEncounterType":
+          return v as MysteryEncounterType;
 
-      if (k === "mysteryEncounterSaveData") {
-        return new MysteryEncounterSaveData(v);
-      }
+        case "mysteryEncounterSaveData":
+          return new MysteryEncounterSaveData(v);
 
-      return v;
+        default:
+          return v;
+      }
     }) as SessionSaveData;
 
     applySessionVersionMigration(sessionData);
@@ -1430,7 +1438,7 @@ export class GameData {
         const systemData = useCachedSystem
           ? this.parseSystemData(decrypt(localStorage.getItem(`data_${loggedInUser?.username}`)!, bypassLogin))
           : this.getSystemSaveData(); // TODO: is this bang correct?
-        
+
         const request = {
           system: systemData,
           session: sessionData,
@@ -1452,7 +1460,7 @@ export class GameData {
           encrypt(JSON.stringify(sessionData), bypassLogin),
         );
 
-        console.debug("Session data saved");
+        console.debug("Session data saved!");
 
         if (!bypassLogin && sync) {
           pokerogueApi.savedata.updateAll(request).then(error => {
@@ -1500,7 +1508,7 @@ export class GameData {
         link.remove();
       };
       if (!bypassLogin && dataType < GameDataType.SETTINGS) {
-        let promise: Promise<string | null> = Promise.resolve(null);
+        let promise: Promise<string | null | number> = Promise.resolve(null);
 
         if (dataType === GameDataType.SYSTEM) {
           promise = pokerogueApi.savedata.system.get({ clientSessionId });
@@ -1512,7 +1520,7 @@ export class GameData {
         }
 
         promise.then(response => {
-          if (!response?.length || response[0] !== "{") {
+          if (typeof response === "number" || !response?.length || response[0] !== "{") {
             console.error(response);
             resolve(false);
             return;
@@ -1604,7 +1612,7 @@ export class GameData {
             null,
             () => {
               globalScene.ui.setOverlayMode(
-                Mode.CONFIRM,
+                UiMode.CONFIRM,
                 () => {
                   localStorage.setItem(dataKey, encrypt(dataStr, bypassLogin));
 

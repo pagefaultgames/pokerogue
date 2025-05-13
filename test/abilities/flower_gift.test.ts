@@ -1,5 +1,5 @@
 import { BattlerIndex } from "#app/battle";
-import { allAbilities } from "#app/data/ability";
+import { allAbilities } from "#app/data/data-lists";
 import { Abilities } from "#app/enums/abilities";
 import { Stat } from "#app/enums/stat";
 import { WeatherType } from "#app/enums/weather-type";
@@ -47,7 +47,7 @@ describe("Abilities - Flower Gift", () => {
     allyAbility = Abilities.BALL_FETCH,
     enemyAbility = Abilities.BALL_FETCH,
   ): Promise<[number, number]> => {
-    game.override.battleType("double");
+    game.override.battleStyle("double");
     game.override.moveset([Moves.SPLASH, Moves.SUNNY_DAY, move, Moves.HEAL_PULSE]);
     game.override.enemyMoveset([Moves.SPLASH, Moves.HEAL_PULSE]);
     const target_index = allyAttacker ? BattlerIndex.ENEMY : BattlerIndex.PLAYER_2;
@@ -110,7 +110,7 @@ describe("Abilities - Flower Gift", () => {
   });
 
   it("increases the ATK and SPDEF stat stages of the Pokémon with this Ability and its allies by 1.5× during Harsh Sunlight", async () => {
-    game.override.battleType("double");
+    game.override.battleStyle("double");
     await game.classicMode.startBattle([Species.CHERRIM, Species.MAGIKARP]);
 
     const [cherrim, magikarp] = game.scene.getPlayerField();

@@ -26,7 +26,7 @@ describe("Arena - Gravity", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .battleType("single")
+      .battleStyle("single")
       .moveset([Moves.TACKLE, Moves.GRAVITY, Moves.FISSURE])
       .ability(Abilities.UNNERVE)
       .enemyAbility(Abilities.BALL_FETCH)

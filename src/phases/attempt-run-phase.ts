@@ -1,14 +1,20 @@
-import { applyAbAttrs, applyPreLeaveFieldAbAttrs, PreLeaveFieldAbAttr, RunSuccessAbAttr } from "#app/data/ability";
+import {
+  applyAbAttrs,
+  applyPreLeaveFieldAbAttrs,
+  PreLeaveFieldAbAttr,
+  RunSuccessAbAttr,
+} from "#app/data/abilities/ability";
 import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import type { PlayerPokemon, EnemyPokemon } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
 import i18next from "i18next";
-import { NumberHolder } from "#app/utils";
+import { NumberHolder } from "#app/utils/common";
 import { BattleEndPhase } from "./battle-end-phase";
 import { NewBattlePhase } from "./new-battle-phase";
 import { PokemonPhase } from "./pokemon-phase";
 import { globalScene } from "#app/global-scene";
+import { SelectBiomePhase } from "./select-biome-phase";
 
 export class AttemptRunPhase extends PokemonPhase {
   /** For testing purposes: this is to force the pokemon to fail and escape */
@@ -54,6 +60,11 @@ export class AttemptRunPhase extends PokemonPhase {
       });
 
       globalScene.pushPhase(new BattleEndPhase(false));
+
+      if (globalScene.gameMode.hasRandomBiomes || globalScene.isNewBiome()) {
+        globalScene.pushPhase(new SelectBiomePhase());
+      }
+
       globalScene.pushPhase(new NewBattlePhase());
     } else {
       playerPokemon.turnData.failedRunAway = true;

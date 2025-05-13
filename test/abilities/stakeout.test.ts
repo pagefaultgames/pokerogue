@@ -1,5 +1,5 @@
 import { BattlerIndex } from "#app/battle";
-import { isBetween } from "#app/utils";
+import { isBetween } from "#app/utils/common";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
@@ -26,7 +26,7 @@ describe("Abilities - Stakeout", () => {
     game.override
       .moveset([Moves.SPLASH, Moves.SURF])
       .ability(Abilities.STAKEOUT)
-      .battleType("single")
+      .battleStyle("single")
       .disableCrits()
       .startingLevel(100)
       .enemyLevel(100)

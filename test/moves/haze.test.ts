@@ -23,7 +23,7 @@ describe("Moves - Haze", () => {
     beforeEach(() => {
       game = new GameManager(phaserGame);
 
-      game.override.battleType("single");
+      game.override.battleStyle("single");
 
       game.override.enemySpecies(Species.RATTATA);
       game.override.enemyLevel(100);

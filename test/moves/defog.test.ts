@@ -25,7 +25,7 @@ describe("Moves - Defog", () => {
     game.override
       .moveset([Moves.MIST, Moves.SAFEGUARD, Moves.SPLASH])
       .ability(Abilities.BALL_FETCH)
-      .battleType("single")
+      .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.SHUCKLE)
       .enemyAbility(Abilities.BALL_FETCH)

@@ -10,6 +10,9 @@ import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { Status } from "#app/data/status-effect";
 import { StatusEffect } from "#enums/status-effect";
+import { BattlerIndex } from "#app/battle";
+import { BattleType } from "#enums/battle-type";
+import { TrainerType } from "#enums/trainer-type";
 
 describe("Moves - Whirlwind", () => {
   let phaserGame: Phaser.Game;
@@ -28,8 +31,8 @@ describe("Moves - Whirlwind", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .battleType("single")
-      .moveset(Moves.SPLASH)
+      .battleStyle("single")
+      .moveset([Moves.SPLASH])
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset([Moves.SPLASH, Moves.WHIRLWIND])
       .enemySpecies(Species.PIDGEY);
@@ -41,7 +44,8 @@ describe("Moves - Whirlwind", () => {
     { move: Moves.SKY_DROP, name: "Sky Drop" },
   ])("should not hit a flying target: $name (=$move)", async ({ move }) => {
     game.override.moveset([move]);
-    await game.classicMode.startBattle([Species.STARAPTOR]);
+    // Must have a pokemon in the back so that the move misses instead of fails.
+    await game.classicMode.startBattle([Species.STARAPTOR, Species.MAGIKARP]);
 
     const staraptor = game.scene.getPlayerPokemon()!;
 
@@ -155,5 +159,62 @@ describe("Moves - Whirlwind", () => {
 
     expect(lapras.isOnField()).toBe(true);
     expect(eevee.isOnField()).toBe(false);
+  });
+
+  it("should not pull in the other trainer's pokemon in a partner trainer battle", async () => {
+    game.override
+      .startingWave(2)
+      .battleType(BattleType.TRAINER)
+      .randomTrainer({
+        trainerType: TrainerType.BREEDER,
+        alwaysDouble: true,
+      })
+      .enemyMoveset([Moves.SPLASH, Moves.LUNAR_DANCE])
+      .moveset([Moves.WHIRLWIND, Moves.SPLASH]);
+    await game.classicMode.startBattle([Species.MAGIKARP, Species.TOTODILE]);
+
+    // expect the enemy to have at least 4 pokemon, necessary for this check to even work
+    expect(game.scene.getEnemyParty().length, "enemy must have exactly 4 pokemon").toBe(4);
+
+    const user = game.scene.getPlayerPokemon()!;
+
+    console.log(user.getMoveset(false));
+
+    game.move.select(Moves.SPLASH);
+    game.move.select(Moves.SPLASH);
+    await game.forceEnemyMove(Moves.MEMENTO);
+    await game.forceEnemyMove(Moves.SPLASH);
+    await game.toNextTurn();
+
+    // Get the enemy pokemon id so we can check if is the same after switch.
+    const enemy_id = game.scene.getEnemyPokemon()!.id;
+
+    // Hit the enemy that fainted with whirlwind.
+    game.move.select(Moves.WHIRLWIND, 0, BattlerIndex.ENEMY);
+    game.move.select(Moves.SPLASH, 1);
+
+    await game.forceEnemyMove(Moves.SPLASH);
+    await game.forceEnemyMove(Moves.SPLASH);
+
+    await game.toNextTurn();
+
+    // Expect the enemy pokemon to not have switched out.
+    expect(game.scene.getEnemyPokemon()!.id).toBe(enemy_id);
+  });
+
+  it("should force a wild pokemon to flee", async () => {
+    game.override
+      .battleType(BattleType.WILD)
+      .moveset([Moves.WHIRLWIND, Moves.SPLASH])
+      .enemyMoveset(Moves.SPLASH)
+      .ability(Abilities.BALL_FETCH);
+    await game.classicMode.startBattle([Species.MAGIKARP]);
+
+    const user = game.scene.getPlayerPokemon()!;
+
+    game.move.select(Moves.WHIRLWIND);
+    await game.phaseInterceptor.to("BerryPhase");
+
+    expect(user.getLastXMoves(1)[0].result).toBe(MoveResult.SUCCESS);
   });
 });

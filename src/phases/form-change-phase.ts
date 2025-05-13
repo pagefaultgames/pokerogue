@@ -1,10 +1,10 @@
 import { globalScene } from "#app/global-scene";
-import { fixedInt } from "#app/utils";
+import { fixedInt } from "#app/utils/common";
 import { achvs } from "../system/achv";
 import type { SpeciesFormChange } from "../data/pokemon-forms";
 import { getSpeciesFormChangeMessage } from "../data/pokemon-forms";
 import type { PlayerPokemon } from "../field/pokemon";
-import { Mode } from "../ui/ui";
+import { UiMode } from "#enums/ui-mode";
 import type PartyUiHandler from "../ui/party-ui-handler";
 import { getPokemonNameWithAffix } from "../messages";
 import { EndEvolutionPhase } from "./end-evolution-phase";
@@ -31,7 +31,7 @@ export class FormChangePhase extends EvolutionPhase {
     if (!this.modal) {
       return super.setMode();
     }
-    return globalScene.ui.setOverlayMode(Mode.EVOLUTION_SCENE);
+    return globalScene.ui.setOverlayMode(UiMode.EVOLUTION_SCENE);
   }
 
   doEvolution(): void {
@@ -51,7 +51,7 @@ export class FormChangePhase extends EvolutionPhase {
         sprite.setPipelineData("shiny", transformedPokemon.shiny);
         sprite.setPipelineData("variant", transformedPokemon.variant);
         ["spriteColors", "fusionSpriteColors"].map(k => {
-          if (transformedPokemon.summonData?.speciesForm) {
+          if (transformedPokemon.summonData.speciesForm) {
             k += "Base";
           }
           sprite.pipelineData[k] = transformedPokemon.getSprite().pipelineData[k];
@@ -181,7 +181,7 @@ export class FormChangePhase extends EvolutionPhase {
     this.pokemon.findAndRemoveTags(t => t.tagType === BattlerTagType.AUTOTOMIZED);
     if (this.modal) {
       globalScene.ui.revertMode().then(() => {
-        if (globalScene.ui.getMode() === Mode.PARTY) {
+        if (globalScene.ui.getMode() === UiMode.PARTY) {
           const partyUiHandler = globalScene.ui.getHandler() as PartyUiHandler;
           partyUiHandler.clearPartySlots();
           partyUiHandler.populatePartySlots();

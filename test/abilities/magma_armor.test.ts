@@ -23,9 +23,9 @@ describe("Abilities - Magma Armor", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([ Moves.SPLASH ])
+      .moveset([Moves.SPLASH])
       .ability(Abilities.BALL_FETCH)
-      .battleType("single")
+      .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)
@@ -33,12 +33,12 @@ describe("Abilities - Magma Armor", () => {
   });
 
   it("should remove freeze when gained", async () => {
-    game.override.ability(Abilities.MAGMA_ARMOR)
+    game.override
+      .ability(Abilities.MAGMA_ARMOR)
       .enemyAbility(Abilities.BALL_FETCH)
       .moveset(Moves.SKILL_SWAP)
-      .enemyMoveset(Moves.SPLASH),
-
-    await game.classicMode.startBattle([ Species.FEEBAS ]);
+      .enemyMoveset(Moves.SPLASH);
+    await game.classicMode.startBattle([Species.FEEBAS]);
     const enemy = game.scene.getEnemyPokemon();
     enemy?.trySetStatus(StatusEffect.FREEZE);
     expect(enemy?.status?.effect).toBe(StatusEffect.FREEZE);

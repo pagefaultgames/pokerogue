@@ -7,7 +7,7 @@ import type { CommandPhase } from "#app/phases/command-phase";
 import { LearnMovePhase } from "#app/phases/learn-move-phase";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { Command } from "#app/ui/command-ui-handler";
-import { Mode } from "#app/ui/ui";
+import { UiMode } from "#enums/ui-mode";
 import { Moves } from "#enums/moves";
 import { getMovePosition } from "#test/testUtils/gameManagerUtils";
 import { GameManagerHelper } from "#test/testUtils/helpers/gameManagerHelper";
@@ -18,29 +18,29 @@ import { vi } from "vitest";
  */
 export class MoveHelper extends GameManagerHelper {
   /**
-   * Intercepts {@linkcode MoveEffectPhase} and mocks the
-   * {@linkcode MoveEffectPhase.hitCheck | hitCheck}'s return value to `true`.
-   * Used to force a move to hit.
+   * Intercepts {@linkcode MoveEffectPhase} and mocks the phase's move's
+   * accuracy to -1, guaranteeing a hit.
    */
   public async forceHit(): Promise<void> {
     await this.game.phaseInterceptor.to(MoveEffectPhase, false);
-    vi.spyOn(this.game.scene.getCurrentPhase() as MoveEffectPhase, "hitCheck").mockReturnValue(true);
+    const moveEffectPhase = this.game.scene.getCurrentPhase() as MoveEffectPhase;
+    vi.spyOn(moveEffectPhase.move, "calculateBattleAccuracy").mockReturnValue(-1);
   }
 
   /**
-   * Intercepts {@linkcode MoveEffectPhase} and mocks the
-   * {@linkcode MoveEffectPhase.hitCheck | hitCheck}'s return value to `false`.
-   * Used to force a move to miss.
+   * Intercepts {@linkcode MoveEffectPhase} and mocks the phase's move's accuracy
+   * to 0, guaranteeing a miss.
    * @param firstTargetOnly - Whether the move should force miss on the first target only, in the case of multi-target moves.
    */
   public async forceMiss(firstTargetOnly = false): Promise<void> {
     await this.game.phaseInterceptor.to(MoveEffectPhase, false);
-    const hitCheck = vi.spyOn(this.game.scene.getCurrentPhase() as MoveEffectPhase, "hitCheck");
+    const moveEffectPhase = this.game.scene.getCurrentPhase() as MoveEffectPhase;
+    const accuracy = vi.spyOn(moveEffectPhase.move, "calculateBattleAccuracy");
 
     if (firstTargetOnly) {
-      hitCheck.mockReturnValueOnce(false);
+      accuracy.mockReturnValueOnce(0);
     } else {
-      hitCheck.mockReturnValue(false);
+      accuracy.mockReturnValue(0);
     }
   }
 
@@ -53,11 +53,38 @@ export class MoveHelper extends GameManagerHelper {
   public select(move: Moves, pkmIndex: 0 | 1 = 0, targetIndex?: BattlerIndex | null) {
     const movePosition = getMovePosition(this.game.scene, pkmIndex, move);
 
-    this.game.onNextPrompt("CommandPhase", Mode.COMMAND, () => {
-      this.game.scene.ui.setMode(Mode.FIGHT, (this.game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
+    this.game.onNextPrompt("CommandPhase", UiMode.COMMAND, () => {
+      this.game.scene.ui.setMode(UiMode.FIGHT, (this.game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
     });
-    this.game.onNextPrompt("CommandPhase", Mode.FIGHT, () => {
+    this.game.onNextPrompt("CommandPhase", UiMode.FIGHT, () => {
       (this.game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
+    });
+
+    if (targetIndex !== null) {
+      this.game.selectTarget(movePosition, targetIndex);
+    }
+  }
+
+  /**
+   * Select the move to be used by the given Pokemon(-index), **which will also terastallize on this turn**.
+   * Triggers during the next {@linkcode CommandPhase}
+   * @param move - the move to use
+   * @param pkmIndex - the pokemon index. Relevant for double-battles only (defaults to 0)
+   * @param targetIndex - The {@linkcode BattlerIndex} of the Pokemon to target for single-target moves, or `null` if a manual call to `selectTarget()` is required
+   */
+  public selectWithTera(move: Moves, pkmIndex: 0 | 1 = 0, targetIndex?: BattlerIndex | null) {
+    const movePosition = getMovePosition(this.game.scene, pkmIndex, move);
+    this.game.scene.getPlayerParty()[pkmIndex].isTerastallized = false;
+
+    this.game.onNextPrompt("CommandPhase", UiMode.COMMAND, () => {
+      this.game.scene.ui.setMode(
+        UiMode.FIGHT,
+        (this.game.scene.getCurrentPhase() as CommandPhase).getFieldIndex(),
+        Command.TERA,
+      );
+    });
+    this.game.onNextPrompt("CommandPhase", UiMode.FIGHT, () => {
+      (this.game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.TERA, movePosition, false);
     });
 
     if (targetIndex !== null) {
@@ -74,6 +101,17 @@ export class MoveHelper extends GameManagerHelper {
     vi.spyOn(Overrides, "STATUS_ACTIVATION_OVERRIDE", "get").mockReturnValue(activated);
     await this.game.phaseInterceptor.to("MovePhase");
     vi.spyOn(Overrides, "STATUS_ACTIVATION_OVERRIDE", "get").mockReturnValue(null);
+  }
+
+  /**
+   * Forces the Confusion status to activate on the next move by temporarily mocking {@linkcode Overrides.CONFUSION_ACTIVATION_OVERRIDE},
+   * advancing to the next `MovePhase`, and then resetting the override to `null`
+   * @param activated - `true` to force the Pokemon to hit themself, `false` to forcibly disable it
+   */
+  public async forceConfusionActivation(activated: boolean): Promise<void> {
+    vi.spyOn(Overrides, "CONFUSION_ACTIVATION_OVERRIDE", "get").mockReturnValue(activated);
+    await this.game.phaseInterceptor.to("MovePhase");
+    vi.spyOn(Overrides, "CONFUSION_ACTIVATION_OVERRIDE", "get").mockReturnValue(null);
   }
 
   /**
@@ -108,16 +146,16 @@ export class MoveHelper extends GameManagerHelper {
 
       // if slots are full, queue up inputs to replace existing moves
       if (this.game.scene.getPlayerParty()[partyIndex].moveset.filter(m => m).length === 4) {
-        this.game.onNextPrompt("LearnMovePhase", Mode.CONFIRM, () => {
+        this.game.onNextPrompt("LearnMovePhase", UiMode.CONFIRM, () => {
           this.game.scene.ui.processInput(Button.ACTION); // "Should a move be forgotten and replaced with XXX?"
         });
-        this.game.onNextPrompt("LearnMovePhase", Mode.SUMMARY, () => {
+        this.game.onNextPrompt("LearnMovePhase", UiMode.SUMMARY, () => {
           for (let x = 0; x < (moveSlotIndex ?? 0); x++) {
             this.game.scene.ui.processInput(Button.DOWN); // Scrolling in summary pane to move position
           }
           this.game.scene.ui.processInput(Button.ACTION);
           if (moveSlotIndex === 4) {
-            this.game.onNextPrompt("LearnMovePhase", Mode.CONFIRM, () => {
+            this.game.onNextPrompt("LearnMovePhase", UiMode.CONFIRM, () => {
               this.game.scene.ui.processInput(Button.ACTION); // "Give up on learning XXX?"
             });
           }

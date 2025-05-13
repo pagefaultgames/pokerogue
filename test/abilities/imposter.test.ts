@@ -25,7 +25,7 @@ describe("Abilities - Imposter", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .battleType("single")
+      .battleStyle("single")
       .enemySpecies(Species.MEW)
       .enemyLevel(200)
       .enemyAbility(Abilities.BEAST_BOOST)

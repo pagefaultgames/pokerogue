@@ -1,4 +1,5 @@
-import { BooleanHolder, type NumberHolder, randSeedItem, deepCopy } from "#app/utils";
+import { BooleanHolder, type NumberHolder, randSeedItem } from "#app/utils/common";
+import { deepCopy } from "#app/utils/data";
 import i18next from "i18next";
 import type { DexAttrProps, GameData } from "#app/system/game-data";
 import { defaultStarterSpecies } from "#app/system/game-data";
@@ -8,7 +9,9 @@ import { speciesStarterCosts } from "#app/data/balance/starters";
 import type Pokemon from "#app/field/pokemon";
 import { PokemonMove } from "#app/field/pokemon";
 import type { FixedBattleConfig } from "#app/battle";
-import { ClassicFixedBossWaves, BattleType, getRandomTrainerFunc } from "#app/battle";
+import { getRandomTrainerFunc } from "#app/battle";
+import { ClassicFixedBossWaves } from "#enums/fixed-boss-waves";
+import { BattleType } from "#enums/battle-type";
 import Trainer, { TrainerVariant } from "#app/field/trainer";
 import { PokemonType } from "#enums/pokemon-type";
 import { Challenges } from "#enums/challenges";

@@ -3,7 +3,7 @@ import MysteryEncounterIntroVisuals from "#app/field/mystery-encounter-intro";
 import Pokemon from "#app/field/pokemon";
 import Trainer from "#app/field/trainer";
 import { globalScene } from "#app/global-scene";
-import { rgbHexToRgba } from "#app/utils";
+import { rgbHexToRgba } from "#app/utils/common";
 import FieldSpritePipeline from "./field-sprite";
 import spriteFragShader from "./glsl/spriteFragShader.frag?raw";
 import spriteVertShader from "./glsl/spriteShader.vert?raw";
@@ -101,7 +101,7 @@ export default class SpritePipeline extends FieldSpritePipeline {
         flatSpriteColors.splice(
           flatSpriteColors.length,
           0,
-          ...(c < spriteColors.length ? spriteColors[c] : emptyColors),
+          ...(c < spriteColors.length ? spriteColors[c].map(x => x / 255.0) : emptyColors),
         );
         flatFusionSpriteColors.splice(
           flatFusionSpriteColors.length,
@@ -110,7 +110,7 @@ export default class SpritePipeline extends FieldSpritePipeline {
         );
       }
 
-      this.set4iv("spriteColors", flatSpriteColors.flat());
+      this.set4fv("spriteColors", flatSpriteColors.flat());
       this.set4iv("fusionSpriteColors", flatFusionSpriteColors.flat());
     }
   }
@@ -146,7 +146,7 @@ export default class SpritePipeline extends FieldSpritePipeline {
           if (c < baseColors.length) {
             const baseColor = Array.from(Object.values(rgbHexToRgba(baseColors[c])));
             const variantColor = Array.from(Object.values(rgbHexToRgba(variantColors[variant][baseColors[c]])));
-            flatBaseColors.splice(flatBaseColors.length, 0, ...baseColor);
+            flatBaseColors.splice(flatBaseColors.length, 0, ...baseColor.map(c => c / 255.0));
             flatVariantColors.splice(flatVariantColors.length, 0, ...variantColor.map(c => c / 255.0));
           } else {
             flatBaseColors.splice(flatBaseColors.length, 0, ...emptyColors);
@@ -160,7 +160,7 @@ export default class SpritePipeline extends FieldSpritePipeline {
         }
       }
 
-      this.set4iv("baseVariantColors", flatBaseColors.flat());
+      this.set4fv("baseVariantColors", flatBaseColors.flat());
       this.set4fv("variantColors", flatVariantColors.flat());
     }
 

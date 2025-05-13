@@ -30,7 +30,7 @@ describe("Moves - Fusion Bolt", () => {
     game.override.enemyAbility(Abilities.ROUGH_SKIN);
     game.override.enemyMoveset([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
 
-    game.override.battleType("single");
+    game.override.battleStyle("single");
     game.override.startingWave(97);
     game.override.disableCrits();
   });

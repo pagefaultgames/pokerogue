@@ -27,7 +27,7 @@ describe("Abilities - ZERO TO HERO", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .battleType("single")
+      .battleStyle("single")
       .moveset(Moves.SPLASH)
       .enemyMoveset(Moves.SPLASH)
       .enemyAbility(Abilities.BALL_FETCH);

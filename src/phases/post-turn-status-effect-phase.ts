@@ -7,13 +7,13 @@ import {
   BlockStatusDamageAbAttr,
   PostDamageAbAttr,
   ReduceBurnDamageAbAttr,
-} from "#app/data/ability";
+} from "#app/data/abilities/ability";
 import { CommonBattleAnim, CommonAnim } from "#app/data/battle-anims";
 import { getStatusEffectActivationText } from "#app/data/status-effect";
 import { BattleSpec } from "#app/enums/battle-spec";
 import { StatusEffect } from "#app/enums/status-effect";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { BooleanHolder, NumberHolder } from "#app/utils";
+import { BooleanHolder, NumberHolder } from "#app/utils/common";
 import { PokemonPhase } from "./pokemon-phase";
 
 export class PostTurnStatusEffectPhase extends PokemonPhase {

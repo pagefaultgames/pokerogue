@@ -2,7 +2,7 @@ import { Abilities } from "#app/enums/abilities";
 import { Moves } from "#app/enums/moves";
 import { ModifierTier } from "#app/modifier/modifier-tier";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
-import { Mode } from "#app/ui/ui";
+import { UiMode } from "#enums/ui-mode";
 import GameManager from "#test/testUtils/gameManager";
 import Phase from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -25,7 +25,7 @@ describe("Items - Lock Capsule", () => {
     game = new GameManager(phaserGame);
 
     game.override
-      .battleType("single")
+      .battleStyle("single")
       .startingLevel(200)
       .moveset([Moves.SURF])
       .enemyAbility(Abilities.BALL_FETCH)
@@ -41,7 +41,7 @@ describe("Items - Lock Capsule", () => {
       }),
     );
 
-    game.onNextPrompt("SelectModifierPhase", Mode.MODIFIER_SELECT, () => {
+    game.onNextPrompt("SelectModifierPhase", UiMode.MODIFIER_SELECT, () => {
       const selectModifierPhase = game.scene.getCurrentPhase() as SelectModifierPhase;
       const rerollCost = selectModifierPhase.getRerollCost(true);
       expect(rerollCost).toBe(150);

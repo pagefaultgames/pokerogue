@@ -1,5 +1,6 @@
 import { BattlerIndex } from "#app/battle";
-import { allAbilities, PostDefendContactApplyStatusEffectAbAttr } from "#app/data/ability";
+import { PostDefendContactApplyStatusEffectAbAttr } from "#app/data/abilities/ability";
+import { allAbilities } from "#app/data/data-lists";
 import { Abilities } from "#app/enums/abilities";
 import { StatusEffect } from "#app/enums/status-effect";
 import GameManager from "#test/testUtils/gameManager";
@@ -25,7 +26,7 @@ describe("Moves - Safeguard", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .battleType("single")
+      .battleStyle("single")
       .enemySpecies(Species.DRATINI)
       .enemyMoveset([Moves.SAFEGUARD])
       .enemyAbility(Abilities.BALL_FETCH)
@@ -70,7 +71,7 @@ describe("Moves - Safeguard", () => {
   });
 
   it("protects ally from status", async () => {
-    game.override.battleType("double");
+    game.override.battleStyle("double");
 
     await game.classicMode.startBattle();
 

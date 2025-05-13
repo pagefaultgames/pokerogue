@@ -1,7 +1,7 @@
 import { BattlerIndex } from "../battle";
-import { Mode } from "./ui";
+import { UiMode } from "#enums/ui-mode";
 import UiHandler from "./ui-handler";
-import { isNullOrUndefined, fixedInt } from "#app/utils";
+import { isNullOrUndefined, fixedInt } from "#app/utils/common";
 import { getMoveTargets } from "../data/moves/move";
 import { Button } from "#enums/buttons";
 import type { Moves } from "#enums/moves";
@@ -27,7 +27,7 @@ export default class TargetSelectUiHandler extends UiHandler {
   private targetBattleInfoMoveTween: Phaser.Tweens.Tween[] = [];
 
   constructor() {
-    super(Mode.TARGET_SELECT);
+    super(UiMode.TARGET_SELECT);
 
     this.cursor = -1;
   }
@@ -71,7 +71,7 @@ export default class TargetSelectUiHandler extends UiHandler {
    */
   resetCursor(cursorN: number, user: Pokemon): void {
     if (!isNullOrUndefined(cursorN)) {
-      if ([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2].includes(cursorN) || user.battleSummonData.waveTurnCount === 1) {
+      if ([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2].includes(cursorN) || user.tempSummonData.waveTurnCount === 1) {
         // Reset cursor on the first turn of a fight or if an ally was targeted last turn
         cursorN = -1;
       }
