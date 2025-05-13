@@ -949,64 +949,66 @@ export default class PartyUiHandler extends MessageUiHandler {
   }
 
   setCursor(cursor: number): boolean {
-    let changed: boolean;
-
     if (this.optionsMode) {
-      changed = this.optionsCursor !== cursor;
-      let isScroll = false;
-      if (changed && this.optionsScroll) {
-        if (Math.abs(cursor - this.optionsCursor) === this.options.length - 1) {
-          this.optionsScrollCursor = cursor ? this.optionsScrollTotal - 8 : 0;
-          this.updateOptions();
-        } else {
-          const isDown = cursor && cursor > this.optionsCursor;
-          if (isDown) {
-            if (this.options[cursor] === PartyOption.SCROLL_DOWN) {
-              isScroll = true;
-              this.optionsScrollCursor++;
-            }
-          } else {
-            if (!cursor && this.optionsScrollCursor) {
-              isScroll = true;
-              this.optionsScrollCursor--;
-            }
-          }
-          if (isScroll && this.optionsScrollCursor === 1) {
-            this.optionsScrollCursor += isDown ? 1 : -1;
-          }
-        }
+      return this.setOptionsCursor(cursor);
+    }
+    const changed = this.cursor !== cursor;
+    if (changed) {
+      this.lastCursor = this.cursor;
+      this.cursor = cursor;
+      if (this.lastCursor < 6) {
+        this.partySlots[this.lastCursor].deselect();
+      } else if (this.lastCursor === 6) {
+        this.partyCancelButton.deselect();
       }
-      if (isScroll) {
+      if (cursor < 6) {
+        this.partySlots[cursor].select();
+      } else if (cursor === 6) {
+        this.partyCancelButton.select();
+      }
+    }
+    return changed;
+  }
+
+  setOptionsCursor(cursor: number): boolean {
+    const changed = this.optionsCursor !== cursor;
+    let isScroll = false;
+    if (changed && this.optionsScroll) {
+      if (Math.abs(cursor - this.optionsCursor) === this.options.length - 1) {
+        this.optionsScrollCursor = cursor ? this.optionsScrollTotal - 8 : 0;
         this.updateOptions();
       } else {
-        this.optionsCursor = cursor;
-      }
-      if (!this.optionsCursorObj) {
-        this.optionsCursorObj = globalScene.add.image(0, 0, "cursor");
-        this.optionsCursorObj.setOrigin(0, 0);
-        this.optionsContainer.add(this.optionsCursorObj);
-      }
-      this.optionsCursorObj.setPosition(
-        8 - this.optionsBg.displayWidth,
-        -19 - 16 * (this.options.length - 1 - this.optionsCursor),
-      );
-    } else {
-      changed = this.cursor !== cursor;
-      if (changed) {
-        this.lastCursor = this.cursor;
-        this.cursor = cursor;
-        if (this.lastCursor < 6) {
-          this.partySlots[this.lastCursor].deselect();
-        } else if (this.lastCursor === 6) {
-          this.partyCancelButton.deselect();
+        const isDown = cursor && cursor > this.optionsCursor;
+        if (isDown) {
+          if (this.options[cursor] === PartyOption.SCROLL_DOWN) {
+            isScroll = true;
+            this.optionsScrollCursor++;
+          }
+        } else {
+          if (!cursor && this.optionsScrollCursor) {
+            isScroll = true;
+            this.optionsScrollCursor--;
+          }
         }
-        if (cursor < 6) {
-          this.partySlots[cursor].select();
-        } else if (cursor === 6) {
-          this.partyCancelButton.select();
+        if (isScroll && this.optionsScrollCursor === 1) {
+          this.optionsScrollCursor += isDown ? 1 : -1;
         }
       }
     }
+    if (isScroll) {
+      this.updateOptions();
+    } else {
+      this.optionsCursor = cursor;
+    }
+    if (!this.optionsCursorObj) {
+      this.optionsCursorObj = globalScene.add.image(0, 0, "cursor");
+      this.optionsCursorObj.setOrigin(0, 0);
+      this.optionsContainer.add(this.optionsCursorObj);
+    }
+    this.optionsCursorObj.setPosition(
+      8 - this.optionsBg.displayWidth,
+      -19 - 16 * (this.options.length - 1 - this.optionsCursor),
+    );
 
     return changed;
   }
