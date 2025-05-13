@@ -19,7 +19,7 @@ import type { EnemyPokemon } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
 import { HitResult, PlayerPokemon, PokemonMove } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { PokemonInstantReviveModifier } from "#app/modifier/modifier";
+import { EvoTrackerRecoilModifier, PokemonInstantReviveModifier } from "#app/modifier/modifier";
 import { SwitchType } from "#enums/switch-type";
 import i18next from "i18next";
 import { DamageAnimPhase } from "./damage-anim-phase";
@@ -32,6 +32,7 @@ import { VictoryPhase } from "./victory-phase";
 import { isNullOrUndefined } from "#app/utils/common";
 import { FRIENDSHIP_LOSS_FROM_FAINT } from "#app/data/balance/starters";
 import { BattlerTagType } from "#enums/battler-tag-type";
+import { Species } from "#enums/species";
 
 export class FaintPhase extends PokemonPhase {
   /**
@@ -115,6 +116,13 @@ export class FaintPhase extends PokemonPhase {
       true,
     );
     globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeActiveTrigger, true);
+
+    if (pokemon.isPlayer() && pokemon.hasSpecies(Species.BASCULIN, "white-striped")) { // Reset counter
+      const modifier = globalScene.findModifier(m => m instanceof EvoTrackerRecoilModifier && m.pokemonId === pokemon.id);
+      if (!isNullOrUndefined(modifier)) {
+        globalScene.removeModifier(modifier);
+      }
+    }
 
     pokemon.resetTera();
 
