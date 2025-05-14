@@ -51,6 +51,7 @@ export enum PartyUiMode {
    * Indicates that the party UI is open because of a start-of-encounter optional
    * switch. This type of switch can be cancelled.
    */
+  // TODO: Rename to PRE_BATTLE_SWITCH
   POST_BATTLE_SWITCH,
   /**
    * Indicates that the party UI is open because of the move Revival Blessing.
@@ -870,6 +871,7 @@ export default class PartyUiHandler extends MessageUiHandler {
         }
         // Pressing return button
         if (this.cursor === 6) {
+          // TODO: define an "allowCancel (PartyUiMode) method to check here and below"
           if (this.partyUiMode === PartyUiMode.FAINT_SWITCH || this.partyUiMode === PartyUiMode.REVIVAL_BLESSING) {
             ui.playError();
           } else {
@@ -1100,6 +1102,7 @@ export default class PartyUiHandler extends MessageUiHandler {
     );
   }
 
+  // TODO: add FORCED_SWITCH (and perhaps also BATON_PASS_SWITCH) to the modes
   isBatonPassMove(): boolean {
     const moveHistory = globalScene.getPlayerField()[this.fieldIndex].getMoveHistory();
     return !!(
