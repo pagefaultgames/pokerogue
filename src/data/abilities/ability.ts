@@ -21,6 +21,7 @@ import {
   NeutralDamageAgainstFlyingTypeMultiplierAttr,
   FixedDamageAttr,
   type MoveAttr,
+  ForceSwitchOutAttr,
 } from "#app/data/moves/move";
 import { ArenaTagSide } from "#app/data/arena-tag";
 import { BerryModifier, HitHealModifier, PokemonHeldItemModifier } from "#app/modifier/modifier";
@@ -3662,7 +3663,7 @@ export class SuppressWeatherEffectAbAttr extends PreWeatherEffectAbAttr {
 /**
  * Condition function to applied to abilities related to Sheer Force.
  * Checks if last move used against target was affected by a Sheer Force user and:
- * Disables: Color Change, Pickpocket, Berserk, Anger Shell
+ * Disables: Color Change, Pickpocket, Berserk, Anger Shell, Wimp Out and Emergency Exit.
  * @returns An {@linkcode AbAttrCondition} to disable the ability under the proper conditions.
  */
 function getSheerForceHitDisableAbCondition(): AbAttrCondition {
@@ -5547,12 +5548,12 @@ function applySingleAbAttrs<TAttr extends AbAttr>(
  * Shell Bell's modifier (if any).
  *
  * @param pokemon - The Pokémon whose Shell Bell recovery is being calculated.
- * @returns The amount of health recovered by Shell Bell.
+ * @returns The amount of health recovered by Shell Bell, or `0` if none are present.
  */
 function calculateShellBellRecovery(pokemon: Pokemon): number {
   const shellBellModifier = pokemon.getHeldItems().find(m => m instanceof HitHealModifier);
   if (shellBellModifier) {
-    return toDmgValue(pokemon.turnData.totalDamageDealt / 8) * shellBellModifier.stackCount;
+    return toDmgValue(pokemon.turnData.lastMoveDamageDealt / 8) * shellBellModifier.stackCount;
   }
   return 0;
 }
@@ -5565,20 +5566,19 @@ export class PostDamageAbAttr extends AbAttr {
   public canApplyPostDamage(
     pokemon: Pokemon,
     damage: number,
-    passive: boolean,
     simulated: boolean,
-    args: any[],
-    source?: Pokemon): boolean {
+    source: Pokemon | undefined,
+    args: any[]
+  ): boolean {
     return true;
   }
 
   public applyPostDamage(
     pokemon: Pokemon,
     damage: number,
-    passive: boolean,
     simulated: boolean,
-    args: any[],
-    source?: Pokemon,
+    source: Pokemon | undefined,
+    args: any[]
   ): void {}
 }
 
@@ -5587,75 +5587,65 @@ export class PostDamageAbAttr extends AbAttr {
  * This attribute checks various conditions related to the damage received, the moves used by the Pokémon
  * and its opponents, and determines whether a forced switch-out should occur.
  *
- * Used by Wimp Out and Emergency Exit
+ * Used for Wimp Out and Emergency Exit
  *
- * @extends PostDamageAbAttr
  * @see {@linkcode applyPostDamage}
  */
 export class PostDamageForceSwitchAbAttr extends ForceSwitch(PostDamageAbAttr) {
   private hpRatio: number;
 
-  constructor(selfSwitch = true, switchType: NormalSwitchType = SwitchType.SWITCH, hpRatio = 0.5) {
+  constructor(switchType: NormalSwitchType = SwitchType.SWITCH, hpRatio = 0.5) {
     super();
-    this.selfSwitch = selfSwitch;
+    this.selfSwitch = false; // TODO: change if any abilities get damage
     this.switchType = switchType;
     this.hpRatio = hpRatio;
   }
 
-  // TODO: Refactor to use more early returns
+  /**
+   * Check to see if the user should be switched out after taking damage.
+   * @param pokemon - The {@linkcode Pokemon} with this ability; will be switched out if conditions are met.
+   * @param damage - The amount of damage dealt by the triggering damage instance.
+   * @param _simulated - unused
+   * @param source - The {@linkcode Pokemon} having damaged the user with an attack, or `undefined`
+   * if the damage source was indirect.
+   * @param _args - unused
+   * @returns Whether this pokemon should be switched out upon move conclusion.
+   */
   public override canApplyPostDamage(
     pokemon: Pokemon,
     damage: number,
-    passive: boolean,
-    simulated: boolean,
-    args: any[],
-    source?: Pokemon): boolean {
-    const moveHistory = pokemon.getMoveHistory();
+    _simulated: boolean,
+    source: Pokemon | undefined,
+    _args: any[],
+  ): boolean {
+    const userLastMove = pokemon.getLastXMoves()[0];
     // Will not activate when the Pokémon's HP is lowered by cutting its own HP
-    const fordbiddenAttackingMoves = [ Moves.BELLY_DRUM, Moves.SUBSTITUTE, Moves.CURSE, Moves.PAIN_SPLIT ];
-    if (moveHistory.length > 0) {
-      const lastMoveUsed = moveHistory[moveHistory.length - 1];
-      if (fordbiddenAttackingMoves.includes(lastMoveUsed.move)) {
-        return false;
-      }
+    const forbiddenAttackingMoves = new Set<Moves>([ Moves.BELLY_DRUM, Moves.SUBSTITUTE, Moves.CURSE, Moves.PAIN_SPLIT ]);
+    if (!isNullOrUndefined(userLastMove) && forbiddenAttackingMoves.has(userLastMove.move)) {
+      return false;
     }
 
-    // Dragon Tail and Circle Throw switch out Pokémon before the Ability activates.
-    const fordbiddenDefendingMoves = [ Moves.DRAGON_TAIL, Moves.CIRCLE_THROW ];
-    if (source) {
-      const enemyMoveHistory = source.getMoveHistory();
-      if (enemyMoveHistory.length > 0) {
-        const enemyLastMoveUsed = enemyMoveHistory[enemyMoveHistory.length - 1];
-        // Will not activate if the Pokémon's HP falls below half while it is in the air during Sky Drop.
-        if (fordbiddenDefendingMoves.includes(enemyLastMoveUsed.move) || enemyLastMoveUsed.move === Moves.SKY_DROP && enemyLastMoveUsed.result === MoveResult.OTHER) {
-          return false;
-        // Will not activate if the Pokémon's HP falls below half by a move affected by Sheer Force.
-        // TODO: Make this use the sheer force disable condition
-        } else if (allMoves[enemyLastMoveUsed.move].chance >= 0 && source.hasAbility(Abilities.SHEER_FORCE)) {
-          return false;
-        // Activate only after the last hit of multistrike moves
-        } else if (source.turnData.hitsLeft > 1) {
-          return false;
-        }
-        if (source.turnData.hitCount > 1) {
-          damage = pokemon.turnData.damageTaken;
-        }
-      }
+    // Skip last move checks if no enemy move
+    const lastMove = source?.getLastXMoves()[0]
+    if (
+      lastMove &&
+      // Will not activate for forced switch moves (triggers before wimp out activates)
+      (allMoves[lastMove.move].hasAttr(ForceSwitchOutAttr)
+      // Will not activate if the Pokémon's HP falls below half while it is in the air during Sky Drop
+      // TODO: Make this check the user's tags rather than the last move used by the target - we could be lifted by another pokemon
+      || (lastMove.move === Moves.SKY_DROP && lastMove.result === MoveResult.OTHER))
+    ) {
+      return false;
     }
 
-    if (pokemon.hp + damage >= pokemon.getMaxHp() * this.hpRatio) {
-      const shellBellHeal = calculateShellBellRecovery(pokemon);
-      if (pokemon.hp - shellBellHeal < pokemon.getMaxHp() * this.hpRatio) {
-        for (const opponent of pokemon.getOpponents()) {
-          if (!this.canSwitchOut(pokemon, opponent)) {
-            return false;
-          }
-        }
-        return true;
-      }
+    // Check for HP percents - don't switch if the move didn't knock us below our switch threshold
+    // (either because we were below it to begin with or are still above it after the hit).
+    const hpNeededToSwitch = pokemon.getMaxHp() * this.hpRatio;
+    if (pokemon.hp + damage < hpNeededToSwitch || pokemon.hp >= hpNeededToSwitch) {
+      return false;
     }
 
-    return false;
+    return this.canSwitchOut(pokemon, oppponent)
   }
 
   /**
@@ -5663,7 +5653,7 @@ export class PostDamageForceSwitchAbAttr extends ForceSwitch(PostDamageAbAttr) {
    *
    * @param pokemon The Pokémon that took damage.
    */
-  public override applyPostDamage(pokemon: Pokemon, damage: number, passive: boolean, simulated: boolean, args: any[], source?: Pokemon): void {
+  public override applyPostDamage(pokemon: Pokemon, _damage: number, _simulated: boolean, _source: Pokemon | undefined, args: any[]): void {
     this.doSwitch(pokemon);
   }
 }
@@ -5837,16 +5827,15 @@ export function applyPostDamageAbAttrs(
   attrType: Constructor<PostDamageAbAttr>,
   pokemon: Pokemon,
   damage: number,
-  passive: boolean,
   simulated = false,
-  args: any[],
-  source?: Pokemon,
+  source: Pokemon | undefined = undefined,
+  ...args: any[]
 ): void {
   applyAbAttrsInternal<PostDamageAbAttr>(
     attrType,
     pokemon,
-    (attr, passive) => attr.applyPostDamage(pokemon, damage, passive, simulated, args, source),
-    (attr, passive) => attr.canApplyPostDamage(pokemon, damage, passive, simulated, args, source),
+    (attr, passive) => attr.applyPostDamage(pokemon, damage, simulated, source, args),
+    (attr, passive) => attr.canApplyPostDamage(pokemon, damage, simulated, source, args),
     args,
   );
 }
@@ -6942,9 +6931,11 @@ export function initAbilities() {
       .attr(PostDefendStatStageChangeAbAttr, (target, user, move) => move.category !== MoveCategory.STATUS, Stat.DEF, 1),
     new Ability(Abilities.WIMP_OUT, 7)
       .attr(PostDamageForceSwitchAbAttr)
+      .condition(getSheerForceHitDisableAbCondition())
       .edgeCase(), // Should not trigger when hurting itself in confusion, causes Fake Out to fail turn 1 and succeed turn 2 if pokemon is switched out before battle start via playing in Switch Mode
     new Ability(Abilities.EMERGENCY_EXIT, 7)
       .attr(PostDamageForceSwitchAbAttr)
+      .condition(getSheerForceHitDisableAbCondition())
       .edgeCase(), // Should not trigger when hurting itself in confusion, causes Fake Out to fail turn 1 and succeed turn 2 if pokemon is switched out before battle start via playing in Switch Mode
     new Ability(Abilities.WATER_COMPACTION, 7)
       .attr(PostDefendStatStageChangeAbAttr, (target, user, move) => user.getMoveType(move) === PokemonType.WATER && move.category !== MoveCategory.STATUS, Stat.DEF, 2),

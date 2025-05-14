@@ -342,6 +342,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public luck: number;
   public pauseEvolutions: boolean;
   public pokerus: boolean;
+  // TODO: Document these
   public switchOutStatus = false;
   public evoCounter: number;
   public teraType: PokemonType;
@@ -4748,13 +4749,15 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * Given the damage, adds a new DamagePhase and update HP values, etc.
    *
    * Checks for 'Indirect' HitResults to account for Endure/Reviver Seed applying correctly
-   * @param damage integer - passed to damage()
-   * @param result an enum if it's super effective, not very, etc.
-   * @param isCritical boolean if move is a critical hit
-   * @param ignoreSegments boolean, passed to damage() and not used currently
-   * @param preventEndure boolean, ignore endure properties of pokemon, passed to damage()
-   * @param ignoreFaintPhase boolean to ignore adding a FaintPhase, passsed to damage()
-   * @returns integer of damage done
+   * @param damage - Amount of damage to deal
+   * @param result - The {@linkcode HitResult} of the damage instance; default `HitResult.EFFECTIVE`
+   * @param isCritical - Whether the move being used (if any) was a critical hit; default `false`
+   * @param ignoreSegments - Whether to ignore boss segments; default `false` and currently unused
+   * @param preventEndure - Whether to ignore {@linkcode Moves.ENDURE} and similar effects when applying damage; default `false`
+   * @param ignoreFaintPhase - Whether to ignore adding a faint phase if the damage causes the target to faint; default `false`
+   * @returns The amount of damage actually dealt.
+   * @remarks
+   * This will not trigger "on damage" effects for direct damage moves, which instead occurs at the end of `MoveEffectPhase`.
    */
   damageAndUpdate(damage: number,
     {
@@ -4762,53 +4765,52 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       isCritical = false,
       ignoreSegments = false,
       ignoreFaintPhase = false,
-      source = undefined,
     }:
     {
       result?: DamageResult,
       isCritical?: boolean,
       ignoreSegments?: boolean,
       ignoreFaintPhase?: boolean,
-      source?: Pokemon,
     } = {}
   ): number {
     const isIndirectDamage = [ HitResult.INDIRECT, HitResult.INDIRECT_KO ].includes(result);
     const damagePhase = new DamageAnimPhase(
       this.getBattlerIndex(),
       damage,
-      result as DamageResult,
+      result,
       isCritical
     );
     globalScene.unshiftPhase(damagePhase);
-    if (this.switchOutStatus && source) {
+
+    // TODO: Review if wimp out battle skip actually needs this anymore
+    if (this.switchOutStatus) {
       damage = 0;
     }
+
     damage = this.damage(
       damage,
       ignoreSegments,
       isIndirectDamage,
       ignoreFaintPhase,
     );
+
     // Ensure the battle-info bar's HP is updated, though only if the battle info is visible
     // TODO: When battle-info UI is refactored, make this only update the HP bar
     if (this.battleInfo.visible) {
       this.updateInfo();
     }
+
     // Damage amount may have changed, but needed to be queued before calling damage function
     damagePhase.updateAmount(damage);
-    /**
-     * Run PostDamageAbAttr from any source of damage that is not from a multi-hit
-     * Multi-hits are handled in move-effect-phase.ts for PostDamageAbAttr
-     */
-    if (!source || source.turnData.hitCount <= 1) {
+
+    // Trigger PostDamageAbAttr (ie wimp out) for indirect damage only.
+    if (isIndirectDamage) {
       applyPostDamageAbAttrs(
         PostDamageAbAttr,
         this,
         damage,
-        this.hasPassive(),
         false,
-        [],
-        source,
+        undefined
       );
     }
     return damage;
@@ -7957,8 +7959,13 @@ export class PokemonTurnData {
    * - `0` = Move is finished
    */
   public hitsLeft = -1;
-  public totalDamageDealt = 0;
+  /**
+   * The amount of damage dealt by this Pokemon's last attack.
+   * Reset upon successfully using a move and used to enable internal tracking of damage amounts.
+   */
+  public lastMoveDamageDealt = 0;
   public singleHitDamageDealt = 0;
+  // TODO: Rework this into "damage taken last" counter for metal burst and co.
   public damageTaken = 0;
   public attacksReceived: AttackMoveResult[] = [];
   public order: number;
@@ -8007,7 +8014,7 @@ export enum HitResult {
   FAIL,
   MISS,
   INDIRECT,
-  IMMUNE,
+  IMMUNE, // TODO: Why is this used exclusively for sheer cold?
   CONFUSION,
   INDIRECT_KO,
 }

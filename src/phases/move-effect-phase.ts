@@ -10,7 +10,6 @@ import {
   IgnoreMoveEffectsAbAttr,
   MaxMultiHitAbAttr,
   PostAttackAbAttr,
-  PostDamageAbAttr,
   PostDefendAbAttr,
   ReflectStatusMoveAbAttr,
 } from "#app/data/abilities/ability";
@@ -48,7 +47,7 @@ import { MoveTarget } from "#enums/MoveTarget";
 import { MoveCategory } from "#enums/MoveCategory";
 import { SpeciesFormChangePostMoveTrigger } from "#app/data/pokemon-forms";
 import { PokemonType } from "#enums/pokemon-type";
-import { DamageResult, PokemonMove, type TurnMove } from "#app/field/pokemon";
+import { type DamageResult, PokemonMove, type TurnMove } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
 import { HitResult, MoveResult } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
@@ -72,7 +71,7 @@ import { ShowAbilityPhase } from "./show-ability-phase";
 import { MovePhase } from "./move-phase";
 import { MoveEndPhase } from "./move-end-phase";
 import { HideAbilityPhase } from "#app/phases/hide-ability-phase";
-import { TypeDamageMultiplier } from "#app/data/type";
+import type { TypeDamageMultiplier } from "#app/data/type";
 import { HitCheckResult } from "#enums/hit-check-result";
 import type Move from "#app/data/moves/move";
 import { isFieldTargeted } from "#app/data/moves/move-utils";
@@ -101,6 +100,9 @@ export class MoveEffectPhase extends PokemonPhase {
   /** Phases queued during moves */
   private queuedPhases: Phase[] = [];
 
+  /** The amount of direct attack damage taken by each of this Phase's targets. */
+  private targetDamageTaken: number[] = [];
+
   /**
    * @param reflected Indicates that the move was reflected by the user due to magic coat or magic bounce
    * @param virtual Indicates that the move is a virtual move (i.e. called by metronome)
@@ -123,6 +125,7 @@ export class MoveEffectPhase extends PokemonPhase {
     this.targets = targets;
 
     this.hitChecks = Array(this.targets.length).fill([HitCheckResult.PENDING, 0]);
+    this.targetDamageTaken = Array(this.targets.length).fill(0);
   }
 
   /**
@@ -785,11 +788,6 @@ export class MoveEffectPhase extends PokemonPhase {
     }
     if (this.lastHit) {
       globalScene.triggerPokemonFormChange(user, SpeciesFormChangePostMoveTrigger);
-
-      // Multi-hit check for Wimp Out/Emergency Exit
-      if (user.turnData.hitCount > 1) {
-        applyPostDamageAbAttrs(PostDamageAbAttr, target, 0, target.hasPassive(), false, [], user);
-      }
     }
   }
 
@@ -821,6 +819,7 @@ export class MoveEffectPhase extends PokemonPhase {
       isCritical,
     });
 
+    // Apply and/or remove type boosting tags (Flash Fire, Charge, etc.)
     const typeBoost = user.findTag(
       t => t instanceof TypeBoostTag && t.boostedType === user.getMoveType(this.move),
     ) as TypeBoostTag;
@@ -828,18 +827,17 @@ export class MoveEffectPhase extends PokemonPhase {
       user.removeTag(typeBoost.tagType);
     }
 
-    const isOneHitKo = result === HitResult.ONE_HIT_KO;
-
-    if (!dmg) {
+    if (dmg === 0) {
       return result;
     }
 
+    const isOneHitKo = result === HitResult.ONE_HIT_KO;
     target.lapseTags(BattlerTagLapseType.HIT);
 
-    const substitute = target.getTag(SubstituteTag);
-    const isBlockedBySubstitute = substitute && this.move.hitsSubstitute(user, target);
+    const substituteTag = target.getTag(SubstituteTag);
+    const isBlockedBySubstitute = substituteTag && this.move.hitsSubstitute(user, target);
     if (isBlockedBySubstitute) {
-      substitute.hp -= dmg;
+      substituteTag.hp -= dmg;
     } else if (!target.isPlayer() && dmg >= target.hp) {
       globalScene.applyModifiers(EnemyEndureChanceModifier, false, target);
     }
@@ -851,7 +849,6 @@ export class MoveEffectPhase extends PokemonPhase {
           ignoreFaintPhase: true,
           ignoreSegments: isOneHitKo,
           isCritical,
-          source: user,
         });
 
     if (isCritical) {
@@ -865,14 +862,13 @@ export class MoveEffectPhase extends PokemonPhase {
     if (user.isPlayer()) {
       globalScene.validateAchvs(DamageAchv, new NumberHolder(damage));
 
-      if (damage > globalScene.gameData.gameStats.highestDamage) {
-        globalScene.gameData.gameStats.highestDamage = damage;
-      }
+      globalScene.gameData.gameStats.highestDamage = Math.max(damage, globalScene.gameData.gameStats.highestDamage);
     }
 
-    user.turnData.totalDamageDealt += damage;
+    user.turnData.lastMoveDamageDealt += damage;
     user.turnData.singleHitDamageDealt = damage;
     target.battleData.hitCount++;
+    // TODO: this might be incorrect for counter moves
     target.turnData.damageTaken += damage;
 
     target.turnData.attacksReceived.unshift({

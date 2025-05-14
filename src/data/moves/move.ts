@@ -1551,6 +1551,7 @@ export class MatchHpAttr extends FixedDamageAttr {
 
 type MoveFilter = (move: Move) => boolean;
 
+// TODO: fix this to check the last direct damage instance taken
 export class CounterDamageAttr extends FixedDamageAttr {
   private moveFilter: MoveFilter;
   private multiplier: number;
@@ -1664,8 +1665,8 @@ export class RecoilAttr extends MoveEffectAttr {
       return false;
     }
 
-    const damageValue = (!this.useHp ? user.turnData.totalDamageDealt : user.getMaxHp()) * this.damageRatio;
-    const minValue = user.turnData.totalDamageDealt ? 1 : 0;
+    const damageValue = (!this.useHp ? user.turnData.lastMoveDamageDealt : user.getMaxHp()) * this.damageRatio;
+    const minValue = user.turnData.lastMoveDamageDealt ? 1 : 0;
     const recoilDamage = toDmgValue(damageValue, minValue);
     if (!recoilDamage) {
       return false;
