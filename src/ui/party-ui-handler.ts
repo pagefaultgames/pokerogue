@@ -807,8 +807,11 @@ export default class PartyUiHandler extends MessageUiHandler {
         return true;
       }
 
-      // This is used when switching out using the Pokemon command (possibly holding a Baton held item).
-      if ((option === PartyOption.PASS_BATON || option === PartyOption.SEND_OUT) && !this.selectCallback) {
+      // This is used when switching out using the Pokemon command (possibly holding a Baton held item). In this case there is no callback.
+      if (
+        (option === PartyOption.PASS_BATON || option === PartyOption.SEND_OUT) &&
+        this.partyUiMode === PartyUiMode.SWITCH
+      ) {
         this.clearOptions();
         (globalScene.getCurrentPhase() as CommandPhase).handleCommand(
           Command.POKEMON,
