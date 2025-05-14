@@ -1466,7 +1466,7 @@ class SpeciesStatBoosterModifierTypeGenerator extends ModifierTypeGenerator {
       rare: false,
     },
     DEEP_SEA_TOOTH: {
-      stats: [Stat.SPDEF],
+      stats: [Stat.SPATK],
       multiplier: 2,
       species: [Species.CLAMPERL],
       rare: false,
