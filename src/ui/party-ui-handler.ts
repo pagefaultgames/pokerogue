@@ -714,6 +714,10 @@ export default class PartyUiHandler extends MessageUiHandler {
       return true;
     }
 
+    console.log(PartyUiMode[this.partyUiMode]);
+    console.log(PartyOption[option]);
+    console.log(this.selectCallback);
+
     // TODO: Careful about using success for the return values here. Find a better way
     // PartyOption.ALL, and options specific to the mode (held items)
     if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER) {
@@ -803,7 +807,8 @@ export default class PartyUiHandler extends MessageUiHandler {
         return true;
       }
 
-      if (option === PartyOption.PASS_BATON) {
+      // TODO: This case is probably for when a baton is on
+      if (option === PartyOption.PASS_BATON && !this.selectCallback) {
         (globalScene.getCurrentPhase() as CommandPhase).handleCommand(
           Command.POKEMON,
           this.cursor,
@@ -814,7 +819,7 @@ export default class PartyUiHandler extends MessageUiHandler {
       if (
         [
           PartyOption.SEND_OUT,
-          //        PartyOption.PASS_BATON,  TODO: figure out if this is processed differently
+          PartyOption.PASS_BATON,
           PartyOption.REVIVE,
           PartyOption.APPLY,
           PartyOption.TEACH,
