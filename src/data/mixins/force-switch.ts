@@ -34,7 +34,7 @@ export function ForceSwitch<TBase extends SubMoveOrAbAttr>(Base: TBase) {
 
      * @param switchOutTarget - The {@linkcode Pokemon} attempting to switch out.
      * @param opponent - The {@linkcode Pokemon} opposing the currently switched out Pokemon.
-     * Unused if {@linkcode selfSwitch} is `true`, in which case it should conventionally be set to `undefined`.
+     * Unused if {@linkcode selfSwitch} is `true`, as it is only used to check Suction Cups.
      * @returns Whether {@linkcode switchOutTarget} can be switched out by the current Move or Ability.
      */
     protected canSwitchOut(switchOutTarget: Pokemon, opponent: Pokemon | undefined): boolean {

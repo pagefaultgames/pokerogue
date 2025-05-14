@@ -10,6 +10,7 @@ import {
   IgnoreMoveEffectsAbAttr,
   MaxMultiHitAbAttr,
   PostAttackAbAttr,
+  PostDamageAbAttr,
   PostDefendAbAttr,
   ReflectStatusMoveAbAttr,
 } from "#app/data/abilities/ability";
@@ -100,9 +101,6 @@ export class MoveEffectPhase extends PokemonPhase {
   /** Phases queued during moves */
   private queuedPhases: Phase[] = [];
 
-  /** The amount of direct attack damage taken by each of this Phase's targets. */
-  private targetDamageTaken: number[] = [];
-
   /**
    * @param reflected Indicates that the move was reflected by the user due to magic coat or magic bounce
    * @param virtual Indicates that the move is a virtual move (i.e. called by metronome)
@@ -125,7 +123,6 @@ export class MoveEffectPhase extends PokemonPhase {
     this.targets = targets;
 
     this.hitChecks = Array(this.targets.length).fill([HitCheckResult.PENDING, 0]);
-    this.targetDamageTaken = Array(this.targets.length).fill(0);
   }
 
   /**
@@ -788,6 +785,7 @@ export class MoveEffectPhase extends PokemonPhase {
     }
     if (this.lastHit) {
       globalScene.triggerPokemonFormChange(user, SpeciesFormChangePostMoveTrigger);
+      applyPostDamageAbAttrs(PostDamageAbAttr, target, target.turnData.lastMoveDamageDealt);
     }
   }
 

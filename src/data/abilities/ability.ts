@@ -5541,24 +5541,6 @@ function applySingleAbAttrs<TAttr extends AbAttr>(
 }
 
 /**
- * Calculates the amount of recovery from the Shell Bell item.
- *
- * If the Pokémon is holding a Shell Bell, this function computes the amount of health
- * recovered based on the damage dealt in the current turn. The recovery is multiplied by the
- * Shell Bell's modifier (if any).
- *
- * @param pokemon - The Pokémon whose Shell Bell recovery is being calculated.
- * @returns The amount of health recovered by Shell Bell, or `0` if none are present.
- */
-function calculateShellBellRecovery(pokemon: Pokemon): number {
-  const shellBellModifier = pokemon.getHeldItems().find(m => m instanceof HitHealModifier);
-  if (shellBellModifier) {
-    return toDmgValue(pokemon.turnData.lastMoveDamageDealt / 8) * shellBellModifier.stackCount;
-  }
-  return 0;
-}
-
-/**
  * Triggers after the Pokemon takes any damage
  * @extends AbAttr
  */
@@ -5645,7 +5627,7 @@ export class PostDamageForceSwitchAbAttr extends ForceSwitch(PostDamageAbAttr) {
       return false;
     }
 
-    return this.canSwitchOut(pokemon, oppponent)
+    return this.canSwitchOut(pokemon, undefined)
   }
 
   /**

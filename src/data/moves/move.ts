@@ -1633,6 +1633,7 @@ export class CelebrateAttr extends MoveEffectAttr {
 }
 
 export class RecoilAttr extends MoveEffectAttr {
+  /** Whether the recoil damage should use the user's max HP (`true`) or damage dealt `false`. */
   private useHp: boolean;
   private damageRatio: number;
   private unblockable: boolean;
@@ -1665,8 +1666,8 @@ export class RecoilAttr extends MoveEffectAttr {
       return false;
     }
 
-    const damageValue = (!this.useHp ? user.turnData.lastMoveDamageDealt : user.getMaxHp()) * this.damageRatio;
-    const minValue = user.turnData.lastMoveDamageDealt ? 1 : 0;
+    const damageValue = (!this.useHp ? user.turnData.singleHitDamageDealt : user.getMaxHp()) * this.damageRatio;
+    const minValue = user.turnData.singleHitDamageDealt ? 1 : 0;
     const recoilDamage = toDmgValue(damageValue, minValue);
     if (!recoilDamage) {
       return false;
