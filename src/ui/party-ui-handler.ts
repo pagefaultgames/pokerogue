@@ -807,8 +807,8 @@ export default class PartyUiHandler extends MessageUiHandler {
         return true;
       }
 
-      // TODO: This case is probably for when a baton is on
-      if (option === PartyOption.PASS_BATON && !this.selectCallback) {
+      // This is used when switching out using the Pokemon command (possibly holding a Baton held item).
+      if ((option === PartyOption.PASS_BATON || option === PartyOption.SEND_OUT) && !this.selectCallback) {
         (globalScene.getCurrentPhase() as CommandPhase).handleCommand(
           Command.POKEMON,
           this.cursor,
@@ -818,8 +818,8 @@ export default class PartyUiHandler extends MessageUiHandler {
 
       if (
         [
-          PartyOption.SEND_OUT,
-          PartyOption.PASS_BATON,
+          PartyOption.SEND_OUT, // When sending out at the start of battle, or due to an effect
+          PartyOption.PASS_BATON, // When passing the baton due to the Baton Pass move
           PartyOption.REVIVE,
           PartyOption.APPLY,
           PartyOption.TEACH,
