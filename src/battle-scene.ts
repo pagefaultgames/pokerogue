@@ -872,6 +872,51 @@ export default class BattleScene extends SceneBase {
   }
 
   /**
+   * Return all {@linkcode Pokemon} that are **not** currently {@linkcode Pokemon.isOnField | on field}
+   * but are still {@linkcode Pokemon.isAllowedInBattle | allowed in battle}.
+
+   * Used for switch out logic checks.
+   * @param player - Whether to search the player (`true`) or enemy (`false`) party; default `true`
+   * @returns An array of all {@linkcode PlayerPokemon} in reserve able to be switched into.
+   * @overload
+   */
+  public getBackupPartyMembers(player: true): PlayerPokemon[];
+  /**
+   * Return all {@linkcode Pokemon} that are **not** currently {@linkcode Pokemon.isOnField | on field}
+   * but are still {@linkcode Pokemon.isAllowedInBattle | allowed in battle}.
+
+   * Used for switch out logic checks.
+   * @param player - Whether to search the player (`true`) or enemy (`false`) party; default `true`
+   * @param trainerSlot - The {@linkcode EnemyPokemon.trainerSlot | trainer slot} of the Pokemon being switched out;
+   * used to verify ownership in multi battles.
+   * @returns An array of all {@linkcode EnemyPokemon} in reserve able to be switched into.
+   * @overload
+   */
+  public getBackupPartyMembers(player: false, trainerSlot: number): EnemyPokemon[];
+  /**
+   * Return all {@linkcode Pokemon} that are **not** currently {@linkcode Pokemon.isOnField | on field}
+   * but are still {@linkcode Pokemon.isAllowedInBattle | allowed in battle}.
+
+   * Used for switch out logic checks.
+   * @param player - Whether to search the player (`true`) or enemy (`false`) party; default `true`
+   * @param trainerSlot - The enemy Pokemon's {@linkcode EnemyPokemon.trainerSlot | trainer slot} for opposing trainers;
+   * used to verify ownership in multi battles and unused for player pokemon.
+   * @returns An array of all {@linkcode PlayerPokemon}/{@linkcode EnemyPokemon} in reserve able to be switched into.
+   * @overload
+   */
+  public getBackupPartyMembers(player: boolean, trainerSlot: number | undefined): PlayerPokemon | EnemyPokemon[];
+
+  public getBackupPartyMembers<B extends boolean = never, R = B extends true ? PlayerPokemon : EnemyPokemon>(
+    player: B,
+    trainerSlot?: number,
+  ): R[] {
+    return (player ? this.getPlayerParty() : this.getEnemyParty()).filter(
+      (p: PlayerPokemon | EnemyPokemon) =>
+        p.isAllowedInBattle() && !p.isOnField() && (p instanceof PlayerPokemon || p.trainerSlot !== trainerSlot),
+    ) as R[];
+  }
+
+  /**
    * Returns an array of Pokemon on both sides of the battle - player first, then enemy.
    * Does not actually check if the pokemon are on the field or not, and always has length 4 regardless of battle type.
    * @param activeOnly - Whether to consider only active pokemon; default `false`

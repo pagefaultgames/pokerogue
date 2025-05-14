@@ -17,13 +17,12 @@ export class SwitchPhase extends BattlePhase {
   private readonly doReturn: boolean;
 
   /**
-   * Creates a new SwitchPhase
-   * @param switchType {@linkcode SwitchType} The type of switch logic this phase implements
-   * @param fieldIndex Field index to switch out
-   * @param isModal Indicates if the switch should be forced (true) or is
-   * optional (false).
-   * @param doReturn Indicates if the party member on the field should be
-   * recalled to ball or has already left the field. Passed to {@linkcode SwitchSummonPhase}.
+   * Creates a new {@linkcode SwitchPhase}, the phase where players select a Pokemon to send into battle.
+   * @param switchType - The {@linkcode SwitchType} dictating this switch's logic.
+   * @param fieldIndex - The 0-indexed field position of the Pokemon being switched out.
+   * @param isModal - Whether the switch should be forced (`true`) or optional (`false`).
+   * @param doReturn - Whether to render the "Come back!" dialogue for recalling player pokemon.
+   * @see {@linkcode SwitchSummonPhase} for the phase which does the actual switching.
    */
   constructor(switchType: SwitchType, fieldIndex: number, isModal: boolean, doReturn: boolean) {
     super();
@@ -37,8 +36,8 @@ export class SwitchPhase extends BattlePhase {
   start() {
     super.start();
 
-    // Skip modal switch if impossible (no remaining party members that aren't in battle)
-    if (this.isModal && !globalScene.getPlayerParty().filter(p => p.isAllowedInBattle() && !p.isActive(true)).length) {
+    // Failsafe: skip modal switches if impossible (no eligible party members in reserve).
+    if (this.isModal && globalScene.getBackupPartyMembers(true).length === 0) {
       return super.end();
     }
 

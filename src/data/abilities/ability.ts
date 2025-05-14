@@ -20,6 +20,7 @@ import {
   CopyMoveAttr,
   NeutralDamageAgainstFlyingTypeMultiplierAttr,
   FixedDamageAttr,
+  type MoveAttr,
 } from "#app/data/moves/move";
 import { ArenaTagSide } from "#app/data/arena-tag";
 import { BerryModifier, HitHealModifier, PokemonHeldItemModifier } from "#app/modifier/modifier";
@@ -55,7 +56,7 @@ import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import { SwitchType } from "#enums/switch-type";
+import { SwitchType, type NormalSwitchType } from "#enums/switch-type";
 import { MoveFlags } from "#enums/MoveFlags";
 import { MoveTarget } from "#enums/MoveTarget";
 import { MoveCategory } from "#enums/MoveCategory";
@@ -67,7 +68,7 @@ import { BerryUsedEvent } from "#app/events/battle-scene";
 
 
 // Type imports
-import type { EnemyPokemon, PokemonMove } from "#app/field/pokemon";
+import { EnemyPokemon, PokemonMove } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
 import type { Weather } from "#app/data/weather";
 import type { BattlerTag } from "#app/data/battler-tags";
@@ -77,6 +78,7 @@ import type Move from "#app/data/moves/move";
 import type { ArenaTrapTag, SuppressAbilitiesTag } from "#app/data/arena-tag";
 import { SelectBiomePhase } from "#app/phases/select-biome-phase";
 import { noAbilityTypeOverrideMoves } from "../moves/invalid-moves";
+import { ForceSwitch } from "../mixins/force-switch";
 
 export class BlockRecoilDamageAttr extends AbAttr {
   constructor() {
@@ -1246,7 +1248,7 @@ export class MoveTypeChangeAbAttr extends PreAttackAbAttr {
 
   /**
    * Determine if the move type change attribute can be applied
-   * 
+   *
    * Can be applied if:
    * - The ability's condition is met, e.g. pixilate only boosts normal moves,
    * - The move is not forbidden from having its type changed by an ability, e.g. {@linkcode Moves.MULTI_ATTACK}
@@ -1262,7 +1264,7 @@ export class MoveTypeChangeAbAttr extends PreAttackAbAttr {
    */
   override canApplyPreAttack(pokemon: Pokemon, _passive: boolean, _simulated: boolean, _defender: Pokemon | null, move: Move, _args: [NumberHolder?, NumberHolder?, ...any]): boolean {
     return (!this.condition || this.condition(pokemon, _defender, move)) &&
-            !noAbilityTypeOverrideMoves.has(move.id) && 
+            !noAbilityTypeOverrideMoves.has(move.id) &&
             (!pokemon.isTerastallized ||
               (move.id !== Moves.TERA_BLAST &&
               (move.id !== Moves.TERA_STARSTORM || pokemon.getTeraType() !== PokemonType.STELLAR || !pokemon.hasSpecies(Species.TERAPAGOS))));
@@ -5537,128 +5539,6 @@ function applySingleAbAttrs<TAttr extends AbAttr>(
   }
 }
 
-class ForceSwitchOutHelper {
-  constructor(private switchType: SwitchType) {}
-
-  /**
-   * Handles the logic for switching out a Pokémon based on battle conditions, HP, and the switch type.
-   *
-   * @param pokemon The {@linkcode Pokemon} attempting to switch out.
-   * @returns `true` if the switch is successful
-   */
-  public switchOutLogic(pokemon: Pokemon): boolean {
-    const switchOutTarget = pokemon;
-    /**
-     * If the switch-out target is a player-controlled Pokémon, the function checks:
-     * - Whether there are available party members to switch in.
-     * - If the Pokémon is still alive (hp > 0), and if so, it leaves the field and a new SwitchPhase is initiated.
-     */
-    if (switchOutTarget instanceof PlayerPokemon) {
-      if (globalScene.getPlayerParty().filter((p) => p.isAllowedInBattle() && !p.isOnField()).length < 1) {
-        return false;
-      }
-
-      if (switchOutTarget.hp > 0) {
-        switchOutTarget.leaveField(this.switchType === SwitchType.SWITCH);
-        globalScene.prependToPhase(new SwitchPhase(this.switchType, switchOutTarget.getFieldIndex(), true, true), MoveEndPhase);
-        return true;
-      }
-    /**
-     * For non-wild battles, it checks if the opposing party has any available Pokémon to switch in.
-     * If yes, the Pokémon leaves the field and a new SwitchSummonPhase is initiated.
-     */
-    } else if (globalScene.currentBattle.battleType !== BattleType.WILD) {
-      if (globalScene.getEnemyParty().filter((p) => p.isAllowedInBattle() && !p.isOnField()).length < 1) {
-        return false;
-      }
-      if (switchOutTarget.hp > 0) {
-        switchOutTarget.leaveField(this.switchType === SwitchType.SWITCH);
-        const summonIndex = (globalScene.currentBattle.trainer ? globalScene.currentBattle.trainer.getNextSummonIndex((switchOutTarget as EnemyPokemon).trainerSlot) : 0);
-        globalScene.prependToPhase(new SwitchSummonPhase(this.switchType, switchOutTarget.getFieldIndex(), summonIndex, false, false), MoveEndPhase);
-        return true;
-      }
-    /**
-     * For wild Pokémon battles, the Pokémon will flee if the conditions are met (waveIndex and double battles).
-     * It will not flee if it is a Mystery Encounter with fleeing disabled (checked in `getSwitchOutCondition()`) or if it is a wave 10x wild boss
-     */
-    } else {
-      const allyPokemon = switchOutTarget.getAlly();
-
-      if (!globalScene.currentBattle.waveIndex || globalScene.currentBattle.waveIndex % 10 === 0) {
-        return false;
-      }
-
-      if (switchOutTarget.hp > 0) {
-        switchOutTarget.leaveField(false);
-        globalScene.queueMessage(i18next.t("moveTriggers:fled", { pokemonName: getPokemonNameWithAffix(switchOutTarget) }), null, true, 500);
-        if (globalScene.currentBattle.double && !isNullOrUndefined(allyPokemon)) {
-          globalScene.redirectPokemonMoves(switchOutTarget, allyPokemon);
-        }
-      }
-
-      if (!allyPokemon?.isActive(true)) {
-        globalScene.clearEnemyHeldItemModifiers();
-
-        if (switchOutTarget.hp) {
-          globalScene.pushPhase(new BattleEndPhase(false));
-
-          if (globalScene.gameMode.hasRandomBiomes || globalScene.isNewBiome()) {
-            globalScene.pushPhase(new SelectBiomePhase());
-          }
-
-          globalScene.pushPhase(new NewBattlePhase());
-        }
-      }
-    }
-    return false;
-  }
-
-  /**
-   * Determines if a Pokémon can switch out based on its status, the opponent's status, and battle conditions.
-   *
-   * @param pokemon The Pokémon attempting to switch out.
-   * @param opponent The opponent Pokémon.
-   * @returns `true` if the switch-out condition is met
-   */
-  public getSwitchOutCondition(pokemon: Pokemon, opponent: Pokemon): boolean {
-    const switchOutTarget = pokemon;
-    const player = switchOutTarget instanceof PlayerPokemon;
-
-    if (player) {
-      const blockedByAbility = new BooleanHolder(false);
-      applyAbAttrs(ForceSwitchOutImmunityAbAttr, opponent, blockedByAbility);
-      return !blockedByAbility.value;
-    }
-
-    if (!player && globalScene.currentBattle.battleType === BattleType.WILD) {
-      if (!globalScene.currentBattle.waveIndex && globalScene.currentBattle.waveIndex % 10 === 0) {
-        return false;
-      }
-    }
-
-    if (!player && globalScene.currentBattle.isBattleMysteryEncounter() && !globalScene.currentBattle.mysteryEncounter?.fleeAllowed) {
-      return false;
-    }
-
-    const party = player ? globalScene.getPlayerParty() : globalScene.getEnemyParty();
-    return (!player && globalScene.currentBattle.battleType === BattleType.WILD)
-      || party.filter(p => p.isAllowedInBattle() && !p.isOnField()
-        && (player || (p as EnemyPokemon).trainerSlot === (switchOutTarget as EnemyPokemon).trainerSlot)).length > 0;
-  }
-
-  /**
-   * Returns a message if the switch-out attempt fails due to ability effects.
-   *
-   * @param target The target Pokémon.
-   * @returns The failure message, or `null` if no failure.
-   */
-  public getFailedText(target: Pokemon): string | null {
-    const blockedByAbility = new BooleanHolder(false);
-    applyAbAttrs(ForceSwitchOutImmunityAbAttr, target, blockedByAbility);
-    return blockedByAbility.value ? i18next.t("moveTriggers:cannotBeSwitchedOut", { pokemonName: getPokemonNameWithAffix(target) }) : null;
-  }
-}
-
 /**
  * Calculates the amount of recovery from the Shell Bell item.
  *
@@ -5712,12 +5592,13 @@ export class PostDamageAbAttr extends AbAttr {
  * @extends PostDamageAbAttr
  * @see {@linkcode applyPostDamage}
  */
-export class PostDamageForceSwitchAbAttr extends PostDamageAbAttr {
-  private helper: ForceSwitchOutHelper = new ForceSwitchOutHelper(SwitchType.SWITCH);
+export class PostDamageForceSwitchAbAttr extends ForceSwitch(PostDamageAbAttr) {
   private hpRatio: number;
 
-  constructor(hpRatio = 0.5) {
+  constructor(selfSwitch = true, switchType: NormalSwitchType = SwitchType.SWITCH, hpRatio = 0.5) {
     super();
+    this.selfSwitch = selfSwitch;
+    this.switchType = switchType;
     this.hpRatio = hpRatio;
   }
 
@@ -5766,7 +5647,7 @@ export class PostDamageForceSwitchAbAttr extends PostDamageAbAttr {
       const shellBellHeal = calculateShellBellRecovery(pokemon);
       if (pokemon.hp - shellBellHeal < pokemon.getMaxHp() * this.hpRatio) {
         for (const opponent of pokemon.getOpponents()) {
-          if (!this.helper.getSwitchOutCondition(pokemon, opponent)) {
+          if (!this.canSwitchOut(pokemon, opponent)) {
             return false;
           }
         }
@@ -5779,20 +5660,14 @@ export class PostDamageForceSwitchAbAttr extends PostDamageAbAttr {
 
   /**
    * Applies the switch-out logic after the Pokémon takes damage.
-   * Checks various conditions based on the moves used by the Pokémon, the opponents' moves, and
-   * the Pokémon's health after damage to determine whether the switch-out should occur.
    *
    * @param pokemon The Pokémon that took damage.
-   * @param damage N/A
-   * @param passive N/A
-   * @param simulated Whether the ability is being simulated.
-   * @param args N/A
-   * @param source N/A
    */
   public override applyPostDamage(pokemon: Pokemon, damage: number, passive: boolean, simulated: boolean, args: any[], source?: Pokemon): void {
-    this.helper.switchOutLogic(pokemon);
+    this.doSwitch(pokemon);
   }
 }
+
 function applyAbAttrsInternal<TAttr extends AbAttr>(
   attrType: Constructor<TAttr>,
   pokemon: Pokemon | null,

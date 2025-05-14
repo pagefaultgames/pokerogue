@@ -5678,7 +5678,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Performs the action of clearing a Pokemon's status
-   * 
+   *
    * This is a helper to {@linkcode resetStatus}, which should be called directly instead of this method
    */
   public clearStatus(confusion: boolean, reloadAssets: boolean) {
@@ -5723,8 +5723,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Reset this Pokemon's {@linkcode PokemonSummonData | SummonData} and {@linkcode PokemonTempSummonData | TempSummonData}
    * in preparation for switching pokemon, as well as removing any relevant on-switch tags.
+   * @remarks
+   * This **SHOULD NOT** be called when a `SummonPhase` or `SwitchSummonPhase` is already being added,
+   * both of which call this method (directly or indirectly) on both pokemon changing positions.
    */
   resetSummonData(): void {
+    console.log(`resetSummonData called on Pokemon ${this.name}`)
     const illusion: IllusionData | null = this.summonData.illusion;
     if (this.summonData.speciesForm) {
       this.summonData.speciesForm = null;
@@ -6299,13 +6303,16 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Causes a Pokemon to leave the field (such as in preparation for a switch out/escape).
-   * @param clearEffects Indicates if effects should be cleared (true) or passed
-   * to the next pokemon, such as during a baton pass (false)
-   * @param hideInfo Indicates if this should also play the animation to hide the Pokemon's
-   * info container.
+   * Cause this {@linkcode Pokemon} to leave the field (such as in preparation for a switch out/escape).
+   * @param clearEffects - Whether to clear (`true`) or transfer (`false`) transient effects upon switching; default `true`
+   * @param hideInfo - Whether to play the animation to hide the Pokemon's info container; default `true`.
+   * @param destroy - Whether to destroy this Pokemon once it leaves the field; default `false`
+   * @remarks
+   * This **SHOULD NOT** be called when a `SummonPhase` or `SwitchSummonPhase` is already being added,
+   * which can lead to erroneous resetting of {@linkcode turnData} or {@linkcode summonData}.
    */
   leaveField(clearEffects = true, hideInfo = true, destroy = false) {
+    console.log(`leaveField called on Pokemon ${this.name}`)
     this.resetSprite();
     this.resetTurnData();
     globalScene
