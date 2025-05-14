@@ -500,6 +500,37 @@ export default class PartyUiHandler extends MessageUiHandler {
     return true;
   }
 
+  // TODO: Does this need to check that selectCallback exists?
+  processTransferOption(): boolean {
+    const ui = this.getUi();
+    if (this.transferCursor !== this.cursor) {
+      if (this.transferAll) {
+        this.getTransferrableItemsFromPokemon(globalScene.getPlayerParty()[this.transferCursor]).forEach(
+          (_, i, array) => {
+            const invertedIndex = array.length - 1 - i;
+            (this.selectCallback as PartyModifierTransferSelectCallback)(
+              this.transferCursor,
+              invertedIndex,
+              this.transferQuantitiesMax[invertedIndex],
+              this.cursor,
+            );
+          },
+        );
+      } else {
+        (this.selectCallback as PartyModifierTransferSelectCallback)(
+          this.transferCursor,
+          this.transferOptionCursor,
+          this.transferQuantities[this.transferOptionCursor],
+          this.cursor,
+        );
+      }
+    }
+    this.clearTransfer();
+    ui.playSelect();
+    return true;
+  }
+
+  // TODO: This will be largely changed with the modifier rework
   processModifierTransferModeInput(button: Button) {
     let success = false;
     const ui = this.getUi();
@@ -507,6 +538,7 @@ export default class PartyUiHandler extends MessageUiHandler {
 
     if (button === Button.ACTION) {
       const pokemon = globalScene.getPlayerParty()[this.cursor];
+      // TODO: Revise this condition
       if (!this.transferMode && option !== PartyOption.CANCEL) {
         this.startTransfer();
 
@@ -682,10 +714,12 @@ export default class PartyUiHandler extends MessageUiHandler {
       return true;
     }
 
-    // TODO: Careful about using success for the return values here
+    // TODO: Careful about using success for the return values here. Find a better way
+    // PartyOption.ALL, and options specific to the mode (held items)
     if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER) {
       success = this.processModifierTransferModeInput(button);
     }
+    // options specific to the mode (moves)
     if (this.partyUiMode === PartyUiMode.REMEMBER_MOVE_MODIFIER) {
       success = this.processRememberMoveModeInput(button);
     }
@@ -698,6 +732,7 @@ export default class PartyUiHandler extends MessageUiHandler {
     if (button === Button.ACTION) {
       const pokemon = globalScene.getPlayerParty()[this.cursor];
 
+      // These are the options that do not involve a callback
       if (option === PartyOption.SUMMARY) {
         return this.processSummaryOption(pokemon);
       }
@@ -713,103 +748,93 @@ export default class PartyUiHandler extends MessageUiHandler {
       if (option === PartyOption.RENAME) {
         return this.processRenameOption(pokemon);
       }
-      if (option === PartyOption.RELEASE) {
-        return this.processReleaseOption(pokemon);
-      }
-      // TODO: Figure out better what this option is supposed to do---presumably we want a callback
-      if (option === PartyOption.SELECT) {
-        ui.playSelect();
-        return true;
+      // This is only relevant for PartyUiMode.CHECK
+      // TODO: This risks hitting the other options (.MOVE_i and ALL) so does it? Do we need an extra check?
+      if (option >= PartyOption.FORM_CHANGE_ITEM && globalScene.getCurrentPhase() instanceof SelectModifierPhase) {
+        if (this.partyUiMode === PartyUiMode.CHECK) {
+          const formChangeItemModifiers = this.getFormChangeItemsModifiers(pokemon);
+          const modifier = formChangeItemModifiers[option - PartyOption.FORM_CHANGE_ITEM];
+          modifier.active = !modifier.active;
+          globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeItemTrigger, false, true);
+        }
       }
 
+      // If the pokemon is filtered out for this option, we cannot continue
       const filterResult = this.getFilterResult(option, pokemon);
       if (filterResult) {
         this.clearOptions();
         this.showText(filterResult as string, undefined, () => this.showText("", 0), undefined, true);
-      }
-
-      // This is always going to return
-      if (this.partyUiMode !== PartyUiMode.SPLICE) {
-        this.clearOptions();
+        return true;
       }
 
       // For what modes is a selectCallback needed?
-      // PartyUiMode.SELECT
-      // PartyUiMode.RELEASE
-      // PartyUiMode.FAINT_SWITCH
-      // PartyUiMode.REVIVAL_BLESSING
-      // PartyUiMode.MODIFIER_TRANSFER
-      // PartyUiMode.CHECK
-      // PartyUiMode.SPLICE
-      // PartyUiMode.TM_MODIFIER
-      // PartyUiMode.REMEMBER_MOVE_MODIFIER
-      // PartyUiMode.MODIFIER
-      // PartyUiMode.POST_BATTLE_SWITCH
+      // PartyUiMode.SELECT (SELECT)
+      // PartyUiMode.RELEASE (RELEASE)
+      // PartyUiMode.FAINT_SWITCH (SEND_OUT or PASS_BATON (?))
+      // PartyUiMode.REVIVAL_BLESSING (REVIVE)
+      // PartyUiMode.MODIFIER_TRANSFER (held items, and ALL)
+      // PartyUiMode.CHECK --- no specific option, only relevant on cancel?
+      // PartyUiMode.SPLICE (SPLICE)
+      // PartyUiMode.MOVE_MODIFIER (MOVE_1, MOVE_2, MOVE_3, MOVE_4)
+      // PartyUiMode.TM_MODIFIER (TEACH)
+      // PartyUiMode.REMEMBER_MOVE_MODIFIER (no specific option, callback is invoked when selecting a move)
+      // PartyUiMode.MODIFIER (APPLY option)
+      // PartyUiMode.POST_BATTLE_SWITCH (SEND_OUT)
 
-      if (this.selectCallback) {
-        if (option === PartyOption.TRANSFER) {
-          if (this.transferCursor !== this.cursor) {
-            if (this.transferAll) {
-              this.getTransferrableItemsFromPokemon(globalScene.getPlayerParty()[this.transferCursor]).forEach(
-                (_, i, array) => {
-                  const invertedIndex = array.length - 1 - i;
-                  (this.selectCallback as PartyModifierTransferSelectCallback)(
-                    this.transferCursor,
-                    invertedIndex,
-                    this.transferQuantitiesMax[invertedIndex],
-                    this.cursor,
-                  );
-                },
-              );
-            } else {
-              (this.selectCallback as PartyModifierTransferSelectCallback)(
-                this.transferCursor,
-                this.transferOptionCursor,
-                this.transferQuantities[this.transferOptionCursor],
-                this.cursor,
-              );
-            }
-          }
+      // These are the options that need a callback
+      if (option === PartyOption.TRANSFER) {
+        return this.processTransferOption();
+      }
+
+      if (option === PartyOption.RELEASE) {
+        return this.processReleaseOption(pokemon);
+      }
+
+      if (this.partyUiMode === PartyUiMode.SPLICE) {
+        if (option === PartyOption.SPLICE) {
+          (this.selectCallback as PartyModifierSpliceSelectCallback)(this.transferCursor, this.cursor);
           this.clearTransfer();
-          ui.playSelect();
-          return true;
+          // TODO: Surely this else should specify some other option too...
+        } else if (option === PartyOption.APPLY) {
+          this.startTransfer();
         }
+        this.clearOptions();
+        ui.playSelect();
+        return true;
+      }
 
-        if (this.partyUiMode === PartyUiMode.SPLICE) {
-          if (option === PartyOption.SPLICE) {
-            (this.selectCallback as PartyModifierSpliceSelectCallback)(this.transferCursor, this.cursor);
-            this.clearTransfer();
-            // TODO: Surely this else should specify some other option too...
-          } else {
-            this.startTransfer();
-          }
-          this.clearOptions();
-          ui.playSelect();
-          return true;
-        }
+      if (option === PartyOption.PASS_BATON) {
+        (globalScene.getCurrentPhase() as CommandPhase).handleCommand(
+          Command.POKEMON,
+          this.cursor,
+          option === PartyOption.PASS_BATON,
+        );
+      }
 
-        if (this.partyUiMode !== PartyUiMode.CHECK) {
-          const selectCallback = this.selectCallback;
-          this.selectCallback = null;
-          selectCallback(this.cursor, option);
-        }
-      } else {
-        // TODO: Where is the value for option set in this case?
-        if (option >= PartyOption.FORM_CHANGE_ITEM && globalScene.getCurrentPhase() instanceof SelectModifierPhase) {
-          if (this.partyUiMode === PartyUiMode.CHECK) {
-            const formChangeItemModifiers = this.getFormChangeItemsModifiers(pokemon);
-            const modifier = formChangeItemModifiers[option - PartyOption.FORM_CHANGE_ITEM];
-            modifier.active = !modifier.active;
-            globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeItemTrigger, false, true);
-          }
-          // TODO: Not clear at all... why are we passing the baton here?
-        } else if (this.cursor) {
-          (globalScene.getCurrentPhase() as CommandPhase).handleCommand(
-            Command.POKEMON,
-            this.cursor,
-            option === PartyOption.PASS_BATON,
-          );
-        }
+      if (
+        [
+          PartyOption.SEND_OUT,
+          //        PartyOption.PASS_BATON,  TODO: figure out if this is processed differently
+          PartyOption.REVIVE,
+          PartyOption.APPLY,
+          PartyOption.TEACH,
+          PartyOption.MOVE_1,
+          PartyOption.MOVE_2,
+          PartyOption.MOVE_3,
+          PartyOption.MOVE_4,
+          PartyOption.SELECT,
+        ].includes(option) &&
+        this.selectCallback
+      ) {
+        this.clearOptions();
+        const selectCallback = this.selectCallback;
+        this.selectCallback = null;
+        selectCallback(this.cursor, option);
+      }
+
+      // TODO: Figure out better what this option is supposed to do---presumably we want a callback
+      if (option === PartyOption.SELECT) {
+        ui.playSelect();
       }
 
       if (
