@@ -160,6 +160,7 @@ export class MovePhase extends BattlePhase {
     }
 
     this.pokemon.turnData.acted = true;
+    this.pokemon.turnData.lastMoveDamageDealt = 0;
 
     // Reset hit-related turn data when starting follow-up moves (e.g. Metronomed moves, Dancer repeats)
     if (this.followUp) {

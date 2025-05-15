@@ -28,7 +28,7 @@ export class SwitchSummonPhase extends SummonPhase {
   private lastPokemon: Pokemon;
 
   /**
-   * Constructor for creating a new SwitchSummonPhase
+   * Constructor for creating a new {@linkcode SwitchSummonPhase}, the phase where player and enemy Pokemon are switched out.
    * @param switchType - The type of switch behavior
    * @param fieldIndex - Position on the battle field
    * @param slotIndex - The index of pokemon (in party of 6) to switch into

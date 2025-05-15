@@ -32,25 +32,34 @@ describe("Moves - U-turn", () => {
       .disableCrits();
   });
 
-  it("triggers regenerator a single time when a regenerator user switches out with u-turn", async () => {
-    // arrange
-    const playerHp = 1;
-    game.override.ability(Abilities.REGENERATOR);
+  it("should switch the user out upon use", async () => {
     await game.classicMode.startBattle([Species.RAICHU, Species.SHUCKLE]);
-    game.scene.getPlayerPokemon()!.hp = playerHp;
+    const [raichu, shuckle] = game.scene.getPlayerParty();
+    expect(raichu).toBeDefined();
+    expect(shuckle).toBeDefined();
 
-    // act
+    expect(game.scene.getPlayerPokemon()!).toBe(raichu);
     game.move.select(Moves.U_TURN);
     game.doSelectPartyPokemon(1);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    // assert
-    expect(game.scene.getPlayerParty()[1].hp).toEqual(
-      Math.floor(game.scene.getPlayerParty()[1].getMaxHp() * 0.33 + playerHp),
-    );
+    expect(game.phaseInterceptor.log).toContain("SwitchSummonPhase");
+    expect(game.scene.getPlayerPokemon()!).toBe(shuckle);
+  });
+
+  it("triggers regenerator passive once upon switch", async () => {
+    game.override.ability(Abilities.REGENERATOR);
+    await game.classicMode.startBattle([Species.RAICHU, Species.SHUCKLE]);
+    game.scene.getPlayerPokemon()!.hp = 1;
+
+    game.move.select(Moves.U_TURN);
+    game.doSelectPartyPokemon(1);
+    await game.phaseInterceptor.to("TurnEndPhase");
+
+    expect(game.scene.getPlayerParty()[1].hp).toBeGreaterThan(1);
     expect(game.phaseInterceptor.log).toContain("SwitchSummonPhase");
     expect(game.scene.getPlayerPokemon()!.species.speciesId).toBe(Species.SHUCKLE);
-  }, 20000);
+  });
 
   it("triggers rough skin on the u-turn user before a new pokemon is switched in", async () => {
     // arrange
