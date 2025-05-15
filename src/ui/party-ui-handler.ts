@@ -709,6 +709,142 @@ export default class PartyUiHandler extends MessageUiHandler {
     return filterResult;
   }
 
+  processActionButtonForOptions(option: PartyOption) {
+    const ui = this.getUi();
+    if (option === PartyOption.CANCEL) {
+      return this.processOptionMenuInput(Button.CANCEL);
+    }
+
+    // If the input has been already processed we are done, otherwise move on until the correct option is found
+    const pokemon = globalScene.getPlayerParty()[this.cursor];
+
+    // TODO: Careful about using success for the return values here. Find a better way
+    // PartyOption.ALL, and options specific to the mode (held items)
+    if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER) {
+      return this.processModifierTransferModeInput(pokemon);
+    }
+
+    // options specific to the mode (moves)
+    if (this.partyUiMode === PartyUiMode.REMEMBER_MOVE_MODIFIER) {
+      return this.processRememberMoveModeInput(pokemon);
+    }
+
+    // These are the options that do not involve a callback
+    if (option === PartyOption.SUMMARY) {
+      return this.processSummaryOption(pokemon);
+    }
+    if (option === PartyOption.POKEDEX) {
+      return this.processPokedexOption(pokemon);
+    }
+    if (option === PartyOption.UNPAUSE_EVOLUTION) {
+      return this.processUnpauseEvolutionOption(pokemon);
+    }
+    if (option === PartyOption.UNSPLICE) {
+      return this.processUnspliceOption(pokemon);
+    }
+    if (option === PartyOption.RENAME) {
+      return this.processRenameOption(pokemon);
+    }
+    // This is only relevant for PartyUiMode.CHECK
+    // TODO: This risks hitting the other options (.MOVE_i and ALL) so does it? Do we need an extra check?
+    if (option >= PartyOption.FORM_CHANGE_ITEM && globalScene.getCurrentPhase() instanceof SelectModifierPhase) {
+      if (this.partyUiMode === PartyUiMode.CHECK) {
+        const formChangeItemModifiers = this.getFormChangeItemsModifiers(pokemon);
+        const modifier = formChangeItemModifiers[option - PartyOption.FORM_CHANGE_ITEM];
+        modifier.active = !modifier.active;
+        globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeItemTrigger, false, true);
+      }
+    }
+
+    // If the pokemon is filtered out for this option, we cannot continue
+    const filterResult = this.getFilterResult(option, pokemon);
+    if (filterResult) {
+      this.clearOptions();
+      this.showText(filterResult as string, undefined, () => this.showText("", 0), undefined, true);
+      return true;
+    }
+
+    // For what modes is a selectCallback needed?
+    // PartyUiMode.SELECT (SELECT)
+    // PartyUiMode.RELEASE (RELEASE)
+    // PartyUiMode.FAINT_SWITCH (SEND_OUT or PASS_BATON (?))
+    // PartyUiMode.REVIVAL_BLESSING (REVIVE)
+    // PartyUiMode.MODIFIER_TRANSFER (held items, and ALL)
+    // PartyUiMode.CHECK --- no specific option, only relevant on cancel?
+    // PartyUiMode.SPLICE (SPLICE)
+    // PartyUiMode.MOVE_MODIFIER (MOVE_1, MOVE_2, MOVE_3, MOVE_4)
+    // PartyUiMode.TM_MODIFIER (TEACH)
+    // PartyUiMode.REMEMBER_MOVE_MODIFIER (no specific option, callback is invoked when selecting a move)
+    // PartyUiMode.MODIFIER (APPLY option)
+    // PartyUiMode.POST_BATTLE_SWITCH (SEND_OUT)
+
+    // These are the options that need a callback
+    if (option === PartyOption.RELEASE) {
+      return this.processReleaseOption(pokemon);
+    }
+
+    if (this.partyUiMode === PartyUiMode.SPLICE) {
+      if (option === PartyOption.SPLICE) {
+        (this.selectCallback as PartyModifierSpliceSelectCallback)(this.transferCursor, this.cursor);
+        this.clearTransfer();
+        // TODO: Surely this else should specify some other option too...
+      } else if (option === PartyOption.APPLY) {
+        this.startTransfer();
+      }
+      this.clearOptions();
+      ui.playSelect();
+      return true;
+    }
+
+    // This is used when switching out using the Pokemon command (possibly holding a Baton held item). In this case there is no callback.
+    if (
+      (option === PartyOption.PASS_BATON || option === PartyOption.SEND_OUT) &&
+      this.partyUiMode === PartyUiMode.SWITCH
+    ) {
+      this.clearOptions();
+      (globalScene.getCurrentPhase() as CommandPhase).handleCommand(
+        Command.POKEMON,
+        this.cursor,
+        option === PartyOption.PASS_BATON,
+      );
+    }
+
+    if (
+      [
+        PartyOption.SEND_OUT, // When sending out at the start of battle, or due to an effect
+        PartyOption.PASS_BATON, // When passing the baton due to the Baton Pass move
+        PartyOption.REVIVE,
+        PartyOption.APPLY,
+        PartyOption.TEACH,
+        PartyOption.MOVE_1,
+        PartyOption.MOVE_2,
+        PartyOption.MOVE_3,
+        PartyOption.MOVE_4,
+        PartyOption.SELECT,
+      ].includes(option) &&
+      this.selectCallback
+    ) {
+      this.clearOptions();
+      const selectCallback = this.selectCallback;
+      this.selectCallback = null;
+      selectCallback(this.cursor, option);
+    }
+
+    // TODO: Figure out better what this option is supposed to do---presumably we want a callback
+    if (option === PartyOption.SELECT) {
+      ui.playSelect();
+    }
+
+    if (
+      this.partyUiMode !== PartyUiMode.MODIFIER &&
+      this.partyUiMode !== PartyUiMode.TM_MODIFIER &&
+      this.partyUiMode !== PartyUiMode.MOVE_MODIFIER
+    ) {
+      ui.playSelect();
+    }
+    return true;
+  }
+
   processOptionMenuInput(button: Button) {
     const ui = this.getUi();
     const option = this.options[this.optionsCursor];
@@ -721,138 +857,7 @@ export default class PartyUiHandler extends MessageUiHandler {
     }
 
     if (button === Button.ACTION) {
-      if (option === PartyOption.CANCEL) {
-        return this.processOptionMenuInput(Button.CANCEL);
-      }
-
-      // If the input has been already processed we are done, otherwise move on until the correct option is found
-      const pokemon = globalScene.getPlayerParty()[this.cursor];
-
-      // TODO: Careful about using success for the return values here. Find a better way
-      // PartyOption.ALL, and options specific to the mode (held items)
-      if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER) {
-        return this.processModifierTransferModeInput(pokemon);
-      }
-
-      // options specific to the mode (moves)
-      if (this.partyUiMode === PartyUiMode.REMEMBER_MOVE_MODIFIER) {
-        return this.processRememberMoveModeInput(pokemon);
-      }
-
-      // These are the options that do not involve a callback
-      if (option === PartyOption.SUMMARY) {
-        return this.processSummaryOption(pokemon);
-      }
-      if (option === PartyOption.POKEDEX) {
-        return this.processPokedexOption(pokemon);
-      }
-      if (option === PartyOption.UNPAUSE_EVOLUTION) {
-        return this.processUnpauseEvolutionOption(pokemon);
-      }
-      if (option === PartyOption.UNSPLICE) {
-        return this.processUnspliceOption(pokemon);
-      }
-      if (option === PartyOption.RENAME) {
-        return this.processRenameOption(pokemon);
-      }
-      // This is only relevant for PartyUiMode.CHECK
-      // TODO: This risks hitting the other options (.MOVE_i and ALL) so does it? Do we need an extra check?
-      if (option >= PartyOption.FORM_CHANGE_ITEM && globalScene.getCurrentPhase() instanceof SelectModifierPhase) {
-        if (this.partyUiMode === PartyUiMode.CHECK) {
-          const formChangeItemModifiers = this.getFormChangeItemsModifiers(pokemon);
-          const modifier = formChangeItemModifiers[option - PartyOption.FORM_CHANGE_ITEM];
-          modifier.active = !modifier.active;
-          globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeItemTrigger, false, true);
-        }
-      }
-
-      // If the pokemon is filtered out for this option, we cannot continue
-      const filterResult = this.getFilterResult(option, pokemon);
-      if (filterResult) {
-        this.clearOptions();
-        this.showText(filterResult as string, undefined, () => this.showText("", 0), undefined, true);
-        return true;
-      }
-
-      // For what modes is a selectCallback needed?
-      // PartyUiMode.SELECT (SELECT)
-      // PartyUiMode.RELEASE (RELEASE)
-      // PartyUiMode.FAINT_SWITCH (SEND_OUT or PASS_BATON (?))
-      // PartyUiMode.REVIVAL_BLESSING (REVIVE)
-      // PartyUiMode.MODIFIER_TRANSFER (held items, and ALL)
-      // PartyUiMode.CHECK --- no specific option, only relevant on cancel?
-      // PartyUiMode.SPLICE (SPLICE)
-      // PartyUiMode.MOVE_MODIFIER (MOVE_1, MOVE_2, MOVE_3, MOVE_4)
-      // PartyUiMode.TM_MODIFIER (TEACH)
-      // PartyUiMode.REMEMBER_MOVE_MODIFIER (no specific option, callback is invoked when selecting a move)
-      // PartyUiMode.MODIFIER (APPLY option)
-      // PartyUiMode.POST_BATTLE_SWITCH (SEND_OUT)
-
-      // These are the options that need a callback
-      if (option === PartyOption.RELEASE) {
-        return this.processReleaseOption(pokemon);
-      }
-
-      if (this.partyUiMode === PartyUiMode.SPLICE) {
-        if (option === PartyOption.SPLICE) {
-          (this.selectCallback as PartyModifierSpliceSelectCallback)(this.transferCursor, this.cursor);
-          this.clearTransfer();
-          // TODO: Surely this else should specify some other option too...
-        } else if (option === PartyOption.APPLY) {
-          this.startTransfer();
-        }
-        this.clearOptions();
-        ui.playSelect();
-        return true;
-      }
-
-      // This is used when switching out using the Pokemon command (possibly holding a Baton held item). In this case there is no callback.
-      if (
-        (option === PartyOption.PASS_BATON || option === PartyOption.SEND_OUT) &&
-        this.partyUiMode === PartyUiMode.SWITCH
-      ) {
-        this.clearOptions();
-        (globalScene.getCurrentPhase() as CommandPhase).handleCommand(
-          Command.POKEMON,
-          this.cursor,
-          option === PartyOption.PASS_BATON,
-        );
-      }
-
-      if (
-        [
-          PartyOption.SEND_OUT, // When sending out at the start of battle, or due to an effect
-          PartyOption.PASS_BATON, // When passing the baton due to the Baton Pass move
-          PartyOption.REVIVE,
-          PartyOption.APPLY,
-          PartyOption.TEACH,
-          PartyOption.MOVE_1,
-          PartyOption.MOVE_2,
-          PartyOption.MOVE_3,
-          PartyOption.MOVE_4,
-          PartyOption.SELECT,
-        ].includes(option) &&
-        this.selectCallback
-      ) {
-        this.clearOptions();
-        const selectCallback = this.selectCallback;
-        this.selectCallback = null;
-        selectCallback(this.cursor, option);
-      }
-
-      // TODO: Figure out better what this option is supposed to do---presumably we want a callback
-      if (option === PartyOption.SELECT) {
-        ui.playSelect();
-      }
-
-      if (
-        this.partyUiMode !== PartyUiMode.MODIFIER &&
-        this.partyUiMode !== PartyUiMode.TM_MODIFIER &&
-        this.partyUiMode !== PartyUiMode.MOVE_MODIFIER
-      ) {
-        ui.playSelect();
-      }
-      return true;
+      return this.processActionButtonForOptions(option);
     }
 
     if (button === Button.UP || button === Button.DOWN) {
@@ -895,95 +900,117 @@ export default class PartyUiHandler extends MessageUiHandler {
       return false;
     }
 
-    let success = false;
-
     if (this.optionsMode) {
+      let success = false;
       success = this.processOptionMenuInput(button);
-    } else {
-      if (button === Button.ACTION) {
-        if (this.cursor < 6) {
-          if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER && !this.transferMode) {
-            /** Initialize item quantities for the selected Pokemon */
-            const itemModifiers = globalScene.findModifiers(
-              m =>
-                m instanceof PokemonHeldItemModifier &&
-                m.isTransferable &&
-                m.pokemonId === globalScene.getPlayerParty()[this.cursor].id,
-            ) as PokemonHeldItemModifier[];
-            this.transferQuantities = itemModifiers.map(item => item.getStackCount());
-            this.transferQuantitiesMax = itemModifiers.map(item => item.getStackCount());
-          }
-          this.showOptions();
-          ui.playSelect();
-        }
-        // Pressing return button
-        if (this.cursor === 6) {
-          // TODO: define an "allowCancel (PartyUiMode) method to check here and below"
-          if (this.partyUiMode === PartyUiMode.FAINT_SWITCH || this.partyUiMode === PartyUiMode.REVIVAL_BLESSING) {
-            ui.playError();
-          } else {
-            return this.processInput(Button.CANCEL);
-          }
-        }
-        return true;
+      if (success) {
+        ui.playSelect();
       }
-      if (button === Button.CANCEL) {
-        if (
-          (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER || this.partyUiMode === PartyUiMode.SPLICE) &&
-          this.transferMode
-        ) {
-          this.clearTransfer();
-          ui.playSelect();
-        } else if (this.partyUiMode !== PartyUiMode.FAINT_SWITCH && this.partyUiMode !== PartyUiMode.REVIVAL_BLESSING) {
-          if (this.selectCallback) {
-            const selectCallback = this.selectCallback;
-            this.selectCallback = null;
-            selectCallback(6, PartyOption.CANCEL);
-            ui.playSelect();
-          } else {
-            ui.setMode(UiMode.COMMAND, this.fieldIndex);
-            ui.playSelect();
-          }
+      return success;
+    }
+
+    if (button === Button.ACTION) {
+      return this.processPartyActionInput();
+    }
+
+    if (button === Button.CANCEL) {
+      return this.processPartyCancelInput();
+    }
+
+    if (button === Button.UP || button === Button.DOWN || button === Button.RIGHT || button === Button.LEFT) {
+      return this.processPartyDirectionalInput(button);
+    }
+
+    return false;
+  }
+
+  processPartyActionInput(): boolean {
+    const ui = this.getUi();
+    if (this.cursor < 6) {
+      if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER && !this.transferMode) {
+        /** Initialize item quantities for the selected Pokemon */
+        const itemModifiers = globalScene.findModifiers(
+          m =>
+            m instanceof PokemonHeldItemModifier &&
+            m.isTransferable &&
+            m.pokemonId === globalScene.getPlayerParty()[this.cursor].id,
+        ) as PokemonHeldItemModifier[];
+        this.transferQuantities = itemModifiers.map(item => item.getStackCount());
+        this.transferQuantitiesMax = itemModifiers.map(item => item.getStackCount());
+      }
+      this.showOptions();
+      ui.playSelect();
+    }
+    // Pressing return button
+    if (this.cursor === 6) {
+      // TODO: define an "allowCancel (PartyUiMode) method to check here and below"
+      if (this.partyUiMode === PartyUiMode.FAINT_SWITCH || this.partyUiMode === PartyUiMode.REVIVAL_BLESSING) {
+        ui.playError();
+      } else {
+        return this.processInput(Button.CANCEL);
+      }
+    }
+    return true;
+  }
+
+  processPartyCancelInput(): boolean {
+    const ui = this.getUi();
+    if (
+      (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER || this.partyUiMode === PartyUiMode.SPLICE) &&
+      this.transferMode
+    ) {
+      this.clearTransfer();
+      ui.playSelect();
+    } else if (this.partyUiMode !== PartyUiMode.FAINT_SWITCH && this.partyUiMode !== PartyUiMode.REVIVAL_BLESSING) {
+      if (this.selectCallback) {
+        const selectCallback = this.selectCallback;
+        this.selectCallback = null;
+        selectCallback(6, PartyOption.CANCEL);
+        ui.playSelect();
+      } else {
+        ui.setMode(UiMode.COMMAND, this.fieldIndex);
+        ui.playSelect();
+      }
+    }
+    return true;
+  }
+
+  processPartyDirectionalInput(button: Button.UP | Button.DOWN | Button.LEFT | Button.RIGHT): boolean {
+    const ui = this.getUi();
+    const slotCount = this.partySlots.length;
+    const battlerCount = globalScene.currentBattle.getBattlerCount();
+
+    let success = false;
+    switch (button) {
+      case Button.UP:
+        success = this.setCursor(this.cursor ? (this.cursor < 6 ? this.cursor - 1 : slotCount - 1) : 6);
+        break;
+      case Button.DOWN:
+        success = this.setCursor(this.cursor < 6 ? (this.cursor < slotCount - 1 ? this.cursor + 1 : 6) : 0);
+        break;
+      case Button.LEFT:
+        if (this.cursor >= battlerCount && this.cursor <= 6) {
+          success = this.setCursor(0);
         }
-
-        return true;
-      }
-
-      const slotCount = this.partySlots.length;
-      const battlerCount = globalScene.currentBattle.getBattlerCount();
-
-      switch (button) {
-        case Button.UP:
-          success = this.setCursor(this.cursor ? (this.cursor < 6 ? this.cursor - 1 : slotCount - 1) : 6);
+        break;
+      case Button.RIGHT:
+        if (slotCount === battlerCount) {
+          success = this.setCursor(6);
           break;
-        case Button.DOWN:
-          success = this.setCursor(this.cursor < 6 ? (this.cursor < slotCount - 1 ? this.cursor + 1 : 6) : 0);
+        }
+        if (battlerCount >= 2 && slotCount > battlerCount && this.getCursor() === 0 && this.lastCursor === 1) {
+          success = this.setCursor(2);
           break;
-        case Button.LEFT:
-          if (this.cursor >= battlerCount && this.cursor <= 6) {
-            success = this.setCursor(0);
-          }
+        }
+        if (slotCount > battlerCount && this.cursor < battlerCount) {
+          success = this.setCursor(this.lastCursor < 6 ? this.lastCursor || battlerCount : battlerCount);
           break;
-        case Button.RIGHT:
-          if (slotCount === battlerCount) {
-            success = this.setCursor(6);
-            break;
-          }
-          if (battlerCount >= 2 && slotCount > battlerCount && this.getCursor() === 0 && this.lastCursor === 1) {
-            success = this.setCursor(2);
-            break;
-          }
-          if (slotCount > battlerCount && this.cursor < battlerCount) {
-            success = this.setCursor(this.lastCursor < 6 ? this.lastCursor || battlerCount : battlerCount);
-            break;
-          }
-      }
+        }
     }
 
     if (success) {
       ui.playSelect();
     }
-
     return success;
   }
 
