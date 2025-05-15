@@ -828,21 +828,10 @@ export default class PartyUiHandler extends MessageUiHandler {
       const selectCallback = this.selectCallback;
       this.selectCallback = null;
       selectCallback(this.cursor, option);
+      return true;
     }
 
-    // TODO: Figure out better what this option is supposed to do---presumably we want a callback
-    if (option === PartyOption.SELECT) {
-      ui.playSelect();
-    }
-
-    if (
-      this.partyUiMode !== PartyUiMode.MODIFIER &&
-      this.partyUiMode !== PartyUiMode.TM_MODIFIER &&
-      this.partyUiMode !== PartyUiMode.MOVE_MODIFIER
-    ) {
-      ui.playSelect();
-    }
-    return true;
+    return false;
   }
 
   processOptionMenuInput(button: Button) {
