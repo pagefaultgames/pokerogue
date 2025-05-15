@@ -532,60 +532,66 @@ export default class PartyUiHandler extends MessageUiHandler {
   }
 
   // TODO: This will be largely changed with the modifier rework
-  processModifierTransferModeInput(button: Button) {
-    let success = false;
+  processModifierTransferModeInput(pokemon: PlayerPokemon) {
     const ui = this.getUi();
     const option = this.options[this.optionsCursor];
 
-    if (button === Button.ACTION) {
-      const pokemon = globalScene.getPlayerParty()[this.cursor];
-      // TODO: Revise this condition
-      if (!this.transferMode && option !== PartyOption.CANCEL) {
-        this.startTransfer();
+    if (option === PartyOption.TRANSFER) {
+      return this.processTransferOption();
+    }
 
-        let ableToTransferText: string;
-        for (let p = 0; p < globalScene.getPlayerParty().length; p++) {
-          // this for look goes through each of the party pokemon
-          const newPokemon = globalScene.getPlayerParty()[p];
-          // this next bit checks to see if the the selected item from the original transfer pokemon exists on the new pokemon [p]; this returns undefined if the new pokemon doesn't have the item at all, otherwise it returns the pokemonHeldItemModifier for that item
-          const matchingModifier = globalScene.findModifier(
-            m =>
-              m instanceof PokemonHeldItemModifier &&
-              m.pokemonId === newPokemon.id &&
-              m.matchType(this.getTransferrableItemsFromPokemon(pokemon)[this.transferOptionCursor]),
-          ) as PokemonHeldItemModifier;
-          const partySlot = this.partySlots.filter(m => m.getPokemon() === newPokemon)[0]; // this gets pokemon [p] for us
-          if (p !== this.transferCursor) {
-            // this skips adding the able/not able labels on the pokemon doing the transfer
-            if (matchingModifier) {
-              // if matchingModifier exists then the item exists on the new pokemon
-              if (matchingModifier.getMaxStackCount() === matchingModifier.stackCount) {
-                // checks to see if the stack of items is at max stack; if so, set the description label to "Not able"
-                ableToTransferText = i18next.t("partyUiHandler:notAble");
-              } else {
-                // if the pokemon isn't at max stack, make the label "Able"
-                ableToTransferText = i18next.t("partyUiHandler:able");
-              }
+    // TODO: Revise this condition
+    if (!this.transferMode) {
+      this.startTransfer();
+
+      let ableToTransferText: string;
+      for (let p = 0; p < globalScene.getPlayerParty().length; p++) {
+        // this for look goes through each of the party pokemon
+        const newPokemon = globalScene.getPlayerParty()[p];
+        // this next bit checks to see if the the selected item from the original transfer pokemon exists on the new pokemon [p]; this returns undefined if the new pokemon doesn't have the item at all, otherwise it returns the pokemonHeldItemModifier for that item
+        const matchingModifier = globalScene.findModifier(
+          m =>
+            m instanceof PokemonHeldItemModifier &&
+            m.pokemonId === newPokemon.id &&
+            m.matchType(this.getTransferrableItemsFromPokemon(pokemon)[this.transferOptionCursor]),
+        ) as PokemonHeldItemModifier;
+        const partySlot = this.partySlots.filter(m => m.getPokemon() === newPokemon)[0]; // this gets pokemon [p] for us
+        if (p !== this.transferCursor) {
+          // this skips adding the able/not able labels on the pokemon doing the transfer
+          if (matchingModifier) {
+            // if matchingModifier exists then the item exists on the new pokemon
+            if (matchingModifier.getMaxStackCount() === matchingModifier.stackCount) {
+              // checks to see if the stack of items is at max stack; if so, set the description label to "Not able"
+              ableToTransferText = i18next.t("partyUiHandler:notAble");
             } else {
-              // if matchingModifier doesn't exist, that means the pokemon doesn't have any of the item, and we need to show "Able"
+              // if the pokemon isn't at max stack, make the label "Able"
               ableToTransferText = i18next.t("partyUiHandler:able");
             }
           } else {
-            // this else relates to the transfer pokemon. We set the text to be blank so there's no "Able"/"Not able" text
-            ableToTransferText = "";
+            // if matchingModifier doesn't exist, that means the pokemon doesn't have any of the item, and we need to show "Able"
+            ableToTransferText = i18next.t("partyUiHandler:able");
           }
-          partySlot.slotHpBar.setVisible(false);
-          partySlot.slotHpOverlay.setVisible(false);
-          partySlot.slotHpText.setVisible(false);
-          partySlot.slotDescriptionLabel.setText(ableToTransferText);
-          partySlot.slotDescriptionLabel.setVisible(true);
+        } else {
+          // this else relates to the transfer pokemon. We set the text to be blank so there's no "Able"/"Not able" text
+          ableToTransferText = "";
         }
-        this.clearOptions();
-        ui.playSelect();
-        return true;
+        partySlot.slotHpBar.setVisible(false);
+        partySlot.slotHpOverlay.setVisible(false);
+        partySlot.slotHpText.setVisible(false);
+        partySlot.slotDescriptionLabel.setText(ableToTransferText);
+        partySlot.slotDescriptionLabel.setVisible(true);
       }
+      this.clearOptions();
+      ui.playSelect();
+      return true;
     }
+    return false;
+  }
 
+  // TODO: Might need a check here actually for when this.transferMode is active...
+  processModifierTransferModeLeftRightInput(button: Button) {
+    let success = false;
+    const option = this.options[this.optionsCursor];
     if (button === Button.LEFT) {
       /** Decrease quantity for the current item and update UI */
       if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER) {
@@ -613,16 +619,21 @@ export default class PartyUiHandler extends MessageUiHandler {
         ); /** Place again the cursor at the same position. Necessary, otherwise the cursor disappears */
       }
     }
+    return success;
+  }
 
-    if (button === Button.UP || button === Button.DOWN) {
-      if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER) {
-        if (option !== PartyOption.ALL) {
-          this.transferQuantities[option] = this.transferQuantitiesMax[option];
-        }
-        this.updateOptions();
+  // TODO: Might need a check here actually for when this.transferMode is active...
+  processModifierTransferModeUpDownInput(button: Button.UP | Button.DOWN) {
+    let success = false;
+    const option = this.options[this.optionsCursor];
+
+    if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER) {
+      if (option !== PartyOption.ALL) {
+        this.transferQuantities[option] = this.transferQuantitiesMax[option];
       }
-      success = this.moveOptionCursor(button);
+      this.updateOptions();
     }
+    success = this.moveOptionCursor(button);
 
     return success;
   }
@@ -634,42 +645,38 @@ export default class PartyUiHandler extends MessageUiHandler {
     return this.setCursor(this.optionsCursor < this.options.length - 1 ? this.optionsCursor + 1 : 0);
   }
 
-  processRememberMoveModeInput(button: Button) {
-    let success = false;
+  processRememberMoveModeInput(pokemon: PlayerPokemon) {
     const ui = this.getUi();
     const option = this.options[this.optionsCursor];
 
-    if (button === Button.ACTION) {
-      const pokemon = globalScene.getPlayerParty()[this.cursor];
-      if (option !== PartyOption.CANCEL) {
-        // clear overlay on cancel
-        this.moveInfoOverlay.clear();
-        const filterResult = (this.selectFilter as PokemonSelectFilter)(pokemon);
-        if (filterResult === null) {
-          this.selectCallback?.(this.cursor, option);
-          this.clearOptions();
-        } else {
-          this.clearOptions();
-          this.showText(filterResult as string, undefined, () => this.showText("", 0), undefined, true);
-        }
-        ui.playSelect();
-        return true;
-      }
+    // clear overlay on cancel
+    this.moveInfoOverlay.clear();
+    const filterResult = (this.selectFilter as PokemonSelectFilter)(pokemon);
+    if (filterResult === null) {
+      this.selectCallback?.(this.cursor, option);
+      this.clearOptions();
+    } else {
+      this.clearOptions();
+      this.showText(filterResult as string, undefined, () => this.showText("", 0), undefined, true);
     }
+    ui.playSelect();
+    return true;
+  }
 
-    if (button === Button.UP || button === Button.DOWN) {
-      success = this.moveOptionCursor(button);
+  processRememberMoveModeUpDownInput(button: Button.UP | Button.DOWN) {
+    let success = false;
 
-      // show move description
-      const option = this.options[this.optionsCursor];
-      const pokemon = globalScene.getPlayerParty()[this.cursor];
-      const move = allMoves[pokemon.getLearnableLevelMoves()[option]];
-      if (move) {
-        this.moveInfoOverlay.show(move);
-      } else {
-        // or hide the overlay, in case it's the cancel button
-        this.moveInfoOverlay.clear();
-      }
+    success = this.moveOptionCursor(button);
+
+    // show move description
+    const option = this.options[this.optionsCursor];
+    const pokemon = globalScene.getPlayerParty()[this.cursor];
+    const move = allMoves[pokemon.getLearnableLevelMoves()[option]];
+    if (move) {
+      this.moveInfoOverlay.show(move);
+    } else {
+      // or hide the overlay, in case it's the cancel button
+      this.moveInfoOverlay.clear();
     }
 
     return success;
@@ -703,38 +710,34 @@ export default class PartyUiHandler extends MessageUiHandler {
   }
 
   processOptionMenuInput(button: Button) {
-    let success = false;
     const ui = this.getUi();
     const option = this.options[this.optionsCursor];
 
     // Button.CANCEL has no special behavior for any option
-    if (button === Button.CANCEL || option === PartyOption.CANCEL) {
+    if (button === Button.CANCEL) {
       this.clearOptions();
       ui.playSelect();
       return true;
     }
 
-    console.log(PartyUiMode[this.partyUiMode]);
-    console.log(PartyOption[option]);
-    console.log(this.selectCallback);
-
-    // TODO: Careful about using success for the return values here. Find a better way
-    // PartyOption.ALL, and options specific to the mode (held items)
-    if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER) {
-      success = this.processModifierTransferModeInput(button);
-    }
-    // options specific to the mode (moves)
-    if (this.partyUiMode === PartyUiMode.REMEMBER_MOVE_MODIFIER) {
-      success = this.processRememberMoveModeInput(button);
-    }
-
-    // If the input has been already processed we are done, otherwise move on until the correct option is found
-    if (success) {
-      return true;
-    }
-
     if (button === Button.ACTION) {
+      if (option === PartyOption.CANCEL) {
+        return this.processOptionMenuInput(Button.CANCEL);
+      }
+
+      // If the input has been already processed we are done, otherwise move on until the correct option is found
       const pokemon = globalScene.getPlayerParty()[this.cursor];
+
+      // TODO: Careful about using success for the return values here. Find a better way
+      // PartyOption.ALL, and options specific to the mode (held items)
+      if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER) {
+        return this.processModifierTransferModeInput(pokemon);
+      }
+
+      // options specific to the mode (moves)
+      if (this.partyUiMode === PartyUiMode.REMEMBER_MOVE_MODIFIER) {
+        return this.processRememberMoveModeInput(pokemon);
+      }
 
       // These are the options that do not involve a callback
       if (option === PartyOption.SUMMARY) {
@@ -786,10 +789,6 @@ export default class PartyUiHandler extends MessageUiHandler {
       // PartyUiMode.POST_BATTLE_SWITCH (SEND_OUT)
 
       // These are the options that need a callback
-      if (option === PartyOption.TRANSFER) {
-        return this.processTransferOption();
-      }
-
       if (option === PartyOption.RELEASE) {
         return this.processReleaseOption(pokemon);
       }
@@ -857,10 +856,24 @@ export default class PartyUiHandler extends MessageUiHandler {
     }
 
     if (button === Button.UP || button === Button.DOWN) {
-      success = this.moveOptionCursor(button);
+      if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER) {
+        return this.processModifierTransferModeUpDownInput(button);
+      }
+
+      if (this.partyUiMode === PartyUiMode.REMEMBER_MOVE_MODIFIER) {
+        return this.processRememberMoveModeUpDownInput(button);
+      }
+
+      return this.moveOptionCursor(button);
     }
 
-    return success;
+    if (button === Button.LEFT || button === Button.RIGHT) {
+      if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER) {
+        return this.processModifierTransferModeLeftRightInput(button);
+      }
+    }
+
+    return false;
   }
 
   processInput(button: Button): boolean {
