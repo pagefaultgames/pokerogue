@@ -206,11 +206,13 @@ export class MoveEffectPhase extends PokemonPhase {
    * @throws Error if there was an unexpected hit check result
    */
   private applyToTargets(user: Pokemon, targets: Pokemon[]): void {
+    let firstHit = true;
     for (const [i, target] of targets.entries()) {
       const [hitCheckResult, effectiveness] = this.hitChecks[i];
       switch (hitCheckResult) {
         case HitCheckResult.HIT:
-          this.applyMoveEffects(target, effectiveness);
+          this.applyMoveEffects(target, effectiveness, firstHit);
+          firstHit = false;
           if (isFieldTargeted(this.move)) {
             // Stop processing other targets if the move is a field move
             return;
@@ -763,15 +765,12 @@ export class MoveEffectPhase extends PokemonPhase {
    * - Invoking {@linkcode applyOnTargetEffects} if the move does not hit a substitute
    * - Triggering form changes and emergency exit / wimp out if this is the last hit
    *
-   * @param target the {@linkcode Pokemon} hit by this phase's move.
-   * @param effectiveness the effectiveness of the move (as previously evaluated in {@linkcode hitCheck})
+   * @param target - the {@linkcode Pokemon} hit by this phase's move.
+   * @param effectiveness - The effectiveness of the move (as previously evaluated in {@linkcode hitCheck})
+   * @param firstTarget - Whether this is the first target successfully struck by the move
    */
-  protected applyMoveEffects(target: Pokemon, effectiveness: TypeDamageMultiplier): void {
+  protected applyMoveEffects(target: Pokemon, effectiveness: TypeDamageMultiplier, firstTarget: boolean): void {
     const user = this.getUserPokemon();
-
-    /** The first target hit by the move */
-    const firstTarget = target === this.getTargets().find((_, i) => this.hitChecks[i][1] > 0);
-
     if (isNullOrUndefined(user)) {
       return;
     }
@@ -905,6 +904,14 @@ export class MoveEffectPhase extends PokemonPhase {
 
     target.destroySubstitute();
     target.lapseTag(BattlerTagType.COMMANDED);
+
+    // Force `lastHit` to be true if this is a multi hit move with hits left
+    // `hitsLeft` must be left as-is in order for the message displaying the number of hits
+    // to display the proper number.
+    // Note: When Dragon Darts' smart targeting is implemented, this logic may need to be adjusted.
+    if (!this.lastHit && user.turnData.hitsLeft > 1) {
+      this.lastHit = true;
+    }
   }
 
   /**
