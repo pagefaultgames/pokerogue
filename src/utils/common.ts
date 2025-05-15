@@ -106,7 +106,7 @@ export function randSeedInt(range: number, min = 0): number {
  * @returns a random integer between {@linkcode min} and {@linkcode max} inclusive
  */
 export function randSeedIntRange(min: number, max: number): number {
-  return this.randSeedInt(max - min + 1, min);
+  return randSeedInt(max - min + 1, min);
 }
 
 /**
