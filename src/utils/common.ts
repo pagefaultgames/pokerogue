@@ -100,6 +100,16 @@ export function randSeedInt(range: number, min = 0): number {
 }
 
 /**
+ * Generates a random number using the global seed
+ * @param min The minimum integer to generate
+ * @param max The maximum integer to generate
+ * @returns a random integer between {@linkcode min} and {@linkcode max} inclusive
+ */
+export function randSeedIntRange(min: number, max: number): number {
+  return this.randSeedInt(max - min + 1, min);
+}
+
+/**
  * Returns a random integer between min and max (non-inclusive)
  * @param min The lowest number
  * @param max The highest number
