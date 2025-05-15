@@ -1245,7 +1245,9 @@ export default class PartyUiHandler extends MessageUiHandler {
           this.addCommonOptions(pokemon);
         }
         break;
-      // TODO: This still needs to be broken up
+      // TODO: This still needs to be broken up.
+      // It could use a rework differentiating different kind of switches
+      // to treat baton passing separately from switching on faint.
       case PartyUiMode.SWITCH:
       case PartyUiMode.FAINT_SWITCH:
       case PartyUiMode.POST_BATTLE_SWITCH:
