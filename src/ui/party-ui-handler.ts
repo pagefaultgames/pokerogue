@@ -441,7 +441,7 @@ export default class PartyUiHandler extends MessageUiHandler {
     const ui = this.getUi();
     this.clearOptions();
     ui.playSelect();
-    // TODO: Figure out how this edge case works
+    // In release mode, we do not ask for confirmation when clicking release.
     if (this.partyUiMode === PartyUiMode.RELEASE) {
       this.doRelease(this.cursor);
       return true;
@@ -526,6 +526,7 @@ export default class PartyUiHandler extends MessageUiHandler {
       }
     }
     this.clearTransfer();
+    this.clearOptions();
     ui.playSelect();
     return true;
   }
@@ -579,7 +580,6 @@ export default class PartyUiHandler extends MessageUiHandler {
           partySlot.slotDescriptionLabel.setText(ableToTransferText);
           partySlot.slotDescriptionLabel.setVisible(true);
         }
-
         this.clearOptions();
         ui.playSelect();
         return true;
