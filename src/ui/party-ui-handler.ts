@@ -588,7 +588,7 @@ export default class PartyUiHandler extends MessageUiHandler {
     return false;
   }
 
-  // TODO: Might need a check here actually for when this.transferMode is active...
+  // TODO: Might need to check here for when this.transferMode is active.
   processModifierTransferModeLeftRightInput(button: Button) {
     let success = false;
     const option = this.options[this.optionsCursor];
@@ -622,7 +622,7 @@ export default class PartyUiHandler extends MessageUiHandler {
     return success;
   }
 
-  // TODO: Might need a check here actually for when this.transferMode is active...
+  // TODO: Might need to check here for when this.transferMode is active.
   processModifierTransferModeUpDownInput(button: Button.UP | Button.DOWN) {
     let success = false;
     const option = this.options[this.optionsCursor];
@@ -787,7 +787,6 @@ export default class PartyUiHandler extends MessageUiHandler {
       if (option === PartyOption.SPLICE) {
         (this.selectCallback as PartyModifierSpliceSelectCallback)(this.transferCursor, this.cursor);
         this.clearTransfer();
-        // TODO: Surely this else should specify some other option too...
       } else if (option === PartyOption.APPLY) {
         this.startTransfer();
       }
@@ -913,6 +912,10 @@ export default class PartyUiHandler extends MessageUiHandler {
     return false;
   }
 
+  allowCancel(): boolean {
+    return !(this.partyUiMode === PartyUiMode.FAINT_SWITCH || this.partyUiMode === PartyUiMode.REVIVAL_BLESSING);
+  }
+
   processPartyActionInput(): boolean {
     const ui = this.getUi();
     if (this.cursor < 6) {
@@ -932,8 +935,7 @@ export default class PartyUiHandler extends MessageUiHandler {
     }
     // Pressing return button
     if (this.cursor === 6) {
-      // TODO: define an "allowCancel (PartyUiMode) method to check here and below"
-      if (this.partyUiMode === PartyUiMode.FAINT_SWITCH || this.partyUiMode === PartyUiMode.REVIVAL_BLESSING) {
+      if (!this.allowCancel()) {
         ui.playError();
       } else {
         return this.processInput(Button.CANCEL);
@@ -950,7 +952,7 @@ export default class PartyUiHandler extends MessageUiHandler {
     ) {
       this.clearTransfer();
       ui.playSelect();
-    } else if (this.partyUiMode !== PartyUiMode.FAINT_SWITCH && this.partyUiMode !== PartyUiMode.REVIVAL_BLESSING) {
+    } else if (this.allowCancel()) {
       if (this.selectCallback) {
         const selectCallback = this.selectCallback;
         this.selectCallback = null;
@@ -1177,12 +1179,11 @@ export default class PartyUiHandler extends MessageUiHandler {
   }
 
   getItemModifiers(pokemon: Pokemon): PokemonHeldItemModifier[] {
-    // TODO: This conditional has no reason to be here
-    return this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER
-      ? (globalScene.findModifiers(
-          m => m instanceof PokemonHeldItemModifier && m.isTransferable && m.pokemonId === pokemon.id,
-        ) as PokemonHeldItemModifier[])
-      : [];
+    return (
+      (globalScene.findModifiers(
+        m => m instanceof PokemonHeldItemModifier && m.isTransferable && m.pokemonId === pokemon.id,
+      ) as PokemonHeldItemModifier[]) ?? []
+    );
   }
 
   updateOptionsWithRememberMoveModifierMode(pokemon): void {
