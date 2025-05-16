@@ -260,6 +260,7 @@ import { MoveFlags } from "#enums/MoveFlags";
 import { timedEventManager } from "#app/global-event-manager";
 import { loadMoveAnimations } from "#app/sprites/pokemon-asset-loader";
 import { ResetStatusPhase } from "#app/phases/reset-status-phase";
+import { MoveUseType } from "#enums/move-use-type";
 
 export enum LearnMoveSituation {
   MISC,
@@ -406,7 +407,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     super(globalScene, x, y);
 
     if (!species.isObtainable() && this.isPlayer()) {
-      throw `Cannot create a player Pokemon for species '${species.getName(formIndex)}'`;
+      throw `Cannot create a player Pokemon for species "${species.getName(formIndex)}"`;
     }
 
     this.species = species;
@@ -3714,7 +3715,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         while (rand > stabMovePool[index][1]) {
           rand -= stabMovePool[index++][1];
         }
-        this.moveset.push(new PokemonMove(stabMovePool[index][0], 0, 0));
+        this.moveset.push(new PokemonMove(stabMovePool[index][0]));
       }
     } else {
       // Normal wild pokemon just force a random damaging move
@@ -3728,7 +3729,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         while (rand > attackMovePool[index][1]) {
           rand -= attackMovePool[index++][1];
         }
-        this.moveset.push(new PokemonMove(attackMovePool[index][0], 0, 0));
+        this.moveset.push(new PokemonMove(attackMovePool[index][0]));
       }
     }
 
@@ -3780,7 +3781,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       while (rand > movePool[index][1]) {
         rand -= movePool[index++][1];
       }
-      this.moveset.push(new PokemonMove(movePool[index][0], 0, 0));
+      this.moveset.push(new PokemonMove(movePool[index][0]));
     }
 
     // Trigger FormChange, except for enemy Pokemon during Mystery Encounters, to avoid crashes
@@ -4914,7 +4915,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**@overload */
-  getTag(tagType: BattlerTagType.GRUDGE): GrudgeTag | nil;
+  getTag(tagType: BattlerTagType.GRUDGE): GrudgeTag | undefined;
 
   /** @overload */
   getTag(tagType: BattlerTagType): BattlerTag | undefined;
@@ -5157,9 +5158,41 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return moveHistory.slice(0).reverse();
   }
 
+  /**
+   * Return the most recently executed {@linkcode TurnMove} this {@linkcode Pokemon} has used that is:
+   * - Not {@linkcode Moves.NONE}
+   * - Non-virtual ({@linkcode MoveUseType | useType} < {@linkcode MoveUseType.INDIRECT})
+   * @param ignoreStruggle - Whether to additionally ignore {@linkcode Moves.STRUGGLE}; default `false`
+   * @param ignoreFollowUp - Whether to ignore moves with a use type of {@linkcode MoveUseType.FOLLOW_UP}
+   * (Copycat, Mirror Move, etc.); default `true`.
+   * @returns The last move this Pokemon has used satisfying the aforementioned conditions,
+   * or `undefined` if no applicable moves have been used since switching in.
+   */
+  getLastNonVirtualMove(ignoreStruggle = false, ignoreFollowUp = true): TurnMove | undefined {
+    return this.getLastXMoves(-1).find(m =>
+      m.move !== Moves.NONE
+      && (m.useType < MoveUseType.INDIRECT ||
+        (!ignoreFollowUp && m.useType === MoveUseType.FOLLOW_UP))
+      && (!ignoreStruggle || m.move !== Moves.STRUGGLE)
+    );
+  }
+
+  /**
+   * Return this Pokemon's move queue, consisting of all the moves it is slated to perform.
+   * @returns An array of {@linkcode TurnMove}, as described above
+   */
   getMoveQueue(): TurnMove[] {
     return this.summonData.moveQueue;
   }
+
+  /**
+   * Add a new entry to the end of this Pokemon's move queue.
+   * @param queuedMove - A {@linkcode TurnMove} to push to this Pokemon's queue.
+   */
+  pushMoveQueue(queuedMove: TurnMove): void {
+    this.summonData.moveQueue.push(queuedMove);
+  }
+
 
   changeForm(formChange: SpeciesFormChange): Promise<void> {
     return new Promise(resolve => {
@@ -5678,7 +5711,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Performs the action of clearing a Pokemon's status
-   * 
+   *
    * This is a helper to {@linkcode resetStatus}, which should be called directly instead of this method
    */
   public clearStatus(confusion: boolean, reloadAssets: boolean) {
@@ -7026,7 +7059,7 @@ export class PlayerPokemon extends Pokemon {
   copyMoveset(): PokemonMove[] {
     const newMoveset: PokemonMove[] = [];
     this.moveset.forEach(move => {
-      newMoveset.push(new PokemonMove(move.moveId, 0, move.ppUp, move.virtual, move.maxPpOverride));
+      newMoveset.push(new PokemonMove(move.moveId, 0, move.ppUp, move.maxPpOverride));
     });
 
     return newMoveset;
@@ -7216,19 +7249,23 @@ export class EnemyPokemon extends Pokemon {
    * the Pokemon the move will target.
    * @returns this Pokemon's next move in the format {move, moveTargets}
    */
+  // TODO: Refactor this and split it up
   getNextMove(): TurnMove {
     // If this Pokemon has a move already queued, return it.
-    const moveQueue = this.getMoveQueue();
-    if (moveQueue.length !== 0) {
-      const queuedMove = moveQueue[0];
-      if (queuedMove) {
-        const moveIndex = this.getMoveset().findIndex(m => m.moveId === queuedMove.move);
-        if ((moveIndex > -1 && this.getMoveset()[moveIndex].isUsable(this, queuedMove.ignorePP)) || queuedMove.virtual) {
-          return queuedMove;
-        } else {
-          this.getMoveQueue().shift();
-          return this.getNextMove();
-        }
+    for (const queuedMove of this.getMoveQueue()) {
+      const moveIndex = this.getMoveset().findIndex(m => m.moveId === queuedMove.move);
+      // If the queued move was called indirectly, ignore all PP and usability checks.
+      // Otherwise, ensure that the move being used is actually usable
+      // TODO: Virtual moves shouldn't use the move queue
+      if (
+        queuedMove.useType >= MoveUseType.INDIRECT ||
+        (moveIndex > -1 &&
+        this.getMoveset()[moveIndex].isUsable(
+          this,
+          queuedMove.useType >= MoveUseType.IGNORE_PP)
+        )
+      ) {
+      return queuedMove;
       }
     }
 
@@ -7238,9 +7275,10 @@ export class EnemyPokemon extends Pokemon {
     if (movePool.length) {
       // If there's only 1 move in the move pool, use it.
       if (movePool.length === 1) {
-        return { move: movePool[0].moveId, targets: this.getNextTargets(movePool[0].moveId) };
+        return { move: movePool[0].moveId, targets: this.getNextTargets(movePool[0].moveId) , useType: MoveUseType.NORMAL};
       }
       // If a move is forced because of Encore, use it.
+      // Said moves are executed normally
       const encoreTag = this.getTag(EncoreTag) as EncoreTag;
       if (encoreTag) {
         const encoreMove = movePool.find(m => m.moveId === encoreTag.moveId);
@@ -7248,13 +7286,14 @@ export class EnemyPokemon extends Pokemon {
           return {
             move: encoreMove.moveId,
             targets: this.getNextTargets(encoreMove.moveId),
+            useType: MoveUseType.NORMAL
           };
         }
       }
       switch (this.aiType) {
         case AiType.RANDOM: // No enemy should spawn with this AI type in-game
           const moveId = movePool[globalScene.randBattleSeedInt(movePool.length)].moveId;
-          return { move: moveId, targets: this.getNextTargets(moveId) };
+          return { move: moveId, targets: this.getNextTargets(moveId),  useType: MoveUseType.NORMAL };
         case AiType.SMART_RANDOM:
         case AiType.SMART:
           /**
@@ -7433,13 +7472,15 @@ export class EnemyPokemon extends Pokemon {
             }
           }
           console.log(movePool.map(m => m.getName()), moveScores, r, sortedMovePool.map(m => m.getName()));
-          return { move: sortedMovePool[r]!.moveId, targets: moveTargets[sortedMovePool[r]!.moveId] };
+          return { move: sortedMovePool[r]!.moveId, targets: moveTargets[sortedMovePool[r]!.moveId], useType: MoveUseType.NORMAL };
       }
     }
 
+    // No moves left means struggle
     return {
       move: Moves.STRUGGLE,
       targets: this.getNextTargets(Moves.STRUGGLE),
+      useType: MoveUseType.IGNORE_PP,
     };
   }
 
@@ -7799,10 +7840,9 @@ interface IllusionData {
 export interface TurnMove {
   move: Moves;
   targets: BattlerIndex[];
+  useType: MoveUseType;
   result?: MoveResult;
-  virtual?: boolean;
   turn?: number;
-  ignorePP?: boolean;
 }
 
 export interface AttackMoveResult {
@@ -7821,6 +7861,12 @@ export interface AttackMoveResult {
 export class PokemonSummonData {
   /** [Atk, Def, SpAtk, SpDef, Spd, Acc, Eva] */
   public statStages: number[] = [0, 0, 0, 0, 0, 0, 0];
+  /**
+   * A queue of moves yet to be executed, used by charging, recharging and frenzy moves.
+   * So long as this array is nonempty, this Pokemon's corresponding `CommandPhase` will be skipped over entirely
+   * in favor of using the queued move.
+   * TODO: Clean up a lot of the code surrounding the move queue. It's intertwined with the
+   */
   public moveQueue: TurnMove[] = [];
   public tags: BattlerTag[] = [];
   public abilitySuppressed = false;
@@ -7941,7 +7987,6 @@ export class PokemonWaveData {
  * Resets at the start of a new turn, as well as on switch.
  */
 export class PokemonTurnData {
-  public flinched = false;
   public acted = false;
   /** How many times the current move should hit the target(s) */
   public hitCount = 0;
@@ -7963,8 +8008,9 @@ export class PokemonTurnData {
   public failedRunAway = false;
   public joinedRound = false;
   /**
+   * The amount of times this Pokemon has acted again and used a move in the current turn.
    * Used to make sure multi-hits occur properly when the user is
-   * forced to act again in the same turn
+   * forced to act again in the same turn, and must be incremented by any effects that grant extra turns.
    */
   public extraTurns = 0;
   /**
@@ -8041,10 +8087,9 @@ export class PokemonMove {
   public moveId: Moves;
   public ppUsed: number;
   public ppUp: number;
-  public virtual: boolean;
 
   /**
-   * If defined and nonzero, overrides the maximum PP of the move (e.g., due to move being copied by Transform).
+   * If defined and nonzero, overrides the maximum PP of the move (e.g. due to Transform).
    * This also nullifies all effects of `ppUp`.
    */
   public maxPpOverride?: number;
@@ -8053,13 +8098,11 @@ export class PokemonMove {
     moveId: Moves,
     ppUsed = 0,
     ppUp = 0,
-    virtual = false,
     maxPpOverride?: number,
   ) {
     this.moveId = moveId;
     this.ppUsed = ppUsed;
     this.ppUp = ppUp;
-    this.virtual = virtual;
     this.maxPpOverride = maxPpOverride;
   }
 
@@ -8077,6 +8120,7 @@ export class PokemonMove {
     ignorePp = false,
     ignoreRestrictionTags = false,
   ): boolean {
+    // TODO: Add Sky Drop's 1 turn stall
     if (
       this.moveId &&
       !ignoreRestrictionTags &&
@@ -8131,7 +8175,6 @@ export class PokemonMove {
       source.moveId,
       source.ppUsed,
       source.ppUp,
-      source.virtual,
       source.maxPpOverride,
     );
   }

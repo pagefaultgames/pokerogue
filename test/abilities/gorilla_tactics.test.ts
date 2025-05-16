@@ -1,11 +1,12 @@
 import { BattlerIndex } from "#app/battle";
+import { RandomMoveAttr } from "#app/data/moves/move";
 import { Moves } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
 import { Stat } from "#app/enums/stat";
 import { Abilities } from "#enums/abilities";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Abilities - Gorilla Tactics", () => {
   let phaserGame: Phaser.Game;
@@ -25,10 +26,10 @@ describe("Abilities - Gorilla Tactics", () => {
     game.override
       .battleStyle("single")
       .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset([Moves.SPLASH, Moves.DISABLE])
+      .enemyMoveset(Moves.SPLASH)
       .enemySpecies(Species.MAGIKARP)
       .enemyLevel(30)
-      .moveset([Moves.SPLASH, Moves.TACKLE, Moves.GROWL])
+      .moveset([Moves.SPLASH, Moves.TACKLE, Moves.GROWL, Moves.METRONOME])
       .ability(Abilities.GORILLA_TACTICS);
   });
 
@@ -39,8 +40,6 @@ describe("Abilities - Gorilla Tactics", () => {
     const initialAtkStat = darmanitan.getStat(Stat.ATK);
 
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.SPLASH);
-
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(darmanitan.getStat(Stat.ATK, false)).toBeCloseTo(initialAtkStat * 1.5);
@@ -50,6 +49,7 @@ describe("Abilities - Gorilla Tactics", () => {
   });
 
   it("should struggle if the only usable move is disabled", async () => {
+    game.override.enemyMoveset([Moves.DISABLE, Moves.SPLASH]);
     await game.classicMode.startBattle([Species.GALAR_DARMANITAN]);
 
     const darmanitan = game.scene.getPlayerPokemon()!;
@@ -77,5 +77,19 @@ describe("Abilities - Gorilla Tactics", () => {
 
     await game.phaseInterceptor.to("MoveEndPhase");
     expect(darmanitan.hp).toBeLessThan(darmanitan.getMaxHp());
+  });
+
+  it("should lock into calling moves, even if also in moveset", async () => {
+    vi.spyOn(RandomMoveAttr.prototype, "getMoveOverride").mockReturnValue(Moves.TACKLE);
+    await game.classicMode.startBattle([Species.GALAR_DARMANITAN]);
+
+    const darmanitan = game.scene.getPlayerPokemon()!;
+
+    game.move.select(Moves.METRONOME);
+    await game.phaseInterceptor.to("TurnEndPhase");
+
+    // Gorilla Tactics should bypass dancer and instruct
+    expect(darmanitan.isMoveRestricted(Moves.TACKLE)).toBe(true);
+    expect(darmanitan.isMoveRestricted(Moves.METRONOME)).toBe(false);
   });
 });

@@ -2,7 +2,6 @@ import { Stat } from "#enums/stat";
 import { StockpilingTag } from "#app/data/battler-tags";
 import { allMoves } from "#app/data/moves/move";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
-import type { TurnMove } from "#app/field/pokemon";
 import { MoveResult } from "#app/field/pokemon";
 import GameManager from "#test/testUtils/gameManager";
 import { Abilities } from "#enums/abilities";
@@ -127,7 +126,7 @@ describe("Moves - Spit Up", () => {
     game.move.select(Moves.SPIT_UP);
     await game.phaseInterceptor.to(TurnInitPhase);
 
-    expect(pokemon.getMoveHistory().at(-1)).toMatchObject<TurnMove>({
+    expect(pokemon.getMoveHistory().at(-1)).toMatchObject({
       move: Moves.SPIT_UP,
       result: MoveResult.FAIL,
       targets: [game.scene.getEnemyPokemon()!.getBattlerIndex()],
@@ -154,7 +153,7 @@ describe("Moves - Spit Up", () => {
 
       await game.phaseInterceptor.to(TurnInitPhase);
 
-      expect(pokemon.getMoveHistory().at(-1)).toMatchObject<TurnMove>({
+      expect(pokemon.getMoveHistory().at(-1)).toMatchObject({
         move: Moves.SPIT_UP,
         result: MoveResult.SUCCESS,
         targets: [game.scene.getEnemyPokemon()!.getBattlerIndex()],
@@ -186,7 +185,7 @@ describe("Moves - Spit Up", () => {
       game.move.select(Moves.SPIT_UP);
       await game.phaseInterceptor.to(TurnInitPhase);
 
-      expect(pokemon.getMoveHistory().at(-1)).toMatchObject<TurnMove>({
+      expect(pokemon.getMoveHistory().at(-1)).toMatchObject({
         move: Moves.SPIT_UP,
         result: MoveResult.SUCCESS,
         targets: [game.scene.getEnemyPokemon()!.getBattlerIndex()],
