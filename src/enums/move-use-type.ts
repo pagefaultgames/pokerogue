@@ -12,15 +12,18 @@ export enum MoveUseType {
   * This move was used normally (i.e. clicking on the button) or called via Instruct.
   * It deducts PP from the user's moveset (failing if out of PP), and interacts normally with other moves and abilities.
   */
-  NORMAL,
+  NORMAL = 1,
 
   /**
-   * This move was called by an effect that ignores PP, such as a consecutively executed move.
-   * Identical to {@linkcode MoveUseType.NORMAL}, except the move **does not consume PP** on use
-   * and **will not fail** if none is left before its execution.
+   * This move was called by an effect that ignores PP, such as a consecutively executed move (e.g. Outrage).
+
+   * PP-ignoring moves (as their name implies) **do not consume PP** when used
+   * and **will not fail** if none is left prior to execution.
+   * All other effects remain identical to {@linkcode MoveUseType.NORMAL}.
+
    * PP can still be reduced by other effects (such as Spite or Eerie Spell).
    */
-  IGNORE_PP,
+  IGNORE_PP = 2,
 
   /**
    * This move was called indirectly by an out-of-turn effect other than Instruct or the user's previous move.
@@ -32,7 +35,7 @@ export enum MoveUseType {
 
    * They still respect the user's volatile status conditions and confusion (though will uniquely _cure freeze and sleep before use_).
    */
-  INDIRECT,
+  INDIRECT = 3,
 
   /**
     * This move was called as part of another move's effect (such as for most {@link https://bulbapedia.bulbagarden.net/wiki/Category:Moves_that_call_other_moves | Move-calling moves}).
@@ -43,7 +46,7 @@ export enum MoveUseType {
     * They are _not ignored_ by other move-calling moves and abilities (unlike {@linkcode MoveUseType.FOLLOW_UP} and {@linkcode MoveUseType.REFLECTED}),
     * but still inherit the former's disregard for moveset-related effects.
     */
-  FOLLOW_UP,
+  FOLLOW_UP = 4,
 
   /**
    * This move was reflected by Magic Coat or Magic Bounce.
@@ -52,11 +55,11 @@ export enum MoveUseType {
    * and retain the same copy prevention as {@linkcode MoveUseType.FOLLOW_UP}, but additionally
    * **cannot be reflected by other reflecting effects**.
    */
-  REFLECTED
+  REFLECTED = 5
 }
 
 /**
- * Comment block to prevent auto-import removal.
+ * Comment block to prevent IDE auto-import removal.
  * {@linkcode BattlerTagLapseType}
  * {@linkcode PostDancingMoveAbAttr}
  */
