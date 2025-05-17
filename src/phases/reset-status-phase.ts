@@ -1,7 +1,5 @@
 import type Pokemon from "#app/field/pokemon";
 import { BattlePhase } from "#app/phases/battle-phase";
-import { BattlerTagType } from "#enums/battler-tag-type";
-import { StatusEffect } from "#enums/status-effect";
 
 /**
  * Phase which handles resetting a Pokemon's status to none
@@ -22,23 +20,7 @@ export class ResetStatusPhase extends BattlePhase {
   }
 
   public override start() {
-    const lastStatus = this.pokemon.status?.effect;
-    this.pokemon.status = null;
-    if (lastStatus === StatusEffect.SLEEP) {
-      this.pokemon.setFrameRate(10);
-      if (this.pokemon.getTag(BattlerTagType.NIGHTMARE)) {
-        this.pokemon.lapseTag(BattlerTagType.NIGHTMARE);
-      }
-    }
-    if (this.affectConfusion) {
-      if (this.pokemon.getTag(BattlerTagType.CONFUSED)) {
-        this.pokemon.lapseTag(BattlerTagType.CONFUSED);
-      }
-    }
-    if (this.reloadAssets) {
-      this.pokemon.loadAssets(false).then(() => this.pokemon.playAnim());
-    }
-    this.pokemon.updateInfo(true);
+    this.pokemon.clearStatus(this.affectConfusion, this.reloadAssets);
     this.end();
   }
 }

@@ -768,32 +768,27 @@ class SpikesTag extends ArenaTrapTag {
   }
 
   override activateTrap(pokemon: Pokemon, simulated: boolean): boolean {
-    if (pokemon.isGrounded()) {
-      const cancelled = new BooleanHolder(false);
-      applyAbAttrs(BlockNonDirectDamageAbAttr, pokemon, cancelled);
-
-      if (simulated) {
-        return !cancelled.value;
-      }
-
-      if (!cancelled.value) {
-        const damageHpRatio = 1 / (10 - 2 * this.layers);
-        const damage = toDmgValue(pokemon.getMaxHp() * damageHpRatio);
-
-        globalScene.queueMessage(
-          i18next.t("arenaTag:spikesActivateTrap", {
-            pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-          }),
-        );
-        pokemon.damageAndUpdate(damage, { result: HitResult.INDIRECT });
-        if (pokemon.turnData) {
-          pokemon.turnData.damageTaken += damage;
-        }
-        return true;
-      }
+    if (!pokemon.isGrounded()) {
+      return false;
     }
 
-    return false;
+    const cancelled = new BooleanHolder(false);
+    applyAbAttrs(BlockNonDirectDamageAbAttr, pokemon, cancelled);
+    if (simulated || cancelled.value) {
+      return !cancelled.value;
+    }
+
+    const damageHpRatio = 1 / (10 - 2 * this.layers);
+    const damage = toDmgValue(pokemon.getMaxHp() * damageHpRatio);
+
+    globalScene.queueMessage(
+      i18next.t("arenaTag:spikesActivateTrap", {
+        pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+      }),
+    );
+    pokemon.damageAndUpdate(damage, { result: HitResult.INDIRECT });
+    pokemon.turnData.damageTaken += damage;
+    return true;
   }
 }
 
@@ -962,31 +957,28 @@ class StealthRockTag extends ArenaTrapTag {
   override activateTrap(pokemon: Pokemon, simulated: boolean): boolean {
     const cancelled = new BooleanHolder(false);
     applyAbAttrs(BlockNonDirectDamageAbAttr, pokemon, cancelled);
-
     if (cancelled.value) {
       return false;
     }
 
     const damageHpRatio = this.getDamageHpRatio(pokemon);
+    if (!damageHpRatio) {
+      return false;
+    }
 
-    if (damageHpRatio) {
-      if (simulated) {
-        return true;
-      }
-      const damage = toDmgValue(pokemon.getMaxHp() * damageHpRatio);
-      globalScene.queueMessage(
-        i18next.t("arenaTag:stealthRockActivateTrap", {
-          pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-        }),
-      );
-      pokemon.damageAndUpdate(damage, { result: HitResult.INDIRECT });
-      if (pokemon.turnData) {
-        pokemon.turnData.damageTaken += damage;
-      }
+    if (simulated) {
       return true;
     }
 
-    return false;
+    const damage = toDmgValue(pokemon.getMaxHp() * damageHpRatio);
+    globalScene.queueMessage(
+      i18next.t("arenaTag:stealthRockActivateTrap", {
+        pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+      }),
+    );
+    pokemon.damageAndUpdate(damage, { result: HitResult.INDIRECT });
+    pokemon.turnData.damageTaken += damage;
+    return true;
   }
 
   getMatchupScoreMultiplier(pokemon: Pokemon): number {

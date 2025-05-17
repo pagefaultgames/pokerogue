@@ -146,7 +146,7 @@ export class EvolutionPhase extends Phase {
         sprite.setPipelineData("shiny", this.pokemon.shiny);
         sprite.setPipelineData("variant", this.pokemon.variant);
         ["spriteColors", "fusionSpriteColors"].map(k => {
-          if (this.pokemon.summonData?.speciesForm) {
+          if (this.pokemon.summonData.speciesForm) {
             k += "Base";
           }
           sprite.pipelineData[k] = this.pokemon.getSprite().pipelineData[k];
@@ -178,7 +178,7 @@ export class EvolutionPhase extends Phase {
             sprite.setPipelineData("shiny", evolvedPokemon.shiny);
             sprite.setPipelineData("variant", evolvedPokemon.variant);
             ["spriteColors", "fusionSpriteColors"].map(k => {
-              if (evolvedPokemon.summonData?.speciesForm) {
+              if (evolvedPokemon.summonData.speciesForm) {
                 k += "Base";
               }
               sprite.pipelineData[k] = evolvedPokemon.getSprite().pipelineData[k];

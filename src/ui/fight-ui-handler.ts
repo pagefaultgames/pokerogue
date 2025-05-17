@@ -127,7 +127,7 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
     messageHandler.commandWindow.setVisible(false);
     messageHandler.movesWindowContainer.setVisible(true);
     const pokemon = (globalScene.getCurrentPhase() as CommandPhase).getPokemon();
-    if (pokemon.battleSummonData.turnCount <= 1) {
+    if (pokemon.tempSummonData.turnCount <= 1) {
       this.setCursor(0);
     } else {
       this.setCursor(this.getCursor());
@@ -305,7 +305,7 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
     const effectiveness = opponent.getMoveEffectiveness(
       pokemon,
       pokemonMove.getMove(),
-      !opponent.battleData?.abilityRevealed,
+      !opponent.waveData.abilityRevealed,
       undefined,
       undefined,
       true,
@@ -356,7 +356,7 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
         opponent.getMoveEffectiveness(
           pokemon,
           pokemonMove.getMove(),
-          !opponent.battleData.abilityRevealed,
+          !opponent.waveData.abilityRevealed,
           undefined,
           undefined,
           true,

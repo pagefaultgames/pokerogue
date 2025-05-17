@@ -598,7 +598,7 @@ export class Egg {
   }
 
   private getEggTier(): EggTier {
-    return speciesEggTiers[this.species];
+    return speciesEggTiers[this.species] ?? EggTier.COMMON;
   }
 
   ////

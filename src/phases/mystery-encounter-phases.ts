@@ -229,8 +229,7 @@ export class MysteryEncounterBattleStartCleanupPhase extends Phase {
 
     // Lapse any residual flinches/endures but ignore all other turn-end battle tags
     const includedLapseTags = [BattlerTagType.FLINCHED, BattlerTagType.ENDURING];
-    const field = globalScene.getField(true).filter(p => p.summonData);
-    field.forEach(pokemon => {
+    globalScene.getField(true).forEach(pokemon => {
       const tags = pokemon.summonData.tags;
       tags
         .filter(
