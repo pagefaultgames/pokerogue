@@ -13,6 +13,8 @@ export class SelectBiomePhase extends BattlePhase {
   start() {
     super.start();
 
+    globalScene.resetSeed();
+
     const currentBiome = globalScene.arena.biomeType;
     const nextWaveIndex = globalScene.currentBattle.waveIndex + 1;
 
