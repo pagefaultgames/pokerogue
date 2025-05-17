@@ -146,7 +146,7 @@ export class EncounterPhase extends BattlePhase {
       const enemyPokemon = globalScene.getEnemyParty()[e];
       if (e < (battle.double ? 2 : 1)) {
         enemyPokemon.setX(-66 + enemyPokemon.getFieldPositionOffset()[0]);
-        enemyPokemon.resetSummonData();
+        enemyPokemon.fieldSetup(true);
       }
 
       if (!this.loaded) {

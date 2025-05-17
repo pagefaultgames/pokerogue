@@ -354,8 +354,8 @@ export class MoveEffectPhase extends PokemonPhase {
         move.id as Moves,
         user,
         firstTarget?.getBattlerIndex() ?? BattlerIndex.ATTACKER,
-        // Field moves and some moves used in mystery encounters should be played even on an empty field
-        fieldMove || (globalScene.currentBattle?.mysteryEncounter?.hasBattleAnimationsWithoutTargets ?? false),
+        // Some moves used in mystery encounters should be played even on an empty field
+        globalScene.currentBattle?.mysteryEncounter?.hasBattleAnimationsWithoutTargets ?? false,
       ).play(move.hitsSubstitute(user, firstTarget), () => this.postAnimCallback(user, targets));
 
       return;
@@ -594,7 +594,7 @@ export class MoveEffectPhase extends PokemonPhase {
     }
 
     const accuracyMultiplier = user.getAccuracyMultiplier(target, this.move);
-    const rand = user.randSeedInt(100);
+    const rand = user.randBattleSeedInt(100);
 
     if (rand < moveAccuracy * accuracyMultiplier) {
       return [HitCheckResult.HIT, effectiveness];
