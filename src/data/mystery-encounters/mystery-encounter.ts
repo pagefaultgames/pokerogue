@@ -344,12 +344,13 @@ export default class MysteryEncounter implements IMysteryEncounter {
    */
   private meetsPrimaryRequirementAndPrimaryPokemonSelected(): boolean {
     let qualified: PlayerPokemon[] = globalScene.getPlayerParty();
-    if (!this.primaryPokemonRequirements || this.primaryPokemonRequirements.length === 0) {
+    if (!this.primaryPokemonRequirements?.length) {
       // If we lack specified criterion, grab the first on-field pokemon, or else the first pokemon allowed in battle
       const activeMons = qualified.filter(p => p.isAllowedInBattle());
       this.primaryPokemon = activeMons.find(p => p.isOnField()) ?? activeMons[0];
       return true;
     }
+
     for (const req of this.primaryPokemonRequirements) {
       if (req.meetsRequirement()) {
         qualified = qualified.filter(pkmn => req.queryParty(globalScene.getPlayerParty()).includes(pkmn));

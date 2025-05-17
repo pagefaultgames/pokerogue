@@ -43,7 +43,7 @@ import { CommonAnimPhase } from "#app/phases/common-anim-phase";
 import { MoveChargePhase } from "#app/phases/move-charge-phase";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { MoveEndPhase } from "#app/phases/move-end-phase";
-import { NumberHolder } from "#app/utils/common";
+import { getEnumValues, NumberHolder } from "#app/utils/common";
 import { Abilities } from "#enums/abilities";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
@@ -160,7 +160,7 @@ export class MovePhase extends BattlePhase {
     }
 
     this.pokemon.turnData.acted = true;
-    this.pokemon.turnData.lastMoveDamageDealt = 0;
+    this.pokemon.turnData.lastMoveDamageDealt = Array(Math.max(...getEnumValues(BattlerIndex))).fill(0);
 
     // Reset hit-related turn data when starting follow-up moves (e.g. Metronomed moves, Dancer repeats)
     if (this.followUp) {

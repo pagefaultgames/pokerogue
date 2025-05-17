@@ -80,6 +80,7 @@ import type { ArenaTrapTag, SuppressAbilitiesTag } from "#app/data/arena-tag";
 import { SelectBiomePhase } from "#app/phases/select-biome-phase";
 import { noAbilityTypeOverrideMoves } from "../moves/invalid-moves";
 import { ForceSwitch } from "../mixins/force-switch";
+import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 
 export class BlockRecoilDamageAttr extends AbAttr {
   constructor() {
@@ -1301,7 +1302,6 @@ export class PokemonTypeChangeAbAttr extends PreAttackAbAttr {
     if (!pokemon.isTerastallized &&
     move.id !== Moves.STRUGGLE &&
     /**
-     * Skip moves that call other moves because these moves generate a following move that will trigger this ability attribute
      * @see {@link https://bulbapedia.bulbagarden.net/wiki/Category:Moves_that_call_other_moves}
      */
     !move.findAttr((attr) =>
@@ -2818,8 +2818,12 @@ export class CommanderAbAttr extends AbAttr {
 
     // TODO: Should this work with X + Dondozo fusions?
     const ally = pokemon.getAlly();
-    return globalScene.currentBattle?.double && !isNullOrUndefined(ally) && ally.species.speciesId === Species.DONDOZO
-           && !(ally.isFainted() || ally.getTag(BattlerTagType.COMMANDED));
+    return (
+      globalScene.currentBattle?.double
+      && ally?.species.speciesId === Species.DONDOZO
+      && !ally.isFainted()
+      && !ally.getTag(BattlerTagType.COMMANDED)
+    );
   }
 
   override apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: null, args: any[]): void {
@@ -4105,7 +4109,6 @@ export class PostTurnRestoreBerryAbAttr extends PostTurnAbAttr {
       return false;
     }
 
-    // Clamp procChance to [0, 1]. Skip if didn't proc (less than pass)
     const pass = Phaser.Math.RND.realInRange(0, 1);
     return Phaser.Math.Clamp(this.procChance(pokemon), 0, 1) >= pass;
   }
@@ -5578,7 +5581,7 @@ export class PostDamageForceSwitchAbAttr extends ForceSwitch(PostDamageAbAttr) {
 
   constructor(switchType: NormalSwitchType = SwitchType.SWITCH, hpRatio = 0.5) {
     super();
-    this.selfSwitch = false; // TODO: change if any abilities get damage
+    this.selfSwitch = false; // TODO: change if any force switch abilities with red card exist
     this.switchType = switchType;
     this.hpRatio = hpRatio;
   }
@@ -5600,34 +5603,64 @@ export class PostDamageForceSwitchAbAttr extends ForceSwitch(PostDamageAbAttr) {
     source: Pokemon | undefined,
     _args: any[],
   ): boolean {
-    const userLastMove = pokemon.getLastXMoves()[0];
-    // Will not activate when the Pokémon's HP is lowered by cutting its own HP
-    const forbiddenAttackingMoves = new Set<Moves>([ Moves.BELLY_DRUM, Moves.SUBSTITUTE, Moves.CURSE, Moves.PAIN_SPLIT ]);
-    if (!isNullOrUndefined(userLastMove) && forbiddenAttackingMoves.has(userLastMove.move)) {
+
+    // Skip move checks for damage not occurring due to a move (eg: hazards)
+    const currentPhase = globalScene.getCurrentPhase();
+    if (currentPhase instanceof MoveEffectPhase && !this.passesMoveChecks(pokemon, source)) {
       return false;
     }
 
-    // Skip last move checks if no enemy move
+    if (!this.wasKnockedBelowHalf(pokemon, damage)) {
+      return false;
+    }
+
+    return this.canSwitchOut(pokemon)
+  }
+
+  /**
+   * Perform move checks to determine if this pokemon should switch out.
+   * @param pokemon - The {@linkcode Pokemon} with this ability
+   * @param source - The {@linkcode Pokemon} whose attack caused the user to switch out,
+   * or `undefined` if the damage source was indirect.
+   * @returns `true` if this Pokemon should be allowed to switch out.
+   */
+  private passesMoveChecks(pokemon: Pokemon, source: Pokemon | undefined): boolean {
+    // Wimp Out and Emergency Exit...
+    const currentPhase = globalScene.getCurrentPhase() as MoveEffectPhase;
+    const currentMove = currentPhase.move;
+
+    // will not activate from self-induced HP cutting...
+    // TODO: Verify that Fillet Away and Clangorous Soul proc wimp out
+    const hpCutMoves = new Set<Moves>([ Moves.CURSE, Moves.BELLY_DRUM, Moves.SUBSTITUTE, Moves.PAIN_SPLIT, Moves.CLANGOROUS_SOUL, Moves.FILLET_AWAY]);
+    // NB: Given this attribute is only applied after _taking damage_ or recieving a damaging attack,
+    // a failed Substitute or non-ghost type Curse will not trigger this ability to begin with.
+    const notHpCut = !hpCutMoves.has(currentMove.id)
+
+    // will not activate for forced switch moves (which trigger before wimp out activates)...
+    const notForceSwitched = ![Moves.DRAGON_TAIL, Moves.CIRCLE_THROW].includes(currentMove.id)
+
+    // and will not activate if the Pokemon is currently in the air from Sky Drop.
+    // TODO: Make this check the user's tags once Sky Drop is fully implemented -
+    // we could be sky dropped by another Pokemon or take indirect damage while skybound (both of which render this check moot)
     const lastMove = source?.getLastXMoves()[0]
-    if (
-      lastMove &&
-      // Will not activate for forced switch moves (triggers before wimp out activates)
-      (allMoves[lastMove.move].hasAttr(ForceSwitchOutAttr)
-      // Will not activate if the Pokémon's HP falls below half while it is in the air during Sky Drop
-      // TODO: Make this check the user's tags rather than the last move used by the target - we could be lifted by another pokemon
-      || (lastMove.move === Moves.SKY_DROP && lastMove.result === MoveResult.OTHER))
-    ) {
-      return false;
-    }
+    const notSkyDropped = !(lastMove?.move === Moves.SKY_DROP && lastMove.result === MoveResult.OTHER)
 
-    // Check for HP percents - don't switch if the move didn't knock us below our switch threshold
-    // (either because we were below it to begin with or are still above it after the hit).
+    return notHpCut && notForceSwitched && notSkyDropped;
+  }
+
+  /**
+   * Perform HP checks to determine if this pokemon should switch out.
+   * The switch fails if the pokemon was below {@linkcode hpRatio} before being hit
+   * or is still above it after the hit.
+   * @param pokemon - The {@linkcode Pokemon} with this ability
+   * @param damage - The amount of damage taken.
+   * @returns `true` if this Pokemon was knocked below half after `damage` was applied
+   */
+  private wasKnockedBelowHalf(pokemon: Pokemon, damage: number) {
+    // NB: This occurs in `MoveEffectPhase` _after_ attack damage has been dealt,
+    // so `pokemon.hp` contains the post-taking damage hp value.
     const hpNeededToSwitch = pokemon.getMaxHp() * this.hpRatio;
-    if (pokemon.hp + damage < hpNeededToSwitch || pokemon.hp >= hpNeededToSwitch) {
-      return false;
-    }
-
-    return this.canSwitchOut(pokemon, undefined)
+    return pokemon.hp < hpNeededToSwitch && pokemon.hp + damage >= hpNeededToSwitch
   }
 
   /**
@@ -6913,12 +6946,10 @@ export function initAbilities() {
       .attr(PostDefendStatStageChangeAbAttr, (target, user, move) => move.category !== MoveCategory.STATUS, Stat.DEF, 1),
     new Ability(Abilities.WIMP_OUT, 7)
       .attr(PostDamageForceSwitchAbAttr)
-      .condition(getSheerForceHitDisableAbCondition())
-      .edgeCase(), // Should not trigger when hurting itself in confusion, causes Fake Out to fail turn 1 and succeed turn 2 if pokemon is switched out before battle start via playing in Switch Mode
+      .condition(getSheerForceHitDisableAbCondition()),
     new Ability(Abilities.EMERGENCY_EXIT, 7)
       .attr(PostDamageForceSwitchAbAttr)
-      .condition(getSheerForceHitDisableAbCondition())
-      .edgeCase(), // Should not trigger when hurting itself in confusion, causes Fake Out to fail turn 1 and succeed turn 2 if pokemon is switched out before battle start via playing in Switch Mode
+      .condition(getSheerForceHitDisableAbCondition()),
     new Ability(Abilities.WATER_COMPACTION, 7)
       .attr(PostDefendStatStageChangeAbAttr, (target, user, move) => user.getMoveType(move) === PokemonType.WATER && move.category !== MoveCategory.STATUS, Stat.DEF, 2),
     new Ability(Abilities.MERCILESS, 7)

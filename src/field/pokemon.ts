@@ -4757,7 +4757,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param ignoreFaintPhase - Whether to ignore adding a faint phase if the damage causes the target to faint; default `false`
    * @returns The amount of damage actually dealt.
    * @remarks
-   * This will not trigger "on damage" effects for direct damage moves, which instead occurs at the end of `MoveEffectPhase`.
+   * This will not trigger "on damage" effects for direct damage moves, instead occuring at the end of `MoveEffectPhase`.
    */
   damageAndUpdate(damage: number,
     {
@@ -4782,7 +4782,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     );
     globalScene.unshiftPhase(damagePhase);
 
-    // TODO: Review if wimp out battle skip actually needs this anymore
+    // Prevent enemies not on field from taking damage.
+    // TODO: Review if wimp out actually needs this anymore
     if (this.switchOutStatus) {
       damage = 0;
     }
@@ -4803,8 +4804,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     // Damage amount may have changed, but needed to be queued before calling damage function
     damagePhase.updateAmount(damage);
 
-    // Trigger PostDamageAbAttr (ie wimp out) for indirect damage only.
-    if (isIndirectDamage) {
+    // Trigger PostDamageAbAttr (ie wimp out) for indirect, non-confusion damage instances.
+    // We leave `source` as undefined for indirect hits to specify that the damage instance is indirect.
+    if (isIndirectDamage && result !== HitResult.CONFUSION) {
       applyPostDamageAbAttrs(
         PostDamageAbAttr,
         this,
@@ -5726,8 +5728,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * Reset this Pokemon's {@linkcode PokemonSummonData | SummonData} and {@linkcode PokemonTempSummonData | TempSummonData}
    * in preparation for switching pokemon, as well as removing any relevant on-switch tags.
    * @remarks
-   * This **SHOULD NOT** be called when a `SummonPhase` or `SwitchSummonPhase` is already being added,
-   * both of which call this method (directly or indirectly) on both pokemon changing positions.
+   * This **SHOULD NOT** be called when {@linkcode leaveField} is already being called,
+   * which already calls this function.
    */
   resetSummonData(): void {
     console.log(`resetSummonData called on Pokemon ${this.name}`)
@@ -5801,6 +5803,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   resetTurnData(): void {
+    console.log(`resetTurnData called on Pokemon ${this.name}`)
     this.turnData = new PokemonTurnData();
   }
 
@@ -6311,7 +6314,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param destroy - Whether to destroy this Pokemon once it leaves the field; default `false`
    * @remarks
    * This **SHOULD NOT** be called when a `SummonPhase` or `SwitchSummonPhase` is already being added,
-   * which can lead to erroneous resetting of {@linkcode turnData} or {@linkcode summonData}.
+   * which can lead to premature resetting of {@klinkcode turnData} and {@linkcode summonData}.
    */
   leaveField(clearEffects = true, hideInfo = true, destroy = false) {
     console.log(`leaveField called on Pokemon ${this.name}`)
@@ -7960,12 +7963,20 @@ export class PokemonTurnData {
    */
   public hitsLeft = -1;
   /**
-   * The amount of damage dealt by this Pokemon's last attack.
-   * Reset upon successfully using a move and used to enable internal tracking of damage amounts.
+   * The final amount of damage dealt by this Pokemon's last attack against each of its targets,
+   * mapped by their respective `BattlerIndex`es.
+   * Reset to an empty array upon attempting to use a move,
+   * and is used to calculate various damage-related effects (Shell Bell, U-Turn + Wimp Out interactions, etc.).
    */
-  public lastMoveDamageDealt = 0;
+  public lastMoveDamageDealt: number[] = [];
+  /**
+   * The amount of damage dealt by this Pokemon's last hit.
+   * Used to calculate recoil damage amounts.
+   * TODO: Merge with `lastMoveDamageDealt` if any spread recoil moves are added
+   */
   public singleHitDamageDealt = 0;
-  // TODO: Rework this into "damage taken last" counter for metal burst and co.
+  // TODO: Make this into a "damage taken last" counter for metal burst and co.
+  // This is currently ONLY USED FOR ASSURANCE
   public damageTaken = 0;
   public attacksReceived: AttackMoveResult[] = [];
   public order: number;

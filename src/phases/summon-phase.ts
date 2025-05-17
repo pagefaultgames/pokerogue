@@ -274,6 +274,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
       globalScene.unshiftPhase(new ShinySparklePhase(pokemon.getBattlerIndex()));
     }
 
+    // TODO: This might be a duplicate - check to see if can be removed without breaking things
     pokemon.resetTurnData();
 
     if (

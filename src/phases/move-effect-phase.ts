@@ -3,6 +3,7 @@ import { globalScene } from "#app/global-scene";
 import {
   AddSecondStrikeAbAttr,
   AlwaysHitAbAttr,
+  applyAbAttrs,
   applyPostAttackAbAttrs,
   applyPostDamageAbAttrs,
   applyPostDefendAbAttrs,
@@ -78,6 +79,7 @@ import type Move from "#app/data/moves/move";
 import { isFieldTargeted } from "#app/data/moves/move-utils";
 import { FaintPhase } from "./faint-phase";
 import { DamageAchv } from "#app/system/achv";
+import { userInfo } from "node:os";
 
 type HitCheckEntry = [HitCheckResult, TypeDamageMultiplier];
 
@@ -95,7 +97,7 @@ export class MoveEffectPhase extends PokemonPhase {
 
   /** Is this the first strike of a move? */
   private firstHit: boolean;
-  /** Is this the last strike of a move? */
+  /** Is this the last strike of a move (either due to running out of hits or all targets being fainted/immune)? */
   private lastHit: boolean;
 
   /** Phases queued during moves */
@@ -181,7 +183,6 @@ export class MoveEffectPhase extends PokemonPhase {
    * Queue the phaes that should occur when the target reflects the move back to the user
    * @param user - The {@linkcode Pokemon} using this phase's invoked move
    * @param target - The {@linkcode Pokemon} that is reflecting the move
-   *
    */
   private queueReflectedMove(user: Pokemon, target: Pokemon): void {
     const newTargets = this.move.isMultiTarget()
@@ -342,7 +343,7 @@ export class MoveEffectPhase extends PokemonPhase {
     const targets = this.conductHitChecks(user, fieldMove);
 
     this.firstHit = user.turnData.hitCount === user.turnData.hitsLeft;
-    this.lastHit = user.turnData.hitsLeft === 1 || !targets.some(t => t.isActive(true));
+    this.lastHit = user.turnData.hitsLeft === 1 || targets.every(t => !t.isActive(true));
 
     // Play the animation if the move was successful against any of its targets or it has a POST_TARGET effect (like self destruct)
     if (
@@ -766,6 +767,7 @@ export class MoveEffectPhase extends PokemonPhase {
    * - Triggering form changes and emergency exit / wimp out if this is the last hit
    *
    * @param target - the {@linkcode Pokemon} hit by this phase's move.
+   * @param targetIndex - The index of the target (used to update damage dealt amounts)
    * @param effectiveness - The effectiveness of the move (as previously evaluated in {@linkcode hitCheck})
    * @param firstTarget - Whether this is the first target successfully struck by the move
    */
@@ -785,7 +787,13 @@ export class MoveEffectPhase extends PokemonPhase {
     }
     if (this.lastHit) {
       globalScene.triggerPokemonFormChange(user, SpeciesFormChangePostMoveTrigger);
-      applyPostDamageAbAttrs(PostDamageAbAttr, target, target.turnData.lastMoveDamageDealt);
+      applyPostDamageAbAttrs(
+        PostDamageAbAttr,
+        target,
+        user.turnData.lastMoveDamageDealt[target.getBattlerIndex()],
+        false,
+        user,
+      );
     }
   }
 
@@ -863,7 +871,7 @@ export class MoveEffectPhase extends PokemonPhase {
       globalScene.gameData.gameStats.highestDamage = Math.max(damage, globalScene.gameData.gameStats.highestDamage);
     }
 
-    user.turnData.lastMoveDamageDealt += damage;
+    user.turnData.lastMoveDamageDealt[target.getBattlerIndex()] += damage;
     user.turnData.singleHitDamageDealt = damage;
     target.battleData.hitCount++;
     // TODO: this might be incorrect for counter moves

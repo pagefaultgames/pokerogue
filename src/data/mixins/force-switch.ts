@@ -17,51 +17,49 @@ import { applyAbAttrs, ForceSwitchOutImmunityAbAttr } from "../abilities/ability
 import type { MoveAttr } from "../moves/move";
 import { getPokemonNameWithAffix } from "#app/messages";
 import type { AbAttr } from "../abilities/ab-attrs/ab-attr";
-import type { TrainerSlot } from "#enums/trainer-slot";
 
-// NB: This shouldn't be terribly hard to extend from if switching items are added (à la Eject Button)
+// NB: This shouldn't be terribly hard to extend from items if switching items are added (à la Eject Button/Red Card);
 type SubMoveOrAbAttr = (new (...args: any[]) => MoveAttr) | (new (...args: any[]) => AbAttr);
 
-/** Mixin to handle shared logic for switch-in moves and abilities. */
+/** Mixin to handle shared logic for switching moves and abilities. */
 export function ForceSwitch<TBase extends SubMoveOrAbAttr>(Base: TBase) {
   return class ForceSwitchClass extends Base {
     protected selfSwitch = false;
     protected switchType: NormalSwitchType = SwitchType.SWITCH;
 
     /**
-     * Determines if a Pokémon can be forcibly switched out based on its status, the opponent's status and battle conditions.
-     * @see {@linkcode performOpponentChecks} for opponent-related check code.
-
-     * @param switchOutTarget - The {@linkcode Pokemon} attempting to switch out.
-     * @param opponent - The {@linkcode Pokemon} opposing the currently switched out Pokemon.
-     * Unused if {@linkcode selfSwitch} is `true`, as it is only used to check Suction Cups.
+     * Determines if a Pokémon can be forcibly switched out based on its status and battle conditions.
+     * @param switchOutTarget - The {@linkcode Pokemon} being switched out.
      * @returns Whether {@linkcode switchOutTarget} can be switched out by the current Move or Ability.
      */
-    protected canSwitchOut(switchOutTarget: Pokemon, opponent: Pokemon | undefined): boolean {
+    protected canSwitchOut(switchOutTarget: Pokemon): boolean {
       const isPlayer = switchOutTarget instanceof PlayerPokemon;
 
-      if (!this.selfSwitch && opponent && !this.performOpponentChecks(switchOutTarget, opponent)) {
+      // If we aren't switching ourself out, ensure the target in question can actually be switched out by us
+      if (!this.selfSwitch && !this.performForceSwitchChecks(switchOutTarget)) {
         return false;
       }
 
+      // Wild enemies should not be allowed to flee with baton pass, nor by any means on X0 waves (don't want easy boss wins)
       if (!isPlayer && globalScene.currentBattle.battleType === BattleType.WILD) {
-        // enemies should not be allowed to flee with baton pass, nor by any means on X0 waves (don't want easy boss wins)
         return this.switchType !== SwitchType.BATON_PASS && globalScene.currentBattle.waveIndex % 10 !== 0;
       }
 
-      // Finally, ensure that we have valid switch out targets.
-      const reservePartyMembers = globalScene.getBackupPartyMembers(
+      // Finally, ensure that a trainer switching out has at least 1 valid reserve member to send in.
+      const reservePartyMembers = globalScene.getBackupPartyMemberIndices(
         isPlayer,
-        (switchOutTarget as EnemyPokemon).trainerSlot as TrainerSlot | undefined,
-      ); // evaluates to `undefined` if not present
-      if (reservePartyMembers.length === 0) {
-        return false;
-      }
-
-      return true;
+        !isPlayer ? (switchOutTarget as EnemyPokemon).trainerSlot : undefined,
+      );
+      return reservePartyMembers.length > 0;
     }
 
-    protected performOpponentChecks(switchOutTarget: Pokemon, opponent: Pokemon): boolean {
+    /**
+     * Perform various checks to confirm the switched out target can be forcibly removed from the field
+     * by another Pokemon.
+     * @param switchOutTarget - The {@linkcode Pokemon} being switched out
+     * @returns Whether {@linkcode switchOutTarget} can be switched out by another Pokemon.
+     */
+    private performForceSwitchChecks(switchOutTarget: Pokemon): boolean {
       // Dondozo with an allied Tatsugiri in its mouth cannot be forced out by enemies
       const commandedTag = switchOutTarget.getTag(BattlerTagType.COMMANDED);
       if (commandedTag?.getSourcePokemon()?.isActive(true)) {
@@ -70,8 +68,8 @@ export function ForceSwitch<TBase extends SubMoveOrAbAttr>(Base: TBase) {
 
       // Check for opposing switch block abilities (Suction Cups and co)
       const blockedByAbility = new BooleanHolder(false);
-      applyAbAttrs(ForceSwitchOutImmunityAbAttr, opponent, blockedByAbility);
-      if (!blockedByAbility.value) {
+      applyAbAttrs(ForceSwitchOutImmunityAbAttr, switchOutTarget, blockedByAbility);
+      if (blockedByAbility.value) {
         return false;
       }
 
@@ -97,7 +95,10 @@ export function ForceSwitch<TBase extends SubMoveOrAbAttr>(Base: TBase) {
       }
 
       if (!(switchOutTarget instanceof EnemyPokemon)) {
-        console.warn("Switched out target not instance of Player or enemy Pokemon!");
+        console.warn(
+          "Switched out target (index %i) neither player nor enemy Pokemon!",
+          switchOutTarget.getFieldIndex(),
+        );
         return;
       }
 
@@ -119,12 +120,12 @@ export function ForceSwitch<TBase extends SubMoveOrAbAttr>(Base: TBase) {
         return;
       }
 
-      // Pick a random player pokemon to switch out.
-      const reservePartyMembers = globalScene.getBackupPartyMembers(true);
-      const switchOutIndex = switchOutTarget.randSeedInt(reservePartyMembers.length);
+      // Pick a random eligible player pokemon to replace the switched out one.
+      const reservePartyMembers = globalScene.getBackupPartyMemberIndices(true);
+      const switchInIndex = reservePartyMembers[switchOutTarget.randSeedInt(reservePartyMembers.length)];
 
       globalScene.appendToPhase(
-        new SwitchSummonPhase(this.switchType, switchOutTarget.getFieldIndex(), switchOutIndex, false, true),
+        new SwitchSummonPhase(this.switchType, switchOutTarget.getFieldIndex(), switchInIndex, false, true),
         MoveEndPhase,
       );
     }
@@ -132,15 +133,16 @@ export function ForceSwitch<TBase extends SubMoveOrAbAttr>(Base: TBase) {
     private trySwitchTrainerPokemon(switchOutTarget: EnemyPokemon): void {
       // fallback for no trainer
       if (!globalScene.currentBattle.trainer) {
-        console.warn("Enemy trainer switch logic approached without a trainer!");
+        console.warn("Enemy trainer switch logic triggered without a trainer!");
         return;
       }
-      // Forced switches will to pick a random eligible pokemon, while
-      // choice-based switching uses the trainer's default switch behavior
-      const reservePartyMembers = globalScene.getBackupPartyMembers(false, switchOutTarget.trainerSlot);
+
+      // Forced switches will pick a random eligible pokemon from this trainer's side, while
+      // choice-based switching uses the trainer's default switch behavior.
+      const reservePartyIndices = globalScene.getBackupPartyMemberIndices(false, switchOutTarget.trainerSlot);
       const summonIndex =
         this.switchType === SwitchType.FORCE_SWITCH
-          ? switchOutTarget.randSeedInt(reservePartyMembers.length)
+          ? reservePartyIndices[switchOutTarget.randSeedInt(reservePartyIndices.length)]
           : (globalScene.currentBattle.trainer.getNextSummonIndex(switchOutTarget.trainerSlot) ?? 0);
       globalScene.appendToPhase(
         new SwitchSummonPhase(this.switchType, switchOutTarget.getFieldIndex(), summonIndex, false, false),
@@ -179,6 +181,10 @@ export function ForceSwitch<TBase extends SubMoveOrAbAttr>(Base: TBase) {
 
     public isBatonPass(): boolean {
       return this.switchType === SwitchType.BATON_PASS;
+    }
+
+    public isForcedSwitch(): boolean {
+      return this.switchType === SwitchType.FORCE_SWITCH;
     }
   };
 }

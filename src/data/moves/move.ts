@@ -2002,6 +2002,13 @@ export class FlameBurstAttr extends MoveEffectAttr {
   }
 }
 
+/**
+ * Attribute to KO the user while fully restoring HP/status of the next switched in Pokemon.
+ *
+ * Used for {@linkcode Moves.HEALING_WISH} and {@linkcode Moves.LUNAR_DANCE}.
+ * TODO: Implement "heal storing" if switched in pokemon is at full HP (likely with an end-of-turn ArenaTag).
+ * Will likely be blocked by the need for a "slot dependent ArenaTag" similar to Future Sight
+ */
 export class SacrificialFullRestoreAttr extends SacrificialAttr {
   protected restorePP: boolean;
   protected moveMessage: string;
@@ -2019,8 +2026,8 @@ export class SacrificialFullRestoreAttr extends SacrificialAttr {
     }
 
     // We don't know which party member will be chosen, so pick the highest max HP in the party
-    const party = user.isPlayer() ? globalScene.getPlayerParty() : globalScene.getEnemyParty();
-    const maxPartyMemberHp = party.map(p => p.getMaxHp()).reduce((maxHp: number, hp: number) => Math.max(hp, maxHp), 0);
+    const party: Pokemon[] = user.isPlayer() ? globalScene.getPlayerParty() : globalScene.getEnemyParty();
+    const maxPartyMemberHp = Math.max(...party.map(p => p.getMaxHp()));
 
     globalScene.pushPhase(
       new PokemonHealPhase(
@@ -6210,7 +6217,9 @@ export class RevivalBlessingAttr extends MoveEffectAttr {
   }
 }
 
-
+/**
+ * Attribute to forcibly switch out the user or target of a Move.
+ */
 export class ForceSwitchOutAttr extends ForceSwitch(MoveEffectAttr) {
   constructor(
     selfSwitch: boolean = false,
@@ -6221,53 +6230,66 @@ export class ForceSwitchOutAttr extends ForceSwitch(MoveEffectAttr) {
     this.switchType = switchType;
   }
 
-  apply(user: Pokemon, target: Pokemon, _move: Move, _args: any[]): boolean {
+  apply(user: Pokemon, target: Pokemon, move: Move, _args: any[]): boolean {
+    if (!this.getSwitchOutCondition()(user, target, move)) {
+      return false;
+    }
     this.doSwitch(this.selfSwitch ? user : target)
     return true;
   }
 
   getCondition(): MoveConditionFunc {
-    return this.getSwitchOutCondition();
+    // Damaging switch moves should not "fail" _per se_ upon a failed switch -
+    // they still succeed and deal damage (but just without actually switching out).
+    return (user, target, move) => (move.category !== MoveCategory.STATUS || this.getSwitchOutCondition()(user, target, move));
   }
 
+  /**
+   * Check whether the target can be switched out.
+   * @returns A {@linkcode MoveConditionFunc} that returns `true` if the switch out attempt should succeed.
+   */
   getSwitchOutCondition(): MoveConditionFunc {
     return (user, target, move) => {
-      const [switchOutTarget, opponent] = this.selfSwitch ? [user, target] : [target, user];
+      const switchOutTarget = this.selfSwitch ? user : target;
 
       // Don't allow wild mons to flee with U-turn et al.
-      if (switchOutTarget instanceof EnemyPokemon && globalScene.currentBattle.battleType === BattleType.WILD && !(this.selfSwitch && move.category !== MoveCategory.STATUS)) {
+      if (
+        switchOutTarget instanceof EnemyPokemon
+        && globalScene.currentBattle.battleType === BattleType.WILD
+        && this.selfSwitch
+        && move.category !== MoveCategory.STATUS
+      ) {
         return false;
       }
 
-      return this.canSwitchOut(switchOutTarget, opponent)
+      // Check for Wimp Out edge case - self-switching moves cannot proc if the attack also triggers Wimp Out/EE
+      const moveDmgDealt = user.turnData.lastMoveDamageDealt[target.getBattlerIndex()]
+      if (
+        this.selfSwitch
+        && moveDmgDealt
+        && target.getAbilityAttrs(PostDamageForceSwitchAbAttr).some(
+          p => p.canApplyPostDamage(target, moveDmgDealt, false, user, []))
+        ) {
+          return false;
+        }
+
+      return this.canSwitchOut(switchOutTarget)
     };
   }
 
   getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
-    if (!globalScene.getEnemyParty().find(p => p.isActive() && !p.isOnField())) {
+    const reservePartyMembers = globalScene.getBackupPartyMemberIndices(user.isPlayer() === this.selfSwitch, !user.isPlayer() ? (user as EnemyPokemon).trainerSlot : undefined)
+    if (reservePartyMembers.length === 0) {
       return -20;
     }
+
     let ret = this.selfSwitch ? Math.floor((1 - user.getHpRatio()) * 20) : super.getUserBenefitScore(user, target, move);
     if (this.selfSwitch && this.isBatonPass()) {
       const statStageTotal = user.getStatStages().reduce((s: number, total: number) => total += s, 0);
+      // TODO: Why do we use a sine tween?
       ret = ret / 2 + (Phaser.Tweens.Builders.GetEaseFunction("Sine.easeOut")(Math.min(Math.abs(statStageTotal), 10) / 10) * (statStageTotal >= 0 ? 10 : -10));
     }
     return ret;
-  }
-
-  /**
-  * Helper function to check if the Pokémon's health is below half after taking damage.
-  * Used for an edge case interaction with Wimp Out/Emergency Exit.
-  * If the Ability activates due to being hit by U-turn or Volt Switch, the user of that move will not be switched out.
-  */
-  hpDroppedBelowHalf(target: Pokemon): boolean {
-    const pokemonHealth = target.hp;
-    const maxPokemonHealth = target.getMaxHp();
-    const damageTaken = target.turnData.damageTaken;
-    const initialHealth = pokemonHealth + damageTaken;
-
-    // Check if the Pokémon's health has dropped below half after the damage
-    return initialHealth >= maxPokemonHealth / 2 && pokemonHealth < maxPokemonHealth / 2;
   }
 }
 

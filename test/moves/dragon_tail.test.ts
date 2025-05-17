@@ -1,8 +1,6 @@
 import { BattlerIndex } from "#app/battle";
 import { allMoves } from "#app/data/moves/move";
-import { Status } from "#app/data/status-effect";
 import { Challenges } from "#enums/challenges";
-import { StatusEffect } from "#enums/status-effect";
 import { PokemonType } from "#enums/pokemon-type";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
@@ -10,6 +8,11 @@ import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { BattleType } from "#enums/battle-type";
+import { TrainerSlot } from "#enums/trainer-slot";
+import { TrainerType } from "#enums/trainer-type";
+import { splitArray } from "#app/utils/common";
+import { BattlerTagType } from "#enums/battler-tag-type";
 
 describe("Moves - Dragon Tail", () => {
   let phaserGame: Phaser.Game;
@@ -38,23 +41,6 @@ describe("Moves - Dragon Tail", () => {
     vi.spyOn(allMoves[Moves.DRAGON_TAIL], "accuracy", "get").mockReturnValue(100);
   });
 
-  it("should cause opponent to flee, and not crash", async () => {
-    await game.classicMode.startBattle([Species.DRATINI]);
-
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
-
-    game.move.select(Moves.DRAGON_TAIL);
-
-    await game.phaseInterceptor.to("BerryPhase");
-
-    const isVisible = enemyPokemon.visible;
-    const hasFled = enemyPokemon.switchOutStatus;
-    expect(!isVisible && hasFled).toBe(true);
-
-    // simply want to test that the game makes it this far without crashing
-    await game.phaseInterceptor.to("BattleEndPhase");
-  });
-
   it("should cause opponent to flee, display ability, and not crash", async () => {
     game.override.enemyAbility(Abilities.ROUGH_SKIN);
     await game.classicMode.startBattle([Species.DRATINI]);
@@ -68,7 +54,8 @@ describe("Moves - Dragon Tail", () => {
 
     const isVisible = enemyPokemon.visible;
     const hasFled = enemyPokemon.switchOutStatus;
-    expect(!isVisible && hasFled).toBe(true);
+    expect(isVisible).toBe(false);
+    expect(hasFled).toBe(true);
     expect(leadPokemon.hp).toBeLessThan(leadPokemon.getMaxHp());
   });
 
@@ -101,6 +88,47 @@ describe("Moves - Dragon Tail", () => {
     expect(enemySecPokemon.hp).toBeLessThan(enemySecPokemon.getMaxHp());
   });
 
+  it("should force trainers to switch randomly without selecting from a partner's party", async () => {
+    game.override
+      .battleStyle("double")
+      .enemyMoveset(Moves.SPLASH)
+      .enemyAbility(Abilities.STURDY)
+      .battleType(BattleType.TRAINER)
+      .randomTrainer({ trainerType: TrainerType.TATE, alwaysDouble: true })
+      .enemySpecies(0);
+    await game.classicMode.startBattle([Species.WIMPOD, Species.TYRANITAR]);
+
+    // Grab each trainer's pokemon based on species name
+    const [tateParty, lizaParty] = splitArray(
+      game.scene.getEnemyParty(),
+      pkmn => pkmn.trainerSlot === TrainerSlot.TRAINER,
+    ).map(a => a.map(p => p.species.name));
+
+    expect(tateParty).not.toEqual(lizaParty);
+
+    // Force enemy trainers to switch to the first mon available.
+    // Due to how enemy trainer parties are laid out, this prevents false positives
+    // as Tate's pokemon are placed immediately before Liza's corresponding members.
+    vi.fn(Phaser.Math.RND.integerInRange).mockImplementation(min => min);
+
+    // Spy on the function responsible for making informed switches
+    const choiceSwitchSpy = vi.spyOn(game.scene.currentBattle.trainer!, "getNextSummonIndex");
+
+    game.move.select(Moves.DRAGON_TAIL, BattlerIndex.PLAYER, BattlerIndex.ENEMY_2);
+    game.move.select(Moves.SPLASH, BattlerIndex.PLAYER_2);
+    await game.phaseInterceptor.to("BerryPhase");
+
+    const [tatePartyNew, lizaPartyNew] = splitArray(
+      game.scene.getEnemyParty(),
+      pkmn => pkmn.trainerSlot === TrainerSlot.TRAINER,
+    ).map(a => a.map(p => p.species.name));
+
+    // Forced switch move should have switched Liza's Pokemon with another one of her own at random
+    expect(tatePartyNew).toEqual(tateParty);
+    expect(lizaPartyNew).not.toEqual(lizaParty);
+    expect(choiceSwitchSpy).not.toHaveBeenCalled();
+  });
+
   it("should redirect targets upon opponent flee", async () => {
     game.override.battleStyle("double").enemyMoveset(Moves.SPLASH).enemyAbility(Abilities.ROUGH_SKIN);
     await game.classicMode.startBattle([Species.DRATINI, Species.DRATINI, Species.WAILORD, Species.WAILORD]);
@@ -128,7 +156,7 @@ describe("Moves - Dragon Tail", () => {
     expect(enemySecPokemon.hp).toBeLessThan(enemySecPokemon.getMaxHp());
   });
 
-  it("doesn't switch out if the target has suction cups", async () => {
+  it("should not switch out a target with suction cups", async () => {
     game.override.enemyAbility(Abilities.SUCTION_CUPS);
     await game.classicMode.startBattle([Species.REGIELEKI]);
 
@@ -137,7 +165,23 @@ describe("Moves - Dragon Tail", () => {
     game.move.select(Moves.DRAGON_TAIL);
     await game.phaseInterceptor.to("TurnEndPhase");
 
+    expect(enemy.isOnField()).toBe(true);
     expect(enemy.isFullHp()).toBe(false);
+  });
+
+  it("should not switch out a Commanded Dondozo", async () => {
+    game.override.battleStyle("double").enemySpecies(Species.DONDOZO);
+    await game.classicMode.startBattle([Species.REGIELEKI]);
+
+    // pretend dondozo 2 commanded dondozo 1 (silly I know, but it works)
+    const [dondozo1, dondozo2] = game.scene.getEnemyField();
+    dondozo1.addTag(BattlerTagType.COMMANDED, 1, Moves.NONE, dondozo2.id);
+
+    game.move.select(Moves.DRAGON_TAIL);
+    await game.phaseInterceptor.to("TurnEndPhase");
+
+    expect(dondozo1.isOnField()).toBe(true);
+    expect(dondozo1.isFullHp()).toBe(false);
   });
 
   it("should force a switch upon fainting an opponent normally", async () => {
@@ -227,81 +271,55 @@ describe("Moves - Dragon Tail", () => {
     expect(charmander.getInverseHp()).toBeGreaterThan(0);
   });
 
-  it("should not force a switch to a challenge-ineligible Pokemon", async () => {
+  it("should not force a switch to a fainted or challenge-ineligible Pokemon", async () => {
     game.override.enemyMoveset(Moves.DRAGON_TAIL).startingLevel(100).enemyLevel(1);
     // Mono-Water challenge, Eevee is ineligible
     game.challengeMode.addChallenge(Challenges.SINGLE_TYPE, PokemonType.WATER + 1, 0);
     await game.challengeMode.startBattle([Species.LAPRAS, Species.EEVEE, Species.TOXAPEX, Species.PRIMARINA]);
 
     const [lapras, eevee, toxapex, primarina] = game.scene.getPlayerParty();
+    expect(toxapex).toBeDefined();
 
-    // Turn 1: Mock an RNG call that would normally call for switching to Eevee, but it is ineligible
+    // Mock an RNG call to switch to the first eligible pokemon.
+    // Eevee is ineligible and Toxapex is fainted, so it should proc on Primarina instead
     vi.spyOn(game.scene, "randBattleSeedInt").mockImplementation((_range, min = 0) => {
       return min;
     });
     game.move.select(Moves.SPLASH);
+    await game.killPokemon(toxapex);
     await game.toNextTurn();
 
     expect(lapras.isOnField()).toBe(false);
     expect(eevee.isOnField()).toBe(false);
-    expect(toxapex.isOnField()).toBe(true);
-    expect(primarina.isOnField()).toBe(false);
+    expect(toxapex.isOnField()).toBe(false);
+    expect(primarina.isOnField()).toBe(true);
     expect(lapras.getInverseHp()).toBeGreaterThan(0);
   });
 
-  it("should not force a switch to a fainted Pokemon", async () => {
-    game.override.enemyMoveset([Moves.SPLASH, Moves.DRAGON_TAIL]).startingLevel(100).enemyLevel(1);
-    await game.classicMode.startBattle([Species.LAPRAS, Species.EEVEE, Species.TOXAPEX, Species.PRIMARINA]);
+  it("should deal damage without switching if there are no available backup Pokemon to switch into", async () => {
+    game.override.enemyMoveset(Moves.DRAGON_TAIL).battleStyle("double").startingLevel(100).enemyLevel(1);
+    // Mono-Water challenge
+    game.challengeMode.addChallenge(Challenges.SINGLE_TYPE, PokemonType.WATER + 1, 0);
+    await game.challengeMode.startBattle([Species.LAPRAS, Species.KYOGRE, Species.EEVEE, Species.CLOYSTER]);
 
-    const [lapras, eevee, toxapex, primarina] = game.scene.getPlayerParty();
+    const [lapras, kyogre, eevee, cloyster] = game.scene.getPlayerParty();
+    expect(cloyster).toBeDefined();
 
-    // Turn 1: Eevee faints
-    eevee.hp = 0;
-    eevee.status = new Status(StatusEffect.FAINT);
-    expect(eevee.isFainted()).toBe(true);
-    game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.SPLASH);
+    game.move.select(Moves.SPLASH, BattlerIndex.PLAYER);
+    game.move.select(Moves.SPLASH, BattlerIndex.PLAYER_2);
+    await game.forceEnemyMove(Moves.DRAGON_TAIL, BattlerIndex.PLAYER);
+    await game.forceEnemyMove(Moves.DRAGON_TAIL, BattlerIndex.PLAYER_2);
+    await game.killPokemon(cloyster);
     await game.toNextTurn();
 
-    // Turn 2: Mock an RNG call that would normally call for switching to Eevee, but it is fainted
-    vi.spyOn(game.scene, "randBattleSeedInt").mockImplementation((_range, min = 0) => {
-      return min;
-    });
-    game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.DRAGON_TAIL);
-    await game.toNextTurn();
-
-    expect(lapras.isOnField()).toBe(false);
-    expect(eevee.isOnField()).toBe(false);
-    expect(toxapex.isOnField()).toBe(true);
-    expect(primarina.isOnField()).toBe(false);
-    expect(lapras.getInverseHp()).toBeGreaterThan(0);
-  });
-
-  it("should not force a switch if there are no available Pokemon to switch into", async () => {
-    game.override.enemyMoveset([Moves.SPLASH, Moves.DRAGON_TAIL]).startingLevel(100).enemyLevel(1);
-    await game.classicMode.startBattle([Species.LAPRAS, Species.EEVEE]);
-
-    const [lapras, eevee] = game.scene.getPlayerParty();
-
-    // Turn 1: Eevee faints
-    eevee.hp = 0;
-    eevee.status = new Status(StatusEffect.FAINT);
-    expect(eevee.isFainted()).toBe(true);
-    game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.SPLASH);
-    await game.toNextTurn();
-
-    // Turn 2: Mock an RNG call that would normally call for switching to Eevee, but it is fainted
-    vi.spyOn(game.scene, "randBattleSeedInt").mockImplementation((_range, min = 0) => {
-      return min;
-    });
-    game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.DRAGON_TAIL);
-    await game.toNextTurn();
-
+    // Eevee is ineligble due to challenge and cloyster is fainted, leaving no backup pokemon able to switch in
     expect(lapras.isOnField()).toBe(true);
+    expect(kyogre.isOnField()).toBe(true);
     expect(eevee.isOnField()).toBe(false);
+    expect(cloyster.isOnField()).toBe(false);
     expect(lapras.getInverseHp()).toBeGreaterThan(0);
+    expect(kyogre.getInverseHp()).toBeGreaterThan(0);
+    expect(game.scene.getBackupPartyMemberIndices(true)).toHaveLength(0);
+    expect(game.phaseInterceptor.log).not.toContain("SwitchSummonPhase");
   });
 });

@@ -61,8 +61,6 @@ export class FaintPhase extends PokemonPhase {
       faintPokemon.getTag(BattlerTagType.GRUDGE)?.lapse(faintPokemon, BattlerTagLapseType.CUSTOM, this.source);
     }
 
-    faintPokemon.resetSummonData();
-
     if (!this.preventInstantRevive) {
       const instantReviveModifier = globalScene.applyModifier(
         PokemonInstantReviveModifier,
@@ -71,6 +69,7 @@ export class FaintPhase extends PokemonPhase {
       ) as PokemonInstantReviveModifier;
 
       if (instantReviveModifier) {
+        faintPokemon.resetSummonData();
         faintPokemon.loseHeldItem(instantReviveModifier);
         globalScene.updateModifiers(this.player);
         return this.end();
