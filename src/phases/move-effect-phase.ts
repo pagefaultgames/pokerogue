@@ -594,7 +594,7 @@ export class MoveEffectPhase extends PokemonPhase {
     }
 
     const accuracyMultiplier = user.getAccuracyMultiplier(target, this.move);
-    const rand = user.randSeedInt(100);
+    const rand = user.randBattleSeedInt(100);
 
     if (rand < moveAccuracy * accuracyMultiplier) {
       return [HitCheckResult.HIT, effectiveness];

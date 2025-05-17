@@ -54,7 +54,7 @@ import {
   getStarterValueFriendshipCap,
   speciesStarterCosts,
 } from "#app/data/balance/starters";
-import { NumberHolder, randSeedInt, getIvsFromId, BooleanHolder, randSeedItem, isNullOrUndefined, getEnumValues, toDmgValue, fixedInt, rgbaToInt, rgbHexToRgba, rgbToHsv, deltaRgb, isBetween, type nil, type Constructor } from "#app/utils/common";
+import { NumberHolder, randSeedInt, getIvsFromId, BooleanHolder, randSeedItem, isNullOrUndefined, getEnumValues, toDmgValue, fixedInt, rgbaToInt, rgbHexToRgba, rgbToHsv, deltaRgb, isBetween, type nil, type Constructor, randSeedIntRange } from "#app/utils/common";
 import type { TypeDamageMultiplier } from "#app/data/type";
 import { getTypeDamageMultiplier, getTypeRgb } from "#app/data/type";
 import { PokemonType } from "#enums/pokemon-type";
@@ -4485,7 +4485,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
      */
     const randomMultiplier = simulated
       ? 1
-      : this.randSeedIntRange(85, 100) / 100;
+      : this.randBattleSeedIntRange(85, 100) / 100;
 
 
     /** A damage multiplier for when the attack is of the attacker's type and/or Tera type. */
@@ -5629,7 +5629,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     let sleepTurnsRemaining: NumberHolder;
 
     if (effect === StatusEffect.SLEEP) {
-      sleepTurnsRemaining = new NumberHolder(this.randSeedIntRange(2, 4));
+      sleepTurnsRemaining = new NumberHolder(this.randBattleSeedIntRange(2, 4));
 
       this.setFrameRate(4);
 
@@ -6292,7 +6292,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param min The minimum integer to pick, default `0`
    * @returns A random integer between {@linkcode min} and ({@linkcode min} + {@linkcode range} - 1)
    */
-  randSeedInt(range: number, min = 0): number {
+  randBattleSeedInt(range: number, min = 0): number {
     return globalScene.currentBattle
       ? globalScene.randBattleSeedInt(range, min)
       : randSeedInt(range, min);
@@ -6304,8 +6304,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param max The maximum integer to generate
    * @returns a random integer between {@linkcode min} and {@linkcode max} inclusive
    */
-  randSeedIntRange(min: number, max: number): number {
-    return this.randSeedInt(max - min + 1, min);
+  randBattleSeedIntRange(min: number, max: number): number {
+    return globalScene.currentBattle
+      ? globalScene.randBattleSeedInt(max - min + 1, min)
+      : randSeedIntRange(min, max);
   }
 
   /**
@@ -7143,7 +7145,7 @@ export class EnemyPokemon extends Pokemon {
         const { waveIndex } = globalScene.currentBattle;
         const ivs: number[] = [];
         while (ivs.length < 6) {
-          ivs.push(this.randSeedIntRange(Math.floor(waveIndex / 10), 31));
+          ivs.push(randSeedIntRange(Math.floor(waveIndex / 10), 31));
         }
         this.ivs = ivs;
       }
