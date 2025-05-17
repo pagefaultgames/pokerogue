@@ -36,6 +36,16 @@ export class PlayerBattleInfo extends BattleInfo {
     this.expMaskRect = expMaskRect;
   }
 
+  /**
+   * Toggle the stat overlay, ensuring that the hp numbers container is hidden while the stats are visible.
+   * @param visible - Whether the stats should be visible or not.
+   */
+  override toggleStats(visible: boolean): void {
+    // Need to make the hp numbers container invisible
+    this.hpNumbersContainer.setVisible(!visible);
+    super.toggleStats(visible);
+  }
+
   override initInfo(pokemon: PlayerPokemon): void {
     super.initInfo(pokemon);
     this.setHpNumbers(pokemon.hp, pokemon.getMaxHp());
