@@ -5721,17 +5721,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Reset this Pokemon's {@linkcode PokemonSummonData | SummonData} and {@linkcode PokemonTempSummonData | TempSummonData}
-   * in preparation for switching pokemon, as well as removing any relevant on-switch tags.
+   * Performs miscellaneous setup for when the Pokemon is summoned, like generating the substitute sprite
+   * @param resetSummonData - Whether to additionally reset the Pokemon's summon data (default: `false`)
    */
-  resetSummonData(): void {
-    const illusion: IllusionData | null = this.summonData.illusion;
-    if (this.summonData.speciesForm) {
-      this.summonData.speciesForm = null;
-      this.updateFusionPalette();
-    }
-    this.summonData = new PokemonSummonData();
-    this.tempSummonData = new PokemonTempSummonData();
+  public fieldSetup(resetSummonData?: boolean): void {
     this.setSwitchOutStatus(false);
     if (globalScene) {
       globalScene.triggerPokemonFormChange(
@@ -5740,7 +5733,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         true,
       );
     }
-
     // If this Pokemon has a Substitute when loading in, play an animation to add its sprite
     if (this.getTag(SubstituteTag)) {
       globalScene.triggerPokemonBattleAnim(
@@ -5758,6 +5750,24 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     ) {
       this.setVisible(false);
     }
+
+    if (resetSummonData) {
+      this.resetSummonData();
+    }
+  }
+
+  /**
+   * Reset this Pokemon's {@linkcode PokemonSummonData | SummonData} and {@linkcode PokemonTempSummonData | TempSummonData}
+   * in preparation for switching pokemon, as well as removing any relevant on-switch tags.
+   */
+  resetSummonData(): void {
+    const illusion: IllusionData | null = this.summonData.illusion;
+    if (this.summonData.speciesForm) {
+      this.summonData.speciesForm = null;
+      this.updateFusionPalette();
+    }
+    this.summonData = new PokemonSummonData();
+    this.tempSummonData = new PokemonTempSummonData();
     this.summonData.illusion = illusion
     this.updateInfo();
   }
