@@ -7984,6 +7984,7 @@ export class PokemonTurnData {
   public statStagesDecreased = false;
   public moveEffectiveness: TypeDamageMultiplier | null = null;
   public combiningPledge?: Moves;
+  /** Whether the pokemon was sent into battle during this turn; used for {@linkcode Abilities.STAKEOUT} and {@linkcode Abilities.SPEED_BOOST}. */
   public switchedInThisTurn = false;
   public failedRunAway = false;
   public joinedRound = false;

@@ -209,9 +209,9 @@ export class SwitchSummonPhase extends SummonPhase {
 
     const pokemon = this.getPokemon();
 
-    if (this.switchType === SwitchType.BATON_PASS && pokemon) {
+    if (this.switchType === SwitchType.BATON_PASS) {
       pokemon.transferSummon(this.lastPokemon);
-    } else if (this.switchType === SwitchType.SHED_TAIL && pokemon) {
+    } else if (this.switchType === SwitchType.SHED_TAIL) {
       const subTag = this.lastPokemon.getTag(SubstituteTag);
       if (subTag) {
         pokemon.summonData.tags.push(subTag);
@@ -223,10 +223,11 @@ export class SwitchSummonPhase extends SummonPhase {
     if (this.switchType !== SwitchType.INITIAL_SWITCH) {
       pokemon.tempSummonData.turnCount--;
       pokemon.tempSummonData.waveTurnCount--;
-      // No need to reset turn/summon data for initial switch since both get initialized to an empty object on object creation
+      pokemon.turnData.switchedInThisTurn = true;
+      // No need to reset turn/summon data for initial switch
+      //(since both get initialized to an empty object on object creation)
       pokemon.resetTurnData();
       pokemon.resetSummonData();
-      pokemon.turnData.switchedInThisTurn = true;
     }
 
     globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeActiveTrigger, true);
