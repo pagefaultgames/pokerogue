@@ -5034,6 +5034,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     for (const tag of source.summonData.tags) {
+      // Skip non-Baton Passable tags (or telekinesis for mega gengar; cf. https://bulbapedia.bulbagarden.net/wiki/Telekinesis_(move))
       if (
         !tag.isBatonPassable ||
         (tag.tagType === BattlerTagType.TELEKINESIS &&
@@ -6314,20 +6315,20 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param destroy - Whether to destroy this Pokemon once it leaves the field; default `false`
    * @remarks
    * This **SHOULD NOT** be called when a `SummonPhase` or `SwitchSummonPhase` is already being added,
-   * which can lead to premature resetting of {@klinkcode turnData} and {@linkcode summonData}.
+   * which can lead to premature resetting of {@linkcode turnData} and {@linkcode summonData}.
    */
   leaveField(clearEffects = true, hideInfo = true, destroy = false) {
     console.log(`leaveField called on Pokemon ${this.name}`)
     this.resetSprite();
-    this.resetTurnData();
     globalScene
-      .getField(true)
-      .filter(p => p !== this)
+    .getField(true)
+    .filter(p => p !== this)
       .forEach(p => p.removeTagsBySourceId(this.id));
 
     if (clearEffects) {
       this.destroySubstitute();
       this.resetSummonData();
+      this.resetTurnData();
     }
     if (hideInfo) {
       this.hideInfo();

@@ -86,7 +86,7 @@ export function ForceSwitch<TBase extends SubMoveOrAbAttr>(Base: TBase) {
 
     /**
      * Wrapper function to handle the actual "switching out" of Pokemon.
-     * @param switchOutTarget - The {@linkcode Pokemon} (player or enemy) attempting to switch out.
+     * @param switchOutTarget - The {@linkcode Pokemon} (player or enemy) to be switched switch out.
      */
     protected doSwitch(switchOutTarget: Pokemon): void {
       if (switchOutTarget instanceof PlayerPokemon) {

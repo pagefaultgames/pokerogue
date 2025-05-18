@@ -111,7 +111,6 @@ export class SwitchSummonPhase extends SummonPhase {
       scale: 0.5,
       onComplete: () => {
         globalScene.time.delayedCall(750, () => this.switchAndSummon());
-        lastPokemon.leaveField(this.switchType === SwitchType.SWITCH, false);
       },
     });
   }
@@ -162,9 +161,12 @@ export class SwitchSummonPhase extends SummonPhase {
       }
     }
 
+    // Swap around the 2 pokemon's party positions and play an animation to send in the new pokemon.
     party[this.slotIndex] = this.lastPokemon;
     party[this.fieldIndex] = switchedInPokemon;
     const showTextAndSummon = () => {
+      // TODO: Should this remove the info container?
+      this.lastPokemon.leaveField(![SwitchType.BATON_PASS, SwitchType.SHED_TAIL].includes(this.switchType), false);
       globalScene.ui.showText(
         this.player
           ? i18next.t("battle:playerGo", {
@@ -209,25 +211,30 @@ export class SwitchSummonPhase extends SummonPhase {
 
     const pokemon = this.getPokemon();
 
+    // If not switching at start of battle, reset turn counts and temp data on the newly sent in Pokemon
+    // Needed as we increment turn counters in `TurnEndPhase`.
+    if (this.switchType !== SwitchType.INITIAL_SWITCH) {
+      // No need to reset turn/summon data for initial switch
+      // (since both get initialized to an empty object on object creation)
+      this.lastPokemon.resetTurnData();
+      this.lastPokemon.resetSummonData();
+      pokemon.tempSummonData.turnCount--;
+      pokemon.tempSummonData.waveTurnCount--;
+      pokemon.turnData.switchedInThisTurn = true;
+    }
+
+    // Baton Pass over any eligible effects or substitutes before resetting the last pokemon's temporary data.
     if (this.switchType === SwitchType.BATON_PASS) {
       pokemon.transferSummon(this.lastPokemon);
+      this.lastPokemon.resetTurnData();
+      this.lastPokemon.resetSummonData();
     } else if (this.switchType === SwitchType.SHED_TAIL) {
       const subTag = this.lastPokemon.getTag(SubstituteTag);
       if (subTag) {
         pokemon.summonData.tags.push(subTag);
       }
-    }
-
-    // If not switching at start of battle, reset turn counts and temp data.
-    // Needed as we increment turn counters in `TurnEndPhase`.
-    if (this.switchType !== SwitchType.INITIAL_SWITCH) {
-      pokemon.tempSummonData.turnCount--;
-      pokemon.tempSummonData.waveTurnCount--;
-      pokemon.turnData.switchedInThisTurn = true;
-      // No need to reset turn/summon data for initial switch
-      //(since both get initialized to an empty object on object creation)
-      pokemon.resetTurnData();
-      pokemon.resetSummonData();
+      this.lastPokemon.resetTurnData();
+      this.lastPokemon.resetSummonData();
     }
 
     globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeActiveTrigger, true);

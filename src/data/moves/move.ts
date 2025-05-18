@@ -7771,8 +7771,9 @@ const targetSleptOrComatoseCondition: MoveConditionFunc = (user: Pokemon, target
 const failIfLastCondition: MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => globalScene.phaseQueue.find(phase => phase instanceof MovePhase) !== undefined;
 
 const failIfLastInPartyCondition: MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => {
-  const party: Pokemon[] = user.isPlayer() ? globalScene.getPlayerParty() : globalScene.getEnemyParty();
-  return party.some(pokemon => pokemon.isActive() && !pokemon.isOnField());
+  const player = user.isPlayer();
+  const otherPartyIndices = globalScene.getBackupPartyMemberIndices(player, !player ? (user as EnemyPokemon).trainerSlot : undefined)
+  return otherPartyIndices.length > 0;
 };
 
 const failIfGhostTypeCondition: MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => !target.isOfType(PokemonType.GHOST);
