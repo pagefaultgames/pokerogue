@@ -1336,7 +1336,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @see {@linkcode SubstituteTag}
    * @see {@linkcode getFieldPositionOffset}
    */
-  getSubstituteOffset(): [number, number] {
+  getSubstituteOffset(): [x: number, y: number] {
     return this.isPlayer() ? [-30, 10] : [30, -10];
   }
 

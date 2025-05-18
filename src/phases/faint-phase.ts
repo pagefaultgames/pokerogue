@@ -61,7 +61,8 @@ export class FaintPhase extends PokemonPhase {
       faintPokemon.getTag(BattlerTagType.GRUDGE)?.lapse(faintPokemon, BattlerTagLapseType.CUSTOM, this.source);
     }
 
-    // Check for reviver seed
+    faintPokemon.resetSummonData();
+
     if (!this.preventInstantRevive) {
       const instantReviveModifier = globalScene.applyModifier(
         PokemonInstantReviveModifier,
@@ -70,7 +71,6 @@ export class FaintPhase extends PokemonPhase {
       ) as PokemonInstantReviveModifier;
 
       if (instantReviveModifier) {
-        faintPokemon.resetSummonData();
         faintPokemon.loseHeldItem(instantReviveModifier);
         globalScene.updateModifiers(this.player);
         return this.end();
@@ -179,11 +179,11 @@ export class FaintPhase extends PokemonPhase {
     } else {
       globalScene.unshiftPhase(new VictoryPhase(this.battlerIndex));
       if ([BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER].includes(globalScene.currentBattle.battleType)) {
-        const reservePartyIndices = globalScene.getBackupPartyMemberIndices(
-          false,
-          (pokemon as EnemyPokemon).trainerSlot,
-        );
-        if (reservePartyIndices.length) {
+        const hasReservePartyMember = !!globalScene
+          .getEnemyParty()
+          .filter(p => p.isActive() && !p.isOnField() && p.trainerSlot === (pokemon as EnemyPokemon).trainerSlot)
+          .length;
+        if (hasReservePartyMember) {
           globalScene.pushPhase(new SwitchSummonPhase(SwitchType.SWITCH, this.fieldIndex, -1, false, false));
         }
       }
@@ -217,7 +217,6 @@ export class FaintPhase extends PokemonPhase {
             globalScene.addFaintedEnemyScore(pokemon as EnemyPokemon);
             globalScene.currentBattle.addPostBattleLoot(pokemon as EnemyPokemon);
           }
-          // TODO: Do we need to leave the field here & now as opposed to during `switchSummonPhase`?
           pokemon.leaveField();
           this.end();
         },

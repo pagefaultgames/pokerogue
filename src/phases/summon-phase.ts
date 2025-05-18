@@ -274,6 +274,8 @@ export class SummonPhase extends PartyMemberPokemonPhase {
       globalScene.unshiftPhase(new ShinySparklePhase(pokemon.getBattlerIndex()));
     }
 
+    pokemon.resetTurnData();
+
     if (
       !this.loaded ||
       [BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER].includes(globalScene.currentBattle.battleType) ||

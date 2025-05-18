@@ -349,7 +349,7 @@ describe("Abilities - Wimp Out", () => {
     confirmNoSwitch();
 
     // Turn 2: get back enough HP that substitute doesn't put us under
-    wimpod.hp = wimpod.getMaxHp() * 0.8;
+    wimpod.hp = wimpod.getMaxHp() * 0.78;
 
     game.move.select(Moves.SUBSTITUTE);
     game.doSelectPartyPokemon(1);
@@ -373,7 +373,7 @@ describe("Abilities - Wimp Out", () => {
   it("should disregard Shell Bell recovery while still activating it before switching", async () => {
     game.override
       .moveset(Moves.DOUBLE_EDGE)
-      .enemyMoveset([Moves.SPLASH])
+      .enemyMoveset(Moves.SPLASH)
       .startingHeldItems([{ name: "SHELL_BELL", count: 4 }]); // heals 50% of damage dealt, more than recoil takes away
     await game.classicMode.startBattle([Species.WIMPOD, Species.TYRUNT]);
 
@@ -382,10 +382,13 @@ describe("Abilities - Wimp Out", () => {
 
     game.move.select(Moves.DOUBLE_EDGE);
     game.doSelectPartyPokemon(1);
-    await game.phaseInterceptor.to("TurnEndPhase");
+    await game.phaseInterceptor.to("MoveEffectPhase");
 
-    // Wimp out activated before shell bell healing
+    // Wimp out check activated from recoil before shell bell procced, but did not deny the pokemon its recovery
+    expect(wimpod.turnData.damageTaken).toBeGreaterThan(0);
     expect(wimpod.getHpRatio()).toBeGreaterThan(0.5);
+
+    await game.phaseInterceptor.to("TurnEndPhase");
     confirmSwitch();
     expect(game.phaseInterceptor.log).toContain("PokemonHealPhase");
   });

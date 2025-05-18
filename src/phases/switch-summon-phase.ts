@@ -165,8 +165,13 @@ export class SwitchSummonPhase extends SummonPhase {
     party[this.slotIndex] = this.lastPokemon;
     party[this.fieldIndex] = switchedInPokemon;
     const showTextAndSummon = () => {
-      // TODO: Should this remove the info container?
-      this.lastPokemon.leaveField(![SwitchType.BATON_PASS, SwitchType.SHED_TAIL].includes(this.switchType), false);
+      // We don't reset temp effects here as we need to transfer them to tne new pokemon
+      // TODO: When should this remove the info container?
+      // Force switch moves did it prior
+      this.lastPokemon.leaveField(
+        ![SwitchType.BATON_PASS, SwitchType.SHED_TAIL].includes(this.switchType),
+        this.doReturn,
+      );
       globalScene.ui.showText(
         this.player
           ? i18next.t("battle:playerGo", {
@@ -184,13 +189,11 @@ export class SwitchSummonPhase extends SummonPhase {
        * If this switch is passing a Substitute, make the switched Pokemon matches the returned Pokemon's state as it left.
        * Otherwise, clear any persisting tags on the returned Pokemon.
        */
-      if (this.switchType === SwitchType.BATON_PASS || this.switchType === SwitchType.SHED_TAIL) {
-        const substitute = this.lastPokemon.getTag(SubstituteTag);
-        if (substitute) {
-          switchedInPokemon.x += this.lastPokemon.getSubstituteOffset()[0];
-          switchedInPokemon.y += this.lastPokemon.getSubstituteOffset()[1];
-          switchedInPokemon.setAlpha(0.5);
-        }
+      const substitute = this.lastPokemon.getTag(SubstituteTag);
+      if ((this.switchType === SwitchType.BATON_PASS || this.switchType === SwitchType.SHED_TAIL) && substitute) {
+        switchedInPokemon.x += this.lastPokemon.getSubstituteOffset()[0];
+        switchedInPokemon.y += this.lastPokemon.getSubstituteOffset()[1];
+        switchedInPokemon.setAlpha(0.5);
       }
       this.summon();
     };
@@ -209,35 +212,35 @@ export class SwitchSummonPhase extends SummonPhase {
   onEnd(): void {
     super.onEnd();
 
-    const pokemon = this.getPokemon();
+    const activePokemon = this.getPokemon();
 
     // If not switching at start of battle, reset turn counts and temp data on the newly sent in Pokemon
     // Needed as we increment turn counters in `TurnEndPhase`.
     if (this.switchType !== SwitchType.INITIAL_SWITCH) {
       // No need to reset turn/summon data for initial switch
       // (since both get initialized to an empty object on object creation)
-      this.lastPokemon.resetTurnData();
-      this.lastPokemon.resetSummonData();
-      pokemon.tempSummonData.turnCount--;
-      pokemon.tempSummonData.waveTurnCount--;
-      pokemon.turnData.switchedInThisTurn = true;
+      activePokemon.resetTurnData();
+      activePokemon.resetSummonData();
+      activePokemon.tempSummonData.turnCount--;
+      activePokemon.tempSummonData.waveTurnCount--;
+      activePokemon.turnData.switchedInThisTurn = true;
     }
 
     // Baton Pass over any eligible effects or substitutes before resetting the last pokemon's temporary data.
     if (this.switchType === SwitchType.BATON_PASS) {
-      pokemon.transferSummon(this.lastPokemon);
+      activePokemon.transferSummon(this.lastPokemon);
       this.lastPokemon.resetTurnData();
       this.lastPokemon.resetSummonData();
     } else if (this.switchType === SwitchType.SHED_TAIL) {
       const subTag = this.lastPokemon.getTag(SubstituteTag);
       if (subTag) {
-        pokemon.summonData.tags.push(subTag);
+        activePokemon.summonData.tags.push(subTag);
       }
       this.lastPokemon.resetTurnData();
       this.lastPokemon.resetSummonData();
     }
 
-    globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeActiveTrigger, true);
+    globalScene.triggerPokemonFormChange(activePokemon, SpeciesFormChangeActiveTrigger, true);
     // Reverts to weather-based forms when weather suppressors (Cloud Nine/Air Lock) are switched out
     globalScene.arena.triggerWeatherBasedFormChanges();
   }

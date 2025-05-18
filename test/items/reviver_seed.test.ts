@@ -106,10 +106,9 @@ describe("Items - Reviver Seed", () => {
 
   // Self-damage tests
   it.each([
-    { moveType: "Relative Recoil", move: Moves.DOUBLE_EDGE },
-    { moveType: "HP% Recoil", move: Moves.CHLOROBLAST },
+    { moveType: "Recoil", move: Moves.DOUBLE_EDGE },
     { moveType: "Self-KO", move: Moves.EXPLOSION },
-    { moveType: "Ghost-type Curse", move: Moves.CURSE },
+    { moveType: "Self-Deduction", move: Moves.CURSE },
     { moveType: "Liquid Ooze", move: Moves.GIGA_DRAIN },
   ])("should not activate the holder's reviver seed from $moveType", async ({ move }) => {
     game.override

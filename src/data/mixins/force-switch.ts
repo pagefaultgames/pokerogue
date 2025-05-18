@@ -110,10 +110,14 @@ export function ForceSwitch<TBase extends SubMoveOrAbAttr>(Base: TBase) {
       this.tryFleeWildPokemon(switchOutTarget);
     }
 
+    // NB: `prependToPhase` is used here to ensure that the switch happens before the move ends
+    // and `arena.ignoreAbilities` is reset.
+    // This ensures ability ignore effects will persist for the duration of the switch (for hazards).
+
     private trySwitchPlayerPokemon(switchOutTarget: PlayerPokemon): void {
       // If not forced to switch, add a SwitchPhase to allow picking the next switched in Pokemon.
       if (this.switchType !== SwitchType.FORCE_SWITCH) {
-        globalScene.appendToPhase(
+        globalScene.prependToPhase(
           new SwitchPhase(this.switchType, switchOutTarget.getFieldIndex(), true, true),
           MoveEndPhase,
         );
@@ -124,7 +128,7 @@ export function ForceSwitch<TBase extends SubMoveOrAbAttr>(Base: TBase) {
       const reservePartyMembers = globalScene.getBackupPartyMemberIndices(true);
       const switchInIndex = reservePartyMembers[switchOutTarget.randSeedInt(reservePartyMembers.length)];
 
-      globalScene.appendToPhase(
+      globalScene.prependToPhase(
         new SwitchSummonPhase(this.switchType, switchOutTarget.getFieldIndex(), switchInIndex, false, true),
         MoveEndPhase,
       );
@@ -144,7 +148,7 @@ export function ForceSwitch<TBase extends SubMoveOrAbAttr>(Base: TBase) {
         this.switchType === SwitchType.FORCE_SWITCH
           ? reservePartyIndices[switchOutTarget.randSeedInt(reservePartyIndices.length)]
           : (globalScene.currentBattle.trainer.getNextSummonIndex(switchOutTarget.trainerSlot) ?? 0);
-      globalScene.appendToPhase(
+      globalScene.prependToPhase(
         new SwitchSummonPhase(this.switchType, switchOutTarget.getFieldIndex(), summonIndex, false, false),
         MoveEndPhase,
       );
