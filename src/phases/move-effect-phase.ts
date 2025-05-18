@@ -3,7 +3,6 @@ import { globalScene } from "#app/global-scene";
 import {
   AddSecondStrikeAbAttr,
   AlwaysHitAbAttr,
-  applyAbAttrs,
   applyPostAttackAbAttrs,
   applyPostDamageAbAttrs,
   applyPostDefendAbAttrs,
@@ -79,7 +78,6 @@ import type Move from "#app/data/moves/move";
 import { isFieldTargeted } from "#app/data/moves/move-utils";
 import { FaintPhase } from "./faint-phase";
 import { DamageAchv } from "#app/system/achv";
-import { userInfo } from "node:os";
 
 type HitCheckEntry = [HitCheckResult, TypeDamageMultiplier];
 
@@ -767,7 +765,6 @@ export class MoveEffectPhase extends PokemonPhase {
    * - Triggering form changes and emergency exit / wimp out if this is the last hit
    *
    * @param target - the {@linkcode Pokemon} hit by this phase's move.
-   * @param targetIndex - The index of the target (used to update damage dealt amounts)
    * @param effectiveness - The effectiveness of the move (as previously evaluated in {@linkcode hitCheck})
    * @param firstTarget - Whether this is the first target successfully struck by the move
    */
@@ -813,7 +810,7 @@ export class MoveEffectPhase extends PokemonPhase {
      */
     applyMoveAttrs(StatChangeBeforeDmgCalcAttr, user, target, this.move);
 
-    const { result: result, damage: dmg } = target.getAttackDamage({
+    const { result, damage: dmg } = target.getAttackDamage({
       source: user,
       move: this.move,
       ignoreAbility: false,
@@ -852,7 +849,7 @@ export class MoveEffectPhase extends PokemonPhase {
       ? 0
       : target.damageAndUpdate(dmg, {
           result: result as DamageResult,
-          ignoreFaintPhase: true,
+          ignoreFaintPhase: true, // ignore faint phase so we can handle it ourselves
           ignoreSegments: isOneHitKo,
           isCritical,
         });

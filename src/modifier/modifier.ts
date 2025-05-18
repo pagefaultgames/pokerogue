@@ -1788,6 +1788,10 @@ export class HitHealModifier extends PokemonHeldItemModifier {
     }
 
     const totalDmgDealt = pokemon.turnData.lastMoveDamageDealt.reduce((r, d) => r + d, 0);
+    if (totalDmgDealt === 0) {
+      return false;
+    }
+
     globalScene.unshiftPhase(
       new PokemonHealPhase(
         pokemon.getBattlerIndex(),

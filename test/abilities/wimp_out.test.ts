@@ -14,6 +14,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vite
 import { BattleType } from "#enums/battle-type";
 import { HitResult } from "#app/field/pokemon";
 import type { ModifierOverride } from "#app/modifier/modifier-type";
+import type { SwitchSummonPhase } from "#app/phases/switch-summon-phase";
 
 describe("Abilities - Wimp Out", () => {
   let phaserGame: Phaser.Game;
@@ -64,7 +65,7 @@ describe("Abilities - Wimp Out", () => {
 
     expect(pokemon1.species.speciesId).toBe(Species.WIMPOD);
     expect(pokemon1.isFainted()).toBe(false);
-    expect(pokemon1.getHpRatio()).toBeLessThan(0.5);
+    expect(pokemon1.getHpRatio(true)).toBeLessThan(0.5);
   }
 
   it("should switch the user out when falling below half HP, canceling its subsequent moves", async () => {
@@ -86,8 +87,11 @@ describe("Abilities - Wimp Out", () => {
     expect(wimpod.turnData.acted).toBe(false);
   });
 
-  it("should not trigger if user faints from damage", async () => {
-    game.override.enemyMoveset(Moves.BRAVE_BIRD).enemyLevel(1000);
+  it("should not trigger if user faints from damage and is revived", async () => {
+    game.override
+      .startingHeldItems([{ name: "REVIVER_SEED", count: 1 }])
+      .enemyMoveset(Moves.BRAVE_BIRD)
+      .enemyLevel(1000);
     await game.classicMode.startBattle([Species.WIMPOD, Species.TYRUNT]);
 
     const wimpod = game.scene.getPlayerPokemon()!;
@@ -95,9 +99,12 @@ describe("Abilities - Wimp Out", () => {
 
     game.move.select(Moves.SPLASH);
     game.doSelectPartyPokemon(1);
-    await game.phaseInterceptor.to("TurnEndPhase");
+    await game.toNextTurn();
 
-    expect(wimpod.isFainted()).toBe(true);
+    expect(wimpod.isFainted()).toBe(false);
+    expect(wimpod.isOnField()).toBe(true);
+    expect(wimpod.getHpRatio()).toBeCloseTo(0.5);
+    expect(wimpod.getHeldItems()).toHaveLength(0);
     expect(wimpod.waveData.abilitiesApplied).not.toContain(Abilities.WIMP_OUT);
   });
 
@@ -185,34 +192,41 @@ describe("Abilities - Wimp Out", () => {
   });
 
   it("should block U-turn or Volt Switch on activation", async () => {
-    game.override.enemyMoveset(Moves.U_TURN);
+    game.override.battleType(BattleType.TRAINER).enemyMoveset(Moves.U_TURN);
     await game.classicMode.startBattle([Species.WIMPOD, Species.TYRUNT]);
+    const ninjask = game.scene.getEnemyPokemon()!;
 
     game.move.select(Moves.SPLASH);
     game.doSelectPartyPokemon(1);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
-    const hasFled = enemyPokemon.switchOutStatus;
-    expect(hasFled).toBe(false);
     confirmSwitch();
+    expect(ninjask.isOnField()).toBe(true);
   });
 
   it("should not block U-turn or Volt Switch if not activated", async () => {
-    game.override.enemyMoveset(Moves.U_TURN).battleType(BattleType.TRAINER);
+    game.override.battleType(BattleType.TRAINER).enemyMoveset(Moves.U_TURN).battleType(BattleType.TRAINER);
     await game.classicMode.startBattle([Species.GOLISOPOD, Species.TYRUNT]);
-    const ninjask1 = game.scene.getEnemyPokemon()!;
 
-    vi.spyOn(game.scene.getPlayerPokemon()!, "getAttackDamage").mockReturnValue({
+    const wimpod = game.scene.getPlayerPokemon()!;
+    const ninjask = game.scene.getEnemyPokemon()!;
+
+    // force enemy u turn to do 1 dmg
+    vi.spyOn(wimpod, "getAttackDamage").mockReturnValue({
       cancelled: false,
       damage: 1,
       result: HitResult.EFFECTIVE,
     });
 
     game.move.select(Moves.SPLASH);
+    await game.phaseInterceptor.to("SwitchSummonPhase", false);
+    const switchSummonPhase = game.scene.getCurrentPhase() as SwitchSummonPhase;
+    expect(switchSummonPhase.getPokemon()).toBe(ninjask);
+
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    expect(ninjask1.isOnField()).toBe(true);
+    expect(wimpod.isOnField()).toBe(true);
+    expect(ninjask.isOnField()).toBe(false);
   });
 
   it("should not activate from Dragon Tail and Circle Throw", async () => {
@@ -242,7 +256,7 @@ describe("Abilities - Wimp Out", () => {
       { type: "status", enemyMove: Moves.TOXIC },
       { type: "Ghost-type Curse", enemyMove: Moves.CURSE },
       { type: "Salt Cure", enemyMove: Moves.SALT_CURE },
-      { type: "partial trapping moves", enemyMove: Moves.WHIRLPOOL }, // no guard passive makes this guaranteed
+      { type: "partial trapping moves", enemyMove: Moves.WHIRLPOOL }, // no guard passive makes this 100% accurate
       { type: "Leech Seed", enemyMove: Moves.LEECH_SEED },
       { type: "Powder", playerMove: Moves.EMBER, enemyMove: Moves.POWDER },
       { type: "Nightmare", playerPassive: Abilities.COMATOSE, enemyMove: Moves.NIGHTMARE },
@@ -254,10 +268,11 @@ describe("Abilities - Wimp Out", () => {
       playerMove = Moves.SPLASH,
       playerPassive = Abilities.NONE,
       enemyMove = Moves.SPLASH,
-      enemyAbility = Abilities.BALL_FETCH,
+      enemyAbility = Abilities.STURDY,
     }) => {
       game.override
         .moveset(playerMove)
+        .enemyLevel(1)
         .passiveAbility(playerPassive)
         .enemySpecies(Species.GASTLY)
         .enemyMoveset(enemyMove)
@@ -266,7 +281,7 @@ describe("Abilities - Wimp Out", () => {
 
       const wimpod = game.scene.getPlayerPokemon()!;
       expect(wimpod).toBeDefined();
-      wimpod.hp = toDmgValue(wimpod.getMaxHp() / 2 + 5);
+      wimpod.hp = toDmgValue(wimpod.getMaxHp() / 2 + 2);
       // mock enemy attack damage func to only do 1 dmg (for whirlpool)
       vi.spyOn(wimpod, "getAttackDamage").mockReturnValueOnce({
         cancelled: false,
@@ -342,18 +357,16 @@ describe("Abilities - Wimp Out", () => {
 
     game.move.select(Moves.SUBSTITUTE);
     await game.forceEnemyMove(Moves.TIDY_UP);
-    game.doSelectPartyPokemon(1);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toNextTurn();
 
     confirmNoSwitch();
-
     // Turn 2: get back enough HP that substitute doesn't put us under
-    wimpod.hp = wimpod.getMaxHp() * 0.78;
+    wimpod.hp = wimpod.getMaxHp() * 0.8;
 
     game.move.select(Moves.SUBSTITUTE);
-    game.doSelectPartyPokemon(1);
     await game.forceEnemyMove(Moves.ROUND);
+    game.doSelectPartyPokemon(1);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("TurnEndPhase");
 
@@ -413,7 +426,7 @@ describe("Abilities - Wimp Out", () => {
     game.move.select(Moves.SPLASH);
     await game.toNextTurn();
 
-    confirmNoSwitch();
+    expect(wimpod.isOnField()).toBe(true);
     expect(wimpod.getHpRatio()).toBeCloseTo(0.51);
   });
 
@@ -548,7 +561,7 @@ describe("Abilities - Wimp Out", () => {
 
     await game.classicMode.startBattle([Species.REGIDRAGO, Species.MAGIKARP]);
 
-    // turn 1
+    // turn 1 - 1st wimpod faints while the 2nd one flees
     game.move.select(Moves.DRAGON_ENERGY, 0);
     game.move.select(Moves.SPLASH, 1);
     await game.forceEnemyMove(Moves.SPLASH);

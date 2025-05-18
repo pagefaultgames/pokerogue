@@ -156,7 +156,7 @@ describe("Moves - Dragon Tail", () => {
     expect(enemySecPokemon.hp).toBeLessThan(enemySecPokemon.getMaxHp());
   });
 
-  it("should not switch out a target with suction cups", async () => {
+  it("should not switch out a target with suction cups, unless the user has Mold Breaker", async () => {
     game.override.enemyAbility(Abilities.SUCTION_CUPS);
     await game.classicMode.startBattle([Species.REGIELEKI]);
 
@@ -166,6 +166,16 @@ describe("Moves - Dragon Tail", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(enemy.isOnField()).toBe(true);
+    expect(enemy.isFullHp()).toBe(false);
+
+    // Turn 2: Mold Breaker should ignore switch blocking ability and switch out the target
+    game.override.ability(Abilities.MOLD_BREAKER);
+    enemy.hp = enemy.getMaxHp();
+
+    game.move.select(Moves.DRAGON_TAIL);
+    await game.phaseInterceptor.to("TurnEndPhase");
+
+    expect(enemy.isOnField()).toBe(false);
     expect(enemy.isFullHp()).toBe(false);
   });
 
@@ -203,43 +213,47 @@ describe("Moves - Dragon Tail", () => {
     expect(game.scene.getEnemyField().length).toBe(1);
   });
 
-  it("should not cause a softlock when activating an opponent trainer's reviver seed", async () => {
+  it("should neither switch nor softlock when activating an opponent's reviver seed", async () => {
     game.override
-      .startingWave(5)
+      .battleType(BattleType.TRAINER)
       .enemyHeldItems([{ name: "REVIVER_SEED" }])
-      .startingLevel(1000); // To make sure Dragon Tail KO's the opponent
+      .startingLevel(1000); // make sure Dragon Tail KO's the opponent
     await game.classicMode.startBattle([Species.DRATINI]);
 
-    game.move.select(Moves.DRAGON_TAIL);
+    const [wailord1, wailord2] = game.scene.getEnemyParty()!;
+    expect(wailord1).toBeDefined();
+    expect(wailord2).toBeDefined();
 
+    game.move.select(Moves.DRAGON_TAIL);
     await game.toNextTurn();
 
-    // Make sure the enemy field is not empty and has a revived Pokemon
-    const enemy = game.scene.getEnemyPokemon()!;
-    expect(enemy).toBeDefined();
-    expect(enemy.hp).toBe(Math.floor(enemy.getMaxHp() / 2));
-    expect(game.scene.getEnemyField().length).toBe(1);
+    // Wailord should have consumed the reviver seed and stayed on field
+    expect(wailord1.isOnField()).toBe(true);
+    expect(wailord1.getHpRatio()).toBeCloseTo(0.5);
+    expect(wailord1.getHeldItems()).toHaveLength(0);
+    expect(wailord2.isOnField()).toBe(false);
   });
 
-  it("should not cause a softlock when activating a player's reviver seed", async () => {
+  it("should neither switch nor softlock when activating a player's reviver seed", async () => {
     game.override
       .startingHeldItems([{ name: "REVIVER_SEED" }])
       .enemyMoveset(Moves.DRAGON_TAIL)
-      .enemyLevel(1000); // To make sure Dragon Tail KO's the player
-    await game.classicMode.startBattle([Species.DRATINI, Species.BULBASAUR]);
+      .enemyLevel(1000); // make sure Dragon Tail KO's the player
+    await game.classicMode.startBattle([Species.BLISSEY, Species.BULBASAUR]);
+
+    const [blissey, bulbasaur] = game.scene.getPlayerParty();
 
     game.move.select(Moves.SPLASH);
-
     await game.toNextTurn();
 
-    // Make sure the player's field is not empty and has a revived Pokemon
-    const dratini = game.scene.getPlayerPokemon()!;
-    expect(dratini).toBeDefined();
-    expect(dratini.hp).toBe(Math.floor(dratini.getMaxHp() / 2));
-    expect(game.scene.getPlayerField().length).toBe(1);
+    // dratini should have consumed the reviver seed and stayed on field
+    expect(blissey.isOnField()).toBe(true);
+    expect(blissey.getHpRatio()).toBeCloseTo(0.5);
+    expect(blissey.getHeldItems()).toHaveLength(0);
+    expect(bulbasaur.isOnField()).toBe(false);
   });
 
-  it("should force switches randomly", async () => {
+  it("should force switches to a random off-field pokemon", async () => {
     game.override.enemyMoveset(Moves.DRAGON_TAIL).startingLevel(100).enemyLevel(1);
     await game.classicMode.startBattle([Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE]);
 
@@ -279,6 +293,7 @@ describe("Moves - Dragon Tail", () => {
 
     const [lapras, eevee, toxapex, primarina] = game.scene.getPlayerParty();
     expect(toxapex).toBeDefined();
+    toxapex.hp = 0;
 
     // Mock an RNG call to switch to the first eligible pokemon.
     // Eevee is ineligible and Toxapex is fainted, so it should proc on Primarina instead
@@ -286,7 +301,6 @@ describe("Moves - Dragon Tail", () => {
       return min;
     });
     game.move.select(Moves.SPLASH);
-    await game.killPokemon(toxapex);
     await game.toNextTurn();
 
     expect(lapras.isOnField()).toBe(false);
@@ -309,14 +323,15 @@ describe("Moves - Dragon Tail", () => {
     game.move.select(Moves.SPLASH, BattlerIndex.PLAYER_2);
     await game.forceEnemyMove(Moves.DRAGON_TAIL, BattlerIndex.PLAYER);
     await game.forceEnemyMove(Moves.DRAGON_TAIL, BattlerIndex.PLAYER_2);
-    await game.killPokemon(cloyster);
+    await game.killPokemon(kyogre);
+    game.doSelectPartyPokemon(3);
     await game.toNextTurn();
 
-    // Eevee is ineligble due to challenge and cloyster is fainted, leaving no backup pokemon able to switch in
+    // Eevee is ineligble due to challenge and kyogre is fainted, leaving no backup pokemon able to switch in
     expect(lapras.isOnField()).toBe(true);
-    expect(kyogre.isOnField()).toBe(true);
+    expect(kyogre.isOnField()).toBe(false);
     expect(eevee.isOnField()).toBe(false);
-    expect(cloyster.isOnField()).toBe(false);
+    expect(cloyster.isOnField()).toBe(true);
     expect(lapras.getInverseHp()).toBeGreaterThan(0);
     expect(kyogre.getInverseHp()).toBeGreaterThan(0);
     expect(game.scene.getBackupPartyMemberIndices(true)).toHaveLength(0);

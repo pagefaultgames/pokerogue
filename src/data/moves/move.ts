@@ -1239,10 +1239,12 @@ export class MoveEffectAttr extends MoveAttr {
    * @param user {@linkcode Pokemon} using the move
    * @param target {@linkcode Pokemon} target of the move
    * @param move {@linkcode Move} with this attribute
-   * @param args Set of unique arguments needed by this attribute
-   * @returns true if basic application of the ability attribute should be possible
+   * @param args - Any unique arguments needed by this attribute
+   * @returns `true` if basic application of the ability attribute should be possible.
+   * By default, checks that the target is not fainted and (for non self-targeting moves) not protected by an effect.
    */
   canApply(user: Pokemon, target: Pokemon, move: Move, args?: any[]) {
+    // TODO: why do we check frenzy tag here?
     return !! (this.selfTarget ? user.hp && !user.getTag(BattlerTagType.FRENZY) : target.hp)
            && (this.selfTarget || !target.getTag(BattlerTagType.PROTECTED) ||
                 move.doesFlagEffectApply({ flag: MoveFlags.IGNORE_PROTECT, user, target }));
@@ -6239,7 +6241,7 @@ export class ForceSwitchOutAttr extends ForceSwitch(MoveEffectAttr) {
   }
 
   getCondition(): MoveConditionFunc {
-    // Damaging switch moves should not "fail" _per se_ upon a failed switch -
+    // Damaging switch moves should not "fail" _per se_ upon an unsuccessful switch -
     // they still succeed and deal damage (but just without actually switching out).
     return (user, target, move) => (move.category !== MoveCategory.STATUS || this.getSwitchOutCondition()(user, target, move));
   }

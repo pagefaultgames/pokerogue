@@ -6326,9 +6326,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param hideInfo - Whether to play the animation to hide the Pokemon's info container; default `true`.
    * @param destroy - Whether to destroy this Pokemon once it leaves the field; default `false`
    * @remarks
-   * This **SHOULD NOT** be called when a `SummonPhase` or `SwitchSummonPhase` is already being added,
-   * which can lead to premature resetting of {@linkcode turnData} and {@linkcode summonData}.
+   * This **SHOULD NOT** be called with `clearEffects=true` when a `SummonPhase` or `SwitchSummonPhase` is already being added,
+   * both of which do so already and can lead to premature resetting of {@linkcode turnData} and {@linkcode summonData}.
    */
+  // TODO: Review where this is being called and where it is necessary to call it
   leaveField(clearEffects = true, hideInfo = true, destroy = false) {
     console.log(`leaveField called on Pokemon ${this.name}`)
     this.resetSprite();

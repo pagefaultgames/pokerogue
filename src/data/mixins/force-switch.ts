@@ -35,6 +35,12 @@ export function ForceSwitch<TBase extends SubMoveOrAbAttr>(Base: TBase) {
     protected canSwitchOut(switchOutTarget: Pokemon): boolean {
       const isPlayer = switchOutTarget instanceof PlayerPokemon;
 
+      if (switchOutTarget.isFainted()) {
+        // Fainted Pokemon cannot be switched out by any means.
+        // This is already checked in `MoveEffectAttr.canApply`, but better safe than sorry
+        return false;
+      }
+
       // If we aren't switching ourself out, ensure the target in question can actually be switched out by us
       if (!this.selfSwitch && !this.performForceSwitchChecks(switchOutTarget)) {
         return false;
@@ -86,15 +92,10 @@ export function ForceSwitch<TBase extends SubMoveOrAbAttr>(Base: TBase) {
 
     /**
      * Wrapper function to handle the actual "switching out" of Pokemon.
-     * @param switchOutTarget - The {@linkcode Pokemon} (player or enemy) to be switched switch out.
+     * @param switchOutTarget - The {@linkcode Pokemon} (player or enemy) to be switched out.
      */
     protected doSwitch(switchOutTarget: Pokemon): void {
-      if (switchOutTarget instanceof PlayerPokemon) {
-        this.trySwitchPlayerPokemon(switchOutTarget);
-        return;
-      }
-
-      if (!(switchOutTarget instanceof EnemyPokemon)) {
+      if (!(switchOutTarget instanceof PlayerPokemon) && !(switchOutTarget instanceof EnemyPokemon)) {
         console.warn(
           "Switched out target (index %i) neither player nor enemy Pokemon!",
           switchOutTarget.getFieldIndex(),
@@ -102,17 +103,31 @@ export function ForceSwitch<TBase extends SubMoveOrAbAttr>(Base: TBase) {
         return;
       }
 
-      if (globalScene.currentBattle.battleType !== BattleType.WILD) {
-        this.trySwitchTrainerPokemon(switchOutTarget);
-        return;
+      switch (true) {
+        case switchOutTarget instanceof PlayerPokemon:
+          this.trySwitchPlayerPokemon(switchOutTarget);
+          break;
+        case globalScene.currentBattle.battleType !== BattleType.WILD:
+          this.trySwitchTrainerPokemon(switchOutTarget);
+          break;
+        default:
+          this.tryFleeWildPokemon(switchOutTarget);
       }
 
-      this.tryFleeWildPokemon(switchOutTarget);
+      // Hide the info container as soon as the switch out occurs.
+      // Effects are kept to ensure correct Shell Bell interactions.
+      // TODO: Should we hide the info container for wild fleeing?
+      // Currently keeping it same as prior logic for consistency
+      if (switchOutTarget instanceof EnemyPokemon && globalScene.currentBattle.battleType === BattleType.WILD) {
+        switchOutTarget.hideInfo();
+      }
     }
 
-    // NB: `prependToPhase` is used here to ensure that the switch happens before the move ends
-    // and `arena.ignoreAbilities` is reset.
-    // This ensures ability ignore effects will persist for the duration of the switch (for hazards).
+    /*
+    NB: `prependToPhase` is used here to ensure that the switch happens before the move ends
+    and `arena.ignoreAbilities` is reset.
+    This ensures ability ignore effects will persist for the duration of the switch (for hazards, etc).
+    */
 
     private trySwitchPlayerPokemon(switchOutTarget: PlayerPokemon): void {
       // If not forced to switch, add a SwitchPhase to allow picking the next switched in Pokemon.
@@ -156,7 +171,6 @@ export function ForceSwitch<TBase extends SubMoveOrAbAttr>(Base: TBase) {
 
     private tryFleeWildPokemon(switchOutTarget: EnemyPokemon): void {
       // flee wild pokemon, redirecting moves to an ally in doubles as applicable.
-      switchOutTarget.leaveField(false);
       globalScene.queueMessage(
         i18next.t("moveTriggers:fled", { pokemonName: getPokemonNameWithAffix(switchOutTarget) }),
         null,
@@ -169,7 +183,7 @@ export function ForceSwitch<TBase extends SubMoveOrAbAttr>(Base: TBase) {
         globalScene.redirectPokemonMoves(switchOutTarget, allyPokemon);
       }
 
-      // End battle if no enemies are active and enemy wasn't already KO'd (kos do )
+      // End battle if no enemies are active and enemy wasn't already KO'd
       if (!allyPokemon?.isActive(true) && !switchOutTarget.isFainted()) {
         globalScene.clearEnemyHeldItemModifiers();
 

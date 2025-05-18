@@ -45,6 +45,15 @@ export class SwitchSummonPhase extends SummonPhase {
   }
 
   preSummon(): void {
+    const switchOutPokemon = this.getPokemon();
+
+    // if the target is still on-field, remove it and/or hide its info container.
+    // Effects are kept to be transferred to the new Pokemon if applicable
+    // TODO: Make moves that switch out pokemon defer to this phase
+    if (switchOutPokemon.isOnField()) {
+      switchOutPokemon.leaveField(false, switchOutPokemon.getBattleInfo()?.visible);
+    }
+
     if (!this.player) {
       if (this.slotIndex === -1) {
         //@ts-ignore
@@ -71,13 +80,12 @@ export class SwitchSummonPhase extends SummonPhase {
       return;
     }
 
-    const lastPokemon = this.getPokemon();
     (this.player ? globalScene.getEnemyField() : globalScene.getPlayerField()).forEach(enemyPokemon =>
-      enemyPokemon.removeTagsBySourceId(lastPokemon.id),
+      enemyPokemon.removeTagsBySourceId(switchOutPokemon.id),
     );
 
     if (this.switchType === SwitchType.SWITCH || this.switchType === SwitchType.INITIAL_SWITCH) {
-      const substitute = lastPokemon.getTag(SubstituteTag);
+      const substitute = switchOutPokemon.getTag(SubstituteTag);
       if (substitute) {
         globalScene.tweens.add({
           targets: substitute.sprite,
@@ -92,25 +100,26 @@ export class SwitchSummonPhase extends SummonPhase {
     globalScene.ui.showText(
       this.player
         ? i18next.t("battle:playerComeBack", {
-            pokemonName: getPokemonNameWithAffix(lastPokemon),
+            pokemonName: getPokemonNameWithAffix(switchOutPokemon),
           })
         : i18next.t("battle:trainerComeBack", {
             trainerName: globalScene.currentBattle.trainer?.getName(
               !(this.fieldIndex % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER,
             ),
-            pokemonName: lastPokemon.getNameToRender(),
+            pokemonName: switchOutPokemon.getNameToRender(),
           }),
     );
     globalScene.playSound("se/pb_rel");
-    lastPokemon.hideInfo();
-    lastPokemon.tint(getPokeballTintColor(lastPokemon.getPokeball(true)), 1, 250, "Sine.easeIn");
+    switchOutPokemon.hideInfo();
+    switchOutPokemon.tint(getPokeballTintColor(switchOutPokemon.getPokeball(true)), 1, 250, "Sine.easeIn");
     globalScene.tweens.add({
-      targets: lastPokemon,
+      targets: switchOutPokemon,
       duration: 250,
       ease: "Sine.easeIn",
       scale: 0.5,
       onComplete: () => {
         globalScene.time.delayedCall(750, () => this.switchAndSummon());
+        switchOutPokemon.leaveField(this.switchType === SwitchType.SWITCH, false);
       },
     });
   }
@@ -161,17 +170,9 @@ export class SwitchSummonPhase extends SummonPhase {
       }
     }
 
-    // Swap around the 2 pokemon's party positions and play an animation to send in the new pokemon.
     party[this.slotIndex] = this.lastPokemon;
     party[this.fieldIndex] = switchedInPokemon;
     const showTextAndSummon = () => {
-      // We don't reset temp effects here as we need to transfer them to tne new pokemon
-      // TODO: When should this remove the info container?
-      // Force switch moves did it prior
-      this.lastPokemon.leaveField(
-        ![SwitchType.BATON_PASS, SwitchType.SHED_TAIL].includes(this.switchType),
-        this.doReturn,
-      );
       globalScene.ui.showText(
         this.player
           ? i18next.t("battle:playerGo", {
