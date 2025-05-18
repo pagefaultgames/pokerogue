@@ -2847,10 +2847,6 @@ export class BypassSleepAttr extends MoveAttr {
     return true;
   }
 
-  getCondition(): MoveConditionFunc {
-    return (user, target, move) => user.status?.effect === StatusEffect.SLEEP && user.status.sleepTurnsRemaining != undefined && user.status.sleepTurnsRemaining > 0;
-  }
-
   /**
    * Returns arbitrarily high score when Pokemon is asleep, otherwise shouldn't be used
    * @param user
@@ -7923,7 +7919,7 @@ const failIfDampCondition: MoveConditionFunc = (user, target, move) => {
   return !cancelled.value;
 };
 
-const userSleptOrComatoseCondition: MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) =>  user.status?.effect === StatusEffect.SLEEP || user.hasAbility(Abilities.COMATOSE);
+const userSleptOrComatoseCondition: MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) =>  (user.status?.effect === StatusEffect.SLEEP && (user.status.sleepTurnsRemaining ?? 0) > 0) || user.hasAbility(Abilities.COMATOSE);
 
 const targetSleptOrComatoseCondition: MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) =>  target.status?.effect === StatusEffect.SLEEP || target.hasAbility(Abilities.COMATOSE);
 
