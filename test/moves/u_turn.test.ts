@@ -74,7 +74,7 @@ describe("Moves - U-turn", () => {
     // arrange
     game.override.enemyAbility(Abilities.POISON_POINT);
     await game.classicMode.startBattle([Species.RAICHU, Species.SHUCKLE]);
-    vi.spyOn(game.scene.getEnemyPokemon()!, "randSeedInt").mockReturnValue(0);
+    vi.spyOn(game.scene.getEnemyPokemon()!, "randBattleSeedInt").mockReturnValue(0);
 
     // act
     game.move.select(Moves.U_TURN);
