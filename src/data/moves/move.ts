@@ -2843,12 +2843,12 @@ export class HealStatusEffectAttr extends MoveEffectAttr {
 
 export class BypassSleepAttr extends MoveAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (user.status?.effect === StatusEffect.SLEEP) {
-      user.addTag(BattlerTagType.BYPASS_SLEEP, 1, move.id, user.id);
-      return true;
-    }
+    user.addTag(BattlerTagType.BYPASS_SLEEP, 1, move.id, user.id);
+    return true;
+  }
 
-    return false;
+  getCondition(): MoveConditionFunc {
+    return (user, target, move) => user.status?.effect === StatusEffect.SLEEP && user.status.sleepTurnsRemaining != undefined && user.status.sleepTurnsRemaining > 0;
   }
 
   /**
