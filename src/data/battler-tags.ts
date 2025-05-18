@@ -772,13 +772,13 @@ export class ConfusedTag extends BattlerTag {
     globalScene.unshiftPhase(new CommonAnimPhase(pokemon.getBattlerIndex(), undefined, CommonAnim.CONFUSION));
 
     // 1/3 chance of hitting self with a 40 base power move
-    const shouldInterruptMove = Overrides.CONFUSION_ACTIVATION_OVERRIDE ?? pokemon.randSeedInt(3) === 0;
+    const shouldInterruptMove = Overrides.CONFUSION_ACTIVATION_OVERRIDE ?? pokemon.randBattleSeedInt(3) === 0;
     if (shouldInterruptMove) {
       // TODO: Are these calculations correct? We really shouldn't hardcode the damage formula here...
       const atk = pokemon.getEffectiveStat(Stat.ATK);
       const def = pokemon.getEffectiveStat(Stat.DEF);
       const damage = toDmgValue(
-        ((((2 * pokemon.level) / 5 + 2) * 40 * atk) / def / 50 + 2) * (pokemon.randSeedIntRange(85, 100) / 100),
+        ((((2 * pokemon.level) / 5 + 2) * 40 * atk) / def / 50 + 2) * (pokemon.randBattleSeedIntRange(85, 100) / 100),
       );
       // Intentionally don't increment rage fist's hitCount
       globalScene.queueMessage(i18next.t("battlerTags:confusedLapseHurtItself"));
@@ -898,7 +898,7 @@ export class InfatuatedTag extends BattlerTag {
       );
       globalScene.unshiftPhase(new CommonAnimPhase(pokemon.getBattlerIndex(), undefined, CommonAnim.ATTRACT));
 
-      if (pokemon.randSeedInt(2)) {
+      if (pokemon.randBattleSeedInt(2)) {
         globalScene.queueMessage(
           i18next.t("battlerTags:infatuatedLapseImmobilize", {
             pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
@@ -1127,7 +1127,7 @@ export class FrenzyTag extends BattlerTag {
 
     if (this.turnCount < 2) {
       // Only add CONFUSED tag if a disruption occurs on the final confusion-inducing turn of FRENZY
-      pokemon.addTag(BattlerTagType.CONFUSED, pokemon.randSeedIntRange(2, 4));
+      pokemon.addTag(BattlerTagType.CONFUSED, pokemon.randBattleSeedIntRange(2, 4));
     }
   }
 }

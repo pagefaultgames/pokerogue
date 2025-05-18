@@ -126,7 +126,7 @@ export function ForceSwitch<TBase extends SubMoveOrAbAttr>(Base: TBase) {
 
       // Pick a random eligible player pokemon to replace the switched out one.
       const reservePartyMembers = globalScene.getBackupPartyMemberIndices(true);
-      const switchInIndex = reservePartyMembers[switchOutTarget.randSeedInt(reservePartyMembers.length)];
+      const switchInIndex = reservePartyMembers[switchOutTarget.randBattleSeedInt(reservePartyMembers.length)];
 
       globalScene.prependToPhase(
         new SwitchSummonPhase(this.switchType, switchOutTarget.getFieldIndex(), switchInIndex, false, true),
@@ -146,7 +146,7 @@ export function ForceSwitch<TBase extends SubMoveOrAbAttr>(Base: TBase) {
       const reservePartyIndices = globalScene.getBackupPartyMemberIndices(false, switchOutTarget.trainerSlot);
       const summonIndex =
         this.switchType === SwitchType.FORCE_SWITCH
-          ? reservePartyIndices[switchOutTarget.randSeedInt(reservePartyIndices.length)]
+          ? reservePartyIndices[switchOutTarget.randBattleSeedInt(reservePartyIndices.length)]
           : (globalScene.currentBattle.trainer.getNextSummonIndex(switchOutTarget.trainerSlot) ?? 0);
       globalScene.prependToPhase(
         new SwitchSummonPhase(this.switchType, switchOutTarget.getFieldIndex(), summonIndex, false, false),

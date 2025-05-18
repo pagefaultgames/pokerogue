@@ -189,11 +189,15 @@ export class SwitchSummonPhase extends SummonPhase {
        * If this switch is passing a Substitute, make the switched Pokemon matches the returned Pokemon's state as it left.
        * Otherwise, clear any persisting tags on the returned Pokemon.
        */
-      const substitute = this.lastPokemon.getTag(SubstituteTag);
-      if ((this.switchType === SwitchType.BATON_PASS || this.switchType === SwitchType.SHED_TAIL) && substitute) {
-        switchedInPokemon.x += this.lastPokemon.getSubstituteOffset()[0];
-        switchedInPokemon.y += this.lastPokemon.getSubstituteOffset()[1];
-        switchedInPokemon.setAlpha(0.5);
+      if (this.switchType === SwitchType.BATON_PASS || this.switchType === SwitchType.SHED_TAIL) {
+        const substitute = this.lastPokemon.getTag(SubstituteTag);
+        if (substitute) {
+          switchedInPokemon.x += this.lastPokemon.getSubstituteOffset()[0];
+          switchedInPokemon.y += this.lastPokemon.getSubstituteOffset()[1];
+          switchedInPokemon.setAlpha(0.5);
+        }
+      } else {
+        switchedInPokemon.fieldSetup();
       }
       this.summon();
     };
