@@ -47,6 +47,10 @@ export class MessagePhase extends Phase {
           new MessagePhase(page1, this.callbackDelay, this.prompt, this.promptDelay, this.speaker),
         );
         this.text = page0.trim();
+      } else {
+        for (let p = 0; p < globalScene.getPlayerField().length; p++) {
+          this.text = this.text.split(repname[p]).join(pokename[p]);
+        }
       }
     }
 
