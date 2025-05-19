@@ -2339,22 +2339,22 @@ export class PostSummonStatStageChangeAbAttr extends PostSummonAbAttr {
       return;
     }
 
-      // Apply the stat change to all non-immune opponents
-      for (const opponent of pokemon.getOpponents()) {
-        const cancelled = new BooleanHolder(false);
-        if (this.intimidate) {
-          applyAbAttrs(IntimidateImmunityAbAttr, opponent, cancelled, simulated);
-          applyAbAttrs(PostIntimidateStatStageChangeAbAttr, opponent, cancelled, simulated);
+    // Apply the stat change to all non-immune opponents
+    for (const opponent of pokemon.getOpponents()) {
+      const cancelled = new BooleanHolder(false);
+      if (this.intimidate) {
+        applyAbAttrs(IntimidateImmunityAbAttr, opponent, cancelled, simulated);
+        applyAbAttrs(PostIntimidateStatStageChangeAbAttr, opponent, cancelled, simulated);
 
-          if (opponent.getTag(BattlerTagType.SUBSTITUTE)) {
-            cancelled.value = true;
-          }
-        }
-        if (!cancelled.value) {
-          globalScene.unshiftPhase(new StatStageChangePhase(opponent.getBattlerIndex(), false, this.stats, this.stages));
+        if (opponent.getTag(BattlerTagType.SUBSTITUTE)) {
+          cancelled.value = true;
         }
       }
+      if (!cancelled.value) {
+        globalScene.unshiftPhase(new StatStageChangePhase(opponent.getBattlerIndex(), false, this.stats, this.stages));
+      }
     }
+  }
 }
 
 /**
