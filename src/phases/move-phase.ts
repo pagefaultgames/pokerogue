@@ -398,18 +398,6 @@ export class MovePhase extends BattlePhase {
     // trigger ability-based user type changes and then execute move effects.
     applyPreAttackAbAttrs(PokemonTypeChangeAbAttr, this.pokemon, null, move);
     globalScene.unshiftPhase(new MoveEffectPhase(this.pokemon.getBattlerIndex(), this.targets, move, this.useType));
-
-    // Handle Dancer, which triggers immediately after a move is used (rather than waiting on `this.end()`).
-    // Note the MoveUseType check here prevents an infinite Dancer loop.
-    if (
-      this.move.getMove().hasFlag(MoveFlags.DANCE_MOVE) &&
-      ![MoveUseType.INDIRECT, MoveUseType.REFLECTED].includes(this.useType)
-    ) {
-      // TODO: Fix in dancer PR to move to MEP for hit checks
-      globalScene.getField(true).forEach(pokemon => {
-        applyPostMoveUsedAbAttrs(PostMoveUsedAbAttr, pokemon, this.move, this.pokemon, this.targets);
-      });
-    }
   }
 
   /**
