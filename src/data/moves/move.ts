@@ -6225,6 +6225,12 @@ export class RevivalBlessingAttr extends MoveEffectAttr {
  */
 // TODO: Add custom failure text & locales
 export class ForceSwitchOutAttr extends ForceSwitch(MoveEffectAttr) {
+  /**
+   * Create a new {@linkcode ForceSwitchOutAttr}.
+   * @param selfSwitch - Whether the move should switch out the user (`true`) or target (`false`); default `false`.
+   * Self-switching moves that target the user should still set this as `true`.
+   * @param switchType - A {@linkcode SwitchType} dictating the type of switch logic to implement; default {@linkcode SwitchType.SWITCH}
+   */
   constructor(
     selfSwitch: boolean = false,
     switchType: NormalSwitchType = SwitchType.SWITCH
@@ -10974,8 +10980,9 @@ export function initMoves() {
       .attr(ForceSwitchOutAttr, true, SwitchType.SHED_TAIL)
       .condition(failIfLastInPartyCondition),
     new SelfStatusMove(Moves.CHILLY_RECEPTION, PokemonType.ICE, -1, 10, -1, 0, 9)
-      .attr(PreMoveMessageAttr, (user, move) => i18next.t("moveTriggers:chillyReception", { pokemonName: getPokemonNameWithAffix(user) }))
-      .attr(ChillyReceptionAttr, true),
+      .attr(PreMoveMessageAttr, (user, target, move) => i18next.t("moveTriggers:chillyReception", { pokemonName: getPokemonNameWithAffix(user) }))
+      .attr(ChillyReceptionAttr, true)
+      .edgeCase(), // "Chilly Joke" message shouldn't occur if called indirectly
     new SelfStatusMove(Moves.TIDY_UP, PokemonType.NORMAL, -1, 10, -1, 0, 9)
       .attr(StatStageChangeAttr, [ Stat.ATK, Stat.SPD ], 1, true)
       .attr(RemoveArenaTrapAttr, true)
