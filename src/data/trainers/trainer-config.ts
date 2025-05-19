@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import { PokemonMove } from "#app/field/pokemon";
-import { toReadableString, isNullOrUndefined, randSeedItem, randSeedInt } from "#app/utils/common";
+import { toReadableString, isNullOrUndefined, randSeedItem, randSeedInt, randSeedIntRange } from "#app/utils/common";
 import { pokemonEvolutions, pokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { tmSpecies } from "#app/data/balance/tms";
@@ -4254,7 +4254,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setPartyMemberFunc(
       5,
       getRandomPartyMemberFunc([Species.URSHIFU], TrainerSlot.TRAINER, true, p => {
-        p.formIndex = randSeedInt(2, 2); // Random G-Max Urshifu
+        p.formIndex = randSeedIntRange(2, 3); // Random G-Max Urshifu
         p.generateAndPopulateMoveset();
         p.generateName();
         p.gender = Gender.MALE;
