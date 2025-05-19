@@ -2,14 +2,11 @@ import { BattlerIndex } from "#app/battle";
 import { globalScene } from "#app/global-scene";
 import {
   applyAbAttrs,
-  applyPostMoveUsedAbAttrs,
   applyPreAttackAbAttrs,
   BlockRedirectAbAttr,
   IncreasePpAbAttr,
   PokemonTypeChangeAbAttr,
-  PostMoveUsedAbAttr,
   RedirectMoveAbAttr,
-  ReduceStatusEffectDurationAbAttr,
 } from "#app/data/abilities/ability";
 import type { DelayedAttackTag } from "#app/data/arena-tag";
 import { CommonAnim } from "#app/data/battle-anims";
@@ -247,7 +244,9 @@ export class MovePhase extends BattlePhase {
       return;
     }
 
-    this.pokemon.status.incrementTurn();
+    // Decrement sleep turn count, triggering Early Bird as applicable.
+    this.pokemon.status.decrementSleepTurnCount(this.pokemon);
+
     /** Whether to prevent us from using the move */
     let activated = false;
     /** Whether to cure the status */
@@ -255,35 +254,31 @@ export class MovePhase extends BattlePhase {
 
     switch (this.pokemon.status.effect) {
       case StatusEffect.PARALYSIS:
-        activated =
-          (this.pokemon.randBattleSeedInt(4) === 0 || Overrides.STATUS_ACTIVATION_OVERRIDE === true) &&
-          Overrides.STATUS_ACTIVATION_OVERRIDE !== false;
+        // 20% chance to proc each turn (unless status override is set)
+        activated = Overrides.STATUS_ACTIVATION_OVERRIDE ?? this.pokemon.randBattleSeedInt(4) === 0;
         break;
       case StatusEffect.SLEEP: {
+        healed = (this.pokemon.status.sleepTurnsRemaining ?? 1) <= 0;
+        // Check for Snore and Sleep Talk - they apply the BYPASS_SLEEP tag for 1 turn to allow use while asleep
         applyMoveAttrs(BypassSleepAttr, this.pokemon, null, this.move.getMove());
-        const turnsRemaining = new NumberHolder(this.pokemon.status.sleepTurnsRemaining ?? 0);
-        applyAbAttrs(
-          ReduceStatusEffectDurationAbAttr,
-          this.pokemon,
-          null,
-          false,
-          this.pokemon.status.effect,
-          turnsRemaining,
-        );
-        this.pokemon.status.sleepTurnsRemaining = turnsRemaining.value;
-        healed = this.pokemon.status.sleepTurnsRemaining <= 0;
-        activated = !healed && !this.pokemon.getTag(BattlerTagType.BYPASS_SLEEP);
+        if (this.pokemon.getTag(BattlerTagType.BYPASS_SLEEP)) {
+          // Komala is love, Komala is life, Komala will **MURDER YOU IN ITS SLEEP**
+          break;
+        }
+        activated = !healed;
         break;
       }
       case StatusEffect.FREEZE:
+        // Unfreeze if using a move that thaws the user or if a 20% roll succeeds;
+        // all other cases remain frozen
         healed =
-          !!this.move
+          Overrides.STATUS_ACTIVATION_OVERRIDE ??
+          (!!this.move
             .getMove()
             .findAttr(
               attr => attr instanceof HealStatusEffectAttr && attr.selfTarget && attr.isOfEffect(StatusEffect.FREEZE),
             ) ||
-          (!this.pokemon.randBattleSeedInt(5) && Overrides.STATUS_ACTIVATION_OVERRIDE !== true) ||
-          Overrides.STATUS_ACTIVATION_OVERRIDE === false;
+            this.pokemon.randBattleSeedInt(5) === 0);
 
         activated = !healed;
         break;

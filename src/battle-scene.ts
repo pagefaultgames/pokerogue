@@ -874,7 +874,7 @@ export default class BattleScene extends SceneBase {
   /**
    * Returns an array of Pokemon on both sides of the battle - player first, then enemy.
    * Does not actually check if the pokemon are on the field or not, and always has length 4 regardless of battle type.
-   * @param activeOnly - Whether to consider only active pokemon; default `false`
+   * @param activeOnly - Whether to consider only active pokemon (see {@linkcode Pokemon.isActive()} for more info); default `false`
    * @returns An array of {@linkcode Pokemon}, as described above.
    */
   public getField(activeOnly = false): Pokemon[] {
@@ -2802,10 +2802,10 @@ export default class BattleScene extends SceneBase {
   }
 
   /**
-   * Tries to add the input phase to index before target phase in the phaseQueue, else simply calls unshiftPhase()
-   * @param phase {@linkcode Phase} the phase to be added
-   * @param targetPhase {@linkcode Phase} the type of phase to search for in phaseQueue
-   * @returns boolean if a targetPhase was found and added
+   * Tries to add the input phase(s) to index before target phase in the phaseQueue, else simply calls {@linkcode unshiftPhase()}
+   * @param phase - One or more {@linkcode Phase}s to be added
+   * @param targetPhase - The type of {@linkcode Phase} to queue the selected phases before.
+   * @returns Whether a targetPhase was found to prepend the phases to.
    */
   prependToPhase(phase: Phase | Phase[], targetPhase: Constructor<Phase>): boolean {
     if (!Array.isArray(phase)) {
