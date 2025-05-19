@@ -1360,7 +1360,8 @@ export class PreMoveMessageAttr extends MoveAttr {
   /**
    * Create a new {@linkcode PreMoveMessageAttr} to display a message before move execution.
    * @param message - The message to display before move use, either as a string or a function producing one.
-   * A value of `undefined` or an empty string (`''`) will cause no message to be displayed.
+   * A value of `undefined` or an empty string (`''`) will cause no message to be displayed
+   * (though the move will still suceed).
    */
   constructor(message: string | undefined | ((user: Pokemon, target: Pokemon, move: Move) => string | undefined)) {
     super();
@@ -1373,9 +1374,9 @@ export class PreMoveMessageAttr extends MoveAttr {
       : this.message;
     if (message) {
       globalScene.queueMessage(message, 500);
-      return true;
     }
-    return false;
+    // always return `true` to ensure moves succeed even without a message
+    return true;
   }
 }
 
