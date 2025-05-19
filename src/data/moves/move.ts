@@ -1350,18 +1350,27 @@ export class BeakBlastHeaderAttr extends AddBattlerTagHeaderAttr {
   }
 }
 
+/**
+ * Attribute to display a message before a move is executed.
+ */
 export class PreMoveMessageAttr extends MoveAttr {
-  private message: string | ((user: Pokemon, target: Pokemon, move: Move) => string);
+  /** The message to display or a function returning one */
+  private message: string | undefined | ((user: Pokemon, target: Pokemon, move: Move) => string | undefined);
 
-  constructor(message: string | ((user: Pokemon, target: Pokemon, move: Move) => string)) {
+  /**
+   * Create a new {@linkcode PreMoveMessageAttr} to display a message before move execution.
+   * @param message - The message to display before move use, either as a string or a function producing one.
+   * A value of `undefined` or an empty string (`''`) will cause no message to be displayed.
+   */
+  constructor(message: string | undefined | ((user: Pokemon, target: Pokemon, move: Move) => string | undefined)) {
     super();
     this.message = message;
   }
 
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const message = typeof this.message === "string"
-      ? this.message as string
-      : this.message(user, target, move);
+  apply(user: Pokemon, target: Pokemon, move: Move, _args: any[]): boolean {
+    const message = typeof this.message === "function"
+      ? this.message(user, target, move)
+      : this.message;
     if (message) {
       globalScene.queueMessage(message, 500);
       return true;
@@ -11120,7 +11129,12 @@ export function initMoves() {
       .attr(ForceSwitchOutAttr, true, SwitchType.SHED_TAIL)
       .condition(failIfLastInPartyCondition),
     new SelfStatusMove(Moves.CHILLY_RECEPTION, PokemonType.ICE, -1, 10, -1, 0, 9)
-      .attr(PreMoveMessageAttr, (user, move) => i18next.t("moveTriggers:chillyReception", { pokemonName: getPokemonNameWithAffix(user) }))
+      .attr(PreMoveMessageAttr, (user, _target, _move) =>
+        // Don't display text if current move phase is follow up (ie move called indirectly)
+        // TODO: Change in move-use-type PR to use the move phase's current use type
+        (globalScene.getCurrentPhase() as MovePhase)["followUp"]
+          ? undefined
+          : i18next.t("moveTriggers:chillyReception", { pokemonName: getPokemonNameWithAffix(user) }))
       .attr(ChillyReceptionAttr, true),
     new SelfStatusMove(Moves.TIDY_UP, PokemonType.NORMAL, -1, 10, -1, 0, 9)
       .attr(StatStageChangeAttr, [ Stat.ATK, Stat.SPD ], 1, true)
