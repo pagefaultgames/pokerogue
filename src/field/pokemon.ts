@@ -6249,8 +6249,6 @@ export class EnemyPokemon extends Pokemon {
         return queuedMove;
       }
     }
-
-    // Filter out any moves this Pokemon cannot use
     let movePool = this.getMoveset().filter(m => m.isUsable(this));
     // If no moves are left, use Struggle. Otherwise, continue with move selection
     if (movePool.length) {
