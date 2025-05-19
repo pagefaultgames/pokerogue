@@ -124,6 +124,10 @@ import { MultiHitType } from "#enums/MultiHitType";
 import { invalidAssistMoves, invalidCopycatMoves, invalidMetronomeMoves, invalidMirrorMoveMoves, invalidSleepTalkMoves } from "./invalid-moves";
 import { SelectBiomePhase } from "#app/phases/select-biome-phase";
 
+/**
+ * A function used to conditionally determine execution of a given {@linkcode MoveAttr}.
+ * Conventionally returns `true` for success and `false` for failure.
+*/
 type MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => boolean;
 type UserMoveConditionFunc = (user: Pokemon, move: Move) => boolean;
 
@@ -1355,15 +1359,16 @@ export class BeakBlastHeaderAttr extends AddBattlerTagHeaderAttr {
  */
 export class PreMoveMessageAttr extends MoveAttr {
   /** The message to display or a function returning one */
-  private message: string | undefined | ((user: Pokemon, target: Pokemon, move: Move) => string | undefined);
+  private message: string | ((user: Pokemon, target: Pokemon, move: Move) => string | undefined);
 
   /**
    * Create a new {@linkcode PreMoveMessageAttr} to display a message before move execution.
    * @param message - The message to display before move use, either as a string or a function producing one.
-   * A value of `undefined` or an empty string (`''`) will cause no message to be displayed
+   * @remarks
+   * If {@linkcode message} evaluates to an empty string (`''`), no message will be displayed
    * (though the move will still suceed).
    */
-  constructor(message: string | undefined | ((user: Pokemon, target: Pokemon, move: Move) => string | undefined)) {
+  constructor(message: string | ((user: Pokemon, target: Pokemon, move: Move) => string)) {
     super();
     this.message = message;
   }
@@ -1372,10 +1377,10 @@ export class PreMoveMessageAttr extends MoveAttr {
     const message = typeof this.message === "function"
       ? this.message(user, target, move)
       : this.message;
+
     if (message) {
       globalScene.queueMessage(message, 500);
     }
-    // always return `true` to ensure moves succeed even without a message
     return true;
   }
 }
@@ -11134,7 +11139,7 @@ export function initMoves() {
         // Don't display text if current move phase is follow up (ie move called indirectly)
         // TODO: Change in move-use-type PR to use the move phase's current use type
         (globalScene.getCurrentPhase() as MovePhase)["followUp"]
-          ? undefined
+          ? ""
           : i18next.t("moveTriggers:chillyReception", { pokemonName: getPokemonNameWithAffix(user) }))
       .attr(ChillyReceptionAttr, true),
     new SelfStatusMove(Moves.TIDY_UP, PokemonType.NORMAL, -1, 10, -1, 0, 9)

@@ -77,18 +77,25 @@ describe("Moves - Chilly Reception", () => {
 
     game.move.select(Moves.CHILLY_RECEPTION);
     game.doSelectPartyPokemon(1);
+    // TODO: Uncomment lines once wimp out PR fixes force switches to not reset summon data immediately
+    //  await game.phaseInterceptor.to("SwitchSummonPhase", false);
+    //  expect(slowking.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
+
     await game.phaseInterceptor.to("BerryPhase", false);
 
     expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.SNOW);
     expect(game.phaseInterceptor.log).toContain("SwitchSummonPhase");
     expect(game.scene.getPlayerPokemon()).toBe(meowth);
-    expect(slowking.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
+    expect(slowking.isOnField()).toBe(false);
   });
 
-  it("should fail if neither weather change nor switch out succeeds", async () => {
+  // Source: https://replay.pokemonshowdown.com/gen9ou-2367532550
+  it("should fail (while still displaying message) if neither weather change nor switch out succeeds", async () => {
     await game.classicMode.startBattle([Species.SLOWKING]);
 
     expect(game.scene.arena.weather?.weatherType).not.toBe(WeatherType.SNOW);
+
+    const slowking = game.scene.getPlayerPokemon()!;
 
     game.move.select(Moves.SNOWSCAPE);
     await game.toNextTurn();
@@ -101,12 +108,14 @@ describe("Moves - Chilly Reception", () => {
 
     expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.SNOW);
     expect(game.phaseInterceptor.log).not.toContain("SwitchSummonPhase");
-    expect(game.scene.getPlayerPokemon()?.species.speciesId).toBe(Species.SLOWKING);
-    expect(game.scene.getPlayerPokemon()?.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+    expect(game.scene.getPlayerPokemon()).toBe(slowking);
+    expect(slowking.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+    expect(game.textInterceptor.logs).toContain(
+      i18next.t("moveTriggers:chillyReception", { pokemonName: getPokemonNameWithAffix(slowking) }),
+    );
   });
 
-  // TODO: Fix this - it's really easy (just check the current MovePhase's `virtual` flag)
-  it.todo("should not display message if called indirectly", async () => {
+  it("should not display message if called indirectly", async () => {
     vi.spyOn(RandomMoveAttr.prototype, "getMoveOverride").mockReturnValue(Moves.CHILLY_RECEPTION);
     await game.classicMode.startBattle([Species.SLOWKING, Species.MEOWTH]);
 
