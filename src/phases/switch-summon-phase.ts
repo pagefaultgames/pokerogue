@@ -19,16 +19,17 @@ import { SwitchType } from "#enums/switch-type";
 
 export class SwitchSummonPhase extends SummonPhase {
   private readonly switchType: SwitchType;
-  private readonly slotIndex: number;
   private readonly doReturn: boolean;
+  private slotIndex: number;
 
   private lastPokemon: Pokemon;
 
   /**
-   * Constructor for creating a new {@linkcode SwitchSummonPhase}, the phase where player and enemy Pokemon are switched out.
+   * Constructor for creating a new {@linkcode SwitchSummonPhase}, the phase where player and enemy Pokemon are switched out
+   * and replaced by another Pokemon from the same party.
    * @param switchType - The type of switch behavior
-   * @param fieldIndex - Position on the battle field
-   * @param slotIndex - The index of pokemon (in party of 6) to switch into
+   * @param fieldIndex - The position on field of the Pokemon being switched out
+   * @param slotIndex - The 0-indexed party position of the Pokemon switching in, or `-1` to use the default trainer switch logic.
    * @param doReturn - Whether to render "comeback" dialogue
    * @param player - Whether the switch came from the player or enemy; default `true`
    */
@@ -40,6 +41,9 @@ export class SwitchSummonPhase extends SummonPhase {
     this.doReturn = doReturn;
   }
 
+  // TODO: This is calling `applyPreSummonAbAttrs` both far too early and on the wrong pokemon;
+  // `super.start` calls applyPreSummonAbAttrs(PreSummonAbAttr, this.getPokemon()),
+  // and `this.getPokemon` is the pokemon SWITCHING OUT, NOT IN
   start(): void {
     super.start();
   }
@@ -47,36 +51,35 @@ export class SwitchSummonPhase extends SummonPhase {
   preSummon(): void {
     const switchOutPokemon = this.getPokemon();
 
-    // if the target is still on-field, remove it and/or hide its info container.
-    // Effects are kept to be transferred to the new Pokemon if applicable
-    // TODO: Make moves that switch out pokemon defer to this phase
-    if (switchOutPokemon.isOnField()) {
-      switchOutPokemon.leaveField(false, switchOutPokemon.getBattleInfo()?.visible);
-    }
-
-    if (!this.player) {
+    // For enemy trainers, pick a pokemon to switch to and/or display the opposing pokeball tray
+    if (!this.player && globalScene.currentBattle.trainer) {
       if (this.slotIndex === -1) {
-        //@ts-ignore
-        this.slotIndex = globalScene.currentBattle.trainer?.getNextSummonIndex(
-          !this.fieldIndex ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER,
-        ); // TODO: what would be the default trainer-slot fallback?
+        this.slotIndex = globalScene.currentBattle.trainer.getNextSummonIndex(this.getTrainerSlotFromFieldIndex());
       }
+      // TODO: Remove this check since `getNextSummonIndex` _should_ always return a number between 0 and party length inclusive
       if (this.slotIndex > -1) {
-        this.showEnemyTrainer(!(this.fieldIndex % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER);
+        this.showEnemyTrainer(this.getTrainerSlotFromFieldIndex());
         globalScene.pbTrayEnemy.showPbTray(globalScene.getEnemyParty());
       }
     }
 
     if (
       !this.doReturn ||
+      // TODO: this part of the check need not exist `- `switchAndSummon` returns near immediately if we have no pokemon to switch into
       (this.slotIndex !== -1 &&
         !(this.player ? globalScene.getPlayerParty() : globalScene.getEnemyParty())[this.slotIndex])
     ) {
+      // If the target is still on-field, remove it and/or hide its info container.
+      // Effects are kept to be transferred to the new Pokemon later on.
+      if (switchOutPokemon.isOnField()) {
+        switchOutPokemon.leaveField(false, switchOutPokemon.getBattleInfo()?.visible);
+      }
+
       if (this.player) {
         this.switchAndSummon();
-        return;
+      } else {
+        globalScene.time.delayedCall(750, () => this.switchAndSummon());
       }
-      globalScene.time.delayedCall(750, () => this.switchAndSummon());
       return;
     }
 
@@ -84,7 +87,8 @@ export class SwitchSummonPhase extends SummonPhase {
       enemyPokemon.removeTagsBySourceId(switchOutPokemon.id),
     );
 
-    if (this.switchType === SwitchType.SWITCH || this.switchType === SwitchType.INITIAL_SWITCH) {
+    // If not transferring a substitute, play animation to remove it from the field
+    if (!this.shouldKeepEffects()) {
       const substitute = switchOutPokemon.getTag(SubstituteTag);
       if (substitute) {
         globalScene.tweens.add({
@@ -103,9 +107,7 @@ export class SwitchSummonPhase extends SummonPhase {
             pokemonName: getPokemonNameWithAffix(switchOutPokemon),
           })
         : i18next.t("battle:trainerComeBack", {
-            trainerName: globalScene.currentBattle.trainer?.getName(
-              !(this.fieldIndex % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER,
-            ),
+            trainerName: globalScene.currentBattle.trainer?.getName(this.getTrainerSlotFromFieldIndex()),
             pokemonName: switchOutPokemon.getNameToRender(),
           }),
     );
@@ -119,19 +121,21 @@ export class SwitchSummonPhase extends SummonPhase {
       scale: 0.5,
       onComplete: () => {
         globalScene.time.delayedCall(750, () => this.switchAndSummon());
-        switchOutPokemon.leaveField(this.switchType === SwitchType.SWITCH, false);
+        switchOutPokemon.leaveField(this.switchType === SwitchType.SWITCH, false); // TODO: do we have to do this right here right now
       },
     });
   }
 
   switchAndSummon() {
     const party = this.player ? this.getParty() : globalScene.getEnemyParty();
-    const switchedInPokemon: Pokemon | undefined = party[this.slotIndex];
+    const switchInPokemon: Pokemon | undefined = party[this.slotIndex];
     this.lastPokemon = this.getPokemon();
 
-    applyPreSummonAbAttrs(PreSummonAbAttr, switchedInPokemon);
+    applyPreSummonAbAttrs(PreSummonAbAttr, switchInPokemon);
     applyPreSwitchOutAbAttrs(PreSwitchOutAbAttr, this.lastPokemon);
-    if (!switchedInPokemon) {
+    // TODO: Why do we trigger post switch out attributes even if the switch in target doesn't exist?
+    // (This should almost certainly go somewhere inside `preSummon`)
+    if (!switchInPokemon) {
       this.end();
       return;
     }
@@ -139,7 +143,7 @@ export class SwitchSummonPhase extends SummonPhase {
     if (this.switchType === SwitchType.BATON_PASS) {
       // If switching via baton pass, update opposing tags coming from the prior pokemon
       (this.player ? globalScene.getEnemyField() : globalScene.getPlayerField()).forEach((enemyPokemon: Pokemon) =>
-        enemyPokemon.transferTagsBySourceId(this.lastPokemon.id, switchedInPokemon.id),
+        enemyPokemon.transferTagsBySourceId(this.lastPokemon.id, switchInPokemon.id),
       );
 
       // If the recipient pokemon lacks a baton, give our baton to it during the swap
@@ -147,7 +151,7 @@ export class SwitchSummonPhase extends SummonPhase {
         !globalScene.findModifier(
           m =>
             m instanceof SwitchEffectTransferModifier &&
-            (m as SwitchEffectTransferModifier).pokemonId === switchedInPokemon.id,
+            (m as SwitchEffectTransferModifier).pokemonId === switchInPokemon.id,
         )
       ) {
         const batonPassModifier = globalScene.findModifier(
@@ -159,7 +163,7 @@ export class SwitchSummonPhase extends SummonPhase {
         if (batonPassModifier) {
           globalScene.tryTransferHeldItemModifier(
             batonPassModifier,
-            switchedInPokemon,
+            switchInPokemon,
             false,
             undefined,
             undefined,
@@ -171,12 +175,14 @@ export class SwitchSummonPhase extends SummonPhase {
     }
 
     party[this.slotIndex] = this.lastPokemon;
-    party[this.fieldIndex] = switchedInPokemon;
+    party[this.fieldIndex] = switchInPokemon;
+    // TODO: Make this text configurable for Dragon Tail & co.
+    // TODO: Make this a method
     const showTextAndSummon = () => {
       globalScene.ui.showText(
         this.player
           ? i18next.t("battle:playerGo", {
-              pokemonName: getPokemonNameWithAffix(switchedInPokemon),
+              pokemonName: getPokemonNameWithAffix(switchInPokemon),
             })
           : i18next.t("battle:trainerGo", {
               trainerName: globalScene.currentBattle.trainer?.getName(
@@ -190,15 +196,15 @@ export class SwitchSummonPhase extends SummonPhase {
        * If this switch is passing a Substitute, make the switched Pokemon matches the returned Pokemon's state as it left.
        * Otherwise, clear any persisting tags on the returned Pokemon.
        */
-      if (this.switchType === SwitchType.BATON_PASS || this.switchType === SwitchType.SHED_TAIL) {
+      if (this.shouldKeepEffects()) {
         const substitute = this.lastPokemon.getTag(SubstituteTag);
         if (substitute) {
-          switchedInPokemon.x += this.lastPokemon.getSubstituteOffset()[0];
-          switchedInPokemon.y += this.lastPokemon.getSubstituteOffset()[1];
-          switchedInPokemon.setAlpha(0.5);
+          switchInPokemon.x += this.lastPokemon.getSubstituteOffset()[0];
+          switchInPokemon.y += this.lastPokemon.getSubstituteOffset()[1];
+          switchInPokemon.setAlpha(0.5);
         }
       } else {
-        switchedInPokemon.fieldSetup();
+        switchInPokemon.fieldSetup();
       }
       this.summon();
     };
@@ -252,5 +258,17 @@ export class SwitchSummonPhase extends SummonPhase {
 
   queuePostSummon(): void {
     globalScene.unshiftPhase(new PostSummonPhase(this.getPokemon().getBattlerIndex()));
+  }
+
+  private shouldKeepEffects(): boolean {
+    return [SwitchType.BATON_PASS, SwitchType.SHED_TAIL].includes(this.switchType);
+  }
+
+  private getTrainerSlotFromFieldIndex(): TrainerSlot {
+    return this.player || !globalScene.currentBattle.trainer
+      ? TrainerSlot.NONE
+      : this.fieldIndex % 2 === 0
+        ? TrainerSlot.TRAINER
+        : TrainerSlot.TRAINER_PARTNER;
   }
 }

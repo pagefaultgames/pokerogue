@@ -129,6 +129,10 @@ export function ForceSwitch<TBase extends SubMoveOrAbAttr>(Base: TBase) {
     This ensures ability ignore effects will persist for the duration of the switch (for hazards, etc).
     */
 
+    /**
+     * Method to handle switching out a player Pokemon.
+     * @param switchOutTarget - The {@linkcode PlayerPokemon} to be switched out.
+     */
     private trySwitchPlayerPokemon(switchOutTarget: PlayerPokemon): void {
       // If not forced to switch, add a SwitchPhase to allow picking the next switched in Pokemon.
       if (this.switchType !== SwitchType.FORCE_SWITCH) {
@@ -149,6 +153,10 @@ export function ForceSwitch<TBase extends SubMoveOrAbAttr>(Base: TBase) {
       );
     }
 
+    /**
+     * Method to handle switching out an opposing trainer's Pokemon.
+     * @param switchOutTarget - The {@linkcode EnemyPokemon} to be switched out.
+     */
     private trySwitchTrainerPokemon(switchOutTarget: EnemyPokemon): void {
       // fallback for no trainer
       if (!globalScene.currentBattle.trainer) {
@@ -169,8 +177,12 @@ export function ForceSwitch<TBase extends SubMoveOrAbAttr>(Base: TBase) {
       );
     }
 
+    /**
+     * Method to handle fleeing a wild enemy Pokemon, redirecting incoming moves to its ally as applicable.
+     * @param switchOutTarget - The {@linkcode EnemyPokemon} fleeing the battle.
+     */
     private tryFleeWildPokemon(switchOutTarget: EnemyPokemon): void {
-      // flee wild pokemon, redirecting moves to an ally in doubles as applicable.
+      switchOutTarget.leaveField(true);
       globalScene.queueMessage(
         i18next.t("moveTriggers:fled", { pokemonName: getPokemonNameWithAffix(switchOutTarget) }),
         null,

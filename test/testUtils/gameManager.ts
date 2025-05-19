@@ -165,6 +165,8 @@ export default class GameManager {
    * @param mode - The mode to wait for.
    * @param callback - The callback function to execute on next prompt.
    * @param expireFn - Optional function to determine if the prompt has expired.
+   * @remarks
+   * If multiple callbacks are queued for the same phase, they will be executed in the order they were added.
    */
   onNextPrompt(
     phaseTarget: string,
@@ -541,8 +543,8 @@ export default class GameManager {
   }
 
   /**
-   * Select a pokemon from the party menu during the given phase. 
-   * Only really handles the basic case of "navigate to party slot and press Action twice" - 
+   * Select a pokemon from the party menu during the given phase.
+   * Only really handles the basic case of "navigate to party slot and press Action twice" -
    * any menus that come up afterwards are ignored and must be handled separately by the caller.
    * @param slot - The 0-indexed position of the pokemon in your party to switch to
    * @param inPhase - Which phase to expect the selection to occur in. Defaults to `SwitchPhase`

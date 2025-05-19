@@ -48,6 +48,7 @@ import {
   ConfusionOnStatusEffectAbAttr,
   FieldMoveTypePowerBoostAbAttr,
   FieldPreventExplosiveMovesAbAttr,
+  ForceSwitchOutImmunityAbAttr,
   HealFromBerryUseAbAttr,
   IgnoreContactAbAttr,
   IgnoreMoveEffectsAbAttr,
@@ -6222,6 +6223,7 @@ export class RevivalBlessingAttr extends MoveEffectAttr {
 /**
  * Attribute to forcibly switch out the user or target of a Move.
  */
+// TODO: Add custom failure text & locales
 export class ForceSwitchOutAttr extends ForceSwitch(MoveEffectAttr) {
   constructor(
     selfSwitch: boolean = false,
@@ -6277,6 +6279,14 @@ export class ForceSwitchOutAttr extends ForceSwitch(MoveEffectAttr) {
 
       return this.canSwitchOut(switchOutTarget)
     };
+  }
+
+  getFailedText(_user: Pokemon, target: Pokemon, _move: Move): string | undefined {
+    const blockedByAbility = new BooleanHolder(false);
+    applyAbAttrs(ForceSwitchOutImmunityAbAttr, target, blockedByAbility);
+    if (blockedByAbility.value) {
+      return i18next.t("moveTriggers:cannotBeSwitchedOut", { pokemonName: getPokemonNameWithAffix(target) });
+    }
   }
 
   getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {

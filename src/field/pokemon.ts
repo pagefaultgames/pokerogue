@@ -342,7 +342,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public luck: number;
   public pauseEvolutions: boolean;
   public pokerus: boolean;
-  // TODO: Document these
+  /** Whether this Pokemon is currently attempting to switch in. */
   public switchOutStatus = false;
   public evoCounter: number;
   public teraType: PokemonType;

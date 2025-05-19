@@ -39,16 +39,12 @@ export class CheckSwitchPhase extends BattlePhase {
     }
 
     // ...if there are no other allowed Pokemon in the player's party to switch with
-    if (
-      !globalScene
-        .getPlayerParty()
-        .slice(1)
-        .filter(p => p.isActive()).length
-    ) {
+    if (globalScene.getBackupPartyMemberIndices(true).length === 0) {
       return super.end();
     }
 
     // ...or if any player Pokemon has an effect that prevents the checked Pokemon from switching
+    // TODO: Ignore trapping check if baton item is held (since those bypass trapping)
     if (
       pokemon.getTag(BattlerTagType.FRENZY) ||
       pokemon.isTrapped() ||
