@@ -4041,8 +4041,7 @@ export class FirstAttackDoublePowerAttr extends VariablePowerAttr {
    * @returns Whether the attribute was successfully applied
    */
   apply(_user: Pokemon, target: Pokemon, move: Move, args: [NumberHolder]): boolean {
-    const lastMove: TurnMove | undefined = target.getLastXMoves()[0]; // undefined needed as array might be empty
-    if (lastMove?.turn === globalScene.currentBattle.turn) {
+    if (target.turnData.acted) {
       return false;
     }
 
