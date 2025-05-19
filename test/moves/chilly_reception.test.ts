@@ -78,7 +78,7 @@ describe("Moves - Chilly Reception", () => {
     await game.phaseInterceptor.to("BerryPhase", false);
 
     expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.SNOW);
-    expect(game.phaseInterceptor.log).not.toContain("SwitchSummonPhase");
+    expect(game.phaseInterceptor.log).toContain("SwitchSummonPhase");
     expect(game.scene.getPlayerPokemon()?.species.speciesId).toBe(Species.MEOWTH);
     expect(game.scene.getPlayerPokemon()?.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
   });
