@@ -250,8 +250,8 @@ export class MovePhase extends BattlePhase {
 
     switch (this.pokemon.status.effect) {
       case StatusEffect.PARALYSIS:
-        activated = Overrides.STATUS_ACTIVATION_OVERRIDE ??
-          this.pokemon.randBattleSeedInt(4) === 0 || Overrides.STATUS_ACTIVATION_OVERRIDE === true) &&
+        activated =
+          (this.pokemon.randBattleSeedInt(4) === 0 || Overrides.STATUS_ACTIVATION_OVERRIDE === true) &&
           Overrides.STATUS_ACTIVATION_OVERRIDE !== false;
         break;
       case StatusEffect.SLEEP: {
