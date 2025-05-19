@@ -458,18 +458,6 @@ export class MovePhase extends BattlePhase {
       // Remove the user from its semi-invulnerable state (if applicable)
       this.pokemon.lapseTags(BattlerTagLapseType.MOVE_EFFECT);
     }
-
-    // Handle Dancer, which triggers immediately after a move is used (rather than waiting on `this.end()`).
-    // Note the MoveUseType check here prevents an infinite Dancer loop.
-    if (
-      this.move.getMove().hasFlag(MoveFlags.DANCE_MOVE) &&
-      ![MoveUseType.INDIRECT, MoveUseType.REFLECTED].includes(this.useType)
-    ) {
-      // TODO: Fix in dancer PR to move to MEP for hit checks
-      globalScene.getField(true).forEach(pokemon => {
-        applyPostMoveUsedAbAttrs(PostMoveUsedAbAttr, pokemon, this.move, this.pokemon, this.targets);
-      });
-    }
   }
 
   /** Queues a {@linkcode MoveChargePhase} for this phase's invoked move. */
