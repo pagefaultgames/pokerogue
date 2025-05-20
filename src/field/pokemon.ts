@@ -54,7 +54,7 @@ import {
   getStarterValueFriendshipCap,
   speciesStarterCosts,
 } from "#app/data/balance/starters";
-import { NumberHolder, randSeedInt, getIvsFromId, BooleanHolder, randSeedItem, isNullOrUndefined, getEnumValues, toDmgValue, fixedInt, rgbaToInt, rgbHexToRgba, rgbToHsv, deltaRgb, isBetween, type nil, type Constructor } from "#app/utils/common";
+import { NumberHolder, randSeedInt, getIvsFromId, BooleanHolder, randSeedItem, isNullOrUndefined, getEnumValues, toDmgValue, fixedInt, rgbaToInt, rgbHexToRgba, rgbToHsv, deltaRgb, isBetween, type nil, type Constructor, randSeedIntRange } from "#app/utils/common";
 import type { TypeDamageMultiplier } from "#app/data/type";
 import { getTypeDamageMultiplier, getTypeRgb } from "#app/data/type";
 import { PokemonType } from "#enums/pokemon-type";
@@ -186,6 +186,7 @@ import {
   applyAllyStatMultiplierAbAttrs,
   AllyStatMultiplierAbAttr,
   MoveAbilityBypassAbAttr,
+  PreSummonAbAttr,
 } from "#app/data/abilities/ability";
 import { allAbilities } from "#app/data/data-lists";
 import type PokemonData from "#app/system/pokemon-data";
@@ -908,19 +909,22 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       const originalWarn = console.warn;
       // Ignore warnings for missing frames, because there will be a lot
       console.warn = () => {};
-      const battleFrameNames = globalScene.anims.generateFrameNames(this.getBattleSpriteKey(), {
+      const battleSpriteKey = this.getBattleSpriteKey(this.isPlayer(), ignoreOverride);
+      const battleFrameNames = globalScene.anims.generateFrameNames(battleSpriteKey, {
         zeroPad: 4,
         suffix: ".png",
         start: 1,
         end: 400,
       });
       console.warn = originalWarn;
-      globalScene.anims.create({
-        key: this.getBattleSpriteKey(),
-        frames: battleFrameNames,
-        frameRate: 10,
-        repeat: -1,
-      });
+      if (!globalScene.anims.exists(battleSpriteKey)) {
+        globalScene.anims.create({
+          key: battleSpriteKey,
+          frames: battleFrameNames,
+          frameRate: 10,
+          repeat: -1,
+        });
+      }
     }
     // With everything loaded, now begin playing the animation.
     this.playAnim();
@@ -2414,8 +2418,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const suppressAbilitiesTag = arena.getTag(
       ArenaTagType.NEUTRALIZING_GAS,
     ) as SuppressAbilitiesTag;
+    const suppressOffField = ability.hasAttr(PreSummonAbAttr);
     if (
-      this.isOnField() &&
+      (this.isOnField() || suppressOffField) &&
       suppressAbilitiesTag &&
       !suppressAbilitiesTag.isBeingRemoved()
     ) {
@@ -4480,7 +4485,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
      */
     const randomMultiplier = simulated
       ? 1
-      : this.randSeedIntRange(85, 100) / 100;
+      : this.randBattleSeedIntRange(85, 100) / 100;
 
 
     /** A damage multiplier for when the attack is of the attacker's type and/or Tera type. */
@@ -5624,7 +5629,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     let sleepTurnsRemaining: NumberHolder;
 
     if (effect === StatusEffect.SLEEP) {
-      sleepTurnsRemaining = new NumberHolder(this.randSeedIntRange(2, 4));
+      sleepTurnsRemaining = new NumberHolder(this.randBattleSeedIntRange(2, 4));
 
       this.setFrameRate(4);
 
@@ -5716,17 +5721,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Reset this Pokemon's {@linkcode PokemonSummonData | SummonData} and {@linkcode PokemonTempSummonData | TempSummonData}
-   * in preparation for switching pokemon, as well as removing any relevant on-switch tags.
+   * Performs miscellaneous setup for when the Pokemon is summoned, like generating the substitute sprite
+   * @param resetSummonData - Whether to additionally reset the Pokemon's summon data (default: `false`)
    */
-  resetSummonData(): void {
-    const illusion: IllusionData | null = this.summonData.illusion;
-    if (this.summonData.speciesForm) {
-      this.summonData.speciesForm = null;
-      this.updateFusionPalette();
-    }
-    this.summonData = new PokemonSummonData();
-    this.tempSummonData = new PokemonTempSummonData();
+  public fieldSetup(resetSummonData?: boolean): void {
     this.setSwitchOutStatus(false);
     if (globalScene) {
       globalScene.triggerPokemonFormChange(
@@ -5735,7 +5733,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         true,
       );
     }
-
     // If this Pokemon has a Substitute when loading in, play an animation to add its sprite
     if (this.getTag(SubstituteTag)) {
       globalScene.triggerPokemonBattleAnim(
@@ -5753,6 +5750,24 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     ) {
       this.setVisible(false);
     }
+
+    if (resetSummonData) {
+      this.resetSummonData();
+    }
+  }
+
+  /**
+   * Reset this Pokemon's {@linkcode PokemonSummonData | SummonData} and {@linkcode PokemonTempSummonData | TempSummonData}
+   * in preparation for switching pokemon, as well as removing any relevant on-switch tags.
+   */
+  resetSummonData(): void {
+    const illusion: IllusionData | null = this.summonData.illusion;
+    if (this.summonData.speciesForm) {
+      this.summonData.speciesForm = null;
+      this.updateFusionPalette();
+    }
+    this.summonData = new PokemonSummonData();
+    this.tempSummonData = new PokemonTempSummonData();
     this.summonData.illusion = illusion
     this.updateInfo();
   }
@@ -6277,7 +6292,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param min The minimum integer to pick, default `0`
    * @returns A random integer between {@linkcode min} and ({@linkcode min} + {@linkcode range} - 1)
    */
-  randSeedInt(range: number, min = 0): number {
+  randBattleSeedInt(range: number, min = 0): number {
     return globalScene.currentBattle
       ? globalScene.randBattleSeedInt(range, min)
       : randSeedInt(range, min);
@@ -6289,8 +6304,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param max The maximum integer to generate
    * @returns a random integer between {@linkcode min} and {@linkcode max} inclusive
    */
-  randSeedIntRange(min: number, max: number): number {
-    return this.randSeedInt(max - min + 1, min);
+  randBattleSeedIntRange(min: number, max: number): number {
+    return globalScene.currentBattle
+      ? globalScene.randBattleSeedInt(max - min + 1, min)
+      : randSeedIntRange(min, max);
   }
 
   /**
@@ -7128,7 +7145,7 @@ export class EnemyPokemon extends Pokemon {
         const { waveIndex } = globalScene.currentBattle;
         const ivs: number[] = [];
         while (ivs.length < 6) {
-          ivs.push(this.randSeedIntRange(Math.floor(waveIndex / 10), 31));
+          ivs.push(randSeedIntRange(Math.floor(waveIndex / 10), 31));
         }
         this.ivs = ivs;
       }
@@ -7856,6 +7873,11 @@ export class PokemonSummonData {
     // TODO: Rework this into an actual generic function for use elsewhere
     for (const [key, value] of Object.entries(source)) {
       if (isNullOrUndefined(value) && this.hasOwnProperty(key)) {
+        continue;
+      }
+
+      if (key === "moveset") {
+        this.moveset = value?.map((m: any) => PokemonMove.loadMove(m));
         continue;
       }
 
