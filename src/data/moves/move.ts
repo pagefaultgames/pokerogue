@@ -6744,8 +6744,12 @@ export class RandomMoveAttr extends CallMoveAttr {
   }
 
   /**
-   * Pick a random move to execute.
-   * Exported to allow tests to override move choice.
+   * Pick a random move to execute, barring unimplemented moves and ones
+   * in this move's {@linkcode invalidMetronomeMoves | exclusion list}.
+   * Exported to allow tests to override move choice using mocks.
+
+   * @param user - The {@linkcode Pokemon} using the move
+   * @returns A randomly selected {@linkcode Moves | move ID} chosen among
    */
   getMove(user: Pokemon): Moves {
     const moveIds = getEnumValues(Moves).filter(m => !this.invalidMoves.has(m) && !allMoves[m].name.endsWith(" (N)"));
@@ -6753,12 +6757,11 @@ export class RandomMoveAttr extends CallMoveAttr {
   }
 
   /**
-   * User calls a random moveId, excluding unimplemented moves and ones
-   * in its {@linkcode invalidMetronomeMoves | exclusion list}.
+   * Cause the user to execute a random valid move.
 
    * @param user - The {@linkcode Pokemon} using the move
    * @param target - The {@linkcode Pokemon} being targeted (for single target moves)
-   * @param move - The {@linkcode Move} being used
+   * @param move - Unused
    * @param args - Unused
    * @returns Whether a random move was successfully called
    */

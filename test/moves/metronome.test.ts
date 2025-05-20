@@ -33,16 +33,27 @@ describe("Moves - Metronome", () => {
     game.override
       .moveset([Moves.METRONOME, Moves.SPLASH])
       .battleStyle("single")
-      .startingLevel(100)
-      .starterSpecies(Species.REGIELEKI)
-      .enemyLevel(100)
       .enemySpecies(Species.SHUCKLE)
       .enemyMoveset(Moves.SPLASH)
       .enemyAbility(Abilities.BALL_FETCH);
   });
 
+  it("should not be able to copy Moves.NONE", async () => {
+    await game.classicMode.startBattle([Species.REGIELEKI]);
+    const player = game.scene.getPlayerPokemon()!;
+
+    // Pick the first move available to use
+    vi.spyOn(player, "randBattleSeedInt").mockReturnValue(0);
+    game.move.select(Moves.METRONOME);
+    await game.toNextTurn();
+
+    const lastMoveStr = Moves[player.getLastXMoves()[0].move];
+    expect(lastMoveStr).not.toBe(Moves[Moves.NONE]);
+    expect(lastMoveStr).toBe(Moves[1]);
+  });
+
   it("should become semi-invulnerable as normal when using phasing moves", async () => {
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle([Species.REGIELEKI]);
     const player = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;
     vi.spyOn(randomMoveAttr, "getMove").mockReturnValue(Moves.DIVE);
@@ -58,7 +69,7 @@ describe("Moves - Metronome", () => {
   });
 
   it("should apply secondary effects of the called move", async () => {
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle([Species.REGIELEKI]);
     const player = game.scene.getPlayerPokemon()!;
     vi.spyOn(randomMoveAttr, "getMove").mockReturnValue(Moves.WOOD_HAMMER);
 
@@ -71,7 +82,7 @@ describe("Moves - Metronome", () => {
   it("should count as last move used for Copycat/Mirror Move", async () => {
     game.override.enemyMoveset(Moves.MIRROR_MOVE);
     vi.spyOn(randomMoveAttr, "getMove").mockReturnValue(Moves.ABSORB);
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle([Species.REGIELEKI]);
 
     game.move.select(Moves.METRONOME);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
@@ -83,7 +94,7 @@ describe("Moves - Metronome", () => {
   });
 
   it("should recharge after using recharge move", async () => {
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle([Species.REGIELEKI]);
     const player = game.scene.getPlayerPokemon()!;
     vi.spyOn(randomMoveAttr, "getMove").mockReturnValue(Moves.HYPER_BEAM);
     vi.spyOn(allMoves[Moves.HYPER_BEAM], "accuracy", "get").mockReturnValue(100);
@@ -113,7 +124,7 @@ describe("Moves - Metronome", () => {
   });
 
   it("should cause opponent to flee when using Roar", async () => {
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle([Species.REGIELEKI]);
     vi.spyOn(randomMoveAttr, "getMove").mockReturnValue(Moves.ROAR);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
