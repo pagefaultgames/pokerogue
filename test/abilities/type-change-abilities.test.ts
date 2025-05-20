@@ -171,7 +171,7 @@ describe("Abilities - Protean/Libero", () => {
   );
 
   it.each<{ cause: string; move?: Moves; enemyMove?: Moves; tera?: boolean }>([
-    { cause: "user is already soleoy move type", move: Moves.WATERFALL },
+    { cause: "user is already the move's type", move: Moves.WATERFALL },
     { cause: "user is terastallized to any type", tera: true },
     { cause: "user uses Struggle", move: Moves.STRUGGLE },
     { cause: "the user's move fails", move: Moves.BURN_UP },
