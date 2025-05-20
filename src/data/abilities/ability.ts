@@ -14,12 +14,10 @@ import {
   SelfStatusMove,
   VariablePowerAttr,
   applyMoveAttrs,
-  RandomMovesetMoveAttr,
-  RandomMoveAttr,
   NaturePowerAttr,
-  CopyMoveAttr,
   NeutralDamageAgainstFlyingTypeMultiplierAttr,
   FixedDamageAttr,
+  CallMoveAttr,
 } from "#app/data/moves/move";
 import { ArenaTagSide } from "#app/data/arena-tag";
 import { BerryModifier, HitHealModifier, PokemonHeldItemModifier } from "#app/modifier/modifier";
@@ -1304,8 +1302,8 @@ export class PokemonTypeChangeAbAttr extends PreAttackAbAttr {
      * Skip moves that call other moves because these moves generate a following move that will trigger this ability attribute
      * @see {@link https://bulbapedia.bulbagarden.net/wiki/Category:Moves_that_call_other_moves}
      */
-      // TODO: change to `isVirtual((globalScene.getCurrentPhase() as MovePhase).useType)` after move-use-type PR is merged
-     || ((globalScene.getCurrentPhase() as MovePhase)["followUp"])
+     || move.hasAttr(CallMoveAttr)
+     || move.hasAttr(NaturePowerAttr) // TODO: remove this line when nature power is made to extend from `CallMoveAttr`
     ) {
       return false;
     }

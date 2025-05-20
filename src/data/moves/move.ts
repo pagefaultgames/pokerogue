@@ -6712,7 +6712,7 @@ export class FirstMoveTypeAttr extends MoveEffectAttr {
  * @see {@linkcode apply} for move call
  * @extends OverrideMoveEffectAttr
  */
-class CallMoveAttr extends OverrideMoveEffectAttr {
+export class CallMoveAttr extends OverrideMoveEffectAttr {
   protected invalidMoves: ReadonlySet<Moves>;
   protected hasTarget: boolean;
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -6823,6 +6823,7 @@ export class RandomMovesetMoveAttr extends CallMoveAttr {
   }
 }
 
+// TODO: Shouldn't this be `CallMoveAttr`?
 export class NaturePowerAttr extends OverrideMoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     let moveId;

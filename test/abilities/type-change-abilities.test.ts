@@ -9,6 +9,7 @@ import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { BattleType } from "#enums/battle-type";
+import { BattlerIndex } from "#app/battle";
 
 describe("Abilities - Protean/Libero", () => {
   let phaserGame: Phaser.Game;
@@ -44,11 +45,11 @@ describe("Abilities - Protean/Libero", () => {
    * This will clear the given Pokemon's `abilitiesApplied` set after being called to allow for easier multi-turn testing.
    */
   function expectTypeChange(pokemon: PlayerPokemon) {
-    expect(pokemon.waveData.abilitiesApplied).toContain(expect.toBeOneOf([Abilities.PROTEAN, Abilities.LIBERO]));
+    expect(pokemon.waveData.abilitiesApplied).toContainEqual(expect.toBeOneOf([Abilities.PROTEAN, Abilities.LIBERO]));
     const lastMove = allMoves[pokemon.getLastXMoves()[0].move]!;
 
     const pokemonTypes = pokemon.getTypes().map(pt => PokemonType[pt]);
-    const moveType = PokemonType[pokemon.getMoveType(lastMove, true)];
+    const moveType = PokemonType[pokemon.getMoveType(lastMove)];
     expect(pokemonTypes).toEqual([moveType]);
     pokemon.waveData.abilitiesApplied.clear();
   }
@@ -62,7 +63,9 @@ describe("Abilities - Protean/Libero", () => {
    * This will clear the given Pokemon's `abilitiesApplied` set after being called to allow for easier multi-turn testing.
    */
   function expectNoTypeChange(pokemon: PlayerPokemon) {
-    expect(pokemon.waveData.abilitiesApplied).not.toContain(expect.toBeOneOf([Abilities.PROTEAN, Abilities.LIBERO]));
+    expect(pokemon.waveData.abilitiesApplied).not.toContainEqual(
+      expect.toBeOneOf([Abilities.PROTEAN, Abilities.LIBERO]),
+    );
     const lastMove = allMoves[pokemon.getLastXMoves()[0].move]!;
 
     const pokemonTypes = pokemon.getTypes().map(pt => PokemonType[pt]);
@@ -138,7 +141,8 @@ describe("Abilities - Protean/Libero", () => {
       expect(linoone).toBeDefined();
 
       game.move.select(move);
-      await game.phaseInterceptor.to("TurnEndPhase");
+      await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+      await game.phaseInterceptor.to("BerryPhase"); // NB: berry phase = turn end tags stay = tests happy
 
       expectTypeChange(linoone);
     },
@@ -164,14 +168,13 @@ describe("Abilities - Protean/Libero", () => {
       expect(meow).toBeDefined();
 
       game.move.select(move);
-      await game.phaseInterceptor.to("TurnEndPhase");
+      await game.phaseInterceptor.to("BerryPhase");
 
       expectTypeChange(meow);
     },
   );
 
   it.each<{ cause: string; move?: Moves; enemyMove?: Moves; tera?: boolean }>([
-    { cause: "user is already the move's type", move: Moves.WATERFALL },
     { cause: "user is terastallized to any type", tera: true },
     { cause: "user uses Struggle", move: Moves.STRUGGLE },
     { cause: "the user's move fails", move: Moves.BURN_UP },
@@ -194,6 +197,20 @@ describe("Abilities - Protean/Libero", () => {
     expectNoTypeChange(karp);
   });
 
+  it("should not apply if user is already the move's type", async () => {
+    game.override.moveset(Moves.WATERFALL);
+    await game.classicMode.startBattle([Species.MAGIKARP]);
+
+    const karp = game.scene.getPlayerPokemon()!;
+    expect(karp).toBeDefined();
+
+    game.move.select(Moves.WATERFALL);
+    await game.phaseInterceptor.to("TurnEndPhase");
+
+    expect(karp.waveData.abilitiesApplied.size).toBe(0);
+    expect(karp.getTypes()).toEqual([allMoves[Moves.WATERFALL].type]);
+  });
+
   it.each<{ moveName: string; move: Moves }>([
     { moveName: "Roar", move: Moves.ROAR },
     { moveName: "Whirlwind", move: Moves.WHIRLWIND },
@@ -210,7 +227,9 @@ describe("Abilities - Protean/Libero", () => {
     game.move.select(move);
     // KO all off-field opponents for Whirlwind and co.
     for (const enemyMon of game.scene.getEnemyParty()) {
-      enemyMon.hp = 0;
+      if (!enemyMon.isActive()) {
+        enemyMon.hp = 0;
+      }
     }
     await game.phaseInterceptor.to("TurnEndPhase");
 
