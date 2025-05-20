@@ -81,7 +81,6 @@ describe("Moves - Gastro Acid", () => {
   it("should suppress the passive of a target even if its main ability is unsuppressable", async () => {
     game.override.enemyAbility(Abilities.COMATOSE);
     game.override.enemyPassiveAbility(Abilities.WATER_ABSORB);
-    game.override.enemyHasPassiveAbility(true);
     await game.classicMode.startBattle([Species.MAGIKARP]);
 
     const enemyPokemon = game.scene.getEnemyPokemon();
