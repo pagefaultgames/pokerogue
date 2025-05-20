@@ -11,8 +11,9 @@ import { Species } from "#enums/species";
 import { WeatherType } from "#enums/weather-type";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, test } from "vitest";
 
+// TODO: use `describe.each` to combine the Libero and Protean tests
 describe("Abilities - Libero", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
@@ -289,6 +290,18 @@ describe("Abilities - Libero", () => {
 
     testPokemonTypeMatchesDefaultMoveType(leadPokemon, Moves.CURSE);
     expect(leadPokemon.getTag(BattlerTagType.CURSED)).not.toBe(undefined);
+  });
+
+  it("activates even if the move is stopped by Psychic Terrain", async () => {
+    game.override.enemyAbility(Abilities.PSYCHIC_SURGE).moveset(Moves.QUICK_ATTACK);
+    await game.classicMode.startBattle([Species.FEEBAS]);
+
+    const feebas = game.scene.getPlayerPokemon()!;
+
+    game.move.select(Moves.QUICK_ATTACK);
+    await game.phaseInterceptor.to("TurnEndPhase");
+
+    testPokemonTypeMatchesDefaultMoveType(feebas, Moves.QUICK_ATTACK);
   });
 });
 
