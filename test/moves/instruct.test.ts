@@ -200,6 +200,7 @@ describe("Moves - Instruct", () => {
     expect(karp1.isFainted()).toBe(true);
     expect(karp2.isFainted()).toBe(true);
   });
+
   it("should allow for dancer copying of instructed dance move", async () => {
     game.override.battleStyle("double").enemyMoveset([Moves.INSTRUCT, Moves.SPLASH]).enemyLevel(1000);
     await game.classicMode.startBattle([Species.ORICORIO, Species.VOLCARONA]);
@@ -377,7 +378,7 @@ describe("Moves - Instruct", () => {
       .enemyMoveset([Moves.SPLASH, Moves.PSYCHIC_TERRAIN]);
     await game.classicMode.startBattle([Species.BANETTE, Species.KLEFKI]);
 
-    game.move.select(Moves.QUICK_ATTACK, BattlerIndex.PLAYER, BattlerIndex.ENEMY); // succeeds due to terrain no
+    game.move.select(Moves.QUICK_ATTACK, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
     game.move.select(Moves.SPLASH, BattlerIndex.PLAYER_2);
     await game.forceEnemyMove(Moves.SPLASH);
     await game.forceEnemyMove(Moves.PSYCHIC_TERRAIN);
@@ -388,10 +389,9 @@ describe("Moves - Instruct", () => {
     await game.setTurnOrder([BattlerIndex.PLAYER_2, BattlerIndex.PLAYER, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
     await game.phaseInterceptor.to("TurnEndPhase", false);
 
-    // quick attack failed when instructed
     const banette = game.scene.getPlayerPokemon()!;
     expect(banette.getLastXMoves(-1)[1].move).toBe(Moves.QUICK_ATTACK);
-    expect(banette.getLastXMoves(-1)[1].result).toBe(MoveResult.FAIL);
+    expect(banette.getLastXMoves(-1)[1].result).toBe(MoveResult.MISS);
   });
 
   it("should still work w/ prankster in psychic terrain", async () => {
