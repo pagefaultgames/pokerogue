@@ -52,19 +52,26 @@ describe("Moves - Metronome", () => {
     expect(lastMoveStr).toBe(Moves[1]);
   });
 
-  it("should become semi-invulnerable as normal when using phasing moves", async () => {
-    await game.classicMode.startBattle([Species.REGIELEKI]);
-    const player = game.scene.getPlayerPokemon()!;
-    const enemy = game.scene.getEnemyPokemon()!;
+  it("should become semi-invulnerable when using phasing moves", async () => {
     vi.spyOn(randomMoveAttr, "getMove").mockReturnValue(Moves.DIVE);
+    await game.classicMode.startBattle([Species.REGIELEKI]);
+
+    const player = game.scene.getPlayerPokemon()!;
+    expect(player.getTag(SemiInvulnerableTag)).toBeUndefined();
+    expect(player.visible).toBe(true);
 
     game.move.select(Moves.METRONOME);
     await game.toNextTurn();
 
-    expect(player.getTag(SemiInvulnerableTag)).toBeTruthy();
+    expect(player.getTag(SemiInvulnerableTag)).toBeDefined();
+    expect(player.visible).toBe(false);
+    expect(player.visible).toBe(false);
 
-    await game.toNextTurn();
-    expect(player.getTag(SemiInvulnerableTag)).toBeFalsy();
+    await game.phaseInterceptor.to("TurnEndPhase");
+    expect(player.getTag(SemiInvulnerableTag)).toBeUndefined();
+    expect(player.visible).toBe(true);
+
+    const enemy = game.scene.getEnemyPokemon()!;
     expect(enemy.isFullHp()).toBeFalsy();
   });
 
@@ -93,7 +100,7 @@ describe("Moves - Metronome", () => {
     expect(game.scene.getEnemyPokemon()!.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
   });
 
-  it("should recharge after using recharge move", async () => {
+  it("should recharge after using recharge moves", async () => {
     await game.classicMode.startBattle([Species.REGIELEKI]);
     const player = game.scene.getPlayerPokemon()!;
     vi.spyOn(randomMoveAttr, "getMove").mockReturnValue(Moves.HYPER_BEAM);
