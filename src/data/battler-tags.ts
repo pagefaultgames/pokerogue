@@ -308,13 +308,14 @@ export class DisabledTag extends MoveRestrictionBattlerTag {
    * and showing a message.
    */
   override onAdd(pokemon: Pokemon): void {
-    // Disable fails against struggle or an empty move history, but we still need to check for
-    // Cursed Body
+    // Disable fails against struggle or an empty move history
+    // TODO: Confirm if this is redundant given Disable/Cursed Body's disable conditions
     const move = pokemon.getLastNonVirtualMove();
     if (isNullOrUndefined(move) || move.move === Moves.STRUGGLE) {
       return;
     }
 
+    super.onAdd(pokemon);
     this.moveId = move.move;
 
     globalScene.queueMessage(
