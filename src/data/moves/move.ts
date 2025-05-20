@@ -123,7 +123,7 @@ import { MoveEffectTrigger } from "#enums/MoveEffectTrigger";
 import { MultiHitType } from "#enums/MultiHitType";
 import { invalidAssistMoves, invalidCopycatMoves, invalidMetronomeMoves, invalidMirrorMoveMoves, invalidSleepTalkMoves, invalidSketchMoves } from "./invalid-moves";
 import { SelectBiomePhase } from "#app/phases/select-biome-phase";
-import { isFollowUp, MoveUseType } from "#enums/move-use-type";
+import { isVirtual, MoveUseType } from "#enums/move-use-type";
 
 type MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => boolean;
 type UserMoveConditionFunc = (user: Pokemon, move: Move) => boolean;
@@ -7022,6 +7022,7 @@ export class CopyMoveAttr extends CallMoveAttr {
  * Used for [Instruct](https://bulbapedia.bulbagarden.net/wiki/Instruct_(move)).
 */
 export class RepeatMoveAttr extends MoveEffectAttr {
+  private movesetMove: PokemonMove;
   constructor() {
     super(false, { trigger: MoveEffectTrigger.POST_APPLY }); // needed to ensure correct protect interaction
   }
@@ -7034,20 +7035,16 @@ export class RepeatMoveAttr extends MoveEffectAttr {
    */
   apply(user: Pokemon, target: Pokemon): boolean {
     // get the last move used (excluding status based failures) as well as the corresponding moveset slot
+    // bangs are justified as Instruct fails if no prior move or moveset move exists
     // TODO: How does instruct work when copying a move called via Copycat that the user itself knows?
-    const lastMove = target.getLastNonVirtualMove();
-    const movesetMove = target.getMoveset().find(m => m.moveId === lastMove?.move)
-
-    // never happens due to condition func, but makes TS compiler not sad about nullishness
-    if (!lastMove || !movesetMove) {
-      return false;
-    }
+    const lastMove = target.getLastNonVirtualMove()!;
+    const movesetMove = target.getMoveset().find(m => m.moveId === lastMove?.move)!
 
     // If the last move used can hit more than one target or has variable targets,
     // re-compute the targets for the attack (mainly for alternating double/single battles)
     // Rampaging moves (e.g. Outrage) are not included due to being incompatible with Instruct,
     // nor is Dragon Darts (due to its smart targeting bypassing normal target selection)
-    let moveTargets = movesetMove.getMove().isMultiTarget() ? getMoveTargets(target, lastMove.move).targets : lastMove.targets;
+    let moveTargets = this.movesetMove.getMove().isMultiTarget() ? getMoveTargets(target, this.movesetMove.moveId).targets : lastMove.targets;
 
     // In the event the instructed move's only target is a fainted opponent, redirect it to an alive ally if possible.
     // Normally, all yet-unexecuted move phases would swap targets after any foe faints or flees (see `redirectPokemonMoves` in `battle-scene.ts`),
@@ -7153,6 +7150,7 @@ export class RepeatMoveAttr extends MoveEffectAttr {
         || uninstructableMoves.includes(lastMove.move)) { // called move is in the banlist
         return false;
       }
+      this.movesetMove = movesetMove;
       return true;
     };
   }
@@ -7816,7 +7814,7 @@ export class LastResortAttr extends MoveAttr {
 
       const movesInHistory = new Set<Moves>(
         user.getMoveHistory()
-        .filter(m => !isFollowUp(m.useType)) // Last resort ignores virtual moves
+        .filter(m => !isVirtual(m.useType)) // Last resort ignores virtual moves
         .map(m => m.move)
       );
 

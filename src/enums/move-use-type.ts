@@ -9,7 +9,7 @@ import type { PostDancingMoveAbAttr } from "#app/data/abilities/ability";
 
  * Callers should refrain from performing non-equality checks on `MoveUseTypes` directly,
  * instead using the available helper functions
- * ({@linkcode isFollowUp}, {@linkcode isIgnorePP} and {@linkcode isReflected}).
+ * ({@linkcode isVirtual}, {@linkcode isIgnorePP} and {@linkcode isReflected}).
  */
 export enum MoveUseType {
   /**
@@ -72,10 +72,10 @@ export enum MoveUseType {
 // Please update the markdown tables if any new `MoveUseType`s get added.
 
 /**
- * Check if a given {@linkcode MoveUseType} is follow-up (i.e. called by another move).
- * Follow-up moves are ignored by most moveset-related effects and pre-move cancellation checks.
+ * Check if a given {@linkcode MoveUseType} is virtual (i.e. called by another move or effect).
+ * Virtual moves are ignored by most moveset-related effects and pre-move cancellation checks.
  * @param useType - The {@linkcode MoveUseType} to check.
- * @returns Whether {@linkcode useType} is follow-up.
+ * @returns Whether {@linkcode useType} is virtual.
  * @remarks
  * This function is equivalent to the following truth table:
 
@@ -87,7 +87,7 @@ export enum MoveUseType {
  * | {@linkcode MoveUseType.FOLLOW_UP}  | `true`  |
  * | {@linkcode MoveUseType.REFLECTED}  | `true`  |
  */
-export function isFollowUp(useType: MoveUseType): boolean {
+export function isVirtual(useType: MoveUseType): boolean {
   return useType >= MoveUseType.INDIRECT
 }
 

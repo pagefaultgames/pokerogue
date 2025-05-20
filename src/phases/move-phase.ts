@@ -50,7 +50,7 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import { Moves } from "#enums/moves";
 import { StatusEffect } from "#enums/status-effect";
 import i18next from "i18next";
-import { isFollowUp, isIgnorePP, isReflected, MoveUseType } from "#enums/move-use-type";
+import { isVirtual, isIgnorePP, isReflected, MoveUseType } from "#enums/move-use-type";
 
 export class MovePhase extends BattlePhase {
   protected _pokemon: Pokemon;
@@ -171,7 +171,7 @@ export class MovePhase extends BattlePhase {
     this.pokemon.turnData.acted = true;
 
     // Reset hit-related turn data when starting follow-up moves (e.g. Metronomed moves, Dancer repeats)
-    if (isFollowUp(this.useType)) {
+    if (isVirtual(this.useType)) {
       this.pokemon.turnData.hitsLeft = -1;
       this.pokemon.turnData.hitCount = 0;
     }
@@ -181,7 +181,7 @@ export class MovePhase extends BattlePhase {
       this.move.getMove().doesFlagEffectApply({
         flag: MoveFlags.IGNORE_ABILITIES,
         user: this.pokemon,
-        isFollowUp: isFollowUp(this.useType), // Sunsteel strike and co. don't work when called indirectly
+        isFollowUp: isVirtual(this.useType), // Sunsteel strike and co. don't work when called indirectly
       })
     ) {
       globalScene.arena.setIgnoreAbilities(true, this.pokemon.getBattlerIndex());
@@ -321,7 +321,7 @@ export class MovePhase extends BattlePhase {
 
     // TODO: does this intentionally happen before the no targets/Moves.NONE on queue cancellation case is checked?
     // (In other words, check if truant can proc on a move w/o targets)
-    if (this.useType < MoveUseType.FOLLOW_UP && this.canMove() && !this.cancelled) {
+    if (!isVirtual(this.useType) && this.canMove() && !this.cancelled) {
       this.pokemon.lapseTags(BattlerTagLapseType.MOVE);
     }
   }
@@ -511,7 +511,7 @@ export class MovePhase extends BattlePhase {
    */
   public end(): void {
     globalScene.unshiftPhase(
-      new MoveEndPhase(this.pokemon.getBattlerIndex(), this.getActiveTargetPokemon(), isFollowUp(this.useType)),
+      new MoveEndPhase(this.pokemon.getBattlerIndex(), this.getActiveTargetPokemon(), isVirtual(this.useType)),
     );
 
     super.end();
@@ -641,7 +641,7 @@ export class MovePhase extends BattlePhase {
   protected handlePreMoveFailures(): void {
     if (this.cancelled || this.failed) {
       if (this.failed) {
-        const ppUsed = this.useType > MoveUseType.IGNORE_PP ? 1 : 0;
+        const ppUsed = isIgnorePP(this.useType) ? 0 : 1;
 
         if (ppUsed) {
           this.move.usePp();

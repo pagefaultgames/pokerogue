@@ -260,7 +260,7 @@ import { MoveFlags } from "#enums/MoveFlags";
 import { timedEventManager } from "#app/global-event-manager";
 import { loadMoveAnimations } from "#app/sprites/pokemon-asset-loader";
 import { ResetStatusPhase } from "#app/phases/reset-status-phase";
-import { isFollowUp, isIgnorePP, MoveUseType } from "#enums/move-use-type";
+import { isVirtual, isIgnorePP, MoveUseType } from "#enums/move-use-type";
 
 export enum LearnMoveSituation {
   MISC,
@@ -5172,7 +5172,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.getLastXMoves(-1).find(m =>
       m.move !== Moves.NONE
       && (!ignoreStruggle || m.move !== Moves.STRUGGLE)
-      && (m.useType < MoveUseType.INDIRECT ||
+      && (!isVirtual(m.useType) ||
         (!ignoreFollowUp && m.useType === MoveUseType.FOLLOW_UP))
     );
   }
@@ -7270,7 +7270,7 @@ export class EnemyPokemon extends Pokemon {
       // Otherwise, ensure that the move being used is actually usable
       // TODO: Virtual moves shouldn't use the move queue
       if (
-        isFollowUp(queuedMove.useType) ||
+        isVirtual(queuedMove.useType) ||
         (moveIndex > -1 &&
         this.getMoveset()[moveIndex].isUsable(
           this,

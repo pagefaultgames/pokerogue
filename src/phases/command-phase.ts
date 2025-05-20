@@ -23,7 +23,7 @@ import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import { isNullOrUndefined } from "#app/utils/common";
 import { ArenaTagSide } from "#app/data/arena-tag";
 import { ArenaTagType } from "#app/enums/arena-tag-type";
-import { isFollowUp, isIgnorePP, MoveUseType } from "#enums/move-use-type";
+import { isVirtual, isIgnorePP, MoveUseType } from "#enums/move-use-type";
 
 export class CommandPhase extends FieldPhase {
   protected fieldIndex: number;
@@ -104,7 +104,7 @@ export class CommandPhase extends FieldPhase {
       moveQueue.length &&
       moveQueue[0] &&
       moveQueue[0].move &&
-      !isFollowUp(moveQueue[0].useType) &&
+      !isVirtual(moveQueue[0].useType) &&
       (!playerPokemon.getMoveset().find(m => m.moveId === moveQueue[0].move) ||
         !playerPokemon
           .getMoveset()
@@ -126,7 +126,7 @@ export class CommandPhase extends FieldPhase {
         if (
           (moveIndex > -1 &&
             playerPokemon.getMoveset()[moveIndex].isUsable(playerPokemon, isIgnorePP(queuedMove.useType))) ||
-          isFollowUp(queuedMove.useType)
+          isVirtual(queuedMove.useType)
         ) {
           this.handleCommand(Command.FIGHT, moveIndex, queuedMove.useType, queuedMove);
         } else {

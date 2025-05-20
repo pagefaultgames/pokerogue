@@ -5,7 +5,7 @@ import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { BerryPhase } from "#app/phases/berry-phase";
-import { MoveResult, PokemonMove } from "#app/field/pokemon";
+import { MoveResult } from "#app/field/pokemon";
 import { PokemonType } from "#enums/pokemon-type";
 import { StatusEffect } from "#enums/status-effect";
 import { BattlerIndex } from "#app/battle";
@@ -43,7 +43,7 @@ describe("Moves - Powder", () => {
     await game.classicMode.startBattle([Species.CHARIZARD]);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
-    enemyPokemon.moveset = [new PokemonMove(Moves.EMBER)];
+    game.move.changeMoveset(enemyPokemon, Moves.EMBER);
 
     game.move.select(Moves.POWDER);
 

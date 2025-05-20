@@ -78,7 +78,7 @@ import type Move from "#app/data/moves/move";
 import { isFieldTargeted } from "#app/data/moves/move-utils";
 import { FaintPhase } from "./faint-phase";
 import { DamageAchv } from "#app/system/achv";
-import { isFollowUp, MoveUseType } from "#enums/move-use-type";
+import { isVirtual, isReflected, MoveUseType } from "#enums/move-use-type";
 
 export type HitCheckEntry = [HitCheckResult, TypeDamageMultiplier];
 
@@ -302,7 +302,7 @@ export class MoveEffectPhase extends PokemonPhase {
       this.getFirstTarget() ?? null,
       move,
       overridden,
-      isFollowUp(this.useType),
+      isVirtual(this.useType),
     );
 
     // If other effects were overriden, stop this phase before they can be applied
@@ -567,10 +567,7 @@ export class MoveEffectPhase extends PokemonPhase {
     }
 
     // Reflected moves cannot be reflected again
-    if (
-      this.useType < MoveUseType.REFLECTED &&
-      move.doesFlagEffectApply({ flag: MoveFlags.REFLECTABLE, user, target })
-    ) {
+    if (!isReflected(this.useType) && move.doesFlagEffectApply({ flag: MoveFlags.REFLECTABLE, user, target })) {
       return [HitCheckResult.REFLECTED, 0];
     }
 

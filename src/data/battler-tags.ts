@@ -398,13 +398,10 @@ export class GorillaTacticsTag extends MoveRestrictionBattlerTag {
    * @param pokemon - The {@linkcode Pokemon} to add the tag to
    */
   override onAdd(pokemon: Pokemon): void {
-    const lastMove = pokemon.getLastNonVirtualMove();
-    if (!lastMove) {
-      return;
-    }
-
     super.onAdd(pokemon);
-    this.moveId = lastMove.move;
+
+    // Bang is justified as tag is not added if prior move doesn't exist
+    this.moveId = pokemon.getLastNonVirtualMove()!.move;
     pokemon.setStat(Stat.ATK, pokemon.getStat(Stat.ATK, false) * 1.5, false);
   }
 
