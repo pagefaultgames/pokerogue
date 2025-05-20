@@ -4,7 +4,7 @@ import { ActivatePriorityQueuePhase } from "#app/phases/activate-priority-queue-
 import type { PostSummonPhase } from "#app/phases/post-summon-phase";
 import { PostSummonActivateAbilityPhase } from "#app/phases/post-summon-activate-ability-phase";
 import { Stat } from "#enums/stat";
-import { BooleanHolder } from "#app/utils";
+import { BooleanHolder } from "#app/utils/common";
 import { TrickRoomTag } from "#app/data/arena-tag";
 import { DynamicPhaseType } from "#enums/dynamic-phase-type";
 

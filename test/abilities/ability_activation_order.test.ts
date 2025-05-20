@@ -1,4 +1,3 @@
-import { PreventBerryUseAbAttr, TerrainEventTypeChangeAbAttr } from "#app/data/ability";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
@@ -6,7 +5,7 @@ import { Stat } from "#enums/stat";
 import { WeatherType } from "#enums/weather-type";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Ability Activation Order", () => {
   let phaserGame: Phaser.Game;
@@ -27,7 +26,7 @@ describe("Ability Activation Order", () => {
     game.override
       .moveset([Moves.SPLASH])
       .ability(Abilities.BALL_FETCH)
-      .battleType("single")
+      .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)
