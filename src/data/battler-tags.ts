@@ -45,15 +45,17 @@ import { StatusEffect } from "#enums/status-effect";
 import { WeatherType } from "#enums/weather-type";
 import { isNullOrUndefined } from "#app/utils/common";
 
+// TODO: Explain what a battlerTagLapseType actually is
 export enum BattlerTagLapseType {
   FAINT,
+  /** Tag lapses while using a (non-follow up) move, potentially halting its execution. */
   MOVE,
   PRE_MOVE,
   AFTER_MOVE,
   MOVE_EFFECT,
   TURN_END,
   HIT,
-  /** Tag lapses AFTER_HIT, applying its effects even if the user faints */
+  /** Tag lapses after being hit, applying its effects even if the user faints */
   AFTER_HIT,
   CUSTOM,
 }
@@ -94,10 +96,13 @@ export class BattlerTag {
 
   /**
    * Tick down this {@linkcode BattlerTag}'s duration.
+   * @param _pokemon - The {@linkcode Pokemon} whom this tag belongs to.
+   * Unused by default but can be used by super classes.
+   * @param _lapseType - The {@linkcode BattlerTagLapseType} being lapsed.
+   * Unused by default but can be used by super classes.
    * @returns `true` if the tag should be kept (`turnCount` > 0`)
    */
   lapse(_pokemon: Pokemon, _lapseType: BattlerTagLapseType): boolean {
-    // TODO: Maybe flip this (return `true` if tag needs removal)
     return --this.turnCount > 0;
   }
 
@@ -143,7 +148,7 @@ export interface TerrainBattlerTag {
 
 /**
  * Base class for tags that restrict the usage of moves. This effect is generally referred to as "disabling" a move
- * in-game. This is not to be confused with {@linkcode Moves.DISABLE}.
+ * in-game (not to be confused with {@linkcode Moves.DISABLE}).
  *
  * Descendants can override {@linkcode isMoveRestricted} to restrict moves that
  * match a condition. A restricted move gets cancelled before it is used.
