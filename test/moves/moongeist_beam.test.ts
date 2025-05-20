@@ -48,9 +48,7 @@ describe("Moves - Moongeist Beam", () => {
   // Also covers Photon Geyser and Sunsteel Strike
   it("should not ignore enemy abilities when called by another move, such as metronome", async () => {
     await game.classicMode.startBattle([Species.MILOTIC]);
-    vi.spyOn(allMoves[Moves.METRONOME].getAttrs(RandomMoveAttr)[0], "getMoveOverride").mockReturnValue(
-      Moves.MOONGEIST_BEAM,
-    );
+    vi.spyOn(allMoves[Moves.METRONOME].getAttrs(RandomMoveAttr)[0], "getMove").mockReturnValue(Moves.MOONGEIST_BEAM);
 
     game.move.select(Moves.METRONOME);
     await game.phaseInterceptor.to("BerryPhase");
