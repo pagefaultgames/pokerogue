@@ -10,7 +10,7 @@ import {
   PostMoveUsedAbAttr,
   RedirectMoveAbAttr,
   ReduceStatusEffectDurationAbAttr,
-} from "#app/data/ability";
+} from "#app/data/abilities/ability";
 import type { DelayedAttackTag } from "#app/data/arena-tag";
 import { CommonAnim } from "#app/data/battle-anims";
 import { BattlerTagLapseType, CenterOfAttentionTag } from "#app/data/battler-tags";
@@ -43,7 +43,7 @@ import { CommonAnimPhase } from "#app/phases/common-anim-phase";
 import { MoveChargePhase } from "#app/phases/move-charge-phase";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { MoveEndPhase } from "#app/phases/move-end-phase";
-import { NumberHolder } from "#app/utils";
+import { NumberHolder } from "#app/utils/common";
 import { Abilities } from "#enums/abilities";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
@@ -232,7 +232,7 @@ export class MovePhase extends BattlePhase {
       switch (this.pokemon.status.effect) {
         case StatusEffect.PARALYSIS:
           activated =
-            (!this.pokemon.randSeedInt(4) || Overrides.STATUS_ACTIVATION_OVERRIDE === true) &&
+            (!this.pokemon.randBattleSeedInt(4) || Overrides.STATUS_ACTIVATION_OVERRIDE === true) &&
             Overrides.STATUS_ACTIVATION_OVERRIDE !== false;
           break;
         case StatusEffect.SLEEP: {
@@ -258,7 +258,7 @@ export class MovePhase extends BattlePhase {
               .findAttr(
                 attr => attr instanceof HealStatusEffectAttr && attr.selfTarget && attr.isOfEffect(StatusEffect.FREEZE),
               ) ||
-            (!this.pokemon.randSeedInt(5) && Overrides.STATUS_ACTIVATION_OVERRIDE !== true) ||
+            (!this.pokemon.randBattleSeedInt(5) && Overrides.STATUS_ACTIVATION_OVERRIDE !== true) ||
             Overrides.STATUS_ACTIVATION_OVERRIDE === false;
 
           activated = !healed;
@@ -404,9 +404,10 @@ export class MovePhase extends BattlePhase {
      * if the move fails.
      */
     if (success) {
-      applyPreAttackAbAttrs(PokemonTypeChangeAbAttr, this.pokemon, null, this.move.getMove());
+      const move = this.move.getMove();
+      applyPreAttackAbAttrs(PokemonTypeChangeAbAttr, this.pokemon, null, move);
       globalScene.unshiftPhase(
-        new MoveEffectPhase(this.pokemon.getBattlerIndex(), this.targets, this.move, this.reflected),
+        new MoveEffectPhase(this.pokemon.getBattlerIndex(), this.targets, move, this.reflected, this.move.virtual),
       );
     } else {
       if ([Moves.ROAR, Moves.WHIRLWIND, Moves.TRICK_OR_TREAT, Moves.FORESTS_CURSE].includes(this.move.moveId)) {
@@ -617,7 +618,7 @@ export class MovePhase extends BattlePhase {
         globalScene.eventTarget.dispatchEvent(new MoveUsedEvent(this.pokemon?.id, this.move.getMove(), ppUsed));
       }
 
-      if (this.cancelled && this.pokemon.summonData?.tags?.find(t => t.tagType === BattlerTagType.FRENZY)) {
+      if (this.cancelled && this.pokemon.summonData.tags?.find(t => t.tagType === BattlerTagType.FRENZY)) {
         frenzyMissFunc(this.pokemon, this.move.getMove());
       }
 
@@ -654,7 +655,7 @@ export class MovePhase extends BattlePhase {
       }),
       500,
     );
-    applyMoveAttrs(PreMoveMessageAttr, this.pokemon, this.pokemon.getOpponents()[0], this.move.getMove());
+    applyMoveAttrs(PreMoveMessageAttr, this.pokemon, this.pokemon.getOpponents(false)[0], this.move.getMove());
   }
 
   public showFailedText(failedText: string = i18next.t("battle:attackFailed")): void {

@@ -4,7 +4,7 @@ import GameManager from "#test/testUtils/gameManager";
 import { Species } from "#enums/species";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Moves } from "#enums/moves";
-import { Stat, BATTLE_STATS, EFFECTIVE_STATS } from "#enums/stat";
+import { Stat, EFFECTIVE_STATS } from "#enums/stat";
 import { Abilities } from "#enums/abilities";
 import { BattlerIndex } from "#app/battle";
 
@@ -26,7 +26,7 @@ describe("Moves - Transform", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .battleType("single")
+      .battleStyle("single")
       .enemySpecies(Species.MEW)
       .enemyLevel(200)
       .enemyAbility(Abilities.BEAST_BOOST)
@@ -49,30 +49,18 @@ describe("Moves - Transform", () => {
     expect(player.getAbility()).toBe(enemy.getAbility());
     expect(player.getGender()).toBe(enemy.getGender());
 
+    // copies all stats except hp
     expect(player.getStat(Stat.HP, false)).not.toBe(enemy.getStat(Stat.HP));
     for (const s of EFFECTIVE_STATS) {
       expect(player.getStat(s, false)).toBe(enemy.getStat(s, false));
     }
 
-    for (const s of BATTLE_STATS) {
-      expect(player.getStatStage(s)).toBe(enemy.getStatStage(s));
-    }
+    expect(player.getStatStages()).toEqual(enemy.getStatStages());
 
-    const playerMoveset = player.getMoveset();
-    const enemyMoveset = enemy.getMoveset();
+    // move IDs are equal
+    expect(player.getMoveset().map(m => m.moveId)).toEqual(enemy.getMoveset().map(m => m.moveId));
 
-    expect(playerMoveset.length).toBe(enemyMoveset.length);
-    for (let i = 0; i < playerMoveset.length && i < enemyMoveset.length; i++) {
-      expect(playerMoveset[i]?.moveId).toBe(enemyMoveset[i]?.moveId);
-    }
-
-    const playerTypes = player.getTypes();
-    const enemyTypes = enemy.getTypes();
-
-    expect(playerTypes.length).toBe(enemyTypes.length);
-    for (let i = 0; i < playerTypes.length && i < enemyTypes.length; i++) {
-      expect(playerTypes[i]).toBe(enemyTypes[i]);
-    }
+    expect(player.getTypes()).toEqual(enemy.getTypes());
   });
 
   it("should copy in-battle overridden stats", async () => {

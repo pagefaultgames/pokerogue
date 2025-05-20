@@ -7,11 +7,10 @@ import {
 import { trainerConfigs } from "#app/data/trainers/trainer-config";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { globalScene } from "#app/global-scene";
-import { randSeedShuffle } from "#app/utils";
+import { randSeedShuffle } from "#app/utils/common";
 import type MysteryEncounter from "../mystery-encounter";
 import { MysteryEncounterBuilder } from "../mystery-encounter";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
-import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 import { Biome } from "#enums/biome";
 import { TrainerType } from "#enums/trainer-type";
 import i18next from "i18next";
@@ -123,7 +122,7 @@ export const TheExpertPokemonBreederEncounter: MysteryEncounter = MysteryEncount
   MysteryEncounterType.THE_EXPERT_POKEMON_BREEDER,
 )
   .withEncounterTier(MysteryEncounterTier.ULTRA)
-  .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
+  .withSceneWaveRangeRequirement(25, 180)
   .withScenePartySizeRequirement(4, 6, true) // Must have at least 4 legal pokemon in party
   .withIntroSpriteConfigs([]) // These are set in onInit()
   .withIntroDialogue([
@@ -483,9 +482,9 @@ function getPartyConfig(): EnemyPartyConfig {
         abilityIndex: 1, // Magic Guard
         shiny: false,
         nature: Nature.ADAMANT,
-        moveSet: [Moves.METEOR_MASH, Moves.FIRE_PUNCH, Moves.ICE_PUNCH, Moves.THUNDER_PUNCH],
+        moveSet: [Moves.FIRE_PUNCH, Moves.ICE_PUNCH, Moves.THUNDER_PUNCH, Moves.METEOR_MASH],
         ivs: [31, 31, 31, 31, 31, 31],
-        tera: PokemonType.STEEL,
+        tera: PokemonType.FAIRY,
       },
     ],
   };

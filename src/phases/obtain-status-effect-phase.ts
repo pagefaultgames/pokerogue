@@ -7,8 +7,8 @@ import type Pokemon from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { PokemonPhase } from "./pokemon-phase";
 import { SpeciesFormChangeStatusEffectTrigger } from "#app/data/pokemon-forms";
-import { applyPostSetStatusAbAttrs, PostSetStatusAbAttr } from "#app/data/ability";
-import { isNullOrUndefined } from "#app/utils";
+import { applyPostSetStatusAbAttrs, PostSetStatusAbAttr } from "#app/data/abilities/ability";
+import { isNullOrUndefined } from "#app/utils/common";
 
 export class ObtainStatusEffectPhase extends PokemonPhase {
   private statusEffect?: StatusEffect;

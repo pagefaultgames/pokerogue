@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import { applyPostBattleAbAttrs, PostBattleAbAttr } from "#app/data/ability";
+import { applyPostBattleAbAttrs, PostBattleAbAttr } from "#app/data/abilities/ability";
 import { LapsingPersistentModifier, LapsingPokemonHeldItemModifier } from "#app/modifier/modifier";
 import { BattlePhase } from "./battle-phase";
 import { GameOverPhase } from "./game-over-phase";
@@ -59,8 +59,8 @@ export class BattleEndPhase extends BattlePhase {
     }
 
     for (const pokemon of globalScene.getField()) {
-      if (pokemon?.battleSummonData) {
-        pokemon.battleSummonData.waveTurnCount = 1;
+      if (pokemon) {
+        pokemon.tempSummonData.waveTurnCount = 1;
       }
     }
 
@@ -73,6 +73,13 @@ export class BattleEndPhase extends BattlePhase {
     }
 
     globalScene.clearEnemyHeldItemModifiers();
+    for (const p of globalScene.getEnemyParty()) {
+      try {
+        p.destroy();
+      } catch {
+        console.warn("Unable to destroy stale pokemon object in BattleEndPhase:", p);
+      }
+    }
 
     const lapsingModifiers = globalScene.findModifiers(
       m => m instanceof LapsingPersistentModifier || m instanceof LapsingPokemonHeldItemModifier,

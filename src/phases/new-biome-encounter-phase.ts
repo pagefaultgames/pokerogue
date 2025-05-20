@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import { applyAbAttrs, PostBiomeChangeAbAttr } from "#app/data/ability";
+import { applyAbAttrs, PostBiomeChangeAbAttr } from "#app/data/abilities/ability";
 import { getRandomWeatherType } from "#app/data/weather";
 import { NextEncounterPhase } from "./next-encounter-phase";
 
@@ -7,15 +7,15 @@ export class NewBiomeEncounterPhase extends NextEncounterPhase {
   doEncounter(): void {
     globalScene.playBgm(undefined, true);
 
+    // Reset all battle and wave data, perform form changes, etc.
+    // We do this because new biomes are considered "arena transitions" akin to MEs and trainer battles
     for (const pokemon of globalScene.getPlayerParty()) {
       if (pokemon) {
-        pokemon.resetBattleData();
-        pokemon.customPokemonData.resetHitReceivedCount();
+        pokemon.resetBattleAndWaveData();
+        if (pokemon.isOnField()) {
+          applyAbAttrs(PostBiomeChangeAbAttr, pokemon, null);
+        }
       }
-    }
-
-    for (const pokemon of globalScene.getPlayerParty().filter(p => p.isOnField())) {
-      applyAbAttrs(PostBiomeChangeAbAttr, pokemon, null);
     }
 
     const enemyField = globalScene.getEnemyField();

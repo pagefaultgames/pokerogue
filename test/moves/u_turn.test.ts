@@ -23,7 +23,7 @@ describe("Moves - U-turn", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .battleType("single")
+      .battleStyle("single")
       .enemySpecies(Species.GENGAR)
       .startingLevel(90)
       .startingWave(97)
@@ -65,7 +65,7 @@ describe("Moves - U-turn", () => {
     // assert
     const playerPkm = game.scene.getPlayerPokemon()!;
     expect(playerPkm.hp).not.toEqual(playerPkm.getMaxHp());
-    expect(game.scene.getEnemyPokemon()!.battleData.abilityRevealed).toBe(true); // proxy for asserting ability activated
+    expect(game.scene.getEnemyPokemon()!.waveData.abilityRevealed).toBe(true); // proxy for asserting ability activated
     expect(playerPkm.species.speciesId).toEqual(Species.RAICHU);
     expect(game.phaseInterceptor.log).not.toContain("SwitchSummonPhase");
   }, 20000);
@@ -74,7 +74,7 @@ describe("Moves - U-turn", () => {
     // arrange
     game.override.enemyAbility(Abilities.POISON_POINT);
     await game.classicMode.startBattle([Species.RAICHU, Species.SHUCKLE]);
-    vi.spyOn(game.scene.getEnemyPokemon()!, "randSeedInt").mockReturnValue(0);
+    vi.spyOn(game.scene.getEnemyPokemon()!, "randBattleSeedInt").mockReturnValue(0);
 
     // act
     game.move.select(Moves.U_TURN);
@@ -84,7 +84,7 @@ describe("Moves - U-turn", () => {
     const playerPkm = game.scene.getPlayerPokemon()!;
     expect(playerPkm.status?.effect).toEqual(StatusEffect.POISON);
     expect(playerPkm.species.speciesId).toEqual(Species.RAICHU);
-    expect(game.scene.getEnemyPokemon()!.battleData.abilityRevealed).toBe(true); // proxy for asserting ability activated
+    expect(game.scene.getEnemyPokemon()!.waveData.abilityRevealed).toBe(true); // proxy for asserting ability activated
     expect(game.phaseInterceptor.log).not.toContain("SwitchSummonPhase");
   }, 20000);
 

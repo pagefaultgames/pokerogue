@@ -15,10 +15,10 @@ import {
   koPlayerPokemon,
 } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
-import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
+import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { ModifierTier } from "#app/modifier/modifier-tier";
 import { GameOverPhase } from "#app/phases/game-over-phase";
-import { randSeedInt } from "#app/utils";
+import { randSeedInt } from "#app/utils/common";
 import { Moves } from "#enums/moves";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
@@ -29,8 +29,8 @@ import { Species } from "#enums/species";
 const namespace = "mysteryEncounters/mysteriousChest";
 
 const RAND_LENGTH = 100;
-const TRAP_PERCENT = 35;
-const COMMON_REWARDS_PERCENT = 20;
+const TRAP_PERCENT = 30;
+const COMMON_REWARDS_PERCENT = 25;
 const ULTRA_REWARDS_PERCENT = 30;
 const ROGUE_REWARDS_PERCENT = 10;
 const MASTER_REWARDS_PERCENT = 5;

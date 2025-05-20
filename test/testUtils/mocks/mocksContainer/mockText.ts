@@ -308,5 +308,14 @@ export default class MockText implements MockGameObject {
     return this.list;
   }
 
+  /**
+   * Runs the word wrap algorithm on the text, then returns an array of the lines
+   */
+  getWrappedText() {
+    // Returns the wrapped text.
+    // return this.phaserText.getWrappedText();
+    return this.runWordWrap(this.text).split("\n");
+  }
+
   on(_event: string | symbol, _fn: Function, _context?: any) {}
 }

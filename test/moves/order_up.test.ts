@@ -29,7 +29,7 @@ describe("Moves - Order Up", () => {
     game.override
       .moveset(Moves.ORDER_UP)
       .ability(Abilities.COMMANDER)
-      .battleType("double")
+      .battleStyle("double")
       .disableCrits()
       .enemySpecies(Species.SNORLAX)
       .enemyAbility(Abilities.BALL_FETCH)
@@ -81,7 +81,7 @@ describe("Moves - Order Up", () => {
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    expect(dondozo.battleData.abilitiesApplied.includes(Abilities.SHEER_FORCE)).toBeTruthy();
+    expect(dondozo.waveData.abilitiesApplied.has(Abilities.SHEER_FORCE)).toBeTruthy();
     expect(dondozo.getStatStage(Stat.ATK)).toBe(3);
   });
 });

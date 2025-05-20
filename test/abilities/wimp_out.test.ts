@@ -2,7 +2,7 @@ import { BattlerIndex } from "#app/battle";
 import { ArenaTagSide } from "#app/data/arena-tag";
 import { allMoves } from "#app/data/moves/move";
 import GameManager from "#test/testUtils/gameManager";
-import { toDmgValue } from "#app/utils";
+import { toDmgValue } from "#app/utils/common";
 import { Abilities } from "#enums/abilities";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
@@ -31,7 +31,7 @@ describe("Abilities - Wimp Out", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .battleType("single")
+      .battleStyle("single")
       .ability(Abilities.WIMP_OUT)
       .enemySpecies(Species.NINJASK)
       .enemyPassiveAbility(Abilities.NO_GUARD)
@@ -155,7 +155,7 @@ describe("Abilities - Wimp Out", () => {
     game.doSelectPartyPokemon(1);
     await game.phaseInterceptor.to("SwitchSummonPhase", false);
 
-    expect(wimpod.summonData.abilitiesApplied).not.toContain(Abilities.WIMP_OUT);
+    expect(wimpod.waveData.abilitiesApplied).not.toContain(Abilities.WIMP_OUT);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
@@ -342,7 +342,7 @@ describe("Abilities - Wimp Out", () => {
   });
 
   it("Wimp Out activating should not cancel a double battle", async () => {
-    game.override.battleType("double").enemyAbility(Abilities.WIMP_OUT).enemyMoveset([Moves.SPLASH]).enemyLevel(1);
+    game.override.battleStyle("double").enemyAbility(Abilities.WIMP_OUT).enemyMoveset([Moves.SPLASH]).enemyLevel(1);
     await game.classicMode.startBattle([Species.WIMPOD, Species.TYRUNT]);
     const enemyLeadPokemon = game.scene.getEnemyParty()[0];
     const enemySecPokemon = game.scene.getEnemyParty()[1];
@@ -508,7 +508,7 @@ describe("Abilities - Wimp Out", () => {
       .moveset([Moves.MATCHA_GOTCHA, Moves.FALSE_SWIPE])
       .startingLevel(50)
       .enemyLevel(1)
-      .battleType("double")
+      .battleStyle("double")
       .startingWave(wave);
     await game.classicMode.startBattle([Species.RAICHU, Species.PIKACHU]);
     const [wimpod0, wimpod1] = game.scene.getEnemyField();
@@ -534,12 +534,12 @@ describe("Abilities - Wimp Out", () => {
       .enemyAbility(Abilities.WIMP_OUT)
       .startingLevel(50)
       .enemyLevel(1)
-      .enemyMoveset([ Moves.SPLASH, Moves.ENDURE ])
-      .battleType("double")
-      .moveset([ Moves.DRAGON_ENERGY, Moves.SPLASH ])
+      .enemyMoveset([Moves.SPLASH, Moves.ENDURE])
+      .battleStyle("double")
+      .moveset([Moves.DRAGON_ENERGY, Moves.SPLASH])
       .startingWave(wave);
 
-    await game.classicMode.startBattle([ Species.REGIDRAGO, Species.MAGIKARP ]);
+    await game.classicMode.startBattle([Species.REGIDRAGO, Species.MAGIKARP]);
 
     // turn 1
     game.move.select(Moves.DRAGON_ENERGY, 0);
@@ -549,6 +549,5 @@ describe("Abilities - Wimp Out", () => {
 
     await game.phaseInterceptor.to("SelectModifierPhase");
     expect(game.scene.currentBattle.waveIndex).toBe(wave + 1);
-
   });
 });

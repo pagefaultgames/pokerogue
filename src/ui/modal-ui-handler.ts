@@ -1,5 +1,5 @@
 import { TextStyle, addTextObject } from "./text";
-import type { Mode } from "./ui";
+import type { UiMode } from "#enums/ui-mode";
 import UiHandler from "./ui-handler";
 import { WindowVariant, addWindow } from "./ui-theme";
 import type { Button } from "#enums/buttons";
@@ -17,7 +17,7 @@ export abstract class ModalUiHandler extends UiHandler {
   protected buttonBgs: Phaser.GameObjects.NineSlice[];
   protected buttonLabels: Phaser.GameObjects.Text[];
 
-  constructor(mode: Mode | null = null) {
+  constructor(mode: UiMode | null = null) {
     super(mode);
 
     this.buttonContainers = [];
@@ -134,7 +134,11 @@ export abstract class ModalUiHandler extends UiHandler {
 
       for (let a = 0; a < this.buttonBgs.length; a++) {
         if (a < this.buttonBgs.length) {
-          this.buttonBgs[a].on("pointerdown", _ => config.buttonActions[a]());
+          this.buttonBgs[a].on("pointerdown", _ => {
+            if (globalScene.tweens.getTweensOf(this.modalContainer).length === 0) {
+              config.buttonActions[a]();
+            }
+          });
         }
       }
 
