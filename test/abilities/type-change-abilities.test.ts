@@ -121,13 +121,13 @@ describe("Abilities - Protean/Libero", () => {
   });
 
   it.each<{ category: string; move?: Moves; passive?: Abilities; enemyMove?: Moves }>([
-    { category: "Variable type Moves", move: Moves.WEATHER_BALL, passive: Abilities.DROUGHT },
-    { category: "Type Change Abilities", passive: Abilities.REFRIGERATE },
-    { category: "Move-calling Moves", move: Moves.NATURE_POWER, passive: Abilities.PSYCHIC_SURGE },
-    { category: "Ion Deluge", enemyMove: Moves.ION_DELUGE },
-    { category: "Electrify", enemyMove: Moves.ELECTRIFY },
+    { category: "Variable type Moves'", move: Moves.WEATHER_BALL, passive: Abilities.DROUGHT },
+    { category: "Type Change Abilities'", passive: Abilities.REFRIGERATE },
+    { category: "Move-calling Moves'", move: Moves.NATURE_POWER, passive: Abilities.PSYCHIC_SURGE },
+    { category: "Ion Deluge's", enemyMove: Moves.ION_DELUGE },
+    { category: "Electrify's", enemyMove: Moves.ELECTRIFY },
   ])(
-    "should respect $category' final type",
+    "should respect $category final type",
     async ({ move = Moves.TACKLE, passive = Abilities.NONE, enemyMove = Moves.SPLASH }) => {
       game.override.moveset(move).passiveAbility(passive).enemyMoveset(enemyMove);
 
