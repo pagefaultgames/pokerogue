@@ -48,7 +48,7 @@ import { MoveTarget } from "#enums/MoveTarget";
 import { MoveCategory } from "#enums/MoveCategory";
 import { SpeciesFormChangePostMoveTrigger } from "#app/data/pokemon-forms";
 import { PokemonType } from "#enums/pokemon-type";
-import { DamageResult, PokemonMove, type TurnMove } from "#app/field/pokemon";
+import { type DamageResult, PokemonMove, type TurnMove } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
 import { HitResult, MoveResult } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
@@ -72,7 +72,7 @@ import { ShowAbilityPhase } from "./show-ability-phase";
 import { MovePhase } from "./move-phase";
 import { MoveEndPhase } from "./move-end-phase";
 import { HideAbilityPhase } from "#app/phases/hide-ability-phase";
-import { TypeDamageMultiplier } from "#app/data/type";
+import type { TypeDamageMultiplier } from "#app/data/type";
 import { HitCheckResult } from "#enums/hit-check-result";
 import type Move from "#app/data/moves/move";
 import { isFieldTargeted } from "#app/data/moves/move-utils";
@@ -547,6 +547,12 @@ export class MoveEffectPhase extends PokemonPhase {
       return [HitCheckResult.MISS, 0];
     }
 
+    // Protection from Psychic Terrain applies before Magic Bounce/Coat and Protect/etc
+    if (globalScene.arena.isMoveTerrainCancelled(user, this.targets, move)) {
+      // getTerrainBlockMessage(targets[0], globalScene.arena.getTerrainType());
+      return [HitCheckResult.NO_EFFECT, 0];
+    }
+
     if (!fieldTargeted && this.protectedCheck(user, target)) {
       return [HitCheckResult.PROTECTED, 0];
     }
@@ -809,7 +815,7 @@ export class MoveEffectPhase extends PokemonPhase {
      */
     applyMoveAttrs(StatChangeBeforeDmgCalcAttr, user, target, this.move);
 
-    const { result: result, damage: dmg } = target.getAttackDamage({
+    const { result, damage: dmg } = target.getAttackDamage({
       source: user,
       move: this.move,
       ignoreAbility: false,

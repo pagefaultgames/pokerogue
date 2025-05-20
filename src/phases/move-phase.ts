@@ -31,7 +31,7 @@ import { MoveFlags } from "#enums/MoveFlags";
 import { SpeciesFormChangePreMoveTrigger } from "#app/data/pokemon-forms";
 import { getStatusEffectActivationText, getStatusEffectHealText } from "#app/data/status-effect";
 import { PokemonType } from "#enums/pokemon-type";
-import { getTerrainBlockMessage, getWeatherBlockMessage } from "#app/data/weather";
+import { getWeatherBlockMessage } from "#app/data/weather";
 import { MoveUsedEvent } from "#app/events/battle-scene";
 import type { PokemonMove } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
@@ -156,7 +156,8 @@ export class MovePhase extends BattlePhase {
         this.showMoveText();
         this.showFailedText();
       }
-      return this.end();
+      this.end();
+      return;
     }
 
     this.pokemon.turnData.acted = true;
@@ -168,14 +169,13 @@ export class MovePhase extends BattlePhase {
     }
 
     // Check move to see if arena.ignoreAbilities should be true.
-    if (!this.followUp || this.reflected) {
-      if (
-        this.move
-          .getMove()
-          .doesFlagEffectApply({ flag: MoveFlags.IGNORE_ABILITIES, user: this.pokemon, isFollowUp: this.followUp })
-      ) {
-        globalScene.arena.setIgnoreAbilities(true, this.pokemon.getBattlerIndex());
-      }
+    if (
+      (!this.followUp || this.reflected) &&
+      this.move
+        .getMove()
+        .doesFlagEffectApply({ flag: MoveFlags.IGNORE_ABILITIES, user: this.pokemon, isFollowUp: this.followUp })
+    ) {
+      globalScene.arena.setIgnoreAbilities(true, this.pokemon.getBattlerIndex());
     }
 
     this.resolveRedirectTarget();
@@ -329,7 +329,8 @@ export class MovePhase extends BattlePhase {
       if (fail) {
         this.showMoveText();
         this.showFailedText();
-        return this.end();
+        this.end();
+        return;
       }
     }
 
@@ -380,13 +381,11 @@ export class MovePhase extends BattlePhase {
      * Move conditions assume the move has a single target
      * TODO: is this sustainable?
      */
-    let failedDueToTerrain = false;
     let failedDueToWeather = false;
     if (success) {
       const passesConditions = move.applyConditions(this.pokemon, targets[0], move);
       failedDueToWeather = globalScene.arena.isMoveWeatherCancelled(this.pokemon, move);
-      failedDueToTerrain = globalScene.arena.isMoveTerrainCancelled(this.pokemon, this.targets, move);
-      success = passesConditions && !failedDueToWeather && !failedDueToTerrain;
+      success = passesConditions && !failedDueToWeather;
     }
 
     // Update the battle's "last move" pointer, unless we're currently mimicking a move.
@@ -425,8 +424,6 @@ export class MovePhase extends BattlePhase {
       let failedText: string | undefined;
       if (failureMessage) {
         failedText = failureMessage;
-      } else if (failedDueToTerrain) {
-        failedText = getTerrainBlockMessage(targets[0], globalScene.arena.getTerrainType());
       } else if (failedDueToWeather) {
         failedText = getWeatherBlockMessage(globalScene.arena.getWeatherType());
       }
