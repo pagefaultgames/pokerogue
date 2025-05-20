@@ -68,6 +68,7 @@ export class MovePhase extends BattlePhase {
     return this._pokemon;
   }
 
+  // TODO: Do we need public getters but only protected setters?
   protected set pokemon(pokemon: Pokemon) {
     this._pokemon = pokemon;
   }
@@ -332,12 +333,15 @@ export class MovePhase extends BattlePhase {
     const isDelayedAttack = move.hasAttr(DelayedAttackAttr);
     if (isDelayedAttack) {
       // Check the player side arena if another delayed attack is active and hitting the same slot.
-      const delayedAttackTags = globalScene.arena.findTags(t =>
-        [ArenaTagType.FUTURE_SIGHT, ArenaTagType.DOOM_DESIRE].includes(t.tagType),
-      ) as DelayedAttackTag[];
+      // TODO: Make this use a `getTags` proxy once one is added to support custom predicates
       const currentTargetIndex = targets[0].getBattlerIndex();
+      const delayedAttackTags = globalScene.arena.findTags(
+        (tag): tag is DelayedAttackTag =>
+          (tag.tagType === ArenaTagType.FUTURE_SIGHT || tag.tagType === ArenaTagType.DOOM_DESIRE) &&
+          (tag as DelayedAttackTag).targetIndex === currentTargetIndex,
+      ) as DelayedAttackTag[];
 
-      if (delayedAttackTags.some(tag => tag.targetIndex === currentTargetIndex)) {
+      if (delayedAttackTags.length) {
         this.showMoveText();
         this.failMove();
         return;

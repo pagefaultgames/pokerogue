@@ -269,3 +269,14 @@ export const invalidSketchMoves: ReadonlySet<Moves> = new Set([
   Moves.BREAKNECK_BLITZ__PHYSICAL,
   Moves.BREAKNECK_BLITZ__SPECIAL,
 ]);
+
+/** Set of all moves that cannot be locked into by {@linkcode Moves.ENCORE}. */
+export const invalidEncoreMoves = new Set<Moves>([
+  Moves.MIMIC,
+  Moves.MIRROR_MOVE,
+  Moves.TRANSFORM,
+  Moves.STRUGGLE,
+  Moves.SKETCH,
+  Moves.SLEEP_TALK,
+  Moves.ENCORE,
+]);

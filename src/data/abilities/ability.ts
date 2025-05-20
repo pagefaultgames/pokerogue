@@ -1,8 +1,8 @@
-import { HitResult, MoveResult, PlayerPokemon, type TurnMove } from "#app/field/pokemon";
+import { HitResult, MoveResult, PlayerPokemon } from "#app/field/pokemon";
 import { BooleanHolder, NumberHolder, toDmgValue, isNullOrUndefined, randSeedItem, randSeedInt, type Constructor } from "#app/utils/common";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { BattlerTagLapseType, GroundedTag } from "#app/data/battler-tags";
-import { getNonVolatileStatusEffects, getStatusEffectDescriptor, getStatusEffectHealText, type Status } from "#app/data/status-effect";
+import { getNonVolatileStatusEffects, getStatusEffectDescriptor, getStatusEffectHealText } from "#app/data/status-effect";
 import { Gender } from "#app/data/gender";
 import {
   AttackMove,
@@ -65,10 +65,8 @@ import { CommonAnim } from "../battle-anims";
 import { getBerryEffectFunc } from "../berry";
 import { BerryUsedEvent } from "#app/events/battle-scene";
 
-
 // Type imports
-import { EnemyPokemon, PokemonMove } from "#app/field/pokemon";
-import Pokemon from "#app/field/pokemon";
+import Pokemon, { EnemyPokemon, PokemonMove } from "#app/field/pokemon";
 import type { Weather } from "#app/data/weather";
 import type { BattlerTag } from "#app/data/battler-tags";
 import type { AbAttrCondition, PokemonDefendCondition, PokemonStatStageChangeCondition, PokemonAttackCondition, AbAttrApplyFunc, AbAttrSuccessFunc } from "#app/@types/ability-types";
@@ -4447,11 +4445,10 @@ export class PostDancingMoveAbAttr extends PostMoveUsedAbAttr {
     move: PokemonMove,
     source: Pokemon,
     targets: BattlerIndex[],
-        simulated: boolean,
+    simulated: boolean,
     args: any[]): void {
     if (!simulated) {
       // If the move is an AttackMove or a StatusMove the Dancer must replicate the move on the source of the Dance
-       // TODO: fix in main dancer PR (currently keeping this purely semantic rather than actually fixing bug)
       if (move.getMove() instanceof AttackMove || move.getMove() instanceof StatusMove) {
         const target = this.getTarget(dancer, source, targets);
         globalScene.unshiftPhase(new MovePhase(dancer, target, move, MoveUseType.INDIRECT));
@@ -5547,8 +5544,8 @@ class ForceSwitchOutHelper {
    *
    * @param pokemon The {@linkcode Pokemon} attempting to switch out.
    * @returns `true` if the switch is successful
-   * TODO: Make this actually cancel pending move phases on the switched out target
-   */
+  */
+  // TODO: Make this cancel pending move phases on the switched out target
   public switchOutLogic(pokemon: Pokemon): boolean {
     const switchOutTarget = pokemon;
     /**
@@ -7177,7 +7174,13 @@ export function initAbilities() {
       .attr(PostFaintHPDamageAbAttr)
       .bypassFaint(),
     new Ability(Abilities.DANCER, 7)
-      .attr(PostDancingMoveAbAttr),
+      .attr(PostDancingMoveAbAttr)
+      .edgeCase(),
+      /* Incorrect interations with:
+      * Petal Dance (should not lock in or count down timer; currently does both)
+      * Flinches (due to tag being removed earlier)
+      * Failed/protected moves (should not trigger if original move is protected against)
+      */
     new Ability(Abilities.BATTERY, 7)
       .attr(AllyMoveCategoryPowerBoostAbAttr, [ MoveCategory.SPECIAL ], 1.3),
     new Ability(Abilities.FLUFFY, 7)
@@ -7320,7 +7323,9 @@ export function initAbilities() {
       .bypassFaint()
       .edgeCase(), //  interacts incorrectly with rock head. It's meant to switch abilities before recoil would apply so that a pokemon with rock head would lose rock head first and still take the recoil
     new Ability(Abilities.GORILLA_TACTICS, 8)
-      .attr(GorillaTacticsAbAttr),
+      .attr(GorillaTacticsAbAttr)
+      .edgeCase(),
+      // May or may not incorrectly increase struggle's power by 50% (needs confirmation)
     new Ability(Abilities.NEUTRALIZING_GAS, 8)
       .attr(PostSummonAddArenaTagAbAttr, true, ArenaTagType.NEUTRALIZING_GAS, 0)
       .attr(PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr)

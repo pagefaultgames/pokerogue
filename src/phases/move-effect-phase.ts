@@ -48,9 +48,9 @@ import { MoveTarget } from "#enums/MoveTarget";
 import { MoveCategory } from "#enums/MoveCategory";
 import { SpeciesFormChangePostMoveTrigger } from "#app/data/pokemon-forms";
 import { PokemonType } from "#enums/pokemon-type";
-import { type DamageResult, PokemonMove, type TurnMove } from "#app/field/pokemon";
+import { PokemonMove, HitResult, MoveResult } from "#app/field/pokemon";
+import type { DamageResult, TurnMove } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
-import { HitResult, MoveResult } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import {
   ContactHeldItemTransferChanceModifier,

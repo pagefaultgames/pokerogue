@@ -5421,12 +5421,14 @@ export class FrenzyAttr extends MoveEffectAttr {
     // If frenzy is not active, add a tag and push 1-2 extra turns of attacks to the user's move queue.
     // Otherwise, tick down the existing tag.
     if (!user.getTag(BattlerTagType.FRENZY) && user.getMoveQueue().length === 0) {
-      const turnCount = user.randBattleSeedIntRange(1, 2);
-      new Array(turnCount).fill(null).map(() => user.getMoveQueue().push({ move: move.id, targets: [ target.getBattlerIndex() ], useType: MoveUseType.IGNORE_PP }));
+      const turnCount = user.randBattleSeedIntRange(1, 2); // excludes initial use
+      for (let i = 0; i < turnCount; i++) {
+        user.pushMoveQueue({ move: move.id, targets: [ target.getBattlerIndex() ], useType: MoveUseType.IGNORE_PP });
+      }
       user.addTag(BattlerTagType.FRENZY, turnCount, move.id, user.id);
     } else {
       applyMoveAttrs(AddBattlerTagAttr, user, target, move, args);
-      user.lapseTag(BattlerTagType.FRENZY); // if FRENZY is already in effect (moveQueue.length > 0), lapse the tag
+      user.lapseTag(BattlerTagType.FRENZY);
     }
 
     return true;
@@ -7001,14 +7003,14 @@ export class CopyMoveAttr extends CallMoveAttr {
 
   apply(user: Pokemon, target: Pokemon, _move: Move, args: any[]): boolean {
     this.hasTarget = this.mirrorMove;
-    // TODO: Confirm whether Mirror Move and co. can copy struggle
+    // bang is correct as condition func returns `false` and fails move if no last move exists
     const lastMove = this.mirrorMove ? target.getLastNonVirtualMove(false, false)!.move : globalScene.currentBattle.lastMove;
     return super.apply(user, target, allMoves[lastMove], args);
   }
 
   getCondition(): MoveConditionFunc {
     return (_user, target, _move) => {
-      const lastMove = this.mirrorMove ? target.getLastNonVirtualMove(false, true)?.move : globalScene.currentBattle.lastMove;
+      const lastMove = this.mirrorMove ? target.getLastNonVirtualMove(false, false)?.move : globalScene.currentBattle.lastMove;
       return !isNullOrUndefined(lastMove) && !this.invalidMoves.has(lastMove);
     };
   }
@@ -7140,12 +7142,13 @@ export class RepeatMoveAttr extends MoveEffectAttr {
         Moves.TRANSFORM,
         Moves.MIMIC,
         Moves.STRUGGLE,
-        // TODO: Add Max/G-Move blockage if or when they are implemented
+        // TODO: Add Max/G-Max/Z-Move blockage if or when they are implemented
       ];
 
       if (!lastMove?.move // no move to instruct
         || !movesetMove // called move not in target's moveset (forgetting the move, etc.)
         || movesetMove.ppUsed === movesetMove.getMovePp() // move out of pp
+        // TODO: This next line is likely redundant as all charging moves are in the above list
         || allMoves[lastMove.move].isChargingMove() // called move is a charging/recharging move
         || uninstructableMoves.includes(lastMove.move)) { // called move is in the banlist
         return false;
@@ -8607,8 +8610,7 @@ export function initMoves() {
     new SelfStatusMove(Moves.METRONOME, PokemonType.NORMAL, -1, 10, -1, 0, 1)
       .attr(RandomMoveAttr, invalidMetronomeMoves),
     new StatusMove(Moves.MIRROR_MOVE, PokemonType.FLYING, -1, 20, -1, 0, 1)
-      .attr(CopyMoveAttr, true, invalidMirrorMoveMoves)
-      .edgeCase(), // May or may not have incorrect interactions with Struggle
+      .attr(CopyMoveAttr, true, invalidMirrorMoveMoves),
     new AttackMove(Moves.SELF_DESTRUCT, PokemonType.NORMAL, MoveCategory.PHYSICAL, 200, 100, 5, -1, 0, 1)
       .attr(SacrificialAttr)
       .makesContact(false)
@@ -8965,7 +8967,10 @@ export function initMoves() {
       .attr(AddBattlerTagAttr, BattlerTagType.ENCORE, false, true)
       .ignoresSubstitute()
       .condition((user, target, move) => new EncoreTag(user.id).canAdd(target))
-      .reflectable(),
+      .reflectable()
+      .edgeCase(),
+      // Can lock infinitely into struggle; has incorrect interactions with Blood Moon/Gigaton Hammer
+      // Also may or may not incorrectly select targets for replacement move (needs verification)
     new AttackMove(Moves.PURSUIT, PokemonType.DARK, MoveCategory.PHYSICAL, 40, 100, 20, -1, 0, 2)
       .partial(), // No effect implemented
     new AttackMove(Moves.RAPID_SPIN, PokemonType.NORMAL, MoveCategory.PHYSICAL, 50, 100, 40, 100, 0, 2)
@@ -9477,8 +9482,7 @@ export function initMoves() {
       .target(MoveTarget.NEAR_ENEMY)
       .unimplemented(),
     new SelfStatusMove(Moves.COPYCAT, PokemonType.NORMAL, -1, 20, -1, 0, 4)
-    .attr(CopyMoveAttr, false, invalidCopycatMoves)
-      .edgeCase(), // May or may not have incorrect interactions with Struggle
+    .attr(CopyMoveAttr, false, invalidCopycatMoves),
     new StatusMove(Moves.POWER_SWAP, PokemonType.PSYCHIC, -1, 10, 100, 0, 4)
       .attr(SwapStatStagesAttr, [ Stat.ATK, Stat.SPATK ])
       .ignoresSubstitute(),
@@ -10426,9 +10430,12 @@ export function initMoves() {
       .ignoresSubstitute()
       .attr(RepeatMoveAttr)
       .edgeCase(),
-      // incorrect interactions with Gigaton Hammer, Blood Moon & Torment due to them making moves _fail on use_,
-      // not merely unselectable.
-      // Also my or may not have incorrect interactions with Struggle (needs verification).
+      /*
+      * Incorrect interactions with Gigaton Hammer, Blood Moon & Torment due to them
+      presently making moves _fail on use_, not merely unselectable.
+      * May or may not have incorrect interactions with Struggle (needs verification).
+      * May or may not fail upon copying a copied move also in one's own moveset
+      */
     new AttackMove(Moves.BEAK_BLAST, PokemonType.FLYING, MoveCategory.PHYSICAL, 100, 100, 15, -1, -3, 7)
       .attr(BeakBlastHeaderAttr)
       .ballBombMove()

@@ -45,6 +45,7 @@ import { StatusEffect } from "#enums/status-effect";
 import { WeatherType } from "#enums/weather-type";
 import { isNullOrUndefined } from "#app/utils/common";
 import { MoveUseType } from "#enums/move-use-type";
+import { invalidEncoreMoves } from "./moves/invalid-moves";
 
 export enum BattlerTagLapseType {
   FAINT,
@@ -379,12 +380,11 @@ export class GorillaTacticsTag extends MoveRestrictionBattlerTag {
 
   /**
    * Ensures that move history exists on {@linkcode Pokemon} and has a valid move to lock into.
-   * @param pokemon - the {@linkcode Pokemon} to add the tag to
+   * @param pokemon - The {@linkcode Pokemon} to add the tag to
    * @returns `true` if the tag can be added
    */
   override canAdd(pokemon: Pokemon): boolean {
-    // Choice items ignore struggle
-    // TODO: Check if struggle also gets the 50% power boost
+    // Choice items ignore struggle, so Gorilla Tactics should too
     const lastSelectedMove = pokemon.getLastNonVirtualMove();
     return (
       !isNullOrUndefined(lastSelectedMove) &&
@@ -398,8 +398,13 @@ export class GorillaTacticsTag extends MoveRestrictionBattlerTag {
    * @param pokemon - The {@linkcode Pokemon} to add the tag to
    */
   override onAdd(pokemon: Pokemon): void {
+    const lastMove = pokemon.getLastNonVirtualMove();
+    if (!lastMove) {
+      return;
+    }
+
     super.onAdd(pokemon);
-    this.moveId = pokemon.getLastNonVirtualMove()!.move; // `canAdd` returns false if no move
+    this.moveId = lastMove.move;
     pokemon.setStat(Stat.ATK, pokemon.getStat(Stat.ATK, false) * 1.5, false);
   }
 
@@ -1122,7 +1127,6 @@ export class FrenzyTag extends BattlerTag {
  * Applies the effects of {@linkcode Moves.ENCORE} onto the target Pokemon.
  * Encore forces the target Pokemon to use its most-recent move for 3 turns.
  */
-// TODO: Refactor and fix the bugs involving struggle and lock ons
 export class EncoreTag extends MoveRestrictionBattlerTag {
   public moveId: Moves;
 
@@ -1147,17 +1151,7 @@ export class EncoreTag extends MoveRestrictionBattlerTag {
       return false;
     }
 
-    const unEncoreableMoves = new Set<Moves>([
-      Moves.MIMIC,
-      Moves.MIRROR_MOVE,
-      Moves.TRANSFORM,
-      Moves.STRUGGLE,
-      Moves.SKETCH,
-      Moves.SLEEP_TALK,
-      Moves.ENCORE,
-    ]);
-
-    if (unEncoreableMoves.has(lastMove.move)) {
+    if (invalidEncoreMoves.has(lastMove.move)) {
       return false;
     }
 
@@ -1167,6 +1161,7 @@ export class EncoreTag extends MoveRestrictionBattlerTag {
   }
 
   onAdd(pokemon: Pokemon): void {
+    // TODO: shouldn't this be `onAdd`?
     super.onRemove(pokemon);
 
     globalScene.queueMessage(
@@ -1179,7 +1174,6 @@ export class EncoreTag extends MoveRestrictionBattlerTag {
     if (movePhase) {
       const movesetMove = pokemon.getMoveset().find(m => m.moveId === this.moveId);
       if (movesetMove) {
-        // TODO: Check encore + calling move interactions and change to `pokemon.getLastNonVirtualMove()` if needed
         const lastMove = pokemon.getLastXMoves(1)[0];
         globalScene.tryReplacePhase(
           m => m instanceof MovePhase && m.pokemon === pokemon,
@@ -1908,19 +1902,22 @@ export class TruantTag extends AbilityBattlerTag {
 
     const lastMove = pokemon.getLastXMoves()[0];
 
-    if (lastMove && lastMove.move !== Moves.NONE) {
-      // ignore if just slacked off OR first turn of battle
-      const passive = pokemon.getAbility().id !== Abilities.TRUANT;
-      (globalScene.getCurrentPhase() as MovePhase).cancel();
-      // TODO: Ability displays should be handled by the ability
-      globalScene.queueAbilityDisplay(pokemon, passive, true);
-      globalScene.queueMessage(
-        i18next.t("battlerTags:truantLapse", {
-          pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-        }),
-      );
-      globalScene.queueAbilityDisplay(pokemon, passive, false);
+    if (!lastMove) {
+      // Don't interrupt move if last move was `Moves.NONE` OR no prior move was found
+      return true;
     }
+
+    // Interrupt move usage in favor of slacking off
+    const passive = pokemon.getAbility().id !== Abilities.TRUANT;
+    (globalScene.getCurrentPhase() as MovePhase).cancel();
+    // TODO: Ability displays should be handled by the ability
+    globalScene.queueAbilityDisplay(pokemon, passive, true);
+    globalScene.queueMessage(
+      i18next.t("battlerTags:truantLapse", {
+        pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+      }),
+    );
+    globalScene.queueAbilityDisplay(pokemon, passive, false);
 
     return true;
   }
