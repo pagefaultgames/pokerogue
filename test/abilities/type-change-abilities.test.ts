@@ -1,6 +1,6 @@
 import { allMoves } from "#app/data/moves/move";
 import { PokemonType } from "#enums/pokemon-type";
-import type { PlayerPokemon } from "#app/field/pokemon";
+import { MoveResult, type PlayerPokemon } from "#app/field/pokemon";
 import { Abilities } from "#enums/abilities";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Moves } from "#enums/moves";
@@ -245,5 +245,24 @@ describe("Abilities - Protean/Libero", () => {
     expectTypeChange(karp);
     expect(karp.getTag(BattlerTagType.CURSED)).toBeDefined();
     expect(karp.getHpRatio(true)).toBeCloseTo(0.25);
+  });
+
+  it("should not trigger during Focus Punch's start-of-turn message or being interrupted", async () => {
+    game.override.moveset(Moves.FOCUS_PUNCH).enemyMoveset(Moves.ABSORB);
+    await game.classicMode.startBattle([Species.MAGIKARP]);
+
+    const karp = game.scene.getPlayerPokemon()!;
+    expect(karp).toBeDefined();
+    expect(karp.isOfType(PokemonType.FIGHTING)).toBe(false);
+
+    game.move.select(Moves.FOCUS_PUNCH);
+
+    await game.phaseInterceptor.to("MessagePhase");
+    expect(karp.isOfType(PokemonType.FIGHTING)).toBe(false);
+
+    await game.phaseInterceptor.to("TurnEndPhase");
+
+    expectNoTypeChange(karp);
+    expect(karp.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
   });
 });

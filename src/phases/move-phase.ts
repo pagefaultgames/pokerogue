@@ -56,9 +56,13 @@ export class MovePhase extends BattlePhase {
   protected _targets: BattlerIndex[];
   protected followUp: boolean;
   protected ignorePp: boolean;
+  /** Whether the current move is forced last (used for Quash). */
   protected forcedLast: boolean;
+  /** Whether the current move should fail but retain PP. */
   protected failed = false;
+  /** Whether the current move should fail but still use PP. */
   protected cancelled = false;
+  /** Whether the current move was reflected by a prior Magic Coat/Magic Bounce. */
   protected reflected = false;
 
   public get pokemon(): Pokemon {
@@ -125,12 +129,12 @@ export class MovePhase extends BattlePhase {
     );
   }
 
-  /**Signifies the current move should fail but still use PP */
+  /** Signifies the current move should fail but still use PP */
   public fail(): void {
     this.failed = true;
   }
 
-  /**Signifies the current move should cancel and retain PP */
+  /** Signifies the current move should cancel and retain PP */
   public cancel(): void {
     this.cancelled = true;
   }
@@ -294,7 +298,7 @@ export class MovePhase extends BattlePhase {
   protected lapsePreMoveAndMoveTags(): void {
     this.pokemon.lapseTags(BattlerTagLapseType.PRE_MOVE);
 
-    // TODO: does this intentionally happen before the no targets/Moves.NONE on queue cancellation case is checked?
+    // This intentionally happens before moves without targets are cancelled (Truant takes priority over lack of targets)
     if (!this.followUp && this.canMove() && !this.cancelled) {
       this.pokemon.lapseTags(BattlerTagLapseType.MOVE);
     }
@@ -319,20 +323,17 @@ export class MovePhase extends BattlePhase {
       ) as DelayedAttackTag[];
 
       if (delayedAttackTags.length) {
-        this.showMoveText();
-        this.failMove();
+        this.failMove(true);
         return;
       }
     }
 
     // Check if the move has any attributes that can interrupt its own use **before** displaying text.
-    let success = !move.getAttrs(PreUseInterruptAttr).some(attr => attr.apply(this.pokemon, targets[0], move));
-    if (!success) {
-      this.failMove();
+    let failed = move.getAttrs(PreUseInterruptAttr).some(attr => attr.apply(this.pokemon, targets[0], move));
+    if (failed) {
+      this.failMove(false);
       return;
     }
-
-    this.showMoveText();
 
     // Clear out any two turn moves once they've been used.
     // TODO: Refactor move queues and remove this assignment
@@ -365,13 +366,13 @@ export class MovePhase extends BattlePhase {
      * Move conditions assume the move has a single target
      * TODO: is this sustainable?
      */
-    const passesConditions = move.applyConditions(this.pokemon, targets[0], move);
+    const failsConditions = !move.applyConditions(this.pokemon, targets[0], move);
     const failedDueToWeather = globalScene.arena.isMoveWeatherCancelled(this.pokemon, move);
     const failedDueToTerrain = globalScene.arena.isMoveTerrainCancelled(this.pokemon, this.targets, move);
-    success &&= passesConditions && !failedDueToWeather && !failedDueToTerrain;
+    failed ||= failsConditions || failedDueToWeather || failedDueToTerrain;
 
-    if (!success) {
-      this.failMove(failedDueToWeather, failedDueToTerrain);
+    if (failed) {
+      this.failMove(true, failedDueToWeather, failedDueToTerrain);
       return;
     }
 
@@ -383,7 +384,9 @@ export class MovePhase extends BattlePhase {
 
     // trigger ability-based user type changes and then execute move effects.
     applyPreAttackAbAttrs(PokemonTypeChangeAbAttr, this.pokemon, null, move);
-    globalScene.unshiftPhase(new MoveEffectPhase(this.pokemon.getBattlerIndex(), this.targets, move));
+    globalScene.unshiftPhase(
+      new MoveEffectPhase(this.pokemon.getBattlerIndex(), this.targets, move, this.reflected, this.followUp),
+    );
 
     // Handle Dancer, which triggers immediately after a move is used (rather than waiting on `this.end()`).
     // Note that the `!this.followUp` check here prevents an infinite Dancer loop.
@@ -397,20 +400,31 @@ export class MovePhase extends BattlePhase {
   /**
    * Fail the move currently being used.
    * Handles failure messages, pushing to move history, etc.
-   * Notably, Roar, Whirlwind, Trick-or-Treat, and Forest's Curse will trigger type changes even on failure,
-   * as will all moves blocked by terrain.
+   * @param showText - Whether to show move text when failing the move.
    * @param failedDueToWeather - Whether the move failed due to weather (default `false`)
    * @param failedDueToTerrain - Whether the move failed due to terrain (default `false`)
    */
-  protected failMove(failedDueToWeather = false, failedDueToTerrain = false) {
+  protected failMove(showText: boolean, failedDueToWeather = false, failedDueToTerrain = false) {
     const move = this.move.getMove();
     const targets = this.getActiveTargetPokemon();
 
+    // NOTE: DO NOT CHANGE THE ORDER OF OPERATIONS HERE.
+    // Protean is supposed to trigger its effects first, _then_ move text is displayed,
+    // _then_ any blockage messages are shown.
+
+    // Roar, Whirlwind, Trick-or-Treat, and Forest's Curse
+    // will trigger type changes even on failure,
+    // as will all moves blocked by terrain/weather.
     if (
+      failedDueToWeather ||
       failedDueToTerrain ||
       [Moves.ROAR, Moves.WHIRLWIND, Moves.TRICK_OR_TREAT, Moves.FORESTS_CURSE].includes(this.move.moveId)
     ) {
       applyPreAttackAbAttrs(PokemonTypeChangeAbAttr, this.pokemon, null, move);
+    }
+
+    if (showText) {
+      this.showMoveText();
     }
 
     this.pokemon.pushMoveHistory({
@@ -445,12 +459,11 @@ export class MovePhase extends BattlePhase {
     const targets = this.getActiveTargetPokemon();
 
     if (!move.applyConditions(this.pokemon, targets[0], move)) {
-      this.showMoveText();
-      this.failMove();
+      this.failMove(true);
       return;
     }
 
-    // Protean and Libero apply on the charging turn of charge moves, and before showing usage test
+    // Protean and Libero apply on the charging turn of charge moves, and before showing usage text
     applyPreAttackAbAttrs(PokemonTypeChangeAbAttr, this.pokemon, null, this.move.getMove());
 
     this.showMoveText();
