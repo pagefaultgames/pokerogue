@@ -260,7 +260,7 @@ import { MoveFlags } from "#enums/MoveFlags";
 import { timedEventManager } from "#app/global-event-manager";
 import { loadMoveAnimations } from "#app/sprites/pokemon-asset-loader";
 import { ResetStatusPhase } from "#app/phases/reset-status-phase";
-import { MoveUseType } from "#enums/move-use-type";
+import { isFollowUp, isIgnorePP, MoveUseType } from "#enums/move-use-type";
 
 export enum LearnMoveSituation {
   MISC,
@@ -5164,16 +5164,16 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * - Non-virtual ({@linkcode MoveUseType | useType} < {@linkcode MoveUseType.INDIRECT})
    * @param ignoreStruggle - Whether to additionally ignore {@linkcode Moves.STRUGGLE}; default `false`
    * @param ignoreFollowUp - Whether to ignore moves with a use type of {@linkcode MoveUseType.FOLLOW_UP}
-   * (Copycat, Mirror Move, etc.); default `true`.
+   * (e.g. ones called by Copycat/Mirror Move); default `true`.
    * @returns The last move this Pokemon has used satisfying the aforementioned conditions,
    * or `undefined` if no applicable moves have been used since switching in.
    */
   getLastNonVirtualMove(ignoreStruggle = false, ignoreFollowUp = true): TurnMove | undefined {
     return this.getLastXMoves(-1).find(m =>
       m.move !== Moves.NONE
+      && (!ignoreStruggle || m.move !== Moves.STRUGGLE)
       && (m.useType < MoveUseType.INDIRECT ||
         (!ignoreFollowUp && m.useType === MoveUseType.FOLLOW_UP))
-      && (!ignoreStruggle || m.move !== Moves.STRUGGLE)
     );
   }
 
@@ -7270,11 +7270,11 @@ export class EnemyPokemon extends Pokemon {
       // Otherwise, ensure that the move being used is actually usable
       // TODO: Virtual moves shouldn't use the move queue
       if (
-        queuedMove.useType >= MoveUseType.INDIRECT ||
+        isFollowUp(queuedMove.useType) ||
         (moveIndex > -1 &&
         this.getMoveset()[moveIndex].isUsable(
           this,
-          queuedMove.useType >= MoveUseType.IGNORE_PP)
+          isIgnorePP(queuedMove.useType))
         )
       ) {
       return queuedMove;

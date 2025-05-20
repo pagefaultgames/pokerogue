@@ -50,7 +50,7 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import { Moves } from "#enums/moves";
 import { StatusEffect } from "#enums/status-effect";
 import i18next from "i18next";
-import { MoveUseType } from "#enums/move-use-type";
+import { isFollowUp, isIgnorePP, isReflected, MoveUseType } from "#enums/move-use-type";
 
 export class MovePhase extends BattlePhase {
   protected _pokemon: Pokemon;
@@ -123,7 +123,7 @@ export class MovePhase extends BattlePhase {
   public canMove(ignoreDisableTags = false): boolean {
     return (
       this.pokemon.isActive(true) &&
-      this.move.isUsable(this.pokemon, this.useType >= MoveUseType.IGNORE_PP, ignoreDisableTags) &&
+      this.move.isUsable(this.pokemon, isIgnorePP(this.useType), ignoreDisableTags) &&
       this.targets.length > 0
     );
   }
@@ -151,9 +151,14 @@ export class MovePhase extends BattlePhase {
 
     console.log(Moves[this.move.moveId], MoveUseType[this.useType]);
 
-    // Check if move is unusable (e.g. running out of PP due to a mid-turn Spite
-    // or the user no longer being on field).
+    if (!this.useType) {
+      console.warn(`Unexpected MoveUseType of ${this.useType} during move phase!`);
+      this.useType = MoveUseType.NORMAL;
+    }
+
     if (!this.canMove(true)) {
+      // Check if move is unusable (e.g. running out of PP due to a mid-turn Spite
+      // or the user no longer being on field).
       if (this.pokemon.isActive(true)) {
         this.fail();
         this.showMoveText();
@@ -166,7 +171,7 @@ export class MovePhase extends BattlePhase {
     this.pokemon.turnData.acted = true;
 
     // Reset hit-related turn data when starting follow-up moves (e.g. Metronomed moves, Dancer repeats)
-    if (this.useType >= MoveUseType.INDIRECT) {
+    if (isFollowUp(this.useType)) {
       this.pokemon.turnData.hitsLeft = -1;
       this.pokemon.turnData.hitCount = 0;
     }
@@ -176,7 +181,7 @@ export class MovePhase extends BattlePhase {
       this.move.getMove().doesFlagEffectApply({
         flag: MoveFlags.IGNORE_ABILITIES,
         user: this.pokemon,
-        isFollowUp: this.useType >= MoveUseType.INDIRECT, // Sunsteel strike and co. don't work when called indirectly
+        isFollowUp: isFollowUp(this.useType), // Sunsteel strike and co. don't work when called indirectly
       })
     ) {
       globalScene.arena.setIgnoreAbilities(true, this.pokemon.getBattlerIndex());
@@ -376,7 +381,7 @@ export class MovePhase extends BattlePhase {
       this.pokemon.lapseTag(BattlerTagType.CHARGING);
     }
 
-    if (this.useType < MoveUseType.IGNORE_PP) {
+    if (!isIgnorePP(this.useType)) {
       // "commit" to using the move, deducting PP.
       const ppUsed = 1 + this.getPpIncreaseFromPressure(targets);
 
@@ -506,11 +511,7 @@ export class MovePhase extends BattlePhase {
    */
   public end(): void {
     globalScene.unshiftPhase(
-      new MoveEndPhase(
-        this.pokemon.getBattlerIndex(),
-        this.getActiveTargetPokemon(),
-        this.useType >= MoveUseType.INDIRECT,
-      ),
+      new MoveEndPhase(this.pokemon.getBattlerIndex(), this.getActiveTargetPokemon(), isFollowUp(this.useType)),
     );
 
     super.end();
@@ -681,7 +682,7 @@ export class MovePhase extends BattlePhase {
     }
 
     globalScene.queueMessage(
-      i18next.t(this.useType === MoveUseType.REFLECTED ? "battle:magicCoatActivated" : "battle:useMove", {
+      i18next.t(isReflected(this.useType) ? "battle:magicCoatActivated" : "battle:useMove", {
         pokemonNameWithAffix: getPokemonNameWithAffix(this.pokemon),
         moveName: this.move.getName(),
       }),

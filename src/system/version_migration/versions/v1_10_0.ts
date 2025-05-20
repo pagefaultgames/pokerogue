@@ -29,7 +29,8 @@ const fixMoveHistory: SessionSaveMigrator = {
       targets: tm.targets,
       result: tm.result,
       turn: tm.turn,
-      // NOTE: This currently mis-classifies Dancer and Magic Bounce-induced moves, but not much we can do about it tbh
+      // NOTE: This unfortuately has to mis-classify Dancer and Magic Bounce-induced moves as `FOLLOW_UP`,
+      // given we previously had _no way_ of distinguishing them from follow-up moves post hoc.
       useType: tm.virtual ? MoveUseType.FOLLOW_UP : tm.ignorePP ? MoveUseType.IGNORE_PP : MoveUseType.NORMAL,
     });
     data.party.forEach(pkmn => {

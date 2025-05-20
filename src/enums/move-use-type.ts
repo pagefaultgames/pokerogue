@@ -6,6 +6,10 @@ import type { PostDancingMoveAbAttr } from "#app/data/abilities/ability";
  * Each one inherits the properties (or exclusions) of all types preceding it.
  * Properties newly found on a given use type will be **bolded**,
  * while oddities breaking a previous trend will be listed in _italics_.
+
+ * Callers should refrain from performing non-equality checks on `MoveUseTypes` directly,
+ * instead using the available helper functions
+ * ({@linkcode isFollowUp}, {@linkcode isIgnorePP} and {@linkcode isReflected}).
  */
 export enum MoveUseType {
   /**
@@ -63,3 +67,67 @@ export enum MoveUseType {
  * {@linkcode BattlerTagLapseType}
  * {@linkcode PostDancingMoveAbAttr}
  */
+
+// # HELPER FUNCTIONS
+// Please update the markdown tables if any new `MoveUseType`s get added.
+
+/**
+ * Check if a given {@linkcode MoveUseType} is follow-up (i.e. called by another move).
+ * Follow-up moves are ignored by most moveset-related effects and pre-move cancellation checks.
+ * @param useType - The {@linkcode MoveUseType} to check.
+ * @returns Whether {@linkcode useType} is follow-up.
+ * @remarks
+ * This function is equivalent to the following truth table:
+
+ * | Use Type                           | Returns |
+ * |------------------------------------|---------|
+ * | {@linkcode MoveUseType.NORMAL}     | `false` |
+ * | {@linkcode MoveUseType.IGNORE_PP}  | `false` |
+ * | {@linkcode MoveUseType.INDIRECT}   | `true`  |
+ * | {@linkcode MoveUseType.FOLLOW_UP}  | `true`  |
+ * | {@linkcode MoveUseType.REFLECTED}  | `true`  |
+ */
+export function isFollowUp(useType: MoveUseType): boolean {
+  return useType >= MoveUseType.INDIRECT
+}
+
+/**
+ * Check if a given {@linkcode MoveUseType} should ignore PP.
+ * PP-ignoring moves will ignore normal PP consumption as well as associated failure checks.
+ * @param useType - The {@linkcode MoveUseType} to check.
+ * @returns Whether {@linkcode useType} ignores PP.
+ * @remarks
+ * This function is equivalent to the following truth table:
+
+ * | Use Type                           | Returns |
+ * |------------------------------------|---------|
+ * | {@linkcode MoveUseType.NORMAL}     | `false` |
+ * | {@linkcode MoveUseType.IGNORE_PP}  | `true`  |
+ * | {@linkcode MoveUseType.INDIRECT}   | `true`  |
+ * | {@linkcode MoveUseType.FOLLOW_UP}  | `true`  |
+ * | {@linkcode MoveUseType.REFLECTED}  | `true`  |
+ */
+export function isIgnorePP(useType: MoveUseType): boolean {
+  return useType >= MoveUseType.IGNORE_PP;
+}
+
+/**
+ * Check if a given {@linkcode MoveUseType} is reflected.
+ * Reflected moves cannot be reflected, copied, or cancelled by status effects,
+ * nor will they trigger {@linkcode PostDancingMoveAbAttr | Dancer}.
+ * @param useType - The {@linkcode MoveUseType} to check.
+ * @returns Whether {@linkcode useType} is reflected.
+ * @remarks
+ * This function is equivalent to the following truth table:
+ *
+ * | Use Type                           | Returns |
+ * |------------------------------------|---------|
+ * | {@linkcode MoveUseType.NORMAL}     | `false` |
+ * | {@linkcode MoveUseType.IGNORE_PP}  | `false` |
+ * | {@linkcode MoveUseType.INDIRECT}   | `false` |
+ * | {@linkcode MoveUseType.FOLLOW_UP}  | `false` |
+ * | {@linkcode MoveUseType.REFLECTED}  | `true`  |
+ */
+export function isReflected(useType: MoveUseType): boolean {
+  return useType === MoveUseType.REFLECTED;
+}

@@ -78,7 +78,7 @@ import type Move from "#app/data/moves/move";
 import { isFieldTargeted } from "#app/data/moves/move-utils";
 import { FaintPhase } from "./faint-phase";
 import { DamageAchv } from "#app/system/achv";
-import { MoveUseType } from "#enums/move-use-type";
+import { isFollowUp, MoveUseType } from "#enums/move-use-type";
 
 export type HitCheckEntry = [HitCheckResult, TypeDamageMultiplier];
 
@@ -302,7 +302,7 @@ export class MoveEffectPhase extends PokemonPhase {
       this.getFirstTarget() ?? null,
       move,
       overridden,
-      this.useType >= MoveUseType.INDIRECT,
+      isFollowUp(this.useType),
     );
 
     // If other effects were overriden, stop this phase before they can be applied

@@ -123,7 +123,7 @@ import { MoveEffectTrigger } from "#enums/MoveEffectTrigger";
 import { MultiHitType } from "#enums/MultiHitType";
 import { invalidAssistMoves, invalidCopycatMoves, invalidMetronomeMoves, invalidMirrorMoveMoves, invalidSleepTalkMoves, invalidSketchMoves } from "./invalid-moves";
 import { SelectBiomePhase } from "#app/phases/select-biome-phase";
-import { MoveUseType } from "#enums/move-use-type";
+import { isFollowUp, MoveUseType } from "#enums/move-use-type";
 
 type MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => boolean;
 type UserMoveConditionFunc = (user: Pokemon, move: Move) => boolean;
@@ -7038,7 +7038,7 @@ export class RepeatMoveAttr extends MoveEffectAttr {
     const lastMove = target.getLastNonVirtualMove();
     const movesetMove = target.getMoveset().find(m => m.moveId === lastMove?.move)
 
-    // never happens due to condition func, but makes TS compiler not sad
+    // never happens due to condition func, but makes TS compiler not sad about nullishness
     if (!lastMove || !movesetMove) {
       return false;
     }
@@ -7046,7 +7046,7 @@ export class RepeatMoveAttr extends MoveEffectAttr {
     // If the last move used can hit more than one target or has variable targets,
     // re-compute the targets for the attack (mainly for alternating double/single battles)
     // Rampaging moves (e.g. Outrage) are not included due to being incompatible with Instruct,
-    // nor is Dragon Darts (due to handling its smart targeting entirely within `MoveEffectPhase`)
+    // nor is Dragon Darts (due to its smart targeting bypassing normal target selection)
     let moveTargets = movesetMove.getMove().isMultiTarget() ? getMoveTargets(target, lastMove.move).targets : lastMove.targets;
 
     // In the event the instructed move's only target is a fainted opponent, redirect it to an alive ally if possible.
@@ -7816,12 +7816,11 @@ export class LastResortAttr extends MoveAttr {
 
       const movesInHistory = new Set<Moves>(
         user.getMoveHistory()
-        .filter(m => m.useType < MoveUseType.INDIRECT) // Last resort ignores virtual moves
+        .filter(m => !isFollowUp(m.useType)) // Last resort ignores virtual moves
         .map(m => m.move)
       );
 
       // Since `Set.intersection()` is only present in ESNext, we have to do this to check inclusion
-      // grumble mumble grumble mumble...
       return [...otherMovesInMoveset].every(m => movesInHistory.has(m))
     };
   }

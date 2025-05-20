@@ -23,7 +23,7 @@ import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import { isNullOrUndefined } from "#app/utils/common";
 import { ArenaTagSide } from "#app/data/arena-tag";
 import { ArenaTagType } from "#app/enums/arena-tag-type";
-import { MoveUseType } from "#enums/move-use-type";
+import { isFollowUp, isIgnorePP, MoveUseType } from "#enums/move-use-type";
 
 export class CommandPhase extends FieldPhase {
   protected fieldIndex: number;
@@ -104,13 +104,13 @@ export class CommandPhase extends FieldPhase {
       moveQueue.length &&
       moveQueue[0] &&
       moveQueue[0].move &&
-      moveQueue[0].useType < MoveUseType.INDIRECT &&
+      !isFollowUp(moveQueue[0].useType) &&
       (!playerPokemon.getMoveset().find(m => m.moveId === moveQueue[0].move) ||
         !playerPokemon
           .getMoveset()
           [playerPokemon.getMoveset().findIndex(m => m.moveId === moveQueue[0].move)].isUsable(
             playerPokemon,
-            moveQueue[0].useType >= MoveUseType.IGNORE_PP,
+            isIgnorePP(moveQueue[0].useType),
           ))
     ) {
       moveQueue.shift();
@@ -125,10 +125,8 @@ export class CommandPhase extends FieldPhase {
         const moveIndex = playerPokemon.getMoveset().findIndex(m => m.moveId === queuedMove.move);
         if (
           (moveIndex > -1 &&
-            playerPokemon
-              .getMoveset()
-              [moveIndex].isUsable(playerPokemon, queuedMove.useType >= MoveUseType.IGNORE_PP)) ||
-          queuedMove.useType >= MoveUseType.INDIRECT
+            playerPokemon.getMoveset()[moveIndex].isUsable(playerPokemon, isIgnorePP(queuedMove.useType))) ||
+          isFollowUp(queuedMove.useType)
         ) {
           this.handleCommand(Command.FIGHT, moveIndex, queuedMove.useType, queuedMove);
         } else {
