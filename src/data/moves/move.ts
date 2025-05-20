@@ -7499,6 +7499,7 @@ export class SuppressAbilitiesAttr extends MoveEffectAttr {
 
     target.suppressAbility();
 
+
     globalScene.arena.triggerWeatherBasedFormChangesToNormal();
 
     return true;
@@ -7506,7 +7507,7 @@ export class SuppressAbilitiesAttr extends MoveEffectAttr {
 
   /** Causes the effect to fail when the target's ability is unsupressable or already suppressed. */
   getCondition(): MoveConditionFunc {
-    return (user, target, move) => target.getAbility().isSuppressable && !target.summonData.abilitySuppressed;
+    return (_user, target, _move) => !target.summonData.abilitySuppressed && (target.getAbility().isSuppressable || (target.hasPassive() && target.getPassiveAbility().isSuppressable));
   }
 }
 
