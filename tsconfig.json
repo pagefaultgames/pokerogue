@@ -7,7 +7,7 @@
     "esModuleInterop": true,
     "strictNullChecks": true,
     "sourceMap": false,
-    "strict": false,
+    "strict": false, // TODO: Enable this eventually
     "rootDir": ".",
     "baseUrl": "./src",
     "paths": {

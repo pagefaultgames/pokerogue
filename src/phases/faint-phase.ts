@@ -35,19 +35,19 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 
 export class FaintPhase extends PokemonPhase {
   /**
-   * Whether or not enduring (for this phase's purposes, Reviver Seed) should be prevented
+   * Whether or not instant revive should be prevented
    */
-  private preventEndure: boolean;
+  private preventInstantRevive: boolean;
 
   /**
    * The source Pokemon that dealt fatal damage
    */
   private source?: Pokemon;
 
-  constructor(battlerIndex: BattlerIndex, preventEndure = false, source?: Pokemon) {
+  constructor(battlerIndex: BattlerIndex, preventInstantRevive = false, source?: Pokemon) {
     super(battlerIndex);
 
-    this.preventEndure = preventEndure;
+    this.preventInstantRevive = preventInstantRevive;
     this.source = source;
   }
 
@@ -63,7 +63,7 @@ export class FaintPhase extends PokemonPhase {
 
     faintPokemon.resetSummonData();
 
-    if (!this.preventEndure) {
+    if (!this.preventInstantRevive) {
       const instantReviveModifier = globalScene.applyModifier(
         PokemonInstantReviveModifier,
         this.player,
@@ -118,7 +118,7 @@ export class FaintPhase extends PokemonPhase {
 
     pokemon.resetTera();
 
-    if (pokemon.turnData?.attacksReceived?.length) {
+    if (pokemon.turnData.attacksReceived?.length) {
       const lastAttack = pokemon.turnData.attacksReceived[0];
       applyPostFaintAbAttrs(
         PostFaintAbAttr,
@@ -136,7 +136,7 @@ export class FaintPhase extends PokemonPhase {
     for (const p of alivePlayField) {
       applyPostKnockOutAbAttrs(PostKnockOutAbAttr, p, pokemon);
     }
-    if (pokemon.turnData?.attacksReceived?.length) {
+    if (pokemon.turnData.attacksReceived?.length) {
       const defeatSource = this.source;
 
       if (defeatSource?.isOnField()) {

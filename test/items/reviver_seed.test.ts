@@ -73,7 +73,7 @@ describe("Items - Reviver Seed", () => {
     const reviverSeed = player.getHeldItems()[0] as PokemonInstantReviveModifier;
     vi.spyOn(reviverSeed, "apply");
 
-    vi.spyOn(player, "randSeedInt").mockReturnValue(0); // Force confusion self-hit
+    vi.spyOn(player, "randBattleSeedInt").mockReturnValue(0); // Force confusion self-hit
     game.move.select(Moves.TACKLE);
     await game.phaseInterceptor.to("BerryPhase");
 

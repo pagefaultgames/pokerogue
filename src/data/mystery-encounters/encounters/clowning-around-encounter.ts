@@ -46,7 +46,7 @@ import { Moves } from "#enums/moves";
 import { EncounterBattleAnim } from "#app/data/battle-anims";
 import { MoveCategory } from "#enums/MoveCategory";
 import { CustomPokemonData } from "#app/data/custom-pokemon-data";
-import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
+import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { EncounterAnim } from "#enums/encounter-anims";
 import { Challenges } from "#enums/challenges";
 
@@ -397,9 +397,6 @@ export const ClowningAroundEncounter: MysteryEncounter = MysteryEncounterBuilder
           newTypes.push(secondType);
 
           // Apply the type changes (to both base and fusion, if pokemon is fused)
-          if (!pokemon.customPokemonData) {
-            pokemon.customPokemonData = new CustomPokemonData();
-          }
           pokemon.customPokemonData.types = newTypes;
           if (pokemon.isFusion()) {
             if (!pokemon.fusionCustomPokemonData) {

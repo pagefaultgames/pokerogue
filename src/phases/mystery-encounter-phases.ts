@@ -27,6 +27,7 @@ import { IvScannerModifier } from "../modifier/modifier";
 import { Phase } from "../phase";
 import { UiMode } from "#enums/ui-mode";
 import { isNullOrUndefined, randSeedItem } from "#app/utils/common";
+import { SelectBiomePhase } from "./select-biome-phase";
 
 /**
  * Will handle (in order):
@@ -228,8 +229,7 @@ export class MysteryEncounterBattleStartCleanupPhase extends Phase {
 
     // Lapse any residual flinches/endures but ignore all other turn-end battle tags
     const includedLapseTags = [BattlerTagType.FLINCHED, BattlerTagType.ENDURING];
-    const field = globalScene.getField(true).filter(p => p.summonData);
-    field.forEach(pokemon => {
+    globalScene.getField(true).forEach(pokemon => {
       const tags = pokemon.summonData.tags;
       tags
         .filter(
@@ -612,6 +612,10 @@ export class PostMysteryEncounterPhase extends Phase {
    */
   continueEncounter() {
     const endPhase = () => {
+      if (globalScene.gameMode.hasRandomBiomes || globalScene.isNewBiome()) {
+        globalScene.pushPhase(new SelectBiomePhase());
+      }
+
       globalScene.pushPhase(new NewBattlePhase());
       this.end();
     };

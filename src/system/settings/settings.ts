@@ -804,6 +804,7 @@ export function setSetting(setting: string, value: number): boolean {
       break;
     case SettingKeys.Candy_Upgrade_Display:
       globalScene.candyUpgradeDisplay = value;
+      break;
     case SettingKeys.Money_Format:
       switch (Setting[index].options[value].value) {
         case "Normal":
