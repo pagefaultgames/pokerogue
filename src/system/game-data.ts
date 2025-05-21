@@ -1110,7 +1110,7 @@ export class GameData {
           for (const p of sessionData.party) {
             const pokemon = p.toPokemon() as PlayerPokemon;
             pokemon.setVisible(false);
-            loadPokemonAssets.push(pokemon.loadAssets());
+            loadPokemonAssets.push(pokemon.loadAssets(false));
             party.push(pokemon);
           }
 
