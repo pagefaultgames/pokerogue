@@ -5317,7 +5317,6 @@ export class PostWeatherChangeFormChangeAbAttr extends PostWeatherChangeAbAttr {
     _weather: WeatherType,
     _args: any[],
   ): void {
-    console.log("Inside applyPostWeatherChange");
     if (simulated) {
       return;
     }
