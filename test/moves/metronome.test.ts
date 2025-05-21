@@ -65,7 +65,6 @@ describe("Moves - Metronome", () => {
 
     expect(player.getTag(SemiInvulnerableTag)).toBeDefined();
     expect(player.visible).toBe(false);
-    expect(player.visible).toBe(false);
 
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(player.getTag(SemiInvulnerableTag)).toBeUndefined();
