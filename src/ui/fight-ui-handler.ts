@@ -391,7 +391,7 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
 
     const opponents = (globalScene.getCurrentPhase() as CommandPhase).getPokemon().getOpponents();
     opponents.forEach(opponent => {
-      (opponent as EnemyPokemon).updateEffectiveness(undefined);
+      (opponent as EnemyPokemon).updateEffectiveness();
     });
   }
 
