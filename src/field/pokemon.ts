@@ -65,6 +65,7 @@ import {
   isBetween,
   type nil,
   type Constructor,
+  randSeedIntRange,
 } from "#app/utils/common";
 import type { TypeDamageMultiplier } from "#app/data/type";
 import { getTypeDamageMultiplier, getTypeRgb } from "#app/data/type";
