@@ -35,7 +35,7 @@ describe("Moves - Metronome", () => {
       .battleStyle("single")
       .enemySpecies(Species.SHUCKLE)
       .enemyMoveset(Moves.SPLASH)
-      .enemyAbility(Abilities.BALL_FETCH);
+      .enemyAbility(Abilities.STURDY);
   });
 
   it("should not be able to copy Moves.NONE", async () => {
@@ -54,7 +54,6 @@ describe("Moves - Metronome", () => {
 
   it("should become semi-invulnerable when using phasing moves", async () => {
     vi.spyOn(randomMoveAttr, "getMove").mockReturnValue(Moves.DIVE);
-    game.override.enemyAbility(Abilities.STURDY);
     await game.classicMode.startBattle([Species.REGIELEKI]);
 
     const player = game.scene.getPlayerPokemon()!;
@@ -72,18 +71,21 @@ describe("Moves - Metronome", () => {
     expect(player.visible).toBe(true);
 
     const enemy = game.scene.getEnemyPokemon()!;
-    expect(enemy.hp).not.toBe(enemy.getMaxHp());
+    expect(enemy.hp).toBeLessThan(enemy.getMaxHp());
   });
 
   it("should apply secondary effects of the called move", async () => {
     await game.classicMode.startBattle([Species.REGIELEKI]);
-    const player = game.scene.getPlayerPokemon()!;
     vi.spyOn(randomMoveAttr, "getMove").mockReturnValue(Moves.WOOD_HAMMER);
 
     game.move.select(Moves.METRONOME);
     await game.toNextTurn();
 
-    expect(player.isFullHp()).toBeFalsy();
+    const player = game.scene.getPlayerPokemon()!;
+    const enemy = game.scene.getEnemyPokemon()!;
+
+    expect(player.hp).toBeLessThan(player.getMaxHp());
+    expect(enemy.hp).toBeLessThan(enemy.getMaxHp());
   });
 
   it("should count as last move used for Copycat/Mirror Move", async () => {
@@ -97,9 +99,9 @@ describe("Moves - Metronome", () => {
 
     const player = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;
-    
-    expect(player.hp).not.toBe(player.getMaxHp());
-    expect(enemy.hp).not.toBe(enemy.getMaxHp());
+
+    expect(player.hp).toBeLessThan(player.getMaxHp());
+    expect(enemy.hp).toBeLessThan(enemy.getMaxHp());
     expect(enemy.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
   });
 
@@ -147,6 +149,6 @@ describe("Moves - Metronome", () => {
     expect(isVisible).toBe(false);
     expect(hasFled).toBe(true);
 
-    expect(async () => await game.toNextTurn()).not.toThrowError(); // Check no crash
+    await game.toNextTurn(); // Check no crash
   });
 });
