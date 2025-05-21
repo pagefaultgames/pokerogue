@@ -382,8 +382,9 @@ export class MovePhase extends BattlePhase {
       globalScene.currentBattle.lastMove = move.id;
     }
 
-    // trigger ability-based user type changes and then execute move effects.
+    // trigger ability-based user type changes, display move text and then execute move effects.
     applyPreAttackAbAttrs(PokemonTypeChangeAbAttr, this.pokemon, null, move);
+    this.showMoveText();
     globalScene.unshiftPhase(
       new MoveEffectPhase(this.pokemon.getBattlerIndex(), this.targets, move, this.reflected, this.followUp),
     );
