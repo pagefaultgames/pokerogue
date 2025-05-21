@@ -2796,6 +2796,7 @@ export class PostSummonFormChangeByWeatherAbAttr extends PostSummonAbAttr {
    *
    * @param pokemon - The Pokemon with this ability
    * @param passive - unused
+   * @param simulated - unused
    * @param args - unused
    */
   override applyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): void {
@@ -3840,10 +3841,11 @@ export class PostWeatherChangeFormChangeAbAttr extends PostWeatherChangeAbAttr {
   /**
    * Calls {@linkcode Arena.triggerWeatherBasedFormChangesToNormal | triggerWeatherBasedFormChangesToNormal} when the
    * weather changed to form-reverting weather, otherwise calls {@linkcode Arena.triggerWeatherBasedFormChanges | triggerWeatherBasedFormChanges}
-   * @param {Pokemon} pokemon the Pokemon with this ability
-   * @param passive n/a
-   * @param weather n/a
-   * @param args n/a
+   * @param pokemon - The Pokemon with this ability
+   * @param passive - unused
+   * @param simulated - unused
+   * @param weather - unused
+   * @param args - unused
    */
   override applyPostWeatherChange(pokemon: Pokemon, passive: boolean, simulated: boolean, weather: WeatherType, args: any[]): void {
     if (simulated) {
