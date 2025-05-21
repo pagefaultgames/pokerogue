@@ -542,6 +542,79 @@
         "volume": 100,
         "pitch": 55,
         "eventType": "AnimTimedSoundEvent"
+      },
+      {
+        "frameIndex": 0,
+        "resourceName": "PRAS- Sandstorm",
+        "bgX": -50,
+        "bgY": 0,
+        "opacity": 0,
+        "duration": 5,
+        "eventType": "AnimTimedAddBgEvent"
+      },
+      {
+        "frameIndex": 0,
+        "resourceName": "",
+        "bgX": -50,
+        "bgY": 0,
+        "opacity": 96,
+        "duration": 3,
+        "eventType": "AnimTimedUpdateBgEvent"
+      }
+    ],
+    "3": [
+      {
+        "frameIndex": 3,
+        "resourceName": "",
+        "bgX": -25,
+        "bgY": 0,
+        "opacity": 128,
+        "duration": 3,
+        "eventType": "AnimTimedUpdateBgEvent"
+      }
+    ],
+    "6": [
+      {
+        "frameIndex": 6,
+        "resourceName": "",
+        "bgX": 0,
+        "bgY": 0,
+        "opacity": 192,
+        "duration": 3,
+        "eventType": "AnimTimedUpdateBgEvent"
+      }
+    ],
+    "9": [
+      {
+        "frameIndex": 9,
+        "resourceName": "",
+        "bgX": 25,
+        "bgY": 0,
+        "opacity": 128,
+        "duration": 3,
+        "eventType": "AnimTimedUpdateBgEvent"
+      }
+    ],
+    "12": [
+      {
+        "frameIndex": 12,
+        "resourceName": "",
+        "bgX": 50,
+        "bgY": 0,
+        "opacity": 96,
+        "duration": 3,
+        "eventType": "AnimTimedUpdateBgEvent"
+      }
+    ],
+    "15": [
+      {
+        "frameIndex": 15,
+        "resourceName": "",
+        "bgX": 50,
+        "bgY": 0,
+        "opacity": 0,
+        "duration": 3,
+        "eventType": "AnimTimedUpdateBgEvent"
       }
     ]
   },
