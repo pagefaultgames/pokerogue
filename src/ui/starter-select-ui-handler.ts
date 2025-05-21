@@ -151,8 +151,10 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     starterInfoXPos: 30,
   },
   ja: {
-    starterInfoTextSize: "51px",
+    starterInfoTextSize: "62px",
     instructionTextSize: "38px",
+    starterInfoYOffset: 0.5,
+    starterInfoXPos: 33,
   },
   "ca-ES": {
     starterInfoTextSize: "52px",
