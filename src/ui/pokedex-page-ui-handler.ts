@@ -1888,7 +1888,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
               if (!(passiveAttr & PassiveAttr.UNLOCKED)) {
                 const passiveCost = getPassiveCandyCount(speciesStarterCosts[this.starterId]);
                 options.push({
-                  label: `x${passiveCost} ${i18next.t("pokedexUiHandler:unlockPassive")} (${allAbilities[this.passive].name})`,
+                  label: `x${passiveCost} ${i18next.t("pokedexUiHandler:unlockPassive")}`,
                   handler: () => {
                     if (Overrides.FREE_CANDY_UPGRADE_OVERRIDE || candyCount >= passiveCost) {
                       starterData.passiveAttr |= PassiveAttr.UNLOCKED | PassiveAttr.ENABLED;
