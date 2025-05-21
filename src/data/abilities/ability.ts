@@ -3846,7 +3846,6 @@ export class PostWeatherChangeFormChangeAbAttr extends PostWeatherChangeAbAttr {
    * @param args n/a
    */
   override applyPostWeatherChange(pokemon: Pokemon, passive: boolean, simulated: boolean, weather: WeatherType, args: any[]): void {
-    console.log("Inside applyPostWeatherChange");
     if (simulated) {
       return;
     }
