@@ -1746,17 +1746,15 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   isBaseShiny(useIllusion = false) {
     if (!useIllusion && this.summonData.illusion) {
       return !!this.summonData.illusion.basePokemon?.shiny;
-    } else {
-      return this.shiny;
     }
+    return this.shiny;
   }
 
   isFusionShiny(useIllusion = false) {
     if (!useIllusion && this.summonData.illusion) {
       return !!this.summonData.illusion.basePokemon?.fusionShiny;
-    } else {
-      return this.isFusion(useIllusion) && this.fusionShiny;
     }
+    return this.isFusion(useIllusion) && this.fusionShiny;
   }
 
   /**
