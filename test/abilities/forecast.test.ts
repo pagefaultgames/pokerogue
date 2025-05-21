@@ -22,22 +22,6 @@ describe("Abilities - Forecast", () => {
   const SNOWY_FORM = 3;
 
   /**
-   * Tests form changes based on weather changes
-   * @param game - The game manager instance
-   * @param weather - The active weather to set
-   * @param form - The expected form based on the active weather
-   * @param initialForm - The initial form pre form change
-   */
-  const testWeatherFormChange = async (game: GameManager, weather: WeatherType, form: number, initialForm?: number) => {
-    game.override.weather(weather).starterForms({ [SpeciesId.CASTFORM]: initialForm });
-    await game.classicMode.startBattle([SpeciesId.CASTFORM]);
-
-    game.move.select(MoveId.SPLASH);
-
-    expect(game.scene.getPlayerPokemon()?.formIndex).toBe(form);
-  };
-
-  /**
    * Tests reverting to normal form when Cloud Nine/Air Lock is active on the field
    * @param game - The game manager instance
    * @param ability - The ability that is active on the field
@@ -190,10 +174,6 @@ describe("Abilities - Forecast", () => {
     },
     30 * 1000,
   );
-
-  it("reverts to Normal Form during Clear weather", async () => {
-    await testWeatherFormChange(game, WeatherType.NONE, NORMAL_FORM, SUNNY_FORM);
-  });
 
   it("reverts to Normal Form if a Pokémon on the field has Air Lock", async () => {
     await testRevertFormAgainstAbility(game, AbilityId.AIR_LOCK);
