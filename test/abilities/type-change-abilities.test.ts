@@ -176,7 +176,7 @@ describe("Abilities - Protean/Libero", () => {
   it.each<{ cause: string; move?: Moves; tera?: boolean; passive?: Abilities }>([
     { cause: "user is terastallized to any type", tera: true },
     { cause: "user uses Struggle", move: Moves.STRUGGLE },
-    { cause: "the user's move is blocked by weather", move: Moves.WATER_PULSE, passive: Abilities.DESOLATE_LAND },
+    { cause: "the user's move is blocked by weather", move: Moves.FIRE_BLAST, passive: Abilities.PRIMORDIAL_SEA },
     { cause: "the user's move fails", move: Moves.BURN_UP },
   ])("should not apply if $cause", async ({ move = Moves.TACKLE, tera = false, passive = Abilities.NONE }) => {
     game.override.moveset(move).enemyPassiveAbility(passive);
