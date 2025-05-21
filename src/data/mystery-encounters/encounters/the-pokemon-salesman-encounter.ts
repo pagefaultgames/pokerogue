@@ -88,7 +88,7 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter = MysteryEncounterBui
 
     const r = randSeedInt(SHINY_MAGIKARP_WEIGHT);
 
-    let validEventEncounters = timedEventManager
+    const validEventEncounters = timedEventManager
       .getEventEncounters()
       .filter(
         s =>
@@ -116,8 +116,7 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter = MysteryEncounterBui
       // If you roll 1%, give shiny Magikarp with random variant
       species = getPokemonSpecies(Species.MAGIKARP);
       pokemon = new PlayerPokemon(species, 5, 2, undefined, undefined, true);
-    }
-    else if (
+    } else if (
       validEventEncounters.length > 0 &&
       (r <= EVENT_THRESHOLD || isNullOrUndefined(species.abilityHidden) || species.abilityHidden === Abilities.NONE)
     ) {
@@ -126,7 +125,12 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter = MysteryEncounterBui
         // If you roll 20%, give event encounter with 3 extra shiny rolls and its HA, if it has one
         const enc = randSeedItem(validEventEncounters);
         species = getPokemonSpecies(enc.species);
-        pokemon = new PlayerPokemon(species, 5, species.abilityHidden === Abilities.NONE ? undefined : 2, enc.formIndex);
+        pokemon = new PlayerPokemon(
+          species,
+          5,
+          species.abilityHidden === Abilities.NONE ? undefined : 2,
+          enc.formIndex,
+        );
         pokemon.trySetShinySeed();
         pokemon.trySetShinySeed();
         pokemon.trySetShinySeed();
@@ -145,15 +149,13 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter = MysteryEncounterBui
           pokemon.trySetShinySeed();
           pokemon.trySetShinySeed();
           pokemon.trySetShinySeed();
-        }
-        else {
+        } else {
           // If there's, and this would never happen, no eligible event encounters with a hidden ability, just do Magikarp
           species = getPokemonSpecies(Species.MAGIKARP);
           pokemon = new PlayerPokemon(species, 5, 2, undefined, undefined, true);
         }
       }
-    }
-    else {
+    } else {
       pokemon = new PlayerPokemon(species, 5, 2, species.formIndex);
     }
     pokemon.generateAndPopulateMoveset();
