@@ -6823,7 +6823,7 @@ export class RandomMovesetMoveAttr extends CallMoveAttr {
   }
 }
 
-// TODO: Shouldn't this be `CallMoveAttr`?
+// TODO: This should extend `CallMoveAttr`
 export class NaturePowerAttr extends OverrideMoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     let moveId;

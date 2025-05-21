@@ -6994,8 +6994,8 @@ export function initAbilities() {
     new Ability(Abilities.PROTEAN, 6)
       .attr(PokemonTypeChangeAbAttr)
       // .condition((p) => !p.summonData.abilitiesApplied.includes(Abilities.PROTEAN)) //Gen 9 Implementation
+      // TODO: needs testing on interaction with weather blockage
       .edgeCase(),
-      // May or may not interact incorrectly with weather blockage (needs testing)
     new Ability(Abilities.FUR_COAT, 6)
       .attr(ReceivedMoveDamageMultiplierAbAttr, (target, user, move) => move.category === MoveCategory.PHYSICAL, 0.5)
       .ignorable(),
@@ -7242,8 +7242,8 @@ export function initAbilities() {
     new Ability(Abilities.LIBERO, 8)
       .attr(PokemonTypeChangeAbAttr)
     //.condition((p) => !p.summonData.abilitiesApplied.includes(Abilities.LIBERO)), //Gen 9 Implementation
+      // TODO: needs testing on interaction with weather blockage
       .edgeCase(),
-      // May or may not interact incorrectly with weather blockage (needs testing)
     new Ability(Abilities.BALL_FETCH, 8)
       .attr(FetchBallAbAttr)
       .condition(getOncePerBattleCondition(Abilities.BALL_FETCH)),

@@ -58,9 +58,9 @@ export class MovePhase extends BattlePhase {
   protected ignorePp: boolean;
   /** Whether the current move is forced last (used for Quash). */
   protected forcedLast: boolean;
-  /** Whether the current move should fail but retain PP. */
-  protected failed = false;
   /** Whether the current move should fail but still use PP. */
+  protected failed = false;
+  /** Whether the current move should fail and retain PP. */
   protected cancelled = false;
   /** Whether the current move was reflected by a prior Magic Coat/Magic Bounce. */
   protected reflected = false;
@@ -415,9 +415,8 @@ export class MovePhase extends BattlePhase {
 
     // Roar, Whirlwind, Trick-or-Treat, and Forest's Curse
     // will trigger type changes even on failure,
-    // as will all moves blocked by terrain/weather.
+    // as will all moves blocked by terrain (weather not included).
     if (
-      failedDueToWeather ||
       failedDueToTerrain ||
       [Moves.ROAR, Moves.WHIRLWIND, Moves.TRICK_OR_TREAT, Moves.FORESTS_CURSE].includes(this.move.moveId)
     ) {
