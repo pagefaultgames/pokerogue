@@ -118,7 +118,7 @@ export class FaintPhase extends PokemonPhase {
 
     pokemon.resetTera();
 
-    if (pokemon.turnData?.attacksReceived?.length) {
+    if (pokemon.turnData.attacksReceived?.length) {
       const lastAttack = pokemon.turnData.attacksReceived[0];
       applyPostFaintAbAttrs(
         PostFaintAbAttr,
@@ -136,7 +136,7 @@ export class FaintPhase extends PokemonPhase {
     for (const p of alivePlayField) {
       applyPostKnockOutAbAttrs(PostKnockOutAbAttr, p, pokemon);
     }
-    if (pokemon.turnData?.attacksReceived?.length) {
+    if (pokemon.turnData.attacksReceived?.length) {
       const defeatSource = this.source;
 
       if (defeatSource?.isOnField()) {
