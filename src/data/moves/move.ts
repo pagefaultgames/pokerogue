@@ -7499,7 +7499,6 @@ export class SuppressAbilitiesAttr extends MoveEffectAttr {
 
     target.suppressAbility();
 
-
     globalScene.arena.triggerWeatherBasedFormChangesToNormal();
 
     return true;
