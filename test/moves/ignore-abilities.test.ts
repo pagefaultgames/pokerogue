@@ -98,6 +98,8 @@ describe("Moves - Ability Ignores", () => {
     expect(game.scene.arena.ignoringEffectSource).toBe(solgaleo.getBattlerIndex());
 
     await game.phaseInterceptor.to("BerryPhase");
+
+    // Both the initial and redirected instruct use ignored sturdy
     const [enemy1, enemy2] = game.scene.getEnemyField();
     expect(enemy1.isFainted()).toBe(true);
     expect(enemy2.isFainted()).toBe(true);
