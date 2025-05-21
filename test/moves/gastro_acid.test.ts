@@ -59,8 +59,8 @@ describe("Moves - Gastro Acid", () => {
 
     expect(enemy1.summonData.abilitySuppressed).toBe(true);
     expect(enemy2.summonData.abilitySuppressed).toBe(false);
-    expect(enemy1.isFullHp()).toBe(false);
-    expect(enemy2.isFullHp()).toBe(true);
+    expect(enemy1.hp).not.toBe(enemy1.getMaxHp());
+    expect(enemy2.hp).toBe(enemy2.getMaxHp());
   });
 
   it("should be removed on switch", async () => {
