@@ -2440,31 +2440,36 @@ export class WaterShurikenMultiHitTypeAttr extends ChangeMultiHitTypeAttr {
 
 export class StatusEffectAttr extends MoveEffectAttr {
   public effect: StatusEffect;
-  public turnsRemaining?: number;
-  public overrideStatus: boolean = false;
+  private overrideStatus: boolean;
 
-  constructor(effect: StatusEffect, selfTarget?: boolean, turnsRemaining?: number, overrideStatus: boolean = false) {
+  constructor(effect: StatusEffect, selfTarget = false, overrideStatus = false) {
     super(selfTarget);
 
     this.effect = effect;
-    this.turnsRemaining = turnsRemaining;
-    this.overrideStatus = overrideStatus;
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const moveChance = this.getMoveChance(user, target, move, this.selfTarget, true);
     const statusCheck = moveChance < 0 || moveChance === 100 || user.randBattleSeedInt(100) < moveChance;
+    if (!statusCheck) {
+      return false;
+    }
+
     const quiet = move.category !== MoveCategory.STATUS;
-    if (statusCheck) {
-      const pokemon = this.selfTarget ? user : target;
-      if (user !== target && move.category === MoveCategory.STATUS && !target.canSetStatus(this.effect, quiet, false, user, true)) {
-        return false;
-      }
-      if (((!pokemon.status || this.overrideStatus) || (pokemon.status.effect === this.effect && moveChance < 0))
-        && pokemon.trySetStatus(this.effect, true, user, this.turnsRemaining, null, this.overrideStatus, quiet)) {
-        applyPostAttackAbAttrs(ConfusionOnStatusEffectAbAttr, user, target, move, null, false, this.effect);
-        return true;
-      }
+
+    // TODO: why
+    const pokemon = this.selfTarget ? user : target;
+    if (user !== target && move.category === MoveCategory.STATUS && !target.canSetStatus(this.effect, quiet, this.overrideStatus, user, true)) {
+      return false;
+    }
+
+    // TODO: What does a chance of -1 have to do with any of this???
+    if (
+      (!pokemon.status || (pokemon.status.effect === this.effect && moveChance < 0))
+      && pokemon.trySetStatus(this.effect, true, user, null, this.overrideStatus, quiet)
+    ) {
+      applyPostAttackAbAttrs(ConfusionOnStatusEffectAbAttr, user, target, move, null, false, this.effect);
+      return true;
     }
     return false;
   }
@@ -2478,11 +2483,37 @@ export class StatusEffectAttr extends MoveEffectAttr {
   }
 }
 
+/**
+ * Attribute to put the target to sleep for a fixed duration and cure its status.
+ * Used for {@linkcode Moves.REST}.
+ */
+export class RestAttr extends StatusEffectAttr {
+  private duration: number;
+
+  constructor(
+    duration: number,
+    overrideStatus: boolean
+  ){
+    // Sleep is the only duration-based status ATM
+    super(StatusEffect.SLEEP, true, overrideStatus);
+    this.duration = duration;
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const didStatus = super.apply(user, target, move, args);
+    if (didStatus && user.status?.effect === this.effect) {
+      user.status.sleepTurnsRemaining = this.duration;
+    }
+    return didStatus;
+  }
+}
+
+
 export class MultiStatusEffectAttr extends StatusEffectAttr {
   public effects: StatusEffect[];
 
-  constructor(effects: StatusEffect[], selfTarget?: boolean, turnsRemaining?: number, overrideStatus?: boolean) {
-    super(effects[0], selfTarget, turnsRemaining, overrideStatus);
+  constructor(effects: StatusEffect[], selfTarget?: boolean) {
+    super(effects[0], selfTarget);
     this.effects = effects;
   }
 
@@ -8704,7 +8735,7 @@ export function initMoves() {
       .attr(MultiHitAttr, MultiHitType._2)
       .makesContact(false),
     new SelfStatusMove(Moves.REST, PokemonType.PSYCHIC, -1, 5, -1, 0, 1)
-      .attr(StatusEffectAttr, StatusEffect.SLEEP, true, 3, true)
+      .attr(RestAttr, 3, true)
       .attr(HealAttr, 1, true)
       .condition((user, target, move) => !user.isFullHp() && user.canSetStatus(StatusEffect.SLEEP, true, true, user))
       .triageMove(),

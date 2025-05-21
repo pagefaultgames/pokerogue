@@ -36,6 +36,31 @@ describe("Moves - Sleep Talk", () => {
       .enemyLevel(100);
   });
 
+  it("should call a random valid move if the user is asleep", async () => {
+    game.override.moveset([Moves.SLEEP_TALK, Moves.DIG, Moves.FLY, Moves.SWORDS_DANCE]); // Dig and Fly are invalid moves, Swords Dance should always be called
+    await game.classicMode.startBattle([Species.FEEBAS]);
+
+    game.move.select(Moves.SLEEP_TALK);
+    await game.toNextTurn();
+    const feebas = game.scene.getPlayerPokemon()!;
+
+    expect(feebas.getStatStage(Stat.ATK)).toBe(2);
+    expect(feebas.getLastXMoves()).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          move: Moves.SWORDS_DANCE,
+          result: MoveResult.SUCCESS,
+          virtual: true,
+        }),
+        expect.objectContaining({
+          move: Moves.SLEEP_TALK,
+          result: MoveResult.SUCCESS,
+          virtual: false,
+        }),
+      ]),
+    );
+  });
+
   it("should fail when the user is not asleep", async () => {
     game.override.statusEffect(StatusEffect.NONE);
     await game.classicMode.startBattle([Species.FEEBAS]);
@@ -52,15 +77,6 @@ describe("Moves - Sleep Talk", () => {
     game.move.select(Moves.SLEEP_TALK);
     await game.toNextTurn();
     expect(game.scene.getPlayerPokemon()!.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
-  });
-
-  it("should call a random valid move if the user is asleep", async () => {
-    game.override.moveset([Moves.SLEEP_TALK, Moves.DIG, Moves.FLY, Moves.SWORDS_DANCE]); // Dig and Fly are invalid moves, Swords Dance should always be called
-    await game.classicMode.startBattle([Species.FEEBAS]);
-
-    game.move.select(Moves.SLEEP_TALK);
-    await game.toNextTurn();
-    expect(game.scene.getPlayerPokemon()!.getStatStage(Stat.ATK));
   });
 
   it("should apply secondary effects of a move", async () => {

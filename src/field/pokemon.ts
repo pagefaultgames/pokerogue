@@ -5433,12 +5433,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Checks if a status effect can be applied to the Pokemon.
+   * Check if a status effect can be applied to this {@linckode Pokemon}.
    *
-   * @param effect The {@linkcode StatusEffect} whose applicability is being checked
-   * @param quiet Whether in-battle messages should trigger or not
-   * @param overrideStatus Whether the Pokemon's current status can be overriden
-   * @param sourcePokemon The Pokemon that is setting the status effect
+   * @param effect - The {@linkcode StatusEffect} whose applicability is being checked
+   * @param quiet - Whether to suppress in-battle messages for status checks; default `false`
+   * @param overrideStatus - Whether to allow overriding the Pokemon's current status with a different one; default `false`
+   * @param sourcePokemon - The {@linkcode Pokemon} applying the status effect to the target
    * @param ignoreField Whether any field effects (weather, terrain, etc.) should be considered
    */
   canSetStatus(
@@ -5586,7 +5586,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     effect?: StatusEffect,
     asPhase = false,
     sourcePokemon: Pokemon | null = null,
-    turnsRemaining = 0,
     sourceText: string | null = null,
     overrideStatus?: boolean,
     quiet = true,
@@ -5618,7 +5617,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         new ObtainStatusEffectPhase(
           this.getBattlerIndex(),
           effect,
-          turnsRemaining,
           sourceText,
           sourcePokemon,
         ),

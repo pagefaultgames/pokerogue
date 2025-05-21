@@ -1756,7 +1756,7 @@ export class TurnStatusEffectModifier extends PokemonHeldItemModifier {
    * @returns `true` if the status effect was applied successfully
    */
   override apply(pokemon: Pokemon): boolean {
-    return pokemon.trySetStatus(this.effect, true, undefined, undefined, this.type.name);
+    return pokemon.trySetStatus(this.effect, true, pokemon, this.type.name);
   }
 
   getMaxHeldItemCount(_pokemon: Pokemon): number {
