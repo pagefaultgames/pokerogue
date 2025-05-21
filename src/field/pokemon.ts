@@ -5678,7 +5678,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Performs the action of clearing a Pokemon's status
-   * 
+   *
    * This is a helper to {@linkcode resetStatus}, which should be called directly instead of this method
    */
   public clearStatus(confusion: boolean, reloadAssets: boolean) {
