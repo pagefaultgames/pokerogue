@@ -10,6 +10,7 @@ import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { Status } from "#app/data/status-effect";
 import { StatusEffect } from "#enums/status-effect";
+import { globalScene } from "#app/global-scene";
 import { BattlerIndex } from "#app/battle";
 import { BattleType } from "#enums/battle-type";
 import { TrainerType } from "#enums/trainer-type";
@@ -159,6 +160,37 @@ describe("Moves - Whirlwind", () => {
 
     expect(lapras.isOnField()).toBe(true);
     expect(eevee.isOnField()).toBe(false);
+  });
+
+  it("should fail when player uses Whirlwind against an opponent with only one available Pokémon", async () => {
+    // Set up the battle scenario with the player knowing Whirlwind
+    game.override.startingWave(5).enemySpecies(Species.PIDGEY).moveset([Moves.WHIRLWIND]);
+    await game.classicMode.startBattle();
+
+    const enemyParty = game.scene.getEnemyParty();
+
+    // Ensure the opponent has only one available Pokémon
+    if (enemyParty.length > 1) {
+      enemyParty.slice(1).forEach(p => {
+        p.hp = 0;
+        p.status = new Status(StatusEffect.FAINT);
+      });
+    }
+    const eligibleEnemy = enemyParty.filter(p => p.hp > 0 && p.isAllowedInBattle());
+    expect(eligibleEnemy.length).toBe(1);
+
+    // Spy on the queueMessage function
+    const queueSpy = vi.spyOn(globalScene, "queueMessage");
+
+    // Player uses Whirlwind; opponent uses Splash
+    game.move.select(Moves.WHIRLWIND);
+    await game.forceEnemyMove(Moves.SPLASH);
+    await game.toNextTurn();
+
+    // Verify that the failure message is displayed for Whirlwind
+    expect(queueSpy).toHaveBeenCalledWith(expect.stringContaining("But it failed"));
+    // Verify the opponent's Splash message
+    expect(queueSpy).toHaveBeenCalledWith(expect.stringContaining("But nothing happened!"));
   });
 
   it("should not pull in the other trainer's pokemon in a partner trainer battle", async () => {
