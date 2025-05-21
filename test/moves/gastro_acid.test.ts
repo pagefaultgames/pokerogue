@@ -25,7 +25,8 @@ describe("Moves - Gastro Acid", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("double")
-      .ability(Abilities.NONE)
+      .ability(Abilities.SLOW_START)
+      .startingLevel(1)
       .moveset([Moves.GASTRO_ACID, Moves.WATER_GUN, Moves.SPLASH, Moves.CORE_ENFORCER])
       .enemySpecies(Species.BIDOOF)
       .enemyMoveset(Moves.SPLASH)
