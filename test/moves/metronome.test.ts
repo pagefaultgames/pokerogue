@@ -72,7 +72,7 @@ describe("Moves - Metronome", () => {
     expect(player.visible).toBe(true);
 
     const enemy = game.scene.getEnemyPokemon()!;
-    expect(enemy.isFullHp()).toBeFalsy();
+    expect(enemy.hp).not.toBe(enemy.getMaxHp());
   });
 
   it("should apply secondary effects of the called move", async () => {
