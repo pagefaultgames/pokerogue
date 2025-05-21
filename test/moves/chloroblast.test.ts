@@ -1,3 +1,4 @@
+import { MoveResult } from "#app/field/pokemon";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
@@ -22,21 +23,23 @@ describe("Moves - Chloroblast", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.CHLOROBLAST])
       .ability(Abilities.BALL_FETCH)
       .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset(Moves.PROTECT);
+      .enemyAbility(Abilities.BALL_FETCH);
   });
 
   it("should not deal recoil damage if the opponent uses protect", async () => {
     await game.classicMode.startBattle([Species.FEEBAS]);
 
-    game.move.select(Moves.CHLOROBLAST);
-    await game.phaseInterceptor.to("BerryPhase");
+    game.move.use(Moves.CHLOROBLAST);
+    await game.move.forceEnemyMove(Moves.PROTECT);
+    await game.toEndOfTurn();
 
-    expect(game.scene.getPlayerPokemon()!.isFullHp()).toBe(true);
+    const player = game.field.getPlayerPokemon();
+
+    expect(player.isFullHp()).toBe(true);
+    expect(player.getLastXMoves()[0]).toMatchObject({ result: MoveResult.MISS, move: Moves.CHLOROBLAST });
   });
 });
