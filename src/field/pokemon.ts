@@ -1058,46 +1058,62 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.getFusionBattleSpriteId(back, ignoreOverride).replace(/\_{2}/g, "/");
   }
 
-  getIconAtlasKey(ignoreOverride: boolean = false, useIllusion: boolean = true): string {
+  getIconAtlasKey(ignoreOverride = false, useIllusion = true): string {
     // TODO: confirm the correct behavior here (is it intentional that the check fails if `illusion.formIndex` is `0`?)
-    const formIndex = useIllusion && this.summonData.illusion?.formIndex ? this.summonData.illusion.formIndex : this.formIndex;
-    const variant = !useIllusion && this.summonData.illusion ? this.summonData.illusion.basePokemon.variant : this.variant;
+    const formIndex =
+      useIllusion && this.summonData.illusion?.formIndex ? this.summonData.illusion.formIndex : this.formIndex;
+    const variant =
+      !useIllusion && this.summonData.illusion ? this.summonData.illusion.basePokemon.variant : this.variant;
     return this.getSpeciesForm(ignoreOverride, useIllusion).getIconAtlasKey(
       formIndex,
       this.isBaseShiny(useIllusion),
-      variant
+      variant,
     );
   }
 
-  getFusionIconAtlasKey(ignoreOverride: boolean = false, useIllusion: boolean = true): string {
-    const fusionFormIndex = useIllusion && this.summonData.illusion?.fusionFormIndex ? this.summonData.illusion.fusionFormIndex : this.fusionFormIndex;
-    const fusionVariant = !useIllusion && this.summonData.illusion ? this.summonData.illusion.basePokemon.fusionVariant : this.fusionVariant;
+  getFusionIconAtlasKey(ignoreOverride = false, useIllusion = true): string {
+    const fusionFormIndex =
+      useIllusion && this.summonData.illusion?.fusionFormIndex
+        ? this.summonData.illusion.fusionFormIndex
+        : this.fusionFormIndex;
+    const fusionVariant =
+      !useIllusion && this.summonData.illusion
+        ? this.summonData.illusion.basePokemon.fusionVariant
+        : this.fusionVariant;
     return this.getFusionSpeciesForm(ignoreOverride, useIllusion).getIconAtlasKey(
       fusionFormIndex,
       this.isFusionShiny(),
-      fusionVariant
+      fusionVariant,
     );
   }
 
-  getIconId(ignoreOverride?: boolean, useIllusion: boolean = true): string {
-    const formIndex = useIllusion && this.summonData.illusion?.formIndex ? this.summonData.illusion?.formIndex : this.formIndex;
-    const variant = !useIllusion && !!this.summonData.illusion ? this.summonData.illusion?.basePokemon.variant : this.variant;
+  getIconId(ignoreOverride?: boolean, useIllusion = true): string {
+    const formIndex =
+      useIllusion && this.summonData.illusion?.formIndex ? this.summonData.illusion?.formIndex : this.formIndex;
+    const variant =
+      !useIllusion && !!this.summonData.illusion ? this.summonData.illusion?.basePokemon.variant : this.variant;
     return this.getSpeciesForm(ignoreOverride, useIllusion).getIconId(
       this.getGender(ignoreOverride, useIllusion) === Gender.FEMALE,
       formIndex,
       this.isBaseShiny(),
-      variant
+      variant,
     );
   }
 
-  getFusionIconId(ignoreOverride?: boolean, useIllusion: boolean = true): string {
-    const fusionFormIndex = useIllusion && this.summonData.illusion?.fusionFormIndex ? this.summonData.illusion?.fusionFormIndex : this.fusionFormIndex;
-    const fusionVariant = !useIllusion && !!this.summonData.illusion ? this.summonData.illusion?.basePokemon.fusionVariant : this.fusionVariant;
+  getFusionIconId(ignoreOverride?: boolean, useIllusion = true): string {
+    const fusionFormIndex =
+      useIllusion && this.summonData.illusion?.fusionFormIndex
+        ? this.summonData.illusion?.fusionFormIndex
+        : this.fusionFormIndex;
+    const fusionVariant =
+      !useIllusion && !!this.summonData.illusion
+        ? this.summonData.illusion?.basePokemon.fusionVariant
+        : this.fusionVariant;
     return this.getFusionSpeciesForm(ignoreOverride, useIllusion).getIconId(
       this.getFusionGender(ignoreOverride, useIllusion) === Gender.FEMALE,
       fusionFormIndex,
       this.isFusionShiny(),
-      fusionVariant
+      fusionVariant,
     );
   }
 
@@ -1727,7 +1743,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.shiny || (this.isFusion(useIllusion) && this.fusionShiny);
   }
 
-  isBaseShiny(useIllusion: boolean = false){
+  isBaseShiny(useIllusion = false) {
     if (!useIllusion && this.summonData.illusion) {
       return !!this.summonData.illusion.basePokemon?.shiny;
     } else {
@@ -1735,7 +1751,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
   }
 
-  isFusionShiny(useIllusion: boolean = false){
+  isFusionShiny(useIllusion = false) {
     if (!useIllusion && this.summonData.illusion) {
       return !!this.summonData.illusion.basePokemon?.fusionShiny;
     } else {
@@ -1902,8 +1918,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public getTypes(
     includeTeraType = false,
     forDefend = false,
-    ignoreOverride: boolean = false,
-    useIllusion: boolean = false
+    ignoreOverride = false,
+    useIllusion = false,
   ): PokemonType[] {
     const types: PokemonType[] = [];
 
@@ -1918,7 +1934,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
     }
     if (!types.length || !includeTeraType) {
-
       if (
         !ignoreOverride &&
         this.summonData.types &&
@@ -2193,22 +2208,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (this.summonData.abilitySuppressed && ability.isSuppressable) {
       return false;
     }
-    const suppressAbilitiesTag = arena.getTag(
-      ArenaTagType.NEUTRALIZING_GAS,
-    ) as SuppressAbilitiesTag;
+    const suppressAbilitiesTag = arena.getTag(ArenaTagType.NEUTRALIZING_GAS) as SuppressAbilitiesTag;
     const suppressOffField = ability.hasAttr(PreSummonAbAttr);
-    if (
-      (this.isOnField() || suppressOffField) &&
-      suppressAbilitiesTag &&
-      !suppressAbilitiesTag.isBeingRemoved()
-    ) {
-      const thisAbilitySuppressing = ability.hasAttr(
-        PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr,
-      );
-      const hasSuppressingAbility = this.hasAbilityWithAttr(
-        PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr,
-        false,
-      );
+    if ((this.isOnField() || suppressOffField) && suppressAbilitiesTag && !suppressAbilitiesTag.isBeingRemoved()) {
+      const thisAbilitySuppressing = ability.hasAttr(PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr);
+      const hasSuppressingAbility = this.hasAbilityWithAttr(PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr, false);
       // Neutralizing gas is up - suppress abilities unless they are unsuppressable or this pokemon is responsible for the gas
       // (Balance decided that the other ability of a neutralizing gas pokemon should not be neutralized)
       // If the ability itself is neutralizing gas, don't suppress it (handled through arena tag)
@@ -3062,7 +3066,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         weight = 50;
       }
       // Assume level 1 moves with 80+ BP are "move reminder" moves and bump their weight. Trainers use actual relearn moves.
-      if (weight === 1 && allMoves[levelMove[1]].power >= 80 || weight === RELEARN_MOVE && this.hasTrainer()) {
+      if ((weight === 1 && allMoves[levelMove[1]].power >= 80) || (weight === RELEARN_MOVE && this.hasTrainer())) {
         weight = 40;
       }
       if (!movePool.some(m => m[0] === levelMove[1]) && !allMoves[levelMove[1]].name.endsWith(" (N)")) {
@@ -3146,17 +3150,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       movePool = movePool.filter(m => !allMoves[m[0]].hasAttr(SacrificialAttr) && !allMoves[m[0]].hasAttr(HpSplitAttr));
     }
     // No one gets Memento or Final Gambit
-    movePool = movePool.filter(
-      m => !allMoves[m[0]].hasAttr(SacrificialAttrOnHit),
-    );
+    movePool = movePool.filter(m => !allMoves[m[0]].hasAttr(SacrificialAttrOnHit));
     if (this.hasTrainer()) {
       // Trainers never get OHKO moves
       movePool = movePool.filter(m => !allMoves[m[0]].hasAttr(OneHitKOAttr));
       // Half the weight of self KO moves
-      movePool = movePool.map(m => [
-        m[0],
-        m[1] * (allMoves[m[0]].hasAttr(SacrificialAttr) ? 0.5 : 1),
-      ]);
+      movePool = movePool.map(m => [m[0], m[1] * (allMoves[m[0]].hasAttr(SacrificialAttr) ? 0.5 : 1)]);
       // Trainers get a weight bump to stat buffing moves
       movePool = movePool.map(m => [
         m[0],
@@ -3205,9 +3204,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     // All Pokemon force a STAB move first
     const stabMovePool = baseWeights.filter(
-      m =>
-        allMoves[m[0]].category !== MoveCategory.STATUS &&
-        this.isOfType(allMoves[m[0]].type),
+      m => allMoves[m[0]].category !== MoveCategory.STATUS && this.isOfType(allMoves[m[0]].type),
     );
 
     if (stabMovePool.length) {
@@ -3226,11 +3223,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         // Other damaging moves 2x weight if 0-1 damaging moves, 0.5x if 2, 0.125x if 3. These weights get 20x if STAB.
         // Status moves remain unchanged on weight, this encourages 1-2
         movePool = baseWeights
-          .filter(m => !this.moveset.some(
-            mo => 
-              m[0] === mo.moveId ||
-              (allMoves[m[0]].hasAttr(SacrificialAttr) && mo.getMove().hasAttr(SacrificialAttr)) // Only one self-KO move allowed
-          ))
+          .filter(
+            m =>
+              !this.moveset.some(
+                mo =>
+                  m[0] === mo.moveId ||
+                  (allMoves[m[0]].hasAttr(SacrificialAttr) && mo.getMove().hasAttr(SacrificialAttr)), // Only one self-KO move allowed
+              ),
+          )
           .map(m => {
             let ret: number;
             if (
@@ -3252,11 +3252,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           });
       } else {
         // Non-trainer pokemon just use normal weights
-        movePool = baseWeights.filter(m => !this.moveset.some(
-          mo => 
-            m[0] === mo.moveId ||
-            (allMoves[m[0]].hasAttr(SacrificialAttr) && mo.getMove().hasAttr(SacrificialAttr)) // Only one self-KO move allowed
-        ));
+        movePool = baseWeights.filter(
+          m =>
+            !this.moveset.some(
+              mo =>
+                m[0] === mo.moveId ||
+                (allMoves[m[0]].hasAttr(SacrificialAttr) && mo.getMove().hasAttr(SacrificialAttr)), // Only one self-KO move allowed
+            ),
+        );
       }
       const totalWeight = movePool.reduce((v, m) => v + m[1], 0);
       let rand = randSeedInt(totalWeight);
@@ -3826,9 +3829,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
      * A multiplier for random damage spread in the range [0.85, 1]
      * This is always 1 for simulated calls.
      */
-    const randomMultiplier = simulated
-      ? 1
-      : this.randBattleSeedIntRange(85, 100) / 100;
+    const randomMultiplier = simulated ? 1 : this.randBattleSeedIntRange(85, 100) / 100;
 
     /** A damage multiplier for when the attack is of the attacker's type and/or Tera type. */
     const stabMultiplier = this.calculateStabMultiplier(source, move, ignoreSourceAbility, simulated);
@@ -4930,7 +4931,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
     this.summonData = new PokemonSummonData();
     this.tempSummonData = new PokemonTempSummonData();
-    this.summonData.illusion = illusion
+    this.summonData.illusion = illusion;
     this.updateInfo();
   }
 
@@ -5405,9 +5406,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @returns a random integer between {@linkcode min} and {@linkcode max} inclusive
    */
   randBattleSeedIntRange(min: number, max: number): number {
-    return globalScene.currentBattle
-      ? globalScene.randBattleSeedInt(max - min + 1, min)
-      : randSeedIntRange(min, max);
+    return globalScene.currentBattle ? globalScene.randBattleSeedInt(max - min + 1, min) : randSeedIntRange(min, max);
   }
 
   /**

@@ -57,7 +57,7 @@
       },
       "style": {
         "noVar": "error",
-        "useEnumInitializers": "off", // large enums like Moves/Species would make this cumbersome 
+        "useEnumInitializers": "off", // large enums like Moves/Species would make this cumbersome
         "useBlockStatements": "error",
         "useConst": "error",
         "useImportType": "error",
@@ -72,9 +72,9 @@
       },
       "suspicious": {
         "noDoubleEquals": "error",
-        // While this would be a nice rule to enable, the current structure of the codebase makes this infeasible 
+        // While this would be a nice rule to enable, the current structure of the codebase makes this infeasible
         // due to being used for move/ability `args` params and save data-related code.
-        // This can likely be enabled for all non-utils files once these are eventually reworked, but until then we leave it off.  
+        // This can likely be enabled for all non-utils files once these are eventually reworked, but until then we leave it off.
         "noExplicitAny": "off",
         "noAssignInExpressions": "off",
         "noPrototypeBuiltins": "off",
