@@ -23,10 +23,10 @@ describe("Abilities - Forecast", () => {
 
   /**
    * Tests form changes based on weather changes
-   * @param {GameManager} game The game manager instance
-   * @param {WeatherType} weather The active weather to set
-   * @param form The expected form based on the active weather
-   * @param initialForm The initial form pre form change
+   * @param game - The game manager instance
+   * @param weather - The active weather to set
+   * @param form - The expected form based on the active weather
+   * @param initialForm - The initial form pre form change
    */
   const testWeatherFormChange = async (game: GameManager, weather: WeatherType, form: number, initialForm?: number) => {
     game.override.weather(weather).starterForms({ [Species.CASTFORM]: initialForm });
@@ -39,8 +39,8 @@ describe("Abilities - Forecast", () => {
 
   /**
    * Tests reverting to normal form when Cloud Nine/Air Lock is active on the field
-   * @param {GameManager} game The game manager instance
-   * @param {Abilities} ability The ability that is active on the field
+   * @param game - The game manager instance
+   * @param ability - The ability that is active on the field
    */
   const testRevertFormAgainstAbility = async (game: GameManager, ability: Abilities) => {
     game.override.starterForms({ [Species.CASTFORM]: SUNNY_FORM }).enemyAbility(ability);
@@ -287,7 +287,7 @@ describe("Abilities - Forecast", () => {
     expect(castform.formIndex).toBe(SUNNY_FORM);
   });
   it("should trigger enemy's form change when summoned at the same time as a player with a weather changing ability", async () => {
-    game.override.ability(Abilities.DROUGHT).enemySpecies(Species.CASTFORM);
+    game.override.ability(Abilities.DROUGHT).enemySpecies(Species.CASTFORM).enemyAbility(Abilities.FORECAST);
     await game.classicMode.startBattle([Species.MAGIKARP]);
     const castform = game.scene.getEnemyPokemon()!;
     expect(castform.formIndex).toBe(SUNNY_FORM);
