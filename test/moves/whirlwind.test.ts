@@ -185,7 +185,6 @@ describe("Moves - Whirlwind", () => {
     // Player uses Whirlwind; opponent uses Splash
     game.move.select(Moves.WHIRLWIND);
     await game.forceEnemyMove(Moves.SPLASH);
-    await game.phaseInterceptor.to("MoveEndPhase", false);
     await game.toNextTurn();
 
     // Verify that the failure message is displayed for Whirlwind
