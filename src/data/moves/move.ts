@@ -6758,7 +6758,7 @@ export class RandomMoveAttr extends CallMoveAttr {
 
   /**
    * Cause the user to execute a random valid move.
-
+   *
    * @param user - The {@linkcode Pokemon} using the move
    * @param target - The {@linkcode Pokemon} being targeted (for single target moves)
    * @param move - Unused
