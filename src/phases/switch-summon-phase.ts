@@ -193,7 +193,7 @@ export class SwitchSummonPhase extends SummonPhase {
           switchedInPokemon.setAlpha(0.5);
         }
       } else {
-        switchedInPokemon.resetSummonData();
+        switchedInPokemon.fieldSetup(true);
       }
       this.summon();
     };

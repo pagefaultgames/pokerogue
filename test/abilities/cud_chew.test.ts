@@ -111,7 +111,7 @@ describe("Abilities - Cud Chew", () => {
 
     it("can store multiple berries across 2 turns with teatime", async () => {
       // always eat first berry for stuff cheeks & company
-      vi.spyOn(Pokemon.prototype, "randSeedInt").mockReturnValue(0);
+      vi.spyOn(Pokemon.prototype, "randBattleSeedInt").mockReturnValue(0);
       game.override
         .startingHeldItems([
           { name: "BERRY", type: BerryType.PETAYA, count: 3 },
