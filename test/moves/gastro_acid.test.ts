@@ -78,9 +78,11 @@ describe("Moves - Gastro Acid", () => {
     expect(game.scene.getPlayerPokemon()!.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
   });
 
-  it("should suppress the passive of a target even if its main ability is unsuppressable", async () => {
-    game.override.enemyAbility(Abilities.COMATOSE);
-    game.override.enemyPassiveAbility(Abilities.WATER_ABSORB);
+  it("should suppress the passive of a target even if its main ability is unsuppressable and not suppress main abli", async () => {
+    game.override
+      .enemyAbility(Abilities.COMATOSE)
+      .enemyPassiveAbility(Abilities.WATER_ABSORB)
+      .moveset([Moves.SPLASH, Moves.GASTRO_ACID, Moves.WATER_GUN]);
     await game.classicMode.startBattle([Species.MAGIKARP]);
 
     const enemyPokemon = game.scene.getEnemyPokemon();
@@ -90,8 +92,12 @@ describe("Moves - Gastro Acid", () => {
     expect(enemyPokemon?.summonData.abilitySuppressed).toBe(true);
 
     game.move.select(Moves.WATER_GUN);
+    await game.toNextTurn();
+    expect(enemyPokemon?.getHpRatio()).toBeLessThan(1);
+
+    game.move.select(Moves.SPORE);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(enemyPokemon?.getHpRatio()).toBeLessThan(1);
+    expect(enemyPokemon?.status?.effect).toBeFalsy();
   });
 });
