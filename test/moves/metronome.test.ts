@@ -95,9 +95,12 @@ describe("Moves - Metronome", () => {
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toNextTurn();
 
-    expect(game.scene.getPlayerPokemon()!.isFullHp()).toBeFalsy();
-    expect(game.scene.getEnemyPokemon()!.isFullHp()).toBeFalsy();
-    expect(game.scene.getEnemyPokemon()!.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
+    const player = game.scene.getPlayerPokemon()!;
+    const enemy = game.scene.getEnemyPokemon()!;
+    
+    expect(player.hp).not.toBe(player.getMaxHp());
+    expect(enemy.hp).not.toBe(enemy.getMaxHp());
+    expect(enemy.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
   });
 
   it("should recharge after using recharge moves", async () => {
