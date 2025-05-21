@@ -129,7 +129,7 @@ export class BattlerTag {
    * @returns The source {@linkcode Pokemon}, or `null` if none is found
    */
   public getSourcePokemon(): Pokemon | null {
-    return this.sourceId ? globalScene.getPokemonById(this.sourceId) : null;
+    return globalScene.getPokemonById(this.sourceId);
   }
 }
 
@@ -585,9 +585,13 @@ export class TrappedTag extends BattlerTag {
   }
 
   canAdd(pokemon: Pokemon): boolean {
-    const source = globalScene.getPokemonById(this.sourceId!)!;
-    const move = allMoves[this.sourceMove];
+    const source = this.getSourcePokemon();
+    if (!source) {
+      console.warn(`Failed to get source Pokemon for TrappedTag canAdd; id: ${this.sourceId}`);
+      return false;
+    }
 
+    const move = allMoves[this.sourceMove];
     const isGhost = pokemon.isOfType(PokemonType.GHOST);
     const isTrapped = pokemon.getTag(TrappedTag);
     const hasSubstitute = move.hitsSubstitute(source, pokemon);
@@ -809,12 +813,20 @@ export class DestinyBondTag extends BattlerTag {
     if (lapseType !== BattlerTagLapseType.CUSTOM) {
       return super.lapse(pokemon, lapseType);
     }
-    const source = this.sourceId ? globalScene.getPokemonById(this.sourceId) : null;
-    if (!source?.isFainted()) {
+
+    const source = this.getSourcePokemon();
+    if (!source) {
+      console.warn(`Failed to get source Pokemon for DestinyBondTag lapse; id: ${this.sourceId}`);
+      return false;
+    }
+
+    // Destiny bond stays active until the user faints
+    if (!source.isFainted()) {
       return true;
     }
 
-    if (source?.getAlly() === pokemon) {
+    // Don't kill allies
+    if (source.getAlly() === pokemon) {
       return false;
     }
 
@@ -827,6 +839,7 @@ export class DestinyBondTag extends BattlerTag {
       return false;
     }
 
+    // Drag the foe down with the user
     globalScene.queueMessage(
       i18next.t("battlerTags:destinyBondLapse", {
         pokemonNameWithAffix: getPokemonNameWithAffix(source),
@@ -844,17 +857,13 @@ export class InfatuatedTag extends BattlerTag {
   }
 
   canAdd(pokemon: Pokemon): boolean {
-    if (this.sourceId) {
-      const pkm = globalScene.getPokemonById(this.sourceId);
-
-      if (pkm) {
-        return pokemon.isOppositeGender(pkm);
-      }
-      console.warn("canAdd: this.sourceId is not a valid pokemon id!", this.sourceId);
+    const source = this.getSourcePokemon();
+    if (!source) {
+      console.warn(`Failed to get source Pokemon for InfatuatedTag canAdd; id: ${this.sourceId}`);
       return false;
     }
-    console.warn("canAdd: this.sourceId is undefined");
-    return false;
+
+    return pokemon.isOppositeGender(source);
   }
 
   onAdd(pokemon: Pokemon): void {
@@ -863,7 +872,7 @@ export class InfatuatedTag extends BattlerTag {
     globalScene.queueMessage(
       i18next.t("battlerTags:infatuatedOnAdd", {
         pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-        sourcePokemonName: getPokemonNameWithAffix(globalScene.getPokemonById(this.sourceId!) ?? undefined), // TODO: is that bang correct?
+        sourcePokemonName: getPokemonNameWithAffix(this.getSourcePokemon()!), // Tag not added + console warns if no source
       }),
     );
   }
@@ -881,26 +890,35 @@ export class InfatuatedTag extends BattlerTag {
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     const ret = lapseType !== BattlerTagLapseType.CUSTOM || super.lapse(pokemon, lapseType);
 
-    if (ret) {
-      globalScene.queueMessage(
-        i18next.t("battlerTags:infatuatedLapse", {
-          pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-          sourcePokemonName: getPokemonNameWithAffix(globalScene.getPokemonById(this.sourceId!) ?? undefined), // TODO: is that bang correct?
-        }),
-      );
-      globalScene.unshiftPhase(new CommonAnimPhase(pokemon.getBattlerIndex(), undefined, CommonAnim.ATTRACT));
-
-      if (pokemon.randBattleSeedInt(2)) {
-        globalScene.queueMessage(
-          i18next.t("battlerTags:infatuatedLapseImmobilize", {
-            pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-          }),
-        );
-        (globalScene.getCurrentPhase() as MovePhase).cancel();
-      }
+    if (!ret) {
+      return false;
     }
 
-    return ret;
+    const source = this.getSourcePokemon();
+    if (!source) {
+      console.warn(`Failed to get source Pokemon for InfatuatedTag lapse; id: ${this.sourceId}`);
+      return false;
+    }
+
+    globalScene.queueMessage(
+      i18next.t("battlerTags:infatuatedLapse", {
+        pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+        sourcePokemonName: getPokemonNameWithAffix(source),
+      }),
+    );
+    globalScene.unshiftPhase(new CommonAnimPhase(pokemon.getBattlerIndex(), undefined, CommonAnim.ATTRACT));
+
+    // 50% chance to disrupt the target's action
+    if (pokemon.randBattleSeedInt(2) === 0) {
+      globalScene.queueMessage(
+        i18next.t("battlerTags:infatuatedLapseImmobilize", {
+          pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+        }),
+      );
+      (globalScene.getCurrentPhase() as MovePhase).cancel();
+    }
+
+    return true;
   }
 
   onRemove(pokemon: Pokemon): void {
@@ -943,6 +961,12 @@ export class SeedTag extends BattlerTag {
   }
 
   onAdd(pokemon: Pokemon): void {
+    const source = this.getSourcePokemon();
+    if (!source) {
+      console.warn(`Failed to get source Pokemon for SeedTag onAdd; id: ${this.sourceId}`);
+      return;
+    }
+
     super.onAdd(pokemon);
 
     globalScene.queueMessage(
@@ -950,45 +974,52 @@ export class SeedTag extends BattlerTag {
         pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
       }),
     );
-    this.sourceIndex = globalScene.getPokemonById(this.sourceId!)!.getBattlerIndex(); // TODO: are those bangs correct?
+    this.sourceIndex = source.getBattlerIndex();
   }
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     const ret = lapseType !== BattlerTagLapseType.CUSTOM || super.lapse(pokemon, lapseType);
 
-    if (ret) {
-      const source = pokemon.getOpponents().find(o => o.getBattlerIndex() === this.sourceIndex);
-      if (source) {
-        const cancelled = new BooleanHolder(false);
-        applyAbAttrs(BlockNonDirectDamageAbAttr, pokemon, cancelled);
-
-        if (!cancelled.value) {
-          globalScene.unshiftPhase(
-            new CommonAnimPhase(source.getBattlerIndex(), pokemon.getBattlerIndex(), CommonAnim.LEECH_SEED),
-          );
-
-          const damage = pokemon.damageAndUpdate(toDmgValue(pokemon.getMaxHp() / 8), { result: HitResult.INDIRECT });
-          const reverseDrain = pokemon.hasAbilityWithAttr(ReverseDrainAbAttr, false);
-          globalScene.unshiftPhase(
-            new PokemonHealPhase(
-              source.getBattlerIndex(),
-              !reverseDrain ? damage : damage * -1,
-              !reverseDrain
-                ? i18next.t("battlerTags:seededLapse", {
-                    pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-                  })
-                : i18next.t("battlerTags:seededLapseShed", {
-                    pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-                  }),
-              false,
-              true,
-            ),
-          );
-        }
-      }
+    if (!ret) {
+      return false;
     }
 
-    return ret;
+    // Check which opponent to restore HP to
+    const source = pokemon.getOpponents().find(o => o.getBattlerIndex() === this.sourceIndex);
+    if (!source) {
+      console.warn(`Failed to get source Pokemon for SeedTag lapse; id: ${this.sourceId}`);
+      return false;
+    }
+
+    const cancelled = new BooleanHolder(false);
+    applyAbAttrs(BlockNonDirectDamageAbAttr, pokemon, cancelled);
+
+    if (cancelled.value) {
+      return true;
+    }
+
+    globalScene.unshiftPhase(
+      new CommonAnimPhase(source.getBattlerIndex(), pokemon.getBattlerIndex(), CommonAnim.LEECH_SEED),
+    );
+
+    const damage = pokemon.damageAndUpdate(toDmgValue(pokemon.getMaxHp() / 8), { result: HitResult.INDIRECT });
+    const reverseDrain = pokemon.hasAbilityWithAttr(ReverseDrainAbAttr, false);
+    globalScene.unshiftPhase(
+      new PokemonHealPhase(
+        source.getBattlerIndex(),
+        !reverseDrain ? damage : damage * -1,
+        !reverseDrain
+          ? i18next.t("battlerTags:seededLapse", {
+              pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+            })
+          : i18next.t("battlerTags:seededLapseShed", {
+              pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+            }),
+        false,
+        true,
+      ),
+    );
+    return true;
   }
 
   getDescriptor(): string {
@@ -1245,9 +1276,15 @@ export class HelpingHandTag extends BattlerTag {
   }
 
   onAdd(pokemon: Pokemon): void {
+    const source = this.getSourcePokemon();
+    if (!source) {
+      console.warn(`Failed to get source Pokemon for HelpingHandTag onAdd; id: ${this.sourceId}`);
+      return;
+    }
+
     globalScene.queueMessage(
       i18next.t("battlerTags:helpingHandOnAdd", {
-        pokemonNameWithAffix: getPokemonNameWithAffix(globalScene.getPokemonById(this.sourceId!) ?? undefined), // TODO: is that bang correct?
+        pokemonNameWithAffix: getPokemonNameWithAffix(source),
         pokemonName: getPokemonNameWithAffix(pokemon),
       }),
     );
@@ -1459,15 +1496,22 @@ export abstract class DamagingTrapTag extends TrappedTag {
   }
 }
 
+// TODO: Condense all these tags into 1 singular tag with a modified message func
 export class BindTag extends DamagingTrapTag {
   constructor(turnCount: number, sourceId: number) {
     super(BattlerTagType.BIND, CommonAnim.BIND, turnCount, Moves.BIND, sourceId);
   }
 
   getTrapMessage(pokemon: Pokemon): string {
+    const source = this.getSourcePokemon();
+    if (!source) {
+      console.warn(`Failed to get source Pokemon for BindTag getTrapMessage; id: ${this.sourceId}`);
+      return "ERROR - CHECK CONSOLE AND REPORT";
+    }
+
     return i18next.t("battlerTags:bindOnTrap", {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-      sourcePokemonName: getPokemonNameWithAffix(globalScene.getPokemonById(this.sourceId!) ?? undefined), // TODO: is that bang correct?
+      sourcePokemonName: getPokemonNameWithAffix(source),
       moveName: this.getMoveName(),
     });
   }
@@ -1479,9 +1523,16 @@ export class WrapTag extends DamagingTrapTag {
   }
 
   getTrapMessage(pokemon: Pokemon): string {
-    return i18next.t("battlerTags:wrapOnTrap", {
+    const source = this.getSourcePokemon();
+    if (!source) {
+      console.warn(`Failed to get source Pokemon for ClampTag getTrapMessage; id: ${this.sourceId}`);
+      return "ERROR - CHECK CONSOLE AND REPORT";
+    }
+
+    return i18next.t("battlerTags:clampOnTrap", {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-      sourcePokemonName: getPokemonNameWithAffix(globalScene.getPokemonById(this.sourceId!) ?? undefined), // TODO: is that bang correct?
+      sourcePokemonName: getPokemonNameWithAffix(source),
+      moveName: this.getMoveName(),
     });
   }
 }
@@ -1516,8 +1567,14 @@ export class ClampTag extends DamagingTrapTag {
   }
 
   getTrapMessage(pokemon: Pokemon): string {
+    const source = this.getSourcePokemon();
+    if (!source) {
+      console.warn(`Failed to get source Pokemon for ClampTag getTrapMessage; id: ${this.sourceId}`);
+      return "ERROR - CHECK CONSOLE AND REPORT ASAP";
+    }
+
     return i18next.t("battlerTags:clampOnTrap", {
-      sourcePokemonNameWithAffix: getPokemonNameWithAffix(globalScene.getPokemonById(this.sourceId!) ?? undefined), // TODO: is that bang correct?
+      sourcePokemonNameWithAffix: getPokemonNameWithAffix(source),
       pokemonName: getPokemonNameWithAffix(pokemon),
     });
   }
@@ -1566,9 +1623,15 @@ export class ThunderCageTag extends DamagingTrapTag {
   }
 
   getTrapMessage(pokemon: Pokemon): string {
+    const source = this.getSourcePokemon();
+    if (!source) {
+      console.warn(`Failed to get source Pokemon for ThunderCageTag getTrapMessage; id: ${this.sourceId}`);
+      return "ERROR - PLEASE REPORT ASAP";
+    }
+
     return i18next.t("battlerTags:thunderCageOnTrap", {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-      sourcePokemonNameWithAffix: getPokemonNameWithAffix(globalScene.getPokemonById(this.sourceId!) ?? undefined), // TODO: is that bang correct?
+      sourcePokemonNameWithAffix: getPokemonNameWithAffix(source),
     });
   }
 }
@@ -1579,9 +1642,15 @@ export class InfestationTag extends DamagingTrapTag {
   }
 
   getTrapMessage(pokemon: Pokemon): string {
+    const source = this.getSourcePokemon();
+    if (!source) {
+      console.warn(`Failed to get source Pokemon for InfestationTag getTrapMessage; id: ${this.sourceId}`);
+      return "ERROR - CHECK CONSOLE AND REPORT";
+    }
+
     return i18next.t("battlerTags:infestationOnTrap", {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-      sourcePokemonNameWithAffix: getPokemonNameWithAffix(globalScene.getPokemonById(this.sourceId!) ?? undefined), // TODO: is that bang correct?
+      sourcePokemonNameWithAffix: getPokemonNameWithAffix(source),
     });
   }
 }
@@ -2253,14 +2322,19 @@ export class SaltCuredTag extends BattlerTag {
   }
 
   onAdd(pokemon: Pokemon): void {
-    super.onAdd(pokemon);
+    const source = this.getSourcePokemon();
+    if (!source) {
+      console.warn(`Failed to get source Pokemon for SaltCureTag onAdd; id: ${this.sourceId}`);
+      return;
+    }
 
+    super.onAdd(pokemon);
     globalScene.queueMessage(
       i18next.t("battlerTags:saltCuredOnAdd", {
         pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
       }),
     );
-    this.sourceIndex = globalScene.getPokemonById(this.sourceId!)!.getBattlerIndex(); // TODO: are those bangs correct?
+    this.sourceIndex = source.getBattlerIndex();
   }
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
@@ -2310,8 +2384,14 @@ export class CursedTag extends BattlerTag {
   }
 
   onAdd(pokemon: Pokemon): void {
+    const source = this.getSourcePokemon();
+    if (!source) {
+      console.warn(`Failed to get source Pokemon for CursedTag onAdd; id: ${this.sourceId}`);
+      return;
+    }
+
     super.onAdd(pokemon);
-    this.sourceIndex = globalScene.getPokemonById(this.sourceId!)!.getBattlerIndex(); // TODO: are those bangs correct?
+    this.sourceIndex = source.getBattlerIndex();
   }
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
@@ -2922,7 +3002,13 @@ export class SubstituteTag extends BattlerTag {
 
   /** Sets the Substitute's HP and queues an on-add battle animation that initializes the Substitute's sprite. */
   onAdd(pokemon: Pokemon): void {
-    this.hp = Math.floor(globalScene.getPokemonById(this.sourceId!)!.getMaxHp() / 4);
+    const source = this.getSourcePokemon();
+    if (!source) {
+      console.warn(`Failed to get source Pokemon for SubstituteTag onAdd; id: ${this.sourceId}`);
+      return;
+    }
+
+    this.hp = Math.floor(source.getMaxHp() / 4);
     this.sourceInFocus = false;
 
     // Queue battle animation and message
@@ -3205,13 +3291,14 @@ export class ImprisonTag extends MoveRestrictionBattlerTag {
    */
   public override lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     const source = this.getSourcePokemon();
-    if (source) {
-      if (lapseType === BattlerTagLapseType.PRE_MOVE) {
-        return super.lapse(pokemon, lapseType) && source.isActive(true);
-      }
-      return source.isActive(true);
+    if (!source) {
+      console.warn(`Failed to get source Pokemon for ImprisonTag lapse; id: ${this.sourceId}`);
+      return false;
     }
-    return false;
+    if (lapseType === BattlerTagLapseType.PRE_MOVE) {
+      return super.lapse(pokemon, lapseType) && source.isActive(true);
+    }
+    return source.isActive(true);
   }
 
   /**
@@ -3271,12 +3358,20 @@ export class SyrupBombTag extends BattlerTag {
    * Applies the single-stage speed down to the target Pokemon and decrements the tag's turn count
    * @param pokemon - The target {@linkcode Pokemon}
    * @param _lapseType - N/A
-   * @returns `true` if the `turnCount` is still greater than `0`; `false` if the `turnCount` is `0` or the target or source Pokemon has been removed from the field
+   * @returns Whether the tag should persist (`turnsRemaining > 0` and source still on field)
    */
   override lapse(pokemon: Pokemon, _lapseType: BattlerTagLapseType): boolean {
-    if (this.sourceId && !globalScene.getPokemonById(this.sourceId)?.isActive(true)) {
+    const source = this.getSourcePokemon();
+    if (!source) {
+      console.warn(`Failed to get source Pokemon for SyrupBombTag lapse; id: ${this.sourceId}`);
       return false;
     }
+
+    // Syrup bomb clears immediately if source leaves field/faints
+    if (!source.isActive(true)) {
+      return false;
+    }
+
     // Custom message in lieu of an animation in mainline
     globalScene.queueMessage(
       i18next.t("battlerTags:syrupBombLapse", {
@@ -3286,7 +3381,7 @@ export class SyrupBombTag extends BattlerTag {
     globalScene.unshiftPhase(
       new StatStageChangePhase(pokemon.getBattlerIndex(), true, [Stat.SPD], -1, true, false, true),
     );
-    return --this.turnCount > 0;
+    return super.lapse(pokemon, _lapseType);
   }
 }
 

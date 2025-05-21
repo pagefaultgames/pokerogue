@@ -23,10 +23,7 @@ describe("Abilities - Unburden", () => {
    */
   function getHeldItemCount(pokemon: Pokemon): number {
     const stackCounts = pokemon.getHeldItems().map(m => m.getStackCount());
-    if (stackCounts.length) {
-      return stackCounts.reduce((a, b) => a + b);
-    }
-    return 0;
+    return stackCounts.reduce((a, b) => a + b, 0);
   }
 
   beforeAll(() => {
@@ -318,7 +315,7 @@ describe("Abilities - Unburden", () => {
   });
 
   it("should activate when a reviver seed is used", async () => {
-    game.override.startingHeldItems([{ name: "REVIVER_SEED" }]).enemyMoveset([Moves.WING_ATTACK]);
+    game.override.startingHeldItems([{ name: "REVIVER_SEED" }]).enemyMoveset(Moves.WING_ATTACK);
     await game.classicMode.startBattle([Species.TREECKO]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;

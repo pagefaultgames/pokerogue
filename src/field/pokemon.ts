@@ -311,6 +311,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * TODO: Stop treating this like a unique ID and stop treating 0 as no pokemon
    */
   public id: number;
+  public pid: number;
   public name: string;
   public nickname: string;
   public species: PokemonSpecies;
@@ -4172,7 +4173,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   getTag<T extends BattlerTag>(tagType: Constructor<T>): T | undefined;
 
   getTag(tagType: BattlerTagType | Constructor<BattlerTag>): BattlerTag | undefined {
-    return tagType instanceof Function
+    return typeof tagType === "function"
       ? this.summonData.tags.find(t => t instanceof tagType)
       : this.summonData.tags.find(t => t.tagType === tagType);
   }
@@ -6702,7 +6703,7 @@ export class EnemyPokemon extends Pokemon {
     return ret;
   }
 
-  
+
   /**
    * Show or hide the type effectiveness multiplier window
    * Passing undefined will hide the window
