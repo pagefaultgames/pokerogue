@@ -587,8 +587,8 @@ export function getShinyDescriptor(variant: Variant): string {
     case 2:
       return i18next.t("common:epicShiny");
     case 1:
-      return i18next.t("common:shiny");
+      return i18next.t("common:rareShiny");
     case 0:
-      return i18next.t("common:normal");
+      return i18next.t("common:commonShiny");
   }
 }
