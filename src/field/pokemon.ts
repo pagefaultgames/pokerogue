@@ -1073,6 +1073,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   getFusionIconAtlasKey(ignoreOverride = false, useIllusion = true): string {
+    // TODO: confirm the correct behavior here (is it intentional that the check fails if `illusion.fusionFormIndex` is `0`?)
     const fusionFormIndex =
       useIllusion && this.summonData.illusion?.fusionFormIndex
         ? this.summonData.illusion.fusionFormIndex
