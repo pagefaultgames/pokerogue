@@ -81,6 +81,7 @@ describe("Moves - Ability Ignores", () => {
     expect(game.scene.getPlayerPokemon()?.getLastXMoves()[0].move).toBe(Moves.SUNSTEEL_STRIKE);
   });
 
+  // TODO: Verify this behavior on cart
   it("should ignore enemy abilities when called by Instruct", async () => {
     game.override.moveset([Moves.SUNSTEEL_STRIKE, Moves.INSTRUCT]).battleStyle("double");
     await game.classicMode.startBattle([Species.SOLGALEO, Species.LUNALA]);
@@ -93,6 +94,7 @@ describe("Moves - Ability Ignores", () => {
 
     await game.phaseInterceptor.to("MoveEffectPhase"); // initial attack
     await game.phaseInterceptor.to("MoveEffectPhase"); // instruct
+    await game.phaseInterceptor.to("MoveEffectPhase"); // instructed move use
 
     expect(game.scene.arena.ignoreAbilities).toBe(true);
     expect(game.scene.arena.ignoringEffectSource).toBe(solgaleo.getBattlerIndex());
