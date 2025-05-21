@@ -153,7 +153,7 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     starterInfoYOffset: 0.5,
     starterInfoXPos: 33,
   },
-  "ca-ES": {
+  ca: {
     starterInfoTextSize: "48px",
     instructionTextSize: "38px",
     starterInfoYOffset: 0.5,
