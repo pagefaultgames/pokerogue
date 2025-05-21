@@ -44,20 +44,18 @@ describe("Moves - Focus Punch", () => {
     const leadPokemon = game.scene.getPlayerPokemon()!;
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-    const enemyStartingHp = enemyPokemon.hp;
-
     game.move.select(Moves.FOCUS_PUNCH);
 
     await game.phaseInterceptor.to(MessagePhase);
 
-    expect(enemyPokemon.hp).toBe(enemyStartingHp);
+    expect(enemyPokemon.getInverseHp()).toBe(0);
     expect(leadPokemon.getMoveHistory().length).toBe(0);
 
     await game.phaseInterceptor.to(BerryPhase, false);
 
-    expect(enemyPokemon.hp).toBeLessThan(enemyStartingHp);
+    expect(enemyPokemon.getInverseHp()).toBe(0);
     expect(leadPokemon.getMoveHistory().length).toBe(1);
-    expect(leadPokemon.turnData.totalDamageDealt).toBe(enemyStartingHp - enemyPokemon.hp);
+    expect(enemyPokemon.getInverseHp()).toBeGreaterThan(0);
   });
 
   it("should fail if the user is hit", async () => {
@@ -72,16 +70,16 @@ describe("Moves - Focus Punch", () => {
 
     game.move.select(Moves.FOCUS_PUNCH);
 
-    await game.phaseInterceptor.to(MessagePhase);
+    await game.phaseInterceptor.to("MessagePhase");
 
     expect(enemyPokemon.hp).toBe(enemyStartingHp);
     expect(leadPokemon.getMoveHistory().length).toBe(0);
 
-    await game.phaseInterceptor.to(BerryPhase, false);
+    await game.phaseInterceptor.to("BerryPhase", false);
 
     expect(enemyPokemon.hp).toBe(enemyStartingHp);
     expect(leadPokemon.getMoveHistory().length).toBe(1);
-    expect(leadPokemon.turnData.totalDamageDealt).toBe(0);
+    expect(enemyPokemon.getInverseHp()).toBe(0);
   });
 
   it("should be cancelled if the user falls asleep mid-turn", async () => {

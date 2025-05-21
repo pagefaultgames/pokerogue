@@ -342,6 +342,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public luck: number;
   public pauseEvolutions: boolean;
   public pokerus: boolean;
+  /** Whether this Pokemon is currently attempting to switch in. */
   public switchOutStatus = false;
   public evoCounter: number;
   public teraType: PokemonType;
@@ -1335,7 +1336,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @see {@linkcode SubstituteTag}
    * @see {@linkcode getFieldPositionOffset}
    */
-  getSubstituteOffset(): [number, number] {
+  getSubstituteOffset(): [x: number, y: number] {
     return this.isPlayer() ? [-30, 10] : [30, -10];
   }
 
@@ -4733,13 +4734,15 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * Given the damage, adds a new DamagePhase and update HP values, etc.
    *
    * Checks for 'Indirect' HitResults to account for Endure/Reviver Seed applying correctly
-   * @param damage integer - passed to damage()
-   * @param result an enum if it's super effective, not very, etc.
-   * @param isCritical boolean if move is a critical hit
-   * @param ignoreSegments boolean, passed to damage() and not used currently
-   * @param preventEndure boolean, ignore endure properties of pokemon, passed to damage()
-   * @param ignoreFaintPhase boolean to ignore adding a FaintPhase, passsed to damage()
-   * @returns integer of damage done
+   * @param damage - Amount of damage to deal
+   * @param result - The {@linkcode HitResult} of the damage instance; default `HitResult.EFFECTIVE`
+   * @param isCritical - Whether the move being used (if any) was a critical hit; default `false`
+   * @param ignoreSegments - Whether to ignore boss segments; default `false` and currently unused
+   * @param preventEndure - Whether to ignore {@linkcode Moves.ENDURE} and similar effects when applying damage; default `false`
+   * @param ignoreFaintPhase - Whether to ignore adding a faint phase if the damage causes the target to faint; default `false`
+   * @returns The amount of damage actually dealt.
+   * @remarks
+   * This will not trigger "on damage" effects for direct damage moves, instead occuring at the end of `MoveEffectPhase`.
    */
   damageAndUpdate(damage: number,
     {
@@ -4747,53 +4750,54 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       isCritical = false,
       ignoreSegments = false,
       ignoreFaintPhase = false,
-      source = undefined,
     }:
     {
       result?: DamageResult,
       isCritical?: boolean,
       ignoreSegments?: boolean,
       ignoreFaintPhase?: boolean,
-      source?: Pokemon,
     } = {}
   ): number {
     const isIndirectDamage = [ HitResult.INDIRECT, HitResult.INDIRECT_KO ].includes(result);
     const damagePhase = new DamageAnimPhase(
       this.getBattlerIndex(),
       damage,
-      result as DamageResult,
+      result,
       isCritical
     );
     globalScene.unshiftPhase(damagePhase);
-    if (this.switchOutStatus && source) {
+
+    // Prevent enemies not on field from taking damage.
+    // TODO: Review if wimp out actually needs this anymore
+    if (this.switchOutStatus) {
       damage = 0;
     }
+
     damage = this.damage(
       damage,
       ignoreSegments,
       isIndirectDamage,
       ignoreFaintPhase,
     );
+
     // Ensure the battle-info bar's HP is updated, though only if the battle info is visible
     // TODO: When battle-info UI is refactored, make this only update the HP bar
     if (this.battleInfo.visible) {
       this.updateInfo();
     }
+
     // Damage amount may have changed, but needed to be queued before calling damage function
     damagePhase.updateAmount(damage);
-    /**
-     * Run PostDamageAbAttr from any source of damage that is not from a multi-hit
-     * Multi-hits are handled in move-effect-phase.ts for PostDamageAbAttr
-     */
-    if (!source || source.turnData.hitCount <= 1) {
+
+    // Trigger PostDamageAbAttr (ie wimp out) for indirect, non-confusion damage instances.
+    // We leave `source` as undefined for indirect hits to specify that the damage instance is indirect.
+    if (isIndirectDamage && result !== HitResult.CONFUSION) {
       applyPostDamageAbAttrs(
         PostDamageAbAttr,
         this,
         damage,
-        this.hasPassive(),
         false,
-        [],
-        source,
+        undefined
       );
     }
     return damage;
@@ -5015,6 +5019,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     for (const tag of source.summonData.tags) {
+      // Skip non-Baton Passable tags (or telekinesis for mega gengar; cf. https://bulbapedia.bulbagarden.net/wiki/Telekinesis_(move))
       if (
         !tag.isBatonPassable ||
         (tag.tagType === BattlerTagType.TELEKINESIS &&
@@ -5744,8 +5749,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Reset this Pokemon's {@linkcode PokemonSummonData | SummonData} and {@linkcode PokemonTempSummonData | TempSummonData}
    * in preparation for switching pokemon, as well as removing any relevant on-switch tags.
+   * @remarks
+   * This **SHOULD NOT** be called when {@linkcode leaveField} is already being called,
+   * which already calls this function.
    */
   resetSummonData(): void {
+    console.log(`resetSummonData called on Pokemon ${this.name}`)
     const illusion: IllusionData | null = this.summonData.illusion;
     if (this.summonData.speciesForm) {
       this.summonData.speciesForm = null;
@@ -5753,7 +5762,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
     this.summonData = new PokemonSummonData();
     this.tempSummonData = new PokemonTempSummonData();
-    this.summonData.illusion = illusion
+    this.summonData.illusion = illusion;
     this.updateInfo();
   }
 
@@ -5790,6 +5799,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   resetTurnData(): void {
+    console.log(`resetTurnData called on Pokemon ${this.name}`)
     this.turnData = new PokemonTurnData();
   }
 
@@ -6296,23 +6306,27 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Causes a Pokemon to leave the field (such as in preparation for a switch out/escape).
-   * @param clearEffects Indicates if effects should be cleared (true) or passed
-   * to the next pokemon, such as during a baton pass (false)
-   * @param hideInfo Indicates if this should also play the animation to hide the Pokemon's
-   * info container.
+   * Cause this {@linkcode Pokemon} to leave the field (such as in preparation for a switch out/escape).
+   * @param clearEffects - Whether to clear (`true`) or transfer (`false`) transient effects upon switching; default `true`
+   * @param hideInfo - Whether to play the animation to hide the Pokemon's info container; default `true`.
+   * @param destroy - Whether to destroy this Pokemon once it leaves the field; default `false`
+   * @remarks
+   * This **SHOULD NOT** be called with `clearEffects=true` when a `SummonPhase` or `SwitchSummonPhase` is already being added,
+   * both of which do so already and can lead to premature resetting of {@linkcode turnData} and {@linkcode summonData}.
    */
+  // TODO: Review where this is being called and where it is necessary to call it
   leaveField(clearEffects = true, hideInfo = true, destroy = false) {
+    console.log(`leaveField called on Pokemon ${this.name}`)
     this.resetSprite();
-    this.resetTurnData();
     globalScene
-      .getField(true)
-      .filter(p => p !== this)
+    .getField(true)
+    .filter(p => p !== this)
       .forEach(p => p.removeTagsBySourceId(this.id));
 
     if (clearEffects) {
       this.destroySubstitute();
       this.resetSummonData();
+      this.resetTurnData();
     }
     if (hideInfo) {
       this.hideInfo();
@@ -7946,8 +7960,21 @@ export class PokemonTurnData {
    * - `0` = Move is finished
    */
   public hitsLeft = -1;
-  public totalDamageDealt = 0;
+  /**
+   * The final amount of damage dealt by this Pokemon's last attack against each of its targets,
+   * mapped by their respective `BattlerIndex`es.
+   * Reset to an empty array upon attempting to use a move,
+   * and is used to calculate various damage-related effects (Shell Bell, U-Turn + Wimp Out interactions, etc.).
+   */
+  public lastMoveDamageDealt: number[] = [];
+  /**
+   * The amount of damage dealt by this Pokemon's last hit.
+   * Used to calculate recoil damage amounts.
+   * TODO: Merge with `lastMoveDamageDealt` if any spread recoil moves are added
+   */
   public singleHitDamageDealt = 0;
+  // TODO: Make this into a "damage taken last" counter for metal burst and co.
+  // This is currently ONLY USED FOR ASSURANCE
   public damageTaken = 0;
   public attacksReceived: AttackMoveResult[] = [];
   public order: number;
@@ -7955,6 +7982,7 @@ export class PokemonTurnData {
   public statStagesDecreased = false;
   public moveEffectiveness: TypeDamageMultiplier | null = null;
   public combiningPledge?: Moves;
+  /** Whether the pokemon was sent into battle during this turn; used for {@linkcode Abilities.STAKEOUT} and {@linkcode Abilities.SPEED_BOOST}. */
   public switchedInThisTurn = false;
   public failedRunAway = false;
   public joinedRound = false;
@@ -7996,7 +8024,7 @@ export enum HitResult {
   FAIL,
   MISS,
   INDIRECT,
-  IMMUNE,
+  IMMUNE, // TODO: Why is this used exclusively for sheer cold?
   CONFUSION,
   INDIRECT_KO,
 }

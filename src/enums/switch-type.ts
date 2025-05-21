@@ -14,3 +14,5 @@ export enum SwitchType {
   /** Force switchout to a random party member */
   FORCE_SWITCH,
 }
+
+export type NormalSwitchType = Exclude<SwitchType, SwitchType.INITIAL_SWITCH>

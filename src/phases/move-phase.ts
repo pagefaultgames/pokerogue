@@ -160,6 +160,8 @@ export class MovePhase extends BattlePhase {
     }
 
     this.pokemon.turnData.acted = true;
+    // TODO: Increase this if triple battles are added
+    this.pokemon.turnData.lastMoveDamageDealt = Array(4).fill(0);
 
     // Reset hit-related turn data when starting follow-up moves (e.g. Metronomed moves, Dancer repeats)
     if (this.followUp) {

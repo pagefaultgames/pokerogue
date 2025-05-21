@@ -751,10 +751,16 @@ export class ConfusedTag extends BattlerTag {
     );
   }
 
+  /**
+   * Tick down this Pokemon's confusion duration, randomly interrupting its move if not cured/
+   * @param pokemon - The {@linkcode Pokemon} with this tag
+   * @param lapseType - The {@linkcode BattlerTagLapseType | lapse type} triggering this tag's effects.
+   * @returns Whether the tag should be kept.
+   */
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
-    const shouldLapse = lapseType !== BattlerTagLapseType.CUSTOM && super.lapse(pokemon, lapseType);
+    const shouldRemain = super.lapse(pokemon, lapseType);
 
-    if (!shouldLapse) {
+    if (!shouldRemain) {
       return false;
     }
 
@@ -766,7 +772,9 @@ export class ConfusedTag extends BattlerTag {
     globalScene.unshiftPhase(new CommonAnimPhase(pokemon.getBattlerIndex(), undefined, CommonAnim.CONFUSION));
 
     // 1/3 chance of hitting self with a 40 base power move
-    if (pokemon.randBattleSeedInt(3) === 0 || Overrides.CONFUSION_ACTIVATION_OVERRIDE === true) {
+    const shouldInterruptMove = Overrides.CONFUSION_ACTIVATION_OVERRIDE ?? pokemon.randBattleSeedInt(3) === 0;
+    if (shouldInterruptMove) {
+      // TODO: Are these calculations correct? We really shouldn't hardcode the damage formula here...
       const atk = pokemon.getEffectiveStat(Stat.ATK);
       const def = pokemon.getEffectiveStat(Stat.DEF);
       const damage = toDmgValue(
