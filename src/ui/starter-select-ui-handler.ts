@@ -139,7 +139,6 @@ const languageSettings: { [key: string]: LanguageSetting } = {
   zh: {
     starterInfoTextSize: "56px",
     instructionTextSize: "36px",
-    starterInfoYOffset: 0,
     starterInfoXPos: 26,
   },
   ko: {
