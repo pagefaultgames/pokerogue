@@ -54,6 +54,7 @@ describe("Moves - Metronome", () => {
 
   it("should become semi-invulnerable when using phasing moves", async () => {
     vi.spyOn(randomMoveAttr, "getMove").mockReturnValue(Moves.DIVE);
+    game.override.enemyAbility(Abilities.STURDY);
     await game.classicMode.startBattle([Species.REGIELEKI]);
 
     const player = game.scene.getPlayerPokemon()!;
