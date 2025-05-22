@@ -8,11 +8,11 @@ export type SignatureSpecies = {
  * The signature species for each Gym Leader, Elite Four member, and Champion.
  * The key is the trainer type, and the value is an array of Species or Species arrays.
  * This is in a separate const so it can be accessed from other places and not just the trainerConfigs
- * 
+ *
  * @remarks
- * The `Proxy` object allows us to define a handler that will intercept 
+ * The `Proxy` object allows us to define a handler that will intercept
  * the property access and return an empty array if the property does not exist in the object.
- * 
+ *
  * This means that accessing `signatureSpecies` will not throw an error if the property does not exist,
  * but instead default to an empty array.
  */
