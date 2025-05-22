@@ -63,6 +63,8 @@ import { UnlockPhase } from "#app/phases/unlock-phase";
 import { PostGameOverPhase } from "#app/phases/post-game-over-phase";
 import { RevivalBlessingPhase } from "#app/phases/revival-blessing-phase";
 
+import type { PhaseClass, PhaseString } from "#app/@types/phase-types";
+
 export interface PromptHandler {
   phaseTarget?: string;
   mode?: UiMode;
@@ -70,126 +72,6 @@ export interface PromptHandler {
   expireFn?: () => void;
   awaitingActionInput?: boolean;
 }
-
-type PhaseClass =
-  | typeof LoginPhase
-  | typeof TitlePhase
-  | typeof SelectGenderPhase
-  | typeof NewBiomeEncounterPhase
-  | typeof SelectStarterPhase
-  | typeof PostSummonPhase
-  | typeof SummonPhase
-  | typeof ToggleDoublePositionPhase
-  | typeof CheckSwitchPhase
-  | typeof ShowAbilityPhase
-  | typeof MessagePhase
-  | typeof TurnInitPhase
-  | typeof CommandPhase
-  | typeof EnemyCommandPhase
-  | typeof TurnStartPhase
-  | typeof MovePhase
-  | typeof MoveEffectPhase
-  | typeof DamageAnimPhase
-  | typeof FaintPhase
-  | typeof BerryPhase
-  | typeof TurnEndPhase
-  | typeof BattleEndPhase
-  | typeof EggLapsePhase
-  | typeof SelectModifierPhase
-  | typeof NextEncounterPhase
-  | typeof NewBattlePhase
-  | typeof VictoryPhase
-  | typeof LearnMovePhase
-  | typeof MoveEndPhase
-  | typeof StatStageChangePhase
-  | typeof ShinySparklePhase
-  | typeof SelectTargetPhase
-  | typeof UnavailablePhase
-  | typeof QuietFormChangePhase
-  | typeof SwitchPhase
-  | typeof SwitchSummonPhase
-  | typeof PartyHealPhase
-  | typeof FormChangePhase
-  | typeof EvolutionPhase
-  | typeof EndEvolutionPhase
-  | typeof LevelCapPhase
-  | typeof AttemptRunPhase
-  | typeof SelectBiomePhase
-  | typeof MysteryEncounterPhase
-  | typeof MysteryEncounterOptionSelectedPhase
-  | typeof MysteryEncounterBattlePhase
-  | typeof MysteryEncounterRewardsPhase
-  | typeof PostMysteryEncounterPhase
-  | typeof RibbonModifierRewardPhase
-  | typeof GameOverModifierRewardPhase
-  | typeof ModifierRewardPhase
-  | typeof PartyExpPhase
-  | typeof ExpPhase
-  | typeof EncounterPhase
-  | typeof GameOverPhase
-  | typeof UnlockPhase
-  | typeof PostGameOverPhase
-  | typeof RevivalBlessingPhase;
-
-type PhaseString =
-  | "LoginPhase"
-  | "TitlePhase"
-  | "SelectGenderPhase"
-  | "NewBiomeEncounterPhase"
-  | "SelectStarterPhase"
-  | "PostSummonPhase"
-  | "SummonPhase"
-  | "ToggleDoublePositionPhase"
-  | "CheckSwitchPhase"
-  | "ShowAbilityPhase"
-  | "MessagePhase"
-  | "TurnInitPhase"
-  | "CommandPhase"
-  | "EnemyCommandPhase"
-  | "TurnStartPhase"
-  | "MovePhase"
-  | "MoveEffectPhase"
-  | "DamageAnimPhase"
-  | "FaintPhase"
-  | "BerryPhase"
-  | "TurnEndPhase"
-  | "BattleEndPhase"
-  | "EggLapsePhase"
-  | "SelectModifierPhase"
-  | "NextEncounterPhase"
-  | "NewBattlePhase"
-  | "VictoryPhase"
-  | "LearnMovePhase"
-  | "MoveEndPhase"
-  | "StatStageChangePhase"
-  | "ShinySparklePhase"
-  | "SelectTargetPhase"
-  | "UnavailablePhase"
-  | "QuietFormChangePhase"
-  | "SwitchPhase"
-  | "SwitchSummonPhase"
-  | "PartyHealPhase"
-  | "FormChangePhase"
-  | "EvolutionPhase"
-  | "EndEvolutionPhase"
-  | "LevelCapPhase"
-  | "AttemptRunPhase"
-  | "SelectBiomePhase"
-  | "MysteryEncounterPhase"
-  | "MysteryEncounterOptionSelectedPhase"
-  | "MysteryEncounterBattlePhase"
-  | "MysteryEncounterRewardsPhase"
-  | "PostMysteryEncounterPhase"
-  | "RibbonModifierRewardPhase"
-  | "GameOverModifierRewardPhase"
-  | "ModifierRewardPhase"
-  | "PartyExpPhase"
-  | "ExpPhase"
-  | "EncounterPhase"
-  | "GameOverPhase"
-  | "UnlockPhase"
-  | "PostGameOverPhase"
-  | "RevivalBlessingPhase";
 
 type PhaseInterceptorPhase = PhaseClass | PhaseString;
 
