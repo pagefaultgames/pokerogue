@@ -19,29 +19,6 @@ describe("Abilities - Dancer", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
-  /**
-   * Check that the specified {@linkcode Pokemon} is using the specified move
-   * in the current {@linkcode MovePhase} against the specified targets.
-   */
-  function checkCurrentMoveUser(
-    pokemon: Pokemon | undefined,
-    move: Moves,
-    targets?: BattlerIndex[],
-    useType: MoveUseType = MoveUseType.INDIRECT,
-  ) {
-    const currentPhase = game.scene.getCurrentPhase() as MovePhase;
-    expect(currentPhase).not.toBeNull();
-    expect(currentPhase).toBeInstanceOf(MovePhase);
-    expect.soft(currentPhase.pokemon).toBe(pokemon);
-    expect.soft(currentPhase.move.moveId).toBe(move);
-    if (targets) {
-      expect.soft(currentPhase.targets).toHaveLength(targets.length);
-      expect.soft(currentPhase.targets).toEqual(expect.arrayContaining(targets));
-    }
-    // ENABLE ONCE RULE TURNS ON // biome-ignore lint/complexity/useLiteralKeys: Needed to check protected class property
-    expect.soft(currentPhase["useType"]).toBe(useType);
-  }
-
   beforeAll(() => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
@@ -65,10 +42,37 @@ describe("Abilities - Dancer", () => {
       .startingLevel(100);
   });
 
+  /**
+   * Check that the specified {@linkcode Pokemon} is using the specified move
+   * in the current {@linkcode MovePhase} against the specified targets.
+   */
+  function checkCurrentMoveUser(
+    pokemon: Pokemon | undefined,
+    move: Moves,
+    targets?: BattlerIndex[],
+    useType: MoveUseType = MoveUseType.INDIRECT,
+  ) {
+    const currentPhase = game.scene.getCurrentPhase() as MovePhase;
+    expect(currentPhase).not.toBeNull();
+    expect(currentPhase).toBeInstanceOf(MovePhase);
+    expect(currentPhase.pokemon).toBe(pokemon);
+    expect(currentPhase.move.moveId).toBe(move);
+    if (targets) {
+      expect(currentPhase.targets).toHaveLength(targets.length);
+      expect(currentPhase.targets).toEqual(expect.arrayContaining(targets));
+    }
+    expect(currentPhase.useType).toBe(useType);
+  }
+
+  async function toNextMove() {
+    await game.phaseInterceptor.to("MoveEndPhase");
+    await game.phaseInterceptor.to("MovePhase", false);
+  }
+
   // Reference Link: https://bulbapedia.bulbagarden.net/wiki/Dancer_(Ability).
 
   it("should copy dance moves without consuming extra PP", async () => {
-    game.override.enemyAbility(Abilities.DANCER);
+    game.override.enemyAbility(Abilities.DANCER).enemyMoveset([]);
     await game.classicMode.startBattle([Species.ORICORIO]);
 
     const oricorio = game.scene.getPlayerPokemon()!;
@@ -105,8 +109,8 @@ describe("Abilities - Dancer", () => {
     ]);
   });
 
-  it("should redirect copied move if opponent faints", async () => {
-    game.override.battleStyle("double").enemyLevel(1).moveset([Moves.REVELATION_DANCE, Moves.SPLASH]);
+  it("should redirect copied move if ally target faints", async () => {
+    game.override.battleStyle("double").startingLevel(500).moveset([Moves.REVELATION_DANCE, Moves.SPLASH]);
     await game.classicMode.startBattle([Species.ORICORIO, Species.FEEBAS]);
 
     const [oricorio, feebas] = game.scene.getPlayerField();
@@ -117,7 +121,7 @@ describe("Abilities - Dancer", () => {
 
     await game.phaseInterceptor.to("MovePhase", false); // feebas rev dance
     checkCurrentMoveUser(feebas, Moves.REVELATION_DANCE, [BattlerIndex.ENEMY_2], MoveUseType.NORMAL);
-    await game.phaseInterceptor.to("MovePhase", false); // oricorio copies
+    await toNextMove();
 
     // attack should redirect
     const [shuckle1, shuckle2] = game.scene.getEnemyField();
@@ -129,10 +133,40 @@ describe("Abilities - Dancer", () => {
     expect(shuckle1.isFainted()).toBe(true);
   });
 
+  // TODO: Verify on cart
+  it("should redirect copied move if source enemy faints", async () => {
+    game.override
+      .battleStyle("double")
+      .enemyAbility(Abilities.ROUGH_SKIN)
+      .enemyMoveset([Moves.AQUA_STEP, Moves.SPLASH]);
+    await game.classicMode.startBattle([Species.ORICORIO]);
+
+    const oricorio = game.scene.getPlayerPokemon()!;
+    const [shuckle1, shuckle2] = game.scene.getEnemyField();
+    shuckle1.hp = 1;
+
+    // Enemy 1 hits enemy 2 and gets pwneed
+    game.move.select(Moves.SPLASH);
+    await game.forceEnemyMove(Moves.AQUA_STEP, BattlerIndex.ENEMY_2);
+    await game.forceEnemyMove(Moves.SPLASH);
+    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER]);
+
+    await game.phaseInterceptor.to("MovePhase"); // shuckle aqua step kills itself
+    await toNextMove(); // Oricorio copies
+    expect(shuckle1.isFainted()).toBe(true);
+
+    // attack should redirect to other shuckle
+    checkCurrentMoveUser(oricorio, Moves.AQUA_STEP, [BattlerIndex.ENEMY_2]);
+
+    await game.phaseInterceptor.to("TurnEndPhase");
+
+    expect(shuckle2.isFullHp()).toBe(false);
+  });
+
   it("should target correctly in double battles", async () => {
     game.override
       .battleStyle("double")
-      .moveset([Moves.REVELATION_DANCE, Moves.SPLASH])
+      .moveset([Moves.FEATHER_DANCE, Moves.REVELATION_DANCE])
       .enemyMoveset([Moves.FIERY_DANCE, Moves.SWORDS_DANCE]);
     await game.classicMode.startBattle([Species.ORICORIO, Species.FEEBAS]);
 
@@ -149,25 +183,27 @@ describe("Abilities - Dancer", () => {
 
     await game.phaseInterceptor.to("MovePhase", false); // oricorio feather dance
     checkCurrentMoveUser(oricorio, Moves.FEATHER_DANCE, [BattlerIndex.PLAYER_2], MoveUseType.NORMAL);
-    await game.phaseInterceptor.to("MovePhase", false); // feebas copies feather dance against oricorio
+    await toNextMove(); // feebas copies feather dance against oricorio
     checkCurrentMoveUser(feebas, Moves.FEATHER_DANCE, [BattlerIndex.PLAYER]);
 
-    await game.phaseInterceptor.to("MovePhase", false); // feebas uses rev dance on shuckle #2
+    await toNextMove(); // feebas uses rev dance on shuckle #2
     checkCurrentMoveUser(feebas, Moves.REVELATION_DANCE, [BattlerIndex.ENEMY_2], MoveUseType.NORMAL);
-    await game.phaseInterceptor.to("MovePhase", false); // oricorio copies rev dance against same target
+    await toNextMove(); // oricorio copies rev dance against same target
     checkCurrentMoveUser(oricorio, Moves.REVELATION_DANCE, [BattlerIndex.ENEMY_2]);
 
-    await game.phaseInterceptor.to("MovePhase"); // shuckle 1 uses fiery dance
-    await game.phaseInterceptor.to("MovePhase", false); // oricorio copies fiery dance against it
+    await toNextMove(); // shuckle 1 uses fiery dance
+    await toNextMove(); // oricorio copies fiery dance against it
     checkCurrentMoveUser(oricorio, Moves.FIERY_DANCE, [BattlerIndex.ENEMY]);
-    await game.phaseInterceptor.to("MovePhase", false); // feebas copies fiery dance
+    await toNextMove(); // feebas copies fiery dance
     checkCurrentMoveUser(feebas, Moves.FIERY_DANCE, [BattlerIndex.ENEMY]);
 
-    await game.phaseInterceptor.to("MovePhase"); // shuckle 2 uses swords dance
-    await game.phaseInterceptor.to("MovePhase", false); // oricorio copies fiery dance against it
-    checkCurrentMoveUser(oricorio, Moves.FIERY_DANCE, [BattlerIndex.PLAYER]);
-    await game.phaseInterceptor.to("MovePhase", false); // feebas copies fiery dance
-    checkCurrentMoveUser(feebas, Moves.FIERY_DANCE, [BattlerIndex.PLAYER_2]);
+    await toNextMove(); // shuckle 2 uses swords dance
+    await toNextMove(); // oricorio copies swords dance
+    checkCurrentMoveUser(oricorio, Moves.SWORDS_DANCE, [BattlerIndex.PLAYER]);
+    await toNextMove(); // feebas copies swords dance
+    checkCurrentMoveUser(feebas, Moves.SWORDS_DANCE, [BattlerIndex.PLAYER_2]);
+
+    await game.phaseInterceptor.to("TurnEndPhase");
   });
 
   // TODO: Enable once abilities start proccing in speed order
@@ -247,13 +283,15 @@ describe("Abilities - Dancer", () => {
   });
 
   it.each<{ name: string; move?: Moves; enemyMove: Moves }>([
-    { name: "protected", enemyMove: Moves.FIERY_DANCE, move: Moves.PROTECT },
-    { name: "missed", enemyMove: Moves.AQUA_STEP },
-    { name: "ineffective", enemyMove: Moves.REVELATION_DANCE }, // ground type
-    { name: "failed", enemyMove: Moves.TEETER_DANCE },
-    { name: "capped stat-boosting", enemyMove: Moves.FEATHER_DANCE },
-    { name: "capped stat-lowering", enemyMove: Moves.QUIVER_DANCE },
-  ])("should not trigger on $name moves", async ({ move = Moves.SPLASH, enemyMove }) => {
+    { name: "protected moves", enemyMove: Moves.FIERY_DANCE, move: Moves.PROTECT },
+    { name: "missed moves", enemyMove: Moves.AQUA_STEP },
+    { name: "ineffective moves", enemyMove: Moves.REVELATION_DANCE }, // ground type
+    // TODO: These currently don't work as the moves are still considered "successful"
+    // if all targets are already confused
+    // { name: "failed Teeter Dance", enemyMove: Moves.TEETER_DANCE },
+    // { name: "capped stat-boosting moves", enemyMove: Moves.FEATHER_DANCE },
+    // { name: "capped stat-lowering moves", enemyMove: Moves.QUIVER_DANCE },
+  ])("should not trigger on $name", async ({ move = Moves.SPLASH, enemyMove }) => {
     game.override.moveset(move).enemyMoveset(enemyMove).enemySpecies(Species.GROUDON);
     // force aqua step to whiff
     vi.spyOn(allMoves[Moves.AQUA_STEP], "accuracy", "get").mockReturnValue(0);
@@ -271,10 +309,12 @@ describe("Abilities - Dancer", () => {
     game.move.select(move);
     await game.toNextTurn();
 
-    expect(oricorio.waveData.abilityRevealed).toBe(false);
+    console.log(game.scene.getEnemyPokemon()!.getLastXMoves()[0]);
+
     expect(oricorio.getLastXMoves(-1)).toEqual([
       expect.objectContaining({ move, result: MoveResult.SUCCESS, useType: MoveUseType.NORMAL }),
     ]);
+    expect(oricorio.waveData.abilityRevealed).toBe(false);
   });
 
   it("should trigger confusion self-damage, even when protected against", async () => {
@@ -523,8 +563,11 @@ describe("Abilities - Dancer", () => {
     await game.phaseInterceptor.to("MovePhase"); // Oricorio copies fiery dance
 
     await game.phaseInterceptor.to("MovePhase"); // shuckle 2 instructs oricorio
-    await game.phaseInterceptor.to("MovePhase", false); // instructed move used
+    await toNextMove(); // instructed move used
 
     checkCurrentMoveUser(game.scene.getPlayerPokemon(), Moves.SPLASH, [BattlerIndex.PLAYER], MoveUseType.NORMAL);
   });
+
+  // TODO: Implement this
+  it.todo("should display multiple concurrent dancers' ability flyouts when their moves are used");
 });

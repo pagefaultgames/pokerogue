@@ -4452,7 +4452,7 @@ export class PostDancingMoveAbAttr extends PostMoveUsedAbAttr {
 
   /**
    * Check whether this ability can be applied after a move is used.
-   * @param pokemon - The {@linkcode Pokemon} with the ability
+   * @param dancer - The {@linkcode Pokemon} with the ability
    * @param move - The {@linkcode Move} having been used
    * @param source - The {@linkcode Pokemon} who used the move
    * @param targets - Array of {@linkcode BattlerIndex}es containing Pokemon targeted by move.
@@ -4463,7 +4463,7 @@ export class PostDancingMoveAbAttr extends PostMoveUsedAbAttr {
    * @see {@linkcode applyPostMoveUsed}
   */
   canApplyPostMoveUsed(
-    pokemon: Pokemon,
+    dancer: Pokemon,
     move: Move,
     source: Pokemon,
     targets: BattlerIndex[],
@@ -4479,9 +4479,9 @@ export class PostDancingMoveAbAttr extends PostMoveUsedAbAttr {
       BattlerTagType.HIDDEN,
     ]);
 
-    return super.canApplyPostMoveUsed(pokemon, move, source, targets, hitResults, simulated, args)
+    return super.canApplyPostMoveUsed(dancer, move, source, targets, hitResults, simulated, args)
       && move.hasFlag(MoveFlags.DANCE_MOVE) // move is dance move
-      && !pokemon.summonData.tags.some(tag => forbiddenTags.has(tag.tagType)); // user able to perform attack
+      && !dancer.summonData.tags.some(tag => forbiddenTags.has(tag.tagType)); // user able to perform attack
   }
 
   /**
@@ -4490,9 +4490,9 @@ export class PostDancingMoveAbAttr extends PostMoveUsedAbAttr {
    * @param dancer - The {@linkcode Pokemon} with Dancer
    * @param move - The {@linkcode Move} having been used
    * @param source - The {@linkcode Pokemon} who used the move
-   * @param targets - Array of {@linkcode BattlerIndex}es containing Pokemon targeted by move
-   * @param hitResults - N/A
-   * @param simulated - Whether the ability call is simulated (which should never happen fwiw)
+   * @param targets - Array of {@linkcode BattlerIndex}es containing Pokemon targeted by original move
+   * @param _hitResults - N/A
+   * @param _simulated - Whether the ability call is simulated
    * @param _args - N/A
    */
   override applyPostMoveUsed(
@@ -4501,24 +4501,14 @@ export class PostDancingMoveAbAttr extends PostMoveUsedAbAttr {
     source: Pokemon,
     targets: BattlerIndex[],
     _hitResults: HitCheckEntry[],
-    simulated: boolean,
+    _simulated: boolean,
     _args: any[],
   ): void {
-    if (simulated) {
-      return;
-    }
-
-    // Self-targeted status moves (Swords Dance & co.) are replicated on the user;
-    // all other moves target the source of the dance (or the move's prior target if allied)
-    const moveTargets: BattlerIndex[] =
-      move instanceof AttackMove || move instanceof StatusMove
-      ? this.getTarget(dancer, source, targets)
-      : [ dancer.getBattlerIndex() ];
 
     dancer.turnData.extraTurns++;
-    // Append to phase is used here to ensure multiple dancers proc in successive order _without_ interrupting one another
-    // or ignoring abilities when they shouldn't
-    globalScene.appendToPhase(new MovePhase(dancer, moveTargets, new PokemonMove(move.id), MoveUseType.INDIRECT), MoveEndPhase);
+    // appendToPhase is used here to ensure multiple dancers proc in successive order
+    // _without_ interrupting one another
+    globalScene.appendToPhase(new MovePhase(dancer, this.getMoveTargets(dancer, source, move, targets), new PokemonMove(move.id), MoveUseType.INDIRECT), MoveEndPhase);
   }
 
   /**
@@ -4526,13 +4516,42 @@ export class PostDancingMoveAbAttr extends PostMoveUsedAbAttr {
    *
    * @param dancer - The {@linkcode Pokemon} with Dancer
    * @param source - The {@linkcode Pokemon} that used the dancing move
-   * @param targets - Array of {@linkcode BattlerIndex}es containing targets of copied move
+   * @param move - The {@linkcode Move} being used
+   * @param targets - Array of {@linkcode BattlerIndex}es containing original targets of copied move
    */
-  getTarget(dancer: Pokemon, source: Pokemon, targets: BattlerIndex[]) : BattlerIndex[] {
-    // TODO: Check dancer targeting if the ally KOs their original target
-    return dancer.isPlayer() === source.isPlayer()
-      ? targets // moves copied from allies will attack the ally's prior target
-      : [ source.getBattlerIndex() ];
+  getMoveTargets(dancer: Pokemon, source: Pokemon, move: Move, targets: BattlerIndex[]): BattlerIndex[] {
+    // TODO: uncomment if multi target dance moves are ever added
+    // if (move.isMultiTarget()) {
+    //   return getMoveTargets(dancer, move.id).targets
+    // }
+
+    // Self-targeted status moves (Swords Dance & co.) are replicated on the user.
+    if (move instanceof SelfStatusMove) {
+      return [ dancer.getBattlerIndex() ]
+    }
+
+    // Attack moves are unleashed on the source of the dance UNLESS they are an ally attacking an enemy
+    // (in which case we retain the prior move's targets)
+    // TODO: What if the source has fainted?
+    if (!(dancer.isPlayer() === source.isPlayer() && !targets.includes(dancer.getBattlerIndex()))) {
+      targets = [ source.getBattlerIndex() ];
+    }
+
+    // Attempt to redirect to the prior target's partner if fainted.
+    const firstTarget = globalScene.getField()[targets[0]];
+    if (
+      globalScene.currentBattle.double
+      && firstTarget.isFainted()
+      && firstTarget !== dancer
+    ) {
+      const ally = firstTarget.getAlly();
+      if (ally?.isActive()) {
+        // ally exists, is not dead and can sponge the blast
+        return [ ally.getBattlerIndex() ];
+      }
+    }
+
+    return targets;
   }
 }
 
@@ -7238,10 +7257,10 @@ export function initAbilities() {
     new Ability(AbilityId.DANCER, 7)
       .attr(PostDancingMoveAbAttr)
       .edgeCase(),
-      /* Incorrect interations with:
-      * Petal Dance (should not lock in or count down timer; currently does both)
-      * Flinches (due to tag being removed earlier)
-      * Failed/protected moves (should not trigger if original move is protected against)
+      /*
+      * Incorrectly locks user into petal dance and ticks down its duration
+      * Incorrectly copies ineffective stat-raising/lowering moves + Teeter Dance
+      * Displays all the ability popups all at once (as opposed to when the moves are actually being used)
       */
     new Ability(AbilityId.BATTERY, 7)
       .attr(AllyMoveCategoryPowerBoostAbAttr, [ MoveCategory.SPECIAL ], 1.3),
