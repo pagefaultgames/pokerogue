@@ -115,7 +115,7 @@ describe("Moves - Chilly Reception", () => {
     );
   });
 
-  it("should not display message if called indirectly", async () => {
+  it("should succeed without message if called indirectly", async () => {
     vi.spyOn(RandomMoveAttr.prototype, "getMoveOverride").mockReturnValue(Moves.CHILLY_RECEPTION);
     await game.classicMode.startBattle([Species.SLOWKING, Species.MEOWTH]);
 
