@@ -9077,7 +9077,7 @@ export function initMoves() {
       .attr(DelayedAttackAttr, ArenaTagType.DELAYED_ATTACK, ChargeAnim.FUTURE_SIGHT_CHARGING, i18next.t("moveTriggers:foresawAnAttack", { pokemonName: "{USER}" }))
       .ignoresProtect()
       .edgeCase(),
-      // cannot be used on multiple Pokemon on the same side in a double battle, hits immediately when called by Metronome/etc, should not apply abilities or held items if user is off the field
+      // should not apply abilities or held items if user is off the field, currently triggers after Electrify tag is removed
     new AttackMove(Moves.ROCK_SMASH, PokemonType.FIGHTING, MoveCategory.PHYSICAL, 40, 100, 15, 50, 0, 2)
       .attr(StatStageChangeAttr, [ Stat.DEF ], -1),
     new AttackMove(Moves.WHIRLPOOL, PokemonType.WATER, MoveCategory.SPECIAL, 35, 85, 15, -1, 0, 2)
@@ -9416,7 +9416,7 @@ export function initMoves() {
       .attr(DelayedAttackAttr, ArenaTagType.DELAYED_ATTACK, ChargeAnim.DOOM_DESIRE_CHARGING, i18next.t("moveTriggers:choseDoomDesireAsDestiny", { pokemonName: "{USER}" }))
       .ignoresProtect()
       .edgeCase(),
-      // should not apply abilities or held items if user is off the field
+      // should not apply abilities or held items if user is off the field, currently triggers after Electrify tag is removed
     new AttackMove(Moves.PSYCHO_BOOST, PokemonType.PSYCHIC, MoveCategory.SPECIAL, 140, 90, 5, -1, 0, 3)
       .attr(StatStageChangeAttr, [ Stat.SPATK ], -2, true),
     new SelfStatusMove(Moves.ROOST, PokemonType.FLYING, -1, 5, -1, 0, 4)

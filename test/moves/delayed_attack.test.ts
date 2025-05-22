@@ -229,7 +229,8 @@ describe("Moves - Delayed Attacks", () => {
     );
   });
 
-  // TODO: ArenaTags currently proc after battler tags
+  // TODO: ArenaTags currently proc around when battler tags are removed in `TurnEndPhase`,
+  // meaning the resultant `MoveEffectPhase` no longer has Electrify applied to it
   it.todo("should consider type changes at moment of execution & ignore Lightning Rod redirection", async () => {
     game.override.battleStyle("double");
     await game.classicMode.startBattle([Species.MAGIKARP]);
