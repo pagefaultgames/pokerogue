@@ -1,7 +1,8 @@
 import type BattleScene from "#app/battle-scene";
 import { ArenaTagSide } from "#app/data/arena-tag";
 import type Move from "#app/data/moves/move";
-import { allMoves, CritOnlyAttr } from "#app/data/moves/move";
+import { CritOnlyAttr } from "#app/data/moves/move";
+import { allMoves } from "#app/data/data-lists";
 import { ArenaTagType } from "#app/enums/arena-tag-type";
 import type Pokemon from "#app/field/pokemon";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
