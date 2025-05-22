@@ -14,7 +14,7 @@ import { EvoTrackerModifier, EvoTrackerMoveUseModifier, EvoTrackerRecoilModifier
 import { SpeciesFormKey } from "#enums/species-form-key";
 import { speciesStarterCosts } from "./starters";
 import i18next from "i18next";
-import { allMoves } from "../moves/move";
+import { allMoves } from "#app/data/data-lists";
 import { getPokemonSpecies } from "../pokemon-species";
 
 
