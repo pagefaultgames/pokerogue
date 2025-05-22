@@ -1,5 +1,5 @@
 import { BattlerTagType } from "#enums/battler-tag-type";
-import { allMoves } from "#app/data/moves/move";
+import { allMoves } from "#app/data/data-lists";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";

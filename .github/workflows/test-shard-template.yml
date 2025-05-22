@@ -12,11 +12,16 @@ on:
       totalShards:
         required: true
         type: number
+      skip:
+        required: true
+        type: boolean
+        default: false
 
 jobs:
   test:
     name: Shard ${{ inputs.shard }} of ${{ inputs.totalShards }}
     runs-on: ubuntu-latest
+    if: ${{ !inputs.skip }}
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v4.2.2

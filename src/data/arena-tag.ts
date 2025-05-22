@@ -2,7 +2,7 @@ import { globalScene } from "#app/global-scene";
 import type { Arena } from "#app/field/arena";
 import { PokemonType } from "#enums/pokemon-type";
 import { BooleanHolder, NumberHolder, toDmgValue } from "#app/utils/common";
-import { allMoves } from "#app/data/moves/move";
+import { allMoves } from "./data-lists";
 import { MoveTarget } from "#enums/MoveTarget";
 import { MoveCategory } from "#enums/MoveCategory";
 import { getPokemonNameWithAffix } from "#app/messages";

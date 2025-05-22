@@ -66,7 +66,7 @@ import {
   VariableMovePowerAbAttr,
   WonderSkinAbAttr,
 } from "../abilities/ability";
-import { allAbilities } from "../data-lists";
+import { allAbilities, allMoves } from "../data-lists";
 import {
   AttackTypeBoosterModifier,
   BerryModifier,
@@ -8261,14 +8261,11 @@ export function getMoveTargets(user: Pokemon, move: Moves, replaceTarget?: MoveT
   return { targets: set.filter(p => p?.isActive(true)).map(p => p.getBattlerIndex()).filter(t => t !== undefined), multiple };
 }
 
-export const allMoves: Move[] = [
-  new SelfStatusMove(Moves.NONE, PokemonType.NORMAL, MoveCategory.STATUS, -1, -1, 0, 1),
-];
-
 export const selfStatLowerMoves: Moves[] = [];
 
 export function initMoves() {
   allMoves.push(
+    new SelfStatusMove(Moves.NONE, PokemonType.NORMAL, MoveCategory.STATUS, -1, -1, 0, 1),
     new AttackMove(Moves.POUND, PokemonType.NORMAL, MoveCategory.PHYSICAL, 40, 100, 35, -1, 0, 1),
     new AttackMove(Moves.KARATE_CHOP, PokemonType.FIGHTING, MoveCategory.PHYSICAL, 50, 100, 25, -1, 0, 1)
       .attr(HighCritAttr),
