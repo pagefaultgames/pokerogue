@@ -1,5 +1,6 @@
 import type { PostDancingMoveAbAttr } from "#app/data/abilities/ability";
 import type { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
+import type { DelayedAttackAttr } from "#app/@types/move-types";
 
 /**
  * Enum representing all the possible means through which a given move can be executed.
@@ -59,8 +60,15 @@ export const MoveUseMode = {
    * and retain the same copy prevention as {@linkcode MoveUseMode.FOLLOW_UP}, but additionally
    * **cannot be reflected by other reflecting effects**.
    */
-  REFLECTED: 5
-  // TODO: Add use type TRANSPARENT for Future Sight and Doom Desire to prevent move history pushing
+  REFLECTED: 5,
+  /**
+   * This "move" was created by a transparent effect that **does not count as using a move**,
+   * such as {@linkcode DelayedAttackAttr | Future Sight/Doom Desire}.
+   *
+   * In addition to inheriting the cancellation ignores and copy prevention from {@linkcode MoveUseMode.REFLECTED},
+   * transparent moves are ignored by **all forms of move usage checks** due to **not pushing to move history**.
+   */
+  TRANSPARENT: 6
 } as const;
 
 export type MoveUseMode = (typeof MoveUseMode)[keyof typeof MoveUseMode];

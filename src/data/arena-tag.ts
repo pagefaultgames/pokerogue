@@ -22,6 +22,14 @@ import { MoveId } from "#enums/move-id";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import { MoveUseMode } from "#enums/move-use-mode";
 
+/** biome-ignore lint/correctness/noUnusedImports: Type-only import for doc comment */
+import type { BattlerTag } from "#app/data/battler-tags";
+
+/**
+ * An {@linkcode ArenaTag} represents a semi-persistent effect that lasts one or more turns.
+ * Unlike not tied to any individual {@linkcode Pokemon}.
+ * Unlike {@linkcode BattlerTag}s (which are )
+ */
 export abstract class ArenaTag {
   constructor(
     public tagType: ArenaTagType,
@@ -852,44 +860,102 @@ class ToxicSpikesTag extends ArenaTrapTag {
 }
 
 /**
- * Arena Tag class for delayed attacks, such as {@linkcode MoveId.FUTURE_SIGHT} or {@linkcode MoveId.DOOM_DESIRE}.
- * Delays the attack's effect by a set amount of turns, usually 3 (including the turn the move is used),
- * and deals damage after the turn count is reached.
+ * Interface representing a delayed attack command.
+ * @see {@linkcode DelayedAttackTag}
+ */
+interface DelayedAttack {
+  sourceId: number;
+  move: MoveId;
+  targetIndex: BattlerIndex;
+  turnCount: number;
+}
+
+/**
+ * Arena Tag to manage execution of delayed attacks, such as {@linkcode MoveId.FUTURE_SIGHT} or {@linkcode MoveId.DOOM_DESIRE}.
+ * Delayed attacks do nothing for the first 3 turns after use (including the turn the move is used),
+ * dealing damage to the specified slot after the turn count has been elapsed.
  */
 export class DelayedAttackTag extends ArenaTag {
-  public targetIndex: BattlerIndex;
+  /** Contains all queued delayed attacks on the field */
+  private delayedAttacks: DelayedAttack[] = [];
 
-  constructor(
-    tagType: ArenaTagType,
-    sourceMove: MoveId | undefined,
-    sourceId: number,
-    targetIndex: BattlerIndex,
-    side: ArenaTagSide = ArenaTagSide.BOTH,
-  ) {
-    super(tagType, 3, sourceMove, sourceId, side);
-
-    this.targetIndex = targetIndex;
-    this.side = side;
+  constructor() {
+    super(ArenaTagType.DELAYED_ATTACK, 0);
   }
 
-  lapse(arena: Arena): boolean {
-    const ret = super.lapse(arena);
+  loadTag(source: ArenaTag | any): void {
+    super.loadTag(source);
+    this.delayedAttacks = source.delayedAttacks;
+  }
 
-    if (!ret) {
-      // TODO: This should not add to move history (for Spite)
+  /**
+   * Queue a delayed attack to be used in some indeterminate number of turns.
+   * @param source - The {@linkcode Pokemon} using the move
+   * @param move - The {@linkcode MoveId} being used
+   * @param targetIndex - The {@linkcode BattlerIndex} being targeted
+   * @param turnCount - The number of turns to delay the attack; default `3`
+   */
+  public queueAttack(source: Pokemon, move: MoveId, targetIndex: BattlerIndex, turnCount = 3): void {
+    this.delayedAttacks.push({ sourceId: source.id, move, targetIndex, turnCount });
+  }
+
+  /**
+   * Check whether a delayed attack can be queued against the given target.
+   * @param targetIndex - The {@linkcode BattlerIndex} of the target Pokemon.
+   */
+  public canAddAttack(targetIndex: BattlerIndex): boolean {
+    return this.delayedAttacks.every(atk => atk.targetIndex !== targetIndex);
+  }
+
+  /**
+   * Tick down all existing delayed attacks, activating them if they et. */
+  override lapse(_arena: Arena): boolean {
+    for (const attack of this.delayedAttacks) {
+      const source = globalScene.getPokemonById(attack.sourceId);
+      const target: Pokemon | null = globalScene.getField()[attack.targetIndex];
+
+      if (--attack.turnCount > 0) {
+        // attack still cooking
+        continue;
+      }
+
+      if (!source || !target || source === target || target.isFainted()) {
+        // source/target either not present or the exact same pokemon; silently mark for deletion
+        attack.turnCount = -1;
+        continue;
+      }
+
+      // Queue attack message and then unshift a new MoveEffectPhase for this move's attack phase.
+      globalScene.phaseManager.queueMessage(
+        i18next.t("moveTriggers:tookMoveAttack", {
+          pokemonName: getPokemonNameWithAffix(target),
+          moveName: allMoves[attack.move].name,
+        }),
+      );
+
       globalScene.phaseManager.unshiftNew(
         "MoveEffectPhase",
-        this.sourceId!,
-        [this.targetIndex],
-        allMoves[this.sourceMove!],
-        MoveUseMode.FOLLOW_UP,
-      ); // TODO: are those bangs correct?
+        attack.sourceId,
+        [attack.targetIndex],
+        allMoves[attack.move],
+        MoveUseMode.TRANSPARENT,
+      );
     }
 
-    return ret;
+    return this.removeDoneAttacks();
   }
 
-  onRemove(_arena: Arena): void {}
+  /**
+   * Remove all finished attacks from the current queue.
+   * @returns Whether at least 1 attack has not finished triggering
+   */
+  removeDoneAttacks(): boolean {
+    this.delayedAttacks = this.delayedAttacks.filter(a => a.turnCount > 0);
+    return this.delayedAttacks.length > 0;
+  }
+
+  /** Override on remove func to do nothing. */
+  override onRemove(_arena: Arena): void {}
 }
 
 /**
@@ -1481,7 +1547,6 @@ export function getArenaTag(
   turnCount: number,
   sourceMove: MoveId | undefined,
   sourceId: number,
-  targetIndex?: BattlerIndex,
   side: ArenaTagSide = ArenaTagSide.BOTH,
 ): ArenaTag | null {
   switch (tagType) {
@@ -1507,9 +1572,8 @@ export function getArenaTag(
       return new SpikesTag(sourceId, side);
     case ArenaTagType.TOXIC_SPIKES:
       return new ToxicSpikesTag(sourceId, side);
-    case ArenaTagType.FUTURE_SIGHT:
-    case ArenaTagType.DOOM_DESIRE:
-      return new DelayedAttackTag(tagType, sourceMove, sourceId, targetIndex!, side); // TODO:questionable bang
+    case ArenaTagType.DELAYED_ATTACK:
+      return new DelayedAttackTag();
     case ArenaTagType.WISH:
       return new WishTag(turnCount, sourceId, side);
     case ArenaTagType.STEALTH_ROCK:
@@ -1556,14 +1620,7 @@ export function getArenaTag(
  */
 export function loadArenaTag(source: ArenaTag | any): ArenaTag {
   const tag =
-    getArenaTag(
-      source.tagType,
-      source.turnCount,
-      source.sourceMove,
-      source.sourceId,
-      source.targetIndex,
-      source.side,
-    ) ?? new NoneTag();
+    getArenaTag(source.tagType, source.sourceId, source.sourceMove, source.turnCount, source.side) ?? new NoneTag();
   tag.loadTag(source);
   return tag;
 }

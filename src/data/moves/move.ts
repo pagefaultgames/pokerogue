@@ -30,7 +30,7 @@ import { PokemonType } from "#enums/pokemon-type";
 import { BooleanHolder, NumberHolder, isNullOrUndefined, toDmgValue, randSeedItem, randSeedInt, getEnumValues, toReadableString, type Constructor, randSeedFloat } from "#app/utils/common";
 import { WeatherType } from "#enums/weather-type";
 import type { ArenaTrapTag } from "../arena-tag";
-import { WeakenMoveTypeTag } from "../arena-tag";
+import { DelayedAttackTag, WeakenMoveTypeTag } from "../arena-tag";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import {
   applyAbAttrs,
@@ -1400,13 +1400,15 @@ export class PreMoveMessageAttr extends MoveAttr {
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const message = typeof this.message === "string"
-      ? this.message as string
+      ? this.message
       : this.message(user, target, move);
     if (message) {
       globalScene.phaseManager.queueMessage(message, 500);
       return true;
     }
-    return false;
+
+    globalScene.queueMessage(message, 500);
+    return true;
   }
 }
 
@@ -3077,52 +3079,80 @@ export class OverrideMoveEffectAttr extends MoveAttr {
    * Its sole purpose is to ensure that typescript is able to properly narrow when the `is` method is called.
    */
   declare private _: never;
-  override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+  /**
+   * Apply the move attribute to override a move effect.
+   * @param user - The {@linkcode Pokemon} using the move
+   * @param target - The {@linkcode Pokemon} targeted by the move
+   * @param move - The {@linkcode Move} being used
+   * @param args -
+   * `[0]`: A {@linkcode BooleanHolder} containing whether move effects were successfully overridden; should be set to `true` on success
+   * `[1]`: The {@linkcode MoveUseMode} dictating how this move was used.
+   * @returns `true` if the move effect was successfully overridden.
+   */
+  override apply(_user: Pokemon, _target: Pokemon, _move: Move, _args: [overridden: BooleanHolder, useMode: MoveUseMode]): boolean {
     return true;
   }
 }
 
 /**
- * Attack Move that doesn't hit the turn it is played and doesn't allow for multiple
- * uses on the same target. Examples are Future Sight or Doom Desire.
- * @extends OverrideMoveEffectAttr
- * @param tagType The {@linkcode ArenaTagType} that will be placed on the field when the move is used
- * @param chargeAnim The {@linkcode ChargeAnim | Charging Animation} used for the move
- * @param chargeText The text to display when the move is used
+ * Attribute to implement delayed attacks, such as {@linkcode MoveId.FUTURE_SIGHT} or {@linkcode MoveId.DOOM_DESIRE}.
+ * Delays the attack's effect by adding an arena tag,
+ * only  after the turn count is fully elapsed.
  */
 export class DelayedAttackAttr extends OverrideMoveEffectAttr {
-  public tagType: ArenaTagType;
   public chargeAnim: ChargeAnim;
   private chargeText: string;
 
-  constructor(tagType: ArenaTagType, chargeAnim: ChargeAnim, chargeText: string) {
+  /**
+   * @param chargeAnim - The {@linkcode ChargeAnim | charging animation} used for the move's charging phase.
+   * @param chargeKey - The `i18next` locales **key** to show when the delayed attack is used.
+   * In the displayed text, `{{pokemonName}}` and `{{targetName}}` will be populated with the user's & target's names respectively.
+   */
+  constructor(chargeAnim: ChargeAnim, chargeKey: string) {
     super();
 
-    this.tagType = tagType;
     this.chargeAnim = chargeAnim;
-    this.chargeText = chargeText;
+    this.chargeText = chargeKey;
   }
 
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    // Edge case for the move applied on a pokemon that has fainted
-    if (!target) {
+  getCondition(): MoveConditionFunc {
+    return (_user, target, _move) => {
+      // Check the arena if another delayed attack is active and hitting the same slot
+      const delayedTag = globalScene.arena.getTag(DelayedAttackTag);
+      return delayedTag?.canAddAttack(target.getBattlerIndex()) ?? true;
+    }
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: [overridden: BooleanHolder, useMode: MoveUseMode]): boolean {
+    const useMode = args[1];
+    if (useMode === MoveUseMode.TRANSPARENT) {
+      // don't trigger if already queueing an indirect attack
       return true;
     }
 
-    const overridden = args[0] as BooleanHolder;
-    const virtual = args[1] as boolean;
+    const overridden = args[0];
+    overridden.value = true;
 
-    if (!virtual) {
-      overridden.value = true;
-      globalScene.phaseManager.unshiftNew("MoveAnimPhase", new MoveChargeAnim(this.chargeAnim, move.id, user));
-      globalScene.phaseManager.queueMessage(this.chargeText.replace("{TARGET}", getPokemonNameWithAffix(target)).replace("{USER}", getPokemonNameWithAffix(user)));
-      user.pushMoveHistory({ move: move.id, targets: [ target.getBattlerIndex() ], result: MoveResult.OTHER, useMode: MoveUseMode.NORMAL });
-      const side = target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
-      globalScene.arena.addTag(this.tagType, 3, move.id, user.id, side, false, target.getBattlerIndex());
-    } else {
-      globalScene.phaseManager.queueMessage(i18next.t("moveTriggers:tookMoveAttack", { pokemonName: getPokemonNameWithAffix(globalScene.getPokemonById(target.id) ?? undefined), moveName: move.name }));
+    // Display the move animation to foresee an attack
+    globalScene.phaseManager.unshiftNew("MoveAnimPhase", new MoveChargeAnim(this.chargeAnim, move.id, user));
+    globalScene.phaseManager.queueMessage(i18next.t(this.chargeText,
+      // uncomment if any new delayed moves actually use target in the move text.
+      {pokemonName: getPokemonNameWithAffix(user)/*, targetName: getPokemonNameWithAffix(target) */}))
+
+    user.pushMoveHistory({move: move.id, targets: [target.getBattlerIndex()], result: MoveResult.OTHER, useType: useMode, turn: globalScene.currentBattle.turn})
+
+    // Add a Delayed Attack tag to the arena if it doesn't already exist and queue up an extra attack.
+    // TODO: Remove unused params once signature is tweaked to make more sense (none of these get used)
+    globalScene.arena.addTag(ArenaTagType.DELAYED_ATTACK, 123, 69, 420);
+
+    // Queue an attack on the added (or existing) tag
+    const delayedAttackTag = globalScene.arena.getTag(DelayedAttackTag)
+    if (!delayedAttackTag) {
+      console.warn("Delayed attack tag not present!")
+      return false;
     }
 
+    delayedAttackTag.queueAttack(user, move.id, target.getBattlerIndex());
     return true;
   }
 }
@@ -3142,8 +3172,8 @@ export class AwaitCombinedPledgeAttr extends OverrideMoveEffectAttr {
    * @param user the {@linkcode Pokemon} using this move
    * @param target n/a
    * @param move the {@linkcode Move} being used
-   * @param args
-   * - [0] a {@linkcode BooleanHolder} indicating whether the move's base
+   * @param args -
+   * `[0]`: A {@linkcode BooleanHolder} indicating whether the move's base
    * effects should be overridden this turn.
    * @returns `true` if base move effects were overridden; `false` otherwise
    */
@@ -9177,9 +9207,10 @@ export function initMoves() {
       .attr(StatStageChangeAttr, [ Stat.SPDEF ], -1)
       .ballBombMove(),
     new AttackMove(MoveId.FUTURE_SIGHT, PokemonType.PSYCHIC, MoveCategory.SPECIAL, 120, 100, 10, -1, 0, 2)
-      .partial() // cannot be used on multiple Pokemon on the same side in a double battle, hits immediately when called by Metronome/etc, should not apply abilities or held items if user is off the field
+      .attr(DelayedAttackAttr, ArenaTagType.DELAYED_ATTACK, ChargeAnim.FUTURE_SIGHT_CHARGING, "moveTriggers:foresawAnAttack"))
       .ignoresProtect()
-      .attr(DelayedAttackAttr, ArenaTagType.FUTURE_SIGHT, ChargeAnim.FUTURE_SIGHT_CHARGING, i18next.t("moveTriggers:foresawAnAttack", { pokemonName: "{USER}" })),
+      .edgeCase(),
+      // should not apply abilities or held items if user is off the field
     new AttackMove(MoveId.ROCK_SMASH, PokemonType.FIGHTING, MoveCategory.PHYSICAL, 40, 100, 15, 50, 0, 2)
       .attr(StatStageChangeAttr, [ Stat.DEF ], -1),
     new AttackMove(MoveId.WHIRLPOOL, PokemonType.WATER, MoveCategory.SPECIAL, 35, 85, 15, -1, 0, 2)
@@ -9515,9 +9546,10 @@ export function initMoves() {
       .attr(ConfuseAttr)
       .pulseMove(),
     new AttackMove(MoveId.DOOM_DESIRE, PokemonType.STEEL, MoveCategory.SPECIAL, 140, 100, 5, -1, 0, 3)
-      .partial() // cannot be used on multiple Pokemon on the same side in a double battle, hits immediately when called by Metronome/etc, should not apply abilities or held items if user is off the field
+      .attr(DelayedAttackAttr, ArenaTagType.DELAYED_ATTACK, ChargeAnim.DOOM_DESIRE_CHARGING, "moveTriggers:choseDoomDesireAsDestiny")
       .ignoresProtect()
-      .attr(DelayedAttackAttr, ArenaTagType.DOOM_DESIRE, ChargeAnim.DOOM_DESIRE_CHARGING, i18next.t("moveTriggers:choseDoomDesireAsDestiny", { pokemonName: "{USER}" })),
+      .edgeCase(),
+      // should not apply abilities or held items if user is off the field
     new AttackMove(MoveId.PSYCHO_BOOST, PokemonType.PSYCHIC, MoveCategory.SPECIAL, 140, 90, 5, -1, 0, 3)
       .attr(StatStageChangeAttr, [ Stat.SPATK ], -2, true),
     new SelfStatusMove(MoveId.ROOST, PokemonType.FLYING, -1, 5, -1, 0, 4)
