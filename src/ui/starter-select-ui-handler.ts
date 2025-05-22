@@ -151,8 +151,10 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     starterInfoXPos: 30,
   },
   ja: {
-    starterInfoTextSize: "51px",
+    starterInfoTextSize: "62px",
     instructionTextSize: "38px",
+    starterInfoYOffset: 0.5,
+    starterInfoXPos: 33,
   },
   "ca-ES": {
     starterInfoTextSize: "52px",
@@ -2182,7 +2184,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             if (!(passiveAttr & PassiveAttr.UNLOCKED)) {
               const passiveCost = getPassiveCandyCount(speciesStarterCosts[this.lastSpecies.speciesId]);
               options.push({
-                label: `x${passiveCost} ${i18next.t("starterSelectUiHandler:unlockPassive")} (${allAbilities[this.lastSpecies.getPassiveAbility()].name})`,
+                label: `x${passiveCost} ${i18next.t("starterSelectUiHandler:unlockPassive")}`,
                 handler: () => {
                   if (Overrides.FREE_CANDY_UPGRADE_OVERRIDE || candyCount >= passiveCost) {
                     starterData.passiveAttr |= PassiveAttr.UNLOCKED | PassiveAttr.ENABLED;
