@@ -1400,15 +1400,13 @@ export class PreMoveMessageAttr extends MoveAttr {
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const message = typeof this.message === "string"
-      ? this.message
+      ? this.message as string
       : this.message(user, target, move);
     if (message) {
       globalScene.phaseManager.queueMessage(message, 500);
       return true;
     }
-
-    globalScene.queueMessage(message, 500);
-    return true;
+    return false;
   }
 }
 
@@ -3139,7 +3137,7 @@ export class DelayedAttackAttr extends OverrideMoveEffectAttr {
       // uncomment if any new delayed moves actually use target in the move text.
       {pokemonName: getPokemonNameWithAffix(user)/*, targetName: getPokemonNameWithAffix(target) */}))
 
-    user.pushMoveHistory({move: move.id, targets: [target.getBattlerIndex()], result: MoveResult.OTHER, useType: useMode, turn: globalScene.currentBattle.turn})
+    user.pushMoveHistory({move: move.id, targets: [target.getBattlerIndex()], result: MoveResult.OTHER, useMode: useMode, turn: globalScene.currentBattle.turn})
 
     // Add a Delayed Attack tag to the arena if it doesn't already exist and queue up an extra attack.
     // TODO: Remove unused params once signature is tweaked to make more sense (none of these get used)
@@ -9207,10 +9205,13 @@ export function initMoves() {
       .attr(StatStageChangeAttr, [ Stat.SPDEF ], -1)
       .ballBombMove(),
     new AttackMove(MoveId.FUTURE_SIGHT, PokemonType.PSYCHIC, MoveCategory.SPECIAL, 120, 100, 10, -1, 0, 2)
-      .attr(DelayedAttackAttr, ArenaTagType.DELAYED_ATTACK, ChargeAnim.FUTURE_SIGHT_CHARGING, "moveTriggers:foresawAnAttack"))
+      .attr(DelayedAttackAttr, ChargeAnim.FUTURE_SIGHT_CHARGING, "moveTriggers:foresawAnAttack")
       .ignoresProtect()
+      /*
+       * Should not apply abilities or held items if user is off the field
+       * Triggered move phase occurs after Electrify tag is removed
+      */
       .edgeCase(),
-      // should not apply abilities or held items if user is off the field
     new AttackMove(MoveId.ROCK_SMASH, PokemonType.FIGHTING, MoveCategory.PHYSICAL, 40, 100, 15, 50, 0, 2)
       .attr(StatStageChangeAttr, [ Stat.DEF ], -1),
     new AttackMove(MoveId.WHIRLPOOL, PokemonType.WATER, MoveCategory.SPECIAL, 35, 85, 15, -1, 0, 2)
@@ -9546,10 +9547,13 @@ export function initMoves() {
       .attr(ConfuseAttr)
       .pulseMove(),
     new AttackMove(MoveId.DOOM_DESIRE, PokemonType.STEEL, MoveCategory.SPECIAL, 140, 100, 5, -1, 0, 3)
-      .attr(DelayedAttackAttr, ArenaTagType.DELAYED_ATTACK, ChargeAnim.DOOM_DESIRE_CHARGING, "moveTriggers:choseDoomDesireAsDestiny")
+      .attr(DelayedAttackAttr, ChargeAnim.DOOM_DESIRE_CHARGING, "moveTriggers:choseDoomDesireAsDestiny")
       .ignoresProtect()
+      /*
+       * Should not apply abilities or held items if user is off the field
+       * Triggered move phase occurs after Electrify tag is removed
+      */
       .edgeCase(),
-      // should not apply abilities or held items if user is off the field
     new AttackMove(MoveId.PSYCHO_BOOST, PokemonType.PSYCHIC, MoveCategory.SPECIAL, 140, 90, 5, -1, 0, 3)
       .attr(StatStageChangeAttr, [ Stat.SPATK ], -2, true),
     new SelfStatusMove(MoveId.ROOST, PokemonType.FLYING, -1, 5, -1, 0, 4)

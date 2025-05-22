@@ -908,7 +908,9 @@ export class DelayedAttackTag extends ArenaTag {
   }
 
   /**
-   * Tick down all existing delayed attacks, activating them if they et. */
+   * Tick down all existing delayed attacks, activating them if their timers have elapsed.
+   * @returns `true` if at least 1 delayed attack has not been completed
+   */
   override lapse(_arena: Arena): boolean {
     for (const attack of this.delayedAttacks) {
       const source = globalScene.getPokemonById(attack.sourceId);

@@ -15,7 +15,6 @@ import i18next from "i18next";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { BattleType } from "#enums/battle-type";
-import { MoveTypePowerBoostAbAttr } from "#app/data/abilities/ability";
 
 describe("Moves - Delayed Attacks", () => {
   let phaserGame: Phaser.Game;
@@ -232,7 +231,8 @@ describe("Moves - Delayed Attacks", () => {
     );
   });
 
-  // TODO: The move phase unshifting happens after Electrify has been removed
+  // TODO: ArenaTags currently proc concurrently with battler tag removal in `TurnEndPhase`,
+  // meaning the queued `MoveEffectPhase` no longer has Electrify applied to it
   it.todo("should consider type changes at moment of execution & ignore Lightning Rod redirection", async () => {
     game.override.battleStyle("double");
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);

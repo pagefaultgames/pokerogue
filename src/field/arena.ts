@@ -694,6 +694,8 @@ export class Arena {
    * @param sourceMove - The {@linkcode MoveId} of the move creating the tag, or `undefined` if not from a move.
    * @param side - The {@linkcode ArenaTagSide}(s) to which the tag should apply; default `ArenaTagSide.BOTH`.
    * @param quiet - Whether to suppress messages produced by tag addition; default `false`.
+   * @returns `true` if the tag was successfully added without overlapping.
+  // TODO: Do we need the return value here? literally nothing uses it
    */
   addTag(
     tagType: ArenaTagType,
@@ -702,7 +704,7 @@ export class Arena {
     sourceId: number,
     side: ArenaTagSide = ArenaTagSide.BOTH,
     quiet = false,
-  ): void {
+  ): boolean {
     const existingTag = this.getTagOnSide(tagType, side);
     if (existingTag) {
       existingTag.onOverlap(this, globalScene.getPokemonById(sourceId));
@@ -731,7 +733,6 @@ export class Arena {
     return true;
   }
 
-  // TODO: This should take a map of `BattlerTagType`s to
   /**
    * Attempt to get a tag from the Arena via {@linkcode getTagOnSide} that applies to both sides
    * @param tagType The {@linkcode ArenaTagType} to retrieve
