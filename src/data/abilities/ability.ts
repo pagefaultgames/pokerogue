@@ -9,7 +9,6 @@ import {
   FlinchAttr,
   OneHitKOAttr,
   HitHealAttr,
-  allMoves,
   StatusMove,
   SelfStatusMove,
   VariablePowerAttr,
@@ -19,6 +18,7 @@ import {
   FixedDamageAttr,
   CallMoveAttr,
 } from "#app/data/moves/move";
+import { allMoves } from "../data-lists";
 import { ArenaTagSide } from "#app/data/arena-tag";
 import { BerryModifier, HitHealModifier, PokemonHeldItemModifier } from "#app/modifier/modifier";
 import { TerrainType } from "#app/data/terrain";

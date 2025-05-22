@@ -26,6 +26,7 @@ import {
   PreMoveMessageAttr,
   PreUseInterruptAttr,
 } from "#app/data/moves/move";
+import { allMoves } from "#app/data/data-lists";
 import { MoveFlags } from "#enums/MoveFlags";
 import { SpeciesFormChangePreMoveTrigger } from "#app/data/pokemon-forms";
 import { getStatusEffectActivationText, getStatusEffectHealText } from "#app/data/status-effect";

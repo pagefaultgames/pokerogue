@@ -16,7 +16,6 @@ import {
   applyMoveAttrs,
   FixedDamageAttr,
   VariableAtkAttr,
-  allMoves,
   TypelessAttr,
   CritOnlyAttr,
   getMoveTargets,
@@ -41,6 +40,7 @@ import {
   VariableMoveTypeChartAttr,
   HpSplitAttr,
 } from "#app/data/moves/move";
+import { allMoves } from "#app/data/data-lists";
 import { MoveTarget } from "#enums/MoveTarget";
 import { MoveCategory } from "#enums/MoveCategory";
 import type { PokemonSpeciesForm } from "#app/data/pokemon-species";

@@ -1,4 +1,4 @@
-import { allMoves } from "#app/data/moves/move";
+import { allMoves } from "#app/data/data-lists";
 import { PokemonType } from "#enums/pokemon-type";
 import { MoveResult, type PlayerPokemon } from "#app/field/pokemon";
 import { Abilities } from "#enums/abilities";
