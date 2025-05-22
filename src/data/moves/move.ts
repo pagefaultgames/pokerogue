@@ -31,7 +31,7 @@ import { getTypeDamageMultiplier } from "../type";
 import { PokemonType } from "#enums/pokemon-type";
 import { BooleanHolder, NumberHolder, isNullOrUndefined, toDmgValue, randSeedItem, randSeedInt, getEnumValues, toReadableString, type Constructor } from "#app/utils/common";
 import { WeatherType } from "#enums/weather-type";
-import type { ArenaTrapTag } from "../arena-tag";
+import { ArenaTrapTag, DelayedAttackTag } from "../arena-tag";
 import { ArenaTagSide, WeakenMoveTypeTag } from "../arena-tag";
 import {
   AllyMoveCategoryPowerBoostAbAttr,
@@ -124,6 +124,7 @@ import { MultiHitType } from "#enums/MultiHitType";
 import { invalidAssistMoves, invalidCopycatMoves, invalidMetronomeMoves, invalidMirrorMoveMoves, invalidSleepTalkMoves, invalidSketchMoves } from "./invalid-moves";
 import { SelectBiomePhase } from "#app/phases/select-biome-phase";
 import { isVirtual, MoveUseType } from "#enums/move-use-type";
+import type { MoveEffectPhase } from "#app/phases/move-effect-phase";
 
 type MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => boolean;
 type UserMoveConditionFunc = (user: Pokemon, move: Move) => boolean;
@@ -1361,13 +1362,15 @@ export class PreMoveMessageAttr extends MoveAttr {
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const message = typeof this.message === "string"
-      ? this.message as string
+      ? this.message
       : this.message(user, target, move);
-    if (message) {
-      globalScene.queueMessage(message, 500);
-      return true;
+
+    if (!message) {
+      return false;
     }
-    return false;
+
+    globalScene.queueMessage(message, 500);
+    return true;
   }
 }
 
@@ -3031,24 +3034,37 @@ export class WeatherInstantChargeAttr extends InstantChargeAttr {
 }
 
 export class OverrideMoveEffectAttr extends MoveAttr {
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+  /**
+   * Apply the move attribute to override a move effect.
+   * @param user - The {@linkcode Pokemon} using the move
+   * @param target - The {@linkcode Pokemon} targeted by the move
+   * @param move - The {@linkcode Move} being used
+   * @param args
+   * `[0]` - A {@linkcode BooleanHolder} containing whether move effects were overridden; should be set to `true` on success
+   * `[1]` - The {@linkcode MoveUseType} dictating how this move was used.
+   * @returns always `true`
+   */
+  apply(user: Pokemon, target: Pokemon, move: Move, args: [BooleanHolder, MoveUseType]): boolean {
     return true;
   }
 }
 
 /**
- * Attack Move that doesn't hit the turn it is played and doesn't allow for multiple
- * uses on the same target. Examples are Future Sight or Doom Desire.
- * @extends OverrideMoveEffectAttr
- * @param tagType The {@linkcode ArenaTagType} that will be placed on the field when the move is used
- * @param chargeAnim The {@linkcode ChargeAnim | Charging Animation} used for the move
- * @param chargeText The text to display when the move is used
+ * MoveAttr for delayed attacks, such as {@linkcode Moves.FUTURE_SIGHT} or {@linkcode Moves.DOOM_DESIRE}.
+ * Cancels the attack's effect by adding an arena tag,
+ * and deals damage after the turn count is fully elapsed.
  */
 export class DelayedAttackAttr extends OverrideMoveEffectAttr {
   public tagType: ArenaTagType;
   public chargeAnim: ChargeAnim;
   private chargeText: string;
 
+  /**
+   * @param tagType - The {@linkcode ArenaTagType} to place on field when the move is used.
+   * @param chargeAnim - The {@linkcode ChargeAnim | charging animation} used for the move.
+   * @param chargeText - The text to display when the move is charged.
+   * All instances of `{USER}` and `{TARGET}` will be replaced by the user/target names respectively.
+   */
   constructor(tagType: ArenaTagType, chargeAnim: ChargeAnim, chargeText: string) {
     super();
 
@@ -3057,26 +3073,52 @@ export class DelayedAttackAttr extends OverrideMoveEffectAttr {
     this.chargeText = chargeText;
   }
 
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    // Edge case for the move applied on a pokemon that has fainted
-    if (!target) {
+  getCondition(): MoveConditionFunc {
+    return (_user, target, _move) => {
+      // Check the arena if another delayed attack is active and hitting the same slot
+      const delayedTag = globalScene.arena.getTag(DelayedAttackTag);
+      return delayedTag?.canAddAttack(target.getBattlerIndex()) ?? true;
+    }
+  }
+
+  /**
+   * Apply the effects of Future Sight, either setting up or activating a delayed attack.
+   * @param user - The {@linkcode Pokemon} using the move
+   * @param target - The {@linkcode Pokemon} targeted by the move
+   * @param move - The {@linkcode Move} being used
+   * @param args
+   * `[0]` - A {@linkcode BooleanHolder} containing whether move effects were overridden; will be set to `true` on success
+   * `[1]` - The {@linkcode MoveUseType} dictating how this move was used.
+   * @returns always `true` unless an error occurs
+   */
+  apply(user: Pokemon, target: Pokemon, move: Move, args: [BooleanHolder, MoveUseType]): boolean {
+    const useType = args[1];
+    if (useType === MoveUseType.INDIRECT) {
+      // don't trigger if already queueing an indirect attack
       return true;
     }
 
-    const overridden = args[0] as BooleanHolder;
-    const virtual = args[1] as boolean;
+    const overridden = args[0];
+    overridden.value = true;
 
-    if (!virtual) {
-      overridden.value = true;
-      globalScene.unshiftPhase(new MoveAnimPhase(new MoveChargeAnim(this.chargeAnim, move.id, user)));
-      globalScene.queueMessage(this.chargeText.replace("{TARGET}", getPokemonNameWithAffix(target)).replace("{USER}", getPokemonNameWithAffix(user)));
-      user.pushMoveHistory({ move: move.id, targets: [ target.getBattlerIndex() ], result: MoveResult.OTHER, useType: MoveUseType.NORMAL });
-      const side = target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
-      globalScene.arena.addTag(this.tagType, 3, move.id, user.id, side, false, target.getBattlerIndex());
-    } else {
-      globalScene.queueMessage(i18next.t("moveTriggers:tookMoveAttack", { pokemonName: getPokemonNameWithAffix(globalScene.getPokemonById(target.id) ?? undefined), moveName: move.name }));
+    // Display the move animation to foresee an attack
+    globalScene.unshiftPhase(new MoveAnimPhase(new MoveChargeAnim(this.chargeAnim, move.id, user)));
+    globalScene.queueMessage(this.chargeText.replace("{TARGET}", getPokemonNameWithAffix(target)).replace("{USER}", getPokemonNameWithAffix(user)));
+
+    user.pushMoveHistory({move: move.id, targets: [target.getBattlerIndex()], result: MoveResult.OTHER, useType: useType, turn: globalScene.currentBattle.turn})
+
+    // Add a Delayed Attack tag to the arena if it doesn't already exist and queue up an extra attack.
+    // TODO: Remove unused params once signature is tweaked to make more sense (none of these get used)
+    globalScene.arena.addTag(ArenaTagType.DELAYED_ATTACK, 123, 69, 420);
+
+    // Queue an attack on the added (or existing) tag
+    const delayedAttackTag = globalScene.arena.getTag(DelayedAttackTag)
+    if (!delayedAttackTag) {
+      console.warn("Delayed attack tag not present!")
+      return false;
     }
 
+    delayedAttackTag.queueAttack(user, move.id, target.getBattlerIndex());
     return true;
   }
 }
@@ -5423,7 +5465,6 @@ export class FrenzyAttr extends MoveEffectAttr {
     if (!user.getTag(BattlerTagType.FRENZY) && user.getMoveQueue().length === 0) {
       const turnCount = user.randBattleSeedIntRange(1, 2); // excludes initial use
       for (let i = 0; i < turnCount; i++) {
-        user.pushMoveQueue({ move: move.id, targets: [ target.getBattlerIndex() ], useType: MoveUseType.IGNORE_PP });
       }
       user.addTag(BattlerTagType.FRENZY, turnCount, move.id, user.id);
     } else {
@@ -7814,7 +7855,6 @@ export class LastResortAttr extends MoveAttr {
 
       const movesInHistory = new Set<Moves>(
         user.getMoveHistory()
-        .filter(m => !isVirtual(m.useType)) // Last resort ignores virtual moves
         .map(m => m.move)
       );
 
@@ -7898,7 +7938,6 @@ export class ForceLastAttr extends MoveEffectAttr {
         globalScene.phaseQueue.splice(
           globalScene.phaseQueue.indexOf(prependPhase),
           0,
-          new MovePhase(target, [ ...targetMovePhase.targets ], targetMovePhase.move, targetMovePhase.useType, true)
         );
       }
     }
@@ -9035,9 +9074,10 @@ export function initMoves() {
       .attr(StatStageChangeAttr, [ Stat.SPDEF ], -1)
       .ballBombMove(),
     new AttackMove(Moves.FUTURE_SIGHT, PokemonType.PSYCHIC, MoveCategory.SPECIAL, 120, 100, 10, -1, 0, 2)
-      .partial() // cannot be used on multiple Pokemon on the same side in a double battle, hits immediately when called by Metronome/etc, should not apply abilities or held items if user is off the field
+      .attr(DelayedAttackAttr, ArenaTagType.DELAYED_ATTACK, ChargeAnim.FUTURE_SIGHT_CHARGING, i18next.t("moveTriggers:foresawAnAttack", { pokemonName: "{USER}" }))
       .ignoresProtect()
-      .attr(DelayedAttackAttr, ArenaTagType.FUTURE_SIGHT, ChargeAnim.FUTURE_SIGHT_CHARGING, i18next.t("moveTriggers:foresawAnAttack", { pokemonName: "{USER}" })),
+      .edgeCase(),
+      // cannot be used on multiple Pokemon on the same side in a double battle, hits immediately when called by Metronome/etc, should not apply abilities or held items if user is off the field
     new AttackMove(Moves.ROCK_SMASH, PokemonType.FIGHTING, MoveCategory.PHYSICAL, 40, 100, 15, 50, 0, 2)
       .attr(StatStageChangeAttr, [ Stat.DEF ], -1),
     new AttackMove(Moves.WHIRLPOOL, PokemonType.WATER, MoveCategory.SPECIAL, 35, 85, 15, -1, 0, 2)
@@ -9373,9 +9413,10 @@ export function initMoves() {
       .attr(ConfuseAttr)
       .pulseMove(),
     new AttackMove(Moves.DOOM_DESIRE, PokemonType.STEEL, MoveCategory.SPECIAL, 140, 100, 5, -1, 0, 3)
-      .partial() // cannot be used on multiple Pokemon on the same side in a double battle, hits immediately when called by Metronome/etc, should not apply abilities or held items if user is off the field
+      .attr(DelayedAttackAttr, ArenaTagType.DELAYED_ATTACK, ChargeAnim.DOOM_DESIRE_CHARGING, i18next.t("moveTriggers:choseDoomDesireAsDestiny", { pokemonName: "{USER}" }))
       .ignoresProtect()
-      .attr(DelayedAttackAttr, ArenaTagType.DOOM_DESIRE, ChargeAnim.DOOM_DESIRE_CHARGING, i18next.t("moveTriggers:choseDoomDesireAsDestiny", { pokemonName: "{USER}" })),
+      .edgeCase(),
+      // should not apply abilities or held items if user is off the field
     new AttackMove(Moves.PSYCHO_BOOST, PokemonType.PSYCHIC, MoveCategory.SPECIAL, 140, 90, 5, -1, 0, 3)
       .attr(StatStageChangeAttr, [ Stat.SPATK ], -2, true),
     new SelfStatusMove(Moves.ROOST, PokemonType.FLYING, -1, 5, -1, 0, 4)

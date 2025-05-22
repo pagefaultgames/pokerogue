@@ -15,6 +15,7 @@ import { NewBattlePhase } from "./new-battle-phase";
 import { PokemonPhase } from "./pokemon-phase";
 import { globalScene } from "#app/global-scene";
 import { SelectBiomePhase } from "./select-biome-phase";
+import { ArenaTagType } from "#enums/arena-tag-type";
 
 export class AttemptRunPhase extends PokemonPhase {
   /** For testing purposes: this is to force the pokemon to fail and escape */
@@ -51,6 +52,9 @@ export class AttemptRunPhase extends PokemonPhase {
       });
 
       globalScene.clearEnemyHeldItemModifiers();
+
+      // clear all queued delayed attacks (e.g. from Future Sight)
+      globalScene.arena.removeTag(ArenaTagType.DELAYED_ATTACK);
 
       // biome-ignore lint/complexity/noForEach: TODO
       enemyField.forEach(enemyPokemon => {

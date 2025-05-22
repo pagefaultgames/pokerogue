@@ -33,6 +33,13 @@ import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { BattleType } from "#enums/battle-type";
 import { ClassicFixedBossWaves } from "#enums/fixed-boss-waves";
 
+/**
+ * The index of a Pokemon in battle.
+ * Used for various aspects of move targeting and access.
+ *
+ * NB: This can be used as an index to {@linkcode globalScene.getField()} to retrieve the corresponding Pokemon
+ * (assuming the slot is present that is.)
+ */
 export enum BattlerIndex {
   ATTACKER = -1,
   PLAYER,

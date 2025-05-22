@@ -1,5 +1,6 @@
 import type { BattlerTagLapseType } from "#app/data/battler-tags";
 import type { PostDancingMoveAbAttr } from "#app/data/abilities/ability";
+import { Moves } from "./moves";
 
 /**
  * Enum representing all the possible ways a given move can be executed.
@@ -31,7 +32,8 @@ export enum MoveUseType {
 
   /**
    * This move was called indirectly by an out-of-turn effect other than Instruct or the user's previous move.
-   * Currently only used by {@linkcode PostDancingMoveAbAttr | Dancer}.
+   * Currently used by {@linkcode PostDancingMoveAbAttr | Dancer},
+   * as well as the "attack" phases of {@linkcode Moves.FUTURE_SIGHT} and {@linkcode Moves.DOOM_DESIRE}.
 
    * Indirect moves ignore PP checks similar to {@linkcode MoveUseType.IGNORE_PP}, but additionally **cannot be copied**
    * by all move-copying effects (barring reflection).
@@ -66,6 +68,7 @@ export enum MoveUseType {
  * Comment block to prevent IDE auto-import removal.
  * {@linkcode BattlerTagLapseType}
  * {@linkcode PostDancingMoveAbAttr}
+ * {@linkcode Moves}
  */
 
 // # HELPER FUNCTIONS

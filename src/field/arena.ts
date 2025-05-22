@@ -672,13 +672,12 @@ export class Arena {
 
   /**
    * Adds a new tag to the arena
-   * @param tagType {@linkcode ArenaTagType} the tag being added
-   * @param turnCount How many turns the tag lasts
-   * @param sourceMove {@linkcode Moves} the move the tag came from, or `undefined` if not from a move
-   * @param sourceId The ID of the pokemon in play the tag came from (see {@linkcode BattleScene.getPokemonById})
-   * @param side {@linkcode ArenaTagSide} which side(s) the tag applies to
-   * @param quiet If a message should be queued on screen to announce the tag being added
-   * @param targetIndex The {@linkcode BattlerIndex} of the target pokemon
+   * @param tagType - The {@linkcode ArenaTagType} of the tag to add
+   * @param sourceId - The {@linkcode Pokemon.id | PID} of the Pokemon creating the tag
+   * @param sourceMove - The {@linkcode Moves | move ID} of the move creating the tag, or `undefined` if not from a move
+   * @param turnCount - The duration to add the tag for delayed attacks; default `0`
+   * @param side - The {@linkcode ArenaTagSide}(s) to which the tag should apply to; default `ArenaTagSide.BOTH`
+   * @param quiet - Whether to suppress messages produced by tags; default `false`
    * @returns `false` if there already exists a tag of this type in the Arena
    */
   addTag(
@@ -688,7 +687,6 @@ export class Arena {
     sourceId: number,
     side: ArenaTagSide = ArenaTagSide.BOTH,
     quiet = false,
-    targetIndex?: BattlerIndex,
   ): boolean {
     const existingTag = this.getTagOnSide(tagType, side);
     if (existingTag) {
@@ -703,7 +701,7 @@ export class Arena {
     }
 
     // creates a new tag object
-    const newTag = getArenaTag(tagType, turnCount || 0, sourceMove, sourceId, targetIndex, side);
+    const newTag = getArenaTag(tagType, turnCount || 0, sourceMove, sourceId, side);
     if (newTag) {
       newTag.onAdd(this, quiet);
       this.tags.push(newTag);
@@ -719,10 +717,21 @@ export class Arena {
   }
 
   /**
-   * Attempts to get a tag from the Arena via {@linkcode getTagOnSide} that applies to both sides
-   * @param tagType The {@linkcode ArenaTagType} or {@linkcode ArenaTag} to get
-   * @returns either the {@linkcode ArenaTag}, or `undefined` if it isn't there
+   * Attempt to get a tag from the Arena via {@linkcode getTagOnSide} that applies to both sides
+   * @param tagType The {@linkcode ArenaTagType} to retrieve
+   * @returns The existing {@linkcode ArenaTag}, or `undefined` if not present.
+   * @overload
    */
+  getTag(tagType: ArenaTagType): ArenaTag | undefined;
+
+  /**
+   * Attempt to get a tag from the Arena via {@linkcode getTagOnSide} that applies to both sides
+   * @param tagType The {@linkcode ArenaTag} to retrieve
+   * @returns The existing {@linkcode ArenaTag}, or `undefined` if not present.
+   * @overload
+   */
+  getTag<T extends ArenaTag>(tagType: Constructor<T>): T | undefined;
+
   getTag(tagType: ArenaTagType | Constructor<ArenaTag>): ArenaTag | undefined {
     return this.getTagOnSide(tagType, ArenaTagSide.BOTH);
   }

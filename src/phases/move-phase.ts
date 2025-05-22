@@ -11,7 +11,6 @@ import {
   RedirectMoveAbAttr,
   ReduceStatusEffectDurationAbAttr,
 } from "#app/data/abilities/ability";
-import type { DelayedAttackTag } from "#app/data/arena-tag";
 import { CommonAnim } from "#app/data/battle-anims";
 import { BattlerTagLapseType, CenterOfAttentionTag } from "#app/data/battler-tags";
 import {
@@ -21,7 +20,6 @@ import {
   BypassRedirectAttr,
   BypassSleepAttr,
   CopyMoveAttr,
-  DelayedAttackAttr,
   frenzyMissFunc,
   HealStatusEffectAttr,
   PreMoveMessageAttr,
@@ -45,7 +43,6 @@ import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { MoveEndPhase } from "#app/phases/move-end-phase";
 import { NumberHolder } from "#app/utils/common";
 import { Abilities } from "#enums/abilities";
-import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Moves } from "#enums/moves";
 import { StatusEffect } from "#enums/status-effect";
@@ -333,32 +330,6 @@ export class MovePhase extends BattlePhase {
 
     // form changes happen even before we know that the move wll execute.
     globalScene.triggerPokemonFormChange(this.pokemon, SpeciesFormChangePreMoveTrigger);
-
-    const isDelayedAttack = move.hasAttr(DelayedAttackAttr);
-    if (isDelayedAttack) {
-      // Check the player side arena if future sight is active
-      const futureSightTags = globalScene.arena.findTags(t => t.tagType === ArenaTagType.FUTURE_SIGHT);
-      const doomDesireTags = globalScene.arena.findTags(t => t.tagType === ArenaTagType.DOOM_DESIRE);
-      let fail = false;
-      const currentTargetIndex = targets[0].getBattlerIndex();
-      for (const tag of futureSightTags) {
-        if ((tag as DelayedAttackTag).targetIndex === currentTargetIndex) {
-          fail = true;
-          break;
-        }
-      }
-      for (const tag of doomDesireTags) {
-        if ((tag as DelayedAttackTag).targetIndex === currentTargetIndex) {
-          fail = true;
-          break;
-        }
-      }
-      if (fail) {
-        this.showMoveText();
-        this.showFailedText();
-        return this.end();
-      }
-    }
 
     let success = true;
     // Check if there are any attributes that can interrupt the move, overriding the fail message.

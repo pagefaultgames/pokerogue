@@ -285,25 +285,19 @@ export class MoveEffectPhase extends PokemonPhase {
       }
     }
 
+    const move = this.move;
+
     /**
      * Does an effect from this move override other effects on this turn?
      * e.g. Charging moves (Fly, etc.) on their first turn of use.
      */
     const overridden = new BooleanHolder(false);
-    const move = this.move;
 
     // Apply effects to override a move effect.
     // Assuming single target here works as this is (currently)
-    // only used for Future Sight and Pledge moves.
+    // only used for Future Sight, Pledge moves and move-calling moves.
     // TODO: change if any other move effect overrides are introduced
-    applyMoveAttrs(
-      OverrideMoveEffectAttr,
-      user,
-      this.getFirstTarget() ?? null,
-      move,
-      overridden,
-      isVirtual(this.useType),
-    );
+    applyMoveAttrs(OverrideMoveEffectAttr, user, this.getFirstTarget() ?? null, move, overridden, this.useType);
 
     // If other effects were overriden, stop this phase before they can be applied
     if (overridden.value) {
