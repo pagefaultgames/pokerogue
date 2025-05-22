@@ -109,6 +109,16 @@ export const EXTORTION_MOVES = [
 ];
 
 /**
+ * Moves that can clear a foggy weather
+ */
+export const DEFOG_MOVES = [Moves.DEFOG, Moves.RAPID_SPIN, Moves.GUST];
+
+/**
+ * Moves that can help navigate through foggy weather
+ */
+export const LIGHT_MOVES = [Moves.FLASH, Moves.FORESIGHT];
+
+/**
  * Abilities that (loosely) can be used to trap/rob someone
  */
 export const EXTORTION_ABILITIES = [
@@ -134,4 +144,19 @@ export const FIRE_RESISTANT_ABILITIES = [
   AbilityId.WATER_VEIL,
   AbilityId.STEAM_ENGINE,
   AbilityId.PRIMORDIAL_SEA,
+];
+
+/**
+ * Abilities that can clear foggy weather
+ */
+export const DEFOG_ABILITIES = [Abilities.AIR_LOCK, Abilities.CLOUD_NINE];
+
+/**
+ * Abilities that can help navigate through foggy weather
+ */
+export const LIGHT_ABILITIES = [
+  Abilities.KEEN_EYE,
+  Abilities.ILLUMINATE,
+  Abilities.COMPOUND_EYES,
+  Abilities.VICTORY_STAR,
 ];

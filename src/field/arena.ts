@@ -321,8 +321,15 @@ export class Arena {
 
     if (
       this.weather?.isImmutable() &&
-      ![WeatherType.HARSH_SUN, WeatherType.HEAVY_RAIN, WeatherType.STRONG_WINDS, WeatherType.NONE].includes(weather)
+      ![
+        WeatherType.HARSH_SUN,
+        WeatherType.HEAVY_RAIN,
+        WeatherType.STRONG_WINDS,
+        WeatherType.HEAVY_FOG,
+        WeatherType.NONE,
+      ].includes(weather)
     ) {
+    if (oldWeatherType !== WeatherType.HEAVY_FOG) {
       globalScene.phaseManager.unshiftNew(
         "CommonAnimPhase",
         undefined,
@@ -330,6 +337,7 @@ export class Arena {
         CommonAnim.SUNNY + (oldWeatherType - 1),
         true,
       );
+    }
       globalScene.phaseManager.queueMessage(getLegendaryWeatherContinuesMessage(oldWeatherType)!);
       return false;
     }

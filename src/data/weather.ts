@@ -36,6 +36,7 @@ export class Weather {
       case WeatherType.HEAVY_RAIN:
       case WeatherType.HARSH_SUN:
       case WeatherType.STRONG_WINDS:
+      case WeatherType.HEAVY_FOG:
         return true;
     }
 
@@ -136,6 +137,8 @@ export function getWeatherStartMessage(weatherType: WeatherType): string | null 
       return i18next.t("weather:snowStartMessage");
     case WeatherType.FOG:
       return i18next.t("weather:fogStartMessage");
+    case WeatherType.HEAVY_FOG:
+      return i18next.t("weather:heavyFogStartMessage");
     case WeatherType.HEAVY_RAIN:
       return i18next.t("weather:heavyRainStartMessage");
     case WeatherType.HARSH_SUN:
@@ -161,6 +164,8 @@ export function getWeatherLapseMessage(weatherType: WeatherType): string | null 
       return i18next.t("weather:snowLapseMessage");
     case WeatherType.FOG:
       return i18next.t("weather:fogLapseMessage");
+    case WeatherType.HEAVY_FOG:
+      return i18next.t("weather:heavyFogLapseMessage");
     case WeatherType.HEAVY_RAIN:
       return i18next.t("weather:heavyRainLapseMessage");
     case WeatherType.HARSH_SUN:
@@ -201,6 +206,8 @@ export function getWeatherClearMessage(weatherType: WeatherType): string | null 
       return i18next.t("weather:snowClearMessage");
     case WeatherType.FOG:
       return i18next.t("weather:fogClearMessage");
+    case WeatherType.HEAVY_FOG:
+      return i18next.t("weather:fogClearMessage");
     case WeatherType.HEAVY_RAIN:
       return i18next.t("weather:heavyRainClearMessage");
     case WeatherType.HARSH_SUN:
@@ -220,6 +227,8 @@ export function getLegendaryWeatherContinuesMessage(weatherType: WeatherType): s
       return i18next.t("weather:heavyRainContinueMessage");
     case WeatherType.STRONG_WINDS:
       return i18next.t("weather:strongWindsContinueMessage");
+    case WeatherType.HEAVY_FOG:
+      return i18next.t("weather:heavyFogContinueMessage");
   }
   return null;
 }

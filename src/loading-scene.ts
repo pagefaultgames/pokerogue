@@ -236,6 +236,7 @@ export class LoadingScene extends SceneBase {
 
     this.loadAtlas("pb", "");
     this.loadAtlas("items", "");
+    this.loadImage("heavy_fog", "");
     this.loadAtlas("types", "");
 
     // Get current lang and load the types atlas for it. English will only load types while all other languages will load types and types_<lang>
