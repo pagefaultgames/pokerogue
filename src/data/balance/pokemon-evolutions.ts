@@ -1793,6 +1793,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.DUSKNOIR, 1, EvolutionItem.REAPER_CLOTH, null, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.CLAMPERL]: [
+    // TODO: Change the SpeciesEvolutionConditions here to use a bespoke HeldItemEvolutionCondition after the modifier rework
     new SpeciesEvolution(Species.HUNTAIL, 1, EvolutionItem.LINKING_CORD, new SpeciesEvolutionCondition(p => p.getHeldItems().some(m => m instanceof SpeciesStatBoosterModifier && (m.type as SpeciesStatBoosterModifierType).key === "DEEP_SEA_TOOTH")), SpeciesWildEvolutionDelay.VERY_LONG),
     new SpeciesEvolution(Species.GOREBYSS, 1, EvolutionItem.LINKING_CORD, new SpeciesEvolutionCondition(p => p.getHeldItems().some(m => m instanceof SpeciesStatBoosterModifier && (m.type as SpeciesStatBoosterModifierType).key === "DEEP_SEA_SCALE")), SpeciesWildEvolutionDelay.VERY_LONG)
   ],

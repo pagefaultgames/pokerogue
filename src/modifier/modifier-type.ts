@@ -1505,9 +1505,8 @@ class SpeciesStatBoosterModifierTypeGenerator extends ModifierTypeGenerator {
 
           if (!hasItem) {
             if (checkedSpecies.includes(speciesId) || (!!fusionSpeciesId && checkedSpecies.includes(fusionSpeciesId))) {
-              if (values[i].rare === true) {
-                rare === true;
-              }
+              // Sets the item's rarity in order to determine if the item is rare (ultra tier) or not (great tier)
+              values[i].rare = rare;
               // Add weight if party member has a matching species or, if applicable, a matching fusion species
               weights[i]++;
             } else if (checkedSpecies.includes(Species.PIKACHU) && hasFling) {
