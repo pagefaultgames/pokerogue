@@ -19,6 +19,9 @@ import { EndEvolutionPhase } from "#app/phases/end-evolution-phase";
 import { EVOLVE_MOVE } from "#app/data/balance/pokemon-level-moves";
 
 export class EvolutionPhase extends Phase {
+  // FormChangePhase inherits from this, but EvolutionPhase is not abstract.
+  // We have to use the union here
+  protected readonly phaseName: "EvolutionPhase" | "FormChangePhase" = "EvolutionPhase";
   protected pokemon: PlayerPokemon;
   protected lastLevel: number;
 

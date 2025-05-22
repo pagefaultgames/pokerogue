@@ -2,6 +2,7 @@ import { globalScene } from "#app/global-scene";
 import { Phase } from "#app/phase";
 
 export class MessagePhase extends Phase {
+  protected readonly phaseName = "MessagePhase";
   private text: string;
   private callbackDelay?: number | null;
   private prompt?: boolean | null;

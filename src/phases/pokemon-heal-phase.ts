@@ -14,6 +14,7 @@ import { BattlerTagType } from "#app/enums/battler-tag-type";
 import type { HealBlockTag } from "#app/data/battler-tags";
 
 export class PokemonHealPhase extends CommonAnimPhase {
+  protected readonly phaseName = "PokemonHealPhase";
   private hpHealed: number;
   private message: string | null;
   private showFullHpMessage: boolean;

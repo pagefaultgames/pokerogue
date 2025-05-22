@@ -20,6 +20,7 @@ import { doShinySparkleAnim } from "#app/field/anims";
  * Class that represents egg hatching
  */
 export class EggHatchPhase extends Phase {
+  protected readonly phaseName = "EggHatchPhase";
   /** The egg that is hatching */
   private egg: Egg;
   /** The new EggHatchData for the egg/pokemon that hatches */

@@ -27,6 +27,7 @@ import { globalScene } from "#app/global-scene";
 import { Gender } from "#app/data/gender";
 
 export class AttemptCapturePhase extends PokemonPhase {
+  protected readonly phaseName = "AttemptCapturePhase";
   private pokeballType: PokeballType;
   private pokeball: Phaser.GameObjects.Sprite;
   private originalY: number;
