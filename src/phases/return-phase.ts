@@ -4,6 +4,7 @@ import { SwitchType } from "#enums/switch-type";
 import { SwitchSummonPhase } from "./switch-summon-phase";
 
 export class ReturnPhase extends SwitchSummonPhase {
+  protected readonly phaseName = "ReturnPhase";
   constructor(fieldIndex: number) {
     super(SwitchType.SWITCH, fieldIndex, -1, true);
   }

@@ -15,6 +15,7 @@ import type { PlayerPokemon } from "#app/field/pokemon";
  * when used by one of the player's Pokemon.
  */
 export class RevivalBlessingPhase extends BattlePhase {
+  protected readonly phaseName = "RevivalBlessingPhase";
   constructor(protected user: PlayerPokemon) {
     super();
   }

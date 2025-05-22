@@ -1,9 +1,33 @@
 import { globalScene } from "#app/global-scene";
+import type { PhaseMap, PhaseString } from "./@types/phase-types";
 
-export class Phase {
+export abstract class Phase {
   start() {}
 
   end() {
     globalScene.shiftPhase();
+  }
+
+  /**
+   * The string name of the phase, used to identify the phase type for {@linkcode isXPhase}
+   *
+   * @privateremarks
+   *
+   * When implementing a phase, you must set the `phaseName` property to the name of the phase.
+   */
+  protected abstract readonly phaseName: PhaseString;
+
+  /**
+   * Check if the phase is of the given type without requiring `instanceof`.
+   *
+   * @param phase - The string name of the phase to check.
+   * @returns `true` if this phase is of the given type, `false` otherwise.
+   *
+   * @remarks
+   * This does not check for subclasses! It only checks if the phase is *exactly* the given type.
+   * This method exists to avoid circular import issues, as using `instanceof` would require importing each phase.
+   */
+  isXPhase<K extends keyof PhaseMap>(phase: K): this is PhaseMap[K] {
+    return this.phaseName === phase;
   }
 }

@@ -31,6 +31,7 @@ export type StatStageChangeCallback = (
 ) => void;
 
 export class StatStageChangePhase extends PokemonPhase {
+  protected readonly phaseName = "StatStageChangePhase";
   private stats: BattleStat[];
   private selfTarget: boolean;
   private stages: number;

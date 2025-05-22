@@ -9,6 +9,7 @@ import { Phase } from "#app/phase";
 import { globalScene } from "#app/global-scene";
 
 export class AddEnemyBuffModifierPhase extends Phase {
+  protected readonly phaseName = "AddEnemyBuffModifierPhase";
   start() {
     super.start();
 

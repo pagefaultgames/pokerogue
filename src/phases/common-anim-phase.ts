@@ -5,6 +5,9 @@ import { CommonBattleAnim } from "#app/data/battle-anims";
 import { PokemonPhase } from "./pokemon-phase";
 
 export class CommonAnimPhase extends PokemonPhase {
+  // PokemonHealPhase extends CommonAnimPhase, and to make typescript happy,
+  // we need to allow phaseName to be a union of the two
+  protected readonly phaseName: "CommonAnimPhase" | "PokemonHealPhase" | "WeatherEffectPhase" = "CommonAnimPhase";
   private anim: CommonAnim | null;
   private targetIndex?: BattlerIndex;
   private playOnEmptyField: boolean;
