@@ -24,8 +24,12 @@ type SubMoveOrAbAttr = (new (...args: any[]) => MoveAttr) | (new (...args: any[]
 /** Mixin to handle shared logic for switching moves and abilities. */
 export function ForceSwitch<TBase extends SubMoveOrAbAttr>(Base: TBase) {
   return class ForceSwitchClass extends Base {
+    /** Whether to switch out the user (`true`) or the target (`false`). */
     protected selfSwitch = false;
+    /** A {@linkcode SwitchType} dictating the type of switch logic to implement. */
     protected switchType: NormalSwitchType = SwitchType.SWITCH;
+    /** Whether to allow non-boss wild Pokemon to flee. */
+    protected allowFlee = false;
 
     /**
      * Determines if a Pokémon can be forcibly switched out based on its status and battle conditions.
@@ -46,9 +50,9 @@ export function ForceSwitch<TBase extends SubMoveOrAbAttr>(Base: TBase) {
         return false;
       }
 
-      // Wild enemies should not be allowed to flee with baton pass, nor by any means on X0 waves (don't want easy boss wins)
+      // Wild enemies should not be allowed to flee with fleeing moves, nor by any means on X0 waves (don't want easy boss wins)
       if (!isPlayer && globalScene.currentBattle.battleType === BattleType.WILD) {
-        return this.switchType !== SwitchType.BATON_PASS && globalScene.currentBattle.waveIndex % 10 !== 0;
+        return this.allowFlee && globalScene.currentBattle.waveIndex % 10 !== 0;
       }
 
       // Finally, ensure that a trainer switching out has at least 1 valid reserve member to send in.

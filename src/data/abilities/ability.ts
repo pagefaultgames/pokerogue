@@ -5581,9 +5581,10 @@ export class PostDamageForceSwitchAbAttr extends ForceSwitch(PostDamageAbAttr) {
 
   constructor(switchType: NormalSwitchType = SwitchType.SWITCH, hpRatio = 0.5) {
     super();
+    this.hpRatio = hpRatio;
     this.selfSwitch = false; // TODO: change if any force switch abilities with red card exist
     this.switchType = switchType;
-    this.hpRatio = hpRatio;
+    this.allowFlee = true; // change to `false` to disable wild fleeing with Wimp Out/EE
   }
 
   /**

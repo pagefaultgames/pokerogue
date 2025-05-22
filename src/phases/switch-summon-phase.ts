@@ -48,7 +48,7 @@ export class SwitchSummonPhase extends SummonPhase {
     super.start();
   }
 
-  preSummon(): void {
+  override preSummon(): void {
     const switchOutPokemon = this.getPokemon();
 
     // For enemy trainers, pick a pokemon to switch to and/or display the opposing pokeball tray
