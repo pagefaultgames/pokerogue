@@ -6405,8 +6405,23 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
     return (user, target, move) => {
       const switchOutTarget = (this.selfSwitch ? user : target);
       const player = switchOutTarget instanceof PlayerPokemon;
+      const forceSwitchAttr = move.getAttrs(ForceSwitchOutAttr).find(attr => attr.switchType === SwitchType.FORCE_SWITCH);
 
       if (!this.selfSwitch) {
+        if (move.hitsSubstitute(user, target)) {
+          return false;
+        }
+
+        // Check if the move is Roar or Whirlwind and if there is a trainer with only Pokémon left.
+        if (forceSwitchAttr && globalScene.currentBattle.trainer) {
+        const enemyParty = globalScene.getEnemyParty();
+        // Filter out any Pokémon that are not allowed in battle (e.g. fainted ones)
+        const remainingPokemon = enemyParty.filter(p => p.hp > 0 && p.isAllowedInBattle());
+          if (remainingPokemon.length <= 1) {
+            return false;
+          }
+        }
+
         // Dondozo with an allied Tatsugiri in its mouth cannot be forced out
         const commandedTag = switchOutTarget.getTag(BattlerTagType.COMMANDED);
         if (commandedTag?.getSourcePokemon()?.isActive(true)) {
@@ -8067,10 +8082,10 @@ export class UpperHandCondition extends MoveCondition {
   }
 }
 
-export class hitsSameTypeAttr extends VariableMoveTypeMultiplierAttr {
+export class HitsSameTypeAttr extends VariableMoveTypeMultiplierAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const multiplier = args[0] as NumberHolder;
-    if (!user.getTypes().some(type => target.getTypes().includes(type))) {
+    if (!user.getTypes(true).some(type => target.getTypes(true).includes(type))) {
       multiplier.value = 0;
       return true;
     }
@@ -9771,7 +9786,7 @@ export function initMoves() {
     new AttackMove(Moves.SYNCHRONOISE, PokemonType.PSYCHIC, MoveCategory.SPECIAL, 120, 100, 10, -1, 0, 5)
       .target(MoveTarget.ALL_NEAR_OTHERS)
       .condition(unknownTypeCondition)
-      .attr(hitsSameTypeAttr),
+      .attr(HitsSameTypeAttr),
     new AttackMove(Moves.ELECTRO_BALL, PokemonType.ELECTRIC, MoveCategory.SPECIAL, -1, 100, 10, -1, 0, 5)
       .attr(ElectroBallPowerAttr)
       .ballBombMove(),
