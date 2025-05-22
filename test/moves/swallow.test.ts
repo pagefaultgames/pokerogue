@@ -1,7 +1,6 @@
 import { Stat } from "#enums/stat";
 import { StockpilingTag } from "#app/data/battler-tags";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
-import type { TurnMove } from "#app/field/pokemon";
 import { MoveResult } from "#app/field/pokemon";
 import { MovePhase } from "#app/phases/move-phase";
 import { TurnInitPhase } from "#app/phases/turn-init-phase";
@@ -135,7 +134,7 @@ describe("Moves - Swallow", () => {
     game.move.select(Moves.SWALLOW);
     await game.phaseInterceptor.to(TurnInitPhase);
 
-    expect(pokemon.getMoveHistory().at(-1)).toMatchObject<TurnMove>({
+    expect(pokemon.getMoveHistory().at(-1)).toMatchObject({
       move: Moves.SWALLOW,
       result: MoveResult.FAIL,
       targets: [pokemon.getBattlerIndex()],
@@ -160,7 +159,7 @@ describe("Moves - Swallow", () => {
 
       await game.phaseInterceptor.to(TurnInitPhase);
 
-      expect(pokemon.getMoveHistory().at(-1)).toMatchObject<TurnMove>({
+      expect(pokemon.getMoveHistory().at(-1)).toMatchObject({
         move: Moves.SWALLOW,
         result: MoveResult.SUCCESS,
         targets: [pokemon.getBattlerIndex()],
@@ -191,7 +190,7 @@ describe("Moves - Swallow", () => {
 
       await game.phaseInterceptor.to(TurnInitPhase);
 
-      expect(pokemon.getMoveHistory().at(-1)).toMatchObject<TurnMove>({
+      expect(pokemon.getMoveHistory().at(-1)).toMatchObject({
         move: Moves.SWALLOW,
         result: MoveResult.SUCCESS,
         targets: [pokemon.getBattlerIndex()],
