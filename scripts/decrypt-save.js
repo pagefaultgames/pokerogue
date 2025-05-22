@@ -117,10 +117,6 @@ function writeToFile(filePath, data) {
 
 function main() {
   let args = process.argv.slice(2);
-  if (args.includes("-h") || args.includes("--help") || args.length === 0) {
-    printUsage();
-    process.exit(0);
-  }
   // Get options
   const options = args.filter(arg => arg.startsWith("-"));
   // get args
