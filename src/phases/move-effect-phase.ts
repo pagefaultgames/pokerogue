@@ -444,6 +444,9 @@ export class MoveEffectPhase extends PokemonPhase {
     if (this.useType !== MoveUseType.INDIRECT && this.useType !== MoveUseType.REFLECTED) {
       globalScene
         .getField(true)
+        // Needed to ensure multiple dancers proc in FIFO order after the current move ends.
+        // TODO: Figure out a way of doing this nicer
+        .reverse()
         .forEach(p => applyPostMoveUsedAbAttrs(PostMoveUsedAbAttr, p, this.move, user, this.targets, this.hitChecks));
     }
     super.end();
