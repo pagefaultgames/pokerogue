@@ -162,7 +162,7 @@ export class CommandPhase extends FieldPhase {
         const turnMove: TurnMove | undefined = args.length === 2 ? (args[1] as TurnMove) : undefined;
         if (
           cursor === -1 ||
-          playerPokemon.trySelectMove(cursor, (args[0] as MoveUseType) >= MoveUseType.IGNORE_PP) ||
+          playerPokemon.trySelectMove(cursor, isIgnorePP(args[0] as MoveUseType)) ||
           (useStruggle = cursor > -1 && !playerPokemon.getMoveset().filter(m => m.isUsable(playerPokemon)).length)
         ) {
           let moveId: Moves;

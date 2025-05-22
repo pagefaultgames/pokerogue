@@ -9,7 +9,7 @@ import type { PostDancingMoveAbAttr } from "#app/data/abilities/ability";
 
  * Callers should refrain from performing non-equality checks on `MoveUseTypes` directly,
  * instead using the available helper functions
- * ({@linkcode isVirtual}, {@linkcode isIgnorePP} and {@linkcode isReflected}).
+ * ({@linkcode isVirtual}, {@linkcode isIgnoreStatus}, {@linkcode isIgnorePP} and {@linkcode isReflected}).
  */
 export enum MoveUseType {
   /**
@@ -78,7 +78,7 @@ export enum MoveUseType {
  * @returns Whether {@linkcode useType} is virtual.
  * @remarks
  * This function is equivalent to the following truth table:
-
+ *
  * | Use Type                           | Returns |
  * |------------------------------------|---------|
  * | {@linkcode MoveUseType.NORMAL}     | `false` |
@@ -92,13 +92,32 @@ export function isVirtual(useType: MoveUseType): boolean {
 }
 
 /**
+ * Check if a given {@linkcode MoveUseType} should ignore pre-move cancellation checks.
+ * @param useType - The {@linkcode MoveUseType} to check.
+ * @returns Whether {@linkcode useType} should ignore status checks.
+ * @remarks
+ * This function is equivalent to the following truth table:
+ *
+ * | Use Type                           | Returns |
+ * |------------------------------------|---------|
+ * | {@linkcode MoveUseType.NORMAL}     | `false` |
+ * | {@linkcode MoveUseType.IGNORE_PP}  | `false` |
+ * | {@linkcode MoveUseType.INDIRECT}   | `false` |
+ * | {@linkcode MoveUseType.FOLLOW_UP}  | `true`  |
+ * | {@linkcode MoveUseType.REFLECTED}  | `true`  |
+ */
+export function isIgnoreStatus(useType: MoveUseType): boolean {
+  return useType >= MoveUseType.FOLLOW_UP;
+}
+
+/**
  * Check if a given {@linkcode MoveUseType} should ignore PP.
  * PP-ignoring moves will ignore normal PP consumption as well as associated failure checks.
  * @param useType - The {@linkcode MoveUseType} to check.
  * @returns Whether {@linkcode useType} ignores PP.
  * @remarks
  * This function is equivalent to the following truth table:
-
+ *
  * | Use Type                           | Returns |
  * |------------------------------------|---------|
  * | {@linkcode MoveUseType.NORMAL}     | `false` |

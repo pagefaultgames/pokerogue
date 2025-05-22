@@ -50,7 +50,7 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import { Moves } from "#enums/moves";
 import { StatusEffect } from "#enums/status-effect";
 import i18next from "i18next";
-import { isVirtual, isIgnorePP, isReflected, MoveUseType } from "#enums/move-use-type";
+import { isVirtual, isIgnorePP, isReflected, MoveUseType, isIgnoreStatus } from "#enums/move-use-type";
 
 export class MovePhase extends BattlePhase {
   protected _pokemon: Pokemon;
@@ -234,7 +234,7 @@ export class MovePhase extends BattlePhase {
    */
   protected resolvePreMoveStatusEffects(): void {
     // Skip for follow ups/reflected moves, no status condition or post turn statuses (e.g. Poison/Toxic)
-    if (!this.pokemon.status || this.pokemon.status?.isPostTurn() || this.useType >= MoveUseType.FOLLOW_UP) {
+    if (!this.pokemon.status || this.pokemon.status?.isPostTurn() || isIgnoreStatus(this.useType)) {
       return;
     }
 
@@ -321,7 +321,7 @@ export class MovePhase extends BattlePhase {
 
     // TODO: does this intentionally happen before the no targets/Moves.NONE on queue cancellation case is checked?
     // (In other words, check if truant can proc on a move w/o targets)
-    if (!isVirtual(this.useType) && this.canMove() && !this.cancelled) {
+    if (!isIgnoreStatus(this.useType) && this.canMove() && !this.cancelled) {
       this.pokemon.lapseTags(BattlerTagLapseType.MOVE);
     }
   }
