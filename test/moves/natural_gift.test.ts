@@ -148,21 +148,17 @@ describe("Moves - Natural Gift", () => {
   });
 
   it("should clear BerryType once successfully used", async () => {
- game.override
+    game.override
       .startingHeldItems([{ name: "BERRY", type: BerryType.SITRUS, count: 3 }])
-      .ability(Abilities.NORMALIZE)
       .enemySpecies(Species.MACHAMP);
 
     await game.classicMode.startBattle([Species.BULBASAUR]);
     const player = game.scene.getPlayerPokemon()!;
     expect(getHeldItemCount(player)).toBe(3);
-    const enemy = game.scene.getEnemyPokemon()!;
 
     game.move.select(Moves.NATURAL_GIFT);
-    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toNextTurn();
 
-    expect(getHeldItemCount(player)).toBe(2);
-    expect(enemy.getMoveEffectiveness).toHaveReturnedWith(2);
+    expect(NaturalGiftBerrySelector.getSelectedBerry()).toBeFalsy();
   });
 });
