@@ -10,6 +10,7 @@ import { SwitchPhase } from "./switch-phase";
 import { SwitchType } from "#enums/switch-type";
 
 export class CheckSwitchPhase extends BattlePhase {
+  protected readonly phaseName = "CheckSwitchPhase";
   protected fieldIndex: number;
   protected useName: boolean;
 

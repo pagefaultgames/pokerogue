@@ -16,6 +16,7 @@ import { MoveEndPhase } from "#app/phases/move-end-phase";
  * @extends {@linkcode PokemonPhase}
  */
 export class MoveChargePhase extends PokemonPhase {
+  protected readonly phaseName = "MoveChargePhase";
   /** The move instance that this phase applies */
   public move: PokemonMove;
   /** The field index targeted by the move (Charging moves assume single target) */

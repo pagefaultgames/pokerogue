@@ -35,6 +35,7 @@ import { FRIENDSHIP_LOSS_FROM_FAINT } from "#app/data/balance/starters";
 import { BattlerTagType } from "#enums/battler-tag-type";
 
 export class FaintPhase extends PokemonPhase {
+  protected readonly phaseName = "FaintPhase";
   /**
    * Whether or not instant revive should be prevented
    */

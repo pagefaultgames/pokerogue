@@ -19,6 +19,7 @@ import {
 } from "#app/data/abilities/ability";
 
 export class QuietFormChangePhase extends BattlePhase {
+  protected readonly phaseName = "QuietFormChangePhase";
   protected pokemon: Pokemon;
   protected formChange: SpeciesFormChange;
 

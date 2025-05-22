@@ -5,6 +5,7 @@ import { BattlePhase } from "./battle-phase";
 import { GameOverPhase } from "./game-over-phase";
 
 export class BattleEndPhase extends BattlePhase {
+  protected readonly phaseName = "BattleEndPhase";
   /** If true, will increment battles won */
   isVictory: boolean;
 

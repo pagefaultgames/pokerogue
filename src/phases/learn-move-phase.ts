@@ -24,6 +24,7 @@ export enum LearnMoveType {
 }
 
 export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
+  protected readonly phaseName = "LearnMovePhase";
   private moveId: MoveId;
   private messageMode: UiMode;
   private learnMoveType: LearnMoveType;

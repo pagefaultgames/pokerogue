@@ -17,6 +17,7 @@ import { globalScene } from "#app/global-scene";
 import { SelectBiomePhase } from "./select-biome-phase";
 
 export class AttemptRunPhase extends PokemonPhase {
+  protected readonly phaseName = "AttemptRunPhase";
   /** For testing purposes: this is to force the pokemon to fail and escape */
   public forceFailEscape = false;
 

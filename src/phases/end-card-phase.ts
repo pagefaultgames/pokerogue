@@ -5,6 +5,7 @@ import { addTextObject, TextStyle } from "#app/ui/text";
 import i18next from "i18next";
 
 export class EndCardPhase extends Phase {
+  protected readonly phaseName = "EndCardPhase";
   public endCard: Phaser.GameObjects.Image;
   public text: Phaser.GameObjects.Text;
   start(): void {

@@ -7,6 +7,7 @@ import { PokemonAnimType } from "#enums/pokemon-anim-type";
 import { SpeciesId } from "#enums/species-id";
 
 export class PokemonAnimPhase extends BattlePhase {
+  protected readonly phaseName = "PokemonAnimPhase";
   /** The type of animation to play in this phase */
   protected key: PokemonAnimType;
   /** The Pokemon to which this animation applies */
