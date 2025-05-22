@@ -16,7 +16,6 @@ import {
   applyMoveAttrs,
   FixedDamageAttr,
   VariableAtkAttr,
-  allMoves,
   TypelessAttr,
   CritOnlyAttr,
   getMoveTargets,
@@ -41,6 +40,7 @@ import {
   VariableMoveTypeChartAttr,
   HpSplitAttr,
 } from "#app/data/moves/move";
+import { allMoves } from "#app/data/data-lists";
 import { MoveTarget } from "#enums/MoveTarget";
 import { MoveCategory } from "#enums/MoveCategory";
 import type { PokemonSpeciesForm } from "#app/data/pokemon-species";
@@ -6385,7 +6385,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (heldItem.pokemonId !== -1 && heldItem.pokemonId !== this.id) {
       return false;
     }
-    console.log("================================================== LOSING HELD ITEM ==================================================");
 
       heldItem.stackCount--;
       if (heldItem.stackCount <= 0) {
