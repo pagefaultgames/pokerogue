@@ -17,6 +17,7 @@ import { GameManagerHelper } from "./gameManagerHelper";
 import { shiftCharCodes } from "#app/utils/common";
 import type { RandomTrainerOverride } from "#app/overrides";
 import type { BattleType } from "#enums/battle-type";
+import type { TimeOfDay } from "#enums/time-of-day";
 
 /**
  * Helper to handle overrides in tests
@@ -35,6 +36,17 @@ export class OverridesHelper extends GameManagerHelper {
   public startingBiome(biome: BiomeId): this {
     this.game.scene.newArena(biome);
     this.log(`Starting biome set to ${BiomeId[biome]} (=${biome})!`);
+    return this;
+  }
+
+  /**
+   * Override the starting time of day
+   * @param timeOfDay - The time of day to be set
+   * @returns `this`
+   */
+  public startingTimeOfDay(timeOfDay: TimeOfDay): this {
+    vi.spyOn(Overrides, "ARENA_TINT_OVERRIDE", "get").mockReturnValue(timeOfDay);
+    this.log(`Starting time of day set to ${timeOfDay}!`);
     return this;
   }
 

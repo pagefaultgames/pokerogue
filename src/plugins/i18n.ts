@@ -280,6 +280,7 @@ export async function initI18n(): Promise<void> {
       "mysteryEncounters/uncommonBreed",
       "mysteryEncounters/globalTradeSystem",
       "mysteryEncounters/theExpertPokemonBreeder",
+      "mysteryEncounters/creepingFog",
       "mysteryEncounterMessages",
     ],
     detection: {
