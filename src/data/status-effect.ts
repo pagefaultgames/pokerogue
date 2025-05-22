@@ -33,7 +33,7 @@ export class Status {
    */
   decrementSleepTurnCount(pokemon: Pokemon): void {
     if (this.effect === StatusEffect.SLEEP && this.sleepTurnsRemaining) {
-      --this.sleepTurnsRemaining;
+      this.sleepTurnsRemaining--;
       // Tick down turns remaining for Early Bird
       applyAbAttrs(ReduceSleepDurationAbAttr, pokemon, null, false, this);
     }

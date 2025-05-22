@@ -2,7 +2,7 @@ import { HitResult, MoveResult, PlayerPokemon } from "#app/field/pokemon";
 import { BooleanHolder, NumberHolder, toDmgValue, isNullOrUndefined, randSeedItem, randSeedInt, type Constructor } from "#app/utils/common";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { BattlerTagLapseType, GroundedTag } from "#app/data/battler-tags";
-import { getNonVolatileStatusEffects, getStatusEffectDescriptor, getStatusEffectHealText } from "#app/data/status-effect";
+import { getNonVolatileStatusEffects, getStatusEffectDescriptor, getStatusEffectHealText, type Status } from "#app/data/status-effect";
 import { Gender } from "#app/data/gender";
 import {
   AttackMove,
