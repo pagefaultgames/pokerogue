@@ -1,5 +1,5 @@
 import { SESSION_ID_COOKIE_NAME } from "#app/constants";
-import { getCookie } from "#app/utils";
+import { getCookie } from "#app/utils/cookies";
 
 type DataType = "json" | "form-urlencoded";
 
@@ -85,8 +85,8 @@ export abstract class ApiBase {
    */
   protected toUrlSearchParams<D extends Record<string, any>>(data: D) {
     const arr = Object.entries(data)
-      .map(([ key, value ]) => (value !== undefined ? [ key, String(value) ] : [ key, "" ]))
-      .filter(([ , value ]) => value !== "");
+      .map(([key, value]) => (value !== undefined ? [key, String(value)] : [key, ""]))
+      .filter(([, value]) => value !== "");
 
     return new URLSearchParams(arr);
   }

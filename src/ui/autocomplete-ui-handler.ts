@@ -1,10 +1,10 @@
 import { Button } from "#enums/buttons";
 import AbstractOptionSelectUiHandler from "./abstact-option-select-ui-handler";
-import { Mode } from "./ui";
+import { UiMode } from "#enums/ui-mode";
 
 export default class AutoCompleteUiHandler extends AbstractOptionSelectUiHandler {
   modalContainer: Phaser.GameObjects.Container;
-  constructor(mode: Mode = Mode.OPTION_SELECT) {
+  constructor(mode: UiMode = UiMode.OPTION_SELECT) {
     super(mode);
   }
 
@@ -27,8 +27,15 @@ export default class AutoCompleteUiHandler extends AbstractOptionSelectUiHandler
   protected setupOptions() {
     super.setupOptions();
     if (this.modalContainer) {
-      this.optionSelectContainer.setSize(this.optionSelectContainer.height, Math.max(this.optionSelectText.displayWidth + 24, this.getWindowWidth()));
-      this.optionSelectContainer.setPositionRelative(this.modalContainer, this.optionSelectBg.width, this.optionSelectBg.height + 50);
+      this.optionSelectContainer.setSize(
+        this.optionSelectContainer.height,
+        Math.max(this.optionSelectText.displayWidth + 24, this.getWindowWidth()),
+      );
+      this.optionSelectContainer.setPositionRelative(
+        this.modalContainer,
+        this.optionSelectBg.width,
+        this.optionSelectBg.height + 50,
+      );
     }
   }
 

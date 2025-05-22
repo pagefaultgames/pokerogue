@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import * as Utils from "../utils";
+import { fixedInt } from "#app/utils/common";
 
 export default class SavingIconHandler extends Phaser.GameObjects.Container {
   private icon: Phaser.GameObjects.Sprite;
@@ -36,16 +36,16 @@ export default class SavingIconHandler extends Phaser.GameObjects.Container {
     globalScene.tweens.add({
       targets: this,
       alpha: 1,
-      duration: Utils.fixedInt(250),
+      duration: fixedInt(250),
       ease: "Sine.easeInOut",
       onComplete: () => {
-        globalScene.time.delayedCall(Utils.fixedInt(500), () => {
+        globalScene.time.delayedCall(fixedInt(500), () => {
           this.animActive = false;
           if (!this.shown) {
             this.hide();
           }
         });
-      }
+      },
     });
 
     this.setVisible(true);
@@ -64,7 +64,7 @@ export default class SavingIconHandler extends Phaser.GameObjects.Container {
     globalScene.tweens.add({
       targets: this,
       alpha: 0,
-      duration: Utils.fixedInt(250),
+      duration: fixedInt(250),
       ease: "Sine.easeInOut",
       onComplete: () => {
         this.animActive = false;
@@ -72,7 +72,7 @@ export default class SavingIconHandler extends Phaser.GameObjects.Container {
         if (this.shown) {
           this.show();
         }
-      }
+      },
     });
 
     this.shown = false;

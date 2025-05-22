@@ -10,8 +10,16 @@ import { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-en
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { MoveRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
 import type { EnemyPartyConfig, EnemyPokemonConfig } from "../utils/encounter-phase-utils";
-import { generateModifierType, initBattleWithEnemyConfig, leaveEncounterWithoutBattle, loadCustomMovesForEncounter, setEncounterExp, setEncounterRewards, } from "../utils/encounter-phase-utils";
+import {
+  generateModifierType,
+  initBattleWithEnemyConfig,
+  leaveEncounterWithoutBattle,
+  loadCustomMovesForEncounter,
+  setEncounterExp,
+  setEncounterRewards,
+} from "../utils/encounter-phase-utils";
 import { queueEncounterMessage } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
+import { Nature } from "#enums/nature";
 import { Moves } from "#enums/moves";
 import { BattlerIndex } from "#app/battle";
 import { AiType, PokemonMove } from "#app/field/pokemon";
@@ -19,9 +27,10 @@ import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { PartyHealPhase } from "#app/phases/party-heal-phase";
-import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 import { BerryType } from "#enums/berry-type";
+import { Stat } from "#enums/stat";
 import { CustomPokemonData } from "#app/data/custom-pokemon-data";
+import { randSeedInt } from "#app/utils/common";
 
 /** i18n namespace for the encounter */
 const namespace = "mysteryEncounters/slumberingSnorlax";
@@ -31,141 +40,152 @@ const namespace = "mysteryEncounters/slumberingSnorlax";
  * @see {@link https://github.com/pagefaultgames/pokerogue/issues/3815 | GitHub Issue #3815}
  * @see For biome requirements check {@linkcode mysteryEncountersByBiome}
  */
-export const SlumberingSnorlaxEncounter: MysteryEncounter =
-  MysteryEncounterBuilder.withEncounterType(MysteryEncounterType.SLUMBERING_SNORLAX)
-    .withEncounterTier(MysteryEncounterTier.GREAT)
-    .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
-    .withCatchAllowed(true)
-    .withHideWildIntroMessage(true)
-    .withFleeAllowed(false)
-    .withIntroSpriteConfigs([
-      {
-        spriteKey: Species.SNORLAX.toString(),
-        fileRoot: "pokemon",
-        hasShadow: true,
-        tint: 0.25,
-        scale: 1.25,
-        repeat: true,
-        y: 5,
-      },
-    ])
-    .withIntroDialogue([
-      {
-        text: `${namespace}:intro`,
-      },
-    ])
-    .withOnInit(() => {
+export const SlumberingSnorlaxEncounter: MysteryEncounter = MysteryEncounterBuilder.withEncounterType(
+  MysteryEncounterType.SLUMBERING_SNORLAX,
+)
+  .withEncounterTier(MysteryEncounterTier.GREAT)
+  .withSceneWaveRangeRequirement(15, 150)
+  .withCatchAllowed(true)
+  .withHideWildIntroMessage(true)
+  .withFleeAllowed(false)
+  .withIntroSpriteConfigs([
+    {
+      spriteKey: Species.SNORLAX.toString(),
+      fileRoot: "pokemon",
+      hasShadow: true,
+      tint: 0.25,
+      scale: 1.25,
+      repeat: true,
+      y: 5,
+    },
+  ])
+  .withIntroDialogue([
+    {
+      text: `${namespace}:intro`,
+    },
+  ])
+  .withOnInit(() => {
+    const encounter = globalScene.currentBattle.mysteryEncounter!;
+    console.log(encounter);
+
+    // Calculate boss mon
+    const bossSpecies = getPokemonSpecies(Species.SNORLAX);
+    const pokemonConfig: EnemyPokemonConfig = {
+      species: bossSpecies,
+      isBoss: true,
+      shiny: false, // Shiny lock because shiny is rolled only if the battle option is picked
+      status: [StatusEffect.SLEEP, 6], // Extra turns on timer for Snorlax's start of fight moves
+      nature: Nature.DOCILE,
+      moveSet: [Moves.BODY_SLAM, Moves.CRUNCH, Moves.SLEEP_TALK, Moves.REST],
+      modifierConfigs: [
+        {
+          modifier: generateModifierType(modifierTypes.BERRY, [BerryType.SITRUS]) as PokemonHeldItemModifierType,
+        },
+        {
+          modifier: generateModifierType(modifierTypes.BERRY, [BerryType.ENIGMA]) as PokemonHeldItemModifierType,
+        },
+        {
+          modifier: generateModifierType(modifierTypes.BASE_STAT_BOOSTER, [Stat.HP]) as PokemonHeldItemModifierType,
+        },
+        {
+          modifier: generateModifierType(modifierTypes.SOOTHE_BELL) as PokemonHeldItemModifierType,
+          stackCount: randSeedInt(2, 0),
+        },
+        {
+          modifier: generateModifierType(modifierTypes.LUCKY_EGG) as PokemonHeldItemModifierType,
+          stackCount: randSeedInt(2, 0),
+        },
+      ],
+      customPokemonData: new CustomPokemonData({ spriteScale: 1.25 }),
+      aiType: AiType.SMART, // Required to ensure Snorlax uses Sleep Talk while it is asleep
+    };
+    const config: EnemyPartyConfig = {
+      levelAdditiveModifier: 0.5,
+      pokemonConfigs: [pokemonConfig],
+    };
+    encounter.enemyPartyConfigs = [config];
+
+    // Load animations/sfx for Snorlax fight start moves
+    loadCustomMovesForEncounter([Moves.SNORE]);
+
+    encounter.setDialogueToken("snorlaxName", getPokemonSpecies(Species.SNORLAX).getName());
+
+    return true;
+  })
+  .setLocalizationKey(`${namespace}`)
+  .withTitle(`${namespace}:title`)
+  .withDescription(`${namespace}:description`)
+  .withQuery(`${namespace}:query`)
+  .withSimpleOption(
+    {
+      buttonLabel: `${namespace}:option.1.label`,
+      buttonTooltip: `${namespace}:option.1.tooltip`,
+      selected: [
+        {
+          text: `${namespace}:option.1.selected`,
+        },
+      ],
+    },
+    async () => {
+      // Pick battle
       const encounter = globalScene.currentBattle.mysteryEncounter!;
-      console.log(encounter);
-
-      // Calculate boss mon
-      const bossSpecies = getPokemonSpecies(Species.SNORLAX);
-      const pokemonConfig: EnemyPokemonConfig = {
-        species: bossSpecies,
-        isBoss: true,
-        shiny: false, // Shiny lock because shiny is rolled only if the battle option is picked
-        status: [ StatusEffect.SLEEP, 5 ], // Extra turns on timer for Snorlax's start of fight moves
-        moveSet: [ Moves.REST, Moves.SLEEP_TALK, Moves.CRUNCH, Moves.GIGA_IMPACT ],
-        modifierConfigs: [
-          {
-            modifier: generateModifierType(modifierTypes.BERRY, [ BerryType.SITRUS ]) as PokemonHeldItemModifierType,
-            stackCount: 2
-          },
-          {
-            modifier: generateModifierType(modifierTypes.BERRY, [ BerryType.ENIGMA ]) as PokemonHeldItemModifierType,
-            stackCount: 2
-          },
-        ],
-        customPokemonData: new CustomPokemonData({ spriteScale: 1.25 }),
-        aiType: AiType.SMART // Required to ensure Snorlax uses Sleep Talk while it is asleep
-      };
-      const config: EnemyPartyConfig = {
-        levelAdditiveModifier: 0.5,
-        pokemonConfigs: [ pokemonConfig ],
-      };
-      encounter.enemyPartyConfigs = [ config ];
-
-      // Load animations/sfx for Snorlax fight start moves
-      loadCustomMovesForEncounter([ Moves.SNORE ]);
-
-      encounter.setDialogueToken("snorlaxName", getPokemonSpecies(Species.SNORLAX).getName());
-
-      return true;
-    })
-    .setLocalizationKey(`${namespace}`)
-    .withTitle(`${namespace}:title`)
-    .withDescription(`${namespace}:description`)
-    .withQuery(`${namespace}:query`)
-    .withSimpleOption(
-      {
-        buttonLabel: `${namespace}:option.1.label`,
-        buttonTooltip: `${namespace}:option.1.tooltip`,
+      setEncounterRewards({
+        guaranteedModifierTypeFuncs: [modifierTypes.LEFTOVERS],
+        fillRemaining: true,
+      });
+      encounter.startOfBattleEffects.push(
+        {
+          sourceBattlerIndex: BattlerIndex.ENEMY,
+          targets: [BattlerIndex.PLAYER],
+          move: new PokemonMove(Moves.SNORE),
+          ignorePp: true,
+        },
+      );
+      await initBattleWithEnemyConfig(encounter.enemyPartyConfigs[0]);
+    },
+  )
+  .withSimpleOption(
+    {
+      buttonLabel: `${namespace}:option.2.label`,
+      buttonTooltip: `${namespace}:option.2.tooltip`,
+      selected: [
+        {
+          text: `${namespace}:option.2.selected`,
+        },
+      ],
+    },
+    async () => {
+      // Fall asleep waiting for Snorlax
+      // Full heal party
+      globalScene.unshiftPhase(new PartyHealPhase(true));
+      queueEncounterMessage(`${namespace}:option.2.rest_result`);
+      leaveEncounterWithoutBattle();
+    },
+  )
+  .withOption(
+    MysteryEncounterOptionBuilder.newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_SPECIAL)
+      .withPrimaryPokemonRequirement(new MoveRequirement(STEALING_MOVES, true))
+      .withDialogue({
+        buttonLabel: `${namespace}:option.3.label`,
+        buttonTooltip: `${namespace}:option.3.tooltip`,
+        disabledButtonTooltip: `${namespace}:option.3.disabled_tooltip`,
         selected: [
           {
-            text: `${namespace}:option.1.selected`,
+            text: `${namespace}:option.3.selected`,
           },
         ],
-      },
-      async () => {
-        // Pick battle
-        const encounter = globalScene.currentBattle.mysteryEncounter!;
-        setEncounterRewards({ guaranteedModifierTypeFuncs: [ modifierTypes.LEFTOVERS ], fillRemaining: true });
-        encounter.startOfBattleEffects.push(
-          {
-            sourceBattlerIndex: BattlerIndex.ENEMY,
-            targets: [ BattlerIndex.PLAYER ],
-            move: new PokemonMove(Moves.SNORE),
-            ignorePp: true
-          },
-          {
-            sourceBattlerIndex: BattlerIndex.ENEMY,
-            targets: [ BattlerIndex.PLAYER ],
-            move: new PokemonMove(Moves.SNORE),
-            ignorePp: true
-          });
-        await initBattleWithEnemyConfig(encounter.enemyPartyConfigs[0]);
-      }
-    )
-    .withSimpleOption(
-      {
-        buttonLabel: `${namespace}:option.2.label`,
-        buttonTooltip: `${namespace}:option.2.tooltip`,
-        selected: [
-          {
-            text: `${namespace}:option.2.selected`,
-          },
-        ],
-      },
-      async () => {
-        // Fall asleep waiting for Snorlax
-        // Full heal party
-        globalScene.unshiftPhase(new PartyHealPhase(true));
-        queueEncounterMessage(`${namespace}:option.2.rest_result`);
+      })
+      .withOptionPhase(async () => {
+        // Steal the Snorlax's Leftovers
+        const instance = globalScene.currentBattle.mysteryEncounter!;
+        setEncounterRewards({
+          guaranteedModifierTypeFuncs: [modifierTypes.LEFTOVERS],
+          fillRemaining: false,
+        });
+        // Snorlax exp to Pokemon that did the stealing
+        setEncounterExp(instance.primaryPokemon!.id, getPokemonSpecies(Species.SNORLAX).baseExp);
         leaveEncounterWithoutBattle();
-      }
-    )
-    .withOption(
-      MysteryEncounterOptionBuilder
-        .newOptionWithMode(MysteryEncounterOptionMode.DISABLED_OR_SPECIAL)
-        .withPrimaryPokemonRequirement(new MoveRequirement(STEALING_MOVES, true))
-        .withDialogue({
-          buttonLabel: `${namespace}:option.3.label`,
-          buttonTooltip: `${namespace}:option.3.tooltip`,
-          disabledButtonTooltip: `${namespace}:option.3.disabled_tooltip`,
-          selected: [
-            {
-              text: `${namespace}:option.3.selected`
-            }
-          ]
-        })
-        .withOptionPhase(async () => {
-          // Steal the Snorlax's Leftovers
-          const instance = globalScene.currentBattle.mysteryEncounter!;
-          setEncounterRewards({ guaranteedModifierTypeFuncs: [ modifierTypes.LEFTOVERS ], fillRemaining: false });
-          // Snorlax exp to Pokemon that did the stealing
-          setEncounterExp(instance.primaryPokemon!.id, getPokemonSpecies(Species.SNORLAX).baseExp);
-          leaveEncounterWithoutBattle();
-        })
-        .build()
-    )
-    .build();
+      })
+      .build(),
+  )
+  .build();

@@ -6,6 +6,9 @@ import { StatusEffect } from "#app/enums/status-effect";
 import type Pokemon from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { PokemonPhase } from "./pokemon-phase";
+import { SpeciesFormChangeStatusEffectTrigger } from "#app/data/pokemon-forms";
+import { applyPostSetStatusAbAttrs, PostSetStatusAbAttr } from "#app/data/abilities/ability";
+import { isNullOrUndefined } from "#app/utils/common";
 
 export class ObtainStatusEffectPhase extends PokemonPhase {
   private statusEffect?: StatusEffect;
@@ -13,7 +16,13 @@ export class ObtainStatusEffectPhase extends PokemonPhase {
   private sourceText?: string | null;
   private sourcePokemon?: Pokemon | null;
 
-  constructor(battlerIndex: BattlerIndex, statusEffect?: StatusEffect, turnsRemaining?: number, sourceText?: string | null, sourcePokemon?: Pokemon | null) {
+  constructor(
+    battlerIndex: BattlerIndex,
+    statusEffect?: StatusEffect,
+    turnsRemaining?: number,
+    sourceText?: string | null,
+    sourcePokemon?: Pokemon | null,
+  ) {
     super(battlerIndex);
 
     this.statusEffect = statusEffect;
@@ -31,13 +40,27 @@ export class ObtainStatusEffectPhase extends PokemonPhase {
         }
         pokemon.updateInfo(true);
         new CommonBattleAnim(CommonAnim.POISON + (this.statusEffect! - 1), pokemon).play(false, () => {
-          globalScene.queueMessage(getStatusEffectObtainText(this.statusEffect, getPokemonNameWithAffix(pokemon), this.sourceText ?? undefined));
+          globalScene.queueMessage(
+            getStatusEffectObtainText(
+              this.statusEffect,
+              getPokemonNameWithAffix(pokemon),
+              this.sourceText ?? undefined,
+            ),
+          );
+          if (!isNullOrUndefined(this.statusEffect) && this.statusEffect !== StatusEffect.FAINT) {
+            globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeStatusEffectTrigger, true);
+            // If mold breaker etc was used to set this status, it shouldn't apply to abilities activated afterwards
+            globalScene.arena.setIgnoreAbilities(false);
+            applyPostSetStatusAbAttrs(PostSetStatusAbAttr, pokemon, this.statusEffect, this.sourcePokemon);
+          }
           this.end();
         });
         return;
       }
     } else if (pokemon.status?.effect === this.statusEffect) {
-      globalScene.queueMessage(getStatusEffectOverlapText(this.statusEffect ?? StatusEffect.NONE, getPokemonNameWithAffix(pokemon)));
+      globalScene.queueMessage(
+        getStatusEffectOverlapText(this.statusEffect ?? StatusEffect.NONE, getPokemonNameWithAffix(pokemon)),
+      );
     }
     this.end();
   }

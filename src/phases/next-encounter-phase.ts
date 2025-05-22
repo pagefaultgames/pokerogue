@@ -1,11 +1,11 @@
 import { globalScene } from "#app/global-scene";
 import { EncounterPhase } from "./encounter-phase";
 
+/**
+ * The phase between defeating an encounter and starting another wild wave.
+ * Handles generating, loading and preparing for it.
+ */
 export class NextEncounterPhase extends EncounterPhase {
-  constructor() {
-    super();
-  }
-
   start() {
     super.start();
   }
@@ -13,9 +13,12 @@ export class NextEncounterPhase extends EncounterPhase {
   doEncounter(): void {
     globalScene.playBgm(undefined, true);
 
+    // Reset all player transient wave data/intel before starting a new wild encounter.
+    // We exclusively reset wave data here as wild waves are considered one continuous "battle"
+    // for lack of an arena transition.
     for (const pokemon of globalScene.getPlayerParty()) {
       if (pokemon) {
-        pokemon.resetBattleData();
+        pokemon.resetWaveData();
       }
     }
 
@@ -23,7 +26,13 @@ export class NextEncounterPhase extends EncounterPhase {
     globalScene.arenaNextEnemy.setVisible(true);
 
     const enemyField = globalScene.getEnemyField();
-    const moveTargets: any[] = [ globalScene.arenaEnemy, globalScene.arenaNextEnemy, globalScene.currentBattle.trainer, enemyField, globalScene.lastEnemyTrainer ];
+    const moveTargets: any[] = [
+      globalScene.arenaEnemy,
+      globalScene.arenaNextEnemy,
+      globalScene.currentBattle.trainer,
+      enemyField,
+      globalScene.lastEnemyTrainer,
+    ];
     const lastEncounterVisuals = globalScene.lastMysteryEncounter?.introVisuals;
     if (lastEncounterVisuals) {
       moveTargets.push(lastEncounterVisuals);
@@ -36,7 +45,7 @@ export class NextEncounterPhase extends EncounterPhase {
         globalScene.tweens.add({
           targets: nextEncounterVisuals,
           x: "-=200",
-          duration: 2000
+          duration: 2000,
         });
       } else {
         moveTargets.push(nextEncounterVisuals);
@@ -64,13 +73,12 @@ export class NextEncounterPhase extends EncounterPhase {
         if (!this.tryOverrideForBattleSpec()) {
           this.doEncounterCommon();
         }
-      }
+      },
     });
   }
 
   /**
    * Do nothing (since this is simply the next wave in the same biome).
    */
-  trySetWeatherIfNewBiome(): void {
-  }
+  trySetWeatherIfNewBiome(): void {}
 }

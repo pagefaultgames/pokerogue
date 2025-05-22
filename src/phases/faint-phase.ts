@@ -1,11 +1,17 @@
 import type { BattlerIndex } from "#app/battle";
-import { BattleType } from "#app/battle";
+import { BattleType } from "#enums/battle-type";
 import { globalScene } from "#app/global-scene";
-import { applyPostFaintAbAttrs, applyPostKnockOutAbAttrs, applyPostVictoryAbAttrs, PostFaintAbAttr, PostKnockOutAbAttr, PostVictoryAbAttr } from "#app/data/ability";
-import type { DestinyBondTag, GrudgeTag } from "#app/data/battler-tags";
+import {
+  applyPostFaintAbAttrs,
+  applyPostKnockOutAbAttrs,
+  applyPostVictoryAbAttrs,
+  PostFaintAbAttr,
+  PostKnockOutAbAttr,
+  PostVictoryAbAttr,
+} from "#app/data/abilities/ability";
 import { BattlerTagLapseType } from "#app/data/battler-tags";
 import { battleSpecDialogue } from "#app/data/dialogue";
-import { allMoves, PostVictoryStatStageChangeAttr } from "#app/data/move";
+import { allMoves, PostVictoryStatStageChangeAttr } from "#app/data/moves/move";
 import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms";
 import { BattleSpec } from "#app/enums/battle-spec";
 import { StatusEffect } from "#app/enums/status-effect";
@@ -23,36 +29,25 @@ import { SwitchPhase } from "./switch-phase";
 import { SwitchSummonPhase } from "./switch-summon-phase";
 import { ToggleDoublePositionPhase } from "./toggle-double-position-phase";
 import { VictoryPhase } from "./victory-phase";
-import { isNullOrUndefined } from "#app/utils";
+import { isNullOrUndefined } from "#app/utils/common";
 import { FRIENDSHIP_LOSS_FROM_FAINT } from "#app/data/balance/starters";
+import { BattlerTagType } from "#enums/battler-tag-type";
 
 export class FaintPhase extends PokemonPhase {
   /**
-   * Whether or not enduring (for this phase's purposes, Reviver Seed) should be prevented
+   * Whether or not instant revive should be prevented
    */
-  private preventEndure: boolean;
-
-  /**
-   * Destiny Bond tag belonging to the currently fainting Pokemon, if applicable
-   */
-  private destinyTag?: DestinyBondTag | null;
-
-  /**
-   * Grudge tag belonging to the currently fainting Pokemon, if applicable
-   */
-  private grudgeTag?: GrudgeTag | null;
+  private preventInstantRevive: boolean;
 
   /**
    * The source Pokemon that dealt fatal damage
    */
   private source?: Pokemon;
 
-  constructor(battlerIndex: BattlerIndex, preventEndure: boolean = false, destinyTag?: DestinyBondTag | null, grudgeTag?: GrudgeTag | null, source?: Pokemon) {
+  constructor(battlerIndex: BattlerIndex, preventInstantRevive = false, source?: Pokemon) {
     super(battlerIndex);
 
-    this.preventEndure = preventEndure;
-    this.destinyTag = destinyTag;
-    this.grudgeTag = grudgeTag;
+    this.preventInstantRevive = preventInstantRevive;
     this.source = source;
   }
 
@@ -61,16 +56,19 @@ export class FaintPhase extends PokemonPhase {
 
     const faintPokemon = this.getPokemon();
 
-    if (!isNullOrUndefined(this.destinyTag) && !isNullOrUndefined(this.source)) {
-      this.destinyTag.lapse(this.source, BattlerTagLapseType.CUSTOM);
+    if (this.source) {
+      faintPokemon.getTag(BattlerTagType.DESTINY_BOND)?.lapse(this.source, BattlerTagLapseType.CUSTOM);
+      faintPokemon.getTag(BattlerTagType.GRUDGE)?.lapse(faintPokemon, BattlerTagLapseType.CUSTOM, this.source);
     }
 
-    if (!isNullOrUndefined(this.grudgeTag) && !isNullOrUndefined(this.source)) {
-      this.grudgeTag.lapse(faintPokemon, BattlerTagLapseType.CUSTOM, this.source);
-    }
+    faintPokemon.resetSummonData();
 
-    if (!this.preventEndure) {
-      const instantReviveModifier = globalScene.applyModifier(PokemonInstantReviveModifier, this.player, faintPokemon) as PokemonInstantReviveModifier;
+    if (!this.preventInstantRevive) {
+      const instantReviveModifier = globalScene.applyModifier(
+        PokemonInstantReviveModifier,
+        this.player,
+        faintPokemon,
+      ) as PokemonInstantReviveModifier;
 
       if (instantReviveModifier) {
         faintPokemon.loseHeldItem(instantReviveModifier);
@@ -80,13 +78,11 @@ export class FaintPhase extends PokemonPhase {
     }
 
     /** In case the current pokemon was just switched in, make sure it is counted as participating in the combat */
-    globalScene.getPlayerField().forEach((pokemon, i) => {
-      if (pokemon?.isActive(true)) {
-        if (pokemon.isPlayer()) {
-          globalScene.currentBattle.addParticipant(pokemon as PlayerPokemon);
-        }
+    for (const pokemon of globalScene.getPlayerField()) {
+      if (pokemon?.isActive(true) && pokemon.isPlayer()) {
+        globalScene.currentBattle.addParticipant(pokemon as PlayerPokemon);
       }
-    });
+    }
 
     if (!this.tryOverrideForBattleSpec()) {
       this.doFaint();
@@ -96,29 +92,51 @@ export class FaintPhase extends PokemonPhase {
   doFaint(): void {
     const pokemon = this.getPokemon();
 
-
-    // Track total times pokemon have been KO'd for supreme overlord/last respects
+    // Track total times pokemon have been KO'd for Last Respects/Supreme Overlord
     if (pokemon.isPlayer()) {
-      globalScene.currentBattle.playerFaints += 1;
-      globalScene.currentBattle.playerFaintsHistory.push({ pokemon: pokemon, turn: globalScene.currentBattle.turn });
+      globalScene.arena.playerFaints += 1;
+      globalScene.currentBattle.playerFaintsHistory.push({
+        pokemon: pokemon,
+        turn: globalScene.currentBattle.turn,
+      });
     } else {
       globalScene.currentBattle.enemyFaints += 1;
-      globalScene.currentBattle.enemyFaintsHistory.push({ pokemon: pokemon, turn: globalScene.currentBattle.turn });
+      globalScene.currentBattle.enemyFaintsHistory.push({
+        pokemon: pokemon,
+        turn: globalScene.currentBattle.turn,
+      });
     }
 
-    globalScene.queueMessage(i18next.t("battle:fainted", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }), null, true);
+    globalScene.queueMessage(
+      i18next.t("battle:fainted", {
+        pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+      }),
+      null,
+      true,
+    );
     globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeActiveTrigger, true);
 
-    if (pokemon.turnData?.attacksReceived?.length) {
+    pokemon.resetTera();
+
+    if (pokemon.turnData.attacksReceived?.length) {
       const lastAttack = pokemon.turnData.attacksReceived[0];
-      applyPostFaintAbAttrs(PostFaintAbAttr, pokemon, globalScene.getPokemonById(lastAttack.sourceId)!, new PokemonMove(lastAttack.move).getMove(), lastAttack.result); // TODO: is this bang correct?
-    } else { //If killed by indirect damage, apply post-faint abilities without providing a last move
+      applyPostFaintAbAttrs(
+        PostFaintAbAttr,
+        pokemon,
+        globalScene.getPokemonById(lastAttack.sourceId)!,
+        new PokemonMove(lastAttack.move).getMove(),
+        lastAttack.result,
+      ); // TODO: is this bang correct?
+    } else {
+      //If killed by indirect damage, apply post-faint abilities without providing a last move
       applyPostFaintAbAttrs(PostFaintAbAttr, pokemon);
     }
 
     const alivePlayField = globalScene.getField(true);
-    alivePlayField.forEach(p => applyPostKnockOutAbAttrs(PostKnockOutAbAttr, p, pokemon));
-    if (pokemon.turnData?.attacksReceived?.length) {
+    for (const p of alivePlayField) {
+      applyPostKnockOutAbAttrs(PostKnockOutAbAttr, p, pokemon);
+    }
+    if (pokemon.turnData.attacksReceived?.length) {
       const defeatSource = this.source;
 
       if (defeatSource?.isOnField()) {
@@ -141,7 +159,11 @@ export class FaintPhase extends PokemonPhase {
       if (!legalPlayerPokemon.length) {
         /** If the player doesn't have any legal Pokemon, end the game */
         globalScene.unshiftPhase(new GameOverPhase());
-      } else if (globalScene.currentBattle.double && legalPlayerPokemon.length === 1 && legalPlayerPartyPokemon.length === 0) {
+      } else if (
+        globalScene.currentBattle.double &&
+        legalPlayerPokemon.length === 1 &&
+        legalPlayerPartyPokemon.length === 0
+      ) {
         /**
          * If the player has exactly one Pokemon in total at this point in a double battle, and that Pokemon
          * is already on the field, unshift a phase that moves that Pokemon to center position.
@@ -156,8 +178,11 @@ export class FaintPhase extends PokemonPhase {
       }
     } else {
       globalScene.unshiftPhase(new VictoryPhase(this.battlerIndex));
-      if ([ BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER ].includes(globalScene.currentBattle.battleType)) {
-        const hasReservePartyMember = !!globalScene.getEnemyParty().filter(p => p.isActive() && !p.isOnField() && p.trainerSlot === (pokemon as EnemyPokemon).trainerSlot).length;
+      if ([BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER].includes(globalScene.currentBattle.battleType)) {
+        const hasReservePartyMember = !!globalScene
+          .getEnemyParty()
+          .filter(p => p.isActive() && !p.isOnField() && p.trainerSlot === (pokemon as EnemyPokemon).trainerSlot)
+          .length;
         if (hasReservePartyMember) {
           globalScene.pushPhase(new SwitchSummonPhase(SwitchType.SWITCH, this.fieldIndex, -1, false, false));
         }
@@ -165,8 +190,8 @@ export class FaintPhase extends PokemonPhase {
     }
 
     // in double battles redirect potential moves off fainted pokemon
-    if (globalScene.currentBattle.double) {
-      const allyPokemon = pokemon.getAlly();
+    const allyPokemon = pokemon.getAlly();
+    if (globalScene.currentBattle.double && !isNullOrUndefined(allyPokemon)) {
       globalScene.redirectPokemonMoves(pokemon, allyPokemon);
     }
 
@@ -194,7 +219,7 @@ export class FaintPhase extends PokemonPhase {
           }
           pokemon.leaveField();
           this.end();
-        }
+        },
       });
     });
   }
@@ -205,11 +230,16 @@ export class FaintPhase extends PokemonPhase {
         if (!this.player) {
           const enemy = this.getPokemon();
           if (enemy.formIndex) {
-            globalScene.ui.showDialogue(battleSpecDialogue[BattleSpec.FINAL_BOSS].secondStageWin, enemy.species.name, null, () => this.doFaint());
+            globalScene.ui.showDialogue(
+              battleSpecDialogue[BattleSpec.FINAL_BOSS].secondStageWin,
+              enemy.species.name,
+              null,
+              () => this.doFaint(),
+            );
           } else {
-          // Final boss' HP threshold has been bypassed; cancel faint and force check for 2nd phase
+            // Final boss' HP threshold has been bypassed; cancel faint and force check for 2nd phase
             enemy.hp++;
-            globalScene.unshiftPhase(new DamageAnimPhase(enemy.getBattlerIndex(), 0, HitResult.OTHER));
+            globalScene.unshiftPhase(new DamageAnimPhase(enemy.getBattlerIndex(), 0, HitResult.INDIRECT));
             this.end();
           }
           return true;

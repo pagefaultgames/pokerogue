@@ -1,0 +1,158 @@
+{ "frames": {
+   "unknown": {
+    "frame": { "x": 0, "y": 0, "w": 18, "h": 21 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 1, "y": 1, "w": 18, "h": 21 },
+    "sourceSize": { "w": 20, "h": 23 }
+   },
+   "bug": {
+    "frame": { "x": 18, "y": 0, "w": 18, "h": 21 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 1, "y": 1, "w": 18, "h": 21 },
+    "sourceSize": { "w": 20, "h": 23 }
+   },
+   "dark": {
+    "frame": { "x": 36, "y": 0, "w": 18, "h": 21 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 1, "y": 1, "w": 18, "h": 21 },
+    "sourceSize": { "w": 20, "h": 23 }
+   },
+   "dragon": {
+    "frame": { "x": 54, "y": 0, "w": 18, "h": 21 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 1, "y": 1, "w": 18, "h": 21 },
+    "sourceSize": { "w": 20, "h": 23 }
+   },
+   "electric": {
+    "frame": { "x": 72, "y": 0, "w": 18, "h": 21 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 1, "y": 1, "w": 18, "h": 21 },
+    "sourceSize": { "w": 20, "h": 23 }
+   },
+   "fairy": {
+    "frame": { "x": 0, "y": 21, "w": 18, "h": 21 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 1, "y": 1, "w": 18, "h": 21 },
+    "sourceSize": { "w": 20, "h": 23 }
+   },
+   "fighting": {
+    "frame": { "x": 18, "y": 21, "w": 18, "h": 21 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 1, "y": 1, "w": 18, "h": 21 },
+    "sourceSize": { "w": 20, "h": 23 }
+   },
+   "fire": {
+    "frame": { "x": 36, "y": 21, "w": 18, "h": 21 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 1, "y": 1, "w": 18, "h": 21 },
+    "sourceSize": { "w": 20, "h": 23 }
+   },
+   "flying": {
+    "frame": { "x": 54, "y": 21, "w": 18, "h": 21 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 1, "y": 1, "w": 18, "h": 21 },
+    "sourceSize": { "w": 20, "h": 23 }
+   },
+   "ghost": {
+    "frame": { "x": 72, "y": 21, "w": 18, "h": 21 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 1, "y": 1, "w": 18, "h": 21 },
+    "sourceSize": { "w": 20, "h": 23 }
+   },
+   "grass": {
+    "frame": { "x": 0, "y": 42, "w": 18, "h": 21 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 1, "y": 1, "w": 18, "h": 21 },
+    "sourceSize": { "w": 20, "h": 23 }
+   },
+   "ground": {
+    "frame": { "x": 18, "y": 42, "w": 18, "h": 21 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 1, "y": 1, "w": 18, "h": 21 },
+    "sourceSize": { "w": 20, "h": 23 }
+   },
+   "ice": {
+    "frame": { "x": 36, "y": 42, "w": 18, "h": 21 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 1, "y": 1, "w": 18, "h": 21 },
+    "sourceSize": { "w": 20, "h": 23 }
+   },
+   "normal": {
+    "frame": { "x": 54, "y": 42, "w": 18, "h": 21 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 1, "y": 1, "w": 18, "h": 21 },
+    "sourceSize": { "w": 20, "h": 23 }
+   },
+   "poison": {
+    "frame": { "x": 72, "y": 42, "w": 18, "h": 21 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 1, "y": 1, "w": 18, "h": 21 },
+    "sourceSize": { "w": 20, "h": 23 }
+   },
+   "psychic": {
+    "frame": { "x": 0, "y": 63, "w": 18, "h": 21 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 1, "y": 1, "w": 18, "h": 21 },
+    "sourceSize": { "w": 20, "h": 23 }
+   },
+   "rock": {
+    "frame": { "x": 18, "y": 63, "w": 18, "h": 21 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 1, "y": 1, "w": 18, "h": 21 },
+    "sourceSize": { "w": 20, "h": 23 }
+   },
+   "steel": {
+    "frame": { "x": 36, "y": 63, "w": 18, "h": 21 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 1, "y": 1, "w": 18, "h": 21 },
+    "sourceSize": { "w": 20, "h": 23 }
+   },
+   "water": {
+    "frame": { "x": 54, "y": 63, "w": 18, "h": 21 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 1, "y": 1, "w": 18, "h": 21 },
+    "sourceSize": { "w": 20, "h": 23 }
+   },
+   "stellar": {
+    "frame": { "x": 72, "y": 63, "w": 18, "h": 21 },
+    "rotated": false,
+    "trimmed": true,
+    "spriteSourceSize": { "x": 1, "y": 1, "w": 18, "h": 21 },
+    "sourceSize": { "w": 20, "h": 23 }
+   }
+ },
+ "meta": {
+  "app": "https://www.aseprite.org/",
+  "version": "1.3.7-dev",
+  "image": "button_tera.png",
+  "format": "RGBA8888",
+  "size": { "w": 90, "h": 84 },
+  "scale": "1",
+  "frameTags": [
+  ],
+  "layers": [
+   { "name": "Sprite Sheet", "opacity": 255, "blendMode": "normal" }
+  ],
+  "slices": [
+  ]
+ }
+}

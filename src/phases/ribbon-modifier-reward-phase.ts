@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import type PokemonSpecies from "#app/data/pokemon-species";
 import type { ModifierTypeFunc } from "#app/modifier/modifier-type";
-import { Mode } from "#app/ui/ui";
+import { UiMode } from "#enums/ui-mode";
 import i18next from "i18next";
 import { ModifierRewardPhase } from "./modifier-reward-phase";
 
@@ -17,17 +17,23 @@ export class RibbonModifierRewardPhase extends ModifierRewardPhase {
   doReward(): Promise<void> {
     return new Promise<void>(resolve => {
       const newModifier = this.modifierType.newModifier();
-      globalScene.addModifier(newModifier).then(() => {
-        globalScene.playSound("level_up_fanfare");
-        globalScene.ui.setMode(Mode.MESSAGE);
-        globalScene.ui.showText(i18next.t("battle:beatModeFirstTime", {
+      globalScene.addModifier(newModifier);
+      globalScene.playSound("level_up_fanfare");
+      globalScene.ui.setMode(UiMode.MESSAGE);
+      globalScene.ui.showText(
+        i18next.t("battle:beatModeFirstTime", {
           speciesName: this.species.name,
           gameMode: globalScene.gameMode.getName(),
-          newModifier: newModifier?.type.name
-        }), null, () => {
+          newModifier: newModifier?.type.name,
+        }),
+        null,
+        () => {
           resolve();
-        }, null, true, 1500);
-      });
+        },
+        null,
+        true,
+        1500,
+      );
     });
   }
 }

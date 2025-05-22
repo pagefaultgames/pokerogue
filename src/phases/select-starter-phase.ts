@@ -9,24 +9,20 @@ import { Phase } from "#app/phase";
 import { TitlePhase } from "#app/phases/title-phase";
 import { SaveSlotUiMode } from "#app/ui/save-slot-select-ui-handler";
 import type { Starter } from "#app/ui/starter-select-ui-handler";
-import { Mode } from "#app/ui/ui";
+import { UiMode } from "#enums/ui-mode";
 import type { Species } from "#enums/species";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
+import { isNullOrUndefined } from "#app/utils/common";
 
 export class SelectStarterPhase extends Phase {
-
-  constructor() {
-    super();
-  }
-
   start() {
     super.start();
 
     globalScene.playBgm("menu");
 
-    globalScene.ui.setMode(Mode.STARTER_SELECT, (starters: Starter[]) => {
+    globalScene.ui.setMode(UiMode.STARTER_SELECT, (starters: Starter[]) => {
       globalScene.ui.clearText();
-      globalScene.ui.setMode(Mode.SAVE_SLOT, SaveSlotUiMode.SAVE, (slotId: number) => {
+      globalScene.ui.setMode(UiMode.SAVE_SLOT, SaveSlotUiMode.SAVE, (slotId: number) => {
         if (slotId === -1) {
           globalScene.clearPhaseQueue();
           globalScene.pushPhase(new TitlePhase());
@@ -53,24 +49,36 @@ export class SelectStarterPhase extends Phase {
       let starterFormIndex = Math.min(starterProps.formIndex, Math.max(starter.species.forms.length - 1, 0));
       if (
         starter.species.speciesId in Overrides.STARTER_FORM_OVERRIDES &&
+        !isNullOrUndefined(Overrides.STARTER_FORM_OVERRIDES[starter.species.speciesId]) &&
         starter.species.forms[Overrides.STARTER_FORM_OVERRIDES[starter.species.speciesId]!]
       ) {
         starterFormIndex = Overrides.STARTER_FORM_OVERRIDES[starter.species.speciesId]!;
       }
 
-      let starterGender = starter.species.malePercent !== null
-        ? !starterProps.female ? Gender.MALE : Gender.FEMALE
-        : Gender.GENDERLESS;
+      let starterGender =
+        starter.species.malePercent !== null ? (!starterProps.female ? Gender.MALE : Gender.FEMALE) : Gender.GENDERLESS;
       if (Overrides.GENDER_OVERRIDE !== null) {
         starterGender = Overrides.GENDER_OVERRIDE;
       }
       const starterIvs = globalScene.gameData.dexData[starter.species.speciesId].ivs.slice(0);
-      const starterPokemon = globalScene.addPlayerPokemon(starter.species, globalScene.gameMode.getStartingLevel(), starter.abilityIndex, starterFormIndex, starterGender, starterProps.shiny, starterProps.variant, starterIvs, starter.nature);
+      const starterPokemon = globalScene.addPlayerPokemon(
+        starter.species,
+        globalScene.gameMode.getStartingLevel(),
+        starter.abilityIndex,
+        starterFormIndex,
+        starterGender,
+        starterProps.shiny,
+        starterProps.variant,
+        starterIvs,
+        starter.nature,
+      );
       starter.moveset && starterPokemon.tryPopulateMoveset(starter.moveset);
       if (starter.passive) {
         starterPokemon.passive = true;
       }
-      starterPokemon.luck = globalScene.gameData.getDexAttrLuck(globalScene.gameData.dexData[starter.species.speciesId].caughtAttr);
+      starterPokemon.luck = globalScene.gameData.getDexAttrLuck(
+        globalScene.gameData.dexData[starter.species.speciesId].caughtAttr,
+      );
       if (starter.pokerus) {
         starterPokemon.pokerus = true;
       }
@@ -79,11 +87,17 @@ export class SelectStarterPhase extends Phase {
         starterPokemon.nickname = starter.nickname;
       }
 
+      if (!isNullOrUndefined(starter.teraType)) {
+        starterPokemon.teraType = starter.teraType;
+      } else {
+        starterPokemon.teraType = starterPokemon.species.type1;
+      }
+
       if (globalScene.gameMode.isSplicedOnly || Overrides.STARTER_FUSION_OVERRIDE) {
         starterPokemon.generateFusionSpecies(true);
       }
       starterPokemon.setVisible(false);
-      applyChallenges(globalScene.gameMode, ChallengeType.STARTER_MODIFY, starterPokemon);
+      applyChallenges(ChallengeType.STARTER_MODIFY, starterPokemon);
       party.push(starterPokemon);
       loadPokemonAssets.push(starterPokemon.loadAssets());
     });
@@ -102,7 +116,7 @@ export class SelectStarterPhase extends Phase {
       globalScene.sessionPlayTime = 0;
       globalScene.lastSavePlayTime = 0;
       // Ensures Keldeo (or any future Pokemon that have this type of form change) starts in the correct form
-      globalScene.getPlayerParty().forEach((p) => {
+      globalScene.getPlayerParty().forEach(p => {
         globalScene.triggerPokemonFormChange(p, SpeciesFormChangeMoveLearnedTrigger);
       });
       this.end();

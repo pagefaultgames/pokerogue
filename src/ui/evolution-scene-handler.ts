@@ -1,6 +1,6 @@
 import MessageUiHandler from "./message-ui-handler";
 import { TextStyle, addTextObject } from "./text";
-import { Mode } from "./ui";
+import { UiMode } from "#enums/ui-mode";
 import { Button } from "#enums/buttons";
 import { globalScene } from "#app/global-scene";
 
@@ -12,7 +12,7 @@ export default class EvolutionSceneHandler extends MessageUiHandler {
   public cancelled: boolean;
 
   constructor() {
-    super(Mode.EVOLUTION_SCENE);
+    super(UiMode.EVOLUTION_SCENE);
   }
 
   setup() {
@@ -38,8 +38,8 @@ export default class EvolutionSceneHandler extends MessageUiHandler {
     const message = addTextObject(0, 0, "", TextStyle.MESSAGE, {
       maxLines: 2,
       wordWrap: {
-        width: 1780
-      }
+        width: 1780,
+      },
     });
     this.messageContainer.add(message);
 

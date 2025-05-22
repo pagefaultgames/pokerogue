@@ -4,18 +4,23 @@ on:
   push:
     branches:
       - beta
+      - release
+  workflow_run:
+    types: completed
+    workflows: ["Post Release Deleted"]
 
 jobs:
   deploy:
-    if: github.repository == 'pagefaultgames/pokerogue'
+    if: github.repository == 'pagefaultgames/pokerogue' && github.ref_name == ${{ vars.BETA_DEPLOY_BRANCH || 'beta' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
-          submodules: 'recursive'
+          submodules: "recursive"
+          ref: ${{ vars.BETA_DEPLOY_BRANCH || 'beta'}}
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version-file: ".nvmrc"
       - name: Install dependencies
         run: npm ci
       - name: Build
@@ -30,5 +35,5 @@ jobs:
           chmod 600 ~/.ssh/*
           ssh-keyscan -H ${{ secrets.BETA_SSH_HOST }} >> ~/.ssh/known_hosts
       - name: Deploy build on server
-        run: | 
+        run: |
           rsync --del --no-times --checksum -vrm dist/* ${{ secrets.BETA_SSH_USER }}@${{ secrets.BETA_SSH_HOST }}:${{ secrets.BETA_DESTINATION_DIR }}

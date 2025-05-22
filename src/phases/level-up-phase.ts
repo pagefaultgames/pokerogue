@@ -6,7 +6,7 @@ import { EvolutionPhase } from "#app/phases/evolution-phase";
 import { LearnMovePhase } from "#app/phases/learn-move-phase";
 import { PlayerPartyMemberPokemonPhase } from "#app/phases/player-party-member-pokemon-phase";
 import { LevelAchv } from "#app/system/achv";
-import { NumberHolder } from "#app/utils";
+import { NumberHolder } from "#app/utils/common";
 import i18next from "i18next";
 
 export class LevelUpPhase extends PlayerPartyMemberPokemonPhase {
@@ -36,20 +36,33 @@ export class LevelUpPhase extends PlayerPartyMemberPokemonPhase {
     if (globalScene.expParty === ExpNotification.DEFAULT) {
       globalScene.playSound("level_up_fanfare");
       globalScene.ui.showText(
-        i18next.t("battle:levelUp", { pokemonName: getPokemonNameWithAffix(this.pokemon), level: this.level }),
+        i18next.t("battle:levelUp", {
+          pokemonName: getPokemonNameWithAffix(this.pokemon),
+          level: this.level,
+        }),
         null,
-        () => globalScene.ui.getMessageHandler().promptLevelUpStats(this.partyMemberIndex, prevStats, false)
-          .then(() => this.end()), null, true);
+        () =>
+          globalScene.ui
+            .getMessageHandler()
+            .promptLevelUpStats(this.partyMemberIndex, prevStats, false)
+            .then(() => this.end()),
+        null,
+        true,
+      );
     } else if (globalScene.expParty === ExpNotification.SKIP) {
       this.end();
     } else {
       // we still want to display the stats if activated
-      globalScene.ui.getMessageHandler().promptLevelUpStats(this.partyMemberIndex, prevStats, false).then(() => this.end());
+      globalScene.ui
+        .getMessageHandler()
+        .promptLevelUpStats(this.partyMemberIndex, prevStats, false)
+        .then(() => this.end());
     }
   }
 
   public override end() {
-    if (this.lastLevel < 100) { // this feels like an unnecessary optimization
+    if (this.lastLevel < 100) {
+      // this feels like an unnecessary optimization
       const levelMoves = this.getPokemon().getLevelMoves(this.lastLevel + 1);
       for (const lm of levelMoves) {
         globalScene.unshiftPhase(new LearnMovePhase(this.partyMemberIndex, lm[1]));
@@ -58,6 +71,7 @@ export class LevelUpPhase extends PlayerPartyMemberPokemonPhase {
     if (!this.pokemon.pauseEvolutions) {
       const evolution = this.pokemon.getEvolution();
       if (evolution) {
+        this.pokemon.breakIllusion();
         globalScene.unshiftPhase(new EvolutionPhase(this.pokemon, evolution, this.lastLevel));
       }
     }

@@ -1,23 +1,24 @@
-import { applyAbAttrs, RunSuccessAbAttr } from "#app/data/ability";
-import { Stat } from "#app/enums/stat";
-import { StatusEffect } from "#app/enums/status-effect";
+import {
+  applyAbAttrs,
+  applyPreLeaveFieldAbAttrs,
+  PreLeaveFieldAbAttr,
+  RunSuccessAbAttr,
+} from "#app/data/abilities/ability";
+import { Stat } from "#enums/stat";
+import { StatusEffect } from "#enums/status-effect";
 import type { PlayerPokemon, EnemyPokemon } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
 import i18next from "i18next";
-import * as Utils from "#app/utils";
+import { NumberHolder } from "#app/utils/common";
 import { BattleEndPhase } from "./battle-end-phase";
 import { NewBattlePhase } from "./new-battle-phase";
 import { PokemonPhase } from "./pokemon-phase";
 import { globalScene } from "#app/global-scene";
+import { SelectBiomePhase } from "./select-biome-phase";
 
 export class AttemptRunPhase extends PokemonPhase {
-
   /** For testing purposes: this is to force the pokemon to fail and escape */
   public forceFailEscape = false;
-
-  constructor(fieldIndex: number) {
-    super(fieldIndex);
-  }
 
   start() {
     super.start();
@@ -27,26 +28,31 @@ export class AttemptRunPhase extends PokemonPhase {
 
     const playerPokemon = this.getPokemon();
 
-    const escapeChance = new Utils.NumberHolder(0);
+    const escapeChance = new NumberHolder(0);
 
     this.attemptRunAway(playerField, enemyField, escapeChance);
 
     applyAbAttrs(RunSuccessAbAttr, playerPokemon, null, false, escapeChance);
 
-    if (playerPokemon.randSeedInt(100) < escapeChance.value && !this.forceFailEscape) {
+    if (playerPokemon.randBattleSeedInt(100) < escapeChance.value && !this.forceFailEscape) {
+      enemyField.forEach(enemyPokemon => applyPreLeaveFieldAbAttrs(PreLeaveFieldAbAttr, enemyPokemon));
+
       globalScene.playSound("se/flee");
       globalScene.queueMessage(i18next.t("battle:runAwaySuccess"), null, true, 500);
 
       globalScene.tweens.add({
-        targets: [ globalScene.arenaEnemy, enemyField ].flat(),
+        targets: [globalScene.arenaEnemy, enemyField].flat(),
         alpha: 0,
         duration: 250,
         ease: "Sine.easeIn",
-        onComplete: () => enemyField.forEach(enemyPokemon => enemyPokemon.destroy())
+        onComplete: () =>
+          // biome-ignore lint/complexity/noForEach: TODO
+          enemyField.forEach(enemyPokemon => enemyPokemon.destroy()),
       });
 
       globalScene.clearEnemyHeldItemModifiers();
 
+      // biome-ignore lint/complexity/noForEach: TODO
       enemyField.forEach(enemyPokemon => {
         enemyPokemon.hideInfo().then(() => enemyPokemon.destroy());
         enemyPokemon.hp = 0;
@@ -54,6 +60,11 @@ export class AttemptRunPhase extends PokemonPhase {
       });
 
       globalScene.pushPhase(new BattleEndPhase(false));
+
+      if (globalScene.gameMode.hasRandomBiomes || globalScene.isNewBiome()) {
+        globalScene.pushPhase(new SelectBiomePhase());
+      }
+
       globalScene.pushPhase(new NewBattlePhase());
     } else {
       playerPokemon.turnData.failedRunAway = true;
@@ -63,11 +74,17 @@ export class AttemptRunPhase extends PokemonPhase {
     this.end();
   }
 
-  attemptRunAway(playerField: PlayerPokemon[], enemyField: EnemyPokemon[], escapeChance: Utils.NumberHolder) {
+  attemptRunAway(playerField: PlayerPokemon[], enemyField: EnemyPokemon[], escapeChance: NumberHolder) {
     /** Sum of the speed of all enemy pokemon on the field */
-    const enemySpeed = enemyField.reduce((total: number, enemyPokemon: Pokemon) => total + enemyPokemon.getStat(Stat.SPD), 0);
+    const enemySpeed = enemyField.reduce(
+      (total: number, enemyPokemon: Pokemon) => total + enemyPokemon.getStat(Stat.SPD),
+      0,
+    );
     /** Sum of the speed of all player pokemon on the field */
-    const playerSpeed = playerField.reduce((total: number, playerPokemon: Pokemon) => total + playerPokemon.getStat(Stat.SPD), 0);
+    const playerSpeed = playerField.reduce(
+      (total: number, playerPokemon: Pokemon) => total + playerPokemon.getStat(Stat.SPD),
+      0,
+    );
 
     /*  The way the escape chance works is by looking at the difference between your speed and the enemy field's average speed as a ratio. The higher this ratio, the higher your chance of success.
      *  However, there is a cap for the ratio of your speed vs enemy speed which beyond that point, you won't gain any advantage. It also looks at how many times you've tried to escape.
@@ -104,6 +121,10 @@ export class AttemptRunPhase extends PokemonPhase {
     const escapeSlope = (maxChance - minChance) / speedCap;
 
     // This will calculate the escape chance given all of the above and clamp it to the range of [`minChance`, `maxChance`]
-    escapeChance.value = Phaser.Math.Clamp(Math.round((escapeSlope * speedRatio) + minChance + (escapeBonus * globalScene.currentBattle.escapeAttempts++)), minChance, maxChance);
+    escapeChance.value = Phaser.Math.Clamp(
+      Math.round(escapeSlope * speedRatio + minChance + escapeBonus * globalScene.currentBattle.escapeAttempts++),
+      minChance,
+      maxChance,
+    );
   }
 }

@@ -12,21 +12,27 @@ on:
       totalShards:
         required: true
         type: number
+      skip:
+        required: true
+        type: boolean
+        default: false
 
 jobs:
   test:
     name: Shard ${{ inputs.shard }} of ${{ inputs.totalShards }}
     runs-on: ubuntu-latest
+    if: ${{ !inputs.skip }}
     steps:
       - name: Check out Git repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.2.2
         with:
           submodules: 'recursive'
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version-file: '.nvmrc'
+          cache: 'npm'
       - name: Install Node.js dependencies
         run: npm ci
       - name: Run tests
-        run: npx vitest --project ${{ inputs.project }} --shard=${{ inputs.shard }}/${{ inputs.totalShards }} ${{ !runner.debug && '--silent' || '' }}
+        run: npx vitest --project ${{ inputs.project }} --no-isolate --shard=${{ inputs.shard }}/${{ inputs.totalShards }} ${{ !runner.debug && '--silent' || '' }}

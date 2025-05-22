@@ -1,4 +1,4 @@
-import { Mode } from "./ui";
+import { UiMode } from "#enums/ui-mode";
 import PokemonIconAnimHandler, { PokemonIconAnimMode } from "./pokemon-icon-anim-handler";
 import MessageUiHandler from "./message-ui-handler";
 import { getEggTierForSpecies } from "../data/egg";
@@ -39,7 +39,7 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
   private eggHatchBg: Phaser.GameObjects.Image;
   private eggHatchData: EggHatchData[];
 
-  private scrollGridHandler : ScrollableGridUiHandler;
+  private scrollGridHandler: ScrollableGridUiHandler;
   private cursorObj: Phaser.GameObjects.Image;
 
   /** used to add a delay before which it is not possible to exit the summary */
@@ -54,7 +54,7 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
   public readonly eventTarget: EventTarget = new EventTarget();
 
   constructor() {
-    super(Mode.EGG_HATCH_SUMMARY);
+    super(UiMode.EGG_HATCH_SUMMARY);
   }
 
   setup() {
@@ -89,7 +89,13 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
     this.infoContainer.setVisible(true);
     this.summaryContainer.add(this.infoContainer);
 
-    const scrollBar = new ScrollBar(iconContainerX + numCols * iconSize, iconContainerY + 3, 4, globalScene.game.canvas.height / 6 - 20, numRows);
+    const scrollBar = new ScrollBar(
+      iconContainerX + numCols * iconSize,
+      iconContainerY + 3,
+      4,
+      globalScene.game.canvas.height / 6 - 20,
+      numRows,
+    );
     this.summaryContainer.add(scrollBar);
 
     this.scrollGridHandler = new ScrollableGridUiHandler(this, numRows, numCols)
@@ -146,17 +152,17 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
         const speciesB = b.pokemon.species;
         if (getEggTierForSpecies(speciesA) < getEggTierForSpecies(speciesB)) {
           return -1;
-        } else if (getEggTierForSpecies(speciesA) > getEggTierForSpecies(speciesB)) {
-          return 1;
-        } else {
-          if (speciesA.speciesId < speciesB.speciesId) {
-            return -1;
-          } else if (speciesA.speciesId > speciesB.speciesId) {
-            return 1;
-          } else {
-            return 0;
-          }
         }
+        if (getEggTierForSpecies(speciesA) > getEggTierForSpecies(speciesB)) {
+          return 1;
+        }
+        if (speciesA.speciesId < speciesB.speciesId) {
+          return -1;
+        }
+        if (speciesA.speciesId > speciesB.speciesId) {
+          return 1;
+        }
+        return 0;
       });
     }
 
@@ -174,9 +180,9 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
 
     // Prevent exiting the egg summary for 2 seconds if the egg hatching
     // was skipped automatically and for 1 second otherwise
-    const exitBlockingDuration = (globalScene.eggSkipPreference === 2) ? 2000 : 1000;
+    const exitBlockingDuration = globalScene.eggSkipPreference === 2 ? 2000 : 1000;
     this.blockExit = true;
-    globalScene.time.delayedCall(exitBlockingDuration, () => this.blockExit = false);
+    globalScene.time.delayedCall(exitBlockingDuration, () => (this.blockExit = false));
 
     return true;
   }
@@ -245,7 +251,10 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
     changed = super.setCursor(cursor);
 
     if (changed) {
-      this.cursorObj.setPosition(iconContainerX - 1 + iconSize * (cursor % numCols), iconContainerY + 1 + iconSize * Math.floor(cursor / numCols));
+      this.cursorObj.setPosition(
+        iconContainerX - 1 + iconSize * (cursor % numCols),
+        iconContainerY + 1 + iconSize * Math.floor(cursor / numCols),
+      );
 
       if (lastCursor > -1) {
         this.iconAnimHandler.addOrUpdate(this.pokemonContainers[lastCursor].icon, PokemonIconAnimMode.NONE);
@@ -257,5 +266,4 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
 
     return changed;
   }
-
 }
