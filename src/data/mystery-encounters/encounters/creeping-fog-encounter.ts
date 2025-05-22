@@ -49,7 +49,7 @@ const namespace = "mysteryEncounters/creepingFog";
 
 /**
  * Creeping Fog encounter.
- * @see {@link https://github.com/pagefaultgames/pokerogue/issues/4423 | GitHub Issue #4418}
+ * @see {@link https://github.com/pagefaultgames/pokerogue/issues/4418 | GitHub Issue #4418}
  * @see For biome requirements check {@linkcode mysteryEncountersByBiome}
  **/
 export const CreepingFogEncounter: MysteryEncounter = MysteryEncounterBuilder.withEncounterType(
