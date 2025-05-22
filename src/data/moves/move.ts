@@ -4905,13 +4905,8 @@ export class NaturalGiftTypeAttr extends VariableMoveTypeAttr {
       return false;
     }
 
-    // If the berry is not in the user's held items, repick it
-
-    if (randomBerry) {
-      moveType.value = randomBerry.getNaturalGiftType();
-      return true;
-    }
-    return false;
+    moveType.value = randomBerry.getNaturalGiftType();
+    return true;
   }
 }
 
