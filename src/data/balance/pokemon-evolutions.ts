@@ -12,7 +12,7 @@ import { Species } from "#enums/species";
 import { TimeOfDay } from "#enums/time-of-day";
 import { EvoTrackerModifier, EvoTrackerMoveUseModifier, EvoTrackerRecoilModifier, SpeciesStatBoosterModifier, PersistentModifier} from "#app/modifier/modifier";
 import { SpeciesFormKey } from "#enums/species-form-key";
-import type { SpeciesStatBoosterModifierType } from "#app/modifier/modifier-type";
+import type { ModifierTypeKeys, SpeciesStatBoosterItem, SpeciesStatBoosterModifierType } from "#app/modifier/modifier-type";
 import { speciesStarterCosts } from "./starters";
 import i18next from "i18next";
 import { allMoves } from "#app/data/data-lists";
@@ -101,6 +101,7 @@ export enum EvoCondKey {
   NATURE,
   MOVE_USE_COUNT,
   RECOIL_DAMAGE_COUNT,
+  HELD_ITEM, // Currently checks only for species stat booster items
 }
 
 export interface EvolutionConditionData {
@@ -117,6 +118,7 @@ export interface EvolutionConditionData {
   speciesCaught?: Species;
   gender?: Gender;
   nature?: Nature[];
+  itemKey?: SpeciesStatBoosterItem;
 }
 
 export class SpeciesEvolutionCondition {
@@ -142,7 +144,8 @@ export class SpeciesEvolutionCondition {
         (cond === EvoCondKey.RANDOM_FORM && isNullOrUndefined(this.data.randomFormChance)) ||
         (cond === EvoCondKey.GENDER && isNullOrUndefined(this.data.gender)) ||
         (cond === EvoCondKey.SPECIES_CAUGHT && isNullOrUndefined(this.data.speciesCaught)) ||
-        (cond === EvoCondKey.MOVE_USE_COUNT && (isNullOrUndefined(this.data.move) || isNullOrUndefined(this.data.evoCount)))
+        (cond === EvoCondKey.MOVE_USE_COUNT && (isNullOrUndefined(this.data.move) || isNullOrUndefined(this.data.evoCount))) ||
+        (cond === EvoCondKey.HELD_ITEM && (isNullOrUndefined(this.data.itemKey) || this.data.itemKey.length === 0))
       ) {
         console.log("Error! Missing data for evo condition: ", EvoCondKey[cond]);
       }
@@ -197,6 +200,9 @@ export class SpeciesEvolutionCondition {
         case EvoCondKey.RECOIL_DAMAGE_COUNT:
           str.push(i18next.t("pokemonEvolutions:recoil"));
           break;
+        case EvoCondKey.HELD_ITEM:
+          str.push(i18next.t("pokemonEvolutions:heldItem"));
+          break;
       }
     });
     return str.join(i18next.t("pokemonEvolutions:connector"));
@@ -246,6 +252,8 @@ export class SpeciesEvolutionCondition {
             m.getStackCount() >= this.data.evoCount!);
         case EvoCondKey.RECOIL_DAMAGE_COUNT:
           return pokemon.getHeldItems().some(m => m instanceof EvoTrackerRecoilModifier && m.getStackCount() >= this.data.evoCount!);
+        case EvoCondKey.HELD_ITEM:
+          return pokemon.getHeldItems().some(m => m instanceof SpeciesStatBoosterModifier && (m.type as SpeciesStatBoosterModifierType).key === this.data.itemKey!)
       }
     });
   }
@@ -1785,9 +1793,8 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.DUSKNOIR, 1, EvolutionItem.REAPER_CLOTH, null, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.CLAMPERL]: [
-    // TODO: Change the SpeciesEvolutionConditions here to use a bespoke HeldItemEvolutionCondition after the modifier rework
-    new SpeciesEvolution(Species.HUNTAIL, 1, EvolutionItem.LINKING_CORD, {}, SpeciesWildEvolutionDelay.VERY_LONG),
-    new SpeciesEvolution(Species.GOREBYSS, 1, EvolutionItem.LINKING_CORD, {}, SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesEvolution(Species.HUNTAIL, 1, EvolutionItem.LINKING_CORD, {key: EvoCondKey.HELD_ITEM, itemKey: "DEEP_SEA_TOOTH"}, SpeciesWildEvolutionDelay.VERY_LONG),
+    new SpeciesEvolution(Species.GOREBYSS, 1, EvolutionItem.LINKING_CORD, {key: EvoCondKey.HELD_ITEM, itemKey: "DEEP_SEA_SCALE"}, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.BOLDORE]: [
     new SpeciesEvolution(Species.GIGALITH, 1, EvolutionItem.LINKING_CORD, null, SpeciesWildEvolutionDelay.VERY_LONG)
