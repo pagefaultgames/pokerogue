@@ -8,7 +8,7 @@ import type Pokemon from "../field/pokemon";
 import i18next from "i18next";
 import type { DexEntry, StarterDataEntry } from "../system/game-data";
 import { DexAttr } from "../system/game-data";
-import { fixedInt } from "#app/utils/common";
+import { fixedInt, getShinyDescriptor } from "#app/utils/common";
 import ConfirmUiHandler from "./confirm-ui-handler";
 import { StatsContainer } from "./stats-container";
 import { TextStyle, addBBCodeTextObject, addTextObject, getTextColor } from "./text";
@@ -343,18 +343,19 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
       this.pokemonShinyIcon.setVisible(pokemon.isShiny());
       this.pokemonShinyIcon.setTint(getVariantTint(baseVariant));
       if (this.pokemonShinyIcon.visible) {
-        const shinyDescriptor =
-          doubleShiny || baseVariant
-            ? `${baseVariant === 2 ? i18next.t("common:epicShiny") : baseVariant === 1 ? i18next.t("common:rareShiny") : i18next.t("common:commonShiny")}${doubleShiny ? `/${pokemon.fusionVariant === 2 ? i18next.t("common:epicShiny") : pokemon.fusionVariant === 1 ? i18next.t("common:rareShiny") : i18next.t("common:commonShiny")}` : ""}`
-            : "";
-        this.pokemonShinyIcon.on("pointerover", () =>
-          globalScene.ui.showTooltip(
-            "",
-            `${i18next.t("common:shinyOnHover")}${shinyDescriptor ? ` (${shinyDescriptor})` : ""}`,
-            true,
-          ),
-        );
-        this.pokemonShinyIcon.on("pointerout", () => globalScene.ui.hideTooltip());
+        let shinyDescriptor = "";
+        if (doubleShiny || baseVariant) {
+          shinyDescriptor = " (" + getShinyDescriptor(baseVariant);
+          if (doubleShiny) {
+            shinyDescriptor += "/" + getShinyDescriptor(pokemon.fusionVariant);
+          }
+          shinyDescriptor += ")";
+        }
+        this.pokemonShinyIcon
+          .on("pointerover", () =>
+            globalScene.ui.showTooltip("", i18next.t("common:shinyOnHover") + shinyDescriptor, true),
+          )
+          .on("pointerout", () => globalScene.ui.hideTooltip());
 
         const newShiny = BigInt(1 << (pokemon.shiny ? 1 : 0));
         const newVariant = BigInt(1 << (pokemon.variant + 4));
