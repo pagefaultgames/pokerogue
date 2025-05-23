@@ -657,26 +657,24 @@ export class MoveImmunityStatStageChangeAbAttr extends MoveImmunityAbAttr {
  * @see {@linkcode applyPostDefend}
  */
 export class ReverseDrainAbAttr extends PostDefendAbAttr {
+  private attacker: Pokemon;
 
   override canApplyPostDefend(_pokemon: Pokemon, _passive: boolean, _simulated: boolean, _attacker: Pokemon, move: Move, _hitResult: HitResult | null, args: any[]): boolean {
     return move.hasAttr(HitHealAttr);
   }
 
-  /**
-   * Determines if a damage and draining move was used to check if this ability should stop the healing.
-   * Examples include: Absorb, Draining Kiss, Bitter Blade, etc.
-   * Also displays a message to show this ability was activated.
-   * @param pokemon {@linkcode Pokemon} with this ability
-   * @param _passive N/A
-   * @param attacker {@linkcode Pokemon} that is attacking this Pokemon
-   * @param move {@linkcode PokemonMove} that is being used
-   * @param _hitResult N/A
-   * @param _args N/A
-   */
-  override applyPostDefend(pokemon: Pokemon, _passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, _hitResult: HitResult, _args: any[]): void {
-    if (!simulated) {
-      globalScene.queueMessage(i18next.t("abilityTriggers:reverseDrain", { pokemonNameWithAffix: getPokemonNameWithAffix(attacker) }));
+  override applyPostDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, hitResult: HitResult | null, args: any[]): void {
+    const cancelled = new BooleanHolder(false);
+    applyAbAttrs(BlockNonDirectDamageAbAttr, attacker, cancelled);
+    if (!cancelled.value) {
+      const damageAmount = move.getAttrs<HitHealAttr>(HitHealAttr)[0].getHealAmount(attacker, pokemon);
+      pokemon.turnData.damageTaken += damageAmount;
+      globalScene.unshiftPhase(new PokemonHealPhase(attacker.getBattlerIndex(), -damageAmount, null, false, true));
     }
+  }
+
+  public override getTriggerMessage(pokemon: Pokemon, _abilityName: string, ..._args: any[]): string | null {
+    return i18next.t("abilityTriggers:reverseDrain", { pokemonNameWithAffix: getPokemonNameWithAffix(this.attacker) });
   }
 }
 
