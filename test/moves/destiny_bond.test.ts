@@ -249,6 +249,6 @@ describe("Moves - Destiny Bond", () => {
     const revSeeds = game.scene
       .getModifiers(PokemonInstantReviveModifier)
       .filter(m => m.pokemonId === playerPokemon?.id);
-    expect(revSeeds.length).toBe(1);
+    expect(revSeeds).toHaveLength(1);
   });
 });

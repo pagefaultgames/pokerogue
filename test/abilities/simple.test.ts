@@ -31,10 +31,10 @@ describe("Abilities - Simple", () => {
   });
 
   it("should double stat changes when applied", async () => {
-    await game.startBattle([Species.SLOWBRO]);
+    await game.classicMode.startBattle([Species.SLOWBRO]);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
     expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(-2);
-  }, 20000);
+  });
 });

@@ -23,19 +23,18 @@ describe("Moves - Beat Up", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("single");
-
-    game.override.enemySpecies(Species.SNORLAX);
-    game.override.enemyLevel(100);
-    game.override.enemyMoveset([Moves.SPLASH]);
-    game.override.enemyAbility(Abilities.INSOMNIA);
-
-    game.override.startingLevel(100);
-    game.override.moveset([Moves.BEAT_UP]);
+    game.override
+      .battleStyle("single")
+      .enemySpecies(Species.SNORLAX)
+      .enemyLevel(100)
+      .enemyMoveset([Moves.SPLASH])
+      .enemyAbility(Abilities.INSOMNIA)
+      .startingLevel(100)
+      .moveset([Moves.BEAT_UP]);
   });
 
   it("should hit once for each healthy player Pokemon", async () => {
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.MAGIKARP,
       Species.BULBASAUR,
       Species.CHARMANDER,
@@ -63,7 +62,7 @@ describe("Moves - Beat Up", () => {
   });
 
   it("should not count player Pokemon with status effects towards hit count", async () => {
-    await game.startBattle([
+    await game.classicMode.startBattle([
       Species.MAGIKARP,
       Species.BULBASAUR,
       Species.CHARMANDER,

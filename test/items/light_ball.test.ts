@@ -108,7 +108,7 @@ describe("Items - Light Ball", () => {
 
     expect(atkValue.value / atkStat).toBe(2);
     expect(spAtkValue.value / spAtkStat).toBe(2);
-  }, 20000);
+  });
 
   it("LIGHT_BALL held by fused PIKACHU (base)", async () => {
     await game.classicMode.startBattle([Species.PIKACHU, Species.MAROWAK]);
@@ -147,10 +147,10 @@ describe("Items - Light Ball", () => {
 
     expect(atkValue.value / atkStat).toBe(2);
     expect(spAtkValue.value / spAtkStat).toBe(2);
-  }, 20000);
+  });
 
   it("LIGHT_BALL held by fused PIKACHU (part)", async () => {
-    await game.startBattle([Species.MAROWAK, Species.PIKACHU]);
+    await game.classicMode.startBattle([Species.MAROWAK, Species.PIKACHU]);
 
     const partyMember = game.scene.getPlayerParty()[0];
     const ally = game.scene.getPlayerParty()[1];
@@ -186,10 +186,10 @@ describe("Items - Light Ball", () => {
 
     expect(atkValue.value / atkStat).toBe(2);
     expect(spAtkValue.value / spAtkStat).toBe(2);
-  }, 20000);
+  });
 
   it("LIGHT_BALL not held by PIKACHU", async () => {
-    await game.startBattle([Species.MAROWAK]);
+    await game.classicMode.startBattle([Species.MAROWAK]);
 
     const partyMember = game.scene.getPlayerParty()[0];
 
@@ -215,5 +215,5 @@ describe("Items - Light Ball", () => {
 
     expect(atkValue.value / atkStat).toBe(1);
     expect(spAtkValue.value / spAtkStat).toBe(1);
-  }, 20000);
+  });
 });

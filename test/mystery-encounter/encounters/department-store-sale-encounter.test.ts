@@ -32,10 +32,11 @@ describe("Department Store Sale - Mystery Encounter", () => {
   beforeEach(async () => {
     game = new GameManager(phaserGame);
     scene = game.scene;
-    game.override.mysteryEncounterChance(100);
-    game.override.startingWave(defaultWave);
-    game.override.startingBiome(defaultBiome);
-    game.override.disableTrainerWaves();
+    game.override
+      .mysteryEncounterChance(100)
+      .startingWave(defaultWave)
+      .startingBiome(defaultBiome)
+      .disableTrainerWaves();
 
     const biomeMap = new Map<Biome, MysteryEncounterType[]>([
       [Biome.VOLCANO, [MysteryEncounterType.MYSTERIOUS_CHALLENGERS]],
@@ -48,8 +49,6 @@ describe("Department Store Sale - Mystery Encounter", () => {
 
   afterEach(() => {
     game.phaseInterceptor.restoreOg();
-    vi.clearAllMocks();
-    vi.resetAllMocks();
   });
 
   it("should have the correct properties", async () => {
@@ -70,12 +69,11 @@ describe("Department Store Sale - Mystery Encounter", () => {
       `${namespace}:description`,
     );
     expect(DepartmentStoreSaleEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}:query`);
-    expect(DepartmentStoreSaleEncounter.options.length).toBe(4);
+    expect(DepartmentStoreSaleEncounter.options).toHaveLength(4);
   });
 
   it("should not spawn outside of CIVILIZATION_ENCOUNTER_BIOMES", async () => {
-    game.override.mysteryEncounterTier(MysteryEncounterTier.COMMON);
-    game.override.startingBiome(Biome.VOLCANO);
+    game.override.mysteryEncounterTier(MysteryEncounterTier.COMMON).startingBiome(Biome.VOLCANO);
     await game.runToMysteryEncounter();
 
     expect(scene.currentBattle?.mysteryEncounter?.encounterType).not.toBe(MysteryEncounterType.DEPARTMENT_STORE_SALE);

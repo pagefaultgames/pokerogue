@@ -34,7 +34,7 @@ describe("Moves - Power Split", () => {
 
   it("should average the user's ATK and SPATK stats with those of the target", async () => {
     game.override.enemyMoveset(Moves.SPLASH);
-    await game.startBattle([Species.INDEEDEE]);
+    await game.classicMode.startBattle([Species.INDEEDEE]);
 
     const player = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;
@@ -50,11 +50,11 @@ describe("Moves - Power Split", () => {
 
     expect(player.getStat(Stat.SPATK, false)).toBe(avgSpAtk);
     expect(enemy.getStat(Stat.SPATK, false)).toBe(avgSpAtk);
-  }, 20000);
+  });
 
   it("should be idempotent", async () => {
     game.override.enemyMoveset([Moves.POWER_SPLIT]);
-    await game.startBattle([Species.INDEEDEE]);
+    await game.classicMode.startBattle([Species.INDEEDEE]);
 
     const player = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;
@@ -73,5 +73,5 @@ describe("Moves - Power Split", () => {
 
     expect(player.getStat(Stat.SPATK, false)).toBe(avgSpAtk);
     expect(enemy.getStat(Stat.SPATK, false)).toBe(avgSpAtk);
-  }, 20000);
+  });
 });

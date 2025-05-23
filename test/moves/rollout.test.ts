@@ -23,18 +23,19 @@ describe("Moves - Rollout", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.disableCrits();
-    game.override.battleStyle("single");
-    game.override.starterSpecies(Species.RATTATA);
-    game.override.ability(Abilities.BALL_FETCH);
-    game.override.enemySpecies(Species.BIDOOF);
-    game.override.enemyAbility(Abilities.BALL_FETCH);
-    game.override.startingLevel(100);
-    game.override.enemyLevel(100);
-    game.override.enemyMoveset(Moves.SPLASH);
+    game.override
+      .disableCrits()
+      .battleStyle("single")
+      .starterSpecies(Species.RATTATA)
+      .ability(Abilities.BALL_FETCH)
+      .enemySpecies(Species.BIDOOF)
+      .enemyAbility(Abilities.BALL_FETCH)
+      .startingLevel(100)
+      .enemyLevel(100)
+      .enemyMoveset(Moves.SPLASH);
   });
 
-  it("should double it's dmg on sequential uses but reset after 5", async () => {
+  it("should double its dmg on sequential uses but reset after 5", async () => {
     game.override.moveset([Moves.ROLLOUT]);
     vi.spyOn(allMoves[Moves.ROLLOUT], "accuracy", "get").mockReturnValue(100); //always hit
 
@@ -42,7 +43,7 @@ describe("Moves - Rollout", () => {
     const turns = 6;
     const dmgHistory: number[] = [];
 
-    await game.startBattle();
+    await game.classicMode.startBattle();
 
     const playerPkm = game.scene.getPlayerParty()[0];
     vi.spyOn(playerPkm, "stats", "get").mockReturnValue([500000, 1, 1, 1, 1, 1]); // HP, ATK, DEF, SPATK, SPDEF, SPD

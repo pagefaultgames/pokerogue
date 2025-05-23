@@ -50,10 +50,11 @@ describe("Trash to Treasure - Mystery Encounter", () => {
   beforeEach(async () => {
     game = new GameManager(phaserGame);
     scene = game.scene;
-    game.override.mysteryEncounterChance(100);
-    game.override.startingWave(defaultWave);
-    game.override.startingBiome(defaultBiome);
-    game.override.disableTrainerWaves();
+    game.override
+      .mysteryEncounterChance(100)
+      .startingWave(defaultWave)
+      .startingBiome(defaultBiome)
+      .disableTrainerWaves();
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
       new Map<Biome, MysteryEncounterType[]>([[Biome.CAVE, [MysteryEncounterType.TRASH_TO_TREASURE]]]),
@@ -62,8 +63,6 @@ describe("Trash to Treasure - Mystery Encounter", () => {
 
   afterEach(() => {
     game.phaseInterceptor.restoreOg();
-    vi.clearAllMocks();
-    vi.resetAllMocks();
   });
 
   it("should have the correct properties", async () => {
@@ -76,7 +75,7 @@ describe("Trash to Treasure - Mystery Encounter", () => {
     expect(TrashToTreasureEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}:title`);
     expect(TrashToTreasureEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}:description`);
     expect(TrashToTreasureEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}:query`);
-    expect(TrashToTreasureEncounter.options.length).toBe(2);
+    expect(TrashToTreasureEncounter.options).toHaveLength(2);
   });
 
   it("should initialize fully", async () => {
@@ -222,7 +221,7 @@ describe("Trash to Treasure - Mystery Encounter", () => {
 
       const enemyField = scene.getEnemyField();
       expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
-      expect(enemyField.length).toBe(1);
+      expect(enemyField).toHaveLength(1);
       expect(enemyField[0].species.speciesId).toBe(Species.GARBODOR);
       expect(enemyField[0].moveset).toEqual([
         new PokemonMove(Moves.GUNK_SHOT),
@@ -233,9 +232,9 @@ describe("Trash to Treasure - Mystery Encounter", () => {
 
       // Should have used moves pre-battle
       const movePhases = phaseSpy.mock.calls.filter(p => p[0] instanceof MovePhase).map(p => p[0]);
-      expect(movePhases.length).toBe(2);
-      expect(movePhases.filter(p => (p as MovePhase).move.moveId === Moves.TOXIC).length).toBe(1);
-      expect(movePhases.filter(p => (p as MovePhase).move.moveId === Moves.STOCKPILE).length).toBe(1);
+      expect(movePhases).toHaveLength(2);
+      expect(movePhases.filter(p => (p as MovePhase).move.moveId === Moves.TOXIC)).toHaveLength(1);
+      expect(movePhases.filter(p => (p as MovePhase).move.moveId === Moves.STOCKPILE)).toHaveLength(1);
     });
 
     it("should have 2 Rogue, 1 Ultra, 1 Great in rewards", async () => {

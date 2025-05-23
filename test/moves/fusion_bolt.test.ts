@@ -23,20 +23,19 @@ describe("Moves - Fusion Bolt", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.moveset([fusionBolt]);
-    game.override.startingLevel(1);
-
-    game.override.enemySpecies(Species.RESHIRAM);
-    game.override.enemyAbility(Abilities.ROUGH_SKIN);
-    game.override.enemyMoveset([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
-
-    game.override.battleStyle("single");
-    game.override.startingWave(97);
-    game.override.disableCrits();
+    game.override
+      .moveset([fusionBolt])
+      .startingLevel(1)
+      .enemySpecies(Species.RESHIRAM)
+      .enemyAbility(Abilities.ROUGH_SKIN)
+      .enemyMoveset(Moves.SPLASH)
+      .battleStyle("single")
+      .startingWave(97)
+      .disableCrits();
   });
 
   it("should not make contact", async () => {
-    await game.startBattle([Species.ZEKROM]);
+    await game.classicMode.startBattle([Species.ZEKROM]);
 
     const partyMember = game.scene.getPlayerPokemon()!;
     const initialHp = partyMember.hp;
@@ -46,5 +45,5 @@ describe("Moves - Fusion Bolt", () => {
     await game.toNextTurn();
 
     expect(initialHp - partyMember.hp).toBe(0);
-  }, 20000);
+  });
 });

@@ -1,6 +1,6 @@
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, type MockInstance, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import PokedexUiHandler from "#app/ui/pokedex-ui-handler";
 import { FilterTextRow } from "#app/ui/filter-text";
 import { allAbilities } from "#app/data/data-lists";
@@ -46,7 +46,6 @@ function permutations<T>(array: T[], length: number): T[][] {
 describe("UI - Pokedex", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
-  const mocks: MockInstance[] = [];
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({
@@ -55,9 +54,6 @@ describe("UI - Pokedex", () => {
   });
 
   afterEach(() => {
-    while (mocks.length > 0) {
-      mocks.pop()?.mockRestore();
-    }
     game.phaseInterceptor.restoreOg();
   });
 
@@ -185,10 +181,10 @@ describe("UI - Pokedex", () => {
       checks.push(...pokemon.forms);
     }
     for (const p of checks) {
-      mocks.push(vi.spyOn(p, "ability1", "get").mockReturnValue(ability));
-      mocks.push(vi.spyOn(p, "ability2", "get").mockReturnValue(ability2));
-      mocks.push(vi.spyOn(p, "abilityHidden", "get").mockReturnValue(hidden));
-      mocks.push(vi.spyOn(p, "getPassiveAbility").mockReturnValue(passive));
+      vi.spyOn(p, "ability1", "get").mockReturnValue(ability);
+      vi.spyOn(p, "ability2", "get").mockReturnValue(ability2);
+      vi.spyOn(p, "abilityHidden", "get").mockReturnValue(hidden);
+      vi.spyOn(p, "getPassiveAbility").mockReturnValue(passive);
     }
   }
 
@@ -447,7 +443,7 @@ describe("UI - Pokedex", () => {
     let filteredPokemon = pokedexHandler.filteredPokemonData.map(pokemon => pokemon.species.speciesId);
 
     // Red shiny
-    expect(filteredPokemon.length).toBe(1);
+    expect(filteredPokemon).toHaveLength(1);
     expect(filteredPokemon[0], "tier 1 shiny").toBe(Species.CATERPIE);
 
     // tier 2 shiny
@@ -456,14 +452,14 @@ describe("UI - Pokedex", () => {
 
     // @ts-expect-error - `filteredPokemonData` is private
     filteredPokemon = pokedexHandler.filteredPokemonData.map(pokemon => pokemon.species.speciesId);
-    expect(filteredPokemon.length).toBe(1);
+    expect(filteredPokemon).toHaveLength(1);
     expect(filteredPokemon[0], "tier 2 shiny").toBe(Species.RATTATA);
 
     filter.toggleOptionState(2);
     filter.toggleOptionState(1);
     // @ts-expect-error - `filteredPokemonData` is private
     filteredPokemon = pokedexHandler.filteredPokemonData.map(pokemon => pokemon.species.speciesId);
-    expect(filteredPokemon.length).toBe(1);
+    expect(filteredPokemon).toHaveLength(1);
     expect(filteredPokemon[0], "tier 3 shiny").toBe(Species.EKANS);
 
     // filter by no shiny
@@ -472,7 +468,7 @@ describe("UI - Pokedex", () => {
 
     // @ts-expect-error - `filteredPokemonData` is private
     filteredPokemon = pokedexHandler.filteredPokemonData.map(pokemon => pokemon.species.speciesId);
-    expect(filteredPokemon.length).toBe(27);
+    expect(filteredPokemon).toHaveLength(27);
     expect(filteredPokemon, "not shiny").not.toContain(Species.CATERPIE);
     expect(filteredPokemon, "not shiny").not.toContain(Species.RATTATA);
     expect(filteredPokemon, "not shiny").not.toContain(Species.EKANS);

@@ -36,10 +36,11 @@ describe("Part-Timer - Mystery Encounter", () => {
   beforeEach(async () => {
     game = new GameManager(phaserGame);
     scene = game.scene;
-    game.override.mysteryEncounterChance(100);
-    game.override.startingWave(defaultWave);
-    game.override.startingBiome(defaultBiome);
-    game.override.disableTrainerWaves();
+    game.override
+      .mysteryEncounterChance(100)
+      .startingWave(defaultWave)
+      .startingBiome(defaultBiome)
+      .disableTrainerWaves();
 
     const biomeMap = new Map<Biome, MysteryEncounterType[]>([
       [Biome.VOLCANO, [MysteryEncounterType.MYSTERIOUS_CHALLENGERS]],
@@ -52,8 +53,6 @@ describe("Part-Timer - Mystery Encounter", () => {
 
   afterEach(() => {
     game.phaseInterceptor.restoreOg();
-    vi.clearAllMocks();
-    vi.resetAllMocks();
   });
 
   it("should have the correct properties", async () => {
@@ -72,12 +71,11 @@ describe("Part-Timer - Mystery Encounter", () => {
     expect(PartTimerEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}:title`);
     expect(PartTimerEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}:description`);
     expect(PartTimerEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}:query`);
-    expect(PartTimerEncounter.options.length).toBe(3);
+    expect(PartTimerEncounter.options).toHaveLength(3);
   });
 
   it("should not spawn outside of CIVILIZATION_ENCOUNTER_BIOMES", async () => {
-    game.override.mysteryEncounterTier(MysteryEncounterTier.COMMON);
-    game.override.startingBiome(Biome.VOLCANO);
+    game.override.mysteryEncounterTier(MysteryEncounterTier.COMMON).startingBiome(Biome.VOLCANO);
     await game.runToMysteryEncounter();
 
     expect(scene.currentBattle?.mysteryEncounter?.encounterType).not.toBe(MysteryEncounterType.PART_TIMER);

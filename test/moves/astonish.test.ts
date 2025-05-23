@@ -27,19 +27,20 @@ describe("Moves - Astonish", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("single");
-    game.override.moveset([Moves.ASTONISH, Moves.SPLASH]);
-    game.override.enemySpecies(Species.BLASTOISE);
-    game.override.enemyAbility(Abilities.INSOMNIA);
-    game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
-    game.override.startingLevel(100);
-    game.override.enemyLevel(100);
+    game.override
+      .battleStyle("single")
+      .moveset([Moves.ASTONISH, Moves.SPLASH])
+      .enemySpecies(Species.BLASTOISE)
+      .enemyAbility(Abilities.INSOMNIA)
+      .enemyMoveset(Moves.TACKLE)
+      .startingLevel(100)
+      .enemyLevel(100);
 
     vi.spyOn(allMoves[Moves.ASTONISH], "chance", "get").mockReturnValue(100);
   });
 
   test("move effect should cancel the target's move on the turn it applies", async () => {
-    await game.startBattle([Species.MEOWSCARADA]);
+    await game.classicMode.startBattle([Species.MEOWSCARADA]);
 
     const leadPokemon = game.scene.getPlayerPokemon()!;
 

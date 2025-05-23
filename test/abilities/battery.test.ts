@@ -26,11 +26,12 @@ describe("Abilities - Battery", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("double");
-    game.override.enemySpecies(Species.SHUCKLE);
-    game.override.enemyAbility(Abilities.BALL_FETCH);
-    game.override.moveset([Moves.TACKLE, Moves.BREAKING_SWIPE, Moves.SPLASH, Moves.DAZZLING_GLEAM]);
-    game.override.enemyMoveset(Moves.SPLASH);
+    game.override
+      .battleStyle("double")
+      .enemySpecies(Species.SHUCKLE)
+      .enemyAbility(Abilities.BALL_FETCH)
+      .moveset([Moves.TACKLE, Moves.BREAKING_SWIPE, Moves.SPLASH, Moves.DAZZLING_GLEAM])
+      .enemyMoveset(Moves.SPLASH);
   });
 
   it("raises the power of allies' special moves by 30%", async () => {
@@ -39,7 +40,7 @@ describe("Abilities - Battery", () => {
 
     vi.spyOn(moveToCheck, "calculateBattlePower");
 
-    await game.startBattle([Species.PIKACHU, Species.CHARJABUG]);
+    await game.classicMode.startBattle([Species.PIKACHU, Species.CHARJABUG]);
 
     game.move.select(Moves.DAZZLING_GLEAM);
     game.move.select(Moves.SPLASH, 1);
@@ -54,7 +55,7 @@ describe("Abilities - Battery", () => {
 
     vi.spyOn(moveToCheck, "calculateBattlePower");
 
-    await game.startBattle([Species.PIKACHU, Species.CHARJABUG]);
+    await game.classicMode.startBattle([Species.PIKACHU, Species.CHARJABUG]);
 
     game.move.select(Moves.BREAKING_SWIPE);
     game.move.select(Moves.SPLASH, 1);
@@ -69,7 +70,7 @@ describe("Abilities - Battery", () => {
 
     vi.spyOn(moveToCheck, "calculateBattlePower");
 
-    await game.startBattle([Species.CHARJABUG, Species.PIKACHU]);
+    await game.classicMode.startBattle([Species.CHARJABUG, Species.PIKACHU]);
 
     game.move.select(Moves.DAZZLING_GLEAM);
     game.move.select(Moves.SPLASH, 1);

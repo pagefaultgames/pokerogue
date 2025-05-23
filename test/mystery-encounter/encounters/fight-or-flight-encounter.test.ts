@@ -40,10 +40,11 @@ describe("Fight or Flight - Mystery Encounter", () => {
   beforeEach(async () => {
     game = new GameManager(phaserGame);
     scene = game.scene;
-    game.override.mysteryEncounterChance(100);
-    game.override.startingWave(defaultWave);
-    game.override.startingBiome(defaultBiome);
-    game.override.disableTrainerWaves();
+    game.override
+      .mysteryEncounterChance(100)
+      .startingWave(defaultWave)
+      .startingBiome(defaultBiome)
+      .disableTrainerWaves();
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
       new Map<Biome, MysteryEncounterType[]>([[Biome.CAVE, [MysteryEncounterType.FIGHT_OR_FLIGHT]]]),
@@ -52,8 +53,6 @@ describe("Fight or Flight - Mystery Encounter", () => {
 
   afterEach(() => {
     game.phaseInterceptor.restoreOg();
-    vi.clearAllMocks();
-    vi.resetAllMocks();
   });
 
   it("should have the correct properties", async () => {
@@ -66,7 +65,7 @@ describe("Fight or Flight - Mystery Encounter", () => {
     expect(FightOrFlightEncounter.dialogue.encounterOptionsDialogue?.title).toBe(`${namespace}:title`);
     expect(FightOrFlightEncounter.dialogue.encounterOptionsDialogue?.description).toBe(`${namespace}:description`);
     expect(FightOrFlightEncounter.dialogue.encounterOptionsDialogue?.query).toBe(`${namespace}:query`);
-    expect(FightOrFlightEncounter.options.length).toBe(3);
+    expect(FightOrFlightEncounter.options).toHaveLength(3);
   });
 
   it("should initialize fully", async () => {
@@ -112,7 +111,7 @@ describe("Fight or Flight - Mystery Encounter", () => {
 
       const enemyField = scene.getEnemyField();
       expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
-      expect(enemyField.length).toBe(1);
+      expect(enemyField).toHaveLength(1);
       expect(enemyField[0].species.speciesId).toBe(speciesToSpawn);
     });
 

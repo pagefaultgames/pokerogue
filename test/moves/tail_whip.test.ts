@@ -25,18 +25,19 @@ describe("Moves - Tail whip", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     const moveToUse = Moves.TAIL_WHIP;
-    game.override.battleStyle("single");
-    game.override.enemySpecies(Species.RATTATA);
-    game.override.enemyAbility(Abilities.INSOMNIA);
-    game.override.ability(Abilities.INSOMNIA);
-    game.override.startingLevel(2000);
-    game.override.moveset([moveToUse]);
-    game.override.enemyMoveset(Moves.SPLASH);
+    game.override
+      .battleStyle("single")
+      .enemySpecies(Species.RATTATA)
+      .enemyAbility(Abilities.INSOMNIA)
+      .ability(Abilities.INSOMNIA)
+      .startingLevel(2000)
+      .moveset([moveToUse])
+      .enemyMoveset(Moves.SPLASH);
   });
 
   it("should lower DEF stat stage by 1", async () => {
     const moveToUse = Moves.TAIL_WHIP;
-    await game.startBattle([Species.MIGHTYENA, Species.MIGHTYENA]);
+    await game.classicMode.startBattle([Species.MIGHTYENA, Species.MIGHTYENA]);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
     expect(enemyPokemon.getStatStage(Stat.DEF)).toBe(0);
@@ -45,5 +46,5 @@ describe("Moves - Tail whip", () => {
     await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(TurnInitPhase);
 
     expect(enemyPokemon.getStatStage(Stat.DEF)).toBe(-1);
-  }, 20000);
+  });
 });
