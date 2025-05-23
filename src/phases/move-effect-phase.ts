@@ -57,6 +57,7 @@ import {
   DamageMoneyRewardModifier,
   EnemyAttackStatusEffectChanceModifier,
   EnemyEndureChanceModifier,
+  EvoTrackerMoveUseModifier,
   FlinchChanceModifier,
   HitHealModifier,
   PokemonMultiHitModifier,
@@ -78,6 +79,8 @@ import type Move from "#app/data/moves/move";
 import { isFieldTargeted } from "#app/data/moves/move-utils";
 import { FaintPhase } from "./faint-phase";
 import { DamageAchv } from "#app/system/achv";
+import { Species } from "#enums/species";
+import { modifierTypes } from "#app/modifier/modifier-type";
 
 type HitCheckEntry = [HitCheckResult, TypeDamageMultiplier];
 
@@ -785,6 +788,18 @@ export class MoveEffectPhase extends PokemonPhase {
     }
     if (this.lastHit) {
       globalScene.triggerPokemonFormChange(user, SpeciesFormChangePostMoveTrigger);
+
+      // Increment evo counter for Primeape and Stantler
+      if (
+        (user.isPlayer() &&
+        ((user.hasSpecies(Species.PRIMEAPE) && this.move.id === Moves.RAGE_FIST) ||
+        (user.hasSpecies(Species.STANTLER) && this.move.id === Moves.PSYSHIELD_BASH)))) {
+          const modifier = (this.move.id === Moves.RAGE_FIST ?
+            modifierTypes.EVOLUTION_TRACKER_PRIMEAPE().withIdFromFunc(modifierTypes.EVOLUTION_TRACKER_PRIMEAPE) :
+            modifierTypes.EVOLUTION_TRACKER_STANTLER().withIdFromFunc(modifierTypes.EVOLUTION_TRACKER_STANTLER))
+            .newModifier(user) as EvoTrackerMoveUseModifier;
+          globalScene.addModifier(modifier);
+      }
 
       // Multi-hit check for Wimp Out/Emergency Exit
       if (user.turnData.hitCount > 1) {
