@@ -467,14 +467,52 @@ function displayYesNoOptions(resolve) {
   globalScene.ui.setModeWithoutClear(UiMode.OPTION_SELECT, config, null, true);
 }
 
+function handleRepeatedAbility(resolve, pokemon: PlayerPokemon, ability: Abilities) {
+  showEncounterText("Your pokemon already has this ability. Are you sure you want to apply it?");
+  const fullOptions = [
+    {
+      label: i18next.t("menu:yes"),
+      handler: () => {
+        applyAbilityOverrideToPokemon(pokemon, ability, true);
+        globalScene.ui.setMode(UiMode.MESSAGE).then(() => resolve(true));
+        return true;
+      },
+    },
+    {
+      label: i18next.t("menu:no"),
+      handler: () => {
+        onYesAbilitySwap(resolve);
+        return true;
+      },
+    },
+  ];
+
+  const config: OptionSelectConfig = {
+    options: fullOptions,
+    maxOptions: 7,
+    yOffset: 0,
+  };
+  globalScene.ui.setModeWithoutClear(UiMode.OPTION_SELECT, config, null, true);
+}
+
 function onYesAbilitySwap(resolve) {
   const onPokemonSelected = (pokemon: PlayerPokemon) => {
     // Do ability swap
     const encounter = globalScene.currentBattle.mysteryEncounter!;
 
-    applyAbilityOverrideToPokemon(pokemon, encounter.misc.ability);
+    // Choose a random ability, to give a pokemon on the end of a battle
+    const randomAbility = encounter.misc.ability;
+    const newAbility = applyAbilityOverrideToPokemon(pokemon, randomAbility, false);
     encounter.setDialogueToken("chosenPokemon", pokemon.getNameToRender());
-    globalScene.ui.setMode(UiMode.MESSAGE).then(() => resolve(true));
+
+    globalScene.ui.setMode(UiMode.MESSAGE).then(() => {
+      // if Pokemon already has the same Ability
+      if (!newAbility) {
+        handleRepeatedAbility(resolve, pokemon, randomAbility);
+      } else {
+        resolve(true);
+      }
+    });
   };
 
   const onPokemonNotSelected = () => {
