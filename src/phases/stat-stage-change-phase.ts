@@ -236,9 +236,9 @@ export class StatStageChangePhase extends PokemonPhase {
 
       // Look for any other stat change phases; if this is the last one, do White Herb check
       const existingPhase = globalScene.findPhase(
-        p => p instanceof StatStageChangePhase && p.battlerIndex === this.battlerIndex,
+        p => p.isXPhase("StatStageChangePhase") && p.battlerIndex === this.battlerIndex,
       );
-      if (!(existingPhase instanceof StatStageChangePhase)) {
+      if (!existingPhase?.isXPhase("StatStageChangePhase")) {
         // Apply White Herb if needed
         const whiteHerb = globalScene.applyModifier(
           ResetNegativeStatStageModifier,
@@ -317,7 +317,7 @@ export class StatStageChangePhase extends PokemonPhase {
       while (
         (existingPhase = globalScene.findPhase(
           p =>
-            p instanceof StatStageChangePhase &&
+            p.isXPhase("StatStageChangePhase") &&
             p.battlerIndex === this.battlerIndex &&
             p.stats.length === 1 &&
             p.stats[0] === this.stats[0] &&
@@ -336,7 +336,7 @@ export class StatStageChangePhase extends PokemonPhase {
     while (
       (existingPhase = globalScene.findPhase(
         p =>
-          p instanceof StatStageChangePhase &&
+          p.isXPhase("StatStageChangePhase") &&
           p.battlerIndex === this.battlerIndex &&
           p.selfTarget === this.selfTarget &&
           accEva.some(s => p.stats.includes(s)) === isAccEva &&
