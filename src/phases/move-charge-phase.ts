@@ -9,7 +9,6 @@ import { BooleanHolder } from "#app/utils/common";
 import { MovePhase } from "#app/phases/move-phase";
 import { PokemonPhase } from "#app/phases/pokemon-phase";
 import { BattlerTagType } from "#enums/battler-tag-type";
-import { MoveEndPhase } from "#app/phases/move-end-phase";
 
 /**
  * Phase for the "charging turn" of two-turn moves (e.g. Dig).
@@ -63,7 +62,7 @@ export class MoveChargePhase extends PokemonPhase {
 
       if (instantCharge.value) {
         // this MoveEndPhase will be duplicated by the queued MovePhase if not removed
-        globalScene.tryRemovePhase(phase => phase instanceof MoveEndPhase && phase.getPokemon() === user);
+        globalScene.tryRemovePhase(phase => phase.isXPhase("MoveEndPhase") && phase.getPokemon() === user);
         // queue a new MovePhase for this move's attack phase
         globalScene.unshiftPhase(new MovePhase(user, [this.targetIndex], this.move, false));
       } else {

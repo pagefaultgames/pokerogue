@@ -20,7 +20,7 @@ export class BattleEndPhase extends BattlePhase {
 
     // cull any extra `BattleEnd` phases from the queue.
     globalScene.phaseQueue = globalScene.phaseQueue.filter(phase => {
-      if (phase instanceof BattleEndPhase) {
+      if (phase.isXPhase("BattleEndPhase")) {
         this.isVictory ||= phase.isVictory;
         return false;
       }
@@ -29,7 +29,7 @@ export class BattleEndPhase extends BattlePhase {
     // `phaseQueuePrepend` is private, so we have to use this inefficient loop.
     while (
       globalScene.tryRemoveUnshiftedPhase(phase => {
-        if (phase instanceof BattleEndPhase) {
+        if (phase.isXPhase("BattleEndPhase")) {
           this.isVictory ||= phase.isVictory;
           return true;
         }

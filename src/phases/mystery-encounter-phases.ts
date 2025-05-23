@@ -6,7 +6,6 @@ import { getEncounterText } from "#app/data/mystery-encounters/utils/encounter-d
 import { CheckSwitchPhase } from "#app/phases/check-switch-phase";
 import { GameOverPhase } from "#app/phases/game-over-phase";
 import { NewBattlePhase } from "#app/phases/new-battle-phase";
-import { PostTurnStatusEffectPhase } from "#app/phases/post-turn-status-effect-phase";
 import { ReturnPhase } from "#app/phases/return-phase";
 import { ScanIvsPhase } from "#app/phases/scan-ivs-phase";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
@@ -248,8 +247,8 @@ export class MysteryEncounterBattleStartCleanupPhase extends Phase {
     });
 
     // Remove any status tick phases
-    while (globalScene.findPhase(p => p instanceof PostTurnStatusEffectPhase)) {
-      globalScene.tryRemovePhase(p => p instanceof PostTurnStatusEffectPhase);
+    while (globalScene.findPhase(p => p.isXPhase("PostTurnStatusEffectPhase"))) {
+      globalScene.tryRemovePhase(p => p.isXPhase("PostTurnStatusEffectPhase"));
     }
 
     // The total number of Pokemon in the player's party that can legally fight
@@ -563,7 +562,7 @@ export class MysteryEncounterRewardsPhase extends Phase {
     if (encounter.doEncounterRewards) {
       encounter.doEncounterRewards();
     } else if (this.addHealPhase) {
-      globalScene.tryRemovePhase(p => p instanceof SelectModifierPhase);
+      globalScene.tryRemovePhase(p => p.isXPhase("SelectModifierPhase"));
       globalScene.unshiftPhase(
         new SelectModifierPhase(0, undefined, {
           fillRemaining: false,

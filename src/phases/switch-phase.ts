@@ -3,7 +3,6 @@ import PartyUiHandler, { PartyOption, PartyUiMode } from "#app/ui/party-ui-handl
 import { UiMode } from "#enums/ui-mode";
 import { SwitchType } from "#enums/switch-type";
 import { BattlePhase } from "./battle-phase";
-import { PostSummonPhase } from "./post-summon-phase";
 import { SwitchSummonPhase } from "./switch-summon-phase";
 
 /**
@@ -77,7 +76,9 @@ export class SwitchPhase extends BattlePhase {
         if (slotIndex >= globalScene.currentBattle.getBattlerCount() && slotIndex < 6) {
           // Remove any pre-existing PostSummonPhase under the same field index.
           // Pre-existing PostSummonPhases may occur when this phase is invoked during a prompt to switch at the start of a wave.
-          globalScene.tryRemovePhase(p => p instanceof PostSummonPhase && p.player && p.fieldIndex === this.fieldIndex);
+          globalScene.tryRemovePhase(
+            p => p.isXPhase("PostSummonPhase") && p.player && p.fieldIndex === this.fieldIndex,
+          );
           const switchType = option === PartyOption.PASS_BATON ? SwitchType.BATON_PASS : this.switchType;
           globalScene.unshiftPhase(new SwitchSummonPhase(switchType, fieldIndex, slotIndex, this.doReturn));
         }
