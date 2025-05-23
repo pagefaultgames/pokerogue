@@ -4,7 +4,6 @@ import MessageUiHandler from "./message-ui-handler";
 import { getEggTierForSpecies } from "../data/egg";
 import { Button } from "#enums/buttons";
 import PokemonHatchInfoContainer from "./pokemon-hatch-info-container";
-import { EggSummaryPhase } from "#app/phases/egg-summary-phase";
 import type { EggHatchData } from "#app/data/egg-hatch-data";
 import ScrollableGridUiHandler from "./scrollable-grid-handler";
 import { HatchedPokemonContainer } from "./hatched-pokemon-container";
@@ -223,7 +222,7 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
     if (button === Button.CANCEL) {
       if (!this.blockExit) {
         const phase = globalScene.getCurrentPhase();
-        if (phase instanceof EggSummaryPhase) {
+        if (phase?.isXPhase("EggSummaryPhase")) {
           phase.end();
         }
         success = true;

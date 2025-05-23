@@ -17,6 +17,9 @@ import { applyPreSummonAbAttrs, PreSummonAbAttr } from "#app/data/abilities/abil
 import { globalScene } from "#app/global-scene";
 
 export class SummonPhase extends PartyMemberPokemonPhase {
+  // The union type is needed to keep typescript happy as these phases extend from SummonPhase
+  protected readonly phaseName: "SummonPhase" | "SummonMissingPhase" | "SwitchSummonPhase" | "ReturnPhase" =
+    "SummonPhase";
   private loaded: boolean;
 
   constructor(fieldIndex: number, player = true, loaded = false) {
