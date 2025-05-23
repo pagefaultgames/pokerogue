@@ -873,7 +873,7 @@ export class SpeciesStatBoosterModifierType
   extends PokemonHeldItemModifierType
   implements GeneratedPersistentModifierType
 {
-  private key: SpeciesStatBoosterItem;
+  public key: SpeciesStatBoosterItem;
 
   constructor(key: SpeciesStatBoosterItem) {
     const item = SpeciesStatBoosterModifierTypeGenerator.items[key];
@@ -1440,34 +1440,59 @@ class SpeciesStatBoosterModifierTypeGenerator extends ModifierTypeGenerator {
       stats: [Stat.ATK, Stat.SPATK],
       multiplier: 2,
       species: [Species.PIKACHU],
+      rare: true,
     },
     THICK_CLUB: {
       stats: [Stat.ATK],
       multiplier: 2,
       species: [Species.CUBONE, Species.MAROWAK, Species.ALOLA_MAROWAK],
+      rare: true,
     },
     METAL_POWDER: {
       stats: [Stat.DEF],
       multiplier: 2,
       species: [Species.DITTO],
+      rare: true,
     },
     QUICK_POWDER: {
       stats: [Stat.SPD],
       multiplier: 2,
       species: [Species.DITTO],
+      rare: true,
+    },
+    DEEP_SEA_SCALE: {
+      stats: [Stat.SPDEF],
+      multiplier: 2,
+      species: [Species.CLAMPERL],
+      rare: false,
+    },
+    DEEP_SEA_TOOTH: {
+      stats: [Stat.SPATK],
+      multiplier: 2,
+      species: [Species.CLAMPERL],
+      rare: false,
     },
   };
 
-  constructor() {
+  constructor(rare: boolean) {
     super((party: Pokemon[], pregenArgs?: any[]) => {
       const items = SpeciesStatBoosterModifierTypeGenerator.items;
       if (pregenArgs && pregenArgs.length === 1 && pregenArgs[0] in items) {
         return new SpeciesStatBoosterModifierType(pregenArgs[0] as SpeciesStatBoosterItem);
       }
 
-      const values = Object.values(items);
-      const keys = Object.keys(items);
-      const weights = keys.map(() => 0);
+      // Get a pool of items based on the rarity.
+      const keys: (keyof SpeciesStatBoosterItem)[] = [];
+      const values: (typeof items)[keyof typeof items][] = [];
+      const weights: number[] = [];
+      for (const [key, val] of Object.entries(SpeciesStatBoosterModifierTypeGenerator.items)) {
+        if (val.rare !== rare) {
+          continue;
+        }
+        values.push(val);
+        keys.push(key as keyof SpeciesStatBoosterItem);
+        weights.push(0);
+      }
 
       for (const p of party) {
         const speciesId = p.getSpeciesForm(true).speciesId;
@@ -1846,7 +1871,7 @@ export type GeneratorModifierOverride = {
   count?: number;
 } & (
   | {
-      name: keyof Pick<typeof modifierTypes, "SPECIES_STAT_BOOSTER">;
+      name: keyof Pick<typeof modifierTypes, "SPECIES_STAT_BOOSTER" | "RARE_SPECIES_STAT_BOOSTER">;
       type?: SpeciesStatBoosterItem;
     }
   | {
@@ -1874,7 +1899,7 @@ export type GeneratorModifierOverride = {
       type?: EvolutionItem;
     }
   | {
-      name: keyof Pick<typeof modifierTypes, "FORM_CHANGE_ITEM">;
+      name: keyof Pick<typeof modifierTypes, "FORM_CHANGE_ITEM" | "RARE_FORM_CHANGE_ITEM">;
       type?: FormChangeItem;
     }
   | {
@@ -1977,7 +2002,8 @@ export const modifierTypes = {
   SUPER_LURE: () => new DoubleBattleChanceBoosterModifierType("modifierType:ModifierType.SUPER_LURE", "super_lure", 15),
   MAX_LURE: () => new DoubleBattleChanceBoosterModifierType("modifierType:ModifierType.MAX_LURE", "max_lure", 30),
 
-  SPECIES_STAT_BOOSTER: () => new SpeciesStatBoosterModifierTypeGenerator(),
+  SPECIES_STAT_BOOSTER: () => new SpeciesStatBoosterModifierTypeGenerator(false),
+  RARE_SPECIES_STAT_BOOSTER: () => new SpeciesStatBoosterModifierTypeGenerator(true),
 
   TEMP_STAT_STAGE_BOOSTER: () => new TempStatStageBoosterModifierTypeGenerator(),
 
@@ -2617,6 +2643,7 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.DIRE_HIT, 4),
     new WeightedModifierType(modifierTypes.SUPER_LURE, lureWeightFunc(15, 4)),
     new WeightedModifierType(modifierTypes.NUGGET, skipInLastClassicWaveOrDefault(5)),
+    new WeightedModifierType(modifierTypes.SPECIES_STAT_BOOSTER, 4),
     new WeightedModifierType(
       modifierTypes.EVOLUTION_ITEM,
       () => {
@@ -2713,7 +2740,7 @@ const modifierPool: ModifierPool = {
       }
       return 0;
     }),
-    new WeightedModifierType(modifierTypes.SPECIES_STAT_BOOSTER, 12),
+    new WeightedModifierType(modifierTypes.RARE_SPECIES_STAT_BOOSTER, 12),
     new WeightedModifierType(
       modifierTypes.LEEK,
       (party: Pokemon[]) => {
