@@ -29,7 +29,7 @@ describe("Moves - Sketch", () => {
     game.override
       .ability(Abilities.BALL_FETCH)
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(Species.SHUCKLE)
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH);

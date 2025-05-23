@@ -26,7 +26,7 @@ describe("Abilities - Heatproof", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(Species.CHARMANDER)
       .enemyAbility(Abilities.HEATPROOF)
       .enemyMoveset(Moves.SPLASH)

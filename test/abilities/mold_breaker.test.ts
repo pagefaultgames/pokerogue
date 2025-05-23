@@ -27,7 +27,7 @@ describe("Abilities - Mold Breaker", () => {
       .moveset([Moves.SPLASH])
       .ability(Abilities.MOLD_BREAKER)
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH);

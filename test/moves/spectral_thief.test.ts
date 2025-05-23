@@ -29,7 +29,8 @@ describe("Moves - Spectral Thief", () => {
       .enemyMoveset(Moves.SPLASH)
       .enemyAbility(Abilities.BALL_FETCH)
       .moveset([Moves.SPECTRAL_THIEF, Moves.SPLASH])
-      .ability(Abilities.BALL_FETCH).disableCrits;
+      .ability(Abilities.BALL_FETCH)
+      .criticalHits(false);
   });
 
   it("should steal max possible positive stat changes and ignore negative ones.", async () => {

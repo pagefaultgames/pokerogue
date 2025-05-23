@@ -28,7 +28,7 @@ describe("Moves - Encore", () => {
       .moveset([Moves.SPLASH, Moves.ENCORE])
       .ability(Abilities.BALL_FETCH)
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset([Moves.SPLASH, Moves.TACKLE])
