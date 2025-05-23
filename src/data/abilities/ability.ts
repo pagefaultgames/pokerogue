@@ -4429,7 +4429,7 @@ export class PostMoveUsedAbAttr extends AbAttr {
     args: any[],
   ): boolean {
     return source.getBattlerIndex() !== pokemon.getBattlerIndex() // not used by ourself
-      && !!targets.length // move had targets to hit
+      && targets.length > 0 // move had targets to hit
       && hitChecks.some(hr => hr[0] === HitCheckResult.HIT); // successfully affected at least 1 target
   }
 
@@ -4449,7 +4449,9 @@ export class PostMoveUsedAbAttr extends AbAttr {
  * @extends PostMoveUsedAbAttr
  */
 export class PostDancingMoveAbAttr extends PostMoveUsedAbAttr {
-
+  constructor() {
+    super(false) // don't display abilities normally
+  }
   /**
    * Check whether this ability can be applied after a move is used.
    * @param dancer - The {@linkcode Pokemon} with the ability
@@ -4479,9 +4481,14 @@ export class PostDancingMoveAbAttr extends PostMoveUsedAbAttr {
       BattlerTagType.HIDDEN,
     ]);
 
-    return super.canApplyPostMoveUsed(dancer, move, source, targets, hitResults, simulated, args)
+    const ret = super.canApplyPostMoveUsed(dancer, move, source, targets, hitResults, simulated, args)
       && move.hasFlag(MoveFlags.DANCE_MOVE) // move is dance move
-      && !dancer.summonData.tags.some(tag => forbiddenTags.has(tag.tagType)); // user able to perform attack
+      && dancer.summonData.tags.every(tag => !forbiddenTags.has(tag.tagType)); // user able to perform attack
+
+    if (ret) {
+      globalScene.setPhaseQueueSplice()
+    }
+    return ret
   }
 
   /**
@@ -4504,8 +4511,9 @@ export class PostDancingMoveAbAttr extends PostMoveUsedAbAttr {
     _simulated: boolean,
     _args: any[],
   ): void {
-
+    // increment extra turns var to ensure subsequent multi-hit moves
     dancer.turnData.extraTurns++;
+
     // appendToPhase is used here to ensure multiple dancers proc in successive order
     // _without_ interrupting one another
     globalScene.appendToPhase(new MovePhase(dancer, this.getMoveTargets(dancer, source, move, targets), new PokemonMove(move.id), MoveUseType.INDIRECT), MoveEndPhase);
