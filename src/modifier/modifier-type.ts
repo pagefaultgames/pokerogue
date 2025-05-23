@@ -1481,9 +1481,18 @@ class SpeciesStatBoosterModifierTypeGenerator extends ModifierTypeGenerator {
         return new SpeciesStatBoosterModifierType(pregenArgs[0] as SpeciesStatBoosterItem);
       }
 
-      const values = Object.values(items);
-      const keys = Object.keys(items);
-      const weights = keys.map(() => 0);
+      // Get a pool of items based on the rarity.
+      const keys: (keyof SpeciesStatBoosterItem)[] = [];
+      const values: (typeof items)[keyof typeof items][] = [];
+      const weights: number[] = [];
+      for (const [key, val] of Object.entries(SpeciesStatBoosterModifierTypeGenerator.items)) {
+        if (val.rare !== rare) {
+          continue;
+        }
+        values.push(val);
+        keys.push(key as keyof SpeciesStatBoosterItem);
+        weights.push(0);
+      }
 
       for (const p of party) {
         const speciesId = p.getSpeciesForm(true).speciesId;
@@ -1506,8 +1515,6 @@ class SpeciesStatBoosterModifierTypeGenerator extends ModifierTypeGenerator {
 
           if (!hasItem) {
             if (checkedSpecies.includes(speciesId) || (!!fusionSpeciesId && checkedSpecies.includes(fusionSpeciesId))) {
-              // Sets the item's rarity in order to determine if the item is rare (ultra tier) or not (great tier)
-              values[i].rare = rare;
               // Add weight if party member has a matching species or, if applicable, a matching fusion species
               weights[i]++;
             } else if (checkedSpecies.includes(Species.PIKACHU) && hasFling) {
