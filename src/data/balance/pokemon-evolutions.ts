@@ -10,13 +10,13 @@ import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { TimeOfDay } from "#enums/time-of-day";
-import { EvoTrackerModifier, EvoTrackerMoveUseModifier, EvoTrackerRecoilModifier, PersistentModifier} from "#app/modifier/modifier";
+import { EvoTrackerModifier, EvoTrackerMoveUseModifier, EvoTrackerRecoilModifier, SpeciesStatBoosterModifier, PersistentModifier} from "#app/modifier/modifier";
 import { SpeciesFormKey } from "#enums/species-form-key";
+import type { SpeciesStatBoosterModifierType } from "#app/modifier/modifier-type";
 import { speciesStarterCosts } from "./starters";
 import i18next from "i18next";
 import { allMoves } from "#app/data/data-lists";
 import { getPokemonSpecies } from "../pokemon-species";
-
 
 export enum SpeciesWildEvolutionDelay {
   NONE,
@@ -1785,8 +1785,9 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.DUSKNOIR, 1, EvolutionItem.REAPER_CLOTH, null, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.CLAMPERL]: [
-    new SpeciesEvolution(Species.HUNTAIL, 1, EvolutionItem.LINKING_CORD, {key: EvoCondKey.GENDER, gender: Gender.MALE/* Deep Sea Tooth */}, SpeciesWildEvolutionDelay.VERY_LONG),
-    new SpeciesEvolution(Species.GOREBYSS, 1, EvolutionItem.LINKING_CORD, {key: EvoCondKey.GENDER, gender: Gender.FEMALE/* Deep Sea Scale */}, SpeciesWildEvolutionDelay.VERY_LONG)
+    // TODO: Change the SpeciesEvolutionConditions here to use a bespoke HeldItemEvolutionCondition after the modifier rework
+    new SpeciesEvolution(Species.HUNTAIL, 1, EvolutionItem.LINKING_CORD, {}, SpeciesWildEvolutionDelay.VERY_LONG),
+    new SpeciesEvolution(Species.GOREBYSS, 1, EvolutionItem.LINKING_CORD, {}, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.BOLDORE]: [
     new SpeciesEvolution(Species.GIGALITH, 1, EvolutionItem.LINKING_CORD, null, SpeciesWildEvolutionDelay.VERY_LONG)
