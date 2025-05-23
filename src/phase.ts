@@ -21,7 +21,7 @@ export abstract class Phase {
    * Check if the phase is of the given type without requiring `instanceof`.
    *
    * @param phase - The string name of the phase to check.
-   * @returns `true` if this phase is of the given type, `false` otherwise.
+   * @returns Whether this phase is of the provided type.
    *
    * @remarks
    * This does not check for subclasses! It only checks if the phase is *exactly* the given type.
