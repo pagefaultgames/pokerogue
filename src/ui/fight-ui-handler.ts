@@ -263,7 +263,7 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
 
       const ppPercentLeft = pp / maxPP;
 
-      //** Determines TextStyle according to percentage of PP remaining */
+      /** Determines TextStyle according to percentage of PP remaining */
       let ppColorStyle = TextStyle.MOVE_PP_FULL;
       if (ppPercentLeft > 0.25 && ppPercentLeft <= 0.5) {
         ppColorStyle = TextStyle.MOVE_PP_HALF_FULL;
@@ -273,7 +273,7 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
         ppColorStyle = TextStyle.MOVE_PP_EMPTY;
       }
 
-      //** Changes the text color and shadow according to the determined TextStyle */
+      /** Changes the text color and shadow according to the determined TextStyle */
       this.ppText.setColor(this.getTextColor(ppColorStyle, false));
       this.ppText.setShadowColor(this.getTextColor(ppColorStyle, true));
       this.moveInfoOverlay.show(pokemonMove.getMove());

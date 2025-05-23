@@ -874,7 +874,8 @@ export default class BattleScene extends SceneBase {
   /**
    * Returns an array of Pokemon on both sides of the battle - player first, then enemy.
    * Does not actually check if the pokemon are on the field or not, and always has length 4 regardless of battle type.
-   * @param activeOnly - Whether to consider only active pokemon; default `false`
+   * @param activeOnly - Whether to consider only active pokemon (as described by {@linkcode Pokemon.isActive()}); default `false`.
+   * If `true`, will also elide all `null` values from the array.
    * @returns An array of {@linkcode Pokemon}, as described above.
    */
   public getField(activeOnly = false): Pokemon[] {
@@ -887,9 +888,9 @@ export default class BattleScene extends SceneBase {
   }
 
   /**
-   * Used in doubles battles to redirect moves from one pokemon to another when one faints or is removed from the field
-   * @param removedPokemon {@linkcode Pokemon} the pokemon that is being removed from the field (flee, faint), moves to be redirected FROM
-   * @param allyPokemon {@linkcode Pokemon} the pokemon that will have the moves be redirected TO
+   * Attempt to redirect a move in double battles from a fainted/removed Pokemon to its ally.
+   * @param removedPokemon - The {@linkcode Pokemon} having been removed from the field.
+   * @param allyPokemon - The {@linkcode Pokemon} allied with the removed Pokemon; will have moves redirected to it
    */
   redirectPokemonMoves(removedPokemon: Pokemon, allyPokemon: Pokemon): void {
     // failsafe: if not a double battle just return
@@ -915,10 +916,10 @@ export default class BattleScene extends SceneBase {
 
   /**
    * Returns the ModifierBar of this scene, which is declared private and therefore not accessible elsewhere
-   * @param isEnemy Whether to return the enemy's modifier bar
-   * @returns {ModifierBar}
+   * @param isEnemy - Whether to return the enemy modifier bar instead of the player bar; default `false`
+   * @returns The {@linkcode ModifierBar} for the given side of the field
    */
-  getModifierBar(isEnemy?: boolean): ModifierBar {
+  getModifierBar(isEnemy = false): ModifierBar {
     return isEnemy ? this.enemyModifierBar : this.modifierBar;
   }
 
@@ -933,8 +934,7 @@ export default class BattleScene extends SceneBase {
   }
 
   getPokemonById(pokemonId: number): Pokemon | null {
-    const findInParty = (party: Pokemon[]) => party.find(p => p.id === pokemonId);
-    return (findInParty(this.getPlayerParty()) || findInParty(this.getEnemyParty())) ?? null;
+    return (this.getPlayerParty() as Pokemon[]).concat(this.getEnemyParty()).find(p => p.id === pokemonId) ?? null;
   }
 
   addPlayerPokemon(
@@ -1472,10 +1472,12 @@ export default class BattleScene extends SceneBase {
 
     if (!waveIndex && lastBattle) {
       const isNewBiome = this.isNewBiome(lastBattle);
+      /** Whether to reset and recall pokemon */
       const resetArenaState =
         isNewBiome ||
         [BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER].includes(this.currentBattle.battleType) ||
         this.currentBattle.battleSpec === BattleSpec.FINAL_BOSS;
+
       for (const enemyPokemon of this.getEnemyParty()) {
         enemyPokemon.destroy();
       }
@@ -1847,7 +1849,7 @@ export default class BattleScene extends SceneBase {
   }
 
   resetSeed(waveIndex?: number): void {
-    const wave = waveIndex || this.currentBattle?.waveIndex || 0;
+    const wave = waveIndex ?? this.currentBattle?.waveIndex ?? 0;
     this.waveSeed = shiftCharCodes(this.seed, wave);
     Phaser.Math.RND.sow([this.waveSeed]);
     console.log("Wave Seed:", this.waveSeed, wave);
@@ -2861,7 +2863,7 @@ export default class BattleScene extends SceneBase {
       // adds to the end of PhaseQueuePrepend
       this.unshiftPhase(phase);
     } else {
-      //remember that pushPhase adds it to nextCommandPhaseQueue
+      // remember that pushPhase adds it to nextCommandPhaseQueue
       this.pushPhase(phase);
     }
   }
@@ -2913,6 +2915,7 @@ export default class BattleScene extends SceneBase {
     return Math.floor(moneyValue / 10) * 10;
   }
 
+  // TODO: refactor this
   addModifier(
     modifier: Modifier | null,
     ignoreUpdate?: boolean,
@@ -3353,18 +3356,18 @@ export default class BattleScene extends SceneBase {
 
   /**
    * Get all of the modifiers that pass the `modifierFilter` function
-   * @param modifierFilter The function used to filter a target's modifiers
-   * @param isPlayer Whether to search the player (`true`) or the enemy (`false`); Defaults to `true`
-   * @returns the list of all modifiers that passed the `modifierFilter` function
+   * @param modifierFilter - The function used to filter a target's modifiers
+   * @param isPlayer - Whether to search the player (`true`) or the enemy (`false`); Defaults to `true`
+   * @returns an array of {@linkcode PersistentModifier}s that passed the `modifierFilter` function
    */
   findModifiers(modifierFilter: ModifierPredicate, isPlayer = true): PersistentModifier[] {
     return (isPlayer ? this.modifiers : this.enemyModifiers).filter(modifierFilter);
   }
 
   /**
-   * Find the first modifier that pass the `modifierFilter` function
-   * @param modifierFilter The function used to filter a target's modifiers
-   * @param player Whether to search the player (`true`) or the enemy (`false`); Defaults to `true`
+   * Find the first modifier that passes the `modifierFilter` function
+   * @param modifierFilter - The function used to filter a target's modifiers
+   * @param player - Whether to search the player (`true`) or the enemy (`false`); Defaults to `true`
    * @returns the first modifier that passed the `modifierFilter` function; `undefined` if none passed
    */
   findModifier(modifierFilter: ModifierPredicate, player = true): PersistentModifier | undefined {

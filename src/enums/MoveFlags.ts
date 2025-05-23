@@ -1,3 +1,7 @@
+/**
+ * A list of possible flags that various moves may have.
+ * Represented internally as a bitmask.
+ */
 export enum MoveFlags {
   NONE = 0,
   MAKES_CONTACT = 1 << 0,

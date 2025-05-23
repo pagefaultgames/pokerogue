@@ -65,7 +65,7 @@ export const modifierSortFunc = (a: Modifier, b: Modifier): number => {
   const aId = a instanceof PokemonHeldItemModifier && a.pokemonId ? a.pokemonId : 4294967295;
   const bId = b instanceof PokemonHeldItemModifier && b.pokemonId ? b.pokemonId : 4294967295;
 
-  //First sort by pokemonID
+  // First sort by pokemonID
   if (aId < bId) {
     return 1;
   }
@@ -745,7 +745,7 @@ export abstract class PokemonHeldItemModifier extends PersistentModifier {
     return 1;
   }
 
-  getMaxStackCount(forThreshold?: boolean): number {
+  getMaxStackCount(forThreshold = false): number {
     const pokemon = this.getPokemon();
     if (!pokemon) {
       return 0;
@@ -2826,6 +2826,7 @@ export class PokemonMultiHitModifier extends PokemonHeldItemModifier {
       damageMultiplier.value *= 1 - 0.25 * this.getStackCount();
       return true;
     }
+
     if (pokemon.turnData.hitCount - pokemon.turnData.hitsLeft !== this.getStackCount() + 1) {
       // Deal 25% damage for each remaining Multi Lens hit
       damageMultiplier.value *= 0.25;

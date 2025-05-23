@@ -361,7 +361,6 @@ export class TypeImmunityAbAttr extends PreDefendAbAttr {
    * @param move {@linkcode Move} The attacking move.
    * @param cancelled {@linkcode BooleanHolder} - A holder for a boolean value indicating if the move was cancelled.
    * @param args [0] {@linkcode NumberHolder} gets set to 0 if move is immuned by an ability.
-   * @param args [1] - Whether the move is simulated.
    */
   override applyPreDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, cancelled: BooleanHolder, args: any[]): void {
     (args[0] as NumberHolder).value = 0;
@@ -1203,6 +1202,7 @@ export class FieldPreventExplosiveMovesAbAttr extends AbAttr {
 export class FieldMultiplyStatAbAttr extends AbAttr {
   private stat: Stat;
   private multiplier: number;
+  /** Whether this ability can stack with others of the same type for this stat; default `false` */
   private canStack: boolean;
 
   constructor(stat: Stat, multiplier: number, canStack = false) {
@@ -1213,13 +1213,13 @@ export class FieldMultiplyStatAbAttr extends AbAttr {
     this.canStack = canStack;
   }
 
-  canApplyFieldStat(pokemon: Pokemon, passive: boolean, simulated: boolean, stat: Stat, statValue: NumberHolder, checkedPokemon: Pokemon, hasApplied: BooleanHolder, args: any[]): boolean {
-    return this.canStack || !hasApplied.value
+  canApplyFieldStat(_pokemon: Pokemon, _passive: boolean, _simulated: boolean, stat: Stat, _statValue: NumberHolder, checkedPokemon: Pokemon, hasApplied: BooleanHolder, _args: any[]): boolean {
+    return (this.canStack || !hasApplied.value)
       && this.stat === stat && checkedPokemon.getAbilityAttrs(FieldMultiplyStatAbAttr).every(attr => (attr as FieldMultiplyStatAbAttr).stat !== stat);
   }
 
   /**
-   * applyFieldStat: Tries to multiply a Pokemon's Stat
+   * Tries to multiply a Pokemon's Stat.
    * @param pokemon {@linkcode Pokemon} the Pokemon using this ability
    * @param passive {@linkcode boolean} unused
    * @param stat {@linkcode Stat} the type of the checked stat
@@ -1245,7 +1245,7 @@ export class MoveTypeChangeAbAttr extends PreAttackAbAttr {
   }
 
   /**
-   * Determine if the move type change attribute can be applied
+   * Determine if the move type change attribute can be applied.
    * 
    * Can be applied if:
    * - The ability's condition is met, e.g. pixilate only boosts normal moves,
@@ -1255,27 +1255,32 @@ export class MoveTypeChangeAbAttr extends PreAttackAbAttr {
    * @param pokemon - The pokemon that has the move type changing ability and is using the attacking move
    * @param _passive - Unused
    * @param _simulated - Unused
-   * @param _defender - The pokemon being attacked (unused)
-   * @param move - The move being used
-   * @param _args - args[0] holds the type that the move is changed to, args[1] holds the multiplier
+   * @param _defender - Unused
+   * @param move - The {@linkcode Move} being used
+   * @param _args - Unused
    * @returns whether the move type change attribute can be applied
    */
-  override canApplyPreAttack(pokemon: Pokemon, _passive: boolean, _simulated: boolean, _defender: Pokemon | null, move: Move, _args: [NumberHolder?, NumberHolder?, ...any]): boolean {
+  // TODO: Why can these be nullish?
+  override canApplyPreAttack(pokemon: Pokemon, _passive: boolean, _simulated: boolean, _defender: Pokemon | null, move: Move, _args: [NumberHolder?, NumberHolder?]): boolean {
     return (!this.condition || this.condition(pokemon, _defender, move)) &&
-            !noAbilityTypeOverrideMoves.has(move.id) && 
+            !noAbilityTypeOverrideMoves.has(move.id) &&
             (!pokemon.isTerastallized ||
               (move.id !== Moves.TERA_BLAST &&
               (move.id !== Moves.TERA_STARSTORM || pokemon.getTeraType() !== PokemonType.STELLAR || !pokemon.hasSpecies(Species.TERAPAGOS))));
   }
 
   /**
-   * @param pokemon - The pokemon that has the move type changing ability and is using the attacking move
-   * @param passive - Unused
-   * @param simulated - Unused
-   * @param defender - The pokemon being attacked (unused)
-   * @param move - The move being used
-   * @param args - args[0] holds the type that the move is changed to, args[1] holds the multiplier
+   * Apply the ability attribute to change the move's type and/or boost its power.
+   * @param _pokemon - Unused
+   * @param _passive - Unused
+   * @param _simulated - Unused
+   * @param _defender - Unused
+   * @param _move - Unused
+   * @param args
+   * `[0]` - A {@linkcode NumberHolder} holding the move's type
+   * `[1]` - A {@linkcode NumberHolder} containing the move's power
    */
+  // TODO: Why can these be nullish?
   override applyPreAttack(pokemon: Pokemon, passive: boolean, simulated: boolean, defender: Pokemon, move: Move, args: [NumberHolder?, NumberHolder?, ...any]): void {
     if (args[0] && args[0] instanceof NumberHolder) {
       args[0].value = this.newType;
@@ -1334,13 +1339,16 @@ export class PokemonTypeChangeAbAttr extends PreAttackAbAttr {
 }
 
 /**
- * Class for abilities that convert single-strike moves to two-strike moves (i.e. Parental Bond).
- * @param damageMultiplier the damage multiplier for the second strike, relative to the first.
- */
+ * Class for abilities that add additional strikes to single-target moves.
+ * Used by {@linkcode Moves.PARENTAL_BOND | Parental Bond}.
+*/
 export class AddSecondStrikeAbAttr extends PreAttackAbAttr {
   private damageMultiplier: number;
 
-  constructor(damageMultiplier: number) {
+  /**
+   * @param damageMultiplier - The damage multiplier for the added strike, relative to the first.
+  */
+ constructor(damageMultiplier: number) {
     super(false);
 
     this.damageMultiplier = damageMultiplier;
@@ -1351,16 +1359,16 @@ export class AddSecondStrikeAbAttr extends PreAttackAbAttr {
   }
 
   /**
-   * If conditions are met, this doubles the move's hit count (via args[1])
-   * or multiplies the damage of secondary strikes (via args[2])
-   * @param pokemon the {@linkcode Pokemon} using the move
-   * @param passive n/a
-   * @param defender n/a
-   * @param move the {@linkcode Move} used by the ability source
-   * @param args Additional arguments:
-   * - `[0]` the number of strikes this move currently has ({@linkcode NumberHolder})
-   * - `[1]` the damage multiplier for the current strike ({@linkcode NumberHolder})
+   * Applies the ability attribute by increasing hit count
+   * @param pokemon - The {@linkcode Pokemon} using the move
+   * @param passive - Unused
+   * @param defender - Unused
+   * @param move - The {@linkcode Move} being used
+   * @param args:
+   * - `[0]` - A {@linkcode NumberHolder} holding the move's current strike count
+   * - `[1]` - A {@linkcode NumberHolder} holding the current strike's damage multiplier.
    */
+  // TODO: Why can these be nullish?
   override applyPreAttack(pokemon: Pokemon, passive: boolean, simulated: boolean, defender: Pokemon, move: Move, args: any[]): void {
     const hitCount = args[0] as NumberHolder;
     const multiplier = args[1] as NumberHolder;
@@ -1587,8 +1595,9 @@ export class PostAttackAbAttr extends AbAttr {
 
   /**
    * By default, this method checks that the move used is a damaging attack before
-   * applying the effect of any inherited class. This can be changed by providing a different {@link attackCondition} to the constructor. See {@link ConfusionOnStatusEffectAbAttr}
-   * for an example of an effect that does not require a damaging move.
+   * applying the effect of any inherited class.
+   * This can be changed by providing a different {@linkcode attackCondition} to the constructor
+   * (see {@linkcode ConfusionOnStatusEffectAbAttr} for an example of this being used).
    */
   canApplyPostAttack(
     pokemon: Pokemon,
@@ -3138,36 +3147,47 @@ export class ProtectStatAbAttr extends PreStatStageChangeAbAttr {
 }
 
 /**
- * This attribute applies confusion to the target whenever the user
- * directly poisons them with a move, e.g. Poison Puppeteer.
+ * Attribute to apply confusion to the target whenever the user
+ * directly statuses them with a move.
+ * Used by {@linkcode Abilities.POISON_PUPPETEER}
  * Called in {@linkcode StatusEffectAttr}.
  * @extends PostAttackAbAttr
  * @see {@linkcode applyPostAttack}
  */
 export class ConfusionOnStatusEffectAbAttr extends PostAttackAbAttr {
   /** List of effects to apply confusion after */
-  private effects: StatusEffect[];
+  private effects: ReadonlySet<StatusEffect>;
 
   constructor(...effects: StatusEffect[]) {
     /** This effect does not require a damaging move */
     super((user, target, move) => true);
-    this.effects = effects;
+    this.effects = new Set(effects);
   }
 
-  override canApplyPostAttack(pokemon: Pokemon, passive: boolean, simulated: boolean, defender: Pokemon, move: Move, hitResult: HitResult | null, args: any[]): boolean {
+   /**
+    * Check that the target was inflicted by the correct status condition from this Pokemon
+    * and can be confused.
+    * @param pokemon - {The @linkcode Pokemon} with this ability
+    * @param passive - N/A
+    * @param defender - The {@linkcode Pokemon} being targeted (will be confused)
+    * @param move - The {@linkcode Move} that applied the status effect
+    * @param hitResult - N/A
+    * @param args `[0]` - The {@linkcode StatusEffect} applied by the move
+    * @returns `true` if the target can be confused after being statused.
+   */
+  override canApplyPostAttack(pokemon: Pokemon, passive: boolean, simulated: boolean, defender: Pokemon, move: Move, hitResult: HitResult | null, args: [StatusEffect]): boolean {
     return super.canApplyPostAttack(pokemon, passive, simulated, defender, move, hitResult, args)
-        && this.effects.indexOf(args[0]) > -1 && !defender.isFainted() && defender.canAddTag(BattlerTagType.CONFUSED);
+        && this.effects.has(args[0]) && !defender.isFainted() && defender.canAddTag(BattlerTagType.CONFUSED);
   }
-
 
   /**
-   * Applies confusion to the target pokemon.
-   * @param pokemon {@link Pokemon} attacking
+   * Apply confusion to the target pokemon.
+   * @param pokemon - {@linkcode Pokemon} with the ability
    * @param passive N/A
-   * @param defender {@link Pokemon} defending
-   * @param move {@link Move} used to apply status effect and confusion
-   * @param hitResult N/A
-   * @param args [0] {@linkcode StatusEffect} applied by move
+   * @param defender - {@linkcode Pokemon} being targeted (will be confused)
+   * @param move - N/A
+   * @param hitResult - N/A
+   * @param args - N/A
    */
   override applyPostAttack(pokemon: Pokemon, passive: boolean, simulated: boolean, defender: Pokemon, move: Move, hitResult: HitResult, args: any[]): void {
     if (!simulated) {
@@ -3313,15 +3333,15 @@ export class ConditionalUserFieldProtectStatAbAttr extends PreStatStageChangeAbA
 
   /**
    * Determine whether the {@linkcode ConditionalUserFieldProtectStatAbAttr} can be applied.
-   * @param pokemon The pokemon with the ability
-   * @param passive unused
-   * @param simulated Unused
-   * @param stat The stat being affected
-   * @param cancelled Holds whether the stat change was already prevented.
-   * @param args Args[0] is the target pokemon of the stat change.
-   * @returns
-   */
-  override canApplyPreStatStageChange(pokemon: Pokemon, passive: boolean, simulated: boolean, stat: BattleStat, cancelled: BooleanHolder, args: [Pokemon, ...any]): boolean {
+   * @param pokemon - The pokemon with the ability
+   * @param passive - unused
+   * @param simulated - Unused
+   * @param stat - The {@linkcode Stat} being affected
+   * @param cancelled - {@linkcode BooleanHolder} containing whether the stat change was already prevented
+   * @param args `[0]` - The {@linkcode Pokemon} recieving the stat change
+   * @returns  `true` if the ability can be applied
+  */
+  override canApplyPreStatStageChange(pokemon: Pokemon, passive: boolean, simulated: boolean, stat: BattleStat, cancelled: BooleanHolder, args: [Pokemon]): boolean {
     const target = args[0];
     if (!target) {
       return false;
@@ -3330,12 +3350,12 @@ export class ConditionalUserFieldProtectStatAbAttr extends PreStatStageChangeAbA
   }
 
   /**
-   * Apply the {@linkcode ConditionalUserFieldStatusEffectImmunityAbAttr} to an interaction
-   * @param _pokemon The pokemon the stat change is affecting (unused)
-   * @param _passive unused
-   * @param _simulated unused
-   * @param stat The stat being affected
-   * @param cancelled Will be set to true if the stat change is prevented
+   * Apply the {@linkcode ConditionalUserFieldStatusEffectImmunityAbAttr} to block status effect application
+   * @param _pokemon - unused
+   * @param _passive - unused
+   * @param _simulated - unused
+   * @param stat - unused
+   * @param cancelled - A {@linkcode BooleanHolder} containing status effect immunity; will be set to `true`
    * @param _args unused
    */
   override applyPreStatStageChange(_pokemon: Pokemon, _passive: boolean, _simulated: boolean, _stat: BattleStat, cancelled: BooleanHolder, _args: any[]): void {
@@ -3508,12 +3528,17 @@ export class ConditionalCritAbAttr extends AbAttr {
   }
 
   /**
-   * @param pokemon {@linkcode Pokemon} user.
-   * @param args [0] {@linkcode BooleanHolder} If true critical hit is guaranteed.
-   *             [1] {@linkcode Pokemon} Target.
-   *             [2] {@linkcode Move} used by ability user.
+   * Apply this ability by enabling guaranteed critical hits.
+   * @param pokemon - The {@linkcode Pokemon} with the ability (unused).
+   * @param passive - Unused
+   * @param simulated - Unused
+   * @param cancelled - Unused
+   * @param args -
+   * - [0] A {@linkcode BooleanHolder} containing whether critical hits are guaranteed.
+   * - [1] The {@linkcode Pokemon} being targeted (unused)
+   * - [2] The {@linkcode Move} used by the ability holder (unused)
    */
-  override apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: BooleanHolder, args: any[]): void {
+  override apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: BooleanHolder, args: [BooleanHolder, Pokemon, Move, ...any]): void {
     (args[0] as BooleanHolder).value = true;
   }
 }
@@ -4034,7 +4059,7 @@ export class PostTurnStatusHealAbAttr extends PostTurnAbAttr {
 
 /**
  * After the turn ends, resets the status of either the ability holder or their ally
- * @param allyTarget Whether to target ally, defaults to false (self-target)
+ * @param allyTarget - Whether to target the ability holder's ally; default `false` (self-target)
  */
 export class PostTurnResetStatusAbAttr extends PostTurnAbAttr {
   private allyTarget: boolean;
@@ -4298,26 +4323,29 @@ export class PostTurnFormChangeAbAttr extends PostTurnAbAttr {
 
 
 /**
- * Attribute used for abilities (Bad Dreams) that damages the opponents for being asleep
+ * Attribute used for abilities (Bad Dreams) that damages sleeping opponents during turn end.
  */
 export class PostTurnHurtIfSleepingAbAttr extends PostTurnAbAttr {
   override canApplyPostTurn(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
     return pokemon.getOpponents().some(opp => (opp.status?.effect === StatusEffect.SLEEP || opp.hasAbility(Abilities.COMATOSE)) && !opp.hasAbilityWithAttr(BlockNonDirectDamageAbAttr) && !opp.switchOutStatus);
   }
   /**
-   * Deals damage to all sleeping opponents equal to 1/8 of their max hp (min 1)
-   * @param pokemon {@linkcode Pokemon} with this ability
-   * @param passive N/A
-   * @param simulated `true` if applying in a simulated call.
-   * @param args N/A
+   * Damages all sleeping opponents on turn end equal to 1/8 of their respective max hp (min 1)
+   * @param pokemon - The {@linkcode Pokemon} with this ability
+   * @param passive - Unused
+   * @param simulated - Whether to suppress changes to game state during calculations.
+   * @param args - Unused
    */
   override applyPostTurn(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): void {
-    for (const opp of pokemon.getOpponents()) {
-      if ((opp.status?.effect === StatusEffect.SLEEP || opp.hasAbility(Abilities.COMATOSE)) && !opp.hasAbilityWithAttr(BlockNonDirectDamageAbAttr) && !opp.switchOutStatus) {
-        if (!simulated) {
-          opp.damageAndUpdate(toDmgValue(opp.getMaxHp() / 8), { result: HitResult.INDIRECT });
-          globalScene.queueMessage(i18next.t("abilityTriggers:badDreams", { pokemonName: getPokemonNameWithAffix(opp) }));
-        }
+    if (simulated) {
+      return;
+    }
+
+    // grab all on-field, sleeping opponents and hurt them if they aren't immune to passive damage
+    for (const opp of pokemon.getOpponents(true).filter(opp => opp.status?.effect === StatusEffect.SLEEP || opp.hasAbility(Abilities.COMATOSE))) {
+      if (!opp.hasAbilityWithAttr(BlockNonDirectDamageAbAttr)) {
+        opp.damageAndUpdate(toDmgValue(opp.getMaxHp() / 8), { result: HitResult.INDIRECT });
+        globalScene.queueMessage(i18next.t("abilityTriggers:badDreams", { pokemonName: getPokemonNameWithAffix(opp) }));
       }
     }
   }
@@ -4398,7 +4426,7 @@ export class PostBiomeChangeTerrainChangeAbAttr extends PostBiomeChangeAbAttr {
  * @extends AbAttr
  */
 export class PostMoveUsedAbAttr extends AbAttr {
-  canApplyPostMoveUsed(
+    canApplyPostMoveUsed(
     pokemon: Pokemon,
     move: PokemonMove,
     source: Pokemon,
@@ -5086,7 +5114,8 @@ export class IgnoreTypeImmunityAbAttr extends AbAttr {
 }
 
 /**
- * Ignores the type immunity to Status Effects of the defender if the defender is of a certain type
+ * Attribute to ignore type-based immunities to Status Effect if the defender is of a certain type.
+ * Used by {@linkcode Abilities.CORROSION}.
  */
 export class IgnoreTypeStatusEffectImmunityAbAttr extends AbAttr {
   private statusEffect: StatusEffect[];
