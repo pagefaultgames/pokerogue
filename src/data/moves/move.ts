@@ -2843,12 +2843,8 @@ export class HealStatusEffectAttr extends MoveEffectAttr {
 
 export class BypassSleepAttr extends MoveAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (user.status?.effect === StatusEffect.SLEEP) {
-      user.addTag(BattlerTagType.BYPASS_SLEEP, 1, move.id, user.id);
-      return true;
-    }
-
-    return false;
+    user.addTag(BattlerTagType.BYPASS_SLEEP, 1, move.id, user.id);
+    return true;
   }
 
   /**
@@ -7938,7 +7934,7 @@ const failIfDampCondition: MoveConditionFunc = (user, target, move) => {
   return !cancelled.value;
 };
 
-const userSleptOrComatoseCondition: MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) =>  user.status?.effect === StatusEffect.SLEEP || user.hasAbility(Abilities.COMATOSE);
+const userSleptOrComatoseCondition: MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) =>  (user.status?.effect === StatusEffect.SLEEP && (user.status.sleepTurnsRemaining ?? 0) > 0) || user.hasAbility(Abilities.COMATOSE);
 
 const targetSleptOrComatoseCondition: MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) =>  target.status?.effect === StatusEffect.SLEEP || target.hasAbility(Abilities.COMATOSE);
 
