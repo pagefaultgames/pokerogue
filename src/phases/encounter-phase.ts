@@ -47,7 +47,8 @@ import { WEIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/data/mystery-encounters/mys
 import { getNatureName } from "#app/data/nature";
 
 export class EncounterPhase extends BattlePhase {
-  protected readonly phaseName = "EncounterPhase";
+  // Union type is necessary as these
+  protected readonly phaseName: "EncounterPhase" | "NextEncounterPhase" | "NewBiomeEncounterPhase" = "EncounterPhase";
   private loaded: boolean;
 
   constructor(loaded = false) {
