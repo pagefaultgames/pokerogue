@@ -14,6 +14,8 @@ import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { toDmgValue } from "#app/utils/common";
 import { allMoves } from "#app/data/moves/move";
+import { allAbilities } from "#app/data/data-lists";
+import { ShowAbilityPhase } from "#app/phases/show-ability-phase";
 
 describe("Abilities - Dancer", () => {
   let phaserGame: Phaser.Game;
@@ -135,15 +137,13 @@ describe("Abilities - Dancer", () => {
 
   // TODO: Verify on cart
   it("should redirect copied move if source enemy faints", async () => {
-    game.override
-      .battleStyle("double")
-      .enemyAbility(Abilities.ROUGH_SKIN)
-      .enemyMoveset([Moves.AQUA_STEP, Moves.SPLASH]);
+    game.override.battleStyle("double").enemyMoveset([Moves.AQUA_STEP, Moves.SPLASH]);
     await game.classicMode.startBattle([Species.ORICORIO]);
 
     const oricorio = game.scene.getPlayerPokemon()!;
     const [shuckle1, shuckle2] = game.scene.getEnemyField();
     shuckle1.hp = 1;
+    vi.spyOn(shuckle2, "getAbility").mockReturnValue(allAbilities[Abilities.ROUGH_SKIN]);
 
     // Enemy 1 hits enemy 2 and gets pwneed
     game.move.select(Moves.SPLASH);
@@ -151,7 +151,7 @@ describe("Abilities - Dancer", () => {
     await game.forceEnemyMove(Moves.SPLASH);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER]);
 
-    await game.phaseInterceptor.to("MovePhase"); // shuckle aqua step kills itself
+    await game.phaseInterceptor.to("MovePhase"); // shuckle aqua steps its ally and kills itself
     await toNextMove(); // Oricorio copies
     expect(shuckle1.isFainted()).toBe(true);
 
@@ -159,8 +159,25 @@ describe("Abilities - Dancer", () => {
     checkCurrentMoveUser(oricorio, Moves.AQUA_STEP, [BattlerIndex.ENEMY_2]);
 
     await game.phaseInterceptor.to("TurnEndPhase");
+    expect(oricorio.isFullHp()).toBe(false);
+  });
 
-    expect(shuckle2.isFullHp()).toBe(false);
+  it("should not break subsequent last hit only moves", async () => {
+    game.override.battleStyle("single").enemyMoveset(Moves.SWORDS_DANCE).moveset(Moves.BATON_PASS);
+    await game.classicMode.startBattle([Species.ORICORIO, Species.FEEBAS]);
+
+    const [oricorio, feebas] = game.scene.getPlayerParty();
+
+    game.move.select(Moves.BATON_PASS);
+    game.doSelectPartyPokemon(1);
+    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    await game.phaseInterceptor.to("TurnEndPhase");
+
+    expect(game.phaseInterceptor.log).toContain("SwitchSummonPhase");
+    expect(game.scene.getPlayerPokemon()).toBe(feebas);
+    expect(feebas.getStatStage(Stat.ATK)).toBe(2);
+    expect(oricorio.isOnField()).toBe(false);
+    expect(oricorio.visible).toBe(false);
   });
 
   it("should target correctly in double battles", async () => {
@@ -207,7 +224,8 @@ describe("Abilities - Dancer", () => {
   });
 
   // TODO: Enable once abilities start proccing in speed order
-  it.todo("should respect speed order during doubles", async () => {
+  // TODO: Fix display order - currently we display them all right at the start in REVERSE ORDER...?
+  it.todo("should respect speed order during doubles and display in order", async () => {
     game.override
       .battleStyle("double")
       .enemyAbility(Abilities.DANCER)
@@ -216,9 +234,10 @@ describe("Abilities - Dancer", () => {
     await game.classicMode.startBattle([Species.ORICORIO, Species.FEEBAS]);
 
     // Set the mons in reverse speed order - P1, P2, E1, E2
-    // Used in place of `setTurnOrder` as the latter only applies for current phase
+    // Used in place of `setTurnOrder` as the latter only applies for turn start phase
     game.scene.getField().forEach((pkmn, i) => pkmn.setStat(Stat.SPD, 5 - i));
     const orderSpy = vi.spyOn(MovePhase.prototype, "start");
+    const showAbSpy = vi.spyOn(ShowAbilityPhase.prototype, "start");
 
     game.move.select(Moves.QUIVER_DANCE, BattlerIndex.PLAYER);
     game.move.select(Moves.SWORDS_DANCE, BattlerIndex.PLAYER_2);
@@ -226,8 +245,7 @@ describe("Abilities - Dancer", () => {
 
     const [oricorio, feebas, shuckle1, shuckle2] = game.scene.getField();
 
-    const order = (orderSpy.mock.contexts as MovePhase[]).map(mp => mp.pokemon);
-    expect(order).toEqual([
+    const expectedOrder = [
       // Oricorio quiver dance
       oricorio,
       feebas,
@@ -238,7 +256,12 @@ describe("Abilities - Dancer", () => {
       oricorio,
       shuckle1,
       shuckle2,
-    ]);
+    ];
+
+    const order = (orderSpy.mock.contexts as MovePhase[]).map(mp => mp.pokemon);
+    const abOrder = (showAbSpy.mock.contexts as ShowAbilityPhase[]).map(sap => sap.getPokemon());
+    expect(order).toEqual(expectedOrder);
+    expect(abOrder).toEqual(expectedOrder);
   });
 
   // TODO: Currently this is bugged as counter moves don't work at all
@@ -567,7 +590,4 @@ describe("Abilities - Dancer", () => {
 
     checkCurrentMoveUser(game.scene.getPlayerPokemon(), Moves.SPLASH, [BattlerIndex.PLAYER], MoveUseType.NORMAL);
   });
-
-  // TODO: Implement this
-  it.todo("should display multiple concurrent dancers' ability flyouts when their moves are used");
 });

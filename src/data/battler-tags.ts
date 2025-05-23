@@ -25,7 +25,7 @@ import { getStatusEffectHealText } from "#app/data/status-effect";
 import { TerrainType } from "#app/data/terrain";
 import { PokemonType } from "#enums/pokemon-type";
 import type Pokemon from "#app/field/pokemon";
-import { HitResult, MoveResult } from "#app/field/pokemon";
+import { HitResult, MoveResult, type TurnMove } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { CommonAnimPhase } from "#app/phases/common-anim-phase";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
@@ -1858,6 +1858,7 @@ export class CenterOfAttentionTag extends BattlerTag {
   }
 }
 
+// TODO: Add a way to "link" battler tags with their source ability display
 export class AbilityBattlerTag extends BattlerTag {
   public ability: Abilities;
 
@@ -1904,7 +1905,7 @@ export class TruantTag extends AbilityBattlerTag {
       return super.lapse(pokemon, lapseType);
     }
 
-    const lastMove = pokemon.getLastXMoves()[0];
+    const lastMove: TurnMove | undefined = pokemon.getLastXMoves()[0];
 
     if (!lastMove) {
       // Don't interrupt move if last move was `Moves.NONE` OR no prior move was found
