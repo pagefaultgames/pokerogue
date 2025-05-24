@@ -4450,7 +4450,7 @@ export class PostMoveUsedAbAttr extends AbAttr {
  */
 export class PostDancingMoveAbAttr extends PostMoveUsedAbAttr {
   constructor() {
-    super(false) // don't display abilities normally
+    super(true) // don't display abilities normally
   }
   /**
    * Check whether this ability can be applied after a move is used.
@@ -4481,14 +4481,9 @@ export class PostDancingMoveAbAttr extends PostMoveUsedAbAttr {
       BattlerTagType.HIDDEN,
     ]);
 
-    const ret = super.canApplyPostMoveUsed(dancer, move, source, targets, hitResults, simulated, args)
+    return super.canApplyPostMoveUsed(dancer, move, source, targets, hitResults, simulated, args)
       && move.hasFlag(MoveFlags.DANCE_MOVE) // move is dance move
       && dancer.summonData.tags.every(tag => !forbiddenTags.has(tag.tagType)); // user able to perform attack
-
-    if (ret) {
-      globalScene.setPhaseQueueSplice()
-    }
-    return ret
   }
 
   /**
@@ -4533,30 +4528,27 @@ export class PostDancingMoveAbAttr extends PostMoveUsedAbAttr {
     //   return getMoveTargets(dancer, move.id).targets
     // }
 
-    // Self-targeted status moves (Swords Dance & co.) are replicated on the user.
+    // Self-targeted status moves (Swords Dance & co.) are always replicated on the user.
     if (move instanceof SelfStatusMove) {
       return [ dancer.getBattlerIndex() ]
     }
 
     // Attack moves are unleashed on the source of the dance UNLESS they are an ally attacking an enemy
     // (in which case we retain the prior move's targets)
-    // TODO: What if the source has fainted?
     if (!(dancer.isPlayer() === source.isPlayer() && !targets.includes(dancer.getBattlerIndex()))) {
       targets = [ source.getBattlerIndex() ];
     }
 
-    // Attempt to redirect to the prior target's partner if fainted.
+    // Attempt to redirect to the prior target's partner if fainted and not our own ally.
     const firstTarget = globalScene.getField()[targets[0]];
+    const ally = firstTarget.getAlly();
     if (
       globalScene.currentBattle.double
       && firstTarget.isFainted()
-      && firstTarget !== dancer
+      && firstTarget.isPlayer() !== dancer.isPlayer()
+      && ally?.isActive()
     ) {
-      const ally = firstTarget.getAlly();
-      if (ally?.isActive()) {
-        // ally exists, is not dead and can sponge the blast
         return [ ally.getBattlerIndex() ];
-      }
     }
 
     return targets;
