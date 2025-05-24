@@ -135,7 +135,6 @@ describe("Abilities - Dancer", () => {
     expect(shuckle1.isFainted()).toBe(true);
   });
 
-  // TODO: Verify on cart
   it("should redirect copied move if source enemy faints", async () => {
     game.override.battleStyle("double").enemyMoveset([Moves.AQUA_STEP, Moves.SPLASH]);
     await game.classicMode.startBattle([Species.ORICORIO]);
