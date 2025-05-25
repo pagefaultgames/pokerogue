@@ -7,7 +7,8 @@ import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { StatusEffect } from "#app/enums/status-effect";
 import { BattlerIndex } from "#app/battle";
-import { allMoves, RandomMoveAttr } from "#app/data/moves/move";
+import { RandomMoveAttr } from "#app/data/moves/move";
+import { allMoves } from "#app/data/data-lists";
 
 describe("Moves - Sketch", () => {
   let phaserGame: Phaser.Game;

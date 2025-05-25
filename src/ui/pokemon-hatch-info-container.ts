@@ -4,7 +4,7 @@ import { PokemonType } from "#enums/pokemon-type";
 import { rgbHexToRgba, padInt } from "#app/utils/common";
 import { TextStyle, addTextObject } from "#app/ui/text";
 import { speciesEggMoves } from "#app/data/balance/egg-moves";
-import { allMoves } from "#app/data/moves/move";
+import { allMoves } from "#app/data/data-lists";
 import { Species } from "#enums/species";
 import { getEggTierForSpecies } from "#app/data/egg";
 import { starterColors } from "#app/global-vars/starter-colors";
