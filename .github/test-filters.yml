@@ -1,0 +1,19 @@
+all:
+  - "src/**"
+  - "test/**"
+  - "public/**"
+  # Workflows that can impact tests
+  - ".github/workflows/test*.yml"
+  - ".github/test-filters.yml"
+  # top-level files
+  - "package*.json"
+  - ".nvrmc" # Updates to node version can break tests
+  - "vite*" # vite.config.ts, vite.vitest.config.ts, vitest.workspace.ts
+  - "tsconfig*.json" # tsconfig.json tweaking can impact compilation
+  - "global.d.ts"
+  - ".env*"
+  # Blanket negations for files that cannot impact tests
+  - "!**/*.py" # No .py files
+  - "!**/*.sh" # No .sh files
+  - "!**/*.md" # No .md files
+  - "!**/.git*" # .gitkeep and family
