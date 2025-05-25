@@ -5780,36 +5780,22 @@ export class ProtectAttr extends AddBattlerTagAttr {
 
   getCondition(): MoveConditionFunc {
     return ((user, target, move): boolean => {
-      // Protect rng resets on new waves, it always succeeds.
-      if (user.tempSummonData.waveTurnCount === 1) {
-        return true;
-      }
-
       let timesUsed = 0;
-      const moveHistory = user.getLastXMoves(-1);
-      let turnMove: TurnMove | undefined;
 
-      while (moveHistory.length) {
-        turnMove = moveHistory.shift();
-
-        if (!allMoves[turnMove?.move ?? Moves.NONE].hasAttr(ProtectAttr) || turnMove?.result !== MoveResult.SUCCESS) {
+      for (const turnMove of user.tempSummonData.waveMoveHistory) {
+        if (
+          // Quick & Wide guard increment the Protect counter without using it for fail chance
+          !(allMoves[turnMove.move].hasAttr(ProtectAttr) || [Moves.QUICK_GUARD, Moves.WIDE_GUARD].includes(turnMove.move))
+          || turnMove?.result !== MoveResult.SUCCESS
+        ) {
           break;
         }
 
-        timesUsed++;
-
-        // Break after first move used this wave.
-        // If no move was used on turn 1, then it would have broken in the attr check already.
-        if (turnMove?.turn === 1) {
-          break;
-        }
+        timesUsed++
       }
 
-      if (timesUsed) {
-        return !user.randBattleSeedInt(Math.pow(3, timesUsed));
-      }
-
-      return true;
+      // console.log(`Wave Move History: ${user.tempSummonData.waveMoveHistory}\nTimes Used In Row: ${timesUsed}\nSuccess chance: 1 in ${Math.pow(3, timesUsed)}`)
+      return timesUsed === 0 || user.randBattleSeedInt(Math.pow(3, timesUsed)) === 0;
     });
   }
 }
