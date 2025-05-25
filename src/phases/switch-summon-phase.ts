@@ -138,7 +138,6 @@ export class SwitchSummonPhase extends SummonPhase {
       return;
     }
 
-    // await globalScene.time.delayedCall(2000 () => )
 
     if (this.switchType === SwitchType.BATON_PASS) {
       // If switching via baton pass, update opposing tags coming from the prior pokemon
