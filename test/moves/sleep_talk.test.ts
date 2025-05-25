@@ -61,13 +61,25 @@ describe("Moves - Sleep Talk", () => {
     );
   });
 
-  it("should fail when the user is not asleep", async () => {
+  it("should fail if the user is not asleep", async () => {
     game.override.statusEffect(StatusEffect.NONE);
     await game.classicMode.startBattle([Species.FEEBAS]);
 
     game.move.select(Moves.SLEEP_TALK);
     await game.toNextTurn();
     expect(game.scene.getPlayerPokemon()!.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+  });
+
+  it("should fail the turn the user wakes up from Sleep", async () => {
+    await game.classicMode.startBattle([Species.FEEBAS]);
+
+    const feebas = game.scene.getPlayerPokemon()!;
+    expect(feebas.status?.effect).toBe(StatusEffect.SLEEP);
+    feebas.status!.sleepTurnsRemaining = 1;
+
+    game.move.select(Moves.SLEEP_TALK);
+    await game.toNextTurn();
+    expect(feebas.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
   });
 
   it("should fail if the user has no valid moves", async () => {

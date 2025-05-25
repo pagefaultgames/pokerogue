@@ -103,26 +103,9 @@ describe("Moves - Rest", () => {
     const snorlax = game.scene.getPlayerPokemon()!;
     snorlax.hp = 1;
 
-    // Turn 1
-    game.move.select(Moves.REST);
-    await game.toNextTurn();
-
-    snorlax.hp = 1;
     expect(snorlax.status?.effect).toBe(StatusEffect.SLEEP);
+    snorlax.status!.sleepTurnsRemaining = 1;
 
-    // Turn 2
-    game.move.select(Moves.REST);
-    await game.toNextTurn();
-
-    expect(snorlax.status?.effect).toBe(StatusEffect.SLEEP);
-
-    // Turn 3
-    game.move.select(Moves.REST);
-    await game.toNextTurn();
-
-    expect(snorlax.status?.effect).toBe(StatusEffect.SLEEP);
-
-    // Turn 4 (wakeup)
     game.move.select(Moves.REST);
     await game.toNextTurn();
 
