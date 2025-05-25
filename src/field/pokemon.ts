@@ -260,6 +260,7 @@ import { timedEventManager } from "#app/global-event-manager";
 import { loadMoveAnimations } from "#app/sprites/pokemon-asset-loader";
 import { ResetStatusPhase } from "#app/phases/reset-status-phase";
 import { PokemonBattleData, PokemonSummonData, PokemonTempSummonData, PokemonWaveData, PokemonTurnData, type IllusionData } from "../@types/pokemon-data";
+import type { TurnMove } from "../@types/turn-move";
 
 export enum LearnMoveSituation {
   MISC,
@@ -7754,24 +7755,6 @@ export class EnemyPokemon extends Pokemon {
 
     return ret;
   }
-}
-
-export interface TurnMove {
-  move: Moves;
-  targets: BattlerIndex[];
-  result?: MoveResult;
-  virtual?: boolean;
-  turn?: number;
-  ignorePP?: boolean;
-}
-
-export interface AttackMoveResult {
-  move: Moves;
-  result: DamageResult;
-  damage: number;
-  critical: boolean;
-  sourceId: number;
-  sourceBattlerIndex: BattlerIndex;
 }
 
 export enum AiType {

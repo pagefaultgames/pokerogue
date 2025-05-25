@@ -11,7 +11,9 @@ import type { Moves } from "#enums/moves";
 import type { PokeballType } from "#enums/pokeball";
 import type { PokemonType } from "#enums/pokemon-type";
 import type { Species } from "#enums/species";
-import { type TurnMove, PokemonMove, type AttackMoveResult } from "#app/field/pokemon";
+import { PokemonMove } from "#app/field/pokemon";
+import type { TurnMove } from "#app/@types/turn-move";
+import type { AttackMoveResult } from "#app/@types/attack-move-result";
 
 /**
  * Persistent in-battle data for a {@linkcode Pokemon}.
