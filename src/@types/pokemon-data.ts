@@ -14,12 +14,40 @@ import type { Species } from "#enums/species";
 import { PokemonMove } from "#app/field/pokemon";
 import type { TurnMove } from "#app/@types/turn-move";
 import type { AttackMoveResult } from "#app/@types/attack-move-result";
+import type { Nature } from "#enums/nature";
+
+/**
+ * Permanent data that can customize a Pokemon in non-standard ways from its Species.
+ * Includes abilities, nature, changed types, etc.
+ */
+export class CustomPokemonData {
+  // TODO: Change the default value for all these from -1 to something a bit more sensible
+  /**
+   * The scale at which to render this Pokemon's sprite.
+   */
+  public spriteScale = -1;
+  public ability: Abilities | -1;
+  public passive: Abilities | -1;
+  public nature: Nature | -1;
+  public types: PokemonType[];
+  /** Deprecated but needed for session save migration */
+  // TODO: Remove this once pre-session migration is implemented
+  public hitsRecCount: number | null = null;
+
+  constructor(data?: CustomPokemonData | Partial<CustomPokemonData>) {
+    this.spriteScale = data?.spriteScale ?? -1;
+    this.ability = data?.ability ?? -1;
+    this.passive = data?.passive ?? -1;
+    this.nature = data?.nature ?? -1;
+    this.types = data?.types ?? [];
+    this.hitsRecCount = data?.hitsRecCount ?? null;
+  }
+}
 
 /**
  * Persistent in-battle data for a {@linkcode Pokemon}.
  * Resets on switch or new battle.
  */
-
 export class PokemonSummonData {
   /** [Atk, Def, SpAtk, SpDef, Spd, Acc, Eva] */
   public statStages: number[] = [0, 0, 0, 0, 0, 0, 0];
@@ -80,6 +108,7 @@ export class PokemonSummonData {
     }
   }
 }
+
 /**
  * Illusion property
  */
@@ -115,8 +144,8 @@ export interface IllusionData {
   /** The level of the illusion (not used currently) */
   level?: number;
 }
-// TODO: Merge this inside `summmonData` but exclude from save if/when a save data serializer is added
 
+// TODO: Merge this inside `summmonData` but exclude from save if/when a save data serializer is added
 export class PokemonTempSummonData {
   /**
    * The number of turns this pokemon has spent without switching out.
@@ -134,11 +163,11 @@ export class PokemonTempSummonData {
  */
   waveTurnCount = 1;
 }
+
 /**
  * Persistent data for a {@linkcode Pokemon}.
  * Resets at the start of a new battle (but not on switch).
  */
-
 export class PokemonBattleData {
   /** Counter tracking direct hits this Pokemon has received during this battle; used for {@linkcode Moves.RAGE_FIST} */
   public hitCount = 0;
@@ -155,11 +184,11 @@ export class PokemonBattleData {
     }
   }
 }
+
 /**
  * Temporary data for a {@linkcode Pokemon}.
  * Resets on new wave/battle start (but not on switch).
  */
-
 export class PokemonWaveData {
   /** Whether the pokemon has endured due to a {@linkcode BattlerTagType.ENDURE_TOKEN} */
   public endured = false;
@@ -171,11 +200,11 @@ export class PokemonWaveData {
   /** Whether the pokemon's ability has been revealed or not */
   public abilityRevealed = false;
 }
+
 /**
  * Temporary data for a {@linkcode Pokemon}.
  * Resets at the start of a new turn, as well as on switch.
  */
-
 export class PokemonTurnData {
   public flinched = false;
   public acted = false;

@@ -29,7 +29,7 @@ import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode
 import { PartyHealPhase } from "#app/phases/party-heal-phase";
 import { BerryType } from "#enums/berry-type";
 import { Stat } from "#enums/stat";
-import { CustomPokemonData } from "#app/data/custom-pokemon-data";
+import { CustomPokemonData } from "#app/@types/pokemon-data";
 import { randSeedInt } from "#app/utils/common";
 
 /** i18n namespace for the encounter */
@@ -133,14 +133,12 @@ export const SlumberingSnorlaxEncounter: MysteryEncounter = MysteryEncounterBuil
         guaranteedModifierTypeFuncs: [modifierTypes.LEFTOVERS],
         fillRemaining: true,
       });
-      encounter.startOfBattleEffects.push(
-        {
-          sourceBattlerIndex: BattlerIndex.ENEMY,
-          targets: [BattlerIndex.PLAYER],
-          move: new PokemonMove(Moves.SNORE),
-          ignorePp: true,
-        },
-      );
+      encounter.startOfBattleEffects.push({
+        sourceBattlerIndex: BattlerIndex.ENEMY,
+        targets: [BattlerIndex.PLAYER],
+        move: new PokemonMove(Moves.SNORE),
+        ignorePp: true,
+      });
       await initBattleWithEnemyConfig(encounter.enemyPartyConfigs[0]);
     },
   )

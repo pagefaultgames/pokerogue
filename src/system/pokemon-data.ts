@@ -12,7 +12,7 @@ import type { Variant } from "#app/sprites/variant";
 import type { Biome } from "#enums/biome";
 import type { Moves } from "#enums/moves";
 import type { Species } from "#enums/species";
-import { CustomPokemonData } from "#app/data/custom-pokemon-data";
+import { CustomPokemonData } from "#app/@types/pokemon-data";
 import type { PokemonType } from "#enums/pokemon-type";
 
 export default class PokemonData {
