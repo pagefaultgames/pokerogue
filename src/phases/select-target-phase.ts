@@ -5,7 +5,7 @@ import { UiMode } from "#enums/ui-mode";
 import { CommandPhase } from "./command-phase";
 import { PokemonPhase } from "./pokemon-phase";
 import i18next from "#app/plugins/i18n";
-import { allMoves } from "#app/data/moves/move";
+import { allMoves } from "#app/data/data-lists";
 
 export class SelectTargetPhase extends PokemonPhase {
   // biome-ignore lint/complexity/noUselessConstructor: This makes `fieldIndex` required

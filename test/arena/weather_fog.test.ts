@@ -1,4 +1,4 @@
-import { allMoves } from "#app/data/moves/move";
+import { allMoves } from "#app/data/data-lists";
 import { Abilities } from "#app/enums/abilities";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { Moves } from "#enums/moves";

@@ -1,6 +1,7 @@
 import { BattlerIndex } from "#app/battle";
 import { RechargingTag, SemiInvulnerableTag } from "#app/data/battler-tags";
-import { allMoves, RandomMoveAttr } from "#app/data/moves/move";
+import { RandomMoveAttr } from "#app/data/moves/move";
+import { allMoves } from "#app/data/data-lists";
 import { Abilities } from "#app/enums/abilities";
 import { Stat } from "#app/enums/stat";
 import { MoveResult } from "#app/field/pokemon";
