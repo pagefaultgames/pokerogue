@@ -66,7 +66,7 @@ import {
   VariableMovePowerAbAttr,
   WonderSkinAbAttr,
 } from "../abilities/ability";
-import { allAbilities } from "../data-lists";
+import { allAbilities, allMoves } from "../data-lists";
 import {
   AttackTypeBoosterModifier,
   BerryModifier,
@@ -6410,8 +6410,23 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
     return (user, target, move) => {
       const switchOutTarget = (this.selfSwitch ? user : target);
       const player = switchOutTarget instanceof PlayerPokemon;
+      const forceSwitchAttr = move.getAttrs(ForceSwitchOutAttr).find(attr => attr.switchType === SwitchType.FORCE_SWITCH);
 
       if (!this.selfSwitch) {
+        if (move.hitsSubstitute(user, target)) {
+          return false;
+        }
+
+        // Check if the move is Roar or Whirlwind and if there is a trainer with only Pokémon left.
+        if (forceSwitchAttr && globalScene.currentBattle.trainer) {
+        const enemyParty = globalScene.getEnemyParty();
+        // Filter out any Pokémon that are not allowed in battle (e.g. fainted ones)
+        const remainingPokemon = enemyParty.filter(p => p.hp > 0 && p.isAllowedInBattle());
+          if (remainingPokemon.length <= 1) {
+            return false;
+          }
+        }
+
         // Dondozo with an allied Tatsugiri in its mouth cannot be forced out
         const commandedTag = switchOutTarget.getTag(BattlerTagType.COMMANDED);
         if (commandedTag?.getSourcePokemon()?.isActive(true)) {
@@ -8264,14 +8279,11 @@ export function getMoveTargets(user: Pokemon, move: Moves, replaceTarget?: MoveT
   return { targets: set.filter(p => p?.isActive(true)).map(p => p.getBattlerIndex()).filter(t => t !== undefined), multiple };
 }
 
-export const allMoves: Move[] = [
-  new SelfStatusMove(Moves.NONE, PokemonType.NORMAL, MoveCategory.STATUS, -1, -1, 0, 1),
-];
-
 export const selfStatLowerMoves: Moves[] = [];
 
 export function initMoves() {
   allMoves.push(
+    new SelfStatusMove(Moves.NONE, PokemonType.NORMAL, MoveCategory.STATUS, -1, -1, 0, 1),
     new AttackMove(Moves.POUND, PokemonType.NORMAL, MoveCategory.PHYSICAL, 40, 100, 35, -1, 0, 1),
     new AttackMove(Moves.KARATE_CHOP, PokemonType.FIGHTING, MoveCategory.PHYSICAL, 50, 100, 25, -1, 0, 1)
       .attr(HighCritAttr),

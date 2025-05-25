@@ -12,12 +12,12 @@ import { allAbilities } from "./data-lists";
 import { ChargeAnim, CommonAnim, CommonBattleAnim, MoveChargeAnim } from "#app/data/battle-anims";
 import type Move from "#app/data/moves/move";
 import {
-  allMoves,
   applyMoveAttrs,
   ConsecutiveUseDoublePowerAttr,
   HealOnAllyAttr,
   StatusCategoryOnAllyAttr,
 } from "#app/data/moves/move";
+import { allMoves } from "./data-lists";
 import { MoveFlags } from "#enums/MoveFlags";
 import { MoveCategory } from "#enums/MoveCategory";
 import { SpeciesFormChangeAbilityTrigger } from "#app/data/pokemon-forms";
