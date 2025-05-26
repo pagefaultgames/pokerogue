@@ -20,14 +20,18 @@ import { UiMode } from "#enums/ui-mode";
 import type { PlayerPokemon } from "#field/pokemon";
 import type { MoveTargetSet } from "#moves/move";
 import { getMoveTargets } from "#moves/move-utils";
-import { FieldPhase } from "#phases/field-phase";
 import type { TurnMove } from "#types/turn-move";
-import { isNullOrUndefined } from "#utils/common";
 import i18next from "i18next";
+import { FieldPhase } from "./field-phase";
 
 export class CommandPhase extends FieldPhase {
   public readonly phaseName = "CommandPhase";
   protected fieldIndex: number;
+
+  /**
+   * Whether the command phase is handling a switch command
+   */
+  private isSwitch = false;
 
   constructor(fieldIndex: number) {
     super();
@@ -150,7 +154,7 @@ export class CommandPhase extends FieldPhase {
   /**
    *
    * @param user - The pokemon using the move
-   * @param cursor -
+   * @param cursor - The index of the move in the moveset
    */
   private queueFightErrorMessage(user: PlayerPokemon, cursor: number) {
     const move = user.getMoveset()[cursor];
@@ -264,6 +268,11 @@ export class CommandPhase extends FieldPhase {
     return true;
   }
 
+  /**
+   * Set the mode in preparation to show the text, and then show the text.
+   * Only works for parameterless i18next keys.
+   * @param key - The i18next key for the text to show
+   */
   private queueShowText(key: string) {
     globalScene.ui.setMode(UiMode.COMMAND, this.fieldIndex);
     globalScene.ui.setMode(UiMode.MESSAGE);
@@ -323,7 +332,7 @@ export class CommandPhase extends FieldPhase {
    * @param cursor - The index of the pokeball to use
    * @returns Whether the command was successfully initiated
    */
-  handleBallCommand(cursor: number): boolean {
+  private handleBallCommand(cursor: number): boolean {
     const targets = globalScene
       .getEnemyField()
       .filter(p => p.isActive(true))
@@ -364,125 +373,158 @@ export class CommandPhase extends FieldPhase {
     return false;
   }
 
-  handleCommand(command: Command, cursor: number, useMode: MoveUseMode = MoveUseMode.NORMAL, move?: TurnMove): boolean {
+  /**
+   * Common helper method to handle the logic for effects that prevent the pokemon from leaving the field
+   * due to trapping abilities or effects.
+   *
+   * This method queues the proper messages in the case of trapping abilities or effects
+   *
+   * @returns Whether the pokemon is currently trapped
+   */
+  private handleTrap(): boolean {
     const playerPokemon = globalScene.getPlayerField()[this.fieldIndex];
+    const trappedAbMessages: string[] = [];
+    const isSwitch = this.isSwitch;
+    if (!playerPokemon.isTrapped(trappedAbMessages)) {
+      return false;
+    }
+    if (trappedAbMessages.length > 0) {
+      if (isSwitch) {
+        globalScene.ui.setMode(UiMode.MESSAGE);
+      }
+      globalScene.ui.showText(
+        trappedAbMessages[0],
+        null,
+        () => {
+          globalScene.ui.showText("", 0);
+          if (isSwitch) {
+            globalScene.ui.setMode(UiMode.COMMAND, this.fieldIndex);
+          }
+        },
+        null,
+        true,
+      );
+    } else {
+      const trapTag = playerPokemon.getTag(TrappedTag);
+      const fairyLockTag = globalScene.arena.getTagOnSide(ArenaTagType.FAIRY_LOCK, ArenaTagSide.PLAYER);
+
+      if (!isSwitch) {
+        globalScene.ui.setMode(UiMode.COMMAND, this.fieldIndex);
+        globalScene.ui.setMode(UiMode.MESSAGE);
+      }
+      if (trapTag) {
+        this.showNoEscapeText(trapTag, false);
+      } else if (fairyLockTag) {
+        this.showNoEscapeText(fairyLockTag, false);
+      }
+    }
+
+    return true;
+  }
+
+  /**
+   * Common helper method that attempts to have the pokemon leave the field.
+   * Checks for trapping abilities and effects.
+   *
+   * @param cursor - The index of the option that the cursor is on
+   * @param isBatonSwitch - Whether the switch command is switching via the Baton item
+   * @returns whether the pokemon is able to leave the field, indicating the command phase should end
+   */
+  private tryLeaveField(cursor?: number, isBatonSwitch = false): boolean {
+    const currentBattle = globalScene.currentBattle;
+
+    if (isBatonSwitch && !this.handleTrap()) {
+      currentBattle.turnCommands[this.fieldIndex] = {
+        command: this.isSwitch ? Command.POKEMON : Command.RUN,
+        cursor: cursor,
+      };
+      if (!this.isSwitch && this.fieldIndex) {
+        currentBattle.turnCommands[this.fieldIndex - 1]!.skip = true;
+      }
+      return true;
+    }
+
+    return false;
+  }
+
+  private handleRunCommand(): boolean {
+    const { currentBattle, arena } = globalScene;
+    const mysteryEncounterFleeAllowed = currentBattle.mysteryEncounter?.fleeAllowed ?? true;
+    if (arena.biomeType === BiomeId.END || !mysteryEncounterFleeAllowed) {
+      this.queueShowText("battle:noEscapeForce");
+      return false;
+    }
+    if (
+      currentBattle.battleType === BattleType.TRAINER ||
+      currentBattle.mysteryEncounter?.encounterMode === MysteryEncounterMode.TRAINER_BATTLE
+    ) {
+      this.queueShowText("battle:noEscapeTrainer");
+      return false;
+    }
+
+    const success = this.tryLeaveField();
+
+    return success;
+  }
+
+  /**
+   * Show a message indicating that the pokemon cannot escape, and then return to the command phase.
+   */
+  private showNoEscapeText(tag: any, isSwitch: boolean): void {
+    globalScene.ui.showText(
+      i18next.t("battle:noEscapePokemon", {
+        pokemonName:
+          tag.sourceId && globalScene.getPokemonById(tag.sourceId)
+            ? getPokemonNameWithAffix(globalScene.getPokemonById(tag.sourceId)!)
+            : "",
+        moveName: tag.getMoveName(),
+        escapeVerb: i18next.t(isSwitch ? "battle:escapeVerbSwitch" : "battle:escapeVerbFlee"),
+      }),
+      null,
+      () => {
+        globalScene.ui.showText("", 0);
+        if (!isSwitch) {
+          globalScene.ui.setMode(UiMode.COMMAND, this.fieldIndex);
+        }
+      },
+      null,
+      true,
+    );
+  }
+
+  // Overloads for handleCommand to provide a more specific type signature for the different options
+  handleCommand(command: Command.FIGHT | Command.TERA, cursor: number, useMode?: MoveUseMode, move?: TurnMove): boolean;
+  handleCommand(command: Command.BALL, cursor: number): boolean;
+  handleCommand(command: Command.POKEMON, cursor: number, useBaton: boolean): boolean;
+  handleCommand(command: Command.RUN, cursor: number): boolean;
+  handleCommand(command: Command, cursor: number, useMode?: boolean | MoveUseMode, move?: TurnMove): boolean;
+
+  /**
+   * Process the command phase logic based on the selected command
+   *
+   * @param command - The kind of command to handle
+   * @param cursor - The index of option that the cursor is on, or -1 if no option is selected
+   * @param useMode - The mode to use for the move, if applicable. For switches, a boolean that specifies whether the switch is a Baton switch.
+   * @param move - For {@linkcode Command.FIGHT}, the move to use
+   */
+  handleCommand(command: Command, cursor: number, useMode: boolean | MoveUseMode = false, move?: TurnMove): boolean {
     let success = false;
 
     switch (command) {
       case Command.TERA:
       case Command.FIGHT:
-        return this.handleFightCommand(command, cursor, useMode, move);
-      case Command.BALL:
-        return this.handleBallCommand(cursor);
-      case Command.POKEMON:
-      case Command.RUN: {
-        const isSwitch = command === Command.POKEMON;
-        const { currentBattle, arena } = globalScene;
-        const mysteryEncounterFleeAllowed = currentBattle.mysteryEncounter?.fleeAllowed;
-        if (
-          !isSwitch &&
-          (arena.biomeType === BiomeId.END ||
-            (!isNullOrUndefined(mysteryEncounterFleeAllowed) && !mysteryEncounterFleeAllowed))
-        ) {
-          globalScene.ui.setMode(UiMode.COMMAND, this.fieldIndex);
-          globalScene.ui.setMode(UiMode.MESSAGE);
-          globalScene.ui.showText(
-            i18next.t("battle:noEscapeForce"),
-            null,
-            () => {
-              globalScene.ui.showText("", 0);
-              globalScene.ui.setMode(UiMode.COMMAND, this.fieldIndex);
-            },
-            null,
-            true,
-          );
-        } else if (
-          !isSwitch &&
-          (currentBattle.battleType === BattleType.TRAINER ||
-            currentBattle.mysteryEncounter?.encounterMode === MysteryEncounterMode.TRAINER_BATTLE)
-        ) {
-          globalScene.ui.setMode(UiMode.COMMAND, this.fieldIndex);
-          globalScene.ui.setMode(UiMode.MESSAGE);
-          globalScene.ui.showText(
-            i18next.t("battle:noEscapeTrainer"),
-            null,
-            () => {
-              globalScene.ui.showText("", 0);
-              globalScene.ui.setMode(UiMode.COMMAND, this.fieldIndex);
-            },
-            null,
-            true,
-          );
-        } else {
-          const batonPass = isSwitch && useMode;
-          const trappedAbMessages: string[] = [];
-          if (batonPass || !playerPokemon.isTrapped(trappedAbMessages)) {
-            currentBattle.turnCommands[this.fieldIndex] = isSwitch
-              ? { command: Command.POKEMON, cursor: cursor }
-              : { command: Command.RUN };
-            success = true;
-            if (!isSwitch && this.fieldIndex) {
-              currentBattle.turnCommands[this.fieldIndex - 1]!.skip = true;
-            }
-          } else if (trappedAbMessages.length > 0) {
-            if (!isSwitch) {
-              globalScene.ui.setMode(UiMode.MESSAGE);
-            }
-            globalScene.ui.showText(
-              trappedAbMessages[0],
-              null,
-              () => {
-                globalScene.ui.showText("", 0);
-                if (!isSwitch) {
-                  globalScene.ui.setMode(UiMode.COMMAND, this.fieldIndex);
-                }
-              },
-              null,
-              true,
-            );
-          } else {
-            const trapTag = playerPokemon.getTag(TrappedTag);
-            const fairyLockTag = globalScene.arena.getTagOnSide(ArenaTagType.FAIRY_LOCK, ArenaTagSide.PLAYER);
-
-            if (!trapTag && !fairyLockTag) {
-              i18next.t(`battle:noEscape${isSwitch ? "Switch" : "Flee"}`);
-              break;
-            }
-            if (!isSwitch) {
-              globalScene.ui.setMode(UiMode.COMMAND, this.fieldIndex);
-              globalScene.ui.setMode(UiMode.MESSAGE);
-            }
-            const showNoEscapeText = (tag: any) => {
-              globalScene.ui.showText(
-                i18next.t("battle:noEscapePokemon", {
-                  pokemonName:
-                    tag.sourceId && globalScene.getPokemonById(tag.sourceId)
-                      ? getPokemonNameWithAffix(globalScene.getPokemonById(tag.sourceId)!)
-                      : "",
-                  moveName: tag.getMoveName(),
-                  escapeVerb: isSwitch ? i18next.t("battle:escapeVerbSwitch") : i18next.t("battle:escapeVerbFlee"),
-                }),
-                null,
-                () => {
-                  globalScene.ui.showText("", 0);
-                  if (!isSwitch) {
-                    globalScene.ui.setMode(UiMode.COMMAND, this.fieldIndex);
-                  }
-                },
-                null,
-                true,
-              );
-            };
-
-            if (trapTag) {
-              showNoEscapeText(trapTag);
-            } else if (fairyLockTag) {
-              showNoEscapeText(fairyLockTag);
-            }
-          }
-        }
+        success = this.handleFightCommand(command, cursor, typeof useMode === "boolean" ? undefined : useMode, move);
         break;
-      }
+      case Command.BALL:
+        success = this.handleBallCommand(cursor);
+        break;
+      case Command.POKEMON:
+        this.isSwitch = true;
+        success = this.tryLeaveField(cursor, typeof useMode === "boolean" ? useMode : undefined);
+        this.isSwitch = false;
+        break;
+      case Command.RUN:
+        success = this.handleRunCommand();
     }
 
     if (success) {
