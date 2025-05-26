@@ -543,6 +543,7 @@ export class CommandPhase extends FieldPhase {
   handleCommand(command: Command.BALL, cursor: number): boolean;
   handleCommand(command: Command.POKEMON, cursor: number, useBaton: boolean): boolean;
   handleCommand(command: Command.RUN, cursor: number): boolean;
+  handleCommand(command: Command, cursor: number, ignorePP?: boolean, move?: TurnMove): boolean;
 
   /**
    * Process the command phase logic based on the selected command
