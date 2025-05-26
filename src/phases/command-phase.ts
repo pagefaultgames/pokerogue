@@ -249,8 +249,7 @@ export class CommandPhase extends FieldPhase {
     const playerPokemon = this.getPokemon();
     const ignorePP = isIgnorePP(useMode);
 
-    /** Whether or not to display an error message instead of attempting to initiate the command selection process */
-    let canUse = cursor !== -1 || !playerPokemon.trySelectMove(cursor, ignorePP);
+    let canUse = cursor === -1 || playerPokemon.trySelectMove(cursor, ignorePP);
 
     const useStruggle = canUse
       ? false
@@ -291,7 +290,7 @@ export class CommandPhase extends FieldPhase {
 
     console.log(moveTargets, getPokemonNameWithAffix(playerPokemon));
 
-    if (moveTargets.multiple) {
+    if (moveTargets.targets.length > 1 && moveTargets.multiple) {
       globalScene.phaseManager.unshiftNew("SelectTargetPhase", this.fieldIndex);
     }
 
@@ -419,7 +418,7 @@ export class CommandPhase extends FieldPhase {
   }
 
   /**
-   * Common helper method to handle the logic for effects that prevent the pokemon from leaving the field
+   * Helper method to handle the logic for effects that prevent the pokemon from leaving the field
    * due to trapping abilities or effects.
    *
    * This method queues the proper messages in the case of trapping abilities or effects
@@ -478,11 +477,16 @@ export class CommandPhase extends FieldPhase {
   private tryLeaveField(cursor?: number, isBatonSwitch = false): boolean {
     const currentBattle = globalScene.currentBattle;
 
-    if (isBatonSwitch && !this.handleTrap()) {
-      currentBattle.turnCommands[this.fieldIndex] = {
-        command: this.isSwitch ? Command.POKEMON : Command.RUN,
-        cursor: cursor,
-      };
+    if (isBatonSwitch || !this.handleTrap()) {
+      currentBattle.turnCommands[this.fieldIndex] = this.isSwitch
+        ? {
+            command: Command.POKEMON,
+            cursor: cursor,
+            args: [isBatonSwitch],
+          }
+        : {
+            command: Command.RUN,
+          };
       if (!this.isSwitch && this.fieldIndex) {
         currentBattle.turnCommands[this.fieldIndex - 1]!.skip = true;
       }
@@ -537,7 +541,7 @@ export class CommandPhase extends FieldPhase {
     );
   }
 
-  // Overloads for handleCommand to provide a more specific type signature for the different options
+  // Overloads for handleCommand to provide a more specific signature for the different options
   handleCommand(command: Command.FIGHT | Command.TERA, cursor: number, useMode?: MoveUseMode, move?: TurnMove): boolean;
   handleCommand(command: Command.BALL, cursor: number): boolean;
   handleCommand(command: Command.POKEMON, cursor: number, useBaton: boolean): boolean;
