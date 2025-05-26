@@ -1,14 +1,13 @@
 import type { TurnCommand } from "#app/battle";
+import { BattlerTagType } from "#app/enums/battler-tag-type";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { speciesStarterCosts } from "#balance/starters";
-import type { EncoreTag } from "#data/battler-tags";
 import { TrappedTag } from "#data/battler-tags";
 import { AbilityId } from "#enums/ability-id";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattleType } from "#enums/battle-type";
-import { BattlerTagType } from "#enums/battler-tag-type";
 import { BiomeId } from "#enums/biome-id";
 import { Command } from "#enums/command";
 import { FieldPosition } from "#enums/field-position";
@@ -39,11 +38,13 @@ export class CommandPhase extends FieldPhase {
     this.fieldIndex = fieldIndex;
   }
 
-  start() {
-    super.start();
-
-    globalScene.updateGameInfo();
-
+  /**
+   * Resets the cursor to the position of {@linkcode Command.FIGHT} if any of the following are true
+   * - The setting to remember the last action is not enabled
+   * - This is the first turn of a mystery encounter, trainer battle, or the END biome
+   * - The cursor is currently on the POKEMON command
+   */
+  private resetCursorIfNeeded() {
     const commandUiHandler = globalScene.ui.handlers[UiMode.COMMAND];
 
     // If one of these conditions is true, we always reset the cursor to Command.FIGHT
@@ -52,33 +53,42 @@ export class CommandPhase extends FieldPhase {
       globalScene.currentBattle.battleType === BattleType.TRAINER ||
       globalScene.arena.biomeType === BiomeId.END;
 
-    if (commandUiHandler) {
-      if (
-        (globalScene.currentBattle.turn === 1 && (!globalScene.commandCursorMemory || cursorResetEvent)) ||
-        commandUiHandler.getCursor() === Command.POKEMON
-      ) {
-        commandUiHandler.setCursor(Command.FIGHT);
-      } else {
-        commandUiHandler.setCursor(commandUiHandler.getCursor());
-      }
+    if (
+      (commandUiHandler &&
+        globalScene.currentBattle.turn === 1 &&
+        (!globalScene.commandCursorMemory || cursorResetEvent)) ||
+      commandUiHandler.getCursor() === Command.POKEMON
+    ) {
+      commandUiHandler.setCursor(Command.FIGHT);
+    }
+  }
+
+  /**
+   * Submethod of {@linkcode start} that validates field index logic for nonzero field indices.
+   * Must only be called if the field index is nonzero.
+   */
+  private handleFieldIndexLogic() {
+    // If we somehow are attempting to check the right pokemon but there's only one pokemon out
+    // Switch back to the center pokemon. This can happen rarely in double battles with mid turn switching
+    // TODO: Prevent this from happening in the first place
+    if (globalScene.getPlayerField().filter(p => p.isActive()).length === 1) {
+      this.fieldIndex = FieldPosition.CENTER;
+      return;
     }
 
-    if (this.fieldIndex) {
-      // If we somehow are attempting to check the right pokemon but there's only one pokemon out
-      // Switch back to the center pokemon. This can happen rarely in double battles with mid turn switching
-      if (globalScene.getPlayerField().filter(p => p.isActive()).length === 1) {
-        this.fieldIndex = FieldPosition.CENTER;
-      } else {
-        const allyCommand = globalScene.currentBattle.turnCommands[this.fieldIndex - 1];
-        if (allyCommand?.command === Command.BALL || allyCommand?.command === Command.RUN) {
-          globalScene.currentBattle.turnCommands[this.fieldIndex] = {
-            command: allyCommand?.command,
-            skip: true,
-          };
-        }
-      }
+    const allyCommand = globalScene.currentBattle.turnCommands[this.fieldIndex - 1];
+    if (allyCommand?.command === Command.BALL || allyCommand?.command === Command.RUN) {
+      globalScene.currentBattle.turnCommands[this.fieldIndex] = {
+        command: allyCommand?.command,
+        skip: true,
+      };
     }
+  }
 
+  /** Submethod of {@linkcode start} that sets the turn command to skip if this pokemon is commanding its ally
+   * via {@linkcode Abilities.COMMANDER}.
+   */
+  private checkCommander() {
     // If the Pokemon has applied Commander's effects to its ally, skip this command
     if (
       globalScene.currentBattle?.double &&
@@ -90,64 +100,99 @@ export class CommandPhase extends FieldPhase {
         skip: true,
       };
     }
+  }
 
-    // Checks if the Pokemon is under the effects of Encore. If so, Encore can end early if the encored move has no more PP.
-    const encoreTag = this.getPokemon().getTag(BattlerTagType.ENCORE) as EncoreTag | undefined;
-    if (encoreTag) {
-      this.getPokemon().lapseTag(BattlerTagType.ENCORE);
+  /**
+   * Clear out all unusable moves in front of the currently acting pokemon's move queue.
+   * TODO: Refactor move queue handling to ensure that this method is not necessary.
+   */
+  private clearUnusuableMoves() {
+    const playerPokemon = this.getPokemon();
+    const moveQueue = playerPokemon.getMoveQueue();
+    if (moveQueue.length === 0) {
+      return;
     }
+
+    let entriesToDelete = 0;
+    const moveset = playerPokemon.getMoveset();
+    for (const queuedMove of moveQueue) {
+      const movesetQueuedMove = moveset.find(m => m.moveId === queuedMove.move);
+      if (
+        queuedMove.move !== MoveId.NONE &&
+        !isVirtual(queuedMove.useMode) &&
+        !movesetQueuedMove?.isUsable(playerPokemon, isIgnorePP(queuedMove.useMode))
+      ) {
+        entriesToDelete++;
+      } else {
+        break;
+      }
+    }
+    if (entriesToDelete) {
+      moveQueue.splice(0, entriesToDelete);
+    }
+  }
+
+  /**
+   * Attempt to execute the first usable move in this Pokemon's move queue
+   * @returns Whether a queued move was successfully set to be executed.
+   */
+  private tryExecuteQueuedMove(): boolean {
+    this.clearUnusuableMoves();
+    const playerPokemon = globalScene.getPlayerField()[this.fieldIndex];
+    const moveQueue = playerPokemon.getMoveQueue();
+
+    if (moveQueue.length === 0) {
+      return false;
+    }
+
+    const queuedMove = moveQueue[0];
+    if (queuedMove.move === MoveId.NONE) {
+      this.handleCommand(Command.FIGHT, -1);
+      return true;
+    }
+    const moveIndex = playerPokemon.getMoveset().findIndex(m => m.moveId === queuedMove.move);
+    if (!isVirtual(queuedMove.useMode) && moveIndex === -1) {
+      globalScene.ui.setMode(UiMode.COMMAND, this.fieldIndex);
+    } else {
+      this.handleCommand(Command.FIGHT, moveIndex, queuedMove.useMode, queuedMove);
+    }
+
+    return true;
+  }
+
+  start() {
+    super.start();
+
+    globalScene.updateGameInfo();
+    this.resetCursorIfNeeded();
+
+    if (this.fieldIndex) {
+      this.handleFieldIndexLogic();
+    }
+
+    this.checkCommander();
+
+    const playerPokemon = this.getPokemon();
+
+    // Note: It is OK to call this if the target is not under the effect of encore; it will simply do nothing.
+    playerPokemon.lapseTag(BattlerTagType.ENCORE);
 
     if (globalScene.currentBattle.turnCommands[this.fieldIndex]?.skip) {
       return this.end();
     }
 
-    const playerPokemon = globalScene.getPlayerField()[this.fieldIndex];
-
-    const moveQueue = playerPokemon.getMoveQueue();
-
-    while (
-      moveQueue.length &&
-      moveQueue[0] &&
-      moveQueue[0].move &&
-      !isVirtual(moveQueue[0].useMode) &&
-      (!playerPokemon.getMoveset().find(m => m.moveId === moveQueue[0].move) ||
-        !playerPokemon
-          .getMoveset()
-          [playerPokemon.getMoveset().findIndex(m => m.moveId === moveQueue[0].move)].isUsable(
-            playerPokemon,
-            isIgnorePP(moveQueue[0].useMode),
-          ))
-    ) {
-      moveQueue.shift();
+    if (this.tryExecuteQueuedMove()) {
+      return;
     }
 
-    // TODO: Refactor this. I did a few simple find/replace matches but this is just ABHORRENTLY structured
-    if (moveQueue.length > 0) {
-      const queuedMove = moveQueue[0];
-      if (!queuedMove.move) {
-        this.handleCommand(Command.FIGHT, -1, MoveUseMode.NORMAL);
-      } else {
-        const moveIndex = playerPokemon.getMoveset().findIndex(m => m.moveId === queuedMove.move);
-        if (
-          (moveIndex > -1 &&
-            playerPokemon.getMoveset()[moveIndex].isUsable(playerPokemon, isIgnorePP(queuedMove.useMode))) ||
-          isVirtual(queuedMove.useMode)
-        ) {
-          this.handleCommand(Command.FIGHT, moveIndex, queuedMove.useMode, queuedMove);
-        } else {
-          globalScene.ui.setMode(UiMode.COMMAND, this.fieldIndex);
-        }
-      }
+    if (
+      globalScene.currentBattle.isBattleMysteryEncounter() &&
+      globalScene.currentBattle.mysteryEncounter?.skipToFightInput
+    ) {
+      globalScene.ui.clearText();
+      globalScene.ui.setMode(UiMode.FIGHT, this.fieldIndex);
     } else {
-      if (
-        globalScene.currentBattle.isBattleMysteryEncounter() &&
-        globalScene.currentBattle.mysteryEncounter?.skipToFightInput
-      ) {
-        globalScene.ui.clearText();
-        globalScene.ui.setMode(UiMode.FIGHT, this.fieldIndex);
-      } else {
-        globalScene.ui.setMode(UiMode.COMMAND, this.fieldIndex);
-      }
+      globalScene.ui.setMode(UiMode.COMMAND, this.fieldIndex);
     }
   }
 
@@ -201,7 +246,7 @@ export class CommandPhase extends FieldPhase {
     useMode: MoveUseMode = MoveUseMode.NORMAL,
     move?: TurnMove,
   ): boolean {
-    const playerPokemon = globalScene.getPlayerField()[this.fieldIndex];
+    const playerPokemon = this.getPokemon();
     const ignorePP = isIgnorePP(useMode);
 
     /** Whether or not to display an error message instead of attempting to initiate the command selection process */
@@ -382,7 +427,7 @@ export class CommandPhase extends FieldPhase {
    * @returns Whether the pokemon is currently trapped
    */
   private handleTrap(): boolean {
-    const playerPokemon = globalScene.getPlayerField()[this.fieldIndex];
+    const playerPokemon = this.getPokemon();
     const trappedAbMessages: string[] = [];
     const isSwitch = this.isSwitch;
     if (!playerPokemon.isTrapped(trappedAbMessages)) {
