@@ -5122,6 +5122,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
     turnMove.turn = globalScene.currentBattle?.turn;
     this.getMoveHistory().push(turnMove);
+    this.tempSummonData.waveMoveHistory.push(turnMove)
   }
 
   /**
@@ -5774,6 +5775,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    */
   resetWaveData(): void {
     this.waveData = new PokemonWaveData();
+    this.tempSummonData.waveTurnCount = 1;
+    this.tempSummonData.waveMoveHistory = [];
   }
 
   resetTera(): void {
@@ -7883,16 +7886,24 @@ export class PokemonTempSummonData {
    */
   turnCount: number = 1;
 
-    /**
+  /**
    * The number of turns this pokemon has spent in the active position since the start of the wave
    * without switching out.
    * Reset on switch and new wave, but not stored in `SummonData` to avoid being written to the save file.
-
+   *
    * Used to evaluate "first turn only" conditions such as
    * {@linkcode Moves.FAKE_OUT | Fake Out} and {@linkcode Moves.FIRST_IMPRESSION | First Impression}).
    */
   waveTurnCount = 1;
 
+  /**
+   * An array containing all moves this Pokemon has used since the start of the wave
+   * without switching out.
+   * Reset on switch and new wave, but not stored in `SummonData` to avoid being written to the save file.
+
+   * Used to calculate {@link https://bulbapedia.bulbagarden.net/wiki/Protection | Protecting moves}' fail chances.
+   */
+  waveMoveHistory: TurnMove[] = [];
 }
 
 /**
