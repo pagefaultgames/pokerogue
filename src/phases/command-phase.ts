@@ -250,6 +250,7 @@ export class CommandPhase extends FieldPhase {
     const ignorePP = isIgnorePP(useMode);
 
     let canUse = cursor === -1 || playerPokemon.trySelectMove(cursor, ignorePP);
+    let canUse = cursor === -1 || playerPokemon.trySelectMove(cursor, ignorePP);
 
     const useStruggle = canUse
       ? false
