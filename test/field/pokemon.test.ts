@@ -25,15 +25,6 @@ describe("Spec - Pokemon", () => {
     game = new GameManager(phaserGame);
   });
 
-  it("should not crash when trying to set status of undefined", async () => {
-    await game.classicMode.runToSummon([Species.ABRA]);
-
-    const pkm = game.scene.getPlayerPokemon()!;
-    expect(pkm).toBeDefined();
-
-    expect(pkm.trySetStatus(undefined)).toBe(true);
-  });
-
   describe("Add To Party", () => {
     let scene: BattleScene;
 

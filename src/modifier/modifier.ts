@@ -1751,12 +1751,12 @@ export class TurnStatusEffectModifier extends PokemonHeldItemModifier {
   }
 
   /**
-   * Tries to inflicts the holder with the associated {@linkcode StatusEffect}.
-   * @param pokemon {@linkcode Pokemon} that holds the held item
+   * Attempt to inflicts the holder with the associated {@linkcode StatusEffect}.
+   * @param pokemon - The {@linkcode Pokemon} holds the item.
    * @returns `true` if the status effect was applied successfully
    */
   override apply(pokemon: Pokemon): boolean {
-    return pokemon.trySetStatus(this.effect, true, pokemon, this.type.name);
+    return pokemon.trySetStatus(this.effect, true, pokemon, undefined, this.type.name);
   }
 
   getMaxHeldItemCount(_pokemon: Pokemon): number {

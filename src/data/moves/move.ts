@@ -1873,11 +1873,11 @@ export class HealAttr extends MoveEffectAttr {
   /** Should an animation be shown? */
   private showAnim: boolean;
 
-  constructor(healRatio?: number, showAnim?: boolean, selfTarget?: boolean) {
-    super(selfTarget === undefined || selfTarget);
+  constructor(healRatio = 1, showAnim = false, selfTarget = true) {
+    super(selfTarget);
 
-    this.healRatio = healRatio || 1;
-    this.showAnim = !!showAnim;
+    this.healRatio = healRatio;
+    this.showAnim = showAnim;
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -2440,9 +2440,8 @@ export class WaterShurikenMultiHitTypeAttr extends ChangeMultiHitTypeAttr {
 
 export class StatusEffectAttr extends MoveEffectAttr {
   public effect: StatusEffect;
-  private overrideStatus: boolean;
 
-  constructor(effect: StatusEffect, selfTarget = false, overrideStatus = false) {
+  constructor(effect: StatusEffect, selfTarget = false) {
     super(selfTarget);
 
     this.effect = effect;
@@ -2455,18 +2454,11 @@ export class StatusEffectAttr extends MoveEffectAttr {
       return false;
     }
 
+    // non-status moves don't play sound effects for failures
     const quiet = move.category !== MoveCategory.STATUS;
 
-    // TODO: why
-    const pokemon = this.selfTarget ? user : target;
-    if (user !== target && move.category === MoveCategory.STATUS && !target.canSetStatus(this.effect, quiet, this.overrideStatus, user, true)) {
-      return false;
-    }
-
-    // TODO: What does a chance of -1 have to do with any of this???
     if (
-      (!pokemon.status || (pokemon.status.effect === this.effect && moveChance < 0))
-      && pokemon.trySetStatus(this.effect, true, user, null, this.overrideStatus, quiet)
+      this.doSetStatus(this.selfTarget ? user : target, user, quiet)
     ) {
       applyPostAttackAbAttrs(ConfusionOnStatusEffectAbAttr, user, target, move, null, false, this.effect);
       return true;
@@ -2476,10 +2468,23 @@ export class StatusEffectAttr extends MoveEffectAttr {
 
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
     const moveChance = this.getMoveChance(user, target, move, this.selfTarget, false);
-    const score = (moveChance < 0) ? -10 : Math.floor(moveChance * -0.1);
+    const score = moveChance < 0 ? -10 : Math.floor(moveChance * -0.1);
     const pokemon = this.selfTarget ? user : target;
 
-    return !pokemon.status && pokemon.canSetStatus(this.effect, true, false, user) ? score : 0;
+    return pokemon.canSetStatus(this.effect, true, false, user) ? score : 0;
+  }
+
+  /**
+   * Wrapper function to attempt to set status of a pokemon.
+   * Exists to allow super classes to override parameters.
+   * @param pokemon - The {@linkcode Pokemon} being statused.
+   * @param user - The {@linkcode Pokemon} doing the statusing.
+   * @param quiet - Whether to suppress messages for status immunities.
+   * @returns Whether the status was sucessfully applied.
+   * @see {@linkcode Pokemon.trySetStatus}
+   */
+  protected doSetStatus(pokemon: Pokemon, user: Pokemon, quiet: boolean): boolean {
+    return pokemon.trySetStatus(this.effect, true, user, undefined, null, false, quiet)
   }
 }
 
@@ -2490,21 +2495,15 @@ export class StatusEffectAttr extends MoveEffectAttr {
 export class RestAttr extends StatusEffectAttr {
   private duration: number;
 
-  constructor(
-    duration: number,
-    overrideStatus: boolean
-  ){
+  constructor(duration: number) {
     // Sleep is the only duration-based status ATM
-    super(StatusEffect.SLEEP, true, overrideStatus);
+    super(StatusEffect.SLEEP, true);
     this.duration = duration;
   }
 
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const didStatus = super.apply(user, target, move, args);
-    if (didStatus && user.status?.effect === this.effect) {
-      user.status.sleepTurnsRemaining = this.duration;
-    }
-    return didStatus;
+  // TODO: Add custom text for rest and make `HealAttr` no longer cause status
+  protected override doSetStatus(pokemon: Pokemon, user: Pokemon, quiet: boolean): boolean {
+    return pokemon.trySetStatus(this.effect, true, user, this.duration, null, true, quiet)
   }
 }
 
@@ -2543,25 +2542,39 @@ export class PsychoShiftEffectAttr extends MoveEffectAttr {
    * @returns `true` if Psycho Shift's effect is able to be applied to the target
    */
   apply(user: Pokemon, target: Pokemon, _move: Move, _args: any[]): boolean {
-    const statusToApply: StatusEffect | undefined = user.status?.effect ?? (user.hasAbility(Abilities.COMATOSE) ? StatusEffect.SLEEP : undefined);
-
-    if (target.status) {
+    // Bang is justified as condition func returns early if no status is found
+    const statusToApply = user.hasAbility(Abilities.COMATOSE) ? StatusEffect.SLEEP : user.status?.effect!
+    if (!target.trySetStatus(statusToApply, true, user)) {
       return false;
-    } else {
-      const canSetStatus = target.canSetStatus(statusToApply, true, false, user);
-      const trySetStatus = canSetStatus ? target.trySetStatus(statusToApply, true, user) : false;
+    }
 
-      if (trySetStatus && user.status) {
-        // PsychoShiftTag is added to the user if move succeeds so that the user is healed of its status effect after its move
-        user.addTag(BattlerTagType.PSYCHO_SHIFT);
+    if (user.status) {
+      // Add tag to user to heal its status effect after the move ends (unless we have comatose);
+      // Occurs after move use to ensure correct Synchronize timing
+      user.addTag(BattlerTagType.PSYCHO_SHIFT)
+    }
+
+    return true;
+  }
+
+  getCondition(): MoveConditionFunc {
+    return (user, target, _move) => {
+      if (target.status) {
+        return false;
       }
 
-      return trySetStatus;
+      const statusToApply = user.status?.effect ?? (user.hasAbility(Abilities.COMATOSE) ? StatusEffect.SLEEP : undefined);
+      return !!statusToApply && target.canSetStatus(statusToApply, false, false, user);
     }
   }
 
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
-    return !target.status && target.canSetStatus(user.status?.effect, true, false, user) ? -10 : 0;
+    const statusToApply =
+      user.status?.effect ??
+      (user.hasAbility(Abilities.COMATOSE) ? StatusEffect.SLEEP : undefined);
+
+      // TODO: Give this an actual positive benefit score
+    return !target.status && statusToApply && target.canSetStatus(statusToApply, true, false, user) ? -10 : 0;
   }
 }
 
@@ -2831,7 +2844,10 @@ export class HealStatusEffectAttr extends MoveEffectAttr {
    */
   constructor(selfTarget: boolean, effects: StatusEffect | StatusEffect[]) {
     super(selfTarget, { lastHitOnly: true });
-    this.effects = [ effects ].flat(1);
+    if (!Array.isArray(effects)) {
+      effects = [ effects ]
+    }
+    this.effects = effects
   }
 
   /**
@@ -8747,8 +8763,8 @@ export function initMoves() {
       .attr(MultiHitAttr, MultiHitType._2)
       .makesContact(false),
     new SelfStatusMove(Moves.REST, PokemonType.PSYCHIC, -1, 5, -1, 0, 1)
-      .attr(RestAttr, 3, true)
       .attr(HealAttr, 1, true)
+      .attr(RestAttr, 3)
       .condition((user, target, move) => !user.isFullHp() && user.canSetStatus(StatusEffect.SLEEP, true, true, user))
       .triageMove(),
     new AttackMove(Moves.ROCK_SLIDE, PokemonType.ROCK, MoveCategory.PHYSICAL, 75, 90, 10, 30, 0, 1)
@@ -9469,15 +9485,7 @@ export function initMoves() {
       .makesContact(false)
       .unimplemented(),
     new StatusMove(Moves.PSYCHO_SHIFT, PokemonType.PSYCHIC, 100, 10, -1, 0, 4)
-      .attr(PsychoShiftEffectAttr)
-      .condition((user, target, move) => {
-        let statusToApply = user.hasAbility(Abilities.COMATOSE) ? StatusEffect.SLEEP : undefined;
-        if (user.status?.effect && isNonVolatileStatusEffect(user.status.effect)) {
-          statusToApply = user.status.effect;
-        }
-        return !!statusToApply && target.canSetStatus(statusToApply, false, false, user);
-      }
-      ),
+      .attr(PsychoShiftEffectAttr),
     new AttackMove(Moves.TRUMP_CARD, PokemonType.NORMAL, MoveCategory.SPECIAL, -1, -1, 5, -1, 0, 4)
       .makesContact()
       .attr(LessPPMorePowerAttr),

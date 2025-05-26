@@ -71,7 +71,7 @@ describe("Abilities - Corrosion", () => {
     expect(enemyPokemon!.status).toBeUndefined();
   });
 
-  it("should affect the user's held a Toxic Orb", async () => {
+  it("should affect the user's held Toxic Orb", async () => {
     game.override.startingHeldItems([{ name: "TOXIC_ORB", count: 1 }]);
     await game.classicMode.startBattle([Species.SALAZZLE]);
 

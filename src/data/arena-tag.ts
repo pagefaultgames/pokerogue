@@ -856,6 +856,7 @@ class ToxicSpikesTag extends ArenaTrapTag {
       this.layers === 1 ? StatusEffect.POISON : StatusEffect.TOXIC,
       true,
       null,
+      0,
       this.getMoveName(),
     );
   }
