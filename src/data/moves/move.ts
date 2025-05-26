@@ -5782,11 +5782,12 @@ export class ProtectAttr extends AddBattlerTagAttr {
     return ((user, target, move): boolean => {
       let timesUsed = 0;
 
-      for (const turnMove of user.tempSummonData.waveMoveHistory) {
+      for (const turnMove of user.tempSummonData.waveMoveHistory.reverse()) {
         if (
           // Quick & Wide guard increment the Protect counter without using it for fail chance
-          !(allMoves[turnMove.move].hasAttr(ProtectAttr) || [Moves.QUICK_GUARD, Moves.WIDE_GUARD].includes(turnMove.move))
-          || turnMove?.result !== MoveResult.SUCCESS
+          !(allMoves[turnMove.move].hasAttr(ProtectAttr) || 
+          [Moves.QUICK_GUARD, Moves.WIDE_GUARD].includes(turnMove.move)) || 
+          turnMove?.result !== MoveResult.SUCCESS
         ) {
           break;
         }
@@ -5794,7 +5795,7 @@ export class ProtectAttr extends AddBattlerTagAttr {
         timesUsed++
       }
 
-      // console.log(`Wave Move History: ${user.tempSummonData.waveMoveHistory}\nTimes Used In Row: ${timesUsed}\nSuccess chance: 1 in ${Math.pow(3, timesUsed)}`)
+      // console.log(`Wave Move History: ${user.tempSummonData.waveMoveHistory.reverse().map(t => t.move)}\nTimes Used In Row: ${timesUsed}\nSuccess chance: 1 in ${Math.pow(3, timesUsed)}`)
       return timesUsed === 0 || user.randBattleSeedInt(Math.pow(3, timesUsed)) === 0;
     });
   }
