@@ -119,7 +119,7 @@ export class Ability implements Localizable {
 
   /**
    * Mark an ability as partially implemented.
-   * Partial abilities are expected to have their core functionality implemented, but may lack
+   * Partial abilities are expected to have some of their core functionality implemented, but may lack
    * certain notable features or interactions with other moves or abilities.
    * @returns `this`
    */
@@ -139,9 +139,11 @@ export class Ability implements Localizable {
   }
 
   /**
-   * Mark an ability as having an edge case.
+   * Mark an ability as having one or more edge cases.
+   * It may lack certain niche interactions with other moves/abilities, but still functions
+   * as intended in most cases.
    * Does not show up in game and is solely for internal dev use.
-
+   *
    * When using this, make sure to **document the edge case** (or else this becomes pointless).
    * @returns `this`
    */
