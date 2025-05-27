@@ -6,6 +6,10 @@ export abstract class AbAttr {
   public showAbility: boolean;
   private extraCondition: AbAttrCondition;
 
+  /**
+   * @param showAbility - Whether to show this ability as a flyout during battle; default `true`.
+   * Should be kept in parity with mainline where possible.
+   */
   constructor(showAbility = true) {
     this.showAbility = showAbility;
   }

@@ -1,5 +1,6 @@
 import { globalScene } from "#app/global-scene";
-import { AttackMove, BeakBlastHeaderAttr, DelayedAttackAttr, SelfStatusMove, allMoves } from "./moves/move";
+import { AttackMove, BeakBlastHeaderAttr, DelayedAttackAttr, SelfStatusMove } from "./moves/move";
+import { allMoves } from "./data-lists";
 import { MoveFlags } from "#enums/MoveFlags";
 import type Pokemon from "../field/pokemon";
 import { type nil, getFrameMs, getEnumKeys, getEnumValues, animationFileName } from "../utils/common";
@@ -1132,7 +1133,6 @@ export abstract class BattleAnim {
                 if (priority === 0) {
                   // Place the sprite in front of the pokemon on the field.
                   targetSprite = globalScene.getEnemyField().find(p => p) ?? globalScene.getPlayerField().find(p => p);
-                  console.log(typeof targetSprite);
                   moveFunc = globalScene.field.moveBelow;
                 } else if (priority === 2 && this.bgSprite) {
                   moveFunc = globalScene.field.moveAbove;

@@ -1,5 +1,6 @@
 import { applyAbAttrs, BypassSpeedChanceAbAttr, PreventBypassSpeedChanceAbAttr } from "#app/data/abilities/ability";
-import { allMoves, MoveHeaderAttr } from "#app/data/moves/move";
+import { MoveHeaderAttr } from "#app/data/moves/move";
+import { allMoves } from "#app/data/data-lists";
 import { Abilities } from "#app/enums/abilities";
 import { Stat } from "#app/enums/stat";
 import type Pokemon from "#app/field/pokemon";
@@ -72,19 +73,16 @@ export class TurnStartPhase extends FieldPhase {
     // This occurs before the main loop because of battles with more than two Pokemon
     const battlerBypassSpeed = {};
 
-    globalScene
-      .getField(true)
-      .filter(p => p.summonData)
-      .map(p => {
-        const bypassSpeed = new BooleanHolder(false);
-        const canCheckHeldItems = new BooleanHolder(true);
-        applyAbAttrs(BypassSpeedChanceAbAttr, p, null, false, bypassSpeed);
-        applyAbAttrs(PreventBypassSpeedChanceAbAttr, p, null, false, bypassSpeed, canCheckHeldItems);
-        if (canCheckHeldItems.value) {
-          globalScene.applyModifiers(BypassSpeedChanceModifier, p.isPlayer(), p, bypassSpeed);
-        }
-        battlerBypassSpeed[p.getBattlerIndex()] = bypassSpeed;
-      });
+    globalScene.getField(true).map(p => {
+      const bypassSpeed = new BooleanHolder(false);
+      const canCheckHeldItems = new BooleanHolder(true);
+      applyAbAttrs(BypassSpeedChanceAbAttr, p, null, false, bypassSpeed);
+      applyAbAttrs(PreventBypassSpeedChanceAbAttr, p, null, false, bypassSpeed, canCheckHeldItems);
+      if (canCheckHeldItems.value) {
+        globalScene.applyModifiers(BypassSpeedChanceModifier, p.isPlayer(), p, bypassSpeed);
+      }
+      battlerBypassSpeed[p.getBattlerIndex()] = bypassSpeed;
+    });
 
     // The function begins sorting orderedTargets based on command priority, move priority, and possible speed bypasses.
     // Non-FIGHT commands (SWITCH, BALL, RUN) have a higher command priority and will always occur before any FIGHT commands.

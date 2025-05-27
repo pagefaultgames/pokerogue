@@ -11,7 +11,8 @@ import {
 } from "#app/data/abilities/ability";
 import { BattlerTagLapseType } from "#app/data/battler-tags";
 import { battleSpecDialogue } from "#app/data/dialogue";
-import { allMoves, PostVictoryStatStageChangeAttr } from "#app/data/moves/move";
+import { PostVictoryStatStageChangeAttr } from "#app/data/moves/move";
+import { allMoves } from "#app/data/data-lists";
 import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms";
 import { BattleSpec } from "#app/enums/battle-spec";
 import { StatusEffect } from "#app/enums/status-effect";
@@ -118,7 +119,7 @@ export class FaintPhase extends PokemonPhase {
 
     pokemon.resetTera();
 
-    if (pokemon.turnData?.attacksReceived?.length) {
+    if (pokemon.turnData.attacksReceived?.length) {
       const lastAttack = pokemon.turnData.attacksReceived[0];
       applyPostFaintAbAttrs(
         PostFaintAbAttr,
@@ -136,7 +137,7 @@ export class FaintPhase extends PokemonPhase {
     for (const p of alivePlayField) {
       applyPostKnockOutAbAttrs(PostKnockOutAbAttr, p, pokemon);
     }
-    if (pokemon.turnData?.attacksReceived?.length) {
+    if (pokemon.turnData.attacksReceived?.length) {
       const defeatSource = this.source;
 
       if (defeatSource?.isOnField()) {
