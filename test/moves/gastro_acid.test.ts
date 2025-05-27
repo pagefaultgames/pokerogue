@@ -25,7 +25,7 @@ describe("Moves - Gastro Acid", () => {
     game.override.battleStyle("double");
     game.override.startingLevel(1);
     game.override.enemyLevel(100);
-    game.override.ability(Abilities.NONE);
+    game.override.ability(Abilities.BALL_FETCH);
     game.override.moveset([Moves.GASTRO_ACID, Moves.WATER_GUN, Moves.SPLASH, Moves.CORE_ENFORCER]);
     game.override.enemySpecies(Species.BIDOOF);
     game.override.enemyMoveset(Moves.SPLASH);
