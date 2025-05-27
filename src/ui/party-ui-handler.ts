@@ -549,7 +549,8 @@ export default class PartyUiHandler extends MessageUiHandler {
       for (let p = 0; p < globalScene.getPlayerParty().length; p++) {
         // this for look goes through each of the party pokemon
         const newPokemon = globalScene.getPlayerParty()[p];
-        // this next bit checks to see if the the selected item from the original transfer pokemon exists on the new pokemon [p]; this returns undefined if the new pokemon doesn't have the item at all, otherwise it returns the pokemonHeldItemModifier for that item
+        // this next bit checks to see if the the selected item from the original transfer pokemon exists on the new pokemon `p`
+        // this returns `undefined` if the new pokemon doesn't have the item at all, otherwise it returns the `pokemonHeldItemModifier` for that item
         const matchingModifier = globalScene.findModifier(
           m =>
             m instanceof PokemonHeldItemModifier &&
@@ -1165,7 +1166,7 @@ export default class PartyUiHandler extends MessageUiHandler {
       globalScene.findModifier(
         m =>
           m instanceof SwitchEffectTransferModifier &&
-          (m as SwitchEffectTransferModifier).pokemonId === globalScene.getPlayerField()[this.fieldIndex].id,
+          m.pokemonId === globalScene.getPlayerField()[this.fieldIndex].id,
       )
     );
   }
