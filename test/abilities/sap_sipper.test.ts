@@ -9,7 +9,8 @@ import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { allMoves, RandomMoveAttr } from "#app/data/moves/move";
+import { RandomMoveAttr } from "#app/data/moves/move";
+import { allMoves } from "#app/data/data-lists";
 
 // See also: TypeImmunityAbAttr
 describe("Abilities - Sap Sipper", () => {
