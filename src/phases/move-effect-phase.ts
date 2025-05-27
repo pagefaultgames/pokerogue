@@ -81,6 +81,7 @@ import { isFieldTargeted } from "#app/data/moves/move-utils";
 import { FaintPhase } from "./faint-phase";
 import { DamageAchv } from "#app/system/achv";
 import { isVirtual, isReflected, MoveUseType } from "#enums/move-use-type";
+import { DancerPhase } from "./dancer-phase";
 
 export type HitCheckEntry = [HitCheckResult, TypeDamageMultiplier];
 
@@ -379,6 +380,7 @@ export class MoveEffectPhase extends PokemonPhase {
    */
   private postAnimCallback(user: Pokemon, targets: Pokemon[]) {
     // Add to the move history entry
+    // TODO: Once Truant is fixed to not check history, don't push an entry for reflected/indirect moves
     if (this.firstHit) {
       user.pushMoveHistory(this.moveHistoryEntry);
     }
@@ -442,12 +444,10 @@ export class MoveEffectPhase extends PokemonPhase {
     // Dancer does not proc on other dancer moves, nor for either occurrence of a reflected move.
     // (This blocks copying on the follow-up reflected use; the initial use gets blocked by hit checks)
     if (this.useType !== MoveUseType.INDIRECT && this.useType !== MoveUseType.REFLECTED) {
-      globalScene
-        .getField(true)
-        // Needed to ensure multiple dancers proc in FIFO order after the current move ends.
-        // TODO: Figure out a way of doing this nicer
-        .reverse()
-        .forEach(p => applyPostMoveUsedAbAttrs(PostMoveUsedAbAttr, p, this.move, user, this.targets, this.hitChecks));
+      globalScene.appendToPhase(
+        new DancerPhase(this.battlerIndex, this.targets, this.move, this.hitChecks),
+        MoveEndPhase,
+      );
     }
     super.end();
   }

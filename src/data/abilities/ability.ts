@@ -78,6 +78,7 @@ import { MoveUseType } from "#enums/move-use-type";
 import { noAbilityTypeOverrideMoves } from "../moves/invalid-moves";
 import type { HitCheckEntry } from "#app/phases/move-effect-phase";
 import { HitCheckResult } from "#enums/hit-check-result";
+import { glob } from "fs";
 
 export class BlockRecoilDamageAttr extends AbAttr {
   constructor() {
@@ -4450,8 +4451,9 @@ export class PostMoveUsedAbAttr extends AbAttr {
  */
 export class PostDancingMoveAbAttr extends PostMoveUsedAbAttr {
   constructor() {
-    super(true) // don't display abilities normally
+    super(true) // don't display abilities normally - we do it ourself
   }
+
   /**
    * Check whether this ability can be applied after a move is used.
    * @param dancer - The {@linkcode Pokemon} with the ability
@@ -4483,7 +4485,7 @@ export class PostDancingMoveAbAttr extends PostMoveUsedAbAttr {
 
     return super.canApplyPostMoveUsed(dancer, move, source, targets, hitResults, simulated, args)
       && move.hasFlag(MoveFlags.DANCE_MOVE) // move is dance move
-      && dancer.summonData.tags.every(tag => !forbiddenTags.has(tag.tagType)); // user able to perform attack
+      && !dancer.summonData.tags.every(tag => forbiddenTags.has(tag.tagType)); // user able to perform attack
   }
 
   /**
@@ -4506,12 +4508,12 @@ export class PostDancingMoveAbAttr extends PostMoveUsedAbAttr {
     _simulated: boolean,
     _args: any[],
   ): void {
-    // increment extra turns var to ensure subsequent multi-hit moves
+    // increment extra turns var to ensure subsequent multi-hit moves don't bork
     dancer.turnData.extraTurns++;
 
-    // appendToPhase is used here to ensure multiple dancers proc in successive order
-    // _without_ interrupting one another
-    globalScene.appendToPhase(new MovePhase(dancer, this.getMoveTargets(dancer, source, move, targets), new PokemonMove(move.id), MoveUseType.INDIRECT), MoveEndPhase);
+    // needed to ensure proper proc order of ability flyouts
+    globalScene.setPhaseQueueSplice();
+    globalScene.unshiftPhase(new MovePhase(dancer, this.getMoveTargets(dancer, source, move, targets), new PokemonMove(move.id), MoveUseType.INDIRECT));
   }
 
   /**
@@ -5586,8 +5588,6 @@ function applySingleAbAttrs<TAttr extends AbAttr>(
     if (condition && !condition(pokemon) || !successFunc(attr, passive)) {
       continue;
     }
-
-    globalScene.setPhaseQueueSplice();
 
     if (attr.showAbility && !simulated) {
       globalScene.queueAbilityDisplay(pokemon, passive, true);
