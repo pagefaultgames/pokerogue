@@ -5782,7 +5782,7 @@ export class ProtectAttr extends AddBattlerTagAttr {
     return ((user, target, move): boolean => {
       let timesUsed = 0;
 
-      for (const turnMove of user.tempSummonData.waveMoveHistory.reverse()) {
+      for (const turnMove of user.tempSummonData.waveMoveHistory.slice().reverse()) {
         if (
           // Quick & Wide guard increment the Protect counter without using it for fail chance
           !(allMoves[turnMove.move].hasAttr(ProtectAttr) || 
