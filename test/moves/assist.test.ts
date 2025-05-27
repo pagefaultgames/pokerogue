@@ -30,7 +30,7 @@ describe("Moves - Assist", () => {
     game.override
       .ability(Abilities.BALL_FETCH)
       .battleStyle("double")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(Species.MAGIKARP)
       .enemyLevel(100)
       .enemyAbility(Abilities.BALL_FETCH)

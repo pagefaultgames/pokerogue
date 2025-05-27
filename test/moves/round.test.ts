@@ -28,7 +28,7 @@ describe("Moves - Round", () => {
       .moveset([Moves.SPLASH, Moves.ROUND])
       .ability(Abilities.BALL_FETCH)
       .battleStyle("double")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset([Moves.SPLASH, Moves.ROUND])

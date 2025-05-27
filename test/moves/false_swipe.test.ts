@@ -27,7 +27,7 @@ describe("Moves - False Swipe", () => {
       .ability(Abilities.BALL_FETCH)
       .startingLevel(1000)
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH);

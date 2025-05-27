@@ -28,7 +28,7 @@ describe("Abilities - Protosynthesis", () => {
       .moveset([Moves.SPLASH, Moves.TACKLE])
       .ability(Abilities.PROTOSYNTHESIS)
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH);

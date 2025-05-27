@@ -30,7 +30,7 @@ describe("Moves - Tackle", () => {
     game.override.startingWave(97);
     game.override.moveset([moveToUse]);
     game.override.enemyMoveset([Moves.GROWTH, Moves.GROWTH, Moves.GROWTH, Moves.GROWTH]);
-    game.override.disableCrits();
+    game.override.criticalHits(false);
   });
 
   it("TACKLE against ghost", async () => {

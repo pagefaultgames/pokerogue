@@ -23,7 +23,7 @@ async function promptTestType() {
     {
       type: "list",
       name: "selectedOption",
-      message: "What type of test would you like to create:",
+      message: "What type of test would you like to create?",
       choices: [...typeChoices, "EXIT"],
     },
   ]);
@@ -130,16 +130,16 @@ describe("${description}", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([ Moves.SPLASH ])
+      .moveset(Moves.SPLASH)
       .ability(Abilities.BALL_FETCH)
-      .battleType("single")
-      .disableCrits()
+      .battleStyle("single")
+      .criticalHits(false)
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH);
   });
 
-  it("should do X", async () => {
+  it("should do XYZ", async () => {
     await game.classicMode.startBattle([ Species.FEEBAS ]);
 
     game.move.select(Moves.SPLASH);

@@ -31,7 +31,7 @@ describe("Abilities - Sap Sipper", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .ability(Abilities.SAP_SIPPER)
       .enemySpecies(Species.RATTATA)
       .enemyAbility(Abilities.SAP_SIPPER)

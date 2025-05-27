@@ -23,7 +23,7 @@ describe("Abilities - Stall", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override.battleStyle("single");
-    game.override.disableCrits();
+    game.override.criticalHits(false);
     game.override.enemySpecies(Species.REGIELEKI);
     game.override.enemyAbility(Abilities.STALL);
     game.override.enemyMoveset([Moves.QUICK_ATTACK, Moves.QUICK_ATTACK, Moves.QUICK_ATTACK, Moves.QUICK_ATTACK]);

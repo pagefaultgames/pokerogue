@@ -21,7 +21,7 @@ describe("Endless Boss", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.startingBiome(Biome.END).disableCrits();
+    game.override.startingBiome(Biome.END).criticalHits(false);
   });
 
   afterEach(() => {

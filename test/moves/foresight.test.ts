@@ -22,7 +22,7 @@ describe("Moves - Foresight", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(Species.GASTLY)
       .enemyMoveset(Moves.SPLASH)
       .enemyLevel(5)

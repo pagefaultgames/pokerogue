@@ -26,7 +26,7 @@ describe("Abilities - Hustle", () => {
     game.override
       .ability(Abilities.HUSTLE)
       .moveset([Moves.TACKLE, Moves.GIGA_DRAIN, Moves.FISSURE])
-      .disableCrits()
+      .criticalHits(false)
       .battleStyle("single")
       .enemyMoveset(Moves.SPLASH)
       .enemySpecies(Species.SHUCKLE)

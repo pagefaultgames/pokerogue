@@ -26,7 +26,7 @@ describe("Moves - Role Play", () => {
       .moveset([Moves.SPLASH, Moves.ROLE_PLAY])
       .ability(Abilities.ADAPTABILITY)
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH);
