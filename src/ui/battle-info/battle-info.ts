@@ -410,7 +410,8 @@ export default abstract class BattleInfo extends Phaser.GameObjects.Container {
 
   //#region Update methods and helpers
 
-  /** Update the status icon to match the pokemon's current status
+  /**
+   * Update the status icon to match the pokemon's current status
    * @param pokemon - The pokemon object attached to this battle info
    * @param xOffset - The offset from the name text
    */
