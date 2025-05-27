@@ -487,7 +487,7 @@ describe("Abilities - Dancer", () => {
     const oricorio = game.scene.getPlayerPokemon()!;
     expect(oricorio).toBeDefined();
 
-    // turn 1: Splash --> truanted SD
+    // turn 1: Splash --> truanted Dancer SD
     game.move.select(Moves.SPLASH);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toNextTurn();
@@ -506,7 +506,7 @@ describe("Abilities - Dancer", () => {
     ]);
     expect(oricorio.getStatStage(Stat.ATK)).toBe(0);
 
-    // Turn 2: SD --> truanted Splash
+    // Turn 2: Dancer SD --> truanted Splash
     game.move.select(Moves.SPLASH);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("TurnEndPhase");

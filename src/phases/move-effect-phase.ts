@@ -379,6 +379,7 @@ export class MoveEffectPhase extends PokemonPhase {
    */
   private postAnimCallback(user: Pokemon, targets: Pokemon[]) {
     // Add to the move history entry
+    // TODO: Once Truant is fixed to not check history, don't push an entry for reflected/indirect moves
     if (this.firstHit) {
       user.pushMoveHistory(this.moveHistoryEntry);
     }
