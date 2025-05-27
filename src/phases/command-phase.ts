@@ -230,7 +230,7 @@ export class CommandPhase extends FieldPhase {
    *
    * Does not check if the move is usable or not, that should be handled by the caller.
    */
-  private comptueMoveId(playerPokemon: PlayerPokemon, cursor: number, move?: TurnMove): MoveId {
+  private computeMoveId(playerPokemon: PlayerPokemon, cursor: number, move?: TurnMove): MoveId {
     return move?.move ?? (cursor > -1 ? playerPokemon.getMoveset()[cursor]?.moveId : MoveId.NONE);
   }
 
@@ -263,7 +263,7 @@ export class CommandPhase extends FieldPhase {
       return false;
     }
 
-    const moveId = useStruggle ? MoveId.STRUGGLE : this.comptueMoveId(playerPokemon, cursor, move);
+    const moveId = useStruggle ? MoveId.STRUGGLE : this.computeMoveId(playerPokemon, cursor, move);
 
     const turnCommand: TurnCommand = {
       command: Command.FIGHT,
