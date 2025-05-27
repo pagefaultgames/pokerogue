@@ -98,8 +98,8 @@ export default abstract class BattleInfo extends Phaser.GameObjects.Container {
       .setVisible(false)
       .setOrigin(0)
       .setScale(0.5)
-      .setInteractive(hitArea, hitCallback);
-    this.teraIcon.setPositionRelative(this.nameText, 0, 2);
+      .setInteractive(hitArea, hitCallback)
+      .setPositionRelative(this.nameText, 0, 2);
 
     this.shinyIcon = globalScene.add
       .sprite(0, 0, "shiny_star")
@@ -107,8 +107,8 @@ export default abstract class BattleInfo extends Phaser.GameObjects.Container {
       .setVisible(false)
       .setOrigin(0)
       .setScale(0.5)
-      .setInteractive(hitArea, hitCallback);
-    this.shinyIcon.setPositionRelative(this.nameText, 0, 2);
+      .setInteractive(hitArea, hitCallback)
+      .setPositionRelative(this.nameText, 0, 2);
 
     this.fusionShinyIcon = globalScene.add
       .sprite(0, 0, "shiny_star_2")
@@ -124,8 +124,8 @@ export default abstract class BattleInfo extends Phaser.GameObjects.Container {
       .setVisible(false)
       .setOrigin(0)
       .setScale(0.5)
-      .setInteractive(hitArea, hitCallback);
-    this.splicedIcon.setPositionRelative(this.nameText, 0, 2);
+      .setInteractive(hitArea, hitCallback)
+      .setPositionRelative(this.nameText, 0, 2);
 
     this.add([this.teraIcon, this.shinyIcon, this.fusionShinyIcon, this.splicedIcon]);
   }
@@ -235,8 +235,10 @@ export default abstract class BattleInfo extends Phaser.GameObjects.Container {
       .setOrigin(0);
     this.add(this.nameText);
 
-    this.genderText = addTextObject(0, 0, "", TextStyle.BATTLE_INFO).setName("text_gender").setOrigin(0);
-    this.genderText.setPositionRelative(this.nameText, 0, 2);
+    this.genderText = addTextObject(0, 0, "", TextStyle.BATTLE_INFO)
+      .setName("text_gender")
+      .setOrigin(0)
+      .setPositionRelative(this.nameText, 0, 2);
     this.add(this.genderText);
 
     this.constructIcons();
@@ -245,8 +247,8 @@ export default abstract class BattleInfo extends Phaser.GameObjects.Container {
       .sprite(0, 0, getLocalizedSpriteKey("statuses"))
       .setName("icon_status")
       .setVisible(false)
-      .setOrigin(0);
-    this.statusIndicator.setPositionRelative(this.nameText, 0, 11.5);
+      .setOrigin(0)
+      .setPositionRelative(this.nameText, 0, 11.5);
     this.add(this.statusIndicator);
 
     this.levelContainer = globalScene.add

@@ -57,8 +57,9 @@ export default class MockGraphics implements MockGameObject {
     // This callback is invoked when this Game Object is added to a Scene.
   }
 
-  setPositionRelative(_source, _x, _y) {
+  setPositionRelative(_source, _x, _y): this {
     /// Sets the position of this Game Object to be a relative position from the source Game Object.
+    return this;
   }
 
   destroy() {

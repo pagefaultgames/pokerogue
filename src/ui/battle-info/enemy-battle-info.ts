@@ -56,15 +56,19 @@ export class EnemyBattleInfo extends BattleInfo {
 
     super(140, -141, false, posParams);
 
-    this.ownedIcon = globalScene.add.sprite(0, 0, "icon_owned").setName("icon_owned").setVisible(false).setOrigin(0, 0);
-    this.ownedIcon.setPositionRelative(this.nameText, 0, 11.75);
+    this.ownedIcon = globalScene.add
+      .sprite(0, 0, "icon_owned")
+      .setName("icon_owned")
+      .setVisible(false)
+      .setOrigin(0, 0)
+      .setPositionRelative(this.nameText, 0, 11.75);
 
     this.championRibbon = globalScene.add
       .sprite(0, 0, "champion_ribbon")
       .setName("icon_champion_ribbon")
       .setVisible(false)
-      .setOrigin(0, 0);
-    this.championRibbon.setPositionRelative(this.nameText, 8, 11.75);
+      .setOrigin(0, 0)
+      .setPositionRelative(this.nameText, 8, 11.75);
     // Ensure these two icons are positioned below the stats container
     this.addAt([this.ownedIcon, this.championRibbon], this.getIndex(this.statsContainer));
 
@@ -73,8 +77,10 @@ export class EnemyBattleInfo extends BattleInfo {
 
     this.moveBelow<Phaser.GameObjects.GameObject>(this.flyoutMenu, this.box);
 
-    this.effectivenessContainer = globalScene.add.container(0, 0).setVisible(false);
-    this.effectivenessContainer.setPositionRelative(this.type1Icon, 22, 4);
+    this.effectivenessContainer = globalScene.add
+      .container(0, 0)
+      .setVisible(false)
+      .setPositionRelative(this.type1Icon, 22, 4);
     this.add(this.effectivenessContainer);
 
     this.effectivenessText = addTextObject(5, 4.5, "", TextStyle.BATTLE_INFO);

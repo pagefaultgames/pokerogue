@@ -58,8 +58,9 @@ export default class MockContainer implements MockGameObject {
     return this;
   }
 
-  setPositionRelative(_source, _x, _y) {
+  setPositionRelative(_source, _x, _y): this {
     /// Sets the position of this Game Object to be a relative position from the source Game Object.
+    return this;
   }
 
   setInteractive(): this {

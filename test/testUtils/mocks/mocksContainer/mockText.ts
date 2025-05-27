@@ -197,9 +197,10 @@ export default class MockText implements MockGameObject {
     return this;
   }
 
-  setPositionRelative(_source, _x, _y) {
+  setPositionRelative(_source, _x, _y): this {
     /// Sets the position of this Game Object to be a relative position from the source Game Object.
     // return this.phaserText.setPositionRelative(source, x, y);
+    return this;
   }
 
   setShadowOffset(_offsetX, _offsetY): this {
