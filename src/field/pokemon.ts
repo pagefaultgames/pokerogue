@@ -54,7 +54,7 @@ import {
   getStarterValueFriendshipCap,
   speciesStarterCosts,
 } from "#app/data/balance/starters";
-import { NumberHolder, randSeedInt, getIvsFromId, BooleanHolder, randSeedItem, isNullOrUndefined, getEnumValues, toDmgValue, fixedInt, rgbaToInt, rgbHexToRgba, rgbToHsv, deltaRgb, isBetween, type nil, type Constructor, randSeedIntRange } from "#app/utils/common";
+import { NumberHolder, randSeedInt, getIvsFromId, BooleanHolder, randSeedItem, isNullOrUndefined, getEnumValues, toDmgValue, fixedInt, rgbaToInt, rgbHexToRgba, rgbToHsv, deltaRgb, isBetween, type nil, type Constructor, randSeedFloat, randSeedIntRange } from "#app/utils/common";
 import type { TypeDamageMultiplier } from "#app/data/type";
 import { getTypeDamageMultiplier, getTypeRgb } from "#app/data/type";
 import { PokemonType } from "#enums/pokemon-type";
@@ -6109,7 +6109,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     let fusionPaletteColors: Map<number, number>;
 
     const originalRandom = Math.random;
-    Math.random = () => Phaser.Math.RND.realInRange(0, 1);
+    Math.random = () => randSeedFloat();
 
     globalScene.executeWithSeedOffset(
       () => {
