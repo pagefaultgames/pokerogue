@@ -25,7 +25,7 @@ describe("Moves - Gastro Acid", () => {
     game.override.battleStyle("double");
     game.override.startingLevel(1);
     game.override.enemyLevel(100);
-    game.override.ability(Abilities.NONE);
+    game.override.ability(Abilities.BALL_FETCH);
     game.override.moveset([Moves.GASTRO_ACID, Moves.WATER_GUN, Moves.SPLASH, Moves.CORE_ENFORCER]);
     game.override.enemySpecies(Species.BIDOOF);
     game.override.enemyMoveset(Moves.SPLASH);
@@ -40,7 +40,7 @@ describe("Moves - Gastro Acid", () => {
      * - player mon 1 should have dealt damage, player mon 2 should have not
      */
 
-    await game.startBattle();
+    await game.classicMode.startBattle();
 
     game.move.select(Moves.GASTRO_ACID, 0, BattlerIndex.ENEMY);
     game.move.select(Moves.SPLASH, 1);
@@ -63,7 +63,7 @@ describe("Moves - Gastro Acid", () => {
   it("fails if used on an enemy with an already-suppressed ability", async () => {
     game.override.battleStyle("single");
 
-    await game.startBattle();
+    await game.classicMode.startBattle();
 
     game.move.select(Moves.CORE_ENFORCER);
     // Force player to be slower to enable Core Enforcer to proc its suppression effect
@@ -76,5 +76,28 @@ describe("Moves - Gastro Acid", () => {
     await game.phaseInterceptor.to("TurnInitPhase");
 
     expect(game.scene.getPlayerPokemon()!.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+  });
+
+  it("should suppress the passive of a target even if its main ability is unsuppressable and not suppress main abli", async () => {
+    game.override
+      .enemyAbility(Abilities.COMATOSE)
+      .enemyPassiveAbility(Abilities.WATER_ABSORB)
+      .moveset([Moves.SPLASH, Moves.GASTRO_ACID, Moves.WATER_GUN]);
+    await game.classicMode.startBattle([Species.MAGIKARP]);
+
+    const enemyPokemon = game.scene.getEnemyPokemon();
+
+    game.move.select(Moves.GASTRO_ACID);
+    await game.toNextTurn();
+    expect(enemyPokemon?.summonData.abilitySuppressed).toBe(true);
+
+    game.move.select(Moves.WATER_GUN);
+    await game.toNextTurn();
+    expect(enemyPokemon?.getHpRatio()).toBeLessThan(1);
+
+    game.move.select(Moves.SPORE);
+    await game.phaseInterceptor.to("BerryPhase");
+
+    expect(enemyPokemon?.status?.effect).toBeFalsy();
   });
 });
