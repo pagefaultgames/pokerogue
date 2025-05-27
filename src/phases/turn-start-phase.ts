@@ -1,5 +1,6 @@
 import { applyAbAttrs, BypassSpeedChanceAbAttr, PreventBypassSpeedChanceAbAttr } from "#app/data/abilities/ability";
-import { allMoves, MoveHeaderAttr } from "#app/data/moves/move";
+import { MoveHeaderAttr } from "#app/data/moves/move";
+import { allMoves } from "#app/data/data-lists";
 import { Abilities } from "#app/enums/abilities";
 import { Stat } from "#app/enums/stat";
 import type Pokemon from "#app/field/pokemon";

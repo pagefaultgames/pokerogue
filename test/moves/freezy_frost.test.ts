@@ -5,7 +5,7 @@ import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { allMoves } from "#app/data/moves/move";
+import { allMoves } from "#app/data/data-lists";
 import { CommandPhase } from "#app/phases/command-phase";
 
 describe("Moves - Freezy Frost", () => {
