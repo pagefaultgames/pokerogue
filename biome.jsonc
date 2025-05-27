@@ -32,7 +32,6 @@
       // TODO: these files are too big and complex, ignore them until their respective refactors
       "src/data/moves/move.ts",
       "src/data/abilities/ability.ts",
-      "src/field/pokemon.ts",
 
       // this file is just too big:
       "src/data/balance/tms.ts"
@@ -58,7 +57,7 @@
       },
       "style": {
         "noVar": "error",
-        "useEnumInitializers": "off", // large enums like Moves/Species would make this cumbersome 
+        "useEnumInitializers": "off", // large enums like Moves/Species would make this cumbersome
         "useBlockStatements": "error",
         "useConst": "error",
         "useImportType": "error",
@@ -73,9 +72,9 @@
       },
       "suspicious": {
         "noDoubleEquals": "error",
-        // While this would be a nice rule to enable, the current structure of the codebase makes this infeasible 
+        // While this would be a nice rule to enable, the current structure of the codebase makes this infeasible
         // due to being used for move/ability `args` params and save data-related code.
-        // This can likely be enabled for all non-utils files once these are eventually reworked, but until then we leave it off.  
+        // This can likely be enabled for all non-utils files once these are eventually reworked, but until then we leave it off.
         "noExplicitAny": "off",
         "noAssignInExpressions": "off",
         "noPrototypeBuiltins": "off",
@@ -92,6 +91,19 @@
         "noUselessSwitchCase": "off", // Explicit > Implicit
         "noUselessConstructor": "warn", // TODO: Refactor and make this an error
         "noBannedTypes": "warn" // TODO: Refactor and make this an error
+      },
+      "nursery": {
+        "noRestrictedTypes": {
+          "level": "error",
+          "options": {
+            "types": {
+              "integer": {
+                "message": "This is an alias for 'number' that can provide false impressions of what values can actually be contained in this variable. Use 'number' instead.",
+                "use": "number"
+              }
+            }
+          }
+        }
       }
     }
   },
