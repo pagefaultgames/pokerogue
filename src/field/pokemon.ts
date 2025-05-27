@@ -7878,7 +7878,11 @@ export class PokemonSummonData {
   }
 }
 
- // TODO: Merge this inside `summmonData` but exclude from save if/when a save data serializer is added
+/**
+ * Pokemon data that is not stored in `SummonData` to avoid being written to the save file.
+ * 
+ * TODO: Merge this inside `summmonData` but exclude from save if/when a save data serializer is added
+ */
 export class PokemonTempSummonData {
   /**
    * The number of turns this pokemon has spent without switching out.
@@ -7889,7 +7893,7 @@ export class PokemonTempSummonData {
   /**
    * The number of turns this pokemon has spent in the active position since the start of the wave
    * without switching out.
-   * Reset on switch and new wave, but not stored in `SummonData` to avoid being written to the save file.
+   * Reset on switch and new wave.
    *
    * Used to evaluate "first turn only" conditions such as
    * {@linkcode Moves.FAKE_OUT | Fake Out} and {@linkcode Moves.FIRST_IMPRESSION | First Impression}).
@@ -7899,7 +7903,7 @@ export class PokemonTempSummonData {
   /**
    * An array containing all moves this Pokemon has used since the start of the wave
    * without switching out.
-   * Reset on switch and new wave, but not stored in `SummonData` to avoid being written to the save file.
+   * Reset on switch and new wave.
 
    * Used to calculate {@link https://bulbapedia.bulbagarden.net/wiki/Protection | Protecting moves}' fail chances.
    */
