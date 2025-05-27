@@ -280,7 +280,7 @@ export class CommandPhase extends FieldPhase {
             multiple: move.targets.length > 1,
           };
 
-    if (!moveId) {
+    if (moveId === Moves.NONE) {
       turnCommand.targets = [this.fieldIndex];
     }
 
