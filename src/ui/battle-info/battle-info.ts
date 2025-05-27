@@ -30,7 +30,7 @@ export type BattleInfoParamList = {
   statBox: {
     /** The starting offset from the left of the label for the entries in the stat box */
     xOffset: number;
-    /** The X between each number */
+    /** The X padding between each number column */
     paddingX: number;
     /** The index of the stat entries at which paddingX is used instead of startingX */
     statOverflow: number;
