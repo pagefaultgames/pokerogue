@@ -252,13 +252,12 @@ export class CommandPhase extends FieldPhase {
     let canUse = cursor === -1 || playerPokemon.trySelectMove(cursor, ignorePP);
     let canUse = cursor === -1 || playerPokemon.trySelectMove(cursor, ignorePP);
 
+    // Ternary here ensures we don't compute struggle conditions unless necessary
     const useStruggle = canUse
       ? false
       : cursor > -1 && !playerPokemon.getMoveset().some(m => m.isUsable(playerPokemon));
 
-    canUse = canUse || useStruggle;
-
-    if (!canUse) {
+    if (!canUse && !useStruggle) {
       this.queueFightErrorMessage(playerPokemon, cursor);
       return false;
     }
