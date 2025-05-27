@@ -264,7 +264,8 @@ export default abstract class BattleInfo extends Phaser.GameObjects.Container {
       .on("pointerout", () => globalScene.ui.hideTooltip());
   }
 
-  /** Called by {@linkcode initInfo} to initialize the shiny icon
+  /**
+   * Called by {@linkcode initInfo} to initialize the shiny icon
    * @param pokemon - The pokemon object attached to this battle info
    * @param baseXOffset - The x offset to use for the shiny icon
    * @param doubleShiny - Whether the pokemon is shiny and its fusion species is also shiny
@@ -379,9 +380,10 @@ export default abstract class BattleInfo extends Phaser.GameObjects.Container {
   }
   //#endregion
 
-  getTextureName(): string {
-    return `pbinfo_${this.player ? "player" : "enemy"}${!this.player && this.boss ? "_boss" : this.mini ? "_mini" : ""}`;
-  }
+  /**
+   * Return the texture name of the battle info box
+   */
+  abstract getTextureName(): string;
 
   setMini(_mini: boolean): void {}
 
@@ -424,7 +426,7 @@ export default abstract class BattleInfo extends Phaser.GameObjects.Container {
     }
   }
 
-  /** Update the pokemon name inside the container ,*/
+  /** Update the pokemon name inside the container */
   protected updateName(name: string): boolean {
     if (this.lastName === name) {
       return false;

@@ -12,6 +12,11 @@ export class PlayerBattleInfo extends BattleInfo {
   override get statOrder(): Stat[] {
     return [Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.ACC, Stat.EVA, Stat.SPD];
   }
+
+  override getTextureName(): string {
+    return this.mini ? "pbinfo_player_mini" : "pbinfo_player";
+  }
+
   constructor() {
     super(Math.floor(globalScene.game.canvas.width / 6) - 10, -72, true);
 
@@ -55,6 +60,7 @@ export class PlayerBattleInfo extends BattleInfo {
 
     this.statValuesContainer.setPosition(8, 7);
   }
+
   override setMini(mini: boolean): void {
     if (this.mini === mini) {
       return;
@@ -166,7 +172,9 @@ export class PlayerBattleInfo extends BattleInfo {
     });
   }
 
-  /** Updates the info on the info bar.
+  /**
+   * Updates the info on the info bar.
+   *
    * In addition to performing all the steps of {@linkcode BattleInfo.updateInfo},
    * it also updates the EXP Bar
    */

@@ -27,6 +27,10 @@ export class EnemyBattleInfo extends BattleInfo {
     return [Stat.HP, Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.ACC, Stat.EVA, Stat.SPD];
   }
 
+  override getTextureName(): string {
+    return this.boss ? "pbinfo_enemy_boss_mini" : "pbinfo_enemy_mini";
+  }
+
   constructor() {
     super(140, -141, false);
 
