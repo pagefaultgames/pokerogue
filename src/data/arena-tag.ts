@@ -69,9 +69,9 @@ export abstract class ArenaTag {
 
   /**
    * Trigger this {@linkcode ArenaTag}'s effect, reducing its duration as applicable.
-   * Will ignore duration of all tags with durations alwrea
+   * Will ignore durations of all tags with durations `<=0`.
    * @param _arena - The {@linkcode Arena} at the moment the tag is being lapsed.
-   * Unused by default but can be used by super classes.
+   * Unused by default but can be used by sub-classes.
    * @returns `true` if this tag should be kept; `false` if it should be removed.
    */
   lapse(_arena: Arena): boolean {
@@ -881,7 +881,6 @@ class ToxicSpikesTag extends ArenaTrapTag {
  * Arena Tag class for delayed attacks, such as {@linkcode Moves.FUTURE_SIGHT} or {@linkcode Moves.DOOM_DESIRE}.
  * Delays the attack's effect by a set amount of turns, usually 3 (including the turn the move is used),
  * and deals damage after the turn count is reached.
-  // TODO: Add class for tags that can have multiple instances up and edit `arena.addTag` appropriately
  */
 export class DelayedAttackTag extends ArenaTag {
   public targetIndex: BattlerIndex;

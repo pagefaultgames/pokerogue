@@ -1202,7 +1202,10 @@ export class FieldPreventExplosiveMovesAbAttr extends AbAttr {
 export class FieldMultiplyStatAbAttr extends AbAttr {
   private stat: Stat;
   private multiplier: number;
-  /** Whether this ability can stack with others of the same type for this stat; default `false` */
+  /**
+   * Whether this ability can stack with others of the same type for this stat.
+   * @defaultValue `false`
+   */
   private canStack: boolean;
 
   constructor(stat: Stat, multiplier: number, canStack = false) {
@@ -1214,8 +1217,12 @@ export class FieldMultiplyStatAbAttr extends AbAttr {
   }
 
   canApplyFieldStat(_pokemon: Pokemon, _passive: boolean, _simulated: boolean, stat: Stat, _statValue: NumberHolder, checkedPokemon: Pokemon, hasApplied: BooleanHolder, _args: any[]): boolean {
-    return (this.canStack || !hasApplied.value)
-      && this.stat === stat && checkedPokemon.getAbilityAttrs(FieldMultiplyStatAbAttr).every(attr => (attr as FieldMultiplyStatAbAttr).stat !== stat);
+    return (
+      (this.canStack || !hasApplied.value)
+      && this.stat === stat
+      // targets with the same stat-changing ability as this are unaffected
+      && checkedPokemon.getAbilityAttrs(FieldMultiplyStatAbAttr).every(attr => attr.stat !== stat)
+    );
   }
 
   /**
@@ -1246,7 +1253,7 @@ export class MoveTypeChangeAbAttr extends PreAttackAbAttr {
 
   /**
    * Determine if the move type change attribute can be applied.
-   * 
+   *
    * Can be applied if:
    * - The ability's condition is met, e.g. pixilate only boosts normal moves,
    * - The move is not forbidden from having its type changed by an ability, e.g. {@linkcode Moves.MULTI_ATTACK}
@@ -1341,37 +1348,35 @@ export class PokemonTypeChangeAbAttr extends PreAttackAbAttr {
 /**
  * Class for abilities that add additional strikes to single-target moves.
  * Used by {@linkcode Moves.PARENTAL_BOND | Parental Bond}.
+ *
+ * @param damageMultiplier - The damage multiplier for the added strike, relative to the first.
 */
 export class AddSecondStrikeAbAttr extends PreAttackAbAttr {
   private damageMultiplier: number;
-
-  /**
-   * @param damageMultiplier - The damage multiplier for the added strike, relative to the first.
-  */
  constructor(damageMultiplier: number) {
     super(false);
 
     this.damageMultiplier = damageMultiplier;
   }
 
-  override canApplyPreAttack(pokemon: Pokemon, passive: boolean, simulated: boolean, defender: Pokemon | null, move: Move, args: any[]): boolean {
+  override canApplyPreAttack(pokemon: Pokemon, _passive: boolean, _simulated: boolean, _defender: Pokemon | null, move: Move, _args: [NumberHolder?, NumberHolder?]): boolean {
     return move.canBeMultiStrikeEnhanced(pokemon, true);
   }
 
   /**
-   * Applies the ability attribute by increasing hit count
+   * Increases the move's hit count or modifies the move's damage.
    * @param pokemon - The {@linkcode Pokemon} using the move
    * @param passive - Unused
    * @param defender - Unused
    * @param move - The {@linkcode Move} being used
-   * @param args:
+   * @param args -
    * - `[0]` - A {@linkcode NumberHolder} holding the move's current strike count
    * - `[1]` - A {@linkcode NumberHolder} holding the current strike's damage multiplier.
    */
-  // TODO: Why can these be nullish?
-  override applyPreAttack(pokemon: Pokemon, passive: boolean, simulated: boolean, defender: Pokemon, move: Move, args: any[]): void {
-    const hitCount = args[0] as NumberHolder;
-    const multiplier = args[1] as NumberHolder;
+  // TODO: Review if these args can be undefined when called (and remove the ? if not)
+  override applyPreAttack(pokemon: Pokemon, _passive: boolean, _simulated: boolean, _defender: Pokemon, _move: Move, args: [NumberHolder?, NumberHolder?]): void {
+    const hitCount = args[0];
+    const multiplier = args[1];
     if (hitCount?.value) {
       hitCount.value += 1;
     }
@@ -3147,10 +3152,11 @@ export class ProtectStatAbAttr extends PreStatStageChangeAbAttr {
 }
 
 /**
- * Attribute to apply confusion to the target whenever the user
- * directly statuses them with a move.
+ * Attribute to apply confusion to the target whenever the user directly statuses them with a move.
+ *
  * Used by {@linkcode Abilities.POISON_PUPPETEER}
- * Called in {@linkcode StatusEffectAttr}.
+ *
+ * Called in {@linkcode StatusEffectAttr}
  * @extends PostAttackAbAttr
  * @see {@linkcode applyPostAttack}
  */
@@ -3338,8 +3344,8 @@ export class ConditionalUserFieldProtectStatAbAttr extends PreStatStageChangeAbA
    * @param simulated - Unused
    * @param stat - The {@linkcode Stat} being affected
    * @param cancelled - {@linkcode BooleanHolder} containing whether the stat change was already prevented
-   * @param args `[0]` - The {@linkcode Pokemon} recieving the stat change
-   * @returns  `true` if the ability can be applied
+   * @param args - `[0]`: The {@linkcode Pokemon} receiving the stat change
+   * @returns `true` if the ability can be applied
   */
   override canApplyPreStatStageChange(pokemon: Pokemon, passive: boolean, simulated: boolean, stat: BattleStat, cancelled: BooleanHolder, args: [Pokemon]): boolean {
     const target = args[0];
@@ -3534,9 +3540,9 @@ export class ConditionalCritAbAttr extends AbAttr {
    * @param simulated - Unused
    * @param cancelled - Unused
    * @param args -
-   * - [0] A {@linkcode BooleanHolder} containing whether critical hits are guaranteed.
-   * - [1] The {@linkcode Pokemon} being targeted (unused)
-   * - [2] The {@linkcode Move} used by the ability holder (unused)
+   * - `[0]` A {@linkcode BooleanHolder} containing whether critical hits are guaranteed.
+   * - `[1]` The {@linkcode Pokemon} being targeted (unused)
+   * - `[2]` The {@linkcode Move} used by the ability holder (unused)
    */
   override apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: BooleanHolder, args: [BooleanHolder, Pokemon, Move, ...any]): void {
     (args[0] as BooleanHolder).value = true;

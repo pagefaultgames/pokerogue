@@ -691,7 +691,6 @@ export class Arena {
     targetIndex?: BattlerIndex,
   ): boolean {
     const existingTag = this.getTagOnSide(tagType, side);
-    // TODO: Change this for future sight
     if (existingTag) {
       existingTag.onOverlap(this, globalScene.getPokemonById(sourceId));
 
@@ -704,7 +703,6 @@ export class Arena {
     }
 
     // creates a new tag object
-    // TODO: check if we can remove the `|| 0` since turn count should never be nullish
     const newTag = getArenaTag(tagType, turnCount || 0, sourceMove, sourceId, targetIndex, side);
     if (newTag) {
       newTag.onAdd(this, quiet);

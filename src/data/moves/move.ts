@@ -201,7 +201,7 @@ export default class Move implements Localizable {
   /**
    * Check if a move has an attribute that matches `attrType`
    * @param attrType - The constructor of a {@linkcode MoveAttr}
-   * @returns Whether if the move has an attribute that is/extends `attrType`
+   * @returns Whether this move has an attribute matching `attrType`
    */
   hasAttr<T extends MoveAttr>(attrType: Constructor<T>): boolean {
     return this.attrs.some((attr) => attr instanceof attrType);
@@ -209,11 +209,13 @@ export default class Move implements Localizable {
 
   /**
    * Find the first attribute that matches a given predicate function.
-   * @param attrPredicate - The predicate function to search `MoveAttr`s by. 
-   * @returns The first {@linkcode MoveAttr} for which `attrPredicate` returns a value coercible to the boolean value `true`.
+   * @param attrPredicate - The predicate function to search `MoveAttr`s by.
+   * @returns The first {@linkcode MoveAttr} for which `attrPredicate` returns `true`.
    */
   findAttr(attrPredicate: (attr: MoveAttr) => boolean): MoveAttr {
-    return this.attrs.find(attrPredicate)!; // TODO: is the bang correct?
+    // TODO: Remove bang and make return type `MoveAttr | undefined`,
+    // as well as add overload for functions of type `x is T`
+    return this.attrs.find(attrPredicate)!;
   }
 
   /**
@@ -241,7 +243,7 @@ export default class Move implements Localizable {
    * Adds a new MoveAttr to this move (appends to the attr array).
    * If the MoveAttr also comes with a condition, it is added to its {@linkcode MoveCondition} array.
    *
-   * Almost identical to {@linkcode attr}, except taking already instantized {@linkcode MoveAttr} object
+   * Similar to {@linkcode attr}, except this takes an already instantiated {@linkcode MoveAttr} object
    * as opposed to a constructor and its arguments.
    * @param attrAdd - The {@linkcode MoveAttr} to add
    * @returns `this`
@@ -371,7 +373,7 @@ export default class Move implements Localizable {
 
   /**
    * Adds a condition to this move (in addition to any provided by its prior {@linkcode MoveAttr}s).
-   * The move will fail upon use if at least 1 of its conditions is not met. 
+   * The move will fail upon use if at least 1 of its conditions is not met.
    * @param condition - The {@linkcode MoveCondition} or {@linkcode MoveConditionFunc} to add to the conditions array.
    * @returns `this`
    */
@@ -386,8 +388,8 @@ export default class Move implements Localizable {
 
   /**
    * Mark a move as having one or more edge cases.
-   * The move may lack certain niche interactions with other moves/abilities, but still functions
-   * as intended in most cases.
+   * The move may lack certain niche interactions with other moves/abilities,
+   * but still functions as intended in most cases.
    *
    * When using this, **make sure to document the edge case** (or else this becomes pointless).
    * @returns `this`
@@ -397,8 +399,8 @@ export default class Move implements Localizable {
   }
 
   /**
-   * Mark a move as partially implemented.
-   * Partial moves are expected to have their core functionality implemented, but may lack
+   * Mark this move as partially implemented.
+   * Partial moves are expected to have some core functionality implemented, but may lack
    * certain notable features or interactions with other moves or abilities.
    * @returns `this`
    */
@@ -408,9 +410,9 @@ export default class Move implements Localizable {
   }
 
   /**
-   * Mark a move as unimplemented.
+   * Mark this move as unimplemented.
    * Unimplemented moves are ones which have _none_ of their basic functionality enabled,
-   * and are effectively barred from use by the AI.
+   * and will fail upon use.
    * @returns `this`
    */
   unimplemented(): this {
@@ -976,10 +978,8 @@ export class AttackMove extends Move {
   constructor(id: Moves, type: PokemonType, category: MoveCategory, power: number, accuracy: number, pp: number, chance: number, priority: number, generation: number) {
     super(id, type, category, MoveTarget.NEAR_OTHER, power, accuracy, pp, chance, priority, generation);
 
-    /**
-     * {@link https://bulbapedia.bulbagarden.net/wiki/Freeze_(status_condition)}
-     * All damaging Fire-type moves can thaw a frozen target, regardless of whether or not they have a chance to burn
-     */
+    // > All damaging Fire-type moves can... thaw a frozen target, regardless of whether or not they have a chance to burn.
+    // - https://bulbapedia.bulbagarden.net/wiki/Freeze_(status_condition)
     if (this.type === PokemonType.FIRE) {
       this.addAttr(new HealStatusEffectAttr(false, StatusEffect.FREEZE));
     }
@@ -2865,6 +2865,8 @@ export class HealStatusEffectAttr extends MoveEffectAttr {
  * Attribute to add the {@linkcode BattlerTagType.BYPASS_SLEEP | BYPASS_SLEEP Battler Tag} for 1 turn to the user before move use.
  * Used by {@linkcode Moves.SNORE} and {@linkcode Moves.SLEEP_TALK}.
  */
+// TODO: Should this use a battler tag?
+// TODO: Give this `userSleptOrComatoseCondition`
 export class BypassSleepAttr extends MoveAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (user.status?.effect === StatusEffect.SLEEP) {
@@ -2882,7 +2884,7 @@ export class BypassSleepAttr extends MoveAttr {
    * @param move
    */
   getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
-    return user.status && user.status.effect === StatusEffect.SLEEP ? 200 : -10;
+    return user.status?.effect === StatusEffect.SLEEP ? 200 : -10;
   }
 }
 

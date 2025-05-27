@@ -875,7 +875,7 @@ export default class BattleScene extends SceneBase {
    * Returns an array of Pokemon on both sides of the battle - player first, then enemy.
    * Does not actually check if the pokemon are on the field or not, and always has length 4 regardless of battle type.
    * @param activeOnly - Whether to consider only active pokemon (as described by {@linkcode Pokemon.isActive()}); default `false`.
-   * If `true`, will also elide all `null` values from the array.
+   * If `true`, will also remove all `null` values from the array.
    * @returns An array of {@linkcode Pokemon}, as described above.
    */
   public getField(activeOnly = false): Pokemon[] {
@@ -3353,6 +3353,8 @@ export default class BattleScene extends SceneBase {
   getModifiers<T extends PersistentModifier>(modifierType: Constructor<T>, player = true): T[] {
     return (player ? this.modifiers : this.enemyModifiers).filter((m): m is T => m instanceof modifierType);
   }
+
+  // TODO: Add overload signature to `findModifier` and `findModifiers` for functions of the form `(x): X is T`
 
   /**
    * Get all of the modifiers that pass the `modifierFilter` function

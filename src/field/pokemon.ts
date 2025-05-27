@@ -586,7 +586,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @returns The {@linkcode PokeballType} that will be shown when this Pokemon is sent out into battle.
    */
   getPokeball(useIllusion = false): PokeballType {
-    return useIllusion && this.summonData?.illusion
+    return useIllusion && this.summonData.illusion
       ? this.summonData.illusion.pokeball
       : this.pokeball;
     }
@@ -645,7 +645,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   /**
    * Checks if a pokemon is fainted (ie: its `hp <= 0`).
-   * Usually should not be called directly in favor of consulting {@linkcode isAllowedInBattle()}.
+   * Usually should not be called directly in favor of calling {@linkcode isAllowedInBattle()}.
    * @param checkStatus - Whether to also check that the pokemon's status is {@linkcode StatusEffect.FAINT}; default `false`
    * @returns Whether this Pokemon is fainted, as described above.
    */
@@ -2270,9 +2270,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Get this Pokemon's non-passive {@linkcode Ability}, factoring in fusions, overrides and ability-changing effects.
 
-   * Should rarely be called directky in favor of {@linkcode hasAbility} or {@linkcode hasAbilityWithAttr},
+   * Should rarely be called directly in favor of {@linkcode hasAbility} or {@linkcode hasAbilityWithAttr},
    * both of which check both ability slots and account for suppression.
-   * @see {@linkcode hasAbility}and {@linkcode hasAbilityWithAttr} Intended ways to check abilities in most cases
+   * @see {@linkcode hasAbility} and {@linkcode hasAbilityWithAttr} are the intended ways to check abilities in most cases
    * @param ignoreOverride - Whether to ignore any overrides caused by {@linkcode Moves.TRANSFORM | Transform}; default `false`
    * @returns The non-passive {@linkcode Ability} of this Pokemon.
    */
@@ -6424,7 +6424,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Reduces one of this Pokemon's held item stacks by 1, removing it if applicable.
    * Does nothing if this Pokemon is somehow not the owner of the held item.
-   * @param heldItem The item stack to be reduced.
+   * @param heldItem - The item stack to be reduced.
    * @param forBattle - Whether to trigger in-battle effects (such as Unburden) after losing the item. Default: `true`
    * Should be `false` for all item loss occurring outside of battle (MEs, etc.).
    * @returns Whether the item was removed successfully.
