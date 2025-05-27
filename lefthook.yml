@@ -2,13 +2,12 @@ pre-commit:
   parallel: true
   commands:
     biome-lint:
-      glob: "*.{js,jsx,ts,tsx}"
-      run: npx @biomejs/biome check --write --reporter=summary {staged_files} --no-errors-on-unmatched
+      run: npx biome check --write --reporter=summary --staged --no-errors-on-unmatched
       stage_fixed: true
       skip:
         - merge
         - rebase
-      
+
 post-merge:
   commands:
     update-submodules:

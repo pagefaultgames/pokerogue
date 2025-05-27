@@ -1,5 +1,5 @@
 import { BattlerIndex } from "#app/battle";
-import { allMoves } from "#app/data/moves/move";
+import { allMoves } from "#app/data/data-lists";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
 import type { PokemonInstantReviveModifier } from "#app/modifier/modifier";
 import { Abilities } from "#enums/abilities";
@@ -73,7 +73,7 @@ describe("Items - Reviver Seed", () => {
     const reviverSeed = player.getHeldItems()[0] as PokemonInstantReviveModifier;
     vi.spyOn(reviverSeed, "apply");
 
-    vi.spyOn(player, "randSeedInt").mockReturnValue(0); // Force confusion self-hit
+    vi.spyOn(player, "randBattleSeedInt").mockReturnValue(0); // Force confusion self-hit
     game.move.select(Moves.TACKLE);
     await game.phaseInterceptor.to("BerryPhase");
 

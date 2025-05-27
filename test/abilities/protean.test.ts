@@ -1,4 +1,4 @@
-import { allMoves } from "#app/data/moves/move";
+import { allMoves } from "#app/data/data-lists";
 import { PokemonType } from "#enums/pokemon-type";
 import { Weather } from "#app/data/weather";
 import type { PlayerPokemon } from "#app/field/pokemon";
@@ -67,7 +67,7 @@ describe("Abilities - Protean", () => {
     game.move.select(Moves.AGILITY);
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    expect(leadPokemon.summonData.abilitiesApplied.filter(a => a === Abilities.PROTEAN)).toHaveLength(1);
+    expect(leadPokemon.waveData.abilitiesApplied).toContain(Abilities.PROTEAN);
     const leadPokemonType = PokemonType[leadPokemon.getTypes()[0]];
     const moveType = PokemonType[allMoves[Moves.AGILITY].type];
     expect(leadPokemonType).not.toBe(moveType);
@@ -99,7 +99,7 @@ describe("Abilities - Protean", () => {
     game.move.select(Moves.WEATHER_BALL);
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    expect(leadPokemon.summonData.abilitiesApplied).toContain(Abilities.PROTEAN);
+    expect(leadPokemon.waveData.abilitiesApplied).toContain(Abilities.PROTEAN);
     expect(leadPokemon.getTypes()).toHaveLength(1);
     const leadPokemonType = PokemonType[leadPokemon.getTypes()[0]],
       moveType = PokemonType[PokemonType.FIRE];
@@ -118,7 +118,7 @@ describe("Abilities - Protean", () => {
     game.move.select(Moves.TACKLE);
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    expect(leadPokemon.summonData.abilitiesApplied).toContain(Abilities.PROTEAN);
+    expect(leadPokemon.waveData.abilitiesApplied).toContain(Abilities.PROTEAN);
     expect(leadPokemon.getTypes()).toHaveLength(1);
     const leadPokemonType = PokemonType[leadPokemon.getTypes()[0]],
       moveType = PokemonType[PokemonType.ICE];
@@ -214,7 +214,7 @@ describe("Abilities - Protean", () => {
     game.move.select(Moves.SPLASH);
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    expect(leadPokemon.summonData.abilitiesApplied).not.toContain(Abilities.PROTEAN);
+    expect(leadPokemon.waveData.abilitiesApplied).not.toContain(Abilities.PROTEAN);
   });
 
   test("ability is not applied if pokemon is terastallized", async () => {
@@ -230,7 +230,7 @@ describe("Abilities - Protean", () => {
     game.move.select(Moves.SPLASH);
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    expect(leadPokemon.summonData.abilitiesApplied).not.toContain(Abilities.PROTEAN);
+    expect(leadPokemon.waveData.abilitiesApplied).not.toContain(Abilities.PROTEAN);
   });
 
   test("ability is not applied if pokemon uses struggle", async () => {
@@ -244,7 +244,7 @@ describe("Abilities - Protean", () => {
     game.move.select(Moves.STRUGGLE);
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    expect(leadPokemon.summonData.abilitiesApplied).not.toContain(Abilities.PROTEAN);
+    expect(leadPokemon.waveData.abilitiesApplied).not.toContain(Abilities.PROTEAN);
   });
 
   test("ability is not applied if the pokemon's move fails", async () => {
@@ -258,7 +258,7 @@ describe("Abilities - Protean", () => {
     game.move.select(Moves.BURN_UP);
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    expect(leadPokemon.summonData.abilitiesApplied).not.toContain(Abilities.PROTEAN);
+    expect(leadPokemon.waveData.abilitiesApplied).not.toContain(Abilities.PROTEAN);
   });
 
   test("ability applies correctly even if the pokemon's Trick-or-Treat fails", async () => {
@@ -293,7 +293,7 @@ describe("Abilities - Protean", () => {
 });
 
 function testPokemonTypeMatchesDefaultMoveType(pokemon: PlayerPokemon, move: Moves) {
-  expect(pokemon.summonData.abilitiesApplied).toContain(Abilities.PROTEAN);
+  expect(pokemon.waveData.abilitiesApplied).toContain(Abilities.PROTEAN);
   expect(pokemon.getTypes()).toHaveLength(1);
   const pokemonType = PokemonType[pokemon.getTypes()[0]],
     moveType = PokemonType[allMoves[move].type];

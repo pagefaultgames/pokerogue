@@ -24,7 +24,7 @@ export class RevivalBlessingPhase extends BattlePhase {
       UiMode.PARTY,
       PartyUiMode.REVIVAL_BLESSING,
       this.user.getFieldIndex(),
-      (slotIndex: integer, _option: PartyOption) => {
+      (slotIndex: number, _option: PartyOption) => {
         if (slotIndex >= 0 && slotIndex < 6) {
           const pokemon = globalScene.getPlayerParty()[slotIndex];
           if (!pokemon || !pokemon.isFainted()) {
@@ -32,7 +32,7 @@ export class RevivalBlessingPhase extends BattlePhase {
           }
 
           pokemon.resetTurnData();
-          pokemon.resetStatus();
+          pokemon.resetStatus(true, false, false, false);
           pokemon.heal(Math.min(toDmgValue(0.5 * pokemon.getMaxHp()), pokemon.getMaxHp()));
           globalScene.queueMessage(
             i18next.t("moveTriggers:revivalBlessing", {

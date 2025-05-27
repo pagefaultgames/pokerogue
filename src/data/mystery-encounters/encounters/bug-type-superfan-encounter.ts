@@ -50,7 +50,7 @@ import {
 } from "#app/modifier/modifier";
 import i18next from "i18next";
 import MoveInfoOverlay from "#app/ui/move-info-overlay";
-import { allMoves } from "#app/data/moves/move";
+import { allMoves } from "#app/data/data-lists";
 import { ModifierTier } from "#app/modifier/modifier-tier";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { getSpriteKeysFromSpecies } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
@@ -144,27 +144,25 @@ const POOL_3_POKEMON: { species: Species; formIndex?: number }[] = [
 
 const POOL_4_POKEMON = [Species.GENESECT, Species.SLITHER_WING, Species.BUZZWOLE, Species.PHEROMOSA];
 
-const PHYSICAL_TUTOR_MOVES = [
-  Moves.MEGAHORN,
-  Moves.X_SCISSOR,
-  Moves.ATTACK_ORDER,
-  Moves.PIN_MISSILE,
-  Moves.FIRST_IMPRESSION,
+const PHYSICAL_TUTOR_MOVES = [Moves.MEGAHORN, Moves.ATTACK_ORDER, Moves.BUG_BITE, Moves.FIRST_IMPRESSION, Moves.LUNGE];
+
+const SPECIAL_TUTOR_MOVES = [
+  Moves.SILVER_WIND,
+  Moves.SIGNAL_BEAM,
+  Moves.BUG_BUZZ,
+  Moves.POLLEN_PUFF,
+  Moves.STRUGGLE_BUG,
 ];
 
-const SPECIAL_TUTOR_MOVES = [Moves.SILVER_WIND, Moves.BUG_BUZZ, Moves.SIGNAL_BEAM, Moves.POLLEN_PUFF];
-
-const STATUS_TUTOR_MOVES = [Moves.STRING_SHOT, Moves.STICKY_WEB, Moves.SILK_TRAP, Moves.RAGE_POWDER, Moves.HEAL_ORDER];
-
-const MISC_TUTOR_MOVES = [
-  Moves.BUG_BITE,
-  Moves.LEECH_LIFE,
+const STATUS_TUTOR_MOVES = [
+  Moves.STRING_SHOT,
   Moves.DEFEND_ORDER,
-  Moves.QUIVER_DANCE,
-  Moves.TAIL_GLOW,
-  Moves.INFESTATION,
-  Moves.U_TURN,
+  Moves.RAGE_POWDER,
+  Moves.STICKY_WEB,
+  Moves.SILK_TRAP,
 ];
+
+const MISC_TUTOR_MOVES = [Moves.LEECH_LIFE, Moves.U_TURN, Moves.HEAL_ORDER, Moves.QUIVER_DANCE, Moves.INFESTATION];
 
 /**
  * Wave breakpoints that determine how strong to make the Bug-Type Superfan's team

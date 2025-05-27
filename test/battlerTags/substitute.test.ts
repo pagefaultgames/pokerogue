@@ -7,7 +7,7 @@ import { BattlerTagLapseType, BindTag, SubstituteTag } from "#app/data/battler-t
 import { Moves } from "#app/enums/moves";
 import { PokemonAnimType } from "#app/enums/pokemon-anim-type";
 import * as messages from "#app/messages";
-import { allMoves } from "#app/data/moves/move";
+import { allMoves } from "#app/data/data-lists";
 import type { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import GameManager from "#test/testUtils/gameManager";
 
@@ -42,7 +42,6 @@ describe("BattlerTag - SubstituteTag", () => {
           // simulate a Trapped tag set by another Pokemon, then expect the filter to catch it.
           const trapTag = new BindTag(5, 0);
           expect(tagFilter(trapTag)).toBeTruthy();
-          return true;
         }) as Pokemon["findAndRemoveTags"],
       } as unknown as Pokemon;
 

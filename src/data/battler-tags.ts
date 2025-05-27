@@ -1,4 +1,5 @@
 import { globalScene } from "#app/global-scene";
+import Overrides from "#app/overrides";
 import {
   applyAbAttrs,
   BlockNonDirectDamageAbAttr,
@@ -11,12 +12,12 @@ import { allAbilities } from "./data-lists";
 import { ChargeAnim, CommonAnim, CommonBattleAnim, MoveChargeAnim } from "#app/data/battle-anims";
 import type Move from "#app/data/moves/move";
 import {
-  allMoves,
   applyMoveAttrs,
   ConsecutiveUseDoublePowerAttr,
   HealOnAllyAttr,
   StatusCategoryOnAllyAttr,
 } from "#app/data/moves/move";
+import { allMoves } from "./data-lists";
 import { MoveFlags } from "#enums/MoveFlags";
 import { MoveCategory } from "#enums/MoveCategory";
 import { SpeciesFormChangeAbilityTrigger } from "#app/data/pokemon-forms";
@@ -91,7 +92,12 @@ export class BattlerTag {
 
   onOverlap(_pokemon: Pokemon): void {}
 
+  /**
+   * Tick down this {@linkcode BattlerTag}'s duration.
+   * @returns `true` if the tag should be kept (`turnCount` > 0`)
+   */
   lapse(_pokemon: Pokemon, _lapseType: BattlerTagLapseType): boolean {
+    // TODO: Maybe flip this (return `true` if tag needs removal)
     return --this.turnCount > 0;
   }
 
@@ -108,9 +114,9 @@ export class BattlerTag {
   }
 
   /**
-   * When given a battler tag or json representing one, load the data for it.
-   * This is meant to be inherited from by any battler tag with custom attributes
-   * @param {BattlerTag | any} source A battler tag
+   * Load the data for a given {@linkcode BattlerTag} or JSON representation thereof.
+   * Should be inherited from by any battler tag with custom attributes.
+   * @param source The battler tag to load
    */
   loadTag(source: BattlerTag | any): void {
     this.turnCount = source.turnCount;
@@ -120,7 +126,7 @@ export class BattlerTag {
 
   /**
    * Helper function that retrieves the source Pokemon object
-   * @returns The source {@linkcode Pokemon} or `null` if none is found
+   * @returns The source {@linkcode Pokemon}, or `null` if none is found
    */
   public getSourcePokemon(): Pokemon | null {
     return this.sourceId ? globalScene.getPokemonById(this.sourceId) : null;
@@ -140,8 +146,8 @@ export interface TerrainBattlerTag {
  * in-game. This is not to be confused with {@linkcode Moves.DISABLE}.
  *
  * Descendants can override {@linkcode isMoveRestricted} to restrict moves that
- * match a condition. A restricted move gets cancelled before it is used. Players and enemies should not be allowed
- * to select restricted moves.
+ * match a condition. A restricted move gets cancelled before it is used.
+ * Players and enemies should not be allowed to select restricted moves.
  */
 export abstract class MoveRestrictionBattlerTag extends BattlerTag {
   constructor(
@@ -746,31 +752,33 @@ export class ConfusedTag extends BattlerTag {
   }
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
-    const ret = lapseType !== BattlerTagLapseType.CUSTOM && super.lapse(pokemon, lapseType);
+    const shouldLapse = lapseType !== BattlerTagLapseType.CUSTOM && super.lapse(pokemon, lapseType);
 
-    if (ret) {
-      globalScene.queueMessage(
-        i18next.t("battlerTags:confusedLapse", {
-          pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-        }),
-      );
-      globalScene.unshiftPhase(new CommonAnimPhase(pokemon.getBattlerIndex(), undefined, CommonAnim.CONFUSION));
-
-      // 1/3 chance of hitting self with a 40 base power move
-      if (pokemon.randSeedInt(3) === 0) {
-        const atk = pokemon.getEffectiveStat(Stat.ATK);
-        const def = pokemon.getEffectiveStat(Stat.DEF);
-        const damage = toDmgValue(
-          ((((2 * pokemon.level) / 5 + 2) * 40 * atk) / def / 50 + 2) * (pokemon.randSeedIntRange(85, 100) / 100),
-        );
-        globalScene.queueMessage(i18next.t("battlerTags:confusedLapseHurtItself"));
-        pokemon.damageAndUpdate(damage, { result: HitResult.CONFUSION });
-        pokemon.battleData.hitCount++;
-        (globalScene.getCurrentPhase() as MovePhase).cancel();
-      }
+    if (!shouldLapse) {
+      return false;
     }
 
-    return ret;
+    globalScene.queueMessage(
+      i18next.t("battlerTags:confusedLapse", {
+        pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+      }),
+    );
+    globalScene.unshiftPhase(new CommonAnimPhase(pokemon.getBattlerIndex(), undefined, CommonAnim.CONFUSION));
+
+    // 1/3 chance of hitting self with a 40 base power move
+    if (pokemon.randBattleSeedInt(3) === 0 || Overrides.CONFUSION_ACTIVATION_OVERRIDE === true) {
+      const atk = pokemon.getEffectiveStat(Stat.ATK);
+      const def = pokemon.getEffectiveStat(Stat.DEF);
+      const damage = toDmgValue(
+        ((((2 * pokemon.level) / 5 + 2) * 40 * atk) / def / 50 + 2) * (pokemon.randBattleSeedIntRange(85, 100) / 100),
+      );
+      // Intentionally don't increment rage fist's hitCount
+      globalScene.queueMessage(i18next.t("battlerTags:confusedLapseHurtItself"));
+      pokemon.damageAndUpdate(damage, { result: HitResult.CONFUSION });
+      (globalScene.getCurrentPhase() as MovePhase).cancel();
+    }
+
+    return true;
   }
 
   getDescriptor(): string {
@@ -882,7 +890,7 @@ export class InfatuatedTag extends BattlerTag {
       );
       globalScene.unshiftPhase(new CommonAnimPhase(pokemon.getBattlerIndex(), undefined, CommonAnim.ATTRACT));
 
-      if (pokemon.randSeedInt(2)) {
+      if (pokemon.randBattleSeedInt(2)) {
         globalScene.queueMessage(
           i18next.t("battlerTags:infatuatedLapseImmobilize", {
             pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
@@ -1111,14 +1119,14 @@ export class FrenzyTag extends BattlerTag {
 
     if (this.turnCount < 2) {
       // Only add CONFUSED tag if a disruption occurs on the final confusion-inducing turn of FRENZY
-      pokemon.addTag(BattlerTagType.CONFUSED, pokemon.randSeedIntRange(2, 4));
+      pokemon.addTag(BattlerTagType.CONFUSED, pokemon.randBattleSeedIntRange(2, 4));
     }
   }
 }
 
 /**
- * Applies the effects of the move Encore onto the target Pokemon
- * Encore forces the target Pokemon to use its most-recent move for 3 turns
+ * Applies the effects of {@linkcode Moves.ENCORE} onto the target Pokemon.
+ * Encore forces the target Pokemon to use its most-recent move for 3 turns.
  */
 export class EncoreTag extends MoveRestrictionBattlerTag {
   public moveId: Moves;
@@ -1133,10 +1141,6 @@ export class EncoreTag extends MoveRestrictionBattlerTag {
     );
   }
 
-  /**
-   * When given a battler tag or json representing one, load the data for it.
-   * @param {BattlerTag | any} source A battler tag
-   */
   loadTag(source: BattlerTag | any): void {
     super.loadTag(source);
     this.moveId = source.moveId as Moves;

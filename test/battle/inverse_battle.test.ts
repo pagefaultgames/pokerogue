@@ -179,12 +179,12 @@ describe("Inverse Battle", () => {
     expect(enemy.status?.effect).toBe(StatusEffect.PARALYSIS);
   });
 
-  it("Anticipation should trigger on 2x effective moves - Anticipation against Thunderbolt", async () => {
+  it("Anticipation should trigger on 2x effective moves", async () => {
     game.override.moveset([Moves.THUNDERBOLT]).enemySpecies(Species.SANDSHREW).enemyAbility(Abilities.ANTICIPATION);
 
     await game.challengeMode.startBattle();
 
-    expect(game.scene.getEnemyPokemon()?.summonData.abilitiesApplied[0]).toBe(Abilities.ANTICIPATION);
+    expect(game.scene.getEnemyPokemon()?.waveData.abilitiesApplied).toContain(Abilities.ANTICIPATION);
   });
 
   it("Conversion 2 should change the type to the resistive type - Conversion 2 against Dragonite", async () => {

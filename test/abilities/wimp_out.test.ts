@@ -1,6 +1,6 @@
 import { BattlerIndex } from "#app/battle";
 import { ArenaTagSide } from "#app/data/arena-tag";
-import { allMoves } from "#app/data/moves/move";
+import { allMoves } from "#app/data/data-lists";
 import GameManager from "#test/testUtils/gameManager";
 import { toDmgValue } from "#app/utils/common";
 import { Abilities } from "#enums/abilities";
@@ -155,7 +155,7 @@ describe("Abilities - Wimp Out", () => {
     game.doSelectPartyPokemon(1);
     await game.phaseInterceptor.to("SwitchSummonPhase", false);
 
-    expect(wimpod.summonData.abilitiesApplied).not.toContain(Abilities.WIMP_OUT);
+    expect(wimpod.waveData.abilitiesApplied).not.toContain(Abilities.WIMP_OUT);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
