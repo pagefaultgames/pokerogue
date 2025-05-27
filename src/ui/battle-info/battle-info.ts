@@ -10,10 +10,38 @@ import { getVariantTint } from "#app/sprites/variant";
 import { Stat } from "#enums/stat";
 import i18next from "i18next";
 
+/**
+ * Parameters influencing the position of elements within the battle info container
+ */
+export type BattleInfoParamList = {
+  /** X offset for the name text*/
+  nameTextX: number;
+  /** Y offset for the name text */
+  nameTextY: number;
+  /** X offset for the level container */
+  levelContainerX: number;
+  /** Y offset for the level container */
+  levelContainerY: number;
+  /** X offset for the hp bar */
+  hpBarX: number;
+  /** Y offset for the hp bar */
+  hpBarY: number;
+  /** Parameters for the stat box container */
+  statBox: {
+    /** The starting offset from the left of the label for the entries in the stat box */
+    xOffset: number;
+    /** The X between each number */
+    paddingX: number;
+    /** The index of the stat entries at which paddingX is used instead of startingX */
+    statOverflow: number;
+  };
+};
+
 export default abstract class BattleInfo extends Phaser.GameObjects.Container {
   public static readonly EXP_GAINS_DURATION_BASE = 1650;
 
   protected baseY: number;
+  protected baseLvContainerX: number;
 
   protected player: boolean;
   protected mini: boolean;
@@ -102,7 +130,83 @@ export default abstract class BattleInfo extends Phaser.GameObjects.Container {
     this.add([this.teraIcon, this.shinyIcon, this.fusionShinyIcon, this.splicedIcon]);
   }
 
-  constructor(x: number, y: number, player: boolean) {
+  /**
+   * Submethod of the constructor that creates and adds the stats container to the battle info
+   */
+  protected constructStatContainer({ xOffset, paddingX, statOverflow }: BattleInfoParamList["statBox"]): void {
+    this.statsContainer = globalScene.add.container(0, 0).setName("container_stats").setAlpha(0);
+    this.add(this.statsContainer);
+
+    this.statsBox = globalScene.add
+      .sprite(0, 0, `${this.getTextureName()}_stats`)
+      .setName("box_stats")
+      .setOrigin(1, 0.5);
+    this.statsContainer.add(this.statsBox);
+
+    const statLabels: Phaser.GameObjects.Sprite[] = [];
+    this.statNumbers = [];
+
+    this.statValuesContainer = globalScene.add.container();
+    this.statsContainer.add(this.statValuesContainer);
+
+    const startingX = -this.statsBox.width + xOffset;
+
+    // this gives us a different starting location from the left of the label and padding between stats for a player vs enemy
+    // since the player won't have HP to show, it doesn't need to change from the current version
+
+    for (const [i, s] of this.statOrder.entries()) {
+      const isHp = s === Stat.HP;
+      // we do a check for i > statOverflow to see when the stat labels go onto the next column
+      // For enemies, we have HP (i=0) by itself then a new column, so we check for i > 0
+      // For players, we don't have HP, so we start with i = 0 and i = 1 for our first column, and so need to check for i > 1
+      const statX =
+        i > statOverflow
+          ? this.statNumbers[Math.max(i - 2, 0)].x + this.statNumbers[Math.max(i - 2, 0)].width + paddingX
+          : startingX; // we have the Math.max(i - 2, 0) in there so for i===1 to not return a negative number; since this is now based on anything >0 instead of >1, we need to allow for i-2 < 0
+
+      let statY = -this.statsBox.height / 2 + 4; // this is the baseline for the y-axis
+      if (isHp || s === Stat.SPD) {
+        statY += 5;
+      } else if (this.player === !!(i % 2)) {
+        // we compare i % 2 against this.player to tell us where to place the label
+        // because this.battleStatOrder for enemies has HP, this.battleStatOrder[1]=ATK, but for players
+        // this.battleStatOrder[0]=ATK, so this comparing i % 2 to this.player fixes this issue for us
+        statY += 10;
+      }
+
+      const statLabel = globalScene.add
+        .sprite(statX, statY, "pbinfo_stat", Stat[s])
+        .setName("icon_stat_label_" + i.toString())
+        .setOrigin(0);
+      statLabels.push(statLabel);
+      this.statValuesContainer.add(statLabel);
+
+      const statNumber = globalScene.add
+        .sprite(statX + statLabel.width, statY, "pbinfo_stat_numbers", !isHp ? "3" : "empty")
+        .setName("icon_stat_number_" + i.toString())
+        .setOrigin(0);
+      this.statNumbers.push(statNumber);
+      this.statValuesContainer.add(statNumber);
+
+      if (isHp) {
+        statLabel.setVisible(false);
+        statNumber.setVisible(false);
+      }
+    }
+  }
+
+  /**
+   * Submethod of the constructor that creates and adds the pokemon type icons to the battle info
+   */
+  protected abstract constructTypeIcons(): void;
+
+  /**
+   * @param x - The x position of the battle info container
+   * @param y - The y position of the battle info container
+   * @param player - Whether this battle info belongs to a player or an enemy
+   * @param posParams - The parameters influencing the position of elements within the battle info container
+   */
+  constructor(x: number, y: number, player: boolean, posParams: BattleInfoParamList) {
     super(globalScene, x, y);
     this.baseY = y;
     this.player = player;
@@ -118,6 +222,7 @@ export default abstract class BattleInfo extends Phaser.GameObjects.Container {
     this.lastExp = -1;
     this.lastLevelExp = -1;
     this.lastLevel = -1;
+    this.baseLvContainerX = posParams.levelContainerX;
 
     // Initially invisible and shown via Pokemon.showInfo
     this.setVisible(false);
@@ -144,16 +249,15 @@ export default abstract class BattleInfo extends Phaser.GameObjects.Container {
     this.statusIndicator.setPositionRelative(this.nameText, 0, 11.5);
     this.add(this.statusIndicator);
 
-    this.levelContainer = globalScene.add.container(player ? -41 : -50, player ? -10 : -5).setName("container_level");
+    this.levelContainer = globalScene.add
+      .container(posParams.levelContainerX, posParams.levelContainerY)
+      .setName("container_level");
     this.add(this.levelContainer);
 
     const levelOverlay = globalScene.add.image(0, 0, "overlay_lv");
     this.levelContainer.add(levelOverlay);
 
-    this.hpBar = globalScene.add
-      .image(player ? -61 : -71, player ? -1 : 4.5, "overlay_hp")
-      .setName("hp_bar")
-      .setOrigin(0);
+    this.hpBar = globalScene.add.image(posParams.hpBarX, posParams.hpBarY, "overlay_hp").setName("hp_bar").setOrigin(0);
     this.add(this.hpBar);
 
     this.levelNumbersContainer = globalScene.add
@@ -161,81 +265,9 @@ export default abstract class BattleInfo extends Phaser.GameObjects.Container {
       .setName("container_level");
     this.levelContainer.add(this.levelNumbersContainer);
 
-    this.statsContainer = globalScene.add.container(0, 0).setName("container_stats").setAlpha(0);
-    this.add(this.statsContainer);
+    this.constructStatContainer(posParams.statBox);
 
-    this.statsBox = globalScene.add
-      .sprite(0, 0, `${this.getTextureName()}_stats`)
-      .setName("box_stats")
-      .setOrigin(1, 0.5);
-    this.statsContainer.add(this.statsBox);
-
-    const statLabels: Phaser.GameObjects.Sprite[] = [];
-    this.statNumbers = [];
-
-    this.statValuesContainer = globalScene.add.container(0, 0);
-    this.statsContainer.add(this.statValuesContainer);
-
-    // this gives us a different starting location from the left of the label and padding between stats for a player vs enemy
-    // since the player won't have HP to show, it doesn't need to change from the current version
-    const startingX = this.player ? -this.statsBox.width + 8 : -this.statsBox.width + 5;
-    const paddingX = this.player ? 4 : 2;
-    const statOverflow = this.player ? 1 : 0;
-
-    for (const [i, s] of this.statOrder.entries()) {
-      // we do a check for i > statOverflow to see when the stat labels go onto the next column
-      // For enemies, we have HP (i=0) by itself then a new column, so we check for i > 0
-      // For players, we don't have HP, so we start with i = 0 and i = 1 for our first column, and so need to check for i > 1
-      const statX =
-        i > statOverflow
-          ? this.statNumbers[Math.max(i - 2, 0)].x + this.statNumbers[Math.max(i - 2, 0)].width + paddingX
-          : startingX; // we have the Math.max(i - 2, 0) in there so for i===1 to not return a negative number; since this is now based on anything >0 instead of >1, we need to allow for i-2 < 0
-
-      const baseY = -this.statsBox.height / 2 + 4; // this is the baseline for the y-axis
-      let statY: number; // this will be the y-axis placement for the labels
-      if (this.statOrder[i] === Stat.SPD || this.statOrder[i] === Stat.HP) {
-        statY = baseY + 5;
-      } else {
-        statY = baseY + (!!(i % 2) === this.player ? 10 : 0); // we compare i % 2 against this.player to tell us where to place the label; because this.battleStatOrder for enemies has HP, this.battleStatOrder[1]=ATK, but for players this.battleStatOrder[0]=ATK, so this comparing i % 2 to this.player fixes this issue for us
-      }
-
-      const statLabel = globalScene.add
-        .sprite(statX, statY, "pbinfo_stat", Stat[s])
-        .setName("icon_stat_label_" + i.toString())
-        .setOrigin(0);
-      statLabels.push(statLabel);
-      this.statValuesContainer.add(statLabel);
-
-      const statNumber = globalScene.add
-        .sprite(statX + statLabel.width, statY, "pbinfo_stat_numbers", this.statOrder[i] !== Stat.HP ? "3" : "empty")
-        .setName("icon_stat_number_" + i.toString())
-        .setOrigin(0);
-      this.statNumbers.push(statNumber);
-      this.statValuesContainer.add(statNumber);
-
-      if (this.statOrder[i] === Stat.HP) {
-        statLabel.setVisible(false);
-        statNumber.setVisible(false);
-      }
-    }
-
-    this.type1Icon = globalScene.add
-      .sprite(player ? -139 : -15, player ? -17 : -15.5, `pbinfo_${player ? "player" : "enemy"}_type1`)
-      .setName("icon_type_1")
-      .setOrigin(0);
-    this.add(this.type1Icon);
-
-    this.type2Icon = globalScene.add
-      .sprite(player ? -139 : -15, player ? -1 : -2.5, `pbinfo_${player ? "player" : "enemy"}_type2`)
-      .setName("icon_type_2")
-      .setOrigin(0);
-    this.add(this.type2Icon);
-
-    this.type3Icon = globalScene.add
-      .sprite(player ? -154 : 0, player ? -17 : -15.5, `pbinfo_${player ? "player" : "enemy"}_type`)
-      .setName("icon_type_3")
-      .setOrigin(0);
-    this.add(this.type3Icon);
+    this.constructTypeIcons();
   }
 
   getStatsValueContainer(): Phaser.GameObjects.Container {
@@ -305,21 +337,6 @@ export default abstract class BattleInfo extends Phaser.GameObjects.Container {
       .on("pointerout", () => globalScene.ui.hideTooltip());
   }
 
-  /** Called by {@linkcode initInfo} to initialize the type icons beside the battle info */
-  initTypes(types: PokemonType[]) {
-    this.type1Icon
-      .setTexture(`pbinfo_${this.player ? "player" : "enemy"}_type${types.length > 1 ? "1" : ""}`)
-      .setFrame(PokemonType[types[0]].toLowerCase());
-    this.type2Icon.setVisible(types.length > 1);
-    this.type3Icon.setVisible(types.length > 2);
-    if (types.length > 1) {
-      this.type2Icon.setFrame(PokemonType[types[1]].toLowerCase());
-    }
-    if (types.length > 2) {
-      this.type3Icon.setFrame(PokemonType[types[2]].toLowerCase());
-    }
-  }
-
   initInfo(pokemon: Pokemon) {
     this.updateNameText(pokemon);
     const nameTextWidth = this.nameText.displayWidth;
@@ -371,7 +388,7 @@ export default abstract class BattleInfo extends Phaser.GameObjects.Container {
 
     this.shinyIcon.setVisible(pokemon.isShiny());
 
-    this.initTypes(pokemon.getTypes(true, false, undefined, true));
+    this.setTypes(pokemon.getTypes(true, false, undefined, true));
 
     const stats = this.statOrder.map(() => 0);
 
@@ -452,7 +469,10 @@ export default abstract class BattleInfo extends Phaser.GameObjects.Container {
     return true;
   }
 
-  updateTypes(types: PokemonType[]): void {
+  /**
+   * Update the type icons to match the pokemon's types
+   */
+  setTypes(types: PokemonType[]): void {
     this.type1Icon
       .setTexture(`pbinfo_${this.player ? "player" : "enemy"}_type${types.length > 1 ? "1" : ""}`)
       .setFrame(PokemonType[types[0]].toLowerCase());
@@ -628,16 +648,24 @@ export default abstract class BattleInfo extends Phaser.GameObjects.Container {
     }
   }
 
-  setLevel(level: number): void {
-    const isCapped = level >= globalScene.getMaxExpLevel();
+  /**
+   * Set the level numbers container to display the provided level
+   *
+   * @remarks
+   * The numbers in the pokemon's level uses images for each number rather than a text object with a special font.
+   * This method sets the images for each digit of the level number and then positions the level container based
+   * on the number of digits.
+   *
+   * @param level - The level to display
+   * @param textureKey - The texture key for the level numbers
+   */
+  setLevel(level: number, textureKey: "numbers" | "numbers_red" = "numbers"): void {
     this.levelNumbersContainer.removeAll(true);
     const levelStr = level.toString();
     for (let i = 0; i < levelStr.length; i++) {
-      this.levelNumbersContainer.add(
-        globalScene.add.image(i * 8, 0, `numbers${isCapped && this.player ? "_red" : ""}`, levelStr[i]),
-      );
+      this.levelNumbersContainer.add(globalScene.add.image(i * 8, 0, textureKey, levelStr[i]));
     }
-    this.levelContainer.setX((this.player ? -41 : -50) - 8 * Math.max(levelStr.length - 3, 0));
+    this.levelContainer.setX(this.baseLvContainerX - 8 * Math.max(levelStr.length - 3, 0));
   }
 
   updateStats(stats: number[]): void {

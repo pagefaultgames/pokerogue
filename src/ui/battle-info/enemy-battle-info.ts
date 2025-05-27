@@ -1,4 +1,3 @@
-import BattleInfo from "./battle-info";
 import { globalScene } from "#app/global-scene";
 import BattleFlyout from "../battle-flyout";
 import { addTextObject, TextStyle } from "#app/ui/text";
@@ -7,6 +6,8 @@ import { Stat } from "#enums/stat";
 import i18next from "i18next";
 import type { EnemyPokemon } from "#app/field/pokemon";
 import type { GameObjects } from "phaser";
+import BattleInfo from "./battle-info";
+import type { BattleInfoParamList } from "./battle-info";
 
 export class EnemyBattleInfo extends BattleInfo {
   protected player: false = false;
@@ -31,8 +32,29 @@ export class EnemyBattleInfo extends BattleInfo {
     return this.boss ? "pbinfo_enemy_boss_mini" : "pbinfo_enemy_mini";
   }
 
+  override constructTypeIcons(): void {
+    this.type1Icon = globalScene.add.sprite(-15, -15.5, "pbinfo_enemy_type1").setName("icon_type_1").setOrigin(0);
+    this.type2Icon = globalScene.add.sprite(-15, -2.5, "pbinfo_enemy_type2").setName("icon_type_2").setOrigin(0);
+    this.type3Icon = globalScene.add.sprite(0, 15.5, "pbinfo_enemy_type3").setName("icon_type_3").setOrigin(0);
+    this.add([this.type1Icon, this.type2Icon, this.type3Icon]);
+  }
+
   constructor() {
-    super(140, -141, false);
+    const posParams: BattleInfoParamList = {
+      nameTextX: -124,
+      nameTextY: -11.2,
+      levelContainerX: -50,
+      levelContainerY: -5,
+      hpBarX: -71,
+      hpBarY: 4.5,
+      statBox: {
+        xOffset: 5,
+        paddingX: 2,
+        statOverflow: 0,
+      },
+    };
+
+    super(140, -141, false, posParams);
 
     this.ownedIcon = globalScene.add.sprite(0, 0, "icon_owned").setName("icon_owned").setVisible(false).setOrigin(0, 0);
     this.ownedIcon.setPositionRelative(this.nameText, 0, 11.75);

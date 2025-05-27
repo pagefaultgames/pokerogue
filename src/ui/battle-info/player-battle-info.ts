@@ -4,6 +4,7 @@ import { globalScene } from "#app/global-scene";
 import { ExpGainsSpeed } from "#enums/exp-gains-speed";
 import { Stat } from "#enums/stat";
 import BattleInfo from "./battle-info";
+import type { BattleInfoParamList } from "./battle-info";
 
 export class PlayerBattleInfo extends BattleInfo {
   protected player: true = true;
@@ -17,8 +18,28 @@ export class PlayerBattleInfo extends BattleInfo {
     return this.mini ? "pbinfo_player_mini" : "pbinfo_player";
   }
 
+  override constructTypeIcons(): void {
+    this.type1Icon = globalScene.add.sprite(-139, -17, "pbinfo_player_type1").setName("icon_type_1").setOrigin(0);
+    this.type2Icon = globalScene.add.sprite(-139, -1, "pbinfo_player_type2").setName("icon_type_2").setOrigin(0);
+    this.type3Icon = globalScene.add.sprite(-154, -17, "pbinfo_player_type3").setName("icon_type_3").setOrigin(0);
+    this.add([this.type1Icon, this.type2Icon, this.type3Icon]);
+  }
+
   constructor() {
-    super(Math.floor(globalScene.game.canvas.width / 6) - 10, -72, true);
+    const posParams: BattleInfoParamList = {
+      nameTextX: -115,
+      nameTextY: -15.2,
+      levelContainerX: -41,
+      levelContainerY: -10,
+      hpBarX: -61,
+      hpBarY: -1,
+      statBox: {
+        xOffset: 8,
+        paddingX: 4,
+        statOverflow: 1,
+      },
+    };
+    super(Math.floor(globalScene.game.canvas.width / 6) - 10, -72, true, posParams);
 
     this.hpNumbersContainer = globalScene.add.container(-15, 10).setName("container_hp");
 
@@ -207,5 +228,15 @@ export class PlayerBattleInfo extends BattleInfo {
     for (let i = hpStr.length - 1; i >= 0; i--) {
       this.hpNumbersContainer.add(globalScene.add.image(offset++ * -8, 0, "numbers", hpStr[i]));
     }
+  }
+
+  /**
+   * Set the level numbers container to display the provided level
+   *
+   * Overrides the default implementation to handle displaying level capped numbers in red.
+   * @param level - The level to display
+   */
+  override setLevel(level: number): void {
+    super.setLevel(level, level >= globalScene.getMaxExpLevel() ? "numbers_red" : "numbers");
   }
 }
