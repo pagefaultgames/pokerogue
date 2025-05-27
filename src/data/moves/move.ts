@@ -191,8 +191,8 @@ export default class Move implements Localizable {
 
   /**
    * Get all move attributes that match `attrType`
-   * @param attrType any attribute that extends {@linkcode MoveAttr}
-   * @returns Array of attributes that match `attrType`, Empty Array if none match.
+   * @param attrType - The constructor of a {@linkcode MoveAttr} to check.
+   * @returns An array containing all attributes matching `attrType`, or an empty array if none match.
    */
   getAttrs<T extends MoveAttr>(attrType: Constructor<T>): T[] {
     return this.attrs.filter((a): a is T => a instanceof attrType);
@@ -200,27 +200,27 @@ export default class Move implements Localizable {
 
   /**
    * Check if a move has an attribute that matches `attrType`
-   * @param attrType any attribute that extends {@linkcode MoveAttr}
-   * @returns true if the move has attribute `attrType`
+   * @param attrType - The constructor of a {@linkcode MoveAttr}
+   * @returns Whether if the move has an attribute that is/extends `attrType`
    */
   hasAttr<T extends MoveAttr>(attrType: Constructor<T>): boolean {
     return this.attrs.some((attr) => attr instanceof attrType);
   }
 
   /**
-   * Takes as input a boolean function and returns the first MoveAttr in attrs that matches true
-   * @param attrPredicate
-   * @returns the first {@linkcode MoveAttr} element in attrs that makes the input function return true
+   * Find the first attribute that matches a given predicate function.
+   * @param attrPredicate - The predicate function to search `MoveAttr`s by. 
+   * @returns The first {@linkcode MoveAttr} for which `attrPredicate` returns a value coercible to the boolean value `true`.
    */
   findAttr(attrPredicate: (attr: MoveAttr) => boolean): MoveAttr {
     return this.attrs.find(attrPredicate)!; // TODO: is the bang correct?
   }
 
   /**
-   * Adds a new MoveAttr to the move (appends to the attr array)
-   * if the MoveAttr also comes with a condition, also adds that to the {@linkcode MoveCondition} array
-   * @param attrType - The constructor of a {@linkcode MoveAttr} class to add
-   * @param args - Any additional arguments needed to instantiate the given class
+   * Adds a new MoveAttr to this move (appends to the attr array).
+   * If the MoveAttr also comes with a condition, it is added to its {@linkcode MoveCondition} array.
+   * @param attrType - The {@linkcode MoveAttr} to add
+   * @param args - The arguments needed to instantiate the given class
    * @returns `this`
    */
   attr<T extends Constructor<MoveAttr>>(attrType: T, ...args: ConstructorParameters<T>): this {
@@ -238,10 +238,11 @@ export default class Move implements Localizable {
   }
 
   /**
-   * Adds a new MoveAttr to the move (appends to the attr array)
-   * if the MoveAttr also comes with a condition, also adds that to the {@linkcode MoveCondition} array
-   * Almost identical to {@linkcode attr}, except you are passing in an already instantized {@linkcode MoveAttr} object
-   * as opposed to a constructor and its arguments
+   * Adds a new MoveAttr to this move (appends to the attr array).
+   * If the MoveAttr also comes with a condition, it is added to its {@linkcode MoveCondition} array.
+   *
+   * Almost identical to {@linkcode attr}, except taking already instantized {@linkcode MoveAttr} object
+   * as opposed to a constructor and its arguments.
    * @param attrAdd - The {@linkcode MoveAttr} to add
    * @returns `this`
    */
@@ -260,8 +261,8 @@ export default class Move implements Localizable {
 
   /**
    * Sets the move target of this move
-   * @param moveTarget {@linkcode MoveTarget} the move target to set
-   * @returns the called object {@linkcode Move}
+   * @param moveTarget - The {@linkcode MoveTarget} to set
+   * @returns `this`
    */
   target(moveTarget: MoveTarget): this {
     this.moveTarget = moveTarget;
@@ -320,12 +321,12 @@ export default class Move implements Localizable {
   }
 
   /**
-   * Checks if the move is immune to certain types.
+   * Checks if the target is immune to this Move's type.
    * Currently looks at cases of Grass types with powder moves and Dark types with moves affected by Prankster.
-   * @param {Pokemon} user the source of this move
-   * @param {Pokemon} target the target of this move
-   * @param {PokemonType} type the type of the move's target
-   * @returns boolean
+   * @param user - The {@linkcode Pokemon} using the move
+   * @param target - The {@linkcode Pokemon} targeted by the move
+   * @param type - The {@linkcode PokemonType} of the move
+   * @returns Whether the move is blocked by the target's type
    */
   isTypeImmune(user: Pokemon, target: Pokemon, type: PokemonType): boolean {
     if (this.moveTarget === MoveTarget.USER) {
@@ -349,8 +350,8 @@ export default class Move implements Localizable {
 
   /**
    * Checks if the move would hit its target's Substitute instead of the target itself.
-   * @param user The {@linkcode Pokemon} using this move
-   * @param target The {@linkcode Pokemon} targeted by this move
+   * @param user - The {@linkcode Pokemon} using this move
+   * @param target - The {@linkcode Pokemon} targeted by this move
    * @returns `true` if the move can bypass the target's Substitute; `false` otherwise.
    */
   hitsSubstitute(user: Pokemon, target?: Pokemon): boolean {
@@ -369,13 +370,14 @@ export default class Move implements Localizable {
   }
 
   /**
-   * Adds a move condition to the move
-   * @param condition {@linkcode MoveCondition} or {@linkcode MoveConditionFunc}, appends to conditions array a new MoveCondition object
-   * @returns the called object {@linkcode Move}
+   * Adds a condition to this move (in addition to any provided by its prior {@linkcode MoveAttr}s).
+   * The move will fail upon use if at least 1 of its conditions is not met. 
+   * @param condition - The {@linkcode MoveCondition} or {@linkcode MoveConditionFunc} to add to the conditions array.
+   * @returns `this`
    */
   condition(condition: MoveCondition | MoveConditionFunc): this {
     if (typeof condition === "function") {
-      condition = new MoveCondition(condition as MoveConditionFunc);
+      condition = new MoveCondition(condition);
     }
     this.conditions.push(condition);
 
@@ -383,8 +385,12 @@ export default class Move implements Localizable {
   }
 
   /**
-   * Internal dev flag for documenting edge cases. When using this, please document the known edge case.
-   * @returns the called object {@linkcode Move}
+   * Mark a move as having one or more edge cases.
+   * The move may lack certain niche interactions with other moves/abilities, but still functions
+   * as intended in most cases.
+   *
+   * When using this, **make sure to document the edge case** (or else this becomes pointless).
+   * @returns `this`
    */
   edgeCase(): this {
     return this;
