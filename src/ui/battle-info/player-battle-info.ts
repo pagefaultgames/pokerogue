@@ -21,7 +21,9 @@ export class PlayerBattleInfo extends BattleInfo {
     super(Math.floor(globalScene.game.canvas.width / 6) - 10, -72, true);
 
     this.hpNumbersContainer = globalScene.add.container(-15, 10).setName("container_hp");
-    this.add(this.hpNumbersContainer);
+
+    // hp number container must be beneath the stat container for overlay to display properly
+    this.addAt(this.hpNumbersContainer, this.getIndex(this.statsContainer));
 
     const expBar = globalScene.add.image(-98, 18, "overlay_exp").setName("overlay_exp").setOrigin(0);
     this.add(expBar);
@@ -39,16 +41,6 @@ export class PlayerBattleInfo extends BattleInfo {
 
     this.expBar = expBar;
     this.expMaskRect = expMaskRect;
-  }
-
-  /**
-   * Toggle the stat overlay, ensuring that the hp numbers container is hidden while the stats are visible.
-   * @param visible - Whether the stats should be visible or not.
-   */
-  override toggleStats(visible: boolean): void {
-    // Need to make the hp numbers container invisible
-    this.hpNumbersContainer.setVisible(!visible);
-    super.toggleStats(visible);
   }
 
   override initInfo(pokemon: PlayerPokemon): void {
