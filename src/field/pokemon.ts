@@ -5406,12 +5406,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   // TODO: Add messages for misty/electric terrain
-  private queueImmuneMessage(quiet: boolean, effect?: StatusEffect): void {
+  private queueImmuneMessage(quiet: boolean, effect: StatusEffect): void {
     if (!effect || quiet) {
       return;
     }
-    const message = effect && this.status?.effect === effect
-    ? getStatusEffectOverlapText(effect ?? StatusEffect.NONE, getPokemonNameWithAffix(this))
+    const message = this.status?.effect === effect
+    ? getStatusEffectOverlapText(effect, getPokemonNameWithAffix(this))
     : i18next.t("abilityTriggers:moveImmunity", {
         pokemonNameWithAffix: getPokemonNameWithAffix(this),
       });
@@ -5419,13 +5419,16 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Check if a status effect can be applied to this {@linckode Pokemon}.
+   * Check if a status effect can be applied to this {@linkcode Pokemon}.
    *
-   * @param effect - The {@linkcode StatusEffect} whose applicability is being checked
-   * @param quiet - Whether to suppress in-battle messages for status checks; default `false`
-   * @param overrideStatus - Whether to allow overriding the Pokemon's current status with a different one; default `false`
-   * @param sourcePokemon - The {@linkcode Pokemon} applying the status effect to the target
-   * @param ignoreField Whether any field effects (weather, terrain, etc.) should be considered
+   * @param effect - The {@linkcode StatusEffect} whose applicability is being checked.
+   * @param quiet - Whether to suppress in-battle messages for status checks; default `false`.
+   * @param overrideStatus - Whether to allow overriding the Pokemon's current status with a different one; default `false`.
+   * @param sourcePokemon - The {@linkcode Pokemon} applying the status effect to the target,
+   * or `null` if the status is applied from a non-Pokemon source (hazards, etc.); default `null`.
+   * @param ignoreField - Whether to ignore field effects (weather, terrain, etc.) preventing status application;
+   * default `false`
+   * @returns Whether {@linkcode effect} can be applied to this Pokemon.
    */
   // TODO: Review and verify the message order precedence in mainline if multiple status-blocking effects are present at once
   canSetStatus(
@@ -5436,11 +5439,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     ignoreField = false,
   ): boolean {
     if (effect !== StatusEffect.FAINT) {
-      // Status-overriding moves (ie Rest) fail if their respective status already exists
+      // Status-overriding moves (ie Rest) fail if their respective status already exists;
+      // all other moves fail if the target already has _any_ status
       if (overrideStatus ? this.status?.effect === effect : this.status) {
         this.queueImmuneMessage(quiet, effect);
         return false;
       }
+
       if (
         this.isGrounded() &&
         !ignoreField &&
@@ -5453,13 +5458,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     const types = this.getTypes(true, true);
 
-    // Check for specific immunities for certain statuses
+    /* Whether the target is immune to the specific status being applied. */
     let isImmune = false;
+
     switch (effect) {
       case StatusEffect.POISON:
       case StatusEffect.TOXIC:
-        // Check for type based immunities and/or Corrosion
-        isImmune = types.some(defType => {
+        // Check for type based immunities and/or Corrosion from the applier
+        isImmune = types.some((defType) => {
           if (defType !== PokemonType.POISON && defType !== PokemonType.STEEL) {
             return false;
           }
@@ -5469,40 +5475,41 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           }
 
           const cancelImmunity = new BooleanHolder(false);
-            applyAbAttrs(
-              IgnoreTypeStatusEffectImmunityAbAttr,
-              sourcePokemon,
-              cancelImmunity,
-              false,
-              effect,
-              defType,
-            );
-            return cancelImmunity.value;
-          });
+          applyAbAttrs(
+            IgnoreTypeStatusEffectImmunityAbAttr,
+            sourcePokemon,
+            cancelImmunity,
+            false,
+            effect,
+            defType,
+          );
+          return cancelImmunity.value;
+        });
         break;
       case StatusEffect.PARALYSIS:
-        isImmune = this.isOfType(PokemonType.ELECTRIC)
+        isImmune = this.isOfType(PokemonType.ELECTRIC);
         break;
       case StatusEffect.SLEEP:
         isImmune =
           this.isGrounded() &&
           globalScene.arena.terrain?.terrainType === TerrainType.ELECTRIC;
         break;
-      case StatusEffect.FREEZE:
+      case StatusEffect.FREEZE: {
+        const weatherType = globalScene.arena.weather?.weatherType;
         isImmune =
           this.isOfType(PokemonType.ICE) ||
-          !ignoreField &&
-            [WeatherType.SUNNY, WeatherType.HARSH_SUN].includes(
-              globalScene.arena.weather?.weatherType ?? WeatherType.NONE,
-            )
+          (!ignoreField &&
+            (weatherType === WeatherType.SUNNY ||
+              weatherType === WeatherType.HARSH_SUN));
         break;
+      }
       case StatusEffect.BURN:
-        isImmune = this.isOfType(PokemonType.FIRE)
+        isImmune = this.isOfType(PokemonType.FIRE);
         break;
     }
 
     if (isImmune) {
-      this.queueImmuneMessage(quiet, effect)
+      this.queueImmuneMessage(quiet, effect);
       return false;
     }
 
@@ -5525,8 +5532,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         pokemon,
         effect,
         cancelled,
-        quiet, this, sourcePokemon,
-      )
+        quiet,
+        this,
+        sourcePokemon,
+      );
       if (cancelled.value) {
         return false;
       }
@@ -5540,7 +5549,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     ) {
       if (!quiet) {
         globalScene.queueMessage(
-          i18next.t("moveTriggers:safeguard", { targetName: getPokemonNameWithAffix(this)})
+          i18next.t("moveTriggers:safeguard", {
+            targetName: getPokemonNameWithAffix(this),
+          }),
         );
       }
       return false;
@@ -5549,12 +5560,27 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return true;
   }
 
-  // TODO: Make this take a destructured object as args to condense all these optional args...
+  /**
+   * Attempt to set this Pokemon's status to the specified condition.
+   * @param effect - The {@linkcode StatusEffect} to set.
+   * @param asPhase - Whether to set the status in a new {@linkcode ObtainStatusEffectPhase} or immediately; default `false`.
+   * If `false`, will not display most messages associated with status setting.
+   * @param sourcePokemon - The {@linkcode Pokemon} applying the status effect to the target,
+   * or `null` if the status is applied from a non-Pokemon source (hazards, etc.); default `null`.
+   * @param sleepTurnsRemaining - The number of turns to set {@linkcode StatusEffect.SLEEP} for;
+   * defaults to a random number between 2 and 4 and is unused for non-Sleep statuses.
+   * @param sourceText - The text to show for the source of the status effect, if any;
+   * defaults to `null` and is unused if `asPhase=false`.
+   * @param overrideStatus - Whether to allow overriding the Pokemon's current status with a different one; default `false`.
+   * @param quiet - Whether to suppress in-battle messages for status checks; default `false`.
+   * @returns Whether the status effect was successfully applied (or a phase for it)
+   */
+  // TODO: Make this take a destructured object for params and make it same order as `canSetStatus`
   trySetStatus(
     effect: StatusEffect,
     asPhase = false,
     sourcePokemon: Pokemon | null = null,
-    turnsRemaining?: number,
+    sleepTurnsRemaining?: number,
     sourceText: string | null = null,
     overrideStatus?: boolean,
     quiet = true,
@@ -5579,22 +5605,22 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
     }
 
-    if (asPhase) {
-      if (overrideStatus) {
-        this.resetStatus(false);
-      }
+    if (overrideStatus) {
+      this.resetStatus(false);
+    }
 
+    if (asPhase) {
       globalScene.unshiftPhase(
         new ObtainStatusEffectPhase(
           this.getBattlerIndex(),
           effect,
-          turnsRemaining,
+          sleepTurnsRemaining,
           sourceText,
           sourcePokemon,
         ),
       );
     } else {
-      this.doSetStatus(effect, turnsRemaining)
+      this.doSetStatus(effect, sleepTurnsRemaining)
     }
 
     return true;
@@ -5611,7 +5637,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * Attempt to give the specified Pokemon the given status effect.
    * Does **NOT** perform any feasibility checks whatsoever, and should thus never be called directly
    * unless conditions are known to be met.
-   * @param effect - StatusEffect.SLEEP
+   * @param effect - {@linkcode StatusEffect.SLEEP}
    * @param sleepTurnsRemaining - The number of turns to inflict sleep for; defaults to a random number between 2 and 4.
    */
   doSetStatus(effect: StatusEffect.SLEEP, sleepTurnsRemaining?: number): void;
@@ -5620,7 +5646,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * Does **NOT** perform any feasibility checks whatsoever, and should thus never be called directly
    * unless conditions are known to be met.
    * @param effect - The {@linkcode StatusEffect} to set
-   * @param sleepTurnsRemaining - The number of turns to inflict sleep for; defaults to a random number between 2 and 4.
+   * @param sleepTurnsRemaining - The number of turns to inflict sleep for; defaults to a random number between 2 and 4
+   * and is unused for all non-sleep Statuses.
    */
   doSetStatus(effect: StatusEffect, sleepTurnsRemaining?: number): void;
   /**
@@ -5628,13 +5655,15 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * Does **NOT** perform any feasibility checks whatsoever, and should thus never be called directly
    * unless conditions are known to be met.
    * @param effect - The {@linkcode StatusEffect} to set
-   * @param sleepTurnsRemaining - The number of turns to inflict sleep for; defaults to a random number between 2 and 4.
+   * @param sleepTurnsRemaining - The number of turns to inflict sleep for; defaults to a random number between 2 and 4
+   * and is unused for all non-sleep Statuses.
    */
-  doSetStatus(effect: StatusEffect, sleepTurnsRemaining = this.randBattleSeedIntRange(2, 4)): void {
+  doSetStatus(effect: StatusEffect, sleepTurnsRemaining = effect !== StatusEffect.SLEEP ? 0 : this.randBattleSeedIntRange(2, 4)): void {
     if (effect === StatusEffect.SLEEP) {
       this.setFrameRate(4);
 
-      // If the user is invulnerable, remove their invulnerability when they fall asleep
+      // If the user is semi-invulnerable when put asleep (such as due to Yawm),
+      // remove their invulnerability and cancel the upcoming move from the queue
       const invulnTag = [
         BattlerTagType.UNDERGROUND,
         BattlerTagType.UNDERWATER,
@@ -5650,8 +5679,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     this.status = new Status(effect, 0, sleepTurnsRemaining);
   }
-
-
 
   /**
    * Resets the status of a pokemon.

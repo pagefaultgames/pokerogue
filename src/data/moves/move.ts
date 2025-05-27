@@ -2466,25 +2466,25 @@ export class StatusEffectAttr extends MoveEffectAttr {
     return false;
   }
 
+  /**
+   * Wrapper function to attempt to set status of a pokemon.
+   * Exists to allow super classes to override parameters.
+   * @param pokemon - The {@linkcode Pokemon} being statused.
+   * @param source - The {@linkcode Pokemon} doing the statusing.
+   * @param quiet - Whether to suppress messages for status immunities.
+   * @returns Whether the status was sucessfully applied.
+   * @see {@linkcode Pokemon.trySetStatus}
+   */
+  protected doSetStatus(pokemon: Pokemon, source: Pokemon, quiet: boolean): boolean {
+    return pokemon.trySetStatus(this.effect, true, source, undefined, null, false, quiet)
+  }
+
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
     const moveChance = this.getMoveChance(user, target, move, this.selfTarget, false);
     const score = moveChance < 0 ? -10 : Math.floor(moveChance * -0.1);
     const pokemon = this.selfTarget ? user : target;
 
     return pokemon.canSetStatus(this.effect, true, false, user) ? score : 0;
-  }
-
-  /**
-   * Wrapper function to attempt to set status of a pokemon.
-   * Exists to allow super classes to override parameters.
-   * @param pokemon - The {@linkcode Pokemon} being statused.
-   * @param user - The {@linkcode Pokemon} doing the statusing.
-   * @param quiet - Whether to suppress messages for status immunities.
-   * @returns Whether the status was sucessfully applied.
-   * @see {@linkcode Pokemon.trySetStatus}
-   */
-  protected doSetStatus(pokemon: Pokemon, user: Pokemon, quiet: boolean): boolean {
-    return pokemon.trySetStatus(this.effect, true, user, undefined, null, false, quiet)
   }
 }
 
@@ -2501,13 +2501,16 @@ export class RestAttr extends StatusEffectAttr {
     this.duration = duration;
   }
 
-  // TODO: Add custom text for rest and make `HealAttr` no longer cause status
+  // TODO: Add custom text for rest and make `HealAttr` no longer show the message
   protected override doSetStatus(pokemon: Pokemon, user: Pokemon, quiet: boolean): boolean {
     return pokemon.trySetStatus(this.effect, true, user, this.duration, null, true, quiet)
   }
 }
 
-
+/**
+ * Attribute to randomly apply one of several statuses to the target.
+ * Used for {@linkcode Moves.TRI_ATTACK} and {@linkcode Moves.DIRE_CLAW}.
+ */
 export class MultiStatusEffectAttr extends StatusEffectAttr {
   public effects: StatusEffect[];
 
