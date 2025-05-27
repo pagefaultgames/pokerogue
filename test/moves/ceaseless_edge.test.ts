@@ -1,5 +1,5 @@
 import { ArenaTagSide, ArenaTrapTag } from "#app/data/arena-tag";
-import { allMoves } from "#app/data/moves/move";
+import { allMoves } from "#app/data/data-lists";
 import { Abilities } from "#app/enums/abilities";
 import { ArenaTagType } from "#app/enums/arena-tag-type";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";

@@ -16,7 +16,6 @@ import { CommonAnim } from "#app/data/battle-anims";
 import { BattlerTagLapseType, CenterOfAttentionTag } from "#app/data/battler-tags";
 import {
   AddArenaTrapTagAttr,
-  allMoves,
   applyMoveAttrs,
   BypassRedirectAttr,
   BypassSleepAttr,
@@ -27,6 +26,7 @@ import {
   PreMoveMessageAttr,
   PreUseInterruptAttr,
 } from "#app/data/moves/move";
+import { allMoves } from "#app/data/data-lists";
 import { MoveFlags } from "#enums/MoveFlags";
 import { SpeciesFormChangePreMoveTrigger } from "#app/data/pokemon-forms";
 import { getStatusEffectActivationText, getStatusEffectHealText } from "#app/data/status-effect";
@@ -232,7 +232,7 @@ export class MovePhase extends BattlePhase {
       switch (this.pokemon.status.effect) {
         case StatusEffect.PARALYSIS:
           activated =
-            (!this.pokemon.randSeedInt(4) || Overrides.STATUS_ACTIVATION_OVERRIDE === true) &&
+            (!this.pokemon.randBattleSeedInt(4) || Overrides.STATUS_ACTIVATION_OVERRIDE === true) &&
             Overrides.STATUS_ACTIVATION_OVERRIDE !== false;
           break;
         case StatusEffect.SLEEP: {
@@ -258,7 +258,7 @@ export class MovePhase extends BattlePhase {
               .findAttr(
                 attr => attr instanceof HealStatusEffectAttr && attr.selfTarget && attr.isOfEffect(StatusEffect.FREEZE),
               ) ||
-            (!this.pokemon.randSeedInt(5) && Overrides.STATUS_ACTIVATION_OVERRIDE !== true) ||
+            (!this.pokemon.randBattleSeedInt(5) && Overrides.STATUS_ACTIVATION_OVERRIDE !== true) ||
             Overrides.STATUS_ACTIVATION_OVERRIDE === false;
 
           activated = !healed;

@@ -52,7 +52,7 @@ import { initGameSpeed } from "#app/system/game-speed";
 import { Arena, ArenaBase } from "#app/field/arena";
 import { GameData } from "#app/system/game-data";
 import { addTextObject, getTextColor, TextStyle } from "#app/ui/text";
-import { allMoves } from "#app/data/moves/move";
+import { allMoves } from "./data/data-lists";
 import { MusicPreference } from "#app/system/settings/settings";
 import {
   getDefaultModifierTypeForTier,
@@ -1046,32 +1046,33 @@ export default class BattleScene extends SceneBase {
     y: number,
     originX = 0.5,
     originY = 0.5,
-    ignoreOverride = false,
+    ignoreOverride = true,
+    useIllusion = false,
   ): Phaser.GameObjects.Container {
     const container = this.add.container(x, y);
     container.setName(`${pokemon.name}-icon`);
 
-    const icon = this.add.sprite(0, 0, pokemon.getIconAtlasKey(ignoreOverride));
+    const icon = this.add.sprite(0, 0, pokemon.getIconAtlasKey(ignoreOverride, useIllusion));
     icon.setName(`sprite-${pokemon.name}-icon`);
-    icon.setFrame(pokemon.getIconId(true));
+    icon.setFrame(pokemon.getIconId(ignoreOverride, useIllusion));
     // Temporary fix to show pokemon's default icon if variant icon doesn't exist
-    if (icon.frame.name !== pokemon.getIconId(true)) {
+    if (icon.frame.name !== pokemon.getIconId(ignoreOverride, useIllusion)) {
       console.log(`${pokemon.name}'s variant icon does not exist. Replacing with default.`);
       const temp = pokemon.shiny;
       pokemon.shiny = false;
-      icon.setTexture(pokemon.getIconAtlasKey(ignoreOverride));
-      icon.setFrame(pokemon.getIconId(true));
+      icon.setTexture(pokemon.getIconAtlasKey(ignoreOverride, useIllusion));
+      icon.setFrame(pokemon.getIconId(true, useIllusion));
       pokemon.shiny = temp;
     }
     icon.setOrigin(0.5, 0);
 
     container.add(icon);
 
-    if (pokemon.isFusion(true)) {
-      const fusionIcon = this.add.sprite(0, 0, pokemon.getFusionIconAtlasKey(ignoreOverride));
+    if (pokemon.isFusion(useIllusion)) {
+      const fusionIcon = this.add.sprite(0, 0, pokemon.getFusionIconAtlasKey(ignoreOverride, useIllusion));
       fusionIcon.setName("sprite-fusion-icon");
       fusionIcon.setOrigin(0.5, 0);
-      fusionIcon.setFrame(pokemon.getFusionIconId(true));
+      fusionIcon.setFrame(pokemon.getFusionIconId(ignoreOverride, useIllusion));
 
       const originalWidth = icon.width;
       const originalHeight = icon.height;
@@ -2917,7 +2918,10 @@ export default class BattleScene extends SceneBase {
     instant?: boolean,
     cost?: number,
   ): boolean {
-    if (!modifier) {
+    // We check against modifier.type to stop a bug related to loading in a pokemon that has a form change item, which prior to some patch
+    // that changed form change modifiers worked, had previously set the `type` field to null.
+    // TODO: This is not the right place to check for this; it should ideally go in a session migrator.
+    if (!modifier || !modifier.type) {
       return false;
     }
     let success = false;

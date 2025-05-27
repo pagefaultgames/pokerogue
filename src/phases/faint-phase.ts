@@ -11,7 +11,8 @@ import {
 } from "#app/data/abilities/ability";
 import { BattlerTagLapseType } from "#app/data/battler-tags";
 import { battleSpecDialogue } from "#app/data/dialogue";
-import { allMoves, PostVictoryStatStageChangeAttr } from "#app/data/moves/move";
+import { PostVictoryStatStageChangeAttr } from "#app/data/moves/move";
+import { allMoves } from "#app/data/data-lists";
 import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms";
 import { BattleSpec } from "#app/enums/battle-spec";
 import { StatusEffect } from "#app/enums/status-effect";

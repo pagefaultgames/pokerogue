@@ -30,7 +30,7 @@ import { Nature } from "#enums/nature";
 import { GameStats } from "#app/system/game-stats";
 import { Tutorial } from "#app/tutorial";
 import { speciesEggMoves } from "#app/data/balance/egg-moves";
-import { allMoves } from "#app/data/moves/move";
+import { allMoves } from "#app/data/data-lists";
 import { TrainerVariant } from "#app/field/trainer";
 import type { Variant } from "#app/sprites/variant";
 import { setSettingGamepad, SettingGamepad, settingGamepadDefaults } from "#app/system/settings/settings-gamepad";
@@ -118,15 +118,17 @@ export function getDataTypeKey(dataType: GameDataType, slotId = 0): string {
 }
 
 export function encrypt(data: string, bypassLogin: boolean): string {
-  return (bypassLogin ? (data: string) => btoa(data) : (data: string) => AES.encrypt(data, saveKey))(
-    data,
-  ) as unknown as string; // TODO: is this correct?
+  return (bypassLogin
+    ? (data: string) => btoa(encodeURIComponent(data))
+    : (data: string) => AES.encrypt(data, saveKey))(data) as unknown as string; // TODO: is this correct?
 }
 
 export function decrypt(data: string, bypassLogin: boolean): string {
-  return (bypassLogin ? (data: string) => atob(data) : (data: string) => AES.decrypt(data, saveKey).toString(enc.Utf8))(
-    data,
-  );
+  return (
+    bypassLogin
+      ? (data: string) => decodeURIComponent(atob(data))
+      : (data: string) => AES.decrypt(data, saveKey).toString(enc.Utf8)
+  )(data);
 }
 
 export interface SystemSaveData {
@@ -1108,7 +1110,7 @@ export class GameData {
           for (const p of sessionData.party) {
             const pokemon = p.toPokemon() as PlayerPokemon;
             pokemon.setVisible(false);
-            loadPokemonAssets.push(pokemon.loadAssets());
+            loadPokemonAssets.push(pokemon.loadAssets(false));
             party.push(pokemon);
           }
 
