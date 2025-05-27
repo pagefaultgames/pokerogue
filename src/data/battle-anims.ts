@@ -3,7 +3,7 @@ import { AttackMove, BeakBlastHeaderAttr, DelayedAttackAttr, SelfStatusMove } fr
 import { allMoves } from "./data-lists";
 import { MoveFlags } from "#enums/MoveFlags";
 import type Pokemon from "../field/pokemon";
-import { type nil, getFrameMs, getEnumKeys, getEnumValues, animationFileName } from "../utils/common";
+import { type nil, getFrameMs, getEnumKeys, getEnumValues, animationFileName, coerceArray } from "../utils/common";
 import type { BattlerIndex } from "../battle";
 import { Moves } from "#enums/moves";
 import { SubstituteTag } from "./battler-tags";
@@ -616,7 +616,7 @@ function logMissingMoveAnim(move: Moves, ...optionalParams: any[]) {
  * @param encounterAnim one or more animations to fetch
  */
 export async function initEncounterAnims(encounterAnim: EncounterAnim | EncounterAnim[]): Promise<void> {
-  const anims = Array.isArray(encounterAnim) ? encounterAnim : [encounterAnim];
+  const anims = coerceArray(encounterAnim);
   const encounterAnimNames = getEnumKeys(EncounterAnim);
   const encounterAnimFetches: Promise<Map<EncounterAnim, AnimConfig>>[] = [];
   for (const anim of anims) {
