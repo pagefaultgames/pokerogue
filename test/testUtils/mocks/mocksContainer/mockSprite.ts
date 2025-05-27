@@ -142,7 +142,8 @@ export default class MockSprite implements MockGameObject {
 
   setPositionRelative(source, x, y): this {
     /// Sets the position of this Game Object to be a relative position from the source Game Object.
-    return this.phaserSprite.setPositionRelative(source, x, y);
+    this.phaserSprite.setPositionRelative(source, x, y);
+    return this;
   }
 
   setY(y: number): this {
