@@ -5787,7 +5787,7 @@ export class ProtectAttr extends AddBattlerTagAttr {
           // Quick & Wide guard increment the Protect counter without using it for fail chance
           !(allMoves[turnMove.move].hasAttr(ProtectAttr) || 
           [Moves.QUICK_GUARD, Moves.WIDE_GUARD].includes(turnMove.move)) || 
-          turnMove?.result !== MoveResult.SUCCESS
+          turnMove.result !== MoveResult.SUCCESS
         ) {
           break;
         }
