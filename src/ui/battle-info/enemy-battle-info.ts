@@ -36,7 +36,6 @@ export class EnemyBattleInfo extends BattleInfo {
 
     this.ownedIcon = globalScene.add.sprite(0, 0, "icon_owned").setName("icon_owned").setVisible(false).setOrigin(0, 0);
     this.ownedIcon.setPositionRelative(this.nameText, 0, 11.75);
-    this.add(this.ownedIcon);
 
     this.championRibbon = globalScene.add
       .sprite(0, 0, "champion_ribbon")
@@ -44,7 +43,8 @@ export class EnemyBattleInfo extends BattleInfo {
       .setVisible(false)
       .setOrigin(0, 0);
     this.championRibbon.setPositionRelative(this.nameText, 8, 11.75);
-    this.add(this.championRibbon);
+    // Ensure these two icons are positioned below the stats container
+    this.addAt([this.ownedIcon, this.championRibbon], this.getIndex(this.statsContainer));
 
     this.flyoutMenu = new BattleFlyout(this.player);
     this.add(this.flyoutMenu);
