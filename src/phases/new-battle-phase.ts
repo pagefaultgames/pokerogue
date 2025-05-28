@@ -2,7 +2,7 @@ import { globalScene } from "#app/global-scene";
 import { BattlePhase } from "./battle-phase";
 
 export class NewBattlePhase extends BattlePhase {
-  protected readonly phaseName = "NewBattlePhase";
+  public readonly phaseName = "NewBattlePhase";
   start() {
     super.start();
 

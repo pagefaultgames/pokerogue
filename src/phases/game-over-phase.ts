@@ -34,7 +34,7 @@ import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
 import { MessagePhase } from "./message-phase";
 
 export class GameOverPhase extends BattlePhase {
-  protected readonly phaseName = "GameOverPhase";
+  public readonly phaseName = "GameOverPhase";
   private isVictory: boolean;
   private firstRibbons: PokemonSpecies[] = [];
 

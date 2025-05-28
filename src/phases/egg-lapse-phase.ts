@@ -16,7 +16,7 @@ import { EggHatchData } from "#app/data/egg-hatch-data";
  * Also handles prompts for skipping animation, and calling the egg summary phase
  */
 export class EggLapsePhase extends Phase {
-  protected readonly phaseName = "EggLapsePhase";
+  public readonly phaseName = "EggLapsePhase";
   private eggHatchData: EggHatchData[] = [];
   private readonly minEggsToSkip: number = 2;
 

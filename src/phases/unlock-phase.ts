@@ -6,7 +6,7 @@ import { UiMode } from "#enums/ui-mode";
 import i18next from "i18next";
 
 export class UnlockPhase extends Phase {
-  protected readonly phaseName = "UnlockPhase";
+  public readonly phaseName = "UnlockPhase";
   private unlockable: Unlockables;
 
   constructor(unlockable: Unlockables) {

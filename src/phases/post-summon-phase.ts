@@ -7,7 +7,7 @@ import { MysteryEncounterPostSummonTag } from "#app/data/battler-tags";
 import { BattlerTagType } from "#enums/battler-tag-type";
 
 export class PostSummonPhase extends PokemonPhase {
-  protected readonly phaseName = "PostSummonPhase";
+  public readonly phaseName = "PostSummonPhase";
   start() {
     super.start();
 

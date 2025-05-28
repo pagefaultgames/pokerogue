@@ -14,7 +14,7 @@ import { achvs } from "#app/system/achv";
 import { timedEventManager } from "#app/global-event-manager";
 
 export class TrainerVictoryPhase extends BattlePhase {
-  protected readonly phaseName = "TrainerVictoryPhase";
+  public readonly phaseName = "TrainerVictoryPhase";
   start() {
     globalScene.disableMenu = true;
 

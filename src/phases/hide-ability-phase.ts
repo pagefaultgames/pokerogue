@@ -2,7 +2,7 @@ import { globalScene } from "#app/global-scene";
 import { Phase } from "#app/phase";
 
 export class HideAbilityPhase extends Phase {
-  protected readonly phaseName = "HideAbilityPhase";
+  public readonly phaseName = "HideAbilityPhase";
   start() {
     super.start();
 

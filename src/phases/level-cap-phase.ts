@@ -4,7 +4,7 @@ import i18next from "i18next";
 import { FieldPhase } from "./field-phase";
 
 export class LevelCapPhase extends FieldPhase {
-  protected readonly phaseName = "LevelCapPhase";
+  public readonly phaseName = "LevelCapPhase";
   start(): void {
     super.start();
 

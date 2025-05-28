@@ -20,7 +20,7 @@ import type Pokemon from "#app/field/pokemon";
  * Also triggers Cud Chew's "repeat berry use" effects
  */
 export class BerryPhase extends FieldPhase {
-  protected readonly phaseName = "BerryPhase";
+  public readonly phaseName = "BerryPhase";
   start() {
     super.start();
 

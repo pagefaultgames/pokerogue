@@ -3,7 +3,7 @@ import { fixedInt } from "#app/utils/common";
 import { BattlePhase } from "./battle-phase";
 
 export class PartyHealPhase extends BattlePhase {
-  protected readonly phaseName = "PartyHealPhase";
+  public readonly phaseName = "PartyHealPhase";
   private resumeBgm: boolean;
 
   constructor(resumeBgm: boolean) {
