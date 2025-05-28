@@ -124,12 +124,19 @@ export class SwitchSummonPhase extends SummonPhase {
     const switchedInPokemon: Pokemon | undefined = party[this.slotIndex];
     this.lastPokemon = this.getPokemon();
 
+    // Defensive programming: Overcome the bug where the summon data has somehow not been reset
+    // prior to switching in a new Pokemon.
+    // Force the switch to occur and load the assets for the new pokemon, ignoring override.
+    switchedInPokemon.resetSummonData();
+    switchedInPokemon.loadAssets(true);
+
     applyPreSummonAbAttrs(PreSummonAbAttr, switchedInPokemon);
     applyPreSwitchOutAbAttrs(PreSwitchOutAbAttr, this.lastPokemon);
     if (!switchedInPokemon) {
       this.end();
       return;
     }
+
 
     if (this.switchType === SwitchType.BATON_PASS) {
       // If switching via baton pass, update opposing tags coming from the prior pokemon
