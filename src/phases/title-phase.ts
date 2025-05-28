@@ -29,7 +29,7 @@ import { globalScene } from "#app/global-scene";
 import Overrides from "#app/overrides";
 
 export class TitlePhase extends Phase {
-  protected readonly phaseName = "TitlePhase";
+  public readonly phaseName = "TitlePhase";
   private loaded = false;
   private lastSessionData: SessionSaveData;
   public gameMode: GameModes;

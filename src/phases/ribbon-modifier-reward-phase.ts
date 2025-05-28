@@ -6,7 +6,7 @@ import i18next from "i18next";
 import { ModifierRewardPhase } from "./modifier-reward-phase";
 
 export class RibbonModifierRewardPhase extends ModifierRewardPhase {
-  protected readonly phaseName = "RibbonModifierRewardPhase";
+  public readonly phaseName = "RibbonModifierRewardPhase";
   private species: PokemonSpecies;
 
   constructor(modifierTypeFunc: ModifierTypeFunc, species: PokemonSpecies) {

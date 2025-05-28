@@ -4,7 +4,7 @@ import { UiMode } from "#enums/ui-mode";
 import { LoginPhase } from "./login-phase";
 
 export class UnavailablePhase extends Phase {
-  protected readonly phaseName = "UnavailablePhase";
+  public readonly phaseName = "UnavailablePhase";
   start(): void {
     globalScene.ui.setMode(UiMode.UNAVAILABLE, () => {
       globalScene.unshiftPhase(new LoginPhase(true));

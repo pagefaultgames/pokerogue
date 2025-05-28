@@ -12,7 +12,7 @@ export class MoveAnimPhase<Anim extends MoveAnim> extends Phase {
     super();
   }
 
-  protected readonly phaseName = "MoveAnimPhase";
+  public readonly phaseName = "MoveAnimPhase";
 
   public override start(): void {
     super.start();

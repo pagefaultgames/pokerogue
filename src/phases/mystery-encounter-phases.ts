@@ -38,7 +38,7 @@ import { SelectBiomePhase } from "./select-biome-phase";
  * - Queuing of the {@linkcode MysteryEncounterOptionSelectedPhase}
  */
 export class MysteryEncounterPhase extends Phase {
-  protected readonly phaseName = "MysteryEncounterPhase";
+  public readonly phaseName = "MysteryEncounterPhase";
   private readonly FIRST_DIALOGUE_PROMPT_DELAY = 300;
   optionSelectSettings?: OptionSelectSettings;
 
@@ -180,7 +180,7 @@ export class MysteryEncounterPhase extends Phase {
  * Any phase that is meant to follow this one MUST be queued via the onOptionSelect() logic of the selected option
  */
 export class MysteryEncounterOptionSelectedPhase extends Phase {
-  protected readonly phaseName = "MysteryEncounterOptionSelectedPhase";
+  public readonly phaseName = "MysteryEncounterOptionSelectedPhase";
   onOptionSelect: OptionPhaseCallback;
 
   constructor() {
@@ -222,7 +222,7 @@ export class MysteryEncounterOptionSelectedPhase extends Phase {
  * See {@linkcode TurnEndPhase} for more details
  */
 export class MysteryEncounterBattleStartCleanupPhase extends Phase {
-  protected readonly phaseName = "MysteryEncounterBattleStartCleanupPhase";
+  public readonly phaseName = "MysteryEncounterBattleStartCleanupPhase";
   /**
    * Cleans up `TURN_END` tags, any {@linkcode PostTurnStatusEffectPhase}s, checks for Pokemon switches, then continues
    */
@@ -286,7 +286,7 @@ export class MysteryEncounterBattleStartCleanupPhase extends Phase {
  * - Queue the {@linkcode SummonPhase}s, {@linkcode PostSummonPhase}s, etc., required to initialize the phase queue for a battle
  */
 export class MysteryEncounterBattlePhase extends Phase {
-  protected readonly phaseName = "MysteryEncounterBattlePhase";
+  public readonly phaseName = "MysteryEncounterBattlePhase";
   disableSwitch: boolean;
 
   constructor(disableSwitch = false) {
@@ -516,7 +516,7 @@ export class MysteryEncounterBattlePhase extends Phase {
  * - Queuing of the {@linkcode PostMysteryEncounterPhase}
  */
 export class MysteryEncounterRewardsPhase extends Phase {
-  protected readonly phaseName = "MysteryEncounterRewardsPhase";
+  public readonly phaseName = "MysteryEncounterRewardsPhase";
   addHealPhase: boolean;
 
   constructor(addHealPhase = false) {
@@ -584,7 +584,7 @@ export class MysteryEncounterRewardsPhase extends Phase {
  * - Queuing of the next wave
  */
 export class PostMysteryEncounterPhase extends Phase {
-  protected readonly phaseName = "PostMysteryEncounterPhase";
+  public readonly phaseName = "PostMysteryEncounterPhase";
   private readonly FIRST_DIALOGUE_PROMPT_DELAY = 750;
   onPostOptionSelect?: OptionPhaseCallback;
 

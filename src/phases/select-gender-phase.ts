@@ -6,7 +6,7 @@ import { UiMode } from "#enums/ui-mode";
 import i18next from "i18next";
 
 export class SelectGenderPhase extends Phase {
-  protected readonly phaseName = "SelectGenderPhase";
+  public readonly phaseName = "SelectGenderPhase";
   start(): void {
     super.start();
 

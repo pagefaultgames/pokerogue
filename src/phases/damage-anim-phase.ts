@@ -6,7 +6,7 @@ import { fixedInt } from "#app/utils/common";
 import { PokemonPhase } from "#app/phases/pokemon-phase";
 
 export class DamageAnimPhase extends PokemonPhase {
-  protected readonly phaseName = "DamageAnimPhase";
+  public readonly phaseName = "DamageAnimPhase";
   private amount: number;
   private damageResult: DamageResult;
   private critical: boolean;

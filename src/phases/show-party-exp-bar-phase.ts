@@ -8,7 +8,7 @@ import { LevelUpPhase } from "./level-up-phase";
 import { PlayerPartyMemberPokemonPhase } from "./player-party-member-pokemon-phase";
 
 export class ShowPartyExpBarPhase extends PlayerPartyMemberPokemonPhase {
-  protected readonly phaseName = "ShowPartyExpBarPhase";
+  public readonly phaseName = "ShowPartyExpBarPhase";
   private expValue: number;
 
   constructor(partyMemberIndex: number, expValue: number) {

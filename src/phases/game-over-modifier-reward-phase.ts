@@ -4,7 +4,7 @@ import i18next from "i18next";
 import { ModifierRewardPhase } from "./modifier-reward-phase";
 
 export class GameOverModifierRewardPhase extends ModifierRewardPhase {
-  protected readonly phaseName = "GameOverModifierRewardPhase";
+  public readonly phaseName = "GameOverModifierRewardPhase";
   doReward(): Promise<void> {
     return new Promise<void>(resolve => {
       const newModifier = this.modifierType.newModifier();

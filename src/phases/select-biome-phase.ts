@@ -10,7 +10,7 @@ import { PartyHealPhase } from "./party-heal-phase";
 import { SwitchBiomePhase } from "./switch-biome-phase";
 
 export class SelectBiomePhase extends BattlePhase {
-  protected readonly phaseName = "SelectBiomePhase";
+  public readonly phaseName = "SelectBiomePhase";
   start() {
     super.start();
 

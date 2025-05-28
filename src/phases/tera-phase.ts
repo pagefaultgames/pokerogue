@@ -9,7 +9,7 @@ import { SpeciesFormChangeTeraTrigger } from "#app/data/pokemon-forms";
 import { CommonAnim, CommonBattleAnim } from "#app/data/battle-anims";
 
 export class TeraPhase extends BattlePhase {
-  protected readonly phaseName = "TeraPhase";
+  public readonly phaseName = "TeraPhase";
   public pokemon: Pokemon;
 
   constructor(pokemon: Pokemon) {

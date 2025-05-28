@@ -4,7 +4,7 @@ import type Pokemon from "#app/field/pokemon";
 import { BattlePhase } from "./battle-phase";
 
 export class MoveHeaderPhase extends BattlePhase {
-  protected readonly phaseName = "MoveHeaderPhase";
+  public readonly phaseName = "MoveHeaderPhase";
   public pokemon: Pokemon;
   public move: PokemonMove;
 

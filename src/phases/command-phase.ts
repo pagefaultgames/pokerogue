@@ -25,7 +25,7 @@ import { ArenaTagSide } from "#app/data/arena-tag";
 import { ArenaTagType } from "#app/enums/arena-tag-type";
 
 export class CommandPhase extends FieldPhase {
-  protected readonly phaseName = "CommandPhase";
+  public readonly phaseName = "CommandPhase";
   protected fieldIndex: number;
 
   constructor(fieldIndex: number) {

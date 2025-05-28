@@ -3,7 +3,7 @@ import { Phase } from "#app/phase";
 import { UiMode } from "#enums/ui-mode";
 
 export class SelectChallengePhase extends Phase {
-  protected readonly phaseName = "SelectChallengePhase";
+  public readonly phaseName = "SelectChallengePhase";
   start() {
     super.start();
 

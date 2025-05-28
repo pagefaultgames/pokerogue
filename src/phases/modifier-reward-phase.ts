@@ -7,7 +7,7 @@ import { BattlePhase } from "./battle-phase";
 export class ModifierRewardPhase extends BattlePhase {
   // RibbonModifierRewardPhase extends ModifierRewardPhase and to make typescript happy
   // we need to use a union type here
-  protected readonly phaseName: "ModifierRewardPhase" | "RibbonModifierRewardPhase" | "GameOverModifierRewardPhase" =
+  public readonly phaseName: "ModifierRewardPhase" | "RibbonModifierRewardPhase" | "GameOverModifierRewardPhase" =
     "ModifierRewardPhase";
   protected modifierType: ModifierType;
 

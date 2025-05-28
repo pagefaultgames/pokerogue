@@ -11,7 +11,7 @@ import { SelectGenderPhase } from "./select-gender-phase";
 import { UnavailablePhase } from "./unavailable-phase";
 
 export class LoginPhase extends Phase {
-  protected readonly phaseName = "LoginPhase";
+  public readonly phaseName = "LoginPhase";
   private showText: boolean;
 
   constructor(showText = true) {

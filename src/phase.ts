@@ -15,7 +15,7 @@ export abstract class Phase {
    *
    * When implementing a phase, you must set the `phaseName` property to the name of the phase.
    */
-  protected abstract readonly phaseName: PhaseString;
+  public abstract readonly phaseName: PhaseString;
 
   /**
    * Check if the phase is of the given type without requiring `instanceof`.
