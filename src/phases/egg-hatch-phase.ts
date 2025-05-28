@@ -225,7 +225,7 @@ export class EggHatchPhase extends Phase {
   }
 
   end() {
-    if (globalScene.findPhase(p => p.isXPhase("EggHatchPhase"))) {
+    if (globalScene.findPhase(p => p.is("EggHatchPhase"))) {
       this.eggHatchHandler.clear();
     } else {
       globalScene.time.delayedCall(250, () => globalScene.setModifiersVisible(true));

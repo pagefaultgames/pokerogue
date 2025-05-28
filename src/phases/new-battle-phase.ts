@@ -7,9 +7,9 @@ export class NewBattlePhase extends BattlePhase {
     super.start();
 
     // cull any extra `NewBattle` phases from the queue.
-    globalScene.phaseQueue = globalScene.phaseQueue.filter(phase => !phase.isXPhase("NewBattlePhase"));
+    globalScene.phaseQueue = globalScene.phaseQueue.filter(phase => !phase.is("NewBattlePhase"));
     // `phaseQueuePrepend` is private, so we have to use this inefficient loop.
-    while (globalScene.tryRemoveUnshiftedPhase(phase => phase.isXPhase("NewBattlePhase"))) {}
+    while (globalScene.tryRemoveUnshiftedPhase(phase => phase.is("NewBattlePhase"))) {}
 
     globalScene.newBattle();
 
