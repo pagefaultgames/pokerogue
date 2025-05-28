@@ -198,10 +198,11 @@ export class SpeciesEvolutionCondition {
           )?.moveId === cond.move;
         case EvoCondKey.NATURE:
           return cond.nature.includes(pokemon.getNature());
-        case EvoCondKey.RANDOM_FORM:
+        case EvoCondKey.RANDOM_FORM: {
           let ret = false;
           globalScene.executeWithSeedOffset(() => ret = !randSeedInt(cond.value), pokemon.id);
           return ret;
+        }
         case EvoCondKey.SPECIES_CAUGHT:
           return !!globalScene.gameData.dexData[cond.speciesCaught].caughtAttr;
         case EvoCondKey.MOVE_USE_COUNT:
@@ -278,7 +279,7 @@ export class SpeciesFormEvolution {
    * @param item {@linkcode EvolutionItem} optional, check if the evolution uses a certain item
    * @returns whether this evolution can apply to the Pokemon
    */
-  public validate(pokemon: Pokemon, forFusion: boolean = false, item?: EvolutionItem): boolean {
+  public validate(pokemon: Pokemon, forFusion = false, item?: EvolutionItem): boolean {
     return (
       pokemon.level >= this.level &&
       // Check form key, using the fusion's form key if we're checking the fusion
@@ -288,7 +289,7 @@ export class SpeciesFormEvolution {
     );
   }
 
-  public isValidItemEvolution(pokemon: Pokemon, forFusion: boolean = false): boolean {
+  public isValidItemEvolution(pokemon: Pokemon, forFusion = false): boolean {
     return (
       // If an item is given, check if it's the right one
       !isNullOrUndefined(this.item) &&
