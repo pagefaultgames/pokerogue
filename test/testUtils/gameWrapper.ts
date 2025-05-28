@@ -124,13 +124,17 @@ export default class GameWrapper {
 
     this.scene.tweens = {
       add: data => {
-        if (data.onComplete) {
-          data.onComplete();
-        }
+        // TODO: our mock of `add` should have the same signature as the real one, which returns the tween
+        data.onComplete?.();
       },
       getTweensOf: () => [],
       killTweensOf: () => [],
-      chain: () => null,
+
+      chain: data => {
+        // TODO: our mock of `chain` should have the same signature as the real one, which returns the chain
+        data?.tweens?.forEach(tween => tween.onComplete?.());
+        data.onComplete?.();
+      },
       addCounter: data => {
         if (data.onComplete) {
           data.onComplete();
