@@ -169,7 +169,7 @@ export class QuietFormChangePhase extends BattlePhase {
       this.pokemon.initBattleInfo();
       this.pokemon.cry();
 
-      const movePhase = globalScene.findPhase(p => p.isXPhase("MovePhase") && p.pokemon === this.pokemon) as MovePhase;
+      const movePhase = globalScene.findPhase(p => p.is("MovePhase") && p.pokemon === this.pokemon) as MovePhase;
       if (movePhase) {
         movePhase.cancel();
       }

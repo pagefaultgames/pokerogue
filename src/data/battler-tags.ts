@@ -553,9 +553,9 @@ export class ShellTrapTag extends BattlerTag {
       // Trap should only be triggered by opponent's Physical moves
       if (phaseData?.move.category === MoveCategory.PHYSICAL && pokemon.isOpponent(phaseData.attacker)) {
         const shellTrapPhaseIndex = globalScene.phaseQueue.findIndex(
-          phase => phase.isXPhase("MovePhase") && phase.pokemon === pokemon,
+          phase => phase.is("MovePhase") && phase.pokemon === pokemon,
         );
-        const firstMovePhaseIndex = globalScene.phaseQueue.findIndex(phase => phase.isXPhase("MovePhase"));
+        const firstMovePhaseIndex = globalScene.phaseQueue.findIndex(phase => phase.is("MovePhase"));
 
         // Only shift MovePhase timing if it's not already next up
         if (shellTrapPhaseIndex !== -1 && shellTrapPhaseIndex !== firstMovePhaseIndex) {
@@ -1027,7 +1027,7 @@ export class PowderTag extends BattlerTag {
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     if (lapseType === BattlerTagLapseType.PRE_MOVE) {
       const movePhase = globalScene.getCurrentPhase();
-      if (movePhase?.isXPhase("MovePhase")) {
+      if (movePhase?.is("MovePhase")) {
         const move = movePhase.move.getMove();
         const weather = globalScene.arena.weather;
         if (
@@ -1183,13 +1183,13 @@ export class EncoreTag extends MoveRestrictionBattlerTag {
       }),
     );
 
-    const movePhase = globalScene.findPhase(m => m.isXPhase("MovePhase") && m.pokemon === pokemon);
+    const movePhase = globalScene.findPhase(m => m.is("MovePhase") && m.pokemon === pokemon);
     if (movePhase) {
       const movesetMove = pokemon.getMoveset().find(m => m.moveId === this.moveId);
       if (movesetMove) {
         const lastMove = pokemon.getLastXMoves(1)[0];
         globalScene.tryReplacePhase(
-          m => m.isXPhase("MovePhase") && m.pokemon === pokemon,
+          m => m.is("MovePhase") && m.pokemon === pokemon,
           new MovePhase(pokemon, lastMove.targets ?? [], movesetMove),
         );
       }
@@ -1624,7 +1624,7 @@ export class ProtectedTag extends BattlerTag {
 
       // Stop multi-hit moves early
       const effectPhase = globalScene.getCurrentPhase();
-      if (effectPhase?.isXPhase("MoveEffectPhase")) {
+      if (effectPhase?.is("MoveEffectPhase")) {
         effectPhase.stopMultiHit(pokemon);
       }
       return true;
@@ -2646,7 +2646,7 @@ export class GulpMissileTag extends BattlerTag {
     }
 
     const moveEffectPhase = globalScene.getCurrentPhase();
-    if (moveEffectPhase?.isXPhase("MoveEffectPhase")) {
+    if (moveEffectPhase?.is("MoveEffectPhase")) {
       const attacker = moveEffectPhase.getUserPokemon();
 
       if (!attacker) {
@@ -3004,7 +3004,7 @@ export class SubstituteTag extends BattlerTag {
   /** If the Substitute redirects damage, queue a message to indicate it. */
   onHit(pokemon: Pokemon): void {
     const moveEffectPhase = globalScene.getCurrentPhase();
-    if (moveEffectPhase?.isXPhase("MoveEffectPhase")) {
+    if (moveEffectPhase?.is("MoveEffectPhase")) {
       const attacker = moveEffectPhase.getUserPokemon();
       if (!attacker) {
         return;
@@ -3693,7 +3693,7 @@ export function loadBattlerTag(source: BattlerTag | any): BattlerTag {
  */
 function getMoveEffectPhaseData(_pokemon: Pokemon): { phase: MoveEffectPhase; attacker: Pokemon; move: Move } | null {
   const phase = globalScene.getCurrentPhase();
-  if (phase?.isXPhase("MoveEffectPhase")) {
+  if (phase?.is("MoveEffectPhase")) {
     return {
       phase: phase,
       attacker: phase.getPokemon(),

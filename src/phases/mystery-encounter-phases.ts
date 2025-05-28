@@ -247,8 +247,8 @@ export class MysteryEncounterBattleStartCleanupPhase extends Phase {
     });
 
     // Remove any status tick phases
-    while (globalScene.findPhase(p => p.isXPhase("PostTurnStatusEffectPhase"))) {
-      globalScene.tryRemovePhase(p => p.isXPhase("PostTurnStatusEffectPhase"));
+    while (globalScene.findPhase(p => p.is("PostTurnStatusEffectPhase"))) {
+      globalScene.tryRemovePhase(p => p.is("PostTurnStatusEffectPhase"));
     }
 
     // The total number of Pokemon in the player's party that can legally fight
@@ -562,7 +562,7 @@ export class MysteryEncounterRewardsPhase extends Phase {
     if (encounter.doEncounterRewards) {
       encounter.doEncounterRewards();
     } else if (this.addHealPhase) {
-      globalScene.tryRemovePhase(p => p.isXPhase("SelectModifierPhase"));
+      globalScene.tryRemovePhase(p => p.is("SelectModifierPhase"));
       globalScene.unshiftPhase(
         new SelectModifierPhase(0, undefined, {
           fillRemaining: false,

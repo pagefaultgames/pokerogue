@@ -900,7 +900,7 @@ export default class BattleScene extends SceneBase {
       do {
         targetingMovePhase = this.findPhase(
           mp =>
-            mp.isXPhase("MovePhase") &&
+            mp.is("MovePhase") &&
             mp.targets.length === 1 &&
             mp.targets[0] === removedPokemon.getBattlerIndex() &&
             mp.pokemon.isPlayer() !== allyPokemon.isPlayer(),
@@ -1449,7 +1449,7 @@ export default class BattleScene extends SceneBase {
     }
 
     if (lastBattle?.double && !newDouble) {
-      this.tryRemovePhase((p: Phase) => p.isXPhase("SwitchPhase"));
+      this.tryRemovePhase((p: Phase) => p.is("SwitchPhase"));
       for (const p of this.getPlayerField()) {
         p.lapseTag(BattlerTagType.COMMANDED);
       }

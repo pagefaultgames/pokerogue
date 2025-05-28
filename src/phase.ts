@@ -9,7 +9,7 @@ export abstract class Phase {
   }
 
   /**
-   * The string name of the phase, used to identify the phase type for {@linkcode isXPhase}
+   * The string name of the phase, used to identify the phase type for {@linkcode is}
    *
    * @privateremarks
    *
@@ -27,7 +27,7 @@ export abstract class Phase {
    * This does not check for subclasses! It only checks if the phase is *exactly* the given type.
    * This method exists to avoid circular import issues, as using `instanceof` would require importing each phase.
    */
-  isXPhase<K extends keyof PhaseMap>(phase: K): this is PhaseMap[K] {
+  is<K extends keyof PhaseMap>(phase: K): this is PhaseMap[K] {
     return this.phaseName === phase;
   }
 }
