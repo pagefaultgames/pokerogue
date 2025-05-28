@@ -143,6 +143,7 @@ export type PokemonModifierTransferSelectFilter = (
   modifier: PokemonHeldItemModifier,
 ) => string | null;
 export type PokemonMoveSelectFilter = (pokemonMove: PokemonMove) => string | null;
+export type PokemonFuseSelectFilter = (pokemon: PlayerPokemon, first?: PlayerPokemon) => string | null;
 
 export default class PartyUiHandler extends MessageUiHandler {
   private partyUiMode: PartyUiMode;
@@ -231,6 +232,7 @@ export default class PartyUiHandler extends MessageUiHandler {
   };
 
   public static NoEffectMessage = i18next.t("partyUiHandler:anyEffect");
+  public static FusionForbiddenMessage = i18next.t("partyUiHandler:fusionForbidden");
 
   private localizedOptions = [
     PartyOption.SEND_OUT,
@@ -689,22 +691,34 @@ export default class PartyUiHandler extends MessageUiHandler {
 
   private getFilterResult(option: number, pokemon: PlayerPokemon): string | null {
     let filterResult: string | null;
-    if (option !== PartyOption.TRANSFER && option !== PartyOption.SPLICE) {
-      filterResult = (this.selectFilter as PokemonSelectFilter)(pokemon);
-      if (filterResult === null && (option === PartyOption.SEND_OUT || option === PartyOption.PASS_BATON)) {
-        filterResult = this.FilterChallengeLegal(pokemon);
+    switch (option) {
+      case PartyOption.SPLICE: {
+        const firstSelected = this.transferMode ? globalScene.getPlayerParty()[this.transferCursor] : undefined;
+        return (this.selectFilter as PokemonFuseSelectFilter)(pokemon, firstSelected);
       }
-      if (filterResult === null && this.partyUiMode === PartyUiMode.MOVE_MODIFIER) {
-        filterResult = this.moveSelectFilter(pokemon.moveset[this.optionsCursor]);
-      }
-    } else {
-      filterResult = (this.selectFilter as PokemonModifierTransferSelectFilter)(
-        pokemon,
-        this.getTransferrableItemsFromPokemon(globalScene.getPlayerParty()[this.transferCursor])[
-          this.transferOptionCursor
-        ],
-      );
+      case PartyOption.TRANSFER:
+        // TODO
+        return (this.selectFilter as PokemonModifierTransferSelectFilter)(
+          pokemon,
+          this.getTransferrableItemsFromPokemon(globalScene.getPlayerParty()[this.transferCursor])[
+            this.transferOptionCursor
+          ],
+        );
+      default:
+        filterResult = (this.selectFilter as PokemonSelectFilter)(pokemon);
+        break;
     }
+    if (filterResult !== null) {
+      return filterResult;
+    }
+
+    if (filterResult === null && (option === PartyOption.SEND_OUT || option === PartyOption.PASS_BATON)) {
+      filterResult = this.FilterChallengeLegal(pokemon);
+    }
+    if (filterResult === null && this.partyUiMode === PartyUiMode.MOVE_MODIFIER) {
+      filterResult = this.moveSelectFilter(pokemon.moveset[this.optionsCursor]);
+    }
+
     return filterResult;
   }
 
