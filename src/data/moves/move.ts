@@ -412,7 +412,7 @@ export default class Move implements Localizable {
   /**
    * Mark this move as unimplemented.
    * Unimplemented moves are ones which have _none_ of their basic functionality enabled,
-   * and will fail upon use.
+   * and cannot be used.
    * @returns `this`
    */
   unimplemented(): this {
