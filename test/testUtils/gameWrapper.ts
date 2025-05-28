@@ -122,6 +122,7 @@ export default class GameWrapper {
       },
     };
 
+    // TODO: Replace this with a proper mock of phaser's TweenManager.
     this.scene.tweens = {
       add: data => {
         // TODO: our mock of `add` should have the same signature as the real one, which returns the tween
