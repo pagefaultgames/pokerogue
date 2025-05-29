@@ -123,11 +123,11 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
     globalScene.addInfoToggle(this);
   }
 
-  show(args: any[]): boolean {
+  override show(args: [number?, Command?]): boolean {
     super.show(args);
 
-    this.fieldIndex = args.length ? (args[0] as number) : 0;
-    this.fromCommand = args.length > 1 ? (args[1] as Command) : Command.FIGHT;
+    this.fieldIndex = args[0] ?? 0;
+    this.fromCommand = args[1] ?? Command.FIGHT;
 
     const messageHandler = this.getUi().getMessageHandler();
     messageHandler.bg.setVisible(false);
