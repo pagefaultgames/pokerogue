@@ -1,8 +1,10 @@
 import type Pokemon from "#app/field/pokemon";
 import { globalScene } from "#app/global-scene";
 import type { Localizable } from "#app/interfaces/locales";
-import type { NumberHolder } from "#app/utils/common";
-import { HeldItems } from "#enums/held-items";
+import { getPokemonNameWithAffix } from "#app/messages";
+import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
+import { toDmgValue, type NumberHolder } from "#app/utils/common";
+import { HeldItemNames, HeldItems } from "#enums/held-items";
 import { PokemonType } from "#enums/pokemon-type";
 import i18next from "i18next";
 
@@ -137,7 +139,7 @@ export class AttackTypeBoosterHeldItem extends HeldItem {
   }
 
   getName(): string {
-    return i18next.t(`modifierType:AttackTypeBoosterItem.${HeldItems[this.type]?.toLowerCase()}`);
+    return i18next.t(`modifierType:AttackTypeBoosterItem.${HeldItemNames[this.type]?.toLowerCase()}`);
   }
 
   getDescription(): string {
@@ -147,7 +149,7 @@ export class AttackTypeBoosterHeldItem extends HeldItem {
   }
 
   getIcon(): string {
-    return `${HeldItems[this.type]?.toLowerCase()}`;
+    return `${HeldItemNames[this.type]?.toLowerCase()}`;
   }
 
   apply(stackCount: number, moveType: PokemonType, movePower: NumberHolder): void {
@@ -167,6 +169,48 @@ export function applyAttackTypeBoosterHeldItem(pokemon: Pokemon, moveType: Pokem
   }
 }
 
+export class TurnHealHeldItem extends HeldItem {
+  getName(): string {
+    return i18next.t("modifierType:ModifierType.LEFTOVERS.name") + " (new)";
+  }
+
+  getDescription(): string {
+    return i18next.t("modifierType:ModifierType.LEFTOVERS.description");
+  }
+
+  getIcon(): string {
+    return "leftovers";
+  }
+
+  apply(stackCount: number, pokemon: Pokemon): boolean {
+    if (!pokemon.isFullHp()) {
+      globalScene.unshiftPhase(
+        new PokemonHealPhase(
+          pokemon.getBattlerIndex(),
+          toDmgValue(pokemon.getMaxHp() / 16) * stackCount,
+          i18next.t("modifier:turnHealApply", {
+            pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+            typeName: this.name,
+          }),
+          true,
+        ),
+      );
+      return true;
+    }
+    return false;
+  }
+}
+
+export function applyTurnHealHeldItem(pokemon: Pokemon) {
+  if (pokemon) {
+    for (const [item, props] of Object.entries(pokemon.heldItemManager.getHeldItems())) {
+      if (allHeldItems[item] instanceof TurnHealHeldItem) {
+        allHeldItems[item].apply(props.stack, pokemon);
+      }
+    }
+  }
+}
+
 export const allHeldItems = {};
 
 export function initHeldItems() {
@@ -175,4 +219,6 @@ export function initHeldItems() {
     const pokemonType = Number(typeKey) as PokemonType;
     allHeldItems[heldItemType] = new AttackTypeBoosterHeldItem(heldItemType, 99, pokemonType, 0.2);
   }
+  allHeldItems[HeldItems.LEFTOVERS] = new TurnHealHeldItem(HeldItems.LEFTOVERS, 4);
+  console.log(allHeldItems);
 }

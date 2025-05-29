@@ -129,7 +129,7 @@ import { getStatKey, Stat, TEMP_BATTLE_STATS } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import i18next from "i18next";
 import { timedEventManager } from "#app/global-event-manager";
-import type { HeldItems } from "#enums/held-items";
+import { HeldItems } from "#enums/held-items";
 import { allHeldItems, attackTypeToHeldItem } from "./all-held-items";
 import { TYPE_BOOST_ITEM_BOOST_PERCENT } from "#app/constants";
 
@@ -175,6 +175,10 @@ export class ModifierType {
 
   getDescription(): string {
     return i18next.t(`${this.localeKey}.description` as any);
+  }
+
+  getIcon(): string {
+    return this.iconImage;
   }
 
   setTier(tier: ModifierTier): void {
@@ -423,17 +427,10 @@ export class PokemonHeldItemModifierType extends PokemonModifierType {
 
 export class PokemonHeldItemReward extends PokemonModifierType {
   public itemId: HeldItems;
-  constructor(
-    itemId: HeldItems,
-    localeKey: string,
-    iconImage: string,
-    newModifierFunc: NewModifierFunc,
-    group?: string,
-    soundName?: string,
-  ) {
+  constructor(itemId: HeldItems, newModifierFunc: NewModifierFunc, group?: string, soundName?: string) {
     super(
-      localeKey,
-      iconImage,
+      "",
+      "",
       newModifierFunc,
       (pokemon: PlayerPokemon) => {
         const hasItem = pokemon.heldItemManager.hasItem(this.itemId);
@@ -465,8 +462,11 @@ export class PokemonHeldItemReward extends PokemonModifierType {
   }
 
   getDescription(): string {
-    // TODO: Need getTypeName?
     return allHeldItems[this.itemId].getDescription();
+  }
+
+  getIcon(): string {
+    return allHeldItems[this.itemId].getIcon();
   }
 }
 
@@ -866,8 +866,7 @@ export class AttackTypeBoosterReward extends PokemonHeldItemReward implements Ge
     const itemId = attackTypeToHeldItem[moveType];
     super(
       itemId,
-      "",
-      allHeldItems[itemId].getIcon(),
+      // Next argument is useless
       (_type, args) => new AttackTypeBoosterModifier(this, (args[0] as Pokemon).id, moveType, boostPercent),
     );
     this.moveType = moveType;
@@ -2016,7 +2015,7 @@ export type GeneratorModifierOverride = {
       type?: Nature;
     }
   | {
-      name: keyof Pick<typeof modifierTypes, "ATTACK_TYPE_BOOSTER" | "TERA_SHARD">;
+      name: keyof Pick<typeof modifierTypes, "ATTACK_TYPE_BOOSTER_REWARD" | "ATTACK_TYPE_BOOSTER" | "TERA_SHARD">;
       type?: PokemonType;
     }
   | {
@@ -2370,6 +2369,9 @@ export const modifierTypes = {
       "kings_rock",
       (type, args) => new FlinchChanceModifier(type, (args[0] as Pokemon).id),
     ),
+
+  LEFTOVERS_REWARD: () =>
+    new PokemonHeldItemReward(HeldItems.LEFTOVERS, (type, args) => new TurnHealModifier(type, (args[0] as Pokemon).id)),
 
   LEFTOVERS: () =>
     new PokemonHeldItemModifierType(
@@ -3058,7 +3060,7 @@ const modifierPool: ModifierPool = {
   [ModifierTier.ROGUE]: [
     new WeightedModifierType(modifierTypes.ROGUE_BALL, () => (hasMaximumBalls(PokeballType.ROGUE_BALL) ? 0 : 16), 16),
     new WeightedModifierType(modifierTypes.RELIC_GOLD, skipInLastClassicWaveOrDefault(2)),
-    new WeightedModifierType(modifierTypes.LEFTOVERS, 3),
+    new WeightedModifierType(modifierTypes.LEFTOVERS_REWARD, 3),
     new WeightedModifierType(modifierTypes.SHELL_BELL, 3),
     new WeightedModifierType(modifierTypes.BERRY_POUCH, 4),
     new WeightedModifierType(modifierTypes.GRIP_CLAW, 5),

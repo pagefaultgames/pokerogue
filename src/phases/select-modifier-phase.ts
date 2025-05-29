@@ -161,8 +161,7 @@ export class SelectModifierPhase extends BattlePhase {
       //TODO: is the bang correct?
       if (modifierType instanceof PokemonHeldItemReward) {
         this.openGiveHeldItemMenu(modifierType, modifierSelectCallback);
-      }
-      if (modifierType instanceof FusePokemonModifierType) {
+      } else if (modifierType instanceof FusePokemonModifierType) {
         this.openFusionMenu(modifierType, cost, modifierSelectCallback);
       } else {
         this.openModifierMenu(modifierType, cost, modifierSelectCallback);
@@ -233,26 +232,6 @@ export class SelectModifierPhase extends BattlePhase {
       PartyUiHandler.FilterItemMaxStacks,
     );
     return true;
-  }
-
-  private openGiveHeldItemMenu(reward, modifierSelectCallback) {
-    const party = globalScene.getPlayerParty();
-    const partyUiMode = PartyUiMode.MODIFIER;
-    globalScene.ui.setModeWithoutClear(
-      UiMode.PARTY,
-      partyUiMode,
-      -1,
-      (slotIndex: number, _option: PartyOption) => {
-        if (slotIndex < 6) {
-          globalScene.ui.setMode(UiMode.MODIFIER_SELECT, this.isPlayer()).then(() => {
-            party[slotIndex].heldItemManager.addHeldItem(reward.itemId);
-          });
-        } else {
-          this.resetModifierSelect(modifierSelectCallback);
-        }
-      },
-      reward.selectFilter,
-    );
   }
 
   // Toggle reroll lock
@@ -367,6 +346,29 @@ export class SelectModifierPhase extends BattlePhase {
         : undefined,
       tmMoveId,
       isPpRestoreModifier,
+    );
+  }
+
+  private openGiveHeldItemMenu(reward, modifierSelectCallback) {
+    const party = globalScene.getPlayerParty();
+    const partyUiMode = PartyUiMode.MODIFIER;
+    globalScene.ui.setModeWithoutClear(
+      UiMode.PARTY,
+      partyUiMode,
+      -1,
+      (slotIndex: number, _option: PartyOption) => {
+        if (slotIndex < 6) {
+          globalScene.ui.setMode(UiMode.MODIFIER_SELECT, this.isPlayer()).then(() => {
+            party[slotIndex].heldItemManager.addHeldItem(reward.itemId);
+            globalScene.ui.clearText();
+            globalScene.ui.setMode(UiMode.MESSAGE);
+            super.end();
+          });
+        } else {
+          this.resetModifierSelect(modifierSelectCallback);
+        }
+      },
+      reward.selectFilter,
     );
   }
 

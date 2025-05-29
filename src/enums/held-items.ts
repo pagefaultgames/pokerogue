@@ -74,3 +74,15 @@ export const HeldItems = {
 };
 
 export type HeldItems = (typeof HeldItems)[keyof typeof HeldItems];
+
+type HeldItemName = keyof typeof HeldItems;
+type HeldItemValue = typeof HeldItems[HeldItemName];
+
+// Use a type-safe reducer to force number keys and values
+export const HeldItemNames: Record<HeldItemValue, HeldItemName> = Object.entries(HeldItems).reduce(
+  (acc, [key, value]) => {
+    acc[value as HeldItemValue] = key as HeldItemName;
+    return acc;
+  },
+  {} as Record<HeldItemValue, HeldItemName>
+);

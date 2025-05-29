@@ -718,7 +718,7 @@ export abstract class PokemonHeldItemModifier extends PersistentModifier {
       const item = globalScene.add.sprite(16, this.virtualStackCount ? 8 : 16, "items");
       item.setScale(0.5);
       item.setOrigin(0, 0.5);
-      item.setTexture("items", this.type.iconImage);
+      item.setTexture("items", this.type.getIcon());
       container.add(item);
 
       const stackText = this.getIconStackText();

@@ -6,7 +6,6 @@ import { TurnEndEvent } from "#app/events/battle-scene";
 import type Pokemon from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import {
-  TurnHealModifier,
   EnemyTurnHealModifier,
   EnemyStatusEffectHealChanceModifier,
   TurnStatusEffectModifier,
@@ -16,6 +15,7 @@ import i18next from "i18next";
 import { FieldPhase } from "./field-phase";
 import { PokemonHealPhase } from "./pokemon-heal-phase";
 import { globalScene } from "#app/global-scene";
+import { applyTurnHealHeldItem } from "#app/modifier/all-held-items";
 
 export class TurnEndPhase extends FieldPhase {
   start() {
@@ -30,7 +30,7 @@ export class TurnEndPhase extends FieldPhase {
       if (!pokemon.switchOutStatus) {
         pokemon.lapseTags(BattlerTagLapseType.TURN_END);
 
-        globalScene.applyModifiers(TurnHealModifier, pokemon.isPlayer(), pokemon);
+        applyTurnHealHeldItem(pokemon);
 
         if (globalScene.arena.terrain?.terrainType === TerrainType.GRASSY && pokemon.isGrounded()) {
           globalScene.unshiftPhase(
