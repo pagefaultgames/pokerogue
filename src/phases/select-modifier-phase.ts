@@ -68,7 +68,7 @@ export class SelectModifierPhase extends BattlePhase {
     }
     const modifierCount = this.getModifierCount();
 
-    this.typeOptions = this.getModifierTypeOptions(modifierCount.value);
+    this.typeOptions = this.getModifierTypeOptions(modifierCount);
 
     const modifierSelectCallback = (rowCursor: number, cursor: number) => {
       if (rowCursor < 0 || cursor < 0) {
@@ -146,89 +146,107 @@ export class SelectModifierPhase extends BattlePhase {
   }
 
   private playBottomRowOption(cursor: number, modifierSelectCallback): boolean {
-    const party = globalScene.getPlayerParty();
-    const rerollCost = this.getRerollCost(globalScene.lockModifierTiers);
+    let success = false;
     switch (cursor) {
-      // Reroll rewards
       case 0:
-        if (rerollCost < 0 || globalScene.money < rerollCost) {
-          globalScene.ui.playError();
-          return false;
-        }
-        globalScene.reroll = true;
-        globalScene.unshiftPhase(
-          new SelectModifierPhase(
-            this.rerollCount + 1,
-            this.typeOptions.map(o => o.type?.tier).filter(t => t !== undefined) as ModifierTier[],
-          ),
-        );
-        globalScene.ui.clearText();
-        globalScene.ui.setMode(UiMode.MESSAGE).then(() => super.end());
-        if (!Overrides.WAIVE_ROLL_FEE_OVERRIDE) {
-          globalScene.money -= rerollCost;
-          globalScene.updateMoneyText();
-          globalScene.animateMoneyChanged(false);
-        }
-        globalScene.playSound("se/buy");
+        success = this.rerollModifiers();
         break;
-      // Transfer modifiers among party pokemon
       case 1:
-        globalScene.ui.setModeWithoutClear(
-          UiMode.PARTY,
-          PartyUiMode.MODIFIER_TRANSFER,
-          -1,
-          (fromSlotIndex: number, itemIndex: number, itemQuantity: number, toSlotIndex: number) => {
-            if (
-              toSlotIndex !== undefined &&
-              fromSlotIndex < 6 &&
-              toSlotIndex < 6 &&
-              fromSlotIndex !== toSlotIndex &&
-              itemIndex > -1
-            ) {
-              const itemModifiers = globalScene.findModifiers(
-                m =>
-                  m instanceof PokemonHeldItemModifier && m.isTransferable && m.pokemonId === party[fromSlotIndex].id,
-              ) as PokemonHeldItemModifier[];
-              const itemModifier = itemModifiers[itemIndex];
-              globalScene.tryTransferHeldItemModifier(
-                itemModifier,
-                party[toSlotIndex],
-                true,
-                itemQuantity,
-                undefined,
-                undefined,
-                false,
-              );
-            } else {
-              this.resetModifierSelect(modifierSelectCallback);
-            }
-          },
-          PartyUiHandler.FilterItemMaxStacks,
-        );
+        success = this.openModifierTransferScreen(modifierSelectCallback);
         break;
       // Check the party, pass a callback to restore the modifier select screen.
       case 2:
         globalScene.ui.setModeWithoutClear(UiMode.PARTY, PartyUiMode.CHECK, -1, () => {
           this.resetModifierSelect(modifierSelectCallback);
         });
+        success = true;
         break;
-      // Toggle reroll lock
       case 3:
-        if (rerollCost < 0) {
-          // Reroll lock button is also disabled when reroll is disabled
-          globalScene.ui.playError();
-          return false;
-        }
-        globalScene.lockModifierTiers = !globalScene.lockModifierTiers;
-        const uiHandler = globalScene.ui.getHandler() as ModifierSelectUiHandler;
-        uiHandler.setRerollCost(this.getRerollCost(globalScene.lockModifierTiers));
-        uiHandler.updateLockRaritiesText();
-        uiHandler.updateRerollCostText();
-        return false;
+        success = this.toggleRerollLock();
+        break;
     }
+    return success;
+  }
+
+  // Reroll rewards
+  private rerollModifiers() {
+    const rerollCost = this.getRerollCost(globalScene.lockModifierTiers);
+    if (rerollCost < 0 || globalScene.money < rerollCost) {
+      globalScene.ui.playError();
+      return false;
+    }
+    globalScene.reroll = true;
+    globalScene.unshiftPhase(
+      new SelectModifierPhase(
+        this.rerollCount + 1,
+        this.typeOptions.map(o => o.type?.tier).filter(t => t !== undefined) as ModifierTier[],
+      ),
+    );
+    globalScene.ui.clearText();
+    globalScene.ui.setMode(UiMode.MESSAGE).then(() => super.end());
+    if (!Overrides.WAIVE_ROLL_FEE_OVERRIDE) {
+      globalScene.money -= rerollCost;
+      globalScene.updateMoneyText();
+      globalScene.animateMoneyChanged(false);
+    }
+    globalScene.playSound("se/buy");
     return true;
   }
 
+  // Transfer modifiers among party pokemon
+  private openModifierTransferScreen(modifierSelectCallback) {
+    const party = globalScene.getPlayerParty();
+    globalScene.ui.setModeWithoutClear(
+      UiMode.PARTY,
+      PartyUiMode.MODIFIER_TRANSFER,
+      -1,
+      (fromSlotIndex: number, itemIndex: number, itemQuantity: number, toSlotIndex: number) => {
+        if (
+          toSlotIndex !== undefined &&
+          fromSlotIndex < 6 &&
+          toSlotIndex < 6 &&
+          fromSlotIndex !== toSlotIndex &&
+          itemIndex > -1
+        ) {
+          const itemModifiers = globalScene.findModifiers(
+            m => m instanceof PokemonHeldItemModifier && m.isTransferable && m.pokemonId === party[fromSlotIndex].id,
+          ) as PokemonHeldItemModifier[];
+          const itemModifier = itemModifiers[itemIndex];
+          globalScene.tryTransferHeldItemModifier(
+            itemModifier,
+            party[toSlotIndex],
+            true,
+            itemQuantity,
+            undefined,
+            undefined,
+            false,
+          );
+        } else {
+          this.resetModifierSelect(modifierSelectCallback);
+        }
+      },
+      PartyUiHandler.FilterItemMaxStacks,
+    );
+    return true;
+  }
+
+  // Toggle reroll lock
+  private toggleRerollLock() {
+    const rerollCost = this.getRerollCost(globalScene.lockModifierTiers);
+    if (rerollCost < 0) {
+      // Reroll lock button is also disabled when reroll is disabled
+      globalScene.ui.playError();
+      return false;
+    }
+    globalScene.lockModifierTiers = !globalScene.lockModifierTiers;
+    const uiHandler = globalScene.ui.getHandler() as ModifierSelectUiHandler;
+    uiHandler.setRerollCost(this.getRerollCost(globalScene.lockModifierTiers));
+    uiHandler.updateLockRaritiesText();
+    uiHandler.updateRerollCostText();
+    return false;
+  }
+
+  // Applies the effects of the chosen modifier
   private applyModifier(modifier: Modifier, cost = 0, playSound = false) {
     const result = globalScene.addModifier(modifier, false, playSound, undefined, undefined, cost);
     // Queue a copy of this phase when applying a TM or Memory Mushroom.
@@ -257,6 +275,7 @@ export class SelectModifierPhase extends BattlePhase {
     }
   }
 
+  // Opens the party menu specifically for fusions
   private openFusionMenu(modifierType, cost, modifierSelectCallback) {
     const party = globalScene.getPlayerParty();
     globalScene.ui.setModeWithoutClear(
@@ -282,6 +301,7 @@ export class SelectModifierPhase extends BattlePhase {
     );
   }
 
+  // Opens the party menu to apply one of various modifiers
   private openModifierMenu(modifierType, cost, modifierSelectCallback) {
     const party = globalScene.getPlayerParty();
     const pokemonModifierType = modifierType as PokemonModifierType;
@@ -326,11 +346,11 @@ export class SelectModifierPhase extends BattlePhase {
   }
 
   // Function that determines how many reward slots are available
-  private getModifierCount() {
-    const modifierCount = new NumberHolder(3);
+  private getModifierCount(): number {
+    const modifierCountHolder = new NumberHolder(3);
     if (this.isPlayer()) {
-      globalScene.applyModifiers(ExtraModifierModifier, true, modifierCount);
-      globalScene.applyModifiers(TempExtraModifierModifier, true, modifierCount);
+      globalScene.applyModifiers(ExtraModifierModifier, true, modifierCountHolder);
+      globalScene.applyModifiers(TempExtraModifierModifier, true, modifierCountHolder);
     }
 
     // If custom modifiers are specified, overrides default item count
@@ -340,16 +360,18 @@ export class SelectModifierPhase extends BattlePhase {
         (this.customModifierSettings.guaranteedModifierTypeOptions?.length || 0) +
         (this.customModifierSettings.guaranteedModifierTypeFuncs?.length || 0);
       if (this.customModifierSettings.fillRemaining) {
-        const originalCount = modifierCount.value;
-        modifierCount.value = originalCount > newItemCount ? originalCount : newItemCount;
+        const originalCount = modifierCountHolder.value;
+        modifierCountHolder.value = originalCount > newItemCount ? originalCount : newItemCount;
       } else {
-        modifierCount.value = newItemCount;
+        modifierCountHolder.value = newItemCount;
       }
     }
 
-    return modifierCount;
+    return modifierCountHolder.value;
   }
 
+  // Function that resets the reward selection screen,
+  // e.g. after pressing cancel in the party ui or while learning a move
   private resetModifierSelect(modifierSelectCallback) {
     globalScene.ui.setMode(
       UiMode.MODIFIER_SELECT,

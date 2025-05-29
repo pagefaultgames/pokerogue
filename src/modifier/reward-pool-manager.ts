@@ -1,3 +1,4 @@
+/** 
 import { globalScene } from "#app/global-scene";
 import { isNullOrUndefined, NumberHolder } from "#app/utils/common";
 import type { RewardGenerator } from "./reward-generator";
@@ -13,7 +14,7 @@ export interface CustomRewardSettings {
   guaranteedModifierTypeOptions?: ModifierTypeOption[];
   guaranteedModifierTypeFuncs?: ModifierTypeFunc[];
   fillRemaining?: boolean;
-  /** Set to negative value to disable rerolls completely in shop */
+  //Set to negative value to disable rerolls completely in shop
   rerollMultiplier?: number;
   allowLuckUpgrades?: boolean;
 }
@@ -90,3 +91,4 @@ export class RewardPoolManager {
     return modifierCount;
   }
 }
+*/
