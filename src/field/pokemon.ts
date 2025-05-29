@@ -255,7 +255,7 @@ import { MoveFlags } from "#enums/MoveFlags";
 import { timedEventManager } from "#app/global-event-manager";
 import { loadMoveAnimations } from "#app/sprites/pokemon-asset-loader";
 import { ResetStatusPhase } from "#app/phases/reset-status-phase";
-import { PokemonItemManager } from "./pokemon-item-manager";
+import { PokemonItemManager } from "./pokemon-held-item-manager";
 
 export enum LearnMoveSituation {
   MISC,

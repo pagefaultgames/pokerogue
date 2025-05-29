@@ -2,57 +2,9 @@ import type Pokemon from "#app/field/pokemon";
 import { globalScene } from "#app/global-scene";
 import type { Localizable } from "#app/interfaces/locales";
 import type { NumberHolder } from "#app/utils/common";
+import { HeldItems } from "#enums/held-items";
 import { PokemonType } from "#enums/pokemon-type";
 import i18next from "i18next";
-
-export const HeldItems = {
-  NONE: 0x0000,
-
-  SITRUS_BERRY: 0x0101,
-  LEPPA_BERRY: 0x0102,
-
-  SILK_SCARF: 0x0201,
-  BLACK_BELT: 0x0202,
-  SHARP_BEAK: 0x0203,
-  POISON_BARB: 0x0204,
-  SOFT_SAND: 0x0205,
-  HARD_STONE: 0x0206,
-  SILVER_POWDER: 0x0207,
-  SPELL_TAG: 0x0208,
-  METAL_COAT: 0x0209,
-  CHARCOAL: 0x020a,
-  MYSTIC_WATER: 0x020b,
-  MIRACLE_SEED: 0x020c,
-  MAGNET: 0x020d,
-  TWISTED_SPOON: 0x020e,
-  NEVER_MELT_ICE: 0x020f,
-  DRAGON_FANG: 0x0210,
-  BLACK_GLASSES: 0x0211,
-  FAIRY_FEATHER: 0x0212,
-
-  REVIVER_SEED: 0x0301,
-  SOOTHE_BELL: 0x0302,
-  SOUL_DEW: 0x0303,
-  GOLDEN_PUNCH: 0x0304,
-  GRIP_CLAW: 0x0305,
-  BATON: 0x0306,
-  FOCUS_BAND: 0x0307,
-  QUICK_CLAW: 0x0308,
-  KINGS_ROCK: 0x0309,
-  LEFTOVERS: 0x030a,
-  SHELL_BELL: 0x030b,
-};
-
-export type HeldItems = (typeof HeldItems)[keyof typeof HeldItems];
-
-export const HeldItemCategories = {
-  NONE: 0x0000,
-  BERRY: 0x0100,
-  ATTACK_TYPE_BOOSTER: 0x0200,
-  BASE_STAT_BOOSTER: 0x0400,
-};
-
-export type HeldItemCategories = (typeof HeldItemCategories)[keyof typeof HeldItemCategories];
 
 export class HeldItem implements Localizable {
   //  public pokemonId: number;
@@ -207,9 +159,9 @@ export class AttackTypeBoosterHeldItem extends HeldItem {
 
 export function applyAttackTypeBoosterHeldItem(pokemon: Pokemon, moveType: PokemonType, movePower: NumberHolder) {
   if (pokemon) {
-    for (const [item, stackCount] of pokemon.heldItemManager.getHeldItems()) {
+    for (const [item, props] of Object.entries(pokemon.heldItemManager.getHeldItems())) {
       if (allHeldItems[item] instanceof AttackTypeBoosterHeldItem) {
-        allHeldItems[item].apply(stackCount, moveType, movePower);
+        allHeldItems[item].apply(props.stack, moveType, movePower);
       }
     }
   }
