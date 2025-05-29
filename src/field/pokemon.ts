@@ -5,7 +5,9 @@ import { globalScene } from "#app/global-scene";
 import type { Variant } from "#app/sprites/variant";
 import { populateVariantColors, variantColorCache } from "#app/sprites/variant";
 import { variantData } from "#app/sprites/variant";
-import BattleInfo, { PlayerBattleInfo, EnemyBattleInfo } from "#app/ui/battle-info";
+import BattleInfo from "#app/ui/battle-info/battle-info";
+import { EnemyBattleInfo } from "#app/ui/battle-info/enemy-battle-info";
+import { PlayerBattleInfo } from "#app/ui/battle-info/player-battle-info";
 import type Move from "#app/data/moves/move";
 import {
   HighCritAttr,
@@ -3389,20 +3391,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.battleInfo.updateInfo(this, instant);
   }
 
-  /**
-   * Show or hide the type effectiveness multiplier window
-   * Passing undefined will hide the window
-   */
-  updateEffectiveness(effectiveness?: string) {
-    this.battleInfo.updateEffectiveness(effectiveness);
-  }
-
   toggleStats(visible: boolean): void {
     this.battleInfo.toggleStats(visible);
-  }
-
-  toggleFlyout(visible: boolean): void {
-    this.battleInfo.toggleFlyout(visible);
   }
 
   /**
@@ -5569,6 +5559,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 }
 
 export class PlayerPokemon extends Pokemon {
+  protected battleInfo: PlayerBattleInfo;
   public compatibleTms: Moves[];
 
   constructor(
@@ -6089,6 +6080,7 @@ export class PlayerPokemon extends Pokemon {
 }
 
 export class EnemyPokemon extends Pokemon {
+  protected battleInfo: EnemyBattleInfo;
   public trainerSlot: TrainerSlot;
   public aiType: AiType;
   public bossSegments: number;
@@ -6760,6 +6752,19 @@ export class EnemyPokemon extends Pokemon {
     }
 
     return ret;
+  }
+
+  
+  /**
+   * Show or hide the type effectiveness multiplier window
+   * Passing undefined will hide the window
+   */
+  updateEffectiveness(effectiveness?: string) {
+    this.battleInfo.updateEffectiveness(effectiveness);
+  }
+
+  toggleFlyout(visible: boolean): void {
+    this.battleInfo.toggleFlyout(visible);
   }
 }
 
