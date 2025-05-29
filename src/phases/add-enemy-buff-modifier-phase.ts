@@ -3,7 +3,7 @@ import {
   regenerateModifierPoolThresholds,
   ModifierPoolType,
   getEnemyBuffModifierForWave,
-} from "#app/modifier/modifier-type";
+} from "#app/modifier/modifier-pool";
 import { EnemyPersistentModifier } from "#app/modifier/modifier";
 import { Phase } from "#app/phase";
 import { globalScene } from "#app/global-scene";

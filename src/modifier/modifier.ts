@@ -40,11 +40,11 @@ import {
   type TerastallizeModifierType,
   type TmModifierType,
   getModifierType,
-  ModifierPoolType,
   ModifierTypeGenerator,
   modifierTypes,
   PokemonHeldItemModifierType,
 } from "./modifier-type";
+import { ModifierPoolType } from "./modifier-pool";
 import { Color, ShadowColor } from "#enums/color";
 import { FRIENDSHIP_GAIN_FROM_RARE_CANDY } from "#app/data/balance/starters";
 import {

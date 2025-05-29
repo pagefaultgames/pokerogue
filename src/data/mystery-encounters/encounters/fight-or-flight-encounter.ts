@@ -15,7 +15,7 @@ import {
   getPlayerModifierTypeOptions,
   ModifierPoolType,
   regenerateModifierPoolThresholds,
-} from "#app/modifier/modifier-type";
+} from "#app/modifier/modifier-pool";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { globalScene } from "#app/global-scene";
 import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";

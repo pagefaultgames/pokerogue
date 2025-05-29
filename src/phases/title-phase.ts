@@ -5,12 +5,12 @@ import { Gender } from "#app/data/gender";
 import { getBiomeKey } from "#app/field/arena";
 import { GameMode, GameModes, getGameMode } from "#app/game-mode";
 import type { Modifier } from "#app/modifier/modifier";
+import { modifierTypes } from "#app/modifier/modifier-type";
 import {
   getDailyRunStarterModifiers,
   ModifierPoolType,
-  modifierTypes,
   regenerateModifierPoolThresholds,
-} from "#app/modifier/modifier-type";
+} from "#app/modifier/modifier-pool";
 import { Phase } from "#app/phase";
 import type { SessionSaveData } from "#app/system/game-data";
 import { Unlockables } from "#app/system/unlockables";
