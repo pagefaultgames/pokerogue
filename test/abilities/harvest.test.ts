@@ -1,7 +1,7 @@
 import { BattlerIndex } from "#app/battle";
 import { PostTurnRestoreBerryAbAttr } from "#app/data/abilities/ability";
 import type Pokemon from "#app/field/pokemon";
-import { BerryModifier, PreserveBerryModifier } from "#app/modifier/modifier";
+import { BerryModifier, PreserveBerryModifier } from "#app/modifier/held-item-modifier";
 import type { ModifierOverride } from "#app/modifier/modifier-type";
 import type { BooleanHolder } from "#app/utils/common";
 import { Abilities } from "#enums/abilities";

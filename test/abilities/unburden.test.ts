@@ -3,7 +3,7 @@ import { PostItemLostAbAttr } from "#app/data/abilities/ability";
 import { StealHeldItemChanceAttr } from "#app/data/moves/move";
 import { allMoves } from "#app/data/data-lists";
 import type Pokemon from "#app/field/pokemon";
-import type { ContactHeldItemTransferChanceModifier } from "#app/modifier/modifier";
+import type {} from "#app/modifier/modifier";
 import { Abilities } from "#enums/abilities";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BerryType } from "#enums/berry-type";
@@ -13,6 +13,7 @@ import { Stat } from "#enums/stat";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import type { ContactHeldItemTransferChanceModifier } from "#app/modifier/held-item-modifier";
 
 describe("Abilities - Unburden", () => {
   let phaserGame: Phaser.Game;
