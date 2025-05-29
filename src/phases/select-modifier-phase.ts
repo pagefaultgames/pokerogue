@@ -2,8 +2,6 @@ import { globalScene } from "#app/global-scene";
 import type { ModifierTier } from "#app/modifier/modifier-tier";
 import type { ModifierTypeOption, ModifierType } from "#app/modifier/modifier-type";
 import {
-  regenerateModifierPoolThresholds,
-  getPlayerShopModifierTypeOptionsForWave,
   PokemonModifierType,
   FusePokemonModifierType,
   PokemonMoveModifierType,
@@ -11,9 +9,14 @@ import {
   RememberMoveModifierType,
   PokemonPpRestoreModifierType,
   PokemonPpUpModifierType,
+} from "#app/modifier/modifier-type";
+import {
+  regenerateModifierPoolThresholds,
+  getPlayerShopModifierTypeOptionsForWave,
   ModifierPoolType,
   getPlayerModifierTypeOptions,
-} from "#app/modifier/modifier-type";
+  type CustomModifierSettings,
+} from "#app/modifier/modifier-pool";
 import type { Modifier } from "#app/modifier/modifier";
 import {
   ExtraModifierModifier,
@@ -28,7 +31,6 @@ import { UiMode } from "#enums/ui-mode";
 import i18next from "i18next";
 import { BattlePhase } from "./battle-phase";
 import Overrides from "#app/overrides";
-import type { CustomModifierSettings } from "#app/modifier/modifier-type";
 import { isNullOrUndefined, NumberHolder } from "#app/utils/common";
 
 export class SelectModifierPhase extends BattlePhase {

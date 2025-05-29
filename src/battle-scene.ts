@@ -53,18 +53,14 @@ import { GameData } from "#app/system/game-data";
 import { addTextObject, getTextColor, TextStyle } from "#app/ui/text";
 import { allMoves } from "./data/data-lists";
 import { MusicPreference } from "#app/system/settings/settings";
+import { getModifierType, modifierTypes, PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
 import {
   getDefaultModifierTypeForTier,
   getEnemyModifierTypesForWave,
-  getLuckString,
-  getLuckTextTint,
   getModifierPoolForType,
-  getModifierType,
-  getPartyLuckValue,
   ModifierPoolType,
-  modifierTypes,
-  PokemonHeldItemModifierType,
-} from "#app/modifier/modifier-type";
+} from "#app/modifier/modifier-pool";
+import { getLuckString, getLuckTextTint, getPartyLuckValue } from "#app/modifier/modifier-utils";
 import AbilityBar from "#app/ui/ability-bar";
 import {
   applyAbAttrs,

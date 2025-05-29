@@ -11,7 +11,7 @@ import {
   getPlayerModifierTypeOptions,
   ModifierPoolType,
   regenerateModifierPoolThresholds,
-} from "#app/modifier/modifier-type";
+} from "#app/modifier/modifier-pool";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { globalScene } from "#app/global-scene";
 import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
@@ -54,6 +54,7 @@ import type { PokeballType } from "#enums/pokeball";
 import { doShinySparkleAnim } from "#app/field/anims";
 import { TrainerType } from "#enums/trainer-type";
 import { timedEventManager } from "#app/global-event-manager";
+import { withTierFromPool } from "#app/modifier/modifier-pool";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/globalTradeSystem";
@@ -437,7 +438,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
         const chosenPokemon: PlayerPokemon = encounter.misc.chosenPokemon;
 
         // Check tier of the traded item, the received item will be one tier up
-        const type = modifier.type.withTierFromPool(ModifierPoolType.PLAYER, party);
+        const type = withTierFromPool(modifier.type, ModifierPoolType.PLAYER, party);
         let tier = type.tier ?? ModifierTier.GREAT;
         // Eggs and White Herb are not in the pool
         if (type.id === "WHITE_HERB") {

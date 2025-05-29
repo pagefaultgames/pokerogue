@@ -11,15 +11,19 @@ import { showEncounterText } from "#app/data/mystery-encounters/utils/encounter-
 import type { AiType, PlayerPokemon } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
 import { EnemyPokemon, FieldPosition, PokemonMove } from "#app/field/pokemon";
-import type { CustomModifierSettings, ModifierType } from "#app/modifier/modifier-type";
 import {
-  getPartyLuckValue,
-  ModifierPoolType,
+  type ModifierType,
   ModifierTypeGenerator,
   ModifierTypeOption,
   modifierTypes,
-  regenerateModifierPoolThresholds,
 } from "#app/modifier/modifier-type";
+import {
+  type CustomModifierSettings,
+  ModifierPoolType,
+  regenerateModifierPoolThresholds,
+  withTierFromPool,
+} from "#app/modifier/modifier-pool";
+import { getPartyLuckValue } from "#app/modifier/modifier-utils";
 import {
   MysteryEncounterBattlePhase,
   MysteryEncounterBattleStartCleanupPhase,
@@ -513,9 +517,11 @@ export function generateModifierType(modifier: () => ModifierType, pregenArgs?: 
   let result: ModifierType = modifierTypes[modifierId]();
 
   // Populates item id and tier (order matters)
-  result = result
-    .withIdFromFunc(modifierTypes[modifierId])
-    .withTierFromPool(ModifierPoolType.PLAYER, globalScene.getPlayerParty());
+  result = withTierFromPool(
+    result.withIdFromFunc(modifierTypes[modifierId]),
+    ModifierPoolType.PLAYER,
+    globalScene.getPlayerParty(),
+  );
 
   return result instanceof ModifierTypeGenerator
     ? result.generateType(globalScene.getPlayerParty(), pregenArgs)
