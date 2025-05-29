@@ -4666,7 +4666,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     switch (effect) {
       case StatusEffect.POISON:
       case StatusEffect.TOXIC:
-        // Check for type based immunities and/or Corrosion from the applier
+        // Check for type based immunities and/or Corrosion from the applier.
+        // Only need 1 immune type to block status
         isImmune = types.some(defType => {
           if (defType !== PokemonType.POISON && defType !== PokemonType.STEEL) {
             return false;
@@ -4678,7 +4679,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
           const cancelImmunity = new BooleanHolder(false);
           applyAbAttrs(IgnoreTypeStatusEffectImmunityAbAttr, sourcePokemon, cancelImmunity, false, effect, defType);
-          return cancelImmunity.value;
+          return !cancelImmunity.value;
         });
         break;
       case StatusEffect.PARALYSIS:
