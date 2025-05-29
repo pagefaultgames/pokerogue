@@ -77,7 +77,7 @@ import {
 import type { BattlerIndex } from "../../battle";
 import { BattleType } from "#enums/battle-type";
 import { TerrainType } from "../terrain";
-import { getOrInferTier, ModifierPoolType } from "#app/modifier/modifier-pool";
+import { getOrInferTier } from "#app/modifier/modifier-pool";
 import { Command } from "../../ui/command-ui-handler";
 import i18next from "i18next";
 import type { Localizable } from "#app/interfaces/locales";
@@ -123,6 +123,7 @@ import { MultiHitType } from "#enums/MultiHitType";
 import { invalidAssistMoves, invalidCopycatMoves, invalidMetronomeMoves, invalidMirrorMoveMoves, invalidSleepTalkMoves } from "./invalid-moves";
 import { SelectBiomePhase } from "#app/phases/select-biome-phase";
 import { PreserveBerryModifier } from "#app/modifier/modifier";
+import { ModifierPoolType } from "#app/modifier/modifier-pool-type";
 
 type MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => boolean;
 type UserMoveConditionFunc = (user: Pokemon, move: Move) => boolean;

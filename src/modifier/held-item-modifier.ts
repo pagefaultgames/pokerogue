@@ -31,21 +31,17 @@ import {
   PreserveBerryModifier,
   TempExtraModifierModifier,
 } from "./modifier";
-import {
-  type FormChangeItemModifierType,
-  type ModifierOverride,
-  ModifierTypeGenerator,
-  modifierTypes,
-  type PokemonExpBoosterModifierType,
-  type PokemonFriendshipBoosterModifierType,
-  PokemonHeldItemModifierType,
-  type PokemonMoveAccuracyBoosterModifierType,
-  type PokemonMultiHitModifierType,
-  type ModifierType,
-  type PokemonBaseStatTotalModifierType,
+import type {
+  FormChangeItemModifierType,
+  PokemonExpBoosterModifierType,
+  PokemonFriendshipBoosterModifierType,
+  PokemonMoveAccuracyBoosterModifierType,
+  PokemonMultiHitModifierType,
+  ModifierType,
+  PokemonBaseStatTotalModifierType,
 } from "./modifier-type";
-import { getOrInferTier, ModifierPoolType } from "./modifier-pool";
-import Overrides from "#app/overrides";
+import { getOrInferTier } from "./modifier-pool";
+import { ModifierPoolType } from "./modifier-pool-type";
 
 export abstract class PokemonHeldItemModifier extends PersistentModifier {
   /** The ID of the {@linkcode Pokemon} that this item belongs to. */
@@ -984,7 +980,7 @@ export class BypassSpeedChanceModifier extends PokemonHeldItemModifier {
       doBypassSpeed.value = true;
       const isCommandFight =
         globalScene.currentBattle.turnCommands[pokemon.getBattlerIndex()]?.command === Command.FIGHT;
-      const hasQuickClaw = this.type instanceof PokemonHeldItemModifierType && this.type.id === "QUICK_CLAW";
+      const hasQuickClaw = this.type.id === "QUICK_CLAW";
 
       if (isCommandFight && hasQuickClaw) {
         globalScene.queueMessage(
@@ -1906,48 +1902,5 @@ export class ContactHeldItemTransferChanceModifier extends HeldItemTransferModif
 
   getMaxHeldItemCount(_pokemon: Pokemon): number {
     return 5;
-  }
-}
-
-/**
- * Uses either `HELD_ITEMS_OVERRIDE` in overrides.ts to set {@linkcode PokemonHeldItemModifier}s for either:
- *  - The first member of the player's team when starting a new game
- *  - An enemy {@linkcode Pokemon} being spawned in
- * @param pokemon {@linkcode Pokemon} whose held items are being overridden
- * @param isPlayer {@linkcode boolean} for whether the {@linkcode pokemon} is the player's (`true`) or an enemy (`false`)
- */
-export function overrideHeldItems(pokemon: Pokemon, isPlayer = true): void {
-  const heldItemsOverride: ModifierOverride[] = isPlayer
-    ? Overrides.STARTING_HELD_ITEMS_OVERRIDE
-    : Overrides.OPP_HELD_ITEMS_OVERRIDE;
-  if (!heldItemsOverride || heldItemsOverride.length === 0 || !globalScene) {
-    return;
-  }
-
-  if (!isPlayer) {
-    globalScene.clearEnemyHeldItemModifiers(pokemon);
-  }
-
-  for (const item of heldItemsOverride) {
-    const modifierFunc = modifierTypes[item.name];
-    let modifierType: ModifierType | null = modifierFunc();
-    const qty = item.count || 1;
-
-    if (modifierType instanceof ModifierTypeGenerator) {
-      const pregenArgs = "type" in item && item.type !== null ? [item.type] : undefined;
-      modifierType = modifierType.generateType([], pregenArgs);
-    }
-
-    const heldItemModifier =
-      modifierType && (modifierType.withIdFromFunc(modifierFunc).newModifier(pokemon) as PokemonHeldItemModifier);
-    if (heldItemModifier) {
-      heldItemModifier.pokemonId = pokemon.id;
-      heldItemModifier.stackCount = qty;
-      if (isPlayer) {
-        globalScene.addModifier(heldItemModifier, true, false, false, true);
-      } else {
-        globalScene.addEnemyModifier(heldItemModifier, true, true);
-      }
-    }
   }
 }

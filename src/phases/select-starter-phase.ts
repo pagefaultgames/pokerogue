@@ -13,7 +13,7 @@ import { UiMode } from "#enums/ui-mode";
 import type { Species } from "#enums/species";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 import { isNullOrUndefined } from "#app/utils/common";
-import { overrideHeldItems } from "#app/modifier/held-item-modifier";
+import { overrideHeldItems } from "#app/modifier/modifier-type";
 
 export class SelectStarterPhase extends Phase {
   start() {

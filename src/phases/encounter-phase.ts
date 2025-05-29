@@ -20,7 +20,7 @@ import type Pokemon from "#app/field/pokemon";
 import { FieldPosition } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { BoostBugSpawnModifier, IvScannerModifier } from "#app/modifier/modifier";
-import { ModifierPoolType, regenerateModifierPoolThresholds } from "#app/modifier/modifier-pool";
+import { regenerateModifierPoolThresholds } from "#app/modifier/modifier-pool";
 import Overrides from "#app/overrides";
 import { BattlePhase } from "#app/phases/battle-phase";
 import { CheckSwitchPhase } from "#app/phases/check-switch-phase";
@@ -45,7 +45,9 @@ import { overrideModifiers } from "#app/modifier/modifier";
 import i18next from "i18next";
 import { WEIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/data/mystery-encounters/mystery-encounters";
 import { getNatureName } from "#app/data/nature";
-import { overrideHeldItems, TurnHeldItemTransferModifier } from "#app/modifier/held-item-modifier";
+import { TurnHeldItemTransferModifier } from "#app/modifier/held-item-modifier";
+import { ModifierPoolType } from "#app/modifier/modifier-pool-type";
+import { overrideHeldItems } from "#app/modifier/modifier-type";
 
 export class EncounterPhase extends BattlePhase {
   private loaded: boolean;

@@ -13,7 +13,7 @@ import type { PlayerPokemon } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
 import type { BerryModifierType, ModifierTypeOption } from "#app/modifier/modifier-type";
 import { modifierTypes } from "#app/modifier/modifier-type";
-import { ModifierPoolType, regenerateModifierPoolThresholds } from "#app/modifier/modifier-pool";
+import { regenerateModifierPoolThresholds } from "#app/modifier/modifier-pool";
 import { randSeedInt } from "#app/utils/common";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
@@ -38,6 +38,7 @@ import { BerryType } from "#enums/berry-type";
 import { PERMANENT_STATS, Stat } from "#enums/stat";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
+import { ModifierPoolType } from "#app/modifier/modifier-pool-type";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/berriesAbound";

@@ -53,7 +53,6 @@ import {
   getDefaultModifierTypeForTier,
   getEnemyModifierTypesForWave,
   getModifierPoolForType,
-  ModifierPoolType,
 } from "#app/modifier/modifier-pool";
 import { getLuckString, getLuckTextTint, getPartyLuckValue } from "#app/modifier/modifier-utils";
 import AbilityBar from "#app/ui/ability-bar";
@@ -185,6 +184,7 @@ import {
   PokemonIncrementingStatModifier,
   type TurnHeldItemTransferModifier,
 } from "./modifier/held-item-modifier";
+import { ModifierPoolType } from "./modifier/modifier-pool-type";
 
 const DEBUG_RNG = false;
 

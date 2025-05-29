@@ -7,11 +7,7 @@ import { TrainerSlot } from "#enums/trainer-slot";
 import { ModifierTier } from "#app/modifier/modifier-tier";
 import { MusicPreference } from "#app/system/settings/settings";
 import type { ModifierTypeOption } from "#app/modifier/modifier-type";
-import {
-  getPlayerModifierTypeOptions,
-  ModifierPoolType,
-  regenerateModifierPoolThresholds,
-} from "#app/modifier/modifier-pool";
+import { getPlayerModifierTypeOptions, regenerateModifierPoolThresholds } from "#app/modifier/modifier-pool";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { globalScene } from "#app/global-scene";
 import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
@@ -54,6 +50,7 @@ import { doShinySparkleAnim } from "#app/field/anims";
 import { TrainerType } from "#enums/trainer-type";
 import { timedEventManager } from "#app/global-event-manager";
 import { withTierFromPool } from "#app/modifier/modifier-pool";
+import { ModifierPoolType } from "#app/modifier/modifier-pool-type";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/globalTradeSystem";

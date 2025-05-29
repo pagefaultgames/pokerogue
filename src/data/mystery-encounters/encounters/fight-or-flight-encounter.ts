@@ -11,11 +11,7 @@ import { STEALING_MOVES } from "#app/data/mystery-encounters/requirements/requir
 import type Pokemon from "#app/field/pokemon";
 import { ModifierTier } from "#app/modifier/modifier-tier";
 import type { ModifierTypeOption } from "#app/modifier/modifier-type";
-import {
-  getPlayerModifierTypeOptions,
-  ModifierPoolType,
-  regenerateModifierPoolThresholds,
-} from "#app/modifier/modifier-pool";
+import { getPlayerModifierTypeOptions, regenerateModifierPoolThresholds } from "#app/modifier/modifier-pool";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { globalScene } from "#app/global-scene";
 import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
@@ -34,6 +30,7 @@ import { queueEncounterMessage } from "#app/data/mystery-encounters/utils/encoun
 import { randSeedInt } from "#app/utils/common";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
+import { ModifierPoolType } from "#app/modifier/modifier-pool-type";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/fightOrFlight";

@@ -11,7 +11,7 @@ import { Moves } from "#enums/moves";
 import { PokeballType } from "#enums/pokeball";
 import { Species } from "#enums/species";
 import { StatusEffect } from "#enums/status-effect";
-import type { EnemyPersistentModifier, PersistentModifier } from "./modifier";
+import { DoubleBattleChanceBoosterModifier, type EnemyPersistentModifier, type PersistentModifier } from "./modifier";
 import {
   BerryModifier,
   type PokemonHeldItemModifier,
@@ -22,7 +22,6 @@ import { ModifierTier } from "./modifier-tier";
 import {
   FormChangeItemModifierType,
   getModifierType,
-  lureWeightFunc,
   type ModifierOverride,
   type ModifierType,
   type ModifierTypeFunc,
@@ -31,26 +30,82 @@ import {
   ModifierTypeOption,
   modifierTypes,
   PokemonHeldItemModifierType,
-  skipInClassicAfterWave,
-  skipInLastClassicWaveOrDefault,
-  WeightedModifierType,
 } from "./modifier-type";
 import { getPartyLuckValue, hasMaximumBalls } from "./modifier-utils";
 import Overrides from "#app/overrides";
+import { ModifierPoolType } from "./modifier-pool-type";
 
 const outputModifierData = false;
 const useMaxWeightForOutput = false;
 
-export enum ModifierPoolType {
-  PLAYER,
-  WILD,
-  TRAINER,
-  ENEMY_BUFF,
-  DAILY_STARTER,
-}
-
 interface ModifierPool {
   [tier: string]: WeightedModifierType[];
+}
+
+export class WeightedModifierType {
+  public modifierType: ModifierType;
+  public weight: number | WeightedModifierTypeWeightFunc;
+  public maxWeight: number | WeightedModifierTypeWeightFunc;
+
+  constructor(
+    modifierTypeFunc: ModifierTypeFunc,
+    weight: number | WeightedModifierTypeWeightFunc,
+    maxWeight?: number | WeightedModifierTypeWeightFunc,
+  ) {
+    this.modifierType = modifierTypeFunc();
+    this.modifierType.id = Object.keys(modifierTypes).find(k => modifierTypes[k] === modifierTypeFunc)!; // TODO: is this bang correct?
+    this.weight = weight;
+    this.maxWeight = maxWeight || (!(weight instanceof Function) ? weight : 0);
+  }
+
+  setTier(tier: ModifierTier) {
+    this.modifierType.setTier(tier);
+  }
+}
+
+type WeightedModifierTypeWeightFunc = (party: Pokemon[], rerollCount?: number) => number;
+
+/**
+ * High order function that returns a WeightedModifierTypeWeightFunc that will only be applied on
+ * classic and skip an ModifierType if current wave is greater or equal to the one passed down
+ * @param wave - Wave where we should stop showing the modifier
+ * @param defaultWeight - ModifierType default weight
+ * @returns A WeightedModifierTypeWeightFunc
+ */
+export function skipInClassicAfterWave(wave: number, defaultWeight: number): WeightedModifierTypeWeightFunc {
+  return () => {
+    const gameMode = globalScene.gameMode;
+    const currentWave = globalScene.currentBattle.waveIndex;
+    return gameMode.isClassic && currentWave >= wave ? 0 : defaultWeight;
+  };
+}
+
+/**
+ * High order function that returns a WeightedModifierTypeWeightFunc that will only be applied on
+ * classic and it will skip a ModifierType if it is the last wave pull.
+ * @param defaultWeight ModifierType default weight
+ * @returns A WeightedModifierTypeWeightFunc
+ */
+export function skipInLastClassicWaveOrDefault(defaultWeight: number): WeightedModifierTypeWeightFunc {
+  return skipInClassicAfterWave(199, defaultWeight);
+}
+
+/**
+ * High order function that returns a WeightedModifierTypeWeightFunc to ensure Lures don't spawn on Classic 199
+ * or if the lure still has over 60% of its duration left
+ * @param maxBattles The max battles the lure type in question lasts. 10 for green, 15 for Super, 30 for Max
+ * @param weight The desired weight for the lure when it does spawn
+ * @returns A WeightedModifierTypeWeightFunc
+ */
+export function lureWeightFunc(maxBattles: number, weight: number): WeightedModifierTypeWeightFunc {
+  return () => {
+    const lures = globalScene.getModifiers(DoubleBattleChanceBoosterModifier);
+    return !(globalScene.gameMode.isClassic && globalScene.currentBattle.waveIndex === 199) &&
+      (lures.length === 0 ||
+        lures.filter(m => m.getMaxBattles() === maxBattles && m.getBattleCount() >= maxBattles * 0.6).length === 0)
+      ? weight
+      : 0;
+  };
 }
 
 const modifierPool: ModifierPool = {

@@ -104,6 +104,7 @@ import { ModifierTier } from "#app/modifier/modifier-tier";
 import { getVoucherTypeIcon, getVoucherTypeName, VoucherType } from "#app/system/voucher";
 import type { PokemonMoveSelectFilter, PokemonSelectFilter } from "#app/ui/party-ui-handler";
 import PartyUiHandler from "#app/ui/party-ui-handler";
+import Overrides from "#app/overrides";
 
 import { formatMoney, getEnumKeys, getEnumValues, NumberHolder, padInt, randSeedInt } from "#app/utils/common";
 import { BattlerTagType } from "#enums/battler-tag-type";
@@ -1689,70 +1690,6 @@ export class EnemyEndureChanceModifierType extends ModifierType {
 }
 
 export type ModifierTypeFunc = () => ModifierType;
-type WeightedModifierTypeWeightFunc = (party: Pokemon[], rerollCount?: number) => number;
-
-/**
- * High order function that returns a WeightedModifierTypeWeightFunc that will only be applied on
- * classic and skip an ModifierType if current wave is greater or equal to the one passed down
- * @param wave - Wave where we should stop showing the modifier
- * @param defaultWeight - ModifierType default weight
- * @returns A WeightedModifierTypeWeightFunc
- */
-export function skipInClassicAfterWave(wave: number, defaultWeight: number): WeightedModifierTypeWeightFunc {
-  return () => {
-    const gameMode = globalScene.gameMode;
-    const currentWave = globalScene.currentBattle.waveIndex;
-    return gameMode.isClassic && currentWave >= wave ? 0 : defaultWeight;
-  };
-}
-
-/**
- * High order function that returns a WeightedModifierTypeWeightFunc that will only be applied on
- * classic and it will skip a ModifierType if it is the last wave pull.
- * @param defaultWeight ModifierType default weight
- * @returns A WeightedModifierTypeWeightFunc
- */
-export function skipInLastClassicWaveOrDefault(defaultWeight: number): WeightedModifierTypeWeightFunc {
-  return skipInClassicAfterWave(199, defaultWeight);
-}
-
-/**
- * High order function that returns a WeightedModifierTypeWeightFunc to ensure Lures don't spawn on Classic 199
- * or if the lure still has over 60% of its duration left
- * @param maxBattles The max battles the lure type in question lasts. 10 for green, 15 for Super, 30 for Max
- * @param weight The desired weight for the lure when it does spawn
- * @returns A WeightedModifierTypeWeightFunc
- */
-export function lureWeightFunc(maxBattles: number, weight: number): WeightedModifierTypeWeightFunc {
-  return () => {
-    const lures = globalScene.getModifiers(DoubleBattleChanceBoosterModifier);
-    return !(globalScene.gameMode.isClassic && globalScene.currentBattle.waveIndex === 199) &&
-      (lures.length === 0 ||
-        lures.filter(m => m.getMaxBattles() === maxBattles && m.getBattleCount() >= maxBattles * 0.6).length === 0)
-      ? weight
-      : 0;
-  };
-}
-export class WeightedModifierType {
-  public modifierType: ModifierType;
-  public weight: number | WeightedModifierTypeWeightFunc;
-  public maxWeight: number | WeightedModifierTypeWeightFunc;
-
-  constructor(
-    modifierTypeFunc: ModifierTypeFunc,
-    weight: number | WeightedModifierTypeWeightFunc,
-    maxWeight?: number | WeightedModifierTypeWeightFunc,
-  ) {
-    this.modifierType = modifierTypeFunc();
-    this.modifierType.id = Object.keys(modifierTypes).find(k => modifierTypes[k] === modifierTypeFunc)!; // TODO: is this bang correct?
-    this.weight = weight;
-    this.maxWeight = maxWeight || (!(weight instanceof Function) ? weight : 0);
-  }
-
-  setTier(tier: ModifierTier) {
-    this.modifierType.setTier(tier);
-  }
-}
 
 type BaseModifierOverride = {
   name: Exclude<ModifierTypeKeys, GeneratorModifierOverride["name"]>;
@@ -2337,4 +2274,47 @@ export class ModifierTypeOption {
 
 export function getModifierTypeFuncById(id: string): ModifierTypeFunc {
   return modifierTypes[id];
+}
+
+/**
+ * Uses either `HELD_ITEMS_OVERRIDE` in overrides.ts to set {@linkcode PokemonHeldItemModifier}s for either:
+ *  - The first member of the player's team when starting a new game
+ *  - An enemy {@linkcode Pokemon} being spawned in
+ * @param pokemon {@linkcode Pokemon} whose held items are being overridden
+ * @param isPlayer {@linkcode boolean} for whether the {@linkcode pokemon} is the player's (`true`) or an enemy (`false`)
+ */
+export function overrideHeldItems(pokemon: Pokemon, isPlayer = true): void {
+  const heldItemsOverride: ModifierOverride[] = isPlayer
+    ? Overrides.STARTING_HELD_ITEMS_OVERRIDE
+    : Overrides.OPP_HELD_ITEMS_OVERRIDE;
+  if (!heldItemsOverride || heldItemsOverride.length === 0 || !globalScene) {
+    return;
+  }
+
+  if (!isPlayer) {
+    globalScene.clearEnemyHeldItemModifiers(pokemon);
+  }
+
+  for (const item of heldItemsOverride) {
+    const modifierFunc = modifierTypes[item.name];
+    let modifierType: ModifierType | null = modifierFunc();
+    const qty = item.count || 1;
+
+    if (modifierType instanceof ModifierTypeGenerator) {
+      const pregenArgs = "type" in item && item.type !== null ? [item.type] : undefined;
+      modifierType = modifierType.generateType([], pregenArgs);
+    }
+
+    const heldItemModifier =
+      modifierType && (modifierType.withIdFromFunc(modifierFunc).newModifier(pokemon) as PokemonHeldItemModifier);
+    if (heldItemModifier) {
+      heldItemModifier.pokemonId = pokemon.id;
+      heldItemModifier.stackCount = qty;
+      if (isPlayer) {
+        globalScene.addModifier(heldItemModifier, true, false, false, true);
+      } else {
+        globalScene.addEnemyModifier(heldItemModifier, true, true);
+      }
+    }
+  }
 }

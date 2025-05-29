@@ -6,11 +6,7 @@ import { getBiomeKey } from "#app/field/arena";
 import { GameMode, GameModes, getGameMode } from "#app/game-mode";
 import type { Modifier } from "#app/modifier/modifier";
 import { modifierTypes } from "#app/modifier/modifier-type";
-import {
-  getDailyRunStarterModifiers,
-  ModifierPoolType,
-  regenerateModifierPoolThresholds,
-} from "#app/modifier/modifier-pool";
+import { getDailyRunStarterModifiers, regenerateModifierPoolThresholds } from "#app/modifier/modifier-pool";
 import { Phase } from "#app/phase";
 import type { SessionSaveData } from "#app/system/game-data";
 import { Unlockables } from "#app/system/unlockables";
@@ -27,6 +23,7 @@ import { SelectStarterPhase } from "./select-starter-phase";
 import { SummonPhase } from "./summon-phase";
 import { globalScene } from "#app/global-scene";
 import Overrides from "#app/overrides";
+import { ModifierPoolType } from "#app/modifier/modifier-pool-type";
 
 export class TitlePhase extends Phase {
   private loaded = false;

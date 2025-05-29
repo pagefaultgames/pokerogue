@@ -19,7 +19,6 @@ import {
 } from "#app/modifier/modifier-type";
 import {
   type CustomModifierSettings,
-  ModifierPoolType,
   regenerateModifierPoolThresholds,
   withTierFromPool,
 } from "#app/modifier/modifier-pool";
@@ -70,6 +69,7 @@ import { PokemonType } from "#enums/pokemon-type";
 import { getNatureName } from "#app/data/nature";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { timedEventManager } from "#app/global-event-manager";
+import { ModifierPoolType } from "#app/modifier/modifier-pool-type";
 
 /**
  * Animates exclamation sprite over trainer's head at start of encounter

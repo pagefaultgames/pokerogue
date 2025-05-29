@@ -13,7 +13,6 @@ import {
 import {
   regenerateModifierPoolThresholds,
   getPlayerShopModifierTypeOptionsForWave,
-  ModifierPoolType,
   getPlayerModifierTypeOptions,
   type CustomModifierSettings,
 } from "#app/modifier/modifier-pool";
@@ -28,6 +27,7 @@ import { BattlePhase } from "./battle-phase";
 import Overrides from "#app/overrides";
 import { isNullOrUndefined, NumberHolder } from "#app/utils/common";
 import { PokemonHeldItemModifier } from "#app/modifier/held-item-modifier";
+import { ModifierPoolType } from "#app/modifier/modifier-pool-type";
 
 export class SelectModifierPhase extends BattlePhase {
   private rerollCount: number;
