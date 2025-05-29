@@ -858,33 +858,75 @@ export class BerryModifierType extends PokemonHeldItemModifierType implements Ge
   }
 }
 
+export class AttackTypeBoosterReward extends PokemonHeldItemReward implements GeneratedPersistentModifierType {
+  public moveType: PokemonType;
+  public boostPercent: number;
+
+  constructor(moveType: PokemonType, boostPercent: number) {
+    const itemId = attackTypeToHeldItem[moveType];
+    super(
+      itemId,
+      "",
+      allHeldItems[itemId].getIcon(),
+      (_type, args) => new AttackTypeBoosterModifier(this, (args[0] as Pokemon).id, moveType, boostPercent),
+    );
+    this.moveType = moveType;
+    this.boostPercent = boostPercent;
+  }
+
+  getPregenArgs(): any[] {
+    return [this.moveType];
+  }
+}
+
+enum AttackTypeBoosterItem {
+  SILK_SCARF,
+  BLACK_BELT,
+  SHARP_BEAK,
+  POISON_BARB,
+  SOFT_SAND,
+  HARD_STONE,
+  SILVER_POWDER,
+  SPELL_TAG,
+  METAL_COAT,
+  CHARCOAL,
+  MYSTIC_WATER,
+  MIRACLE_SEED,
+  MAGNET,
+  TWISTED_SPOON,
+  NEVER_MELT_ICE,
+  DRAGON_FANG,
+  BLACK_GLASSES,
+  FAIRY_FEATHER,
+}
+
 export class AttackTypeBoosterModifierType
   extends PokemonHeldItemModifierType
   implements GeneratedPersistentModifierType
 {
   public moveType: PokemonType;
   public boostPercent: number;
-  public heldItemId: HeldItems;
 
   constructor(moveType: PokemonType, boostPercent: number) {
-    const heldItemId = attackTypeToHeldItem[moveType];
     super(
       "",
-      allHeldItems[heldItemId].getIcon(),
+      `${AttackTypeBoosterItem[moveType]?.toLowerCase()}`,
       (_type, args) => new AttackTypeBoosterModifier(this, (args[0] as Pokemon).id, moveType, boostPercent),
     );
 
     this.moveType = moveType;
     this.boostPercent = boostPercent;
-    this.heldItemId = heldItemId; // Not good, but temporary
   }
 
   get name(): string {
-    return allHeldItems[this.heldItemId].getName();
+    return i18next.t(`modifierType:AttackTypeBoosterItem.${AttackTypeBoosterItem[this.moveType]?.toLowerCase()}`);
   }
 
   getDescription(): string {
-    return allHeldItems[this.heldItemId].getDescription();
+    // TODO: Need getTypeName?
+    return i18next.t("modifierType:ModifierType.AttackTypeBoosterModifierType.description", {
+      moveType: i18next.t(`pokemonInfo:Type.${PokemonType[this.moveType]}`),
+    });
   }
 
   getPregenArgs(): any[] {
