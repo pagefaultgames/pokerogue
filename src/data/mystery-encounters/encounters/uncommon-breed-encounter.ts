@@ -34,7 +34,7 @@ import { SelfStatusMove } from "#app/data/moves/move";
 import { PokeballType } from "#enums/pokeball";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { queueEncounterMessage } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
-import { BerryModifier } from "#app/modifier/modifier";
+import { BerryModifier } from "#app/modifier/held-item-modifier";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { Stat } from "#enums/stat";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";

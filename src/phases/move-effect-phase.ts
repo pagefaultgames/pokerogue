@@ -55,12 +55,10 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import {
   ContactHeldItemTransferChanceModifier,
   DamageMoneyRewardModifier,
-  EnemyAttackStatusEffectChanceModifier,
-  EnemyEndureChanceModifier,
   FlinchChanceModifier,
   HitHealModifier,
   PokemonMultiHitModifier,
-} from "#app/modifier/modifier";
+} from "#app/modifier/held-item-modifier";
 import { PokemonPhase } from "#app/phases/pokemon-phase";
 import { BooleanHolder, isNullOrUndefined, NumberHolder } from "#app/utils/common";
 import type { nil } from "#app/utils/common";
@@ -78,6 +76,7 @@ import type Move from "#app/data/moves/move";
 import { isFieldTargeted } from "#app/data/moves/move-utils";
 import { FaintPhase } from "./faint-phase";
 import { DamageAchv } from "#app/system/achv";
+import { EnemyAttackStatusEffectChanceModifier, EnemyEndureChanceModifier } from "#app/modifier/modifier";
 
 type HitCheckEntry = [HitCheckResult, TypeDamageMultiplier];
 

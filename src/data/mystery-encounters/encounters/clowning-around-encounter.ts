@@ -40,7 +40,7 @@ import type { OptionSelectConfig } from "#app/ui/abstact-option-select-ui-handle
 import type { PlayerPokemon } from "#app/field/pokemon";
 import { PokemonMove } from "#app/field/pokemon";
 import { Ability } from "#app/data/abilities/ability-class";
-import { BerryModifier } from "#app/modifier/modifier";
+import { BerryModifier } from "#app/modifier/held-item-modifier";
 import { BerryType } from "#enums/berry-type";
 import { BattlerIndex } from "#app/battle";
 import { Moves } from "#enums/moves";

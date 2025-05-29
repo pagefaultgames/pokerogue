@@ -7,7 +7,7 @@ import {
 import { CommonAnim } from "#app/data/battle-anims";
 import { BerryUsedEvent } from "#app/events/battle-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { BerryModifier } from "#app/modifier/modifier";
+import { BerryModifier } from "#app/modifier/held-item-modifier";
 import i18next from "i18next";
 import { BooleanHolder } from "#app/utils/common";
 import { FieldPhase } from "./field-phase";

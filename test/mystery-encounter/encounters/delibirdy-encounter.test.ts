@@ -16,18 +16,16 @@ import * as MysteryEncounters from "#app/data/mystery-encounters/mystery-encount
 import type { MoneyRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
 import {
   BerryModifier,
-  HealingBoosterModifier,
   HitHealModifier,
-  LevelIncrementBoosterModifier,
-  MoneyMultiplierModifier,
   PokemonInstantReviveModifier,
   PokemonNatureWeightModifier,
   PreserveBerryModifier,
-} from "#app/modifier/modifier";
+} from "#app/modifier/held-item-modifier";
 import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
 import { generateModifierType } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import { BerryType } from "#enums/berry-type";
+import { HealingBoosterModifier, LevelIncrementBoosterModifier, MoneyMultiplierModifier } from "#app/modifier/modifier";
 
 const namespace = "mysteryEncounters/delibirdy";
 const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];

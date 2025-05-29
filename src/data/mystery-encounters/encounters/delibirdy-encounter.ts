@@ -19,14 +19,13 @@ import { getPokemonSpecies } from "#app/data/pokemon-species";
 import type { PlayerPokemon } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
-import type { PokemonHeldItemModifier, PokemonInstantReviveModifier } from "#app/modifier/modifier";
 import {
   BerryModifier,
-  HealingBoosterModifier,
-  LevelIncrementBoosterModifier,
-  MoneyMultiplierModifier,
+  type PokemonHeldItemModifier,
+  type PokemonInstantReviveModifier,
   PreserveBerryModifier,
-} from "#app/modifier/modifier";
+} from "#app/modifier/held-item-modifier";
+import { HealingBoosterModifier, LevelIncrementBoosterModifier, MoneyMultiplierModifier } from "#app/modifier/modifier";
 import type { PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import { ModifierRewardPhase } from "#app/phases/modifier-reward-phase";

@@ -13,7 +13,7 @@ import { Biome } from "#app/enums/biome";
 import { MysteryEncounterType } from "#app/enums/mystery-encounter-type";
 import { Species } from "#app/enums/species";
 import { PokemonMove } from "#app/field/pokemon";
-import { HealShopCostModifier, HitHealModifier, TurnHealModifier } from "#app/modifier/modifier";
+import { HitHealModifier, TurnHealModifier } from "#app/modifier/held-item-modifier";
 import { ModifierTier } from "#app/modifier/modifier-tier";
 import { modifierTypes, type PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
 import { CommandPhase } from "#app/phases/command-phase";
@@ -32,6 +32,7 @@ import {
 import GameManager from "#test/testUtils/gameManager";
 import { initSceneWithoutEncounterPhase } from "#test/testUtils/gameManagerUtils";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { HealShopCostModifier } from "#app/modifier/modifier";
 
 const namespace = "mysteryEncounters/trashToTreasure";
 const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
