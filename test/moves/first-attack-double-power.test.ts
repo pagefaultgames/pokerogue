@@ -1,5 +1,5 @@
 import { BattlerIndex } from "#app/battle";
-import { allMoves } from "#app/data/data-lists.ts";
+import { allMoves } from "#app/data/data-lists";
 import { Abilities } from "#enums/abilities";
 import { BattleType } from "#enums/battle-type";
 import { Moves } from "#enums/moves";
