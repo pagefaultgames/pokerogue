@@ -44,7 +44,7 @@ import {
   modifierTypes,
   PokemonHeldItemModifierType,
 } from "./modifier-type";
-import { ModifierPoolType } from "./modifier-pool";
+import { getOrInferTier, ModifierPoolType } from "./modifier-pool";
 import { Color, ShadowColor } from "#enums/color";
 import { FRIENDSHIP_GAIN_FROM_RARE_CANDY } from "#app/data/balance/starters";
 import {
@@ -3259,9 +3259,9 @@ export abstract class HeldItemTransferModifier extends PokemonHeldItemModifier {
       targetPokemon.isPlayer(),
     ) as PokemonHeldItemModifier[];
     let highestItemTier = itemModifiers
-      .map(m => m.type.getOrInferTier(poolType))
+      .map(m => getOrInferTier(m.type, poolType))
       .reduce((highestTier, tier) => Math.max(tier!, highestTier), 0); // TODO: is this bang correct?
-    let tierItemModifiers = itemModifiers.filter(m => m.type.getOrInferTier(poolType) === highestItemTier);
+    let tierItemModifiers = itemModifiers.filter(m => getOrInferTier(m.type, poolType) === highestItemTier);
 
     for (let i = 0; i < transferredItemCount; i++) {
       if (!tierItemModifiers.length) {
