@@ -87,14 +87,16 @@ import {
   EnemyDamageReducerModifier,
   EnemyFusionChanceModifier,
   HiddenAbilityRateBoosterModifier,
+  ShinyRateBoosterModifier,
+  TempStatStageBoosterModifier,
+  TempCritBoosterModifier,
+} from "#app/modifier/modifier";
+import {
   BaseStatModifier,
   PokemonFriendshipBoosterModifier,
   PokemonHeldItemModifier,
   PokemonNatureWeightModifier,
-  ShinyRateBoosterModifier,
   SurviveDamageModifier,
-  TempStatStageBoosterModifier,
-  TempCritBoosterModifier,
   StatBoosterModifier,
   CritBoosterModifier,
   PokemonBaseStatFlatModifier,
@@ -102,7 +104,7 @@ import {
   PokemonIncrementingStatModifier,
   EvoTrackerModifier,
   PokemonMultiHitModifier,
-} from "#app/modifier/modifier";
+} from "#app/modifier/held-item-modifier";
 import { PokeballType } from "#enums/pokeball";
 import { Gender } from "#app/data/gender";
 import { Status, getRandomStatus } from "#app/data/status-effect";
@@ -6702,7 +6704,6 @@ export class EnemyPokemon extends Pokemon {
     return ret;
   }
 
-  
   /**
    * Show or hide the type effectiveness multiplier window
    * Passing undefined will hide the window

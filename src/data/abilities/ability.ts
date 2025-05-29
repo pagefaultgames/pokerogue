@@ -22,7 +22,7 @@ import {
 } from "#app/data/moves/move";
 import { allMoves } from "../data-lists";
 import { ArenaTagSide } from "#app/data/arena-tag";
-import { BerryModifier, HitHealModifier, PokemonHeldItemModifier } from "#app/modifier/modifier";
+import { BerryModifier, HitHealModifier, PokemonHeldItemModifier } from "#app/modifier/held-item-modifier";
 import { TerrainType } from "#app/data/terrain";
 import { SpeciesFormChangeAbilityTrigger, SpeciesFormChangeRevertWeatherFormTrigger, SpeciesFormChangeWeatherTrigger } from "#app/data/pokemon-forms";
 import i18next from "i18next";

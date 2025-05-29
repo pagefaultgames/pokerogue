@@ -34,13 +34,12 @@ import {
 import type { PlayerPokemon } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
 import { EnemyPokemon, PokemonMove } from "#app/field/pokemon";
-import type { PokemonHeldItemModifier } from "#app/modifier/modifier";
 import {
-  HiddenAbilityRateBoosterModifier,
   PokemonFormChangeItemModifier,
-  ShinyRateBoosterModifier,
   SpeciesStatBoosterModifier,
-} from "#app/modifier/modifier";
+  type PokemonHeldItemModifier,
+} from "#app/modifier/held-item-modifier";
+import { HiddenAbilityRateBoosterModifier, ShinyRateBoosterModifier } from "#app/modifier/modifier";
 import type { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
 import PokemonData from "#app/system/pokemon-data";
 import i18next from "i18next";

@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import i18next from "i18next";
 import { isNullOrUndefined, randSeedInt } from "#app/utils/common";
-import { PokemonHeldItemModifier } from "#app/modifier/modifier";
+import { PokemonHeldItemModifier } from "#app/modifier/held-item-modifier";
 import type { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
 import {

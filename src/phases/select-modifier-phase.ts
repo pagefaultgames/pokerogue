@@ -18,12 +18,7 @@ import {
   type CustomModifierSettings,
 } from "#app/modifier/modifier-pool";
 import type { Modifier } from "#app/modifier/modifier";
-import {
-  ExtraModifierModifier,
-  HealShopCostModifier,
-  PokemonHeldItemModifier,
-  TempExtraModifierModifier,
-} from "#app/modifier/modifier";
+import { ExtraModifierModifier, HealShopCostModifier, TempExtraModifierModifier } from "#app/modifier/modifier";
 import type ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 import { SHOP_OPTIONS_ROW_LIMIT } from "#app/ui/modifier-select-ui-handler";
 import PartyUiHandler, { PartyUiMode, PartyOption } from "#app/ui/party-ui-handler";
@@ -32,6 +27,7 @@ import i18next from "i18next";
 import { BattlePhase } from "./battle-phase";
 import Overrides from "#app/overrides";
 import { isNullOrUndefined, NumberHolder } from "#app/utils/common";
+import { PokemonHeldItemModifier } from "#app/modifier/held-item-modifier";
 
 export class SelectModifierPhase extends BattlePhase {
   private rerollCount: number;

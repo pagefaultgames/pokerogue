@@ -11,7 +11,7 @@ import { getNatureName } from "#app/data/nature";
 import { speciesStarterCosts } from "#app/data/balance/starters";
 import type { PlayerPokemon } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
-import type { PokemonHeldItemModifier } from "#app/modifier/modifier";
+import type { PokemonHeldItemModifier } from "#app/modifier/held-item-modifier";
 import { AbilityAttr } from "#app/system/game-data";
 import PokemonData from "#app/system/pokemon-data";
 import type { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
