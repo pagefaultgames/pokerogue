@@ -119,8 +119,7 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
     });
     ui.add(this.moveInfoOverlay);
     // register the overlay to receive toggle events
-    globalScene.addInfoToggle(this.moveInfoOverlay);
-    globalScene.addInfoToggle(this);
+    globalScene.addInfoToggle(this.moveInfoOverlay, this);
   }
 
   override show(args: [number?, Command?]): boolean {
