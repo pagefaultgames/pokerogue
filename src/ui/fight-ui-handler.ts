@@ -205,21 +205,26 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
     return success;
   }
 
+  /**
+   * Adjust the visibility of move names and the cursor icon when the info overlay is toggled
+   * @param visible - The visibility of the info overlay; the move names and cursor's visibility will be set to the opposite
+   */
   toggleInfo(visible: boolean): void {
+    // The info overlay will already fade in, so we should hide the move name text and cursor immediately
+    // rather than adjusting alpha via a tween.
     if (visible) {
-      this.movesContainer.setVisible(false);
-      this.cursorObj?.setVisible(false);
+      this.movesContainer.setVisible(false).setAlpha(0);
+      this.cursorObj?.setVisible(false).setAlpha(0);
+      return;
     }
     globalScene.tweens.add({
       targets: [this.movesContainer, this.cursorObj],
       duration: fixedInt(125),
       ease: "Sine.easeInOut",
-      alpha: visible ? 0 : 1,
+      alpha: 1,
     });
-    if (!visible) {
-      this.movesContainer.setVisible(true);
-      this.cursorObj?.setVisible(true);
-    }
+    this.movesContainer.setVisible(true);
+    this.cursorObj?.setVisible(true);
   }
 
   isActive(): boolean {
