@@ -248,7 +248,7 @@ export class SelectModifierPhase extends BattlePhase {
   }
 
   // Applies the effects of the chosen modifier
-  private applyModifier(modifier: Modifier, cost = 0, playSound = false) {
+  private applyModifier(modifier: Modifier, cost = 0, playSound = false): void {
     const result = globalScene.addModifier(modifier, false, playSound, undefined, undefined, cost);
     // Queue a copy of this phase when applying a TM or Memory Mushroom.
     // If the player selects either of these, then escapes out of consuming them,
@@ -277,7 +277,7 @@ export class SelectModifierPhase extends BattlePhase {
   }
 
   // Opens the party menu specifically for fusions
-  private openFusionMenu(modifierType, cost, modifierSelectCallback) {
+  private openFusionMenu(modifierType: PokemonModifierType, cost: number, modifierSelectCallback): void {
     const party = globalScene.getPlayerParty();
     globalScene.ui.setModeWithoutClear(
       UiMode.PARTY,
@@ -303,7 +303,7 @@ export class SelectModifierPhase extends BattlePhase {
   }
 
   // Opens the party menu to apply one of various modifiers
-  private openModifierMenu(modifierType, cost, modifierSelectCallback) {
+  private openModifierMenu(modifierType: PokemonModifierType, cost: number, modifierSelectCallback): void {
     const party = globalScene.getPlayerParty();
     const pokemonModifierType = modifierType as PokemonModifierType;
     const isMoveModifier = modifierType instanceof PokemonMoveModifierType;
