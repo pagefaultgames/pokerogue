@@ -19,13 +19,17 @@ import {
   HitHealModifier,
   PokemonInstantReviveModifier,
   PokemonNatureWeightModifier,
-  PreserveBerryModifier,
 } from "#app/modifier/held-item-modifier";
 import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
 import { generateModifierType } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import { BerryType } from "#enums/berry-type";
-import { HealingBoosterModifier, LevelIncrementBoosterModifier, MoneyMultiplierModifier } from "#app/modifier/modifier";
+import {
+  HealingBoosterModifier,
+  LevelIncrementBoosterModifier,
+  MoneyMultiplierModifier,
+  PreserveBerryModifier,
+} from "#app/modifier/modifier";
 
 const namespace = "mysteryEncounters/delibirdy";
 const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];

@@ -1,5 +1,5 @@
 import { GameModes } from "#app/game-mode";
-import { TurnHeldItemTransferModifier } from "#app/modifier/modifier";
+import { TurnHeldItemTransferModifier } from "#app/modifier/held-item-modifier";
 import { Abilities } from "#enums/abilities";
 import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";

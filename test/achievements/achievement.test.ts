@@ -1,4 +1,4 @@
-import { TurnHeldItemTransferModifier } from "#app/modifier/modifier";
+import { TurnHeldItemTransferModifier } from "#app/modifier/held-item-modifier";
 import {
   Achv,
   AchvTier,

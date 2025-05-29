@@ -73,7 +73,6 @@ import {
   PokemonHeldItemModifier,
   PokemonMoveAccuracyBoosterModifier,
   PokemonMultiHitModifier,
-  PreserveBerryModifier,
 } from "../../modifier/held-item-modifier";
 import type { BattlerIndex } from "../../battle";
 import { BattleType } from "#enums/battle-type";
@@ -123,6 +122,7 @@ import { MoveEffectTrigger } from "#enums/MoveEffectTrigger";
 import { MultiHitType } from "#enums/MultiHitType";
 import { invalidAssistMoves, invalidCopycatMoves, invalidMetronomeMoves, invalidMirrorMoveMoves, invalidSleepTalkMoves } from "./invalid-moves";
 import { SelectBiomePhase } from "#app/phases/select-biome-phase";
+import { PreserveBerryModifier } from "#app/modifier/modifier";
 
 type MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => boolean;
 type UserMoveConditionFunc = (user: Pokemon, move: Move) => boolean;

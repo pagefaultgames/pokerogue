@@ -65,6 +65,7 @@ import {
   type Modifier,
   TempExtraModifierModifier,
   CriticalCatchChanceBoosterModifier,
+  PreserveBerryModifier,
 } from "#app/modifier/modifier";
 import {
   AttackTypeBoosterModifier,
@@ -89,7 +90,6 @@ import {
   PokemonMoveAccuracyBoosterModifier,
   PokemonMultiHitModifier,
   PokemonNatureWeightModifier,
-  PreserveBerryModifier,
   ResetNegativeStatStageModifier,
   SpeciesCritBoosterModifier,
   SpeciesStatBoosterModifier,

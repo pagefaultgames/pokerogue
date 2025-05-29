@@ -23,9 +23,13 @@ import {
   BerryModifier,
   type PokemonHeldItemModifier,
   type PokemonInstantReviveModifier,
-  PreserveBerryModifier,
 } from "#app/modifier/held-item-modifier";
-import { HealingBoosterModifier, LevelIncrementBoosterModifier, MoneyMultiplierModifier } from "#app/modifier/modifier";
+import {
+  HealingBoosterModifier,
+  LevelIncrementBoosterModifier,
+  MoneyMultiplierModifier,
+  PreserveBerryModifier,
+} from "#app/modifier/modifier";
 import type { PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import { ModifierRewardPhase } from "#app/phases/modifier-reward-phase";

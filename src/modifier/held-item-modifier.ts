@@ -28,6 +28,7 @@ import {
   type Modifier,
   MoneyMultiplierModifier,
   PersistentModifier,
+  PreserveBerryModifier,
   TempExtraModifierModifier,
 } from "./modifier";
 import {
@@ -1248,42 +1249,6 @@ export class BerryModifier extends PokemonHeldItemModifier {
     if ([BerryType.LUM, BerryType.LEPPA, BerryType.SITRUS, BerryType.ENIGMA].includes(this.berryType)) {
       return 2;
     }
-    return 3;
-  }
-}
-
-export class PreserveBerryModifier extends PersistentModifier {
-  match(modifier: Modifier) {
-    return modifier instanceof PreserveBerryModifier;
-  }
-
-  clone() {
-    return new PreserveBerryModifier(this.type, this.stackCount);
-  }
-
-  /**
-   * Checks if all prequired conditions are met to apply {@linkcode PreserveBerryModifier}
-   * @param pokemon {@linkcode Pokemon} that holds the berry
-   * @param doPreserve {@linkcode BooleanHolder} that is `true` if the berry should be preserved
-   * @returns `true` if {@linkcode PreserveBerryModifier} should be applied
-   */
-  override shouldApply(pokemon?: Pokemon, doPreserve?: BooleanHolder): boolean {
-    return !!pokemon && !!doPreserve;
-  }
-
-  /**
-   * Applies {@linkcode PreserveBerryModifier}
-   * @param pokemon The {@linkcode Pokemon} that holds the berry
-   * @param doPreserve {@linkcode BooleanHolder} that is `true` if the berry should be preserved
-   * @returns always `true`
-   */
-  override apply(pokemon: Pokemon, doPreserve: BooleanHolder): boolean {
-    doPreserve.value ||= pokemon.randBattleSeedInt(10) < this.getStackCount() * 3;
-
-    return true;
-  }
-
-  getMaxStackCount(): number {
     return 3;
   }
 }

@@ -12,6 +12,7 @@ import { TextStyle, addTextObject } from "./text";
 import { UiMode } from "#enums/ui-mode";
 import { addWindow } from "./ui-theme";
 import { RunDisplayMode } from "#app/ui/run-info-ui-handler";
+import { PokemonHeldItemModifier } from "#app/modifier/held-item-modifier";
 
 const SESSION_SLOTS_COUNT = 5;
 const SLOTS_ON_SCREEN = 3;
@@ -445,7 +446,7 @@ class SessionSlot extends Phaser.GameObjects.Container {
     let visibleModifierIndex = 0;
     for (const m of data.modifiers) {
       const modifier = m.toModifier(Modifier[m.className]);
-      if (modifier instanceof Modifier.PokemonHeldItemModifier) {
+      if (modifier instanceof PokemonHeldItemModifier) {
         continue;
       }
       const icon = modifier?.getIcon(false);
