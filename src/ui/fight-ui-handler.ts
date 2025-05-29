@@ -40,62 +40,67 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
     super(UiMode.FIGHT);
   }
 
+  /**
+   * Set the visibility of the objects in the move info container.
+   */
+  private setInfoVis(visibility: boolean): void {
+    this.moveInfoContainer.iterate((o: Phaser.GameObjects.Components.Visible) => o.setVisible(visibility));
+  }
+
   setup() {
     const ui = this.getUi();
 
-    this.movesContainer = globalScene.add.container(18, -38.7);
-    this.movesContainer.setName(FightUiHandler.MOVES_CONTAINER_NAME);
+    this.movesContainer = globalScene.add.container(18, -38.7).setName(FightUiHandler.MOVES_CONTAINER_NAME);
     ui.add(this.movesContainer);
 
-    this.moveInfoContainer = globalScene.add.container(1, 0);
-    this.moveInfoContainer.setName("move-info");
+    this.moveInfoContainer = globalScene.add.container(1, 0).setName("move-info");
     ui.add(this.moveInfoContainer);
 
-    this.typeIcon = globalScene.add.sprite(
-      globalScene.scaledCanvas.width - 57,
-      -36,
-      getLocalizedSpriteKey("types"),
-      "unknown",
-    );
-    this.typeIcon.setVisible(false);
-    this.moveInfoContainer.add(this.typeIcon);
+    this.typeIcon = globalScene.add
+      .sprite(globalScene.scaledCanvas.width - 57, -36, getLocalizedSpriteKey("types"), "unknown")
+      .setVisible(false);
 
-    this.moveCategoryIcon = globalScene.add.sprite(globalScene.scaledCanvas.width - 25, -36, "categories", "physical");
-    this.moveCategoryIcon.setVisible(false);
-    this.moveInfoContainer.add(this.moveCategoryIcon);
+    this.moveCategoryIcon = globalScene.add
+      .sprite(globalScene.scaledCanvas.width - 25, -36, "categories", "physical")
+      .setVisible(false);
 
-    this.ppLabel = addTextObject(globalScene.scaledCanvas.width - 70, -26, "PP", TextStyle.MOVE_INFO_CONTENT);
-    this.ppLabel.setOrigin(0.0, 0.5);
-    this.ppLabel.setVisible(false);
-    this.ppLabel.setText(i18next.t("fightUiHandler:pp"));
-    this.moveInfoContainer.add(this.ppLabel);
+    this.ppLabel = addTextObject(globalScene.scaledCanvas.width - 70, -26, "PP", TextStyle.MOVE_INFO_CONTENT)
+      .setOrigin(0.0, 0.5)
+      .setVisible(false)
+      .setText(i18next.t("fightUiHandler:pp"));
 
-    this.ppText = addTextObject(globalScene.scaledCanvas.width - 12, -26, "--/--", TextStyle.MOVE_INFO_CONTENT);
-    this.ppText.setOrigin(1, 0.5);
-    this.ppText.setVisible(false);
-    this.moveInfoContainer.add(this.ppText);
+    this.ppText = addTextObject(globalScene.scaledCanvas.width - 12, -26, "--/--", TextStyle.MOVE_INFO_CONTENT)
+      .setOrigin(1, 0.5)
+      .setVisible(false);
 
-    this.powerLabel = addTextObject(globalScene.scaledCanvas.width - 70, -18, "POWER", TextStyle.MOVE_INFO_CONTENT);
-    this.powerLabel.setOrigin(0.0, 0.5);
-    this.powerLabel.setVisible(false);
-    this.powerLabel.setText(i18next.t("fightUiHandler:power"));
-    this.moveInfoContainer.add(this.powerLabel);
+    this.powerLabel = addTextObject(globalScene.scaledCanvas.width - 70, -18, "POWER", TextStyle.MOVE_INFO_CONTENT)
+      .setOrigin(0.0, 0.5)
+      .setVisible(false)
+      .setText(i18next.t("fightUiHandler:power"));
 
-    this.powerText = addTextObject(globalScene.scaledCanvas.width - 12, -18, "---", TextStyle.MOVE_INFO_CONTENT);
-    this.powerText.setOrigin(1, 0.5);
-    this.powerText.setVisible(false);
-    this.moveInfoContainer.add(this.powerText);
+    this.powerText = addTextObject(globalScene.scaledCanvas.width - 12, -18, "---", TextStyle.MOVE_INFO_CONTENT)
+      .setOrigin(1, 0.5)
+      .setVisible(false);
 
-    this.accuracyLabel = addTextObject(globalScene.scaledCanvas.width - 70, -10, "ACC", TextStyle.MOVE_INFO_CONTENT);
-    this.accuracyLabel.setOrigin(0.0, 0.5);
-    this.accuracyLabel.setVisible(false);
-    this.accuracyLabel.setText(i18next.t("fightUiHandler:accuracy"));
-    this.moveInfoContainer.add(this.accuracyLabel);
+    this.accuracyLabel = addTextObject(globalScene.scaledCanvas.width - 70, -10, "ACC", TextStyle.MOVE_INFO_CONTENT)
+      .setOrigin(0.0, 0.5)
+      .setVisible(false)
+      .setText(i18next.t("fightUiHandler:accuracy"));
 
-    this.accuracyText = addTextObject(globalScene.scaledCanvas.width - 12, -10, "---", TextStyle.MOVE_INFO_CONTENT);
-    this.accuracyText.setOrigin(1, 0.5);
-    this.accuracyText.setVisible(false);
-    this.moveInfoContainer.add(this.accuracyText);
+    this.accuracyText = addTextObject(globalScene.scaledCanvas.width - 12, -10, "---", TextStyle.MOVE_INFO_CONTENT)
+      .setOrigin(1, 0.5)
+      .setVisible(false);
+
+    this.moveInfoContainer.add([
+      this.typeIcon,
+      this.moveCategoryIcon,
+      this.ppLabel,
+      this.ppText,
+      this.powerLabel,
+      this.powerText,
+      this.accuracyLabel,
+      this.accuracyText,
+    ]);
 
     // prepare move overlay
     const overlayScale = 1;
@@ -129,8 +134,6 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
     const pokemon = (globalScene.getCurrentPhase() as CommandPhase).getPokemon();
     if (pokemon.tempSummonData.turnCount <= 1) {
       this.setCursor(0);
-    } else {
-      this.setCursor(this.getCursor());
     }
     this.displayMoves();
     this.toggleInfo(false); // in case cancel was pressed while info toggle is active
@@ -145,44 +148,43 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
 
     const cursor = this.getCursor();
 
-    if (button === Button.CANCEL || button === Button.ACTION) {
-      if (button === Button.ACTION) {
+    switch (button) {
+      case Button.ACTION:
         if ((globalScene.getCurrentPhase() as CommandPhase).handleCommand(this.fromCommand, cursor, false)) {
           success = true;
         } else {
           ui.playError();
         }
-      } else {
+        break;
+      case Button.CANCEL: {
         // Cannot back out of fight menu if skipToFightInput is enabled
         const { battleType, mysteryEncounter } = globalScene.currentBattle;
         if (battleType !== BattleType.MYSTERY_ENCOUNTER || !mysteryEncounter?.skipToFightInput) {
           ui.setMode(UiMode.COMMAND, this.fieldIndex);
           success = true;
         }
+        break;
       }
-    } else {
-      switch (button) {
-        case Button.UP:
-          if (cursor >= 2) {
-            success = this.setCursor(cursor - 2);
-          }
-          break;
-        case Button.DOWN:
-          if (cursor < 2) {
-            success = this.setCursor(cursor + 2);
-          }
-          break;
-        case Button.LEFT:
-          if (cursor % 2 === 1) {
-            success = this.setCursor(cursor - 1);
-          }
-          break;
-        case Button.RIGHT:
-          if (cursor % 2 === 0) {
-            success = this.setCursor(cursor + 1);
-          }
-          break;
-      }
+      case Button.UP:
+        if (cursor >= 2) {
+          success = this.setCursor(cursor - 2);
+        }
+        break;
+      case Button.DOWN:
+        if (cursor < 2) {
+          success = this.setCursor(cursor + 2);
+        }
+        break;
+      case Button.LEFT:
+        if (cursor % 2 === 1) {
+          success = this.setCursor(cursor - 1);
+        }
+        break;
+      case Button.RIGHT:
+        if (cursor % 2 === 0) {
+          success = this.setCursor(cursor + 1);
+        }
+        break;
     }
 
     if (success) {
@@ -217,6 +219,64 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
     return !this.fieldIndex ? this.cursor : this.cursor2;
   }
 
+  /**@returns TextStyle according to percentage of PP remaining */
+  private static ppRatioToColor(ppRatio: number): TextStyle {
+    if (ppRatio > 0.25 && ppRatio <= 0.5) {
+      return TextStyle.MOVE_PP_HALF_FULL;
+    }
+    if (ppRatio > 0 && ppRatio <= 0.25) {
+      return TextStyle.MOVE_PP_NEAR_EMPTY;
+    }
+    if (ppRatio === 0) {
+      return TextStyle.MOVE_PP_EMPTY;
+    }
+    return TextStyle.MOVE_PP_FULL; // default to full if ppRatio is invalid
+  }
+
+  /**
+   * Populate the move info overlay with the information of the move at the given cursor index
+   * @param cursor - The cursor position to set the move info for
+   */
+  private setMoveInfo(cursor: number): void {
+    const pokemon = (globalScene.getCurrentPhase() as CommandPhase).getPokemon();
+    const moveset = pokemon.getMoveset();
+
+    const hasMove = cursor < moveset.length;
+    this.setInfoVis(hasMove);
+
+    if (!hasMove) {
+      return;
+    }
+
+    const pokemonMove = moveset[cursor];
+    const moveType = pokemon.getMoveType(pokemonMove.getMove());
+    const textureKey = getLocalizedSpriteKey("types");
+    this.typeIcon.setTexture(textureKey, PokemonType[moveType].toLowerCase()).setScale(0.8);
+
+    const moveCategory = pokemonMove.getMove().category;
+    this.moveCategoryIcon.setTexture("categories", MoveCategory[moveCategory].toLowerCase()).setScale(1.0);
+    const power = pokemonMove.getMove().power;
+    const accuracy = pokemonMove.getMove().accuracy;
+    const maxPP = pokemonMove.getMovePp();
+    const pp = maxPP - pokemonMove.ppUsed;
+
+    const ppLeftStr = padInt(pp, 2, "  ");
+    const ppMaxStr = padInt(maxPP, 2, "  ");
+    this.ppText.setText(`${ppLeftStr}/${ppMaxStr}`);
+    this.powerText.setText(`${power >= 0 ? power : "---"}`);
+    this.accuracyText.setText(`${accuracy >= 0 ? accuracy : "---"}`);
+
+    const ppColorStyle = FightUiHandler.ppRatioToColor(pp / maxPP);
+
+    //** Changes the text color and shadow according to the determined TextStyle */
+    this.ppText.setColor(this.getTextColor(ppColorStyle, false)).setShadowColor(this.getTextColor(ppColorStyle, true));
+    this.moveInfoOverlay.show(pokemonMove.getMove());
+
+    pokemon.getOpponents().forEach(opponent => {
+      (opponent as EnemyPokemon).updateEffectiveness(this.getEffectivenessText(pokemon, opponent, pokemonMove));
+    });
+  }
+
   setCursor(cursor: number): boolean {
     const ui = this.getUi();
 
@@ -230,67 +290,14 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
       }
     }
 
+    this.setMoveInfo(cursor);
+
     if (!this.cursorObj) {
       const isTera = this.fromCommand === Command.TERA;
       this.cursorObj = globalScene.add.image(0, 0, isTera ? "cursor_tera" : "cursor");
       this.cursorObj.setScale(isTera ? 0.7 : 1);
       ui.add(this.cursorObj);
     }
-
-    const pokemon = (globalScene.getCurrentPhase() as CommandPhase).getPokemon();
-    const moveset = pokemon.getMoveset();
-
-    const hasMove = cursor < moveset.length;
-
-    if (hasMove) {
-      const pokemonMove = moveset[cursor];
-      const moveType = pokemon.getMoveType(pokemonMove.getMove());
-      const textureKey = getLocalizedSpriteKey("types");
-      this.typeIcon.setTexture(textureKey, PokemonType[moveType].toLowerCase()).setScale(0.8);
-
-      const moveCategory = pokemonMove.getMove().category;
-      this.moveCategoryIcon.setTexture("categories", MoveCategory[moveCategory].toLowerCase()).setScale(1.0);
-      const power = pokemonMove.getMove().power;
-      const accuracy = pokemonMove.getMove().accuracy;
-      const maxPP = pokemonMove.getMovePp();
-      const pp = maxPP - pokemonMove.ppUsed;
-
-      const ppLeftStr = padInt(pp, 2, "  ");
-      const ppMaxStr = padInt(maxPP, 2, "  ");
-      this.ppText.setText(`${ppLeftStr}/${ppMaxStr}`);
-      this.powerText.setText(`${power >= 0 ? power : "---"}`);
-      this.accuracyText.setText(`${accuracy >= 0 ? accuracy : "---"}`);
-
-      const ppPercentLeft = pp / maxPP;
-
-      //** Determines TextStyle according to percentage of PP remaining */
-      let ppColorStyle = TextStyle.MOVE_PP_FULL;
-      if (ppPercentLeft > 0.25 && ppPercentLeft <= 0.5) {
-        ppColorStyle = TextStyle.MOVE_PP_HALF_FULL;
-      } else if (ppPercentLeft > 0 && ppPercentLeft <= 0.25) {
-        ppColorStyle = TextStyle.MOVE_PP_NEAR_EMPTY;
-      } else if (ppPercentLeft === 0) {
-        ppColorStyle = TextStyle.MOVE_PP_EMPTY;
-      }
-
-      //** Changes the text color and shadow according to the determined TextStyle */
-      this.ppText.setColor(this.getTextColor(ppColorStyle, false));
-      this.ppText.setShadowColor(this.getTextColor(ppColorStyle, true));
-      this.moveInfoOverlay.show(pokemonMove.getMove());
-
-      pokemon.getOpponents().forEach(opponent => {
-        (opponent as EnemyPokemon).updateEffectiveness(this.getEffectivenessText(pokemon, opponent, pokemonMove));
-      });
-    }
-
-    this.typeIcon.setVisible(hasMove);
-    this.ppLabel.setVisible(hasMove);
-    this.ppText.setVisible(hasMove);
-    this.powerLabel.setVisible(hasMove);
-    this.powerText.setVisible(hasMove);
-    this.accuracyLabel.setVisible(hasMove);
-    this.accuracyText.setVisible(hasMove);
-    this.moveCategoryIcon.setVisible(hasMove);
 
     this.cursorObj.setPosition(13 + (cursor % 2 === 1 ? 114 : 0), -31 + (cursor >= 2 ? 15 : 0));
 
@@ -322,14 +329,19 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
     const moveset = pokemon.getMoveset();
 
     for (let moveIndex = 0; moveIndex < 4; moveIndex++) {
-      const moveText = addTextObject(moveIndex % 2 === 0 ? 0 : 114, moveIndex < 2 ? 0 : 16, "-", TextStyle.WINDOW);
-      moveText.setName("text-empty-move");
+      const moveText = addTextObject(
+        moveIndex % 2 === 0 ? 0 : 114,
+        moveIndex < 2 ? 0 : 16,
+        "-",
+        TextStyle.WINDOW,
+      ).setName("text-empty-move");
 
       if (moveIndex < moveset.length) {
         const pokemonMove = moveset[moveIndex]!; // TODO is the bang correct?
-        moveText.setText(pokemonMove.getName());
-        moveText.setName(pokemonMove.getName());
-        moveText.setColor(this.getMoveColor(pokemon, pokemonMove) ?? moveText.style.color);
+        moveText
+          .setText(pokemonMove.getName())
+          .setName(pokemonMove.getName())
+          .setColor(this.getMoveColor(pokemon, pokemonMove) ?? moveText.style.color);
       }
 
       this.movesContainer.add(moveText);
@@ -372,14 +384,7 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
     super.clear();
     const messageHandler = this.getUi().getMessageHandler();
     this.clearMoves();
-    this.typeIcon.setVisible(false);
-    this.ppLabel.setVisible(false);
-    this.ppText.setVisible(false);
-    this.powerLabel.setVisible(false);
-    this.powerText.setVisible(false);
-    this.accuracyLabel.setVisible(false);
-    this.accuracyText.setVisible(false);
-    this.moveCategoryIcon.setVisible(false);
+    this.setInfoVis(false);
     this.moveInfoOverlay.clear();
     messageHandler.bg.setVisible(true);
     this.eraseCursor();
