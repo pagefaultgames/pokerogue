@@ -19,7 +19,7 @@ import {
   type Constructor,
 } from "#app/utils/common";
 import { deepMergeSpriteData } from "#app/utils/data";
-import type { Modifier, ModifierPredicate, TurnHeldItemTransferModifier } from "./modifier/modifier";
+import type { Modifier, ModifierPredicate } from "./modifier/modifier";
 import {
   ConsumableModifier,
   ConsumablePokemonModifier,
@@ -28,14 +28,9 @@ import {
   ExpShareModifier,
   FusePokemonModifier,
   HealingBoosterModifier,
-  ModifierBar,
   MultipleParticipantExpBonusModifier,
   PersistentModifier,
-  PokemonExpBoosterModifier,
-  PokemonFormChangeItemModifier,
-  PokemonHeldItemModifier,
   PokemonHpRestoreModifier,
-  PokemonIncrementingStatModifier,
   RememberMoveModifier,
 } from "./modifier/modifier";
 import { PokeballType } from "#enums/pokeball";
@@ -182,6 +177,14 @@ import { hasExpSprite } from "./sprites/sprite-utils";
 import { timedEventManager } from "./global-event-manager";
 import { starterColors } from "./global-vars/starter-colors";
 import { startingWave } from "./starting-wave";
+import { ModifierBar } from "./modifier/modifier-bar";
+import {
+  PokemonExpBoosterModifier,
+  PokemonFormChangeItemModifier,
+  PokemonHeldItemModifier,
+  PokemonIncrementingStatModifier,
+  type TurnHeldItemTransferModifier,
+} from "./modifier/held-item-modifier";
 
 const DEBUG_RNG = false;
 

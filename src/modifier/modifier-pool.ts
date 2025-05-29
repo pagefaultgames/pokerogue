@@ -11,14 +11,13 @@ import { Moves } from "#enums/moves";
 import { PokeballType } from "#enums/pokeball";
 import { Species } from "#enums/species";
 import { StatusEffect } from "#enums/status-effect";
+import type { EnemyPersistentModifier, PersistentModifier } from "./modifier";
 import {
   BerryModifier,
-  type EnemyPersistentModifier,
-  type PersistentModifier,
   type PokemonHeldItemModifier,
   SpeciesCritBoosterModifier,
   TurnStatusEffectModifier,
-} from "./modifier";
+} from "./held-item-modifier";
 import { ModifierTier } from "./modifier-tier";
 import {
   FormChangeItemModifierType,

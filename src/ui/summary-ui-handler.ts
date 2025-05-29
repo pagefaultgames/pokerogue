@@ -24,7 +24,6 @@ import { MoveCategory } from "#enums/MoveCategory";
 import { getPokeballAtlasKey } from "#app/data/pokeball";
 import { getGenderColor, getGenderSymbol } from "#app/data/gender";
 import { getLevelRelExp, getLevelTotalExp } from "#app/data/exp";
-import { PokemonHeldItemModifier } from "#app/modifier/modifier";
 import { StatusEffect } from "#enums/status-effect";
 import { getBiomeName } from "#app/data/balance/biomes";
 import { getNatureName, getNatureStatMultiplier } from "#app/data/nature";
@@ -34,11 +33,11 @@ import { getVariantTint } from "#app/sprites/variant";
 import { Button } from "#enums/buttons";
 import type { Ability } from "#app/data/abilities/ability-class";
 import i18next from "i18next";
-import { modifierSortFunc } from "#app/modifier/modifier";
 import { PlayerGender } from "#enums/player-gender";
 import { Stat, PERMANENT_STATS, getStatKey } from "#enums/stat";
 import { Nature } from "#enums/nature";
 import { achvs } from "#app/system/achv";
+import { modifierSortFunc, PokemonHeldItemModifier } from "#app/modifier/held-item-modifier";
 
 enum Page {
   PROFILE,

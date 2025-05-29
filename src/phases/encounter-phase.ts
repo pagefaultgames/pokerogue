@@ -19,7 +19,7 @@ import { EncounterPhaseEvent } from "#app/events/battle-scene";
 import type Pokemon from "#app/field/pokemon";
 import { FieldPosition } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { BoostBugSpawnModifier, IvScannerModifier, TurnHeldItemTransferModifier } from "#app/modifier/modifier";
+import { BoostBugSpawnModifier, IvScannerModifier } from "#app/modifier/modifier";
 import { ModifierPoolType, regenerateModifierPoolThresholds } from "#app/modifier/modifier-pool";
 import Overrides from "#app/overrides";
 import { BattlePhase } from "#app/phases/battle-phase";
@@ -41,10 +41,11 @@ import { Biome } from "#enums/biome";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
-import { overrideHeldItems, overrideModifiers } from "#app/modifier/modifier";
+import { overrideModifiers } from "#app/modifier/modifier";
 import i18next from "i18next";
 import { WEIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/data/mystery-encounters/mystery-encounters";
 import { getNatureName } from "#app/data/nature";
+import { overrideHeldItems, TurnHeldItemTransferModifier } from "#app/modifier/held-item-modifier";
 
 export class EncounterPhase extends BattlePhase {
   private loaded: boolean;
