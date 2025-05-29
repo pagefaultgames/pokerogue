@@ -1,7 +1,7 @@
 import { UiMode } from "#enums/ui-mode";
 import { TextStyle, addTextObject, getEggTierTextTint, getTextStyleOptions } from "./text";
 import MessageUiHandler from "./message-ui-handler";
-import { getEnumValues, getEnumKeys, fixedInt, randSeedShuffle } from "#app/utils/common";
+import { getEnumKeys, fixedInt, randSeedShuffle } from "#app/utils/common";
 import type { IEggOptions } from "../data/egg";
 import { Egg, getLegendaryGachaSpeciesForTimestamp } from "../data/egg";
 import { VoucherType, getVoucherTypeIcon } from "../system/voucher";
@@ -55,6 +55,124 @@ export default class EggGachaUiHandler extends MessageUiHandler {
     this.defaultText = i18next.t("egg:selectMachine");
   }
 
+  private setupGachaType(key: keyof typeof GachaType, gachaType: GachaType): void {
+    const gachaTypeKey = key.toLowerCase();
+    const gachaContainer = globalScene.add.container(180 * gachaType, 18);
+
+    const gacha = globalScene.add.sprite(0, 0, `gacha_${gachaTypeKey}`);
+    gacha.setOrigin(0, 0);
+
+    const gachaUnderlay = globalScene.add.sprite(115, 80, `gacha_underlay_${gachaTypeKey}`);
+    gachaUnderlay.setOrigin(0, 0);
+
+    const gachaEggs = globalScene.add.sprite(0, 0, "gacha_eggs");
+    gachaEggs.setOrigin(0, 0);
+
+    const gachaGlass = globalScene.add.sprite(0, 0, "gacha_glass");
+    gachaGlass.setOrigin(0, 0);
+
+    const gachaInfoContainer = globalScene.add.container(160, 46);
+
+    const currentLanguage = i18next.resolvedLanguage ?? "en";
+    let gachaTextStyle = TextStyle.WINDOW_ALT;
+    let gachaX = 4;
+    let gachaY = 0;
+    let pokemonIconX = -20;
+    let pokemonIconY = 6;
+
+    if (["de", "es-ES", "es-MX", "fr", "ko", "pt-BR", "ru"].includes(currentLanguage)) {
+      gachaTextStyle = TextStyle.SMALLER_WINDOW_ALT;
+      gachaX = 2;
+      gachaY = 2;
+    }
+
+    let legendaryLabelX = gachaX;
+    let legendaryLabelY = gachaY;
+    if (["de", "es-ES", "es-MX"].includes(currentLanguage)) {
+      pokemonIconX = -25;
+      pokemonIconY = 10;
+      legendaryLabelX = -6;
+      legendaryLabelY = 0;
+    }
+
+    const gachaUpLabel = addTextObject(gachaX, gachaY, i18next.t("egg:legendaryUPGacha"), gachaTextStyle);
+    gachaUpLabel.setOrigin(0, 0);
+    gachaInfoContainer.add(gachaUpLabel);
+
+    switch (gachaType as GachaType) {
+      case GachaType.LEGENDARY:
+        {
+          if (["de", "es-ES"].includes(currentLanguage)) {
+            gachaUpLabel.setAlign("center");
+          }
+          let xOffset = 0;
+          const pokemonIcon = globalScene.add.sprite(pokemonIconX, pokemonIconY, "pokemon_icons_0");
+
+          // Intentionally left as "array includes" instead of an equality check to allow for future languages to reuse
+          if (["pt-BR"].includes(currentLanguage)) {
+            xOffset = 2;
+            pokemonIcon.setX(pokemonIconX - 2);
+          }
+
+          gachaUpLabel.setX(legendaryLabelX - xOffset).setY(legendaryLabelY);
+          pokemonIcon.setScale(0.5).setOrigin(0, 0.5);
+          gachaInfoContainer.add(pokemonIcon);
+        }
+        break;
+      case GachaType.MOVE:
+        if (["de", "es-ES", "fr", "pt-BR", "ru"].includes(currentLanguage)) {
+          gachaUpLabel.setAlign("center");
+          gachaUpLabel.setY(0);
+        }
+
+        gachaUpLabel.setText(i18next.t("egg:moveUPGacha")).setX(0).setOrigin(0.5, 0);
+        break;
+      case GachaType.SHINY:
+        if (["de", "fr", "ko", "ru"].includes(currentLanguage)) {
+          gachaUpLabel.setAlign("center").setY(0);
+        }
+
+        gachaUpLabel.setText(i18next.t("egg:shinyUPGacha")).setX(0).setOrigin(0.5, 0);
+        break;
+    }
+
+    const gachaKnob = globalScene.add.sprite(191, 89, "gacha_knob");
+
+    const gachaHatch = globalScene.add.sprite(115, 73, "gacha_hatch");
+    gachaHatch.setOrigin(0, 0).setAlpha(0.9);
+
+    gachaContainer.add([gachaEggs, gachaUnderlay, gacha, gachaGlass, gachaKnob, gachaHatch, gachaInfoContainer]);
+
+    gachaGlass.setAlpha(0.5);
+    gachaHatch.setAlpha(0.9);
+
+    gachaHatch.on("animationupdate", (_anim, frame) =>
+      gachaUnderlay.setFrame(frame.textureFrame === "4.png" ? "open_hatch" : "default"),
+    );
+
+    this.gachaContainers.push(gachaContainer);
+    this.gachaKnobs.push(gachaKnob);
+    this.gachaHatches.push(gachaHatch);
+    this.gachaInfoContainers.push(gachaInfoContainer);
+
+    this.eggGachaContainer.add(gachaContainer);
+
+    // Expiration timer for the legendary gacha
+    if (gachaType === GachaType.LEGENDARY) {
+      this.legendaryExpiration
+        .setText(this.getLegendaryGachaTimeLeft())
+        .setFontSize("64px")
+        .setPositionRelative(
+          gacha,
+          gacha.width / 2 - this.legendaryExpiration.displayWidth / 2 + 0.3,
+          gacha.height / 2 + 12.5,
+        );
+      gachaContainer.add(this.legendaryExpiration);
+    }
+
+    this.updateGachaInfo(gachaType);
+  }
+
   setup() {
     this.gachaCursor = 0;
     this.scale = getTextStyleOptions(TextStyle.WINDOW, globalScene.uiTheme).scale;
@@ -86,144 +204,10 @@ export default class EggGachaUiHandler extends MessageUiHandler {
       });
     }
 
-    getEnumValues(GachaType).forEach((gachaType, g) => {
-      const gachaTypeKey = GachaType[gachaType].toString().toLowerCase();
-      const gachaContainer = globalScene.add.container(180 * g, 18);
+    for (const [gachaTypeKey, gachaType] of Object.entries(GachaType)) {
+      this.setupGachaType(gachaTypeKey as keyof typeof GachaType, gachaType);
+    }
 
-      const gacha = globalScene.add.sprite(0, 0, `gacha_${gachaTypeKey}`);
-      gacha.setOrigin(0, 0);
-
-      const gachaUnderlay = globalScene.add.sprite(115, 80, `gacha_underlay_${gachaTypeKey}`);
-      gachaUnderlay.setOrigin(0, 0);
-
-      const gachaEggs = globalScene.add.sprite(0, 0, "gacha_eggs");
-      gachaEggs.setOrigin(0, 0);
-
-      const gachaGlass = globalScene.add.sprite(0, 0, "gacha_glass");
-      gachaGlass.setOrigin(0, 0);
-
-      const gachaInfoContainer = globalScene.add.container(160, 46);
-
-      const currentLanguage = i18next.resolvedLanguage ?? "en";
-      let gachaTextStyle = TextStyle.WINDOW_ALT;
-      let gachaX = 4;
-      let gachaY = 0;
-      let pokemonIconX = -20;
-      let pokemonIconY = 6;
-
-      if (["de", "es-ES", "es-MX", "fr", "ko", "pt-BR", "ru"].includes(currentLanguage)) {
-        gachaTextStyle = TextStyle.SMALLER_WINDOW_ALT;
-        gachaX = 2;
-        gachaY = 2;
-      }
-
-      let legendaryLabelX = gachaX;
-      let legendaryLabelY = gachaY;
-      if (["de", "es-ES", "es-MX"].includes(currentLanguage)) {
-        pokemonIconX = -25;
-        pokemonIconY = 10;
-        legendaryLabelX = -6;
-        legendaryLabelY = 0;
-      }
-
-      const gachaUpLabel = addTextObject(gachaX, gachaY, i18next.t("egg:legendaryUPGacha"), gachaTextStyle);
-      gachaUpLabel.setOrigin(0, 0);
-      gachaInfoContainer.add(gachaUpLabel);
-
-      switch (gachaType as GachaType) {
-        case GachaType.LEGENDARY: {
-          if (["de", "es-ES"].includes(currentLanguage)) {
-            gachaUpLabel.setAlign("center");
-            gachaUpLabel.setY(0);
-          }
-          if (["pt-BR"].includes(currentLanguage)) {
-            gachaUpLabel.setX(legendaryLabelX - 2);
-          } else {
-            gachaUpLabel.setX(legendaryLabelX);
-          }
-          gachaUpLabel.setY(legendaryLabelY);
-
-          const pokemonIcon = globalScene.add.sprite(pokemonIconX, pokemonIconY, "pokemon_icons_0");
-          if (["pt-BR"].includes(currentLanguage)) {
-            pokemonIcon.setX(pokemonIconX - 2);
-          }
-          pokemonIcon.setScale(0.5);
-          pokemonIcon.setOrigin(0, 0.5);
-
-          gachaInfoContainer.add(pokemonIcon);
-          break;
-        }
-        case GachaType.MOVE:
-          if (["de", "es-ES", "fr", "pt-BR", "ru"].includes(currentLanguage)) {
-            gachaUpLabel.setAlign("center");
-            gachaUpLabel.setY(0);
-          }
-
-          gachaUpLabel.setText(i18next.t("egg:moveUPGacha"));
-          gachaUpLabel.setX(0);
-          gachaUpLabel.setOrigin(0.5, 0);
-          break;
-        case GachaType.SHINY:
-          if (["de", "fr", "ko", "ru"].includes(currentLanguage)) {
-            gachaUpLabel.setAlign("center");
-            gachaUpLabel.setY(0);
-          }
-
-          gachaUpLabel.setText(i18next.t("egg:shinyUPGacha"));
-          gachaUpLabel.setX(0);
-          gachaUpLabel.setOrigin(0.5, 0);
-          break;
-      }
-
-      const gachaKnob = globalScene.add.sprite(191, 89, "gacha_knob");
-
-      const gachaHatch = globalScene.add.sprite(115, 73, "gacha_hatch");
-      gachaHatch.setOrigin(0, 0);
-
-      gachaContainer.add(gachaEggs);
-      gachaContainer.add(gachaUnderlay);
-      gachaContainer.add(gacha);
-      gachaContainer.add(gachaGlass);
-      gachaContainer.add(gachaKnob);
-      gachaContainer.add(gachaHatch);
-      gachaContainer.add(gachaInfoContainer);
-
-      gachaGlass.setAlpha(0.5);
-      gachaHatch.setAlpha(0.9);
-
-      gachaHatch.on("animationupdate", (_anim, frame) =>
-        gachaUnderlay.setFrame(frame.textureFrame === "4.png" ? "open_hatch" : "default"),
-      );
-
-      this.gachaContainers.push(gachaContainer);
-      this.gachaKnobs.push(gachaKnob);
-      this.gachaHatches.push(gachaHatch);
-      this.gachaInfoContainers.push(gachaInfoContainer);
-
-      this.eggGachaContainer.add(gachaContainer);
-
-      // Expiration timer for the legendary gacha
-      if (gachaType === GachaType.LEGENDARY) {
-        this.legendaryExpiration
-          .setText(this.getLegendaryGachaTimeLeft())
-          .setFontSize("64px")
-          .setPositionRelative(
-            gacha,
-            gacha.width / 2 - this.legendaryExpiration.displayWidth / 2 + 0.3,
-            gacha.height / 2 + 12.5,
-          );
-        gachaContainer.add(this.legendaryExpiration);
-      }
-
-      this.updateGachaInfo(g);
-    });
-
-    this.eggGachaOptionsContainer = globalScene.add.container();
-
-    this.eggGachaOptionsContainer = globalScene.add.container(globalScene.game.canvas.width / 6, 148);
-    this.eggGachaContainer.add(this.eggGachaOptionsContainer);
-
-    // Increase egg box width on certain languages
     let eggGachaOptionSelectWidth = 0;
     switch (i18next.resolvedLanguage) {
       case "ru":
@@ -233,9 +217,11 @@ export default class EggGachaUiHandler extends MessageUiHandler {
         eggGachaOptionSelectWidth = 96;
     }
 
-    this.eggGachaOptionSelectBg = addWindow(0, 0, eggGachaOptionSelectWidth, 16 + 576 * this.scale);
-    this.eggGachaOptionSelectBg.setOrigin(1, 1);
-    this.eggGachaOptionsContainer.add(this.eggGachaOptionSelectBg);
+    this.eggGachaOptionSelectBg = addWindow(0, 0, eggGachaOptionSelectWidth, 16 + 576 * this.scale).setOrigin(1);
+    this.eggGachaOptionsContainer = globalScene.add
+      .container(globalScene.game.canvas.width / 6, 148)
+      .add(this.eggGachaOptionSelectBg);
+    this.eggGachaContainer.add(this.eggGachaOptionsContainer);
 
     const multiplierOne = "x1";
     const multiplierTen = "x10";
@@ -611,9 +597,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
       duration: this.getDelayValue(250),
       ease: "Cubic.easeIn",
       onComplete: () => {
-        this.eggGachaSummaryContainer.setVisible(false);
-        this.eggGachaSummaryContainer.setAlpha(1);
-        this.eggGachaSummaryContainer.removeAll(true);
+        this.eggGachaSummaryContainer.setVisible(false).setAlpha(1).removeAll(true);
         this.setTransitioning(false);
         this.summaryFinished = false;
         this.eggGachaOptionsContainer.setVisible(true);
@@ -622,15 +606,13 @@ export default class EggGachaUiHandler extends MessageUiHandler {
   }
 
   updateGachaInfo(gachaType: GachaType): void {
-    const infoContainer = this.gachaInfoContainers[gachaType];
-    switch (gachaType as GachaType) {
-      case GachaType.LEGENDARY: {
-        const species = getPokemonSpecies(getLegendaryGachaSpeciesForTimestamp(Date.now()));
-        const pokemonIcon = infoContainer.getAt(1) as Phaser.GameObjects.Sprite;
-        pokemonIcon.setTexture(species.getIconAtlasKey(), species.getIconId(false));
-        break;
-      }
+    if (gachaType !== GachaType.LEGENDARY) {
+      return;
     }
+    const infoContainer = this.gachaInfoContainers[gachaType];
+    const species = getPokemonSpecies(getLegendaryGachaSpeciesForTimestamp(Date.now()));
+    const pokemonIcon = infoContainer.getAt(1) as Phaser.GameObjects.Sprite;
+    pokemonIcon.setTexture(species.getIconAtlasKey(), species.getIconId(false));
   }
 
   consumeVouchers(voucherType: VoucherType, count: number): void {
@@ -813,7 +795,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
             }
             break;
           case Button.RIGHT:
-            if (this.gachaCursor < getEnumKeys(GachaType).length - 1) {
+            if (this.gachaCursor < Object.keys(GachaType).length - 1) {
               success = this.setGachaCursor(this.gachaCursor + 1);
             }
             break;
