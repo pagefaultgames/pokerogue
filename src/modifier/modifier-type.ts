@@ -129,8 +129,8 @@ import { getStatKey, Stat, TEMP_BATTLE_STATS } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import i18next from "i18next";
 import { timedEventManager } from "#app/global-event-manager";
-import type { HeldItems } from "./held-items";
-import { allHeldItems, attackTypeToHeldItem } from "./held-items";
+import type { HeldItems } from "#enums/held-items";
+import { allHeldItems, attackTypeToHeldItem } from "./all-held-items";
 import { TYPE_BOOST_ITEM_BOOST_PERCENT } from "#app/constants";
 
 const outputModifierData = false;
@@ -418,6 +418,55 @@ export class PokemonHeldItemModifierType extends PokemonModifierType {
 
   newModifier(...args: any[]): PokemonHeldItemModifier {
     return super.newModifier(...args) as PokemonHeldItemModifier;
+  }
+}
+
+export class PokemonHeldItemReward extends PokemonModifierType {
+  public itemId: HeldItems;
+  constructor(
+    itemId: HeldItems,
+    localeKey: string,
+    iconImage: string,
+    newModifierFunc: NewModifierFunc,
+    group?: string,
+    soundName?: string,
+  ) {
+    super(
+      localeKey,
+      iconImage,
+      newModifierFunc,
+      (pokemon: PlayerPokemon) => {
+        const hasItem = pokemon.heldItemManager.hasItem(this.itemId);
+        const maxStackCount = allHeldItems[this.itemId].getMaxStackCount();
+        if (!maxStackCount) {
+          return i18next.t("modifierType:ModifierType.PokemonHeldItemModifierType.extra.inoperable", {
+            pokemonName: getPokemonNameWithAffix(pokemon),
+          });
+        }
+        if (hasItem && pokemon.heldItemManager.getItem(this.itemId).stack === maxStackCount) {
+          return i18next.t("modifierType:ModifierType.PokemonHeldItemModifierType.extra.tooMany", {
+            pokemonName: getPokemonNameWithAffix(pokemon),
+          });
+        }
+        return null;
+      },
+      group,
+      soundName,
+    );
+    this.itemId = itemId;
+  }
+
+  newModifier(...args: any[]): PokemonHeldItemModifier {
+    return super.newModifier(...args) as PokemonHeldItemModifier;
+  }
+
+  get name(): string {
+    return allHeldItems[this.itemId].getName();
+  }
+
+  getDescription(): string {
+    // TODO: Need getTypeName?
+    return allHeldItems[this.itemId].getDescription();
   }
 }
 
