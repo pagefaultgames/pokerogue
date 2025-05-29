@@ -131,14 +131,21 @@ export class SwitchSummonPhase extends SummonPhase {
     const switchInPokemon: Pokemon | undefined = party[this.slotIndex];
     this.lastPokemon = this.getPokemon();
 
-    applyPreSummonAbAttrs(PreSummonAbAttr, switchInPokemon);
-    applyPreSwitchOutAbAttrs(PreSwitchOutAbAttr, this.lastPokemon);
-    // TODO: Why do we trigger post switch out attributes even if the switch in target doesn't exist?
+    // TODO: Why do we trigger these attributes even if the switch in target doesn't exist?
     // (This should almost certainly go somewhere inside `preSummon`)
+    applyPreSummonAbAttrs(PreSummonAbAttr, switchedInPokemon);
+    applyPreSwitchOutAbAttrs(PreSwitchOutAbAttr, this.lastPokemon);
     if (!switchInPokemon) {
       this.end();
       return;
     }
+
+    // Defensive programming: Overcome the bug where the summon data has somehow not been reset
+    // prior to switching in a new Pokemon.
+    // Force the switch to occur and load the assets for the new pokemon, ignoring override.
+    // TODO: Assess whether this is needed anymore and remove if needed
+    switchInPokemon.resetSummonData();
+    switchInPokemon.loadAssets(true);
 
     if (this.switchType === SwitchType.BATON_PASS) {
       // If switching via baton pass, update opposing tags coming from the prior pokemon
@@ -158,7 +165,7 @@ export class SwitchSummonPhase extends SummonPhase {
           m =>
             m instanceof SwitchEffectTransferModifier &&
             (m as SwitchEffectTransferModifier).pokemonId === this.lastPokemon.id,
-        ) as SwitchEffectTransferModifier;
+        ) as SwitchEffectTransferModifier | undefined;
 
         if (batonPassModifier) {
           globalScene.tryTransferHeldItemModifier(

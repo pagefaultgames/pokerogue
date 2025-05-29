@@ -151,9 +151,9 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
           // Prevent overlapping overrides on action modification
           this.submitAction = originalLoginAction;
           this.sanitizeInputs();
-        globalScene.ui.setMode(UiMode.LOADING, { buttonActions: [] });
+          globalScene.ui.setMode(UiMode.LOADING, { buttonActions: [] });
           const onFail = error => {
-          globalScene.ui.setMode(UiMode.LOGIN_FORM, Object.assign(config, { errorMessage: error?.trim() }));
+            globalScene.ui.setMode(UiMode.LOGIN_FORM, Object.assign(config, { errorMessage: error?.trim() }));
             globalScene.ui.playError();
           };
           if (!this.inputs[0].text) {
@@ -243,7 +243,7 @@ export default class LoginFormUiHandler extends FormModalUiHandler {
               },
             });
           }
-        globalScene.ui.setOverlayMode(UiMode.OPTION_SELECT, {
+          globalScene.ui.setOverlayMode(UiMode.OPTION_SELECT, {
             options: options,
             delay: 1000,
           });

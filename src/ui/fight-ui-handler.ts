@@ -10,7 +10,7 @@ import { getLocalizedSpriteKey, fixedInt, padInt } from "#app/utils/common";
 import { MoveCategory } from "#enums/MoveCategory";
 import i18next from "i18next";
 import { Button } from "#enums/buttons";
-import type { PokemonMove } from "#app/field/pokemon";
+import type { EnemyPokemon, PokemonMove } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
 import type { CommandPhase } from "#app/phases/command-phase";
 import MoveInfoOverlay from "./move-info-overlay";
@@ -279,7 +279,7 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
       this.moveInfoOverlay.show(pokemonMove.getMove());
 
       pokemon.getOpponents().forEach(opponent => {
-        opponent.updateEffectiveness(this.getEffectivenessText(pokemon, opponent, pokemonMove));
+        (opponent as EnemyPokemon).updateEffectiveness(this.getEffectivenessText(pokemon, opponent, pokemonMove));
       });
     }
 
@@ -391,7 +391,7 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
 
     const opponents = (globalScene.getCurrentPhase() as CommandPhase).getPokemon().getOpponents();
     opponents.forEach(opponent => {
-      opponent.updateEffectiveness(undefined);
+      (opponent as EnemyPokemon).updateEffectiveness();
     });
   }
 

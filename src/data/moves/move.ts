@@ -66,7 +66,7 @@ import {
   VariableMovePowerAbAttr,
   WonderSkinAbAttr,
 } from "../abilities/ability";
-import { allAbilities } from "../data-lists";
+import { allAbilities, allMoves } from "../data-lists";
 import {
   AttackTypeBoosterModifier,
   BerryModifier,
@@ -6300,7 +6300,7 @@ export class ForceSwitchOutAttr extends ForceSwitch(MoveEffectAttr) {
 
     let ret = this.selfSwitch ? Math.floor((1 - user.getHpRatio()) * 20) : super.getUserBenefitScore(user, target, move);
     if (this.selfSwitch && this.isBatonPass()) {
-      const statStageTotal = user.getStatStages().reduce((s: number, total: number) => total += s, 0);
+      const statStageTotal = user.getStatStages().reduce((total, s) => total + s, 0);
       // TODO: Why do we use a sine tween?
       ret = ret / 2 + (Phaser.Tweens.Builders.GetEaseFunction("Sine.easeOut")(Math.min(Math.abs(statStageTotal), 10) / 10) * (statStageTotal >= 0 ? 10 : -10));
     }
@@ -7362,7 +7362,7 @@ export class SuppressAbilitiesAttr extends MoveEffectAttr {
 
   /** Causes the effect to fail when the target's ability is unsupressable or already suppressed. */
   getCondition(): MoveConditionFunc {
-    return (user, target, move) => target.getAbility().isSuppressable && !target.summonData.abilitySuppressed;
+    return (_user, target, _move) => !target.summonData.abilitySuppressed && (target.getAbility().isSuppressable || (target.hasPassive() && target.getPassiveAbility().isSuppressable));
   }
 }
 
@@ -7903,10 +7903,10 @@ export class UpperHandCondition extends MoveCondition {
   }
 }
 
-export class hitsSameTypeAttr extends VariableMoveTypeMultiplierAttr {
+export class HitsSameTypeAttr extends VariableMoveTypeMultiplierAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const multiplier = args[0] as NumberHolder;
-    if (!user.getTypes().some(type => target.getTypes().includes(type))) {
+    if (!user.getTypes(true).some(type => target.getTypes(true).includes(type))) {
       multiplier.value = 0;
       return true;
     }
@@ -8097,14 +8097,11 @@ export function getMoveTargets(user: Pokemon, move: Moves, replaceTarget?: MoveT
   return { targets: set.filter(p => p?.isActive(true)).map(p => p.getBattlerIndex()).filter(t => t !== undefined), multiple };
 }
 
-export const allMoves: Move[] = [
-  new SelfStatusMove(Moves.NONE, PokemonType.NORMAL, MoveCategory.STATUS, -1, -1, 0, 1),
-];
-
 export const selfStatLowerMoves: Moves[] = [];
 
 export function initMoves() {
   allMoves.push(
+    new SelfStatusMove(Moves.NONE, PokemonType.NORMAL, MoveCategory.STATUS, -1, -1, 0, 1),
     new AttackMove(Moves.POUND, PokemonType.NORMAL, MoveCategory.PHYSICAL, 40, 100, 35, -1, 0, 1),
     new AttackMove(Moves.KARATE_CHOP, PokemonType.FIGHTING, MoveCategory.PHYSICAL, 50, 100, 25, -1, 0, 1)
       .attr(HighCritAttr),
@@ -9604,7 +9601,7 @@ export function initMoves() {
     new AttackMove(Moves.SYNCHRONOISE, PokemonType.PSYCHIC, MoveCategory.SPECIAL, 120, 100, 10, -1, 0, 5)
       .target(MoveTarget.ALL_NEAR_OTHERS)
       .condition(unknownTypeCondition)
-      .attr(hitsSameTypeAttr),
+      .attr(HitsSameTypeAttr),
     new AttackMove(Moves.ELECTRO_BALL, PokemonType.ELECTRIC, MoveCategory.SPECIAL, -1, 100, 10, -1, 0, 5)
       .attr(ElectroBallPowerAttr)
       .ballBombMove(),

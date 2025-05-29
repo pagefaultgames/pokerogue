@@ -1,5 +1,6 @@
 import { BattlerIndex } from "#app/battle";
-import { allMoves, ShellSideArmCategoryAttr } from "#app/data/moves/move";
+import { ShellSideArmCategoryAttr } from "#app/data/moves/move";
+import { allMoves } from "#app/data/data-lists";
 import type Move from "#app/data/moves/move";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
