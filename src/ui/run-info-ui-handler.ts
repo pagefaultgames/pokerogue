@@ -27,7 +27,8 @@ import { SettingKeyboard } from "#app/system/settings/settings-keyboard";
 import { getBiomeName } from "#app/data/balance/biomes";
 import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { globalScene } from "#app/global-scene";
-import { modifierSortFunc, PokemonHeldItemModifier } from "#app/modifier/held-item-modifier";
+import { PokemonHeldItemModifier } from "#app/modifier/held-item-modifier";
+import { modifierSortFunc } from "#app/modifier/modifier-bar";
 
 /**
  * RunInfoUiMode indicates possible overlays of RunInfoUiHandler.

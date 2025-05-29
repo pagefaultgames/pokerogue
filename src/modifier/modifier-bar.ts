@@ -1,6 +1,6 @@
 import { globalScene } from "#app/global-scene";
-import { modifierSortFunc, type PokemonHeldItemModifier } from "./held-item-modifier";
-import type { PersistentModifier } from "./modifier";
+import { PokemonHeldItemModifier } from "./held-item-modifier";
+import type { Modifier, PersistentModifier } from "./modifier";
 
 const iconOverflowIndex = 24;
 
@@ -80,3 +80,27 @@ export class ModifierBar extends Phaser.GameObjects.Container {
     icon.setPosition(this.player ? x : -x, y);
   }
 }
+
+export const modifierSortFunc = (a: Modifier, b: Modifier): number => {
+  const itemNameMatch = a.type.name.localeCompare(b.type.name);
+  const typeNameMatch = a.constructor.name.localeCompare(b.constructor.name);
+  const aId = a instanceof PokemonHeldItemModifier && a.pokemonId ? a.pokemonId : 4294967295;
+  const bId = b instanceof PokemonHeldItemModifier && b.pokemonId ? b.pokemonId : 4294967295;
+
+  //First sort by pokemonID
+  if (aId < bId) {
+    return 1;
+  }
+  if (aId > bId) {
+    return -1;
+  }
+  if (aId === bId) {
+    //Then sort by item type
+    if (typeNameMatch === 0) {
+      return itemNameMatch;
+      //Finally sort by item name
+    }
+    return typeNameMatch;
+  }
+  return 0;
+};
