@@ -10,7 +10,7 @@ import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { BattlerIndex } from "#app/battle";
 import { StatusEffect } from "#enums/status-effect";
-import { PokemonInstantReviveModifier } from "#app/modifier/modifier";
+import { PokemonInstantReviveModifier } from "#app/modifier/held-item-modifier";
 
 describe("Moves - Destiny Bond", () => {
   let phaserGame: Phaser.Game;

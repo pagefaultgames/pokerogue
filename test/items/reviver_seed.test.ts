@@ -1,7 +1,7 @@
 import { BattlerIndex } from "#app/battle";
 import { allMoves } from "#app/data/data-lists";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
-import type { PokemonInstantReviveModifier } from "#app/modifier/modifier";
+import type { PokemonInstantReviveModifier } from "#app/modifier/held-item-modifier";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";

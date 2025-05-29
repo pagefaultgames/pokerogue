@@ -1,8 +1,9 @@
 import { globalScene } from "#app/global-scene";
 import { applyPostBattleAbAttrs, PostBattleAbAttr } from "#app/data/abilities/ability";
-import { LapsingPersistentModifier, LapsingPokemonHeldItemModifier } from "#app/modifier/modifier";
+import { LapsingPersistentModifier } from "#app/modifier/modifier";
 import { BattlePhase } from "./battle-phase";
 import { GameOverPhase } from "./game-over-phase";
+import { LapsingPokemonHeldItemModifier } from "#app/modifier/held-item-modifier";
 
 export class BattleEndPhase extends BattlePhase {
   /** If true, will increment battles won */

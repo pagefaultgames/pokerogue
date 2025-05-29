@@ -3,7 +3,7 @@ import { applyChallenges, ChallengeType } from "#app/data/challenge";
 import { Gender } from "#app/data/gender";
 import { SpeciesFormChangeMoveLearnedTrigger } from "#app/data/pokemon-forms";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
-import { overrideHeldItems, overrideModifiers } from "#app/modifier/modifier";
+import { overrideModifiers } from "#app/modifier/modifier";
 import Overrides from "#app/overrides";
 import { Phase } from "#app/phase";
 import { TitlePhase } from "#app/phases/title-phase";
@@ -13,6 +13,7 @@ import { UiMode } from "#enums/ui-mode";
 import type { Species } from "#enums/species";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 import { isNullOrUndefined } from "#app/utils/common";
+import { overrideHeldItems } from "#app/modifier/held-item-modifier";
 
 export class SelectStarterPhase extends Phase {
   start() {

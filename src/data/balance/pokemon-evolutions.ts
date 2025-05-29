@@ -11,11 +11,12 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { SpeciesFormKey } from "#enums/species-form-key";
 import { TimeOfDay } from "#enums/time-of-day";
-import { DamageMoneyRewardModifier, ExtraModifierModifier, MoneyMultiplierModifier, SpeciesStatBoosterModifier, TempExtraModifierModifier } from "#app/modifier/modifier";
+import { ExtraModifierModifier, MoneyMultiplierModifier, TempExtraModifierModifier } from "#app/modifier/modifier";
 import type { SpeciesStatBoosterModifierType } from "#app/modifier/modifier-type";
 import { speciesStarterCosts } from "./starters";
 import i18next from "i18next";
 import { initI18n } from "#app/plugins/i18n";
+import { DamageMoneyRewardModifier, SpeciesStatBoosterModifier } from "#app/modifier/held-item-modifier";
 
 export enum SpeciesWildEvolutionDelay {
   NONE,

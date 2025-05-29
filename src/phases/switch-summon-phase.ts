@@ -13,7 +13,7 @@ import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms";
 import { TrainerSlot } from "#enums/trainer-slot";
 import type Pokemon from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { SwitchEffectTransferModifier } from "#app/modifier/modifier";
+import { SwitchEffectTransferModifier } from "#app/modifier/held-item-modifier";
 import { Command } from "#app/ui/command-ui-handler";
 import i18next from "i18next";
 import { PostSummonPhase } from "./post-summon-phase";
@@ -137,7 +137,6 @@ export class SwitchSummonPhase extends SummonPhase {
       this.end();
       return;
     }
-
 
     if (this.switchType === SwitchType.BATON_PASS) {
       // If switching via baton pass, update opposing tags coming from the prior pokemon

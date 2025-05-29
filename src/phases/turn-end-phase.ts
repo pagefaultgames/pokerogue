@@ -5,17 +5,16 @@ import { WeatherType } from "#app/enums/weather-type";
 import { TurnEndEvent } from "#app/events/battle-scene";
 import type Pokemon from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
-import {
-  TurnHealModifier,
-  EnemyTurnHealModifier,
-  EnemyStatusEffectHealChanceModifier,
-  TurnStatusEffectModifier,
-  TurnHeldItemTransferModifier,
-} from "#app/modifier/modifier";
+import { EnemyTurnHealModifier, EnemyStatusEffectHealChanceModifier } from "#app/modifier/modifier";
 import i18next from "i18next";
 import { FieldPhase } from "./field-phase";
 import { PokemonHealPhase } from "./pokemon-heal-phase";
 import { globalScene } from "#app/global-scene";
+import {
+  TurnHealModifier,
+  TurnHeldItemTransferModifier,
+  TurnStatusEffectModifier,
+} from "#app/modifier/held-item-modifier";
 
 export class TurnEndPhase extends FieldPhase {
   start() {

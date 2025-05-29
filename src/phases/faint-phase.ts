@@ -20,7 +20,7 @@ import type { EnemyPokemon } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
 import { HitResult, PlayerPokemon, PokemonMove } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { PokemonInstantReviveModifier } from "#app/modifier/modifier";
+import { PokemonInstantReviveModifier } from "#app/modifier/held-item-modifier";
 import { SwitchType } from "#enums/switch-type";
 import i18next from "i18next";
 import { DamageAnimPhase } from "./damage-anim-phase";
