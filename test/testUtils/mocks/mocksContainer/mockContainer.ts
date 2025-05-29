@@ -272,9 +272,24 @@ export default class MockContainer implements MockGameObject {
     return this;
   }
 
-  each(method): this {
+  // biome-ignore lint/complexity/noBannedTypes: This matches the signature of the method it mocks
+  each(callback: Function, context?: object, ...args: any[]): this {
+    if (context !== undefined) {
+      callback = callback.bind(context);
+    }
+    for (const item of this.list.slice()) {
+      callback(item, ...args);
+    }
+    return this;
+  }
+
+  // biome-ignore lint/complexity/noBannedTypes: This matches the signature of the method it mocks
+  iterate(callback: Function, context?: object, ...args: any[]): this {
+    if (context !== undefined) {
+      callback = callback.bind(context);
+    }
     for (const item of this.list) {
-      method(item);
+      callback(item, ...args);
     }
     return this;
   }
