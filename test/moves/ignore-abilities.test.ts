@@ -38,13 +38,13 @@ describe("Moves - Ability-Ignoring Moves", () => {
     { name: "Sunsteel Strike", move: Moves.SUNSTEEL_STRIKE },
     { name: "Moongeist Beam", move: Moves.MOONGEIST_BEAM },
     { name: "Photon Geyser", move: Moves.PHOTON_GEYSER },
-  ])("$name should ignore enemy abilities during move use", async () => {
+  ])("$name should ignore enemy abilities during move use", async ({move}) => {
     await game.classicMode.startBattle([Species.NECROZMA]);
 
     const player = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.MOONGEIST_BEAM);
+    game.move.select(move);
     await game.phaseInterceptor.to("MoveEffectPhase");
 
     expect(game.scene.arena.ignoreAbilities).toBe(true);
