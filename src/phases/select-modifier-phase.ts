@@ -85,87 +85,88 @@ export class SelectModifierPhase extends BattlePhase {
         });
         return false;
       }
-      let modifierType: ModifierType;
-      let cost = 0;
+
       switch (rowCursor) {
-        // Execute option from the bottom row
+        // Execute one of the options from the bottom row
         case 0:
-          return this.playBottomRowOption(cursor, modifierSelectCallback);
+          switch (cursor) {
+            case 0:
+              return this.rerollModifiers();
+            case 1:
+              return this.openModifierTransferScreen(modifierSelectCallback);
+            // Check the party, pass a callback to restore the modifier select screen.
+            case 2:
+              globalScene.ui.setModeWithoutClear(UiMode.PARTY, PartyUiMode.CHECK, -1, () => {
+                this.resetModifierSelect(modifierSelectCallback);
+              });
+              return true;
+            case 3:
+              return this.toggleRerollLock();
+            default:
+              return false;
+          }
         // Pick an option from the rewards
         case 1:
-          if (this.typeOptions.length === 0) {
-            globalScene.ui.clearText();
-            globalScene.ui.setMode(UiMode.MESSAGE);
-            super.end();
-            return true;
-          }
-          if (this.typeOptions[cursor].type) {
-            modifierType = this.typeOptions[cursor].type;
-          }
-          break;
+          return this.selectRewardModifierOption(cursor, modifierSelectCallback);
         // Pick an option from the shop
         default: {
-          const shopOptions = getPlayerShopModifierTypeOptionsForWave(
-            globalScene.currentBattle.waveIndex,
-            globalScene.getWaveMoneyAmount(1),
-          );
-          const shopOption =
-            shopOptions[
-              rowCursor > 2 || shopOptions.length <= SHOP_OPTIONS_ROW_LIMIT ? cursor : cursor + SHOP_OPTIONS_ROW_LIMIT
-            ];
-          if (shopOption.type) {
-            modifierType = shopOption.type;
-          }
-          // Apply Black Sludge to healing item cost
-          const healingItemCost = new NumberHolder(shopOption.cost);
-          globalScene.applyModifier(HealShopCostModifier, true, healingItemCost);
-          cost = healingItemCost.value;
-          break;
+          return this.selectShopModifierOption(rowCursor, cursor, modifierSelectCallback);
         }
       }
-
-      if (cost! && globalScene.money < cost && !Overrides.WAIVE_ROLL_FEE_OVERRIDE) {
-        globalScene.ui.playError();
-        return false;
-      }
-
-      if (modifierType! instanceof PokemonModifierType) {
-        //TODO: is the bang correct?
-        if (modifierType instanceof FusePokemonModifierType) {
-          this.openFusionMenu(modifierType, cost, modifierSelectCallback);
-        } else {
-          this.openModifierMenu(modifierType, cost, modifierSelectCallback);
-        }
-      } else {
-        this.applyModifier(modifierType!.newModifier()!); // TODO: is the bang correct?
-      }
-
-      return !cost!; // TODO: is the bang correct?
     };
+
     this.resetModifierSelect(modifierSelectCallback);
   }
 
-  private playBottomRowOption(cursor: number, modifierSelectCallback): boolean {
-    let success = false;
-    switch (cursor) {
-      case 0:
-        success = this.rerollModifiers();
-        break;
-      case 1:
-        success = this.openModifierTransferScreen(modifierSelectCallback);
-        break;
-      // Check the party, pass a callback to restore the modifier select screen.
-      case 2:
-        globalScene.ui.setModeWithoutClear(UiMode.PARTY, PartyUiMode.CHECK, -1, () => {
-          this.resetModifierSelect(modifierSelectCallback);
-        });
-        success = true;
-        break;
-      case 3:
-        success = this.toggleRerollLock();
-        break;
+  // Pick a modifier from among the rewards and apply it
+  private selectRewardModifierOption(cursor: number, modifierSelectCallback): boolean {
+    if (this.typeOptions.length === 0) {
+      globalScene.ui.clearText();
+      globalScene.ui.setMode(UiMode.MESSAGE);
+      super.end();
+      return true;
     }
-    return success;
+    const modifierType = this.typeOptions[cursor].type;
+    return this.applyChosenModifier(modifierType, 0, modifierSelectCallback);
+  }
+
+  // Pick a modifier from the shop and apply it
+  private selectShopModifierOption(rowCursor: number, cursor: number, modifierSelectCallback): boolean {
+    const shopOptions = getPlayerShopModifierTypeOptionsForWave(
+      globalScene.currentBattle.waveIndex,
+      globalScene.getWaveMoneyAmount(1),
+    );
+    const shopOption =
+      shopOptions[
+        rowCursor > 2 || shopOptions.length <= SHOP_OPTIONS_ROW_LIMIT ? cursor : cursor + SHOP_OPTIONS_ROW_LIMIT
+      ];
+    const modifierType = shopOption.type;
+    // Apply Black Sludge to healing item cost
+    const healingItemCost = new NumberHolder(shopOption.cost);
+    globalScene.applyModifier(HealShopCostModifier, true, healingItemCost);
+    const cost = healingItemCost.value;
+
+    if (globalScene.money < cost && !Overrides.WAIVE_ROLL_FEE_OVERRIDE) {
+      globalScene.ui.playError();
+      return false;
+    }
+
+    return this.applyChosenModifier(modifierType, cost, modifierSelectCallback);
+  }
+
+  // Apply a chosen modifier: do an effect or open the party menu
+  private applyChosenModifier(modifierType: ModifierType, cost: number, modifierSelectCallback): boolean {
+    if (modifierType! instanceof PokemonModifierType) {
+      //TODO: is the bang correct?
+      if (modifierType instanceof FusePokemonModifierType) {
+        this.openFusionMenu(modifierType, cost, modifierSelectCallback);
+      } else {
+        this.openModifierMenu(modifierType, cost, modifierSelectCallback);
+      }
+    } else {
+      this.applyModifier(modifierType!.newModifier()!); // TODO: is the bang correct?
+    }
+    return !cost;
   }
 
   // Reroll rewards
