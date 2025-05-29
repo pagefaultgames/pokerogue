@@ -2332,3 +2332,7 @@ export class ModifierTypeOption {
     this.cost = Math.min(Math.round(cost), Number.MAX_SAFE_INTEGER);
   }
 }
+
+export function getModifierTypeFuncById(id: string): ModifierTypeFunc {
+  return modifierTypes[id];
+}

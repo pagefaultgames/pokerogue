@@ -12,7 +12,7 @@ import { Button } from "../enums/buttons";
 import { BattleType } from "#enums/battle-type";
 import { TrainerVariant } from "../field/trainer";
 import { Challenges } from "#enums/challenges";
-import { getLuckString, getLuckTextTint } from "../modifier/modifier-type";
+import { getLuckString, getLuckTextTint } from "../modifier/modifier-utils";
 import RoundRectangle from "phaser3-rex-plugins/plugins/roundrectangle";
 import { getTypeRgb } from "#app/data/type";
 import { PokemonType } from "#enums/pokemon-type";

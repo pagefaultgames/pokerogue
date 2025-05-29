@@ -922,10 +922,6 @@ export interface CustomModifierSettings {
   allowLuckUpgrades?: boolean;
 }
 
-export function getModifierTypeFuncById(id: string): ModifierTypeFunc {
-  return modifierTypes[id];
-}
-
 /**
  * Generates modifier options for a {@linkcode SelectModifierPhase}
  * @param count Determines the number of items to generate
