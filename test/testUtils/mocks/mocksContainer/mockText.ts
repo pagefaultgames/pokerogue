@@ -159,8 +159,8 @@ export default class MockText implements MockGameObject {
     // return this.phaserText.addedToScene();
   }
 
-  setVisible(_visible) {
-    // return this.phaserText.setVisible(visible);
+  setVisible(_visible): this {
+    return this;
   }
 
   setY(_y): this {
@@ -209,9 +209,10 @@ export default class MockText implements MockGameObject {
     return this;
   }
 
-  setWordWrapWidth(width) {
+  setWordWrapWidth(width): this {
     // Sets the width (in pixels) to use for wrapping lines.
     this.wordWrapWidth = width;
+    return this;
   }
 
   setFontSize(_fontSize): this {
@@ -351,5 +352,6 @@ export default class MockText implements MockGameObject {
     return this.runWordWrap(this.text).split("\n");
   }
 
+  // biome-ignore lint/complexity/noBannedTypes: This matches the signature of the class this mocks
   on(_event: string | symbol, _fn: Function, _context?: any) {}
 }
