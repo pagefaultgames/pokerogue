@@ -1823,8 +1823,8 @@ export class AddSubstituteAttr extends MoveEffectAttr {
   }
 
   /**
-   * Removes 1/4 of the user's maximum HP (rounded down) to create a substitute for the user
-   * @param user - The {@linkcode Pokemon} that used the move.
+   * Removes a fraction of the user's maximum HP to create a substitute.
+   * @param user - The {@linkcode Pokemon} using the move.
    * @param target - n/a
    * @param move - The {@linkcode Move} with this attribute.
    * @param args - n/a

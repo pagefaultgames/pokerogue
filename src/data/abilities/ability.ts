@@ -6947,12 +6947,10 @@ export function initAbilities() {
       .attr(PostDefendStatStageChangeAbAttr, (target, user, move) => move.category !== MoveCategory.STATUS, Stat.DEF, 1),
     new Ability(Abilities.WIMP_OUT, 7)
       .attr(PostDamageForceSwitchAbAttr)
-      .condition(getSheerForceHitDisableAbCondition())
-      .bypassFaint(), // allows Wimp Out to activate with Reviver Seed
+      .condition(getSheerForceHitDisableAbCondition()),
     new Ability(Abilities.EMERGENCY_EXIT, 7)
       .attr(PostDamageForceSwitchAbAttr)
-      .condition(getSheerForceHitDisableAbCondition())
-      .bypassFaint(),
+      .condition(getSheerForceHitDisableAbCondition()),
     new Ability(Abilities.WATER_COMPACTION, 7)
       .attr(PostDefendStatStageChangeAbAttr, (target, user, move) => user.getMoveType(move) === PokemonType.WATER && move.category !== MoveCategory.STATUS, Stat.DEF, 2),
     new Ability(Abilities.MERCILESS, 7)

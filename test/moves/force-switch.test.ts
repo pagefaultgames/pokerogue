@@ -10,10 +10,14 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vite
 import { BattleType } from "#enums/battle-type";
 import { TrainerSlot } from "#enums/trainer-slot";
 import { TrainerType } from "#enums/trainer-type";
-import { splitArray } from "#app/utils/common";
+import { splitArray } from "#app/utils/array";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveResult } from "#app/field/pokemon";
 import { SubstituteTag } from "#app/data/battler-tags";
+import { Stat } from "#enums/stat";
+import i18next from "i18next";
+import { toDmgValue } from "#app/utils/common";
+import { allAbilities } from "#app/data/data-lists";
 
 describe("Moves - Switching Moves", () => {
   let phaserGame: Phaser.Game;
@@ -25,7 +29,7 @@ describe("Moves - Switching Moves", () => {
     });
   });
 
-  describe("Target Switch Moves", () => {
+  describe("Force Switch Moves", () => {
     afterEach(() => {
       game.phaseInterceptor.restoreOg();
     });
@@ -34,8 +38,8 @@ describe("Moves - Switching Moves", () => {
       game = new GameManager(phaserGame);
       game.override
         .battleStyle("single")
-        .ability(Abilities.NO_GUARD)
-        .moveset([Moves.DRAGON_TAIL, Moves.SPLASH, Moves.FLAMETHROWER])
+        .passiveAbility(Abilities.NO_GUARD)
+        .moveset([Moves.DRAGON_TAIL, Moves.SPLASH, Moves.FLAMETHROWER, Moves.FOCUS_PUNCH])
         .enemySpecies(Species.WAILORD)
         .enemyMoveset(Moves.SPLASH);
     });
@@ -75,12 +79,14 @@ describe("Moves - Switching Moves", () => {
     it("should force trainers to switch randomly without selecting from a partner's party", async () => {
       game.override
         .battleStyle("double")
-        .enemyMoveset(Moves.SPLASH)
         .enemyAbility(Abilities.STURDY)
         .battleType(BattleType.TRAINER)
         .randomTrainer({ trainerType: TrainerType.TATE, alwaysDouble: true })
         .enemySpecies(0);
       await game.classicMode.startBattle([Species.WIMPOD, Species.TYRANITAR]);
+
+      expect(game.scene.currentBattle.trainer).not.toBeNull();
+      const choiceSwitchSpy = vi.spyOn(game.scene.currentBattle.trainer!, "getNextSummonIndex");
 
       // Grab each trainer's pokemon based on species name
       const [tateParty, lizaParty] = splitArray(
@@ -94,9 +100,6 @@ describe("Moves - Switching Moves", () => {
       // Due to how enemy trainer parties are laid out, this prevents false positives
       // as Tate's pokemon are placed immediately before Liza's corresponding members.
       vi.fn(Phaser.Math.RND.integerInRange).mockImplementation(min => min);
-
-      // Spy on the function responsible for making informed switches
-      const choiceSwitchSpy = vi.spyOn(game.scene.currentBattle.trainer!, "getNextSummonIndex");
 
       game.move.select(Moves.DRAGON_TAIL, BattlerIndex.PLAYER, BattlerIndex.ENEMY_2);
       game.move.select(Moves.SPLASH, BattlerIndex.PLAYER_2);
@@ -114,29 +117,20 @@ describe("Moves - Switching Moves", () => {
     });
 
     it("should force wild Pokemon to flee and redirect moves accordingly", async () => {
-      game.override.battleStyle("double").enemyMoveset(Moves.SPLASH).enemyAbility(Abilities.ROUGH_SKIN);
-      await game.classicMode.startBattle([Species.DRATINI, Species.DRATINI, Species.WAILORD, Species.WAILORD]);
+      game.override.battleStyle("double").enemyMoveset(Moves.SPLASH);
+      await game.classicMode.startBattle([Species.DRATINI, Species.DRATINI]);
 
-      const leadPokemon = game.scene.getPlayerParty()[0]!;
-      const secPokemon = game.scene.getPlayerParty()[1]!;
+      const [enemyLeadPokemon, enemySecPokemon] = game.scene.getEnemyParty();
 
-      const enemyLeadPokemon = game.scene.getEnemyParty()[0]!;
-      const enemySecPokemon = game.scene.getEnemyParty()[1]!;
-
-      game.move.select(Moves.DRAGON_TAIL, 0, BattlerIndex.ENEMY);
+      game.move.select(Moves.DRAGON_TAIL, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
       // target the same pokemon, second move should be redirected after first flees
-      game.move.select(Moves.DRAGON_TAIL, 1, BattlerIndex.ENEMY);
-
+      // Focus punch used due to having even lower priority than Dtail
+      game.move.select(Moves.FOCUS_PUNCH, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY);
+      await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER, BattlerIndex.PLAYER_2]);
       await game.phaseInterceptor.to("BerryPhase");
 
-      const isVisibleLead = enemyLeadPokemon.visible;
-      const hasFledLead = enemyLeadPokemon.switchOutStatus;
-      const isVisibleSec = enemySecPokemon.visible;
-      const hasFledSec = enemySecPokemon.switchOutStatus;
-      expect(!isVisibleLead && hasFledLead && !isVisibleSec && hasFledSec).toBe(true);
-      expect(leadPokemon.hp).toBeLessThan(leadPokemon.getMaxHp());
-      expect(secPokemon.hp).toBeLessThan(secPokemon.getMaxHp());
-      expect(enemyLeadPokemon.hp).toBeLessThan(enemyLeadPokemon.getMaxHp());
+      expect(enemyLeadPokemon.visible).toBe(false);
+      expect(enemyLeadPokemon.switchOutStatus).toBe(true);
       expect(enemySecPokemon.hp).toBeLessThan(enemySecPokemon.getMaxHp());
     });
 
@@ -153,7 +147,7 @@ describe("Moves - Switching Moves", () => {
       expect(enemy.isFullHp()).toBe(false);
 
       // Turn 2: Mold Breaker should ignore switch blocking ability and switch out the target
-      game.override.ability(Abilities.MOLD_BREAKER);
+      vi.spyOn(game.scene.getPlayerPokemon()!, "getAbility").mockReturnValue(allAbilities[Abilities.MOLD_BREAKER]);
       enemy.hp = enemy.getMaxHp();
 
       game.move.select(Moves.DRAGON_TAIL);
@@ -178,54 +172,53 @@ describe("Moves - Switching Moves", () => {
       expect(dondozo1.isFullHp()).toBe(false);
     });
 
-    it("should force a switch upon fainting an opponent normally", async () => {
-      game.override.startingWave(5).startingLevel(1000); // To make sure Dragon Tail KO's the opponent
+    it("should perform a normal switch upon fainting an opponent", async () => {
+      game.override.battleType(BattleType.TRAINER).startingLevel(1000); // To make sure Dragon Tail KO's the opponent
       await game.classicMode.startBattle([Species.DRATINI]);
 
+      expect(game.scene.getEnemyParty()).toHaveLength(2);
+      const choiceSwitchSpy = vi.spyOn(game.scene.currentBattle.trainer!, "getNextSummonIndex");
       game.move.select(Moves.DRAGON_TAIL);
-
       await game.toNextTurn();
 
-      // Make sure the enemy switched to a healthy Pokemon
       const enemy = game.scene.getEnemyPokemon()!;
       expect(enemy).toBeDefined();
       expect(enemy.isFullHp()).toBe(true);
 
-      // Make sure the enemy has a fainted Pokemon in their party and not on the field
-      const faintedEnemy = game.scene.getEnemyParty().find(p => !p.isAllowedInBattle());
-      expect(faintedEnemy).toBeDefined();
-      expect(game.scene.getEnemyField().length).toBe(1);
+      expect(choiceSwitchSpy).toHaveBeenCalledTimes(1);
     });
 
     it("should neither switch nor softlock when activating an opponent's reviver seed", async () => {
       game.override
         .battleType(BattleType.TRAINER)
-        .enemyHeldItems([{ name: "REVIVER_SEED" }])
-        .startingLevel(1000); // make sure Dragon Tail KO's the opponent
+        .enemySpecies(Species.BLISSEY)
+        .enemyHeldItems([{ name: "REVIVER_SEED" }]);
       await game.classicMode.startBattle([Species.DRATINI]);
 
-      const [wailord1, wailord2] = game.scene.getEnemyParty()!;
-      expect(wailord1).toBeDefined();
-      expect(wailord2).toBeDefined();
+      const [blissey1, blissey2] = game.scene.getEnemyParty()!;
+      expect(blissey1).toBeDefined();
+      expect(blissey2).toBeDefined();
+      blissey1.hp = 1;
 
       game.move.select(Moves.DRAGON_TAIL);
       await game.toNextTurn();
 
-      // Wailord should have consumed the reviver seed and stayed on field
-      expect(wailord1.isOnField()).toBe(true);
-      expect(wailord1.getHpRatio()).toBeCloseTo(0.5);
-      expect(wailord1.getHeldItems()).toHaveLength(0);
-      expect(wailord2.isOnField()).toBe(false);
+      // Bliseey #1 should have consumed the reviver seed and stayed on field
+      expect(blissey1.isOnField()).toBe(true);
+      expect(blissey1.getHpRatio()).toBeCloseTo(0.5);
+      expect(blissey1.getHeldItems()).toHaveLength(0);
+      expect(blissey2.isOnField()).toBe(false);
     });
 
     it("should neither switch nor softlock when activating a player's reviver seed", async () => {
       game.override
         .startingHeldItems([{ name: "REVIVER_SEED" }])
         .enemyMoveset(Moves.DRAGON_TAIL)
-        .enemyLevel(1000); // make sure Dragon Tail KO's the player
+        .startingLevel(1000); // make hp rounding consistent
       await game.classicMode.startBattle([Species.BLISSEY, Species.BULBASAUR]);
 
       const [blissey, bulbasaur] = game.scene.getPlayerParty();
+      blissey.hp = 1;
 
       game.move.select(Moves.SPLASH);
       await game.toNextTurn();
@@ -279,6 +272,13 @@ describe("Moves - Switching Moves", () => {
       const newEnemy = game.scene.getEnemyPokemon()!;
       expect(newEnemy).not.toBe(enemy);
       expect(game.phaseInterceptor.log).toContain("SwitchSummonPhase");
+      // TODO: Replace this with the locale key in question
+      expect(game.textInterceptor.logs).toContain(
+        i18next.t("INSERT FORCE SWITCH LOCALES KEY HERE", {
+          pokemonName: newEnemy.getNameToRender(),
+        }),
+      );
+
       expect(game.textInterceptor.logs).not.toContain(
         i18next.t("battle:trainerGo", {
           trainerName: game.scene.currentBattle.trainer?.getName(newEnemy.trainerSlot),
@@ -338,225 +338,175 @@ describe("Moves - Switching Moves", () => {
     });
   });
 
-  describe("Failure Checks", () => {
+  describe("Baton Pass", () => {
     afterEach(() => {
       game.phaseInterceptor.restoreOg();
     });
 
     beforeEach(() => {
       game = new GameManager(phaserGame);
-      game.override.battleStyle("single").enemySpecies(Species.GENGAR).disableCrits().enemyAbility(Abilities.STURDY);
+      game.override
+        .battleStyle("single")
+        .enemySpecies(Species.MAGIKARP)
+        .enemyAbility(Abilities.BALL_FETCH)
+        .moveset([Moves.BATON_PASS, Moves.NASTY_PLOT, Moves.SPLASH, Moves.SUBSTITUTE])
+        .ability(Abilities.BALL_FETCH)
+        .enemyMoveset(Moves.SPLASH)
+        .disableCrits();
     });
 
-    it.each<{ name: string; move: Moves }>([
-      { name: "U-Turn", move: Moves.U_TURN },
-      { name: "Flip Turn", move: Moves.FLIP_TURN },
-      { name: "Volt Switch", move: Moves.VOLT_SWITCH },
-      { name: "Baton Pass", move: Moves.BATON_PASS },
-      { name: "Shed Tail", move: Moves.SHED_TAIL },
-      { name: "Parting Shot", move: Moves.PARTING_SHOT },
-    ])("$name should not allow wild pokemon to flee", async ({ move }) => {
-      game.override.moveset(Moves.SPLASH).enemyMoveset(move);
+    it("should pass the user's stat stages and BattlerTags to an ally", async () => {
       await game.classicMode.startBattle([Species.RAICHU, Species.SHUCKLE]);
 
-      // reset species override so we get a different species
-      game.override.enemySpecies(Species.ARBOK);
-
-      game.move.select(Moves.SPLASH);
-      game.doSelectPartyPokemon(1);
-
-      await game.phaseInterceptor.to("TurnEndPhase");
-
-      expect(game.phaseInterceptor.log).toContain("SwitchSummonPhase");
-      const player = game.scene.getPlayerPokemon()!;
-      expect(player.species.speciesId).toBe(Species.SHUCKLE);
-      expect(player.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
-
-      expect(game.phaseInterceptor.log).not.toContain("BattleEndPhase");
-      const enemy = game.scene.getEnemyPokemon()!;
-      expect(enemy.switchOutStatus).toBe(false);
-      expect(enemy.species.speciesId).toBe(Species.GENGAR);
-    });
-
-    it.each<{ name: string; move: Moves }>([
-      { name: "Teleport", move: Moves.TELEPORT },
-      { name: "Whirlwind", move: Moves.WHIRLWIND },
-      { name: "Roar", move: Moves.ROAR },
-      { name: "Dragon Tail", move: Moves.DRAGON_TAIL },
-      { name: "Circle Throw", move: Moves.CIRCLE_THROW },
-    ])("$name should allow wild pokemon to flee", async ({ move }) => {
-      game.override.moveset(move).enemyMoveset(move);
-      await game.classicMode.startBattle([Species.RAICHU, Species.SHUCKLE]);
-
-      const gengar = game.scene.getEnemyPokemon();
-      game.move.select(move);
-      game.doSelectPartyPokemon(1);
-      await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+      game.move.select(Moves.NASTY_PLOT);
       await game.toNextTurn();
 
-      expect(game.phaseInterceptor.log).not.toContain("BattleEndPhase");
-      expect(game.scene.getEnemyPokemon()).toBe(gengar);
+      const [raichu, shuckle] = game.scene.getPlayerParty();
+      expect(raichu.getStatStage(Stat.SPATK)).toEqual(2);
+
+      game.move.select(Moves.SUBSTITUTE);
+      await game.toNextTurn();
+
+      expect(raichu.getTag(BattlerTagType.SUBSTITUTE)).toBeDefined();
+
+      game.move.select(Moves.BATON_PASS);
+      game.doSelectPartyPokemon(1);
+      await game.phaseInterceptor.to("TurnEndPhase");
+
+      expect(game.scene.getPlayerPokemon()).toBe(shuckle);
+      expect(shuckle.getStatStage(Stat.SPATK)).toEqual(2);
+      expect(shuckle.getTag(BattlerTagType.SUBSTITUTE)).toBeDefined();
     });
 
-    it.each<{ name: string; move?: Moves; enemyMove?: Moves }>([
-      { name: "U-Turn", move: Moves.U_TURN },
-      { name: "Flip Turn", move: Moves.FLIP_TURN },
-      { name: "Volt Switch", move: Moves.VOLT_SWITCH },
-      // TODO: Enable once Parting shot is fixed
-      // {name: "Parting Shot", move: Moves.PARTING_SHOT},
-      { name: "Dragon Tail", enemyMove: Moves.DRAGON_TAIL },
-      { name: "Circle Throw", enemyMove: Moves.CIRCLE_THROW },
-    ])(
-      "$name should not fail if no valid switch out target is found",
-      async ({ move = Moves.SPLASH, enemyMove = Moves.SPLASH }) => {
-        game.override.moveset(move).enemyMoveset(enemyMove);
-        await game.classicMode.startBattle([Species.RAICHU]);
+    it("should pass stat stages when used by enemy trainers", async () => {
+      game.override.battleType(BattleType.TRAINER).enemyMoveset([Moves.NASTY_PLOT, Moves.BATON_PASS]);
+      await game.classicMode.startBattle([Species.RAICHU, Species.SHUCKLE]);
 
-        game.move.select(move);
-        game.doSelectPartyPokemon(1);
-        await game.toNextTurn();
+      const enemy = game.scene.getEnemyPokemon()!;
 
-        expect(game.phaseInterceptor.log).not.toContain("SwitchSummonPhase");
-        expect(game.scene.getPlayerPokemon()?.getLastXMoves()[0].result).toBe(MoveResult.MISS);
-      },
-    );
+      // round 1 - ai buffs
+      game.move.select(Moves.SPLASH);
+      await game.forceEnemyMove(Moves.NASTY_PLOT);
+      await game.toNextTurn();
 
-    it.each<{ name: string; move?: Moves; enemyMove?: Moves }>([
-      { name: "Teleport", move: Moves.TELEPORT },
-      { name: "Baton Pass", move: Moves.BATON_PASS },
-      { name: "Shed Tail", move: Moves.SHED_TAIL },
-      { name: "Roar", enemyMove: Moves.ROAR },
-      { name: "Whirlwind", enemyMove: Moves.WHIRLWIND },
-    ])(
-      "$name should fail if no valid switch out target is found",
-      async ({ move = Moves.SPLASH, enemyMove = Moves.SPLASH }) => {
-        game.override.moveset(move).enemyMoveset(enemyMove);
-        await game.classicMode.startBattle([Species.RAICHU, Species.SHUCKLE]);
+      game.move.select(Moves.SPLASH);
+      await game.forceEnemyMove(Moves.BATON_PASS);
+      await game.toNextTurn();
 
-        // reset species override so we get a different species
-        game.override.enemySpecies(Species.ARBOK);
+      // check buffs are still there
+      const newEnemy = game.scene.getEnemyPokemon()!;
+      expect(newEnemy).not.toBe(enemy);
+      expect(newEnemy.getStatStage(Stat.SPATK)).toBe(2);
+      expect(game.phaseInterceptor.log).toContain("SwitchSummonPhase");
+    });
 
-        game.move.select(move);
-        game.doSelectPartyPokemon(1);
+    it("should not transfer non-transferrable effects", async () => {
+      game.override.enemyMoveset([Moves.SALT_CURE]);
+      await game.classicMode.startBattle([Species.PIKACHU, Species.FEEBAS]);
 
-        await game.toNextTurn();
+      const [player1, player2] = game.scene.getPlayerParty();
 
-        expect(game.phaseInterceptor.log).not.toContain("BattleEndPhase");
-        expect(game.scene.getEnemyPokemon()!.species.speciesId).toBe(Species.GENGAR);
-      },
-    );
+      game.move.select(Moves.BATON_PASS);
+      await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
 
-    describe("Baton Pass", () => {
-      let phaserGame: Phaser.Game;
-      let game: GameManager;
+      // enemy salt cure
+      await game.phaseInterceptor.to("MoveEndPhase");
+      expect(player1.getTag(BattlerTagType.SALT_CURED)).toBeDefined();
 
-      beforeAll(() => {
-        phaserGame = new Phaser.Game({
-          type: Phaser.HEADLESS,
-        });
-      });
+      game.doSelectPartyPokemon(1);
+      await game.toNextTurn();
 
-      afterEach(() => {
-        game.phaseInterceptor.restoreOg();
-      });
+      expect(player1.isOnField()).toBe(false);
+      expect(player2.isOnField()).toBe(true);
+      expect(player2.getTag(BattlerTagType.SALT_CURED)).toBeUndefined();
+    });
 
-      beforeEach(() => {
-        game = new GameManager(phaserGame);
-        game.override
-          .battleStyle("single")
-          .enemySpecies(Species.MAGIKARP)
-          .enemyAbility(Abilities.BALL_FETCH)
-          .moveset([Moves.BATON_PASS, Moves.NASTY_PLOT, Moves.SPLASH, Moves.SUBSTITUTE])
-          .ability(Abilities.BALL_FETCH)
-          .enemyMoveset(Moves.SPLASH)
-          .disableCrits();
-      });
+    it("should remove the user's binding effects", async () => {
+      game.override.moveset([Moves.FIRE_SPIN, Moves.BATON_PASS]);
 
-      it("should pass the user's stat stages and BattlerTags to an ally", async () => {
-        await game.classicMode.startBattle([Species.RAICHU, Species.SHUCKLE]);
+      await game.classicMode.startBattle([Species.MAGIKARP, Species.FEEBAS]);
 
-        game.move.select(Moves.NASTY_PLOT);
-        await game.toNextTurn();
+      const enemy = game.scene.getEnemyPokemon()!;
 
-        const [raichu, shuckle] = game.scene.getPlayerParty();
-        expect(raichu.getStatStage(Stat.SPATK)).toEqual(2);
+      game.move.select(Moves.FIRE_SPIN);
+      await game.move.forceHit();
+      await game.toNextTurn();
 
-        game.move.select(Moves.SUBSTITUTE);
-        await game.toNextTurn();
+      expect(enemy.getTag(BattlerTagType.FIRE_SPIN)).toBeDefined();
 
-        expect(raichu.getTag(BattlerTagType.SUBSTITUTE)).toBeDefined();
+      game.move.select(Moves.BATON_PASS);
+      game.doSelectPartyPokemon(1);
+      await game.toNextTurn();
 
-        game.move.select(Moves.BATON_PASS);
-        game.doSelectPartyPokemon(1);
-        await game.phaseInterceptor.to("TurnEndPhase");
+      expect(enemy.getTag(BattlerTagType.FIRE_SPIN)).toBeUndefined();
+    });
+  });
 
-        expect(game.scene.getPlayerPokemon()).toBe(shuckle);
-        expect(shuckle.getStatStage(Stat.SPATK)).toEqual(2);
-        expect(shuckle.getTag(BattlerTagType.SUBSTITUTE)).toBeDefined();
-      });
+  describe("Shed Tail", () => {
+    afterEach(() => {
+      game.phaseInterceptor.restoreOg();
+    });
 
-      it("should pass stat stages when used by enemy trainers", async () => {
-        game.override.battleType(BattleType.TRAINER).enemyMoveset([Moves.NASTY_PLOT, Moves.BATON_PASS]);
-        await game.classicMode.startBattle([Species.RAICHU, Species.SHUCKLE]);
+    beforeEach(() => {
+      game = new GameManager(phaserGame);
+      game.override
+        .moveset(Moves.SHED_TAIL)
+        .battleStyle("single")
+        .enemySpecies(Species.SNORLAX)
+        .enemyAbility(Abilities.BALL_FETCH)
+        .enemyMoveset(Moves.SPLASH);
+    });
 
-        const enemy = game.scene.getEnemyPokemon()!;
+    it("should consume 50% of the user's max HP (rounded up) to transfer a 25% HP Substitute doll", async () => {
+      await game.classicMode.startBattle([Species.MAGIKARP, Species.FEEBAS]);
 
-        // round 1 - ai buffs
-        game.move.select(Moves.SPLASH);
-        await game.forceEnemyMove(Moves.NASTY_PLOT);
-        await game.toNextTurn();
+      const magikarp = game.scene.getPlayerPokemon()!;
 
-        game.move.select(Moves.SPLASH);
-        await game.forceEnemyMove(Moves.BATON_PASS);
-        await game.toNextTurn();
+      game.move.select(Moves.SHED_TAIL);
+      game.doSelectPartyPokemon(1);
+      await game.phaseInterceptor.to("TurnEndPhase", false);
 
-        // check buffs are still there
-        const newEnemy = game.scene.getEnemyPokemon()!;
-        expect(newEnemy).not.toBe(enemy);
-        expect(newEnemy.getStatStage(Stat.SPATK)).toBe(2);
-        expect(game.phaseInterceptor.log).toContain("SwitchSummonPhase");
-      });
+      const feebas = game.scene.getPlayerPokemon()!;
+      expect(feebas).not.toBe(magikarp);
+      expect(feebas.hp).toBe(feebas.getMaxHp());
 
-      it("should not transfer non-transferrable effects", async () => {
-        game.override.enemyMoveset([Moves.SALT_CURE]);
-        await game.classicMode.startBattle([Species.PIKACHU, Species.FEEBAS]);
+      const substituteTag = feebas.getTag(SubstituteTag)!;
+      expect(substituteTag).toBeDefined();
 
-        const [player1, player2] = game.scene.getPlayerParty();
+      // Note: Altered the test to be consistent with the correct HP cost :yipeevee_static:
+      expect(magikarp.getInverseHp()).toBe(Math.ceil(magikarp.getMaxHp() / 2));
+      expect(substituteTag.hp).toBe(Math.floor(magikarp.getMaxHp() / 4));
+    });
 
-        game.move.select(Moves.BATON_PASS);
-        await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    it("should not transfer other effects", async () => {
+      await game.classicMode.startBattle([Species.MAGIKARP, Species.FEEBAS]);
 
-        // enemy salt cure
-        await game.phaseInterceptor.to("MoveEndPhase");
-        expect(player1.getTag(BattlerTagType.SALT_CURED)).toBeDefined();
+      const magikarp = game.scene.getPlayerPokemon()!;
+      magikarp.setStatStage(Stat.ATK, 6);
 
-        game.doSelectPartyPokemon(1);
-        await game.toNextTurn();
+      game.move.select(Moves.SHED_TAIL);
+      game.doSelectPartyPokemon(1);
+      await game.phaseInterceptor.to("TurnEndPhase", false);
 
-        expect(player1.isOnField()).toBe(false);
-        expect(player2.isOnField()).toBe(true);
-        expect(player2.getTag(BattlerTagType.SALT_CURED)).toBeUndefined();
-      });
+      const feebas = game.scene.getPlayerPokemon()!;
+      expect(feebas).not.toBe(magikarp);
+      expect(feebas.getStatStage(Stat.ATK)).toBe(0);
+      expect(magikarp.getStatStage(Stat.ATK)).toBe(0);
+    });
 
-      it("removes the user's binding effects", async () => {
-        game.override.moveset([Moves.FIRE_SPIN, Moves.BATON_PASS]);
+    it("should fail if the user's HP is insufficient", async () => {
+      await game.classicMode.startBattle([Species.MAGIKARP, Species.FEEBAS]);
 
-        await game.classicMode.startBattle([Species.MAGIKARP, Species.FEEBAS]);
+      const magikarp = game.scene.getPlayerPokemon()!;
+      const initHp = toDmgValue(magikarp.getMaxHp() / 2 - 1);
+      magikarp.hp = initHp;
 
-        const enemy = game.scene.getEnemyPokemon()!;
+      game.move.select(Moves.SHED_TAIL);
+      await game.phaseInterceptor.to("TurnEndPhase", false);
 
-        game.move.select(Moves.FIRE_SPIN);
-        await game.move.forceHit();
-        await game.toNextTurn();
-
-        expect(enemy.getTag(BattlerTagType.FIRE_SPIN)).toBeDefined();
-
-        game.move.select(Moves.BATON_PASS);
-        game.doSelectPartyPokemon(1);
-        await game.toNextTurn();
-
-        expect(enemy.getTag(BattlerTagType.FIRE_SPIN)).toBeUndefined();
-      });
+      expect(magikarp.isOnField()).toBe(true);
+      expect(magikarp.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+      expect(magikarp.hp).toBe(initHp);
     });
   });
 
@@ -664,7 +614,7 @@ describe("Moves - Switching Moves", () => {
     });
   });
 
-  describe("Shed Tail", () => {
+  describe("Failure Checks", () => {
     afterEach(() => {
       game.phaseInterceptor.restoreOg();
     });
@@ -672,47 +622,97 @@ describe("Moves - Switching Moves", () => {
     beforeEach(() => {
       game = new GameManager(phaserGame);
       game.override
-        .moveset(Moves.SHED_TAIL)
         .battleStyle("single")
-        .enemySpecies(Species.SNORLAX)
-        .enemyAbility(Abilities.BALL_FETCH)
-        .enemyMoveset(Moves.SPLASH);
+        .passiveAbility(Abilities.NO_GUARD)
+        .enemySpecies(Species.GENGAR)
+        .disableCrits()
+        .enemyAbility(Abilities.STURDY);
     });
 
-    it("should consume 50% of the user's max HP (rounded up) to transfer a 25% HP Substitute doll", async () => {
-      await game.classicMode.startBattle([Species.MAGIKARP, Species.FEEBAS]);
+    it.each<{ name: string; move: Moves }>([
+      { name: "U-Turn", move: Moves.U_TURN },
+      { name: "Flip Turn", move: Moves.FLIP_TURN },
+      { name: "Volt Switch", move: Moves.VOLT_SWITCH },
+      { name: "Baton Pass", move: Moves.BATON_PASS },
+      { name: "Shed Tail", move: Moves.SHED_TAIL },
+      { name: "Parting Shot", move: Moves.PARTING_SHOT },
+    ])("$name should not allow wild pokemon to flee", async ({ move }) => {
+      game.override.moveset(Moves.SPLASH).enemyMoveset(move);
+      await game.classicMode.startBattle([Species.RAICHU, Species.SHUCKLE]);
 
-      const magikarp = game.scene.getPlayerPokemon()!;
+      const gengar = game.scene.getEnemyPokemon()!;
+      game.move.select(Moves.SPLASH);
+      await game.phaseInterceptor.to("TurnEndPhase");
 
-      game.move.select(Moves.SHED_TAIL);
+      expect(game.phaseInterceptor.log).not.toContain("BattleEndPhase");
+      const enemy = game.scene.getEnemyPokemon()!;
+      expect(enemy).toBe(gengar);
+      expect(enemy.switchOutStatus).toBe(false);
+    });
+
+    it.each<{ name: string; move?: Moves; enemyMove?: Moves }>([
+      { name: "Teleport", enemyMove: Moves.TELEPORT },
+      { name: "Whirlwind", move: Moves.WHIRLWIND },
+      { name: "Roar", move: Moves.ROAR },
+      { name: "Dragon Tail", move: Moves.DRAGON_TAIL },
+      { name: "Circle Throw", move: Moves.CIRCLE_THROW },
+    ])("$name should allow wild pokemon to flee", async ({ move = Moves.SPLASH, enemyMove = Moves.SPLASH }) => {
+      game.override.moveset(move).enemyMoveset(enemyMove);
+      await game.classicMode.startBattle([Species.RAICHU, Species.SHUCKLE]);
+
+      const gengar = game.scene.getEnemyPokemon();
+      game.move.select(move);
       game.doSelectPartyPokemon(1);
+      await game.toNextTurn();
 
-      await game.phaseInterceptor.to("TurnEndPhase", false);
-
-      const feebas = game.scene.getPlayerPokemon()!;
-      expect(feebas).not.toBe(magikarp);
-      expect(feebas.hp).toBe(feebas.getMaxHp());
-
-      const substituteTag = feebas.getTag(SubstituteTag)!;
-      expect(substituteTag).toBeDefined();
-
-      // Note: Altered the test to be consistent with the correct HP cost :yipeevee_static:
-      expect(magikarp.getInverseHp()).toBe(Math.ceil(magikarp.getMaxHp() / 2));
-      expect(substituteTag.hp).toBe(Math.ceil(magikarp.getMaxHp() / 4));
+      expect(game.phaseInterceptor.log).toContain("BattleEndPhase");
+      expect(game.scene.getEnemyPokemon()).not.toBe(gengar);
     });
 
-    it("should fail if user's HP is insufficient", async () => {
-      await game.classicMode.startBattle([Species.MAGIKARP, Species.FEEBAS]);
+    it.each<{ name: string; move?: Moves; enemyMove?: Moves }>([
+      { name: "U-Turn", move: Moves.U_TURN },
+      { name: "Flip Turn", move: Moves.FLIP_TURN },
+      { name: "Volt Switch", move: Moves.VOLT_SWITCH },
+      // TODO: Enable once Parting shot is fixed
+      // { name: "Parting Shot", move: Moves.PARTING_SHOT },
+      { name: "Dragon Tail", enemyMove: Moves.DRAGON_TAIL },
+      { name: "Circle Throw", enemyMove: Moves.CIRCLE_THROW },
+    ])(
+      "$name should not fail if no valid switch out target is found",
+      async ({ move = Moves.SPLASH, enemyMove = Moves.SPLASH }) => {
+        game.override.moveset(move).enemyMoveset(enemyMove);
+        await game.classicMode.startBattle([Species.RAICHU]);
 
-      const magikarp = game.scene.getPlayerPokemon()!;
-      magikarp.hp = Math.floor(magikarp.getMaxHp() / 2 - 1);
+        game.move.select(move);
+        game.doSelectPartyPokemon(1);
+        await game.toNextTurn();
 
-      game.move.select(Moves.SHED_TAIL);
-      await game.phaseInterceptor.to("TurnEndPhase", false);
+        expect(game.phaseInterceptor.log).not.toContain("SwitchSummonPhase");
+        const user = enemyMove === Moves.SPLASH ? game.scene.getPlayerPokemon()! : game.scene.getEnemyPokemon()!;
+        expect(user.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
+      },
+    );
 
-      expect(magikarp.isOnField()).toBe(true);
-      expect(magikarp.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
-      expect(magikarp.hp).toBe(magikarp.getMaxHp() / 2 - 1);
-    });
+    it.each<{ name: string; move?: Moves; enemyMove?: Moves }>([
+      { name: "Teleport", move: Moves.TELEPORT },
+      { name: "Baton Pass", move: Moves.BATON_PASS },
+      { name: "Shed Tail", move: Moves.SHED_TAIL },
+      { name: "Roar", enemyMove: Moves.ROAR },
+      { name: "Whirlwind", enemyMove: Moves.WHIRLWIND },
+    ])(
+      "$name should fail if no valid switch out target is found",
+      async ({ move = Moves.SPLASH, enemyMove = Moves.SPLASH }) => {
+        game.override.moveset(move).enemyMoveset(enemyMove);
+        await game.classicMode.startBattle([Species.RAICHU, Species.SHUCKLE]);
+
+        game.move.select(move);
+        game.doSelectPartyPokemon(1);
+        await game.toNextTurn();
+
+        expect(game.phaseInterceptor.log).not.toContain("SwitchSummonPhase");
+        const user = enemyMove === Moves.SPLASH ? game.scene.getPlayerPokemon()! : game.scene.getEnemyPokemon()!;
+        expect(user.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+      },
+    );
   });
 });

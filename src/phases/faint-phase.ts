@@ -30,9 +30,9 @@ import { SwitchPhase } from "./switch-phase";
 import { SwitchSummonPhase } from "./switch-summon-phase";
 import { ToggleDoublePositionPhase } from "./toggle-double-position-phase";
 import { VictoryPhase } from "./victory-phase";
-import { isNullOrUndefined } from "#app/utils/common";
 import { FRIENDSHIP_LOSS_FROM_FAINT } from "#app/data/balance/starters";
 import { BattlerTagType } from "#enums/battler-tag-type";
+import { isNullOrUndefined } from "#app/utils/common";
 
 export class FaintPhase extends PokemonPhase {
   /**
@@ -118,6 +118,7 @@ export class FaintPhase extends PokemonPhase {
 
     pokemon.resetTera();
 
+    // TODO: This could be simplified greatly with the concept of "move being used"
     if (pokemon.turnData.attacksReceived?.length) {
       const lastAttack = pokemon.turnData.attacksReceived[0];
       applyPostFaintAbAttrs(
@@ -151,41 +152,35 @@ export class FaintPhase extends PokemonPhase {
       }
     }
 
+    const legalBackupPokemon = globalScene.getBackupPartyMemberIndices(
+      this.player,
+      !this.player ? (pokemon as EnemyPokemon).trainerSlot : undefined,
+    );
+
     if (this.player) {
-      /** The total number of Pokemon in the player's party that can legally fight */
+      /** An array of Pokemon in the player's party that can legally fight. */
       const legalPlayerPokemon = globalScene.getPokemonAllowedInBattle();
-      /** The total number of legal player Pokemon that aren't currently on the field */
-      const legalPlayerPartyPokemon = legalPlayerPokemon.filter(p => !p.isActive(true));
-      if (!legalPlayerPokemon.length) {
-        /** If the player doesn't have any legal Pokemon, end the game */
+      if (legalPlayerPokemon.length === 0) {
+        // If the player doesn't have any legal Pokemon left in their party, end the game.
         globalScene.unshiftPhase(new GameOverPhase());
-      } else if (
-        globalScene.currentBattle.double &&
-        legalPlayerPokemon.length === 1 &&
-        legalPlayerPartyPokemon.length === 0
-      ) {
-        /**
-         * If the player has exactly one Pokemon in total at this point in a double battle, and that Pokemon
-         * is already on the field, unshift a phase that moves that Pokemon to center position.
-         */
+      } else if (globalScene.currentBattle.double && legalBackupPokemon.length === 0) {
+        /*
+        Otherwise, if the player has no reserve members left to switch in,
+        unshift a phase to move the other on-field pokemon to center position.
+        */
         globalScene.unshiftPhase(new ToggleDoublePositionPhase(true));
-      } else if (legalPlayerPartyPokemon.length > 0) {
-        /**
-         * If previous conditions weren't met, and the player has at least 1 legal Pokemon off the field,
-         * push a phase that prompts the player to summon a Pokemon from their party.
-         */
+      } else {
+        // If previous conditions weren't met, push a phase to prompt the player to select a pokemon from their party.
         globalScene.pushPhase(new SwitchPhase(SwitchType.SWITCH, this.fieldIndex, true, false));
       }
     } else {
+      // Unshift a phase for EXP gains and/or one to switch in a replacement party member.
       globalScene.unshiftPhase(new VictoryPhase(this.battlerIndex));
-      if ([BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER].includes(globalScene.currentBattle.battleType)) {
-        const hasReservePartyMember = !!globalScene
-          .getEnemyParty()
-          .filter(p => p.isActive() && !p.isOnField() && p.trainerSlot === (pokemon as EnemyPokemon).trainerSlot)
-          .length;
-        if (hasReservePartyMember) {
-          globalScene.pushPhase(new SwitchSummonPhase(SwitchType.SWITCH, this.fieldIndex, -1, false, false));
-        }
+      if (
+        [BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER].includes(globalScene.currentBattle.battleType) &&
+        legalBackupPokemon.length > 0
+      ) {
+        globalScene.pushPhase(new SwitchSummonPhase(SwitchType.SWITCH, this.fieldIndex, -1, false, false));
       }
     }
 

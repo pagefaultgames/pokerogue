@@ -133,7 +133,7 @@ export class SwitchSummonPhase extends SummonPhase {
 
     // TODO: Why do we trigger these attributes even if the switch in target doesn't exist?
     // (This should almost certainly go somewhere inside `preSummon`)
-    applyPreSummonAbAttrs(PreSummonAbAttr, switchedInPokemon);
+    applyPreSummonAbAttrs(PreSummonAbAttr, switchInPokemon);
     applyPreSwitchOutAbAttrs(PreSwitchOutAbAttr, this.lastPokemon);
     if (!switchInPokemon) {
       this.end();

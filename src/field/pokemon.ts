@@ -1692,6 +1692,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.getMaxHp() - this.hp;
   }
 
+  /**
+   * Return this Pokemon's current HP as a fraction of its maximum HP.
+   * @param precise - Whether to return the exact HP ratio (`true`) or rounded to the nearest 1% (`false`); default `false`
+   * @returns This pokemon's current HP ratio (current / max).
+   */
   getHpRatio(precise = false): number {
     return precise ? this.hp / this.getMaxHp() : Math.round((this.hp / this.getMaxHp()) * 100) / 100;
   }
@@ -4048,15 +4053,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       isCritical = false,
       ignoreSegments = false,
       ignoreFaintPhase = false,
-    }:
-    {
-      result?: DamageResult,
-      isCritical?: boolean,
-      ignoreSegments?: boolean,
-      ignoreFaintPhase?: boolean,
-    } = {}
+    }: {
+      result?: DamageResult;
+      isCritical?: boolean;
+      ignoreSegments?: boolean;
+      ignoreFaintPhase?: boolean;
+    } = {},
   ): number {
-    const isIndirectDamage = [ HitResult.INDIRECT, HitResult.INDIRECT_KO ].includes(result);
+    const isIndirectDamage = [HitResult.INDIRECT, HitResult.INDIRECT_KO].includes(result);
     const damagePhase = new DamageAnimPhase(this.getBattlerIndex(), damage, result, isCritical);
     globalScene.unshiftPhase(damagePhase);
 
@@ -4923,7 +4927,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * which already calls this function.
    */
   resetSummonData(): void {
-    console.log(`resetSummonData called on Pokemon ${this.name}`)
+    console.log(`resetSummonData called on Pokemon ${this.name}`);
     const illusion: IllusionData | null = this.summonData.illusion;
     if (this.summonData.speciesForm) {
       this.summonData.speciesForm = null;
@@ -4965,7 +4969,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   resetTurnData(): void {
-    console.log(`resetTurnData called on Pokemon ${this.name}`)
+    console.log(`resetTurnData called on Pokemon ${this.name}`);
     this.turnData = new PokemonTurnData();
   }
 
@@ -5421,11 +5425,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    */
   // TODO: Review where this is being called and where it is necessary to call it
   leaveField(clearEffects = true, hideInfo = true, destroy = false) {
-    console.log(`leaveField called on Pokemon ${this.name}`)
+    console.log(`leaveField called on Pokemon ${this.name}`);
     this.resetSprite();
     globalScene
-    .getField(true)
-    .filter(p => p !== this)
+      .getField(true)
+      .filter(p => p !== this)
       .forEach(p => p.removeTagsBySourceId(this.id));
 
     if (clearEffects) {
@@ -6716,7 +6720,6 @@ export class EnemyPokemon extends Pokemon {
 
     return ret;
   }
-
 
   /**
    * Show or hide the type effectiveness multiplier window
