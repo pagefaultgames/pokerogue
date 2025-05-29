@@ -201,9 +201,13 @@ export default class MockSprite implements MockGameObject {
     return this;
   }
 
-  add(obj): this {
+  add(obj: MockGameObject | MockGameObject[]): this {
     // Adds a child to this Game Object.
-    this.list.push(obj);
+    if (Array.isArray(obj)) {
+      this.list.push(...obj);
+    } else {
+      this.list.push(obj);
+    }
     return this;
   }
 

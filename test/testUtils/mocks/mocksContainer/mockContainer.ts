@@ -214,9 +214,12 @@ export default class MockContainer implements MockGameObject {
     return this;
   }
 
-  add(...obj: MockGameObject[]): this {
-    // Adds a child to this Game Object.
-    this.list.push(...obj);
+  add(obj: MockGameObject | MockGameObject[]): this {
+    if (Array.isArray(obj)) {
+      this.list.push(...obj);
+    } else {
+      this.list.push(obj);
+    }
     return this;
   }
 
