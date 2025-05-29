@@ -885,8 +885,8 @@ export default class BattleScene extends SceneBase {
   }
 
   // store info toggles to be accessible by the ui
-  addInfoToggle(infoToggle: InfoToggle): void {
-    this.infoToggles.push(infoToggle);
+  addInfoToggle(...infoToggles: InfoToggle[]): void {
+    this.infoToggles.push(...infoToggles);
   }
 
   // return the stored info toggles; used by ui-inputs
