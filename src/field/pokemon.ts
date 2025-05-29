@@ -242,7 +242,7 @@ import { SwitchSummonPhase } from "#app/phases/switch-summon-phase";
 import { Challenges } from "#enums/challenges";
 import { PokemonAnimType } from "#enums/pokemon-anim-type";
 import { PLAYER_PARTY_MAX_SIZE } from "#app/constants";
-import { CustomPokemonData } from "#app/@types/pokemon-data";
+import { CustomPokemonData } from "#app/data/pokemon/pokemon-data";
 import { SwitchType } from "#enums/switch-type";
 import { SpeciesFormKey } from "#enums/species-form-key";
 import { getStatusEffectOverlapText } from "#app/data/status-effect";
@@ -259,7 +259,8 @@ import { MoveFlags } from "#enums/MoveFlags";
 import { timedEventManager } from "#app/global-event-manager";
 import { loadMoveAnimations } from "#app/sprites/pokemon-asset-loader";
 import { ResetStatusPhase } from "#app/phases/reset-status-phase";
-import { PokemonBattleData, PokemonSummonData, PokemonTempSummonData, PokemonWaveData, PokemonTurnData, type IllusionData } from "../@types/pokemon-data";
+import { PokemonBattleData, PokemonSummonData, PokemonTempSummonData, PokemonWaveData, PokemonTurnData } from "../data/pokemon/pokemon-data";
+import { type IllusionData } from "#app/@types/illusion-data";
 import type { TurnMove } from "../@types/turn-move";
 
 export enum LearnMoveSituation {

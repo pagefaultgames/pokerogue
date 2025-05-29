@@ -1,6 +1,6 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import type { TurnMove } from "#app/@types/turn-move";
-import type { PokemonTurnData } from "#app/@types/pokemon-data";
+import type { PokemonTurnData } from "#app/data/pokemon/pokemon-data";
 import type Pokemon from "#app/field/pokemon";
 import { MoveResult } from "#app/field/pokemon";
 import type BattleScene from "#app/battle-scene";

@@ -5,7 +5,7 @@ import { PokeballType } from "#enums/pokeball";
 import type BattleScene from "#app/battle-scene";
 import { Moves } from "#app/enums/moves";
 import { PokemonType } from "#enums/pokemon-type";
-import { CustomPokemonData } from "#app/@types/pokemon-data";
+import { CustomPokemonData } from "#app/data/pokemon/pokemon-data";
 
 describe("Spec - Pokemon", () => {
   let phaserGame: Phaser.Game;

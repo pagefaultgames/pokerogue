@@ -1,6 +1,6 @@
 import { StockpilingTag } from "#app/data/battler-tags";
 import type Pokemon from "#app/field/pokemon";
-import { PokemonSummonData } from "#app/@types/pokemon-data";
+import { PokemonSummonData } from "#app/data/pokemon/pokemon-data";
 import * as messages from "#app/messages";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { Stat } from "#enums/stat";

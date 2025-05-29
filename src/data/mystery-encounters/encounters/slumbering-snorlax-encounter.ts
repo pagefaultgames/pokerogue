@@ -29,7 +29,7 @@ import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode
 import { PartyHealPhase } from "#app/phases/party-heal-phase";
 import { BerryType } from "#enums/berry-type";
 import { Stat } from "#enums/stat";
-import { CustomPokemonData } from "#app/@types/pokemon-data";
+import { CustomPokemonData } from "#app/data/pokemon/pokemon-data";
 import { randSeedInt } from "#app/utils/common";
 
 /** i18n namespace for the encounter */
