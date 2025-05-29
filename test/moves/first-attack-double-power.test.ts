@@ -1,5 +1,5 @@
 import { BattlerIndex } from "#app/battle";
-import { allMoves } from "#app/data/moves/move";
+import { allMoves } from "#app/data/data-lists.ts";
 import { Abilities } from "#enums/abilities";
 import { BattleType } from "#enums/battle-type";
 import { Moves } from "#enums/moves";
@@ -59,7 +59,7 @@ describe.each<{ name: string; move: Moves }>([
 
     expect(powerSpy).toHaveLastReturnedWith(allMoves[move].power * 2);
   });
-
+  
   it("should only consider the selected target in Double Battles", async () => {
     game.override.battleStyle("double").moveset([move, Moves.SPLASH]);
     await game.classicMode.startBattle([Species.FEEBAS, Species.MILOTIC]);
