@@ -18,6 +18,7 @@ export class MoveHelper extends GameManagerHelper {
   /**
    * Intercepts {@linkcode MoveEffectPhase} and mocks the phase's move's
    * accuracy to -1, guaranteeing a hit.
+   * @returns A promise that resolves once the next MoveEffectPhase has been reached (not run).
    */
   public async forceHit(): Promise<void> {
     await this.game.phaseInterceptor.to(MoveEffectPhase, false);
@@ -28,7 +29,8 @@ export class MoveHelper extends GameManagerHelper {
   /**
    * Intercepts {@linkcode MoveEffectPhase} and mocks the phase's move's accuracy
    * to 0, guaranteeing a miss.
-   * @param firstTargetOnly - Whether the move should force miss on the first target only, in the case of multi-target moves.
+   * @param firstTargetOnly - Whether to only force a miss on the first target hit; default `false`.
+   * @returns A promise that resolves once the next MoveEffectPhase has been reached (not run).
    */
   public async forceMiss(firstTargetOnly = false): Promise<void> {
     await this.game.phaseInterceptor.to(MoveEffectPhase, false);

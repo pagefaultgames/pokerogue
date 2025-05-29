@@ -6,7 +6,6 @@ import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { WeatherType } from "#enums/weather-type";
 import GameManager from "#test/testUtils/gameManager";
@@ -42,9 +41,9 @@ describe("Abilities - Magic Guard", () => {
       .enemyLevel(100);
   });
 
-  //Bulbapedia Reference: https://bulbapedia.bulbagarden.net/wiki/Magic_Guard_(Ability)
+  // Bulbapedia Reference: https://bulbapedia.bulbagarden.net/wiki/Magic_Guard_(Ability)
 
-  it("ability should prevent damage caused by weather", async () => {
+  it("should prevent passive weather damage", async () => {
     game.override.weather(WeatherType.SANDSTORM);
 
     await game.classicMode.startBattle([Species.MAGIKARP]);
@@ -67,35 +66,7 @@ describe("Abilities - Magic Guard", () => {
     expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
   });
 
-  it("should retain catch boost, toxic turn count and burn attack drops", async () => {
-    game.override.statusEffect(StatusEffect.TOXIC);
-    await game.classicMode.startBattle([Species.MAGIKARP]);
-
-    const leadPokemon = game.scene.getPlayerPokemon()!;
-
-    game.move.select(Moves.SPLASH);
-    await game.phaseInterceptor.to("TurnEndPhase");
-
-    expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp());
-    expect(leadPokemon.status).toBeTruthy();
-    expect(leadPokemon.status!.toxicTurnCount).toBeGreaterThan(0);
-    expect(getStatusEffectCatchRateMultiplier(leadPokemon.status!.effect)).toBe(1.5);
-
-    await game.toNextTurn();
-
-    // give ourselves burn and ensure our attack indeed dropped
-
-    const prevAtk = leadPokemon.getEffectiveStat(Stat.ATK);
-    leadPokemon.resetStatus();
-    expect(leadPokemon.status).toBeFalsy();
-
-    leadPokemon.trySetStatus(StatusEffect.BURN);
-    expect(leadPokemon.status).toBeTruthy();
-    const burntAtk = leadPokemon.getEffectiveStat(Stat.ATK);
-    expect(burntAtk).toBeCloseTo(prevAtk / 2, 1);
-  });
-
-  it("ability effect should not persist when the ability is replaced", async () => {
+  it("should not persist when ability is replaced", async () => {
     game.override.enemyMoveset(Moves.WORRY_SEED).statusEffect(StatusEffect.POISON);
 
     await game.classicMode.startBattle([Species.MAGIKARP]);
@@ -113,53 +84,58 @@ describe("Abilities - Magic Guard", () => {
     expect(leadPokemon.hp).toBeLessThan(leadPokemon.getMaxHp());
   });
 
-  it("Magic Guard prevents damage caused by burn but other non-damaging effects are still applied", async () => {
-    game.override.enemyStatusEffect(StatusEffect.BURN).enemyAbility(Abilities.MAGIC_GUARD);
+  it("should prevent burn damage but not attack drop", async () => {
+    game.override
+      .moveset(Moves.WILL_O_WISP)
+      .enemyMoveset(Moves.TACKLE)
+      .enemyAbility(Abilities.MAGIC_GUARD)
+      .enemyPassiveAbility(Abilities.NO_GUARD);
+    await game.classicMode.startBattle([Species.GRANBULL]);
 
-    await game.classicMode.startBattle([Species.MAGIKARP]);
-
-    game.move.select(Moves.SPLASH);
-
+    const granbull = game.scene.getPlayerPokemon()!;
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
+    // Take 1 attack before being burned & 1 after
+    game.move.select(Moves.WILL_O_WISP);
+    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("TurnEndPhase");
 
-    /**
-     * Expect:
-     * - The enemy Pokemon (with Magic Guard) has not taken damage from burn
-     * - The enemy Pokemon's physical attack damage is halved (TBD)
-     * - The enemy Pokemon's hypothetical CatchRateMultiplier should be 1.5
-     */
+    const firstTurnDmg = granbull.getInverseHp();
     expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
-    expect(getStatusEffectCatchRateMultiplier(enemyPokemon.status!.effect)).toBe(1.5);
+
+    await game.toNextTurn();
+
+    game.move.select(Moves.WILL_O_WISP);
+    await game.phaseInterceptor.to("TurnEndPhase");
+
+    expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
+
+    const secondTurnDmg = granbull.getInverseHp() - firstTurnDmg;
+    expect(secondTurnDmg).toBeLessThan(firstTurnDmg);
   });
 
-  it("Magic Guard prevents damage caused by toxic but other non-damaging effects are still applied", async () => {
+  it("should prevent non-volatile status damage without preventing other effects", async () => {
     game.override.enemyStatusEffect(StatusEffect.TOXIC).enemyAbility(Abilities.MAGIC_GUARD);
-
     await game.classicMode.startBattle([Species.MAGIKARP]);
 
-    game.move.select(Moves.SPLASH);
-
     const enemyPokemon = game.scene.getEnemyPokemon()!;
-
     const toxicStartCounter = enemyPokemon.status!.toxicTurnCount;
-    //should be 0
 
+    game.move.select(Moves.SPLASH);
     await game.phaseInterceptor.to("TurnEndPhase");
 
     /**
      * Expect:
      * - The enemy Pokemon (with Magic Guard) has not taken damage from toxic
      * - The enemy Pokemon's status effect duration should be incremented
-     * - The enemy Pokemon's hypothetical CatchRateMultiplier should be 1.5
+     * - The enemy Pokemon's CatchRateMultiplier should be 1.5
      */
     expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
     expect(enemyPokemon.status!.toxicTurnCount).toBeGreaterThan(toxicStartCounter);
     expect(getStatusEffectCatchRateMultiplier(enemyPokemon.status!.effect)).toBe(1.5);
   });
 
-  it("Magic Guard prevents damage caused by entry hazards", async () => {
+  it("should prevent damage from entry hazards", async () => {
     //Adds and applies Spikes to both sides of the arena
     const newTag = getArenaTag(ArenaTagType.SPIKES, 5, Moves.SPIKES, 0, 0, ArenaTagSide.BOTH)!;
     game.scene.arena.tags.push(newTag);
@@ -182,8 +158,8 @@ describe("Abilities - Magic Guard", () => {
     expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
   });
 
-  it("Magic Guard does not prevent poison from Toxic Spikes", async () => {
-    //Adds and applies Spikes to both sides of the arena
+  it("should not prevent Toxic Spikes from applying poison", async () => {
+    // Add Toxic Spikes to both sides of the arena
     const playerTag = getArenaTag(ArenaTagType.TOXIC_SPIKES, 5, Moves.TOXIC_SPIKES, 0, 0, ArenaTagSide.PLAYER)!;
     const enemyTag = getArenaTag(ArenaTagType.TOXIC_SPIKES, 5, Moves.TOXIC_SPIKES, 0, 0, ArenaTagSide.ENEMY)!;
     game.scene.arena.tags.push(playerTag);
@@ -210,14 +186,13 @@ describe("Abilities - Magic Guard", () => {
     expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
   });
 
-  it("Magic Guard prevents against damage from volatile status effects", async () => {
+  it("should prevent damage from volatile status effects", async () => {
     await game.classicMode.startBattle([Species.DUSKULL]);
     game.override.moveset([Moves.CURSE]).enemyAbility(Abilities.MAGIC_GUARD);
 
     const leadPokemon = game.scene.getPlayerPokemon()!;
 
     game.move.select(Moves.CURSE);
-
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
     await game.phaseInterceptor.to("TurnEndPhase");
@@ -233,7 +208,7 @@ describe("Abilities - Magic Guard", () => {
     expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
   });
 
-  it("Magic Guard prevents crash damage", async () => {
+  it("should prevent crash damage", async () => {
     game.override.moveset([Moves.HIGH_JUMP_KICK]);
     await game.classicMode.startBattle([Species.MAGIKARP]);
 
@@ -251,7 +226,7 @@ describe("Abilities - Magic Guard", () => {
     expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp());
   });
 
-  it("Magic Guard prevents damage from recoil", async () => {
+  it("should prevent damage from recoil", async () => {
     game.override.moveset([Moves.TAKE_DOWN]);
     await game.classicMode.startBattle([Species.MAGIKARP]);
 
@@ -268,7 +243,7 @@ describe("Abilities - Magic Guard", () => {
     expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp());
   });
 
-  it("Magic Guard does not prevent damage from Struggle's recoil", async () => {
+  it("should not prevent damage from Struggle recoil", async () => {
     game.override.moveset([Moves.STRUGGLE]);
     await game.classicMode.startBattle([Species.MAGIKARP]);
 
@@ -331,7 +306,7 @@ describe("Abilities - Magic Guard", () => {
     expect(leadPokemon.hp).toBeLessThan(leadPokemon.getMaxHp());
   });
 
-  it("Magic Guard prevents damage from abilities with PostTurnHurtIfSleepingAbAttr", async () => {
+  it("should prevent damage from abilities with PostTurnHurtIfSleepingAbAttr", async () => {
     game.override.statusEffect(StatusEffect.SLEEP).enemyMoveset(Moves.SPORE).enemyAbility(Abilities.BAD_DREAMS);
 
     await game.classicMode.startBattle([Species.MAGIKARP]);
@@ -373,7 +348,7 @@ describe("Abilities - Magic Guard", () => {
     expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp());
   });
 
-  it("Magic Guard prevents damage from abilities with PostDefendContactDamageAbAttr", async () => {
+  it("should prevent damage from abilities with PostDefendContactDamageAbAttr", async () => {
     //Tests the abilities Iron Barbs/Rough Skin
     game.override.moveset([Moves.TACKLE]).enemyAbility(Abilities.IRON_BARBS);
 
@@ -395,7 +370,7 @@ describe("Abilities - Magic Guard", () => {
     expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp());
   });
 
-  it("Magic Guard prevents damage from abilities with ReverseDrainAbAttr", async () => {
+  it("should prevent damage from abilities with ReverseDrainAbAttr", async () => {
     //Tests the ability Liquid Ooze
     game.override.moveset([Moves.ABSORB]).enemyAbility(Abilities.LIQUID_OOZE);
 
@@ -417,7 +392,7 @@ describe("Abilities - Magic Guard", () => {
     expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp());
   });
 
-  it("Magic Guard prevents HP loss from abilities with PostWeatherLapseDamageAbAttr", async () => {
+  it("should prevent HP loss from abilities with PostWeatherLapseDamageAbAttr", async () => {
     game.override.passiveAbility(Abilities.SOLAR_POWER).weather(WeatherType.SUNNY);
 
     await game.classicMode.startBattle([Species.MAGIKARP]);
