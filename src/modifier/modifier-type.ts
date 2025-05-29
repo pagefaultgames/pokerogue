@@ -1400,6 +1400,63 @@ export class FusePokemonModifierType extends PokemonModifierType {
   }
 }
 
+class AttackTypeBoosterRewardGenerator extends ModifierTypeGenerator {
+  constructor() {
+    super((party: Pokemon[], pregenArgs?: any[]) => {
+      if (pregenArgs && pregenArgs.length === 1 && pregenArgs[0] in PokemonType) {
+        return new AttackTypeBoosterReward(pregenArgs[0] as PokemonType, TYPE_BOOST_ITEM_BOOST_PERCENT);
+      }
+
+      const attackMoveTypes = party.flatMap(p =>
+        p
+          .getMoveset()
+          .map(m => m.getMove())
+          .filter(m => m instanceof AttackMove)
+          .map(m => m.type),
+      );
+      if (!attackMoveTypes.length) {
+        return null;
+      }
+
+      const attackMoveTypeWeights = new Map<PokemonType, number>();
+      let totalWeight = 0;
+      for (const t of attackMoveTypes) {
+        if (attackMoveTypeWeights.has(t)) {
+          if (attackMoveTypeWeights.get(t)! < 3) {
+            // attackMoveTypeWeights.has(t) was checked before
+            attackMoveTypeWeights.set(t, attackMoveTypeWeights.get(t)! + 1);
+          } else {
+            continue;
+          }
+        } else {
+          attackMoveTypeWeights.set(t, 1);
+        }
+        totalWeight++;
+      }
+
+      if (!totalWeight) {
+        return null;
+      }
+
+      let type: PokemonType;
+
+      const randInt = randSeedInt(totalWeight);
+      let weight = 0;
+
+      for (const t of attackMoveTypeWeights.keys()) {
+        const typeWeight = attackMoveTypeWeights.get(t)!; // guranteed to be defined
+        if (randInt <= weight + typeWeight) {
+          type = t;
+          break;
+        }
+        weight += typeWeight;
+      }
+
+      return new AttackTypeBoosterReward(type!, TYPE_BOOST_ITEM_BOOST_PERCENT);
+    });
+  }
+}
+
 class AttackTypeBoosterModifierTypeGenerator extends ModifierTypeGenerator {
   constructor() {
     super((party: Pokemon[], pregenArgs?: any[]) => {
@@ -2090,6 +2147,8 @@ export const modifierTypes = {
     })("modifierType:ModifierType.DIRE_HIT", "dire_hit", (type, _args) => new TempCritBoosterModifier(type, 5)),
 
   BASE_STAT_BOOSTER: () => new BaseStatBoosterModifierTypeGenerator(),
+
+  ATTACK_TYPE_BOOSTER_REWARD: () => new AttackTypeBoosterRewardGenerator(),
 
   ATTACK_TYPE_BOOSTER: () => new AttackTypeBoosterModifierTypeGenerator(),
 
@@ -2975,7 +3034,7 @@ const modifierPool: ModifierPool = {
     ),
     new WeightedModifierType(modifierTypes.REVIVER_SEED, 4),
     new WeightedModifierType(modifierTypes.CANDY_JAR, skipInLastClassicWaveOrDefault(5)),
-    new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, 9),
+    new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER_REWARD, 9),
     new WeightedModifierType(modifierTypes.TM_ULTRA, 11),
     new WeightedModifierType(modifierTypes.RARER_CANDY, 4),
     new WeightedModifierType(modifierTypes.GOLDEN_PUNCH, skipInLastClassicWaveOrDefault(2)),
