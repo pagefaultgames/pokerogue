@@ -922,10 +922,6 @@ export function setSetting(setting: string, value: number): boolean {
                 handler: () => changeLocaleHandler("es-MX"),
               },
               {
-                label: "Italiano",
-                handler: () => changeLocaleHandler("it"),
-              },
-              {
                 label: "Français",
                 handler: () => changeLocaleHandler("fr"),
               },
@@ -934,16 +930,12 @@ export function setSetting(setting: string, value: number): boolean {
                 handler: () => changeLocaleHandler("de"),
               },
               {
+                label: "Italiano",
+                handler: () => changeLocaleHandler("it"),
+              },
+              {
                 label: "Português (BR)",
                 handler: () => changeLocaleHandler("pt-BR"),
-              },
-              {
-                label: "简体中文",
-                handler: () => changeLocaleHandler("zh-CN"),
-              },
-              {
-                label: "繁體中文",
-                handler: () => changeLocaleHandler("zh-TW"),
               },
               {
                 label: "한국어",
@@ -954,24 +946,32 @@ export function setSetting(setting: string, value: number): boolean {
                 handler: () => changeLocaleHandler("ja"),
               },
               {
-                label: "Català",
+                label: "简体中文",
+                handler: () => changeLocaleHandler("zh-CN"),
+              },
+              {
+                label: "繁體中文",
+                handler: () => changeLocaleHandler("zh-TW"),
+              },
+              {
+                label: "Català (Needs Help)",
                 handler: () => changeLocaleHandler("ca-ES"),
               },
               {
-                label: "Dansk",
-                handler: () => changeLocaleHandler("da")
-              },
-              {
-                label: "Türkçe",
+                label: "Türkçe (Needs Help)",
                 handler: () => changeLocaleHandler("tr")
               },
               {
-                label: "Română",
-                handler: () => changeLocaleHandler("ro")
+                label: "Русский (Needs Help)",
+                handler: () => changeLocaleHandler("ru"),
               },
               {
-                label: "Русский",
-                handler: () => changeLocaleHandler("ru"),
+                label: "Dansk (Needs Help)",
+                handler: () => changeLocaleHandler("da")
+              },
+              {
+                label: "Română (Needs Help)",
+                handler: () => changeLocaleHandler("ro")
               },
               {
                 label: i18next.t("settings:back"),
