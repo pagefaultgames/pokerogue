@@ -5781,20 +5781,22 @@ export class ProtectAttr extends AddBattlerTagAttr {
   getCondition(): MoveConditionFunc {
     return ((user, target, move): boolean => {
       let timesUsed = 0;
-      const moveHistory = user.getLastXMoves();
-      let turnMove: TurnMove | undefined;
 
-      while (moveHistory.length) {
-        turnMove = moveHistory.shift();
-        if (!allMoves[turnMove?.move ?? Moves.NONE].hasAttr(ProtectAttr) || turnMove?.result !== MoveResult.SUCCESS) {
+      for (const turnMove of user.tempSummonData.waveMoveHistory.slice().reverse()) {
+        if (
+          // Quick & Wide guard increment the Protect counter without using it for fail chance
+          !(allMoves[turnMove.move].hasAttr(ProtectAttr) || 
+          [Moves.QUICK_GUARD, Moves.WIDE_GUARD].includes(turnMove.move)) || 
+          turnMove.result !== MoveResult.SUCCESS
+        ) {
           break;
         }
-        timesUsed++;
+
+        timesUsed++
       }
-      if (timesUsed) {
-        return !user.randBattleSeedInt(Math.pow(3, timesUsed));
-      }
-      return true;
+
+      // console.log(`Wave Move History: ${user.tempSummonData.waveMoveHistory.reverse().map(t => t.move)}\nTimes Used In Row: ${timesUsed}\nSuccess chance: 1 in ${Math.pow(3, timesUsed)}`)
+      return timesUsed === 0 || user.randBattleSeedInt(Math.pow(3, timesUsed)) === 0;
     });
   }
 }

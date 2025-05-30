@@ -1,12 +1,12 @@
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import GameManager from "#test/testUtils/gameManager";
 import { Species } from "#enums/species";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Stat } from "#enums/stat";
-import { BerryPhase } from "#app/phases/berry-phase";
-import { CommandPhase } from "#app/phases/command-phase";
+import { BattlerIndex } from "#app/battle";
+import { MoveResult } from "#app/field/pokemon";
 
 describe("Moves - Wide Guard", () => {
   let phaserGame: Phaser.Game;
@@ -25,87 +25,86 @@ describe("Moves - Wide Guard", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
 
-    game.override.battleStyle("double");
-
-    game.override.moveset([Moves.WIDE_GUARD, Moves.SPLASH, Moves.SURF]);
-
-    game.override.enemySpecies(Species.SNORLAX);
-    game.override.enemyMoveset([Moves.SWIFT]);
-    game.override.enemyAbility(Abilities.INSOMNIA);
-
-    game.override.startingLevel(100);
-    game.override.enemyLevel(100);
+    game.override
+      .battleStyle("double")
+      .moveset([Moves.WIDE_GUARD, Moves.SPLASH, Moves.SURF, Moves.SPIKY_SHIELD])
+      .enemySpecies(Species.SNORLAX)
+      .enemyMoveset([Moves.SWIFT, Moves.GROWL, Moves.TACKLE])
+      .enemyAbility(Abilities.INSOMNIA)
+      .startingLevel(100)
+      .enemyLevel(100);
   });
 
-  test("should protect the user and allies from multi-target attack moves", async () => {
-    await game.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
+  it("should protect the user and allies from multi-target attack and status moves", async () => {
+    await game.classicMode.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
+    const [charizard, blastoise] = game.scene.getPlayerField();
 
-    const leadPokemon = game.scene.getPlayerField();
+    game.move.select(Moves.WIDE_GUARD, BattlerIndex.PLAYER);
+    game.move.select(Moves.SPLASH, BattlerIndex.PLAYER_2);
+    await game.forceEnemyMove(Moves.SWIFT);
+    await game.forceEnemyMove(Moves.GROWL);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
-    game.move.select(Moves.WIDE_GUARD);
-
-    await game.phaseInterceptor.to(CommandPhase);
-
-    game.move.select(Moves.SPLASH, 1);
-
-    await game.phaseInterceptor.to(BerryPhase, false);
-
-    leadPokemon.forEach(p => expect(p.hp).toBe(p.getMaxHp()));
+    expect(charizard.hp).toBe(charizard.getMaxHp());
+    expect(blastoise.hp).toBe(blastoise.getMaxHp());
+    expect(charizard.getStatStage(Stat.ATK)).toBe(0);
+    expect(blastoise.getStatStage(Stat.ATK)).toBe(0);
   });
 
-  test("should protect the user and allies from multi-target status moves", async () => {
-    game.override.enemyMoveset([Moves.GROWL]);
+  it("should not protect the user and allies from single-target moves", async () => {
+    await game.classicMode.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
 
-    await game.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
+    const [charizard, blastoise] = game.scene.getPlayerField();
+    game.move.select(Moves.WIDE_GUARD, BattlerIndex.PLAYER);
+    game.move.select(Moves.SPLASH, BattlerIndex.PLAYER_2);
+    await game.forceEnemyMove(Moves.TACKLE, BattlerIndex.PLAYER);
+    await game.forceEnemyMove(Moves.TACKLE, BattlerIndex.PLAYER_2);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
-    const leadPokemon = game.scene.getPlayerField();
-
-    game.move.select(Moves.WIDE_GUARD);
-
-    await game.phaseInterceptor.to(CommandPhase);
-
-    game.move.select(Moves.SPLASH, 1);
-
-    await game.phaseInterceptor.to(BerryPhase, false);
-
-    leadPokemon.forEach(p => expect(p.getStatStage(Stat.ATK)).toBe(0));
+    expect(charizard.hp).toBeLessThan(charizard.getMaxHp());
+    expect(blastoise.hp).toBeLessThan(blastoise.getMaxHp());
   });
 
-  test("should not protect the user and allies from single-target moves", async () => {
-    game.override.enemyMoveset([Moves.TACKLE]);
+  it("should protect the user from its ally's multi-target move", async () => {
+    game.override.enemyMoveset(Moves.SPLASH);
 
-    await game.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
+    await game.classicMode.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
 
-    const leadPokemon = game.scene.getPlayerField();
+    const charizard = game.scene.getPlayerPokemon()!;
+    const [snorlax1, snorlax2] = game.scene.getEnemyField();
 
-    game.move.select(Moves.WIDE_GUARD);
+    game.move.select(Moves.WIDE_GUARD, BattlerIndex.PLAYER);
+    game.move.select(Moves.SURF, BattlerIndex.PLAYER_2);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
-    await game.phaseInterceptor.to(CommandPhase);
-
-    game.move.select(Moves.SPLASH, 1);
-
-    await game.phaseInterceptor.to(BerryPhase, false);
-
-    expect(leadPokemon.some(p => p.hp < p.getMaxHp())).toBeTruthy();
+    expect(charizard.hp).toBe(charizard.getMaxHp());
+    expect(snorlax1.hp).toBeLessThan(snorlax1.getMaxHp());
+    expect(snorlax2.hp).toBeLessThan(snorlax2.getMaxHp());
   });
 
-  test("should protect the user from its ally's multi-target move", async () => {
-    game.override.enemyMoveset([Moves.SPLASH]);
+  it("should increment (but not respect) other protection moves' fail counters", async () => {
+    game.override.battleStyle("single");
+    await game.classicMode.startBattle([Species.CHARIZARD]);
 
-    await game.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
-
-    const leadPokemon = game.scene.getPlayerField();
-    const enemyPokemon = game.scene.getEnemyField();
+    const charizard = game.scene.getPlayerPokemon()!;
+    // force protect to fail on anything other than a guaranteed success
+    vi.spyOn(charizard, "randBattleSeedInt").mockReturnValue(1);
 
     game.move.select(Moves.WIDE_GUARD);
+    await game.toNextTurn();
 
-    await game.phaseInterceptor.to(CommandPhase);
+    expect(charizard.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
 
-    game.move.select(Moves.SURF, 1);
+    // ignored fail chance
+    game.move.select(Moves.WIDE_GUARD);
+    await game.toNextTurn();
 
-    await game.phaseInterceptor.to(BerryPhase, false);
+    expect(charizard.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
 
-    expect(leadPokemon[0].hp).toBe(leadPokemon[0].getMaxHp());
-    enemyPokemon.forEach(p => expect(p.hp).toBeLessThan(p.getMaxHp()));
+    game.move.select(Moves.SPIKY_SHIELD);
+    await game.toNextTurn();
+
+    // ignored fail chance
+    expect(charizard.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
   });
 });
