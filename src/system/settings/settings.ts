@@ -955,7 +955,7 @@ export function setSetting(setting: string, value: number): boolean {
               },
               {
                 label: "Català (Needs Help)",
-                handler: () => changeLocaleHandler("ca-ES"),
+                handler: () => changeLocaleHandler("ca"),
               },
               {
                 label: "Türkçe (Needs Help)",
