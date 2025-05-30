@@ -139,12 +139,12 @@ describe("Moves - Disable", () => {
     const enemyMon = game.scene.getEnemyPokemon()!;
 
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.SPLASH, BattlerIndex.PLAYER);
+    await game.move.selectEnemyMove(Moves.SPLASH, BattlerIndex.PLAYER);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
     game.move.select(Moves.DISABLE);
-    await game.forceEnemyMove(Moves.TACKLE, BattlerIndex.PLAYER);
+    await game.move.selectEnemyMove(Moves.TACKLE, BattlerIndex.PLAYER);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 

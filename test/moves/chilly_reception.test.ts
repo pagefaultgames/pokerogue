@@ -77,7 +77,7 @@ describe("Moves - Chilly Reception", () => {
     await game.classicMode.startBattle([Species.SLOWKING, Species.MEOWTH]);
 
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.TACKLE);
+    await game.move.selectEnemyMove(Moves.TACKLE);
 
     await game.phaseInterceptor.to("BerryPhase", false);
     expect(game.scene.arena.weather?.weatherType).toBe(undefined);

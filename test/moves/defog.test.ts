@@ -39,7 +39,7 @@ describe("Moves - Defog", () => {
     const enemyPokemon = game.scene.getEnemyField();
 
     game.move.select(Moves.SAFEGUARD);
-    await game.forceEnemyMove(Moves.DEFOG);
+    await game.move.selectEnemyMove(Moves.DEFOG);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(playerPokemon[0].isSafeguarded(enemyPokemon[0])).toBe(false);
@@ -53,12 +53,12 @@ describe("Moves - Defog", () => {
     const playerPokemon = game.scene.getPlayerField();
 
     game.move.select(Moves.MIST);
-    await game.forceEnemyMove(Moves.DEFOG);
+    await game.move.selectEnemyMove(Moves.DEFOG);
 
     await game.toNextTurn();
 
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.GROWL);
+    await game.move.selectEnemyMove(Moves.GROWL);
 
     await game.phaseInterceptor.to("BerryPhase");
 

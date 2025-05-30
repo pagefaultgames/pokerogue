@@ -2,6 +2,7 @@ import { MoneyFormat } from "#enums/money-format";
 import { Moves } from "#enums/moves";
 import i18next from "i18next";
 import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
+import type { Variant } from "#app/sprites/variant";
 
 export type nil = null | undefined;
 
@@ -434,15 +435,19 @@ export function hasAllLocalizedSprites(lang?: string): boolean {
     case "es-ES":
     case "es-MX":
     case "fr":
+    case "da":
     case "de":
     case "he":
     case "it":
     case "zh-CN":
     case "zh-TW":
     case "pt-BR":
+    case "ro":
+    case "tr":
     case "ko":
     case "ja":
-    case "ca-ES":
+    case "ca":
+    case "ru":
       return true;
     default:
       return false;
@@ -576,4 +581,19 @@ export function animationFileName(move: Moves): string {
  */
 export function camelCaseToKebabCase(str: string): string {
   return str.replace(/[A-Z]+(?![a-z])|[A-Z]/g, (s, o) => (o ? "-" : "") + s.toLowerCase());
+}
+
+/** Get the localized shiny descriptor for the provided variant
+ * @param variant - The variant to get the shiny descriptor for
+ * @returns The localized shiny descriptor
+ */
+export function getShinyDescriptor(variant: Variant): string {
+  switch (variant) {
+    case 2:
+      return i18next.t("common:epicShiny");
+    case 1:
+      return i18next.t("common:rareShiny");
+    case 0:
+      return i18next.t("common:commonShiny");
+  }
 }

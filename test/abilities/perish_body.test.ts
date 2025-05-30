@@ -64,14 +64,14 @@ describe("Abilities - Perish Song", () => {
     const magikarp = game.scene.getEnemyPokemon();
 
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.PERISH_SONG);
+    await game.move.selectEnemyMove(Moves.PERISH_SONG);
     await game.toNextTurn();
 
     expect(feebas?.summonData.tags[0].turnCount).toBe(3);
     expect(magikarp?.summonData.tags[0].turnCount).toBe(3);
 
     game.doSwitchPokemon(1);
-    await game.forceEnemyMove(Moves.SPLASH);
+    await game.move.selectEnemyMove(Moves.SPLASH);
     await game.toNextTurn();
 
     const cursola = game.scene.getPlayerPokemon();
@@ -79,7 +79,7 @@ describe("Abilities - Perish Song", () => {
     expect(magikarp?.summonData.tags[0].turnCount).toBe(2);
 
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.AQUA_JET);
+    await game.move.selectEnemyMove(Moves.AQUA_JET);
     await game.toNextTurn();
 
     expect(cursola?.summonData.tags.length).toBe(0);
@@ -94,7 +94,7 @@ describe("Abilities - Perish Song", () => {
     const cursola = game.scene.getPlayerPokemon();
 
     game.move.select(Moves.WHIRLWIND);
-    await game.forceEnemyMove(Moves.PERISH_SONG);
+    await game.move.selectEnemyMove(Moves.PERISH_SONG);
     await game.toNextTurn();
 
     const magikarp = game.scene.getEnemyPokemon();
@@ -102,7 +102,7 @@ describe("Abilities - Perish Song", () => {
     expect(magikarp?.summonData.tags.length).toBe(0);
 
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.AQUA_JET);
+    await game.move.selectEnemyMove(Moves.AQUA_JET);
     await game.toNextTurn();
 
     expect(cursola?.summonData.tags[0].turnCount).toBe(2);

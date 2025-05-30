@@ -36,7 +36,7 @@ describe("Multi-target damage reduction", () => {
   });
 
   it("should reduce d.gleam damage when multiple enemies but not tackle", async () => {
-    await game.startBattle([Species.MAGIKARP, Species.FEEBAS]);
+    await game.classicMode.startBattle([Species.MAGIKARP, Species.FEEBAS]);
 
     const [enemy1, enemy2] = game.scene.getEnemyField();
 
@@ -76,7 +76,7 @@ describe("Multi-target damage reduction", () => {
   });
 
   it("should reduce earthquake when more than one pokemon other than user is not fainted", async () => {
-    await game.startBattle([Species.MAGIKARP, Species.FEEBAS]);
+    await game.classicMode.startBattle([Species.MAGIKARP, Species.FEEBAS]);
 
     const player2 = game.scene.getPlayerParty()[1];
     const [enemy1, enemy2] = game.scene.getEnemyField();
