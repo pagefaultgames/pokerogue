@@ -222,13 +222,60 @@ describe("Abilities - Dancer", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
   });
 
-  // TODO: Enable once abilities start proccing in speed order
-  // TODO: Fix display order - currently we display them all right at the start in REVERSE ORDER...?
-  it.todo("should respect speed order during doubles and display in order", async () => {
+  it("should display ability flyouts right before move use", async () => {
     game.override
       .battleStyle("double")
       .enemyAbility(Abilities.DANCER)
-      .moveset([Moves.QUIVER_DANCE, Moves.SWORDS_DANCE])
+      .moveset([Moves.SWORDS_DANCE, Moves.SPLASH])
+      .enemyMoveset(Moves.SPLASH);
+    await game.classicMode.startBattle([Species.ORICORIO, Species.FEEBAS]);
+
+    // TODO: uncomment once dynamic spd order added
+    // game.scene
+    //   .getField()
+    //   .forEach((pkmn, i) => pkmn.setStat(Stat.SPD, 5 - i));
+
+    game.move.select(Moves.SWORDS_DANCE, BattlerIndex.PLAYER);
+    game.move.select(Moves.SPLASH, BattlerIndex.PLAYER_2);
+    await game.phaseInterceptor.to("TurnEndPhase");
+
+    const showAbPhases: number[] = [];
+    const hideAbPhases: number[] = [];
+    const movePhases: number[] = [];
+    // Check the logs after the first MoveEndPhase for ability order
+    const logsAfterFirstPhase = game.phaseInterceptor.log.splice(
+      game.phaseInterceptor.log.findIndex(l => l === "MoveEndPhase"),
+    );
+    for (const index of logsAfterFirstPhase.keys()) {
+      switch (logsAfterFirstPhase[index]) {
+        case "ShowAbilityPhase":
+          showAbPhases.push(index);
+          break;
+        case "HideAbilityPhase":
+          hideAbPhases.push(index);
+          break;
+        case "MovePhase":
+          movePhases.push(index);
+          break;
+      }
+    }
+
+    expect(showAbPhases).toHaveLength(3);
+    expect(hideAbPhases).toHaveLength(3);
+
+    // Each ShowAbilityPhase must be immediately followed by a HideAbilityPhase, and then a MovePhase
+    for (const i of showAbPhases) {
+      expect(hideAbPhases).toContain(i + 1);
+      expect(movePhases).toContain(i + 2);
+    }
+  });
+
+  // TODO: Enable once abilities start proccing in speed order
+  it.todo("should respect speed order during doubles", async () => {
+    game.override
+      .battleStyle("double")
+      .enemyAbility(Abilities.DANCER)
+      .moveset([Moves.QUIVER_DANCE, Moves.SPLASH])
       .enemyMoveset(Moves.SPLASH);
     await game.classicMode.startBattle([Species.ORICORIO, Species.FEEBAS]);
 
@@ -239,20 +286,15 @@ describe("Abilities - Dancer", () => {
     const showAbSpy = vi.spyOn(ShowAbilityPhase.prototype, "start");
 
     game.move.select(Moves.QUIVER_DANCE, BattlerIndex.PLAYER);
-    game.move.select(Moves.SWORDS_DANCE, BattlerIndex.PLAYER_2);
+    game.move.select(Moves.SPLASH, BattlerIndex.PLAYER_2);
     await game.phaseInterceptor.to("TurnEndPhase");
 
     const [oricorio, feebas, shuckle1, shuckle2] = game.scene.getField();
 
     const expectedOrder = [
-      // Oricorio quiver dance
+      // Oricorio quiver dance, then copies
       oricorio,
       feebas,
-      shuckle1,
-      shuckle2,
-      // Feebas swords dance
-      feebas,
-      oricorio,
       shuckle1,
       shuckle2,
     ];
