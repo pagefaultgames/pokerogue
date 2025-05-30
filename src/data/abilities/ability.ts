@@ -1246,7 +1246,7 @@ export class MoveTypeChangeAbAttr extends PreAttackAbAttr {
 
   /**
    * Determine if the move type change attribute can be applied
-   * 
+   *
    * Can be applied if:
    * - The ability's condition is met, e.g. pixilate only boosts normal moves,
    * - The move is not forbidden from having its type changed by an ability, e.g. {@linkcode Moves.MULTI_ATTACK}
@@ -1262,7 +1262,7 @@ export class MoveTypeChangeAbAttr extends PreAttackAbAttr {
    */
   override canApplyPreAttack(pokemon: Pokemon, _passive: boolean, _simulated: boolean, _defender: Pokemon | null, move: Move, _args: [NumberHolder?, NumberHolder?, ...any]): boolean {
     return (!this.condition || this.condition(pokemon, _defender, move)) &&
-            !noAbilityTypeOverrideMoves.has(move.id) && 
+            !noAbilityTypeOverrideMoves.has(move.id) &&
             (!pokemon.isTerastallized ||
               (move.id !== Moves.TERA_BLAST &&
               (move.id !== Moves.TERA_STARSTORM || pokemon.getTeraType() !== PokemonType.STELLAR || !pokemon.hasSpecies(Species.TERAPAGOS))));
@@ -5086,7 +5086,9 @@ export class IgnoreTypeImmunityAbAttr extends AbAttr {
 }
 
 /**
- * Ignores the type immunity to Status Effects of the defender if the defender is of a certain type
+ * Attribute to ignore Status Effect type immunity of the defending Pokemon.
+ *
+ * Used by {@linkcode Abilities.CORROSION}.
  */
 export class IgnoreTypeStatusEffectImmunityAbAttr extends AbAttr {
   private statusEffect: StatusEffect[];
@@ -5099,11 +5101,21 @@ export class IgnoreTypeStatusEffectImmunityAbAttr extends AbAttr {
     this.defenderType = defenderType;
   }
 
-  override canApply(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
-    return this.statusEffect.includes(args[0] as StatusEffect) && this.defenderType.includes(args[1] as PokemonType);
+  /**
+   * Check if this attribute can apply.
+   * @param _pokemon - Unused
+   * @param passive - Unused
+   * @param simulated - Unused
+   * @param args -
+   * `[0]`: The {@linkcode StatusEffect} being applied.
+   * `[1]`: The defender's {@linkcode PokemonType} being checked.
+   * @returns Whether the defender's status immunity can be nullified.
+   */
+  override canApply(_pokemon: Pokemon, _passive: boolean, _simulated: boolean, args: [StatusEffect, PokemonType]): boolean {
+    return this.statusEffect.includes(args[0]) && this.defenderType.includes(args[1] as PokemonType);
   }
 
-  override apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: BooleanHolder, args: any[]): void {
+  override apply(_pokemon: Pokemon, _passive: boolean, _simulated: boolean, cancelled: BooleanHolder, _args: [StatusEffect, PokemonType]): void {
     cancelled.value = true;
   }
 }
@@ -7449,7 +7461,7 @@ export function initAbilities() {
     new Ability(Abilities.ORICHALCUM_PULSE, 9)
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.SUNNY)
       .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.SUNNY)
-      .conditionalAttr(getWeatherCondition(WeatherType.SUNNY, WeatherType.HARSH_SUN), StatMultiplierAbAttr, Stat.ATK, 4 / 3),
+      .conditionalAttr(getWeatherCondition(WeatherType.SUNNY, WeatherType.HARSH_SUN), StatMultiplierAbAttr, Stat.ATK, 4 / 3), // No game freak rounding jank
     new Ability(Abilities.HADRON_ENGINE, 9)
       .attr(PostSummonTerrainChangeAbAttr, TerrainType.ELECTRIC)
       .attr(PostBiomeChangeTerrainChangeAbAttr, TerrainType.ELECTRIC)

@@ -281,7 +281,8 @@ export class MovePhase extends BattlePhase {
         globalScene.queueMessage(
           getStatusEffectHealText(this.pokemon.status.effect, getPokemonNameWithAffix(this.pokemon)),
         );
-        this.pokemon.resetStatus();
+        // cannot use `unshiftPhase` as it will cause status to be reset _after_ move condition checks fire
+        this.pokemon.resetStatus(false, false, false, false);
         this.pokemon.updateInfo();
       }
     }
