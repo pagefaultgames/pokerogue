@@ -13,12 +13,10 @@ import {
   SelfStatusMove,
   VariablePowerAttr,
   applyMoveAttrs,
-  RandomMovesetMoveAttr,
-  RandomMoveAttr,
   NaturePowerAttr,
-  CopyMoveAttr,
   NeutralDamageAgainstFlyingTypeMultiplierAttr,
   FixedDamageAttr,
+  CallMoveAttr,
 } from "#app/data/moves/move";
 import { allMoves } from "../data-lists";
 import { ArenaTagSide } from "#app/data/arena-tag";
@@ -1246,7 +1244,7 @@ export class MoveTypeChangeAbAttr extends PreAttackAbAttr {
 
   /**
    * Determine if the move type change attribute can be applied
-   * 
+   *
    * Can be applied if:
    * - The ability's condition is met, e.g. pixilate only boosts normal moves,
    * - The move is not forbidden from having its type changed by an ability, e.g. {@linkcode Moves.MULTI_ATTACK}
@@ -1262,7 +1260,7 @@ export class MoveTypeChangeAbAttr extends PreAttackAbAttr {
    */
   override canApplyPreAttack(pokemon: Pokemon, _passive: boolean, _simulated: boolean, _defender: Pokemon | null, move: Move, _args: [NumberHolder?, NumberHolder?, ...any]): boolean {
     return (!this.condition || this.condition(pokemon, _defender, move)) &&
-            !noAbilityTypeOverrideMoves.has(move.id) && 
+            !noAbilityTypeOverrideMoves.has(move.id) &&
             (!pokemon.isTerastallized ||
               (move.id !== Moves.TERA_BLAST &&
               (move.id !== Moves.TERA_STARSTORM || pokemon.getTeraType() !== PokemonType.STELLAR || !pokemon.hasSpecies(Species.TERAPAGOS))));
@@ -1286,33 +1284,37 @@ export class MoveTypeChangeAbAttr extends PreAttackAbAttr {
   }
 }
 
-/** Ability attribute for changing a pokemon's type before using a move */
+/**
+ * Attribute to change the ability holder's type to that of the move being executed.
+ * Used by {@linkcode Abilities.PROTEAN} and {@linkcode Abilities.LIBERO}.
+ */
 export class PokemonTypeChangeAbAttr extends PreAttackAbAttr {
-  private moveType: PokemonType;
-
+  private moveType: PokemonType = PokemonType.UNKNOWN;
   constructor() {
     super(true);
   }
 
-  override canApplyPreAttack(pokemon: Pokemon, passive: boolean, simulated: boolean, defender: Pokemon | null, move: Move, args: any[]): boolean {
-    if (!pokemon.isTerastallized &&
-    move.id !== Moves.STRUGGLE &&
+  override canApplyPreAttack(pokemon: Pokemon, _passive: boolean, _simulated: boolean, _defender: Pokemon | null, move: Move, _args: any[]): boolean {
+    if (
+      pokemon.isTerastallized
+      || move.id === Moves.STRUGGLE
     /**
      * Skip moves that call other moves because these moves generate a following move that will trigger this ability attribute
      * @see {@link https://bulbapedia.bulbagarden.net/wiki/Category:Moves_that_call_other_moves}
      */
-    !move.findAttr((attr) =>
-      attr instanceof RandomMovesetMoveAttr ||
-      attr instanceof RandomMoveAttr ||
-      attr instanceof NaturePowerAttr ||
-      attr instanceof CopyMoveAttr)) {
-      const moveType = pokemon.getMoveType(move);
-      if (pokemon.getTypes().some((t) => t !== moveType)) {
-        this.moveType = moveType;
-        return true;
-      }
+     || move.hasAttr(CallMoveAttr)
+     || move.hasAttr(NaturePowerAttr) // TODO: remove this line when nature power is made to extend from `CallMoveAttr`
+    ) {
+      return false;
     }
-    return false;
+
+    const moveType = pokemon.getMoveType(move);
+    if (pokemon.getTypes().every(t => t === moveType)) {
+      return false;
+    }
+
+    this.moveType = moveType;
+    return true;
   }
 
   override applyPreAttack(pokemon: Pokemon, passive: boolean, simulated: boolean, defender: Pokemon, move: Move, args: any[]): void {
@@ -6990,8 +6992,10 @@ export function initAbilities() {
     new Ability(Abilities.CHEEK_POUCH, 6)
       .attr(HealFromBerryUseAbAttr, 1 / 3),
     new Ability(Abilities.PROTEAN, 6)
-      .attr(PokemonTypeChangeAbAttr),
-    //.condition((p) => !p.summonData.abilitiesApplied.includes(Abilities.PROTEAN)), //Gen 9 Implementation
+      .attr(PokemonTypeChangeAbAttr)
+      // .condition((p) => !p.summonData.abilitiesApplied.includes(Abilities.PROTEAN)) //Gen 9 Implementation
+      // TODO: needs testing on interaction with weather blockage
+      .edgeCase(),
     new Ability(Abilities.FUR_COAT, 6)
       .attr(ReceivedMoveDamageMultiplierAbAttr, (target, user, move) => move.category === MoveCategory.PHYSICAL, 0.5)
       .ignorable(),
@@ -7236,8 +7240,10 @@ export function initAbilities() {
     new Ability(Abilities.DAUNTLESS_SHIELD, 8)
       .attr(PostSummonStatStageChangeAbAttr, [ Stat.DEF ], 1, true),
     new Ability(Abilities.LIBERO, 8)
-      .attr(PokemonTypeChangeAbAttr),
+      .attr(PokemonTypeChangeAbAttr)
     //.condition((p) => !p.summonData.abilitiesApplied.includes(Abilities.LIBERO)), //Gen 9 Implementation
+      // TODO: needs testing on interaction with weather blockage
+      .edgeCase(),
     new Ability(Abilities.BALL_FETCH, 8)
       .attr(FetchBallAbAttr)
       .condition(getOncePerBattleCondition(Abilities.BALL_FETCH)),
