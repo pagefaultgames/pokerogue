@@ -49,13 +49,9 @@ export class FilterBar extends Phaser.GameObjects.Container {
     this.cursorOffset = cursorOffset;
 
     this.window = addWindow(0, 0, width, height, false, false, undefined, undefined, WindowVariant.THIN);
-    this.add(this.window);
 
-    this.cursorObj = globalScene.add.image(1, 1, "cursor");
-    this.cursorObj.setScale(0.5);
-    this.cursorObj.setVisible(false);
-    this.cursorObj.setOrigin(0, 0);
-    this.add(this.cursorObj);
+    this.cursorObj = globalScene.add.image(1, 1, "cursor").setScale(0.5).setVisible(false).setOrigin(0);
+    this.add([this.window, this.cursorObj]);
   }
 
   /**
