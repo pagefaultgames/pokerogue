@@ -94,7 +94,7 @@ export class EvolutionPhase extends Phase {
       .rectangle(0, 0, globalScene.game.canvas.width / 6, globalScene.game.canvas.height / 6, 0x262626)
       .setOrigin(0)
       .setAlpha(0);
-    this.evolutionContainer.add([this.evolutionBaseBg, this.evolutionBg, this.evolutionBgOverlay]);
+    this.evolutionContainer.add([this.evolutionBaseBg, this.evolutionBgOverlay, this.evolutionBg]);
 
     this.evolutionOverlay = globalScene.add.rectangle(
       0,
@@ -224,11 +224,6 @@ export class EvolutionPhase extends Phase {
         ease: "Sine.easeOut",
         onComplete: () => {
           globalScene.time.delayedCall(1000, () => {
-            globalScene.tweens.add({
-              targets: this.evolutionBgOverlay,
-              alpha: 0,
-              duration: 250,
-            });
             this.evolutionBg.setVisible(true);
             this.evolutionBg.play();
           });
