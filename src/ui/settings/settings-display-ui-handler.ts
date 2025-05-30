@@ -88,7 +88,7 @@ export default class SettingsDisplayUiHandler extends AbstractSettingsUiHandler 
             label: "繁體中文",
           };
           break;
-        case "ca-ES":
+        case "ca":
           this.settings[languageIndex].options[0] = {
             value: "Català",
             label: "Català (Needs Help)",
