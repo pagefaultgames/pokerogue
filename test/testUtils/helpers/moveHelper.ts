@@ -187,6 +187,7 @@ export class MoveHelper extends GameManagerHelper {
         target !== undefined && !legalTargets.multiple && legalTargets.targets.includes(target)
           ? [target]
           : enemy.getNextTargets(moveId),
+      useType: MoveUseType.NORMAL,
     });
 
     /**
@@ -229,6 +230,7 @@ export class MoveHelper extends GameManagerHelper {
         target !== undefined && !legalTargets.multiple && legalTargets.targets.includes(target)
           ? [target]
           : enemy.getNextTargets(moveId),
+      useType: MoveUseType.NORMAL,
     });
 
     /**
