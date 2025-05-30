@@ -22,6 +22,10 @@ export class PokemonItemManager {
     return this.heldItems;
   }
 
+  getHeldItemKeys(): number[] {
+    return Object.keys(this.heldItems).map(k => Number(k));
+  }
+
   hasItem(itemType: HeldItems): boolean {
     return itemType in this.getHeldItems();
   }
@@ -29,6 +33,10 @@ export class PokemonItemManager {
   getItem(itemType: HeldItems): HeldItemProperties {
     // TODO: Not very safe
     return this.heldItems[itemType];
+  }
+
+  getStack(itemType: HeldItems): number {
+    return itemType in this.getHeldItems() ? this.heldItems[itemType].stack : 0;
   }
 
   addHeldItem(itemType: HeldItems, addStack = 1) {
