@@ -161,6 +161,14 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     starterInfoYOffset: 0.5,
     starterInfoXPos: 29,
   },
+  "da":{
+    starterInfoTextSize: "56px",
+    instructionTextSize: "38px",
+  },
+  "tr":{
+    starterInfoTextSize: "56px",
+    instructionTextSize: "38px",
+  },
   "ro":{
     starterInfoTextSize: "56px",
     instructionTextSize: "38px",
