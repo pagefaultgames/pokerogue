@@ -23,7 +23,7 @@ import type Pokemon from "#app/field/pokemon";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { isPokemonValidForEncounterOptionSelection } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import { MoneyMultiplierModifier } from "#app/modifier/modifier";
-import * as Utils from "#app/utils";
+import { NumberHolder } from "#app/utils/common";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/partTimer";
@@ -276,12 +276,12 @@ export const PartTimerEncounter: MysteryEncounter = MysteryEncounterBuilder.with
         // Bring visuals back in
         await transitionMysteryEncounterIntroVisuals(false, false);
 
-          // Give money and do dialogue
-          await showEncounterDialogue(`${namespace}:job_complete_good`, `${namespace}:speaker`);
+        // Give money and do dialogue
+        await showEncounterDialogue(`${namespace}:job_complete_good`, `${namespace}:speaker`);
 
-          const formattedMoneyAmount = applyMoneyMultipliers(2.5);
-          await showEncounterText(i18next.t("mysteryEncounterMessages:receive_money", { amount: formattedMoneyAmount }));
-          await showEncounterText(`${namespace}:pokemon_tired`);
+        const formattedMoneyAmount = applyMoneyMultipliers(2.5);
+        await showEncounterText(i18next.t("mysteryEncounterMessages:receive_money", { amount: formattedMoneyAmount }));
+        await showEncounterText(`${namespace}:pokemon_tired`);
 
         setEncounterRewards({ fillRemaining: true });
         leaveEncounterWithoutBattle();
@@ -346,7 +346,7 @@ function doSalesSfx() {
 }
 
 function applyMoneyMultipliers(moneyMultiplier) {
-  const moneyChange = new Utils.IntegerHolder(globalScene.getWaveMoneyAmount(moneyMultiplier));
+  const moneyChange = new NumberHolder(globalScene.getWaveMoneyAmount(moneyMultiplier));
   globalScene.applyModifiers(MoneyMultiplierModifier, true, moneyChange);
   updatePlayerMoney(moneyChange.value, true, false);
 
