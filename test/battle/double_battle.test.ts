@@ -34,7 +34,7 @@ describe("Double Battles", () => {
   // (There were bugs that either only summon one when can summon two, player stuck in switchPhase etc)
   it("3v2 edge case: player summons 2 pokemon on the next battle after being fainted and revived", async () => {
     game.override.battleStyle("double").enemyMoveset(Moves.SPLASH).moveset(Moves.SPLASH);
-    await game.startBattle([Species.BULBASAUR, Species.CHARIZARD, Species.SQUIRTLE]);
+    await game.classicMode.startBattle([Species.BULBASAUR, Species.CHARIZARD, Species.SQUIRTLE]);
 
     game.move.select(Moves.SPLASH);
     game.move.select(Moves.SPLASH, 1);

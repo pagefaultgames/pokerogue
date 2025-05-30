@@ -39,7 +39,7 @@ describe("Abilities - Battery", () => {
 
     vi.spyOn(moveToCheck, "calculateBattlePower");
 
-    await game.startBattle([Species.PIKACHU, Species.CHARJABUG]);
+    await game.classicMode.startBattle([Species.PIKACHU, Species.CHARJABUG]);
 
     game.move.select(Moves.DAZZLING_GLEAM);
     game.move.select(Moves.SPLASH, 1);
@@ -54,7 +54,7 @@ describe("Abilities - Battery", () => {
 
     vi.spyOn(moveToCheck, "calculateBattlePower");
 
-    await game.startBattle([Species.PIKACHU, Species.CHARJABUG]);
+    await game.classicMode.startBattle([Species.PIKACHU, Species.CHARJABUG]);
 
     game.move.select(Moves.BREAKING_SWIPE);
     game.move.select(Moves.SPLASH, 1);
@@ -69,7 +69,7 @@ describe("Abilities - Battery", () => {
 
     vi.spyOn(moveToCheck, "calculateBattlePower");
 
-    await game.startBattle([Species.CHARJABUG, Species.PIKACHU]);
+    await game.classicMode.startBattle([Species.CHARJABUG, Species.PIKACHU]);
 
     game.move.select(Moves.DAZZLING_GLEAM);
     game.move.select(Moves.SPLASH, 1);
