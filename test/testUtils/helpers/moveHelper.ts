@@ -14,6 +14,7 @@ import { UiMode } from "#enums/ui-mode";
 import { getMovePosition } from "#test/testUtils/gameManagerUtils";
 import { GameManagerHelper } from "#test/testUtils/helpers/gameManagerHelper";
 import { vi } from "vitest";
+import { MoveUseType } from "#enums/move-use-type";
 
 /**
  * Helper to handle a Pokemon's move
@@ -59,7 +60,11 @@ export class MoveHelper extends GameManagerHelper {
       this.game.scene.ui.setMode(UiMode.FIGHT, (this.game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
     });
     this.game.onNextPrompt("CommandPhase", UiMode.FIGHT, () => {
-      (this.game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
+      (this.game.scene.getCurrentPhase() as CommandPhase).handleCommand(
+        Command.FIGHT,
+        movePosition,
+        MoveUseType.NORMAL,
+      );
     });
 
     if (targetIndex !== null) {
@@ -86,7 +91,7 @@ export class MoveHelper extends GameManagerHelper {
       );
     });
     this.game.onNextPrompt("CommandPhase", UiMode.FIGHT, () => {
-      (this.game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.TERA, movePosition, false);
+      (this.game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.TERA, movePosition, MoveUseType.NORMAL);
     });
 
     if (targetIndex !== null) {
