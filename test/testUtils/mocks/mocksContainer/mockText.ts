@@ -12,6 +12,7 @@ export default class MockText implements MockGameObject {
   public text = "";
   public name: string;
   public color?: string;
+  public active = true;
 
   constructor(textureManager, _x, _y, _content, _styleOptions) {
     this.scene = textureManager.scene;
@@ -354,4 +355,8 @@ export default class MockText implements MockGameObject {
 
   // biome-ignore lint/complexity/noBannedTypes: This matches the signature of the class this mocks
   on(_event: string | symbol, _fn: Function, _context?: any) {}
+
+  setActive(_active: boolean): this {
+    return this;
+  }
 }
