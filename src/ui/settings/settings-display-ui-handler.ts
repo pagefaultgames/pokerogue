@@ -91,31 +91,31 @@ export default class SettingsDisplayUiHandler extends AbstractSettingsUiHandler 
         case "ca-ES":
           this.settings[languageIndex].options[0] = {
             value: "Català",
-            label: "Català (Need Help)",
+            label: "Català (Needs Help)",
           };
           break;
         case "da":
           this.settings[languageIndex].options[0] = {
             value: "Dansk",
-            label: "Dansk (Need Help)",
+            label: "Dansk (Needs Help)",
           };
           break;
         case "tr":
           this.settings[languageIndex].options[0] = {
             value: "Türkçe",
-            label: "Türkçe (Need Help)",
+            label: "Türkçe (Needs Help)",
           };
           break;
         case "ro":
           this.settings[languageIndex].options[0] = {
             value: "Română",
-            label: "Română (Need Help)",
+            label: "Română (Needs Help)",
           };
           break;
         case "ru":
           this.settings[languageIndex].options[0] = {
             value: "Русский",
-            label: "Русский (Need Help)",
+            label: "Русский (Needs Help)",
           };
           break;
         default:
