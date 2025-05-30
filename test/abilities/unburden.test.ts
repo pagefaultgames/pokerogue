@@ -244,8 +244,8 @@ describe("Abilities - Unburden", () => {
     // Turn 1: Treecko gets hit by False Swipe and eats Sitrus Berry, activating Unburden
     game.move.select(Moves.SPLASH);
     game.move.select(Moves.SPLASH, 1);
-    await game.forceEnemyMove(Moves.FALSE_SWIPE, 0);
-    await game.forceEnemyMove(Moves.FALSE_SWIPE, 0);
+    await game.move.selectEnemyMove(Moves.FALSE_SWIPE, 0);
+    await game.move.selectEnemyMove(Moves.FALSE_SWIPE, 0);
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(getHeldItemCount(treecko)).toBeLessThan(playerHeldItems);
@@ -302,7 +302,7 @@ describe("Abilities - Unburden", () => {
 
     // Turn 1: Get hit by False Swipe and eat Sitrus Berry, activating Unburden
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.FALSE_SWIPE);
+    await game.move.selectEnemyMove(Moves.FALSE_SWIPE);
     await game.toNextTurn();
 
     expect(getHeldItemCount(playerPokemon)).toBeLessThan(playerHeldItems);
@@ -310,7 +310,7 @@ describe("Abilities - Unburden", () => {
 
     // Turn 2: Get hit by Worry Seed, deactivating Unburden
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.WORRY_SEED);
+    await game.move.selectEnemyMove(Moves.WORRY_SEED);
     await game.toNextTurn();
 
     expect(getHeldItemCount(playerPokemon)).toBeLessThan(playerHeldItems);
@@ -343,13 +343,13 @@ describe("Abilities - Unburden", () => {
     const initialSpeed = treecko.getStat(Stat.SPD);
 
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.THIEF);
+    await game.move.selectEnemyMove(Moves.THIEF);
     game.doSelectPartyPokemon(1);
     await game.toNextTurn();
 
     game.doRevivePokemon(1);
     game.doSwitchPokemon(1);
-    await game.forceEnemyMove(Moves.SPLASH);
+    await game.move.selectEnemyMove(Moves.SPLASH);
     await game.toNextTurn();
 
     expect(game.scene.getPlayerPokemon()!).toBe(treecko);
@@ -372,8 +372,8 @@ describe("Abilities - Unburden", () => {
 
     game.move.select(Moves.SPLASH);
     game.move.select(Moves.REVIVAL_BLESSING, 1);
-    await game.forceEnemyMove(Moves.THIEF, BattlerIndex.PLAYER);
-    await game.forceEnemyMove(Moves.SPLASH);
+    await game.move.selectEnemyMove(Moves.THIEF, BattlerIndex.PLAYER);
+    await game.move.selectEnemyMove(Moves.SPLASH);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2]);
     game.doSelectPartyPokemon(0, "RevivalBlessingPhase");
     await game.toNextTurn();

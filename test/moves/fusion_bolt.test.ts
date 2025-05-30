@@ -36,7 +36,7 @@ describe("Moves - Fusion Bolt", () => {
   });
 
   it("should not make contact", async () => {
-    await game.startBattle([Species.ZEKROM]);
+    await game.classicMode.startBattle([Species.ZEKROM]);
 
     const partyMember = game.scene.getPlayerPokemon()!;
     const initialHp = partyMember.hp;
