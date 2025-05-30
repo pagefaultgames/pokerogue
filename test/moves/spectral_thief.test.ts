@@ -1,7 +1,7 @@
 import { Abilities } from "#enums/abilities";
 import { BattlerIndex } from "#app/battle";
 import { Stat } from "#enums/stat";
-import { allMoves } from "#app/data/moves/move";
+import { allMoves } from "#app/data/data-lists";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";

@@ -2,7 +2,7 @@ import { Abilities } from "#enums/abilities";
 import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import { Stat } from "#enums/stat";
-import { allMoves } from "#app/data/moves/move";
+import { allMoves } from "#app/data/data-lists";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
