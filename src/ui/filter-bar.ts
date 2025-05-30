@@ -5,16 +5,7 @@ import { addTextObject, getTextColor, TextStyle } from "./text";
 import type { UiTheme } from "#enums/ui-theme";
 import { addWindow, WindowVariant } from "./ui-theme";
 import { globalScene } from "#app/global-scene";
-
-export enum DropDownColumn {
-  GEN,
-  TYPES,
-  BIOME,
-  CAUGHT,
-  UNLOCKS,
-  MISC,
-  SORT,
-}
+import type { DropDownColumn } from "#enums/drop-down-column";
 
 export class FilterBar extends Phaser.GameObjects.Container {
   private window: Phaser.GameObjects.NineSlice;
