@@ -958,6 +958,10 @@ export function setSetting(setting: string, value: number): boolean {
                 handler: () => changeLocaleHandler("ca-ES"),
               },
               {
+                label: "Dansk",
+                handler: () => changeLocaleHandler("da")
+              },
+              {
                 label: "Türkçe",
                 handler: () => changeLocaleHandler("tr")
               },
