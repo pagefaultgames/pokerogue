@@ -18,7 +18,7 @@ import { BattleSpec } from "#app/enums/battle-spec";
 import { StatusEffect } from "#app/enums/status-effect";
 import type { EnemyPokemon } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
-import { HitResult, PlayerPokemon, PokemonMove } from "#app/field/pokemon";
+import { HitResult, type PlayerPokemon, PokemonMove } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { PokemonInstantReviveModifier } from "#app/modifier/modifier";
 import { SwitchType } from "#enums/switch-type";
@@ -197,7 +197,7 @@ export class FaintPhase extends PokemonPhase {
     }
 
     pokemon.faintCry(() => {
-      if (pokemon instanceof PlayerPokemon) {
+      if (pokemon.isPlayer()) {
         pokemon.addFriendship(-FRIENDSHIP_LOSS_FROM_FAINT);
       }
       pokemon.hideInfo();
