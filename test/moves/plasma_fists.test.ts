@@ -42,8 +42,8 @@ describe("Moves - Plasma Fists", () => {
     game.move.select(Moves.PLASMA_FISTS, 0, BattlerIndex.ENEMY);
     game.move.select(Moves.TACKLE, 1, BattlerIndex.ENEMY_2);
 
-    await game.forceEnemyMove(Moves.TACKLE, BattlerIndex.PLAYER);
-    await game.forceEnemyMove(Moves.TACKLE, BattlerIndex.PLAYER_2);
+    await game.move.selectEnemyMove(Moves.TACKLE, BattlerIndex.PLAYER);
+    await game.move.selectEnemyMove(Moves.TACKLE, BattlerIndex.PLAYER_2);
 
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
 

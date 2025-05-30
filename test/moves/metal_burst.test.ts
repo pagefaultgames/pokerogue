@@ -42,8 +42,8 @@ describe("Moves - Metal Burst", () => {
     game.move.select(Moves.METAL_BURST);
     game.move.select(Moves.FISSURE, 1, BattlerIndex.ENEMY);
 
-    await game.forceEnemyMove(Moves.TACKLE, BattlerIndex.PLAYER);
-    await game.forceEnemyMove(Moves.TACKLE, BattlerIndex.PLAYER_2);
+    await game.move.selectEnemyMove(Moves.TACKLE, BattlerIndex.PLAYER);
+    await game.move.selectEnemyMove(Moves.TACKLE, BattlerIndex.PLAYER_2);
 
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER_2, BattlerIndex.PLAYER, BattlerIndex.ENEMY_2]);
 
@@ -63,8 +63,8 @@ describe("Moves - Metal Burst", () => {
     game.move.select(Moves.METAL_BURST);
     game.move.select(Moves.PRECIPICE_BLADES, 1);
 
-    await game.forceEnemyMove(Moves.TACKLE, BattlerIndex.PLAYER);
-    await game.forceEnemyMove(Moves.TACKLE, BattlerIndex.PLAYER_2);
+    await game.move.selectEnemyMove(Moves.TACKLE, BattlerIndex.PLAYER);
+    await game.move.selectEnemyMove(Moves.TACKLE, BattlerIndex.PLAYER_2);
 
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER_2, BattlerIndex.PLAYER, BattlerIndex.ENEMY_2]);
 
