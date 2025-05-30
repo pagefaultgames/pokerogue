@@ -230,7 +230,7 @@ export default abstract class BattleInfo extends Phaser.GameObjects.Container {
     this.box = globalScene.add.sprite(0, 0, this.getTextureName()).setName("box").setOrigin(1, 0.5);
     this.add(this.box);
 
-    this.nameText = addTextObject(player ? -115 : -124, player ? -15.2 : -11.2, "", TextStyle.BATTLE_INFO)
+    this.nameText = addTextObject(posParams.nameTextX, posParams.nameTextY, "", TextStyle.BATTLE_INFO)
       .setName("text_name")
       .setOrigin(0);
     this.add(this.nameText);

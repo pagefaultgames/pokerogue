@@ -4,6 +4,7 @@ export default class MockGraphics implements MockGameObject {
   private scene;
   public list: MockGameObject[] = [];
   public name: string;
+  public active = true;
   constructor(textureManager, _config) {
     this.scene = textureManager.scene;
   }
@@ -111,6 +112,11 @@ export default class MockGraphics implements MockGameObject {
   }
 
   copyPosition(_source): this {
+    return this;
+  }
+
+  setActive(active: boolean): this {
+    this.active = active;
     return this;
   }
 }

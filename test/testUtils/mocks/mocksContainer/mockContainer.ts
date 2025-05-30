@@ -14,6 +14,7 @@ export default class MockContainer implements MockGameObject {
   protected textureManager;
   public list: MockGameObject[] = [];
   public name: string;
+  public active = true;
 
   constructor(textureManager: MockTextureManager, x: number, y: number) {
     this.x = x;
@@ -304,6 +305,11 @@ export default class MockContainer implements MockGameObject {
     if (source.y !== undefined) {
       this.y = source.y;
     }
+    return this;
+  }
+
+  setActive(active: boolean): this {
+    this.active = active;
     return this;
   }
 }
