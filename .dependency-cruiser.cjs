@@ -2,6 +2,17 @@
 module.exports = {
   forbidden: [
     {
+      name: "only-type-imports",
+      severity: "error",
+      comment: "Files in enums and @types may only use type imports.",
+      from: {
+        path: ["(^|/)src/@types", "(^|/)src/enums"],
+      },
+      to: {
+        dependencyTypesNot: ["type-only"],
+      },
+    },
+    {
       name: "no-circular-at-runtime",
       severity: "warn",
       comment:
