@@ -8,7 +8,7 @@ import { Abilities } from "#enums/abilities";
 import { Species } from "#enums/species";
 import { allSpecies, getPokemonSpecies, type PokemonForm } from "#app/data/pokemon-species";
 import { Button } from "#enums/buttons";
-import { DropDownColumn } from "#app/ui/filter-bar";
+import { DropDownColumn } from "#enums/drop-down-column";
 import type PokemonSpecies from "#app/data/pokemon-species";
 import { PokemonType } from "#enums/pokemon-type";
 import { UiMode } from "#enums/ui-mode";
