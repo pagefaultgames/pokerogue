@@ -5,7 +5,7 @@ import { addBBCodeTextObject, addTextObject, getTextColor, TextStyle } from "#ap
 import { Command } from "#app/ui/command-ui-handler";
 import MessageUiHandler from "#app/ui/message-ui-handler";
 import { UiMode } from "#enums/ui-mode";
-import { BooleanHolder, toReadableString, randInt, getLocalizedSpriteKey, isNullOrUndefined } from "#app/utils/common";
+import { BooleanHolder, toReadableString, randInt, getLocalizedSpriteKey } from "#app/utils/common";
 import {
   PokemonFormChangeItemModifier,
   PokemonHeldItemModifier,
@@ -1165,19 +1165,19 @@ export default class PartyUiHandler extends MessageUiHandler {
       this.partyUiMode !== PartyUiMode.FAINT_SWITCH &&
       globalScene.findModifier(
         m =>
-          m instanceof SwitchEffectTransferModifier &&
-          m.pokemonId === globalScene.getPlayerField()[this.fieldIndex].id,
+          m instanceof SwitchEffectTransferModifier && m.pokemonId === globalScene.getPlayerField()[this.fieldIndex].id,
       )
     );
   }
 
   // TODO: add FORCED_SWITCH (and perhaps also BATON_PASS_SWITCH) to the modes
+  // TODO: refactor once moves in flight become a thing...
   private isBatonPassMove(): boolean {
     const lastMove: TurnMove | undefined = globalScene.getPlayerField()[this.fieldIndex].getLastXMoves()[0];
     return (
       this.partyUiMode === PartyUiMode.FAINT_SWITCH &&
-      allMoves[lastMove.move].getAttrs(ForceSwitchOutAttr)[0]?.isBatonPass() &&
-      lastMove?.result === MoveResult.SUCCESS
+      lastMove?.result === MoveResult.SUCCESS &&
+      allMoves[lastMove.move].getAttrs(ForceSwitchOutAttr)[0]?.isBatonPass()
     );
   }
 

@@ -65,7 +65,6 @@ import {
   rgbToHsv,
   deltaRgb,
   isBetween,
-  type nil,
   type Constructor,
   randSeedIntRange,
 } from "#app/utils/common";
@@ -4389,11 +4388,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * or `undefined` if no applicable moves have been used since switching in.
    */
   getLastNonVirtualMove(ignoreStruggle = false, ignoreFollowUp = true): TurnMove | undefined {
-    return this.getLastXMoves(-1).find(m =>
-      m.move !== Moves.NONE
-      && (!ignoreStruggle || m.move !== Moves.STRUGGLE)
-      && (!isVirtual(m.useType) ||
-        (!ignoreFollowUp && m.useType === MoveUseType.FOLLOW_UP))
+    return this.getLastXMoves(-1).find(
+      m =>
+        m.move !== Moves.NONE &&
+        (!ignoreStruggle || m.move !== Moves.STRUGGLE) &&
+        (!isVirtual(m.useType) || (!ignoreFollowUp && m.useType === MoveUseType.FOLLOW_UP)),
     );
   }
 
@@ -4412,7 +4411,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   pushMoveQueue(queuedMove: TurnMove): void {
     this.summonData.moveQueue.push(queuedMove);
   }
-
 
   changeForm(formChange: SpeciesFormChange): Promise<void> {
     return new Promise(resolve => {
@@ -6247,7 +6245,7 @@ export class EnemyPokemon extends Pokemon {
         isVirtual(queuedMove.useType) ||
         (moveIndex > -1 && this.getMoveset()[moveIndex].isUsable(this, isIgnorePP(queuedMove.useType)))
       ) {
-        moveQueue.splice(0, i) // TODO: This may be redundant and definitely should not be done here
+        moveQueue.splice(0, i); // TODO: This may be redundant and definitely should not be done here
         return queuedMove;
       }
     }
@@ -6258,7 +6256,11 @@ export class EnemyPokemon extends Pokemon {
     if (movePool.length) {
       // If there's only 1 move in the move pool, use it.
       if (movePool.length === 1) {
-        return { move: movePool[0].moveId, targets: this.getNextTargets(movePool[0].moveId) , useType: MoveUseType.NORMAL};
+        return {
+          move: movePool[0].moveId,
+          targets: this.getNextTargets(movePool[0].moveId),
+          useType: MoveUseType.NORMAL,
+        };
       }
       // If a move is forced because of Encore, use it.
       // Said moves are executed normally
@@ -6269,7 +6271,7 @@ export class EnemyPokemon extends Pokemon {
           return {
             move: encoreMove.moveId,
             targets: this.getNextTargets(encoreMove.moveId),
-            useType: MoveUseType.NORMAL
+            useType: MoveUseType.NORMAL,
           };
         }
       }
@@ -6440,15 +6442,17 @@ export class EnemyPokemon extends Pokemon {
               r++;
             }
           }
-          console.log(movePool.map(m => m.getName()), moveScores, r, sortedMovePool.map(m => m.getName()));
-          return { move: sortedMovePool[r]!.moveId, targets: moveTargets[sortedMovePool[r]!.moveId], useType: MoveUseType.NORMAL };
           console.log(
             movePool.map(m => m.getName()),
             moveScores,
             r,
             sortedMovePool.map(m => m.getName()),
           );
-          return { move: sortedMovePool[r]!.moveId, targets: moveTargets[sortedMovePool[r]!.moveId], useType: MoveUseType.NORMAL };
+          return {
+            move: sortedMovePool[r]!.moveId,
+            targets: moveTargets[sortedMovePool[r]!.moveId],
+            useType: MoveUseType.NORMAL,
+          };
         }
       }
     }
@@ -6741,7 +6745,6 @@ export class EnemyPokemon extends Pokemon {
     return ret;
   }
 
-  
   /**
    * Show or hide the type effectiveness multiplier window
    * Passing undefined will hide the window
