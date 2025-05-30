@@ -1,15 +1,15 @@
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import Phaser from "phaser";
-import GameManager from "#test/testUtils/gameManager";
+import { BattlerIndex } from "#app/battle";
+import { MoveResult, PokemonMove } from "#app/field/pokemon";
+import { BerryPhase } from "#app/phases/berry-phase";
+import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
-import { BerryPhase } from "#app/phases/berry-phase";
-import { MoveResult, PokemonMove } from "#app/field/pokemon";
 import { PokemonType } from "#enums/pokemon-type";
-import { MoveEffectPhase } from "#app/phases/move-effect-phase";
+import { Species } from "#enums/species";
 import { StatusEffect } from "#enums/status-effect";
-import { BattlerIndex } from "#app/battle";
+import GameManager from "#test/testUtils/gameManager";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Moves - Powder", () => {
   let phaserGame: Phaser.Game;
@@ -161,7 +161,6 @@ describe("Moves - Powder", () => {
     game.move.select(Moves.ROAR, 0, BattlerIndex.ENEMY_2);
     game.move.select(Moves.SPLASH, 1);
     await game.toNextTurn();
-    await game.toNextTurn(); // Requires game.toNextTurn() twice due to double battle
 
     // Turn 2: Enemy should activate Powder twice: From using Ember, and from copying Fiery Dance via Dancer
     playerPokemon.hp = playerPokemon.getMaxHp();
