@@ -69,9 +69,7 @@ export class HeldItem implements Localizable {
   createSummaryIcon(stackCount: number): Phaser.GameObjects.Container {
     const container = globalScene.add.container(0, 0);
 
-    const item = globalScene.add.sprite(0, 12, "items");
-    item.setFrame(this.getIcon());
-    item.setOrigin(0, 0.5);
+    const item = globalScene.add.sprite(0, 12, "items").setFrame(this.getIcon()).setOrigin(0, 0.5);
     container.add(item);
 
     const stackText = this.getIconStackText(stackCount);
@@ -91,10 +89,11 @@ export class HeldItem implements Localizable {
     container.add(pokemonIcon);
     container.setName(pokemon.id.toString());
 
-    const item = globalScene.add.sprite(16, 16, "items");
-    item.setScale(0.5);
-    item.setOrigin(0, 0.5);
-    item.setTexture("items", this.getIcon());
+    const item = globalScene.add
+      .sprite(16, 16, "items")
+      .setScale(0.5)
+      .setOrigin(0, 0.5)
+      .setTexture("items", this.getIcon());
     container.add(item);
 
     const stackText = this.getIconStackText(stackCount);
