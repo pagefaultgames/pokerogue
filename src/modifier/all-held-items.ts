@@ -115,7 +115,7 @@ export class HeldItem implements Localizable {
     if (stackCount >= this.getMaxStackCount()) {
       text.setTint(0xf89890);
     }
-    text.setOrigin(0, 0);
+    text.setOrigin(0);
 
     return text;
   }
@@ -206,21 +206,21 @@ export class TurnHealHeldItem extends HeldItem {
   }
 
   apply(stackCount: number, pokemon: Pokemon): boolean {
-    if (!pokemon.isFullHp()) {
-      globalScene.unshiftPhase(
-        new PokemonHealPhase(
-          pokemon.getBattlerIndex(),
-          toDmgValue(pokemon.getMaxHp() / 16) * stackCount,
-          i18next.t("modifier:turnHealApply", {
-            pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-            typeName: this.name,
-          }),
-          true,
-        ),
-      );
-      return true;
+    if (pokemon.isFullHp()) {
+      return false;
     }
-    return false;
+    globalScene.unshiftPhase(
+      new PokemonHealPhase(
+        pokemon.getBattlerIndex(),
+        toDmgValue(pokemon.getMaxHp() / 16) * stackCount,
+        i18next.t("modifier:turnHealApply", {
+          pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+          typeName: this.name,
+        }),
+        true,
+      ),
+    );
+    return true;
   }
 }
 

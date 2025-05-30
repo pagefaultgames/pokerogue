@@ -1406,6 +1406,7 @@ class AttackTypeBoosterRewardGenerator extends ModifierTypeGenerator {
         return new AttackTypeBoosterReward(pregenArgs[0] as PokemonType, TYPE_BOOST_ITEM_BOOST_PERCENT);
       }
 
+      // TODO: make this consider moves or abilities that change types
       const attackMoveTypes = party.flatMap(p =>
         p
           .getMoveset()
@@ -1420,17 +1421,11 @@ class AttackTypeBoosterRewardGenerator extends ModifierTypeGenerator {
       const attackMoveTypeWeights = new Map<PokemonType, number>();
       let totalWeight = 0;
       for (const t of attackMoveTypes) {
-        if (attackMoveTypeWeights.has(t)) {
-          if (attackMoveTypeWeights.get(t)! < 3) {
-            // attackMoveTypeWeights.has(t) was checked before
-            attackMoveTypeWeights.set(t, attackMoveTypeWeights.get(t)! + 1);
-          } else {
-            continue;
-          }
-        } else {
-          attackMoveTypeWeights.set(t, 1);
+        const weight = attackMoveTypeWeights.get(t) ?? 0;
+        if (weight < 3) {
+          attackMoveTypeWeights.set(t, weight + 1);
+          totalWeight++;
         }
-        totalWeight++;
       }
 
       if (!totalWeight) {
@@ -1477,17 +1472,11 @@ class AttackTypeBoosterModifierTypeGenerator extends ModifierTypeGenerator {
       const attackMoveTypeWeights = new Map<PokemonType, number>();
       let totalWeight = 0;
       for (const t of attackMoveTypes) {
-        if (attackMoveTypeWeights.has(t)) {
-          if (attackMoveTypeWeights.get(t)! < 3) {
-            // attackMoveTypeWeights.has(t) was checked before
-            attackMoveTypeWeights.set(t, attackMoveTypeWeights.get(t)! + 1);
-          } else {
-            continue;
-          }
-        } else {
-          attackMoveTypeWeights.set(t, 1);
+        const weight = attackMoveTypeWeights.get(t) ?? 0;
+        if (weight < 3) {
+          attackMoveTypeWeights.set(t, weight + 1);
+          totalWeight++;
         }
-        totalWeight++;
       }
 
       if (!totalWeight) {
