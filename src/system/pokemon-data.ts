@@ -5,7 +5,7 @@ import { Nature } from "#enums/nature";
 import { PokeballType } from "#enums/pokeball";
 import { getPokemonSpecies, getPokemonSpeciesForm } from "../data/pokemon-species";
 import { Status } from "../data/status-effect";
-import Pokemon, { PokemonBattleData, PokemonMove, PokemonSummonData } from "../field/pokemon";
+import Pokemon, { EnemyPokemon, PokemonBattleData, PokemonMove, PokemonSummonData } from "../field/pokemon";
 import { TrainerSlot } from "#enums/trainer-slot";
 import type { Variant } from "#app/sprites/variant";
 import type { Biome } from "#enums/biome";
@@ -140,7 +140,7 @@ export default class PokemonData {
     this.fusionLuck = source.fusionLuck ?? (source.fusionShiny ? source.fusionVariant + 1 : 0);
     this.fusionTeraType = (source.fusionTeraType ?? 0) as PokemonType;
 
-    this.boss = (source.isEnemy() && !!source.bossSegments) || (!this.player && !!source.boss);
+    this.boss = (source instanceof EnemyPokemon && !!source.bossSegments) || (!this.player && !!source.boss);
     this.bossSegments = source.bossSegments ?? 0;
 
     this.summonData = new PokemonSummonData(source.summonData);
