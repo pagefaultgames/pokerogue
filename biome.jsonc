@@ -31,7 +31,6 @@
       // TODO: these files are too big and complex, ignore them until their respective refactors
       "src/data/moves/move.ts",
       "src/data/abilities/ability.ts",
-      "src/field/pokemon.ts",
 
       // this file is just too big:
       "src/data/balance/tms.ts"
@@ -91,6 +90,19 @@
         "noUselessSwitchCase": "off", // Explicit > Implicit
         "noUselessConstructor": "warn", // TODO: Refactor and make this an error
         "noBannedTypes": "warn" // TODO: Refactor and make this an error
+      },
+      "nursery": {
+        "noRestrictedTypes": {
+          "level": "error",
+          "options": {
+            "types": {
+              "integer": {
+                "message": "This is an alias for 'number' that can provide false impressions of what values can actually be contained in this variable. Use 'number' instead.",
+                "use": "number"
+              }
+            }
+          }
+        }
       }
     }
   },
