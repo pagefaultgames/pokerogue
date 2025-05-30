@@ -970,6 +970,10 @@ export function setSetting(setting: string, value: number): boolean {
                 handler: () => changeLocaleHandler("ro")
               },
               {
+                label: "Русский",
+                handler: () => changeLocaleHandler("ru"),
+              },
+              {
                 label: i18next.t("settings:back"),
                 handler: () => cancelHandler(),
               },
