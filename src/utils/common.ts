@@ -2,6 +2,7 @@ import { MoneyFormat } from "#enums/money-format";
 import { Moves } from "#enums/moves";
 import i18next from "i18next";
 import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
+import type { Variant } from "#app/sprites/variant";
 
 export type nil = null | undefined;
 
@@ -97,6 +98,16 @@ export function randSeedInt(range: number, min = 0): number {
     return min;
   }
   return Phaser.Math.RND.integerInRange(min, range - 1 + min);
+}
+
+/**
+ * Generates a random number using the global seed
+ * @param min The minimum integer to generate
+ * @param max The maximum integer to generate
+ * @returns a random integer between {@linkcode min} and {@linkcode max} inclusive
+ */
+export function randSeedIntRange(min: number, max: number): number {
+  return randSeedInt(max - min + 1, min);
 }
 
 /**
@@ -565,4 +576,19 @@ export function animationFileName(move: Moves): string {
  */
 export function camelCaseToKebabCase(str: string): string {
   return str.replace(/[A-Z]+(?![a-z])|[A-Z]/g, (s, o) => (o ? "-" : "") + s.toLowerCase());
+}
+
+/** Get the localized shiny descriptor for the provided variant
+ * @param variant - The variant to get the shiny descriptor for
+ * @returns The localized shiny descriptor
+ */
+export function getShinyDescriptor(variant: Variant): string {
+  switch (variant) {
+    case 2:
+      return i18next.t("common:epicShiny");
+    case 1:
+      return i18next.t("common:rareShiny");
+    case 0:
+      return i18next.t("common:commonShiny");
+  }
 }

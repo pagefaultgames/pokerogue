@@ -7,7 +7,7 @@ import { Moves } from "#enums/moves";
 import { Stat } from "#enums/stat";
 import { StatusEffect } from "#app/enums/status-effect";
 import { WeatherType } from "#app/enums/weather-type";
-import { allMoves } from "#app/data/moves/move";
+import { allMoves } from "#app/data/data-lists";
 
 describe("Moves - Fell Stinger", () => {
   let phaserGame: Phaser.Game;

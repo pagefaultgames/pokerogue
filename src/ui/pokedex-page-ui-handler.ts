@@ -9,7 +9,7 @@ import { allAbilities } from "#app/data/data-lists";
 import { speciesEggMoves } from "#app/data/balance/egg-moves";
 import { GrowthRate, getGrowthRateColor } from "#app/data/exp";
 import { Gender, getGenderColor, getGenderSymbol } from "#app/data/gender";
-import { allMoves } from "#app/data/moves/move";
+import { allMoves } from "#app/data/data-lists";
 import { getNatureName } from "#app/data/nature";
 import type { SpeciesFormChange } from "#app/data/pokemon-forms";
 import { pokemonFormChanges } from "#app/data/pokemon-forms";
@@ -1888,7 +1888,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
               if (!(passiveAttr & PassiveAttr.UNLOCKED)) {
                 const passiveCost = getPassiveCandyCount(speciesStarterCosts[this.starterId]);
                 options.push({
-                  label: `x${passiveCost} ${i18next.t("pokedexUiHandler:unlockPassive")} (${allAbilities[this.passive].name})`,
+                  label: `x${passiveCost} ${i18next.t("pokedexUiHandler:unlockPassive")}`,
                   handler: () => {
                     if (Overrides.FREE_CANDY_UPGRADE_OVERRIDE || candyCount >= passiveCost) {
                       starterData.passiveAttr |= PassiveAttr.UNLOCKED | PassiveAttr.ENABLED;
