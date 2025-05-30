@@ -1,6 +1,9 @@
 import { BattlerIndex } from "#app/battle";
+import { ArenaTagSide } from "#app/data/arena-tag";
 import { globalScene } from "#app/global-scene";
 import { Abilities } from "#enums/abilities";
+import { ArenaTagType } from "#enums/arena-tag-type";
+import { BattleType } from "#enums/battle-type";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -24,29 +27,57 @@ describe("Abilities - Mold Breaker", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.SPLASH])
+      .moveset([Moves.ERUPTION, Moves.EARTHQUAKE, Moves.DRAGON_TAIL])
       .ability(Abilities.MOLD_BREAKER)
       .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyPassiveAbility(Abilities.NO_GUARD)
       .enemyMoveset(Moves.SPLASH);
   });
 
-  it("should turn off the ignore abilities arena variable after the user's move", async () => {
-    game.override
-      .enemyMoveset(Moves.SPLASH)
-      .ability(Abilities.MOLD_BREAKER)
-      .moveset([Moves.ERUPTION])
-      .startingLevel(100)
-      .enemyLevel(2);
+  it("should ignore ignorable abilities during the move's execution", async () => {
+    game.override.startingLevel(100).enemyLevel(2).enemyAbility(Abilities.STURDY);
     await game.classicMode.startBattle([Species.MAGIKARP]);
-    const enemy = game.scene.getEnemyPokemon()!;
 
-    expect(enemy.isFainted()).toBe(false);
+    const player = game.scene.getPlayerPokemon()!;
+    game.move.select(Moves.ERUPTION);
+
+    expect(globalScene.arena.ignoreAbilities).toBe(false);
     game.move.select(Moves.SPLASH);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
-    await game.phaseInterceptor.to("MoveEndPhase", true);
-    expect(globalScene.arena.ignoreAbilities).toBe(false);
+
+    await game.phaseInterceptor.to("MoveEffectPhase");
+    expect(game.scene.arena.ignoreAbilities).toBe(true);
+    expect(game.scene.arena.ignoringEffectSource).toBe(player.getBattlerIndex());
+
+    await game.phaseInterceptor.to("MoveEndPhase");
+    expect(game.scene.arena.ignoreAbilities).toBe(false);
+
+    await game.phaseInterceptor.to("TurnEndPhase");
+    expect(game.scene.getEnemyPokemon()?.isFainted()).toBe(true);
+  });
+
+  it("should keep Levitate opponents grounded when using force switch moves", async () => {
+    game.override.enemyAbility(Abilities.LEVITATE).enemySpecies(Species.WEEZING).battleType(BattleType.TRAINER);
+
+    // Setup toxic spikes and spikes
+    game.scene.arena.addTag(ArenaTagType.TOXIC_SPIKES, -1, Moves.TOXIC_SPIKES, 1, ArenaTagSide.ENEMY);
+    game.scene.arena.addTag(ArenaTagType.SPIKES, -1, Moves.CEASELESS_EDGE, 1, ArenaTagSide.ENEMY);
+    await game.classicMode.startBattle([Species.MAGIKARP]);
+
+    const [weezing1, weezing2] = game.scene.getEnemyParty();
+    // Weezing's levitate prevented removal of Toxic Spikes, ignored Spikes damage
+    expect(game.scene.arena.getTagOnSide(ArenaTagType.TOXIC_SPIKES, ArenaTagSide.ENEMY)).toBeDefined();
+    expect(weezing1.hp).toBe(weezing1.getMaxHp());
+
+    game.move.select(Moves.DRAGON_TAIL);
+    await game.phaseInterceptor.to("TurnEndPhase");
+
+    // Levitate was ignored during the switch, causing Toxic Spikes to be removed and Spikes to deal damage
+    expect(weezing1.isOnField()).toBe(false);
+    expect(weezing2.isOnField()).toBe(true);
+    expect(weezing2.getHpRatio(true)).toBeCloseTo(0.75);
+    expect(game.scene.arena.getTagOnSide(ArenaTagType.TOXIC_SPIKES, ArenaTagSide.ENEMY)).toBeUndefined();
   });
 });

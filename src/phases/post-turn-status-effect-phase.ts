@@ -49,9 +49,10 @@ export class PostTurnStatusEffectPhase extends PokemonPhase {
         }
         if (damage.value) {
           // Set preventEndure flag to avoid pokemon surviving thanks to focus band, sturdy, endure ...
+          // TODO: why don't we call `damageAndUpdate` here?
           globalScene.damageNumberHandler.add(this.getPokemon(), pokemon.damage(damage.value, false, true));
           pokemon.updateInfo();
-          applyPostDamageAbAttrs(PostDamageAbAttr, pokemon, damage.value, pokemon.hasPassive(), false, []);
+          applyPostDamageAbAttrs(PostDamageAbAttr, pokemon, damage.value);
         }
         new CommonBattleAnim(CommonAnim.POISON + (pokemon.status.effect - 1), pokemon).play(false, () => this.end());
       } else {
