@@ -73,7 +73,7 @@ export class TurnStartPhase extends FieldPhase {
     // This occurs before the main loop because of battles with more than two Pokemon
     const battlerBypassSpeed = {};
 
-    globalScene.getField(true).map(p => {
+    globalScene.getField(true).forEach(p => {
       const bypassSpeed = new BooleanHolder(false);
       const canCheckHeldItems = new BooleanHolder(true);
       applyAbAttrs(BypassSpeedChanceAbAttr, p, null, false, bypassSpeed);
@@ -134,6 +134,8 @@ export class TurnStartPhase extends FieldPhase {
     return moveOrder;
   }
 
+  // TODO: Refactor this alongside `CommandPhase.handleCommand` to use SEPARATE METHODS
+  // Also need a clearer distinction between "turn command" and queued moves
   start() {
     super.start();
 
@@ -172,34 +174,19 @@ export class TurnStartPhase extends FieldPhase {
             continue;
           }
           const move =
-            pokemon.getMoveset().find(m => m.moveId === queuedMove.move && m.ppUsed < m.getMovePp()) ||
+            pokemon.getMoveset().find(m => m.moveId === queuedMove.move && m.ppUsed < m.getMovePp()) ??
             new PokemonMove(queuedMove.move);
           if (move.getMove().hasAttr(MoveHeaderAttr)) {
             globalScene.unshiftPhase(new MoveHeaderPhase(pokemon, move));
           }
-          if (pokemon.isPlayer()) {
-            if (turnCommand.cursor === -1) {
-              globalScene.pushPhase(new MovePhase(pokemon, turnCommand.targets || turnCommand.move!.targets, move)); //TODO: is the bang correct here?
-            } else {
-              const playerPhase = new MovePhase(
-                pokemon,
-                turnCommand.targets || turnCommand.move!.targets,
-                move,
-                false,
-                queuedMove.ignorePP,
-              ); //TODO: is the bang correct here?
-              globalScene.pushPhase(playerPhase);
-            }
+          if (pokemon.isPlayer() && turnCommand.cursor === -1) {
+            globalScene.pushPhase(
+              new MovePhase(pokemon, turnCommand.targets || turnCommand.move!.targets, move, turnCommand.move!.useType),
+            ); //TODO: is the bang correct here?
           } else {
             globalScene.pushPhase(
-              new MovePhase(
-                pokemon,
-                turnCommand.targets || turnCommand.move!.targets,
-                move,
-                false,
-                queuedMove.ignorePP,
-              ),
-            ); //TODO: is the bang correct here?
+              new MovePhase(pokemon, turnCommand.targets || turnCommand.move!.targets, move, queuedMove.useType),
+            ); // TODO: is the bang correct here?
           }
           break;
         case Command.BALL:

@@ -749,6 +749,9 @@ export class Arena {
         );
   }
 
+  // TODO: Add an overload similar to `Array.prototype.find` if the predicate func is of the form
+  // `(x): x is T`
+
   /**
    * Uses {@linkcode findTagsOnSide} to filter (using the parameter function) for specific tags that apply to both sides
    * @param tagPredicate a function mapping {@linkcode ArenaTag}s to `boolean`s
