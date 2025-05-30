@@ -258,14 +258,15 @@ describe("Abilities - Forecast", () => {
     expect(castform.formIndex).toBe(NORMAL_FORM);
   });
 
+  // NOTE: The following pairs of tests are intentionally testing the same scenario, switching the player and enemy pokemon
+  // as this is a regression test where the order of player and enemy mattered.
   it("should trigger player's form change when summoned at the same time as an enemy with a weather changing ability", async () => {
-    // NOTE: The following pairs of tests are intentionally testing the same scenario, switching the player and enemy pokemon
-    // as this is a regression test where the order of player and enemy mattered.
     game.override.enemyAbility(AbilityId.DROUGHT);
     await game.classicMode.startBattle([SpeciesId.CASTFORM, SpeciesId.MAGIKARP]);
     const castform = game.scene.getPlayerPokemon()!;
     expect(castform.formIndex).toBe(SUNNY_FORM);
   });
+
   it("should trigger enemy's form change when summoned at the same time as a player with a weather changing ability", async () => {
     game.override.ability(AbilityId.DROUGHT).enemySpecies(SpeciesId.CASTFORM).enemyAbility(AbilityId.FORECAST);
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
