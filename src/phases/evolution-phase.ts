@@ -224,8 +224,7 @@ export class EvolutionPhase extends Phase {
         ease: "Sine.easeOut",
         onComplete: () => {
           globalScene.time.delayedCall(1000, () => {
-            this.evolutionBg.setVisible(true);
-            this.evolutionBg.play();
+            this.evolutionBg.setVisible(true).play();
           });
           globalScene.playSound("se/charge");
           this.doSpiralUpward();
