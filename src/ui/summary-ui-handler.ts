@@ -551,7 +551,7 @@ export default class SummaryUiHandler extends UiHandler {
             }
           }
           success = true;
-        } else if (this.moveCursor === 4) {
+        } else if (this.moveCursor === 4 && this.summaryUiMode !== SummaryUiMode.LEARN_MOVE) {
           return this.processInput(Button.CANCEL);
         } else {
           error = true;
@@ -1239,7 +1239,7 @@ export default class SummaryUiHandler extends UiHandler {
     this.moveSelect = true;
     this.extraMoveRowContainer.setVisible(true);
     this.selectedMoveIndex = -1;
-    this.setCursor(0);
+    this.setCursor(this.summaryUiMode === SummaryUiMode.LEARN_MOVE ? 4 : 0);
     this.showMoveEffect();
   }
 
