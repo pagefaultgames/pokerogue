@@ -6966,7 +6966,7 @@ export class PokemonTurnData {
   /**
    * The amount of times this Pokemon has acted again and used a move in the current turn.
    * Used to make sure multi-hits occur properly when the user is
-   * forced to act again in the same turn, and must be incremented by any effects that grant extra turns.
+   * forced to act again in the same turn, and **must be incremented** by any effects that grant extra actions.
    */
   public extraTurns = 0;
   /**
