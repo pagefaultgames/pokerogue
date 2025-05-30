@@ -19,8 +19,6 @@ import {
   CopyMoveAttr,
   NeutralDamageAgainstFlyingTypeMultiplierAttr,
   FixedDamageAttr,
-  type MoveAttr,
-  ForceSwitchOutAttr,
 } from "#app/data/moves/move";
 import { allMoves } from "../data-lists";
 import { ArenaTagSide } from "#app/data/arena-tag";
@@ -69,7 +67,7 @@ import { BerryUsedEvent } from "#app/events/battle-scene";
 
 
 // Type imports
-import { EnemyPokemon, PokemonMove } from "#app/field/pokemon";
+import { PokemonMove } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
 import type { Weather } from "#app/data/weather";
 import type { BattlerTag } from "#app/data/battler-tags";
@@ -1302,6 +1300,7 @@ export class PokemonTypeChangeAbAttr extends PreAttackAbAttr {
     if (!pokemon.isTerastallized &&
     move.id !== Moves.STRUGGLE &&
     /**
+     * Skip moves that call other moves because these moves generate a following move that will trigger this ability attribute
      * @see {@link https://bulbapedia.bulbagarden.net/wiki/Category:Moves_that_call_other_moves}
      */
     !move.findAttr((attr) =>
@@ -5630,19 +5629,19 @@ export class PostDamageForceSwitchAbAttr extends ForceSwitch(PostDamageAbAttr) {
     const currentPhase = globalScene.getCurrentPhase() as MoveEffectPhase;
     const currentMove = currentPhase.move;
 
-    // will not activate from self-induced HP cutting...
+    // will not activate from self-induced HP cutting,
     // TODO: Verify that Fillet Away and Clangorous Soul proc wimp out
     const hpCutMoves = new Set<Moves>([ Moves.CURSE, Moves.BELLY_DRUM, Moves.SUBSTITUTE, Moves.PAIN_SPLIT, Moves.CLANGOROUS_SOUL, Moves.FILLET_AWAY]);
     // NB: Given this attribute is only applied after _taking damage_ or recieving a damaging attack,
-    // a failed Substitute or non-ghost type Curse will not trigger this ability to begin with.
+    // a failed Substitute or non-Ghost type Curse will not trigger this code.
     const notHpCut = !hpCutMoves.has(currentMove.id)
 
-    // will not activate for forced switch moves (which trigger before wimp out activates)...
+    // will not activate for forced switch moves (which trigger before wimp out activates),
     const notForceSwitched = ![Moves.DRAGON_TAIL, Moves.CIRCLE_THROW].includes(currentMove.id)
 
     // and will not activate if the Pokemon is currently in the air from Sky Drop.
-    // TODO: Make this check the user's tags once Sky Drop is fully implemented -
-    // we could be sky dropped by another Pokemon or take indirect damage while skybound (both of which render this check moot)
+    // TODO: Make this check the user's tags and move to main `canApply` block once Sky Drop is fully implemented -
+    // we could be sky dropped by another Pokemon or take indirect damage while skybound (both of which render this check useless)
     const lastMove = source?.getLastXMoves()[0]
     const notSkyDropped = !(lastMove?.move === Moves.SKY_DROP && lastMove.result === MoveResult.OTHER)
 
@@ -5655,7 +5654,7 @@ export class PostDamageForceSwitchAbAttr extends ForceSwitch(PostDamageAbAttr) {
    * or is still above it after the hit.
    * @param pokemon - The {@linkcode Pokemon} with this ability
    * @param damage - The amount of damage taken.
-   * @returns `true` if this Pokemon was knocked below half after `damage` was applied
+   * @returns Whether the Pokemon was knocked below half after `damage` was applied
    */
   private wasKnockedBelowHalf(pokemon: Pokemon, damage: number) {
     // NB: This occurs in `MoveEffectPhase` _after_ attack damage has been dealt,
@@ -5669,7 +5668,7 @@ export class PostDamageForceSwitchAbAttr extends ForceSwitch(PostDamageAbAttr) {
    *
    * @param pokemon The Pokémon that took damage.
    */
-  public override applyPostDamage(pokemon: Pokemon, _damage: number, _simulated: boolean, _source: Pokemon | undefined, args: any[]): void {
+  public override applyPostDamage(pokemon: Pokemon): void {
     this.doSwitch(pokemon);
   }
 }

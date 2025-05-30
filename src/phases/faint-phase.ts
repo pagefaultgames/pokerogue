@@ -30,9 +30,9 @@ import { SwitchPhase } from "./switch-phase";
 import { SwitchSummonPhase } from "./switch-summon-phase";
 import { ToggleDoublePositionPhase } from "./toggle-double-position-phase";
 import { VictoryPhase } from "./victory-phase";
+import { isNullOrUndefined } from "#app/utils/common";
 import { FRIENDSHIP_LOSS_FROM_FAINT } from "#app/data/balance/starters";
 import { BattlerTagType } from "#enums/battler-tag-type";
-import { isNullOrUndefined } from "#app/utils/common";
 
 export class FaintPhase extends PokemonPhase {
   /**
@@ -170,7 +170,7 @@ export class FaintPhase extends PokemonPhase {
         */
         globalScene.unshiftPhase(new ToggleDoublePositionPhase(true));
       } else {
-        // If previous conditions weren't met, push a phase to prompt the player to select a pokemon from their party.
+        // If previous conditions weren't met, push a phase to prompt the player to select a new pokemon from their party.
         globalScene.pushPhase(new SwitchPhase(SwitchType.SWITCH, this.fieldIndex, true, false));
       }
     } else {

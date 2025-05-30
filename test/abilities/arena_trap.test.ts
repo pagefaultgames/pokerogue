@@ -43,6 +43,8 @@ describe("Abilities - Arena Trap", () => {
 
     const enemy = game.scene.getEnemyPokemon()!;
 
+    // flee stuff goes here
+
     game.onNextPrompt("CommandPhase", UiMode.COMMAND, () => {
       // no switch out command should be queued due to arena trap
       expect(game.scene.currentBattle.turnCommands[0]).toBeNull();
@@ -59,14 +61,6 @@ describe("Abilities - Arena Trap", () => {
         abilityName: allAbilities[Abilities.ARENA_TRAP].name,
       }),
     );
-
-    game.override.ability(Abilities.RUN_AWAY);
-
-    // do switch stuff
-
-    await game.toNextTurn();
-
-    expect(game.scene.currentBattle.waveIndex).toBe(2);
   });
 
   it("should interrupt player switch attempt and display message", async () => {

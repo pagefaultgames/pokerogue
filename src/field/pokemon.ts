@@ -6925,15 +6925,15 @@ export class PokemonTurnData {
   public hitsLeft = -1;
   /**
    * The final amount of damage dealt by this Pokemon's last attack against each of its targets,
-   * mapped by their respective `BattlerIndex`es.
+   * indexed by their respective `BattlerIndex`es.
    * Reset to an empty array upon attempting to use a move,
    * and is used to calculate various damage-related effects (Shell Bell, U-Turn + Wimp Out interactions, etc.).
    */
+  // TODO: move this or something like it to some sort of "move in flight" object
   public lastMoveDamageDealt: number[] = [];
   /**
    * The amount of damage dealt by this Pokemon's last hit.
    * Used to calculate recoil damage amounts.
-   * TODO: Merge with `lastMoveDamageDealt` if any spread recoil moves are added
    */
   public singleHitDamageDealt = 0;
   // TODO: Make this into a "damage taken last" counter for metal burst and co.

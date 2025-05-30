@@ -752,7 +752,7 @@ export class ConfusedTag extends BattlerTag {
   }
 
   /**
-   * Tick down this Pokemon's confusion duration, randomly interrupting its move if not cured/
+   * Tick down this Pokemon's confusion duration, randomly interrupting its move if not cured.
    * @param pokemon - The {@linkcode Pokemon} with this tag
    * @param lapseType - The {@linkcode BattlerTagLapseType | lapse type} triggering this tag's effects.
    * @returns Whether the tag should be kept.
@@ -774,7 +774,7 @@ export class ConfusedTag extends BattlerTag {
     // 1/3 chance of hitting self with a 40 base power move
     const shouldInterruptMove = Overrides.CONFUSION_ACTIVATION_OVERRIDE ?? pokemon.randBattleSeedInt(3) === 0;
     if (shouldInterruptMove) {
-      // TODO: Are these calculations correct? We really shouldn't hardcode the damage formula here...
+      // TODO: Are these calculations correct? We probably shouldn't hardcode the damage formula here...
       const atk = pokemon.getEffectiveStat(Stat.ATK);
       const def = pokemon.getEffectiveStat(Stat.DEF);
       const damage = toDmgValue(
