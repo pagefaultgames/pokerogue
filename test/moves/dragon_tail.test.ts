@@ -206,7 +206,7 @@ describe("Moves - Dragon Tail", () => {
       return min;
     });
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.DRAGON_TAIL);
+    await game.move.selectEnemyMove(Moves.DRAGON_TAIL);
     await game.toNextTurn();
 
     expect(bulbasaur.isOnField()).toBe(false);
@@ -260,7 +260,7 @@ describe("Moves - Dragon Tail", () => {
     eevee.status = new Status(StatusEffect.FAINT);
     expect(eevee.isFainted()).toBe(true);
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.SPLASH);
+    await game.move.selectEnemyMove(Moves.SPLASH);
     await game.toNextTurn();
 
     // Turn 2: Mock an RNG call that would normally call for switching to Eevee, but it is fainted
@@ -268,7 +268,7 @@ describe("Moves - Dragon Tail", () => {
       return min;
     });
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.DRAGON_TAIL);
+    await game.move.selectEnemyMove(Moves.DRAGON_TAIL);
     await game.toNextTurn();
 
     expect(lapras.isOnField()).toBe(false);
@@ -289,7 +289,7 @@ describe("Moves - Dragon Tail", () => {
     eevee.status = new Status(StatusEffect.FAINT);
     expect(eevee.isFainted()).toBe(true);
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.SPLASH);
+    await game.move.selectEnemyMove(Moves.SPLASH);
     await game.toNextTurn();
 
     // Turn 2: Mock an RNG call that would normally call for switching to Eevee, but it is fainted
@@ -297,7 +297,7 @@ describe("Moves - Dragon Tail", () => {
       return min;
     });
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.DRAGON_TAIL);
+    await game.move.selectEnemyMove(Moves.DRAGON_TAIL);
     await game.toNextTurn();
 
     expect(lapras.isOnField()).toBe(true);
