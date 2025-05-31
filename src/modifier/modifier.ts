@@ -3225,8 +3225,7 @@ export abstract class HeldItemTransferModifier extends PokemonHeldItemModifier {
   }
 
   /**
-   * Steals an item from a set of target Pokemon.
-   * This prioritizes high-tier held items when selecting the item to steal.
+   * Steals an item, chosen randomly, from a set of target Pokemon.
    * @param pokemon The {@linkcode Pokemon} holding this item
    * @param target The {@linkcode Pokemon} to steal from (optional)
    * @param _args N/A
