@@ -117,19 +117,35 @@ export class Ability implements Localizable {
     return this;
   }
 
+  /**
+   * Mark an ability as partially implemented.
+   * Partial abilities are expected to have some of their core functionality implemented, but may lack
+   * certain notable features or interactions with other moves or abilities.
+   * @returns `this`
+   */
   partial(): this {
     this.nameAppend += " (P)";
     return this;
   }
 
+  /**
+   * Mark an ability as unimplemented.
+   * Unimplemented abilities are ones which have _none_ of their basic functionality enabled.
+   * @returns `this`
+   */
   unimplemented(): this {
     this.nameAppend += " (N)";
     return this;
   }
 
   /**
-   * Internal flag used for developers to document edge cases. When using this, please be sure to document the edge case.
-   * @returns the ability
+   * Mark an ability as having one or more edge cases.
+   * It may lack certain niche interactions with other moves/abilities, but still functions
+   * as intended in most cases.
+   * Does not show up in game and is solely for internal dev use.
+   *
+   * When using this, make sure to **document the edge case** (or else this becomes pointless).
+   * @returns `this`
    */
   edgeCase(): this {
     return this;
