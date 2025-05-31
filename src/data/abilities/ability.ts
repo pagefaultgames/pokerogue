@@ -24,7 +24,7 @@ import { allMoves } from "../data-lists";
 import { ArenaTagSide } from "#app/data/arena-tag";
 import { BerryModifier, HitHealModifier, PokemonHeldItemModifier } from "#app/modifier/modifier";
 import { TerrainType } from "#app/data/terrain";
-import { SpeciesFormChangeAbilityTrigger, SpeciesFormChangeRevertWeatherFormTrigger, SpeciesFormChangeWeatherTrigger } from "#app/data/pokemon-forms";
+import { pokemonFormChanges, SpeciesFormChangeAbilityTrigger, SpeciesFormChangeRevertWeatherFormTrigger, SpeciesFormChangeWeatherTrigger } from "#app/data/pokemon-forms";
 import i18next from "i18next";
 import { Command } from "#app/ui/command-ui-handler";
 import { BerryModifierType } from "#app/modifier/modifier-type";
@@ -2775,25 +2775,32 @@ export class PostSummonFormChangeByWeatherAbAttr extends PostSummonAbAttr {
     this.ability = ability;
   }
 
+  /**
+   * Determine if the pokemon has a forme change that is triggered by the weather
+   *
+   * @param pokemon - The pokemon with the forme change ability
+   * @param passive - unused
+   * @param simulated - unused
+   * @param args - unused
+   */
   override canApplyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
-    const isCastformWithForecast = (pokemon.species.speciesId === Species.CASTFORM && this.ability === Abilities.FORECAST);
-    const isCherrimWithFlowerGift = (pokemon.species.speciesId === Species.CHERRIM && this.ability === Abilities.FLOWER_GIFT);
-    return isCastformWithForecast || isCherrimWithFlowerGift;
+    return !!pokemonFormChanges[pokemon.species.speciesId]?.some(
+      fc => fc.findTrigger(SpeciesFormChangeWeatherTrigger) && fc.canChange(pokemon),
+    );
   }
 
   /**
-   * Calls the {@linkcode BattleScene.triggerPokemonFormChange | triggerPokemonFormChange} for both
-   * {@linkcode SpeciesFormChange.SpeciesFormChangeWeatherTrigger | SpeciesFormChangeWeatherTrigger} and
-   * {@linkcode SpeciesFormChange.SpeciesFormChangeWeatherTrigger | SpeciesFormChangeRevertWeatherFormTrigger} if it
-   * is the specific Pokemon and ability
-   * @param {Pokemon} pokemon the Pokemon with this ability
-   * @param passive n/a
-   * @param args n/a
+   * Trigger the pokemon's forme change by invoking
+   * {@linkcode BattleScene.triggerPokemonFormChange | triggerPokemonFormChange}
+   *
+   * @param pokemon - The Pokemon with this ability
+   * @param passive - unused
+   * @param simulated - unused
+   * @param args - unused
    */
   override applyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): void {
     if (!simulated) {
       globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeWeatherTrigger);
-      globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeRevertWeatherFormTrigger);
     }
   }
 }
@@ -3833,10 +3840,11 @@ export class PostWeatherChangeFormChangeAbAttr extends PostWeatherChangeAbAttr {
   /**
    * Calls {@linkcode Arena.triggerWeatherBasedFormChangesToNormal | triggerWeatherBasedFormChangesToNormal} when the
    * weather changed to form-reverting weather, otherwise calls {@linkcode Arena.triggerWeatherBasedFormChanges | triggerWeatherBasedFormChanges}
-   * @param {Pokemon} pokemon the Pokemon with this ability
-   * @param passive n/a
-   * @param weather n/a
-   * @param args n/a
+   * @param pokemon - The Pokemon with this ability
+   * @param passive - unused
+   * @param simulated - unused
+   * @param weather - unused
+   * @param args - unused
    */
   override applyPostWeatherChange(pokemon: Pokemon, passive: boolean, simulated: boolean, weather: WeatherType, args: any[]): void {
     if (simulated) {
