@@ -3979,10 +3979,9 @@ export class PostSummonFormChangeByWeatherAbAttr extends PostSummonAbAttr {
    * @param args - unused
    */
   override canApplyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
-    const fc = (pokemonFormChanges[pokemon.species.speciesId]?.filter(
-      fc => fc.findTrigger(SpeciesFormChangeWeatherTrigger) && fc.canChange(pokemon)
-    ) || [])[0];
-    return !isNullOrUndefined(fc);
+    return !!pokemonFormChanges[pokemon.species.speciesId]?.some(
+      fc => fc.findTrigger(SpeciesFormChangeWeatherTrigger) && fc.canChange(pokemon),
+    );
   }
 
   /**
