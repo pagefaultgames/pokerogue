@@ -130,8 +130,9 @@ import { StatusEffect } from "#enums/status-effect";
 import i18next from "i18next";
 import { timedEventManager } from "#app/global-event-manager";
 import { HeldItems } from "#enums/held-items";
-import { allHeldItems, attackTypeToHeldItem } from "./all-held-items";
+import { allHeldItems } from "./all-held-items";
 import { TYPE_BOOST_ITEM_BOOST_PERCENT } from "#app/constants";
+import { attackTypeToHeldItem } from "./held-items/attack-type-booster";
 
 const outputModifierData = false;
 const useMaxWeightForOutput = false;
