@@ -12,6 +12,7 @@ export class Ability implements Localizable {
   public name: string;
   public description: string;
   public generation: number;
+  public postSummonPriority: number;
   public isBypassFaint: boolean;
   public isIgnorable: boolean;
   public isSuppressable = true;
@@ -20,11 +21,12 @@ export class Ability implements Localizable {
   public attrs: AbAttr[];
   public conditions: AbAttrCondition[];
 
-  constructor(id: Abilities, generation: number) {
+  constructor(id: Abilities, generation: number, postSummonPriority = 0) {
     this.id = id;
 
     this.nameAppend = "";
     this.generation = generation;
+    this.postSummonPriority = postSummonPriority;
     this.attrs = [];
     this.conditions = [];
 
