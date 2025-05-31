@@ -9,7 +9,6 @@ import {
   FlinchAttr,
   OneHitKOAttr,
   HitHealAttr,
-  allMoves,
   StatusMove,
   SelfStatusMove,
   VariablePowerAttr,
@@ -21,6 +20,7 @@ import {
   NeutralDamageAgainstFlyingTypeMultiplierAttr,
   FixedDamageAttr,
 } from "#app/data/moves/move";
+import { allMoves } from "../data-lists";
 import { ArenaTagSide } from "#app/data/arena-tag";
 import { BerryModifier, HitHealModifier, PokemonHeldItemModifier } from "#app/modifier/modifier";
 import { TerrainType } from "#app/data/terrain";
@@ -7425,7 +7425,12 @@ export function initAbilities() {
       .uncopiable()
       .attr(NoTransformAbilityAbAttr),
     new Ability(Abilities.GOOD_AS_GOLD, 9)
-      .attr(MoveImmunityAbAttr, (pokemon, attacker, move) => pokemon !== attacker && move.category === MoveCategory.STATUS && ![ MoveTarget.ENEMY_SIDE, MoveTarget.BOTH_SIDES, MoveTarget.USER_SIDE ].includes(move.moveTarget))
+      .attr(MoveImmunityAbAttr, (pokemon, attacker, move) =>
+        pokemon !== attacker
+        && move.category === MoveCategory.STATUS
+        && ![ MoveTarget.ENEMY_SIDE, MoveTarget.BOTH_SIDES, MoveTarget.USER_SIDE ].includes(move.moveTarget)
+      )
+      .edgeCase() // Heal Bell should not cure the status of a Pokemon with Good As Gold
       .ignorable(),
     new Ability(Abilities.VESSEL_OF_RUIN, 9)
       .attr(FieldMultiplyStatAbAttr, Stat.SPATK, 0.75)

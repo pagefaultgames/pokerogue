@@ -1,4 +1,4 @@
-import { allMoves } from "#app/data/moves/move";
+import { allMoves } from "#app/data/data-lists";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
 import { BerryPhase } from "#app/phases/berry-phase";
 import { CommandPhase } from "#app/phases/command-phase";
@@ -39,7 +39,7 @@ describe("Moves - Astonish", () => {
   });
 
   test("move effect should cancel the target's move on the turn it applies", async () => {
-    await game.startBattle([Species.MEOWSCARADA]);
+    await game.classicMode.startBattle([Species.MEOWSCARADA]);
 
     const leadPokemon = game.scene.getPlayerPokemon()!;
 

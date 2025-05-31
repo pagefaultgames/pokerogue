@@ -1,5 +1,5 @@
 import { BattlerIndex } from "#app/battle";
-import { allMoves } from "#app/data/moves/move";
+import { allMoves } from "#app/data/data-lists";
 import type { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
@@ -45,8 +45,8 @@ describe("Moves - Round", () => {
     game.move.select(Moves.ROUND, 0, BattlerIndex.ENEMY);
     game.move.select(Moves.ROUND, 1, BattlerIndex.ENEMY_2);
 
-    await game.forceEnemyMove(Moves.ROUND, BattlerIndex.PLAYER);
-    await game.forceEnemyMove(Moves.SPLASH);
+    await game.move.selectEnemyMove(Moves.ROUND, BattlerIndex.PLAYER);
+    await game.move.selectEnemyMove(Moves.SPLASH);
 
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY]);
 

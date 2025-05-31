@@ -1,4 +1,4 @@
-import type { default as Pokemon } from "../field/pokemon";
+import type { EnemyPokemon, default as Pokemon } from "../field/pokemon";
 import { addTextObject, TextStyle } from "./text";
 import { fixedInt } from "#app/utils/common";
 import { globalScene } from "#app/global-scene";
@@ -126,7 +126,7 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
    * Links the given {@linkcode Pokemon} and subscribes to the {@linkcode BattleSceneEventType.MOVE_USED} event
    * @param pokemon {@linkcode Pokemon} to link to this flyout
    */
-  initInfo(pokemon: Pokemon) {
+  initInfo(pokemon: EnemyPokemon) {
     this.pokemon = pokemon;
 
     this.name = `Flyout ${getPokemonNameWithAffix(this.pokemon)}`;

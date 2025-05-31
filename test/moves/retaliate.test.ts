@@ -3,7 +3,7 @@ import Phaser from "phaser";
 import GameManager from "#test/testUtils/gameManager";
 import { Species } from "#enums/species";
 import { Moves } from "#enums/moves";
-import { allMoves } from "#app/data/moves/move";
+import { allMoves } from "#app/data/data-lists";
 import type Move from "#app/data/moves/move";
 
 describe("Moves - Retaliate", () => {
@@ -37,7 +37,7 @@ describe("Moves - Retaliate", () => {
 
   it("increases power if ally died previous turn", async () => {
     vi.spyOn(retaliate, "calculateBattlePower");
-    await game.startBattle([Species.ABRA, Species.COBALION]);
+    await game.classicMode.startBattle([Species.ABRA, Species.COBALION]);
     game.move.select(Moves.RETALIATE);
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(retaliate.calculateBattlePower).toHaveLastReturnedWith(70);

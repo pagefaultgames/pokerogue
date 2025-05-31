@@ -8,7 +8,7 @@ import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, it, expect, vi } from "vitest";
 import { BattlerIndex } from "#app/battle";
-import { allMoves } from "#app/data/moves/move";
+import { allMoves } from "#app/data/data-lists";
 
 describe("Moves - Fly", () => {
   let phaserGame: Phaser.Game;
@@ -104,10 +104,10 @@ describe("Moves - Fly", () => {
 
     game.move.select(Moves.FLY);
 
-    await game.forceEnemyMove(Moves.SPLASH);
+    await game.move.selectEnemyMove(Moves.SPLASH);
 
     await game.toNextTurn();
-    await game.forceEnemyMove(Moves.GRAVITY);
+    await game.move.selectEnemyMove(Moves.GRAVITY);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
 
     await game.phaseInterceptor.to("TurnEndPhase");

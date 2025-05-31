@@ -23,7 +23,8 @@ import type { Species } from "#enums/species";
 import { Button } from "#enums/buttons";
 import { DropDown, DropDownLabel, DropDownOption, DropDownState, DropDownType, SortCriteria } from "#app/ui/dropdown";
 import { PokedexMonContainer } from "#app/ui/pokedex-mon-container";
-import { DropDownColumn, FilterBar } from "#app/ui/filter-bar";
+import { FilterBar } from "#app/ui/filter-bar";
+import { DropDownColumn } from "#enums/drop-down-column";
 import { ScrollBar } from "#app/ui/scroll-bar";
 import { Abilities } from "#enums/abilities";
 import {
@@ -37,7 +38,7 @@ import { addWindow } from "./ui-theme";
 import type { OptionSelectConfig } from "./abstact-option-select-ui-handler";
 import { FilterText, FilterTextRow } from "./filter-text";
 import { allAbilities } from "#app/data/data-lists";
-import { allMoves } from "#app/data/moves/move";
+import { allMoves } from "#app/data/data-lists";
 import { speciesTmMoves } from "#app/data/balance/tms";
 import { pokemonStarters } from "#app/data/balance/pokemon-evolutions";
 import { Biome } from "#enums/biome";

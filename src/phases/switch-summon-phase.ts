@@ -6,7 +6,8 @@ import {
   PreSummonAbAttr,
   PreSwitchOutAbAttr,
 } from "#app/data/abilities/ability";
-import { allMoves, ForceSwitchOutAttr } from "#app/data/moves/move";
+import { ForceSwitchOutAttr } from "#app/data/moves/move";
+import { allMoves } from "#app/data/data-lists";
 import { getPokeballTintColor } from "#app/data/pokeball";
 import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms";
 import { TrainerSlot } from "#enums/trainer-slot";
@@ -124,12 +125,19 @@ export class SwitchSummonPhase extends SummonPhase {
     const switchedInPokemon: Pokemon | undefined = party[this.slotIndex];
     this.lastPokemon = this.getPokemon();
 
+    // Defensive programming: Overcome the bug where the summon data has somehow not been reset
+    // prior to switching in a new Pokemon.
+    // Force the switch to occur and load the assets for the new pokemon, ignoring override.
+    switchedInPokemon.resetSummonData();
+    switchedInPokemon.loadAssets(true);
+
     applyPreSummonAbAttrs(PreSummonAbAttr, switchedInPokemon);
     applyPreSwitchOutAbAttrs(PreSwitchOutAbAttr, this.lastPokemon);
     if (!switchedInPokemon) {
       this.end();
       return;
     }
+
 
     if (this.switchType === SwitchType.BATON_PASS) {
       // If switching via baton pass, update opposing tags coming from the prior pokemon

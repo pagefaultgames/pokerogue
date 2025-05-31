@@ -1,4 +1,4 @@
-import { allMoves } from "#app/data/moves/move";
+import { allMoves } from "#app/data/data-lists";
 import { PokemonType } from "#enums/pokemon-type";
 import { Weather } from "#app/data/weather";
 import type { PlayerPokemon } from "#app/field/pokemon";
@@ -39,7 +39,7 @@ describe("Abilities - Libero", () => {
   test("ability applies and changes a pokemon's type", async () => {
     game.override.moveset([Moves.SPLASH]);
 
-    await game.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([Species.MAGIKARP]);
 
     const leadPokemon = game.scene.getPlayerPokemon()!;
     expect(leadPokemon).not.toBe(undefined);
@@ -54,7 +54,7 @@ describe("Abilities - Libero", () => {
   test.skip("ability applies only once per switch in", async () => {
     game.override.moveset([Moves.SPLASH, Moves.AGILITY]);
 
-    await game.startBattle([Species.MAGIKARP, Species.BULBASAUR]);
+    await game.classicMode.startBattle([Species.MAGIKARP, Species.BULBASAUR]);
 
     let leadPokemon = game.scene.getPlayerPokemon()!;
     expect(leadPokemon).not.toBe(undefined);
@@ -90,7 +90,7 @@ describe("Abilities - Libero", () => {
   test("ability applies correctly even if the pokemon's move has a variable type", async () => {
     game.override.moveset([Moves.WEATHER_BALL]);
 
-    await game.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([Species.MAGIKARP]);
 
     const leadPokemon = game.scene.getPlayerPokemon()!;
     expect(leadPokemon).not.toBe(undefined);
@@ -110,7 +110,7 @@ describe("Abilities - Libero", () => {
     game.override.moveset([Moves.TACKLE]);
     game.override.passiveAbility(Abilities.REFRIGERATE);
 
-    await game.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([Species.MAGIKARP]);
 
     const leadPokemon = game.scene.getPlayerPokemon()!;
     expect(leadPokemon).not.toBe(undefined);
@@ -128,7 +128,7 @@ describe("Abilities - Libero", () => {
   test("ability applies correctly even if the pokemon's move calls another move", async () => {
     game.override.moveset([Moves.NATURE_POWER]);
 
-    await game.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([Species.MAGIKARP]);
 
     const leadPokemon = game.scene.getPlayerPokemon()!;
     expect(leadPokemon).not.toBe(undefined);
@@ -143,7 +143,7 @@ describe("Abilities - Libero", () => {
   test("ability applies correctly even if the pokemon's move is delayed / charging", async () => {
     game.override.moveset([Moves.DIG]);
 
-    await game.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([Species.MAGIKARP]);
 
     const leadPokemon = game.scene.getPlayerPokemon()!;
     expect(leadPokemon).not.toBe(undefined);
@@ -158,7 +158,7 @@ describe("Abilities - Libero", () => {
     game.override.moveset([Moves.TACKLE]);
     game.override.enemyMoveset(Moves.SPLASH);
 
-    await game.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([Species.MAGIKARP]);
 
     const leadPokemon = game.scene.getPlayerPokemon()!;
     expect(leadPokemon).not.toBe(undefined);
@@ -176,7 +176,7 @@ describe("Abilities - Libero", () => {
     game.override.moveset([Moves.TACKLE]);
     game.override.enemyMoveset([Moves.PROTECT, Moves.PROTECT, Moves.PROTECT, Moves.PROTECT]);
 
-    await game.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([Species.MAGIKARP]);
 
     const leadPokemon = game.scene.getPlayerPokemon()!;
     expect(leadPokemon).not.toBe(undefined);
@@ -191,7 +191,7 @@ describe("Abilities - Libero", () => {
     game.override.moveset([Moves.TACKLE]);
     game.override.enemySpecies(Species.GASTLY);
 
-    await game.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([Species.MAGIKARP]);
 
     const leadPokemon = game.scene.getPlayerPokemon()!;
     expect(leadPokemon).not.toBe(undefined);
@@ -205,7 +205,7 @@ describe("Abilities - Libero", () => {
   test("ability is not applied if pokemon's type is the same as the move's type", async () => {
     game.override.moveset([Moves.SPLASH]);
 
-    await game.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([Species.MAGIKARP]);
 
     const leadPokemon = game.scene.getPlayerPokemon()!;
     expect(leadPokemon).not.toBe(undefined);
@@ -220,7 +220,7 @@ describe("Abilities - Libero", () => {
   test("ability is not applied if pokemon is terastallized", async () => {
     game.override.moveset([Moves.SPLASH]);
 
-    await game.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([Species.MAGIKARP]);
 
     const leadPokemon = game.scene.getPlayerPokemon()!;
     expect(leadPokemon).not.toBe(undefined);
@@ -236,7 +236,7 @@ describe("Abilities - Libero", () => {
   test("ability is not applied if pokemon uses struggle", async () => {
     game.override.moveset([Moves.STRUGGLE]);
 
-    await game.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([Species.MAGIKARP]);
 
     const leadPokemon = game.scene.getPlayerPokemon()!;
     expect(leadPokemon).not.toBe(undefined);
@@ -250,7 +250,7 @@ describe("Abilities - Libero", () => {
   test("ability is not applied if the pokemon's move fails", async () => {
     game.override.moveset([Moves.BURN_UP]);
 
-    await game.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([Species.MAGIKARP]);
 
     const leadPokemon = game.scene.getPlayerPokemon()!;
     expect(leadPokemon).not.toBe(undefined);
@@ -265,7 +265,7 @@ describe("Abilities - Libero", () => {
     game.override.moveset([Moves.TRICK_OR_TREAT]);
     game.override.enemySpecies(Species.GASTLY);
 
-    await game.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([Species.MAGIKARP]);
 
     const leadPokemon = game.scene.getPlayerPokemon()!;
     expect(leadPokemon).not.toBe(undefined);
@@ -279,7 +279,7 @@ describe("Abilities - Libero", () => {
   test("ability applies correctly and the pokemon curses itself", async () => {
     game.override.moveset([Moves.CURSE]);
 
-    await game.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([Species.MAGIKARP]);
 
     const leadPokemon = game.scene.getPlayerPokemon()!;
     expect(leadPokemon).not.toBe(undefined);

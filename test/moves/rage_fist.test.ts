@@ -2,7 +2,7 @@ import { BattlerIndex } from "#app/battle";
 import { Abilities } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import { allMoves } from "#app/data/moves/move";
+import { allMoves } from "#app/data/data-lists";
 import type Move from "#app/data/moves/move";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -75,7 +75,7 @@ describe("Moves - Rage Fist", () => {
     await game.classicMode.startBattle([Species.REGIROCK]);
 
     game.move.select(Moves.SUBSTITUTE);
-    await game.forceEnemyMove(Moves.DOUBLE_KICK);
+    await game.move.selectEnemyMove(Moves.DOUBLE_KICK);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toNextTurn();
 
@@ -84,12 +84,12 @@ describe("Moves - Rage Fist", () => {
 
     // remove substitute and get confused
     game.move.select(Moves.TIDY_UP);
-    await game.forceEnemyMove(Moves.CONFUSE_RAY);
+    await game.move.selectEnemyMove(Moves.CONFUSE_RAY);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toNextTurn();
 
     game.move.select(Moves.RAGE_FIST);
-    await game.forceEnemyMove(Moves.CONFUSE_RAY);
+    await game.move.selectEnemyMove(Moves.CONFUSE_RAY);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.move.forceConfusionActivation(true);
     await game.toNextTurn();
@@ -123,7 +123,7 @@ describe("Moves - Rage Fist", () => {
 
     // beat up a magikarp
     game.move.select(Moves.RAGE_FIST);
-    await game.forceEnemyMove(Moves.DOUBLE_KICK);
+    await game.move.selectEnemyMove(Moves.DOUBLE_KICK);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("TurnEndPhase");
 

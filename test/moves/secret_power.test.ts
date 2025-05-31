@@ -2,7 +2,7 @@ import { Abilities } from "#enums/abilities";
 import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import { Stat } from "#enums/stat";
-import { allMoves } from "#app/data/moves/move";
+import { allMoves } from "#app/data/data-lists";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -49,13 +49,13 @@ describe("Moves - Secret Power", () => {
 
     // No Terrain + Biome.VOLCANO --> Burn
     game.move.select(Moves.SECRET_POWER);
-    await game.forceEnemyMove(Moves.SPLASH);
+    await game.move.selectEnemyMove(Moves.SPLASH);
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(enemyPokemon.status?.effect).toBe(StatusEffect.BURN);
 
     // Misty Terrain --> SpAtk -1
     game.move.select(Moves.SECRET_POWER);
-    await game.forceEnemyMove(Moves.MISTY_TERRAIN);
+    await game.move.selectEnemyMove(Moves.MISTY_TERRAIN);
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(enemyPokemon.getStatStage(Stat.SPATK)).toBe(-1);
   });

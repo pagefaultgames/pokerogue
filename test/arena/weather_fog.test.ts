@@ -1,4 +1,4 @@
-import { allMoves } from "#app/data/moves/move";
+import { allMoves } from "#app/data/data-lists";
 import { Abilities } from "#app/enums/abilities";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { Moves } from "#enums/moves";
@@ -37,7 +37,7 @@ describe("Weather - Fog", () => {
 
     vi.spyOn(moveToCheck, "calculateBattleAccuracy");
 
-    await game.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([Species.MAGIKARP]);
     game.move.select(Moves.TACKLE);
     await game.phaseInterceptor.to(MoveEffectPhase);
 

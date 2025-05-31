@@ -10,6 +10,7 @@ import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { Status } from "#app/data/status-effect";
 import { StatusEffect } from "#enums/status-effect";
+import { globalScene } from "#app/global-scene";
 import { BattlerIndex } from "#app/battle";
 import { BattleType } from "#enums/battle-type";
 import { TrainerType } from "#enums/trainer-type";
@@ -50,7 +51,7 @@ describe("Moves - Whirlwind", () => {
     const staraptor = game.scene.getPlayerPokemon()!;
 
     game.move.select(move);
-    await game.forceEnemyMove(Moves.WHIRLWIND);
+    await game.move.selectEnemyMove(Moves.WHIRLWIND);
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
@@ -68,7 +69,7 @@ describe("Moves - Whirlwind", () => {
       return min;
     });
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.WHIRLWIND);
+    await game.move.selectEnemyMove(Moves.WHIRLWIND);
     await game.toNextTurn();
 
     expect(bulbasaur.isOnField()).toBe(false);
@@ -80,7 +81,7 @@ describe("Moves - Whirlwind", () => {
       return min + 1;
     });
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.WHIRLWIND);
+    await game.move.selectEnemyMove(Moves.WHIRLWIND);
     await game.toNextTurn();
 
     expect(bulbasaur.isOnField()).toBe(false);
@@ -100,7 +101,7 @@ describe("Moves - Whirlwind", () => {
       return min;
     });
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.WHIRLWIND);
+    await game.move.selectEnemyMove(Moves.WHIRLWIND);
     await game.toNextTurn();
 
     expect(lapras.isOnField()).toBe(false);
@@ -119,7 +120,7 @@ describe("Moves - Whirlwind", () => {
     eevee.status = new Status(StatusEffect.FAINT);
     expect(eevee.isFainted()).toBe(true);
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.SPLASH);
+    await game.move.selectEnemyMove(Moves.SPLASH);
     await game.toNextTurn();
 
     // Turn 2: Mock an RNG call that would normally call for switching to Eevee, but it is fainted
@@ -127,7 +128,7 @@ describe("Moves - Whirlwind", () => {
       return min;
     });
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.WHIRLWIND);
+    await game.move.selectEnemyMove(Moves.WHIRLWIND);
     await game.toNextTurn();
 
     expect(lapras.isOnField()).toBe(false);
@@ -146,7 +147,7 @@ describe("Moves - Whirlwind", () => {
     eevee.status = new Status(StatusEffect.FAINT);
     expect(eevee.isFainted()).toBe(true);
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.SPLASH);
+    await game.move.selectEnemyMove(Moves.SPLASH);
     await game.toNextTurn();
 
     // Turn 2: Mock an RNG call that would normally call for switching to Eevee, but it is fainted
@@ -154,11 +155,42 @@ describe("Moves - Whirlwind", () => {
       return min;
     });
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.WHIRLWIND);
+    await game.move.selectEnemyMove(Moves.WHIRLWIND);
     await game.toNextTurn();
 
     expect(lapras.isOnField()).toBe(true);
     expect(eevee.isOnField()).toBe(false);
+  });
+
+  it("should fail when player uses Whirlwind against an opponent with only one available Pokémon", async () => {
+    // Set up the battle scenario with the player knowing Whirlwind
+    game.override.startingWave(5).enemySpecies(Species.PIDGEY).moveset([Moves.WHIRLWIND]);
+    await game.classicMode.startBattle();
+
+    const enemyParty = game.scene.getEnemyParty();
+
+    // Ensure the opponent has only one available Pokémon
+    if (enemyParty.length > 1) {
+      enemyParty.slice(1).forEach(p => {
+        p.hp = 0;
+        p.status = new Status(StatusEffect.FAINT);
+      });
+    }
+    const eligibleEnemy = enemyParty.filter(p => p.hp > 0 && p.isAllowedInBattle());
+    expect(eligibleEnemy.length).toBe(1);
+
+    // Spy on the queueMessage function
+    const queueSpy = vi.spyOn(globalScene, "queueMessage");
+
+    // Player uses Whirlwind; opponent uses Splash
+    game.move.select(Moves.WHIRLWIND);
+    await game.move.selectEnemyMove(Moves.SPLASH);
+    await game.toNextTurn();
+
+    // Verify that the failure message is displayed for Whirlwind
+    expect(queueSpy).toHaveBeenCalledWith(expect.stringContaining("But it failed"));
+    // Verify the opponent's Splash message
+    expect(queueSpy).toHaveBeenCalledWith(expect.stringContaining("But nothing happened!"));
   });
 
   it("should not pull in the other trainer's pokemon in a partner trainer battle", async () => {
@@ -182,8 +214,8 @@ describe("Moves - Whirlwind", () => {
 
     game.move.select(Moves.SPLASH);
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.MEMENTO);
-    await game.forceEnemyMove(Moves.SPLASH);
+    await game.move.selectEnemyMove(Moves.MEMENTO);
+    await game.move.selectEnemyMove(Moves.SPLASH);
     await game.toNextTurn();
 
     // Get the enemy pokemon id so we can check if is the same after switch.
@@ -193,8 +225,8 @@ describe("Moves - Whirlwind", () => {
     game.move.select(Moves.WHIRLWIND, 0, BattlerIndex.ENEMY);
     game.move.select(Moves.SPLASH, 1);
 
-    await game.forceEnemyMove(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.SPLASH);
+    await game.move.selectEnemyMove(Moves.SPLASH);
+    await game.move.selectEnemyMove(Moves.SPLASH);
 
     await game.toNextTurn();
 

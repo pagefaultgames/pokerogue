@@ -29,7 +29,7 @@ describe("Items - Metal Powder", () => {
   });
 
   it("METAL_POWDER activates in battle correctly", async () => {
-    game.override.startingHeldItems([{ name: "SPECIES_STAT_BOOSTER", type: "METAL_POWDER" }]);
+    game.override.startingHeldItems([{ name: "RARE_SPECIES_STAT_BOOSTER", type: "METAL_POWDER" }]);
     const consoleSpy = vi.spyOn(console, "log");
     await game.classicMode.startBattle([Species.DITTO]);
 
@@ -82,7 +82,7 @@ describe("Items - Metal Powder", () => {
   });
 
   it("METAL_POWDER held by DITTO", async () => {
-    await game.startBattle([Species.DITTO]);
+    await game.classicMode.startBattle([Species.DITTO]);
 
     const partyMember = game.scene.getPlayerParty()[0];
 
@@ -96,7 +96,7 @@ describe("Items - Metal Powder", () => {
 
     // Giving Eviolite to party member and testing if it applies
     await game.scene.addModifier(
-      modifierTypes.SPECIES_STAT_BOOSTER().generateType([], ["METAL_POWDER"])!.newModifier(partyMember),
+      modifierTypes.RARE_SPECIES_STAT_BOOSTER().generateType([], ["METAL_POWDER"])!.newModifier(partyMember),
       true,
     );
     game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.DEF, defValue);
@@ -105,7 +105,7 @@ describe("Items - Metal Powder", () => {
   }, 20000);
 
   it("METAL_POWDER held by fused DITTO (base)", async () => {
-    await game.startBattle([Species.DITTO, Species.MAROWAK]);
+    await game.classicMode.startBattle([Species.DITTO, Species.MAROWAK]);
 
     const partyMember = game.scene.getPlayerParty()[0];
     const ally = game.scene.getPlayerParty()[1];
@@ -129,7 +129,7 @@ describe("Items - Metal Powder", () => {
 
     // Giving Eviolite to party member and testing if it applies
     await game.scene.addModifier(
-      modifierTypes.SPECIES_STAT_BOOSTER().generateType([], ["METAL_POWDER"])!.newModifier(partyMember),
+      modifierTypes.RARE_SPECIES_STAT_BOOSTER().generateType([], ["METAL_POWDER"])!.newModifier(partyMember),
       true,
     );
     game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.DEF, defValue);
@@ -138,7 +138,7 @@ describe("Items - Metal Powder", () => {
   }, 20000);
 
   it("METAL_POWDER held by fused DITTO (part)", async () => {
-    await game.startBattle([Species.MAROWAK, Species.DITTO]);
+    await game.classicMode.startBattle([Species.MAROWAK, Species.DITTO]);
 
     const partyMember = game.scene.getPlayerParty()[0];
     const ally = game.scene.getPlayerParty()[1];
@@ -162,7 +162,7 @@ describe("Items - Metal Powder", () => {
 
     // Giving Eviolite to party member and testing if it applies
     await game.scene.addModifier(
-      modifierTypes.SPECIES_STAT_BOOSTER().generateType([], ["METAL_POWDER"])!.newModifier(partyMember),
+      modifierTypes.RARE_SPECIES_STAT_BOOSTER().generateType([], ["METAL_POWDER"])!.newModifier(partyMember),
       true,
     );
     game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.DEF, defValue);
@@ -171,7 +171,7 @@ describe("Items - Metal Powder", () => {
   }, 20000);
 
   it("METAL_POWDER not held by DITTO", async () => {
-    await game.startBattle([Species.MAROWAK]);
+    await game.classicMode.startBattle([Species.MAROWAK]);
 
     const partyMember = game.scene.getPlayerParty()[0];
 
@@ -185,7 +185,7 @@ describe("Items - Metal Powder", () => {
 
     // Giving Eviolite to party member and testing if it applies
     await game.scene.addModifier(
-      modifierTypes.SPECIES_STAT_BOOSTER().generateType([], ["METAL_POWDER"])!.newModifier(partyMember),
+      modifierTypes.RARE_SPECIES_STAT_BOOSTER().generateType([], ["METAL_POWDER"])!.newModifier(partyMember),
       true,
     );
     game.scene.applyModifiers(SpeciesStatBoosterModifier, true, partyMember, Stat.DEF, defValue);

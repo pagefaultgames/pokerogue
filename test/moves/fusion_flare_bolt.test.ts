@@ -1,6 +1,6 @@
 import { Stat } from "#enums/stat";
 import { BattlerIndex } from "#app/battle";
-import { allMoves } from "#app/data/moves/move";
+import { allMoves } from "#app/data/data-lists";
 import type Move from "#app/data/moves/move";
 import { DamageAnimPhase } from "#app/phases/damage-anim-phase";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
@@ -138,7 +138,7 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
   }, 20000);
 
   it("FUSION_FLARE should double power of subsequent FUSION_BOLT if moves are aimed at allies", async () => {
-    await game.startBattle([Species.ZEKROM, Species.RESHIRAM]);
+    await game.classicMode.startBattle([Species.ZEKROM, Species.RESHIRAM]);
 
     game.move.select(fusionBolt.id, 0, BattlerIndex.PLAYER_2);
     game.move.select(fusionFlare.id, 1, BattlerIndex.PLAYER);

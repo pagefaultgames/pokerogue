@@ -1,16 +1,15 @@
 import { updateUserInfo } from "#app/account";
 import { BattlerIndex } from "#app/battle";
 import BattleScene from "#app/battle-scene";
-import { getMoveTargets } from "#app/data/moves/move";
 import type { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
 import Trainer from "#app/field/trainer";
 import { GameModes, getGameMode } from "#app/game-mode";
+import { globalScene } from "#app/global-scene";
 import { ModifierTypeOption, modifierTypes } from "#app/modifier/modifier-type";
 import overrides from "#app/overrides";
 import { CheckSwitchPhase } from "#app/phases/check-switch-phase";
 import { CommandPhase } from "#app/phases/command-phase";
 import { EncounterPhase } from "#app/phases/encounter-phase";
-import { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
 import { FaintPhase } from "#app/phases/faint-phase";
 import { LoginPhase } from "#app/phases/login-phase";
 import { MovePhase } from "#app/phases/move-phase";
@@ -22,42 +21,40 @@ import { TitlePhase } from "#app/phases/title-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { TurnInitPhase } from "#app/phases/turn-init-phase";
 import { TurnStartPhase } from "#app/phases/turn-start-phase";
-import ErrorInterceptor from "#test/testUtils/errorInterceptor";
-import type InputsHandler from "#test/testUtils/inputsHandler";
 import type BallUiHandler from "#app/ui/ball-ui-handler";
 import type BattleMessageUiHandler from "#app/ui/battle-message-ui-handler";
 import type CommandUiHandler from "#app/ui/command-ui-handler";
 import type ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 import type PartyUiHandler from "#app/ui/party-ui-handler";
+import type StarterSelectUiHandler from "#app/ui/starter-select-ui-handler";
 import type TargetSelectUiHandler from "#app/ui/target-select-ui-handler";
-import { UiMode } from "#enums/ui-mode";
 import { isNullOrUndefined } from "#app/utils/common";
-import { BattleStyle } from "#enums/battle-style";
 import { Button } from "#enums/buttons";
 import { ExpGainsSpeed } from "#enums/exp-gains-speed";
 import { ExpNotification } from "#enums/exp-notification";
-import type { Moves } from "#enums/moves";
 import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PlayerGender } from "#enums/player-gender";
 import type { Species } from "#enums/species";
+import { UiMode } from "#enums/ui-mode";
+import ErrorInterceptor from "#test/testUtils/errorInterceptor";
 import { generateStarter, waitUntil } from "#test/testUtils/gameManagerUtils";
 import GameWrapper from "#test/testUtils/gameWrapper";
 import { ChallengeModeHelper } from "#test/testUtils/helpers/challengeModeHelper";
 import { ClassicModeHelper } from "#test/testUtils/helpers/classicModeHelper";
 import { DailyModeHelper } from "#test/testUtils/helpers/dailyModeHelper";
+import { FieldHelper } from "#test/testUtils/helpers/field-helper";
 import { ModifierHelper } from "#test/testUtils/helpers/modifiersHelper";
 import { MoveHelper } from "#test/testUtils/helpers/moveHelper";
 import { OverridesHelper } from "#test/testUtils/helpers/overridesHelper";
 import { ReloadHelper } from "#test/testUtils/helpers/reloadHelper";
 import { SettingsHelper } from "#test/testUtils/helpers/settingsHelper";
+import type InputsHandler from "#test/testUtils/inputsHandler";
+import { MockFetch } from "#test/testUtils/mocks/mockFetch";
 import PhaseInterceptor from "#test/testUtils/phaseInterceptor";
 import TextInterceptor from "#test/testUtils/TextInterceptor";
 import { AES, enc } from "crypto-js";
 import fs from "node:fs";
 import { expect, vi } from "vitest";
-import { globalScene } from "#app/global-scene";
-import type StarterSelectUiHandler from "#app/ui/starter-select-ui-handler";
-import { MockFetch } from "#test/testUtils/mocks/mockFetch";
 
 /**
  * Class to manage the game state and transitions between phases.
@@ -76,6 +73,7 @@ export default class GameManager {
   public readonly settings: SettingsHelper;
   public readonly reload: ReloadHelper;
   public readonly modifiers: ModifierHelper;
+  public readonly field: FieldHelper;
 
   /**
    * Creates an instance of GameManager.
@@ -123,6 +121,7 @@ export default class GameManager {
     this.settings = new SettingsHelper(this);
     this.reload = new ReloadHelper(this);
     this.modifiers = new ModifierHelper(this);
+    this.field = new FieldHelper(this);
     this.override.sanitizeOverrides();
 
     // Disables Mystery Encounters on all tests (can be overridden at test level)
@@ -272,42 +271,6 @@ export default class GameManager {
   }
 
   /**
-   * @deprecated Use `game.classicMode.startBattle()` or `game.dailyMode.startBattle()` instead
-   *
-   * Transitions to the start of a battle.
-   * @param species - Optional array of species to start the battle with.
-   * @returns A promise that resolves when the battle is started.
-   */
-  async startBattle(species?: Species[]) {
-    await this.classicMode.runToSummon(species);
-
-    if (this.scene.battleStyle === BattleStyle.SWITCH) {
-      this.onNextPrompt(
-        "CheckSwitchPhase",
-        UiMode.CONFIRM,
-        () => {
-          this.setMode(UiMode.MESSAGE);
-          this.endPhase();
-        },
-        () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(TurnInitPhase),
-      );
-
-      this.onNextPrompt(
-        "CheckSwitchPhase",
-        UiMode.CONFIRM,
-        () => {
-          this.setMode(UiMode.MESSAGE);
-          this.endPhase();
-        },
-        () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(TurnInitPhase),
-      );
-    }
-
-    await this.phaseInterceptor.to(CommandPhase);
-    console.log("==================[New Turn]==================");
-  }
-
-  /**
    * Emulate a player's target selection after a move is chosen, usually called automatically by {@linkcode MoveHelper.select}.
    * Will trigger during the next {@linkcode SelectTargetPhase}
    * @param targetIndex - The {@linkcode BattlerIndex} of the attack target, or `undefined` for multi-target attacks
@@ -377,35 +340,6 @@ export default class GameManager {
     );
   }
 
-  /**
-   * Forces the next enemy selecting a move to use the given move in its moveset against the
-   * given target (if applicable).
-   * @param moveId - The {@linkcode Moves | move} the enemy will use
-   * @param target - The {@linkcode BattlerIndex} of the target against which the enemy will use the given move;
-   * will use normal target selection priorities if omitted.
-   */
-  async forceEnemyMove(moveId: Moves, target?: BattlerIndex) {
-    // Wait for the next EnemyCommandPhase to start
-    await this.phaseInterceptor.to(EnemyCommandPhase, false);
-    const enemy = this.scene.getEnemyField()[(this.scene.getCurrentPhase() as EnemyCommandPhase).getFieldIndex()];
-    const legalTargets = getMoveTargets(enemy, moveId);
-
-    vi.spyOn(enemy, "getNextMove").mockReturnValueOnce({
-      move: moveId,
-      targets:
-        target !== undefined && !legalTargets.multiple && legalTargets.targets.includes(target)
-          ? [target]
-          : enemy.getNextTargets(moveId),
-    });
-
-    /**
-     * Run the EnemyCommandPhase to completion.
-     * This allows this function to be called consecutively to
-     * force a move for each enemy in a double battle.
-     */
-    await this.phaseInterceptor.to(EnemyCommandPhase);
-  }
-
   forceEnemyToSwitch() {
     const originalMatchupScore = Trainer.prototype.getPartyMemberMatchupScores;
     Trainer.prototype.getPartyMemberMatchupScores = () => {
@@ -417,9 +351,15 @@ export default class GameManager {
     };
   }
 
-  /** Transition to the next upcoming {@linkcode CommandPhase} */
+  /** Transition to the first {@linkcode CommandPhase} of the next turn. */
   async toNextTurn() {
-    await this.phaseInterceptor.to(CommandPhase);
+    await this.phaseInterceptor.to("TurnInitPhase");
+    await this.phaseInterceptor.to("CommandPhase");
+  }
+
+  /** Transition to the {@linkcode TurnEndPhase | end of the current turn}. */
+  async toEndOfTurn() {
+    await this.phaseInterceptor.to("TurnEndPhase");
   }
 
   /**
@@ -541,8 +481,8 @@ export default class GameManager {
   }
 
   /**
-   * Select a pokemon from the party menu during the given phase. 
-   * Only really handles the basic case of "navigate to party slot and press Action twice" - 
+   * Select a pokemon from the party menu during the given phase.
+   * Only really handles the basic case of "navigate to party slot and press Action twice" -
    * any menus that come up afterwards are ignored and must be handled separately by the caller.
    * @param slot - The 0-indexed position of the pokemon in your party to switch to
    * @param inPhase - Which phase to expect the selection to occur in. Defaults to `SwitchPhase`
