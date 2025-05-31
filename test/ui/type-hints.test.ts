@@ -99,8 +99,8 @@ describe("UI - Type Hints", () => {
     // Use soak to change type of remaining abra to water
     game.move.select(Moves.SOAK, 1);
 
-    await game.forceEnemyMove(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.TELEPORT);
+    await game.move.selectEnemyMove(Moves.SPLASH);
+    await game.move.selectEnemyMove(Moves.TELEPORT);
     await game.toNextTurn();
 
     game.onNextPrompt("CommandPhase", UiMode.COMMAND, () => {

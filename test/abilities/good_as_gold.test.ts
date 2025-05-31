@@ -74,8 +74,8 @@ describe("Abilities - Good As Gold", () => {
 
     game.move.select(Moves.SWORDS_DANCE, 0);
     game.move.select(Moves.SAFEGUARD, 1);
-    await game.forceEnemyMove(Moves.STEALTH_ROCK);
-    await game.forceEnemyMove(Moves.HAZE);
+    await game.move.selectEnemyMove(Moves.STEALTH_ROCK);
+    await game.move.selectEnemyMove(Moves.HAZE);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
     await game.phaseInterceptor.to("BerryPhase");
     expect(good_as_gold.getAbility().id).toBe(Abilities.GOOD_AS_GOLD);

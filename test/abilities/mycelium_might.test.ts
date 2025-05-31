@@ -43,7 +43,7 @@ describe("Abilities - Mycelium Might", () => {
    **/
 
   it("will move last in its priority bracket and ignore protective abilities", async () => {
-    await game.startBattle([Species.REGIELEKI]);
+    await game.classicMode.startBattle([Species.REGIELEKI]);
 
     const enemyPokemon = game.scene.getEnemyPokemon();
     const playerIndex = game.scene.getPlayerPokemon()?.getBattlerIndex();
@@ -89,7 +89,7 @@ describe("Abilities - Mycelium Might", () => {
   }, 20000);
 
   it("will not affect non-status moves", async () => {
-    await game.startBattle([Species.REGIELEKI]);
+    await game.classicMode.startBattle([Species.REGIELEKI]);
 
     const playerIndex = game.scene.getPlayerPokemon()!.getBattlerIndex();
     const enemyIndex = game.scene.getEnemyPokemon()!.getBattlerIndex();

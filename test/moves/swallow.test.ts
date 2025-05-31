@@ -42,7 +42,7 @@ describe("Moves - Swallow", () => {
       const stacksToSetup = 1;
       const expectedHeal = 25;
 
-      await game.startBattle([Species.ABOMASNOW]);
+      await game.classicMode.startBattle([Species.ABOMASNOW]);
 
       const pokemon = game.scene.getPlayerPokemon()!;
       vi.spyOn(pokemon, "getMaxHp").mockReturnValue(100);
@@ -69,7 +69,7 @@ describe("Moves - Swallow", () => {
       const stacksToSetup = 2;
       const expectedHeal = 50;
 
-      await game.startBattle([Species.ABOMASNOW]);
+      await game.classicMode.startBattle([Species.ABOMASNOW]);
 
       const pokemon = game.scene.getPlayerPokemon()!;
       vi.spyOn(pokemon, "getMaxHp").mockReturnValue(100);
@@ -97,7 +97,7 @@ describe("Moves - Swallow", () => {
       const stacksToSetup = 3;
       const expectedHeal = 100;
 
-      await game.startBattle([Species.ABOMASNOW]);
+      await game.classicMode.startBattle([Species.ABOMASNOW]);
 
       const pokemon = game.scene.getPlayerPokemon()!;
       vi.spyOn(pokemon, "getMaxHp").mockReturnValue(100);
@@ -124,7 +124,7 @@ describe("Moves - Swallow", () => {
   });
 
   it("fails without stacks", async () => {
-    await game.startBattle([Species.ABOMASNOW]);
+    await game.classicMode.startBattle([Species.ABOMASNOW]);
 
     const pokemon = game.scene.getPlayerPokemon()!;
 
@@ -143,7 +143,7 @@ describe("Moves - Swallow", () => {
 
   describe("restores stat stage boosts granted by stacks", () => {
     it("decreases stats based on stored values (both boosts equal)", async () => {
-      await game.startBattle([Species.ABOMASNOW]);
+      await game.classicMode.startBattle([Species.ABOMASNOW]);
 
       const pokemon = game.scene.getPlayerPokemon()!;
       pokemon.addTag(BattlerTagType.STOCKPILING);
@@ -172,7 +172,7 @@ describe("Moves - Swallow", () => {
     });
 
     it("lower stat stages based on stored values (different boosts)", async () => {
-      await game.startBattle([Species.ABOMASNOW]);
+      await game.classicMode.startBattle([Species.ABOMASNOW]);
 
       const pokemon = game.scene.getPlayerPokemon()!;
       pokemon.addTag(BattlerTagType.STOCKPILING);

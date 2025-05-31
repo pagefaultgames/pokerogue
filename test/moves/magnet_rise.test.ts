@@ -34,7 +34,7 @@ describe("Moves - Magnet Rise", () => {
   });
 
   it("MAGNET RISE", async () => {
-    await game.startBattle();
+    await game.classicMode.startBattle();
 
     const startingHp = game.scene.getPlayerParty()[0].hp;
     game.move.select(moveToUse);
@@ -45,7 +45,7 @@ describe("Moves - Magnet Rise", () => {
   }, 20000);
 
   it("MAGNET RISE - Gravity", async () => {
-    await game.startBattle();
+    await game.classicMode.startBattle();
 
     const startingHp = game.scene.getPlayerParty()[0].hp;
     game.move.select(moveToUse);
