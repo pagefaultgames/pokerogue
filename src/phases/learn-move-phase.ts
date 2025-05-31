@@ -106,7 +106,7 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
    * > Which move should be forgotten?
    *
    * The game then goes `Mode.SUMMARY` to select a move to be forgotten.
-   * If a player does not select a move, the game goes to `this.rejectMoveAndEnd()`.
+   * If a player does not select a move or chooses the new move (`moveIndex === 4`), the game goes to `this.rejectMoveAndEnd()`.
    * If an old move is selected, the function then passes the `moveIndex` to `this.learnMove()`
    * @param move The Move to be learned
    * @param Pokemon The Pokemon learning the move

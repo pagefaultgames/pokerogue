@@ -551,7 +551,7 @@ export default class SummaryUiHandler extends UiHandler {
             }
           }
           success = true;
-        } else if (this.moveCursor === 4 && this.summaryUiMode !== SummaryUiMode.LEARN_MOVE) {
+        } else if (this.moveCursor === 4) {
           return this.processInput(Button.CANCEL);
         } else {
           error = true;
