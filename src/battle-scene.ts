@@ -812,6 +812,7 @@ export default class BattleScene extends SceneBase {
     }
   }
 
+  // TODO: Add a `getPartyOnSide` function for getting the party of a pokemon
   public getPlayerParty(): PlayerPokemon[] {
     return this.party;
   }
@@ -3089,9 +3090,9 @@ export default class BattleScene extends SceneBase {
 
     const removeOld = itemModifier.stackCount === 0;
 
-    if (!removeOld || !source || this.removeModifier(itemModifier, !source.isPlayer())) {
+    if (!removeOld || !source || this.removeModifier(itemModifier, source.isEnemy())) {
       const addModifier = () => {
-        if (!matchingModifier || this.removeModifier(matchingModifier, !target.isPlayer())) {
+        if (!matchingModifier || this.removeModifier(matchingModifier, target.isEnemy())) {
           if (target.isPlayer()) {
             this.addModifier(newItemModifier, ignoreUpdate, playSound, false, instant);
             if (source && itemLost) {
@@ -3495,12 +3496,12 @@ export default class BattleScene extends SceneBase {
       }
       if (matchingFormChange) {
         let phase: Phase;
-        if (pokemon instanceof PlayerPokemon && !matchingFormChange.quiet) {
+        if (pokemon.isPlayer() && !matchingFormChange.quiet) {
           phase = new FormChangePhase(pokemon, matchingFormChange, modal);
         } else {
           phase = new QuietFormChangePhase(pokemon, matchingFormChange);
         }
-        if (pokemon instanceof PlayerPokemon && !matchingFormChange.quiet && modal) {
+        if (pokemon.isPlayer() && !matchingFormChange.quiet && modal) {
           this.overridePhase(phase);
         } else if (delayed) {
           this.pushPhase(phase);
@@ -3601,7 +3602,7 @@ export default class BattleScene extends SceneBase {
     activePokemon = activePokemon.concat(this.getEnemyParty());
     for (const p of activePokemon) {
       keys.push(p.getSpriteKey(true));
-      if (p instanceof PlayerPokemon) {
+      if (p.isPlayer()) {
         keys.push(p.getBattleSpriteKey(true, true));
       }
       keys.push(p.species.getCryKey(p.formIndex));
@@ -3617,7 +3618,7 @@ export default class BattleScene extends SceneBase {
    * @param pokemon The (enemy) pokemon
    */
   initFinalBossPhaseTwo(pokemon: Pokemon): void {
-    if (pokemon instanceof EnemyPokemon && pokemon.isBoss() && !pokemon.formIndex && pokemon.bossSegmentIndex < 1) {
+    if (pokemon.isEnemy() && pokemon.isBoss() && !pokemon.formIndex && pokemon.bossSegmentIndex < 1) {
       this.fadeOutBgm(fixedInt(2000), false);
       this.ui.showDialogue(
         battleSpecDialogue[BattleSpec.FINAL_BOSS].firstStageWin,

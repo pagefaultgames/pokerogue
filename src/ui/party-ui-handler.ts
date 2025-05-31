@@ -1165,8 +1165,7 @@ export default class PartyUiHandler extends MessageUiHandler {
       this.partyUiMode !== PartyUiMode.FAINT_SWITCH &&
       globalScene.findModifier(
         m =>
-          m instanceof SwitchEffectTransferModifier &&
-          m.pokemonId === globalScene.getPlayerField()[this.fieldIndex].id,
+          m instanceof SwitchEffectTransferModifier && m.pokemonId === globalScene.getPlayerField()[this.fieldIndex].id,
       )
     );
   }
