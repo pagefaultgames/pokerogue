@@ -82,6 +82,7 @@ import { DamageAchv } from "#app/system/achv";
 type HitCheckEntry = [HitCheckResult, TypeDamageMultiplier];
 
 export class MoveEffectPhase extends PokemonPhase {
+  public readonly phaseName = "MoveEffectPhase";
   public move: Move;
   private virtual = false;
   protected targets: BattlerIndex[];

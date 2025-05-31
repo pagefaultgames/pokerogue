@@ -5,6 +5,7 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import { HideAbilityPhase } from "#app/phases/hide-ability-phase";
 
 export class ShowAbilityPhase extends PokemonPhase {
+  public readonly phaseName = "ShowAbilityPhase";
   private passive: boolean;
   private pokemonName: string;
   private abilityName: string;

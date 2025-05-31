@@ -15,6 +15,7 @@ import { TurnStartPhase } from "./turn-start-phase";
 import { globalScene } from "#app/global-scene";
 
 export class TurnInitPhase extends FieldPhase {
+  public readonly phaseName = "TurnInitPhase";
   start() {
     super.start();
 

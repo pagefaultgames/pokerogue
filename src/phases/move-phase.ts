@@ -52,6 +52,7 @@ import { StatusEffect } from "#enums/status-effect";
 import i18next from "i18next";
 
 export class MovePhase extends BattlePhase {
+  public readonly phaseName = "MovePhase";
   protected _pokemon: Pokemon;
   protected _move: PokemonMove;
   protected _targets: BattlerIndex[];
