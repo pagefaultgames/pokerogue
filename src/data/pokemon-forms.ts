@@ -1,4 +1,4 @@
-import { PokemonFormChangeItemModifier } from "../modifier/modifier";
+import { PokemonFormChangeItemModifier } from "../modifier/held-item-modifier";
 import type Pokemon from "../field/pokemon";
 import { StatusEffect } from "#enums/status-effect";
 import { allMoves } from "./data-lists";

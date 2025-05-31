@@ -7,7 +7,7 @@ import { StatusEffect } from "#enums/status-effect";
 import { PokemonType } from "#enums/pokemon-type";
 import { WeatherType } from "#enums/weather-type";
 import type { PlayerPokemon } from "#app/field/pokemon";
-import { AttackTypeBoosterModifier } from "#app/modifier/modifier";
+import { AttackTypeBoosterModifier } from "#app/modifier/held-item-modifier";
 import type { AttackTypeBoosterModifierType } from "#app/modifier/modifier-type";
 import { isNullOrUndefined } from "#app/utils/common";
 import type { Abilities } from "#enums/abilities";

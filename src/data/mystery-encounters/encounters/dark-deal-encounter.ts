@@ -17,8 +17,8 @@ import {
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { ModifierRewardPhase } from "#app/phases/modifier-reward-phase";
-import type { PokemonHeldItemModifier } from "#app/modifier/modifier";
-import { PokemonFormChangeItemModifier } from "#app/modifier/modifier";
+import type { PokemonHeldItemModifier } from "#app/modifier/held-item-modifier";
+import { PokemonFormChangeItemModifier } from "#app/modifier/held-item-modifier";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { Challenges } from "#enums/challenges";
 

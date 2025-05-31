@@ -1,6 +1,7 @@
 import { BattlerIndex } from "#app/battle";
 import type Pokemon from "#app/field/pokemon";
-import type { ContactHeldItemTransferChanceModifier } from "#app/modifier/modifier";
+import type { ContactHeldItemTransferChanceModifier } from "#app/modifier/held-item-modifier";
+import type {} from "#app/modifier/modifier";
 import { Abilities } from "#enums/abilities";
 import { BerryType } from "#enums/berry-type";
 import { Moves } from "#enums/moves";

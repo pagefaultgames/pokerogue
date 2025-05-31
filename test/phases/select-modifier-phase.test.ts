@@ -2,7 +2,7 @@ import type BattleScene from "#app/battle-scene";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { PlayerPokemon } from "#app/field/pokemon";
 import { ModifierTier } from "#app/modifier/modifier-tier";
-import type { CustomModifierSettings } from "#app/modifier/modifier-type";
+import type { CustomModifierSettings } from "#app/modifier/modifier-pool";
 import { ModifierTypeOption, modifierTypes } from "#app/modifier/modifier-type";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";

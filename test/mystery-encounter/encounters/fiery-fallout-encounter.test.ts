@@ -16,7 +16,7 @@ import {
 } from "#test/mystery-encounter/encounter-test-utils";
 import { Moves } from "#enums/moves";
 import type BattleScene from "#app/battle-scene";
-import { AttackTypeBoosterModifier, PokemonHeldItemModifier } from "#app/modifier/modifier";
+import { AttackTypeBoosterModifier, PokemonHeldItemModifier } from "#app/modifier/held-item-modifier";
 import { PokemonType } from "#enums/pokemon-type";
 import { Status } from "#app/data/status-effect";
 import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";

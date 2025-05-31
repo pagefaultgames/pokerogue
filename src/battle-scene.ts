@@ -19,7 +19,7 @@ import {
   type Constructor,
 } from "#app/utils/common";
 import { deepMergeSpriteData } from "#app/utils/data";
-import type { Modifier, ModifierPredicate, TurnHeldItemTransferModifier } from "./modifier/modifier";
+import type { Modifier, ModifierPredicate } from "./modifier/modifier";
 import {
   ConsumableModifier,
   ConsumablePokemonModifier,
@@ -28,14 +28,9 @@ import {
   ExpShareModifier,
   FusePokemonModifier,
   HealingBoosterModifier,
-  ModifierBar,
   MultipleParticipantExpBonusModifier,
   PersistentModifier,
-  PokemonExpBoosterModifier,
-  PokemonFormChangeItemModifier,
-  PokemonHeldItemModifier,
   PokemonHpRestoreModifier,
-  PokemonIncrementingStatModifier,
   RememberMoveModifier,
 } from "./modifier/modifier";
 import { PokeballType } from "#enums/pokeball";
@@ -53,18 +48,13 @@ import { GameData } from "#app/system/game-data";
 import { addTextObject, getTextColor, TextStyle } from "#app/ui/text";
 import { allMoves } from "./data/data-lists";
 import { MusicPreference } from "#app/system/settings/settings";
+import { getModifierType, modifierTypes, PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
 import {
   getDefaultModifierTypeForTier,
   getEnemyModifierTypesForWave,
-  getLuckString,
-  getLuckTextTint,
   getModifierPoolForType,
-  getModifierType,
-  getPartyLuckValue,
-  ModifierPoolType,
-  modifierTypes,
-  PokemonHeldItemModifierType,
-} from "#app/modifier/modifier-type";
+} from "#app/modifier/modifier-pool";
+import { getLuckString, getLuckTextTint, getPartyLuckValue } from "#app/modifier/modifier-utils";
 import AbilityBar from "#app/ui/ability-bar";
 import {
   applyAbAttrs,
@@ -186,6 +176,15 @@ import { hasExpSprite } from "./sprites/sprite-utils";
 import { timedEventManager } from "./global-event-manager";
 import { starterColors } from "./global-vars/starter-colors";
 import { startingWave } from "./starting-wave";
+import { ModifierBar } from "./modifier/modifier-bar";
+import {
+  PokemonExpBoosterModifier,
+  PokemonFormChangeItemModifier,
+  PokemonHeldItemModifier,
+  PokemonIncrementingStatModifier,
+  type TurnHeldItemTransferModifier,
+} from "./modifier/held-item-modifier";
+import { ModifierPoolType } from "./modifier/modifier-pool-type";
 
 const DEBUG_RNG = false;
 

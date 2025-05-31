@@ -40,14 +40,13 @@ import {
 import { PokemonType } from "#enums/pokemon-type";
 import type { AttackTypeBoosterModifierType, ModifierTypeOption } from "#app/modifier/modifier-type";
 import { modifierTypes } from "#app/modifier/modifier-type";
-import type { PokemonHeldItemModifier } from "#app/modifier/modifier";
 import {
   AttackTypeBoosterModifier,
   BypassSpeedChanceModifier,
   ContactHeldItemTransferChanceModifier,
-  GigantamaxAccessModifier,
-  MegaEvolutionAccessModifier,
-} from "#app/modifier/modifier";
+  type PokemonHeldItemModifier,
+} from "#app/modifier/held-item-modifier";
+import { GigantamaxAccessModifier, MegaEvolutionAccessModifier } from "#app/modifier/modifier";
 import i18next from "i18next";
 import MoveInfoOverlay from "#app/ui/move-info-overlay";
 import { allMoves } from "#app/data/data-lists";

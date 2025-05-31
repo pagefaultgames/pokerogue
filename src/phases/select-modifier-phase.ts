@@ -2,8 +2,6 @@ import { globalScene } from "#app/global-scene";
 import type { ModifierTier } from "#app/modifier/modifier-tier";
 import type { ModifierTypeOption, ModifierType } from "#app/modifier/modifier-type";
 import {
-  regenerateModifierPoolThresholds,
-  getPlayerShopModifierTypeOptionsForWave,
   PokemonModifierType,
   FusePokemonModifierType,
   PokemonMoveModifierType,
@@ -11,16 +9,15 @@ import {
   RememberMoveModifierType,
   PokemonPpRestoreModifierType,
   PokemonPpUpModifierType,
-  ModifierPoolType,
-  getPlayerModifierTypeOptions,
 } from "#app/modifier/modifier-type";
-import type { Modifier } from "#app/modifier/modifier";
 import {
-  ExtraModifierModifier,
-  HealShopCostModifier,
-  PokemonHeldItemModifier,
-  TempExtraModifierModifier,
-} from "#app/modifier/modifier";
+  regenerateModifierPoolThresholds,
+  getPlayerShopModifierTypeOptionsForWave,
+  getPlayerModifierTypeOptions,
+  type CustomModifierSettings,
+} from "#app/modifier/modifier-pool";
+import type { Modifier } from "#app/modifier/modifier";
+import { ExtraModifierModifier, HealShopCostModifier, TempExtraModifierModifier } from "#app/modifier/modifier";
 import type ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 import { SHOP_OPTIONS_ROW_LIMIT } from "#app/ui/modifier-select-ui-handler";
 import PartyUiHandler, { PartyUiMode, PartyOption } from "#app/ui/party-ui-handler";
@@ -28,8 +25,9 @@ import { UiMode } from "#enums/ui-mode";
 import i18next from "i18next";
 import { BattlePhase } from "./battle-phase";
 import Overrides from "#app/overrides";
-import type { CustomModifierSettings } from "#app/modifier/modifier-type";
 import { isNullOrUndefined, NumberHolder } from "#app/utils/common";
+import { PokemonHeldItemModifier } from "#app/modifier/held-item-modifier";
+import { ModifierPoolType } from "#app/modifier/modifier-pool-type";
 
 export class SelectModifierPhase extends BattlePhase {
   private rerollCount: number;

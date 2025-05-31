@@ -1,5 +1,5 @@
 import { Stat } from "#enums/stat";
-import { SpeciesStatBoosterModifier } from "#app/modifier/modifier";
+import { SpeciesStatBoosterModifier } from "#app/modifier/held-item-modifier";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import i18next from "#app/plugins/i18n";
 import { NumberHolder, randInt } from "#app/utils/common";
