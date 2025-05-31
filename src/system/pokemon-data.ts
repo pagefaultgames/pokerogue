@@ -15,8 +15,8 @@ import { CustomPokemonData } from "#app/data/custom-pokemon-data";
 import type { PokemonType } from "#enums/pokemon-type";
 
 export interface PokemonPregenData {
-  player: boolean;
   species: Species;
+  player?: boolean;
   nickname?: string;
   formIndex?: number;
   abilityIndex?: number;
@@ -34,6 +34,9 @@ export interface PokemonPregenData {
   luck?: number;
   pokerus?: boolean;
   teraType?: PokemonType;
+  shinyLock?: boolean;
+  instantTera?: boolean;
+  randomForms?: number[];
 
   fusionSpecies?: Species;
   fusionFormIndex?: number;

@@ -6139,8 +6139,8 @@ export class EnemyPokemon extends Pokemon {
       dataSource?.gender ?? pregenData?.gender,
       !shinyLock ? dataSource?.shiny ?? pregenData?.shiny : false,
       !shinyLock ? dataSource?.variant ?? pregenData?.variant : undefined,
-      dataSource?.ivs ?? pregenData?.ivs ?? undefined,
-      dataSource ? dataSource.nature : undefined,
+      dataSource?.ivs ?? pregenData?.ivs,
+      dataSource?.nature ?? pregenData?.nature,
       dataSource,
       pregenData,
     );
@@ -6275,7 +6275,7 @@ export class EnemyPokemon extends Pokemon {
             new PokemonMove(Moves.FLAMETHROWER),
             new PokemonMove(Moves.COSMIC_POWER),
           ];
-      if (globalScene.gameMode.hasChallenge(Challenges.INVERSE_BATTLE)) {
+      if (globalScene.gameMode.hasChallenge(Challenges.INVERSE_BATTLE)) { // TODO: A ChallengeType should do this
         this.moveset[2] = new PokemonMove(Moves.THUNDERBOLT);
       }
     }
