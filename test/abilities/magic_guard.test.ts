@@ -60,8 +60,7 @@ describe("Abilities - Magic Guard", () => {
   it.each<{ abName: string; move?: Moves; enemyMove?: Moves; passive?: Abilities; enemyAbility?: Abilities }>([
     { abName: "Bad Dreams", enemyMove: Moves.SPORE, enemyAbility: Abilities.BAD_DREAMS },
     { abName: "Aftermath", move: Moves.PSYCHIC_FANGS, enemyAbility: Abilities.AFTERMATH },
-    // TODO: Currently don't work
-    // { abName: "Innards Out", move: Moves.PSYCHIC_FANGS, enemyAbility: Abilities.INNARDS_OUT },
+    { abName: "Innards Out", move: Moves.PSYCHIC_FANGS, enemyAbility: Abilities.INNARDS_OUT },
     { abName: "Rough Skin", move: Moves.PSYCHIC_FANGS, enemyAbility: Abilities.ROUGH_SKIN },
     { abName: "Dry Skin", move: Moves.SUNNY_DAY, passive: Abilities.DRY_SKIN },
     { abName: "Liquid Ooze", move: Moves.DRAIN_PUNCH, enemyAbility: Abilities.LIQUID_OOZE },
