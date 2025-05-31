@@ -28,7 +28,6 @@ import {
   ExpShareModifier,
   FusePokemonModifier,
   HealingBoosterModifier,
-  ModifierBar,
   MultipleParticipantExpBonusModifier,
   PersistentModifier,
   PokemonExpBoosterModifier,
@@ -186,6 +185,7 @@ import { hasExpSprite } from "./sprites/sprite-utils";
 import { timedEventManager } from "./global-event-manager";
 import { starterColors } from "./global-vars/starter-colors";
 import { startingWave } from "./starting-wave";
+import { ModifierBar } from "./modifier/modifier-bar";
 
 const DEBUG_RNG = false;
 

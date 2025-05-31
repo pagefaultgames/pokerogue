@@ -34,11 +34,12 @@ import { getVariantTint } from "#app/sprites/variant";
 import { Button } from "#enums/buttons";
 import type { Ability } from "#app/data/abilities/ability-class";
 import i18next from "i18next";
-import { modifierSortFunc } from "#app/modifier/modifier";
+import { modifierSortFunc } from "#app/modifier/modifier-bar";
 import { PlayerGender } from "#enums/player-gender";
 import { Stat, PERMANENT_STATS, getStatKey } from "#enums/stat";
 import { Nature } from "#enums/nature";
 import { achvs } from "#app/system/achv";
+import { allHeldItems } from "#app/items/all-held-items";
 
 enum Page {
   PROFILE,
@@ -1046,6 +1047,26 @@ export default class SummaryUiHandler extends UiHandler {
 
           icon.setInteractive(new Phaser.Geom.Rectangle(0, 0, 32, 32), Phaser.Geom.Rectangle.Contains);
           icon.on("pointerover", () => globalScene.ui.showTooltip(item.type.name, item.type.getDescription(), true));
+          icon.on("pointerout", () => globalScene.ui.hideTooltip());
+        });
+
+        const heldItemKeys = this.pokemon?.heldItemManager.getHeldItemKeys();
+        // TODO: Sort them
+        //.sort(heldItemSortFunc);
+
+        console.log(heldItemKeys);
+
+        heldItemKeys?.forEach((itemKey, i) => {
+          const stack = this.pokemon?.heldItemManager.getStack(itemKey);
+          const heldItem = allHeldItems[itemKey];
+          const icon = heldItem.createSummaryIcon(stack);
+
+          console.log(icon);
+          icon.setPosition((i % 17) * 12 + 3, 14 * Math.floor(i / 17) + 15);
+          this.statsContainer.add(icon);
+
+          icon.setInteractive(new Phaser.Geom.Rectangle(0, 0, 32, 32), Phaser.Geom.Rectangle.Contains);
+          icon.on("pointerover", () => globalScene.ui.showTooltip(heldItem.getName(), heldItem.getDescription(), true));
           icon.on("pointerout", () => globalScene.ui.hideTooltip());
         });
 

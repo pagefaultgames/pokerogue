@@ -129,7 +129,10 @@ import { getStatKey, Stat, TEMP_BATTLE_STATS } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import i18next from "i18next";
 import { timedEventManager } from "#app/global-event-manager";
+import { HeldItems } from "#enums/held-items";
+import { allHeldItems } from "#app/items/all-held-items";
 import { TYPE_BOOST_ITEM_BOOST_PERCENT } from "#app/constants";
+import { attackTypeToHeldItem } from "#app/items/held-items/attack-type-booster";
 
 const outputModifierData = false;
 const useMaxWeightForOutput = false;
@@ -173,6 +176,10 @@ export class ModifierType {
 
   getDescription(): string {
     return i18next.t(`${this.localeKey}.description` as any);
+  }
+
+  getIcon(): string {
+    return this.iconImage;
   }
 
   setTier(tier: ModifierTier): void {
@@ -416,6 +423,51 @@ export class PokemonHeldItemModifierType extends PokemonModifierType {
 
   newModifier(...args: any[]): PokemonHeldItemModifier {
     return super.newModifier(...args) as PokemonHeldItemModifier;
+  }
+}
+
+export class PokemonHeldItemReward extends PokemonModifierType {
+  public itemId: HeldItems;
+  constructor(itemId: HeldItems, newModifierFunc: NewModifierFunc, group?: string, soundName?: string) {
+    super(
+      "",
+      "",
+      newModifierFunc,
+      (pokemon: PlayerPokemon) => {
+        const hasItem = pokemon.heldItemManager.hasItem(this.itemId);
+        const maxStackCount = allHeldItems[this.itemId].getMaxStackCount();
+        if (!maxStackCount) {
+          return i18next.t("modifierType:ModifierType.PokemonHeldItemModifierType.extra.inoperable", {
+            pokemonName: getPokemonNameWithAffix(pokemon),
+          });
+        }
+        if (hasItem && pokemon.heldItemManager.getItem(this.itemId).stack === maxStackCount) {
+          return i18next.t("modifierType:ModifierType.PokemonHeldItemModifierType.extra.tooMany", {
+            pokemonName: getPokemonNameWithAffix(pokemon),
+          });
+        }
+        return null;
+      },
+      group,
+      soundName,
+    );
+    this.itemId = itemId;
+  }
+
+  newModifier(...args: any[]): PokemonHeldItemModifier {
+    return super.newModifier(...args) as PokemonHeldItemModifier;
+  }
+
+  get name(): string {
+    return allHeldItems[this.itemId].getName();
+  }
+
+  getDescription(): string {
+    return allHeldItems[this.itemId].getDescription();
+  }
+
+  getIcon(): string {
+    return allHeldItems[this.itemId].getIcon();
   }
 }
 
@@ -804,6 +856,26 @@ export class BerryModifierType extends PokemonHeldItemModifierType implements Ge
 
   getPregenArgs(): any[] {
     return [this.berryType];
+  }
+}
+
+export class AttackTypeBoosterReward extends PokemonHeldItemReward implements GeneratedPersistentModifierType {
+  public moveType: PokemonType;
+  public boostPercent: number;
+
+  constructor(moveType: PokemonType, boostPercent: number) {
+    const itemId = attackTypeToHeldItem[moveType];
+    super(
+      itemId,
+      // Next argument is useless
+      (_type, args) => new AttackTypeBoosterModifier(this, (args[0] as Pokemon).id, moveType, boostPercent),
+    );
+    this.moveType = moveType;
+    this.boostPercent = boostPercent;
+  }
+
+  getPregenArgs(): any[] {
+    return [this.moveType];
   }
 }
 
@@ -1328,6 +1400,58 @@ export class FusePokemonModifierType extends PokemonModifierType {
   }
 }
 
+class AttackTypeBoosterRewardGenerator extends ModifierTypeGenerator {
+  constructor() {
+    super((party: Pokemon[], pregenArgs?: any[]) => {
+      if (pregenArgs && pregenArgs.length === 1 && pregenArgs[0] in PokemonType) {
+        return new AttackTypeBoosterReward(pregenArgs[0] as PokemonType, TYPE_BOOST_ITEM_BOOST_PERCENT);
+      }
+
+      // TODO: make this consider moves or abilities that change types
+      const attackMoveTypes = party.flatMap(p =>
+        p
+          .getMoveset()
+          .map(m => m.getMove())
+          .filter(m => m instanceof AttackMove)
+          .map(m => m.type),
+      );
+      if (!attackMoveTypes.length) {
+        return null;
+      }
+
+      const attackMoveTypeWeights = new Map<PokemonType, number>();
+      let totalWeight = 0;
+      for (const t of attackMoveTypes) {
+        const weight = attackMoveTypeWeights.get(t) ?? 0;
+        if (weight < 3) {
+          attackMoveTypeWeights.set(t, weight + 1);
+          totalWeight++;
+        }
+      }
+
+      if (!totalWeight) {
+        return null;
+      }
+
+      let type: PokemonType;
+
+      const randInt = randSeedInt(totalWeight);
+      let weight = 0;
+
+      for (const t of attackMoveTypeWeights.keys()) {
+        const typeWeight = attackMoveTypeWeights.get(t)!; // guranteed to be defined
+        if (randInt <= weight + typeWeight) {
+          type = t;
+          break;
+        }
+        weight += typeWeight;
+      }
+
+      return new AttackTypeBoosterReward(type!, TYPE_BOOST_ITEM_BOOST_PERCENT);
+    });
+  }
+}
+
 class AttackTypeBoosterModifierTypeGenerator extends ModifierTypeGenerator {
   constructor() {
     super((party: Pokemon[], pregenArgs?: any[]) => {
@@ -1349,17 +1473,11 @@ class AttackTypeBoosterModifierTypeGenerator extends ModifierTypeGenerator {
       const attackMoveTypeWeights = new Map<PokemonType, number>();
       let totalWeight = 0;
       for (const t of attackMoveTypes) {
-        if (attackMoveTypeWeights.has(t)) {
-          if (attackMoveTypeWeights.get(t)! < 3) {
-            // attackMoveTypeWeights.has(t) was checked before
-            attackMoveTypeWeights.set(t, attackMoveTypeWeights.get(t)! + 1);
-          } else {
-            continue;
-          }
-        } else {
-          attackMoveTypeWeights.set(t, 1);
+        const weight = attackMoveTypeWeights.get(t) ?? 0;
+        if (weight < 3) {
+          attackMoveTypeWeights.set(t, weight + 1);
+          totalWeight++;
         }
-        totalWeight++;
       }
 
       if (!totalWeight) {
@@ -1887,7 +2005,7 @@ export type GeneratorModifierOverride = {
       type?: Nature;
     }
   | {
-      name: keyof Pick<typeof modifierTypes, "ATTACK_TYPE_BOOSTER" | "TERA_SHARD">;
+      name: keyof Pick<typeof modifierTypes, "ATTACK_TYPE_BOOSTER_REWARD" | "ATTACK_TYPE_BOOSTER" | "TERA_SHARD">;
       type?: PokemonType;
     }
   | {
@@ -2018,6 +2136,8 @@ export const modifierTypes = {
     })("modifierType:ModifierType.DIRE_HIT", "dire_hit", (type, _args) => new TempCritBoosterModifier(type, 5)),
 
   BASE_STAT_BOOSTER: () => new BaseStatBoosterModifierTypeGenerator(),
+
+  ATTACK_TYPE_BOOSTER_REWARD: () => new AttackTypeBoosterRewardGenerator(),
 
   ATTACK_TYPE_BOOSTER: () => new AttackTypeBoosterModifierTypeGenerator(),
 
@@ -2239,6 +2359,9 @@ export const modifierTypes = {
       "kings_rock",
       (type, args) => new FlinchChanceModifier(type, (args[0] as Pokemon).id),
     ),
+
+  LEFTOVERS_REWARD: () =>
+    new PokemonHeldItemReward(HeldItems.LEFTOVERS, (type, args) => new TurnHealModifier(type, (args[0] as Pokemon).id)),
 
   LEFTOVERS: () =>
     new PokemonHeldItemModifierType(
@@ -2903,7 +3026,7 @@ const modifierPool: ModifierPool = {
     ),
     new WeightedModifierType(modifierTypes.REVIVER_SEED, 4),
     new WeightedModifierType(modifierTypes.CANDY_JAR, skipInLastClassicWaveOrDefault(5)),
-    new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, 9),
+    new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER_REWARD, 9),
     new WeightedModifierType(modifierTypes.TM_ULTRA, 11),
     new WeightedModifierType(modifierTypes.RARER_CANDY, 4),
     new WeightedModifierType(modifierTypes.GOLDEN_PUNCH, skipInLastClassicWaveOrDefault(2)),
@@ -2927,7 +3050,7 @@ const modifierPool: ModifierPool = {
   [ModifierTier.ROGUE]: [
     new WeightedModifierType(modifierTypes.ROGUE_BALL, () => (hasMaximumBalls(PokeballType.ROGUE_BALL) ? 0 : 16), 16),
     new WeightedModifierType(modifierTypes.RELIC_GOLD, skipInLastClassicWaveOrDefault(2)),
-    new WeightedModifierType(modifierTypes.LEFTOVERS, 3),
+    new WeightedModifierType(modifierTypes.LEFTOVERS_REWARD, 3),
     new WeightedModifierType(modifierTypes.SHELL_BELL, 3),
     new WeightedModifierType(modifierTypes.BERRY_POUCH, 4),
     new WeightedModifierType(modifierTypes.GRIP_CLAW, 5),
