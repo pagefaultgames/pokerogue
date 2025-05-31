@@ -53,7 +53,8 @@ import { Button } from "#enums/buttons";
 import { EggSourceType } from "#enums/egg-source-types";
 import { DropDown, DropDownLabel, DropDownOption, DropDownState, DropDownType, SortCriteria } from "#app/ui/dropdown";
 import { StarterContainer } from "#app/ui/starter-container";
-import { DropDownColumn, FilterBar } from "#app/ui/filter-bar";
+import { FilterBar } from "#app/ui/filter-bar";
+import { DropDownColumn } from "#enums/drop-down-column";
 import { ScrollBar } from "#app/ui/scroll-bar";
 import { SelectChallengePhase } from "#app/phases/select-challenge-phase";
 import { EncounterPhase } from "#app/phases/encounter-phase";
@@ -160,6 +161,24 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     instructionTextSize: "38px",
     starterInfoYOffset: 0.5,
     starterInfoXPos: 29,
+  },
+  da:{
+    starterInfoTextSize: "56px",
+    instructionTextSize: "38px",
+  },
+  tr:{
+    starterInfoTextSize: "56px",
+    instructionTextSize: "38px",
+  },
+  ro:{
+    starterInfoTextSize: "56px",
+    instructionTextSize: "38px",
+  },
+  ru: {
+    starterInfoTextSize: "46px",
+    instructionTextSize: "38px",
+    starterInfoYOffset: 0.5,
+    starterInfoXPos: 26,
   },
 };
 

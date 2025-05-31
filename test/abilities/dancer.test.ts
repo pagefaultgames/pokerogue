@@ -77,8 +77,8 @@ describe("Abilities - Dancer", () => {
 
     game.move.select(Moves.REVELATION_DANCE, BattlerIndex.PLAYER, BattlerIndex.ENEMY_2);
     game.move.select(Moves.FIERY_DANCE, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY_2);
-    await game.forceEnemyMove(Moves.INSTRUCT, BattlerIndex.PLAYER);
-    await game.forceEnemyMove(Moves.MIRROR_MOVE, BattlerIndex.PLAYER);
+    await game.move.selectEnemyMove(Moves.INSTRUCT, BattlerIndex.PLAYER);
+    await game.move.selectEnemyMove(Moves.MIRROR_MOVE, BattlerIndex.PLAYER);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY_2, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("MovePhase"); // Oricorio rev dance
     await game.phaseInterceptor.to("MovePhase"); // Feebas fiery dance

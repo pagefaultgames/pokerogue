@@ -62,12 +62,12 @@ describe("Moves - Magic Coat", () => {
 
     // turn 1
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.MAGIC_COAT);
+    await game.move.selectEnemyMove(Moves.MAGIC_COAT);
     await game.toNextTurn();
 
     // turn 2
     game.move.select(Moves.GROWL);
-    await game.forceEnemyMove(Moves.SPLASH);
+    await game.move.selectEnemyMove(Moves.SPLASH);
     await game.phaseInterceptor.to("BerryPhase");
     expect(game.scene.getEnemyPokemon()!.getStatStage(Stat.ATK)).toBe(-1);
   });
@@ -102,8 +102,8 @@ describe("Moves - Magic Coat", () => {
 
     game.move.select(Moves.GROWL, 0);
     game.move.select(Moves.SPLASH, 1);
-    await game.forceEnemyMove(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.MAGIC_COAT);
+    await game.move.selectEnemyMove(Moves.SPLASH);
+    await game.move.selectEnemyMove(Moves.MAGIC_COAT);
 
     await game.phaseInterceptor.to("BerryPhase");
     expect(game.scene.getPlayerField().every(p => p.getStatStage(Stat.ATK) === -1)).toBeTruthy();
@@ -129,8 +129,8 @@ describe("Moves - Magic Coat", () => {
 
     game.move.select(Moves.MAGIC_COAT, 0);
     game.move.select(Moves.GROWL, 1);
-    await game.forceEnemyMove(Moves.MAGIC_COAT);
-    await game.forceEnemyMove(Moves.SPLASH);
+    await game.move.selectEnemyMove(Moves.MAGIC_COAT);
+    await game.move.selectEnemyMove(Moves.SPLASH);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(game.scene.getEnemyField()[0].getStatStage(Stat.ATK)).toBe(0);
@@ -192,12 +192,12 @@ describe("Moves - Magic Coat", () => {
 
     // turn 1
     game.move.select(Moves.GROWL);
-    await game.forceEnemyMove(Moves.MAGIC_COAT);
+    await game.move.selectEnemyMove(Moves.MAGIC_COAT);
     await game.toNextTurn();
 
     // turn 2
     game.move.select(Moves.ENCORE);
-    await game.forceEnemyMove(Moves.TACKLE);
+    await game.move.selectEnemyMove(Moves.TACKLE);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("BerryPhase");
     expect(enemyPokemon.getTag(BattlerTagType.ENCORE)!["moveId"]).toBe(Moves.TACKLE);
@@ -233,7 +233,7 @@ describe("Moves - Magic Coat", () => {
       vi.spyOn(stomping_tantrum, "calculateBattlePower");
 
       game.move.select(Moves.SPORE);
-      await game.forceEnemyMove(Moves.CHARM);
+      await game.move.selectEnemyMove(Moves.CHARM);
       await game.phaseInterceptor.to("TurnEndPhase");
       expect(enemy.getLastXMoves(1)[0].result).toBe("success");
 

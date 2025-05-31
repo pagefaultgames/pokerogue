@@ -5,16 +5,7 @@ import { addTextObject, getTextColor, TextStyle } from "./text";
 import type { UiTheme } from "#enums/ui-theme";
 import { addWindow, WindowVariant } from "./ui-theme";
 import { globalScene } from "#app/global-scene";
-
-export enum DropDownColumn {
-  GEN,
-  TYPES,
-  BIOME,
-  CAUGHT,
-  UNLOCKS,
-  MISC,
-  SORT,
-}
+import type { DropDownColumn } from "#enums/drop-down-column";
 
 export class FilterBar extends Phaser.GameObjects.Container {
   private window: Phaser.GameObjects.NineSlice;
@@ -49,13 +40,9 @@ export class FilterBar extends Phaser.GameObjects.Container {
     this.cursorOffset = cursorOffset;
 
     this.window = addWindow(0, 0, width, height, false, false, undefined, undefined, WindowVariant.THIN);
-    this.add(this.window);
 
-    this.cursorObj = globalScene.add.image(1, 1, "cursor");
-    this.cursorObj.setScale(0.5);
-    this.cursorObj.setVisible(false);
-    this.cursorObj.setOrigin(0, 0);
-    this.add(this.cursorObj);
+    this.cursorObj = globalScene.add.image(1, 1, "cursor").setScale(0.5).setVisible(false).setOrigin(0);
+    this.add([this.window, this.cursorObj]);
   }
 
   /**

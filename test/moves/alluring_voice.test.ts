@@ -29,20 +29,18 @@ describe("Moves - Alluring Voice", () => {
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.ICE_SCALES)
-      .enemyMoveset([Moves.HOWL])
+      .enemyMoveset(Moves.HOWL)
       .startingLevel(10)
       .enemyLevel(10)
-      .starterSpecies(Species.FEEBAS)
-      .ability(Abilities.BALL_FETCH)
-      .moveset([Moves.ALLURING_VOICE]);
+      .ability(Abilities.BALL_FETCH);
   });
 
   it("should confuse the opponent if their stat stages were raised", async () => {
-    await game.classicMode.startBattle();
+    await game.classicMode.startBattle([Species.FEEBAS]);
 
     const enemy = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.ALLURING_VOICE);
+    game.move.use(Moves.ALLURING_VOICE);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to(BerryPhase);
 

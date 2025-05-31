@@ -76,7 +76,7 @@ describe("Abilities - Cud Chew", () => {
       farigiraf.hp = farigiraf.getMaxHp() / 2 - 1;
 
       game.move.select(Moves.SPLASH);
-      await game.forceEnemyMove(Moves.SPLASH);
+      await game.move.selectEnemyMove(Moves.SPLASH);
       await game.phaseInterceptor.to("TurnEndPhase");
 
       // doesn't trigger since cud chew hasn't eaten berry yet
@@ -86,7 +86,7 @@ describe("Abilities - Cud Chew", () => {
 
       // get heal pulsed back to full before the cud chew proc
       game.move.select(Moves.SPLASH);
-      await game.forceEnemyMove(Moves.HEAL_PULSE);
+      await game.move.selectEnemyMove(Moves.HEAL_PULSE);
       await game.phaseInterceptor.to("TurnEndPhase");
 
       // globalScene.queueAbilityDisplay should be called twice:
