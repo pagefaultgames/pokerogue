@@ -27,7 +27,7 @@ describe("Moves - Freezy Frost", () => {
       .battleStyle("single")
       .enemySpecies(Species.RATTATA)
       .enemyLevel(100)
-      .enemyMoveset([Moves.HOWL, Moves.HOWL, Moves.HOWL, Moves.HOWL])
+      .enemyMoveset(Moves.HOWL)
       .enemyAbility(Abilities.BALL_FETCH)
       .startingLevel(100)
       .moveset([Moves.FREEZY_FROST, Moves.HOWL, Moves.SPLASH])
@@ -55,7 +55,7 @@ describe("Moves - Freezy Frost", () => {
   });
 
   it("should clear all stat changes even when enemy uses the move", async () => {
-    game.override.enemyMoveset([Moves.FREEZY_FROST, Moves.FREEZY_FROST, Moves.FREEZY_FROST, Moves.FREEZY_FROST]);
+    game.override.enemyMoveset(Moves.FREEZY_FROST);
     await game.classicMode.startBattle([Species.SHUCKLE]); // Shuckle for slower Howl on first turn so Freezy Frost doesn't affect it.
     const user = game.scene.getPlayerPokemon()!;
 

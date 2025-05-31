@@ -28,7 +28,7 @@ describe("Moves - Retaliate", () => {
     game.override
       .battleStyle("single")
       .enemySpecies(Species.SNORLAX)
-      .enemyMoveset([Moves.RETALIATE, Moves.RETALIATE, Moves.RETALIATE, Moves.RETALIATE])
+      .enemyMoveset(Moves.RETALIATE)
       .enemyLevel(100)
       .moveset([Moves.RETALIATE, Moves.SPLASH])
       .startingLevel(80)

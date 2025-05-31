@@ -25,10 +25,7 @@ describe("Abilities - SCHOOLING", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     const moveToUse = Moves.SPLASH;
-    game.override.battleStyle("single");
-    game.override.ability(Abilities.SCHOOLING);
-    game.override.moveset([moveToUse]);
-    game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
+    game.override.battleStyle("single").ability(Abilities.SCHOOLING).moveset([moveToUse]).enemyMoveset(Moves.TACKLE);
   });
 
   test("check if fainted pokemon switches to base form on arena reset", async () => {
