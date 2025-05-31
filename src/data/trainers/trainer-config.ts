@@ -19,7 +19,7 @@ import {
   TrainerPartyTemplate,
   trainerPartyTemplates,
 } from "./TrainerPartyTemplate";
-import { evilAdminTrainerPools } from "./evil-admin-trainer-pools";
+import { evilAdminTrainerPools } from "../balance/trainers/evil-admin-trainer-pools";
 
 // Enum imports
 import { PartyMemberStrength } from "#enums/party-member-strength";
@@ -39,7 +39,7 @@ import type { PokemonSpeciesFilter } from "#app/data/pokemon-species";
 import type PokemonSpecies from "#app/data/pokemon-species";
 import type { ModifierTypeFunc } from "#app/modifier/modifier-type";
 import { EnemyPokemon } from "#app/field/pokemon";
-import type { EvilTeam } from "./evil-admin-trainer-pools";
+import type { EvilTeam } from "../balance/trainers/evil-admin-trainer-pools";
 import type {
   PartyMemberFunc,
   GenModifiersFunc,
