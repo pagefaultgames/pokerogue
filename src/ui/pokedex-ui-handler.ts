@@ -228,6 +228,9 @@ export default class PokedexUiHandler extends MessageUiHandler {
   private canShowFormTray: boolean;
   private filteredIndices: Species[];
 
+  // Custom tint for unseen species filter
+  private customTintSeenFilter = false;
+
   constructor() {
     super(UiMode.POKEDEX);
   }
@@ -403,6 +406,11 @@ export default class PokedexUiHandler extends MessageUiHandler {
       new DropDownLabel(i18next.t("filterBar:hasHiddenAbility"), undefined, DropDownState.ON),
       new DropDownLabel(i18next.t("filterBar:noHiddenAbility"), undefined, DropDownState.EXCLUDE),
     ];
+    const seenSpeciesLabels = [
+      new DropDownLabel(i18next.t("filterBar:seenSpecies"), undefined, DropDownState.OFF),
+      new DropDownLabel(i18next.t("filterBar:isSeen"), undefined, DropDownState.ON),
+      new DropDownLabel(i18next.t("filterBar:isUnseen"), undefined, DropDownState.EXCLUDE),
+    ];
     const eggLabels = [
       new DropDownLabel(i18next.t("filterBar:egg"), undefined, DropDownState.OFF),
       new DropDownLabel(i18next.t("filterBar:eggPurchasable"), undefined, DropDownState.ON),
@@ -416,6 +424,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
       new DropDownOption("FAVORITE", favoriteLabels),
       new DropDownOption("WIN", winLabels),
       new DropDownOption("HIDDEN_ABILITY", hiddenAbilityLabels),
+      new DropDownOption("SEEN_SPECIES", seenSpeciesLabels),
       new DropDownOption("EGG", eggLabels),
       new DropDownOption("POKERUS", pokerusLabels),
     ];
@@ -778,13 +787,15 @@ export default class PokedexUiHandler extends MessageUiHandler {
     this.starterSelectMessageBoxContainer.setVisible(!!text?.length);
   }
 
-  isSeen(species: PokemonSpecies, dexEntry: DexEntry): boolean {
+  isSeen(species: PokemonSpecies, dexEntry: DexEntry, seenFilter?: boolean): boolean {
     if (dexEntry?.seenAttr) {
       return true;
     }
-
-    const starterDexEntry = globalScene.gameData.dexData[this.getStarterSpeciesId(species.speciesId)];
-    return !!starterDexEntry?.caughtAttr;
+    if (!seenFilter) {
+      const starterDexEntry = globalScene.gameData.dexData[this.getStarterSpeciesId(species.speciesId)];
+      return !!starterDexEntry?.caughtAttr;
+    }
+    return false;
   }
 
   /**
@@ -1603,6 +1614,23 @@ export default class PokedexUiHandler extends MessageUiHandler {
         }
       });
 
+      // Seen Filter
+      const dexEntry = globalScene.gameData.dexData[species.speciesId];
+      const isItSeen = this.isSeen(species, dexEntry, true);
+      const fitsSeen = this.filterBar.getVals(DropDownColumn.MISC).some(misc => {
+        if (misc.val === "SEEN_SPECIES" && misc.state === DropDownState.ON) {
+          return isItSeen;
+        }
+        if (misc.val === "SEEN_SPECIES" && misc.state === DropDownState.EXCLUDE) {
+          this.customTintSeenFilter = true;
+          return !isItSeen;
+        }
+        if (misc.val === "SEEN_SPECIES" && misc.state === DropDownState.OFF) {
+          this.customTintSeenFilter = false;
+          return true;
+        }
+      });
+
       // Egg Purchasable Filter
       const isEggPurchasable = this.isSameSpeciesEggAvailable(species.speciesId);
       const fitsEgg = this.filterBar.getVals(DropDownColumn.MISC).some(misc => {
@@ -1644,6 +1672,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
         fitsFavorite &&
         fitsWin &&
         fitsHA &&
+        fitsSeen &&
         fitsEgg &&
         fitsPokerus
       ) {
@@ -1739,9 +1768,9 @@ export default class PokedexUiHandler extends MessageUiHandler {
           globalScene.gameData.dexData[this.getStarterSpeciesId(speciesId)].caughtAttr &
           data.species.getFullUnlocksData();
 
-        if (caughtAttr & data.species.getFullUnlocksData() || globalScene.dexForDevs) {
+        if ((caughtAttr & data.species.getFullUnlocksData() && !this.customTintSeenFilter) || globalScene.dexForDevs) {
           container.icon.clearTint();
-        } else if (this.isSeen(data.species, dexEntry)) {
+        } else if (this.isSeen(data.species, dexEntry) || this.customTintSeenFilter) {
           container.icon.setTint(0x808080);
         } else {
           container.icon.setTint(0);
