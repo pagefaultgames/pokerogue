@@ -39,7 +39,7 @@ import { PlayerGender } from "#enums/player-gender";
 import { Stat, PERMANENT_STATS, getStatKey } from "#enums/stat";
 import { Nature } from "#enums/nature";
 import { achvs } from "#app/system/achv";
-import { allHeldItems } from "#app/modifier/all-held-items";
+import { allHeldItems } from "#app/items/all-held-items";
 
 enum Page {
   PROFILE,

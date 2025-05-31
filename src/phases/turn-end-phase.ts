@@ -15,7 +15,7 @@ import i18next from "i18next";
 import { FieldPhase } from "./field-phase";
 import { PokemonHealPhase } from "./pokemon-heal-phase";
 import { globalScene } from "#app/global-scene";
-import { applyTurnHealHeldItem } from "#app/modifier/held-items/turn-heal";
+import { applyTurnHealHeldItem } from "#app/items/held-items/turn-heal";
 
 export class TurnEndPhase extends FieldPhase {
   start() {

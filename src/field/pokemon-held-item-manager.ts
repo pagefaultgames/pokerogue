@@ -1,4 +1,4 @@
-import { allHeldItems } from "#app/modifier/all-held-items";
+import { allHeldItems } from "#app/items/all-held-items";
 import type { HeldItems } from "#app/enums/held-items";
 
 interface HeldItemProperties {

@@ -1,7 +1,7 @@
 import type Pokemon from "#app/field/pokemon";
 import { globalScene } from "#app/global-scene";
 import i18next from "i18next";
-import { HeldItem } from "../held-item";
+import { HeldItem } from "#app/items/held-item";
 import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
 import { toDmgValue } from "#app/utils/common";
 import { getPokemonNameWithAffix } from "#app/messages";
