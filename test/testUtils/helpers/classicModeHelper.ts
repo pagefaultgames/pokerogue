@@ -16,9 +16,19 @@ import { GameManagerHelper } from "./gameManagerHelper";
 export class ClassicModeHelper extends GameManagerHelper {
   /**
    * Runs the classic game to the summon phase.
-   * @param species - Optional array of species to summon.
+   * @param species - An array of {@linkcode Species} to summon.
    * @returns A promise that resolves when the summon phase is reached.
    */
+  async runToSummon(species: Species[]): Promise<void>;
+  /**
+   * Runs the classic game to the summon phase.
+   * Selects 3 daily run starters with a fixed seed of "test"
+   * (see `DailyRunConfig.getDailyRunStarters` in `daily-run.ts` for more info).
+   * @returns A promise that resolves when the summon phase is reached.
+   * @deprecated - Specifying the starters helps prevent inconsistencies from internal RNG changes.
+   */
+  async runToSummon(): Promise<void>;
+  async runToSummon(species: Species[] | undefined): Promise<void>;
   async runToSummon(species?: Species[]): Promise<void> {
     await this.game.runToTitle();
 
@@ -42,9 +52,18 @@ export class ClassicModeHelper extends GameManagerHelper {
 
   /**
    * Transitions to the start of a battle.
-   * @param species - Optional array of species to start the battle with.
+   * @param species - An array of {@linkcode Species} to start the battle with.
    * @returns A promise that resolves when the battle is started.
    */
+  async startBattle(species: Species[]): Promise<void>;
+  /**
+   * Transitions to the start of a battle.
+   * Will select 3 daily run starters with a fixed seed of "test"
+   * (see `DailyRunConfig.getDailyRunStarters` in `daily-run.ts` for more info).
+   * @returns A promise that resolves when the battle is started.
+   * @deprecated - Specifying the starters helps prevent inconsistencies from internal RNG changes.
+   */
+  async startBattle(): Promise<void>;
   async startBattle(species?: Species[]): Promise<void> {
     await this.runToSummon(species);
 
