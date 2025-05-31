@@ -236,7 +236,6 @@ export class MovePhase extends BattlePhase {
             Overrides.STATUS_ACTIVATION_OVERRIDE !== false;
           break;
         case StatusEffect.SLEEP: {
-          applyMoveAttrs(BypassSleepAttr, this.pokemon, null, this.move.getMove());
           const turnsRemaining = new NumberHolder(this.pokemon.status.sleepTurnsRemaining ?? 0);
           applyAbAttrs(
             ReduceStatusEffectDurationAbAttr,
@@ -248,7 +247,7 @@ export class MovePhase extends BattlePhase {
           );
           this.pokemon.status.sleepTurnsRemaining = turnsRemaining.value;
           healed = this.pokemon.status.sleepTurnsRemaining <= 0;
-          activated = !healed && !this.pokemon.getTag(BattlerTagType.BYPASS_SLEEP);
+          activated = !healed;
           break;
         }
         case StatusEffect.FREEZE:
@@ -266,7 +265,14 @@ export class MovePhase extends BattlePhase {
       }
 
       if (activated) {
-        this.cancel();
+        if (this.pokemon.status.effect === StatusEffect.SLEEP) {
+          applyMoveAttrs(BypassSleepAttr, this.pokemon, null, this.move.getMove());
+          if (!this.pokemon.getTag(BattlerTagType.BYPASS_SLEEP)) {
+            this.cancel();
+          }
+        } else {
+          this.cancel();
+        }
         globalScene.queueMessage(
           getStatusEffectActivationText(this.pokemon.status.effect, getPokemonNameWithAffix(this.pokemon)),
         );
@@ -281,7 +287,7 @@ export class MovePhase extends BattlePhase {
         globalScene.queueMessage(
           getStatusEffectHealText(this.pokemon.status.effect, getPokemonNameWithAffix(this.pokemon)),
         );
-        this.pokemon.resetStatus();
+        this.pokemon.resetStatus(true, false, false, false);
         this.pokemon.updateInfo();
       }
     }
