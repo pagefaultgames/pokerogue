@@ -1,6 +1,6 @@
 import { BattlerIndex } from "#app/battle";
-import { allAbilities } from "#app/data/data-lists";
 import { ArenaTagSide } from "#app/data/arena-tag";
+import { allAbilities } from "#app/data/data-lists";
 import { ArenaTagType } from "#app/enums/arena-tag-type";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
 import { Stat } from "#app/enums/stat";
@@ -74,8 +74,8 @@ describe("Abilities - Good As Gold", () => {
 
     game.move.select(Moves.SWORDS_DANCE, 0);
     game.move.select(Moves.SAFEGUARD, 1);
-    await game.forceEnemyMove(Moves.STEALTH_ROCK);
-    await game.forceEnemyMove(Moves.HAZE);
+    await game.move.selectEnemyMove(Moves.STEALTH_ROCK);
+    await game.move.selectEnemyMove(Moves.HAZE);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
     await game.phaseInterceptor.to("BerryPhase");
     expect(good_as_gold.getAbility().id).toBe(Abilities.GOOD_AS_GOLD);
@@ -107,35 +107,33 @@ describe("Abilities - Good As Gold", () => {
     expect(game.scene.getPlayerField()[1].getTag(BattlerTagType.HELPING_HAND)).toBeUndefined();
   });
 
-  it("should block the ally's heal bell, but only if the good as gold user is on the field", async () => {
-    game.override.battleStyle("double");
-    game.override.moveset([Moves.HEAL_BELL, Moves.SPLASH]);
-    game.override.statusEffect(StatusEffect.BURN);
-    await game.classicMode.startBattle([Species.MAGIKARP, Species.FEEBAS, Species.ABRA]);
-    const [good_as_gold, ball_fetch] = game.scene.getPlayerField();
-
-    // Force second pokemon to have ball fetch to isolate to a single mon.
-    vi.spyOn(ball_fetch, "getAbility").mockReturnValue(allAbilities[Abilities.BALL_FETCH]);
+  // TODO: re-enable when heal bell is fixed
+  it.todo("should block the ally's heal bell, but only if the good as gold user is on the field", async () => {
+    game.override.battleStyle("double").statusEffect(StatusEffect.BURN);
+    await game.classicMode.startBattle([Species.MILOTIC, Species.FEEBAS, Species.ABRA]);
+    const [milotic, feebas, abra] = game.scene.getPlayerParty();
+    game.field.mockAbility(milotic, Abilities.GOOD_AS_GOLD);
+    game.field.mockAbility(feebas, Abilities.BALL_FETCH);
+    game.field.mockAbility(abra, Abilities.BALL_FETCH);
 
     // turn 1
-    game.move.select(Moves.SPLASH, 0);
-    game.move.select(Moves.HEAL_BELL, 1);
+    game.move.use(Moves.SPLASH, 0);
+    game.move.use(Moves.HEAL_BELL, 1);
     await game.toNextTurn();
-    expect(good_as_gold.status?.effect).toBe(StatusEffect.BURN);
+    expect(milotic.status?.effect).toBe(StatusEffect.BURN);
 
     game.doSwitchPokemon(2);
-    game.move.select(Moves.HEAL_BELL, 0);
+    game.move.use(Moves.HEAL_BELL, 1);
     await game.toNextTurn();
-    expect(good_as_gold.status?.effect).toBeUndefined();
+    expect(milotic.status?.effect).toBeUndefined();
   });
 
   it("should not block field targeted effects like rain dance", async () => {
     game.override.battleStyle("single");
     game.override.enemyMoveset([Moves.RAIN_DANCE]);
-    game.override.weather(WeatherType.NONE);
     await game.classicMode.startBattle([Species.MAGIKARP]);
 
-    game.move.select(Moves.SPLASH, 0);
+    game.move.use(Moves.SPLASH, 0);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.RAIN);

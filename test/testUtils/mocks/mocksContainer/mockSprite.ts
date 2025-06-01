@@ -13,6 +13,7 @@ export default class MockSprite implements MockGameObject {
   public anims;
   public list: MockGameObject[] = [];
   public name: string;
+  public active = true;
   constructor(textureManager, x, y, texture) {
     this.textureManager = textureManager;
     this.scene = textureManager.scene;
@@ -245,6 +246,11 @@ export default class MockSprite implements MockGameObject {
 
   copyPosition(obj): this {
     this.phaserSprite.copyPosition(obj);
+    return this;
+  }
+
+  setActive(active: boolean): this {
+    this.phaserSprite.setActive(active);
     return this;
   }
 }

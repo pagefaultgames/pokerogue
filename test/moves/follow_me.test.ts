@@ -43,8 +43,8 @@ describe("Moves - Follow Me", () => {
     game.move.select(Moves.QUICK_ATTACK, 1, BattlerIndex.ENEMY);
 
     // Force both enemies to target the player Pokemon that did not use Follow Me
-    await game.forceEnemyMove(Moves.TACKLE, BattlerIndex.PLAYER_2);
-    await game.forceEnemyMove(Moves.TACKLE, BattlerIndex.PLAYER_2);
+    await game.move.selectEnemyMove(Moves.TACKLE, BattlerIndex.PLAYER_2);
+    await game.move.selectEnemyMove(Moves.TACKLE, BattlerIndex.PLAYER_2);
 
     await game.phaseInterceptor.to(TurnEndPhase, false);
 
@@ -61,8 +61,8 @@ describe("Moves - Follow Me", () => {
     game.move.select(Moves.FOLLOW_ME, 1);
 
     // Each player is targeted by an enemy
-    await game.forceEnemyMove(Moves.TACKLE, BattlerIndex.PLAYER);
-    await game.forceEnemyMove(Moves.TACKLE, BattlerIndex.PLAYER_2);
+    await game.move.selectEnemyMove(Moves.TACKLE, BattlerIndex.PLAYER);
+    await game.move.selectEnemyMove(Moves.TACKLE, BattlerIndex.PLAYER_2);
 
     await game.phaseInterceptor.to(TurnEndPhase, false);
 
@@ -84,8 +84,8 @@ describe("Moves - Follow Me", () => {
     game.move.select(Moves.QUICK_ATTACK, 1, BattlerIndex.ENEMY_2);
 
     // Target doesn't need to be specified if the move is self-targeted
-    await game.forceEnemyMove(Moves.FOLLOW_ME);
-    await game.forceEnemyMove(Moves.SPLASH);
+    await game.move.selectEnemyMove(Moves.FOLLOW_ME);
+    await game.move.selectEnemyMove(Moves.SPLASH);
 
     await game.phaseInterceptor.to(TurnEndPhase, false);
 
@@ -104,8 +104,8 @@ describe("Moves - Follow Me", () => {
     game.move.select(Moves.SNIPE_SHOT, 0, BattlerIndex.ENEMY);
     game.move.select(Moves.SNIPE_SHOT, 1, BattlerIndex.ENEMY_2);
 
-    await game.forceEnemyMove(Moves.FOLLOW_ME);
-    await game.forceEnemyMove(Moves.SPLASH);
+    await game.move.selectEnemyMove(Moves.FOLLOW_ME);
+    await game.move.selectEnemyMove(Moves.SPLASH);
 
     await game.phaseInterceptor.to(TurnEndPhase, false);
 
