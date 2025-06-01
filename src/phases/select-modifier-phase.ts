@@ -359,7 +359,7 @@ export class SelectModifierPhase extends BattlePhase {
       (slotIndex: number, _option: PartyOption) => {
         if (slotIndex < 6) {
           globalScene.ui.setMode(UiMode.MODIFIER_SELECT, this.isPlayer()).then(() => {
-            party[slotIndex].heldItemManager.addHeldItem(reward.itemId);
+            party[slotIndex].heldItemManager.add(reward.itemId);
             globalScene.ui.clearText();
             globalScene.ui.setMode(UiMode.MESSAGE);
             super.end();

@@ -107,3 +107,20 @@ export class HeldItem {
     return 1;
   }
 }
+
+export class ConsumableHeldItem extends HeldItem {
+  applyConsumable(_pokemon: Pokemon): boolean {
+    return true;
+  }
+
+  apply(pokemon: Pokemon): boolean {
+    const consumed = this.applyConsumable(pokemon);
+
+    if (consumed) {
+      pokemon.heldItemManager.remove(this.type, 1);
+      return true;
+    }
+
+    return false;
+  }
+}

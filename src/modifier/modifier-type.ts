@@ -2096,6 +2096,14 @@ export const modifierTypes = {
       "reviver_seed",
       (type, args) => new PokemonInstantReviveModifier(type, (args[0] as Pokemon).id),
     ),
+
+  WHITE_HERB_REWARD: () =>
+    new PokemonHeldItemReward(
+      HeldItems.WHITE_HERB,
+      (type, args) => new ResetNegativeStatStageModifier(type, (args[0] as Pokemon).id),
+    ),
+
+  // TODO: Remove the old one
   WHITE_HERB: () =>
     new PokemonHeldItemModifierType(
       "modifierType:ModifierType.WHITE_HERB",
@@ -3140,7 +3148,7 @@ const wildModifierPool: ModifierPool = {
   }),
   [ModifierTier.ULTRA]: [
     new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, 10),
-    new WeightedModifierType(modifierTypes.WHITE_HERB, 0),
+    new WeightedModifierType(modifierTypes.WHITE_HERB_REWARD, 0),
   ].map(m => {
     m.setTier(ModifierTier.ULTRA);
     return m;
@@ -3685,13 +3693,12 @@ export function getEnemyHeldItemsForWave(
   poolType: ModifierPoolType.WILD | ModifierPoolType.TRAINER,
   upgradeChance = 0,
 ): PokemonHeldItemReward[] {
-  const ret = new Array(count)
-    .fill(0)
-    .map(
-      () =>
-        getNewModifierTypeOption(party, poolType, undefined, upgradeChance && !randSeedInt(upgradeChance) ? 1 : 0)
-          ?.type as PokemonHeldItemReward,
-    );
+  const ret = new Array(count).fill(0).map(
+    () =>
+      // TODO: Change this to get held items (this function really could just return a list of ids honestly)
+      getNewModifierTypeOption(party, poolType, undefined, upgradeChance && !randSeedInt(upgradeChance) ? 1 : 0)
+        ?.type as PokemonHeldItemReward,
+  );
   if (!(waveIndex % 1000)) {
     // TODO: Change this line with the actual held item when implemented
     ret.push(getModifierType(modifierTypes.MINI_BLACK_HOLE) as PokemonHeldItemReward);
@@ -3740,13 +3747,53 @@ export function getDailyRunStarterModifiers(party: PlayerPokemon[]): PokemonHeld
 function getNewModifierTypeOption(
   party: Pokemon[],
   poolType: ModifierPoolType,
-  tier?: ModifierTier,
+  baseTier?: ModifierTier,
   upgradeCount?: number,
   retryCount = 0,
   allowLuckUpgrades = true,
 ): ModifierTypeOption | null {
   const player = !poolType;
   const pool = getModifierPoolForType(poolType);
+  const thresholds = getPoolThresholds(poolType);
+
+  const tier = determineTier(party, player, baseTier, upgradeCount, retryCount, allowLuckUpgrades);
+
+  const tierThresholds = Object.keys(thresholds[tier]);
+  const totalWeight = Number.parseInt(tierThresholds[tierThresholds.length - 1]);
+  const value = randSeedInt(totalWeight);
+  let index: number | undefined;
+  for (const t of tierThresholds) {
+    const threshold = Number.parseInt(t);
+    if (value < threshold) {
+      index = thresholds[tier][threshold];
+      break;
+    }
+  }
+
+  if (index === undefined) {
+    return null;
+  }
+
+  if (player) {
+    console.log(index, ignoredPoolIndexes[tier].filter(i => i <= index).length, ignoredPoolIndexes[tier]);
+  }
+  let modifierType: ModifierType | null = pool[tier][index].modifierType;
+  if (modifierType instanceof ModifierTypeGenerator) {
+    modifierType = (modifierType as ModifierTypeGenerator).generateType(party);
+    if (modifierType === null) {
+      if (player) {
+        console.log(ModifierTier[tier], upgradeCount);
+      }
+      return getNewModifierTypeOption(party, poolType, tier, upgradeCount, ++retryCount);
+    }
+  }
+
+  console.log(modifierType, !player ? "(enemy)" : "");
+
+  return new ModifierTypeOption(modifierType as ModifierType, upgradeCount!); // TODO: is this bang correct?
+}
+
+function getPoolThresholds(poolType: ModifierPoolType) {
   let thresholds: object;
   switch (poolType) {
     case ModifierPoolType.PLAYER:
@@ -3765,6 +3812,17 @@ function getNewModifierTypeOption(
       thresholds = dailyStarterModifierPoolThresholds;
       break;
   }
+  return thresholds;
+}
+
+function determineTier(
+  party: Pokemon[],
+  player: boolean,
+  tier?: ModifierTier,
+  upgradeCount?: number,
+  retryCount = 0,
+  allowLuckUpgrades = true,
+): ModifierTier {
   if (tier === undefined) {
     const tierValue = randSeedInt(1024);
     if (!upgradeCount) {
@@ -3819,40 +3877,7 @@ function getNewModifierTypeOption(
     retryCount = 0;
     tier--;
   }
-
-  const tierThresholds = Object.keys(thresholds[tier]);
-  const totalWeight = Number.parseInt(tierThresholds[tierThresholds.length - 1]);
-  const value = randSeedInt(totalWeight);
-  let index: number | undefined;
-  for (const t of tierThresholds) {
-    const threshold = Number.parseInt(t);
-    if (value < threshold) {
-      index = thresholds[tier][threshold];
-      break;
-    }
-  }
-
-  if (index === undefined) {
-    return null;
-  }
-
-  if (player) {
-    console.log(index, ignoredPoolIndexes[tier].filter(i => i <= index).length, ignoredPoolIndexes[tier]);
-  }
-  let modifierType: ModifierType | null = pool[tier][index].modifierType;
-  if (modifierType instanceof ModifierTypeGenerator) {
-    modifierType = (modifierType as ModifierTypeGenerator).generateType(party);
-    if (modifierType === null) {
-      if (player) {
-        console.log(ModifierTier[tier], upgradeCount);
-      }
-      return getNewModifierTypeOption(party, poolType, tier, upgradeCount, ++retryCount);
-    }
-  }
-
-  console.log(modifierType, !player ? "(enemy)" : "");
-
-  return new ModifierTypeOption(modifierType as ModifierType, upgradeCount!); // TODO: is this bang correct?
+  return tier;
 }
 
 export function getDefaultModifierTypeForTier(tier: ModifierTier): ModifierType {

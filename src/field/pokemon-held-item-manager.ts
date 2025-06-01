@@ -39,7 +39,7 @@ export class PokemonItemManager {
     return itemType in this.getHeldItems() ? this.heldItems[itemType].stack : 0;
   }
 
-  addHeldItem(itemType: HeldItems, addStack = 1) {
+  add(itemType: HeldItems, addStack = 1) {
     const maxStack = allHeldItems[itemType].getMaxStackCount();
 
     if (this.hasItem(itemType)) {
@@ -47,6 +47,14 @@ export class PokemonItemManager {
       this.heldItems[itemType].stack = Math.min(this.heldItems[itemType].stack + addStack, maxStack);
     } else {
       this.heldItems[itemType] = { stack: Math.min(addStack, maxStack), disabled: false };
+    }
+  }
+
+  remove(itemType: HeldItems, removeStack = 1) {
+    this.heldItems[itemType].stack -= removeStack;
+
+    if (this.heldItems[itemType].stack <= 0) {
+      delete this.heldItems[itemType];
     }
   }
 }
