@@ -96,9 +96,9 @@ export const trainerPartyConfigs: TrainerPartyConfigs = {
       teraType: PokemonType.PSYCHIC,
       instantTera: true,
     }]],
-    [3, { species: Species.EXEGGUTOR }],
-    [4, [{ species: Species.WYRDEER }, { species: Species.FARIGIRAF }]],
-    [5, { species: Species.XATU }]
+    [3, { species: Species.EXEGGUTOR, gender: Gender.FEMALE }],
+    [4, [{ species: Species.WYRDEER, gender: Gender.FEMALE }, { species: Species.FARIGIRAF, gender: Gender.FEMALE }]],
+    [5, { species: Species.XATU, gender: Gender.FEMALE }]
   ],
   [TrainerType.KOGA]: [
     [0, {
@@ -227,14 +227,11 @@ export const trainerPartyConfigs: TrainerPartyConfigs = {
     }]
   ],
   [TrainerType.LUCIAN]: [
-    [0, [{ species: Species.FARIGIRAF }]],
-    [2, [{
-      species: Species.ESPEON,
+    [0, [{ species: Species.ESPEON }, { species: Species.ALAKAZAM }]],
+    [2, {
+      species: Species.FARIGIRAF,
       instantTera: true,
-    }, {
-      species: Species.ALAKAZAM,
-      instantTera: true,
-    }]],
+    }],
     [3, { species: Species.BRONZONG }],
     [4, [{ species: Species.MR_RIME }, { species: Species.HISUI_BRAVIARY }]],
     [5, {
@@ -631,12 +628,10 @@ export const trainerPartyConfigs: TrainerPartyConfigs = {
     [2, [{
       species: Species.LATIAS,
       formIndex: 1, // Mega Latias
-      presetMoves: [Moves.SURF],
       pokeball: PokeballType.MASTER_BALL,
     }, {
       species: Species.LATIOS,
       formIndex: 1, // Mega Latios
-      presetMoves: [Moves.SURF],
       pokeball: PokeballType.MASTER_BALL,
     }]],
     [3, [{ species: Species.SWAMPERT }, { species: Species.GASTRODON }, { species: Species.SEISMITOAD }]],
@@ -676,7 +671,6 @@ export const trainerPartyConfigs: TrainerPartyConfigs = {
     [4, {
       species: Species.TOGEKISS,
       abilityIndex: 1, // Serene Grace
-      presetMoves: [Moves.RELIC_SONG],
       boss: true,
     }],
     [5, {
