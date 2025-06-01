@@ -25,7 +25,8 @@ export class HitHealHeldItem extends HeldItem {
    * @param pokemon The {@linkcode Pokemon} that holds the item
    * @returns `true` if the {@linkcode Pokemon} was healed
    */
-  apply(stackCount: number, pokemon: Pokemon): boolean {
+  apply(pokemon: Pokemon): boolean {
+    const stackCount = pokemon.heldItemManager.getStack(this.type);
     if (pokemon.turnData.totalDamageDealt && !pokemon.isFullHp()) {
       // TODO: this shouldn't be undefined AFAIK
       globalScene.unshiftPhase(
@@ -46,9 +47,9 @@ export class HitHealHeldItem extends HeldItem {
 
 export function applyHitHealHeldItem(pokemon: Pokemon) {
   if (pokemon) {
-    for (const [item, props] of Object.entries(pokemon.heldItemManager.getHeldItems())) {
+    for (const item of Object.keys(pokemon.heldItemManager.getHeldItems())) {
       if (allHeldItems[item] instanceof HitHealHeldItem) {
-        allHeldItems[item].apply(props.stack, pokemon);
+        allHeldItems[item].apply(pokemon);
       }
     }
   }

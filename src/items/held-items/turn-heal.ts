@@ -20,7 +20,8 @@ export class TurnHealHeldItem extends HeldItem {
     return "leftovers";
   }
 
-  apply(stackCount: number, pokemon: Pokemon): boolean {
+  apply(pokemon: Pokemon): boolean {
+    const stackCount = pokemon.heldItemManager.getStack(this.type);
     if (pokemon.isFullHp()) {
       return false;
     }
@@ -41,9 +42,9 @@ export class TurnHealHeldItem extends HeldItem {
 
 export function applyTurnHealHeldItem(pokemon: Pokemon) {
   if (pokemon) {
-    for (const [item, props] of Object.entries(pokemon.heldItemManager.getHeldItems())) {
+    for (const item of Object.keys(pokemon.heldItemManager.getHeldItems())) {
       if (allHeldItems[item] instanceof TurnHealHeldItem) {
-        allHeldItems[item].apply(props.stack, pokemon);
+        allHeldItems[item].apply(pokemon);
       }
     }
   }

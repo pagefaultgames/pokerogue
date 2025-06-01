@@ -55,7 +55,8 @@ export class AttackTypeBoosterHeldItem extends HeldItem {
     return `${HeldItemNames[this.type]?.toLowerCase()}`;
   }
 
-  apply(stackCount: number, moveType: PokemonType, movePower: NumberHolder): void {
+  apply(pokemon: Pokemon, moveType: PokemonType, movePower: NumberHolder): void {
+    const stackCount = pokemon.heldItemManager.getStack(this.type);
     if (moveType === this.moveType && movePower.value >= 1) {
       movePower.value = Math.floor(movePower.value * (1 + stackCount * this.powerBoost));
     }
@@ -64,9 +65,9 @@ export class AttackTypeBoosterHeldItem extends HeldItem {
 
 export function applyAttackTypeBoosterHeldItem(pokemon: Pokemon, moveType: PokemonType, movePower: NumberHolder) {
   if (pokemon) {
-    for (const [item, props] of Object.entries(pokemon.heldItemManager.getHeldItems())) {
+    for (const item of Object.keys(pokemon.heldItemManager.getHeldItems())) {
       if (allHeldItems[item] instanceof AttackTypeBoosterHeldItem) {
-        allHeldItems[item].apply(props.stack, moveType, movePower);
+        allHeldItems[item].apply(pokemon, moveType, movePower);
       }
     }
   }
