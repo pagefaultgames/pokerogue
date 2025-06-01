@@ -113,11 +113,13 @@ export class ConsumableHeldItem extends HeldItem {
     return true;
   }
 
-  apply(pokemon: Pokemon): boolean {
+  apply(pokemon: Pokemon, isPlayer: boolean): boolean {
     const consumed = this.applyConsumable(pokemon);
 
     if (consumed) {
       pokemon.heldItemManager.remove(this.type, 1);
+      // TODO: Turn this into updateItemBar or something
+      globalScene.updateModifiers(isPlayer);
       return true;
     }
 
