@@ -7,6 +7,7 @@ export const ITEM_EFFECT = {
   TURN_END_HEAL: 2,
   HIT_HEAL: 3,
   RESET_NEGATIVE_STAT_STAGE: 4,
+  EXP_BOOSTER: 5,
 } as const;
 
 export type ITEM_EFFECT = (typeof ITEM_EFFECT)[keyof typeof ITEM_EFFECT];

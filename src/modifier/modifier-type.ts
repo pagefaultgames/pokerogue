@@ -2236,6 +2236,18 @@ export const modifierTypes = {
   GOLDEN_EXP_CHARM: () =>
     new ExpBoosterModifierType("modifierType:ModifierType.GOLDEN_EXP_CHARM", "golden_exp_charm", 100),
 
+  LUCKY_EGG_REWARD: () =>
+    new PokemonHeldItemReward(
+      HeldItems.LUCKY_EGG,
+      (type, args) => new ExpBoosterModifier(type, (args[0] as Pokemon).id),
+    ),
+  GOLDEN_EGG_REWARD: () =>
+    new PokemonHeldItemReward(
+      HeldItems.GOLDEN_EGG,
+      (type, args) => new ExpBoosterModifier(type, (args[0] as Pokemon).id),
+    ),
+
+  // TODO: Remove these when refactor is done
   LUCKY_EGG: () => new PokemonExpBoosterModifierType("modifierType:ModifierType.LUCKY_EGG", "lucky_egg", 40),
   GOLDEN_EGG: () => new PokemonExpBoosterModifierType("modifierType:ModifierType.GOLDEN_EGG", "golden_egg", 100),
 
@@ -3147,17 +3159,17 @@ const wildModifierPool: ModifierPool = {
     return m;
   }),
   [ModifierTier.ULTRA]: [
-    new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, 10),
+    new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER_REWARD, 10),
     new WeightedModifierType(modifierTypes.WHITE_HERB_REWARD, 0),
   ].map(m => {
     m.setTier(ModifierTier.ULTRA);
     return m;
   }),
-  [ModifierTier.ROGUE]: [new WeightedModifierType(modifierTypes.LUCKY_EGG, 4)].map(m => {
+  [ModifierTier.ROGUE]: [new WeightedModifierType(modifierTypes.LUCKY_EGG_REWARD, 4)].map(m => {
     m.setTier(ModifierTier.ROGUE);
     return m;
   }),
-  [ModifierTier.MASTER]: [new WeightedModifierType(modifierTypes.GOLDEN_EGG, 1)].map(m => {
+  [ModifierTier.MASTER]: [new WeightedModifierType(modifierTypes.GOLDEN_EGG_REWARD, 1)].map(m => {
     m.setTier(ModifierTier.MASTER);
     return m;
   }),

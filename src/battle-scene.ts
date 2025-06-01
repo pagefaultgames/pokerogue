@@ -30,7 +30,6 @@ import {
   HealingBoosterModifier,
   MultipleParticipantExpBonusModifier,
   PersistentModifier,
-  PokemonExpBoosterModifier,
   PokemonFormChangeItemModifier,
   PokemonHeldItemModifier,
   PokemonHpRestoreModifier,
@@ -186,6 +185,8 @@ import { timedEventManager } from "./global-event-manager";
 import { starterColors } from "./global-vars/starter-colors";
 import { startingWave } from "./starting-wave";
 import { ModifierBar } from "./modifier/modifier-bar";
+import { applyHeldItems } from "./items/all-held-items";
+import { ITEM_EFFECT } from "./items/held-item";
 
 const DEBUG_RNG = false;
 
@@ -3722,7 +3723,7 @@ export default class BattleScene extends SceneBase {
           expMultiplier = Overrides.XP_MULTIPLIER_OVERRIDE;
         }
         const pokemonExp = new NumberHolder(expValue * expMultiplier);
-        this.applyModifiers(PokemonExpBoosterModifier, true, partyMember, pokemonExp);
+        applyHeldItems(ITEM_EFFECT.EXP_BOOSTER, { pokemon: partyMember, expAmount: pokemonExp });
         partyMemberExp.push(Math.floor(pokemonExp.value));
       }
 
