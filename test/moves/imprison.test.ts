@@ -36,7 +36,7 @@ describe("Moves - Imprison", () => {
     const playerPokemon = game.scene.getPlayerPokemon()!;
 
     game.move.select(Moves.TRANSFORM);
-    await game.forceEnemyMove(Moves.IMPRISON);
+    await game.move.selectEnemyMove(Moves.IMPRISON);
     await game.toNextTurn();
     const playerMoveset = playerPokemon.getMoveset().map(x => x?.moveId);
     const enemyMoveset = game.scene
@@ -51,7 +51,7 @@ describe("Moves - Imprison", () => {
 
     // Second turn, Imprison forces Struggle to occur
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.SPLASH);
+    await game.move.selectEnemyMove(Moves.SPLASH);
     await game.toNextTurn();
     const move1 = playerPokemon.getLastXMoves(1)[0]!;
     expect(move1.move).toBe(Moves.STRUGGLE);
@@ -63,7 +63,7 @@ describe("Moves - Imprison", () => {
     const playerPokemon1 = game.scene.getPlayerPokemon()!;
 
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.IMPRISON);
+    await game.move.selectEnemyMove(Moves.IMPRISON);
     await game.toNextTurn();
     const imprisonArenaTag = game.scene.arena.getTag(ArenaTagType.IMPRISON);
     const imprisonBattlerTag1 = playerPokemon1.getTag(BattlerTagType.IMPRISON);
@@ -72,7 +72,7 @@ describe("Moves - Imprison", () => {
 
     // Second turn, Imprison forces Struggle to occur
     game.doSwitchPokemon(1);
-    await game.forceEnemyMove(Moves.SPLASH);
+    await game.move.selectEnemyMove(Moves.SPLASH);
     await game.toNextTurn();
     const playerPokemon2 = game.scene.getPlayerPokemon()!;
     const imprisonBattlerTag2 = playerPokemon2.getTag(BattlerTagType.IMPRISON);
@@ -87,12 +87,12 @@ describe("Moves - Imprison", () => {
     const playerPokemon = game.scene.getPlayerPokemon()!;
     const enemyPokemon = game.scene.getEnemyPokemon()!;
     game.move.select(Moves.IMPRISON);
-    await game.forceEnemyMove(Moves.GROWL);
+    await game.move.selectEnemyMove(Moves.GROWL);
     await game.toNextTurn();
     expect(game.scene.arena.getTag(ArenaTagType.IMPRISON)).toBeDefined();
     expect(enemyPokemon.getTag(BattlerTagType.IMPRISON)).toBeDefined();
     game.doSwitchPokemon(1);
-    await game.forceEnemyMove(Moves.SPLASH);
+    await game.move.selectEnemyMove(Moves.SPLASH);
     await game.toNextTurn();
     expect(playerPokemon.isActive(true)).toBeFalsy();
     expect(game.scene.arena.getTag(ArenaTagType.IMPRISON)).toBeUndefined();

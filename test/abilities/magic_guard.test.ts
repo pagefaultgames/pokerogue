@@ -46,7 +46,7 @@ describe("Abilities - Magic Guard", () => {
   it("ability should prevent damage caused by weather", async () => {
     game.override.weather(WeatherType.SANDSTORM);
 
-    await game.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([Species.MAGIKARP]);
 
     const leadPokemon = game.scene.getPlayerPokemon()!;
 
@@ -70,7 +70,7 @@ describe("Abilities - Magic Guard", () => {
     //Toxic keeps track of the turn counters -> important that Magic Guard keeps track of post-Toxic turns
     game.override.statusEffect(StatusEffect.POISON);
 
-    await game.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([Species.MAGIKARP]);
 
     const leadPokemon = game.scene.getPlayerPokemon()!;
 
@@ -91,7 +91,7 @@ describe("Abilities - Magic Guard", () => {
     game.override.enemyMoveset([Moves.WORRY_SEED, Moves.WORRY_SEED, Moves.WORRY_SEED, Moves.WORRY_SEED]);
     game.override.statusEffect(StatusEffect.POISON);
 
-    await game.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([Species.MAGIKARP]);
 
     const leadPokemon = game.scene.getPlayerPokemon()!;
 
@@ -110,7 +110,7 @@ describe("Abilities - Magic Guard", () => {
     game.override.enemyStatusEffect(StatusEffect.BURN);
     game.override.enemyAbility(Abilities.MAGIC_GUARD);
 
-    await game.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([Species.MAGIKARP]);
 
     game.move.select(Moves.SPLASH);
 
@@ -132,7 +132,7 @@ describe("Abilities - Magic Guard", () => {
     game.override.enemyStatusEffect(StatusEffect.TOXIC);
     game.override.enemyAbility(Abilities.MAGIC_GUARD);
 
-    await game.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([Species.MAGIKARP]);
 
     game.move.select(Moves.SPLASH);
 
@@ -159,7 +159,7 @@ describe("Abilities - Magic Guard", () => {
     const newTag = getArenaTag(ArenaTagType.SPIKES, 5, Moves.SPIKES, 0, 0, ArenaTagSide.BOTH)!;
     game.scene.arena.tags.push(newTag);
 
-    await game.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([Species.MAGIKARP]);
     const leadPokemon = game.scene.getPlayerPokemon()!;
 
     game.move.select(Moves.SPLASH);
@@ -184,7 +184,7 @@ describe("Abilities - Magic Guard", () => {
     game.scene.arena.tags.push(playerTag);
     game.scene.arena.tags.push(enemyTag);
 
-    await game.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([Species.MAGIKARP]);
     const leadPokemon = game.scene.getPlayerPokemon()!;
 
     game.move.select(Moves.SPLASH);
@@ -206,7 +206,7 @@ describe("Abilities - Magic Guard", () => {
   });
 
   it("Magic Guard prevents against damage from volatile status effects", async () => {
-    await game.startBattle([Species.DUSKULL]);
+    await game.classicMode.startBattle([Species.DUSKULL]);
     game.override.moveset([Moves.CURSE]);
     game.override.enemyAbility(Abilities.MAGIC_GUARD);
 
@@ -231,7 +231,7 @@ describe("Abilities - Magic Guard", () => {
 
   it("Magic Guard prevents crash damage", async () => {
     game.override.moveset([Moves.HIGH_JUMP_KICK]);
-    await game.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([Species.MAGIKARP]);
 
     const leadPokemon = game.scene.getPlayerPokemon()!;
 
@@ -249,7 +249,7 @@ describe("Abilities - Magic Guard", () => {
 
   it("Magic Guard prevents damage from recoil", async () => {
     game.override.moveset([Moves.TAKE_DOWN]);
-    await game.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([Species.MAGIKARP]);
 
     const leadPokemon = game.scene.getPlayerPokemon()!;
 
@@ -266,7 +266,7 @@ describe("Abilities - Magic Guard", () => {
 
   it("Magic Guard does not prevent damage from Struggle's recoil", async () => {
     game.override.moveset([Moves.STRUGGLE]);
-    await game.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([Species.MAGIKARP]);
 
     const leadPokemon = game.scene.getPlayerPokemon()!;
 
@@ -284,7 +284,7 @@ describe("Abilities - Magic Guard", () => {
   //This tests different move attributes than the recoil tests above
   it("Magic Guard prevents self-damage from attacking moves", async () => {
     game.override.moveset([Moves.STEEL_BEAM]);
-    await game.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([Species.MAGIKARP]);
 
     const leadPokemon = game.scene.getPlayerPokemon()!;
 
@@ -301,7 +301,7 @@ describe("Abilities - Magic Guard", () => {
 
   /*
   it("Magic Guard does not prevent self-damage from confusion", async () => {
-    await game.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([Species.MAGIKARP]);
 
     game.move.select(Moves.CHARM);
 
@@ -311,7 +311,7 @@ describe("Abilities - Magic Guard", () => {
 
   it("Magic Guard does not prevent self-damage from non-attacking moves", async () => {
     game.override.moveset([Moves.BELLY_DRUM]);
-    await game.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([Species.MAGIKARP]);
 
     const leadPokemon = game.scene.getPlayerPokemon()!;
 
@@ -333,7 +333,7 @@ describe("Abilities - Magic Guard", () => {
     game.override.enemyMoveset([Moves.SPORE, Moves.SPORE, Moves.SPORE, Moves.SPORE]);
     game.override.enemyAbility(Abilities.BAD_DREAMS);
 
-    await game.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([Species.MAGIKARP]);
 
     const leadPokemon = game.scene.getPlayerPokemon()!;
 
@@ -355,7 +355,7 @@ describe("Abilities - Magic Guard", () => {
     game.override.moveset([Moves.TACKLE]);
     game.override.enemyAbility(Abilities.AFTERMATH);
 
-    await game.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([Species.MAGIKARP]);
 
     const leadPokemon = game.scene.getPlayerPokemon()!;
 
@@ -379,7 +379,7 @@ describe("Abilities - Magic Guard", () => {
     game.override.moveset([Moves.TACKLE]);
     game.override.enemyAbility(Abilities.IRON_BARBS);
 
-    await game.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([Species.MAGIKARP]);
 
     const leadPokemon = game.scene.getPlayerPokemon()!;
 
@@ -402,7 +402,7 @@ describe("Abilities - Magic Guard", () => {
     game.override.moveset([Moves.ABSORB]);
     game.override.enemyAbility(Abilities.LIQUID_OOZE);
 
-    await game.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([Species.MAGIKARP]);
 
     const leadPokemon = game.scene.getPlayerPokemon()!;
 
@@ -425,7 +425,7 @@ describe("Abilities - Magic Guard", () => {
     game.override.passiveAbility(Abilities.SOLAR_POWER);
     game.override.weather(WeatherType.SUNNY);
 
-    await game.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([Species.MAGIKARP]);
     const leadPokemon = game.scene.getPlayerPokemon()!;
     game.move.select(Moves.SPLASH);
     await game.phaseInterceptor.to(TurnEndPhase);

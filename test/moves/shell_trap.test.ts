@@ -38,7 +38,7 @@ describe("Moves - Shell Trap", () => {
   });
 
   it("should activate after the user is hit by a physical attack", async () => {
-    await game.startBattle([Species.CHARIZARD, Species.TURTONATOR]);
+    await game.classicMode.startBattle([Species.CHARIZARD, Species.TURTONATOR]);
 
     const playerPokemon = game.scene.getPlayerField();
     const enemyPokemon = game.scene.getEnemyField();
@@ -61,7 +61,7 @@ describe("Moves - Shell Trap", () => {
   it("should fail if the user is only hit by special attacks", async () => {
     game.override.enemyMoveset([Moves.SWIFT]);
 
-    await game.startBattle([Species.CHARIZARD, Species.TURTONATOR]);
+    await game.classicMode.startBattle([Species.CHARIZARD, Species.TURTONATOR]);
 
     const playerPokemon = game.scene.getPlayerField();
     const enemyPokemon = game.scene.getEnemyField();
@@ -84,7 +84,7 @@ describe("Moves - Shell Trap", () => {
   it("should fail if the user isn't hit with any attack", async () => {
     game.override.enemyMoveset(Moves.SPLASH);
 
-    await game.startBattle([Species.CHARIZARD, Species.TURTONATOR]);
+    await game.classicMode.startBattle([Species.CHARIZARD, Species.TURTONATOR]);
 
     const playerPokemon = game.scene.getPlayerField();
     const enemyPokemon = game.scene.getEnemyField();
@@ -107,7 +107,7 @@ describe("Moves - Shell Trap", () => {
   it("should not activate from an ally's attack", async () => {
     game.override.enemyMoveset(Moves.SPLASH);
 
-    await game.startBattle([Species.BLASTOISE, Species.CHARIZARD]);
+    await game.classicMode.startBattle([Species.BLASTOISE, Species.CHARIZARD]);
 
     const playerPokemon = game.scene.getPlayerField();
     const enemyPokemon = game.scene.getEnemyField();
@@ -131,7 +131,7 @@ describe("Moves - Shell Trap", () => {
     game.override.battleStyle("single");
     vi.spyOn(allMoves[Moves.RAZOR_LEAF], "priority", "get").mockReturnValue(-4);
 
-    await game.startBattle([Species.CHARIZARD]);
+    await game.classicMode.startBattle([Species.CHARIZARD]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
     const enemyPokemon = game.scene.getEnemyPokemon()!;
