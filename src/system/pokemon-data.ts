@@ -18,7 +18,7 @@ export interface PokemonPregenData {
   species: Species;
   player?: boolean;
   nickname?: string;
-  formIndex?: number;
+  formIndex?: number; // Specific desired form index
   abilityIndex?: number;
   passive?: boolean;
   shiny?: boolean;
@@ -28,15 +28,16 @@ export interface PokemonPregenData {
   gender?: Gender;
   ivs?: number[];
   nature?: Nature;
-  moveset?: PokemonMove[];
-  presetMoves?: Moves[];
+  moveset?: PokemonMove[]; // Fully built PokemonMove objects including PP info
+  presetMoves?: Moves[]; // Moves to include first during moveset generation
   friendship?: number;
   luck?: number;
   pokerus?: boolean;
   teraType?: PokemonType;
   shinyLock?: boolean;
   instantTera?: boolean;
-  randomForms?: number[];
+  randomForms?: number[]; // Form indexes to choose from at random
+  preferredGender?: Gender; // The PREFERRED gender for the mon to have, but can be overridden by the majority gender for mons w/ uneven ratios
 
   fusionSpecies?: Species;
   fusionFormIndex?: number;
@@ -47,8 +48,8 @@ export interface PokemonPregenData {
   fusionLuck?: number;
   fusionTeraType?: PokemonType;
 
-  boss?: boolean;
-  bossSegments?: number;
+  boss?: boolean; // Defaults to 2 boss bars
+  bossSegments?: number; // If this is set, boss will be set to true
 
   customPokemonData?: CustomPokemonData;
   fusionCustomPokemonData?: CustomPokemonData;

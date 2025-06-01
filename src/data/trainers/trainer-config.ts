@@ -712,7 +712,7 @@ export class TrainerConfig {
     return this;
   }
 
-  initPartyMemberFuncFromConfig(cfgs: PokemonPregenData[], postProcess?: (Pokemon) => void) {
+  getRandomPartyMemberFuncFromConfig(cfgs: PokemonPregenData[], postProcess?: (Pokemon) => void) {
     return (level: number, strength: PartyMemberStrength) => {
       let cfg: PokemonPregenData = cfgs[0];
       if (cfgs.length > 1) {
@@ -722,7 +722,7 @@ export class TrainerConfig {
       if (cfg.teraType) { // Defined tera type: instant tera
         cfg.instantTera = true;
       }
-      else if (cfg.instantTera) { // Instant tera with undefined type will be specialty type or undefined
+      else if (cfg.instantTera && this.hasSpecialtyType()) { // Instant tera with undefined type will be specialty type
         cfg.teraType = this.specialtyType;
       }
 
@@ -758,7 +758,10 @@ export class TrainerConfig {
 
     // Set the party templates for the Elite Four.
     this.setPartyTemplates(trainerPartyTemplates.ELITE_FOUR);
-    let teraSlot: number | undefined;
+
+    // Set species filter and specialty type, otherwise filter by base total.
+    this.setSpeciesFilter(p => p.isOfType(specialtyType) && p.baseTotal >= ELITE_FOUR_MINIMUM_BST);
+    this.setSpecialtyType(specialtyType);
 
     trainerPartyConfigs[this.trainerType].forEach((slot, s) => {
       const cfg = Array.isArray(slot[1]) ? slot[1] : [slot[1]];
@@ -769,19 +772,13 @@ export class TrainerConfig {
         });
       }
       cfg.forEach(c => {
-        c.gender = c.gender ?? isMale ? Gender.MALE: Gender.FEMALE;
-        c.pokeball = c.pokeball ?? PokeballType.ULTRA_BALL;
+        c.preferredGender = c.preferredGender ?? isMale ? Gender.MALE: Gender.FEMALE;
       });
       if (cfg.some(c => c.teraType || c.instantTera)) {
         this.setInstantTera(s);
-        teraSlot = s;
       }
-      this.setPartyMemberFunc(slot[0], this.initPartyMemberFuncFromConfig(cfg));
+      this.setPartyMemberFunc(slot[0], this.getRandomPartyMemberFuncFromConfig(cfg));
     });
-
-    // Set species filter and specialty type, otherwise filter by base total.
-    this.setSpeciesFilter(p => p.isOfType(specialtyType) && p.baseTotal >= ELITE_FOUR_MINIMUM_BST);
-    this.setSpecialtyType(specialtyType);
 
     // Localize the trainer's name by converting it to lowercase and replacing spaces with underscores.
     const nameForCall = this.name.toLowerCase().replace(/\s/g, "_");
@@ -800,7 +797,6 @@ export class TrainerConfig {
     this.setHasVoucher(true);
     this.setBattleBgm("battle_unova_elite");
     this.setVictoryBgm("victory_gym");
-    this.setRandomTeraModifiers(() => 1, teraSlot);
 
     return this;
   }
@@ -819,6 +815,23 @@ export class TrainerConfig {
 
     // Set the party templates for the Champion.
     this.setPartyTemplates(trainerPartyTemplates.CHAMPION);
+
+    trainerPartyConfigs[this.trainerType].forEach((slot, s) => {
+      const cfg = Array.isArray(slot[1]) ? slot[1] : [slot[1]];
+      if (s === 5) { // Last party member is always a boss with 2 segments
+        cfg.forEach(c => {
+          c.boss = true;
+          c.bossSegments = 2;
+        });
+      }
+      cfg.forEach(c => {
+        c.preferredGender = c.preferredGender ?? isMale ? Gender.MALE: Gender.FEMALE;
+      });
+      if (cfg.some(c => c.teraType || c.instantTera)) {
+        this.setInstantTera(s);
+      }
+      this.setPartyMemberFunc(slot[0], this.getRandomPartyMemberFuncFromConfig(cfg));
+    });
 
     // Localize the trainer's name by converting it to lowercase and replacing spaces with underscores.
     const nameForCall = this.name.toLowerCase().replace(/\s/g, "_");
@@ -1031,6 +1044,7 @@ export function getRandomPartyMemberFunc(
   trainerSlot: TrainerSlot = TrainerSlot.TRAINER,
   ignoreEvolution = false,
   postProcess?: (enemyPokemon: EnemyPokemon) => void,
+  pregenData?: PokemonPregenData,
 ) {
   return (level: number, strength: PartyMemberStrength) => {
     let species = randSeedItem(speciesPool);
@@ -1050,6 +1064,7 @@ export function getRandomPartyMemberFunc(
       false,
       undefined,
       postProcess,
+      pregenData,
     );
   };
 }

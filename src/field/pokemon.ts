@@ -481,12 +481,17 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
 
       if (this.formIndex === undefined) {
-        this.formIndex = globalScene.getSpeciesFormIndex(
-          species,
-          this.gender,
-          this.nature,
-          this.isPlayer(),
-        );
+        if (pregenData.randomForms) {
+          this.formIndex = randSeedItem(pregenData.randomForms);
+        }
+        else {
+          this.formIndex = globalScene.getSpeciesFormIndex(
+            species,
+            this.gender,
+            this.nature,
+            this.isPlayer(),
+          );
+        }
       }
 
       if (this.shiny === undefined) {
@@ -1757,10 +1762,19 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return precise ? this.hp / this.getMaxHp() : Math.round((this.hp / this.getMaxHp()) * 100) / 100;
   }
 
-  generateGender(): void {
+  generateGender(preferred?: Gender): void {
     if (this.species.malePercent === null) {
       this.gender = Gender.GENDERLESS;
-    } else {
+    }
+    else if (!isNullOrUndefined(preferred)) {
+      if (preferred === Gender.MALE) {
+        this.gender = this.species.malePercent >= 50 ? Gender.MALE : Gender.FEMALE;
+      }
+      else {
+        this.gender = this.species.malePercent <= 50? Gender.FEMALE : Gender.MALE;
+      }
+    }
+    else {
       const genderChance = (this.id % 256) * 0.390625;
       if (genderChance < this.species.malePercent) {
         this.gender = Gender.MALE;
@@ -6170,7 +6184,12 @@ export class EnemyPokemon extends Pokemon {
       this.formIndex = Overrides.OPP_FORM_OVERRIDES[speciesId];
     }
 
-    if (pregenData && pregenData.presetMoves) {
+    // Push any predefined PokemonMove Objects (including PP info etc) to the moveset first
+    if (pregenData?.moveset) {
+      this.moveset.push(...pregenData.moveset);
+    }
+
+    if (pregenData?.presetMoves) {
       this.generateAndPopulateMoveset(...pregenData.presetMoves);
     }
     else if (!dataSource) {
