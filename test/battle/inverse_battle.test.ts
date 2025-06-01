@@ -188,9 +188,7 @@ describe("Inverse Battle", () => {
   });
 
   it("Conversion 2 should change the type to the resistive type - Conversion 2 against Dragonite", async () => {
-    game.override
-      .moveset([Moves.CONVERSION_2])
-      .enemyMoveset([Moves.DRAGON_CLAW, Moves.DRAGON_CLAW, Moves.DRAGON_CLAW, Moves.DRAGON_CLAW]);
+    game.override.moveset([Moves.CONVERSION_2]).enemyMoveset(Moves.DRAGON_CLAW);
 
     await game.challengeMode.startBattle();
 

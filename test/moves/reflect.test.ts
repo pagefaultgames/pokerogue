@@ -35,13 +35,14 @@ describe("Moves - Reflect", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     globalScene = game.scene;
-    game.override.battleStyle("single");
-    game.override.ability(Abilities.NONE);
-    game.override.moveset([Moves.ABSORB, Moves.ROCK_SLIDE, Moves.TACKLE]);
-    game.override.enemyLevel(100);
-    game.override.enemySpecies(Species.MAGIKARP);
-    game.override.enemyMoveset([Moves.REFLECT, Moves.REFLECT, Moves.REFLECT, Moves.REFLECT]);
-    game.override.disableCrits();
+    game.override
+      .battleStyle("single")
+      .ability(Abilities.NONE)
+      .moveset([Moves.ABSORB, Moves.ROCK_SLIDE, Moves.TACKLE])
+      .enemyLevel(100)
+      .enemySpecies(Species.MAGIKARP)
+      .enemyMoveset(Moves.REFLECT)
+      .disableCrits();
   });
 
   it("reduces damage of physical attacks by half in a single battle", async () => {
