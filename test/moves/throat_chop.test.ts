@@ -23,11 +23,11 @@ describe("Moves - Throat Chop", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset(Array(4).fill(Moves.GROWL))
+      .moveset(Moves.GROWL)
       .battleStyle("single")
       .ability(Abilities.BALL_FETCH)
       .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset(Array(4).fill(Moves.THROAT_CHOP))
+      .enemyMoveset(Moves.THROAT_CHOP)
       .enemySpecies(Species.MAGIKARP);
   });
 
