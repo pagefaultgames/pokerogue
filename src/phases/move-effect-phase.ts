@@ -78,6 +78,7 @@ import type Move from "#app/data/moves/move";
 import { isFieldTargeted } from "#app/data/moves/move-utils";
 import { FaintPhase } from "./faint-phase";
 import { DamageAchv } from "#app/system/achv";
+import { applyHitHealHeldItem } from "#app/items/held-items/hit-heal";
 
 type HitCheckEntry = [HitCheckResult, TypeDamageMultiplier];
 
@@ -416,7 +417,7 @@ export class MoveEffectPhase extends PokemonPhase {
           // If there are multiple hits, or if there are hits of the multi-hit move left
           globalScene.queueMessage(i18next.t("battle:attackHitsCount", { count: hitsTotal }));
         }
-        globalScene.applyModifiers(HitHealModifier, this.player, user);
+        applyHitHealHeldItem(user);
         this.getTargets().forEach(target => (target.turnData.moveEffectiveness = null));
       }
     }

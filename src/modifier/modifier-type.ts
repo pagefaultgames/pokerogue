@@ -2363,6 +2363,9 @@ export const modifierTypes = {
   LEFTOVERS_REWARD: () =>
     new PokemonHeldItemReward(HeldItems.LEFTOVERS, (type, args) => new TurnHealModifier(type, (args[0] as Pokemon).id)),
 
+  SHELL_BELL_REWARD: () =>
+    new PokemonHeldItemReward(HeldItems.SHELL_BELL, (type, args) => new HitHealModifier(type, (args[0] as Pokemon).id)),
+
   LEFTOVERS: () =>
     new PokemonHeldItemModifierType(
       "modifierType:ModifierType.LEFTOVERS",
@@ -3051,7 +3054,7 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.ROGUE_BALL, () => (hasMaximumBalls(PokeballType.ROGUE_BALL) ? 0 : 16), 16),
     new WeightedModifierType(modifierTypes.RELIC_GOLD, skipInLastClassicWaveOrDefault(2)),
     new WeightedModifierType(modifierTypes.LEFTOVERS_REWARD, 3),
-    new WeightedModifierType(modifierTypes.SHELL_BELL, 3),
+    new WeightedModifierType(modifierTypes.SHELL_BELL_REWARD, 3),
     new WeightedModifierType(modifierTypes.BERRY_POUCH, 4),
     new WeightedModifierType(modifierTypes.GRIP_CLAW, 5),
     new WeightedModifierType(modifierTypes.SCOPE_LENS, 4),
@@ -3671,6 +3674,27 @@ export function getEnemyModifierTypesForWave(
     );
   if (!(waveIndex % 1000)) {
     ret.push(getModifierType(modifierTypes.MINI_BLACK_HOLE) as PokemonHeldItemModifierType);
+  }
+  return ret;
+}
+
+export function getEnemyHeldItemsForWave(
+  waveIndex: number,
+  count: number,
+  party: EnemyPokemon[],
+  poolType: ModifierPoolType.WILD | ModifierPoolType.TRAINER,
+  upgradeChance = 0,
+): PokemonHeldItemReward[] {
+  const ret = new Array(count)
+    .fill(0)
+    .map(
+      () =>
+        getNewModifierTypeOption(party, poolType, undefined, upgradeChance && !randSeedInt(upgradeChance) ? 1 : 0)
+          ?.type as PokemonHeldItemReward,
+    );
+  if (!(waveIndex % 1000)) {
+    // TODO: Change this line with the actual held item when implemented
+    ret.push(getModifierType(modifierTypes.MINI_BLACK_HOLE) as PokemonHeldItemReward);
   }
   return ret;
 }
