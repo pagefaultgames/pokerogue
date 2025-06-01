@@ -42,7 +42,7 @@ export class TurnHealHeldItem extends HeldItem {
 
 export function applyTurnHealHeldItem(pokemon: Pokemon) {
   if (pokemon) {
-    for (const item of Object.keys(pokemon.heldItemManager.getHeldItems())) {
+    for (const item of Object.keys(pokemon.heldItemManager.heldItems)) {
       if (allHeldItems[item] instanceof TurnHealHeldItem) {
         allHeldItems[item].apply(pokemon);
       }

@@ -65,7 +65,7 @@ export class AttackTypeBoosterHeldItem extends HeldItem {
 
 export function applyAttackTypeBoosterHeldItem(pokemon: Pokemon, moveType: PokemonType, movePower: NumberHolder) {
   if (pokemon) {
-    for (const item of Object.keys(pokemon.heldItemManager.getHeldItems())) {
+    for (const item of Object.keys(pokemon.heldItemManager.heldItems)) {
       if (allHeldItems[item] instanceof AttackTypeBoosterHeldItem) {
         allHeldItems[item].apply(pokemon, moveType, movePower);
       }

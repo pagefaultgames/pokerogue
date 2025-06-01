@@ -47,7 +47,7 @@ export class HitHealHeldItem extends HeldItem {
 
 export function applyHitHealHeldItem(pokemon: Pokemon) {
   if (pokemon) {
-    for (const item of Object.keys(pokemon.heldItemManager.getHeldItems())) {
+    for (const item of Object.keys(pokemon.heldItemManager.heldItems)) {
       if (allHeldItems[item] instanceof HitHealHeldItem) {
         allHeldItems[item].apply(pokemon);
       }

@@ -12,14 +12,10 @@ type HeldItemPropertyMap = {
 };
 
 export class PokemonItemManager {
-  private heldItems: HeldItemPropertyMap;
+  public heldItems: HeldItemPropertyMap;
 
   constructor() {
     this.heldItems = {};
-  }
-
-  getHeldItems(): HeldItemPropertyMap {
-    return this.heldItems;
   }
 
   getHeldItemKeys(): number[] {
@@ -27,7 +23,7 @@ export class PokemonItemManager {
   }
 
   hasItem(itemType: HeldItems): boolean {
-    return itemType in this.getHeldItems();
+    return itemType in this.heldItems;
   }
 
   getItem(itemType: HeldItems): HeldItemProperties {
@@ -36,7 +32,7 @@ export class PokemonItemManager {
   }
 
   getStack(itemType: HeldItems): number {
-    return itemType in this.getHeldItems() ? this.heldItems[itemType].stack : 0;
+    return itemType in this.heldItems ? this.heldItems[itemType].stack : 0;
   }
 
   add(itemType: HeldItems, addStack = 1) {

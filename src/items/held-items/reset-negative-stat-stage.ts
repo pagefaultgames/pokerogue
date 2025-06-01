@@ -60,7 +60,7 @@ export class ResetNegativeStatStageHeldItem extends ConsumableHeldItem {
 export function applyResetNegativeStatStageHeldItem(pokemon: Pokemon): boolean {
   let applied = false;
   if (pokemon) {
-    for (const item of Object.keys(pokemon.heldItemManager.getHeldItems())) {
+    for (const item of Object.keys(pokemon.heldItemManager.heldItems)) {
       if (allHeldItems[item] instanceof ResetNegativeStatStageHeldItem) {
         applied ||= allHeldItems[item].apply(pokemon);
       }
