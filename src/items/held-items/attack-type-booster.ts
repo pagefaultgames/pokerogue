@@ -3,8 +3,16 @@ import { PokemonType } from "#enums/pokemon-type";
 import i18next from "i18next";
 import type { NumberHolder } from "#app/utils/common";
 import type Pokemon from "#app/field/pokemon";
-import { HeldItem } from "#app/items/held-item";
-import { allHeldItems } from "../all-held-items";
+import { HeldItem, ITEM_EFFECT } from "#app/items/held-item";
+
+export interface ATTACK_TYPE_BOOST_PARAMS {
+  /** The pokemon with the item */
+  pokemon: Pokemon;
+  /** The resolved type of the move */
+  moveType: PokemonType;
+  /** Holder for the damage value */
+  movePower: NumberHolder;
+}
 
 interface AttackTypeToHeldItemMap {
   [key: number]: HeldItems;
@@ -32,6 +40,7 @@ export const attackTypeToHeldItem: AttackTypeToHeldItemMap = {
 };
 
 export class AttackTypeBoosterHeldItem extends HeldItem {
+  public effects: ITEM_EFFECT[] = [ITEM_EFFECT.TURN_END_HEAL];
   public moveType: PokemonType;
   public powerBoost: number;
 
@@ -55,20 +64,13 @@ export class AttackTypeBoosterHeldItem extends HeldItem {
     return `${HeldItemNames[this.type]?.toLowerCase()}`;
   }
 
-  apply(pokemon: Pokemon, moveType: PokemonType, movePower: NumberHolder): void {
+  apply(params: ATTACK_TYPE_BOOST_PARAMS): void {
+    const pokemon = params.pokemon;
+    const moveType = params.moveType;
+    const movePower = params.movePower;
     const stackCount = pokemon.heldItemManager.getStack(this.type);
     if (moveType === this.moveType && movePower.value >= 1) {
       movePower.value = Math.floor(movePower.value * (1 + stackCount * this.powerBoost));
-    }
-  }
-}
-
-export function applyAttackTypeBoosterHeldItem(pokemon: Pokemon, moveType: PokemonType, movePower: NumberHolder) {
-  if (pokemon) {
-    for (const item of Object.keys(pokemon.heldItemManager.heldItems)) {
-      if (allHeldItems[item] instanceof AttackTypeBoosterHeldItem) {
-        allHeldItems[item].apply(pokemon, moveType, movePower);
-      }
     }
   }
 }

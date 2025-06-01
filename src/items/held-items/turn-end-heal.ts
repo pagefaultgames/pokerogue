@@ -1,13 +1,19 @@
 import type Pokemon from "#app/field/pokemon";
 import { globalScene } from "#app/global-scene";
 import i18next from "i18next";
-import { HeldItem } from "#app/items/held-item";
+import { HeldItem, ITEM_EFFECT } from "#app/items/held-item";
 import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
 import { toDmgValue } from "#app/utils/common";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { allHeldItems } from "../all-held-items";
 
-export class TurnHealHeldItem extends HeldItem {
+export interface TURN_END_HEAL_PARAMS {
+  /** The pokemon with the item */
+  pokemon: Pokemon;
+}
+
+export class TurnEndHealHeldItem extends HeldItem {
+  public effects: ITEM_EFFECT[] = [ITEM_EFFECT.TURN_END_HEAL];
+
   get name(): string {
     return i18next.t("modifierType:ModifierType.LEFTOVERS.name") + " (new)";
   }
@@ -20,7 +26,8 @@ export class TurnHealHeldItem extends HeldItem {
     return "leftovers";
   }
 
-  apply(pokemon: Pokemon): boolean {
+  apply(params: TURN_END_HEAL_PARAMS): boolean {
+    const pokemon = params.pokemon;
     const stackCount = pokemon.heldItemManager.getStack(this.type);
     if (pokemon.isFullHp()) {
       return false;
@@ -37,15 +44,5 @@ export class TurnHealHeldItem extends HeldItem {
       ),
     );
     return true;
-  }
-}
-
-export function applyTurnHealHeldItem(pokemon: Pokemon) {
-  if (pokemon) {
-    for (const item of Object.keys(pokemon.heldItemManager.heldItems)) {
-      if (allHeldItems[item] instanceof TurnHealHeldItem) {
-        allHeldItems[item].apply(pokemon);
-      }
-    }
   }
 }

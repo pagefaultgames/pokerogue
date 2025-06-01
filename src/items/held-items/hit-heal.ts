@@ -1,13 +1,19 @@
 import type Pokemon from "#app/field/pokemon";
 import { globalScene } from "#app/global-scene";
 import i18next from "i18next";
-import { HeldItem } from "#app/items/held-item";
+import { HeldItem, ITEM_EFFECT } from "#app/items/held-item";
 import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
 import { toDmgValue } from "#app/utils/common";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { allHeldItems } from "../all-held-items";
+
+export interface HIT_HEAL_PARAMS {
+  /** The pokemon with the item */
+  pokemon: Pokemon;
+}
 
 export class HitHealHeldItem extends HeldItem {
+  public effects: ITEM_EFFECT[] = [ITEM_EFFECT.TURN_END_HEAL];
+
   get name(): string {
     return i18next.t("modifierType:ModifierType.SHELL_BELL.name");
   }
@@ -25,7 +31,8 @@ export class HitHealHeldItem extends HeldItem {
    * @param pokemon The {@linkcode Pokemon} that holds the item
    * @returns `true` if the {@linkcode Pokemon} was healed
    */
-  apply(pokemon: Pokemon): boolean {
+  apply(params: HIT_HEAL_PARAMS): boolean {
+    const pokemon = params.pokemon;
     const stackCount = pokemon.heldItemManager.getStack(this.type);
     if (pokemon.turnData.totalDamageDealt && !pokemon.isFullHp()) {
       // TODO: this shouldn't be undefined AFAIK
@@ -42,15 +49,5 @@ export class HitHealHeldItem extends HeldItem {
       );
     }
     return true;
-  }
-}
-
-export function applyHitHealHeldItem(pokemon: Pokemon) {
-  if (pokemon) {
-    for (const item of Object.keys(pokemon.heldItemManager.heldItems)) {
-      if (allHeldItems[item] instanceof HitHealHeldItem) {
-        allHeldItems[item].apply(pokemon);
-      }
-    }
   }
 }

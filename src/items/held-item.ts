@@ -2,6 +2,15 @@ import type Pokemon from "#app/field/pokemon";
 import { globalScene } from "#app/global-scene";
 import type { HeldItems } from "#enums/held-items";
 
+export const ITEM_EFFECT = {
+  ATTACK_TYPE_BOOST: 1,
+  TURN_END_HEAL: 2,
+  HIT_HEAL: 3,
+  RESET_NEGATIVE_STAT_STAGE: 4,
+} as const;
+
+export type ITEM_EFFECT = (typeof ITEM_EFFECT)[keyof typeof ITEM_EFFECT];
+
 export class HeldItem {
   //  public pokemonId: number;
   public type: HeldItems;
@@ -109,20 +118,10 @@ export class HeldItem {
 }
 
 export class ConsumableHeldItem extends HeldItem {
-  applyConsumable(_pokemon: Pokemon): boolean {
+  consume(pokemon: Pokemon, isPlayer: boolean): boolean {
+    pokemon.heldItemManager.remove(this.type, 1);
+    // TODO: Turn this into updateItemBar or something
+    globalScene.updateModifiers(isPlayer);
     return true;
-  }
-
-  apply(pokemon: Pokemon, isPlayer: boolean): boolean {
-    const consumed = this.applyConsumable(pokemon);
-
-    if (consumed) {
-      pokemon.heldItemManager.remove(this.type, 1);
-      // TODO: Turn this into updateItemBar or something
-      globalScene.updateModifiers(isPlayer);
-      return true;
-    }
-
-    return false;
   }
 }

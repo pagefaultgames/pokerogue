@@ -22,7 +22,8 @@ import { PokemonPhase } from "./pokemon-phase";
 import { Stat, type BattleStat, getStatKey, getStatStageChangeDescriptionKey } from "#enums/stat";
 import { OctolockTag } from "#app/data/battler-tags";
 import { ArenaTagType } from "#app/enums/arena-tag-type";
-import { applyResetNegativeStatStageHeldItem } from "#app/items/held-items/reset-negative-stat-stage";
+import { applyHeldItems } from "#app/items/all-held-items";
+import { ITEM_EFFECT } from "#app/items/held-item";
 
 export type StatStageChangeCallback = (
   target: Pokemon | null,
@@ -239,7 +240,7 @@ export class StatStageChangePhase extends PokemonPhase {
       );
       if (!(existingPhase instanceof StatStageChangePhase)) {
         // Apply White Herb if needed
-        applyResetNegativeStatStageHeldItem(pokemon);
+        applyHeldItems(ITEM_EFFECT.RESET_NEGATIVE_STAT_STAGE, { pokemon: pokemon, isPlayer: this.player });
       }
 
       pokemon.updateInfo();

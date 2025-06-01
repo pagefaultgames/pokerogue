@@ -2,9 +2,15 @@ import type Pokemon from "#app/field/pokemon";
 import { globalScene } from "#app/global-scene";
 import { BATTLE_STATS } from "#enums/stat";
 import i18next from "i18next";
-import { ConsumableHeldItem } from "../held-item";
+import { ConsumableHeldItem, ITEM_EFFECT } from "../held-item";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { allHeldItems } from "../all-held-items";
+
+export interface RESET_NEGATIVE_STAT_STAGE_PARAMS {
+  /** The pokemon with the item */
+  pokemon: Pokemon;
+  /** Whether the move was used by a player pokemon */
+  isPlayer: boolean;
+}
 
 /**
  * Modifier used for held items, namely White Herb, that restore adverse stat
@@ -13,6 +19,8 @@ import { allHeldItems } from "../all-held-items";
  * @see {@linkcode apply}
  */
 export class ResetNegativeStatStageHeldItem extends ConsumableHeldItem {
+  public effects: ITEM_EFFECT[] = [ITEM_EFFECT.RESET_NEGATIVE_STAT_STAGE];
+
   get name(): string {
     return i18next.t("modifierType:ModifierType.WHITE_HERB.name");
   }
@@ -30,7 +38,9 @@ export class ResetNegativeStatStageHeldItem extends ConsumableHeldItem {
    * @param pokemon {@linkcode Pokemon} that holds the item
    * @returns `true` if any stat stages were reset, false otherwise
    */
-  applyConsumable(pokemon: Pokemon): boolean {
+  apply(params: RESET_NEGATIVE_STAT_STAGE_PARAMS): boolean {
+    const pokemon = params.pokemon;
+    const isPlayer = params.isPlayer;
     let statRestored = false;
 
     for (const s of BATTLE_STATS) {
@@ -47,24 +57,10 @@ export class ResetNegativeStatStageHeldItem extends ConsumableHeldItem {
           typeName: this.name,
         }),
       );
+
+      this.consume(pokemon, isPlayer);
     }
+
     return statRestored;
   }
-
-  getMaxHeldItemCount(_pokemon: Pokemon): number {
-    return 2;
-  }
-}
-
-// TODO: Do we need this to return true/false?
-export function applyResetNegativeStatStageHeldItem(pokemon: Pokemon): boolean {
-  let applied = false;
-  if (pokemon) {
-    for (const item of Object.keys(pokemon.heldItemManager.heldItems)) {
-      if (allHeldItems[item] instanceof ResetNegativeStatStageHeldItem) {
-        applied ||= allHeldItems[item].apply(pokemon);
-      }
-    }
-  }
-  return applied;
 }

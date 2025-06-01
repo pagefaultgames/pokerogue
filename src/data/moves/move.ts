@@ -124,7 +124,8 @@ import { MultiHitType } from "#enums/MultiHitType";
 import { invalidAssistMoves, invalidCopycatMoves, invalidMetronomeMoves, invalidMirrorMoveMoves, invalidSleepTalkMoves } from "./invalid-moves";
 import { TrainerVariant } from "#app/field/trainer";
 import { SelectBiomePhase } from "#app/phases/select-biome-phase";
-import { applyAttackTypeBoosterHeldItem } from "#app/items/held-items/attack-type-booster";
+import { applyHeldItems } from "#app/items/all-held-items";
+import { ITEM_EFFECT } from "#app/items/held-item";
 
 type MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => boolean;
 type UserMoveConditionFunc = (user: Pokemon, move: Move) => boolean;
@@ -853,7 +854,11 @@ export default class Move implements Localizable {
 
     if (!this.hasAttr(TypelessAttr)) {
       globalScene.arena.applyTags(WeakenMoveTypeTag, simulated, typeChangeHolder.value, power);
-      applyAttackTypeBoosterHeldItem(source, typeChangeHolder.value, power);
+      applyHeldItems(ITEM_EFFECT.ATTACK_TYPE_BOOST, {
+        pokemon: source, 
+        moveType: typeChangeHolder.value,
+        movePower: power,
+      });
     }
 
     if (source.getTag(HelpingHandTag)) {
