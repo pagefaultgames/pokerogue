@@ -40,6 +40,9 @@ export default class EggGachaUiHandler extends MessageUiHandler {
 
   private scale = 0.1666666667;
 
+  private legendaryExpiration = addTextObject(0, 0, "", TextStyle.WINDOW_ALT);
+  private playTimeTimer: Phaser.Time.TimerEvent | null;
+
   constructor() {
     super(UiMode.EGG_GACHA);
 
@@ -198,6 +201,18 @@ export default class EggGachaUiHandler extends MessageUiHandler {
 
       this.eggGachaContainer.add(gachaContainer);
 
+      // Expiration timer for the legendary gacha
+      if (gachaType === GachaType.LEGENDARY) {
+        this.legendaryExpiration.setText(this.getLegendaryGachaTimeLeft());
+        this.legendaryExpiration.setFontSize("64px");
+        this.legendaryExpiration.setPositionRelative(
+          gacha,
+          gacha.width / 2 - this.legendaryExpiration.displayWidth / 2 + 0.3,
+          gacha.height / 2 + 12,
+        );
+        gachaContainer.add(this.legendaryExpiration);
+      }
+
       this.updateGachaInfo(g);
     });
 
@@ -347,6 +362,8 @@ export default class EggGachaUiHandler extends MessageUiHandler {
     this.eggGachaContainer.setVisible(true);
 
     handleTutorial(Tutorial.Egg_Gacha);
+
+    this.legendaryGachaTimer();
 
     return true;
   }
@@ -836,9 +853,37 @@ export default class EggGachaUiHandler extends MessageUiHandler {
     return changed;
   }
 
+  legendaryGachaTimer(): void {
+    if (this.playTimeTimer) {
+      this.playTimeTimer.destroy();
+      this.playTimeTimer = null;
+    }
+    this.playTimeTimer = globalScene.time.addEvent({
+      loop: true,
+      delay: 1000,
+      callback: () => {
+        this.legendaryExpiration.setText(this.getLegendaryGachaTimeLeft());
+      },
+    });
+  }
+
+  getLegendaryGachaTimeLeft(): string {
+    // 86400000 is the number of miliseconds in one day
+    const msUntilMidnight = 86400000 - (Date.now() % 86400000);
+    const hours = `${Math.floor(msUntilMidnight / 3600000)}`;
+    const minutes = `${Math.floor((msUntilMidnight % 3600000) / 60000)}`;
+    const seconds = `${Math.floor((msUntilMidnight % 60000) / 1000)}`;
+
+    return `${hours.padStart(2, "0")}:${minutes.padStart(2, "0")}:${seconds.padStart(2, "0")}`;
+  }
+
   clear(): void {
     super.clear();
     this.setGachaCursor(-1);
     this.eggGachaContainer.setVisible(false);
+    if (this.playTimeTimer) {
+      this.playTimeTimer.destroy();
+      this.playTimeTimer = null;
+    }
   }
 }
