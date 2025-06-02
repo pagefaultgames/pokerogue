@@ -208,7 +208,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
         this.legendaryExpiration.setPositionRelative(
           gacha,
           gacha.width / 2 - this.legendaryExpiration.displayWidth / 2 + 0.3,
-          gacha.height / 2 + 12,
+          gacha.height / 2 + 12.5,
         );
         gachaContainer.add(this.legendaryExpiration);
       }
