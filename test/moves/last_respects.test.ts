@@ -167,7 +167,10 @@ describe("Moves - Last Respects", () => {
     game.move.select(Moves.LAST_RESPECTS);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("MoveEndPhase");
-    expect(move.calculateBattlePower).toHaveLastReturnedWith(basePower);
+    expect(
+      move.calculateBattlePower,
+      `Enemy: ${game.field.getEnemyPokemon()}\nPlayer: ${game.field.getPlayerPokemon()}`,
+    ).toHaveLastReturnedWith(basePower);
   });
 
   it("should reset playerFaints count if we enter new trainer battle", async () => {

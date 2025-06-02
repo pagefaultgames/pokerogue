@@ -40,8 +40,8 @@ describe("Moves - Mirror Move", () => {
 
     game.move.select(Moves.MIRROR_MOVE, 0, BattlerIndex.ENEMY); // target's last move is Tackle, enemy should receive damage from Mirror Move copying Tackle
     game.move.select(Moves.SPLASH, 1);
-    await game.forceEnemyMove(Moves.TACKLE, BattlerIndex.PLAYER_2);
-    await game.forceEnemyMove(Moves.GROWL, BattlerIndex.PLAYER_2);
+    await game.move.selectEnemyMove(Moves.TACKLE, BattlerIndex.PLAYER_2);
+    await game.move.selectEnemyMove(Moves.GROWL, BattlerIndex.PLAYER_2);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 

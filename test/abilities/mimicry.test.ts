@@ -55,7 +55,7 @@ describe("Abilities - Mimicry", () => {
 
     const playerPokemon = game.scene.getPlayerPokemon();
     game.move.select(Moves.TRANSFORM);
-    await game.forceEnemyMove(Moves.PSYCHIC_TERRAIN);
+    await game.move.selectEnemyMove(Moves.PSYCHIC_TERRAIN);
     await game.toNextTurn();
     expect(playerPokemon?.getTypes().includes(PokemonType.PSYCHIC)).toBe(true);
 
@@ -64,7 +64,7 @@ describe("Abilities - Mimicry", () => {
     }
 
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.SPLASH);
+    await game.move.selectEnemyMove(Moves.SPLASH);
     await game.toNextTurn();
     expect(playerPokemon?.getTypes().includes(PokemonType.ELECTRIC)).toBe(true);
   });
@@ -75,13 +75,13 @@ describe("Abilities - Mimicry", () => {
 
     const playerPokemon = game.scene.getPlayerPokemon();
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.FORESTS_CURSE);
+    await game.move.selectEnemyMove(Moves.FORESTS_CURSE);
     await game.toNextTurn();
 
     expect(playerPokemon?.summonData.addedType).toBe(PokemonType.GRASS);
 
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.GRASSY_TERRAIN);
+    await game.move.selectEnemyMove(Moves.GRASSY_TERRAIN);
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(playerPokemon?.summonData.addedType).toBeNull();

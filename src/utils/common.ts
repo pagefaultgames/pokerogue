@@ -435,14 +435,18 @@ export function hasAllLocalizedSprites(lang?: string): boolean {
     case "es-ES":
     case "es-MX":
     case "fr":
+    case "da":
     case "de":
     case "it":
     case "zh-CN":
     case "zh-TW":
     case "pt-BR":
+    case "ro":
+    case "tr":
     case "ko":
     case "ja":
-    case "ca-ES":
+    case "ca":
+    case "ru":
       return true;
     default:
       return false;

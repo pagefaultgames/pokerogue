@@ -86,11 +86,11 @@ describe("Moves - Last Resort", () => {
 
     // use mirror move normally to trigger absorb virtually
     game.move.select(Moves.MIRROR_MOVE);
-    await game.forceEnemyMove(Moves.ABSORB);
+    await game.move.selectEnemyMove(Moves.ABSORB);
     await game.toNextTurn();
 
     game.move.select(Moves.LAST_RESORT);
-    await game.forceEnemyMove(Moves.SWORDS_DANCE); // goes first to proc dancer ahead of time
+    await game.move.selectEnemyMove(Moves.SWORDS_DANCE); // goes first to proc dancer ahead of time
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("TurnEndPhase");
     expectLastResortFail();
@@ -154,10 +154,10 @@ describe("Moves - Last Resort", () => {
 
     // ensure enemy last resort succeeds
     game.move.select(Moves.MIRROR_MOVE);
-    await game.forceEnemyMove(Moves.ABSORB);
+    await game.move.selectEnemyMove(Moves.ABSORB);
     await game.phaseInterceptor.to("TurnEndPhase");
     game.move.select(Moves.MIRROR_MOVE);
-    await game.forceEnemyMove(Moves.LAST_RESORT);
+    await game.move.selectEnemyMove(Moves.LAST_RESORT);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("TurnEndPhase");
 

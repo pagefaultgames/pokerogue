@@ -38,8 +38,8 @@ describe("Moves - Rage Powder", () => {
     game.move.select(Moves.QUICK_ATTACK, 0, BattlerIndex.ENEMY);
     game.move.select(Moves.QUICK_ATTACK, 1, BattlerIndex.ENEMY_2);
 
-    await game.forceEnemyMove(Moves.RAGE_POWDER);
-    await game.forceEnemyMove(Moves.SPLASH);
+    await game.move.selectEnemyMove(Moves.RAGE_POWDER);
+    await game.move.selectEnemyMove(Moves.SPLASH);
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
@@ -61,8 +61,8 @@ describe("Moves - Rage Powder", () => {
     game.move.select(Moves.QUICK_ATTACK, 0, BattlerIndex.ENEMY);
     game.move.select(Moves.QUICK_ATTACK, 1, BattlerIndex.ENEMY_2);
 
-    await game.forceEnemyMove(Moves.RAGE_POWDER);
-    await game.forceEnemyMove(Moves.SPLASH);
+    await game.move.selectEnemyMove(Moves.RAGE_POWDER);
+    await game.move.selectEnemyMove(Moves.SPLASH);
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
