@@ -172,7 +172,7 @@ describe("Moves - Last Respects", () => {
     const player = game.field.getPlayerPokemon();
     const items = `Player items: ${player.getHeldItems()} | Enemy Items: ${enemy.getHeldItems()} |`;
 
-    expect(move.calculateBattlePower, items).toHaveLastReturnedWith(1);
+    expect(move.calculateBattlePower, items).toHaveLastReturnedWith(50);
   });
 
   it("should reset playerFaints count if we enter new trainer battle", async () => {
