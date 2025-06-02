@@ -126,6 +126,7 @@ export interface SessionSaveData {
   battleType: BattleType;
   trainer: TrainerData;
   gameVersion: string;
+  runNameText: string;
   timestamp: number;
   challenges: ChallengeData[];
   mysteryEncounterType: MysteryEncounterType | -1; // Only defined when current wave is ME,
@@ -973,6 +974,47 @@ export class GameData {
           await handleSessionData(decrypt(sessionData, bypassLogin));
         } else {
           return resolve(null);
+        }
+      }
+    });
+  }
+
+  renameSession(slotId: number, newName: string): Promise<boolean> {
+    return new Promise(async resolve => {
+      if (slotId < 0) {
+        return resolve(false);
+      }
+
+      const sessionData: SessionSaveData | null = await this.getSession(slotId);
+
+      if (!sessionData) return resolve(false);
+
+      sessionData.runNameText = newName;
+
+      const updatedDataStr = JSON.stringify(sessionData);
+
+      if (bypassLogin) {
+        localStorage.setItem(
+          `sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`,
+          encrypt(updatedDataStr, bypassLogin),
+        );
+        resolve(true);
+      } else {
+        const encrypted = encrypt(updatedDataStr, bypassLogin);
+        const secretId = this.secretId;
+        const trainerId = this.trainerId;
+
+        const error = await pokerogueApi.savedata.session.update(
+          { slot: slotId, trainerId, secretId, clientSessionId },
+          encrypted,
+        );
+
+        if (!error) {
+          localStorage.setItem(`sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`, encrypted); // Keep local in sync
+          resolve(true);
+        } else {
+          console.error("Failed to update session name:", error);
+          resolve(false);
         }
       }
     });
