@@ -1,6 +1,7 @@
 import { GameMode } from "#app/game-mode";
 import { globalScene } from "#app/global-scene";
 import { Button } from "#enums/buttons";
+import type { OptionSelectConfig } from "#app/ui/abstact-option-select-ui-handler";
 import { UiMode } from "#enums/ui-mode";
 // biome-ignore lint/performance/noNamespaceImport: See `src/system/game-data.ts`
 import * as Modifier from "#modifiers/modifier";
@@ -14,7 +15,7 @@ import { fixedInt, formatLargeNumber, getPlayTimeString, isNullOrUndefined } fro
 import i18next from "i18next";
 
 const SESSION_SLOTS_COUNT = 5;
-const SLOTS_ON_SCREEN = 3;
+const SLOTS_ON_SCREEN = 2;
 
 export enum SaveSlotUiMode {
   LOAD,
@@ -32,6 +33,7 @@ export class SaveSlotSelectUiHandler extends MessageUiHandler {
 
   private uiMode: SaveSlotUiMode;
   private saveSlotSelectCallback: SaveSlotSelectCallback | null;
+  protected manageDataConfig: OptionSelectConfig;
 
   private scrollCursor = 0;
 
@@ -100,6 +102,7 @@ export class SaveSlotSelectUiHandler extends MessageUiHandler {
 
   processInput(button: Button): boolean {
     const ui = this.getUi();
+    const manageDataOptions: any[] = [];
 
     let success = false;
     let error = false;
@@ -113,9 +116,107 @@ export class SaveSlotSelectUiHandler extends MessageUiHandler {
         } else {
           switch (this.uiMode) {
             case SaveSlotUiMode.LOAD:
-              this.saveSlotSelectCallback = null;
-              originalCallback?.(cursor);
+              manageDataOptions.push({
+                label: i18next.t("menu:loadGame"),
+                handler: () => {
+                  globalScene.ui.revertMode();
+                  originalCallback?.(cursor);
+                  return true;
+                },
+                keepOpen: false,
+              });
+
+              manageDataOptions.push({
+                label: i18next.t("saveSlotSelectUiHandler:renameRun"),
+                handler: () => {
+                  globalScene.ui.revertMode();
+                  ui.setOverlayMode(
+                    UiMode.RENAME_POKEMON,
+                    {
+                      buttonActions: [
+                        (sanitizedName: string) => {
+                          const name = decodeURIComponent((atob(sanitizedName)));
+                          globalScene.gameData.renameSession(cursor, name).then(response => {
+                            if (response[0] === false) {
+                              globalScene.reset(true);
+                            } else {
+                              this.clearSessionSlots();
+                              this.cursorObj = null;
+                              this.populateSessionSlots();
+                              this.setScrollCursor(0);
+                              this.setCursor(0);
+                              ui.revertMode();
+                              ui.showText("", 0);
+                            }
+                          });
+                        },
+                        () => {
+                          ui.revertMode();
+                        },
+                      ],
+                    },
+                    "",
+                  );
+                  return true;
+                },
+              });
+
+              this.manageDataConfig = {
+                xOffset: 0,
+                yOffset: 48,
+                options: manageDataOptions,
+                maxOptions: 4,
+              };
+
+              manageDataOptions.push({
+                label: i18next.t("saveSlotSelectUiHandler:deleteRun"),
+                handler: () => {
+                  globalScene.ui.revertMode();
+                  ui.showText(i18next.t("saveSlotSelectUiHandler:deleteData"), null, () => {
+                    ui.setOverlayMode(
+                      UiMode.CONFIRM,
+                      () => {
+                        globalScene.gameData.tryClearSession(cursor).then(response => {
+                          if (response[0] === false) {
+                            globalScene.reset(true);
+                          } else {
+                            this.clearSessionSlots();
+                            this.cursorObj = null;
+                            this.populateSessionSlots();
+                            this.setScrollCursor(0);
+                            this.setCursor(0);
+                            ui.revertMode();
+                            ui.showText("", 0);
+                          }
+                        });
+                      },
+                      () => {
+                        ui.revertMode();
+                        ui.showText("", 0);
+                      },
+                      false,
+                      0,
+                      19,
+                      import.meta.env.DEV ? 300 : 2000,
+                    );
+                  });
+                  return true;
+                },
+                keepOpen: false,
+              });
+
+              manageDataOptions.push({
+                label: i18next.t("menuUiHandler:cancel"),
+                handler: () => {
+                  globalScene.ui.revertMode();
+                  return true;
+                },
+                keepOpen: true,
+              });
+
+              ui.setOverlayMode(UiMode.MENU_OPTION_SELECT, this.manageDataConfig);
               break;
+
             case SaveSlotUiMode.SAVE: {
               const saveAndCallback = () => {
                 const originalCallback = this.saveSlotSelectCallback;
@@ -160,6 +261,7 @@ export class SaveSlotSelectUiHandler extends MessageUiHandler {
         }
       } else {
         this.saveSlotSelectCallback = null;
+        ui.showText("", 0); // Clear any UI text if needed
         originalCallback?.(-1);
         success = true;
       }
@@ -266,33 +368,34 @@ export class SaveSlotSelectUiHandler extends MessageUiHandler {
       this.cursorObj = globalScene.add.container(0, 0);
       const cursorBox = globalScene.add.nineslice(
         0,
-        0,
+        15,
         "select_cursor_highlight_thick",
         undefined,
-        296,
-        44,
+        294,
+        this.sessionSlots[prevSlotIndex ?? 0]?.saveData?.runNameText ? 50 : 60,
         6,
         6,
         6,
         6,
       );
       const rightArrow = globalScene.add.image(0, 0, "cursor");
-      rightArrow.setPosition(160, 0);
+      rightArrow.setPosition(160, 15);
       rightArrow.setName("rightArrow");
       this.cursorObj.add([cursorBox, rightArrow]);
       this.sessionSlotsContainer.add(this.cursorObj);
     }
     const cursorPosition = cursor + this.scrollCursor;
-    const cursorIncrement = cursorPosition * 56;
+    const valueHeight = this.sessionSlots[prevSlotIndex ?? 0]?.saveData?.runNameText ? 76 : 76; //nocas
+    const cursorIncrement = cursorPosition * 76;
     if (this.sessionSlots[cursorPosition] && this.cursorObj) {
       const hasData = this.sessionSlots[cursorPosition].hasData;
       // If the session slot lacks session data, it does not move from its default, central position.
       // Only session slots with session data will move leftwards and have a visible arrow.
       if (!hasData) {
-        this.cursorObj.setPosition(151, 26 + cursorIncrement);
+        this.cursorObj.setPosition(151, 20 + cursorIncrement);
         this.sessionSlots[cursorPosition].setPosition(0, cursorIncrement);
       } else {
-        this.cursorObj.setPosition(145, 26 + cursorIncrement);
+        this.cursorObj.setPosition(145, 20 + cursorIncrement);
         this.sessionSlots[cursorPosition].setPosition(-6, cursorIncrement);
       }
       this.setArrowVisibility(hasData);
@@ -310,7 +413,8 @@ export class SaveSlotSelectUiHandler extends MessageUiHandler {
   revertSessionSlot(slotIndex: number): void {
     const sessionSlot = this.sessionSlots[slotIndex];
     if (sessionSlot) {
-      sessionSlot.setPosition(0, slotIndex * 56);
+      const valueHeight = sessionSlot.saveData?.runNameText ? 76 : 76;
+      sessionSlot.setPosition(0, slotIndex * valueHeight);
     }
   }
 
@@ -339,7 +443,7 @@ export class SaveSlotSelectUiHandler extends MessageUiHandler {
       this.setCursor(this.cursor, prevSlotIndex);
       globalScene.tweens.add({
         targets: this.sessionSlotsContainer,
-        y: this.sessionSlotsContainerInitialY - 56 * scrollCursor,
+        y: this.sessionSlotsContainerInitialY - 76 * scrollCursor,
         duration: fixedInt(325),
         ease: "Sine.easeInOut",
       });
@@ -373,12 +477,12 @@ export class SaveSlotSelectUiHandler extends MessageUiHandler {
 class SessionSlot extends Phaser.GameObjects.Container {
   public slotId: number;
   public hasData: boolean;
+  private slotWindow: Phaser.GameObjects.NineSlice;
   private loadingLabel: Phaser.GameObjects.Text;
-
   public saveData: SessionSaveData;
 
   constructor(slotId: number) {
-    super(globalScene, 0, slotId * 56);
+    super(globalScene, 0, slotId * 76);
 
     this.slotId = slotId;
 
@@ -386,32 +490,42 @@ class SessionSlot extends Phaser.GameObjects.Container {
   }
 
   setup() {
-    const slotWindow = addWindow(0, 0, 304, 52);
-    this.add(slotWindow);
+    this.slotWindow = addWindow(0, 0, 304, 70);
+    this.add(this.slotWindow);
 
-    this.loadingLabel = addTextObject(152, 26, i18next.t("saveSlotSelectUiHandler:loading"), TextStyle.WINDOW);
+    this.loadingLabel = addTextObject(152, 33, i18next.t("saveSlotSelectUiHandler:loading"), TextStyle.WINDOW);
     this.loadingLabel.setOrigin(0.5, 0.5);
     this.add(this.loadingLabel);
   }
 
   async setupWithData(data: SessionSaveData) {
+    const hasName = data?.runNameText;
     this.remove(this.loadingLabel, true);
+    if (hasName) {
+      const nameLabel = addTextObject(8, 5, data.runNameText, TextStyle.WINDOW);
+      this.add(nameLabel);
+    }
 
     const gameModeLabel = addTextObject(
       8,
-      5,
+      hasName ? 19 : 12,
       `${GameMode.getModeName(data.gameMode) || i18next.t("gameMode:unkown")} - ${i18next.t("saveSlotSelectUiHandler:wave")} ${data.waveIndex}`,
       TextStyle.WINDOW,
     );
     this.add(gameModeLabel);
 
-    const timestampLabel = addTextObject(8, 19, new Date(data.timestamp).toLocaleString(), TextStyle.WINDOW);
+    const timestampLabel = addTextObject(
+      8,
+      hasName ? 33 : 26,
+      new Date(data.timestamp).toLocaleString(),
+      TextStyle.WINDOW,
+    );
     this.add(timestampLabel);
 
-    const playTimeLabel = addTextObject(8, 33, getPlayTimeString(data.playTime), TextStyle.WINDOW);
+    const playTimeLabel = addTextObject(8, hasName ? 47 : 40, getPlayTimeString(data.playTime), TextStyle.WINDOW);
     this.add(playTimeLabel);
 
-    const pokemonIconsContainer = globalScene.add.container(144, 4);
+    const pokemonIconsContainer = globalScene.add.container(144, hasName ? 16 : 9);
     data.party.forEach((p: PokemonData, i: number) => {
       const iconContainer = globalScene.add.container(26 * i, 0);
       iconContainer.setScale(0.75);
@@ -440,7 +554,7 @@ class SessionSlot extends Phaser.GameObjects.Container {
 
     this.add(pokemonIconsContainer);
 
-    const modifierIconsContainer = globalScene.add.container(148, 30);
+    const modifierIconsContainer = globalScene.add.container(148, 38);
     modifierIconsContainer.setScale(0.5);
     let visibleModifierIndex = 0;
     for (const m of data.modifiers) {
