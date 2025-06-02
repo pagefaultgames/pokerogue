@@ -860,7 +860,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
     }
     this.playTimeTimer = globalScene.time.addEvent({
       loop: true,
-      delay: 1000,
+      delay: fixedInt(1000),
       callback: () => {
         this.legendaryExpiration.setText(this.getLegendaryGachaTimeLeft());
       },
