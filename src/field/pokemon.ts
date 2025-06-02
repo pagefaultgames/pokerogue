@@ -1300,10 +1300,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
       // During the Pokemon's MoveEffect phase, the offset is removed to put the Pokemon "in focus"
       const currentPhase = globalScene.getCurrentPhase();
-      if (currentPhase instanceof MoveEffectPhase && currentPhase.getPokemon() === this) {
-        return false;
-      }
-      return true;
+      return !(currentPhase instanceof MoveEffectPhase && currentPhase.getPokemon() === this);
     }
     return false;
   }
@@ -2242,10 +2239,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (this.getAbility(ignoreOverride).id === ability && (!canApply || this.canApplyAbility())) {
       return true;
     }
-    if (this.getPassiveAbility().id === ability && this.hasPassive() && (!canApply || this.canApplyAbility(true))) {
-      return true;
-    }
-    return false;
+    return this.getPassiveAbility().id === ability && this.hasPassive() && (!canApply || this.canApplyAbility(true));
   }
 
   /**
@@ -2262,10 +2256,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if ((!canApply || this.canApplyAbility()) && this.getAbility(ignoreOverride).hasAttr(attrType)) {
       return true;
     }
-    if (this.hasPassive() && (!canApply || this.canApplyAbility(true)) && this.getPassiveAbility().hasAttr(attrType)) {
-      return true;
-    }
-    return false;
+    return this.hasPassive() && (!canApply || this.canApplyAbility(true)) && this.getPassiveAbility().hasAttr(attrType);
   }
 
   /**
@@ -5462,10 +5453,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if ((ownedAbilityAttrs & 2) > 0 && this.hasSameAbilityInRootForm(1)) {
       return true;
     }
-    if ((ownedAbilityAttrs & 4) > 0 && this.hasSameAbilityInRootForm(2)) {
-      return true;
-    }
-    return false;
+    return (ownedAbilityAttrs & 4) > 0 && this.hasSameAbilityInRootForm(2);
   }
 
   /**
@@ -6702,7 +6690,6 @@ export class EnemyPokemon extends Pokemon {
     return ret;
   }
 
-  
   /**
    * Show or hide the type effectiveness multiplier window
    * Passing undefined will hide the window

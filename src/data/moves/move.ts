@@ -5473,10 +5473,7 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
   }
 
   canApply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (!super.canApply(user, target, move, args)) {
-      return false;
-    }
-    return true;
+    return super.canApply(user, target, move, args);
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -7367,11 +7364,7 @@ export class SketchAttr extends MoveEffectAttr {
         return false;
       }
 
-      if (user.getMoveset().find(m => m.moveId === targetMove.move)) {
-        return false;
-      }
-
-      return true;
+      return !user.getMoveset().some(m => m.moveId === targetMove.move);
     };
   }
 }

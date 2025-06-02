@@ -186,11 +186,7 @@ export class SpeciesFormChange {
       }
     }
 
-    if (!this.trigger.canChange(pokemon)) {
-      return false;
-    }
-
-    return true;
+    return this.trigger.canChange(pokemon);
   }
 
   findTrigger(triggerType: Constructor<SpeciesFormChangeTrigger>): SpeciesFormChangeTrigger | nil {

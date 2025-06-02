@@ -1203,10 +1203,7 @@ export class EncoreTag extends MoveRestrictionBattlerTag {
   override lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     if (lapseType === BattlerTagLapseType.CUSTOM) {
       const encoredMove = pokemon.getMoveset().find(m => m.moveId === this.moveId);
-      if (encoredMove && encoredMove?.getPpRatio() > 0) {
-        return true;
-      }
-      return false;
+      return !isNullOrUndefined(encoredMove) && encoredMove.getPpRatio() > 0;
     }
     return super.lapse(pokemon, lapseType);
   }
@@ -1218,10 +1215,7 @@ export class EncoreTag extends MoveRestrictionBattlerTag {
    * @returns `true` if the move does not match with the moveId stored and as a result, restricted
    */
   override isMoveRestricted(move: Moves, _user?: Pokemon): boolean {
-    if (move !== this.moveId) {
-      return true;
-    }
-    return false;
+    return move !== this.moveId;
   }
 
   override selectionDeniedText(_pokemon: Pokemon, move: Moves): string {
@@ -2756,10 +2750,7 @@ export class HealBlockTag extends MoveRestrictionBattlerTag {
    * @returns `true` if the move has a TRIAGE_MOVE flag and is a status move
    */
   override isMoveRestricted(move: Moves): boolean {
-    if (allMoves[move].hasFlag(MoveFlags.TRIAGE_MOVE) && allMoves[move].category === MoveCategory.STATUS) {
-      return true;
-    }
-    return false;
+    return allMoves[move].hasFlag(MoveFlags.TRIAGE_MOVE) && allMoves[move].category === MoveCategory.STATUS;
   }
 
   /**
@@ -2773,10 +2764,7 @@ export class HealBlockTag extends MoveRestrictionBattlerTag {
   override isMoveTargetRestricted(move: Moves, user: Pokemon, target: Pokemon) {
     const moveCategory = new NumberHolder(allMoves[move].category);
     applyMoveAttrs(StatusCategoryOnAllyAttr, user, target, allMoves[move], moveCategory);
-    if (allMoves[move].hasAttr(HealOnAllyAttr) && moveCategory.value === MoveCategory.STATUS) {
-      return true;
-    }
-    return false;
+    return allMoves[move].hasAttr(HealOnAllyAttr) && moveCategory.value === MoveCategory.STATUS;
   }
 
   /**
@@ -3114,10 +3102,7 @@ export class TormentTag extends MoveRestrictionBattlerTag {
     const moveObj = allMoves[lastMove.move];
     const isUnaffected = moveObj.hasAttr(ConsecutiveUseDoublePowerAttr) || user.getTag(BattlerTagType.FRENZY);
     const validLastMoveResult = lastMove.result === MoveResult.SUCCESS || lastMove.result === MoveResult.MISS;
-    if (lastMove.move === move && validLastMoveResult && lastMove.move !== Moves.STRUGGLE && !isUnaffected) {
-      return true;
-    }
-    return false;
+    return lastMove.move === move && validLastMoveResult && lastMove.move !== Moves.STRUGGLE && !isUnaffected;
   }
 
   override selectionDeniedText(pokemon: Pokemon, _move: Moves): string {

@@ -275,15 +275,11 @@ export class TimeOfDayRequirement extends EncounterSceneRequirement {
 
   override meetsRequirement(): boolean {
     const timeOfDay = globalScene.arena?.getTimeOfDay();
-    if (
+    return !(
       !isNullOrUndefined(timeOfDay) &&
       this.requiredTimeOfDay?.length > 0 &&
       !this.requiredTimeOfDay.includes(timeOfDay)
-    ) {
-      return false;
-    }
-
-    return true;
+    );
   }
 
   override getDialogueToken(_pokemon?: PlayerPokemon): [string, string] {
@@ -301,15 +297,11 @@ export class WeatherRequirement extends EncounterSceneRequirement {
 
   override meetsRequirement(): boolean {
     const currentWeather = globalScene.arena.weather?.weatherType;
-    if (
+    return !(
       !isNullOrUndefined(currentWeather) &&
       this.requiredWeather?.length > 0 &&
       !this.requiredWeather.includes(currentWeather!)
-    ) {
-      return false;
-    }
-
-    return true;
+    );
   }
 
   override getDialogueToken(_pokemon?: PlayerPokemon): [string, string] {
@@ -798,7 +790,7 @@ export class CanFormChangeWithItemRequirement extends EncounterPokemonRequiremen
   }
 
   filterByForm(pokemon, formChangeItem) {
-    if (
+    return (
       pokemonFormChanges.hasOwnProperty(pokemon.species.speciesId) &&
       // Get all form changes for this species with an item trigger, including any compound triggers
       pokemonFormChanges[pokemon.species.speciesId]
@@ -807,10 +799,7 @@ export class CanFormChangeWithItemRequirement extends EncounterPokemonRequiremen
         .flatMap(fc => fc.findTrigger(SpeciesFormChangeItemTrigger) as SpeciesFormChangeItemTrigger)
         .flatMap(fc => fc.item)
         .includes(formChangeItem)
-    ) {
-      return true;
-    }
-    return false;
+    );
   }
 
   override queryParty(partyPokemon: PlayerPokemon[]): PlayerPokemon[] {
@@ -868,17 +857,15 @@ export class CanEvolveWithItemRequirement extends EncounterPokemonRequirement {
     ) {
       return true;
     }
-    if (
+
+    return (
       pokemon.isFusion() &&
       pokemonEvolutions.hasOwnProperty(pokemon.fusionSpecies.speciesId) &&
       pokemonEvolutions[pokemon.fusionSpecies.speciesId].filter(
         e => e.item === evolutionItem && (!e.condition || e.condition.predicate(pokemon)),
       ).length &&
       pokemon.getFusionFormKey() !== SpeciesFormKey.GIGANTAMAX
-    ) {
-      return true;
-    }
-    return false;
+    );
   }
 
   override queryParty(partyPokemon: PlayerPokemon[]): PlayerPokemon[] {

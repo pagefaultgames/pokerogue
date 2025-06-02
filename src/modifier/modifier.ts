@@ -1217,10 +1217,6 @@ export class StatBoosterModifier extends PokemonHeldItemModifier {
  * @see {@linkcode apply}
  */
 export class EvolutionStatBoosterModifier extends StatBoosterModifier {
-  clone() {
-    return super.clone() as EvolutionStatBoosterModifier;
-  }
-
   matchType(modifier: Modifier): boolean {
     return modifier instanceof EvolutionStatBoosterModifier;
   }
