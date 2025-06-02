@@ -41,8 +41,8 @@ describe("Moves - Quick Guard", () => {
 
     game.move.select(Moves.QUICK_GUARD, BattlerIndex.PLAYER);
     game.move.select(Moves.SPLASH, BattlerIndex.PLAYER_2);
-    await game.forceEnemyMove(Moves.QUICK_ATTACK, BattlerIndex.PLAYER);
-    await game.forceEnemyMove(Moves.QUICK_ATTACK, BattlerIndex.PLAYER_2);
+    await game.move.forceEnemyMove(Moves.QUICK_ATTACK, BattlerIndex.PLAYER);
+    await game.move.forceEnemyMove(Moves.QUICK_ATTACK, BattlerIndex.PLAYER_2);
     await game.phaseInterceptor.to("BerryPhase", false);
 
     expect(charizard.hp).toBe(charizard.getMaxHp());
@@ -60,8 +60,8 @@ describe("Moves - Quick Guard", () => {
 
     game.move.select(Moves.QUICK_GUARD, BattlerIndex.PLAYER);
     game.move.select(Moves.SPLASH, BattlerIndex.PLAYER_2);
-    await game.forceEnemyMove(move, BattlerIndex.PLAYER);
-    await game.forceEnemyMove(move, BattlerIndex.PLAYER_2);
+    await game.move.forceEnemyMove(move, BattlerIndex.PLAYER);
+    await game.move.forceEnemyMove(move, BattlerIndex.PLAYER_2);
     await game.phaseInterceptor.to("BerryPhase", false);
 
     expect(charizard.hp).toBe(charizard.getMaxHp());

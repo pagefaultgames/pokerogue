@@ -203,12 +203,12 @@ describe("Moves - Protect", () => {
 
     // Turn 1: setup future sight
     game.move.select(Moves.PROTECT);
-    await game.forceEnemyMove(Moves.FUTURE_SIGHT);
+    await game.move.forceEnemyMove(Moves.FUTURE_SIGHT);
     await game.toNextTurn();
 
     // Turn 2: mighty cleave
     game.move.select(Moves.PROTECT);
-    await game.forceEnemyMove(Moves.MIGHTY_CLEAVE);
+    await game.move.forceEnemyMove(Moves.MIGHTY_CLEAVE);
     await game.toNextTurn();
 
     expect(aggron.hp).toBeLessThan(aggron.getMaxHp());
@@ -217,7 +217,7 @@ describe("Moves - Protect", () => {
 
     // turn 3: Future Sight hits
     game.move.select(Moves.PROTECT);
-    await game.forceEnemyMove(Moves.SPORE);
+    await game.move.forceEnemyMove(Moves.SPORE);
     await game.toNextTurn();
 
     expect(aggron.hp).toBeLessThan(aggron.getMaxHp());

@@ -43,8 +43,8 @@ describe("Moves - Crafty Shield", () => {
     const [charizard, blastoise] = game.scene.getPlayerField();
     game.move.select(Moves.CRAFTY_SHIELD, BattlerIndex.PLAYER);
     game.move.select(Moves.SPLASH, BattlerIndex.PLAYER_2);
-    await game.forceEnemyMove(Moves.GROWL);
-    await game.forceEnemyMove(Moves.GROWL);
+    await game.move.forceEnemyMove(Moves.GROWL);
+    await game.move.forceEnemyMove(Moves.GROWL);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
@@ -55,13 +55,13 @@ describe("Moves - Crafty Shield", () => {
   it("should not protect the user and allies from attack moves", async () => {
     game.override.enemyMoveset(Moves.TACKLE);
     await game.classicMode.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
-    
+
     const [charizard, blastoise] = game.scene.getPlayerField();
 
     game.move.select(Moves.CRAFTY_SHIELD, BattlerIndex.PLAYER);
     game.move.select(Moves.SPLASH, BattlerIndex.PLAYER_2);
-    await game.forceEnemyMove(Moves.TACKLE, BattlerIndex.PLAYER);
-    await game.forceEnemyMove(Moves.TACKLE, BattlerIndex.PLAYER_2);
+    await game.move.forceEnemyMove(Moves.TACKLE, BattlerIndex.PLAYER);
+    await game.move.forceEnemyMove(Moves.TACKLE, BattlerIndex.PLAYER_2);
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(charizard.isFullHp()).toBe(false);
@@ -76,8 +76,8 @@ describe("Moves - Crafty Shield", () => {
 
     game.move.select(Moves.CRAFTY_SHIELD, BattlerIndex.PLAYER);
     game.move.select(Moves.SPLASH, BattlerIndex.PLAYER_2);
-    await game.forceEnemyMove(Moves.PERISH_SONG);
-    await game.forceEnemyMove(Moves.TOXIC_SPIKES);
+    await game.move.forceEnemyMove(Moves.PERISH_SONG);
+    await game.move.forceEnemyMove(Moves.TOXIC_SPIKES);
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(game.scene.arena.getTagOnSide(ArenaTagType.TOXIC_SPIKES, ArenaTagSide.PLAYER)).toBeDefined();
@@ -87,15 +87,15 @@ describe("Moves - Crafty Shield", () => {
 
   it("should protect the user and allies from moves that ignore other protection", async () => {
     game.override.moveset(Moves.CURSE);
-    
+
     await game.classicMode.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
 
     const [charizard, blastoise] = game.scene.getPlayerField();
 
     game.move.select(Moves.CRAFTY_SHIELD, BattlerIndex.PLAYER);
     game.move.select(Moves.SPLASH, BattlerIndex.PLAYER_2);
-    await game.forceEnemyMove(Moves.CURSE, BattlerIndex.PLAYER);
-    await game.forceEnemyMove(Moves.CURSE, BattlerIndex.PLAYER_2);
+    await game.move.forceEnemyMove(Moves.CURSE, BattlerIndex.PLAYER);
+    await game.move.forceEnemyMove(Moves.CURSE, BattlerIndex.PLAYER_2);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 

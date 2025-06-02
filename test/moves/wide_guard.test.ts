@@ -41,8 +41,8 @@ describe("Moves - Wide Guard", () => {
 
     game.move.select(Moves.WIDE_GUARD, BattlerIndex.PLAYER);
     game.move.select(Moves.SPLASH, BattlerIndex.PLAYER_2);
-    await game.forceEnemyMove(Moves.SWIFT);
-    await game.forceEnemyMove(Moves.GROWL);
+    await game.move.forceEnemyMove(Moves.SWIFT);
+    await game.move.forceEnemyMove(Moves.GROWL);
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(charizard.hp).toBe(charizard.getMaxHp());
@@ -57,8 +57,8 @@ describe("Moves - Wide Guard", () => {
     const [charizard, blastoise] = game.scene.getPlayerField();
     game.move.select(Moves.WIDE_GUARD, BattlerIndex.PLAYER);
     game.move.select(Moves.SPLASH, BattlerIndex.PLAYER_2);
-    await game.forceEnemyMove(Moves.TACKLE, BattlerIndex.PLAYER);
-    await game.forceEnemyMove(Moves.TACKLE, BattlerIndex.PLAYER_2);
+    await game.move.forceEnemyMove(Moves.TACKLE, BattlerIndex.PLAYER);
+    await game.move.forceEnemyMove(Moves.TACKLE, BattlerIndex.PLAYER_2);
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(charizard.hp).toBeLessThan(charizard.getMaxHp());
