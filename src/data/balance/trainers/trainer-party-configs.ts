@@ -13,17 +13,16 @@ export const trainerPartyConfigs: TrainerPartyConfigs = {
       species: Species.DEWGONG,
       abilityIndex: 0, // Thick Fat
     }],
-    [2, [{
-      species: Species.SLOWBRO,
-      teraType: PokemonType.ICE,
-      instantTera: true,
-      presetMoves: [Moves.ICE_BEAM],
-    }, {
-      species: Species.GALAR_SLOWBRO,
-      teraType: PokemonType.ICE,
-      instantTera: true,
-      presetMoves: [Moves.ICE_BEAM],
-    }]],
+    [2, [
+      {species: Species.SLOWBRO},
+      {species: Species.GALAR_SLOWBRO}
+      ],
+      {
+        teraType: PokemonType.ICE,
+        instantTera: true,
+        presetMoves: [Moves.ICE_BEAM],
+      }
+    ],
     [3, { species: Species.JYNX }],
     [4, [{ species: Species.CLOYSTER }, { species: Species.ALOLA_SANDSLASH }]],
     [5, { species: Species.LAPRAS }]
@@ -47,16 +46,14 @@ export const trainerPartyConfigs: TrainerPartyConfigs = {
     [2, [{
       species: Species.ARBOK,
       abilityIndex: 0,
-      teraType: PokemonType.GHOST,
-      instantTera: true,
-      presetMoves: [Moves.TERA_BLAST],
-    }, {
+      }, {
       species: Species.WEEZING,
       abilityIndex: 0,
+    }], {
       teraType: PokemonType.GHOST,
       instantTera: true,
       presetMoves: [Moves.TERA_BLAST],
-    }]],
+    }],
     [3, { species: Species.ALOLA_MAROWAK }],
     [4, { species: Species.CURSOLA }],
     [5, {
@@ -68,15 +65,11 @@ export const trainerPartyConfigs: TrainerPartyConfigs = {
     [2, [{
       species: Species.GYARADOS,
       presetMoves: [Moves.SCALE_SHOT],
-      teraType: PokemonType.DRAGON,
-      instantTera: true,
     },
     {
       species: Species.AERODACTYL,
       presetMoves: [Moves.DRAGON_CLAW],
-      teraType: PokemonType.DRAGON,
-      instantTera: true,
-    }]
+    }], {instantTera: true}
     ],
     [3, { species: Species.ALOLA_EXEGGUTOR }],
     [4, { species: Species.SALAMENCE }],
@@ -85,19 +78,16 @@ export const trainerPartyConfigs: TrainerPartyConfigs = {
 
   [TrainerType.WILL]: [
     [0, { species: Species.JYNX }],
-    [2, [{
-      species: Species.SLOWKING,
+    [2, [
+      {species: Species.SLOWKING},
+      {species: Species.GALAR_SLOWKING},
+    ], {
       gender: Gender.FEMALE,
       teraType: PokemonType.PSYCHIC,
       instantTera: true,
-    }, {
-      species: Species.GALAR_SLOWKING,
-      gender: Gender.FEMALE,
-      teraType: PokemonType.PSYCHIC,
-      instantTera: true,
-    }]],
+    }],
     [3, { species: Species.EXEGGUTOR, gender: Gender.FEMALE }],
-    [4, [{ species: Species.WYRDEER, gender: Gender.FEMALE }, { species: Species.FARIGIRAF, gender: Gender.FEMALE }]],
+    [4, [{ species: Species.WYRDEER }, { species: Species.FARIGIRAF }], {gender: Gender.FEMALE}],
     [5, { species: Species.XATU, gender: Gender.FEMALE }]
   ],
   [TrainerType.KOGA]: [
@@ -107,11 +97,9 @@ export const trainerPartyConfigs: TrainerPartyConfigs = {
     }],
     [2, [{
       species: Species.MUK,
-      instantTera: true,
-    }, {
+      }, {
       species: Species.WEEZING,
-      instantTera: true,
-    }]],
+    }], {instantTera: true}],
     [3, { species: Species.TENTACRUEL }],
     [4, [{ species: Species.SNEASLER }, { species: Species.OVERQWIL }]],
     [5, { species: Species.CROBAT }]
@@ -210,16 +198,12 @@ export const trainerPartyConfigs: TrainerPartyConfigs = {
     [0, { species: Species.RAPIDASH }],
     [2, [{
       species: Species.STEELIX,
-      teraType: PokemonType.FIRE,
-      instantTera: true,
       presetMoves: [Moves.FIRE_FANG],
     },
     {
       species: Species.LOPUNNY,
-      teraType: PokemonType.FIRE,
-      instantTera: true,
       presetMoves: [Moves.FIRE_PUNCH],
-    }]],
+    }], {teraType: PokemonType.FIRE, instantTera: true}],
     [3, [{ species: Species.ARCANINE }, { species: Species.HISUI_ARCANINE }]],
     [4, { species: Species.INFERNAPE }],
     [5, {
@@ -296,7 +280,7 @@ export const trainerPartyConfigs: TrainerPartyConfigs = {
     [0, { species: Species.KLEFKI }],
     [2, {
       species: Species.CERULEDGE,
-      instantTera: true,
+      instantTera: true, // Tera Steel Ceruledge
       presetMoves: [Moves.IRON_HEAD],
     }],
     [3, { species: Species.SCIZOR }],
@@ -307,7 +291,7 @@ export const trainerPartyConfigs: TrainerPartyConfigs = {
     [0, { species: Species.DRAGALGE }],
     [2, {
       species: Species.GARCHOMP,
-      instantTera: true,
+      instantTera: true, // Tera Dragon Garchomp
     }],
     [3, { species: Species.ALTARIA }],
     [4, { species: Species.DRUDDIGON }],
@@ -411,11 +395,11 @@ export const trainerPartyConfigs: TrainerPartyConfigs = {
   [TrainerType.ALLISTER_ELITE]: [
     [0, { species: Species.DUSKNOIR }],
     [2, {
-      species: Species.RUNERIGUS,
-      instantTera: true, // Tera Ghost Runerigus
+      species: Species.CURSOLA,
+      instantTera: true, // Tera Ghost Cursola
     }],
     [3, [{ species: Species.POLTEAGEIST }, { species: Species.SINISTCHA }]],
-    [4, { species: Species.CURSOLA }],
+    [4, { species: Species.RUNERIGUS }],
     [5, { species: Species.GENGAR }],
   ],
   [TrainerType.RAIHAN_ELITE]: [
@@ -441,12 +425,15 @@ export const trainerPartyConfigs: TrainerPartyConfigs = {
   [TrainerType.POPPY]: [
     [0, { species: Species.COPPERAJAH }],
     [2, { species: Species.MAGNEZONE }],
-    [3, [{
-      species: Species.CORVIKNIGHT
-    }, {
-      species: Species.BRONZONG,
-      abilityIndex: 0, // Levitate
-    }]],
+    [3, [
+      {
+        species: Species.CORVIKNIGHT
+      },
+      {
+        species: Species.BRONZONG,
+        abilityIndex: 0, // Levitate
+      }
+    ]],
     [4, { species: Species.STEELIX }],
     [5, { species: Species.TINKATON, instantTera: true }],
   ],
@@ -509,7 +496,7 @@ export const trainerPartyConfigs: TrainerPartyConfigs = {
       presetMoves: [Moves.DUAL_CHOP],
     }],
     [3, { species: Species.HAXORUS }],
-    [4, [{ species: Species.KINGDRA }, { species: Species.DRACOVISH }]],
+    [4, { species: Species.KINGDRA }],
     [5, { species: Species.ARCHALUDON }],
   ],
 
@@ -517,23 +504,15 @@ export const trainerPartyConfigs: TrainerPartyConfigs = {
     [0, { species: Species.ALAKAZAM }],
     [1, { species: Species.MACHAMP }],
     [2, { species: Species.HO_OH, pokeball: PokeballType.MASTER_BALL }],
-    [3, [{
-      species: Species.RHYPERIOR,
-      instantTera: true, // Tera Ground or Rock
-    }, {
-      species: Species.ELECTIVIRE,
-      instantTera: true, // Tera Electric
-    }]],
-    [4, [{
-      species: Species.ARCANINE,
-      boss: true,
-    }, {
-      species: Species.EXEGGUTOR,
-      boss: true,
-    }, {
-      species: Species.GYARADOS,
-      boss: true,
-    }]],
+    [3, [
+      {species: Species.RHYPERIOR}, // Tera Ground or Rock
+      {species: Species.ELECTIVIRE}, // Tera Electric
+    ], {instantTera: true}],
+    [4, [
+      {species: Species.ARCANINE},
+      {species: Species.EXEGGUTOR},
+      {species: Species.GYARADOS}
+    ], {boss: true}],
     [5, {
       species: Species.PIDGEOT,
       formIndex: 1, // Mega Pidgeot
@@ -547,16 +526,11 @@ export const trainerPartyConfigs: TrainerPartyConfigs = {
     }],
     [1, [{ species: Species.ESPEON }, { species: Species.UMBREON }, { species: Species.SYLVEON }]],
     [2, { species: Species.LUGIA, pokeball: PokeballType.MASTER_BALL }],
-    [3, [{
-      species: Species.MEGANIUM,
-      instantTera: true, // Tera Grass
-    }, {
-      species: Species.TYPHLOSION,
-      instantTera: true, // Tera Fire
-    }, {
-      species: Species.FERALIGATR,
-      instantTera: true, // Tera Water
-    }]],
+    [3, [
+      {species: Species.MEGANIUM},
+      {species: Species.TYPHLOSION},
+      {species: Species.FERALIGATR}
+    ], {instantTera: true}],
     [4, { species: Species.SNORLAX, boss: true }],
     [5, [{
       species: Species.VENUSAUR,
@@ -578,23 +552,16 @@ export const trainerPartyConfigs: TrainerPartyConfigs = {
     [4, [{
       species: Species.TYRANITAR,
       abilityIndex: 2, // Unnerve
-      teraType: PokemonType.DRAGON,
-      instantTera: true,
-      presetMoves: [Moves.DRAGON_CLAW]
+      presetMoves: [Moves.DRAGON_CLAW],
     }, {
       species: Species.GARCHOMP,
       abilityIndex: 2, // Rough Skin
-      teraType: PokemonType.DRAGON,
-      instantTera: true,
     }, {
       species: Species.KOMMO_O,
       abilityIndex: 1, // Soundproof
-      teraType: PokemonType.DRAGON,
-      instantTera: true,
-    }]],
+    }], {teraType: PokemonType.DRAGON, instantTera: true}],
     [5, {
       species: Species.DRAGONITE,
-      abilityIndex: 2, // Multiscale
       boss: true,
     }]
   ],
@@ -604,19 +571,11 @@ export const trainerPartyConfigs: TrainerPartyConfigs = {
     [1, [{ species: Species.CRADILY }, { species: Species.ARMALDO }]],
     [2, { species: Species.AGGRON, boss: true }],
     [3, [{ species: Species.GOLURK }, { species: Species.RUNERIGUS }]],
-    [4, [{
-      species: Species.REGIROCK,
-      instantTera: true,
-      pokeball: PokeballType.ULTRA_BALL,
-    }, {
-      species: Species.REGICE,
-      instantTera: true,
-      pokeball: PokeballType.ULTRA_BALL,
-    }, {
-      species: Species.REGISTEEL,
-      instantTera: true,
-      pokeball: PokeballType.ULTRA_BALL,
-    }]],
+    [4, [
+      {species: Species.REGIROCK},
+      {species: Species.REGICE},
+      {species: Species.REGISTEEL}
+    ], {instantTera: true, pokeball: PokeballType.ULTRA_BALL}],
     [5, {
       species: Species.METAGROSS,
       formIndex: 1, // Mega Metagross
@@ -628,22 +587,15 @@ export const trainerPartyConfigs: TrainerPartyConfigs = {
     [2, [{
       species: Species.LATIAS,
       formIndex: 1, // Mega Latias
-      pokeball: PokeballType.MASTER_BALL,
     }, {
       species: Species.LATIOS,
       formIndex: 1, // Mega Latios
-      pokeball: PokeballType.MASTER_BALL,
-    }]],
+    }], {pokeball: PokeballType.MASTER_BALL}],
     [3, [{ species: Species.SWAMPERT }, { species: Species.GASTRODON }, { species: Species.SEISMITOAD }]],
-    [4, [{
-      species: Species.REGIELEKI,
-      instantTera: true,
-      pokeball: PokeballType.ULTRA_BALL,
-    }, {
-      species: Species.REGIDRAGO,
-      instantTera: true,
-      pokeball: PokeballType.ULTRA_BALL,
-    }]],
+    [4, [
+      {species: Species.REGIELEKI},
+      {species: Species.REGIDRAGO}
+    ], {instantTera: true, pokeball: PokeballType.ULTRA_BALL}],
     [5, {
       species: Species.MILOTIC,
       boss: true,
@@ -683,18 +635,18 @@ export const trainerPartyConfigs: TrainerPartyConfigs = {
   [TrainerType.ALDER]: [
     [0, [{ species: Species.BOUFFALANT }, { species: Species.BRAVIARY }]],
     [1, [
-      { species: Species.BASCULEGION, pokeball: PokeballType.ROGUE_BALL },
-      { species: Species.HISUI_LILLIGANT, pokeball: PokeballType.ROGUE_BALL },
-      { species: Species.HISUI_ZOROARK, pokeball: PokeballType.ROGUE_BALL },
-    ]],
+      { species: Species.BASCULEGION },
+      { species: Species.HISUI_LILLIGANT },
+      { species: Species.HISUI_ZOROARK },
+    ], {pokeball: PokeballType.ROGUE_BALL}],
     [2, { species: Species.ZEKROM, pokeball: PokeballType.MASTER_BALL }],
     [3, { species: Species.KELDEO, pokeball: PokeballType.ULTRA_BALL }],
     [4, [
-      { species: Species.CHANDELURE, teraType: PokemonType.GHOST, instantTera: true },
-      { species: Species.KROOKODILE, teraType: PokemonType.DARK, instantTera: true },
-      { species: Species.CONKELDURR, teraType: PokemonType.FIGHTING, instantTera: true },
-      { species: Species.REUNICLUS, teraType: PokemonType.PSYCHIC, instantTera: true },
-    ]],
+      { species: Species.CHANDELURE, teraType: PokemonType.GHOST },
+      { species: Species.KROOKODILE, teraType: PokemonType.DARK },
+      { species: Species.CONKELDURR, teraType: PokemonType.FIGHTING },
+      { species: Species.REUNICLUS, teraType: PokemonType.PSYCHIC },
+    ], {instantTera: true}],
     [5, { species: Species.VOLCARONA, boss: true }],
   ],
   [TrainerType.IRIS]: [
@@ -702,10 +654,10 @@ export const trainerPartyConfigs: TrainerPartyConfigs = {
     [1, { species: Species.ARCHEOPS }],
     [2, { species: Species.RESHIRAM, pokeball: PokeballType.MASTER_BALL }],
     [3, [
-      { species: Species.SALAMENCE, teraType: PokemonType.DRAGON, instantTera: true },
-      { species: Species.HYDREIGON, teraType: PokemonType.DRAGON, instantTera: true },
-      { species: Species.ARCHALUDON, teraType: PokemonType.DRAGON, instantTera: true },
-    ]],
+      { species: Species.SALAMENCE },
+      { species: Species.HYDREIGON },
+      { species: Species.ARCHALUDON },
+    ], {teraType: PokemonType.DRAGON, instantTera: true}],
     [4, {
       species: Species.LAPRAS,
       formIndex: 1, // G-Max Lapras
@@ -721,13 +673,11 @@ export const trainerPartyConfigs: TrainerPartyConfigs = {
       species: Species.TYRANTRUM,
       abilityIndex: 2, // Rock Head
       teraType: PokemonType.DRAGON,
-      instantTera: true,
     }, {
       species: Species.AURORUS,
       abilityIndex: 2, // Snow Warning
       teraType: PokemonType.ICE,
-      instantTera: true,
-    }]],
+    }], {instantTera: true}],
     [4, {
       species: Species.GOODRA,
       boss: true,
@@ -745,19 +695,19 @@ export const trainerPartyConfigs: TrainerPartyConfigs = {
     }],
     [1, [{ species: Species.MAGNEZONE }, { species: Species.ALOLA_NINETALES }]],
     [2, [
-      { species: Species.TORNADUS, formIndex: 1, pokeball: PokeballType.ULTRA_BALL },
-      { species: Species.THUNDURUS, formIndex: 1, pokeball: PokeballType.ULTRA_BALL },
-      { species: Species.LANDORUS, formIndex: 1, pokeball: PokeballType.ULTRA_BALL },
-    ]],
+      { species: Species.TORNADUS },
+      { species: Species.THUNDURUS },
+      { species: Species.LANDORUS },
+    ], {formIndex: 1, pokeball: PokeballType.ULTRA_BALL}], // Therian Forme Genie
     [3, [
-      { species: Species.TAPU_KOKO, boss: true, pokeball: PokeballType.ULTRA_BALL },
-      { species: Species.TAPU_FINI, boss: true, pokeball: PokeballType.ULTRA_BALL },
-    ]],
+      { species: Species.TAPU_KOKO },
+      { species: Species.TAPU_FINI },
+    ], {boss: true, pokeball: PokeballType.ULTRA_BALL}],
     [4, { species: Species.SNORLAX, formIndex: 1 }], // G-Max Snorlax
     [5, [
-      { species: Species.INCINEROAR, teraType: PokemonType.DARK, instantTera: true },
-      { species: Species.HISUI_DECIDUEYE, teraType: PokemonType.FIGHTING, instantTera: true },
-    ]],
+      { species: Species.INCINEROAR, teraType: PokemonType.DARK },
+      { species: Species.HISUI_DECIDUEYE, teraType: PokemonType.FIGHTING },
+    ], {instantTera: true}],
   ],
 
   [TrainerType.HAU]: [
@@ -765,14 +715,14 @@ export const trainerPartyConfigs: TrainerPartyConfigs = {
     [1, { species: Species.NOIVERN }],
     [2, { species: Species.SOLGALEO, pokeball: PokeballType.MASTER_BALL }],
     [3, [
-      { species: Species.TAPU_LELE, teraType: PokemonType.PSYCHIC, instantTera: true, pokeball: PokeballType.ULTRA_BALL },
-      { species: Species.TAPU_BULU, teraType: PokemonType.GRASS, instantTera: true, pokeball: PokeballType.ULTRA_BALL },
-    ]],
+      { species: Species.TAPU_LELE, teraType: PokemonType.PSYCHIC },
+      { species: Species.TAPU_BULU, teraType: PokemonType.GRASS },
+    ], {instantTera: true, pokeball: PokeballType.ULTRA_BALL}],
     [4, { species: Species.ZYGARDE, formIndex: 1, pokeball: PokeballType.ROGUE_BALL }], // Zygarde 10% Forme, Aura Break
     [5, [
-      { species: Species.DECIDUEYE, boss: true },
-      { species: Species.PRIMARINA, boss: true, gender: Gender.FEMALE },
-    ]],
+      { species: Species.DECIDUEYE },
+      { species: Species.PRIMARINA, gender: Gender.FEMALE },
+    ], {boss: true}],
   ],
 
   [TrainerType.LEON]: [
@@ -781,10 +731,10 @@ export const trainerPartyConfigs: TrainerPartyConfigs = {
     [2, { species: Species.ZACIAN, pokeball: PokeballType.MASTER_BALL }],
     [3, { species: Species.DRAGAPULT, instantTera: true }], // Tera Ghost or Dragon Dragapult
     [4, [
-      { species: Species.RILLABOOM, boss: true },
-      { species: Species.CINDERACE, boss: true },
-      { species: Species.INTELEON, boss: true },
-    ]],
+      { species: Species.RILLABOOM },
+      { species: Species.CINDERACE },
+      { species: Species.INTELEON },
+    ], {boss: true}],
     [5, { species: Species.CHARIZARD, formIndex: 3 }], // G-Max Charizard
   ],
 
@@ -792,14 +742,14 @@ export const trainerPartyConfigs: TrainerPartyConfigs = {
     [0, { species: Species.CORVIKNIGHT, pokeball: PokeballType.ULTRA_BALL }],
     [1, { species: Species.KOMMO_O, pokeball: PokeballType.ULTRA_BALL }],
     [2, [
-      { species: Species.GALAR_SLOWBRO, pokeball: PokeballType.ULTRA_BALL, teraType: PokemonType.POISON, instantTera: true },
-      { species: Species.GALAR_SLOWKING, pokeball: PokeballType.ULTRA_BALL, teraType: PokemonType.POISON, instantTera: true },
-    ]],
+      { species: Species.GALAR_SLOWBRO, pokeball: PokeballType.ULTRA_BALL },
+      { species: Species.GALAR_SLOWKING, pokeball: PokeballType.ULTRA_BALL },
+    ], {teraType: PokemonType.POISON, instantTera: true}],
     [3, { species: Species.GALAR_DARMANITAN, pokeball: PokeballType.ULTRA_BALL }],
     [4, [
-      { species: Species.VENUSAUR, pokeball: PokeballType.ULTRA_BALL, boss: true },
-      { species: Species.BLASTOISE, pokeball: PokeballType.ULTRA_BALL, boss: true },
-    ]],
+      { species: Species.VENUSAUR },
+      { species: Species.BLASTOISE },
+    ], {pokeball: PokeballType.ULTRA_BALL, boss: true}],
     [5, {
       species: Species.URSHIFU,
       randomForms: [2, 3], // G-Max Single Strike or G-Max Rapid Strike
@@ -837,31 +787,17 @@ export const trainerPartyConfigs: TrainerPartyConfigs = {
       {
         species: Species.ARMAROUGE,
         teraType: PokemonType.PSYCHIC,
-        instantTera: true,
       },
       {
         species: Species.CERULEDGE,
         teraType: PokemonType.GHOST,
-        instantTera: true,
       },
-    ]],
+    ], {instantTera: true}],
     [5, [
-      {
-        species: Species.MEOWSCARADA,
-        boss: true,
-        gender: Gender.MALE,
-      },
-      {
-        species: Species.SKELEDIRGE,
-        boss: true,
-        gender: Gender.MALE,
-      },
-      {
-        species: Species.QUAQUAVAL,
-        boss: true,
-        gender: Gender.MALE,
-      },
-    ]]
+      {species: Species.MEOWSCARADA},
+      {species: Species.SKELEDIRGE},
+      {species: Species.QUAQUAVAL},
+    ], {boss: true, gender: Gender.MALE}],
   ],
 
   [TrainerType.KIERAN]: [
@@ -872,9 +808,9 @@ export const trainerPartyConfigs: TrainerPartyConfigs = {
     ]],
     [2, { species: Species.TERAPAGOS, pokeball: PokeballType.MASTER_BALL }],
     [3, [
-      { species: Species.URSALUNA, pokeball: PokeballType.ULTRA_BALL },
-      { species: Species.BLOODMOON_URSALUNA, pokeball: PokeballType.ULTRA_BALL },
-    ]],
+      { species: Species.URSALUNA },
+      { species: Species.BLOODMOON_URSALUNA },
+    ], {pokeball: PokeballType.ULTRA_BALL}],
     [4, {
       species: Species.OGERPON,
       randomForms: [0, 1, 2, 3], // Choose a random Mask, which will then Tera

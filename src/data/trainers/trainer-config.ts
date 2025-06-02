@@ -49,13 +49,8 @@ import type {
   TrainerConfigs,
   PartyMemberFuncs,
 } from "./typedefs";
-import { PokemonPregenData } from "#app/system/pokemon-data";
+import { mergePregenData, PokemonPregenData } from "#app/system/pokemon-data";
 import { trainerPartyConfigs } from "../balance/trainers/trainer-party-configs";
-
-export type TrainerPartySetSlot = [
-  slot: number,
-  config: PokemonPregenData | PokemonPregenData[]
-]
 
 /** Minimum BST for Pokemon generated onto the Elite Four's teams */
 const ELITE_FOUR_MINIMUM_BST = 460;
@@ -129,6 +124,7 @@ export class TrainerConfig {
   public specialtyType: PokemonType;
   public hasVoucher = false;
   public trainerAI: TrainerAI;
+  public partyPregen: Partial<PokemonPregenData>;
 
   public encounterMessages: string[] = [];
   public victoryMessages: string[] = [];
@@ -712,22 +708,24 @@ export class TrainerConfig {
     return this;
   }
 
-  getRandomPartyMemberFuncFromConfig(cfgs: PokemonPregenData[], postProcess?: (Pokemon) => void) {
+  getRandomPartyMemberFuncFromConfig(cfgs: PokemonPregenData[], postProcess?: (Pokemon) => void, extraPregen?: Partial<PokemonPregenData>) {
     return (level: number, strength: PartyMemberStrength) => {
       let cfg: PokemonPregenData = cfgs[0];
       if (cfgs.length > 1) {
         cfg = randSeedItem(cfgs);
       }
 
-      if (cfg.teraType) { // Defined tera type: instant tera
+      if (cfg.teraType || extraPregen?.teraType) { // Defined tera type: instant tera
         cfg.instantTera = true;
       }
-      else if (cfg.instantTera && this.hasSpecialtyType()) { // Instant tera with undefined type will be specialty type
+      else if ((cfg.instantTera || extraPregen?.instantTera) && this.hasSpecialtyType()) { // Instant tera with undefined type will be specialty type
         cfg.teraType = this.specialtyType;
       }
+      const pregen = extraPregen ? mergePregenData(extraPregen, this.partyPregen) : this.partyPregen;
 
       cfg.player = false;
       cfg.level = level;
+      cfg = pregen ? mergePregenData(cfg, pregen) as PokemonPregenData : cfg;
       return globalScene.addEnemyPokemon(
         getPokemonSpecies(cfg.species),
         level,
@@ -736,7 +734,7 @@ export class TrainerConfig {
         cfg.shinyLock,
         undefined,
         postProcess,
-        cfg
+        cfg,
       );
     }
   }
@@ -762,22 +760,28 @@ export class TrainerConfig {
     // Set species filter and specialty type, otherwise filter by base total.
     this.setSpeciesFilter(p => p.isOfType(specialtyType) && p.baseTotal >= ELITE_FOUR_MINIMUM_BST);
     this.setSpecialtyType(specialtyType);
+    if (!this.partyPregen.preferredGender) {
+      this.partyPregen.preferredGender = isMale ? Gender.MALE : Gender.FEMALE;
+    }
 
     trainerPartyConfigs[this.trainerType].forEach((slot, s) => {
-      const cfg = Array.isArray(slot[1]) ? slot[1] : [slot[1]];
-      if (s === 5) { // Last party member is always a boss with 2 segments
-        cfg.forEach(c => {
-          c.boss = true;
-          c.bossSegments = 2;
-        });
+      if (!Array.isArray(slot[1])) {
+        if (s == 5) {
+          slot[1].boss = true;
+          slot[1].bossSegments = 2;
+        }
+        if (slot[1].teraType || slot[1].instantTera) {
+          this.setInstantTera(s);
+        }
+        this.setPartyMemberFunc(slot[0], this.getRandomPartyMemberFuncFromConfig([slot[1]]));
       }
-      cfg.forEach(c => {
-        c.preferredGender = c.preferredGender ?? isMale ? Gender.MALE: Gender.FEMALE;
-      });
-      if (cfg.some(c => c.teraType || c.instantTera)) {
-        this.setInstantTera(s);
+      else {
+        let pregen = slot[2] ?? undefined;
+        if (slot[2]?.teraType || slot[2]?.instantTera) {
+          this.setInstantTera(s);
+        }
+        this.setPartyMemberFunc(slot[0], this.getRandomPartyMemberFuncFromConfig(slot[1], undefined, pregen));
       }
-      this.setPartyMemberFunc(slot[0], this.getRandomPartyMemberFuncFromConfig(cfg));
     });
 
     // Localize the trainer's name by converting it to lowercase and replacing spaces with underscores.
@@ -815,22 +819,23 @@ export class TrainerConfig {
 
     // Set the party templates for the Champion.
     this.setPartyTemplates(trainerPartyTemplates.CHAMPION);
+    if (!this.partyPregen.preferredGender) {
+      this.partyPregen.preferredGender = isMale ? Gender.MALE : Gender.FEMALE;
+    }
 
     trainerPartyConfigs[this.trainerType].forEach((slot, s) => {
-      const cfg = Array.isArray(slot[1]) ? slot[1] : [slot[1]];
-      if (s === 5) { // Last party member is always a boss with 2 segments
-        cfg.forEach(c => {
-          c.boss = true;
-          c.bossSegments = 2;
-        });
+      if (!Array.isArray(slot[1])) {
+        if (slot[1].teraType || slot[1].instantTera) {
+          this.setInstantTera(s);
+        }
+        this.setPartyMemberFunc(slot[0], this.getRandomPartyMemberFuncFromConfig([slot[1]]));
       }
-      cfg.forEach(c => {
-        c.preferredGender = c.preferredGender ?? isMale ? Gender.MALE: Gender.FEMALE;
-      });
-      if (cfg.some(c => c.teraType || c.instantTera)) {
-        this.setInstantTera(s);
+      else {
+        if (slot[2]?.teraType || slot[2]?.instantTera) {
+          this.setInstantTera(s);
+        }
+        this.setPartyMemberFunc(slot[0], this.getRandomPartyMemberFuncFromConfig(slot[1], undefined, slot[2]));
       }
-      this.setPartyMemberFunc(slot[0], this.getRandomPartyMemberFuncFromConfig(cfg));
     });
 
     // Localize the trainer's name by converting it to lowercase and replacing spaces with underscores.
@@ -1044,7 +1049,7 @@ export function getRandomPartyMemberFunc(
   trainerSlot: TrainerSlot = TrainerSlot.TRAINER,
   ignoreEvolution = false,
   postProcess?: (enemyPokemon: EnemyPokemon) => void,
-  pregenData?: PokemonPregenData,
+  pregenData?: Partial<PokemonPregenData>,
 ) {
   return (level: number, strength: PartyMemberStrength) => {
     let species = randSeedItem(speciesPool);
@@ -1056,6 +1061,9 @@ export function getRandomPartyMemberFunc(
         globalScene.currentBattle.waveIndex,
       );
     }
+    if (pregenData) {
+      pregenData.species = species;
+    }
     return globalScene.addEnemyPokemon(
       getPokemonSpecies(species),
       level,
@@ -1064,7 +1072,7 @@ export function getRandomPartyMemberFunc(
       false,
       undefined,
       postProcess,
-      pregenData,
+      pregenData as PokemonPregenData ?? undefined,
     );
   };
 }

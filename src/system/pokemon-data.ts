@@ -55,6 +55,12 @@ export interface PokemonPregenData {
   fusionCustomPokemonData?: CustomPokemonData;
 }
 
+export function mergePregenData(p: Partial<PokemonPregenData>, q: Partial<PokemonPregenData>): Partial<PokemonPregenData> {
+  let ret: Partial<PokemonPregenData> = {};
+  Object.assign<typeof ret, typeof q, typeof p>(ret, q, p);
+  return ret;
+}
+
 export default class PokemonData {
   public id: number;
   public player: boolean;
