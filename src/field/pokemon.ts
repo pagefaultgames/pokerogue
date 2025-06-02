@@ -477,7 +477,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.ivs = pregenData.ivs ?? getIvsFromId(this.id);
 
       if (this.gender === undefined) {
-        this.generateGender();
+        this.generateGender(pregenData.preferredGender);
       }
 
       if (this.formIndex === undefined) {
