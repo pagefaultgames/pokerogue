@@ -32,7 +32,7 @@ describe("Moves - Spikes", () => {
   });
 
   it("should not damage the team that set them", async () => {
-    await game.startBattle([Species.MIGHTYENA, Species.POOCHYENA]);
+    await game.classicMode.startBattle([Species.MIGHTYENA, Species.POOCHYENA]);
 
     game.move.select(Moves.SPIKES);
     await game.toNextTurn();
@@ -52,7 +52,7 @@ describe("Moves - Spikes", () => {
 
   it("should damage opposing pokemon that are forced to switch in", async () => {
     game.override.startingWave(5);
-    await game.startBattle([Species.MIGHTYENA, Species.POOCHYENA]);
+    await game.classicMode.startBattle([Species.MIGHTYENA, Species.POOCHYENA]);
 
     game.move.select(Moves.SPIKES);
     await game.toNextTurn();
@@ -66,7 +66,7 @@ describe("Moves - Spikes", () => {
 
   it("should damage opposing pokemon that choose to switch in", async () => {
     game.override.startingWave(5);
-    await game.startBattle([Species.MIGHTYENA, Species.POOCHYENA]);
+    await game.classicMode.startBattle([Species.MIGHTYENA, Species.POOCHYENA]);
 
     game.move.select(Moves.SPIKES);
     await game.toNextTurn();
