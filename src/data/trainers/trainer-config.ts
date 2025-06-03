@@ -466,6 +466,11 @@ export class TrainerConfig {
     return this;
   }
 
+  setCommonPregenData(pregen: Partial<PokemonPregenData>): TrainerConfig {
+    this.partyPregen = pregen;
+    return this;
+  }
+
   setGenModifiersFunc(genModifiersFunc: GenModifiersFunc): TrainerConfig {
     this.genModifiersFunc = genModifiersFunc;
     return this;
@@ -756,6 +761,9 @@ export class TrainerConfig {
 
     // Set the party templates for the Elite Four.
     this.setPartyTemplates(trainerPartyTemplates.ELITE_FOUR);
+    if (!this.partyPregen) {
+      this.partyPregen = {};
+    }
 
     // Set species filter and specialty type, otherwise filter by base total.
     this.setSpeciesFilter(p => p.isOfType(specialtyType) && p.baseTotal >= ELITE_FOUR_MINIMUM_BST);
@@ -815,6 +823,10 @@ export class TrainerConfig {
     // Check if the internationalization (i18n) system is initialized.
     if (!getIsInitialized()) {
       initI18n();
+    }
+    
+    if (!this.partyPregen) {
+      this.partyPregen = {};
     }
 
     // Set the party templates for the Champion.
@@ -2676,6 +2688,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setBattleBgm("battle_johto_gym")
     .setMixedBattleBgm("battle_johto_gym"),
   [TrainerType.BUGSY]: new TrainerConfig(++t)
+    .setCommonPregenData({preferredGender: Gender.FEMALE})
     .initForGymLeader(signatureSpecies["BUGSY"], true, PokemonType.BUG, false, -1)
     .setBattleBgm("battle_johto_gym")
     .setMixedBattleBgm("battle_johto_gym"),
@@ -2931,6 +2944,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setBattleBgm("battle_kanto_gym")
     .setMixedBattleBgm("battle_kanto_gym"),
   [TrainerType.WILL]: new TrainerConfig(++t)
+    .setCommonPregenData({preferredGender: Gender.FEMALE})
     .initForEliteFour(true, PokemonType.PSYCHIC)
     .setBattleBgm("battle_johto_gym")
     .setMixedBattleBgm("battle_johto_gym"),
@@ -3119,6 +3133,7 @@ export const trainerConfigs: TrainerConfigs = {
     .initForChampion(true)
     .setMixedBattleBgm("battle_galar_champion"),
   [TrainerType.MUSTARD]: new TrainerConfig(++t)
+    .setCommonPregenData({pokeball: PokeballType.ULTRA_BALL})
     .initForChampion(true)
     .setMixedBattleBgm("battle_mustard"),
   [TrainerType.GEETA]: new TrainerConfig(++t)
