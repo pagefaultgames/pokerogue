@@ -9,7 +9,6 @@ import { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
 import { LoginPhase } from "#app/phases/login-phase";
 import { NextEncounterPhase } from "#app/phases/next-encounter-phase";
 import { SelectGenderPhase } from "#app/phases/select-gender-phase";
-import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import { SelectStarterPhase } from "#app/phases/select-starter-phase";
 import { SummonPhase } from "#app/phases/summon-phase";
 import { SwitchPhase } from "#app/phases/switch-phase";
@@ -90,15 +89,10 @@ describe("Test Battle Phase", () => {
   }, 20000);
 
   it("do attack wave 3 - single battle - regular - OHKO", async () => {
-    game.override
-      .enemySpecies(Species.RATTATA)
-      .startingLevel(2000)
-      .startingWave(3)
-      .battleStyle("single")
-      .enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
+    game.override.enemySpecies(Species.RATTATA).startingLevel(2000).battleStyle("single");
     await game.classicMode.startBattle([Species.MEWTWO]);
-    game.move.select(Moves.TACKLE);
-    await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(SelectModifierPhase, false);
+    game.move.use(Moves.TACKLE);
+    await game.phaseInterceptor.to("SelectModifierPhase");
   }, 20000);
 
   it("do attack wave 3 - single battle - regular - NO OHKO with opponent using non damage attack", async () => {
