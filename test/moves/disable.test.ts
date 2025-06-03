@@ -150,6 +150,7 @@ describe("Moves - Disable", () => {
     ).toBe(false);
   });
 
+
   it("should ignore dancer copied moves, even if also in moveset", async () => {
     game.override
       .enemyAbility(Abilities.DANCER)
@@ -158,15 +159,15 @@ describe("Moves - Disable", () => {
     await game.classicMode.startBattle([Species.PIKACHU]);
 
     game.move.select(Moves.SWORDS_DANCE);
-    await game.forceEnemyMove(Moves.SPLASH);
+    await game.move.selectEnemyMove(Moves.SPLASH);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
     game.move.select(Moves.DISABLE);
-    await game.forceEnemyMove(Moves.SWORDS_DANCE);
+    await game.move.selectEnemyMove(Moves.SWORDS_DANCE);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
-    await game.phaseInterceptor.to("TurnEndPhase");
-
+    await game.toNextTurn();
+ 
     // Dancer-induced Swords Dance was ignored in favor of splash,
     // leaving the subsequent _normal_ swords dance free to work as normal
     const shuckle = game.scene.getEnemyPokemon()!;

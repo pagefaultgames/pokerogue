@@ -26,7 +26,6 @@ describe("Abilities - Gorilla Tactics", () => {
     game.override
       .battleStyle("single")
       .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset(Moves.SPLASH)
       .enemySpecies(Species.MAGIKARP)
       .enemyLevel(30)
       .moveset([Moves.SPLASH, Moves.TACKLE, Moves.GROWL, Moves.METRONOME])
@@ -40,7 +39,8 @@ describe("Abilities - Gorilla Tactics", () => {
     const initialAtkStat = darmanitan.getStat(Stat.ATK);
 
     game.move.select(Moves.SPLASH);
-    await game.phaseInterceptor.to("TurnEndPhase");
+    await game.move.forceEnemyMove(Moves.SPLASH);
+    await game.toEndOfTurn()
 
     expect(darmanitan.getStat(Stat.ATK, false)).toBeCloseTo(initialAtkStat * 1.5);
     // Other moves should be restricted
@@ -49,34 +49,33 @@ describe("Abilities - Gorilla Tactics", () => {
   });
 
   it("should struggle if the only usable move is disabled", async () => {
-    game.override.enemyMoveset([Moves.DISABLE, Moves.SPLASH]);
     await game.classicMode.startBattle([Species.GALAR_DARMANITAN]);
 
-    const darmanitan = game.scene.getPlayerPokemon()!;
-    const enemy = game.scene.getEnemyPokemon()!;
+    const darmanitan = game.field.getPlayerPokemon();
+    const enemy = game.field.getEnemyPokemon();
 
     // First turn, lock move to Growl
     game.move.select(Moves.GROWL);
-    await game.forceEnemyMove(Moves.SPLASH);
-
-    // Second turn, Growl is interrupted by Disable
+    await game.move.forceEnemyMove(Moves.SPLASH);
     await game.toNextTurn();
 
+    // Second turn, Growl is interrupted by Disable
     game.move.select(Moves.GROWL);
-    await game.forceEnemyMove(Moves.DISABLE);
+    await game.move.forceEnemyMove(Moves.DISABLE);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
-
-    await game.phaseInterceptor.to("TurnEndPhase");
+    await game.toNextTurn();
+    
     expect(enemy.getStatStage(Stat.ATK)).toBe(-1); // Only the effect of the first Growl should be applied
 
     // Third turn, Struggle is used
-    await game.toNextTurn();
-
     game.move.select(Moves.TACKLE);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
-
     await game.phaseInterceptor.to("MoveEndPhase");
+    
     expect(darmanitan.hp).toBeLessThan(darmanitan.getMaxHp());
+    
+    await game.toNextTurn();
+    expect(darmanitan.getLastXMoves()[0].move).toBe(Moves.STRUGGLE);
   });
 
   it("should lock into calling moves, even if also in moveset", async () => {
