@@ -19,6 +19,8 @@ export default class AbstractSettingsUiHandler extends MessageUiHandler {
   private optionsContainer: Phaser.GameObjects.Container;
   private messageBoxContainer: Phaser.GameObjects.Container;
   private navigationContainer: NavigationMenu;
+  /** Text object displaying "*Reload Required" */
+  protected reloadRequiredText: Phaser.GameObjects.Text;
 
   private scrollCursor: number;
   private scrollBar: ScrollBar;
@@ -108,10 +110,12 @@ export default class AbstractSettingsUiHandler extends MessageUiHandler {
 
     this.reloadSettings = this.settings.filter(s => s?.requireReload);
 
+    let anyReloadRequired = false;
     this.settings.forEach((setting, s) => {
       let settingName = setting.label;
       if (setting?.requireReload) {
-        settingName += ` (${i18next.t("settings:requireReload")})`;
+        settingName += "*";
+        anyReloadRequired = true;
       }
 
       this.settingLabels[s] = addTextObject(8, 28 + s * 16, settingName, TextStyle.SETTINGS_LABEL);
@@ -187,6 +191,14 @@ export default class AbstractSettingsUiHandler extends MessageUiHandler {
     this.settingsContainer.add(iconAction);
     this.settingsContainer.add(iconCancel);
     this.settingsContainer.add(actionText);
+    // Only add the ReloadRequired text on pages that have settings that require a reload.
+    if (anyReloadRequired) {
+      const reloadRequired = addTextObject(0, 0, `*${i18next.t("settings:requireReload")}`, TextStyle.SETTINGS_LABEL)
+        .setOrigin(0, 0.15)
+        .setPositionRelative(actionsBg, 6, 0)
+        .setY(actionText.y);
+      this.settingsContainer.add(reloadRequired);
+    }
     this.settingsContainer.add(cancelText);
     this.settingsContainer.add(this.messageBoxContainer);
 
