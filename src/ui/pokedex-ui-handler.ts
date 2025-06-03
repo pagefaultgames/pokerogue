@@ -23,7 +23,8 @@ import type { Species } from "#enums/species";
 import { Button } from "#enums/buttons";
 import { DropDown, DropDownLabel, DropDownOption, DropDownState, DropDownType, SortCriteria } from "#app/ui/dropdown";
 import { PokedexMonContainer } from "#app/ui/pokedex-mon-container";
-import { DropDownColumn, FilterBar } from "#app/ui/filter-bar";
+import { FilterBar } from "#app/ui/filter-bar";
+import { DropDownColumn } from "#enums/drop-down-column";
 import { ScrollBar } from "#app/ui/scroll-bar";
 import { Abilities } from "#enums/abilities";
 import {

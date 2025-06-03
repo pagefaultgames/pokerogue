@@ -59,8 +59,8 @@ describe("Abilities - Commander", () => {
     expect(game.scene.currentBattle.turnCommands[0]?.skip).toBeTruthy();
 
     // Force both enemies to target the Tatsugiri
-    await game.forceEnemyMove(Moves.TACKLE, BattlerIndex.PLAYER);
-    await game.forceEnemyMove(Moves.TACKLE, BattlerIndex.PLAYER);
+    await game.move.selectEnemyMove(Moves.TACKLE, BattlerIndex.PLAYER);
+    await game.move.selectEnemyMove(Moves.TACKLE, BattlerIndex.PLAYER);
 
     await game.phaseInterceptor.to("BerryPhase", false);
     game.scene.getEnemyField().forEach(enemy => expect(enemy.getLastXMoves(1)[0].result).toBe(MoveResult.MISS));
@@ -100,8 +100,8 @@ describe("Abilities - Commander", () => {
 
     expect(game.scene.currentBattle.turnCommands[0]?.skip).toBeTruthy();
 
-    await game.forceEnemyMove(Moves.TACKLE, BattlerIndex.PLAYER);
-    await game.forceEnemyMove(Moves.TACKLE, BattlerIndex.PLAYER);
+    await game.move.selectEnemyMove(Moves.TACKLE, BattlerIndex.PLAYER);
+    await game.move.selectEnemyMove(Moves.TACKLE, BattlerIndex.PLAYER);
 
     await game.setTurnOrder([BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER]);
 
@@ -183,8 +183,8 @@ describe("Abilities - Commander", () => {
 
     expect(game.scene.currentBattle.turnCommands[0]?.skip).toBeTruthy();
 
-    await game.forceEnemyMove(Moves.WHIRLWIND, BattlerIndex.PLAYER_2);
-    await game.forceEnemyMove(Moves.SPLASH);
+    await game.move.selectEnemyMove(Moves.WHIRLWIND, BattlerIndex.PLAYER_2);
+    await game.move.selectEnemyMove(Moves.SPLASH);
 
     // Test may time out here if Whirlwind forced out a Pokemon
     await game.phaseInterceptor.to("TurnEndPhase");

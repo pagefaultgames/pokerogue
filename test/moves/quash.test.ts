@@ -39,8 +39,8 @@ describe("Moves - Quash", () => {
 
     game.move.select(Moves.QUASH, 0, BattlerIndex.PLAYER_2);
     game.move.select(Moves.SUNNY_DAY, 1);
-    await game.forceEnemyMove(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.RAIN_DANCE);
+    await game.move.selectEnemyMove(Moves.SPLASH);
+    await game.move.selectEnemyMove(Moves.RAIN_DANCE);
 
     await game.phaseInterceptor.to("TurnEndPhase", false);
     // will be sunny if player_2 moved last because of quash, rainy otherwise
@@ -67,8 +67,8 @@ describe("Moves - Quash", () => {
     game.move.select(Moves.RAIN_DANCE, 0);
     game.move.select(Moves.SUNNY_DAY, 1);
 
-    await game.forceEnemyMove(Moves.QUASH, BattlerIndex.PLAYER);
-    await game.forceEnemyMove(Moves.QUASH, BattlerIndex.PLAYER_2);
+    await game.move.selectEnemyMove(Moves.QUASH, BattlerIndex.PLAYER);
+    await game.move.selectEnemyMove(Moves.QUASH, BattlerIndex.PLAYER_2);
 
     await game.phaseInterceptor.to("TurnEndPhase", false);
     expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.SUNNY);
@@ -81,15 +81,15 @@ describe("Moves - Quash", () => {
     game.move.select(Moves.SPLASH, 0);
     game.move.select(Moves.SPLASH, 1);
 
-    await game.forceEnemyMove(Moves.TRICK_ROOM);
-    await game.forceEnemyMove(Moves.SPLASH);
+    await game.move.selectEnemyMove(Moves.TRICK_ROOM);
+    await game.move.selectEnemyMove(Moves.SPLASH);
     await game.phaseInterceptor.to("TurnInitPhase");
     // both users are quashed - accelgor should move last w/ TR so rain should be up at end of turn
     game.move.select(Moves.RAIN_DANCE, 0);
     game.move.select(Moves.SUNNY_DAY, 1);
 
-    await game.forceEnemyMove(Moves.QUASH, BattlerIndex.PLAYER);
-    await game.forceEnemyMove(Moves.QUASH, BattlerIndex.PLAYER_2);
+    await game.move.selectEnemyMove(Moves.QUASH, BattlerIndex.PLAYER);
+    await game.move.selectEnemyMove(Moves.QUASH, BattlerIndex.PLAYER_2);
 
     await game.phaseInterceptor.to("TurnEndPhase", false);
     expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.RAIN);

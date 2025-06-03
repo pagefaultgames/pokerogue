@@ -51,7 +51,7 @@ describe("Moves - Whirlwind", () => {
     const staraptor = game.scene.getPlayerPokemon()!;
 
     game.move.select(move);
-    await game.forceEnemyMove(Moves.WHIRLWIND);
+    await game.move.selectEnemyMove(Moves.WHIRLWIND);
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
@@ -69,7 +69,7 @@ describe("Moves - Whirlwind", () => {
       return min;
     });
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.WHIRLWIND);
+    await game.move.selectEnemyMove(Moves.WHIRLWIND);
     await game.toNextTurn();
 
     expect(bulbasaur.isOnField()).toBe(false);
@@ -81,7 +81,7 @@ describe("Moves - Whirlwind", () => {
       return min + 1;
     });
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.WHIRLWIND);
+    await game.move.selectEnemyMove(Moves.WHIRLWIND);
     await game.toNextTurn();
 
     expect(bulbasaur.isOnField()).toBe(false);
@@ -101,7 +101,7 @@ describe("Moves - Whirlwind", () => {
       return min;
     });
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.WHIRLWIND);
+    await game.move.selectEnemyMove(Moves.WHIRLWIND);
     await game.toNextTurn();
 
     expect(lapras.isOnField()).toBe(false);
@@ -120,7 +120,7 @@ describe("Moves - Whirlwind", () => {
     eevee.status = new Status(StatusEffect.FAINT);
     expect(eevee.isFainted()).toBe(true);
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.SPLASH);
+    await game.move.selectEnemyMove(Moves.SPLASH);
     await game.toNextTurn();
 
     // Turn 2: Mock an RNG call that would normally call for switching to Eevee, but it is fainted
@@ -128,7 +128,7 @@ describe("Moves - Whirlwind", () => {
       return min;
     });
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.WHIRLWIND);
+    await game.move.selectEnemyMove(Moves.WHIRLWIND);
     await game.toNextTurn();
 
     expect(lapras.isOnField()).toBe(false);
@@ -147,7 +147,7 @@ describe("Moves - Whirlwind", () => {
     eevee.status = new Status(StatusEffect.FAINT);
     expect(eevee.isFainted()).toBe(true);
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.SPLASH);
+    await game.move.selectEnemyMove(Moves.SPLASH);
     await game.toNextTurn();
 
     // Turn 2: Mock an RNG call that would normally call for switching to Eevee, but it is fainted
@@ -155,7 +155,7 @@ describe("Moves - Whirlwind", () => {
       return min;
     });
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.WHIRLWIND);
+    await game.move.selectEnemyMove(Moves.WHIRLWIND);
     await game.toNextTurn();
 
     expect(lapras.isOnField()).toBe(true);
@@ -184,7 +184,7 @@ describe("Moves - Whirlwind", () => {
 
     // Player uses Whirlwind; opponent uses Splash
     game.move.select(Moves.WHIRLWIND);
-    await game.forceEnemyMove(Moves.SPLASH);
+    await game.move.selectEnemyMove(Moves.SPLASH);
     await game.toNextTurn();
 
     // Verify that the failure message is displayed for Whirlwind
@@ -214,8 +214,8 @@ describe("Moves - Whirlwind", () => {
 
     game.move.select(Moves.SPLASH);
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.MEMENTO);
-    await game.forceEnemyMove(Moves.SPLASH);
+    await game.move.selectEnemyMove(Moves.MEMENTO);
+    await game.move.selectEnemyMove(Moves.SPLASH);
     await game.toNextTurn();
 
     // Get the enemy pokemon id so we can check if is the same after switch.
@@ -225,8 +225,8 @@ describe("Moves - Whirlwind", () => {
     game.move.select(Moves.WHIRLWIND, 0, BattlerIndex.ENEMY);
     game.move.select(Moves.SPLASH, 1);
 
-    await game.forceEnemyMove(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.SPLASH);
+    await game.move.selectEnemyMove(Moves.SPLASH);
+    await game.move.selectEnemyMove(Moves.SPLASH);
 
     await game.toNextTurn();
 

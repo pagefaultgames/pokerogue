@@ -49,7 +49,7 @@ describe("Abilities - Flower Veil", () => {
     await game.classicMode.startBattle([Species.BULBASAUR]);
     const user = game.scene.getPlayerPokemon()!;
     game.move.select(Moves.REST);
-    await game.forceEnemyMove(Moves.TACKLE);
+    await game.move.selectEnemyMove(Moves.TACKLE);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
     expect(user.status?.effect).toBe(StatusEffect.SLEEP);
@@ -57,7 +57,7 @@ describe("Abilities - Flower Veil", () => {
     // remove sleep status so we can get burn from the orb
     user.resetStatus();
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.SPLASH);
+    await game.move.selectEnemyMove(Moves.SPLASH);
     await game.toNextTurn();
     expect(user.status?.effect).toBe(StatusEffect.BURN);
   });
@@ -71,8 +71,8 @@ describe("Abilities - Flower Veil", () => {
     vi.spyOn(ally, "getAbility").mockReturnValue(allAbilities[Abilities.BALL_FETCH]);
     game.move.select(Moves.SPLASH);
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.YAWN, BattlerIndex.PLAYER);
-    await game.forceEnemyMove(Moves.YAWN, BattlerIndex.PLAYER_2);
+    await game.move.selectEnemyMove(Moves.YAWN, BattlerIndex.PLAYER);
+    await game.move.selectEnemyMove(Moves.YAWN, BattlerIndex.PLAYER_2);
 
     await game.phaseInterceptor.to("BerryPhase");
     const user = game.scene.getPlayerPokemon()!;
@@ -86,7 +86,7 @@ describe("Abilities - Flower Veil", () => {
     await game.classicMode.startBattle([Species.BULBASAUR]);
 
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.THUNDER_WAVE);
+    await game.move.selectEnemyMove(Moves.THUNDER_WAVE);
     await game.toNextTurn();
     expect(game.scene.getPlayerPokemon()!.status).toBeUndefined();
     vi.spyOn(allMoves[Moves.THUNDER_WAVE], "accuracy", "get").mockClear();
@@ -101,8 +101,8 @@ describe("Abilities - Flower Veil", () => {
     vi.spyOn(ally, "getAbility").mockReturnValue(allAbilities[Abilities.BALL_FETCH]);
     game.move.select(Moves.SPLASH);
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.THUNDER_WAVE, BattlerIndex.PLAYER);
-    await game.forceEnemyMove(Moves.THUNDER_WAVE, BattlerIndex.PLAYER_2);
+    await game.move.selectEnemyMove(Moves.THUNDER_WAVE, BattlerIndex.PLAYER);
+    await game.move.selectEnemyMove(Moves.THUNDER_WAVE, BattlerIndex.PLAYER_2);
     await game.phaseInterceptor.to("BerryPhase");
     expect(user.status?.effect).toBe(StatusEffect.PARALYSIS);
     expect(ally.status?.effect).toBe(StatusEffect.PARALYSIS);

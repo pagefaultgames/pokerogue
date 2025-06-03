@@ -61,7 +61,7 @@ describe("Abilities - Harvest", () => {
     await game.classicMode.startBattle([Species.FEEBAS]);
 
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.NUZZLE);
+    await game.move.selectEnemyMove(Moves.NUZZLE);
     await game.phaseInterceptor.to("BerryPhase");
     expect(getPlayerBerries()).toHaveLength(0);
     expect(game.scene.getPlayerPokemon()?.battleData.berriesEaten).toHaveLength(1);
@@ -87,7 +87,7 @@ describe("Abilities - Harvest", () => {
 
     // Chug a few berries without harvest (should get tracked)
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.NUZZLE);
+    await game.move.selectEnemyMove(Moves.NUZZLE);
     await game.toNextTurn();
 
     expect(milotic.battleData.berriesEaten).toEqual(expect.arrayContaining([BerryType.ENIGMA, BerryType.LUM]));
@@ -98,7 +98,7 @@ describe("Abilities - Harvest", () => {
     vi.spyOn(PostTurnRestoreBerryAbAttr.prototype, "canApplyPostTurn").mockReturnValueOnce(false);
     game.override.ability(Abilities.HARVEST);
     game.move.select(Moves.GASTRO_ACID);
-    await game.forceEnemyMove(Moves.NUZZLE);
+    await game.move.selectEnemyMove(Moves.NUZZLE);
 
     await game.toNextTurn();
 
@@ -109,7 +109,7 @@ describe("Abilities - Harvest", () => {
 
     // proc a high roll and we _should_ get a berry back!
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.SPLASH);
+    await game.move.selectEnemyMove(Moves.SPLASH);
     await game.toNextTurn();
 
     expect(milotic.battleData.berriesEaten).toHaveLength(3);
@@ -126,7 +126,7 @@ describe("Abilities - Harvest", () => {
     regieleki.hp = 1;
 
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.SPLASH);
+    await game.move.selectEnemyMove(Moves.SPLASH);
     await game.doKillOpponents();
     await game.phaseInterceptor.to("TurnEndPhase");
 
@@ -154,7 +154,7 @@ describe("Abilities - Harvest", () => {
     regieleki.hp = regieleki.getMaxHp() / 4 + 1;
 
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.SUPER_FANG);
+    await game.move.selectEnemyMove(Moves.SUPER_FANG);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
@@ -165,7 +165,7 @@ describe("Abilities - Harvest", () => {
 
     // heal up so harvest doesn't proc and kill enemy
     game.move.select(Moves.EARTHQUAKE);
-    await game.forceEnemyMove(Moves.HEAL_PULSE);
+    await game.move.selectEnemyMove(Moves.HEAL_PULSE);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextWave();
 
@@ -191,7 +191,7 @@ describe("Abilities - Harvest", () => {
     feebas.battleData.berriesEaten = [BerryType.LUM, BerryType.STARF];
 
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.SPLASH);
+    await game.move.selectEnemyMove(Moves.SPLASH);
     await game.phaseInterceptor.to("BerryPhase");
 
     // Force RNG roll to hit the first berry we find that matches.
@@ -219,7 +219,7 @@ describe("Abilities - Harvest", () => {
     player.battleData.berriesEaten = [BerryType.LUM, BerryType.STARF];
 
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.SPLASH);
+    await game.move.selectEnemyMove(Moves.SPLASH);
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expectBerriesContaining(...initBerries);
@@ -231,7 +231,7 @@ describe("Abilities - Harvest", () => {
       await game.classicMode.startBattle([Species.FEEBAS]);
 
       game.move.select(Moves.SPLASH);
-      await game.forceEnemyMove(Moves.INCINERATE);
+      await game.move.selectEnemyMove(Moves.INCINERATE);
       await game.phaseInterceptor.to("TurnEndPhase");
 
       expect(game.scene.getPlayerPokemon()?.battleData.berriesEaten).toEqual([]);
@@ -242,7 +242,7 @@ describe("Abilities - Harvest", () => {
       await game.classicMode.startBattle([Species.FEEBAS]);
 
       game.move.select(Moves.SPLASH);
-      await game.forceEnemyMove(Moves.KNOCK_OFF);
+      await game.move.selectEnemyMove(Moves.KNOCK_OFF);
       await game.phaseInterceptor.to("TurnEndPhase");
 
       expect(game.scene.getPlayerPokemon()?.battleData.berriesEaten).toEqual([]);
@@ -308,7 +308,7 @@ describe("Abilities - Harvest", () => {
 
       // steal a sitrus and immediately consume it
       game.move.select(Moves.FALSE_SWIPE);
-      await game.forceEnemyMove(Moves.SPLASH);
+      await game.move.selectEnemyMove(Moves.SPLASH);
       await game.phaseInterceptor.to("BerryPhase");
       expect(player.battleData.berriesEaten).toEqual([BerryType.SITRUS]);
 

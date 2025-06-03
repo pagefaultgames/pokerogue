@@ -1,7 +1,8 @@
 all:
-  - "src/**"
-  - "test/**"
-  - "public/**"
+  # Negations syntax from https://github.com/dorny/paths-filter/issues/184#issuecomment-2786521554
+  - "src/**/!(*.{md,py,sh,gitkeep,gitignore})"
+  - "test/**/!(*.{md,py,sh,gitkeep,gitignore})"
+  - "public/**/!(*.{md,py,sh,gitkeep,gitignore})"
   # Workflows that can impact tests
   - ".github/workflows/test*.yml"
   - ".github/test-filters.yml"
@@ -12,8 +13,3 @@ all:
   - "tsconfig*.json" # tsconfig.json tweaking can impact compilation
   - "global.d.ts"
   - ".env*"
-  # Blanket negations for files that cannot impact tests
-  - "!**/*.py" # No .py files
-  - "!**/*.sh" # No .sh files
-  - "!**/*.md" # No .md files
-  - "!**/.git*" # .gitkeep and family

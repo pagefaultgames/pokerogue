@@ -100,10 +100,8 @@ describe("Moves - Lucky Chant", () => {
   it("should prevent critical hits from field effects", async () => {
     await game.classicMode.startBattle([Species.CHARIZARD]);
 
-    const charizard = game.scene.getPlayerPokemon()!;
-    expect(charizard).toBeDefined();
-
-    const snorlax = game.scene.getEnemyPokemon()!;
+    const charizard = game.field.getPlayerPokemon();
+    const snorlax = game.field.getEnemyPokemon();
     snorlax.addTag(BattlerTagType.ALWAYS_CRIT, 2, Moves.NONE, 0);
 
     game.move.select(Moves.SPLASH);

@@ -241,13 +241,13 @@ describe("Abilities - Gulp Missile", () => {
     await game.classicMode.startBattle([Species.CRAMORANT]);
 
     game.move.select(Moves.SURF);
-    await game.forceEnemyMove(Moves.SPLASH);
+    await game.move.selectEnemyMove(Moves.SPLASH);
     await game.toNextTurn();
 
     expect(game.scene.getPlayerPokemon()!.formIndex).toBe(GULPING_FORM);
 
     game.move.select(Moves.SUBSTITUTE);
-    await game.forceEnemyMove(Moves.POWER_TRIP);
+    await game.move.selectEnemyMove(Moves.POWER_TRIP);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toNextTurn();
 

@@ -37,7 +37,7 @@ describe("Moves - Grudge", () => {
 
     const playerPokemon = game.scene.getPlayerPokemon();
     game.move.select(Moves.EMBER);
-    await game.forceEnemyMove(Moves.GRUDGE);
+    await game.move.selectEnemyMove(Moves.GRUDGE);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("BerryPhase");
 
@@ -51,12 +51,12 @@ describe("Moves - Grudge", () => {
 
     const playerPokemon = game.scene.getPlayerPokemon();
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.GRUDGE);
+    await game.move.selectEnemyMove(Moves.GRUDGE);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toNextTurn();
 
     game.move.select(Moves.EMBER);
-    await game.forceEnemyMove(Moves.SPLASH);
+    await game.move.selectEnemyMove(Moves.SPLASH);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("BerryPhase");
 
@@ -78,7 +78,7 @@ describe("Moves - Grudge", () => {
     const playerPokemon = game.scene.getPlayerPokemon();
 
     game.move.select(Moves.FALSE_SWIPE);
-    await game.forceEnemyMove(Moves.GRUDGE);
+    await game.move.selectEnemyMove(Moves.GRUDGE);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("BerryPhase");
 

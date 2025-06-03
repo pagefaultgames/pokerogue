@@ -46,7 +46,7 @@ describe("Ability - Mirror Armor", () => {
 
     // Enemy has intimidate, enemy should lose -1 atk
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.SPLASH, BattlerIndex.PLAYER);
+    await game.move.selectEnemyMove(Moves.SPLASH, BattlerIndex.PLAYER);
     await game.toNextTurn();
 
     expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(-1);
@@ -63,7 +63,7 @@ describe("Ability - Mirror Armor", () => {
 
     // Enemy has intimidate, enemy should lose -1 atk
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.SPLASH, BattlerIndex.PLAYER);
+    await game.move.selectEnemyMove(Moves.SPLASH, BattlerIndex.PLAYER);
     await game.toNextTurn();
 
     expect(userPokemon.getStatStage(Stat.ATK)).toBe(-1);
@@ -82,8 +82,8 @@ describe("Ability - Mirror Armor", () => {
     // Enemy has intimidate, enemy should lose -2 atk each
     game.move.select(Moves.SPLASH);
     game.move.select(Moves.SPLASH, 1);
-    await game.forceEnemyMove(Moves.SPLASH, BattlerIndex.PLAYER);
-    await game.forceEnemyMove(Moves.SPLASH, BattlerIndex.PLAYER_2);
+    await game.move.selectEnemyMove(Moves.SPLASH, BattlerIndex.PLAYER);
+    await game.move.selectEnemyMove(Moves.SPLASH, BattlerIndex.PLAYER_2);
     await game.toNextTurn();
 
     expect(enemy1.getStatStage(Stat.ATK)).toBe(-2);
@@ -104,8 +104,8 @@ describe("Ability - Mirror Armor", () => {
     // Enemy has intimidate, enemy should lose -1 atk
     game.move.select(Moves.SPLASH);
     game.move.select(Moves.SPLASH, 1);
-    await game.forceEnemyMove(Moves.SPLASH, BattlerIndex.PLAYER);
-    await game.forceEnemyMove(Moves.SPLASH, BattlerIndex.PLAYER_2);
+    await game.move.selectEnemyMove(Moves.SPLASH, BattlerIndex.PLAYER);
+    await game.move.selectEnemyMove(Moves.SPLASH, BattlerIndex.PLAYER_2);
     await game.toNextTurn();
 
     expect(enemy1.getStatStage(Stat.ATK)).toBe(0);
@@ -124,7 +124,7 @@ describe("Ability - Mirror Armor", () => {
 
     // Enemy has intimidate and uses tickle, enemy receives -2 atk and -1 defense
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.TICKLE, BattlerIndex.PLAYER);
+    await game.move.selectEnemyMove(Moves.TICKLE, BattlerIndex.PLAYER);
     await game.toNextTurn();
 
     expect(enemyPokemon.getStatStage(Stat.DEF)).toBe(-1);
@@ -144,8 +144,8 @@ describe("Ability - Mirror Armor", () => {
 
     game.move.select(Moves.SPLASH);
     game.move.select(Moves.SPLASH, 1);
-    await game.forceEnemyMove(Moves.TICKLE, BattlerIndex.PLAYER);
-    await game.forceEnemyMove(Moves.TICKLE, BattlerIndex.PLAYER_2);
+    await game.move.selectEnemyMove(Moves.TICKLE, BattlerIndex.PLAYER);
+    await game.move.selectEnemyMove(Moves.TICKLE, BattlerIndex.PLAYER_2);
     await game.toNextTurn();
 
     expect(player1.getStatStage(Stat.ATK)).toBe(0);
@@ -168,7 +168,7 @@ describe("Ability - Mirror Armor", () => {
 
     // Enemy has intimidate and uses tickle, enemy receives -2 atk and -1 defense
     game.move.select(Moves.TICKLE);
-    await game.forceEnemyMove(Moves.SPLASH, BattlerIndex.PLAYER);
+    await game.move.selectEnemyMove(Moves.SPLASH, BattlerIndex.PLAYER);
     await game.toNextTurn();
 
     expect(userPokemon.getStatStage(Stat.DEF)).toBe(-1);
@@ -187,7 +187,7 @@ describe("Ability - Mirror Armor", () => {
 
     // Enemy has intimidate and uses tickle, enemy has white smoke, no one loses stats
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.TICKLE, BattlerIndex.PLAYER);
+    await game.move.selectEnemyMove(Moves.TICKLE, BattlerIndex.PLAYER);
     await game.toNextTurn();
 
     expect(enemyPokemon.getStatStage(Stat.DEF)).toBe(0);
@@ -206,7 +206,7 @@ describe("Ability - Mirror Armor", () => {
 
     // Enemy has intimidate and uses tickle, enemy has white smoke, no one loses stats
     game.move.select(Moves.TICKLE);
-    await game.forceEnemyMove(Moves.SPLASH, BattlerIndex.PLAYER);
+    await game.move.selectEnemyMove(Moves.SPLASH, BattlerIndex.PLAYER);
     await game.toNextTurn();
 
     expect(enemyPokemon.getStatStage(Stat.DEF)).toBe(0);
@@ -224,7 +224,7 @@ describe("Ability - Mirror Armor", () => {
 
     // Enemy uses octolock, player loses stats at end of turn
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.OCTOLOCK, BattlerIndex.PLAYER);
+    await game.move.selectEnemyMove(Moves.OCTOLOCK, BattlerIndex.PLAYER);
     await game.toNextTurn();
 
     expect(enemyPokemon.getStatStage(Stat.DEF)).toBe(0);
@@ -242,7 +242,7 @@ describe("Ability - Mirror Armor", () => {
 
     // Player uses octolock, enemy loses stats at end of turn
     game.move.select(Moves.OCTOLOCK);
-    await game.forceEnemyMove(Moves.SPLASH, BattlerIndex.PLAYER);
+    await game.move.selectEnemyMove(Moves.SPLASH, BattlerIndex.PLAYER);
     await game.toNextTurn();
 
     expect(userPokemon.getStatStage(Stat.DEF)).toBe(0);
@@ -261,7 +261,7 @@ describe("Ability - Mirror Armor", () => {
     const userPokemon = game.scene.getPlayerPokemon()!;
 
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.SPLASH, BattlerIndex.PLAYER);
+    await game.move.selectEnemyMove(Moves.SPLASH, BattlerIndex.PLAYER);
     await game.toNextTurn();
 
     expect(userPokemon.getStatStage(Stat.ATK)).toBe(-1);
@@ -276,11 +276,11 @@ describe("Ability - Mirror Armor", () => {
     const userPokemon = game.scene.getPlayerPokemon()!;
 
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.STICKY_WEB, BattlerIndex.PLAYER);
+    await game.move.selectEnemyMove(Moves.STICKY_WEB, BattlerIndex.PLAYER);
     await game.toNextTurn();
 
     game.doSwitchPokemon(1);
-    await game.forceEnemyMove(Moves.SPLASH, BattlerIndex.PLAYER);
+    await game.move.selectEnemyMove(Moves.SPLASH, BattlerIndex.PLAYER);
     await game.toNextTurn();
 
     expect(userPokemon.getStatStage(Stat.SPD)).toBe(0);
@@ -297,14 +297,14 @@ describe("Ability - Mirror Armor", () => {
 
     game.move.select(Moves.SPLASH);
     game.move.select(Moves.SPLASH, 1);
-    await game.forceEnemyMove(Moves.STICKY_WEB, BattlerIndex.PLAYER);
-    await game.forceEnemyMove(Moves.SPLASH, BattlerIndex.PLAYER_2);
+    await game.move.selectEnemyMove(Moves.STICKY_WEB, BattlerIndex.PLAYER);
+    await game.move.selectEnemyMove(Moves.SPLASH, BattlerIndex.PLAYER_2);
     await game.toNextTurn();
 
     game.doSwitchPokemon(2);
     game.move.select(Moves.SPLASH, 1);
-    await game.forceEnemyMove(Moves.SPLASH, BattlerIndex.PLAYER);
-    await game.forceEnemyMove(Moves.SPLASH, BattlerIndex.PLAYER_2);
+    await game.move.selectEnemyMove(Moves.SPLASH, BattlerIndex.PLAYER);
+    await game.move.selectEnemyMove(Moves.SPLASH, BattlerIndex.PLAYER_2);
     await game.toNextTurn();
 
     expect(enemy1.getStatStage(Stat.SPD)).toBe(-1);

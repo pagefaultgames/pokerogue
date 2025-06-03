@@ -39,7 +39,7 @@ describe("Abilities - Gorilla Tactics", () => {
     const initialAtkStat = darmanitan.getStat(Stat.ATK);
 
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.SPLASH);
+    await game.move.selectEnemyMove(Moves.SPLASH);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
@@ -57,13 +57,13 @@ describe("Abilities - Gorilla Tactics", () => {
 
     // First turn, lock move to Growl
     game.move.select(Moves.GROWL);
-    await game.forceEnemyMove(Moves.SPLASH);
+    await game.move.selectEnemyMove(Moves.SPLASH);
 
     // Second turn, Growl is interrupted by Disable
     await game.toNextTurn();
 
     game.move.select(Moves.GROWL);
-    await game.forceEnemyMove(Moves.DISABLE);
+    await game.move.selectEnemyMove(Moves.DISABLE);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
 
     await game.phaseInterceptor.to("TurnEndPhase");

@@ -4,61 +4,81 @@ export default class MockGraphics implements MockGameObject {
   private scene;
   public list: MockGameObject[] = [];
   public name: string;
+  public active = true;
   constructor(textureManager, _config) {
     this.scene = textureManager.scene;
   }
 
-  fillStyle(_color) {
+  fillStyle(_color): this {
     // Sets the fill style to be used by the fill methods.
+    return this;
   }
 
-  beginPath() {
+  beginPath(): this {
     // Starts a new path by emptying the list of sub-paths. Call this method when you want to create a new path.
+    return this;
   }
 
-  fillRect(_x, _y, _width, _height) {
+  fillRect(_x, _y, _width, _height): this {
     // Adds a rectangle shape to the path which is filled when you call fill().
+    return this;
   }
 
-  createGeometryMask() {
+  createGeometryMask(): this {
     // Creates a geometry mask.
+    return this;
   }
 
-  setOrigin(_x, _y) {}
+  setOrigin(_x, _y): this {
+    return this;
+  }
 
-  setAlpha(_alpha) {}
+  setAlpha(_alpha): this {
+    return this;
+  }
 
-  setVisible(_visible) {}
+  setVisible(_visible): this {
+    return this;
+  }
 
-  setName(_name) {}
+  setName(_name) {
+    return this;
+  }
 
-  once(_event, _callback, _source) {}
+  once(_event, _callback, _source) {
+    return this;
+  }
 
-  removeFromDisplayList() {
+  removeFromDisplayList(): this {
     // same as remove or destroy
+    return this;
   }
 
   addedToScene() {
     // This callback is invoked when this Game Object is added to a Scene.
   }
 
-  setPositionRelative(_source, _x, _y) {
+  setPositionRelative(_source, _x, _y): this {
     /// Sets the position of this Game Object to be a relative position from the source Game Object.
+    return this;
   }
 
   destroy() {
     this.list = [];
   }
 
-  setScale(_scale) {
-    // Sets the scale of this Game Object.
+  setScale(_scale): this {
+    return this;
   }
 
-  off(_event, _callback, _source) {}
+  off(_event, _callback, _source): this {
+    return this;
+  }
 
-  add(obj) {
+  add(obj): this {
     // Adds a child to this Game Object.
     this.list.push(obj);
+    return this;
   }
 
   removeAll() {
@@ -89,5 +109,14 @@ export default class MockGraphics implements MockGameObject {
 
   getAll() {
     return this.list;
+  }
+
+  copyPosition(_source): this {
+    return this;
+  }
+
+  setActive(active: boolean): this {
+    this.active = active;
+    return this;
   }
 }

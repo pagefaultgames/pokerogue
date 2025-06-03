@@ -30,7 +30,7 @@ describe("Daily Mode", () => {
   });
 
   it("should initialize properly", async () => {
-    await game.dailyMode.runToSummon();
+    await game.dailyMode.startBattle();
 
     const party = game.scene.getPlayerParty();
     expect(party).toHaveLength(3);

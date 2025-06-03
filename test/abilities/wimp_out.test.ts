@@ -544,8 +544,8 @@ describe("Abilities - Wimp Out", () => {
     // turn 1
     game.move.select(Moves.DRAGON_ENERGY, 0);
     game.move.select(Moves.SPLASH, 1);
-    await game.forceEnemyMove(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.ENDURE);
+    await game.move.selectEnemyMove(Moves.SPLASH);
+    await game.move.selectEnemyMove(Moves.ENDURE);
 
     await game.phaseInterceptor.to("SelectModifierPhase");
     expect(game.scene.currentBattle.waveIndex).toBe(wave + 1);
