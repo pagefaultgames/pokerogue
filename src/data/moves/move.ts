@@ -29,7 +29,8 @@ import {
 } from "../status-effect";
 import { getTypeDamageMultiplier } from "../type";
 import { PokemonType } from "#enums/pokemon-type";
-import { BooleanHolder, NumberHolder, isNullOrUndefined, toDmgValue, randSeedItem, randSeedInt, getEnumValues, toReadableString, type Constructor } from "#app/utils/common";
+import { BooleanHolder, NumberHolder, isNullOrUndefined, toDmgValue, randSeedItem, randSeedInt, getEnumValues, toReadableString } from "#app/utils/common";
+import { type Constructor, type nil} from "#app/utils/common";
 import { WeatherType } from "#enums/weather-type";
 import type { ArenaTrapTag } from "../arena-tag";
 import { ArenaTagSide, WeakenMoveTypeTag } from "../arena-tag";
@@ -4837,6 +4838,142 @@ export class VariableMoveTypeAttr extends MoveAttr {
   }
 }
 
+/**
+ * Attribute used to control the Power and Type of Natural Gift.
+ * Takes over the Power calculation of Natural Gift while {@linkcode NaturalGiftTypeAttr}
+ * takes care of the Move Type.
+ * @extends VariablePowerAttr
+ */
+export class NaturalGiftPowerAttr extends VariablePowerAttr {
+  /**
+   * Overrides the power of Natural Gift depending on the berry that has been selected.
+   * 
+   * @remarks
+   * The berry is not consumed until the move has been successfully used
+   * which has a {@linkcode MoveEffectTrigger.POST_TARGET} trigger.
+   * 
+   * @param user - The Pokémon using the move.
+   * @param _target - The target Pokémon (unused)
+   * @param _move - The move being used (unused)
+   * @param args - args[0] holds the power of user's move
+   * @returns A boolean indicating whether the move was successfully applied.
+   */
+  apply(user: Pokemon, _target: Pokemon, _move: Move, args: [NumberHolder]): boolean {
+    const power = args[0];
+    if (!(power instanceof NumberHolder)) {
+      return false;
+    }
+
+    const randomBerry = NaturalGiftBerrySelector.getRandomBerry(user);
+
+    if (!randomBerry) {
+      return false;
+    }
+
+    power.value = randomBerry.getNaturalGiftPower();
+    return true;
+  }
+}
+
+/**
+ * Attribute used to control the type of Natural Gift
+ * Takes over the Type calculation of Natural Gift while {@linkcode NaturalGiftPowerAttr}
+ * takes care of the Move power.
+ * @extends VariableMoveTypeAttr
+ */
+export class NaturalGiftTypeAttr extends VariableMoveTypeAttr {
+
+  /**
+   * Overrides the type of Natural Gift depending on the consumed berry.
+   * The item used for the move is not removed here but in {@linkcode MoveEndPhase}
+   * to ensure 
+   * @param user - The Pokémon using the move.
+   * @param target - The target Pokémon.
+   * @param move - The move being used.
+   * @param args - args[0] NumberHolder with the move's type.
+   * @returns A boolean indicating whether the move was successfully applied.
+   */
+  apply(user: Pokemon, target: Pokemon, move: Move, args: [NumberHolder]): boolean {
+    const moveType = args[0];
+    if (!(moveType instanceof NumberHolder)) {
+      return false;
+    }
+
+    const randomBerry = NaturalGiftBerrySelector.getRandomBerry(user) as BerryModifier;
+    // Force repick if the berry is somehow not owned by the user
+    if (!randomBerry) {
+      return false;
+    }
+
+    moveType.value = randomBerry.getNaturalGiftType();
+    return true;
+  }
+}
+
+/**
+ * Attribute used to consume the berry selected by {@linkcode NaturalGiftBerrySelector}
+ */
+export class NaturalGiftConsumeBerryAttr extends MoveEffectAttr {
+  /**
+   * 
+   * @param user - The Pokemon using the move
+   * @param _target - The target Pokemon (unused)
+   * @param _move - unused
+   * @param args - unused
+   * @returns 
+   */
+  apply(user: Pokemon, _target: Pokemon, _move: Move, args: any[]): boolean {
+    const berry = NaturalGiftBerrySelector.getSelectedBerry();
+    if (isNullOrUndefined(berry)) {
+      return false;
+    }
+    user.loseHeldItem(berry, user.isPlayer());
+    // Natural gift counts as berries eaten for the purpose of harvest, but not for the purpose of cud chew.
+    user.battleData.berriesEaten.push(berry.berryType);
+    globalScene.updateModifiers(user.isPlayer());
+    NaturalGiftBerrySelector.resetBerry();
+    return true;
+  }
+
+  constructor() {
+    // POST_TARGET is used to ensure the berry is consumed only if the move was invoked successfully, regardless of whether or not it hit.
+    super(true, { lastHitOnly: true, trigger: MoveEffectTrigger.POST_TARGET });
+  }
+
+}
+
+export class NaturalGiftBerrySelector {
+  private static selectedBerry: BerryModifier | null;
+
+  /**
+   * select random berry from user
+   * @param user - The Pokemon using Natural Gift
+   * @returns A random berry to use in {@linkcode NaturalGiftPowerAttr} and {@linkcode NaturalGiftTypeAttr}
+   */
+  public static getRandomBerry(user: Pokemon): BerryModifier | null {
+    // Rechoose the berry if it is null or if the user does not have it.
+    if (isNullOrUndefined(this.selectedBerry) || !user.getHeldItems().some(item => this.selectedBerry?.match(item))) {
+      const berries =  globalScene.findModifiers(
+        m => m instanceof BerryModifier && m.pokemonId === user.id,
+        user.isPlayer()
+      ) as BerryModifier[];
+      this.selectedBerry = berries.at(user.randBattleSeedInt(berries.length)) ?? null;
+    }
+    return this.selectedBerry;
+  }
+
+  public static getSelectedBerry(): BerryModifier | null {
+    return this.selectedBerry;
+  }
+
+  /**
+   * Reset the selected berry
+   */
+  public static resetBerry() {
+    this.selectedBerry = null;
+  }
+}
+
 export class FormChangeItemTypeAttr extends VariableMoveTypeAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const moveType = args[0];
@@ -6479,6 +6616,7 @@ export class ChillyReceptionAttr extends ForceSwitchOutAttr {
     return (user, target, move) => globalScene.arena.weather?.weatherType !== WeatherType.SNOW || super.getSwitchOutCondition()(user, target, move);
   }
 }
+
 export class RemoveTypeAttr extends MoveEffectAttr {
 
   private removedType: PokemonType;
@@ -9397,13 +9535,13 @@ export function initMoves() {
     new AttackMove(Moves.BRINE, PokemonType.WATER, MoveCategory.SPECIAL, 65, 100, 10, -1, 0, 4)
       .attr(MovePowerMultiplierAttr, (user, target, move) => target.getHpRatio() < 0.5 ? 2 : 1),
     new AttackMove(Moves.NATURAL_GIFT, PokemonType.NORMAL, MoveCategory.PHYSICAL, -1, 100, 15, -1, 0, 4)
-      .makesContact(false)
-      .unimplemented(),
-      /*
-      NOTE: To whoever tries to implement this, reminder to push to battleData.berriesEaten
-      and enable the harvest test..
-      Do NOT push to berriesEatenLast or else cud chew will puke the berry.
-      */
+      .attr(NaturalGiftPowerAttr)
+      .attr(NaturalGiftTypeAttr)
+      .attr(NaturalGiftConsumeBerryAttr)
+      .condition((user) => {
+        return user.getHeldItems().some(i => i instanceof BerryModifier);
+      })
+      .makesContact(false),
     new AttackMove(Moves.FEINT, PokemonType.NORMAL, MoveCategory.PHYSICAL, 30, 100, 10, -1, 2, 4)
       .attr(RemoveBattlerTagAttr, [ BattlerTagType.PROTECTED ])
       .attr(RemoveArenaTagsAttr, [ ArenaTagType.QUICK_GUARD, ArenaTagType.WIDE_GUARD, ArenaTagType.MAT_BLOCK, ArenaTagType.CRAFTY_SHIELD ], false)

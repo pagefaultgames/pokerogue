@@ -24,7 +24,7 @@ import type { PokeballType } from "#enums/pokeball";
 import { Species } from "#enums/species";
 import { type PermanentStat, type TempBattleStat, BATTLE_STATS, Stat, TEMP_BATTLE_STATS } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
-import type { PokemonType } from "#enums/pokemon-type";
+import { PokemonType } from "#enums/pokemon-type";
 import i18next from "i18next";
 import {
   type DoubleBattleChanceBoosterModifierType,
@@ -1840,6 +1840,20 @@ export class LevelIncrementBoosterModifier extends PersistentModifier {
   }
 }
 
+const berryNaturalGiftMap: { [key in BerryType]: { power: number; type: PokemonType } } = {
+  [BerryType.SITRUS]: { power: 80, type: PokemonType.PSYCHIC },
+  [BerryType.LUM]: { power: 80, type: PokemonType.FLYING },
+  [BerryType.ENIGMA]: { power: 100, type: PokemonType.BUG },
+  [BerryType.LIECHI]: { power: 100, type: PokemonType.GRASS },
+  [BerryType.GANLON]: { power: 100, type: PokemonType.ICE },
+  [BerryType.PETAYA]: { power: 100, type: PokemonType.POISON },
+  [BerryType.APICOT]: { power: 100, type: PokemonType.GROUND },
+  [BerryType.SALAC]: { power: 100, type: PokemonType.FIGHTING },
+  [BerryType.LANSAT]: { power: 100, type: PokemonType.FLYING },
+  [BerryType.STARF]: { power: 100, type: PokemonType.PSYCHIC },
+  [BerryType.LEPPA]: { power: 80, type: PokemonType.FIGHTING },
+};
+
 export class BerryModifier extends PokemonHeldItemModifier {
   public berryType: BerryType;
   public consumed: boolean;
@@ -1898,6 +1912,14 @@ export class BerryModifier extends PokemonHeldItemModifier {
       return 2;
     }
     return 3;
+  }
+
+  getNaturalGiftPower(): number {
+    return berryNaturalGiftMap[this.berryType].power ?? 0;
+  }
+
+  getNaturalGiftType(): PokemonType {
+    return berryNaturalGiftMap[this.berryType].type ?? null;
   }
 }
 
