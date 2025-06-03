@@ -5,7 +5,14 @@ import i18next from "i18next";
 import { Button } from "#enums/buttons";
 import { globalScene } from "#app/global-scene";
 
+export enum ConfirmUiMode {
+  DEFAULT,
+  REJECT_MOVE,
+}
+
 export default class ConfirmUiHandler extends AbstractOptionSelectUiHandler {
+  private confirmUiMode: ConfirmUiMode;
+
   public static readonly windowWidth: number = 48;
 
   private switchCheck: boolean;
@@ -105,7 +112,16 @@ export default class ConfirmUiHandler extends AbstractOptionSelectUiHandler {
 
       this.optionSelectContainer.setPosition(globalScene.game.canvas.width / 6 - 1 + xOffset, -48 + yOffset);
 
-      this.setCursor(this.switchCheck ? this.switchCheckCursor : 0);
+      this.confirmUiMode = args.length >= 6 ? (args[5] as ConfirmUiMode) : ConfirmUiMode.DEFAULT;
+
+      switch (this.confirmUiMode) {
+        case ConfirmUiMode.DEFAULT:
+          this.setCursor(this.switchCheck ? this.switchCheckCursor : 0);
+          break;
+        case ConfirmUiMode.REJECT_MOVE:
+          this.setCursor(this.switchCheck ? this.switchCheckCursor : 1);
+          break;
+      }
 
       return true;
     }
