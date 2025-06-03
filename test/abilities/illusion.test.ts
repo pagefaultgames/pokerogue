@@ -116,12 +116,14 @@ describe("Abilities - Illusion", () => {
     expect(psychicEffectiveness).above(flameThrowerEffectiveness);
   });
 
-  it("does not break from indirect damage", async () => {
+  it("should not break from indirect damage from status, weather or recoil", async () => {
     game.override.enemySpecies(Species.GIGALITH).enemyAbility(Abilities.SAND_STREAM);
+
     await game.classicMode.startBattle([Species.ZOROARK, Species.AZUMARILL]);
 
     game.move.use(Moves.FLARE_BLITZ);
-    await game.phaseInterceptor.to("TurnEndPhase");
+    await game.move.forceEnemyMove(Moves.WILL_O_WISP);
+    await game.toEndOfTurn();
 
     const zoroark = game.scene.getPlayerPokemon()!;
     expect(!!zoroark.summonData.illusion).equals(true);
