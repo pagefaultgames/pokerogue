@@ -91,7 +91,7 @@ describe("Battle order", () => {
     expect(order.slice(0, 2).includes(enemyIndices[1])).toBe(true);
     expect(order.slice(2, 4).includes(playerIndices[0])).toBe(true);
     expect(order.slice(2, 4).includes(playerIndices[1])).toBe(true);
-  }, 20000);
+  });
 
   it("double - speed tie except 1 - 100/100 vs 100/150", async () => {
     game.override.battleStyle("double");
