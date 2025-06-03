@@ -134,10 +134,15 @@ describe("Moves - Safeguard", () => {
   });
 
   it("protects from ability-inflicted status", async () => {
-    game.override.ability(Abilities.STATIC);
-    vi.spyOn(PostDefendContactApplyStatusEffectAbAttr.prototype, "chance", "get").mockReturnValue(100);
     await game.classicMode.startBattle();
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+
+    const player = game.field.getPlayerPokemon();
+    game.field.mockAbility(player, Abilities.STATIC);
+    vi.spyOn(
+      player.getAbility().getAttrs(PostDefendContactApplyStatusEffectAbAttr)[0],
+      "chance",
+      "get",
+    ).mockReturnValue(100);
 
     game.move.select(Moves.SPLASH);
     await game.move.forceEnemyMove(Moves.SAFEGUARD);
@@ -147,6 +152,7 @@ describe("Moves - Safeguard", () => {
     await game.move.forceEnemyMove(Moves.TACKLE);
     await game.toNextTurn();
 
+    const enemyPokemon = game.field.getEnemyPokemon();
     expect(enemyPokemon.status).toBeUndefined();
   });
 });
