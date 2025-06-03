@@ -92,6 +92,10 @@ describe("Learn Move Phase", () => {
     game.onNextPrompt("LearnMovePhase", UiMode.CONFIRM, () => {
       game.scene.ui.processInput(Button.ACTION);
     });
+    game.onNextPrompt("LearnMovePhase", UiMode.CONFIRM, () => {
+      game.scene.ui.setCursor(0);
+      game.scene.ui.processInput(Button.ACTION);
+    });
     await game.phaseInterceptor.to(LearnMovePhase);
 
     const levelReq = bulbasaur.getLevelMoves(5)[0][0];
