@@ -11,6 +11,7 @@ import {
   isNullOrUndefined,
   toReadableString,
   formatStat,
+  getShinyDescriptor,
 } from "#app/utils/common";
 import type { PlayerPokemon, PokemonMove } from "#app/field/pokemon";
 import { getStarterValueFriendshipCap, speciesStarterCosts } from "#app/data/balance/starters";
@@ -444,18 +445,19 @@ export default class SummaryUiHandler extends UiHandler {
     this.shinyIcon.setVisible(this.pokemon.isShiny(false));
     this.shinyIcon.setTint(getVariantTint(baseVariant));
     if (this.shinyIcon.visible) {
-      const shinyDescriptor =
-        doubleShiny || baseVariant
-          ? `${baseVariant === 2 ? i18next.t("common:epicShiny") : baseVariant === 1 ? i18next.t("common:rareShiny") : i18next.t("common:commonShiny")}${doubleShiny ? `/${this.pokemon.fusionVariant === 2 ? i18next.t("common:epicShiny") : this.pokemon.fusionVariant === 1 ? i18next.t("common:rareShiny") : i18next.t("common:commonShiny")}` : ""}`
-          : "";
-      this.shinyIcon.on("pointerover", () =>
-        globalScene.ui.showTooltip(
-          "",
-          `${i18next.t("common:shinyOnHover")}${shinyDescriptor ? ` (${shinyDescriptor})` : ""}`,
-          true,
-        ),
-      );
-      this.shinyIcon.on("pointerout", () => globalScene.ui.hideTooltip());
+      let shinyDescriptor = "";
+      if (doubleShiny || baseVariant) {
+        shinyDescriptor = " (" + getShinyDescriptor(baseVariant);
+        if (doubleShiny) {
+          shinyDescriptor += "/" + getShinyDescriptor(this.pokemon.fusionVariant);
+        }
+        shinyDescriptor += ")";
+      }
+      this.shinyIcon
+        .on("pointerover", () =>
+          globalScene.ui.showTooltip("", i18next.t("common:shinyOnHover") + shinyDescriptor, true),
+        )
+        .on("pointerout", () => globalScene.ui.hideTooltip());
     }
 
     this.fusionShinyIcon.setPosition(this.shinyIcon.x, this.shinyIcon.y);
@@ -1237,7 +1239,7 @@ export default class SummaryUiHandler extends UiHandler {
     this.moveSelect = true;
     this.extraMoveRowContainer.setVisible(true);
     this.selectedMoveIndex = -1;
-    this.setCursor(0);
+    this.setCursor(this.summaryUiMode === SummaryUiMode.LEARN_MOVE ? 4 : 0);
     this.showMoveEffect();
   }
 

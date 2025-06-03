@@ -40,8 +40,8 @@ describe("Moves - Fairy Lock", () => {
 
     game.move.select(Moves.FAIRY_LOCK);
     game.move.select(Moves.SPLASH, 1);
-    await game.forceEnemyMove(Moves.SPLASH, 1);
-    await game.forceEnemyMove(Moves.SPLASH, 1);
+    await game.move.selectEnemyMove(Moves.SPLASH, 1);
+    await game.move.selectEnemyMove(Moves.SPLASH, 1);
     await game.phaseInterceptor.to("BerryPhase");
     expect(game.scene.arena.getTagOnSide(ArenaTagType.FAIRY_LOCK, ArenaTagSide.PLAYER)).toBeDefined();
     expect(game.scene.arena.getTagOnSide(ArenaTagType.FAIRY_LOCK, ArenaTagSide.ENEMY)).toBeDefined();
@@ -50,8 +50,8 @@ describe("Moves - Fairy Lock", () => {
 
     game.move.select(Moves.SPLASH);
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.SPLASH, 1);
-    await game.forceEnemyMove(Moves.SPLASH, 1);
+    await game.move.selectEnemyMove(Moves.SPLASH, 1);
+    await game.move.selectEnemyMove(Moves.SPLASH, 1);
     await game.phaseInterceptor.to("BerryPhase");
     expect(playerPokemon[0].isTrapped()).toEqual(true);
     expect(playerPokemon[1].isTrapped()).toEqual(true);
@@ -70,8 +70,8 @@ describe("Moves - Fairy Lock", () => {
 
     game.move.select(Moves.FAIRY_LOCK);
     game.move.select(Moves.SPLASH, 1);
-    await game.forceEnemyMove(Moves.SPLASH, 1);
-    await game.forceEnemyMove(Moves.SPLASH, 1);
+    await game.move.selectEnemyMove(Moves.SPLASH, 1);
+    await game.move.selectEnemyMove(Moves.SPLASH, 1);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(game.scene.arena.getTagOnSide(ArenaTagType.FAIRY_LOCK, ArenaTagSide.PLAYER)).toBeDefined();
@@ -84,8 +84,8 @@ describe("Moves - Fairy Lock", () => {
 
     game.move.select(Moves.SPLASH);
     game.doSwitchPokemon(2);
-    await game.forceEnemyMove(Moves.SPLASH, 1);
-    await game.forceEnemyMove(Moves.SPLASH, 1);
+    await game.move.selectEnemyMove(Moves.SPLASH, 1);
+    await game.move.selectEnemyMove(Moves.SPLASH, 1);
     await game.phaseInterceptor.to("BerryPhase");
     await game.toNextTurn();
 
@@ -98,8 +98,8 @@ describe("Moves - Fairy Lock", () => {
 
     game.move.select(Moves.FAIRY_LOCK);
     game.move.select(Moves.SPLASH, 1);
-    await game.forceEnemyMove(Moves.SPLASH, 1);
-    await game.forceEnemyMove(Moves.SPLASH, 1);
+    await game.move.selectEnemyMove(Moves.SPLASH, 1);
+    await game.move.selectEnemyMove(Moves.SPLASH, 1);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(game.scene.arena.getTagOnSide(ArenaTagType.FAIRY_LOCK, ArenaTagSide.PLAYER)).toBeDefined();
@@ -108,9 +108,9 @@ describe("Moves - Fairy Lock", () => {
     await game.toNextTurn();
     game.move.select(Moves.SPLASH);
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.WHIRLWIND, 0);
+    await game.move.selectEnemyMove(Moves.WHIRLWIND, 0);
     game.doSelectPartyPokemon(2);
-    await game.forceEnemyMove(Moves.WHIRLWIND, 1);
+    await game.move.selectEnemyMove(Moves.WHIRLWIND, 1);
     game.doSelectPartyPokemon(2);
     await game.phaseInterceptor.to("BerryPhase");
     await game.toNextTurn();
@@ -126,8 +126,8 @@ describe("Moves - Fairy Lock", () => {
     game.move.select(Moves.FAIRY_LOCK);
     game.move.select(Moves.MEMENTO, 1);
     game.doSelectPartyPokemon(2);
-    await game.forceEnemyMove(Moves.SPLASH, 1);
-    await game.forceEnemyMove(Moves.SPLASH, 1);
+    await game.move.selectEnemyMove(Moves.SPLASH, 1);
+    await game.move.selectEnemyMove(Moves.SPLASH, 1);
     await game.phaseInterceptor.to("BerryPhase");
     expect(game.scene.arena.getTagOnSide(ArenaTagType.FAIRY_LOCK, ArenaTagSide.PLAYER)).toBeDefined();
     expect(game.scene.arena.getTagOnSide(ArenaTagType.FAIRY_LOCK, ArenaTagSide.ENEMY)).toBeDefined();
@@ -135,8 +135,8 @@ describe("Moves - Fairy Lock", () => {
     await game.toNextTurn();
     game.move.select(Moves.SPLASH);
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.SPLASH, 1);
-    await game.forceEnemyMove(Moves.SPLASH, 1);
+    await game.move.selectEnemyMove(Moves.SPLASH, 1);
+    await game.move.selectEnemyMove(Moves.SPLASH, 1);
     await game.phaseInterceptor.to("BerryPhase");
     expect(game.scene.getPlayerField()[0].isTrapped()).toEqual(true);
     expect(game.scene.getPlayerField()[1].isTrapped()).toEqual(true);

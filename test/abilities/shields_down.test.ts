@@ -76,7 +76,7 @@ describe("Abilities - SHIELDS DOWN", () => {
     await game.classicMode.startBattle([Species.MINIOR]);
 
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.SPORE);
+    await game.move.selectEnemyMove(Moves.SPORE);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(game.scene.getPlayerPokemon()!.status).toBe(undefined);
@@ -115,12 +115,12 @@ describe("Abilities - SHIELDS DOWN", () => {
 
     // turn 1
     game.move.select(Moves.GRAVITY);
-    await game.forceEnemyMove(Moves.TOXIC_SPIKES);
+    await game.move.selectEnemyMove(Moves.TOXIC_SPIKES);
     await game.toNextTurn();
 
     // turn 2
     game.doSwitchPokemon(1);
-    await game.forceEnemyMove(Moves.SPLASH);
+    await game.move.selectEnemyMove(Moves.SPLASH);
     await game.toNextTurn();
 
     expect(game.scene.getPlayerPokemon()!.species.speciesId).toBe(Species.MINIOR);
@@ -134,7 +134,7 @@ describe("Abilities - SHIELDS DOWN", () => {
     await game.classicMode.startBattle([Species.MAGIKARP, Species.MINIOR]);
 
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.YAWN);
+    await game.move.selectEnemyMove(Moves.YAWN);
 
     await game.phaseInterceptor.to(TurnEndPhase);
     expect(game.scene.getPlayerPokemon()!.findTag(tag => tag.tagType === BattlerTagType.DROWSY)).toBe(undefined);
@@ -146,7 +146,7 @@ describe("Abilities - SHIELDS DOWN", () => {
     await game.classicMode.startBattle([Species.MINIOR]);
 
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.CONFUSE_RAY);
+    await game.move.selectEnemyMove(Moves.CONFUSE_RAY);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -162,7 +162,7 @@ describe("Abilities - SHIELDS DOWN", () => {
     await game.classicMode.startBattle([Species.MINIOR]);
 
     game.move.select(Moves.SPORE);
-    await game.forceEnemyMove(Moves.SPLASH);
+    await game.move.selectEnemyMove(Moves.SPLASH);
 
     await game.phaseInterceptor.to(TurnEndPhase);
     expect(game.scene.getEnemyPokemon()!.status?.effect).toBe(StatusEffect.SLEEP);
