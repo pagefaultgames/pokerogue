@@ -13,7 +13,8 @@ import { TrainerPartyCompoundTemplate } from "#app/data/trainers/TrainerPartyTem
 import { TrainerPartyTemplate } from "#app/data/trainers/TrainerPartyTemplate";
 import { ModifierTier } from "#app/modifier/modifier-tier";
 import type { PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
-import { ModifierPoolType, modifierTypes } from "#app/modifier/modifier-type";
+import { modifierTypes } from "#app/modifier/modifier-type";
+import { ModifierPoolType } from "#app/modifier/modifier-pool-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import { globalScene } from "#app/global-scene";
@@ -39,7 +40,7 @@ import type { OptionSelectConfig } from "#app/ui/abstact-option-select-ui-handle
 import type { PlayerPokemon } from "#app/field/pokemon";
 import { PokemonMove } from "#app/field/pokemon";
 import { Ability } from "#app/data/abilities/ability-class";
-import { BerryModifier } from "#app/modifier/modifier";
+import { BerryModifier } from "#app/modifier/held-item-modifier";
 import { BerryType } from "#enums/berry-type";
 import { BattlerIndex } from "#app/battle";
 import { Moves } from "#enums/moves";
@@ -49,6 +50,7 @@ import { CustomPokemonData } from "#app/data/custom-pokemon-data";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { EncounterAnim } from "#enums/encounter-anims";
 import { Challenges } from "#enums/challenges";
+import { withTierFromPool } from "#app/modifier/modifier-pool";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/clowningAround";
@@ -318,7 +320,7 @@ export const ClowningAroundEncounter: MysteryEncounter = MysteryEncounterBuilder
         let numRogue = 0;
 
         for (const m of items.filter(m => m.isTransferable && !(m instanceof BerryModifier))) {
-          const type = m.type.withTierFromPool(ModifierPoolType.PLAYER, party);
+          const type = withTierFromPool(m.type, ModifierPoolType.PLAYER, party);
           const tier = type.tier ?? ModifierTier.ULTRA;
           if (type.id === "GOLDEN_EGG" || tier === ModifierTier.ROGUE) {
             numRogue += m.stackCount;

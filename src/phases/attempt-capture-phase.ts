@@ -12,7 +12,7 @@ import { getStatusEffectCatchRateMultiplier } from "#app/data/status-effect";
 import { addPokeballCaptureStars, addPokeballOpenParticles } from "#app/field/anims";
 import type { EnemyPokemon } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { PokemonHeldItemModifier } from "#app/modifier/modifier";
+import { PokemonHeldItemModifier } from "#app/modifier/held-item-modifier";
 import { PokemonPhase } from "#app/phases/pokemon-phase";
 import { VictoryPhase } from "#app/phases/victory-phase";
 import { achvs } from "#app/system/achv";

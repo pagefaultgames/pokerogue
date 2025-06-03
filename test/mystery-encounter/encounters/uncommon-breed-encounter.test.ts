@@ -25,7 +25,7 @@ import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { BerryType } from "#enums/berry-type";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { Stat } from "#enums/stat";
-import type { BerryModifier } from "#app/modifier/modifier";
+import type { BerryModifier } from "#app/modifier/held-item-modifier";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import { Abilities } from "#enums/abilities";
 

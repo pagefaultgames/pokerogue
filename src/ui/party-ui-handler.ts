@@ -10,7 +10,7 @@ import {
   PokemonFormChangeItemModifier,
   PokemonHeldItemModifier,
   SwitchEffectTransferModifier,
-} from "#app/modifier/modifier";
+} from "#app/modifier/held-item-modifier";
 import { ForceSwitchOutAttr } from "#app/data/moves/move";
 import { allMoves } from "#app/data/data-lists";
 import { Gender, getGenderColor, getGenderSymbol } from "#app/data/gender";
@@ -1165,8 +1165,7 @@ export default class PartyUiHandler extends MessageUiHandler {
       this.partyUiMode !== PartyUiMode.FAINT_SWITCH &&
       globalScene.findModifier(
         m =>
-          m instanceof SwitchEffectTransferModifier &&
-          m.pokemonId === globalScene.getPlayerField()[this.fieldIndex].id,
+          m instanceof SwitchEffectTransferModifier && m.pokemonId === globalScene.getPlayerField()[this.fieldIndex].id,
       )
     );
   }

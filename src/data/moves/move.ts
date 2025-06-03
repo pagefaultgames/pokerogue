@@ -73,12 +73,11 @@ import {
   PokemonHeldItemModifier,
   PokemonMoveAccuracyBoosterModifier,
   PokemonMultiHitModifier,
-  PreserveBerryModifier,
-} from "../../modifier/modifier";
+} from "../../modifier/held-item-modifier";
 import type { BattlerIndex } from "../../battle";
 import { BattleType } from "#enums/battle-type";
 import { TerrainType } from "../terrain";
-import { ModifierPoolType } from "#app/modifier/modifier-type";
+import { getOrInferTier } from "#app/modifier/modifier-pool";
 import { Command } from "../../ui/command-ui-handler";
 import i18next from "i18next";
 import type { Localizable } from "#app/interfaces/locales";
@@ -123,6 +122,8 @@ import { MoveEffectTrigger } from "#enums/MoveEffectTrigger";
 import { MultiHitType } from "#enums/MultiHitType";
 import { invalidAssistMoves, invalidCopycatMoves, invalidMetronomeMoves, invalidMirrorMoveMoves, invalidSleepTalkMoves } from "./invalid-moves";
 import { SelectBiomePhase } from "#app/phases/select-biome-phase";
+import { PreserveBerryModifier } from "#app/modifier/modifier";
+import { ModifierPoolType } from "#app/modifier/modifier-pool-type";
 
 type MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => boolean;
 type UserMoveConditionFunc = (user: Pokemon, move: Move) => boolean;
@@ -2558,8 +2559,8 @@ export class StealHeldItemChanceAttr extends MoveEffectAttr {
     }
 
     const poolType = target.isPlayer() ? ModifierPoolType.PLAYER : target.hasTrainer() ? ModifierPoolType.TRAINER : ModifierPoolType.WILD;
-    const highestItemTier = heldItems.map((m) => m.type.getOrInferTier(poolType)).reduce((highestTier, tier) => Math.max(tier!, highestTier), 0); // TODO: is the bang after tier correct?
-    const tierHeldItems = heldItems.filter((m) => m.type.getOrInferTier(poolType) === highestItemTier);
+    const highestItemTier = heldItems.map((m) => getOrInferTier(m.type, poolType)).reduce((highestTier, tier) => Math.max(tier!, highestTier), 0); // TODO: is the bang after tier correct?
+    const tierHeldItems = heldItems.filter((m) => getOrInferTier(m.type, poolType) === highestItemTier);
     const stolenItem = tierHeldItems[user.randBattleSeedInt(tierHeldItems.length)];
     if (!globalScene.tryTransferHeldItemModifier(stolenItem, user, false)) {
       return false;

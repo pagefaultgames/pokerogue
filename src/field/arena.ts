@@ -40,7 +40,7 @@ import { Abilities } from "#enums/abilities";
 import { SpeciesFormChangeRevertWeatherFormTrigger, SpeciesFormChangeWeatherTrigger } from "#app/data/pokemon-forms";
 import { CommonAnimPhase } from "#app/phases/common-anim-phase";
 import { WeatherType } from "#enums/weather-type";
-import { FieldEffectModifier } from "#app/modifier/modifier";
+import { FieldEffectModifier } from "#app/modifier/held-item-modifier";
 
 export class Arena {
   public biomeType: Biome;

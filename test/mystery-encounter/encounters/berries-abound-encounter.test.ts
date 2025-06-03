@@ -11,7 +11,7 @@ import {
 import type BattleScene from "#app/battle-scene";
 import { UiMode } from "#enums/ui-mode";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
-import { BerryModifier } from "#app/modifier/modifier";
+import { BerryModifier } from "#app/modifier/held-item-modifier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { initSceneWithoutEncounterPhase } from "#test/testUtils/gameManagerUtils";

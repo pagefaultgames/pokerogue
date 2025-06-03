@@ -12,7 +12,7 @@ import { Button } from "../enums/buttons";
 import { BattleType } from "#enums/battle-type";
 import { TrainerVariant } from "../field/trainer";
 import { Challenges } from "#enums/challenges";
-import { getLuckString, getLuckTextTint } from "../modifier/modifier-type";
+import { getLuckString, getLuckTextTint } from "../modifier/modifier-utils";
 import RoundRectangle from "phaser3-rex-plugins/plugins/roundrectangle";
 import { getTypeRgb } from "#app/data/type";
 import { PokemonType } from "#enums/pokemon-type";
@@ -27,6 +27,8 @@ import { SettingKeyboard } from "#app/system/settings/settings-keyboard";
 import { getBiomeName } from "#app/data/balance/biomes";
 import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { globalScene } from "#app/global-scene";
+import { PokemonHeldItemModifier } from "#app/modifier/held-item-modifier";
+import { modifierSortFunc } from "#app/modifier/modifier-bar";
 
 /**
  * RunInfoUiMode indicates possible overlays of RunInfoUiHandler.
@@ -650,7 +652,7 @@ export default class RunInfoUiHandler extends UiHandler {
       modifierIconsContainer.setScale(0.45);
       for (const m of this.runInfo.modifiers) {
         const modifier = m.toModifier(this.modifiersModule[m.className]);
-        if (modifier instanceof Modifier.PokemonHeldItemModifier) {
+        if (modifier instanceof PokemonHeldItemModifier) {
           continue;
         }
         const icon = modifier?.getIcon(false);
@@ -881,17 +883,17 @@ export default class RunInfoUiHandler extends UiHandler {
       const heldItemsScale =
         this.runInfo.gameMode === GameModes.SPLICED_ENDLESS || this.runInfo.gameMode === GameModes.ENDLESS ? 0.25 : 0.5;
       const heldItemsContainer = globalScene.add.container(-82, 2);
-      const heldItemsList: Modifier.PokemonHeldItemModifier[] = [];
+      const heldItemsList: PokemonHeldItemModifier[] = [];
       if (this.runInfo.modifiers.length) {
         for (const m of this.runInfo.modifiers) {
           const modifier = m.toModifier(this.modifiersModule[m.className]);
-          if (modifier instanceof Modifier.PokemonHeldItemModifier && modifier.pokemonId === pokemon.id) {
+          if (modifier instanceof PokemonHeldItemModifier && modifier.pokemonId === pokemon.id) {
             modifier.stackCount = m["stackCount"];
             heldItemsList.push(modifier);
           }
         }
         if (heldItemsList.length > 0) {
-          (heldItemsList as Modifier.PokemonHeldItemModifier[]).sort(Modifier.modifierSortFunc);
+          (heldItemsList as PokemonHeldItemModifier[]).sort(modifierSortFunc);
           let row = 0;
           for (const [index, item] of heldItemsList.entries()) {
             if (index > 36) {

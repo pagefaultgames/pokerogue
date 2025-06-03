@@ -7,11 +7,7 @@ import { TrainerSlot } from "#enums/trainer-slot";
 import { ModifierTier } from "#app/modifier/modifier-tier";
 import { MusicPreference } from "#app/system/settings/settings";
 import type { ModifierTypeOption } from "#app/modifier/modifier-type";
-import {
-  getPlayerModifierTypeOptions,
-  ModifierPoolType,
-  regenerateModifierPoolThresholds,
-} from "#app/modifier/modifier-type";
+import { getPlayerModifierTypeOptions, regenerateModifierPoolThresholds } from "#app/modifier/modifier-pool";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { globalScene } from "#app/global-scene";
 import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
@@ -34,13 +30,12 @@ import {
 import type { PlayerPokemon } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
 import { EnemyPokemon, PokemonMove } from "#app/field/pokemon";
-import type { PokemonHeldItemModifier } from "#app/modifier/modifier";
 import {
-  HiddenAbilityRateBoosterModifier,
   PokemonFormChangeItemModifier,
-  ShinyRateBoosterModifier,
   SpeciesStatBoosterModifier,
-} from "#app/modifier/modifier";
+  type PokemonHeldItemModifier,
+} from "#app/modifier/held-item-modifier";
+import { HiddenAbilityRateBoosterModifier, ShinyRateBoosterModifier } from "#app/modifier/modifier";
 import type { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
 import PokemonData from "#app/system/pokemon-data";
 import i18next from "i18next";
@@ -54,6 +49,8 @@ import type { PokeballType } from "#enums/pokeball";
 import { doShinySparkleAnim } from "#app/field/anims";
 import { TrainerType } from "#enums/trainer-type";
 import { timedEventManager } from "#app/global-event-manager";
+import { withTierFromPool } from "#app/modifier/modifier-pool";
+import { ModifierPoolType } from "#app/modifier/modifier-pool-type";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/globalTradeSystem";
@@ -437,7 +434,7 @@ export const GlobalTradeSystemEncounter: MysteryEncounter = MysteryEncounterBuil
         const chosenPokemon: PlayerPokemon = encounter.misc.chosenPokemon;
 
         // Check tier of the traded item, the received item will be one tier up
-        const type = modifier.type.withTierFromPool(ModifierPoolType.PLAYER, party);
+        const type = withTierFromPool(modifier.type, ModifierPoolType.PLAYER, party);
         let tier = type.tier ?? ModifierTier.GREAT;
         // Eggs and White Herb are not in the pool
         if (type.id === "WHITE_HERB") {

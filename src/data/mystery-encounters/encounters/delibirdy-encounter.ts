@@ -19,9 +19,12 @@ import { getPokemonSpecies } from "#app/data/pokemon-species";
 import type { PlayerPokemon } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
-import type { PokemonHeldItemModifier, PokemonInstantReviveModifier } from "#app/modifier/modifier";
 import {
   BerryModifier,
+  type PokemonHeldItemModifier,
+  type PokemonInstantReviveModifier,
+} from "#app/modifier/held-item-modifier";
+import {
   HealingBoosterModifier,
   LevelIncrementBoosterModifier,
   MoneyMultiplierModifier,

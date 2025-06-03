@@ -11,7 +11,7 @@ import {
 } from "#app/utils/common";
 import Trainer, { TrainerVariant } from "./field/trainer";
 import type { GameMode } from "./game-mode";
-import { MoneyMultiplierModifier, PokemonHeldItemModifier } from "./modifier/modifier";
+import { MoneyMultiplierModifier } from "./modifier/modifier";
 import type { PokeballType } from "#enums/pokeball";
 import { trainerConfigs } from "#app/data/trainers/trainer-config";
 import { SpeciesFormKey } from "#enums/species-form-key";
@@ -27,11 +27,12 @@ import { TrainerType } from "#enums/trainer-type";
 import i18next from "#app/plugins/i18n";
 import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
-import type { CustomModifierSettings } from "#app/modifier/modifier-type";
+import type { CustomModifierSettings } from "#app/modifier/modifier-pool";
 import { ModifierTier } from "#app/modifier/modifier-tier";
 import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { BattleType } from "#enums/battle-type";
 import { ClassicFixedBossWaves } from "#enums/fixed-boss-waves";
+import { PokemonHeldItemModifier } from "./modifier/held-item-modifier";
 
 export enum BattlerIndex {
   ATTACKER = -1,

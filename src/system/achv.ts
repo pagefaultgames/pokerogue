@@ -1,5 +1,5 @@
 import type { Modifier } from "typescript";
-import { TurnHeldItemTransferModifier } from "../modifier/modifier";
+import { TurnHeldItemTransferModifier } from "../modifier/held-item-modifier";
 import { pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
 import i18next from "i18next";
 import { NumberHolder } from "#app/utils/common";

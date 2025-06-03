@@ -1,4 +1,4 @@
-import { StatBoosterModifier } from "#app/modifier/modifier";
+import { StatBoosterModifier } from "#app/modifier/held-item-modifier";
 import { NumberHolder, randItem } from "#app/utils/common";
 import { Species } from "#enums/species";
 import { Stat } from "#enums/stat";
