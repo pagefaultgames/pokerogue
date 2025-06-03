@@ -343,7 +343,7 @@ describe("Moves - Instruct", () => {
       move: Moves.ELECTRO_DRIFT,
       targets: [BattlerIndex.PLAYER],
       result: MoveResult.SUCCESS,
-      virtual: false,
+      useType: MoveUseType.NORMAL,
     });
 
     game.move.select(Moves.SPLASH);
