@@ -94,25 +94,20 @@ describe("Abilities - Intimidate", () => {
   });
 
   it("should trigger on moves that switch user/target out during trainer battles", async () => {
-    game.override
-      .moveset([Moves.SPLASH, Moves.DRAGON_TAIL])
-      .enemyMoveset([Moves.SPLASH, Moves.TELEPORT])
-      .battleType(BattleType.TRAINER)
-      .startingWave(8)
-      .passiveAbility(Abilities.NO_GUARD);
+    game.override.battleType(BattleType.TRAINER).passiveAbility(Abilities.NO_GUARD);
 
     await game.classicMode.startBattle([Species.MIGHTYENA]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
     expect(playerPokemon.getStatStage(Stat.ATK)).toBe(-1);
 
-    game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.TELEPORT);
+    game.move.use(Moves.SPLASH);
+    await game.move.forceEnemyMove(Moves.TELEPORT);
     await game.toNextTurn();
     expect(playerPokemon.getStatStage(Stat.ATK)).toBe(-2);
 
-    game.move.select(Moves.DRAGON_TAIL);
-    await game.forceEnemyMove(Moves.SPLASH);
+    game.move.use(Moves.DRAGON_TAIL);
+    await game.move.forceEnemyMove(Moves.SPLASH);
     await game.toNextTurn();
     expect(playerPokemon.getStatStage(Stat.ATK)).toBe(-3);
   });
