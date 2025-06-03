@@ -64,12 +64,12 @@ describe("Moves - Baton Pass", () => {
 
     // round 1 - ai buffs
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.NASTY_PLOT);
+    await game.move.forceEnemyMove(Moves.NASTY_PLOT);
     await game.toNextTurn();
 
     // round 2 - baton pass
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.BATON_PASS);
+    await game.move.forceEnemyMove(Moves.BATON_PASS);
     await game.phaseInterceptor.to("PostSummonPhase", false);
 
     // check buffs are still there

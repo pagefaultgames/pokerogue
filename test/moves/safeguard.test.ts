@@ -1,6 +1,5 @@
 import { BattlerIndex } from "#app/battle";
 import { PostDefendContactApplyStatusEffectAbAttr } from "#app/data/abilities/ability";
-import { allAbilities } from "#app/data/data-lists";
 import { Abilities } from "#app/enums/abilities";
 import { StatusEffect } from "#app/enums/status-effect";
 import GameManager from "#test/testUtils/gameManager";
@@ -113,14 +112,14 @@ describe("Moves - Safeguard", () => {
     expect(enemyPokemon.status?.effect).toBe(StatusEffect.SLEEP);
   });
 
-  it("doesn't protect from self-inflicted via Rest or Flame Orb", async () => {
-    game.override.enemyHeldItems([{ name: "FLAME_ORB" }]).enemyMoveset([Moves.SAFEGUARD, Moves.REST]);
+  it("doesn't protect from self-inflicted status from Rest or Flame Orb", async () => {
+    game.override.enemyHeldItems([{ name: "FLAME_ORB" }]);
     await game.classicMode.startBattle();
     const enemyPokemon = game.scene.getEnemyPokemon()!;
     enemyPokemon.hp = 1;
 
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.SAFEGUARD);
+    await game.move.forceEnemyMove(Moves.SAFEGUARD);
     await game.toNextTurn();
 
     expect(enemyPokemon.status?.effect).toBe(StatusEffect.BURN);
@@ -128,28 +127,24 @@ describe("Moves - Safeguard", () => {
     enemyPokemon.resetStatus();
 
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.REST);
+    await game.move.forceEnemyMove(Moves.REST);
     await game.toNextTurn();
 
     expect(enemyPokemon.status?.effect).toBe(StatusEffect.SLEEP);
   });
 
   it("protects from ability-inflicted status", async () => {
-    game.override.ability(Abilities.STATIC).enemyMoveset([Moves.SAFEGUARD, Moves.TACKLE]);
-    vi.spyOn(
-      allAbilities[Abilities.STATIC].getAttrs(PostDefendContactApplyStatusEffectAbAttr)[0],
-      "chance",
-      "get",
-    ).mockReturnValue(100);
+    game.override.ability(Abilities.STATIC);
+    vi.spyOn(PostDefendContactApplyStatusEffectAbAttr.prototype, "chance", "get").mockReturnValue(100);
     await game.classicMode.startBattle();
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.SAFEGUARD);
+    await game.move.forceEnemyMove(Moves.SAFEGUARD);
     await game.toNextTurn();
 
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.TACKLE);
+    await game.move.forceEnemyMove(Moves.TACKLE);
     await game.toNextTurn();
 
     expect(enemyPokemon.status).toBeUndefined();

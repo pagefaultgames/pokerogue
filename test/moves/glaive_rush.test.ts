@@ -138,17 +138,17 @@ describe("Moves - Glaive Rush", () => {
     player.hp = 1000;
 
     game.move.select(Moves.PROTECT);
-    await game.forceEnemyMove(Moves.GLAIVE_RUSH);
+    await game.move.forceEnemyMove(Moves.GLAIVE_RUSH);
     await game.phaseInterceptor.to("TurnEndPhase");
 
     game.move.select(Moves.SHADOW_SNEAK);
-    await game.forceEnemyMove(Moves.GLAIVE_RUSH);
+    await game.move.forceEnemyMove(Moves.GLAIVE_RUSH);
     await game.phaseInterceptor.to("TurnEndPhase");
     const damagedHP1 = 1000 - enemy.hp;
     enemy.hp = 1000;
 
     game.move.select(Moves.SHADOW_SNEAK);
-    await game.forceEnemyMove(Moves.SPLASH);
+    await game.move.forceEnemyMove(Moves.SPLASH);
     await game.phaseInterceptor.to("TurnEndPhase");
     const damagedHP2 = 1000 - enemy.hp;
 
