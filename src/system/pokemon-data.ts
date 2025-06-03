@@ -5,13 +5,14 @@ import { Nature } from "#enums/nature";
 import { PokeballType } from "#enums/pokeball";
 import { getPokemonSpecies, getPokemonSpeciesForm } from "../data/pokemon-species";
 import { Status } from "../data/status-effect";
-import Pokemon, { EnemyPokemon, PokemonBattleData, PokemonMove, PokemonSummonData } from "../field/pokemon";
+import Pokemon, { EnemyPokemon, PokemonMove } from "../field/pokemon";
+import { PokemonBattleData, PokemonSummonData } from "#app/data/pokemon/pokemon-data";
 import { TrainerSlot } from "#enums/trainer-slot";
 import type { Variant } from "#app/sprites/variant";
 import type { Biome } from "#enums/biome";
 import type { Moves } from "#enums/moves";
 import type { Species } from "#enums/species";
-import { CustomPokemonData } from "#app/data/custom-pokemon-data";
+import { CustomPokemonData } from "#app/data/pokemon/pokemon-data";
 import type { PokemonType } from "#enums/pokemon-type";
 
 export default class PokemonData {
