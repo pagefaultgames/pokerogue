@@ -53,7 +53,7 @@ import { allMoves } from "./data/data-lists";
 import { MusicPreference } from "#app/system/settings/settings";
 import {
   getDefaultModifierTypeForTier,
-  getEnemyModifierTypesForWave,
+  getEnemyHeldItemsForWave,
   getLuckString,
   getLuckTextTint,
   getModifierPoolForType,
@@ -3223,13 +3223,13 @@ export default class BattleScene extends SceneBase {
           if (isBoss) {
             count = Math.max(count, Math.floor(chances / 2));
           }
-          getEnemyModifierTypesForWave(
+          getEnemyHeldItemsForWave(
             difficultyWaveIndex,
             count,
             [enemyPokemon],
             this.currentBattle.battleType === BattleType.TRAINER ? ModifierPoolType.TRAINER : ModifierPoolType.WILD,
             upgradeChance,
-          ).map(mt => mt.newModifier(enemyPokemon).add(this.enemyModifiers, false));
+          ).map(itemId => enemyPokemon.heldItemManager.add(itemId));
         }
         return true;
       });

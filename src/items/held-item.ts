@@ -1,3 +1,4 @@
+import { applyPostItemLostAbAttrs, PostItemLostAbAttr } from "#app/data/abilities/ability";
 import type Pokemon from "#app/field/pokemon";
 import { globalScene } from "#app/global-scene";
 import type { HeldItems } from "#enums/held-items";
@@ -8,6 +9,9 @@ export const ITEM_EFFECT = {
   HIT_HEAL: 3,
   RESET_NEGATIVE_STAT_STAGE: 4,
   EXP_BOOSTER: 5,
+  // Should we actually distinguish different berry effects?
+  BERRY: 6,
+  BASE_STAT_BOOSTER: 7,
 } as const;
 
 export type ITEM_EFFECT = (typeof ITEM_EFFECT)[keyof typeof ITEM_EFFECT];
@@ -41,6 +45,7 @@ export class HeldItem {
     return "";
   }
 
+  // TODO: Aren't these fine as just properties to set in the subclass definition?
   untransferable(): HeldItem {
     this.isTransferable = false;
     return this;
@@ -119,10 +124,15 @@ export class HeldItem {
 }
 
 export class ConsumableHeldItem extends HeldItem {
-  consume(pokemon: Pokemon, isPlayer: boolean): boolean {
-    pokemon.heldItemManager.remove(this.type, 1);
-    // TODO: Turn this into updateItemBar or something
-    globalScene.updateModifiers(isPlayer);
-    return true;
+  // Sometimes berries are not eaten, some stuff may not proc unburden...
+  consume(pokemon: Pokemon, isPlayer: boolean, remove = true, unburden = true): void {
+    if (remove) {
+      pokemon.heldItemManager.remove(this.type, 1);
+      // TODO: Turn this into updateItemBar or something
+      globalScene.updateModifiers(isPlayer);
+    }
+    if (unburden) {
+      applyPostItemLostAbAttrs(PostItemLostAbAttr, pokemon, false);
+    }
   }
 }

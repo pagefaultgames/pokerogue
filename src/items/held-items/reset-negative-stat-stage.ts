@@ -58,7 +58,7 @@ export class ResetNegativeStatStageHeldItem extends ConsumableHeldItem {
         }),
       );
 
-      this.consume(pokemon, isPlayer);
+      this.consume(pokemon, isPlayer, true, false);
     }
 
     return statRestored;

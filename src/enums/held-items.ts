@@ -71,6 +71,17 @@ export const HeldItems = {
   FLAME_ORB: 0x070C,
   SOUL_DEW: 0x070D,
   BATON: 0x070E,
+
+  // Mini Black Hole
+  MINI_BLACK_HOLE: 0x0801,
+
+  // Vitamins
+  HP_UP: 0x0901,
+  PROTEIN: 0x0902,
+  IRON: 0x0903,
+  CALCIUM: 0x0904,
+  ZINC: 0x0905,
+  CARBOS: 0x0906,
 };
 
 export type HeldItems = (typeof HeldItems)[keyof typeof HeldItems];

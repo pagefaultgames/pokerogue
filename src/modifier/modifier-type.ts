@@ -133,6 +133,8 @@ import { HeldItems } from "#enums/held-items";
 import { allHeldItems } from "#app/items/all-held-items";
 import { TYPE_BOOST_ITEM_BOOST_PERCENT } from "#app/constants";
 import { attackTypeToHeldItem } from "#app/items/held-items/attack-type-booster";
+import { berryTypeToHeldItem } from "#app/items/held-items/berry";
+import { permanentStatToHeldItem, statBoostItems } from "#app/items/held-items/base-stat-booster";
 
 const outputModifierData = false;
 const useMaxWeightForOutput = false;
@@ -859,6 +861,26 @@ export class BerryModifierType extends PokemonHeldItemModifierType implements Ge
   }
 }
 
+export class BerryReward extends PokemonHeldItemReward implements GeneratedPersistentModifierType {
+  private berryType: BerryType;
+
+  constructor(berryType: BerryType) {
+    const itemId = berryTypeToHeldItem[berryType];
+    super(
+      itemId,
+      // Next argument is useless
+      (type, args) => new BerryModifier(type, (args[0] as Pokemon).id, berryType),
+    );
+
+    this.berryType = berryType;
+    this.id = "BERRY"; // needed to prevent harvest item deletion; remove after modifier rework
+  }
+
+  getPregenArgs(): any[] {
+    return [this.berryType];
+  }
+}
+
 export class AttackTypeBoosterReward extends PokemonHeldItemReward implements GeneratedPersistentModifierType {
   public moveType: PokemonType;
   public boostPercent: number;
@@ -1022,6 +1044,24 @@ export class BaseStatBoosterModifierType
     return i18next.t("modifierType:ModifierType.BaseStatBoosterModifierType.description", {
       stat: i18next.t(getStatKey(this.stat)),
     });
+  }
+
+  getPregenArgs(): any[] {
+    return [this.stat];
+  }
+}
+
+export class BaseStatBoosterReward extends PokemonHeldItemReward implements GeneratedPersistentModifierType {
+  private stat: PermanentStat;
+  private key: string;
+
+  constructor(stat: PermanentStat) {
+    const key = statBoostItems[stat];
+    const itemId = permanentStatToHeldItem[stat];
+    super(itemId, (_type, args) => new BaseStatModifier(this, (args[0] as Pokemon).id, this.stat));
+
+    this.stat = stat;
+    this.key = key;
   }
 
   getPregenArgs(): any[] {
@@ -1520,6 +1560,18 @@ class BaseStatBoosterModifierTypeGenerator extends ModifierTypeGenerator {
       }
       const randStat: PermanentStat = randSeedInt(Stat.SPD + 1);
       return new BaseStatBoosterModifierType(randStat);
+    });
+  }
+}
+
+class BaseStatBoosterRewardGenerator extends ModifierTypeGenerator {
+  constructor() {
+    super((_party: Pokemon[], pregenArgs?: any[]) => {
+      if (pregenArgs) {
+        return new BaseStatBoosterReward(pregenArgs[0]);
+      }
+      const randStat: PermanentStat = randSeedInt(Stat.SPD + 1);
+      return new BaseStatBoosterReward(randStat);
     });
   }
 }
@@ -2143,6 +2195,8 @@ export const modifierTypes = {
       }
     })("modifierType:ModifierType.DIRE_HIT", "dire_hit", (type, _args) => new TempCritBoosterModifier(type, 5)),
 
+  BASE_STAT_BOOSTER_REWARD: () => new BaseStatBoosterRewardGenerator(),
+
   BASE_STAT_BOOSTER: () => new BaseStatBoosterModifierTypeGenerator(),
 
   ATTACK_TYPE_BOOSTER_REWARD: () => new AttackTypeBoosterRewardGenerator(),
@@ -2187,6 +2241,26 @@ export const modifierTypes = {
         shardType = randSeedInt(64) ? (randSeedInt(18) as PokemonType) : PokemonType.STELLAR;
       }
       return new TerastallizeModifierType(shardType);
+    }),
+
+  BERRY_REWARD: () =>
+    new ModifierTypeGenerator((_party: Pokemon[], pregenArgs?: any[]) => {
+      if (pregenArgs && pregenArgs.length === 1 && pregenArgs[0] in BerryType) {
+        return new BerryModifierType(pregenArgs[0] as BerryType);
+      }
+      const berryTypes = getEnumValues(BerryType);
+      let randBerryType: BerryType;
+      const rand = randSeedInt(12);
+      if (rand < 2) {
+        randBerryType = BerryType.SITRUS;
+      } else if (rand < 4) {
+        randBerryType = BerryType.LUM;
+      } else if (rand < 6) {
+        randBerryType = BerryType.LEPPA;
+      } else {
+        randBerryType = berryTypes[randSeedInt(berryTypes.length - 3) + 2];
+      }
+      return new BerryReward(randBerryType);
     }),
 
   BERRY: () =>
@@ -3150,11 +3224,11 @@ const modifierPool: ModifierPool = {
 };
 
 const wildModifierPool: ModifierPool = {
-  [ModifierTier.COMMON]: [new WeightedModifierType(modifierTypes.BERRY, 1)].map(m => {
+  [ModifierTier.COMMON]: [new WeightedModifierType(modifierTypes.BERRY_REWARD, 1)].map(m => {
     m.setTier(ModifierTier.COMMON);
     return m;
   }),
-  [ModifierTier.GREAT]: [new WeightedModifierType(modifierTypes.BASE_STAT_BOOSTER, 1)].map(m => {
+  [ModifierTier.GREAT]: [new WeightedModifierType(modifierTypes.BASE_STAT_BOOSTER_REWARD, 1)].map(m => {
     m.setTier(ModifierTier.GREAT);
     return m;
   }),
@@ -3177,19 +3251,19 @@ const wildModifierPool: ModifierPool = {
 
 const trainerModifierPool: ModifierPool = {
   [ModifierTier.COMMON]: [
-    new WeightedModifierType(modifierTypes.BERRY, 8),
-    new WeightedModifierType(modifierTypes.BASE_STAT_BOOSTER, 3),
+    new WeightedModifierType(modifierTypes.BERRY_REWARD, 8),
+    new WeightedModifierType(modifierTypes.BASE_STAT_BOOSTER_REWARD, 3),
   ].map(m => {
     m.setTier(ModifierTier.COMMON);
     return m;
   }),
-  [ModifierTier.GREAT]: [new WeightedModifierType(modifierTypes.BASE_STAT_BOOSTER, 3)].map(m => {
+  [ModifierTier.GREAT]: [new WeightedModifierType(modifierTypes.BASE_STAT_BOOSTER_REWARD, 3)].map(m => {
     m.setTier(ModifierTier.GREAT);
     return m;
   }),
   [ModifierTier.ULTRA]: [
-    new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, 10),
-    new WeightedModifierType(modifierTypes.WHITE_HERB, 0),
+    new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER_REWARD, 10),
+    new WeightedModifierType(modifierTypes.WHITE_HERB_REWARD, 0),
   ].map(m => {
     m.setTier(ModifierTier.ULTRA);
     return m;
@@ -3698,22 +3772,27 @@ export function getEnemyModifierTypesForWave(
   return ret;
 }
 
+// TODO: Add proper documentation to this function (once it fully works...)
+// TODO: Convert trainer pool to HeldItems too
 export function getEnemyHeldItemsForWave(
   waveIndex: number,
   count: number,
   party: EnemyPokemon[],
   poolType: ModifierPoolType.WILD | ModifierPoolType.TRAINER,
   upgradeChance = 0,
-): PokemonHeldItemReward[] {
-  const ret = new Array(count).fill(0).map(
-    () =>
-      // TODO: Change this to get held items (this function really could just return a list of ids honestly)
-      getNewModifierTypeOption(party, poolType, undefined, upgradeChance && !randSeedInt(upgradeChance) ? 1 : 0)
-        ?.type as PokemonHeldItemReward,
-  );
+): HeldItems[] {
+  const ret = new Array(count).fill(0).map(() => {
+    const reward = getNewModifierTypeOption(
+      party,
+      poolType,
+      undefined,
+      upgradeChance && !randSeedInt(upgradeChance) ? 1 : 0,
+    )?.type as PokemonHeldItemReward;
+    return reward.itemId;
+  });
   if (!(waveIndex % 1000)) {
     // TODO: Change this line with the actual held item when implemented
-    ret.push(getModifierType(modifierTypes.MINI_BLACK_HOLE) as PokemonHeldItemReward);
+    ret.push(HeldItems.MINI_BLACK_HOLE);
   }
   return ret;
 }

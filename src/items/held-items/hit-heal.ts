@@ -22,7 +22,7 @@ export class HitHealHeldItem extends HeldItem {
     return i18next.t("modifierType:ModifierType.SHELL_BELL.description");
   }
 
-  get icon(): string {
+  get iconName(): string {
     return "shell_bell";
   }
 

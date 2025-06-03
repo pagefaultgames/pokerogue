@@ -44,6 +44,7 @@ export class AttackTypeBoosterHeldItem extends HeldItem {
   public moveType: PokemonType;
   public powerBoost: number;
 
+  // This constructor may need a revision
   constructor(type: HeldItems, maxStackCount = 1, moveType: PokemonType, powerBoost: number) {
     super(type, maxStackCount);
     this.moveType = moveType;
