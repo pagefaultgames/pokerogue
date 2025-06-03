@@ -230,7 +230,7 @@ export default abstract class BattleInfo extends Phaser.GameObjects.Container {
     this.box = globalScene.add.sprite(0, 0, this.getTextureName()).setName("box").setOrigin(1, 0.5);
     this.add(this.box);
 
-    this.nameText = addTextObject(player ? -115 : -124, player ? -15.2 : -11.2, "", TextStyle.BATTLE_INFO)
+    this.nameText = addTextObject(posParams.nameTextX, posParams.nameTextY, "", TextStyle.BATTLE_INFO)
       .setName("text_name")
       .setOrigin(0);
     this.add(this.nameText);
@@ -447,12 +447,14 @@ export default abstract class BattleInfo extends Phaser.GameObjects.Container {
   }
 
   /** Update the pokemon name inside the container */
-  protected updateName(name: string): boolean {
+  protected updateName(pokemon: Pokemon): boolean {
+    const name = pokemon.getNameToRender();
     if (this.lastName === name) {
       return false;
     }
-    this.nameText.setText(name).setPositionRelative(this.box, -this.nameText.displayWidth, 0);
-    this.lastName = name;
+
+    this.updateNameText(pokemon);
+    this.genderText.setPositionRelative(this.nameText, this.nameText.displayWidth, 0);
 
     return true;
   }
@@ -572,7 +574,7 @@ export default abstract class BattleInfo extends Phaser.GameObjects.Container {
 
     this.genderText.setText(getGenderSymbol(gender)).setColor(getGenderColor(gender));
 
-    const nameUpdated = this.updateName(pokemon.getNameToRender());
+    const nameUpdated = this.updateName(pokemon);
 
     const teraTypeUpdated = this.updateTeraType(pokemon.isTerastallized ? pokemon.getTeraType() : PokemonType.UNKNOWN);
 
@@ -583,6 +585,8 @@ export default abstract class BattleInfo extends Phaser.GameObjects.Container {
     }
 
     this.updateStatusIcon(pokemon);
+
+    this.setTypes(pokemon.getTypes(true, false, undefined, true));
 
     if (this.lastHp !== pokemon.hp || this.lastMaxHp !== pokemon.getMaxHp()) {
       return this.updatePokemonHp(pokemon, resolve, instant);

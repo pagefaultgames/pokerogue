@@ -44,7 +44,7 @@ describe("Abilities - Supreme Overlord", () => {
   });
 
   it("should increase Power by 20% if 2 Pokemon are fainted in the party", async () => {
-    await game.startBattle([Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE]);
+    await game.classicMode.startBattle([Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE]);
 
     game.move.select(Moves.EXPLOSION);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);

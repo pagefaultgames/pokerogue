@@ -29,7 +29,7 @@ export class EnemyBattleInfo extends BattleInfo {
   }
 
   override getTextureName(): string {
-    return this.boss ? "pbinfo_enemy_boss_mini" : "pbinfo_enemy_mini";
+    return this.boss ? "pbinfo_enemy_boss" : "pbinfo_enemy_mini";
   }
 
   override constructTypeIcons(): void {

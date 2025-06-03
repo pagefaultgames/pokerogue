@@ -25,6 +25,7 @@ jobs:
       - name: checkout
         uses: actions/checkout@v4
       - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36
+        id: filter
         with:
           filters: .github/test-filters.yml
 
@@ -33,10 +34,10 @@ jobs:
     needs: check-path-change-filter
     strategy:
       matrix:
-        shard: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        shard: [1, 2, 3, 4, 5]
     uses: ./.github/workflows/test-shard-template.yml
     with:
       project: main
       shard: ${{ matrix.shard }}
-      totalShards: 10
-      skip: ${{ needs.check-path-change-filter.outputs.all == 'false'}}
+      totalShards: 5
+      skip: ${{ needs.check-path-change-filter.outputs.all != 'true'}}
