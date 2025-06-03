@@ -6,7 +6,6 @@ import { Abilities } from "#enums/abilities";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -30,8 +29,8 @@ describe("Abilities - Magic Guard", () => {
     game = new GameManager(phaserGame);
     game.override
       .ability(Abilities.MAGIC_GUARD)
-      .enemySpecies(Species.GRIMER)
-      .enemyAbility(Abilities.INSOMNIA)
+      .enemySpecies(Species.BLISSEY)
+      .enemyAbility(Abilities.NO_GUARD)
       .startingLevel(100)
       .enemyLevel(100);
   });
@@ -101,28 +100,59 @@ describe("Abilities - Magic Guard", () => {
     expect(leadPokemon.hp).toBeLessThan(leadPokemon.getMaxHp());
   });
 
-  it("should preserve catch boost, toxic turn count and burn attack drops", async () => {
+  it("should preserve toxic turn count and deal appropriate damage when ability lost", async () => {
     game.override.statusEffect(StatusEffect.TOXIC);
     await game.classicMode.startBattle([Species.MAGIKARP]);
 
-    const leadPokemon = game.scene.getPlayerPokemon()!;
-
-    game.move.select(Moves.SPLASH);
-    await game.phaseInterceptor.to("TurnEndPhase");
-
-    expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp());
-    expect(leadPokemon.status?.toxicTurnCount).toBeGreaterThan(0);
-    expect(getStatusEffectCatchRateMultiplier(leadPokemon.status!.effect)).toBe(1.5);
-
+    game.move.use(Moves.SPLASH);
+    await game.move.forceEnemyMove(Moves.SPLASH);
     await game.toNextTurn();
 
-    // give ourselves burn and ensure our attack indeed dropped
+    const magikarp = game.field.getPlayerPokemon();
+    expect(magikarp.hp).toBe(magikarp.getMaxHp());
+    expect(magikarp.status?.toxicTurnCount).toBe(1);
 
-    const prevAtk = leadPokemon.getEffectiveStat(Stat.ATK);
-    leadPokemon.trySetStatus(StatusEffect.BURN, false, null, 0, null, true);
-    expect(leadPokemon.status).toBeTruthy();
-    const burntAtk = leadPokemon.getEffectiveStat(Stat.ATK);
-    expect(burntAtk).toBeCloseTo(prevAtk / 2, 1);
+    // have a few turns pass
+    game.move.use(Moves.SPLASH);
+    await game.toNextTurn();
+    game.move.use(Moves.SPLASH);
+    await game.toNextTurn();
+    game.move.use(Moves.SPLASH);
+    await game.toNextTurn();
+    expect(magikarp.status?.toxicTurnCount).toBe(4);
+
+    game.move.use(Moves.SPLASH);
+    await game.move.forceEnemyMove(Moves.GASTRO_ACID);
+    await game.toNextTurn();
+
+    expect(magikarp.status?.toxicTurnCount).toBe(5);
+    expect(magikarp.getHpRatio(true)).toBeCloseTo(11 / 16, 1);
+  });
+
+  it("should preserve burn physical damage halving & status catch boost", async () => {
+    await game.classicMode.startBattle([Species.MAGIKARP]);
+
+    // NB: Burn applies directly to the physical dmg formula, so we can't just check attack here
+    game.move.use(Moves.TACKLE);
+    await game.move.forceEnemyMove(Moves.SPLASH);
+    await game.toNextTurn();
+
+    const magikarp = game.field.getPlayerPokemon();
+    expect(magikarp.hp).toBe(magikarp.getMaxHp());
+
+    const blissey = game.field.getEnemyPokemon();
+    const prevDmg = blissey.getInverseHp();
+    blissey.hp = blissey.getMaxHp();
+
+    magikarp.trySetStatus(StatusEffect.BURN, false, null, 0, null, true);
+    expect(magikarp.status?.effect).toBe(StatusEffect.BURN);
+    expect(getStatusEffectCatchRateMultiplier(magikarp.status!.effect)).toBe(1.5);
+
+    game.move.use(Moves.TACKLE);
+    await game.toNextTurn();
+
+    const burntDmg = blissey.getInverseHp();
+    expect(burntDmg).toBeCloseTo(prevDmg / 2, 1);
   });
 
   it("should prevent damage from entry hazards, but not Toxic Spikes poison", async () => {
