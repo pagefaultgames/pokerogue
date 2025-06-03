@@ -86,8 +86,7 @@ type TyrogueMove = Moves.LOW_SWEEP | Moves.MACH_PUNCH | Moves.RAPID_SPIN;
 export type EvolutionLevel = [species: Species, level: number];
 
 enum EvoCondKey {
-  NONE,
-  FRIENDSHIP,
+  FRIENDSHIP = 1,
   TIME,
   MOVE,
   MOVE_TYPE,
@@ -119,7 +118,7 @@ type EvolutionConditionData =
   {key: EvoCondKey.NATURE, nature: Nature[]} |
   {key: EvoCondKey.WEATHER, weather: WeatherType[]} |
   {key: EvoCondKey.TYROGUE, move: TyrogueMove} |
-  {key: EvoCondKey.SHEDINJA | EvoCondKey.NONE}
+  {key: EvoCondKey.SHEDINJA}
 ;
 
 export class SpeciesEvolutionCondition {
@@ -162,10 +161,10 @@ export class SpeciesEvolutionCondition {
         case EvoCondKey.RECOIL_DAMAGE_COUNT:
           return i18next.t("pokemonEvolutions:recoil");
         case EvoCondKey.HELD_ITEM:
-          return i18next.t("pokemonEvolutions:heldItem");
+          return i18next.t(`pokemonEvolutions:heldItem.${cond.itemKey}`);
       }
     }).filter(s => !isNullOrUndefined(s)); // Filter out stringless conditions
-    return str.join(i18next.t("pokemonEvolutions:connector"));
+    return str.join(i18next.t("pokemonEvolutions:connector")); // A comma or something of the sort
   }
 
   public conditionsFulfilled(pokemon: Pokemon): boolean {

@@ -790,21 +790,31 @@ export class MoveEffectPhase extends PokemonPhase {
       globalScene.triggerPokemonFormChange(user, SpeciesFormChangePostMoveTrigger);
 
       // Increment evo counter for Primeape and Stantler
-      if (
-        (user.isPlayer() &&
-        ((user.hasSpecies(Species.PRIMEAPE) && this.move.id === Moves.RAGE_FIST) ||
-        (user.hasSpecies(Species.STANTLER) && this.move.id === Moves.PSYSHIELD_BASH)))) {
-          const modifier = (this.move.id === Moves.RAGE_FIST ?
-            modifierTypes.EVOLUTION_TRACKER_PRIMEAPE().withIdFromFunc(modifierTypes.EVOLUTION_TRACKER_PRIMEAPE) :
-            modifierTypes.EVOLUTION_TRACKER_STANTLER().withIdFromFunc(modifierTypes.EVOLUTION_TRACKER_STANTLER))
-            .newModifier(user) as EvoTrackerMoveUseModifier;
-          globalScene.addModifier(modifier);
+      if (user.isPlayer()) {
+        this.incrementMoveUseEvoCounters(user);
       }
 
       // Multi-hit check for Wimp Out/Emergency Exit
       if (user.turnData.hitCount > 1) {
         applyPostDamageAbAttrs(PostDamageAbAttr, target, 0, target.hasPassive(), false, [], user);
       }
+    }
+  }
+
+  /**
+   * Increments evolution tracker stack for "Use move X times" evolutions, namely Primeape and Stantler
+   * @param user {@linkcode Pokemon} the move's user
+   */
+  incrementMoveUseEvoCounters(user: Pokemon) {
+    // Increment evo counter for Primeape and Stantler
+    if (
+      ((user.hasSpecies(Species.PRIMEAPE) && this.move.id === Moves.RAGE_FIST) ||
+      (user.hasSpecies(Species.STANTLER) && this.move.id === Moves.PSYSHIELD_BASH))) {
+        const modifier = (this.move.id === Moves.RAGE_FIST ?
+          modifierTypes.EVOLUTION_TRACKER_PRIMEAPE().withIdFromFunc(modifierTypes.EVOLUTION_TRACKER_PRIMEAPE) :
+          modifierTypes.EVOLUTION_TRACKER_STANTLER().withIdFromFunc(modifierTypes.EVOLUTION_TRACKER_STANTLER))
+          .newModifier(user) as EvoTrackerMoveUseModifier;
+        globalScene.addModifier(modifier); // Adds modifier or increments existing stack
     }
   }
 
