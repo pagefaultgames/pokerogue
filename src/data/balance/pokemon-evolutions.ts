@@ -10,7 +10,7 @@ import { Biome } from "#enums/biome";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { TimeOfDay } from "#enums/time-of-day";
-import { EvoTrackerModifier, EvoTrackerMoveUseModifier, EvoTrackerRecoilModifier, SpeciesStatBoosterModifier } from "#app/modifier/modifier";
+import { EvoTrackerModifier, SpeciesStatBoosterModifier } from "#app/modifier/modifier";
 import { SpeciesFormKey } from "#enums/species-form-key";
 import type { SpeciesStatBoosterItem, SpeciesStatBoosterModifierType } from "#app/modifier/modifier-type";
 import { speciesStarterCosts } from "./starters";
@@ -100,19 +100,16 @@ enum EvoCondKey {
   SPECIES_CAUGHT,
   GENDER,
   NATURE,
-  MOVE_USE_COUNT,
-  RECOIL_DAMAGE_COUNT,
   HELD_ITEM, // Currently checks only for species stat booster items
 }
 
 type EvolutionConditionData =
-  {key: EvoCondKey.FRIENDSHIP | EvoCondKey.RANDOM_FORM | EvoCondKey.EVO_TREASURE_TRACKER | EvoCondKey.RECOIL_DAMAGE_COUNT, value: number} |
+  {key: EvoCondKey.FRIENDSHIP | EvoCondKey.RANDOM_FORM | EvoCondKey.EVO_TREASURE_TRACKER, value: number} |
   {key: EvoCondKey.MOVE, move: Moves} |
   {key: EvoCondKey.TIME, time: TimeOfDay[]} |
   {key: EvoCondKey.BIOME, biome: Biome[]} |
   {key: EvoCondKey.GENDER, gender: Gender} |
   {key: EvoCondKey.MOVE_TYPE | EvoCondKey.PARTY_TYPE, pkmnType: PokemonType} |
-  {key: EvoCondKey.MOVE_USE_COUNT, move: Moves, value: number} |
   {key: EvoCondKey.SPECIES_CAUGHT, speciesCaught: Species} |
   {key: EvoCondKey.HELD_ITEM, itemKey: SpeciesStatBoosterItem} |
   {key: EvoCondKey.NATURE, nature: Nature[]} |
@@ -156,10 +153,6 @@ export class SpeciesEvolutionCondition {
           return i18next.t("pokemonEvolutions:treasure");
         case EvoCondKey.SPECIES_CAUGHT:
           return i18next.t("pokemonEvolutions:caught", {species: getPokemonSpecies(cond.speciesCaught).name});
-        case EvoCondKey.MOVE_USE_COUNT:
-          return i18next.t("pokemonEvolutions:useMoveCount", {move: allMoves[cond.move].name, count: cond.value});
-        case EvoCondKey.RECOIL_DAMAGE_COUNT:
-          return i18next.t("pokemonEvolutions:recoil");
         case EvoCondKey.HELD_ITEM:
           return i18next.t(`pokemonEvolutions:heldItem.${cond.itemKey}`);
       }
@@ -204,13 +197,6 @@ export class SpeciesEvolutionCondition {
         }
         case EvoCondKey.SPECIES_CAUGHT:
           return !!globalScene.gameData.dexData[cond.speciesCaught].caughtAttr;
-        case EvoCondKey.MOVE_USE_COUNT:
-          return pokemon.getHeldItems().some(m =>
-            m instanceof EvoTrackerMoveUseModifier &&
-            m.shouldApply(pokemon, cond.move) &&
-            m.getStackCount() >= cond.value);
-        case EvoCondKey.RECOIL_DAMAGE_COUNT:
-          return pokemon.getHeldItems().some(m => m instanceof EvoTrackerRecoilModifier && m.getStackCount() >= cond.value);
         case EvoCondKey.HELD_ITEM:
           return pokemon.getHeldItems().some(m => m instanceof SpeciesStatBoosterModifier && (m.type as SpeciesStatBoosterModifierType).key === cond.itemKey)
       }
@@ -642,8 +628,8 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.KIRLIA, 20, null, null)
   ],
   [Species.KIRLIA]: [
-    new SpeciesEvolution(Species.GARDEVOIR, 30, null, null),
-    new SpeciesEvolution(Species.GALLADE, 30, EvolutionItem.DAWN_STONE, {key: EvoCondKey.GENDER, gender: Gender.MALE})
+    new SpeciesEvolution(Species.GARDEVOIR, 30, null, {key: EvoCondKey.GENDER, gender: Gender.FEMALE}),
+    new SpeciesEvolution(Species.GALLADE, 30, null, {key: EvoCondKey.GENDER, gender: Gender.MALE})
   ],
   [Species.SURSKIT]: [
     new SpeciesEvolution(Species.MASQUERAIN, 22, null, null)
@@ -731,8 +717,8 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.DUSCLOPS, 37, null, null)
   ],
   [Species.SNORUNT]: [
-    new SpeciesEvolution(Species.GLALIE, 42, null, null),
-    new SpeciesEvolution(Species.FROSLASS, 42, EvolutionItem.DAWN_STONE, {key: EvoCondKey.GENDER, gender: Gender.FEMALE})
+    new SpeciesEvolution(Species.GLALIE, 42, null, {key: EvoCondKey.GENDER, gender: Gender.MALE}),
+    new SpeciesEvolution(Species.FROSLASS, 42, null, {key: EvoCondKey.GENDER, gender: Gender.FEMALE})
   ],
   [Species.SPHEAL]: [
     new SpeciesEvolution(Species.SEALEO, 32, null, null)
@@ -1542,7 +1528,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.MAMOSWINE, 1, null, {key: EvoCondKey.MOVE, move: Moves.ANCIENT_POWER}, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.STANTLER]: [
-    new SpeciesEvolution(Species.WYRDEER, 1, null, {key: EvoCondKey.MOVE_USE_COUNT, move: Moves.PSYSHIELD_BASH, value: 10}, SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesEvolution(Species.WYRDEER, 25, null, {key: EvoCondKey.MOVE, move: Moves.PSYSHIELD_BASH}, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.LOMBRE]: [
     new SpeciesEvolution(Species.LUDICOLO, 1, EvolutionItem.WATER_STONE, null, SpeciesWildEvolutionDelay.LONG)
@@ -1586,8 +1572,8 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.LILLIGANT, 1, EvolutionItem.SUN_STONE, null, SpeciesWildEvolutionDelay.LONG)
   ],
   [Species.BASCULIN]: [
-    new SpeciesFormEvolution(Species.BASCULEGION, "white-striped", "female", 1, null, [{key: EvoCondKey.GENDER, gender: Gender.FEMALE}, {key: EvoCondKey.RECOIL_DAMAGE_COUNT, value: 294}], SpeciesWildEvolutionDelay.VERY_LONG),
-    new SpeciesFormEvolution(Species.BASCULEGION, "white-striped", "male", 1, null, [{key: EvoCondKey.GENDER, gender: Gender.MALE}, {key: EvoCondKey.RECOIL_DAMAGE_COUNT, value: 294}], SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesFormEvolution(Species.BASCULEGION, "white-striped", "female", 40, null, [{key: EvoCondKey.GENDER, gender: Gender.FEMALE}], SpeciesWildEvolutionDelay.VERY_LONG),
+    new SpeciesFormEvolution(Species.BASCULEGION, "white-striped", "male", 40, null, [{key: EvoCondKey.GENDER, gender: Gender.MALE}], SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.MINCCINO]: [
     new SpeciesEvolution(Species.CINCCINO, 1, EvolutionItem.SHINY_STONE, null, SpeciesWildEvolutionDelay.LONG)
@@ -1788,7 +1774,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(Species.ALOLA_GOLEM, 1, EvolutionItem.LINKING_CORD, null, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.PRIMEAPE]: [
-    new SpeciesEvolution(Species.ANNIHILAPE, 1, null, {key: EvoCondKey.MOVE_USE_COUNT, move: Moves.RAGE_FIST, value: 10}, SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesEvolution(Species.ANNIHILAPE, 35, null, {key: EvoCondKey.MOVE, move: Moves.RAGE_FIST}, SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [Species.GOLBAT]: [
     new SpeciesEvolution(Species.CROBAT, 1, null, {key: EvoCondKey.FRIENDSHIP, value: 120}, SpeciesWildEvolutionDelay.VERY_LONG)
