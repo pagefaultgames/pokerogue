@@ -24,13 +24,14 @@ describe("Moves - Tackle", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     const moveToUse = Moves.TACKLE;
-    game.override.battleStyle("single");
-    game.override.enemySpecies(Species.MAGIKARP);
-    game.override.startingLevel(1);
-    game.override.startingWave(97);
-    game.override.moveset([moveToUse]);
-    game.override.enemyMoveset([Moves.GROWTH, Moves.GROWTH, Moves.GROWTH, Moves.GROWTH]);
-    game.override.disableCrits();
+    game.override
+      .battleStyle("single")
+      .enemySpecies(Species.MAGIKARP)
+      .startingLevel(1)
+      .startingWave(97)
+      .moveset([moveToUse])
+      .enemyMoveset(Moves.GROWTH)
+      .disableCrits();
   });
 
   it("TACKLE against ghost", async () => {

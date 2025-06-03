@@ -581,7 +581,7 @@ function calculateEggRewardsForPokemon(pokemon: PlayerPokemon): [number, number]
 }
 
 function getEggOptions(commonEggs: number, rareEggs: number) {
-  const eggDescription = i18next.t(`${namespace}:title`) + ":\n" + i18next.t(trainerNameKey);
+  const eggDescription = i18next.t(`${namespace}:title`);
   const eggOptions: IEggOptions[] = [];
 
   if (commonEggs > 0) {
