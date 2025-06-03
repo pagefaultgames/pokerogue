@@ -26,12 +26,10 @@ describe("Abilities - Shell Armor", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset(Moves.SPLASH)
       .ability(Abilities.SHELL_ARMOR)
       .battleStyle("single")
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset([Moves.TACKLE, Moves.FLOWER_TRICK])
       .statusEffect(StatusEffect.POISON);
 
     critSpy = vi.spyOn(Pokemon.prototype, "getCriticalHitResult");
@@ -41,8 +39,8 @@ describe("Abilities - Shell Armor", () => {
     game.override.criticalHits(true); // force random crit rolls to always succeed
     await game.classicMode.startBattle([Species.ABOMASNOW]);
 
-    game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.TACKLE);
+    game.move.use(Moves.SPLASH);
+    await game.move.forceEnemyMove(Moves.TACKLE);
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(critSpy).toHaveReturnedWith(false);
@@ -51,18 +49,19 @@ describe("Abilities - Shell Armor", () => {
   it("should prevent guaranteed-crit moves from critting", async () => {
     await game.classicMode.startBattle([Species.ABOMASNOW]);
 
-    game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.FLOWER_TRICK);
+    game.move.use(Moves.SPLASH);
+    await game.move.forceEnemyMove(Moves.FLOWER_TRICK);
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(critSpy).toHaveReturnedWith(false);
   });
 
   it("should block Merciless guaranteed crits", async () => {
-    game.override.enemyMoveset(Moves.ACCELEROCK).enemyAbility(Abilities.MERCILESS);
+    game.override.enemyAbility(Abilities.MERCILESS);
     await game.classicMode.startBattle([Species.ABOMASNOW]);
 
-    game.move.select(Moves.SPLASH);
+    game.move.use(Moves.SPLASH);
+    await game.move.forceEnemyMove(Moves.TACKLE);
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(critSpy).toHaveReturnedWith(false);
