@@ -34,17 +34,16 @@ describe("Moves - Disable", () => {
   });
 
   it("should restrict the last move used", async () => {
-    game.override.enemyMoveset([Moves.GROWL, Moves.SPLASH]);
     await game.classicMode.startBattle([Species.PIKACHU]);
 
-    const enemyMon = game.scene.getEnemyPokemon()!;
+    const enemyMon = game.field.getEnemyPokemon();
 
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.GROWL);
+    await game.move.forceEnemyMove(Moves.GROWL);
     await game.toNextTurn();
 
     game.move.select(Moves.DISABLE);
-    await game.forceEnemyMove(Moves.SPLASH);
+    await game.move.forceEnemyMove(Moves.SPLASH);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
@@ -56,8 +55,8 @@ describe("Moves - Disable", () => {
   it("should fail if enemy has no move history", async () => {
     await game.classicMode.startBattle([Species.PIKACHU]);
 
-    const playerMon = game.scene.getPlayerPokemon()!;
-    const enemyMon = game.scene.getEnemyPokemon()!;
+    const playerMon = game.field.getPlayerPokemon();
+    const enemyMon = game.field.getEnemyPokemon();
 
     game.move.select(Moves.DISABLE);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
@@ -73,7 +72,7 @@ describe("Moves - Disable", () => {
   it("causes STRUGGLE if all usable moves are disabled", async () => {
     await game.classicMode.startBattle([Species.PIKACHU]);
 
-    const enemyMon = game.scene.getEnemyPokemon()!;
+    const enemyMon = game.field.getEnemyPokemon();
 
     game.move.select(Moves.DISABLE);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
@@ -88,13 +87,13 @@ describe("Moves - Disable", () => {
   });
 
   it("should fail if it would otherwise disable struggle", async () => {
-    game.override.enemyMoveset([Moves.STRUGGLE]);
     await game.classicMode.startBattle([Species.PIKACHU]);
 
-    const playerMon = game.scene.getPlayerPokemon()!;
-    const enemyMon = game.scene.getEnemyPokemon()!;
+    const playerMon = game.field.getPlayerPokemon();
+    const enemyMon = game.field.getEnemyPokemon();
 
     game.move.select(Moves.DISABLE);
+    await game.move.forceEnemyMove(Moves.STRUGGLE);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
@@ -106,7 +105,7 @@ describe("Moves - Disable", () => {
   it("should interrupt target's move if used first", async () => {
     await game.classicMode.startBattle([Species.PIKACHU]);
 
-    const enemyMon = game.scene.getEnemyPokemon()!;
+    const enemyMon = game.field.getEnemyPokemon();
     // add splash to enemy move history
     enemyMon.pushMoveHistory({
       move: Moves.SPLASH,
@@ -137,6 +136,7 @@ describe("Moves - Disable", () => {
     game.scene.currentBattle.lastMove = Moves.SPLASH;
 
     game.move.select(Moves.DISABLE);
+    await game.move.forceEnemyMove(moveId);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
@@ -170,7 +170,7 @@ describe("Moves - Disable", () => {
  
     // Dancer-induced Swords Dance was ignored in favor of splash,
     // leaving the subsequent _normal_ swords dance free to work as normal
-    const shuckle = game.scene.getEnemyPokemon()!;
+    const shuckle = game.field.getEnemyPokemon();
     expect.soft(shuckle.isMoveRestricted(Moves.SPLASH)).toBe(true);
     expect.soft(shuckle.isMoveRestricted(Moves.SWORDS_DANCE)).toBe(false);
     expect(shuckle.getLastXMoves()[0]).toMatchObject({ move: Moves.SWORDS_DANCE, result: MoveResult.SUCCESS });
