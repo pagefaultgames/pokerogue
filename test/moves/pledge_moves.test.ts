@@ -256,8 +256,8 @@ describe("Moves - Pledge Moves", () => {
     game.move.select(Moves.FIRE_PLEDGE, 0, BattlerIndex.ENEMY);
     game.move.select(Moves.GRASS_PLEDGE, 1, BattlerIndex.ENEMY_2);
 
-    await game.forceEnemyMove(Moves.SPORE, BattlerIndex.PLAYER_2);
-    await game.forceEnemyMove(Moves.SPLASH);
+    await game.move.selectEnemyMove(Moves.SPORE, BattlerIndex.PLAYER_2);
+    await game.move.selectEnemyMove(Moves.SPLASH);
 
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY_2]);
 
@@ -290,8 +290,8 @@ describe("Moves - Pledge Moves", () => {
     game.move.select(Moves.WATER_PLEDGE, 0, BattlerIndex.ENEMY);
     game.move.select(Moves.SPLASH, 1);
 
-    await game.forceEnemyMove(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.FOLLOW_ME);
+    await game.move.selectEnemyMove(Moves.SPLASH);
+    await game.move.selectEnemyMove(Moves.FOLLOW_ME);
 
     await game.phaseInterceptor.to("BerryPhase", false);
 

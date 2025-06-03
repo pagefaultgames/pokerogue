@@ -26,7 +26,7 @@ describe("Moves - Chilly Reception", () => {
     game.override
       .battleStyle("single")
       .moveset([Moves.CHILLY_RECEPTION, Moves.SNOWSCAPE])
-      .enemyMoveset(Array(4).fill(Moves.SPLASH))
+      .enemyMoveset(Moves.SPLASH)
       .enemyAbility(Abilities.BALL_FETCH)
       .ability(Abilities.BALL_FETCH);
   });
@@ -69,15 +69,12 @@ describe("Moves - Chilly Reception", () => {
 
   // enemy uses another move and weather doesn't change
   it("check case - enemy not selecting chilly reception doesn't change weather ", async () => {
-    game.override
-      .battleStyle("single")
-      .enemyMoveset([Moves.CHILLY_RECEPTION, Moves.TACKLE])
-      .moveset(Array(4).fill(Moves.SPLASH));
+    game.override.battleStyle("single").enemyMoveset([Moves.CHILLY_RECEPTION, Moves.TACKLE]).moveset(Moves.SPLASH);
 
     await game.classicMode.startBattle([Species.SLOWKING, Species.MEOWTH]);
 
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.TACKLE);
+    await game.move.selectEnemyMove(Moves.TACKLE);
 
     await game.phaseInterceptor.to("BerryPhase", false);
     expect(game.scene.arena.weather?.weatherType).toBe(undefined);
@@ -87,7 +84,7 @@ describe("Moves - Chilly Reception", () => {
     game.override
       .battleStyle("single")
       .startingWave(8)
-      .enemyMoveset(Array(4).fill(Moves.CHILLY_RECEPTION))
+      .enemyMoveset(Moves.CHILLY_RECEPTION)
       .enemySpecies(Species.MAGIKARP)
       .moveset([Moves.SPLASH, Moves.THUNDERBOLT]);
 

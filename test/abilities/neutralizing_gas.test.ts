@@ -110,16 +110,16 @@ describe("Abilities - Neutralizing Gas", () => {
     await game.classicMode.startBattle([Species.ACCELGOR, Species.ACCELGOR]);
     game.move.select(Moves.SPLASH, 0);
     game.move.select(Moves.SPLASH, 1);
-    await game.forceEnemyMove(Moves.ENTRAINMENT, BattlerIndex.PLAYER);
-    await game.forceEnemyMove(Moves.SPLASH);
+    await game.move.selectEnemyMove(Moves.ENTRAINMENT, BattlerIndex.PLAYER);
+    await game.move.selectEnemyMove(Moves.SPLASH);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
     await game.phaseInterceptor.to("BerryPhase");
     expect(game.scene.arena.getTag(ArenaTagType.NEUTRALIZING_GAS)).toBeDefined(); // Now one neut gas user is left
 
     game.move.select(Moves.SPLASH, 0);
     game.move.select(Moves.SPLASH, 1);
-    await game.forceEnemyMove(Moves.ENTRAINMENT, BattlerIndex.PLAYER_2);
-    await game.forceEnemyMove(Moves.SPLASH);
+    await game.move.selectEnemyMove(Moves.ENTRAINMENT, BattlerIndex.PLAYER_2);
+    await game.move.selectEnemyMove(Moves.SPLASH);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
     await game.phaseInterceptor.to("BerryPhase");
     expect(game.scene.arena.getTag(ArenaTagType.NEUTRALIZING_GAS)).toBeUndefined(); // No neut gas users are left

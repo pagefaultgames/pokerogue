@@ -94,7 +94,7 @@ describe("Abilities - Magic Guard", () => {
 
     game.move.use(move);
     await game.move.forceEnemyMove(enemyMove);
-    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]); // forces enemy confusion to whiff own attack
     await game.phaseInterceptor.to("TurnEndPhase");
 
     const leadPokemon = game.field.getPlayerPokemon();

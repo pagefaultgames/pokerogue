@@ -67,8 +67,8 @@ describe("Abilities - Flower Gift", () => {
     // turn 1
     game.move.select(Moves.SUNNY_DAY, 0);
     game.move.select(ally_move, 1, ally_target);
-    await game.forceEnemyMove(enemy_move, BattlerIndex.PLAYER_2);
-    await game.forceEnemyMove(Moves.SPLASH);
+    await game.move.selectEnemyMove(enemy_move, BattlerIndex.PLAYER_2);
+    await game.move.selectEnemyMove(Moves.SPLASH);
     // Ensure sunny day is used last.
     await game.setTurnOrder([attacker_index, target_index, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to(TurnEndPhase);
@@ -79,8 +79,8 @@ describe("Abilities - Flower Gift", () => {
     // turn 2. Make target use recover to reset hp calculation.
     game.move.select(Moves.SPLASH, 0, target_index);
     game.move.select(ally_move, 1, ally_target);
-    await game.forceEnemyMove(enemy_move, BattlerIndex.PLAYER_2);
-    await game.forceEnemyMove(Moves.SPLASH);
+    await game.move.selectEnemyMove(enemy_move, BattlerIndex.PLAYER_2);
+    await game.move.selectEnemyMove(Moves.SPLASH);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY_2, target_index, attacker_index]);
     await game.phaseInterceptor.to(TurnEndPhase);
     const damageWithGift = initialHp - target.hp;

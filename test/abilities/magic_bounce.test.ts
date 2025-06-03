@@ -52,7 +52,7 @@ describe("Abilities - Magic Bounce", () => {
     game.override.enemyMoveset([Moves.FLY]);
 
     game.move.select(Moves.GROWL);
-    await game.forceEnemyMove(Moves.FLY);
+    await game.move.selectEnemyMove(Moves.FLY);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("BerryPhase");
 
@@ -183,7 +183,7 @@ describe("Abilities - Magic Bounce", () => {
 
     // turn 1
     game.move.select(Moves.ENCORE);
-    await game.forceEnemyMove(Moves.TACKLE);
+    await game.move.selectEnemyMove(Moves.TACKLE);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
     expect(enemyPokemon.getTag(BattlerTagType.ENCORE)!["moveId"]).toBe(Moves.TACKLE);
@@ -209,7 +209,7 @@ describe("Abilities - Magic Bounce", () => {
 
     // turn 1
     game.move.select(Moves.GROWL);
-    await game.forceEnemyMove(Moves.TACKLE);
+    await game.move.selectEnemyMove(Moves.TACKLE);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
@@ -218,7 +218,7 @@ describe("Abilities - Magic Bounce", () => {
 
     // turn 2
     game.move.select(Moves.ENCORE);
-    await game.forceEnemyMove(Moves.TACKLE);
+    await game.move.selectEnemyMove(Moves.TACKLE);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("BerryPhase");
     expect(enemyPokemon.getTag(BattlerTagType.ENCORE)!["moveId"]).toBe(Moves.TACKLE);
@@ -254,7 +254,7 @@ describe("Abilities - Magic Bounce", () => {
       vi.spyOn(stomping_tantrum, "calculateBattlePower");
 
       game.move.select(Moves.SPORE);
-      await game.forceEnemyMove(Moves.CHARM);
+      await game.move.selectEnemyMove(Moves.CHARM);
       await game.phaseInterceptor.to("TurnEndPhase");
       expect(enemy.getLastXMoves(1)[0].result).toBe("success");
 
@@ -346,7 +346,7 @@ describe("Abilities - Magic Bounce", () => {
     game.override.moveset([Moves.TOXIC, Moves.CHARM]);
     await game.classicMode.startBattle([Species.BULBASAUR]);
     game.move.select(Moves.TOXIC);
-    await game.forceEnemyMove(Moves.FLY);
+    await game.move.selectEnemyMove(Moves.FLY);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("BerryPhase");
     expect(game.scene.getEnemyPokemon()!.status?.effect).toBe(StatusEffect.TOXIC);

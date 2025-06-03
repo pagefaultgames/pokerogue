@@ -85,7 +85,7 @@ describe("Test - Battle Phase", () => {
   }, 20000);
 
   it("newGame one-liner", async () => {
-    await game.startBattle();
+    await game.classicMode.startBattle();
     expect(game.scene.ui?.getMode()).toBe(UiMode.COMMAND);
     expect(game.scene.getCurrentPhase()!.constructor.name).toBe(CommandPhase.name);
   }, 20000);
@@ -126,7 +126,7 @@ describe("Test - Battle Phase", () => {
   }, 20000);
 
   it("start battle with selected team", async () => {
-    await game.startBattle([Species.CHARIZARD, Species.CHANSEY, Species.MEW]);
+    await game.classicMode.startBattle([Species.CHARIZARD, Species.CHANSEY, Species.MEW]);
     expect(game.scene.getPlayerParty()[0].species.speciesId).toBe(Species.CHARIZARD);
     expect(game.scene.getPlayerParty()[1].species.speciesId).toBe(Species.CHANSEY);
     expect(game.scene.getPlayerParty()[2].species.speciesId).toBe(Species.MEW);
@@ -229,7 +229,7 @@ describe("Test - Battle Phase", () => {
     game.override.startingWave(3);
     game.override.moveset([moveToUse]);
     game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
-    await game.startBattle([Species.DARMANITAN, Species.CHARIZARD]);
+    await game.classicMode.startBattle([Species.DARMANITAN, Species.CHARIZARD]);
 
     game.move.select(moveToUse);
     await game.phaseInterceptor.to(DamageAnimPhase, false);
@@ -249,7 +249,7 @@ describe("Test - Battle Phase", () => {
     game.override.startingWave(3);
     game.override.moveset([moveToUse]);
     game.override.enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
-    await game.startBattle();
+    await game.classicMode.startBattle();
     const turn = game.scene.currentBattle.turn;
     game.move.select(moveToUse);
     await game.toNextTurn();
@@ -292,7 +292,7 @@ describe("Test - Battle Phase", () => {
       .enemyMoveset(Moves.SPLASH)
       .startingHeldItems([{ name: "TEMP_STAT_STAGE_BOOSTER", type: Stat.ACC }]);
 
-    await game.startBattle();
+    await game.classicMode.startBattle();
     game.scene.getPlayerPokemon()!.hp = 1;
     game.move.select(moveToUse);
 

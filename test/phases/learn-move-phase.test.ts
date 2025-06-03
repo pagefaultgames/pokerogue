@@ -56,9 +56,7 @@ describe("Learn Move Phase", () => {
       game.scene.ui.processInput(Button.ACTION);
     });
     game.onNextPrompt("LearnMovePhase", UiMode.SUMMARY, () => {
-      for (let x = 0; x < moveSlotNum; x++) {
-        game.scene.ui.processInput(Button.DOWN);
-      }
+      game.scene.ui.setCursor(moveSlotNum);
       game.scene.ui.processInput(Button.ACTION);
     });
     await game.phaseInterceptor.to(LearnMovePhase);
@@ -88,9 +86,7 @@ describe("Learn Move Phase", () => {
       game.scene.ui.processInput(Button.ACTION);
     });
     game.onNextPrompt("LearnMovePhase", UiMode.SUMMARY, () => {
-      for (let x = 0; x < 4; x++) {
-        game.scene.ui.processInput(Button.DOWN); // moves down 4 times to the 5th move slot
-      }
+      game.scene.ui.setCursor(4);
       game.scene.ui.processInput(Button.ACTION);
     });
     game.onNextPrompt("LearnMovePhase", UiMode.CONFIRM, () => {
@@ -101,65 +97,5 @@ describe("Learn Move Phase", () => {
     const levelReq = bulbasaur.getLevelMoves(5)[0][0];
     expect(bulbasaur.level).toBeGreaterThanOrEqual(levelReq);
     expect(bulbasaur.getMoveset().map(m => m?.moveId)).toEqual(prevMoveset);
-  });
-
-  it("macro should add moves in free slots normally", async () => {
-    await game.classicMode.startBattle([Species.BULBASAUR]);
-    const bulbasaur = game.scene.getPlayerPokemon()!;
-
-    game.move.changeMoveset(bulbasaur, [Moves.SPLASH, Moves.ABSORB, Moves.ACID]);
-    game.move.select(Moves.SPLASH);
-    await game.move.learnMove(Moves.SACRED_FIRE, 0, 1);
-    expect(bulbasaur.getMoveset().map(m => m?.moveId)).toEqual([
-      Moves.SPLASH,
-      Moves.ABSORB,
-      Moves.ACID,
-      Moves.SACRED_FIRE,
-    ]);
-  });
-
-  it("macro should replace moves", async () => {
-    await game.classicMode.startBattle([Species.BULBASAUR]);
-    const bulbasaur = game.scene.getPlayerPokemon()!;
-
-    game.move.changeMoveset(bulbasaur, [Moves.SPLASH, Moves.ABSORB, Moves.ACID, Moves.VINE_WHIP]);
-    game.move.select(Moves.SPLASH);
-    await game.move.learnMove(Moves.SACRED_FIRE, 0, 1);
-    expect(bulbasaur.getMoveset().map(m => m?.moveId)).toEqual([
-      Moves.SPLASH,
-      Moves.SACRED_FIRE,
-      Moves.ACID,
-      Moves.VINE_WHIP,
-    ]);
-  });
-
-  it("macro should allow for cancelling move learning", async () => {
-    await game.classicMode.startBattle([Species.BULBASAUR]);
-    const bulbasaur = game.scene.getPlayerPokemon()!;
-
-    game.move.changeMoveset(bulbasaur, [Moves.SPLASH, Moves.ABSORB, Moves.ACID, Moves.VINE_WHIP]);
-    game.move.select(Moves.SPLASH);
-    await game.move.learnMove(Moves.SACRED_FIRE, 0, 4);
-    expect(bulbasaur.getMoveset().map(m => m?.moveId)).toEqual([
-      Moves.SPLASH,
-      Moves.ABSORB,
-      Moves.ACID,
-      Moves.VINE_WHIP,
-    ]);
-  });
-
-  it("macro works on off-field party members", async () => {
-    await game.classicMode.startBattle([Species.BULBASAUR, Species.SQUIRTLE]);
-    const squirtle = game.scene.getPlayerParty()[1]!;
-
-    game.move.changeMoveset(squirtle, [Moves.SPLASH, Moves.WATER_GUN, Moves.FREEZE_DRY, Moves.GROWL]);
-    game.move.select(Moves.TACKLE);
-    await game.move.learnMove(Moves.SHELL_SMASH, 1, 0);
-    expect(squirtle.getMoveset().map(m => m?.moveId)).toEqual([
-      Moves.SHELL_SMASH,
-      Moves.WATER_GUN,
-      Moves.FREEZE_DRY,
-      Moves.GROWL,
-    ]);
   });
 });

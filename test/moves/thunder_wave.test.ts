@@ -34,7 +34,7 @@ describe("Moves - Thunder Wave", () => {
 
   it("paralyzes non-statused Pokemon that are not Ground types", async () => {
     game.override.enemySpecies(Species.MAGIKARP);
-    await game.startBattle();
+    await game.classicMode.startBattle();
 
     const enemyPokemon: EnemyPokemon = game.scene.getEnemyPokemon()!;
 
@@ -47,7 +47,7 @@ describe("Moves - Thunder Wave", () => {
 
   it("does not paralyze if the Pokemon is a Ground-type", async () => {
     game.override.enemySpecies(Species.DIGLETT);
-    await game.startBattle();
+    await game.classicMode.startBattle();
 
     const enemyPokemon: EnemyPokemon = game.scene.getEnemyPokemon()!;
 
@@ -60,7 +60,7 @@ describe("Moves - Thunder Wave", () => {
 
   it("does not paralyze if the Pokemon already has a status effect", async () => {
     game.override.enemySpecies(Species.MAGIKARP).enemyStatusEffect(StatusEffect.BURN);
-    await game.startBattle();
+    await game.classicMode.startBattle();
 
     const enemyPokemon: EnemyPokemon = game.scene.getEnemyPokemon()!;
 
@@ -73,7 +73,7 @@ describe("Moves - Thunder Wave", () => {
 
   it("affects Ground types if the user has Normalize", async () => {
     game.override.ability(Abilities.NORMALIZE).enemySpecies(Species.DIGLETT);
-    await game.startBattle();
+    await game.classicMode.startBattle();
 
     const enemyPokemon: EnemyPokemon = game.scene.getEnemyPokemon()!;
 
@@ -86,7 +86,7 @@ describe("Moves - Thunder Wave", () => {
 
   it("does not affect Ghost types if the user has Normalize", async () => {
     game.override.ability(Abilities.NORMALIZE).enemySpecies(Species.HAUNTER);
-    await game.startBattle();
+    await game.classicMode.startBattle();
 
     const enemyPokemon: EnemyPokemon = game.scene.getEnemyPokemon()!;
 

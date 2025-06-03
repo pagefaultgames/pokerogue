@@ -39,8 +39,8 @@ describe("Moves - Spotlight", () => {
     game.move.select(Moves.SPOTLIGHT, 0, BattlerIndex.ENEMY);
     game.move.select(Moves.QUICK_ATTACK, 1, BattlerIndex.ENEMY_2);
 
-    await game.forceEnemyMove(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.SPLASH);
+    await game.move.selectEnemyMove(Moves.SPLASH);
+    await game.move.selectEnemyMove(Moves.SPLASH);
 
     await game.phaseInterceptor.to(TurnEndPhase, false);
 
@@ -56,8 +56,8 @@ describe("Moves - Spotlight", () => {
     game.move.select(Moves.SPOTLIGHT, 0, BattlerIndex.ENEMY);
     game.move.select(Moves.QUICK_ATTACK, 1, BattlerIndex.ENEMY_2);
 
-    await game.forceEnemyMove(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.FOLLOW_ME);
+    await game.move.selectEnemyMove(Moves.SPLASH);
+    await game.move.selectEnemyMove(Moves.FOLLOW_ME);
 
     await game.phaseInterceptor.to("BerryPhase", false);
 

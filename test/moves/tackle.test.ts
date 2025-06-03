@@ -24,19 +24,20 @@ describe("Moves - Tackle", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     const moveToUse = Moves.TACKLE;
-    game.override.battleStyle("single");
-    game.override.enemySpecies(Species.MAGIKARP);
-    game.override.startingLevel(1);
-    game.override.startingWave(97);
-    game.override.moveset([moveToUse]);
-    game.override.enemyMoveset([Moves.GROWTH, Moves.GROWTH, Moves.GROWTH, Moves.GROWTH]);
-    game.override.disableCrits();
+    game.override
+      .battleStyle("single")
+      .enemySpecies(Species.MAGIKARP)
+      .startingLevel(1)
+      .startingWave(97)
+      .moveset([moveToUse])
+      .enemyMoveset(Moves.GROWTH)
+      .disableCrits();
   });
 
   it("TACKLE against ghost", async () => {
     const moveToUse = Moves.TACKLE;
     game.override.enemySpecies(Species.GENGAR);
-    await game.startBattle([Species.MIGHTYENA]);
+    await game.classicMode.startBattle([Species.MIGHTYENA]);
     const hpOpponent = game.scene.currentBattle.enemyParty[0].hp;
     game.move.select(moveToUse);
     await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(TurnEndPhase);
@@ -46,7 +47,7 @@ describe("Moves - Tackle", () => {
 
   it("TACKLE against not resistant", async () => {
     const moveToUse = Moves.TACKLE;
-    await game.startBattle([Species.MIGHTYENA]);
+    await game.classicMode.startBattle([Species.MIGHTYENA]);
     game.scene.currentBattle.enemyParty[0].stats[Stat.DEF] = 50;
     game.scene.getPlayerParty()[0].stats[Stat.ATK] = 50;
 

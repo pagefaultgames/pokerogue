@@ -37,17 +37,17 @@ describe("Moves - Reflect Type", () => {
     const enemyPokemon = game.scene.getEnemyPokemon();
 
     game.move.select(Moves.SPLASH);
-    await game.forceEnemyMove(Moves.BURN_UP);
+    await game.move.selectEnemyMove(Moves.BURN_UP);
     await game.toNextTurn();
 
     game.move.select(Moves.FORESTS_CURSE);
-    await game.forceEnemyMove(Moves.SPLASH);
+    await game.move.selectEnemyMove(Moves.SPLASH);
     await game.toNextTurn();
     expect(enemyPokemon?.getTypes().includes(PokemonType.UNKNOWN)).toBe(true);
     expect(enemyPokemon?.getTypes().includes(PokemonType.GRASS)).toBe(true);
 
     game.move.select(Moves.REFLECT_TYPE);
-    await game.forceEnemyMove(Moves.SPLASH);
+    await game.move.selectEnemyMove(Moves.SPLASH);
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(playerPokemon?.getTypes()[0]).toBe(PokemonType.NORMAL);
     expect(playerPokemon?.getTypes().includes(PokemonType.GRASS)).toBe(true);

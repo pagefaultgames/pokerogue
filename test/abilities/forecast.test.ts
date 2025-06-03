@@ -30,7 +30,7 @@ describe("Abilities - Forecast", () => {
    */
   const testWeatherFormChange = async (game: GameManager, weather: WeatherType, form: number, initialForm?: number) => {
     game.override.weather(weather).starterForms({ [Species.CASTFORM]: initialForm });
-    await game.startBattle([Species.CASTFORM]);
+    await game.classicMode.startBattle([Species.CASTFORM]);
 
     game.move.select(Moves.SPLASH);
 
@@ -44,7 +44,7 @@ describe("Abilities - Forecast", () => {
    */
   const testRevertFormAgainstAbility = async (game: GameManager, ability: Abilities) => {
     game.override.starterForms({ [Species.CASTFORM]: SUNNY_FORM }).enemyAbility(ability);
-    await game.startBattle([Species.CASTFORM]);
+    await game.classicMode.startBattle([Species.CASTFORM]);
 
     game.move.select(Moves.SPLASH);
 
@@ -81,7 +81,7 @@ describe("Abilities - Forecast", () => {
           [Species.GROUDON]: 1,
           [Species.RAYQUAZA]: 1,
         });
-      await game.startBattle([
+      await game.classicMode.startBattle([
         Species.CASTFORM,
         Species.FEEBAS,
         Species.KYOGRE,
@@ -201,7 +201,7 @@ describe("Abilities - Forecast", () => {
 
   it("has no effect on Pokémon other than Castform", async () => {
     game.override.enemyAbility(Abilities.FORECAST).enemySpecies(Species.SHUCKLE);
-    await game.startBattle([Species.CASTFORM]);
+    await game.classicMode.startBattle([Species.CASTFORM]);
 
     game.move.select(Moves.RAIN_DANCE);
     await game.phaseInterceptor.to(TurnEndPhase);
@@ -212,7 +212,7 @@ describe("Abilities - Forecast", () => {
 
   it("reverts to Normal Form when Forecast is suppressed, changes form to match the weather when it regains it", async () => {
     game.override.enemyMoveset([Moves.GASTRO_ACID]).weather(WeatherType.RAIN);
-    await game.startBattle([Species.CASTFORM, Species.PIKACHU]);
+    await game.classicMode.startBattle([Species.CASTFORM, Species.PIKACHU]);
     const castform = game.scene.getPlayerPokemon()!;
 
     expect(castform.formIndex).toBe(RAINY_FORM);
@@ -243,7 +243,7 @@ describe("Abilities - Forecast", () => {
 
   it("does not change Castform's form until after Stealth Rock deals damage", async () => {
     game.override.weather(WeatherType.RAIN).enemyMoveset([Moves.STEALTH_ROCK]);
-    await game.startBattle([Species.PIKACHU, Species.CASTFORM]);
+    await game.classicMode.startBattle([Species.PIKACHU, Species.CASTFORM]);
 
     // First turn - set up stealth rock
     game.move.select(Moves.SPLASH);
@@ -267,7 +267,7 @@ describe("Abilities - Forecast", () => {
   it("should be in Normal Form after the user is switched out", async () => {
     game.override.weather(WeatherType.RAIN);
 
-    await game.startBattle([Species.CASTFORM, Species.MAGIKARP]);
+    await game.classicMode.startBattle([Species.CASTFORM, Species.MAGIKARP]);
     const castform = game.scene.getPlayerPokemon()!;
 
     expect(castform.formIndex).toBe(RAINY_FORM);

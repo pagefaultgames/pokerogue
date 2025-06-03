@@ -447,12 +447,14 @@ export default abstract class BattleInfo extends Phaser.GameObjects.Container {
   }
 
   /** Update the pokemon name inside the container */
-  protected updateName(name: string): boolean {
+  protected updateName(pokemon: Pokemon): boolean {
+    const name = pokemon.getNameToRender();
     if (this.lastName === name) {
       return false;
     }
-    this.nameText.setText(name).setPositionRelative(this.box, -this.nameText.displayWidth, 0);
-    this.lastName = name;
+
+    this.updateNameText(pokemon);
+    this.genderText.setPositionRelative(this.nameText, this.nameText.displayWidth, 0);
 
     return true;
   }
@@ -572,7 +574,7 @@ export default abstract class BattleInfo extends Phaser.GameObjects.Container {
 
     this.genderText.setText(getGenderSymbol(gender)).setColor(getGenderColor(gender));
 
-    const nameUpdated = this.updateName(pokemon.getNameToRender());
+    const nameUpdated = this.updateName(pokemon);
 
     const teraTypeUpdated = this.updateTeraType(pokemon.isTerastallized ? pokemon.getTeraType() : PokemonType.UNKNOWN);
 
@@ -583,6 +585,8 @@ export default abstract class BattleInfo extends Phaser.GameObjects.Container {
     }
 
     this.updateStatusIcon(pokemon);
+
+    this.setTypes(pokemon.getTypes(true, false, undefined, true));
 
     if (this.lastHp !== pokemon.hp || this.lastMaxHp !== pokemon.getMaxHp()) {
       return this.updatePokemonHp(pokemon, resolve, instant);
