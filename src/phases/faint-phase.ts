@@ -33,7 +33,6 @@ import { VictoryPhase } from "./victory-phase";
 import { isNullOrUndefined } from "#app/utils/common";
 import { FRIENDSHIP_LOSS_FROM_FAINT } from "#app/data/balance/starters";
 import { BattlerTagType } from "#enums/battler-tag-type";
-import { Species } from "#enums/species";
 
 export class FaintPhase extends PokemonPhase {
   /**

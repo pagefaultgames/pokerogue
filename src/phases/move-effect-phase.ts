@@ -78,8 +78,6 @@ import type Move from "#app/data/moves/move";
 import { isFieldTargeted } from "#app/data/moves/move-utils";
 import { FaintPhase } from "./faint-phase";
 import { DamageAchv } from "#app/system/achv";
-import { Species } from "#enums/species";
-import { modifierTypes } from "#app/modifier/modifier-type";
 
 type HitCheckEntry = [HitCheckResult, TypeDamageMultiplier];
 

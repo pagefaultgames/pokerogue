@@ -78,7 +78,7 @@ import {
 import type { BattlerIndex } from "../../battle";
 import { BattleType } from "#enums/battle-type";
 import { TerrainType } from "../terrain";
-import { ModifierPoolType, modifierTypes } from "#app/modifier/modifier-type";
+import { ModifierPoolType } from "#app/modifier/modifier-type";
 import { Command } from "../../ui/command-ui-handler";
 import i18next from "i18next";
 import type { Localizable } from "#app/interfaces/locales";
