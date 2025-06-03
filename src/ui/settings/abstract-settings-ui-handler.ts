@@ -19,8 +19,6 @@ export default class AbstractSettingsUiHandler extends MessageUiHandler {
   private optionsContainer: Phaser.GameObjects.Container;
   private messageBoxContainer: Phaser.GameObjects.Container;
   private navigationContainer: NavigationMenu;
-  /** Text object displaying "*Reload Required" */
-  protected reloadRequiredText: Phaser.GameObjects.Text;
 
   private scrollCursor: number;
   private scrollBar: ScrollBar;
