@@ -1351,7 +1351,8 @@ export class GameData {
     // (or prevent them from being null)
     // If the value is able to *not exist*, it should say so in the code
     const sessionData = JSON.parse(dataStr, (k: string, v: any) => {
-      // TODO: Add pre-parse migrate scripts
+      // TODO: Move this to occur _after_ migrate scripts (and refactor all non-assignment duties into migrate scripts)
+      // This should ideally be just a giant assign block
       switch (k) {
         case "party":
         case "enemyParty": {
