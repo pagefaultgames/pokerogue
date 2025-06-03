@@ -1,5 +1,6 @@
 import type { EnemyPokemon } from "#app/field/pokemon";
 import type { PersistentModifier } from "#app/modifier/modifier";
+import { PokemonPregenData } from "#app/system/pokemon-data";
 import type { PartyMemberStrength } from "#enums/party-member-strength";
 import type { Species } from "#enums/species";
 import type { TrainerConfig } from "./trainer-config";
@@ -20,3 +21,13 @@ export interface TrainerConfigs {
 export interface PartyMemberFuncs {
   [key: number]: PartyMemberFunc;
 }
+
+export interface TrainerPartyConfigs {
+  [key: number]: TrainerPartySetSlot[];
+}
+
+export type TrainerPartySetSlot = [
+  slot: number,
+  config: PokemonPregenData | PokemonPregenData[],
+  applyToAll?: Partial<PokemonPregenData>
+];

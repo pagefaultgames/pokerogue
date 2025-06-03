@@ -14,6 +14,53 @@ import type { Species } from "#enums/species";
 import { CustomPokemonData } from "#app/data/custom-pokemon-data";
 import type { PokemonType } from "#enums/pokemon-type";
 
+export interface PokemonPregenData {
+  species: Species;
+  player?: boolean;
+  nickname?: string;
+  formIndex?: number; // Specific desired form index
+  abilityIndex?: number;
+  passive?: boolean;
+  shiny?: boolean;
+  variant?: Variant;
+  pokeball?: PokeballType;
+  level?: number;
+  gender?: Gender;
+  ivs?: number[];
+  nature?: Nature;
+  moveset?: PokemonMove[]; // Fully built PokemonMove objects including PP info
+  presetMoves?: Moves[]; // Moves to include first during moveset generation
+  friendship?: number;
+  luck?: number;
+  pokerus?: boolean;
+  teraType?: PokemonType;
+  shinyLock?: boolean;
+  instantTera?: boolean;
+  randomForms?: number[]; // Form indexes to choose from at random
+  preferredGender?: Gender; // The PREFERRED gender for the mon to have, but can be overridden by the majority gender for mons w/ uneven ratios
+
+  fusionSpecies?: Species;
+  fusionFormIndex?: number;
+  fusionAbilityIndex?: number;
+  fusionShiny?: boolean;
+  fusionVariant?: Variant;
+  fusionGender?: Gender;
+  fusionLuck?: number;
+  fusionTeraType?: PokemonType;
+
+  boss?: boolean; // Defaults to 2 boss bars
+  bossSegments?: number; // If this is set, boss will be set to true
+
+  customPokemonData?: CustomPokemonData;
+  fusionCustomPokemonData?: CustomPokemonData;
+}
+
+export function mergePregenData(p: Partial<PokemonPregenData>, q: Partial<PokemonPregenData>): Partial<PokemonPregenData> {
+  let ret: Partial<PokemonPregenData> = {};
+  Object.assign<typeof ret, typeof q, typeof p>(ret, q, p);
+  return ret;
+}
+
 export default class PokemonData {
   public id: number;
   public player: boolean;
