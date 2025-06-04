@@ -1,6 +1,6 @@
 import { Stat } from "#app/enums/stat";
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -23,19 +23,19 @@ describe("Abilities - Wandering Spirit", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.SPLASH])
+      .moveset([MoveId.SPLASH])
       .ability(AbilityId.WANDERING_SPIRIT)
       .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .enemyMoveset(Moves.TACKLE);
+      .enemyMoveset(MoveId.TACKLE);
   });
 
   it("should exchange abilities when hit with a contact move", async () => {
     await game.classicMode.startBattle([Species.FEEBAS]);
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(game.scene.getPlayerPokemon()?.getAbility().id).toBe(AbilityId.BALL_FETCH);
@@ -43,10 +43,10 @@ describe("Abilities - Wandering Spirit", () => {
   });
 
   it("should not exchange abilities when hit with a non-contact move", async () => {
-    game.override.enemyMoveset(Moves.EARTHQUAKE);
+    game.override.enemyMoveset(MoveId.EARTHQUAKE);
     await game.classicMode.startBattle([Species.FEEBAS]);
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(game.scene.getPlayerPokemon()?.getAbility().id).toBe(AbilityId.WANDERING_SPIRIT);
@@ -57,7 +57,7 @@ describe("Abilities - Wandering Spirit", () => {
     game.override.enemyAbility(AbilityId.INTIMIDATE);
     await game.classicMode.startBattle([Species.FEEBAS]);
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(game.scene.getEnemyPokemon()?.getStatStage(Stat.ATK)).toBe(-1);

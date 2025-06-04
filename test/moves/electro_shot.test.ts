@@ -3,7 +3,7 @@ import { Stat } from "#enums/stat";
 import { WeatherType } from "#enums/weather-type";
 import { MoveResult } from "#app/field/pokemon";
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -26,13 +26,13 @@ describe("Moves - Electro Shot", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset(Moves.ELECTRO_SHOT)
+      .moveset(MoveId.ELECTRO_SHOT)
       .battleStyle("single")
       .startingLevel(100)
       .enemySpecies(Species.SNORLAX)
       .enemyLevel(100)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .enemyMoveset(Moves.SPLASH);
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   it("should increase the user's Sp. Atk on the first turn, then attack on the second turn", async () => {
@@ -41,7 +41,7 @@ describe("Moves - Electro Shot", () => {
     const playerPokemon = game.scene.getPlayerPokemon()!;
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.ELECTRO_SHOT);
+    game.move.select(MoveId.ELECTRO_SHOT);
 
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(playerPokemon.getTag(BattlerTagType.CHARGING)).toBeDefined();
@@ -56,7 +56,7 @@ describe("Moves - Electro Shot", () => {
     expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(1);
     expect(playerPokemon.getLastXMoves(1)[0].result).toBe(MoveResult.SUCCESS);
 
-    const playerElectroShot = playerPokemon.getMoveset().find(mv => mv && mv.moveId === Moves.ELECTRO_SHOT);
+    const playerElectroShot = playerPokemon.getMoveset().find(mv => mv && mv.moveId === MoveId.ELECTRO_SHOT);
     expect(playerElectroShot?.ppUsed).toBe(1);
   });
 
@@ -71,7 +71,7 @@ describe("Moves - Electro Shot", () => {
     const playerPokemon = game.scene.getPlayerPokemon()!;
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.ELECTRO_SHOT);
+    game.move.select(MoveId.ELECTRO_SHOT);
 
     await game.phaseInterceptor.to("MoveEffectPhase", false);
     expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(1);
@@ -82,7 +82,7 @@ describe("Moves - Electro Shot", () => {
     expect(playerPokemon.getMoveHistory()).toHaveLength(2);
     expect(playerPokemon.getLastXMoves(1)[0].result).toBe(MoveResult.SUCCESS);
 
-    const playerElectroShot = playerPokemon.getMoveset().find(mv => mv && mv.moveId === Moves.ELECTRO_SHOT);
+    const playerElectroShot = playerPokemon.getMoveset().find(mv => mv && mv.moveId === MoveId.ELECTRO_SHOT);
     expect(playerElectroShot?.ppUsed).toBe(1);
   });
 
@@ -93,7 +93,7 @@ describe("Moves - Electro Shot", () => {
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
 
-    game.move.select(Moves.ELECTRO_SHOT);
+    game.move.select(MoveId.ELECTRO_SHOT);
 
     await game.phaseInterceptor.to("MoveEndPhase");
     expect(playerPokemon.turnData.hitCount).toBe(1);

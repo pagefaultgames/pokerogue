@@ -2,7 +2,7 @@ import { BattlerIndex } from "#app/battle";
 import { allMoves } from "#app/data/data-lists";
 import { PokemonType } from "#enums/pokemon-type";
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#app/enums/moves";
+import { MoveId } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -50,10 +50,10 @@ describe.each([
       .startingLevel(100)
       .starterSpecies(Species.MAGIKARP)
       .ability(ab)
-      .moveset([Moves.TACKLE, Moves.REVELATION_DANCE, Moves.FURY_SWIPES])
+      .moveset([MoveId.TACKLE, MoveId.REVELATION_DANCE, MoveId.FURY_SWIPES])
       .enemySpecies(Species.DUSCLOPS)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .enemyMoveset(Moves.SPLASH)
+      .enemyMoveset(MoveId.SPLASH)
       .enemyLevel(100);
   });
 
@@ -65,9 +65,9 @@ describe.each([
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
     const enemySpy = vi.spyOn(enemyPokemon, "getMoveEffectiveness");
-    const powerSpy = vi.spyOn(allMoves[Moves.TACKLE], "calculateBattlePower");
+    const powerSpy = vi.spyOn(allMoves[MoveId.TACKLE], "calculateBattlePower");
 
-    game.move.select(Moves.TACKLE);
+    game.move.select(MoveId.TACKLE);
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
@@ -92,7 +92,7 @@ describe.each([
 
       enemyPokemon.hp = Math.floor(enemyPokemon.getMaxHp() * 0.8);
 
-      game.move.select(Moves.TACKLE);
+      game.move.select(MoveId.TACKLE);
 
       await game.phaseInterceptor.to("BerryPhase", false);
 
@@ -103,12 +103,12 @@ describe.each([
   }
 
   it.each([
-    { moveName: "Revelation Dance", move: Moves.REVELATION_DANCE, expected_ty: PokemonType.WATER },
-    { moveName: "Judgement", move: Moves.JUDGMENT, expected_ty: PokemonType.NORMAL },
-    { moveName: "Terrain Pulse", move: Moves.TERRAIN_PULSE, expected_ty: PokemonType.NORMAL },
-    { moveName: "Weather Ball", move: Moves.WEATHER_BALL, expected_ty: PokemonType.NORMAL },
-    { moveName: "Multi Attack", move: Moves.MULTI_ATTACK, expected_ty: PokemonType.NORMAL },
-    { moveName: "Techno Blast", move: Moves.TECHNO_BLAST, expected_ty: PokemonType.NORMAL },
+    { moveName: "Revelation Dance", move: MoveId.REVELATION_DANCE, expected_ty: PokemonType.WATER },
+    { moveName: "Judgement", move: MoveId.JUDGMENT, expected_ty: PokemonType.NORMAL },
+    { moveName: "Terrain Pulse", move: MoveId.TERRAIN_PULSE, expected_ty: PokemonType.NORMAL },
+    { moveName: "Weather Ball", move: MoveId.WEATHER_BALL, expected_ty: PokemonType.NORMAL },
+    { moveName: "Multi Attack", move: MoveId.MULTI_ATTACK, expected_ty: PokemonType.NORMAL },
+    { moveName: "Techno Blast", move: MoveId.TECHNO_BLAST, expected_ty: PokemonType.NORMAL },
   ])("should not change the type of $moveName", async ({ move, expected_ty: expectedTy }) => {
     game.override
       .enemySpecies(Species.MAGIKARP)
@@ -135,7 +135,7 @@ describe.each([
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.FURY_SWIPES);
+    game.move.select(MoveId.FURY_SWIPES);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.move.forceHit();
 
@@ -156,7 +156,7 @@ describe.each([
     game.override.startingHeldItems([{ name: "ATTACK_TYPE_BOOSTER", count: 1, type: PokemonType.NORMAL }]);
     await game.classicMode.startBattle();
 
-    const testMoveInstance = allMoves[Moves.TACKLE];
+    const testMoveInstance = allMoves[MoveId.TACKLE];
 
     // get the power boost from the ability so we can compare it to the item
     // @ts-expect-error power multiplier is private
@@ -165,7 +165,7 @@ describe.each([
 
     const powerSpy = vi.spyOn(testMoveInstance, "calculateBattlePower");
     const typeSpy = vi.spyOn(game.scene.getPlayerPokemon()!, "getMoveType");
-    game.move.select(Moves.TACKLE);
+    game.move.select(MoveId.TACKLE);
     await game.phaseInterceptor.to("BerryPhase", false);
     expect(typeSpy, "type was not changed").toHaveLastReturnedWith(ty);
     expect(powerSpy).toHaveLastReturnedWith(toDmgValue(testMoveInstance.power * boost));
@@ -180,10 +180,10 @@ describe.each([
     const boost = allAbilities[ab]?.getAttrs(MoveTypeChangeAbAttr)[0]?.powerMultiplier;
     expect(boost, "power boost should be defined").toBeDefined();
 
-    const tackle = allMoves[Moves.TACKLE];
+    const tackle = allMoves[MoveId.TACKLE];
 
     const spy = vi.spyOn(tackle, "calculateBattlePower");
-    game.move.select(Moves.TACKLE);
+    game.move.select(MoveId.TACKLE);
     await game.phaseInterceptor.to("BerryPhase", false);
     expect(spy).toHaveLastReturnedWith(toDmgValue(tackle.power * boost * (1 + TYPE_BOOST_ITEM_BOOST_PERCENT / 100)));
   });

@@ -1,4 +1,4 @@
-import { Moves } from "#app/enums/moves";
+import { MoveId } from "#app/enums/moves";
 import { AbilityId } from "#enums/ability-id";
 import { Species } from "#enums/species";
 import { Stat } from "#enums/stat";
@@ -27,7 +27,7 @@ describe("Abilities - Simple", () => {
       .enemySpecies(Species.BULBASAUR)
       .enemyAbility(AbilityId.SIMPLE)
       .ability(AbilityId.INTIMIDATE)
-      .enemyMoveset(Moves.SPLASH);
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   it("should double stat changes when applied", async () => {

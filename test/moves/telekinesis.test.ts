@@ -1,7 +1,7 @@
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { allMoves } from "#app/data/data-lists";
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import { MoveResult } from "#app/field/pokemon";
 import GameManager from "#test/testUtils/gameManager";
@@ -26,12 +26,12 @@ describe("Moves - Telekinesis", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.TELEKINESIS, Moves.TACKLE, Moves.MUD_SHOT, Moves.SMACK_DOWN])
+      .moveset([MoveId.TELEKINESIS, MoveId.TACKLE, MoveId.MUD_SHOT, MoveId.SMACK_DOWN])
       .battleStyle("single")
       .enemySpecies(Species.SNORLAX)
       .enemyLevel(60)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .enemyMoveset([Moves.SPLASH]);
+      .enemyMoveset([MoveId.SPLASH]);
   });
 
   it("Telekinesis makes the affected vulnerable to most attacking moves regardless of accuracy", async () => {
@@ -39,14 +39,14 @@ describe("Moves - Telekinesis", () => {
 
     const enemyOpponent = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.TELEKINESIS);
+    game.move.select(MoveId.TELEKINESIS);
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(enemyOpponent.getTag(BattlerTagType.TELEKINESIS)).toBeDefined();
     expect(enemyOpponent.getTag(BattlerTagType.FLOATING)).toBeDefined();
 
     await game.toNextTurn();
-    vi.spyOn(allMoves[Moves.TACKLE], "accuracy", "get").mockReturnValue(0);
-    game.move.select(Moves.TACKLE);
+    vi.spyOn(allMoves[MoveId.TACKLE], "accuracy", "get").mockReturnValue(0);
+    game.move.select(MoveId.TACKLE);
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(enemyOpponent.isFullHp()).toBe(false);
   });
@@ -56,25 +56,25 @@ describe("Moves - Telekinesis", () => {
 
     const enemyOpponent = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.TELEKINESIS);
+    game.move.select(MoveId.TELEKINESIS);
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(enemyOpponent.getTag(BattlerTagType.TELEKINESIS)).toBeDefined();
     expect(enemyOpponent.getTag(BattlerTagType.FLOATING)).toBeDefined();
 
     await game.toNextTurn();
-    vi.spyOn(allMoves[Moves.MUD_SHOT], "accuracy", "get").mockReturnValue(100);
-    game.move.select(Moves.MUD_SHOT);
+    vi.spyOn(allMoves[MoveId.MUD_SHOT], "accuracy", "get").mockReturnValue(100);
+    game.move.select(MoveId.MUD_SHOT);
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(enemyOpponent.isFullHp()).toBe(true);
   });
 
   it("Telekinesis can still affect Pokemon that have been transformed into invalid Pokemon", async () => {
-    game.override.enemyMoveset(Moves.TRANSFORM);
+    game.override.enemyMoveset(MoveId.TRANSFORM);
     await game.classicMode.startBattle([Species.DIGLETT]);
 
     const enemyOpponent = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.TELEKINESIS);
+    game.move.select(MoveId.TELEKINESIS);
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(enemyOpponent.getTag(BattlerTagType.TELEKINESIS)).toBeDefined();
     expect(enemyOpponent.getTag(BattlerTagType.FLOATING)).toBeDefined();
@@ -86,35 +86,35 @@ describe("Moves - Telekinesis", () => {
 
     const enemyOpponent = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.TELEKINESIS);
+    game.move.select(MoveId.TELEKINESIS);
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(enemyOpponent.getTag(BattlerTagType.TELEKINESIS)).toBeDefined();
     expect(enemyOpponent.getTag(BattlerTagType.FLOATING)).toBeDefined();
 
     await game.toNextTurn();
-    game.move.select(Moves.SMACK_DOWN);
+    game.move.select(MoveId.SMACK_DOWN);
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(enemyOpponent.getTag(BattlerTagType.TELEKINESIS)).toBeUndefined();
     expect(enemyOpponent.getTag(BattlerTagType.FLOATING)).toBeUndefined();
   });
 
   it("Ingrain will remove the floating effect of Telekinesis, but not the 100% hit", async () => {
-    game.override.enemyMoveset([Moves.SPLASH, Moves.INGRAIN]);
+    game.override.enemyMoveset([MoveId.SPLASH, MoveId.INGRAIN]);
     await game.classicMode.startBattle([Species.MAGIKARP]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
     const enemyOpponent = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.TELEKINESIS);
-    await game.move.selectEnemyMove(Moves.SPLASH);
+    game.move.select(MoveId.TELEKINESIS);
+    await game.move.selectEnemyMove(MoveId.SPLASH);
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(enemyOpponent.getTag(BattlerTagType.TELEKINESIS)).toBeDefined();
     expect(enemyOpponent.getTag(BattlerTagType.FLOATING)).toBeDefined();
 
     await game.toNextTurn();
-    vi.spyOn(allMoves[Moves.MUD_SHOT], "accuracy", "get").mockReturnValue(0);
-    game.move.select(Moves.MUD_SHOT);
-    await game.move.selectEnemyMove(Moves.INGRAIN);
+    vi.spyOn(allMoves[MoveId.MUD_SHOT], "accuracy", "get").mockReturnValue(0);
+    game.move.select(MoveId.MUD_SHOT);
+    await game.move.selectEnemyMove(MoveId.INGRAIN);
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(enemyOpponent.getTag(BattlerTagType.TELEKINESIS)).toBeDefined();
     expect(enemyOpponent.getTag(BattlerTagType.INGRAIN)).toBeDefined();
@@ -125,12 +125,12 @@ describe("Moves - Telekinesis", () => {
 
   it("should not be baton passed onto a mega gengar", async () => {
     game.override
-      .moveset([Moves.BATON_PASS])
-      .enemyMoveset([Moves.TELEKINESIS])
+      .moveset([MoveId.BATON_PASS])
+      .enemyMoveset([MoveId.TELEKINESIS])
       .starterForms({ [Species.GENGAR]: 1 });
 
     await game.classicMode.startBattle([Species.MAGIKARP, Species.GENGAR]);
-    game.move.select(Moves.BATON_PASS);
+    game.move.select(MoveId.BATON_PASS);
     game.doSelectPartyPokemon(1);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("BerryPhase");

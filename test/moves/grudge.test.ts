@@ -1,5 +1,5 @@
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import { BattlerIndex } from "#app/battle";
 import GameManager from "#test/testUtils/gameManager";
@@ -23,25 +23,25 @@ describe("Moves - Grudge", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.EMBER, Moves.SPLASH])
+      .moveset([MoveId.EMBER, MoveId.SPLASH])
       .ability(AbilityId.BALL_FETCH)
       .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.SHEDINJA)
       .enemyAbility(AbilityId.WONDER_GUARD)
-      .enemyMoveset([Moves.GRUDGE, Moves.SPLASH]);
+      .enemyMoveset([MoveId.GRUDGE, MoveId.SPLASH]);
   });
 
   it("should reduce the PP of the Pokemon's move to 0 when the user has fainted", async () => {
     await game.classicMode.startBattle([Species.FEEBAS]);
 
     const playerPokemon = game.scene.getPlayerPokemon();
-    game.move.select(Moves.EMBER);
-    await game.move.selectEnemyMove(Moves.GRUDGE);
+    game.move.select(MoveId.EMBER);
+    await game.move.selectEnemyMove(MoveId.GRUDGE);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("BerryPhase");
 
-    const playerMove = playerPokemon?.getMoveset().find(m => m.moveId === Moves.EMBER);
+    const playerMove = playerPokemon?.getMoveset().find(m => m.moveId === MoveId.EMBER);
 
     expect(playerMove?.getPpRatio()).toBe(0);
   });
@@ -50,17 +50,17 @@ describe("Moves - Grudge", () => {
     await game.classicMode.startBattle([Species.FEEBAS]);
 
     const playerPokemon = game.scene.getPlayerPokemon();
-    game.move.select(Moves.SPLASH);
-    await game.move.selectEnemyMove(Moves.GRUDGE);
+    game.move.select(MoveId.SPLASH);
+    await game.move.selectEnemyMove(MoveId.GRUDGE);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toNextTurn();
 
-    game.move.select(Moves.EMBER);
-    await game.move.selectEnemyMove(Moves.SPLASH);
+    game.move.select(MoveId.EMBER);
+    await game.move.selectEnemyMove(MoveId.SPLASH);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("BerryPhase");
 
-    const playerMove = playerPokemon?.getMoveset().find(m => m.moveId === Moves.EMBER);
+    const playerMove = playerPokemon?.getMoveset().find(m => m.moveId === MoveId.EMBER);
 
     expect(playerMove?.getPpRatio()).toBe(0);
   });
@@ -68,7 +68,7 @@ describe("Moves - Grudge", () => {
   it("should not reduce the opponent's PP if the user dies to weather/indirect damage", async () => {
     // Opponent will be reduced to 1 HP by False Swipe, then faint to Sandstorm
     game.override
-      .moveset([Moves.FALSE_SWIPE])
+      .moveset([MoveId.FALSE_SWIPE])
       .startingLevel(100)
       .ability(AbilityId.SAND_STREAM)
       .enemySpecies(Species.RATTATA);
@@ -77,14 +77,14 @@ describe("Moves - Grudge", () => {
     const enemyPokemon = game.scene.getEnemyPokemon();
     const playerPokemon = game.scene.getPlayerPokemon();
 
-    game.move.select(Moves.FALSE_SWIPE);
-    await game.move.selectEnemyMove(Moves.GRUDGE);
+    game.move.select(MoveId.FALSE_SWIPE);
+    await game.move.selectEnemyMove(MoveId.GRUDGE);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(enemyPokemon?.isFainted()).toBe(true);
 
-    const playerMove = playerPokemon?.getMoveset().find(m => m.moveId === Moves.FALSE_SWIPE);
+    const playerMove = playerPokemon?.getMoveset().find(m => m.moveId === MoveId.FALSE_SWIPE);
     expect(playerMove?.getPpRatio()).toBeGreaterThan(0);
   });
 });

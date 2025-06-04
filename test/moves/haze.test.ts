@@ -1,7 +1,7 @@
 import { Stat } from "#enums/stat";
 import GameManager from "#test/testUtils/gameManager";
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -27,11 +27,11 @@ describe("Moves - Haze", () => {
 
       game.override.enemySpecies(Species.RATTATA);
       game.override.enemyLevel(100);
-      game.override.enemyMoveset(Moves.SPLASH);
+      game.override.enemyMoveset(MoveId.SPLASH);
       game.override.enemyAbility(AbilityId.NONE);
 
       game.override.startingLevel(100);
-      game.override.moveset([Moves.HAZE, Moves.SWORDS_DANCE, Moves.CHARM, Moves.SPLASH]);
+      game.override.moveset([MoveId.HAZE, MoveId.SWORDS_DANCE, MoveId.CHARM, MoveId.SPLASH]);
       game.override.ability(AbilityId.NONE);
     });
 
@@ -43,16 +43,16 @@ describe("Moves - Haze", () => {
       expect(user.getStatStage(Stat.ATK)).toBe(0);
       expect(enemy.getStatStage(Stat.ATK)).toBe(0);
 
-      game.move.select(Moves.SWORDS_DANCE);
+      game.move.select(MoveId.SWORDS_DANCE);
       await game.phaseInterceptor.to(TurnInitPhase);
 
-      game.move.select(Moves.CHARM);
+      game.move.select(MoveId.CHARM);
       await game.phaseInterceptor.to(TurnInitPhase);
 
       expect(user.getStatStage(Stat.ATK)).toBe(2);
       expect(enemy.getStatStage(Stat.ATK)).toBe(-2);
 
-      game.move.select(Moves.HAZE);
+      game.move.select(MoveId.HAZE);
       await game.phaseInterceptor.to(TurnInitPhase);
 
       expect(user.getStatStage(Stat.ATK)).toBe(0);

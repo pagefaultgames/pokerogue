@@ -1,5 +1,5 @@
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -9,7 +9,7 @@ describe("Moves - Fusion Bolt", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
-  const fusionBolt = Moves.FUSION_BOLT;
+  const fusionBolt = MoveId.FUSION_BOLT;
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({
@@ -28,7 +28,7 @@ describe("Moves - Fusion Bolt", () => {
       .startingLevel(1)
       .enemySpecies(Species.RESHIRAM)
       .enemyAbility(AbilityId.ROUGH_SKIN)
-      .enemyMoveset(Moves.SPLASH)
+      .enemyMoveset(MoveId.SPLASH)
       .battleStyle("single")
       .startingWave(97)
       .disableCrits();

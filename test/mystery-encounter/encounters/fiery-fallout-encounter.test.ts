@@ -14,7 +14,7 @@ import {
   runSelectMysteryEncounterOption,
   skipBattleRunMysteryEncounterRewardsPhase,
 } from "#test/mystery-encounter/encounter-test-utils";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import type BattleScene from "#app/battle-scene";
 import { AttackTypeBoosterModifier, PokemonHeldItemModifier } from "#app/modifier/modifier";
 import { PokemonType } from "#enums/pokemon-type";
@@ -54,7 +54,7 @@ describe("Fiery Fallout - Mystery Encounter", () => {
       .startingWave(defaultWave)
       .startingBiome(defaultBiome)
       .disableTrainerWaves()
-      .moveset([Moves.PAYBACK, Moves.THUNDERBOLT]); // Required for attack type booster item generation
+      .moveset([MoveId.PAYBACK, MoveId.THUNDERBOLT]); // Required for attack type booster item generation
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
       new Map<Biome, MysteryEncounterType[]>([
@@ -171,7 +171,7 @@ describe("Fiery Fallout - Mystery Encounter", () => {
 
       const movePhases = phaseSpy.mock.calls.filter(p => p[0] instanceof MovePhase).map(p => p[0]);
       expect(movePhases.length).toBe(2);
-      expect(movePhases.filter(p => (p as MovePhase).move.moveId === Moves.FIRE_SPIN).length).toBe(2); // Fire spin used twice before battle
+      expect(movePhases.filter(p => (p as MovePhase).move.moveId === MoveId.FIRE_SPIN).length).toBe(2); // Fire spin used twice before battle
     });
 
     it("should give attack type boosting item to lead pokemon", async () => {

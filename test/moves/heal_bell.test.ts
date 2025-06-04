@@ -1,7 +1,7 @@
 import { StatusEffect } from "#app/enums/status-effect";
 import { CommandPhase } from "#app/phases/command-phase";
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -24,11 +24,11 @@ describe("Moves - Heal Bell", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.HEAL_BELL, Moves.SPLASH])
+      .moveset([MoveId.HEAL_BELL, MoveId.SPLASH])
       .statusEffect(StatusEffect.BURN)
       .battleStyle("double")
       .enemyAbility(AbilityId.BALL_FETCH)
-      .enemyMoveset(Moves.SPLASH);
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   it("should cure status effect of the user, its ally, and all party pokemon", async () => {
@@ -39,9 +39,9 @@ describe("Moves - Heal Bell", () => {
     vi.spyOn(rightPlayer, "resetStatus");
     vi.spyOn(partyPokemon, "resetStatus");
 
-    game.move.select(Moves.HEAL_BELL, 0);
+    game.move.select(MoveId.HEAL_BELL, 0);
     await game.phaseInterceptor.to(CommandPhase);
-    game.move.select(Moves.SPLASH, 1);
+    game.move.select(MoveId.SPLASH, 1);
     await game.toNextTurn();
 
     expect(leftPlayer.resetStatus).toHaveBeenCalledOnce();
@@ -61,9 +61,9 @@ describe("Moves - Heal Bell", () => {
     vi.spyOn(leftOpp, "resetStatus");
     vi.spyOn(rightOpp, "resetStatus");
 
-    game.move.select(Moves.HEAL_BELL, 0);
+    game.move.select(MoveId.HEAL_BELL, 0);
     await game.phaseInterceptor.to(CommandPhase);
-    game.move.select(Moves.SPLASH, 1);
+    game.move.select(MoveId.SPLASH, 1);
     await game.toNextTurn();
 
     expect(leftOpp.resetStatus).toHaveBeenCalledTimes(0);
@@ -85,9 +85,9 @@ describe("Moves - Heal Bell", () => {
     vi.spyOn(rightPlayer, "resetStatus");
     vi.spyOn(partyPokemon, "resetStatus");
 
-    game.move.select(Moves.HEAL_BELL, 0);
+    game.move.select(MoveId.HEAL_BELL, 0);
     await game.phaseInterceptor.to(CommandPhase);
-    game.move.select(Moves.SPLASH, 1);
+    game.move.select(MoveId.SPLASH, 1);
     await game.toNextTurn();
 
     expect(leftPlayer.resetStatus).toHaveBeenCalledOnce();

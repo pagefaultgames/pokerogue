@@ -1,6 +1,6 @@
 import { BattlerIndex } from "#app/battle";
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import { StatusEffect } from "#enums/status-effect";
 import GameManager from "#test/testUtils/gameManager";
@@ -24,13 +24,13 @@ describe("Moves - Will-O-Wisp", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.WILL_O_WISP, Moves.SPLASH])
+      .moveset([MoveId.WILL_O_WISP, MoveId.SPLASH])
       .ability(AbilityId.BALL_FETCH)
       .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .enemyMoveset(Moves.SPLASH);
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   it("should burn the opponent", async () => {
@@ -38,14 +38,14 @@ describe("Moves - Will-O-Wisp", () => {
 
     const enemy = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.WILL_O_WISP);
+    game.move.select(MoveId.WILL_O_WISP);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.move.forceHit();
     await game.toNextTurn();
 
     expect(enemy.status?.effect).toBe(StatusEffect.BURN);
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
 
     expect(enemy.status?.effect).toBe(StatusEffect.BURN);

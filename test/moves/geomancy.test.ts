@@ -2,7 +2,7 @@ import type { EffectiveStat } from "#enums/stat";
 import { Stat } from "#enums/stat";
 import { MoveResult } from "#app/field/pokemon";
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -25,13 +25,13 @@ describe("Moves - Geomancy", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset(Moves.GEOMANCY)
+      .moveset(MoveId.GEOMANCY)
       .battleStyle("single")
       .startingLevel(100)
       .enemySpecies(Species.SNORLAX)
       .enemyLevel(100)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .enemyMoveset(Moves.SPLASH);
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   it("should boost the user's stats on the second turn of use", async () => {
@@ -40,7 +40,7 @@ describe("Moves - Geomancy", () => {
     const player = game.scene.getPlayerPokemon()!;
     const affectedStats: EffectiveStat[] = [Stat.SPATK, Stat.SPDEF, Stat.SPD];
 
-    game.move.select(Moves.GEOMANCY);
+    game.move.select(MoveId.GEOMANCY);
 
     await game.phaseInterceptor.to("TurnEndPhase");
     affectedStats.forEach(stat => expect(player.getStatStage(stat)).toBe(0));
@@ -51,7 +51,7 @@ describe("Moves - Geomancy", () => {
     expect(player.getMoveHistory()).toHaveLength(2);
     expect(player.getLastXMoves(1)[0].result).toBe(MoveResult.SUCCESS);
 
-    const playerGeomancy = player.getMoveset().find(mv => mv && mv.moveId === Moves.GEOMANCY);
+    const playerGeomancy = player.getMoveset().find(mv => mv && mv.moveId === MoveId.GEOMANCY);
     expect(playerGeomancy?.ppUsed).toBe(1);
   });
 
@@ -61,7 +61,7 @@ describe("Moves - Geomancy", () => {
     const player = game.scene.getPlayerPokemon()!;
     const affectedStats: EffectiveStat[] = [Stat.SPATK, Stat.SPDEF, Stat.SPD];
 
-    game.move.select(Moves.GEOMANCY);
+    game.move.select(MoveId.GEOMANCY);
 
     await game.phaseInterceptor.to("MoveEndPhase", false);
     await game.doKillOpponents();
@@ -73,7 +73,7 @@ describe("Moves - Geomancy", () => {
     expect(player.getMoveHistory()).toHaveLength(2);
     expect(player.getLastXMoves(1)[0].result).toBe(MoveResult.SUCCESS);
 
-    const playerGeomancy = player.getMoveset().find(mv => mv && mv.moveId === Moves.GEOMANCY);
+    const playerGeomancy = player.getMoveset().find(mv => mv && mv.moveId === MoveId.GEOMANCY);
     expect(playerGeomancy?.ppUsed).toBe(1);
   });
 });

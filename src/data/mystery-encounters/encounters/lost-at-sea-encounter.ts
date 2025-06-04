@@ -1,5 +1,5 @@
 import { getPokemonSpecies } from "#app/data/pokemon-species";
-import { Moves } from "#app/enums/moves";
+import { MoveId } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { globalScene } from "#app/global-scene";
@@ -13,8 +13,8 @@ import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { PokemonMove } from "#app/field/pokemon";
 
-const OPTION_1_REQUIRED_MOVE = Moves.SURF;
-const OPTION_2_REQUIRED_MOVE = Moves.FLY;
+const OPTION_1_REQUIRED_MOVE = MoveId.SURF;
+const OPTION_2_REQUIRED_MOVE = MoveId.FLY;
 /**
  * Damage percentage taken when wandering aimlessly.
  * Can be a number between `0` - `100`.

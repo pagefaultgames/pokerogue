@@ -3,7 +3,7 @@ import { WeatherType } from "#app/enums/weather-type";
 import type { CommandPhase } from "#app/phases/command-phase";
 import { Command } from "#app/ui/command-ui-handler";
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -26,19 +26,19 @@ describe("Abilities - Desolate Land", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset(Moves.SPLASH)
+      .moveset(MoveId.SPLASH)
       .hasPassiveAbility(true)
       .enemySpecies(Species.RALTS)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .enemyMoveset(Moves.SPLASH);
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   /**
    * This checks that the weather has changed after the Enemy Pokemon with {@linkcode AbilityId.DESOLATE_LAND}
-   * is forcefully moved out of the field from moves such as Roar {@linkcode Moves.ROAR}
+   * is forcefully moved out of the field from moves such as Roar {@linkcode MoveId.ROAR}
    */
   it("should lift only when all pokemon with this ability leave the field", async () => {
-    game.override.battleStyle("double").enemyMoveset([Moves.SPLASH, Moves.ROAR]);
+    game.override.battleStyle("double").enemyMoveset([MoveId.SPLASH, MoveId.ROAR]);
     await game.classicMode.startBattle([Species.MAGCARGO, Species.MAGCARGO, Species.MAGIKARP, Species.MAGIKARP]);
 
     expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.HARSH_SUN);
@@ -47,11 +47,11 @@ describe("Abilities - Desolate Land", () => {
       return min;
     });
 
-    game.move.select(Moves.SPLASH, 0, 2);
-    game.move.select(Moves.SPLASH, 1, 2);
+    game.move.select(MoveId.SPLASH, 0, 2);
+    game.move.select(MoveId.SPLASH, 1, 2);
 
-    await game.move.selectEnemyMove(Moves.ROAR, 0);
-    await game.move.selectEnemyMove(Moves.SPLASH, 1);
+    await game.move.selectEnemyMove(MoveId.ROAR, 0);
+    await game.move.selectEnemyMove(MoveId.SPLASH, 1);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
@@ -63,11 +63,11 @@ describe("Abilities - Desolate Land", () => {
       return min + 1;
     });
 
-    game.move.select(Moves.SPLASH, 0, 2);
-    game.move.select(Moves.SPLASH, 1, 2);
+    game.move.select(MoveId.SPLASH, 0, 2);
+    game.move.select(MoveId.SPLASH, 1, 2);
 
-    await game.move.selectEnemyMove(Moves.ROAR, 1);
-    await game.move.selectEnemyMove(Moves.SPLASH, 0);
+    await game.move.selectEnemyMove(MoveId.ROAR, 1);
+    await game.move.selectEnemyMove(MoveId.SPLASH, 0);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
@@ -77,18 +77,18 @@ describe("Abilities - Desolate Land", () => {
   it("should lift when enemy faints", async () => {
     game.override
       .battleStyle("single")
-      .moveset([Moves.SHEER_COLD])
+      .moveset([MoveId.SHEER_COLD])
       .ability(AbilityId.NO_GUARD)
       .startingLevel(100)
       .enemyLevel(1)
-      .enemyMoveset([Moves.SPLASH])
+      .enemyMoveset([MoveId.SPLASH])
       .enemySpecies(Species.MAGCARGO)
       .enemyHasPassiveAbility(true);
     await game.classicMode.startBattle([Species.MAGIKARP]);
 
     expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.HARSH_SUN);
 
-    game.move.select(Moves.SHEER_COLD);
+    game.move.select(MoveId.SHEER_COLD);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
@@ -96,15 +96,15 @@ describe("Abilities - Desolate Land", () => {
   });
 
   it("should lift when pokemon returns upon switching from double to single battle", async () => {
-    game.override.battleStyle("even-doubles").enemyMoveset([Moves.SPLASH, Moves.MEMENTO]).startingWave(12);
+    game.override.battleStyle("even-doubles").enemyMoveset([MoveId.SPLASH, MoveId.MEMENTO]).startingWave(12);
     await game.classicMode.startBattle([Species.MAGIKARP, Species.MAGCARGO]);
 
     expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.HARSH_SUN);
 
-    game.move.select(Moves.SPLASH, 0, 2);
-    game.move.select(Moves.SPLASH, 1, 2);
-    await game.move.selectEnemyMove(Moves.MEMENTO, 0);
-    await game.move.selectEnemyMove(Moves.MEMENTO, 1);
+    game.move.select(MoveId.SPLASH, 0, 2);
+    game.move.select(MoveId.SPLASH, 1, 2);
+    await game.move.selectEnemyMove(MoveId.MEMENTO, 0);
+    await game.move.selectEnemyMove(MoveId.MEMENTO, 1);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
@@ -118,7 +118,7 @@ describe("Abilities - Desolate Land", () => {
   it("should lift when enemy is captured", async () => {
     game.override
       .battleStyle("single")
-      .enemyMoveset([Moves.SPLASH])
+      .enemyMoveset([MoveId.SPLASH])
       .enemySpecies(Species.MAGCARGO)
       .enemyHasPassiveAbility(true);
     await game.classicMode.startBattle([Species.MAGIKARP]);

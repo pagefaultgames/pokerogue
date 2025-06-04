@@ -2,7 +2,7 @@ import { BattlerIndex } from "#app/battle";
 import { allMoves } from "#app/data/data-lists";
 import { DamageAnimPhase } from "#app/phases/damage-anim-phase";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import type Move from "#app/data/moves/move";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -26,17 +26,17 @@ describe("Moves - Dynamax Cannon", () => {
   });
 
   beforeEach(() => {
-    dynamaxCannon = allMoves[Moves.DYNAMAX_CANNON];
+    dynamaxCannon = allMoves[MoveId.DYNAMAX_CANNON];
     game = new GameManager(phaserGame);
 
     game.override
-      .moveset(Moves.DYNAMAX_CANNON)
+      .moveset(MoveId.DYNAMAX_CANNON)
       .startingLevel(200)
       .levelCap(10)
       .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
-      .enemyMoveset(Moves.SPLASH);
+      .enemyMoveset(MoveId.SPLASH);
 
     // Note that, for Waves 1-10, the level cap is 10
     game.override.startingWave(1);
@@ -44,7 +44,7 @@ describe("Moves - Dynamax Cannon", () => {
     game.override.disableCrits();
 
     game.override.enemySpecies(Species.MAGIKARP);
-    game.override.enemyMoveset([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
+    game.override.enemyMoveset([MoveId.SPLASH, MoveId.SPLASH, MoveId.SPLASH, MoveId.SPLASH]);
 
     vi.spyOn(dynamaxCannon, "calculateBattlePower");
   });

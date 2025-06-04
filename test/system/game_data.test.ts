@@ -2,7 +2,7 @@ import * as bypassLoginModule from "#app/global-vars/bypass-login";
 import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
 import type { SessionSaveData } from "#app/system/game-data";
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -21,10 +21,10 @@ describe("System - Game Data", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.SPLASH])
+      .moveset([MoveId.SPLASH])
       .battleStyle("single")
       .enemyAbility(AbilityId.BALL_FETCH)
-      .enemyMoveset(Moves.SPLASH);
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   afterEach(() => {

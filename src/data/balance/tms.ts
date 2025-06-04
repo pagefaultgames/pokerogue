@@ -1,12 +1,12 @@
 import { ModifierTier } from "#app/modifier/modifier-tier";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 
 interface TmSpecies {
     [key: number]: Array<Species | Array<Species | string>>
 }
 
-export const reverseCompatibleTms: Moves[] = [];/*[
+export const reverseCompatibleTms: MoveId[] = [];/*[
     Moves.TAKE_DOWN,
     Moves.TOXIC,
     Moves.RAGE,
@@ -32,7 +32,7 @@ export const reverseCompatibleTms: Moves[] = [];/*[
 ];*/
 
 export const tmSpecies: TmSpecies = {
-  [Moves.MEGA_PUNCH]: [
+  [MoveId.MEGA_PUNCH]: [
     Species.CHARMANDER,
     Species.CHARMELEON,
     Species.CHARIZARD,
@@ -257,7 +257,7 @@ export const tmSpecies: TmSpecies = {
     Species.GALAR_DARUMAKA,
     Species.GALAR_DARMANITAN,
   ],
-  [Moves.PAY_DAY]: [
+  [MoveId.PAY_DAY]: [
     Species.PIKACHU,
     Species.RAICHU,
     Species.NIDOQUEEN,
@@ -315,7 +315,7 @@ export const tmSpecies: TmSpecies = {
     Species.GALAR_SLOWBRO,
     Species.GALAR_SLOWKING,
   ],
-  [Moves.FIRE_PUNCH]: [
+  [MoveId.FIRE_PUNCH]: [
     Species.CHARMANDER,
     Species.CHARMELEON,
     Species.CHARIZARD,
@@ -502,7 +502,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_GOODRA,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.ICE_PUNCH]: [
+  [MoveId.ICE_PUNCH]: [
     Species.SQUIRTLE,
     Species.WARTORTLE,
     Species.BLASTOISE,
@@ -698,7 +698,7 @@ export const tmSpecies: TmSpecies = {
     Species.GALAR_DARMANITAN,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.THUNDER_PUNCH]: [
+  [MoveId.THUNDER_PUNCH]: [
     Species.CHARMANDER,
     Species.CHARMELEON,
     Species.CHARIZARD,
@@ -922,7 +922,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_GOODRA,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.SWORDS_DANCE]: [
+  [MoveId.SWORDS_DANCE]: [
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -1223,7 +1223,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_DECIDUEYE,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.CUT]: [
+  [MoveId.CUT]: [
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -1501,7 +1501,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_BRAVIARY,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.FLY]: [
+  [MoveId.FLY]: [
     Species.CHARIZARD,
     Species.PIDGEY,
     Species.PIDGEOTTO,
@@ -1613,7 +1613,7 @@ export const tmSpecies: TmSpecies = {
     Species.GALAR_MOLTRES,
     Species.HISUI_BRAVIARY,
   ],
-  [Moves.MEGA_KICK]: [
+  [MoveId.MEGA_KICK]: [
     Species.CHARMANDER,
     Species.CHARMELEON,
     Species.CHARIZARD,
@@ -1844,7 +1844,7 @@ export const tmSpecies: TmSpecies = {
     Species.GALAR_DARMANITAN,
     Species.HISUI_LILLIGANT,
   ],
-  [Moves.BODY_SLAM]: [
+  [MoveId.BODY_SLAM]: [
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -2461,7 +2461,7 @@ export const tmSpecies: TmSpecies = {
     Species.PALDEA_WOOPER,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.TAKE_DOWN]: [
+  [MoveId.TAKE_DOWN]: [
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -3153,7 +3153,7 @@ export const tmSpecies: TmSpecies = {
     Species.PALDEA_TAUROS,
     Species.PALDEA_WOOPER,
   ],
-  [Moves.DOUBLE_EDGE]: [
+  [MoveId.DOUBLE_EDGE]: [
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -3756,7 +3756,7 @@ export const tmSpecies: TmSpecies = {
     Species.PALDEA_WOOPER,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.PIN_MISSILE]: [
+  [MoveId.PIN_MISSILE]: [
     Species.BEEDRILL,
     Species.SANDSLASH,
     Species.CLOYSTER,
@@ -3806,7 +3806,7 @@ export const tmSpecies: TmSpecies = {
     Species.GALAR_LINOONE,
     Species.HISUI_QWILFISH,
   ],
-  [Moves.ROAR]: [
+  [MoveId.ROAR]: [
     Species.VENUSAUR,
     Species.CHARMANDER,
     Species.CHARMELEON,
@@ -4045,7 +4045,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_ZOROARK,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.FLAMETHROWER]: [
+  [MoveId.FLAMETHROWER]: [
     Species.CHARMANDER,
     Species.CHARMELEON,
     Species.CHARIZARD,
@@ -4272,7 +4272,7 @@ export const tmSpecies: TmSpecies = {
       "blaze",
     ],
   ],
-  [Moves.HYDRO_PUMP]: [
+  [MoveId.HYDRO_PUMP]: [
     Species.SQUIRTLE,
     Species.WARTORTLE,
     Species.BLASTOISE,
@@ -4469,7 +4469,7 @@ export const tmSpecies: TmSpecies = {
     ],
     Species.PALDEA_WOOPER,
   ],
-  [Moves.SURF]: [
+  [MoveId.SURF]: [
     Species.SQUIRTLE,
     Species.WARTORTLE,
     Species.BLASTOISE,
@@ -4718,7 +4718,7 @@ export const tmSpecies: TmSpecies = {
     ],
     Species.PALDEA_WOOPER,
   ],
-  [Moves.ICE_BEAM]: [
+  [MoveId.ICE_BEAM]: [
     Species.SQUIRTLE,
     Species.WARTORTLE,
     Species.BLASTOISE,
@@ -5020,7 +5020,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_GOODRA,
     Species.HISUI_AVALUGG,
   ],
-  [Moves.BLIZZARD]: [
+  [MoveId.BLIZZARD]: [
     Species.SQUIRTLE,
     Species.WARTORTLE,
     Species.BLASTOISE,
@@ -5305,7 +5305,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_GOODRA,
     Species.HISUI_AVALUGG,
   ],
-  [Moves.PSYBEAM]: [
+  [MoveId.PSYBEAM]: [
     Species.BUTTERFREE,
     Species.CLEFAIRY,
     Species.CLEFABLE,
@@ -5433,7 +5433,7 @@ export const tmSpecies: TmSpecies = {
     Species.GALAR_SLOWKING,
     Species.HISUI_BRAVIARY,
   ],
-  [Moves.HYPER_BEAM]: [
+  [MoveId.HYPER_BEAM]: [
     Species.VENUSAUR,
     Species.CHARIZARD,
     Species.BLASTOISE,
@@ -6028,7 +6028,7 @@ export const tmSpecies: TmSpecies = {
       "red-striped",
     ]
   ],
-  [Moves.LOW_KICK]: [
+  [MoveId.LOW_KICK]: [
     Species.SANDSHREW,
     Species.SANDSLASH,
     Species.PSYDUCK,
@@ -6255,7 +6255,7 @@ export const tmSpecies: TmSpecies = {
     Species.PALDEA_WOOPER,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.COUNTER]: [
+  [MoveId.COUNTER]: [
     Species.CHARMANDER,
     Species.CHARMELEON,
     Species.CHARIZARD,
@@ -6478,7 +6478,7 @@ export const tmSpecies: TmSpecies = {
     Species.OGERPON,
     Species.IRON_BOULDER,
   ],
-  [Moves.STRENGTH]: [
+  [MoveId.STRENGTH]: [
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -6862,7 +6862,7 @@ export const tmSpecies: TmSpecies = {
     Species.PALDEA_TAUROS,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.SOLAR_BEAM]: [
+  [MoveId.SOLAR_BEAM]: [
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -7190,7 +7190,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_LILLIGANT,
     Species.HISUI_DECIDUEYE,
   ],
-  [Moves.FIRE_SPIN]: [
+  [MoveId.FIRE_SPIN]: [
     Species.CHARMANDER,
     Species.CHARMELEON,
     Species.CHARIZARD,
@@ -7292,7 +7292,7 @@ export const tmSpecies: TmSpecies = {
       "blaze",
     ],
   ],
-  [Moves.THUNDERBOLT]: [
+  [MoveId.THUNDERBOLT]: [
     Species.RATTATA,
     Species.RATICATE,
     Species.PIKACHU,
@@ -7568,7 +7568,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_SLIGGOO,
     Species.HISUI_GOODRA,
   ],
-  [Moves.THUNDER_WAVE]: [
+  [MoveId.THUNDER_WAVE]: [
     Species.RATTATA,
     Species.RATICATE,
     Species.PIKACHU,
@@ -7859,7 +7859,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_VOLTORB,
     Species.HISUI_ELECTRODE,
   ],
-  [Moves.THUNDER]: [
+  [MoveId.THUNDER]: [
     Species.RATTATA,
     Species.RATICATE,
     Species.PIKACHU,
@@ -8102,7 +8102,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_SLIGGOO,
     Species.HISUI_GOODRA,
   ],
-  [Moves.EARTHQUAKE]: [
+  [MoveId.EARTHQUAKE]: [
     Species.VENUSAUR,
     Species.CHARIZARD,
     Species.BLASTOISE,
@@ -8420,7 +8420,7 @@ export const tmSpecies: TmSpecies = {
     Species.PALDEA_WOOPER,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.DIG]: [
+  [MoveId.DIG]: [
     Species.CHARMANDER,
     Species.CHARMELEON,
     Species.CHARIZARD,
@@ -8845,7 +8845,7 @@ export const tmSpecies: TmSpecies = {
     Species.PALDEA_WOOPER,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.TOXIC]: [
+  [MoveId.TOXIC]: [
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -9679,7 +9679,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_SNEASEL,
     Species.PALDEA_WOOPER,
   ],
-  [Moves.PSYCHIC]: [
+  [MoveId.PSYCHIC]: [
     Species.BUTTERFREE,
     Species.CLEFAIRY,
     Species.CLEFABLE,
@@ -9935,7 +9935,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_ZOROARK,
     Species.HISUI_BRAVIARY,
   ],
-  [Moves.AGILITY]: [
+  [MoveId.AGILITY]: [
     Species.BEEDRILL,
     Species.PIDGEY,
     Species.PIDGEOTTO,
@@ -10232,7 +10232,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_ZOROARK,
     Species.HISUI_BRAVIARY,
   ],
-  [Moves.NIGHT_SHADE]: [
+  [MoveId.NIGHT_SHADE]: [
     Species.CLEFAIRY,
     Species.CLEFABLE,
     Species.NINETALES,
@@ -10341,7 +10341,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_BRAVIARY,
     Species.HISUI_DECIDUEYE,
   ],
-  [Moves.SCREECH]: [
+  [MoveId.SCREECH]: [
     Species.RATTATA,
     Species.EKANS,
     Species.ARBOK,
@@ -10572,7 +10572,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_ELECTRODE,
     Species.HISUI_SNEASEL,
   ],
-  [Moves.DOUBLE_TEAM]: [
+  [MoveId.DOUBLE_TEAM]: [
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -11629,7 +11629,7 @@ export const tmSpecies: TmSpecies = {
     Species.PALDEA_WOOPER,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.CONFUSE_RAY]: [
+  [MoveId.CONFUSE_RAY]: [
     Species.VULPIX,
     Species.NINETALES,
     Species.ZUBAT,
@@ -11813,7 +11813,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_BRAVIARY,
     Species.HISUI_DECIDUEYE,
   ],
-  [Moves.LIGHT_SCREEN]: [
+  [MoveId.LIGHT_SCREEN]: [
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -12141,7 +12141,7 @@ export const tmSpecies: TmSpecies = {
       "female",
     ],
   ],
-  [Moves.HAZE]: [
+  [MoveId.HAZE]: [
     Species.SQUIRTLE,
     Species.WARTORTLE,
     Species.BLASTOISE,
@@ -12272,7 +12272,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_DECIDUEYE,
     Species.PALDEA_WOOPER,
   ],
-  [Moves.REFLECT]: [
+  [MoveId.REFLECT]: [
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -12598,7 +12598,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_VOLTORB,
     Species.HISUI_ELECTRODE,
   ],
-  [Moves.FOCUS_ENERGY]: [
+  [MoveId.FOCUS_ENERGY]: [
     Species.BEEDRILL,
     Species.RATTATA,
     Species.RATICATE,
@@ -12770,7 +12770,7 @@ export const tmSpecies: TmSpecies = {
     Species.GALAR_DARMANITAN,
     Species.HISUI_SAMUROTT,
   ],
-  [Moves.METRONOME]: [
+  [MoveId.METRONOME]: [
     Species.CLEFAIRY,
     Species.CLEFABLE,
     Species.JIGGLYPUFF,
@@ -12912,7 +12912,7 @@ export const tmSpecies: TmSpecies = {
     Species.GALAR_SLOWKING,
     Species.HISUI_LILLIGANT,
   ],
-  [Moves.SELF_DESTRUCT]: [
+  [MoveId.SELF_DESTRUCT]: [
     Species.JIGGLYPUFF,
     Species.WIGGLYTUFF,
     Species.GEODUDE,
@@ -13015,7 +13015,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_ELECTRODE,
     Species.HISUI_QWILFISH,
   ],
-  [Moves.FIRE_BLAST]: [
+  [MoveId.FIRE_BLAST]: [
     Species.CHARMANDER,
     Species.CHARMELEON,
     Species.CHARIZARD,
@@ -13220,7 +13220,7 @@ export const tmSpecies: TmSpecies = {
       "blaze",
     ],
   ],
-  [Moves.WATERFALL]: [
+  [MoveId.WATERFALL]: [
     Species.SQUIRTLE,
     Species.WARTORTLE,
     Species.BLASTOISE,
@@ -13378,7 +13378,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_SAMUROTT,
     Species.PALDEA_WOOPER,
   ],
-  [Moves.SWIFT]: [
+  [MoveId.SWIFT]: [
     Species.CHARMANDER,
     Species.CHARMELEON,
     Species.CHARIZARD,
@@ -13897,7 +13897,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_DECIDUEYE,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.AMNESIA]: [
+  [MoveId.AMNESIA]: [
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -14056,7 +14056,7 @@ export const tmSpecies: TmSpecies = {
     Species.GALAR_CORSOLA,
     Species.PALDEA_WOOPER,
   ],
-  [Moves.DREAM_EATER]: [
+  [MoveId.DREAM_EATER]: [
     Species.BUTTERFREE,
     Species.CLEFAIRY,
     Species.CLEFABLE,
@@ -14244,7 +14244,7 @@ export const tmSpecies: TmSpecies = {
     Species.MAROWAK,
     Species.GALAR_ARTICUNO,
   ],
-  [Moves.LEECH_LIFE]: [
+  [MoveId.LEECH_LIFE]: [
     Species.EKANS,
     Species.ARBOK,
     Species.SANDSHREW,
@@ -14323,7 +14323,7 @@ export const tmSpecies: TmSpecies = {
     Species.ALOLA_SANDSHREW,
     Species.ALOLA_SANDSLASH,
   ],
-  [Moves.FLASH]: [
+  [MoveId.FLASH]: [
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -14644,7 +14644,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_AVALUGG,
     Species.PALDEA_WOOPER,
   ],
-  [Moves.EXPLOSION]: [
+  [MoveId.EXPLOSION]: [
     Species.GEODUDE,
     Species.GRAVELER,
     Species.GOLEM,
@@ -14743,7 +14743,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_VOLTORB,
     Species.HISUI_ELECTRODE,
   ],
-  [Moves.REST]: [
+  [MoveId.REST]: [
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -15799,7 +15799,7 @@ export const tmSpecies: TmSpecies = {
     Species.PALDEA_WOOPER,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.ROCK_SLIDE]: [
+  [MoveId.ROCK_SLIDE]: [
     Species.CHARMANDER,
     Species.CHARMELEON,
     Species.CHARIZARD,
@@ -16196,7 +16196,7 @@ export const tmSpecies: TmSpecies = {
     Species.PALDEA_WOOPER,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.TRI_ATTACK]: [
+  [MoveId.TRI_ATTACK]: [
     Species.SPEAROW,
     Species.FEAROW,
     Species.CLEFAIRY,
@@ -16253,7 +16253,7 @@ export const tmSpecies: TmSpecies = {
     Species.GALAR_SLOWBRO,
     Species.GALAR_SLOWKING,
   ],
-  [Moves.SUPER_FANG]: [
+  [MoveId.SUPER_FANG]: [
     Species.RATTATA,
     Species.RATICATE,
     Species.SANDSHREW,
@@ -16344,7 +16344,7 @@ export const tmSpecies: TmSpecies = {
     Species.ALOLA_SANDSHREW,
     Species.ALOLA_SANDSLASH,
   ],
-  [Moves.SUBSTITUTE]: [
+  [MoveId.SUBSTITUTE]: [
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -17402,7 +17402,7 @@ export const tmSpecies: TmSpecies = {
     Species.PALDEA_WOOPER,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.THIEF]: [
+  [MoveId.THIEF]: [
     Species.BUTTERFREE,
     Species.BEEDRILL,
     Species.PIDGEY,
@@ -17881,7 +17881,7 @@ export const tmSpecies: TmSpecies = {
     Species.PALDEA_TAUROS,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.SNORE]: [
+  [MoveId.SNORE]: [
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -18800,7 +18800,7 @@ export const tmSpecies: TmSpecies = {
     Species.GALAR_YAMASK,
     Species.GALAR_STUNFISK,
   ],
-  [Moves.CURSE]: [
+  [MoveId.CURSE]: [
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -19289,7 +19289,7 @@ export const tmSpecies: TmSpecies = {
     Species.PALDEA_TAUROS,
     Species.PALDEA_WOOPER,
   ],
-  [Moves.REVERSAL]: [
+  [MoveId.REVERSAL]: [
     Species.RATTATA,
     Species.RATICATE,
     Species.PIKACHU,
@@ -19500,7 +19500,7 @@ export const tmSpecies: TmSpecies = {
       "red-striped",
     ],
   ],
-  [Moves.SPITE]: [
+  [MoveId.SPITE]: [
     Species.EKANS,
     Species.ARBOK,
     Species.VULPIX,
@@ -19694,7 +19694,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_ZORUA,
     Species.HISUI_ZOROARK,
   ],
-  [Moves.PROTECT]: [
+  [MoveId.PROTECT]: [
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -20756,7 +20756,7 @@ export const tmSpecies: TmSpecies = {
     Species.PALDEA_WOOPER,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.SCARY_FACE]: [
+  [MoveId.SCARY_FACE]: [
     Species.CHARMANDER,
     Species.CHARMELEON,
     Species.CHARIZARD,
@@ -21096,7 +21096,7 @@ export const tmSpecies: TmSpecies = {
     Species.PALDEA_TAUROS,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.SLUDGE_BOMB]: [
+  [MoveId.SLUDGE_BOMB]: [
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -21283,7 +21283,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_GOODRA,
     Species.PALDEA_WOOPER,
   ],
-  [Moves.MUD_SLAP]: [
+  [MoveId.MUD_SLAP]: [
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -21765,7 +21765,7 @@ export const tmSpecies: TmSpecies = {
     Species.GALAR_STUNFISK,
     Species.PALDEA_WOOPER,
   ],
-  [Moves.SPIKES]: [
+  [MoveId.SPIKES]: [
     Species.SANDSHREW,
     Species.SANDSLASH,
     Species.SHELLDER,
@@ -21853,7 +21853,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_QWILFISH,
     Species.PALDEA_WOOPER,
   ],
-  [Moves.ICY_WIND]: [
+  [MoveId.ICY_WIND]: [
     Species.SQUIRTLE,
     Species.WARTORTLE,
     Species.BLASTOISE,
@@ -22180,7 +22180,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_BRAVIARY,
     Species.HISUI_AVALUGG,
   ],
-  [Moves.OUTRAGE]: [
+  [MoveId.OUTRAGE]: [
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -22355,7 +22355,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_GOODRA,
     Species.PALDEA_TAUROS,
   ],
-  [Moves.SANDSTORM]: [
+  [MoveId.SANDSTORM]: [
     Species.CHARIZARD,
     Species.SANDSHREW,
     Species.SANDSLASH,
@@ -22623,7 +22623,7 @@ export const tmSpecies: TmSpecies = {
     Species.PALDEA_TAUROS,
     Species.PALDEA_WOOPER,
   ],
-  [Moves.GIGA_DRAIN]: [
+  [MoveId.GIGA_DRAIN]: [
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -22853,7 +22853,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_LILLIGANT,
     Species.HISUI_DECIDUEYE,
   ],
-  [Moves.ENDURE]: [
+  [MoveId.ENDURE]: [
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -23889,7 +23889,7 @@ export const tmSpecies: TmSpecies = {
     Species.PALDEA_WOOPER,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.CHARM]: [
+  [MoveId.CHARM]: [
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -24124,7 +24124,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_SLIGGOO,
     Species.HISUI_GOODRA,
   ],
-  [Moves.FALSE_SWIPE]: [
+  [MoveId.FALSE_SWIPE]: [
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -24258,7 +24258,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_SAMUROTT,
     Species.HISUI_DECIDUEYE,
   ],
-  [Moves.SWAGGER]: [
+  [MoveId.SWAGGER]: [
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -25082,7 +25082,7 @@ export const tmSpecies: TmSpecies = {
     Species.GALAR_SLOWKING,
     Species.PALDEA_TAUROS,
   ],
-  [Moves.STEEL_WING]: [
+  [MoveId.STEEL_WING]: [
     Species.CHARIZARD,
     Species.PIDGEY,
     Species.PIDGEOTTO,
@@ -25185,7 +25185,7 @@ export const tmSpecies: TmSpecies = {
     Species.GALAR_ZAPDOS,
     Species.GALAR_MOLTRES,
   ],
-  [Moves.ATTRACT]: [
+  [MoveId.ATTRACT]: [
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -26096,7 +26096,7 @@ export const tmSpecies: TmSpecies = {
     Species.PALDEA_WOOPER,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.SLEEP_TALK]: [
+  [MoveId.SLEEP_TALK]: [
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -27157,7 +27157,7 @@ export const tmSpecies: TmSpecies = {
     Species.PALDEA_WOOPER,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.HEAL_BELL]: [
+  [MoveId.HEAL_BELL]: [
     Species.CLEFAIRY,
     Species.CLEFABLE,
     Species.JIGGLYPUFF,
@@ -27240,7 +27240,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_LILLIGANT,
     Species.ETERNAL_FLOETTE,
   ],
-  [Moves.RETURN]: [
+  [MoveId.RETURN]: [
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -28299,7 +28299,7 @@ export const tmSpecies: TmSpecies = {
     Species.PALDEA_WOOPER,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.FRUSTRATION]: [
+  [MoveId.FRUSTRATION]: [
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -29358,7 +29358,7 @@ export const tmSpecies: TmSpecies = {
     Species.PALDEA_WOOPER,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.SAFEGUARD]: [
+  [MoveId.SAFEGUARD]: [
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -29638,7 +29638,7 @@ export const tmSpecies: TmSpecies = {
       "female",
     ],
   ],
-  [Moves.PAIN_SPLIT]: [
+  [MoveId.PAIN_SPLIT]: [
     Species.ARBOK,
     Species.VULPIX,
     Species.NINETALES,
@@ -29790,7 +29790,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_ZORUA,
     Species.HISUI_ZOROARK,
   ],
-  [Moves.MEGAHORN]: [
+  [MoveId.MEGAHORN]: [
     Species.NIDOKING,
     Species.RAPIDASH,
     Species.SEEL,
@@ -29837,7 +29837,7 @@ export const tmSpecies: TmSpecies = {
     ],
     Species.HISUI_SAMUROTT,
   ],
-  [Moves.BATON_PASS]: [
+  [MoveId.BATON_PASS]: [
     Species.BUTTERFREE,
     Species.CLEFAIRY,
     Species.CLEFABLE,
@@ -30021,7 +30021,7 @@ export const tmSpecies: TmSpecies = {
     ],
     Species.HISUI_DECIDUEYE,
   ],
-  [Moves.ENCORE]: [
+  [MoveId.ENCORE]: [
     Species.PIKACHU,
     Species.RAICHU,
     Species.CLEFAIRY,
@@ -30220,7 +30220,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_SAMUROTT,
     Species.HISUI_LILLIGANT,
   ],
-  [Moves.IRON_TAIL]: [
+  [MoveId.IRON_TAIL]: [
     Species.CHARMANDER,
     Species.CHARMELEON,
     Species.CHARIZARD,
@@ -30563,7 +30563,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_SLIGGOO,
     Species.HISUI_GOODRA,
   ],
-  [Moves.METAL_CLAW]: [
+  [MoveId.METAL_CLAW]: [
     Species.CHARMANDER,
     Species.CHARMELEON,
     Species.CHARIZARD,
@@ -30669,7 +30669,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_BRAVIARY,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.SYNTHESIS]: [
+  [MoveId.SYNTHESIS]: [
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -30781,7 +30781,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_LILLIGANT,
     Species.HISUI_DECIDUEYE,
   ],
-  [Moves.HIDDEN_POWER]: [
+  [MoveId.HIDDEN_POWER]: [
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -31842,7 +31842,7 @@ export const tmSpecies: TmSpecies = {
     Species.PALDEA_WOOPER,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.RAIN_DANCE]: [
+  [MoveId.RAIN_DANCE]: [
     Species.SQUIRTLE,
     Species.WARTORTLE,
     Species.BLASTOISE,
@@ -32575,7 +32575,7 @@ export const tmSpecies: TmSpecies = {
     Species.PALDEA_WOOPER,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.SUNNY_DAY]: [
+  [MoveId.SUNNY_DAY]: [
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -33292,7 +33292,7 @@ export const tmSpecies: TmSpecies = {
     ],
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.CRUNCH]: [
+  [MoveId.CRUNCH]: [
     Species.CHARMANDER,
     Species.CHARMELEON,
     Species.CHARIZARD,
@@ -33541,7 +33541,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_AVALUGG,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.PSYCH_UP]: [
+  [MoveId.PSYCH_UP]: [
     Species.BUTTERFREE,
     Species.CLEFAIRY,
     Species.CLEFABLE,
@@ -33805,7 +33805,7 @@ export const tmSpecies: TmSpecies = {
     Species.GALAR_SLOWBRO,
     Species.GALAR_SLOWKING,
   ],
-  [Moves.SHADOW_BALL]: [
+  [MoveId.SHADOW_BALL]: [
     Species.BUTTERFREE,
     Species.RATTATA,
     Species.RATICATE,
@@ -34146,7 +34146,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_ZOROARK,
     Species.HISUI_BRAVIARY,
   ],
-  [Moves.FUTURE_SIGHT]: [
+  [MoveId.FUTURE_SIGHT]: [
     Species.PSYDUCK,
     Species.GOLDUCK,
     Species.KADABRA,
@@ -34249,7 +34249,7 @@ export const tmSpecies: TmSpecies = {
     Species.GALAR_ARTICUNO,
     Species.GALAR_SLOWKING,
   ],
-  [Moves.ROCK_SMASH]: [
+  [MoveId.ROCK_SMASH]: [
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -34719,7 +34719,7 @@ export const tmSpecies: TmSpecies = {
     Species.PALDEA_WOOPER,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.WHIRLPOOL]: [
+  [MoveId.WHIRLPOOL]: [
     Species.SQUIRTLE,
     Species.WARTORTLE,
     Species.BLASTOISE,
@@ -34905,7 +34905,7 @@ export const tmSpecies: TmSpecies = {
       "aqua",
     ],
   ],
-  [Moves.BEAT_UP]: [
+  [MoveId.BEAT_UP]: [
     Species.CHARMANDER,
     Species.CHARMELEON,
     Species.CHARIZARD,
@@ -34974,7 +34974,7 @@ export const tmSpecies: TmSpecies = {
     Species.ALOLA_DUGTRIO,
     Species.ALOLA_PERSIAN,
   ],
-  [Moves.UPROAR]: [
+  [MoveId.UPROAR]: [
     Species.PIDGEY,
     Species.PIDGEOTTO,
     Species.PIDGEOT,
@@ -35304,7 +35304,7 @@ export const tmSpecies: TmSpecies = {
     ],
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.HEAT_WAVE]: [
+  [MoveId.HEAT_WAVE]: [
     Species.CHARMANDER,
     Species.CHARMELEON,
     Species.CHARIZARD,
@@ -35465,7 +35465,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_TYPHLOSION,
     Species.HISUI_BRAVIARY,
   ],
-  [Moves.HAIL]: [
+  [MoveId.HAIL]: [
     Species.SQUIRTLE,
     Species.WARTORTLE,
     Species.BLASTOISE,
@@ -35650,7 +35650,7 @@ export const tmSpecies: TmSpecies = {
       "ice",
     ],
   ],
-  [Moves.TORMENT]: [
+  [MoveId.TORMENT]: [
     Species.EKANS,
     Species.ARBOK,
     Species.NIDOQUEEN,
@@ -35849,7 +35849,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_ZORUA,
     Species.HISUI_ZOROARK,
   ],
-  [Moves.WILL_O_WISP]: [
+  [MoveId.WILL_O_WISP]: [
     Species.CHARMANDER,
     Species.CHARMELEON,
     Species.CHARIZARD,
@@ -36001,7 +36001,7 @@ export const tmSpecies: TmSpecies = {
       "blaze",
     ],
   ],
-  [Moves.FACADE]: [
+  [MoveId.FACADE]: [
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -37044,7 +37044,7 @@ export const tmSpecies: TmSpecies = {
     Species.PALDEA_WOOPER,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.FOCUS_PUNCH]: [
+  [MoveId.FOCUS_PUNCH]: [
     Species.CHARMANDER,
     Species.CHARMELEON,
     Species.CHARIZARD,
@@ -37290,7 +37290,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_DECIDUEYE,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.NATURE_POWER]: [
+  [MoveId.NATURE_POWER]: [
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -37437,7 +37437,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_LILLIGANT,
     Species.HISUI_DECIDUEYE,
   ],
-  [Moves.CHARGE]: [
+  [MoveId.CHARGE]: [
     Species.PIKACHU,
     Species.RAICHU,
     Species.MAGNEMITE,
@@ -37515,7 +37515,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_VOLTORB,
     Species.HISUI_ELECTRODE,
   ],
-  [Moves.TAUNT]: [
+  [MoveId.TAUNT]: [
     Species.RATTATA,
     Species.RATICATE,
     Species.NIDOQUEEN,
@@ -37896,7 +37896,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_DECIDUEYE,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.HELPING_HAND]: [
+  [MoveId.HELPING_HAND]: [
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -38449,7 +38449,7 @@ export const tmSpecies: TmSpecies = {
     Species.PALDEA_WOOPER,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.TRICK]: [
+  [MoveId.TRICK]: [
     Species.CLEFAIRY,
     Species.CLEFABLE,
     Species.ABRA,
@@ -38626,7 +38626,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_ZORUA,
     Species.HISUI_ZOROARK,
   ],
-  [Moves.SUPERPOWER]: [
+  [MoveId.SUPERPOWER]: [
     Species.NIDOQUEEN,
     Species.NIDOKING,
     Species.ARCANINE,
@@ -38824,7 +38824,7 @@ export const tmSpecies: TmSpecies = {
     ],
     Species.HISUI_BRAVIARY,
   ],
-  [Moves.RECYCLE]: [
+  [MoveId.RECYCLE]: [
     Species.CLEFAIRY,
     Species.CLEFABLE,
     Species.JIGGLYPUFF,
@@ -38941,7 +38941,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_VOLTORB,
     Species.HISUI_ELECTRODE,
   ],
-  [Moves.REVENGE]: [
+  [MoveId.REVENGE]: [
     Species.RATTATA,
     Species.RATICATE,
     Species.MANKEY,
@@ -39074,7 +39074,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_SAMUROTT,
     Species.GALAR_STUNFISK,
   ],
-  [Moves.BRICK_BREAK]: [
+  [MoveId.BRICK_BREAK]: [
     Species.CHARMANDER,
     Species.CHARMELEON,
     Species.CHARIZARD,
@@ -39430,7 +39430,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_DECIDUEYE,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.KNOCK_OFF]: [
+  [MoveId.KNOCK_OFF]: [
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -39757,7 +39757,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_GOODRA,
     Species.HISUI_DECIDUEYE,
   ],
-  [Moves.ENDEAVOR]: [
+  [MoveId.ENDEAVOR]: [
     Species.BEEDRILL,
     Species.RATTATA,
     Species.RATICATE,
@@ -40080,7 +40080,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_TYPHLOSION,
     Species.PALDEA_TAUROS,
   ],
-  [Moves.SKILL_SWAP]: [
+  [MoveId.SKILL_SWAP]: [
     Species.BUTTERFREE,
     Species.CLEFAIRY,
     Species.CLEFABLE,
@@ -40238,7 +40238,7 @@ export const tmSpecies: TmSpecies = {
     Species.GALAR_SLOWKING,
     Species.GALAR_YAMASK,
   ],
-  [Moves.IMPRISON]: [
+  [MoveId.IMPRISON]: [
     Species.CLEFAIRY,
     Species.CLEFABLE,
     Species.VULPIX,
@@ -40399,7 +40399,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_ZORUA,
     Species.HISUI_ZOROARK,
   ],
-  [Moves.SECRET_POWER]: [
+  [MoveId.SECRET_POWER]: [
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -41458,7 +41458,7 @@ export const tmSpecies: TmSpecies = {
     Species.PALDEA_WOOPER,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.DIVE]: [
+  [MoveId.DIVE]: [
     Species.SQUIRTLE,
     Species.WARTORTLE,
     Species.BLASTOISE,
@@ -41607,7 +41607,7 @@ export const tmSpecies: TmSpecies = {
       "rapid-strike",
     ],
   ],
-  [Moves.FEATHER_DANCE]: [
+  [MoveId.FEATHER_DANCE]: [
     Species.PIDGEY,
     Species.PIDGEOTTO,
     Species.PIDGEOT,
@@ -41674,7 +41674,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_BRAVIARY,
     Species.HISUI_DECIDUEYE,
   ],
-  [Moves.BLAZE_KICK]: [
+  [MoveId.BLAZE_KICK]: [
     Species.CHARIZARD,
     Species.HITMONLEE,
     Species.MEW,
@@ -41696,7 +41696,7 @@ export const tmSpecies: TmSpecies = {
     Species.CINDERACE,
     Species.GALAR_ZAPDOS,
   ],
-  [Moves.HYPER_VOICE]: [
+  [MoveId.HYPER_VOICE]: [
     Species.CLEFAIRY,
     Species.CLEFABLE,
     Species.JIGGLYPUFF,
@@ -41901,7 +41901,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_BRAVIARY,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.BLAST_BURN]: [
+  [MoveId.BLAST_BURN]: [
     Species.CHARIZARD,
     Species.MEW,
     Species.TYPHLOSION,
@@ -41914,7 +41914,7 @@ export const tmSpecies: TmSpecies = {
     Species.SKELEDIRGE,
     Species.HISUI_TYPHLOSION,
   ],
-  [Moves.HYDRO_CANNON]: [
+  [MoveId.HYDRO_CANNON]: [
     Species.BLASTOISE,
     Species.MEW,
     Species.FERALIGATR,
@@ -41927,7 +41927,7 @@ export const tmSpecies: TmSpecies = {
     Species.QUAQUAVAL,
     Species.HISUI_SAMUROTT,
   ],
-  [Moves.WEATHER_BALL]: [
+  [MoveId.WEATHER_BALL]: [
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -42086,7 +42086,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_LILLIGANT,
     Species.HISUI_GOODRA,
   ],
-  [Moves.FAKE_TEARS]: [
+  [MoveId.FAKE_TEARS]: [
     Species.PIKACHU,
     Species.CLEFAIRY,
     Species.CLEFABLE,
@@ -42221,7 +42221,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_ZORUA,
     Species.HISUI_ZOROARK,
   ],
-  [Moves.AIR_CUTTER]: [
+  [MoveId.AIR_CUTTER]: [
     Species.CHARMANDER,
     Species.CHARMELEON,
     Species.CHARIZARD,
@@ -42349,7 +42349,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_BRAVIARY,
     Species.HISUI_DECIDUEYE,
   ],
-  [Moves.OVERHEAT]: [
+  [MoveId.OVERHEAT]: [
     Species.CHARMANDER,
     Species.CHARMELEON,
     Species.CHARIZARD,
@@ -42465,7 +42465,7 @@ export const tmSpecies: TmSpecies = {
       "blaze",
     ],
   ],
-  [Moves.ROCK_TOMB]: [
+  [MoveId.ROCK_TOMB]: [
     Species.CHARMANDER,
     Species.CHARMELEON,
     Species.CHARIZARD,
@@ -42872,7 +42872,7 @@ export const tmSpecies: TmSpecies = {
     Species.PALDEA_WOOPER,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.METAL_SOUND]: [
+  [MoveId.METAL_SOUND]: [
     Species.MAGNEMITE,
     Species.MAGNETON,
     Species.VOLTORB,
@@ -42953,7 +42953,7 @@ export const tmSpecies: TmSpecies = {
     Species.GALAR_MEOWTH,
     Species.GALAR_STUNFISK,
   ],
-  [Moves.COSMIC_POWER]: [
+  [MoveId.COSMIC_POWER]: [
     Species.CLEFAIRY,
     Species.CLEFABLE,
     Species.STARYU,
@@ -42995,7 +42995,7 @@ export const tmSpecies: TmSpecies = {
     Species.RELLOR,
     Species.RABSCA,
   ],
-  [Moves.SIGNAL_BEAM]: [
+  [MoveId.SIGNAL_BEAM]: [
     Species.BLASTOISE,
     Species.BUTTERFREE,
     Species.PIKACHU,
@@ -43220,7 +43220,7 @@ export const tmSpecies: TmSpecies = {
     Species.FARIGIRAF,
     Species.ALOLA_RAICHU,
   ],
-  [Moves.SAND_TOMB]: [
+  [MoveId.SAND_TOMB]: [
     Species.SANDSHREW,
     Species.SANDSLASH,
     Species.NIDOQUEEN,
@@ -43310,7 +43310,7 @@ export const tmSpecies: TmSpecies = {
     Species.ALOLA_DIGLETT,
     Species.ALOLA_DUGTRIO,
   ],
-  [Moves.MUDDY_WATER]: [
+  [MoveId.MUDDY_WATER]: [
     Species.SQUIRTLE,
     Species.WARTORTLE,
     Species.BLASTOISE,
@@ -43417,7 +43417,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_SLIGGOO,
     Species.HISUI_GOODRA,
   ],
-  [Moves.BULLET_SEED]: [
+  [MoveId.BULLET_SEED]: [
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -43560,7 +43560,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_LILLIGANT,
     Species.HISUI_DECIDUEYE,
   ],
-  [Moves.AERIAL_ACE]: [
+  [MoveId.AERIAL_ACE]: [
     Species.CHARMANDER,
     Species.CHARMELEON,
     Species.CHARIZARD,
@@ -43915,7 +43915,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_BRAVIARY,
     Species.HISUI_DECIDUEYE,
   ],
-  [Moves.ICICLE_SPEAR]: [
+  [MoveId.ICICLE_SPEAR]: [
     Species.SEEL,
     Species.DEWGONG,
     Species.SHELLDER,
@@ -43976,7 +43976,7 @@ export const tmSpecies: TmSpecies = {
     ],
     Species.HISUI_AVALUGG,
   ],
-  [Moves.IRON_DEFENSE]: [
+  [MoveId.IRON_DEFENSE]: [
     Species.SQUIRTLE,
     Species.WARTORTLE,
     Species.BLASTOISE,
@@ -44241,7 +44241,7 @@ export const tmSpecies: TmSpecies = {
     ],
     Species.HISUI_AVALUGG,
   ],
-  [Moves.DRAGON_CLAW]: [
+  [MoveId.DRAGON_CLAW]: [
     Species.CHARMANDER,
     Species.CHARMELEON,
     Species.CHARIZARD,
@@ -44323,7 +44323,7 @@ export const tmSpecies: TmSpecies = {
     Species.GOUGING_FIRE,
     Species.HISUI_GOODRA,
   ],
-  [Moves.FRENZY_PLANT]: [
+  [MoveId.FRENZY_PLANT]: [
     Species.VENUSAUR,
     Species.MEW,
     Species.MEGANIUM,
@@ -44336,7 +44336,7 @@ export const tmSpecies: TmSpecies = {
     Species.MEOWSCARADA,
     Species.HISUI_DECIDUEYE,
   ],
-  [Moves.BULK_UP]: [
+  [MoveId.BULK_UP]: [
     Species.MANKEY,
     Species.PRIMEAPE,
     Species.POLIWRATH,
@@ -44471,7 +44471,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_DECIDUEYE,
     Species.PALDEA_TAUROS,
   ],
-  [Moves.BOUNCE]: [
+  [MoveId.BOUNCE]: [
     Species.CLEFAIRY,
     Species.CLEFABLE,
     Species.JIGGLYPUFF,
@@ -44599,7 +44599,7 @@ export const tmSpecies: TmSpecies = {
     Species.GALAR_ZAPDOS,
     Species.GALAR_STUNFISK,
   ],
-  [Moves.MUD_SHOT]: [
+  [MoveId.MUD_SHOT]: [
     Species.EKANS,
     Species.ARBOK,
     Species.SANDSHREW,
@@ -44853,7 +44853,7 @@ export const tmSpecies: TmSpecies = {
     Species.PALDEA_WOOPER,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.POISON_TAIL]: [
+  [MoveId.POISON_TAIL]: [
     Species.EKANS,
     Species.ARBOK,
     Species.NIDORAN_F,
@@ -44893,7 +44893,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_SNEASEL,
     Species.PALDEA_WOOPER,
   ],
-  [Moves.COVET]: [
+  [MoveId.COVET]: [
     Species.RATTATA,
     Species.RATICATE,
     Species.PIKACHU,
@@ -45117,7 +45117,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_DECIDUEYE,
     Species.ETERNAL_FLOETTE,
   ],
-  [Moves.MAGICAL_LEAF]: [
+  [MoveId.MAGICAL_LEAF]: [
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -45256,7 +45256,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_LILLIGANT,
     Species.HISUI_DECIDUEYE,
   ],
-  [Moves.CALM_MIND]: [
+  [MoveId.CALM_MIND]: [
     Species.PIKACHU,
     Species.RAICHU,
     Species.CLEFAIRY,
@@ -45501,7 +45501,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_BRAVIARY,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.LEAF_BLADE]: [
+  [MoveId.LEAF_BLADE]: [
     Species.VICTREEBEL,
     Species.FARFETCHD,
     Species.MEW,
@@ -45535,7 +45535,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_LILLIGANT,
     Species.HISUI_DECIDUEYE,
   ],
-  [Moves.DRAGON_DANCE]: [
+  [MoveId.DRAGON_DANCE]: [
     Species.CHARMANDER,
     Species.CHARMELEON,
     Species.CHARIZARD,
@@ -45605,7 +45605,7 @@ export const tmSpecies: TmSpecies = {
     Species.WALKING_WAKE,
     Species.GOUGING_FIRE,
   ],
-  [Moves.ROCK_BLAST]: [
+  [MoveId.ROCK_BLAST]: [
     Species.NIDOQUEEN,
     Species.NIDOKING,
     Species.DIGLETT,
@@ -45731,7 +45731,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_ARCANINE,
     Species.HISUI_AVALUGG,
   ],
-  [Moves.WATER_PULSE]: [
+  [MoveId.WATER_PULSE]: [
     Species.SQUIRTLE,
     Species.WARTORTLE,
     Species.BLASTOISE,
@@ -46024,7 +46024,7 @@ export const tmSpecies: TmSpecies = {
     ],
     Species.PALDEA_WOOPER,
   ],
-  [Moves.ROOST]: [
+  [MoveId.ROOST]: [
     Species.CHARIZARD,
     Species.BUTTERFREE,
     Species.BEEDRILL,
@@ -46158,7 +46158,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_BRAVIARY,
     Species.HISUI_DECIDUEYE,
   ],
-  [Moves.GRAVITY]: [
+  [MoveId.GRAVITY]: [
     Species.CLEFAIRY,
     Species.CLEFABLE,
     Species.JIGGLYPUFF,
@@ -46281,7 +46281,7 @@ export const tmSpecies: TmSpecies = {
       "male",
     ],
   ],
-  [Moves.GYRO_BALL]: [
+  [MoveId.GYRO_BALL]: [
     Species.SQUIRTLE,
     Species.WARTORTLE,
     Species.BLASTOISE,
@@ -46417,7 +46417,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_GOODRA,
     Species.HISUI_AVALUGG,
   ],
-  [Moves.BRINE]: [
+  [MoveId.BRINE]: [
     Species.SQUIRTLE,
     Species.WARTORTLE,
     Species.BLASTOISE,
@@ -46533,7 +46533,7 @@ export const tmSpecies: TmSpecies = {
     ],
     Species.HISUI_QWILFISH,
   ],
-  [Moves.PLUCK]: [
+  [MoveId.PLUCK]: [
     Species.PIDGEY,
     Species.PIDGEOTTO,
     Species.PIDGEOT,
@@ -46617,7 +46617,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_BRAVIARY,
     Species.HISUI_DECIDUEYE,
   ],
-  [Moves.TAILWIND]: [
+  [MoveId.TAILWIND]: [
     Species.CHARIZARD,
     Species.BUTTERFREE,
     Species.BEEDRILL,
@@ -46763,7 +46763,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_BRAVIARY,
     Species.HISUI_DECIDUEYE,
   ],
-  [Moves.U_TURN]: [
+  [MoveId.U_TURN]: [
     Species.BUTTERFREE,
     Species.BEEDRILL,
     Species.PIDGEY,
@@ -46989,7 +46989,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_BRAVIARY,
     Species.HISUI_DECIDUEYE,
   ],
-  [Moves.CLOSE_COMBAT]: [
+  [MoveId.CLOSE_COMBAT]: [
     Species.MANKEY,
     Species.PRIMEAPE,
     Species.GROWLITHE,
@@ -47127,7 +47127,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_DECIDUEYE,
     Species.PALDEA_TAUROS,
   ],
-  [Moves.PAYBACK]: [
+  [MoveId.PAYBACK]: [
     Species.BEEDRILL,
     Species.EKANS,
     Species.ARBOK,
@@ -47442,7 +47442,7 @@ export const tmSpecies: TmSpecies = {
       "shadow",
     ],
   ],
-  [Moves.ASSURANCE]: [
+  [MoveId.ASSURANCE]: [
     Species.BEEDRILL,
     Species.RATTATA,
     Species.RATICATE,
@@ -47647,7 +47647,7 @@ export const tmSpecies: TmSpecies = {
       "combat",
     ],
   ],
-  [Moves.EMBARGO]: [
+  [MoveId.EMBARGO]: [
     Species.PERSIAN,
     Species.ABRA,
     Species.KADABRA,
@@ -47744,7 +47744,7 @@ export const tmSpecies: TmSpecies = {
     Species.ALOLA_GRIMER,
     Species.ALOLA_MUK,
   ],
-  [Moves.FLING]: [
+  [MoveId.FLING]: [
     Species.CHARMANDER,
     Species.CHARMELEON,
     Species.CHARIZARD,
@@ -48154,7 +48154,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_ZOROARK,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.GASTRO_ACID]: [
+  [MoveId.GASTRO_ACID]: [
     Species.EKANS,
     Species.ARBOK,
     Species.ODDISH,
@@ -48210,7 +48210,7 @@ export const tmSpecies: TmSpecies = {
     Species.ALOLA_GRIMER,
     Species.ALOLA_MUK,
   ],
-  [Moves.POWER_SWAP]: [
+  [MoveId.POWER_SWAP]: [
     Species.VULPIX,
     Species.NINETALES,
     Species.ABRA,
@@ -48280,7 +48280,7 @@ export const tmSpecies: TmSpecies = {
     Species.GALAR_MR_MIME,
     Species.GALAR_ARTICUNO,
   ],
-  [Moves.GUARD_SWAP]: [
+  [MoveId.GUARD_SWAP]: [
     Species.ABRA,
     Species.KADABRA,
     Species.ALAKAZAM,
@@ -48352,7 +48352,7 @@ export const tmSpecies: TmSpecies = {
       "female",
     ],
   ],
-  [Moves.WORRY_SEED]: [
+  [MoveId.WORRY_SEED]: [
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -48470,7 +48470,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_DECIDUEYE,
     Species.ETERNAL_FLOETTE,
   ],
-  [Moves.TOXIC_SPIKES]: [
+  [MoveId.TOXIC_SPIKES]: [
     Species.BEEDRILL,
     Species.EKANS,
     Species.ARBOK,
@@ -48559,7 +48559,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_SNEASEL,
     Species.PALDEA_WOOPER,
   ],
-  [Moves.FLARE_BLITZ]: [
+  [MoveId.FLARE_BLITZ]: [
     Species.CHARMANDER,
     Species.CHARMELEON,
     Species.CHARIZARD,
@@ -48654,7 +48654,7 @@ export const tmSpecies: TmSpecies = {
       "blaze",
     ],
   ],
-  [Moves.AURA_SPHERE]: [
+  [MoveId.AURA_SPHERE]: [
     Species.SQUIRTLE,
     Species.WARTORTLE,
     Species.BLASTOISE,
@@ -48698,7 +48698,7 @@ export const tmSpecies: TmSpecies = {
     Species.TERAPAGOS,
     Species.HISUI_DECIDUEYE,
   ],
-  [Moves.ROCK_POLISH]: [
+  [MoveId.ROCK_POLISH]: [
     Species.GEODUDE,
     Species.GRAVELER,
     Species.GOLEM,
@@ -48812,7 +48812,7 @@ export const tmSpecies: TmSpecies = {
     Species.ALOLA_GRIMER,
     Species.ALOLA_MUK,
   ],
-  [Moves.POISON_JAB]: [
+  [MoveId.POISON_JAB]: [
     Species.BEEDRILL,
     Species.EKANS,
     Species.ARBOK,
@@ -49008,7 +49008,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_LILLIGANT,
     Species.PALDEA_WOOPER,
   ],
-  [Moves.DARK_PULSE]: [
+  [MoveId.DARK_PULSE]: [
     Species.BLASTOISE,
     Species.EKANS,
     Species.ARBOK,
@@ -49210,7 +49210,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_ZORUA,
     Species.HISUI_ZOROARK,
   ],
-  [Moves.AQUA_TAIL]: [
+  [MoveId.AQUA_TAIL]: [
     Species.SQUIRTLE,
     Species.WARTORTLE,
     Species.BLASTOISE,
@@ -49356,7 +49356,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_QWILFISH,
     Species.HISUI_SAMUROTT,
   ],
-  [Moves.SEED_BOMB]: [
+  [MoveId.SEED_BOMB]: [
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -49561,7 +49561,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_DECIDUEYE,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.AIR_SLASH]: [
+  [MoveId.AIR_SLASH]: [
     Species.CHARIZARD,
     Species.BUTTERFREE,
     Species.PIDGEY,
@@ -49712,7 +49712,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_BRAVIARY,
     Species.HISUI_DECIDUEYE,
   ],
-  [Moves.X_SCISSOR]: [
+  [MoveId.X_SCISSOR]: [
     Species.BEEDRILL,
     Species.SANDSHREW,
     Species.SANDSLASH,
@@ -49836,7 +49836,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_SNEASEL,
     Species.HISUI_SAMUROTT,
   ],
-  [Moves.BUG_BUZZ]: [
+  [MoveId.BUG_BUZZ]: [
     Species.BUTTERFREE,
     Species.VENONAT,
     Species.VENOMOTH,
@@ -49909,7 +49909,7 @@ export const tmSpecies: TmSpecies = {
     Species.IRON_MOTH,
     Species.TERAPAGOS,
   ],
-  [Moves.DRAGON_PULSE]: [
+  [MoveId.DRAGON_PULSE]: [
     Species.CHARMANDER,
     Species.CHARMELEON,
     Species.CHARIZARD,
@@ -50038,7 +50038,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_SLIGGOO,
     Species.HISUI_GOODRA,
   ],
-  [Moves.POWER_GEM]: [
+  [MoveId.POWER_GEM]: [
     Species.MEOWTH,
     Species.PERSIAN,
     Species.GOLDUCK,
@@ -50114,7 +50114,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_GROWLITHE,
     Species.HISUI_ARCANINE,
   ],
-  [Moves.DRAIN_PUNCH]: [
+  [MoveId.DRAIN_PUNCH]: [
     Species.CLEFAIRY,
     Species.CLEFABLE,
     Species.JIGGLYPUFF,
@@ -50258,7 +50258,7 @@ export const tmSpecies: TmSpecies = {
     Species.GALAR_MR_MIME,
     Species.GALAR_SLOWKING,
   ],
-  [Moves.VACUUM_WAVE]: [
+  [MoveId.VACUUM_WAVE]: [
     Species.PSYDUCK,
     Species.GOLDUCK,
     Species.MANKEY,
@@ -50319,7 +50319,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_BRAVIARY,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.FOCUS_BLAST]: [
+  [MoveId.FOCUS_BLAST]: [
     Species.CHARMANDER,
     Species.CHARIZARD,
     Species.BLASTOISE,
@@ -50556,7 +50556,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_DECIDUEYE,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.ENERGY_BALL]: [
+  [MoveId.ENERGY_BALL]: [
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -50813,7 +50813,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_LILLIGANT,
     Species.HISUI_DECIDUEYE,
   ],
-  [Moves.BRAVE_BIRD]: [
+  [MoveId.BRAVE_BIRD]: [
     Species.PIDGEY,
     Species.PIDGEOTTO,
     Species.PIDGEOT,
@@ -50885,7 +50885,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_BRAVIARY,
     Species.HISUI_DECIDUEYE,
   ],
-  [Moves.EARTH_POWER]: [
+  [MoveId.EARTH_POWER]: [
     Species.VENUSAUR,
     Species.SANDSHREW,
     Species.SANDSLASH,
@@ -51098,7 +51098,7 @@ export const tmSpecies: TmSpecies = {
     Species.PALDEA_WOOPER,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.GIGA_IMPACT]: [
+  [MoveId.GIGA_IMPACT]: [
     Species.VENUSAUR,
     Species.CHARIZARD,
     Species.BLASTOISE,
@@ -51710,7 +51710,7 @@ export const tmSpecies: TmSpecies = {
       "red-striped",
     ],
   ],
-  [Moves.NASTY_PLOT]: [
+  [MoveId.NASTY_PLOT]: [
     Species.PIKACHU,
     Species.RAICHU,
     Species.VULPIX,
@@ -51896,7 +51896,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_ZOROARK,
     Species.HISUI_DECIDUEYE,
   ],
-  [Moves.AVALANCHE]: [
+  [MoveId.AVALANCHE]: [
     Species.BLASTOISE,
     Species.NIDOQUEEN,
     Species.NIDOKING,
@@ -52007,7 +52007,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_AVALUGG,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.SHADOW_CLAW]: [
+  [MoveId.SHADOW_CLAW]: [
     Species.CHARMANDER,
     Species.CHARMELEON,
     Species.CHARIZARD,
@@ -52224,7 +52224,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_DECIDUEYE,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.THUNDER_FANG]: [
+  [MoveId.THUNDER_FANG]: [
     Species.ARBOK,
     Species.GROWLITHE,
     Species.ARCANINE,
@@ -52327,7 +52327,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_GROWLITHE,
     Species.HISUI_ARCANINE,
   ],
-  [Moves.ICE_FANG]: [
+  [MoveId.ICE_FANG]: [
     Species.ARBOK,
     Species.RHYHORN,
     Species.RHYDON,
@@ -52429,7 +52429,7 @@ export const tmSpecies: TmSpecies = {
     Species.GALAR_STUNFISK,
     Species.HISUI_AVALUGG,
   ],
-  [Moves.FIRE_FANG]: [
+  [MoveId.FIRE_FANG]: [
     Species.CHARMANDER,
     Species.CHARMELEON,
     Species.CHARIZARD,
@@ -52545,7 +52545,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_ARCANINE,
     Species.HISUI_TYPHLOSION,
   ],
-  [Moves.PSYCHO_CUT]: [
+  [MoveId.PSYCHO_CUT]: [
     Species.KADABRA,
     Species.ALAKAZAM,
     Species.DROWZEE,
@@ -52611,7 +52611,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_SAMUROTT,
     Species.HISUI_DECIDUEYE,
   ],
-  [Moves.ZEN_HEADBUTT]: [
+  [MoveId.ZEN_HEADBUTT]: [
     Species.SQUIRTLE,
     Species.WARTORTLE,
     Species.BLASTOISE,
@@ -52940,7 +52940,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_BRAVIARY,
     Species.PALDEA_TAUROS,
   ],
-  [Moves.FLASH_CANNON]: [
+  [MoveId.FLASH_CANNON]: [
     Species.BLASTOISE,
     Species.MAGNEMITE,
     Species.MAGNETON,
@@ -53090,7 +53090,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_SLIGGOO,
     Species.HISUI_GOODRA,
   ],
-  [Moves.ROCK_CLIMB]: [
+  [MoveId.ROCK_CLIMB]: [
     Species.VENUSAUR,
     Species.BLASTOISE,
     Species.SANDSHREW,
@@ -53221,7 +53221,7 @@ export const tmSpecies: TmSpecies = {
     Species.PALDEA_TAUROS,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.DEFOG]: [
+  [MoveId.DEFOG]: [
     Species.CHARIZARD,
     Species.BUTTERFREE,
     Species.BEEDRILL,
@@ -53380,7 +53380,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_BRAVIARY,
     Species.HISUI_DECIDUEYE,
   ],
-  [Moves.TRICK_ROOM]: [
+  [MoveId.TRICK_ROOM]: [
     Species.ABRA,
     Species.KADABRA,
     Species.ALAKAZAM,
@@ -53533,7 +53533,7 @@ export const tmSpecies: TmSpecies = {
     Species.GALAR_SLOWKING,
     Species.GALAR_YAMASK,
   ],
-  [Moves.DRACO_METEOR]: [
+  [MoveId.DRACO_METEOR]: [
     Species.DRATINI,
     Species.DRAGONAIR,
     Species.DRAGONITE,
@@ -53611,7 +53611,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_SLIGGOO,
     Species.HISUI_GOODRA,
   ],
-  [Moves.LEAF_STORM]: [
+  [MoveId.LEAF_STORM]: [
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -53728,7 +53728,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_LILLIGANT,
     Species.HISUI_DECIDUEYE,
   ],
-  [Moves.POWER_WHIP]: [
+  [MoveId.POWER_WHIP]: [
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -53770,7 +53770,7 @@ export const tmSpecies: TmSpecies = {
     Species.OGERPON,
     Species.ALOLA_EXEGGUTOR,
   ],
-  [Moves.CROSS_POISON]: [
+  [MoveId.CROSS_POISON]: [
     Species.PARAS,
     Species.PARASECT,
     Species.MACHAMP,
@@ -53808,7 +53808,7 @@ export const tmSpecies: TmSpecies = {
     Species.GRAFAIAI,
     Species.FEZANDIPITI,
   ],
-  [Moves.GUNK_SHOT]: [
+  [MoveId.GUNK_SHOT]: [
     Species.EKANS,
     Species.ARBOK,
     Species.SANDSLASH,
@@ -53944,7 +53944,7 @@ export const tmSpecies: TmSpecies = {
     Species.PALDEA_WOOPER,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.IRON_HEAD]: [
+  [MoveId.IRON_HEAD]: [
     Species.ARCANINE,
     Species.GRAVELER,
     Species.GOLEM,
@@ -54175,7 +54175,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_AVALUGG,
     Species.PALDEA_TAUROS,
   ],
-  [Moves.STONE_EDGE]: [
+  [MoveId.STONE_EDGE]: [
     Species.SANDSHREW,
     Species.SANDSLASH,
     Species.NIDOQUEEN,
@@ -54423,7 +54423,7 @@ export const tmSpecies: TmSpecies = {
     Species.PALDEA_WOOPER,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.STEALTH_ROCK]: [
+  [MoveId.STEALTH_ROCK]: [
     Species.SANDSHREW,
     Species.SANDSLASH,
     Species.NIDOQUEEN,
@@ -54648,7 +54648,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_AVALUGG,
     Species.PALDEA_WOOPER,
   ],
-  [Moves.GRASS_KNOT]: [
+  [MoveId.GRASS_KNOT]: [
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -54998,7 +54998,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_ZOROARK,
     Species.HISUI_DECIDUEYE,
   ],
-  [Moves.BUG_BITE]: [
+  [MoveId.BUG_BITE]: [
     Species.CATERPIE,
     Species.METAPOD,
     Species.BUTTERFREE,
@@ -55104,7 +55104,7 @@ export const tmSpecies: TmSpecies = {
     Species.DIPPLIN,
     Species.HYDRAPPLE,
   ],
-  [Moves.CHARGE_BEAM]: [
+  [MoveId.CHARGE_BEAM]: [
     Species.RATTATA,
     Species.RATICATE,
     Species.PIKACHU,
@@ -55298,7 +55298,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_VOLTORB,
     Species.HISUI_ELECTRODE,
   ],
-  [Moves.HONE_CLAWS]: [
+  [MoveId.HONE_CLAWS]: [
     Species.CHARMANDER,
     Species.CHARMELEON,
     Species.CHARIZARD,
@@ -55490,7 +55490,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_ZOROARK,
     Species.HISUI_BRAVIARY,
   ],
-  [Moves.WONDER_ROOM]: [
+  [MoveId.WONDER_ROOM]: [
     Species.CLEFAIRY,
     Species.CLEFABLE,
     Species.PSYDUCK,
@@ -55597,7 +55597,7 @@ export const tmSpecies: TmSpecies = {
     Species.GALAR_SLOWKING,
     Species.GALAR_YAMASK,
   ],
-  [Moves.PSYSHOCK]: [
+  [MoveId.PSYSHOCK]: [
     Species.CLEFAIRY,
     Species.CLEFABLE,
     Species.NINETALES,
@@ -55739,7 +55739,7 @@ export const tmSpecies: TmSpecies = {
     Species.GALAR_SLOWKING,
     Species.HISUI_BRAVIARY,
   ],
-  [Moves.VENOSHOCK]: [
+  [MoveId.VENOSHOCK]: [
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -55863,7 +55863,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_SNEASEL,
     Species.PALDEA_WOOPER,
   ],
-  [Moves.MAGIC_ROOM]: [
+  [MoveId.MAGIC_ROOM]: [
     Species.WIGGLYTUFF,
     Species.ABRA,
     Species.KADABRA,
@@ -55932,7 +55932,7 @@ export const tmSpecies: TmSpecies = {
     Species.GALAR_RAPIDASH,
     Species.GALAR_MR_MIME,
   ],
-  [Moves.SMACK_DOWN]: [
+  [MoveId.SMACK_DOWN]: [
     Species.BLASTOISE,
     Species.SANDSHREW,
     Species.SANDSLASH,
@@ -56100,7 +56100,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_DECIDUEYE,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.SLUDGE_WAVE]: [
+  [MoveId.SLUDGE_WAVE]: [
     Species.EKANS,
     Species.ARBOK,
     Species.NIDOQUEEN,
@@ -56202,7 +56202,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_GOODRA,
     Species.PALDEA_WOOPER,
   ],
-  [Moves.HEAVY_SLAM]: [
+  [MoveId.HEAVY_SLAM]: [
     Species.MACHOP,
     Species.MACHOKE,
     Species.MACHAMP,
@@ -56335,7 +56335,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_AVALUGG,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.ELECTRO_BALL]: [
+  [MoveId.ELECTRO_BALL]: [
     Species.PIKACHU,
     Species.RAICHU,
     Species.MAGNEMITE,
@@ -56416,7 +56416,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_VOLTORB,
     Species.HISUI_ELECTRODE,
   ],
-  [Moves.FLAME_CHARGE]: [
+  [MoveId.FLAME_CHARGE]: [
     Species.CHARMANDER,
     Species.CHARMELEON,
     Species.CHARIZARD,
@@ -56519,7 +56519,7 @@ export const tmSpecies: TmSpecies = {
       "blaze",
     ],
   ],
-  [Moves.LOW_SWEEP]: [
+  [MoveId.LOW_SWEEP]: [
     Species.PSYDUCK,
     Species.GOLDUCK,
     Species.MANKEY,
@@ -56668,7 +56668,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_ZOROARK,
     Species.HISUI_DECIDUEYE,
   ],
-  [Moves.ACID_SPRAY]: [
+  [MoveId.ACID_SPRAY]: [
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -56763,7 +56763,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_GOODRA,
     Species.PALDEA_WOOPER,
   ],
-  [Moves.FOUL_PLAY]: [
+  [MoveId.FOUL_PLAY]: [
     Species.VULPIX,
     Species.NINETALES,
     Species.DIGLETT,
@@ -56941,7 +56941,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_ZORUA,
     Species.HISUI_ZOROARK,
   ],
-  [Moves.ROUND]: [
+  [MoveId.ROUND]: [
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -57857,7 +57857,7 @@ export const tmSpecies: TmSpecies = {
     Species.GALAR_YAMASK,
     Species.GALAR_STUNFISK,
   ],
-  [Moves.ECHOED_VOICE]: [
+  [MoveId.ECHOED_VOICE]: [
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -58086,7 +58086,7 @@ export const tmSpecies: TmSpecies = {
     Species.ALOLA_MAROWAK,
     Species.ETERNAL_FLOETTE,
   ],
-  [Moves.STORED_POWER]: [
+  [MoveId.STORED_POWER]: [
     Species.CLEFAIRY,
     Species.CLEFABLE,
     Species.NINETALES,
@@ -58238,7 +58238,7 @@ export const tmSpecies: TmSpecies = {
     Species.GALAR_SLOWKING,
     Species.HISUI_BRAVIARY,
   ],
-  [Moves.ALLY_SWITCH]: [
+  [MoveId.ALLY_SWITCH]: [
     Species.CLEFAIRY,
     Species.CLEFABLE,
     Species.JIGGLYPUFF,
@@ -58416,7 +58416,7 @@ export const tmSpecies: TmSpecies = {
     Species.GALAR_ARTICUNO,
     Species.GALAR_YAMASK,
   ],
-  [Moves.SCALD]: [
+  [MoveId.SCALD]: [
     Species.SQUIRTLE,
     Species.WARTORTLE,
     Species.BLASTOISE,
@@ -58575,7 +58575,7 @@ export const tmSpecies: TmSpecies = {
       "rapid-strike",
     ],
   ],
-  [Moves.HEX]: [
+  [MoveId.HEX]: [
     Species.NIDOQUEEN,
     Species.NIDOKING,
     Species.VULPIX,
@@ -58708,7 +58708,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_ZORUA,
     Species.HISUI_ZOROARK,
   ],
-  [Moves.SKY_DROP]: [
+  [MoveId.SKY_DROP]: [
     Species.CHARIZARD,
     Species.AERODACTYL,
     Species.ARTICUNO,
@@ -58732,7 +58732,7 @@ export const tmSpecies: TmSpecies = {
     Species.LUNALA,
     Species.NAGANADEL,
   ],
-  [Moves.INCINERATE]: [
+  [MoveId.INCINERATE]: [
     Species.CHARMANDER,
     Species.CHARMELEON,
     Species.CHARIZARD,
@@ -58934,7 +58934,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_GOODRA,
     Species.PALDEA_TAUROS,
   ],
-  [Moves.QUASH]: [
+  [MoveId.QUASH]: [
     Species.NIDOQUEEN,
     Species.NIDOKING,
     Species.KINGLER,
@@ -58975,7 +58975,7 @@ export const tmSpecies: TmSpecies = {
     Species.ALOLA_GRIMER,
     Species.ALOLA_MUK,
   ],
-  [Moves.ACROBATICS]: [
+  [MoveId.ACROBATICS]: [
     Species.CHARMANDER,
     Species.CHARMELEON,
     Species.CHARIZARD,
@@ -59156,7 +59156,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_LILLIGANT,
     Species.HISUI_BRAVIARY,
   ],
-  [Moves.RETALIATE]: [
+  [MoveId.RETALIATE]: [
     Species.RATTATA,
     Species.RATICATE,
     Species.CLEFAIRY,
@@ -59369,7 +59369,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_ARCANINE,
     Species.HISUI_SAMUROTT,
   ],
-  [Moves.WATER_PLEDGE]: [
+  [MoveId.WATER_PLEDGE]: [
     Species.SQUIRTLE,
     Species.WARTORTLE,
     Species.BLASTOISE,
@@ -59403,7 +59403,7 @@ export const tmSpecies: TmSpecies = {
     Species.QUAQUAVAL,
     Species.HISUI_SAMUROTT,
   ],
-  [Moves.FIRE_PLEDGE]: [
+  [MoveId.FIRE_PLEDGE]: [
     Species.CHARMANDER,
     Species.CHARMELEON,
     Species.CHARIZARD,
@@ -59437,7 +59437,7 @@ export const tmSpecies: TmSpecies = {
     Species.SKELEDIRGE,
     Species.HISUI_TYPHLOSION,
   ],
-  [Moves.GRASS_PLEDGE]: [
+  [MoveId.GRASS_PLEDGE]: [
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -59471,7 +59471,7 @@ export const tmSpecies: TmSpecies = {
     Species.MEOWSCARADA,
     Species.HISUI_DECIDUEYE,
   ],
-  [Moves.VOLT_SWITCH]: [
+  [MoveId.VOLT_SWITCH]: [
     Species.PIKACHU,
     Species.RAICHU,
     Species.MAGNEMITE,
@@ -59554,7 +59554,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_VOLTORB,
     Species.HISUI_ELECTRODE,
   ],
-  [Moves.STRUGGLE_BUG]: [
+  [MoveId.STRUGGLE_BUG]: [
     Species.BUTTERFREE,
     Species.BEEDRILL,
     Species.PARAS,
@@ -59643,7 +59643,7 @@ export const tmSpecies: TmSpecies = {
     Species.RABSCA,
     Species.IRON_MOTH,
   ],
-  [Moves.BULLDOZE]: [
+  [MoveId.BULLDOZE]: [
     Species.VENUSAUR,
     Species.CHARIZARD,
     Species.BLASTOISE,
@@ -60020,7 +60020,7 @@ export const tmSpecies: TmSpecies = {
     Species.PALDEA_WOOPER,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.FROST_BREATH]: [
+  [MoveId.FROST_BREATH]: [
     Species.DEWGONG,
     Species.CLOYSTER,
     Species.JYNX,
@@ -60062,7 +60062,7 @@ export const tmSpecies: TmSpecies = {
     Species.ALOLA_VULPIX,
     Species.ALOLA_NINETALES,
   ],
-  [Moves.DRAGON_TAIL]: [
+  [MoveId.DRAGON_TAIL]: [
     Species.CHARMANDER,
     Species.CHARMELEON,
     Species.CHARIZARD,
@@ -60168,7 +60168,7 @@ export const tmSpecies: TmSpecies = {
     Species.ALOLA_EXEGGUTOR,
     Species.HISUI_GOODRA,
   ],
-  [Moves.WORK_UP]: [
+  [MoveId.WORK_UP]: [
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -60476,7 +60476,7 @@ export const tmSpecies: TmSpecies = {
     Species.GALAR_DARMANITAN,
     Species.PALDEA_TAUROS,
   ],
-  [Moves.ELECTROWEB]: [
+  [MoveId.ELECTROWEB]: [
     Species.CATERPIE,
     Species.METAPOD,
     Species.BUTTERFREE,
@@ -60555,7 +60555,7 @@ export const tmSpecies: TmSpecies = {
     Species.ALOLA_GRAVELER,
     Species.ALOLA_GOLEM,
   ],
-  [Moves.WILD_CHARGE]: [
+  [MoveId.WILD_CHARGE]: [
     Species.RATTATA,
     Species.RATICATE,
     Species.PIKACHU,
@@ -60705,7 +60705,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_TYPHLOSION,
     Species.PALDEA_TAUROS,
   ],
-  [Moves.DRILL_RUN]: [
+  [MoveId.DRILL_RUN]: [
     Species.BEEDRILL,
     Species.SPEAROW,
     Species.FEAROW,
@@ -60760,7 +60760,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_SAMUROTT,
     Species.PALDEA_TAUROS,
   ],
-  [Moves.RAZOR_SHELL]: [
+  [MoveId.RAZOR_SHELL]: [
     Species.SLOWBRO,
     Species.SHELLDER,
     Species.CLOYSTER,
@@ -60784,7 +60784,7 @@ export const tmSpecies: TmSpecies = {
     Species.GALAR_SLOWKING,
     Species.HISUI_SAMUROTT,
   ],
-  [Moves.HEAT_CRASH]: [
+  [MoveId.HEAT_CRASH]: [
     Species.CHARIZARD,
     Species.ARCANINE,
     Species.RHYDON,
@@ -60826,7 +60826,7 @@ export const tmSpecies: TmSpecies = {
     Species.TERAPAGOS,
     Species.HISUI_ARCANINE,
   ],
-  [Moves.TAIL_SLAP]: [
+  [MoveId.TAIL_SLAP]: [
     Species.VULPIX,
     Species.NINETALES,
     Species.MEW,
@@ -60856,7 +60856,7 @@ export const tmSpecies: TmSpecies = {
     Species.ALOLA_VULPIX,
     Species.ALOLA_NINETALES,
   ],
-  [Moves.HURRICANE]: [
+  [MoveId.HURRICANE]: [
     Species.CHARIZARD,
     Species.BUTTERFREE,
     Species.PIDGEY,
@@ -60937,7 +60937,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_LILLIGANT,
     Species.HISUI_BRAVIARY,
   ],
-  [Moves.SNARL]: [
+  [MoveId.SNARL]: [
     Species.EKANS,
     Species.ARBOK,
     Species.VULPIX,
@@ -61092,7 +61092,7 @@ export const tmSpecies: TmSpecies = {
       "single-strike",
     ],
   ],
-  [Moves.PHANTOM_FORCE]: [
+  [MoveId.PHANTOM_FORCE]: [
     Species.HAUNTER,
     Species.GENGAR,
     Species.MEW,
@@ -61147,7 +61147,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_ZORUA,
     Species.HISUI_ZOROARK,
   ],
-  [Moves.PETAL_BLIZZARD]: [
+  [MoveId.PETAL_BLIZZARD]: [
     Species.VENUSAUR,
     Species.GLOOM,
     Species.VILEPLUME,
@@ -61184,7 +61184,7 @@ export const tmSpecies: TmSpecies = {
     Species.ETERNAL_FLOETTE,
     Species.HISUI_LILLIGANT,
   ],
-  [Moves.DISARMING_VOICE]: [
+  [MoveId.DISARMING_VOICE]: [
     Species.PIKACHU,
     Species.RAICHU,
     Species.CLEFAIRY,
@@ -61265,7 +61265,7 @@ export const tmSpecies: TmSpecies = {
     Species.ALOLA_NINETALES,
     Species.ETERNAL_FLOETTE,
   ],
-  [Moves.DRAINING_KISS]: [
+  [MoveId.DRAINING_KISS]: [
     Species.BUTTERFREE,
     Species.PIKACHU,
     Species.RAICHU,
@@ -61359,7 +61359,7 @@ export const tmSpecies: TmSpecies = {
     Species.ALOLA_NINETALES,
     Species.ETERNAL_FLOETTE,
   ],
-  [Moves.GRASSY_TERRAIN]: [
+  [MoveId.GRASSY_TERRAIN]: [
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -61474,7 +61474,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_LILLIGANT,
     Species.HISUI_DECIDUEYE,
   ],
-  [Moves.MISTY_TERRAIN]: [
+  [MoveId.MISTY_TERRAIN]: [
     Species.CLEFAIRY,
     Species.CLEFABLE,
     Species.JIGGLYPUFF,
@@ -61543,7 +61543,7 @@ export const tmSpecies: TmSpecies = {
     Species.GALAR_WEEZING,
     Species.GALAR_MR_MIME,
   ],
-  [Moves.PLAY_ROUGH]: [
+  [MoveId.PLAY_ROUGH]: [
     Species.PIKACHU,
     Species.RAICHU,
     Species.CLEFAIRY,
@@ -61716,7 +61716,7 @@ export const tmSpecies: TmSpecies = {
     Species.GALAR_WEEZING,
     Species.HISUI_TYPHLOSION,
   ],
-  [Moves.CONFIDE]: [
+  [MoveId.CONFIDE]: [
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -62523,7 +62523,7 @@ export const tmSpecies: TmSpecies = {
     Species.ALOLA_MAROWAK,
     Species.ETERNAL_FLOETTE,
   ],
-  [Moves.MYSTICAL_FIRE]: [
+  [MoveId.MYSTICAL_FIRE]: [
     Species.CHARIZARD,
     Species.CLEFAIRY,
     Species.CLEFABLE,
@@ -62572,7 +62572,7 @@ export const tmSpecies: TmSpecies = {
     Species.GALAR_PONYTA,
     Species.GALAR_RAPIDASH,
   ],
-  [Moves.EERIE_IMPULSE]: [
+  [MoveId.EERIE_IMPULSE]: [
     Species.PIKACHU,
     Species.RAICHU,
     Species.MAGNEMITE,
@@ -62632,7 +62632,7 @@ export const tmSpecies: TmSpecies = {
     Species.RAGING_BOLT,
     Species.ALOLA_RAICHU,
   ],
-  [Moves.VENOM_DRENCH]: [
+  [MoveId.VENOM_DRENCH]: [
     Species.NIDORAN_F,
     Species.NIDORINA,
     Species.NIDOQUEEN,
@@ -62685,7 +62685,7 @@ export const tmSpecies: TmSpecies = {
       "low-key",
     ],
   ],
-  [Moves.ELECTRIC_TERRAIN]: [
+  [MoveId.ELECTRIC_TERRAIN]: [
     Species.PIKACHU,
     Species.RAICHU,
     Species.MAGNEMITE,
@@ -62758,7 +62758,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_VOLTORB,
     Species.HISUI_ELECTRODE,
   ],
-  [Moves.DAZZLING_GLEAM]: [
+  [MoveId.DAZZLING_GLEAM]: [
     Species.CLEFAIRY,
     Species.CLEFABLE,
     Species.JIGGLYPUFF,
@@ -62928,7 +62928,7 @@ export const tmSpecies: TmSpecies = {
     Species.GALAR_MR_MIME,
     Species.HISUI_BRAVIARY,
   ],
-  [Moves.INFESTATION]: [
+  [MoveId.INFESTATION]: [
     Species.BUTTERFREE,
     Species.BEEDRILL,
     Species.EKANS,
@@ -63048,7 +63048,7 @@ export const tmSpecies: TmSpecies = {
     Species.ALOLA_MUK,
     Species.ALOLA_EXEGGUTOR,
   ],
-  [Moves.POWER_UP_PUNCH]: [
+  [MoveId.POWER_UP_PUNCH]: [
     Species.CHARMANDER,
     Species.CHARMELEON,
     Species.CHARIZARD,
@@ -63269,7 +63269,7 @@ export const tmSpecies: TmSpecies = {
     Species.GALAR_DARUMAKA,
     Species.GALAR_DARMANITAN,
   ],
-  [Moves.DARKEST_LARIAT]: [
+  [MoveId.DARKEST_LARIAT]: [
     Species.POLIWRATH,
     Species.MACHAMP,
     Species.SNORLAX,
@@ -63291,7 +63291,7 @@ export const tmSpecies: TmSpecies = {
     Species.URSHIFU,
     Species.ZARUDE,
   ],
-  [Moves.HIGH_HORSEPOWER]: [
+  [MoveId.HIGH_HORSEPOWER]: [
     Species.SANDSHREW,
     Species.SANDSLASH,
     Species.NIDOQUEEN,
@@ -63413,7 +63413,7 @@ export const tmSpecies: TmSpecies = {
     Species.PALDEA_TAUROS,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.SOLAR_BLADE]: [
+  [MoveId.SOLAR_BLADE]: [
     Species.PONYTA,
     Species.RAPIDASH,
     Species.FARFETCHD,
@@ -63458,7 +63458,7 @@ export const tmSpecies: TmSpecies = {
     Species.GALAR_FARFETCHD,
     Species.HISUI_LILLIGANT,
   ],
-  [Moves.THROAT_CHOP]: [
+  [MoveId.THROAT_CHOP]: [
     Species.BEEDRILL,
     Species.RATICATE,
     Species.FEAROW,
@@ -63605,7 +63605,7 @@ export const tmSpecies: TmSpecies = {
       "ice",
     ],
   ],
-  [Moves.POLLEN_PUFF]: [
+  [MoveId.POLLEN_PUFF]: [
     Species.BUTTERFREE,
     Species.GLOOM,
     Species.VILEPLUME,
@@ -63646,7 +63646,7 @@ export const tmSpecies: TmSpecies = {
     Species.ETERNAL_FLOETTE,
     Species.HISUI_LILLIGANT,
   ],
-  [Moves.PSYCHIC_TERRAIN]: [
+  [MoveId.PSYCHIC_TERRAIN]: [
     Species.ABRA,
     Species.KADABRA,
     Species.ALAKAZAM,
@@ -63721,7 +63721,7 @@ export const tmSpecies: TmSpecies = {
     Species.GALAR_SLOWKING,
     Species.HISUI_BRAVIARY,
   ],
-  [Moves.LUNGE]: [
+  [MoveId.LUNGE]: [
     Species.VENONAT,
     Species.VENOMOTH,
     Species.BELLSPROUT,
@@ -63798,7 +63798,7 @@ export const tmSpecies: TmSpecies = {
     Species.SLITHER_WING,
     Species.IRON_MOTH,
   ],
-  [Moves.SPEED_SWAP]: [
+  [MoveId.SPEED_SWAP]: [
     Species.RAICHU,
     Species.ABRA,
     Species.KADABRA,
@@ -63826,7 +63826,7 @@ export const tmSpecies: TmSpecies = {
     Species.RABSCA,
     Species.ALOLA_RAICHU,
   ],
-  [Moves.SMART_STRIKE]: [
+  [MoveId.SMART_STRIKE]: [
     Species.NIDORAN_M,
     Species.NIDORINO,
     Species.NIDOKING,
@@ -63888,7 +63888,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_SAMUROTT,
     Species.PALDEA_TAUROS,
   ],
-  [Moves.BRUTAL_SWING]: [
+  [MoveId.BRUTAL_SWING]: [
     Species.CHARIZARD,
     Species.BEEDRILL,
     Species.EKANS,
@@ -64038,7 +64038,7 @@ export const tmSpecies: TmSpecies = {
     Species.GALAR_WEEZING,
     Species.GALAR_YAMASK,
   ],
-  [Moves.AURORA_VEIL]: [
+  [MoveId.AURORA_VEIL]: [
     Species.JYNX,
     Species.ARTICUNO,
     Species.MEW,
@@ -64065,7 +64065,7 @@ export const tmSpecies: TmSpecies = {
     Species.ALOLA_NINETALES,
     Species.HISUI_AVALUGG,
   ],
-  [Moves.PSYCHIC_FANGS]: [
+  [MoveId.PSYCHIC_FANGS]: [
     Species.EKANS,
     Species.ARBOK,
     Species.GROWLITHE,
@@ -64140,7 +64140,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_GROWLITHE,
     Species.HISUI_ARCANINE,
   ],
-  [Moves.STOMPING_TANTRUM]: [
+  [MoveId.STOMPING_TANTRUM]: [
     Species.VENUSAUR,
     Species.RATICATE,
     Species.ARBOK,
@@ -64413,7 +64413,7 @@ export const tmSpecies: TmSpecies = {
     Species.PALDEA_WOOPER,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.LIQUIDATION]: [
+  [MoveId.LIQUIDATION]: [
     Species.SQUIRTLE,
     Species.WARTORTLE,
     Species.BLASTOISE,
@@ -64576,7 +64576,7 @@ export const tmSpecies: TmSpecies = {
     ],
     Species.PALDEA_WOOPER,
   ],
-  [Moves.BODY_PRESS]: [
+  [MoveId.BODY_PRESS]: [
     Species.BLASTOISE,
     Species.NIDOQUEEN,
     Species.NIDOKING,
@@ -64744,7 +64744,7 @@ export const tmSpecies: TmSpecies = {
     Species.PALDEA_WOOPER,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.BREAKING_SWIPE]: [
+  [MoveId.BREAKING_SWIPE]: [
     Species.CHARMANDER,
     Species.CHARMELEON,
     Species.CHARIZARD,
@@ -64825,7 +64825,7 @@ export const tmSpecies: TmSpecies = {
     Species.ALOLA_EXEGGUTOR,
     Species.HISUI_GOODRA,
   ],
-  [Moves.STEEL_BEAM]: [
+  [MoveId.STEEL_BEAM]: [
     Species.MAGNEMITE,
     Species.MAGNETON,
     Species.MEW,
@@ -64904,7 +64904,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_SLIGGOO,
     Species.HISUI_GOODRA,
   ],
-  [Moves.EXPANDING_FORCE]: [
+  [MoveId.EXPANDING_FORCE]: [
     Species.WIGGLYTUFF,
     Species.KADABRA,
     Species.ALAKAZAM,
@@ -64999,7 +64999,7 @@ export const tmSpecies: TmSpecies = {
     Species.GALAR_SLOWKING,
     Species.HISUI_BRAVIARY,
   ],
-  [Moves.STEEL_ROLLER]: [
+  [MoveId.STEEL_ROLLER]: [
     Species.SANDSHREW,
     Species.SANDSLASH,
     Species.JIGGLYPUFF,
@@ -65058,7 +65058,7 @@ export const tmSpecies: TmSpecies = {
     Species.ALOLA_SANDSHREW,
     Species.ALOLA_SANDSLASH,
   ],
-  [Moves.SCALE_SHOT]: [
+  [MoveId.SCALE_SHOT]: [
     Species.CHARIZARD,
     Species.EKANS,
     Species.ARBOK,
@@ -65139,7 +65139,7 @@ export const tmSpecies: TmSpecies = {
     Species.GOUGING_FIRE,
     Species.HISUI_QWILFISH,
   ],
-  [Moves.METEOR_BEAM]: [
+  [MoveId.METEOR_BEAM]: [
     Species.CLEFAIRY,
     Species.CLEFABLE,
     Species.ONIX,
@@ -65230,7 +65230,7 @@ export const tmSpecies: TmSpecies = {
     Species.GALAR_CORSOLA,
     Species.HISUI_AVALUGG,
   ],
-  [Moves.MISTY_EXPLOSION]: [
+  [MoveId.MISTY_EXPLOSION]: [
     Species.CLEFAIRY,
     Species.CLEFABLE,
     Species.JIGGLYPUFF,
@@ -65257,7 +65257,7 @@ export const tmSpecies: TmSpecies = {
     Species.SCREAM_TAIL,
     Species.GALAR_WEEZING,
   ],
-  [Moves.GRASSY_GLIDE]: [
+  [MoveId.GRASSY_GLIDE]: [
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -65358,7 +65358,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_LILLIGANT,
     Species.HISUI_DECIDUEYE,
   ],
-  [Moves.RISING_VOLTAGE]: [
+  [MoveId.RISING_VOLTAGE]: [
     Species.PIKACHU,
     Species.RAICHU,
     Species.MAGNEMITE,
@@ -65406,7 +65406,7 @@ export const tmSpecies: TmSpecies = {
     Species.RAGING_BOLT,
     Species.ALOLA_RAICHU,
   ],
-  [Moves.TERRAIN_PULSE]: [
+  [MoveId.TERRAIN_PULSE]: [
     Species.VENUSAUR,
     Species.BLASTOISE,
     Species.EXEGGUTOR,
@@ -65436,7 +65436,7 @@ export const tmSpecies: TmSpecies = {
     Species.ALOLA_EXEGGUTOR,
     Species.GALAR_STUNFISK,
   ],
-  [Moves.SKITTER_SMACK]: [
+  [MoveId.SKITTER_SMACK]: [
     Species.EKANS,
     Species.ARBOK,
     Species.VENONAT,
@@ -65568,7 +65568,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_SLIGGOO,
     Species.HISUI_GOODRA,
   ],
-  [Moves.BURNING_JEALOUSY]: [
+  [MoveId.BURNING_JEALOUSY]: [
     Species.VULPIX,
     Species.NINETALES,
     Species.MAGMAR,
@@ -65627,7 +65627,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_ZORUA,
     Species.HISUI_ZOROARK,
   ],
-  [Moves.LASH_OUT]: [
+  [MoveId.LASH_OUT]: [
     Species.EKANS,
     Species.ARBOK,
     Species.MEOWTH,
@@ -65786,7 +65786,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_GOODRA,
     Species.PALDEA_TAUROS,
   ],
-  [Moves.POLTERGEIST]: [
+  [MoveId.POLTERGEIST]: [
     Species.GASTLY,
     Species.HAUNTER,
     Species.GENGAR,
@@ -65846,7 +65846,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_TYPHLOSION,
     Species.HISUI_ZOROARK,
   ],
-  [Moves.CORROSIVE_GAS]: [
+  [MoveId.CORROSIVE_GAS]: [
     Species.VILEPLUME,
     Species.TENTACRUEL,
     Species.GASTLY,
@@ -65865,7 +65865,7 @@ export const tmSpecies: TmSpecies = {
     Species.GUZZLORD,
     Species.GALAR_WEEZING,
   ],
-  [Moves.COACHING]: [
+  [MoveId.COACHING]: [
     Species.POLIWRATH,
     Species.MACHOP,
     Species.MACHOKE,
@@ -65936,7 +65936,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_LILLIGANT,
     Species.HISUI_DECIDUEYE,
   ],
-  [Moves.FLIP_TURN]: [
+  [MoveId.FLIP_TURN]: [
     Species.SQUIRTLE,
     Species.WARTORTLE,
     Species.BLASTOISE,
@@ -66006,7 +66006,7 @@ export const tmSpecies: TmSpecies = {
     Species.WALKING_WAKE,
     Species.HISUI_SAMUROTT,
   ],
-  [Moves.TRIPLE_AXEL]: [
+  [MoveId.TRIPLE_AXEL]: [
     Species.SEEL,
     Species.DEWGONG,
     Species.JYNX,
@@ -66052,7 +66052,7 @@ export const tmSpecies: TmSpecies = {
     Species.GALAR_MR_MIME,
     Species.HISUI_LILLIGANT,
   ],
-  [Moves.DUAL_WINGBEAT]: [
+  [MoveId.DUAL_WINGBEAT]: [
     Species.CHARIZARD,
     Species.BUTTERFREE,
     Species.CLEFAIRY,
@@ -66171,7 +66171,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_BRAVIARY,
     Species.HISUI_DECIDUEYE,
   ],
-  [Moves.SCORCHING_SANDS]: [
+  [MoveId.SCORCHING_SANDS]: [
     Species.CHARIZARD,
     Species.SANDSHREW,
     Species.SANDSLASH,
@@ -66258,7 +66258,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_GROWLITHE,
     Species.HISUI_ARCANINE,
   ],
-  [Moves.TERA_BLAST]: [
+  [MoveId.TERA_BLAST]: [
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -67332,7 +67332,7 @@ export const tmSpecies: TmSpecies = {
     Species.PALDEA_WOOPER,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.ICE_SPINNER]: [
+  [MoveId.ICE_SPINNER]: [
     Species.SQUIRTLE,
     Species.WARTORTLE,
     Species.BLASTOISE,
@@ -67406,7 +67406,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_GOODRA,
     Species.HISUI_AVALUGG,
   ],
-  [Moves.SNOWSCAPE]: [
+  [MoveId.SNOWSCAPE]: [
     Species.SLOWPOKE,
     Species.SLOWBRO,
     Species.SEEL,
@@ -67504,7 +67504,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_ZOROARK,
     Species.HISUI_AVALUGG,
   ],
-  [Moves.POUNCE]: [
+  [MoveId.POUNCE]: [
     Species.VENONAT,
     Species.VENOMOTH,
     Species.BELLSPROUT,
@@ -67583,7 +67583,7 @@ export const tmSpecies: TmSpecies = {
     Species.DIPPLIN,
     Species.HYDRAPPLE,
   ],
-  [Moves.TRAILBLAZE]: [
+  [MoveId.TRAILBLAZE]: [
     Species.BULBASAUR,
     Species.IVYSAUR,
     Species.VENUSAUR,
@@ -67882,7 +67882,7 @@ export const tmSpecies: TmSpecies = {
     Species.PALDEA_WOOPER,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.CHILLING_WATER]: [
+  [MoveId.CHILLING_WATER]: [
     Species.SQUIRTLE,
     Species.WARTORTLE,
     Species.BLASTOISE,
@@ -68100,7 +68100,7 @@ export const tmSpecies: TmSpecies = {
     ],
     Species.PALDEA_WOOPER,
   ],
-  [Moves.HARD_PRESS]: [
+  [MoveId.HARD_PRESS]: [
     Species.GRAVELER,
     Species.GOLEM,
     Species.SNORLAX,
@@ -68149,7 +68149,7 @@ export const tmSpecies: TmSpecies = {
     Species.HISUI_AVALUGG,
     Species.BLOODMOON_URSALUNA,
   ],
-  [Moves.DRAGON_CHEER]: [
+  [MoveId.DRAGON_CHEER]: [
     Species.CHARIZARD,
     Species.GYARADOS,
     Species.LAPRAS,
@@ -68209,7 +68209,7 @@ export const tmSpecies: TmSpecies = {
     Species.ALOLA_EXEGGUTOR,
     Species.HISUI_GOODRA,
   ],
-  [Moves.ALLURING_VOICE]: [
+  [MoveId.ALLURING_VOICE]: [
     Species.PIKACHU,
     Species.RAICHU,
     Species.CLEFAIRY,
@@ -68277,7 +68277,7 @@ export const tmSpecies: TmSpecies = {
       "female",
     ],
   ],
-  [Moves.TEMPER_FLARE]: [
+  [MoveId.TEMPER_FLARE]: [
     Species.CHARMANDER,
     Species.CHARMELEON,
     Species.CHARIZARD,
@@ -68356,7 +68356,7 @@ export const tmSpecies: TmSpecies = {
       "blaze",
     ],
   ],
-  [Moves.SUPERCELL_SLAM]:[
+  [MoveId.SUPERCELL_SLAM]:[
     Species.ELECTRODE,
     Species.RHYHORN,
     Species.RHYDON,
@@ -68403,7 +68403,7 @@ export const tmSpecies: TmSpecies = {
     Species.ALOLA_GOLEM,
     Species.HISUI_ELECTRODE,
   ],
-  [Moves.PSYCHIC_NOISE]: [
+  [MoveId.PSYCHIC_NOISE]: [
     Species.JIGGLYPUFF,
     Species.WIGGLYTUFF,
     Species.VENONAT,
@@ -68476,7 +68476,7 @@ export const tmSpecies: TmSpecies = {
     Species.GALAR_SLOWKING,
     Species.HISUI_BRAVIARY,
   ],
-  [Moves.UPPER_HAND]: [
+  [MoveId.UPPER_HAND]: [
     Species.PIKACHU,
     Species.RAICHU,
     Species.POLIWRATH,
@@ -68544,7 +68544,7 @@ export const tmSpecies: TmSpecies = {
 };
 
 interface SpeciesTmMoves {
-  [key: number]: (Moves | [string | Species, Moves])[];
+  [key: number]: (MoveId | [string | Species, MoveId])[];
 }
 
 function transposeTmSpecies(): SpeciesTmMoves {
@@ -68588,320 +68588,320 @@ interface TmPoolTiers {
 }
 
 export const tmPoolTiers: TmPoolTiers = {
-  [Moves.MEGA_PUNCH]: ModifierTier.GREAT,
-  [Moves.PAY_DAY]: ModifierTier.ULTRA,
-  [Moves.FIRE_PUNCH]: ModifierTier.GREAT,
-  [Moves.ICE_PUNCH]: ModifierTier.GREAT,
-  [Moves.THUNDER_PUNCH]: ModifierTier.GREAT,
-  [Moves.SWORDS_DANCE]: ModifierTier.COMMON,
-  [Moves.CUT]: ModifierTier.COMMON,
-  [Moves.FLY]: ModifierTier.COMMON,
-  [Moves.MEGA_KICK]: ModifierTier.GREAT,
-  [Moves.BODY_SLAM]: ModifierTier.GREAT,
-  [Moves.TAKE_DOWN]: ModifierTier.GREAT,
-  [Moves.DOUBLE_EDGE]: ModifierTier.ULTRA,
-  [Moves.PIN_MISSILE]: ModifierTier.COMMON,
-  [Moves.ROAR]: ModifierTier.COMMON,
-  [Moves.FLAMETHROWER]: ModifierTier.ULTRA,
-  [Moves.HYDRO_PUMP]: ModifierTier.ULTRA,
-  [Moves.SURF]: ModifierTier.ULTRA,
-  [Moves.ICE_BEAM]: ModifierTier.ULTRA,
-  [Moves.BLIZZARD]: ModifierTier.ULTRA,
-  [Moves.PSYBEAM]: ModifierTier.GREAT,
-  [Moves.HYPER_BEAM]: ModifierTier.ULTRA,
-  [Moves.LOW_KICK]: ModifierTier.COMMON,
-  [Moves.COUNTER]: ModifierTier.COMMON,
-  [Moves.STRENGTH]: ModifierTier.GREAT,
-  [Moves.SOLAR_BEAM]: ModifierTier.ULTRA,
-  [Moves.FIRE_SPIN]: ModifierTier.COMMON,
-  [Moves.THUNDERBOLT]: ModifierTier.ULTRA,
-  [Moves.THUNDER_WAVE]: ModifierTier.COMMON,
-  [Moves.THUNDER]: ModifierTier.ULTRA,
-  [Moves.EARTHQUAKE]: ModifierTier.ULTRA,
-  [Moves.DIG]: ModifierTier.GREAT,
-  [Moves.TOXIC]: ModifierTier.GREAT,
-  [Moves.PSYCHIC]: ModifierTier.ULTRA,
-  [Moves.AGILITY]: ModifierTier.COMMON,
-  [Moves.NIGHT_SHADE]: ModifierTier.COMMON,
-  [Moves.SCREECH]: ModifierTier.COMMON,
-  [Moves.DOUBLE_TEAM]: ModifierTier.COMMON,
-  [Moves.CONFUSE_RAY]: ModifierTier.COMMON,
-  [Moves.LIGHT_SCREEN]: ModifierTier.COMMON,
-  [Moves.HAZE]: ModifierTier.COMMON,
-  [Moves.REFLECT]: ModifierTier.COMMON,
-  [Moves.FOCUS_ENERGY]: ModifierTier.COMMON,
-  [Moves.METRONOME]: ModifierTier.COMMON,
-  [Moves.SELF_DESTRUCT]: ModifierTier.GREAT,
-  [Moves.FIRE_BLAST]: ModifierTier.ULTRA,
-  [Moves.WATERFALL]: ModifierTier.GREAT,
-  [Moves.SWIFT]: ModifierTier.COMMON,
-  [Moves.AMNESIA]: ModifierTier.COMMON,
-  [Moves.DREAM_EATER]: ModifierTier.GREAT,
-  [Moves.LEECH_LIFE]: ModifierTier.ULTRA,
-  [Moves.FLASH]: ModifierTier.COMMON,
-  [Moves.EXPLOSION]: ModifierTier.GREAT,
-  [Moves.REST]: ModifierTier.COMMON,
-  [Moves.ROCK_SLIDE]: ModifierTier.GREAT,
-  [Moves.TRI_ATTACK]: ModifierTier.ULTRA,
-  [Moves.SUPER_FANG]: ModifierTier.COMMON,
-  [Moves.SUBSTITUTE]: ModifierTier.COMMON,
-  [Moves.THIEF]: ModifierTier.GREAT,
-  [Moves.SNORE]: ModifierTier.COMMON,
-  [Moves.CURSE]: ModifierTier.COMMON,
-  [Moves.REVERSAL]: ModifierTier.COMMON,
-  [Moves.SPITE]: ModifierTier.COMMON,
-  [Moves.PROTECT]: ModifierTier.COMMON,
-  [Moves.SCARY_FACE]: ModifierTier.COMMON,
-  [Moves.SLUDGE_BOMB]: ModifierTier.GREAT,
-  [Moves.MUD_SLAP]: ModifierTier.COMMON,
-  [Moves.SPIKES]: ModifierTier.COMMON,
-  [Moves.ICY_WIND]: ModifierTier.GREAT,
-  [Moves.OUTRAGE]: ModifierTier.ULTRA,
-  [Moves.SANDSTORM]: ModifierTier.COMMON,
-  [Moves.GIGA_DRAIN]: ModifierTier.ULTRA,
-  [Moves.ENDURE]: ModifierTier.COMMON,
-  [Moves.CHARM]: ModifierTier.COMMON,
-  [Moves.FALSE_SWIPE]: ModifierTier.COMMON,
-  [Moves.SWAGGER]: ModifierTier.COMMON,
-  [Moves.STEEL_WING]: ModifierTier.GREAT,
-  [Moves.ATTRACT]: ModifierTier.COMMON,
-  [Moves.SLEEP_TALK]: ModifierTier.COMMON,
-  [Moves.HEAL_BELL]: ModifierTier.COMMON,
-  [Moves.RETURN]: ModifierTier.ULTRA,
-  [Moves.FRUSTRATION]: ModifierTier.COMMON,
-  [Moves.SAFEGUARD]: ModifierTier.COMMON,
-  [Moves.PAIN_SPLIT]: ModifierTier.COMMON,
-  [Moves.MEGAHORN]: ModifierTier.ULTRA,
-  [Moves.BATON_PASS]: ModifierTier.COMMON,
-  [Moves.ENCORE]: ModifierTier.COMMON,
-  [Moves.IRON_TAIL]: ModifierTier.GREAT,
-  [Moves.METAL_CLAW]: ModifierTier.COMMON,
-  [Moves.SYNTHESIS]: ModifierTier.GREAT,
-  [Moves.HIDDEN_POWER]: ModifierTier.GREAT,
-  [Moves.RAIN_DANCE]: ModifierTier.COMMON,
-  [Moves.SUNNY_DAY]: ModifierTier.COMMON,
-  [Moves.CRUNCH]: ModifierTier.GREAT,
-  [Moves.PSYCH_UP]: ModifierTier.COMMON,
-  [Moves.SHADOW_BALL]: ModifierTier.ULTRA,
-  [Moves.FUTURE_SIGHT]: ModifierTier.GREAT,
-  [Moves.ROCK_SMASH]: ModifierTier.COMMON,
-  [Moves.WHIRLPOOL]: ModifierTier.COMMON,
-  [Moves.BEAT_UP]: ModifierTier.COMMON,
-  [Moves.UPROAR]: ModifierTier.GREAT,
-  [Moves.HEAT_WAVE]: ModifierTier.ULTRA,
-  [Moves.HAIL]: ModifierTier.COMMON,
-  [Moves.TORMENT]: ModifierTier.COMMON,
-  [Moves.WILL_O_WISP]: ModifierTier.COMMON,
-  [Moves.FACADE]: ModifierTier.GREAT,
-  [Moves.FOCUS_PUNCH]: ModifierTier.COMMON,
-  [Moves.NATURE_POWER]: ModifierTier.COMMON,
-  [Moves.CHARGE]: ModifierTier.COMMON,
-  [Moves.TAUNT]: ModifierTier.COMMON,
-  [Moves.HELPING_HAND]: ModifierTier.COMMON,
-  [Moves.TRICK]: ModifierTier.COMMON,
-  [Moves.SUPERPOWER]: ModifierTier.ULTRA,
-  [Moves.RECYCLE]: ModifierTier.COMMON,
-  [Moves.REVENGE]: ModifierTier.GREAT,
-  [Moves.BRICK_BREAK]: ModifierTier.GREAT,
-  [Moves.KNOCK_OFF]: ModifierTier.GREAT,
-  [Moves.ENDEAVOR]: ModifierTier.COMMON,
-  [Moves.SKILL_SWAP]: ModifierTier.COMMON,
-  [Moves.IMPRISON]: ModifierTier.COMMON,
-  [Moves.SECRET_POWER]: ModifierTier.COMMON,
-  [Moves.DIVE]: ModifierTier.GREAT,
-  [Moves.FEATHER_DANCE]: ModifierTier.COMMON,
-  [Moves.BLAZE_KICK]: ModifierTier.GREAT,
-  [Moves.HYPER_VOICE]: ModifierTier.ULTRA,
-  [Moves.BLAST_BURN]: ModifierTier.ULTRA,
-  [Moves.HYDRO_CANNON]: ModifierTier.ULTRA,
-  [Moves.WEATHER_BALL]: ModifierTier.COMMON,
-  [Moves.FAKE_TEARS]: ModifierTier.COMMON,
-  [Moves.AIR_CUTTER]: ModifierTier.GREAT,
-  [Moves.OVERHEAT]: ModifierTier.ULTRA,
-  [Moves.ROCK_TOMB]: ModifierTier.GREAT,
-  [Moves.METAL_SOUND]: ModifierTier.COMMON,
-  [Moves.COSMIC_POWER]: ModifierTier.COMMON,
-  [Moves.SIGNAL_BEAM]: ModifierTier.GREAT,
-  [Moves.SAND_TOMB]: ModifierTier.COMMON,
-  [Moves.MUDDY_WATER]: ModifierTier.GREAT,
-  [Moves.BULLET_SEED]: ModifierTier.GREAT,
-  [Moves.AERIAL_ACE]: ModifierTier.GREAT,
-  [Moves.ICICLE_SPEAR]: ModifierTier.GREAT,
-  [Moves.IRON_DEFENSE]: ModifierTier.GREAT,
-  [Moves.DRAGON_CLAW]: ModifierTier.ULTRA,
-  [Moves.FRENZY_PLANT]: ModifierTier.ULTRA,
-  [Moves.BULK_UP]: ModifierTier.COMMON,
-  [Moves.BOUNCE]: ModifierTier.GREAT,
-  [Moves.MUD_SHOT]: ModifierTier.GREAT,
-  [Moves.POISON_TAIL]: ModifierTier.GREAT,
-  [Moves.COVET]: ModifierTier.GREAT,
-  [Moves.MAGICAL_LEAF]: ModifierTier.GREAT,
-  [Moves.CALM_MIND]: ModifierTier.GREAT,
-  [Moves.LEAF_BLADE]: ModifierTier.ULTRA,
-  [Moves.DRAGON_DANCE]: ModifierTier.GREAT,
-  [Moves.ROCK_BLAST]: ModifierTier.GREAT,
-  [Moves.WATER_PULSE]: ModifierTier.GREAT,
-  [Moves.ROOST]: ModifierTier.GREAT,
-  [Moves.GRAVITY]: ModifierTier.COMMON,
-  [Moves.GYRO_BALL]: ModifierTier.COMMON,
-  [Moves.BRINE]: ModifierTier.GREAT,
-  [Moves.PLUCK]: ModifierTier.GREAT,
-  [Moves.TAILWIND]: ModifierTier.GREAT,
-  [Moves.U_TURN]: ModifierTier.GREAT,
-  [Moves.CLOSE_COMBAT]: ModifierTier.ULTRA,
-  [Moves.PAYBACK]: ModifierTier.COMMON,
-  [Moves.ASSURANCE]: ModifierTier.COMMON,
-  [Moves.EMBARGO]: ModifierTier.COMMON,
-  [Moves.FLING]: ModifierTier.COMMON,
-  [Moves.GASTRO_ACID]: ModifierTier.GREAT,
-  [Moves.POWER_SWAP]: ModifierTier.COMMON,
-  [Moves.GUARD_SWAP]: ModifierTier.COMMON,
-  [Moves.WORRY_SEED]: ModifierTier.GREAT,
-  [Moves.TOXIC_SPIKES]: ModifierTier.GREAT,
-  [Moves.FLARE_BLITZ]: ModifierTier.ULTRA,
-  [Moves.AURA_SPHERE]: ModifierTier.GREAT,
-  [Moves.ROCK_POLISH]: ModifierTier.COMMON,
-  [Moves.POISON_JAB]: ModifierTier.GREAT,
-  [Moves.DARK_PULSE]: ModifierTier.GREAT,
-  [Moves.AQUA_TAIL]: ModifierTier.GREAT,
-  [Moves.SEED_BOMB]: ModifierTier.GREAT,
-  [Moves.AIR_SLASH]: ModifierTier.GREAT,
-  [Moves.X_SCISSOR]: ModifierTier.GREAT,
-  [Moves.BUG_BUZZ]: ModifierTier.GREAT,
-  [Moves.DRAGON_PULSE]: ModifierTier.GREAT,
-  [Moves.POWER_GEM]: ModifierTier.GREAT,
-  [Moves.DRAIN_PUNCH]: ModifierTier.GREAT,
-  [Moves.VACUUM_WAVE]: ModifierTier.COMMON,
-  [Moves.FOCUS_BLAST]: ModifierTier.GREAT,
-  [Moves.ENERGY_BALL]: ModifierTier.GREAT,
-  [Moves.BRAVE_BIRD]: ModifierTier.ULTRA,
-  [Moves.EARTH_POWER]: ModifierTier.ULTRA,
-  [Moves.GIGA_IMPACT]: ModifierTier.GREAT,
-  [Moves.NASTY_PLOT]: ModifierTier.COMMON,
-  [Moves.AVALANCHE]: ModifierTier.GREAT,
-  [Moves.SHADOW_CLAW]: ModifierTier.GREAT,
-  [Moves.THUNDER_FANG]: ModifierTier.GREAT,
-  [Moves.ICE_FANG]: ModifierTier.GREAT,
-  [Moves.FIRE_FANG]: ModifierTier.GREAT,
-  [Moves.PSYCHO_CUT]: ModifierTier.GREAT,
-  [Moves.ZEN_HEADBUTT]: ModifierTier.GREAT,
-  [Moves.FLASH_CANNON]: ModifierTier.GREAT,
-  [Moves.ROCK_CLIMB]: ModifierTier.GREAT,
-  [Moves.DEFOG]: ModifierTier.COMMON,
-  [Moves.TRICK_ROOM]: ModifierTier.COMMON,
-  [Moves.DRACO_METEOR]: ModifierTier.ULTRA,
-  [Moves.LEAF_STORM]: ModifierTier.ULTRA,
-  [Moves.POWER_WHIP]: ModifierTier.ULTRA,
-  [Moves.CROSS_POISON]: ModifierTier.GREAT,
-  [Moves.GUNK_SHOT]: ModifierTier.ULTRA,
-  [Moves.IRON_HEAD]: ModifierTier.GREAT,
-  [Moves.STONE_EDGE]: ModifierTier.ULTRA,
-  [Moves.STEALTH_ROCK]: ModifierTier.COMMON,
-  [Moves.GRASS_KNOT]: ModifierTier.ULTRA,
-  [Moves.BUG_BITE]: ModifierTier.GREAT,
-  [Moves.CHARGE_BEAM]: ModifierTier.GREAT,
-  [Moves.HONE_CLAWS]: ModifierTier.COMMON,
-  [Moves.WONDER_ROOM]: ModifierTier.COMMON,
-  [Moves.PSYSHOCK]: ModifierTier.GREAT,
-  [Moves.VENOSHOCK]: ModifierTier.GREAT,
-  [Moves.MAGIC_ROOM]: ModifierTier.COMMON,
-  [Moves.SMACK_DOWN]: ModifierTier.COMMON,
-  [Moves.SLUDGE_WAVE]: ModifierTier.GREAT,
-  [Moves.HEAVY_SLAM]: ModifierTier.GREAT,
-  [Moves.ELECTRO_BALL]: ModifierTier.GREAT,
-  [Moves.FLAME_CHARGE]: ModifierTier.GREAT,
-  [Moves.LOW_SWEEP]: ModifierTier.GREAT,
-  [Moves.ACID_SPRAY]: ModifierTier.COMMON,
-  [Moves.FOUL_PLAY]: ModifierTier.ULTRA,
-  [Moves.ROUND]: ModifierTier.COMMON,
-  [Moves.ECHOED_VOICE]: ModifierTier.COMMON,
-  [Moves.STORED_POWER]: ModifierTier.COMMON,
-  [Moves.ALLY_SWITCH]: ModifierTier.COMMON,
-  [Moves.SCALD]: ModifierTier.GREAT,
-  [Moves.HEX]: ModifierTier.GREAT,
-  [Moves.SKY_DROP]: ModifierTier.GREAT,
-  [Moves.INCINERATE]: ModifierTier.GREAT,
-  [Moves.QUASH]: ModifierTier.COMMON,
-  [Moves.ACROBATICS]: ModifierTier.GREAT,
-  [Moves.RETALIATE]: ModifierTier.GREAT,
-  [Moves.WATER_PLEDGE]: ModifierTier.GREAT,
-  [Moves.FIRE_PLEDGE]: ModifierTier.GREAT,
-  [Moves.GRASS_PLEDGE]: ModifierTier.GREAT,
-  [Moves.VOLT_SWITCH]: ModifierTier.GREAT,
-  [Moves.STRUGGLE_BUG]: ModifierTier.COMMON,
-  [Moves.BULLDOZE]: ModifierTier.GREAT,
-  [Moves.FROST_BREATH]: ModifierTier.GREAT,
-  [Moves.DRAGON_TAIL]: ModifierTier.GREAT,
-  [Moves.WORK_UP]: ModifierTier.COMMON,
-  [Moves.ELECTROWEB]: ModifierTier.GREAT,
-  [Moves.WILD_CHARGE]: ModifierTier.GREAT,
-  [Moves.DRILL_RUN]: ModifierTier.GREAT,
-  [Moves.RAZOR_SHELL]: ModifierTier.GREAT,
-  [Moves.HEAT_CRASH]: ModifierTier.GREAT,
-  [Moves.TAIL_SLAP]: ModifierTier.GREAT,
-  [Moves.HURRICANE]: ModifierTier.ULTRA,
-  [Moves.SNARL]: ModifierTier.COMMON,
-  [Moves.PHANTOM_FORCE]: ModifierTier.ULTRA,
-  [Moves.PETAL_BLIZZARD]: ModifierTier.GREAT,
-  [Moves.DISARMING_VOICE]: ModifierTier.GREAT,
-  [Moves.DRAINING_KISS]: ModifierTier.GREAT,
-  [Moves.GRASSY_TERRAIN]: ModifierTier.COMMON,
-  [Moves.MISTY_TERRAIN]: ModifierTier.COMMON,
-  [Moves.PLAY_ROUGH]: ModifierTier.GREAT,
-  [Moves.CONFIDE]: ModifierTier.COMMON,
-  [Moves.MYSTICAL_FIRE]: ModifierTier.GREAT,
-  [Moves.EERIE_IMPULSE]: ModifierTier.COMMON,
-  [Moves.VENOM_DRENCH]: ModifierTier.COMMON,
-  [Moves.ELECTRIC_TERRAIN]: ModifierTier.COMMON,
-  [Moves.DAZZLING_GLEAM]: ModifierTier.ULTRA,
-  [Moves.INFESTATION]: ModifierTier.COMMON,
-  [Moves.POWER_UP_PUNCH]: ModifierTier.GREAT,
-  [Moves.DARKEST_LARIAT]: ModifierTier.GREAT,
-  [Moves.HIGH_HORSEPOWER]: ModifierTier.ULTRA,
-  [Moves.SOLAR_BLADE]: ModifierTier.GREAT,
-  [Moves.THROAT_CHOP]: ModifierTier.GREAT,
-  [Moves.POLLEN_PUFF]: ModifierTier.GREAT,
-  [Moves.PSYCHIC_TERRAIN]: ModifierTier.COMMON,
-  [Moves.LUNGE]: ModifierTier.GREAT,
-  [Moves.SPEED_SWAP]: ModifierTier.COMMON,
-  [Moves.SMART_STRIKE]: ModifierTier.GREAT,
-  [Moves.BRUTAL_SWING]: ModifierTier.GREAT,
-  [Moves.AURORA_VEIL]: ModifierTier.COMMON,
-  [Moves.PSYCHIC_FANGS]: ModifierTier.GREAT,
-  [Moves.STOMPING_TANTRUM]: ModifierTier.GREAT,
-  [Moves.LIQUIDATION]: ModifierTier.ULTRA,
-  [Moves.BODY_PRESS]: ModifierTier.ULTRA,
-  [Moves.BREAKING_SWIPE]: ModifierTier.GREAT,
-  [Moves.STEEL_BEAM]: ModifierTier.ULTRA,
-  [Moves.EXPANDING_FORCE]: ModifierTier.GREAT,
-  [Moves.STEEL_ROLLER]: ModifierTier.COMMON,
-  [Moves.SCALE_SHOT]: ModifierTier.ULTRA,
-  [Moves.METEOR_BEAM]: ModifierTier.GREAT,
-  [Moves.MISTY_EXPLOSION]: ModifierTier.COMMON,
-  [Moves.GRASSY_GLIDE]: ModifierTier.COMMON,
-  [Moves.RISING_VOLTAGE]: ModifierTier.COMMON,
-  [Moves.TERRAIN_PULSE]: ModifierTier.COMMON,
-  [Moves.SKITTER_SMACK]: ModifierTier.GREAT,
-  [Moves.BURNING_JEALOUSY]: ModifierTier.GREAT,
-  [Moves.LASH_OUT]: ModifierTier.GREAT,
-  [Moves.POLTERGEIST]: ModifierTier.ULTRA,
-  [Moves.CORROSIVE_GAS]: ModifierTier.COMMON,
-  [Moves.COACHING]: ModifierTier.COMMON,
-  [Moves.FLIP_TURN]: ModifierTier.COMMON,
-  [Moves.TRIPLE_AXEL]: ModifierTier.COMMON,
-  [Moves.DUAL_WINGBEAT]: ModifierTier.COMMON,
-  [Moves.SCORCHING_SANDS]: ModifierTier.GREAT,
-  [Moves.TERA_BLAST]: ModifierTier.GREAT,
-  [Moves.ICE_SPINNER]: ModifierTier.GREAT,
-  [Moves.SNOWSCAPE]: ModifierTier.COMMON,
-  [Moves.POUNCE]: ModifierTier.COMMON,
-  [Moves.TRAILBLAZE]: ModifierTier.COMMON,
-  [Moves.CHILLING_WATER]: ModifierTier.COMMON,
-  [Moves.HARD_PRESS]: ModifierTier.GREAT,
-  [Moves.DRAGON_CHEER]: ModifierTier.COMMON,
-  [Moves.ALLURING_VOICE]: ModifierTier.GREAT,
-  [Moves.TEMPER_FLARE]: ModifierTier.GREAT,
-  [Moves.SUPERCELL_SLAM]: ModifierTier.GREAT,
-  [Moves.PSYCHIC_NOISE]: ModifierTier.GREAT,
-  [Moves.UPPER_HAND]: ModifierTier.COMMON,
+  [MoveId.MEGA_PUNCH]: ModifierTier.GREAT,
+  [MoveId.PAY_DAY]: ModifierTier.ULTRA,
+  [MoveId.FIRE_PUNCH]: ModifierTier.GREAT,
+  [MoveId.ICE_PUNCH]: ModifierTier.GREAT,
+  [MoveId.THUNDER_PUNCH]: ModifierTier.GREAT,
+  [MoveId.SWORDS_DANCE]: ModifierTier.COMMON,
+  [MoveId.CUT]: ModifierTier.COMMON,
+  [MoveId.FLY]: ModifierTier.COMMON,
+  [MoveId.MEGA_KICK]: ModifierTier.GREAT,
+  [MoveId.BODY_SLAM]: ModifierTier.GREAT,
+  [MoveId.TAKE_DOWN]: ModifierTier.GREAT,
+  [MoveId.DOUBLE_EDGE]: ModifierTier.ULTRA,
+  [MoveId.PIN_MISSILE]: ModifierTier.COMMON,
+  [MoveId.ROAR]: ModifierTier.COMMON,
+  [MoveId.FLAMETHROWER]: ModifierTier.ULTRA,
+  [MoveId.HYDRO_PUMP]: ModifierTier.ULTRA,
+  [MoveId.SURF]: ModifierTier.ULTRA,
+  [MoveId.ICE_BEAM]: ModifierTier.ULTRA,
+  [MoveId.BLIZZARD]: ModifierTier.ULTRA,
+  [MoveId.PSYBEAM]: ModifierTier.GREAT,
+  [MoveId.HYPER_BEAM]: ModifierTier.ULTRA,
+  [MoveId.LOW_KICK]: ModifierTier.COMMON,
+  [MoveId.COUNTER]: ModifierTier.COMMON,
+  [MoveId.STRENGTH]: ModifierTier.GREAT,
+  [MoveId.SOLAR_BEAM]: ModifierTier.ULTRA,
+  [MoveId.FIRE_SPIN]: ModifierTier.COMMON,
+  [MoveId.THUNDERBOLT]: ModifierTier.ULTRA,
+  [MoveId.THUNDER_WAVE]: ModifierTier.COMMON,
+  [MoveId.THUNDER]: ModifierTier.ULTRA,
+  [MoveId.EARTHQUAKE]: ModifierTier.ULTRA,
+  [MoveId.DIG]: ModifierTier.GREAT,
+  [MoveId.TOXIC]: ModifierTier.GREAT,
+  [MoveId.PSYCHIC]: ModifierTier.ULTRA,
+  [MoveId.AGILITY]: ModifierTier.COMMON,
+  [MoveId.NIGHT_SHADE]: ModifierTier.COMMON,
+  [MoveId.SCREECH]: ModifierTier.COMMON,
+  [MoveId.DOUBLE_TEAM]: ModifierTier.COMMON,
+  [MoveId.CONFUSE_RAY]: ModifierTier.COMMON,
+  [MoveId.LIGHT_SCREEN]: ModifierTier.COMMON,
+  [MoveId.HAZE]: ModifierTier.COMMON,
+  [MoveId.REFLECT]: ModifierTier.COMMON,
+  [MoveId.FOCUS_ENERGY]: ModifierTier.COMMON,
+  [MoveId.METRONOME]: ModifierTier.COMMON,
+  [MoveId.SELF_DESTRUCT]: ModifierTier.GREAT,
+  [MoveId.FIRE_BLAST]: ModifierTier.ULTRA,
+  [MoveId.WATERFALL]: ModifierTier.GREAT,
+  [MoveId.SWIFT]: ModifierTier.COMMON,
+  [MoveId.AMNESIA]: ModifierTier.COMMON,
+  [MoveId.DREAM_EATER]: ModifierTier.GREAT,
+  [MoveId.LEECH_LIFE]: ModifierTier.ULTRA,
+  [MoveId.FLASH]: ModifierTier.COMMON,
+  [MoveId.EXPLOSION]: ModifierTier.GREAT,
+  [MoveId.REST]: ModifierTier.COMMON,
+  [MoveId.ROCK_SLIDE]: ModifierTier.GREAT,
+  [MoveId.TRI_ATTACK]: ModifierTier.ULTRA,
+  [MoveId.SUPER_FANG]: ModifierTier.COMMON,
+  [MoveId.SUBSTITUTE]: ModifierTier.COMMON,
+  [MoveId.THIEF]: ModifierTier.GREAT,
+  [MoveId.SNORE]: ModifierTier.COMMON,
+  [MoveId.CURSE]: ModifierTier.COMMON,
+  [MoveId.REVERSAL]: ModifierTier.COMMON,
+  [MoveId.SPITE]: ModifierTier.COMMON,
+  [MoveId.PROTECT]: ModifierTier.COMMON,
+  [MoveId.SCARY_FACE]: ModifierTier.COMMON,
+  [MoveId.SLUDGE_BOMB]: ModifierTier.GREAT,
+  [MoveId.MUD_SLAP]: ModifierTier.COMMON,
+  [MoveId.SPIKES]: ModifierTier.COMMON,
+  [MoveId.ICY_WIND]: ModifierTier.GREAT,
+  [MoveId.OUTRAGE]: ModifierTier.ULTRA,
+  [MoveId.SANDSTORM]: ModifierTier.COMMON,
+  [MoveId.GIGA_DRAIN]: ModifierTier.ULTRA,
+  [MoveId.ENDURE]: ModifierTier.COMMON,
+  [MoveId.CHARM]: ModifierTier.COMMON,
+  [MoveId.FALSE_SWIPE]: ModifierTier.COMMON,
+  [MoveId.SWAGGER]: ModifierTier.COMMON,
+  [MoveId.STEEL_WING]: ModifierTier.GREAT,
+  [MoveId.ATTRACT]: ModifierTier.COMMON,
+  [MoveId.SLEEP_TALK]: ModifierTier.COMMON,
+  [MoveId.HEAL_BELL]: ModifierTier.COMMON,
+  [MoveId.RETURN]: ModifierTier.ULTRA,
+  [MoveId.FRUSTRATION]: ModifierTier.COMMON,
+  [MoveId.SAFEGUARD]: ModifierTier.COMMON,
+  [MoveId.PAIN_SPLIT]: ModifierTier.COMMON,
+  [MoveId.MEGAHORN]: ModifierTier.ULTRA,
+  [MoveId.BATON_PASS]: ModifierTier.COMMON,
+  [MoveId.ENCORE]: ModifierTier.COMMON,
+  [MoveId.IRON_TAIL]: ModifierTier.GREAT,
+  [MoveId.METAL_CLAW]: ModifierTier.COMMON,
+  [MoveId.SYNTHESIS]: ModifierTier.GREAT,
+  [MoveId.HIDDEN_POWER]: ModifierTier.GREAT,
+  [MoveId.RAIN_DANCE]: ModifierTier.COMMON,
+  [MoveId.SUNNY_DAY]: ModifierTier.COMMON,
+  [MoveId.CRUNCH]: ModifierTier.GREAT,
+  [MoveId.PSYCH_UP]: ModifierTier.COMMON,
+  [MoveId.SHADOW_BALL]: ModifierTier.ULTRA,
+  [MoveId.FUTURE_SIGHT]: ModifierTier.GREAT,
+  [MoveId.ROCK_SMASH]: ModifierTier.COMMON,
+  [MoveId.WHIRLPOOL]: ModifierTier.COMMON,
+  [MoveId.BEAT_UP]: ModifierTier.COMMON,
+  [MoveId.UPROAR]: ModifierTier.GREAT,
+  [MoveId.HEAT_WAVE]: ModifierTier.ULTRA,
+  [MoveId.HAIL]: ModifierTier.COMMON,
+  [MoveId.TORMENT]: ModifierTier.COMMON,
+  [MoveId.WILL_O_WISP]: ModifierTier.COMMON,
+  [MoveId.FACADE]: ModifierTier.GREAT,
+  [MoveId.FOCUS_PUNCH]: ModifierTier.COMMON,
+  [MoveId.NATURE_POWER]: ModifierTier.COMMON,
+  [MoveId.CHARGE]: ModifierTier.COMMON,
+  [MoveId.TAUNT]: ModifierTier.COMMON,
+  [MoveId.HELPING_HAND]: ModifierTier.COMMON,
+  [MoveId.TRICK]: ModifierTier.COMMON,
+  [MoveId.SUPERPOWER]: ModifierTier.ULTRA,
+  [MoveId.RECYCLE]: ModifierTier.COMMON,
+  [MoveId.REVENGE]: ModifierTier.GREAT,
+  [MoveId.BRICK_BREAK]: ModifierTier.GREAT,
+  [MoveId.KNOCK_OFF]: ModifierTier.GREAT,
+  [MoveId.ENDEAVOR]: ModifierTier.COMMON,
+  [MoveId.SKILL_SWAP]: ModifierTier.COMMON,
+  [MoveId.IMPRISON]: ModifierTier.COMMON,
+  [MoveId.SECRET_POWER]: ModifierTier.COMMON,
+  [MoveId.DIVE]: ModifierTier.GREAT,
+  [MoveId.FEATHER_DANCE]: ModifierTier.COMMON,
+  [MoveId.BLAZE_KICK]: ModifierTier.GREAT,
+  [MoveId.HYPER_VOICE]: ModifierTier.ULTRA,
+  [MoveId.BLAST_BURN]: ModifierTier.ULTRA,
+  [MoveId.HYDRO_CANNON]: ModifierTier.ULTRA,
+  [MoveId.WEATHER_BALL]: ModifierTier.COMMON,
+  [MoveId.FAKE_TEARS]: ModifierTier.COMMON,
+  [MoveId.AIR_CUTTER]: ModifierTier.GREAT,
+  [MoveId.OVERHEAT]: ModifierTier.ULTRA,
+  [MoveId.ROCK_TOMB]: ModifierTier.GREAT,
+  [MoveId.METAL_SOUND]: ModifierTier.COMMON,
+  [MoveId.COSMIC_POWER]: ModifierTier.COMMON,
+  [MoveId.SIGNAL_BEAM]: ModifierTier.GREAT,
+  [MoveId.SAND_TOMB]: ModifierTier.COMMON,
+  [MoveId.MUDDY_WATER]: ModifierTier.GREAT,
+  [MoveId.BULLET_SEED]: ModifierTier.GREAT,
+  [MoveId.AERIAL_ACE]: ModifierTier.GREAT,
+  [MoveId.ICICLE_SPEAR]: ModifierTier.GREAT,
+  [MoveId.IRON_DEFENSE]: ModifierTier.GREAT,
+  [MoveId.DRAGON_CLAW]: ModifierTier.ULTRA,
+  [MoveId.FRENZY_PLANT]: ModifierTier.ULTRA,
+  [MoveId.BULK_UP]: ModifierTier.COMMON,
+  [MoveId.BOUNCE]: ModifierTier.GREAT,
+  [MoveId.MUD_SHOT]: ModifierTier.GREAT,
+  [MoveId.POISON_TAIL]: ModifierTier.GREAT,
+  [MoveId.COVET]: ModifierTier.GREAT,
+  [MoveId.MAGICAL_LEAF]: ModifierTier.GREAT,
+  [MoveId.CALM_MIND]: ModifierTier.GREAT,
+  [MoveId.LEAF_BLADE]: ModifierTier.ULTRA,
+  [MoveId.DRAGON_DANCE]: ModifierTier.GREAT,
+  [MoveId.ROCK_BLAST]: ModifierTier.GREAT,
+  [MoveId.WATER_PULSE]: ModifierTier.GREAT,
+  [MoveId.ROOST]: ModifierTier.GREAT,
+  [MoveId.GRAVITY]: ModifierTier.COMMON,
+  [MoveId.GYRO_BALL]: ModifierTier.COMMON,
+  [MoveId.BRINE]: ModifierTier.GREAT,
+  [MoveId.PLUCK]: ModifierTier.GREAT,
+  [MoveId.TAILWIND]: ModifierTier.GREAT,
+  [MoveId.U_TURN]: ModifierTier.GREAT,
+  [MoveId.CLOSE_COMBAT]: ModifierTier.ULTRA,
+  [MoveId.PAYBACK]: ModifierTier.COMMON,
+  [MoveId.ASSURANCE]: ModifierTier.COMMON,
+  [MoveId.EMBARGO]: ModifierTier.COMMON,
+  [MoveId.FLING]: ModifierTier.COMMON,
+  [MoveId.GASTRO_ACID]: ModifierTier.GREAT,
+  [MoveId.POWER_SWAP]: ModifierTier.COMMON,
+  [MoveId.GUARD_SWAP]: ModifierTier.COMMON,
+  [MoveId.WORRY_SEED]: ModifierTier.GREAT,
+  [MoveId.TOXIC_SPIKES]: ModifierTier.GREAT,
+  [MoveId.FLARE_BLITZ]: ModifierTier.ULTRA,
+  [MoveId.AURA_SPHERE]: ModifierTier.GREAT,
+  [MoveId.ROCK_POLISH]: ModifierTier.COMMON,
+  [MoveId.POISON_JAB]: ModifierTier.GREAT,
+  [MoveId.DARK_PULSE]: ModifierTier.GREAT,
+  [MoveId.AQUA_TAIL]: ModifierTier.GREAT,
+  [MoveId.SEED_BOMB]: ModifierTier.GREAT,
+  [MoveId.AIR_SLASH]: ModifierTier.GREAT,
+  [MoveId.X_SCISSOR]: ModifierTier.GREAT,
+  [MoveId.BUG_BUZZ]: ModifierTier.GREAT,
+  [MoveId.DRAGON_PULSE]: ModifierTier.GREAT,
+  [MoveId.POWER_GEM]: ModifierTier.GREAT,
+  [MoveId.DRAIN_PUNCH]: ModifierTier.GREAT,
+  [MoveId.VACUUM_WAVE]: ModifierTier.COMMON,
+  [MoveId.FOCUS_BLAST]: ModifierTier.GREAT,
+  [MoveId.ENERGY_BALL]: ModifierTier.GREAT,
+  [MoveId.BRAVE_BIRD]: ModifierTier.ULTRA,
+  [MoveId.EARTH_POWER]: ModifierTier.ULTRA,
+  [MoveId.GIGA_IMPACT]: ModifierTier.GREAT,
+  [MoveId.NASTY_PLOT]: ModifierTier.COMMON,
+  [MoveId.AVALANCHE]: ModifierTier.GREAT,
+  [MoveId.SHADOW_CLAW]: ModifierTier.GREAT,
+  [MoveId.THUNDER_FANG]: ModifierTier.GREAT,
+  [MoveId.ICE_FANG]: ModifierTier.GREAT,
+  [MoveId.FIRE_FANG]: ModifierTier.GREAT,
+  [MoveId.PSYCHO_CUT]: ModifierTier.GREAT,
+  [MoveId.ZEN_HEADBUTT]: ModifierTier.GREAT,
+  [MoveId.FLASH_CANNON]: ModifierTier.GREAT,
+  [MoveId.ROCK_CLIMB]: ModifierTier.GREAT,
+  [MoveId.DEFOG]: ModifierTier.COMMON,
+  [MoveId.TRICK_ROOM]: ModifierTier.COMMON,
+  [MoveId.DRACO_METEOR]: ModifierTier.ULTRA,
+  [MoveId.LEAF_STORM]: ModifierTier.ULTRA,
+  [MoveId.POWER_WHIP]: ModifierTier.ULTRA,
+  [MoveId.CROSS_POISON]: ModifierTier.GREAT,
+  [MoveId.GUNK_SHOT]: ModifierTier.ULTRA,
+  [MoveId.IRON_HEAD]: ModifierTier.GREAT,
+  [MoveId.STONE_EDGE]: ModifierTier.ULTRA,
+  [MoveId.STEALTH_ROCK]: ModifierTier.COMMON,
+  [MoveId.GRASS_KNOT]: ModifierTier.ULTRA,
+  [MoveId.BUG_BITE]: ModifierTier.GREAT,
+  [MoveId.CHARGE_BEAM]: ModifierTier.GREAT,
+  [MoveId.HONE_CLAWS]: ModifierTier.COMMON,
+  [MoveId.WONDER_ROOM]: ModifierTier.COMMON,
+  [MoveId.PSYSHOCK]: ModifierTier.GREAT,
+  [MoveId.VENOSHOCK]: ModifierTier.GREAT,
+  [MoveId.MAGIC_ROOM]: ModifierTier.COMMON,
+  [MoveId.SMACK_DOWN]: ModifierTier.COMMON,
+  [MoveId.SLUDGE_WAVE]: ModifierTier.GREAT,
+  [MoveId.HEAVY_SLAM]: ModifierTier.GREAT,
+  [MoveId.ELECTRO_BALL]: ModifierTier.GREAT,
+  [MoveId.FLAME_CHARGE]: ModifierTier.GREAT,
+  [MoveId.LOW_SWEEP]: ModifierTier.GREAT,
+  [MoveId.ACID_SPRAY]: ModifierTier.COMMON,
+  [MoveId.FOUL_PLAY]: ModifierTier.ULTRA,
+  [MoveId.ROUND]: ModifierTier.COMMON,
+  [MoveId.ECHOED_VOICE]: ModifierTier.COMMON,
+  [MoveId.STORED_POWER]: ModifierTier.COMMON,
+  [MoveId.ALLY_SWITCH]: ModifierTier.COMMON,
+  [MoveId.SCALD]: ModifierTier.GREAT,
+  [MoveId.HEX]: ModifierTier.GREAT,
+  [MoveId.SKY_DROP]: ModifierTier.GREAT,
+  [MoveId.INCINERATE]: ModifierTier.GREAT,
+  [MoveId.QUASH]: ModifierTier.COMMON,
+  [MoveId.ACROBATICS]: ModifierTier.GREAT,
+  [MoveId.RETALIATE]: ModifierTier.GREAT,
+  [MoveId.WATER_PLEDGE]: ModifierTier.GREAT,
+  [MoveId.FIRE_PLEDGE]: ModifierTier.GREAT,
+  [MoveId.GRASS_PLEDGE]: ModifierTier.GREAT,
+  [MoveId.VOLT_SWITCH]: ModifierTier.GREAT,
+  [MoveId.STRUGGLE_BUG]: ModifierTier.COMMON,
+  [MoveId.BULLDOZE]: ModifierTier.GREAT,
+  [MoveId.FROST_BREATH]: ModifierTier.GREAT,
+  [MoveId.DRAGON_TAIL]: ModifierTier.GREAT,
+  [MoveId.WORK_UP]: ModifierTier.COMMON,
+  [MoveId.ELECTROWEB]: ModifierTier.GREAT,
+  [MoveId.WILD_CHARGE]: ModifierTier.GREAT,
+  [MoveId.DRILL_RUN]: ModifierTier.GREAT,
+  [MoveId.RAZOR_SHELL]: ModifierTier.GREAT,
+  [MoveId.HEAT_CRASH]: ModifierTier.GREAT,
+  [MoveId.TAIL_SLAP]: ModifierTier.GREAT,
+  [MoveId.HURRICANE]: ModifierTier.ULTRA,
+  [MoveId.SNARL]: ModifierTier.COMMON,
+  [MoveId.PHANTOM_FORCE]: ModifierTier.ULTRA,
+  [MoveId.PETAL_BLIZZARD]: ModifierTier.GREAT,
+  [MoveId.DISARMING_VOICE]: ModifierTier.GREAT,
+  [MoveId.DRAINING_KISS]: ModifierTier.GREAT,
+  [MoveId.GRASSY_TERRAIN]: ModifierTier.COMMON,
+  [MoveId.MISTY_TERRAIN]: ModifierTier.COMMON,
+  [MoveId.PLAY_ROUGH]: ModifierTier.GREAT,
+  [MoveId.CONFIDE]: ModifierTier.COMMON,
+  [MoveId.MYSTICAL_FIRE]: ModifierTier.GREAT,
+  [MoveId.EERIE_IMPULSE]: ModifierTier.COMMON,
+  [MoveId.VENOM_DRENCH]: ModifierTier.COMMON,
+  [MoveId.ELECTRIC_TERRAIN]: ModifierTier.COMMON,
+  [MoveId.DAZZLING_GLEAM]: ModifierTier.ULTRA,
+  [MoveId.INFESTATION]: ModifierTier.COMMON,
+  [MoveId.POWER_UP_PUNCH]: ModifierTier.GREAT,
+  [MoveId.DARKEST_LARIAT]: ModifierTier.GREAT,
+  [MoveId.HIGH_HORSEPOWER]: ModifierTier.ULTRA,
+  [MoveId.SOLAR_BLADE]: ModifierTier.GREAT,
+  [MoveId.THROAT_CHOP]: ModifierTier.GREAT,
+  [MoveId.POLLEN_PUFF]: ModifierTier.GREAT,
+  [MoveId.PSYCHIC_TERRAIN]: ModifierTier.COMMON,
+  [MoveId.LUNGE]: ModifierTier.GREAT,
+  [MoveId.SPEED_SWAP]: ModifierTier.COMMON,
+  [MoveId.SMART_STRIKE]: ModifierTier.GREAT,
+  [MoveId.BRUTAL_SWING]: ModifierTier.GREAT,
+  [MoveId.AURORA_VEIL]: ModifierTier.COMMON,
+  [MoveId.PSYCHIC_FANGS]: ModifierTier.GREAT,
+  [MoveId.STOMPING_TANTRUM]: ModifierTier.GREAT,
+  [MoveId.LIQUIDATION]: ModifierTier.ULTRA,
+  [MoveId.BODY_PRESS]: ModifierTier.ULTRA,
+  [MoveId.BREAKING_SWIPE]: ModifierTier.GREAT,
+  [MoveId.STEEL_BEAM]: ModifierTier.ULTRA,
+  [MoveId.EXPANDING_FORCE]: ModifierTier.GREAT,
+  [MoveId.STEEL_ROLLER]: ModifierTier.COMMON,
+  [MoveId.SCALE_SHOT]: ModifierTier.ULTRA,
+  [MoveId.METEOR_BEAM]: ModifierTier.GREAT,
+  [MoveId.MISTY_EXPLOSION]: ModifierTier.COMMON,
+  [MoveId.GRASSY_GLIDE]: ModifierTier.COMMON,
+  [MoveId.RISING_VOLTAGE]: ModifierTier.COMMON,
+  [MoveId.TERRAIN_PULSE]: ModifierTier.COMMON,
+  [MoveId.SKITTER_SMACK]: ModifierTier.GREAT,
+  [MoveId.BURNING_JEALOUSY]: ModifierTier.GREAT,
+  [MoveId.LASH_OUT]: ModifierTier.GREAT,
+  [MoveId.POLTERGEIST]: ModifierTier.ULTRA,
+  [MoveId.CORROSIVE_GAS]: ModifierTier.COMMON,
+  [MoveId.COACHING]: ModifierTier.COMMON,
+  [MoveId.FLIP_TURN]: ModifierTier.COMMON,
+  [MoveId.TRIPLE_AXEL]: ModifierTier.COMMON,
+  [MoveId.DUAL_WINGBEAT]: ModifierTier.COMMON,
+  [MoveId.SCORCHING_SANDS]: ModifierTier.GREAT,
+  [MoveId.TERA_BLAST]: ModifierTier.GREAT,
+  [MoveId.ICE_SPINNER]: ModifierTier.GREAT,
+  [MoveId.SNOWSCAPE]: ModifierTier.COMMON,
+  [MoveId.POUNCE]: ModifierTier.COMMON,
+  [MoveId.TRAILBLAZE]: ModifierTier.COMMON,
+  [MoveId.CHILLING_WATER]: ModifierTier.COMMON,
+  [MoveId.HARD_PRESS]: ModifierTier.GREAT,
+  [MoveId.DRAGON_CHEER]: ModifierTier.COMMON,
+  [MoveId.ALLURING_VOICE]: ModifierTier.GREAT,
+  [MoveId.TEMPER_FLARE]: ModifierTier.GREAT,
+  [MoveId.SUPERCELL_SLAM]: ModifierTier.GREAT,
+  [MoveId.PSYCHIC_NOISE]: ModifierTier.GREAT,
+  [MoveId.UPPER_HAND]: ModifierTier.COMMON,
 };

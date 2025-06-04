@@ -26,7 +26,7 @@ import { PartyMemberStrength } from "#enums/party-member-strength";
 import { Species } from "#enums/species";
 import { PokeballType } from "#enums/pokeball";
 import { PokemonType } from "#enums/pokemon-type";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { AbilityId } from "#enums/ability-id";
 import { TeraAIMode } from "#enums/tera-ai-mode";
 import { TrainerPoolTier } from "#enums/trainer-pool-tier";
@@ -1127,7 +1127,7 @@ export const trainerConfigs: TrainerConfigs = {
         s
           .getLevelMoves()
           .some(plm =>
-            [Moves.SOFT_BOILED, Moves.SPORE, Moves.MILK_DRINK, Moves.OVERHEAT, Moves.TEATIME].includes(plm[1]),
+            [MoveId.SOFT_BOILED, MoveId.SPORE, MoveId.MILK_DRINK, MoveId.OVERHEAT, MoveId.TEATIME].includes(plm[1]),
           ),
     ), // Mons with baking related abilities or who learn Overheat, Teatime, Milk Drink, Spore, or Soft-Boiled by level
   [TrainerType.BEAUTY]: new TrainerConfig(++t)
@@ -1333,11 +1333,11 @@ export const trainerConfigs: TrainerConfigs = {
     .setHasDouble("Medical Team")
     .setMoneyMultiplier(3)
     .setEncounterBgm(TrainerType.CLERK)
-    .setSpeciesFilter(s => !!s.getLevelMoves().find(plm => plm[1] === Moves.HEAL_PULSE)),
+    .setSpeciesFilter(s => !!s.getLevelMoves().find(plm => plm[1] === MoveId.HEAL_PULSE)),
   [TrainerType.FIREBREATHER]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.4)
     .setEncounterBgm(TrainerType.ROUGHNECK)
-    .setSpeciesFilter(s => !!s.getLevelMoves().find(plm => plm[1] === Moves.SMOG) || s.isOfType(PokemonType.FIRE)),
+    .setSpeciesFilter(s => !!s.getLevelMoves().find(plm => plm[1] === MoveId.SMOG) || s.isOfType(PokemonType.FIRE)),
   [TrainerType.FISHERMAN]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.25)
     .setEncounterBgm(TrainerType.BACKPACKER)
@@ -1394,7 +1394,7 @@ export const trainerConfigs: TrainerConfigs = {
     .setSpeciesFilter(s => s.isOfType(PokemonType.ELECTRIC)),
   [TrainerType.HARLEQUIN]: new TrainerConfig(++t)
     .setEncounterBgm(TrainerType.PSYCHIC)
-    .setSpeciesFilter(s => tmSpecies[Moves.TRICK_ROOM].indexOf(s.speciesId) > -1),
+    .setSpeciesFilter(s => tmSpecies[MoveId.TRICK_ROOM].indexOf(s.speciesId) > -1),
   [TrainerType.HIKER]: new TrainerConfig(++t)
     .setEncounterBgm(TrainerType.BACKPACKER)
     .setPartyTemplates(
@@ -1466,7 +1466,7 @@ export const trainerConfigs: TrainerConfigs = {
       trainerPartyTemplates.TWO_WEAK_ONE_AVG,
       trainerPartyTemplates.TWO_AVG,
     )
-    .setSpeciesFilter(s => !!s.getLevelMoves().find(plm => plm[1] === Moves.SING)),
+    .setSpeciesFilter(s => !!s.getLevelMoves().find(plm => plm[1] === MoveId.SING)),
   [TrainerType.HEX_MANIAC]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.5)
     .setEncounterBgm(TrainerType.PSYCHIC)
@@ -1527,7 +1527,7 @@ export const trainerConfigs: TrainerConfigs = {
               AbilityId.DRY_SKIN,
               AbilityId.WIND_POWER,
             ].includes(a),
-        ) || s.getLevelMoves().some(plm => plm[1] === Moves.RAIN_DANCE),
+        ) || s.getLevelMoves().some(plm => plm[1] === MoveId.RAIN_DANCE),
     ), // Mons with rain abilities or who learn Rain Dance by level
   [TrainerType.PILOT]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.75)
@@ -1538,7 +1538,7 @@ export const trainerConfigs: TrainerConfigs = {
       trainerPartyTemplates.TWO_AVG,
       trainerPartyTemplates.THREE_AVG,
     )
-    .setSpeciesFilter(s => tmSpecies[Moves.FLY].indexOf(s.speciesId) > -1),
+    .setSpeciesFilter(s => tmSpecies[MoveId.FLY].indexOf(s.speciesId) > -1),
   [TrainerType.POKEFAN]: new TrainerConfig(++t)
     .setMoneyMultiplier(1.4)
     .setName("PokéFan")
@@ -1554,7 +1554,7 @@ export const trainerConfigs: TrainerConfigs = {
       trainerPartyTemplates.FIVE_WEAK,
       trainerPartyTemplates.SIX_WEAKER_SAME,
     )
-    .setSpeciesFilter(s => tmSpecies[Moves.HELPING_HAND].indexOf(s.speciesId) > -1),
+    .setSpeciesFilter(s => tmSpecies[MoveId.HELPING_HAND].indexOf(s.speciesId) > -1),
   [TrainerType.PRESCHOOLER]: new TrainerConfig(++t)
     .setMoneyMultiplier(0.2)
     .setEncounterBgm(TrainerType.YOUNGSTER)
@@ -2490,10 +2490,10 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([Species.REVAVROOM], TrainerSlot.TRAINER, true, p => {
         p.formIndex = 1; // Segin Starmobile
         p.moveset = [
-          new PokemonMove(Moves.WICKED_TORQUE),
-          new PokemonMove(Moves.SPIN_OUT),
-          new PokemonMove(Moves.SHIFT_GEAR),
-          new PokemonMove(Moves.HIGH_HORSEPOWER),
+          new PokemonMove(MoveId.WICKED_TORQUE),
+          new PokemonMove(MoveId.SPIN_OUT),
+          new PokemonMove(MoveId.SHIFT_GEAR),
+          new PokemonMove(MoveId.HIGH_HORSEPOWER),
         ];
       }),
     ),
@@ -2510,10 +2510,10 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([Species.REVAVROOM], TrainerSlot.TRAINER, true, p => {
         p.formIndex = 2; // Schedar Starmobile
         p.moveset = [
-          new PokemonMove(Moves.BLAZING_TORQUE),
-          new PokemonMove(Moves.SPIN_OUT),
-          new PokemonMove(Moves.SHIFT_GEAR),
-          new PokemonMove(Moves.HIGH_HORSEPOWER),
+          new PokemonMove(MoveId.BLAZING_TORQUE),
+          new PokemonMove(MoveId.SPIN_OUT),
+          new PokemonMove(MoveId.SHIFT_GEAR),
+          new PokemonMove(MoveId.HIGH_HORSEPOWER),
         ];
       }),
     ),
@@ -2530,10 +2530,10 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([Species.REVAVROOM], TrainerSlot.TRAINER, true, p => {
         p.formIndex = 3; // Navi Starmobile
         p.moveset = [
-          new PokemonMove(Moves.NOXIOUS_TORQUE),
-          new PokemonMove(Moves.SPIN_OUT),
-          new PokemonMove(Moves.SHIFT_GEAR),
-          new PokemonMove(Moves.HIGH_HORSEPOWER),
+          new PokemonMove(MoveId.NOXIOUS_TORQUE),
+          new PokemonMove(MoveId.SPIN_OUT),
+          new PokemonMove(MoveId.SHIFT_GEAR),
+          new PokemonMove(MoveId.HIGH_HORSEPOWER),
         ];
       }),
     ),
@@ -2550,10 +2550,10 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([Species.REVAVROOM], TrainerSlot.TRAINER, true, p => {
         p.formIndex = 4; // Ruchbah Starmobile
         p.moveset = [
-          new PokemonMove(Moves.MAGICAL_TORQUE),
-          new PokemonMove(Moves.SPIN_OUT),
-          new PokemonMove(Moves.SHIFT_GEAR),
-          new PokemonMove(Moves.HIGH_HORSEPOWER),
+          new PokemonMove(MoveId.MAGICAL_TORQUE),
+          new PokemonMove(MoveId.SPIN_OUT),
+          new PokemonMove(MoveId.SHIFT_GEAR),
+          new PokemonMove(MoveId.HIGH_HORSEPOWER),
         ];
       }),
     ),
@@ -2570,10 +2570,10 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([Species.REVAVROOM], TrainerSlot.TRAINER, true, p => {
         p.formIndex = 5; // Caph Starmobile
         p.moveset = [
-          new PokemonMove(Moves.COMBAT_TORQUE),
-          new PokemonMove(Moves.SPIN_OUT),
-          new PokemonMove(Moves.SHIFT_GEAR),
-          new PokemonMove(Moves.HIGH_HORSEPOWER),
+          new PokemonMove(MoveId.COMBAT_TORQUE),
+          new PokemonMove(MoveId.SPIN_OUT),
+          new PokemonMove(MoveId.SHIFT_GEAR),
+          new PokemonMove(MoveId.HIGH_HORSEPOWER),
         ];
       }),
     ),
@@ -2868,9 +2868,9 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([Species.SLOWBRO, Species.GALAR_SLOWBRO], TrainerSlot.TRAINER, true, p => {
         // Tera Ice Slowbro/G-Slowbro
         p.generateAndPopulateMoveset();
-        if (!p.moveset.some(move => !isNullOrUndefined(move) && move.moveId === Moves.ICE_BEAM)) {
+        if (!p.moveset.some(move => !isNullOrUndefined(move) && move.moveId === MoveId.ICE_BEAM)) {
           // Check if Ice Beam is in the moveset, if not, replace the third move with Ice Beam.
-          p.moveset[2] = new PokemonMove(Moves.ICE_BEAM);
+          p.moveset[2] = new PokemonMove(MoveId.ICE_BEAM);
         }
       }),
     )
@@ -2893,9 +2893,9 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([Species.STEELIX], TrainerSlot.TRAINER, true, p => {
         // Tera Fighting Steelix
         p.generateAndPopulateMoveset();
-        if (!p.moveset.some(move => !isNullOrUndefined(move) && move.moveId === Moves.BODY_PRESS)) {
+        if (!p.moveset.some(move => !isNullOrUndefined(move) && move.moveId === MoveId.BODY_PRESS)) {
           // Check if Body Press is in the moveset, if not, replace the third move with Body Press.
-          p.moveset[2] = new PokemonMove(Moves.BODY_PRESS);
+          p.moveset[2] = new PokemonMove(MoveId.BODY_PRESS);
         }
       }),
     )
@@ -2918,9 +2918,9 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([Species.ARBOK, Species.WEEZING], TrainerSlot.TRAINER, true, p => {
         // Tera Ghost Arbok/Weezing
         p.generateAndPopulateMoveset();
-        if (!p.moveset.some(move => !isNullOrUndefined(move) && move.moveId === Moves.TERA_BLAST)) {
+        if (!p.moveset.some(move => !isNullOrUndefined(move) && move.moveId === MoveId.TERA_BLAST)) {
           // Check if Tera Blast is in the moveset, if not, replace the third move with Tera Blast.
-          p.moveset[2] = new PokemonMove(Moves.TERA_BLAST);
+          p.moveset[2] = new PokemonMove(MoveId.TERA_BLAST);
         }
       }),
     )
@@ -2944,9 +2944,9 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([Species.GYARADOS, Species.AERODACTYL], TrainerSlot.TRAINER, true, p => {
         // Tera Dragon Gyarados/Aerodactyl
         p.generateAndPopulateMoveset();
-        if (!p.moveset.some(move => !isNullOrUndefined(move) && move.moveId === Moves.TERA_BLAST)) {
+        if (!p.moveset.some(move => !isNullOrUndefined(move) && move.moveId === MoveId.TERA_BLAST)) {
           // Check if Tera Blast is in the moveset, if not, replace the third move with Tera Blast.
-          p.moveset[2] = new PokemonMove(Moves.TERA_BLAST);
+          p.moveset[2] = new PokemonMove(MoveId.TERA_BLAST);
         }
       }),
     )
@@ -3005,9 +3005,9 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([Species.GENGAR], TrainerSlot.TRAINER, true, p => {
         // Tera Dark Gengar
         p.generateAndPopulateMoveset();
-        if (!p.moveset.some(move => !isNullOrUndefined(move) && move.moveId === Moves.DARK_PULSE)) {
+        if (!p.moveset.some(move => !isNullOrUndefined(move) && move.moveId === MoveId.DARK_PULSE)) {
           // Check if Dark Pulse is in the moveset, if not, replace the third move with Dark Pulse.
-          p.moveset[2] = new PokemonMove(Moves.DARK_PULSE);
+          p.moveset[2] = new PokemonMove(MoveId.DARK_PULSE);
         }
       }),
     )
@@ -3089,9 +3089,9 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([Species.DHELMISE], TrainerSlot.TRAINER, true, p => {
         // Tera Dragon Dhelmise
         p.generateAndPopulateMoveset();
-        if (!p.moveset.some(move => !isNullOrUndefined(move) && move.moveId === Moves.TERA_BLAST)) {
+        if (!p.moveset.some(move => !isNullOrUndefined(move) && move.moveId === MoveId.TERA_BLAST)) {
           // Check if Tera Blast is in the moveset, if not, replace the third move with Tera Blast.
-          p.moveset[2] = new PokemonMove(Moves.TERA_BLAST);
+          p.moveset[2] = new PokemonMove(MoveId.TERA_BLAST);
         }
       }),
     )
@@ -3119,9 +3119,9 @@ export const trainerConfigs: TrainerConfigs = {
         p.setBoss(true, 2);
         p.abilityIndex = 1; // Sniper
         p.generateAndPopulateMoveset();
-        if (!p.moveset.some(move => !isNullOrUndefined(move) && move.moveId === Moves.X_SCISSOR)) {
+        if (!p.moveset.some(move => !isNullOrUndefined(move) && move.moveId === MoveId.X_SCISSOR)) {
           // Check if X-Scissor is in the moveset, if not, replace the third move with X-Scissor.
-          p.moveset[2] = new PokemonMove(Moves.X_SCISSOR);
+          p.moveset[2] = new PokemonMove(MoveId.X_SCISSOR);
         }
       }),
     ),
@@ -3158,9 +3158,9 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([Species.STEELIX, Species.LOPUNNY], TrainerSlot.TRAINER, true, p => {
         // Tera Fire Steelix/Lopunny
         p.generateAndPopulateMoveset();
-        if (!p.moveset.some(move => !isNullOrUndefined(move) && move.moveId === Moves.TERA_BLAST)) {
+        if (!p.moveset.some(move => !isNullOrUndefined(move) && move.moveId === MoveId.TERA_BLAST)) {
           // Check if Tera Blast is in the moveset, if not, replace the third move with Tera Blast.
-          p.moveset[2] = new PokemonMove(Moves.TERA_BLAST);
+          p.moveset[2] = new PokemonMove(MoveId.TERA_BLAST);
         }
       }),
     )
@@ -3301,9 +3301,9 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([Species.CERULEDGE], TrainerSlot.TRAINER, true, p => {
         // Tera Steel Ceruledge
         p.generateAndPopulateMoveset();
-        if (!p.moveset.some(move => !isNullOrUndefined(move) && move.moveId === Moves.IRON_HEAD)) {
+        if (!p.moveset.some(move => !isNullOrUndefined(move) && move.moveId === MoveId.IRON_HEAD)) {
           // Check if Iron Head is in the moveset, if not, replace the third move with Iron Head.
-          p.moveset[2] = new PokemonMove(Moves.IRON_HEAD);
+          p.moveset[2] = new PokemonMove(MoveId.IRON_HEAD);
         }
       }),
     )
@@ -3339,9 +3339,9 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([Species.INCINEROAR], TrainerSlot.TRAINER, true, p => {
         // Tera Fighting Incineroar
         p.generateAndPopulateMoveset();
-        if (!p.moveset.some(move => !isNullOrUndefined(move) && move.moveId === Moves.CROSS_CHOP)) {
+        if (!p.moveset.some(move => !isNullOrUndefined(move) && move.moveId === MoveId.CROSS_CHOP)) {
           // Check if Cross Chop is in the moveset, if not, replace the third move with Cross Chop.
-          p.moveset[2] = new PokemonMove(Moves.CROSS_CHOP);
+          p.moveset[2] = new PokemonMove(MoveId.CROSS_CHOP);
         }
       }),
     )
@@ -3412,9 +3412,9 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([Species.DECIDUEYE], TrainerSlot.TRAINER, true, p => {
         // Tera Flying Decidueye
         p.generateAndPopulateMoveset();
-        if (!p.moveset.some(move => !isNullOrUndefined(move) && move.moveId === Moves.BRAVE_BIRD)) {
+        if (!p.moveset.some(move => !isNullOrUndefined(move) && move.moveId === MoveId.BRAVE_BIRD)) {
           // Check if Brave Bird is in the moveset, if not, replace the third move with Brave Bird.
-          p.moveset[2] = new PokemonMove(Moves.BRAVE_BIRD);
+          p.moveset[2] = new PokemonMove(MoveId.BRAVE_BIRD);
         }
       }),
     )
@@ -3437,9 +3437,9 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([Species.TOXICROAK], TrainerSlot.TRAINER, true, p => {
         // Tera Dark Toxicroak
         p.generateAndPopulateMoveset();
-        if (!p.moveset.some(move => !isNullOrUndefined(move) && move.moveId === Moves.SUCKER_PUNCH)) {
+        if (!p.moveset.some(move => !isNullOrUndefined(move) && move.moveId === MoveId.SUCKER_PUNCH)) {
           // Check if Sucker Punch is in the moveset, if not, replace the third move with Sucker Punch.
-          p.moveset[2] = new PokemonMove(Moves.SUCKER_PUNCH);
+          p.moveset[2] = new PokemonMove(MoveId.SUCKER_PUNCH);
         }
       }),
     )
@@ -3462,9 +3462,9 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([Species.EISCUE], TrainerSlot.TRAINER, true, p => {
         // Tera Water Eiscue
         p.generateAndPopulateMoveset();
-        if (!p.moveset.some(move => !isNullOrUndefined(move) && move.moveId === Moves.LIQUIDATION)) {
+        if (!p.moveset.some(move => !isNullOrUndefined(move) && move.moveId === MoveId.LIQUIDATION)) {
           // Check if Liquidation is in the moveset, if not, replace the third move with Liquidation.
-          p.moveset[2] = new PokemonMove(Moves.LIQUIDATION);
+          p.moveset[2] = new PokemonMove(MoveId.LIQUIDATION);
         }
       }),
     )
@@ -3524,9 +3524,9 @@ export const trainerConfigs: TrainerConfigs = {
         // Tera Dragon Torkoal
         p.abilityIndex = 1; // Drought
         p.generateAndPopulateMoveset();
-        if (!p.moveset.some(move => !isNullOrUndefined(move) && move.moveId === Moves.TERA_BLAST)) {
+        if (!p.moveset.some(move => !isNullOrUndefined(move) && move.moveId === MoveId.TERA_BLAST)) {
           // Check if Tera Blast is in the moveset, if not, replace the third move with Tera Blast.
-          p.moveset[2] = new PokemonMove(Moves.TERA_BLAST);
+          p.moveset[2] = new PokemonMove(MoveId.TERA_BLAST);
         }
       }),
     )
@@ -3621,9 +3621,9 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([Species.EXEGGUTOR], TrainerSlot.TRAINER, true, p => {
         // Tera Fire Exeggutor
         p.generateAndPopulateMoveset();
-        if (!p.moveset.some(move => !isNullOrUndefined(move) && move.moveId === Moves.TERA_BLAST)) {
+        if (!p.moveset.some(move => !isNullOrUndefined(move) && move.moveId === MoveId.TERA_BLAST)) {
           // Check if Tera Blast is in the moveset, if not, replace the third move with Tera Blast.
-          p.moveset[2] = new PokemonMove(Moves.TERA_BLAST);
+          p.moveset[2] = new PokemonMove(MoveId.TERA_BLAST);
         }
       }),
     )
@@ -3631,9 +3631,9 @@ export const trainerConfigs: TrainerConfigs = {
       3,
       getRandomPartyMemberFunc([Species.TALONFLAME], TrainerSlot.TRAINER, true, p => {
         p.generateAndPopulateMoveset();
-        if (!p.moveset.some(move => !isNullOrUndefined(move) && move.moveId === Moves.SUNNY_DAY)) {
+        if (!p.moveset.some(move => !isNullOrUndefined(move) && move.moveId === MoveId.SUNNY_DAY)) {
           // Check if Sunny Day is in the moveset, if not, replace the third move with Sunny Day.
-          p.moveset[2] = new PokemonMove(Moves.SUNNY_DAY);
+          p.moveset[2] = new PokemonMove(MoveId.SUNNY_DAY);
         }
       }),
     )
@@ -3654,9 +3654,9 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([Species.REUNICLUS], TrainerSlot.TRAINER, true, p => {
         // Tera Steel Reuniclus
         p.generateAndPopulateMoveset();
-        if (!p.moveset.some(move => !isNullOrUndefined(move) && move.moveId === Moves.FLASH_CANNON)) {
+        if (!p.moveset.some(move => !isNullOrUndefined(move) && move.moveId === MoveId.FLASH_CANNON)) {
           // Check if Flash Cannon is in the moveset, if not, replace the third move with Flash Cannon.
-          p.moveset[2] = new PokemonMove(Moves.FLASH_CANNON);
+          p.moveset[2] = new PokemonMove(MoveId.FLASH_CANNON);
         }
       }),
     )
@@ -3682,9 +3682,9 @@ export const trainerConfigs: TrainerConfigs = {
         // Tera Fairy Excadrill
         p.setBoss(true, 2);
         p.generateAndPopulateMoveset();
-        if (!p.moveset.some(move => !isNullOrUndefined(move) && move.moveId === Moves.TERA_BLAST)) {
+        if (!p.moveset.some(move => !isNullOrUndefined(move) && move.moveId === MoveId.TERA_BLAST)) {
           // Check if Tera Blast is in the moveset, if not, replace the third move with Tera Blast.
-          p.moveset[2] = new PokemonMove(Moves.TERA_BLAST);
+          p.moveset[2] = new PokemonMove(MoveId.TERA_BLAST);
         }
       }),
     ),
@@ -3697,9 +3697,9 @@ export const trainerConfigs: TrainerConfigs = {
       getRandomPartyMemberFunc([Species.SCEPTILE], TrainerSlot.TRAINER, true, p => {
         // Tera Dragon Sceptile
         p.generateAndPopulateMoveset();
-        if (!p.moveset.some(move => !isNullOrUndefined(move) && move.moveId === Moves.DUAL_CHOP)) {
+        if (!p.moveset.some(move => !isNullOrUndefined(move) && move.moveId === MoveId.DUAL_CHOP)) {
           // Check if Dual Chop is in the moveset, if not, replace the third move with Dual Chop.
-          p.moveset[2] = new PokemonMove(Moves.DUAL_CHOP);
+          p.moveset[2] = new PokemonMove(MoveId.DUAL_CHOP);
         }
       }),
     )
@@ -4287,9 +4287,9 @@ export const trainerConfigs: TrainerConfigs = {
       5,
       getRandomPartyMemberFunc([Species.KINGAMBIT], TrainerSlot.TRAINER, true, p => {
         p.generateAndPopulateMoveset();
-        if (!p.moveset.some(move => !isNullOrUndefined(move) && move.moveId === Moves.TERA_BLAST)) {
+        if (!p.moveset.some(move => !isNullOrUndefined(move) && move.moveId === MoveId.TERA_BLAST)) {
           // Check if Tera Blast is in the moveset, if not, replace the third move with Tera Blast.
-          p.moveset[2] = new PokemonMove(Moves.TERA_BLAST);
+          p.moveset[2] = new PokemonMove(MoveId.TERA_BLAST);
         }
         p.abilityIndex = 1; // Supreme Overlord
         p.teraType = PokemonType.FLYING;
@@ -4367,9 +4367,9 @@ export const trainerConfigs: TrainerConfigs = {
         p.formIndex = randSeedInt(4); // Random Ogerpon Tera Mask
         p.generateAndPopulateMoveset();
         p.pokeball = PokeballType.ULTRA_BALL;
-        if (!p.moveset.some(move => !isNullOrUndefined(move) && move.moveId === Moves.IVY_CUDGEL)) {
+        if (!p.moveset.some(move => !isNullOrUndefined(move) && move.moveId === MoveId.IVY_CUDGEL)) {
           // Check if Ivy Cudgel is in the moveset, if not, replace the first move with Ivy Cudgel.
-          p.moveset[0] = new PokemonMove(Moves.IVY_CUDGEL);
+          p.moveset[0] = new PokemonMove(MoveId.IVY_CUDGEL);
         }
       }),
     )
@@ -5419,9 +5419,9 @@ export const trainerConfigs: TrainerConfigs = {
         p.formIndex = randSeedInt(18); // Random Silvally Form
         p.generateAndPopulateMoveset();
         p.pokeball = PokeballType.ROGUE_BALL;
-        if (!p.moveset.some(move => !isNullOrUndefined(move) && move.moveId === Moves.MULTI_ATTACK)) {
+        if (!p.moveset.some(move => !isNullOrUndefined(move) && move.moveId === MoveId.MULTI_ATTACK)) {
           // Check if Multi Attack is in the moveset, if not, replace the first move with Multi Attack.
-          p.moveset[0] = new PokemonMove(Moves.MULTI_ATTACK);
+          p.moveset[0] = new PokemonMove(MoveId.MULTI_ATTACK);
         }
       }),
     )
@@ -5537,9 +5537,9 @@ export const trainerConfigs: TrainerConfigs = {
         p.generateAndPopulateMoveset();
         p.pokeball = PokeballType.ULTRA_BALL;
         p.formIndex = randSeedInt(4, 1); // Shock, Burn, Chill, or Douse Drive
-        if (!p.moveset.some(move => !isNullOrUndefined(move) && move.moveId === Moves.TECHNO_BLAST)) {
+        if (!p.moveset.some(move => !isNullOrUndefined(move) && move.moveId === MoveId.TECHNO_BLAST)) {
           // Check if Techno Blast is in the moveset, if not, replace the third move with Techno Blast.
-          p.moveset[2] = new PokemonMove(Moves.TECHNO_BLAST);
+          p.moveset[2] = new PokemonMove(MoveId.TECHNO_BLAST);
         }
       }),
     )

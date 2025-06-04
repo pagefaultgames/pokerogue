@@ -8,7 +8,7 @@ import {
 } from "#app/data/status-effect";
 import { MoveResult } from "#app/field/pokemon";
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import { StatusEffect } from "#enums/status-effect";
 import GameManager from "#test/testUtils/gameManager";
@@ -320,9 +320,9 @@ describe("Status Effects", () => {
 
       game.override
         .enemySpecies(Species.MAGIKARP)
-        .enemyMoveset(Moves.SPLASH)
+        .enemyMoveset(MoveId.SPLASH)
         .enemyAbility(AbilityId.BALL_FETCH)
-        .moveset([Moves.QUICK_ATTACK])
+        .moveset([MoveId.QUICK_ATTACK])
         .ability(AbilityId.BALL_FETCH)
         .statusEffect(StatusEffect.PARALYSIS);
     });
@@ -330,7 +330,7 @@ describe("Status Effects", () => {
     it("causes the pokemon's move to fail when activated", async () => {
       await game.classicMode.startBattle([Species.FEEBAS]);
 
-      game.move.select(Moves.QUICK_ATTACK);
+      game.move.select(MoveId.QUICK_ATTACK);
       await game.move.forceStatusActivation(true);
       await game.toNextTurn();
 
@@ -356,13 +356,13 @@ describe("Status Effects", () => {
     beforeEach(() => {
       game = new GameManager(phaserGame);
       game.override
-        .moveset([Moves.SPLASH])
+        .moveset([MoveId.SPLASH])
         .ability(AbilityId.BALL_FETCH)
         .battleStyle("single")
         .disableCrits()
         .enemySpecies(Species.MAGIKARP)
         .enemyAbility(AbilityId.BALL_FETCH)
-        .enemyMoveset(Moves.SPLASH);
+        .enemyMoveset(MoveId.SPLASH);
     });
 
     it("should last the appropriate number of turns", async () => {
@@ -371,23 +371,23 @@ describe("Status Effects", () => {
       const player = game.scene.getPlayerPokemon()!;
       player.status = new Status(StatusEffect.SLEEP, 0, 4);
 
-      game.move.select(Moves.SPLASH);
+      game.move.select(MoveId.SPLASH);
       await game.toNextTurn();
 
       expect(player.status.effect).toBe(StatusEffect.SLEEP);
 
-      game.move.select(Moves.SPLASH);
+      game.move.select(MoveId.SPLASH);
       await game.toNextTurn();
 
       expect(player.status.effect).toBe(StatusEffect.SLEEP);
 
-      game.move.select(Moves.SPLASH);
+      game.move.select(MoveId.SPLASH);
       await game.toNextTurn();
 
       expect(player.status.effect).toBe(StatusEffect.SLEEP);
       expect(player.getLastXMoves(1)[0].result).toBe(MoveResult.FAIL);
 
-      game.move.select(Moves.SPLASH);
+      game.move.select(MoveId.SPLASH);
       await game.toNextTurn();
 
       expect(player.status?.effect).toBeUndefined();
@@ -412,13 +412,13 @@ describe("Status Effects", () => {
     beforeEach(() => {
       game = new GameManager(phaserGame);
       game.override
-        .moveset([Moves.SPLASH])
+        .moveset([MoveId.SPLASH])
         .ability(AbilityId.BALL_FETCH)
         .battleStyle("single")
         .disableCrits()
         .enemySpecies(Species.MAGIKARP)
         .enemyAbility(AbilityId.BALL_FETCH)
-        .enemyMoveset(Moves.NUZZLE)
+        .enemyMoveset(MoveId.NUZZLE)
         .enemyLevel(2000);
     });
 

@@ -5,7 +5,7 @@ import { MoveResult } from "#app/field/pokemon";
 import { CommandPhase } from "#app/phases/command-phase";
 import { TurnInitPhase } from "#app/phases/turn-init-phase";
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -30,11 +30,11 @@ describe("Moves - Stockpile", () => {
       game.override.battleStyle("single");
 
       game.override.enemySpecies(Species.RATTATA);
-      game.override.enemyMoveset(Moves.SPLASH);
+      game.override.enemyMoveset(MoveId.SPLASH);
       game.override.enemyAbility(AbilityId.NONE);
 
       game.override.startingLevel(2000);
-      game.override.moveset([Moves.STOCKPILE, Moves.SPLASH]);
+      game.override.moveset([MoveId.STOCKPILE, MoveId.SPLASH]);
       game.override.ability(AbilityId.NONE);
     });
 
@@ -56,7 +56,7 @@ describe("Moves - Stockpile", () => {
           await game.phaseInterceptor.to(CommandPhase);
         }
 
-        game.move.select(Moves.STOCKPILE);
+        game.move.select(MoveId.STOCKPILE);
         await game.phaseInterceptor.to(TurnInitPhase);
 
         const stockpilingTag = user.getTag(StockpilingTag)!;
@@ -75,7 +75,7 @@ describe("Moves - Stockpile", () => {
           expect(stockpilingTag.stockpiledCount).toBe(3);
           expect(user.getMoveHistory().at(-1)).toMatchObject<TurnMove>({
             result: MoveResult.FAIL,
-            move: Moves.STOCKPILE,
+            move: MoveId.STOCKPILE,
             targets: [user.getBattlerIndex()],
           });
         }
@@ -94,7 +94,7 @@ describe("Moves - Stockpile", () => {
       expect(user.getStatStage(Stat.DEF)).toBe(6);
       expect(user.getStatStage(Stat.SPDEF)).toBe(6);
 
-      game.move.select(Moves.STOCKPILE);
+      game.move.select(MoveId.STOCKPILE);
       await game.phaseInterceptor.to(TurnInitPhase);
 
       const stockpilingTag = user.getTag(StockpilingTag)!;
@@ -106,7 +106,7 @@ describe("Moves - Stockpile", () => {
       // do it again, just for good measure
       await game.phaseInterceptor.to(CommandPhase);
 
-      game.move.select(Moves.STOCKPILE);
+      game.move.select(MoveId.STOCKPILE);
       await game.phaseInterceptor.to(TurnInitPhase);
 
       const stockpilingTagAgain = user.getTag(StockpilingTag)!;

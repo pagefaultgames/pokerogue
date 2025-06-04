@@ -1,7 +1,7 @@
 import { allMoves } from "#app/data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
-import { Moves } from "#app/enums/moves";
+import { MoveId } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
 import { BerryPhase } from "#app/phases/berry-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
@@ -30,11 +30,11 @@ describe("Moves - Hyper Beam", () => {
     game.override.ability(AbilityId.BALL_FETCH);
     game.override.enemySpecies(Species.SNORLAX);
     game.override.enemyAbility(AbilityId.BALL_FETCH);
-    game.override.enemyMoveset([Moves.SPLASH]);
+    game.override.enemyMoveset([MoveId.SPLASH]);
     game.override.enemyLevel(100);
 
-    game.override.moveset([Moves.HYPER_BEAM, Moves.TACKLE]);
-    vi.spyOn(allMoves[Moves.HYPER_BEAM], "accuracy", "get").mockReturnValue(100);
+    game.override.moveset([MoveId.HYPER_BEAM, MoveId.TACKLE]);
+    vi.spyOn(allMoves[MoveId.HYPER_BEAM], "accuracy", "get").mockReturnValue(100);
   });
 
   it("should force the user to recharge on the next turn (and only that turn)", async () => {
@@ -43,7 +43,7 @@ describe("Moves - Hyper Beam", () => {
     const leadPokemon = game.scene.getPlayerPokemon()!;
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.HYPER_BEAM);
+    game.move.select(MoveId.HYPER_BEAM);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -58,7 +58,7 @@ describe("Moves - Hyper Beam", () => {
     expect(enemyPokemon.hp).toBe(enemyPostAttackHp);
     expect(leadPokemon.getTag(BattlerTagType.RECHARGING)).toBeUndefined();
 
-    game.move.select(Moves.TACKLE);
+    game.move.select(MoveId.TACKLE);
 
     await game.phaseInterceptor.to(BerryPhase, false);
 

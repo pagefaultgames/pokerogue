@@ -9,7 +9,7 @@ import {
   runSelectMysteryEncounterOption,
   skipBattleRunMysteryEncounterRewardsPhase,
 } from "#test/mystery-encounter/encounter-test-utils";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import type BattleScene from "#app/battle-scene";
 import { PokemonMove } from "#app/field/pokemon";
 import { UiMode } from "#enums/ui-mode";
@@ -117,36 +117,30 @@ const POOL_3_POKEMON: { species: Species; formIndex?: number }[] = [
 const POOL_4_POKEMON = [Species.GENESECT, Species.SLITHER_WING, Species.BUZZWOLE, Species.PHEROMOSA];
 
 const PHYSICAL_TUTOR_MOVES = [
-  Moves.MEGAHORN,
-  Moves.ATTACK_ORDER,
-  Moves.BUG_BITE,
-  Moves.FIRST_IMPRESSION,
-  Moves.LUNGE
+  MoveId.MEGAHORN,
+  MoveId.ATTACK_ORDER,
+  MoveId.BUG_BITE,
+  MoveId.FIRST_IMPRESSION,
+  MoveId.LUNGE,
 ];
 
 const SPECIAL_TUTOR_MOVES = [
-  Moves.SILVER_WIND,
-  Moves.SIGNAL_BEAM,
-  Moves.BUG_BUZZ,
-  Moves.POLLEN_PUFF,
-  Moves.STRUGGLE_BUG
+  MoveId.SILVER_WIND,
+  MoveId.SIGNAL_BEAM,
+  MoveId.BUG_BUZZ,
+  MoveId.POLLEN_PUFF,
+  MoveId.STRUGGLE_BUG,
 ];
 
 const STATUS_TUTOR_MOVES = [
-  Moves.STRING_SHOT,
-  Moves.DEFEND_ORDER,
-  Moves.RAGE_POWDER,
-  Moves.STICKY_WEB,
-  Moves.SILK_TRAP
+  MoveId.STRING_SHOT,
+  MoveId.DEFEND_ORDER,
+  MoveId.RAGE_POWDER,
+  MoveId.STICKY_WEB,
+  MoveId.SILK_TRAP,
 ];
 
-const MISC_TUTOR_MOVES = [
-  Moves.LEECH_LIFE,
-  Moves.U_TURN,
-  Moves.HEAL_ORDER,
-  Moves.QUIVER_DANCE,
-  Moves.INFESTATION,
-];
+const MISC_TUTOR_MOVES = [MoveId.LEECH_LIFE, MoveId.U_TURN, MoveId.HEAL_ORDER, MoveId.QUIVER_DANCE, MoveId.INFESTATION];
 
 describe("Bug-Type Superfan - Mystery Encounter", () => {
   let phaserGame: Phaser.Game;

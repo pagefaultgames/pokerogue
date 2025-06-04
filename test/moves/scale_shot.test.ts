@@ -5,7 +5,7 @@ import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { MoveEndPhase } from "#app/phases/move-end-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import { Stat } from "#enums/stat";
 import GameManager from "#test/testUtils/gameManager";
@@ -29,12 +29,12 @@ describe("Moves - Scale Shot", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.SCALE_SHOT])
+      .moveset([MoveId.SCALE_SHOT])
       .battleStyle("single")
       .disableCrits()
       .ability(AbilityId.NO_GUARD)
       .passiveAbility(AbilityId.SKILL_LINK)
-      .enemyMoveset(Moves.SPLASH)
+      .enemyMoveset(MoveId.SPLASH)
       .enemyLevel(3);
   });
 
@@ -43,7 +43,7 @@ describe("Moves - Scale Shot", () => {
 
     await game.classicMode.startBattle([Species.MINCCINO]);
     const minccino = game.scene.getPlayerPokemon()!;
-    game.move.select(Moves.SCALE_SHOT);
+    game.move.select(MoveId.SCALE_SHOT);
 
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
 
@@ -62,7 +62,7 @@ describe("Moves - Scale Shot", () => {
   });
 
   it("unaffected by sheer force", async () => {
-    const moveToCheck = allMoves[Moves.SCALE_SHOT];
+    const moveToCheck = allMoves[MoveId.SCALE_SHOT];
     const basePower = moveToCheck.power;
 
     game.override.enemySpecies(Species.WOBBUFFET);
@@ -72,7 +72,7 @@ describe("Moves - Scale Shot", () => {
     await game.classicMode.startBattle([Species.MINCCINO]);
     const minccino = game.scene.getPlayerPokemon()!;
 
-    game.move.select(Moves.SCALE_SHOT);
+    game.move.select(MoveId.SCALE_SHOT);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     //effect not nullified by sheer force

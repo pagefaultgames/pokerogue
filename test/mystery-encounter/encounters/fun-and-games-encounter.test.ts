@@ -21,7 +21,7 @@ import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
 import { CommandPhase } from "#app/phases/command-phase";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import { FunAndGamesEncounter } from "#app/data/mystery-encounters/encounters/fun-and-games-encounter";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Command } from "#app/ui/command-ui-handler";
 import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 
@@ -138,7 +138,7 @@ describe("Fun And Games! - Mystery Encounter", () => {
 
     it("should get 3 turns to attack the Wobbuffet for a reward", async () => {
       scene.money = 20000;
-      game.override.moveset([Moves.TACKLE]);
+      game.override.moveset([MoveId.TACKLE]);
       await game.runToMysteryEncounter(MysteryEncounterType.FUN_AND_GAMES, defaultParty);
       await runMysteryEncounterToEnd(game, 1, { pokemonNo: 1 }, true);
 
@@ -195,7 +195,7 @@ describe("Fun And Games! - Mystery Encounter", () => {
 
     it("should have Wide Lens item in rewards if Wubboffet is at 15-33% HP remaining", async () => {
       scene.money = 20000;
-      game.override.moveset([Moves.SPLASH]);
+      game.override.moveset([MoveId.SPLASH]);
       await game.runToMysteryEncounter(MysteryEncounterType.FUN_AND_GAMES, defaultParty);
       await runMysteryEncounterToEnd(game, 1, { pokemonNo: 1 }, true);
 
@@ -225,7 +225,7 @@ describe("Fun And Games! - Mystery Encounter", () => {
 
     it("should have Scope Lens item in rewards if Wubboffet is at 3-15% HP remaining", async () => {
       scene.money = 20000;
-      game.override.moveset([Moves.SPLASH]);
+      game.override.moveset([MoveId.SPLASH]);
       await game.runToMysteryEncounter(MysteryEncounterType.FUN_AND_GAMES, defaultParty);
       await runMysteryEncounterToEnd(game, 1, { pokemonNo: 1 }, true);
 
@@ -255,7 +255,7 @@ describe("Fun And Games! - Mystery Encounter", () => {
 
     it("should have Multi Lens item in rewards if Wubboffet is at <3% HP remaining", async () => {
       scene.money = 20000;
-      game.override.moveset([Moves.SPLASH]);
+      game.override.moveset([MoveId.SPLASH]);
       await game.runToMysteryEncounter(MysteryEncounterType.FUN_AND_GAMES, defaultParty);
       await runMysteryEncounterToEnd(game, 1, { pokemonNo: 1 }, true);
 

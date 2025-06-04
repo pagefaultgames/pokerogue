@@ -1,6 +1,6 @@
 import { BattlerIndex } from "#app/battle";
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#app/enums/moves";
+import { MoveId } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -25,10 +25,10 @@ describe("Abilities - Tera Shell", () => {
     game.override
       .battleStyle("single")
       .ability(AbilityId.TERA_SHELL)
-      .moveset([Moves.SPLASH])
+      .moveset([MoveId.SPLASH])
       .enemySpecies(Species.SNORLAX)
       .enemyAbility(AbilityId.INSOMNIA)
-      .enemyMoveset([Moves.MACH_PUNCH])
+      .enemyMoveset([MoveId.MACH_PUNCH])
       .startingLevel(100)
       .enemyLevel(100);
   });
@@ -39,56 +39,56 @@ describe("Abilities - Tera Shell", () => {
     const playerPokemon = game.scene.getPlayerPokemon()!;
     vi.spyOn(playerPokemon, "getMoveEffectiveness");
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
 
     await game.phaseInterceptor.to("MoveEndPhase");
     expect(playerPokemon.getMoveEffectiveness).toHaveLastReturnedWith(0.5);
 
     await game.toNextTurn();
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
 
     await game.phaseInterceptor.to("MoveEndPhase");
     expect(playerPokemon.getMoveEffectiveness).toHaveLastReturnedWith(2);
   });
 
   it("should not override type immunities", async () => {
-    game.override.enemyMoveset([Moves.SHADOW_SNEAK]);
+    game.override.enemyMoveset([MoveId.SHADOW_SNEAK]);
 
     await game.classicMode.startBattle([Species.SNORLAX]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
     vi.spyOn(playerPokemon, "getMoveEffectiveness");
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
 
     await game.phaseInterceptor.to("MoveEndPhase");
     expect(playerPokemon.getMoveEffectiveness).toHaveLastReturnedWith(0);
   });
 
   it("should not override type multipliers less than 0.5x", async () => {
-    game.override.enemyMoveset([Moves.QUICK_ATTACK]);
+    game.override.enemyMoveset([MoveId.QUICK_ATTACK]);
 
     await game.classicMode.startBattle([Species.AGGRON]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
     vi.spyOn(playerPokemon, "getMoveEffectiveness");
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
 
     await game.phaseInterceptor.to("MoveEndPhase");
     expect(playerPokemon.getMoveEffectiveness).toHaveLastReturnedWith(0.25);
   });
 
   it("should not affect the effectiveness of fixed-damage moves", async () => {
-    game.override.enemyMoveset([Moves.DRAGON_RAGE]);
+    game.override.enemyMoveset([MoveId.DRAGON_RAGE]);
 
     await game.classicMode.startBattle([Species.CHARIZARD]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
     const spy = vi.spyOn(playerPokemon, "getMoveEffectiveness");
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
 
     await game.phaseInterceptor.to("BerryPhase", false);
     expect(spy).toHaveLastReturnedWith(1);
@@ -98,14 +98,14 @@ describe("Abilities - Tera Shell", () => {
   });
 
   it("should change the effectiveness of all strikes of a multi-strike move", async () => {
-    game.override.enemyMoveset([Moves.DOUBLE_HIT]);
+    game.override.enemyMoveset([MoveId.DOUBLE_HIT]);
 
     await game.classicMode.startBattle([Species.SNORLAX]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
     const spy = vi.spyOn(playerPokemon, "getMoveEffectiveness");
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
 
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.move.forceHit();

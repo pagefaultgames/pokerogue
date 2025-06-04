@@ -3,7 +3,7 @@ import { AbilityId } from "#enums/ability-id";
 import { GameModes, getGameMode } from "#app/game-mode";
 import { BattleEndPhase } from "#app/phases/battle-end-phase";
 import { TurnInitPhase } from "#app/phases/turn-init-phase";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import { StatusEffect } from "#enums/status-effect";
 import GameManager from "#test/testUtils/gameManager";
@@ -33,11 +33,11 @@ describe("Double Battles", () => {
   // double-battle player's pokemon both fainted in same round, then revive one, and next double battle summons two player's pokemon successfully.
   // (There were bugs that either only summon one when can summon two, player stuck in switchPhase etc)
   it("3v2 edge case: player summons 2 pokemon on the next battle after being fainted and revived", async () => {
-    game.override.battleStyle("double").enemyMoveset(Moves.SPLASH).moveset(Moves.SPLASH);
+    game.override.battleStyle("double").enemyMoveset(MoveId.SPLASH).moveset(MoveId.SPLASH);
     await game.classicMode.startBattle([Species.BULBASAUR, Species.CHARIZARD, Species.SQUIRTLE]);
 
-    game.move.select(Moves.SPLASH);
-    game.move.select(Moves.SPLASH, 1);
+    game.move.select(MoveId.SPLASH);
+    game.move.select(MoveId.SPLASH, 1);
 
     for (const pokemon of game.scene.getPlayerField()) {
       pokemon.hp = 0;
@@ -67,8 +67,8 @@ describe("Double Battles", () => {
     });
 
     game.override
-      .enemyMoveset(Moves.SPLASH)
-      .moveset(Moves.SPLASH)
+      .enemyMoveset(MoveId.SPLASH)
+      .moveset(MoveId.SPLASH)
       .enemyAbility(AbilityId.BALL_FETCH)
       .ability(AbilityId.BALL_FETCH);
 
@@ -79,7 +79,7 @@ describe("Double Battles", () => {
     for (let i = 0; i < DOUBLE_CHANCE; i++) {
       rngSweepProgress = (i + 0.5) / DOUBLE_CHANCE;
 
-      game.move.select(Moves.SPLASH);
+      game.move.select(MoveId.SPLASH);
       await game.doKillOpponents();
       await game.toNextWave();
 

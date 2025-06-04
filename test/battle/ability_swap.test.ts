@@ -1,7 +1,7 @@
 import { allAbilities } from "#app/data/data-lists";
 import { Stat } from "#app/enums/stat";
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -24,19 +24,19 @@ describe("Test Ability Swapping", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.SPLASH])
+      .moveset([MoveId.SPLASH])
       .ability(AbilityId.BALL_FETCH)
       .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .enemyMoveset(Moves.SPLASH);
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   it("should activate post-summon abilities", async () => {
     await game.classicMode.startBattle([Species.FEEBAS]);
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     game.scene.getPlayerPokemon()?.setTempAbility(allAbilities[AbilityId.INTIMIDATE]);
     await game.phaseInterceptor.to("BerryPhase");
 
@@ -47,7 +47,7 @@ describe("Test Ability Swapping", () => {
     game.override.ability(AbilityId.DESOLATE_LAND);
     await game.classicMode.startBattle([Species.FEEBAS]);
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     game.scene.getPlayerPokemon()?.setTempAbility(allAbilities[AbilityId.BALL_FETCH]);
     await game.phaseInterceptor.to("BerryPhase");
 
@@ -58,7 +58,7 @@ describe("Test Ability Swapping", () => {
     game.override.passiveAbility(AbilityId.INTREPID_SWORD);
     await game.classicMode.startBattle([Species.FEEBAS]);
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     game.scene.getPlayerPokemon()?.setTempAbility(allAbilities[AbilityId.BALL_FETCH]);
     await game.phaseInterceptor.to("BerryPhase");
 
@@ -67,10 +67,10 @@ describe("Test Ability Swapping", () => {
 
   // Pickup and Honey Gather are special cases as they're the only abilities to be Unsuppressable but not Unswappable
   it("should be able to swap pickup", async () => {
-    game.override.ability(AbilityId.PICKUP).enemyAbility(AbilityId.INTIMIDATE).moveset(Moves.ROLE_PLAY);
+    game.override.ability(AbilityId.PICKUP).enemyAbility(AbilityId.INTIMIDATE).moveset(MoveId.ROLE_PLAY);
     await game.classicMode.startBattle([Species.FEEBAS]);
 
-    game.move.select(Moves.ROLE_PLAY);
+    game.move.select(MoveId.ROLE_PLAY);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(game.scene.getEnemyPokemon()?.getStatStage(Stat.ATK)).toBe(-1);

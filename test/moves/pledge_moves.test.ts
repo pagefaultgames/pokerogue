@@ -8,7 +8,7 @@ import { ArenaTagType } from "#enums/arena-tag-type";
 import { Stat } from "#enums/stat";
 import { toDmgValue } from "#app/utils/common";
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -33,24 +33,24 @@ describe("Moves - Pledge Moves", () => {
     game.override
       .battleStyle("double")
       .startingLevel(100)
-      .moveset([Moves.FIRE_PLEDGE, Moves.GRASS_PLEDGE, Moves.WATER_PLEDGE, Moves.SPLASH])
+      .moveset([MoveId.FIRE_PLEDGE, MoveId.GRASS_PLEDGE, MoveId.WATER_PLEDGE, MoveId.SPLASH])
       .enemySpecies(Species.SNORLAX)
       .enemyLevel(100)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .enemyMoveset(Moves.SPLASH);
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   it("Fire Pledge - should be an 80-power Fire-type attack outside of combination", async () => {
     await game.classicMode.startBattle([Species.BLASTOISE, Species.CHARIZARD]);
 
-    const firePledge = allMoves[Moves.FIRE_PLEDGE];
+    const firePledge = allMoves[MoveId.FIRE_PLEDGE];
     vi.spyOn(firePledge, "calculateBattlePower");
 
     const playerPokemon = game.scene.getPlayerField();
     vi.spyOn(playerPokemon[0], "getMoveType");
 
-    game.move.select(Moves.FIRE_PLEDGE, 0, BattlerIndex.ENEMY);
-    game.move.select(Moves.SPLASH, 1);
+    game.move.select(MoveId.FIRE_PLEDGE, 0, BattlerIndex.ENEMY);
+    game.move.select(MoveId.SPLASH, 1);
 
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
     await game.phaseInterceptor.to("MoveEndPhase", false);
@@ -62,7 +62,7 @@ describe("Moves - Pledge Moves", () => {
   it("Fire Pledge - should not combine with an ally using Fire Pledge", async () => {
     await game.classicMode.startBattle([Species.BLASTOISE, Species.CHARIZARD]);
 
-    const firePledge = allMoves[Moves.FIRE_PLEDGE];
+    const firePledge = allMoves[MoveId.FIRE_PLEDGE];
     vi.spyOn(firePledge, "calculateBattlePower");
 
     const playerPokemon = game.scene.getPlayerField();
@@ -70,8 +70,8 @@ describe("Moves - Pledge Moves", () => {
 
     const enemyPokemon = game.scene.getEnemyField();
 
-    game.move.select(Moves.FIRE_PLEDGE, 0, BattlerIndex.ENEMY);
-    game.move.select(Moves.FIRE_PLEDGE, 0, BattlerIndex.ENEMY_2);
+    game.move.select(MoveId.FIRE_PLEDGE, 0, BattlerIndex.ENEMY);
+    game.move.select(MoveId.FIRE_PLEDGE, 0, BattlerIndex.ENEMY_2);
 
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
 
@@ -87,14 +87,14 @@ describe("Moves - Pledge Moves", () => {
   });
 
   it("Fire Pledge - should not combine with an enemy's Pledge move", async () => {
-    game.override.battleStyle("single").enemyMoveset(Moves.GRASS_PLEDGE);
+    game.override.battleStyle("single").enemyMoveset(MoveId.GRASS_PLEDGE);
 
     await game.classicMode.startBattle([Species.CHARIZARD]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.FIRE_PLEDGE);
+    game.move.select(MoveId.FIRE_PLEDGE);
 
     await game.toNextTurn();
 
@@ -108,7 +108,7 @@ describe("Moves - Pledge Moves", () => {
   it("Grass Pledge - should combine with Fire Pledge to form a 150-power Fire-type attack that creates a 'sea of fire'", async () => {
     await game.classicMode.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
 
-    const grassPledge = allMoves[Moves.GRASS_PLEDGE];
+    const grassPledge = allMoves[MoveId.GRASS_PLEDGE];
     vi.spyOn(grassPledge, "calculateBattlePower");
 
     const playerPokemon = game.scene.getPlayerField();
@@ -117,8 +117,8 @@ describe("Moves - Pledge Moves", () => {
     vi.spyOn(playerPokemon[1], "getMoveType");
     const baseDmgMock = vi.spyOn(enemyPokemon[0], "getBaseDamage");
 
-    game.move.select(Moves.FIRE_PLEDGE, 0, BattlerIndex.ENEMY_2);
-    game.move.select(Moves.GRASS_PLEDGE, 1, BattlerIndex.ENEMY);
+    game.move.select(MoveId.FIRE_PLEDGE, 0, BattlerIndex.ENEMY_2);
+    game.move.select(MoveId.GRASS_PLEDGE, 1, BattlerIndex.ENEMY);
 
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
     // advance to the end of PLAYER_2's move this turn
@@ -139,11 +139,11 @@ describe("Moves - Pledge Moves", () => {
   });
 
   it("Fire Pledge - should combine with Water Pledge to form a 150-power Water-type attack that creates a 'rainbow'", async () => {
-    game.override.moveset([Moves.FIRE_PLEDGE, Moves.WATER_PLEDGE, Moves.FIERY_DANCE, Moves.SPLASH]);
+    game.override.moveset([MoveId.FIRE_PLEDGE, MoveId.WATER_PLEDGE, MoveId.FIERY_DANCE, MoveId.SPLASH]);
 
     await game.classicMode.startBattle([Species.BLASTOISE, Species.VENUSAUR]);
 
-    const firePledge = allMoves[Moves.FIRE_PLEDGE];
+    const firePledge = allMoves[MoveId.FIRE_PLEDGE];
     vi.spyOn(firePledge, "calculateBattlePower");
 
     const playerPokemon = game.scene.getPlayerField();
@@ -151,8 +151,8 @@ describe("Moves - Pledge Moves", () => {
 
     vi.spyOn(playerPokemon[1], "getMoveType");
 
-    game.move.select(Moves.WATER_PLEDGE, 0, BattlerIndex.ENEMY_2);
-    game.move.select(Moves.FIRE_PLEDGE, 1, BattlerIndex.ENEMY);
+    game.move.select(MoveId.WATER_PLEDGE, 0, BattlerIndex.ENEMY_2);
+    game.move.select(MoveId.FIRE_PLEDGE, 1, BattlerIndex.ENEMY);
 
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
     // advance to the end of PLAYER_2's move this turn
@@ -166,8 +166,8 @@ describe("Moves - Pledge Moves", () => {
 
     await game.toNextTurn();
 
-    game.move.select(Moves.FIERY_DANCE, 0, BattlerIndex.ENEMY_2);
-    game.move.select(Moves.SPLASH, 1);
+    game.move.select(MoveId.FIERY_DANCE, 0, BattlerIndex.ENEMY_2);
+    game.move.select(MoveId.SPLASH, 1);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
     await game.phaseInterceptor.to("MoveEndPhase");
 
@@ -178,7 +178,7 @@ describe("Moves - Pledge Moves", () => {
   it("Water Pledge - should combine with Grass Pledge to form a 150-power Grass-type attack that creates a 'swamp'", async () => {
     await game.classicMode.startBattle([Species.BLASTOISE, Species.CHARIZARD]);
 
-    const waterPledge = allMoves[Moves.WATER_PLEDGE];
+    const waterPledge = allMoves[MoveId.WATER_PLEDGE];
     vi.spyOn(waterPledge, "calculateBattlePower");
 
     const playerPokemon = game.scene.getPlayerField();
@@ -187,8 +187,8 @@ describe("Moves - Pledge Moves", () => {
 
     vi.spyOn(playerPokemon[1], "getMoveType");
 
-    game.move.select(Moves.GRASS_PLEDGE, 0, BattlerIndex.ENEMY_2);
-    game.move.select(Moves.WATER_PLEDGE, 1, BattlerIndex.ENEMY);
+    game.move.select(MoveId.GRASS_PLEDGE, 0, BattlerIndex.ENEMY_2);
+    game.move.select(MoveId.WATER_PLEDGE, 1, BattlerIndex.ENEMY);
 
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
     // advance to the end of PLAYER_2's move this turn
@@ -209,8 +209,8 @@ describe("Moves - Pledge Moves", () => {
 
     const enemyPokemon = game.scene.getEnemyField();
 
-    game.move.select(Moves.WATER_PLEDGE, 0, BattlerIndex.ENEMY);
-    game.move.select(Moves.FIRE_PLEDGE, 1, BattlerIndex.ENEMY_2);
+    game.move.select(MoveId.WATER_PLEDGE, 0, BattlerIndex.ENEMY);
+    game.move.select(MoveId.FIRE_PLEDGE, 1, BattlerIndex.ENEMY_2);
 
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2]);
     // PLAYER_2 should act with a combined move immediately after PLAYER as the second move in the turn
@@ -224,22 +224,22 @@ describe("Moves - Pledge Moves", () => {
   it("Pledge Moves - 'rainbow' effect should not stack with Serene Grace when applied to flinching moves", async () => {
     game.override
       .ability(AbilityId.SERENE_GRACE)
-      .moveset([Moves.FIRE_PLEDGE, Moves.WATER_PLEDGE, Moves.IRON_HEAD, Moves.SPLASH]);
+      .moveset([MoveId.FIRE_PLEDGE, MoveId.WATER_PLEDGE, MoveId.IRON_HEAD, MoveId.SPLASH]);
 
     await game.classicMode.startBattle([Species.BLASTOISE, Species.CHARIZARD]);
 
-    const ironHeadFlinchAttr = allMoves[Moves.IRON_HEAD].getAttrs(FlinchAttr)[0];
+    const ironHeadFlinchAttr = allMoves[MoveId.IRON_HEAD].getAttrs(FlinchAttr)[0];
     vi.spyOn(ironHeadFlinchAttr, "getMoveChance");
 
-    game.move.select(Moves.WATER_PLEDGE, 0, BattlerIndex.ENEMY);
-    game.move.select(Moves.FIRE_PLEDGE, 1, BattlerIndex.ENEMY_2);
+    game.move.select(MoveId.WATER_PLEDGE, 0, BattlerIndex.ENEMY);
+    game.move.select(MoveId.FIRE_PLEDGE, 1, BattlerIndex.ENEMY_2);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(game.scene.arena.getTagOnSide(ArenaTagType.WATER_FIRE_PLEDGE, ArenaTagSide.PLAYER)).toBeDefined();
 
-    game.move.select(Moves.IRON_HEAD, 0, BattlerIndex.ENEMY);
-    game.move.select(Moves.SPLASH, 1);
+    game.move.select(MoveId.IRON_HEAD, 0, BattlerIndex.ENEMY);
+    game.move.select(MoveId.SPLASH, 1);
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
@@ -247,17 +247,17 @@ describe("Moves - Pledge Moves", () => {
   });
 
   it("Pledge Moves - should have no effect when the second ally's move is cancelled", async () => {
-    game.override.enemyMoveset([Moves.SPLASH, Moves.SPORE]);
+    game.override.enemyMoveset([MoveId.SPLASH, MoveId.SPORE]);
 
     await game.classicMode.startBattle([Species.BLASTOISE, Species.CHARIZARD]);
 
     const enemyPokemon = game.scene.getEnemyField();
 
-    game.move.select(Moves.FIRE_PLEDGE, 0, BattlerIndex.ENEMY);
-    game.move.select(Moves.GRASS_PLEDGE, 1, BattlerIndex.ENEMY_2);
+    game.move.select(MoveId.FIRE_PLEDGE, 0, BattlerIndex.ENEMY);
+    game.move.select(MoveId.GRASS_PLEDGE, 1, BattlerIndex.ENEMY_2);
 
-    await game.move.selectEnemyMove(Moves.SPORE, BattlerIndex.PLAYER_2);
-    await game.move.selectEnemyMove(Moves.SPLASH);
+    await game.move.selectEnemyMove(MoveId.SPORE, BattlerIndex.PLAYER_2);
+    await game.move.selectEnemyMove(MoveId.SPLASH);
 
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY_2]);
 
@@ -272,8 +272,8 @@ describe("Moves - Pledge Moves", () => {
     const enemyPokemon = game.scene.getEnemyField();
     vi.spyOn(enemyPokemon[1], "getAbility").mockReturnValue(allAbilities[AbilityId.STORM_DRAIN]);
 
-    game.move.select(Moves.WATER_PLEDGE, 0, BattlerIndex.ENEMY);
-    game.move.select(Moves.SPLASH, 1);
+    game.move.select(MoveId.WATER_PLEDGE, 0, BattlerIndex.ENEMY);
+    game.move.select(MoveId.SPLASH, 1);
 
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
 
@@ -284,14 +284,14 @@ describe("Moves - Pledge Moves", () => {
   });
 
   it("Pledge Moves - should not ignore redirection from another Pokemon's Follow Me", async () => {
-    game.override.enemyMoveset([Moves.FOLLOW_ME, Moves.SPLASH]);
+    game.override.enemyMoveset([MoveId.FOLLOW_ME, MoveId.SPLASH]);
     await game.classicMode.startBattle([Species.BLASTOISE, Species.CHARIZARD]);
 
-    game.move.select(Moves.WATER_PLEDGE, 0, BattlerIndex.ENEMY);
-    game.move.select(Moves.SPLASH, 1);
+    game.move.select(MoveId.WATER_PLEDGE, 0, BattlerIndex.ENEMY);
+    game.move.select(MoveId.SPLASH, 1);
 
-    await game.move.selectEnemyMove(Moves.SPLASH);
-    await game.move.selectEnemyMove(Moves.FOLLOW_ME);
+    await game.move.selectEnemyMove(MoveId.SPLASH);
+    await game.move.selectEnemyMove(MoveId.FOLLOW_ME);
 
     await game.phaseInterceptor.to("BerryPhase", false);
 

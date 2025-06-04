@@ -1,7 +1,7 @@
 import type { CommandPhase } from "#app/phases/command-phase";
 import { Command } from "#app/ui/command-ui-handler";
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -24,7 +24,7 @@ describe("Abilities - Honey Gather", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.SPLASH, Moves.ROAR, Moves.THUNDERBOLT])
+      .moveset([MoveId.SPLASH, MoveId.ROAR, MoveId.THUNDERBOLT])
       .startingLevel(100)
       .ability(AbilityId.HONEY_GATHER)
       .passiveAbility(AbilityId.RUN_AWAY)
@@ -32,14 +32,14 @@ describe("Abilities - Honey Gather", () => {
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .enemyMoveset(Moves.SPLASH);
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   it("should give money when winning a battle", async () => {
     await game.classicMode.startBattle([Species.MILOTIC]);
     game.scene.money = 1000;
 
-    game.move.select(Moves.THUNDERBOLT);
+    game.move.select(MoveId.THUNDERBOLT);
     await game.toNextWave();
 
     expect(game.scene.money).toBeGreaterThan(1000);
@@ -49,7 +49,7 @@ describe("Abilities - Honey Gather", () => {
     await game.classicMode.startBattle([Species.MILOTIC]);
     game.scene.money = 1000;
 
-    game.move.select(Moves.ROAR);
+    game.move.select(MoveId.ROAR);
     await game.toNextTurn();
 
     expect(game.scene.money).toBe(1000);

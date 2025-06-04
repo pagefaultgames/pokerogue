@@ -1,7 +1,7 @@
 import { Stat } from "#enums/stat";
 import { TurnInitPhase } from "#app/phases/turn-init-phase";
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -27,9 +27,9 @@ describe("Abilities - Competitive", () => {
     game.override
       .battleStyle("single")
       .enemySpecies(Species.BEEDRILL)
-      .enemyMoveset(Moves.TICKLE)
+      .enemyMoveset(MoveId.TICKLE)
       .startingLevel(1)
-      .moveset([Moves.SPLASH, Moves.CLOSE_COMBAT])
+      .moveset([MoveId.SPLASH, MoveId.CLOSE_COMBAT])
       .ability(AbilityId.COMPETITIVE);
   });
 
@@ -37,7 +37,7 @@ describe("Abilities - Competitive", () => {
     await game.classicMode.startBattle([Species.FLYGON]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to(TurnInitPhase);
 
     expect(playerPokemon.getStatStage(Stat.ATK)).toBe(-1);
@@ -46,11 +46,11 @@ describe("Abilities - Competitive", () => {
   });
 
   it("lowering your own stats should not trigger competitive", async () => {
-    game.override.enemyMoveset(Moves.SPLASH);
+    game.override.enemyMoveset(MoveId.SPLASH);
     await game.classicMode.startBattle([Species.FLYGON]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
-    game.move.select(Moves.CLOSE_COMBAT);
+    game.move.select(MoveId.CLOSE_COMBAT);
     await game.phaseInterceptor.to(TurnInitPhase);
 
     expect(playerPokemon.getStatStage(Stat.SPDEF)).toBe(-1);
@@ -63,7 +63,7 @@ describe("Abilities - Competitive", () => {
     await game.classicMode.startBattle([Species.FLYGON]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to(TurnInitPhase);
 
     expect(playerPokemon.getStatStage(Stat.ATK)).toBe(0);

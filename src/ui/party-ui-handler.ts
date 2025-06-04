@@ -25,7 +25,7 @@ import { applyChallenges, ChallengeType } from "#app/data/challenge";
 import MoveInfoOverlay from "#app/ui/move-info-overlay";
 import i18next from "i18next";
 import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import { getPokemonNameWithAffix } from "#app/messages";
 import type { CommandPhase } from "#app/phases/command-phase";
@@ -184,7 +184,7 @@ export default class PartyUiHandler extends MessageUiHandler {
   private selectCallback: PartySelectCallback | PartyModifierTransferSelectCallback | null;
   private selectFilter: PokemonSelectFilter | PokemonModifierTransferSelectFilter;
   private moveSelectFilter: PokemonMoveSelectFilter;
-  private tmMoveId: Moves;
+  private tmMoveId: MoveId;
   private showMovePp: boolean;
 
   private iconAnimHandler: PokemonIconAnimHandler;
@@ -346,7 +346,7 @@ export default class PartyUiHandler extends MessageUiHandler {
       args.length > 4 && args[4] instanceof Function
         ? (args[4] as PokemonMoveSelectFilter)
         : PartyUiHandler.FilterAllMoves;
-    this.tmMoveId = args.length > 5 && args[5] ? args[5] : Moves.NONE;
+    this.tmMoveId = args.length > 5 && args[5] ? args[5] : MoveId.NONE;
     this.showMovePp = args.length > 6 && args[6];
 
     this.partyContainer.setVisible(true);
@@ -1165,8 +1165,7 @@ export default class PartyUiHandler extends MessageUiHandler {
       this.partyUiMode !== PartyUiMode.FAINT_SWITCH &&
       globalScene.findModifier(
         m =>
-          m instanceof SwitchEffectTransferModifier &&
-          m.pokemonId === globalScene.getPlayerField()[this.fieldIndex].id,
+          m instanceof SwitchEffectTransferModifier && m.pokemonId === globalScene.getPlayerField()[this.fieldIndex].id,
       )
     );
   }
@@ -1654,7 +1653,7 @@ class PartySlot extends Phaser.GameObjects.Container {
     pokemon: PlayerPokemon,
     iconAnimHandler: PokemonIconAnimHandler,
     partyUiMode: PartyUiMode,
-    tmMoveId: Moves,
+    tmMoveId: MoveId,
   ) {
     super(
       globalScene,
@@ -1677,7 +1676,7 @@ class PartySlot extends Phaser.GameObjects.Container {
     return this.pokemon;
   }
 
-  setup(partyUiMode: PartyUiMode, tmMoveId: Moves) {
+  setup(partyUiMode: PartyUiMode, tmMoveId: MoveId) {
     const currentLanguage = i18next.resolvedLanguage ?? "en";
     const offsetJa = currentLanguage === "ja";
 

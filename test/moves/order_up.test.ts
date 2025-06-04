@@ -4,7 +4,7 @@ import { PokemonAnimType } from "#enums/pokemon-anim-type";
 import type { EffectiveStat } from "#enums/stat";
 import { Stat } from "#enums/stat";
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -27,13 +27,13 @@ describe("Moves - Order Up", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset(Moves.ORDER_UP)
+      .moveset(MoveId.ORDER_UP)
       .ability(AbilityId.COMMANDER)
       .battleStyle("double")
       .disableCrits()
       .enemySpecies(Species.SNORLAX)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .enemyMoveset(Moves.SPLASH)
+      .enemyMoveset(MoveId.SPLASH)
       .startingLevel(100)
       .enemyLevel(100);
 
@@ -56,7 +56,7 @@ describe("Moves - Order Up", () => {
       expect(game.scene.triggerPokemonBattleAnim).toHaveBeenLastCalledWith(tatsugiri, PokemonAnimType.COMMANDER_APPLY);
       expect(dondozo.getTag(BattlerTagType.COMMANDED)).toBeDefined();
 
-      game.move.select(Moves.ORDER_UP, 1, BattlerIndex.ENEMY);
+      game.move.select(MoveId.ORDER_UP, 1, BattlerIndex.ENEMY);
       expect(game.scene.currentBattle.turnCommands[0]?.skip).toBeTruthy();
 
       await game.phaseInterceptor.to("BerryPhase", false);
@@ -76,7 +76,7 @@ describe("Moves - Order Up", () => {
     expect(game.scene.triggerPokemonBattleAnim).toHaveBeenLastCalledWith(tatsugiri, PokemonAnimType.COMMANDER_APPLY);
     expect(dondozo.getTag(BattlerTagType.COMMANDED)).toBeDefined();
 
-    game.move.select(Moves.ORDER_UP, 1, BattlerIndex.ENEMY);
+    game.move.select(MoveId.ORDER_UP, 1, BattlerIndex.ENEMY);
     expect(game.scene.currentBattle.turnCommands[0]?.skip).toBeTruthy();
 
     await game.phaseInterceptor.to("BerryPhase", false);

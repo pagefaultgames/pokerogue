@@ -3,7 +3,7 @@ import Phaser from "phaser";
 import GameManager from "#test/testUtils/gameManager";
 import { Species } from "#enums/species";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Stat } from "#enums/stat";
 import { AbilityId } from "#enums/ability-id";
 
@@ -28,12 +28,12 @@ describe("Moves - Power Split", () => {
       .enemyAbility(AbilityId.NONE)
       .enemySpecies(Species.MEW)
       .enemyLevel(200)
-      .moveset([Moves.POWER_SPLIT])
+      .moveset([MoveId.POWER_SPLIT])
       .ability(AbilityId.NONE);
   });
 
   it("should average the user's ATK and SPATK stats with those of the target", async () => {
-    game.override.enemyMoveset(Moves.SPLASH);
+    game.override.enemyMoveset(MoveId.SPLASH);
     await game.classicMode.startBattle([Species.INDEEDEE]);
 
     const player = game.scene.getPlayerPokemon()!;
@@ -42,7 +42,7 @@ describe("Moves - Power Split", () => {
     const avgAtk = Math.floor((player.getStat(Stat.ATK, false) + enemy.getStat(Stat.ATK, false)) / 2);
     const avgSpAtk = Math.floor((player.getStat(Stat.SPATK, false) + enemy.getStat(Stat.SPATK, false)) / 2);
 
-    game.move.select(Moves.POWER_SPLIT);
+    game.move.select(MoveId.POWER_SPLIT);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(player.getStat(Stat.ATK, false)).toBe(avgAtk);
@@ -53,7 +53,7 @@ describe("Moves - Power Split", () => {
   }, 20000);
 
   it("should be idempotent", async () => {
-    game.override.enemyMoveset([Moves.POWER_SPLIT]);
+    game.override.enemyMoveset([MoveId.POWER_SPLIT]);
     await game.classicMode.startBattle([Species.INDEEDEE]);
 
     const player = game.scene.getPlayerPokemon()!;
@@ -62,10 +62,10 @@ describe("Moves - Power Split", () => {
     const avgAtk = Math.floor((player.getStat(Stat.ATK, false) + enemy.getStat(Stat.ATK, false)) / 2);
     const avgSpAtk = Math.floor((player.getStat(Stat.SPATK, false) + enemy.getStat(Stat.SPATK, false)) / 2);
 
-    game.move.select(Moves.POWER_SPLIT);
+    game.move.select(MoveId.POWER_SPLIT);
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    game.move.select(Moves.POWER_SPLIT);
+    game.move.select(MoveId.POWER_SPLIT);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(player.getStat(Stat.ATK, false)).toBe(avgAtk);

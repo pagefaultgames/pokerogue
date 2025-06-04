@@ -28,7 +28,7 @@ import {
 } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import PokemonData from "#app/system/pokemon-data";
 import { isNullOrUndefined, randSeedInt } from "#app/utils/common";
-import type { Moves } from "#enums/moves";
+import type { MoveId } from "#enums/moves";
 import { BattlerIndex } from "#app/battle";
 import { SelfStatusMove } from "#app/data/moves/move";
 import { PokeballType } from "#enums/pokeball";
@@ -73,7 +73,7 @@ export const UncommonBreedEncounter: MysteryEncounter = MysteryEncounterBuilder.
     const eggMoves = pokemon.getEggMoves();
     if (eggMoves) {
       const eggMoveIndex = randSeedInt(4);
-      const randomEggMove: Moves = eggMoves[eggMoveIndex];
+      const randomEggMove: MoveId = eggMoves[eggMoveIndex];
       encounter.misc = {
         eggMove: randomEggMove,
         pokemon: pokemon,
@@ -270,10 +270,10 @@ export const UncommonBreedEncounter: MysteryEncounter = MysteryEncounterBuilder.
   )
   .build();
 
-function givePokemonExtraEggMove(pokemon: EnemyPokemon, previousEggMove: Moves) {
+function givePokemonExtraEggMove(pokemon: EnemyPokemon, previousEggMove: MoveId) {
   const eggMoves = pokemon.getEggMoves();
   if (eggMoves) {
-    let randomEggMove: Moves = eggMoves[randSeedInt(4)];
+    let randomEggMove: MoveId = eggMoves[randSeedInt(4)];
     while (randomEggMove === previousEggMove) {
       randomEggMove = eggMoves[randSeedInt(4)];
     }

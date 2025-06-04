@@ -1,7 +1,7 @@
 import { BattlerIndex } from "#app/battle";
 import { PokemonType } from "#enums/pokemon-type";
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -24,10 +24,10 @@ describe("Moves - Tera Starstorm", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.TERA_STARSTORM, Moves.SPLASH])
+      .moveset([MoveId.TERA_STARSTORM, MoveId.SPLASH])
       .battleStyle("double")
       .enemyAbility(AbilityId.BALL_FETCH)
-      .enemyMoveset(Moves.SPLASH)
+      .enemyMoveset(MoveId.SPLASH)
       .enemyLevel(30)
       .enemySpecies(Species.MAGIKARP);
   });
@@ -41,7 +41,7 @@ describe("Moves - Tera Starstorm", () => {
 
     vi.spyOn(terapagos, "getMoveType");
 
-    game.move.select(Moves.TERA_STARSTORM);
+    game.move.select(MoveId.TERA_STARSTORM);
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(terapagos.getMoveType).toHaveReturnedWith(PokemonType.STELLAR);
@@ -53,8 +53,8 @@ describe("Moves - Tera Starstorm", () => {
     const terapagos = game.scene.getPlayerParty()[1];
     terapagos.isTerastallized = true;
 
-    game.move.select(Moves.TERA_STARSTORM, 0, BattlerIndex.ENEMY);
-    game.move.select(Moves.TERA_STARSTORM, 1);
+    game.move.select(MoveId.TERA_STARSTORM, 0, BattlerIndex.ENEMY);
+    game.move.select(MoveId.TERA_STARSTORM, 1);
 
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
 
@@ -75,7 +75,7 @@ describe("Moves - Tera Starstorm", () => {
     const terapagos = game.scene.getPlayerParty()[0];
     terapagos.isTerastallized = false;
 
-    game.move.selectWithTera(Moves.TERA_STARSTORM, 0);
+    game.move.selectWithTera(MoveId.TERA_STARSTORM, 0);
 
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
 
@@ -92,7 +92,7 @@ describe("Moves - Tera Starstorm", () => {
     const terapagos = game.scene.getPlayerParty()[0];
     terapagos.isTerastallized = false;
 
-    game.move.select(Moves.TERA_STARSTORM, 0, BattlerIndex.ENEMY);
+    game.move.select(MoveId.TERA_STARSTORM, 0, BattlerIndex.ENEMY);
 
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
 
@@ -122,8 +122,8 @@ describe("Moves - Tera Starstorm", () => {
 
     vi.spyOn(fusionedMon, "getMoveType");
 
-    game.move.select(Moves.TERA_STARSTORM, 0);
-    game.move.select(Moves.SPLASH, 1);
+    game.move.select(MoveId.TERA_STARSTORM, 0);
+    game.move.select(MoveId.SPLASH, 1);
     await game.phaseInterceptor.to("TurnEndPhase");
 
     // Fusion and terastallized

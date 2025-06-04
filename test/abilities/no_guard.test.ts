@@ -2,7 +2,7 @@ import { BattlerIndex } from "#app/battle";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { MoveEndPhase } from "#app/phases/move-end-phase";
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import { HitCheckResult } from "#enums/hit-check-result";
 import GameManager from "#test/testUtils/gameManager";
@@ -26,12 +26,12 @@ describe("Abilities - No Guard", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset(Moves.ZAP_CANNON)
+      .moveset(MoveId.ZAP_CANNON)
       .ability(AbilityId.NO_GUARD)
       .enemyLevel(200)
       .enemySpecies(Species.SNORLAX)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .enemyMoveset(Moves.SPLASH);
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   it("should make moves always hit regardless of move accuracy", async () => {
@@ -39,7 +39,7 @@ describe("Abilities - No Guard", () => {
 
     await game.classicMode.startBattle([Species.REGIELEKI]);
 
-    game.move.select(Moves.ZAP_CANNON);
+    game.move.select(MoveId.ZAP_CANNON);
 
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
 

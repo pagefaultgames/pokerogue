@@ -3,7 +3,7 @@ import Phaser from "phaser";
 import GameManager from "#test/testUtils/gameManager";
 import { Species } from "#enums/species";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Stat, BATTLE_STATS } from "#enums/stat";
 import { AbilityId } from "#enums/ability-id";
 import { MoveEndPhase } from "#app/phases/move-end-phase";
@@ -26,10 +26,10 @@ describe("Moves - Guard Swap", () => {
     game.override
       .battleStyle("single")
       .enemyAbility(AbilityId.BALL_FETCH)
-      .enemyMoveset(Moves.SPLASH)
+      .enemyMoveset(MoveId.SPLASH)
       .enemySpecies(Species.INDEEDEE)
       .enemyLevel(200)
-      .moveset([Moves.GUARD_SWAP])
+      .moveset([MoveId.GUARD_SWAP])
       .ability(AbilityId.NONE);
   });
 
@@ -41,7 +41,7 @@ describe("Moves - Guard Swap", () => {
 
     vi.spyOn(enemy.summonData, "statStages", "get").mockReturnValue(new Array(BATTLE_STATS.length).fill(1));
 
-    game.move.select(Moves.GUARD_SWAP);
+    game.move.select(MoveId.GUARD_SWAP);
 
     await game.phaseInterceptor.to(MoveEndPhase);
 

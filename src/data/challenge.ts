@@ -18,7 +18,7 @@ import { Challenges } from "#enums/challenges";
 import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
 import { Nature } from "#enums/nature";
-import type { Moves } from "#enums/moves";
+import type { MoveId } from "#enums/moves";
 import { TypeColor, TypeShadow } from "#enums/color";
 import { ModifierTier } from "#app/modifier/modifier-tier";
 import { globalScene } from "#app/global-scene";
@@ -395,11 +395,11 @@ export abstract class Challenge {
    * An apply function for MOVE_ACCESS. Derived classes should alter this.
    * @param _pokemon {@link Pokemon} What pokemon would learn the move.
    * @param _moveSource {@link MoveSourceType} What source the pokemon would get the move from.
-   * @param _move {@link Moves} The move in question.
+   * @param _move {@link MoveId} The move in question.
    * @param _level {@link NumberHolder} The level threshold for access.
    * @returns {@link boolean} Whether this function did anything.
    */
-  applyMoveAccessLevel(_pokemon: Pokemon, _moveSource: MoveSourceType, _move: Moves, _level: NumberHolder): boolean {
+  applyMoveAccessLevel(_pokemon: Pokemon, _moveSource: MoveSourceType, _move: MoveId, _level: NumberHolder): boolean {
     return false;
   }
 
@@ -407,11 +407,11 @@ export abstract class Challenge {
    * An apply function for MOVE_WEIGHT. Derived classes should alter this.
    * @param _pokemon {@link Pokemon} What pokemon would learn the move.
    * @param _moveSource {@link MoveSourceType} What source the pokemon would get the move from.
-   * @param _move {@link Moves} The move in question.
+   * @param _move {@link MoveId} The move in question.
    * @param _weight {@link NumberHolder} The base weight of the move
    * @returns {@link boolean} Whether this function did anything.
    */
-  applyMoveWeight(_pokemon: Pokemon, _moveSource: MoveSourceType, _move: Moves, _level: NumberHolder): boolean {
+  applyMoveWeight(_pokemon: Pokemon, _moveSource: MoveSourceType, _move: MoveId, _level: NumberHolder): boolean {
     return false;
   }
 
@@ -1090,7 +1090,7 @@ export function applyChallenges(challengeType: ChallengeType.GAME_MODE_MODIFY): 
  * @param challengeType {@link ChallengeType} ChallengeType.MOVE_ACCESS
  * @param pokemon {@link Pokemon} What pokemon would learn the move.
  * @param moveSource {@link MoveSourceType} What source the pokemon would get the move from.
- * @param move {@link Moves} The move in question.
+ * @param move {@link MoveId} The move in question.
  * @param level {@link NumberHolder} The level threshold for access.
  * @returns True if any challenge was successfully applied.
  */
@@ -1098,7 +1098,7 @@ export function applyChallenges(
   challengeType: ChallengeType.MOVE_ACCESS,
   pokemon: Pokemon,
   moveSource: MoveSourceType,
-  move: Moves,
+  move: MoveId,
   level: NumberHolder,
 ): boolean;
 /**
@@ -1106,7 +1106,7 @@ export function applyChallenges(
  * @param challengeType {@link ChallengeType} ChallengeType.MOVE_WEIGHT
  * @param pokemon {@link Pokemon} What pokemon would learn the move.
  * @param moveSource {@link MoveSourceType} What source the pokemon would get the move from.
- * @param move {@link Moves} The move in question.
+ * @param move {@link MoveId} The move in question.
  * @param weight {@link NumberHolder} The weight of the move.
  * @returns True if any challenge was successfully applied.
  */
@@ -1114,7 +1114,7 @@ export function applyChallenges(
   challengeType: ChallengeType.MOVE_WEIGHT,
   pokemon: Pokemon,
   moveSource: MoveSourceType,
-  move: Moves,
+  move: MoveId,
   weight: NumberHolder,
 ): boolean;
 

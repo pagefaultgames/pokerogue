@@ -1,7 +1,7 @@
 import { FlinchAttr, StatStageChangeAttr } from "#app/data/moves/move";
 import { allMoves } from "#app/data/data-lists";
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import type Move from "#app/data/moves/move";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -19,7 +19,7 @@ describe("Moves - Triple Arrows", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-    tripleArrows = allMoves[Moves.TRIPLE_ARROWS];
+    tripleArrows = allMoves[MoveId.TRIPLE_ARROWS];
     flinchAttr = tripleArrows.getAttrs(FlinchAttr)[0];
     defDropAttr = tripleArrows.getAttrs(StatStageChangeAttr)[0];
   });
@@ -32,11 +32,11 @@ describe("Moves - Triple Arrows", () => {
     game = new GameManager(phaserGame);
     game.override
       .ability(AbilityId.BALL_FETCH)
-      .moveset([Moves.TRIPLE_ARROWS])
+      .moveset([MoveId.TRIPLE_ARROWS])
       .battleStyle("single")
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(AbilityId.STURDY)
-      .enemyMoveset(Moves.SPLASH);
+      .enemyMoveset(MoveId.SPLASH);
 
     vi.spyOn(flinchAttr, "getMoveChance");
     vi.spyOn(defDropAttr, "getMoveChance");
@@ -45,7 +45,7 @@ describe("Moves - Triple Arrows", () => {
   it("has a 30% flinch chance and 50% defense drop chance", async () => {
     await game.classicMode.startBattle([Species.FEEBAS]);
 
-    game.move.select(Moves.TRIPLE_ARROWS);
+    game.move.select(MoveId.TRIPLE_ARROWS);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(flinchAttr.getMoveChance).toHaveReturnedWith(30);
@@ -56,7 +56,7 @@ describe("Moves - Triple Arrows", () => {
     game.override.ability(AbilityId.SERENE_GRACE);
     await game.classicMode.startBattle([Species.FEEBAS]);
 
-    game.move.select(Moves.TRIPLE_ARROWS);
+    game.move.select(MoveId.TRIPLE_ARROWS);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(flinchAttr.getMoveChance).toHaveReturnedWith(60);

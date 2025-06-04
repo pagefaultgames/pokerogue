@@ -1,4 +1,4 @@
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import { AbilityId } from "#enums/ability-id";
 import GameManager from "#test/testUtils/gameManager";
@@ -25,9 +25,9 @@ describe("Moves - Imprison", () => {
     game.override
       .battleStyle("single")
       .enemyAbility(AbilityId.BALL_FETCH)
-      .enemyMoveset([Moves.IMPRISON, Moves.SPLASH, Moves.GROWL])
+      .enemyMoveset([MoveId.IMPRISON, MoveId.SPLASH, MoveId.GROWL])
       .enemySpecies(Species.SHUCKLE)
-      .moveset([Moves.TRANSFORM, Moves.SPLASH]);
+      .moveset([MoveId.TRANSFORM, MoveId.SPLASH]);
   });
 
   it("Pokemon under Imprison cannot use shared moves", async () => {
@@ -35,8 +35,8 @@ describe("Moves - Imprison", () => {
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
 
-    game.move.select(Moves.TRANSFORM);
-    await game.move.selectEnemyMove(Moves.IMPRISON);
+    game.move.select(MoveId.TRANSFORM);
+    await game.move.selectEnemyMove(MoveId.IMPRISON);
     await game.toNextTurn();
     const playerMoveset = playerPokemon.getMoveset().map(x => x?.moveId);
     const enemyMoveset = game.scene
@@ -50,11 +50,11 @@ describe("Moves - Imprison", () => {
     expect(imprisonBattlerTag).toBeDefined();
 
     // Second turn, Imprison forces Struggle to occur
-    game.move.select(Moves.SPLASH);
-    await game.move.selectEnemyMove(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
+    await game.move.selectEnemyMove(MoveId.SPLASH);
     await game.toNextTurn();
     const move1 = playerPokemon.getLastXMoves(1)[0]!;
-    expect(move1.move).toBe(Moves.STRUGGLE);
+    expect(move1.move).toBe(MoveId.STRUGGLE);
   });
 
   it("Imprison applies to Pokemon switched into Battle", async () => {
@@ -62,8 +62,8 @@ describe("Moves - Imprison", () => {
 
     const playerPokemon1 = game.scene.getPlayerPokemon()!;
 
-    game.move.select(Moves.SPLASH);
-    await game.move.selectEnemyMove(Moves.IMPRISON);
+    game.move.select(MoveId.SPLASH);
+    await game.move.selectEnemyMove(MoveId.IMPRISON);
     await game.toNextTurn();
     const imprisonArenaTag = game.scene.arena.getTag(ArenaTagType.IMPRISON);
     const imprisonBattlerTag1 = playerPokemon1.getTag(BattlerTagType.IMPRISON);
@@ -72,7 +72,7 @@ describe("Moves - Imprison", () => {
 
     // Second turn, Imprison forces Struggle to occur
     game.doSwitchPokemon(1);
-    await game.move.selectEnemyMove(Moves.SPLASH);
+    await game.move.selectEnemyMove(MoveId.SPLASH);
     await game.toNextTurn();
     const playerPokemon2 = game.scene.getPlayerPokemon()!;
     const imprisonBattlerTag2 = playerPokemon2.getTag(BattlerTagType.IMPRISON);
@@ -81,18 +81,18 @@ describe("Moves - Imprison", () => {
   });
 
   it("The effects of Imprison only end when the source is no longer active", async () => {
-    game.override.moveset([Moves.SPLASH, Moves.IMPRISON]);
+    game.override.moveset([MoveId.SPLASH, MoveId.IMPRISON]);
     await game.classicMode.startBattle([Species.REGIELEKI, Species.BULBASAUR]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
     const enemyPokemon = game.scene.getEnemyPokemon()!;
-    game.move.select(Moves.IMPRISON);
-    await game.move.selectEnemyMove(Moves.GROWL);
+    game.move.select(MoveId.IMPRISON);
+    await game.move.selectEnemyMove(MoveId.GROWL);
     await game.toNextTurn();
     expect(game.scene.arena.getTag(ArenaTagType.IMPRISON)).toBeDefined();
     expect(enemyPokemon.getTag(BattlerTagType.IMPRISON)).toBeDefined();
     game.doSwitchPokemon(1);
-    await game.move.selectEnemyMove(Moves.SPLASH);
+    await game.move.selectEnemyMove(MoveId.SPLASH);
     await game.toNextTurn();
     expect(playerPokemon.isActive(true)).toBeFalsy();
     expect(game.scene.arena.getTag(ArenaTagType.IMPRISON)).toBeUndefined();

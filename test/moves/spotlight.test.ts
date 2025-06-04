@@ -1,6 +1,6 @@
 import { BattlerIndex } from "#app/battle";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -27,8 +27,8 @@ describe("Moves - Spotlight", () => {
     game.override.enemySpecies(Species.SNORLAX);
     game.override.startingLevel(100);
     game.override.enemyLevel(100);
-    game.override.moveset([Moves.FOLLOW_ME, Moves.RAGE_POWDER, Moves.SPOTLIGHT, Moves.QUICK_ATTACK]);
-    game.override.enemyMoveset([Moves.FOLLOW_ME, Moves.SPLASH]);
+    game.override.moveset([MoveId.FOLLOW_ME, MoveId.RAGE_POWDER, MoveId.SPOTLIGHT, MoveId.QUICK_ATTACK]);
+    game.override.enemyMoveset([MoveId.FOLLOW_ME, MoveId.SPLASH]);
   });
 
   test("move should redirect attacks to the target", async () => {
@@ -36,11 +36,11 @@ describe("Moves - Spotlight", () => {
 
     const enemyPokemon = game.scene.getEnemyField();
 
-    game.move.select(Moves.SPOTLIGHT, 0, BattlerIndex.ENEMY);
-    game.move.select(Moves.QUICK_ATTACK, 1, BattlerIndex.ENEMY_2);
+    game.move.select(MoveId.SPOTLIGHT, 0, BattlerIndex.ENEMY);
+    game.move.select(MoveId.QUICK_ATTACK, 1, BattlerIndex.ENEMY_2);
 
-    await game.move.selectEnemyMove(Moves.SPLASH);
-    await game.move.selectEnemyMove(Moves.SPLASH);
+    await game.move.selectEnemyMove(MoveId.SPLASH);
+    await game.move.selectEnemyMove(MoveId.SPLASH);
 
     await game.phaseInterceptor.to(TurnEndPhase, false);
 
@@ -53,11 +53,11 @@ describe("Moves - Spotlight", () => {
 
     const enemyPokemon = game.scene.getEnemyField();
 
-    game.move.select(Moves.SPOTLIGHT, 0, BattlerIndex.ENEMY);
-    game.move.select(Moves.QUICK_ATTACK, 1, BattlerIndex.ENEMY_2);
+    game.move.select(MoveId.SPOTLIGHT, 0, BattlerIndex.ENEMY);
+    game.move.select(MoveId.QUICK_ATTACK, 1, BattlerIndex.ENEMY_2);
 
-    await game.move.selectEnemyMove(Moves.SPLASH);
-    await game.move.selectEnemyMove(Moves.FOLLOW_ME);
+    await game.move.selectEnemyMove(MoveId.SPLASH);
+    await game.move.selectEnemyMove(MoveId.FOLLOW_ME);
 
     await game.phaseInterceptor.to("BerryPhase", false);
 

@@ -132,7 +132,7 @@ import { BattleStyle } from "#enums/battle-style";
 import { Biome } from "#enums/biome";
 import type { ExpNotification } from "#enums/exp-notification";
 import { MoneyFormat } from "#enums/money-format";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
 import { UiTheme } from "#enums/ui-theme";
@@ -707,14 +707,14 @@ export default class BattleScene extends SceneBase {
 
     ui.setup();
 
-    const defaultMoves = [Moves.TACKLE, Moves.TAIL_WHIP, Moves.FOCUS_ENERGY, Moves.STRUGGLE];
+    const defaultMoves = [MoveId.TACKLE, MoveId.TAIL_WHIP, MoveId.FOCUS_ENERGY, MoveId.STRUGGLE];
 
     Promise.all([
       Promise.all(loadPokemonAssets),
       initCommonAnims().then(() => loadCommonAnimAssets(true)),
-      Promise.all([Moves.TACKLE, Moves.TAIL_WHIP, Moves.FOCUS_ENERGY, Moves.STRUGGLE].map(m => initMoveAnim(m))).then(
-        () => loadMoveAnimAssets(defaultMoves, true),
-      ),
+      Promise.all(
+        [MoveId.TACKLE, MoveId.TAIL_WHIP, MoveId.FOCUS_ENERGY, MoveId.STRUGGLE].map(m => initMoveAnim(m)),
+      ).then(() => loadMoveAnimAssets(defaultMoves, true)),
       this.initStarterColors(),
     ]).then(() => {
       this.pushPhase(new LoginPhase());

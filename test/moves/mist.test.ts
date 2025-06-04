@@ -1,6 +1,6 @@
 import { Stat } from "#enums/stat";
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -23,13 +23,13 @@ describe("Moves - Mist", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.MIST, Moves.SPLASH])
+      .moveset([MoveId.MIST, MoveId.SPLASH])
       .ability(AbilityId.BALL_FETCH)
       .battleStyle("double")
       .disableCrits()
       .enemySpecies(Species.SNORLAX)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .enemyMoveset(Moves.GROWL);
+      .enemyMoveset(MoveId.GROWL);
   });
 
   it("should prevent the user's side from having stats lowered", async () => {
@@ -37,8 +37,8 @@ describe("Moves - Mist", () => {
 
     const playerPokemon = game.scene.getPlayerField();
 
-    game.move.select(Moves.MIST, 0);
-    game.move.select(Moves.SPLASH, 1);
+    game.move.select(MoveId.MIST, 0);
+    game.move.select(MoveId.SPLASH, 1);
 
     await game.phaseInterceptor.to("BerryPhase");
 

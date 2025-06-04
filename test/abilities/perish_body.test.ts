@@ -1,5 +1,5 @@
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -29,16 +29,16 @@ describe("Abilities - Perish Song", () => {
 
     game.override.starterSpecies(Species.CURSOLA);
     game.override.ability(AbilityId.PERISH_BODY);
-    game.override.moveset([Moves.SPLASH]);
+    game.override.moveset([MoveId.SPLASH]);
   });
 
   it("should trigger when hit with damaging move", async () => {
-    game.override.enemyMoveset([Moves.AQUA_JET]);
+    game.override.enemyMoveset([MoveId.AQUA_JET]);
     await game.classicMode.startBattle();
     const cursola = game.scene.getPlayerPokemon();
     const magikarp = game.scene.getEnemyPokemon();
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
 
     expect(cursola?.summonData.tags[0].turnCount).toBe(3);
@@ -46,11 +46,11 @@ describe("Abilities - Perish Song", () => {
   });
 
   it("should trigger even when fainting", async () => {
-    game.override.enemyMoveset([Moves.AQUA_JET]).enemyLevel(100).startingLevel(1);
+    game.override.enemyMoveset([MoveId.AQUA_JET]).enemyLevel(100).startingLevel(1);
     await game.classicMode.startBattle([Species.CURSOLA, Species.FEEBAS]);
     const magikarp = game.scene.getEnemyPokemon();
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     game.doSelectPartyPokemon(1);
     await game.toNextTurn();
 
@@ -58,28 +58,28 @@ describe("Abilities - Perish Song", () => {
   });
 
   it("should not activate if attacker already has perish song", async () => {
-    game.override.enemyMoveset([Moves.PERISH_SONG, Moves.AQUA_JET, Moves.SPLASH]);
+    game.override.enemyMoveset([MoveId.PERISH_SONG, MoveId.AQUA_JET, MoveId.SPLASH]);
     await game.classicMode.startBattle([Species.FEEBAS, Species.CURSOLA]);
     const feebas = game.scene.getPlayerPokemon();
     const magikarp = game.scene.getEnemyPokemon();
 
-    game.move.select(Moves.SPLASH);
-    await game.move.selectEnemyMove(Moves.PERISH_SONG);
+    game.move.select(MoveId.SPLASH);
+    await game.move.selectEnemyMove(MoveId.PERISH_SONG);
     await game.toNextTurn();
 
     expect(feebas?.summonData.tags[0].turnCount).toBe(3);
     expect(magikarp?.summonData.tags[0].turnCount).toBe(3);
 
     game.doSwitchPokemon(1);
-    await game.move.selectEnemyMove(Moves.SPLASH);
+    await game.move.selectEnemyMove(MoveId.SPLASH);
     await game.toNextTurn();
 
     const cursola = game.scene.getPlayerPokemon();
     expect(cursola?.summonData.tags.length).toBe(0);
     expect(magikarp?.summonData.tags[0].turnCount).toBe(2);
 
-    game.move.select(Moves.SPLASH);
-    await game.move.selectEnemyMove(Moves.AQUA_JET);
+    game.move.select(MoveId.SPLASH);
+    await game.move.selectEnemyMove(MoveId.AQUA_JET);
     await game.toNextTurn();
 
     expect(cursola?.summonData.tags.length).toBe(0);
@@ -87,22 +87,22 @@ describe("Abilities - Perish Song", () => {
   });
 
   it("should activate if cursola already has perish song, but not reset its counter", async () => {
-    game.override.enemyMoveset([Moves.PERISH_SONG, Moves.AQUA_JET, Moves.SPLASH]);
-    game.override.moveset([Moves.WHIRLWIND, Moves.SPLASH]);
+    game.override.enemyMoveset([MoveId.PERISH_SONG, MoveId.AQUA_JET, MoveId.SPLASH]);
+    game.override.moveset([MoveId.WHIRLWIND, MoveId.SPLASH]);
     game.override.startingWave(5);
     await game.classicMode.startBattle([Species.CURSOLA]);
     const cursola = game.scene.getPlayerPokemon();
 
-    game.move.select(Moves.WHIRLWIND);
-    await game.move.selectEnemyMove(Moves.PERISH_SONG);
+    game.move.select(MoveId.WHIRLWIND);
+    await game.move.selectEnemyMove(MoveId.PERISH_SONG);
     await game.toNextTurn();
 
     const magikarp = game.scene.getEnemyPokemon();
     expect(cursola?.summonData.tags[0].turnCount).toBe(3);
     expect(magikarp?.summonData.tags.length).toBe(0);
 
-    game.move.select(Moves.SPLASH);
-    await game.move.selectEnemyMove(Moves.AQUA_JET);
+    game.move.select(MoveId.SPLASH);
+    await game.move.selectEnemyMove(MoveId.AQUA_JET);
     await game.toNextTurn();
 
     expect(cursola?.summonData.tags[0].turnCount).toBe(2);

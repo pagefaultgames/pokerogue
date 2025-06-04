@@ -4,7 +4,7 @@ import { allMoves } from "#app/data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { Stat } from "#app/enums/stat";
 import { CommandPhase } from "#app/phases/command-phase";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -27,16 +27,16 @@ describe("Moves - Metronome", () => {
   });
 
   beforeEach(() => {
-    randomMoveAttr = allMoves[Moves.METRONOME].getAttrs(RandomMoveAttr)[0];
+    randomMoveAttr = allMoves[MoveId.METRONOME].getAttrs(RandomMoveAttr)[0];
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.METRONOME, Moves.SPLASH])
+      .moveset([MoveId.METRONOME, MoveId.SPLASH])
       .battleStyle("single")
       .startingLevel(100)
       .starterSpecies(Species.REGIELEKI)
       .enemyLevel(100)
       .enemySpecies(Species.SHUCKLE)
-      .enemyMoveset(Moves.SPLASH)
+      .enemyMoveset(MoveId.SPLASH)
       .enemyAbility(AbilityId.BALL_FETCH);
   });
 
@@ -44,9 +44,9 @@ describe("Moves - Metronome", () => {
     await game.classicMode.startBattle();
     const player = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;
-    vi.spyOn(randomMoveAttr, "getMoveOverride").mockReturnValue(Moves.DIVE);
+    vi.spyOn(randomMoveAttr, "getMoveOverride").mockReturnValue(MoveId.DIVE);
 
-    game.move.select(Moves.METRONOME);
+    game.move.select(MoveId.METRONOME);
     await game.toNextTurn();
 
     expect(player.getTag(SemiInvulnerableTag)).toBeTruthy();
@@ -59,9 +59,9 @@ describe("Moves - Metronome", () => {
   it("should apply secondary effects of a move", async () => {
     await game.classicMode.startBattle();
     const player = game.scene.getPlayerPokemon()!;
-    vi.spyOn(randomMoveAttr, "getMoveOverride").mockReturnValue(Moves.WOOD_HAMMER);
+    vi.spyOn(randomMoveAttr, "getMoveOverride").mockReturnValue(MoveId.WOOD_HAMMER);
 
-    game.move.select(Moves.METRONOME);
+    game.move.select(MoveId.METRONOME);
     await game.toNextTurn();
 
     expect(player.isFullHp()).toBeFalsy();
@@ -70,10 +70,10 @@ describe("Moves - Metronome", () => {
   it("should recharge after using recharge move", async () => {
     await game.classicMode.startBattle();
     const player = game.scene.getPlayerPokemon()!;
-    vi.spyOn(randomMoveAttr, "getMoveOverride").mockReturnValue(Moves.HYPER_BEAM);
-    vi.spyOn(allMoves[Moves.HYPER_BEAM], "accuracy", "get").mockReturnValue(100);
+    vi.spyOn(randomMoveAttr, "getMoveOverride").mockReturnValue(MoveId.HYPER_BEAM);
+    vi.spyOn(allMoves[MoveId.HYPER_BEAM], "accuracy", "get").mockReturnValue(100);
 
-    game.move.select(Moves.METRONOME);
+    game.move.select(MoveId.METRONOME);
     await game.toNextTurn();
 
     expect(player.getTag(RechargingTag)).toBeTruthy();
@@ -84,11 +84,11 @@ describe("Moves - Metronome", () => {
     await game.classicMode.startBattle([Species.REGIELEKI, Species.RATTATA]);
     const [leftPlayer, rightPlayer] = game.scene.getPlayerField();
     const [leftOpp, rightOpp] = game.scene.getEnemyField();
-    vi.spyOn(randomMoveAttr, "getMoveOverride").mockReturnValue(Moves.AROMATIC_MIST);
+    vi.spyOn(randomMoveAttr, "getMoveOverride").mockReturnValue(MoveId.AROMATIC_MIST);
 
-    game.move.select(Moves.METRONOME, 0);
+    game.move.select(MoveId.METRONOME, 0);
     await game.phaseInterceptor.to(CommandPhase);
-    game.move.select(Moves.SPLASH, 1);
+    game.move.select(MoveId.SPLASH, 1);
     await game.toNextTurn();
 
     expect(rightPlayer.getStatStage(Stat.SPDEF)).toBe(1);
@@ -99,11 +99,11 @@ describe("Moves - Metronome", () => {
 
   it("should cause opponent to flee, and not crash for Roar", async () => {
     await game.classicMode.startBattle();
-    vi.spyOn(randomMoveAttr, "getMoveOverride").mockReturnValue(Moves.ROAR);
+    vi.spyOn(randomMoveAttr, "getMoveOverride").mockReturnValue(MoveId.ROAR);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.METRONOME);
+    game.move.select(MoveId.METRONOME);
     await game.phaseInterceptor.to("BerryPhase");
 
     const isVisible = enemyPokemon.visible;

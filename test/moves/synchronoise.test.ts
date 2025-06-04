@@ -1,5 +1,5 @@
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { PokemonType } from "#enums/pokemon-type";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -23,13 +23,13 @@ describe("Moves - Synchronoise", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.SYNCHRONOISE])
+      .moveset([MoveId.SYNCHRONOISE])
       .ability(AbilityId.BALL_FETCH)
       .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .enemyMoveset(Moves.SPLASH);
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   it("should consider the user's tera type if it is terastallized", async () => {
@@ -40,7 +40,7 @@ describe("Moves - Synchronoise", () => {
     // force the player to be terastallized
     playerPokemon.teraType = PokemonType.WATER;
     playerPokemon.isTerastallized = true;
-    game.move.select(Moves.SYNCHRONOISE);
+    game.move.select(MoveId.SYNCHRONOISE);
     await game.phaseInterceptor.to("BerryPhase");
     expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
   });

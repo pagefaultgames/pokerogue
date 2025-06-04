@@ -10,7 +10,7 @@ import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import * as MysteryEncounters from "#app/data/mystery-encounters/mystery-encounters";
 import { FieldTripEncounter } from "#app/data/mystery-encounters/encounters/field-trip-encounter";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import { UiMode } from "#enums/ui-mode";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
@@ -37,7 +37,7 @@ describe("Field Trip - Mystery Encounter", () => {
     game.override.startingWave(defaultWave);
     game.override.startingBiome(defaultBiome);
     game.override.disableTrainerWaves();
-    game.override.moveset([Moves.TACKLE, Moves.UPROAR, Moves.SWORDS_DANCE]);
+    game.override.moveset([MoveId.TACKLE, MoveId.UPROAR, MoveId.SWORDS_DANCE]);
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
       new Map<Biome, MysteryEncounterType[]>([[Biome.CAVE, [MysteryEncounterType.FIELD_TRIP]]]),

@@ -4,7 +4,7 @@ import { allAbilities } from "#app/data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { StatusEffect } from "#app/enums/status-effect";
 import GameManager from "#test/testUtils/gameManager";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -28,11 +28,11 @@ describe("Moves - Safeguard", () => {
     game.override
       .battleStyle("single")
       .enemySpecies(Species.DRATINI)
-      .enemyMoveset([Moves.SAFEGUARD])
+      .enemyMoveset([MoveId.SAFEGUARD])
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyLevel(5)
       .starterSpecies(Species.DRATINI)
-      .moveset([Moves.NUZZLE, Moves.SPORE, Moves.YAWN, Moves.SPLASH])
+      .moveset([MoveId.NUZZLE, MoveId.SPORE, MoveId.YAWN, MoveId.SPLASH])
       .ability(AbilityId.UNNERVE); // Stop wild Pokemon from potentially eating Lum Berry
   });
 
@@ -40,7 +40,7 @@ describe("Moves - Safeguard", () => {
     await game.classicMode.startBattle();
     const enemy = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.NUZZLE);
+    game.move.select(MoveId.NUZZLE);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
@@ -51,7 +51,7 @@ describe("Moves - Safeguard", () => {
     await game.classicMode.startBattle();
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.SPORE);
+    game.move.select(MoveId.SPORE);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
@@ -59,11 +59,11 @@ describe("Moves - Safeguard", () => {
   });
 
   it("protects from confusion", async () => {
-    game.override.moveset([Moves.CONFUSE_RAY]);
+    game.override.moveset([MoveId.CONFUSE_RAY]);
     await game.classicMode.startBattle();
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.CONFUSE_RAY);
+    game.move.select(MoveId.CONFUSE_RAY);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
@@ -75,8 +75,8 @@ describe("Moves - Safeguard", () => {
 
     await game.classicMode.startBattle();
 
-    game.move.select(Moves.SPORE, 0, BattlerIndex.ENEMY_2);
-    game.move.select(Moves.NUZZLE, 1, BattlerIndex.ENEMY_2);
+    game.move.select(MoveId.SPORE, 0, BattlerIndex.ENEMY_2);
+    game.move.select(MoveId.NUZZLE, 1, BattlerIndex.ENEMY_2);
 
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY_2]);
 
@@ -92,7 +92,7 @@ describe("Moves - Safeguard", () => {
     await game.classicMode.startBattle();
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.YAWN);
+    game.move.select(MoveId.YAWN);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
@@ -103,11 +103,11 @@ describe("Moves - Safeguard", () => {
     await game.classicMode.startBattle();
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.YAWN);
+    game.move.select(MoveId.YAWN);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toNextTurn();
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
 
     expect(enemyPokemon.status?.effect).toEqual(StatusEffect.SLEEP);
@@ -118,18 +118,18 @@ describe("Moves - Safeguard", () => {
     await game.classicMode.startBattle();
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
     enemyPokemon.damageAndUpdate(1);
 
     expect(enemyPokemon.status?.effect).toEqual(StatusEffect.BURN);
 
-    game.override.enemyMoveset([Moves.REST]);
+    game.override.enemyMoveset([MoveId.REST]);
     // Force the moveset to update mid-battle
     // TODO: Remove after enemy AI rework is in
     enemyPokemon.getMoveset();
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     enemyPokemon.damageAndUpdate(1);
     await game.toNextTurn();
 
@@ -146,11 +146,11 @@ describe("Moves - Safeguard", () => {
     await game.classicMode.startBattle();
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
-    game.override.enemyMoveset([Moves.TACKLE]);
-    game.move.select(Moves.SPLASH);
+    game.override.enemyMoveset([MoveId.TACKLE]);
+    game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
 
     expect(enemyPokemon.status).toBeUndefined();

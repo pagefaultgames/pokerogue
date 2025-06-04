@@ -19,7 +19,7 @@ import type { EnemyPokemon, PlayerPokemon, TurnMove } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattleSpec } from "#enums/battle-spec";
-import type { Moves } from "#enums/moves";
+import type { MoveId } from "#enums/moves";
 import { PlayerGender } from "#enums/player-gender";
 import { MusicPreference } from "#app/system/settings/settings";
 import { Species } from "#enums/species";
@@ -78,7 +78,7 @@ export default class Battle {
   public battleScore = 0;
   public postBattleLoot: PokemonHeldItemModifier[] = [];
   public escapeAttempts = 0;
-  public lastMove: Moves;
+  public lastMove: MoveId;
   public battleSeed: string = randomString(16, true);
   private battleSeedState: string | null = null;
   public moneyScattered = 0;

@@ -1,5 +1,5 @@
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -23,10 +23,10 @@ describe("Moves - Autotomize", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.AUTOTOMIZE, Moves.KINGS_SHIELD, Moves.FALSE_SWIPE])
+      .moveset([MoveId.AUTOTOMIZE, MoveId.KINGS_SHIELD, MoveId.FALSE_SWIPE])
       .battleStyle("single")
       .enemyAbility(AbilityId.BALL_FETCH)
-      .enemyMoveset(Moves.SPLASH);
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   it(
@@ -40,15 +40,15 @@ describe("Moves - Autotomize", () => {
       await game.classicMode.startBattle([Species.DRACOZOLT]);
       const playerPokemon = game.scene.getPlayerPokemon()!;
       expect(playerPokemon.getWeight()).toBe(baseDracozoltWeight);
-      game.move.select(Moves.AUTOTOMIZE);
+      game.move.select(MoveId.AUTOTOMIZE);
       await game.toNextTurn();
       expect(playerPokemon.getWeight()).toBe(oneAutotomizeDracozoltWeight);
 
-      game.move.select(Moves.AUTOTOMIZE);
+      game.move.select(MoveId.AUTOTOMIZE);
       await game.toNextTurn();
       expect(playerPokemon.getWeight()).toBe(twoAutotomizeDracozoltWeight);
 
-      game.move.select(Moves.AUTOTOMIZE);
+      game.move.select(MoveId.AUTOTOMIZE);
       await game.toNextTurn();
       expect(playerPokemon.getWeight()).toBe(threeAutotomizeDracozoltWeight);
     },
@@ -66,25 +66,25 @@ describe("Moves - Autotomize", () => {
 
       expect(playerPokemon.getWeight()).toBe(baseAegislashWeight);
 
-      game.move.select(Moves.AUTOTOMIZE);
+      game.move.select(MoveId.AUTOTOMIZE);
       await game.toNextTurn();
       expect(playerPokemon.getWeight()).toBe(autotomizeAegislashWeight);
 
       // Transform to sword form
-      game.move.select(Moves.FALSE_SWIPE);
+      game.move.select(MoveId.FALSE_SWIPE);
       await game.toNextTurn();
       expect(playerPokemon.getWeight()).toBe(baseAegislashWeight);
 
-      game.move.select(Moves.AUTOTOMIZE);
+      game.move.select(MoveId.AUTOTOMIZE);
       await game.toNextTurn();
       expect(playerPokemon.getWeight()).toBe(autotomizeAegislashWeight);
 
       // Transform to shield form
-      game.move.select(Moves.KINGS_SHIELD);
+      game.move.select(MoveId.KINGS_SHIELD);
       await game.toNextTurn();
       expect(playerPokemon.getWeight()).toBe(baseAegislashWeight);
 
-      game.move.select(Moves.AUTOTOMIZE);
+      game.move.select(MoveId.AUTOTOMIZE);
       await game.toNextTurn();
       expect(playerPokemon.getWeight()).toBe(autotomizeAegislashWeight);
     },
@@ -100,7 +100,7 @@ describe("Moves - Autotomize", () => {
       await game.classicMode.startBattle([Species.GROUDON]);
       const playerPokemon = game.scene.getPlayerPokemon()!;
       expect(playerPokemon.getWeight()).toBe(baseLightGroudonWeight);
-      game.move.select(Moves.AUTOTOMIZE);
+      game.move.select(MoveId.AUTOTOMIZE);
       await game.toNextTurn();
       expect(playerPokemon.getWeight()).toBe(autotomizeLightGroudonWeight);
     },

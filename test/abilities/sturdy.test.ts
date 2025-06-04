@@ -2,7 +2,7 @@ import type { EnemyPokemon } from "#app/field/pokemon";
 import { DamageAnimPhase } from "#app/phases/damage-anim-phase";
 import { MoveEndPhase } from "#app/phases/move-end-phase";
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -28,7 +28,7 @@ describe("Abilities - Sturdy", () => {
 
     game.override.starterSpecies(Species.LUCARIO);
     game.override.startingLevel(100);
-    game.override.moveset([Moves.CLOSE_COMBAT, Moves.FISSURE]);
+    game.override.moveset([MoveId.CLOSE_COMBAT, MoveId.FISSURE]);
 
     game.override.enemySpecies(Species.ARON);
     game.override.enemyLevel(5);
@@ -37,7 +37,7 @@ describe("Abilities - Sturdy", () => {
 
   test("Sturdy activates when user is at full HP", async () => {
     await game.classicMode.startBattle();
-    game.move.select(Moves.CLOSE_COMBAT);
+    game.move.select(MoveId.CLOSE_COMBAT);
     await game.phaseInterceptor.to(MoveEndPhase);
     expect(game.scene.getEnemyParty()[0].hp).toBe(1);
   });
@@ -48,7 +48,7 @@ describe("Abilities - Sturdy", () => {
     const enemyPokemon: EnemyPokemon = game.scene.getEnemyParty()[0];
     enemyPokemon.hp = enemyPokemon.getMaxHp() - 1;
 
-    game.move.select(Moves.CLOSE_COMBAT);
+    game.move.select(MoveId.CLOSE_COMBAT);
     await game.phaseInterceptor.to(DamageAnimPhase);
 
     expect(enemyPokemon.hp).toBe(0);
@@ -57,7 +57,7 @@ describe("Abilities - Sturdy", () => {
 
   test("Sturdy pokemon should be immune to OHKO moves", async () => {
     await game.classicMode.startBattle();
-    game.move.select(Moves.FISSURE);
+    game.move.select(MoveId.FISSURE);
     await game.phaseInterceptor.to(MoveEndPhase);
 
     const enemyPokemon: EnemyPokemon = game.scene.getEnemyParty()[0];
@@ -68,7 +68,7 @@ describe("Abilities - Sturdy", () => {
     game.override.ability(AbilityId.MOLD_BREAKER);
 
     await game.classicMode.startBattle();
-    game.move.select(Moves.CLOSE_COMBAT);
+    game.move.select(MoveId.CLOSE_COMBAT);
     await game.phaseInterceptor.to(DamageAnimPhase);
 
     const enemyPokemon: EnemyPokemon = game.scene.getEnemyParty()[0];

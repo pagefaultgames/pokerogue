@@ -53,7 +53,7 @@ import { WeatherType } from "#enums/weather-type";
 import { AbilityId } from "#enums/ability-id";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import { SwitchType } from "#enums/switch-type";
 import { MoveFlags } from "#enums/MoveFlags";
@@ -1139,13 +1139,13 @@ export class MoveEffectChanceMultiplierAbAttr extends AbAttr {
   }
 
   override canApply(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
-    const exceptMoves = [ Moves.ORDER_UP, Moves.ELECTRO_SHOT ];
+    const exceptMoves = [ MoveId.ORDER_UP, MoveId.ELECTRO_SHOT ];
     return !((args[0] as NumberHolder).value <= 0 || exceptMoves.includes((args[1] as Move).id));
   }
 
   /**
    * @param args [0]: {@linkcode NumberHolder} Move additional effect chance. Has to be higher than or equal to 0.
-   *             [1]: {@linkcode Moves } Move used by the ability user.
+   *             [1]: {@linkcode MoveId } Move used by the ability user.
    */
   override apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: BooleanHolder, args: any[]): void {
     (args[0] as NumberHolder).value *= this.chanceMultiplier;
@@ -1249,7 +1249,7 @@ export class MoveTypeChangeAbAttr extends PreAttackAbAttr {
    * 
    * Can be applied if:
    * - The ability's condition is met, e.g. pixilate only boosts normal moves,
-   * - The move is not forbidden from having its type changed by an ability, e.g. {@linkcode Moves.MULTI_ATTACK}
+   * - The move is not forbidden from having its type changed by an ability, e.g. {@linkcode MoveId.MULTI_ATTACK}
    * - The user is not terastallized and using tera blast
    * - The user is not a terastallized terapagos with tera stellar using tera starstorm
    * @param pokemon - The pokemon that has the move type changing ability and is using the attacking move
@@ -1264,8 +1264,8 @@ export class MoveTypeChangeAbAttr extends PreAttackAbAttr {
     return (!this.condition || this.condition(pokemon, _defender, move)) &&
             !noAbilityTypeOverrideMoves.has(move.id) && 
             (!pokemon.isTerastallized ||
-              (move.id !== Moves.TERA_BLAST &&
-              (move.id !== Moves.TERA_STARSTORM || pokemon.getTeraType() !== PokemonType.STELLAR || !pokemon.hasSpecies(Species.TERAPAGOS))));
+              (move.id !== MoveId.TERA_BLAST &&
+              (move.id !== MoveId.TERA_STARSTORM || pokemon.getTeraType() !== PokemonType.STELLAR || !pokemon.hasSpecies(Species.TERAPAGOS))));
   }
 
   /**
@@ -1296,7 +1296,7 @@ export class PokemonTypeChangeAbAttr extends PreAttackAbAttr {
 
   override canApplyPreAttack(pokemon: Pokemon, passive: boolean, simulated: boolean, defender: Pokemon | null, move: Move, args: any[]): boolean {
     if (!pokemon.isTerastallized &&
-    move.id !== Moves.STRUGGLE &&
+    move.id !== MoveId.STRUGGLE &&
     /**
      * Skip moves that call other moves because these moves generate a following move that will trigger this ability attribute
      * @see {@link https://bulbapedia.bulbagarden.net/wiki/Category:Moves_that_call_other_moves}
@@ -2826,7 +2826,7 @@ export class CommanderAbAttr extends AbAttr {
       // Play an animation of the source jumping into the ally Dondozo's mouth
       globalScene.triggerPokemonBattleAnim(pokemon, PokemonAnimType.COMMANDER_APPLY);
       // Apply boosts from this effect to the ally Dondozo
-      pokemon.getAlly()?.addTag(BattlerTagType.COMMANDED, 0, Moves.NONE, pokemon.id);
+      pokemon.getAlly()?.addTag(BattlerTagType.COMMANDED, 0, MoveId.NONE, pokemon.id);
       // Cancel the source Pokemon's next move (if a move is queued)
       globalScene.tryRemovePhase((phase) => phase instanceof MovePhase && phase.pokemon === pokemon);
     }
@@ -3712,7 +3712,7 @@ function getAnticipationCondition(): AbAttrCondition {
           return true;
         }
         // edge case for hidden power, type is computed
-        if (move.getMove().id === Moves.HIDDEN_POWER) {
+        if (move.getMove().id === MoveId.HIDDEN_POWER) {
           const iv_val = Math.floor(((opponent.ivs[Stat.HP] & 1)
               + (opponent.ivs[Stat.ATK] & 1) * 2
               + (opponent.ivs[Stat.DEF] & 1) * 4
@@ -3764,7 +3764,7 @@ export class ForewarnAbAttr extends PostSummonAbAttr {
           movePower = 1;
         } else if (move?.getMove().hasAttr(OneHitKOAttr)) {
           movePower = 150;
-        } else if (move?.getMove().id === Moves.COUNTER || move?.getMove().id === Moves.MIRROR_COAT || move?.getMove().id === Moves.METAL_BURST) {
+        } else if (move?.getMove().id === MoveId.COUNTER || move?.getMove().id === MoveId.MIRROR_COAT || move?.getMove().id === MoveId.METAL_BURST) {
           movePower = 120;
         } else if (move?.getMove().power === -1) {
           movePower = 80;
@@ -4856,7 +4856,7 @@ export class RedirectMoveAbAttr extends AbAttr {
    */
 
   override canApply(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
-    if (!this.canRedirect(args[0] as Moves, args[2] as Pokemon)) {
+    if (!this.canRedirect(args[0] as MoveId, args[2] as Pokemon)) {
       return false;
     }
     const target = args[1] as NumberHolder;
@@ -4870,7 +4870,7 @@ export class RedirectMoveAbAttr extends AbAttr {
     target.value = newTarget;
   }
 
-  canRedirect(moveId: Moves, user: Pokemon): boolean {
+  canRedirect(moveId: MoveId, user: Pokemon): boolean {
     const move = allMoves[moveId];
     return !![ MoveTarget.NEAR_OTHER, MoveTarget.OTHER ].find(t => move.moveTarget === t);
   }
@@ -4884,7 +4884,7 @@ export class RedirectTypeMoveAbAttr extends RedirectMoveAbAttr {
     this.type = type;
   }
 
-  canRedirect(moveId: Moves, user: Pokemon): boolean {
+  canRedirect(moveId: MoveId, user: Pokemon): boolean {
     return super.canRedirect(moveId, user) && user.getMoveType(allMoves[moveId]) === this.type;
   }
 }
@@ -5050,7 +5050,7 @@ export class InfiltratorAbAttr extends AbAttr {
 /**
  * Attribute implementing the effects of {@link https://bulbapedia.bulbagarden.net/wiki/Magic_Bounce_(ability) | Magic Bounce}.
  * Allows the source to bounce back {@linkcode MoveFlags.REFLECTABLE | Reflectable}
- *  moves as if the user had used {@linkcode Moves.MAGIC_COAT | Magic Coat}.
+ *  moves as if the user had used {@linkcode MoveId.MAGIC_COAT | Magic Coat}.
  */
 export class ReflectStatusMoveAbAttr extends AbAttr { }
 
@@ -5731,7 +5731,7 @@ export class PostDamageForceSwitchAbAttr extends PostDamageAbAttr {
     source?: Pokemon): boolean {
     const moveHistory = pokemon.getMoveHistory();
     // Will not activate when the Pokémon's HP is lowered by cutting its own HP
-    const fordbiddenAttackingMoves = [ Moves.BELLY_DRUM, Moves.SUBSTITUTE, Moves.CURSE, Moves.PAIN_SPLIT ];
+    const fordbiddenAttackingMoves = [ MoveId.BELLY_DRUM, MoveId.SUBSTITUTE, MoveId.CURSE, MoveId.PAIN_SPLIT ];
     if (moveHistory.length > 0) {
       const lastMoveUsed = moveHistory[moveHistory.length - 1];
       if (fordbiddenAttackingMoves.includes(lastMoveUsed.move)) {
@@ -5740,13 +5740,13 @@ export class PostDamageForceSwitchAbAttr extends PostDamageAbAttr {
     }
 
     // Dragon Tail and Circle Throw switch out Pokémon before the Ability activates.
-    const fordbiddenDefendingMoves = [ Moves.DRAGON_TAIL, Moves.CIRCLE_THROW ];
+    const fordbiddenDefendingMoves = [ MoveId.DRAGON_TAIL, MoveId.CIRCLE_THROW ];
     if (source) {
       const enemyMoveHistory = source.getMoveHistory();
       if (enemyMoveHistory.length > 0) {
         const enemyLastMoveUsed = enemyMoveHistory[enemyMoveHistory.length - 1];
         // Will not activate if the Pokémon's HP falls below half while it is in the air during Sky Drop.
-        if (fordbiddenDefendingMoves.includes(enemyLastMoveUsed.move) || enemyLastMoveUsed.move === Moves.SKY_DROP && enemyLastMoveUsed.result === MoveResult.OTHER) {
+        if (fordbiddenDefendingMoves.includes(enemyLastMoveUsed.move) || enemyLastMoveUsed.move === MoveId.SKY_DROP && enemyLastMoveUsed.result === MoveResult.OTHER) {
           return false;
         // Will not activate if the Pokémon's HP falls below half by a move affected by Sheer Force.
         // TODO: Make this use the sheer force disable condition

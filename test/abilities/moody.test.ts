@@ -1,6 +1,6 @@
 import { BATTLE_STATS, EFFECTIVE_STATS } from "#enums/stat";
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -28,15 +28,15 @@ describe("Abilities - Moody", () => {
       .enemySpecies(Species.RATTATA)
       .enemyAbility(AbilityId.BALL_FETCH)
       .ability(AbilityId.MOODY)
-      .enemyMoveset(Moves.SPLASH)
-      .moveset(Moves.SPLASH);
+      .enemyMoveset(MoveId.SPLASH)
+      .moveset(MoveId.SPLASH);
   });
 
   it("should increase one stat stage by 2 and decrease a different stat stage by 1", async () => {
     await game.classicMode.startBattle();
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
 
     // Find the increased and decreased stats, make sure they are different.
@@ -57,7 +57,7 @@ describe("Abilities - Moody", () => {
     // Set all stat stages to -6
     vi.spyOn(playerPokemon.summonData, "statStages", "get").mockReturnValue(new Array(BATTLE_STATS.length).fill(-6));
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
 
     // Should increase one stat stage by 2 (from -6, meaning it will be -4)
@@ -75,7 +75,7 @@ describe("Abilities - Moody", () => {
     // Set all stat stages to 6
     vi.spyOn(playerPokemon.summonData, "statStages", "get").mockReturnValue(new Array(BATTLE_STATS.length).fill(6));
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
 
     // Should decrease one stat stage by 1 (from 6, meaning it will be 5)

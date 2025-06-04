@@ -1,7 +1,7 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import Phaser from "phaser";
 import GameManager from "#test/testUtils/gameManager";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Stat } from "#enums/stat";
 import { Species } from "#enums/species";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
@@ -27,10 +27,10 @@ describe("Moves - Power Trick", () => {
     game.override
       .battleStyle("single")
       .enemyAbility(AbilityId.BALL_FETCH)
-      .enemyMoveset(Moves.SPLASH)
+      .enemyMoveset(MoveId.SPLASH)
       .enemySpecies(Species.MEW)
       .enemyLevel(200)
-      .moveset([Moves.POWER_TRICK])
+      .moveset([MoveId.POWER_TRICK])
       .ability(AbilityId.BALL_FETCH);
   });
 
@@ -41,7 +41,7 @@ describe("Moves - Power Trick", () => {
     const baseATK = player.getStat(Stat.ATK, false);
     const baseDEF = player.getStat(Stat.DEF, false);
 
-    game.move.select(Moves.POWER_TRICK);
+    game.move.select(MoveId.POWER_TRICK);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -57,11 +57,11 @@ describe("Moves - Power Trick", () => {
     const baseATK = player.getStat(Stat.ATK, false);
     const baseDEF = player.getStat(Stat.DEF, false);
 
-    game.move.select(Moves.POWER_TRICK);
+    game.move.select(MoveId.POWER_TRICK);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
-    game.move.select(Moves.POWER_TRICK);
+    game.move.select(MoveId.POWER_TRICK);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -72,12 +72,12 @@ describe("Moves - Power Trick", () => {
 
   it("should pass effect when using BATON_PASS", async () => {
     await game.classicMode.startBattle([Species.SHUCKLE, Species.SHUCKLE]);
-    await game.override.moveset([Moves.POWER_TRICK, Moves.BATON_PASS]);
+    await game.override.moveset([MoveId.POWER_TRICK, MoveId.BATON_PASS]);
 
     const player = game.scene.getPlayerPokemon()!;
     player.addTag(BattlerTagType.POWER_TRICK);
 
-    game.move.select(Moves.BATON_PASS);
+    game.move.select(MoveId.BATON_PASS);
     game.doSelectPartyPokemon(1);
 
     await game.phaseInterceptor.to(TurnEndPhase);
@@ -93,12 +93,12 @@ describe("Moves - Power Trick", () => {
 
   it("should remove effect after using Transform", async () => {
     await game.classicMode.startBattle([Species.SHUCKLE, Species.SHUCKLE]);
-    await game.override.moveset([Moves.POWER_TRICK, Moves.TRANSFORM]);
+    await game.override.moveset([MoveId.POWER_TRICK, MoveId.TRANSFORM]);
 
     const player = game.scene.getPlayerPokemon()!;
     player.addTag(BattlerTagType.POWER_TRICK);
 
-    game.move.select(Moves.TRANSFORM);
+    game.move.select(MoveId.TRANSFORM);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 

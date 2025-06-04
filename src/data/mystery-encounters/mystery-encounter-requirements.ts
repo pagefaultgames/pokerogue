@@ -11,7 +11,7 @@ import { AttackTypeBoosterModifier } from "#app/modifier/modifier";
 import type { AttackTypeBoosterModifierType } from "#app/modifier/modifier-type";
 import { isNullOrUndefined } from "#app/utils/common";
 import type { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Species } from "#enums/species";
 import { SpeciesFormKey } from "#enums/species-form-key";
@@ -549,12 +549,17 @@ export class TypeRequirement extends EncounterPokemonRequirement {
 }
 
 export class MoveRequirement extends EncounterPokemonRequirement {
-  requiredMoves: Moves[] = [];
+  requiredMoves: MoveId[] = [];
   minNumberOfPokemon: number;
   invertQuery: boolean;
   excludeDisallowedPokemon: boolean;
 
-  constructor(moves: Moves | Moves[], excludeDisallowedPokemon: boolean, minNumberOfPokemon = 1, invertQuery = false) {
+  constructor(
+    moves: MoveId | MoveId[],
+    excludeDisallowedPokemon: boolean,
+    minNumberOfPokemon = 1,
+    invertQuery = false,
+  ) {
     super();
     this.excludeDisallowedPokemon = excludeDisallowedPokemon;
     this.minNumberOfPokemon = minNumberOfPokemon;
@@ -602,11 +607,11 @@ export class MoveRequirement extends EncounterPokemonRequirement {
  * NOTE: If the Pokemon already knows the move, this requirement will fail, since it's not technically learnable.
  */
 export class CompatibleMoveRequirement extends EncounterPokemonRequirement {
-  requiredMoves: Moves[];
+  requiredMoves: MoveId[];
   minNumberOfPokemon: number;
   invertQuery: boolean;
 
-  constructor(learnableMove: Moves | Moves[], minNumberOfPokemon = 1, invertQuery = false) {
+  constructor(learnableMove: MoveId | MoveId[], minNumberOfPokemon = 1, invertQuery = false) {
     super();
     this.minNumberOfPokemon = minNumberOfPokemon;
     this.invertQuery = invertQuery;
@@ -644,7 +649,7 @@ export class CompatibleMoveRequirement extends EncounterPokemonRequirement {
       pokemon?.compatibleTms.filter(tm => !pokemon.moveset.find(m => m.moveId === tm)).includes(reqMove),
     );
     if (includedCompatMoves.length > 0) {
-      return ["compatibleMove", Moves[includedCompatMoves[0]]];
+      return ["compatibleMove", MoveId[includedCompatMoves[0]]];
     }
     return ["compatibleMove", ""];
   }

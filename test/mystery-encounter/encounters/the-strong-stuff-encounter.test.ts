@@ -11,7 +11,7 @@ import {
   runMysteryEncounterToEnd,
   skipBattleRunMysteryEncounterRewardsPhase,
 } from "#test/mystery-encounter/encounter-test-utils";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import type BattleScene from "#app/battle-scene";
 import { TheStrongStuffEncounter } from "#app/data/mystery-encounters/encounters/the-strong-stuff-encounter";
 import { Nature } from "#enums/nature";
@@ -115,7 +115,7 @@ describe("The Strong Stuff - Mystery Encounter", () => {
             shiny: false,
             customPokemonData: new CustomPokemonData({ spriteScale: 1.25 }),
             nature: Nature.HARDY,
-            moveSet: [Moves.INFESTATION, Moves.SALT_CURE, Moves.GASTRO_ACID, Moves.HEAL_ORDER],
+            moveSet: [MoveId.INFESTATION, MoveId.SALT_CURE, MoveId.GASTRO_ACID, MoveId.HEAL_ORDER],
             modifierConfigs: expect.any(Array),
             tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
             mysteryEncounterBattleEffects: expect.any(Function),
@@ -215,17 +215,17 @@ describe("The Strong Stuff - Mystery Encounter", () => {
       );
       expect(shuckleItems.find(m => m instanceof BerryModifier && m.berryType === BerryType.LUM)?.stackCount).toBe(2);
       expect(enemyField[0].moveset).toEqual([
-        new PokemonMove(Moves.INFESTATION),
-        new PokemonMove(Moves.SALT_CURE),
-        new PokemonMove(Moves.GASTRO_ACID),
-        new PokemonMove(Moves.HEAL_ORDER),
+        new PokemonMove(MoveId.INFESTATION),
+        new PokemonMove(MoveId.SALT_CURE),
+        new PokemonMove(MoveId.GASTRO_ACID),
+        new PokemonMove(MoveId.HEAL_ORDER),
       ]);
 
       // Should have used moves pre-battle
       const movePhases = phaseSpy.mock.calls.filter(p => p[0] instanceof MovePhase).map(p => p[0]);
       expect(movePhases.length).toBe(2);
-      expect(movePhases.filter(p => (p as MovePhase).move.moveId === Moves.GASTRO_ACID).length).toBe(1);
-      expect(movePhases.filter(p => (p as MovePhase).move.moveId === Moves.STEALTH_ROCK).length).toBe(1);
+      expect(movePhases.filter(p => (p as MovePhase).move.moveId === MoveId.GASTRO_ACID).length).toBe(1);
+      expect(movePhases.filter(p => (p as MovePhase).move.moveId === MoveId.STEALTH_ROCK).length).toBe(1);
     });
 
     it("should have Soul Dew in rewards", async () => {

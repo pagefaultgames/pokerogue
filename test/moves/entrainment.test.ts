@@ -1,6 +1,6 @@
 import { Stat } from "#app/enums/stat";
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -23,19 +23,19 @@ describe("Moves - Entrainment", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.SPLASH, Moves.ENTRAINMENT])
+      .moveset([MoveId.SPLASH, MoveId.ENTRAINMENT])
       .ability(AbilityId.ADAPTABILITY)
       .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .enemyMoveset(Moves.SPLASH);
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   it("gives its ability to the target", async () => {
     await game.classicMode.startBattle([Species.FEEBAS]);
 
-    game.move.select(Moves.ENTRAINMENT);
+    game.move.select(MoveId.ENTRAINMENT);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(game.scene.getEnemyPokemon()?.getAbility().id).toBe(AbilityId.ADAPTABILITY);
@@ -45,7 +45,7 @@ describe("Moves - Entrainment", () => {
     game.override.ability(AbilityId.INTIMIDATE);
     await game.classicMode.startBattle([Species.FEEBAS]);
 
-    game.move.select(Moves.ENTRAINMENT);
+    game.move.select(MoveId.ENTRAINMENT);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(game.scene.getPlayerPokemon()?.getStatStage(Stat.ATK)).toBe(-1);

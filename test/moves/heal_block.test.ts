@@ -4,7 +4,7 @@ import GameManager from "#test/testUtils/gameManager";
 import { AbilityId } from "#enums/ability-id";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import { WeatherType } from "#enums/weather-type";
 import Phaser from "phaser";
@@ -28,8 +28,8 @@ describe("Moves - Heal Block", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.ABSORB, Moves.WISH, Moves.SPLASH, Moves.AQUA_RING])
-      .enemyMoveset(Moves.HEAL_BLOCK)
+      .moveset([MoveId.ABSORB, MoveId.WISH, MoveId.SPLASH, MoveId.AQUA_RING])
+      .enemyMoveset(MoveId.HEAL_BLOCK)
       .ability(AbilityId.NO_GUARD)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemySpecies(Species.BLISSEY)
@@ -44,7 +44,7 @@ describe("Moves - Heal Block", () => {
 
     player.damageAndUpdate(enemy.getMaxHp() - 1);
 
-    game.move.select(Moves.ABSORB);
+    game.move.select(MoveId.ABSORB);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("TurnEndPhase");
 
@@ -60,7 +60,7 @@ describe("Moves - Heal Block", () => {
     const player = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.ABSORB);
+    game.move.select(MoveId.ABSORB);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("TurnEndPhase");
 
@@ -75,12 +75,12 @@ describe("Moves - Heal Block", () => {
 
     player.damageAndUpdate(player.getMaxHp() - 1);
 
-    game.move.select(Moves.WISH);
+    game.move.select(MoveId.WISH);
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(game.scene.arena.getTagOnSide(ArenaTagType.WISH, ArenaTagSide.PLAYER)).toBeDefined();
     while (game.scene.arena.getTagOnSide(ArenaTagType.WISH, ArenaTagSide.PLAYER)) {
-      game.move.select(Moves.SPLASH);
+      game.move.select(MoveId.SPLASH);
       await game.phaseInterceptor.to("TurnEndPhase");
     }
 
@@ -96,7 +96,7 @@ describe("Moves - Heal Block", () => {
 
     player.damageAndUpdate(player.getMaxHp() - 1);
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(player.hp).toBe(1);
@@ -109,7 +109,7 @@ describe("Moves - Heal Block", () => {
 
     player.damageAndUpdate(player.getMaxHp() - 1);
 
-    game.move.select(Moves.AQUA_RING);
+    game.move.select(MoveId.AQUA_RING);
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(player.getTag(BattlerTagType.AQUA_RING)).toBeDefined();
@@ -125,7 +125,7 @@ describe("Moves - Heal Block", () => {
 
     player.damageAndUpdate(player.getMaxHp() - 1);
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(player.hp).toBe(1);
@@ -139,7 +139,7 @@ describe("Moves - Heal Block", () => {
     const player = game.scene.getPlayerPokemon()!;
     player.damageAndUpdate(player.getMaxHp() - 1);
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(player.hp).toBe(1);

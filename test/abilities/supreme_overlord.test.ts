@@ -1,4 +1,4 @@
-import { Moves } from "#app/enums/moves";
+import { MoveId } from "#app/enums/moves";
 import type Move from "#app/data/moves/move";
 import { AbilityId } from "#enums/ability-id";
 import { Species } from "#enums/species";
@@ -27,7 +27,7 @@ describe("Abilities - Supreme Overlord", () => {
   });
 
   beforeEach(() => {
-    move = allMoves[Moves.TACKLE];
+    move = allMoves[MoveId.TACKLE];
     basePower = move.power;
     game = new GameManager(phaserGame);
     game.override
@@ -37,8 +37,8 @@ describe("Abilities - Supreme Overlord", () => {
       .startingLevel(1)
       .enemyAbility(AbilityId.BALL_FETCH)
       .ability(AbilityId.SUPREME_OVERLORD)
-      .enemyMoveset([Moves.SPLASH])
-      .moveset([Moves.TACKLE, Moves.EXPLOSION, Moves.LUNAR_DANCE]);
+      .enemyMoveset([MoveId.SPLASH])
+      .moveset([MoveId.TACKLE, MoveId.EXPLOSION, MoveId.LUNAR_DANCE]);
 
     vi.spyOn(move, "calculateBattlePower");
   });
@@ -46,17 +46,17 @@ describe("Abilities - Supreme Overlord", () => {
   it("should increase Power by 20% if 2 Pokemon are fainted in the party", async () => {
     await game.classicMode.startBattle([Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE]);
 
-    game.move.select(Moves.EXPLOSION);
+    game.move.select(MoveId.EXPLOSION);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     game.doSelectPartyPokemon(1);
     await game.toNextTurn();
 
-    game.move.select(Moves.EXPLOSION);
+    game.move.select(MoveId.EXPLOSION);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     game.doSelectPartyPokemon(2);
     await game.toNextTurn();
 
-    game.move.select(Moves.TACKLE);
+    game.move.select(MoveId.TACKLE);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to(MoveEffectPhase);
 
@@ -69,7 +69,7 @@ describe("Abilities - Supreme Overlord", () => {
     /**
      * Bulbasur faints once
      */
-    game.move.select(Moves.EXPLOSION);
+    game.move.select(MoveId.EXPLOSION);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     game.doSelectPartyPokemon(1);
     await game.toNextTurn();
@@ -78,7 +78,7 @@ describe("Abilities - Supreme Overlord", () => {
      * Charmander faints once
      */
     game.doRevivePokemon(1);
-    game.move.select(Moves.EXPLOSION);
+    game.move.select(MoveId.EXPLOSION);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     game.doSelectPartyPokemon(1);
     await game.toNextTurn();
@@ -86,12 +86,12 @@ describe("Abilities - Supreme Overlord", () => {
     /**
      * Bulbasur faints twice
      */
-    game.move.select(Moves.EXPLOSION);
+    game.move.select(MoveId.EXPLOSION);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     game.doSelectPartyPokemon(2);
     await game.toNextTurn();
 
-    game.move.select(Moves.TACKLE);
+    game.move.select(MoveId.TACKLE);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to(MoveEffectPhase);
 
@@ -106,7 +106,7 @@ describe("Abilities - Supreme Overlord", () => {
     /**
      * The first Pokemon faints and another Pokemon in the party is selected.
      */
-    game.move.select(Moves.LUNAR_DANCE);
+    game.move.select(MoveId.LUNAR_DANCE);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     game.doSelectPartyPokemon(1);
     await game.toNextTurn();
@@ -114,11 +114,11 @@ describe("Abilities - Supreme Overlord", () => {
     /**
      * Enemy Pokemon faints and new wave is entered.
      */
-    game.move.select(Moves.TACKLE);
+    game.move.select(MoveId.TACKLE);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextWave();
 
-    game.move.select(Moves.TACKLE);
+    game.move.select(MoveId.TACKLE);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("TurnEndPhase");
 
@@ -130,16 +130,16 @@ describe("Abilities - Supreme Overlord", () => {
 
     await game.classicMode.startBattle([Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE]);
 
-    game.move.select(Moves.LUNAR_DANCE);
+    game.move.select(MoveId.LUNAR_DANCE);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     game.doSelectPartyPokemon(1);
     await game.toNextTurn();
 
-    game.move.select(Moves.TACKLE);
+    game.move.select(MoveId.TACKLE);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextWave();
 
-    game.move.select(Moves.TACKLE);
+    game.move.select(MoveId.TACKLE);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("BerryPhase", false);
 
@@ -151,16 +151,16 @@ describe("Abilities - Supreme Overlord", () => {
 
     await game.classicMode.startBattle([Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE]);
 
-    game.move.select(Moves.LUNAR_DANCE);
+    game.move.select(MoveId.LUNAR_DANCE);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     game.doSelectPartyPokemon(1);
     await game.toNextTurn();
 
-    game.move.select(Moves.TACKLE);
+    game.move.select(MoveId.TACKLE);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextWave();
 
-    game.move.select(Moves.TACKLE);
+    game.move.select(MoveId.TACKLE);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("BerryPhase", false);
 

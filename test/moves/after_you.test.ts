@@ -2,7 +2,7 @@ import { BattlerIndex } from "#app/battle";
 import { AbilityId } from "#enums/ability-id";
 import { MoveResult } from "#app/field/pokemon";
 import { MovePhase } from "#app/phases/move-phase";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -29,16 +29,16 @@ describe("Moves - After You", () => {
       .enemyLevel(5)
       .enemySpecies(Species.PIKACHU)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .enemyMoveset(Moves.SPLASH)
+      .enemyMoveset(MoveId.SPLASH)
       .ability(AbilityId.BALL_FETCH)
-      .moveset([Moves.AFTER_YOU, Moves.SPLASH]);
+      .moveset([MoveId.AFTER_YOU, MoveId.SPLASH]);
   });
 
   it("makes the target move immediately after the user", async () => {
     await game.classicMode.startBattle([Species.REGIELEKI, Species.SHUCKLE]);
 
-    game.move.select(Moves.AFTER_YOU, 0, BattlerIndex.PLAYER_2);
-    game.move.select(Moves.SPLASH, 1);
+    game.move.select(MoveId.AFTER_YOU, 0, BattlerIndex.PLAYER_2);
+    game.move.select(MoveId.SPLASH, 1);
 
     await game.phaseInterceptor.to("MoveEffectPhase");
     await game.phaseInterceptor.to(MovePhase, false);
@@ -51,8 +51,8 @@ describe("Moves - After You", () => {
     game.override.enemySpecies(Species.SHUCKLE);
     await game.classicMode.startBattle([Species.REGIELEKI, Species.PIKACHU]);
 
-    game.move.select(Moves.SPLASH);
-    game.move.select(Moves.AFTER_YOU, 1, BattlerIndex.PLAYER);
+    game.move.select(MoveId.SPLASH);
+    game.move.select(MoveId.AFTER_YOU, 1, BattlerIndex.PLAYER);
 
     await game.phaseInterceptor.to("MoveEndPhase");
     await game.phaseInterceptor.to("MoveEndPhase");

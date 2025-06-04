@@ -1,6 +1,6 @@
 import { MoveResult } from "#app/field/pokemon";
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -23,14 +23,14 @@ describe("Moves - False Swipe", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.FALSE_SWIPE])
+      .moveset([MoveId.FALSE_SWIPE])
       .ability(AbilityId.BALL_FETCH)
       .startingLevel(1000)
       .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .enemyMoveset(Moves.SPLASH);
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   it("should reduce the target to 1 HP", async () => {
@@ -39,15 +39,15 @@ describe("Moves - False Swipe", () => {
     const player = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.FALSE_SWIPE);
+    game.move.select(MoveId.FALSE_SWIPE);
     await game.toNextTurn();
-    game.move.select(Moves.FALSE_SWIPE);
+    game.move.select(MoveId.FALSE_SWIPE);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(enemy.hp).toBe(1);
     const falseSwipeHistory = player
       .getMoveHistory()
-      .every(turnMove => turnMove.move === Moves.FALSE_SWIPE && turnMove.result === MoveResult.SUCCESS);
+      .every(turnMove => turnMove.move === MoveId.FALSE_SWIPE && turnMove.result === MoveResult.SUCCESS);
     expect(falseSwipeHistory).toBe(true);
   });
 });

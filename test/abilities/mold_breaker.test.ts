@@ -1,7 +1,7 @@
 import { BattlerIndex } from "#app/battle";
 import { globalScene } from "#app/global-scene";
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -24,27 +24,27 @@ describe("Abilities - Mold Breaker", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.SPLASH])
+      .moveset([MoveId.SPLASH])
       .ability(AbilityId.MOLD_BREAKER)
       .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .enemyMoveset(Moves.SPLASH);
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   it("should turn off the ignore abilities arena variable after the user's move", async () => {
     game.override
-      .enemyMoveset(Moves.SPLASH)
+      .enemyMoveset(MoveId.SPLASH)
       .ability(AbilityId.MOLD_BREAKER)
-      .moveset([Moves.ERUPTION])
+      .moveset([MoveId.ERUPTION])
       .startingLevel(100)
       .enemyLevel(2);
     await game.classicMode.startBattle([Species.MAGIKARP]);
     const enemy = game.scene.getEnemyPokemon()!;
 
     expect(enemy.isFainted()).toBe(false);
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("MoveEndPhase", true);
     expect(globalScene.arena.ignoreAbilities).toBe(false);

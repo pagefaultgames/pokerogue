@@ -1,6 +1,6 @@
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { toDmgValue } from "#app/utils/common";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import { Stat } from "#enums/stat";
 import GameManager from "#test/testUtils/gameManager";
@@ -34,8 +34,8 @@ describe("Moves - BELLY DRUM", () => {
       .enemySpecies(Species.SNORLAX)
       .startingLevel(100)
       .enemyLevel(100)
-      .moveset([Moves.BELLY_DRUM])
-      .enemyMoveset(Moves.SPLASH)
+      .moveset([MoveId.BELLY_DRUM])
+      .enemyMoveset(MoveId.SPLASH)
       .enemyAbility(AbilityId.BALL_FETCH);
   });
 
@@ -47,7 +47,7 @@ describe("Moves - BELLY DRUM", () => {
     const leadPokemon = game.scene.getPlayerPokemon()!;
     const hpLost = toDmgValue(leadPokemon.getMaxHp() / RATIO);
 
-    game.move.select(Moves.BELLY_DRUM);
+    game.move.select(MoveId.BELLY_DRUM);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp() - hpLost);
@@ -64,7 +64,7 @@ describe("Moves - BELLY DRUM", () => {
     leadPokemon.setStatStage(Stat.ATK, -3);
     leadPokemon.setStatStage(Stat.SPATK, 6);
 
-    game.move.select(Moves.BELLY_DRUM);
+    game.move.select(MoveId.BELLY_DRUM);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp() - hpLost);
@@ -79,7 +79,7 @@ describe("Moves - BELLY DRUM", () => {
 
     leadPokemon.setStatStage(Stat.ATK, 6);
 
-    game.move.select(Moves.BELLY_DRUM);
+    game.move.select(MoveId.BELLY_DRUM);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp());
@@ -93,7 +93,7 @@ describe("Moves - BELLY DRUM", () => {
     const hpLost = toDmgValue(leadPokemon.getMaxHp() / RATIO);
     leadPokemon.hp = hpLost - PREDAMAGE;
 
-    game.move.select(Moves.BELLY_DRUM);
+    game.move.select(MoveId.BELLY_DRUM);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(leadPokemon.hp).toBe(hpLost - PREDAMAGE);

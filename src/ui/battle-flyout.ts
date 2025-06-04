@@ -6,7 +6,7 @@ import type Move from "#app/data/moves/move";
 import type { BerryUsedEvent, MoveUsedEvent } from "../events/battle-scene";
 import { BattleSceneEventType } from "../events/battle-scene";
 import { BerryType } from "#enums/berry-type";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { UiTheme } from "#enums/ui-theme";
 import { getPokemonNameWithAffix } from "#app/messages";
 
@@ -154,7 +154,7 @@ export default class BattleFlyout extends Phaser.GameObjects.Container {
   /** Updates all of the {@linkcode MoveInfo} objects in the moveInfo array */
   private onMoveUsed(event: Event) {
     const moveUsedEvent = event as MoveUsedEvent;
-    if (!moveUsedEvent || moveUsedEvent.pokemonId !== this.pokemon?.id || moveUsedEvent.move.id === Moves.STRUGGLE) {
+    if (!moveUsedEvent || moveUsedEvent.pokemonId !== this.pokemon?.id || moveUsedEvent.move.id === MoveId.STRUGGLE) {
       // Ignore Struggle
       return;
     }

@@ -2,7 +2,7 @@ import { BattlerIndex } from "#app/battle";
 import { AbilityId } from "#enums/ability-id";
 import { Species } from "#app/enums/species";
 import { toDmgValue } from "#app/utils/common";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -29,9 +29,9 @@ describe("Multi-target damage reduction", () => {
       .enemyLevel(100)
       .startingLevel(100)
       .enemySpecies(Species.POLIWAG)
-      .enemyMoveset(Moves.SPLASH)
+      .enemyMoveset(MoveId.SPLASH)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .moveset([Moves.TACKLE, Moves.DAZZLING_GLEAM, Moves.EARTHQUAKE, Moves.SPLASH])
+      .moveset([MoveId.TACKLE, MoveId.DAZZLING_GLEAM, MoveId.EARTHQUAKE, MoveId.SPLASH])
       .ability(AbilityId.BALL_FETCH);
   });
 
@@ -40,8 +40,8 @@ describe("Multi-target damage reduction", () => {
 
     const [enemy1, enemy2] = game.scene.getEnemyField();
 
-    game.move.select(Moves.DAZZLING_GLEAM);
-    game.move.select(Moves.TACKLE, 1, BattlerIndex.ENEMY);
+    game.move.select(MoveId.DAZZLING_GLEAM);
+    game.move.select(MoveId.TACKLE, 1, BattlerIndex.ENEMY);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
     await game.phaseInterceptor.to("MoveEndPhase");
 
@@ -56,8 +56,8 @@ describe("Multi-target damage reduction", () => {
     await game.killPokemon(enemy2);
     await game.toNextTurn();
 
-    game.move.select(Moves.DAZZLING_GLEAM);
-    game.move.select(Moves.TACKLE, 1, BattlerIndex.ENEMY);
+    game.move.select(MoveId.DAZZLING_GLEAM);
+    game.move.select(MoveId.TACKLE, 1, BattlerIndex.ENEMY);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY]);
 
     await game.phaseInterceptor.to("MoveEndPhase");
@@ -81,8 +81,8 @@ describe("Multi-target damage reduction", () => {
     const player2 = game.scene.getPlayerParty()[1];
     const [enemy1, enemy2] = game.scene.getEnemyField();
 
-    game.move.select(Moves.EARTHQUAKE);
-    game.move.select(Moves.SPLASH, 1);
+    game.move.select(MoveId.EARTHQUAKE);
+    game.move.select(MoveId.SPLASH, 1);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
 
     await game.phaseInterceptor.to("MoveEndPhase");
@@ -96,8 +96,8 @@ describe("Multi-target damage reduction", () => {
     await game.killPokemon(enemy2);
     await game.toNextTurn();
 
-    game.move.select(Moves.EARTHQUAKE);
-    game.move.select(Moves.SPLASH, 1);
+    game.move.select(MoveId.EARTHQUAKE);
+    game.move.select(MoveId.SPLASH, 1);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY]);
 
     await game.phaseInterceptor.to("MoveEndPhase");
@@ -115,7 +115,7 @@ describe("Multi-target damage reduction", () => {
     await game.killPokemon(player2);
     await game.toNextTurn();
 
-    game.move.select(Moves.EARTHQUAKE);
+    game.move.select(MoveId.EARTHQUAKE);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
 
     await game.phaseInterceptor.to("MoveEndPhase");

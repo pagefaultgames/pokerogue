@@ -1,6 +1,6 @@
 import type { EnemyPokemon } from "#app/field/pokemon";
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import { StatusEffect } from "#enums/status-effect";
 import GameManager from "#test/testUtils/gameManager";
@@ -26,8 +26,8 @@ describe("Moves - Thunder Wave", () => {
     game.override
       .battleStyle("single")
       .starterSpecies(Species.PIKACHU)
-      .moveset([Moves.THUNDER_WAVE])
-      .enemyMoveset(Moves.SPLASH);
+      .moveset([MoveId.THUNDER_WAVE])
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   // References: https://bulbapedia.bulbagarden.net/wiki/Thunder_Wave_(move)
@@ -38,7 +38,7 @@ describe("Moves - Thunder Wave", () => {
 
     const enemyPokemon: EnemyPokemon = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.THUNDER_WAVE);
+    game.move.select(MoveId.THUNDER_WAVE);
     await game.move.forceHit();
     await game.phaseInterceptor.to("BerryPhase", false);
 
@@ -51,7 +51,7 @@ describe("Moves - Thunder Wave", () => {
 
     const enemyPokemon: EnemyPokemon = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.THUNDER_WAVE);
+    game.move.select(MoveId.THUNDER_WAVE);
     await game.move.forceHit();
     await game.phaseInterceptor.to("BerryPhase", false);
 
@@ -64,7 +64,7 @@ describe("Moves - Thunder Wave", () => {
 
     const enemyPokemon: EnemyPokemon = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.THUNDER_WAVE);
+    game.move.select(MoveId.THUNDER_WAVE);
     await game.move.forceHit();
     await game.phaseInterceptor.to("BerryPhase", false);
 
@@ -77,7 +77,7 @@ describe("Moves - Thunder Wave", () => {
 
     const enemyPokemon: EnemyPokemon = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.THUNDER_WAVE);
+    game.move.select(MoveId.THUNDER_WAVE);
     await game.move.forceHit();
     await game.phaseInterceptor.to("BerryPhase", false);
 
@@ -90,7 +90,7 @@ describe("Moves - Thunder Wave", () => {
 
     const enemyPokemon: EnemyPokemon = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.THUNDER_WAVE);
+    game.move.select(MoveId.THUNDER_WAVE);
     await game.move.forceHit();
     await game.phaseInterceptor.to("BerryPhase", false);
 

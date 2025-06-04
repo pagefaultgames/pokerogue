@@ -1,4 +1,4 @@
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import { AbilityId } from "#enums/ability-id";
 import { BattlerTagType } from "#enums/battler-tag-type";
@@ -31,8 +31,8 @@ describe("Moves - SYRUP BOMB", () => {
       .ability(AbilityId.BALL_FETCH)
       .startingLevel(30)
       .enemyLevel(100)
-      .moveset([Moves.SYRUP_BOMB, Moves.SPLASH])
-      .enemyMoveset(Moves.SPLASH);
+      .moveset([MoveId.SYRUP_BOMB, MoveId.SPLASH])
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   //Bulbapedia Reference: https://bulbapedia.bulbagarden.net/wiki/syrup_bomb_(move)
@@ -43,19 +43,19 @@ describe("Moves - SYRUP BOMB", () => {
     const targetPokemon = game.scene.getEnemyPokemon()!;
     expect(targetPokemon.getStatStage(Stat.SPD)).toBe(0);
 
-    game.move.select(Moves.SYRUP_BOMB);
+    game.move.select(MoveId.SYRUP_BOMB);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.move.forceHit();
     await game.toNextTurn();
     expect(targetPokemon.getTag(BattlerTagType.SYRUP_BOMB)).toBeDefined();
     expect(targetPokemon.getStatStage(Stat.SPD)).toBe(-1);
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
     expect(targetPokemon.getTag(BattlerTagType.SYRUP_BOMB)).toBeDefined();
     expect(targetPokemon.getStatStage(Stat.SPD)).toBe(-2);
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
     expect(targetPokemon.getTag(BattlerTagType.SYRUP_BOMB)).toBeUndefined();
     expect(targetPokemon.getStatStage(Stat.SPD)).toBe(-3);
@@ -67,7 +67,7 @@ describe("Moves - SYRUP BOMB", () => {
 
     const targetPokemon = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.SYRUP_BOMB);
+    game.move.select(MoveId.SYRUP_BOMB);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.move.forceHit();
     await game.toNextTurn();
@@ -79,7 +79,7 @@ describe("Moves - SYRUP BOMB", () => {
   it("stops lowering the target's speed if the user leaves the field", async () => {
     await game.classicMode.startBattle([Species.FEEBAS, Species.MILOTIC]);
 
-    game.move.select(Moves.SYRUP_BOMB);
+    game.move.select(MoveId.SYRUP_BOMB);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.move.forceHit();
     await game.toNextTurn();

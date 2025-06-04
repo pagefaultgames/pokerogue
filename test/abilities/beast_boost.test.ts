@@ -1,6 +1,6 @@
 import { BattlerIndex } from "#app/battle";
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import { Stat } from "#enums/stat";
 import GameManager from "#test/testUtils/gameManager";
@@ -29,8 +29,8 @@ describe("Abilities - Beast Boost", () => {
       .enemyAbility(AbilityId.BEAST_BOOST)
       .ability(AbilityId.BEAST_BOOST)
       .startingLevel(2000)
-      .moveset([Moves.FLAMETHROWER])
-      .enemyMoveset(Moves.SPLASH);
+      .moveset([MoveId.FLAMETHROWER])
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   it("should prefer highest stat to boost its corresponding stat stage by 1 when winning a battle", async () => {
@@ -43,14 +43,14 @@ describe("Abilities - Beast Boost", () => {
 
     expect(playerPokemon.getStatStage(Stat.DEF)).toBe(0);
 
-    game.move.select(Moves.FLAMETHROWER);
+    game.move.select(MoveId.FLAMETHROWER);
     await game.phaseInterceptor.to("VictoryPhase");
 
     expect(playerPokemon.getStatStage(Stat.DEF)).toBe(1);
   }, 20000);
 
   it("should use in-battle overriden stats when determining the stat stage to raise by 1", async () => {
-    game.override.enemyMoveset([Moves.GUARD_SPLIT]);
+    game.override.enemyMoveset([MoveId.GUARD_SPLIT]);
 
     await game.classicMode.startBattle([Species.SLOWBRO]);
 
@@ -60,7 +60,7 @@ describe("Abilities - Beast Boost", () => {
 
     expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(0);
 
-    game.move.select(Moves.FLAMETHROWER);
+    game.move.select(MoveId.FLAMETHROWER);
 
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("VictoryPhase");
@@ -79,7 +79,7 @@ describe("Abilities - Beast Boost", () => {
 
     expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(0);
 
-    game.move.select(Moves.FLAMETHROWER);
+    game.move.select(MoveId.FLAMETHROWER);
 
     await game.phaseInterceptor.to("VictoryPhase");
 

@@ -1,7 +1,7 @@
 import { ArenaTagSide } from "#app/data/arena-tag";
 import { ArenaTagType } from "#app/enums/arena-tag-type";
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import { Stat } from "#enums/stat";
 import GameManager from "#test/testUtils/gameManager";
@@ -26,8 +26,8 @@ describe("Moves - Tailwind", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("double")
-      .moveset([Moves.TAILWIND, Moves.SPLASH])
-      .enemyMoveset(Moves.SPLASH)
+      .moveset([MoveId.TAILWIND, MoveId.SPLASH])
+      .enemyMoveset(MoveId.SPLASH)
       .enemyAbility(AbilityId.BALL_FETCH)
       .ability(AbilityId.BALL_FETCH);
   });
@@ -43,8 +43,8 @@ describe("Moves - Tailwind", () => {
     expect(magikarp.getEffectiveStat(Stat.SPD)).equal(magikarpSpd);
     expect(meowth.getEffectiveStat(Stat.SPD)).equal(meowthSpd);
 
-    game.move.select(Moves.TAILWIND);
-    game.move.select(Moves.SPLASH, 1);
+    game.move.select(MoveId.TAILWIND);
+    game.move.select(MoveId.SPLASH, 1);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
@@ -58,19 +58,19 @@ describe("Moves - Tailwind", () => {
 
     await game.classicMode.startBattle([Species.MAGIKARP]);
 
-    game.move.select(Moves.TAILWIND);
+    game.move.select(MoveId.TAILWIND);
     await game.toNextTurn();
     expect(game.scene.arena.getTagOnSide(ArenaTagType.TAILWIND, ArenaTagSide.PLAYER)).toBeDefined();
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
     expect(game.scene.arena.getTagOnSide(ArenaTagType.TAILWIND, ArenaTagSide.PLAYER)).toBeDefined();
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
     expect(game.scene.arena.getTagOnSide(ArenaTagType.TAILWIND, ArenaTagSide.PLAYER)).toBeDefined();
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
 
     expect(game.scene.arena.getTagOnSide(ArenaTagType.TAILWIND, ArenaTagSide.PLAYER)).toBeUndefined();
@@ -92,7 +92,7 @@ describe("Moves - Tailwind", () => {
     expect(game.scene.arena.getTagOnSide(ArenaTagType.TAILWIND, ArenaTagSide.PLAYER)).toBeUndefined();
     expect(game.scene.arena.getTagOnSide(ArenaTagType.TAILWIND, ArenaTagSide.ENEMY)).toBeUndefined();
 
-    game.move.select(Moves.TAILWIND);
+    game.move.select(MoveId.TAILWIND);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 

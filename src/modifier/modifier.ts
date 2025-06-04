@@ -18,7 +18,7 @@ import { addTextObject, TextStyle } from "#app/ui/text";
 import { BooleanHolder, hslToHex, isNullOrUndefined, NumberHolder, toDmgValue } from "#app/utils/common";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BerryType } from "#enums/berry-type";
-import type { Moves } from "#enums/moves";
+import type { MoveId } from "#enums/moves";
 import type { Nature } from "#enums/nature";
 import type { PokeballType } from "#enums/pokeball";
 import { Species } from "#enums/species";
@@ -2774,14 +2774,14 @@ export class PokemonMultiHitModifier extends PokemonHeldItemModifier {
   /**
    * For each stack, converts 25 percent of attack damage into an additional strike.
    * @param pokemon The {@linkcode Pokemon} using the move
-   * @param moveId The {@linkcode Moves | identifier} for the move being used
+   * @param moveId The {@linkcode MoveId | identifier} for the move being used
    * @param count {@linkcode NumberHolder} holding the move's hit count for this turn
    * @param damageMultiplier {@linkcode NumberHolder} holding a damage multiplier applied to a strike of this move
    * @returns always `true`
    */
   override apply(
     pokemon: Pokemon,
-    moveId: Moves,
+    moveId: MoveId,
     count: NumberHolder | null = null,
     damageMultiplier: NumberHolder | null = null,
   ): boolean {

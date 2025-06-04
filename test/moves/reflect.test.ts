@@ -8,7 +8,7 @@ import { ArenaTagType } from "#app/enums/arena-tag-type";
 import type Pokemon from "#app/field/pokemon";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { NumberHolder } from "#app/utils/common";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -38,15 +38,15 @@ describe("Moves - Reflect", () => {
     game.override
       .battleStyle("single")
       .ability(AbilityId.NONE)
-      .moveset([Moves.ABSORB, Moves.ROCK_SLIDE, Moves.TACKLE])
+      .moveset([MoveId.ABSORB, MoveId.ROCK_SLIDE, MoveId.TACKLE])
       .enemyLevel(100)
       .enemySpecies(Species.MAGIKARP)
-      .enemyMoveset(Moves.REFLECT)
+      .enemyMoveset(MoveId.REFLECT)
       .disableCrits();
   });
 
   it("reduces damage of physical attacks by half in a single battle", async () => {
-    const moveToUse = Moves.TACKLE;
+    const moveToUse = MoveId.TACKLE;
     await game.classicMode.startBattle([Species.SHUCKLE]);
 
     game.move.select(moveToUse);
@@ -64,7 +64,7 @@ describe("Moves - Reflect", () => {
   it("reduces damage of physical attacks by a third in a double battle", async () => {
     game.override.battleStyle("double");
 
-    const moveToUse = Moves.ROCK_SLIDE;
+    const moveToUse = MoveId.ROCK_SLIDE;
     await game.classicMode.startBattle([Species.SHUCKLE, Species.SHUCKLE]);
 
     game.move.select(moveToUse);
@@ -81,7 +81,7 @@ describe("Moves - Reflect", () => {
   });
 
   it("does not affect special attacks", async () => {
-    const moveToUse = Moves.ABSORB;
+    const moveToUse = MoveId.ABSORB;
     await game.classicMode.startBattle([Species.SHUCKLE]);
 
     game.move.select(moveToUse);
@@ -98,8 +98,8 @@ describe("Moves - Reflect", () => {
   });
 
   it("does not affect critical hits", async () => {
-    game.override.moveset([Moves.WICKED_BLOW]);
-    const moveToUse = Moves.WICKED_BLOW;
+    game.override.moveset([MoveId.WICKED_BLOW]);
+    const moveToUse = MoveId.WICKED_BLOW;
     await game.classicMode.startBattle([Species.SHUCKLE]);
 
     game.move.select(moveToUse);
@@ -115,8 +115,8 @@ describe("Moves - Reflect", () => {
   });
 
   it("does not affect critical hits", async () => {
-    game.override.moveset([Moves.WICKED_BLOW]);
-    const moveToUse = Moves.WICKED_BLOW;
+    game.override.moveset([MoveId.WICKED_BLOW]);
+    const moveToUse = MoveId.WICKED_BLOW;
     await game.classicMode.startBattle([Species.SHUCKLE]);
 
     game.move.select(moveToUse);
@@ -132,7 +132,7 @@ describe("Moves - Reflect", () => {
 });
 
 /**
- * Calculates the damage of a move multiplied by screen's multiplier, Reflect in this case {@linkcode Moves.REFLECT}.
+ * Calculates the damage of a move multiplied by screen's multiplier, Reflect in this case {@linkcode MoveId.REFLECT}.
  * Please note this does not consider other damage calculations except the screen multiplier.
  *
  * @param defender - The defending Pokémon.

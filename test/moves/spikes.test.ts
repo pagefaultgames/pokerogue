@@ -1,5 +1,5 @@
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -27,17 +27,17 @@ describe("Moves - Spikes", () => {
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
       .ability(AbilityId.BALL_FETCH)
-      .enemyMoveset(Moves.SPLASH)
-      .moveset([Moves.SPIKES, Moves.SPLASH, Moves.ROAR]);
+      .enemyMoveset(MoveId.SPLASH)
+      .moveset([MoveId.SPIKES, MoveId.SPLASH, MoveId.ROAR]);
   });
 
   it("should not damage the team that set them", async () => {
     await game.classicMode.startBattle([Species.MIGHTYENA, Species.POOCHYENA]);
 
-    game.move.select(Moves.SPIKES);
+    game.move.select(MoveId.SPIKES);
     await game.toNextTurn();
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
 
     game.doSwitchPokemon(1);
@@ -54,10 +54,10 @@ describe("Moves - Spikes", () => {
     game.override.startingWave(5);
     await game.classicMode.startBattle([Species.MIGHTYENA, Species.POOCHYENA]);
 
-    game.move.select(Moves.SPIKES);
+    game.move.select(MoveId.SPIKES);
     await game.toNextTurn();
 
-    game.move.select(Moves.ROAR);
+    game.move.select(MoveId.ROAR);
     await game.toNextTurn();
 
     const enemy = game.scene.getEnemyParty()[0];
@@ -68,10 +68,10 @@ describe("Moves - Spikes", () => {
     game.override.startingWave(5);
     await game.classicMode.startBattle([Species.MIGHTYENA, Species.POOCHYENA]);
 
-    game.move.select(Moves.SPIKES);
+    game.move.select(MoveId.SPIKES);
     await game.toNextTurn();
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     game.forceEnemyToSwitch();
     await game.toNextTurn();
 
@@ -85,8 +85,8 @@ describe("Moves - Spikes", () => {
     game.override.startingLevel(50);
     await game.classicMode.startBattle([Species.RAYQUAZA, Species.ROWLET]);
 
-    game.move.select(Moves.EARTHQUAKE);
-    game.move.select(Moves.SPIKES, 1);
+    game.move.select(MoveId.EARTHQUAKE);
+    game.move.select(MoveId.SPIKES, 1);
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(game.scene.arena.getTagOnSide(ArenaTrapTag, ArenaTagSide.ENEMY)).toBeDefined();

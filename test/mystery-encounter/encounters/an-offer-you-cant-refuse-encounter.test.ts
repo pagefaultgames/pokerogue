@@ -14,7 +14,7 @@ import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { initSceneWithoutEncounterPhase } from "#test/testUtils/gameManagerUtils";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { ShinyRateBoosterModifier } from "#app/modifier/modifier";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import i18next from "i18next";
@@ -212,7 +212,7 @@ describe("An Offer You Can't Refuse - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.AN_OFFER_YOU_CANT_REFUSE, [Species.ABRA]);
       const party = scene.getPlayerParty();
       const abra = party.find(pkm => pkm.species.speciesId === Species.ABRA)!;
-      abra.moveset = [new PokemonMove(Moves.BEAT_UP)];
+      abra.moveset = [new PokemonMove(MoveId.BEAT_UP)];
       const expBefore = abra.exp;
 
       await runMysteryEncounterToEnd(game, 2);

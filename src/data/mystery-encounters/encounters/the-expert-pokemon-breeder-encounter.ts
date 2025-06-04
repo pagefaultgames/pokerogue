@@ -18,7 +18,7 @@ import { Species } from "#enums/species";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { speciesStarterCosts } from "#app/data/balance/starters";
 import { Nature } from "#enums/nature";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import type { PlayerPokemon } from "#app/field/pokemon";
 import { getEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import type { IEggOptions } from "#app/data/egg";
@@ -482,7 +482,7 @@ function getPartyConfig(): EnemyPartyConfig {
         abilityIndex: 1, // Magic Guard
         shiny: false,
         nature: Nature.ADAMANT,
-        moveSet: [Moves.FIRE_PUNCH, Moves.ICE_PUNCH, Moves.THUNDER_PUNCH, Moves.METEOR_MASH],
+        moveSet: [MoveId.FIRE_PUNCH, MoveId.ICE_PUNCH, MoveId.THUNDER_PUNCH, MoveId.METEOR_MASH],
         ivs: [31, 31, 31, 31, 31, 31],
         tera: PokemonType.FAIRY,
       },
@@ -502,7 +502,7 @@ function getPartyConfig(): EnemyPartyConfig {
         shiny: true,
         variant: 1,
         nature: Nature.MODEST,
-        moveSet: [Moves.MOONBLAST, Moves.MYSTICAL_FIRE, Moves.ICE_BEAM, Moves.THUNDERBOLT],
+        moveSet: [MoveId.MOONBLAST, MoveId.MYSTICAL_FIRE, MoveId.ICE_BEAM, MoveId.THUNDERBOLT],
         ivs: [31, 31, 31, 31, 31, 31],
       },
       {
@@ -515,7 +515,7 @@ function getPartyConfig(): EnemyPartyConfig {
         shiny: true,
         variant: 2,
         nature: Nature.BOLD,
-        moveSet: [Moves.TRI_ATTACK, Moves.STORED_POWER, Moves.TAKE_HEART, Moves.MOONLIGHT],
+        moveSet: [MoveId.TRI_ATTACK, MoveId.STORED_POWER, MoveId.TAKE_HEART, MoveId.MOONLIGHT],
         ivs: [31, 31, 31, 31, 31, 31],
       },
     );

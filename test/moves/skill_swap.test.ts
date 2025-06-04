@@ -1,6 +1,6 @@
 import { Stat } from "#app/enums/stat";
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -23,20 +23,20 @@ describe("Moves - Skill Swap", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.SPLASH, Moves.SKILL_SWAP])
+      .moveset([MoveId.SPLASH, MoveId.SKILL_SWAP])
       .ability(AbilityId.BALL_FETCH)
       .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .enemyMoveset(Moves.SPLASH);
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   it("should swap the two abilities", async () => {
     game.override.ability(AbilityId.ADAPTABILITY);
     await game.classicMode.startBattle([Species.FEEBAS]);
 
-    game.move.select(Moves.SKILL_SWAP);
+    game.move.select(MoveId.SKILL_SWAP);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(game.scene.getPlayerPokemon()?.getAbility().id).toBe(AbilityId.BALL_FETCH);
@@ -47,7 +47,7 @@ describe("Moves - Skill Swap", () => {
     game.override.ability(AbilityId.INTIMIDATE);
     await game.classicMode.startBattle([Species.FEEBAS]);
 
-    game.move.select(Moves.SKILL_SWAP);
+    game.move.select(MoveId.SKILL_SWAP);
     await game.phaseInterceptor.to("BerryPhase");
 
     // player atk should be -1 after opponent gains intimidate and it activates

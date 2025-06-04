@@ -5,7 +5,7 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -28,13 +28,13 @@ describe("Abilities - Infiltrator", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.TACKLE, Moves.WATER_GUN, Moves.SPORE, Moves.BABY_DOLL_EYES])
+      .moveset([MoveId.TACKLE, MoveId.WATER_GUN, MoveId.SPORE, MoveId.BABY_DOLL_EYES])
       .ability(AbilityId.INFILTRATOR)
       .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.SNORLAX)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .enemyMoveset(Moves.SPLASH)
+      .enemyMoveset(MoveId.SPLASH)
       .startingLevel(100)
       .enemyLevel(100);
   });
@@ -43,17 +43,17 @@ describe("Abilities - Infiltrator", () => {
     {
       effectName: "Light Screen",
       tagType: ArenaTagType.LIGHT_SCREEN,
-      move: Moves.WATER_GUN,
+      move: MoveId.WATER_GUN,
     },
     {
       effectName: "Reflect",
       tagType: ArenaTagType.REFLECT,
-      move: Moves.TACKLE,
+      move: MoveId.TACKLE,
     },
     {
       effectName: "Aurora Veil",
       tagType: ArenaTagType.AURORA_VEIL,
-      move: Moves.TACKLE,
+      move: MoveId.TACKLE,
     },
   ])("should bypass the target's $effectName", async ({ tagType, move }) => {
     await game.classicMode.startBattle([Species.MAGIKARP]);
@@ -63,7 +63,7 @@ describe("Abilities - Infiltrator", () => {
 
     const preScreenDmg = enemy.getAttackDamage({ source: player, move: allMoves[move] }).damage;
 
-    game.scene.arena.addTag(tagType, 1, Moves.NONE, enemy.id, ArenaTagSide.ENEMY, true);
+    game.scene.arena.addTag(tagType, 1, MoveId.NONE, enemy.id, ArenaTagSide.ENEMY, true);
 
     const postScreenDmg = enemy.getAttackDamage({ source: player, move: allMoves[move] }).damage;
 
@@ -77,9 +77,9 @@ describe("Abilities - Infiltrator", () => {
     const player = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;
 
-    game.scene.arena.addTag(ArenaTagType.SAFEGUARD, 1, Moves.NONE, enemy.id, ArenaTagSide.ENEMY, true);
+    game.scene.arena.addTag(ArenaTagType.SAFEGUARD, 1, MoveId.NONE, enemy.id, ArenaTagSide.ENEMY, true);
 
-    game.move.select(Moves.SPORE);
+    game.move.select(MoveId.SPORE);
 
     await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemy.status?.effect).toBe(StatusEffect.SLEEP);
@@ -93,9 +93,9 @@ describe("Abilities - Infiltrator", () => {
     const player = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;
 
-    game.scene.arena.addTag(ArenaTagType.MIST, 1, Moves.NONE, enemy.id, ArenaTagSide.ENEMY, true);
+    game.scene.arena.addTag(ArenaTagType.MIST, 1, MoveId.NONE, enemy.id, ArenaTagSide.ENEMY, true);
 
-    game.move.select(Moves.BABY_DOLL_EYES);
+    game.move.select(MoveId.BABY_DOLL_EYES);
 
     await game.phaseInterceptor.to("MoveEndPhase");
     expect(enemy.getStatStage(Stat.ATK)).toBe(-1);
@@ -108,9 +108,9 @@ describe("Abilities - Infiltrator", () => {
     const player = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;
 
-    enemy.addTag(BattlerTagType.SUBSTITUTE, 1, Moves.NONE, enemy.id);
+    enemy.addTag(BattlerTagType.SUBSTITUTE, 1, MoveId.NONE, enemy.id);
 
-    game.move.select(Moves.BABY_DOLL_EYES);
+    game.move.select(MoveId.BABY_DOLL_EYES);
 
     await game.phaseInterceptor.to("MoveEndPhase");
     expect(enemy.getStatStage(Stat.ATK)).toBe(-1);

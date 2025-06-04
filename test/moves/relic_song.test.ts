@@ -1,7 +1,7 @@
 import { PokemonType } from "#enums/pokemon-type";
 import { Challenges } from "#app/enums/challenges";
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -23,10 +23,10 @@ describe("Moves - Relic Song", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.RELIC_SONG, Moves.SPLASH])
+      .moveset([MoveId.RELIC_SONG, MoveId.SPLASH])
       .battleStyle("single")
       .enemyAbility(AbilityId.BALL_FETCH)
-      .enemyMoveset(Moves.SPLASH)
+      .enemyMoveset(MoveId.SPLASH)
       .enemySpecies(Species.MAGIKARP)
       .enemyLevel(100);
   });
@@ -36,12 +36,12 @@ describe("Moves - Relic Song", () => {
 
     const meloetta = game.scene.getPlayerPokemon()!;
 
-    game.move.select(Moves.RELIC_SONG);
+    game.move.select(MoveId.RELIC_SONG);
     await game.toNextTurn();
 
     expect(meloetta.formIndex).toBe(1);
 
-    game.move.select(Moves.RELIC_SONG);
+    game.move.select(MoveId.RELIC_SONG);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(meloetta.formIndex).toBe(0);
@@ -55,7 +55,7 @@ describe("Moves - Relic Song", () => {
 
     expect(meloetta.formIndex).toBe(0);
 
-    game.move.select(Moves.RELIC_SONG);
+    game.move.select(MoveId.RELIC_SONG);
     await game.phaseInterceptor.to("BerryPhase");
     await game.toNextTurn();
 
@@ -68,7 +68,7 @@ describe("Moves - Relic Song", () => {
 
     const meloetta = game.scene.getPlayerPokemon()!;
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.doKillOpponents();
     await game.toNextWave();
 

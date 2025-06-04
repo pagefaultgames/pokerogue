@@ -1,7 +1,7 @@
 import { BattlerIndex } from "#app/battle";
 import { Stat } from "#app/enums/stat";
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -24,19 +24,19 @@ describe("Moves - Doodle", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.SPLASH, Moves.DOODLE])
+      .moveset([MoveId.SPLASH, MoveId.DOODLE])
       .ability(AbilityId.ADAPTABILITY)
       .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .enemyMoveset(Moves.SPLASH);
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   it("should copy the opponent's ability in singles", async () => {
     await game.classicMode.startBattle([Species.FEEBAS]);
 
-    game.move.select(Moves.DOODLE);
+    game.move.select(MoveId.DOODLE);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(game.scene.getPlayerPokemon()?.getAbility().id).toBe(AbilityId.BALL_FETCH);
@@ -46,8 +46,8 @@ describe("Moves - Doodle", () => {
     game.override.battleStyle("double");
     await game.classicMode.startBattle([Species.FEEBAS, Species.MAGIKARP]);
 
-    game.move.select(Moves.DOODLE, 0, BattlerIndex.ENEMY);
-    game.move.select(Moves.SPLASH, 1);
+    game.move.select(MoveId.DOODLE, 0, BattlerIndex.ENEMY);
+    game.move.select(MoveId.SPLASH, 1);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(game.scene.getPlayerField()[0].getAbility().id).toBe(AbilityId.BALL_FETCH);
@@ -59,8 +59,8 @@ describe("Moves - Doodle", () => {
 
     await game.classicMode.startBattle([Species.FEEBAS, Species.MAGIKARP]);
 
-    game.move.select(Moves.DOODLE, 0, BattlerIndex.ENEMY);
-    game.move.select(Moves.SPLASH, 1);
+    game.move.select(MoveId.DOODLE, 0, BattlerIndex.ENEMY);
+    game.move.select(MoveId.SPLASH, 1);
     await game.phaseInterceptor.to("BerryPhase");
 
     // Enemies should have been intimidated twice

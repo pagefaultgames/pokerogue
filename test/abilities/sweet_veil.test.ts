@@ -3,7 +3,7 @@ import { AbilityId } from "#enums/ability-id";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
 import { CommandPhase } from "#app/phases/command-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -27,17 +27,17 @@ describe("Abilities - Sweet Veil", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("double")
-      .moveset([Moves.SPLASH, Moves.REST, Moves.YAWN])
+      .moveset([MoveId.SPLASH, MoveId.REST, MoveId.YAWN])
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .enemyMoveset(Moves.POWDER);
+      .enemyMoveset(MoveId.POWDER);
   });
 
   it("prevents the user and its allies from falling asleep", async () => {
     await game.classicMode.startBattle([Species.SWIRLIX, Species.MAGIKARP]);
 
-    game.move.select(Moves.SPLASH);
-    game.move.select(Moves.SPLASH, 1);
+    game.move.select(MoveId.SPLASH);
+    game.move.select(MoveId.SPLASH, 1);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -45,11 +45,11 @@ describe("Abilities - Sweet Veil", () => {
   });
 
   it("causes Rest to fail when used by the user or its allies", async () => {
-    game.override.enemyMoveset(Moves.SPLASH);
+    game.override.enemyMoveset(MoveId.SPLASH);
     await game.classicMode.startBattle([Species.SWIRLIX, Species.MAGIKARP]);
 
-    game.move.select(Moves.SPLASH);
-    game.move.select(Moves.REST, 1);
+    game.move.select(MoveId.SPLASH);
+    game.move.select(MoveId.REST, 1);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -57,11 +57,11 @@ describe("Abilities - Sweet Veil", () => {
   });
 
   it("causes Yawn to fail if used on the user or its allies", async () => {
-    game.override.enemyMoveset(Moves.YAWN);
+    game.override.enemyMoveset(MoveId.YAWN);
     await game.classicMode.startBattle([Species.SWIRLIX, Species.MAGIKARP]);
 
-    game.move.select(Moves.SPLASH);
-    game.move.select(Moves.SPLASH, 1);
+    game.move.select(MoveId.SPLASH);
+    game.move.select(MoveId.SPLASH, 1);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -72,19 +72,19 @@ describe("Abilities - Sweet Veil", () => {
     game.override.enemySpecies(Species.PIKACHU);
     game.override.enemyLevel(5);
     game.override.startingLevel(5);
-    game.override.enemyMoveset(Moves.SPLASH);
+    game.override.enemyMoveset(MoveId.SPLASH);
 
     await game.classicMode.startBattle([Species.SHUCKLE, Species.SHUCKLE, Species.SWIRLIX]);
 
-    game.move.select(Moves.SPLASH);
-    game.move.select(Moves.YAWN, 1, BattlerIndex.PLAYER);
+    game.move.select(MoveId.SPLASH);
+    game.move.select(MoveId.YAWN, 1, BattlerIndex.PLAYER);
 
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(game.scene.getPlayerField().some(p => !!p.getTag(BattlerTagType.DROWSY))).toBe(true);
 
     await game.phaseInterceptor.to(CommandPhase);
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     game.doSwitchPokemon(2);
 
     expect(game.scene.getPlayerField().every(p => p.status?.effect)).toBe(false);

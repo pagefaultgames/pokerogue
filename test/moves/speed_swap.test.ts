@@ -3,7 +3,7 @@ import Phaser from "phaser";
 import GameManager from "#test/testUtils/gameManager";
 import { Species } from "#enums/species";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Stat } from "#enums/stat";
 import { AbilityId } from "#enums/ability-id";
 
@@ -26,10 +26,10 @@ describe("Moves - Speed Swap", () => {
     game.override
       .battleStyle("single")
       .enemyAbility(AbilityId.NONE)
-      .enemyMoveset(Moves.SPLASH)
+      .enemyMoveset(MoveId.SPLASH)
       .enemySpecies(Species.MEW)
       .enemyLevel(200)
-      .moveset([Moves.SPEED_SWAP])
+      .moveset([MoveId.SPEED_SWAP])
       .ability(AbilityId.NONE);
   });
 
@@ -42,7 +42,7 @@ describe("Moves - Speed Swap", () => {
     const playerSpd = player.getStat(Stat.SPD, false);
     const enemySpd = enemy.getStat(Stat.SPD, false);
 
-    game.move.select(Moves.SPEED_SWAP);
+    game.move.select(MoveId.SPEED_SWAP);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(player.getStat(Stat.SPD, false)).toBe(enemySpd);

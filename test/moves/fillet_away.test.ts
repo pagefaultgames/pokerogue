@@ -1,6 +1,6 @@
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { toDmgValue } from "#app/utils/common";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import { Stat } from "#enums/stat";
 import GameManager from "#test/testUtils/gameManager";
@@ -32,8 +32,8 @@ describe("Moves - FILLET AWAY", () => {
     game.override.enemySpecies(Species.SNORLAX);
     game.override.startingLevel(100);
     game.override.enemyLevel(100);
-    game.override.moveset([Moves.FILLET_AWAY]);
-    game.override.enemyMoveset(Moves.SPLASH);
+    game.override.moveset([MoveId.FILLET_AWAY]);
+    game.override.enemyMoveset(MoveId.SPLASH);
   });
 
   //Bulbapedia Reference: https://bulbapedia.bulbagarden.net/wiki/fillet_away_(move)
@@ -44,7 +44,7 @@ describe("Moves - FILLET AWAY", () => {
     const leadPokemon = game.scene.getPlayerPokemon()!;
     const hpLost = toDmgValue(leadPokemon.getMaxHp() / RATIO);
 
-    game.move.select(Moves.FILLET_AWAY);
+    game.move.select(MoveId.FILLET_AWAY);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp() - hpLost);
@@ -63,7 +63,7 @@ describe("Moves - FILLET AWAY", () => {
     leadPokemon.setStatStage(Stat.ATK, 6);
     leadPokemon.setStatStage(Stat.SPATK, 3);
 
-    game.move.select(Moves.FILLET_AWAY);
+    game.move.select(MoveId.FILLET_AWAY);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp() - hpLost);
@@ -81,7 +81,7 @@ describe("Moves - FILLET AWAY", () => {
     leadPokemon.setStatStage(Stat.SPATK, 6);
     leadPokemon.setStatStage(Stat.SPD, 6);
 
-    game.move.select(Moves.FILLET_AWAY);
+    game.move.select(MoveId.FILLET_AWAY);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(leadPokemon.hp).toBe(leadPokemon.getMaxHp());
@@ -97,7 +97,7 @@ describe("Moves - FILLET AWAY", () => {
     const hpLost = toDmgValue(leadPokemon.getMaxHp() / RATIO);
     leadPokemon.hp = hpLost - PREDAMAGE;
 
-    game.move.select(Moves.FILLET_AWAY);
+    game.move.select(MoveId.FILLET_AWAY);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(leadPokemon.hp).toBe(hpLost - PREDAMAGE);

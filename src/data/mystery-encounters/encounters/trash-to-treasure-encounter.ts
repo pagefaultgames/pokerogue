@@ -23,7 +23,7 @@ import { showEncounterText } from "#app/data/mystery-encounters/utils/encounter-
 import i18next from "#app/plugins/i18n";
 import { ModifierTier } from "#app/modifier/modifier-tier";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { BattlerIndex } from "#app/battle";
 import { PokemonMove } from "#app/field/pokemon";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
@@ -81,7 +81,7 @@ export const TrashToTreasureEncounter: MysteryEncounter = MysteryEncounterBuilde
       shiny: false, // Shiny lock because of custom intro sprite
       formIndex: 1, // Gmax
       bossSegmentModifier: 1, // +1 Segment from normal
-      moveSet: [Moves.GUNK_SHOT, Moves.STOMPING_TANTRUM, Moves.HAMMER_ARM, Moves.PAYBACK],
+      moveSet: [MoveId.GUNK_SHOT, MoveId.STOMPING_TANTRUM, MoveId.HAMMER_ARM, MoveId.PAYBACK],
       modifierConfigs: [
         {
           modifier: generateModifierType(modifierTypes.BERRY) as PokemonHeldItemModifierType,
@@ -127,7 +127,7 @@ export const TrashToTreasureEncounter: MysteryEncounter = MysteryEncounterBuilde
     encounter.enemyPartyConfigs = [config];
 
     // Load animations/sfx for Garbodor fight start moves
-    loadCustomMovesForEncounter([Moves.TOXIC, Moves.STOCKPILE]);
+    loadCustomMovesForEncounter([MoveId.TOXIC, MoveId.STOCKPILE]);
 
     globalScene.loadSe("PRSFX- Dig2", "battle_anims", "PRSFX- Dig2.wav");
     globalScene.loadSe("PRSFX- Venom Drench", "battle_anims", "PRSFX- Venom Drench.wav");
@@ -206,13 +206,13 @@ export const TrashToTreasureEncounter: MysteryEncounter = MysteryEncounterBuilde
           {
             sourceBattlerIndex: BattlerIndex.ENEMY,
             targets: [BattlerIndex.PLAYER],
-            move: new PokemonMove(Moves.TOXIC),
+            move: new PokemonMove(MoveId.TOXIC),
             ignorePp: true,
           },
           {
             sourceBattlerIndex: BattlerIndex.ENEMY,
             targets: [BattlerIndex.ENEMY],
-            move: new PokemonMove(Moves.STOCKPILE),
+            move: new PokemonMove(MoveId.STOCKPILE),
             ignorePp: true,
           },
         );

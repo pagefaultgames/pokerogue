@@ -19,7 +19,7 @@ import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { ModifierTier } from "#app/modifier/modifier-tier";
 import { GameOverPhase } from "#app/phases/game-over-phase";
 import { randSeedInt } from "#app/utils/common";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
@@ -89,7 +89,7 @@ export const MysteriousChestEncounter: MysteryEncounter = MysteryEncounterBuilde
           species: getPokemonSpecies(Species.GIMMIGHOUL),
           formIndex: 0,
           isBoss: true,
-          moveSet: [Moves.NASTY_PLOT, Moves.SHADOW_BALL, Moves.POWER_GEM, Moves.THIEF],
+          moveSet: [MoveId.NASTY_PLOT, MoveId.SHADOW_BALL, MoveId.POWER_GEM, MoveId.THIEF],
         },
       ],
     };

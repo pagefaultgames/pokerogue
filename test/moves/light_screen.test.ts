@@ -8,7 +8,7 @@ import { ArenaTagType } from "#app/enums/arena-tag-type";
 import type Pokemon from "#app/field/pokemon";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { NumberHolder } from "#app/utils/common";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -38,15 +38,15 @@ describe("Moves - Light Screen", () => {
     game.override
       .battleStyle("single")
       .ability(AbilityId.BALL_FETCH)
-      .moveset([Moves.ABSORB, Moves.DAZZLING_GLEAM, Moves.TACKLE])
+      .moveset([MoveId.ABSORB, MoveId.DAZZLING_GLEAM, MoveId.TACKLE])
       .enemyLevel(100)
       .enemySpecies(Species.MAGIKARP)
-      .enemyMoveset(Moves.LIGHT_SCREEN)
+      .enemyMoveset(MoveId.LIGHT_SCREEN)
       .disableCrits();
   });
 
   it("reduces damage of special attacks by half in a single battle", async () => {
-    const moveToUse = Moves.ABSORB;
+    const moveToUse = MoveId.ABSORB;
     await game.classicMode.startBattle([Species.SHUCKLE]);
 
     game.move.select(moveToUse);
@@ -65,7 +65,7 @@ describe("Moves - Light Screen", () => {
   it("reduces damage of special attacks by a third in a double battle", async () => {
     game.override.battleStyle("double");
 
-    const moveToUse = Moves.DAZZLING_GLEAM;
+    const moveToUse = MoveId.DAZZLING_GLEAM;
     await game.classicMode.startBattle([Species.SHUCKLE, Species.SHUCKLE]);
 
     game.move.select(moveToUse);
@@ -82,7 +82,7 @@ describe("Moves - Light Screen", () => {
   });
 
   it("does not affect physical attacks", async () => {
-    const moveToUse = Moves.TACKLE;
+    const moveToUse = MoveId.TACKLE;
     await game.classicMode.startBattle([Species.SHUCKLE]);
 
     game.move.select(moveToUse);
@@ -98,9 +98,9 @@ describe("Moves - Light Screen", () => {
   });
 
   it("does not affect critical hits", async () => {
-    game.override.moveset([Moves.FROST_BREATH]);
-    const moveToUse = Moves.FROST_BREATH;
-    vi.spyOn(allMoves[Moves.FROST_BREATH], "accuracy", "get").mockReturnValue(100);
+    game.override.moveset([MoveId.FROST_BREATH]);
+    const moveToUse = MoveId.FROST_BREATH;
+    vi.spyOn(allMoves[MoveId.FROST_BREATH], "accuracy", "get").mockReturnValue(100);
     await game.classicMode.startBattle([Species.SHUCKLE]);
 
     game.move.select(moveToUse);
@@ -116,7 +116,7 @@ describe("Moves - Light Screen", () => {
 });
 
 /**
- * Calculates the damage of a move multiplied by screen's multiplier, Light Screen in this case {@linkcode Moves.LIGHT_SCREEN}.
+ * Calculates the damage of a move multiplied by screen's multiplier, Light Screen in this case {@linkcode MoveId.LIGHT_SCREEN}.
  * Please note this does not consider other damage calculations except the screen multiplier.
  *
  * @param defender - The defending Pokémon.

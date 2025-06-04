@@ -47,7 +47,7 @@ import { applyChallenges, ChallengeType } from "#app/data/challenge";
 import MoveInfoOverlay from "#app/ui/move-info-overlay";
 import { getEggTierForSpecies } from "#app/data/egg";
 import { Device } from "#enums/devices";
-import type { Moves } from "#enums/moves";
+import type { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import { Button } from "#enums/buttons";
 import { EggSourceType } from "#enums/egg-source-types";
@@ -365,7 +365,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private starterTeras: PokemonType[] = [];
   private starterMovesets: StarterMoveset[] = [];
   private speciesStarterDexEntry: DexEntry | null;
-  private speciesStarterMoves: Moves[];
+  private speciesStarterMoves: MoveId[];
   private canCycleShiny: boolean;
   private canCycleForm: boolean;
   private canCycleGender: boolean;
@@ -1970,7 +1970,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
                   ui.setModeWithoutClear(UiMode.OPTION_SELECT, {
                     options: moveset
-                      .map((m: Moves, i: number) => {
+                      .map((m: MoveId, i: number) => {
                         const option: OptionSelectItem = {
                           label: allMoves[m].name,
                           handler: () => {
@@ -1980,7 +1980,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                                 `${i18next.t("starterSelectUiHandler:selectMoveSwapWith")} ${allMoves[m].name}.`,
                                 null,
                                 () => {
-                                  const possibleMoves = this.speciesStarterMoves.filter((sm: Moves) => sm !== m);
+                                  const possibleMoves = this.speciesStarterMoves.filter((sm: MoveId) => sm !== m);
                                   this.moveInfoOverlay.show(allMoves[possibleMoves[0]]);
 
                                   ui.setModeWithoutClear(UiMode.OPTION_SELECT, {
@@ -2765,7 +2765,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.checkIconId(this.starterIcons[index], species, props.female, props.formIndex, props.shiny, props.variant);
   }
 
-  switchMoveHandler(i: number, newMove: Moves, move: Moves) {
+  switchMoveHandler(i: number, newMove: MoveId, move: MoveId) {
     const speciesId = this.lastSpecies.speciesId;
     const existingMoveIndex = this.starterMoveset?.indexOf(newMove)!; // TODO: is this bang correct?
     this.starterMoveset![i] = newMove; // TODO: is this bang correct?

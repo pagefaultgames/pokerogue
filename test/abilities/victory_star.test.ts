@@ -1,7 +1,7 @@
 import { BattlerIndex } from "#app/battle";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -24,12 +24,12 @@ describe("Abilities - Victory Star", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.TACKLE, Moves.SPLASH])
+      .moveset([MoveId.TACKLE, MoveId.SPLASH])
       .battleStyle("double")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .enemyMoveset(Moves.SPLASH);
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   it("should increase the accuracy of its user", async () => {
@@ -38,8 +38,8 @@ describe("Abilities - Victory Star", () => {
     const user = game.scene.getPlayerField()[0];
 
     vi.spyOn(user, "getAccuracyMultiplier");
-    game.move.select(Moves.TACKLE, 0, BattlerIndex.ENEMY);
-    game.move.select(Moves.SPLASH, 1);
+    game.move.select(MoveId.TACKLE, 0, BattlerIndex.ENEMY);
+    game.move.select(MoveId.SPLASH, 1);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(user.getAccuracyMultiplier).toHaveReturnedWith(1.1);
@@ -51,8 +51,8 @@ describe("Abilities - Victory Star", () => {
     const ally = game.scene.getPlayerField()[0];
     vi.spyOn(ally, "getAccuracyMultiplier");
 
-    game.move.select(Moves.TACKLE, 0, BattlerIndex.ENEMY);
-    game.move.select(Moves.SPLASH, 1);
+    game.move.select(MoveId.TACKLE, 0, BattlerIndex.ENEMY);
+    game.move.select(MoveId.SPLASH, 1);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(ally.getAccuracyMultiplier).toHaveReturnedWith(1.1);

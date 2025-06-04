@@ -1,7 +1,7 @@
 import { allMoves } from "#app/data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { Stat } from "#app/enums/stat";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -25,10 +25,10 @@ describe("Abilities - Hustle", () => {
     game = new GameManager(phaserGame);
     game.override
       .ability(AbilityId.HUSTLE)
-      .moveset([Moves.TACKLE, Moves.GIGA_DRAIN, Moves.FISSURE])
+      .moveset([MoveId.TACKLE, MoveId.GIGA_DRAIN, MoveId.FISSURE])
       .disableCrits()
       .battleStyle("single")
-      .enemyMoveset(Moves.SPLASH)
+      .enemyMoveset(MoveId.SPLASH)
       .enemySpecies(Species.SHUCKLE)
       .enemyAbility(AbilityId.BALL_FETCH);
   });
@@ -40,7 +40,7 @@ describe("Abilities - Hustle", () => {
 
     vi.spyOn(pikachu, "getEffectiveStat");
 
-    game.move.select(Moves.TACKLE);
+    game.move.select(MoveId.TACKLE);
     await game.move.forceHit();
     await game.phaseInterceptor.to("DamageAnimPhase");
 
@@ -53,7 +53,7 @@ describe("Abilities - Hustle", () => {
 
     vi.spyOn(pikachu, "getAccuracyMultiplier");
 
-    game.move.select(Moves.TACKLE);
+    game.move.select(MoveId.TACKLE);
     await game.phaseInterceptor.to("MoveEffectPhase");
 
     expect(pikachu.getAccuracyMultiplier).toHaveReturnedWith(0.8);
@@ -67,7 +67,7 @@ describe("Abilities - Hustle", () => {
     vi.spyOn(pikachu, "getEffectiveStat");
     vi.spyOn(pikachu, "getAccuracyMultiplier");
 
-    game.move.select(Moves.GIGA_DRAIN);
+    game.move.select(MoveId.GIGA_DRAIN);
     await game.phaseInterceptor.to("DamageAnimPhase");
 
     expect(pikachu.getEffectiveStat).toHaveReturnedWith(spatk);
@@ -83,13 +83,13 @@ describe("Abilities - Hustle", () => {
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
     vi.spyOn(pikachu, "getAccuracyMultiplier");
-    vi.spyOn(allMoves[Moves.FISSURE], "calculateBattleAccuracy");
+    vi.spyOn(allMoves[MoveId.FISSURE], "calculateBattleAccuracy");
 
-    game.move.select(Moves.FISSURE);
+    game.move.select(MoveId.FISSURE);
     await game.phaseInterceptor.to("DamageAnimPhase");
 
     expect(enemyPokemon.turnData.damageTaken).toBe(enemyPokemon.getMaxHp());
     expect(pikachu.getAccuracyMultiplier).toHaveReturnedWith(1);
-    expect(allMoves[Moves.FISSURE].calculateBattleAccuracy).toHaveReturnedWith(100);
+    expect(allMoves[MoveId.FISSURE].calculateBattleAccuracy).toHaveReturnedWith(100);
   });
 });

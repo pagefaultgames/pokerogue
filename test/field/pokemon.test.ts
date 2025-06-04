@@ -3,7 +3,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import GameManager from "#test/testUtils/gameManager";
 import { PokeballType } from "#enums/pokeball";
 import type BattleScene from "#app/battle-scene";
-import { Moves } from "#app/enums/moves";
+import { MoveId } from "#app/enums/moves";
 import { PokemonType } from "#enums/pokemon-type";
 import { CustomPokemonData } from "#app/data/custom-pokemon-data";
 
@@ -74,8 +74,8 @@ describe("Spec - Pokemon", () => {
 
     const fanRotom = game.scene.getPlayerPokemon()!;
 
-    expect(fanRotom.compatibleTms).not.toContain(Moves.BLIZZARD);
-    expect(fanRotom.compatibleTms).toContain(Moves.AIR_SLASH);
+    expect(fanRotom.compatibleTms).not.toContain(MoveId.BLIZZARD);
+    expect(fanRotom.compatibleTms).toContain(MoveId.AIR_SLASH);
   });
 
   describe("Get correct fusion type", () => {

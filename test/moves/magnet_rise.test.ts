@@ -1,6 +1,6 @@
 import { CommandPhase } from "#app/phases/command-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -9,7 +9,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 describe("Moves - Magnet Rise", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
-  const moveToUse = Moves.MAGNET_RISE;
+  const moveToUse = MoveId.MAGNET_RISE;
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({
@@ -27,10 +27,10 @@ describe("Moves - Magnet Rise", () => {
       .battleStyle("single")
       .starterSpecies(Species.MAGNEZONE)
       .enemySpecies(Species.RATTATA)
-      .enemyMoveset(Moves.DRILL_RUN)
+      .enemyMoveset(MoveId.DRILL_RUN)
       .disableCrits()
       .enemyLevel(1)
-      .moveset([moveToUse, Moves.SPLASH, Moves.GRAVITY, Moves.BATON_PASS]);
+      .moveset([moveToUse, MoveId.SPLASH, MoveId.GRAVITY, MoveId.BATON_PASS]);
   });
 
   it("MAGNET RISE", async () => {
@@ -53,7 +53,7 @@ describe("Moves - Magnet Rise", () => {
     let finalHp = game.scene.getPlayerParty()[0].hp;
     let hpLost = finalHp - startingHp;
     expect(hpLost).toBe(0);
-    game.move.select(Moves.GRAVITY);
+    game.move.select(MoveId.GRAVITY);
     await game.phaseInterceptor.to(TurnEndPhase);
     finalHp = game.scene.getPlayerParty()[0].hp;
     hpLost = finalHp - startingHp;

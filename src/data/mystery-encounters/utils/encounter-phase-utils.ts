@@ -39,7 +39,7 @@ import i18next from "i18next";
 import Trainer, { TrainerVariant } from "#app/field/trainer";
 import type { Gender } from "#app/data/gender";
 import type { Nature } from "#enums/nature";
-import type { Moves } from "#enums/moves";
+import type { MoveId } from "#enums/moves";
 import { initMoveAnim, loadMoveAnimAssets } from "#app/data/battle-anims";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import { Status } from "#app/data/status-effect";
@@ -106,7 +106,7 @@ export interface EnemyPokemonConfig {
   level?: number;
   gender?: Gender;
   passive?: boolean;
-  moveSet?: Moves[];
+  moveSet?: MoveId[];
   nature?: Nature;
   ivs?: [number, number, number, number, number, number];
   shiny?: boolean;
@@ -460,7 +460,7 @@ export async function initBattleWithEnemyConfig(partyConfig: EnemyPartyConfig): 
  * This promise does not need to be awaited on if called in an encounter onInit (will just load lazily)
  * @param moves
  */
-export function loadCustomMovesForEncounter(moves: Moves | Moves[]) {
+export function loadCustomMovesForEncounter(moves: MoveId | MoveId[]) {
   moves = Array.isArray(moves) ? moves : [moves];
   return Promise.all(moves.map(move => initMoveAnim(move))).then(() => loadMoveAnimAssets(moves));
 }

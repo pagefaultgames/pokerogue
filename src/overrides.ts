@@ -10,7 +10,7 @@ import { BattleType } from "#enums/battle-type";
 import { BerryType } from "#enums/berry-type";
 import { Biome } from "#enums/biome";
 import { EggTier } from "#enums/egg-type";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PokeballType } from "#enums/pokeball";
@@ -152,7 +152,7 @@ class DefaultOverrides {
   readonly HAS_PASSIVE_ABILITY_OVERRIDE: boolean | null = null;
   readonly STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
   readonly GENDER_OVERRIDE: Gender | null = null;
-  readonly MOVESET_OVERRIDE: Moves | Array<Moves> = [];
+  readonly MOVESET_OVERRIDE: MoveId | Array<MoveId> = [];
   readonly SHINY_OVERRIDE: boolean | null = null;
   readonly VARIANT_OVERRIDE: Variant | null = null;
 
@@ -174,7 +174,7 @@ class DefaultOverrides {
   readonly OPP_HAS_PASSIVE_ABILITY_OVERRIDE: boolean | null = null;
   readonly OPP_STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
   readonly OPP_GENDER_OVERRIDE: Gender | null = null;
-  readonly OPP_MOVESET_OVERRIDE: Moves | Array<Moves> = [];
+  readonly OPP_MOVESET_OVERRIDE: MoveId | Array<MoveId> = [];
   readonly OPP_SHINY_OVERRIDE: boolean | null = null;
   readonly OPP_VARIANT_OVERRIDE: Variant | null = null;
   readonly OPP_IVS_OVERRIDE: number | number[] = [];

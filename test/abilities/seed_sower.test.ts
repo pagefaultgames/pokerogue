@@ -1,6 +1,6 @@
 import { TerrainType } from "#app/data/terrain";
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -30,24 +30,24 @@ describe("Abilities - Seed Sower", () => {
 
     game.override.starterSpecies(Species.ARBOLIVA);
     game.override.ability(AbilityId.SEED_SOWER);
-    game.override.moveset([Moves.SPLASH]);
+    game.override.moveset([MoveId.SPLASH]);
   });
 
   it("should trigger when hit with damaging move", async () => {
-    game.override.enemyMoveset([Moves.TACKLE]);
+    game.override.enemyMoveset([MoveId.TACKLE]);
     await game.classicMode.startBattle();
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
 
     expect(game.scene.arena.terrain?.terrainType).toBe(TerrainType.GRASSY);
   });
 
   it("should trigger even when fainting", async () => {
-    game.override.enemyMoveset([Moves.TACKLE]).enemyLevel(100).startingLevel(1);
+    game.override.enemyMoveset([MoveId.TACKLE]).enemyLevel(100).startingLevel(1);
     await game.classicMode.startBattle([Species.ARBOLIVA, Species.MAGIKARP]);
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     game.doSelectPartyPokemon(1);
     await game.toNextTurn();
 
@@ -55,10 +55,10 @@ describe("Abilities - Seed Sower", () => {
   });
 
   it("should not trigger when targetted with status moves", async () => {
-    game.override.enemyMoveset([Moves.GROWL]);
+    game.override.enemyMoveset([MoveId.GROWL]);
     await game.classicMode.startBattle();
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
 
     expect(game.scene.arena.terrain?.terrainType).not.toBe(TerrainType.GRASSY);

@@ -1,7 +1,7 @@
 import { Stat } from "#enums/stat";
 import GameManager from "#test/testUtils/gameManager";
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -26,8 +26,8 @@ describe("Abilities - Wind Rider", () => {
       .battleStyle("single")
       .enemySpecies(Species.SHIFTRY)
       .enemyAbility(AbilityId.WIND_RIDER)
-      .moveset([Moves.TAILWIND, Moves.SPLASH, Moves.PETAL_BLIZZARD, Moves.SANDSTORM])
-      .enemyMoveset(Moves.SPLASH);
+      .moveset([MoveId.TAILWIND, MoveId.SPLASH, MoveId.PETAL_BLIZZARD, MoveId.SANDSTORM])
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   it("takes no damage from wind moves and its ATK stat stage is raised by 1 when hit by one", async () => {
@@ -36,7 +36,7 @@ describe("Abilities - Wind Rider", () => {
 
     expect(shiftry.getStatStage(Stat.ATK)).toBe(0);
 
-    game.move.select(Moves.PETAL_BLIZZARD);
+    game.move.select(MoveId.PETAL_BLIZZARD);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
@@ -52,7 +52,7 @@ describe("Abilities - Wind Rider", () => {
 
     expect(shiftry.getStatStage(Stat.ATK)).toBe(0);
 
-    game.move.select(Moves.TAILWIND);
+    game.move.select(MoveId.TAILWIND);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
@@ -69,7 +69,7 @@ describe("Abilities - Wind Rider", () => {
     expect(shiftry.getStatStage(Stat.ATK)).toBe(0);
     expect(magikarp.getStatStage(Stat.ATK)).toBe(0);
 
-    game.move.select(Moves.TAILWIND);
+    game.move.select(MoveId.TAILWIND);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
@@ -87,7 +87,7 @@ describe("Abilities - Wind Rider", () => {
     expect(shiftry.getStatStage(Stat.ATK)).toBe(0);
     expect(magikarp.getStatStage(Stat.ATK)).toBe(0);
 
-    game.move.select(Moves.TAILWIND);
+    game.move.select(MoveId.TAILWIND);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
@@ -104,7 +104,7 @@ describe("Abilities - Wind Rider", () => {
     expect(shiftry.getStatStage(Stat.ATK)).toBe(0);
     expect(shiftry.isFullHp()).toBe(true);
 
-    game.move.select(Moves.SANDSTORM);
+    game.move.select(MoveId.SANDSTORM);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 

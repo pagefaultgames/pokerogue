@@ -22,7 +22,7 @@ import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 import { UiMode } from "#enums/ui-mode";
 import * as Utils from "#app/utils/common";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import {
@@ -100,7 +100,7 @@ describe("Trash to Treasure - Mystery Encounter", () => {
       shiny: false, // Shiny lock because of custom intro sprite
       formIndex: 1, // Gmax
       bossSegmentModifier: 1, // +1 Segment from normal
-      moveSet: [Moves.GUNK_SHOT, Moves.STOMPING_TANTRUM, Moves.HAMMER_ARM, Moves.PAYBACK],
+      moveSet: [MoveId.GUNK_SHOT, MoveId.STOMPING_TANTRUM, MoveId.HAMMER_ARM, MoveId.PAYBACK],
       modifierConfigs: [
         {
           modifier: generateModifierType(modifierTypes.BERRY) as PokemonHeldItemModifierType,
@@ -225,17 +225,17 @@ describe("Trash to Treasure - Mystery Encounter", () => {
       expect(enemyField.length).toBe(1);
       expect(enemyField[0].species.speciesId).toBe(Species.GARBODOR);
       expect(enemyField[0].moveset).toEqual([
-        new PokemonMove(Moves.GUNK_SHOT),
-        new PokemonMove(Moves.STOMPING_TANTRUM),
-        new PokemonMove(Moves.HAMMER_ARM),
-        new PokemonMove(Moves.PAYBACK),
+        new PokemonMove(MoveId.GUNK_SHOT),
+        new PokemonMove(MoveId.STOMPING_TANTRUM),
+        new PokemonMove(MoveId.HAMMER_ARM),
+        new PokemonMove(MoveId.PAYBACK),
       ]);
 
       // Should have used moves pre-battle
       const movePhases = phaseSpy.mock.calls.filter(p => p[0] instanceof MovePhase).map(p => p[0]);
       expect(movePhases.length).toBe(2);
-      expect(movePhases.filter(p => (p as MovePhase).move.moveId === Moves.TOXIC).length).toBe(1);
-      expect(movePhases.filter(p => (p as MovePhase).move.moveId === Moves.STOCKPILE).length).toBe(1);
+      expect(movePhases.filter(p => (p as MovePhase).move.moveId === MoveId.TOXIC).length).toBe(1);
+      expect(movePhases.filter(p => (p as MovePhase).move.moveId === MoveId.STOCKPILE).length).toBe(1);
     });
 
     it("should have 2 Rogue, 1 Ultra, 1 Great in rewards", async () => {

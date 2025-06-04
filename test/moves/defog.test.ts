@@ -1,6 +1,6 @@
 import { Stat } from "#enums/stat";
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -23,13 +23,13 @@ describe("Moves - Defog", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.MIST, Moves.SAFEGUARD, Moves.SPLASH])
+      .moveset([MoveId.MIST, MoveId.SAFEGUARD, MoveId.SPLASH])
       .ability(AbilityId.BALL_FETCH)
       .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.SHUCKLE)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .enemyMoveset([Moves.DEFOG, Moves.GROWL]);
+      .enemyMoveset([MoveId.DEFOG, MoveId.GROWL]);
   });
 
   it("should not allow Safeguard to be active", async () => {
@@ -38,8 +38,8 @@ describe("Moves - Defog", () => {
     const playerPokemon = game.scene.getPlayerField();
     const enemyPokemon = game.scene.getEnemyField();
 
-    game.move.select(Moves.SAFEGUARD);
-    await game.move.selectEnemyMove(Moves.DEFOG);
+    game.move.select(MoveId.SAFEGUARD);
+    await game.move.selectEnemyMove(MoveId.DEFOG);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(playerPokemon[0].isSafeguarded(enemyPokemon[0])).toBe(false);
@@ -52,13 +52,13 @@ describe("Moves - Defog", () => {
 
     const playerPokemon = game.scene.getPlayerField();
 
-    game.move.select(Moves.MIST);
-    await game.move.selectEnemyMove(Moves.DEFOG);
+    game.move.select(MoveId.MIST);
+    await game.move.selectEnemyMove(MoveId.DEFOG);
 
     await game.toNextTurn();
 
-    game.move.select(Moves.SPLASH);
-    await game.move.selectEnemyMove(Moves.GROWL);
+    game.move.select(MoveId.SPLASH);
+    await game.move.selectEnemyMove(MoveId.GROWL);
 
     await game.phaseInterceptor.to("BerryPhase");
 

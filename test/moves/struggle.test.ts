@@ -1,5 +1,5 @@
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -22,21 +22,21 @@ describe("Moves - Struggle", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.SPLASH])
+      .moveset([MoveId.SPLASH])
       .ability(AbilityId.BALL_FETCH)
       .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .enemyMoveset(Moves.SPLASH);
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   it("should not have its power boosted by adaptability or stab", async () => {
-    game.override.moveset([Moves.STRUGGLE]).ability(AbilityId.ADAPTABILITY);
+    game.override.moveset([MoveId.STRUGGLE]).ability(AbilityId.ADAPTABILITY);
     await game.classicMode.startBattle([Species.RATTATA]);
 
     const enemy = game.scene.getEnemyPokemon()!;
-    game.move.select(Moves.STRUGGLE);
+    game.move.select(MoveId.STRUGGLE);
 
     const stabSpy = vi.spyOn(enemy, "calculateStabMultiplier");
 
@@ -48,11 +48,11 @@ describe("Moves - Struggle", () => {
   });
 
   it("should ignore type effectiveness", async () => {
-    game.override.moveset([Moves.STRUGGLE]);
+    game.override.moveset([MoveId.STRUGGLE]);
     await game.classicMode.startBattle([Species.GASTLY]);
 
     const enemy = game.scene.getEnemyPokemon()!;
-    game.move.select(Moves.STRUGGLE);
+    game.move.select(MoveId.STRUGGLE);
 
     const moveEffectivenessSpy = vi.spyOn(enemy, "getMoveEffectiveness");
 

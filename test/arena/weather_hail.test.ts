@@ -1,5 +1,5 @@
 import { BattlerIndex } from "#app/battle";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import { WeatherType } from "#enums/weather-type";
 import GameManager from "#test/testUtils/gameManager";
@@ -25,15 +25,15 @@ describe("Weather - Hail", () => {
     game.override
       .weather(WeatherType.HAIL)
       .battleStyle("single")
-      .moveset(Moves.SPLASH)
-      .enemyMoveset(Moves.SPLASH)
+      .moveset(MoveId.SPLASH)
+      .enemyMoveset(MoveId.SPLASH)
       .enemySpecies(Species.MAGIKARP);
   });
 
   it("inflicts damage equal to 1/16 of Pokemon's max HP at turn end", async () => {
     await game.classicMode.startBattle([Species.MAGIKARP]);
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
 
     await game.phaseInterceptor.to("TurnEndPhase");
@@ -44,10 +44,10 @@ describe("Weather - Hail", () => {
   });
 
   it("does not inflict damage to a Pokemon that is underwater (Dive) or underground (Dig)", async () => {
-    game.override.moveset([Moves.DIG]);
+    game.override.moveset([MoveId.DIG]);
     await game.classicMode.startBattle([Species.MAGIKARP]);
 
-    game.move.select(Moves.DIG);
+    game.move.select(MoveId.DIG);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
 
     await game.phaseInterceptor.to("TurnEndPhase");
@@ -62,7 +62,7 @@ describe("Weather - Hail", () => {
   it("does not inflict damage to Ice type Pokemon", async () => {
     await game.classicMode.startBattle([Species.CLOYSTER]);
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 

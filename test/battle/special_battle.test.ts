@@ -1,7 +1,7 @@
 import { CommandPhase } from "#app/phases/command-phase";
 import { UiMode } from "#enums/ui-mode";
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -26,10 +26,10 @@ describe("Test Battle Phase", () => {
     game.override
       .enemySpecies(Species.RATTATA)
       .startingLevel(2000)
-      .moveset([Moves.TACKLE])
+      .moveset([MoveId.TACKLE])
       .enemyAbility(AbilityId.HYDRATION)
       .ability(AbilityId.HYDRATION)
-      .enemyMoveset(Moves.TACKLE);
+      .enemyMoveset(MoveId.TACKLE);
   });
 
   it("startBattle 2vs1 boss", async () => {

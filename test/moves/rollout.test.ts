@@ -1,7 +1,7 @@
 import { allMoves } from "#app/data/data-lists";
 import { CommandPhase } from "#app/phases/command-phase";
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -31,12 +31,12 @@ describe("Moves - Rollout", () => {
     game.override.enemyAbility(AbilityId.BALL_FETCH);
     game.override.startingLevel(100);
     game.override.enemyLevel(100);
-    game.override.enemyMoveset(Moves.SPLASH);
+    game.override.enemyMoveset(MoveId.SPLASH);
   });
 
   it("should double it's dmg on sequential uses but reset after 5", async () => {
-    game.override.moveset([Moves.ROLLOUT]);
-    vi.spyOn(allMoves[Moves.ROLLOUT], "accuracy", "get").mockReturnValue(100); //always hit
+    game.override.moveset([MoveId.ROLLOUT]);
+    vi.spyOn(allMoves[MoveId.ROLLOUT], "accuracy", "get").mockReturnValue(100); //always hit
 
     const variance = 5;
     const turns = 6;
@@ -55,7 +55,7 @@ describe("Moves - Rollout", () => {
     let previousHp = enemyPkm.hp;
 
     for (let i = 0; i < turns; i++) {
-      game.move.select(Moves.ROLLOUT);
+      game.move.select(MoveId.ROLLOUT);
       await game.phaseInterceptor.to(CommandPhase);
 
       dmgHistory.push(previousHp - enemyPkm.hp);

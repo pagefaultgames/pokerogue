@@ -1,7 +1,7 @@
 import { StatusEffect } from "#app/enums/status-effect";
 import { CommandPhase } from "#app/phases/command-phase";
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -27,19 +27,19 @@ describe("Moves - Lunar Dance", () => {
       .statusEffect(StatusEffect.BURN)
       .battleStyle("double")
       .enemyAbility(AbilityId.BALL_FETCH)
-      .enemyMoveset(Moves.SPLASH);
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   it("should full restore HP, PP and status of switched in pokemon, then fail second use because no remaining backup pokemon in party", async () => {
     await game.classicMode.startBattle([Species.BULBASAUR, Species.ODDISH, Species.RATTATA]);
 
     const [bulbasaur, oddish, rattata] = game.scene.getPlayerParty();
-    game.move.changeMoveset(bulbasaur, [Moves.LUNAR_DANCE, Moves.SPLASH]);
-    game.move.changeMoveset(oddish, [Moves.LUNAR_DANCE, Moves.SPLASH]);
-    game.move.changeMoveset(rattata, [Moves.LUNAR_DANCE, Moves.SPLASH]);
+    game.move.changeMoveset(bulbasaur, [MoveId.LUNAR_DANCE, MoveId.SPLASH]);
+    game.move.changeMoveset(oddish, [MoveId.LUNAR_DANCE, MoveId.SPLASH]);
+    game.move.changeMoveset(rattata, [MoveId.LUNAR_DANCE, MoveId.SPLASH]);
 
-    game.move.select(Moves.SPLASH, 0);
-    game.move.select(Moves.SPLASH, 1);
+    game.move.select(MoveId.SPLASH, 0);
+    game.move.select(MoveId.SPLASH, 1);
     await game.phaseInterceptor.to(CommandPhase);
     await game.toNextTurn();
 
@@ -50,12 +50,12 @@ describe("Moves - Lunar Dance", () => {
 
     // Switch out Bulbasaur for Rattata so we can swtich bulbasaur back in with lunar dance
     game.doSwitchPokemon(2);
-    game.move.select(Moves.SPLASH, 1);
+    game.move.select(MoveId.SPLASH, 1);
     await game.phaseInterceptor.to(CommandPhase);
     await game.toNextTurn();
 
-    game.move.select(Moves.SPLASH, 0);
-    game.move.select(Moves.LUNAR_DANCE);
+    game.move.select(MoveId.SPLASH, 0);
+    game.move.select(MoveId.LUNAR_DANCE);
     game.doSelectPartyPokemon(2);
     await game.phaseInterceptor.to("SwitchPhase", false);
     await game.toNextTurn();
@@ -65,8 +65,8 @@ describe("Moves - Lunar Dance", () => {
     expect(bulbasaur.moveset[1]?.ppUsed).toBe(0);
     expect(bulbasaur.isFullHp()).toBe(true);
 
-    game.move.select(Moves.SPLASH, 0);
-    game.move.select(Moves.LUNAR_DANCE);
+    game.move.select(MoveId.SPLASH, 0);
+    game.move.select(MoveId.LUNAR_DANCE);
     await game.phaseInterceptor.to(CommandPhase);
     await game.toNextTurn();
 

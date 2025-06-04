@@ -1,4 +1,4 @@
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { BattlerIndex } from "#app/battle";
 import { Species } from "#enums/species";
 import { AbilityId } from "#enums/ability-id";
@@ -28,16 +28,16 @@ describe("Moves - Last Respects", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    move = allMoves[Moves.LAST_RESPECTS];
+    move = allMoves[MoveId.LAST_RESPECTS];
     basePower = move.power;
     game.override
       .battleStyle("single")
       .disableCrits()
-      .moveset([Moves.LAST_RESPECTS, Moves.EXPLOSION, Moves.LUNAR_DANCE])
+      .moveset([MoveId.LAST_RESPECTS, MoveId.EXPLOSION, MoveId.LUNAR_DANCE])
       .ability(AbilityId.BALL_FETCH)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemySpecies(Species.MAGIKARP)
-      .enemyMoveset(Moves.SPLASH)
+      .enemyMoveset(MoveId.SPLASH)
       .startingLevel(1)
       .enemyLevel(100);
 
@@ -50,7 +50,7 @@ describe("Moves - Last Respects", () => {
     /**
      * Bulbasur faints once
      */
-    game.move.select(Moves.EXPLOSION);
+    game.move.select(MoveId.EXPLOSION);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     game.doSelectPartyPokemon(1);
     await game.toNextTurn();
@@ -58,12 +58,12 @@ describe("Moves - Last Respects", () => {
     /**
      * Charmander faints once
      */
-    game.move.select(Moves.EXPLOSION);
+    game.move.select(MoveId.EXPLOSION);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     game.doSelectPartyPokemon(2);
     await game.toNextTurn();
 
-    game.move.select(Moves.LAST_RESPECTS);
+    game.move.select(MoveId.LAST_RESPECTS);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to(MoveEffectPhase);
 
@@ -76,7 +76,7 @@ describe("Moves - Last Respects", () => {
     /**
      * Bulbasur faints once
      */
-    game.move.select(Moves.EXPLOSION);
+    game.move.select(MoveId.EXPLOSION);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     game.doSelectPartyPokemon(1);
     await game.toNextTurn();
@@ -85,7 +85,7 @@ describe("Moves - Last Respects", () => {
      * Charmander faints once
      */
     game.doRevivePokemon(1);
-    game.move.select(Moves.EXPLOSION);
+    game.move.select(MoveId.EXPLOSION);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     game.doSelectPartyPokemon(1);
     await game.toNextTurn();
@@ -93,12 +93,12 @@ describe("Moves - Last Respects", () => {
     /**
      * Bulbasur faints twice
      */
-    game.move.select(Moves.EXPLOSION);
+    game.move.select(MoveId.EXPLOSION);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     game.doSelectPartyPokemon(2);
     await game.toNextTurn();
 
-    game.move.select(Moves.LAST_RESPECTS);
+    game.move.select(MoveId.LAST_RESPECTS);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to(MoveEffectPhase);
 
@@ -111,14 +111,14 @@ describe("Moves - Last Respects", () => {
       .startingWave(1)
       .enemyLevel(1)
       .startingLevel(100)
-      .enemyMoveset(Moves.SPLASH);
+      .enemyMoveset(MoveId.SPLASH);
 
     await game.classicMode.startBattle([Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE]);
 
     /**
      * The first Pokemon faints and another Pokemon in the party is selected.
      */
-    game.move.select(Moves.LUNAR_DANCE);
+    game.move.select(MoveId.LUNAR_DANCE);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     game.doSelectPartyPokemon(1);
     await game.toNextTurn();
@@ -126,12 +126,12 @@ describe("Moves - Last Respects", () => {
     /**
      * Enemy Pokemon faints and new wave is entered.
      */
-    game.move.select(Moves.LAST_RESPECTS);
+    game.move.select(MoveId.LAST_RESPECTS);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextWave();
     expect(game.scene.arena.playerFaints).toBe(1);
 
-    game.move.select(Moves.LAST_RESPECTS);
+    game.move.select(MoveId.LAST_RESPECTS);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("MoveEndPhase");
     expect(move.calculateBattlePower).toHaveLastReturnedWith(basePower + 1 * 50);
@@ -143,15 +143,15 @@ describe("Moves - Last Respects", () => {
       .startingWave(1)
       .enemyLevel(1)
       .startingLevel(100)
-      .enemyMoveset(Moves.LAST_RESPECTS)
-      .moveset([Moves.LUNAR_DANCE, Moves.LAST_RESPECTS, Moves.SPLASH]);
+      .enemyMoveset(MoveId.LAST_RESPECTS)
+      .moveset([MoveId.LUNAR_DANCE, MoveId.LAST_RESPECTS, MoveId.SPLASH]);
 
     await game.classicMode.startBattle([Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE]);
 
     /**
      * The first Pokemon faints and another Pokemon in the party is selected.
      */
-    game.move.select(Moves.LUNAR_DANCE);
+    game.move.select(MoveId.LUNAR_DANCE);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     game.doSelectPartyPokemon(1);
     await game.toNextTurn();
@@ -159,12 +159,12 @@ describe("Moves - Last Respects", () => {
     /**
      * Enemy Pokemon faints and new wave is entered.
      */
-    game.move.select(Moves.LAST_RESPECTS);
+    game.move.select(MoveId.LAST_RESPECTS);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextWave();
     expect(game.scene.currentBattle.enemyFaints).toBe(0);
 
-    game.move.select(Moves.LAST_RESPECTS);
+    game.move.select(MoveId.LAST_RESPECTS);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("MoveEndPhase");
 
@@ -180,16 +180,16 @@ describe("Moves - Last Respects", () => {
 
     await game.classicMode.startBattle([Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE]);
 
-    game.move.select(Moves.LUNAR_DANCE);
+    game.move.select(MoveId.LUNAR_DANCE);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     game.doSelectPartyPokemon(1);
     await game.toNextTurn();
 
-    game.move.select(Moves.LAST_RESPECTS);
+    game.move.select(MoveId.LAST_RESPECTS);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextWave();
 
-    game.move.select(Moves.LAST_RESPECTS);
+    game.move.select(MoveId.LAST_RESPECTS);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("BerryPhase", false);
 
@@ -201,16 +201,16 @@ describe("Moves - Last Respects", () => {
 
     await game.classicMode.startBattle([Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE]);
 
-    game.move.select(Moves.LUNAR_DANCE);
+    game.move.select(MoveId.LUNAR_DANCE);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     game.doSelectPartyPokemon(1);
     await game.toNextTurn();
 
-    game.move.select(Moves.LAST_RESPECTS);
+    game.move.select(MoveId.LAST_RESPECTS);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextWave();
 
-    game.move.select(Moves.LAST_RESPECTS);
+    game.move.select(MoveId.LAST_RESPECTS);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("BerryPhase", false);
 

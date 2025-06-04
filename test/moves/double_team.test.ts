@@ -1,7 +1,7 @@
 import { Stat } from "#enums/stat";
 import { AbilityId } from "#enums/ability-id";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -25,12 +25,12 @@ describe("Moves - Double Team", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .moveset([Moves.DOUBLE_TEAM])
+      .moveset([MoveId.DOUBLE_TEAM])
       .disableCrits()
       .ability(AbilityId.BALL_FETCH)
       .enemySpecies(Species.SHUCKLE)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .enemyMoveset(Moves.TACKLE);
+      .enemyMoveset(MoveId.TACKLE);
   });
 
   it("raises the user's EVA stat stage by 1", async () => {
@@ -42,7 +42,7 @@ describe("Moves - Double Team", () => {
     vi.spyOn(enemy, "getAccuracyMultiplier");
     expect(ally.getStatStage(Stat.EVA)).toBe(0);
 
-    game.move.select(Moves.DOUBLE_TEAM);
+    game.move.select(MoveId.DOUBLE_TEAM);
     await game.phaseInterceptor.to(TurnEndPhase);
     await game.toNextTurn();
 

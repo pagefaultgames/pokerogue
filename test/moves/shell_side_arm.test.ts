@@ -3,7 +3,7 @@ import { ShellSideArmCategoryAttr } from "#app/data/moves/move";
 import { allMoves } from "#app/data/data-lists";
 import type Move from "#app/data/moves/move";
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -26,16 +26,16 @@ describe("Moves - Shell Side Arm", () => {
   });
 
   beforeEach(() => {
-    shellSideArm = allMoves[Moves.SHELL_SIDE_ARM];
+    shellSideArm = allMoves[MoveId.SHELL_SIDE_ARM];
     shellSideArmAttr = shellSideArm.getAttrs(ShellSideArmCategoryAttr)[0];
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.SHELL_SIDE_ARM, Moves.SPLASH])
+      .moveset([MoveId.SHELL_SIDE_ARM, MoveId.SPLASH])
       .battleStyle("single")
       .startingLevel(100)
       .enemyLevel(100)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .enemyMoveset(Moves.SPLASH);
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   it("becomes a physical attack if forecasted to deal more damage as physical", async () => {
@@ -45,7 +45,7 @@ describe("Moves - Shell Side Arm", () => {
 
     vi.spyOn(shellSideArmAttr, "apply");
 
-    game.move.select(Moves.SHELL_SIDE_ARM);
+    game.move.select(MoveId.SHELL_SIDE_ARM);
     await game.phaseInterceptor.to("MoveEffectPhase");
 
     expect(shellSideArmAttr.apply).toHaveLastReturnedWith(true);
@@ -58,23 +58,23 @@ describe("Moves - Shell Side Arm", () => {
 
     vi.spyOn(shellSideArmAttr, "apply");
 
-    game.move.select(Moves.SHELL_SIDE_ARM);
+    game.move.select(MoveId.SHELL_SIDE_ARM);
     await game.phaseInterceptor.to("MoveEffectPhase");
 
     expect(shellSideArmAttr.apply).toHaveLastReturnedWith(false);
   });
 
   it("respects stat stage changes when forecasting base damage", async () => {
-    game.override.enemySpecies(Species.SNORLAX).enemyMoveset(Moves.COTTON_GUARD);
+    game.override.enemySpecies(Species.SNORLAX).enemyMoveset(MoveId.COTTON_GUARD);
 
     await game.classicMode.startBattle([Species.MANAPHY]);
 
     vi.spyOn(shellSideArmAttr, "apply");
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
 
-    game.move.select(Moves.SHELL_SIDE_ARM);
+    game.move.select(MoveId.SHELL_SIDE_ARM);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("BerryPhase", false);
 

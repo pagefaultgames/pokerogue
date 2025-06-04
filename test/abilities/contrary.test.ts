@@ -1,4 +1,4 @@
-import { Moves } from "#app/enums/moves";
+import { MoveId } from "#app/enums/moves";
 import { AbilityId } from "#enums/ability-id";
 import { Species } from "#enums/species";
 import { Stat } from "#enums/stat";
@@ -27,7 +27,7 @@ describe("Abilities - Contrary", () => {
       .enemySpecies(Species.BULBASAUR)
       .enemyAbility(AbilityId.CONTRARY)
       .ability(AbilityId.INTIMIDATE)
-      .enemyMoveset(Moves.SPLASH);
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   it("should invert stat changes when applied", async () => {
@@ -40,28 +40,28 @@ describe("Abilities - Contrary", () => {
 
   describe("With Clear Body", () => {
     it("should apply positive effects", async () => {
-      game.override.enemyPassiveAbility(AbilityId.CLEAR_BODY).moveset([Moves.TAIL_WHIP]);
+      game.override.enemyPassiveAbility(AbilityId.CLEAR_BODY).moveset([MoveId.TAIL_WHIP]);
       await game.classicMode.startBattle([Species.SLOWBRO]);
 
       const enemyPokemon = game.scene.getEnemyPokemon()!;
 
       expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(1);
 
-      game.move.select(Moves.TAIL_WHIP);
+      game.move.select(MoveId.TAIL_WHIP);
       await game.phaseInterceptor.to("TurnEndPhase");
 
       expect(enemyPokemon.getStatStage(Stat.DEF)).toBe(1);
     });
 
     it("should block negative effects", async () => {
-      game.override.enemyPassiveAbility(AbilityId.CLEAR_BODY).enemyMoveset(Moves.HOWL).moveset([Moves.SPLASH]);
+      game.override.enemyPassiveAbility(AbilityId.CLEAR_BODY).enemyMoveset(MoveId.HOWL).moveset([MoveId.SPLASH]);
       await game.classicMode.startBattle([Species.SLOWBRO]);
 
       const enemyPokemon = game.scene.getEnemyPokemon()!;
 
       expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(1);
 
-      game.move.select(Moves.SPLASH);
+      game.move.select(MoveId.SPLASH);
       await game.phaseInterceptor.to("TurnEndPhase");
 
       expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(1);

@@ -1,6 +1,6 @@
 import { BattlerIndex } from "#app/battle";
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import { Stat } from "#enums/stat";
 import GameManager from "#test/testUtils/gameManager";
@@ -24,13 +24,13 @@ describe("Abilities - Lightningrod", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.SPLASH, Moves.SHOCK_WAVE])
+      .moveset([MoveId.SPLASH, MoveId.SHOCK_WAVE])
       .ability(AbilityId.BALL_FETCH)
       .battleStyle("double")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .enemyMoveset(Moves.SPLASH);
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   it("should redirect electric type moves", async () => {
@@ -41,15 +41,15 @@ describe("Abilities - Lightningrod", () => {
 
     enemy2.summonData.ability = AbilityId.LIGHTNING_ROD;
 
-    game.move.select(Moves.SHOCK_WAVE, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
-    game.move.select(Moves.SPLASH, BattlerIndex.PLAYER_2);
+    game.move.select(MoveId.SHOCK_WAVE, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
+    game.move.select(MoveId.SPLASH, BattlerIndex.PLAYER_2);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(enemy1.isFullHp()).toBe(true);
   });
 
   it("should not redirect non-electric type moves", async () => {
-    game.override.moveset([Moves.SPLASH, Moves.AERIAL_ACE]);
+    game.override.moveset([MoveId.SPLASH, MoveId.AERIAL_ACE]);
     await game.classicMode.startBattle([Species.FEEBAS, Species.MAGIKARP]);
 
     const enemy1 = game.scene.getEnemyField()[0];
@@ -57,8 +57,8 @@ describe("Abilities - Lightningrod", () => {
 
     enemy2.summonData.ability = AbilityId.LIGHTNING_ROD;
 
-    game.move.select(Moves.AERIAL_ACE, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
-    game.move.select(Moves.SPLASH, BattlerIndex.PLAYER_2);
+    game.move.select(MoveId.AERIAL_ACE, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
+    game.move.select(MoveId.SPLASH, BattlerIndex.PLAYER_2);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(enemy1.isFullHp()).toBe(false);
@@ -71,8 +71,8 @@ describe("Abilities - Lightningrod", () => {
 
     enemy2.summonData.ability = AbilityId.LIGHTNING_ROD;
 
-    game.move.select(Moves.SHOCK_WAVE, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
-    game.move.select(Moves.SPLASH, BattlerIndex.PLAYER_2);
+    game.move.select(MoveId.SHOCK_WAVE, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
+    game.move.select(MoveId.SPLASH, BattlerIndex.PLAYER_2);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(enemy2.isFullHp()).toBe(true);
@@ -88,15 +88,15 @@ describe("Abilities - Lightningrod", () => {
 
     enemy2.summonData.ability = AbilityId.LIGHTNING_ROD;
 
-    game.move.select(Moves.SHOCK_WAVE, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
-    game.move.select(Moves.SPLASH, BattlerIndex.PLAYER_2);
+    game.move.select(MoveId.SHOCK_WAVE, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
+    game.move.select(MoveId.SPLASH, BattlerIndex.PLAYER_2);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(enemy1.isFullHp()).toBe(false);
   });
 
   it("should redirect moves changed to electric type via ability", async () => {
-    game.override.ability(AbilityId.GALVANIZE).moveset(Moves.TACKLE);
+    game.override.ability(AbilityId.GALVANIZE).moveset(MoveId.TACKLE);
     await game.classicMode.startBattle([Species.FEEBAS, Species.MAGIKARP]);
 
     const enemy1 = game.scene.getEnemyField()[0];
@@ -104,8 +104,8 @@ describe("Abilities - Lightningrod", () => {
 
     enemy2.summonData.ability = AbilityId.LIGHTNING_ROD;
 
-    game.move.select(Moves.TACKLE, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
-    game.move.select(Moves.SPLASH, BattlerIndex.PLAYER_2);
+    game.move.select(MoveId.TACKLE, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
+    game.move.select(MoveId.SPLASH, BattlerIndex.PLAYER_2);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(enemy1.isFullHp()).toBe(true);

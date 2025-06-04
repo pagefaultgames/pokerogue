@@ -5,7 +5,7 @@ import { allMoves } from "./data-lists";
 import { MoveCategory } from "#enums/MoveCategory";
 import type { Constructor, nil } from "#app/utils/common";
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import type { TimeOfDay } from "#enums/time-of-day";
 import { getPokemonNameWithAffix } from "#app/messages";
@@ -341,14 +341,14 @@ export class SpeciesFormChangeStatusEffectTrigger extends SpeciesFormChangeTrigg
 }
 
 export class SpeciesFormChangeMoveLearnedTrigger extends SpeciesFormChangeTrigger {
-  public move: Moves;
+  public move: MoveId;
   public known: boolean;
 
-  constructor(move: Moves, known = true) {
+  constructor(move: MoveId, known = true) {
     super();
     this.move = move;
     this.known = known;
-    const moveKey = Moves[this.move]
+    const moveKey = MoveId[this.move]
       .split("_")
       .filter(f => f)
       .map((f, i) => (i ? `${f[0]}${f.slice(1).toLowerCase()}` : f.toLowerCase()))
@@ -368,12 +368,12 @@ export class SpeciesFormChangeMoveLearnedTrigger extends SpeciesFormChangeTrigge
 }
 
 export abstract class SpeciesFormChangeMoveTrigger extends SpeciesFormChangeTrigger {
-  public movePredicate: (m: Moves) => boolean;
+  public movePredicate: (m: MoveId) => boolean;
   public used: boolean;
 
-  constructor(move: Moves | ((m: Moves) => boolean), used = true) {
+  constructor(move: MoveId | ((m: MoveId) => boolean), used = true) {
     super();
-    this.movePredicate = typeof move === "function" ? move : (m: Moves) => m === move;
+    this.movePredicate = typeof move === "function" ? move : (m: MoveId) => m === move;
     this.used = used;
   }
 }
@@ -827,12 +827,12 @@ export const pokemonFormChanges: PokemonFormChanges = {
     new SpeciesFormChange(Species.KYUREM, "", "white", new SpeciesFormChangeItemTrigger(FormChangeItem.LIGHT_STONE), false, getSpeciesDependentFormChangeCondition(Species.RESHIRAM))
   ],
   [Species.KELDEO]: [
-    new SpeciesFormChange(Species.KELDEO, "ordinary", "resolute", new SpeciesFormChangeMoveLearnedTrigger(Moves.SECRET_SWORD), false, new SpeciesFormChangeCondition(() => globalScene.gameMode.isDaily !== true)),
-    new SpeciesFormChange(Species.KELDEO, "resolute", "ordinary", new SpeciesFormChangeMoveLearnedTrigger(Moves.SECRET_SWORD, false), false, new SpeciesFormChangeCondition(() => globalScene.gameMode.isDaily !== true))
+    new SpeciesFormChange(Species.KELDEO, "ordinary", "resolute", new SpeciesFormChangeMoveLearnedTrigger(MoveId.SECRET_SWORD), false, new SpeciesFormChangeCondition(() => globalScene.gameMode.isDaily !== true)),
+    new SpeciesFormChange(Species.KELDEO, "resolute", "ordinary", new SpeciesFormChangeMoveLearnedTrigger(MoveId.SECRET_SWORD, false), false, new SpeciesFormChangeCondition(() => globalScene.gameMode.isDaily !== true))
   ],
   [Species.MELOETTA]: [
-    new SpeciesFormChange(Species.MELOETTA, "aria", "pirouette", new MeloettaFormChangePostMoveTrigger(Moves.RELIC_SONG), true),
-    new SpeciesFormChange(Species.MELOETTA, "pirouette", "aria", new MeloettaFormChangePostMoveTrigger(Moves.RELIC_SONG), true)
+    new SpeciesFormChange(Species.MELOETTA, "aria", "pirouette", new MeloettaFormChangePostMoveTrigger(MoveId.RELIC_SONG), true),
+    new SpeciesFormChange(Species.MELOETTA, "pirouette", "aria", new MeloettaFormChangePostMoveTrigger(MoveId.RELIC_SONG), true)
   ],
   [Species.GENESECT]: [
     new SpeciesFormChange(Species.GENESECT, "", "shock", new SpeciesFormChangeItemTrigger(FormChangeItem.SHOCK_DRIVE)),
@@ -849,7 +849,7 @@ export const pokemonFormChanges: PokemonFormChanges = {
     new SpeciesFormChange(Species.PALAFIN, "hero", "zero", new SpeciesFormChangeAbilityTrigger(), true)
   ],
   [Species.AEGISLASH]: [
-    new SpeciesFormChange(Species.AEGISLASH, "blade", "shield", new SpeciesFormChangePreMoveTrigger(Moves.KINGS_SHIELD), true, new SpeciesFormChangeCondition(p => p.hasAbility(AbilityId.STANCE_CHANGE))),
+    new SpeciesFormChange(Species.AEGISLASH, "blade", "shield", new SpeciesFormChangePreMoveTrigger(MoveId.KINGS_SHIELD), true, new SpeciesFormChangeCondition(p => p.hasAbility(AbilityId.STANCE_CHANGE))),
     new SpeciesFormChange(Species.AEGISLASH, "shield", "blade", new SpeciesFormChangePreMoveTrigger(m => allMoves[m].category !== MoveCategory.STATUS), true, new SpeciesFormChangeCondition(p => p.hasAbility(AbilityId.STANCE_CHANGE))),
     new SpeciesFormChange(Species.AEGISLASH, "blade", "shield", new SpeciesFormChangeActiveTrigger(false), true)
   ],

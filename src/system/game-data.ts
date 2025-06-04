@@ -43,7 +43,7 @@ import { StatusEffect } from "#enums/status-effect";
 import ChallengeData from "#app/system/challenge-data";
 import { Device } from "#enums/devices";
 import { GameDataType } from "#enums/game-data-type";
-import type { Moves } from "#enums/moves";
+import type { MoveId } from "#enums/moves";
 import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
 import { applyChallenges, ChallengeType } from "#app/data/challenge";
@@ -205,7 +205,7 @@ export interface DexEntry {
   ivs: number[];
 }
 
-export type StarterMoveset = [Moves] | [Moves, Moves] | [Moves, Moves, Moves] | [Moves, Moves, Moves, Moves];
+export type StarterMoveset = [MoveId] | [MoveId, MoveId] | [MoveId, MoveId, MoveId] | [MoveId, MoveId, MoveId, MoveId];
 
 export interface StarterFormMoveData {
   [key: number]: StarterMoveset;

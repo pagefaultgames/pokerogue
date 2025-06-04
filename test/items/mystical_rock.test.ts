@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { AbilityId } from "#enums/ability-id";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -25,9 +25,9 @@ describe("Items - Mystical Rock", () => {
 
     game.override
       .enemySpecies(Species.SHUCKLE)
-      .enemyMoveset(Moves.SPLASH)
+      .enemyMoveset(MoveId.SPLASH)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .moveset([Moves.SUNNY_DAY, Moves.GRASSY_TERRAIN])
+      .moveset([MoveId.SUNNY_DAY, MoveId.GRASSY_TERRAIN])
       .startingHeldItems([{ name: "MYSTICAL_ROCK", count: 2 }])
       .battleStyle("single");
   });
@@ -35,7 +35,7 @@ describe("Items - Mystical Rock", () => {
   it("should increase weather duration by +2 turns per stack", async () => {
     await game.classicMode.startBattle([Species.GASTLY]);
 
-    game.move.select(Moves.SUNNY_DAY);
+    game.move.select(MoveId.SUNNY_DAY);
 
     await game.phaseInterceptor.to("MoveEndPhase");
 
@@ -48,7 +48,7 @@ describe("Items - Mystical Rock", () => {
   it("should increase terrain duration by +2 turns per stack", async () => {
     await game.classicMode.startBattle([Species.GASTLY]);
 
-    game.move.select(Moves.GRASSY_TERRAIN);
+    game.move.select(MoveId.GRASSY_TERRAIN);
 
     await game.phaseInterceptor.to("MoveEndPhase");
 

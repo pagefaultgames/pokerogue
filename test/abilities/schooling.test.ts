@@ -2,7 +2,7 @@ import { Status } from "#app/data/status-effect";
 import { QuietFormChangePhase } from "#app/phases/quiet-form-change-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import { StatusEffect } from "#enums/status-effect";
 import GameManager from "#test/testUtils/gameManager";
@@ -24,8 +24,8 @@ describe("Abilities - SCHOOLING", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    const moveToUse = Moves.SPLASH;
-    game.override.battleStyle("single").ability(AbilityId.SCHOOLING).moveset([moveToUse]).enemyMoveset(Moves.TACKLE);
+    const moveToUse = MoveId.SPLASH;
+    game.override.battleStyle("single").ability(AbilityId.SCHOOLING).moveset([moveToUse]).enemyMoveset(MoveId.TACKLE);
   });
 
   test("check if fainted pokemon switches to base form on arena reset", async () => {
@@ -46,7 +46,7 @@ describe("Abilities - SCHOOLING", () => {
     wishiwashi.status = new Status(StatusEffect.FAINT);
     expect(wishiwashi.isFainted()).toBe(true);
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.doKillOpponents();
     await game.phaseInterceptor.to(TurnEndPhase);
     game.doSelectModifier();

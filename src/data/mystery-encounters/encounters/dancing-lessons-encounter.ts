@@ -33,7 +33,7 @@ import type { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler"
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Biome } from "#enums/biome";
 import { EncounterAnim } from "#enums/encounter-anims";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
@@ -130,11 +130,11 @@ export const DancingLessonsEncounter: MysteryEncounter = MysteryEncounterBuilder
     const species = getPokemonSpecies(Species.ORICORIO);
     const level = getEncounterPokemonLevelForWave(STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER);
     const enemyPokemon = new EnemyPokemon(species, level, TrainerSlot.NONE, false);
-    if (!enemyPokemon.moveset.some(m => m && m.getMove().id === Moves.REVELATION_DANCE)) {
+    if (!enemyPokemon.moveset.some(m => m && m.getMove().id === MoveId.REVELATION_DANCE)) {
       if (enemyPokemon.moveset.length < 4) {
-        enemyPokemon.moveset.push(new PokemonMove(Moves.REVELATION_DANCE));
+        enemyPokemon.moveset.push(new PokemonMove(MoveId.REVELATION_DANCE));
       } else {
-        enemyPokemon.moveset[0] = new PokemonMove(Moves.REVELATION_DANCE);
+        enemyPokemon.moveset[0] = new PokemonMove(MoveId.REVELATION_DANCE);
       }
     }
 
@@ -215,7 +215,7 @@ export const DancingLessonsEncounter: MysteryEncounter = MysteryEncounterBuilder
         encounter.startOfBattleEffects.push({
           sourceBattlerIndex: BattlerIndex.ENEMY,
           targets: [BattlerIndex.PLAYER],
-          move: new PokemonMove(Moves.REVELATION_DANCE),
+          move: new PokemonMove(MoveId.REVELATION_DANCE),
           ignorePp: true,
         });
 
@@ -246,7 +246,7 @@ export const DancingLessonsEncounter: MysteryEncounter = MysteryEncounterBuilder
         const onPokemonSelected = (pokemon: PlayerPokemon) => {
           encounter.setDialogueToken("selectedPokemon", pokemon.getNameToRender());
           globalScene.unshiftPhase(
-            new LearnMovePhase(globalScene.getPlayerParty().indexOf(pokemon), Moves.REVELATION_DANCE),
+            new LearnMovePhase(globalScene.getPlayerParty().indexOf(pokemon), MoveId.REVELATION_DANCE),
           );
 
           // Play animation again to "learn" the dance

@@ -1,6 +1,6 @@
 import { TrappedTag } from "#app/data/battler-tags";
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import { Stat } from "#enums/stat";
 import GameManager from "#test/testUtils/gameManager";
@@ -27,10 +27,10 @@ describe("Moves - Octolock", () => {
     game.override
       .battleStyle("single")
       .enemySpecies(Species.MAGIKARP)
-      .enemyMoveset(Moves.SPLASH)
+      .enemyMoveset(MoveId.SPLASH)
       .enemyAbility(AbilityId.BALL_FETCH)
       .startingLevel(2000)
-      .moveset([Moves.OCTOLOCK, Moves.SPLASH, Moves.TRICK_OR_TREAT])
+      .moveset([MoveId.OCTOLOCK, MoveId.SPLASH, MoveId.TRICK_OR_TREAT])
       .ability(AbilityId.BALL_FETCH);
   });
 
@@ -40,14 +40,14 @@ describe("Moves - Octolock", () => {
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
     // use Octolock and advance to init phase of next turn to check for stat changes
-    game.move.select(Moves.OCTOLOCK);
+    game.move.select(MoveId.OCTOLOCK);
     await game.toNextTurn();
 
     expect(enemyPokemon.getStatStage(Stat.DEF)).toBe(-1);
     expect(enemyPokemon.getStatStage(Stat.SPDEF)).toBe(-1);
 
     // take a second turn to make sure stat changes occur again
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
 
     expect(enemyPokemon.getStatStage(Stat.DEF)).toBe(-2);
@@ -61,7 +61,7 @@ describe("Moves - Octolock", () => {
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
     // use Octolock and advance to init phase of next turn to check for stat changes
-    game.move.select(Moves.OCTOLOCK);
+    game.move.select(MoveId.OCTOLOCK);
     await game.toNextTurn();
 
     expect(enemyPokemon.getStatStage(Stat.DEF)).toBe(0);
@@ -75,7 +75,7 @@ describe("Moves - Octolock", () => {
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
     // use Octolock and advance to init phase of next turn to check for stat changes
-    game.move.select(Moves.OCTOLOCK);
+    game.move.select(MoveId.OCTOLOCK);
     await game.toNextTurn();
 
     expect(enemyPokemon.getStatStage(Stat.DEF)).toBe(0);
@@ -89,7 +89,7 @@ describe("Moves - Octolock", () => {
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
     // use Octolock and advance to init phase of next turn to check for stat changes
-    game.move.select(Moves.OCTOLOCK);
+    game.move.select(MoveId.OCTOLOCK);
     await game.toNextTurn();
 
     expect(enemyPokemon.getStatStage(Stat.DEF)).toBe(0);
@@ -104,7 +104,7 @@ describe("Moves - Octolock", () => {
     // before Octolock - enemy should not be trapped
     expect(enemyPokemon.findTag(t => t instanceof TrappedTag)).toBeUndefined();
 
-    game.move.select(Moves.OCTOLOCK);
+    game.move.select(MoveId.OCTOLOCK);
 
     // after Octolock - enemy should be trapped
     await game.phaseInterceptor.to("MoveEndPhase");
@@ -112,7 +112,7 @@ describe("Moves - Octolock", () => {
   });
 
   it("does not work on ghost type pokemon", async () => {
-    game.override.enemyMoveset(Moves.OCTOLOCK);
+    game.override.enemyMoveset(MoveId.OCTOLOCK);
     await game.classicMode.startBattle([Species.GASTLY]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
@@ -120,7 +120,7 @@ describe("Moves - Octolock", () => {
     // before Octolock - player should not be trapped
     expect(playerPokemon.findTag(t => t instanceof TrappedTag)).toBeUndefined();
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
 
     // after Octolock - player should still not be trapped, and no stat loss
@@ -137,9 +137,9 @@ describe("Moves - Octolock", () => {
     // before Octolock - pokemon should not be trapped
     expect(enemy.findTag(t => t instanceof TrappedTag)).toBeUndefined();
 
-    game.move.select(Moves.TRICK_OR_TREAT);
+    game.move.select(MoveId.TRICK_OR_TREAT);
     await game.toNextTurn();
-    game.move.select(Moves.OCTOLOCK);
+    game.move.select(MoveId.OCTOLOCK);
     await game.toNextTurn();
 
     // after Octolock - pokemon should still not be trapped, and no stat loss

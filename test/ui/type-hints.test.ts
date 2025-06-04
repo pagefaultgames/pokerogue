@@ -1,5 +1,5 @@
 import { Button } from "#app/enums/buttons";
-import { Moves } from "#app/enums/moves";
+import { MoveId } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
 import { CommandPhase } from "#app/phases/command-phase";
 import FightUiHandler from "#app/ui/fight-ui-handler";
@@ -27,7 +27,7 @@ describe("UI - Type Hints", () => {
   beforeEach(async () => {
     game = new GameManager(phaserGame);
     game.settings.typeHints(true); //activate type hints
-    game.override.battleStyle("single").startingLevel(100).startingWave(1).enemyMoveset(Moves.SPLASH);
+    game.override.battleStyle("single").startingLevel(100).startingWave(1).enemyMoveset(MoveId.SPLASH);
   });
 
   it("check immunity color", async () => {
@@ -36,8 +36,8 @@ describe("UI - Type Hints", () => {
       .startingLevel(100)
       .startingWave(1)
       .enemySpecies(Species.FLORGES)
-      .enemyMoveset(Moves.SPLASH)
-      .moveset([Moves.DRAGON_CLAW]);
+      .enemyMoveset(MoveId.SPLASH)
+      .moveset([MoveId.DRAGON_CLAW]);
     game.settings.typeHints(true); //activate type hints
 
     await game.classicMode.startBattle([Species.RAYQUAZA]);
@@ -63,7 +63,7 @@ describe("UI - Type Hints", () => {
   });
 
   it("check status move color", async () => {
-    game.override.enemySpecies(Species.FLORGES).moveset([Moves.GROWL]);
+    game.override.enemySpecies(Species.FLORGES).moveset([MoveId.GROWL]);
 
     await game.classicMode.startBattle([Species.RAYQUAZA]);
 
@@ -90,17 +90,17 @@ describe("UI - Type Hints", () => {
   it("should show the proper hint for a move in doubles after one of the enemy pokemon flees", async () => {
     game.override
       .enemySpecies(Species.ABRA)
-      .moveset([Moves.SPLASH, Moves.SHADOW_BALL, Moves.SOAK])
-      .enemyMoveset([Moves.SPLASH, Moves.TELEPORT])
+      .moveset([MoveId.SPLASH, MoveId.SHADOW_BALL, MoveId.SOAK])
+      .enemyMoveset([MoveId.SPLASH, MoveId.TELEPORT])
       .battleStyle("double");
 
     await game.classicMode.startBattle([Species.MAGIKARP, Species.MAGIKARP]);
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     // Use soak to change type of remaining abra to water
-    game.move.select(Moves.SOAK, 1);
+    game.move.select(MoveId.SOAK, 1);
 
-    await game.move.selectEnemyMove(Moves.SPLASH);
-    await game.move.selectEnemyMove(Moves.TELEPORT);
+    await game.move.selectEnemyMove(MoveId.SPLASH);
+    await game.move.selectEnemyMove(MoveId.TELEPORT);
     await game.toNextTurn();
 
     game.onNextPrompt("CommandPhase", UiMode.COMMAND, () => {

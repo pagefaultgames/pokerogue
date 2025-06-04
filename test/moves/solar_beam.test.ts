@@ -3,7 +3,7 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import { WeatherType } from "#enums/weather-type";
 import { MoveResult } from "#app/field/pokemon";
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -26,13 +26,13 @@ describe("Moves - Solar Beam", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset(Moves.SOLAR_BEAM)
+      .moveset(MoveId.SOLAR_BEAM)
       .battleStyle("single")
       .startingLevel(100)
       .enemySpecies(Species.SNORLAX)
       .enemyLevel(100)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .enemyMoveset(Moves.SPLASH);
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   it("should deal damage in two turns if no weather is active", async () => {
@@ -41,7 +41,7 @@ describe("Moves - Solar Beam", () => {
     const playerPokemon = game.scene.getPlayerPokemon()!;
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.SOLAR_BEAM);
+    game.move.select(MoveId.SOLAR_BEAM);
 
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(playerPokemon.getTag(BattlerTagType.CHARGING)).toBeDefined();
@@ -54,7 +54,7 @@ describe("Moves - Solar Beam", () => {
     expect(playerPokemon.getMoveHistory()).toHaveLength(2);
     expect(playerPokemon.getLastXMoves(1)[0].result).toBe(MoveResult.SUCCESS);
 
-    const playerSolarBeam = playerPokemon.getMoveset().find(mv => mv && mv.moveId === Moves.SOLAR_BEAM);
+    const playerSolarBeam = playerPokemon.getMoveset().find(mv => mv && mv.moveId === MoveId.SOLAR_BEAM);
     expect(playerSolarBeam?.ppUsed).toBe(1);
   });
 
@@ -69,7 +69,7 @@ describe("Moves - Solar Beam", () => {
     const playerPokemon = game.scene.getPlayerPokemon()!;
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.SOLAR_BEAM);
+    game.move.select(MoveId.SOLAR_BEAM);
 
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(playerPokemon.getTag(BattlerTagType.CHARGING)).toBeUndefined();
@@ -77,7 +77,7 @@ describe("Moves - Solar Beam", () => {
     expect(playerPokemon.getMoveHistory()).toHaveLength(2);
     expect(playerPokemon.getLastXMoves(1)[0].result).toBe(MoveResult.SUCCESS);
 
-    const playerSolarBeam = playerPokemon.getMoveset().find(mv => mv && mv.moveId === Moves.SOLAR_BEAM);
+    const playerSolarBeam = playerPokemon.getMoveset().find(mv => mv && mv.moveId === MoveId.SOLAR_BEAM);
     expect(playerSolarBeam?.ppUsed).toBe(1);
   });
 
@@ -89,11 +89,11 @@ describe("Moves - Solar Beam", () => {
 
     await game.classicMode.startBattle([Species.MAGIKARP]);
 
-    const solarBeam = allMoves[Moves.SOLAR_BEAM];
+    const solarBeam = allMoves[MoveId.SOLAR_BEAM];
 
     vi.spyOn(solarBeam, "calculateBattlePower");
 
-    game.move.select(Moves.SOLAR_BEAM);
+    game.move.select(MoveId.SOLAR_BEAM);
 
     await game.phaseInterceptor.to("TurnEndPhase");
     await game.phaseInterceptor.to("TurnEndPhase");

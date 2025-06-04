@@ -1,6 +1,6 @@
 import i18next from "#app/plugins/i18n";
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import { StatusEffect } from "#enums/status-effect";
 import GameManager from "#test/testUtils/gameManager";
@@ -28,8 +28,8 @@ describe("Items - Toxic orb", () => {
       .enemySpecies(Species.MAGIKARP)
       .ability(AbilityId.BALL_FETCH)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .moveset(Moves.SPLASH)
-      .enemyMoveset(Moves.SPLASH)
+      .moveset(MoveId.SPLASH)
+      .enemyMoveset(MoveId.SPLASH)
       .startingHeldItems([
         {
           name: "TOXIC_ORB",
@@ -45,7 +45,7 @@ describe("Items - Toxic orb", () => {
     const player = game.scene.getPlayerPokemon()!;
     expect(player.getHeldItems()[0].type.id).toBe("TOXIC_ORB");
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
 
     await game.phaseInterceptor.to("TurnEndPhase");
     await game.phaseInterceptor.to("MessagePhase");

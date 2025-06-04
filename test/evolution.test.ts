@@ -4,7 +4,7 @@ import {
   SpeciesWildEvolutionDelay,
 } from "#app/data/balance/pokemon-evolutions";
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#app/enums/moves";
+import { MoveId } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
 import * as Utils from "#app/utils/common";
 import GameManager from "#test/testUtils/gameManager";
@@ -103,9 +103,9 @@ describe("Evolution", () => {
 
   it("should increase both HP and max HP when evolving", async () => {
     game.override
-      .moveset([Moves.SURF])
+      .moveset([MoveId.SURF])
       .enemySpecies(Species.GOLEM)
-      .enemyMoveset(Moves.SPLASH)
+      .enemyMoveset(MoveId.SPLASH)
       .startingWave(21)
       .startingLevel(16)
       .enemyLevel(50);
@@ -122,7 +122,7 @@ describe("Evolution", () => {
 
     expect(golem.hp).toBe(1);
 
-    game.move.select(Moves.SURF);
+    game.move.select(MoveId.SURF);
     await game.phaseInterceptor.to("EndEvolutionPhase");
 
     expect(totodile.hp).toBe(totodile.getMaxHp());
@@ -131,9 +131,9 @@ describe("Evolution", () => {
 
   it("should not fully heal HP when evolving", async () => {
     game.override
-      .moveset([Moves.SURF])
+      .moveset([MoveId.SURF])
       .enemySpecies(Species.GOLEM)
-      .enemyMoveset(Moves.SPLASH)
+      .enemyMoveset(MoveId.SPLASH)
       .startingWave(21)
       .startingLevel(13)
       .enemyLevel(30);
@@ -152,7 +152,7 @@ describe("Evolution", () => {
 
     expect(golem.hp).toBe(1);
 
-    game.move.select(Moves.SURF);
+    game.move.select(MoveId.SURF);
     await game.phaseInterceptor.to("EndEvolutionPhase");
 
     expect(cyndaquil.getMaxHp()).toBeGreaterThan(maxHpBefore);

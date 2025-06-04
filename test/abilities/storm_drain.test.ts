@@ -1,6 +1,6 @@
 import { BattlerIndex } from "#app/battle";
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import { Stat } from "#enums/stat";
 import GameManager from "#test/testUtils/gameManager";
@@ -24,13 +24,13 @@ describe("Abilities - Storm Drain", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.SPLASH, Moves.WATER_GUN])
+      .moveset([MoveId.SPLASH, MoveId.WATER_GUN])
       .ability(AbilityId.BALL_FETCH)
       .battleStyle("double")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .enemyMoveset(Moves.SPLASH);
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   it("should redirect water type moves", async () => {
@@ -41,15 +41,15 @@ describe("Abilities - Storm Drain", () => {
 
     enemy2.summonData.ability = AbilityId.STORM_DRAIN;
 
-    game.move.select(Moves.WATER_GUN, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
-    game.move.select(Moves.SPLASH, BattlerIndex.PLAYER_2);
+    game.move.select(MoveId.WATER_GUN, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
+    game.move.select(MoveId.SPLASH, BattlerIndex.PLAYER_2);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(enemy1.isFullHp()).toBe(true);
   });
 
   it("should not redirect non-water type moves", async () => {
-    game.override.moveset([Moves.SPLASH, Moves.AERIAL_ACE]);
+    game.override.moveset([MoveId.SPLASH, MoveId.AERIAL_ACE]);
     await game.classicMode.startBattle([Species.FEEBAS, Species.MAGIKARP]);
 
     const enemy1 = game.scene.getEnemyField()[0];
@@ -57,8 +57,8 @@ describe("Abilities - Storm Drain", () => {
 
     enemy2.summonData.ability = AbilityId.STORM_DRAIN;
 
-    game.move.select(Moves.AERIAL_ACE, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
-    game.move.select(Moves.SPLASH, BattlerIndex.PLAYER_2);
+    game.move.select(MoveId.AERIAL_ACE, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
+    game.move.select(MoveId.SPLASH, BattlerIndex.PLAYER_2);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(enemy1.isFullHp()).toBe(false);
@@ -71,8 +71,8 @@ describe("Abilities - Storm Drain", () => {
 
     enemy2.summonData.ability = AbilityId.STORM_DRAIN;
 
-    game.move.select(Moves.WATER_GUN, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
-    game.move.select(Moves.SPLASH, BattlerIndex.PLAYER_2);
+    game.move.select(MoveId.WATER_GUN, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
+    game.move.select(MoveId.SPLASH, BattlerIndex.PLAYER_2);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(enemy2.isFullHp()).toBe(true);
@@ -88,15 +88,15 @@ describe("Abilities - Storm Drain", () => {
 
     enemy2.summonData.ability = AbilityId.STORM_DRAIN;
 
-    game.move.select(Moves.WATER_GUN, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
-    game.move.select(Moves.SPLASH, BattlerIndex.PLAYER_2);
+    game.move.select(MoveId.WATER_GUN, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
+    game.move.select(MoveId.SPLASH, BattlerIndex.PLAYER_2);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(enemy1.isFullHp()).toBe(false);
   });
 
   it("should redirect moves changed to water type via ability", async () => {
-    game.override.ability(AbilityId.LIQUID_VOICE).moveset(Moves.PSYCHIC_NOISE);
+    game.override.ability(AbilityId.LIQUID_VOICE).moveset(MoveId.PSYCHIC_NOISE);
     await game.classicMode.startBattle([Species.FEEBAS, Species.MAGIKARP]);
 
     const enemy1 = game.scene.getEnemyField()[0];
@@ -104,8 +104,8 @@ describe("Abilities - Storm Drain", () => {
 
     enemy2.summonData.ability = AbilityId.STORM_DRAIN;
 
-    game.move.select(Moves.PSYCHIC_NOISE, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
-    game.move.select(Moves.SPLASH, BattlerIndex.PLAYER_2);
+    game.move.select(MoveId.PSYCHIC_NOISE, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
+    game.move.select(MoveId.SPLASH, BattlerIndex.PLAYER_2);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(enemy1.isFullHp()).toBe(true);

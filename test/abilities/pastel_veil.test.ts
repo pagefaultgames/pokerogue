@@ -2,7 +2,7 @@ import { BattlerIndex } from "#app/battle";
 import { AbilityId } from "#enums/ability-id";
 import { CommandPhase } from "#app/phases/command-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import { StatusEffect } from "#enums/status-effect";
 import GameManager from "#test/testUtils/gameManager";
@@ -27,10 +27,10 @@ describe("Abilities - Pastel Veil", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("double")
-      .moveset([Moves.TOXIC_THREAD, Moves.SPLASH])
+      .moveset([MoveId.TOXIC_THREAD, MoveId.SPLASH])
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemySpecies(Species.SUNKERN)
-      .enemyMoveset(Moves.SPLASH);
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   it("prevents the user and its allies from being afflicted by poison", async () => {
@@ -41,8 +41,8 @@ describe("Abilities - Pastel Veil", () => {
 
     expect(ponyta.hasAbility(AbilityId.PASTEL_VEIL)).toBe(true);
 
-    game.move.select(Moves.SPLASH);
-    game.move.select(Moves.TOXIC_THREAD, 1, BattlerIndex.PLAYER);
+    game.move.select(MoveId.SPLASH);
+    game.move.select(MoveId.TOXIC_THREAD, 1, BattlerIndex.PLAYER);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -57,14 +57,14 @@ describe("Abilities - Pastel Veil", () => {
 
     expect(ponyta.hasAbility(AbilityId.PASTEL_VEIL)).toBe(true);
 
-    game.move.select(Moves.SPLASH);
-    game.move.select(Moves.TOXIC_THREAD, 1, BattlerIndex.PLAYER);
+    game.move.select(MoveId.SPLASH);
+    game.move.select(MoveId.TOXIC_THREAD, 1, BattlerIndex.PLAYER);
 
     await game.phaseInterceptor.to(TurnEndPhase);
     expect(magikarp.status?.effect).toBe(StatusEffect.POISON);
 
     await game.phaseInterceptor.to(CommandPhase);
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     game.doSwitchPokemon(2);
     await game.phaseInterceptor.to(TurnEndPhase);
 

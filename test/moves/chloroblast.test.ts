@@ -1,6 +1,6 @@
 import { MoveResult } from "#app/field/pokemon";
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -33,13 +33,13 @@ describe("Moves - Chloroblast", () => {
   it("should not deal recoil damage if the opponent uses protect", async () => {
     await game.classicMode.startBattle([Species.FEEBAS]);
 
-    game.move.use(Moves.CHLOROBLAST);
-    await game.move.forceEnemyMove(Moves.PROTECT);
+    game.move.use(MoveId.CHLOROBLAST);
+    await game.move.forceEnemyMove(MoveId.PROTECT);
     await game.toEndOfTurn();
 
     const player = game.field.getPlayerPokemon();
 
     expect(player.isFullHp()).toBe(true);
-    expect(player.getLastXMoves()[0]).toMatchObject({ result: MoveResult.MISS, move: Moves.CHLOROBLAST });
+    expect(player.getLastXMoves()[0]).toMatchObject({ result: MoveResult.MISS, move: MoveId.CHLOROBLAST });
   });
 });

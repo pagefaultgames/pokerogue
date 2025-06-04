@@ -1,7 +1,7 @@
 import { BattlerIndex } from "#app/battle";
 import { PokemonType } from "#enums/pokemon-type";
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -24,12 +24,12 @@ describe("Moves - Plasma Fists", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.PLASMA_FISTS, Moves.TACKLE])
+      .moveset([MoveId.PLASMA_FISTS, MoveId.TACKLE])
       .battleStyle("double")
       .startingLevel(100)
       .enemySpecies(Species.DUSCLOPS)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .enemyMoveset(Moves.TACKLE)
+      .enemyMoveset(MoveId.TACKLE)
       .enemyLevel(100);
   });
 
@@ -39,11 +39,11 @@ describe("Moves - Plasma Fists", () => {
     const field = game.scene.getField(true);
     field.forEach(p => vi.spyOn(p, "getMoveType"));
 
-    game.move.select(Moves.PLASMA_FISTS, 0, BattlerIndex.ENEMY);
-    game.move.select(Moves.TACKLE, 1, BattlerIndex.ENEMY_2);
+    game.move.select(MoveId.PLASMA_FISTS, 0, BattlerIndex.ENEMY);
+    game.move.select(MoveId.TACKLE, 1, BattlerIndex.ENEMY_2);
 
-    await game.move.selectEnemyMove(Moves.TACKLE, BattlerIndex.PLAYER);
-    await game.move.selectEnemyMove(Moves.TACKLE, BattlerIndex.PLAYER_2);
+    await game.move.selectEnemyMove(MoveId.TACKLE, BattlerIndex.PLAYER);
+    await game.move.selectEnemyMove(MoveId.TACKLE, BattlerIndex.PLAYER_2);
 
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
 
@@ -64,7 +64,7 @@ describe("Moves - Plasma Fists", () => {
     const enemyPokemon = game.scene.getEnemyPokemon()!;
     vi.spyOn(enemyPokemon, "getMoveType");
 
-    game.move.select(Moves.PLASMA_FISTS);
+    game.move.select(MoveId.PLASMA_FISTS);
 
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("BerryPhase", false);
@@ -74,7 +74,7 @@ describe("Moves - Plasma Fists", () => {
   });
 
   it("should affect moves that become Normal type due to Normalize", async () => {
-    game.override.battleStyle("single").enemyAbility(AbilityId.NORMALIZE).enemyMoveset(Moves.WATER_GUN);
+    game.override.battleStyle("single").enemyAbility(AbilityId.NORMALIZE).enemyMoveset(MoveId.WATER_GUN);
 
     await game.classicMode.startBattle([Species.DUSCLOPS]);
 
@@ -82,7 +82,7 @@ describe("Moves - Plasma Fists", () => {
     const enemyPokemon = game.scene.getEnemyPokemon()!;
     vi.spyOn(enemyPokemon, "getMoveType");
 
-    game.move.select(Moves.PLASMA_FISTS);
+    game.move.select(MoveId.PLASMA_FISTS);
 
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("BerryPhase", false);

@@ -2,7 +2,7 @@ import { allMoves } from "#app/data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -29,50 +29,50 @@ describe("Abilities - Battery", () => {
     game.override.battleStyle("double");
     game.override.enemySpecies(Species.SHUCKLE);
     game.override.enemyAbility(AbilityId.BALL_FETCH);
-    game.override.moveset([Moves.TACKLE, Moves.BREAKING_SWIPE, Moves.SPLASH, Moves.DAZZLING_GLEAM]);
-    game.override.enemyMoveset(Moves.SPLASH);
+    game.override.moveset([MoveId.TACKLE, MoveId.BREAKING_SWIPE, MoveId.SPLASH, MoveId.DAZZLING_GLEAM]);
+    game.override.enemyMoveset(MoveId.SPLASH);
   });
 
   it("raises the power of allies' special moves by 30%", async () => {
-    const moveToCheck = allMoves[Moves.DAZZLING_GLEAM];
+    const moveToCheck = allMoves[MoveId.DAZZLING_GLEAM];
     const basePower = moveToCheck.power;
 
     vi.spyOn(moveToCheck, "calculateBattlePower");
 
     await game.classicMode.startBattle([Species.PIKACHU, Species.CHARJABUG]);
 
-    game.move.select(Moves.DAZZLING_GLEAM);
-    game.move.select(Moves.SPLASH, 1);
+    game.move.select(MoveId.DAZZLING_GLEAM);
+    game.move.select(MoveId.SPLASH, 1);
     await game.phaseInterceptor.to(MoveEffectPhase);
 
     expect(moveToCheck.calculateBattlePower).toHaveReturnedWith(basePower * batteryMultiplier);
   });
 
   it("does not raise the power of allies' non-special moves", async () => {
-    const moveToCheck = allMoves[Moves.BREAKING_SWIPE];
+    const moveToCheck = allMoves[MoveId.BREAKING_SWIPE];
     const basePower = moveToCheck.power;
 
     vi.spyOn(moveToCheck, "calculateBattlePower");
 
     await game.classicMode.startBattle([Species.PIKACHU, Species.CHARJABUG]);
 
-    game.move.select(Moves.BREAKING_SWIPE);
-    game.move.select(Moves.SPLASH, 1);
+    game.move.select(MoveId.BREAKING_SWIPE);
+    game.move.select(MoveId.SPLASH, 1);
     await game.phaseInterceptor.to(MoveEffectPhase);
 
     expect(moveToCheck.calculateBattlePower).toHaveReturnedWith(basePower);
   });
 
   it("does not raise the power of the ability owner's special moves", async () => {
-    const moveToCheck = allMoves[Moves.DAZZLING_GLEAM];
+    const moveToCheck = allMoves[MoveId.DAZZLING_GLEAM];
     const basePower = moveToCheck.power;
 
     vi.spyOn(moveToCheck, "calculateBattlePower");
 
     await game.classicMode.startBattle([Species.CHARJABUG, Species.PIKACHU]);
 
-    game.move.select(Moves.DAZZLING_GLEAM);
-    game.move.select(Moves.SPLASH, 1);
+    game.move.select(MoveId.DAZZLING_GLEAM);
+    game.move.select(MoveId.SPLASH, 1);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(moveToCheck.calculateBattlePower).toHaveReturnedWith(basePower);

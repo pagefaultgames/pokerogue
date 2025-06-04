@@ -9,7 +9,7 @@ import {
   runSelectMysteryEncounterOption,
   skipBattleRunMysteryEncounterRewardsPhase,
 } from "#test/mystery-encounter/encounter-test-utils";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import type BattleScene from "#app/battle-scene";
 import { PokemonMove } from "#app/field/pokemon";
 import { UiMode } from "#enums/ui-mode";
@@ -179,7 +179,7 @@ describe("Fight or Flight - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.FIGHT_OR_FLIGHT, defaultParty);
 
       // Mock moveset
-      scene.getPlayerParty()[0].moveset = [new PokemonMove(Moves.KNOCK_OFF)];
+      scene.getPlayerParty()[0].moveset = [new PokemonMove(MoveId.KNOCK_OFF)];
       const item = game.scene.currentBattle.mysteryEncounter!.misc;
 
       await runMysteryEncounterToEnd(game, 2);

@@ -1,7 +1,7 @@
 import { BattlerIndex } from "#app/battle";
 import { PokemonType } from "#enums/pokemon-type";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
-import { Moves } from "#app/enums/moves";
+import { MoveId } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
@@ -29,8 +29,8 @@ describe("Moves - Roost", () => {
     game.override.enemySpecies(Species.RELICANTH);
     game.override.startingLevel(100);
     game.override.enemyLevel(100);
-    game.override.enemyMoveset(Moves.EARTHQUAKE);
-    game.override.moveset([Moves.ROOST, Moves.BURN_UP, Moves.DOUBLE_SHOCK]);
+    game.override.enemyMoveset(MoveId.EARTHQUAKE);
+    game.override.moveset([MoveId.ROOST, MoveId.BURN_UP, MoveId.DOUBLE_SHOCK]);
   });
 
   /**
@@ -50,7 +50,7 @@ describe("Moves - Roost", () => {
     await game.classicMode.startBattle([Species.DUNSPARCE]);
     const playerPokemon = game.scene.getPlayerPokemon()!;
     const playerPokemonStartingHP = playerPokemon.hp;
-    game.move.select(Moves.ROOST);
+    game.move.select(MoveId.ROOST);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to(MoveEffectPhase);
 
@@ -74,7 +74,7 @@ describe("Moves - Roost", () => {
     await game.classicMode.startBattle([Species.TORNADUS]);
     const playerPokemon = game.scene.getPlayerPokemon()!;
     const playerPokemonStartingHP = playerPokemon.hp;
-    game.move.select(Moves.ROOST);
+    game.move.select(MoveId.ROOST);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to(MoveEffectPhase);
 
@@ -98,7 +98,7 @@ describe("Moves - Roost", () => {
     await game.classicMode.startBattle([Species.HAWLUCHA]);
     const playerPokemon = game.scene.getPlayerPokemon()!;
     const playerPokemonStartingHP = playerPokemon.hp;
-    game.move.select(Moves.ROOST);
+    game.move.select(MoveId.ROOST);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to(MoveEffectPhase);
 
@@ -123,7 +123,7 @@ describe("Moves - Roost", () => {
     await game.classicMode.startBattle([Species.ROTOM]);
     const playerPokemon = game.scene.getPlayerPokemon()!;
     const playerPokemonStartingHP = playerPokemon.hp;
-    game.move.select(Moves.ROOST);
+    game.move.select(MoveId.ROOST);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to(MoveEffectPhase);
 
@@ -147,7 +147,7 @@ describe("Moves - Roost", () => {
     await game.classicMode.startBattle([Species.MOLTRES]);
     const playerPokemon = game.scene.getPlayerPokemon()!;
     const playerPokemonStartingHP = playerPokemon.hp;
-    game.move.select(Moves.BURN_UP);
+    game.move.select(MoveId.BURN_UP);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to(MoveEffectPhase);
 
@@ -157,7 +157,7 @@ describe("Moves - Roost", () => {
     expect(playerPokemonTypes.length === 1).toBeTruthy();
 
     await game.phaseInterceptor.to(TurnEndPhase);
-    game.move.select(Moves.ROOST);
+    game.move.select(MoveId.ROOST);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to(MoveEffectPhase);
 
@@ -183,7 +183,7 @@ describe("Moves - Roost", () => {
     await game.classicMode.startBattle([Species.ZAPDOS]);
     const playerPokemon = game.scene.getPlayerPokemon()!;
     const playerPokemonStartingHP = playerPokemon.hp;
-    game.move.select(Moves.DOUBLE_SHOCK);
+    game.move.select(MoveId.DOUBLE_SHOCK);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to(MoveEffectPhase);
 
@@ -193,7 +193,7 @@ describe("Moves - Roost", () => {
     expect(playerPokemonTypes.length === 1).toBeTruthy();
 
     await game.phaseInterceptor.to(TurnEndPhase);
-    game.move.select(Moves.ROOST);
+    game.move.select(MoveId.ROOST);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to(MoveEffectPhase);
 
@@ -216,14 +216,14 @@ describe("Moves - Roost", () => {
 
   test("Dual Type Pokemon afflicted with Forests Curse/Trick or Treat and post roost will become dual type and then become 3 type at end of turn", async () => {
     game.override.enemyMoveset([
-      Moves.TRICK_OR_TREAT,
-      Moves.TRICK_OR_TREAT,
-      Moves.TRICK_OR_TREAT,
-      Moves.TRICK_OR_TREAT,
+      MoveId.TRICK_OR_TREAT,
+      MoveId.TRICK_OR_TREAT,
+      MoveId.TRICK_OR_TREAT,
+      MoveId.TRICK_OR_TREAT,
     ]);
     await game.classicMode.startBattle([Species.MOLTRES]);
     const playerPokemon = game.scene.getPlayerPokemon()!;
-    game.move.select(Moves.ROOST);
+    game.move.select(MoveId.ROOST);
     await game.phaseInterceptor.to(MoveEffectPhase);
 
     let playerPokemonTypes = playerPokemon.getTypes();

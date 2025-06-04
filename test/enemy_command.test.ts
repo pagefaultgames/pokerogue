@@ -2,7 +2,7 @@ import type BattleScene from "#app/battle-scene";
 import { allMoves } from "#app/data/data-lists";
 import { MoveCategory } from "#enums/MoveCategory";
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#app/enums/moves";
+import { MoveId } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
 import type { EnemyPokemon } from "#app/field/pokemon";
 import { AiType } from "#app/field/pokemon";
@@ -55,7 +55,7 @@ describe("Enemy Commands - Move Selection", () => {
   it("should never use Status moves if an attack can KO", async () => {
     game.override
       .enemySpecies(Species.ETERNATUS)
-      .enemyMoveset([Moves.ETERNABEAM, Moves.SLUDGE_BOMB, Moves.DRAGON_DANCE, Moves.COSMIC_POWER])
+      .enemyMoveset([MoveId.ETERNABEAM, MoveId.SLUDGE_BOMB, MoveId.DRAGON_DANCE, MoveId.COSMIC_POWER])
       .startingLevel(1)
       .enemyLevel(100);
 
@@ -79,7 +79,7 @@ describe("Enemy Commands - Move Selection", () => {
   it("should not select Last Resort if it would fail, even if the move KOs otherwise", async () => {
     game.override
       .enemySpecies(Species.KANGASKHAN)
-      .enemyMoveset([Moves.LAST_RESORT, Moves.GIGA_IMPACT, Moves.SPLASH, Moves.SWORDS_DANCE])
+      .enemyMoveset([MoveId.LAST_RESORT, MoveId.GIGA_IMPACT, MoveId.SPLASH, MoveId.SWORDS_DANCE])
       .startingLevel(1)
       .enemyLevel(100);
 
@@ -94,7 +94,7 @@ describe("Enemy Commands - Move Selection", () => {
     getEnemyMoveChoices(enemyPokemon, moveChoices);
 
     enemyMoveset.forEach(mv => {
-      if (mv?.getMove().category === MoveCategory.STATUS || mv?.moveId === Moves.LAST_RESORT) {
+      if (mv?.getMove().category === MoveCategory.STATUS || mv?.moveId === MoveId.LAST_RESORT) {
         expect(moveChoices[mv.moveId]).toBe(0);
       }
     });

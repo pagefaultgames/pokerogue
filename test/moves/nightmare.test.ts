@@ -1,5 +1,5 @@
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import { StatusEffect } from "#enums/status-effect";
 import GameManager from "#test/testUtils/gameManager";
@@ -26,11 +26,11 @@ describe("Moves - Nightmare", () => {
     game.override
       .battleStyle("single")
       .enemySpecies(Species.RATTATA)
-      .enemyMoveset(Moves.SPLASH)
+      .enemyMoveset(MoveId.SPLASH)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyStatusEffect(StatusEffect.SLEEP)
       .startingLevel(5)
-      .moveset([Moves.NIGHTMARE, Moves.SPLASH]);
+      .moveset([MoveId.NIGHTMARE, MoveId.SPLASH]);
   });
 
   it("lowers enemy hp by 1/4 each turn while asleep", async () => {
@@ -39,13 +39,13 @@ describe("Moves - Nightmare", () => {
     const enemyPokemon = game.scene.getEnemyPokemon()!;
     const enemyMaxHP = enemyPokemon.hp;
 
-    game.move.select(Moves.NIGHTMARE);
+    game.move.select(MoveId.NIGHTMARE);
     await game.toNextTurn();
 
     expect(enemyPokemon.hp).toBe(enemyMaxHP - Math.floor(enemyMaxHP / 4));
 
     // take a second turn to make sure damage occurs again
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
 
     expect(enemyPokemon.hp).toBe(enemyMaxHP - Math.floor(enemyMaxHP / 4) - Math.floor(enemyMaxHP / 4));

@@ -2,7 +2,7 @@ import { allAbilities } from "#app/data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import type Pokemon from "#app/field/pokemon";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -36,21 +36,21 @@ describe("Moves - Flame Burst", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override.battleStyle("double");
-    game.override.moveset([Moves.FLAME_BURST, Moves.SPLASH]);
+    game.override.moveset([MoveId.FLAME_BURST, MoveId.SPLASH]);
     game.override.disableCrits();
     game.override.ability(AbilityId.UNNERVE);
     game.override.startingWave(4);
     game.override.enemySpecies(Species.SHUCKLE);
     game.override.enemyAbility(AbilityId.BALL_FETCH);
-    game.override.enemyMoveset([Moves.SPLASH]);
+    game.override.enemyMoveset([MoveId.SPLASH]);
   });
 
   it("inflicts damage to the target's ally equal to 1/16 of its max HP", async () => {
     await game.classicMode.startBattle([Species.PIKACHU, Species.PIKACHU]);
     const [leftEnemy, rightEnemy] = game.scene.getEnemyField();
 
-    game.move.select(Moves.FLAME_BURST, 0, leftEnemy.getBattlerIndex());
-    game.move.select(Moves.SPLASH, 1);
+    game.move.select(MoveId.FLAME_BURST, 0, leftEnemy.getBattlerIndex());
+    game.move.select(MoveId.SPLASH, 1);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(leftEnemy.hp).toBeLessThan(leftEnemy.getMaxHp());
@@ -63,8 +63,8 @@ describe("Moves - Flame Burst", () => {
     await game.classicMode.startBattle([Species.PIKACHU, Species.PIKACHU]);
     const [leftEnemy, rightEnemy] = game.scene.getEnemyField();
 
-    game.move.select(Moves.FLAME_BURST, 0, leftEnemy.getBattlerIndex());
-    game.move.select(Moves.SPLASH, 1);
+    game.move.select(MoveId.FLAME_BURST, 0, leftEnemy.getBattlerIndex());
+    game.move.select(MoveId.SPLASH, 1);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(leftEnemy.hp).toBe(leftEnemy.getMaxHp());
@@ -77,8 +77,8 @@ describe("Moves - Flame Burst", () => {
 
     vi.spyOn(rightEnemy, "getAbility").mockReturnValue(allAbilities[AbilityId.FLASH_FIRE]);
 
-    game.move.select(Moves.FLAME_BURST, 0, leftEnemy.getBattlerIndex());
-    game.move.select(Moves.SPLASH, 1);
+    game.move.select(MoveId.FLAME_BURST, 0, leftEnemy.getBattlerIndex());
+    game.move.select(MoveId.SPLASH, 1);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(leftEnemy.hp).toBeLessThan(leftEnemy.getMaxHp());
@@ -91,8 +91,8 @@ describe("Moves - Flame Burst", () => {
 
     vi.spyOn(rightEnemy, "getAbility").mockReturnValue(allAbilities[AbilityId.MAGIC_GUARD]);
 
-    game.move.select(Moves.FLAME_BURST, 0, leftEnemy.getBattlerIndex());
-    game.move.select(Moves.SPLASH, 1);
+    game.move.select(MoveId.FLAME_BURST, 0, leftEnemy.getBattlerIndex());
+    game.move.select(MoveId.SPLASH, 1);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(leftEnemy.hp).toBeLessThan(leftEnemy.getMaxHp());

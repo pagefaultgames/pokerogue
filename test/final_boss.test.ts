@@ -2,7 +2,7 @@ import { GameModes } from "#app/game-mode";
 import { TurnHeldItemTransferModifier } from "#app/modifier/modifier";
 import { AbilityId } from "#enums/ability-id";
 import { Biome } from "#enums/biome";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import { StatusEffect } from "#enums/status-effect";
 import GameManager from "#test/testUtils/gameManager";
@@ -28,8 +28,8 @@ describe("Final Boss", () => {
       .startingWave(FinalWave.Classic)
       .startingBiome(Biome.END)
       .disableCrits()
-      .enemyMoveset(Moves.SPLASH)
-      .moveset([Moves.SPLASH, Moves.WILL_O_WISP, Moves.DRAGON_PULSE])
+      .enemyMoveset(MoveId.SPLASH)
+      .moveset([MoveId.SPLASH, MoveId.WILL_O_WISP, MoveId.DRAGON_PULSE])
       .startingLevel(10000);
   });
 
@@ -83,7 +83,7 @@ describe("Final Boss", () => {
     expect(eternatus.bossSegments).toBe(4);
     expect(eternatus.bossSegmentIndex).toBe(3);
 
-    game.move.select(Moves.DRAGON_PULSE);
+    game.move.select(MoveId.DRAGON_PULSE);
     await game.toNextTurn();
 
     // Eternatus phase 2: changed form, healed and restored its shields
@@ -112,7 +112,7 @@ describe("Final Boss", () => {
     expect(eternatus.bossSegments).toBe(4);
     expect(eternatus.bossSegmentIndex).toBe(3);
 
-    game.move.select(Moves.WILL_O_WISP);
+    game.move.select(MoveId.WILL_O_WISP);
     await game.toNextTurn();
     expect(eternatus.status?.effect).toBe(StatusEffect.BURN);
 
@@ -120,13 +120,13 @@ describe("Final Boss", () => {
     const lastShieldHp = Math.ceil(phase1Hp / eternatus.bossSegments);
     // Stall until the burn is one hit away from breaking the last shield
     while (eternatus.hp - tickDamage > lastShieldHp) {
-      game.move.select(Moves.SPLASH);
+      game.move.select(MoveId.SPLASH);
       await game.toNextTurn();
     }
 
     expect(eternatus.bossSegmentIndex).toBe(1);
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
 
     // Eternatus phase 2: changed form, healed and restored its shields

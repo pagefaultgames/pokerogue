@@ -3,7 +3,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest
 import GameManager from "#test/testUtils/gameManager";
 import { Species } from "#enums/species";
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { BattlerIndex } from "#app/battle";
 import { StatusEffect } from "#app/enums/status-effect";
 
@@ -26,11 +26,11 @@ describe("Moves - Baneful Bunker", () => {
 
     game.override.battleStyle("single");
 
-    game.override.moveset(Moves.SLASH);
+    game.override.moveset(MoveId.SLASH);
 
     game.override.enemySpecies(Species.SNORLAX);
     game.override.enemyAbility(AbilityId.INSOMNIA);
-    game.override.enemyMoveset(Moves.BANEFUL_BUNKER);
+    game.override.enemyMoveset(MoveId.BANEFUL_BUNKER);
 
     game.override.startingLevel(100);
     game.override.enemyLevel(100);
@@ -41,7 +41,7 @@ describe("Moves - Baneful Bunker", () => {
     const leadPokemon = game.scene.getPlayerPokemon()!;
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.SLASH);
+    game.move.select(MoveId.SLASH);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemyPokemon.hp).toBe(enemyPokemon.getMaxHp());
@@ -53,7 +53,7 @@ describe("Moves - Baneful Bunker", () => {
     const leadPokemon = game.scene.getPlayerPokemon()!;
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.SLASH);
+    game.move.select(MoveId.SLASH);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("MoveEffectPhase");
 
@@ -64,13 +64,13 @@ describe("Moves - Baneful Bunker", () => {
   });
 
   test("should not poison attackers that don't make contact", async () => {
-    game.override.moveset(Moves.FLASH_CANNON);
+    game.override.moveset(MoveId.FLASH_CANNON);
     await game.classicMode.startBattle([Species.CHARIZARD]);
 
     const leadPokemon = game.scene.getPlayerPokemon()!;
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.FLASH_CANNON);
+    game.move.select(MoveId.FLASH_CANNON);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("MoveEffectPhase");
 

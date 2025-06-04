@@ -1,5 +1,5 @@
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phase from "phaser";
@@ -33,8 +33,8 @@ describe("Items - Dire Hit", () => {
 
     game.override
       .enemySpecies(Species.MAGIKARP)
-      .enemyMoveset(Moves.SPLASH)
-      .moveset([Moves.POUND])
+      .enemyMoveset(MoveId.SPLASH)
+      .moveset([MoveId.POUND])
       .startingHeldItems([{ name: "DIRE_HIT" }])
       .battleStyle("single");
   }, 20000);
@@ -46,7 +46,7 @@ describe("Items - Dire Hit", () => {
 
     vi.spyOn(enemyPokemon, "getCritStage");
 
-    game.move.select(Moves.POUND);
+    game.move.select(MoveId.POUND);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -58,7 +58,7 @@ describe("Items - Dire Hit", () => {
 
     await game.classicMode.startBattle([Species.PIKACHU]);
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
 
     await game.doKillOpponents();
 

@@ -3,7 +3,7 @@ import { StatusEffect } from "#app/enums/status-effect";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { toDmgValue } from "#app/utils/common";
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -29,11 +29,11 @@ describe("Abilities - Heatproof", () => {
       .disableCrits()
       .enemySpecies(Species.CHARMANDER)
       .enemyAbility(AbilityId.HEATPROOF)
-      .enemyMoveset(Moves.SPLASH)
+      .enemyMoveset(MoveId.SPLASH)
       .enemyLevel(100)
       .starterSpecies(Species.CHANDELURE)
       .ability(AbilityId.BALL_FETCH)
-      .moveset([Moves.FLAMETHROWER, Moves.SPLASH])
+      .moveset([MoveId.FLAMETHROWER, MoveId.SPLASH])
       .startingLevel(100);
   });
 
@@ -44,14 +44,14 @@ describe("Abilities - Heatproof", () => {
     const initialHP = 1000;
     enemy.hp = initialHP;
 
-    game.move.select(Moves.FLAMETHROWER);
+    game.move.select(MoveId.FLAMETHROWER);
     await game.phaseInterceptor.to(TurnEndPhase);
     const heatproofDamage = initialHP - enemy.hp;
 
     enemy.hp = initialHP;
     game.override.enemyAbility(AbilityId.BALL_FETCH);
 
-    game.move.select(Moves.FLAMETHROWER);
+    game.move.select(MoveId.FLAMETHROWER);
     await game.phaseInterceptor.to(TurnEndPhase);
     const regularDamage = initialHP - enemy.hp;
 
@@ -65,7 +65,7 @@ describe("Abilities - Heatproof", () => {
 
     const enemy = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
 
     // Normal burn damage is /16

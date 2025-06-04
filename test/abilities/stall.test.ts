@@ -1,5 +1,5 @@
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -27,8 +27,8 @@ describe("Abilities - Stall", () => {
       .disableCrits()
       .enemySpecies(Species.REGIELEKI)
       .enemyAbility(AbilityId.STALL)
-      .enemyMoveset(Moves.QUICK_ATTACK)
-      .moveset([Moves.QUICK_ATTACK, Moves.TACKLE]);
+      .enemyMoveset(MoveId.QUICK_ATTACK)
+      .moveset([MoveId.QUICK_ATTACK, MoveId.TACKLE]);
   });
 
   /**
@@ -43,7 +43,7 @@ describe("Abilities - Stall", () => {
     const playerIndex = game.scene.getPlayerPokemon()!.getBattlerIndex();
     const enemyIndex = game.scene.getEnemyPokemon()!.getBattlerIndex();
 
-    game.move.select(Moves.QUICK_ATTACK);
+    game.move.select(MoveId.QUICK_ATTACK);
 
     await game.phaseInterceptor.to(TurnStartPhase, false);
     const phase = game.scene.getCurrentPhase() as TurnStartPhase;
@@ -61,7 +61,7 @@ describe("Abilities - Stall", () => {
     const playerIndex = game.scene.getPlayerPokemon()!.getBattlerIndex();
     const enemyIndex = game.scene.getEnemyPokemon()!.getBattlerIndex();
 
-    game.move.select(Moves.TACKLE);
+    game.move.select(MoveId.TACKLE);
 
     await game.phaseInterceptor.to(TurnStartPhase, false);
     const phase = game.scene.getCurrentPhase() as TurnStartPhase;
@@ -80,7 +80,7 @@ describe("Abilities - Stall", () => {
     const playerIndex = game.scene.getPlayerPokemon()!.getBattlerIndex();
     const enemyIndex = game.scene.getEnemyPokemon()!.getBattlerIndex();
 
-    game.move.select(Moves.TACKLE);
+    game.move.select(MoveId.TACKLE);
 
     await game.phaseInterceptor.to(TurnStartPhase, false);
     const phase = game.scene.getCurrentPhase() as TurnStartPhase;

@@ -1,7 +1,7 @@
 import { Gender } from "#app/data/gender";
 import { PokeballType } from "#app/enums/pokeball";
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -27,9 +27,9 @@ describe("Abilities - Illusion", () => {
       .battleStyle("single")
       .enemySpecies(Species.ZORUA)
       .enemyAbility(AbilityId.ILLUSION)
-      .enemyMoveset(Moves.TACKLE)
+      .enemyMoveset(MoveId.TACKLE)
       .enemyHeldItems([{ name: "WIDE_LENS", count: 3 }])
-      .moveset([Moves.WORRY_SEED, Moves.SOAK, Moves.TACKLE])
+      .moveset([MoveId.WORRY_SEED, MoveId.SOAK, MoveId.TACKLE])
       .startingHeldItems([{ name: "WIDE_LENS", count: 3 }]);
   });
 
@@ -44,7 +44,7 @@ describe("Abilities - Illusion", () => {
 
   it("break after receiving damaging move", async () => {
     await game.classicMode.startBattle([Species.FEEBAS]);
-    game.move.select(Moves.TACKLE);
+    game.move.select(MoveId.TACKLE);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
@@ -56,7 +56,7 @@ describe("Abilities - Illusion", () => {
 
   it("break after getting ability changed", async () => {
     await game.classicMode.startBattle([Species.FEEBAS]);
-    game.move.select(Moves.WORRY_SEED);
+    game.move.select(MoveId.WORRY_SEED);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
@@ -78,8 +78,8 @@ describe("Abilities - Illusion", () => {
     game.override
       .enemyAbility(AbilityId.NEUTRALIZING_GAS)
       .ability(AbilityId.ILLUSION)
-      .moveset(Moves.SPLASH)
-      .enemyMoveset(Moves.SPLASH);
+      .moveset(MoveId.SPLASH)
+      .enemyMoveset(MoveId.SPLASH);
     await game.classicMode.startBattle([Species.MAGIKARP, Species.FEEBAS, Species.MAGIKARP]);
 
     game.doSwitchPokemon(1);
@@ -89,7 +89,7 @@ describe("Abilities - Illusion", () => {
   });
 
   it("causes enemy AI to consider the illusion's type instead of the actual type when considering move effectiveness", async () => {
-    game.override.enemyMoveset([Moves.FLAMETHROWER, Moves.PSYCHIC, Moves.TACKLE]);
+    game.override.enemyMoveset([MoveId.FLAMETHROWER, MoveId.PSYCHIC, MoveId.TACKLE]);
     await game.classicMode.startBattle([Species.ZOROARK, Species.FEEBAS]);
 
     const enemy = game.scene.getEnemyPokemon()!;
@@ -119,12 +119,12 @@ describe("Abilities - Illusion", () => {
   it("does not break from indirect damage", async () => {
     game.override.enemySpecies(Species.GIGALITH);
     game.override.enemyAbility(AbilityId.SAND_STREAM);
-    game.override.enemyMoveset(Moves.WILL_O_WISP);
-    game.override.moveset([Moves.FLARE_BLITZ]);
+    game.override.enemyMoveset(MoveId.WILL_O_WISP);
+    game.override.moveset([MoveId.FLARE_BLITZ]);
 
     await game.classicMode.startBattle([Species.ZOROARK, Species.AZUMARILL]);
 
-    game.move.select(Moves.FLARE_BLITZ);
+    game.move.select(MoveId.FLARE_BLITZ);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
@@ -134,7 +134,7 @@ describe("Abilities - Illusion", () => {
   });
 
   it("copies the the name, nickname, gender, shininess, and pokeball from the illusion source", async () => {
-    game.override.enemyMoveset(Moves.SPLASH);
+    game.override.enemyMoveset(MoveId.SPLASH);
     await game.classicMode.startBattle([Species.ABRA, Species.ZOROARK, Species.AXEW]);
     const axew = game.scene.getPlayerParty().at(2)!;
     axew.shiny = true;
@@ -156,13 +156,13 @@ describe("Abilities - Illusion", () => {
   });
 
   it("breaks when suppressed", async () => {
-    game.override.moveset(Moves.GASTRO_ACID);
+    game.override.moveset(MoveId.GASTRO_ACID);
     await game.classicMode.startBattle([Species.MAGIKARP]);
     const zorua = game.scene.getEnemyPokemon()!;
 
     expect(!!zorua.summonData?.illusion).toBe(true);
 
-    game.move.select(Moves.GASTRO_ACID);
+    game.move.select(MoveId.GASTRO_ACID);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(zorua.isFullHp()).toBe(true);

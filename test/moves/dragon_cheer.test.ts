@@ -1,6 +1,6 @@
 import { BattlerIndex } from "#app/battle";
 import { PokemonType } from "#enums/pokemon-type";
-import { Moves } from "#app/enums/moves";
+import { MoveId } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
 import { AbilityId } from "#enums/ability-id";
 import GameManager from "#test/testUtils/gameManager";
@@ -25,9 +25,9 @@ describe("Moves - Dragon Cheer", () => {
     game.override
       .battleStyle("double")
       .enemyAbility(AbilityId.BALL_FETCH)
-      .enemyMoveset(Moves.SPLASH)
+      .enemyMoveset(MoveId.SPLASH)
       .enemyLevel(20)
-      .moveset([Moves.DRAGON_CHEER, Moves.TACKLE, Moves.SPLASH]);
+      .moveset([MoveId.DRAGON_CHEER, MoveId.TACKLE, MoveId.SPLASH]);
   });
 
   it("increases the user's allies' critical hit ratio by one stage", async () => {
@@ -37,8 +37,8 @@ describe("Moves - Dragon Cheer", () => {
 
     vi.spyOn(enemy, "getCritStage");
 
-    game.move.select(Moves.DRAGON_CHEER, 0);
-    game.move.select(Moves.TACKLE, 1, BattlerIndex.ENEMY);
+    game.move.select(MoveId.DRAGON_CHEER, 0);
+    game.move.select(MoveId.TACKLE, 1, BattlerIndex.ENEMY);
 
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
 
@@ -54,8 +54,8 @@ describe("Moves - Dragon Cheer", () => {
 
     vi.spyOn(enemy, "getCritStage");
 
-    game.move.select(Moves.DRAGON_CHEER, 0);
-    game.move.select(Moves.TACKLE, 1, BattlerIndex.ENEMY);
+    game.move.select(MoveId.DRAGON_CHEER, 0);
+    game.move.select(MoveId.TACKLE, 1, BattlerIndex.ENEMY);
 
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
 
@@ -72,8 +72,8 @@ describe("Moves - Dragon Cheer", () => {
 
     vi.spyOn(enemy, "getCritStage");
 
-    game.move.select(Moves.DRAGON_CHEER, 0);
-    game.move.select(Moves.TACKLE, 1, BattlerIndex.ENEMY);
+    game.move.select(MoveId.DRAGON_CHEER, 0);
+    game.move.select(MoveId.TACKLE, 1, BattlerIndex.ENEMY);
 
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
 
@@ -87,8 +87,8 @@ describe("Moves - Dragon Cheer", () => {
     vi.spyOn(magikarp, "getTypes").mockReturnValue([PokemonType.DRAGON]);
     expect(magikarp.getTypes()).toEqual([PokemonType.DRAGON]);
 
-    game.move.select(Moves.SPLASH, 0);
-    game.move.select(Moves.TACKLE, 1, BattlerIndex.ENEMY);
+    game.move.select(MoveId.SPLASH, 0);
+    game.move.select(MoveId.TACKLE, 1, BattlerIndex.ENEMY);
 
     await game.setTurnOrder([BattlerIndex.PLAYER_2, BattlerIndex.PLAYER, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
 

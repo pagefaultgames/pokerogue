@@ -1,104 +1,111 @@
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { AbilityId } from "#enums/ability-id";
 
 /**
  * Moves that "steal" things
  */
-export const STEALING_MOVES = [Moves.PLUCK, Moves.COVET, Moves.KNOCK_OFF, Moves.THIEF, Moves.TRICK, Moves.SWITCHEROO];
+export const STEALING_MOVES = [
+  MoveId.PLUCK,
+  MoveId.COVET,
+  MoveId.KNOCK_OFF,
+  MoveId.THIEF,
+  MoveId.TRICK,
+  MoveId.SWITCHEROO,
+];
 
 /**
  * Moves that "charm" someone
  */
 export const CHARMING_MOVES = [
-  Moves.CHARM,
-  Moves.FLATTER,
-  Moves.DRAGON_CHEER,
-  Moves.ALLURING_VOICE,
-  Moves.ATTRACT,
-  Moves.SWEET_SCENT,
-  Moves.CAPTIVATE,
-  Moves.AROMATIC_MIST,
+  MoveId.CHARM,
+  MoveId.FLATTER,
+  MoveId.DRAGON_CHEER,
+  MoveId.ALLURING_VOICE,
+  MoveId.ATTRACT,
+  MoveId.SWEET_SCENT,
+  MoveId.CAPTIVATE,
+  MoveId.AROMATIC_MIST,
 ];
 
 /**
  * Moves for the Dancer ability
  */
 export const DANCING_MOVES = [
-  Moves.AQUA_STEP,
-  Moves.CLANGOROUS_SOUL,
-  Moves.DRAGON_DANCE,
-  Moves.FEATHER_DANCE,
-  Moves.FIERY_DANCE,
-  Moves.LUNAR_DANCE,
-  Moves.PETAL_DANCE,
-  Moves.REVELATION_DANCE,
-  Moves.QUIVER_DANCE,
-  Moves.SWORDS_DANCE,
-  Moves.TEETER_DANCE,
-  Moves.VICTORY_DANCE,
+  MoveId.AQUA_STEP,
+  MoveId.CLANGOROUS_SOUL,
+  MoveId.DRAGON_DANCE,
+  MoveId.FEATHER_DANCE,
+  MoveId.FIERY_DANCE,
+  MoveId.LUNAR_DANCE,
+  MoveId.PETAL_DANCE,
+  MoveId.REVELATION_DANCE,
+  MoveId.QUIVER_DANCE,
+  MoveId.SWORDS_DANCE,
+  MoveId.TEETER_DANCE,
+  MoveId.VICTORY_DANCE,
 ];
 
 /**
  * Moves that can distract someone/something
  */
 export const DISTRACTION_MOVES = [
-  Moves.FAKE_OUT,
-  Moves.FOLLOW_ME,
-  Moves.TAUNT,
-  Moves.ROAR,
-  Moves.TELEPORT,
-  Moves.CHARM,
-  Moves.FAKE_TEARS,
-  Moves.TICKLE,
-  Moves.CAPTIVATE,
-  Moves.RAGE_POWDER,
-  Moves.SUBSTITUTE,
-  Moves.SHED_TAIL,
+  MoveId.FAKE_OUT,
+  MoveId.FOLLOW_ME,
+  MoveId.TAUNT,
+  MoveId.ROAR,
+  MoveId.TELEPORT,
+  MoveId.CHARM,
+  MoveId.FAKE_TEARS,
+  MoveId.TICKLE,
+  MoveId.CAPTIVATE,
+  MoveId.RAGE_POWDER,
+  MoveId.SUBSTITUTE,
+  MoveId.SHED_TAIL,
 ];
 
 /**
  * Moves that protect in some way
  */
 export const PROTECTING_MOVES = [
-  Moves.PROTECT,
-  Moves.WIDE_GUARD,
-  Moves.MAX_GUARD,
-  Moves.SAFEGUARD,
-  Moves.REFLECT,
-  Moves.BARRIER,
-  Moves.QUICK_GUARD,
-  Moves.FLOWER_SHIELD,
-  Moves.KINGS_SHIELD,
-  Moves.CRAFTY_SHIELD,
-  Moves.SPIKY_SHIELD,
-  Moves.OBSTRUCT,
-  Moves.DETECT,
+  MoveId.PROTECT,
+  MoveId.WIDE_GUARD,
+  MoveId.MAX_GUARD,
+  MoveId.SAFEGUARD,
+  MoveId.REFLECT,
+  MoveId.BARRIER,
+  MoveId.QUICK_GUARD,
+  MoveId.FLOWER_SHIELD,
+  MoveId.KINGS_SHIELD,
+  MoveId.CRAFTY_SHIELD,
+  MoveId.SPIKY_SHIELD,
+  MoveId.OBSTRUCT,
+  MoveId.DETECT,
 ];
 
 /**
  * Moves that (loosely) can be used to trap/rob someone
  */
 export const EXTORTION_MOVES = [
-  Moves.BIND,
-  Moves.CLAMP,
-  Moves.INFESTATION,
-  Moves.SAND_TOMB,
-  Moves.SNAP_TRAP,
-  Moves.THUNDER_CAGE,
-  Moves.WRAP,
-  Moves.SPIRIT_SHACKLE,
-  Moves.MEAN_LOOK,
-  Moves.JAW_LOCK,
-  Moves.BLOCK,
-  Moves.SPIDER_WEB,
-  Moves.ANCHOR_SHOT,
-  Moves.OCTOLOCK,
-  Moves.PURSUIT,
-  Moves.CONSTRICT,
-  Moves.BEAT_UP,
-  Moves.COIL,
-  Moves.WRING_OUT,
-  Moves.STRING_SHOT,
+  MoveId.BIND,
+  MoveId.CLAMP,
+  MoveId.INFESTATION,
+  MoveId.SAND_TOMB,
+  MoveId.SNAP_TRAP,
+  MoveId.THUNDER_CAGE,
+  MoveId.WRAP,
+  MoveId.SPIRIT_SHACKLE,
+  MoveId.MEAN_LOOK,
+  MoveId.JAW_LOCK,
+  MoveId.BLOCK,
+  MoveId.SPIDER_WEB,
+  MoveId.ANCHOR_SHOT,
+  MoveId.OCTOLOCK,
+  MoveId.PURSUIT,
+  MoveId.CONSTRICT,
+  MoveId.BEAT_UP,
+  MoveId.COIL,
+  MoveId.WRING_OUT,
+  MoveId.STRING_SHOT,
 ];
 
 /**

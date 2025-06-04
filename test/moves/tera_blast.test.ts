@@ -5,7 +5,7 @@ import { allMoves } from "#app/data/data-lists";
 import type Move from "#app/data/moves/move";
 import { PokemonType } from "#enums/pokemon-type";
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -22,7 +22,7 @@ describe("Moves - Tera Blast", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-    moveToCheck = allMoves[Moves.TERA_BLAST];
+    moveToCheck = allMoves[MoveId.TERA_BLAST];
     teraBlastAttr = moveToCheck.getAttrs(TeraMoveCategoryAttr)[0];
   });
 
@@ -37,10 +37,10 @@ describe("Moves - Tera Blast", () => {
       .battleStyle("single")
       .disableCrits()
       .starterSpecies(Species.FEEBAS)
-      .moveset([Moves.TERA_BLAST])
+      .moveset([MoveId.TERA_BLAST])
       .ability(AbilityId.BALL_FETCH)
       .enemySpecies(Species.MAGIKARP)
-      .enemyMoveset(Moves.SPLASH)
+      .enemyMoveset(MoveId.SPLASH)
       .enemyAbility(AbilityId.STURDY)
       .enemyLevel(50);
 
@@ -57,7 +57,7 @@ describe("Moves - Tera Blast", () => {
     playerPokemon.teraType = PokemonType.FIGHTING;
     playerPokemon.isTerastallized = true;
 
-    game.move.select(Moves.TERA_BLAST);
+    game.move.select(MoveId.TERA_BLAST);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("MoveEffectPhase");
 
@@ -71,7 +71,7 @@ describe("Moves - Tera Blast", () => {
     playerPokemon.teraType = PokemonType.STELLAR;
     playerPokemon.isTerastallized = true;
 
-    game.move.select(Moves.TERA_BLAST);
+    game.move.select(MoveId.TERA_BLAST);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("MoveEffectPhase");
 
@@ -89,7 +89,7 @@ describe("Moves - Tera Blast", () => {
     const spy = vi.spyOn(enemyPokemon, "getMoveEffectiveness");
     enemyPokemon.isTerastallized = true;
 
-    game.move.select(Moves.TERA_BLAST);
+    game.move.select(MoveId.TERA_BLAST);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("MoveEffectPhase");
 
@@ -106,7 +106,7 @@ describe("Moves - Tera Blast", () => {
 
     vi.spyOn(teraBlastAttr, "apply");
 
-    game.move.select(Moves.TERA_BLAST);
+    game.move.select(MoveId.TERA_BLAST);
     await game.toNextTurn();
     expect(teraBlastAttr.apply).toHaveLastReturnedWith(true);
   });
@@ -120,13 +120,13 @@ describe("Moves - Tera Blast", () => {
 
     vi.spyOn(teraBlastAttr, "apply");
 
-    game.move.select(Moves.TERA_BLAST);
+    game.move.select(MoveId.TERA_BLAST);
     await game.toNextTurn();
     expect(teraBlastAttr.apply).toHaveLastReturnedWith(false);
   });
 
   it("should stay as a special move if ATK turns lower than SPATK mid-turn", async () => {
-    game.override.enemyMoveset([Moves.CHARM]);
+    game.override.enemyMoveset([MoveId.CHARM]);
     await game.classicMode.startBattle();
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
@@ -135,7 +135,7 @@ describe("Moves - Tera Blast", () => {
 
     vi.spyOn(teraBlastAttr, "apply");
 
-    game.move.select(Moves.TERA_BLAST);
+    game.move.select(MoveId.TERA_BLAST);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
     expect(teraBlastAttr.apply).toHaveLastReturnedWith(false);
@@ -154,7 +154,7 @@ describe("Moves - Tera Blast", () => {
 
     vi.spyOn(teraBlastAttr, "apply");
 
-    game.move.select(Moves.TERA_BLAST);
+    game.move.select(MoveId.TERA_BLAST);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
@@ -171,7 +171,7 @@ describe("Moves - Tera Blast", () => {
 
     vi.spyOn(teraBlastAttr, "apply");
 
-    game.move.select(Moves.TERA_BLAST);
+    game.move.select(MoveId.TERA_BLAST);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
     expect(teraBlastAttr.apply).toHaveLastReturnedWith(false);
@@ -184,7 +184,7 @@ describe("Moves - Tera Blast", () => {
     playerPokemon.teraType = PokemonType.STELLAR;
     playerPokemon.isTerastallized = true;
 
-    game.move.select(Moves.TERA_BLAST);
+    game.move.select(MoveId.TERA_BLAST);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("MoveEndPhase");
 
@@ -198,24 +198,24 @@ describe("Moves - Tera Blast", () => {
     { ab: "pixilate", ty: "fairy", ab_id: AbilityId.PIXILATE, ty_id: PokemonType.FAIRY },
     { ab: "aerilate", ty: "flying", ab_id: AbilityId.AERILATE, ty_id: PokemonType.FLYING },
   ])("should be $ty type if the user has $ab", async ({ ab_id, ty_id }) => {
-    game.override.ability(ab_id).moveset([Moves.TERA_BLAST]).enemyAbility(AbilityId.BALL_FETCH);
+    game.override.ability(ab_id).moveset([MoveId.TERA_BLAST]).enemyAbility(AbilityId.BALL_FETCH);
     await game.classicMode.startBattle([Species.MAGIKARP]);
     const playerPokemon = game.scene.getPlayerPokemon()!;
-    expect(playerPokemon.getMoveType(allMoves[Moves.TERA_BLAST])).toBe(ty_id);
+    expect(playerPokemon.getMoveType(allMoves[MoveId.TERA_BLAST])).toBe(ty_id);
   });
 
   it("should not be affected by normalize when the user is terastallized with tera normal", async () => {
-    game.override.moveset([Moves.TERA_BLAST]).ability(AbilityId.NORMALIZE);
+    game.override.moveset([MoveId.TERA_BLAST]).ability(AbilityId.NORMALIZE);
     await game.classicMode.startBattle([Species.MAGIKARP]);
     const playerPokemon = game.scene.getPlayerPokemon()!;
     // override the tera state for the pokemon
     playerPokemon.isTerastallized = true;
     playerPokemon.teraType = PokemonType.NORMAL;
 
-    const move = allMoves[Moves.TERA_BLAST];
+    const move = allMoves[MoveId.TERA_BLAST];
     const powerSpy = vi.spyOn(move, "calculateBattlePower");
 
-    game.move.select(Moves.TERA_BLAST);
+    game.move.select(MoveId.TERA_BLAST);
     await game.phaseInterceptor.to("BerryPhase");
     expect(powerSpy).toHaveLastReturnedWith(move.power);
   });

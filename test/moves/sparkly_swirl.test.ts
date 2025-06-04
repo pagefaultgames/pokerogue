@@ -2,7 +2,7 @@ import { allMoves } from "#app/data/data-lists";
 import { StatusEffect } from "#app/enums/status-effect";
 import { CommandPhase } from "#app/phases/command-phase";
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -25,12 +25,12 @@ describe("Moves - Sparkly Swirl", () => {
     game.override
       .enemySpecies(Species.SHUCKLE)
       .enemyLevel(100)
-      .enemyMoveset(Moves.SPLASH)
+      .enemyMoveset(MoveId.SPLASH)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .moveset([Moves.SPARKLY_SWIRL, Moves.SPLASH])
+      .moveset([MoveId.SPARKLY_SWIRL, MoveId.SPLASH])
       .ability(AbilityId.BALL_FETCH);
 
-    vi.spyOn(allMoves[Moves.SPARKLY_SWIRL], "accuracy", "get").mockReturnValue(100);
+    vi.spyOn(allMoves[MoveId.SPARKLY_SWIRL], "accuracy", "get").mockReturnValue(100);
   });
 
   it("should cure status effect of the user, its ally, and all party pokemon", async () => {
@@ -43,9 +43,9 @@ describe("Moves - Sparkly Swirl", () => {
     vi.spyOn(rightPlayer, "resetStatus");
     vi.spyOn(partyPokemon, "resetStatus");
 
-    game.move.select(Moves.SPARKLY_SWIRL, 0, leftOpp.getBattlerIndex());
+    game.move.select(MoveId.SPARKLY_SWIRL, 0, leftOpp.getBattlerIndex());
     await game.phaseInterceptor.to(CommandPhase);
-    game.move.select(Moves.SPLASH, 1);
+    game.move.select(MoveId.SPLASH, 1);
     await game.toNextTurn();
 
     expect(leftPlayer.resetStatus).toHaveBeenCalledOnce();
@@ -65,9 +65,9 @@ describe("Moves - Sparkly Swirl", () => {
     vi.spyOn(leftOpp, "resetStatus");
     vi.spyOn(rightOpp, "resetStatus");
 
-    game.move.select(Moves.SPARKLY_SWIRL, 0, leftOpp.getBattlerIndex());
+    game.move.select(MoveId.SPARKLY_SWIRL, 0, leftOpp.getBattlerIndex());
     await game.phaseInterceptor.to(CommandPhase);
-    game.move.select(Moves.SPLASH, 1);
+    game.move.select(MoveId.SPLASH, 1);
     await game.toNextTurn();
 
     expect(leftOpp.resetStatus).toHaveBeenCalledTimes(0);

@@ -1,5 +1,5 @@
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import { PokemonType } from "#enums/pokemon-type";
 import GameManager from "#test/testUtils/gameManager";
@@ -23,24 +23,24 @@ describe("Moves - Forest's Curse", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.FORESTS_CURSE, Moves.TRICK_OR_TREAT])
+      .moveset([MoveId.FORESTS_CURSE, MoveId.TRICK_OR_TREAT])
       .ability(AbilityId.BALL_FETCH)
       .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .enemyMoveset(Moves.SPLASH);
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   it("will replace the added type from Trick Or Treat", async () => {
     await game.classicMode.startBattle([Species.FEEBAS]);
 
     const enemyPokemon = game.scene.getEnemyPokemon();
-    game.move.select(Moves.TRICK_OR_TREAT);
+    game.move.select(MoveId.TRICK_OR_TREAT);
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(enemyPokemon!.summonData.addedType).toBe(PokemonType.GHOST);
 
-    game.move.select(Moves.FORESTS_CURSE);
+    game.move.select(MoveId.FORESTS_CURSE);
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(enemyPokemon?.summonData.addedType).toBe(PokemonType.GRASS);
   });

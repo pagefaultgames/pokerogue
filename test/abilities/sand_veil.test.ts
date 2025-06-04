@@ -4,7 +4,7 @@ import { CommandPhase } from "#app/phases/command-phase";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { MoveEndPhase } from "#app/phases/move-end-phase";
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import { Stat } from "#enums/stat";
 import { WeatherType } from "#enums/weather-type";
@@ -29,10 +29,10 @@ describe("Abilities - Sand Veil", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.SPLASH])
+      .moveset([MoveId.SPLASH])
       .enemySpecies(Species.MEOWSCARADA)
       .enemyAbility(AbilityId.INSOMNIA)
-      .enemyMoveset(Moves.TWISTER)
+      .enemyMoveset(MoveId.TWISTER)
       .startingLevel(100)
       .enemyLevel(100)
       .weather(WeatherType.SANDSTORM)
@@ -60,11 +60,11 @@ describe("Abilities - Sand Veil", () => {
     expect(leadPokemon[0].hasAbility(AbilityId.SAND_VEIL)).toBe(true);
     expect(leadPokemon[1].hasAbility(AbilityId.SAND_VEIL)).toBe(false);
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
 
     await game.phaseInterceptor.to(CommandPhase);
 
-    game.move.select(Moves.SPLASH, 1);
+    game.move.select(MoveId.SPLASH, 1);
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
 

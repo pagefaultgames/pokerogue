@@ -7,7 +7,7 @@ import { MovePhase } from "#app/phases/move-phase";
 import { PostSummonPhase } from "#app/phases/post-summon-phase";
 import { QuietFormChangePhase } from "#app/phases/quiet-form-change-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -32,7 +32,7 @@ describe("Abilities - Forecast", () => {
     game.override.weather(weather).starterForms({ [Species.CASTFORM]: initialForm });
     await game.classicMode.startBattle([Species.CASTFORM]);
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
 
     expect(game.scene.getPlayerPokemon()?.formIndex).toBe(form);
   };
@@ -46,7 +46,7 @@ describe("Abilities - Forecast", () => {
     game.override.starterForms({ [Species.CASTFORM]: SUNNY_FORM }).enemyAbility(ability);
     await game.classicMode.startBattle([Species.CASTFORM]);
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
 
     expect(game.scene.getPlayerPokemon()?.formIndex).toBe(NORMAL_FORM);
   };
@@ -64,9 +64,9 @@ describe("Abilities - Forecast", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.SPLASH, Moves.RAIN_DANCE, Moves.SUNNY_DAY, Moves.TACKLE])
+      .moveset([MoveId.SPLASH, MoveId.RAIN_DANCE, MoveId.SUNNY_DAY, MoveId.TACKLE])
       .enemySpecies(Species.MAGIKARP)
-      .enemyMoveset(Moves.SPLASH)
+      .enemyMoveset(MoveId.SPLASH)
       .enemyAbility(AbilityId.BALL_FETCH);
   });
 
@@ -74,7 +74,7 @@ describe("Abilities - Forecast", () => {
     "changes form based on weather",
     async () => {
       game.override
-        .moveset([Moves.RAIN_DANCE, Moves.SUNNY_DAY, Moves.SNOWSCAPE, Moves.SPLASH])
+        .moveset([MoveId.RAIN_DANCE, MoveId.SUNNY_DAY, MoveId.SNOWSCAPE, MoveId.SPLASH])
         .battleStyle("double")
         .starterForms({
           [Species.KYOGRE]: 1,
@@ -95,86 +95,86 @@ describe("Abilities - Forecast", () => {
       const castform = game.scene.getPlayerField()[0];
       expect(castform.formIndex).toBe(NORMAL_FORM);
 
-      game.move.select(Moves.RAIN_DANCE);
-      game.move.select(Moves.SPLASH, 1);
+      game.move.select(MoveId.RAIN_DANCE);
+      game.move.select(MoveId.SPLASH, 1);
       await game.phaseInterceptor.to("MovePhase");
       await game.toNextTurn();
 
       expect(castform.formIndex).toBe(RAINY_FORM);
 
-      game.move.select(Moves.SUNNY_DAY);
-      game.move.select(Moves.SPLASH, 1);
+      game.move.select(MoveId.SUNNY_DAY);
+      game.move.select(MoveId.SPLASH, 1);
       await game.phaseInterceptor.to("MovePhase");
       await game.toNextTurn();
 
       expect(castform.formIndex).toBe(SUNNY_FORM);
 
-      game.move.select(Moves.SNOWSCAPE);
-      game.move.select(Moves.SPLASH, 1);
+      game.move.select(MoveId.SNOWSCAPE);
+      game.move.select(MoveId.SPLASH, 1);
       await game.phaseInterceptor.to("MovePhase");
       await game.toNextTurn();
 
       expect(castform.formIndex).toBe(SNOWY_FORM);
 
-      game.override.moveset([Moves.HAIL, Moves.SANDSTORM, Moves.SNOWSCAPE, Moves.SPLASH]);
+      game.override.moveset([MoveId.HAIL, MoveId.SANDSTORM, MoveId.SNOWSCAPE, MoveId.SPLASH]);
 
-      game.move.select(Moves.SANDSTORM);
-      game.move.select(Moves.SPLASH, 1);
+      game.move.select(MoveId.SANDSTORM);
+      game.move.select(MoveId.SPLASH, 1);
       await game.phaseInterceptor.to("MovePhase");
       await game.toNextTurn();
 
       expect(castform.formIndex).toBe(NORMAL_FORM);
 
-      game.move.select(Moves.HAIL);
-      game.move.select(Moves.SPLASH, 1);
+      game.move.select(MoveId.HAIL);
+      game.move.select(MoveId.SPLASH, 1);
       await game.phaseInterceptor.to("MovePhase");
       await game.toNextTurn();
 
       expect(castform.formIndex).toBe(SNOWY_FORM);
 
-      game.move.select(Moves.SPLASH);
+      game.move.select(MoveId.SPLASH);
       game.doSwitchPokemon(2); // Feebas now 2, Kyogre 1
       await game.phaseInterceptor.to("MovePhase");
       await game.toNextTurn();
 
       expect(castform.formIndex).toBe(RAINY_FORM);
 
-      game.move.select(Moves.SPLASH);
+      game.move.select(MoveId.SPLASH);
       game.doSwitchPokemon(3); // Kyogre now 3, Groudon 1
       await game.phaseInterceptor.to("MovePhase");
       await game.toNextTurn();
 
       expect(castform.formIndex).toBe(SUNNY_FORM);
 
-      game.move.select(Moves.SPLASH);
+      game.move.select(MoveId.SPLASH);
       game.doSwitchPokemon(4); // Groudon now 4, Rayquaza 1
       await game.phaseInterceptor.to("MovePhase");
       await game.toNextTurn();
 
       expect(castform.formIndex).toBe(NORMAL_FORM);
 
-      game.move.select(Moves.SPLASH);
+      game.move.select(MoveId.SPLASH);
       game.doSwitchPokemon(2); // Rayquaza now 2, Feebas 1
       await game.phaseInterceptor.to("MovePhase");
       await game.toNextTurn();
 
       expect(castform.formIndex).toBe(NORMAL_FORM);
 
-      game.move.select(Moves.SNOWSCAPE);
-      game.move.select(Moves.SPLASH, 1);
+      game.move.select(MoveId.SNOWSCAPE);
+      game.move.select(MoveId.SPLASH, 1);
       await game.phaseInterceptor.to("MovePhase");
       await game.toNextTurn();
 
       expect(castform.formIndex).toBe(SNOWY_FORM);
 
-      game.move.select(Moves.SPLASH);
+      game.move.select(MoveId.SPLASH);
       game.doSwitchPokemon(5); // Feebas now 5, Altaria 1
       await game.phaseInterceptor.to("MovePhase");
       await game.toNextTurn();
 
       expect(castform.formIndex).toBe(NORMAL_FORM);
 
-      game.move.select(Moves.SPLASH);
+      game.move.select(MoveId.SPLASH);
       game.doSwitchPokemon(5); // Altaria now 5, Feebas 1
       await game.phaseInterceptor.to("MovePhase");
       await game.toNextTurn();
@@ -182,8 +182,8 @@ describe("Abilities - Forecast", () => {
       expect(castform.formIndex).toBe(SNOWY_FORM);
 
       game.scene.arena.trySetWeather(WeatherType.FOG);
-      game.move.select(Moves.SPLASH);
-      game.move.select(Moves.SPLASH, 1);
+      game.move.select(MoveId.SPLASH);
+      game.move.select(MoveId.SPLASH, 1);
       await game.phaseInterceptor.to("TurnStartPhase");
 
       expect(castform.formIndex).toBe(NORMAL_FORM);
@@ -203,7 +203,7 @@ describe("Abilities - Forecast", () => {
     game.override.enemyAbility(AbilityId.FORECAST).enemySpecies(Species.SHUCKLE);
     await game.classicMode.startBattle([Species.CASTFORM]);
 
-    game.move.select(Moves.RAIN_DANCE);
+    game.move.select(MoveId.RAIN_DANCE);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(game.scene.getPlayerPokemon()?.formIndex).toBe(RAINY_FORM);
@@ -211,14 +211,14 @@ describe("Abilities - Forecast", () => {
   });
 
   it("reverts to Normal Form when Forecast is suppressed, changes form to match the weather when it regains it", async () => {
-    game.override.enemyMoveset([Moves.GASTRO_ACID]).weather(WeatherType.RAIN);
+    game.override.enemyMoveset([MoveId.GASTRO_ACID]).weather(WeatherType.RAIN);
     await game.classicMode.startBattle([Species.CASTFORM, Species.PIKACHU]);
     const castform = game.scene.getPlayerPokemon()!;
 
     expect(castform.formIndex).toBe(RAINY_FORM);
 
     // First turn - Forecast is suppressed
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.move.forceHit();
 
@@ -242,11 +242,11 @@ describe("Abilities - Forecast", () => {
   });
 
   it("does not change Castform's form until after Stealth Rock deals damage", async () => {
-    game.override.weather(WeatherType.RAIN).enemyMoveset([Moves.STEALTH_ROCK]);
+    game.override.weather(WeatherType.RAIN).enemyMoveset([MoveId.STEALTH_ROCK]);
     await game.classicMode.startBattle([Species.PIKACHU, Species.CASTFORM]);
 
     // First turn - set up stealth rock
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
 
     // Second turn - switch in Castform, regains Forecast

@@ -2,7 +2,7 @@ import { Stat } from "#enums/stat";
 import { BattlerIndex } from "#app/battle";
 import { AbilityId } from "#enums/ability-id";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -30,8 +30,8 @@ describe("Moves - Follow Me", () => {
     game.override.enemySpecies(Species.SNORLAX);
     game.override.startingLevel(100);
     game.override.enemyLevel(100);
-    game.override.moveset([Moves.FOLLOW_ME, Moves.RAGE_POWDER, Moves.SPOTLIGHT, Moves.QUICK_ATTACK]);
-    game.override.enemyMoveset([Moves.TACKLE, Moves.FOLLOW_ME, Moves.SPLASH]);
+    game.override.moveset([MoveId.FOLLOW_ME, MoveId.RAGE_POWDER, MoveId.SPOTLIGHT, MoveId.QUICK_ATTACK]);
+    game.override.enemyMoveset([MoveId.TACKLE, MoveId.FOLLOW_ME, MoveId.SPLASH]);
   });
 
   test("move should redirect enemy attacks to the user", async () => {
@@ -39,12 +39,12 @@ describe("Moves - Follow Me", () => {
 
     const playerPokemon = game.scene.getPlayerField();
 
-    game.move.select(Moves.FOLLOW_ME);
-    game.move.select(Moves.QUICK_ATTACK, 1, BattlerIndex.ENEMY);
+    game.move.select(MoveId.FOLLOW_ME);
+    game.move.select(MoveId.QUICK_ATTACK, 1, BattlerIndex.ENEMY);
 
     // Force both enemies to target the player Pokemon that did not use Follow Me
-    await game.move.selectEnemyMove(Moves.TACKLE, BattlerIndex.PLAYER_2);
-    await game.move.selectEnemyMove(Moves.TACKLE, BattlerIndex.PLAYER_2);
+    await game.move.selectEnemyMove(MoveId.TACKLE, BattlerIndex.PLAYER_2);
+    await game.move.selectEnemyMove(MoveId.TACKLE, BattlerIndex.PLAYER_2);
 
     await game.phaseInterceptor.to(TurnEndPhase, false);
 
@@ -57,12 +57,12 @@ describe("Moves - Follow Me", () => {
 
     const playerPokemon = game.scene.getPlayerField();
 
-    game.move.select(Moves.FOLLOW_ME);
-    game.move.select(Moves.FOLLOW_ME, 1);
+    game.move.select(MoveId.FOLLOW_ME);
+    game.move.select(MoveId.FOLLOW_ME, 1);
 
     // Each player is targeted by an enemy
-    await game.move.selectEnemyMove(Moves.TACKLE, BattlerIndex.PLAYER);
-    await game.move.selectEnemyMove(Moves.TACKLE, BattlerIndex.PLAYER_2);
+    await game.move.selectEnemyMove(MoveId.TACKLE, BattlerIndex.PLAYER);
+    await game.move.selectEnemyMove(MoveId.TACKLE, BattlerIndex.PLAYER_2);
 
     await game.phaseInterceptor.to(TurnEndPhase, false);
 
@@ -74,18 +74,18 @@ describe("Moves - Follow Me", () => {
 
   test("move effect should be bypassed by Stalwart", async () => {
     game.override.ability(AbilityId.STALWART);
-    game.override.moveset([Moves.QUICK_ATTACK]);
+    game.override.moveset([MoveId.QUICK_ATTACK]);
 
     await game.classicMode.startBattle([Species.AMOONGUSS, Species.CHARIZARD]);
 
     const enemyPokemon = game.scene.getEnemyField();
 
-    game.move.select(Moves.QUICK_ATTACK, 0, BattlerIndex.ENEMY);
-    game.move.select(Moves.QUICK_ATTACK, 1, BattlerIndex.ENEMY_2);
+    game.move.select(MoveId.QUICK_ATTACK, 0, BattlerIndex.ENEMY);
+    game.move.select(MoveId.QUICK_ATTACK, 1, BattlerIndex.ENEMY_2);
 
     // Target doesn't need to be specified if the move is self-targeted
-    await game.move.selectEnemyMove(Moves.FOLLOW_ME);
-    await game.move.selectEnemyMove(Moves.SPLASH);
+    await game.move.selectEnemyMove(MoveId.FOLLOW_ME);
+    await game.move.selectEnemyMove(MoveId.SPLASH);
 
     await game.phaseInterceptor.to(TurnEndPhase, false);
 
@@ -95,17 +95,17 @@ describe("Moves - Follow Me", () => {
   });
 
   test("move effect should be bypassed by Snipe Shot", async () => {
-    game.override.moveset([Moves.SNIPE_SHOT]);
+    game.override.moveset([MoveId.SNIPE_SHOT]);
 
     await game.classicMode.startBattle([Species.AMOONGUSS, Species.CHARIZARD]);
 
     const enemyPokemon = game.scene.getEnemyField();
 
-    game.move.select(Moves.SNIPE_SHOT, 0, BattlerIndex.ENEMY);
-    game.move.select(Moves.SNIPE_SHOT, 1, BattlerIndex.ENEMY_2);
+    game.move.select(MoveId.SNIPE_SHOT, 0, BattlerIndex.ENEMY);
+    game.move.select(MoveId.SNIPE_SHOT, 1, BattlerIndex.ENEMY_2);
 
-    await game.move.selectEnemyMove(Moves.FOLLOW_ME);
-    await game.move.selectEnemyMove(Moves.SPLASH);
+    await game.move.selectEnemyMove(MoveId.FOLLOW_ME);
+    await game.move.selectEnemyMove(MoveId.SPLASH);
 
     await game.phaseInterceptor.to(TurnEndPhase, false);
 

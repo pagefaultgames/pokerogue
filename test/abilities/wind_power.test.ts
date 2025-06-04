@@ -1,7 +1,7 @@
 import { BattlerTagType } from "#app/enums/battler-tag-type";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -26,8 +26,8 @@ describe("Abilities - Wind Power", () => {
     game.override.battleStyle("single");
     game.override.enemySpecies(Species.SHIFTRY);
     game.override.enemyAbility(AbilityId.WIND_POWER);
-    game.override.moveset([Moves.TAILWIND, Moves.SPLASH, Moves.PETAL_BLIZZARD, Moves.SANDSTORM]);
-    game.override.enemyMoveset(Moves.SPLASH);
+    game.override.moveset([MoveId.TAILWIND, MoveId.SPLASH, MoveId.PETAL_BLIZZARD, MoveId.SANDSTORM]);
+    game.override.enemyMoveset(MoveId.SPLASH);
   });
 
   it("it becomes charged when hit by wind moves", async () => {
@@ -36,7 +36,7 @@ describe("Abilities - Wind Power", () => {
 
     expect(shiftry.getTag(BattlerTagType.CHARGED)).toBeUndefined();
 
-    game.move.select(Moves.PETAL_BLIZZARD);
+    game.move.select(MoveId.PETAL_BLIZZARD);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(shiftry.getTag(BattlerTagType.CHARGED)).toBeDefined();
@@ -51,7 +51,7 @@ describe("Abilities - Wind Power", () => {
 
     expect(shiftry.getTag(BattlerTagType.CHARGED)).toBeUndefined();
 
-    game.move.select(Moves.TAILWIND);
+    game.move.select(MoveId.TAILWIND);
     await game.phaseInterceptor.to(TurnEndPhase);
 
     expect(shiftry.getTag(BattlerTagType.CHARGED)).toBeDefined();
@@ -68,7 +68,7 @@ describe("Abilities - Wind Power", () => {
     expect(shiftry.getTag(BattlerTagType.CHARGED)).toBeUndefined();
     expect(magikarp.getTag(BattlerTagType.CHARGED)).toBeUndefined();
 
-    game.move.select(Moves.TAILWIND);
+    game.move.select(MoveId.TAILWIND);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -84,7 +84,7 @@ describe("Abilities - Wind Power", () => {
 
     expect(shiftry.getTag(BattlerTagType.CHARGED)).toBeUndefined();
 
-    game.move.select(Moves.SANDSTORM);
+    game.move.select(MoveId.SANDSTORM);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 

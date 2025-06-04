@@ -3,7 +3,7 @@ import { allMoves } from "#app/data/data-lists";
 import { MultiHitType } from "#enums/MultiHitType";
 import { Status } from "#app/data/status-effect";
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import { StatusEffect } from "#enums/status-effect";
 import GameManager from "#test/testUtils/gameManager";
@@ -33,9 +33,9 @@ describe("Abilities - BATTLE BOND", () => {
       .startingWave(4) // Leads to arena reset on Wave 5 trainer battle
       .ability(AbilityId.BATTLE_BOND)
       .starterForms({ [Species.GRENINJA]: ashForm })
-      .moveset([Moves.SPLASH, Moves.WATER_SHURIKEN])
+      .moveset([MoveId.SPLASH, MoveId.WATER_SHURIKEN])
       .enemySpecies(Species.BULBASAUR)
-      .enemyMoveset(Moves.SPLASH)
+      .enemyMoveset(MoveId.SPLASH)
       .startingLevel(100) // Avoid levelling up
       .enemyLevel(1000); // Avoid opponent dying before `doKillOpponents()`
   });
@@ -50,7 +50,7 @@ describe("Abilities - BATTLE BOND", () => {
     greninja.status = new Status(StatusEffect.FAINT);
     expect(greninja.isFainted()).toBe(true);
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.doKillOpponents();
     await game.phaseInterceptor.to("TurnEndPhase");
     game.doSelectModifier();
@@ -62,7 +62,7 @@ describe("Abilities - BATTLE BOND", () => {
   it("should not keep buffing Water Shuriken after Greninja switches to base form", async () => {
     await game.classicMode.startBattle([Species.GRENINJA]);
 
-    const waterShuriken = allMoves[Moves.WATER_SHURIKEN];
+    const waterShuriken = allMoves[MoveId.WATER_SHURIKEN];
     vi.spyOn(waterShuriken, "calculateBattlePower");
 
     let actualMultiHitType: MultiHitType | null = null;
@@ -76,7 +76,7 @@ describe("Abilities - BATTLE BOND", () => {
     let expectedBattlePower = 20;
     let expectedMultiHitType = MultiHitType._3;
 
-    game.move.select(Moves.WATER_SHURIKEN);
+    game.move.select(MoveId.WATER_SHURIKEN);
     await game.phaseInterceptor.to("BerryPhase", false);
     expect(waterShuriken.calculateBattlePower).toHaveLastReturnedWith(expectedBattlePower);
     expect(actualMultiHitType).toBe(expectedMultiHitType);
@@ -88,7 +88,7 @@ describe("Abilities - BATTLE BOND", () => {
     expectedBattlePower = 15;
     expectedMultiHitType = MultiHitType._2_TO_5;
 
-    game.move.select(Moves.WATER_SHURIKEN);
+    game.move.select(MoveId.WATER_SHURIKEN);
     await game.phaseInterceptor.to("BerryPhase", false);
     expect(waterShuriken.calculateBattlePower).toHaveLastReturnedWith(expectedBattlePower);
     expect(actualMultiHitType).toBe(expectedMultiHitType);

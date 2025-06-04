@@ -1,6 +1,6 @@
 import { AbilityId } from "#enums/ability-id";
 import { Stat } from "#app/enums/stat";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import { WeatherType } from "#enums/weather-type";
 import GameManager from "#test/testUtils/gameManager";
@@ -26,15 +26,15 @@ describe("Weather - Sandstorm", () => {
     game.override
       .weather(WeatherType.SANDSTORM)
       .battleStyle("single")
-      .moveset(Moves.SPLASH)
-      .enemyMoveset(Moves.SPLASH)
+      .moveset(MoveId.SPLASH)
+      .enemyMoveset(MoveId.SPLASH)
       .enemySpecies(Species.MAGIKARP);
   });
 
   it("inflicts damage equal to 1/16 of Pokemon's max HP at turn end", async () => {
     await game.classicMode.startBattle([Species.MAGIKARP]);
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
@@ -44,10 +44,10 @@ describe("Weather - Sandstorm", () => {
   });
 
   it("does not inflict damage to a Pokemon that is underwater (Dive) or underground (Dig)", async () => {
-    game.override.moveset([Moves.DIVE]);
+    game.override.moveset([MoveId.DIVE]);
     await game.classicMode.startBattle([Species.MAGIKARP]);
 
-    game.move.select(Moves.DIVE);
+    game.move.select(MoveId.DIVE);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
@@ -67,8 +67,8 @@ describe("Weather - Sandstorm", () => {
 
     await game.classicMode.startBattle([Species.ROCKRUFF, Species.KLINK]);
 
-    game.move.select(Moves.SPLASH, 0);
-    game.move.select(Moves.SPLASH, 1);
+    game.move.select(MoveId.SPLASH, 0);
+    game.move.select(MoveId.SPLASH, 1);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 

@@ -1,6 +1,6 @@
 import { Stat } from "#app/enums/stat";
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, it, expect } from "vitest";
@@ -22,10 +22,10 @@ describe("Abilities - Illuminate", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset(Moves.SPLASH)
+      .moveset(MoveId.SPLASH)
       .ability(AbilityId.ILLUMINATE)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .enemyMoveset(Moves.SAND_ATTACK);
+      .enemyMoveset(MoveId.SAND_ATTACK);
   });
 
   it("should prevent ACC stat stage from being lowered", async () => {
@@ -37,7 +37,7 @@ describe("Abilities - Illuminate", () => {
 
     expect(player.getStatStage(Stat.ACC)).toBe(0);
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
 
     await game.toNextTurn();
 

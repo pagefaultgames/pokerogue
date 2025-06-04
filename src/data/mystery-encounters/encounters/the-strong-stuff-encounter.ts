@@ -20,7 +20,7 @@ import type Pokemon from "#app/field/pokemon";
 import { PokemonMove } from "#app/field/pokemon";
 import { queueEncounterMessage, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { modifyPlayerPokemonBST } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { BattlerIndex } from "#app/battle";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BerryType } from "#enums/berry-type";
@@ -94,7 +94,7 @@ export const TheStrongStuffEncounter: MysteryEncounter = MysteryEncounterBuilder
           shiny: false, // Shiny lock because shiny is rolled only if the battle option is picked
           customPokemonData: new CustomPokemonData({ spriteScale: 1.25 }),
           nature: Nature.HARDY,
-          moveSet: [Moves.INFESTATION, Moves.SALT_CURE, Moves.GASTRO_ACID, Moves.HEAL_ORDER],
+          moveSet: [MoveId.INFESTATION, MoveId.SALT_CURE, MoveId.GASTRO_ACID, MoveId.HEAL_ORDER],
           modifierConfigs: [
             {
               modifier: generateModifierType(modifierTypes.BERRY, [BerryType.SITRUS]) as PokemonHeldItemModifierType,
@@ -126,7 +126,7 @@ export const TheStrongStuffEncounter: MysteryEncounter = MysteryEncounterBuilder
 
     encounter.enemyPartyConfigs = [config];
 
-    loadCustomMovesForEncounter([Moves.GASTRO_ACID, Moves.STEALTH_ROCK]);
+    loadCustomMovesForEncounter([MoveId.GASTRO_ACID, MoveId.STEALTH_ROCK]);
 
     encounter.setDialogueToken("shuckleName", getPokemonSpecies(Species.SHUCKLE).getName());
 
@@ -210,13 +210,13 @@ export const TheStrongStuffEncounter: MysteryEncounter = MysteryEncounterBuilder
         {
           sourceBattlerIndex: BattlerIndex.ENEMY,
           targets: [BattlerIndex.PLAYER],
-          move: new PokemonMove(Moves.GASTRO_ACID),
+          move: new PokemonMove(MoveId.GASTRO_ACID),
           ignorePp: true,
         },
         {
           sourceBattlerIndex: BattlerIndex.ENEMY,
           targets: [BattlerIndex.PLAYER],
-          move: new PokemonMove(Moves.STEALTH_ROCK),
+          move: new PokemonMove(MoveId.STEALTH_ROCK),
           ignorePp: true,
         },
       );

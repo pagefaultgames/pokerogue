@@ -1,6 +1,6 @@
 import { BattlerIndex } from "#app/battle";
 import GameManager from "#test/testUtils/gameManager";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -25,10 +25,10 @@ describe("Moves - Gigaton Hammer", () => {
       .battleStyle("single")
       .enemySpecies(Species.MAGIKARP)
       .starterSpecies(Species.FEEBAS)
-      .moveset([Moves.GIGATON_HAMMER])
+      .moveset([MoveId.GIGATON_HAMMER])
       .startingLevel(10)
       .enemyLevel(100)
-      .enemyMoveset(Moves.SPLASH)
+      .enemyMoveset(MoveId.SPLASH)
       .disableCrits();
   });
 
@@ -37,7 +37,7 @@ describe("Moves - Gigaton Hammer", () => {
 
     const enemy1 = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.GIGATON_HAMMER);
+    game.move.select(MoveId.GIGATON_HAMMER);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("MoveEndPhase");
 
@@ -46,7 +46,7 @@ describe("Moves - Gigaton Hammer", () => {
     await game.doKillOpponents();
     await game.toNextWave();
 
-    game.move.select(Moves.GIGATON_HAMMER);
+    game.move.select(MoveId.GIGATON_HAMMER);
     await game.toNextTurn();
 
     const enemy2 = game.scene.getEnemyPokemon()!;
@@ -60,7 +60,7 @@ describe("Moves - Gigaton Hammer", () => {
 
     const enemy1 = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.GIGATON_HAMMER);
+    game.move.select(MoveId.GIGATON_HAMMER);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("MoveEndPhase");
 
@@ -69,7 +69,7 @@ describe("Moves - Gigaton Hammer", () => {
     await game.doKillOpponents();
     await game.toNextWave();
 
-    game.move.select(Moves.GIGATON_HAMMER);
+    game.move.select(MoveId.GIGATON_HAMMER);
     await game.toNextTurn();
 
     const enemy2 = game.scene.getEnemyPokemon()!;

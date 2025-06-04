@@ -3,7 +3,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vite
 import GameManager from "#test/testUtils/gameManager";
 import { Species } from "#enums/species";
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Stat } from "#enums/stat";
 import { StatusEffect } from "#app/enums/status-effect";
 import { WeatherType } from "#app/enums/weather-type";
@@ -28,21 +28,21 @@ describe("Moves - Fell Stinger", () => {
 
     game.override
       .battleStyle("single")
-      .moveset([Moves.FELL_STINGER, Moves.SALT_CURE, Moves.BIND, Moves.LEECH_SEED])
+      .moveset([MoveId.FELL_STINGER, MoveId.SALT_CURE, MoveId.BIND, MoveId.LEECH_SEED])
       .startingLevel(50)
       .disableCrits()
       .enemyAbility(AbilityId.STURDY)
       .enemySpecies(Species.HYPNO)
-      .enemyMoveset(Moves.SPLASH)
+      .enemyMoveset(MoveId.SPLASH)
       .enemyLevel(5);
   });
 
   it("should not grant stat boost if opponent gets KO'd by recoil", async () => {
-    game.override.enemyMoveset([Moves.DOUBLE_EDGE]);
+    game.override.enemyMoveset([MoveId.DOUBLE_EDGE]);
 
     await game.classicMode.startBattle([Species.LEAVANNY]);
     const leadPokemon = game.scene.getPlayerPokemon()!;
-    game.move.select(Moves.FELL_STINGER);
+    game.move.select(MoveId.FELL_STINGER);
 
     await game.phaseInterceptor.to("VictoryPhase");
 
@@ -50,11 +50,11 @@ describe("Moves - Fell Stinger", () => {
   });
 
   it("should not grant stat boost if enemy is KO'd by status effect", async () => {
-    game.override.enemyMoveset(Moves.SPLASH).enemyStatusEffect(StatusEffect.BURN);
+    game.override.enemyMoveset(MoveId.SPLASH).enemyStatusEffect(StatusEffect.BURN);
 
     await game.classicMode.startBattle([Species.LEAVANNY]);
     const leadPokemon = game.scene.getPlayerPokemon()!;
-    game.move.select(Moves.FELL_STINGER);
+    game.move.select(MoveId.FELL_STINGER);
 
     await game.phaseInterceptor.to("VictoryPhase");
 
@@ -67,7 +67,7 @@ describe("Moves - Fell Stinger", () => {
     await game.classicMode.startBattle([Species.LEAVANNY]);
     const leadPokemon = game.scene.getPlayerPokemon()!;
 
-    game.move.select(Moves.FELL_STINGER);
+    game.move.select(MoveId.FELL_STINGER);
 
     await game.phaseInterceptor.to("VictoryPhase");
 
@@ -80,7 +80,7 @@ describe("Moves - Fell Stinger", () => {
     await game.challengeMode.startBattle([Species.LEAVANNY]);
     const leadPokemon = game.scene.getPlayerPokemon()!;
 
-    game.move.select(Moves.FELL_STINGER);
+    game.move.select(MoveId.FELL_STINGER);
 
     await game.phaseInterceptor.to("VictoryPhase");
 
@@ -92,7 +92,7 @@ describe("Moves - Fell Stinger", () => {
 
     await game.classicMode.startBattle([Species.LEAVANNY]);
     const leadPokemon = game.scene.getPlayerPokemon()!;
-    game.move.select(Moves.FELL_STINGER);
+    game.move.select(MoveId.FELL_STINGER);
 
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(leadPokemon.getStatStage(Stat.ATK)).toBe(0);
@@ -100,8 +100,8 @@ describe("Moves - Fell Stinger", () => {
 
   it("should not grant stat boost if enemy is KO'd by Salt Cure", async () => {
     game.override.battleStyle("double").startingLevel(5);
-    const saltCure = allMoves[Moves.SALT_CURE];
-    const fellStinger = allMoves[Moves.FELL_STINGER];
+    const saltCure = allMoves[MoveId.SALT_CURE];
+    const fellStinger = allMoves[MoveId.FELL_STINGER];
     vi.spyOn(saltCure, "accuracy", "get").mockReturnValue(100);
     vi.spyOn(fellStinger, "power", "get").mockReturnValue(50000);
 
@@ -110,13 +110,13 @@ describe("Moves - Fell Stinger", () => {
     const leftEnemy = game.scene.getEnemyField()[0]!;
 
     //  Turn 1: set Salt Cure, enemy splashes and does nothing
-    game.move.select(Moves.SALT_CURE, 0, leftEnemy.getBattlerIndex());
+    game.move.select(MoveId.SALT_CURE, 0, leftEnemy.getBattlerIndex());
 
     //  Turn 2: enemy Endures Fell Stinger, then dies to Salt Cure
     await game.toNextTurn();
     expect(leftEnemy.isFainted()).toBe(false);
     leftEnemy.heal(leftEnemy.getMaxHp());
-    game.move.select(Moves.FELL_STINGER);
+    game.move.select(MoveId.FELL_STINGER);
     await game.toNextTurn();
 
     expect(leftEnemy.isFainted()).toBe(true);
@@ -125,21 +125,21 @@ describe("Moves - Fell Stinger", () => {
 
   it("should not grant stat boost if enemy dies to Bind or a similar effect", async () => {
     game.override.battleStyle("double").startingLevel(5);
-    vi.spyOn(allMoves[Moves.BIND], "accuracy", "get").mockReturnValue(100);
-    vi.spyOn(allMoves[Moves.FELL_STINGER], "power", "get").mockReturnValue(50000);
+    vi.spyOn(allMoves[MoveId.BIND], "accuracy", "get").mockReturnValue(100);
+    vi.spyOn(allMoves[MoveId.FELL_STINGER], "power", "get").mockReturnValue(50000);
 
     await game.classicMode.startBattle([Species.LEAVANNY]);
     const leadPokemon = game.scene.getPlayerPokemon()!;
     const leftEnemy = game.scene.getEnemyField()[0]!;
 
     // Turn 1: set Bind, enemy splashes and does nothing
-    game.move.select(Moves.BIND, 0, leftEnemy.getBattlerIndex());
+    game.move.select(MoveId.BIND, 0, leftEnemy.getBattlerIndex());
 
     // Turn 2: enemy Endures Fell Stinger, then dies to Bind
     await game.toNextTurn();
     expect(leftEnemy.isFainted()).toBe(false);
     leftEnemy.heal(leftEnemy.getMaxHp());
-    game.move.select(Moves.FELL_STINGER, 0, leftEnemy.getBattlerIndex());
+    game.move.select(MoveId.FELL_STINGER, 0, leftEnemy.getBattlerIndex());
     await game.toNextTurn();
 
     expect(leftEnemy.isFainted()).toBe(true);
@@ -148,21 +148,21 @@ describe("Moves - Fell Stinger", () => {
 
   it("should not grant stat boost if enemy dies to Leech Seed", async () => {
     game.override.battleStyle("double").startingLevel(5);
-    vi.spyOn(allMoves[Moves.LEECH_SEED], "accuracy", "get").mockReturnValue(100);
-    vi.spyOn(allMoves[Moves.FELL_STINGER], "power", "get").mockReturnValue(50000);
+    vi.spyOn(allMoves[MoveId.LEECH_SEED], "accuracy", "get").mockReturnValue(100);
+    vi.spyOn(allMoves[MoveId.FELL_STINGER], "power", "get").mockReturnValue(50000);
 
     await game.classicMode.startBattle([Species.LEAVANNY]);
     const leadPokemon = game.scene.getPlayerPokemon()!;
     const leftEnemy = game.scene.getEnemyField()[0]!;
 
     // Turn 1: set Leech Seed, enemy splashes and does nothing
-    game.move.select(Moves.LEECH_SEED, 0, leftEnemy.getBattlerIndex());
+    game.move.select(MoveId.LEECH_SEED, 0, leftEnemy.getBattlerIndex());
 
     // Turn 2: enemy Endures Fell Stinger, then dies to Leech Seed
     await game.toNextTurn();
     expect(leftEnemy.isFainted()).toBe(false);
     leftEnemy.heal(leftEnemy.getMaxHp());
-    game.move.select(Moves.FELL_STINGER, 0, leftEnemy.getBattlerIndex());
+    game.move.select(MoveId.FELL_STINGER, 0, leftEnemy.getBattlerIndex());
     await game.toNextTurn();
 
     expect(leftEnemy.isFainted()).toBe(true);
@@ -174,7 +174,7 @@ describe("Moves - Fell Stinger", () => {
 
     await game.classicMode.startBattle([Species.LEAVANNY]);
     const leadPokemon = game.scene.getPlayerPokemon();
-    game.move.select(Moves.FELL_STINGER);
+    game.move.select(MoveId.FELL_STINGER);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 

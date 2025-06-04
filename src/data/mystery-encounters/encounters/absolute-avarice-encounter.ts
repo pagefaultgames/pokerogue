@@ -22,7 +22,7 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { BerryModifier, PokemonInstantReviveModifier } from "#app/modifier/modifier";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { randInt } from "#app/utils/common";
 import { BattlerIndex } from "#app/battle";
@@ -232,7 +232,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter = MysteryEncounterBuilde
           isBoss: true,
           bossSegments: 3,
           shiny: false, // Shiny lock because of consistency issues between the different options
-          moveSet: [Moves.THRASH, Moves.CRUNCH, Moves.BODY_PRESS, Moves.SLACK_OFF],
+          moveSet: [MoveId.THRASH, MoveId.CRUNCH, MoveId.BODY_PRESS, MoveId.SLACK_OFF],
           modifierConfigs: bossModifierConfigs,
           tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
           mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
@@ -302,7 +302,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter = MysteryEncounterBuilde
         encounter.startOfBattleEffects.push({
           sourceBattlerIndex: BattlerIndex.ENEMY,
           targets: [BattlerIndex.ENEMY],
-          move: new PokemonMove(Moves.STUFF_CHEEKS),
+          move: new PokemonMove(MoveId.STUFF_CHEEKS),
           ignorePp: true,
         });
 
@@ -375,10 +375,10 @@ export const AbsoluteAvariceEncounter: MysteryEncounter = MysteryEncounterBuilde
         const level = getHighestLevelPlayerPokemon(false, true).level - 2;
         const greedent = new EnemyPokemon(getPokemonSpecies(Species.GREEDENT), level, TrainerSlot.NONE, false, true);
         greedent.moveset = [
-          new PokemonMove(Moves.THRASH),
-          new PokemonMove(Moves.BODY_PRESS),
-          new PokemonMove(Moves.STUFF_CHEEKS),
-          new PokemonMove(Moves.SLACK_OFF),
+          new PokemonMove(MoveId.THRASH),
+          new PokemonMove(MoveId.BODY_PRESS),
+          new PokemonMove(MoveId.STUFF_CHEEKS),
+          new PokemonMove(MoveId.SLACK_OFF),
         ];
         greedent.passive = true;
 

@@ -1,7 +1,7 @@
 import { allMoves } from "#app/data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import { WeatherType } from "#enums/weather-type";
 import GameManager from "#test/testUtils/gameManager";
@@ -25,20 +25,20 @@ describe("Weather - Fog", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override.weather(WeatherType.FOG).battleStyle("single");
-    game.override.moveset([Moves.TACKLE]);
+    game.override.moveset([MoveId.TACKLE]);
     game.override.ability(AbilityId.BALL_FETCH);
     game.override.enemyAbility(AbilityId.BALL_FETCH);
     game.override.enemySpecies(Species.MAGIKARP);
-    game.override.enemyMoveset([Moves.SPLASH]);
+    game.override.enemyMoveset([MoveId.SPLASH]);
   });
 
   it("move accuracy is multiplied by 90%", async () => {
-    const moveToCheck = allMoves[Moves.TACKLE];
+    const moveToCheck = allMoves[MoveId.TACKLE];
 
     vi.spyOn(moveToCheck, "calculateBattleAccuracy");
 
     await game.classicMode.startBattle([Species.MAGIKARP]);
-    game.move.select(Moves.TACKLE);
+    game.move.select(MoveId.TACKLE);
     await game.phaseInterceptor.to(MoveEffectPhase);
 
     expect(moveToCheck.calculateBattleAccuracy).toHaveReturnedWith(100 * 0.9);

@@ -2,7 +2,7 @@ import { BattlerIndex } from "#app/battle";
 import { AbilityId } from "#enums/ability-id";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { StatusEffect } from "#enums/status-effect";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -28,9 +28,9 @@ describe("Frenzy Move Reset", () => {
       .battleStyle("single")
       .disableCrits()
       .starterSpecies(Species.MAGIKARP)
-      .moveset(Moves.THRASH)
+      .moveset(MoveId.THRASH)
       .statusEffect(StatusEffect.PARALYSIS)
-      .enemyMoveset(Moves.SPLASH)
+      .enemyMoveset(MoveId.SPLASH)
       .enemyLevel(100)
       .enemySpecies(Species.SHUCKLE)
       .enemyAbility(AbilityId.BALL_FETCH);
@@ -54,7 +54,7 @@ describe("Frenzy Move Reset", () => {
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
 
-    game.move.select(Moves.THRASH);
+    game.move.select(MoveId.THRASH);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.move.forceStatusActivation(false);
     await game.toNextTurn();

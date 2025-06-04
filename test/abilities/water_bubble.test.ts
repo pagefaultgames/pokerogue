@@ -1,5 +1,5 @@
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import { StatusEffect } from "#enums/status-effect";
 import GameManager from "#test/testUtils/gameManager";
@@ -23,27 +23,27 @@ describe("Abilities - Water Bubble", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.SPLASH])
+      .moveset([MoveId.SPLASH])
       .ability(AbilityId.BALL_FETCH)
       .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .enemyMoveset(Moves.SPLASH);
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   it("should remove burn when gained", async () => {
     game.override
       .ability(AbilityId.THERMAL_EXCHANGE)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .moveset(Moves.SKILL_SWAP)
-      .enemyMoveset(Moves.SPLASH);
+      .moveset(MoveId.SKILL_SWAP)
+      .enemyMoveset(MoveId.SPLASH);
     await game.classicMode.startBattle([Species.FEEBAS]);
     const enemy = game.scene.getEnemyPokemon();
     enemy?.trySetStatus(StatusEffect.BURN);
     expect(enemy?.status?.effect).toBe(StatusEffect.BURN);
 
-    game.move.select(Moves.SKILL_SWAP);
+    game.move.select(MoveId.SKILL_SWAP);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(enemy?.status).toBeNull();

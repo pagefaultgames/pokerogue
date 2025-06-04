@@ -1,5 +1,5 @@
 import { Species } from "#enums/species";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { AbilityId } from "#enums/ability-id";
 import { BattlerIndex } from "#app/battle";
 import { WeatherType } from "#enums/weather-type";
@@ -29,18 +29,18 @@ describe("Moves - Quash", () => {
       .enemyLevel(1)
       .enemySpecies(Species.SLOWPOKE)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .enemyMoveset([Moves.RAIN_DANCE, Moves.SPLASH])
+      .enemyMoveset([MoveId.RAIN_DANCE, MoveId.SPLASH])
       .ability(AbilityId.BALL_FETCH)
-      .moveset([Moves.QUASH, Moves.SUNNY_DAY, Moves.RAIN_DANCE, Moves.SPLASH]);
+      .moveset([MoveId.QUASH, MoveId.SUNNY_DAY, MoveId.RAIN_DANCE, MoveId.SPLASH]);
   });
 
   it("makes the target move last in a turn, ignoring priority", async () => {
     await game.classicMode.startBattle([Species.ACCELGOR, Species.RATTATA]);
 
-    game.move.select(Moves.QUASH, 0, BattlerIndex.PLAYER_2);
-    game.move.select(Moves.SUNNY_DAY, 1);
-    await game.move.selectEnemyMove(Moves.SPLASH);
-    await game.move.selectEnemyMove(Moves.RAIN_DANCE);
+    game.move.select(MoveId.QUASH, 0, BattlerIndex.PLAYER_2);
+    game.move.select(MoveId.SUNNY_DAY, 1);
+    await game.move.selectEnemyMove(MoveId.SPLASH);
+    await game.move.selectEnemyMove(MoveId.RAIN_DANCE);
 
     await game.phaseInterceptor.to("TurnEndPhase", false);
     // will be sunny if player_2 moved last because of quash, rainy otherwise
@@ -49,8 +49,8 @@ describe("Moves - Quash", () => {
 
   it("fails if the target has already moved", async () => {
     await game.classicMode.startBattle([Species.ACCELGOR, Species.RATTATA]);
-    game.move.select(Moves.SPLASH, 0);
-    game.move.select(Moves.QUASH, 1, BattlerIndex.PLAYER);
+    game.move.select(MoveId.SPLASH, 0);
+    game.move.select(MoveId.QUASH, 1, BattlerIndex.PLAYER);
 
     await game.phaseInterceptor.to("MoveEndPhase");
     await game.phaseInterceptor.to("MoveEndPhase");
@@ -64,32 +64,32 @@ describe("Moves - Quash", () => {
     await game.classicMode.startBattle([Species.ACCELGOR, Species.RATTATA]);
 
     // both users are quashed - rattata is slower so sun should be up at end of turn
-    game.move.select(Moves.RAIN_DANCE, 0);
-    game.move.select(Moves.SUNNY_DAY, 1);
+    game.move.select(MoveId.RAIN_DANCE, 0);
+    game.move.select(MoveId.SUNNY_DAY, 1);
 
-    await game.move.selectEnemyMove(Moves.QUASH, BattlerIndex.PLAYER);
-    await game.move.selectEnemyMove(Moves.QUASH, BattlerIndex.PLAYER_2);
+    await game.move.selectEnemyMove(MoveId.QUASH, BattlerIndex.PLAYER);
+    await game.move.selectEnemyMove(MoveId.QUASH, BattlerIndex.PLAYER_2);
 
     await game.phaseInterceptor.to("TurnEndPhase", false);
     expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.SUNNY);
   });
 
   it("respects trick room", async () => {
-    game.override.enemyMoveset([Moves.RAIN_DANCE, Moves.SPLASH, Moves.TRICK_ROOM]);
+    game.override.enemyMoveset([MoveId.RAIN_DANCE, MoveId.SPLASH, MoveId.TRICK_ROOM]);
 
     await game.classicMode.startBattle([Species.ACCELGOR, Species.RATTATA]);
-    game.move.select(Moves.SPLASH, 0);
-    game.move.select(Moves.SPLASH, 1);
+    game.move.select(MoveId.SPLASH, 0);
+    game.move.select(MoveId.SPLASH, 1);
 
-    await game.move.selectEnemyMove(Moves.TRICK_ROOM);
-    await game.move.selectEnemyMove(Moves.SPLASH);
+    await game.move.selectEnemyMove(MoveId.TRICK_ROOM);
+    await game.move.selectEnemyMove(MoveId.SPLASH);
     await game.phaseInterceptor.to("TurnInitPhase");
     // both users are quashed - accelgor should move last w/ TR so rain should be up at end of turn
-    game.move.select(Moves.RAIN_DANCE, 0);
-    game.move.select(Moves.SUNNY_DAY, 1);
+    game.move.select(MoveId.RAIN_DANCE, 0);
+    game.move.select(MoveId.SUNNY_DAY, 1);
 
-    await game.move.selectEnemyMove(Moves.QUASH, BattlerIndex.PLAYER);
-    await game.move.selectEnemyMove(Moves.QUASH, BattlerIndex.PLAYER_2);
+    await game.move.selectEnemyMove(MoveId.QUASH, BattlerIndex.PLAYER);
+    await game.move.selectEnemyMove(MoveId.QUASH, BattlerIndex.PLAYER_2);
 
     await game.phaseInterceptor.to("TurnEndPhase", false);
     expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.RAIN);

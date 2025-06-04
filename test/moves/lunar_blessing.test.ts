@@ -1,7 +1,7 @@
 import { StatusEffect } from "#app/enums/status-effect";
 import { CommandPhase } from "#app/phases/command-phase";
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -25,10 +25,10 @@ describe("Moves - Lunar Blessing", () => {
     game.override.battleStyle("double");
 
     game.override.enemySpecies(Species.SHUCKLE);
-    game.override.enemyMoveset(Moves.SPLASH);
+    game.override.enemyMoveset(MoveId.SPLASH);
     game.override.enemyAbility(AbilityId.BALL_FETCH);
 
-    game.override.moveset([Moves.LUNAR_BLESSING, Moves.SPLASH]);
+    game.override.moveset([MoveId.LUNAR_BLESSING, MoveId.SPLASH]);
     game.override.ability(AbilityId.BALL_FETCH);
   });
 
@@ -47,9 +47,9 @@ describe("Moves - Lunar Blessing", () => {
     vi.spyOn(leftPlayer, "heal");
     vi.spyOn(rightPlayer, "heal");
 
-    game.move.select(Moves.LUNAR_BLESSING, 0);
+    game.move.select(MoveId.LUNAR_BLESSING, 0);
     await game.phaseInterceptor.to(CommandPhase);
-    game.move.select(Moves.SPLASH, 1);
+    game.move.select(MoveId.SPLASH, 1);
     await game.toNextTurn();
 
     expect(leftPlayer.heal).toHaveBeenCalledOnce();
@@ -67,9 +67,9 @@ describe("Moves - Lunar Blessing", () => {
     vi.spyOn(leftPlayer, "resetStatus");
     vi.spyOn(rightPlayer, "resetStatus");
 
-    game.move.select(Moves.LUNAR_BLESSING, 0);
+    game.move.select(MoveId.LUNAR_BLESSING, 0);
     await game.phaseInterceptor.to(CommandPhase);
-    game.move.select(Moves.SPLASH, 1);
+    game.move.select(MoveId.SPLASH, 1);
     await game.toNextTurn();
 
     expect(leftPlayer.resetStatus).toHaveBeenCalledOnce();

@@ -1,6 +1,6 @@
 import { Stat } from "#enums/stat";
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -24,11 +24,11 @@ describe("Abilities - Hyper Cutter", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .moveset([Moves.SAND_ATTACK, Moves.NOBLE_ROAR, Moves.DEFOG, Moves.OCTOLOCK])
+      .moveset([MoveId.SAND_ATTACK, MoveId.NOBLE_ROAR, MoveId.DEFOG, MoveId.OCTOLOCK])
       .ability(AbilityId.BALL_FETCH)
       .enemySpecies(Species.SHUCKLE)
       .enemyAbility(AbilityId.HYPER_CUTTER)
-      .enemyMoveset(Moves.SPLASH);
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   // Reference Link: https://bulbapedia.bulbagarden.net/wiki/Hyper_Cutter_(Ability)
@@ -38,16 +38,16 @@ describe("Abilities - Hyper Cutter", () => {
 
     const enemy = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.OCTOLOCK);
+    game.move.select(MoveId.OCTOLOCK);
     await game.toNextTurn();
-    game.move.select(Moves.DEFOG);
+    game.move.select(MoveId.DEFOG);
     await game.toNextTurn();
-    game.move.select(Moves.NOBLE_ROAR);
+    game.move.select(MoveId.NOBLE_ROAR);
     await game.toNextTurn();
-    game.move.select(Moves.SAND_ATTACK);
+    game.move.select(MoveId.SAND_ATTACK);
     await game.toNextTurn();
-    game.override.moveset([Moves.STRING_SHOT]);
-    game.move.select(Moves.STRING_SHOT);
+    game.override.moveset([MoveId.STRING_SHOT]);
+    game.move.select(MoveId.STRING_SHOT);
     await game.toNextTurn();
 
     expect(enemy.getStatStage(Stat.ATK)).toEqual(0);

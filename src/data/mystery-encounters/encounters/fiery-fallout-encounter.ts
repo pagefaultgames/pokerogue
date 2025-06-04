@@ -27,7 +27,7 @@ import { PokemonType } from "#enums/pokemon-type";
 import { BattlerIndex } from "#app/battle";
 import type Pokemon from "#app/field/pokemon";
 import { PokemonMove } from "#app/field/pokemon";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { EncounterBattleAnim } from "#app/data/battle-anims";
 import { WeatherType } from "#enums/weather-type";
 import { isNullOrUndefined, randSeedInt } from "#app/utils/common";
@@ -138,7 +138,7 @@ export const FieryFalloutEncounter: MysteryEncounter = MysteryEncounterBuilder.w
     ];
 
     // Load animations/sfx for Volcarona moves
-    loadCustomMovesForEncounter([Moves.FIRE_SPIN, Moves.QUIVER_DANCE]);
+    loadCustomMovesForEncounter([MoveId.FIRE_SPIN, MoveId.QUIVER_DANCE]);
 
     const pokemon = globalScene.getEnemyPokemon();
     globalScene.arena.trySetWeather(WeatherType.SUNNY, pokemon);
@@ -193,13 +193,13 @@ export const FieryFalloutEncounter: MysteryEncounter = MysteryEncounterBuilder.w
         {
           sourceBattlerIndex: BattlerIndex.ENEMY,
           targets: [BattlerIndex.PLAYER],
-          move: new PokemonMove(Moves.FIRE_SPIN),
+          move: new PokemonMove(MoveId.FIRE_SPIN),
           ignorePp: true,
         },
         {
           sourceBattlerIndex: BattlerIndex.ENEMY_2,
           targets: [BattlerIndex.PLAYER_2],
-          move: new PokemonMove(Moves.FIRE_SPIN),
+          move: new PokemonMove(MoveId.FIRE_SPIN),
           ignorePp: true,
         },
       );

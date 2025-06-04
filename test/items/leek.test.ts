@@ -1,6 +1,6 @@
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { randInt } from "#app/utils/common";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phase from "phaser";
@@ -25,9 +25,9 @@ describe("Items - Leek", () => {
 
     game.override
       .enemySpecies(Species.MAGIKARP)
-      .enemyMoveset(Moves.SPLASH)
+      .enemyMoveset(MoveId.SPLASH)
       .startingHeldItems([{ name: "LEEK" }])
-      .moveset([Moves.TACKLE])
+      .moveset([MoveId.TACKLE])
       .battleStyle("single");
   });
 
@@ -38,7 +38,7 @@ describe("Items - Leek", () => {
 
     vi.spyOn(enemyMember, "getCritStage");
 
-    game.move.select(Moves.TACKLE);
+    game.move.select(MoveId.TACKLE);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -52,7 +52,7 @@ describe("Items - Leek", () => {
 
     vi.spyOn(enemyMember, "getCritStage");
 
-    game.move.select(Moves.TACKLE);
+    game.move.select(MoveId.TACKLE);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -66,7 +66,7 @@ describe("Items - Leek", () => {
 
     vi.spyOn(enemyMember, "getCritStage");
 
-    game.move.select(Moves.TACKLE);
+    game.move.select(MoveId.TACKLE);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -94,7 +94,7 @@ describe("Items - Leek", () => {
 
     vi.spyOn(enemyMember, "getCritStage");
 
-    game.move.select(Moves.TACKLE);
+    game.move.select(MoveId.TACKLE);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -122,7 +122,7 @@ describe("Items - Leek", () => {
 
     vi.spyOn(enemyMember, "getCritStage");
 
-    game.move.select(Moves.TACKLE);
+    game.move.select(MoveId.TACKLE);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -136,7 +136,7 @@ describe("Items - Leek", () => {
 
     vi.spyOn(enemyMember, "getCritStage");
 
-    game.move.select(Moves.TACKLE);
+    game.move.select(MoveId.TACKLE);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 

@@ -2,7 +2,7 @@ import { BattlerIndex } from "#app/battle";
 import { MoveResult } from "#app/field/pokemon";
 import { toDmgValue } from "#app/utils/common";
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -25,26 +25,26 @@ describe("Moves - Revival Blessing", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.SPLASH, Moves.REVIVAL_BLESSING, Moves.MEMENTO])
+      .moveset([MoveId.SPLASH, MoveId.REVIVAL_BLESSING, MoveId.MEMENTO])
       .ability(AbilityId.BALL_FETCH)
       .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .enemyMoveset(Moves.SPLASH);
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   it("should revive a selected fainted Pokemon when used by the player", async () => {
     await game.classicMode.startBattle([Species.FEEBAS, Species.MAGIKARP]);
 
-    game.move.select(Moves.MEMENTO);
+    game.move.select(MoveId.MEMENTO);
     game.doSelectPartyPokemon(1, "SwitchPhase");
     await game.toNextTurn();
 
     const player = game.scene.getPlayerPokemon()!;
 
     expect(player.species.speciesId).toBe(Species.MAGIKARP);
-    game.move.select(Moves.REVIVAL_BLESSING);
+    game.move.select(MoveId.REVIVAL_BLESSING);
 
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     game.doSelectPartyPokemon(1, "RevivalBlessingPhase");
@@ -57,15 +57,15 @@ describe("Moves - Revival Blessing", () => {
   });
 
   it("should revive a random fainted enemy when used by an enemy Trainer", async () => {
-    game.override.enemyMoveset(Moves.REVIVAL_BLESSING).startingWave(8);
+    game.override.enemyMoveset(MoveId.REVIVAL_BLESSING).startingWave(8);
 
     await game.classicMode.startBattle([Species.MAGIKARP]);
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.doKillOpponents();
 
     await game.toNextTurn();
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
 
     await game.phaseInterceptor.to("MoveEndPhase", false);
@@ -78,7 +78,7 @@ describe("Moves - Revival Blessing", () => {
   it("should fail when there are no fainted Pokemon to target", async () => {
     await game.classicMode.startBattle([Species.FEEBAS, Species.MAGIKARP]);
 
-    game.move.select(Moves.REVIVAL_BLESSING);
+    game.move.select(MoveId.REVIVAL_BLESSING);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("MoveEndPhase", false);
 
@@ -89,17 +89,17 @@ describe("Moves - Revival Blessing", () => {
   it("should revive a player pokemon and immediately send it back out if used in the same turn it fainted in doubles", async () => {
     game.override
       .battleStyle("double")
-      .enemyMoveset([Moves.SPLASH, Moves.FISSURE])
+      .enemyMoveset([MoveId.SPLASH, MoveId.FISSURE])
       .enemyAbility(AbilityId.NO_GUARD)
       .enemyLevel(100);
     await game.classicMode.startBattle([Species.FEEBAS, Species.MILOTIC, Species.GYARADOS]);
 
     const feebas = game.scene.getPlayerField()[0];
 
-    game.move.select(Moves.SPLASH);
-    game.move.select(Moves.REVIVAL_BLESSING, 1);
-    await game.move.selectEnemyMove(Moves.FISSURE, BattlerIndex.PLAYER);
-    await game.move.selectEnemyMove(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
+    game.move.select(MoveId.REVIVAL_BLESSING, 1);
+    await game.move.selectEnemyMove(MoveId.FISSURE, BattlerIndex.PLAYER);
+    await game.move.selectEnemyMove(MoveId.SPLASH);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2]);
 
     await game.phaseInterceptor.to("MoveEndPhase");
@@ -116,13 +116,17 @@ describe("Moves - Revival Blessing", () => {
   });
 
   it("should not summon multiple pokemon to the same slot when reviving the enemy ally in doubles", async () => {
-    game.override.battleStyle("double").enemyMoveset([Moves.REVIVAL_BLESSING]).moveset([Moves.SPLASH]).startingWave(25); // 2nd rival battle - must have 3+ pokemon
+    game.override
+      .battleStyle("double")
+      .enemyMoveset([MoveId.REVIVAL_BLESSING])
+      .moveset([MoveId.SPLASH])
+      .startingWave(25); // 2nd rival battle - must have 3+ pokemon
     await game.classicMode.startBattle([Species.ARCEUS, Species.GIRATINA]);
 
     const enemyFainting = game.scene.getEnemyField()[0];
 
-    game.move.select(Moves.SPLASH, 0);
-    game.move.select(Moves.SPLASH, 1);
+    game.move.select(MoveId.SPLASH, 0);
+    game.move.select(MoveId.SPLASH, 1);
     await game.killPokemon(enemyFainting);
 
     await game.phaseInterceptor.to("BerryPhase");

@@ -119,7 +119,7 @@ import {
 import { AbilityId } from "#enums/ability-id";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BerryType } from "#enums/berry-type";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Nature } from "#enums/nature";
 import { PokeballType } from "#enums/pokeball";
 import { Species } from "#enums/species";
@@ -1165,9 +1165,9 @@ export class PokemonMultiHitModifierType extends PokemonHeldItemModifierType {
 }
 
 export class TmModifierType extends PokemonModifierType {
-  public moveId: Moves;
+  public moveId: MoveId;
 
-  constructor(moveId: Moves) {
+  constructor(moveId: MoveId) {
     super(
       "",
       `tm_${PokemonType[allMoves[moveId].type].toLowerCase()}`,
@@ -1553,8 +1553,8 @@ class SpeciesStatBoosterModifierTypeGenerator extends ModifierTypeGenerator {
 class TmModifierTypeGenerator extends ModifierTypeGenerator {
   constructor(tier: ModifierTier) {
     super((party: Pokemon[], pregenArgs?: any[]) => {
-      if (pregenArgs && pregenArgs.length === 1 && pregenArgs[0] in Moves) {
-        return new TmModifierType(pregenArgs[0] as Moves);
+      if (pregenArgs && pregenArgs.length === 1 && pregenArgs[0] in MoveId) {
+        return new TmModifierType(pregenArgs[0] as MoveId);
       }
       const partyMemberCompatibleTms = party.map(p => {
         const previousLevelMoves = p.getLearnableLevelMoves();
@@ -1904,7 +1904,7 @@ export type GeneratorModifierOverride = {
     }
   | {
       name: keyof Pick<typeof modifierTypes, "TM_COMMON" | "TM_GREAT" | "TM_ULTRA">;
-      type?: Moves;
+      type?: MoveId;
     }
 );
 
@@ -2771,7 +2771,7 @@ const modifierPool: ModifierPool = {
             const canSetStatus = p.canSetStatus(StatusEffect.TOXIC, true, true, null, true);
 
             // Moves that take advantage of obtaining the actual status effect
-            const hasStatusMoves = [Moves.FACADE, Moves.PSYCHO_SHIFT].some(m => moveset.includes(m));
+            const hasStatusMoves = [MoveId.FACADE, MoveId.PSYCHO_SHIFT].some(m => moveset.includes(m));
             // Moves that take advantage of being able to give the target a status orb
             // TODO: Take moves (Trick, Fling, Switcheroo) from comment when they are implemented
             const hasItemMoves = [
@@ -2817,7 +2817,7 @@ const modifierPool: ModifierPool = {
             const canSetStatus = p.canSetStatus(StatusEffect.BURN, true, true, null, true);
 
             // Moves that take advantage of obtaining the actual status effect
-            const hasStatusMoves = [Moves.FACADE, Moves.PSYCHO_SHIFT].some(m => moveset.includes(m));
+            const hasStatusMoves = [MoveId.FACADE, MoveId.PSYCHO_SHIFT].some(m => moveset.includes(m));
             // Moves that take advantage of being able to give the target a status orb
             // TODO: Take moves (Trick, Fling, Switcheroo) from comment when they are implemented
             const hasItemMoves = [
@@ -2880,16 +2880,16 @@ const modifierPool: ModifierPool = {
             ].some(a => p.hasAbility(a, false, true));
 
             const hasMoves = [
-              Moves.SUNNY_DAY,
-              Moves.RAIN_DANCE,
-              Moves.SANDSTORM,
-              Moves.SNOWSCAPE,
-              Moves.HAIL,
-              Moves.CHILLY_RECEPTION,
-              Moves.ELECTRIC_TERRAIN,
-              Moves.PSYCHIC_TERRAIN,
-              Moves.GRASSY_TERRAIN,
-              Moves.MISTY_TERRAIN,
+              MoveId.SUNNY_DAY,
+              MoveId.RAIN_DANCE,
+              MoveId.SANDSTORM,
+              MoveId.SNOWSCAPE,
+              MoveId.HAIL,
+              MoveId.CHILLY_RECEPTION,
+              MoveId.ELECTRIC_TERRAIN,
+              MoveId.PSYCHIC_TERRAIN,
+              MoveId.GRASSY_TERRAIN,
+              MoveId.MISTY_TERRAIN,
             ].some(m => moveset.includes(m));
 
             return hasAbility || hasMoves;

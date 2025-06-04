@@ -1,7 +1,7 @@
 import { BattlerIndex } from "#app/battle";
 import { PokemonType } from "#enums/pokemon-type";
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -24,12 +24,12 @@ describe("Moves - Electrify", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset(Moves.ELECTRIFY)
+      .moveset(MoveId.ELECTRIFY)
       .battleStyle("single")
       .startingLevel(100)
       .enemySpecies(Species.SNORLAX)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .enemyMoveset(Moves.TACKLE)
+      .enemyMoveset(MoveId.TACKLE)
       .enemyLevel(100);
   });
 
@@ -40,7 +40,7 @@ describe("Moves - Electrify", () => {
     const enemyPokemon = game.scene.getEnemyPokemon()!;
     vi.spyOn(enemyPokemon, "getMoveType");
 
-    game.move.select(Moves.ELECTRIFY);
+    game.move.select(MoveId.ELECTRIFY);
 
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
 
@@ -58,7 +58,7 @@ describe("Moves - Electrify", () => {
     const enemyPokemon = game.scene.getPlayerPokemon()!;
     vi.spyOn(enemyPokemon, "getMoveType");
 
-    game.move.select(Moves.ELECTRIFY);
+    game.move.select(MoveId.ELECTRIFY);
 
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
 

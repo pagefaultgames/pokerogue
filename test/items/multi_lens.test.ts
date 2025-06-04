@@ -1,7 +1,7 @@
 import { BattlerIndex } from "#app/battle";
 import { Stat } from "#enums/stat";
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -24,14 +24,14 @@ describe("Items - Multi Lens", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.TACKLE, Moves.TRAILBLAZE, Moves.TACHYON_CUTTER, Moves.FUTURE_SIGHT])
+      .moveset([MoveId.TACKLE, MoveId.TRAILBLAZE, MoveId.TACHYON_CUTTER, MoveId.FUTURE_SIGHT])
       .ability(AbilityId.BALL_FETCH)
       .startingHeldItems([{ name: "MULTI_LENS" }])
       .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.SNORLAX)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .enemyMoveset(Moves.SPLASH)
+      .enemyMoveset(MoveId.SPLASH)
       .startingLevel(99) // Check for proper rounding on Seismic Toss damage reduction
       .enemyLevel(99);
   });
@@ -50,7 +50,7 @@ describe("Items - Multi Lens", () => {
       const spy = vi.spyOn(enemyPokemon, "getAttackDamage");
       vi.spyOn(enemyPokemon, "getBaseDamage").mockReturnValue(100);
 
-      game.move.select(Moves.TACKLE);
+      game.move.select(MoveId.TACKLE);
       await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
 
       await game.phaseInterceptor.to("MoveEndPhase");
@@ -69,7 +69,7 @@ describe("Items - Multi Lens", () => {
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
 
-    game.move.select(Moves.TACKLE);
+    game.move.select(MoveId.TACKLE);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
 
     await game.phaseInterceptor.to("MoveEndPhase");
@@ -81,7 +81,7 @@ describe("Items - Multi Lens", () => {
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
 
-    game.move.select(Moves.TRAILBLAZE);
+    game.move.select(MoveId.TRAILBLAZE);
 
     await game.phaseInterceptor.to("BerryPhase", false);
     expect(playerPokemon.getStatStage(Stat.SPD)).toBe(2);
@@ -92,21 +92,21 @@ describe("Items - Multi Lens", () => {
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
 
-    game.move.select(Moves.TACHYON_CUTTER);
+    game.move.select(MoveId.TACHYON_CUTTER);
 
     await game.phaseInterceptor.to("BerryPhase", false);
     expect(playerPokemon.turnData.hitCount).toBe(2);
   });
 
   it("should enhance multi-target moves", async () => {
-    game.override.battleStyle("double").moveset([Moves.SWIFT, Moves.SPLASH]);
+    game.override.battleStyle("double").moveset([MoveId.SWIFT, MoveId.SPLASH]);
 
     await game.classicMode.startBattle([Species.MAGIKARP, Species.FEEBAS]);
 
     const [magikarp] = game.scene.getPlayerField();
 
-    game.move.select(Moves.SWIFT, 0);
-    game.move.select(Moves.SPLASH, 1);
+    game.move.select(MoveId.SWIFT, 0);
+    game.move.select(MoveId.SPLASH, 1);
 
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
 
@@ -116,7 +116,7 @@ describe("Items - Multi Lens", () => {
   });
 
   it("should enhance fixed-damage moves while also applying damage reduction", async () => {
-    game.override.startingHeldItems([{ name: "MULTI_LENS", count: 1 }]).moveset(Moves.SEISMIC_TOSS);
+    game.override.startingHeldItems([{ name: "MULTI_LENS", count: 1 }]).moveset(MoveId.SEISMIC_TOSS);
 
     await game.classicMode.startBattle([Species.MAGIKARP]);
 
@@ -124,7 +124,7 @@ describe("Items - Multi Lens", () => {
     const enemyPokemon = game.scene.getEnemyPokemon()!;
     const spy = vi.spyOn(enemyPokemon, "getAttackDamage");
 
-    game.move.select(Moves.SEISMIC_TOSS);
+    game.move.select(MoveId.SEISMIC_TOSS);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
 
     await game.phaseInterceptor.to("MoveEndPhase");
@@ -138,7 +138,7 @@ describe("Items - Multi Lens", () => {
   it("should result in correct damage for hp% attacks with 1 lens", async () => {
     game.override
       .startingHeldItems([{ name: "MULTI_LENS", count: 1 }])
-      .moveset(Moves.SUPER_FANG)
+      .moveset(MoveId.SUPER_FANG)
       .ability(AbilityId.COMPOUND_EYES)
       .enemyLevel(1000)
       .enemySpecies(Species.BLISSEY); // allows for unrealistically high levels of accuracy
@@ -147,7 +147,7 @@ describe("Items - Multi Lens", () => {
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.SUPER_FANG);
+    game.move.select(MoveId.SUPER_FANG);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("MoveEndPhase");
     expect(enemyPokemon.getHpRatio()).toBeCloseTo(0.5, 5);
@@ -156,9 +156,9 @@ describe("Items - Multi Lens", () => {
   it("should result in correct damage for hp% attacks with 2 lenses", async () => {
     game.override
       .startingHeldItems([{ name: "MULTI_LENS", count: 2 }])
-      .moveset(Moves.SUPER_FANG)
+      .moveset(MoveId.SUPER_FANG)
       .ability(AbilityId.COMPOUND_EYES)
-      .enemyMoveset(Moves.SPLASH)
+      .enemyMoveset(MoveId.SPLASH)
       .enemyLevel(1000)
       .enemySpecies(Species.BLISSEY); // allows for unrealistically high levels of accuracy
 
@@ -166,7 +166,7 @@ describe("Items - Multi Lens", () => {
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.SUPER_FANG);
+    game.move.select(MoveId.SUPER_FANG);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("MoveEndPhase");
     expect(enemyPokemon.getHpRatio()).toBeCloseTo(0.5, 5);
@@ -175,10 +175,10 @@ describe("Items - Multi Lens", () => {
   it("should result in correct damage for hp% attacks with 2 lenses + Parental Bond", async () => {
     game.override
       .startingHeldItems([{ name: "MULTI_LENS", count: 2 }])
-      .moveset(Moves.SUPER_FANG)
+      .moveset(MoveId.SUPER_FANG)
       .ability(AbilityId.PARENTAL_BOND)
       .passiveAbility(AbilityId.COMPOUND_EYES)
-      .enemyMoveset(Moves.SPLASH)
+      .enemyMoveset(MoveId.SPLASH)
       .enemyLevel(1000)
       .enemySpecies(Species.BLISSEY); // allows for unrealistically high levels of accuracy
 
@@ -186,7 +186,7 @@ describe("Items - Multi Lens", () => {
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.SUPER_FANG);
+    game.move.select(MoveId.SUPER_FANG);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("MoveEndPhase");
     expect(enemyPokemon.getHpRatio()).toBeCloseTo(0.25, 5);
@@ -199,7 +199,7 @@ describe("Items - Multi Lens", () => {
     const enemyPokemon = game.scene.getEnemyPokemon()!;
     vi.spyOn(enemyPokemon, "damageAndUpdate");
 
-    game.move.select(Moves.FUTURE_SIGHT);
+    game.move.select(MoveId.FUTURE_SIGHT);
     await game.toNextTurn();
 
     game.doSwitchPokemon(1);
@@ -213,15 +213,15 @@ describe("Items - Multi Lens", () => {
   });
 
   it("should not allow Pollen Puff to heal ally more than once", async () => {
-    game.override.battleStyle("double").moveset([Moves.POLLEN_PUFF, Moves.ENDURE]);
+    game.override.battleStyle("double").moveset([MoveId.POLLEN_PUFF, MoveId.ENDURE]);
     await game.classicMode.startBattle([Species.BULBASAUR, Species.OMANYTE]);
 
     const [, rightPokemon] = game.scene.getPlayerField();
 
     rightPokemon.damageAndUpdate(rightPokemon.hp - 1);
 
-    game.move.select(Moves.POLLEN_PUFF, 0, BattlerIndex.PLAYER_2);
-    game.move.select(Moves.ENDURE, 1);
+    game.move.select(MoveId.POLLEN_PUFF, 0, BattlerIndex.PLAYER_2);
+    game.move.select(MoveId.ENDURE, 1);
 
     await game.toNextTurn();
 

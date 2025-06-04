@@ -1,6 +1,6 @@
 import { Biome } from "#enums/biome";
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -25,12 +25,12 @@ describe("Game Over Phase", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.MEMENTO, Moves.ICE_BEAM, Moves.SPLASH])
+      .moveset([MoveId.MEMENTO, MoveId.ICE_BEAM, MoveId.SPLASH])
       .ability(AbilityId.BALL_FETCH)
       .battleStyle("single")
       .disableCrits()
       .enemyAbility(AbilityId.BALL_FETCH)
-      .enemyMoveset(Moves.SPLASH)
+      .enemyMoveset(MoveId.SPLASH)
       .startingWave(200)
       .startingBiome(Biome.END)
       .startingLevel(10000);
@@ -42,11 +42,11 @@ describe("Game Over Phase", () => {
 
     // Note: `game.doKillOpponents()` does not properly handle final boss
     // Final boss phase 1
-    game.move.select(Moves.ICE_BEAM);
+    game.move.select(MoveId.ICE_BEAM);
     await game.toNextTurn();
 
     // Final boss phase 2
-    game.move.select(Moves.ICE_BEAM);
+    game.move.select(MoveId.ICE_BEAM);
     await game.phaseInterceptor.to("PostGameOverPhase", false);
 
     // The game refused to actually give the vouchers during tests,
@@ -63,7 +63,7 @@ describe("Game Over Phase", () => {
     await game.classicMode.startBattle([Species.BULBASAUR]);
     vi.spyOn(game.scene, "validateAchv");
 
-    game.move.select(Moves.MEMENTO);
+    game.move.select(MoveId.MEMENTO);
     await game.phaseInterceptor.to("PostGameOverPhase", false);
 
     expect(game.phaseInterceptor.log.includes("GameOverPhase")).toBe(true);

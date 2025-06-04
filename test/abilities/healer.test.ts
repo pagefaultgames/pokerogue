@@ -1,5 +1,5 @@
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import { StatusEffect } from "#enums/status-effect";
 import GameManager from "#test/testUtils/gameManager";
@@ -30,13 +30,13 @@ describe("Abilities - Healer", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.SPLASH])
+      .moveset([MoveId.SPLASH])
       .ability(AbilityId.BALL_FETCH)
       .battleStyle("double")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .enemyMoveset(Moves.SPLASH);
+      .enemyMoveset(MoveId.SPLASH);
 
     healerAttr = allAbilities[AbilityId.HEALER].getAttrs(PostTurnResetStatusAbAttr)[0];
     healerAttrSpy = vi
@@ -45,14 +45,14 @@ describe("Abilities - Healer", () => {
   });
 
   it("should not queue a message phase for healing if the ally has fainted", async () => {
-    game.override.moveset([Moves.SPLASH, Moves.LUNAR_DANCE]);
+    game.override.moveset([MoveId.SPLASH, MoveId.LUNAR_DANCE]);
     await game.classicMode.startBattle([Species.MAGIKARP, Species.MAGIKARP]);
     const user = game.scene.getPlayerPokemon()!;
     // Only want one magikarp to have the ability.
     vi.spyOn(user, "getAbility").mockReturnValue(allAbilities[AbilityId.HEALER]);
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     // faint the ally
-    game.move.select(Moves.LUNAR_DANCE, 1);
+    game.move.select(MoveId.LUNAR_DANCE, 1);
     const abSpy = vi.spyOn(healerAttr, "canApplyPostTurn");
     await game.phaseInterceptor.to("TurnEndPhase");
 
@@ -70,8 +70,8 @@ describe("Abilities - Healer", () => {
     // Only want one magikarp to have the ability.
     vi.spyOn(user, "getAbility").mockReturnValue(allAbilities[AbilityId.HEALER]);
     expect(ally.trySetStatus(StatusEffect.BURN)).toBe(true);
-    game.move.select(Moves.SPLASH);
-    game.move.select(Moves.SPLASH, 1);
+    game.move.select(MoveId.SPLASH);
+    game.move.select(MoveId.SPLASH, 1);
 
     await game.phaseInterceptor.to("TurnEndPhase");
     await game.toNextTurn();
@@ -86,8 +86,8 @@ describe("Abilities - Healer", () => {
     // Only want one magikarp to have the ability.
     vi.spyOn(user, "getAbility").mockReturnValue(allAbilities[AbilityId.HEALER]);
     expect(ally.trySetStatus(StatusEffect.BURN)).toBe(true);
-    game.move.select(Moves.SPLASH);
-    game.move.select(Moves.SPLASH, 1);
+    game.move.select(MoveId.SPLASH);
+    game.move.select(MoveId.SPLASH, 1);
     await game.phaseInterceptor.to("TurnEndPhase");
     await game.toNextTurn();
 

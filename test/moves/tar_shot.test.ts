@@ -1,6 +1,6 @@
 import { BattlerIndex } from "#app/battle";
 import { PokemonType } from "#enums/pokemon-type";
-import { Moves } from "#app/enums/moves";
+import { MoveId } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
 import { Stat } from "#app/enums/stat";
 import { AbilityId } from "#enums/ability-id";
@@ -26,10 +26,10 @@ describe("Moves - Tar Shot", () => {
     game.override
       .battleStyle("single")
       .enemyAbility(AbilityId.BALL_FETCH)
-      .enemyMoveset(Moves.SPLASH)
+      .enemyMoveset(MoveId.SPLASH)
       .enemySpecies(Species.TANGELA)
       .enemyLevel(1000)
-      .moveset([Moves.TAR_SHOT, Moves.FIRE_PUNCH])
+      .moveset([MoveId.TAR_SHOT, MoveId.FIRE_PUNCH])
       .disableCrits();
   });
 
@@ -40,14 +40,14 @@ describe("Moves - Tar Shot", () => {
 
     vi.spyOn(enemy, "getMoveEffectiveness");
 
-    game.move.select(Moves.TAR_SHOT);
+    game.move.select(MoveId.TAR_SHOT);
 
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(enemy.getStatStage(Stat.SPD)).toBe(-1);
 
     await game.toNextTurn();
 
-    game.move.select(Moves.FIRE_PUNCH);
+    game.move.select(MoveId.FIRE_PUNCH);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
 
     await game.phaseInterceptor.to("MoveEndPhase");
@@ -61,21 +61,21 @@ describe("Moves - Tar Shot", () => {
 
     vi.spyOn(enemy, "getMoveEffectiveness");
 
-    game.move.select(Moves.TAR_SHOT);
+    game.move.select(MoveId.TAR_SHOT);
 
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(enemy.getStatStage(Stat.SPD)).toBe(-1);
 
     await game.toNextTurn();
 
-    game.move.select(Moves.TAR_SHOT);
+    game.move.select(MoveId.TAR_SHOT);
 
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(enemy.getStatStage(Stat.SPD)).toBe(-2);
 
     await game.toNextTurn();
 
-    game.move.select(Moves.FIRE_PUNCH);
+    game.move.select(MoveId.FIRE_PUNCH);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
 
     await game.phaseInterceptor.to("MoveEndPhase");
@@ -92,14 +92,14 @@ describe("Moves - Tar Shot", () => {
 
     vi.spyOn(enemy, "getMoveEffectiveness");
 
-    game.move.select(Moves.TAR_SHOT);
+    game.move.select(MoveId.TAR_SHOT);
 
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(enemy.getStatStage(Stat.SPD)).toBe(-1);
 
     await game.toNextTurn();
 
-    game.move.select(Moves.FIRE_PUNCH);
+    game.move.select(MoveId.FIRE_PUNCH);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
 
     await game.phaseInterceptor.to("MoveEndPhase");
@@ -114,7 +114,7 @@ describe("Moves - Tar Shot", () => {
 
     vi.spyOn(enemy, "getMoveEffectiveness");
 
-    game.move.select(Moves.TAR_SHOT);
+    game.move.select(MoveId.TAR_SHOT);
 
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(enemy.getStatStage(Stat.SPD)).toBe(-1);
@@ -124,7 +124,7 @@ describe("Moves - Tar Shot", () => {
     enemy.teraType = PokemonType.GRASS;
     enemy.isTerastallized = true;
 
-    game.move.select(Moves.FIRE_PUNCH);
+    game.move.select(MoveId.FIRE_PUNCH);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
 
     await game.phaseInterceptor.to("MoveEndPhase");

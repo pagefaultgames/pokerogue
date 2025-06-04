@@ -1,7 +1,7 @@
 import { allMoves } from "#app/data/data-lists";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -25,21 +25,21 @@ describe("Moves - Hard Press", () => {
   });
 
   beforeEach(() => {
-    moveToCheck = allMoves[Moves.HARD_PRESS];
+    moveToCheck = allMoves[MoveId.HARD_PRESS];
     game = new GameManager(phaserGame);
     game.override.battleStyle("single");
     game.override.ability(AbilityId.BALL_FETCH);
     game.override.enemySpecies(Species.MUNCHLAX);
     game.override.enemyAbility(AbilityId.BALL_FETCH);
-    game.override.enemyMoveset(Moves.SPLASH);
-    game.override.moveset([Moves.HARD_PRESS]);
+    game.override.enemyMoveset(MoveId.SPLASH);
+    game.override.moveset([MoveId.HARD_PRESS]);
     vi.spyOn(moveToCheck, "calculateBattlePower");
   });
 
   it("should return 100 power if target HP ratio is at 100%", async () => {
     await game.classicMode.startBattle([Species.PIKACHU]);
 
-    game.move.select(Moves.HARD_PRESS);
+    game.move.select(MoveId.HARD_PRESS);
     await game.phaseInterceptor.to(MoveEffectPhase);
 
     expect(moveToCheck.calculateBattlePower).toHaveReturnedWith(100);
@@ -52,7 +52,7 @@ describe("Moves - Hard Press", () => {
 
     vi.spyOn(enemy, "getHpRatio").mockReturnValue(targetHpRatio);
 
-    game.move.select(Moves.HARD_PRESS);
+    game.move.select(MoveId.HARD_PRESS);
     await game.phaseInterceptor.to(MoveEffectPhase);
 
     expect(moveToCheck.calculateBattlePower).toHaveReturnedWith(50);
@@ -65,7 +65,7 @@ describe("Moves - Hard Press", () => {
 
     vi.spyOn(enemy, "getHpRatio").mockReturnValue(targetHpRatio);
 
-    game.move.select(Moves.HARD_PRESS);
+    game.move.select(MoveId.HARD_PRESS);
     await game.phaseInterceptor.to(MoveEffectPhase);
 
     expect(moveToCheck.calculateBattlePower).toHaveReturnedWith(1);
@@ -78,7 +78,7 @@ describe("Moves - Hard Press", () => {
 
     vi.spyOn(enemy, "getHpRatio").mockReturnValue(targetHpRatio);
 
-    game.move.select(Moves.HARD_PRESS);
+    game.move.select(MoveId.HARD_PRESS);
     await game.phaseInterceptor.to(MoveEffectPhase);
 
     expect(moveToCheck.calculateBattlePower).toHaveReturnedWith(1);

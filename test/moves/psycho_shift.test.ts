@@ -1,6 +1,6 @@
 import { StatusEffect } from "#app/enums/status-effect";
 import { AbilityId } from "#enums/ability-id";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -23,7 +23,7 @@ describe("Moves - Psycho Shift", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.PSYCHO_SHIFT])
+      .moveset([MoveId.PSYCHO_SHIFT])
       .ability(AbilityId.BALL_FETCH)
       .statusEffect(StatusEffect.POISON)
       .battleStyle("single")
@@ -31,7 +31,7 @@ describe("Moves - Psycho Shift", () => {
       .enemySpecies(Species.MAGIKARP)
       .enemyLevel(20)
       .enemyAbility(AbilityId.SYNCHRONIZE)
-      .enemyMoveset(Moves.SPLASH);
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   it("If Psycho Shift is used on a Pokémon with Synchronize, the user of Psycho Shift will already be afflicted with a status condition when Synchronize activates", async () => {
@@ -41,7 +41,7 @@ describe("Moves - Psycho Shift", () => {
     const enemyPokemon = game.scene.getEnemyPokemon();
     expect(enemyPokemon?.status).toBeUndefined();
 
-    game.move.select(Moves.PSYCHO_SHIFT);
+    game.move.select(MoveId.PSYCHO_SHIFT);
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(playerPokemon?.status).toBeNull();
     expect(enemyPokemon?.status).toBeDefined();
