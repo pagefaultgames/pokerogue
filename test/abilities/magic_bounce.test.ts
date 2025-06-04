@@ -173,12 +173,13 @@ describe("Abilities - Magic Bounce", () => {
   it("should not cause encore to be interrupted after bouncing", async () => {
     game.override.moveset([Moves.SPLASH, Moves.GROWL, Moves.ENCORE]);
     game.override.enemyMoveset([Moves.TACKLE, Moves.GROWL]);
+    // game.override.ability(Abilities.MOLD_BREAKER);
     await game.classicMode.startBattle([Species.MAGIKARP]);
     const playerPokemon = game.scene.getPlayerPokemon()!;
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
     // Give the player MOLD_BREAKER for this turn to bypass Magic Bounce.
-    game.field.mockAbility(playerPokemon, Abilities.MOLD_BREAKER);
+    vi.spyOn(playerPokemon, "getAbility").mockReturnValue(allAbilities[Abilities.MOLD_BREAKER]);
 
     // turn 1
     game.move.select(Moves.ENCORE);
@@ -188,7 +189,7 @@ describe("Abilities - Magic Bounce", () => {
     expect(enemyPokemon.getTag(BattlerTagType.ENCORE)!["moveId"]).toBe(Moves.TACKLE);
 
     // turn 2
-    game.field.mockAbility(playerPokemon, Abilities.MAGIC_BOUNCE);
+    vi.spyOn(playerPokemon, "getAbility").mockRestore();
     game.move.select(Moves.GROWL);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("BerryPhase");
