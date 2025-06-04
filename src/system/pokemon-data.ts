@@ -8,16 +8,16 @@ import { Status } from "../data/status-effect";
 import Pokemon, { EnemyPokemon, PokemonBattleData, PokemonMove, PokemonSummonData } from "../field/pokemon";
 import { TrainerSlot } from "#enums/trainer-slot";
 import type { Variant } from "#app/sprites/variant";
-import type { Biome } from "#enums/biome";
-import type { Moves } from "#enums/moves";
-import type { Species } from "#enums/species";
+import type { BiomeId } from "#enums/biome-id";
+import type { MoveId } from "#enums/move-id";
+import type { SpeciesId } from "#enums/species-id";
 import { CustomPokemonData } from "#app/data/custom-pokemon-data";
 import type { PokemonType } from "#enums/pokemon-type";
 
 export default class PokemonData {
   public id: number;
   public player: boolean;
-  public species: Species;
+  public species: SpeciesId;
   public nickname: string;
   public formIndex: number;
   public abilityIndex: number;
@@ -37,18 +37,18 @@ export default class PokemonData {
   public status: Status | null;
   public friendship: number;
   public metLevel: number;
-  public metBiome: Biome | -1; // -1 for starters
-  public metSpecies: Species;
+  public metBiome: BiomeId | -1; // -1 for starters
+  public metSpecies: SpeciesId;
   public metWave: number; // 0 for unknown (previous saves), -1 for starters
   public luck: number;
   public pauseEvolutions: boolean;
   public pokerus: boolean;
-  public usedTMs: Moves[];
+  public usedTMs: MoveId[];
   public teraType: PokemonType;
   public isTerastallized: boolean;
   public stellarTypesBoosted: PokemonType[];
 
-  public fusionSpecies: Species;
+  public fusionSpecies: SpeciesId;
   public fusionFormIndex: number;
   public fusionAbilityIndex: number;
   public fusionShiny: boolean;
