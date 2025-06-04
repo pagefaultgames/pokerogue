@@ -8,7 +8,7 @@ import { getMoveTargets } from "#app/data/moves/move";
 import { speciesStarterCosts } from "#app/data/balance/starters";
 import { AbilityId } from "#enums/ability-id";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
-import { Biome } from "#app/enums/biome";
+import { BiomeId } from "#app/enums/biome";
 import { MoveId } from "#enums/move-id";
 import { PokeballType } from "#enums/pokeball";
 import type { PlayerPokemon, TurnMove } from "#app/field/pokemon";
@@ -44,7 +44,7 @@ export class CommandPhase extends FieldPhase {
     const cursorResetEvent =
       globalScene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER ||
       globalScene.currentBattle.battleType === BattleType.TRAINER ||
-      globalScene.arena.biomeType === Biome.END;
+      globalScene.arena.biomeType === BiomeId.END;
 
     if (commandUiHandler) {
       if (
@@ -241,7 +241,7 @@ export class CommandPhase extends FieldPhase {
             .some(p => !globalScene.gameData.dexData[p.species.speciesId].caughtAttr) &&
           globalScene.gameData.getStarterCount(d => !!d.caughtAttr) < Object.keys(speciesStarterCosts).length - 1;
         if (
-          globalScene.arena.biomeType === Biome.END &&
+          globalScene.arena.biomeType === BiomeId.END &&
           (!globalScene.gameMode.isClassic || globalScene.gameMode.isFreshStartChallenge() || notInDex)
         ) {
           globalScene.ui.setMode(UiMode.COMMAND, this.fieldIndex);
@@ -344,7 +344,7 @@ export class CommandPhase extends FieldPhase {
         const mysteryEncounterFleeAllowed = currentBattle.mysteryEncounter?.fleeAllowed;
         if (
           !isSwitch &&
-          (arena.biomeType === Biome.END ||
+          (arena.biomeType === BiomeId.END ||
             (!isNullOrUndefined(mysteryEncounterFleeAllowed) && !mysteryEncounterFleeAllowed))
         ) {
           globalScene.ui.setMode(UiMode.COMMAND, this.fieldIndex);

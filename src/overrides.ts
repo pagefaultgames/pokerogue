@@ -8,7 +8,7 @@ import { Unlockables } from "#app/system/unlockables";
 import { AbilityId } from "#enums/ability-id";
 import { BattleType } from "#enums/battle-type";
 import { BerryType } from "#enums/berry-type";
-import { Biome } from "#enums/biome";
+import { BiomeId } from "#enums/biome";
 import { EggTier } from "#enums/egg-type";
 import { MoveId } from "#enums/move-id";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
@@ -73,7 +73,7 @@ class DefaultOverrides {
    */
   readonly BATTLE_STYLE_OVERRIDE: BattleStyle | null = null;
   readonly STARTING_WAVE_OVERRIDE: number = 0;
-  readonly STARTING_BIOME_OVERRIDE: Biome | null = null;
+  readonly STARTING_BIOME_OVERRIDE: BiomeId | null = null;
   readonly ARENA_TINT_OVERRIDE: TimeOfDay | null = null;
   /** Multiplies XP gained by this value including 0. Set to null to ignore the override. */
   readonly XP_MULTIPLIER_OVERRIDE: number | null = null;

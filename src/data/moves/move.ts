@@ -1,31 +1,31 @@
 import { ChargeAnim, MoveChargeAnim } from "../battle-anims";
 import {
-  CommandedTag,
-  EncoreTag,
-  GulpMissileTag,
-  HelpingHandTag,
-  SemiInvulnerableTag,
-  ShellTrapTag,
-  StockpilingTag,
-  SubstituteTag,
-  TrappedTag,
-  TypeBoostTag,
+    CommandedTag,
+    EncoreTag,
+    GulpMissileTag,
+    HelpingHandTag,
+    SemiInvulnerableTag,
+    ShellTrapTag,
+    StockpilingTag,
+    SubstituteTag,
+    TrappedTag,
+    TypeBoostTag,
 } from "../battler-tags";
 import { getPokemonNameWithAffix } from "../../messages";
 import type { AttackMoveResult, TurnMove } from "../../field/pokemon";
 import type Pokemon from "../../field/pokemon";
 import {
-  EnemyPokemon,
-  FieldPosition,
-  HitResult,
-  MoveResult,
-  PlayerPokemon,
-  PokemonMove,
+    EnemyPokemon,
+    FieldPosition,
+    HitResult,
+    MoveResult,
+    PlayerPokemon,
+    PokemonMove,
 } from "../../field/pokemon";
 import {
-  getNonVolatileStatusEffects,
-  getStatusEffectHealText,
-  isNonVolatileStatusEffect,
+    getNonVolatileStatusEffects,
+    getStatusEffectHealText,
+    isNonVolatileStatusEffect,
 } from "../status-effect";
 import { getTypeDamageMultiplier } from "../type";
 import { PokemonType } from "#enums/pokemon-type";
@@ -34,46 +34,46 @@ import { WeatherType } from "#enums/weather-type";
 import type { ArenaTrapTag } from "../arena-tag";
 import { ArenaTagSide, WeakenMoveTypeTag } from "../arena-tag";
 import {
-  AllyMoveCategoryPowerBoostAbAttr,
-  applyAbAttrs,
-  applyPostAttackAbAttrs,
-  applyPostItemLostAbAttrs,
-  applyPreAttackAbAttrs,
-  applyPreDefendAbAttrs,
-  BlockItemTheftAbAttr,
-  BlockNonDirectDamageAbAttr,
-  BlockOneHitKOAbAttr,
-  BlockRecoilDamageAttr,
-  ChangeMovePriorityAbAttr,
-  ConfusionOnStatusEffectAbAttr,
-  FieldMoveTypePowerBoostAbAttr,
-  FieldPreventExplosiveMovesAbAttr,
-  ForceSwitchOutImmunityAbAttr,
-  HealFromBerryUseAbAttr,
-  IgnoreContactAbAttr,
-  IgnoreMoveEffectsAbAttr,
-  IgnoreProtectOnContactAbAttr,
-  InfiltratorAbAttr,
-  MaxMultiHitAbAttr,
-  MoveAbilityBypassAbAttr,
-  MoveEffectChanceMultiplierAbAttr,
-  MoveTypeChangeAbAttr,
-  PostDamageForceSwitchAbAttr,
-  PostItemLostAbAttr,
-  ReflectStatusMoveAbAttr,
-  ReverseDrainAbAttr,
-  UserFieldMoveTypePowerBoostAbAttr,
-  VariableMovePowerAbAttr,
-  WonderSkinAbAttr,
+    AllyMoveCategoryPowerBoostAbAttr,
+    applyAbAttrs,
+    applyPostAttackAbAttrs,
+    applyPostItemLostAbAttrs,
+    applyPreAttackAbAttrs,
+    applyPreDefendAbAttrs,
+    BlockItemTheftAbAttr,
+    BlockNonDirectDamageAbAttr,
+    BlockOneHitKOAbAttr,
+    BlockRecoilDamageAttr,
+    ChangeMovePriorityAbAttr,
+    ConfusionOnStatusEffectAbAttr,
+    FieldMoveTypePowerBoostAbAttr,
+    FieldPreventExplosiveMovesAbAttr,
+    ForceSwitchOutImmunityAbAttr,
+    HealFromBerryUseAbAttr,
+    IgnoreContactAbAttr,
+    IgnoreMoveEffectsAbAttr,
+    IgnoreProtectOnContactAbAttr,
+    InfiltratorAbAttr,
+    MaxMultiHitAbAttr,
+    MoveAbilityBypassAbAttr,
+    MoveEffectChanceMultiplierAbAttr,
+    MoveTypeChangeAbAttr,
+    PostDamageForceSwitchAbAttr,
+    PostItemLostAbAttr,
+    ReflectStatusMoveAbAttr,
+    ReverseDrainAbAttr,
+    UserFieldMoveTypePowerBoostAbAttr,
+    VariableMovePowerAbAttr,
+    WonderSkinAbAttr,
 } from "../abilities/ability";
 import { allAbilities, allMoves } from "../data-lists";
 import {
-  AttackTypeBoosterModifier,
-  BerryModifier,
-  PokemonHeldItemModifier,
-  PokemonMoveAccuracyBoosterModifier,
-  PokemonMultiHitModifier,
-  PreserveBerryModifier,
+    AttackTypeBoosterModifier,
+    BerryModifier,
+    PokemonHeldItemModifier,
+    PokemonMoveAccuracyBoosterModifier,
+    PokemonMultiHitModifier,
+    PreserveBerryModifier,
 } from "../../modifier/modifier";
 import type { BattlerIndex } from "../../battle";
 import { BattleType } from "#enums/battle-type";
@@ -86,16 +86,16 @@ import { getBerryEffectFunc } from "../berry";
 import { AbilityId } from "#enums/ability-id";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
-import { Biome } from "#enums/biome";
+import { BiomeId } from "#enums/biome";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { MoveUsedEvent } from "#app/events/battle-scene";
 import {
-  BATTLE_STATS,
-  type BattleStat,
-  type EffectiveStat,
-  getStatKey,
-  Stat,
+    BATTLE_STATS,
+    type BattleStat,
+    type EffectiveStat,
+    getStatKey,
+    Stat,
 } from "#app/enums/stat";
 import { BattleEndPhase } from "#app/phases/battle-end-phase";
 import { MoveEndPhase } from "#app/phases/move-end-phase";
@@ -3334,65 +3334,65 @@ export class SecretPowerAttr extends MoveEffectAttr {
    * Cave, Wasteland, Graveyard, Abyss, Space                        | Flinch
    * End                                                             | Def -1
    * ```
-   * @param biome - The current {@linkcode Biome} the battle is set in
+   * @param biome - The current {@linkcode BiomeId} the battle is set in
    * @returns the chosen secondary effect {@linkcode MoveEffectAttr}
    */
-  private determineBiomeEffect(biome: Biome): MoveEffectAttr {
+  private determineBiomeEffect(biome: BiomeId): MoveEffectAttr {
     let secondaryEffect: MoveEffectAttr;
     switch (biome) {
-      case Biome.PLAINS:
-      case Biome.GRASS:
-      case Biome.TALL_GRASS:
-      case Biome.FOREST:
-      case Biome.JUNGLE:
-      case Biome.MEADOW:
+      case BiomeId.PLAINS:
+      case BiomeId.GRASS:
+      case BiomeId.TALL_GRASS:
+      case BiomeId.FOREST:
+      case BiomeId.JUNGLE:
+      case BiomeId.MEADOW:
         secondaryEffect = new StatusEffectAttr(StatusEffect.SLEEP, false);
         break;
-      case Biome.SWAMP:
-      case Biome.MOUNTAIN:
-      case Biome.TEMPLE:
-      case Biome.RUINS:
+      case BiomeId.SWAMP:
+      case BiomeId.MOUNTAIN:
+      case BiomeId.TEMPLE:
+      case BiomeId.RUINS:
         secondaryEffect = new StatStageChangeAttr([ Stat.SPD ], -1, false);
         break;
-      case Biome.ICE_CAVE:
-      case Biome.SNOWY_FOREST:
+      case BiomeId.ICE_CAVE:
+      case BiomeId.SNOWY_FOREST:
         secondaryEffect = new StatusEffectAttr(StatusEffect.FREEZE, false);
         break;
-      case Biome.VOLCANO:
+      case BiomeId.VOLCANO:
         secondaryEffect = new StatusEffectAttr(StatusEffect.BURN, false);
         break;
-      case Biome.FAIRY_CAVE:
+      case BiomeId.FAIRY_CAVE:
         secondaryEffect = new StatStageChangeAttr([ Stat.SPATK ], -1, false);
         break;
-      case Biome.DESERT:
-      case Biome.CONSTRUCTION_SITE:
-      case Biome.BEACH:
-      case Biome.ISLAND:
-      case Biome.BADLANDS:
+      case BiomeId.DESERT:
+      case BiomeId.CONSTRUCTION_SITE:
+      case BiomeId.BEACH:
+      case BiomeId.ISLAND:
+      case BiomeId.BADLANDS:
         secondaryEffect = new StatStageChangeAttr([ Stat.ACC ], -1, false);
         break;
-      case Biome.SEA:
-      case Biome.LAKE:
-      case Biome.SEABED:
+      case BiomeId.SEA:
+      case BiomeId.LAKE:
+      case BiomeId.SEABED:
         secondaryEffect = new StatStageChangeAttr([ Stat.ATK ], -1, false);
         break;
-      case Biome.CAVE:
-      case Biome.WASTELAND:
-      case Biome.GRAVEYARD:
-      case Biome.ABYSS:
-      case Biome.SPACE:
+      case BiomeId.CAVE:
+      case BiomeId.WASTELAND:
+      case BiomeId.GRAVEYARD:
+      case BiomeId.ABYSS:
+      case BiomeId.SPACE:
         secondaryEffect = new AddBattlerTagAttr(BattlerTagType.FLINCHED, false, true);
         break;
-      case Biome.END:
+      case BiomeId.END:
         secondaryEffect = new StatStageChangeAttr([ Stat.DEF ], -1, false);
         break;
-      case Biome.TOWN:
-      case Biome.METROPOLIS:
-      case Biome.SLUM:
-      case Biome.DOJO:
-      case Biome.FACTORY:
-      case Biome.LABORATORY:
-      case Biome.POWER_PLANT:
+      case BiomeId.TOWN:
+      case BiomeId.METROPOLIS:
+      case BiomeId.SLUM:
+      case BiomeId.DOJO:
+      case BiomeId.FACTORY:
+      case BiomeId.LABORATORY:
+      case BiomeId.POWER_PLANT:
       default:
         secondaryEffect = new StatusEffectAttr(StatusEffect.PARALYSIS, false);
         break;
@@ -6593,63 +6593,63 @@ export class CopyBiomeTypeAttr extends MoveEffectAttr {
 
   /**
    * Retrieves a type from the current biome
-   * @param biomeType {@linkcode Biome}
+   * @param biomeType {@linkcode BiomeId}
    * @returns {@linkcode Type}
    */
-  private getTypeForBiome(biomeType: Biome): PokemonType {
+  private getTypeForBiome(biomeType: BiomeId): PokemonType {
     switch (biomeType) {
-      case Biome.TOWN:
-      case Biome.PLAINS:
-      case Biome.METROPOLIS:
+      case BiomeId.TOWN:
+      case BiomeId.PLAINS:
+      case BiomeId.METROPOLIS:
         return PokemonType.NORMAL;
-      case Biome.GRASS:
-      case Biome.TALL_GRASS:
+      case BiomeId.GRASS:
+      case BiomeId.TALL_GRASS:
         return PokemonType.GRASS;
-      case Biome.FOREST:
-      case Biome.JUNGLE:
+      case BiomeId.FOREST:
+      case BiomeId.JUNGLE:
         return PokemonType.BUG;
-      case Biome.SLUM:
-      case Biome.SWAMP:
+      case BiomeId.SLUM:
+      case BiomeId.SWAMP:
         return PokemonType.POISON;
-      case Biome.SEA:
-      case Biome.BEACH:
-      case Biome.LAKE:
-      case Biome.SEABED:
+      case BiomeId.SEA:
+      case BiomeId.BEACH:
+      case BiomeId.LAKE:
+      case BiomeId.SEABED:
         return PokemonType.WATER;
-      case Biome.MOUNTAIN:
+      case BiomeId.MOUNTAIN:
         return PokemonType.FLYING;
-      case Biome.BADLANDS:
+      case BiomeId.BADLANDS:
         return PokemonType.GROUND;
-      case Biome.CAVE:
-      case Biome.DESERT:
+      case BiomeId.CAVE:
+      case BiomeId.DESERT:
         return PokemonType.ROCK;
-      case Biome.ICE_CAVE:
-      case Biome.SNOWY_FOREST:
+      case BiomeId.ICE_CAVE:
+      case BiomeId.SNOWY_FOREST:
         return PokemonType.ICE;
-      case Biome.MEADOW:
-      case Biome.FAIRY_CAVE:
-      case Biome.ISLAND:
+      case BiomeId.MEADOW:
+      case BiomeId.FAIRY_CAVE:
+      case BiomeId.ISLAND:
         return PokemonType.FAIRY;
-      case Biome.POWER_PLANT:
+      case BiomeId.POWER_PLANT:
         return PokemonType.ELECTRIC;
-      case Biome.VOLCANO:
+      case BiomeId.VOLCANO:
         return PokemonType.FIRE;
-      case Biome.GRAVEYARD:
-      case Biome.TEMPLE:
+      case BiomeId.GRAVEYARD:
+      case BiomeId.TEMPLE:
         return PokemonType.GHOST;
-      case Biome.DOJO:
-      case Biome.CONSTRUCTION_SITE:
+      case BiomeId.DOJO:
+      case BiomeId.CONSTRUCTION_SITE:
         return PokemonType.FIGHTING;
-      case Biome.FACTORY:
-      case Biome.LABORATORY:
+      case BiomeId.FACTORY:
+      case BiomeId.LABORATORY:
         return PokemonType.STEEL;
-      case Biome.RUINS:
-      case Biome.SPACE:
+      case BiomeId.RUINS:
+      case BiomeId.SPACE:
         return PokemonType.PSYCHIC;
-      case Biome.WASTELAND:
-      case Biome.END:
+      case BiomeId.WASTELAND:
+      case BiomeId.END:
         return PokemonType.DRAGON;
-      case Biome.ABYSS:
+      case BiomeId.ABYSS:
         return PokemonType.DARK;
       default:
         return PokemonType.UNKNOWN;
@@ -6845,109 +6845,109 @@ export class NaturePowerAttr extends OverrideMoveEffectAttr {
     // this allows terrains to 'override' the biome move
       case TerrainType.NONE:
         switch (globalScene.arena.biomeType) {
-          case Biome.TOWN:
+          case BiomeId.TOWN:
             moveId = MoveId.ROUND;
             break;
-          case Biome.METROPOLIS:
+          case BiomeId.METROPOLIS:
             moveId = MoveId.TRI_ATTACK;
             break;
-          case Biome.SLUM:
+          case BiomeId.SLUM:
             moveId = MoveId.SLUDGE_BOMB;
             break;
-          case Biome.PLAINS:
+          case BiomeId.PLAINS:
             moveId = MoveId.SILVER_WIND;
             break;
-          case Biome.GRASS:
+          case BiomeId.GRASS:
             moveId = MoveId.GRASS_KNOT;
             break;
-          case Biome.TALL_GRASS:
+          case BiomeId.TALL_GRASS:
             moveId = MoveId.POLLEN_PUFF;
             break;
-          case Biome.MEADOW:
+          case BiomeId.MEADOW:
             moveId = MoveId.GIGA_DRAIN;
             break;
-          case Biome.FOREST:
+          case BiomeId.FOREST:
             moveId = MoveId.BUG_BUZZ;
             break;
-          case Biome.JUNGLE:
+          case BiomeId.JUNGLE:
             moveId = MoveId.LEAF_STORM;
             break;
-          case Biome.SEA:
+          case BiomeId.SEA:
             moveId = MoveId.HYDRO_PUMP;
             break;
-          case Biome.SWAMP:
+          case BiomeId.SWAMP:
             moveId = MoveId.MUD_BOMB;
             break;
-          case Biome.BEACH:
+          case BiomeId.BEACH:
             moveId = MoveId.SCALD;
             break;
-          case Biome.LAKE:
+          case BiomeId.LAKE:
             moveId = MoveId.BUBBLE_BEAM;
             break;
-          case Biome.SEABED:
+          case BiomeId.SEABED:
             moveId = MoveId.BRINE;
             break;
-          case Biome.ISLAND:
+          case BiomeId.ISLAND:
             moveId = MoveId.LEAF_TORNADO;
             break;
-          case Biome.MOUNTAIN:
+          case BiomeId.MOUNTAIN:
             moveId = MoveId.AIR_SLASH;
             break;
-          case Biome.BADLANDS:
+          case BiomeId.BADLANDS:
             moveId = MoveId.EARTH_POWER;
             break;
-          case Biome.DESERT:
+          case BiomeId.DESERT:
             moveId = MoveId.SCORCHING_SANDS;
             break;
-          case Biome.WASTELAND:
+          case BiomeId.WASTELAND:
             moveId = MoveId.DRAGON_PULSE;
             break;
-          case Biome.CONSTRUCTION_SITE:
+          case BiomeId.CONSTRUCTION_SITE:
             moveId = MoveId.STEEL_BEAM;
             break;
-          case Biome.CAVE:
+          case BiomeId.CAVE:
             moveId = MoveId.POWER_GEM;
             break;
-          case Biome.ICE_CAVE:
+          case BiomeId.ICE_CAVE:
             moveId = MoveId.ICE_BEAM;
             break;
-          case Biome.SNOWY_FOREST:
+          case BiomeId.SNOWY_FOREST:
             moveId = MoveId.FROST_BREATH;
             break;
-          case Biome.VOLCANO:
+          case BiomeId.VOLCANO:
             moveId = MoveId.LAVA_PLUME;
             break;
-          case Biome.GRAVEYARD:
+          case BiomeId.GRAVEYARD:
             moveId = MoveId.SHADOW_BALL;
             break;
-          case Biome.RUINS:
+          case BiomeId.RUINS:
             moveId = MoveId.ANCIENT_POWER;
             break;
-          case Biome.TEMPLE:
+          case BiomeId.TEMPLE:
             moveId = MoveId.EXTRASENSORY;
             break;
-          case Biome.DOJO:
+          case BiomeId.DOJO:
             moveId = MoveId.FOCUS_BLAST;
             break;
-          case Biome.FAIRY_CAVE:
+          case BiomeId.FAIRY_CAVE:
             moveId = MoveId.ALLURING_VOICE;
             break;
-          case Biome.ABYSS:
+          case BiomeId.ABYSS:
             moveId = MoveId.OMINOUS_WIND;
             break;
-          case Biome.SPACE:
+          case BiomeId.SPACE:
             moveId = MoveId.DRACO_METEOR;
             break;
-          case Biome.FACTORY:
+          case BiomeId.FACTORY:
             moveId = MoveId.FLASH_CANNON;
             break;
-          case Biome.LABORATORY:
+          case BiomeId.LABORATORY:
             moveId = MoveId.ZAP_CANNON;
             break;
-          case Biome.POWER_PLANT:
+          case BiomeId.POWER_PLANT:
             moveId = MoveId.CHARGE_BEAM;
             break;
-          case Biome.END:
+          case BiomeId.END:
             moveId = MoveId.ETERNABEAM;
             break;
         }

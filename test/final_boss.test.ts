@@ -1,7 +1,7 @@
 import { GameModes } from "#app/game-mode";
 import { TurnHeldItemTransferModifier } from "#app/modifier/modifier";
 import { AbilityId } from "#enums/ability-id";
-import { Biome } from "#enums/biome";
+import { BiomeId } from "#enums/biome";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
@@ -26,7 +26,7 @@ describe("Final Boss", () => {
     game = new GameManager(phaserGame);
     game.override
       .startingWave(FinalWave.Classic)
-      .startingBiome(Biome.END)
+      .startingBiome(BiomeId.END)
       .disableCrits()
       .enemyMoveset(MoveId.SPLASH)
       .moveset([MoveId.SPLASH, MoveId.WILL_O_WISP, MoveId.DRAGON_PULSE])
@@ -41,7 +41,7 @@ describe("Final Boss", () => {
     await game.runToFinalBossEncounter([SpeciesId.BIDOOF], GameModes.CLASSIC);
 
     expect(game.scene.currentBattle.waveIndex).toBe(FinalWave.Classic);
-    expect(game.scene.arena.biomeType).toBe(Biome.END);
+    expect(game.scene.arena.biomeType).toBe(BiomeId.END);
     expect(game.scene.getEnemyPokemon()!.species.speciesId).toBe(SpeciesId.ETERNATUS);
   });
 
@@ -50,16 +50,16 @@ describe("Final Boss", () => {
     await game.runToFinalBossEncounter([SpeciesId.BIDOOF], GameModes.CLASSIC);
 
     expect(game.scene.currentBattle.waveIndex).not.toBe(FinalWave.Classic);
-    expect(game.scene.arena.biomeType).toBe(Biome.END);
+    expect(game.scene.arena.biomeType).toBe(BiomeId.END);
     expect(game.scene.getEnemyPokemon()!.species.speciesId).not.toBe(SpeciesId.ETERNATUS);
   });
 
   it("should NOT spawn Eternatus outside of END biome", async () => {
-    game.override.startingBiome(Biome.FOREST);
+    game.override.startingBiome(BiomeId.FOREST);
     await game.runToFinalBossEncounter([SpeciesId.BIDOOF], GameModes.CLASSIC);
 
     expect(game.scene.currentBattle.waveIndex).toBe(FinalWave.Classic);
-    expect(game.scene.arena.biomeType).not.toBe(Biome.END);
+    expect(game.scene.arena.biomeType).not.toBe(BiomeId.END);
     expect(game.scene.getEnemyPokemon()!.species.speciesId).not.toBe(SpeciesId.ETERNATUS);
   });
 

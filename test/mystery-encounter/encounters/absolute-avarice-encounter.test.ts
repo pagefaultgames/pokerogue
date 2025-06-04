@@ -1,4 +1,4 @@
-import { Biome } from "#app/enums/biome";
+import { BiomeId } from "#app/enums/biome";
 import { MysteryEncounterType } from "#app/enums/mystery-encounter-type";
 import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
@@ -23,7 +23,7 @@ import i18next from "i18next";
 
 const namespace = "mysteryEncounters/absoluteAvarice";
 const defaultParty = [SpeciesId.LAPRAS, SpeciesId.GENGAR, SpeciesId.ABRA];
-const defaultBiome = Biome.TALL_GRASS;
+const defaultBiome = BiomeId.TALL_GRASS;
 const defaultWave = 45;
 
 describe("Absolute Avarice - Mystery Encounter", () => {
@@ -44,9 +44,9 @@ describe("Absolute Avarice - Mystery Encounter", () => {
     game.override.disableTrainerWaves();
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
-      new Map<Biome, MysteryEncounterType[]>([
-        [Biome.TALL_GRASS, [MysteryEncounterType.ABSOLUTE_AVARICE]],
-        [Biome.VOLCANO, [MysteryEncounterType.MYSTERIOUS_CHALLENGERS]],
+      new Map<BiomeId, MysteryEncounterType[]>([
+        [BiomeId.TALL_GRASS, [MysteryEncounterType.ABSOLUTE_AVARICE]],
+        [BiomeId.VOLCANO, [MysteryEncounterType.MYSTERIOUS_CHALLENGERS]],
       ]),
     );
   });
@@ -72,7 +72,7 @@ describe("Absolute Avarice - Mystery Encounter", () => {
 
   it("should not spawn outside of proper biomes", async () => {
     game.override.mysteryEncounterTier(MysteryEncounterTier.GREAT);
-    game.override.startingBiome(Biome.VOLCANO);
+    game.override.startingBiome(BiomeId.VOLCANO);
     await game.runToMysteryEncounter();
 
     expect(game.scene.currentBattle.mysteryEncounter?.encounterType).not.toBe(MysteryEncounterType.ABSOLUTE_AVARICE);

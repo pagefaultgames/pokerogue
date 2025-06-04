@@ -1,4 +1,4 @@
-import { Biome } from "#app/enums/biome";
+import { BiomeId } from "#app/enums/biome";
 import { MoveId } from "#enums/move-id";
 import { MapModifier } from "#app/modifier/modifier";
 import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
@@ -56,7 +56,7 @@ describe("Shop modifications", async () => {
 
     game.override
       .startingWave(9)
-      .startingBiome(Biome.ICE_CAVE)
+      .startingBiome(BiomeId.ICE_CAVE)
       .battleStyle("single")
       .startingLevel(100) // Avoid levelling up
       .disableTrainerWaves()

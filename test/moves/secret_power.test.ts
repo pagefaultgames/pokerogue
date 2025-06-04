@@ -1,5 +1,5 @@
 import { AbilityId } from "#enums/ability-id";
-import { Biome } from "#enums/biome";
+import { BiomeId } from "#enums/biome";
 import { MoveId } from "#enums/move-id";
 import { Stat } from "#enums/stat";
 import { allMoves } from "#app/data/data-lists";
@@ -41,7 +41,7 @@ describe("Moves - Secret Power", () => {
   });
 
   it("Secret Power checks for an active terrain first then looks at the biome for its secondary effect", async () => {
-    game.override.startingBiome(Biome.VOLCANO).enemyMoveset([MoveId.SPLASH, MoveId.MISTY_TERRAIN]);
+    game.override.startingBiome(BiomeId.VOLCANO).enemyMoveset([MoveId.SPLASH, MoveId.MISTY_TERRAIN]);
     vi.spyOn(allMoves[MoveId.SECRET_POWER], "chance", "get").mockReturnValue(100);
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 

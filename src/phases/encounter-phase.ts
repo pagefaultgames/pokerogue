@@ -37,7 +37,7 @@ import { handleTutorial, Tutorial } from "#app/tutorial";
 import { UiMode } from "#enums/ui-mode";
 import { randSeedInt, randSeedItem } from "#app/utils/common";
 import { BattleSpec } from "#enums/battle-spec";
-import { Biome } from "#enums/biome";
+import { BiomeId } from "#enums/biome";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import { PlayerGender } from "#enums/player-gender";
 import { SpeciesId } from "#enums/species-id";
@@ -120,7 +120,7 @@ export class EncounterPhase extends BattlePhase {
           if (
             globalScene.findModifier(m => m instanceof BoostBugSpawnModifier) &&
             !globalScene.gameMode.isBoss(battle.waveIndex) &&
-            globalScene.arena.biomeType !== Biome.END &&
+            globalScene.arena.biomeType !== BiomeId.END &&
             randSeedInt(10) === 0
           ) {
             enemySpecies = getGoldenBugNetSpecies(level);

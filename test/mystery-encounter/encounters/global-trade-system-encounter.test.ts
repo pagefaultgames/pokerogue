@@ -1,4 +1,4 @@
-import { Biome } from "#app/enums/biome";
+import { BiomeId } from "#app/enums/biome";
 import { MysteryEncounterType } from "#app/enums/mystery-encounter-type";
 import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
@@ -22,7 +22,7 @@ import * as Utils from "#app/utils/common";
 
 const namespace = "mysteryEncounters/globalTradeSystem";
 const defaultParty = [SpeciesId.LAPRAS, SpeciesId.GENGAR, SpeciesId.ABRA];
-const defaultBiome = Biome.CAVE;
+const defaultBiome = BiomeId.CAVE;
 const defaultWave = 45;
 
 describe("Global Trade System - Mystery Encounter", () => {
@@ -42,8 +42,8 @@ describe("Global Trade System - Mystery Encounter", () => {
     game.override.startingBiome(defaultBiome);
     game.override.disableTrainerWaves();
 
-    const biomeMap = new Map<Biome, MysteryEncounterType[]>([
-      [Biome.VOLCANO, [MysteryEncounterType.MYSTERIOUS_CHALLENGERS]],
+    const biomeMap = new Map<BiomeId, MysteryEncounterType[]>([
+      [BiomeId.VOLCANO, [MysteryEncounterType.MYSTERIOUS_CHALLENGERS]],
     ]);
     CIVILIZATION_ENCOUNTER_BIOMES.forEach(biome => {
       biomeMap.set(biome, [MysteryEncounterType.GLOBAL_TRADE_SYSTEM]);
@@ -86,7 +86,7 @@ describe("Global Trade System - Mystery Encounter", () => {
 
   it("should not spawn outside of CIVILIZATION_ENCOUNTER_BIOMES", async () => {
     game.override.mysteryEncounterTier(MysteryEncounterTier.COMMON);
-    game.override.startingBiome(Biome.VOLCANO);
+    game.override.startingBiome(BiomeId.VOLCANO);
     await game.runToMysteryEncounter();
 
     expect(scene.currentBattle?.mysteryEncounter?.encounterType).not.toBe(MysteryEncounterType.GLOBAL_TRADE_SYSTEM);

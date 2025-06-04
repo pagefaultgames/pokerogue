@@ -1,4 +1,4 @@
-import { Biome } from "#app/enums/biome";
+import { BiomeId } from "#app/enums/biome";
 import { SpeciesId } from "#enums/species-id";
 import { GameModes } from "#app/game-mode";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -21,7 +21,7 @@ describe("Endless Boss", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.startingBiome(Biome.END).disableCrits();
+    game.override.startingBiome(BiomeId.END).disableCrits();
   });
 
   afterEach(() => {
@@ -33,7 +33,7 @@ describe("Endless Boss", () => {
     await game.runToFinalBossEncounter([SpeciesId.BIDOOF], GameModes.ENDLESS);
 
     expect(game.scene.currentBattle.waveIndex).toBe(EndlessBossWave.Minor);
-    expect(game.scene.arena.biomeType).toBe(Biome.END);
+    expect(game.scene.arena.biomeType).toBe(BiomeId.END);
     const eternatus = game.scene.getEnemyPokemon();
     expect(eternatus?.species.speciesId).toBe(SpeciesId.ETERNATUS);
     expect(eternatus?.hasPassive()).toBe(false);
@@ -45,7 +45,7 @@ describe("Endless Boss", () => {
     await game.runToFinalBossEncounter([SpeciesId.BIDOOF], GameModes.ENDLESS);
 
     expect(game.scene.currentBattle.waveIndex).toBe(EndlessBossWave.Major);
-    expect(game.scene.arena.biomeType).toBe(Biome.END);
+    expect(game.scene.arena.biomeType).toBe(BiomeId.END);
     const eternatus = game.scene.getEnemyPokemon();
     expect(eternatus?.species.speciesId).toBe(SpeciesId.ETERNATUS);
     expect(eternatus?.hasPassive()).toBe(false);
@@ -57,7 +57,7 @@ describe("Endless Boss", () => {
     await game.runToFinalBossEncounter([SpeciesId.BIDOOF], GameModes.SPLICED_ENDLESS);
 
     expect(game.scene.currentBattle.waveIndex).toBe(EndlessBossWave.Minor);
-    expect(game.scene.arena.biomeType).toBe(Biome.END);
+    expect(game.scene.arena.biomeType).toBe(BiomeId.END);
     const eternatus = game.scene.getEnemyPokemon();
     expect(eternatus?.species.speciesId).toBe(SpeciesId.ETERNATUS);
     expect(eternatus?.hasPassive()).toBe(false);
@@ -69,7 +69,7 @@ describe("Endless Boss", () => {
     await game.runToFinalBossEncounter([SpeciesId.BIDOOF], GameModes.SPLICED_ENDLESS);
 
     expect(game.scene.currentBattle.waveIndex).toBe(EndlessBossWave.Major);
-    expect(game.scene.arena.biomeType).toBe(Biome.END);
+    expect(game.scene.arena.biomeType).toBe(BiomeId.END);
     const eternatus = game.scene.getEnemyPokemon();
     expect(eternatus?.species.speciesId).toBe(SpeciesId.ETERNATUS);
     expect(eternatus?.hasPassive()).toBe(false);

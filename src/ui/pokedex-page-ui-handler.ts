@@ -58,7 +58,7 @@ import { getEnumKeys } from "#app/utils/common";
 import { speciesTmMoves } from "#app/data/balance/tms";
 import type { BiomeTierTod } from "#app/data/balance/biomes";
 import { BiomePoolTier, catchableSpecies } from "#app/data/balance/biomes";
-import { Biome } from "#app/enums/biome";
+import { BiomeId } from "#app/enums/biome";
 import { TimeOfDay } from "#app/enums/time-of-day";
 import type { AbilityId } from "#enums/ability-id";
 import { BaseStatsOverlay } from "#app/ui/base-stats-overlay";
@@ -824,7 +824,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     const allBiomes = catchableSpecies[species.speciesId] ?? [];
     this.preBiomes = this.sanitizeBiomes(
       (catchableSpecies[this.starterId] ?? []).filter(
-        b => !allBiomes.some(bm => b.biome === bm.biome && b.tier === bm.tier) && !(b.biome === Biome.TOWN),
+        b => !allBiomes.some(bm => b.biome === bm.biome && b.tier === bm.tier) && !(b.biome === BiomeId.TOWN),
       ),
       this.starterId,
     );
@@ -867,9 +867,9 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       return biomes.filter(b => {
         const formIndex = (() => {
           switch (b.biome) {
-            case Biome.BEACH:
+            case BiomeId.BEACH:
               return 1;
-            case Biome.SLUM:
+            case BiomeId.SLUM:
               return 2;
             default:
               return 0;
@@ -882,15 +882,15 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       return biomes.filter(b => {
         const formIndex = (() => {
           switch (b.biome) {
-            case Biome.VOLCANO:
+            case BiomeId.VOLCANO:
               return 1;
-            case Biome.SEA:
+            case BiomeId.SEA:
               return 2;
-            case Biome.ICE_CAVE:
+            case BiomeId.ICE_CAVE:
               return 3;
-            case Biome.MOUNTAIN:
+            case BiomeId.MOUNTAIN:
               return 4;
-            case Biome.TALL_GRASS:
+            case BiomeId.TALL_GRASS:
               return 5;
             default:
               return 0;
@@ -1477,7 +1477,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                   this.biomes.map(b => {
                     options.push({
                       label:
-                        i18next.t(`biome:${Biome[b.biome].toUpperCase()}`) +
+                        i18next.t(`biome:${BiomeId[b.biome].toUpperCase()}`) +
                         " - " +
                         i18next.t(`biome:${BiomePoolTier[b.tier].toUpperCase()}`) +
                         (b.tod.length === 1 && b.tod[0] === -1
@@ -1498,7 +1498,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
                     this.preBiomes.map(b => {
                       options.push({
                         label:
-                          i18next.t(`biome:${Biome[b.biome].toUpperCase()}`) +
+                          i18next.t(`biome:${BiomeId[b.biome].toUpperCase()}`) +
                           " - " +
                           i18next.t(`biome:${BiomePoolTier[b.tier].toUpperCase()}`) +
                           (b.tod.length === 1 && b.tod[0] === -1

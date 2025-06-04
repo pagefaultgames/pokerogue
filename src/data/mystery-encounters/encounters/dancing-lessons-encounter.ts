@@ -31,7 +31,7 @@ import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import PokemonData from "#app/system/pokemon-data";
 import type { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
 import { BattlerTagType } from "#enums/battler-tag-type";
-import { Biome } from "#enums/biome";
+import { BiomeId } from "#enums/biome";
 import { EncounterAnim } from "#enums/encounter-anims";
 import { MoveId } from "#enums/move-id";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
@@ -47,46 +47,46 @@ const namespace = "mysteryEncounters/dancingLessons";
 
 // Fire form
 const BAILE_STYLE_BIOMES = [
-  Biome.VOLCANO,
-  Biome.BEACH,
-  Biome.ISLAND,
-  Biome.WASTELAND,
-  Biome.MOUNTAIN,
-  Biome.BADLANDS,
-  Biome.DESERT,
+  BiomeId.VOLCANO,
+  BiomeId.BEACH,
+  BiomeId.ISLAND,
+  BiomeId.WASTELAND,
+  BiomeId.MOUNTAIN,
+  BiomeId.BADLANDS,
+  BiomeId.DESERT,
 ];
 
 // Electric form
 const POM_POM_STYLE_BIOMES = [
-  Biome.CONSTRUCTION_SITE,
-  Biome.POWER_PLANT,
-  Biome.FACTORY,
-  Biome.LABORATORY,
-  Biome.SLUM,
-  Biome.METROPOLIS,
-  Biome.DOJO,
+  BiomeId.CONSTRUCTION_SITE,
+  BiomeId.POWER_PLANT,
+  BiomeId.FACTORY,
+  BiomeId.LABORATORY,
+  BiomeId.SLUM,
+  BiomeId.METROPOLIS,
+  BiomeId.DOJO,
 ];
 
 // Psychic form
 const PAU_STYLE_BIOMES = [
-  Biome.JUNGLE,
-  Biome.FAIRY_CAVE,
-  Biome.MEADOW,
-  Biome.PLAINS,
-  Biome.GRASS,
-  Biome.TALL_GRASS,
-  Biome.FOREST,
+  BiomeId.JUNGLE,
+  BiomeId.FAIRY_CAVE,
+  BiomeId.MEADOW,
+  BiomeId.PLAINS,
+  BiomeId.GRASS,
+  BiomeId.TALL_GRASS,
+  BiomeId.FOREST,
 ];
 
 // Ghost form
 const SENSU_STYLE_BIOMES = [
-  Biome.RUINS,
-  Biome.SWAMP,
-  Biome.CAVE,
-  Biome.ABYSS,
-  Biome.GRAVEYARD,
-  Biome.LAKE,
-  Biome.TEMPLE,
+  BiomeId.RUINS,
+  BiomeId.SWAMP,
+  BiomeId.CAVE,
+  BiomeId.ABYSS,
+  BiomeId.GRAVEYARD,
+  BiomeId.LAKE,
+  BiomeId.TEMPLE,
 ];
 
 /**

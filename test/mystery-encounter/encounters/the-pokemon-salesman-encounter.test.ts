@@ -1,5 +1,5 @@
 import * as MysteryEncounters from "#app/data/mystery-encounters/mystery-encounters";
-import { Biome } from "#app/enums/biome";
+import { BiomeId } from "#app/enums/biome";
 import { MysteryEncounterType } from "#app/enums/mystery-encounter-type";
 import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
@@ -24,7 +24,7 @@ import { NON_LEGEND_PARADOX_POKEMON } from "#app/data/balance/special-species-gr
 
 const namespace = "mysteryEncounters/thePokemonSalesman";
 const defaultParty = [SpeciesId.LAPRAS, SpeciesId.GENGAR, SpeciesId.ABRA];
-const defaultBiome = Biome.CAVE;
+const defaultBiome = BiomeId.CAVE;
 const defaultWave = 45;
 
 describe("The Pokemon Salesman - Mystery Encounter", () => {
@@ -44,8 +44,8 @@ describe("The Pokemon Salesman - Mystery Encounter", () => {
     game.override.startingBiome(defaultBiome);
     game.override.disableTrainerWaves();
 
-    const biomeMap = new Map<Biome, MysteryEncounterType[]>([
-      [Biome.VOLCANO, [MysteryEncounterType.MYSTERIOUS_CHALLENGERS]],
+    const biomeMap = new Map<BiomeId, MysteryEncounterType[]>([
+      [BiomeId.VOLCANO, [MysteryEncounterType.MYSTERIOUS_CHALLENGERS]],
     ]);
     HUMAN_TRANSITABLE_BIOMES.forEach(biome => {
       biomeMap.set(biome, [MysteryEncounterType.THE_POKEMON_SALESMAN]);
@@ -80,7 +80,7 @@ describe("The Pokemon Salesman - Mystery Encounter", () => {
 
   it("should not spawn outside of HUMAN_TRANSITABLE_BIOMES", async () => {
     game.override.mysteryEncounterTier(MysteryEncounterTier.ULTRA);
-    game.override.startingBiome(Biome.VOLCANO);
+    game.override.startingBiome(BiomeId.VOLCANO);
     await game.runToMysteryEncounter();
 
     expect(scene.currentBattle?.mysteryEncounter?.encounterType).not.toBe(MysteryEncounterType.THE_POKEMON_SALESMAN);

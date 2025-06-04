@@ -2,7 +2,7 @@ import type BattleScene from "#app/battle-scene";
 import { TeleportingHijinksEncounter } from "#app/data/mystery-encounters/encounters/teleporting-hijinks-encounter";
 import * as MysteryEncounters from "#app/data/mystery-encounters/mystery-encounters";
 import { AbilityId } from "#enums/ability-id";
-import { Biome } from "#enums/biome";
+import { BiomeId } from "#enums/biome";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { SpeciesId } from "#enums/species-id";
 import { CommandPhase } from "#app/phases/command-phase";
@@ -24,10 +24,17 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vite
 
 const namespace = "mysteryEncounters/teleportingHijinks";
 const defaultParty = [SpeciesId.LAPRAS, SpeciesId.GENGAR, SpeciesId.ABRA];
-const defaultBiome = Biome.CAVE;
+const defaultBiome = BiomeId.CAVE;
 const defaultWave = 45;
 
-const TRANSPORT_BIOMES = [Biome.SPACE, Biome.ISLAND, Biome.LABORATORY, Biome.FAIRY_CAVE, Biome.WASTELAND, Biome.DOJO];
+const TRANSPORT_BIOMES = [
+  BiomeId.SPACE,
+  BiomeId.ISLAND,
+  BiomeId.LABORATORY,
+  BiomeId.FAIRY_CAVE,
+  BiomeId.WASTELAND,
+  BiomeId.DOJO,
+];
 
 describe("Teleporting Hijinks - Mystery Encounter", () => {
   let phaserGame: Phaser.Game;
@@ -51,7 +58,7 @@ describe("Teleporting Hijinks - Mystery Encounter", () => {
       .enemyPassiveAbility(AbilityId.BALL_FETCH);
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
-      new Map<Biome, MysteryEncounterType[]>([[Biome.CAVE, [MysteryEncounterType.TELEPORTING_HIJINKS]]]),
+      new Map<BiomeId, MysteryEncounterType[]>([[BiomeId.CAVE, [MysteryEncounterType.TELEPORTING_HIJINKS]]]),
     );
   });
 

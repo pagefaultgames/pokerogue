@@ -11,7 +11,7 @@ import { randSeedShuffle } from "#app/utils/common";
 import type MysteryEncounter from "../mystery-encounter";
 import { MysteryEncounterBuilder } from "../mystery-encounter";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
-import { Biome } from "#enums/biome";
+import { BiomeId } from "#enums/biome";
 import { TrainerType } from "#enums/trainer-type";
 import i18next from "i18next";
 import { SpeciesId } from "#enums/species-id";
@@ -489,7 +489,7 @@ function getPartyConfig(): EnemyPartyConfig {
     ],
   };
 
-  if (globalScene.arena.biomeType === Biome.SPACE) {
+  if (globalScene.arena.biomeType === BiomeId.SPACE) {
     // All 3 members always Cleffa line, but different configs
     baseConfig.pokemonConfigs!.push(
       {

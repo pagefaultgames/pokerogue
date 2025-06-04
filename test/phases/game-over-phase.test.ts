@@ -1,4 +1,4 @@
-import { Biome } from "#enums/biome";
+import { BiomeId } from "#enums/biome";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
@@ -32,7 +32,7 @@ describe("Game Over Phase", () => {
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(MoveId.SPLASH)
       .startingWave(200)
-      .startingBiome(Biome.END)
+      .startingBiome(BiomeId.END)
       .startingLevel(10000);
   });
 

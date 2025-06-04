@@ -1,7 +1,7 @@
 import { Stat } from "#enums/stat";
 import { SemiInvulnerableTag } from "#app/data/battler-tags";
 import { PokemonType } from "#enums/pokemon-type";
-import { Biome } from "#app/enums/biome";
+import { BiomeId } from "#app/enums/biome";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
@@ -51,7 +51,7 @@ describe("Moves - Flower Shield", () => {
   });
 
   it("raises DEF stat stage by 1 for all Grass-type Pokemon on the field by one stage - double battle", async () => {
-    game.override.enemySpecies(SpeciesId.MAGIKARP).startingBiome(Biome.GRASS).battleStyle("double");
+    game.override.enemySpecies(SpeciesId.MAGIKARP).startingBiome(BiomeId.GRASS).battleStyle("double");
 
     await game.classicMode.startBattle([SpeciesId.CHERRIM, SpeciesId.MAGIKARP]);
     const field = game.scene.getField(true);

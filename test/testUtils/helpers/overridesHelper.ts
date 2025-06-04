@@ -5,7 +5,7 @@ import type { ModifierOverride } from "#app/modifier/modifier-type";
 import type { BattleStyle } from "#app/overrides";
 import Overrides, { defaultOverrides } from "#app/overrides";
 import type { Unlockables } from "#app/system/unlockables";
-import { Biome } from "#enums/biome";
+import { BiomeId } from "#enums/biome";
 import { MoveId } from "#enums/move-id";
 import type { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
@@ -32,9 +32,9 @@ export class OverridesHelper extends GameManagerHelper {
    * @warning Any event listeners that are attached to [NewArenaEvent](events\battle-scene.ts) may need to be handled down the line
    * @param biome - The biome to set
    */
-  public startingBiome(biome: Biome): this {
+  public startingBiome(biome: BiomeId): this {
     this.game.scene.newArena(biome);
-    this.log(`Starting biome set to ${Biome[biome]} (=${biome})!`);
+    this.log(`Starting biome set to ${BiomeId[biome]} (=${biome})!`);
     return this;
   }
 

@@ -41,7 +41,7 @@ import { allAbilities } from "#app/data/data-lists";
 import { allMoves } from "#app/data/data-lists";
 import { speciesTmMoves } from "#app/data/balance/tms";
 import { pokemonStarters } from "#app/data/balance/pokemon-evolutions";
-import { Biome } from "#enums/biome";
+import { BiomeId } from "#enums/biome";
 import { globalScene } from "#app/global-scene";
 
 interface LanguageSetting {
@@ -314,11 +314,11 @@ export default class PokedexUiHandler extends MessageUiHandler {
     );
 
     // biome filter, making an entry in the dropdown for each biome
-    const biomeOptions = Object.values(Biome)
+    const biomeOptions = Object.values(BiomeId)
       .filter(value => typeof value === "number") // Filter numeric values from the enum
       .map(
         (biomeValue, index) =>
-          new DropDownOption(index, new DropDownLabel(i18next.t(`biome:${Biome[biomeValue].toUpperCase()}`))),
+          new DropDownOption(index, new DropDownLabel(i18next.t(`biome:${BiomeId[biomeValue].toUpperCase()}`))),
       );
     biomeOptions.push(new DropDownOption(biomeOptions.length, new DropDownLabel(i18next.t("filterBar:uncatchable"))));
     const biomeDropDown: DropDown = new DropDown(0, 0, biomeOptions, this.updateStarters, DropDownType.HYBRID);
@@ -1459,7 +1459,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
 
       // Biome filter
       const indexToBiome = new Map(
-        Object.values(Biome)
+        Object.values(BiomeId)
           .map((value, index) => (typeof value === "string" ? [index, value] : undefined))
           .filter((entry): entry is [number, string] => entry !== undefined),
       );
@@ -1467,7 +1467,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
 
       // We get biomes for both the mon and its starters to ensure that evolutions get the correct filters.
       // TODO: We might also need to do it the other way around.
-      const biomes = catchableSpecies[species.speciesId].concat(catchableSpecies[starterId]).map(b => Biome[b.biome]);
+      const biomes = catchableSpecies[species.speciesId].concat(catchableSpecies[starterId]).map(b => BiomeId[b.biome]);
       if (biomes.length === 0) {
         biomes.push("Uncatchable");
       }

@@ -6,7 +6,7 @@ import { PokemonType } from "#enums/pokemon-type";
 import { randSeedInt } from "#app/utils/common";
 import { WeatherType } from "#enums/weather-type";
 import { Nature } from "#enums/nature";
-import { Biome } from "#enums/biome";
+import { BiomeId } from "#enums/biome";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { SpeciesFormKey } from "#enums/species-form-key";
@@ -324,8 +324,8 @@ class MoveTimeOfDayEvolutionCondition extends SpeciesEvolutionCondition {
 }
 
 class BiomeEvolutionCondition extends SpeciesEvolutionCondition {
-  public biomes: Biome[];
-  constructor(biomes: Biome[]) {
+  public biomes: BiomeId[];
+  constructor(biomes: BiomeId[]) {
     super(() => biomes.filter(b => b === globalScene.arena.biomeType).length > 0);
     this.biomes = biomes;
     this.description = i18next.t("pokemonEvolutions:biome");
@@ -1680,31 +1680,31 @@ export const pokemonEvolutions: PokemonEvolutions = {
   ],
   [SpeciesId.MILCERY]: [
     new SpeciesFormEvolution(SpeciesId.ALCREMIE, "", "vanilla-cream", 1, EvolutionItem.STRAWBERRY_SWEET,
-      new BiomeEvolutionCondition([ Biome.TOWN, Biome.PLAINS, Biome.GRASS, Biome.TALL_GRASS, Biome.METROPOLIS ]),
+      new BiomeEvolutionCondition([ BiomeId.TOWN, BiomeId.PLAINS, BiomeId.GRASS, BiomeId.TALL_GRASS, BiomeId.METROPOLIS ]),
       SpeciesWildEvolutionDelay.LONG),
     new SpeciesFormEvolution(SpeciesId.ALCREMIE, "", "ruby-cream", 1, EvolutionItem.STRAWBERRY_SWEET,
-      new BiomeEvolutionCondition([ Biome.BADLANDS, Biome.VOLCANO, Biome.GRAVEYARD, Biome.FACTORY, Biome.SLUM ]),
+      new BiomeEvolutionCondition([ BiomeId.BADLANDS, BiomeId.VOLCANO, BiomeId.GRAVEYARD, BiomeId.FACTORY, BiomeId.SLUM ]),
       SpeciesWildEvolutionDelay.LONG),
     new SpeciesFormEvolution(SpeciesId.ALCREMIE, "", "matcha-cream", 1, EvolutionItem.STRAWBERRY_SWEET,
-      new BiomeEvolutionCondition([ Biome.FOREST, Biome.SWAMP, Biome.MEADOW, Biome.JUNGLE ]),
+      new BiomeEvolutionCondition([ BiomeId.FOREST, BiomeId.SWAMP, BiomeId.MEADOW, BiomeId.JUNGLE ]),
       SpeciesWildEvolutionDelay.LONG),
     new SpeciesFormEvolution(SpeciesId.ALCREMIE, "", "mint-cream", 1, EvolutionItem.STRAWBERRY_SWEET,
-      new BiomeEvolutionCondition([ Biome.SEA, Biome.BEACH, Biome.LAKE, Biome.SEABED ]),
+      new BiomeEvolutionCondition([ BiomeId.SEA, BiomeId.BEACH, BiomeId.LAKE, BiomeId.SEABED ]),
       SpeciesWildEvolutionDelay.LONG),
     new SpeciesFormEvolution(SpeciesId.ALCREMIE, "", "lemon-cream", 1, EvolutionItem.STRAWBERRY_SWEET,
-      new BiomeEvolutionCondition([ Biome.DESERT, Biome.POWER_PLANT, Biome.DOJO, Biome.RUINS, Biome.CONSTRUCTION_SITE ]),
+      new BiomeEvolutionCondition([ BiomeId.DESERT, BiomeId.POWER_PLANT, BiomeId.DOJO, BiomeId.RUINS, BiomeId.CONSTRUCTION_SITE ]),
       SpeciesWildEvolutionDelay.LONG),
     new SpeciesFormEvolution(SpeciesId.ALCREMIE, "", "salted-cream", 1, EvolutionItem.STRAWBERRY_SWEET,
-      new BiomeEvolutionCondition([ Biome.MOUNTAIN, Biome.CAVE, Biome.ICE_CAVE, Biome.FAIRY_CAVE, Biome.SNOWY_FOREST ]),
+      new BiomeEvolutionCondition([ BiomeId.MOUNTAIN, BiomeId.CAVE, BiomeId.ICE_CAVE, BiomeId.FAIRY_CAVE, BiomeId.SNOWY_FOREST ]),
       SpeciesWildEvolutionDelay.LONG),
     new SpeciesFormEvolution(SpeciesId.ALCREMIE, "", "ruby-swirl", 1, EvolutionItem.STRAWBERRY_SWEET,
-      new BiomeEvolutionCondition([ Biome.WASTELAND, Biome.LABORATORY ]),
+      new BiomeEvolutionCondition([ BiomeId.WASTELAND, BiomeId.LABORATORY ]),
       SpeciesWildEvolutionDelay.LONG),
     new SpeciesFormEvolution(SpeciesId.ALCREMIE, "", "caramel-swirl", 1, EvolutionItem.STRAWBERRY_SWEET,
-      new BiomeEvolutionCondition([ Biome.TEMPLE, Biome.ISLAND ]),
+      new BiomeEvolutionCondition([ BiomeId.TEMPLE, BiomeId.ISLAND ]),
       SpeciesWildEvolutionDelay.LONG),
     new SpeciesFormEvolution(SpeciesId.ALCREMIE, "", "rainbow-swirl", 1, EvolutionItem.STRAWBERRY_SWEET,
-      new BiomeEvolutionCondition([ Biome.ABYSS, Biome.SPACE, Biome.END ]),
+      new BiomeEvolutionCondition([ BiomeId.ABYSS, BiomeId.SPACE, BiomeId.END ]),
       SpeciesWildEvolutionDelay.LONG)
   ],
   [SpeciesId.DURALUDON]: [

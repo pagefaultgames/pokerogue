@@ -9,7 +9,7 @@ import {
   generateModifierType,
 } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
-import { Biome } from "#app/enums/biome";
+import { BiomeId } from "#app/enums/biome";
 import { MysteryEncounterType } from "#app/enums/mystery-encounter-type";
 import { SpeciesId } from "#enums/species-id";
 import { PokemonMove } from "#app/field/pokemon";
@@ -35,7 +35,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vite
 
 const namespace = "mysteryEncounters/trashToTreasure";
 const defaultParty = [SpeciesId.LAPRAS, SpeciesId.GENGAR, SpeciesId.ABRA];
-const defaultBiome = Biome.CAVE;
+const defaultBiome = BiomeId.CAVE;
 const defaultWave = 45;
 
 describe("Trash to Treasure - Mystery Encounter", () => {
@@ -56,7 +56,7 @@ describe("Trash to Treasure - Mystery Encounter", () => {
     game.override.disableTrainerWaves();
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
-      new Map<Biome, MysteryEncounterType[]>([[Biome.CAVE, [MysteryEncounterType.TRASH_TO_TREASURE]]]),
+      new Map<BiomeId, MysteryEncounterType[]>([[BiomeId.CAVE, [MysteryEncounterType.TRASH_TO_TREASURE]]]),
     );
   });
 

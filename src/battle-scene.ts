@@ -129,7 +129,7 @@ import { ArenaFlyout } from "#app/ui/arena-flyout";
 import { EaseType } from "#enums/ease-type";
 import { BattleSpec } from "#enums/battle-spec";
 import { BattleStyle } from "#enums/battle-style";
-import { Biome } from "#enums/biome";
+import { BiomeId } from "#enums/biome";
 import type { ExpNotification } from "#enums/exp-notification";
 import { MoneyFormat } from "#enums/money-format";
 import { MoveId } from "#enums/move-id";
@@ -1225,7 +1225,7 @@ export default class BattleScene extends SceneBase {
 
     [this.luckLabelText, this.luckText].map(t => t.setVisible(false));
 
-    this.newArena(Overrides.STARTING_BIOME_OVERRIDE || Biome.TOWN);
+    this.newArena(Overrides.STARTING_BIOME_OVERRIDE || BiomeId.TOWN);
 
     this.field.setVisible(true);
 
@@ -1532,8 +1532,8 @@ export default class BattleScene extends SceneBase {
     return this.currentBattle;
   }
 
-  newArena(biome: Biome, playerFaints?: number): Arena {
-    this.arena = new Arena(biome, Biome[biome].toLowerCase(), playerFaints);
+  newArena(biome: BiomeId, playerFaints?: number): Arena {
+    this.arena = new Arena(biome, BiomeId[biome].toLowerCase(), playerFaints);
     this.eventTarget.dispatchEvent(new NewArenaEvent());
 
     this.arenaBg.pipelineData = {
@@ -2172,10 +2172,10 @@ export default class BattleScene extends SceneBase {
     return filteredSpecies[randSeedInt(filteredSpecies.length)];
   }
 
-  generateRandomBiome(waveIndex: number): Biome {
+  generateRandomBiome(waveIndex: number): BiomeId {
     const relWave = waveIndex % 250;
-    const biomes = getEnumValues(Biome).filter(b => b !== Biome.TOWN && b !== Biome.END);
-    const maxDepth = biomeDepths[Biome.END][0] - 2;
+    const biomes = getEnumValues(BiomeId).filter(b => b !== BiomeId.TOWN && b !== BiomeId.END);
+    const maxDepth = biomeDepths[BiomeId.END][0] - 2;
     const depthWeights = new Array(maxDepth + 1)
       .fill(null)
       .map((_, i: number) => ((1 - Math.min(Math.abs(i / (maxDepth - 1) - relWave / 250) + 0.25, 1)) / 0.75) * 250);

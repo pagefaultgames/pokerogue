@@ -8,7 +8,7 @@ import { Status } from "../data/status-effect";
 import Pokemon, { EnemyPokemon, PokemonBattleData, PokemonMove, PokemonSummonData } from "../field/pokemon";
 import { TrainerSlot } from "#enums/trainer-slot";
 import type { Variant } from "#app/sprites/variant";
-import type { Biome } from "#enums/biome";
+import type { BiomeId } from "#enums/biome";
 import type { MoveId } from "#enums/move-id";
 import type { SpeciesId } from "#enums/species-id";
 import { CustomPokemonData } from "#app/data/custom-pokemon-data";
@@ -37,7 +37,7 @@ export default class PokemonData {
   public status: Status | null;
   public friendship: number;
   public metLevel: number;
-  public metBiome: Biome | -1; // -1 for starters
+  public metBiome: BiomeId | -1; // -1 for starters
   public metSpecies: SpeciesId;
   public metWave: number; // 0 for unknown (previous saves), -1 for starters
   public luck: number;

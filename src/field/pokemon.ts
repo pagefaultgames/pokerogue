@@ -225,7 +225,7 @@ import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattleSpec } from "#enums/battle-spec";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import type { BerryType } from "#enums/berry-type";
-import { Biome } from "#enums/biome";
+import { BiomeId } from "#enums/biome";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { getPokemonNameWithAffix } from "#app/messages";
@@ -333,7 +333,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public status: Status | null;
   public friendship: number;
   public metLevel: number;
-  public metBiome: Biome | -1;
+  public metBiome: BiomeId | -1;
   public metSpecies: SpeciesId;
   public metWave: number;
   public luck: number;
@@ -2822,7 +2822,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    */
   trySetShiny(thresholdOverride?: number): boolean {
     // Shiny Pokemon should not spawn in the end biome in endless
-    if (globalScene.gameMode.isEndless && globalScene.arena.biomeType === Biome.END) {
+    if (globalScene.gameMode.isEndless && globalScene.arena.biomeType === BiomeId.END) {
       return false;
     }
 

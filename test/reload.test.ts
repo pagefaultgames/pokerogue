@@ -2,7 +2,7 @@ import { GameModes } from "#app/game-mode";
 import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
 import type OptionSelectUiHandler from "#app/ui/settings/option-select-ui-handler";
 import { UiMode } from "#enums/ui-mode";
-import { Biome } from "#enums/biome";
+import { BiomeId } from "#enums/biome";
 import { Button } from "#enums/buttons";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
@@ -80,7 +80,7 @@ describe("Reload", () => {
   it("should not have weather inconsistencies after a biome switch", async () => {
     game.override
       .startingWave(10)
-      .startingBiome(Biome.ICE_CAVE) // Will lead to Snowy Forest with randomly generated weather
+      .startingBiome(BiomeId.ICE_CAVE) // Will lead to Snowy Forest with randomly generated weather
       .battleStyle("single")
       .startingLevel(100) // Avoid levelling up
       .disableTrainerWaves()
