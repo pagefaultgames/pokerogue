@@ -45,6 +45,7 @@ import { FRIENDSHIP_GAIN_FROM_RARE_CANDY } from "#app/data/balance/starters";
 import { applyAbAttrs } from "#app/data/abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
 import type { ModifierInstanceMap, ModifierString } from "#app/@types/modifier-types";
+import { applyChallenges } from "#app/data/challenge";
 
 export type ModifierPredicate = (modifier: Modifier) => boolean;
 
@@ -2426,8 +2427,13 @@ export class FusePokemonModifier extends ConsumablePokemonModifier {
    * @returns `true` if {@linkcode FusePokemonModifier} should be applied
    */
   override shouldApply(playerPokemon?: PlayerPokemon, playerPokemon2?: PlayerPokemon): boolean {
+    const shouldFuse = new BooleanHolder(true);
+    applyChallenges(ChallengeType.SHOULD_FUSE, playerPokemon!, playerPokemon2!, shouldFuse);
     return (
-      super.shouldApply(playerPokemon, playerPokemon2) && !!playerPokemon2 && this.fusePokemonId === playerPokemon2.id
+      super.shouldApply(playerPokemon, playerPokemon2) &&
+      !!playerPokemon2 &&
+      this.fusePokemonId === playerPokemon2.id &&
+      shouldFuse.value
     );
   }
 

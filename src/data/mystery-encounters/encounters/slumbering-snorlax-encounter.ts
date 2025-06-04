@@ -31,6 +31,7 @@ import { BerryType } from "#enums/berry-type";
 import { Stat } from "#enums/stat";
 import { CustomPokemonData } from "#app/data/pokemon/pokemon-data";
 import { randSeedInt } from "#app/utils/common";
+import { Challenges } from "#enums/challenges";
 import { MoveUseMode } from "#enums/move-use-mode";
 
 /** i18n namespace for the encounter */
@@ -44,6 +45,7 @@ const namespace = "mysteryEncounters/slumberingSnorlax";
 export const SlumberingSnorlaxEncounter: MysteryEncounter = MysteryEncounterBuilder.withEncounterType(
   MysteryEncounterType.SLUMBERING_SNORLAX,
 )
+  .withDisallowedChallenges(Challenges.NO_AUTO_HEAL)
   .withEncounterTier(MysteryEncounterTier.GREAT)
   .withSceneWaveRangeRequirement(15, 150)
   .withCatchAllowed(true)

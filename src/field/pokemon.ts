@@ -3231,6 +3231,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
   public trySelectMove(moveIndex: number, ignorePp?: boolean): boolean {
     const move = this.getMoveset().length > moveIndex ? this.getMoveset()[moveIndex] : null;
+    if (move !== null) {
+      const isValid = new BooleanHolder(true);
+      applyChallenges(ChallengeType.MOVE_BLACKLIST, move!, isValid);
+      if (!isValid.value) {
+        return false;
+      }
+    }
     return move?.isUsable(this, ignorePp) ?? false;
   }
 

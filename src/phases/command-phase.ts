@@ -227,7 +227,9 @@ export class CommandPhase extends FieldPhase {
                 .selectionDeniedText(playerPokemon, move.moveId)
             : move.getName().endsWith(" (N)")
               ? "battle:moveNotImplemented"
-              : "battle:moveNoPP";
+              : move.getPpRatio()
+                ? "battle:moveDisabled"
+                : "battle:moveNoPP";
           const moveName = move.getName().replace(" (N)", ""); // Trims off the indicator
 
           globalScene.ui.showText(

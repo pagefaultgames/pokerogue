@@ -37,6 +37,8 @@ import { CustomPokemonData } from "#app/data/pokemon/pokemon-data";
 import type { AbilityId } from "#enums/ability-id";
 import type { PokeballType } from "#enums/pokeball";
 import { StatusEffect } from "#enums/status-effect";
+import { BooleanHolder } from "#app/utils/common";
+import { ChallengeType, applyChallenges } from "#app/data/challenge";
 
 /** Will give +1 level every 10 waves */
 export const STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER = 1;
@@ -703,6 +705,17 @@ export async function catchPokemon(
         });
       };
       Promise.all([pokemon.hideInfo(), globalScene.gameData.setPokemonCaught(pokemon)]).then(() => {
+        const challengeCanAddToParty = new BooleanHolder(true);
+        applyChallenges(
+          ChallengeType.ADD_POKEMON_TO_PARTY,
+          globalScene.currentBattle.waveIndex,
+          challengeCanAddToParty,
+        );
+        if (!challengeCanAddToParty.value) {
+          removePokemon();
+          end();
+          return;
+        }
         if (globalScene.getPlayerParty().length === 6) {
           const promptRelease = () => {
             globalScene.ui.showText(

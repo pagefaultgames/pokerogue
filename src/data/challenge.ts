@@ -26,6 +26,8 @@ import { ModifierTier } from "#enums/modifier-tier";
 import { globalScene } from "#app/global-scene";
 import { pokemonFormChanges } from "./pokemon-forms";
 import { pokemonEvolutions } from "./balance/pokemon-evolutions";
+import type { ModifierTypeOption } from "#app/modifier/modifier-type";
+import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { ChallengeType } from "#enums/challenge-type";
 import type { MoveSourceType } from "#enums/move-source-type";
 
@@ -343,6 +345,84 @@ export abstract class Challenge {
    * @returns {@link boolean} Whether this function did anything.
    */
   applyFlipStat(_pokemon: Pokemon, _baseStats: number[]) {
+    return false;
+  }
+
+  /**
+   * An apply function for NO_AUTO_HEAL challenges. Derived classes should alter this.
+   * @param _applyHealPhase {@link BooleanHolder} Whether it should apply the heal phase.
+   * @returns {@link boolean} if this function did anything.
+   */
+  applyNoHealPhase(_applyHealPhase: BooleanHolder): boolean {
+    return false;
+  }
+
+  /**
+   * An apply function for PREVENT_REVIVE. Derived classes should alter this.
+   * @param _canBeRevived {@link BooleanHolder} Whether it should revive the fainted Pokemon.
+   * @returns {@link boolean} if this function did anything.
+   */
+  applyRevivePrevention(_canBeRevived: BooleanHolder): boolean {
+    return true;
+  }
+
+  /**
+   * An apply function for RANDOM_ITEM_BLACKLIST. Derived classes should alter this.
+   * @param _randomItem {@link ModifierTypeOption} The random item in question.
+   * @param _isValid {@link BooleanHolder} Whether it should load the random item.
+   * @returns {@link boolean} if this function did anything.
+   */
+  applyRandomItemBlacklist(_randomItem: ModifierTypeOption | null, _isValid: BooleanHolder): boolean {
+    return false;
+  }
+
+  /**
+   * An apply function for SHOP_ITEM_BLACKLIST. Derived classes should alter this.
+   * @param _shopItem {@link ModifierTypeOption} The shop item in question.
+   * @param _isValid {@link BooleanHolder} Whether the shop should have the item.
+   * @returns {@link boolean} if this function did anything.
+   */
+  applyShopItemBlacklist(_shopItem: ModifierTypeOption | null, _isValid: BooleanHolder): boolean {
+    return false;
+  }
+
+  /**
+   * An apply function for MOVE_BLACKLIST. Derived classes should alter this.
+   * @param _move {@link PokemonMove} The move in question.
+   * @param _isValid {@link BooleanHolder} Whether the move should be allowed.
+   * @returns {@link boolean} if this function did anything.
+   */
+  applyMoveBlacklist(_move: PokemonMove, _isValid: BooleanHolder): boolean {
+    return false;
+  }
+
+  /**
+   * An apply function for DELETE_POKEMON. Derived classes should alter this.
+   * @param _canStay {@link BooleanHolder} Whether the pokemon can stay in team after death.
+   * @returns {@link boolean} if this function did anything.
+   */
+  applyDeletePokemon(_canStay: BooleanHolder): boolean {
+    return false;
+  }
+
+  /**
+   * An apply function for ADD_POKEMON_TO_PARTY. Derived classes should alter this.
+   * @param _waveIndex {@link BooleanHolder} The current wave.
+   * @param _canAddToParty {@link BooleanHolder} Whether the pokemon can be caught.
+   * @returns {@link boolean} if this function did anything.
+   */
+  applyAddPokemonToParty(_waveIndex: number, _canAddToParty: BooleanHolder): boolean {
+    return false;
+  }
+
+  /**
+   * An apply function for SHOULD_FUSE. Derived classes should alter this.
+   * @param _pokemon {@link Pokemon} The first chosen pokemon for fusion.
+   * @param _pokemonTofuse {@link Pokemon} The second chosen pokemon for fusion.
+   * @param _canFuse {@link BooleanHolder} Whether the pokemons can fuse.
+   * @returns {@link boolean} if this function did anything.
+   */
+  applyShouldFuse(_pokemon: Pokemon, _pokemonTofuse: Pokemon, _canFuse: BooleanHolder): boolean {
     return false;
   }
 }
@@ -890,6 +970,123 @@ export class LowerStarterPointsChallenge extends Challenge {
 }
 
 /**
+ * Challenge stops pokemon from healing every 10th wave
+ */
+export class NoFreeHealsChallenge extends Challenge {
+  constructor() {
+    super(Challenges.NO_AUTO_HEAL, 1);
+  }
+
+  applyNoHealPhase(applyHealPhase: BooleanHolder): boolean {
+    applyHealPhase.value = false;
+    return true;
+  }
+
+  static loadChallenge(source: NoFreeHealsChallenge | any): NoFreeHealsChallenge {
+    const newChallenge = new NoFreeHealsChallenge();
+    newChallenge.value = source.value;
+    newChallenge.severity = source.severity;
+    return newChallenge;
+  }
+}
+
+/**
+ * Challenge that removes the ability to revive fallen pokemon
+ */
+export class HardcoreChallenge extends Challenge {
+  private itemBlackList = [
+    "modifierType:ModifierType.REVIVE",
+    "modifierType:ModifierType.MAX_REVIVE",
+    "modifierType:ModifierType.SACRED_ASH",
+    "modifierType:ModifierType.REVIVER_SEED",
+  ];
+
+  constructor() {
+    super(Challenges.HARDCORE, 2);
+  }
+
+  applyRandomItemBlacklist(randomItem: ModifierTypeOption, isValid: BooleanHolder): boolean {
+    if (randomItem !== null) {
+      isValid.value = !this.itemBlackList.includes(randomItem.type.localeKey);
+    }
+    return true;
+  }
+
+  applyShopItemBlacklist(shopItem: ModifierTypeOption, isValid: BooleanHolder): boolean {
+    isValid.value = !this.itemBlackList.includes(shopItem.type.localeKey);
+    return true;
+  }
+
+  applyMoveBlacklist(move: PokemonMove, moveCanBeUsed: BooleanHolder): boolean {
+    const moveBlacklist = [Moves.REVIVAL_BLESSING];
+    moveCanBeUsed.value = !moveBlacklist.includes(move.moveId);
+    return true;
+  }
+
+  applyRevivePrevention(canBeRevived: BooleanHolder): boolean {
+    canBeRevived.value = false;
+    return true;
+  }
+
+  applyDeletePokemon(canStay: BooleanHolder): boolean {
+    if (this.value === 2) {
+      canStay.value = false;
+    } else {
+      canStay.value = true;
+    }
+    return true;
+  }
+
+  override applyShouldFuse(pokemon: Pokemon, pokemonToFuse: Pokemon, canFuse: BooleanHolder): boolean {
+    if (pokemon!.isFainted() || pokemonToFuse.isFainted()) {
+      canFuse.value = false;
+    }
+    return true;
+  }
+
+  static override loadChallenge(source: HardcoreChallenge | any): HardcoreChallenge {
+    const newChallenge = new HardcoreChallenge();
+    newChallenge.value = source.value;
+    newChallenge.severity = source.severity;
+    return newChallenge;
+  }
+}
+
+/**
+ * Challenge that limits the amount of caught pokemons by 1 per biome stage
+ */
+export class LimitedCatchChallenge extends Challenge {
+  private mysteryEncounterBlacklist = [
+    MysteryEncounterType.ABSOLUTE_AVARICE,
+    MysteryEncounterType.DANCING_LESSONS,
+    MysteryEncounterType.SAFARI_ZONE,
+    MysteryEncounterType.THE_POKEMON_SALESMAN,
+    MysteryEncounterType.UNCOMMON_BREED,
+  ];
+  constructor() {
+    super(Challenges.LIMITED_CATCH, 1);
+  }
+
+  override applyAddPokemonToParty(waveIndex: number, canAddToParty: BooleanHolder): boolean {
+    const lastMystery = globalScene.lastMysteryEncounter?.encounterType;
+    if (lastMystery === undefined && !(waveIndex % 10 === 1)) {
+      canAddToParty.value = false;
+    }
+    if (!(waveIndex % 10 === 1) && !(!this.mysteryEncounterBlacklist.includes(lastMystery!) && waveIndex % 10 === 2)) {
+      canAddToParty.value = false;
+    }
+    return true;
+  }
+
+  static override loadChallenge(source: LimitedCatchChallenge | any): LimitedCatchChallenge {
+    const newChallenge = new LimitedCatchChallenge();
+    newChallenge.value = source.value;
+    newChallenge.severity = source.severity;
+    return newChallenge;
+  }
+}
+
+/**
  * Apply all challenges that modify starter choice.
  * @param challengeType {@link ChallengeType} ChallengeType.STARTER_CHOICE
  * @param pokemon {@link PokemonSpecies} The pokemon to check the validity of.
@@ -1040,6 +1237,90 @@ export function applyChallenges(
 ): boolean;
 
 export function applyChallenges(challengeType: ChallengeType.FLIP_STAT, pokemon: Pokemon, baseStats: number[]): boolean;
+/**
+ * Apply all challenges that modify whether a pokemon can be auto healed or not in wave 10m.
+ * @param challengeType {@link ChallengeType} ChallengeType.NO_HEAL_PHASE
+ * @param applyHealPhase {@link BooleanHolder} Whether it should apply the heal phase.
+ * @returns True if any challenge was successfully applied.
+ */
+export function applyChallenges(challengeType: ChallengeType.NO_HEAL_PHASE, applyHealPhase: BooleanHolder): boolean;
+/**
+ * Apply all challenges that modify whether a shop item should be blacklisted.
+ * @param challengeType {@link ChallengeType} ChallengeType.SHOP_ITEM_BLACKLIST
+ * @param shopItem {@link ModifierTypeOption} The shop item in question.
+ * @param isValid {@link BooleanHolder} Whether the shop should have the item.
+ * @returns True if any challenge was successfully applied.
+ */
+export function applyChallenges(
+  challengeType: ChallengeType.SHOP_ITEM_BLACKLIST,
+  shopItem: ModifierTypeOption | null,
+  isValid: BooleanHolder,
+): boolean;
+
+/**
+ * Apply all challenges that modify whether a reward item should be blacklisted.
+ * @param challengeType {@link ChallengeType} ChallengeType.RANDOM_ITEM_BLACKLIST
+ * @param randomItem {@link ModifierTypeOption} The random item in question.
+ * @param isValid {@link BooleanHolder} Whether it should load the random item.
+ * @returns True if any challenge was successfully applied.
+ */
+export function applyChallenges(
+  challengeType: ChallengeType.RANDOM_ITEM_BLACKLIST,
+  randomItem: ModifierTypeOption | null,
+  isValid: BooleanHolder,
+): boolean;
+/**
+ * Apply all challenges that modify whether a pokemon move should be blacklisted.
+ * @param challengeType {@link ChallengeType} ChallengeType.MOVE_BLACKLIST
+ * @param move {@link PokemonMove} The move in question.
+ * @param isValid {@link BooleanHolder} Whether the move should be allowed.
+ * @returns True if any challenge was successfully applied.
+ */
+export function applyChallenges(
+  challengeType: ChallengeType.MOVE_BLACKLIST,
+  move: PokemonMove,
+  isValid: BooleanHolder,
+): boolean;
+/**
+ * Apply all challenges that modify whether a pokemon should be removed from the team.
+ * @param challengeType {@link ChallengeType} ChallengeType.DELETE_POKEMON
+ * @param canStay {@link BooleanHolder} Whether the pokemon can stay in team after death.
+ * @returns True if any challenge was successfully applied.
+ */
+export function applyChallenges(challengeType: ChallengeType.DELETE_POKEMON, canStay: BooleanHolder): boolean;
+/**
+ * Apply all challenges that modify whether a pokemon should revive.
+ * @param challengeType {@link ChallengeType} ChallengeType.PREVENT_REVIVE
+ * @param canBeRevived {@link BooleanHolder} Whether it should revive the fainted Pokemon.
+ * @returns True if any challenge was successfully applied.
+ */
+export function applyChallenges(challengeType: ChallengeType.PREVENT_REVIVE, canBeRevived: BooleanHolder): boolean;
+/**
+ * Apply all challenges that modify whether a pokemon can be caught.
+ * @param challengeType {@link ChallengeType} ChallengeType.ADD_POKEMON_TO_PARTY
+ * @param waveIndex {@link BooleanHolder} The current wave.
+ * @param canAddToParty {@link BooleanHolder} Whether the pokemon can be caught.
+ * @returns True if any challenge was successfully applied.
+ */
+export function applyChallenges(
+  challengeType: ChallengeType.ADD_POKEMON_TO_PARTY,
+  waveIndex: number,
+  canAddToParty: BooleanHolder,
+): boolean;
+/**
+ * Apply all challenges that modify whether a pokemon can fuse.
+ * @param challengeType {@link ChallengeType} ChallengeType.SHOULD_FUSE
+ * @param pokemon {@link Pokemon} The first chosen pokemon for fusion.
+ * @param pokemonTofuse {@link Pokemon} The second chosen pokemon for fusion.
+ * @param canFuse {@link BooleanHolder} Whether the pokemons can fuse.
+ * @returns True if any challenge was successfully applied.
+ */
+export function applyChallenges(
+  challengeType: ChallengeType.SHOULD_FUSE,
+  pokemon: Pokemon,
+  pokemonTofuse: Pokemon,
+  canFuse: BooleanHolder,
+): boolean;
 
 export function applyChallenges(challengeType: ChallengeType, ...args: any[]): boolean {
   let ret = false;
@@ -1088,6 +1369,30 @@ export function applyChallenges(challengeType: ChallengeType, ...args: any[]): b
         case ChallengeType.FLIP_STAT:
           ret ||= c.applyFlipStat(args[0], args[1]);
           break;
+        case ChallengeType.NO_HEAL_PHASE:
+          ret ||= c.applyNoHealPhase(args[0]);
+          break;
+        case ChallengeType.SHOP_ITEM_BLACKLIST:
+          ret ||= c.applyShopItemBlacklist(args[0], args[1]);
+          break;
+        case ChallengeType.RANDOM_ITEM_BLACKLIST:
+          ret ||= c.applyRandomItemBlacklist(args[0], args[1]);
+          break;
+        case ChallengeType.MOVE_BLACKLIST:
+          ret ||= c.applyMoveBlacklist(args[0], args[1]);
+          break;
+        case ChallengeType.DELETE_POKEMON:
+          ret ||= c.applyDeletePokemon(args[0]);
+          break;
+        case ChallengeType.PREVENT_REVIVE:
+          ret ||= c.applyRevivePrevention(args[0]);
+          break;
+        case ChallengeType.ADD_POKEMON_TO_PARTY:
+          ret ||= c.applyAddPokemonToParty(args[0], args[1]);
+          break;
+        case ChallengeType.SHOULD_FUSE:
+          ret ||= c.applyShouldFuse(args[0], args[1], args[2]);
+          break;
       }
     }
   });
@@ -1115,6 +1420,12 @@ export function copyChallenge(source: Challenge | any): Challenge {
       return InverseBattleChallenge.loadChallenge(source);
     case Challenges.FLIP_STAT:
       return FlipStatChallenge.loadChallenge(source);
+    case Challenges.NO_AUTO_HEAL:
+      return NoFreeHealsChallenge.loadChallenge(source);
+    case Challenges.HARDCORE:
+      return HardcoreChallenge.loadChallenge(source);
+    case Challenges.LIMITED_CATCH:
+      return LimitedCatchChallenge.loadChallenge(source);
   }
   throw new Error("Unknown challenge copied");
 }
@@ -1128,6 +1439,9 @@ export function initChallenges() {
     new FreshStartChallenge(),
     new InverseBattleChallenge(),
     new FlipStatChallenge(),
+    new NoFreeHealsChallenge(),
+    new LimitedCatchChallenge(),
+    new HardcoreChallenge(),
   );
 }
 

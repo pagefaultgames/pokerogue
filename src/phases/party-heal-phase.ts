@@ -1,6 +1,7 @@
 import { globalScene } from "#app/global-scene";
-import { fixedInt } from "#app/utils/common";
+import { BooleanHolder, fixedInt } from "#app/utils/common";
 import { BattlePhase } from "./battle-phase";
+import { applyChallenges, ChallengeType } from "#app/data/challenge";
 
 export class PartyHealPhase extends BattlePhase {
   public readonly phaseName = "PartyHealPhase";
@@ -15,18 +16,27 @@ export class PartyHealPhase extends BattlePhase {
   start() {
     super.start();
 
+    const isHealPhaseActive = new BooleanHolder(true);
+    const isReviveActive = new BooleanHolder(true);
+    applyChallenges(ChallengeType.NO_HEAL_PHASE, isHealPhaseActive);
+    if (!isHealPhaseActive.value) {
+      return this.end();
+    }
     const bgmPlaying = globalScene.isBgmPlaying();
     if (bgmPlaying) {
       globalScene.fadeOutBgm(1000, false);
     }
     globalScene.ui.fadeOut(1000).then(() => {
       for (const pokemon of globalScene.getPlayerParty()) {
-        pokemon.hp = pokemon.getMaxHp();
-        pokemon.resetStatus(true, false, false, true);
-        for (const move of pokemon.moveset) {
-          move.ppUsed = 0;
+        applyChallenges(ChallengeType.PREVENT_REVIVE, isReviveActive);
+        if (isReviveActive.value || !pokemon.isFainted()) {
+          pokemon.hp = pokemon.getMaxHp();
+          pokemon.resetStatus(true, false, false, true);
+          for (const move of pokemon.moveset) {
+            move.ppUsed = 0;
+          }
+          pokemon.updateInfo(true);
         }
-        pokemon.updateInfo(true);
       }
       const healSong = globalScene.playSoundWithoutBgm("heal");
       globalScene.time.delayedCall(fixedInt(healSong.totalDuration * 1000), () => {
