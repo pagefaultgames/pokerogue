@@ -206,7 +206,17 @@ export default class EggGachaUiHandler extends MessageUiHandler {
     this.eggGachaOptionsContainer = globalScene.add.container(globalScene.game.canvas.width / 6, 148);
     this.eggGachaContainer.add(this.eggGachaOptionsContainer);
 
-    this.eggGachaOptionSelectBg = addWindow(0, 0, 96, 16 + 576 * this.scale);
+    // Increase egg box width on certain languages
+    let EGOS_width = 0;
+    switch (i18next.resolvedLanguage) {
+      case "ru":
+        EGOS_width = 100;
+        break;
+      default:
+        EGOS_width = 96;
+    }
+
+    this.eggGachaOptionSelectBg = addWindow(0, 0, EGOS_width, 16 + 576 * this.scale);
     this.eggGachaOptionSelectBg.setOrigin(1, 1);
     this.eggGachaOptionsContainer.add(this.eggGachaOptionSelectBg);
 
