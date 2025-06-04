@@ -759,7 +759,7 @@ export abstract class PokemonHeldItemModifier extends PersistentModifier {
     return this.getMaxHeldItemCount(pokemon);
   }
 
-  getSpecies(): Species | null {
+  getSpecies(): SpeciesId | null {
     return null;
   }
 
@@ -936,7 +936,7 @@ export class EvoTrackerModifier extends PokemonHeldItemModifier {
     return 999;
   }
 
-  override getSpecies(): Species {
+  override getSpecies(): SpeciesId {
     return this.species;
   }
 }
@@ -2920,7 +2920,7 @@ export class MoneyRewardModifier extends ConsumableModifier {
     globalScene.addMoney(moneyAmount.value);
 
     globalScene.getPlayerParty().map(p => {
-      if (p.species?.speciesId === Species.GIMMIGHOUL || p.fusionSpecies?.speciesId === Species.GIMMIGHOUL) {
+      if (p.species?.speciesId === SpeciesId.GIMMIGHOUL || p.fusionSpecies?.speciesId === SpeciesId.GIMMIGHOUL) {
         const factor = Math.min(Math.floor(this.moneyMultiplier), 3);
         const modifier = getModifierType(modifierTypes.EVOLUTION_TRACKER_GIMMIGHOUL).newModifier(
           p,
