@@ -58,6 +58,7 @@ import PokedexScanUiHandler from "./pokedex-scan-ui-handler";
 import PokedexPageUiHandler from "./pokedex-page-ui-handler";
 import { NavigationManager } from "./settings/navigationMenu";
 import { UiMode } from "#enums/ui-mode";
+import RenameRunFormUiHandler from "./rename-run-ui-handler";
 
 const transitionModes = [
   UiMode.SAVE_SLOT,
@@ -96,6 +97,7 @@ const noTransitionModes = [
   UiMode.SESSION_RELOAD,
   UiMode.UNAVAILABLE,
   UiMode.RENAME_POKEMON,
+  UiMode.RENAME_RUN,
   UiMode.TEST_DIALOGUE,
   UiMode.AUTO_COMPLETE,
   UiMode.ADMIN,
@@ -165,6 +167,7 @@ export default class UI extends Phaser.GameObjects.Container {
       new UnavailableModalUiHandler(),
       new GameChallengesUiHandler(),
       new RenameFormUiHandler(),
+      new RenameRunFormUiHandler(),
       new RunHistoryUiHandler(),
       new RunInfoUiHandler(),
       new TestDialogueUiHandler(UiMode.TEST_DIALOGUE),

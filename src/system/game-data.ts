@@ -979,7 +979,7 @@ export class GameData {
     });
   }
 
-  renameSession(slotId: number, newName: string): Promise<boolean> {
+  async renameSession(slotId: number, newName: string): Promise<boolean> {
     return new Promise(async resolve => {
       if (slotId < 0) {
         return resolve(false);
@@ -1010,7 +1010,8 @@ export class GameData {
         );
 
         if (!error) {
-          localStorage.setItem(`sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`, encrypted); // Keep local in sync
+          localStorage.setItem(`sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`, encrypted);
+          await updateUserInfo();
           resolve(true);
         } else {
           console.error("Failed to update session name:", error);
