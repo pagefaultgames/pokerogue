@@ -1,5 +1,5 @@
 import { AbilityId } from "#enums/ability-id";
-import { SpeciesId } from "#app/enums/species";
+import { SpeciesId } from "#enums/species-id";
 
 export interface PassiveAbilities {
   [key: number]: AbilityId

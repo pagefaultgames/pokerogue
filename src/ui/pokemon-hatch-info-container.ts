@@ -5,7 +5,7 @@ import { rgbHexToRgba, padInt } from "#app/utils/common";
 import { TextStyle, addTextObject } from "#app/ui/text";
 import { speciesEggMoves } from "#app/data/balance/egg-moves";
 import { allMoves } from "#app/data/data-lists";
-import { SpeciesId } from "#enums/species";
+import { SpeciesId } from "#enums/species-id";
 import { getEggTierForSpecies } from "#app/data/egg";
 import { starterColors } from "#app/global-vars/starter-colors";
 import { globalScene } from "#app/global-scene";

@@ -10,7 +10,7 @@ import { pokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
 import type { PlayerPokemon } from "#app/field/pokemon";
 import i18next from "i18next";
 import { EggTier } from "#enums/egg-type";
-import { SpeciesId } from "#enums/species";
+import { SpeciesId } from "#enums/species-id";
 import { EggSourceType } from "#enums/egg-source-types";
 import {
   MANAPHY_EGG_MANAPHY_RATE,

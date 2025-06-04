@@ -1,4 +1,4 @@
-import { SpeciesId } from "#enums/species";
+import { SpeciesId } from "#enums/species-id";
 
 /**
  * A list of all {@link https://bulbapedia.bulbagarden.net/wiki/Paradox_Pok%C3%A9mon | Paradox Pokemon}, NOT including the legendaries Miraidon and Koraidon.

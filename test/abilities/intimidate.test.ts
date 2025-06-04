@@ -6,7 +6,7 @@ import { Stat } from "#enums/stat";
 import { getMovePosition } from "#test/testUtils/gameManagerUtils";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import { SpeciesId } from "#enums/species";
+import { SpeciesId } from "#enums/species-id";
 
 describe("Abilities - Intimidate", () => {
   let phaserGame: Phaser.Game;

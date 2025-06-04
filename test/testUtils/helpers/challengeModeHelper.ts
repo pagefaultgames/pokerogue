@@ -1,5 +1,5 @@
 import { BattleStyle } from "#app/enums/battle-style";
-import type { SpeciesId } from "#app/enums/species";
+import type { SpeciesId } from "#enums/species-id";
 import overrides from "#app/overrides";
 import { EncounterPhase } from "#app/phases/encounter-phase";
 import { SelectStarterPhase } from "#app/phases/select-starter-phase";

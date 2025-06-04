@@ -3,7 +3,7 @@ import { MoveId } from "#enums/move-id";
 import { MapModifier } from "#app/modifier/modifier";
 import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
-import { SpeciesId } from "#enums/species";
+import { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import GameManager from "#test/testUtils/gameManager";

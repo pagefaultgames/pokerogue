@@ -36,7 +36,7 @@ import { randSeedItem } from "#app/utils/common";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { SpeciesId } from "#enums/species";
+import { SpeciesId } from "#enums/species-id";
 import { timedEventManager } from "#app/global-event-manager";
 
 /** the i18n namespace for this encounter */

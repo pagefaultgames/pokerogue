@@ -3,7 +3,7 @@ import { allMoves } from "#app/data/data-lists";
 import { MoveCategory } from "#enums/MoveCategory";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import { SpeciesId } from "#app/enums/species";
+import { SpeciesId } from "#enums/species-id";
 import type { EnemyPokemon } from "#app/field/pokemon";
 import { AiType } from "#app/field/pokemon";
 import { randSeedInt } from "#app/utils/common";

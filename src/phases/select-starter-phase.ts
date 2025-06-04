@@ -10,7 +10,7 @@ import { TitlePhase } from "#app/phases/title-phase";
 import { SaveSlotUiMode } from "#app/ui/save-slot-select-ui-handler";
 import type { Starter } from "#app/ui/starter-select-ui-handler";
 import { UiMode } from "#enums/ui-mode";
-import type { SpeciesId } from "#enums/species";
+import type { SpeciesId } from "#enums/species-id";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 import { isNullOrUndefined } from "#app/utils/common";
 

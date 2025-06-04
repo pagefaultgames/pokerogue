@@ -21,7 +21,7 @@ import { getNatureStatMultiplier, getNatureName } from "../data/nature";
 import { getVariantTint } from "#app/sprites/variant";
 // biome-ignore lint/style/noNamespaceImport: See `src/system/game-data.ts`
 import * as Modifier from "#app/modifier/modifier";
-import type { SpeciesId } from "#enums/species";
+import type { SpeciesId } from "#enums/species-id";
 import { PlayerGender } from "#enums/player-gender";
 import { SettingKeyboard } from "#app/system/settings/settings-keyboard";
 import { getBiomeName } from "#app/data/balance/biomes";

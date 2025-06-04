@@ -1,6 +1,6 @@
 import { Stat } from "#enums/stat";
 import { PokemonType } from "#enums/pokemon-type";
-import { SpeciesId } from "#app/enums/species";
+import { SpeciesId } from "#enums/species-id";
 import type { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { AbilityId } from "#enums/ability-id";

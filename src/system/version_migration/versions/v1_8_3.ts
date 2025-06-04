@@ -1,7 +1,7 @@
 import type { SystemSaveMigrator } from "#app/@types/SystemSaveMigrator";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { DexAttr, type SystemSaveData } from "#app/system/game-data";
-import { SpeciesId } from "#enums/species";
+import { SpeciesId } from "#enums/species-id";
 
 /**
  * If a starter is caught, but the only forms registered as caught are not starterSelectable,

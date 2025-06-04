@@ -1,5 +1,5 @@
 import { PartyMemberStrength } from "#enums/party-member-strength";
-import type { SpeciesId } from "#enums/species";
+import type { SpeciesId } from "#enums/species-id";
 import { globalScene } from "#app/global-scene";
 import { PlayerPokemon } from "#app/field/pokemon";
 import type { Starter } from "#app/ui/starter-select-ui-handler";

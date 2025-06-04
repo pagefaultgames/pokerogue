@@ -2,7 +2,7 @@ import { STEALING_MOVES } from "#app/data/mystery-encounters/requirements/requir
 import type { PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { SpeciesId } from "#enums/species";
+import { SpeciesId } from "#enums/species-id";
 import { globalScene } from "#app/global-scene";
 import { StatusEffect } from "#enums/status-effect";
 import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";

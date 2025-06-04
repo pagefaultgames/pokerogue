@@ -22,7 +22,7 @@ import { UiMode } from "#enums/ui-mode";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { PlayerGender } from "#enums/player-gender";
-import { SpeciesId } from "#enums/species";
+import { SpeciesId } from "#enums/species-id";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { Biome } from "#app/enums/biome";

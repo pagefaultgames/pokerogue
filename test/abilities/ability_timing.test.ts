@@ -4,7 +4,7 @@ import { TurnInitPhase } from "#app/phases/turn-init-phase";
 import i18next from "#app/plugins/i18n";
 import { UiMode } from "#enums/ui-mode";
 import { AbilityId } from "#enums/ability-id";
-import { SpeciesId } from "#enums/species";
+import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";

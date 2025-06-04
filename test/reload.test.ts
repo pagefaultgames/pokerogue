@@ -5,7 +5,7 @@ import { UiMode } from "#enums/ui-mode";
 import { Biome } from "#enums/biome";
 import { Button } from "#enums/buttons";
 import { MoveId } from "#enums/move-id";
-import { SpeciesId } from "#enums/species";
+import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import type { MockClock } from "#test/testUtils/mocks/mockClock";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";

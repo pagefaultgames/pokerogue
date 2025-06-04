@@ -1,5 +1,5 @@
 import { MoveId } from "#enums/move-id";
-import { SpeciesId } from "#enums/species";
+import { SpeciesId } from "#enums/species-id";
 
 export type LevelMoves = ([number, MoveId])[];
 

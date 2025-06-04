@@ -15,7 +15,7 @@ import { BattleType } from "#enums/battle-type";
 import Trainer, { TrainerVariant } from "#app/field/trainer";
 import { PokemonType } from "#enums/pokemon-type";
 import { Challenges } from "#enums/challenges";
-import { SpeciesId } from "#enums/species";
+import { SpeciesId } from "#enums/species-id";
 import { TrainerType } from "#enums/trainer-type";
 import { Nature } from "#enums/nature";
 import type { MoveId } from "#enums/move-id";

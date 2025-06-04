@@ -4,7 +4,7 @@ import * as MysteryEncounters from "#app/data/mystery-encounters/mystery-encount
 import { AbilityId } from "#enums/ability-id";
 import { Biome } from "#enums/biome";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { SpeciesId } from "#enums/species";
+import { SpeciesId } from "#enums/species-id";
 import { CommandPhase } from "#app/phases/command-phase";
 import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";

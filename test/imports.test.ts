@@ -5,7 +5,7 @@ async function importModule() {
   try {
     initStatsKeys();
     const { PokemonMove } = await import("#app/field/pokemon");
-    const { SpeciesId: Species } = await import("#enums/species");
+    const { SpeciesId: Species } = await import("#enums/species-id");
     return {
       PokemonMove,
       Species,

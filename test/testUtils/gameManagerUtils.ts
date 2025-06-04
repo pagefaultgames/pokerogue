@@ -9,7 +9,7 @@ import { GameModes, getGameMode } from "#app/game-mode";
 import type { StarterMoveset } from "#app/system/game-data";
 import type { Starter } from "#app/ui/starter-select-ui-handler";
 import { MoveId } from "#enums/move-id";
-import type { SpeciesId } from "#enums/species";
+import type { SpeciesId } from "#enums/species-id";
 
 /** Function to convert Blob to string */
 export function blobToString(blob) {

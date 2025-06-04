@@ -15,7 +15,7 @@ import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounte
 import { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { TrainerType } from "#enums/trainer-type";
-import { SpeciesId } from "#enums/species";
+import { SpeciesId } from "#enums/species-id";
 import { AbilityId } from "#enums/ability-id";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { MoveId } from "#enums/move-id";

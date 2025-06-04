@@ -19,7 +19,7 @@ import { TextStyle, addTextObject } from "#app/ui/text";
 import { UiMode } from "#enums/ui-mode";
 import { SettingKeyboard } from "#app/system/settings/settings-keyboard";
 import { Passive as PassiveAttr } from "#enums/passive";
-import type { SpeciesId } from "#enums/species";
+import type { SpeciesId } from "#enums/species-id";
 import { Button } from "#enums/buttons";
 import { DropDown, DropDownLabel, DropDownOption, DropDownState, DropDownType, SortCriteria } from "#app/ui/dropdown";
 import { PokedexMonContainer } from "#app/ui/pokedex-mon-container";

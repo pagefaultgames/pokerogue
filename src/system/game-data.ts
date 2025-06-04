@@ -45,7 +45,7 @@ import { Device } from "#enums/devices";
 import { GameDataType } from "#enums/game-data-type";
 import type { MoveId } from "#enums/move-id";
 import { PlayerGender } from "#enums/player-gender";
-import { SpeciesId } from "#enums/species";
+import { SpeciesId } from "#enums/species-id";
 import { applyChallenges, ChallengeType } from "#app/data/challenge";
 import { WeatherType } from "#enums/weather-type";
 import { TerrainType } from "#app/data/terrain";

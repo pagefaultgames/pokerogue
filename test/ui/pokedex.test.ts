@@ -5,7 +5,7 @@ import PokedexUiHandler from "#app/ui/pokedex-ui-handler";
 import { FilterTextRow } from "#app/ui/filter-text";
 import { allAbilities } from "#app/data/data-lists";
 import { AbilityId } from "#enums/ability-id";
-import { SpeciesId } from "#enums/species";
+import { SpeciesId } from "#enums/species-id";
 import { allSpecies, getPokemonSpecies, type PokemonForm } from "#app/data/pokemon-species";
 import { Button } from "#enums/buttons";
 import { DropDownColumn } from "#enums/drop-down-column";

@@ -11,7 +11,7 @@ import {
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { Biome } from "#app/enums/biome";
 import { MysteryEncounterType } from "#app/enums/mystery-encounter-type";
-import { SpeciesId } from "#app/enums/species";
+import { SpeciesId } from "#enums/species-id";
 import { PokemonMove } from "#app/field/pokemon";
 import { HealShopCostModifier, HitHealModifier, TurnHealModifier } from "#app/modifier/modifier";
 import { ModifierTier } from "#app/modifier/modifier-tier";

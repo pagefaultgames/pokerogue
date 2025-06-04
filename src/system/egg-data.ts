@@ -1,5 +1,5 @@
 import type { EggTier } from "#enums/egg-type";
-import type { SpeciesId } from "#enums/species";
+import type { SpeciesId } from "#enums/species-id";
 import type { VariantTier } from "#enums/variant-tier";
 import { EGG_SEED, Egg } from "../data/egg";
 import type { EggSourceType } from "#app/enums/egg-source-types";

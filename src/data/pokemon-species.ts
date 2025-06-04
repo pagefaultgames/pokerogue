@@ -1,7 +1,7 @@
 import type { Localizable } from "#app/interfaces/locales";
 import { AbilityId } from "#enums/ability-id";
 import { PartyMemberStrength } from "#enums/party-member-strength";
-import { SpeciesId } from "#enums/species";
+import { SpeciesId } from "#enums/species-id";
 import { QuantizerCelebi, argbFromRgba, rgbaFromArgb } from "@material/material-color-utilities";
 import i18next from "i18next";
 import type { AnySound } from "#app/battle-scene";

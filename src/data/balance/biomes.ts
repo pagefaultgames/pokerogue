@@ -4,7 +4,7 @@ import type { SpeciesFormEvolution } from "#app/data/balance/pokemon-evolutions"
 import { pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
 import i18next from "i18next";
 import { Biome } from "#enums/biome";
-import { SpeciesId } from "#enums/species";
+import { SpeciesId } from "#enums/species-id";
 import { TimeOfDay } from "#enums/time-of-day";
 import { TrainerType } from "#enums/trainer-type";
 // import beautify from "json-beautify";

@@ -4,7 +4,7 @@ import type Pokemon from "#app/field/pokemon";
 import { BattlePhase } from "#app/phases/battle-phase";
 import { isNullOrUndefined } from "#app/utils/common";
 import { PokemonAnimType } from "#enums/pokemon-anim-type";
-import { SpeciesId } from "#enums/species";
+import { SpeciesId } from "#enums/species-id";
 
 export class PokemonAnimPhase extends BattlePhase {
   /** The type of animation to play in this phase */

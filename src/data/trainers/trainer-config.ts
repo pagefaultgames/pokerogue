@@ -23,7 +23,7 @@ import { evilAdminTrainerPools } from "./evil-admin-trainer-pools";
 
 // Enum imports
 import { PartyMemberStrength } from "#enums/party-member-strength";
-import { SpeciesId } from "#enums/species";
+import { SpeciesId } from "#enums/species-id";
 import { PokeballType } from "#enums/pokeball";
 import { PokemonType } from "#enums/pokemon-type";
 import { MoveId } from "#enums/move-id";

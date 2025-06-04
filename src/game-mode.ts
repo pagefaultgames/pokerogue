@@ -9,7 +9,7 @@ import type { Arena } from "./field/arena";
 import Overrides from "#app/overrides";
 import { isNullOrUndefined, randSeedInt, randSeedItem } from "#app/utils/common";
 import { Biome } from "#enums/biome";
-import { SpeciesId } from "#enums/species";
+import { SpeciesId } from "#enums/species-id";
 import { Challenges } from "./enums/challenges";
 import { globalScene } from "#app/global-scene";
 import { getDailyStartingBiome } from "./data/daily-run";

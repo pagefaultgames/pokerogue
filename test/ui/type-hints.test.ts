@@ -1,6 +1,6 @@
 import { Button } from "#app/enums/buttons";
 import { MoveId } from "#enums/move-id";
-import { SpeciesId } from "#app/enums/species";
+import { SpeciesId } from "#enums/species-id";
 import { CommandPhase } from "#app/phases/command-phase";
 import FightUiHandler from "#app/ui/fight-ui-handler";
 import { UiMode } from "#enums/ui-mode";

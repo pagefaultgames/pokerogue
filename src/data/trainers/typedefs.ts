@@ -1,7 +1,7 @@
 import type { EnemyPokemon } from "#app/field/pokemon";
 import type { PersistentModifier } from "#app/modifier/modifier";
 import type { PartyMemberStrength } from "#enums/party-member-strength";
-import type { SpeciesId } from "#enums/species";
+import type { SpeciesId } from "#enums/species-id";
 import type { TrainerConfig } from "./trainer-config";
 import type { TrainerPartyTemplate } from "./TrainerPartyTemplate";
 

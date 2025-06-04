@@ -17,7 +17,7 @@ import { achvs } from "#app/system/achv";
 import { UiMode } from "#enums/ui-mode";
 import type { PartyOption } from "#app/ui/party-ui-handler";
 import { PartyUiMode } from "#app/ui/party-ui-handler";
-import { SpeciesId } from "#enums/species";
+import { SpeciesId } from "#enums/species-id";
 import type { PokemonType } from "#enums/pokemon-type";
 import type PokemonSpecies from "#app/data/pokemon-species";
 import { getPokemonSpecies } from "#app/data/pokemon-species";

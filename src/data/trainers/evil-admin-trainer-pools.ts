@@ -1,6 +1,6 @@
 import type { TrainerTierPools } from "#app/data/trainers/typedefs";
 import { TrainerPoolTier } from "#enums/trainer-pool-tier";
-import { SpeciesId } from "#enums/species";
+import { SpeciesId } from "#enums/species-id";
 
 /** Team Rocket's admin trainer pool. */
 const ROCKET: TrainerTierPools = {

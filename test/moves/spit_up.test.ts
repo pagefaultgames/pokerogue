@@ -8,7 +8,7 @@ import GameManager from "#test/testUtils/gameManager";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import type Move from "#app/data/moves/move";
-import { SpeciesId } from "#enums/species";
+import { SpeciesId } from "#enums/species-id";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { MovePhase } from "#app/phases/move-phase";

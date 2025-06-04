@@ -3,7 +3,7 @@ import { TextStyle, addTextObject } from "#app/ui/text";
 import type { nil } from "#app/utils/common";
 import { isNullOrUndefined } from "#app/utils/common";
 import i18next from "i18next";
-import { SpeciesId } from "#enums/species";
+import { SpeciesId } from "#enums/species-id";
 import type { WeatherPoolEntry } from "#app/data/weather";
 import { WeatherType } from "#enums/weather-type";
 import { CLASSIC_CANDY_FRIENDSHIP_MULTIPLIER } from "./data/balance/starters";

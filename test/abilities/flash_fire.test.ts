@@ -1,6 +1,6 @@
 import { BattlerIndex } from "#app/battle";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
-import { SpeciesId } from "#app/enums/species";
+import { SpeciesId } from "#enums/species-id";
 import { MovePhase } from "#app/phases/move-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { AbilityId } from "#enums/ability-id";

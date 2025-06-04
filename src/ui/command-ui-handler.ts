@@ -10,7 +10,7 @@ import { globalScene } from "#app/global-scene";
 import { TerastallizeAccessModifier } from "#app/modifier/modifier";
 import { PokemonType } from "#enums/pokemon-type";
 import { getTypeRgb } from "#app/data/type";
-import { SpeciesId } from "#enums/species";
+import { SpeciesId } from "#enums/species-id";
 
 export enum Command {
   FIGHT = 0,

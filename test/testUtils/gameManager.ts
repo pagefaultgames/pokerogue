@@ -34,7 +34,7 @@ import { ExpGainsSpeed } from "#enums/exp-gains-speed";
 import { ExpNotification } from "#enums/exp-notification";
 import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PlayerGender } from "#enums/player-gender";
-import type { SpeciesId } from "#enums/species";
+import type { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
 import ErrorInterceptor from "#test/testUtils/errorInterceptor";
 import { generateStarter, waitUntil } from "#test/testUtils/gameManagerUtils";

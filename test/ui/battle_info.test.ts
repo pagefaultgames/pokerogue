@@ -1,5 +1,5 @@
 import { ExpGainsSpeed } from "#app/enums/exp-gains-speed";
-import { SpeciesId } from "#app/enums/species";
+import { SpeciesId } from "#enums/species-id";
 import { ExpPhase } from "#app/phases/exp-phase";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";

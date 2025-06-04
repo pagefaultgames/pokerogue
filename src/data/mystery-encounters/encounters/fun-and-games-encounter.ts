@@ -19,7 +19,7 @@ import { MoneyRequirement } from "#app/data/mystery-encounters/mystery-encounter
 import { queueEncounterMessage, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import { SpeciesId } from "#enums/species";
+import { SpeciesId } from "#enums/species-id";
 import i18next from "i18next";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { PlayerGender } from "#enums/player-gender";

@@ -37,7 +37,7 @@ import PokedexInfoOverlay from "#app/ui/pokedex-info-overlay";
 import { getEggTierForSpecies } from "#app/data/egg";
 import { Device } from "#enums/devices";
 import type { MoveId } from "#enums/move-id";
-import { SpeciesId } from "#enums/species";
+import { SpeciesId } from "#enums/species-id";
 import { Button } from "#enums/buttons";
 import { EggSourceType } from "#enums/egg-source-types";
 import {
