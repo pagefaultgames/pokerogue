@@ -1,7 +1,7 @@
 import { BattlerIndex } from "#app/battle";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import { Stat } from "#enums/stat";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -25,7 +25,7 @@ describe("Abilities - Beast Boost", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .enemySpecies(Species.BULBASAUR)
+      .enemySpecies(SpeciesId.BULBASAUR)
       .enemyAbility(AbilityId.BEAST_BOOST)
       .ability(AbilityId.BEAST_BOOST)
       .startingLevel(2000)
@@ -34,7 +34,7 @@ describe("Abilities - Beast Boost", () => {
   });
 
   it("should prefer highest stat to boost its corresponding stat stage by 1 when winning a battle", async () => {
-    await game.classicMode.startBattle([Species.SLOWBRO]);
+    await game.classicMode.startBattle([SpeciesId.SLOWBRO]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
     // Set the pokemon's highest stat to DEF, so it should be picked by Beast Boost
@@ -52,7 +52,7 @@ describe("Abilities - Beast Boost", () => {
   it("should use in-battle overriden stats when determining the stat stage to raise by 1", async () => {
     game.override.enemyMoveset([MoveId.GUARD_SPLIT]);
 
-    await game.classicMode.startBattle([Species.SLOWBRO]);
+    await game.classicMode.startBattle([SpeciesId.SLOWBRO]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
     // If the opponent uses Guard Split, the pokemon's second highest stat (SPATK) should be chosen
@@ -70,7 +70,7 @@ describe("Abilities - Beast Boost", () => {
 
   it("should have order preference in case of stat ties", async () => {
     // Order preference follows the order of EFFECTIVE_STAT
-    await game.classicMode.startBattle([Species.SLOWBRO]);
+    await game.classicMode.startBattle([SpeciesId.SLOWBRO]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
 

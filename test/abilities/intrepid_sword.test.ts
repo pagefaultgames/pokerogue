@@ -2,7 +2,7 @@ import { Stat } from "#enums/stat";
 import GameManager from "#test/testUtils/gameManager";
 import { CommandPhase } from "#app/phases/command-phase";
 import { AbilityId } from "#enums/ability-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -23,13 +23,13 @@ describe("Abilities - Intrepid Sword", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override.battleStyle("single");
-    game.override.enemySpecies(Species.ZACIAN);
+    game.override.enemySpecies(SpeciesId.ZACIAN);
     game.override.enemyAbility(AbilityId.INTREPID_SWORD);
     game.override.ability(AbilityId.INTREPID_SWORD);
   });
 
   it("should raise ATK stat stage by 1 on entry", async () => {
-    await game.classicMode.runToSummon([Species.ZACIAN]);
+    await game.classicMode.runToSummon([SpeciesId.ZACIAN]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
     const enemyPokemon = game.scene.getEnemyPokemon()!;

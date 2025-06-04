@@ -4,7 +4,7 @@ import * as MysteryEncounters from "#app/data/mystery-encounters/mystery-encount
 import { AbilityId } from "#enums/ability-id";
 import { Biome } from "#enums/biome";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import { CommandPhase } from "#app/phases/command-phase";
 import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
@@ -23,7 +23,7 @@ import i18next from "i18next";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const namespace = "mysteryEncounters/teleportingHijinks";
-const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
+const defaultParty = [SpeciesId.LAPRAS, SpeciesId.GENGAR, SpeciesId.ABRA];
 const defaultBiome = Biome.CAVE;
 const defaultWave = 45;
 
@@ -215,7 +215,7 @@ describe("Teleporting Hijinks - Mystery Encounter", () => {
     });
 
     it("should NOT be selectable if the player doesn't the right type pokemon", async () => {
-      await game.runToMysteryEncounter(MysteryEncounterType.TELEPORTING_HIJINKS, [Species.BLASTOISE]);
+      await game.runToMysteryEncounter(MysteryEncounterType.TELEPORTING_HIJINKS, [SpeciesId.BLASTOISE]);
       await game.phaseInterceptor.to(MysteryEncounterPhase, false);
 
       const encounterPhase = scene.getCurrentPhase();
@@ -234,14 +234,14 @@ describe("Teleporting Hijinks - Mystery Encounter", () => {
     });
 
     it("should be selectable if the player has the right type pokemon", async () => {
-      await game.runToMysteryEncounter(MysteryEncounterType.TELEPORTING_HIJINKS, [Species.METAGROSS]);
+      await game.runToMysteryEncounter(MysteryEncounterType.TELEPORTING_HIJINKS, [SpeciesId.METAGROSS]);
       await runMysteryEncounterToEnd(game, 2, undefined, true);
 
       expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
     });
 
     it("should transport to a new area", async () => {
-      await game.runToMysteryEncounter(MysteryEncounterType.TELEPORTING_HIJINKS, [Species.PIKACHU]);
+      await game.runToMysteryEncounter(MysteryEncounterType.TELEPORTING_HIJINKS, [SpeciesId.PIKACHU]);
 
       const previousBiome = scene.arena.biomeType;
 
@@ -252,7 +252,7 @@ describe("Teleporting Hijinks - Mystery Encounter", () => {
     });
 
     it("should start a battle against an enraged boss below wave 50", async () => {
-      await game.runToMysteryEncounter(MysteryEncounterType.TELEPORTING_HIJINKS, [Species.PIKACHU]);
+      await game.runToMysteryEncounter(MysteryEncounterType.TELEPORTING_HIJINKS, [SpeciesId.PIKACHU]);
       await runMysteryEncounterToEnd(game, 2, undefined, true);
       const enemyField = scene.getEnemyField();
       expect(enemyField[0].summonData.statStages).toEqual([0, 1, 0, 1, 1, 0, 0]);
@@ -261,7 +261,7 @@ describe("Teleporting Hijinks - Mystery Encounter", () => {
 
     it("should start a battle against an extra enraged boss above wave 50", { retry: 5 }, async () => {
       game.override.startingWave(56);
-      await game.runToMysteryEncounter(MysteryEncounterType.TELEPORTING_HIJINKS, [Species.PIKACHU]);
+      await game.runToMysteryEncounter(MysteryEncounterType.TELEPORTING_HIJINKS, [SpeciesId.PIKACHU]);
       await runMysteryEncounterToEnd(game, 2, undefined, true);
       const enemyField = scene.getEnemyField();
       expect(enemyField[0].summonData.statStages).toEqual([1, 1, 1, 1, 1, 0, 0]);

@@ -1,5 +1,5 @@
 import { MoveId } from "#enums/move-id";
-import { Species } from "#app/enums/species";
+import { SpeciesId } from "#app/enums/species";
 import { Stat } from "#app/enums/stat";
 import { AbilityId } from "#enums/ability-id";
 import GameManager from "#test/testUtils/gameManager";
@@ -30,7 +30,7 @@ describe("Moves - Power Shift", () => {
   });
 
   it("switches the user's raw Attack stat with its raw Defense stat", async () => {
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
 

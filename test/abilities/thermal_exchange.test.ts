@@ -1,6 +1,6 @@
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import { StatusEffect } from "#enums/status-effect";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -27,7 +27,7 @@ describe("Abilities - Thermal Exchange", () => {
       .ability(AbilityId.BALL_FETCH)
       .battleStyle("single")
       .disableCrits()
-      .enemySpecies(Species.MAGIKARP)
+      .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(MoveId.SPLASH);
   });
@@ -38,7 +38,7 @@ describe("Abilities - Thermal Exchange", () => {
       .enemyAbility(AbilityId.BALL_FETCH)
       .moveset(MoveId.SKILL_SWAP)
       .enemyMoveset(MoveId.SPLASH);
-    await game.classicMode.startBattle([Species.FEEBAS]);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
     const enemy = game.scene.getEnemyPokemon();
     enemy?.trySetStatus(StatusEffect.BURN);
     expect(enemy?.status?.effect).toBe(StatusEffect.BURN);

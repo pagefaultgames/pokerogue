@@ -1,6 +1,6 @@
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -24,7 +24,7 @@ describe("Moves - Spikes", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .enemySpecies(Species.MAGIKARP)
+      .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
       .ability(AbilityId.BALL_FETCH)
       .enemyMoveset(MoveId.SPLASH)
@@ -32,7 +32,7 @@ describe("Moves - Spikes", () => {
   });
 
   it("should not damage the team that set them", async () => {
-    await game.classicMode.startBattle([Species.MIGHTYENA, Species.POOCHYENA]);
+    await game.classicMode.startBattle([SpeciesId.MIGHTYENA, SpeciesId.POOCHYENA]);
 
     game.move.select(MoveId.SPIKES);
     await game.toNextTurn();
@@ -52,7 +52,7 @@ describe("Moves - Spikes", () => {
 
   it("should damage opposing pokemon that are forced to switch in", async () => {
     game.override.startingWave(5);
-    await game.classicMode.startBattle([Species.MIGHTYENA, Species.POOCHYENA]);
+    await game.classicMode.startBattle([SpeciesId.MIGHTYENA, SpeciesId.POOCHYENA]);
 
     game.move.select(MoveId.SPIKES);
     await game.toNextTurn();
@@ -66,7 +66,7 @@ describe("Moves - Spikes", () => {
 
   it("should damage opposing pokemon that choose to switch in", async () => {
     game.override.startingWave(5);
-    await game.classicMode.startBattle([Species.MIGHTYENA, Species.POOCHYENA]);
+    await game.classicMode.startBattle([SpeciesId.MIGHTYENA, SpeciesId.POOCHYENA]);
 
     game.move.select(MoveId.SPIKES);
     await game.toNextTurn();
@@ -80,10 +80,10 @@ describe("Moves - Spikes", () => {
   }, 20000);
 
   it("should work when all targets fainted", async () => {
-    game.override.enemySpecies(Species.DIGLETT);
+    game.override.enemySpecies(SpeciesId.DIGLETT);
     game.override.battleStyle("double");
     game.override.startingLevel(50);
-    await game.classicMode.startBattle([Species.RAYQUAZA, Species.ROWLET]);
+    await game.classicMode.startBattle([SpeciesId.RAYQUAZA, SpeciesId.ROWLET]);
 
     game.move.select(MoveId.EARTHQUAKE);
     game.move.select(MoveId.SPIKES, 1);

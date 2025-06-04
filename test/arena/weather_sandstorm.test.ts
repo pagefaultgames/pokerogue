@@ -1,7 +1,7 @@
 import { AbilityId } from "#enums/ability-id";
 import { Stat } from "#app/enums/stat";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import { WeatherType } from "#enums/weather-type";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -28,11 +28,11 @@ describe("Weather - Sandstorm", () => {
       .battleStyle("single")
       .moveset(MoveId.SPLASH)
       .enemyMoveset(MoveId.SPLASH)
-      .enemySpecies(Species.MAGIKARP);
+      .enemySpecies(SpeciesId.MAGIKARP);
   });
 
   it("inflicts damage equal to 1/16 of Pokemon's max HP at turn end", async () => {
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
     game.move.select(MoveId.SPLASH);
 
@@ -45,7 +45,7 @@ describe("Weather - Sandstorm", () => {
 
   it("does not inflict damage to a Pokemon that is underwater (Dive) or underground (Dig)", async () => {
     game.override.moveset([MoveId.DIVE]);
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
     game.move.select(MoveId.DIVE);
 
@@ -61,11 +61,11 @@ describe("Weather - Sandstorm", () => {
   it("does not inflict damage to Rock, Ground and Steel type Pokemon", async () => {
     game.override
       .battleStyle("double")
-      .enemySpecies(Species.SANDSHREW)
+      .enemySpecies(SpeciesId.SANDSHREW)
       .ability(AbilityId.BALL_FETCH)
       .enemyAbility(AbilityId.BALL_FETCH);
 
-    await game.classicMode.startBattle([Species.ROCKRUFF, Species.KLINK]);
+    await game.classicMode.startBattle([SpeciesId.ROCKRUFF, SpeciesId.KLINK]);
 
     game.move.select(MoveId.SPLASH, 0);
     game.move.select(MoveId.SPLASH, 1);
@@ -78,7 +78,7 @@ describe("Weather - Sandstorm", () => {
   });
 
   it("increases Rock type Pokemon Sp.Def by 50%", async () => {
-    await game.classicMode.startBattle([Species.ROCKRUFF]);
+    await game.classicMode.startBattle([SpeciesId.ROCKRUFF]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
     const playerSpdef = playerPokemon.getStat(Stat.SPDEF);

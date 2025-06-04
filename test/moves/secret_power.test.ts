@@ -3,7 +3,7 @@ import { Biome } from "#enums/biome";
 import { MoveId } from "#enums/move-id";
 import { Stat } from "#enums/stat";
 import { allMoves } from "#app/data/data-lists";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -35,7 +35,7 @@ describe("Moves - Secret Power", () => {
       .ability(AbilityId.BALL_FETCH)
       .battleStyle("single")
       .disableCrits()
-      .enemySpecies(Species.MAGIKARP)
+      .enemySpecies(SpeciesId.MAGIKARP)
       .enemyLevel(60)
       .enemyAbility(AbilityId.BALL_FETCH);
   });
@@ -43,7 +43,7 @@ describe("Moves - Secret Power", () => {
   it("Secret Power checks for an active terrain first then looks at the biome for its secondary effect", async () => {
     game.override.startingBiome(Biome.VOLCANO).enemyMoveset([MoveId.SPLASH, MoveId.MISTY_TERRAIN]);
     vi.spyOn(allMoves[MoveId.SECRET_POWER], "chance", "get").mockReturnValue(100);
-    await game.classicMode.startBattle([Species.FEEBAS]);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
@@ -66,7 +66,7 @@ describe("Moves - Secret Power", () => {
       .ability(AbilityId.SERENE_GRACE)
       .enemyMoveset([MoveId.SPLASH])
       .battleStyle("double");
-    await game.classicMode.startBattle([Species.BLASTOISE, Species.CHARIZARD]);
+    await game.classicMode.startBattle([SpeciesId.BLASTOISE, SpeciesId.CHARIZARD]);
 
     const sereneGraceAttr = allAbilities[AbilityId.SERENE_GRACE].getAttrs(MoveEffectChanceMultiplierAbAttr)[0];
     vi.spyOn(sereneGraceAttr, "canApply");

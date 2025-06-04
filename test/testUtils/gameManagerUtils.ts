@@ -9,7 +9,7 @@ import { GameModes, getGameMode } from "#app/game-mode";
 import type { StarterMoveset } from "#app/system/game-data";
 import type { Starter } from "#app/ui/starter-select-ui-handler";
 import { MoveId } from "#enums/move-id";
-import type { Species } from "#enums/species";
+import type { SpeciesId } from "#enums/species";
 
 /** Function to convert Blob to string */
 export function blobToString(blob) {
@@ -32,7 +32,7 @@ export function holdOn(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-export function generateStarter(scene: BattleScene, species?: Species[]): Starter[] {
+export function generateStarter(scene: BattleScene, species?: SpeciesId[]): Starter[] {
   const seed = "test";
   const starters = getTestRunStarters(seed, species);
   const startingLevel = scene.gameMode.getStartingLevel();
@@ -61,7 +61,7 @@ export function generateStarter(scene: BattleScene, species?: Species[]): Starte
   return starters;
 }
 
-function getTestRunStarters(seed: string, species?: Species[]): Starter[] {
+function getTestRunStarters(seed: string, species?: SpeciesId[]): Starter[] {
   if (!species) {
     return getDailyRunStarters(seed);
   }
@@ -108,7 +108,7 @@ export function getMovePosition(scene: BattleScene, pokemonIndex: 0 | 1, move: M
 /**
  * Useful for populating party, wave index, etc. without having to spin up and run through an entire EncounterPhase
  */
-export function initSceneWithoutEncounterPhase(scene: BattleScene, species?: Species[]): void {
+export function initSceneWithoutEncounterPhase(scene: BattleScene, species?: SpeciesId[]): void {
   const starters = generateStarter(scene, species);
   starters.forEach(starter => {
     const starterProps = scene.gameData.getSpeciesDexAttrProps(starter.species, starter.dexAttr);

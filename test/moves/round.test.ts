@@ -3,7 +3,7 @@ import { allMoves } from "#app/data/data-lists";
 import type { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -29,7 +29,7 @@ describe("Moves - Round", () => {
       .ability(AbilityId.BALL_FETCH)
       .battleStyle("double")
       .disableCrits()
-      .enemySpecies(Species.MAGIKARP)
+      .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset([MoveId.SPLASH, MoveId.ROUND])
       .startingLevel(100)
@@ -37,7 +37,7 @@ describe("Moves - Round", () => {
   });
 
   it("should cue other instances of Round together in Speed order", async () => {
-    await game.classicMode.startBattle([Species.MAGIKARP, Species.FEEBAS]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.FEEBAS]);
 
     const round = allMoves[MoveId.ROUND];
     const spy = vi.spyOn(round, "calculateBattlePower");

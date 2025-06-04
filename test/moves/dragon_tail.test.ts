@@ -6,7 +6,7 @@ import { StatusEffect } from "#enums/status-effect";
 import { PokemonType } from "#enums/pokemon-type";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -30,7 +30,7 @@ describe("Moves - Dragon Tail", () => {
     game.override
       .battleStyle("single")
       .moveset([MoveId.DRAGON_TAIL, MoveId.SPLASH, MoveId.FLAMETHROWER])
-      .enemySpecies(Species.WAILORD)
+      .enemySpecies(SpeciesId.WAILORD)
       .enemyMoveset(MoveId.SPLASH)
       .startingLevel(5)
       .enemyLevel(5);
@@ -39,7 +39,7 @@ describe("Moves - Dragon Tail", () => {
   });
 
   it("should cause opponent to flee, and not crash", async () => {
-    await game.classicMode.startBattle([Species.DRATINI]);
+    await game.classicMode.startBattle([SpeciesId.DRATINI]);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
@@ -57,7 +57,7 @@ describe("Moves - Dragon Tail", () => {
 
   it("should cause opponent to flee, display ability, and not crash", async () => {
     game.override.enemyAbility(AbilityId.ROUGH_SKIN);
-    await game.classicMode.startBattle([Species.DRATINI]);
+    await game.classicMode.startBattle([SpeciesId.DRATINI]);
 
     const leadPokemon = game.scene.getPlayerPokemon()!;
     const enemyPokemon = game.scene.getEnemyPokemon()!;
@@ -74,7 +74,7 @@ describe("Moves - Dragon Tail", () => {
 
   it("should proceed without crashing in a double battle", async () => {
     game.override.battleStyle("double").enemyMoveset(MoveId.SPLASH).enemyAbility(AbilityId.ROUGH_SKIN);
-    await game.classicMode.startBattle([Species.DRATINI, Species.DRATINI, Species.WAILORD, Species.WAILORD]);
+    await game.classicMode.startBattle([SpeciesId.DRATINI, SpeciesId.DRATINI, SpeciesId.WAILORD, SpeciesId.WAILORD]);
 
     const leadPokemon = game.scene.getPlayerParty()[0]!;
 
@@ -103,7 +103,7 @@ describe("Moves - Dragon Tail", () => {
 
   it("should redirect targets upon opponent flee", async () => {
     game.override.battleStyle("double").enemyMoveset(MoveId.SPLASH).enemyAbility(AbilityId.ROUGH_SKIN);
-    await game.classicMode.startBattle([Species.DRATINI, Species.DRATINI, Species.WAILORD, Species.WAILORD]);
+    await game.classicMode.startBattle([SpeciesId.DRATINI, SpeciesId.DRATINI, SpeciesId.WAILORD, SpeciesId.WAILORD]);
 
     const leadPokemon = game.scene.getPlayerParty()[0]!;
     const secPokemon = game.scene.getPlayerParty()[1]!;
@@ -130,7 +130,7 @@ describe("Moves - Dragon Tail", () => {
 
   it("doesn't switch out if the target has suction cups", async () => {
     game.override.enemyAbility(AbilityId.SUCTION_CUPS);
-    await game.classicMode.startBattle([Species.REGIELEKI]);
+    await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
 
     const enemy = game.scene.getEnemyPokemon()!;
 
@@ -142,7 +142,7 @@ describe("Moves - Dragon Tail", () => {
 
   it("should force a switch upon fainting an opponent normally", async () => {
     game.override.startingWave(5).startingLevel(1000); // To make sure Dragon Tail KO's the opponent
-    await game.classicMode.startBattle([Species.DRATINI]);
+    await game.classicMode.startBattle([SpeciesId.DRATINI]);
 
     game.move.select(MoveId.DRAGON_TAIL);
 
@@ -164,7 +164,7 @@ describe("Moves - Dragon Tail", () => {
       .startingWave(5)
       .enemyHeldItems([{ name: "REVIVER_SEED" }])
       .startingLevel(1000); // To make sure Dragon Tail KO's the opponent
-    await game.classicMode.startBattle([Species.DRATINI]);
+    await game.classicMode.startBattle([SpeciesId.DRATINI]);
 
     game.move.select(MoveId.DRAGON_TAIL);
 
@@ -182,7 +182,7 @@ describe("Moves - Dragon Tail", () => {
       .startingHeldItems([{ name: "REVIVER_SEED" }])
       .enemyMoveset(MoveId.DRAGON_TAIL)
       .enemyLevel(1000); // To make sure Dragon Tail KO's the player
-    await game.classicMode.startBattle([Species.DRATINI, Species.BULBASAUR]);
+    await game.classicMode.startBattle([SpeciesId.DRATINI, SpeciesId.BULBASAUR]);
 
     game.move.select(MoveId.SPLASH);
 
@@ -197,7 +197,7 @@ describe("Moves - Dragon Tail", () => {
 
   it("should force switches randomly", async () => {
     game.override.enemyMoveset(MoveId.DRAGON_TAIL).startingLevel(100).enemyLevel(1);
-    await game.classicMode.startBattle([Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE]);
+    await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.CHARMANDER, SpeciesId.SQUIRTLE]);
 
     const [bulbasaur, charmander, squirtle] = game.scene.getPlayerParty();
 
@@ -231,7 +231,7 @@ describe("Moves - Dragon Tail", () => {
     game.override.enemyMoveset(MoveId.DRAGON_TAIL).startingLevel(100).enemyLevel(1);
     // Mono-Water challenge, Eevee is ineligible
     game.challengeMode.addChallenge(Challenges.SINGLE_TYPE, PokemonType.WATER + 1, 0);
-    await game.challengeMode.startBattle([Species.LAPRAS, Species.EEVEE, Species.TOXAPEX, Species.PRIMARINA]);
+    await game.challengeMode.startBattle([SpeciesId.LAPRAS, SpeciesId.EEVEE, SpeciesId.TOXAPEX, SpeciesId.PRIMARINA]);
 
     const [lapras, eevee, toxapex, primarina] = game.scene.getPlayerParty();
 
@@ -251,7 +251,7 @@ describe("Moves - Dragon Tail", () => {
 
   it("should not force a switch to a fainted Pokemon", async () => {
     game.override.enemyMoveset([MoveId.SPLASH, MoveId.DRAGON_TAIL]).startingLevel(100).enemyLevel(1);
-    await game.classicMode.startBattle([Species.LAPRAS, Species.EEVEE, Species.TOXAPEX, Species.PRIMARINA]);
+    await game.classicMode.startBattle([SpeciesId.LAPRAS, SpeciesId.EEVEE, SpeciesId.TOXAPEX, SpeciesId.PRIMARINA]);
 
     const [lapras, eevee, toxapex, primarina] = game.scene.getPlayerParty();
 
@@ -280,7 +280,7 @@ describe("Moves - Dragon Tail", () => {
 
   it("should not force a switch if there are no available Pokemon to switch into", async () => {
     game.override.enemyMoveset([MoveId.SPLASH, MoveId.DRAGON_TAIL]).startingLevel(100).enemyLevel(1);
-    await game.classicMode.startBattle([Species.LAPRAS, Species.EEVEE]);
+    await game.classicMode.startBattle([SpeciesId.LAPRAS, SpeciesId.EEVEE]);
 
     const [lapras, eevee] = game.scene.getPlayerParty();
 

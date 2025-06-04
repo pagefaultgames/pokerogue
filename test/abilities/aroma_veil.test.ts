@@ -1,5 +1,5 @@
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import { AbilityId } from "#enums/ability-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -28,13 +28,13 @@ describe("Moves - Aroma Veil", () => {
       .battleStyle("double")
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset([MoveId.HEAL_BLOCK, MoveId.IMPRISON, MoveId.SPLASH])
-      .enemySpecies(Species.SHUCKLE)
+      .enemySpecies(SpeciesId.SHUCKLE)
       .ability(AbilityId.AROMA_VEIL)
       .moveset([MoveId.GROWL]);
   });
 
   it("Aroma Veil protects the Pokemon's side against most Move Restriction Battler Tags", async () => {
-    await game.classicMode.startBattle([Species.REGIELEKI, Species.BULBASAUR]);
+    await game.classicMode.startBattle([SpeciesId.REGIELEKI, SpeciesId.BULBASAUR]);
 
     const party = game.scene.getPlayerParty()! as PlayerPokemon[];
 
@@ -48,7 +48,7 @@ describe("Moves - Aroma Veil", () => {
   });
 
   it("Aroma Veil does not protect against Imprison", async () => {
-    await game.classicMode.startBattle([Species.REGIELEKI, Species.BULBASAUR]);
+    await game.classicMode.startBattle([SpeciesId.REGIELEKI, SpeciesId.BULBASAUR]);
 
     const party = game.scene.getPlayerParty()! as PlayerPokemon[];
 

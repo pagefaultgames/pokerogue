@@ -1,6 +1,6 @@
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, it, expect } from "vitest";
@@ -37,7 +37,7 @@ describe("Moves - Autotomize", () => {
       const twoAutotomizeDracozoltWeight = 0.1;
       const threeAutotomizeDracozoltWeight = 0.1;
 
-      await game.classicMode.startBattle([Species.DRACOZOLT]);
+      await game.classicMode.startBattle([SpeciesId.DRACOZOLT]);
       const playerPokemon = game.scene.getPlayerPokemon()!;
       expect(playerPokemon.getWeight()).toBe(baseDracozoltWeight);
       game.move.select(MoveId.AUTOTOMIZE);
@@ -61,7 +61,7 @@ describe("Moves - Autotomize", () => {
       const baseAegislashWeight = 53;
       const autotomizeAegislashWeight = 0.1;
 
-      await game.classicMode.startBattle([Species.AEGISLASH]);
+      await game.classicMode.startBattle([SpeciesId.AEGISLASH]);
       const playerPokemon = game.scene.getPlayerPokemon()!;
 
       expect(playerPokemon.getWeight()).toBe(baseAegislashWeight);
@@ -97,7 +97,7 @@ describe("Moves - Autotomize", () => {
       const baseLightGroudonWeight = 475;
       const autotomizeLightGroudonWeight = 425;
       game.override.ability(AbilityId.LIGHT_METAL);
-      await game.classicMode.startBattle([Species.GROUDON]);
+      await game.classicMode.startBattle([SpeciesId.GROUDON]);
       const playerPokemon = game.scene.getPlayerPokemon()!;
       expect(playerPokemon.getWeight()).toBe(baseLightGroudonWeight);
       game.move.select(MoveId.AUTOTOMIZE);

@@ -1,7 +1,7 @@
 import { BattlerIndex } from "#app/battle";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
@@ -23,8 +23,8 @@ describe("Moves - Spotlight", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override.battleStyle("double");
-    game.override.starterSpecies(Species.AMOONGUSS);
-    game.override.enemySpecies(Species.SNORLAX);
+    game.override.starterSpecies(SpeciesId.AMOONGUSS);
+    game.override.enemySpecies(SpeciesId.SNORLAX);
     game.override.startingLevel(100);
     game.override.enemyLevel(100);
     game.override.moveset([MoveId.FOLLOW_ME, MoveId.RAGE_POWDER, MoveId.SPOTLIGHT, MoveId.QUICK_ATTACK]);
@@ -32,7 +32,7 @@ describe("Moves - Spotlight", () => {
   });
 
   test("move should redirect attacks to the target", async () => {
-    await game.classicMode.startBattle([Species.AMOONGUSS, Species.CHARIZARD]);
+    await game.classicMode.startBattle([SpeciesId.AMOONGUSS, SpeciesId.CHARIZARD]);
 
     const enemyPokemon = game.scene.getEnemyField();
 
@@ -49,7 +49,7 @@ describe("Moves - Spotlight", () => {
   });
 
   test("move should cause other redirection moves to fail", async () => {
-    await game.classicMode.startBattle([Species.AMOONGUSS, Species.CHARIZARD]);
+    await game.classicMode.startBattle([SpeciesId.AMOONGUSS, SpeciesId.CHARIZARD]);
 
     const enemyPokemon = game.scene.getEnemyField();
 

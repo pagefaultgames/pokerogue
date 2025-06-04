@@ -34,7 +34,7 @@ import { ExpGainsSpeed } from "#enums/exp-gains-speed";
 import { ExpNotification } from "#enums/exp-notification";
 import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PlayerGender } from "#enums/player-gender";
-import type { Species } from "#enums/species";
+import type { SpeciesId } from "#enums/species";
 import { UiMode } from "#enums/ui-mode";
 import ErrorInterceptor from "#test/testUtils/errorInterceptor";
 import { generateStarter, waitUntil } from "#test/testUtils/gameManagerUtils";
@@ -203,7 +203,7 @@ export default class GameManager {
    * @param species
    * @param mode
    */
-  async runToFinalBossEncounter(species: Species[], mode: GameModes) {
+  async runToFinalBossEncounter(species: SpeciesId[], mode: GameModes) {
     console.log("===to final boss encounter===");
     await this.runToTitle();
 
@@ -232,7 +232,7 @@ export default class GameManager {
    * @param species Optional array of species for party.
    * @returns A promise that resolves when the EncounterPhase ends.
    */
-  async runToMysteryEncounter(encounterType?: MysteryEncounterType, species?: Species[]) {
+  async runToMysteryEncounter(encounterType?: MysteryEncounterType, species?: SpeciesId[]) {
     if (!isNullOrUndefined(encounterType)) {
       this.override.disableTrainerWaves();
       this.override.mysteryEncounter(encounterType);

@@ -1,7 +1,7 @@
 import { Stat } from "#app/enums/stat";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -27,13 +27,13 @@ describe("Abilities - Wandering Spirit", () => {
       .ability(AbilityId.WANDERING_SPIRIT)
       .battleStyle("single")
       .disableCrits()
-      .enemySpecies(Species.MAGIKARP)
+      .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(MoveId.TACKLE);
   });
 
   it("should exchange abilities when hit with a contact move", async () => {
-    await game.classicMode.startBattle([Species.FEEBAS]);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
     game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to("BerryPhase");
@@ -44,7 +44,7 @@ describe("Abilities - Wandering Spirit", () => {
 
   it("should not exchange abilities when hit with a non-contact move", async () => {
     game.override.enemyMoveset(MoveId.EARTHQUAKE);
-    await game.classicMode.startBattle([Species.FEEBAS]);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
     game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to("BerryPhase");
@@ -55,7 +55,7 @@ describe("Abilities - Wandering Spirit", () => {
 
   it("should activate post-summon abilities", async () => {
     game.override.enemyAbility(AbilityId.INTIMIDATE);
-    await game.classicMode.startBattle([Species.FEEBAS]);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
     game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to("BerryPhase");

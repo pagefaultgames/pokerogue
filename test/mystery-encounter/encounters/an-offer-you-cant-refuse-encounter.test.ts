@@ -2,7 +2,7 @@ import * as MysteryEncounters from "#app/data/mystery-encounters/mystery-encount
 import { HUMAN_TRANSITABLE_BIOMES } from "#app/data/mystery-encounters/mystery-encounters";
 import { Biome } from "#app/enums/biome";
 import { MysteryEncounterType } from "#app/enums/mystery-encounter-type";
-import { Species } from "#app/enums/species";
+import { SpeciesId } from "#app/enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
@@ -22,7 +22,7 @@ import { AbilityId } from "#enums/ability-id";
 
 const namespace = "mysteryEncounters/anOfferYouCantRefuse";
 /** Gyarados for Indimidate */
-const defaultParty = [Species.GYARADOS, Species.GENGAR, Species.ABRA];
+const defaultParty = [SpeciesId.GYARADOS, SpeciesId.GENGAR, SpeciesId.ABRA];
 const defaultBiome = Biome.CAVE;
 const defaultWave = 45;
 
@@ -196,29 +196,31 @@ describe("An Offer You Can't Refuse - Mystery Encounter", () => {
     it("should award EXP to a pokemon with an ability in EXTORTION_ABILITIES", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.AN_OFFER_YOU_CANT_REFUSE, defaultParty);
       const party = scene.getPlayerParty();
-      const gyarados = party.find(pkm => pkm.species.speciesId === Species.GYARADOS)!;
+      const gyarados = party.find(pkm => pkm.species.speciesId === SpeciesId.GYARADOS)!;
       const expBefore = gyarados.exp;
 
       await runMysteryEncounterToEnd(game, 2);
       await game.phaseInterceptor.to(SelectModifierPhase, false);
 
       expect(gyarados.exp).toBe(
-        expBefore + Math.floor((getPokemonSpecies(Species.LIEPARD).baseExp * defaultWave) / 5 + 1),
+        expBefore + Math.floor((getPokemonSpecies(SpeciesId.LIEPARD).baseExp * defaultWave) / 5 + 1),
       );
     });
 
     it("should award EXP to a pokemon with a move in EXTORTION_MOVES", async () => {
       game.override.ability(AbilityId.SYNCHRONIZE); // Not an extortion ability, so we can test extortion move
-      await game.runToMysteryEncounter(MysteryEncounterType.AN_OFFER_YOU_CANT_REFUSE, [Species.ABRA]);
+      await game.runToMysteryEncounter(MysteryEncounterType.AN_OFFER_YOU_CANT_REFUSE, [SpeciesId.ABRA]);
       const party = scene.getPlayerParty();
-      const abra = party.find(pkm => pkm.species.speciesId === Species.ABRA)!;
+      const abra = party.find(pkm => pkm.species.speciesId === SpeciesId.ABRA)!;
       abra.moveset = [new PokemonMove(MoveId.BEAT_UP)];
       const expBefore = abra.exp;
 
       await runMysteryEncounterToEnd(game, 2);
       await game.phaseInterceptor.to(SelectModifierPhase, false);
 
-      expect(abra.exp).toBe(expBefore + Math.floor((getPokemonSpecies(Species.LIEPARD).baseExp * defaultWave) / 5 + 1));
+      expect(abra.exp).toBe(
+        expBefore + Math.floor((getPokemonSpecies(SpeciesId.LIEPARD).baseExp * defaultWave) / 5 + 1),
+      );
     });
 
     it("Should update the player's money properly", async () => {

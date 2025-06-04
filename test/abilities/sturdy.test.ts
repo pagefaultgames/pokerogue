@@ -3,7 +3,7 @@ import { DamageAnimPhase } from "#app/phases/damage-anim-phase";
 import { MoveEndPhase } from "#app/phases/move-end-phase";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
@@ -26,11 +26,11 @@ describe("Abilities - Sturdy", () => {
     game = new GameManager(phaserGame);
     game.override.battleStyle("single");
 
-    game.override.starterSpecies(Species.LUCARIO);
+    game.override.starterSpecies(SpeciesId.LUCARIO);
     game.override.startingLevel(100);
     game.override.moveset([MoveId.CLOSE_COMBAT, MoveId.FISSURE]);
 
-    game.override.enemySpecies(Species.ARON);
+    game.override.enemySpecies(SpeciesId.ARON);
     game.override.enemyLevel(5);
     game.override.enemyAbility(AbilityId.STURDY);
   });

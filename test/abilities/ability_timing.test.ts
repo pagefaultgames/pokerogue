@@ -4,7 +4,7 @@ import { TurnInitPhase } from "#app/phases/turn-init-phase";
 import i18next from "#app/plugins/i18n";
 import { UiMode } from "#enums/ui-mode";
 import { AbilityId } from "#enums/ability-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -28,7 +28,7 @@ describe("Ability Timing", () => {
 
     game.override
       .battleStyle("single")
-      .enemySpecies(Species.MAGIKARP)
+      .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.INTIMIDATE)
       .ability(AbilityId.BALL_FETCH);
     vi.spyOn(i18next, "t");
@@ -36,7 +36,7 @@ describe("Ability Timing", () => {
 
   it("should trigger after switch check", async () => {
     game.settings.battleStyle = BattleStyle.SWITCH;
-    await game.classicMode.runToSummon([Species.EEVEE, Species.FEEBAS]);
+    await game.classicMode.runToSummon([SpeciesId.EEVEE, SpeciesId.FEEBAS]);
 
     game.onNextPrompt(
       "CheckSwitchPhase",

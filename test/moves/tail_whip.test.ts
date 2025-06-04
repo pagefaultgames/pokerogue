@@ -2,7 +2,7 @@ import { Stat } from "#enums/stat";
 import GameManager from "#test/testUtils/gameManager";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
@@ -26,7 +26,7 @@ describe("Moves - Tail whip", () => {
     game = new GameManager(phaserGame);
     const moveToUse = MoveId.TAIL_WHIP;
     game.override.battleStyle("single");
-    game.override.enemySpecies(Species.RATTATA);
+    game.override.enemySpecies(SpeciesId.RATTATA);
     game.override.enemyAbility(AbilityId.INSOMNIA);
     game.override.ability(AbilityId.INSOMNIA);
     game.override.startingLevel(2000);
@@ -36,7 +36,7 @@ describe("Moves - Tail whip", () => {
 
   it("should lower DEF stat stage by 1", async () => {
     const moveToUse = MoveId.TAIL_WHIP;
-    await game.classicMode.startBattle([Species.MIGHTYENA, Species.MIGHTYENA]);
+    await game.classicMode.startBattle([SpeciesId.MIGHTYENA, SpeciesId.MIGHTYENA]);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
     expect(enemyPokemon.getStatStage(Stat.DEF)).toBe(0);

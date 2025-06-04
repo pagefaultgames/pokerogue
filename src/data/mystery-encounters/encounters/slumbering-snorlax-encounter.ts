@@ -2,7 +2,7 @@ import { STEALING_MOVES } from "#app/data/mystery-encounters/requirements/requir
 import type { PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import { globalScene } from "#app/global-scene";
 import { StatusEffect } from "#enums/status-effect";
 import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
@@ -50,7 +50,7 @@ export const SlumberingSnorlaxEncounter: MysteryEncounter = MysteryEncounterBuil
   .withFleeAllowed(false)
   .withIntroSpriteConfigs([
     {
-      spriteKey: Species.SNORLAX.toString(),
+      spriteKey: SpeciesId.SNORLAX.toString(),
       fileRoot: "pokemon",
       hasShadow: true,
       tint: 0.25,
@@ -69,7 +69,7 @@ export const SlumberingSnorlaxEncounter: MysteryEncounter = MysteryEncounterBuil
     console.log(encounter);
 
     // Calculate boss mon
-    const bossSpecies = getPokemonSpecies(Species.SNORLAX);
+    const bossSpecies = getPokemonSpecies(SpeciesId.SNORLAX);
     const pokemonConfig: EnemyPokemonConfig = {
       species: bossSpecies,
       isBoss: true,
@@ -108,7 +108,7 @@ export const SlumberingSnorlaxEncounter: MysteryEncounter = MysteryEncounterBuil
     // Load animations/sfx for Snorlax fight start moves
     loadCustomMovesForEncounter([MoveId.SNORE]);
 
-    encounter.setDialogueToken("snorlaxName", getPokemonSpecies(Species.SNORLAX).getName());
+    encounter.setDialogueToken("snorlaxName", getPokemonSpecies(SpeciesId.SNORLAX).getName());
 
     return true;
   })
@@ -181,7 +181,7 @@ export const SlumberingSnorlaxEncounter: MysteryEncounter = MysteryEncounterBuil
           fillRemaining: false,
         });
         // Snorlax exp to Pokemon that did the stealing
-        setEncounterExp(instance.primaryPokemon!.id, getPokemonSpecies(Species.SNORLAX).baseExp);
+        setEncounterExp(instance.primaryPokemon!.id, getPokemonSpecies(SpeciesId.SNORLAX).baseExp);
         leaveEncounterWithoutBattle();
       })
       .build(),

@@ -4,7 +4,7 @@ import { QuietFormChangePhase } from "#app/phases/quiet-form-change-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import { StatusEffect } from "#enums/status-effect";
 import GameManager from "#test/testUtils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
@@ -37,12 +37,12 @@ describe("Abilities - SHIELDS DOWN", () => {
       coreForm = 7;
     game.override.startingWave(4);
     game.override.starterForms({
-      [Species.MINIOR]: coreForm,
+      [SpeciesId.MINIOR]: coreForm,
     });
 
-    await game.classicMode.startBattle([Species.MAGIKARP, Species.MINIOR]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.MINIOR]);
 
-    const minior = game.scene.getPlayerParty().find(p => p.species.speciesId === Species.MINIOR)!;
+    const minior = game.scene.getPlayerParty().find(p => p.species.speciesId === SpeciesId.MINIOR)!;
     expect(minior).not.toBe(undefined);
     expect(minior.formIndex).toBe(coreForm);
 
@@ -62,7 +62,7 @@ describe("Abilities - SHIELDS DOWN", () => {
   test("should ignore non-volatile status moves", async () => {
     game.override.enemyMoveset([MoveId.SPORE]);
 
-    await game.classicMode.startBattle([Species.MINIOR]);
+    await game.classicMode.startBattle([SpeciesId.MINIOR]);
     game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -73,7 +73,7 @@ describe("Abilities - SHIELDS DOWN", () => {
     game.override.enemyAbility(AbilityId.MOLD_BREAKER);
     game.override.enemyMoveset([MoveId.SPORE]);
 
-    await game.classicMode.startBattle([Species.MINIOR]);
+    await game.classicMode.startBattle([SpeciesId.MINIOR]);
 
     game.move.select(MoveId.SPLASH);
     await game.move.selectEnemyMove(MoveId.SPORE);
@@ -85,7 +85,7 @@ describe("Abilities - SHIELDS DOWN", () => {
   test("should ignore non-volatile secondary status effects", async () => {
     game.override.enemyMoveset([MoveId.NUZZLE]);
 
-    await game.classicMode.startBattle([Species.MINIOR]);
+    await game.classicMode.startBattle([SpeciesId.MINIOR]);
 
     game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to(TurnEndPhase);
@@ -97,7 +97,7 @@ describe("Abilities - SHIELDS DOWN", () => {
     game.override.enemyMoveset([MoveId.SPORE]);
     game.override.enemyAbility(AbilityId.MOLD_BREAKER);
 
-    await game.classicMode.startBattle([Species.MINIOR]);
+    await game.classicMode.startBattle([SpeciesId.MINIOR]);
 
     game.move.select(MoveId.SPLASH);
 
@@ -111,7 +111,7 @@ describe("Abilities - SHIELDS DOWN", () => {
     game.override.enemyMoveset([MoveId.GRAVITY, MoveId.TOXIC_SPIKES, MoveId.SPLASH]);
     game.override.moveset([MoveId.GRAVITY, MoveId.SPLASH]);
 
-    await game.classicMode.startBattle([Species.MAGIKARP, Species.MINIOR]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.MINIOR]);
 
     // turn 1
     game.move.select(MoveId.GRAVITY);
@@ -123,7 +123,7 @@ describe("Abilities - SHIELDS DOWN", () => {
     await game.move.selectEnemyMove(MoveId.SPLASH);
     await game.toNextTurn();
 
-    expect(game.scene.getPlayerPokemon()!.species.speciesId).toBe(Species.MINIOR);
+    expect(game.scene.getPlayerPokemon()!.species.speciesId).toBe(SpeciesId.MINIOR);
     expect(game.scene.getPlayerPokemon()!.species.formIndex).toBe(0);
     expect(game.scene.getPlayerPokemon()!.status?.effect).toBe(StatusEffect.POISON);
   });
@@ -131,7 +131,7 @@ describe("Abilities - SHIELDS DOWN", () => {
   test("should ignore yawn", async () => {
     game.override.enemyMoveset([MoveId.YAWN]);
 
-    await game.classicMode.startBattle([Species.MAGIKARP, Species.MINIOR]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.MINIOR]);
 
     game.move.select(MoveId.SPLASH);
     await game.move.selectEnemyMove(MoveId.YAWN);
@@ -143,7 +143,7 @@ describe("Abilities - SHIELDS DOWN", () => {
   test("should not ignore volatile status effects", async () => {
     game.override.enemyMoveset([MoveId.CONFUSE_RAY]);
 
-    await game.classicMode.startBattle([Species.MINIOR]);
+    await game.classicMode.startBattle([SpeciesId.MINIOR]);
 
     game.move.select(MoveId.SPLASH);
     await game.move.selectEnemyMove(MoveId.CONFUSE_RAY);
@@ -155,11 +155,11 @@ describe("Abilities - SHIELDS DOWN", () => {
 
   // the `NoTransformAbilityAbAttr` attribute is not checked anywhere, so this test cannot pass.
   test.todo("ditto should not be immune to status after transforming", async () => {
-    game.override.enemySpecies(Species.DITTO);
+    game.override.enemySpecies(SpeciesId.DITTO);
     game.override.enemyAbility(AbilityId.IMPOSTER);
     game.override.moveset([MoveId.SPLASH, MoveId.SPORE]);
 
-    await game.classicMode.startBattle([Species.MINIOR]);
+    await game.classicMode.startBattle([SpeciesId.MINIOR]);
 
     game.move.select(MoveId.SPORE);
     await game.move.selectEnemyMove(MoveId.SPLASH);
@@ -173,8 +173,8 @@ describe("Abilities - SHIELDS DOWN", () => {
     game.override.moveset([MoveId.THUNDERBOLT]);
     game.override.startingLevel(100);
     game.override.startingWave(5);
-    game.override.enemySpecies(Species.MINIOR);
-    await game.classicMode.startBattle([Species.REGIELEKI]);
+    game.override.enemySpecies(SpeciesId.MINIOR);
+    await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
     const minior = game.scene.getEnemyPokemon()!;
 
     game.move.select(MoveId.THUNDERBOLT);

@@ -37,7 +37,7 @@ import PokedexInfoOverlay from "#app/ui/pokedex-info-overlay";
 import { getEggTierForSpecies } from "#app/data/egg";
 import { Device } from "#enums/devices";
 import type { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import { Button } from "#enums/buttons";
 import { EggSourceType } from "#enums/egg-source-types";
 import {
@@ -203,7 +203,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
   private species: PokemonSpecies;
   private starterId: number;
   private formIndex: number;
-  private speciesLoaded: Map<Species, boolean> = new Map<Species, boolean>();
+  private speciesLoaded: Map<SpeciesId, boolean> = new Map<SpeciesId, boolean>();
   private levelMoves: LevelMoves;
   private eggMoves: MoveId[] = [];
   private hasEggMoves: boolean[] = [];
@@ -256,7 +256,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
   protected scale = 0.1666666667;
   private menuDescriptions: string[];
   private isFormGender: boolean;
-  private filteredIndices: Species[] | null = null;
+  private filteredIndices: SpeciesId[] | null = null;
 
   private availableVariants: number;
   private unlockedVariants: boolean[];
@@ -863,7 +863,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
   // Function to ensure that forms appear in the appropriate biome and tod
   sanitizeBiomes(biomes: BiomeTierTod[], speciesId: number): BiomeTierTod[] {
-    if (speciesId === Species.BURMY || speciesId === Species.WORMADAM) {
+    if (speciesId === SpeciesId.BURMY || speciesId === SpeciesId.WORMADAM) {
       return biomes.filter(b => {
         const formIndex = (() => {
           switch (b.biome) {
@@ -878,7 +878,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
         return this.formIndex === formIndex;
       });
     }
-    if (speciesId === Species.ROTOM) {
+    if (speciesId === SpeciesId.ROTOM) {
       return biomes.filter(b => {
         const formIndex = (() => {
           switch (b.biome) {
@@ -899,7 +899,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
         return this.formIndex === formIndex;
       });
     }
-    if (speciesId === Species.LYCANROC) {
+    if (speciesId === SpeciesId.LYCANROC) {
       return biomes.filter(b => {
         const formIndex = (() => {
           switch (b.tod[0]) {
@@ -1089,11 +1089,11 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
    * @returns the id of the corresponding starter
    */
   getStarterSpeciesId(speciesId): number {
-    if (speciesId === Species.PIKACHU) {
+    if (speciesId === SpeciesId.PIKACHU) {
       if ([0, 1, 8].includes(this.formIndex)) {
-        return Species.PICHU;
+        return SpeciesId.PICHU;
       }
-      return Species.PIKACHU;
+      return SpeciesId.PIKACHU;
     }
     if (speciesStarterCosts.hasOwnProperty(speciesId)) {
       return speciesId;
@@ -2581,7 +2581,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
 
         this.pokemonUncaughtText.setVisible(false);
         this.pokemonCaughtCountText.setText(`${this.speciesStarterDexEntry?.caughtCount}`);
-        if (species.speciesId === Species.MANAPHY || species.speciesId === Species.PHIONE) {
+        if (species.speciesId === SpeciesId.MANAPHY || species.speciesId === SpeciesId.PHIONE) {
           this.pokemonHatchedIcon.setFrame("manaphy");
         } else {
           this.pokemonHatchedIcon.setFrame(getEggTierForSpecies(species));
@@ -2614,7 +2614,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
         this.pokemonCandyIcon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[0])));
         this.pokemonCandyOverlayIcon.setTint(argbFromRgba(rgbHexToRgba(colorScheme[1])));
         this.pokemonCandyCountText.setText(
-          `x${species.speciesId === Species.PIKACHU ? 0 : globalScene.gameData.starterData[this.starterId].candyCount}`,
+          `x${species.speciesId === SpeciesId.PIKACHU ? 0 : globalScene.gameData.starterData[this.starterId].candyCount}`,
         );
         this.pokemonCandyContainer.setVisible(true);
 

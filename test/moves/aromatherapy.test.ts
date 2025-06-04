@@ -2,7 +2,7 @@ import { StatusEffect } from "#app/enums/status-effect";
 import { CommandPhase } from "#app/phases/command-phase";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, it, expect, vi } from "vitest";
@@ -32,7 +32,7 @@ describe("Moves - Aromatherapy", () => {
   });
 
   it("should cure status effect of the user, its ally, and all party pokemon", async () => {
-    await game.classicMode.startBattle([Species.RATTATA, Species.RATTATA, Species.RATTATA]);
+    await game.classicMode.startBattle([SpeciesId.RATTATA, SpeciesId.RATTATA, SpeciesId.RATTATA]);
     const [leftPlayer, rightPlayer, partyPokemon] = game.scene.getPlayerParty();
 
     vi.spyOn(leftPlayer, "resetStatus");
@@ -55,7 +55,7 @@ describe("Moves - Aromatherapy", () => {
 
   it("should not cure status effect of the target/target's allies", async () => {
     game.override.enemyStatusEffect(StatusEffect.BURN);
-    await game.classicMode.startBattle([Species.RATTATA, Species.RATTATA]);
+    await game.classicMode.startBattle([SpeciesId.RATTATA, SpeciesId.RATTATA]);
     const [leftOpp, rightOpp] = game.scene.getEnemyField();
 
     vi.spyOn(leftOpp, "resetStatus");
@@ -78,7 +78,7 @@ describe("Moves - Aromatherapy", () => {
 
   it("should not cure status effect of allies ON FIELD with Sap Sipper, should still cure allies in party", async () => {
     game.override.ability(AbilityId.SAP_SIPPER);
-    await game.classicMode.startBattle([Species.RATTATA, Species.RATTATA, Species.RATTATA]);
+    await game.classicMode.startBattle([SpeciesId.RATTATA, SpeciesId.RATTATA, SpeciesId.RATTATA]);
     const [leftPlayer, rightPlayer, partyPokemon] = game.scene.getPlayerParty();
 
     vi.spyOn(leftPlayer, "resetStatus");

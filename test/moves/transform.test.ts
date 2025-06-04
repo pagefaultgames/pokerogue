@@ -1,7 +1,7 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import Phaser from "phaser";
 import GameManager from "#test/testUtils/gameManager";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { MoveId } from "#enums/move-id";
 import { Stat, EFFECTIVE_STATS } from "#enums/stat";
@@ -27,7 +27,7 @@ describe("Moves - Transform", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .enemySpecies(Species.MEW)
+      .enemySpecies(SpeciesId.MEW)
       .enemyLevel(200)
       .enemyAbility(AbilityId.BEAST_BOOST)
       .enemyPassiveAbility(AbilityId.BALL_FETCH)
@@ -37,7 +37,7 @@ describe("Moves - Transform", () => {
   });
 
   it("should copy species, ability, gender, all stats except HP, all stat stages, moveset, and types of target", async () => {
-    await game.classicMode.startBattle([Species.DITTO]);
+    await game.classicMode.startBattle([SpeciesId.DITTO]);
 
     game.move.select(MoveId.TRANSFORM);
     await game.phaseInterceptor.to(TurnEndPhase);
@@ -66,7 +66,7 @@ describe("Moves - Transform", () => {
   it("should copy in-battle overridden stats", async () => {
     game.override.enemyMoveset([MoveId.POWER_SPLIT]);
 
-    await game.classicMode.startBattle([Species.DITTO]);
+    await game.classicMode.startBattle([SpeciesId.DITTO]);
 
     const player = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;
@@ -87,7 +87,7 @@ describe("Moves - Transform", () => {
   it("should set each move's pp to a maximum of 5", async () => {
     game.override.enemyMoveset([MoveId.SWORDS_DANCE, MoveId.GROWL, MoveId.SKETCH, MoveId.RECOVER]);
 
-    await game.classicMode.startBattle([Species.DITTO]);
+    await game.classicMode.startBattle([SpeciesId.DITTO]);
     const player = game.scene.getPlayerPokemon()!;
 
     game.move.select(MoveId.TRANSFORM);
@@ -109,7 +109,7 @@ describe("Moves - Transform", () => {
   it("should activate its ability if it copies one that activates on summon", async () => {
     game.override.enemyAbility(AbilityId.INTIMIDATE).ability(AbilityId.BALL_FETCH);
 
-    await game.classicMode.startBattle([Species.DITTO]);
+    await game.classicMode.startBattle([SpeciesId.DITTO]);
     game.move.select(MoveId.TRANSFORM);
 
     await game.phaseInterceptor.to("BerryPhase");
@@ -120,7 +120,7 @@ describe("Moves - Transform", () => {
   it("should persist transformed attributes across reloads", async () => {
     game.override.enemyMoveset([]).moveset([]);
 
-    await game.classicMode.startBattle([Species.DITTO]);
+    await game.classicMode.startBattle([SpeciesId.DITTO]);
 
     const player = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;
@@ -155,9 +155,9 @@ describe("Moves - Transform", () => {
 
   it("should stay transformed with the correct form after reload", async () => {
     game.override.enemyMoveset([]).moveset([]);
-    game.override.enemySpecies(Species.DARMANITAN);
+    game.override.enemySpecies(SpeciesId.DARMANITAN);
 
-    await game.classicMode.startBattle([Species.DITTO]);
+    await game.classicMode.startBattle([SpeciesId.DITTO]);
 
     const player = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;

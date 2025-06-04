@@ -17,7 +17,7 @@ import {
 import type PokemonSpecies from "#app/data/pokemon-species";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { speciesStarterCosts } from "#app/data/balance/starters";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import { PokeballType } from "#enums/pokeball";
 import type { EnemyPokemon } from "#app/field/pokemon";
 import { PlayerPokemon } from "#app/field/pokemon";
@@ -114,7 +114,7 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter = MysteryEncounterBui
         validEventEncounters.length === 0)
     ) {
       // If you roll 1%, give shiny Magikarp with random variant
-      species = getPokemonSpecies(Species.MAGIKARP);
+      species = getPokemonSpecies(SpeciesId.MAGIKARP);
       pokemon = new PlayerPokemon(species, 5, 2, undefined, undefined, true);
     } else if (
       validEventEncounters.length > 0 &&
@@ -151,7 +151,7 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter = MysteryEncounterBui
           pokemon.trySetShinySeed();
         } else {
           // If there's, and this would never happen, no eligible event encounters with a hidden ability, just do Magikarp
-          species = getPokemonSpecies(Species.MAGIKARP);
+          species = getPokemonSpecies(SpeciesId.MAGIKARP);
           pokemon = new PlayerPokemon(species, 5, 2, undefined, undefined, true);
         }
       }

@@ -5,7 +5,7 @@ import { ArenaTagType } from "#app/enums/arena-tag-type";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
@@ -27,7 +27,7 @@ describe("Moves - Ceaseless Edge", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override.battleStyle("single");
-    game.override.enemySpecies(Species.RATTATA);
+    game.override.enemySpecies(SpeciesId.RATTATA);
     game.override.enemyAbility(AbilityId.RUN_AWAY);
     game.override.enemyPassiveAbility(AbilityId.RUN_AWAY);
     game.override.startingLevel(100);
@@ -38,7 +38,7 @@ describe("Moves - Ceaseless Edge", () => {
   });
 
   test("move should hit and apply spikes", async () => {
-    await game.classicMode.startBattle([Species.ILLUMISE]);
+    await game.classicMode.startBattle([SpeciesId.ILLUMISE]);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
@@ -60,7 +60,7 @@ describe("Moves - Ceaseless Edge", () => {
 
   test("move should hit twice with multi lens and apply two layers of spikes", async () => {
     game.override.startingHeldItems([{ name: "MULTI_LENS" }]);
-    await game.classicMode.startBattle([Species.ILLUMISE]);
+    await game.classicMode.startBattle([SpeciesId.ILLUMISE]);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
@@ -84,7 +84,7 @@ describe("Moves - Ceaseless Edge", () => {
     game.override.startingHeldItems([{ name: "MULTI_LENS" }]);
     game.override.startingWave(25);
 
-    await game.classicMode.startBattle([Species.ILLUMISE]);
+    await game.classicMode.startBattle([SpeciesId.ILLUMISE]);
 
     game.move.select(MoveId.CEASELESS_EDGE);
     await game.phaseInterceptor.to(MoveEffectPhase, false);

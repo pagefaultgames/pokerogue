@@ -2,7 +2,7 @@ import { BattlerIndex } from "#app/battle";
 import { globalScene } from "#app/global-scene";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -28,7 +28,7 @@ describe("Abilities - Mold Breaker", () => {
       .ability(AbilityId.MOLD_BREAKER)
       .battleStyle("single")
       .disableCrits()
-      .enemySpecies(Species.MAGIKARP)
+      .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(MoveId.SPLASH);
   });
@@ -40,7 +40,7 @@ describe("Abilities - Mold Breaker", () => {
       .moveset([MoveId.ERUPTION])
       .startingLevel(100)
       .enemyLevel(2);
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
     const enemy = game.scene.getEnemyPokemon()!;
 
     expect(enemy.isFainted()).toBe(false);

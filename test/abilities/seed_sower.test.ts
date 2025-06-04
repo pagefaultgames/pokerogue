@@ -1,7 +1,7 @@
 import { TerrainType } from "#app/data/terrain";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -25,10 +25,10 @@ describe("Abilities - Seed Sower", () => {
     game.override.battleStyle("single");
     game.override.disableCrits();
 
-    game.override.enemySpecies(Species.MAGIKARP);
+    game.override.enemySpecies(SpeciesId.MAGIKARP);
     game.override.enemyAbility(AbilityId.BALL_FETCH);
 
-    game.override.starterSpecies(Species.ARBOLIVA);
+    game.override.starterSpecies(SpeciesId.ARBOLIVA);
     game.override.ability(AbilityId.SEED_SOWER);
     game.override.moveset([MoveId.SPLASH]);
   });
@@ -45,7 +45,7 @@ describe("Abilities - Seed Sower", () => {
 
   it("should trigger even when fainting", async () => {
     game.override.enemyMoveset([MoveId.TACKLE]).enemyLevel(100).startingLevel(1);
-    await game.classicMode.startBattle([Species.ARBOLIVA, Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.ARBOLIVA, SpeciesId.MAGIKARP]);
 
     game.move.select(MoveId.SPLASH);
     game.doSelectPartyPokemon(1);

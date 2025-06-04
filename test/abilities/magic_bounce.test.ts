@@ -8,7 +8,7 @@ import { Stat } from "#app/enums/stat";
 import { StatusEffect } from "#app/enums/status-effect";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -33,13 +33,13 @@ describe("Abilities - Magic Bounce", () => {
       .battleStyle("single")
       .moveset([MoveId.GROWL, MoveId.SPLASH])
       .disableCrits()
-      .enemySpecies(Species.MAGIKARP)
+      .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.MAGIC_BOUNCE)
       .enemyMoveset(MoveId.SPLASH);
   });
 
   it("should reflect basic status moves", async () => {
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
     game.move.select(MoveId.GROWL);
     await game.phaseInterceptor.to("BerryPhase");
@@ -47,7 +47,7 @@ describe("Abilities - Magic Bounce", () => {
   });
 
   it("should not bounce moves while the target is in the semi-invulnerable state", async () => {
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
     game.override.moveset([MoveId.GROWL]);
     game.override.enemyMoveset([MoveId.FLY]);
 
@@ -62,7 +62,7 @@ describe("Abilities - Magic Bounce", () => {
   it("should individually bounce back multi-target moves", async () => {
     game.override.battleStyle("double");
     game.override.moveset([MoveId.GROWL, MoveId.SPLASH]);
-    await game.classicMode.startBattle([Species.MAGIKARP, Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.MAGIKARP]);
 
     game.move.select(MoveId.GROWL, 0);
     game.move.select(MoveId.SPLASH, 1);
@@ -73,7 +73,7 @@ describe("Abilities - Magic Bounce", () => {
   });
 
   it("should still bounce back a move that would otherwise fail", async () => {
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
     game.scene.getEnemyPokemon()?.setStatStage(Stat.ATK, -6);
     game.override.moveset([MoveId.GROWL]);
 
@@ -85,7 +85,7 @@ describe("Abilities - Magic Bounce", () => {
 
   it("should not bounce back a move that was just bounced", async () => {
     game.override.ability(AbilityId.MAGIC_BOUNCE);
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
     game.move.select(MoveId.GROWL);
     await game.phaseInterceptor.to("BerryPhase");
@@ -95,7 +95,7 @@ describe("Abilities - Magic Bounce", () => {
 
   it("should receive the stat change after reflecting a move back to a mirror armor user", async () => {
     game.override.ability(AbilityId.MIRROR_ARMOR);
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
     game.move.select(MoveId.GROWL);
     await game.phaseInterceptor.to("BerryPhase");
@@ -105,7 +105,7 @@ describe("Abilities - Magic Bounce", () => {
 
   it("should not bounce back a move from a mold breaker user", async () => {
     game.override.ability(AbilityId.MOLD_BREAKER);
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
     game.move.select(MoveId.GROWL);
     await game.phaseInterceptor.to("BerryPhase");
@@ -117,7 +117,7 @@ describe("Abilities - Magic Bounce", () => {
     game.override.battleStyle("double");
     game.override.moveset([MoveId.GROWL, MoveId.SPLASH]);
     game.override.enemyMoveset([MoveId.SPLASH]);
-    await game.classicMode.startBattle([Species.MAGIKARP, Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.MAGIKARP]);
 
     game.move.select(MoveId.GROWL, 0);
     game.move.select(MoveId.SPLASH, 1);
@@ -128,7 +128,7 @@ describe("Abilities - Magic Bounce", () => {
 
   it("should only bounce spikes back once in doubles when both targets have magic bounce", async () => {
     game.override.battleStyle("double");
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
     game.override.moveset([MoveId.SPIKES]);
 
     game.move.select(MoveId.SPIKES);
@@ -141,7 +141,7 @@ describe("Abilities - Magic Bounce", () => {
   it("should bounce spikes even when the target is protected", async () => {
     game.override.moveset([MoveId.SPIKES]);
     game.override.enemyMoveset([MoveId.PROTECT]);
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
     game.move.select(MoveId.SPIKES);
     await game.phaseInterceptor.to("BerryPhase");
@@ -151,7 +151,7 @@ describe("Abilities - Magic Bounce", () => {
   it("should not bounce spikes when the target is in the semi-invulnerable state", async () => {
     game.override.moveset([MoveId.SPIKES]);
     game.override.enemyMoveset([MoveId.FLY]);
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
     game.move.select(MoveId.SPIKES);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
@@ -160,8 +160,8 @@ describe("Abilities - Magic Bounce", () => {
   });
 
   it("should not bounce back curse", async () => {
-    game.override.starterSpecies(Species.GASTLY);
-    await game.classicMode.startBattle([Species.GASTLY]);
+    game.override.starterSpecies(SpeciesId.GASTLY);
+    await game.classicMode.startBattle([SpeciesId.GASTLY]);
     game.override.moveset([MoveId.CURSE]);
 
     game.move.select(MoveId.CURSE);
@@ -174,7 +174,7 @@ describe("Abilities - Magic Bounce", () => {
     game.override.moveset([MoveId.SPLASH, MoveId.GROWL, MoveId.ENCORE]);
     game.override.enemyMoveset([MoveId.TACKLE, MoveId.GROWL]);
     // game.override.ability(Abilities.MOLD_BREAKER);
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
     const playerPokemon = game.scene.getPlayerPokemon()!;
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
@@ -203,7 +203,7 @@ describe("Abilities - Magic Bounce", () => {
     game.override.enemyMoveset([MoveId.GROWL, MoveId.TACKLE]);
     game.override.enemyAbility(AbilityId.MAGIC_BOUNCE);
 
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
     const playerPokemon = game.scene.getPlayerPokemon()!;
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
@@ -228,7 +228,7 @@ describe("Abilities - Magic Bounce", () => {
   // TODO: stomping tantrum should consider moves that were bounced.
   it.todo("should cause stomping tantrum to double in power when the last move was bounced", async () => {
     game.override.battleStyle("single");
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
     game.override.moveset([MoveId.STOMPING_TANTRUM, MoveId.CHARM]);
 
     const stomping_tantrum = allMoves[MoveId.STOMPING_TANTRUM];
@@ -247,7 +247,7 @@ describe("Abilities - Magic Bounce", () => {
     "should properly cause the enemy's stomping tantrum to be doubled in power after bouncing and failing",
     async () => {
       game.override.enemyMoveset([MoveId.STOMPING_TANTRUM, MoveId.SPLASH, MoveId.CHARM]);
-      await game.classicMode.startBattle([Species.BULBASAUR]);
+      await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
 
       const stomping_tantrum = allMoves[MoveId.STOMPING_TANTRUM];
       const enemy = game.scene.getEnemyPokemon()!;
@@ -272,7 +272,7 @@ describe("Abilities - Magic Bounce", () => {
     vi.spyOn(allMoves[MoveId.THUNDER_WAVE], "accuracy", "get").mockReturnValue(100);
     game.override.moveset([MoveId.THUNDER_WAVE, MoveId.GROWL]);
     game.override.ability(AbilityId.SOUNDPROOF);
-    await game.classicMode.startBattle([Species.PHANPY]);
+    await game.classicMode.startBattle([SpeciesId.PHANPY]);
 
     // Turn 1 - thunder wave immunity test
     game.move.select(MoveId.THUNDER_WAVE);
@@ -287,7 +287,7 @@ describe("Abilities - Magic Bounce", () => {
 
   it("should bounce back a move before the accuracy check", async () => {
     game.override.moveset([MoveId.SPORE]);
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
     const attacker = game.scene.getPlayerPokemon()!;
 
@@ -299,7 +299,7 @@ describe("Abilities - Magic Bounce", () => {
 
   it("should take the accuracy of the magic bounce user into account", async () => {
     game.override.moveset([MoveId.SPORE]);
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
     const opponent = game.scene.getEnemyPokemon()!;
 
     vi.spyOn(opponent, "getAccuracyMultiplier").mockReturnValue(0);
@@ -312,7 +312,7 @@ describe("Abilities - Magic Bounce", () => {
     game.override.battleStyle("double");
     game.override.moveset([MoveId.STICKY_WEB, MoveId.SPLASH, MoveId.TRICK_ROOM]);
 
-    await game.classicMode.startBattle([Species.MAGIKARP, Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.MAGIKARP]);
     const [enemy_1, enemy_2] = game.scene.getEnemyField();
     // set speed just incase logic erroneously checks for speed order
     enemy_1.setStat(Stat.SPD, enemy_2.getStat(Stat.SPD) + 1);
@@ -344,7 +344,7 @@ describe("Abilities - Magic Bounce", () => {
 
   it("should not bounce back status moves that hit through semi-invulnerable states", async () => {
     game.override.moveset([MoveId.TOXIC, MoveId.CHARM]);
-    await game.classicMode.startBattle([Species.BULBASAUR]);
+    await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
     game.move.select(MoveId.TOXIC);
     await game.move.selectEnemyMove(MoveId.FLY);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);

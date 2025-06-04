@@ -38,7 +38,7 @@ import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PokeballType } from "#enums/pokeball";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import { Stat } from "#enums/stat";
 import i18next from "i18next";
 
@@ -127,7 +127,7 @@ export const DancingLessonsEncounter: MysteryEncounter = MysteryEncounterBuilder
   .withOnInit(() => {
     const encounter = globalScene.currentBattle.mysteryEncounter!;
 
-    const species = getPokemonSpecies(Species.ORICORIO);
+    const species = getPokemonSpecies(SpeciesId.ORICORIO);
     const level = getEncounterPokemonLevelForWave(STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER);
     const enemyPokemon = new EnemyPokemon(species, level, TrainerSlot.NONE, false);
     if (!enemyPokemon.moveset.some(m => m && m.getMove().id === MoveId.REVELATION_DANCE)) {
@@ -193,7 +193,7 @@ export const DancingLessonsEncounter: MysteryEncounter = MysteryEncounterBuilder
       oricorioData,
     };
 
-    encounter.setDialogueToken("oricorioName", getPokemonSpecies(Species.ORICORIO).getName());
+    encounter.setDialogueToken("oricorioName", getPokemonSpecies(SpeciesId.ORICORIO).getName());
 
     return true;
   })

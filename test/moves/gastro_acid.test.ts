@@ -1,7 +1,7 @@
 import { BattlerIndex } from "#app/battle";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#app/enums/species";
+import { SpeciesId } from "#app/enums/species";
 import { MoveResult } from "#app/field/pokemon";
 import GameManager from "#test/testUtils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -27,7 +27,7 @@ describe("Moves - Gastro Acid", () => {
     game.override.enemyLevel(100);
     game.override.ability(AbilityId.BALL_FETCH);
     game.override.moveset([MoveId.GASTRO_ACID, MoveId.WATER_GUN, MoveId.SPLASH, MoveId.CORE_ENFORCER]);
-    game.override.enemySpecies(Species.BIDOOF);
+    game.override.enemySpecies(SpeciesId.BIDOOF);
     game.override.enemyMoveset(MoveId.SPLASH);
     game.override.enemyAbility(AbilityId.WATER_ABSORB);
   });
@@ -83,7 +83,7 @@ describe("Moves - Gastro Acid", () => {
       .enemyAbility(AbilityId.COMATOSE)
       .enemyPassiveAbility(AbilityId.WATER_ABSORB)
       .moveset([MoveId.SPLASH, MoveId.GASTRO_ACID, MoveId.WATER_GUN]);
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
     const enemyPokemon = game.scene.getEnemyPokemon();
 

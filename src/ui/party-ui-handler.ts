@@ -26,7 +26,7 @@ import MoveInfoOverlay from "#app/ui/move-info-overlay";
 import i18next from "i18next";
 import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import { getPokemonNameWithAffix } from "#app/messages";
 import type { CommandPhase } from "#app/phases/command-phase";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
@@ -1578,7 +1578,7 @@ export default class PartyUiHandler extends MessageUiHandler {
       formChangeItemModifiers = formChangeItemModifiers.filter(
         m => m.active || m.formChangeItem === FormChangeItem.ULTRANECROZIUM_Z,
       );
-    } else if (pokemon.species.speciesId === Species.NECROZMA) {
+    } else if (pokemon.species.speciesId === SpeciesId.NECROZMA) {
       // no form is currently active. the user has to activate some form, except ULTRANECROZIUM_Z
       formChangeItemModifiers = formChangeItemModifiers.filter(
         m => m.formChangeItem !== FormChangeItem.ULTRANECROZIUM_Z,

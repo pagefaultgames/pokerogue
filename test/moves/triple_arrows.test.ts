@@ -3,7 +3,7 @@ import { allMoves } from "#app/data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import type Move from "#app/data/moves/move";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -34,7 +34,7 @@ describe("Moves - Triple Arrows", () => {
       .ability(AbilityId.BALL_FETCH)
       .moveset([MoveId.TRIPLE_ARROWS])
       .battleStyle("single")
-      .enemySpecies(Species.MAGIKARP)
+      .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.STURDY)
       .enemyMoveset(MoveId.SPLASH);
 
@@ -43,7 +43,7 @@ describe("Moves - Triple Arrows", () => {
   });
 
   it("has a 30% flinch chance and 50% defense drop chance", async () => {
-    await game.classicMode.startBattle([Species.FEEBAS]);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
     game.move.select(MoveId.TRIPLE_ARROWS);
     await game.phaseInterceptor.to("BerryPhase");
@@ -54,7 +54,7 @@ describe("Moves - Triple Arrows", () => {
 
   it("is affected normally by Serene Grace", async () => {
     game.override.ability(AbilityId.SERENE_GRACE);
-    await game.classicMode.startBattle([Species.FEEBAS]);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
     game.move.select(MoveId.TRIPLE_ARROWS);
     await game.phaseInterceptor.to("BerryPhase");

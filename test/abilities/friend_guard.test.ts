@@ -1,5 +1,5 @@
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import { AbilityId } from "#enums/ability-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -29,13 +29,13 @@ describe("Moves - Friend Guard", () => {
       .battleStyle("double")
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset([MoveId.TACKLE, MoveId.SPLASH, MoveId.DRAGON_RAGE])
-      .enemySpecies(Species.SHUCKLE)
+      .enemySpecies(SpeciesId.SHUCKLE)
       .moveset([MoveId.SPLASH])
       .startingLevel(100);
   });
 
   it("should reduce damage that other allied Pokémon receive from attacks (from any Pokémon) by 25%", async () => {
-    await game.classicMode.startBattle([Species.BULBASAUR, Species.CHARMANDER]);
+    await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.CHARMANDER]);
     const [player1, player2] = game.scene.getPlayerField();
     const spy = vi.spyOn(player1, "getAttackDamage");
 
@@ -76,7 +76,7 @@ describe("Moves - Friend Guard", () => {
   });
 
   it("should NOT reduce damage to pokemon with friend guard", async () => {
-    await game.classicMode.startBattle([Species.BULBASAUR, Species.CHARMANDER]);
+    await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.CHARMANDER]);
 
     const player2 = game.scene.getPlayerField()[1];
     const spy = vi.spyOn(player2, "getAttackDamage");
@@ -102,7 +102,7 @@ describe("Moves - Friend Guard", () => {
   });
 
   it("should NOT reduce damage from fixed damage attacks", async () => {
-    await game.classicMode.startBattle([Species.BULBASAUR, Species.CHARMANDER]);
+    await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.CHARMANDER]);
 
     const [player1, player2] = game.scene.getPlayerField();
     const spy = vi.spyOn(player1, "getAttackDamage");

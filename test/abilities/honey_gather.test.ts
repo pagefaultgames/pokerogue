@@ -2,7 +2,7 @@ import type { CommandPhase } from "#app/phases/command-phase";
 import { Command } from "#app/ui/command-ui-handler";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -30,13 +30,13 @@ describe("Abilities - Honey Gather", () => {
       .passiveAbility(AbilityId.RUN_AWAY)
       .battleStyle("single")
       .disableCrits()
-      .enemySpecies(Species.MAGIKARP)
+      .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(MoveId.SPLASH);
   });
 
   it("should give money when winning a battle", async () => {
-    await game.classicMode.startBattle([Species.MILOTIC]);
+    await game.classicMode.startBattle([SpeciesId.MILOTIC]);
     game.scene.money = 1000;
 
     game.move.select(MoveId.THUNDERBOLT);
@@ -46,7 +46,7 @@ describe("Abilities - Honey Gather", () => {
   });
 
   it("should not give money when the enemy pokemon flees", async () => {
-    await game.classicMode.startBattle([Species.MILOTIC]);
+    await game.classicMode.startBattle([SpeciesId.MILOTIC]);
     game.scene.money = 1000;
 
     game.move.select(MoveId.ROAR);
@@ -57,7 +57,7 @@ describe("Abilities - Honey Gather", () => {
   });
 
   it("should not give money when the player flees", async () => {
-    await game.classicMode.startBattle([Species.MILOTIC]);
+    await game.classicMode.startBattle([SpeciesId.MILOTIC]);
     game.scene.money = 1000;
 
     // something weird is going on with the test framework, so this is required to prevent a crash

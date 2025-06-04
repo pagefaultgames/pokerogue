@@ -122,7 +122,7 @@ import { BerryType } from "#enums/berry-type";
 import { MoveId } from "#enums/move-id";
 import { Nature } from "#enums/nature";
 import { PokeballType } from "#enums/pokeball";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import { SpeciesFormKey } from "#enums/species-form-key";
 import type { PermanentStat, TempBattleStat } from "#enums/stat";
 import { getStatKey, Stat, TEMP_BATTLE_STATS } from "#enums/stat";
@@ -430,7 +430,7 @@ export class TerastallizeModifierType extends PokemonModifierType {
       (pokemon: PlayerPokemon) => {
         if (
           [pokemon.species.speciesId, pokemon.fusionSpecies?.speciesId].filter(
-            s => s === Species.TERAPAGOS || s === Species.OGERPON || s === Species.SHEDINJA,
+            s => s === SpeciesId.TERAPAGOS || s === SpeciesId.OGERPON || s === SpeciesId.SHEDINJA,
           ).length > 0
         ) {
           return PartyUiHandler.NoEffectMessage;
@@ -1439,37 +1439,37 @@ class SpeciesStatBoosterModifierTypeGenerator extends ModifierTypeGenerator {
     LIGHT_BALL: {
       stats: [Stat.ATK, Stat.SPATK],
       multiplier: 2,
-      species: [Species.PIKACHU],
+      species: [SpeciesId.PIKACHU],
       rare: true,
     },
     THICK_CLUB: {
       stats: [Stat.ATK],
       multiplier: 2,
-      species: [Species.CUBONE, Species.MAROWAK, Species.ALOLA_MAROWAK],
+      species: [SpeciesId.CUBONE, SpeciesId.MAROWAK, SpeciesId.ALOLA_MAROWAK],
       rare: true,
     },
     METAL_POWDER: {
       stats: [Stat.DEF],
       multiplier: 2,
-      species: [Species.DITTO],
+      species: [SpeciesId.DITTO],
       rare: true,
     },
     QUICK_POWDER: {
       stats: [Stat.SPD],
       multiplier: 2,
-      species: [Species.DITTO],
+      species: [SpeciesId.DITTO],
       rare: true,
     },
     DEEP_SEA_SCALE: {
       stats: [Stat.SPDEF],
       multiplier: 2,
-      species: [Species.CLAMPERL],
+      species: [SpeciesId.CLAMPERL],
       rare: false,
     },
     DEEP_SEA_TOOTH: {
       stats: [Stat.SPATK],
       multiplier: 2,
-      species: [Species.CLAMPERL],
+      species: [SpeciesId.CLAMPERL],
       rare: false,
     },
   };
@@ -1517,7 +1517,7 @@ class SpeciesStatBoosterModifierTypeGenerator extends ModifierTypeGenerator {
             if (checkedSpecies.includes(speciesId) || (!!fusionSpeciesId && checkedSpecies.includes(fusionSpeciesId))) {
               // Add weight if party member has a matching species or, if applicable, a matching fusion species
               weights[i]++;
-            } else if (checkedSpecies.includes(Species.PIKACHU) && hasFling) {
+            } else if (checkedSpecies.includes(SpeciesId.PIKACHU) && hasFling) {
               // Add weight to Light Ball if party member has Fling
               weights[i]++;
             }
@@ -1588,7 +1588,9 @@ class EvolutionItemModifierTypeGenerator extends ModifierTypeGenerator {
           .filter(
             p =>
               pokemonEvolutions.hasOwnProperty(p.species.speciesId) &&
-              (!p.pauseEvolutions || p.species.speciesId === Species.SLOWPOKE || p.species.speciesId === Species.EEVEE),
+              (!p.pauseEvolutions ||
+                p.species.speciesId === SpeciesId.SLOWPOKE ||
+                p.species.speciesId === SpeciesId.EEVEE),
           )
           .flatMap(p => {
             const evolutions = pokemonEvolutions[p.species.speciesId];
@@ -1606,8 +1608,8 @@ class EvolutionItemModifierTypeGenerator extends ModifierTypeGenerator {
               p.fusionSpecies &&
               pokemonEvolutions.hasOwnProperty(p.fusionSpecies.speciesId) &&
               (!p.pauseEvolutions ||
-                p.fusionSpecies.speciesId === Species.SLOWPOKE ||
-                p.fusionSpecies.speciesId === Species.EEVEE),
+                p.fusionSpecies.speciesId === SpeciesId.SLOWPOKE ||
+                p.fusionSpecies.speciesId === SpeciesId.EEVEE),
           )
           .flatMap(p => {
             const evolutions = pokemonEvolutions[p.fusionSpecies!.speciesId];
@@ -1671,7 +1673,7 @@ class FormChangeItemModifierTypeGenerator extends ModifierTypeGenerator {
                     ),
                 );
 
-              if (p.species.speciesId === Species.NECROZMA) {
+              if (p.species.speciesId === SpeciesId.NECROZMA) {
                 // technically we could use a simplified version and check for formChanges.length > 3, but in case any code changes later, this might break...
                 let foundULTRA_Z = false,
                   foundN_LUNA = false,
@@ -1932,7 +1934,7 @@ export const modifierTypes = {
     new PokemonHeldItemModifierType(
       "modifierType:ModifierType.EVOLUTION_TRACKER_GIMMIGHOUL",
       "relic_gold",
-      (type, args) => new EvoTrackerModifier(type, (args[0] as Pokemon).id, Species.GIMMIGHOUL, 10),
+      (type, args) => new EvoTrackerModifier(type, (args[0] as Pokemon).id, SpeciesId.GIMMIGHOUL, 10),
     ),
 
   MEGA_BRACELET: () =>
@@ -2046,7 +2048,9 @@ export const modifierTypes = {
       }
       const teraTypes: PokemonType[] = [];
       for (const p of party) {
-        if (!(p.hasSpecies(Species.TERAPAGOS) || p.hasSpecies(Species.OGERPON) || p.hasSpecies(Species.SHEDINJA))) {
+        if (
+          !(p.hasSpecies(SpeciesId.TERAPAGOS) || p.hasSpecies(SpeciesId.OGERPON) || p.hasSpecies(SpeciesId.SHEDINJA))
+        ) {
           teraTypes.push(p.teraType);
         }
       }
@@ -2125,9 +2129,9 @@ export const modifierTypes = {
       "leek",
       (type, args) =>
         new SpeciesCritBoosterModifier(type, (args[0] as Pokemon).id, 2, [
-          Species.FARFETCHD,
-          Species.GALAR_FARFETCHD,
-          Species.SIRFETCHD,
+          SpeciesId.FARFETCHD,
+          SpeciesId.GALAR_FARFETCHD,
+          SpeciesId.SIRFETCHD,
         ]),
     ),
 
@@ -2674,7 +2678,8 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(modifierTypes.BASE_STAT_BOOSTER, 3),
     new WeightedModifierType(modifierTypes.TERA_SHARD, (party: Pokemon[]) =>
       party.filter(
-        p => !(p.hasSpecies(Species.TERAPAGOS) || p.hasSpecies(Species.OGERPON) || p.hasSpecies(Species.SHEDINJA)),
+        p =>
+          !(p.hasSpecies(SpeciesId.TERAPAGOS) || p.hasSpecies(SpeciesId.OGERPON) || p.hasSpecies(SpeciesId.SHEDINJA)),
       ).length > 0
         ? 1
         : 0,
@@ -2744,7 +2749,7 @@ const modifierPool: ModifierPool = {
     new WeightedModifierType(
       modifierTypes.LEEK,
       (party: Pokemon[]) => {
-        const checkedSpecies = [Species.FARFETCHD, Species.GALAR_FARFETCHD, Species.SIRFETCHD];
+        const checkedSpecies = [SpeciesId.FARFETCHD, SpeciesId.GALAR_FARFETCHD, SpeciesId.SIRFETCHD];
         // If a party member doesn't already have a Leek and is one of the relevant species, Leek can appear
         return party.some(
           p =>

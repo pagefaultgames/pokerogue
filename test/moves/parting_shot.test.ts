@@ -1,6 +1,6 @@
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, test } from "vitest";
 import GameManager from "#test/testUtils/gameManager";
@@ -34,8 +34,8 @@ describe("Moves - Parting Shot", () => {
   });
 
   test("Parting Shot when buffed by prankster should fail against dark types", async () => {
-    game.override.enemySpecies(Species.POOCHYENA).ability(AbilityId.PRANKSTER);
-    await game.classicMode.startBattle([Species.MURKROW, Species.MEOWTH]);
+    game.override.enemySpecies(SpeciesId.POOCHYENA).ability(AbilityId.PRANKSTER);
+    await game.classicMode.startBattle([SpeciesId.MURKROW, SpeciesId.MEOWTH]);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
     expect(enemyPokemon).toBeDefined();
@@ -45,12 +45,12 @@ describe("Moves - Parting Shot", () => {
     await game.phaseInterceptor.to(BerryPhase, false);
     expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(0);
     expect(enemyPokemon.getStatStage(Stat.SPATK)).toBe(0);
-    expect(game.scene.getPlayerField()[0].species.speciesId).toBe(Species.MURKROW);
+    expect(game.scene.getPlayerField()[0].species.speciesId).toBe(SpeciesId.MURKROW);
   });
 
   test("Parting shot should fail against good as gold ability", async () => {
-    game.override.enemySpecies(Species.GHOLDENGO).enemyAbility(AbilityId.GOOD_AS_GOLD);
-    await game.classicMode.startBattle([Species.MURKROW, Species.MEOWTH]);
+    game.override.enemySpecies(SpeciesId.GHOLDENGO).enemyAbility(AbilityId.GOOD_AS_GOLD);
+    await game.classicMode.startBattle([SpeciesId.MURKROW, SpeciesId.MEOWTH]);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
     expect(enemyPokemon).toBeDefined();
@@ -60,7 +60,7 @@ describe("Moves - Parting Shot", () => {
     await game.phaseInterceptor.to(BerryPhase, false);
     expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(0);
     expect(enemyPokemon.getStatStage(Stat.SPATK)).toBe(0);
-    expect(game.scene.getPlayerField()[0].species.speciesId).toBe(Species.MURKROW);
+    expect(game.scene.getPlayerField()[0].species.speciesId).toBe(SpeciesId.MURKROW);
   });
 
   it.todo(
@@ -69,11 +69,11 @@ describe("Moves - Parting Shot", () => {
     async () => {
       game.override.moveset([MoveId.PARTING_SHOT, MoveId.MEMENTO, MoveId.SPLASH]);
       await game.classicMode.startBattle([
-        Species.MEOWTH,
-        Species.MEOWTH,
-        Species.MEOWTH,
-        Species.MURKROW,
-        Species.ABRA,
+        SpeciesId.MEOWTH,
+        SpeciesId.MEOWTH,
+        SpeciesId.MEOWTH,
+        SpeciesId.MURKROW,
+        SpeciesId.ABRA,
       ]);
 
       // use Memento 3 times to debuff enemy
@@ -108,7 +108,7 @@ describe("Moves - Parting Shot", () => {
       await game.phaseInterceptor.to(BerryPhase, false);
       expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(-6);
       expect(enemyPokemon.getStatStage(Stat.SPATK)).toBe(-6);
-      expect(game.scene.getPlayerField()[0].species.speciesId).toBe(Species.MURKROW);
+      expect(game.scene.getPlayerField()[0].species.speciesId).toBe(SpeciesId.MURKROW);
     },
   );
 
@@ -116,8 +116,8 @@ describe("Moves - Parting Shot", () => {
     // TODO: fix this bug to pass the test!
     "Parting shot shouldn't allow switch out when mist is active",
     async () => {
-      game.override.enemySpecies(Species.ALTARIA).enemyAbility(AbilityId.NONE).enemyMoveset([MoveId.MIST]);
-      await game.classicMode.startBattle([Species.SNORLAX, Species.MEOWTH]);
+      game.override.enemySpecies(SpeciesId.ALTARIA).enemyAbility(AbilityId.NONE).enemyMoveset([MoveId.MIST]);
+      await game.classicMode.startBattle([SpeciesId.SNORLAX, SpeciesId.MEOWTH]);
 
       const enemyPokemon = game.scene.getEnemyPokemon()!;
       expect(enemyPokemon).toBeDefined();
@@ -127,7 +127,7 @@ describe("Moves - Parting Shot", () => {
       await game.phaseInterceptor.to(BerryPhase, false);
       expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(0);
       expect(enemyPokemon.getStatStage(Stat.SPATK)).toBe(0);
-      expect(game.scene.getPlayerField()[0].species.speciesId).toBe(Species.MURKROW);
+      expect(game.scene.getPlayerField()[0].species.speciesId).toBe(SpeciesId.MURKROW);
     },
   );
 
@@ -135,8 +135,8 @@ describe("Moves - Parting Shot", () => {
     // TODO: fix this bug to pass the test!
     "Parting shot shouldn't allow switch out against clear body ability",
     async () => {
-      game.override.enemySpecies(Species.TENTACOOL).enemyAbility(AbilityId.CLEAR_BODY);
-      await game.classicMode.startBattle([Species.SNORLAX, Species.MEOWTH]);
+      game.override.enemySpecies(SpeciesId.TENTACOOL).enemyAbility(AbilityId.CLEAR_BODY);
+      await game.classicMode.startBattle([SpeciesId.SNORLAX, SpeciesId.MEOWTH]);
 
       const enemyPokemon = game.scene.getEnemyPokemon()!;
       expect(enemyPokemon).toBeDefined();
@@ -146,7 +146,7 @@ describe("Moves - Parting Shot", () => {
       await game.phaseInterceptor.to(BerryPhase, false);
       expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(0);
       expect(enemyPokemon.getStatStage(Stat.SPATK)).toBe(0);
-      expect(game.scene.getPlayerField()[0].species.speciesId).toBe(Species.MURKROW);
+      expect(game.scene.getPlayerField()[0].species.speciesId).toBe(SpeciesId.MURKROW);
     },
   );
 
@@ -154,7 +154,7 @@ describe("Moves - Parting Shot", () => {
     // TODO: fix this bug to pass the test!
     "Parting shot should de-buff and not fail if no party available to switch - party size 1",
     async () => {
-      await game.classicMode.startBattle([Species.MURKROW]);
+      await game.classicMode.startBattle([SpeciesId.MURKROW]);
 
       const enemyPokemon = game.scene.getEnemyPokemon()!;
       expect(enemyPokemon).toBeDefined();
@@ -164,7 +164,7 @@ describe("Moves - Parting Shot", () => {
       await game.phaseInterceptor.to(BerryPhase, false);
       expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(-1);
       expect(enemyPokemon.getStatStage(Stat.SPATK)).toBe(-1);
-      expect(game.scene.getPlayerField()[0].species.speciesId).toBe(Species.MURKROW);
+      expect(game.scene.getPlayerField()[0].species.speciesId).toBe(SpeciesId.MURKROW);
     },
   );
 
@@ -172,7 +172,7 @@ describe("Moves - Parting Shot", () => {
     // TODO: fix this bug to pass the test!
     "Parting shot regularly not fail if no party available to switch - party fainted",
     async () => {
-      await game.classicMode.startBattle([Species.MURKROW, Species.MEOWTH]);
+      await game.classicMode.startBattle([SpeciesId.MURKROW, SpeciesId.MEOWTH]);
       game.move.select(MoveId.SPLASH);
 
       // intentionally kill party pokemon, switch to second slot (now 1 party mon is fainted)
@@ -188,7 +188,7 @@ describe("Moves - Parting Shot", () => {
       const enemyPokemon = game.scene.getEnemyPokemon()!;
       expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(0);
       expect(enemyPokemon.getStatStage(Stat.SPATK)).toBe(0);
-      expect(game.scene.getPlayerField()[0].species.speciesId).toBe(Species.MEOWTH);
+      expect(game.scene.getPlayerField()[0].species.speciesId).toBe(SpeciesId.MEOWTH);
     },
   );
 });

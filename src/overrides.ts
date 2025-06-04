@@ -15,7 +15,7 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PokeballType } from "#enums/pokeball";
 import { PokemonType } from "#enums/pokemon-type";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { TimeOfDay } from "#enums/time-of-day";
@@ -128,7 +128,7 @@ class DefaultOverrides {
    * }
    * ```
    */
-  readonly STARTER_FORM_OVERRIDES: Partial<Record<Species, number>> = {};
+  readonly STARTER_FORM_OVERRIDES: Partial<Record<SpeciesId, number>> = {};
 
   /** default 5 or 20 for Daily */
   readonly STARTING_LEVEL_OVERRIDE: number = 0;
@@ -138,7 +138,7 @@ class DefaultOverrides {
    * default is 0 to not override
    * @example SPECIES_OVERRIDE = Species.Bulbasaur;
    */
-  readonly STARTER_SPECIES_OVERRIDE: Species | number = 0;
+  readonly STARTER_SPECIES_OVERRIDE: SpeciesId | number = 0;
   /**
    * This will force your starter to be a random fusion
    */
@@ -146,7 +146,7 @@ class DefaultOverrides {
   /**
    * This will override the species of the fusion
    */
-  readonly STARTER_FUSION_SPECIES_OVERRIDE: Species | number = 0;
+  readonly STARTER_FUSION_SPECIES_OVERRIDE: SpeciesId | number = 0;
   readonly ABILITY_OVERRIDE: AbilityId = AbilityId.NONE;
   readonly PASSIVE_ABILITY_OVERRIDE: AbilityId = AbilityId.NONE;
   readonly HAS_PASSIVE_ABILITY_OVERRIDE: boolean | null = null;
@@ -159,7 +159,7 @@ class DefaultOverrides {
   // --------------------------
   // OPPONENT / ENEMY OVERRIDES
   // --------------------------
-  readonly OPP_SPECIES_OVERRIDE: Species | number = 0;
+  readonly OPP_SPECIES_OVERRIDE: SpeciesId | number = 0;
   /**
    * This will make all opponents fused Pokemon
    */
@@ -167,7 +167,7 @@ class DefaultOverrides {
   /**
    * This will override the species of the fusion only when the opponent is already a fusion
    */
-  readonly OPP_FUSION_SPECIES_OVERRIDE: Species | number = 0;
+  readonly OPP_FUSION_SPECIES_OVERRIDE: SpeciesId | number = 0;
   readonly OPP_LEVEL_OVERRIDE: number = 0;
   readonly OPP_ABILITY_OVERRIDE: AbilityId = AbilityId.NONE;
   readonly OPP_PASSIVE_ABILITY_OVERRIDE: AbilityId = AbilityId.NONE;
@@ -178,7 +178,7 @@ class DefaultOverrides {
   readonly OPP_SHINY_OVERRIDE: boolean | null = null;
   readonly OPP_VARIANT_OVERRIDE: Variant | null = null;
   readonly OPP_IVS_OVERRIDE: number | number[] = [];
-  readonly OPP_FORM_OVERRIDES: Partial<Record<Species, number>> = {};
+  readonly OPP_FORM_OVERRIDES: Partial<Record<SpeciesId, number>> = {};
   /**
    * Override to give the enemy Pokemon a given amount of health segments
    *

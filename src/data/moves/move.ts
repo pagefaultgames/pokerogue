@@ -88,7 +88,7 @@ import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Biome } from "#enums/biome";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import { MoveUsedEvent } from "#app/events/battle-scene";
 import {
   BATTLE_STATS,
@@ -2430,7 +2430,7 @@ export class ChangeMultiHitTypeAttr extends MoveAttr {
 
 export class WaterShurikenMultiHitTypeAttr extends ChangeMultiHitTypeAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (user.species.speciesId === Species.GRENINJA && user.hasAbility(AbilityId.BATTLE_BOND) && user.formIndex === 2) {
+    if (user.species.speciesId === SpeciesId.GRENINJA && user.hasAbility(AbilityId.BATTLE_BOND) && user.formIndex === 2) {
       (args[0] as NumberHolder).value = MultiHitType._3;
       return true;
     }
@@ -4237,7 +4237,7 @@ export class PresentPowerAttr extends VariablePowerAttr {
 
 export class WaterShurikenPowerAttr extends VariablePowerAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (user.species.speciesId === Species.GRENINJA && user.hasAbility(AbilityId.BATTLE_BOND) && user.formIndex === 2) {
+    if (user.species.speciesId === SpeciesId.GRENINJA && user.hasAbility(AbilityId.BATTLE_BOND) && user.formIndex === 2) {
       (args[0] as NumberHolder).value = 20;
       return true;
     }
@@ -4844,8 +4844,8 @@ export class FormChangeItemTypeAttr extends VariableMoveTypeAttr {
       return false;
     }
 
-    if ([ user.species.speciesId, user.fusionSpecies?.speciesId ].includes(Species.ARCEUS) || [ user.species.speciesId, user.fusionSpecies?.speciesId ].includes(Species.SILVALLY)) {
-      const form = user.species.speciesId === Species.ARCEUS || user.species.speciesId === Species.SILVALLY ? user.formIndex : user.fusionSpecies?.formIndex!;
+    if ([ user.species.speciesId, user.fusionSpecies?.speciesId ].includes(SpeciesId.ARCEUS) || [ user.species.speciesId, user.fusionSpecies?.speciesId ].includes(SpeciesId.SILVALLY)) {
+      const form = user.species.speciesId === SpeciesId.ARCEUS || user.species.speciesId === SpeciesId.SILVALLY ? user.formIndex : user.fusionSpecies?.formIndex!;
 
       moveType.value = PokemonType[PokemonType[form]];
       return true;
@@ -4867,8 +4867,8 @@ export class TechnoBlastTypeAttr extends VariableMoveTypeAttr {
       return false;
     }
 
-    if ([ user.species.speciesId, user.fusionSpecies?.speciesId ].includes(Species.GENESECT)) {
-      const form = user.species.speciesId === Species.GENESECT ? user.formIndex : user.fusionSpecies?.formIndex;
+    if ([ user.species.speciesId, user.fusionSpecies?.speciesId ].includes(SpeciesId.GENESECT)) {
+      const form = user.species.speciesId === SpeciesId.GENESECT ? user.formIndex : user.fusionSpecies?.formIndex;
 
       switch (form) {
         case 1: // Shock Drive
@@ -4901,8 +4901,8 @@ export class AuraWheelTypeAttr extends VariableMoveTypeAttr {
       return false;
     }
 
-    if ([ user.species.speciesId, user.fusionSpecies?.speciesId ].includes(Species.MORPEKO)) {
-      const form = user.species.speciesId === Species.MORPEKO ? user.formIndex : user.fusionSpecies?.formIndex;
+    if ([ user.species.speciesId, user.fusionSpecies?.speciesId ].includes(SpeciesId.MORPEKO)) {
+      const form = user.species.speciesId === SpeciesId.MORPEKO ? user.formIndex : user.fusionSpecies?.formIndex;
 
       switch (form) {
         case 1: // Hangry Mode
@@ -4926,8 +4926,8 @@ export class RagingBullTypeAttr extends VariableMoveTypeAttr {
       return false;
     }
 
-    if ([ user.species.speciesId, user.fusionSpecies?.speciesId ].includes(Species.PALDEA_TAUROS)) {
-      const form = user.species.speciesId === Species.PALDEA_TAUROS ? user.formIndex : user.fusionSpecies?.formIndex;
+    if ([ user.species.speciesId, user.fusionSpecies?.speciesId ].includes(SpeciesId.PALDEA_TAUROS)) {
+      const form = user.species.speciesId === SpeciesId.PALDEA_TAUROS ? user.formIndex : user.fusionSpecies?.formIndex;
 
       switch (form) {
         case 1: // Blaze breed
@@ -4954,8 +4954,8 @@ export class IvyCudgelTypeAttr extends VariableMoveTypeAttr {
       return false;
     }
 
-    if ([ user.species.speciesId, user.fusionSpecies?.speciesId ].includes(Species.OGERPON)) {
-      const form = user.species.speciesId === Species.OGERPON ? user.formIndex : user.fusionSpecies?.formIndex;
+    if ([ user.species.speciesId, user.fusionSpecies?.speciesId ].includes(SpeciesId.OGERPON)) {
+      const form = user.species.speciesId === SpeciesId.OGERPON ? user.formIndex : user.fusionSpecies?.formIndex;
 
       switch (form) {
         case 1: // Wellspring Mask
@@ -5139,7 +5139,7 @@ export class TeraStarstormTypeAttr extends VariableMoveTypeAttr {
    * @returns `true` if the move type is changed to {@linkcode PokemonType.STELLAR}, `false` otherwise
    */
   override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (user.isTerastallized && user.hasSpecies(Species.TERAPAGOS)) {
+    if (user.isTerastallized && user.hasSpecies(SpeciesId.TERAPAGOS)) {
       const moveType = args[0] as NumberHolder;
 
       moveType.value = PokemonType.STELLAR;
@@ -5616,7 +5616,7 @@ export class GulpMissileTagAttr extends MoveEffectAttr {
       return false;
     }
 
-    if (user.hasAbility(AbilityId.GULP_MISSILE) && user.species.speciesId === Species.CRAMORANT) {
+    if (user.hasAbility(AbilityId.GULP_MISSILE) && user.species.speciesId === SpeciesId.CRAMORANT) {
       if (user.getHpRatio() >= .5) {
         user.addTag(BattlerTagType.GULP_MISSILE_ARROKUDA, 0, move.id);
       } else {
@@ -5629,7 +5629,7 @@ export class GulpMissileTagAttr extends MoveEffectAttr {
   }
 
   getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
-    const isCramorant = user.hasAbility(AbilityId.GULP_MISSILE) && user.species.speciesId === Species.CRAMORANT;
+    const isCramorant = user.hasAbility(AbilityId.GULP_MISSILE) && user.species.speciesId === SpeciesId.CRAMORANT;
     return isCramorant && !user.getTag(GulpMissileTag) ? 10 : 0;
   }
 }
@@ -9735,8 +9735,8 @@ export function initMoves() {
       .attr(AddBattlerTagAttr, BattlerTagType.CENTER_OF_ATTENTION, true),
     new StatusMove(MoveId.TELEKINESIS, PokemonType.PSYCHIC, -1, 15, -1, 0, 5)
       .condition(failOnGravityCondition)
-      .condition((_user, target, _move) => ![ Species.DIGLETT, Species.DUGTRIO, Species.ALOLA_DIGLETT, Species.ALOLA_DUGTRIO, Species.SANDYGAST, Species.PALOSSAND, Species.WIGLETT, Species.WUGTRIO ].includes(target.species.speciesId))
-      .condition((_user, target, _move) => !(target.species.speciesId === Species.GENGAR && target.getFormKey() === "mega"))
+      .condition((_user, target, _move) => ![ SpeciesId.DIGLETT, SpeciesId.DUGTRIO, SpeciesId.ALOLA_DIGLETT, SpeciesId.ALOLA_DUGTRIO, SpeciesId.SANDYGAST, SpeciesId.PALOSSAND, SpeciesId.WIGLETT, SpeciesId.WUGTRIO ].includes(target.species.speciesId))
+      .condition((_user, target, _move) => !(target.species.speciesId === SpeciesId.GENGAR && target.getFormKey() === "mega"))
       .condition((_user, target, _move) => isNullOrUndefined(target.getTag(BattlerTagType.INGRAIN)) && isNullOrUndefined(target.getTag(BattlerTagType.IGNORE_FLYING)))
       .attr(AddBattlerTagAttr, BattlerTagType.TELEKINESIS, false, true, 3)
       .attr(AddBattlerTagAttr, BattlerTagType.FLOATING, false, true, 3)
@@ -11224,7 +11224,7 @@ export function initMoves() {
     new AttackMove(MoveId.TERA_STARSTORM, PokemonType.NORMAL, MoveCategory.SPECIAL, 120, 100, 5, -1, 0, 9)
       .attr(TeraMoveCategoryAttr)
       .attr(TeraStarstormTypeAttr)
-      .attr(VariableTargetAttr, (user, target, move) => user.hasSpecies(Species.TERAPAGOS) && (user.isTerastallized || globalScene.currentBattle.preTurnCommands[user.getFieldIndex()]?.command === Command.TERA) ? MoveTarget.ALL_NEAR_ENEMIES : MoveTarget.NEAR_OTHER)
+      .attr(VariableTargetAttr, (user, target, move) => user.hasSpecies(SpeciesId.TERAPAGOS) && (user.isTerastallized || globalScene.currentBattle.preTurnCommands[user.getFieldIndex()]?.command === Command.TERA) ? MoveTarget.ALL_NEAR_ENEMIES : MoveTarget.NEAR_OTHER)
       .partial(), /** Does not ignore abilities that affect stats, relevant in determining the move's category {@see TeraMoveCategoryAttr} */
     new AttackMove(MoveId.FICKLE_BEAM, PokemonType.DRAGON, MoveCategory.SPECIAL, 80, 100, 5, 30, 0, 9)
       .attr(PreMoveMessageAttr, doublePowerChanceMessageFunc)

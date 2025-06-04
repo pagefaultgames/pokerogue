@@ -3,7 +3,7 @@ import { allAbilities } from "#app/data/data-lists";
 import { FaintPhase } from "#app/phases/faint-phase";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
@@ -26,12 +26,12 @@ describe("Abilities - Quick Draw", () => {
     game = new GameManager(phaserGame);
     game.override.battleStyle("single");
 
-    game.override.starterSpecies(Species.MAGIKARP);
+    game.override.starterSpecies(SpeciesId.MAGIKARP);
     game.override.ability(AbilityId.QUICK_DRAW);
     game.override.moveset([MoveId.TACKLE, MoveId.TAIL_WHIP]);
 
     game.override.enemyLevel(100);
-    game.override.enemySpecies(Species.MAGIKARP);
+    game.override.enemySpecies(SpeciesId.MAGIKARP);
     game.override.enemyAbility(AbilityId.BALL_FETCH);
     game.override.enemyMoveset([MoveId.TACKLE]);
 

@@ -4,7 +4,7 @@ import { allMoves } from "#app/data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -16,7 +16,7 @@ describe("Moves - Destiny Bond", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
-  const defaultParty = [Species.BULBASAUR, Species.SQUIRTLE];
+  const defaultParty = [SpeciesId.BULBASAUR, SpeciesId.SQUIRTLE];
   const enemyFirst = [BattlerIndex.ENEMY, BattlerIndex.PLAYER];
   const playerFirst = [BattlerIndex.PLAYER, BattlerIndex.ENEMY];
 
@@ -35,7 +35,7 @@ describe("Moves - Destiny Bond", () => {
     game.override
       .battleStyle("single")
       .ability(AbilityId.UNNERVE) // Pre-emptively prevent flakiness from opponent berries
-      .enemySpecies(Species.RATTATA)
+      .enemySpecies(SpeciesId.RATTATA)
       .enemyAbility(AbilityId.RUN_AWAY)
       .startingLevel(100) // Make sure tested moves KO
       .enemyLevel(5)
@@ -158,7 +158,7 @@ describe("Moves - Destiny Bond", () => {
 
   it("should not KO an ally", async () => {
     game.override.moveset([MoveId.DESTINY_BOND, MoveId.CRUNCH]).battleStyle("double");
-    await game.classicMode.startBattle([Species.SHEDINJA, Species.BULBASAUR, Species.SQUIRTLE]);
+    await game.classicMode.startBattle([SpeciesId.SHEDINJA, SpeciesId.BULBASAUR, SpeciesId.SQUIRTLE]);
 
     const enemyPokemon0 = game.scene.getEnemyField()[0];
     const enemyPokemon1 = game.scene.getEnemyField()[1];

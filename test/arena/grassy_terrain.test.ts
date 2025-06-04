@@ -1,7 +1,7 @@
 import { allMoves } from "#app/data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -25,7 +25,7 @@ describe("Arena - Grassy Terrain", () => {
       .battleStyle("single")
       .disableCrits()
       .enemyLevel(1)
-      .enemySpecies(Species.SHUCKLE)
+      .enemySpecies(SpeciesId.SHUCKLE)
       .enemyAbility(AbilityId.STURDY)
       .enemyMoveset(MoveId.FLY)
       .moveset([MoveId.GRASSY_TERRAIN, MoveId.EARTHQUAKE])
@@ -33,7 +33,7 @@ describe("Arena - Grassy Terrain", () => {
   });
 
   it("halves the damage of Earthquake", async () => {
-    await game.classicMode.startBattle([Species.TAUROS]);
+    await game.classicMode.startBattle([SpeciesId.TAUROS]);
 
     const eq = allMoves[MoveId.EARTHQUAKE];
     vi.spyOn(eq, "calculateBattlePower");
@@ -53,7 +53,7 @@ describe("Arena - Grassy Terrain", () => {
   });
 
   it("Does not halve the damage of Earthquake if opponent is not grounded", async () => {
-    await game.classicMode.startBattle([Species.NINJASK]);
+    await game.classicMode.startBattle([SpeciesId.NINJASK]);
 
     const eq = allMoves[MoveId.EARTHQUAKE];
     vi.spyOn(eq, "calculateBattlePower");

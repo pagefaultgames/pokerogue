@@ -1,7 +1,7 @@
 import { Stat } from "#app/enums/stat";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -27,13 +27,13 @@ describe("Moves - Role Play", () => {
       .ability(AbilityId.ADAPTABILITY)
       .battleStyle("single")
       .disableCrits()
-      .enemySpecies(Species.MAGIKARP)
+      .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(MoveId.SPLASH);
   });
 
   it("should set the user's ability to the target's ability", async () => {
-    await game.classicMode.startBattle([Species.FEEBAS]);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
     game.move.select(MoveId.ROLE_PLAY);
     await game.phaseInterceptor.to("BerryPhase");
@@ -43,7 +43,7 @@ describe("Moves - Role Play", () => {
 
   it("should activate post-summon abilities", async () => {
     game.override.enemyAbility(AbilityId.INTIMIDATE);
-    await game.classicMode.startBattle([Species.FEEBAS]);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
     game.move.select(MoveId.ROLE_PLAY);
     await game.phaseInterceptor.to("BerryPhase");

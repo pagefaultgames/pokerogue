@@ -3,7 +3,7 @@ import { SelectTargetPhase } from "#app/phases/select-target-phase";
 import { TurnStartPhase } from "#app/phases/turn-start-phase";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -25,14 +25,14 @@ describe("Battle order", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override.battleStyle("single");
-    game.override.enemySpecies(Species.MEWTWO);
+    game.override.enemySpecies(SpeciesId.MEWTWO);
     game.override.enemyAbility(AbilityId.INSOMNIA);
     game.override.ability(AbilityId.INSOMNIA);
     game.override.moveset([MoveId.TACKLE]);
   });
 
   it("opponent faster than player 50 vs 150", async () => {
-    await game.classicMode.startBattle([Species.BULBASAUR]);
+    await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
     const enemyPokemon = game.scene.getEnemyPokemon()!;
@@ -51,7 +51,7 @@ describe("Battle order", () => {
   }, 20000);
 
   it("Player faster than opponent 150 vs 50", async () => {
-    await game.classicMode.startBattle([Species.BULBASAUR]);
+    await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
     const enemyPokemon = game.scene.getEnemyPokemon()!;
@@ -71,7 +71,7 @@ describe("Battle order", () => {
 
   it("double - both opponents faster than player 50/50 vs 150/150", async () => {
     game.override.battleStyle("double");
-    await game.classicMode.startBattle([Species.BULBASAUR, Species.BLASTOISE]);
+    await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.BLASTOISE]);
 
     const playerPokemon = game.scene.getPlayerField();
     const enemyPokemon = game.scene.getEnemyField();
@@ -95,7 +95,7 @@ describe("Battle order", () => {
 
   it("double - speed tie except 1 - 100/100 vs 100/150", async () => {
     game.override.battleStyle("double");
-    await game.classicMode.startBattle([Species.BULBASAUR, Species.BLASTOISE]);
+    await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.BLASTOISE]);
 
     const playerPokemon = game.scene.getPlayerField();
     const enemyPokemon = game.scene.getEnemyField();
@@ -119,7 +119,7 @@ describe("Battle order", () => {
 
   it("double - speed tie 100/150 vs 100/150", async () => {
     game.override.battleStyle("double");
-    await game.classicMode.startBattle([Species.BULBASAUR, Species.BLASTOISE]);
+    await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.BLASTOISE]);
 
     const playerPokemon = game.scene.getPlayerField();
     const enemyPokemon = game.scene.getEnemyField();

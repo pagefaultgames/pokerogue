@@ -4,7 +4,7 @@ import { BattlerTagType } from "#app/enums/battler-tag-type";
 import { CommandPhase } from "#app/phases/command-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -28,13 +28,13 @@ describe("Abilities - Sweet Veil", () => {
     game.override
       .battleStyle("double")
       .moveset([MoveId.SPLASH, MoveId.REST, MoveId.YAWN])
-      .enemySpecies(Species.MAGIKARP)
+      .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(MoveId.POWDER);
   });
 
   it("prevents the user and its allies from falling asleep", async () => {
-    await game.classicMode.startBattle([Species.SWIRLIX, Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.SWIRLIX, SpeciesId.MAGIKARP]);
 
     game.move.select(MoveId.SPLASH);
     game.move.select(MoveId.SPLASH, 1);
@@ -46,7 +46,7 @@ describe("Abilities - Sweet Veil", () => {
 
   it("causes Rest to fail when used by the user or its allies", async () => {
     game.override.enemyMoveset(MoveId.SPLASH);
-    await game.classicMode.startBattle([Species.SWIRLIX, Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.SWIRLIX, SpeciesId.MAGIKARP]);
 
     game.move.select(MoveId.SPLASH);
     game.move.select(MoveId.REST, 1);
@@ -58,7 +58,7 @@ describe("Abilities - Sweet Veil", () => {
 
   it("causes Yawn to fail if used on the user or its allies", async () => {
     game.override.enemyMoveset(MoveId.YAWN);
-    await game.classicMode.startBattle([Species.SWIRLIX, Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.SWIRLIX, SpeciesId.MAGIKARP]);
 
     game.move.select(MoveId.SPLASH);
     game.move.select(MoveId.SPLASH, 1);
@@ -69,12 +69,12 @@ describe("Abilities - Sweet Veil", () => {
   });
 
   it("prevents the user and its allies already drowsy due to Yawn from falling asleep.", async () => {
-    game.override.enemySpecies(Species.PIKACHU);
+    game.override.enemySpecies(SpeciesId.PIKACHU);
     game.override.enemyLevel(5);
     game.override.startingLevel(5);
     game.override.enemyMoveset(MoveId.SPLASH);
 
-    await game.classicMode.startBattle([Species.SHUCKLE, Species.SHUCKLE, Species.SWIRLIX]);
+    await game.classicMode.startBattle([SpeciesId.SHUCKLE, SpeciesId.SHUCKLE, SpeciesId.SWIRLIX]);
 
     game.move.select(MoveId.SPLASH);
     game.move.select(MoveId.YAWN, 1, BattlerIndex.PLAYER);

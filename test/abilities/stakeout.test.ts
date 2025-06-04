@@ -2,7 +2,7 @@ import { BattlerIndex } from "#app/battle";
 import { isBetween } from "#app/utils/common";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -30,14 +30,14 @@ describe("Abilities - Stakeout", () => {
       .disableCrits()
       .startingLevel(100)
       .enemyLevel(100)
-      .enemySpecies(Species.SNORLAX)
+      .enemySpecies(SpeciesId.SNORLAX)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset([MoveId.SPLASH, MoveId.FLIP_TURN])
       .startingWave(5);
   });
 
   it("should do double damage to a pokemon that switched out", async () => {
-    await game.classicMode.startBattle([Species.MILOTIC]);
+    await game.classicMode.startBattle([SpeciesId.MILOTIC]);
 
     const [enemy1] = game.scene.getEnemyParty();
 
@@ -60,7 +60,7 @@ describe("Abilities - Stakeout", () => {
   });
 
   it("should do double damage to a pokemon that switched out via U-Turn/etc", async () => {
-    await game.classicMode.startBattle([Species.MILOTIC]);
+    await game.classicMode.startBattle([SpeciesId.MILOTIC]);
 
     const [enemy1] = game.scene.getEnemyParty();
 

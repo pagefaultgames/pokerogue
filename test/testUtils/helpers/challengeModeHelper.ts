@@ -1,5 +1,5 @@
 import { BattleStyle } from "#app/enums/battle-style";
-import type { Species } from "#app/enums/species";
+import type { SpeciesId } from "#app/enums/species";
 import overrides from "#app/overrides";
 import { EncounterPhase } from "#app/phases/encounter-phase";
 import { SelectStarterPhase } from "#app/phases/select-starter-phase";
@@ -34,7 +34,7 @@ export class ChallengeModeHelper extends GameManagerHelper {
    * @param gameMode - Optional game mode to set.
    * @returns A promise that resolves when the summon phase is reached.
    */
-  async runToSummon(species?: Species[]) {
+  async runToSummon(species?: SpeciesId[]) {
     await this.game.runToTitle();
 
     if (this.game.override.disableShinies) {
@@ -60,7 +60,7 @@ export class ChallengeModeHelper extends GameManagerHelper {
    * @param species - Optional array of species to start the battle with.
    * @returns A promise that resolves when the battle is started.
    */
-  async startBattle(species?: Species[]) {
+  async startBattle(species?: SpeciesId[]) {
     await this.runToSummon(species);
 
     if (this.game.scene.battleStyle === BattleStyle.SWITCH) {

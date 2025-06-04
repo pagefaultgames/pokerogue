@@ -1,4 +1,4 @@
-import { Species } from "#app/enums/species";
+import { SpeciesId } from "#app/enums/species";
 import { StatusEffect } from "#app/enums/status-effect";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { toDmgValue } from "#app/utils/common";
@@ -27,11 +27,11 @@ describe("Abilities - Heatproof", () => {
     game.override
       .battleStyle("single")
       .disableCrits()
-      .enemySpecies(Species.CHARMANDER)
+      .enemySpecies(SpeciesId.CHARMANDER)
       .enemyAbility(AbilityId.HEATPROOF)
       .enemyMoveset(MoveId.SPLASH)
       .enemyLevel(100)
-      .starterSpecies(Species.CHANDELURE)
+      .starterSpecies(SpeciesId.CHANDELURE)
       .ability(AbilityId.BALL_FETCH)
       .moveset([MoveId.FLAMETHROWER, MoveId.SPLASH])
       .startingLevel(100);
@@ -60,7 +60,7 @@ describe("Abilities - Heatproof", () => {
   });
 
   it("reduces Burn damage by half", async () => {
-    game.override.enemyStatusEffect(StatusEffect.BURN).enemySpecies(Species.ABRA);
+    game.override.enemyStatusEffect(StatusEffect.BURN).enemySpecies(SpeciesId.ABRA);
     await game.classicMode.startBattle();
 
     const enemy = game.scene.getEnemyPokemon()!;

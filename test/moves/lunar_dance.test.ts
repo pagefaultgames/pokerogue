@@ -2,7 +2,7 @@ import { StatusEffect } from "#app/enums/status-effect";
 import { CommandPhase } from "#app/phases/command-phase";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, it, expect } from "vitest";
@@ -31,7 +31,7 @@ describe("Moves - Lunar Dance", () => {
   });
 
   it("should full restore HP, PP and status of switched in pokemon, then fail second use because no remaining backup pokemon in party", async () => {
-    await game.classicMode.startBattle([Species.BULBASAUR, Species.ODDISH, Species.RATTATA]);
+    await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.ODDISH, SpeciesId.RATTATA]);
 
     const [bulbasaur, oddish, rattata] = game.scene.getPlayerParty();
     game.move.changeMoveset(bulbasaur, [MoveId.LUNAR_DANCE, MoveId.SPLASH]);

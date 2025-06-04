@@ -227,7 +227,7 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import type { BerryType } from "#enums/berry-type";
 import { Biome } from "#enums/biome";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { DamageAnimPhase } from "#app/phases/damage-anim-phase";
 import { FaintPhase } from "#app/phases/faint-phase";
@@ -334,7 +334,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public friendship: number;
   public metLevel: number;
   public metBiome: Biome | -1;
-  public metSpecies: Species;
+  public metSpecies: SpeciesId;
   public metWave: number;
   public luck: number;
   public pauseEvolutions: boolean;
@@ -1817,21 +1817,21 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Checks if the {@linkcode Pokemon} has a fusion with the specified {@linkcode Species}.
-   * @param species the pokemon {@linkcode Species} to check
-   * @returns `true` if the {@linkcode Pokemon} has a fusion with the specified {@linkcode Species}, `false` otherwise
+   * Checks if the {@linkcode Pokemon} has a fusion with the specified {@linkcode SpeciesId}.
+   * @param species the pokemon {@linkcode SpeciesId} to check
+   * @returns `true` if the {@linkcode Pokemon} has a fusion with the specified {@linkcode SpeciesId}, `false` otherwise
    */
-  hasFusionSpecies(species: Species): boolean {
+  hasFusionSpecies(species: SpeciesId): boolean {
     return this.fusionSpecies?.speciesId === species;
   }
 
   /**
-   * Checks if the {@linkcode Pokemon} has is the specified {@linkcode Species} or is fused with it.
-   * @param species the pokemon {@linkcode Species} to check
+   * Checks if the {@linkcode Pokemon} has is the specified {@linkcode SpeciesId} or is fused with it.
+   * @param species the pokemon {@linkcode SpeciesId} to check
    * @param formKey If provided, requires the species to be in that form
    * @returns `true` if the pokemon is the species or is fused with it, `false` otherwise
    */
-  hasSpecies(species: Species, formKey?: string): boolean {
+  hasSpecies(species: SpeciesId, formKey?: string): boolean {
     if (isNullOrUndefined(formKey)) {
       return this.species.speciesId === species || this.fusionSpecies?.speciesId === species;
     }
@@ -2291,11 +2291,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @returns the pokemon's current tera {@linkcode PokemonType}
    */
   getTeraType(): PokemonType {
-    if (this.hasSpecies(Species.TERAPAGOS)) {
+    if (this.hasSpecies(SpeciesId.TERAPAGOS)) {
       return PokemonType.STELLAR;
     }
-    if (this.hasSpecies(Species.OGERPON)) {
-      const ogerponForm = this.species.speciesId === Species.OGERPON ? this.formIndex : this.fusionFormIndex;
+    if (this.hasSpecies(SpeciesId.OGERPON)) {
+      const ogerponForm = this.species.speciesId === SpeciesId.OGERPON ? this.formIndex : this.fusionFormIndex;
       switch (ogerponForm) {
         case 0:
         case 4:
@@ -2311,7 +2311,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           return PokemonType.ROCK;
       }
     }
-    if (this.hasSpecies(Species.SHEDINJA)) {
+    if (this.hasSpecies(SpeciesId.SHEDINJA)) {
       return PokemonType.BUG;
     }
     return this.teraType;
@@ -2987,7 +2987,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             !species.mythical &&
             !species.isTrainerForbidden() &&
             species.speciesId !== this.species.speciesId &&
-            species.speciesId !== Species.DITTO
+            species.speciesId !== SpeciesId.DITTO
           );
         };
 
@@ -3659,7 +3659,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (
       source.isTerastallized &&
       source.getTeraType() === PokemonType.STELLAR &&
-      (!source.stellarTypesBoosted.includes(moveType) || source.hasSpecies(Species.TERAPAGOS))
+      (!source.stellarTypesBoosted.includes(moveType) || source.hasSpecies(SpeciesId.TERAPAGOS))
     ) {
       stabMultiplier.value += matchesSourceType ? 0.5 : 0.2;
     }
@@ -4284,7 +4284,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       if (
         !tag.isBatonPassable ||
         (tag.tagType === BattlerTagType.TELEKINESIS &&
-          this.species.speciesId === Species.GENGAR &&
+          this.species.speciesId === SpeciesId.GENGAR &&
           this.getFormKey() === "mega")
       ) {
         continue;
@@ -4902,7 +4902,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (
       this.hasAbilityWithAttr(CommanderAbAttr) &&
       globalScene.currentBattle.double &&
-      this.getAlly()?.species.speciesId === Species.DONDOZO
+      this.getAlly()?.species.speciesId === SpeciesId.DONDOZO
     ) {
       this.setVisible(false);
     }
@@ -5680,7 +5680,7 @@ export class PlayerPokemon extends Pokemon {
       }
       // Add to candy progress for this mon's starter species and its fused species (if it has one)
       starterData.forEach((sd: StarterDataEntry, i: number) => {
-        const speciesId = !i ? starterSpeciesId : (fusionStarterSpeciesId as Species);
+        const speciesId = !i ? starterSpeciesId : (fusionStarterSpeciesId as SpeciesId);
         sd.friendship = (sd.friendship || 0) + starterAmount.value;
         if (sd.friendship >= getStarterValueFriendshipCap(speciesStarterCosts[speciesId])) {
           globalScene.gameData.addStarterCandy(getPokemonSpecies(speciesId), 1);
@@ -5815,7 +5815,7 @@ export class PlayerPokemon extends Pokemon {
           this.updateInfo(true).then(() => resolve());
         });
       };
-      if (preEvolution.speciesId === Species.GIMMIGHOUL) {
+      if (preEvolution.speciesId === SpeciesId.GIMMIGHOUL) {
         const evotracker = this.getHeldItems().filter(m => m instanceof EvoTrackerModifier)[0] ?? null;
         if (evotracker) {
           globalScene.removeModifier(evotracker);
@@ -5835,7 +5835,7 @@ export class PlayerPokemon extends Pokemon {
     const isFusion = evolution instanceof FusionSpeciesFormEvolution;
 
     const evoSpecies = !isFusion ? this.species : this.fusionSpecies;
-    if (evoSpecies?.speciesId === Species.NINCADA && evolution.speciesId === Species.NINJASK) {
+    if (evoSpecies?.speciesId === SpeciesId.NINCADA && evolution.speciesId === SpeciesId.NINJASK) {
       const newEvolution = pokemonEvolutions[evoSpecies.speciesId][1];
 
       if (newEvolution.condition?.predicate(this)) {
@@ -6111,7 +6111,7 @@ export class EnemyPokemon extends Pokemon {
 
       this.luck = (this.shiny ? this.variant + 1 : 0) + (this.fusionShiny ? this.fusionVariant + 1 : 0);
 
-      let prevolution: Species;
+      let prevolution: SpeciesId;
       let speciesId = species.speciesId;
       while ((prevolution = pokemonPrevolutions[speciesId])) {
         const evolution = pokemonEvolutions[prevolution].find(
@@ -6167,7 +6167,7 @@ export class EnemyPokemon extends Pokemon {
 
   generateAndPopulateMoveset(formIndex?: number): void {
     switch (true) {
-      case this.species.speciesId === Species.SMEARGLE:
+      case this.species.speciesId === SpeciesId.SMEARGLE:
         this.moveset = [
           new PokemonMove(MoveId.SKETCH),
           new PokemonMove(MoveId.SKETCH),
@@ -6175,7 +6175,7 @@ export class EnemyPokemon extends Pokemon {
           new PokemonMove(MoveId.SKETCH),
         ];
         break;
-      case this.species.speciesId === Species.ETERNATUS:
+      case this.species.speciesId === SpeciesId.ETERNATUS:
         this.moveset = (formIndex !== undefined ? formIndex : this.formIndex)
           ? [
               new PokemonMove(MoveId.DYNAMAX_CANNON),
@@ -6737,7 +6737,7 @@ interface IllusionData {
     fusionVariant: Variant;
   };
   /** The species of the illusion */
-  species: Species;
+  species: SpeciesId;
   /** The formIndex of the illusion */
   formIndex: number;
   /** The gender of the illusion */

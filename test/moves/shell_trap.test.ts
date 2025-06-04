@@ -1,7 +1,7 @@
 import { BattlerIndex } from "#app/battle";
 import { allMoves } from "#app/data/data-lists";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#app/enums/species";
+import { SpeciesId } from "#app/enums/species";
 import { MoveResult } from "#app/field/pokemon";
 import { BerryPhase } from "#app/phases/berry-phase";
 import { MoveEndPhase } from "#app/phases/move-end-phase";
@@ -29,7 +29,7 @@ describe("Moves - Shell Trap", () => {
     game.override
       .battleStyle("double")
       .moveset([MoveId.SHELL_TRAP, MoveId.SPLASH, MoveId.BULLDOZE])
-      .enemySpecies(Species.SNORLAX)
+      .enemySpecies(SpeciesId.SNORLAX)
       .enemyMoveset([MoveId.RAZOR_LEAF])
       .startingLevel(100)
       .enemyLevel(100);
@@ -38,7 +38,7 @@ describe("Moves - Shell Trap", () => {
   });
 
   it("should activate after the user is hit by a physical attack", async () => {
-    await game.classicMode.startBattle([Species.CHARIZARD, Species.TURTONATOR]);
+    await game.classicMode.startBattle([SpeciesId.CHARIZARD, SpeciesId.TURTONATOR]);
 
     const playerPokemon = game.scene.getPlayerField();
     const enemyPokemon = game.scene.getEnemyField();
@@ -61,7 +61,7 @@ describe("Moves - Shell Trap", () => {
   it("should fail if the user is only hit by special attacks", async () => {
     game.override.enemyMoveset([MoveId.SWIFT]);
 
-    await game.classicMode.startBattle([Species.CHARIZARD, Species.TURTONATOR]);
+    await game.classicMode.startBattle([SpeciesId.CHARIZARD, SpeciesId.TURTONATOR]);
 
     const playerPokemon = game.scene.getPlayerField();
     const enemyPokemon = game.scene.getEnemyField();
@@ -84,7 +84,7 @@ describe("Moves - Shell Trap", () => {
   it("should fail if the user isn't hit with any attack", async () => {
     game.override.enemyMoveset(MoveId.SPLASH);
 
-    await game.classicMode.startBattle([Species.CHARIZARD, Species.TURTONATOR]);
+    await game.classicMode.startBattle([SpeciesId.CHARIZARD, SpeciesId.TURTONATOR]);
 
     const playerPokemon = game.scene.getPlayerField();
     const enemyPokemon = game.scene.getEnemyField();
@@ -107,7 +107,7 @@ describe("Moves - Shell Trap", () => {
   it("should not activate from an ally's attack", async () => {
     game.override.enemyMoveset(MoveId.SPLASH);
 
-    await game.classicMode.startBattle([Species.BLASTOISE, Species.CHARIZARD]);
+    await game.classicMode.startBattle([SpeciesId.BLASTOISE, SpeciesId.CHARIZARD]);
 
     const playerPokemon = game.scene.getPlayerField();
     const enemyPokemon = game.scene.getEnemyField();
@@ -131,7 +131,7 @@ describe("Moves - Shell Trap", () => {
     game.override.battleStyle("single");
     vi.spyOn(allMoves[MoveId.RAZOR_LEAF], "priority", "get").mockReturnValue(-4);
 
-    await game.classicMode.startBattle([Species.CHARIZARD]);
+    await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
     const enemyPokemon = game.scene.getEnemyPokemon()!;

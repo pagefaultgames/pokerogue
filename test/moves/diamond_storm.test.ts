@@ -1,7 +1,7 @@
 import { allMoves } from "#app/data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import { Stat } from "#enums/stat";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -26,7 +26,7 @@ describe("Moves - Diamond Storm", () => {
     game.override
       .moveset([MoveId.DIAMOND_STORM])
       .battleStyle("single")
-      .enemySpecies(Species.MAGIKARP)
+      .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(MoveId.SPLASH);
   });
@@ -36,7 +36,7 @@ describe("Moves - Diamond Storm", () => {
     const diamondStorm = allMoves[MoveId.DIAMOND_STORM];
     vi.spyOn(diamondStorm, "chance", "get").mockReturnValue(100);
     vi.spyOn(diamondStorm, "accuracy", "get").mockReturnValue(100);
-    await game.classicMode.startBattle([Species.FEEBAS]);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
     game.move.select(MoveId.DIAMOND_STORM);
     await game.phaseInterceptor.to("BerryPhase");

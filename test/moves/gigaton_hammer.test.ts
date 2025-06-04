@@ -1,7 +1,7 @@
 import { BattlerIndex } from "#app/battle";
 import GameManager from "#test/testUtils/gameManager";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -23,8 +23,8 @@ describe("Moves - Gigaton Hammer", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .enemySpecies(Species.MAGIKARP)
-      .starterSpecies(Species.FEEBAS)
+      .enemySpecies(SpeciesId.MAGIKARP)
+      .starterSpecies(SpeciesId.FEEBAS)
       .moveset([MoveId.GIGATON_HAMMER])
       .startingLevel(10)
       .enemyLevel(100)

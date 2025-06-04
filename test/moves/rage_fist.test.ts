@@ -1,7 +1,7 @@
 import { BattlerIndex } from "#app/battle";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import { allMoves } from "#app/data/data-lists";
 import type Move from "#app/data/moves/move";
 import GameManager from "#test/testUtils/gameManager";
@@ -32,7 +32,7 @@ describe("Moves - Rage Fist", () => {
       .moveset([MoveId.RAGE_FIST, MoveId.SPLASH, MoveId.SUBSTITUTE, MoveId.TIDY_UP])
       .startingLevel(100)
       .enemyLevel(1)
-      .enemySpecies(Species.MAGIKARP)
+      .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(MoveId.DOUBLE_KICK);
 
@@ -40,7 +40,7 @@ describe("Moves - Rage Fist", () => {
   });
 
   it("should gain power per hit taken", async () => {
-    await game.classicMode.startBattle([Species.FEEBAS]);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
     game.move.select(MoveId.RAGE_FIST);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
@@ -50,7 +50,7 @@ describe("Moves - Rage Fist", () => {
   });
 
   it("caps at 6 hits taken", async () => {
-    await game.classicMode.startBattle([Species.FEEBAS]);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
     // spam splash against magikarp hitting us 2 times per turn
     game.move.select(MoveId.SPLASH);
@@ -70,9 +70,9 @@ describe("Moves - Rage Fist", () => {
   });
 
   it("should not count substitute hits or confusion damage", async () => {
-    game.override.enemySpecies(Species.SHUCKLE).enemyMoveset([MoveId.CONFUSE_RAY, MoveId.DOUBLE_KICK]);
+    game.override.enemySpecies(SpeciesId.SHUCKLE).enemyMoveset([MoveId.CONFUSE_RAY, MoveId.DOUBLE_KICK]);
 
-    await game.classicMode.startBattle([Species.REGIROCK]);
+    await game.classicMode.startBattle([SpeciesId.REGIROCK]);
 
     game.move.select(MoveId.SUBSTITUTE);
     await game.move.selectEnemyMove(MoveId.DOUBLE_KICK);
@@ -99,7 +99,7 @@ describe("Moves - Rage Fist", () => {
   });
 
   it("should maintain hits recieved between wild waves", async () => {
-    await game.classicMode.startBattle([Species.FEEBAS]);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
     game.move.select(MoveId.RAGE_FIST);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
@@ -116,7 +116,7 @@ describe("Moves - Rage Fist", () => {
   });
 
   it("should reset hits recieved before trainer battles", async () => {
-    await game.classicMode.startBattle([Species.IRON_HANDS]);
+    await game.classicMode.startBattle([SpeciesId.IRON_HANDS]);
 
     const ironHands = game.scene.getPlayerPokemon()!;
     expect(ironHands).toBeDefined();
@@ -138,9 +138,9 @@ describe("Moves - Rage Fist", () => {
   });
 
   it("should reset hits recieved before new biome", async () => {
-    game.override.enemySpecies(Species.MAGIKARP).startingWave(10);
+    game.override.enemySpecies(SpeciesId.MAGIKARP).startingWave(10);
 
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
     game.move.select(MoveId.RAGE_FIST);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
@@ -162,7 +162,7 @@ describe("Moves - Rage Fist", () => {
         .filter(p => !!p)
         .map(m => m.battleData.hitCount);
 
-    await game.classicMode.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
+    await game.classicMode.startBattle([SpeciesId.CHARIZARD, SpeciesId.BLASTOISE]);
 
     // Charizard hit
     game.move.select(MoveId.SPLASH);
@@ -186,7 +186,7 @@ describe("Moves - Rage Fist", () => {
 
     const charizard = game.scene.getPlayerPokemon()!;
     expect(charizard).toBeDefined();
-    expect(charizard.species.speciesId).toBe(Species.CHARIZARD);
+    expect(charizard.species.speciesId).toBe(SpeciesId.CHARIZARD);
     expect(move.calculateBattlePower).toHaveLastReturnedWith(150);
 
     // go to new wave, reload game and beat up another poor sap

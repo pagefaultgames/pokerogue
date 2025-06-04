@@ -1,5 +1,5 @@
 import { MoveId } from "#enums/move-id";
-import { Species } from "#app/enums/species";
+import { SpeciesId } from "#app/enums/species";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -23,10 +23,10 @@ describe("Moves - Foresight", () => {
     game = new GameManager(phaserGame);
     game.override
       .disableCrits()
-      .enemySpecies(Species.GASTLY)
+      .enemySpecies(SpeciesId.GASTLY)
       .enemyMoveset(MoveId.SPLASH)
       .enemyLevel(5)
-      .starterSpecies(Species.MAGIKARP)
+      .starterSpecies(SpeciesId.MAGIKARP)
       .moveset([MoveId.FORESIGHT, MoveId.QUICK_ATTACK, MoveId.MACH_PUNCH]);
   });
 

@@ -1,7 +1,7 @@
 import { BattlerIndex } from "#app/battle";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
@@ -23,7 +23,7 @@ describe("Moves - Rage Powder", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override.battleStyle("double");
-    game.override.enemySpecies(Species.SNORLAX);
+    game.override.enemySpecies(SpeciesId.SNORLAX);
     game.override.startingLevel(100);
     game.override.enemyLevel(100);
     game.override.moveset([MoveId.FOLLOW_ME, MoveId.RAGE_POWDER, MoveId.SPOTLIGHT, MoveId.QUICK_ATTACK]);
@@ -31,7 +31,7 @@ describe("Moves - Rage Powder", () => {
   });
 
   test("move effect should be bypassed by Grass type", async () => {
-    await game.classicMode.startBattle([Species.AMOONGUSS, Species.VENUSAUR]);
+    await game.classicMode.startBattle([SpeciesId.AMOONGUSS, SpeciesId.VENUSAUR]);
 
     const enemyPokemon = game.scene.getEnemyField();
 
@@ -52,7 +52,7 @@ describe("Moves - Rage Powder", () => {
     game.override.ability(AbilityId.OVERCOAT);
 
     // Test with two non-Grass type player Pokemon
-    await game.classicMode.startBattle([Species.BLASTOISE, Species.CHARIZARD]);
+    await game.classicMode.startBattle([SpeciesId.BLASTOISE, SpeciesId.CHARIZARD]);
 
     const enemyPokemon = game.scene.getEnemyField();
 

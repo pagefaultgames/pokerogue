@@ -1,7 +1,7 @@
 import { BerryType } from "#app/enums/berry-type";
 import { Button } from "#app/enums/buttons";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#app/enums/species";
+import { SpeciesId } from "#app/enums/species";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 import PartyUiHandler, { PartyUiMode } from "#app/ui/party-ui-handler";
 import { UiMode } from "#enums/ui-mode";
@@ -35,10 +35,10 @@ describe("UI - Transfer Items", () => {
       { name: "BERRY", count: 2, type: BerryType.LUM },
     ]);
     game.override.moveset([MoveId.DRAGON_CLAW]);
-    game.override.enemySpecies(Species.MAGIKARP);
+    game.override.enemySpecies(SpeciesId.MAGIKARP);
     game.override.enemyMoveset([MoveId.SPLASH]);
 
-    await game.classicMode.startBattle([Species.RAYQUAZA, Species.RAYQUAZA, Species.RAYQUAZA]);
+    await game.classicMode.startBattle([SpeciesId.RAYQUAZA, SpeciesId.RAYQUAZA, SpeciesId.RAYQUAZA]);
 
     game.move.select(MoveId.DRAGON_CLAW);
 

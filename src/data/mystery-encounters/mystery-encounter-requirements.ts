@@ -13,7 +13,7 @@ import { isNullOrUndefined } from "#app/utils/common";
 import type { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import { SpeciesFormKey } from "#enums/species-form-key";
 import { TimeOfDay } from "#enums/time-of-day";
 
@@ -424,11 +424,11 @@ export class MoneyRequirement extends EncounterSceneRequirement {
 }
 
 export class SpeciesRequirement extends EncounterPokemonRequirement {
-  requiredSpecies: Species[];
+  requiredSpecies: SpeciesId[];
   minNumberOfPokemon: number;
   invertQuery: boolean;
 
-  constructor(species: Species | Species[], minNumberOfPokemon = 1, invertQuery = false) {
+  constructor(species: SpeciesId | SpeciesId[], minNumberOfPokemon = 1, invertQuery = false) {
     super();
     this.minNumberOfPokemon = minNumberOfPokemon;
     this.invertQuery = invertQuery;
@@ -457,7 +457,7 @@ export class SpeciesRequirement extends EncounterPokemonRequirement {
 
   override getDialogueToken(pokemon?: PlayerPokemon): [string, string] {
     if (pokemon?.species.speciesId && this.requiredSpecies.includes(pokemon.species.speciesId)) {
-      return ["species", Species[pokemon.species.speciesId]];
+      return ["species", SpeciesId[pokemon.species.speciesId]];
     }
     return ["species", ""];
   }

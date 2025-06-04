@@ -1,6 +1,6 @@
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import { Stat } from "#enums/stat";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -23,12 +23,12 @@ describe("Moves - Obstruct", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .enemySpecies(Species.MAGIKARP)
+      .enemySpecies(SpeciesId.MAGIKARP)
       .enemyMoveset(MoveId.TACKLE)
       .enemyAbility(AbilityId.BALL_FETCH)
       .ability(AbilityId.BALL_FETCH)
       .moveset([MoveId.OBSTRUCT])
-      .starterSpecies(Species.FEEBAS);
+      .starterSpecies(SpeciesId.FEEBAS);
   });
 
   it("protects from contact damaging moves and lowers the opponent's defense by 2 stages", async () => {

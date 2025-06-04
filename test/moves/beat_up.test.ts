@@ -1,6 +1,6 @@
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#app/enums/species";
+import { SpeciesId } from "#app/enums/species";
 import { StatusEffect } from "#app/enums/status-effect";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import GameManager from "#test/testUtils/gameManager";
@@ -25,7 +25,7 @@ describe("Moves - Beat Up", () => {
     game = new GameManager(phaserGame);
     game.override.battleStyle("single");
 
-    game.override.enemySpecies(Species.SNORLAX);
+    game.override.enemySpecies(SpeciesId.SNORLAX);
     game.override.enemyLevel(100);
     game.override.enemyMoveset([MoveId.SPLASH]);
     game.override.enemyAbility(AbilityId.INSOMNIA);
@@ -36,12 +36,12 @@ describe("Moves - Beat Up", () => {
 
   it("should hit once for each healthy player Pokemon", async () => {
     await game.classicMode.startBattle([
-      Species.MAGIKARP,
-      Species.BULBASAUR,
-      Species.CHARMANDER,
-      Species.SQUIRTLE,
-      Species.PIKACHU,
-      Species.EEVEE,
+      SpeciesId.MAGIKARP,
+      SpeciesId.BULBASAUR,
+      SpeciesId.CHARMANDER,
+      SpeciesId.SQUIRTLE,
+      SpeciesId.PIKACHU,
+      SpeciesId.EEVEE,
     ]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
@@ -64,12 +64,12 @@ describe("Moves - Beat Up", () => {
 
   it("should not count player Pokemon with status effects towards hit count", async () => {
     await game.classicMode.startBattle([
-      Species.MAGIKARP,
-      Species.BULBASAUR,
-      Species.CHARMANDER,
-      Species.SQUIRTLE,
-      Species.PIKACHU,
-      Species.EEVEE,
+      SpeciesId.MAGIKARP,
+      SpeciesId.BULBASAUR,
+      SpeciesId.CHARMANDER,
+      SpeciesId.SQUIRTLE,
+      SpeciesId.PIKACHU,
+      SpeciesId.EEVEE,
     ]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;

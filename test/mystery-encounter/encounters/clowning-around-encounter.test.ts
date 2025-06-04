@@ -1,7 +1,7 @@
 import * as MysteryEncounters from "#app/data/mystery-encounters/mystery-encounters";
 import { Biome } from "#app/enums/biome";
 import { MysteryEncounterType } from "#app/enums/mystery-encounter-type";
-import { Species } from "#app/enums/species";
+import { SpeciesId } from "#app/enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
@@ -39,7 +39,7 @@ import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import { NewBattlePhase } from "#app/phases/new-battle-phase";
 
 const namespace = "mysteryEncounters/clowningAround";
-const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
+const defaultParty = [SpeciesId.LAPRAS, SpeciesId.GENGAR, SpeciesId.ABRA];
 const defaultBiome = Biome.CAVE;
 const defaultWave = 45;
 
@@ -115,12 +115,12 @@ describe("Clowning Around - Mystery Encounter", () => {
     expect(config.doubleBattle).toBe(true);
     expect(config.trainerConfig?.trainerType).toBe(TrainerType.HARLEQUIN);
     expect(config.pokemonConfigs?.[0]).toEqual({
-      species: getPokemonSpecies(Species.MR_MIME),
+      species: getPokemonSpecies(SpeciesId.MR_MIME),
       isBoss: true,
       moveSet: [MoveId.TEETER_DANCE, MoveId.ALLY_SWITCH, MoveId.DAZZLING_GLEAM, MoveId.PSYCHIC],
     });
     expect(config.pokemonConfigs?.[1]).toEqual({
-      species: getPokemonSpecies(Species.BLACEPHALON),
+      species: getPokemonSpecies(SpeciesId.BLACEPHALON),
       customPokemonData: expect.anything(),
       isBoss: true,
       moveSet: [MoveId.TRICK, MoveId.HYPNOSIS, MoveId.SHADOW_BALL, MoveId.MIND_BLOWN],
@@ -175,14 +175,14 @@ describe("Clowning Around - Mystery Encounter", () => {
       const enemyField = scene.getEnemyField();
       expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(enemyField.length).toBe(2);
-      expect(enemyField[0].species.speciesId).toBe(Species.MR_MIME);
+      expect(enemyField[0].species.speciesId).toBe(SpeciesId.MR_MIME);
       expect(enemyField[0].moveset).toEqual([
         new PokemonMove(MoveId.TEETER_DANCE),
         new PokemonMove(MoveId.ALLY_SWITCH),
         new PokemonMove(MoveId.DAZZLING_GLEAM),
         new PokemonMove(MoveId.PSYCHIC),
       ]);
-      expect(enemyField[1].species.speciesId).toBe(Species.BLACEPHALON);
+      expect(enemyField[1].species.speciesId).toBe(SpeciesId.BLACEPHALON);
       expect(enemyField[1].moveset).toEqual([
         new PokemonMove(MoveId.TRICK),
         new PokemonMove(MoveId.HYPNOSIS),

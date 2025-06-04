@@ -3,7 +3,7 @@ import { BattlerIndex } from "#app/battle";
 import { Stat } from "#enums/stat";
 import { allMoves } from "#app/data/data-lists";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -24,7 +24,7 @@ describe("Moves - Spectral Thief", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .enemySpecies(Species.SHUCKLE)
+      .enemySpecies(SpeciesId.SHUCKLE)
       .enemyLevel(100)
       .enemyMoveset(MoveId.SPLASH)
       .enemyAbility(AbilityId.BALL_FETCH)
@@ -65,7 +65,7 @@ describe("Moves - Spectral Thief", () => {
   });
 
   it("should steal stat stages before dmg calculation", async () => {
-    game.override.enemySpecies(Species.MAGIKARP).enemyLevel(50);
+    game.override.enemySpecies(SpeciesId.MAGIKARP).enemyLevel(50);
     await game.classicMode.startBattle();
 
     const player = game.scene.getPlayerPokemon()!;

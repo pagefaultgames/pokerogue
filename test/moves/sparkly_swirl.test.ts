@@ -3,7 +3,7 @@ import { StatusEffect } from "#app/enums/status-effect";
 import { CommandPhase } from "#app/phases/command-phase";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -23,7 +23,7 @@ describe("Moves - Sparkly Swirl", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .enemySpecies(Species.SHUCKLE)
+      .enemySpecies(SpeciesId.SHUCKLE)
       .enemyLevel(100)
       .enemyMoveset(MoveId.SPLASH)
       .enemyAbility(AbilityId.BALL_FETCH)
@@ -35,7 +35,7 @@ describe("Moves - Sparkly Swirl", () => {
 
   it("should cure status effect of the user, its ally, and all party pokemon", async () => {
     game.override.battleStyle("double").statusEffect(StatusEffect.BURN);
-    await game.classicMode.startBattle([Species.RATTATA, Species.RATTATA, Species.RATTATA]);
+    await game.classicMode.startBattle([SpeciesId.RATTATA, SpeciesId.RATTATA, SpeciesId.RATTATA]);
     const [leftPlayer, rightPlayer, partyPokemon] = game.scene.getPlayerParty();
     const leftOpp = game.scene.getEnemyPokemon()!;
 
@@ -59,7 +59,7 @@ describe("Moves - Sparkly Swirl", () => {
 
   it("should not cure status effect of the target/target's allies", async () => {
     game.override.battleStyle("double").enemyStatusEffect(StatusEffect.BURN);
-    await game.classicMode.startBattle([Species.RATTATA, Species.RATTATA]);
+    await game.classicMode.startBattle([SpeciesId.RATTATA, SpeciesId.RATTATA]);
     const [leftOpp, rightOpp] = game.scene.getEnemyField();
 
     vi.spyOn(leftOpp, "resetStatus");

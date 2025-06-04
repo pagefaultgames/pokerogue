@@ -2,7 +2,7 @@ import { BattlerIndex } from "#app/battle";
 import { toDmgValue } from "#app/utils/common";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import GameManager from "#test/testUtils/gameManager";
@@ -28,9 +28,9 @@ describe("Abilities - Disguise", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .enemySpecies(Species.MIMIKYU)
+      .enemySpecies(SpeciesId.MIMIKYU)
       .enemyMoveset(MoveId.SPLASH)
-      .starterSpecies(Species.REGIELEKI)
+      .starterSpecies(SpeciesId.REGIELEKI)
       .moveset([MoveId.SHADOW_SNEAK, MoveId.VACUUM_WAVE, MoveId.TOXIC_THREAD, MoveId.SPLASH]);
   });
 
@@ -109,7 +109,7 @@ describe("Abilities - Disguise", () => {
     game.override.enemyMoveset([MoveId.SHADOW_SNEAK]);
     game.override.starterSpecies(0);
 
-    await game.classicMode.startBattle([Species.MIMIKYU, Species.FURRET]);
+    await game.classicMode.startBattle([SpeciesId.MIMIKYU, SpeciesId.FURRET]);
 
     const mimikyu = game.scene.getPlayerPokemon()!;
     const maxHp = mimikyu.getMaxHp();
@@ -133,9 +133,9 @@ describe("Abilities - Disguise", () => {
   it("persists form change when wave changes with no arena reset", async () => {
     game.override.starterSpecies(0);
     game.override.starterForms({
-      [Species.MIMIKYU]: bustedForm,
+      [SpeciesId.MIMIKYU]: bustedForm,
     });
-    await game.classicMode.startBattle([Species.FURRET, Species.MIMIKYU]);
+    await game.classicMode.startBattle([SpeciesId.FURRET, SpeciesId.MIMIKYU]);
 
     const mimikyu = game.scene.getPlayerParty()[1]!;
     expect(mimikyu.formIndex).toBe(bustedForm);
@@ -149,9 +149,9 @@ describe("Abilities - Disguise", () => {
 
   it("reverts to Disguised form on arena reset", async () => {
     game.override.startingWave(4);
-    game.override.starterSpecies(Species.MIMIKYU);
+    game.override.starterSpecies(SpeciesId.MIMIKYU);
     game.override.starterForms({
-      [Species.MIMIKYU]: bustedForm,
+      [SpeciesId.MIMIKYU]: bustedForm,
     });
 
     await game.classicMode.startBattle();
@@ -171,10 +171,10 @@ describe("Abilities - Disguise", () => {
     game.override.startingWave(10);
     game.override.starterSpecies(0);
     game.override.starterForms({
-      [Species.MIMIKYU]: bustedForm,
+      [SpeciesId.MIMIKYU]: bustedForm,
     });
 
-    await game.classicMode.startBattle([Species.MIMIKYU, Species.FURRET]);
+    await game.classicMode.startBattle([SpeciesId.MIMIKYU, SpeciesId.FURRET]);
 
     const mimikyu1 = game.scene.getPlayerPokemon()!;
 

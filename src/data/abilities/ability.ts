@@ -54,7 +54,7 @@ import { AbilityId } from "#enums/ability-id";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import { SwitchType } from "#enums/switch-type";
 import { MoveFlags } from "#enums/MoveFlags";
 import { MoveTarget } from "#enums/MoveTarget";
@@ -1265,7 +1265,7 @@ export class MoveTypeChangeAbAttr extends PreAttackAbAttr {
             !noAbilityTypeOverrideMoves.has(move.id) && 
             (!pokemon.isTerastallized ||
               (move.id !== MoveId.TERA_BLAST &&
-              (move.id !== MoveId.TERA_STARSTORM || pokemon.getTeraType() !== PokemonType.STELLAR || !pokemon.hasSpecies(Species.TERAPAGOS))));
+              (move.id !== MoveId.TERA_STARSTORM || pokemon.getTeraType() !== PokemonType.STELLAR || !pokemon.hasSpecies(SpeciesId.TERAPAGOS))));
   }
 
   /**
@@ -2776,8 +2776,8 @@ export class PostSummonFormChangeByWeatherAbAttr extends PostSummonAbAttr {
   }
 
   override canApplyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
-    const isCastformWithForecast = (pokemon.species.speciesId === Species.CASTFORM && this.ability === AbilityId.FORECAST);
-    const isCherrimWithFlowerGift = (pokemon.species.speciesId === Species.CHERRIM && this.ability === AbilityId.FLOWER_GIFT);
+    const isCastformWithForecast = (pokemon.species.speciesId === SpeciesId.CASTFORM && this.ability === AbilityId.FORECAST);
+    const isCherrimWithFlowerGift = (pokemon.species.speciesId === SpeciesId.CHERRIM && this.ability === AbilityId.FLOWER_GIFT);
     return isCastformWithForecast || isCherrimWithFlowerGift;
   }
 
@@ -2815,7 +2815,7 @@ export class CommanderAbAttr extends AbAttr {
 
     // TODO: Should this work with X + Dondozo fusions?
     const ally = pokemon.getAlly();
-    return globalScene.currentBattle?.double && !isNullOrUndefined(ally) && ally.species.speciesId === Species.DONDOZO
+    return globalScene.currentBattle?.double && !isNullOrUndefined(ally) && ally.species.speciesId === SpeciesId.DONDOZO
            && !(ally.isFainted() || ally.getTag(BattlerTagType.COMMANDED));
   }
 
@@ -3824,8 +3824,8 @@ export class PostWeatherChangeFormChangeAbAttr extends PostWeatherChangeAbAttr {
   }
 
   override canApplyPostWeatherChange(pokemon: Pokemon, passive: boolean, simulated: boolean, weather: WeatherType, args: any[]): boolean {
-    const isCastformWithForecast = (pokemon.species.speciesId === Species.CASTFORM && this.ability === AbilityId.FORECAST);
-    const isCherrimWithFlowerGift = (pokemon.species.speciesId === Species.CHERRIM && this.ability === AbilityId.FLOWER_GIFT);
+    const isCastformWithForecast = (pokemon.species.speciesId === SpeciesId.CASTFORM && this.ability === AbilityId.FORECAST);
+    const isCherrimWithFlowerGift = (pokemon.species.speciesId === SpeciesId.CHERRIM && this.ability === AbilityId.FLOWER_GIFT);
 
     return isCastformWithForecast || isCherrimWithFlowerGift;
   }
@@ -5273,7 +5273,7 @@ export class IllusionPreSummonAbAttr extends PreSummonAbAttr {
       // Illusion will also not activate if the Pokémon with Illusion is Terastallized and the last Pokémon in the party is Ogerpon or Terapagos.
       if (
         lastPokemon === pokemon ||
-        ((speciesId === Species.OGERPON || speciesId === Species.TERAPAGOS) && (lastPokemon.isTerastallized || pokemon.isTerastallized))
+        ((speciesId === SpeciesId.OGERPON || speciesId === SpeciesId.TERAPAGOS) && (lastPokemon.isTerastallized || pokemon.isTerastallized))
       ) {
         return false;
       }
@@ -6423,8 +6423,8 @@ function setAbilityRevealed(pokemon: Pokemon): void {
  */
 function getPokemonWithWeatherBasedForms() {
   return globalScene.getField(true).filter(p =>
-    (p.hasAbility(AbilityId.FORECAST) && p.species.speciesId === Species.CASTFORM)
-    || (p.hasAbility(AbilityId.FLOWER_GIFT) && p.species.speciesId === Species.CHERRIM)
+    (p.hasAbility(AbilityId.FORECAST) && p.species.speciesId === SpeciesId.CASTFORM)
+    || (p.hasAbility(AbilityId.FLOWER_GIFT) && p.species.speciesId === SpeciesId.CHERRIM)
   );
 }
 

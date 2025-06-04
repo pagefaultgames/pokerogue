@@ -3,7 +3,7 @@ import { AbilityId } from "#enums/ability-id";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -29,7 +29,7 @@ describe("Abilities - Power Spot", () => {
     game.override.battleStyle("double");
     game.override.moveset([MoveId.TACKLE, MoveId.BREAKING_SWIPE, MoveId.SPLASH, MoveId.DAZZLING_GLEAM]);
     game.override.enemyMoveset(MoveId.SPLASH);
-    game.override.enemySpecies(Species.SHUCKLE);
+    game.override.enemySpecies(SpeciesId.SHUCKLE);
     game.override.enemyAbility(AbilityId.BALL_FETCH);
   });
 
@@ -39,7 +39,7 @@ describe("Abilities - Power Spot", () => {
 
     vi.spyOn(moveToCheck, "calculateBattlePower");
 
-    await game.classicMode.startBattle([Species.REGIELEKI, Species.STONJOURNER]);
+    await game.classicMode.startBattle([SpeciesId.REGIELEKI, SpeciesId.STONJOURNER]);
     game.move.select(MoveId.DAZZLING_GLEAM);
     game.move.select(MoveId.SPLASH, 1);
     await game.phaseInterceptor.to(MoveEffectPhase);
@@ -53,7 +53,7 @@ describe("Abilities - Power Spot", () => {
 
     vi.spyOn(moveToCheck, "calculateBattlePower");
 
-    await game.classicMode.startBattle([Species.REGIELEKI, Species.STONJOURNER]);
+    await game.classicMode.startBattle([SpeciesId.REGIELEKI, SpeciesId.STONJOURNER]);
     game.move.select(MoveId.BREAKING_SWIPE);
     game.move.select(MoveId.SPLASH, 1);
     await game.phaseInterceptor.to(MoveEffectPhase);
@@ -67,7 +67,7 @@ describe("Abilities - Power Spot", () => {
 
     vi.spyOn(moveToCheck, "calculateBattlePower");
 
-    await game.classicMode.startBattle([Species.STONJOURNER, Species.REGIELEKI]);
+    await game.classicMode.startBattle([SpeciesId.STONJOURNER, SpeciesId.REGIELEKI]);
     game.move.select(MoveId.BREAKING_SWIPE);
     game.move.select(MoveId.SPLASH, 1);
     await game.phaseInterceptor.to(TurnEndPhase);

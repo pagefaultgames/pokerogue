@@ -48,7 +48,7 @@ import MoveInfoOverlay from "#app/ui/move-info-overlay";
 import { getEggTierForSpecies } from "#app/data/egg";
 import { Device } from "#enums/devices";
 import type { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import { Button } from "#enums/buttons";
 import { EggSourceType } from "#enums/egg-source-types";
 import { DropDown, DropDownLabel, DropDownOption, DropDownState, DropDownType, SortCriteria } from "#app/ui/dropdown";
@@ -356,7 +356,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
   private allSpecies: PokemonSpecies[] = [];
   private lastSpecies: PokemonSpecies;
-  private speciesLoaded: Map<Species, boolean> = new Map<Species, boolean>();
+  private speciesLoaded: Map<SpeciesId, boolean> = new Map<SpeciesId, boolean>();
   public starterSpecies: PokemonSpecies[] = [];
   private pokerusSpecies: PokemonSpecies[] = [];
   private starterAttr: bigint[] = [];
@@ -795,7 +795,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.randomCursorObj.setOrigin(0, 0);
     this.starterSelectContainer.add(this.randomCursorObj);
 
-    const starterSpecies: Species[] = [];
+    const starterSpecies: SpeciesId[] = [];
 
     const starterBoxContainer = globalScene.add.container(speciesContainerX + 6, 9); //115
 
@@ -3537,7 +3537,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.pokemonPassiveLabelText.setVisible(true);
         this.pokemonNatureLabelText.setVisible(true);
         this.pokemonCaughtCountText.setText(`${this.speciesStarterDexEntry.caughtCount}`);
-        if (species.speciesId === Species.MANAPHY || species.speciesId === Species.PHIONE) {
+        if (species.speciesId === SpeciesId.MANAPHY || species.speciesId === SpeciesId.PHIONE) {
           this.pokemonHatchedIcon.setFrame("manaphy");
         } else {
           this.pokemonHatchedIcon.setFrame(getEggTierForSpecies(species));

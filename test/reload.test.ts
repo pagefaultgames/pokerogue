@@ -5,7 +5,7 @@ import { UiMode } from "#enums/ui-mode";
 import { Biome } from "#enums/biome";
 import { Button } from "#enums/buttons";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import type { MockClock } from "#test/testUtils/mocks/mockClock";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -156,7 +156,7 @@ describe("Reload", () => {
 
   it("should not have RNG inconsistencies at a Daily run wave 50 Boss fight", async () => {
     game.override.battleStyle("single").startingWave(50);
-    await game.runToFinalBossEncounter([Species.BULBASAUR], GameModes.DAILY);
+    await game.runToFinalBossEncounter([SpeciesId.BULBASAUR], GameModes.DAILY);
 
     const preReloadRngState = Phaser.Math.RND.state();
 

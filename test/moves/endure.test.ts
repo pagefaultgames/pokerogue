@@ -1,6 +1,6 @@
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -27,13 +27,13 @@ describe("Moves - Endure", () => {
       .startingLevel(100)
       .battleStyle("single")
       .disableCrits()
-      .enemySpecies(Species.MAGIKARP)
+      .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.NO_GUARD)
       .enemyMoveset(MoveId.ENDURE);
   });
 
   it("should let the pokemon survive with 1 HP", async () => {
-    await game.classicMode.startBattle([Species.ARCEUS]);
+    await game.classicMode.startBattle([SpeciesId.ARCEUS]);
 
     game.move.select(MoveId.THUNDER);
     await game.phaseInterceptor.to("BerryPhase");
@@ -42,7 +42,7 @@ describe("Moves - Endure", () => {
   });
 
   it("should let the pokemon survive with 1 HP when hit with a multihit move", async () => {
-    await game.classicMode.startBattle([Species.ARCEUS]);
+    await game.classicMode.startBattle([SpeciesId.ARCEUS]);
 
     game.move.select(MoveId.BULLET_SEED);
     await game.phaseInterceptor.to("BerryPhase");
@@ -51,7 +51,7 @@ describe("Moves - Endure", () => {
   });
 
   it("should let the pokemon survive against OHKO moves", async () => {
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
     const enemy = game.scene.getEnemyPokemon()!;
 
     game.move.select(MoveId.SHEER_COLD);
@@ -71,10 +71,10 @@ describe("Moves - Endure", () => {
     game.override
       .enemyLevel(1)
       .startingLevel(100)
-      .enemySpecies(Species.MAGIKARP)
+      .enemySpecies(SpeciesId.MAGIKARP)
       .moveset(move)
       .enemyMoveset(MoveId.ENDURE);
-    await game.classicMode.startBattle([Species.MAGIKARP, Species.FEEBAS]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.FEEBAS]);
     const enemy = game.scene.getEnemyPokemon()!;
     enemy.damageAndUpdate(enemy.hp - 1);
 

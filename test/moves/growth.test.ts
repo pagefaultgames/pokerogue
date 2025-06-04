@@ -2,7 +2,7 @@ import { Stat } from "#enums/stat";
 import GameManager from "#test/testUtils/gameManager";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
@@ -32,7 +32,7 @@ describe("Moves - Growth", () => {
   });
 
   it("should raise SPATK stat stage by 1", async () => {
-    await game.classicMode.startBattle([Species.MIGHTYENA]);
+    await game.classicMode.startBattle([SpeciesId.MIGHTYENA]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
 

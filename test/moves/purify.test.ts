@@ -3,7 +3,7 @@ import { Status } from "#app/data/status-effect";
 import type { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
 import { MoveEndPhase } from "#app/phases/move-end-phase";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import { StatusEffect } from "#enums/status-effect";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -27,11 +27,11 @@ describe("Moves - Purify", () => {
     game = new GameManager(phaserGame);
     game.override.battleStyle("single");
 
-    game.override.starterSpecies(Species.PYUKUMUKU);
+    game.override.starterSpecies(SpeciesId.PYUKUMUKU);
     game.override.startingLevel(10);
     game.override.moveset([MoveId.PURIFY, MoveId.SIZZLY_SLIDE]);
 
-    game.override.enemySpecies(Species.MAGIKARP);
+    game.override.enemySpecies(SpeciesId.MAGIKARP);
     game.override.enemyLevel(10);
     game.override.enemyMoveset([MoveId.SPLASH, MoveId.NONE, MoveId.NONE, MoveId.NONE]);
   });

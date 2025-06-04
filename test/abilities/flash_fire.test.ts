@@ -1,6 +1,6 @@
 import { BattlerIndex } from "#app/battle";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
-import { Species } from "#app/enums/species";
+import { SpeciesId } from "#app/enums/species";
 import { MovePhase } from "#app/phases/move-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { AbilityId } from "#enums/ability-id";
@@ -37,7 +37,7 @@ describe("Abilities - Flash Fire", () => {
 
   it("immune to Fire-type moves", async () => {
     game.override.enemyMoveset([MoveId.EMBER]).moveset(MoveId.SPLASH);
-    await game.classicMode.startBattle([Species.BLISSEY]);
+    await game.classicMode.startBattle([SpeciesId.BLISSEY]);
 
     const blissey = game.scene.getPlayerPokemon()!;
 
@@ -48,7 +48,7 @@ describe("Abilities - Flash Fire", () => {
 
   it("not activate if the Pokémon is protected from the Fire-type move", async () => {
     game.override.enemyMoveset([MoveId.EMBER]).moveset([MoveId.PROTECT]);
-    await game.classicMode.startBattle([Species.BLISSEY]);
+    await game.classicMode.startBattle([SpeciesId.BLISSEY]);
 
     const blissey = game.scene.getPlayerPokemon()!;
 
@@ -59,7 +59,7 @@ describe("Abilities - Flash Fire", () => {
 
   it("activated by Will-O-Wisp", async () => {
     game.override.enemyMoveset([MoveId.WILL_O_WISP]).moveset(MoveId.SPLASH);
-    await game.classicMode.startBattle([Species.BLISSEY]);
+    await game.classicMode.startBattle([SpeciesId.BLISSEY]);
 
     const blissey = game.scene.getPlayerPokemon()!;
 
@@ -75,7 +75,7 @@ describe("Abilities - Flash Fire", () => {
   it("activated after being frozen", async () => {
     game.override.enemyMoveset([MoveId.EMBER]).moveset(MoveId.SPLASH);
     game.override.statusEffect(StatusEffect.FREEZE);
-    await game.classicMode.startBattle([Species.BLISSEY]);
+    await game.classicMode.startBattle([SpeciesId.BLISSEY]);
 
     const blissey = game.scene.getPlayerPokemon()!;
 
@@ -87,7 +87,7 @@ describe("Abilities - Flash Fire", () => {
 
   it("not passing with baton pass", async () => {
     game.override.enemyMoveset([MoveId.EMBER]).moveset([MoveId.BATON_PASS]);
-    await game.classicMode.startBattle([Species.BLISSEY, Species.CHANSEY]);
+    await game.classicMode.startBattle([SpeciesId.BLISSEY, SpeciesId.CHANSEY]);
 
     // ensure use baton pass after enemy moved
     game.move.select(MoveId.BATON_PASS);
@@ -97,14 +97,14 @@ describe("Abilities - Flash Fire", () => {
 
     await game.phaseInterceptor.to(TurnEndPhase);
     const chansey = game.scene.getPlayerPokemon()!;
-    expect(game.scene.getPlayerPokemon()!.species.speciesId).toBe(Species.CHANSEY);
+    expect(game.scene.getPlayerPokemon()!.species.speciesId).toBe(SpeciesId.CHANSEY);
     expect(chansey!.getTag(BattlerTagType.FIRE_BOOST)).toBeUndefined();
   }, 20000);
 
   it("boosts Fire-type move when the ability is activated", async () => {
     game.override.enemyMoveset([MoveId.FIRE_PLEDGE]).moveset([MoveId.EMBER, MoveId.SPLASH]);
     game.override.enemyAbility(AbilityId.FLASH_FIRE).ability(AbilityId.NONE);
-    await game.classicMode.startBattle([Species.BLISSEY]);
+    await game.classicMode.startBattle([SpeciesId.BLISSEY]);
     const blissey = game.scene.getPlayerPokemon()!;
     const initialHP = 1000;
     blissey.hp = initialHP;
@@ -129,8 +129,8 @@ describe("Abilities - Flash Fire", () => {
   it("still activates regardless of accuracy check", async () => {
     game.override.moveset(MoveId.FIRE_PLEDGE).enemyMoveset(MoveId.EMBER);
     game.override.enemyAbility(AbilityId.NONE).ability(AbilityId.FLASH_FIRE);
-    game.override.enemySpecies(Species.BLISSEY);
-    await game.classicMode.startBattle([Species.RATTATA]);
+    game.override.enemySpecies(SpeciesId.BLISSEY);
+    await game.classicMode.startBattle([SpeciesId.RATTATA]);
 
     const blissey = game.scene.getEnemyPokemon()!;
     const initialHP = 1000;

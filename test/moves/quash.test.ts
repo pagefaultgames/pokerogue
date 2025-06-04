@@ -1,4 +1,4 @@
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import { MoveId } from "#enums/move-id";
 import { AbilityId } from "#enums/ability-id";
 import { BattlerIndex } from "#app/battle";
@@ -27,7 +27,7 @@ describe("Moves - Quash", () => {
     game.override
       .battleStyle("double")
       .enemyLevel(1)
-      .enemySpecies(Species.SLOWPOKE)
+      .enemySpecies(SpeciesId.SLOWPOKE)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset([MoveId.RAIN_DANCE, MoveId.SPLASH])
       .ability(AbilityId.BALL_FETCH)
@@ -35,7 +35,7 @@ describe("Moves - Quash", () => {
   });
 
   it("makes the target move last in a turn, ignoring priority", async () => {
-    await game.classicMode.startBattle([Species.ACCELGOR, Species.RATTATA]);
+    await game.classicMode.startBattle([SpeciesId.ACCELGOR, SpeciesId.RATTATA]);
 
     game.move.select(MoveId.QUASH, 0, BattlerIndex.PLAYER_2);
     game.move.select(MoveId.SUNNY_DAY, 1);
@@ -48,7 +48,7 @@ describe("Moves - Quash", () => {
   });
 
   it("fails if the target has already moved", async () => {
-    await game.classicMode.startBattle([Species.ACCELGOR, Species.RATTATA]);
+    await game.classicMode.startBattle([SpeciesId.ACCELGOR, SpeciesId.RATTATA]);
     game.move.select(MoveId.SPLASH, 0);
     game.move.select(MoveId.QUASH, 1, BattlerIndex.PLAYER);
 
@@ -59,9 +59,9 @@ describe("Moves - Quash", () => {
   });
 
   it("makes multiple quashed targets move in speed order at the end of the turn", async () => {
-    game.override.enemySpecies(Species.NINJASK).enemyLevel(100);
+    game.override.enemySpecies(SpeciesId.NINJASK).enemyLevel(100);
 
-    await game.classicMode.startBattle([Species.ACCELGOR, Species.RATTATA]);
+    await game.classicMode.startBattle([SpeciesId.ACCELGOR, SpeciesId.RATTATA]);
 
     // both users are quashed - rattata is slower so sun should be up at end of turn
     game.move.select(MoveId.RAIN_DANCE, 0);
@@ -77,7 +77,7 @@ describe("Moves - Quash", () => {
   it("respects trick room", async () => {
     game.override.enemyMoveset([MoveId.RAIN_DANCE, MoveId.SPLASH, MoveId.TRICK_ROOM]);
 
-    await game.classicMode.startBattle([Species.ACCELGOR, Species.RATTATA]);
+    await game.classicMode.startBattle([SpeciesId.ACCELGOR, SpeciesId.RATTATA]);
     game.move.select(MoveId.SPLASH, 0);
     game.move.select(MoveId.SPLASH, 1);
 

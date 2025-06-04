@@ -1,6 +1,6 @@
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -29,13 +29,13 @@ describe("Form Change Phase", () => {
       .ability(AbilityId.BALL_FETCH)
       .battleStyle("single")
       .disableCrits()
-      .enemySpecies(Species.MAGIKARP)
+      .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(MoveId.SPLASH);
   });
 
   it("Zacian should successfully change into Crowned form", async () => {
-    await game.classicMode.startBattle([Species.ZACIAN]);
+    await game.classicMode.startBattle([SpeciesId.ZACIAN]);
 
     // Before the form change: Should be Hero form
     const zacian = game.scene.getPlayerParty()[0];

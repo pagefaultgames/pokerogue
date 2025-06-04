@@ -9,7 +9,7 @@ import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { NumberHolder } from "#app/utils/common";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import { WeatherType } from "#enums/weather-type";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -41,7 +41,7 @@ describe("Moves - Aurora Veil", () => {
       .ability(AbilityId.BALL_FETCH)
       .moveset([MoveId.ABSORB, MoveId.ROCK_SLIDE, MoveId.TACKLE])
       .enemyLevel(100)
-      .enemySpecies(Species.MAGIKARP)
+      .enemySpecies(SpeciesId.MAGIKARP)
       .enemyMoveset(MoveId.AURORA_VEIL)
       .disableCrits()
       .weather(WeatherType.HAIL);
@@ -49,7 +49,7 @@ describe("Moves - Aurora Veil", () => {
 
   it("reduces damage of physical attacks by half in a single battle", async () => {
     const moveToUse = MoveId.TACKLE;
-    await game.classicMode.startBattle([Species.SHUCKLE]);
+    await game.classicMode.startBattle([SpeciesId.SHUCKLE]);
 
     game.move.select(moveToUse);
 
@@ -67,7 +67,7 @@ describe("Moves - Aurora Veil", () => {
     game.override.battleStyle("double");
 
     const moveToUse = MoveId.ROCK_SLIDE;
-    await game.classicMode.startBattle([Species.SHUCKLE, Species.SHUCKLE]);
+    await game.classicMode.startBattle([SpeciesId.SHUCKLE, SpeciesId.SHUCKLE]);
 
     game.move.select(moveToUse);
     game.move.select(moveToUse, 1);
@@ -84,7 +84,7 @@ describe("Moves - Aurora Veil", () => {
 
   it("reduces damage of special attacks by half in a single battle", async () => {
     const moveToUse = MoveId.ABSORB;
-    await game.classicMode.startBattle([Species.SHUCKLE]);
+    await game.classicMode.startBattle([SpeciesId.SHUCKLE]);
 
     game.move.select(moveToUse);
 
@@ -103,7 +103,7 @@ describe("Moves - Aurora Veil", () => {
     game.override.battleStyle("double");
 
     const moveToUse = MoveId.DAZZLING_GLEAM;
-    await game.classicMode.startBattle([Species.SHUCKLE, Species.SHUCKLE]);
+    await game.classicMode.startBattle([SpeciesId.SHUCKLE, SpeciesId.SHUCKLE]);
 
     game.move.select(moveToUse);
     game.move.select(moveToUse, 1);
@@ -121,7 +121,7 @@ describe("Moves - Aurora Veil", () => {
   it("does not affect physical critical hits", async () => {
     game.override.moveset([MoveId.WICKED_BLOW]);
     const moveToUse = MoveId.WICKED_BLOW;
-    await game.classicMode.startBattle([Species.SHUCKLE]);
+    await game.classicMode.startBattle([SpeciesId.SHUCKLE]);
 
     game.move.select(moveToUse);
     await game.phaseInterceptor.to(TurnEndPhase);
@@ -138,7 +138,7 @@ describe("Moves - Aurora Veil", () => {
     game.override.moveset([MoveId.FROST_BREATH]);
     const moveToUse = MoveId.FROST_BREATH;
     vi.spyOn(allMoves[MoveId.FROST_BREATH], "accuracy", "get").mockReturnValue(100);
-    await game.classicMode.startBattle([Species.SHUCKLE]);
+    await game.classicMode.startBattle([SpeciesId.SHUCKLE]);
 
     game.move.select(moveToUse);
     await game.phaseInterceptor.to(TurnEndPhase);

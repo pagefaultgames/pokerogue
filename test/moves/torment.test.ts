@@ -1,5 +1,5 @@
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import { AbilityId } from "#enums/ability-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -27,14 +27,14 @@ describe("Moves - Torment", () => {
       .battleStyle("single")
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset([MoveId.TORMENT, MoveId.SPLASH])
-      .enemySpecies(Species.SHUCKLE)
+      .enemySpecies(SpeciesId.SHUCKLE)
       .enemyLevel(30)
       .moveset([MoveId.TACKLE])
       .ability(AbilityId.BALL_FETCH);
   });
 
   it("Pokemon should not be able to use the same move consecutively", async () => {
-    await game.classicMode.startBattle([Species.CHANSEY]);
+    await game.classicMode.startBattle([SpeciesId.CHANSEY]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
 

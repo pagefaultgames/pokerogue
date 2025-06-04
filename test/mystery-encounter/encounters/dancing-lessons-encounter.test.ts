@@ -1,6 +1,6 @@
 import { Biome } from "#app/enums/biome";
 import { MysteryEncounterType } from "#app/enums/mystery-encounter-type";
-import { Species } from "#app/enums/species";
+import { SpeciesId } from "#app/enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
@@ -25,7 +25,7 @@ import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import { LearnMovePhase } from "#app/phases/learn-move-phase";
 
 const namespace = "mysteryEncounters/dancingLessons";
-const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
+const defaultParty = [SpeciesId.LAPRAS, SpeciesId.GENGAR, SpeciesId.ABRA];
 const defaultBiome = Biome.PLAINS;
 const defaultWave = 45;
 
@@ -110,7 +110,7 @@ describe("Dancing Lessons - Mystery Encounter", () => {
       const enemyField = scene.getEnemyField();
       expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(enemyField.length).toBe(1);
-      expect(enemyField[0].species.speciesId).toBe(Species.ORICORIO);
+      expect(enemyField[0].species.speciesId).toBe(SpeciesId.ORICORIO);
       expect(enemyField[0].summonData.statStages).toEqual([1, 1, 1, 1, 0, 0, 0]);
       const moveset = enemyField[0].moveset.map(m => m.moveId);
       expect(moveset.some(m => m === MoveId.REVELATION_DANCE)).toBeTruthy();
@@ -207,7 +207,7 @@ describe("Dancing Lessons - Mystery Encounter", () => {
 
       expect(partyCountBefore + 1).toBe(partyCountAfter);
       const oricorio = scene.getPlayerParty()[scene.getPlayerParty().length - 1];
-      expect(oricorio.species.speciesId).toBe(Species.ORICORIO);
+      expect(oricorio.species.speciesId).toBe(SpeciesId.ORICORIO);
       const moveset = oricorio.moveset.map(m => m.moveId);
       expect(moveset?.some(m => m === MoveId.REVELATION_DANCE)).toBeTruthy();
       expect(moveset?.some(m => m === MoveId.DRAGON_DANCE)).toBeTruthy();

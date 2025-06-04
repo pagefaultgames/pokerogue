@@ -1,7 +1,7 @@
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -26,8 +26,8 @@ describe("Abilities - Unseen Fist", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .starterSpecies(Species.URSHIFU)
-      .enemySpecies(Species.SNORLAX)
+      .starterSpecies(SpeciesId.URSHIFU)
+      .enemySpecies(SpeciesId.SNORLAX)
       .enemyMoveset(MoveId.PROTECT)
       .startingLevel(100)
       .enemyLevel(100);

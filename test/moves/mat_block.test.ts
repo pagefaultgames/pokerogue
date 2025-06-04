@@ -1,7 +1,7 @@
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 import GameManager from "#test/testUtils/gameManager";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { Stat } from "#enums/stat";
@@ -30,7 +30,7 @@ describe("Moves - Mat Block", () => {
 
     game.override.moveset([MoveId.MAT_BLOCK, MoveId.SPLASH]);
 
-    game.override.enemySpecies(Species.SNORLAX);
+    game.override.enemySpecies(SpeciesId.SNORLAX);
     game.override.enemyMoveset([MoveId.TACKLE]);
     game.override.enemyAbility(AbilityId.INSOMNIA);
 
@@ -39,7 +39,7 @@ describe("Moves - Mat Block", () => {
   });
 
   test("should protect the user and allies from attack moves", async () => {
-    await game.classicMode.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
+    await game.classicMode.startBattle([SpeciesId.CHARIZARD, SpeciesId.BLASTOISE]);
 
     const leadPokemon = game.scene.getPlayerField();
 
@@ -57,7 +57,7 @@ describe("Moves - Mat Block", () => {
   test("should not protect the user and allies from status moves", async () => {
     game.override.enemyMoveset([MoveId.GROWL]);
 
-    await game.classicMode.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
+    await game.classicMode.startBattle([SpeciesId.CHARIZARD, SpeciesId.BLASTOISE]);
 
     const leadPokemon = game.scene.getPlayerField();
 
@@ -73,7 +73,7 @@ describe("Moves - Mat Block", () => {
   });
 
   test("should fail when used after the first turn", async () => {
-    await game.classicMode.startBattle([Species.BLASTOISE, Species.CHARIZARD]);
+    await game.classicMode.startBattle([SpeciesId.BLASTOISE, SpeciesId.CHARIZARD]);
 
     const leadPokemon = game.scene.getPlayerField();
 

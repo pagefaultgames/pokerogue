@@ -1,7 +1,7 @@
 import i18next from "#app/plugins/i18n";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import { StatusEffect } from "#enums/status-effect";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -25,7 +25,7 @@ describe("Items - Toxic orb", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .enemySpecies(Species.MAGIKARP)
+      .enemySpecies(SpeciesId.MAGIKARP)
       .ability(AbilityId.BALL_FETCH)
       .enemyAbility(AbilityId.BALL_FETCH)
       .moveset(MoveId.SPLASH)
@@ -40,7 +40,7 @@ describe("Items - Toxic orb", () => {
   });
 
   it("should badly poison the holder", async () => {
-    await game.classicMode.startBattle([Species.FEEBAS]);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
     const player = game.scene.getPlayerPokemon()!;
     expect(player.getHeldItems()[0].type.id).toBe("TOXIC_ORB");

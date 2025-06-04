@@ -1,7 +1,7 @@
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { Nature } from "#enums/nature";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import { Stat } from "#enums/stat";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -29,7 +29,7 @@ describe("Abilities - Protosynthesis", () => {
       .ability(AbilityId.PROTOSYNTHESIS)
       .battleStyle("single")
       .disableCrits()
-      .enemySpecies(Species.MAGIKARP)
+      .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(MoveId.SPLASH);
   });
@@ -41,7 +41,7 @@ describe("Abilities - Protosynthesis", () => {
       .enemyMoveset(MoveId.SUNNY_DAY)
       .startingLevel(100)
       .enemyLevel(100);
-    await game.classicMode.startBattle([Species.MEW]);
+    await game.classicMode.startBattle([SpeciesId.MEW]);
     const mew = game.scene.getPlayerPokemon()!;
     // Nature of starting mon is randomized. We need to fix it to a neutral nature for the automated test.
     mew.setNature(Nature.HARDY);

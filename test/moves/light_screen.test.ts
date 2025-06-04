@@ -9,7 +9,7 @@ import type Pokemon from "#app/field/pokemon";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { NumberHolder } from "#app/utils/common";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -40,14 +40,14 @@ describe("Moves - Light Screen", () => {
       .ability(AbilityId.BALL_FETCH)
       .moveset([MoveId.ABSORB, MoveId.DAZZLING_GLEAM, MoveId.TACKLE])
       .enemyLevel(100)
-      .enemySpecies(Species.MAGIKARP)
+      .enemySpecies(SpeciesId.MAGIKARP)
       .enemyMoveset(MoveId.LIGHT_SCREEN)
       .disableCrits();
   });
 
   it("reduces damage of special attacks by half in a single battle", async () => {
     const moveToUse = MoveId.ABSORB;
-    await game.classicMode.startBattle([Species.SHUCKLE]);
+    await game.classicMode.startBattle([SpeciesId.SHUCKLE]);
 
     game.move.select(moveToUse);
 
@@ -66,7 +66,7 @@ describe("Moves - Light Screen", () => {
     game.override.battleStyle("double");
 
     const moveToUse = MoveId.DAZZLING_GLEAM;
-    await game.classicMode.startBattle([Species.SHUCKLE, Species.SHUCKLE]);
+    await game.classicMode.startBattle([SpeciesId.SHUCKLE, SpeciesId.SHUCKLE]);
 
     game.move.select(moveToUse);
     game.move.select(moveToUse, 1);
@@ -83,7 +83,7 @@ describe("Moves - Light Screen", () => {
 
   it("does not affect physical attacks", async () => {
     const moveToUse = MoveId.TACKLE;
-    await game.classicMode.startBattle([Species.SHUCKLE]);
+    await game.classicMode.startBattle([SpeciesId.SHUCKLE]);
 
     game.move.select(moveToUse);
 
@@ -101,7 +101,7 @@ describe("Moves - Light Screen", () => {
     game.override.moveset([MoveId.FROST_BREATH]);
     const moveToUse = MoveId.FROST_BREATH;
     vi.spyOn(allMoves[MoveId.FROST_BREATH], "accuracy", "get").mockReturnValue(100);
-    await game.classicMode.startBattle([Species.SHUCKLE]);
+    await game.classicMode.startBattle([SpeciesId.SHUCKLE]);
 
     game.move.select(moveToUse);
     await game.phaseInterceptor.to(TurnEndPhase);

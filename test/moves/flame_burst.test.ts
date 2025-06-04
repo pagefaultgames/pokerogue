@@ -3,7 +3,7 @@ import { AbilityId } from "#enums/ability-id";
 import type Pokemon from "#app/field/pokemon";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -40,13 +40,13 @@ describe("Moves - Flame Burst", () => {
     game.override.disableCrits();
     game.override.ability(AbilityId.UNNERVE);
     game.override.startingWave(4);
-    game.override.enemySpecies(Species.SHUCKLE);
+    game.override.enemySpecies(SpeciesId.SHUCKLE);
     game.override.enemyAbility(AbilityId.BALL_FETCH);
     game.override.enemyMoveset([MoveId.SPLASH]);
   });
 
   it("inflicts damage to the target's ally equal to 1/16 of its max HP", async () => {
-    await game.classicMode.startBattle([Species.PIKACHU, Species.PIKACHU]);
+    await game.classicMode.startBattle([SpeciesId.PIKACHU, SpeciesId.PIKACHU]);
     const [leftEnemy, rightEnemy] = game.scene.getEnemyField();
 
     game.move.select(MoveId.FLAME_BURST, 0, leftEnemy.getBattlerIndex());
@@ -60,7 +60,7 @@ describe("Moves - Flame Burst", () => {
   it("does not inflict damage to the target's ally if the target was not affected by Flame Burst", async () => {
     game.override.enemyAbility(AbilityId.FLASH_FIRE);
 
-    await game.classicMode.startBattle([Species.PIKACHU, Species.PIKACHU]);
+    await game.classicMode.startBattle([SpeciesId.PIKACHU, SpeciesId.PIKACHU]);
     const [leftEnemy, rightEnemy] = game.scene.getEnemyField();
 
     game.move.select(MoveId.FLAME_BURST, 0, leftEnemy.getBattlerIndex());
@@ -72,7 +72,7 @@ describe("Moves - Flame Burst", () => {
   });
 
   it("does not interact with the target ally's abilities", async () => {
-    await game.classicMode.startBattle([Species.PIKACHU, Species.PIKACHU]);
+    await game.classicMode.startBattle([SpeciesId.PIKACHU, SpeciesId.PIKACHU]);
     const [leftEnemy, rightEnemy] = game.scene.getEnemyField();
 
     vi.spyOn(rightEnemy, "getAbility").mockReturnValue(allAbilities[AbilityId.FLASH_FIRE]);
@@ -86,7 +86,7 @@ describe("Moves - Flame Burst", () => {
   });
 
   it("effect damage is prevented by Magic Guard", async () => {
-    await game.classicMode.startBattle([Species.PIKACHU, Species.PIKACHU]);
+    await game.classicMode.startBattle([SpeciesId.PIKACHU, SpeciesId.PIKACHU]);
     const [leftEnemy, rightEnemy] = game.scene.getEnemyField();
 
     vi.spyOn(rightEnemy, "getAbility").mockReturnValue(allAbilities[AbilityId.MAGIC_GUARD]);

@@ -10,14 +10,14 @@ import { TrainerSlot } from "#enums/trainer-slot";
 import type { Variant } from "#app/sprites/variant";
 import type { Biome } from "#enums/biome";
 import type { MoveId } from "#enums/move-id";
-import type { Species } from "#enums/species";
+import type { SpeciesId } from "#enums/species";
 import { CustomPokemonData } from "#app/data/custom-pokemon-data";
 import type { PokemonType } from "#enums/pokemon-type";
 
 export default class PokemonData {
   public id: number;
   public player: boolean;
-  public species: Species;
+  public species: SpeciesId;
   public nickname: string;
   public formIndex: number;
   public abilityIndex: number;
@@ -38,7 +38,7 @@ export default class PokemonData {
   public friendship: number;
   public metLevel: number;
   public metBiome: Biome | -1; // -1 for starters
-  public metSpecies: Species;
+  public metSpecies: SpeciesId;
   public metWave: number; // 0 for unknown (previous saves), -1 for starters
   public luck: number;
   public pauseEvolutions: boolean;
@@ -49,7 +49,7 @@ export default class PokemonData {
   public isTerastallized: boolean;
   public stellarTypesBoosted: PokemonType[];
 
-  public fusionSpecies: Species;
+  public fusionSpecies: SpeciesId;
   public fusionFormIndex: number;
   public fusionAbilityIndex: number;
   public fusionShiny: boolean;

@@ -2,7 +2,7 @@ import { BattlerIndex } from "#app/battle";
 import type { MovePhase } from "#app/phases/move-phase";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -29,8 +29,8 @@ describe("Abilities - Dancer", () => {
   // Reference Link: https://bulbapedia.bulbagarden.net/wiki/Dancer_(Ability)
 
   it("triggers when dance moves are used, doesn't consume extra PP", async () => {
-    game.override.enemyAbility(AbilityId.DANCER).enemySpecies(Species.MAGIKARP).enemyMoveset(MoveId.VICTORY_DANCE);
-    await game.classicMode.startBattle([Species.ORICORIO, Species.FEEBAS]);
+    game.override.enemyAbility(AbilityId.DANCER).enemySpecies(SpeciesId.MAGIKARP).enemyMoveset(MoveId.VICTORY_DANCE);
+    await game.classicMode.startBattle([SpeciesId.ORICORIO, SpeciesId.FEEBAS]);
 
     const [oricorio, feebas] = game.scene.getPlayerField();
     game.move.changeMoveset(oricorio, [MoveId.SWORDS_DANCE, MoveId.VICTORY_DANCE, MoveId.SPLASH]);
@@ -68,9 +68,9 @@ describe("Abilities - Dancer", () => {
     game.override
       .moveset([MoveId.FIERY_DANCE, MoveId.REVELATION_DANCE])
       .enemyMoveset([MoveId.INSTRUCT, MoveId.MIRROR_MOVE, MoveId.SPLASH])
-      .enemySpecies(Species.SHUCKLE)
+      .enemySpecies(SpeciesId.SHUCKLE)
       .enemyLevel(10);
-    await game.classicMode.startBattle([Species.ORICORIO, Species.FEEBAS]);
+    await game.classicMode.startBattle([SpeciesId.ORICORIO, SpeciesId.FEEBAS]);
 
     const [oricorio] = game.scene.getPlayerField();
     const [, shuckle2] = game.scene.getEnemyField();

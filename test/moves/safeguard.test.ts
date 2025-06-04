@@ -5,7 +5,7 @@ import { AbilityId } from "#enums/ability-id";
 import { StatusEffect } from "#app/enums/status-effect";
 import GameManager from "#test/testUtils/gameManager";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -27,11 +27,11 @@ describe("Moves - Safeguard", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .enemySpecies(Species.DRATINI)
+      .enemySpecies(SpeciesId.DRATINI)
       .enemyMoveset([MoveId.SAFEGUARD])
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyLevel(5)
-      .starterSpecies(Species.DRATINI)
+      .starterSpecies(SpeciesId.DRATINI)
       .moveset([MoveId.NUZZLE, MoveId.SPORE, MoveId.YAWN, MoveId.SPLASH])
       .ability(AbilityId.UNNERVE); // Stop wild Pokemon from potentially eating Lum Berry
   });

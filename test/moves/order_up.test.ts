@@ -5,7 +5,7 @@ import type { EffectiveStat } from "#enums/stat";
 import { Stat } from "#enums/stat";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -31,7 +31,7 @@ describe("Moves - Order Up", () => {
       .ability(AbilityId.COMMANDER)
       .battleStyle("double")
       .disableCrits()
-      .enemySpecies(Species.SNORLAX)
+      .enemySpecies(SpeciesId.SNORLAX)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(MoveId.SPLASH)
       .startingLevel(100)
@@ -47,9 +47,9 @@ describe("Moves - Order Up", () => {
   ])(
     "should raise the user's $statName when the user is commanded by a $formName Tatsugiri",
     async ({ formIndex, stat }) => {
-      game.override.starterForms({ [Species.TATSUGIRI]: formIndex });
+      game.override.starterForms({ [SpeciesId.TATSUGIRI]: formIndex });
 
-      await game.classicMode.startBattle([Species.TATSUGIRI, Species.DONDOZO]);
+      await game.classicMode.startBattle([SpeciesId.TATSUGIRI, SpeciesId.DONDOZO]);
 
       const [tatsugiri, dondozo] = game.scene.getPlayerField();
 
@@ -67,9 +67,9 @@ describe("Moves - Order Up", () => {
   );
 
   it("should be boosted by Sheer Force while still applying a stat boost", async () => {
-    game.override.passiveAbility(AbilityId.SHEER_FORCE).starterForms({ [Species.TATSUGIRI]: 0 });
+    game.override.passiveAbility(AbilityId.SHEER_FORCE).starterForms({ [SpeciesId.TATSUGIRI]: 0 });
 
-    await game.classicMode.startBattle([Species.TATSUGIRI, Species.DONDOZO]);
+    await game.classicMode.startBattle([SpeciesId.TATSUGIRI, SpeciesId.DONDOZO]);
 
     const [tatsugiri, dondozo] = game.scene.getPlayerField();
 

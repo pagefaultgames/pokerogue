@@ -1,7 +1,7 @@
 import { allMoves } from "#app/data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -29,7 +29,7 @@ describe("Abilities - Aura Break", () => {
       .moveset([MoveId.MOONBLAST, MoveId.DARK_PULSE])
       .enemyMoveset(MoveId.SPLASH)
       .enemyAbility(AbilityId.AURA_BREAK)
-      .enemySpecies(Species.SHUCKLE);
+      .enemySpecies(SpeciesId.SHUCKLE);
   });
 
   it("reverses the effect of Fairy Aura", async () => {
@@ -39,7 +39,7 @@ describe("Abilities - Aura Break", () => {
     game.override.ability(AbilityId.FAIRY_AURA);
     vi.spyOn(moveToCheck, "calculateBattlePower");
 
-    await game.classicMode.startBattle([Species.PIKACHU]);
+    await game.classicMode.startBattle([SpeciesId.PIKACHU]);
     game.move.select(MoveId.MOONBLAST);
     await game.phaseInterceptor.to("MoveEffectPhase");
 
@@ -53,7 +53,7 @@ describe("Abilities - Aura Break", () => {
     game.override.ability(AbilityId.DARK_AURA);
     vi.spyOn(moveToCheck, "calculateBattlePower");
 
-    await game.classicMode.startBattle([Species.PIKACHU]);
+    await game.classicMode.startBattle([SpeciesId.PIKACHU]);
     game.move.select(MoveId.DARK_PULSE);
     await game.phaseInterceptor.to("MoveEffectPhase");
 
@@ -67,7 +67,7 @@ describe("Abilities - Aura Break", () => {
     game.override.ability(AbilityId.BALL_FETCH);
     vi.spyOn(moveToCheck, "calculateBattlePower");
 
-    await game.classicMode.startBattle([Species.PIKACHU]);
+    await game.classicMode.startBattle([SpeciesId.PIKACHU]);
     game.move.select(MoveId.MOONBLAST);
     await game.phaseInterceptor.to("MoveEffectPhase");
 

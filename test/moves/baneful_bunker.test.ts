@@ -1,7 +1,7 @@
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 import GameManager from "#test/testUtils/gameManager";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { BattlerIndex } from "#app/battle";
@@ -28,7 +28,7 @@ describe("Moves - Baneful Bunker", () => {
 
     game.override.moveset(MoveId.SLASH);
 
-    game.override.enemySpecies(Species.SNORLAX);
+    game.override.enemySpecies(SpeciesId.SNORLAX);
     game.override.enemyAbility(AbilityId.INSOMNIA);
     game.override.enemyMoveset(MoveId.BANEFUL_BUNKER);
 
@@ -36,7 +36,7 @@ describe("Moves - Baneful Bunker", () => {
     game.override.enemyLevel(100);
   });
   test("should protect the user and poison attackers that make contact", async () => {
-    await game.classicMode.startBattle([Species.CHARIZARD]);
+    await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
     const leadPokemon = game.scene.getPlayerPokemon()!;
     const enemyPokemon = game.scene.getEnemyPokemon()!;
@@ -48,7 +48,7 @@ describe("Moves - Baneful Bunker", () => {
     expect(leadPokemon.status?.effect === StatusEffect.POISON).toBeTruthy();
   });
   test("should protect the user and poison attackers that make contact, regardless of accuracy checks", async () => {
-    await game.classicMode.startBattle([Species.CHARIZARD]);
+    await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
     const leadPokemon = game.scene.getPlayerPokemon()!;
     const enemyPokemon = game.scene.getEnemyPokemon()!;
@@ -65,7 +65,7 @@ describe("Moves - Baneful Bunker", () => {
 
   test("should not poison attackers that don't make contact", async () => {
     game.override.moveset(MoveId.FLASH_CANNON);
-    await game.classicMode.startBattle([Species.CHARIZARD]);
+    await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
     const leadPokemon = game.scene.getPlayerPokemon()!;
     const enemyPokemon = game.scene.getEnemyPokemon()!;

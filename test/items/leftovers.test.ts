@@ -2,7 +2,7 @@ import { DamageAnimPhase } from "#app/phases/damage-anim-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -28,14 +28,14 @@ describe("Items - Leftovers", () => {
       .startingLevel(2000)
       .ability(AbilityId.UNNERVE)
       .moveset([MoveId.SPLASH])
-      .enemySpecies(Species.SHUCKLE)
+      .enemySpecies(SpeciesId.SHUCKLE)
       .enemyAbility(AbilityId.UNNERVE)
       .enemyMoveset(MoveId.TACKLE)
       .startingHeldItems([{ name: "LEFTOVERS", count: 1 }]);
   });
 
   it("leftovers works", async () => {
-    await game.classicMode.startBattle([Species.ARCANINE]);
+    await game.classicMode.startBattle([SpeciesId.ARCANINE]);
 
     // Make sure leftovers are there
     expect(game.scene.modifiers[0].type.id).toBe("LEFTOVERS");

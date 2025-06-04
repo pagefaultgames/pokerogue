@@ -2,7 +2,7 @@ import { BattlerIndex } from "#app/battle";
 import { PokemonType } from "#enums/pokemon-type";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, it, expect, vi } from "vitest";
@@ -29,12 +29,12 @@ describe("Moves - Tera Starstorm", () => {
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(MoveId.SPLASH)
       .enemyLevel(30)
-      .enemySpecies(Species.MAGIKARP);
+      .enemySpecies(SpeciesId.MAGIKARP);
   });
 
   it("changes type to Stellar when used by Terapagos in its Stellar Form", async () => {
     game.override.battleStyle("single");
-    await game.classicMode.startBattle([Species.TERAPAGOS]);
+    await game.classicMode.startBattle([SpeciesId.TERAPAGOS]);
 
     const terapagos = game.scene.getPlayerPokemon()!;
     terapagos.isTerastallized = true;
@@ -48,7 +48,7 @@ describe("Moves - Tera Starstorm", () => {
   });
 
   it("targets both opponents in a double battle when used by Terapagos in its Stellar Form", async () => {
-    await game.classicMode.startBattle([Species.MAGIKARP, Species.TERAPAGOS]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.TERAPAGOS]);
 
     const terapagos = game.scene.getPlayerParty()[1];
     terapagos.isTerastallized = true;
@@ -70,7 +70,7 @@ describe("Moves - Tera Starstorm", () => {
   });
 
   it("targets both opponents in a double battle when used by Terapagos immediately after terastallizing", async () => {
-    await game.classicMode.startBattle([Species.TERAPAGOS]);
+    await game.classicMode.startBattle([SpeciesId.TERAPAGOS]);
 
     const terapagos = game.scene.getPlayerParty()[0];
     terapagos.isTerastallized = false;
@@ -87,7 +87,7 @@ describe("Moves - Tera Starstorm", () => {
   });
 
   it("targets only one opponent in a double battle when used by Terapagos without terastallizing", async () => {
-    await game.classicMode.startBattle([Species.TERAPAGOS]);
+    await game.classicMode.startBattle([SpeciesId.TERAPAGOS]);
 
     const terapagos = game.scene.getPlayerParty()[0];
     terapagos.isTerastallized = false;
@@ -104,7 +104,7 @@ describe("Moves - Tera Starstorm", () => {
   });
 
   it("applies the effects when Terapagos in Stellar Form is fused with another Pokemon", async () => {
-    await game.classicMode.startBattle([Species.TERAPAGOS, Species.CHARMANDER, Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.TERAPAGOS, SpeciesId.CHARMANDER, SpeciesId.MAGIKARP]);
 
     const fusionedMon = game.scene.getPlayerParty()[0];
     const magikarp = game.scene.getPlayerParty()[2];

@@ -4,7 +4,7 @@ import type { ContactHeldItemTransferChanceModifier } from "#app/modifier/modifi
 import { AbilityId } from "#enums/ability-id";
 import { BerryType } from "#enums/berry-type";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phase from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -30,7 +30,7 @@ describe("Items - Grip Claw", () => {
       .battleStyle("double")
       .moveset([MoveId.TACKLE, MoveId.SPLASH, MoveId.ATTRACT])
       .startingHeldItems([{ name: "GRIP_CLAW", count: 1 }])
-      .enemySpecies(Species.SNORLAX)
+      .enemySpecies(SpeciesId.SNORLAX)
       .enemyAbility(AbilityId.UNNERVE)
       .ability(AbilityId.UNNERVE)
       .enemyMoveset(MoveId.SPLASH)
@@ -42,7 +42,7 @@ describe("Items - Grip Claw", () => {
   });
 
   it("should steal items on contact and only from the attack target", async () => {
-    await game.classicMode.startBattle([Species.FEEBAS, Species.MILOTIC]);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MILOTIC]);
 
     const [playerPokemon] = game.scene.getPlayerField();
 
@@ -71,7 +71,7 @@ describe("Items - Grip Claw", () => {
   });
 
   it("should not steal items when using a targetted, non attack move", async () => {
-    await game.classicMode.startBattle([Species.FEEBAS, Species.MILOTIC]);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MILOTIC]);
 
     const [playerPokemon] = game.scene.getPlayerField();
 
@@ -107,7 +107,7 @@ describe("Items - Grip Claw", () => {
         { name: "GRIP_CLAW", count: 1 },
         { name: "BERRY", type: BerryType.LUM, count: 1 },
       ]);
-    await game.classicMode.startBattle([Species.BULBASAUR, Species.OMANYTE]);
+    await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.OMANYTE]);
 
     const [leftPokemon, rightPokemon] = game.scene.getPlayerField();
 

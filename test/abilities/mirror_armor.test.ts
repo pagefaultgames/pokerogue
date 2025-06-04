@@ -1,7 +1,7 @@
 import { Stat } from "#enums/stat";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -28,7 +28,7 @@ describe("Ability - Mirror Armor", () => {
 
     game.override
       .battleStyle("single")
-      .enemySpecies(Species.RATTATA)
+      .enemySpecies(SpeciesId.RATTATA)
       .enemyMoveset([MoveId.SPLASH, MoveId.STICKY_WEB, MoveId.TICKLE, MoveId.OCTOLOCK])
       .enemyAbility(AbilityId.BALL_FETCH)
       .startingLevel(2000)
@@ -39,7 +39,7 @@ describe("Ability - Mirror Armor", () => {
   it("Player side + single battle Intimidate - opponent loses stats", async () => {
     game.override.ability(AbilityId.MIRROR_ARMOR);
     game.override.enemyAbility(AbilityId.INTIMIDATE);
-    await game.classicMode.startBattle([Species.BULBASAUR]);
+    await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
     const userPokemon = game.scene.getPlayerPokemon()!;
@@ -56,7 +56,7 @@ describe("Ability - Mirror Armor", () => {
   it("Enemy side + single battle Intimidate - player loses stats", async () => {
     game.override.enemyAbility(AbilityId.MIRROR_ARMOR);
     game.override.ability(AbilityId.INTIMIDATE);
-    await game.classicMode.startBattle([Species.BULBASAUR]);
+    await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
     const userPokemon = game.scene.getPlayerPokemon()!;
@@ -74,7 +74,7 @@ describe("Ability - Mirror Armor", () => {
     game.override.battleStyle("double");
     game.override.ability(AbilityId.MIRROR_ARMOR);
     game.override.enemyAbility(AbilityId.INTIMIDATE);
-    await game.classicMode.startBattle([Species.BULBASAUR, Species.CHARMANDER]);
+    await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.CHARMANDER]);
 
     const [enemy1, enemy2] = game.scene.getEnemyField();
     const [player1, player2] = game.scene.getPlayerField();
@@ -96,7 +96,7 @@ describe("Ability - Mirror Armor", () => {
     game.override.battleStyle("double");
     game.override.enemyAbility(AbilityId.MIRROR_ARMOR);
     game.override.ability(AbilityId.INTIMIDATE);
-    await game.classicMode.startBattle([Species.BULBASAUR, Species.CHARMANDER]);
+    await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.CHARMANDER]);
 
     const [enemy1, enemy2] = game.scene.getEnemyField();
     const [player1, player2] = game.scene.getPlayerField();
@@ -117,7 +117,7 @@ describe("Ability - Mirror Armor", () => {
   it("Player side + single battle Intimidate + Tickle - opponent loses stats", async () => {
     game.override.ability(AbilityId.MIRROR_ARMOR);
     game.override.enemyAbility(AbilityId.INTIMIDATE);
-    await game.classicMode.startBattle([Species.BULBASAUR]);
+    await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
     const userPokemon = game.scene.getPlayerPokemon()!;
@@ -137,7 +137,7 @@ describe("Ability - Mirror Armor", () => {
     game.override.battleStyle("double");
     game.override.ability(AbilityId.MIRROR_ARMOR);
     game.override.enemyAbility(AbilityId.INTIMIDATE);
-    await game.classicMode.startBattle([Species.BULBASAUR, Species.CHARMANDER]);
+    await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.CHARMANDER]);
 
     const [enemy1, enemy2] = game.scene.getEnemyField();
     const [player1, player2] = game.scene.getPlayerField();
@@ -161,7 +161,7 @@ describe("Ability - Mirror Armor", () => {
   it("Enemy side + single battle Intimidate + Tickle - player loses stats", async () => {
     game.override.enemyAbility(AbilityId.MIRROR_ARMOR);
     game.override.ability(AbilityId.INTIMIDATE);
-    await game.classicMode.startBattle([Species.BULBASAUR]);
+    await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
     const userPokemon = game.scene.getPlayerPokemon()!;
@@ -180,7 +180,7 @@ describe("Ability - Mirror Armor", () => {
   it("Player side + single battle Intimidate + oppoenent has white smoke - no one loses stats", async () => {
     game.override.enemyAbility(AbilityId.WHITE_SMOKE);
     game.override.ability(AbilityId.MIRROR_ARMOR);
-    await game.classicMode.startBattle([Species.BULBASAUR]);
+    await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
     const userPokemon = game.scene.getPlayerPokemon()!;
@@ -199,7 +199,7 @@ describe("Ability - Mirror Armor", () => {
   it("Enemy side + single battle Intimidate + player has white smoke - no one loses stats", async () => {
     game.override.ability(AbilityId.WHITE_SMOKE);
     game.override.enemyAbility(AbilityId.MIRROR_ARMOR);
-    await game.classicMode.startBattle([Species.BULBASAUR]);
+    await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
     const userPokemon = game.scene.getPlayerPokemon()!;
@@ -217,7 +217,7 @@ describe("Ability - Mirror Armor", () => {
 
   it("Player side + single battle + opponent uses octolock - does not interact with mirror armor, player loses stats", async () => {
     game.override.ability(AbilityId.MIRROR_ARMOR);
-    await game.classicMode.startBattle([Species.BULBASAUR]);
+    await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
     const userPokemon = game.scene.getPlayerPokemon()!;
@@ -235,7 +235,7 @@ describe("Ability - Mirror Armor", () => {
 
   it("Enemy side + single battle + player uses octolock - does not interact with mirror armor, opponent loses stats", async () => {
     game.override.enemyAbility(AbilityId.MIRROR_ARMOR);
-    await game.classicMode.startBattle([Species.BULBASAUR]);
+    await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
     const userPokemon = game.scene.getPlayerPokemon()!;
@@ -255,7 +255,7 @@ describe("Ability - Mirror Armor", () => {
     game.override.enemyAbility(AbilityId.MIRROR_ARMOR);
     game.override.ability(AbilityId.MIRROR_ARMOR);
     game.override.ability(AbilityId.INTIMIDATE);
-    await game.classicMode.startBattle([Species.BULBASAUR]);
+    await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
     const userPokemon = game.scene.getPlayerPokemon()!;
@@ -270,7 +270,7 @@ describe("Ability - Mirror Armor", () => {
 
   it("Single battle + sticky web applied player side - player switches out and enemy should lose -1 speed", async () => {
     game.override.ability(AbilityId.MIRROR_ARMOR);
-    await game.classicMode.startBattle([Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE]);
+    await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.CHARMANDER, SpeciesId.SQUIRTLE]);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
     const userPokemon = game.scene.getPlayerPokemon()!;
@@ -290,7 +290,7 @@ describe("Ability - Mirror Armor", () => {
   it("Double battle + sticky web applied player side - player switches out and enemy 1 should lose -1 speed", async () => {
     game.override.battleStyle("double");
     game.override.ability(AbilityId.MIRROR_ARMOR);
-    await game.classicMode.startBattle([Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE]);
+    await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.CHARMANDER, SpeciesId.SQUIRTLE]);
 
     const [enemy1, enemy2] = game.scene.getEnemyField();
     const [player1, player2] = game.scene.getPlayerField();

@@ -1,7 +1,7 @@
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 import GameManager from "#test/testUtils/gameManager";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { Stat } from "#enums/stat";
@@ -29,7 +29,7 @@ describe("Moves - Wide Guard", () => {
 
     game.override.moveset([MoveId.WIDE_GUARD, MoveId.SPLASH, MoveId.SURF]);
 
-    game.override.enemySpecies(Species.SNORLAX);
+    game.override.enemySpecies(SpeciesId.SNORLAX);
     game.override.enemyMoveset([MoveId.SWIFT]);
     game.override.enemyAbility(AbilityId.INSOMNIA);
 
@@ -38,7 +38,7 @@ describe("Moves - Wide Guard", () => {
   });
 
   test("should protect the user and allies from multi-target attack moves", async () => {
-    await game.classicMode.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
+    await game.classicMode.startBattle([SpeciesId.CHARIZARD, SpeciesId.BLASTOISE]);
 
     const leadPokemon = game.scene.getPlayerField();
 
@@ -56,7 +56,7 @@ describe("Moves - Wide Guard", () => {
   test("should protect the user and allies from multi-target status moves", async () => {
     game.override.enemyMoveset([MoveId.GROWL]);
 
-    await game.classicMode.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
+    await game.classicMode.startBattle([SpeciesId.CHARIZARD, SpeciesId.BLASTOISE]);
 
     const leadPokemon = game.scene.getPlayerField();
 
@@ -74,7 +74,7 @@ describe("Moves - Wide Guard", () => {
   test("should not protect the user and allies from single-target moves", async () => {
     game.override.enemyMoveset([MoveId.TACKLE]);
 
-    await game.classicMode.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
+    await game.classicMode.startBattle([SpeciesId.CHARIZARD, SpeciesId.BLASTOISE]);
 
     const leadPokemon = game.scene.getPlayerField();
 
@@ -92,7 +92,7 @@ describe("Moves - Wide Guard", () => {
   test("should protect the user from its ally's multi-target move", async () => {
     game.override.enemyMoveset([MoveId.SPLASH]);
 
-    await game.classicMode.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
+    await game.classicMode.startBattle([SpeciesId.CHARIZARD, SpeciesId.BLASTOISE]);
 
     const leadPokemon = game.scene.getPlayerField();
     const enemyPokemon = game.scene.getEnemyField();

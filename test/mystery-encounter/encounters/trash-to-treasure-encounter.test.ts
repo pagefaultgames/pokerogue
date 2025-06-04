@@ -11,7 +11,7 @@ import {
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { Biome } from "#app/enums/biome";
 import { MysteryEncounterType } from "#app/enums/mystery-encounter-type";
-import { Species } from "#app/enums/species";
+import { SpeciesId } from "#app/enums/species";
 import { PokemonMove } from "#app/field/pokemon";
 import { HealShopCostModifier, HitHealModifier, TurnHealModifier } from "#app/modifier/modifier";
 import { ModifierTier } from "#app/modifier/modifier-tier";
@@ -34,7 +34,7 @@ import { initSceneWithoutEncounterPhase } from "#test/testUtils/gameManagerUtils
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const namespace = "mysteryEncounters/trashToTreasure";
-const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
+const defaultParty = [SpeciesId.LAPRAS, SpeciesId.GENGAR, SpeciesId.ABRA];
 const defaultBiome = Biome.CAVE;
 const defaultWave = 45;
 
@@ -93,7 +93,7 @@ describe("Trash to Treasure - Mystery Encounter", () => {
     TrashToTreasureEncounter.populateDialogueTokensFromRequirements();
     const onInitResult = onInit!();
 
-    const bossSpecies = getPokemonSpecies(Species.GARBODOR);
+    const bossSpecies = getPokemonSpecies(SpeciesId.GARBODOR);
     const pokemonConfig: EnemyPokemonConfig = {
       species: bossSpecies,
       isBoss: true,
@@ -223,7 +223,7 @@ describe("Trash to Treasure - Mystery Encounter", () => {
       const enemyField = scene.getEnemyField();
       expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(enemyField.length).toBe(1);
-      expect(enemyField[0].species.speciesId).toBe(Species.GARBODOR);
+      expect(enemyField[0].species.speciesId).toBe(SpeciesId.GARBODOR);
       expect(enemyField[0].moveset).toEqual([
         new PokemonMove(MoveId.GUNK_SHOT),
         new PokemonMove(MoveId.STOMPING_TANTRUM),

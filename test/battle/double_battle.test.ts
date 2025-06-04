@@ -4,7 +4,7 @@ import { GameModes, getGameMode } from "#app/game-mode";
 import { BattleEndPhase } from "#app/phases/battle-end-phase";
 import { TurnInitPhase } from "#app/phases/turn-init-phase";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import { StatusEffect } from "#enums/status-effect";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -34,7 +34,7 @@ describe("Double Battles", () => {
   // (There were bugs that either only summon one when can summon two, player stuck in switchPhase etc)
   it("3v2 edge case: player summons 2 pokemon on the next battle after being fainted and revived", async () => {
     game.override.battleStyle("double").enemyMoveset(MoveId.SPLASH).moveset(MoveId.SPLASH);
-    await game.classicMode.startBattle([Species.BULBASAUR, Species.CHARIZARD, Species.SQUIRTLE]);
+    await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.CHARIZARD, SpeciesId.SQUIRTLE]);
 
     game.move.select(MoveId.SPLASH);
     game.move.select(MoveId.SPLASH, 1);
@@ -50,7 +50,7 @@ describe("Double Battles", () => {
     await game.phaseInterceptor.to(BattleEndPhase);
     game.doSelectModifier();
 
-    const charizard = game.scene.getPlayerParty().findIndex(p => p.species.speciesId === Species.CHARIZARD);
+    const charizard = game.scene.getPlayerParty().findIndex(p => p.species.speciesId === SpeciesId.CHARIZARD);
     game.doRevivePokemon(charizard);
 
     await game.phaseInterceptor.to(TurnInitPhase);
@@ -73,7 +73,7 @@ describe("Double Battles", () => {
       .ability(AbilityId.BALL_FETCH);
 
     // Play through endless, waves 1 to 9, counting number of double battles from waves 2 to 9
-    await game.classicMode.startBattle([Species.BULBASAUR]);
+    await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
     game.scene.gameMode = getGameMode(GameModes.ENDLESS);
 
     for (let i = 0; i < DOUBLE_CHANCE; i++) {

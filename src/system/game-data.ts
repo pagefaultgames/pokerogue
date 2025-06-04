@@ -45,7 +45,7 @@ import { Device } from "#enums/devices";
 import { GameDataType } from "#enums/game-data-type";
 import type { MoveId } from "#enums/move-id";
 import { PlayerGender } from "#enums/player-gender";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import { applyChallenges, ChallengeType } from "#app/data/challenge";
 import { WeatherType } from "#enums/weather-type";
 import { TerrainType } from "#app/data/terrain";
@@ -63,34 +63,34 @@ import { ArenaTrapTag } from "#app/data/arena-tag";
 import { pokemonFormChanges } from "#app/data/pokemon-forms";
 import type { PokemonType } from "#enums/pokemon-type";
 
-export const defaultStarterSpecies: Species[] = [
-  Species.BULBASAUR,
-  Species.CHARMANDER,
-  Species.SQUIRTLE,
-  Species.CHIKORITA,
-  Species.CYNDAQUIL,
-  Species.TOTODILE,
-  Species.TREECKO,
-  Species.TORCHIC,
-  Species.MUDKIP,
-  Species.TURTWIG,
-  Species.CHIMCHAR,
-  Species.PIPLUP,
-  Species.SNIVY,
-  Species.TEPIG,
-  Species.OSHAWOTT,
-  Species.CHESPIN,
-  Species.FENNEKIN,
-  Species.FROAKIE,
-  Species.ROWLET,
-  Species.LITTEN,
-  Species.POPPLIO,
-  Species.GROOKEY,
-  Species.SCORBUNNY,
-  Species.SOBBLE,
-  Species.SPRIGATITO,
-  Species.FUECOCO,
-  Species.QUAXLY,
+export const defaultStarterSpecies: SpeciesId[] = [
+  SpeciesId.BULBASAUR,
+  SpeciesId.CHARMANDER,
+  SpeciesId.SQUIRTLE,
+  SpeciesId.CHIKORITA,
+  SpeciesId.CYNDAQUIL,
+  SpeciesId.TOTODILE,
+  SpeciesId.TREECKO,
+  SpeciesId.TORCHIC,
+  SpeciesId.MUDKIP,
+  SpeciesId.TURTWIG,
+  SpeciesId.CHIMCHAR,
+  SpeciesId.PIPLUP,
+  SpeciesId.SNIVY,
+  SpeciesId.TEPIG,
+  SpeciesId.OSHAWOTT,
+  SpeciesId.CHESPIN,
+  SpeciesId.FENNEKIN,
+  SpeciesId.FROAKIE,
+  SpeciesId.ROWLET,
+  SpeciesId.LITTEN,
+  SpeciesId.POPPLIO,
+  SpeciesId.GROOKEY,
+  SpeciesId.SCORBUNNY,
+  SpeciesId.SOBBLE,
+  SpeciesId.SPRIGATITO,
+  SpeciesId.FUECOCO,
+  SpeciesId.QUAXLY,
 ];
 
 const saveKey = "x0i2O7WRiANTqPmZ"; // Temporary; secure encryption is not yet necessary
@@ -555,7 +555,7 @@ export class GameData {
 
           this.migrateStarterAbilities(systemData, this.starterData);
 
-          const starterIds = Object.keys(this.starterData).map(s => Number.parseInt(s) as Species);
+          const starterIds = Object.keys(this.starterData).map(s => Number.parseInt(s) as SpeciesId);
           for (const s of starterIds) {
             this.starterData[s].candyCount += systemData.dexData[s].caughtCount;
             this.starterData[s].candyCount += systemData.dexData[s].hatchedCount * 2;
@@ -1720,7 +1720,7 @@ export class GameData {
   private initStarterData(): void {
     const starterData: StarterData = {};
 
-    const starterSpeciesIds = Object.keys(speciesStarterCosts).map(k => Number.parseInt(k) as Species);
+    const starterSpeciesIds = Object.keys(speciesStarterCosts).map(k => Number.parseInt(k) as SpeciesId);
 
     for (const speciesId of starterSpeciesIds) {
       starterData[speciesId] = {
@@ -1815,16 +1815,16 @@ export class GameData {
       const formKey = pokemon.getFormKey();
       if (formIndex > 0) {
         // In case a Pikachu with formIndex > 0 was unlocked, base form Pichu is also unlocked
-        if (pokemon.species.speciesId === Species.PIKACHU && species.speciesId === Species.PICHU) {
+        if (pokemon.species.speciesId === SpeciesId.PIKACHU && species.speciesId === SpeciesId.PICHU) {
           dexEntry.caughtAttr |= globalScene.gameData.getFormAttr(0);
         }
-        if (pokemon.species.speciesId === Species.URSHIFU) {
+        if (pokemon.species.speciesId === SpeciesId.URSHIFU) {
           if (formIndex === 2) {
             dexEntry.caughtAttr |= globalScene.gameData.getFormAttr(0);
           } else if (formIndex === 3) {
             dexEntry.caughtAttr |= globalScene.gameData.getFormAttr(1);
           }
-        } else if (pokemon.species.speciesId === Species.ZYGARDE) {
+        } else if (pokemon.species.speciesId === SpeciesId.ZYGARDE) {
           if (formIndex === 4) {
             dexEntry.caughtAttr |= globalScene.gameData.getFormAttr(2);
           } else if (formIndex === 5) {
@@ -1929,7 +1929,7 @@ export class GameData {
   }
 
   incrementRibbonCount(species: PokemonSpecies, forStarter = false): number {
-    const speciesIdToIncrement: Species = species.getRootSpeciesId(forStarter);
+    const speciesIdToIncrement: SpeciesId = species.getRootSpeciesId(forStarter);
 
     if (!this.starterData[speciesIdToIncrement].classicWinCount) {
       this.starterData[speciesIdToIncrement].classicWinCount = 0;
@@ -2040,7 +2040,7 @@ export class GameData {
     }
 
     //recursively unlock nature for species and prevolutions
-    const _unlockSpeciesNature = (speciesId: Species) => {
+    const _unlockSpeciesNature = (speciesId: SpeciesId) => {
       this.dexData[speciesId].natureAttr |= 1 << (nature + 1);
       if (pokemonPrevolutions.hasOwnProperty(speciesId)) {
         _unlockSpeciesNature(pokemonPrevolutions[speciesId]);
@@ -2049,7 +2049,7 @@ export class GameData {
     _unlockSpeciesNature(species.speciesId);
   }
 
-  updateSpeciesDexIvs(speciesId: Species, ivs: number[]): void {
+  updateSpeciesDexIvs(speciesId: SpeciesId, ivs: number[]): void {
     let dexEntry: DexEntry;
     do {
       dexEntry = globalScene.gameData.dexData[speciesId];
@@ -2180,7 +2180,7 @@ export class GameData {
     return ret;
   }
 
-  getSpeciesStarterValue(speciesId: Species): number {
+  getSpeciesStarterValue(speciesId: SpeciesId): number {
     const baseValue = speciesStarterCosts[speciesId];
     let value = baseValue;
 
@@ -2231,7 +2231,7 @@ export class GameData {
   }
 
   migrateStarterAbilities(systemData: SystemSaveData, initialStarterData?: StarterData): void {
-    const starterIds = Object.keys(this.starterData).map(s => Number.parseInt(s) as Species);
+    const starterIds = Object.keys(this.starterData).map(s => Number.parseInt(s) as SpeciesId);
     const starterData = initialStarterData || systemData.starterData;
     const dexData = systemData.dexData;
     for (const s of starterIds) {

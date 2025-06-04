@@ -1,6 +1,6 @@
 import GameManager from "#test/testUtils/gameManager";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -22,7 +22,7 @@ describe("Moves - Fake Out", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .enemySpecies(Species.CORVIKNIGHT)
+      .enemySpecies(SpeciesId.CORVIKNIGHT)
       .moveset([MoveId.FAKE_OUT, MoveId.SPLASH])
       .enemyMoveset(MoveId.SPLASH)
       .enemyLevel(10)
@@ -31,7 +31,7 @@ describe("Moves - Fake Out", () => {
   });
 
   it("should only work the first turn a pokemon is sent out in a battle", async () => {
-    await game.classicMode.startBattle([Species.FEEBAS]);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
     const corv = game.scene.getEnemyPokemon()!;
 
@@ -49,7 +49,7 @@ describe("Moves - Fake Out", () => {
 
   // This is a PokeRogue buff to Fake Out
   it("should succeed at the start of each new wave, even if user wasn't recalled", async () => {
-    await game.classicMode.startBattle([Species.FEEBAS]);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
     // set hp to 1 for easy knockout
     game.scene.getEnemyPokemon()!.hp = 1;
@@ -66,7 +66,7 @@ describe("Moves - Fake Out", () => {
 
   // This is a PokeRogue buff to Fake Out
   it("should succeed at the start of each new wave, even if user wasn't recalled", async () => {
-    await game.classicMode.startBattle([Species.FEEBAS]);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
     // set hp to 1 for easy knockout
     game.scene.getEnemyPokemon()!.hp = 1;
@@ -82,7 +82,7 @@ describe("Moves - Fake Out", () => {
   });
 
   it("should succeed if recalled and sent back out", async () => {
-    await game.classicMode.startBattle([Species.FEEBAS, Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MAGIKARP]);
 
     game.move.select(MoveId.FAKE_OUT);
     await game.toNextTurn();

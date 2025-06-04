@@ -15,7 +15,7 @@ import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounte
 import { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { TrainerType } from "#enums/trainer-type";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import { AbilityId } from "#enums/ability-id";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { MoveId } from "#enums/move-id";
@@ -215,7 +215,7 @@ function endTrainerBattleAndShowDialogue(): Promise<void> {
         // Only trigger form change when Eiscue is in Noice form
         // Hardcoded Eiscue for now in case it is fused with another pokemon
         if (
-          pokemon.species.speciesId === Species.EISCUE &&
+          pokemon.species.speciesId === SpeciesId.EISCUE &&
           pokemon.hasAbility(AbilityId.ICE_FACE) &&
           pokemon.formIndex === 1
         ) {
@@ -256,7 +256,7 @@ function getVictorTrainerConfig(): EnemyPartyConfig {
     trainerType: TrainerType.VICTOR,
     pokemonConfigs: [
       {
-        species: getPokemonSpecies(Species.SWELLOW),
+        species: getPokemonSpecies(SpeciesId.SWELLOW),
         isBoss: false,
         abilityIndex: 0, // Guts
         nature: Nature.ADAMANT,
@@ -274,7 +274,7 @@ function getVictorTrainerConfig(): EnemyPartyConfig {
         ],
       },
       {
-        species: getPokemonSpecies(Species.OBSTAGOON),
+        species: getPokemonSpecies(SpeciesId.OBSTAGOON),
         isBoss: false,
         abilityIndex: 1, // Guts
         nature: Nature.ADAMANT,
@@ -300,7 +300,7 @@ function getVictoriaTrainerConfig(): EnemyPartyConfig {
     trainerType: TrainerType.VICTORIA,
     pokemonConfigs: [
       {
-        species: getPokemonSpecies(Species.ROSERADE),
+        species: getPokemonSpecies(SpeciesId.ROSERADE),
         isBoss: false,
         abilityIndex: 0, // Natural Cure
         nature: Nature.CALM,
@@ -318,7 +318,7 @@ function getVictoriaTrainerConfig(): EnemyPartyConfig {
         ],
       },
       {
-        species: getPokemonSpecies(Species.GARDEVOIR),
+        species: getPokemonSpecies(SpeciesId.GARDEVOIR),
         isBoss: false,
         formIndex: 1,
         nature: Nature.TIMID,
@@ -349,7 +349,7 @@ function getViviTrainerConfig(): EnemyPartyConfig {
     trainerType: TrainerType.VIVI,
     pokemonConfigs: [
       {
-        species: getPokemonSpecies(Species.SEAKING),
+        species: getPokemonSpecies(SpeciesId.SEAKING),
         isBoss: false,
         abilityIndex: 3, // Lightning Rod
         nature: Nature.ADAMANT,
@@ -368,7 +368,7 @@ function getViviTrainerConfig(): EnemyPartyConfig {
         ],
       },
       {
-        species: getPokemonSpecies(Species.BRELOOM),
+        species: getPokemonSpecies(SpeciesId.BRELOOM),
         isBoss: false,
         abilityIndex: 1, // Poison Heal
         nature: Nature.JOLLY,
@@ -386,7 +386,7 @@ function getViviTrainerConfig(): EnemyPartyConfig {
         ],
       },
       {
-        species: getPokemonSpecies(Species.CAMERUPT),
+        species: getPokemonSpecies(SpeciesId.CAMERUPT),
         isBoss: false,
         formIndex: 1,
         nature: Nature.CALM,
@@ -408,7 +408,7 @@ function getVickyTrainerConfig(): EnemyPartyConfig {
     trainerType: TrainerType.VICKY,
     pokemonConfigs: [
       {
-        species: getPokemonSpecies(Species.MEDICHAM),
+        species: getPokemonSpecies(SpeciesId.MEDICHAM),
         isBoss: false,
         formIndex: 1,
         nature: Nature.IMPISH,
@@ -429,7 +429,7 @@ function getVitoTrainerConfig(): EnemyPartyConfig {
     trainerType: TrainerType.VITO,
     pokemonConfigs: [
       {
-        species: getPokemonSpecies(Species.HISUI_ELECTRODE),
+        species: getPokemonSpecies(SpeciesId.HISUI_ELECTRODE),
         isBoss: false,
         abilityIndex: 0, // Soundproof
         nature: Nature.MODEST,
@@ -443,7 +443,7 @@ function getVitoTrainerConfig(): EnemyPartyConfig {
         ],
       },
       {
-        species: getPokemonSpecies(Species.SWALOT),
+        species: getPokemonSpecies(SpeciesId.SWALOT),
         isBoss: false,
         abilityIndex: 2, // Gluttony
         nature: Nature.QUIET,
@@ -496,7 +496,7 @@ function getVitoTrainerConfig(): EnemyPartyConfig {
         ],
       },
       {
-        species: getPokemonSpecies(Species.DODRIO),
+        species: getPokemonSpecies(SpeciesId.DODRIO),
         isBoss: false,
         abilityIndex: 2, // Tangled Feet
         nature: Nature.JOLLY,
@@ -510,7 +510,7 @@ function getVitoTrainerConfig(): EnemyPartyConfig {
         ],
       },
       {
-        species: getPokemonSpecies(Species.ALAKAZAM),
+        species: getPokemonSpecies(SpeciesId.ALAKAZAM),
         isBoss: false,
         formIndex: 1,
         nature: Nature.BOLD,
@@ -524,7 +524,7 @@ function getVitoTrainerConfig(): EnemyPartyConfig {
         ],
       },
       {
-        species: getPokemonSpecies(Species.DARMANITAN),
+        species: getPokemonSpecies(SpeciesId.DARMANITAN),
         isBoss: false,
         abilityIndex: 0, // Sheer Force
         nature: Nature.IMPISH,

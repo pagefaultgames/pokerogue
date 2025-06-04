@@ -9,7 +9,7 @@ import { Biome } from "#enums/biome";
 import { MoveId } from "#enums/move-id";
 import type { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import { StatusEffect } from "#enums/status-effect";
 import type { WeatherType } from "#enums/weather-type";
 import { expect, vi } from "vitest";
@@ -54,7 +54,7 @@ export class OverridesHelper extends GameManagerHelper {
    * @param level - The level to set
    * @returns `this`
    */
-  public startingLevel(level: Species | number): this {
+  public startingLevel(level: SpeciesId | number): this {
     vi.spyOn(Overrides, "STARTING_LEVEL_OVERRIDE", "get").mockReturnValue(level);
     this.log(`Player Pokemon starting level set to ${level}!`);
     return this;
@@ -103,13 +103,13 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the player pokemon's {@linkcode Species | species}
-   * @param species - The {@linkcode Species | species} to set
+   * Override the player pokemon's {@linkcode SpeciesId | species}
+   * @param species - The {@linkcode SpeciesId | species} to set
    * @returns `this`
    */
-  public starterSpecies(species: Species | number): this {
+  public starterSpecies(species: SpeciesId | number): this {
     vi.spyOn(Overrides, "STARTER_SPECIES_OVERRIDE", "get").mockReturnValue(species);
-    this.log(`Player Pokemon species set to ${Species[species]} (=${species})!`);
+    this.log(`Player Pokemon species set to ${SpeciesId[species]} (=${species})!`);
     return this;
   }
 
@@ -128,9 +128,9 @@ export class OverridesHelper extends GameManagerHelper {
    * @param species - The fusion species to set
    * @returns `this`
    */
-  public starterFusionSpecies(species: Species | number): this {
+  public starterFusionSpecies(species: SpeciesId | number): this {
     vi.spyOn(Overrides, "STARTER_FUSION_SPECIES_OVERRIDE", "get").mockReturnValue(species);
-    this.log(`Player Pokemon fusion species set to ${Species[species]} (=${species})!`);
+    this.log(`Player Pokemon fusion species set to ${SpeciesId[species]} (=${species})!`);
     return this;
   }
 
@@ -139,10 +139,10 @@ export class OverridesHelper extends GameManagerHelper {
    * @param forms - The forms to set
    * @returns `this`
    */
-  public starterForms(forms: Partial<Record<Species, number>>): this {
+  public starterForms(forms: Partial<Record<SpeciesId, number>>): this {
     vi.spyOn(Overrides, "STARTER_FORM_OVERRIDES", "get").mockReturnValue(forms);
     const formsStr = Object.entries(forms)
-      .map(([speciesId, formIndex]) => `${Species[speciesId]}=${formIndex}`)
+      .map(([speciesId, formIndex]) => `${SpeciesId[speciesId]}=${formIndex}`)
       .join(", ");
     this.log(`Player Pokemon form set to: ${formsStr}!`);
     return this;
@@ -307,13 +307,13 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the {@linkcode Species | species} of enemy pokemon
-   * @param species - The {@linkcode Species | species} to set
+   * Override the {@linkcode SpeciesId | species} of enemy pokemon
+   * @param species - The {@linkcode SpeciesId | species} to set
    * @returns `this`
    */
-  public enemySpecies(species: Species | number): this {
+  public enemySpecies(species: SpeciesId | number): this {
     vi.spyOn(Overrides, "OPP_SPECIES_OVERRIDE", "get").mockReturnValue(species);
-    this.log(`Enemy Pokemon species set to ${Species[species]} (=${species})!`);
+    this.log(`Enemy Pokemon species set to ${SpeciesId[species]} (=${species})!`);
     return this;
   }
 
@@ -332,9 +332,9 @@ export class OverridesHelper extends GameManagerHelper {
    * @param species - The fusion species to set
    * @returns `this`
    */
-  public enemyFusionSpecies(species: Species | number): this {
+  public enemyFusionSpecies(species: SpeciesId | number): this {
     vi.spyOn(Overrides, "OPP_FUSION_SPECIES_OVERRIDE", "get").mockReturnValue(species);
-    this.log(`Enemy Pokemon fusion species set to ${Species[species]} (=${species})!`);
+    this.log(`Enemy Pokemon fusion species set to ${SpeciesId[species]} (=${species})!`);
     return this;
   }
 

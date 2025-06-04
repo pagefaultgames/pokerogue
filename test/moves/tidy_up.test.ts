@@ -4,7 +4,7 @@ import { MoveEndPhase } from "#app/phases/move-end-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -27,10 +27,10 @@ describe("Moves - Tidy Up", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override.battleStyle("single");
-    game.override.enemySpecies(Species.MAGIKARP);
+    game.override.enemySpecies(SpeciesId.MAGIKARP);
     game.override.enemyAbility(AbilityId.BALL_FETCH);
     game.override.enemyMoveset(MoveId.SPLASH);
-    game.override.starterSpecies(Species.FEEBAS);
+    game.override.starterSpecies(SpeciesId.FEEBAS);
     game.override.ability(AbilityId.BALL_FETCH);
     game.override.moveset([MoveId.TIDY_UP]);
     game.override.startingLevel(50);

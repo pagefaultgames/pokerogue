@@ -1,6 +1,6 @@
 import { BattlerIndex } from "#app/battle";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#app/enums/species";
+import { SpeciesId } from "#app/enums/species";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -24,10 +24,10 @@ describe("Moves - Miracle Eye", () => {
     game = new GameManager(phaserGame);
     game.override
       .disableCrits()
-      .enemySpecies(Species.UMBREON)
+      .enemySpecies(SpeciesId.UMBREON)
       .enemyMoveset(MoveId.SPLASH)
       .enemyLevel(5)
-      .starterSpecies(Species.MAGIKARP)
+      .starterSpecies(SpeciesId.MAGIKARP)
       .moveset([MoveId.MIRACLE_EYE, MoveId.CONFUSION]);
   });
 

@@ -1,6 +1,6 @@
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import { TerrainType } from "#app/data/terrain";
 import { PokemonType } from "#enums/pokemon-type";
 import { BattlerIndex } from "#app/battle";
@@ -29,13 +29,13 @@ describe("Moves - Camouflage", () => {
       .ability(AbilityId.BALL_FETCH)
       .battleStyle("single")
       .disableCrits()
-      .enemySpecies(Species.REGIELEKI)
+      .enemySpecies(SpeciesId.REGIELEKI)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(MoveId.PSYCHIC_TERRAIN);
   });
 
   it("Camouflage should look at terrain first when selecting a type to change into", async () => {
-    await game.classicMode.startBattle([Species.SHUCKLE]);
+    await game.classicMode.startBattle([SpeciesId.SHUCKLE]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
 

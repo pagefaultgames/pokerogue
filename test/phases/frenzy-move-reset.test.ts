@@ -3,7 +3,7 @@ import { AbilityId } from "#enums/ability-id";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { StatusEffect } from "#enums/status-effect";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, it, expect } from "vitest";
@@ -27,12 +27,12 @@ describe("Frenzy Move Reset", () => {
     game.override
       .battleStyle("single")
       .disableCrits()
-      .starterSpecies(Species.MAGIKARP)
+      .starterSpecies(SpeciesId.MAGIKARP)
       .moveset(MoveId.THRASH)
       .statusEffect(StatusEffect.PARALYSIS)
       .enemyMoveset(MoveId.SPLASH)
       .enemyLevel(100)
-      .enemySpecies(Species.SHUCKLE)
+      .enemySpecies(SpeciesId.SHUCKLE)
       .enemyAbility(AbilityId.BALL_FETCH);
   });
 

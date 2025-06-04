@@ -2,7 +2,7 @@ import { BattlerIndex } from "#app/battle";
 import { Stat } from "#enums/stat";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -29,7 +29,7 @@ describe("Items - Multi Lens", () => {
       .startingHeldItems([{ name: "MULTI_LENS" }])
       .battleStyle("single")
       .disableCrits()
-      .enemySpecies(Species.SNORLAX)
+      .enemySpecies(SpeciesId.SNORLAX)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(MoveId.SPLASH)
       .startingLevel(99) // Check for proper rounding on Seismic Toss damage reduction
@@ -44,7 +44,7 @@ describe("Items - Multi Lens", () => {
     async ({ stackCount, firstHitDamage }) => {
       game.override.startingHeldItems([{ name: "MULTI_LENS", count: stackCount }]);
 
-      await game.classicMode.startBattle([Species.MAGIKARP]);
+      await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
       const enemyPokemon = game.scene.getEnemyPokemon()!;
       const spy = vi.spyOn(enemyPokemon, "getAttackDamage");
@@ -65,7 +65,7 @@ describe("Items - Multi Lens", () => {
   it("should stack additively with Parental Bond", async () => {
     game.override.ability(AbilityId.PARENTAL_BOND);
 
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
 
@@ -77,7 +77,7 @@ describe("Items - Multi Lens", () => {
   });
 
   it("should apply secondary effects on each hit", async () => {
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
 
@@ -88,7 +88,7 @@ describe("Items - Multi Lens", () => {
   });
 
   it("should not enhance multi-hit moves", async () => {
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
 
@@ -101,7 +101,7 @@ describe("Items - Multi Lens", () => {
   it("should enhance multi-target moves", async () => {
     game.override.battleStyle("double").moveset([MoveId.SWIFT, MoveId.SPLASH]);
 
-    await game.classicMode.startBattle([Species.MAGIKARP, Species.FEEBAS]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.FEEBAS]);
 
     const [magikarp] = game.scene.getPlayerField();
 
@@ -118,7 +118,7 @@ describe("Items - Multi Lens", () => {
   it("should enhance fixed-damage moves while also applying damage reduction", async () => {
     game.override.startingHeldItems([{ name: "MULTI_LENS", count: 1 }]).moveset(MoveId.SEISMIC_TOSS);
 
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
     const enemyPokemon = game.scene.getEnemyPokemon()!;
@@ -141,9 +141,9 @@ describe("Items - Multi Lens", () => {
       .moveset(MoveId.SUPER_FANG)
       .ability(AbilityId.COMPOUND_EYES)
       .enemyLevel(1000)
-      .enemySpecies(Species.BLISSEY); // allows for unrealistically high levels of accuracy
+      .enemySpecies(SpeciesId.BLISSEY); // allows for unrealistically high levels of accuracy
 
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
@@ -160,9 +160,9 @@ describe("Items - Multi Lens", () => {
       .ability(AbilityId.COMPOUND_EYES)
       .enemyMoveset(MoveId.SPLASH)
       .enemyLevel(1000)
-      .enemySpecies(Species.BLISSEY); // allows for unrealistically high levels of accuracy
+      .enemySpecies(SpeciesId.BLISSEY); // allows for unrealistically high levels of accuracy
 
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
@@ -180,9 +180,9 @@ describe("Items - Multi Lens", () => {
       .passiveAbility(AbilityId.COMPOUND_EYES)
       .enemyMoveset(MoveId.SPLASH)
       .enemyLevel(1000)
-      .enemySpecies(Species.BLISSEY); // allows for unrealistically high levels of accuracy
+      .enemySpecies(SpeciesId.BLISSEY); // allows for unrealistically high levels of accuracy
 
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
@@ -194,7 +194,7 @@ describe("Items - Multi Lens", () => {
 
   it("should not allow Future Sight to hit infinitely many times if the user switches out", async () => {
     game.override.enemyLevel(1000);
-    await game.classicMode.startBattle([Species.BULBASAUR, Species.CHARMANDER, Species.SQUIRTLE]);
+    await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.CHARMANDER, SpeciesId.SQUIRTLE]);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
     vi.spyOn(enemyPokemon, "damageAndUpdate");
@@ -214,7 +214,7 @@ describe("Items - Multi Lens", () => {
 
   it("should not allow Pollen Puff to heal ally more than once", async () => {
     game.override.battleStyle("double").moveset([MoveId.POLLEN_PUFF, MoveId.ENDURE]);
-    await game.classicMode.startBattle([Species.BULBASAUR, Species.OMANYTE]);
+    await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.OMANYTE]);
 
     const [, rightPokemon] = game.scene.getPlayerField();
 

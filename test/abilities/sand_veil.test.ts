@@ -5,7 +5,7 @@ import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { MoveEndPhase } from "#app/phases/move-end-phase";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import { Stat } from "#enums/stat";
 import { WeatherType } from "#enums/weather-type";
 import GameManager from "#test/testUtils/gameManager";
@@ -30,7 +30,7 @@ describe("Abilities - Sand Veil", () => {
     game = new GameManager(phaserGame);
     game.override
       .moveset([MoveId.SPLASH])
-      .enemySpecies(Species.MEOWSCARADA)
+      .enemySpecies(SpeciesId.MEOWSCARADA)
       .enemyAbility(AbilityId.INSOMNIA)
       .enemyMoveset(MoveId.TWISTER)
       .startingLevel(100)
@@ -40,7 +40,7 @@ describe("Abilities - Sand Veil", () => {
   });
 
   test("ability should increase the evasiveness of the source", async () => {
-    await game.classicMode.startBattle([Species.SNORLAX, Species.BLISSEY]);
+    await game.classicMode.startBattle([SpeciesId.SNORLAX, SpeciesId.BLISSEY]);
 
     const leadPokemon = game.scene.getPlayerField();
 

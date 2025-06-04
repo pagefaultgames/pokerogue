@@ -1,6 +1,6 @@
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -24,10 +24,10 @@ describe("Abilities - Perish Song", () => {
     game.override.battleStyle("single");
     game.override.disableCrits();
 
-    game.override.enemySpecies(Species.MAGIKARP);
+    game.override.enemySpecies(SpeciesId.MAGIKARP);
     game.override.enemyAbility(AbilityId.BALL_FETCH);
 
-    game.override.starterSpecies(Species.CURSOLA);
+    game.override.starterSpecies(SpeciesId.CURSOLA);
     game.override.ability(AbilityId.PERISH_BODY);
     game.override.moveset([MoveId.SPLASH]);
   });
@@ -47,7 +47,7 @@ describe("Abilities - Perish Song", () => {
 
   it("should trigger even when fainting", async () => {
     game.override.enemyMoveset([MoveId.AQUA_JET]).enemyLevel(100).startingLevel(1);
-    await game.classicMode.startBattle([Species.CURSOLA, Species.FEEBAS]);
+    await game.classicMode.startBattle([SpeciesId.CURSOLA, SpeciesId.FEEBAS]);
     const magikarp = game.scene.getEnemyPokemon();
 
     game.move.select(MoveId.SPLASH);
@@ -59,7 +59,7 @@ describe("Abilities - Perish Song", () => {
 
   it("should not activate if attacker already has perish song", async () => {
     game.override.enemyMoveset([MoveId.PERISH_SONG, MoveId.AQUA_JET, MoveId.SPLASH]);
-    await game.classicMode.startBattle([Species.FEEBAS, Species.CURSOLA]);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.CURSOLA]);
     const feebas = game.scene.getPlayerPokemon();
     const magikarp = game.scene.getEnemyPokemon();
 
@@ -90,7 +90,7 @@ describe("Abilities - Perish Song", () => {
     game.override.enemyMoveset([MoveId.PERISH_SONG, MoveId.AQUA_JET, MoveId.SPLASH]);
     game.override.moveset([MoveId.WHIRLWIND, MoveId.SPLASH]);
     game.override.startingWave(5);
-    await game.classicMode.startBattle([Species.CURSOLA]);
+    await game.classicMode.startBattle([SpeciesId.CURSOLA]);
     const cursola = game.scene.getPlayerPokemon();
 
     game.move.select(MoveId.WHIRLWIND);

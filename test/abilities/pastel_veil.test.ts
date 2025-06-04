@@ -3,7 +3,7 @@ import { AbilityId } from "#enums/ability-id";
 import { CommandPhase } from "#app/phases/command-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import { StatusEffect } from "#enums/status-effect";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -29,12 +29,12 @@ describe("Abilities - Pastel Veil", () => {
       .battleStyle("double")
       .moveset([MoveId.TOXIC_THREAD, MoveId.SPLASH])
       .enemyAbility(AbilityId.BALL_FETCH)
-      .enemySpecies(Species.SUNKERN)
+      .enemySpecies(SpeciesId.SUNKERN)
       .enemyMoveset(MoveId.SPLASH);
   });
 
   it("prevents the user and its allies from being afflicted by poison", async () => {
-    await game.classicMode.startBattle([Species.MAGIKARP, Species.GALAR_PONYTA]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.GALAR_PONYTA]);
     const ponyta = game.scene.getPlayerField()[1];
     const magikarp = game.scene.getPlayerField()[0];
     ponyta.abilityIndex = 1;
@@ -50,7 +50,7 @@ describe("Abilities - Pastel Veil", () => {
   });
 
   it("it heals the poisoned status condition of allies if user is sent out into battle", async () => {
-    await game.classicMode.startBattle([Species.MAGIKARP, Species.FEEBAS, Species.GALAR_PONYTA]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.FEEBAS, SpeciesId.GALAR_PONYTA]);
     const ponyta = game.scene.getPlayerParty()[2];
     const magikarp = game.scene.getPlayerField()[0];
     ponyta.abilityIndex = 1;

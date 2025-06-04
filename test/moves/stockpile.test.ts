@@ -6,7 +6,7 @@ import { CommandPhase } from "#app/phases/command-phase";
 import { TurnInitPhase } from "#app/phases/turn-init-phase";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -29,7 +29,7 @@ describe("Moves - Stockpile", () => {
 
       game.override.battleStyle("single");
 
-      game.override.enemySpecies(Species.RATTATA);
+      game.override.enemySpecies(SpeciesId.RATTATA);
       game.override.enemyMoveset(MoveId.SPLASH);
       game.override.enemyAbility(AbilityId.NONE);
 
@@ -39,7 +39,7 @@ describe("Moves - Stockpile", () => {
     });
 
     it("gains a stockpile stack and raises user's DEF and SPDEF stat stages by 1 on each use, fails at max stacks (3)", async () => {
-      await game.classicMode.startBattle([Species.ABOMASNOW]);
+      await game.classicMode.startBattle([SpeciesId.ABOMASNOW]);
 
       const user = game.scene.getPlayerPokemon()!;
 
@@ -83,7 +83,7 @@ describe("Moves - Stockpile", () => {
     });
 
     it("gains a stockpile stack even if user's DEF and SPDEF stat stages are at +6", async () => {
-      await game.classicMode.startBattle([Species.ABOMASNOW]);
+      await game.classicMode.startBattle([SpeciesId.ABOMASNOW]);
 
       const user = game.scene.getPlayerPokemon()!;
 

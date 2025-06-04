@@ -9,7 +9,7 @@ import type { Arena } from "./field/arena";
 import Overrides from "#app/overrides";
 import { isNullOrUndefined, randSeedInt, randSeedItem } from "#app/utils/common";
 import { Biome } from "#enums/biome";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import { Challenges } from "./enums/challenges";
 import { globalScene } from "#app/global-scene";
 import { getDailyStartingBiome } from "./data/daily-run";
@@ -220,8 +220,8 @@ export class GameMode implements GameModeConfig {
         s =>
           (s.subLegendary || s.legendary || s.mythical) &&
           s.baseTotal >= 600 &&
-          s.speciesId !== Species.ETERNATUS &&
-          s.speciesId !== Species.ARCEUS,
+          s.speciesId !== SpeciesId.ETERNATUS &&
+          s.speciesId !== SpeciesId.ARCEUS,
       );
       return randSeedItem(allFinalBossSpecies);
     }

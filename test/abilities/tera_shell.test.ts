@@ -1,7 +1,7 @@
 import { BattlerIndex } from "#app/battle";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#app/enums/species";
+import { SpeciesId } from "#app/enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -26,7 +26,7 @@ describe("Abilities - Tera Shell", () => {
       .battleStyle("single")
       .ability(AbilityId.TERA_SHELL)
       .moveset([MoveId.SPLASH])
-      .enemySpecies(Species.SNORLAX)
+      .enemySpecies(SpeciesId.SNORLAX)
       .enemyAbility(AbilityId.INSOMNIA)
       .enemyMoveset([MoveId.MACH_PUNCH])
       .startingLevel(100)
@@ -34,7 +34,7 @@ describe("Abilities - Tera Shell", () => {
   });
 
   it("should change the effectiveness of non-resisted attacks when the source is at full HP", async () => {
-    await game.classicMode.startBattle([Species.SNORLAX]);
+    await game.classicMode.startBattle([SpeciesId.SNORLAX]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
     vi.spyOn(playerPokemon, "getMoveEffectiveness");
@@ -55,7 +55,7 @@ describe("Abilities - Tera Shell", () => {
   it("should not override type immunities", async () => {
     game.override.enemyMoveset([MoveId.SHADOW_SNEAK]);
 
-    await game.classicMode.startBattle([Species.SNORLAX]);
+    await game.classicMode.startBattle([SpeciesId.SNORLAX]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
     vi.spyOn(playerPokemon, "getMoveEffectiveness");
@@ -69,7 +69,7 @@ describe("Abilities - Tera Shell", () => {
   it("should not override type multipliers less than 0.5x", async () => {
     game.override.enemyMoveset([MoveId.QUICK_ATTACK]);
 
-    await game.classicMode.startBattle([Species.AGGRON]);
+    await game.classicMode.startBattle([SpeciesId.AGGRON]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
     vi.spyOn(playerPokemon, "getMoveEffectiveness");
@@ -83,7 +83,7 @@ describe("Abilities - Tera Shell", () => {
   it("should not affect the effectiveness of fixed-damage moves", async () => {
     game.override.enemyMoveset([MoveId.DRAGON_RAGE]);
 
-    await game.classicMode.startBattle([Species.CHARIZARD]);
+    await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
     const spy = vi.spyOn(playerPokemon, "getMoveEffectiveness");
@@ -100,7 +100,7 @@ describe("Abilities - Tera Shell", () => {
   it("should change the effectiveness of all strikes of a multi-strike move", async () => {
     game.override.enemyMoveset([MoveId.DOUBLE_HIT]);
 
-    await game.classicMode.startBattle([Species.SNORLAX]);
+    await game.classicMode.startBattle([SpeciesId.SNORLAX]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
     const spy = vi.spyOn(playerPokemon, "getMoveEffectiveness");

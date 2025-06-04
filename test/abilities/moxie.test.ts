@@ -2,7 +2,7 @@ import { Stat } from "#enums/stat";
 import GameManager from "#test/testUtils/gameManager";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { BattlerIndex } from "#app/battle";
@@ -28,7 +28,7 @@ describe("Abilities - Moxie", () => {
     game = new GameManager(phaserGame);
     const moveToUse = MoveId.AERIAL_ACE;
     game.override.battleStyle("single");
-    game.override.enemySpecies(Species.RATTATA);
+    game.override.enemySpecies(SpeciesId.RATTATA);
     game.override.enemyAbility(AbilityId.MOXIE);
     game.override.ability(AbilityId.MOXIE);
     game.override.startingLevel(2000);
@@ -38,7 +38,7 @@ describe("Abilities - Moxie", () => {
 
   it("should raise ATK stat stage by 1 when winning a battle", async () => {
     const moveToUse = MoveId.AERIAL_ACE;
-    await game.classicMode.startBattle([Species.MIGHTYENA, Species.MIGHTYENA]);
+    await game.classicMode.startBattle([SpeciesId.MIGHTYENA, SpeciesId.MIGHTYENA]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
 
@@ -56,7 +56,7 @@ describe("Abilities - Moxie", () => {
     async () => {
       game.override.battleStyle("double");
       const moveToUse = MoveId.AERIAL_ACE;
-      await game.classicMode.startBattle([Species.MIGHTYENA, Species.MIGHTYENA]);
+      await game.classicMode.startBattle([SpeciesId.MIGHTYENA, SpeciesId.MIGHTYENA]);
 
       const [firstPokemon, secondPokemon] = game.scene.getPlayerField();
 

@@ -1,6 +1,6 @@
 import { Biome } from "#app/enums/biome";
 import { MysteryEncounterType } from "#app/enums/mystery-encounter-type";
-import { Species } from "#app/enums/species";
+import { SpeciesId } from "#app/enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
@@ -22,7 +22,7 @@ import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import i18next from "i18next";
 
 const namespace = "mysteryEncounters/absoluteAvarice";
-const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
+const defaultParty = [SpeciesId.LAPRAS, SpeciesId.GENGAR, SpeciesId.ABRA];
 const defaultBiome = Biome.TALL_GRASS;
 const defaultWave = 45;
 
@@ -137,7 +137,7 @@ describe("Absolute Avarice - Mystery Encounter", () => {
       const enemyField = scene.getEnemyField();
       expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(enemyField.length).toBe(1);
-      expect(enemyField[0].species.speciesId).toBe(Species.GREEDENT);
+      expect(enemyField[0].species.speciesId).toBe(SpeciesId.GREEDENT);
       const moveset = enemyField[0].moveset.map(m => m.moveId);
       expect(moveset?.length).toBe(4);
       expect(moveset).toEqual([MoveId.THRASH, MoveId.CRUNCH, MoveId.BODY_PRESS, MoveId.SLACK_OFF]);
@@ -260,7 +260,7 @@ describe("Absolute Avarice - Mystery Encounter", () => {
 
       expect(partyCountBefore + 1).toBe(partyCountAfter);
       const greedent = scene.getPlayerParty()[scene.getPlayerParty().length - 1];
-      expect(greedent.species.speciesId).toBe(Species.GREEDENT);
+      expect(greedent.species.speciesId).toBe(SpeciesId.GREEDENT);
       const moveset = greedent.moveset.map(m => m.moveId);
       expect(moveset?.length).toBe(4);
       expect(moveset).toEqual([MoveId.THRASH, MoveId.BODY_PRESS, MoveId.STUFF_CHEEKS, MoveId.SLACK_OFF]);

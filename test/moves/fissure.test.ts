@@ -1,5 +1,5 @@
 import { Stat } from "#enums/stat";
-import { Species } from "#app/enums/species";
+import { SpeciesId } from "#app/enums/species";
 import type { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
 import { DamageAnimPhase } from "#app/phases/damage-anim-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
@@ -31,12 +31,12 @@ describe("Moves - Fissure", () => {
     game.override.battleStyle("single");
     game.override.disableCrits();
 
-    game.override.starterSpecies(Species.SNORLAX);
+    game.override.starterSpecies(SpeciesId.SNORLAX);
     game.override.moveset([MoveId.FISSURE]);
     game.override.passiveAbility(AbilityId.BALL_FETCH);
     game.override.startingLevel(100);
 
-    game.override.enemySpecies(Species.SNORLAX);
+    game.override.enemySpecies(SpeciesId.SNORLAX);
     game.override.enemyMoveset(MoveId.SPLASH);
     game.override.enemyPassiveAbility(AbilityId.BALL_FETCH);
     game.override.enemyLevel(100);

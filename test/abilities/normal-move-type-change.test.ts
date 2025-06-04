@@ -3,7 +3,7 @@ import { allMoves } from "#app/data/data-lists";
 import { PokemonType } from "#enums/pokemon-type";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#app/enums/species";
+import { SpeciesId } from "#app/enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -48,10 +48,10 @@ describe.each([
     game.override
       .battleStyle("single")
       .startingLevel(100)
-      .starterSpecies(Species.MAGIKARP)
+      .starterSpecies(SpeciesId.MAGIKARP)
       .ability(ab)
       .moveset([MoveId.TACKLE, MoveId.REVELATION_DANCE, MoveId.FURY_SWIPES])
-      .enemySpecies(Species.DUSCLOPS)
+      .enemySpecies(SpeciesId.DUSCLOPS)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(MoveId.SPLASH)
       .enemyLevel(100);
@@ -111,12 +111,12 @@ describe.each([
     { moveName: "Techno Blast", move: MoveId.TECHNO_BLAST, expected_ty: PokemonType.NORMAL },
   ])("should not change the type of $moveName", async ({ move, expected_ty: expectedTy }) => {
     game.override
-      .enemySpecies(Species.MAGIKARP)
+      .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
       .moveset([move])
-      .starterSpecies(Species.MAGIKARP);
+      .starterSpecies(SpeciesId.MAGIKARP);
 
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
     const tySpy = vi.spyOn(playerPokemon, "getMoveType");

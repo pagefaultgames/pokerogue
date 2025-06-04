@@ -1,6 +1,6 @@
 import { Stat } from "#enums/stat";
 import { PokemonType } from "#enums/pokemon-type";
-import { Species } from "#app/enums/species";
+import { SpeciesId } from "#app/enums/species";
 import type { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { AbilityId } from "#enums/ability-id";
@@ -33,13 +33,13 @@ describe("Moves - Dragon Rage", () => {
 
     game.override.battleStyle("single");
 
-    game.override.starterSpecies(Species.SNORLAX);
+    game.override.starterSpecies(SpeciesId.SNORLAX);
     game.override.moveset([MoveId.DRAGON_RAGE]);
     game.override.ability(AbilityId.BALL_FETCH);
     game.override.passiveAbility(AbilityId.BALL_FETCH);
     game.override.startingLevel(100);
 
-    game.override.enemySpecies(Species.SNORLAX);
+    game.override.enemySpecies(SpeciesId.SNORLAX);
     game.override.enemyMoveset(MoveId.SPLASH);
     game.override.enemyAbility(AbilityId.BALL_FETCH);
     game.override.enemyPassiveAbility(AbilityId.BALL_FETCH);

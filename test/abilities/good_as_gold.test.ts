@@ -8,7 +8,7 @@ import { StatusEffect } from "#app/enums/status-effect";
 import { WeatherType } from "#app/enums/weather-type";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -34,14 +34,14 @@ describe("Abilities - Good As Gold", () => {
       .ability(AbilityId.GOOD_AS_GOLD)
       .battleStyle("single")
       .disableCrits()
-      .enemySpecies(Species.MAGIKARP)
+      .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(MoveId.SPLASH);
   });
 
   it("should block normal status moves", async () => {
     game.override.enemyMoveset([MoveId.GROWL]);
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
     const player = game.scene.getPlayerPokemon()!;
 
@@ -55,7 +55,7 @@ describe("Abilities - Good As Gold", () => {
 
   it("should block memento and prevent the user from fainting", async () => {
     game.override.enemyMoveset([MoveId.MEMENTO]);
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
     game.move.select(MoveId.MEMENTO);
     await game.phaseInterceptor.to("BerryPhase");
     expect(game.scene.getPlayerPokemon()!.isFainted()).toBe(false);
@@ -66,7 +66,7 @@ describe("Abilities - Good As Gold", () => {
     game.override.battleStyle("double");
     game.override.enemyMoveset([MoveId.STEALTH_ROCK, MoveId.HAZE]);
     game.override.moveset([MoveId.SWORDS_DANCE, MoveId.SAFEGUARD]);
-    await game.classicMode.startBattle([Species.MAGIKARP, Species.FEEBAS]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.FEEBAS]);
     const [good_as_gold, ball_fetch] = game.scene.getPlayerField();
 
     // Force second pokemon to have ball fetch to isolate to a single mon.
@@ -87,7 +87,7 @@ describe("Abilities - Good As Gold", () => {
   it("should not block field targeted effects in singles", async () => {
     game.override.battleStyle("single");
     game.override.enemyMoveset([MoveId.SPIKES]);
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
     game.move.select(MoveId.SPLASH, 0);
     await game.phaseInterceptor.to("BerryPhase");
@@ -98,7 +98,7 @@ describe("Abilities - Good As Gold", () => {
   it("should block the ally's helping hand", async () => {
     game.override.battleStyle("double");
     game.override.moveset([MoveId.HELPING_HAND, MoveId.TACKLE]);
-    await game.classicMode.startBattle([Species.MAGIKARP, Species.FEEBAS]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.FEEBAS]);
 
     game.move.select(MoveId.HELPING_HAND, 0);
     game.move.select(MoveId.TACKLE, 1);
@@ -110,7 +110,7 @@ describe("Abilities - Good As Gold", () => {
   // TODO: re-enable when heal bell is fixed
   it.todo("should block the ally's heal bell, but only if the good as gold user is on the field", async () => {
     game.override.battleStyle("double").statusEffect(StatusEffect.BURN);
-    await game.classicMode.startBattle([Species.MILOTIC, Species.FEEBAS, Species.ABRA]);
+    await game.classicMode.startBattle([SpeciesId.MILOTIC, SpeciesId.FEEBAS, SpeciesId.ABRA]);
     const [milotic, feebas, abra] = game.scene.getPlayerParty();
     game.field.mockAbility(milotic, AbilityId.GOOD_AS_GOLD);
     game.field.mockAbility(feebas, AbilityId.BALL_FETCH);
@@ -131,7 +131,7 @@ describe("Abilities - Good As Gold", () => {
   it("should not block field targeted effects like rain dance", async () => {
     game.override.battleStyle("single");
     game.override.enemyMoveset([MoveId.RAIN_DANCE]);
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
     game.move.use(MoveId.SPLASH, 0);
     await game.phaseInterceptor.to("BerryPhase");

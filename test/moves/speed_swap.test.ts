@@ -1,7 +1,7 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import Phaser from "phaser";
 import GameManager from "#test/testUtils/gameManager";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { MoveId } from "#enums/move-id";
 import { Stat } from "#enums/stat";
@@ -27,14 +27,14 @@ describe("Moves - Speed Swap", () => {
       .battleStyle("single")
       .enemyAbility(AbilityId.NONE)
       .enemyMoveset(MoveId.SPLASH)
-      .enemySpecies(Species.MEW)
+      .enemySpecies(SpeciesId.MEW)
       .enemyLevel(200)
       .moveset([MoveId.SPEED_SWAP])
       .ability(AbilityId.NONE);
   });
 
   it("should swap the user's SPD and the target's SPD stats", async () => {
-    await game.classicMode.startBattle([Species.INDEEDEE]);
+    await game.classicMode.startBattle([SpeciesId.INDEEDEE]);
 
     const player = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;

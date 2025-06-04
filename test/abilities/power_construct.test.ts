@@ -3,7 +3,7 @@ import { QuietFormChangePhase } from "#app/phases/quiet-form-change-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import { StatusEffect } from "#enums/status-effect";
 import GameManager from "#test/testUtils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
@@ -37,12 +37,12 @@ describe("Abilities - POWER CONSTRUCT", () => {
       completeForm = 4;
     game.override.startingWave(4);
     game.override.starterForms({
-      [Species.ZYGARDE]: completeForm,
+      [SpeciesId.ZYGARDE]: completeForm,
     });
 
-    await game.classicMode.startBattle([Species.MAGIKARP, Species.ZYGARDE]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.ZYGARDE]);
 
-    const zygarde = game.scene.getPlayerParty().find(p => p.species.speciesId === Species.ZYGARDE);
+    const zygarde = game.scene.getPlayerParty().find(p => p.species.speciesId === SpeciesId.ZYGARDE);
     expect(zygarde).not.toBe(undefined);
     expect(zygarde!.formIndex).toBe(completeForm);
 
@@ -64,12 +64,12 @@ describe("Abilities - POWER CONSTRUCT", () => {
       completeForm = 5;
     game.override.startingWave(4);
     game.override.starterForms({
-      [Species.ZYGARDE]: completeForm,
+      [SpeciesId.ZYGARDE]: completeForm,
     });
 
-    await game.classicMode.startBattle([Species.MAGIKARP, Species.ZYGARDE]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.ZYGARDE]);
 
-    const zygarde = game.scene.getPlayerParty().find(p => p.species.speciesId === Species.ZYGARDE);
+    const zygarde = game.scene.getPlayerParty().find(p => p.species.speciesId === SpeciesId.ZYGARDE);
     expect(zygarde).not.toBe(undefined);
     expect(zygarde!.formIndex).toBe(completeForm);
 

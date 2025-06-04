@@ -10,7 +10,7 @@ import type Pokemon from "#app/field/pokemon";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import { randSeedInt } from "#app/utils/common";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import { globalScene } from "#app/global-scene";
 import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
@@ -49,7 +49,7 @@ export const ShadyVitaminDealerEncounter: MysteryEncounter = MysteryEncounterBui
   .withPrimaryPokemonHealthRatioRequirement([0.51, 1]) // At least 1 Pokemon must have above half HP
   .withIntroSpriteConfigs([
     {
-      spriteKey: Species.KROOKODILE.toString(),
+      spriteKey: SpeciesId.KROOKODILE.toString(),
       fileRoot: "pokemon",
       hasShadow: true,
       repeat: true,

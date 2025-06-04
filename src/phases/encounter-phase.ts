@@ -40,7 +40,7 @@ import { BattleSpec } from "#enums/battle-spec";
 import { Biome } from "#enums/biome";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import { PlayerGender } from "#enums/player-gender";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import { overrideHeldItems, overrideModifiers } from "#app/modifier/modifier";
 import i18next from "i18next";
 import { WEIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/data/mystery-encounters/mystery-encounters";
@@ -158,7 +158,7 @@ export class EncounterPhase extends BattlePhase {
         );
       }
 
-      if (enemyPokemon.species.speciesId === Species.ETERNATUS) {
+      if (enemyPokemon.species.speciesId === SpeciesId.ETERNATUS) {
         if (
           globalScene.gameMode.isClassic &&
           (battle.battleSpec === BattleSpec.FINAL_BOSS || globalScene.gameMode.isWaveFinal(battle.waveIndex))
@@ -556,7 +556,7 @@ export class EncounterPhase extends BattlePhase {
       }
       /** This sets Eternatus' held item to be untransferrable, preventing it from being stolen */
       if (
-        enemyPokemon.species.speciesId === Species.ETERNATUS &&
+        enemyPokemon.species.speciesId === SpeciesId.ETERNATUS &&
         (globalScene.gameMode.isBattleClassicFinalBoss(globalScene.currentBattle.waveIndex) ||
           globalScene.gameMode.isEndlessMajorBoss(globalScene.currentBattle.waveIndex))
       ) {

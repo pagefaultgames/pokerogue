@@ -15,7 +15,7 @@ import { BattleType } from "#enums/battle-type";
 import Trainer, { TrainerVariant } from "#app/field/trainer";
 import { PokemonType } from "#enums/pokemon-type";
 import { Challenges } from "#enums/challenges";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
 import { Nature } from "#enums/nature";
 import type { MoveId } from "#enums/move-id";
@@ -305,11 +305,11 @@ export abstract class Challenge {
 
   /**
    * An apply function for STARTER_COST challenges. Derived classes should alter this.
-   * @param _species {@link Species} The pokemon to change the cost of.
+   * @param _species {@link SpeciesId} The pokemon to change the cost of.
    * @param _cost {@link NumberHolder} The cost of the starter.
    * @returns {@link boolean} Whether this function did anything.
    */
-  applyStarterCost(_species: Species, _cost: NumberHolder): boolean {
+  applyStarterCost(_species: SpeciesId, _cost: NumberHolder): boolean {
     return false;
   }
 
@@ -696,7 +696,7 @@ export class SingleGenerationChallenge extends Challenge {
 
 interface monotypeOverride {
   /** The species to override */
-  species: Species;
+  species: SpeciesId;
   /** The type to count as */
   type: PokemonType;
   /** If part of a fusion, should we check the fused species instead of the base species? */
@@ -708,7 +708,7 @@ interface monotypeOverride {
  */
 export class SingleTypeChallenge extends Challenge {
   private static TYPE_OVERRIDES: monotypeOverride[] = [
-    { species: Species.CASTFORM, type: PokemonType.NORMAL, fusion: false },
+    { species: SpeciesId.CASTFORM, type: PokemonType.NORMAL, fusion: false },
   ];
   // TODO: Find a solution for all Pokemon with this ssui issue, including Basculin and Burmy
 
@@ -804,7 +804,7 @@ export class FreshStartChallenge extends Challenge {
     return false;
   }
 
-  applyStarterCost(species: Species, cost: NumberHolder): boolean {
+  applyStarterCost(species: SpeciesId, cost: NumberHolder): boolean {
     if (defaultStarterSpecies.includes(species)) {
       cost.value = speciesStarterCosts[species];
       return true;
@@ -992,13 +992,13 @@ export function applyChallenges(challengeType: ChallengeType.STARTER_POINTS, poi
 /**
  * Apply all challenges that modify the cost of a starter.
  * @param challengeType {@link ChallengeType} ChallengeType.STARTER_COST
- * @param species {@link Species} The pokemon to change the cost of.
+ * @param species {@link SpeciesId} The pokemon to change the cost of.
  * @param points {@link NumberHolder} The cost of the pokemon.
  * @returns True if any challenge was successfully applied.
  */
 export function applyChallenges(
   challengeType: ChallengeType.STARTER_COST,
-  species: Species,
+  species: SpeciesId,
   cost: NumberHolder,
 ): boolean;
 /**

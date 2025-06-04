@@ -1,5 +1,5 @@
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import { AbilityId } from "#enums/ability-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -26,12 +26,12 @@ describe("Moves - Imprison", () => {
       .battleStyle("single")
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset([MoveId.IMPRISON, MoveId.SPLASH, MoveId.GROWL])
-      .enemySpecies(Species.SHUCKLE)
+      .enemySpecies(SpeciesId.SHUCKLE)
       .moveset([MoveId.TRANSFORM, MoveId.SPLASH]);
   });
 
   it("Pokemon under Imprison cannot use shared moves", async () => {
-    await game.classicMode.startBattle([Species.REGIELEKI]);
+    await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
 
@@ -58,7 +58,7 @@ describe("Moves - Imprison", () => {
   });
 
   it("Imprison applies to Pokemon switched into Battle", async () => {
-    await game.classicMode.startBattle([Species.REGIELEKI, Species.BULBASAUR]);
+    await game.classicMode.startBattle([SpeciesId.REGIELEKI, SpeciesId.BULBASAUR]);
 
     const playerPokemon1 = game.scene.getPlayerPokemon()!;
 
@@ -82,7 +82,7 @@ describe("Moves - Imprison", () => {
 
   it("The effects of Imprison only end when the source is no longer active", async () => {
     game.override.moveset([MoveId.SPLASH, MoveId.IMPRISON]);
-    await game.classicMode.startBattle([Species.REGIELEKI, Species.BULBASAUR]);
+    await game.classicMode.startBattle([SpeciesId.REGIELEKI, SpeciesId.BULBASAUR]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
     const enemyPokemon = game.scene.getEnemyPokemon()!;

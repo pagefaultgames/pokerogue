@@ -3,7 +3,7 @@ import { AbilityId } from "#enums/ability-id";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -27,7 +27,7 @@ describe("Abilities - Battery", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override.battleStyle("double");
-    game.override.enemySpecies(Species.SHUCKLE);
+    game.override.enemySpecies(SpeciesId.SHUCKLE);
     game.override.enemyAbility(AbilityId.BALL_FETCH);
     game.override.moveset([MoveId.TACKLE, MoveId.BREAKING_SWIPE, MoveId.SPLASH, MoveId.DAZZLING_GLEAM]);
     game.override.enemyMoveset(MoveId.SPLASH);
@@ -39,7 +39,7 @@ describe("Abilities - Battery", () => {
 
     vi.spyOn(moveToCheck, "calculateBattlePower");
 
-    await game.classicMode.startBattle([Species.PIKACHU, Species.CHARJABUG]);
+    await game.classicMode.startBattle([SpeciesId.PIKACHU, SpeciesId.CHARJABUG]);
 
     game.move.select(MoveId.DAZZLING_GLEAM);
     game.move.select(MoveId.SPLASH, 1);
@@ -54,7 +54,7 @@ describe("Abilities - Battery", () => {
 
     vi.spyOn(moveToCheck, "calculateBattlePower");
 
-    await game.classicMode.startBattle([Species.PIKACHU, Species.CHARJABUG]);
+    await game.classicMode.startBattle([SpeciesId.PIKACHU, SpeciesId.CHARJABUG]);
 
     game.move.select(MoveId.BREAKING_SWIPE);
     game.move.select(MoveId.SPLASH, 1);
@@ -69,7 +69,7 @@ describe("Abilities - Battery", () => {
 
     vi.spyOn(moveToCheck, "calculateBattlePower");
 
-    await game.classicMode.startBattle([Species.CHARJABUG, Species.PIKACHU]);
+    await game.classicMode.startBattle([SpeciesId.CHARJABUG, SpeciesId.PIKACHU]);
 
     game.move.select(MoveId.DAZZLING_GLEAM);
     game.move.select(MoveId.SPLASH, 1);

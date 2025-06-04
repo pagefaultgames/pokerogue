@@ -4,7 +4,7 @@ import { toDmgValue } from "#app/utils/common";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { PokemonType } from "#enums/pokemon-type";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -30,13 +30,13 @@ describe("Abilities - Normalize", () => {
       .ability(AbilityId.NORMALIZE)
       .battleStyle("single")
       .disableCrits()
-      .enemySpecies(Species.MAGIKARP)
+      .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(MoveId.SPLASH);
   });
 
   it("should boost the power of normal type moves by 20%", async () => {
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
     const powerSpy = vi.spyOn(allMoves[MoveId.TACKLE], "calculateBattlePower");
 
     game.move.select(MoveId.TACKLE);
@@ -49,7 +49,7 @@ describe("Abilities - Normalize", () => {
     game.override.moveset([MoveId.LEAFAGE]);
 
     const powerSpy = vi.spyOn(allMoves[MoveId.LEAFAGE], "calculateBattlePower");
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
     game.move.select(MoveId.LEAFAGE);
     await game.phaseInterceptor.to("BerryPhase");
 
@@ -62,7 +62,7 @@ describe("Abilities - Normalize", () => {
     game.override.moveset([MoveId.LEAFAGE]);
 
     const powerSpy = vi.spyOn(allMoves[MoveId.LEAFAGE], "calculateBattlePower");
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
     game.move.select(MoveId.LEAFAGE);
     await game.phaseInterceptor.to("BerryPhase");
 
@@ -82,7 +82,7 @@ describe("Abilities - Normalize", () => {
     { moveName: "Hidden Power", move: MoveId.HIDDEN_POWER },
   ])("should not boost the power of $moveName", async ({ move }) => {
     game.override.moveset([move]);
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
     const powerSpy = vi.spyOn(allMoves[move], "calculateBattlePower");
 
     game.move.select(move);

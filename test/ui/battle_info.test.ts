@@ -1,5 +1,5 @@
 import { ExpGainsSpeed } from "#app/enums/exp-gains-speed";
-import { Species } from "#app/enums/species";
+import { SpeciesId } from "#app/enums/species";
 import { ExpPhase } from "#app/phases/exp-phase";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
@@ -35,7 +35,7 @@ describe("UI - Battle Info", () => {
       .battleStyle("single")
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(MoveId.SPLASH)
-      .enemySpecies(Species.CATERPIE);
+      .enemySpecies(SpeciesId.CATERPIE);
   });
 
   it.each([ExpGainsSpeed.FAST, ExpGainsSpeed.FASTER, ExpGainsSpeed.SKIP])(
@@ -44,7 +44,7 @@ describe("UI - Battle Info", () => {
       game.settings.expGainsSpeed(expGainsSpeed);
       vi.spyOn(Math, "pow");
 
-      await game.classicMode.startBattle([Species.CHARIZARD]);
+      await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
       game.move.select(MoveId.SPLASH);
       await game.doKillOpponents();

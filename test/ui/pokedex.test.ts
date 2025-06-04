@@ -5,7 +5,7 @@ import PokedexUiHandler from "#app/ui/pokedex-ui-handler";
 import { FilterTextRow } from "#app/ui/filter-text";
 import { allAbilities } from "#app/data/data-lists";
 import { AbilityId } from "#enums/ability-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import { allSpecies, getPokemonSpecies, type PokemonForm } from "#app/data/pokemon-species";
 import { Button } from "#enums/buttons";
 import { DropDownColumn } from "#enums/drop-down-column";
@@ -106,8 +106,8 @@ describe("UI - Pokedex", () => {
    * Compute a set of pokemon that have a specific ability in allAbilities
    * @param ability - The ability to filter for
    */
-  function getSpeciesWithAbility(ability: AbilityId): Set<Species> {
-    const speciesSet = new Set<Species>();
+  function getSpeciesWithAbility(ability: AbilityId): Set<SpeciesId> {
+    const speciesSet = new Set<SpeciesId>();
     for (const pkmn of allSpecies) {
       if (
         [pkmn.ability1, pkmn.ability2, pkmn.getPassiveAbility(), pkmn.abilityHidden].includes(ability) ||
@@ -127,8 +127,8 @@ describe("UI - Pokedex", () => {
    * Includes all forms of the pokemon
    * @param types - The types to filter for
    */
-  function getSpeciesWithType(...types: PokemonType[]): Set<Species> {
-    const speciesSet = new Set<Species>();
+  function getSpeciesWithType(...types: PokemonType[]): Set<SpeciesId> {
+    const speciesSet = new Set<SpeciesId>();
     const tySet = new Set<PokemonType>(types);
 
     // get the pokemon and its forms
@@ -164,7 +164,7 @@ describe("UI - Pokedex", () => {
    * @param setForms - Whether to also overwrite the abilities for each of the species' forms (defaults to `true`)
    */
   function createAbilityMocks(
-    species: Species,
+    species: SpeciesId,
     {
       ability = AbilityId.NONE,
       ability2 = AbilityId.NONE,
@@ -216,8 +216,8 @@ describe("UI - Pokedex", () => {
 
   it("should filter to show only pokemon with ability and passive when filtering by 2 abilities", async () => {
     // Setup mocks for the ability and passive combinations
-    const whitelist: Species[] = [];
-    const blacklist: Species[] = [];
+    const whitelist: SpeciesId[] = [];
+    const blacklist: SpeciesId[] = [];
 
     const filter_ab1 = AbilityId.OVERGROW;
     const filter_ab2 = AbilityId.ADAPTABILITY;
@@ -235,15 +235,15 @@ describe("UI - Pokedex", () => {
     // Mock pokemon to have the exhaustive combination of the two selected abilities
     const attrs: (keyof typeof baseObj)[] = ["ability", "ability2", "hidden", "passive"];
     for (const [idx, value] of permutations(attrs, 2).entries()) {
-      createAbilityMocks(Species.BULBASAUR + idx, {
+      createAbilityMocks(SpeciesId.BULBASAUR + idx, {
         ...baseObj,
         [value[0]]: filter_ab1,
         [value[1]]: filter_ab2,
       });
       if (value.includes("passive")) {
-        whitelist.push(Species.BULBASAUR + idx);
+        whitelist.push(SpeciesId.BULBASAUR + idx);
       } else {
-        blacklist.push(Species.BULBASAUR + idx);
+        blacklist.push(SpeciesId.BULBASAUR + idx);
       }
     }
 
@@ -318,12 +318,12 @@ describe("UI - Pokedex", () => {
     }
 
     const expectedPokemon = new Set([
-      Species.CHIKORITA,
-      Species.CYNDAQUIL,
-      Species.TORCHIC,
-      Species.TURTWIG,
-      Species.EKANS,
-      Species.MUDKIP,
+      SpeciesId.CHIKORITA,
+      SpeciesId.CYNDAQUIL,
+      SpeciesId.TORCHIC,
+      SpeciesId.TURTWIG,
+      SpeciesId.EKANS,
+      SpeciesId.MUDKIP,
     ]);
     expect(
       // @ts-expect-error - `filteredPokemonData` is private
@@ -345,7 +345,7 @@ describe("UI - Pokedex", () => {
     expect(
       // @ts-expect-error - `filteredPokemonData` is private
       pokedexHandler.filteredPokemonData.every(
-        pokemon => pokedexHandler.getStarterSpeciesId(pokemon.species.speciesId) === Species.MUDKIP,
+        pokemon => pokedexHandler.getStarterSpeciesId(pokemon.species.speciesId) === SpeciesId.MUDKIP,
       ),
     ).toBe(true);
   });
@@ -359,11 +359,11 @@ describe("UI - Pokedex", () => {
 
     // Cycling 4 times to get to the "can unlock" for passive
     const expectedPokemon = new Set([
-      Species.EKANS,
-      Species.CHIKORITA,
-      Species.CYNDAQUIL,
-      Species.TORCHIC,
-      Species.TURTWIG,
+      SpeciesId.EKANS,
+      SpeciesId.CHIKORITA,
+      SpeciesId.CYNDAQUIL,
+      SpeciesId.TORCHIC,
+      SpeciesId.TURTWIG,
     ]);
 
     // cycling twice to get to the "can unlock" for passive
@@ -382,7 +382,7 @@ describe("UI - Pokedex", () => {
     await game.importData("./test/testUtils/saves/data_pokedex_tests.prsv");
     const pokedexHandler = await runToOpenPokedex();
 
-    const expectedPokemon = new Set([Species.TREECKO, Species.CYNDAQUIL, Species.TOTODILE]);
+    const expectedPokemon = new Set([SpeciesId.TREECKO, SpeciesId.CYNDAQUIL, SpeciesId.TOTODILE]);
 
     // @ts-expect-error - `filterBar` is private
     const filter = pokedexHandler.filterBar.getFilter(DropDownColumn.UNLOCKS);
@@ -401,7 +401,7 @@ describe("UI - Pokedex", () => {
     await game.importData("./test/testUtils/saves/data_pokedex_tests.prsv");
     const pokedexHandler = await runToOpenPokedex();
 
-    const expectedPokemon = new Set([Species.CYNDAQUIL, Species.TOTODILE]);
+    const expectedPokemon = new Set([SpeciesId.CYNDAQUIL, SpeciesId.TOTODILE]);
 
     // @ts-expect-error - `filterBar` is private
     const filter = pokedexHandler.filterBar.getFilter(DropDownColumn.UNLOCKS);
@@ -431,7 +431,7 @@ describe("UI - Pokedex", () => {
     expect(
       // @ts-expect-error - `filteredPokemonData` is private
       pokedexHandler.filteredPokemonData.every(
-        pokemon => pokedexHandler.getStarterSpeciesId(pokemon.species.speciesId) === Species.TREECKO,
+        pokemon => pokedexHandler.getStarterSpeciesId(pokemon.species.speciesId) === SpeciesId.TREECKO,
       ),
     ).toBe(true);
   });
@@ -448,7 +448,7 @@ describe("UI - Pokedex", () => {
 
     // Red shiny
     expect(filteredPokemon.length).toBe(1);
-    expect(filteredPokemon[0], "tier 1 shiny").toBe(Species.CATERPIE);
+    expect(filteredPokemon[0], "tier 1 shiny").toBe(SpeciesId.CATERPIE);
 
     // tier 2 shiny
     filter.toggleOptionState(3);
@@ -457,14 +457,14 @@ describe("UI - Pokedex", () => {
     // @ts-expect-error - `filteredPokemonData` is private
     filteredPokemon = pokedexHandler.filteredPokemonData.map(pokemon => pokemon.species.speciesId);
     expect(filteredPokemon.length).toBe(1);
-    expect(filteredPokemon[0], "tier 2 shiny").toBe(Species.RATTATA);
+    expect(filteredPokemon[0], "tier 2 shiny").toBe(SpeciesId.RATTATA);
 
     filter.toggleOptionState(2);
     filter.toggleOptionState(1);
     // @ts-expect-error - `filteredPokemonData` is private
     filteredPokemon = pokedexHandler.filteredPokemonData.map(pokemon => pokemon.species.speciesId);
     expect(filteredPokemon.length).toBe(1);
-    expect(filteredPokemon[0], "tier 3 shiny").toBe(Species.EKANS);
+    expect(filteredPokemon[0], "tier 3 shiny").toBe(SpeciesId.EKANS);
 
     // filter by no shiny
     filter.toggleOptionState(1);
@@ -473,9 +473,9 @@ describe("UI - Pokedex", () => {
     // @ts-expect-error - `filteredPokemonData` is private
     filteredPokemon = pokedexHandler.filteredPokemonData.map(pokemon => pokemon.species.speciesId);
     expect(filteredPokemon.length).toBe(27);
-    expect(filteredPokemon, "not shiny").not.toContain(Species.CATERPIE);
-    expect(filteredPokemon, "not shiny").not.toContain(Species.RATTATA);
-    expect(filteredPokemon, "not shiny").not.toContain(Species.EKANS);
+    expect(filteredPokemon, "not shiny").not.toContain(SpeciesId.CATERPIE);
+    expect(filteredPokemon, "not shiny").not.toContain(SpeciesId.RATTATA);
+    expect(filteredPokemon, "not shiny").not.toContain(SpeciesId.EKANS);
   });
 
   /****************************
@@ -518,10 +518,10 @@ describe("UI - Pokedex", () => {
 
   it("should show caught battle form as caught", async () => {
     await game.importData("./test/testUtils/saves/data_pokedex_tests_v2.prsv");
-    const pageHandler = await runToPokedexPage(getPokemonSpecies(Species.VENUSAUR), { form: 1 });
+    const pageHandler = await runToPokedexPage(getPokemonSpecies(SpeciesId.VENUSAUR), { form: 1 });
 
     // @ts-expect-error - `species` is private
-    expect(pageHandler.species.speciesId).toEqual(Species.VENUSAUR);
+    expect(pageHandler.species.speciesId).toEqual(SpeciesId.VENUSAUR);
 
     // @ts-expect-error - `formIndex` is private
     expect(pageHandler.formIndex).toEqual(1);
@@ -533,10 +533,10 @@ describe("UI - Pokedex", () => {
   //TODO: check tint of the sprite
   it("should show uncaught battle form as seen", async () => {
     await game.importData("./test/testUtils/saves/data_pokedex_tests_v2.prsv");
-    const pageHandler = await runToPokedexPage(getPokemonSpecies(Species.VENUSAUR), { form: 2 });
+    const pageHandler = await runToPokedexPage(getPokemonSpecies(SpeciesId.VENUSAUR), { form: 2 });
 
     // @ts-expect-error - `species` is private
-    expect(pageHandler.species.speciesId).toEqual(Species.VENUSAUR);
+    expect(pageHandler.species.speciesId).toEqual(SpeciesId.VENUSAUR);
 
     // @ts-expect-error - `formIndex` is private
     expect(pageHandler.formIndex).toEqual(2);

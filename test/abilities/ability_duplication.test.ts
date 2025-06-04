@@ -1,7 +1,7 @@
 import { Stat } from "#app/enums/stat";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, it, expect } from "vitest";
@@ -33,7 +33,7 @@ describe("Ability Duplication", () => {
   it("huge power should only be applied once if both normal and passive", async () => {
     game.override.passiveAbility(AbilityId.HUGE_POWER);
 
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
     const [magikarp] = game.scene.getPlayerField();
     const magikarpAttack = magikarp.getEffectiveStat(Stat.ATK);
@@ -46,7 +46,7 @@ describe("Ability Duplication", () => {
   it("huge power should stack with pure power", async () => {
     game.override.passiveAbility(AbilityId.PURE_POWER);
 
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
     const [magikarp] = game.scene.getPlayerField();
     const magikarpAttack = magikarp.getEffectiveStat(Stat.ATK);

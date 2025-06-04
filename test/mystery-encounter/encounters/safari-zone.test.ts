@@ -1,7 +1,7 @@
 import * as MysteryEncounters from "#app/data/mystery-encounters/mystery-encounters";
 import { Biome } from "#enums/biome";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import {
@@ -22,7 +22,7 @@ import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encount
 import { NON_LEGEND_PARADOX_POKEMON } from "#app/data/balance/special-species-groups";
 
 const namespace = "mysteryEncounters/safariZone";
-const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
+const defaultParty = [SpeciesId.LAPRAS, SpeciesId.GENGAR, SpeciesId.ABRA];
 const defaultBiome = Biome.SWAMP;
 const defaultWave = 45;
 

@@ -1,6 +1,6 @@
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -25,7 +25,7 @@ describe("Abilities - Stall", () => {
     game.override
       .battleStyle("single")
       .disableCrits()
-      .enemySpecies(Species.REGIELEKI)
+      .enemySpecies(SpeciesId.REGIELEKI)
       .enemyAbility(AbilityId.STALL)
       .enemyMoveset(MoveId.QUICK_ATTACK)
       .moveset([MoveId.QUICK_ATTACK, MoveId.TACKLE]);
@@ -38,7 +38,7 @@ describe("Abilities - Stall", () => {
    **/
 
   it("Pokemon with Stall should move last in its priority bracket regardless of speed", async () => {
-    await game.classicMode.startBattle([Species.SHUCKLE]);
+    await game.classicMode.startBattle([SpeciesId.SHUCKLE]);
 
     const playerIndex = game.scene.getPlayerPokemon()!.getBattlerIndex();
     const enemyIndex = game.scene.getEnemyPokemon()!.getBattlerIndex();
@@ -56,7 +56,7 @@ describe("Abilities - Stall", () => {
   }, 20000);
 
   it("Pokemon with Stall will go first if a move that is in a higher priority bracket than the opponent's move is used", async () => {
-    await game.classicMode.startBattle([Species.SHUCKLE]);
+    await game.classicMode.startBattle([SpeciesId.SHUCKLE]);
 
     const playerIndex = game.scene.getPlayerPokemon()!.getBattlerIndex();
     const enemyIndex = game.scene.getEnemyPokemon()!.getBattlerIndex();
@@ -75,7 +75,7 @@ describe("Abilities - Stall", () => {
 
   it("If both Pokemon have stall and use the same move, speed is used to determine who goes first.", async () => {
     game.override.ability(AbilityId.STALL);
-    await game.classicMode.startBattle([Species.SHUCKLE]);
+    await game.classicMode.startBattle([SpeciesId.SHUCKLE]);
 
     const playerIndex = game.scene.getPlayerPokemon()!.getBattlerIndex();
     const enemyIndex = game.scene.getEnemyPokemon()!.getBattlerIndex();

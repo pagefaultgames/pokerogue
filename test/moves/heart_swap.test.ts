@@ -1,7 +1,7 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import Phaser from "phaser";
 import GameManager from "#test/testUtils/gameManager";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { MoveId } from "#enums/move-id";
 import { BATTLE_STATS } from "#enums/stat";
@@ -27,14 +27,14 @@ describe("Moves - Heart Swap", () => {
       .battleStyle("single")
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(MoveId.SPLASH)
-      .enemySpecies(Species.INDEEDEE)
+      .enemySpecies(SpeciesId.INDEEDEE)
       .enemyLevel(200)
       .moveset([MoveId.HEART_SWAP])
       .ability(AbilityId.NONE);
   });
 
   it("should swap all of the user's stat stages with the target's", async () => {
-    await game.classicMode.startBattle([Species.MANAPHY]);
+    await game.classicMode.startBattle([SpeciesId.MANAPHY]);
 
     const player = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;

@@ -1,6 +1,6 @@
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import { BattlerIndex } from "#app/battle";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -27,13 +27,13 @@ describe("Moves - Grudge", () => {
       .ability(AbilityId.BALL_FETCH)
       .battleStyle("single")
       .disableCrits()
-      .enemySpecies(Species.SHEDINJA)
+      .enemySpecies(SpeciesId.SHEDINJA)
       .enemyAbility(AbilityId.WONDER_GUARD)
       .enemyMoveset([MoveId.GRUDGE, MoveId.SPLASH]);
   });
 
   it("should reduce the PP of the Pokemon's move to 0 when the user has fainted", async () => {
-    await game.classicMode.startBattle([Species.FEEBAS]);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
     const playerPokemon = game.scene.getPlayerPokemon();
     game.move.select(MoveId.EMBER);
@@ -47,7 +47,7 @@ describe("Moves - Grudge", () => {
   });
 
   it("should remain in effect until the user's next move", async () => {
-    await game.classicMode.startBattle([Species.FEEBAS]);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
     const playerPokemon = game.scene.getPlayerPokemon();
     game.move.select(MoveId.SPLASH);
@@ -71,8 +71,8 @@ describe("Moves - Grudge", () => {
       .moveset([MoveId.FALSE_SWIPE])
       .startingLevel(100)
       .ability(AbilityId.SAND_STREAM)
-      .enemySpecies(Species.RATTATA);
-    await game.classicMode.startBattle([Species.GEODUDE]);
+      .enemySpecies(SpeciesId.RATTATA);
+    await game.classicMode.startBattle([SpeciesId.GEODUDE]);
 
     const enemyPokemon = game.scene.getEnemyPokemon();
     const playerPokemon = game.scene.getPlayerPokemon();

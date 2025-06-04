@@ -3,7 +3,7 @@ import { MoveResult } from "#app/field/pokemon";
 import { toDmgValue } from "#app/utils/common";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -29,13 +29,13 @@ describe("Moves - Revival Blessing", () => {
       .ability(AbilityId.BALL_FETCH)
       .battleStyle("single")
       .disableCrits()
-      .enemySpecies(Species.MAGIKARP)
+      .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(MoveId.SPLASH);
   });
 
   it("should revive a selected fainted Pokemon when used by the player", async () => {
-    await game.classicMode.startBattle([Species.FEEBAS, Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MAGIKARP]);
 
     game.move.select(MoveId.MEMENTO);
     game.doSelectPartyPokemon(1, "SwitchPhase");
@@ -43,7 +43,7 @@ describe("Moves - Revival Blessing", () => {
 
     const player = game.scene.getPlayerPokemon()!;
 
-    expect(player.species.speciesId).toBe(Species.MAGIKARP);
+    expect(player.species.speciesId).toBe(SpeciesId.MAGIKARP);
     game.move.select(MoveId.REVIVAL_BLESSING);
 
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
@@ -59,7 +59,7 @@ describe("Moves - Revival Blessing", () => {
   it("should revive a random fainted enemy when used by an enemy Trainer", async () => {
     game.override.enemyMoveset(MoveId.REVIVAL_BLESSING).startingWave(8);
 
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
     game.move.select(MoveId.SPLASH);
     await game.doKillOpponents();
@@ -76,7 +76,7 @@ describe("Moves - Revival Blessing", () => {
   });
 
   it("should fail when there are no fainted Pokemon to target", async () => {
-    await game.classicMode.startBattle([Species.FEEBAS, Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MAGIKARP]);
 
     game.move.select(MoveId.REVIVAL_BLESSING);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
@@ -92,7 +92,7 @@ describe("Moves - Revival Blessing", () => {
       .enemyMoveset([MoveId.SPLASH, MoveId.FISSURE])
       .enemyAbility(AbilityId.NO_GUARD)
       .enemyLevel(100);
-    await game.classicMode.startBattle([Species.FEEBAS, Species.MILOTIC, Species.GYARADOS]);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MILOTIC, SpeciesId.GYARADOS]);
 
     const feebas = game.scene.getPlayerField()[0];
 
@@ -121,7 +121,7 @@ describe("Moves - Revival Blessing", () => {
       .enemyMoveset([MoveId.REVIVAL_BLESSING])
       .moveset([MoveId.SPLASH])
       .startingWave(25); // 2nd rival battle - must have 3+ pokemon
-    await game.classicMode.startBattle([Species.ARCEUS, Species.GIRATINA]);
+    await game.classicMode.startBattle([SpeciesId.ARCEUS, SpeciesId.GIRATINA]);
 
     const enemyFainting = game.scene.getEnemyField()[0];
 

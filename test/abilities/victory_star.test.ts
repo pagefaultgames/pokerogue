@@ -2,7 +2,7 @@ import { BattlerIndex } from "#app/battle";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -27,13 +27,13 @@ describe("Abilities - Victory Star", () => {
       .moveset([MoveId.TACKLE, MoveId.SPLASH])
       .battleStyle("double")
       .disableCrits()
-      .enemySpecies(Species.MAGIKARP)
+      .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(MoveId.SPLASH);
   });
 
   it("should increase the accuracy of its user", async () => {
-    await game.classicMode.startBattle([Species.VICTINI, Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.VICTINI, SpeciesId.MAGIKARP]);
 
     const user = game.scene.getPlayerField()[0];
 
@@ -46,7 +46,7 @@ describe("Abilities - Victory Star", () => {
   });
 
   it("should increase the accuracy of its user's ally", async () => {
-    await game.classicMode.startBattle([Species.MAGIKARP, Species.VICTINI]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.VICTINI]);
 
     const ally = game.scene.getPlayerField()[0];
     vi.spyOn(ally, "getAccuracyMultiplier");

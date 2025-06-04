@@ -4,7 +4,7 @@ import GameManager from "#test/testUtils/gameManager";
 import { AbilityId } from "#enums/ability-id";
 import { Stat } from "#enums/stat";
 import { MoveId } from "#enums/move-id";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -27,7 +27,7 @@ describe("Abilities - Mycelium Might", () => {
     game.override
       .battleStyle("single")
       .disableCrits()
-      .enemySpecies(Species.SHUCKLE)
+      .enemySpecies(SpeciesId.SHUCKLE)
       .enemyAbility(AbilityId.CLEAR_BODY)
 
       .enemyMoveset(MoveId.QUICK_ATTACK)
@@ -43,7 +43,7 @@ describe("Abilities - Mycelium Might", () => {
    **/
 
   it("will move last in its priority bracket and ignore protective abilities", async () => {
-    await game.classicMode.startBattle([Species.REGIELEKI]);
+    await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
 
     const enemyPokemon = game.scene.getEnemyPokemon();
     const playerIndex = game.scene.getPlayerPokemon()?.getBattlerIndex();
@@ -67,7 +67,7 @@ describe("Abilities - Mycelium Might", () => {
 
   it("will still go first if a status move that is in a higher priority bracket than the opponent's move is used", async () => {
     game.override.enemyMoveset(MoveId.TACKLE);
-    await game.classicMode.startBattle([Species.REGIELEKI]);
+    await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
 
     const enemyPokemon = game.scene.getEnemyPokemon();
     const playerIndex = game.scene.getPlayerPokemon()?.getBattlerIndex();
@@ -89,7 +89,7 @@ describe("Abilities - Mycelium Might", () => {
   }, 20000);
 
   it("will not affect non-status moves", async () => {
-    await game.classicMode.startBattle([Species.REGIELEKI]);
+    await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
 
     const playerIndex = game.scene.getPlayerPokemon()!.getBattlerIndex();
     const enemyIndex = game.scene.getEnemyPokemon()!.getBattlerIndex();
