@@ -1498,7 +1498,7 @@ class SpeciesStatBoosterModifierTypeGenerator extends ModifierTypeGenerator {
         const speciesId = p.getSpeciesForm(true).speciesId;
         const fusionSpeciesId = p.isFusion() ? p.getFusionSpeciesForm(true).speciesId : null;
         // TODO: Use commented boolean when Fling is implemented
-        const hasFling = false; /* p.getMoveset(true).some(m => m.moveId === Moves.FLING) */
+        const hasFling = false; /* p.getMoveset(true).some(m => m.moveId === MoveId.FLING) */
 
         for (const i in values) {
           const checkedSpecies = values[i].species;
@@ -2780,7 +2780,7 @@ const modifierPool: ModifierPool = {
             // Moves that take advantage of being able to give the target a status orb
             // TODO: Take moves (Trick, Fling, Switcheroo) from comment when they are implemented
             const hasItemMoves = [
-              /* Moves.TRICK, Moves.FLING, Moves.SWITCHEROO */
+              /* MoveId.TRICK, MoveId.FLING, MoveId.SWITCHEROO */
             ].some(m => moveset.includes(m));
 
             if (canSetStatus) {
@@ -2826,7 +2826,7 @@ const modifierPool: ModifierPool = {
             // Moves that take advantage of being able to give the target a status orb
             // TODO: Take moves (Trick, Fling, Switcheroo) from comment when they are implemented
             const hasItemMoves = [
-              /* Moves.TRICK, Moves.FLING, Moves.SWITCHEROO */
+              /* MoveId.TRICK, MoveId.FLING, MoveId.SWITCHEROO */
             ].some(m => moveset.includes(m));
 
             if (canSetStatus) {

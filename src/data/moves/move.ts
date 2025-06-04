@@ -1,31 +1,31 @@
 import { ChargeAnim, MoveChargeAnim } from "../battle-anims";
 import {
-    CommandedTag,
-    EncoreTag,
-    GulpMissileTag,
-    HelpingHandTag,
-    SemiInvulnerableTag,
-    ShellTrapTag,
-    StockpilingTag,
-    SubstituteTag,
-    TrappedTag,
-    TypeBoostTag,
+  CommandedTag,
+  EncoreTag,
+  GulpMissileTag,
+  HelpingHandTag,
+  SemiInvulnerableTag,
+  ShellTrapTag,
+  StockpilingTag,
+  SubstituteTag,
+  TrappedTag,
+  TypeBoostTag,
 } from "../battler-tags";
 import { getPokemonNameWithAffix } from "../../messages";
 import type { AttackMoveResult, TurnMove } from "../../field/pokemon";
 import type Pokemon from "../../field/pokemon";
 import {
-    EnemyPokemon,
-    FieldPosition,
-    HitResult,
-    MoveResult,
-    PlayerPokemon,
-    PokemonMove,
+  EnemyPokemon,
+  FieldPosition,
+  HitResult,
+  MoveResult,
+  PlayerPokemon,
+  PokemonMove,
 } from "../../field/pokemon";
 import {
-    getNonVolatileStatusEffects,
-    getStatusEffectHealText,
-    isNonVolatileStatusEffect,
+  getNonVolatileStatusEffects,
+  getStatusEffectHealText,
+  isNonVolatileStatusEffect,
 } from "../status-effect";
 import { getTypeDamageMultiplier } from "../type";
 import { PokemonType } from "#enums/pokemon-type";
@@ -34,46 +34,46 @@ import { WeatherType } from "#enums/weather-type";
 import type { ArenaTrapTag } from "../arena-tag";
 import { ArenaTagSide, WeakenMoveTypeTag } from "../arena-tag";
 import {
-    AllyMoveCategoryPowerBoostAbAttr,
-    applyAbAttrs,
-    applyPostAttackAbAttrs,
-    applyPostItemLostAbAttrs,
-    applyPreAttackAbAttrs,
-    applyPreDefendAbAttrs,
-    BlockItemTheftAbAttr,
-    BlockNonDirectDamageAbAttr,
-    BlockOneHitKOAbAttr,
-    BlockRecoilDamageAttr,
-    ChangeMovePriorityAbAttr,
-    ConfusionOnStatusEffectAbAttr,
-    FieldMoveTypePowerBoostAbAttr,
-    FieldPreventExplosiveMovesAbAttr,
-    ForceSwitchOutImmunityAbAttr,
-    HealFromBerryUseAbAttr,
-    IgnoreContactAbAttr,
-    IgnoreMoveEffectsAbAttr,
-    IgnoreProtectOnContactAbAttr,
-    InfiltratorAbAttr,
-    MaxMultiHitAbAttr,
-    MoveAbilityBypassAbAttr,
-    MoveEffectChanceMultiplierAbAttr,
-    MoveTypeChangeAbAttr,
-    PostDamageForceSwitchAbAttr,
-    PostItemLostAbAttr,
-    ReflectStatusMoveAbAttr,
-    ReverseDrainAbAttr,
-    UserFieldMoveTypePowerBoostAbAttr,
-    VariableMovePowerAbAttr,
-    WonderSkinAbAttr,
+  AllyMoveCategoryPowerBoostAbAttr,
+  applyAbAttrs,
+  applyPostAttackAbAttrs,
+  applyPostItemLostAbAttrs,
+  applyPreAttackAbAttrs,
+  applyPreDefendAbAttrs,
+  BlockItemTheftAbAttr,
+  BlockNonDirectDamageAbAttr,
+  BlockOneHitKOAbAttr,
+  BlockRecoilDamageAttr,
+  ChangeMovePriorityAbAttr,
+  ConfusionOnStatusEffectAbAttr,
+  FieldMoveTypePowerBoostAbAttr,
+  FieldPreventExplosiveMovesAbAttr,
+  ForceSwitchOutImmunityAbAttr,
+  HealFromBerryUseAbAttr,
+  IgnoreContactAbAttr,
+  IgnoreMoveEffectsAbAttr,
+  IgnoreProtectOnContactAbAttr,
+  InfiltratorAbAttr,
+  MaxMultiHitAbAttr,
+  MoveAbilityBypassAbAttr,
+  MoveEffectChanceMultiplierAbAttr,
+  MoveTypeChangeAbAttr,
+  PostDamageForceSwitchAbAttr,
+  PostItemLostAbAttr,
+  ReflectStatusMoveAbAttr,
+  ReverseDrainAbAttr,
+  UserFieldMoveTypePowerBoostAbAttr,
+  VariableMovePowerAbAttr,
+  WonderSkinAbAttr,
 } from "../abilities/ability";
 import { allAbilities, allMoves } from "../data-lists";
 import {
-    AttackTypeBoosterModifier,
-    BerryModifier,
-    PokemonHeldItemModifier,
-    PokemonMoveAccuracyBoosterModifier,
-    PokemonMultiHitModifier,
-    PreserveBerryModifier,
+  AttackTypeBoosterModifier,
+  BerryModifier,
+  PokemonHeldItemModifier,
+  PokemonMoveAccuracyBoosterModifier,
+  PokemonMultiHitModifier,
+  PreserveBerryModifier,
 } from "../../modifier/modifier";
 import type { BattlerIndex } from "../../battle";
 import { BattleType } from "#enums/battle-type";
@@ -91,11 +91,11 @@ import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { MoveUsedEvent } from "#app/events/battle-scene";
 import {
-    BATTLE_STATS,
-    type BattleStat,
-    type EffectiveStat,
-    getStatKey,
-    Stat,
+  BATTLE_STATS,
+  type BattleStat,
+  type EffectiveStat,
+  getStatKey,
+  Stat,
 } from "#app/enums/stat";
 import { BattleEndPhase } from "#app/phases/battle-end-phase";
 import { MoveEndPhase } from "#app/phases/move-end-phase";
@@ -10920,103 +10920,103 @@ export function initMoves() {
       .attr(StatStageChangeAttr, [ Stat.SPATK, Stat.SPDEF ], 1, true)
       .attr(HealStatusEffectAttr, true, [ StatusEffect.PARALYSIS, StatusEffect.POISON, StatusEffect.TOXIC, StatusEffect.BURN, StatusEffect.SLEEP ]),
     /* Unused
-    new AttackMove(Moves.G_MAX_WILDFIRE, PokemonType.Fire, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
+    new AttackMove(MoveId.G_MAX_WILDFIRE, PokemonType.Fire, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .unimplemented(),
-    new AttackMove(Moves.G_MAX_BEFUDDLE, Type.BUG, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
+    new AttackMove(MoveId.G_MAX_BEFUDDLE, Type.BUG, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .unimplemented(),
-    new AttackMove(Moves.G_MAX_VOLT_CRASH, Type.ELECTRIC, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
+    new AttackMove(MoveId.G_MAX_VOLT_CRASH, Type.ELECTRIC, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .unimplemented(),
-    new AttackMove(Moves.G_MAX_GOLD_RUSH, Type.NORMAL, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
+    new AttackMove(MoveId.G_MAX_GOLD_RUSH, Type.NORMAL, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .unimplemented(),
-    new AttackMove(Moves.G_MAX_CHI_STRIKE, Type.FIGHTING, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
+    new AttackMove(MoveId.G_MAX_CHI_STRIKE, Type.FIGHTING, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .unimplemented(),
-    new AttackMove(Moves.G_MAX_TERROR, Type.GHOST, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
+    new AttackMove(MoveId.G_MAX_TERROR, Type.GHOST, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .unimplemented(),
-    new AttackMove(Moves.G_MAX_RESONANCE, Type.ICE, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
+    new AttackMove(MoveId.G_MAX_RESONANCE, Type.ICE, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .unimplemented(),
-    new AttackMove(Moves.G_MAX_CUDDLE, Type.NORMAL, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
+    new AttackMove(MoveId.G_MAX_CUDDLE, Type.NORMAL, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .unimplemented(),
-    new AttackMove(Moves.G_MAX_REPLENISH, Type.NORMAL, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
+    new AttackMove(MoveId.G_MAX_REPLENISH, Type.NORMAL, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .unimplemented(),
-    new AttackMove(Moves.G_MAX_MALODOR, Type.POISON, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
+    new AttackMove(MoveId.G_MAX_MALODOR, Type.POISON, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .unimplemented(),
-    new AttackMove(Moves.G_MAX_STONESURGE, Type.WATER, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
+    new AttackMove(MoveId.G_MAX_STONESURGE, Type.WATER, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .unimplemented(),
-    new AttackMove(Moves.G_MAX_WIND_RAGE, Type.FLYING, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
+    new AttackMove(MoveId.G_MAX_WIND_RAGE, Type.FLYING, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .unimplemented(),
-    new AttackMove(Moves.G_MAX_STUN_SHOCK, Type.ELECTRIC, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
+    new AttackMove(MoveId.G_MAX_STUN_SHOCK, Type.ELECTRIC, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .unimplemented(),
-    new AttackMove(Moves.G_MAX_FINALE, Type.FAIRY, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
+    new AttackMove(MoveId.G_MAX_FINALE, Type.FAIRY, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .unimplemented(),
-    new AttackMove(Moves.G_MAX_DEPLETION, Type.DRAGON, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
+    new AttackMove(MoveId.G_MAX_DEPLETION, Type.DRAGON, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .unimplemented(),
-    new AttackMove(Moves.G_MAX_GRAVITAS, Type.PSYCHIC, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
+    new AttackMove(MoveId.G_MAX_GRAVITAS, Type.PSYCHIC, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .unimplemented(),
-    new AttackMove(Moves.G_MAX_VOLCALITH, Type.ROCK, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
+    new AttackMove(MoveId.G_MAX_VOLCALITH, Type.ROCK, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .unimplemented(),
-    new AttackMove(Moves.G_MAX_SANDBLAST, Type.GROUND, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
+    new AttackMove(MoveId.G_MAX_SANDBLAST, Type.GROUND, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .unimplemented(),
-    new AttackMove(Moves.G_MAX_SNOOZE, Type.DARK, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
+    new AttackMove(MoveId.G_MAX_SNOOZE, Type.DARK, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .unimplemented(),
-    new AttackMove(Moves.G_MAX_TARTNESS, Type.GRASS, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
+    new AttackMove(MoveId.G_MAX_TARTNESS, Type.GRASS, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .unimplemented(),
-    new AttackMove(Moves.G_MAX_SWEETNESS, Type.GRASS, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
+    new AttackMove(MoveId.G_MAX_SWEETNESS, Type.GRASS, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .unimplemented(),
-    new AttackMove(Moves.G_MAX_SMITE, Type.FAIRY, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
+    new AttackMove(MoveId.G_MAX_SMITE, Type.FAIRY, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .unimplemented(),
-    new AttackMove(Moves.G_MAX_STEELSURGE, Type.STEEL, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
+    new AttackMove(MoveId.G_MAX_STEELSURGE, Type.STEEL, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .unimplemented(),
-    new AttackMove(Moves.G_MAX_MELTDOWN, Type.STEEL, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
+    new AttackMove(MoveId.G_MAX_MELTDOWN, Type.STEEL, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .unimplemented(),
-    new AttackMove(Moves.G_MAX_FOAM_BURST, Type.WATER, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
+    new AttackMove(MoveId.G_MAX_FOAM_BURST, Type.WATER, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .unimplemented(),
-    new AttackMove(Moves.G_MAX_CENTIFERNO, PokemonType.Fire, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
+    new AttackMove(MoveId.G_MAX_CENTIFERNO, PokemonType.Fire, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .unimplemented(),
-    new AttackMove(Moves.G_MAX_VINE_LASH, Type.GRASS, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
+    new AttackMove(MoveId.G_MAX_VINE_LASH, Type.GRASS, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .unimplemented(),
-    new AttackMove(Moves.G_MAX_CANNONADE, Type.WATER, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
+    new AttackMove(MoveId.G_MAX_CANNONADE, Type.WATER, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .unimplemented(),
-    new AttackMove(Moves.G_MAX_DRUM_SOLO, Type.GRASS, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
+    new AttackMove(MoveId.G_MAX_DRUM_SOLO, Type.GRASS, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .unimplemented(),
-    new AttackMove(Moves.G_MAX_FIREBALL, PokemonType.Fire, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
+    new AttackMove(MoveId.G_MAX_FIREBALL, PokemonType.Fire, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .unimplemented(),
-    new AttackMove(Moves.G_MAX_HYDROSNIPE, Type.WATER, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
+    new AttackMove(MoveId.G_MAX_HYDROSNIPE, Type.WATER, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .unimplemented(),
-    new AttackMove(Moves.G_MAX_ONE_BLOW, Type.DARK, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
+    new AttackMove(MoveId.G_MAX_ONE_BLOW, Type.DARK, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .unimplemented(),
-    new AttackMove(Moves.G_MAX_RAPID_FLOW, Type.WATER, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
+    new AttackMove(MoveId.G_MAX_RAPID_FLOW, Type.WATER, MoveCategory.PHYSICAL, 10, -1, 10, -1, 0, 8)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       .unimplemented(),
     End Unused */

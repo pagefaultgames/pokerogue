@@ -294,7 +294,7 @@ export class MovePhase extends BattlePhase {
   protected lapsePreMoveAndMoveTags(): void {
     this.pokemon.lapseTags(BattlerTagLapseType.PRE_MOVE);
 
-    // TODO: does this intentionally happen before the no targets/Moves.NONE on queue cancellation case is checked?
+    // TODO: does this intentionally happen before the no targets/MoveId.NONE on queue cancellation case is checked?
     if (!this.followUp && this.canMove() && !this.cancelled) {
       this.pokemon.lapseTags(BattlerTagLapseType.MOVE);
     }

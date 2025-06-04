@@ -2117,8 +2117,8 @@ export class TypeImmuneTag extends BattlerTag {
 
 /**
  * Battler Tag that lifts the affected Pokemon into the air and provides immunity to Ground type moves.
- * @see {@link https://bulbapedia.bulbagarden.net/wiki/Magnet_Rise_(move) | Moves.MAGNET_RISE}
- * @see {@link https://bulbapedia.bulbagarden.net/wiki/Telekinesis_(move) | Moves.TELEKINESIS}
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Magnet_Rise_(move) | MoveId.MAGNET_RISE}
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Telekinesis_(move) | MoveId.TELEKINESIS}
  */
 export class FloatingTag extends TypeImmuneTag {
   constructor(tagType: BattlerTagType, sourceMove: MoveId, turnCount: number) {
@@ -3306,7 +3306,7 @@ export class SyrupBombTag extends BattlerTag {
  * Telekinesis raises the target into the air for three turns and causes all moves used against the target (aside from OHKO moves) to hit the target unless the target is in a semi-invulnerable state from Fly/Dig.
  * The first effect is provided by {@linkcode FloatingTag}, the accuracy-bypass effect is provided by TelekinesisTag
  * The effects of Telekinesis can be baton passed to a teammate.
- * @see {@link https://bulbapedia.bulbagarden.net/wiki/Telekinesis_(move) | Moves.TELEKINESIS}
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Telekinesis_(move) | MoveId.TELEKINESIS}
  */
 export class TelekinesisTag extends BattlerTag {
   constructor(sourceMove: MoveId) {

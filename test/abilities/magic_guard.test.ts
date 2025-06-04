@@ -303,7 +303,7 @@ describe("Abilities - Magic Guard", () => {
   it("Magic Guard does not prevent self-damage from confusion", async () => {
     await game.classicMode.startBattle([Species.MAGIKARP]);
 
-    game.move.select(Moves.CHARM);
+    game.move.select(MoveId.CHARM);
 
     await game.phaseInterceptor.to(TurnEndPhase);
   });
