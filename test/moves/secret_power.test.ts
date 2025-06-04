@@ -47,7 +47,7 @@ describe("Moves - Secret Power", () => {
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-    // No Terrain + Biome.VOLCANO --> Burn
+    // No Terrain + BiomeId.VOLCANO --> Burn
     game.move.select(MoveId.SECRET_POWER);
     await game.move.selectEnemyMove(MoveId.SPLASH);
     await game.phaseInterceptor.to("TurnEndPhase");
