@@ -24,6 +24,8 @@ import { StatusEffect } from "#enums/status-effect";
 import i18next from "i18next";
 import { globalScene } from "#app/global-scene";
 import { Gender } from "#app/data/gender";
+import { BooleanHolder } from "#app/utils/common";
+import { ChallengeType, applyChallenges } from "#app/data/challenge";
 
 export class AttemptCapturePhase extends PokemonPhase {
   public readonly phaseName = "AttemptCapturePhase";
@@ -285,6 +287,17 @@ export class AttemptCapturePhase extends PokemonPhase {
           });
         };
         Promise.all([pokemon.hideInfo(), globalScene.gameData.setPokemonCaught(pokemon)]).then(() => {
+          const challengeCanAddToParty = new BooleanHolder(true);
+          applyChallenges(
+            ChallengeType.ADD_POKEMON_TO_PARTY,
+            globalScene.currentBattle.waveIndex,
+            challengeCanAddToParty,
+          );
+          if (!challengeCanAddToParty.value) {
+            removePokemon();
+            end();
+            return;
+          }
           if (globalScene.getPlayerParty().length === PLAYER_PARTY_MAX_SIZE) {
             const promptRelease = () => {
               globalScene.ui.showText(

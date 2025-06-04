@@ -16,6 +16,8 @@ import i18next from "i18next";
 import { ShopCursorTarget } from "#app/enums/shop-cursor-target";
 import Phaser from "phaser";
 import type { PokeballType } from "#enums/pokeball";
+import { applyChallenges, ChallengeType } from "#app/data/challenge";
+import { BooleanHolder } from "#app/utils/common";
 
 export const SHOP_OPTIONS_ROW_LIMIT = 7;
 const SINGLE_SHOP_ROW_YOFFSET = 12;
@@ -211,9 +213,16 @@ export default class ModifierSelectUiHandler extends AwaitableUiHandler {
     const removeHealShop = globalScene.gameMode.hasNoShop;
     const baseShopCost = new NumberHolder(globalScene.getWaveMoneyAmount(1));
     globalScene.applyModifier(HealShopCostModifier, true, baseShopCost);
-    const shopTypeOptions = !removeHealShop
-      ? getPlayerShopModifierTypeOptionsForWave(globalScene.currentBattle.waveIndex, baseShopCost.value)
-      : [];
+    const shopTypeOptions = removeHealShop
+      ? []
+      : getPlayerShopModifierTypeOptionsForWave(globalScene.currentBattle.waveIndex, baseShopCost.value).filter(
+          shopItem => {
+            const isValidForChallenge = new BooleanHolder(true);
+            applyChallenges(ChallengeType.SHOP_ITEM_BLACKLIST, shopItem, isValidForChallenge);
+            return isValidForChallenge.value;
+          },
+        );
+
     const optionsYOffset =
       shopTypeOptions.length > SHOP_OPTIONS_ROW_LIMIT ? -SINGLE_SHOP_ROW_YOFFSET : -DOUBLE_SHOP_ROW_YOFFSET;
 
