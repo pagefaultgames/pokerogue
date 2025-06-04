@@ -311,7 +311,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * TODO: Stop treating this like a unique ID and stop treating 0 as no pokemon
    */
   public id: number;
-  public pid: number;
   public name: string;
   public nickname: string;
   public species: PokemonSpecies;
@@ -5133,6 +5132,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
     });
 
+    globalScene.queueMessage(
+      i18next.t("battleInfo:newKey2", {
+        // arguments for the locale key go here;
+        pokemonNameWithAffix: getPokemonNameWithAffix(this),
+      }),
+    );
+
     for (let f = 0; f < 2; f++) {
       const variantColors = variantColorCache[!f ? spriteKey : backSpriteKey];
       const variantColorSet = new Map<number, number[]>();
@@ -6702,7 +6708,6 @@ export class EnemyPokemon extends Pokemon {
 
     return ret;
   }
-
 
   /**
    * Show or hide the type effectiveness multiplier window

@@ -19,7 +19,12 @@ import {
   type Constructor,
 } from "#app/utils/common";
 import { deepMergeSpriteData } from "#app/utils/data";
-import type { Modifier, ModifierPredicate, TurnHeldItemTransferModifier } from "./modifier/modifier";
+import type {
+  Modifier,
+  ModifierIdentityPredicate,
+  ModifierPredicate,
+  TurnHeldItemTransferModifier,
+} from "./modifier/modifier";
 import {
   ConsumableModifier,
   ConsumablePokemonModifier,
@@ -3074,7 +3079,7 @@ export default class BattleScene extends SceneBase {
 
     // Check for effects that might block us from stealing
     const cancelled = new BooleanHolder(false);
-    if (source && source.isPlayer() !== target.isPlayer()) {
+    if (source.isPlayer() !== target.isPlayer()) {
       applyAbAttrs(BlockItemTheftAbAttr, source, cancelled);
     }
     if (cancelled.value) {
@@ -3083,9 +3088,10 @@ export default class BattleScene extends SceneBase {
 
     // check if we have an item already and calc how much to transfer
     const matchingModifier = this.findModifier(
-      m => m instanceof PokemonHeldItemModifier && m.matchType(itemModifier) && m.pokemonId === target.id,
+      (m): m is PokemonHeldItemModifier =>
+        m instanceof PokemonHeldItemModifier && m.matchType(itemModifier) && m.pokemonId === target.id,
       target.isPlayer(),
-    ) as PokemonHeldItemModifier | undefined;
+    );
     const countTaken = Math.min(
       transferQuantity,
       itemModifier.stackCount,
@@ -3131,7 +3137,7 @@ export default class BattleScene extends SceneBase {
 
   canTransferHeldItemModifier(itemModifier: PokemonHeldItemModifier, target: Pokemon, transferQuantity = 1): boolean {
     const source = itemModifier.getPokemon();
-    if (!source) {
+    if (isNullOrUndefined(source)) {
       console.error(
         `Pokemon ${target.getNameToRender()} tried to transfer %d items from nonexistent source; item: `,
         transferQuantity,
@@ -3140,27 +3146,33 @@ export default class BattleScene extends SceneBase {
       return false;
     }
 
-    // Check theft prevention
-    // TODO: Verify whether sticky hold procs on friendly fire ally theft
-    const cancelled = new BooleanHolder(false);
-    if (source.isPlayer() !== target.isPlayer()) {
-      applyAbAttrs(BlockItemTheftAbAttr, source, cancelled);
-    }
-    if (cancelled.value) {
+    // If we somehow lack the item being transferred, skip
+    if (!this.hasModifier(itemModifier, !source.isPlayer())) {
       return false;
     }
 
-    // figure out if we can take anything
+    // Check enemy theft prevention
+    // TODO: Verify whether sticky hold procs on friendly fire ally theft
+    if (source.isPlayer() !== target.isPlayer()) {
+      const cancelled = new BooleanHolder(false);
+      applyAbAttrs(BlockItemTheftAbAttr, source, cancelled);
+      if (cancelled.value) {
+        return false;
+      }
+    }
+
+    // Finally, ensure we can actually steal at least 1 item
     const matchingModifier = this.findModifier(
-      m => m instanceof PokemonHeldItemModifier && m.matchType(itemModifier) && m.pokemonId === target.id,
+      (m): m is PokemonHeldItemModifier =>
+        m instanceof PokemonHeldItemModifier && m.matchType(itemModifier) && m.pokemonId === target.id,
       target.isPlayer(),
-    ) as PokemonHeldItemModifier | undefined;
+    );
     const countTaken = Math.min(
       transferQuantity,
       itemModifier.stackCount,
       matchingModifier?.getCountUnderMax() ?? Number.MAX_SAFE_INTEGER,
     );
-    return countTaken > 0 && this.hasModifier(itemModifier, !source.isPlayer());
+    return countTaken > 0;
   }
 
   removePartyMemberModifiers(partyMemberIndex: number): Promise<void> {
@@ -3399,6 +3411,11 @@ export default class BattleScene extends SceneBase {
     return (isPlayer ? this.modifiers : this.enemyModifiers).filter(modifierFilter);
   }
 
+  findModifier<T extends PersistentModifier>(
+    modifierFilter: ModifierIdentityPredicate<T>,
+    player?: boolean,
+  ): T | undefined;
+  findModifier(modifierFilter: ModifierPredicate, player?: boolean): PersistentModifier | undefined;
   /**
    * Find the first modifier that pass the `modifierFilter` function
    * @param modifierFilter The function used to filter a target's modifiers
