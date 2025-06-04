@@ -64,7 +64,7 @@ describe("Abilities - Sturdy", () => {
     expect(enemyPokemon.isFullHp()).toBe(true);
   });
 
-  test("Sturdy is ignored by pokemon with `Abilities.MOLD_BREAKER`", async () => {
+  test("Sturdy is ignored by pokemon with `AbilityId.MOLD_BREAKER`", async () => {
     game.override.ability(AbilityId.MOLD_BREAKER);
 
     await game.classicMode.startBattle();

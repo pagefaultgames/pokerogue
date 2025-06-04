@@ -173,7 +173,7 @@ describe("Abilities - Magic Bounce", () => {
   it("should not cause encore to be interrupted after bouncing", async () => {
     game.override.moveset([MoveId.SPLASH, MoveId.GROWL, MoveId.ENCORE]);
     game.override.enemyMoveset([MoveId.TACKLE, MoveId.GROWL]);
-    // game.override.ability(Abilities.MOLD_BREAKER);
+    // game.override.ability(AbilityId.MOLD_BREAKER);
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
     const playerPokemon = game.scene.getPlayerPokemon()!;
     const enemyPokemon = game.scene.getEnemyPokemon()!;

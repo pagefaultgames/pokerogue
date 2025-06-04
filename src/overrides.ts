@@ -38,8 +38,8 @@ import { WeatherType } from "#enums/weather-type";
  * @example
  * ```
  * const overrides = {
- *   ABILITY_OVERRIDE: Abilities.PROTEAN,
- *   PASSIVE_ABILITY_OVERRIDE: Abilities.PIXILATE,
+ *   ABILITY_OVERRIDE: AbilityId.PROTEAN,
+ *   PASSIVE_ABILITY_OVERRIDE: AbilityId.PIXILATE,
  * }
  * ```
  */

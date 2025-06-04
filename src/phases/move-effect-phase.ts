@@ -609,7 +609,7 @@ export class MoveEffectPhase extends PokemonPhase {
    * @returns `true` if the move should bypass accuracy and semi-invulnerability
    *
    * Accuracy and semi-invulnerability can be bypassed by:
-   * - An ability like {@linkcode Abilities.NO_GUARD | No Guard}
+   * - An ability like {@linkcode AbilityId.NO_GUARD | No Guard}
    * - A poison type using {@linkcode MoveId.TOXIC | Toxic}
    * - A move like {@linkcode MoveId.LOCK_ON | Lock-On} or {@linkcode MoveId.MIND_READER | Mind Reader}.
    * - A field-targeted move like spikes

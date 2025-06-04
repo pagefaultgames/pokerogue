@@ -6991,7 +6991,7 @@ export function initAbilities() {
       .attr(HealFromBerryUseAbAttr, 1 / 3),
     new Ability(AbilityId.PROTEAN, 6)
       .attr(PokemonTypeChangeAbAttr),
-    //.condition((p) => !p.summonData.abilitiesApplied.includes(Abilities.PROTEAN)), //Gen 9 Implementation
+    //.condition((p) => !p.summonData.abilitiesApplied.includes(AbilityId.PROTEAN)), //Gen 9 Implementation
     new Ability(AbilityId.FUR_COAT, 6)
       .attr(ReceivedMoveDamageMultiplierAbAttr, (target, user, move) => move.category === MoveCategory.PHYSICAL, 0.5)
       .ignorable(),
@@ -7237,7 +7237,7 @@ export function initAbilities() {
       .attr(PostSummonStatStageChangeAbAttr, [ Stat.DEF ], 1, true),
     new Ability(AbilityId.LIBERO, 8)
       .attr(PokemonTypeChangeAbAttr),
-    //.condition((p) => !p.summonData.abilitiesApplied.includes(Abilities.LIBERO)), //Gen 9 Implementation
+    //.condition((p) => !p.summonData.abilitiesApplied.includes(AbilityId.LIBERO)), //Gen 9 Implementation
     new Ability(AbilityId.BALL_FETCH, 8)
       .attr(FetchBallAbAttr)
       .condition(getOncePerBattleCondition(AbilityId.BALL_FETCH)),
