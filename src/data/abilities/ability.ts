@@ -4834,7 +4834,7 @@ export class PostFaintContactDamageAbAttr extends PostFaintAbAttr {
  */
 export class PostFaintHPDamageAbAttr extends PostFaintAbAttr {
   override applyPostFaint(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker?: Pokemon, move?: Move, hitResult?: HitResult, ...args: any[]): void {
-    // return early if the user didn't die to indirect damage, has magic guard or was KO'd by an ally
+    // return early if the user died to indirect damage, target has magic guard or was KO'd by an ally
     if (
       move === undefined
       || attacker === undefined
