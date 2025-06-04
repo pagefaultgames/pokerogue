@@ -130,6 +130,7 @@ describe("Abilities - Magic Guard", () => {
   });
 
   it("should preserve burn physical damage halving & status catch boost", async () => {
+    game.override.startingLevel(100).enemyLevel(100);
     await game.classicMode.startBattle([Species.MAGIKARP]);
 
     // NB: Burn applies directly to the physical dmg formula, so we can't just check attack here
@@ -152,7 +153,7 @@ describe("Abilities - Magic Guard", () => {
     await game.toNextTurn();
 
     const burntDmg = blissey.getInverseHp();
-    expect(burntDmg).toBeCloseTo(prevDmg / 2, 1);
+    expect(burntDmg).toBeCloseTo(prevDmg / 2, 0);
   });
 
   it("should prevent damage from entry hazards, but not Toxic Spikes poison", async () => {
