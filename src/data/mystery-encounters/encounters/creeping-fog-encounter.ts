@@ -48,7 +48,7 @@ import FogOverlay from "#app/ui/fog-overlay";
 const namespace = "mysteryEncounters/creepingFog";
 
 /**
- * Creeping Fog encounter.
+ * Creeping Fog Mystery Encounter.
  * @see {@link https://github.com/pagefaultgames/pokerogue/issues/4418 | GitHub Issue #4418}
  * @see For biome requirements check {@linkcode mysteryEncountersByBiome}
  **/
