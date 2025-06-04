@@ -4616,11 +4616,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Display an immunity message for a failed status application.
    * @param quiet - Whether to suppress message and return early
-   * @param reason - The reason for the terrain blockage -
+   * @param reason - The reason for the status application failure -
    * can be "overlap" (already has same status), "other" (generic fail message)
    * or a {@linkcode TerrainType} for terrain-based blockages.
+   * Defaults to "other".
    */
-  private queueImmuneMessage(quiet: boolean, reason: "overlap" | "other" | TerrainType = "other"): void {
+  private queueStatusImmuneMessage(quiet: boolean, reason: "overlap" | "other" | TerrainType = "other"): void {
     if (quiet) {
       return;
     }
@@ -4661,11 +4662,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   ): boolean {
     if (effect !== StatusEffect.FAINT) {
       if (overrideStatus ? this.status?.effect === effect : this.status) {
-        this.queueImmuneMessage(quiet, overrideStatus ? "overlap" : "other"); // having different status displays generic fail message
+        this.queueStatusImmuneMessage(quiet, overrideStatus ? "overlap" : "other"); // having different status displays generic fail message
         return false;
       }
       if (this.isGrounded() && !ignoreField && globalScene.arena.terrain?.terrainType === TerrainType.MISTY) {
-        this.queueImmuneMessage(quiet, TerrainType.MISTY);
+        this.queueStatusImmuneMessage(quiet, TerrainType.MISTY);
         return false;
       }
     }
@@ -4696,7 +4697,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
         if (this.isOfType(PokemonType.POISON) || this.isOfType(PokemonType.STEEL)) {
           if (poisonImmunity.includes(true)) {
-            this.queueImmuneMessage(quiet);
+            this.queueStatusImmuneMessage(quiet);
             return false;
           }
         }
@@ -4704,13 +4705,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
       case StatusEffect.PARALYSIS:
         if (this.isOfType(PokemonType.ELECTRIC)) {
-          this.queueImmuneMessage(quiet);
+          this.queueStatusImmuneMessage(quiet);
           return false;
         }
         break;
       case StatusEffect.SLEEP:
         if (this.isGrounded() && globalScene.arena.terrain?.terrainType === TerrainType.ELECTRIC) {
-          this.queueImmuneMessage(quiet, TerrainType.ELECTRIC);
+          this.queueStatusImmuneMessage(quiet, TerrainType.ELECTRIC);
           return false;
         }
         break;
@@ -4721,13 +4722,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             globalScene?.arena?.weather?.weatherType &&
             [WeatherType.SUNNY, WeatherType.HARSH_SUN].includes(globalScene.arena.weather.weatherType))
         ) {
-          this.queueImmuneMessage(quiet);
+          this.queueStatusImmuneMessage(quiet);
           return false;
         }
         break;
       case StatusEffect.BURN:
         if (this.isOfType(PokemonType.FIRE)) {
-          this.queueImmuneMessage(quiet);
+          this.queueStatusImmuneMessage(quiet);
           return false;
         }
         break;
