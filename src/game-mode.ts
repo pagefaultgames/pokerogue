@@ -8,7 +8,7 @@ import { allSpecies } from "./data/pokemon-species";
 import type { Arena } from "./field/arena";
 import Overrides from "#app/overrides";
 import { isNullOrUndefined, randSeedInt, randSeedItem } from "#app/utils/common";
-import { BiomeId } from "#enums/biome";
+import { BiomeId } from "#enums/biome-id";
 import { SpeciesId } from "#enums/species-id";
 import { Challenges } from "./enums/challenges";
 import { globalScene } from "#app/global-scene";

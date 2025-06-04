@@ -41,7 +41,7 @@ import { allAbilities } from "#app/data/data-lists";
 import { allMoves } from "#app/data/data-lists";
 import { speciesTmMoves } from "#app/data/balance/tms";
 import { pokemonStarters } from "#app/data/balance/pokemon-evolutions";
-import { BiomeId } from "#enums/biome";
+import { BiomeId } from "#enums/biome-id";
 import { globalScene } from "#app/global-scene";
 
 interface LanguageSetting {

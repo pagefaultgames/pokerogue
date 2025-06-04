@@ -31,7 +31,7 @@ import type Pokemon from "#app/field/pokemon";
 import Overrides from "#app/overrides";
 import { TagAddedEvent, TagRemovedEvent, TerrainChangedEvent, WeatherChangedEvent } from "#app/events/arena";
 import type { ArenaTagType } from "#enums/arena-tag-type";
-import { BiomeId } from "#enums/biome";
+import { BiomeId } from "#enums/biome-id";
 import type { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { TimeOfDay } from "#enums/time-of-day";

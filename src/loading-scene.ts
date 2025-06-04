@@ -18,7 +18,7 @@ import { initChallenges } from "#app/data/challenge";
 import i18next from "i18next";
 import { initStatsKeys } from "#app/ui/game-stats-ui-handler";
 import { initVouchers } from "#app/system/voucher";
-import { BiomeId } from "#enums/biome";
+import { BiomeId } from "#enums/biome-id";
 import { initMysteryEncounters } from "#app/data/mystery-encounters/mystery-encounters";
 import { timedEventManager } from "./global-event-manager";
 

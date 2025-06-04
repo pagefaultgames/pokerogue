@@ -5,7 +5,7 @@ import type { PlayerPokemon } from "#app/field/pokemon";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { AbilityId } from "#enums/ability-id";
 import { BattlerTagType } from "#enums/battler-tag-type";
-import { BiomeId } from "#enums/biome";
+import { BiomeId } from "#enums/biome-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { WeatherType } from "#enums/weather-type";

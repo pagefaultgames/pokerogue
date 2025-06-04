@@ -25,7 +25,7 @@ import { PlayerGender } from "#enums/player-gender";
 import { SpeciesId } from "#enums/species-id";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { BiomeId } from "#app/enums/biome";
+import { BiomeId } from "#enums/biome-id";
 
 describe("Test Battle Phase", () => {
   let phaserGame: Phaser.Game;

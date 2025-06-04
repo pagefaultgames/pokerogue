@@ -2,7 +2,7 @@ import { LostAtSeaEncounter } from "#app/data/mystery-encounters/encounters/lost
 import * as MysteryEncounters from "#app/data/mystery-encounters/mystery-encounters";
 import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
-import { BiomeId } from "#app/enums/biome";
+import { BiomeId } from "#enums/biome-id";
 import { MysteryEncounterType } from "#app/enums/mystery-encounter-type";
 import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";

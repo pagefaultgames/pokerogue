@@ -1,4 +1,4 @@
-import { BiomeId } from "#enums/biome";
+import { BiomeId } from "#enums/biome-id";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";

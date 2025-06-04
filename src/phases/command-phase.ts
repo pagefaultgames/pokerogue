@@ -8,7 +8,7 @@ import { getMoveTargets } from "#app/data/moves/move";
 import { speciesStarterCosts } from "#app/data/balance/starters";
 import { AbilityId } from "#enums/ability-id";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
-import { BiomeId } from "#app/enums/biome";
+import { BiomeId } from "#enums/biome-id";
 import { MoveId } from "#enums/move-id";
 import { PokeballType } from "#enums/pokeball";
 import type { PlayerPokemon, TurnMove } from "#app/field/pokemon";

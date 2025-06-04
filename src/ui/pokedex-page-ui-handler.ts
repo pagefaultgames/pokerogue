@@ -58,7 +58,7 @@ import { getEnumKeys } from "#app/utils/common";
 import { speciesTmMoves } from "#app/data/balance/tms";
 import type { BiomeTierTod } from "#app/data/balance/biomes";
 import { BiomePoolTier, catchableSpecies } from "#app/data/balance/biomes";
-import { BiomeId } from "#app/enums/biome";
+import { BiomeId } from "#enums/biome-id";
 import { TimeOfDay } from "#app/enums/time-of-day";
 import type { AbilityId } from "#enums/ability-id";
 import { BaseStatsOverlay } from "#app/ui/base-stats-overlay";

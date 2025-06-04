@@ -5,7 +5,7 @@ import type { ModifierOverride } from "#app/modifier/modifier-type";
 import type { BattleStyle } from "#app/overrides";
 import Overrides, { defaultOverrides } from "#app/overrides";
 import type { Unlockables } from "#app/system/unlockables";
-import { BiomeId } from "#enums/biome";
+import { BiomeId } from "#enums/biome-id";
 import { MoveId } from "#enums/move-id";
 import type { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import type { MysteryEncounterType } from "#enums/mystery-encounter-type";

@@ -20,7 +20,7 @@ import { queueEncounterMessage, showEncounterText } from "#app/data/mystery-enco
 import PokemonData from "#app/system/pokemon-data";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import { BiomeId } from "#enums/biome";
+import { BiomeId } from "#enums/biome-id";
 import { getBiomeKey } from "#app/field/arena";
 import { PokemonType } from "#enums/pokemon-type";
 import { getPartyLuckValue, modifierTypes } from "#app/modifier/modifier-type";

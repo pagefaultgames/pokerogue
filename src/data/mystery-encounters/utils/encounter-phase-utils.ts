@@ -33,7 +33,7 @@ import { PartyUiMode } from "#app/ui/party-ui-handler";
 import { UiMode } from "#enums/ui-mode";
 import { isNullOrUndefined, randSeedInt, randomString, randSeedItem } from "#app/utils/common";
 import type { BattlerTagType } from "#enums/battler-tag-type";
-import { BiomeId } from "#enums/biome";
+import { BiomeId } from "#enums/biome-id";
 import type { TrainerType } from "#enums/trainer-type";
 import i18next from "i18next";
 import Trainer, { TrainerVariant } from "#app/field/trainer";

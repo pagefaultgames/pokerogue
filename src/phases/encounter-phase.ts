@@ -37,7 +37,7 @@ import { handleTutorial, Tutorial } from "#app/tutorial";
 import { UiMode } from "#enums/ui-mode";
 import { randSeedInt, randSeedItem } from "#app/utils/common";
 import { BattleSpec } from "#enums/battle-spec";
-import { BiomeId } from "#enums/biome";
+import { BiomeId } from "#enums/biome-id";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import { PlayerGender } from "#enums/player-gender";
 import { SpeciesId } from "#enums/species-id";

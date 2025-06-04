@@ -1,6 +1,6 @@
 import * as MysteryEncounters from "#app/data/mystery-encounters/mystery-encounters";
 import { HUMAN_TRANSITABLE_BIOMES } from "#app/data/mystery-encounters/mystery-encounters";
-import { BiomeId } from "#enums/biome";
+import { BiomeId } from "#enums/biome-id";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";

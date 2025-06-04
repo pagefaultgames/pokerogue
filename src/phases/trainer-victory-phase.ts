@@ -9,7 +9,7 @@ import { ModifierRewardPhase } from "./modifier-reward-phase";
 import { MoneyRewardPhase } from "./money-reward-phase";
 import { TrainerSlot } from "#enums/trainer-slot";
 import { globalScene } from "#app/global-scene";
-import { BiomeId } from "#app/enums/biome";
+import { BiomeId } from "#enums/biome-id";
 import { achvs } from "#app/system/achv";
 import { timedEventManager } from "#app/global-event-manager";
 

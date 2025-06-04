@@ -8,7 +8,7 @@ import { Unlockables } from "#app/system/unlockables";
 import { AbilityId } from "#enums/ability-id";
 import { BattleType } from "#enums/battle-type";
 import { BerryType } from "#enums/berry-type";
-import { BiomeId } from "#enums/biome";
+import { BiomeId } from "#enums/biome-id";
 import { EggTier } from "#enums/egg-type";
 import { MoveId } from "#enums/move-id";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";

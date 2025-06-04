@@ -6,7 +6,7 @@ import { PokemonType } from "#enums/pokemon-type";
 import { randSeedInt } from "#app/utils/common";
 import { WeatherType } from "#enums/weather-type";
 import { Nature } from "#enums/nature";
-import { BiomeId } from "#enums/biome";
+import { BiomeId } from "#enums/biome-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { SpeciesFormKey } from "#enums/species-form-key";

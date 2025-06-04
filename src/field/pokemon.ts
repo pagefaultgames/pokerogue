@@ -225,7 +225,7 @@ import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattleSpec } from "#enums/battle-spec";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import type { BerryType } from "#enums/berry-type";
-import { BiomeId } from "#enums/biome";
+import { BiomeId } from "#enums/biome-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { getPokemonNameWithAffix } from "#app/messages";

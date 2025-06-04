@@ -2,7 +2,7 @@ import { GameModes } from "#app/game-mode";
 import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
 import type OptionSelectUiHandler from "#app/ui/settings/option-select-ui-handler";
 import { UiMode } from "#enums/ui-mode";
-import { BiomeId } from "#enums/biome";
+import { BiomeId } from "#enums/biome-id";
 import { Button } from "#enums/buttons";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";

@@ -129,7 +129,7 @@ import { ArenaFlyout } from "#app/ui/arena-flyout";
 import { EaseType } from "#enums/ease-type";
 import { BattleSpec } from "#enums/battle-spec";
 import { BattleStyle } from "#enums/battle-style";
-import { BiomeId } from "#enums/biome";
+import { BiomeId } from "#enums/biome-id";
 import type { ExpNotification } from "#enums/exp-notification";
 import { MoneyFormat } from "#enums/money-format";
 import { MoveId } from "#enums/move-id";

@@ -2,7 +2,7 @@ import type BattleScene from "#app/battle-scene";
 import { TeleportingHijinksEncounter } from "#app/data/mystery-encounters/encounters/teleporting-hijinks-encounter";
 import * as MysteryEncounters from "#app/data/mystery-encounters/mystery-encounters";
 import { AbilityId } from "#enums/ability-id";
-import { BiomeId } from "#enums/biome";
+import { BiomeId } from "#enums/biome-id";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { SpeciesId } from "#enums/species-id";
 import { CommandPhase } from "#app/phases/command-phase";

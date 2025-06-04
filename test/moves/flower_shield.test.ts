@@ -1,7 +1,7 @@
 import { Stat } from "#enums/stat";
 import { SemiInvulnerableTag } from "#app/data/battler-tags";
 import { PokemonType } from "#enums/pokemon-type";
-import { BiomeId } from "#app/enums/biome";
+import { BiomeId } from "#enums/biome-id";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";

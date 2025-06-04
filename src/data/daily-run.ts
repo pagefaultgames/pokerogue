@@ -8,7 +8,7 @@ import type { PokemonSpeciesForm } from "#app/data/pokemon-species";
 import PokemonSpecies, { getPokemonSpecies, getPokemonSpeciesForm } from "#app/data/pokemon-species";
 import { speciesStarterCosts } from "#app/data/balance/starters";
 import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
-import { BiomeId } from "#app/enums/biome";
+import { BiomeId } from "#enums/biome-id";
 
 export interface DailyRunConfig {
   seed: number;

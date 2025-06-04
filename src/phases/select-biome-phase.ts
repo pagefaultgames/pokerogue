@@ -1,6 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import { biomeLinks, getBiomeName } from "#app/data/balance/biomes";
-import { BiomeId } from "#app/enums/biome";
+import { BiomeId } from "#enums/biome-id";
 import { MoneyInterestModifier, MapModifier } from "#app/modifier/modifier";
 import type { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
 import { UiMode } from "#enums/ui-mode";

@@ -86,7 +86,7 @@ import { getBerryEffectFunc } from "../berry";
 import { AbilityId } from "#enums/ability-id";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
-import { BiomeId } from "#enums/biome";
+import { BiomeId } from "#enums/biome-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { MoveUsedEvent } from "#app/events/battle-scene";

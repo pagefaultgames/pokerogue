@@ -3,7 +3,7 @@ import { randSeedInt, getEnumValues } from "#app/utils/common";
 import type { SpeciesFormEvolution } from "#app/data/balance/pokemon-evolutions";
 import { pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
 import i18next from "i18next";
-import { BiomeId } from "#enums/biome";
+import { BiomeId } from "#enums/biome-id";
 import { SpeciesId } from "#enums/species-id";
 import { TimeOfDay } from "#enums/time-of-day";
 import { TrainerType } from "#enums/trainer-type";
