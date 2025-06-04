@@ -4,7 +4,7 @@ import type Pokemon from "#app/field/pokemon";
 import { MoveResult } from "#app/field/pokemon";
 import type BattleScene from "#app/battle-scene";
 import { BattlerTagLapseType, BindTag, SubstituteTag } from "#app/data/battler-tags";
-import { MoveId } from "#app/enums/moves";
+import { MoveId } from "#enums/move-id";
 import { PokemonAnimType } from "#app/enums/pokemon-anim-type";
 import * as messages from "#app/messages";
 import { allMoves } from "#app/data/data-lists";

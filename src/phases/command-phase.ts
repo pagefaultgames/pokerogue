@@ -9,7 +9,7 @@ import { speciesStarterCosts } from "#app/data/balance/starters";
 import { AbilityId } from "#enums/ability-id";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
 import { Biome } from "#app/enums/biome";
-import { MoveId } from "#app/enums/moves";
+import { MoveId } from "#enums/move-id";
 import { PokeballType } from "#enums/pokeball";
 import type { PlayerPokemon, TurnMove } from "#app/field/pokemon";
 import { FieldPosition } from "#app/field/pokemon";

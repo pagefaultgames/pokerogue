@@ -3,7 +3,7 @@ import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { TrainerSlot } from "#enums/trainer-slot";
 import { PokemonType } from "#enums/pokemon-type";
 import { AbilityId } from "#enums/ability-id";
-import { MoveId } from "#app/enums/moves";
+import { MoveId } from "#enums/move-id";
 import { Species } from "#app/enums/species";
 import * as Messages from "#app/messages";
 import GameManager from "#test/testUtils/gameManager";

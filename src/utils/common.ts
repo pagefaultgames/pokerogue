@@ -1,5 +1,5 @@
 import { MoneyFormat } from "#enums/money-format";
-import { MoveId } from "#enums/moves";
+import { MoveId } from "#enums/move-id";
 import i18next from "i18next";
 import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
 import type { Variant } from "#app/sprites/variant";

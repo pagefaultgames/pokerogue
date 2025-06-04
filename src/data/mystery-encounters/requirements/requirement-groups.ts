@@ -1,4 +1,4 @@
-import { MoveId } from "#enums/moves";
+import { MoveId } from "#enums/move-id";
 import { AbilityId } from "#enums/ability-id";
 
 /**

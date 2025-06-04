@@ -18,7 +18,7 @@ import { TrainerType } from "#enums/trainer-type";
 import { Species } from "#enums/species";
 import { AbilityId } from "#enums/ability-id";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
-import { MoveId } from "#enums/moves";
+import { MoveId } from "#enums/move-id";
 import { Nature } from "#enums/nature";
 import { PokemonType } from "#enums/pokemon-type";
 import { BerryType } from "#enums/berry-type";

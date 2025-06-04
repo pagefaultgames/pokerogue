@@ -15,7 +15,7 @@ import * as MysteryEncounters from "#app/data/mystery-encounters/mystery-encount
 import { BerryModifier, PokemonHeldItemModifier } from "#app/modifier/modifier";
 import { BerryType } from "#enums/berry-type";
 import { AbsoluteAvariceEncounter } from "#app/data/mystery-encounters/encounters/absolute-avarice-encounter";
-import { MoveId } from "#enums/moves";
+import { MoveId } from "#enums/move-id";
 import { CommandPhase } from "#app/phases/command-phase";
 import { MovePhase } from "#app/phases/move-phase";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";

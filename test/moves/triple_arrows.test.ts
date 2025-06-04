@@ -1,7 +1,7 @@
 import { FlinchAttr, StatStageChangeAttr } from "#app/data/moves/move";
 import { allMoves } from "#app/data/data-lists";
 import { AbilityId } from "#enums/ability-id";
-import { MoveId } from "#enums/moves";
+import { MoveId } from "#enums/move-id";
 import type Move from "#app/data/moves/move";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";

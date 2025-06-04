@@ -16,7 +16,7 @@ import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 import MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
 import { TrainerType } from "#enums/trainer-type";
 import { Nature } from "#enums/nature";
-import { MoveId } from "#enums/moves";
+import { MoveId } from "#enums/move-id";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { TheWinstrateChallengeEncounter } from "#app/data/mystery-encounters/encounters/the-winstrate-challenge-encounter";
 import { Status } from "#app/data/status-effect";

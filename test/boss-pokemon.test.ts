@@ -3,7 +3,7 @@ import GameManager from "#test/testUtils/gameManager";
 import { Species } from "#app/enums/species";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { AbilityId } from "#enums/ability-id";
-import { MoveId } from "#app/enums/moves";
+import { MoveId } from "#enums/move-id";
 import { EFFECTIVE_STATS } from "#app/enums/stat";
 import type { EnemyPokemon } from "#app/field/pokemon";
 import { toDmgValue } from "#app/utils/common";

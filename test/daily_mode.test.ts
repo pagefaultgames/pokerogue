@@ -1,5 +1,5 @@
 import { Biome } from "#app/enums/biome";
-import { MoveId } from "#app/enums/moves";
+import { MoveId } from "#enums/move-id";
 import { MapModifier } from "#app/modifier/modifier";
 import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";

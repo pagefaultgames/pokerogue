@@ -3,7 +3,7 @@ import GameManager from "#test/testUtils/gameManager";
 import { Species } from "#enums/species";
 import Phase from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { MoveId } from "#app/enums/moves";
+import { MoveId } from "#enums/move-id";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { AbilityId } from "#enums/ability-id";
 import { TempStatStageBoosterModifier } from "#app/modifier/modifier";

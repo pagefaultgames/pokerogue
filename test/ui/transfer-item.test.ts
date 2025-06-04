@@ -1,6 +1,6 @@
 import { BerryType } from "#app/enums/berry-type";
 import { Button } from "#app/enums/buttons";
-import { MoveId } from "#app/enums/moves";
+import { MoveId } from "#enums/move-id";
 import { Species } from "#app/enums/species";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 import PartyUiHandler, { PartyUiMode } from "#app/ui/party-ui-handler";

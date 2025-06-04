@@ -2,7 +2,7 @@ import { ExpGainsSpeed } from "#app/enums/exp-gains-speed";
 import { Species } from "#app/enums/species";
 import { ExpPhase } from "#app/phases/exp-phase";
 import { AbilityId } from "#enums/ability-id";
-import { MoveId } from "#enums/moves";
+import { MoveId } from "#enums/move-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";

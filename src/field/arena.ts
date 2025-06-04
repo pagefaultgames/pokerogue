@@ -32,7 +32,7 @@ import Overrides from "#app/overrides";
 import { TagAddedEvent, TagRemovedEvent, TerrainChangedEvent, WeatherChangedEvent } from "#app/events/arena";
 import type { ArenaTagType } from "#enums/arena-tag-type";
 import { Biome } from "#enums/biome";
-import type { MoveId } from "#enums/moves";
+import type { MoveId } from "#enums/move-id";
 import { Species } from "#enums/species";
 import { TimeOfDay } from "#enums/time-of-day";
 import { TrainerType } from "#enums/trainer-type";

@@ -1,4 +1,4 @@
-import type { MoveId } from "#enums/moves";
+import type { MoveId } from "#enums/move-id";
 import { initMoveAnim, loadMoveAnimAssets } from "#app/data/battle-anims";
 
 /**

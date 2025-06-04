@@ -42,7 +42,7 @@ import { Ability } from "#app/data/abilities/ability-class";
 import { BerryModifier } from "#app/modifier/modifier";
 import { BerryType } from "#enums/berry-type";
 import { BattlerIndex } from "#app/battle";
-import { MoveId } from "#enums/moves";
+import { MoveId } from "#enums/move-id";
 import { EncounterBattleAnim } from "#app/data/battle-anims";
 import { MoveCategory } from "#enums/MoveCategory";
 import { CustomPokemonData } from "#app/data/custom-pokemon-data";

@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import { MoveId } from "#enums/moves";
+import { MoveId } from "#enums/move-id";
 import { AbilityId } from "#enums/ability-id";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";

@@ -1,4 +1,4 @@
-import { MoveId } from "#app/enums/moves";
+import { MoveId } from "#enums/move-id";
 import type Move from "#app/data/moves/move";
 import { AbilityId } from "#enums/ability-id";
 import { Species } from "#enums/species";

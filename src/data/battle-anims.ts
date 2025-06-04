@@ -5,7 +5,7 @@ import { MoveFlags } from "#enums/MoveFlags";
 import type Pokemon from "../field/pokemon";
 import { type nil, getFrameMs, getEnumKeys, getEnumValues, animationFileName } from "../utils/common";
 import type { BattlerIndex } from "../battle";
-import { MoveId } from "#enums/moves";
+import { MoveId } from "#enums/move-id";
 import { SubstituteTag } from "./battler-tags";
 import { isNullOrUndefined } from "../utils/common";
 import Phaser from "phaser";

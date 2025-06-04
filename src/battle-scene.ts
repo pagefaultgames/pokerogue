@@ -132,7 +132,7 @@ import { BattleStyle } from "#enums/battle-style";
 import { Biome } from "#enums/biome";
 import type { ExpNotification } from "#enums/exp-notification";
 import { MoneyFormat } from "#enums/money-format";
-import { MoveId } from "#enums/moves";
+import { MoveId } from "#enums/move-id";
 import { PlayerGender } from "#enums/player-gender";
 import { Species } from "#enums/species";
 import { UiTheme } from "#enums/ui-theme";

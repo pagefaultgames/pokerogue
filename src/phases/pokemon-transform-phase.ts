@@ -1,6 +1,6 @@
 import type { BattlerIndex } from "#app/battle";
 import { BattlerTagType } from "#enums/battler-tag-type";
-import { MoveId } from "#enums/moves";
+import { MoveId } from "#enums/move-id";
 import { EFFECTIVE_STATS, BATTLE_STATS } from "#enums/stat";
 import { PokemonMove } from "#app/field/pokemon";
 import { globalScene } from "#app/global-scene";

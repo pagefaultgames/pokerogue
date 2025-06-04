@@ -4,7 +4,7 @@ import { Command } from "#app/ui/command-ui-handler";
 import { PostSummonWeatherChangeAbAttr } from "#app/data/abilities/ability";
 import { AbilityId } from "#enums/ability-id";
 import { ArenaTagType } from "#enums/arena-tag-type";
-import { MoveId } from "#enums/moves";
+import { MoveId } from "#enums/move-id";
 import { PokeballType } from "#enums/pokeball";
 import { Species } from "#enums/species";
 import { Stat } from "#enums/stat";

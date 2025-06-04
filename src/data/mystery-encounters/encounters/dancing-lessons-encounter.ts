@@ -33,7 +33,7 @@ import type { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler"
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Biome } from "#enums/biome";
 import { EncounterAnim } from "#enums/encounter-anims";
-import { MoveId } from "#enums/moves";
+import { MoveId } from "#enums/move-id";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";

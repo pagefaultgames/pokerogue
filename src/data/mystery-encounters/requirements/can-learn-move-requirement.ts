@@ -1,4 +1,4 @@
-import type { MoveId } from "#app/enums/moves";
+import type { MoveId } from "#enums/move-id";
 import type { PlayerPokemon } from "#app/field/pokemon";
 import { PokemonMove } from "#app/field/pokemon";
 import { isNullOrUndefined } from "#app/utils/common";

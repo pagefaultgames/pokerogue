@@ -2,7 +2,7 @@ import type BattleScene from "#app/battle-scene";
 import { allMoves } from "#app/data/data-lists";
 import { MoveCategory } from "#enums/MoveCategory";
 import { AbilityId } from "#enums/ability-id";
-import { MoveId } from "#app/enums/moves";
+import { MoveId } from "#enums/move-id";
 import { Species } from "#app/enums/species";
 import type { EnemyPokemon } from "#app/field/pokemon";
 import { AiType } from "#app/field/pokemon";

@@ -5,7 +5,7 @@ import { UiMode } from "#enums/ui-mode";
 import { Stat } from "#enums/stat";
 import { getMovePosition } from "#test/testUtils/gameManagerUtils";
 import { AbilityId } from "#enums/ability-id";
-import { MoveId } from "#enums/moves";
+import { MoveId } from "#enums/move-id";
 import { Species } from "#enums/species";
 
 describe("Abilities - Intimidate", () => {

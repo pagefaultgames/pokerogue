@@ -65,7 +65,7 @@ import { PokemonPhase } from "#app/phases/pokemon-phase";
 import { BooleanHolder, isNullOrUndefined, NumberHolder } from "#app/utils/common";
 import type { nil } from "#app/utils/common";
 import { BattlerTagType } from "#enums/battler-tag-type";
-import { MoveId } from "#enums/moves";
+import { MoveId } from "#enums/move-id";
 import i18next from "i18next";
 import type { Phase } from "#app/phase";
 import { ShowAbilityPhase } from "./show-ability-phase";

@@ -8,7 +8,7 @@ import { PlayerPokemon } from "#app/field/pokemon";
 import { GameModes, getGameMode } from "#app/game-mode";
 import type { StarterMoveset } from "#app/system/game-data";
 import type { Starter } from "#app/ui/starter-select-ui-handler";
-import { MoveId } from "#enums/moves";
+import { MoveId } from "#enums/move-id";
 import type { Species } from "#enums/species";
 
 /** Function to convert Blob to string */

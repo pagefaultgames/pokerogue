@@ -1,5 +1,5 @@
 import { Species } from "#enums/species";
-import { MoveId } from "#enums/moves";
+import { MoveId } from "#enums/move-id";
 import { AbilityId } from "#enums/ability-id";
 import { BattlerIndex } from "#app/battle";
 import { WeatherType } from "#enums/weather-type";

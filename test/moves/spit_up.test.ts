@@ -6,7 +6,7 @@ import type { TurnMove } from "#app/field/pokemon";
 import { MoveResult } from "#app/field/pokemon";
 import GameManager from "#test/testUtils/gameManager";
 import { AbilityId } from "#enums/ability-id";
-import { MoveId } from "#enums/moves";
+import { MoveId } from "#enums/move-id";
 import type Move from "#app/data/moves/move";
 import { Species } from "#enums/species";
 import Phaser from "phaser";

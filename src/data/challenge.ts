@@ -18,7 +18,7 @@ import { Challenges } from "#enums/challenges";
 import { Species } from "#enums/species";
 import { TrainerType } from "#enums/trainer-type";
 import { Nature } from "#enums/nature";
-import type { MoveId } from "#enums/moves";
+import type { MoveId } from "#enums/move-id";
 import { TypeColor, TypeShadow } from "#enums/color";
 import { ModifierTier } from "#app/modifier/modifier-tier";
 import { globalScene } from "#app/global-scene";

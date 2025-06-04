@@ -22,7 +22,7 @@ import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 import { UiMode } from "#enums/ui-mode";
 import * as Utils from "#app/utils/common";
-import { MoveId } from "#enums/moves";
+import { MoveId } from "#enums/move-id";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import {

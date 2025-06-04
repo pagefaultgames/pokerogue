@@ -39,7 +39,7 @@ import i18next from "i18next";
 import Trainer, { TrainerVariant } from "#app/field/trainer";
 import type { Gender } from "#app/data/gender";
 import type { Nature } from "#enums/nature";
-import type { MoveId } from "#enums/moves";
+import type { MoveId } from "#enums/move-id";
 import { initMoveAnim, loadMoveAnimAssets } from "#app/data/battle-anims";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import { Status } from "#app/data/status-effect";

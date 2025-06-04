@@ -28,7 +28,7 @@ import {
 } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import PokemonData from "#app/system/pokemon-data";
 import { isNullOrUndefined, randSeedInt } from "#app/utils/common";
-import type { MoveId } from "#enums/moves";
+import type { MoveId } from "#enums/move-id";
 import { BattlerIndex } from "#app/battle";
 import { SelfStatusMove } from "#app/data/moves/move";
 import { PokeballType } from "#enums/pokeball";

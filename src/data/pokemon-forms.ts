@@ -5,7 +5,7 @@ import { allMoves } from "./data-lists";
 import { MoveCategory } from "#enums/MoveCategory";
 import type { Constructor, nil } from "#app/utils/common";
 import { AbilityId } from "#enums/ability-id";
-import { MoveId } from "#enums/moves";
+import { MoveId } from "#enums/move-id";
 import { Species } from "#enums/species";
 import type { TimeOfDay } from "#enums/time-of-day";
 import { getPokemonNameWithAffix } from "#app/messages";

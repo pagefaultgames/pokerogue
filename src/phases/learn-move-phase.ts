@@ -3,7 +3,7 @@ import { initMoveAnim, loadMoveAnimAssets } from "#app/data/battle-anims";
 import type Move from "#app/data/moves/move";
 import { allMoves } from "#app/data/data-lists";
 import { SpeciesFormChangeMoveLearnedTrigger } from "#app/data/pokemon-forms";
-import { MoveId } from "#enums/moves";
+import { MoveId } from "#enums/move-id";
 import { getPokemonNameWithAffix } from "#app/messages";
 import Overrides from "#app/overrides";
 import EvolutionSceneHandler from "#app/ui/evolution-scene-handler";

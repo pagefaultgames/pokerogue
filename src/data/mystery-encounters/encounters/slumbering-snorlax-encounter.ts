@@ -20,7 +20,7 @@ import {
 } from "../utils/encounter-phase-utils";
 import { queueEncounterMessage } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { Nature } from "#enums/nature";
-import { MoveId } from "#enums/moves";
+import { MoveId } from "#enums/move-id";
 import { BattlerIndex } from "#app/battle";
 import { AiType, PokemonMove } from "#app/field/pokemon";
 import { getPokemonSpecies } from "#app/data/pokemon-species";

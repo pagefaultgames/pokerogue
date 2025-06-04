@@ -2,7 +2,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vite
 import Phaser from "phaser";
 import GameManager from "#test/testUtils/gameManager";
 import { Species } from "#enums/species";
-import { MoveId } from "#enums/moves";
+import { MoveId } from "#enums/move-id";
 import { allMoves } from "#app/data/data-lists";
 import type Move from "#app/data/moves/move";
 

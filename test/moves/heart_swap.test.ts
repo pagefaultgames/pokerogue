@@ -3,7 +3,7 @@ import Phaser from "phaser";
 import GameManager from "#test/testUtils/gameManager";
 import { Species } from "#enums/species";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { MoveId } from "#enums/moves";
+import { MoveId } from "#enums/move-id";
 import { BATTLE_STATS } from "#enums/stat";
 import { AbilityId } from "#enums/ability-id";
 import { MoveEndPhase } from "#app/phases/move-end-phase";
