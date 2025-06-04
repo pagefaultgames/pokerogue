@@ -1002,17 +1002,18 @@ export class SeedTag extends BattlerTag {
       new CommonAnimPhase(source.getBattlerIndex(), pokemon.getBattlerIndex(), CommonAnim.LEECH_SEED),
     );
 
+    // Damage the target and restore our HP (or take damage in the case of liquid ooze)
     const damage = pokemon.damageAndUpdate(toDmgValue(pokemon.getMaxHp() / 8), { result: HitResult.INDIRECT });
     const reverseDrain = pokemon.hasAbilityWithAttr(ReverseDrainAbAttr, false);
     globalScene.unshiftPhase(
       new PokemonHealPhase(
         source.getBattlerIndex(),
-        !reverseDrain ? damage : damage * -1,
-        !reverseDrain
-          ? i18next.t("battlerTags:seededLapse", {
+        reverseDrain ? -damage : damage,
+        reverseDrain
+          ? i18next.t("battlerTags:seededLapseShed", {
               pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
             })
-          : i18next.t("battlerTags:seededLapseShed", {
+          : i18next.t("battlerTags:seededLapse", {
               pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
             }),
         false,
