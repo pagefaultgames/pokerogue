@@ -7,7 +7,6 @@ import type Move from "./moves/move";
 import { AttackMove } from "./moves/move";
 import { randSeedInt } from "#app/utils/common";
 import { SuppressWeatherEffectAbAttr } from "./abilities/ability";
-import { TerrainType, getTerrainName } from "./terrain";
 import i18next from "i18next";
 import { globalScene } from "#app/global-scene";
 import type { Arena } from "#app/field/arena";
@@ -234,50 +233,6 @@ export function getWeatherBlockMessage(weatherType: WeatherType): string {
       return i18next.t("weather:heavyRainEffectMessage");
   }
   return i18next.t("weather:defaultEffectMessage");
-}
-
-export function getTerrainStartMessage(terrainType: TerrainType): string | null {
-  switch (terrainType) {
-    case TerrainType.MISTY:
-      return i18next.t("terrain:mistyStartMessage");
-    case TerrainType.ELECTRIC:
-      return i18next.t("terrain:electricStartMessage");
-    case TerrainType.GRASSY:
-      return i18next.t("terrain:grassyStartMessage");
-    case TerrainType.PSYCHIC:
-      return i18next.t("terrain:psychicStartMessage");
-    default:
-      console.warn("getTerrainStartMessage not defined. Using default null");
-      return null;
-  }
-}
-
-export function getTerrainClearMessage(terrainType: TerrainType): string | null {
-  switch (terrainType) {
-    case TerrainType.MISTY:
-      return i18next.t("terrain:mistyClearMessage");
-    case TerrainType.ELECTRIC:
-      return i18next.t("terrain:electricClearMessage");
-    case TerrainType.GRASSY:
-      return i18next.t("terrain:grassyClearMessage");
-    case TerrainType.PSYCHIC:
-      return i18next.t("terrain:psychicClearMessage");
-    default:
-      console.warn("getTerrainClearMessage not defined. Using default null");
-      return null;
-  }
-}
-
-export function getTerrainBlockMessage(pokemon: Pokemon, terrainType: TerrainType): string {
-  if (terrainType === TerrainType.MISTY) {
-    return i18next.t("terrain:mistyBlockMessage", {
-      pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-    });
-  }
-  return i18next.t("terrain:defaultBlockMessage", {
-    pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-    terrainName: getTerrainName(terrainType),
-  });
 }
 
 export interface WeatherPoolEntry {

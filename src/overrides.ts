@@ -43,7 +43,9 @@ import { WeatherType } from "#enums/weather-type";
  * }
  * ```
  */
-const overrides = {} satisfies Partial<InstanceType<OverridesType>>;
+const overrides = {
+  MOVESET_OVERRIDE: [Moves.WHIRLWIND, Moves.BATON_PASS, Moves.DRAGON_TAIL, Moves.CIRCLE_THROW]
+} satisfies Partial<InstanceType<OverridesType>>;
 
 /**
  * If you need to add Overrides values for local testing do that inside {@linkcode overrides}
@@ -272,7 +274,7 @@ class DefaultOverrides {
 
   /**
    * Set all non-scripted waves to use the selected battle type.
-   * 
+   *
    * Ignored if set to {@linkcode BattleType.TRAINER} and `DISABLE_STANDARD_TRAINERS_OVERRIDE` is `true`.
    */
   readonly BATTLE_TYPE_OVERRIDE: Exclude<BattleType, BattleType.CLEAR> | null = null;

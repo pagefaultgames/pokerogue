@@ -2856,6 +2856,11 @@ export default class BattleScene extends SceneBase {
     promptDelay?: number | null,
     defer?: boolean | null,
   ) {
+    // don't display empty strings
+    if (!message) {
+      return;
+    }
+
     const phase = new MessagePhase(message, callbackDelay, prompt, promptDelay);
     if (!defer) {
       // adds to the end of PhaseQueuePrepend
