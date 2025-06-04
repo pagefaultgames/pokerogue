@@ -1,4 +1,4 @@
-export enum Species {
+export enum SpeciesId {
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Bulbasaur_(Pokémon) | Source} */
   BULBASAUR = 1,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Ivysaur_(Pokémon) | Source} */
