@@ -1,5 +1,5 @@
 import { allMoves } from "#app/data/data-lists";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { Stat } from "#enums/stat";
@@ -27,7 +27,7 @@ describe("Moves - Diamond Storm", () => {
       .moveset([Moves.DIAMOND_STORM])
       .battleStyle("single")
       .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH);
   });
 

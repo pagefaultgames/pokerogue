@@ -1,6 +1,6 @@
 import { BattlerIndex } from "#app/battle";
 import { PokemonType } from "#enums/pokemon-type";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { Challenges } from "#enums/challenges";
 import { Moves } from "#enums/moves";
@@ -32,9 +32,9 @@ describe("Inverse Battle", () => {
     game.override
       .battleStyle("single")
       .starterSpecies(Species.FEEBAS)
-      .ability(Abilities.BALL_FETCH)
+      .ability(AbilityId.BALL_FETCH)
       .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH);
   });
 
@@ -122,7 +122,7 @@ describe("Inverse Battle", () => {
   });
 
   it("Water Absorb should heal against water moves - Water Absorb against Water gun", async () => {
-    game.override.moveset([Moves.WATER_GUN]).enemyAbility(Abilities.WATER_ABSORB);
+    game.override.moveset([Moves.WATER_GUN]).enemyAbility(AbilityId.WATER_ABSORB);
 
     await game.challengeMode.startBattle();
 
@@ -180,11 +180,11 @@ describe("Inverse Battle", () => {
   });
 
   it("Anticipation should trigger on 2x effective moves", async () => {
-    game.override.moveset([Moves.THUNDERBOLT]).enemySpecies(Species.SANDSHREW).enemyAbility(Abilities.ANTICIPATION);
+    game.override.moveset([Moves.THUNDERBOLT]).enemySpecies(Species.SANDSHREW).enemyAbility(AbilityId.ANTICIPATION);
 
     await game.challengeMode.startBattle();
 
-    expect(game.scene.getEnemyPokemon()?.waveData.abilitiesApplied).toContain(Abilities.ANTICIPATION);
+    expect(game.scene.getEnemyPokemon()?.waveData.abilitiesApplied).toContain(AbilityId.ANTICIPATION);
   });
 
   it("Conversion 2 should change the type to the resistive type - Conversion 2 against Dragonite", async () => {
@@ -218,7 +218,7 @@ describe("Inverse Battle", () => {
   });
 
   it("Scrappy ability has no effect - Tackle against Ghost Type still 2x effective with Scrappy", async () => {
-    game.override.moveset([Moves.TACKLE]).ability(Abilities.SCRAPPY).enemySpecies(Species.GASTLY);
+    game.override.moveset([Moves.TACKLE]).ability(AbilityId.SCRAPPY).enemySpecies(Species.GASTLY);
 
     await game.challengeMode.startBattle();
 

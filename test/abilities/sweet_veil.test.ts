@@ -1,5 +1,5 @@
 import { BattlerIndex } from "#app/battle";
-import { Abilities } from "#app/enums/abilities";
+import { AbilityId } from "#app/enums/abilities";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
 import { CommandPhase } from "#app/phases/command-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
@@ -29,7 +29,7 @@ describe("Abilities - Sweet Veil", () => {
       .battleStyle("double")
       .moveset([Moves.SPLASH, Moves.REST, Moves.YAWN])
       .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(Moves.POWDER);
   });
 

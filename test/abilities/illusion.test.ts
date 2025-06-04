@@ -1,6 +1,6 @@
 import { Gender } from "#app/data/gender";
 import { PokeballType } from "#app/enums/pokeball";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -26,7 +26,7 @@ describe("Abilities - Illusion", () => {
     game.override
       .battleStyle("single")
       .enemySpecies(Species.ZORUA)
-      .enemyAbility(Abilities.ILLUSION)
+      .enemyAbility(AbilityId.ILLUSION)
       .enemyMoveset(Moves.TACKLE)
       .enemyHeldItems([{ name: "WIDE_LENS", count: 3 }])
       .moveset([Moves.WORRY_SEED, Moves.SOAK, Moves.TACKLE])
@@ -66,7 +66,7 @@ describe("Abilities - Illusion", () => {
   });
 
   it("breaks with neutralizing gas", async () => {
-    game.override.enemyAbility(Abilities.NEUTRALIZING_GAS);
+    game.override.enemyAbility(AbilityId.NEUTRALIZING_GAS);
     await game.classicMode.startBattle([Species.KOFFING]);
 
     const zorua = game.scene.getEnemyPokemon()!;
@@ -76,8 +76,8 @@ describe("Abilities - Illusion", () => {
 
   it("does not activate if neutralizing gas is active", async () => {
     game.override
-      .enemyAbility(Abilities.NEUTRALIZING_GAS)
-      .ability(Abilities.ILLUSION)
+      .enemyAbility(AbilityId.NEUTRALIZING_GAS)
+      .ability(AbilityId.ILLUSION)
       .moveset(Moves.SPLASH)
       .enemyMoveset(Moves.SPLASH);
     await game.classicMode.startBattle([Species.MAGIKARP, Species.FEEBAS, Species.MAGIKARP]);
@@ -118,7 +118,7 @@ describe("Abilities - Illusion", () => {
 
   it("does not break from indirect damage", async () => {
     game.override.enemySpecies(Species.GIGALITH);
-    game.override.enemyAbility(Abilities.SAND_STREAM);
+    game.override.enemyAbility(AbilityId.SAND_STREAM);
     game.override.enemyMoveset(Moves.WILL_O_WISP);
     game.override.moveset([Moves.FLARE_BLITZ]);
 

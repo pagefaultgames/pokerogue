@@ -4,7 +4,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, type MockInstan
 import PokedexUiHandler from "#app/ui/pokedex-ui-handler";
 import { FilterTextRow } from "#app/ui/filter-text";
 import { allAbilities } from "#app/data/data-lists";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Species } from "#enums/species";
 import { allSpecies, getPokemonSpecies, type PokemonForm } from "#app/data/pokemon-species";
 import { Button } from "#enums/buttons";
@@ -106,7 +106,7 @@ describe("UI - Pokedex", () => {
    * Compute a set of pokemon that have a specific ability in allAbilities
    * @param ability - The ability to filter for
    */
-  function getSpeciesWithAbility(ability: Abilities): Set<Species> {
+  function getSpeciesWithAbility(ability: AbilityId): Set<Species> {
     const speciesSet = new Set<Species>();
     for (const pkmn of allSpecies) {
       if (
@@ -166,16 +166,16 @@ describe("UI - Pokedex", () => {
   function createAbilityMocks(
     species: Species,
     {
-      ability = Abilities.NONE,
-      ability2 = Abilities.NONE,
-      hidden = Abilities.NONE,
-      passive = Abilities.NONE,
+      ability = AbilityId.NONE,
+      ability2 = AbilityId.NONE,
+      hidden = AbilityId.NONE,
+      passive = AbilityId.NONE,
       setForms = true,
     }: {
-      ability?: Abilities;
-      ability2?: Abilities;
-      hidden?: Abilities;
-      passive?: Abilities;
+      ability?: AbilityId;
+      ability2?: AbilityId;
+      hidden?: AbilityId;
+      passive?: AbilityId;
       setForms?: boolean;
     },
   ) {
@@ -201,13 +201,13 @@ describe("UI - Pokedex", () => {
     const pokedexHandler = await runToOpenPokedex();
 
     // Get name of overgrow
-    const overgrow = allAbilities[Abilities.OVERGROW].name;
+    const overgrow = allAbilities[AbilityId.OVERGROW].name;
 
     // @ts-expect-error `filterText` is private
     pokedexHandler.filterText.setValue(FilterTextRow.ABILITY_1, overgrow);
 
     // filter all species to be the pokemon that have overgrow
-    const overgrowSpecies = getSpeciesWithAbility(Abilities.OVERGROW);
+    const overgrowSpecies = getSpeciesWithAbility(AbilityId.OVERGROW);
     // @ts-expect-error - `filteredPokemonData` is private
     const filteredSpecies = new Set(pokedexHandler.filteredPokemonData.map(pokemon => pokemon.species.speciesId));
 
@@ -219,17 +219,17 @@ describe("UI - Pokedex", () => {
     const whitelist: Species[] = [];
     const blacklist: Species[] = [];
 
-    const filter_ab1 = Abilities.OVERGROW;
-    const filter_ab2 = Abilities.ADAPTABILITY;
+    const filter_ab1 = AbilityId.OVERGROW;
+    const filter_ab2 = AbilityId.ADAPTABILITY;
     const ab1_instance = allAbilities[filter_ab1];
     const ab2_instance = allAbilities[filter_ab2];
 
     // Create a species with passive set and each "ability" field
     const baseObj = {
-      ability: Abilities.BALL_FETCH,
-      ability2: Abilities.NONE,
-      hidden: Abilities.BLAZE,
-      passive: Abilities.TORRENT,
+      ability: AbilityId.BALL_FETCH,
+      ability2: AbilityId.NONE,
+      hidden: AbilityId.BLAZE,
+      passive: AbilityId.TORRENT,
     };
 
     // Mock pokemon to have the exhaustive combination of the two selected abilities

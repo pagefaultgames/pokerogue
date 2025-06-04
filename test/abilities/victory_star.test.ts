@@ -1,6 +1,6 @@
 import { BattlerIndex } from "#app/battle";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -28,7 +28,7 @@ describe("Abilities - Victory Star", () => {
       .battleStyle("double")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH);
   });
 

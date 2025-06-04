@@ -1,6 +1,6 @@
 import { BattlerTagType } from "#app/enums/battler-tag-type";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -25,7 +25,7 @@ describe("Abilities - Wind Power", () => {
     game = new GameManager(phaserGame);
     game.override.battleStyle("single");
     game.override.enemySpecies(Species.SHIFTRY);
-    game.override.enemyAbility(Abilities.WIND_POWER);
+    game.override.enemyAbility(AbilityId.WIND_POWER);
     game.override.moveset([Moves.TAILWIND, Moves.SPLASH, Moves.PETAL_BLIZZARD, Moves.SANDSTORM]);
     game.override.enemyMoveset(Moves.SPLASH);
   });
@@ -43,7 +43,7 @@ describe("Abilities - Wind Power", () => {
   });
 
   it("it becomes charged when Tailwind takes effect on its side", async () => {
-    game.override.ability(Abilities.WIND_POWER);
+    game.override.ability(AbilityId.WIND_POWER);
     game.override.enemySpecies(Species.MAGIKARP);
 
     await game.classicMode.startBattle([Species.SHIFTRY]);
@@ -59,7 +59,7 @@ describe("Abilities - Wind Power", () => {
 
   it("does not become charged when Tailwind takes effect on opposing side", async () => {
     game.override.enemySpecies(Species.MAGIKARP);
-    game.override.ability(Abilities.WIND_POWER);
+    game.override.ability(AbilityId.WIND_POWER);
 
     await game.classicMode.startBattle([Species.SHIFTRY]);
     const magikarp = game.scene.getEnemyPokemon()!;

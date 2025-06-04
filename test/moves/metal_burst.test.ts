@@ -1,6 +1,6 @@
 import { BattlerIndex } from "#app/battle";
 import { MoveResult } from "#app/field/pokemon";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -25,12 +25,12 @@ describe("Moves - Metal Burst", () => {
     game = new GameManager(phaserGame);
     game.override
       .moveset([Moves.METAL_BURST, Moves.FISSURE, Moves.PRECIPICE_BLADES])
-      .ability(Abilities.PURE_POWER)
+      .ability(AbilityId.PURE_POWER)
       .startingLevel(10)
       .battleStyle("double")
       .disableCrits()
       .enemySpecies(Species.PICHU)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(Moves.TACKLE);
   });
 

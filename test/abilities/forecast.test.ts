@@ -1,6 +1,6 @@
 import { BattlerIndex } from "#app/battle";
 import { allAbilities } from "#app/data/data-lists";
-import { Abilities } from "#app/enums/abilities";
+import { AbilityId } from "#app/enums/abilities";
 import { WeatherType } from "#app/enums/weather-type";
 import { DamageAnimPhase } from "#app/phases/damage-anim-phase";
 import { MovePhase } from "#app/phases/move-phase";
@@ -40,9 +40,9 @@ describe("Abilities - Forecast", () => {
   /**
    * Tests reverting to normal form when Cloud Nine/Air Lock is active on the field
    * @param {GameManager} game The game manager instance
-   * @param {Abilities} ability The ability that is active on the field
+   * @param {AbilityId} ability The ability that is active on the field
    */
-  const testRevertFormAgainstAbility = async (game: GameManager, ability: Abilities) => {
+  const testRevertFormAgainstAbility = async (game: GameManager, ability: AbilityId) => {
     game.override.starterForms({ [Species.CASTFORM]: SUNNY_FORM }).enemyAbility(ability);
     await game.classicMode.startBattle([Species.CASTFORM]);
 
@@ -67,7 +67,7 @@ describe("Abilities - Forecast", () => {
       .moveset([Moves.SPLASH, Moves.RAIN_DANCE, Moves.SUNNY_DAY, Moves.TACKLE])
       .enemySpecies(Species.MAGIKARP)
       .enemyMoveset(Moves.SPLASH)
-      .enemyAbility(Abilities.BALL_FETCH);
+      .enemyAbility(AbilityId.BALL_FETCH);
   });
 
   it(
@@ -90,7 +90,7 @@ describe("Abilities - Forecast", () => {
         Species.ALTARIA,
       ]);
 
-      vi.spyOn(game.scene.getPlayerParty()[5], "getAbility").mockReturnValue(allAbilities[Abilities.CLOUD_NINE]);
+      vi.spyOn(game.scene.getPlayerParty()[5], "getAbility").mockReturnValue(allAbilities[AbilityId.CLOUD_NINE]);
 
       const castform = game.scene.getPlayerField()[0];
       expect(castform.formIndex).toBe(NORMAL_FORM);
@@ -196,11 +196,11 @@ describe("Abilities - Forecast", () => {
   });
 
   it("reverts to Normal Form if a Pokémon on the field has Air Lock", async () => {
-    await testRevertFormAgainstAbility(game, Abilities.AIR_LOCK);
+    await testRevertFormAgainstAbility(game, AbilityId.AIR_LOCK);
   });
 
   it("has no effect on Pokémon other than Castform", async () => {
-    game.override.enemyAbility(Abilities.FORECAST).enemySpecies(Species.SHUCKLE);
+    game.override.enemyAbility(AbilityId.FORECAST).enemySpecies(Species.SHUCKLE);
     await game.classicMode.startBattle([Species.CASTFORM]);
 
     game.move.select(Moves.RAIN_DANCE);

@@ -1,4 +1,4 @@
-import { Abilities } from "#app/enums/abilities";
+import { AbilityId } from "#app/enums/abilities";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
 import { Moves } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
@@ -28,7 +28,7 @@ describe("Moves - Lucky Chant", () => {
       .battleStyle("single")
       .moveset([Moves.LUCKY_CHANT, Moves.SPLASH, Moves.FOLLOW_ME])
       .enemySpecies(Species.SNORLAX)
-      .enemyAbility(Abilities.INSOMNIA)
+      .enemyAbility(AbilityId.INSOMNIA)
       .enemyMoveset([Moves.FLOWER_TRICK])
       .startingLevel(100)
       .enemyLevel(100);

@@ -2,7 +2,7 @@ import { Status } from "#app/data/status-effect";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
 import { QuietFormChangePhase } from "#app/phases/quiet-form-change-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { StatusEffect } from "#enums/status-effect";
@@ -27,7 +27,7 @@ describe("Abilities - SHIELDS DOWN", () => {
     game = new GameManager(phaserGame);
     const moveToUse = Moves.SPLASH;
     game.override.battleStyle("single");
-    game.override.ability(Abilities.SHIELDS_DOWN);
+    game.override.ability(AbilityId.SHIELDS_DOWN);
     game.override.moveset([moveToUse]);
     game.override.enemyMoveset([Moves.TACKLE]);
   });
@@ -70,7 +70,7 @@ describe("Abilities - SHIELDS DOWN", () => {
   });
 
   test("should still ignore non-volatile status moves used by a pokemon with mold breaker", async () => {
-    game.override.enemyAbility(Abilities.MOLD_BREAKER);
+    game.override.enemyAbility(AbilityId.MOLD_BREAKER);
     game.override.enemyMoveset([Moves.SPORE]);
 
     await game.classicMode.startBattle([Species.MINIOR]);
@@ -95,7 +95,7 @@ describe("Abilities - SHIELDS DOWN", () => {
 
   test("should ignore status moves even through mold breaker", async () => {
     game.override.enemyMoveset([Moves.SPORE]);
-    game.override.enemyAbility(Abilities.MOLD_BREAKER);
+    game.override.enemyAbility(AbilityId.MOLD_BREAKER);
 
     await game.classicMode.startBattle([Species.MINIOR]);
 
@@ -156,7 +156,7 @@ describe("Abilities - SHIELDS DOWN", () => {
   // the `NoTransformAbilityAbAttr` attribute is not checked anywhere, so this test cannot pass.
   test.todo("ditto should not be immune to status after transforming", async () => {
     game.override.enemySpecies(Species.DITTO);
-    game.override.enemyAbility(Abilities.IMPOSTER);
+    game.override.enemyAbility(AbilityId.IMPOSTER);
     game.override.moveset([Moves.SPLASH, Moves.SPORE]);
 
     await game.classicMode.startBattle([Species.MINIOR]);

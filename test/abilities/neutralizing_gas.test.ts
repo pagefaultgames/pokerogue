@@ -2,7 +2,7 @@ import { BattlerIndex } from "#app/battle";
 import type { CommandPhase } from "#app/phases/command-phase";
 import { Command } from "#app/ui/command-ui-handler";
 import { PostSummonWeatherChangeAbAttr } from "#app/data/abilities/ability";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { Moves } from "#enums/moves";
 import { PokeballType } from "#enums/pokeball";
@@ -30,16 +30,16 @@ describe("Abilities - Neutralizing Gas", () => {
     game = new GameManager(phaserGame);
     game.override
       .moveset([Moves.SPLASH])
-      .ability(Abilities.NEUTRALIZING_GAS)
+      .ability(AbilityId.NEUTRALIZING_GAS)
       .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH);
   });
 
   it("should prevent other abilities from activating", async () => {
-    game.override.enemyAbility(Abilities.INTIMIDATE);
+    game.override.enemyAbility(AbilityId.INTIMIDATE);
     await game.classicMode.startBattle([Species.FEEBAS]);
 
     game.move.select(Moves.SPLASH);
@@ -50,7 +50,7 @@ describe("Abilities - Neutralizing Gas", () => {
   });
 
   it("should allow the user's passive to activate", async () => {
-    game.override.passiveAbility(Abilities.INTREPID_SWORD);
+    game.override.passiveAbility(AbilityId.INTREPID_SWORD);
     await game.classicMode.startBattle([Species.FEEBAS]);
 
     game.move.select(Moves.SPLASH);
@@ -60,7 +60,7 @@ describe("Abilities - Neutralizing Gas", () => {
   });
 
   it.todo("should activate before other abilities", async () => {
-    game.override.enemySpecies(Species.ACCELGOR).enemyLevel(100).enemyAbility(Abilities.INTIMIDATE);
+    game.override.enemySpecies(Species.ACCELGOR).enemyLevel(100).enemyAbility(AbilityId.INTIMIDATE);
 
     await game.classicMode.startBattle([Species.FEEBAS]);
 
@@ -73,8 +73,8 @@ describe("Abilities - Neutralizing Gas", () => {
 
   it("should activate other abilities when removed", async () => {
     game.override
-      .enemyAbility(Abilities.INTREPID_SWORD)
-      .enemyPassiveAbility(Abilities.DAUNTLESS_SHIELD)
+      .enemyAbility(AbilityId.INTREPID_SWORD)
+      .enemyPassiveAbility(AbilityId.DAUNTLESS_SHIELD)
       .enemyMoveset(Moves.ENTRAINMENT);
 
     await game.classicMode.startBattle([Species.FEEBAS]);
@@ -91,7 +91,7 @@ describe("Abilities - Neutralizing Gas", () => {
   });
 
   it("should not activate the user's other ability when removed", async () => {
-    game.override.passiveAbility(Abilities.INTIMIDATE).enemyMoveset(Moves.ENTRAINMENT);
+    game.override.passiveAbility(AbilityId.INTIMIDATE).enemyMoveset(Moves.ENTRAINMENT);
 
     await game.classicMode.startBattle([Species.FEEBAS]);
     // Neutralising gas user's passive is still active
@@ -137,7 +137,7 @@ describe("Abilities - Neutralizing Gas", () => {
   });
 
   it("should deactivate when the pokemon faints", async () => {
-    game.override.ability(Abilities.BALL_FETCH).enemyAbility(Abilities.NEUTRALIZING_GAS);
+    game.override.ability(AbilityId.BALL_FETCH).enemyAbility(AbilityId.NEUTRALIZING_GAS);
 
     await game.classicMode.startBattle([Species.FEEBAS]);
     game.move.select(Moves.SPLASH);
@@ -148,7 +148,7 @@ describe("Abilities - Neutralizing Gas", () => {
   });
 
   it("should deactivate upon catching a wild pokemon", async () => {
-    game.override.battleStyle("single").enemyAbility(Abilities.NEUTRALIZING_GAS).ability(Abilities.BALL_FETCH);
+    game.override.battleStyle("single").enemyAbility(AbilityId.NEUTRALIZING_GAS).ability(AbilityId.BALL_FETCH);
     await game.classicMode.startBattle([Species.MAGIKARP]);
     expect(game.scene.arena.getTag(ArenaTagType.NEUTRALIZING_GAS)).toBeDefined();
 
@@ -160,7 +160,7 @@ describe("Abilities - Neutralizing Gas", () => {
   });
 
   it("should deactivate after fleeing from a wild pokemon", async () => {
-    game.override.enemyAbility(Abilities.NEUTRALIZING_GAS).ability(Abilities.BALL_FETCH);
+    game.override.enemyAbility(AbilityId.NEUTRALIZING_GAS).ability(AbilityId.BALL_FETCH);
     await game.classicMode.startBattle([Species.MAGIKARP]);
     expect(game.scene.arena.getTag(ArenaTagType.NEUTRALIZING_GAS)).toBeDefined();
 
@@ -174,7 +174,7 @@ describe("Abilities - Neutralizing Gas", () => {
   });
 
   it("should not activate abilities of pokemon no longer on the field", async () => {
-    game.override.battleStyle("single").ability(Abilities.NEUTRALIZING_GAS).enemyAbility(Abilities.DELTA_STREAM);
+    game.override.battleStyle("single").ability(AbilityId.NEUTRALIZING_GAS).enemyAbility(AbilityId.DELTA_STREAM);
     await game.classicMode.startBattle([Species.MAGIKARP]);
 
     const enemy = game.scene.getEnemyPokemon()!;

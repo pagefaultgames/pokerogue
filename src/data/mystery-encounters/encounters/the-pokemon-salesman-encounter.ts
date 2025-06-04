@@ -27,7 +27,7 @@ import PokemonData from "#app/system/pokemon-data";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { NON_LEGEND_PARADOX_POKEMON, NON_LEGEND_ULTRA_BEASTS } from "#app/data/balance/special-species-groups";
 import { timedEventManager } from "#app/global-event-manager";
 
@@ -81,7 +81,7 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter = MysteryEncounterBui
     let tries = 0;
 
     // Reroll any species that don't have HAs
-    while ((isNullOrUndefined(species.abilityHidden) || species.abilityHidden === Abilities.NONE) && tries < 5) {
+    while ((isNullOrUndefined(species.abilityHidden) || species.abilityHidden === AbilityId.NONE) && tries < 5) {
       species = getSalesmanSpeciesOffer();
       tries++;
     }
@@ -110,7 +110,7 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter = MysteryEncounterBui
      */
     if (
       r === 0 ||
-      ((isNullOrUndefined(species.abilityHidden) || species.abilityHidden === Abilities.NONE) &&
+      ((isNullOrUndefined(species.abilityHidden) || species.abilityHidden === AbilityId.NONE) &&
         validEventEncounters.length === 0)
     ) {
       // If you roll 1%, give shiny Magikarp with random variant
@@ -118,7 +118,7 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter = MysteryEncounterBui
       pokemon = new PlayerPokemon(species, 5, 2, undefined, undefined, true);
     } else if (
       validEventEncounters.length > 0 &&
-      (r <= EVENT_THRESHOLD || isNullOrUndefined(species.abilityHidden) || species.abilityHidden === Abilities.NONE)
+      (r <= EVENT_THRESHOLD || isNullOrUndefined(species.abilityHidden) || species.abilityHidden === AbilityId.NONE)
     ) {
       tries = 0;
       do {
@@ -128,7 +128,7 @@ export const ThePokemonSalesmanEncounter: MysteryEncounter = MysteryEncounterBui
         pokemon = new PlayerPokemon(
           species,
           5,
-          species.abilityHidden === Abilities.NONE ? undefined : 2,
+          species.abilityHidden === AbilityId.NONE ? undefined : 2,
           enc.formIndex,
         );
         pokemon.trySetShinySeed();

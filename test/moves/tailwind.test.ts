@@ -1,6 +1,6 @@
 import { ArenaTagSide } from "#app/data/arena-tag";
 import { ArenaTagType } from "#app/enums/arena-tag-type";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { Stat } from "#enums/stat";
@@ -28,8 +28,8 @@ describe("Moves - Tailwind", () => {
       .battleStyle("double")
       .moveset([Moves.TAILWIND, Moves.SPLASH])
       .enemyMoveset(Moves.SPLASH)
-      .enemyAbility(Abilities.BALL_FETCH)
-      .ability(Abilities.BALL_FETCH);
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .ability(AbilityId.BALL_FETCH);
   });
 
   it("doubles the Speed stat of the Pokemons on its side", async () => {

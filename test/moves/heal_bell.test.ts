@@ -1,6 +1,6 @@
 import { StatusEffect } from "#app/enums/status-effect";
 import { CommandPhase } from "#app/phases/command-phase";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -27,7 +27,7 @@ describe("Moves - Heal Bell", () => {
       .moveset([Moves.HEAL_BELL, Moves.SPLASH])
       .statusEffect(StatusEffect.BURN)
       .battleStyle("double")
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH);
   });
 
@@ -77,7 +77,7 @@ describe("Moves - Heal Bell", () => {
   });
 
   it("should not cure status effect of allies ON FIELD with Soundproof, should still cure allies in party", async () => {
-    game.override.ability(Abilities.SOUNDPROOF);
+    game.override.ability(AbilityId.SOUNDPROOF);
     await game.classicMode.startBattle([Species.RATTATA, Species.RATTATA, Species.RATTATA]);
     const [leftPlayer, rightPlayer, partyPokemon] = game.scene.getPlayerParty();
 

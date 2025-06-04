@@ -1,6 +1,6 @@
 import { BattlerIndex } from "#app/battle";
 import { allMoves } from "#app/data/data-lists";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
@@ -31,7 +31,7 @@ describe("Moves - Dig", () => {
       .startingLevel(100)
       .enemySpecies(Species.SNORLAX)
       .enemyLevel(100)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(Moves.TACKLE);
   });
 
@@ -60,7 +60,7 @@ describe("Moves - Dig", () => {
   });
 
   it("should not allow the user to evade attacks from Pokemon with No Guard", async () => {
-    game.override.enemyAbility(Abilities.NO_GUARD);
+    game.override.enemyAbility(AbilityId.NO_GUARD);
 
     await game.classicMode.startBattle([Species.MAGIKARP]);
 
@@ -75,7 +75,7 @@ describe("Moves - Dig", () => {
   });
 
   it("should not expend PP when the attack phase is cancelled", async () => {
-    game.override.enemyAbility(Abilities.NO_GUARD).enemyMoveset(Moves.SPORE);
+    game.override.enemyAbility(AbilityId.NO_GUARD).enemyMoveset(Moves.SPORE);
 
     await game.classicMode.startBattle([Species.MAGIKARP]);
 

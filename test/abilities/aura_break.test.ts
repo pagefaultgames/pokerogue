@@ -1,5 +1,5 @@
 import { allMoves } from "#app/data/data-lists";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -28,7 +28,7 @@ describe("Abilities - Aura Break", () => {
       .battleStyle("single")
       .moveset([Moves.MOONBLAST, Moves.DARK_PULSE])
       .enemyMoveset(Moves.SPLASH)
-      .enemyAbility(Abilities.AURA_BREAK)
+      .enemyAbility(AbilityId.AURA_BREAK)
       .enemySpecies(Species.SHUCKLE);
   });
 
@@ -36,7 +36,7 @@ describe("Abilities - Aura Break", () => {
     const moveToCheck = allMoves[Moves.MOONBLAST];
     const basePower = moveToCheck.power;
 
-    game.override.ability(Abilities.FAIRY_AURA);
+    game.override.ability(AbilityId.FAIRY_AURA);
     vi.spyOn(moveToCheck, "calculateBattlePower");
 
     await game.classicMode.startBattle([Species.PIKACHU]);
@@ -50,7 +50,7 @@ describe("Abilities - Aura Break", () => {
     const moveToCheck = allMoves[Moves.DARK_PULSE];
     const basePower = moveToCheck.power;
 
-    game.override.ability(Abilities.DARK_AURA);
+    game.override.ability(AbilityId.DARK_AURA);
     vi.spyOn(moveToCheck, "calculateBattlePower");
 
     await game.classicMode.startBattle([Species.PIKACHU]);
@@ -64,7 +64,7 @@ describe("Abilities - Aura Break", () => {
     const moveToCheck = allMoves[Moves.MOONBLAST];
     const basePower = moveToCheck.power;
 
-    game.override.ability(Abilities.BALL_FETCH);
+    game.override.ability(AbilityId.BALL_FETCH);
     vi.spyOn(moveToCheck, "calculateBattlePower");
 
     await game.classicMode.startBattle([Species.PIKACHU]);

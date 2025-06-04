@@ -2,7 +2,7 @@ import { allMoves } from "#app/data/data-lists";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { WeatherType } from "#enums/weather-type";
 import { MoveResult } from "#app/field/pokemon";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -31,7 +31,7 @@ describe("Moves - Solar Beam", () => {
       .startingLevel(100)
       .enemySpecies(Species.SNORLAX)
       .enemyLevel(100)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH);
   });
 

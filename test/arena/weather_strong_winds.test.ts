@@ -1,7 +1,7 @@
 import { allMoves } from "#app/data/data-lists";
 import { StatusEffect } from "#app/enums/status-effect";
 import { TurnStartPhase } from "#app/phases/turn-start-phase";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -27,7 +27,7 @@ describe("Weather - Strong Winds", () => {
     game.override.battleStyle("single");
     game.override.startingLevel(10);
     game.override.enemySpecies(Species.TAILLOW);
-    game.override.enemyAbility(Abilities.DELTA_STREAM);
+    game.override.enemyAbility(AbilityId.DELTA_STREAM);
     game.override.moveset([Moves.THUNDERBOLT, Moves.ICE_BEAM, Moves.ROCK_SLIDE]);
   });
 

@@ -1,7 +1,7 @@
 import { ExpGainsSpeed } from "#app/enums/exp-gains-speed";
 import { Species } from "#app/enums/species";
 import { ExpPhase } from "#app/phases/exp-phase";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -33,7 +33,7 @@ describe("UI - Battle Info", () => {
     game.override
       .moveset([Moves.GUILLOTINE, Moves.SPLASH])
       .battleStyle("single")
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH)
       .enemySpecies(Species.CATERPIE);
   });

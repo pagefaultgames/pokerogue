@@ -3,7 +3,7 @@ import { allAbilities } from "#app/data/data-lists";
 import { CommandPhase } from "#app/phases/command-phase";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { MoveEndPhase } from "#app/phases/move-end-phase";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { Stat } from "#enums/stat";
@@ -31,7 +31,7 @@ describe("Abilities - Sand Veil", () => {
     game.override
       .moveset([Moves.SPLASH])
       .enemySpecies(Species.MEOWSCARADA)
-      .enemyAbility(Abilities.INSOMNIA)
+      .enemyAbility(AbilityId.INSOMNIA)
       .enemyMoveset(Moves.TWISTER)
       .startingLevel(100)
       .enemyLevel(100)
@@ -44,9 +44,9 @@ describe("Abilities - Sand Veil", () => {
 
     const leadPokemon = game.scene.getPlayerField();
 
-    vi.spyOn(leadPokemon[0], "getAbility").mockReturnValue(allAbilities[Abilities.SAND_VEIL]);
+    vi.spyOn(leadPokemon[0], "getAbility").mockReturnValue(allAbilities[AbilityId.SAND_VEIL]);
 
-    const sandVeilAttr = allAbilities[Abilities.SAND_VEIL].getAttrs(StatMultiplierAbAttr)[0];
+    const sandVeilAttr = allAbilities[AbilityId.SAND_VEIL].getAttrs(StatMultiplierAbAttr)[0];
     vi.spyOn(sandVeilAttr, "applyStatStage").mockImplementation(
       (_pokemon, _passive, _simulated, stat, statValue, _args) => {
         if (stat === Stat.EVA && game.scene.arena.weather?.weatherType === WeatherType.SANDSTORM) {
@@ -57,8 +57,8 @@ describe("Abilities - Sand Veil", () => {
       },
     );
 
-    expect(leadPokemon[0].hasAbility(Abilities.SAND_VEIL)).toBe(true);
-    expect(leadPokemon[1].hasAbility(Abilities.SAND_VEIL)).toBe(false);
+    expect(leadPokemon[0].hasAbility(AbilityId.SAND_VEIL)).toBe(true);
+    expect(leadPokemon[1].hasAbility(AbilityId.SAND_VEIL)).toBe(false);
 
     game.move.select(Moves.SPLASH);
 

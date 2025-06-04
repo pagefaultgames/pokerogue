@@ -3,7 +3,7 @@ import { Species } from "#app/enums/species";
 import type { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
 import { DamageAnimPhase } from "#app/phases/damage-anim-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -33,12 +33,12 @@ describe("Moves - Fissure", () => {
 
     game.override.starterSpecies(Species.SNORLAX);
     game.override.moveset([Moves.FISSURE]);
-    game.override.passiveAbility(Abilities.BALL_FETCH);
+    game.override.passiveAbility(AbilityId.BALL_FETCH);
     game.override.startingLevel(100);
 
     game.override.enemySpecies(Species.SNORLAX);
     game.override.enemyMoveset(Moves.SPLASH);
-    game.override.enemyPassiveAbility(Abilities.BALL_FETCH);
+    game.override.enemyPassiveAbility(AbilityId.BALL_FETCH);
     game.override.enemyLevel(100);
 
     await game.classicMode.startBattle();
@@ -48,8 +48,8 @@ describe("Moves - Fissure", () => {
   });
 
   it("ignores damage modification from abilities, for example FUR_COAT", async () => {
-    game.override.ability(Abilities.NO_GUARD);
-    game.override.enemyAbility(Abilities.FUR_COAT);
+    game.override.ability(AbilityId.NO_GUARD);
+    game.override.enemyAbility(AbilityId.FUR_COAT);
 
     game.move.select(Moves.FISSURE);
     await game.phaseInterceptor.to(DamageAnimPhase, true);

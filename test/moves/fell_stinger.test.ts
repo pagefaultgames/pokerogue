@@ -2,7 +2,7 @@ import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import GameManager from "#test/testUtils/gameManager";
 import { Species } from "#enums/species";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Stat } from "#enums/stat";
 import { StatusEffect } from "#app/enums/status-effect";
@@ -31,7 +31,7 @@ describe("Moves - Fell Stinger", () => {
       .moveset([Moves.FELL_STINGER, Moves.SALT_CURE, Moves.BIND, Moves.LEECH_SEED])
       .startingLevel(50)
       .disableCrits()
-      .enemyAbility(Abilities.STURDY)
+      .enemyAbility(AbilityId.STURDY)
       .enemySpecies(Species.HYPNO)
       .enemyMoveset(Moves.SPLASH)
       .enemyLevel(5);
@@ -75,7 +75,7 @@ describe("Moves - Fell Stinger", () => {
   });
 
   it("should not grant stat boost if enemy is KO'd by Dry Skin + Harsh Sunlight", async () => {
-    game.override.enemyPassiveAbility(Abilities.STURDY).enemyAbility(Abilities.DRY_SKIN).weather(WeatherType.HARSH_SUN);
+    game.override.enemyPassiveAbility(AbilityId.STURDY).enemyAbility(AbilityId.DRY_SKIN).weather(WeatherType.HARSH_SUN);
 
     await game.challengeMode.startBattle([Species.LEAVANNY]);
     const leadPokemon = game.scene.getPlayerPokemon()!;
@@ -88,7 +88,7 @@ describe("Moves - Fell Stinger", () => {
   });
 
   it("should not grant stat boost if enemy is saved by Reviver Seed", async () => {
-    game.override.enemyAbility(Abilities.BALL_FETCH).enemyHeldItems([{ name: "REVIVER_SEED" }]);
+    game.override.enemyAbility(AbilityId.BALL_FETCH).enemyHeldItems([{ name: "REVIVER_SEED" }]);
 
     await game.classicMode.startBattle([Species.LEAVANNY]);
     const leadPokemon = game.scene.getPlayerPokemon()!;
@@ -170,7 +170,7 @@ describe("Moves - Fell Stinger", () => {
   });
 
   it("should grant stat boost if enemy dies directly to hit", async () => {
-    game.override.enemyAbility(Abilities.KLUTZ);
+    game.override.enemyAbility(AbilityId.KLUTZ);
 
     await game.classicMode.startBattle([Species.LEAVANNY]);
     const leadPokemon = game.scene.getPlayerPokemon();

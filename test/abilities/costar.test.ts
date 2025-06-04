@@ -1,5 +1,5 @@
 import { Stat } from "#enums/stat";
-import { Abilities } from "#app/enums/abilities";
+import { AbilityId } from "#app/enums/abilities";
 import { Moves } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
 import { CommandPhase } from "#app/phases/command-phase";
@@ -25,13 +25,13 @@ describe("Abilities - COSTAR", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override.battleStyle("double");
-    game.override.ability(Abilities.COSTAR);
+    game.override.ability(AbilityId.COSTAR);
     game.override.moveset([Moves.SPLASH, Moves.NASTY_PLOT]);
     game.override.enemyMoveset(Moves.SPLASH);
   });
 
   test("ability copies positive stat stages", async () => {
-    game.override.enemyAbility(Abilities.BALL_FETCH);
+    game.override.enemyAbility(AbilityId.BALL_FETCH);
 
     await game.classicMode.startBattle([Species.MAGIKARP, Species.MAGIKARP, Species.FLAMIGO]);
 
@@ -56,7 +56,7 @@ describe("Abilities - COSTAR", () => {
   });
 
   test("ability copies negative stat stages", async () => {
-    game.override.enemyAbility(Abilities.INTIMIDATE);
+    game.override.enemyAbility(AbilityId.INTIMIDATE);
 
     await game.classicMode.startBattle([Species.MAGIKARP, Species.MAGIKARP, Species.FLAMIGO]);
 

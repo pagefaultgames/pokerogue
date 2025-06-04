@@ -3,7 +3,7 @@ import { RandomMoveAttr } from "#app/data/moves/move";
 import { allMoves } from "#app/data/data-lists";
 import { Stat } from "#app/enums/stat";
 import { MoveResult } from "#app/field/pokemon";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -31,12 +31,12 @@ describe("Moves - Copycat", () => {
     game = new GameManager(phaserGame);
     game.override
       .moveset([Moves.COPYCAT, Moves.SPIKY_SHIELD, Moves.SWORDS_DANCE, Moves.SPLASH])
-      .ability(Abilities.BALL_FETCH)
+      .ability(AbilityId.BALL_FETCH)
       .battleStyle("single")
       .disableCrits()
       .starterSpecies(Species.FEEBAS)
       .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH);
   });
 

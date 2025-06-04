@@ -35,7 +35,7 @@ import type { StatStageChangeCallback } from "#app/phases/stat-stage-change-phas
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import i18next from "#app/plugins/i18n";
 import { BooleanHolder, getFrameMs, NumberHolder, toDmgValue } from "#app/utils/common";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Moves } from "#enums/moves";
 import { PokemonAnimType } from "#enums/pokemon-anim-type";
@@ -277,7 +277,7 @@ export class ThroatChoppedTag extends MoveRestrictionBattlerTag {
 }
 
 /**
- * Tag representing the "disabling" effect performed by {@linkcode Moves.DISABLE} and {@linkcode Abilities.CURSED_BODY}.
+ * Tag representing the "disabling" effect performed by {@linkcode Moves.DISABLE} and {@linkcode AbilityId.CURSED_BODY}.
  * When the tag is added, the last-used move of the tag holder is set as the disabled move.
  */
 export class DisabledTag extends MoveRestrictionBattlerTag {
@@ -1868,9 +1868,9 @@ export class CenterOfAttentionTag extends BattlerTag {
 }
 
 export class AbilityBattlerTag extends BattlerTag {
-  public ability: Abilities;
+  public ability: AbilityId;
 
-  constructor(tagType: BattlerTagType, ability: Abilities, lapseType: BattlerTagLapseType, turnCount: number) {
+  constructor(tagType: BattlerTagType, ability: AbilityId, lapseType: BattlerTagLapseType, turnCount: number) {
     super(tagType, lapseType, turnCount);
 
     this.ability = ability;
@@ -1882,7 +1882,7 @@ export class AbilityBattlerTag extends BattlerTag {
    */
   loadTag(source: BattlerTag | any): void {
     super.loadTag(source);
-    this.ability = source.ability as Abilities;
+    this.ability = source.ability as AbilityId;
   }
 }
 
@@ -1892,7 +1892,7 @@ export class AbilityBattlerTag extends BattlerTag {
  */
 export class UnburdenTag extends AbilityBattlerTag {
   constructor() {
-    super(BattlerTagType.UNBURDEN, Abilities.UNBURDEN, BattlerTagLapseType.CUSTOM, 1);
+    super(BattlerTagType.UNBURDEN, AbilityId.UNBURDEN, BattlerTagLapseType.CUSTOM, 1);
   }
   onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
@@ -1904,14 +1904,14 @@ export class UnburdenTag extends AbilityBattlerTag {
 
 export class TruantTag extends AbilityBattlerTag {
   constructor() {
-    super(BattlerTagType.TRUANT, Abilities.TRUANT, BattlerTagLapseType.MOVE, 1);
+    super(BattlerTagType.TRUANT, AbilityId.TRUANT, BattlerTagLapseType.MOVE, 1);
   }
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
-    if (!pokemon.hasAbility(Abilities.TRUANT)) {
+    if (!pokemon.hasAbility(AbilityId.TRUANT)) {
       return super.lapse(pokemon, lapseType);
     }
-    const passive = pokemon.getAbility().id !== Abilities.TRUANT;
+    const passive = pokemon.getAbility().id !== AbilityId.TRUANT;
 
     const lastMove = pokemon.getLastXMoves().find(() => true);
 
@@ -1933,7 +1933,7 @@ export class TruantTag extends AbilityBattlerTag {
 
 export class SlowStartTag extends AbilityBattlerTag {
   constructor() {
-    super(BattlerTagType.SLOW_START, Abilities.SLOW_START, BattlerTagLapseType.TURN_END, 5);
+    super(BattlerTagType.SLOW_START, AbilityId.SLOW_START, BattlerTagLapseType.TURN_END, 5);
   }
 
   onAdd(pokemon: Pokemon): void {
@@ -1972,7 +1972,7 @@ export class HighestStatBoostTag extends AbilityBattlerTag {
   public stat: Stat;
   public multiplier: number;
 
-  constructor(tagType: BattlerTagType, ability: Abilities) {
+  constructor(tagType: BattlerTagType, ability: AbilityId) {
     super(tagType, ability, BattlerTagLapseType.CUSTOM, 1);
   }
 
@@ -2031,7 +2031,7 @@ export class HighestStatBoostTag extends AbilityBattlerTag {
 export class WeatherHighestStatBoostTag extends HighestStatBoostTag implements WeatherBattlerTag {
   public weatherTypes: WeatherType[];
 
-  constructor(tagType: BattlerTagType, ability: Abilities, ...weatherTypes: WeatherType[]) {
+  constructor(tagType: BattlerTagType, ability: AbilityId, ...weatherTypes: WeatherType[]) {
     super(tagType, ability);
     this.weatherTypes = weatherTypes;
   }
@@ -2049,7 +2049,7 @@ export class WeatherHighestStatBoostTag extends HighestStatBoostTag implements W
 export class TerrainHighestStatBoostTag extends HighestStatBoostTag implements TerrainBattlerTag {
   public terrainTypes: TerrainType[];
 
-  constructor(tagType: BattlerTagType, ability: Abilities, ...terrainTypes: TerrainType[]) {
+  constructor(tagType: BattlerTagType, ability: AbilityId, ...terrainTypes: TerrainType[]) {
     super(tagType, ability);
     this.terrainTypes = terrainTypes;
   }
@@ -3555,12 +3555,12 @@ export function getBattlerTag(
     case BattlerTagType.PROTOSYNTHESIS:
       return new WeatherHighestStatBoostTag(
         tagType,
-        Abilities.PROTOSYNTHESIS,
+        AbilityId.PROTOSYNTHESIS,
         WeatherType.SUNNY,
         WeatherType.HARSH_SUN,
       );
     case BattlerTagType.QUARK_DRIVE:
-      return new TerrainHighestStatBoostTag(tagType, Abilities.QUARK_DRIVE, TerrainType.ELECTRIC);
+      return new TerrainHighestStatBoostTag(tagType, AbilityId.QUARK_DRIVE, TerrainType.ELECTRIC);
     case BattlerTagType.FLYING:
     case BattlerTagType.UNDERGROUND:
     case BattlerTagType.UNDERWATER:

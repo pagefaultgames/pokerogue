@@ -1,7 +1,7 @@
 import { BypassSpeedChanceAbAttr } from "#app/data/abilities/ability";
 import { allAbilities } from "#app/data/data-lists";
 import { FaintPhase } from "#app/phases/faint-phase";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -27,15 +27,15 @@ describe("Abilities - Quick Draw", () => {
     game.override.battleStyle("single");
 
     game.override.starterSpecies(Species.MAGIKARP);
-    game.override.ability(Abilities.QUICK_DRAW);
+    game.override.ability(AbilityId.QUICK_DRAW);
     game.override.moveset([Moves.TACKLE, Moves.TAIL_WHIP]);
 
     game.override.enemyLevel(100);
     game.override.enemySpecies(Species.MAGIKARP);
-    game.override.enemyAbility(Abilities.BALL_FETCH);
+    game.override.enemyAbility(AbilityId.BALL_FETCH);
     game.override.enemyMoveset([Moves.TACKLE]);
 
-    vi.spyOn(allAbilities[Abilities.QUICK_DRAW].getAttrs(BypassSpeedChanceAbAttr)[0], "chance", "get").mockReturnValue(
+    vi.spyOn(allAbilities[AbilityId.QUICK_DRAW].getAttrs(BypassSpeedChanceAbAttr)[0], "chance", "get").mockReturnValue(
       100,
     );
   });
@@ -54,7 +54,7 @@ describe("Abilities - Quick Draw", () => {
 
     expect(pokemon.isFainted()).toBe(false);
     expect(enemy.isFainted()).toBe(true);
-    expect(pokemon.waveData.abilitiesApplied).contain(Abilities.QUICK_DRAW);
+    expect(pokemon.waveData.abilitiesApplied).contain(AbilityId.QUICK_DRAW);
   }, 20000);
 
   test(
@@ -76,7 +76,7 @@ describe("Abilities - Quick Draw", () => {
 
       expect(pokemon.isFainted()).toBe(true);
       expect(enemy.isFainted()).toBe(false);
-      expect(pokemon.waveData.abilitiesApplied).not.contain(Abilities.QUICK_DRAW);
+      expect(pokemon.waveData.abilitiesApplied).not.contain(AbilityId.QUICK_DRAW);
     },
   );
 
@@ -96,6 +96,6 @@ describe("Abilities - Quick Draw", () => {
 
     expect(pokemon.isFainted()).toBe(true);
     expect(enemy.isFainted()).toBe(false);
-    expect(pokemon.waveData.abilitiesApplied).contain(Abilities.QUICK_DRAW);
+    expect(pokemon.waveData.abilitiesApplied).contain(AbilityId.QUICK_DRAW);
   }, 20000);
 });

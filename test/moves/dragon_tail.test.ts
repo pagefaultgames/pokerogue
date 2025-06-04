@@ -4,7 +4,7 @@ import { Status } from "#app/data/status-effect";
 import { Challenges } from "#enums/challenges";
 import { StatusEffect } from "#enums/status-effect";
 import { PokemonType } from "#enums/pokemon-type";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -56,7 +56,7 @@ describe("Moves - Dragon Tail", () => {
   });
 
   it("should cause opponent to flee, display ability, and not crash", async () => {
-    game.override.enemyAbility(Abilities.ROUGH_SKIN);
+    game.override.enemyAbility(AbilityId.ROUGH_SKIN);
     await game.classicMode.startBattle([Species.DRATINI]);
 
     const leadPokemon = game.scene.getPlayerPokemon()!;
@@ -73,7 +73,7 @@ describe("Moves - Dragon Tail", () => {
   });
 
   it("should proceed without crashing in a double battle", async () => {
-    game.override.battleStyle("double").enemyMoveset(Moves.SPLASH).enemyAbility(Abilities.ROUGH_SKIN);
+    game.override.battleStyle("double").enemyMoveset(Moves.SPLASH).enemyAbility(AbilityId.ROUGH_SKIN);
     await game.classicMode.startBattle([Species.DRATINI, Species.DRATINI, Species.WAILORD, Species.WAILORD]);
 
     const leadPokemon = game.scene.getPlayerParty()[0]!;
@@ -102,7 +102,7 @@ describe("Moves - Dragon Tail", () => {
   });
 
   it("should redirect targets upon opponent flee", async () => {
-    game.override.battleStyle("double").enemyMoveset(Moves.SPLASH).enemyAbility(Abilities.ROUGH_SKIN);
+    game.override.battleStyle("double").enemyMoveset(Moves.SPLASH).enemyAbility(AbilityId.ROUGH_SKIN);
     await game.classicMode.startBattle([Species.DRATINI, Species.DRATINI, Species.WAILORD, Species.WAILORD]);
 
     const leadPokemon = game.scene.getPlayerParty()[0]!;
@@ -129,7 +129,7 @@ describe("Moves - Dragon Tail", () => {
   });
 
   it("doesn't switch out if the target has suction cups", async () => {
-    game.override.enemyAbility(Abilities.SUCTION_CUPS);
+    game.override.enemyAbility(AbilityId.SUCTION_CUPS);
     await game.classicMode.startBattle([Species.REGIELEKI]);
 
     const enemy = game.scene.getEnemyPokemon()!;

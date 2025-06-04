@@ -1,7 +1,7 @@
 import type { EnemyPokemon } from "#app/field/pokemon";
 import { DamageAnimPhase } from "#app/phases/damage-anim-phase";
 import { MoveEndPhase } from "#app/phases/move-end-phase";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -32,7 +32,7 @@ describe("Abilities - Sturdy", () => {
 
     game.override.enemySpecies(Species.ARON);
     game.override.enemyLevel(5);
-    game.override.enemyAbility(Abilities.STURDY);
+    game.override.enemyAbility(AbilityId.STURDY);
   });
 
   test("Sturdy activates when user is at full HP", async () => {
@@ -65,7 +65,7 @@ describe("Abilities - Sturdy", () => {
   });
 
   test("Sturdy is ignored by pokemon with `Abilities.MOLD_BREAKER`", async () => {
-    game.override.ability(Abilities.MOLD_BREAKER);
+    game.override.ability(AbilityId.MOLD_BREAKER);
 
     await game.classicMode.startBattle();
     game.move.select(Moves.CLOSE_COMBAT);

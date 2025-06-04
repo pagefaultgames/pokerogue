@@ -2,7 +2,7 @@ import { RepeatBerryNextTurnAbAttr } from "#app/data/abilities/ability";
 import Pokemon from "#app/field/pokemon";
 import { globalScene } from "#app/global-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { BerryType } from "#enums/berry-type";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
@@ -31,11 +31,11 @@ describe("Abilities - Cud Chew", () => {
     game.override
       .moveset([Moves.BUG_BITE, Moves.SPLASH, Moves.HYPER_VOICE, Moves.STUFF_CHEEKS])
       .startingHeldItems([{ name: "BERRY", type: BerryType.SITRUS, count: 1 }])
-      .ability(Abilities.CUD_CHEW)
+      .ability(AbilityId.CUD_CHEW)
       .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH);
   });
 
@@ -174,7 +174,7 @@ describe("Abilities - Cud Chew", () => {
     });
 
     it("clears array if disabled", async () => {
-      game.override.enemyAbility(Abilities.NEUTRALIZING_GAS);
+      game.override.enemyAbility(AbilityId.NEUTRALIZING_GAS);
       await game.classicMode.startBattle([Species.FARIGIRAF]);
 
       const farigiraf = game.scene.getPlayerPokemon()!;
@@ -222,7 +222,7 @@ describe("Abilities - Cud Chew", () => {
     });
 
     it("bypasses unnerve", async () => {
-      game.override.enemyAbility(Abilities.UNNERVE);
+      game.override.enemyAbility(AbilityId.UNNERVE);
       await game.classicMode.startBattle([Species.FARIGIRAF]);
 
       const farigiraf = game.scene.getPlayerPokemon()!;
@@ -275,7 +275,7 @@ describe("Abilities - Cud Chew", () => {
     });
 
     it("works with Ripen", async () => {
-      game.override.passiveAbility(Abilities.RIPEN);
+      game.override.passiveAbility(AbilityId.RIPEN);
       await game.classicMode.startBattle([Species.FARIGIRAF]);
 
       const farigiraf = game.scene.getPlayerPokemon()!;

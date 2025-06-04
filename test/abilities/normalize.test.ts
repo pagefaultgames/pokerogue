@@ -1,7 +1,7 @@
 import { TYPE_BOOST_ITEM_BOOST_PERCENT } from "#app/constants";
 import { allMoves } from "#app/data/data-lists";
 import { toDmgValue } from "#app/utils/common";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { PokemonType } from "#enums/pokemon-type";
 import { Species } from "#enums/species";
@@ -27,11 +27,11 @@ describe("Abilities - Normalize", () => {
     game = new GameManager(phaserGame);
     game.override
       .moveset([Moves.TACKLE])
-      .ability(Abilities.NORMALIZE)
+      .ability(AbilityId.NORMALIZE)
       .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH);
   });
 

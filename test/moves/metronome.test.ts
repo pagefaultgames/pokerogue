@@ -1,7 +1,7 @@
 import { RechargingTag, SemiInvulnerableTag } from "#app/data/battler-tags";
 import { RandomMoveAttr } from "#app/data/moves/move";
 import { allMoves } from "#app/data/data-lists";
-import { Abilities } from "#app/enums/abilities";
+import { AbilityId } from "#app/enums/abilities";
 import { Stat } from "#app/enums/stat";
 import { CommandPhase } from "#app/phases/command-phase";
 import { Moves } from "#enums/moves";
@@ -37,7 +37,7 @@ describe("Moves - Metronome", () => {
       .enemyLevel(100)
       .enemySpecies(Species.SHUCKLE)
       .enemyMoveset(Moves.SPLASH)
-      .enemyAbility(Abilities.BALL_FETCH);
+      .enemyAbility(AbilityId.BALL_FETCH);
   });
 
   it("should have one semi-invulnerable turn and deal damage on the second turn when a semi-invulnerable move is called", async () => {

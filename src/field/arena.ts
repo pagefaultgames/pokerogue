@@ -36,7 +36,7 @@ import type { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { TimeOfDay } from "#enums/time-of-day";
 import { TrainerType } from "#enums/trainer-type";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { SpeciesFormChangeRevertWeatherFormTrigger, SpeciesFormChangeWeatherTrigger } from "#app/data/pokemon-forms";
 import { CommonAnimPhase } from "#app/phases/common-anim-phase";
 import { WeatherType } from "#enums/weather-type";
@@ -372,8 +372,8 @@ export class Arena {
    */
   triggerWeatherBasedFormChanges(): void {
     globalScene.getField(true).forEach(p => {
-      const isCastformWithForecast = p.hasAbility(Abilities.FORECAST) && p.species.speciesId === Species.CASTFORM;
-      const isCherrimWithFlowerGift = p.hasAbility(Abilities.FLOWER_GIFT) && p.species.speciesId === Species.CHERRIM;
+      const isCastformWithForecast = p.hasAbility(AbilityId.FORECAST) && p.species.speciesId === Species.CASTFORM;
+      const isCherrimWithFlowerGift = p.hasAbility(AbilityId.FLOWER_GIFT) && p.species.speciesId === Species.CHERRIM;
 
       if (isCastformWithForecast || isCherrimWithFlowerGift) {
         globalScene.triggerPokemonFormChange(p, SpeciesFormChangeWeatherTrigger);
@@ -387,9 +387,9 @@ export class Arena {
   triggerWeatherBasedFormChangesToNormal(): void {
     globalScene.getField(true).forEach(p => {
       const isCastformWithForecast =
-        p.hasAbility(Abilities.FORECAST, false, true) && p.species.speciesId === Species.CASTFORM;
+        p.hasAbility(AbilityId.FORECAST, false, true) && p.species.speciesId === Species.CASTFORM;
       const isCherrimWithFlowerGift =
-        p.hasAbility(Abilities.FLOWER_GIFT, false, true) && p.species.speciesId === Species.CHERRIM;
+        p.hasAbility(AbilityId.FLOWER_GIFT, false, true) && p.species.speciesId === Species.CHERRIM;
 
       if (isCastformWithForecast || isCherrimWithFlowerGift) {
         return globalScene.triggerPokemonFormChange(p, SpeciesFormChangeRevertWeatherFormTrigger);

@@ -1,5 +1,5 @@
 import { Stat } from "#enums/stat";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -24,11 +24,11 @@ describe("Moves - Defog", () => {
     game = new GameManager(phaserGame);
     game.override
       .moveset([Moves.MIST, Moves.SAFEGUARD, Moves.SPLASH])
-      .ability(Abilities.BALL_FETCH)
+      .ability(AbilityId.BALL_FETCH)
       .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.SHUCKLE)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset([Moves.DEFOG, Moves.GROWL]);
   });
 

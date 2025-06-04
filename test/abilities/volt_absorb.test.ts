@@ -1,6 +1,6 @@
 import { Stat } from "#enums/stat";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
@@ -32,13 +32,13 @@ describe("Abilities - Volt Absorb", () => {
 
   it("does not activate when CHARGE is used", async () => {
     const moveToUse = Moves.CHARGE;
-    const ability = Abilities.VOLT_ABSORB;
+    const ability = AbilityId.VOLT_ABSORB;
 
     game.override.moveset([moveToUse]);
     game.override.ability(ability);
     game.override.enemyMoveset([Moves.SPLASH, Moves.NONE, Moves.NONE, Moves.NONE]);
     game.override.enemySpecies(Species.DUSKULL);
-    game.override.enemyAbility(Abilities.BALL_FETCH);
+    game.override.enemyAbility(AbilityId.BALL_FETCH);
 
     await game.classicMode.startBattle();
 
@@ -57,7 +57,7 @@ describe("Abilities - Volt Absorb", () => {
     game.override.moveset(Moves.THUNDERBOLT);
     game.override.enemyMoveset(Moves.SPLASH);
     game.override.enemySpecies(Species.MAGIKARP);
-    game.override.enemyAbility(Abilities.VOLT_ABSORB);
+    game.override.enemyAbility(AbilityId.VOLT_ABSORB);
 
     await game.classicMode.startBattle();
 
@@ -77,7 +77,7 @@ describe("Abilities - Volt Absorb", () => {
     game.override.moveset(Moves.THUNDERBOLT);
     game.override.enemyMoveset(Moves.DIVE);
     game.override.enemySpecies(Species.MAGIKARP);
-    game.override.enemyAbility(Abilities.VOLT_ABSORB);
+    game.override.enemyAbility(AbilityId.VOLT_ABSORB);
 
     await game.classicMode.startBattle();
 

@@ -1,6 +1,6 @@
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -24,7 +24,7 @@ describe("Moves - Taunt", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset([Moves.TAUNT, Moves.SPLASH])
       .enemySpecies(Species.SHUCKLE)
       .moveset([Moves.GROWL]);

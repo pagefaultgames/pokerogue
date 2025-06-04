@@ -1,5 +1,5 @@
 import { Status } from "#app/data/status-effect";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { GameModes, getGameMode } from "#app/game-mode";
 import { BattleEndPhase } from "#app/phases/battle-end-phase";
 import { TurnInitPhase } from "#app/phases/turn-init-phase";
@@ -69,8 +69,8 @@ describe("Double Battles", () => {
     game.override
       .enemyMoveset(Moves.SPLASH)
       .moveset(Moves.SPLASH)
-      .enemyAbility(Abilities.BALL_FETCH)
-      .ability(Abilities.BALL_FETCH);
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .ability(AbilityId.BALL_FETCH);
 
     // Play through endless, waves 1 to 9, counting number of double battles from waves 2 to 9
     await game.classicMode.startBattle([Species.BULBASAUR]);

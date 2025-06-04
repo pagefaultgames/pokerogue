@@ -16,7 +16,7 @@ import { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-en
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { TrainerType } from "#enums/trainer-type";
 import { Species } from "#enums/species";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { Moves } from "#enums/moves";
 import { Nature } from "#enums/nature";
@@ -216,7 +216,7 @@ function endTrainerBattleAndShowDialogue(): Promise<void> {
         // Hardcoded Eiscue for now in case it is fused with another pokemon
         if (
           pokemon.species.speciesId === Species.EISCUE &&
-          pokemon.hasAbility(Abilities.ICE_FACE) &&
+          pokemon.hasAbility(AbilityId.ICE_FACE) &&
           pokemon.formIndex === 1
         ) {
           globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeAbilityTrigger);

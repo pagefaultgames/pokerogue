@@ -7,7 +7,7 @@ import {
 } from "#app/data/abilities/ability";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { NumberHolder } from "#app/utils/common";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { Stat } from "#enums/stat";
@@ -33,7 +33,7 @@ describe("Abilities - Shield Dust", () => {
     game = new GameManager(phaserGame);
     game.override.battleStyle("single");
     game.override.enemySpecies(Species.ONIX);
-    game.override.enemyAbility(Abilities.SHIELD_DUST);
+    game.override.enemyAbility(AbilityId.SHIELD_DUST);
     game.override.startingLevel(100);
     game.override.moveset(Moves.AIR_SLASH);
     game.override.enemyMoveset(Moves.TACKLE);

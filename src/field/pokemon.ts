@@ -220,7 +220,7 @@ import i18next from "i18next";
 import { speciesEggMoves } from "#app/data/balance/egg-moves";
 import { ModifierTier } from "#app/modifier/modifier-tier";
 import { applyChallenges, ChallengeType } from "#app/data/challenge";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattleSpec } from "#enums/battle-spec";
 import { BattlerTagType } from "#enums/battler-tag-type";
@@ -1571,7 +1571,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         if (this.status && this.status.effect === StatusEffect.PARALYSIS) {
           ret >>= 1;
         }
-        if (this.getTag(BattlerTagType.UNBURDEN) && this.hasAbility(Abilities.UNBURDEN)) {
+        if (this.getTag(BattlerTagType.UNBURDEN) && this.hasAbility(AbilityId.UNBURDEN)) {
           ret *= 2;
         }
         break;
@@ -1601,7 +1601,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       if (s === Stat.HP) {
         statHolder.value = statHolder.value + this.level + 10;
         globalScene.applyModifier(PokemonIncrementingStatModifier, this.isPlayer(), this, s, statHolder);
-        if (this.hasAbility(Abilities.WONDER_GUARD, false, true)) {
+        if (this.hasAbility(AbilityId.WONDER_GUARD, false, true)) {
           statHolder.value = 1;
         }
         if (this.hp > statHolder.value || this.hp === undefined) {
@@ -2071,7 +2071,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       return allAbilities[this.customPokemonData.ability];
     }
     let abilityId = this.getSpeciesForm(ignoreOverride).getAbility(this.abilityIndex);
-    if (abilityId === Abilities.NONE) {
+    if (abilityId === AbilityId.NONE) {
       abilityId = this.species.ability1;
     }
     return allAbilities[abilityId];
@@ -2165,9 +2165,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       return false;
     }
     if (
-      ((Overrides.PASSIVE_ABILITY_OVERRIDE !== Abilities.NONE || Overrides.HAS_PASSIVE_ABILITY_OVERRIDE) &&
+      ((Overrides.PASSIVE_ABILITY_OVERRIDE !== AbilityId.NONE || Overrides.HAS_PASSIVE_ABILITY_OVERRIDE) &&
         this.isPlayer()) ||
-      ((Overrides.OPP_PASSIVE_ABILITY_OVERRIDE !== Abilities.NONE || Overrides.OPP_HAS_PASSIVE_ABILITY_OVERRIDE) &&
+      ((Overrides.OPP_PASSIVE_ABILITY_OVERRIDE !== AbilityId.NONE || Overrides.OPP_HAS_PASSIVE_ABILITY_OVERRIDE) &&
         !this.isPlayer())
     ) {
       return true;
@@ -2238,7 +2238,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param ignoreOverride Whether to ignore ability changing effects; default `false`
    * @returns `true` if the ability is present and active
    */
-  public hasAbility(ability: Abilities, canApply = true, ignoreOverride = false): boolean {
+  public hasAbility(ability: AbilityId, canApply = true, ignoreOverride = false): boolean {
     if (this.getAbility(ignoreOverride).id === ability && (!canApply || this.canApplyAbility())) {
       return true;
     }
@@ -2321,7 +2321,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return (
       !!this.getTag(GroundedTag) ||
       (!this.isOfType(PokemonType.FLYING, true, true) &&
-        !this.hasAbility(Abilities.LEVITATE) &&
+        !this.hasAbility(AbilityId.LEVITATE) &&
         !this.getTag(BattlerTagType.FLOATING) &&
         !this.getTag(SemiInvulnerableTag))
     );
@@ -6702,7 +6702,6 @@ export class EnemyPokemon extends Pokemon {
     return ret;
   }
 
-  
   /**
    * Show or hide the type effectiveness multiplier window
    * Passing undefined will hide the window
@@ -6785,8 +6784,8 @@ export class PokemonSummonData {
   // TODO: Move these into a separate class & add rage fist hit count
   public speciesForm: PokemonSpeciesForm | null = null;
   public fusionSpeciesForm: PokemonSpeciesForm | null = null;
-  public ability: Abilities | undefined;
-  public passiveAbility: Abilities | undefined;
+  public ability: AbilityId | undefined;
+  public passiveAbility: AbilityId | undefined;
   public gender: Gender | undefined;
   public fusionGender: Gender | undefined;
   public stats: number[] = [0, 0, 0, 0, 0, 0];
@@ -6800,7 +6799,7 @@ export class PokemonSummonData {
   public illusion: IllusionData | null = null;
   public illusionBroken = false;
 
-  /** Array containing all berries eaten in the last turn; used by {@linkcode Abilities.CUD_CHEW} */
+  /** Array containing all berries eaten in the last turn; used by {@linkcode AbilityId.CUD_CHEW} */
   public berriesEatenLast: BerryType[] = [];
 
   /**
@@ -6863,7 +6862,7 @@ export class PokemonBattleData {
   public hitCount = 0;
   /** Whether this Pokemon has eaten a berry this battle; used for {@linkcode Moves.BELCH} */
   public hasEatenBerry = false;
-  /** Array containing all berries eaten and not yet recovered during this current battle; used by {@linkcode Abilities.HARVEST} */
+  /** Array containing all berries eaten and not yet recovered during this current battle; used by {@linkcode AbilityId.HARVEST} */
   public berriesEaten: BerryType[] = [];
 
   constructor(source?: PokemonBattleData | Partial<PokemonBattleData>) {
@@ -6886,7 +6885,7 @@ export class PokemonWaveData {
    * A set of all the abilities this {@linkcode Pokemon} has used in this wave.
    * Used to track once per battle conditions, as well as (hopefully) by the updated AI for move effectiveness.
    */
-  public abilitiesApplied: Set<Abilities> = new Set<Abilities>();
+  public abilitiesApplied: Set<AbilityId> = new Set<AbilityId>();
   /** Whether the pokemon's ability has been revealed or not */
   public abilityRevealed = false;
 }
@@ -6924,7 +6923,7 @@ export class PokemonTurnData {
   public extraTurns = 0;
   /**
    * All berries eaten by this pokemon in this turn.
-   * Saved into {@linkcode PokemonSummonData | SummonData} by {@linkcode Abilities.CUD_CHEW} on turn end.
+   * Saved into {@linkcode PokemonSummonData | SummonData} by {@linkcode AbilityId.CUD_CHEW} on turn end.
    * @see {@linkcode PokemonSummonData.berriesEatenLast}
    */
   public berriesEaten: BerryType[] = [];

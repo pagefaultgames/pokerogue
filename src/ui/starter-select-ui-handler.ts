@@ -59,7 +59,7 @@ import { ScrollBar } from "#app/ui/scroll-bar";
 import { SelectChallengePhase } from "#app/phases/select-challenge-phase";
 import { EncounterPhase } from "#app/phases/encounter-phase";
 import { TitlePhase } from "#app/phases/title-phase";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import {
   getPassiveCandyCount,
   getValueReductionCandyCounts,
@@ -162,15 +162,15 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     starterInfoYOffset: 0.5,
     starterInfoXPos: 29,
   },
-  da:{
+  da: {
     starterInfoTextSize: "56px",
     instructionTextSize: "38px",
   },
-  tr:{
+  tr: {
     starterInfoTextSize: "56px",
     instructionTextSize: "38px",
   },
-  ro:{
+  ro: {
     starterInfoTextSize: "56px",
     instructionTextSize: "38px",
   },
@@ -3171,7 +3171,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       // HA Filter
       const speciesHasHiddenAbility =
         container.species.abilityHidden !== container.species.ability1 &&
-        container.species.abilityHidden !== Abilities.NONE;
+        container.species.abilityHidden !== AbilityId.NONE;
       const hasHA = starterData.abilityAttr & AbilityAttr.ABILITY_HIDDEN;
       const fitsHA = this.filterBar.getVals(DropDownColumn.MISC).some(misc => {
         if (misc.val === "HIDDEN_ABILITY" && misc.state === DropDownState.ON) {

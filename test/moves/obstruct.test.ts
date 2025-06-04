@@ -1,4 +1,4 @@
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { Stat } from "#enums/stat";
@@ -25,8 +25,8 @@ describe("Moves - Obstruct", () => {
       .battleStyle("single")
       .enemySpecies(Species.MAGIKARP)
       .enemyMoveset(Moves.TACKLE)
-      .enemyAbility(Abilities.BALL_FETCH)
-      .ability(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .ability(AbilityId.BALL_FETCH)
       .moveset([Moves.OBSTRUCT])
       .starterSpecies(Species.FEEBAS);
   });
@@ -86,7 +86,7 @@ describe("Moves - Obstruct", () => {
   });
 
   it("doesn't reduce the stats of an opponent with Clear Body/etc", async () => {
-    game.override.enemyAbility(Abilities.CLEAR_BODY);
+    game.override.enemyAbility(AbilityId.CLEAR_BODY);
     await game.classicMode.startBattle();
 
     game.move.select(Moves.OBSTRUCT);

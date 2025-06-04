@@ -1,6 +1,6 @@
 import { BattlerIndex } from "#app/battle";
 import { globalScene } from "#app/global-scene";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -25,18 +25,18 @@ describe("Abilities - Mold Breaker", () => {
     game = new GameManager(phaserGame);
     game.override
       .moveset([Moves.SPLASH])
-      .ability(Abilities.MOLD_BREAKER)
+      .ability(AbilityId.MOLD_BREAKER)
       .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH);
   });
 
   it("should turn off the ignore abilities arena variable after the user's move", async () => {
     game.override
       .enemyMoveset(Moves.SPLASH)
-      .ability(Abilities.MOLD_BREAKER)
+      .ability(AbilityId.MOLD_BREAKER)
       .moveset([Moves.ERUPTION])
       .startingLevel(100)
       .enemyLevel(2);

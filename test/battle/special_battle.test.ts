@@ -1,6 +1,6 @@
 import { CommandPhase } from "#app/phases/command-phase";
 import { UiMode } from "#enums/ui-mode";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -27,8 +27,8 @@ describe("Test Battle Phase", () => {
       .enemySpecies(Species.RATTATA)
       .startingLevel(2000)
       .moveset([Moves.TACKLE])
-      .enemyAbility(Abilities.HYDRATION)
-      .ability(Abilities.HYDRATION)
+      .enemyAbility(AbilityId.HYDRATION)
+      .ability(AbilityId.HYDRATION)
       .enemyMoveset(Moves.TACKLE);
   });
 

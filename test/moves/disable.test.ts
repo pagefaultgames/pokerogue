@@ -1,6 +1,6 @@
 import { BattlerIndex } from "#app/battle";
 import { MoveResult } from "#app/field/pokemon";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -24,8 +24,8 @@ describe("Moves - Disable", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .ability(Abilities.BALL_FETCH)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .ability(AbilityId.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .moveset([Moves.DISABLE, Moves.SPLASH])
       .enemyMoveset(Moves.SPLASH)
       .starterSpecies(Species.PIKACHU)

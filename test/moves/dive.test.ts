@@ -1,7 +1,7 @@
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { StatusEffect } from "#enums/status-effect";
 import { MoveResult } from "#app/field/pokemon";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -31,7 +31,7 @@ describe("Moves - Dive", () => {
       .startingLevel(100)
       .enemySpecies(Species.SNORLAX)
       .enemyLevel(100)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(Moves.TACKLE);
   });
 
@@ -60,7 +60,7 @@ describe("Moves - Dive", () => {
   });
 
   it("should not allow the user to evade attacks from Pokemon with No Guard", async () => {
-    game.override.enemyAbility(Abilities.NO_GUARD);
+    game.override.enemyAbility(AbilityId.NO_GUARD);
 
     await game.classicMode.startBattle([Species.MAGIKARP]);
 
@@ -75,7 +75,7 @@ describe("Moves - Dive", () => {
   });
 
   it("should not expend PP when the attack phase is cancelled", async () => {
-    game.override.enemyAbility(Abilities.NO_GUARD).enemyMoveset(Moves.SPORE);
+    game.override.enemyAbility(AbilityId.NO_GUARD).enemyMoveset(Moves.SPORE);
 
     await game.classicMode.startBattle([Species.MAGIKARP]);
 
@@ -92,7 +92,7 @@ describe("Moves - Dive", () => {
   });
 
   it("should trigger on-contact post-defend ability effects", async () => {
-    game.override.enemyAbility(Abilities.ROUGH_SKIN).enemyMoveset(Moves.SPLASH);
+    game.override.enemyAbility(AbilityId.ROUGH_SKIN).enemyMoveset(Moves.SPLASH);
 
     await game.classicMode.startBattle([Species.MAGIKARP]);
 
@@ -105,7 +105,7 @@ describe("Moves - Dive", () => {
 
     await game.phaseInterceptor.to("MoveEndPhase");
     expect(playerPokemon.hp).toBeLessThan(playerPokemon.getMaxHp());
-    expect(enemyPokemon.waveData.abilitiesApplied).toContain(Abilities.ROUGH_SKIN);
+    expect(enemyPokemon.waveData.abilitiesApplied).toContain(AbilityId.ROUGH_SKIN);
   });
 
   it("should cancel attack after Harsh Sunlight is set", async () => {

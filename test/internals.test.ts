@@ -1,4 +1,4 @@
-import { Abilities } from "#app/enums/abilities";
+import { AbilityId } from "#app/enums/abilities";
 import { Species } from "#app/enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -28,9 +28,9 @@ describe("Internals", () => {
 
     expect(eevee.getSpeciesForm().getAbilityCount()).toBe(3);
 
-    expect(eevee.getSpeciesForm().getAbility(0)).toBe(Abilities.RUN_AWAY);
-    expect(eevee.getSpeciesForm().getAbility(1)).toBe(Abilities.ADAPTABILITY);
-    expect(eevee.getSpeciesForm().getAbility(2)).toBe(Abilities.ANTICIPATION);
+    expect(eevee.getSpeciesForm().getAbility(0)).toBe(AbilityId.RUN_AWAY);
+    expect(eevee.getSpeciesForm().getAbility(1)).toBe(AbilityId.ADAPTABILITY);
+    expect(eevee.getSpeciesForm().getAbility(2)).toBe(AbilityId.ANTICIPATION);
   });
 
   it("should set Eeeve abilityIndex between 0-2", async () => {

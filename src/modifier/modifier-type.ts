@@ -116,7 +116,7 @@ import {
   padInt,
   randSeedInt,
 } from "#app/utils/common";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BerryType } from "#enums/berry-type";
 import { Moves } from "#enums/moves";
@@ -2781,15 +2781,15 @@ const modifierPool: ModifierPool = {
             if (canSetStatus) {
               // Abilities that take advantage of obtaining the actual status effect, separated based on specificity to the orb
               const hasGeneralAbility = [
-                Abilities.QUICK_FEET,
-                Abilities.GUTS,
-                Abilities.MARVEL_SCALE,
-                Abilities.MAGIC_GUARD,
+                AbilityId.QUICK_FEET,
+                AbilityId.GUTS,
+                AbilityId.MARVEL_SCALE,
+                AbilityId.MAGIC_GUARD,
               ].some(a => p.hasAbility(a, false, true));
-              const hasSpecificAbility = [Abilities.TOXIC_BOOST, Abilities.POISON_HEAL].some(a =>
+              const hasSpecificAbility = [AbilityId.TOXIC_BOOST, AbilityId.POISON_HEAL].some(a =>
                 p.hasAbility(a, false, true),
               );
-              const hasOppositeAbility = [Abilities.FLARE_BOOST].some(a => p.hasAbility(a, false, true));
+              const hasOppositeAbility = [AbilityId.FLARE_BOOST].some(a => p.hasAbility(a, false, true));
 
               return hasSpecificAbility || (hasGeneralAbility && !hasOppositeAbility) || hasStatusMoves;
             }
@@ -2827,13 +2827,13 @@ const modifierPool: ModifierPool = {
             if (canSetStatus) {
               // Abilities that take advantage of obtaining the actual status effect, separated based on specificity to the orb
               const hasGeneralAbility = [
-                Abilities.QUICK_FEET,
-                Abilities.GUTS,
-                Abilities.MARVEL_SCALE,
-                Abilities.MAGIC_GUARD,
+                AbilityId.QUICK_FEET,
+                AbilityId.GUTS,
+                AbilityId.MARVEL_SCALE,
+                AbilityId.MAGIC_GUARD,
               ].some(a => p.hasAbility(a, false, true));
-              const hasSpecificAbility = [Abilities.FLARE_BOOST].some(a => p.hasAbility(a, false, true));
-              const hasOppositeAbility = [Abilities.TOXIC_BOOST, Abilities.POISON_HEAL].some(a =>
+              const hasSpecificAbility = [AbilityId.FLARE_BOOST].some(a => p.hasAbility(a, false, true));
+              const hasOppositeAbility = [AbilityId.TOXIC_BOOST, AbilityId.POISON_HEAL].some(a =>
                 p.hasAbility(a, false, true),
               );
 
@@ -2865,18 +2865,18 @@ const modifierPool: ModifierPool = {
             const moveset = p.getMoveset(true).map(m => m.moveId);
 
             const hasAbility = [
-              Abilities.DROUGHT,
-              Abilities.ORICHALCUM_PULSE,
-              Abilities.DRIZZLE,
-              Abilities.SAND_STREAM,
-              Abilities.SAND_SPIT,
-              Abilities.SNOW_WARNING,
-              Abilities.ELECTRIC_SURGE,
-              Abilities.HADRON_ENGINE,
-              Abilities.PSYCHIC_SURGE,
-              Abilities.GRASSY_SURGE,
-              Abilities.SEED_SOWER,
-              Abilities.MISTY_SURGE,
+              AbilityId.DROUGHT,
+              AbilityId.ORICHALCUM_PULSE,
+              AbilityId.DRIZZLE,
+              AbilityId.SAND_STREAM,
+              AbilityId.SAND_SPIT,
+              AbilityId.SNOW_WARNING,
+              AbilityId.ELECTRIC_SURGE,
+              AbilityId.HADRON_ENGINE,
+              AbilityId.PSYCHIC_SURGE,
+              AbilityId.GRASSY_SURGE,
+              AbilityId.SEED_SOWER,
+              AbilityId.MISTY_SURGE,
             ].some(a => p.hasAbility(a, false, true));
 
             const hasMoves = [

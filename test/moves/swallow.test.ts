@@ -5,7 +5,7 @@ import type { TurnMove } from "#app/field/pokemon";
 import { MoveResult } from "#app/field/pokemon";
 import { MovePhase } from "#app/phases/move-phase";
 import { TurnInitPhase } from "#app/phases/turn-init-phase";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -31,10 +31,10 @@ describe("Moves - Swallow", () => {
       .battleStyle("single")
       .enemySpecies(Species.RATTATA)
       .enemyMoveset(Moves.SPLASH)
-      .enemyAbility(Abilities.NONE)
+      .enemyAbility(AbilityId.NONE)
       .enemyLevel(2000)
       .moveset(Moves.SWALLOW)
-      .ability(Abilities.NONE);
+      .ability(AbilityId.NONE);
   });
 
   describe("consumes all stockpile stacks to heal (scaling with stacks)", () => {

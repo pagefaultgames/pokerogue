@@ -2,7 +2,7 @@ import { BattlerIndex } from "#app/battle";
 import { allMoves } from "#app/data/data-lists";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
 import type { PokemonInstantReviveModifier } from "#app/modifier/modifier";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -27,11 +27,11 @@ describe("Items - Reviver Seed", () => {
     game = new GameManager(phaserGame);
     game.override
       .moveset([Moves.SPLASH, Moves.TACKLE, Moves.ENDURE])
-      .ability(Abilities.BALL_FETCH)
+      .ability(AbilityId.BALL_FETCH)
       .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .startingHeldItems([{ name: "REVIVER_SEED" }])
       .enemyHeldItems([{ name: "REVIVER_SEED" }])
       .enemyMoveset(Moves.SPLASH);
@@ -116,7 +116,7 @@ describe("Items - Reviver Seed", () => {
       .startingLevel(1)
       .enemySpecies(Species.MAGIKARP)
       .moveset(move)
-      .enemyAbility(Abilities.LIQUID_OOZE)
+      .enemyAbility(AbilityId.LIQUID_OOZE)
       .enemyMoveset(Moves.SPLASH);
     await game.classicMode.startBattle([Species.GASTLY, Species.FEEBAS]);
     const player = game.scene.getPlayerPokemon()!;

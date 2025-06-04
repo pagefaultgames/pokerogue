@@ -5,7 +5,7 @@ import { Species } from "#enums/species";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Moves } from "#enums/moves";
 import { Stat, EFFECTIVE_STATS } from "#enums/stat";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { BattlerIndex } from "#app/battle";
 
 // TODO: Add more tests once Transform is fully implemented
@@ -29,10 +29,10 @@ describe("Moves - Transform", () => {
       .battleStyle("single")
       .enemySpecies(Species.MEW)
       .enemyLevel(200)
-      .enemyAbility(Abilities.BEAST_BOOST)
-      .enemyPassiveAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BEAST_BOOST)
+      .enemyPassiveAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH)
-      .ability(Abilities.INTIMIDATE)
+      .ability(AbilityId.INTIMIDATE)
       .moveset([Moves.TRANSFORM]);
   });
 
@@ -107,7 +107,7 @@ describe("Moves - Transform", () => {
   });
 
   it("should activate its ability if it copies one that activates on summon", async () => {
-    game.override.enemyAbility(Abilities.INTIMIDATE).ability(Abilities.BALL_FETCH);
+    game.override.enemyAbility(AbilityId.INTIMIDATE).ability(AbilityId.BALL_FETCH);
 
     await game.classicMode.startBattle([Species.DITTO]);
     game.move.select(Moves.TRANSFORM);

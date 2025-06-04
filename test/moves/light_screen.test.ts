@@ -3,7 +3,7 @@ import { ArenaTagSide } from "#app/data/arena-tag";
 import type Move from "#app/data/moves/move";
 import { CritOnlyAttr } from "#app/data/moves/move";
 import { allMoves } from "#app/data/data-lists";
-import { Abilities } from "#app/enums/abilities";
+import { AbilityId } from "#app/enums/abilities";
 import { ArenaTagType } from "#app/enums/arena-tag-type";
 import type Pokemon from "#app/field/pokemon";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
@@ -37,7 +37,7 @@ describe("Moves - Light Screen", () => {
     globalScene = game.scene;
     game.override
       .battleStyle("single")
-      .ability(Abilities.BALL_FETCH)
+      .ability(AbilityId.BALL_FETCH)
       .moveset([Moves.ABSORB, Moves.DAZZLING_GLEAM, Moves.TACKLE])
       .enemyLevel(100)
       .enemySpecies(Species.MAGIKARP)

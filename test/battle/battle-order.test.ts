@@ -1,7 +1,7 @@
 import { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
 import { SelectTargetPhase } from "#app/phases/select-target-phase";
 import { TurnStartPhase } from "#app/phases/turn-start-phase";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -26,8 +26,8 @@ describe("Battle order", () => {
     game = new GameManager(phaserGame);
     game.override.battleStyle("single");
     game.override.enemySpecies(Species.MEWTWO);
-    game.override.enemyAbility(Abilities.INSOMNIA);
-    game.override.ability(Abilities.INSOMNIA);
+    game.override.enemyAbility(AbilityId.INSOMNIA);
+    game.override.ability(AbilityId.INSOMNIA);
     game.override.moveset([Moves.TACKLE]);
   });
 

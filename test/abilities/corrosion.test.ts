@@ -1,4 +1,4 @@
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -26,12 +26,12 @@ describe("Abilities - Corrosion", () => {
       .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.GRIMER)
-      .enemyAbility(Abilities.CORROSION)
+      .enemyAbility(AbilityId.CORROSION)
       .enemyMoveset(Moves.TOXIC);
   });
 
   it("If a Poison- or Steel-type Pokémon with this Ability poisons a target with Synchronize, Synchronize does not gain the ability to poison Poison- or Steel-type Pokémon.", async () => {
-    game.override.ability(Abilities.SYNCHRONIZE);
+    game.override.ability(AbilityId.SYNCHRONIZE);
     await game.classicMode.startBattle([Species.FEEBAS]);
 
     const playerPokemon = game.scene.getPlayerPokemon();

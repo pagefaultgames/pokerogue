@@ -1,5 +1,5 @@
 import { BattlerIndex } from "#app/battle";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { StatusEffect } from "#enums/status-effect";
 import { Moves } from "#enums/moves";
@@ -33,7 +33,7 @@ describe("Frenzy Move Reset", () => {
       .enemyMoveset(Moves.SPLASH)
       .enemyLevel(100)
       .enemySpecies(Species.SHUCKLE)
-      .enemyAbility(Abilities.BALL_FETCH);
+      .enemyAbility(AbilityId.BALL_FETCH);
   });
 
   /*

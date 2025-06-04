@@ -1,7 +1,7 @@
 import { BattlerIndex } from "#app/battle";
 import { PostDefendContactApplyStatusEffectAbAttr } from "#app/data/abilities/ability";
 import { allAbilities } from "#app/data/data-lists";
-import { Abilities } from "#app/enums/abilities";
+import { AbilityId } from "#app/enums/abilities";
 import { StatusEffect } from "#app/enums/status-effect";
 import GameManager from "#test/testUtils/gameManager";
 import { Moves } from "#enums/moves";
@@ -29,11 +29,11 @@ describe("Moves - Safeguard", () => {
       .battleStyle("single")
       .enemySpecies(Species.DRATINI)
       .enemyMoveset([Moves.SAFEGUARD])
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .enemyLevel(5)
       .starterSpecies(Species.DRATINI)
       .moveset([Moves.NUZZLE, Moves.SPORE, Moves.YAWN, Moves.SPLASH])
-      .ability(Abilities.UNNERVE); // Stop wild Pokemon from potentially eating Lum Berry
+      .ability(AbilityId.UNNERVE); // Stop wild Pokemon from potentially eating Lum Berry
   });
 
   it("protects from damaging moves with additional effects", async () => {
@@ -137,9 +137,9 @@ describe("Moves - Safeguard", () => {
   });
 
   it("protects from ability-inflicted status", async () => {
-    game.override.ability(Abilities.STATIC);
+    game.override.ability(AbilityId.STATIC);
     vi.spyOn(
-      allAbilities[Abilities.STATIC].getAttrs(PostDefendContactApplyStatusEffectAbAttr)[0],
+      allAbilities[AbilityId.STATIC].getAttrs(PostDefendContactApplyStatusEffectAbAttr)[0],
       "chance",
       "get",
     ).mockReturnValue(100);

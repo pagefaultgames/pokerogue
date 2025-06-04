@@ -1,6 +1,6 @@
 import { BattlerIndex } from "#app/battle";
 import { allAbilities } from "#app/data/data-lists";
-import { Abilities } from "#app/enums/abilities";
+import { AbilityId } from "#app/enums/abilities";
 import { Stat } from "#app/enums/stat";
 import { WeatherType } from "#app/enums/weather-type";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
@@ -19,9 +19,9 @@ describe("Abilities - Flower Gift", () => {
   /**
    * Tests reverting to normal form when Cloud Nine/Air Lock is active on the field
    * @param {GameManager} game The game manager instance
-   * @param {Abilities} ability The ability that is active on the field
+   * @param {AbilityId} ability The ability that is active on the field
    */
-  const testRevertFormAgainstAbility = async (game: GameManager, ability: Abilities) => {
+  const testRevertFormAgainstAbility = async (game: GameManager, ability: AbilityId) => {
     game.override.starterForms({ [Species.CASTFORM]: SUNSHINE_FORM }).enemyAbility(ability);
     await game.classicMode.startBattle([Species.CASTFORM]);
 
@@ -44,8 +44,8 @@ describe("Abilities - Flower Gift", () => {
     game: GameManager,
     move: Moves,
     allyAttacker: boolean,
-    allyAbility = Abilities.BALL_FETCH,
-    enemyAbility = Abilities.BALL_FETCH,
+    allyAbility = AbilityId.BALL_FETCH,
+    enemyAbility = AbilityId.BALL_FETCH,
   ): Promise<[number, number]> => {
     game.override.battleStyle("double");
     game.override.moveset([Moves.SPLASH, Moves.SUNNY_DAY, move, Moves.HEAL_PULSE]);
@@ -104,7 +104,7 @@ describe("Abilities - Flower Gift", () => {
       .moveset([Moves.SPLASH, Moves.SUNSTEEL_STRIKE, Moves.SUNNY_DAY, Moves.MUD_SLAP])
       .enemySpecies(Species.MAGIKARP)
       .enemyMoveset(Moves.SPLASH)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .enemyLevel(100)
       .startingLevel(100);
   });
@@ -139,7 +139,7 @@ describe("Abilities - Flower Gift", () => {
   });
 
   it("should not increase the damage of a mold breaker ally", async () => {
-    const [damageWithGift, damageWithoutGift] = await testDamageDealt(game, Moves.TACKLE, true, Abilities.MOLD_BREAKER);
+    const [damageWithGift, damageWithoutGift] = await testDamageDealt(game, Moves.TACKLE, true, AbilityId.MOLD_BREAKER);
     expect(damageWithGift).toBe(damageWithoutGift);
   });
 
@@ -153,8 +153,8 @@ describe("Abilities - Flower Gift", () => {
       game,
       Moves.MUD_SLAP,
       false,
-      Abilities.BALL_FETCH,
-      Abilities.MOLD_BREAKER,
+      AbilityId.BALL_FETCH,
+      AbilityId.MOLD_BREAKER,
     );
     expect(damageWithGift).toBe(damageWithoutGift);
   });
@@ -170,11 +170,11 @@ describe("Abilities - Flower Gift", () => {
   });
 
   it("reverts to Overcast Form if a Pokémon on the field has Air Lock", async () => {
-    await testRevertFormAgainstAbility(game, Abilities.AIR_LOCK);
+    await testRevertFormAgainstAbility(game, AbilityId.AIR_LOCK);
   });
 
   it("reverts to Overcast Form if a Pokémon on the field has Cloud Nine", async () => {
-    await testRevertFormAgainstAbility(game, Abilities.CLOUD_NINE);
+    await testRevertFormAgainstAbility(game, AbilityId.CLOUD_NINE);
   });
 
   it("reverts to Overcast Form when the Flower Gift is suppressed, changes form under Harsh Sunlight/Sunny when it regains it", async () => {

@@ -1,7 +1,7 @@
 import { PokemonType } from "#enums/pokemon-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { toDmgValue } from "#app/utils/common";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { Stat } from "#enums/stat";
@@ -28,9 +28,9 @@ describe("Abilities - Parental Bond", () => {
     game = new GameManager(phaserGame);
     game.override.battleStyle("single");
     game.override.disableCrits();
-    game.override.ability(Abilities.PARENTAL_BOND);
+    game.override.ability(AbilityId.PARENTAL_BOND);
     game.override.enemySpecies(Species.SNORLAX);
-    game.override.enemyAbility(Abilities.FUR_COAT);
+    game.override.enemyAbility(AbilityId.FUR_COAT);
     game.override.enemyMoveset(Moves.SPLASH);
     game.override.startingLevel(100);
     game.override.enemyLevel(100);
@@ -169,7 +169,7 @@ describe("Abilities - Parental Bond", () => {
   it("should not apply to multi-target moves", async () => {
     game.override.battleStyle("double");
     game.override.moveset([Moves.EARTHQUAKE]);
-    game.override.passiveAbility(Abilities.LEVITATE);
+    game.override.passiveAbility(AbilityId.LEVITATE);
 
     await game.classicMode.startBattle([Species.MAGIKARP, Species.FEEBAS]);
 
@@ -394,7 +394,7 @@ describe("Abilities - Parental Bond", () => {
 
   it("should not cause user to hit into Storm Drain more than once", async () => {
     game.override.moveset([Moves.WATER_GUN]);
-    game.override.enemyAbility(Abilities.STORM_DRAIN);
+    game.override.enemyAbility(AbilityId.STORM_DRAIN);
 
     await game.classicMode.startBattle([Species.MAGIKARP]);
 

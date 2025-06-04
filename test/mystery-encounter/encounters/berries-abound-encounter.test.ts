@@ -20,7 +20,7 @@ import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encount
 import * as EncounterDialogueUtils from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { CommandPhase } from "#app/phases/command-phase";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 
 const namespace = "mysteryEncounters/berriesAbound";
 const defaultParty = [Species.PYUKUMUKU, Species.MAGIKARP, Species.PIKACHU];
@@ -47,8 +47,8 @@ describe("Berries Abound - Mystery Encounter", () => {
       .disableTrainerWaves()
       .startingModifier([])
       .startingHeldItems([])
-      .enemyAbility(Abilities.BALL_FETCH)
-      .enemyPassiveAbility(Abilities.BALL_FETCH);
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .enemyPassiveAbility(AbilityId.BALL_FETCH);
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
       new Map<Biome, MysteryEncounterType[]>([[Biome.CAVE, [MysteryEncounterType.BERRIES_ABOUND]]]),

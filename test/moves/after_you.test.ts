@@ -1,5 +1,5 @@
 import { BattlerIndex } from "#app/battle";
-import { Abilities } from "#app/enums/abilities";
+import { AbilityId } from "#app/enums/abilities";
 import { MoveResult } from "#app/field/pokemon";
 import { MovePhase } from "#app/phases/move-phase";
 import { Moves } from "#enums/moves";
@@ -28,9 +28,9 @@ describe("Moves - After You", () => {
       .battleStyle("double")
       .enemyLevel(5)
       .enemySpecies(Species.PIKACHU)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH)
-      .ability(Abilities.BALL_FETCH)
+      .ability(AbilityId.BALL_FETCH)
       .moveset([Moves.AFTER_YOU, Moves.SPLASH]);
   });
 

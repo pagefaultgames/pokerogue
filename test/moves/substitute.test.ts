@@ -8,7 +8,7 @@ import type { CommandPhase } from "#app/phases/command-phase";
 import GameManager from "#test/testUtils/gameManager";
 import { Command } from "#app/ui/command-ui-handler";
 import { UiMode } from "#enums/ui-mode";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BerryType } from "#enums/berry-type";
@@ -40,7 +40,7 @@ describe("Moves - Substitute", () => {
       .battleStyle("single")
       .moveset([Moves.SUBSTITUTE, Moves.SWORDS_DANCE, Moves.TACKLE, Moves.SPLASH])
       .enemySpecies(Species.SNORLAX)
-      .enemyAbility(Abilities.INSOMNIA)
+      .enemyAbility(AbilityId.INSOMNIA)
       .enemyMoveset(Moves.SPLASH)
       .startingLevel(100)
       .enemyLevel(100);
@@ -139,7 +139,7 @@ describe("Moves - Substitute", () => {
 
   it("should be bypassed by attackers with Infiltrator", async () => {
     game.override.enemyMoveset(Moves.TACKLE);
-    game.override.enemyAbility(Abilities.INFILTRATOR);
+    game.override.enemyAbility(AbilityId.INFILTRATOR);
 
     await game.classicMode.startBattle([Species.BLASTOISE]);
 
@@ -413,7 +413,7 @@ describe("Moves - Substitute", () => {
 
   it("should prevent the source's Rough Skin from activating when hit", async () => {
     game.override.enemyMoveset(Moves.TACKLE);
-    game.override.ability(Abilities.ROUGH_SKIN);
+    game.override.ability(AbilityId.ROUGH_SKIN);
 
     await game.classicMode.startBattle([Species.BLASTOISE]);
 

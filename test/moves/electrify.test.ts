@@ -1,6 +1,6 @@
 import { BattlerIndex } from "#app/battle";
 import { PokemonType } from "#enums/pokemon-type";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -28,7 +28,7 @@ describe("Moves - Electrify", () => {
       .battleStyle("single")
       .startingLevel(100)
       .enemySpecies(Species.SNORLAX)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(Moves.TACKLE)
       .enemyLevel(100);
   });
@@ -50,7 +50,7 @@ describe("Moves - Electrify", () => {
   });
 
   it("should override type changes from abilities", async () => {
-    game.override.enemyAbility(Abilities.PIXILATE);
+    game.override.enemyAbility(AbilityId.PIXILATE);
 
     await game.classicMode.startBattle([Species.EXCADRILL]);
 

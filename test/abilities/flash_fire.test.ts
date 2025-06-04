@@ -3,7 +3,7 @@ import { BattlerTagType } from "#app/enums/battler-tag-type";
 import { Species } from "#app/enums/species";
 import { MovePhase } from "#app/phases/move-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { StatusEffect } from "#enums/status-effect";
 import GameManager from "#test/testUtils/gameManager";
@@ -28,8 +28,8 @@ describe("Abilities - Flash Fire", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .ability(Abilities.FLASH_FIRE)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .ability(AbilityId.FLASH_FIRE)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .startingLevel(20)
       .enemyLevel(20)
       .disableCrits();
@@ -103,7 +103,7 @@ describe("Abilities - Flash Fire", () => {
 
   it("boosts Fire-type move when the ability is activated", async () => {
     game.override.enemyMoveset([Moves.FIRE_PLEDGE]).moveset([Moves.EMBER, Moves.SPLASH]);
-    game.override.enemyAbility(Abilities.FLASH_FIRE).ability(Abilities.NONE);
+    game.override.enemyAbility(AbilityId.FLASH_FIRE).ability(AbilityId.NONE);
     await game.classicMode.startBattle([Species.BLISSEY]);
     const blissey = game.scene.getPlayerPokemon()!;
     const initialHP = 1000;
@@ -128,7 +128,7 @@ describe("Abilities - Flash Fire", () => {
 
   it("still activates regardless of accuracy check", async () => {
     game.override.moveset(Moves.FIRE_PLEDGE).enemyMoveset(Moves.EMBER);
-    game.override.enemyAbility(Abilities.NONE).ability(Abilities.FLASH_FIRE);
+    game.override.enemyAbility(AbilityId.NONE).ability(AbilityId.FLASH_FIRE);
     game.override.enemySpecies(Species.BLISSEY);
     await game.classicMode.startBattle([Species.RATTATA]);
 

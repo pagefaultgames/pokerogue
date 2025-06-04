@@ -1,6 +1,6 @@
 import { BattlerIndex } from "#app/battle";
 import { allMoves } from "#app/data/data-lists";
-import { Abilities } from "#app/enums/abilities";
+import { AbilityId } from "#app/enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -27,12 +27,12 @@ describe("Moves - Lash Out", () => {
       .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.FUR_COAT)
+      .enemyAbility(AbilityId.FUR_COAT)
       .enemyMoveset([Moves.GROWL])
       .startingLevel(10)
       .enemyLevel(10)
       .starterSpecies(Species.FEEBAS)
-      .ability(Abilities.BALL_FETCH)
+      .ability(AbilityId.BALL_FETCH)
       .moveset([Moves.LASH_OUT]);
   });
 

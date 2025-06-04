@@ -1,6 +1,6 @@
 import { BattlerIndex } from "#app/battle";
 import { toDmgValue } from "#app/utils/common";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { Stat } from "#enums/stat";
@@ -206,7 +206,7 @@ describe("Abilities - Disguise", () => {
   });
 
   it("activates when Aerilate circumvents immunity to the move's base type", async () => {
-    game.override.ability(Abilities.AERILATE);
+    game.override.ability(AbilityId.AERILATE);
     game.override.moveset([Moves.TACKLE]);
 
     await game.classicMode.startBattle();

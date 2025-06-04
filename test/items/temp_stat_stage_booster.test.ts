@@ -5,7 +5,7 @@ import Phase from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { Moves } from "#app/enums/moves";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { Abilities } from "#app/enums/abilities";
+import { AbilityId } from "#app/enums/abilities";
 import { TempStatStageBoosterModifier } from "#app/modifier/modifier";
 import { UiMode } from "#enums/ui-mode";
 import { Button } from "#app/enums/buttons";
@@ -33,7 +33,7 @@ describe("Items - Temporary Stat Stage Boosters", () => {
       .battleStyle("single")
       .enemySpecies(Species.SHUCKLE)
       .enemyMoveset(Moves.SPLASH)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .moveset([Moves.TACKLE, Moves.SPLASH, Moves.HONE_CLAWS, Moves.BELLY_DRUM])
       .startingModifier([{ name: "TEMP_STAT_STAGE_BOOSTER", type: Stat.ATK }]);
   });
@@ -53,7 +53,7 @@ describe("Items - Temporary Stat Stage Boosters", () => {
   }, 20000);
 
   it("should increase existing ACC stat stage by 1 for X_ACCURACY only", async () => {
-    game.override.startingModifier([{ name: "TEMP_STAT_STAGE_BOOSTER", type: Stat.ACC }]).ability(Abilities.SIMPLE);
+    game.override.startingModifier([{ name: "TEMP_STAT_STAGE_BOOSTER", type: Stat.ACC }]).ability(AbilityId.SIMPLE);
 
     await game.classicMode.startBattle([Species.PIKACHU]);
 

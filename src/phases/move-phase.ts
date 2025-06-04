@@ -44,7 +44,7 @@ import { MoveChargePhase } from "#app/phases/move-charge-phase";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { MoveEndPhase } from "#app/phases/move-end-phase";
 import { NumberHolder } from "#app/utils/common";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Moves } from "#enums/moves";
@@ -486,7 +486,7 @@ export class MovePhase extends BattlePhase {
   }
 
   /**
-   * Applies PP increasing abilities (currently only {@link Abilities.PRESSURE Pressure}) if they exist on the target pokemon.
+   * Applies PP increasing abilities (currently only {@link AbilityId.PRESSURE Pressure}) if they exist on the target pokemon.
    * Note that targets must include only active pokemon.
    *
    * TODO: This hardcodes the PP increase at 1 per opponent, rather than deferring to the ability.
@@ -526,7 +526,7 @@ export class MovePhase extends BattlePhase {
         if (
           redirectTag &&
           (!redirectTag.powder ||
-            (!this.pokemon.isOfType(PokemonType.GRASS) && !this.pokemon.hasAbility(Abilities.OVERCOAT)))
+            (!this.pokemon.isOfType(PokemonType.GRASS) && !this.pokemon.hasAbility(AbilityId.OVERCOAT)))
         ) {
           redirectTarget.value = p.getBattlerIndex();
           redirectedByAbility = false;
@@ -594,8 +594,8 @@ export class MovePhase extends BattlePhase {
 
   /**
    * Handles the case where the move was cancelled or failed:
-   * - Uses PP if the move failed (not cancelled) and should use PP (failed moves are not affected by {@link Abilities.PRESSURE Pressure})
-   * - Records a cancelled OR failed move in move history, so abilities like {@link Abilities.TRUANT Truant} don't trigger on the
+   * - Uses PP if the move failed (not cancelled) and should use PP (failed moves are not affected by {@link AbilityId.PRESSURE Pressure})
+   * - Records a cancelled OR failed move in move history, so abilities like {@link AbilityId.TRUANT Truant} don't trigger on the
    *   next turn and soft-lock.
    * - Lapses `MOVE_EFFECT` tags:
    *   - Semi-invulnerable battler tags (Fly/Dive/etc.) are intended to lapse on move effects, but also need

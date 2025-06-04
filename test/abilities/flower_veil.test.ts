@@ -1,5 +1,5 @@
 import { BattlerIndex } from "#app/battle";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { Stat } from "#enums/stat";
@@ -30,11 +30,11 @@ describe("Abilities - Flower Veil", () => {
     game.override
       .moveset([Moves.SPLASH])
       .enemySpecies(Species.BULBASAUR)
-      .ability(Abilities.FLOWER_VEIL)
+      .ability(AbilityId.FLOWER_VEIL)
       .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH);
   });
 
@@ -68,7 +68,7 @@ describe("Abilities - Flower Veil", () => {
 
     // Clear the ability of the ally to isolate the test
     const ally = game.scene.getPlayerField()[1]!;
-    vi.spyOn(ally, "getAbility").mockReturnValue(allAbilities[Abilities.BALL_FETCH]);
+    vi.spyOn(ally, "getAbility").mockReturnValue(allAbilities[AbilityId.BALL_FETCH]);
     game.move.select(Moves.SPLASH);
     game.move.select(Moves.SPLASH);
     await game.move.selectEnemyMove(Moves.YAWN, BattlerIndex.PLAYER);
@@ -98,7 +98,7 @@ describe("Abilities - Flower Veil", () => {
     const [user, ally] = game.scene.getPlayerField();
     vi.spyOn(allMoves[Moves.THUNDER_WAVE], "accuracy", "get").mockReturnValue(100);
     // Clear the ally ability to isolate the test
-    vi.spyOn(ally, "getAbility").mockReturnValue(allAbilities[Abilities.BALL_FETCH]);
+    vi.spyOn(ally, "getAbility").mockReturnValue(allAbilities[AbilityId.BALL_FETCH]);
     game.move.select(Moves.SPLASH);
     game.move.select(Moves.SPLASH);
     await game.move.selectEnemyMove(Moves.THUNDER_WAVE, BattlerIndex.PLAYER);
@@ -117,7 +117,7 @@ describe("Abilities - Flower Veil", () => {
     await game.classicMode.startBattle([Species.BULBASAUR, Species.BULBASAUR]);
     const [user, ally] = game.scene.getPlayerField();
     // Clear the ally ability to isolate the test
-    vi.spyOn(ally, "getAbility").mockReturnValue(allAbilities[Abilities.BALL_FETCH]);
+    vi.spyOn(ally, "getAbility").mockReturnValue(allAbilities[AbilityId.BALL_FETCH]);
     game.move.select(Moves.SPLASH);
     game.move.select(Moves.SPLASH);
     await game.phaseInterceptor.to("BerryPhase");
@@ -130,7 +130,7 @@ describe("Abilities - Flower Veil", () => {
     await game.classicMode.startBattle([Species.MAGIKARP, Species.MAGIKARP]);
     const [user, ally] = game.scene.getPlayerField();
     // Clear the ally ability to isolate the test
-    vi.spyOn(ally, "getAbility").mockReturnValue(allAbilities[Abilities.BALL_FETCH]);
+    vi.spyOn(ally, "getAbility").mockReturnValue(allAbilities[AbilityId.BALL_FETCH]);
     game.move.select(Moves.SPLASH);
     game.move.select(Moves.SPLASH);
     await game.phaseInterceptor.to("BerryPhase");
@@ -143,7 +143,7 @@ describe("Abilities - Flower Veil", () => {
     await game.classicMode.startBattle([Species.BULBASAUR, Species.BULBASAUR]);
     const [user, ally] = game.scene.getPlayerField();
     // Clear the ally ability to isolate the test
-    vi.spyOn(ally, "getAbility").mockReturnValue(allAbilities[Abilities.BALL_FETCH]);
+    vi.spyOn(ally, "getAbility").mockReturnValue(allAbilities[AbilityId.BALL_FETCH]);
 
     game.move.select(Moves.CLOSE_COMBAT, 0, BattlerIndex.ENEMY);
     game.move.select(Moves.CLOSE_COMBAT, 1, BattlerIndex.ENEMY_2);

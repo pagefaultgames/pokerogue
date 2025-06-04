@@ -1,7 +1,7 @@
 import { BattlerIndex } from "#app/battle";
 import { allMoves } from "#app/data/data-lists";
 import { PokemonType } from "#enums/pokemon-type";
-import { Abilities } from "#app/enums/abilities";
+import { AbilityId } from "#app/enums/abilities";
 import { Moves } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -24,10 +24,10 @@ import { toDmgValue } from "#app/utils/common";
  */
 
 describe.each([
-  { ab: Abilities.GALVANIZE, ab_name: "Galvanize", ty: PokemonType.ELECTRIC, tyName: "electric" },
-  { ab: Abilities.PIXILATE, ab_name: "Pixilate", ty: PokemonType.FAIRY, tyName: "fairy" },
-  { ab: Abilities.REFRIGERATE, ab_name: "Refrigerate", ty: PokemonType.ICE, tyName: "ice" },
-  { ab: Abilities.AERILATE, ab_name: "Aerilate", ty: PokemonType.FLYING, tyName: "flying" },
+  { ab: AbilityId.GALVANIZE, ab_name: "Galvanize", ty: PokemonType.ELECTRIC, tyName: "electric" },
+  { ab: AbilityId.PIXILATE, ab_name: "Pixilate", ty: PokemonType.FAIRY, tyName: "fairy" },
+  { ab: AbilityId.REFRIGERATE, ab_name: "Refrigerate", ty: PokemonType.ICE, tyName: "ice" },
+  { ab: AbilityId.AERILATE, ab_name: "Aerilate", ty: PokemonType.FLYING, tyName: "flying" },
 ])("Abilities - $ab_name", ({ ab, ty, tyName }) => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
@@ -52,7 +52,7 @@ describe.each([
       .ability(ab)
       .moveset([Moves.TACKLE, Moves.REVELATION_DANCE, Moves.FURY_SWIPES])
       .enemySpecies(Species.DUSCLOPS)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH)
       .enemyLevel(100);
   });
@@ -78,9 +78,9 @@ describe.each([
   });
 
   // Galvanize specifically would like to check for volt absorb's activation
-  if (ab === Abilities.GALVANIZE) {
+  if (ab === AbilityId.GALVANIZE) {
     it("should cause Normal-type attacks to activate Volt Absorb", async () => {
-      game.override.enemyAbility(Abilities.VOLT_ABSORB);
+      game.override.enemyAbility(AbilityId.VOLT_ABSORB);
 
       await game.classicMode.startBattle();
 
@@ -112,7 +112,7 @@ describe.each([
   ])("should not change the type of $moveName", async ({ move, expected_ty: expectedTy }) => {
     game.override
       .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .moveset([move])
       .starterSpecies(Species.MAGIKARP);
 

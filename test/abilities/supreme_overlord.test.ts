@@ -1,6 +1,6 @@
 import { Moves } from "#app/enums/moves";
 import type Move from "#app/data/moves/move";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Species } from "#enums/species";
 import { BattlerIndex } from "#app/battle";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
@@ -35,8 +35,8 @@ describe("Abilities - Supreme Overlord", () => {
       .enemySpecies(Species.MAGIKARP)
       .enemyLevel(100)
       .startingLevel(1)
-      .enemyAbility(Abilities.BALL_FETCH)
-      .ability(Abilities.SUPREME_OVERLORD)
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .ability(AbilityId.SUPREME_OVERLORD)
       .enemyMoveset([Moves.SPLASH])
       .moveset([Moves.TACKLE, Moves.EXPLOSION, Moves.LUNAR_DANCE]);
 

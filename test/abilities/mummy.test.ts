@@ -1,4 +1,4 @@
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -23,11 +23,11 @@ describe("Abilities - Mummy", () => {
     game = new GameManager(phaserGame);
     game.override
       .moveset([Moves.SPLASH])
-      .ability(Abilities.MUMMY)
+      .ability(AbilityId.MUMMY)
       .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(Moves.TACKLE);
   });
 
@@ -37,7 +37,7 @@ describe("Abilities - Mummy", () => {
     game.move.select(Moves.SPLASH);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(game.scene.getEnemyPokemon()?.getAbility().id).toBe(Abilities.MUMMY);
+    expect(game.scene.getEnemyPokemon()?.getAbility().id).toBe(AbilityId.MUMMY);
   });
 
   it("should not change the enemy's ability hit by a non-contact move", async () => {
@@ -47,6 +47,6 @@ describe("Abilities - Mummy", () => {
     game.move.select(Moves.SPLASH);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(game.scene.getEnemyPokemon()?.getAbility().id).toBe(Abilities.BALL_FETCH);
+    expect(game.scene.getEnemyPokemon()?.getAbility().id).toBe(AbilityId.BALL_FETCH);
   });
 });

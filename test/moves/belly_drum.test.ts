@@ -6,7 +6,7 @@ import { Stat } from "#enums/stat";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
-import { Abilities } from "#app/enums/abilities";
+import { AbilityId } from "#app/enums/abilities";
 
 // RATIO : HP Cost of Move
 const RATIO = 2;
@@ -36,7 +36,7 @@ describe("Moves - BELLY DRUM", () => {
       .enemyLevel(100)
       .moveset([Moves.BELLY_DRUM])
       .enemyMoveset(Moves.SPLASH)
-      .enemyAbility(Abilities.BALL_FETCH);
+      .enemyAbility(AbilityId.BALL_FETCH);
   });
 
   // Bulbapedia Reference: https://bulbapedia.bulbagarden.net/wiki/Belly_Drum_(move)

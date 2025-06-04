@@ -2,7 +2,7 @@ import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 import GameManager from "#test/testUtils/gameManager";
 import { Species } from "#enums/species";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { BattlerIndex } from "#app/battle";
 import { StatusEffect } from "#app/enums/status-effect";
@@ -29,7 +29,7 @@ describe("Moves - Baneful Bunker", () => {
     game.override.moveset(Moves.SLASH);
 
     game.override.enemySpecies(Species.SNORLAX);
-    game.override.enemyAbility(Abilities.INSOMNIA);
+    game.override.enemyAbility(AbilityId.INSOMNIA);
     game.override.enemyMoveset(Moves.BANEFUL_BUNKER);
 
     game.override.startingLevel(100);

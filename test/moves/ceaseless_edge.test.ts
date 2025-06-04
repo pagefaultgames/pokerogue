@@ -1,6 +1,6 @@
 import { ArenaTagSide, ArenaTrapTag } from "#app/data/arena-tag";
 import { allMoves } from "#app/data/data-lists";
-import { Abilities } from "#app/enums/abilities";
+import { AbilityId } from "#app/enums/abilities";
 import { ArenaTagType } from "#app/enums/arena-tag-type";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
@@ -28,8 +28,8 @@ describe("Moves - Ceaseless Edge", () => {
     game = new GameManager(phaserGame);
     game.override.battleStyle("single");
     game.override.enemySpecies(Species.RATTATA);
-    game.override.enemyAbility(Abilities.RUN_AWAY);
-    game.override.enemyPassiveAbility(Abilities.RUN_AWAY);
+    game.override.enemyAbility(AbilityId.RUN_AWAY);
+    game.override.enemyPassiveAbility(AbilityId.RUN_AWAY);
     game.override.startingLevel(100);
     game.override.enemyLevel(100);
     game.override.moveset([Moves.CEASELESS_EDGE, Moves.SPLASH, Moves.ROAR]);

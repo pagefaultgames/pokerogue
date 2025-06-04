@@ -1,6 +1,6 @@
 import { Stat } from "#enums/stat";
 import GameManager from "#test/testUtils/gameManager";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
@@ -25,8 +25,8 @@ describe("Moves - Growth", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override.battleStyle("single");
-    game.override.enemyAbility(Abilities.MOXIE);
-    game.override.ability(Abilities.INSOMNIA);
+    game.override.enemyAbility(AbilityId.MOXIE);
+    game.override.ability(AbilityId.INSOMNIA);
     game.override.moveset([Moves.GROWTH]);
     game.override.enemyMoveset(Moves.SPLASH);
   });

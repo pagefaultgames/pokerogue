@@ -1,6 +1,6 @@
 import { Stat } from "#enums/stat";
 import { BattlerIndex } from "#app/battle";
-import { Abilities } from "#app/enums/abilities";
+import { AbilityId } from "#app/enums/abilities";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
@@ -26,7 +26,7 @@ describe("Moves - Follow Me", () => {
     game = new GameManager(phaserGame);
     game.override.battleStyle("double");
     game.override.starterSpecies(Species.AMOONGUSS);
-    game.override.ability(Abilities.BALL_FETCH);
+    game.override.ability(AbilityId.BALL_FETCH);
     game.override.enemySpecies(Species.SNORLAX);
     game.override.startingLevel(100);
     game.override.enemyLevel(100);
@@ -73,7 +73,7 @@ describe("Moves - Follow Me", () => {
   });
 
   test("move effect should be bypassed by Stalwart", async () => {
-    game.override.ability(Abilities.STALWART);
+    game.override.ability(AbilityId.STALWART);
     game.override.moveset([Moves.QUICK_ATTACK]);
 
     await game.classicMode.startBattle([Species.AMOONGUSS, Species.CHARIZARD]);

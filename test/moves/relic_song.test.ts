@@ -1,6 +1,6 @@
 import { PokemonType } from "#enums/pokemon-type";
 import { Challenges } from "#app/enums/challenges";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -25,7 +25,7 @@ describe("Moves - Relic Song", () => {
     game.override
       .moveset([Moves.RELIC_SONG, Moves.SPLASH])
       .battleStyle("single")
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH)
       .enemySpecies(Species.MAGIKARP)
       .enemyLevel(100);

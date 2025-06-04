@@ -2,7 +2,7 @@ import { AttemptRunPhase } from "#app/phases/attempt-run-phase";
 import type { CommandPhase } from "#app/phases/command-phase";
 import { Command } from "#app/ui/command-ui-handler";
 import { NumberHolder } from "#app/utils/common";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -27,8 +27,8 @@ describe("Escape chance calculations", () => {
     game.override
       .battleStyle("single")
       .enemySpecies(Species.BULBASAUR)
-      .enemyAbility(Abilities.INSOMNIA)
-      .ability(Abilities.INSOMNIA);
+      .enemyAbility(AbilityId.INSOMNIA)
+      .ability(AbilityId.INSOMNIA);
   });
 
   it("single non-boss opponent", async () => {

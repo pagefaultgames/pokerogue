@@ -1,4 +1,4 @@
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -23,11 +23,11 @@ describe("Moves - Simple Beam", () => {
     game = new GameManager(phaserGame);
     game.override
       .moveset([Moves.SPLASH, Moves.SIMPLE_BEAM])
-      .ability(Abilities.BALL_FETCH)
+      .ability(AbilityId.BALL_FETCH)
       .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH);
   });
 
@@ -37,6 +37,6 @@ describe("Moves - Simple Beam", () => {
     game.move.select(Moves.SIMPLE_BEAM);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(game.scene.getEnemyPokemon()?.getAbility().id).toBe(Abilities.SIMPLE);
+    expect(game.scene.getEnemyPokemon()?.getAbility().id).toBe(AbilityId.SIMPLE);
   });
 });

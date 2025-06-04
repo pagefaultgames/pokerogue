@@ -6,7 +6,7 @@ import { TrappedTag } from "#app/data/battler-tags";
 import type { MoveTargetSet } from "#app/data/moves/move";
 import { getMoveTargets } from "#app/data/moves/move";
 import { speciesStarterCosts } from "#app/data/balance/starters";
-import { Abilities } from "#app/enums/abilities";
+import { AbilityId } from "#app/enums/abilities";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
 import { Biome } from "#app/enums/biome";
 import { Moves } from "#app/enums/moves";
@@ -308,7 +308,7 @@ export class CommandPhase extends FieldPhase {
             if (
               targetPokemon?.isBoss() &&
               targetPokemon?.bossSegmentIndex >= 1 &&
-              !targetPokemon?.hasAbility(Abilities.WONDER_GUARD, false, true) &&
+              !targetPokemon?.hasAbility(AbilityId.WONDER_GUARD, false, true) &&
               cursor < PokeballType.MASTER_BALL
             ) {
               globalScene.ui.setMode(UiMode.COMMAND, this.fieldIndex);

@@ -1,5 +1,5 @@
 import { BattlerIndex } from "#app/battle";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -49,7 +49,7 @@ describe("Moves - Rage Powder", () => {
   });
 
   test("move effect should be bypassed by Overcoat", async () => {
-    game.override.ability(Abilities.OVERCOAT);
+    game.override.ability(AbilityId.OVERCOAT);
 
     // Test with two non-Grass type player Pokemon
     await game.classicMode.startBattle([Species.BLASTOISE, Species.CHARIZARD]);

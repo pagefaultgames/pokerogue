@@ -1,6 +1,6 @@
 import { Species } from "#enums/species";
 import { Moves } from "#enums/moves";
-import { Abilities } from "#app/enums/abilities";
+import { AbilityId } from "#app/enums/abilities";
 import { BattlerIndex } from "#app/battle";
 import { WeatherType } from "#enums/weather-type";
 import { MoveResult } from "#app/field/pokemon";
@@ -28,9 +28,9 @@ describe("Moves - Quash", () => {
       .battleStyle("double")
       .enemyLevel(1)
       .enemySpecies(Species.SLOWPOKE)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset([Moves.RAIN_DANCE, Moves.SPLASH])
-      .ability(Abilities.BALL_FETCH)
+      .ability(AbilityId.BALL_FETCH)
       .moveset([Moves.QUASH, Moves.SUNNY_DAY, Moves.RAIN_DANCE, Moves.SPLASH]);
   });
 

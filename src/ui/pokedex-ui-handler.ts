@@ -26,7 +26,7 @@ import { PokedexMonContainer } from "#app/ui/pokedex-mon-container";
 import { FilterBar } from "#app/ui/filter-bar";
 import { DropDownColumn } from "#enums/drop-down-column";
 import { ScrollBar } from "#app/ui/scroll-bar";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import {
   getPassiveCandyCount,
   getValueReductionCandyCounts,
@@ -1590,7 +1590,7 @@ export default class PokedexUiHandler extends MessageUiHandler {
 
       // HA Filter
       const speciesHasHiddenAbility =
-        species.abilityHidden !== species.ability1 && species.abilityHidden !== Abilities.NONE;
+        species.abilityHidden !== species.ability1 && species.abilityHidden !== AbilityId.NONE;
       const hasHA = starterData.abilityAttr & AbilityAttr.ABILITY_HIDDEN;
       const fitsHA = this.filterBar.getVals(DropDownColumn.MISC).some(misc => {
         if (misc.val === "HIDDEN_ABILITY" && misc.state === DropDownState.ON) {

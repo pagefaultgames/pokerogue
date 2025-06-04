@@ -1,7 +1,7 @@
 import { allMoves } from "#app/data/data-lists";
 import type { EnemyPersistentModifier } from "#app/modifier/modifier";
 import { modifierTypes } from "#app/modifier/modifier-type";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
@@ -28,7 +28,7 @@ describe("Battle Mechanics - Damage Calculation", () => {
     game.override
       .battleStyle("single")
       .enemySpecies(Species.SNORLAX)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH)
       .startingLevel(100)
       .enemyLevel(100)
@@ -68,7 +68,7 @@ describe("Battle Mechanics - Damage Calculation", () => {
   });
 
   it("Attacks deal 1 damage at minimum even with many tokens", async () => {
-    game.override.startingLevel(1).enemySpecies(Species.AGGRON).enemyAbility(Abilities.STURDY).enemyLevel(10000);
+    game.override.startingLevel(1).enemySpecies(Species.AGGRON).enemyAbility(AbilityId.STURDY).enemyLevel(10000);
 
     await game.classicMode.startBattle([Species.SHUCKLE]);
 
@@ -86,7 +86,7 @@ describe("Battle Mechanics - Damage Calculation", () => {
   });
 
   it("Fixed-damage moves ignore damage multipliers", async () => {
-    game.override.enemySpecies(Species.DRAGONITE).enemyAbility(Abilities.MULTISCALE);
+    game.override.enemySpecies(Species.DRAGONITE).enemyAbility(AbilityId.MULTISCALE);
 
     await game.classicMode.startBattle([Species.MAGIKARP]);
 
@@ -97,7 +97,7 @@ describe("Battle Mechanics - Damage Calculation", () => {
   });
 
   it("One-hit KO moves ignore damage multipliers", async () => {
-    game.override.enemySpecies(Species.AGGRON).enemyAbility(Abilities.MULTISCALE);
+    game.override.enemySpecies(Species.AGGRON).enemyAbility(AbilityId.MULTISCALE);
 
     await game.classicMode.startBattle([Species.MAGIKARP]);
 
@@ -108,7 +108,7 @@ describe("Battle Mechanics - Damage Calculation", () => {
   });
 
   it("When the user fails to use Jump Kick with Wonder Guard ability, the damage should be 1.", async () => {
-    game.override.enemySpecies(Species.GASTLY).ability(Abilities.WONDER_GUARD);
+    game.override.enemySpecies(Species.GASTLY).ability(AbilityId.WONDER_GUARD);
 
     await game.classicMode.startBattle([Species.SHEDINJA]);
 
@@ -123,7 +123,7 @@ describe("Battle Mechanics - Damage Calculation", () => {
 
   it("Charizard with odd HP survives Stealth Rock damage twice", async () => {
     game.scene.arena.addTag(ArenaTagType.STEALTH_ROCK, 1, Moves.STEALTH_ROCK, 0);
-    game.override.seed("Charizard Stealth Rock test").enemySpecies(Species.CHARIZARD).enemyAbility(Abilities.BLAZE);
+    game.override.seed("Charizard Stealth Rock test").enemySpecies(Species.CHARIZARD).enemyAbility(AbilityId.BLAZE);
 
     await game.classicMode.startBattle([Species.PIKACHU]);
 

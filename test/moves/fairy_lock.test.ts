@@ -1,6 +1,6 @@
 import { ArenaTagSide } from "#app/data/arena-tag";
 import { ArenaTagType } from "#app/enums/arena-tag-type";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -25,11 +25,11 @@ describe("Moves - Fairy Lock", () => {
     game = new GameManager(phaserGame);
     game.override
       .moveset([Moves.FAIRY_LOCK, Moves.SPLASH])
-      .ability(Abilities.BALL_FETCH)
+      .ability(AbilityId.BALL_FETCH)
       .battleStyle("double")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset([Moves.SPLASH, Moves.U_TURN]);
   });
 

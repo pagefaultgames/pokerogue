@@ -3,7 +3,7 @@ import { StatusEffect } from "#app/enums/status-effect";
 import { BerryPhase } from "#app/phases/berry-phase";
 import { MovePhase } from "#app/phases/move-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -28,10 +28,10 @@ describe("Moves - Beak Blast", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .ability(Abilities.UNNERVE)
+      .ability(AbilityId.UNNERVE)
       .moveset([Moves.BEAK_BLAST])
       .enemySpecies(Species.SNORLAX)
-      .enemyAbility(Abilities.INSOMNIA)
+      .enemyAbility(AbilityId.INSOMNIA)
       .enemyMoveset([Moves.TACKLE])
       .startingLevel(100)
       .enemyLevel(100);
@@ -118,7 +118,7 @@ describe("Moves - Beak Blast", () => {
   });
 
   it("should still burn the enemy if the user is knocked out", async () => {
-    game.override.ability(Abilities.BALL_FETCH);
+    game.override.ability(AbilityId.BALL_FETCH);
     await game.classicMode.startBattle([Species.MAGIKARP, Species.MAGIKARP]);
     const enemyPokemon = game.scene.getEnemyPokemon()!;
     const user = game.scene.getPlayerPokemon()!;
@@ -129,7 +129,7 @@ describe("Moves - Beak Blast", () => {
   });
 
   it("should not burn a long reach enemy that hits the user with a contact move", async () => {
-    game.override.enemyAbility(Abilities.LONG_REACH);
+    game.override.enemyAbility(AbilityId.LONG_REACH);
     game.override.enemyMoveset([Moves.FALSE_SWIPE]).enemyLevel(100);
     await game.classicMode.startBattle([Species.MAGIKARP]);
     game.move.select(Moves.BEAK_BLAST);

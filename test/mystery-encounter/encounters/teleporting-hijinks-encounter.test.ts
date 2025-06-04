@@ -1,7 +1,7 @@
 import type BattleScene from "#app/battle-scene";
 import { TeleportingHijinksEncounter } from "#app/data/mystery-encounters/encounters/teleporting-hijinks-encounter";
 import * as MysteryEncounters from "#app/data/mystery-encounters/mystery-encounters";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Biome } from "#enums/biome";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { Species } from "#enums/species";
@@ -47,8 +47,8 @@ describe("Teleporting Hijinks - Mystery Encounter", () => {
       .startingWave(defaultWave)
       .startingBiome(defaultBiome)
       .disableTrainerWaves()
-      .enemyAbility(Abilities.BALL_FETCH)
-      .enemyPassiveAbility(Abilities.BALL_FETCH);
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .enemyPassiveAbility(AbilityId.BALL_FETCH);
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
       new Map<Biome, MysteryEncounterType[]>([[Biome.CAVE, [MysteryEncounterType.TELEPORTING_HIJINKS]]]),

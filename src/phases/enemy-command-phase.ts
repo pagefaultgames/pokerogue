@@ -2,7 +2,7 @@ import { globalScene } from "#app/global-scene";
 import { BattlerIndex } from "#app/battle";
 import { Command } from "#app/ui/command-ui-handler";
 import { FieldPhase } from "./field-phase";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { BattlerTagType } from "#enums/battler-tag-type";
 
 /**
@@ -38,7 +38,7 @@ export class EnemyCommandPhase extends FieldPhase {
 
     if (
       battle.double &&
-      enemyPokemon.hasAbility(Abilities.COMMANDER) &&
+      enemyPokemon.hasAbility(AbilityId.COMMANDER) &&
       enemyPokemon.getAlly()?.getTag(BattlerTagType.COMMANDED)
     ) {
       this.skipTurn = true;

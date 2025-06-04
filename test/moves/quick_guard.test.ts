@@ -2,7 +2,7 @@ import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 import GameManager from "#test/testUtils/gameManager";
 import { Species } from "#enums/species";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Stat } from "#enums/stat";
 import { BattlerIndex } from "#app/battle";
@@ -31,7 +31,7 @@ describe("Moves - Quick Guard", () => {
 
     game.override.enemySpecies(Species.SNORLAX);
     game.override.enemyMoveset([Moves.QUICK_ATTACK]);
-    game.override.enemyAbility(Abilities.INSOMNIA);
+    game.override.enemyAbility(AbilityId.INSOMNIA);
 
     game.override.startingLevel(100);
     game.override.enemyLevel(100);
@@ -51,7 +51,7 @@ describe("Moves - Quick Guard", () => {
   });
 
   test("should protect the user and allies from Prankster-boosted moves", async () => {
-    game.override.enemyAbility(Abilities.PRANKSTER);
+    game.override.enemyAbility(AbilityId.PRANKSTER);
     game.override.enemyMoveset([Moves.GROWL]);
 
     await game.classicMode.startBattle([Species.CHARIZARD, Species.BLASTOISE]);

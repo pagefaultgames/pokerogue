@@ -5,7 +5,7 @@ import { Species } from "#enums/species";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Moves } from "#enums/moves";
 import { Stat } from "#enums/stat";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 
 describe("Moves - Guard Split", () => {
   let phaserGame: Phaser.Game;
@@ -25,11 +25,11 @@ describe("Moves - Guard Split", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .enemyAbility(Abilities.NONE)
+      .enemyAbility(AbilityId.NONE)
       .enemySpecies(Species.MEW)
       .enemyLevel(200)
       .moveset([Moves.GUARD_SPLIT])
-      .ability(Abilities.NONE);
+      .ability(AbilityId.NONE);
   });
 
   it("should average the user's DEF and SPDEF stats with those of the target", async () => {

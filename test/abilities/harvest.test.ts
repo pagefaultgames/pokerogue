@@ -4,7 +4,7 @@ import type Pokemon from "#app/field/pokemon";
 import { BerryModifier, PreserveBerryModifier } from "#app/modifier/modifier";
 import type { ModifierOverride } from "#app/modifier/modifier-type";
 import type { BooleanHolder } from "#app/utils/common";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { BerryType } from "#enums/berry-type";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
@@ -44,7 +44,7 @@ describe("Abilities - Harvest", () => {
     game = new GameManager(phaserGame);
     game.override
       .moveset([Moves.SPLASH, Moves.NATURAL_GIFT, Moves.FALSE_SWIPE, Moves.GASTRO_ACID])
-      .ability(Abilities.HARVEST)
+      .ability(AbilityId.HARVEST)
       .startingLevel(100)
       .battleStyle("single")
       .disableCrits()
@@ -52,7 +52,7 @@ describe("Abilities - Harvest", () => {
       .weather(WeatherType.SUNNY) // guaranteed recovery
       .enemyLevel(1)
       .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset([Moves.SPLASH, Moves.NUZZLE, Moves.KNOCK_OFF, Moves.INCINERATE]);
   });
 
@@ -79,7 +79,7 @@ describe("Abilities - Harvest", () => {
         { name: "BERRY", type: BerryType.ENIGMA, count: 2 },
         { name: "BERRY", type: BerryType.LUM, count: 2 },
       ])
-      .enemyAbility(Abilities.NEUTRALIZING_GAS);
+      .enemyAbility(AbilityId.NEUTRALIZING_GAS);
     await game.classicMode.startBattle([Species.MILOTIC]);
 
     const milotic = game.scene.getPlayerPokemon()!;
@@ -96,7 +96,7 @@ describe("Abilities - Harvest", () => {
     // Give ourselves harvest and disable enemy neut gas,
     // but force our roll to fail so we don't accidentally recover anything
     vi.spyOn(PostTurnRestoreBerryAbAttr.prototype, "canApplyPostTurn").mockReturnValueOnce(false);
-    game.override.ability(Abilities.HARVEST);
+    game.override.ability(AbilityId.HARVEST);
     game.move.select(Moves.GASTRO_ACID);
     await game.move.selectEnemyMove(Moves.NUZZLE);
 
@@ -119,7 +119,7 @@ describe("Abilities - Harvest", () => {
   it("remembers berries eaten array across waves", async () => {
     game.override
       .startingHeldItems([{ name: "BERRY", type: BerryType.PETAYA, count: 2 }])
-      .ability(Abilities.BALL_FETCH); // don't actually need harvest for this test
+      .ability(AbilityId.BALL_FETCH); // don't actually need harvest for this test
     await game.classicMode.startBattle([Species.REGIELEKI]);
 
     const regieleki = game.scene.getPlayerPokemon()!;
@@ -147,7 +147,7 @@ describe("Abilities - Harvest", () => {
       .startingHeldItems([{ name: "BERRY", type: BerryType.PETAYA, count: 1 }])
       .moveset([Moves.SPLASH, Moves.EARTHQUAKE])
       .enemyMoveset([Moves.SUPER_FANG, Moves.HEAL_PULSE])
-      .enemyAbility(Abilities.COMPOUND_EYES);
+      .enemyAbility(AbilityId.COMPOUND_EYES);
     await game.classicMode.startBattle([Species.REGIELEKI]);
 
     const regieleki = game.scene.getPlayerPokemon()!;
@@ -263,7 +263,7 @@ describe("Abilities - Harvest", () => {
 
     it("cannot restore Plucked berries for either side", async () => {
       const initBerries: ModifierOverride[] = [{ name: "BERRY", type: BerryType.PETAYA, count: 1 }];
-      game.override.startingHeldItems(initBerries).enemyAbility(Abilities.HARVEST).enemyMoveset(Moves.PLUCK);
+      game.override.startingHeldItems(initBerries).enemyAbility(AbilityId.HARVEST).enemyMoveset(Moves.PLUCK);
       await game.classicMode.startBattle([Species.FEEBAS]);
 
       // gobble gobble gobble
@@ -299,7 +299,7 @@ describe("Abilities - Harvest", () => {
 
     it("can restore stolen berries", async () => {
       const initBerries: ModifierOverride[] = [{ name: "BERRY", type: BerryType.SITRUS, count: 1 }];
-      game.override.enemyHeldItems(initBerries).passiveAbility(Abilities.MAGICIAN).hasPassiveAbility(true);
+      game.override.enemyHeldItems(initBerries).passiveAbility(AbilityId.MAGICIAN).hasPassiveAbility(true);
       await game.classicMode.startBattle([Species.MEOWSCARADA]);
 
       // pre damage

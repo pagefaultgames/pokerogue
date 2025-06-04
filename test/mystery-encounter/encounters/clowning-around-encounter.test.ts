@@ -23,7 +23,7 @@ import { initSceneWithoutEncounterPhase } from "#test/testUtils/gameManagerUtils
 import { ModifierTier } from "#app/modifier/modifier-tier";
 import { ClowningAroundEncounter } from "#app/data/mystery-encounters/encounters/clowning-around-encounter";
 import { TrainerType } from "#enums/trainer-type";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { PostMysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
 import { Button } from "#enums/buttons";
 import type PartyUiHandler from "#app/ui/party-ui-handler";
@@ -127,21 +127,21 @@ describe("Clowning Around - Mystery Encounter", () => {
     });
     expect(config.pokemonConfigs?.[1].customPokemonData?.types.length).toBe(2);
     expect([
-      Abilities.STURDY,
-      Abilities.PICKUP,
-      Abilities.INTIMIDATE,
-      Abilities.GUTS,
-      Abilities.DROUGHT,
-      Abilities.DRIZZLE,
-      Abilities.SNOW_WARNING,
-      Abilities.SAND_STREAM,
-      Abilities.ELECTRIC_SURGE,
-      Abilities.PSYCHIC_SURGE,
-      Abilities.GRASSY_SURGE,
-      Abilities.MISTY_SURGE,
-      Abilities.MAGICIAN,
-      Abilities.SHEER_FORCE,
-      Abilities.PRANKSTER,
+      AbilityId.STURDY,
+      AbilityId.PICKUP,
+      AbilityId.INTIMIDATE,
+      AbilityId.GUTS,
+      AbilityId.DROUGHT,
+      AbilityId.DRIZZLE,
+      AbilityId.SNOW_WARNING,
+      AbilityId.SAND_STREAM,
+      AbilityId.ELECTRIC_SURGE,
+      AbilityId.PSYCHIC_SURGE,
+      AbilityId.GRASSY_SURGE,
+      AbilityId.MISTY_SURGE,
+      AbilityId.MAGICIAN,
+      AbilityId.SHEER_FORCE,
+      AbilityId.PRANKSTER,
     ]).toContain(config.pokemonConfigs?.[1].customPokemonData?.ability);
     expect(ClowningAroundEncounter.misc.ability).toBe(config.pokemonConfigs?.[1].customPokemonData?.ability);
     await vi.waitFor(() => expect(moveInitSpy).toHaveBeenCalled());

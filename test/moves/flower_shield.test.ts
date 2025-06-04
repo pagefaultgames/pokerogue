@@ -3,7 +3,7 @@ import { SemiInvulnerableTag } from "#app/data/battler-tags";
 import { PokemonType } from "#enums/pokemon-type";
 import { Biome } from "#app/enums/biome";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -26,8 +26,8 @@ describe("Moves - Flower Shield", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.ability(Abilities.NONE);
-    game.override.enemyAbility(Abilities.NONE);
+    game.override.ability(AbilityId.NONE);
+    game.override.enemyAbility(AbilityId.NONE);
     game.override.battleStyle("single");
     game.override.moveset([Moves.FLOWER_SHIELD, Moves.SPLASH]);
     game.override.enemyMoveset(Moves.SPLASH);

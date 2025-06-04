@@ -1,5 +1,5 @@
 import { Stat } from "#app/enums/stat";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -24,11 +24,11 @@ describe("Abilities - Wandering Spirit", () => {
     game = new GameManager(phaserGame);
     game.override
       .moveset([Moves.SPLASH])
-      .ability(Abilities.WANDERING_SPIRIT)
+      .ability(AbilityId.WANDERING_SPIRIT)
       .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(Moves.TACKLE);
   });
 
@@ -38,8 +38,8 @@ describe("Abilities - Wandering Spirit", () => {
     game.move.select(Moves.SPLASH);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(game.scene.getPlayerPokemon()?.getAbility().id).toBe(Abilities.BALL_FETCH);
-    expect(game.scene.getEnemyPokemon()?.getAbility().id).toBe(Abilities.WANDERING_SPIRIT);
+    expect(game.scene.getPlayerPokemon()?.getAbility().id).toBe(AbilityId.BALL_FETCH);
+    expect(game.scene.getEnemyPokemon()?.getAbility().id).toBe(AbilityId.WANDERING_SPIRIT);
   });
 
   it("should not exchange abilities when hit with a non-contact move", async () => {
@@ -49,12 +49,12 @@ describe("Abilities - Wandering Spirit", () => {
     game.move.select(Moves.SPLASH);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(game.scene.getPlayerPokemon()?.getAbility().id).toBe(Abilities.WANDERING_SPIRIT);
-    expect(game.scene.getEnemyPokemon()?.getAbility().id).toBe(Abilities.BALL_FETCH);
+    expect(game.scene.getPlayerPokemon()?.getAbility().id).toBe(AbilityId.WANDERING_SPIRIT);
+    expect(game.scene.getEnemyPokemon()?.getAbility().id).toBe(AbilityId.BALL_FETCH);
   });
 
   it("should activate post-summon abilities", async () => {
-    game.override.enemyAbility(Abilities.INTIMIDATE);
+    game.override.enemyAbility(AbilityId.INTIMIDATE);
     await game.classicMode.startBattle([Species.FEEBAS]);
 
     game.move.select(Moves.SPLASH);

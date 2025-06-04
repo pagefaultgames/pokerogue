@@ -3,7 +3,7 @@ import {
   SpeciesFormEvolution,
   SpeciesWildEvolutionDelay,
 } from "#app/data/balance/pokemon-evolutions";
-import { Abilities } from "#app/enums/abilities";
+import { AbilityId } from "#app/enums/abilities";
 import { Moves } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
 import * as Utils from "#app/utils/common";
@@ -31,7 +31,7 @@ describe("Evolution", () => {
     game.override.battleStyle("single");
 
     game.override.enemySpecies(Species.MAGIKARP);
-    game.override.enemyAbility(Abilities.BALL_FETCH);
+    game.override.enemyAbility(AbilityId.BALL_FETCH);
 
     game.override.startingLevel(60);
   });

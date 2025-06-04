@@ -1,5 +1,5 @@
 import { allMoves } from "#app/data/data-lists";
-import { Abilities } from "#app/enums/abilities";
+import { AbilityId } from "#app/enums/abilities";
 import { Stat } from "#app/enums/stat";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
@@ -24,13 +24,13 @@ describe("Abilities - Hustle", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .ability(Abilities.HUSTLE)
+      .ability(AbilityId.HUSTLE)
       .moveset([Moves.TACKLE, Moves.GIGA_DRAIN, Moves.FISSURE])
       .disableCrits()
       .battleStyle("single")
       .enemyMoveset(Moves.SPLASH)
       .enemySpecies(Species.SHUCKLE)
-      .enemyAbility(Abilities.BALL_FETCH);
+      .enemyAbility(AbilityId.BALL_FETCH);
   });
 
   it("increases the user's Attack stat by 50%", async () => {

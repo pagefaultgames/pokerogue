@@ -1,5 +1,5 @@
 import { allAbilities } from "#app/data/data-lists";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -24,9 +24,9 @@ describe("Abilities - Arena Trap", () => {
     game = new GameManager(phaserGame);
     game.override
       .moveset(Moves.SPLASH)
-      .ability(Abilities.ARENA_TRAP)
+      .ability(AbilityId.ARENA_TRAP)
       .enemySpecies(Species.RALTS)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(Moves.TELEPORT);
   });
 
@@ -54,7 +54,7 @@ describe("Abilities - Arena Trap", () => {
   });
 
   /**
-   * This checks if the Player Pokemon is able to switch out/run away after the Enemy Pokemon with {@linkcode Abilities.ARENA_TRAP}
+   * This checks if the Player Pokemon is able to switch out/run away after the Enemy Pokemon with {@linkcode AbilityId.ARENA_TRAP}
    * is forcefully moved out of the field from moves such as Roar {@linkcode Moves.ROAR}
    *
    * Note: It should be able to switch out/run away
@@ -64,13 +64,13 @@ describe("Abilities - Arena Trap", () => {
       .battleStyle("double")
       .enemyMoveset(Moves.SPLASH)
       .moveset([Moves.ROAR, Moves.SPLASH])
-      .ability(Abilities.BALL_FETCH);
+      .ability(AbilityId.BALL_FETCH);
     await game.classicMode.startBattle([Species.MAGIKARP, Species.SUDOWOODO, Species.LUNATONE]);
 
     const [enemy1, enemy2] = game.scene.getEnemyField();
     const [player1, player2] = game.scene.getPlayerField();
 
-    vi.spyOn(enemy1, "getAbility").mockReturnValue(allAbilities[Abilities.ARENA_TRAP]);
+    vi.spyOn(enemy1, "getAbility").mockReturnValue(allAbilities[AbilityId.ARENA_TRAP]);
 
     game.move.select(Moves.ROAR);
     game.move.select(Moves.SPLASH, 1);

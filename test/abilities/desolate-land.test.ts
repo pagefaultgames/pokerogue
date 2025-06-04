@@ -2,7 +2,7 @@ import { PokeballType } from "#app/enums/pokeball";
 import { WeatherType } from "#app/enums/weather-type";
 import type { CommandPhase } from "#app/phases/command-phase";
 import { Command } from "#app/ui/command-ui-handler";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -29,12 +29,12 @@ describe("Abilities - Desolate Land", () => {
       .moveset(Moves.SPLASH)
       .hasPassiveAbility(true)
       .enemySpecies(Species.RALTS)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH);
   });
 
   /**
-   * This checks that the weather has changed after the Enemy Pokemon with {@linkcode Abilities.DESOLATE_LAND}
+   * This checks that the weather has changed after the Enemy Pokemon with {@linkcode AbilityId.DESOLATE_LAND}
    * is forcefully moved out of the field from moves such as Roar {@linkcode Moves.ROAR}
    */
   it("should lift only when all pokemon with this ability leave the field", async () => {
@@ -78,7 +78,7 @@ describe("Abilities - Desolate Land", () => {
     game.override
       .battleStyle("single")
       .moveset([Moves.SHEER_COLD])
-      .ability(Abilities.NO_GUARD)
+      .ability(AbilityId.NO_GUARD)
       .startingLevel(100)
       .enemyLevel(1)
       .enemyMoveset([Moves.SPLASH])
@@ -135,7 +135,7 @@ describe("Abilities - Desolate Land", () => {
   });
 
   it("should lift after fleeing from a wild pokemon", async () => {
-    game.override.enemyAbility(Abilities.DESOLATE_LAND).ability(Abilities.BALL_FETCH);
+    game.override.enemyAbility(AbilityId.DESOLATE_LAND).ability(AbilityId.BALL_FETCH);
     await game.classicMode.startBattle([Species.MAGIKARP]);
     expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.HARSH_SUN);
 

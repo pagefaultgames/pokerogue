@@ -1,4 +1,4 @@
-import { Abilities } from "#app/enums/abilities";
+import { AbilityId } from "#app/enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { WeatherType } from "#enums/weather-type";
@@ -27,8 +27,8 @@ describe("Moves - Chilly Reception", () => {
       .battleStyle("single")
       .moveset([Moves.CHILLY_RECEPTION, Moves.SNOWSCAPE])
       .enemyMoveset(Moves.SPLASH)
-      .enemyAbility(Abilities.BALL_FETCH)
-      .ability(Abilities.BALL_FETCH);
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .ability(AbilityId.BALL_FETCH);
   });
 
   it("should still change the weather if user can't switch out", async () => {

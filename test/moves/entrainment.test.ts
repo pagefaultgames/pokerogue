@@ -1,5 +1,5 @@
 import { Stat } from "#app/enums/stat";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -24,11 +24,11 @@ describe("Moves - Entrainment", () => {
     game = new GameManager(phaserGame);
     game.override
       .moveset([Moves.SPLASH, Moves.ENTRAINMENT])
-      .ability(Abilities.ADAPTABILITY)
+      .ability(AbilityId.ADAPTABILITY)
       .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH);
   });
 
@@ -38,11 +38,11 @@ describe("Moves - Entrainment", () => {
     game.move.select(Moves.ENTRAINMENT);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(game.scene.getEnemyPokemon()?.getAbility().id).toBe(Abilities.ADAPTABILITY);
+    expect(game.scene.getEnemyPokemon()?.getAbility().id).toBe(AbilityId.ADAPTABILITY);
   });
 
   it("should activate post-summon abilities", async () => {
-    game.override.ability(Abilities.INTIMIDATE);
+    game.override.ability(AbilityId.INTIMIDATE);
     await game.classicMode.startBattle([Species.FEEBAS]);
 
     game.move.select(Moves.ENTRAINMENT);

@@ -1,4 +1,4 @@
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -23,10 +23,10 @@ describe("Abilities - Super Luck", () => {
     game = new GameManager(phaserGame);
     game.override
       .moveset([Moves.TACKLE])
-      .ability(Abilities.SUPER_LUCK)
+      .ability(AbilityId.SUPER_LUCK)
       .battleStyle("single")
       .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH);
   });
 

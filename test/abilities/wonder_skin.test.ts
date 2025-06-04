@@ -1,6 +1,6 @@
 import { allMoves } from "#app/data/data-lists";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -25,9 +25,9 @@ describe("Abilities - Wonder Skin", () => {
     game = new GameManager(phaserGame);
     game.override.battleStyle("single");
     game.override.moveset([Moves.TACKLE, Moves.CHARM]);
-    game.override.ability(Abilities.BALL_FETCH);
+    game.override.ability(AbilityId.BALL_FETCH);
     game.override.enemySpecies(Species.SHUCKLE);
-    game.override.enemyAbility(Abilities.WONDER_SKIN);
+    game.override.enemyAbility(AbilityId.WONDER_SKIN);
     game.override.enemyMoveset(Moves.SPLASH);
   });
 
@@ -56,9 +56,9 @@ describe("Abilities - Wonder Skin", () => {
   });
 
   const bypassAbilities = [
-    [Abilities.MOLD_BREAKER, "Mold Breaker"],
-    [Abilities.TERAVOLT, "Teravolt"],
-    [Abilities.TURBOBLAZE, "Turboblaze"],
+    [AbilityId.MOLD_BREAKER, "Mold Breaker"],
+    [AbilityId.TERAVOLT, "Teravolt"],
+    [AbilityId.TURBOBLAZE, "Turboblaze"],
   ];
 
   bypassAbilities.forEach(ability => {

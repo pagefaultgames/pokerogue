@@ -1,5 +1,5 @@
 import { Stat } from "#app/enums/stat";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -24,27 +24,27 @@ describe("Moves - Skill Swap", () => {
     game = new GameManager(phaserGame);
     game.override
       .moveset([Moves.SPLASH, Moves.SKILL_SWAP])
-      .ability(Abilities.BALL_FETCH)
+      .ability(AbilityId.BALL_FETCH)
       .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH);
   });
 
   it("should swap the two abilities", async () => {
-    game.override.ability(Abilities.ADAPTABILITY);
+    game.override.ability(AbilityId.ADAPTABILITY);
     await game.classicMode.startBattle([Species.FEEBAS]);
 
     game.move.select(Moves.SKILL_SWAP);
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(game.scene.getPlayerPokemon()?.getAbility().id).toBe(Abilities.BALL_FETCH);
-    expect(game.scene.getEnemyPokemon()?.getAbility().id).toBe(Abilities.ADAPTABILITY);
+    expect(game.scene.getPlayerPokemon()?.getAbility().id).toBe(AbilityId.BALL_FETCH);
+    expect(game.scene.getEnemyPokemon()?.getAbility().id).toBe(AbilityId.ADAPTABILITY);
   });
 
   it("should activate post-summon abilities", async () => {
-    game.override.ability(Abilities.INTIMIDATE);
+    game.override.ability(AbilityId.INTIMIDATE);
     await game.classicMode.startBattle([Species.FEEBAS]);
 
     game.move.select(Moves.SKILL_SWAP);

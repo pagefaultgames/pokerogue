@@ -1,4 +1,4 @@
-import { Abilities } from "#app/enums/abilities";
+import { AbilityId } from "#app/enums/abilities";
 import { Stat } from "#app/enums/stat";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
@@ -62,8 +62,8 @@ describe("Weather - Sandstorm", () => {
     game.override
       .battleStyle("double")
       .enemySpecies(Species.SANDSHREW)
-      .ability(Abilities.BALL_FETCH)
-      .enemyAbility(Abilities.BALL_FETCH);
+      .ability(AbilityId.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH);
 
     await game.classicMode.startBattle([Species.ROCKRUFF, Species.KLINK]);
 

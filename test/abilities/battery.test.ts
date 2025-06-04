@@ -1,5 +1,5 @@
 import { allMoves } from "#app/data/data-lists";
-import { Abilities } from "#app/enums/abilities";
+import { AbilityId } from "#app/enums/abilities";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Moves } from "#enums/moves";
@@ -28,7 +28,7 @@ describe("Abilities - Battery", () => {
     game = new GameManager(phaserGame);
     game.override.battleStyle("double");
     game.override.enemySpecies(Species.SHUCKLE);
-    game.override.enemyAbility(Abilities.BALL_FETCH);
+    game.override.enemyAbility(AbilityId.BALL_FETCH);
     game.override.moveset([Moves.TACKLE, Moves.BREAKING_SWIPE, Moves.SPLASH, Moves.DAZZLING_GLEAM]);
     game.override.enemyMoveset(Moves.SPLASH);
   });

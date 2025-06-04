@@ -1,6 +1,6 @@
 import { RandomMoveAttr } from "#app/data/moves/move";
 import { allMoves } from "#app/data/data-lists";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -25,12 +25,12 @@ describe("Moves - Moongeist Beam", () => {
     game = new GameManager(phaserGame);
     game.override
       .moveset([Moves.MOONGEIST_BEAM, Moves.METRONOME])
-      .ability(Abilities.BALL_FETCH)
+      .ability(AbilityId.BALL_FETCH)
       .startingLevel(200)
       .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.STURDY)
+      .enemyAbility(AbilityId.STURDY)
       .enemyMoveset(Moves.SPLASH);
   });
 

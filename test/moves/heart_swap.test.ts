@@ -5,7 +5,7 @@ import { Species } from "#enums/species";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Moves } from "#enums/moves";
 import { BATTLE_STATS } from "#enums/stat";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { MoveEndPhase } from "#app/phases/move-end-phase";
 
 describe("Moves - Heart Swap", () => {
@@ -25,12 +25,12 @@ describe("Moves - Heart Swap", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH)
       .enemySpecies(Species.INDEEDEE)
       .enemyLevel(200)
       .moveset([Moves.HEART_SWAP])
-      .ability(Abilities.NONE);
+      .ability(AbilityId.NONE);
   });
 
   it("should swap all of the user's stat stages with the target's", async () => {

@@ -1,4 +1,4 @@
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -26,7 +26,7 @@ describe("Abilities - Stall", () => {
       .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.REGIELEKI)
-      .enemyAbility(Abilities.STALL)
+      .enemyAbility(AbilityId.STALL)
       .enemyMoveset(Moves.QUICK_ATTACK)
       .moveset([Moves.QUICK_ATTACK, Moves.TACKLE]);
   });
@@ -74,7 +74,7 @@ describe("Abilities - Stall", () => {
   }, 20000);
 
   it("If both Pokemon have stall and use the same move, speed is used to determine who goes first.", async () => {
-    game.override.ability(Abilities.STALL);
+    game.override.ability(AbilityId.STALL);
     await game.classicMode.startBattle([Species.SHUCKLE]);
 
     const playerIndex = game.scene.getPlayerPokemon()!.getBattlerIndex();

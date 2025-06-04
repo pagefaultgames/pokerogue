@@ -1,7 +1,7 @@
 import { Moves } from "#enums/moves";
 import { BattlerIndex } from "#app/battle";
 import { Species } from "#enums/species";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import GameManager from "#test/testUtils/gameManager";
 import { allMoves } from "#app/data/data-lists";
 import type Move from "#app/data/moves/move";
@@ -34,8 +34,8 @@ describe("Moves - Last Respects", () => {
       .battleStyle("single")
       .disableCrits()
       .moveset([Moves.LAST_RESPECTS, Moves.EXPLOSION, Moves.LUNAR_DANCE])
-      .ability(Abilities.BALL_FETCH)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .ability(AbilityId.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .enemySpecies(Species.MAGIKARP)
       .enemyMoveset(Moves.SPLASH)
       .startingLevel(1)

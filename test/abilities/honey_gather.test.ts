@@ -1,6 +1,6 @@
 import type { CommandPhase } from "#app/phases/command-phase";
 import { Command } from "#app/ui/command-ui-handler";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -26,12 +26,12 @@ describe("Abilities - Honey Gather", () => {
     game.override
       .moveset([Moves.SPLASH, Moves.ROAR, Moves.THUNDERBOLT])
       .startingLevel(100)
-      .ability(Abilities.HONEY_GATHER)
-      .passiveAbility(Abilities.RUN_AWAY)
+      .ability(AbilityId.HONEY_GATHER)
+      .passiveAbility(AbilityId.RUN_AWAY)
       .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH);
   });
 

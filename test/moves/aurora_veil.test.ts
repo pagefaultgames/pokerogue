@@ -7,7 +7,7 @@ import { ArenaTagType } from "#app/enums/arena-tag-type";
 import type Pokemon from "#app/field/pokemon";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { NumberHolder } from "#app/utils/common";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { WeatherType } from "#enums/weather-type";
@@ -38,7 +38,7 @@ describe("Moves - Aurora Veil", () => {
     globalScene = game.scene;
     game.override
       .battleStyle("single")
-      .ability(Abilities.BALL_FETCH)
+      .ability(AbilityId.BALL_FETCH)
       .moveset([Moves.ABSORB, Moves.ROCK_SLIDE, Moves.TACKLE])
       .enemyLevel(100)
       .enemySpecies(Species.MAGIKARP)

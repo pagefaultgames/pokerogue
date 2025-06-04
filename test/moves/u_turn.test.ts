@@ -1,4 +1,4 @@
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { StatusEffect } from "#enums/status-effect";
@@ -35,7 +35,7 @@ describe("Moves - U-turn", () => {
   it("triggers regenerator a single time when a regenerator user switches out with u-turn", async () => {
     // arrange
     const playerHp = 1;
-    game.override.ability(Abilities.REGENERATOR);
+    game.override.ability(AbilityId.REGENERATOR);
     await game.classicMode.startBattle([Species.RAICHU, Species.SHUCKLE]);
     game.scene.getPlayerPokemon()!.hp = playerHp;
 
@@ -54,7 +54,7 @@ describe("Moves - U-turn", () => {
 
   it("triggers rough skin on the u-turn user before a new pokemon is switched in", async () => {
     // arrange
-    game.override.enemyAbility(Abilities.ROUGH_SKIN);
+    game.override.enemyAbility(AbilityId.ROUGH_SKIN);
     await game.classicMode.startBattle([Species.RAICHU, Species.SHUCKLE]);
 
     // act
@@ -72,7 +72,7 @@ describe("Moves - U-turn", () => {
 
   it("triggers contact abilities on the u-turn user (eg poison point) before a new pokemon is switched in", async () => {
     // arrange
-    game.override.enemyAbility(Abilities.POISON_POINT);
+    game.override.enemyAbility(AbilityId.POISON_POINT);
     await game.classicMode.startBattle([Species.RAICHU, Species.SHUCKLE]);
     vi.spyOn(game.scene.getEnemyPokemon()!, "randBattleSeedInt").mockReturnValue(0);
 

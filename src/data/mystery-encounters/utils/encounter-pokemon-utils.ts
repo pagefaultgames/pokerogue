@@ -35,7 +35,7 @@ import type { PermanentStat } from "#enums/stat";
 import { VictoryPhase } from "#app/phases/victory-phase";
 import { SummaryUiMode } from "#app/ui/summary-ui-handler";
 import { CustomPokemonData } from "#app/data/custom-pokemon-data";
-import type { Abilities } from "#enums/abilities";
+import type { AbilityId } from "#enums/abilities";
 import type { PokeballType } from "#enums/pokeball";
 import { StatusEffect } from "#enums/status-effect";
 
@@ -1024,7 +1024,7 @@ export function isPokemonValidForEncounterOptionSelection(
  * Permanently overrides the ability (not passive) of a pokemon.
  * If the pokemon is a fusion, instead overrides the fused pokemon's ability.
  */
-export function applyAbilityOverrideToPokemon(pokemon: Pokemon, ability: Abilities) {
+export function applyAbilityOverrideToPokemon(pokemon: Pokemon, ability: AbilityId) {
   if (pokemon.isFusion()) {
     if (!pokemon.fusionCustomPokemonData) {
       pokemon.fusionCustomPokemonData = new CustomPokemonData();

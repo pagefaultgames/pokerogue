@@ -2,7 +2,7 @@ import type { ArenaTrapTag } from "#app/data/arena-tag";
 import { ArenaTagSide } from "#app/data/arena-tag";
 import type { SessionSaveData } from "#app/system/game-data";
 import { decrypt, encrypt, GameData } from "#app/system/game-data";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
@@ -31,8 +31,8 @@ describe("Moves - Toxic Spikes", () => {
       .battleStyle("single")
       .startingWave(5)
       .enemySpecies(Species.RATTATA)
-      .enemyAbility(Abilities.BALL_FETCH)
-      .ability(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .ability(AbilityId.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH)
       .moveset([Moves.TOXIC_SPIKES, Moves.SPLASH, Moves.ROAR, Moves.COURT_CHANGE]);
   });

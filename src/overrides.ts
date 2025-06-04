@@ -5,7 +5,7 @@ import { FormChangeItem } from "#app/data/pokemon-forms";
 import { type ModifierOverride } from "#app/modifier/modifier-type";
 import { Variant } from "#app/sprites/variant";
 import { Unlockables } from "#app/system/unlockables";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { BattleType } from "#enums/battle-type";
 import { BerryType } from "#enums/berry-type";
 import { Biome } from "#enums/biome";
@@ -147,8 +147,8 @@ class DefaultOverrides {
    * This will override the species of the fusion
    */
   readonly STARTER_FUSION_SPECIES_OVERRIDE: Species | number = 0;
-  readonly ABILITY_OVERRIDE: Abilities = Abilities.NONE;
-  readonly PASSIVE_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
+  readonly ABILITY_OVERRIDE: AbilityId = AbilityId.NONE;
+  readonly PASSIVE_ABILITY_OVERRIDE: AbilityId = AbilityId.NONE;
   readonly HAS_PASSIVE_ABILITY_OVERRIDE: boolean | null = null;
   readonly STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
   readonly GENDER_OVERRIDE: Gender | null = null;
@@ -169,8 +169,8 @@ class DefaultOverrides {
    */
   readonly OPP_FUSION_SPECIES_OVERRIDE: Species | number = 0;
   readonly OPP_LEVEL_OVERRIDE: number = 0;
-  readonly OPP_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
-  readonly OPP_PASSIVE_ABILITY_OVERRIDE: Abilities = Abilities.NONE;
+  readonly OPP_ABILITY_OVERRIDE: AbilityId = AbilityId.NONE;
+  readonly OPP_PASSIVE_ABILITY_OVERRIDE: AbilityId = AbilityId.NONE;
   readonly OPP_HAS_PASSIVE_ABILITY_OVERRIDE: boolean | null = null;
   readonly OPP_STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
   readonly OPP_GENDER_OVERRIDE: Gender | null = null;

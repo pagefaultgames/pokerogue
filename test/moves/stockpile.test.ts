@@ -4,7 +4,7 @@ import type { TurnMove } from "#app/field/pokemon";
 import { MoveResult } from "#app/field/pokemon";
 import { CommandPhase } from "#app/phases/command-phase";
 import { TurnInitPhase } from "#app/phases/turn-init-phase";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -31,11 +31,11 @@ describe("Moves - Stockpile", () => {
 
       game.override.enemySpecies(Species.RATTATA);
       game.override.enemyMoveset(Moves.SPLASH);
-      game.override.enemyAbility(Abilities.NONE);
+      game.override.enemyAbility(AbilityId.NONE);
 
       game.override.startingLevel(2000);
       game.override.moveset([Moves.STOCKPILE, Moves.SPLASH]);
-      game.override.ability(Abilities.NONE);
+      game.override.ability(AbilityId.NONE);
     });
 
     it("gains a stockpile stack and raises user's DEF and SPDEF stat stages by 1 on each use, fails at max stacks (3)", async () => {

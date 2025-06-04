@@ -1,5 +1,5 @@
 import { BattlerIndex } from "#app/battle";
-import { Abilities } from "#app/enums/abilities";
+import { AbilityId } from "#app/enums/abilities";
 import { Moves } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -24,10 +24,10 @@ describe("Abilities - Tera Shell", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .ability(Abilities.TERA_SHELL)
+      .ability(AbilityId.TERA_SHELL)
       .moveset([Moves.SPLASH])
       .enemySpecies(Species.SNORLAX)
-      .enemyAbility(Abilities.INSOMNIA)
+      .enemyAbility(AbilityId.INSOMNIA)
       .enemyMoveset([Moves.MACH_PUNCH])
       .startingLevel(100)
       .enemyLevel(100);

@@ -1,5 +1,5 @@
 import { Moves } from "#app/enums/moves";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Species } from "#enums/species";
 import { Stat } from "#enums/stat";
 import GameManager from "#test/testUtils/gameManager";
@@ -25,8 +25,8 @@ describe("Abilities - Simple", () => {
     game.override
       .battleStyle("single")
       .enemySpecies(Species.BULBASAUR)
-      .enemyAbility(Abilities.SIMPLE)
-      .ability(Abilities.INTIMIDATE)
+      .enemyAbility(AbilityId.SIMPLE)
+      .ability(AbilityId.INTIMIDATE)
       .enemyMoveset(Moves.SPLASH);
   });
 

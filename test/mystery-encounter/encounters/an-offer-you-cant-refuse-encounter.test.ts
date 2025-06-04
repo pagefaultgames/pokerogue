@@ -18,7 +18,7 @@ import { Moves } from "#enums/moves";
 import { ShinyRateBoosterModifier } from "#app/modifier/modifier";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import i18next from "i18next";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 
 const namespace = "mysteryEncounters/anOfferYouCantRefuse";
 /** Gyarados for Indimidate */
@@ -43,7 +43,7 @@ describe("An Offer You Can't Refuse - Mystery Encounter", () => {
       .startingWave(defaultWave)
       .startingBiome(defaultBiome)
       .disableTrainerWaves()
-      .ability(Abilities.INTIMIDATE); // Extortion ability
+      .ability(AbilityId.INTIMIDATE); // Extortion ability
 
     const biomeMap = new Map<Biome, MysteryEncounterType[]>([
       [Biome.VOLCANO, [MysteryEncounterType.MYSTERIOUS_CHALLENGERS]],
@@ -208,7 +208,7 @@ describe("An Offer You Can't Refuse - Mystery Encounter", () => {
     });
 
     it("should award EXP to a pokemon with a move in EXTORTION_MOVES", async () => {
-      game.override.ability(Abilities.SYNCHRONIZE); // Not an extortion ability, so we can test extortion move
+      game.override.ability(AbilityId.SYNCHRONIZE); // Not an extortion ability, so we can test extortion move
       await game.runToMysteryEncounter(MysteryEncounterType.AN_OFFER_YOU_CANT_REFUSE, [Species.ABRA]);
       const party = scene.getPlayerParty();
       const abra = party.find(pkm => pkm.species.speciesId === Species.ABRA)!;

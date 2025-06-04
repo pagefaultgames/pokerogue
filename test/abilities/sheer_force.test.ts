@@ -1,6 +1,6 @@
 import { BattlerIndex } from "#app/battle";
 import { PokemonType } from "#enums/pokemon-type";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { Stat } from "#enums/stat";
@@ -28,9 +28,9 @@ describe("Abilities - Sheer Force", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .ability(Abilities.SHEER_FORCE)
+      .ability(AbilityId.SHEER_FORCE)
       .enemySpecies(Species.ONIX)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset([Moves.SPLASH])
       .disableCrits();
   });
@@ -92,7 +92,7 @@ describe("Abilities - Sheer Force", () => {
       .moveset([Moves.HEADBUTT])
       .enemySpecies(Species.SQUIRTLE)
       .enemyLevel(10)
-      .enemyAbility(Abilities.COLOR_CHANGE);
+      .enemyAbility(AbilityId.COLOR_CHANGE);
 
     await game.classicMode.startBattle([Species.PIDGEOT]);
     const enemyPokemon = game.scene.getEnemyPokemon();
@@ -115,8 +115,8 @@ describe("Abilities - Sheer Force", () => {
   it("Two Pokemon with abilities disabled by Sheer Force hitting each other should not cause a crash", async () => {
     const moveToUse = Moves.CRUNCH;
     game.override
-      .enemyAbility(Abilities.COLOR_CHANGE)
-      .ability(Abilities.COLOR_CHANGE)
+      .enemyAbility(AbilityId.COLOR_CHANGE)
+      .ability(AbilityId.COLOR_CHANGE)
       .moveset(moveToUse)
       .enemyMoveset(moveToUse);
 
@@ -139,7 +139,7 @@ describe("Abilities - Sheer Force", () => {
 
   it("Sheer Force should disable Meloetta's transformation from Relic Song", async () => {
     game.override
-      .ability(Abilities.SHEER_FORCE)
+      .ability(AbilityId.SHEER_FORCE)
       .moveset([Moves.RELIC_SONG])
       .enemyMoveset([Moves.SPLASH])
       .enemyLevel(100);

@@ -1,7 +1,7 @@
 import type BattleScene from "#app/battle-scene";
 import { allMoves } from "#app/data/data-lists";
 import { MoveCategory } from "#enums/MoveCategory";
-import { Abilities } from "#app/enums/abilities";
+import { AbilityId } from "#app/enums/abilities";
 import { Moves } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
 import type { EnemyPokemon } from "#app/field/pokemon";
@@ -49,7 +49,7 @@ describe("Enemy Commands - Move Selection", () => {
     game = new GameManager(phaserGame);
     globalScene = game.scene;
 
-    game.override.ability(Abilities.BALL_FETCH).enemyAbility(Abilities.BALL_FETCH);
+    game.override.ability(AbilityId.BALL_FETCH).enemyAbility(AbilityId.BALL_FETCH);
   });
 
   it("should never use Status moves if an attack can KO", async () => {

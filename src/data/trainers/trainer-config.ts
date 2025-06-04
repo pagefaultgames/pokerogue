@@ -27,7 +27,7 @@ import { Species } from "#enums/species";
 import { PokeballType } from "#enums/pokeball";
 import { PokemonType } from "#enums/pokemon-type";
 import { Moves } from "#enums/moves";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { TeraAIMode } from "#enums/tera-ai-mode";
 import { TrainerPoolTier } from "#enums/trainer-pool-tier";
 import { TrainerSlot } from "#enums/trainer-slot";
@@ -1111,17 +1111,17 @@ export const trainerConfigs: TrainerConfigs = {
           a =>
             !!a &&
             [
-              Abilities.WHITE_SMOKE,
-              Abilities.GLUTTONY,
-              Abilities.HONEY_GATHER,
-              Abilities.HARVEST,
-              Abilities.CHEEK_POUCH,
-              Abilities.SWEET_VEIL,
-              Abilities.RIPEN,
-              Abilities.PURIFYING_SALT,
-              Abilities.WELL_BAKED_BODY,
-              Abilities.SUPERSWEET_SYRUP,
-              Abilities.HOSPITALITY,
+              AbilityId.WHITE_SMOKE,
+              AbilityId.GLUTTONY,
+              AbilityId.HONEY_GATHER,
+              AbilityId.HARVEST,
+              AbilityId.CHEEK_POUCH,
+              AbilityId.SWEET_VEIL,
+              AbilityId.RIPEN,
+              AbilityId.PURIFYING_SALT,
+              AbilityId.WELL_BAKED_BODY,
+              AbilityId.SUPERSWEET_SYRUP,
+              AbilityId.HOSPITALITY,
             ].includes(a),
         ) ||
         s
@@ -1520,12 +1520,12 @@ export const trainerConfigs: TrainerConfigs = {
           a =>
             !!a &&
             [
-              Abilities.DRIZZLE,
-              Abilities.SWIFT_SWIM,
-              Abilities.HYDRATION,
-              Abilities.RAIN_DISH,
-              Abilities.DRY_SKIN,
-              Abilities.WIND_POWER,
+              AbilityId.DRIZZLE,
+              AbilityId.SWIFT_SWIM,
+              AbilityId.HYDRATION,
+              AbilityId.RAIN_DISH,
+              AbilityId.DRY_SKIN,
+              AbilityId.WIND_POWER,
             ].includes(a),
         ) || s.getLevelMoves().some(plm => plm[1] === Moves.RAIN_DANCE),
     ), // Mons with rain abilities or who learn Rain Dance by level

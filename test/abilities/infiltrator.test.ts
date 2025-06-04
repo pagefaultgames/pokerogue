@@ -4,7 +4,7 @@ import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -29,11 +29,11 @@ describe("Abilities - Infiltrator", () => {
     game = new GameManager(phaserGame);
     game.override
       .moveset([Moves.TACKLE, Moves.WATER_GUN, Moves.SPORE, Moves.BABY_DOLL_EYES])
-      .ability(Abilities.INFILTRATOR)
+      .ability(AbilityId.INFILTRATOR)
       .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.SNORLAX)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH)
       .startingLevel(100)
       .enemyLevel(100);
@@ -68,7 +68,7 @@ describe("Abilities - Infiltrator", () => {
     const postScreenDmg = enemy.getAttackDamage({ source: player, move: allMoves[move] }).damage;
 
     expect(postScreenDmg).toBe(preScreenDmg);
-    expect(player.waveData.abilitiesApplied).toContain(Abilities.INFILTRATOR);
+    expect(player.waveData.abilitiesApplied).toContain(AbilityId.INFILTRATOR);
   });
 
   it("should bypass the target's Safeguard", async () => {
@@ -83,7 +83,7 @@ describe("Abilities - Infiltrator", () => {
 
     await game.phaseInterceptor.to("BerryPhase", false);
     expect(enemy.status?.effect).toBe(StatusEffect.SLEEP);
-    expect(player.waveData.abilitiesApplied).toContain(Abilities.INFILTRATOR);
+    expect(player.waveData.abilitiesApplied).toContain(AbilityId.INFILTRATOR);
   });
 
   // TODO: fix this interaction to pass this test
@@ -99,7 +99,7 @@ describe("Abilities - Infiltrator", () => {
 
     await game.phaseInterceptor.to("MoveEndPhase");
     expect(enemy.getStatStage(Stat.ATK)).toBe(-1);
-    expect(player.waveData.abilitiesApplied).toContain(Abilities.INFILTRATOR);
+    expect(player.waveData.abilitiesApplied).toContain(AbilityId.INFILTRATOR);
   });
 
   it("should bypass the target's Substitute", async () => {
@@ -114,6 +114,6 @@ describe("Abilities - Infiltrator", () => {
 
     await game.phaseInterceptor.to("MoveEndPhase");
     expect(enemy.getStatStage(Stat.ATK)).toBe(-1);
-    expect(player.waveData.abilitiesApplied).toContain(Abilities.INFILTRATOR);
+    expect(player.waveData.abilitiesApplied).toContain(AbilityId.INFILTRATOR);
   });
 });

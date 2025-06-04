@@ -1,6 +1,6 @@
 import { BattlerIndex } from "#app/battle";
 import { PokemonType } from "#enums/pokemon-type";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -28,7 +28,7 @@ describe("Moves - Plasma Fists", () => {
       .battleStyle("double")
       .startingLevel(100)
       .enemySpecies(Species.DUSCLOPS)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(Moves.TACKLE)
       .enemyLevel(100);
   });
@@ -56,7 +56,7 @@ describe("Moves - Plasma Fists", () => {
   });
 
   it("should not affect Normal-type attacks boosted by Pixilate", async () => {
-    game.override.battleStyle("single").enemyAbility(Abilities.PIXILATE);
+    game.override.battleStyle("single").enemyAbility(AbilityId.PIXILATE);
 
     await game.classicMode.startBattle([Species.ONIX]);
 
@@ -74,7 +74,7 @@ describe("Moves - Plasma Fists", () => {
   });
 
   it("should affect moves that become Normal type due to Normalize", async () => {
-    game.override.battleStyle("single").enemyAbility(Abilities.NORMALIZE).enemyMoveset(Moves.WATER_GUN);
+    game.override.battleStyle("single").enemyAbility(AbilityId.NORMALIZE).enemyMoveset(Moves.WATER_GUN);
 
     await game.classicMode.startBattle([Species.DUSCLOPS]);
 

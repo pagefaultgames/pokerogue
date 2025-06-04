@@ -1,4 +1,4 @@
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { BattlerIndex } from "#app/battle";
 import { Stat } from "#enums/stat";
 import { allMoves } from "#app/data/data-lists";
@@ -27,9 +27,9 @@ describe("Moves - Spectral Thief", () => {
       .enemySpecies(Species.SHUCKLE)
       .enemyLevel(100)
       .enemyMoveset(Moves.SPLASH)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .moveset([Moves.SPECTRAL_THIEF, Moves.SPLASH])
-      .ability(Abilities.BALL_FETCH).disableCrits;
+      .ability(AbilityId.BALL_FETCH).disableCrits;
   });
 
   it("should steal max possible positive stat changes and ignore negative ones.", async () => {
@@ -84,7 +84,7 @@ describe("Moves - Spectral Thief", () => {
   });
 
   it("should steal stat stages as a negative value with Contrary.", async () => {
-    game.override.ability(Abilities.CONTRARY);
+    game.override.ability(AbilityId.CONTRARY);
     await game.classicMode.startBattle();
 
     const player = game.scene.getPlayerPokemon()!;
@@ -102,7 +102,7 @@ describe("Moves - Spectral Thief", () => {
   });
 
   it("should steal double the stat stages with Simple.", async () => {
-    game.override.ability(Abilities.SIMPLE);
+    game.override.ability(AbilityId.SIMPLE);
     await game.classicMode.startBattle();
 
     const player = game.scene.getPlayerPokemon()!;
@@ -120,7 +120,7 @@ describe("Moves - Spectral Thief", () => {
   });
 
   it("should steal the stat stages through Clear Body.", async () => {
-    game.override.enemyAbility(Abilities.CLEAR_BODY);
+    game.override.enemyAbility(AbilityId.CLEAR_BODY);
     await game.classicMode.startBattle();
 
     const player = game.scene.getPlayerPokemon()!;
@@ -138,7 +138,7 @@ describe("Moves - Spectral Thief", () => {
   });
 
   it("should steal the stat stages through White Smoke.", async () => {
-    game.override.enemyAbility(Abilities.WHITE_SMOKE);
+    game.override.enemyAbility(AbilityId.WHITE_SMOKE);
     await game.classicMode.startBattle();
 
     const player = game.scene.getPlayerPokemon()!;
@@ -156,7 +156,7 @@ describe("Moves - Spectral Thief", () => {
   });
 
   it("should steal the stat stages through Hyper Cutter.", async () => {
-    game.override.enemyAbility(Abilities.HYPER_CUTTER);
+    game.override.enemyAbility(AbilityId.HYPER_CUTTER);
     await game.classicMode.startBattle();
 
     const player = game.scene.getPlayerPokemon()!;

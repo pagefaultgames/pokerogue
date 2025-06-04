@@ -4,7 +4,7 @@ import { TeraMoveCategoryAttr } from "#app/data/moves/move";
 import { allMoves } from "#app/data/data-lists";
 import type Move from "#app/data/moves/move";
 import { PokemonType } from "#enums/pokemon-type";
-import { Abilities } from "#app/enums/abilities";
+import { AbilityId } from "#app/enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -38,10 +38,10 @@ describe("Moves - Tera Blast", () => {
       .disableCrits()
       .starterSpecies(Species.FEEBAS)
       .moveset([Moves.TERA_BLAST])
-      .ability(Abilities.BALL_FETCH)
+      .ability(AbilityId.BALL_FETCH)
       .enemySpecies(Species.MAGIKARP)
       .enemyMoveset(Moves.SPLASH)
-      .enemyAbility(Abilities.STURDY)
+      .enemyAbility(AbilityId.STURDY)
       .enemyLevel(50);
 
     vi.spyOn(moveToCheck, "calculateBattlePower");
@@ -162,7 +162,7 @@ describe("Moves - Tera Blast", () => {
   });
 
   it("does not change its move category from stat changes due to abilities", async () => {
-    game.override.ability(Abilities.HUGE_POWER);
+    game.override.ability(AbilityId.HUGE_POWER);
     await game.classicMode.startBattle();
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
@@ -193,19 +193,19 @@ describe("Moves - Tera Blast", () => {
   });
 
   it.each([
-    { ab: "galvanize", ty: "electric", ab_id: Abilities.GALVANIZE, ty_id: PokemonType.ELECTRIC },
-    { ab: "refrigerate", ty: "ice", ab_id: Abilities.REFRIGERATE, ty_id: PokemonType.ICE },
-    { ab: "pixilate", ty: "fairy", ab_id: Abilities.PIXILATE, ty_id: PokemonType.FAIRY },
-    { ab: "aerilate", ty: "flying", ab_id: Abilities.AERILATE, ty_id: PokemonType.FLYING },
+    { ab: "galvanize", ty: "electric", ab_id: AbilityId.GALVANIZE, ty_id: PokemonType.ELECTRIC },
+    { ab: "refrigerate", ty: "ice", ab_id: AbilityId.REFRIGERATE, ty_id: PokemonType.ICE },
+    { ab: "pixilate", ty: "fairy", ab_id: AbilityId.PIXILATE, ty_id: PokemonType.FAIRY },
+    { ab: "aerilate", ty: "flying", ab_id: AbilityId.AERILATE, ty_id: PokemonType.FLYING },
   ])("should be $ty type if the user has $ab", async ({ ab_id, ty_id }) => {
-    game.override.ability(ab_id).moveset([Moves.TERA_BLAST]).enemyAbility(Abilities.BALL_FETCH);
+    game.override.ability(ab_id).moveset([Moves.TERA_BLAST]).enemyAbility(AbilityId.BALL_FETCH);
     await game.classicMode.startBattle([Species.MAGIKARP]);
     const playerPokemon = game.scene.getPlayerPokemon()!;
     expect(playerPokemon.getMoveType(allMoves[Moves.TERA_BLAST])).toBe(ty_id);
   });
 
   it("should not be affected by normalize when the user is terastallized with tera normal", async () => {
-    game.override.moveset([Moves.TERA_BLAST]).ability(Abilities.NORMALIZE);
+    game.override.moveset([Moves.TERA_BLAST]).ability(AbilityId.NORMALIZE);
     await game.classicMode.startBattle([Species.MAGIKARP]);
     const playerPokemon = game.scene.getPlayerPokemon()!;
     // override the tera state for the pokemon

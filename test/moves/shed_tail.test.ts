@@ -1,6 +1,6 @@
 import { SubstituteTag } from "#app/data/battler-tags";
 import { MoveResult } from "#app/field/pokemon";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -27,7 +27,7 @@ describe("Moves - Shed Tail", () => {
       .moveset([Moves.SHED_TAIL])
       .battleStyle("single")
       .enemySpecies(Species.SNORLAX)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH);
   });
 

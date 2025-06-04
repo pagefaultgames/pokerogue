@@ -1,5 +1,5 @@
 import { BattlerIndex } from "#app/battle";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { allMoves } from "#app/data/data-lists";
@@ -33,7 +33,7 @@ describe("Moves - Rage Fist", () => {
       .startingLevel(100)
       .enemyLevel(1)
       .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(Moves.DOUBLE_KICK);
 
     vi.spyOn(move, "calculateBattlePower");

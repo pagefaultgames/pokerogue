@@ -1,6 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import { Moves } from "#enums/moves";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phase from "phaser";
@@ -26,7 +26,7 @@ describe("Items - Mystical Rock", () => {
     game.override
       .enemySpecies(Species.SHUCKLE)
       .enemyMoveset(Moves.SPLASH)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .moveset([Moves.SUNNY_DAY, Moves.GRASSY_TERRAIN])
       .startingHeldItems([{ name: "MYSTICAL_ROCK", count: 2 }])
       .battleStyle("single");

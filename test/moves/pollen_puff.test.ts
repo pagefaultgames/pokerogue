@@ -1,5 +1,5 @@
 import { BattlerIndex } from "#app/battle";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -24,16 +24,16 @@ describe("Moves - Pollen Puff", () => {
     game = new GameManager(phaserGame);
     game.override
       .moveset([Moves.POLLEN_PUFF])
-      .ability(Abilities.BALL_FETCH)
+      .ability(AbilityId.BALL_FETCH)
       .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH);
   });
 
   it("should not heal more than once when the user has a source of multi-hit", async () => {
-    game.override.battleStyle("double").moveset([Moves.POLLEN_PUFF, Moves.ENDURE]).ability(Abilities.PARENTAL_BOND);
+    game.override.battleStyle("double").moveset([Moves.POLLEN_PUFF, Moves.ENDURE]).ability(AbilityId.PARENTAL_BOND);
     await game.classicMode.startBattle([Species.BULBASAUR, Species.OMANYTE]);
 
     const [_, rightPokemon] = game.scene.getPlayerField();
@@ -50,7 +50,7 @@ describe("Moves - Pollen Puff", () => {
   });
 
   it("should damage an enemy multiple times when the user has a source of multi-hit", async () => {
-    game.override.moveset([Moves.POLLEN_PUFF]).ability(Abilities.PARENTAL_BOND).enemyLevel(100);
+    game.override.moveset([Moves.POLLEN_PUFF]).ability(AbilityId.PARENTAL_BOND).enemyLevel(100);
     await game.classicMode.startBattle([Species.MAGIKARP]);
 
     const target = game.scene.getEnemyPokemon()!;

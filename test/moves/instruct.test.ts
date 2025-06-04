@@ -2,7 +2,7 @@ import { BattlerIndex } from "#app/battle";
 import type Pokemon from "#app/field/pokemon";
 import { MoveResult } from "#app/field/pokemon";
 import type { MovePhase } from "#app/phases/move-phase";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -34,7 +34,7 @@ describe("Moves - Instruct", () => {
     game.override
       .battleStyle("single")
       .enemySpecies(Species.SHUCKLE)
-      .enemyAbility(Abilities.NO_GUARD)
+      .enemyAbility(AbilityId.NO_GUARD)
       .enemyLevel(100)
       .startingLevel(100)
       .disableCrits();
@@ -476,7 +476,7 @@ describe("Moves - Instruct", () => {
 
   it("should cause multi-hit moves to hit the appropriate number of times in singles", async () => {
     game.override
-      .enemyAbility(Abilities.SKILL_LINK)
+      .enemyAbility(AbilityId.SKILL_LINK)
       .moveset([Moves.SPLASH, Moves.INSTRUCT])
       .enemyMoveset(Moves.BULLET_SEED);
     await game.classicMode.startBattle([Species.BULBASAUR]);
@@ -503,7 +503,7 @@ describe("Moves - Instruct", () => {
   it("should cause multi-hit moves to hit the appropriate number of times in doubles", async () => {
     game.override
       .battleStyle("double")
-      .enemyAbility(Abilities.SKILL_LINK)
+      .enemyAbility(AbilityId.SKILL_LINK)
       .moveset([Moves.SPLASH, Moves.INSTRUCT])
       .enemyMoveset([Moves.BULLET_SEED, Moves.SPLASH])
       .enemyLevel(5);

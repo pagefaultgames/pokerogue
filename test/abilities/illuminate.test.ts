@@ -1,5 +1,5 @@
 import { Stat } from "#app/enums/stat";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -23,8 +23,8 @@ describe("Abilities - Illuminate", () => {
     game = new GameManager(phaserGame);
     game.override
       .moveset(Moves.SPLASH)
-      .ability(Abilities.ILLUMINATE)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .ability(AbilityId.ILLUMINATE)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(Moves.SAND_ATTACK);
   });
 

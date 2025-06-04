@@ -1,5 +1,5 @@
 import { Stat } from "#app/enums/stat";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -25,13 +25,13 @@ describe("Ability Duplication", () => {
     game.override
       .moveset([Moves.SPLASH])
       .battleStyle("single")
-      .ability(Abilities.HUGE_POWER)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .ability(AbilityId.HUGE_POWER)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH);
   });
 
   it("huge power should only be applied once if both normal and passive", async () => {
-    game.override.passiveAbility(Abilities.HUGE_POWER);
+    game.override.passiveAbility(AbilityId.HUGE_POWER);
 
     await game.classicMode.startBattle([Species.MAGIKARP]);
 
@@ -44,7 +44,7 @@ describe("Ability Duplication", () => {
   });
 
   it("huge power should stack with pure power", async () => {
-    game.override.passiveAbility(Abilities.PURE_POWER);
+    game.override.passiveAbility(AbilityId.PURE_POWER);
 
     await game.classicMode.startBattle([Species.MAGIKARP]);
 

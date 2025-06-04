@@ -1,5 +1,5 @@
 import { BattlerIndex } from "#app/battle";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -27,11 +27,11 @@ describe("Abilities - Serene Grace", () => {
     game.override
       .disableCrits()
       .battleStyle("single")
-      .ability(Abilities.SERENE_GRACE)
+      .ability(AbilityId.SERENE_GRACE)
       .moveset([Moves.AIR_SLASH])
       .enemySpecies(Species.ALOLA_GEODUDE)
       .enemyLevel(10)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset([Moves.SPLASH]);
   });
 

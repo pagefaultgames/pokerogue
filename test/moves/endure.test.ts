@@ -1,4 +1,4 @@
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -23,12 +23,12 @@ describe("Moves - Endure", () => {
     game = new GameManager(phaserGame);
     game.override
       .moveset([Moves.THUNDER, Moves.BULLET_SEED, Moves.TOXIC, Moves.SHEER_COLD])
-      .ability(Abilities.SKILL_LINK)
+      .ability(AbilityId.SKILL_LINK)
       .startingLevel(100)
       .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.NO_GUARD)
+      .enemyAbility(AbilityId.NO_GUARD)
       .enemyMoveset(Moves.ENDURE);
   });
 

@@ -5,7 +5,7 @@ import { BattlerTagType } from "#app/enums/battler-tag-type";
 import type { TurnMove } from "#app/field/pokemon";
 import { MoveResult } from "#app/field/pokemon";
 import GameManager from "#test/testUtils/gameManager";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import type Move from "#app/data/moves/move";
 import { Species } from "#enums/species";
@@ -36,11 +36,11 @@ describe("Moves - Spit Up", () => {
 
     game.override.enemySpecies(Species.RATTATA);
     game.override.enemyMoveset(Moves.SPLASH);
-    game.override.enemyAbility(Abilities.NONE);
+    game.override.enemyAbility(AbilityId.NONE);
     game.override.enemyLevel(2000);
 
     game.override.moveset(new Array(4).fill(spitUp.id));
-    game.override.ability(Abilities.NONE);
+    game.override.ability(AbilityId.NONE);
 
     vi.spyOn(spitUp, "calculateBattlePower");
   });

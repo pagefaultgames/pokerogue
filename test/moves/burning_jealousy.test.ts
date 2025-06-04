@@ -1,6 +1,6 @@
 import { BattlerIndex } from "#app/battle";
 import { allMoves } from "#app/data/data-lists";
-import { Abilities } from "#app/enums/abilities";
+import { AbilityId } from "#app/enums/abilities";
 import { StatusEffect } from "#app/enums/status-effect";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
@@ -28,12 +28,12 @@ describe("Moves - Burning Jealousy", () => {
       .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.ICE_SCALES)
+      .enemyAbility(AbilityId.ICE_SCALES)
       .enemyMoveset([Moves.HOWL])
       .startingLevel(10)
       .enemyLevel(10)
       .starterSpecies(Species.FEEBAS)
-      .ability(Abilities.BALL_FETCH)
+      .ability(AbilityId.BALL_FETCH)
       .moveset([Moves.BURNING_JEALOUSY, Moves.GROWL]);
   });
 
@@ -64,7 +64,7 @@ describe("Moves - Burning Jealousy", () => {
   });
 
   it("should ignore stat stages raised by IMPOSTER", async () => {
-    game.override.enemySpecies(Species.DITTO).enemyAbility(Abilities.IMPOSTER).enemyMoveset(Moves.SPLASH);
+    game.override.enemySpecies(Species.DITTO).enemyAbility(AbilityId.IMPOSTER).enemyMoveset(Moves.SPLASH);
     await game.classicMode.startBattle();
 
     const enemy = game.scene.getEnemyPokemon()!;
@@ -81,7 +81,7 @@ describe("Moves - Burning Jealousy", () => {
   });
 
   it("should be boosted by Sheer Force even if opponent didn't raise stat stages", async () => {
-    game.override.ability(Abilities.SHEER_FORCE).enemyMoveset(Moves.SPLASH);
+    game.override.ability(AbilityId.SHEER_FORCE).enemyMoveset(Moves.SPLASH);
     vi.spyOn(allMoves[Moves.BURNING_JEALOUSY], "calculateBattlePower");
     await game.classicMode.startBattle();
 

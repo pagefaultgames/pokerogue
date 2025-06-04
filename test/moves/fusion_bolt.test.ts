@@ -1,4 +1,4 @@
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -27,7 +27,7 @@ describe("Moves - Fusion Bolt", () => {
       .moveset([fusionBolt])
       .startingLevel(1)
       .enemySpecies(Species.RESHIRAM)
-      .enemyAbility(Abilities.ROUGH_SKIN)
+      .enemyAbility(AbilityId.ROUGH_SKIN)
       .enemyMoveset(Moves.SPLASH)
       .battleStyle("single")
       .startingWave(97)

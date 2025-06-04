@@ -1,5 +1,5 @@
 import { BattlerIndex } from "#app/battle";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { Stat } from "#enums/stat";
@@ -25,11 +25,11 @@ describe("Abilities - Storm Drain", () => {
     game = new GameManager(phaserGame);
     game.override
       .moveset([Moves.SPLASH, Moves.WATER_GUN])
-      .ability(Abilities.BALL_FETCH)
+      .ability(AbilityId.BALL_FETCH)
       .battleStyle("double")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH);
   });
 
@@ -39,7 +39,7 @@ describe("Abilities - Storm Drain", () => {
     const enemy1 = game.scene.getEnemyField()[0];
     const enemy2 = game.scene.getEnemyField()[1];
 
-    enemy2.summonData.ability = Abilities.STORM_DRAIN;
+    enemy2.summonData.ability = AbilityId.STORM_DRAIN;
 
     game.move.select(Moves.WATER_GUN, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
     game.move.select(Moves.SPLASH, BattlerIndex.PLAYER_2);
@@ -55,7 +55,7 @@ describe("Abilities - Storm Drain", () => {
     const enemy1 = game.scene.getEnemyField()[0];
     const enemy2 = game.scene.getEnemyField()[1];
 
-    enemy2.summonData.ability = Abilities.STORM_DRAIN;
+    enemy2.summonData.ability = AbilityId.STORM_DRAIN;
 
     game.move.select(Moves.AERIAL_ACE, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
     game.move.select(Moves.SPLASH, BattlerIndex.PLAYER_2);
@@ -69,7 +69,7 @@ describe("Abilities - Storm Drain", () => {
 
     const enemy2 = game.scene.getEnemyField()[1];
 
-    enemy2.summonData.ability = Abilities.STORM_DRAIN;
+    enemy2.summonData.ability = AbilityId.STORM_DRAIN;
 
     game.move.select(Moves.WATER_GUN, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
     game.move.select(Moves.SPLASH, BattlerIndex.PLAYER_2);
@@ -80,13 +80,13 @@ describe("Abilities - Storm Drain", () => {
   });
 
   it("should not redirect moves changed from water type via ability", async () => {
-    game.override.ability(Abilities.NORMALIZE);
+    game.override.ability(AbilityId.NORMALIZE);
     await game.classicMode.startBattle([Species.FEEBAS, Species.MAGIKARP]);
 
     const enemy1 = game.scene.getEnemyField()[0];
     const enemy2 = game.scene.getEnemyField()[1];
 
-    enemy2.summonData.ability = Abilities.STORM_DRAIN;
+    enemy2.summonData.ability = AbilityId.STORM_DRAIN;
 
     game.move.select(Moves.WATER_GUN, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
     game.move.select(Moves.SPLASH, BattlerIndex.PLAYER_2);
@@ -96,13 +96,13 @@ describe("Abilities - Storm Drain", () => {
   });
 
   it("should redirect moves changed to water type via ability", async () => {
-    game.override.ability(Abilities.LIQUID_VOICE).moveset(Moves.PSYCHIC_NOISE);
+    game.override.ability(AbilityId.LIQUID_VOICE).moveset(Moves.PSYCHIC_NOISE);
     await game.classicMode.startBattle([Species.FEEBAS, Species.MAGIKARP]);
 
     const enemy1 = game.scene.getEnemyField()[0];
     const enemy2 = game.scene.getEnemyField()[1];
 
-    enemy2.summonData.ability = Abilities.STORM_DRAIN;
+    enemy2.summonData.ability = AbilityId.STORM_DRAIN;
 
     game.move.select(Moves.PSYCHIC_NOISE, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
     game.move.select(Moves.SPLASH, BattlerIndex.PLAYER_2);

@@ -1,6 +1,6 @@
 import { StatusEffect } from "#app/enums/status-effect";
 import { CommandPhase } from "#app/phases/command-phase";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -26,10 +26,10 @@ describe("Moves - Lunar Blessing", () => {
 
     game.override.enemySpecies(Species.SHUCKLE);
     game.override.enemyMoveset(Moves.SPLASH);
-    game.override.enemyAbility(Abilities.BALL_FETCH);
+    game.override.enemyAbility(AbilityId.BALL_FETCH);
 
     game.override.moveset([Moves.LUNAR_BLESSING, Moves.SPLASH]);
-    game.override.ability(Abilities.BALL_FETCH);
+    game.override.ability(AbilityId.BALL_FETCH);
   });
 
   it("should restore 25% HP of the user and its ally", async () => {

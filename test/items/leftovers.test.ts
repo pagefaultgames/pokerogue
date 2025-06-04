@@ -1,6 +1,6 @@
 import { DamageAnimPhase } from "#app/phases/damage-anim-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -26,10 +26,10 @@ describe("Items - Leftovers", () => {
     game.override
       .battleStyle("single")
       .startingLevel(2000)
-      .ability(Abilities.UNNERVE)
+      .ability(AbilityId.UNNERVE)
       .moveset([Moves.SPLASH])
       .enemySpecies(Species.SHUCKLE)
-      .enemyAbility(Abilities.UNNERVE)
+      .enemyAbility(AbilityId.UNNERVE)
       .enemyMoveset(Moves.TACKLE)
       .startingHeldItems([{ name: "LEFTOVERS", count: 1 }]);
   });

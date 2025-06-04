@@ -1,6 +1,6 @@
 import { BattlerIndex } from "#app/battle";
 import { isBetween } from "#app/utils/common";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -25,13 +25,13 @@ describe("Abilities - Stakeout", () => {
     game = new GameManager(phaserGame);
     game.override
       .moveset([Moves.SPLASH, Moves.SURF])
-      .ability(Abilities.STAKEOUT)
+      .ability(AbilityId.STAKEOUT)
       .battleStyle("single")
       .disableCrits()
       .startingLevel(100)
       .enemyLevel(100)
       .enemySpecies(Species.SNORLAX)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset([Moves.SPLASH, Moves.FLIP_TURN])
       .startingWave(5);
   });

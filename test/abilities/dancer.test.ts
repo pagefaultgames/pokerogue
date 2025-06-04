@@ -1,6 +1,6 @@
 import { BattlerIndex } from "#app/battle";
 import type { MovePhase } from "#app/phases/move-phase";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -29,7 +29,7 @@ describe("Abilities - Dancer", () => {
   // Reference Link: https://bulbapedia.bulbagarden.net/wiki/Dancer_(Ability)
 
   it("triggers when dance moves are used, doesn't consume extra PP", async () => {
-    game.override.enemyAbility(Abilities.DANCER).enemySpecies(Species.MAGIKARP).enemyMoveset(Moves.VICTORY_DANCE);
+    game.override.enemyAbility(AbilityId.DANCER).enemySpecies(Species.MAGIKARP).enemyMoveset(Moves.VICTORY_DANCE);
     await game.classicMode.startBattle([Species.ORICORIO, Species.FEEBAS]);
 
     const [oricorio, feebas] = game.scene.getPlayerField();

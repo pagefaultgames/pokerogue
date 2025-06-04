@@ -1,5 +1,5 @@
 import type { EnemyPokemon } from "#app/field/pokemon";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { StatusEffect } from "#enums/status-effect";
@@ -72,7 +72,7 @@ describe("Moves - Thunder Wave", () => {
   });
 
   it("affects Ground types if the user has Normalize", async () => {
-    game.override.ability(Abilities.NORMALIZE).enemySpecies(Species.DIGLETT);
+    game.override.ability(AbilityId.NORMALIZE).enemySpecies(Species.DIGLETT);
     await game.classicMode.startBattle();
 
     const enemyPokemon: EnemyPokemon = game.scene.getEnemyPokemon()!;
@@ -85,7 +85,7 @@ describe("Moves - Thunder Wave", () => {
   });
 
   it("does not affect Ghost types if the user has Normalize", async () => {
-    game.override.ability(Abilities.NORMALIZE).enemySpecies(Species.HAUNTER);
+    game.override.ability(AbilityId.NORMALIZE).enemySpecies(Species.HAUNTER);
     await game.classicMode.startBattle();
 
     const enemyPokemon: EnemyPokemon = game.scene.getEnemyPokemon()!;

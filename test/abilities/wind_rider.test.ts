@@ -1,6 +1,6 @@
 import { Stat } from "#enums/stat";
 import GameManager from "#test/testUtils/gameManager";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
@@ -25,7 +25,7 @@ describe("Abilities - Wind Rider", () => {
     game.override
       .battleStyle("single")
       .enemySpecies(Species.SHIFTRY)
-      .enemyAbility(Abilities.WIND_RIDER)
+      .enemyAbility(AbilityId.WIND_RIDER)
       .moveset([Moves.TAILWIND, Moves.SPLASH, Moves.PETAL_BLIZZARD, Moves.SANDSTORM])
       .enemyMoveset(Moves.SPLASH);
   });
@@ -45,7 +45,7 @@ describe("Abilities - Wind Rider", () => {
   });
 
   it("ATK stat stage is raised by 1 when Tailwind is present on its side", async () => {
-    game.override.enemySpecies(Species.MAGIKARP).ability(Abilities.WIND_RIDER);
+    game.override.enemySpecies(Species.MAGIKARP).ability(AbilityId.WIND_RIDER);
 
     await game.classicMode.startBattle([Species.SHIFTRY]);
     const shiftry = game.scene.getPlayerPokemon()!;
@@ -60,7 +60,7 @@ describe("Abilities - Wind Rider", () => {
   });
 
   it("does not raise ATK stat stage when Tailwind is present on opposing side", async () => {
-    game.override.enemySpecies(Species.MAGIKARP).ability(Abilities.WIND_RIDER);
+    game.override.enemySpecies(Species.MAGIKARP).ability(AbilityId.WIND_RIDER);
 
     await game.classicMode.startBattle([Species.SHIFTRY]);
     const magikarp = game.scene.getEnemyPokemon()!;
@@ -78,7 +78,7 @@ describe("Abilities - Wind Rider", () => {
   });
 
   it("does not raise ATK stat stage when Tailwind is present on opposing side", async () => {
-    game.override.enemySpecies(Species.MAGIKARP).ability(Abilities.WIND_RIDER);
+    game.override.enemySpecies(Species.MAGIKARP).ability(AbilityId.WIND_RIDER);
 
     await game.classicMode.startBattle([Species.SHIFTRY]);
     const magikarp = game.scene.getEnemyPokemon()!;

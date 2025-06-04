@@ -1,7 +1,7 @@
 import { Stat } from "#app/enums/stat";
 import { StatusEffect } from "#app/enums/status-effect";
 import { MoveResult } from "#app/field/pokemon";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -27,11 +27,11 @@ describe("Moves - Sleep Talk", () => {
     game.override
       .moveset([Moves.SPLASH, Moves.SLEEP_TALK])
       .statusEffect(StatusEffect.SLEEP)
-      .ability(Abilities.BALL_FETCH)
+      .ability(AbilityId.BALL_FETCH)
       .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH)
       .enemyLevel(100);
   });

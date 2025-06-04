@@ -4,7 +4,7 @@ import { BerryPhase } from "#app/phases/berry-phase";
 import { CommandPhase } from "#app/phases/command-phase";
 import { MoveEndPhase } from "#app/phases/move-end-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -31,7 +31,7 @@ describe("Moves - Astonish", () => {
       .battleStyle("single")
       .moveset([Moves.ASTONISH, Moves.SPLASH])
       .enemySpecies(Species.BLASTOISE)
-      .enemyAbility(Abilities.INSOMNIA)
+      .enemyAbility(AbilityId.INSOMNIA)
       .enemyMoveset(Moves.TACKLE)
       .startingLevel(100)
       .enemyLevel(100);

@@ -4,7 +4,7 @@ import GameManager from "#test/testUtils/gameManager";
 import { UiMode } from "#enums/ui-mode";
 import { Stat } from "#enums/stat";
 import { getMovePosition } from "#test/testUtils/gameManagerUtils";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 
@@ -27,9 +27,9 @@ describe("Abilities - Intimidate", () => {
     game.override
       .battleStyle("single")
       .enemySpecies(Species.RATTATA)
-      .enemyAbility(Abilities.INTIMIDATE)
-      .enemyPassiveAbility(Abilities.HYDRATION)
-      .ability(Abilities.INTIMIDATE)
+      .enemyAbility(AbilityId.INTIMIDATE)
+      .enemyPassiveAbility(AbilityId.HYDRATION)
+      .ability(AbilityId.INTIMIDATE)
       .startingWave(3)
       .enemyMoveset(Moves.SPLASH);
   });

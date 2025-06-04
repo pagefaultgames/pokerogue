@@ -3,7 +3,7 @@ import { CommandPhase } from "#app/phases/command-phase";
 import { TurnInitPhase } from "#app/phases/turn-init-phase";
 import i18next from "#app/plugins/i18n";
 import { UiMode } from "#enums/ui-mode";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -29,8 +29,8 @@ describe("Ability Timing", () => {
     game.override
       .battleStyle("single")
       .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.INTIMIDATE)
-      .ability(Abilities.BALL_FETCH);
+      .enemyAbility(AbilityId.INTIMIDATE)
+      .ability(AbilityId.BALL_FETCH);
     vi.spyOn(i18next, "t");
   });
 

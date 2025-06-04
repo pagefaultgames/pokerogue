@@ -1,4 +1,4 @@
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { StatusEffect } from "#enums/status-effect";
@@ -24,18 +24,18 @@ describe("Abilities - Insomnia", () => {
     game = new GameManager(phaserGame);
     game.override
       .moveset([Moves.SPLASH])
-      .ability(Abilities.BALL_FETCH)
+      .ability(AbilityId.BALL_FETCH)
       .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH);
   });
 
   it("should remove sleep when gained", async () => {
     game.override
-      .ability(Abilities.INSOMNIA)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .ability(AbilityId.INSOMNIA)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .moveset(Moves.SKILL_SWAP)
       .enemyMoveset(Moves.SPLASH);
     await game.classicMode.startBattle([Species.FEEBAS]);

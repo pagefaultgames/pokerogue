@@ -2,7 +2,7 @@ import { Species } from "#app/enums/species";
 import { StatusEffect } from "#app/enums/status-effect";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { toDmgValue } from "#app/utils/common";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -28,11 +28,11 @@ describe("Abilities - Heatproof", () => {
       .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.CHARMANDER)
-      .enemyAbility(Abilities.HEATPROOF)
+      .enemyAbility(AbilityId.HEATPROOF)
       .enemyMoveset(Moves.SPLASH)
       .enemyLevel(100)
       .starterSpecies(Species.CHANDELURE)
-      .ability(Abilities.BALL_FETCH)
+      .ability(AbilityId.BALL_FETCH)
       .moveset([Moves.FLAMETHROWER, Moves.SPLASH])
       .startingLevel(100);
   });
@@ -49,7 +49,7 @@ describe("Abilities - Heatproof", () => {
     const heatproofDamage = initialHP - enemy.hp;
 
     enemy.hp = initialHP;
-    game.override.enemyAbility(Abilities.BALL_FETCH);
+    game.override.enemyAbility(AbilityId.BALL_FETCH);
 
     game.move.select(Moves.FLAMETHROWER);
     await game.phaseInterceptor.to(TurnEndPhase);

@@ -5,7 +5,7 @@ import { Species } from "#enums/species";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Moves } from "#enums/moves";
 import { Stat, BATTLE_STATS, EFFECTIVE_STATS } from "#enums/stat";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 
 // TODO: Add more tests once Imposter is fully implemented
 describe("Abilities - Imposter", () => {
@@ -28,10 +28,10 @@ describe("Abilities - Imposter", () => {
       .battleStyle("single")
       .enemySpecies(Species.MEW)
       .enemyLevel(200)
-      .enemyAbility(Abilities.BEAST_BOOST)
-      .enemyPassiveAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BEAST_BOOST)
+      .enemyPassiveAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH)
-      .ability(Abilities.IMPOSTER)
+      .ability(AbilityId.IMPOSTER)
       .moveset(Moves.SPLASH);
   });
 
@@ -118,7 +118,7 @@ describe("Abilities - Imposter", () => {
   });
 
   it("should activate its ability if it copies one that activates on summon", async () => {
-    game.override.enemyAbility(Abilities.INTIMIDATE);
+    game.override.enemyAbility(AbilityId.INTIMIDATE);
 
     await game.classicMode.startBattle([Species.DITTO]);
 

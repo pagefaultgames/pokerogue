@@ -1,6 +1,6 @@
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -27,7 +27,7 @@ describe("Moves - Friend Guard", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("double")
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset([Moves.TACKLE, Moves.SPLASH, Moves.DRAGON_RAGE])
       .enemySpecies(Species.SHUCKLE)
       .moveset([Moves.SPLASH])
@@ -56,7 +56,7 @@ describe("Moves - Friend Guard", () => {
       ),
     );
 
-    vi.spyOn(player2, "getAbility").mockReturnValue(allAbilities[Abilities.FRIEND_GUARD]);
+    vi.spyOn(player2, "getAbility").mockReturnValue(allAbilities[AbilityId.FRIEND_GUARD]);
 
     game.move.select(Moves.SPLASH);
     game.move.select(Moves.SPLASH, 1);
@@ -89,7 +89,7 @@ describe("Moves - Friend Guard", () => {
 
     const turn1Damage = spy.mock.results[spy.mock.results.length - 1].value.damage;
 
-    vi.spyOn(player2, "getAbility").mockReturnValue(allAbilities[Abilities.FRIEND_GUARD]);
+    vi.spyOn(player2, "getAbility").mockReturnValue(allAbilities[AbilityId.FRIEND_GUARD]);
 
     game.move.select(Moves.SPLASH);
     game.move.select(Moves.SPLASH, 1);
@@ -116,7 +116,7 @@ describe("Moves - Friend Guard", () => {
     const turn1Damage = spy.mock.results[spy.mock.results.length - 1].value.damage;
     expect(turn1Damage).toBe(40);
 
-    vi.spyOn(player2, "getAbility").mockReturnValue(allAbilities[Abilities.FRIEND_GUARD]);
+    vi.spyOn(player2, "getAbility").mockReturnValue(allAbilities[AbilityId.FRIEND_GUARD]);
 
     game.move.select(Moves.SPLASH);
     game.move.select(Moves.SPLASH, 1);

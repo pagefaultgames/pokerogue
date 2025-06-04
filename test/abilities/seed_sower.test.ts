@@ -1,5 +1,5 @@
 import { TerrainType } from "#app/data/terrain";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -26,10 +26,10 @@ describe("Abilities - Seed Sower", () => {
     game.override.disableCrits();
 
     game.override.enemySpecies(Species.MAGIKARP);
-    game.override.enemyAbility(Abilities.BALL_FETCH);
+    game.override.enemyAbility(AbilityId.BALL_FETCH);
 
     game.override.starterSpecies(Species.ARBOLIVA);
-    game.override.ability(Abilities.SEED_SOWER);
+    game.override.ability(AbilityId.SEED_SOWER);
     game.override.moveset([Moves.SPLASH]);
   });
 

@@ -1,7 +1,7 @@
 import * as bypassLoginModule from "#app/global-vars/bypass-login";
 import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
 import type { SessionSaveData } from "#app/system/game-data";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -23,7 +23,7 @@ describe("System - Game Data", () => {
     game.override
       .moveset([Moves.SPLASH])
       .battleStyle("single")
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH);
   });
 

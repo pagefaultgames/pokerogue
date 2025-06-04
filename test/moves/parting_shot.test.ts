@@ -1,4 +1,4 @@
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
@@ -34,7 +34,7 @@ describe("Moves - Parting Shot", () => {
   });
 
   test("Parting Shot when buffed by prankster should fail against dark types", async () => {
-    game.override.enemySpecies(Species.POOCHYENA).ability(Abilities.PRANKSTER);
+    game.override.enemySpecies(Species.POOCHYENA).ability(AbilityId.PRANKSTER);
     await game.classicMode.startBattle([Species.MURKROW, Species.MEOWTH]);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
@@ -49,7 +49,7 @@ describe("Moves - Parting Shot", () => {
   });
 
   test("Parting shot should fail against good as gold ability", async () => {
-    game.override.enemySpecies(Species.GHOLDENGO).enemyAbility(Abilities.GOOD_AS_GOLD);
+    game.override.enemySpecies(Species.GHOLDENGO).enemyAbility(AbilityId.GOOD_AS_GOLD);
     await game.classicMode.startBattle([Species.MURKROW, Species.MEOWTH]);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
@@ -116,7 +116,7 @@ describe("Moves - Parting Shot", () => {
     // TODO: fix this bug to pass the test!
     "Parting shot shouldn't allow switch out when mist is active",
     async () => {
-      game.override.enemySpecies(Species.ALTARIA).enemyAbility(Abilities.NONE).enemyMoveset([Moves.MIST]);
+      game.override.enemySpecies(Species.ALTARIA).enemyAbility(AbilityId.NONE).enemyMoveset([Moves.MIST]);
       await game.classicMode.startBattle([Species.SNORLAX, Species.MEOWTH]);
 
       const enemyPokemon = game.scene.getEnemyPokemon()!;
@@ -135,7 +135,7 @@ describe("Moves - Parting Shot", () => {
     // TODO: fix this bug to pass the test!
     "Parting shot shouldn't allow switch out against clear body ability",
     async () => {
-      game.override.enemySpecies(Species.TENTACOOL).enemyAbility(Abilities.CLEAR_BODY);
+      game.override.enemySpecies(Species.TENTACOOL).enemyAbility(AbilityId.CLEAR_BODY);
       await game.classicMode.startBattle([Species.SNORLAX, Species.MEOWTH]);
 
       const enemyPokemon = game.scene.getEnemyPokemon()!;

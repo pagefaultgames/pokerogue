@@ -1,6 +1,6 @@
 import { BattlerIndex } from "#app/battle";
 import { Stat } from "#enums/stat";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -25,12 +25,12 @@ describe("Items - Multi Lens", () => {
     game = new GameManager(phaserGame);
     game.override
       .moveset([Moves.TACKLE, Moves.TRAILBLAZE, Moves.TACHYON_CUTTER, Moves.FUTURE_SIGHT])
-      .ability(Abilities.BALL_FETCH)
+      .ability(AbilityId.BALL_FETCH)
       .startingHeldItems([{ name: "MULTI_LENS" }])
       .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.SNORLAX)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH)
       .startingLevel(99) // Check for proper rounding on Seismic Toss damage reduction
       .enemyLevel(99);
@@ -63,7 +63,7 @@ describe("Items - Multi Lens", () => {
   );
 
   it("should stack additively with Parental Bond", async () => {
-    game.override.ability(Abilities.PARENTAL_BOND);
+    game.override.ability(AbilityId.PARENTAL_BOND);
 
     await game.classicMode.startBattle([Species.MAGIKARP]);
 
@@ -139,7 +139,7 @@ describe("Items - Multi Lens", () => {
     game.override
       .startingHeldItems([{ name: "MULTI_LENS", count: 1 }])
       .moveset(Moves.SUPER_FANG)
-      .ability(Abilities.COMPOUND_EYES)
+      .ability(AbilityId.COMPOUND_EYES)
       .enemyLevel(1000)
       .enemySpecies(Species.BLISSEY); // allows for unrealistically high levels of accuracy
 
@@ -157,7 +157,7 @@ describe("Items - Multi Lens", () => {
     game.override
       .startingHeldItems([{ name: "MULTI_LENS", count: 2 }])
       .moveset(Moves.SUPER_FANG)
-      .ability(Abilities.COMPOUND_EYES)
+      .ability(AbilityId.COMPOUND_EYES)
       .enemyMoveset(Moves.SPLASH)
       .enemyLevel(1000)
       .enemySpecies(Species.BLISSEY); // allows for unrealistically high levels of accuracy
@@ -176,8 +176,8 @@ describe("Items - Multi Lens", () => {
     game.override
       .startingHeldItems([{ name: "MULTI_LENS", count: 2 }])
       .moveset(Moves.SUPER_FANG)
-      .ability(Abilities.PARENTAL_BOND)
-      .passiveAbility(Abilities.COMPOUND_EYES)
+      .ability(AbilityId.PARENTAL_BOND)
+      .passiveAbility(AbilityId.COMPOUND_EYES)
       .enemyMoveset(Moves.SPLASH)
       .enemyLevel(1000)
       .enemySpecies(Species.BLISSEY); // allows for unrealistically high levels of accuracy

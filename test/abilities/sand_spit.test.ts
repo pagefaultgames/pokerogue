@@ -1,5 +1,5 @@
 import { WeatherType } from "#app/enums/weather-type";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -26,10 +26,10 @@ describe("Abilities - Sand Spit", () => {
     game.override.disableCrits();
 
     game.override.enemySpecies(Species.MAGIKARP);
-    game.override.enemyAbility(Abilities.BALL_FETCH);
+    game.override.enemyAbility(AbilityId.BALL_FETCH);
 
     game.override.starterSpecies(Species.SILICOBRA);
-    game.override.ability(Abilities.SAND_SPIT);
+    game.override.ability(AbilityId.SAND_SPIT);
     game.override.moveset([Moves.SPLASH, Moves.COIL]);
   });
 

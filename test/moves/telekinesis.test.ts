@@ -1,6 +1,6 @@
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { allMoves } from "#app/data/data-lists";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { MoveResult } from "#app/field/pokemon";
@@ -30,7 +30,7 @@ describe("Moves - Telekinesis", () => {
       .battleStyle("single")
       .enemySpecies(Species.SNORLAX)
       .enemyLevel(60)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset([Moves.SPLASH]);
   });
 

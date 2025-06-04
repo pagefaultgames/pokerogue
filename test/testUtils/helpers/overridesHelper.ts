@@ -1,6 +1,6 @@
 import type { Variant } from "#app/sprites/variant";
 import { Weather } from "#app/data/weather";
-import { Abilities } from "#app/enums/abilities";
+import { AbilityId } from "#app/enums/abilities";
 import type { ModifierOverride } from "#app/modifier/modifier-type";
 import type { BattleStyle } from "#app/overrides";
 import Overrides, { defaultOverrides } from "#app/overrides";
@@ -160,29 +160,29 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the player pokemon's {@linkcode Abilities | ability}.
-   * @param ability - The {@linkcode Abilities | ability} to set
+   * Override the player pokemon's {@linkcode AbilityId | ability}.
+   * @param ability - The {@linkcode AbilityId | ability} to set
    * @returns `this`
    */
-  public ability(ability: Abilities): this {
+  public ability(ability: AbilityId): this {
     vi.spyOn(Overrides, "ABILITY_OVERRIDE", "get").mockReturnValue(ability);
-    this.log(`Player Pokemon ability set to ${Abilities[ability]} (=${ability})!`);
+    this.log(`Player Pokemon ability set to ${AbilityId[ability]} (=${ability})!`);
     return this;
   }
 
   /**
-   * Override the player pokemon's **passive** {@linkcode Abilities | ability}
-   * @param passiveAbility - The **passive** {@linkcode Abilities | ability} to set
+   * Override the player pokemon's **passive** {@linkcode AbilityId | ability}
+   * @param passiveAbility - The **passive** {@linkcode AbilityId | ability} to set
    * @returns `this`
    */
-  public passiveAbility(passiveAbility: Abilities): this {
+  public passiveAbility(passiveAbility: AbilityId): this {
     vi.spyOn(Overrides, "PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(passiveAbility);
-    this.log(`Player Pokemon PASSIVE ability set to ${Abilities[passiveAbility]} (=${passiveAbility})!`);
+    this.log(`Player Pokemon PASSIVE ability set to ${AbilityId[passiveAbility]} (=${passiveAbility})!`);
     return this;
   }
 
   /**
-   * Forces the status of the player pokemon **passive** {@linkcode Abilities | ability}
+   * Forces the status of the player pokemon **passive** {@linkcode AbilityId | ability}
    * @param hasPassiveAbility - Forces the passive to be active if `true`, inactive if `false`
    * @returns `this`
    */
@@ -339,29 +339,29 @@ export class OverridesHelper extends GameManagerHelper {
   }
 
   /**
-   * Override the {@linkcode Abilities | ability} of enemy pokemon
-   * @param ability - The {@linkcode Abilities | ability} to set
+   * Override the {@linkcode AbilityId | ability} of enemy pokemon
+   * @param ability - The {@linkcode AbilityId | ability} to set
    * @returns `this`
    */
-  public enemyAbility(ability: Abilities): this {
+  public enemyAbility(ability: AbilityId): this {
     vi.spyOn(Overrides, "OPP_ABILITY_OVERRIDE", "get").mockReturnValue(ability);
-    this.log(`Enemy Pokemon ability set to ${Abilities[ability]} (=${ability})!`);
+    this.log(`Enemy Pokemon ability set to ${AbilityId[ability]} (=${ability})!`);
     return this;
   }
 
   /**
-   * Override the **passive** {@linkcode Abilities | ability} of enemy pokemon
-   * @param passiveAbility - The **passive** {@linkcode Abilities | ability} to set
+   * Override the **passive** {@linkcode AbilityId | ability} of enemy pokemon
+   * @param passiveAbility - The **passive** {@linkcode AbilityId | ability} to set
    * @returns `this`
    */
-  public enemyPassiveAbility(passiveAbility: Abilities): this {
+  public enemyPassiveAbility(passiveAbility: AbilityId): this {
     vi.spyOn(Overrides, "OPP_PASSIVE_ABILITY_OVERRIDE", "get").mockReturnValue(passiveAbility);
-    this.log(`Enemy Pokemon PASSIVE ability set to ${Abilities[passiveAbility]} (=${passiveAbility})!`);
+    this.log(`Enemy Pokemon PASSIVE ability set to ${AbilityId[passiveAbility]} (=${passiveAbility})!`);
     return this;
   }
 
   /**
-   * Forces the status of the enemy pokemon **passive** {@linkcode Abilities | ability}
+   * Forces the status of the enemy pokemon **passive** {@linkcode AbilityId | ability}
    * @param hasPassiveAbility - Forces the passive to be active if `true`, inactive if `false`
    * @returns `this`
    */

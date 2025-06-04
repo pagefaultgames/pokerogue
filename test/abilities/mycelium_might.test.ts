@@ -1,7 +1,7 @@
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { TurnStartPhase } from "#app/phases/turn-start-phase";
 import GameManager from "#test/testUtils/gameManager";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Stat } from "#enums/stat";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
@@ -28,10 +28,10 @@ describe("Abilities - Mycelium Might", () => {
       .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.SHUCKLE)
-      .enemyAbility(Abilities.CLEAR_BODY)
+      .enemyAbility(AbilityId.CLEAR_BODY)
 
       .enemyMoveset(Moves.QUICK_ATTACK)
-      .ability(Abilities.MYCELIUM_MIGHT)
+      .ability(AbilityId.MYCELIUM_MIGHT)
       .moveset([Moves.QUICK_ATTACK, Moves.BABY_DOLL_EYES]);
   });
 

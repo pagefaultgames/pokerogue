@@ -1,6 +1,6 @@
 import { BattlerIndex } from "#app/battle";
 import { MoveResult } from "#app/field/pokemon";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -32,11 +32,11 @@ describe("Moves - Last Resort", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .ability(Abilities.BALL_FETCH)
+      .ability(AbilityId.BALL_FETCH)
       .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH);
   });
 
@@ -80,7 +80,7 @@ describe("Moves - Last Resort", () => {
     game.override
       .moveset([Moves.LAST_RESORT, Moves.SWORDS_DANCE, Moves.ABSORB, Moves.MIRROR_MOVE])
       .enemyMoveset([Moves.SWORDS_DANCE, Moves.ABSORB])
-      .ability(Abilities.DANCER)
+      .ability(AbilityId.DANCER)
       .enemySpecies(Species.ABOMASNOW); // magikarp has 50% chance to be okho'd on absorb crit
     await game.classicMode.startBattle([Species.BLISSEY]);
 
@@ -107,7 +107,7 @@ describe("Moves - Last Resort", () => {
   });
 
   it("should work if invoked virtually when all other moves have been used", async () => {
-    game.override.moveset([Moves.LAST_RESORT, Moves.SLEEP_TALK]).ability(Abilities.COMATOSE);
+    game.override.moveset([Moves.LAST_RESORT, Moves.SLEEP_TALK]).ability(AbilityId.COMATOSE);
     await game.classicMode.startBattle([Species.KOMALA]);
 
     game.move.select(Moves.SLEEP_TALK);
@@ -127,7 +127,7 @@ describe("Moves - Last Resort", () => {
   });
 
   it("should preserve usability status on reload", async () => {
-    game.override.moveset([Moves.LAST_RESORT, Moves.SPLASH]).ability(Abilities.COMATOSE);
+    game.override.moveset([Moves.LAST_RESORT, Moves.SPLASH]).ability(AbilityId.COMATOSE);
     await game.classicMode.startBattle([Species.BLISSEY]);
 
     game.move.select(Moves.SPLASH);

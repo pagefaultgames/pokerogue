@@ -1,7 +1,7 @@
 import { Status } from "#app/data/status-effect";
 import { QuietFormChangePhase } from "#app/phases/quiet-form-change-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { StatusEffect } from "#enums/status-effect";
@@ -30,7 +30,7 @@ describe("Abilities - ZERO TO HERO", () => {
       .battleStyle("single")
       .moveset(Moves.SPLASH)
       .enemyMoveset(Moves.SPLASH)
-      .enemyAbility(Abilities.BALL_FETCH);
+      .enemyAbility(AbilityId.BALL_FETCH);
   });
 
   it("should swap to base form on arena reset", async () => {

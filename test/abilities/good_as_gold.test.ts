@@ -6,7 +6,7 @@ import { BattlerTagType } from "#app/enums/battler-tag-type";
 import { Stat } from "#app/enums/stat";
 import { StatusEffect } from "#app/enums/status-effect";
 import { WeatherType } from "#app/enums/weather-type";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -31,11 +31,11 @@ describe("Abilities - Good As Gold", () => {
     game = new GameManager(phaserGame);
     game.override
       .moveset([Moves.SPLASH])
-      .ability(Abilities.GOOD_AS_GOLD)
+      .ability(AbilityId.GOOD_AS_GOLD)
       .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH);
   });
 
@@ -49,7 +49,7 @@ describe("Abilities - Good As Gold", () => {
 
     await game.phaseInterceptor.to("BerryPhase");
 
-    expect(player.waveData.abilitiesApplied).toContain(Abilities.GOOD_AS_GOLD);
+    expect(player.waveData.abilitiesApplied).toContain(AbilityId.GOOD_AS_GOLD);
     expect(player.getStatStage(Stat.ATK)).toBe(0);
   });
 
@@ -70,7 +70,7 @@ describe("Abilities - Good As Gold", () => {
     const [good_as_gold, ball_fetch] = game.scene.getPlayerField();
 
     // Force second pokemon to have ball fetch to isolate to a single mon.
-    vi.spyOn(ball_fetch, "getAbility").mockReturnValue(allAbilities[Abilities.BALL_FETCH]);
+    vi.spyOn(ball_fetch, "getAbility").mockReturnValue(allAbilities[AbilityId.BALL_FETCH]);
 
     game.move.select(Moves.SWORDS_DANCE, 0);
     game.move.select(Moves.SAFEGUARD, 1);
@@ -78,7 +78,7 @@ describe("Abilities - Good As Gold", () => {
     await game.move.selectEnemyMove(Moves.HAZE);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
     await game.phaseInterceptor.to("BerryPhase");
-    expect(good_as_gold.getAbility().id).toBe(Abilities.GOOD_AS_GOLD);
+    expect(good_as_gold.getAbility().id).toBe(AbilityId.GOOD_AS_GOLD);
     expect(good_as_gold.getStatStage(Stat.ATK)).toBe(0);
     expect(game.scene.arena.getTagOnSide(ArenaTagType.STEALTH_ROCK, ArenaTagSide.PLAYER)).toBeDefined();
     expect(game.scene.arena.getTagOnSide(ArenaTagType.SAFEGUARD, ArenaTagSide.PLAYER)).toBeDefined();
@@ -112,9 +112,9 @@ describe("Abilities - Good As Gold", () => {
     game.override.battleStyle("double").statusEffect(StatusEffect.BURN);
     await game.classicMode.startBattle([Species.MILOTIC, Species.FEEBAS, Species.ABRA]);
     const [milotic, feebas, abra] = game.scene.getPlayerParty();
-    game.field.mockAbility(milotic, Abilities.GOOD_AS_GOLD);
-    game.field.mockAbility(feebas, Abilities.BALL_FETCH);
-    game.field.mockAbility(abra, Abilities.BALL_FETCH);
+    game.field.mockAbility(milotic, AbilityId.GOOD_AS_GOLD);
+    game.field.mockAbility(feebas, AbilityId.BALL_FETCH);
+    game.field.mockAbility(abra, AbilityId.BALL_FETCH);
 
     // turn 1
     game.move.use(Moves.SPLASH, 0);

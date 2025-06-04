@@ -1,7 +1,7 @@
 import { ArenaTagSide, getArenaTag } from "#app/data/arena-tag";
 import { getStatusEffectCatchRateMultiplier } from "#app/data/status-effect";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Moves } from "#enums/moves";
@@ -30,13 +30,13 @@ describe("Abilities - Magic Guard", () => {
     game = new GameManager(phaserGame);
 
     /** Player Pokemon overrides */
-    game.override.ability(Abilities.MAGIC_GUARD);
+    game.override.ability(AbilityId.MAGIC_GUARD);
     game.override.moveset([Moves.SPLASH]);
     game.override.startingLevel(100);
 
     /** Enemy Pokemon overrides */
     game.override.enemySpecies(Species.SNORLAX);
-    game.override.enemyAbility(Abilities.INSOMNIA);
+    game.override.enemyAbility(AbilityId.INSOMNIA);
     game.override.enemyMoveset(Moves.SPLASH);
     game.override.enemyLevel(100);
   });
@@ -108,7 +108,7 @@ describe("Abilities - Magic Guard", () => {
 
   it("Magic Guard prevents damage caused by burn but other non-damaging effects are still applied", async () => {
     game.override.enemyStatusEffect(StatusEffect.BURN);
-    game.override.enemyAbility(Abilities.MAGIC_GUARD);
+    game.override.enemyAbility(AbilityId.MAGIC_GUARD);
 
     await game.classicMode.startBattle([Species.MAGIKARP]);
 
@@ -130,7 +130,7 @@ describe("Abilities - Magic Guard", () => {
 
   it("Magic Guard prevents damage caused by toxic but other non-damaging effects are still applied", async () => {
     game.override.enemyStatusEffect(StatusEffect.TOXIC);
-    game.override.enemyAbility(Abilities.MAGIC_GUARD);
+    game.override.enemyAbility(AbilityId.MAGIC_GUARD);
 
     await game.classicMode.startBattle([Species.MAGIKARP]);
 
@@ -208,7 +208,7 @@ describe("Abilities - Magic Guard", () => {
   it("Magic Guard prevents against damage from volatile status effects", async () => {
     await game.classicMode.startBattle([Species.DUSKULL]);
     game.override.moveset([Moves.CURSE]);
-    game.override.enemyAbility(Abilities.MAGIC_GUARD);
+    game.override.enemyAbility(AbilityId.MAGIC_GUARD);
 
     const leadPokemon = game.scene.getPlayerPokemon()!;
 
@@ -331,7 +331,7 @@ describe("Abilities - Magic Guard", () => {
     game.override.statusEffect(StatusEffect.SLEEP);
     //enemy pokemon is given Spore just in case player pokemon somehow awakens during test
     game.override.enemyMoveset([Moves.SPORE, Moves.SPORE, Moves.SPORE, Moves.SPORE]);
-    game.override.enemyAbility(Abilities.BAD_DREAMS);
+    game.override.enemyAbility(AbilityId.BAD_DREAMS);
 
     await game.classicMode.startBattle([Species.MAGIKARP]);
 
@@ -353,7 +353,7 @@ describe("Abilities - Magic Guard", () => {
   it("Magic Guard prevents damage from abilities with PostFaintContactDamageAbAttr", async () => {
     //Tests the abilities Innards Out/Aftermath
     game.override.moveset([Moves.TACKLE]);
-    game.override.enemyAbility(Abilities.AFTERMATH);
+    game.override.enemyAbility(AbilityId.AFTERMATH);
 
     await game.classicMode.startBattle([Species.MAGIKARP]);
 
@@ -377,7 +377,7 @@ describe("Abilities - Magic Guard", () => {
   it("Magic Guard prevents damage from abilities with PostDefendContactDamageAbAttr", async () => {
     //Tests the abilities Iron Barbs/Rough Skin
     game.override.moveset([Moves.TACKLE]);
-    game.override.enemyAbility(Abilities.IRON_BARBS);
+    game.override.enemyAbility(AbilityId.IRON_BARBS);
 
     await game.classicMode.startBattle([Species.MAGIKARP]);
 
@@ -400,7 +400,7 @@ describe("Abilities - Magic Guard", () => {
   it("Magic Guard prevents damage from abilities with ReverseDrainAbAttr", async () => {
     //Tests the ability Liquid Ooze
     game.override.moveset([Moves.ABSORB]);
-    game.override.enemyAbility(Abilities.LIQUID_OOZE);
+    game.override.enemyAbility(AbilityId.LIQUID_OOZE);
 
     await game.classicMode.startBattle([Species.MAGIKARP]);
 
@@ -422,7 +422,7 @@ describe("Abilities - Magic Guard", () => {
 
   it("Magic Guard prevents HP loss from abilities with PostWeatherLapseDamageAbAttr", async () => {
     //Tests the abilities Solar Power/Dry Skin
-    game.override.passiveAbility(Abilities.SOLAR_POWER);
+    game.override.passiveAbility(AbilityId.SOLAR_POWER);
     game.override.weather(WeatherType.SUNNY);
 
     await game.classicMode.startBattle([Species.MAGIKARP]);

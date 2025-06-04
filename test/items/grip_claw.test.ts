@@ -1,7 +1,7 @@
 import { BattlerIndex } from "#app/battle";
 import type Pokemon from "#app/field/pokemon";
 import type { ContactHeldItemTransferChanceModifier } from "#app/modifier/modifier";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { BerryType } from "#enums/berry-type";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
@@ -31,8 +31,8 @@ describe("Items - Grip Claw", () => {
       .moveset([Moves.TACKLE, Moves.SPLASH, Moves.ATTRACT])
       .startingHeldItems([{ name: "GRIP_CLAW", count: 1 }])
       .enemySpecies(Species.SNORLAX)
-      .enemyAbility(Abilities.UNNERVE)
-      .ability(Abilities.UNNERVE)
+      .enemyAbility(AbilityId.UNNERVE)
+      .ability(AbilityId.UNNERVE)
       .enemyMoveset(Moves.SPLASH)
       .enemyHeldItems([
         { name: "BERRY", type: BerryType.SITRUS, count: 2 },

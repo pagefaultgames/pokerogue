@@ -3,7 +3,7 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import { PokemonAnimType } from "#enums/pokemon-anim-type";
 import type { EffectiveStat } from "#enums/stat";
 import { Stat } from "#enums/stat";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -28,11 +28,11 @@ describe("Moves - Order Up", () => {
     game = new GameManager(phaserGame);
     game.override
       .moveset(Moves.ORDER_UP)
-      .ability(Abilities.COMMANDER)
+      .ability(AbilityId.COMMANDER)
       .battleStyle("double")
       .disableCrits()
       .enemySpecies(Species.SNORLAX)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH)
       .startingLevel(100)
       .enemyLevel(100);
@@ -67,7 +67,7 @@ describe("Moves - Order Up", () => {
   );
 
   it("should be boosted by Sheer Force while still applying a stat boost", async () => {
-    game.override.passiveAbility(Abilities.SHEER_FORCE).starterForms({ [Species.TATSUGIRI]: 0 });
+    game.override.passiveAbility(AbilityId.SHEER_FORCE).starterForms({ [Species.TATSUGIRI]: 0 });
 
     await game.classicMode.startBattle([Species.TATSUGIRI, Species.DONDOZO]);
 
@@ -81,7 +81,7 @@ describe("Moves - Order Up", () => {
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
-    expect(dondozo.waveData.abilitiesApplied.has(Abilities.SHEER_FORCE)).toBeTruthy();
+    expect(dondozo.waveData.abilitiesApplied.has(AbilityId.SHEER_FORCE)).toBeTruthy();
     expect(dondozo.getStatStage(Stat.ATK)).toBe(3);
   });
 });

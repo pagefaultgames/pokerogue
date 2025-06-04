@@ -1,5 +1,5 @@
 import { BattlerIndex } from "#app/battle";
-import { Abilities } from "#app/enums/abilities";
+import { AbilityId } from "#app/enums/abilities";
 import { Moves } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
 import { MoveResult } from "#app/field/pokemon";
@@ -25,11 +25,11 @@ describe("Moves - Gastro Acid", () => {
     game.override.battleStyle("double");
     game.override.startingLevel(1);
     game.override.enemyLevel(100);
-    game.override.ability(Abilities.BALL_FETCH);
+    game.override.ability(AbilityId.BALL_FETCH);
     game.override.moveset([Moves.GASTRO_ACID, Moves.WATER_GUN, Moves.SPLASH, Moves.CORE_ENFORCER]);
     game.override.enemySpecies(Species.BIDOOF);
     game.override.enemyMoveset(Moves.SPLASH);
-    game.override.enemyAbility(Abilities.WATER_ABSORB);
+    game.override.enemyAbility(AbilityId.WATER_ABSORB);
   });
 
   it("suppresses effect of ability", async () => {
@@ -80,8 +80,8 @@ describe("Moves - Gastro Acid", () => {
 
   it("should suppress the passive of a target even if its main ability is unsuppressable and not suppress main abli", async () => {
     game.override
-      .enemyAbility(Abilities.COMATOSE)
-      .enemyPassiveAbility(Abilities.WATER_ABSORB)
+      .enemyAbility(AbilityId.COMATOSE)
+      .enemyPassiveAbility(AbilityId.WATER_ABSORB)
       .moveset([Moves.SPLASH, Moves.GASTRO_ACID, Moves.WATER_GUN]);
     await game.classicMode.startBattle([Species.MAGIKARP]);
 

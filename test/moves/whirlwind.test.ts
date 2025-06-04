@@ -2,7 +2,7 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import { Challenges } from "#enums/challenges";
 import { PokemonType } from "#enums/pokemon-type";
 import { MoveResult } from "#app/field/pokemon";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -34,7 +34,7 @@ describe("Moves - Whirlwind", () => {
     game.override
       .battleStyle("single")
       .moveset([Moves.SPLASH])
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset([Moves.SPLASH, Moves.WHIRLWIND])
       .enemySpecies(Species.PIDGEY);
   });
@@ -239,7 +239,7 @@ describe("Moves - Whirlwind", () => {
       .battleType(BattleType.WILD)
       .moveset([Moves.WHIRLWIND, Moves.SPLASH])
       .enemyMoveset(Moves.SPLASH)
-      .ability(Abilities.BALL_FETCH);
+      .ability(AbilityId.BALL_FETCH);
     await game.classicMode.startBattle([Species.MAGIKARP]);
 
     const user = game.scene.getPlayerPokemon()!;

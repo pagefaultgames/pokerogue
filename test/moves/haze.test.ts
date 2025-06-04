@@ -1,6 +1,6 @@
 import { Stat } from "#enums/stat";
 import GameManager from "#test/testUtils/gameManager";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import Phaser from "phaser";
@@ -28,11 +28,11 @@ describe("Moves - Haze", () => {
       game.override.enemySpecies(Species.RATTATA);
       game.override.enemyLevel(100);
       game.override.enemyMoveset(Moves.SPLASH);
-      game.override.enemyAbility(Abilities.NONE);
+      game.override.enemyAbility(AbilityId.NONE);
 
       game.override.startingLevel(100);
       game.override.moveset([Moves.HAZE, Moves.SWORDS_DANCE, Moves.CHARM, Moves.SPLASH]);
-      game.override.ability(Abilities.NONE);
+      game.override.ability(AbilityId.NONE);
     });
 
     it("should reset all stat changes of all Pokemon on field", async () => {

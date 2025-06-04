@@ -7,7 +7,7 @@ import { PokemonType } from "#enums/pokemon-type";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { Stat } from "#enums/stat";
 import { toDmgValue } from "#app/utils/common";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -36,7 +36,7 @@ describe("Moves - Pledge Moves", () => {
       .moveset([Moves.FIRE_PLEDGE, Moves.GRASS_PLEDGE, Moves.WATER_PLEDGE, Moves.SPLASH])
       .enemySpecies(Species.SNORLAX)
       .enemyLevel(100)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH);
   });
 
@@ -223,7 +223,7 @@ describe("Moves - Pledge Moves", () => {
 
   it("Pledge Moves - 'rainbow' effect should not stack with Serene Grace when applied to flinching moves", async () => {
     game.override
-      .ability(Abilities.SERENE_GRACE)
+      .ability(AbilityId.SERENE_GRACE)
       .moveset([Moves.FIRE_PLEDGE, Moves.WATER_PLEDGE, Moves.IRON_HEAD, Moves.SPLASH]);
 
     await game.classicMode.startBattle([Species.BLASTOISE, Species.CHARIZARD]);
@@ -270,7 +270,7 @@ describe("Moves - Pledge Moves", () => {
     await game.classicMode.startBattle([Species.BLASTOISE, Species.CHARIZARD]);
 
     const enemyPokemon = game.scene.getEnemyField();
-    vi.spyOn(enemyPokemon[1], "getAbility").mockReturnValue(allAbilities[Abilities.STORM_DRAIN]);
+    vi.spyOn(enemyPokemon[1], "getAbility").mockReturnValue(allAbilities[AbilityId.STORM_DRAIN]);
 
     game.move.select(Moves.WATER_PLEDGE, 0, BattlerIndex.ENEMY);
     game.move.select(Moves.SPLASH, 1);

@@ -1,5 +1,5 @@
 import { Status } from "#app/data/status-effect";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { StatusEffect } from "#enums/status-effect";
@@ -29,9 +29,9 @@ describe("Abilities - ZEN MODE", () => {
       .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .enemyLevel(5)
-      .ability(Abilities.ZEN_MODE)
+      .ability(AbilityId.ZEN_MODE)
       .moveset(Moves.SPLASH)
       .enemyMoveset(Moves.SEISMIC_TOSS);
   });

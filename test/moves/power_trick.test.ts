@@ -5,7 +5,7 @@ import { Moves } from "#enums/moves";
 import { Stat } from "#enums/stat";
 import { Species } from "#enums/species";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { BattlerTagType } from "#enums/battler-tag-type";
 
 describe("Moves - Power Trick", () => {
@@ -26,12 +26,12 @@ describe("Moves - Power Trick", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH)
       .enemySpecies(Species.MEW)
       .enemyLevel(200)
       .moveset([Moves.POWER_TRICK])
-      .ability(Abilities.BALL_FETCH);
+      .ability(AbilityId.BALL_FETCH);
   });
 
   it("swaps the user's ATK and DEF stats", async () => {

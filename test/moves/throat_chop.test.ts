@@ -2,7 +2,7 @@ import { BattlerIndex } from "#app/battle";
 import { Moves } from "#app/enums/moves";
 import { Species } from "#app/enums/species";
 import { Stat } from "#app/enums/stat";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, it, expect } from "vitest";
@@ -25,8 +25,8 @@ describe("Moves - Throat Chop", () => {
     game.override
       .moveset(Moves.GROWL)
       .battleStyle("single")
-      .ability(Abilities.BALL_FETCH)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .ability(AbilityId.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(Moves.THROAT_CHOP)
       .enemySpecies(Species.MAGIKARP);
   });

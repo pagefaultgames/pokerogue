@@ -42,7 +42,7 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { EncounterAnim } from "#enums/encounter-anims";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { Stat } from "#enums/stat";
@@ -239,11 +239,11 @@ export const FieryFalloutEncounter: MysteryEncounter = MysteryEncounterBuilder.w
         if (chosenPokemon.trySetStatus(StatusEffect.BURN)) {
           // Burn applied
           encounter.setDialogueToken("burnedPokemon", chosenPokemon.getNameToRender());
-          encounter.setDialogueToken("abilityName", new Ability(Abilities.HEATPROOF, 3).name);
+          encounter.setDialogueToken("abilityName", new Ability(AbilityId.HEATPROOF, 3).name);
           queueEncounterMessage(`${namespace}:option.2.target_burned`);
 
           // Also permanently change the burned Pokemon's ability to Heatproof
-          applyAbilityOverrideToPokemon(chosenPokemon, Abilities.HEATPROOF);
+          applyAbilityOverrideToPokemon(chosenPokemon, AbilityId.HEATPROOF);
         }
       }
 

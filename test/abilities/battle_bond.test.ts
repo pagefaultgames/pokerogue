@@ -2,7 +2,7 @@ import { MultiHitAttr } from "#app/data/moves/move";
 import { allMoves } from "#app/data/data-lists";
 import { MultiHitType } from "#enums/MultiHitType";
 import { Status } from "#app/data/status-effect";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { StatusEffect } from "#enums/status-effect";
@@ -31,7 +31,7 @@ describe("Abilities - BATTLE BOND", () => {
     game.override
       .battleStyle("single")
       .startingWave(4) // Leads to arena reset on Wave 5 trainer battle
-      .ability(Abilities.BATTLE_BOND)
+      .ability(AbilityId.BATTLE_BOND)
       .starterForms({ [Species.GRENINJA]: ashForm })
       .moveset([Moves.SPLASH, Moves.WATER_SHURIKEN])
       .enemySpecies(Species.BULBASAUR)

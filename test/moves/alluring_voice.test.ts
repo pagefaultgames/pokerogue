@@ -1,5 +1,5 @@
 import { BattlerIndex } from "#app/battle";
-import { Abilities } from "#app/enums/abilities";
+import { AbilityId } from "#app/enums/abilities";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
 import { BerryPhase } from "#app/phases/berry-phase";
 import { Moves } from "#enums/moves";
@@ -28,11 +28,11 @@ describe("Moves - Alluring Voice", () => {
       .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.ICE_SCALES)
+      .enemyAbility(AbilityId.ICE_SCALES)
       .enemyMoveset(Moves.HOWL)
       .startingLevel(10)
       .enemyLevel(10)
-      .ability(Abilities.BALL_FETCH);
+      .ability(AbilityId.BALL_FETCH);
   });
 
   it("should confuse the opponent if their stat stages were raised", async () => {

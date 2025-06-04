@@ -2,7 +2,7 @@ import { BattlerIndex } from "#app/battle";
 import { Stat } from "#app/enums/stat";
 import { MoveResult } from "#app/field/pokemon";
 import { CommandPhase } from "#app/phases/command-phase";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -28,12 +28,12 @@ describe("Moves - Assist", () => {
     // Manual moveset overrides are required for the player pokemon in these tests
     // because the normal moveset override doesn't allow for accurate testing of moveset changes
     game.override
-      .ability(Abilities.BALL_FETCH)
+      .ability(AbilityId.BALL_FETCH)
       .battleStyle("double")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
       .enemyLevel(100)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH);
   });
 

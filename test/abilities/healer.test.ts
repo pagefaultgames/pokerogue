@@ -1,4 +1,4 @@
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { StatusEffect } from "#enums/status-effect";
@@ -31,14 +31,14 @@ describe("Abilities - Healer", () => {
     game = new GameManager(phaserGame);
     game.override
       .moveset([Moves.SPLASH])
-      .ability(Abilities.BALL_FETCH)
+      .ability(AbilityId.BALL_FETCH)
       .battleStyle("double")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH);
 
-    healerAttr = allAbilities[Abilities.HEALER].getAttrs(PostTurnResetStatusAbAttr)[0];
+    healerAttr = allAbilities[AbilityId.HEALER].getAttrs(PostTurnResetStatusAbAttr)[0];
     healerAttrSpy = vi
       .spyOn(healerAttr, "getCondition")
       .mockReturnValue((pokemon: Pokemon) => !isNullOrUndefined(pokemon.getAlly()));
@@ -49,7 +49,7 @@ describe("Abilities - Healer", () => {
     await game.classicMode.startBattle([Species.MAGIKARP, Species.MAGIKARP]);
     const user = game.scene.getPlayerPokemon()!;
     // Only want one magikarp to have the ability.
-    vi.spyOn(user, "getAbility").mockReturnValue(allAbilities[Abilities.HEALER]);
+    vi.spyOn(user, "getAbility").mockReturnValue(allAbilities[AbilityId.HEALER]);
     game.move.select(Moves.SPLASH);
     // faint the ally
     game.move.select(Moves.LUNAR_DANCE, 1);
@@ -68,7 +68,7 @@ describe("Abilities - Healer", () => {
     await game.classicMode.startBattle([Species.MAGIKARP, Species.MAGIKARP]);
     const [user, ally] = game.scene.getPlayerField();
     // Only want one magikarp to have the ability.
-    vi.spyOn(user, "getAbility").mockReturnValue(allAbilities[Abilities.HEALER]);
+    vi.spyOn(user, "getAbility").mockReturnValue(allAbilities[AbilityId.HEALER]);
     expect(ally.trySetStatus(StatusEffect.BURN)).toBe(true);
     game.move.select(Moves.SPLASH);
     game.move.select(Moves.SPLASH, 1);
@@ -84,7 +84,7 @@ describe("Abilities - Healer", () => {
     await game.classicMode.startBattle([Species.MAGIKARP, Species.MAGIKARP]);
     const [user, ally] = game.scene.getPlayerField();
     // Only want one magikarp to have the ability.
-    vi.spyOn(user, "getAbility").mockReturnValue(allAbilities[Abilities.HEALER]);
+    vi.spyOn(user, "getAbility").mockReturnValue(allAbilities[AbilityId.HEALER]);
     expect(ally.trySetStatus(StatusEffect.BURN)).toBe(true);
     game.move.select(Moves.SPLASH);
     game.move.select(Moves.SPLASH, 1);

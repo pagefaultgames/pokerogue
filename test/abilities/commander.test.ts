@@ -6,7 +6,7 @@ import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { WeatherType } from "#enums/weather-type";
 import { MoveResult } from "#app/field/pokemon";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
@@ -33,11 +33,11 @@ describe("Abilities - Commander", () => {
       .startingLevel(100)
       .enemyLevel(100)
       .moveset([Moves.LIQUIDATION, Moves.MEMENTO, Moves.SPLASH, Moves.FLIP_TURN])
-      .ability(Abilities.COMMANDER)
+      .ability(AbilityId.COMMANDER)
       .battleStyle("double")
       .disableCrits()
       .enemySpecies(Species.SNORLAX)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(Moves.TACKLE);
 
     vi.spyOn(game.scene, "triggerPokemonBattleAnim").mockReturnValue(true);

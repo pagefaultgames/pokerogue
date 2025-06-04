@@ -1,5 +1,5 @@
 import { Moves } from "#enums/moves";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 
 /**
  * Moves that "steal" things
@@ -105,26 +105,26 @@ export const EXTORTION_MOVES = [
  * Abilities that (loosely) can be used to trap/rob someone
  */
 export const EXTORTION_ABILITIES = [
-  Abilities.INTIMIDATE,
-  Abilities.ARENA_TRAP,
-  Abilities.SHADOW_TAG,
-  Abilities.SUCTION_CUPS,
-  Abilities.STICKY_HOLD,
+  AbilityId.INTIMIDATE,
+  AbilityId.ARENA_TRAP,
+  AbilityId.SHADOW_TAG,
+  AbilityId.SUCTION_CUPS,
+  AbilityId.STICKY_HOLD,
 ];
 
 /**
  * Abilities that signify resistance to fire
  */
 export const FIRE_RESISTANT_ABILITIES = [
-  Abilities.FLAME_BODY,
-  Abilities.FLASH_FIRE,
-  Abilities.WELL_BAKED_BODY,
-  Abilities.HEATPROOF,
-  Abilities.THERMAL_EXCHANGE,
-  Abilities.THICK_FAT,
-  Abilities.WATER_BUBBLE,
-  Abilities.MAGMA_ARMOR,
-  Abilities.WATER_VEIL,
-  Abilities.STEAM_ENGINE,
-  Abilities.PRIMORDIAL_SEA,
+  AbilityId.FLAME_BODY,
+  AbilityId.FLASH_FIRE,
+  AbilityId.WELL_BAKED_BODY,
+  AbilityId.HEATPROOF,
+  AbilityId.THERMAL_EXCHANGE,
+  AbilityId.THICK_FAT,
+  AbilityId.WATER_BUBBLE,
+  AbilityId.MAGMA_ARMOR,
+  AbilityId.WATER_VEIL,
+  AbilityId.STEAM_ENGINE,
+  AbilityId.PRIMORDIAL_SEA,
 ];

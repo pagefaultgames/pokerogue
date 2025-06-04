@@ -1,5 +1,5 @@
 import { BattlerIndex } from "#app/battle";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { Stat } from "#enums/stat";
@@ -25,11 +25,11 @@ describe("Abilities - Lightningrod", () => {
     game = new GameManager(phaserGame);
     game.override
       .moveset([Moves.SPLASH, Moves.SHOCK_WAVE])
-      .ability(Abilities.BALL_FETCH)
+      .ability(AbilityId.BALL_FETCH)
       .battleStyle("double")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH);
   });
 
@@ -39,7 +39,7 @@ describe("Abilities - Lightningrod", () => {
     const enemy1 = game.scene.getEnemyField()[0];
     const enemy2 = game.scene.getEnemyField()[1];
 
-    enemy2.summonData.ability = Abilities.LIGHTNING_ROD;
+    enemy2.summonData.ability = AbilityId.LIGHTNING_ROD;
 
     game.move.select(Moves.SHOCK_WAVE, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
     game.move.select(Moves.SPLASH, BattlerIndex.PLAYER_2);
@@ -55,7 +55,7 @@ describe("Abilities - Lightningrod", () => {
     const enemy1 = game.scene.getEnemyField()[0];
     const enemy2 = game.scene.getEnemyField()[1];
 
-    enemy2.summonData.ability = Abilities.LIGHTNING_ROD;
+    enemy2.summonData.ability = AbilityId.LIGHTNING_ROD;
 
     game.move.select(Moves.AERIAL_ACE, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
     game.move.select(Moves.SPLASH, BattlerIndex.PLAYER_2);
@@ -69,7 +69,7 @@ describe("Abilities - Lightningrod", () => {
 
     const enemy2 = game.scene.getEnemyField()[1];
 
-    enemy2.summonData.ability = Abilities.LIGHTNING_ROD;
+    enemy2.summonData.ability = AbilityId.LIGHTNING_ROD;
 
     game.move.select(Moves.SHOCK_WAVE, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
     game.move.select(Moves.SPLASH, BattlerIndex.PLAYER_2);
@@ -80,13 +80,13 @@ describe("Abilities - Lightningrod", () => {
   });
 
   it("should not redirect moves changed from electric type via ability", async () => {
-    game.override.ability(Abilities.NORMALIZE);
+    game.override.ability(AbilityId.NORMALIZE);
     await game.classicMode.startBattle([Species.FEEBAS, Species.MAGIKARP]);
 
     const enemy1 = game.scene.getEnemyField()[0];
     const enemy2 = game.scene.getEnemyField()[1];
 
-    enemy2.summonData.ability = Abilities.LIGHTNING_ROD;
+    enemy2.summonData.ability = AbilityId.LIGHTNING_ROD;
 
     game.move.select(Moves.SHOCK_WAVE, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
     game.move.select(Moves.SPLASH, BattlerIndex.PLAYER_2);
@@ -96,13 +96,13 @@ describe("Abilities - Lightningrod", () => {
   });
 
   it("should redirect moves changed to electric type via ability", async () => {
-    game.override.ability(Abilities.GALVANIZE).moveset(Moves.TACKLE);
+    game.override.ability(AbilityId.GALVANIZE).moveset(Moves.TACKLE);
     await game.classicMode.startBattle([Species.FEEBAS, Species.MAGIKARP]);
 
     const enemy1 = game.scene.getEnemyField()[0];
     const enemy2 = game.scene.getEnemyField()[1];
 
-    enemy2.summonData.ability = Abilities.LIGHTNING_ROD;
+    enemy2.summonData.ability = AbilityId.LIGHTNING_ROD;
 
     game.move.select(Moves.TACKLE, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
     game.move.select(Moves.SPLASH, BattlerIndex.PLAYER_2);

@@ -1,4 +1,4 @@
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import { Moves } from "#enums/moves";
 import { Nature } from "#enums/nature";
 import { Species } from "#enums/species";
@@ -26,11 +26,11 @@ describe("Abilities - Protosynthesis", () => {
     game = new GameManager(phaserGame);
     game.override
       .moveset([Moves.SPLASH, Moves.TACKLE])
-      .ability(Abilities.PROTOSYNTHESIS)
+      .ability(AbilityId.PROTOSYNTHESIS)
       .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(Moves.SPLASH);
   });
 

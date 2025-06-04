@@ -27,7 +27,7 @@ import { CommandPhase } from "#app/phases/command-phase";
 import { MovePhase } from "#app/phases/move-phase";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import { BattlerTagType } from "#enums/battler-tag-type";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 import i18next from "i18next";
 import { StatusEffect } from "#enums/status-effect";
 
@@ -231,7 +231,7 @@ describe("Fiery Fallout - Mystery Encounter", () => {
         );
       });
       expect(burnablePokemon.some(pkm => pkm.status?.effect === StatusEffect.BURN)).toBeTruthy();
-      expect(burnablePokemon.some(pkm => pkm.customPokemonData.ability === Abilities.HEATPROOF));
+      expect(burnablePokemon.some(pkm => pkm.customPokemonData.ability === AbilityId.HEATPROOF));
       notBurnablePokemon.forEach(pkm =>
         expect(pkm.hp, `${pkm.name} should be full hp: ${pkm.hp} / ${pkm.getMaxHp()} HP`).toBe(pkm.getMaxHp()),
       );

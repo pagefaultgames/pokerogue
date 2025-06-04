@@ -28,7 +28,7 @@ import { CustomPokemonData } from "#app/data/custom-pokemon-data";
 import { CommandPhase } from "#app/phases/command-phase";
 import { MovePhase } from "#app/phases/move-phase";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/abilities";
 
 const namespace = "mysteryEncounters/theStrongStuff";
 const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
@@ -52,8 +52,8 @@ describe("The Strong Stuff - Mystery Encounter", () => {
       .startingWave(defaultWave)
       .startingBiome(defaultBiome)
       .disableTrainerWaves()
-      .enemyAbility(Abilities.BALL_FETCH)
-      .enemyPassiveAbility(Abilities.BALL_FETCH);
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .enemyPassiveAbility(AbilityId.BALL_FETCH);
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
       new Map<Biome, MysteryEncounterType[]>([
