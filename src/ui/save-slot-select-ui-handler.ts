@@ -131,11 +131,11 @@ export class SaveSlotSelectUiHandler extends MessageUiHandler {
                 handler: () => {
                   globalScene.ui.revertMode();
                   ui.setOverlayMode(
-                    UiMode.RENAME_POKEMON,
+                    UiMode.RENAME_RUN,
                     {
                       buttonActions: [
                         (sanitizedName: string) => {
-                          const name = decodeURIComponent((atob(sanitizedName)));
+                          const name = decodeURIComponent(atob(sanitizedName));
                           globalScene.gameData.renameSession(cursor, name).then(response => {
                             if (response[0] === false) {
                               globalScene.reset(true);
