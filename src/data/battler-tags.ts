@@ -717,7 +717,11 @@ export class ConfusedTag extends BattlerTag {
   }
 
   canAdd(pokemon: Pokemon): boolean {
-    return globalScene.arena.terrain?.terrainType !== TerrainType.MISTY || !pokemon.isGrounded();
+    const blockedByTerrain = !(pokemon.isGrounded() && globalScene.arena.terrain?.terrainType === TerrainType.MISTY);
+    if (blockedByTerrain) {
+      pokemon.queueStatusImmuneMessage(false, TerrainType.MISTY);
+    }
+    return blockedByTerrain;
   }
 
   onAdd(pokemon: Pokemon): void {
