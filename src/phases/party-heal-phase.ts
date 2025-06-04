@@ -19,6 +19,7 @@ export class PartyHealPhase extends BattlePhase {
     const isHealPhaseActive = new BooleanHolder(true);
     const isReviveActive = new BooleanHolder(true);
     applyChallenges(ChallengeType.NO_HEAL_PHASE, isHealPhaseActive);
+    applyChallenges(ChallengeType.PREVENT_REVIVE, isReviveActive);
     if (!isHealPhaseActive.value) {
       return this.end();
     }
@@ -28,7 +29,6 @@ export class PartyHealPhase extends BattlePhase {
     }
     globalScene.ui.fadeOut(1000).then(() => {
       for (const pokemon of globalScene.getPlayerParty()) {
-        applyChallenges(ChallengeType.PREVENT_REVIVE, isReviveActive);
         if (isReviveActive.value || !pokemon.isFainted()) {
           pokemon.hp = pokemon.getMaxHp();
           pokemon.resetStatus(true, false, false, true);
