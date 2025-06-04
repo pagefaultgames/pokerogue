@@ -1,9 +1,9 @@
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import GameManager from "#test/testUtils/gameManager";
-import { Species } from "#enums/species";
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
+import { SpeciesId } from "#enums/species-id";
+import { AbilityId } from "#enums/ability-id";
+import { MoveId } from "#enums/move-id";
 import { BattlerIndex } from "#app/battle";
 import { StatusEffect } from "#app/enums/status-effect";
 
@@ -26,10 +26,10 @@ describe("Moves - Baneful Bunker", () => {
 
     game.override
       .battleStyle("single")
-      .moveset([Moves.SLASH, Moves.FLASH_CANNON])
-      .enemySpecies(Species.TOXAPEX)
-      .enemyAbility(Abilities.INSOMNIA)
-      .enemyMoveset(Moves.BANEFUL_BUNKER)
+      .moveset([MoveId.SLASH, MoveId.FLASH_CANNON])
+      .enemySpecies(SpeciesId.TOXAPEX)
+      .enemyAbility(AbilityId.INSOMNIA)
+      .enemyMoveset(MoveId.BANEFUL_BUNKER)
       .startingLevel(100)
       .enemyLevel(100);
   });
@@ -40,9 +40,9 @@ describe("Moves - Baneful Bunker", () => {
   }
 
   it("should protect the user and poison attackers that make contact", async () => {
-    await game.classicMode.startBattle([Species.CHARIZARD]);
+    await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
-    game.move.select(Moves.SLASH);
+    game.move.select(MoveId.SLASH);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("BerryPhase", false);
 
@@ -50,9 +50,9 @@ describe("Moves - Baneful Bunker", () => {
   });
 
   it("should ignore accuracy checks", async () => {
-    await game.classicMode.startBattle([Species.CHARIZARD]);
+    await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
-    game.move.select(Moves.SLASH);
+    game.move.select(MoveId.SLASH);
     await game.phaseInterceptor.to("MoveEndPhase"); // baneful bunker
     await game.move.forceMiss();
 
@@ -62,12 +62,12 @@ describe("Moves - Baneful Bunker", () => {
   });
 
   it("should block non-contact moves without poisoning attackers", async () => {
-    await game.classicMode.startBattle([Species.CHARIZARD]);
+    await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
     const charizard = game.scene.getPlayerPokemon()!;
     const toxapex = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.FLASH_CANNON);
+    game.move.select(MoveId.FLASH_CANNON);
     await game.phaseInterceptor.to("BerryPhase", false);
 
     expect(toxapex.hp).toBe(toxapex.getMaxHp());

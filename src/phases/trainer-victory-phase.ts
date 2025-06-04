@@ -9,7 +9,7 @@ import { ModifierRewardPhase } from "./modifier-reward-phase";
 import { MoneyRewardPhase } from "./money-reward-phase";
 import { TrainerSlot } from "#enums/trainer-slot";
 import { globalScene } from "#app/global-scene";
-import { Biome } from "#app/enums/biome";
+import { BiomeId } from "#enums/biome-id";
 import { achvs } from "#app/system/achv";
 import { timedEventManager } from "#app/global-event-manager";
 
@@ -57,7 +57,7 @@ export class TrainerVictoryPhase extends BattlePhase {
     }
     // Breeders in Space achievement
     if (
-      globalScene.arena.biomeType === Biome.SPACE &&
+      globalScene.arena.biomeType === BiomeId.SPACE &&
       (trainerType === TrainerType.BREEDER || trainerType === TrainerType.EXPERT_POKEMON_BREEDER)
     ) {
       globalScene.validateAchv(achvs.BREEDERS_IN_SPACE);

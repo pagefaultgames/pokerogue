@@ -1,9 +1,9 @@
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import GameManager from "#test/testUtils/gameManager";
-import { Species } from "#enums/species";
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
+import { SpeciesId } from "#enums/species-id";
+import { AbilityId } from "#enums/ability-id";
+import { MoveId } from "#enums/move-id";
 import { Stat } from "#enums/stat";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
 import { BattlerIndex } from "#app/battle";
@@ -29,22 +29,22 @@ describe("Moves - Crafty Shield", () => {
 
     game.override
       .battleStyle("double")
-      .moveset([Moves.CRAFTY_SHIELD, Moves.SPLASH, Moves.SWORDS_DANCE, Moves.HOWL])
-      .enemySpecies(Species.DUSKNOIR)
-      .enemyMoveset(Moves.GROWL)
-      .enemyAbility(Abilities.INSOMNIA)
+      .moveset([MoveId.CRAFTY_SHIELD, MoveId.SPLASH, MoveId.SWORDS_DANCE, MoveId.HOWL])
+      .enemySpecies(SpeciesId.DUSKNOIR)
+      .enemyMoveset(MoveId.GROWL)
+      .enemyAbility(AbilityId.INSOMNIA)
       .startingLevel(100)
       .enemyLevel(100);
   });
 
   it("should protect the user and allies from status moves", async () => {
-    await game.classicMode.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
+    await game.classicMode.startBattle([SpeciesId.CHARIZARD, SpeciesId.BLASTOISE]);
 
     const [charizard, blastoise] = game.scene.getPlayerField();
-    game.move.select(Moves.CRAFTY_SHIELD, BattlerIndex.PLAYER);
-    game.move.select(Moves.SPLASH, BattlerIndex.PLAYER_2);
-    await game.move.forceEnemyMove(Moves.GROWL);
-    await game.move.forceEnemyMove(Moves.GROWL);
+    game.move.select(MoveId.CRAFTY_SHIELD, BattlerIndex.PLAYER);
+    game.move.select(MoveId.SPLASH, BattlerIndex.PLAYER_2);
+    await game.move.forceEnemyMove(MoveId.GROWL);
+    await game.move.forceEnemyMove(MoveId.GROWL);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
@@ -53,15 +53,15 @@ describe("Moves - Crafty Shield", () => {
   });
 
   it("should not protect the user and allies from attack moves", async () => {
-    game.override.enemyMoveset(Moves.TACKLE);
-    await game.classicMode.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
+    game.override.enemyMoveset(MoveId.TACKLE);
+    await game.classicMode.startBattle([SpeciesId.CHARIZARD, SpeciesId.BLASTOISE]);
 
     const [charizard, blastoise] = game.scene.getPlayerField();
 
-    game.move.select(Moves.CRAFTY_SHIELD, BattlerIndex.PLAYER);
-    game.move.select(Moves.SPLASH, BattlerIndex.PLAYER_2);
-    await game.move.forceEnemyMove(Moves.TACKLE, BattlerIndex.PLAYER);
-    await game.move.forceEnemyMove(Moves.TACKLE, BattlerIndex.PLAYER_2);
+    game.move.select(MoveId.CRAFTY_SHIELD, BattlerIndex.PLAYER);
+    game.move.select(MoveId.SPLASH, BattlerIndex.PLAYER_2);
+    await game.move.forceEnemyMove(MoveId.TACKLE, BattlerIndex.PLAYER);
+    await game.move.forceEnemyMove(MoveId.TACKLE, BattlerIndex.PLAYER_2);
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(charizard.isFullHp()).toBe(false);
@@ -69,15 +69,15 @@ describe("Moves - Crafty Shield", () => {
   });
 
   it("should not block entry hazards and field-targeted moves", async () => {
-    game.override.enemyMoveset([Moves.PERISH_SONG, Moves.TOXIC_SPIKES]);
-    await game.classicMode.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
+    game.override.enemyMoveset([MoveId.PERISH_SONG, MoveId.TOXIC_SPIKES]);
+    await game.classicMode.startBattle([SpeciesId.CHARIZARD, SpeciesId.BLASTOISE]);
 
     const [charizard, blastoise] = game.scene.getPlayerField();
 
-    game.move.select(Moves.CRAFTY_SHIELD, BattlerIndex.PLAYER);
-    game.move.select(Moves.SPLASH, BattlerIndex.PLAYER_2);
-    await game.move.forceEnemyMove(Moves.PERISH_SONG);
-    await game.move.forceEnemyMove(Moves.TOXIC_SPIKES);
+    game.move.select(MoveId.CRAFTY_SHIELD, BattlerIndex.PLAYER);
+    game.move.select(MoveId.SPLASH, BattlerIndex.PLAYER_2);
+    await game.move.forceEnemyMove(MoveId.PERISH_SONG);
+    await game.move.forceEnemyMove(MoveId.TOXIC_SPIKES);
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(game.scene.arena.getTagOnSide(ArenaTagType.TOXIC_SPIKES, ArenaTagSide.PLAYER)).toBeDefined();
@@ -86,16 +86,16 @@ describe("Moves - Crafty Shield", () => {
   });
 
   it("should protect the user and allies from moves that ignore other protection", async () => {
-    game.override.moveset(Moves.CURSE);
+    game.override.moveset(MoveId.CURSE);
 
-    await game.classicMode.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
+    await game.classicMode.startBattle([SpeciesId.CHARIZARD, SpeciesId.BLASTOISE]);
 
     const [charizard, blastoise] = game.scene.getPlayerField();
 
-    game.move.select(Moves.CRAFTY_SHIELD, BattlerIndex.PLAYER);
-    game.move.select(Moves.SPLASH, BattlerIndex.PLAYER_2);
-    await game.move.forceEnemyMove(Moves.CURSE, BattlerIndex.PLAYER);
-    await game.move.forceEnemyMove(Moves.CURSE, BattlerIndex.PLAYER_2);
+    game.move.select(MoveId.CRAFTY_SHIELD, BattlerIndex.PLAYER);
+    game.move.select(MoveId.SPLASH, BattlerIndex.PLAYER_2);
+    await game.move.forceEnemyMove(MoveId.CURSE, BattlerIndex.PLAYER);
+    await game.move.forceEnemyMove(MoveId.CURSE, BattlerIndex.PLAYER_2);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
@@ -108,19 +108,19 @@ describe("Moves - Crafty Shield", () => {
   });
 
   it("should not block allies' self or ally-targeted moves", async () => {
-    await game.classicMode.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
+    await game.classicMode.startBattle([SpeciesId.CHARIZARD, SpeciesId.BLASTOISE]);
 
     const [charizard, blastoise] = game.scene.getPlayerField();
 
-    game.move.select(Moves.CRAFTY_SHIELD, BattlerIndex.PLAYER);
-    game.move.select(Moves.SWORDS_DANCE, BattlerIndex.PLAYER_2);
+    game.move.select(MoveId.CRAFTY_SHIELD, BattlerIndex.PLAYER);
+    game.move.select(MoveId.SWORDS_DANCE, BattlerIndex.PLAYER_2);
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(charizard.getStatStage(Stat.ATK)).toBe(0);
     expect(blastoise.getStatStage(Stat.ATK)).toBe(2);
 
-    game.move.select(Moves.HOWL, BattlerIndex.PLAYER);
-    game.move.select(Moves.CRAFTY_SHIELD, BattlerIndex.PLAYER_2);
+    game.move.select(MoveId.HOWL, BattlerIndex.PLAYER);
+    game.move.select(MoveId.CRAFTY_SHIELD, BattlerIndex.PLAYER_2);
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(charizard.getStatStage(Stat.ATK)).toBe(1);
