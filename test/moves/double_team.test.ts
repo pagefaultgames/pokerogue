@@ -1,5 +1,5 @@
 import { Stat } from "#enums/stat";
-import { AbilityId } from "#app/enums/abilities";
+import { AbilityId } from "#enums/ability-id";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";

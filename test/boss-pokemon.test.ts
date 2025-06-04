@@ -2,7 +2,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import GameManager from "#test/testUtils/gameManager";
 import { Species } from "#app/enums/species";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
-import { AbilityId } from "#app/enums/abilities";
+import { AbilityId } from "#enums/ability-id";
 import { Moves } from "#app/enums/moves";
 import { EFFECTIVE_STATS } from "#app/enums/stat";
 import type { EnemyPokemon } from "#app/field/pokemon";

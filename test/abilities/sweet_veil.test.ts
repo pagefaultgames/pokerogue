@@ -1,5 +1,5 @@
 import { BattlerIndex } from "#app/battle";
-import { AbilityId } from "#app/enums/abilities";
+import { AbilityId } from "#enums/ability-id";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
 import { CommandPhase } from "#app/phases/command-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";

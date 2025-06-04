@@ -5,7 +5,7 @@ import { FormChangeItem } from "#app/data/pokemon-forms";
 import { type ModifierOverride } from "#app/modifier/modifier-type";
 import { Variant } from "#app/sprites/variant";
 import { Unlockables } from "#app/system/unlockables";
-import { AbilityId } from "#enums/abilities";
+import { AbilityId } from "#enums/ability-id";
 import { BattleType } from "#enums/battle-type";
 import { BerryType } from "#enums/berry-type";
 import { Biome } from "#enums/biome";

@@ -1,7 +1,7 @@
 import { RechargingTag, SemiInvulnerableTag } from "#app/data/battler-tags";
 import { RandomMoveAttr } from "#app/data/moves/move";
 import { allMoves } from "#app/data/data-lists";
-import { AbilityId } from "#app/enums/abilities";
+import { AbilityId } from "#enums/ability-id";
 import { Stat } from "#app/enums/stat";
 import { CommandPhase } from "#app/phases/command-phase";
 import { Moves } from "#enums/moves";

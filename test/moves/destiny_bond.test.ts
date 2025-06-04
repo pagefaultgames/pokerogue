@@ -1,7 +1,7 @@
 import type { ArenaTrapTag } from "#app/data/arena-tag";
 import { ArenaTagSide } from "#app/data/arena-tag";
 import { allMoves } from "#app/data/data-lists";
-import { AbilityId } from "#enums/abilities";
+import { AbilityId } from "#enums/ability-id";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";

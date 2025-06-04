@@ -1,6 +1,6 @@
 import { BattlerIndex } from "#app/battle";
 import { allAbilities } from "#app/data/data-lists";
-import { AbilityId } from "#app/enums/abilities";
+import { AbilityId } from "#enums/ability-id";
 import { Stat } from "#app/enums/stat";
 import { WeatherType } from "#app/enums/weather-type";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";

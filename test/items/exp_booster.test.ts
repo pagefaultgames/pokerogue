@@ -1,4 +1,4 @@
-import { AbilityId } from "#app/enums/abilities";
+import { AbilityId } from "#enums/ability-id";
 import { PokemonExpBoosterModifier } from "#app/modifier/modifier";
 import { NumberHolder } from "#app/utils/common";
 import GameManager from "#test/testUtils/gameManager";

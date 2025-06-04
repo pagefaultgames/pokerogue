@@ -1,7 +1,7 @@
 import { BattlerIndex } from "#app/battle";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { MoveEndPhase } from "#app/phases/move-end-phase";
-import { AbilityId } from "#enums/abilities";
+import { AbilityId } from "#enums/ability-id";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { HitCheckResult } from "#enums/hit-check-result";

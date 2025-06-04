@@ -4,7 +4,7 @@ import GameManager from "#test/testUtils/gameManager";
 import { UiMode } from "#enums/ui-mode";
 import { Stat } from "#enums/stat";
 import { getMovePosition } from "#test/testUtils/gameManagerUtils";
-import { AbilityId } from "#enums/abilities";
+import { AbilityId } from "#enums/ability-id";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 

@@ -1,7 +1,7 @@
 import { Moves } from "#enums/moves";
 import { BattlerIndex } from "#app/battle";
 import { Species } from "#enums/species";
-import { AbilityId } from "#enums/abilities";
+import { AbilityId } from "#enums/ability-id";
 import GameManager from "#test/testUtils/gameManager";
 import { allMoves } from "#app/data/data-lists";
 import type Move from "#app/data/moves/move";

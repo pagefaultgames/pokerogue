@@ -1,6 +1,6 @@
 import { BattlerIndex } from "#app/battle";
 import { allMoves } from "#app/data/data-lists";
-import { AbilityId } from "#app/enums/abilities";
+import { AbilityId } from "#enums/ability-id";
 import { StatusEffect } from "#app/enums/status-effect";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";

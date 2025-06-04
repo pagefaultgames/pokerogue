@@ -5,20 +5,20 @@ import { BattlerTagLapseType, GroundedTag } from "#app/data/battler-tags";
 import { getNonVolatileStatusEffects, getStatusEffectDescriptor, getStatusEffectHealText } from "#app/data/status-effect";
 import { Gender } from "#app/data/gender";
 import {
-    AttackMove,
-    FlinchAttr,
-    OneHitKOAttr,
-    HitHealAttr,
-    StatusMove,
-    SelfStatusMove,
-    VariablePowerAttr,
-    applyMoveAttrs,
-    RandomMovesetMoveAttr,
-    RandomMoveAttr,
-    NaturePowerAttr,
-    CopyMoveAttr,
-    NeutralDamageAgainstFlyingTypeMultiplierAttr,
-    FixedDamageAttr,
+  AttackMove,
+  FlinchAttr,
+  OneHitKOAttr,
+  HitHealAttr,
+  StatusMove,
+  SelfStatusMove,
+  VariablePowerAttr,
+  applyMoveAttrs,
+  RandomMovesetMoveAttr,
+  RandomMoveAttr,
+  NaturePowerAttr,
+  CopyMoveAttr,
+  NeutralDamageAgainstFlyingTypeMultiplierAttr,
+  FixedDamageAttr,
 } from "#app/data/moves/move";
 import { allMoves } from "../data-lists";
 import { ArenaTagSide } from "#app/data/arena-tag";
@@ -50,7 +50,7 @@ import { PokemonType } from "#enums/pokemon-type";
 import { PokemonAnimType } from "#enums/pokemon-anim-type";
 import { StatusEffect } from "#enums/status-effect";
 import { WeatherType } from "#enums/weather-type";
-import { AbilityId } from "#enums/abilities";
+import { AbilityId } from "#enums/ability-id";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Moves } from "#enums/moves";

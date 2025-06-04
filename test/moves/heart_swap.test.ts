@@ -5,7 +5,7 @@ import { Species } from "#enums/species";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { Moves } from "#enums/moves";
 import { BATTLE_STATS } from "#enums/stat";
-import { AbilityId } from "#enums/abilities";
+import { AbilityId } from "#enums/ability-id";
 import { MoveEndPhase } from "#app/phases/move-end-phase";
 
 describe("Moves - Heart Swap", () => {

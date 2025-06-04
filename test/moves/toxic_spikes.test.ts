@@ -2,7 +2,7 @@ import type { ArenaTrapTag } from "#app/data/arena-tag";
 import { ArenaTagSide } from "#app/data/arena-tag";
 import type { SessionSaveData } from "#app/system/game-data";
 import { decrypt, encrypt, GameData } from "#app/system/game-data";
-import { AbilityId } from "#enums/abilities";
+import { AbilityId } from "#enums/ability-id";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";

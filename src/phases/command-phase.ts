@@ -6,7 +6,7 @@ import { TrappedTag } from "#app/data/battler-tags";
 import type { MoveTargetSet } from "#app/data/moves/move";
 import { getMoveTargets } from "#app/data/moves/move";
 import { speciesStarterCosts } from "#app/data/balance/starters";
-import { AbilityId } from "#app/enums/abilities";
+import { AbilityId } from "#enums/ability-id";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
 import { Biome } from "#app/enums/biome";
 import { Moves } from "#app/enums/moves";

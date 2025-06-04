@@ -1,4 +1,4 @@
-import { AbilityId } from "#enums/abilities";
+import { AbilityId } from "#enums/ability-id";
 import type { AbAttrCondition } from "#app/@types/ability-types";
 import type { AbAttr } from "#app/data/abilities/ab-attrs/ab-attr";
 import i18next from "i18next";

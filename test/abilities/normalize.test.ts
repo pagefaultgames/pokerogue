@@ -1,7 +1,7 @@
 import { TYPE_BOOST_ITEM_BOOST_PERCENT } from "#app/constants";
 import { allMoves } from "#app/data/data-lists";
 import { toDmgValue } from "#app/utils/common";
-import { AbilityId } from "#enums/abilities";
+import { AbilityId } from "#enums/ability-id";
 import { Moves } from "#enums/moves";
 import { PokemonType } from "#enums/pokemon-type";
 import { Species } from "#enums/species";

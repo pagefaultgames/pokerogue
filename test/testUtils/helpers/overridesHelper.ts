@@ -1,6 +1,6 @@
 import type { Variant } from "#app/sprites/variant";
 import { Weather } from "#app/data/weather";
-import { AbilityId } from "#app/enums/abilities";
+import { AbilityId } from "#enums/ability-id";
 import type { ModifierOverride } from "#app/modifier/modifier-type";
 import type { BattleStyle } from "#app/overrides";
 import Overrides, { defaultOverrides } from "#app/overrides";

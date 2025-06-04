@@ -4,7 +4,7 @@ import { StatusEffect } from "#enums/status-effect";
 import { allMoves } from "./data-lists";
 import { MoveCategory } from "#enums/MoveCategory";
 import type { Constructor, nil } from "#app/utils/common";
-import { AbilityId } from "#enums/abilities";
+import { AbilityId } from "#enums/ability-id";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import type { TimeOfDay } from "#enums/time-of-day";

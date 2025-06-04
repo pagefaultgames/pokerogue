@@ -1,6 +1,6 @@
 import { Species } from "#enums/species";
 import { Moves } from "#enums/moves";
-import { AbilityId } from "#app/enums/abilities";
+import { AbilityId } from "#enums/ability-id";
 import { BattlerIndex } from "#app/battle";
 import { WeatherType } from "#enums/weather-type";
 import { MoveResult } from "#app/field/pokemon";

@@ -1,4 +1,4 @@
-import { AbilityId } from "#enums/abilities";
+import { AbilityId } from "#enums/ability-id";
 import { BattlerIndex } from "#app/battle";
 import { Stat } from "#enums/stat";
 import { allMoves } from "#app/data/data-lists";

@@ -1,7 +1,7 @@
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { TurnStartPhase } from "#app/phases/turn-start-phase";
 import GameManager from "#test/testUtils/gameManager";
-import { AbilityId } from "#enums/abilities";
+import { AbilityId } from "#enums/ability-id";
 import { Stat } from "#enums/stat";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";

@@ -1,4 +1,4 @@
-import type { AbilityId } from "#enums/abilities";
+import type { AbilityId } from "#enums/ability-id";
 import type { PokemonType } from "#enums/pokemon-type";
 import type { Nature } from "#enums/nature";
 

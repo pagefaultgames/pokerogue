@@ -1,7 +1,7 @@
 import { ArenaTagType } from "#app/enums/arena-tag-type";
 import { PostSummonPhase } from "#app/phases/post-summon-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { AbilityId } from "#enums/abilities";
+import { AbilityId } from "#enums/ability-id";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";

@@ -8,7 +8,7 @@ import type { Ability } from "#app/data/abilities/ability-class";
 import { allAbilities } from "#app/data/data-lists";
 import type Pokemon from "#app/field/pokemon";
 import type { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
-import type { AbilityId } from "#enums/abilities";
+import type { AbilityId } from "#enums/ability-id";
 import type { PokemonType } from "#enums/pokemon-type";
 import { Stat } from "#enums/stat";
 import { GameManagerHelper } from "#test/testUtils/helpers/gameManagerHelper";

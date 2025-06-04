@@ -3,7 +3,7 @@ import { PokemonType } from "#enums/pokemon-type";
 import { Species } from "#app/enums/species";
 import type { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { AbilityId } from "#enums/abilities";
+import { AbilityId } from "#enums/ability-id";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Moves } from "#enums/moves";
 import GameManager from "#test/testUtils/gameManager";

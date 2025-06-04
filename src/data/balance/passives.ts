@@ -1,4 +1,4 @@
-import { AbilityId } from "#app/enums/abilities";
+import { AbilityId } from "#enums/ability-id";
 import { Species } from "#app/enums/species";
 
 export interface PassiveAbilities {

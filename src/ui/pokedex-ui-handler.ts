@@ -26,7 +26,7 @@ import { PokedexMonContainer } from "#app/ui/pokedex-mon-container";
 import { FilterBar } from "#app/ui/filter-bar";
 import { DropDownColumn } from "#enums/drop-down-column";
 import { ScrollBar } from "#app/ui/scroll-bar";
-import { AbilityId } from "#enums/abilities";
+import { AbilityId } from "#enums/ability-id";
 import {
   getPassiveCandyCount,
   getValueReductionCandyCounts,

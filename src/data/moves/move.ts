@@ -1,31 +1,31 @@
 import { ChargeAnim, MoveChargeAnim } from "../battle-anims";
 import {
-    CommandedTag,
-    EncoreTag,
-    GulpMissileTag,
-    HelpingHandTag,
-    SemiInvulnerableTag,
-    ShellTrapTag,
-    StockpilingTag,
-    SubstituteTag,
-    TrappedTag,
-    TypeBoostTag,
+  CommandedTag,
+  EncoreTag,
+  GulpMissileTag,
+  HelpingHandTag,
+  SemiInvulnerableTag,
+  ShellTrapTag,
+  StockpilingTag,
+  SubstituteTag,
+  TrappedTag,
+  TypeBoostTag,
 } from "../battler-tags";
 import { getPokemonNameWithAffix } from "../../messages";
 import type { AttackMoveResult, TurnMove } from "../../field/pokemon";
 import type Pokemon from "../../field/pokemon";
 import {
-    EnemyPokemon,
-    FieldPosition,
-    HitResult,
-    MoveResult,
-    PlayerPokemon,
-    PokemonMove,
+  EnemyPokemon,
+  FieldPosition,
+  HitResult,
+  MoveResult,
+  PlayerPokemon,
+  PokemonMove,
 } from "../../field/pokemon";
 import {
-    getNonVolatileStatusEffects,
-    getStatusEffectHealText,
-    isNonVolatileStatusEffect,
+  getNonVolatileStatusEffects,
+  getStatusEffectHealText,
+  isNonVolatileStatusEffect,
 } from "../status-effect";
 import { getTypeDamageMultiplier } from "../type";
 import { PokemonType } from "#enums/pokemon-type";
@@ -34,46 +34,46 @@ import { WeatherType } from "#enums/weather-type";
 import type { ArenaTrapTag } from "../arena-tag";
 import { ArenaTagSide, WeakenMoveTypeTag } from "../arena-tag";
 import {
-    AllyMoveCategoryPowerBoostAbAttr,
-    applyAbAttrs,
-    applyPostAttackAbAttrs,
-    applyPostItemLostAbAttrs,
-    applyPreAttackAbAttrs,
-    applyPreDefendAbAttrs,
-    BlockItemTheftAbAttr,
-    BlockNonDirectDamageAbAttr,
-    BlockOneHitKOAbAttr,
-    BlockRecoilDamageAttr,
-    ChangeMovePriorityAbAttr,
-    ConfusionOnStatusEffectAbAttr,
-    FieldMoveTypePowerBoostAbAttr,
-    FieldPreventExplosiveMovesAbAttr,
-    ForceSwitchOutImmunityAbAttr,
-    HealFromBerryUseAbAttr,
-    IgnoreContactAbAttr,
-    IgnoreMoveEffectsAbAttr,
-    IgnoreProtectOnContactAbAttr,
-    InfiltratorAbAttr,
-    MaxMultiHitAbAttr,
-    MoveAbilityBypassAbAttr,
-    MoveEffectChanceMultiplierAbAttr,
-    MoveTypeChangeAbAttr,
-    PostDamageForceSwitchAbAttr,
-    PostItemLostAbAttr,
-    ReflectStatusMoveAbAttr,
-    ReverseDrainAbAttr,
-    UserFieldMoveTypePowerBoostAbAttr,
-    VariableMovePowerAbAttr,
-    WonderSkinAbAttr,
+  AllyMoveCategoryPowerBoostAbAttr,
+  applyAbAttrs,
+  applyPostAttackAbAttrs,
+  applyPostItemLostAbAttrs,
+  applyPreAttackAbAttrs,
+  applyPreDefendAbAttrs,
+  BlockItemTheftAbAttr,
+  BlockNonDirectDamageAbAttr,
+  BlockOneHitKOAbAttr,
+  BlockRecoilDamageAttr,
+  ChangeMovePriorityAbAttr,
+  ConfusionOnStatusEffectAbAttr,
+  FieldMoveTypePowerBoostAbAttr,
+  FieldPreventExplosiveMovesAbAttr,
+  ForceSwitchOutImmunityAbAttr,
+  HealFromBerryUseAbAttr,
+  IgnoreContactAbAttr,
+  IgnoreMoveEffectsAbAttr,
+  IgnoreProtectOnContactAbAttr,
+  InfiltratorAbAttr,
+  MaxMultiHitAbAttr,
+  MoveAbilityBypassAbAttr,
+  MoveEffectChanceMultiplierAbAttr,
+  MoveTypeChangeAbAttr,
+  PostDamageForceSwitchAbAttr,
+  PostItemLostAbAttr,
+  ReflectStatusMoveAbAttr,
+  ReverseDrainAbAttr,
+  UserFieldMoveTypePowerBoostAbAttr,
+  VariableMovePowerAbAttr,
+  WonderSkinAbAttr,
 } from "../abilities/ability";
 import { allAbilities, allMoves } from "../data-lists";
 import {
-    AttackTypeBoosterModifier,
-    BerryModifier,
-    PokemonHeldItemModifier,
-    PokemonMoveAccuracyBoosterModifier,
-    PokemonMultiHitModifier,
-    PreserveBerryModifier,
+  AttackTypeBoosterModifier,
+  BerryModifier,
+  PokemonHeldItemModifier,
+  PokemonMoveAccuracyBoosterModifier,
+  PokemonMultiHitModifier,
+  PreserveBerryModifier,
 } from "../../modifier/modifier";
 import type { BattlerIndex } from "../../battle";
 import { BattleType } from "#enums/battle-type";
@@ -83,7 +83,7 @@ import { Command } from "../../ui/command-ui-handler";
 import i18next from "i18next";
 import type { Localizable } from "#app/interfaces/locales";
 import { getBerryEffectFunc } from "../berry";
-import { AbilityId } from "#enums/abilities";
+import { AbilityId } from "#enums/ability-id";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Biome } from "#enums/biome";
@@ -91,11 +91,11 @@ import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import { MoveUsedEvent } from "#app/events/battle-scene";
 import {
-    BATTLE_STATS,
-    type BattleStat,
-    type EffectiveStat,
-    getStatKey,
-    Stat,
+  BATTLE_STATS,
+  type BattleStat,
+  type EffectiveStat,
+  getStatKey,
+  Stat,
 } from "#app/enums/stat";
 import { BattleEndPhase } from "#app/phases/battle-end-phase";
 import { MoveEndPhase } from "#app/phases/move-end-phase";

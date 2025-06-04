@@ -3,7 +3,7 @@ import { ArenaTagSide } from "#app/data/arena-tag";
 import type Move from "#app/data/moves/move";
 import { CritOnlyAttr } from "#app/data/moves/move";
 import { allMoves } from "#app/data/data-lists";
-import { AbilityId } from "#app/enums/abilities";
+import { AbilityId } from "#enums/ability-id";
 import { ArenaTagType } from "#app/enums/arena-tag-type";
 import type Pokemon from "#app/field/pokemon";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";

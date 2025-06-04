@@ -1,7 +1,7 @@
 import type { EffectiveStat } from "#enums/stat";
 import { Stat } from "#enums/stat";
 import { MoveResult } from "#app/field/pokemon";
-import { AbilityId } from "#enums/abilities";
+import { AbilityId } from "#enums/ability-id";
 import { Moves } from "#enums/moves";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";

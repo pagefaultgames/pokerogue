@@ -1,6 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import { Moves } from "#enums/moves";
-import { AbilityId } from "#enums/abilities";
+import { AbilityId } from "#enums/ability-id";
 import { Species } from "#enums/species";
 import GameManager from "#test/testUtils/gameManager";
 import Phase from "phaser";

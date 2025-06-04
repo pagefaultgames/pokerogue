@@ -60,7 +60,7 @@ import type { BiomeTierTod } from "#app/data/balance/biomes";
 import { BiomePoolTier, catchableSpecies } from "#app/data/balance/biomes";
 import { Biome } from "#app/enums/biome";
 import { TimeOfDay } from "#app/enums/time-of-day";
-import type { AbilityId } from "#app/enums/abilities";
+import type { AbilityId } from "#enums/ability-id";
 import { BaseStatsOverlay } from "#app/ui/base-stats-overlay";
 import { globalScene } from "#app/global-scene";
 import type BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";

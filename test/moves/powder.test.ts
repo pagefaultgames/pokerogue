@@ -2,7 +2,7 @@ import { BattlerIndex } from "#app/battle";
 import { MoveResult, PokemonMove } from "#app/field/pokemon";
 import { BerryPhase } from "#app/phases/berry-phase";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
-import { AbilityId } from "#enums/abilities";
+import { AbilityId } from "#enums/ability-id";
 import { Moves } from "#enums/moves";
 import { PokemonType } from "#enums/pokemon-type";
 import { Species } from "#enums/species";
