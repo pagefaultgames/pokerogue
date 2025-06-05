@@ -90,6 +90,7 @@ export class ChangePasswordFormUiHandler extends FormModalUiHandler {
 
           pokerogueApi.account.changePassword({ password: passwordInput.text }).then(error => {
             if (!error && originalSubmitAction) {
+              globalScene.ui.playSelect();
               originalSubmitAction();
               // Only clear inputs if the action was successful
               for (const input of this.inputs) {
@@ -104,7 +105,7 @@ export class ChangePasswordFormUiHandler extends FormModalUiHandler {
       // Upon pressing cancel, the inputs should be cleared
       const originalCancelAction = this.cancelAction;
       this.cancelAction = () => {
-        console.log("Change password form cancelled");
+        globalScene.ui.playSelect();
         for (const input of this.inputs) {
           input.setText("");
         }
