@@ -1,6 +1,6 @@
-import { Biome } from "#app/enums/biome";
+import { BiomeId } from "#enums/biome-id";
 import { MysteryEncounterType } from "#app/enums/mystery-encounter-type";
-import { Species } from "#app/enums/species";
+import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
@@ -13,7 +13,7 @@ import type BattleScene from "#app/battle-scene";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import * as MysteryEncounters from "#app/data/mystery-encounters/mystery-encounters";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/move-id";
 import { DancingLessonsEncounter } from "#app/data/mystery-encounters/encounters/dancing-lessons-encounter";
 import { UiMode } from "#enums/ui-mode";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
@@ -25,8 +25,8 @@ import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import { LearnMovePhase } from "#app/phases/learn-move-phase";
 
 const namespace = "mysteryEncounters/dancingLessons";
-const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
-const defaultBiome = Biome.PLAINS;
+const defaultParty = [SpeciesId.LAPRAS, SpeciesId.GENGAR, SpeciesId.ABRA];
+const defaultBiome = BiomeId.PLAINS;
 const defaultWave = 45;
 
 describe("Dancing Lessons - Mystery Encounter", () => {
@@ -47,9 +47,9 @@ describe("Dancing Lessons - Mystery Encounter", () => {
     game.override.disableTrainerWaves();
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
-      new Map<Biome, MysteryEncounterType[]>([
-        [Biome.PLAINS, [MysteryEncounterType.DANCING_LESSONS]],
-        [Biome.SPACE, [MysteryEncounterType.MYSTERIOUS_CHALLENGERS]],
+      new Map<BiomeId, MysteryEncounterType[]>([
+        [BiomeId.PLAINS, [MysteryEncounterType.DANCING_LESSONS]],
+        [BiomeId.SPACE, [MysteryEncounterType.MYSTERIOUS_CHALLENGERS]],
       ]),
     );
   });
@@ -75,7 +75,7 @@ describe("Dancing Lessons - Mystery Encounter", () => {
 
   it("should not spawn outside of proper biomes", async () => {
     game.override.mysteryEncounterTier(MysteryEncounterTier.GREAT);
-    game.override.startingBiome(Biome.SPACE);
+    game.override.startingBiome(BiomeId.SPACE);
     await game.runToMysteryEncounter();
 
     expect(game.scene.currentBattle.mysteryEncounter?.encounterType).not.toBe(MysteryEncounterType.DANCING_LESSONS);
@@ -110,14 +110,14 @@ describe("Dancing Lessons - Mystery Encounter", () => {
       const enemyField = scene.getEnemyField();
       expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(enemyField.length).toBe(1);
-      expect(enemyField[0].species.speciesId).toBe(Species.ORICORIO);
+      expect(enemyField[0].species.speciesId).toBe(SpeciesId.ORICORIO);
       expect(enemyField[0].summonData.statStages).toEqual([1, 1, 1, 1, 0, 0, 0]);
       const moveset = enemyField[0].moveset.map(m => m.moveId);
-      expect(moveset.some(m => m === Moves.REVELATION_DANCE)).toBeTruthy();
+      expect(moveset.some(m => m === MoveId.REVELATION_DANCE)).toBeTruthy();
 
       const movePhases = phaseSpy.mock.calls.filter(p => p[0] instanceof MovePhase).map(p => p[0]);
       expect(movePhases.length).toBe(1);
-      expect(movePhases.filter(p => (p as MovePhase).move.moveId === Moves.REVELATION_DANCE).length).toBe(1); // Revelation Dance used before battle
+      expect(movePhases.filter(p => (p as MovePhase).move.moveId === MoveId.REVELATION_DANCE).length).toBe(1); // Revelation Dance used before battle
     });
 
     it("should have a Baton in the rewards after battle", async () => {
@@ -166,7 +166,7 @@ describe("Dancing Lessons - Mystery Encounter", () => {
 
       const movePhases = phaseSpy.mock.calls.filter(p => p[0] instanceof LearnMovePhase).map(p => p[0]);
       expect(movePhases.length).toBe(1);
-      expect(movePhases.filter(p => (p as LearnMovePhase)["moveId"] === Moves.REVELATION_DANCE).length).toBe(1); // Revelation Dance taught to pokemon
+      expect(movePhases.filter(p => (p as LearnMovePhase)["moveId"] === MoveId.REVELATION_DANCE).length).toBe(1); // Revelation Dance taught to pokemon
     });
 
     it("should leave encounter without battle", async () => {
@@ -201,16 +201,16 @@ describe("Dancing Lessons - Mystery Encounter", () => {
     it("should add Oricorio to the party", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.DANCING_LESSONS, defaultParty);
       const partyCountBefore = scene.getPlayerParty().length;
-      scene.getPlayerParty()[0].moveset = [new PokemonMove(Moves.DRAGON_DANCE)];
+      scene.getPlayerParty()[0].moveset = [new PokemonMove(MoveId.DRAGON_DANCE)];
       await runMysteryEncounterToEnd(game, 3, { pokemonNo: 1, optionNo: 1 });
       const partyCountAfter = scene.getPlayerParty().length;
 
       expect(partyCountBefore + 1).toBe(partyCountAfter);
       const oricorio = scene.getPlayerParty()[scene.getPlayerParty().length - 1];
-      expect(oricorio.species.speciesId).toBe(Species.ORICORIO);
+      expect(oricorio.species.speciesId).toBe(SpeciesId.ORICORIO);
       const moveset = oricorio.moveset.map(m => m.moveId);
-      expect(moveset?.some(m => m === Moves.REVELATION_DANCE)).toBeTruthy();
-      expect(moveset?.some(m => m === Moves.DRAGON_DANCE)).toBeTruthy();
+      expect(moveset?.some(m => m === MoveId.REVELATION_DANCE)).toBeTruthy();
+      expect(moveset?.some(m => m === MoveId.DRAGON_DANCE)).toBeTruthy();
     });
 
     it("should NOT be selectable if the player doesn't have a Dance type move", async () => {
@@ -240,7 +240,7 @@ describe("Dancing Lessons - Mystery Encounter", () => {
       const leaveEncounterWithoutBattleSpy = vi.spyOn(EncounterPhaseUtils, "leaveEncounterWithoutBattle");
 
       await game.runToMysteryEncounter(MysteryEncounterType.DANCING_LESSONS, defaultParty);
-      scene.getPlayerParty()[0].moveset = [new PokemonMove(Moves.DRAGON_DANCE)];
+      scene.getPlayerParty()[0].moveset = [new PokemonMove(MoveId.DRAGON_DANCE)];
       await runMysteryEncounterToEnd(game, 3, { pokemonNo: 1, optionNo: 1 });
 
       expect(leaveEncounterWithoutBattleSpy).toBeCalled();

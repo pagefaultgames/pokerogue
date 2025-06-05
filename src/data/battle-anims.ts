@@ -5,7 +5,7 @@ import { MoveFlags } from "#enums/MoveFlags";
 import type Pokemon from "../field/pokemon";
 import { type nil, getFrameMs, getEnumKeys, getEnumValues, animationFileName } from "../utils/common";
 import type { BattlerIndex } from "../battle";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/move-id";
 import { SubstituteTag } from "./battler-tags";
 import { isNullOrUndefined } from "../utils/common";
 import Phaser from "phaser";
@@ -498,7 +498,7 @@ class AnimTimedAddBgEvent extends AnimTimedBgEvent {
   }
 }
 
-export const moveAnims = new Map<Moves, AnimConfig | [AnimConfig, AnimConfig] | null>();
+export const moveAnims = new Map<MoveId, AnimConfig | [AnimConfig, AnimConfig] | null>();
 export const chargeAnims = new Map<ChargeAnim, AnimConfig | [AnimConfig, AnimConfig] | null>();
 export const commonAnims = new Map<CommonAnim, AnimConfig>();
 export const encounterAnims = new Map<EncounterAnim, AnimConfig>();
@@ -521,7 +521,7 @@ export function initCommonAnims(): Promise<void> {
   });
 }
 
-export function initMoveAnim(move: Moves): Promise<void> {
+export function initMoveAnim(move: MoveId): Promise<void> {
   return new Promise(resolve => {
     if (moveAnims.has(move)) {
       if (moveAnims.get(move) !== null) {
@@ -544,12 +544,12 @@ export function initMoveAnim(move: Moves): Promise<void> {
       moveAnims.set(move, null);
       const defaultMoveAnim =
         allMoves[move] instanceof AttackMove
-          ? Moves.TACKLE
+          ? MoveId.TACKLE
           : allMoves[move] instanceof SelfStatusMove
-            ? Moves.FOCUS_ENERGY
-            : Moves.TAIL_WHIP;
+            ? MoveId.FOCUS_ENERGY
+            : MoveId.TAIL_WHIP;
 
-      const fetchAnimAndResolve = (move: Moves) => {
+      const fetchAnimAndResolve = (move: MoveId) => {
         globalScene
           .cachedFetch(`./battle-anims/${animationFileName(move)}.json`)
           .then(response => {
@@ -594,7 +594,7 @@ export function initMoveAnim(move: Moves): Promise<void> {
  * @param move the move to populate an animation for
  * @param defaultMoveAnim the move to use as the default animation
  */
-function useDefaultAnim(move: Moves, defaultMoveAnim: Moves) {
+function useDefaultAnim(move: MoveId, defaultMoveAnim: MoveId) {
   populateMoveAnim(move, moveAnims.get(defaultMoveAnim));
 }
 
@@ -606,7 +606,7 @@ function useDefaultAnim(move: Moves, defaultMoveAnim: Moves) {
  *
  * @remarks use {@linkcode useDefaultAnim} to use a default animation
  */
-function logMissingMoveAnim(move: Moves, ...optionalParams: any[]) {
+function logMissingMoveAnim(move: MoveId, ...optionalParams: any[]) {
   const moveName = animationFileName(move);
   console.warn(`Could not load animation file for move '${moveName}'`, ...optionalParams);
 }
@@ -664,7 +664,7 @@ export function initMoveChargeAnim(chargeAnim: ChargeAnim): Promise<void> {
   });
 }
 
-function populateMoveAnim(move: Moves, animSource: any): void {
+function populateMoveAnim(move: MoveId, animSource: any): void {
   const moveAnim = new AnimConfig(animSource);
   if (moveAnims.get(move) === null) {
     moveAnims.set(move, moveAnim);
@@ -697,7 +697,7 @@ export async function loadEncounterAnimAssets(startLoad?: boolean): Promise<void
   await loadAnimAssets(Array.from(encounterAnims.values()), startLoad);
 }
 
-export function loadMoveAnimAssets(moveIds: Moves[], startLoad?: boolean): Promise<void> {
+export function loadMoveAnimAssets(moveIds: MoveId[], startLoad?: boolean): Promise<void> {
   return new Promise(resolve => {
     const moveAnimations = moveIds.flatMap(m => moveAnims.get(m) as AnimConfig);
     for (const moveId of moveIds) {
@@ -1425,9 +1425,9 @@ export class CommonBattleAnim extends BattleAnim {
 }
 
 export class MoveAnim extends BattleAnim {
-  public move: Moves;
+  public move: MoveId;
 
-  constructor(move: Moves, user: Pokemon, target: BattlerIndex, playOnEmptyField = false) {
+  constructor(move: MoveId, user: Pokemon, target: BattlerIndex, playOnEmptyField = false) {
     // Set target to the user pokemon if no target is found to avoid crashes
     super(user, globalScene.getField()[target] ?? user, playOnEmptyField);
 
@@ -1456,7 +1456,7 @@ export class MoveAnim extends BattleAnim {
 export class MoveChargeAnim extends MoveAnim {
   private chargeAnim: ChargeAnim;
 
-  constructor(chargeAnim: ChargeAnim, move: Moves, user: Pokemon) {
+  constructor(chargeAnim: ChargeAnim, move: MoveId, user: Pokemon) {
     super(move, user, 0);
 
     this.chargeAnim = chargeAnim;
@@ -1502,8 +1502,8 @@ export async function populateAnims() {
   const chargeAnimIds = getEnumValues(ChargeAnim) as ChargeAnim[];
   const commonNamePattern = /name: (?:Common:)?(Opp )?(.*)/;
   const moveNameToId = {};
-  for (const move of getEnumValues(Moves).slice(1)) {
-    const moveName = Moves[move].toUpperCase().replace(/\_/g, "");
+  for (const move of getEnumValues(MoveId).slice(1)) {
+    const moveName = MoveId[move].toUpperCase().replace(/\_/g, "");
     moveNameToId[moveName] = move;
   }
 

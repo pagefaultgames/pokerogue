@@ -1,6 +1,6 @@
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import { AbilityId } from "#enums/ability-id";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -23,62 +23,61 @@ describe("Abilities - Corrosion", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.SPLASH, Moves.TOXIC, Moves.TOXIC_SPIKES])
       .battleStyle("single")
       .disableCrits()
-      .enemySpecies(Species.GRIMER)
-      .enemyAbility(Abilities.CORROSION)
-      .enemyMoveset(Moves.TOXIC);
+      .enemySpecies(SpeciesId.GRIMER)
+      .enemyAbility(AbilityId.CORROSION)
+      .enemyMoveset(MoveId.TOXIC);
   });
 
-  it.each<{ name: string; species: Species }>([
-    { name: "Poison", species: Species.GRIMER },
-    { name: "Steel", species: Species.KLINK },
+  it.each<{ name: string; species: SpeciesId }>([
+    { name: "Poison", species: SpeciesId.GRIMER },
+    { name: "Steel", species: SpeciesId.KLINK },
   ])("should grant the user the ability to poison $name-type opponents", async ({ species }) => {
-    game.override.ability(Abilities.SYNCHRONIZE);
     await game.classicMode.startBattle([species]);
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
     expect(enemyPokemon.status).toBeUndefined();
 
-    game.move.select(Moves.TOXIC);
+    game.move.use(MoveId.POISON_GAS);
     await game.phaseInterceptor.to("BerryPhase");
     expect(enemyPokemon.status).toBeDefined();
   });
 
   it("should not affect Toxic Spikes", async () => {
-    await game.classicMode.startBattle([Species.SALANDIT]);
+    await game.classicMode.startBattle([SpeciesId.SALANDIT]);
 
-    game.move.select(Moves.TOXIC_SPIKES);
+    game.move.use(MoveId.TOXIC_SPIKES);
     await game.doKillOpponents();
     await game.toNextWave();
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const enemyPokemon = game.field.getEnemyPokemon();
     expect(enemyPokemon.status).toBeUndefined();
   });
 
   it("should not affect an opponent's Synchronize ability", async () => {
-    game.override.ability(Abilities.SYNCHRONIZE);
-    await game.classicMode.startBattle([Species.ARBOK]);
+    game.override.ability(AbilityId.SYNCHRONIZE);
+    await game.classicMode.startBattle([SpeciesId.ARBOK]);
 
-    const playerPokemon = game.scene.getPlayerPokemon();
-    const enemyPokemon = game.scene.getEnemyPokemon();
-    expect(playerPokemon!.status).toBeUndefined();
+    const playerPokemon = game.field.getPlayerPokemon();
+    const enemyPokemon = game.field.getEnemyPokemon();
+    expect(enemyPokemon.status?.effect).toBeUndefined();
 
-    game.move.select(Moves.SPLASH);
-    await game.phaseInterceptor.to("BerryPhase");
-    expect(playerPokemon!.status).toBeDefined();
-    expect(enemyPokemon!.status).toBeUndefined();
+    game.move.select(MoveId.TOXIC);
+    await game.toEndOfTurn()
+
+    expect(playerPokemon.status?.effect).toBe(StatusEffect.TOXIC);
+    expect(enemyPokemon.status?.effect).toBeUndefined();
   });
 
   it("should affect the user's held Toxic Orb", async () => {
     game.override.startingHeldItems([{ name: "TOXIC_ORB", count: 1 }]);
-    await game.classicMode.startBattle([Species.SALAZZLE]);
+    await game.classicMode.startBattle([SpeciesId.SALAZZLE]);
 
-    const salazzle = game.scene.getPlayerPokemon()!;
+    const salazzle = game.field.getPlayerPokemon();
     expect(salazzle.status?.effect).toBeUndefined();
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
     expect(salazzle.status?.effect).toBe(StatusEffect.TOXIC);
   });
