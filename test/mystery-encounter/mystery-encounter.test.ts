@@ -1,7 +1,7 @@
 import { afterEach, beforeAll, beforeEach, expect, describe, it } from "vitest";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species-id";
 import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import type BattleScene from "#app/battle-scene";
@@ -30,8 +30,8 @@ describe("Mystery Encounters", () => {
 
   it("Spawns a mystery encounter", async () => {
     await game.runToMysteryEncounter(MysteryEncounterType.MYSTERIOUS_CHALLENGERS, [
-      Species.CHARIZARD,
-      Species.VOLCARONA,
+      SpeciesId.CHARIZARD,
+      SpeciesId.VOLCARONA,
     ]);
 
     await game.phaseInterceptor.to(MysteryEncounterPhase, false);

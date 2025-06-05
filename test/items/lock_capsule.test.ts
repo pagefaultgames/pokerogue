@@ -1,5 +1,5 @@
-import { Abilities } from "#app/enums/abilities";
-import { Moves } from "#app/enums/moves";
+import { AbilityId } from "#enums/ability-id";
+import { MoveId } from "#enums/move-id";
 import { ModifierTier } from "#app/modifier/modifier-tier";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import { UiMode } from "#enums/ui-mode";
@@ -27,8 +27,8 @@ describe("Items - Lock Capsule", () => {
     game.override
       .battleStyle("single")
       .startingLevel(200)
-      .moveset([Moves.SURF])
-      .enemyAbility(Abilities.BALL_FETCH)
+      .moveset([MoveId.SURF])
+      .enemyAbility(AbilityId.BALL_FETCH)
       .startingModifier([{ name: "LOCK_CAPSULE" }]);
   });
 

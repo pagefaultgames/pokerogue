@@ -1,7 +1,7 @@
 import { allMoves } from "#app/data/data-lists";
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import { AbilityId } from "#enums/ability-id";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -24,21 +24,21 @@ describe("Moves - Diamond Storm", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.DIAMOND_STORM])
+      .moveset([MoveId.DIAMOND_STORM])
       .battleStyle("single")
-      .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset(Moves.SPLASH);
+      .enemySpecies(SpeciesId.MAGIKARP)
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   it("should only increase defense once even if hitting 2 pokemon", async () => {
     game.override.battleStyle("double");
-    const diamondStorm = allMoves[Moves.DIAMOND_STORM];
+    const diamondStorm = allMoves[MoveId.DIAMOND_STORM];
     vi.spyOn(diamondStorm, "chance", "get").mockReturnValue(100);
     vi.spyOn(diamondStorm, "accuracy", "get").mockReturnValue(100);
-    await game.classicMode.startBattle([Species.FEEBAS]);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-    game.move.select(Moves.DIAMOND_STORM);
+    game.move.select(MoveId.DIAMOND_STORM);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(game.scene.getPlayerPokemon()!.getStatStage(Stat.DEF)).toBe(2);

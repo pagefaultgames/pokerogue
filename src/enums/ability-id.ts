@@ -1,4 +1,4 @@
-export enum Abilities {
+export enum AbilityId {
   /**{@link https://bulbapedia.bulbagarden.net/wiki/None_(ability) | Source} */
   NONE,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Stench_(ability) | Source} */
