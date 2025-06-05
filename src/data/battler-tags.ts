@@ -35,11 +35,11 @@ import type { StatStageChangeCallback } from "#app/phases/stat-stage-change-phas
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import i18next from "#app/plugins/i18n";
 import { BooleanHolder, getFrameMs, NumberHolder, toDmgValue } from "#app/utils/common";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/ability-id";
 import { BattlerTagType } from "#enums/battler-tag-type";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/move-id";
 import { PokemonAnimType } from "#enums/pokemon-anim-type";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species-id";
 import { EFFECTIVE_STATS, getStatKey, Stat, type BattleStat, type EffectiveStat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { WeatherType } from "#enums/weather-type";
@@ -62,7 +62,7 @@ export class BattlerTag {
   public tagType: BattlerTagType;
   public lapseTypes: BattlerTagLapseType[];
   public turnCount: number;
-  public sourceMove: Moves;
+  public sourceMove: MoveId;
   public sourceId?: number;
   public isBatonPassable: boolean;
 
@@ -70,7 +70,7 @@ export class BattlerTag {
     tagType: BattlerTagType,
     lapseType: BattlerTagLapseType | BattlerTagLapseType[],
     turnCount: number,
-    sourceMove?: Moves,
+    sourceMove?: MoveId,
     sourceId?: number,
     isBatonPassable = false,
   ) {
@@ -143,7 +143,7 @@ export interface TerrainBattlerTag {
 
 /**
  * Base class for tags that restrict the usage of moves. This effect is generally referred to as "disabling" a move
- * in-game. This is not to be confused with {@linkcode Moves.DISABLE}.
+ * in-game. This is not to be confused with {@linkcode MoveId.DISABLE}.
  *
  * Descendants can override {@linkcode isMoveRestricted} to restrict moves that
  * match a condition. A restricted move gets cancelled before it is used.
@@ -154,7 +154,7 @@ export abstract class MoveRestrictionBattlerTag extends BattlerTag {
     tagType: BattlerTagType,
     lapseType: BattlerTagLapseType | BattlerTagLapseType[],
     turnCount: number,
-    sourceMove?: Moves,
+    sourceMove?: MoveId,
     sourceId?: number,
   ) {
     super(tagType, lapseType, turnCount, sourceMove, sourceId);
@@ -183,21 +183,21 @@ export abstract class MoveRestrictionBattlerTag extends BattlerTag {
   /**
    * Gets whether this tag is restricting a move.
    *
-   * @param move - {@linkcode Moves} ID to check restriction for.
+   * @param move - {@linkcode MoveId} ID to check restriction for.
    * @param user - The {@linkcode Pokemon} involved
    * @returns `true` if the move is restricted by this tag, otherwise `false`.
    */
-  public abstract isMoveRestricted(move: Moves, user?: Pokemon): boolean;
+  public abstract isMoveRestricted(move: MoveId, user?: Pokemon): boolean;
 
   /**
    * Checks if this tag is restricting a move based on a user's decisions during the target selection phase
    *
-   * @param {Moves} _move {@linkcode Moves} move ID to check restriction for
+   * @param {MoveId} _move {@linkcode MoveId} move ID to check restriction for
    * @param {Pokemon} _user {@linkcode Pokemon} the user of the above move
    * @param {Pokemon} _target {@linkcode Pokemon} the target of the above move
    * @returns {boolean} `false` unless overridden by the child tag
    */
-  isMoveTargetRestricted(_move: Moves, _user: Pokemon, _target: Pokemon): boolean {
+  isMoveTargetRestricted(_move: MoveId, _user: Pokemon, _target: Pokemon): boolean {
     return false;
   }
 
@@ -205,10 +205,10 @@ export abstract class MoveRestrictionBattlerTag extends BattlerTag {
    * Gets the text to display when the player attempts to select a move that is restricted by this tag.
    *
    * @param {Pokemon} pokemon {@linkcode Pokemon} for which the player is attempting to select the restricted move
-   * @param {Moves} move {@linkcode Moves} ID of the move that is having its selection denied
+   * @param {MoveId} move {@linkcode MoveId} ID of the move that is having its selection denied
    * @returns {string} text to display when the player attempts to select the restricted move
    */
-  abstract selectionDeniedText(pokemon: Pokemon, move: Moves): string;
+  abstract selectionDeniedText(pokemon: Pokemon, move: MoveId): string;
 
   /**
    * Gets the text to display when a move's execution is prevented as a result of the restriction.
@@ -216,10 +216,10 @@ export abstract class MoveRestrictionBattlerTag extends BattlerTag {
    * pokemon first selects a move, then gets outsped by a pokemon using a move that restricts the selected move.
    *
    * @param {Pokemon} _pokemon {@linkcode Pokemon} attempting to use the restricted move
-   * @param {Moves} _move {@linkcode Moves} ID of the move being interrupted
+   * @param {MoveId} _move {@linkcode MoveId} ID of the move being interrupted
    * @returns {string} text to display when the move is interrupted
    */
-  interruptedText(_pokemon: Pokemon, _move: Moves): string {
+  interruptedText(_pokemon: Pokemon, _move: MoveId): string {
     return "";
   }
 }
@@ -235,17 +235,17 @@ export class ThroatChoppedTag extends MoveRestrictionBattlerTag {
       BattlerTagType.THROAT_CHOPPED,
       [BattlerTagLapseType.TURN_END, BattlerTagLapseType.PRE_MOVE],
       2,
-      Moves.THROAT_CHOP,
+      MoveId.THROAT_CHOP,
     );
   }
 
   /**
-   * Checks if a {@linkcode Moves | move} is restricted by Throat Chop.
+   * Checks if a {@linkcode MoveId | move} is restricted by Throat Chop.
    * @override
-   * @param {Moves} move the {@linkcode Moves | move} to check for sound-based restriction
+   * @param {MoveId} move the {@linkcode MoveId | move} to check for sound-based restriction
    * @returns true if the move is sound-based
    */
-  override isMoveRestricted(move: Moves): boolean {
+  override isMoveRestricted(move: MoveId): boolean {
     return allMoves[move].hasFlag(MoveFlags.SOUND_BASED);
   }
 
@@ -253,10 +253,10 @@ export class ThroatChoppedTag extends MoveRestrictionBattlerTag {
    * Shows a message when the player attempts to select a move that is restricted by Throat Chop.
    * @override
    * @param {Pokemon} _pokemon the {@linkcode Pokemon} that is attempting to select the restricted move
-   * @param {Moves} move the {@linkcode Moves | move} that is being restricted
+   * @param {MoveId} move the {@linkcode MoveId | move} that is being restricted
    * @returns the message to display when the player attempts to select the restricted move
    */
-  override selectionDeniedText(_pokemon: Pokemon, move: Moves): string {
+  override selectionDeniedText(_pokemon: Pokemon, move: MoveId): string {
     return i18next.t("battle:moveCannotBeSelected", {
       moveName: allMoves[move].name,
     });
@@ -266,10 +266,10 @@ export class ThroatChoppedTag extends MoveRestrictionBattlerTag {
    * Shows a message when a move is interrupted by Throat Chop.
    * @override
    * @param {Pokemon} pokemon the interrupted {@linkcode Pokemon}
-   * @param {Moves} _move the {@linkcode Moves | move} that was interrupted
+   * @param {MoveId} _move the {@linkcode MoveId | move} that was interrupted
    * @returns the message to display when the move is interrupted
    */
-  override interruptedText(pokemon: Pokemon, _move: Moves): string {
+  override interruptedText(pokemon: Pokemon, _move: MoveId): string {
     return i18next.t("battle:throatChopInterruptedMove", {
       pokemonName: getPokemonNameWithAffix(pokemon),
     });
@@ -277,25 +277,25 @@ export class ThroatChoppedTag extends MoveRestrictionBattlerTag {
 }
 
 /**
- * Tag representing the "disabling" effect performed by {@linkcode Moves.DISABLE} and {@linkcode Abilities.CURSED_BODY}.
+ * Tag representing the "disabling" effect performed by {@linkcode MoveId.DISABLE} and {@linkcode AbilityId.CURSED_BODY}.
  * When the tag is added, the last-used move of the tag holder is set as the disabled move.
  */
 export class DisabledTag extends MoveRestrictionBattlerTag {
   /** The move being disabled. Gets set when {@linkcode onAdd} is called for this tag. */
-  private moveId: Moves = Moves.NONE;
+  private moveId: MoveId = MoveId.NONE;
 
   constructor(sourceId: number) {
     super(
       BattlerTagType.DISABLED,
       [BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.TURN_END],
       4,
-      Moves.DISABLE,
+      MoveId.DISABLE,
       sourceId,
     );
   }
 
   /** @override */
-  override isMoveRestricted(move: Moves): boolean {
+  override isMoveRestricted(move: MoveId): boolean {
     return move === this.moveId;
   }
 
@@ -309,7 +309,7 @@ export class DisabledTag extends MoveRestrictionBattlerTag {
     super.onAdd(pokemon);
 
     const move = pokemon.getLastXMoves(-1).find(m => !m.virtual);
-    if (isNullOrUndefined(move) || move.move === Moves.STRUGGLE || move.move === Moves.NONE) {
+    if (isNullOrUndefined(move) || move.move === MoveId.STRUGGLE || move.move === MoveId.NONE) {
       return;
     }
 
@@ -336,17 +336,17 @@ export class DisabledTag extends MoveRestrictionBattlerTag {
   }
 
   /** @override */
-  override selectionDeniedText(_pokemon: Pokemon, move: Moves): string {
+  override selectionDeniedText(_pokemon: Pokemon, move: MoveId): string {
     return i18next.t("battle:moveDisabled", { moveName: allMoves[move].name });
   }
 
   /**
    * @override
    * @param {Pokemon} pokemon {@linkcode Pokemon} attempting to use the restricted move
-   * @param {Moves} move {@linkcode Moves} ID of the move being interrupted
+   * @param {MoveId} move {@linkcode MoveId} ID of the move being interrupted
    * @returns {string} text to display when the move is interrupted
    */
-  override interruptedText(pokemon: Pokemon, move: Moves): string {
+  override interruptedText(pokemon: Pokemon, move: MoveId): string {
     return i18next.t("battle:disableInterruptedMove", {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
       moveName: allMoves[move].name,
@@ -365,14 +365,14 @@ export class DisabledTag extends MoveRestrictionBattlerTag {
  * @extends MoveRestrictionBattlerTag
  */
 export class GorillaTacticsTag extends MoveRestrictionBattlerTag {
-  private moveId = Moves.NONE;
+  private moveId = MoveId.NONE;
 
   constructor() {
     super(BattlerTagType.GORILLA_TACTICS, BattlerTagLapseType.CUSTOM, 0);
   }
 
   /** @override */
-  override isMoveRestricted(move: Moves): boolean {
+  override isMoveRestricted(move: MoveId): boolean {
     return move !== this.moveId;
   }
 
@@ -416,10 +416,10 @@ export class GorillaTacticsTag extends MoveRestrictionBattlerTag {
    *
    * @override
    * @param {Pokemon} pokemon n/a
-   * @param {Moves} _move {@linkcode Moves} ID of the move being denied
+   * @param {MoveId} _move {@linkcode MoveId} ID of the move being denied
    * @returns {string} text to display when the move is denied
    */
-  override selectionDeniedText(pokemon: Pokemon, _move: Moves): string {
+  override selectionDeniedText(pokemon: Pokemon, _move: MoveId): string {
     return i18next.t("battle:canOnlyUseMove", {
       moveName: allMoves[this.moveId].name,
       pokemonName: getPokemonNameWithAffix(pokemon),
@@ -429,10 +429,10 @@ export class GorillaTacticsTag extends MoveRestrictionBattlerTag {
   /**
    * Gets the last valid move from the pokemon's move history.
    * @param {Pokemon} pokemon {@linkcode Pokemon} to get the last valid move from
-   * @returns {Moves | undefined} the last valid move from the pokemon's move history
+   * @returns {MoveId | undefined} the last valid move from the pokemon's move history
    */
-  getLastValidMove(pokemon: Pokemon): Moves | undefined {
-    const move = pokemon.getLastXMoves().find(m => m.move !== Moves.NONE && m.move !== Moves.STRUGGLE && !m.virtual);
+  getLastValidMove(pokemon: Pokemon): MoveId | undefined {
+    const move = pokemon.getLastXMoves().find(m => m.move !== MoveId.NONE && m.move !== MoveId.STRUGGLE && !m.virtual);
 
     return move?.move;
   }
@@ -442,7 +442,7 @@ export class GorillaTacticsTag extends MoveRestrictionBattlerTag {
  * BattlerTag that represents the "recharge" effects of moves like Hyper Beam.
  */
 export class RechargingTag extends BattlerTag {
-  constructor(sourceMove: Moves) {
+  constructor(sourceMove: MoveId) {
     super(BattlerTagType.RECHARGING, [BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.TURN_END], 2, sourceMove);
   }
 
@@ -450,7 +450,7 @@ export class RechargingTag extends BattlerTag {
     super.onAdd(pokemon);
 
     // Queue a placeholder move for the Pokemon to "use" next turn
-    pokemon.getMoveQueue().push({ move: Moves.NONE, targets: [] });
+    pokemon.getMoveQueue().push({ move: MoveId.NONE, targets: [] });
   }
 
   /** Cancels the source's move this turn and queues a "__ must recharge!" message */
@@ -479,7 +479,7 @@ export class BeakBlastChargingTag extends BattlerTag {
       BattlerTagType.BEAK_BLAST_CHARGING,
       [BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.TURN_END, BattlerTagLapseType.AFTER_HIT],
       1,
-      Moves.BEAK_BLAST,
+      MoveId.BEAK_BLAST,
     );
   }
 
@@ -578,7 +578,7 @@ export class TrappedTag extends BattlerTag {
     tagType: BattlerTagType,
     lapseType: BattlerTagLapseType,
     turnCount: number,
-    sourceMove: Moves,
+    sourceMove: MoveId,
     sourceId: number,
   ) {
     super(tagType, lapseType, turnCount, sourceMove, sourceId, true);
@@ -635,7 +635,7 @@ export class TrappedTag extends BattlerTag {
  */
 class NoRetreatTag extends TrappedTag {
   constructor(sourceId: number) {
-    super(BattlerTagType.NO_RETREAT, BattlerTagLapseType.CUSTOM, 0, Moves.NO_RETREAT, sourceId);
+    super(BattlerTagType.NO_RETREAT, BattlerTagLapseType.CUSTOM, 0, MoveId.NO_RETREAT, sourceId);
   }
 
   /** overrides {@linkcode TrappedTag.apply}, removing the Ghost-type condition */
@@ -648,7 +648,7 @@ class NoRetreatTag extends TrappedTag {
  * BattlerTag that represents the {@link https://bulbapedia.bulbagarden.net/wiki/Flinch Flinch} status condition
  */
 export class FlinchedTag extends BattlerTag {
-  constructor(sourceMove: Moves) {
+  constructor(sourceMove: MoveId) {
     super(BattlerTagType.FLINCHED, [BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.TURN_END], 0, sourceMove);
   }
 
@@ -683,7 +683,7 @@ export class FlinchedTag extends BattlerTag {
 }
 
 export class InterruptedTag extends BattlerTag {
-  constructor(sourceMove: Moves) {
+  constructor(sourceMove: MoveId) {
     super(BattlerTagType.INTERRUPTED, BattlerTagLapseType.PRE_MOVE, 0, sourceMove);
   }
 
@@ -696,7 +696,7 @@ export class InterruptedTag extends BattlerTag {
 
     pokemon.getMoveQueue().shift();
     pokemon.pushMoveHistory({
-      move: Moves.NONE,
+      move: MoveId.NONE,
       result: MoveResult.OTHER,
       targets: [],
     });
@@ -712,7 +712,7 @@ export class InterruptedTag extends BattlerTag {
  * BattlerTag that represents the {@link https://bulbapedia.bulbagarden.net/wiki/Confusion_(status_condition) Confusion} status condition
  */
 export class ConfusedTag extends BattlerTag {
-  constructor(turnCount: number, sourceMove: Moves) {
+  constructor(turnCount: number, sourceMove: MoveId) {
     super(BattlerTagType.CONFUSED, BattlerTagLapseType.MOVE, turnCount, sourceMove, undefined, true);
   }
 
@@ -796,7 +796,7 @@ export class ConfusedTag extends BattlerTag {
  * @see {@linkcode apply}
  */
 export class DestinyBondTag extends BattlerTag {
-  constructor(sourceMove: Moves, sourceId: number) {
+  constructor(sourceMove: MoveId, sourceId: number) {
     super(BattlerTagType.DESTINY_BOND, BattlerTagLapseType.PRE_MOVE, 1, sourceMove, sourceId, true);
   }
 
@@ -930,7 +930,7 @@ export class SeedTag extends BattlerTag {
   private sourceIndex: number;
 
   constructor(sourceId: number) {
-    super(BattlerTagType.SEEDED, BattlerTagLapseType.TURN_END, 1, Moves.LEECH_SEED, sourceId, true);
+    super(BattlerTagType.SEEDED, BattlerTagLapseType.TURN_END, 1, MoveId.LEECH_SEED, sourceId, true);
   }
 
   /**
@@ -1063,7 +1063,7 @@ export class PowderTag extends BattlerTag {
 
 export class NightmareTag extends BattlerTag {
   constructor() {
-    super(BattlerTagType.NIGHTMARE, BattlerTagLapseType.TURN_END, 1, Moves.NIGHTMARE);
+    super(BattlerTagType.NIGHTMARE, BattlerTagLapseType.TURN_END, 1, MoveId.NIGHTMARE);
   }
 
   onAdd(pokemon: Pokemon): void {
@@ -1114,7 +1114,7 @@ export class NightmareTag extends BattlerTag {
 }
 
 export class FrenzyTag extends BattlerTag {
-  constructor(turnCount: number, sourceMove: Moves, sourceId: number) {
+  constructor(turnCount: number, sourceMove: MoveId, sourceId: number) {
     super(BattlerTagType.FRENZY, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
   }
 
@@ -1129,25 +1129,25 @@ export class FrenzyTag extends BattlerTag {
 }
 
 /**
- * Applies the effects of {@linkcode Moves.ENCORE} onto the target Pokemon.
+ * Applies the effects of {@linkcode MoveId.ENCORE} onto the target Pokemon.
  * Encore forces the target Pokemon to use its most-recent move for 3 turns.
  */
 export class EncoreTag extends MoveRestrictionBattlerTag {
-  public moveId: Moves;
+  public moveId: MoveId;
 
   constructor(sourceId: number) {
     super(
       BattlerTagType.ENCORE,
       [BattlerTagLapseType.CUSTOM, BattlerTagLapseType.AFTER_MOVE],
       3,
-      Moves.ENCORE,
+      MoveId.ENCORE,
       sourceId,
     );
   }
 
   loadTag(source: BattlerTag | any): void {
     super.loadTag(source);
-    this.moveId = source.moveId as Moves;
+    this.moveId = source.moveId as MoveId;
   }
 
   canAdd(pokemon: Pokemon): boolean {
@@ -1163,13 +1163,13 @@ export class EncoreTag extends MoveRestrictionBattlerTag {
     }
 
     switch (repeatableMove.move) {
-      case Moves.MIMIC:
-      case Moves.MIRROR_MOVE:
-      case Moves.TRANSFORM:
-      case Moves.STRUGGLE:
-      case Moves.SKETCH:
-      case Moves.SLEEP_TALK:
-      case Moves.ENCORE:
+      case MoveId.MIMIC:
+      case MoveId.MIRROR_MOVE:
+      case MoveId.TRANSFORM:
+      case MoveId.STRUGGLE:
+      case MoveId.SKETCH:
+      case MoveId.SLEEP_TALK:
+      case MoveId.ENCORE:
         return false;
     }
 
@@ -1217,18 +1217,18 @@ export class EncoreTag extends MoveRestrictionBattlerTag {
 
   /**
    * Checks if the move matches the moveId stored within the tag and returns a boolean value
-   * @param move {@linkcode Moves} the move selected
+   * @param move {@linkcode MoveId} the move selected
    * @param user N/A
    * @returns `true` if the move does not match with the moveId stored and as a result, restricted
    */
-  override isMoveRestricted(move: Moves, _user?: Pokemon): boolean {
+  override isMoveRestricted(move: MoveId, _user?: Pokemon): boolean {
     if (move !== this.moveId) {
       return true;
     }
     return false;
   }
 
-  override selectionDeniedText(_pokemon: Pokemon, move: Moves): string {
+  override selectionDeniedText(_pokemon: Pokemon, move: MoveId): string {
     return i18next.t("battle:moveDisabled", { moveName: allMoves[move].name });
   }
 
@@ -1245,7 +1245,7 @@ export class EncoreTag extends MoveRestrictionBattlerTag {
 
 export class HelpingHandTag extends BattlerTag {
   constructor(sourceId: number) {
-    super(BattlerTagType.HELPING_HAND, BattlerTagLapseType.TURN_END, 1, Moves.HELPING_HAND, sourceId);
+    super(BattlerTagType.HELPING_HAND, BattlerTagLapseType.TURN_END, 1, MoveId.HELPING_HAND, sourceId);
   }
 
   onAdd(pokemon: Pokemon): void {
@@ -1264,7 +1264,7 @@ export class HelpingHandTag extends BattlerTag {
  */
 export class IngrainTag extends TrappedTag {
   constructor(sourceId: number) {
-    super(BattlerTagType.INGRAIN, BattlerTagLapseType.TURN_END, 1, Moves.INGRAIN, sourceId);
+    super(BattlerTagType.INGRAIN, BattlerTagLapseType.TURN_END, 1, MoveId.INGRAIN, sourceId);
   }
 
   /**
@@ -1314,7 +1314,7 @@ export class IngrainTag extends TrappedTag {
  */
 export class OctolockTag extends TrappedTag {
   constructor(sourceId: number) {
-    super(BattlerTagType.OCTOLOCK, BattlerTagLapseType.TURN_END, 1, Moves.OCTOLOCK, sourceId);
+    super(BattlerTagType.OCTOLOCK, BattlerTagLapseType.TURN_END, 1, MoveId.OCTOLOCK, sourceId);
   }
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
@@ -1331,7 +1331,7 @@ export class OctolockTag extends TrappedTag {
 
 export class AquaRingTag extends BattlerTag {
   constructor() {
-    super(BattlerTagType.AQUA_RING, BattlerTagLapseType.TURN_END, 1, Moves.AQUA_RING, undefined, true);
+    super(BattlerTagType.AQUA_RING, BattlerTagLapseType.TURN_END, 1, MoveId.AQUA_RING, undefined, true);
   }
 
   onAdd(pokemon: Pokemon): void {
@@ -1365,10 +1365,10 @@ export class AquaRingTag extends BattlerTag {
   }
 }
 
-/** Tag used to allow moves that interact with {@link Moves.MINIMIZE} to function */
+/** Tag used to allow moves that interact with {@link MoveId.MINIMIZE} to function */
 export class MinimizeTag extends BattlerTag {
   constructor() {
-    super(BattlerTagType.MINIMIZED, BattlerTagLapseType.TURN_END, 1, Moves.MINIMIZE);
+    super(BattlerTagType.MINIMIZED, BattlerTagLapseType.TURN_END, 1, MoveId.MINIMIZE);
   }
 
   onAdd(pokemon: Pokemon): void {
@@ -1386,7 +1386,7 @@ export class MinimizeTag extends BattlerTag {
 
 export class DrowsyTag extends BattlerTag {
   constructor() {
-    super(BattlerTagType.DROWSY, BattlerTagLapseType.TURN_END, 2, Moves.YAWN);
+    super(BattlerTagType.DROWSY, BattlerTagLapseType.TURN_END, 2, MoveId.YAWN);
   }
 
   canAdd(pokemon: Pokemon): boolean {
@@ -1420,7 +1420,13 @@ export class DrowsyTag extends BattlerTag {
 export abstract class DamagingTrapTag extends TrappedTag {
   private commonAnim: CommonAnim;
 
-  constructor(tagType: BattlerTagType, commonAnim: CommonAnim, turnCount: number, sourceMove: Moves, sourceId: number) {
+  constructor(
+    tagType: BattlerTagType,
+    commonAnim: CommonAnim,
+    turnCount: number,
+    sourceMove: MoveId,
+    sourceId: number,
+  ) {
     super(tagType, BattlerTagLapseType.TURN_END, turnCount, sourceMove, sourceId);
 
     this.commonAnim = commonAnim;
@@ -1465,7 +1471,7 @@ export abstract class DamagingTrapTag extends TrappedTag {
 
 export class BindTag extends DamagingTrapTag {
   constructor(turnCount: number, sourceId: number) {
-    super(BattlerTagType.BIND, CommonAnim.BIND, turnCount, Moves.BIND, sourceId);
+    super(BattlerTagType.BIND, CommonAnim.BIND, turnCount, MoveId.BIND, sourceId);
   }
 
   getTrapMessage(pokemon: Pokemon): string {
@@ -1479,7 +1485,7 @@ export class BindTag extends DamagingTrapTag {
 
 export class WrapTag extends DamagingTrapTag {
   constructor(turnCount: number, sourceId: number) {
-    super(BattlerTagType.WRAP, CommonAnim.WRAP, turnCount, Moves.WRAP, sourceId);
+    super(BattlerTagType.WRAP, CommonAnim.WRAP, turnCount, MoveId.WRAP, sourceId);
   }
 
   getTrapMessage(pokemon: Pokemon): string {
@@ -1491,7 +1497,13 @@ export class WrapTag extends DamagingTrapTag {
 }
 
 export abstract class VortexTrapTag extends DamagingTrapTag {
-  constructor(tagType: BattlerTagType, commonAnim: CommonAnim, turnCount: number, sourceMove: Moves, sourceId: number) {
+  constructor(
+    tagType: BattlerTagType,
+    commonAnim: CommonAnim,
+    turnCount: number,
+    sourceMove: MoveId,
+    sourceId: number,
+  ) {
     super(tagType, commonAnim, turnCount, sourceMove, sourceId);
   }
 
@@ -1504,19 +1516,19 @@ export abstract class VortexTrapTag extends DamagingTrapTag {
 
 export class FireSpinTag extends VortexTrapTag {
   constructor(turnCount: number, sourceId: number) {
-    super(BattlerTagType.FIRE_SPIN, CommonAnim.FIRE_SPIN, turnCount, Moves.FIRE_SPIN, sourceId);
+    super(BattlerTagType.FIRE_SPIN, CommonAnim.FIRE_SPIN, turnCount, MoveId.FIRE_SPIN, sourceId);
   }
 }
 
 export class WhirlpoolTag extends VortexTrapTag {
   constructor(turnCount: number, sourceId: number) {
-    super(BattlerTagType.WHIRLPOOL, CommonAnim.WHIRLPOOL, turnCount, Moves.WHIRLPOOL, sourceId);
+    super(BattlerTagType.WHIRLPOOL, CommonAnim.WHIRLPOOL, turnCount, MoveId.WHIRLPOOL, sourceId);
   }
 }
 
 export class ClampTag extends DamagingTrapTag {
   constructor(turnCount: number, sourceId: number) {
-    super(BattlerTagType.CLAMP, CommonAnim.CLAMP, turnCount, Moves.CLAMP, sourceId);
+    super(BattlerTagType.CLAMP, CommonAnim.CLAMP, turnCount, MoveId.CLAMP, sourceId);
   }
 
   getTrapMessage(pokemon: Pokemon): string {
@@ -1529,7 +1541,7 @@ export class ClampTag extends DamagingTrapTag {
 
 export class SandTombTag extends DamagingTrapTag {
   constructor(turnCount: number, sourceId: number) {
-    super(BattlerTagType.SAND_TOMB, CommonAnim.SAND_TOMB, turnCount, Moves.SAND_TOMB, sourceId);
+    super(BattlerTagType.SAND_TOMB, CommonAnim.SAND_TOMB, turnCount, MoveId.SAND_TOMB, sourceId);
   }
 
   getTrapMessage(pokemon: Pokemon): string {
@@ -1542,7 +1554,7 @@ export class SandTombTag extends DamagingTrapTag {
 
 export class MagmaStormTag extends DamagingTrapTag {
   constructor(turnCount: number, sourceId: number) {
-    super(BattlerTagType.MAGMA_STORM, CommonAnim.MAGMA_STORM, turnCount, Moves.MAGMA_STORM, sourceId);
+    super(BattlerTagType.MAGMA_STORM, CommonAnim.MAGMA_STORM, turnCount, MoveId.MAGMA_STORM, sourceId);
   }
 
   getTrapMessage(pokemon: Pokemon): string {
@@ -1554,7 +1566,7 @@ export class MagmaStormTag extends DamagingTrapTag {
 
 export class SnapTrapTag extends DamagingTrapTag {
   constructor(turnCount: number, sourceId: number) {
-    super(BattlerTagType.SNAP_TRAP, CommonAnim.SNAP_TRAP, turnCount, Moves.SNAP_TRAP, sourceId);
+    super(BattlerTagType.SNAP_TRAP, CommonAnim.SNAP_TRAP, turnCount, MoveId.SNAP_TRAP, sourceId);
   }
 
   getTrapMessage(pokemon: Pokemon): string {
@@ -1566,7 +1578,7 @@ export class SnapTrapTag extends DamagingTrapTag {
 
 export class ThunderCageTag extends DamagingTrapTag {
   constructor(turnCount: number, sourceId: number) {
-    super(BattlerTagType.THUNDER_CAGE, CommonAnim.THUNDER_CAGE, turnCount, Moves.THUNDER_CAGE, sourceId);
+    super(BattlerTagType.THUNDER_CAGE, CommonAnim.THUNDER_CAGE, turnCount, MoveId.THUNDER_CAGE, sourceId);
   }
 
   getTrapMessage(pokemon: Pokemon): string {
@@ -1579,7 +1591,7 @@ export class ThunderCageTag extends DamagingTrapTag {
 
 export class InfestationTag extends DamagingTrapTag {
   constructor(turnCount: number, sourceId: number) {
-    super(BattlerTagType.INFESTATION, CommonAnim.INFESTATION, turnCount, Moves.INFESTATION, sourceId);
+    super(BattlerTagType.INFESTATION, CommonAnim.INFESTATION, turnCount, MoveId.INFESTATION, sourceId);
   }
 
   getTrapMessage(pokemon: Pokemon): string {
@@ -1591,7 +1603,7 @@ export class InfestationTag extends DamagingTrapTag {
 }
 
 export class ProtectedTag extends BattlerTag {
-  constructor(sourceMove: Moves, tagType: BattlerTagType = BattlerTagType.PROTECTED) {
+  constructor(sourceMove: MoveId, tagType: BattlerTagType = BattlerTagType.PROTECTED) {
     super(tagType, BattlerTagLapseType.TURN_END, 0, sourceMove);
   }
 
@@ -1663,12 +1675,12 @@ export class ContactProtectedTag extends ProtectedTag {
 
 /**
  * `BattlerTag` class for moves that block damaging moves damage the enemy if the enemy's move makes contact
- * Used by {@linkcode Moves.SPIKY_SHIELD}
+ * Used by {@linkcode MoveId.SPIKY_SHIELD}
  */
 export class ContactDamageProtectedTag extends ContactProtectedTag {
   private damageRatio: number;
 
-  constructor(sourceMove: Moves, damageRatio: number) {
+  constructor(sourceMove: MoveId, damageRatio: number) {
     super(sourceMove, BattlerTagType.SPIKY_SHIELD);
     this.damageRatio = damageRatio;
   }
@@ -1708,7 +1720,7 @@ export class ContactSetStatusProtectedTag extends DamageProtectedTag {
    * @param statusEffect The status effect to apply to the attacker
    */
   constructor(
-    sourceMove: Moves,
+    sourceMove: MoveId,
     tagType: BattlerTagType,
     private statusEffect: StatusEffect,
   ) {
@@ -1727,13 +1739,13 @@ export class ContactSetStatusProtectedTag extends DamageProtectedTag {
 
 /**
  * `BattlerTag` class for moves that block damaging moves and lower enemy stats if the enemy's move makes contact
- * Used by {@linkcode Moves.KINGS_SHIELD}, {@linkcode Moves.OBSTRUCT}, {@linkcode Moves.SILK_TRAP}
+ * Used by {@linkcode MoveId.KINGS_SHIELD}, {@linkcode MoveId.OBSTRUCT}, {@linkcode MoveId.SILK_TRAP}
  */
 export class ContactStatStageChangeProtectedTag extends DamageProtectedTag {
   private stat: BattleStat;
   private levels: number;
 
-  constructor(sourceMove: Moves, tagType: BattlerTagType, stat: BattleStat, levels: number) {
+  constructor(sourceMove: MoveId, tagType: BattlerTagType, stat: BattleStat, levels: number) {
     super(sourceMove, tagType);
 
     this.stat = stat;
@@ -1766,7 +1778,7 @@ export class ContactStatStageChangeProtectedTag extends DamageProtectedTag {
  * Endure Tokens.
  */
 export class EnduringTag extends BattlerTag {
-  constructor(tagType: BattlerTagType, lapseType: BattlerTagLapseType, sourceMove: Moves) {
+  constructor(tagType: BattlerTagType, lapseType: BattlerTagLapseType, sourceMove: MoveId) {
     super(tagType, lapseType, 0, sourceMove);
   }
 
@@ -1795,7 +1807,7 @@ export class EnduringTag extends BattlerTag {
 }
 
 export class SturdyTag extends BattlerTag {
-  constructor(sourceMove: Moves) {
+  constructor(sourceMove: MoveId) {
     super(BattlerTagType.STURDY, BattlerTagLapseType.TURN_END, 0, sourceMove);
   }
 
@@ -1815,7 +1827,7 @@ export class SturdyTag extends BattlerTag {
 
 export class PerishSongTag extends BattlerTag {
   constructor(turnCount: number) {
-    super(BattlerTagType.PERISH_SONG, BattlerTagLapseType.TURN_END, turnCount, Moves.PERISH_SONG, undefined, true);
+    super(BattlerTagType.PERISH_SONG, BattlerTagLapseType.TURN_END, turnCount, MoveId.PERISH_SONG, undefined, true);
   }
 
   canAdd(pokemon: Pokemon): boolean {
@@ -1847,10 +1859,10 @@ export class PerishSongTag extends BattlerTag {
 export class CenterOfAttentionTag extends BattlerTag {
   public powder: boolean;
 
-  constructor(sourceMove: Moves) {
+  constructor(sourceMove: MoveId) {
     super(BattlerTagType.CENTER_OF_ATTENTION, BattlerTagLapseType.TURN_END, 1, sourceMove);
 
-    this.powder = this.sourceMove === Moves.RAGE_POWDER;
+    this.powder = this.sourceMove === MoveId.RAGE_POWDER;
   }
 
   /** "Center of Attention" can't be added if an ally is already the Center of Attention. */
@@ -1872,9 +1884,9 @@ export class CenterOfAttentionTag extends BattlerTag {
 }
 
 export class AbilityBattlerTag extends BattlerTag {
-  public ability: Abilities;
+  public ability: AbilityId;
 
-  constructor(tagType: BattlerTagType, ability: Abilities, lapseType: BattlerTagLapseType, turnCount: number) {
+  constructor(tagType: BattlerTagType, ability: AbilityId, lapseType: BattlerTagLapseType, turnCount: number) {
     super(tagType, lapseType, turnCount);
 
     this.ability = ability;
@@ -1886,7 +1898,7 @@ export class AbilityBattlerTag extends BattlerTag {
    */
   loadTag(source: BattlerTag | any): void {
     super.loadTag(source);
-    this.ability = source.ability as Abilities;
+    this.ability = source.ability as AbilityId;
   }
 }
 
@@ -1896,7 +1908,7 @@ export class AbilityBattlerTag extends BattlerTag {
  */
 export class UnburdenTag extends AbilityBattlerTag {
   constructor() {
-    super(BattlerTagType.UNBURDEN, Abilities.UNBURDEN, BattlerTagLapseType.CUSTOM, 1);
+    super(BattlerTagType.UNBURDEN, AbilityId.UNBURDEN, BattlerTagLapseType.CUSTOM, 1);
   }
   onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
@@ -1908,18 +1920,18 @@ export class UnburdenTag extends AbilityBattlerTag {
 
 export class TruantTag extends AbilityBattlerTag {
   constructor() {
-    super(BattlerTagType.TRUANT, Abilities.TRUANT, BattlerTagLapseType.MOVE, 1);
+    super(BattlerTagType.TRUANT, AbilityId.TRUANT, BattlerTagLapseType.MOVE, 1);
   }
 
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
-    if (!pokemon.hasAbility(Abilities.TRUANT)) {
+    if (!pokemon.hasAbility(AbilityId.TRUANT)) {
       return super.lapse(pokemon, lapseType);
     }
-    const passive = pokemon.getAbility().id !== Abilities.TRUANT;
+    const passive = pokemon.getAbility().id !== AbilityId.TRUANT;
 
     const lastMove = pokemon.getLastXMoves().find(() => true);
 
-    if (lastMove && lastMove.move !== Moves.NONE) {
+    if (lastMove && lastMove.move !== MoveId.NONE) {
       (globalScene.getCurrentPhase() as MovePhase).cancel();
       // TODO: Ability displays should be handled by the ability
       globalScene.queueAbilityDisplay(pokemon, passive, true);
@@ -1937,7 +1949,7 @@ export class TruantTag extends AbilityBattlerTag {
 
 export class SlowStartTag extends AbilityBattlerTag {
   constructor() {
-    super(BattlerTagType.SLOW_START, Abilities.SLOW_START, BattlerTagLapseType.TURN_END, 5);
+    super(BattlerTagType.SLOW_START, AbilityId.SLOW_START, BattlerTagLapseType.TURN_END, 5);
   }
 
   onAdd(pokemon: Pokemon): void {
@@ -1976,7 +1988,7 @@ export class HighestStatBoostTag extends AbilityBattlerTag {
   public stat: Stat;
   public multiplier: number;
 
-  constructor(tagType: BattlerTagType, ability: Abilities) {
+  constructor(tagType: BattlerTagType, ability: AbilityId) {
     super(tagType, ability, BattlerTagLapseType.CUSTOM, 1);
   }
 
@@ -2035,7 +2047,7 @@ export class HighestStatBoostTag extends AbilityBattlerTag {
 export class WeatherHighestStatBoostTag extends HighestStatBoostTag implements WeatherBattlerTag {
   public weatherTypes: WeatherType[];
 
-  constructor(tagType: BattlerTagType, ability: Abilities, ...weatherTypes: WeatherType[]) {
+  constructor(tagType: BattlerTagType, ability: AbilityId, ...weatherTypes: WeatherType[]) {
     super(tagType, ability);
     this.weatherTypes = weatherTypes;
   }
@@ -2053,7 +2065,7 @@ export class WeatherHighestStatBoostTag extends HighestStatBoostTag implements W
 export class TerrainHighestStatBoostTag extends HighestStatBoostTag implements TerrainBattlerTag {
   public terrainTypes: TerrainType[];
 
-  constructor(tagType: BattlerTagType, ability: Abilities, ...terrainTypes: TerrainType[]) {
+  constructor(tagType: BattlerTagType, ability: AbilityId, ...terrainTypes: TerrainType[]) {
     super(tagType, ability);
     this.terrainTypes = terrainTypes;
   }
@@ -2069,7 +2081,7 @@ export class TerrainHighestStatBoostTag extends HighestStatBoostTag implements T
 }
 
 export class SemiInvulnerableTag extends BattlerTag {
-  constructor(tagType: BattlerTagType, turnCount: number, sourceMove: Moves) {
+  constructor(tagType: BattlerTagType, turnCount: number, sourceMove: MoveId) {
     super(tagType, BattlerTagLapseType.MOVE_EFFECT, turnCount, sourceMove);
   }
 
@@ -2091,7 +2103,7 @@ export class SemiInvulnerableTag extends BattlerTag {
 export class TypeImmuneTag extends BattlerTag {
   public immuneType: PokemonType;
 
-  constructor(tagType: BattlerTagType, sourceMove: Moves, immuneType: PokemonType, length = 1) {
+  constructor(tagType: BattlerTagType, sourceMove: MoveId, immuneType: PokemonType, length = 1) {
     super(tagType, BattlerTagLapseType.TURN_END, length, sourceMove, undefined, true);
 
     this.immuneType = immuneType;
@@ -2109,18 +2121,18 @@ export class TypeImmuneTag extends BattlerTag {
 
 /**
  * Battler Tag that lifts the affected Pokemon into the air and provides immunity to Ground type moves.
- * @see {@link https://bulbapedia.bulbagarden.net/wiki/Magnet_Rise_(move) | Moves.MAGNET_RISE}
- * @see {@link https://bulbapedia.bulbagarden.net/wiki/Telekinesis_(move) | Moves.TELEKINESIS}
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Magnet_Rise_(move) | MoveId.MAGNET_RISE}
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Telekinesis_(move) | MoveId.TELEKINESIS}
  */
 export class FloatingTag extends TypeImmuneTag {
-  constructor(tagType: BattlerTagType, sourceMove: Moves, turnCount: number) {
+  constructor(tagType: BattlerTagType, sourceMove: MoveId, turnCount: number) {
     super(tagType, sourceMove, PokemonType.GROUND, turnCount);
   }
 
   onAdd(pokemon: Pokemon): void {
     super.onAdd(pokemon);
 
-    if (this.sourceMove === Moves.MAGNET_RISE) {
+    if (this.sourceMove === MoveId.MAGNET_RISE) {
       globalScene.queueMessage(
         i18next.t("battlerTags:magnetRisenOnAdd", {
           pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
@@ -2131,7 +2143,7 @@ export class FloatingTag extends TypeImmuneTag {
 
   onRemove(pokemon: Pokemon): void {
     super.onRemove(pokemon);
-    if (this.sourceMove === Moves.MAGNET_RISE) {
+    if (this.sourceMove === MoveId.MAGNET_RISE) {
       globalScene.queueMessage(
         i18next.t("battlerTags:magnetRisenOnRemove", {
           pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
@@ -2148,7 +2160,7 @@ export class TypeBoostTag extends BattlerTag {
 
   constructor(
     tagType: BattlerTagType,
-    sourceMove: Moves,
+    sourceMove: MoveId,
     boostedType: PokemonType,
     boostValue: number,
     oneUse: boolean,
@@ -2192,7 +2204,7 @@ export class TypeBoostTag extends BattlerTag {
 }
 
 export class CritBoostTag extends BattlerTag {
-  constructor(tagType: BattlerTagType, sourceMove: Moves) {
+  constructor(tagType: BattlerTagType, sourceMove: MoveId) {
     super(tagType, BattlerTagLapseType.TURN_END, 1, sourceMove, undefined, true);
   }
 
@@ -2230,7 +2242,7 @@ export class DragonCheerTag extends CritBoostTag {
   public typesOnAdd: PokemonType[];
 
   constructor() {
-    super(BattlerTagType.CRIT_BOOST, Moves.DRAGON_CHEER);
+    super(BattlerTagType.CRIT_BOOST, MoveId.DRAGON_CHEER);
   }
 
   onAdd(pokemon: Pokemon): void {
@@ -2244,7 +2256,7 @@ export class SaltCuredTag extends BattlerTag {
   private sourceIndex: number;
 
   constructor(sourceId: number) {
-    super(BattlerTagType.SALT_CURED, BattlerTagLapseType.TURN_END, 1, Moves.SALT_CURE, sourceId);
+    super(BattlerTagType.SALT_CURED, BattlerTagLapseType.TURN_END, 1, MoveId.SALT_CURE, sourceId);
   }
 
   /**
@@ -2301,7 +2313,7 @@ export class CursedTag extends BattlerTag {
   private sourceIndex: number;
 
   constructor(sourceId: number) {
-    super(BattlerTagType.CURSED, BattlerTagLapseType.TURN_END, 1, Moves.CURSE, sourceId, true);
+    super(BattlerTagType.CURSED, BattlerTagLapseType.TURN_END, 1, MoveId.CURSE, sourceId, true);
   }
 
   /**
@@ -2346,7 +2358,7 @@ export class CursedTag extends BattlerTag {
  * Battler tag for attacks that remove a type post use.
  */
 export class RemovedTypeTag extends BattlerTag {
-  constructor(tagType: BattlerTagType, lapseType: BattlerTagLapseType, sourceMove: Moves) {
+  constructor(tagType: BattlerTagType, lapseType: BattlerTagLapseType, sourceMove: MoveId) {
     super(tagType, lapseType, 1, sourceMove);
   }
 }
@@ -2356,7 +2368,7 @@ export class RemovedTypeTag extends BattlerTag {
  * @description `IGNORE_FLYING`: Persistent grounding effects (i.e. from Smack Down and Thousand Waves)
  */
 export class GroundedTag extends BattlerTag {
-  constructor(tagType: BattlerTagType, lapseType: BattlerTagLapseType, sourceMove: Moves) {
+  constructor(tagType: BattlerTagType, lapseType: BattlerTagLapseType, sourceMove: MoveId) {
     super(tagType, lapseType, 1, sourceMove);
   }
 }
@@ -2371,7 +2383,7 @@ export class RoostedTag extends BattlerTag {
   private isBasePureFlying: boolean;
 
   constructor() {
-    super(BattlerTagType.ROOSTED, BattlerTagLapseType.TURN_END, 1, Moves.ROOST);
+    super(BattlerTagType.ROOSTED, BattlerTagLapseType.TURN_END, 1, MoveId.ROOST);
   }
 
   onRemove(pokemon: Pokemon): void {
@@ -2489,7 +2501,7 @@ export class CommandedTag extends BattlerTag {
   private _tatsugiriFormKey: string;
 
   constructor(sourceId: number) {
-    super(BattlerTagType.COMMANDED, BattlerTagLapseType.CUSTOM, 0, Moves.NONE, sourceId);
+    super(BattlerTagType.COMMANDED, BattlerTagLapseType.CUSTOM, 0, MoveId.NONE, sourceId);
   }
 
   public get tatsugiriFormKey(): string {
@@ -2539,7 +2551,7 @@ export class StockpilingTag extends BattlerTag {
     [Stat.SPDEF]: 0,
   };
 
-  constructor(sourceMove: Moves = Moves.NONE) {
+  constructor(sourceMove: MoveId = MoveId.NONE) {
     super(BattlerTagType.STOCKPILING, BattlerTagLapseType.CUSTOM, 1, sourceMove);
   }
 
@@ -2628,7 +2640,7 @@ export class StockpilingTag extends BattlerTag {
  * @extends BattlerTag
  */
 export class GulpMissileTag extends BattlerTag {
-  constructor(tagType: BattlerTagType, sourceMove: Moves) {
+  constructor(tagType: BattlerTagType, sourceMove: MoveId) {
     super(tagType, BattlerTagLapseType.HIT, 0, sourceMove);
   }
 
@@ -2671,12 +2683,12 @@ export class GulpMissileTag extends BattlerTag {
    * @returns Whether the BattlerTag can be added.
    */
   canAdd(pokemon: Pokemon): boolean {
-    const isSurfOrDive = [Moves.SURF, Moves.DIVE].includes(this.sourceMove);
+    const isSurfOrDive = [MoveId.SURF, MoveId.DIVE].includes(this.sourceMove);
     const isNormalForm =
       pokemon.formIndex === 0 &&
       !pokemon.getTag(BattlerTagType.GULP_MISSILE_ARROKUDA) &&
       !pokemon.getTag(BattlerTagType.GULP_MISSILE_PIKACHU);
-    const isCramorant = pokemon.species.speciesId === Species.CRAMORANT;
+    const isCramorant = pokemon.species.speciesId === SpeciesId.CRAMORANT;
 
     return isSurfOrDive && isNormalForm && isCramorant;
   }
@@ -2696,8 +2708,8 @@ export class GulpMissileTag extends BattlerTag {
  * Tag that makes the target drop all of it type immunities
  * and all accuracy checks ignore its evasiveness stat.
  *
- * Applied by moves: {@linkcode Moves.ODOR_SLEUTH | Odor Sleuth},
- * {@linkcode Moves.MIRACLE_EYE | Miracle Eye} and {@linkcode Moves.FORESIGHT | Foresight}.
+ * Applied by moves: {@linkcode MoveId.ODOR_SLEUTH | Odor Sleuth},
+ * {@linkcode MoveId.MIRACLE_EYE | Miracle Eye} and {@linkcode MoveId.FORESIGHT | Foresight}.
  *
  * @extends BattlerTag
  * @see {@linkcode ignoreImmunity}
@@ -2706,7 +2718,7 @@ export class ExposedTag extends BattlerTag {
   private defenderType: PokemonType;
   private allowedTypes: PokemonType[];
 
-  constructor(tagType: BattlerTagType, sourceMove: Moves, defenderType: PokemonType, allowedTypes: PokemonType[]) {
+  constructor(tagType: BattlerTagType, sourceMove: MoveId, defenderType: PokemonType, allowedTypes: PokemonType[]) {
     super(tagType, BattlerTagLapseType.CUSTOM, 1, sourceMove);
     this.defenderType = defenderType;
     this.allowedTypes = allowedTypes;
@@ -2734,12 +2746,12 @@ export class ExposedTag extends BattlerTag {
 
 /**
  * Tag that prevents HP recovery from held items and move effects. It also blocks the usage of recovery moves.
- * Applied by moves:  {@linkcode Moves.HEAL_BLOCK | Heal Block (5 turns)}, {@linkcode Moves.PSYCHIC_NOISE | Psychic Noise (2 turns)}
+ * Applied by moves:  {@linkcode MoveId.HEAL_BLOCK | Heal Block (5 turns)}, {@linkcode MoveId.PSYCHIC_NOISE | Psychic Noise (2 turns)}
  *
  * @extends MoveRestrictionBattlerTag
  */
 export class HealBlockTag extends MoveRestrictionBattlerTag {
-  constructor(turnCount: number, sourceMove: Moves) {
+  constructor(turnCount: number, sourceMove: MoveId) {
     super(
       BattlerTagType.HEAL_BLOCK,
       [BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.TURN_END],
@@ -2756,10 +2768,10 @@ export class HealBlockTag extends MoveRestrictionBattlerTag {
 
   /**
    * Checks if a move is disabled under Heal Block
-   * @param {Moves} move {@linkcode Moves} the move ID
+   * @param {MoveId} move {@linkcode MoveId} the move ID
    * @returns `true` if the move has a TRIAGE_MOVE flag and is a status move
    */
-  override isMoveRestricted(move: Moves): boolean {
+  override isMoveRestricted(move: MoveId): boolean {
     if (allMoves[move].hasFlag(MoveFlags.TRIAGE_MOVE) && allMoves[move].category === MoveCategory.STATUS) {
       return true;
     }
@@ -2769,12 +2781,12 @@ export class HealBlockTag extends MoveRestrictionBattlerTag {
   /**
    * Checks if a move is disabled under Heal Block because of its choice of target
    * Implemented b/c of Pollen Puff
-   * @param {Moves} move {@linkcode Moves} the move ID
+   * @param {MoveId} move {@linkcode MoveId} the move ID
    * @param {Pokemon} user {@linkcode Pokemon} the move user
    * @param {Pokemon} target {@linkcode Pokemon} the target of the move
    * @returns `true` if the move cannot be used because the target is an ally
    */
-  override isMoveTargetRestricted(move: Moves, user: Pokemon, target: Pokemon) {
+  override isMoveTargetRestricted(move: MoveId, user: Pokemon, target: Pokemon) {
     const moveCategory = new NumberHolder(allMoves[move].category);
     applyMoveAttrs(StatusCategoryOnAllyAttr, user, target, allMoves[move], moveCategory);
     if (allMoves[move].hasAttr(HealOnAllyAttr) && moveCategory.value === MoveCategory.STATUS) {
@@ -2786,25 +2798,25 @@ export class HealBlockTag extends MoveRestrictionBattlerTag {
   /**
    * Uses its own unique selectionDeniedText() message
    */
-  override selectionDeniedText(pokemon: Pokemon, move: Moves): string {
+  override selectionDeniedText(pokemon: Pokemon, move: MoveId): string {
     return i18next.t("battle:moveDisabledHealBlock", {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
       moveName: allMoves[move].name,
-      healBlockName: allMoves[Moves.HEAL_BLOCK].name,
+      healBlockName: allMoves[MoveId.HEAL_BLOCK].name,
     });
   }
 
   /**
    * @override
    * @param {Pokemon} pokemon {@linkcode Pokemon} attempting to use the restricted move
-   * @param {Moves} move {@linkcode Moves} ID of the move being interrupted
+   * @param {MoveId} move {@linkcode MoveId} ID of the move being interrupted
    * @returns {string} text to display when the move is interrupted
    */
-  override interruptedText(pokemon: Pokemon, move: Moves): string {
+  override interruptedText(pokemon: Pokemon, move: MoveId): string {
     return i18next.t("battle:moveDisabledHealBlock", {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
       moveName: allMoves[move].name,
-      healBlockName: allMoves[Moves.HEAL_BLOCK].name,
+      healBlockName: allMoves[MoveId.HEAL_BLOCK].name,
     });
   }
 
@@ -2855,7 +2867,7 @@ export class TarShotTag extends BattlerTag {
  */
 export class ElectrifiedTag extends BattlerTag {
   constructor() {
-    super(BattlerTagType.ELECTRIFIED, BattlerTagLapseType.TURN_END, 1, Moves.ELECTRIFY);
+    super(BattlerTagType.ELECTRIFIED, BattlerTagLapseType.TURN_END, 1, MoveId.ELECTRIFY);
   }
 
   override onAdd(pokemon: Pokemon): void {
@@ -2874,7 +2886,7 @@ export class ElectrifiedTag extends BattlerTag {
  */
 export class AutotomizedTag extends BattlerTag {
   public autotomizeCount = 0;
-  constructor(sourceMove: Moves = Moves.AUTOTOMIZE) {
+  constructor(sourceMove: MoveId = MoveId.AUTOTOMIZE) {
     super(BattlerTagType.AUTOTOMIZED, BattlerTagLapseType.CUSTOM, 1, sourceMove);
   }
 
@@ -2913,7 +2925,7 @@ export class SubstituteTag extends BattlerTag {
   /** Is the source Pokemon "in focus," i.e. is it fully visible on the field? */
   public sourceInFocus: boolean;
 
-  constructor(sourceMove: Moves, sourceId: number) {
+  constructor(sourceMove: MoveId, sourceId: number) {
     super(
       BattlerTagType.SUBSTITUTE,
       [BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.AFTER_MOVE, BattlerTagLapseType.HIT],
@@ -2931,7 +2943,7 @@ export class SubstituteTag extends BattlerTag {
 
     // Queue battle animation and message
     globalScene.triggerPokemonBattleAnim(pokemon, PokemonAnimType.SUBSTITUTE_ADD);
-    if (this.sourceMove === Moves.SHED_TAIL) {
+    if (this.sourceMove === MoveId.SHED_TAIL) {
       globalScene.queueMessage(
         i18next.t("battlerTags:shedTailOnAdd", {
           pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
@@ -3072,7 +3084,7 @@ export class MysteryEncounterPostSummonTag extends BattlerTag {
  */
 export class TormentTag extends MoveRestrictionBattlerTag {
   constructor(sourceId: number) {
-    super(BattlerTagType.TORMENT, BattlerTagLapseType.AFTER_MOVE, 1, Moves.TORMENT, sourceId);
+    super(BattlerTagType.TORMENT, BattlerTagLapseType.AFTER_MOVE, 1, MoveId.TORMENT, sourceId);
   }
 
   /**
@@ -3102,10 +3114,10 @@ export class TormentTag extends MoveRestrictionBattlerTag {
 
   /**
    * This checks if the current move used is identical to the last used move with a {@linkcode MoveResult} of `SUCCESS`/`MISS`
-   * @param {Moves} move the move under investigation
+   * @param {MoveId} move the move under investigation
    * @returns `true` if there is valid consecutive usage | `false` if the moves are different from each other
    */
-  public override isMoveRestricted(move: Moves, user: Pokemon): boolean {
+  public override isMoveRestricted(move: MoveId, user: Pokemon): boolean {
     if (!user) {
       return false;
     }
@@ -3118,13 +3130,13 @@ export class TormentTag extends MoveRestrictionBattlerTag {
     const moveObj = allMoves[lastMove.move];
     const isUnaffected = moveObj.hasAttr(ConsecutiveUseDoublePowerAttr) || user.getTag(BattlerTagType.FRENZY);
     const validLastMoveResult = lastMove.result === MoveResult.SUCCESS || lastMove.result === MoveResult.MISS;
-    if (lastMove.move === move && validLastMoveResult && lastMove.move !== Moves.STRUGGLE && !isUnaffected) {
+    if (lastMove.move === move && validLastMoveResult && lastMove.move !== MoveId.STRUGGLE && !isUnaffected) {
       return true;
     }
     return false;
   }
 
-  override selectionDeniedText(pokemon: Pokemon, _move: Moves): string {
+  override selectionDeniedText(pokemon: Pokemon, _move: MoveId): string {
     return i18next.t("battle:moveDisabledTorment", {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
     });
@@ -3138,7 +3150,7 @@ export class TormentTag extends MoveRestrictionBattlerTag {
  */
 export class TauntTag extends MoveRestrictionBattlerTag {
   constructor() {
-    super(BattlerTagType.TAUNT, [BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.AFTER_MOVE], 4, Moves.TAUNT);
+    super(BattlerTagType.TAUNT, [BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.AFTER_MOVE], 4, MoveId.TAUNT);
   }
 
   override onAdd(pokemon: Pokemon) {
@@ -3163,21 +3175,21 @@ export class TauntTag extends MoveRestrictionBattlerTag {
 
   /**
    * Checks if a move is a status move and determines its restriction status on that basis
-   * @param {Moves} move the move under investigation
+   * @param {MoveId} move the move under investigation
    * @returns `true` if the move is a status move
    */
-  override isMoveRestricted(move: Moves): boolean {
+  override isMoveRestricted(move: MoveId): boolean {
     return allMoves[move].category === MoveCategory.STATUS;
   }
 
-  override selectionDeniedText(pokemon: Pokemon, move: Moves): string {
+  override selectionDeniedText(pokemon: Pokemon, move: MoveId): string {
     return i18next.t("battle:moveDisabledTaunt", {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
       moveName: allMoves[move].name,
     });
   }
 
-  override interruptedText(pokemon: Pokemon, move: Moves): string {
+  override interruptedText(pokemon: Pokemon, move: MoveId): string {
     return i18next.t("battle:moveDisabledTaunt", {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
       moveName: allMoves[move].name,
@@ -3196,7 +3208,7 @@ export class ImprisonTag extends MoveRestrictionBattlerTag {
       BattlerTagType.IMPRISON,
       [BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.AFTER_MOVE],
       1,
-      Moves.IMPRISON,
+      MoveId.IMPRISON,
       sourceId,
     );
   }
@@ -3221,10 +3233,10 @@ export class ImprisonTag extends MoveRestrictionBattlerTag {
   /**
    * Checks if the source of the tag has the parameter move in its moveset and that the source is still active
    * @override
-   * @param {Moves} move the move under investigation
+   * @param {MoveId} move the move under investigation
    * @returns `false` if either condition is not met
    */
-  public override isMoveRestricted(move: Moves, _user: Pokemon): boolean {
+  public override isMoveRestricted(move: MoveId, _user: Pokemon): boolean {
     const source = this.getSourcePokemon();
     if (source) {
       const sourceMoveset = source.getMoveset().map(m => m.moveId);
@@ -3233,14 +3245,14 @@ export class ImprisonTag extends MoveRestrictionBattlerTag {
     return false;
   }
 
-  override selectionDeniedText(pokemon: Pokemon, move: Moves): string {
+  override selectionDeniedText(pokemon: Pokemon, move: MoveId): string {
     return i18next.t("battle:moveDisabledImprison", {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
       moveName: allMoves[move].name,
     });
   }
 
-  override interruptedText(pokemon: Pokemon, move: Moves): string {
+  override interruptedText(pokemon: Pokemon, move: MoveId): string {
     return i18next.t("battle:moveDisabledImprison", {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
       moveName: allMoves[move].name,
@@ -3255,7 +3267,7 @@ export class ImprisonTag extends MoveRestrictionBattlerTag {
  */
 export class SyrupBombTag extends BattlerTag {
   constructor(sourceId: number) {
-    super(BattlerTagType.SYRUP_BOMB, BattlerTagLapseType.TURN_END, 3, Moves.SYRUP_BOMB, sourceId);
+    super(BattlerTagType.SYRUP_BOMB, BattlerTagLapseType.TURN_END, 3, MoveId.SYRUP_BOMB, sourceId);
   }
 
   /**
@@ -3298,10 +3310,10 @@ export class SyrupBombTag extends BattlerTag {
  * Telekinesis raises the target into the air for three turns and causes all moves used against the target (aside from OHKO moves) to hit the target unless the target is in a semi-invulnerable state from Fly/Dig.
  * The first effect is provided by {@linkcode FloatingTag}, the accuracy-bypass effect is provided by TelekinesisTag
  * The effects of Telekinesis can be baton passed to a teammate.
- * @see {@link https://bulbapedia.bulbagarden.net/wiki/Telekinesis_(move) | Moves.TELEKINESIS}
+ * @see {@link https://bulbapedia.bulbagarden.net/wiki/Telekinesis_(move) | MoveId.TELEKINESIS}
  */
 export class TelekinesisTag extends BattlerTag {
-  constructor(sourceMove: Moves) {
+  constructor(sourceMove: MoveId) {
     super(
       BattlerTagType.TELEKINESIS,
       [BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.AFTER_MOVE],
@@ -3326,7 +3338,7 @@ export class TelekinesisTag extends BattlerTag {
  * @extends BattlerTag
  */
 export class PowerTrickTag extends BattlerTag {
-  constructor(sourceMove: Moves, sourceId: number) {
+  constructor(sourceMove: MoveId, sourceId: number) {
     super(BattlerTagType.POWER_TRICK, BattlerTagLapseType.CUSTOM, 0, sourceMove, sourceId, true);
   }
 
@@ -3374,7 +3386,7 @@ export class PowerTrickTag extends BattlerTag {
  */
 export class GrudgeTag extends BattlerTag {
   constructor() {
-    super(BattlerTagType.GRUDGE, [BattlerTagLapseType.CUSTOM, BattlerTagLapseType.PRE_MOVE], 1, Moves.GRUDGE);
+    super(BattlerTagType.GRUDGE, [BattlerTagLapseType.CUSTOM, BattlerTagLapseType.PRE_MOVE], 1, MoveId.GRUDGE);
   }
 
   onAdd(pokemon: Pokemon) {
@@ -3398,7 +3410,7 @@ export class GrudgeTag extends BattlerTag {
       if (sourcePokemon.isActive() && pokemon.isOpponent(sourcePokemon)) {
         const lastMove = pokemon.turnData.attacksReceived[0];
         const lastMoveData = sourcePokemon.getMoveset().find(m => m.moveId === lastMove.move);
-        if (lastMoveData && lastMove.move !== Moves.STRUGGLE) {
+        if (lastMoveData && lastMove.move !== MoveId.STRUGGLE) {
           lastMoveData.ppUsed = lastMoveData.getMovePp();
           globalScene.queueMessage(
             i18next.t("battlerTags:grudgeLapse", {
@@ -3419,7 +3431,7 @@ export class GrudgeTag extends BattlerTag {
  */
 export class PsychoShiftTag extends BattlerTag {
   constructor() {
-    super(BattlerTagType.PSYCHO_SHIFT, BattlerTagLapseType.AFTER_MOVE, 1, Moves.PSYCHO_SHIFT);
+    super(BattlerTagType.PSYCHO_SHIFT, BattlerTagLapseType.AFTER_MOVE, 1, MoveId.PSYCHO_SHIFT);
   }
 
   /**
@@ -3441,7 +3453,7 @@ export class PsychoShiftTag extends BattlerTag {
  */
 export class MagicCoatTag extends BattlerTag {
   constructor() {
-    super(BattlerTagType.MAGIC_COAT, BattlerTagLapseType.TURN_END, 1, Moves.MAGIC_COAT);
+    super(BattlerTagType.MAGIC_COAT, BattlerTagLapseType.TURN_END, 1, MoveId.MAGIC_COAT);
   }
 
   /**
@@ -3466,7 +3478,7 @@ export class MagicCoatTag extends BattlerTag {
 export function getBattlerTag(
   tagType: BattlerTagType,
   turnCount: number,
-  sourceMove: Moves,
+  sourceMove: MoveId,
   sourceId: number,
 ): BattlerTag {
   switch (tagType) {
@@ -3559,12 +3571,12 @@ export function getBattlerTag(
     case BattlerTagType.PROTOSYNTHESIS:
       return new WeatherHighestStatBoostTag(
         tagType,
-        Abilities.PROTOSYNTHESIS,
+        AbilityId.PROTOSYNTHESIS,
         WeatherType.SUNNY,
         WeatherType.HARSH_SUN,
       );
     case BattlerTagType.QUARK_DRIVE:
-      return new TerrainHighestStatBoostTag(tagType, Abilities.QUARK_DRIVE, TerrainType.ELECTRIC);
+      return new TerrainHighestStatBoostTag(tagType, AbilityId.QUARK_DRIVE, TerrainType.ELECTRIC);
     case BattlerTagType.FLYING:
     case BattlerTagType.UNDERGROUND:
     case BattlerTagType.UNDERWATER:
