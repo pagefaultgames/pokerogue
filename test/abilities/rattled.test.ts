@@ -37,15 +37,15 @@ describe("Abilities - Rattled", () => {
     // `runToSummon` used instead of `startBattle` to avoid skipping past initial "post send out" effects
     await game.classicMode.runToSummon([SpeciesId.GIMMIGHOUL]);
 
-    const playerPokemon = game.scene.getPlayerPokemon();
+    const playerPokemon = game.field.getPlayerPokemon();
     await game.phaseInterceptor.to("StatStageChangePhase");
 
-    expect(playerPokemon!.getStatStage(Stat.ATK)).toBe(-1);
-    expect(playerPokemon!.getStatStage(Stat.SPD)).toBe(0);
+    expect(playerPokemon.getStatStage(Stat.ATK)).toBe(-1);
+    expect(playerPokemon.getStatStage(Stat.SPD)).toBe(0);
 
     await game.phaseInterceptor.to("StatStageChangePhase");
 
-    expect(playerPokemon!.getStatStage(Stat.ATK)).toBe(-1);
-    expect(playerPokemon!.getStatStage(Stat.SPD)).toBe(1);
+    expect(playerPokemon.getStatStage(Stat.ATK)).toBe(-1);
+    expect(playerPokemon.getStatStage(Stat.SPD)).toBe(1);
   });
 });
