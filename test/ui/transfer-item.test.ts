@@ -1,7 +1,7 @@
 import { BerryType } from "#app/enums/berry-type";
 import { Button } from "#app/enums/buttons";
-import { Moves } from "#app/enums/moves";
-import { Species } from "#app/enums/species";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 import PartyUiHandler, { PartyUiMode } from "#app/ui/party-ui-handler";
 import { UiMode } from "#enums/ui-mode";
@@ -34,13 +34,13 @@ describe("UI - Transfer Items", () => {
       { name: "BERRY", count: 2, type: BerryType.APICOT },
       { name: "BERRY", count: 2, type: BerryType.LUM },
     ]);
-    game.override.moveset([Moves.DRAGON_CLAW]);
-    game.override.enemySpecies(Species.MAGIKARP);
-    game.override.enemyMoveset([Moves.SPLASH]);
+    game.override.moveset([MoveId.DRAGON_CLAW]);
+    game.override.enemySpecies(SpeciesId.MAGIKARP);
+    game.override.enemyMoveset([MoveId.SPLASH]);
 
-    await game.classicMode.startBattle([Species.RAYQUAZA, Species.RAYQUAZA, Species.RAYQUAZA]);
+    await game.classicMode.startBattle([SpeciesId.RAYQUAZA, SpeciesId.RAYQUAZA, SpeciesId.RAYQUAZA]);
 
-    game.move.select(Moves.DRAGON_CLAW);
+    game.move.select(MoveId.DRAGON_CLAW);
 
     game.onNextPrompt("SelectModifierPhase", UiMode.MODIFIER_SELECT, () => {
       expect(game.scene.ui.getHandler()).toBeInstanceOf(ModifierSelectUiHandler);

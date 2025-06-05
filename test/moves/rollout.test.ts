@@ -1,8 +1,8 @@
 import { allMoves } from "#app/data/data-lists";
 import { CommandPhase } from "#app/phases/command-phase";
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import { AbilityId } from "#enums/ability-id";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -25,24 +25,24 @@ describe("Moves - Rollout", () => {
     game = new GameManager(phaserGame);
     game.override.disableCrits();
     game.override.battleStyle("single");
-    game.override.starterSpecies(Species.RATTATA);
-    game.override.ability(Abilities.BALL_FETCH);
-    game.override.enemySpecies(Species.BIDOOF);
-    game.override.enemyAbility(Abilities.BALL_FETCH);
+    game.override.starterSpecies(SpeciesId.RATTATA);
+    game.override.ability(AbilityId.BALL_FETCH);
+    game.override.enemySpecies(SpeciesId.BIDOOF);
+    game.override.enemyAbility(AbilityId.BALL_FETCH);
     game.override.startingLevel(100);
     game.override.enemyLevel(100);
-    game.override.enemyMoveset(Moves.SPLASH);
+    game.override.enemyMoveset(MoveId.SPLASH);
   });
 
   it("should double it's dmg on sequential uses but reset after 5", async () => {
-    game.override.moveset([Moves.ROLLOUT]);
-    vi.spyOn(allMoves[Moves.ROLLOUT], "accuracy", "get").mockReturnValue(100); //always hit
+    game.override.moveset([MoveId.ROLLOUT]);
+    vi.spyOn(allMoves[MoveId.ROLLOUT], "accuracy", "get").mockReturnValue(100); //always hit
 
     const variance = 5;
     const turns = 6;
     const dmgHistory: number[] = [];
 
-    await game.startBattle();
+    await game.classicMode.startBattle();
 
     const playerPkm = game.scene.getPlayerParty()[0];
     vi.spyOn(playerPkm, "stats", "get").mockReturnValue([500000, 1, 1, 1, 1, 1]); // HP, ATK, DEF, SPATK, SPDEF, SPD
@@ -55,7 +55,7 @@ describe("Moves - Rollout", () => {
     let previousHp = enemyPkm.hp;
 
     for (let i = 0; i < turns; i++) {
-      game.move.select(Moves.ROLLOUT);
+      game.move.select(MoveId.ROLLOUT);
       await game.phaseInterceptor.to(CommandPhase);
 
       dmgHistory.push(previousHp - enemyPkm.hp);
