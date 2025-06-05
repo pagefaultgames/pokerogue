@@ -8771,7 +8771,8 @@ export function initMoves() {
       .attr(HealAttr, 1, true)
       .attr(RestAttr, 3)
       .condition((user, target, move) => !user.isFullHp() && user.canSetStatus(StatusEffect.SLEEP, true, true, user))
-      .triageMove(),
+      .triageMove()
+      .edgeCase(), // Lacks unique message in favor of displaying messages for both heal/status cure
     new AttackMove(MoveId.ROCK_SLIDE, PokemonType.ROCK, MoveCategory.PHYSICAL, 75, 90, 10, 30, 0, 1)
       .attr(FlinchAttr)
       .makesContact(false)
