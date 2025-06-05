@@ -1,6 +1,6 @@
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import { AbilityId } from "#enums/ability-id";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -22,21 +22,21 @@ describe("Abilities - Innards Out", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .ability(Abilities.BALL_FETCH)
+      .ability(AbilityId.BALL_FETCH)
       .battleStyle("single")
       .disableCrits()
-      .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.INNARDS_OUT)
-      .enemyMoveset(Moves.SPLASH)
+      .enemySpecies(SpeciesId.MAGIKARP)
+      .enemyAbility(AbilityId.INNARDS_OUT)
+      .enemyMoveset(MoveId.SPLASH)
       .startingLevel(100);
   });
 
   it("should damage opppnents that faint the ability holder for equal damage", async () => {
-    await game.classicMode.startBattle([Species.FEEBAS]);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
     const magikarp = game.field.getEnemyPokemon();
     magikarp.hp = 20;
-    game.move.use(Moves.X_SCISSOR);
+    game.move.use(MoveId.X_SCISSOR);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(magikarp.isFainted()).toBe(true);
@@ -46,14 +46,14 @@ describe("Abilities - Innards Out", () => {
 
   it("should not damage an ally in Double Battles", async () => {
     game.override.battleStyle("double");
-    await game.classicMode.startBattle([Species.FEEBAS]);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
     const [magikarp1, magikarp2] = game.scene.getEnemyField();
     magikarp1.hp = 1;
 
-    game.move.use(Moves.PROTECT);
-    await game.move.forceEnemyMove(Moves.SPLASH);
-    await game.move.forceEnemyMove(Moves.SURF);
+    game.move.use(MoveId.PROTECT);
+    await game.move.forceEnemyMove(MoveId.SPLASH);
+    await game.move.forceEnemyMove(MoveId.SURF);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(magikarp1.isFainted()).toBe(true);
