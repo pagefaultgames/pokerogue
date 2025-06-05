@@ -138,6 +138,7 @@ export class SwitchSummonPhase extends SummonPhase {
       return;
     }
 
+
     if (this.switchType === SwitchType.BATON_PASS) {
       // If switching via baton pass, update opposing tags coming from the prior pokemon
       (this.player ? globalScene.getEnemyField() : globalScene.getPlayerField()).forEach((enemyPokemon: Pokemon) =>
