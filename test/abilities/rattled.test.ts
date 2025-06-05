@@ -33,7 +33,7 @@ describe("Abilities - Rattled", () => {
       .enemyMoveset(MoveId.PIN_MISSILE);
   });
 
-  it("should reduce attack and then increase speed", async () => {
+  it("should trigger and boost speed immediately after Intimidate attack drop on initial send out", async () => {
     await game.classicMode.runToSummon([SpeciesId.GIMMIGHOUL]);
 
     const playerPokemon = game.scene.getPlayerPokemon();
