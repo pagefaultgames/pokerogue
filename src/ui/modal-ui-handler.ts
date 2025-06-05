@@ -6,7 +6,7 @@ import type { Button } from "#enums/buttons";
 import { globalScene } from "#app/global-scene";
 
 export interface ModalConfig {
-  buttonActions: Function[];
+  buttonActions: ((...args: any[]) => any)[];
 }
 
 export abstract class ModalUiHandler extends UiHandler {
