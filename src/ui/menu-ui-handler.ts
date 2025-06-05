@@ -311,6 +311,17 @@ export class MenuUiHandler extends MessageUiHandler {
         keepOpen: true,
       },
       {
+        // Note: i18n key is under `menu`, not `menuUiHandler` to avoid duplication
+        label: i18next.t("menu:changePassword"),
+        handler: () => {
+          ui.setOverlayMode(UiMode.CHANGE_PASSWORD_FORM, {
+            buttonActions: [() => ui.revertMode(), () => ui.revertMode()],
+          });
+          return true;
+        },
+        keepOpen: true,
+      },
+      {
         label: i18next.t("menuUiHandler:consentPreferences"),
         handler: () => {
           const consentLink = document.querySelector(".termly-display-preferences") as HTMLInputElement;
