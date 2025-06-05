@@ -8,6 +8,7 @@ import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { SubstituteTag } from "#app/data/battler-tags";
+import { SpeciesId } from "#enums/species-id";
 
 describe("Moves - Tidy Up", () => {
   let phaserGame: Phaser.Game;

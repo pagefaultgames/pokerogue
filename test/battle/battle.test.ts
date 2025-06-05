@@ -23,6 +23,7 @@ import { PlayerGender } from "#enums/player-gender";
 import { SpeciesId } from "#enums/species-id";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { BiomeId } from "#enums/biome-id";
 
 describe("Test Battle Phase", () => {
   let phaserGame: Phaser.Game;
@@ -284,7 +285,7 @@ describe("Test Battle Phase", () => {
       .ability(AbilityId.ZEN_MODE)
       .startingLevel(2000)
       .startingWave(3)
-      .startingBiome(Biome.LAKE)
+      .startingBiome(BiomeId.LAKE)
       .moveset([moveToUse])
       .enemyMoveset([MoveId.TACKLE, MoveId.TACKLE, MoveId.TACKLE, MoveId.TACKLE]);
     await game.classicMode.startBattle();

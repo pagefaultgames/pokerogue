@@ -83,7 +83,7 @@ describe("The Strong Stuff - Mystery Encounter", () => {
   });
 
   it("should not spawn outside of CAVE biome", async () => {
-    game.override.mysteryEncounterTier(MysteryEncounterTier.COMMON).startingBiome(Biome.MOUNTAIN);
+    game.override.mysteryEncounterTier(MysteryEncounterTier.COMMON).startingBiome(BiomeId.MOUNTAIN);
     await game.runToMysteryEncounter();
 
     expect(scene.currentBattle?.mysteryEncounter?.encounterType).not.toBe(MysteryEncounterType.THE_STRONG_STUFF);

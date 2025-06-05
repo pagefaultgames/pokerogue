@@ -82,7 +82,7 @@ describe("Fun And Games! - Mystery Encounter", () => {
   });
 
   it("should not spawn outside of CIVILIZATIONN biomes", async () => {
-    game.override.mysteryEncounterTier(MysteryEncounterTier.GREAT).startingBiome(Biome.VOLCANO);
+    game.override.mysteryEncounterTier(MysteryEncounterTier.GREAT).startingBiome(BiomeId.VOLCANO);
     await game.runToMysteryEncounter();
 
     expect(scene.currentBattle?.mysteryEncounter?.encounterType).not.toBe(MysteryEncounterType.FUN_AND_GAMES);

@@ -7,6 +7,7 @@ import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { BattlerIndex } from "#app/battle";
+import { SpeciesId } from "#enums/species-id";
 
 // See also: TypeImmunityAbAttr
 describe("Abilities - Volt Absorb", () => {
@@ -35,7 +36,7 @@ describe("Abilities - Volt Absorb", () => {
     game.override
       .moveset([moveToUse])
       .ability(ability)
-      .enemyMoveset([MoveId.SPLASH, MoveId.NONE, MoveId.NONE, MoveId.NONE])
+      .enemyMoveset([MoveId.SPLASH])
       .enemySpecies(SpeciesId.DUSKULL)
       .enemyAbility(AbilityId.BALL_FETCH);
 
