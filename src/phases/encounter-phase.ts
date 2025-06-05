@@ -2,7 +2,12 @@ import { BattlerIndex } from "#app/battle";
 import { BattleType } from "#enums/battle-type";
 import { globalScene } from "#app/global-scene";
 import { PLAYER_PARTY_MAX_SIZE } from "#app/constants";
-import { applyAbAttrs, SyncEncounterNatureAbAttr, applyPreSummonAbAttrs, PreSummonAbAttr } from "#app/data/abilities/ability";
+import {
+  applyAbAttrs,
+  SyncEncounterNatureAbAttr,
+  applyPreSummonAbAttrs,
+  PreSummonAbAttr,
+} from "#app/data/abilities/ability";
 import { initEncounterAnims, loadEncounterAnimAssets } from "#app/data/battle-anims";
 import { getCharVariantFromDialogue } from "#app/data/dialogue";
 import { getEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
@@ -32,10 +37,10 @@ import { handleTutorial, Tutorial } from "#app/tutorial";
 import { UiMode } from "#enums/ui-mode";
 import { randSeedInt, randSeedItem } from "#app/utils/common";
 import { BattleSpec } from "#enums/battle-spec";
-import { Biome } from "#enums/biome";
+import { BiomeId } from "#enums/biome-id";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import { PlayerGender } from "#enums/player-gender";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species-id";
 import { overrideHeldItems, overrideModifiers } from "#app/modifier/modifier";
 import i18next from "i18next";
 import { WEIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/data/mystery-encounters/mystery-encounters";
@@ -108,12 +113,6 @@ export class EncounterPhase extends BattlePhase {
       }
       if (!this.loaded) {
         if (battle.battleType === BattleType.TRAINER) {
-          //resets hitRecCount during Trainer ecnounter
-          for (const pokemon of globalScene.getPlayerParty()) {
-            if (pokemon) {
-              pokemon.customPokemonData.resetHitReceivedCount();
-            }
-          }
           battle.enemyParty[e] = battle.trainer?.genPartyMember(e)!; // TODO:: is the bang correct here?
         } else {
           let enemySpecies = globalScene.randomSpecies(battle.waveIndex, level, true);
@@ -121,7 +120,7 @@ export class EncounterPhase extends BattlePhase {
           if (
             globalScene.findModifier(m => m instanceof BoostBugSpawnModifier) &&
             !globalScene.gameMode.isBoss(battle.waveIndex) &&
-            globalScene.arena.biomeType !== Biome.END &&
+            globalScene.arena.biomeType !== BiomeId.END &&
             randSeedInt(10) === 0
           ) {
             enemySpecies = getGoldenBugNetSpecies(level);
@@ -135,7 +134,6 @@ export class EncounterPhase extends BattlePhase {
           if (globalScene.currentBattle.battleSpec === BattleSpec.FINAL_BOSS) {
             battle.enemyParty[e].ivs = new Array(6).fill(31);
           }
-          // biome-ignore lint/complexity/noForEach: Improves readability
           globalScene
             .getPlayerParty()
             .slice(0, !battle.double ? 1 : 2)
@@ -148,7 +146,7 @@ export class EncounterPhase extends BattlePhase {
       const enemyPokemon = globalScene.getEnemyParty()[e];
       if (e < (battle.double ? 2 : 1)) {
         enemyPokemon.setX(-66 + enemyPokemon.getFieldPositionOffset()[0]);
-        enemyPokemon.resetSummonData();
+        enemyPokemon.fieldSetup(true);
       }
 
       if (!this.loaded) {
@@ -160,7 +158,7 @@ export class EncounterPhase extends BattlePhase {
         );
       }
 
-      if (enemyPokemon.species.speciesId === Species.ETERNATUS) {
+      if (enemyPokemon.species.speciesId === SpeciesId.ETERNATUS) {
         if (
           globalScene.gameMode.isClassic &&
           (battle.battleSpec === BattleSpec.FINAL_BOSS || globalScene.gameMode.isWaveFinal(battle.waveIndex))
@@ -190,12 +188,13 @@ export class EncounterPhase extends BattlePhase {
       ];
       const moveset: string[] = [];
       for (const move of enemyPokemon.getMoveset()) {
-        moveset.push(move!.getName()); // TODO: remove `!` after moveset-null removal PR
+        moveset.push(move.getName());
       }
 
       console.log(
         `Pokemon: ${getPokemonNameWithAffix(enemyPokemon)}`,
         `| Species ID: ${enemyPokemon.species.speciesId}`,
+        `| Level: ${enemyPokemon.level}`,
         `| Nature: ${getNatureName(enemyPokemon.nature, true, true, true)}`,
       );
       console.log(`Stats (IVs): ${stats}`);
@@ -282,6 +281,7 @@ export class EncounterPhase extends BattlePhase {
       });
 
       if (!this.loaded && battle.battleType !== BattleType.MYSTERY_ENCOUNTER) {
+        // generate modifiers for MEs, overriding prior ones as applicable
         regenerateModifierPoolThresholds(
           globalScene.getEnemyField(),
           battle.battleType === BattleType.TRAINER ? ModifierPoolType.TRAINER : ModifierPoolType.WILD,
@@ -294,8 +294,8 @@ export class EncounterPhase extends BattlePhase {
         }
       }
 
-      if (battle.battleType === BattleType.TRAINER) {
-        globalScene.currentBattle.trainer!.genAI(globalScene.getEnemyParty());
+      if (battle.battleType === BattleType.TRAINER && globalScene.currentBattle.trainer) {
+        globalScene.currentBattle.trainer.genAI(globalScene.getEnemyParty());
       }
 
       globalScene.ui.setMode(UiMode.MESSAGE).then(() => {
@@ -336,8 +336,10 @@ export class EncounterPhase extends BattlePhase {
     }
 
     for (const pokemon of globalScene.getPlayerParty()) {
+      // Currently, a new wave is not considered a new battle if there is no arena reset
+      // Therefore, we only reset wave data here
       if (pokemon) {
-        pokemon.resetBattleData();
+        pokemon.resetWaveData();
       }
     }
 
@@ -552,9 +554,9 @@ export class EncounterPhase extends BattlePhase {
       if (enemyPokemon.isShiny(true)) {
         globalScene.unshiftPhase(new ShinySparklePhase(BattlerIndex.ENEMY + e));
       }
-      /** This sets Eternatus' held item to be untransferrable, preventing it from being stolen  */
+      /** This sets Eternatus' held item to be untransferrable, preventing it from being stolen */
       if (
-        enemyPokemon.species.speciesId === Species.ETERNATUS &&
+        enemyPokemon.species.speciesId === SpeciesId.ETERNATUS &&
         (globalScene.gameMode.isBattleClassicFinalBoss(globalScene.currentBattle.waveIndex) ||
           globalScene.gameMode.isEndlessMajorBoss(globalScene.currentBattle.waveIndex))
       ) {

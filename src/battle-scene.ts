@@ -7,7 +7,6 @@ import type PokemonSpecies from "#app/data/pokemon-species";
 import { allSpecies, getPokemonSpecies } from "#app/data/pokemon-species";
 import {
   fixedInt,
-  deepMergeObjects,
   getIvsFromId,
   randSeedInt,
   getEnumValues,
@@ -19,6 +18,7 @@ import {
   BooleanHolder,
   type Constructor,
 } from "#app/utils/common";
+import { deepMergeSpriteData } from "#app/utils/data";
 import type { Modifier, ModifierPredicate, TurnHeldItemTransferModifier } from "./modifier/modifier";
 import {
   ConsumableModifier,
@@ -51,7 +51,7 @@ import { initGameSpeed } from "#app/system/game-speed";
 import { Arena, ArenaBase } from "#app/field/arena";
 import { GameData } from "#app/system/game-data";
 import { addTextObject, getTextColor, TextStyle } from "#app/ui/text";
-import { allMoves } from "#app/data/moves/move";
+import { allMoves } from "./data/data-lists";
 import { MusicPreference } from "#app/system/settings/settings";
 import {
   getDefaultModifierTypeForTier,
@@ -129,12 +129,12 @@ import { ArenaFlyout } from "#app/ui/arena-flyout";
 import { EaseType } from "#enums/ease-type";
 import { BattleSpec } from "#enums/battle-spec";
 import { BattleStyle } from "#enums/battle-style";
-import { Biome } from "#enums/biome";
+import { BiomeId } from "#enums/biome-id";
 import type { ExpNotification } from "#enums/exp-notification";
 import { MoneyFormat } from "#enums/money-format";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/move-id";
 import { PlayerGender } from "#enums/player-gender";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species-id";
 import { UiTheme } from "#enums/ui-theme";
 import { TimedEventManager } from "#app/timed-event-manager";
 import type { PokemonAnimType } from "#enums/pokemon-anim-type";
@@ -151,7 +151,6 @@ import { NextEncounterPhase } from "#app/phases/next-encounter-phase";
 import { PokemonAnimPhase } from "#app/phases/pokemon-anim-phase";
 import { QuietFormChangePhase } from "#app/phases/quiet-form-change-phase";
 import { ReturnPhase } from "#app/phases/return-phase";
-import { SelectBiomePhase } from "#app/phases/select-biome-phase";
 import { ShowTrainerPhase } from "#app/phases/show-trainer-phase";
 import { SummonPhase } from "#app/phases/summon-phase";
 import { SwitchPhase } from "#app/phases/switch-phase";
@@ -708,14 +707,14 @@ export default class BattleScene extends SceneBase {
 
     ui.setup();
 
-    const defaultMoves = [Moves.TACKLE, Moves.TAIL_WHIP, Moves.FOCUS_ENERGY, Moves.STRUGGLE];
+    const defaultMoves = [MoveId.TACKLE, MoveId.TAIL_WHIP, MoveId.FOCUS_ENERGY, MoveId.STRUGGLE];
 
     Promise.all([
       Promise.all(loadPokemonAssets),
       initCommonAnims().then(() => loadCommonAnimAssets(true)),
-      Promise.all([Moves.TACKLE, Moves.TAIL_WHIP, Moves.FOCUS_ENERGY, Moves.STRUGGLE].map(m => initMoveAnim(m))).then(
-        () => loadMoveAnimAssets(defaultMoves, true),
-      ),
+      Promise.all(
+        [MoveId.TACKLE, MoveId.TAIL_WHIP, MoveId.FOCUS_ENERGY, MoveId.STRUGGLE].map(m => initMoveAnim(m)),
+      ).then(() => loadMoveAnimAssets(defaultMoves, true)),
       this.initStarterColors(),
     ]).then(() => {
       this.pushPhase(new LoginPhase());
@@ -788,7 +787,7 @@ export default class BattleScene extends SceneBase {
       return;
     }
     const expVariantData = await this.cachedFetch("./images/pokemon/variant/_exp_masterlist.json").then(r => r.json());
-    deepMergeObjects(variantData, expVariantData);
+    deepMergeSpriteData(variantData, expVariantData);
   }
 
   cachedFetch(url: string, init?: RequestInit): Promise<Response> {
@@ -836,6 +835,7 @@ export default class BattleScene extends SceneBase {
     return this.getPlayerField().find(p => p.isActive() && (includeSwitching || p.switchOutStatus === false));
   }
 
+  // TODO: Add `undefined` to return type
   /**
    * Returns an array of PlayerPokemon of length 1 or 2 depending on if in a double battle or not.
    * Does not actually check if the pokemon are on the field or not.
@@ -851,9 +851,9 @@ export default class BattleScene extends SceneBase {
   }
 
   /**
-   * @returns The first {@linkcode EnemyPokemon} that is {@linkcode getEnemyField on the field}
-   * and {@linkcode EnemyPokemon.isActive is active}
-   * (aka {@linkcode EnemyPokemon.isAllowedInBattle is allowed in battle}),
+   * @returns The first {@linkcode EnemyPokemon} that is {@linkcode getEnemyField | on the field}
+   * and {@linkcode EnemyPokemon.isActive | is active}
+   * (aka {@linkcode EnemyPokemon.isAllowedInBattle | is allowed in battle}),
    * or `undefined` if there are no valid pokemon
    * @param includeSwitching Whether a pokemon that is currently switching out is valid, default `true`
    */
@@ -874,8 +874,8 @@ export default class BattleScene extends SceneBase {
   /**
    * Returns an array of Pokemon on both sides of the battle - player first, then enemy.
    * Does not actually check if the pokemon are on the field or not, and always has length 4 regardless of battle type.
-   * @param activeOnly Whether to consider only active pokemon
-   * @returns array of {@linkcode Pokemon}
+   * @param activeOnly - Whether to consider only active pokemon; default `false`
+   * @returns An array of {@linkcode Pokemon}, as described above.
    */
   public getField(activeOnly = false): Pokemon[] {
     const ret = new Array(4).fill(null);
@@ -1045,32 +1045,33 @@ export default class BattleScene extends SceneBase {
     y: number,
     originX = 0.5,
     originY = 0.5,
-    ignoreOverride = false,
+    ignoreOverride = true,
+    useIllusion = false,
   ): Phaser.GameObjects.Container {
     const container = this.add.container(x, y);
     container.setName(`${pokemon.name}-icon`);
 
-    const icon = this.add.sprite(0, 0, pokemon.getIconAtlasKey(ignoreOverride));
+    const icon = this.add.sprite(0, 0, pokemon.getIconAtlasKey(ignoreOverride, useIllusion));
     icon.setName(`sprite-${pokemon.name}-icon`);
-    icon.setFrame(pokemon.getIconId(true));
+    icon.setFrame(pokemon.getIconId(ignoreOverride, useIllusion));
     // Temporary fix to show pokemon's default icon if variant icon doesn't exist
-    if (icon.frame.name !== pokemon.getIconId(true)) {
+    if (icon.frame.name !== pokemon.getIconId(ignoreOverride, useIllusion)) {
       console.log(`${pokemon.name}'s variant icon does not exist. Replacing with default.`);
       const temp = pokemon.shiny;
       pokemon.shiny = false;
-      icon.setTexture(pokemon.getIconAtlasKey(ignoreOverride));
-      icon.setFrame(pokemon.getIconId(true));
+      icon.setTexture(pokemon.getIconAtlasKey(ignoreOverride, useIllusion));
+      icon.setFrame(pokemon.getIconId(true, useIllusion));
       pokemon.shiny = temp;
     }
     icon.setOrigin(0.5, 0);
 
     container.add(icon);
 
-    if (pokemon.isFusion(true)) {
-      const fusionIcon = this.add.sprite(0, 0, pokemon.getFusionIconAtlasKey(ignoreOverride));
+    if (pokemon.isFusion(useIllusion)) {
+      const fusionIcon = this.add.sprite(0, 0, pokemon.getFusionIconAtlasKey(ignoreOverride, useIllusion));
       fusionIcon.setName("sprite-fusion-icon");
       fusionIcon.setOrigin(0.5, 0);
-      fusionIcon.setFrame(pokemon.getFusionIconId(true));
+      fusionIcon.setFrame(pokemon.getFusionIconId(ignoreOverride, useIllusion));
 
       const originalWidth = icon.width;
       const originalHeight = icon.height;
@@ -1224,7 +1225,7 @@ export default class BattleScene extends SceneBase {
 
     [this.luckLabelText, this.luckText].map(t => t.setVisible(false));
 
-    this.newArena(Overrides.STARTING_BIOME_OVERRIDE || Biome.TOWN);
+    this.newArena(Overrides.STARTING_BIOME_OVERRIDE || BiomeId.TOWN);
 
     this.field.setVisible(true);
 
@@ -1298,14 +1299,23 @@ export default class BattleScene extends SceneBase {
     return Math.max(doubleChance.value, 1);
   }
 
-  // TODO: ...this never actually returns `null`, right?
+  isNewBiome(currentBattle = this.currentBattle) {
+    const isWaveIndexMultipleOfTen = !(currentBattle.waveIndex % 10);
+    const isEndlessOrDaily = this.gameMode.hasShortBiomes || this.gameMode.isDaily;
+    const isEndlessFifthWave = this.gameMode.hasShortBiomes && currentBattle.waveIndex % 5 === 0;
+    const isWaveIndexMultipleOfFiftyMinusOne = currentBattle.waveIndex % 50 === 49;
+    const isNewBiome =
+      isWaveIndexMultipleOfTen || isEndlessFifthWave || (isEndlessOrDaily && isWaveIndexMultipleOfFiftyMinusOne);
+    return isNewBiome;
+  }
+
   newBattle(
     waveIndex?: number,
     battleType?: BattleType,
     trainerData?: TrainerData,
     double?: boolean,
     mysteryEncounterType?: MysteryEncounterType,
-  ): Battle | null {
+  ): Battle {
     const _startingWave = Overrides.STARTING_WAVE_OVERRIDE || startingWave;
     const newWaveIndex = waveIndex || (this.currentBattle?.waveIndex || _startingWave - 1) + 1;
     let newDouble: boolean | undefined;
@@ -1385,9 +1395,9 @@ export default class BattleScene extends SceneBase {
     if (double === undefined && newWaveIndex > 1) {
       if (newBattleType === BattleType.WILD && !this.gameMode.isWaveFinal(newWaveIndex)) {
         newDouble = !randSeedInt(this.getDoubleBattleChance(newWaveIndex, playerField));
+      } else if (newBattleType === BattleType.TRAINER) {
+        newDouble = newTrainer?.variant === TrainerVariant.DOUBLE;
       }
-    } else if (double === undefined && newBattleType === BattleType.TRAINER) {
-      newDouble = newTrainer?.variant === TrainerVariant.DOUBLE;
     } else if (!battleConfig) {
       newDouble = !!double;
     }
@@ -1461,12 +1471,7 @@ export default class BattleScene extends SceneBase {
     }
 
     if (!waveIndex && lastBattle) {
-      const isWaveIndexMultipleOfTen = !(lastBattle.waveIndex % 10);
-      const isEndlessOrDaily = this.gameMode.hasShortBiomes || this.gameMode.isDaily;
-      const isEndlessFifthWave = this.gameMode.hasShortBiomes && lastBattle.waveIndex % 5 === 0;
-      const isWaveIndexMultipleOfFiftyMinusOne = lastBattle.waveIndex % 50 === 49;
-      const isNewBiome =
-        isWaveIndexMultipleOfTen || isEndlessFifthWave || (isEndlessOrDaily && isWaveIndexMultipleOfFiftyMinusOne);
+      const isNewBiome = this.isNewBiome(lastBattle);
       const resetArenaState =
         isNewBiome ||
         [BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER].includes(this.currentBattle.battleType) ||
@@ -1492,11 +1497,11 @@ export default class BattleScene extends SceneBase {
         });
 
         for (const pokemon of this.getPlayerParty()) {
-          pokemon.resetBattleData();
+          pokemon.resetBattleAndWaveData();
           pokemon.resetTera();
           applyPostBattleInitAbAttrs(PostBattleInitAbAttr, pokemon);
           if (
-            pokemon.hasSpecies(Species.TERAPAGOS) ||
+            pokemon.hasSpecies(SpeciesId.TERAPAGOS) ||
             (this.gameMode.isClassic && this.currentBattle.waveIndex > 180 && this.currentBattle.waveIndex <= 190)
           ) {
             this.arena.playerTerasUsed = 0;
@@ -1515,7 +1520,6 @@ export default class BattleScene extends SceneBase {
       if (!this.gameMode.hasRandomBiomes && !isNewBiome) {
         this.pushPhase(new NextEncounterPhase());
       } else {
-        this.pushPhase(new SelectBiomePhase());
         this.pushPhase(new NewBiomeEncounterPhase());
 
         const newMaxExpLevel = this.getMaxExpLevel();
@@ -1528,8 +1532,8 @@ export default class BattleScene extends SceneBase {
     return this.currentBattle;
   }
 
-  newArena(biome: Biome, playerFaints?: number): Arena {
-    this.arena = new Arena(biome, Biome[biome].toLowerCase(), playerFaints);
+  newArena(biome: BiomeId, playerFaints?: number): Arena {
+    this.arena = new Arena(biome, BiomeId[biome].toLowerCase(), playerFaints);
     this.eventTarget.dispatchEvent(new NewArenaEvent());
 
     this.arenaBg.pipelineData = {
@@ -1595,7 +1599,7 @@ export default class BattleScene extends SceneBase {
       !isNullOrUndefined(this.currentBattle.trainer) &&
       this.currentBattle.trainer.config.hasSpecialtyType()
     ) {
-      if (species.speciesId === Species.WORMADAM) {
+      if (species.speciesId === SpeciesId.WORMADAM) {
         switch (this.currentBattle.trainer.config.specialtyType) {
           case PokemonType.GROUND:
             return 1; // Sandy Cloak
@@ -1605,7 +1609,7 @@ export default class BattleScene extends SceneBase {
             return 0; // Plant Cloak
         }
       }
-      if (species.speciesId === Species.ROTOM) {
+      if (species.speciesId === SpeciesId.ROTOM) {
         switch (this.currentBattle.trainer.config.specialtyType) {
           case PokemonType.FLYING:
             return 4; // Fan Rotom
@@ -1621,7 +1625,7 @@ export default class BattleScene extends SceneBase {
             return 3; // Frost Rotom
         }
       }
-      if (species.speciesId === Species.ORICORIO) {
+      if (species.speciesId === SpeciesId.ORICORIO) {
         switch (this.currentBattle.trainer.config.specialtyType) {
           case PokemonType.GHOST:
             return 3; // Sensu Style
@@ -1633,7 +1637,7 @@ export default class BattleScene extends SceneBase {
             return 2; // Pa'u Style
         }
       }
-      if (species.speciesId === Species.PALDEA_TAUROS) {
+      if (species.speciesId === SpeciesId.PALDEA_TAUROS) {
         switch (this.currentBattle.trainer.config.specialtyType) {
           case PokemonType.FIRE:
             return 1; // Blaze Breed
@@ -1641,41 +1645,41 @@ export default class BattleScene extends SceneBase {
             return 2; // Aqua Breed
         }
       }
-      if (species.speciesId === Species.SILVALLY || species.speciesId === Species.ARCEUS) {
+      if (species.speciesId === SpeciesId.SILVALLY || species.speciesId === SpeciesId.ARCEUS) {
         // Would probably never happen, but might as well
         return this.currentBattle.trainer.config.specialtyType;
       }
     }
 
     switch (species.speciesId) {
-      case Species.UNOWN:
-      case Species.SHELLOS:
-      case Species.GASTRODON:
-      case Species.BASCULIN:
-      case Species.DEERLING:
-      case Species.SAWSBUCK:
-      case Species.SCATTERBUG:
-      case Species.SPEWPA:
-      case Species.VIVILLON:
-      case Species.FLABEBE:
-      case Species.FLOETTE:
-      case Species.FLORGES:
-      case Species.FURFROU:
-      case Species.PUMPKABOO:
-      case Species.GOURGEIST:
-      case Species.ORICORIO:
-      case Species.MAGEARNA:
-      case Species.ZARUDE:
-      case Species.SQUAWKABILLY:
-      case Species.TATSUGIRI:
-      case Species.PALDEA_TAUROS:
+      case SpeciesId.UNOWN:
+      case SpeciesId.SHELLOS:
+      case SpeciesId.GASTRODON:
+      case SpeciesId.BASCULIN:
+      case SpeciesId.DEERLING:
+      case SpeciesId.SAWSBUCK:
+      case SpeciesId.SCATTERBUG:
+      case SpeciesId.SPEWPA:
+      case SpeciesId.VIVILLON:
+      case SpeciesId.FLABEBE:
+      case SpeciesId.FLOETTE:
+      case SpeciesId.FLORGES:
+      case SpeciesId.FURFROU:
+      case SpeciesId.PUMPKABOO:
+      case SpeciesId.GOURGEIST:
+      case SpeciesId.ORICORIO:
+      case SpeciesId.MAGEARNA:
+      case SpeciesId.ZARUDE:
+      case SpeciesId.SQUAWKABILLY:
+      case SpeciesId.TATSUGIRI:
+      case SpeciesId.PALDEA_TAUROS:
         return randSeedInt(species.forms.length);
-      case Species.PIKACHU:
+      case SpeciesId.PIKACHU:
         if (this.currentBattle?.battleType === BattleType.TRAINER && this.currentBattle?.waveIndex < 30) {
           return 0; // Ban Cosplay and Partner Pika from Trainers before wave 30
         }
         return randSeedInt(8);
-      case Species.EEVEE:
+      case SpeciesId.EEVEE:
         if (
           this.currentBattle?.battleType === BattleType.TRAINER &&
           this.currentBattle?.waveIndex < 30 &&
@@ -1684,27 +1688,27 @@ export default class BattleScene extends SceneBase {
           return 0; // No Partner Eevee for Wave 12 Preschoolers
         }
         return randSeedInt(2);
-      case Species.FROAKIE:
-      case Species.FROGADIER:
-      case Species.GRENINJA:
+      case SpeciesId.FROAKIE:
+      case SpeciesId.FROGADIER:
+      case SpeciesId.GRENINJA:
         if (this.currentBattle?.battleType === BattleType.TRAINER && !isEggPhase) {
           return 0; // Don't give trainers Battle Bond Greninja, Froakie or Frogadier
         }
         return randSeedInt(2);
-      case Species.URSHIFU:
+      case SpeciesId.URSHIFU:
         return randSeedInt(2);
-      case Species.ZYGARDE:
+      case SpeciesId.ZYGARDE:
         return randSeedInt(4);
-      case Species.MINIOR:
+      case SpeciesId.MINIOR:
         return randSeedInt(7);
-      case Species.ALCREMIE:
+      case SpeciesId.ALCREMIE:
         return randSeedInt(9);
-      case Species.MEOWSTIC:
-      case Species.INDEEDEE:
-      case Species.BASCULEGION:
-      case Species.OINKOLOGNE:
+      case SpeciesId.MEOWSTIC:
+      case SpeciesId.INDEEDEE:
+      case SpeciesId.BASCULEGION:
+      case SpeciesId.OINKOLOGNE:
         return gender === Gender.FEMALE ? 1 : 0;
-      case Species.TOXTRICITY: {
+      case SpeciesId.TOXTRICITY: {
         const lowkeyNatures = [
           Nature.LONELY,
           Nature.BOLD,
@@ -1724,7 +1728,7 @@ export default class BattleScene extends SceneBase {
         }
         return 0;
       }
-      case Species.GIMMIGHOUL:
+      case SpeciesId.GIMMIGHOUL:
         // Chest form can only be found in Mysterious Chest Encounter, if this is a game mode with MEs
         if (this.gameMode.hasMysteryEncounters && !isEggPhase) {
           return 1; // Wandering form
@@ -1734,10 +1738,10 @@ export default class BattleScene extends SceneBase {
 
     if (ignoreArena) {
       switch (species.speciesId) {
-        case Species.BURMY:
-        case Species.WORMADAM:
-        case Species.ROTOM:
-        case Species.LYCANROC:
+        case SpeciesId.BURMY:
+        case SpeciesId.WORMADAM:
+        case SpeciesId.ROTOM:
+        case SpeciesId.LYCANROC:
           return randSeedInt(species.forms.length);
       }
       return 0;
@@ -2168,10 +2172,10 @@ export default class BattleScene extends SceneBase {
     return filteredSpecies[randSeedInt(filteredSpecies.length)];
   }
 
-  generateRandomBiome(waveIndex: number): Biome {
+  generateRandomBiome(waveIndex: number): BiomeId {
     const relWave = waveIndex % 250;
-    const biomes = getEnumValues(Biome).filter(b => b !== Biome.TOWN && b !== Biome.END);
-    const maxDepth = biomeDepths[Biome.END][0] - 2;
+    const biomes = getEnumValues(BiomeId).filter(b => b !== BiomeId.TOWN && b !== BiomeId.END);
+    const maxDepth = biomeDepths[BiomeId.END][0] - 2;
     const depthWeights = new Array(maxDepth + 1)
       .fill(null)
       .map((_, i: number) => ((1 - Math.min(Math.abs(i / (maxDepth - 1) - relWave / 250) + 0.25, 1)) / 0.75) * 250);
@@ -2917,7 +2921,10 @@ export default class BattleScene extends SceneBase {
     instant?: boolean,
     cost?: number,
   ): boolean {
-    if (!modifier) {
+    // We check against modifier.type to stop a bug related to loading in a pokemon that has a form change item, which prior to some patch
+    // that changed form change modifiers worked, had previously set the `type` field to null.
+    // TODO: This is not the right place to check for this; it should ideally go in a session migrator.
+    if (!modifier || !modifier.type) {
       return false;
     }
     let success = false;
@@ -3261,6 +3268,7 @@ export default class BattleScene extends SceneBase {
     [this.modifierBar, this.enemyModifierBar].map(m => m.setVisible(visible));
   }
 
+  // TODO: Document this
   updateModifiers(player = true, instant?: boolean): void {
     const modifiers = player ? this.modifiers : (this.enemyModifiers as PersistentModifier[]);
     for (let m = 0; m < modifiers.length; m++) {
@@ -3313,8 +3321,8 @@ export default class BattleScene extends SceneBase {
    * gets removed. This function does NOT apply in-battle effects, such as Unburden.
    * If in-battle effects are needed, use {@linkcode Pokemon.loseHeldItem} instead.
    * @param modifier The item to be removed.
-   * @param enemy If `true`, remove an item owned by the enemy. If `false`, remove an item owned by the player. Default is `false`.
-   * @returns `true` if the item exists and was successfully removed, `false` otherwise.
+   * @param enemy `true` to remove an item owned by the enemy rather than the player; default `false`.
+   * @returns `true` if the item exists and was successfully removed, `false` otherwise
    */
   removeModifier(modifier: PersistentModifier, enemy = false): boolean {
     const modifiers = !enemy ? this.modifiers : this.enemyModifiers;
@@ -3467,7 +3475,7 @@ export default class BattleScene extends SceneBase {
         fc => fc.findTrigger(formChangeTriggerType) && fc.canChange(pokemon),
       );
       let matchingFormChange: SpeciesFormChange | null;
-      if (pokemon.species.speciesId === Species.NECROZMA && matchingFormChangeOpts.length > 1) {
+      if (pokemon.species.speciesId === SpeciesId.NECROZMA && matchingFormChangeOpts.length > 1) {
         // Ultra Necrozma is changing its form back, so we need to figure out into which form it devolves.
         const formChangeItemModifiers = (
           this.findModifiers(

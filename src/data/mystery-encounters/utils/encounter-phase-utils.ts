@@ -10,7 +10,7 @@ import {
 import { showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import type { AiType, PlayerPokemon } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
-import { EnemyPokemon, FieldPosition, PokemonMove, PokemonSummonData } from "#app/field/pokemon";
+import { EnemyPokemon, FieldPosition, PokemonMove } from "#app/field/pokemon";
 import type { CustomModifierSettings, ModifierType } from "#app/modifier/modifier-type";
 import {
   getPartyLuckValue,
@@ -33,13 +33,13 @@ import { PartyUiMode } from "#app/ui/party-ui-handler";
 import { UiMode } from "#enums/ui-mode";
 import { isNullOrUndefined, randSeedInt, randomString, randSeedItem } from "#app/utils/common";
 import type { BattlerTagType } from "#enums/battler-tag-type";
-import { Biome } from "#enums/biome";
+import { BiomeId } from "#enums/biome-id";
 import type { TrainerType } from "#enums/trainer-type";
 import i18next from "i18next";
 import Trainer, { TrainerVariant } from "#app/field/trainer";
 import type { Gender } from "#app/data/gender";
 import type { Nature } from "#enums/nature";
-import type { Moves } from "#enums/moves";
+import type { MoveId } from "#enums/move-id";
 import { initMoveAnim, loadMoveAnimAssets } from "#app/data/battle-anims";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import { Status } from "#app/data/status-effect";
@@ -106,7 +106,7 @@ export interface EnemyPokemonConfig {
   level?: number;
   gender?: Gender;
   passive?: boolean;
-  moveSet?: Moves[];
+  moveSet?: MoveId[];
   nature?: Nature;
   ivs?: [number, number, number, number, number, number];
   shiny?: boolean;
@@ -348,11 +348,6 @@ export async function initBattleWithEnemyConfig(partyConfig: EnemyPartyConfig): 
         enemyPokemon.status = new Status(status, 0, cureTurn);
       }
 
-      // Set summon data fields
-      if (!enemyPokemon.summonData) {
-        enemyPokemon.summonData = new PokemonSummonData();
-      }
-
       // Set ability
       if (!isNullOrUndefined(config.abilityIndex)) {
         enemyPokemon.abilityIndex = config.abilityIndex;
@@ -390,13 +385,10 @@ export async function initBattleWithEnemyConfig(partyConfig: EnemyPartyConfig): 
         }
       }
 
-      // mysteryEncounterBattleEffects will only be used IFF MYSTERY_ENCOUNTER_POST_SUMMON tag is applied
+      // mysteryEncounterBattleEffects will only be used if MYSTERY_ENCOUNTER_POST_SUMMON tag is applied
       if (config.mysteryEncounterBattleEffects) {
         enemyPokemon.mysteryEncounterBattleEffects = config.mysteryEncounterBattleEffects;
       }
-
-      // Requires re-priming summon data to update everything properly
-      enemyPokemon.primeSummonData(enemyPokemon.summonData);
 
       if (enemyPokemon.isShiny() && !enemyPokemon["shinySparkle"]) {
         enemyPokemon.initShinySparkle();
@@ -424,6 +416,7 @@ export async function initBattleWithEnemyConfig(partyConfig: EnemyPartyConfig): 
     console.log(
       `Pokemon: ${getPokemonNameWithAffix(enemyPokemon)}`,
       `| Species ID: ${enemyPokemon.species.speciesId}`,
+      `| Level: ${enemyPokemon.level}`,
       `| Nature: ${getNatureName(enemyPokemon.nature, true, true, true)}`,
     );
     console.log(`Stats (IVs): ${stats}`);
@@ -467,7 +460,7 @@ export async function initBattleWithEnemyConfig(partyConfig: EnemyPartyConfig): 
  * This promise does not need to be awaited on if called in an encounter onInit (will just load lazily)
  * @param moves
  */
-export function loadCustomMovesForEncounter(moves: Moves | Moves[]) {
+export function loadCustomMovesForEncounter(moves: MoveId | MoveId[]) {
   moves = Array.isArray(moves) ? moves : [moves];
   return Promise.all(moves.map(move => initMoveAnim(move))).then(() => loadMoveAnimAssets(moves));
 }
@@ -1075,8 +1068,8 @@ export function getRandomEncounterSpecies(level: number, isBoss = false, rerollH
     ret.formIndex = formIndex;
   }
 
-  //Reroll shiny for event encounters
-  if (isEventEncounter && !ret.shiny) {
+  //Reroll shiny or variant for event encounters
+  if (isEventEncounter) {
     ret.trySetShinySeed();
   }
   //Reroll hidden ability
@@ -1095,16 +1088,16 @@ export function getRandomEncounterSpecies(level: number, isBoss = false, rerollH
 export function calculateMEAggregateStats(baseSpawnWeight: number) {
   const numRuns = 1000;
   let run = 0;
-  const biomes = Object.keys(Biome).filter(key => Number.isNaN(Number(key)));
+  const biomes = Object.keys(BiomeId).filter(key => Number.isNaN(Number(key)));
   const alwaysPickTheseBiomes = [
-    Biome.ISLAND,
-    Biome.ABYSS,
-    Biome.WASTELAND,
-    Biome.FAIRY_CAVE,
-    Biome.TEMPLE,
-    Biome.LABORATORY,
-    Biome.SPACE,
-    Biome.WASTELAND,
+    BiomeId.ISLAND,
+    BiomeId.ABYSS,
+    BiomeId.WASTELAND,
+    BiomeId.FAIRY_CAVE,
+    BiomeId.TEMPLE,
+    BiomeId.LABORATORY,
+    BiomeId.SPACE,
+    BiomeId.WASTELAND,
   ];
 
   const calculateNumEncounters = (): any[] => {
@@ -1113,7 +1106,7 @@ export function calculateMEAggregateStats(baseSpawnWeight: number) {
     let mostRecentEncounterWave = 0;
     const encountersByBiome = new Map<string, number>(biomes.map(b => [b, 0]));
     const validMEfloorsByBiome = new Map<string, number>(biomes.map(b => [b, 0]));
-    let currentBiome = Biome.TOWN;
+    let currentBiome = BiomeId.TOWN;
     let currentArena = globalScene.newArena(currentBiome);
     globalScene.setSeed(randomString(24));
     globalScene.resetSeed();
@@ -1126,9 +1119,9 @@ export function calculateMEAggregateStats(baseSpawnWeight: number) {
       // New biome
       if (i % 10 === 1) {
         if (Array.isArray(biomeLinks[currentBiome])) {
-          let biomes: Biome[];
+          let biomes: BiomeId[];
           globalScene.executeWithSeedOffset(() => {
-            biomes = (biomeLinks[currentBiome] as (Biome | [Biome, number])[])
+            biomes = (biomeLinks[currentBiome] as (BiomeId | [BiomeId, number])[])
               .filter(b => {
                 return !Array.isArray(b) || !randSeedInt(b[1]);
               })
@@ -1143,10 +1136,10 @@ export function calculateMEAggregateStats(baseSpawnWeight: number) {
             }
           }
         } else if (biomeLinks.hasOwnProperty(currentBiome)) {
-          currentBiome = biomeLinks[currentBiome] as Biome;
+          currentBiome = biomeLinks[currentBiome] as BiomeId;
         } else {
           if (!(i % 50)) {
-            currentBiome = Biome.END;
+            currentBiome = BiomeId.END;
           } else {
             currentBiome = globalScene.generateRandomBiome(i);
           }
@@ -1168,7 +1161,7 @@ export function calculateMEAggregateStats(baseSpawnWeight: number) {
       // Otherwise, roll encounter
 
       const roll = randSeedInt(256);
-      validMEfloorsByBiome.set(Biome[currentBiome], (validMEfloorsByBiome.get(Biome[currentBiome]) ?? 0) + 1);
+      validMEfloorsByBiome.set(BiomeId[currentBiome], (validMEfloorsByBiome.get(BiomeId[currentBiome]) ?? 0) + 1);
 
       // If total number of encounters is lower than expected for the run, slightly favor a new encounter
       // Do the reverse as well
@@ -1204,7 +1197,7 @@ export function calculateMEAggregateStats(baseSpawnWeight: number) {
             : tierValue > rareThreshold
               ? ++numEncounters[2]
               : ++numEncounters[3];
-        encountersByBiome.set(Biome[currentBiome], (encountersByBiome.get(Biome[currentBiome]) ?? 0) + 1);
+        encountersByBiome.set(BiomeId[currentBiome], (encountersByBiome.get(BiomeId[currentBiome]) ?? 0) + 1);
       } else {
         encounterRate += WEIGHT_INCREMENT_ON_SPAWN_MISS;
       }

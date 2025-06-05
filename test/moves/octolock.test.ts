@@ -1,7 +1,7 @@
 import { TrappedTag } from "#app/data/battler-tags";
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import { AbilityId } from "#enums/ability-id";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -26,28 +26,28 @@ describe("Moves - Octolock", () => {
 
     game.override
       .battleStyle("single")
-      .enemySpecies(Species.MAGIKARP)
-      .enemyMoveset(Moves.SPLASH)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemySpecies(SpeciesId.MAGIKARP)
+      .enemyMoveset(MoveId.SPLASH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .startingLevel(2000)
-      .moveset([Moves.OCTOLOCK, Moves.SPLASH, Moves.TRICK_OR_TREAT])
-      .ability(Abilities.BALL_FETCH);
+      .moveset([MoveId.OCTOLOCK, MoveId.SPLASH, MoveId.TRICK_OR_TREAT])
+      .ability(AbilityId.BALL_FETCH);
   });
 
   it("lowers DEF and SPDEF stat stages of the target Pokemon by 1 each turn", async () => {
-    await game.classicMode.startBattle([Species.GRAPPLOCT]);
+    await game.classicMode.startBattle([SpeciesId.GRAPPLOCT]);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
     // use Octolock and advance to init phase of next turn to check for stat changes
-    game.move.select(Moves.OCTOLOCK);
+    game.move.select(MoveId.OCTOLOCK);
     await game.toNextTurn();
 
     expect(enemyPokemon.getStatStage(Stat.DEF)).toBe(-1);
     expect(enemyPokemon.getStatStage(Stat.SPDEF)).toBe(-1);
 
     // take a second turn to make sure stat changes occur again
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
 
     expect(enemyPokemon.getStatStage(Stat.DEF)).toBe(-2);
@@ -55,13 +55,13 @@ describe("Moves - Octolock", () => {
   });
 
   it("if target pokemon has BIG_PECKS, should only lower SPDEF stat stage by 1", async () => {
-    game.override.enemyAbility(Abilities.BIG_PECKS);
-    await game.classicMode.startBattle([Species.GRAPPLOCT]);
+    game.override.enemyAbility(AbilityId.BIG_PECKS);
+    await game.classicMode.startBattle([SpeciesId.GRAPPLOCT]);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
     // use Octolock and advance to init phase of next turn to check for stat changes
-    game.move.select(Moves.OCTOLOCK);
+    game.move.select(MoveId.OCTOLOCK);
     await game.toNextTurn();
 
     expect(enemyPokemon.getStatStage(Stat.DEF)).toBe(0);
@@ -69,13 +69,13 @@ describe("Moves - Octolock", () => {
   });
 
   it("if target pokemon has WHITE_SMOKE, should not reduce any stat stages", async () => {
-    game.override.enemyAbility(Abilities.WHITE_SMOKE);
-    await game.classicMode.startBattle([Species.GRAPPLOCT]);
+    game.override.enemyAbility(AbilityId.WHITE_SMOKE);
+    await game.classicMode.startBattle([SpeciesId.GRAPPLOCT]);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
     // use Octolock and advance to init phase of next turn to check for stat changes
-    game.move.select(Moves.OCTOLOCK);
+    game.move.select(MoveId.OCTOLOCK);
     await game.toNextTurn();
 
     expect(enemyPokemon.getStatStage(Stat.DEF)).toBe(0);
@@ -83,13 +83,13 @@ describe("Moves - Octolock", () => {
   });
 
   it("if target pokemon has CLEAR_BODY, should not reduce any stat stages", async () => {
-    game.override.enemyAbility(Abilities.CLEAR_BODY);
-    await game.classicMode.startBattle([Species.GRAPPLOCT]);
+    game.override.enemyAbility(AbilityId.CLEAR_BODY);
+    await game.classicMode.startBattle([SpeciesId.GRAPPLOCT]);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
     // use Octolock and advance to init phase of next turn to check for stat changes
-    game.move.select(Moves.OCTOLOCK);
+    game.move.select(MoveId.OCTOLOCK);
     await game.toNextTurn();
 
     expect(enemyPokemon.getStatStage(Stat.DEF)).toBe(0);
@@ -97,14 +97,14 @@ describe("Moves - Octolock", () => {
   });
 
   it("traps the target pokemon", async () => {
-    await game.classicMode.startBattle([Species.GRAPPLOCT]);
+    await game.classicMode.startBattle([SpeciesId.GRAPPLOCT]);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
     // before Octolock - enemy should not be trapped
     expect(enemyPokemon.findTag(t => t instanceof TrappedTag)).toBeUndefined();
 
-    game.move.select(Moves.OCTOLOCK);
+    game.move.select(MoveId.OCTOLOCK);
 
     // after Octolock - enemy should be trapped
     await game.phaseInterceptor.to("MoveEndPhase");
@@ -112,15 +112,15 @@ describe("Moves - Octolock", () => {
   });
 
   it("does not work on ghost type pokemon", async () => {
-    game.override.enemyMoveset(Moves.OCTOLOCK);
-    await game.classicMode.startBattle([Species.GASTLY]);
+    game.override.enemyMoveset(MoveId.OCTOLOCK);
+    await game.classicMode.startBattle([SpeciesId.GASTLY]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
 
     // before Octolock - player should not be trapped
     expect(playerPokemon.findTag(t => t instanceof TrappedTag)).toBeUndefined();
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
 
     // after Octolock - player should still not be trapped, and no stat loss
@@ -130,16 +130,16 @@ describe("Moves - Octolock", () => {
   });
 
   it("does not work on pokemon with added ghost type via Trick-or-Treat", async () => {
-    await game.classicMode.startBattle([Species.FEEBAS]);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
     const enemy = game.scene.getEnemyPokemon()!;
 
     // before Octolock - pokemon should not be trapped
     expect(enemy.findTag(t => t instanceof TrappedTag)).toBeUndefined();
 
-    game.move.select(Moves.TRICK_OR_TREAT);
+    game.move.select(MoveId.TRICK_OR_TREAT);
     await game.toNextTurn();
-    game.move.select(Moves.OCTOLOCK);
+    game.move.select(MoveId.OCTOLOCK);
     await game.toNextTurn();
 
     // after Octolock - pokemon should still not be trapped, and no stat loss

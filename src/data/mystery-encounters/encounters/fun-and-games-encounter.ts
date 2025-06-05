@@ -19,7 +19,7 @@ import { MoneyRequirement } from "#app/data/mystery-encounters/mystery-encounter
 import { queueEncounterMessage, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species-id";
 import i18next from "i18next";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { PlayerGender } from "#enums/player-gender";
@@ -30,7 +30,7 @@ import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms";
 import { PostSummonPhase } from "#app/phases/post-summon-phase";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import { Nature } from "#enums/nature";
-import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
+import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { isPokemonValidForEncounterOptionSelection } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 
 /** the i18n namespace for the encounter */
@@ -91,7 +91,7 @@ export const FunAndGamesEncounter: MysteryEncounter = MysteryEncounterBuilder.wi
   .withOnInit(() => {
     const encounter = globalScene.currentBattle.mysteryEncounter!;
     globalScene.loadBgm("mystery_encounter_fun_and_games", "mystery_encounter_fun_and_games.mp3");
-    encounter.setDialogueToken("wobbuffetName", getPokemonSpecies(Species.WOBBUFFET).getName());
+    encounter.setDialogueToken("wobbuffetName", getPokemonSpecies(SpeciesId.WOBBUFFET).getName());
     return true;
   })
   .withOnVisualsStart(() => {
@@ -214,7 +214,7 @@ async function summonPlayerPokemon() {
     });
 
     // Also loads Wobbuffet data (cannot be shiny)
-    const enemySpecies = getPokemonSpecies(Species.WOBBUFFET);
+    const enemySpecies = getPokemonSpecies(SpeciesId.WOBBUFFET);
     globalScene.currentBattle.enemyParty = [];
     const wobbuffet = globalScene.addEnemyPokemon(
       enemySpecies,

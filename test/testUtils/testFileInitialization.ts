@@ -3,7 +3,7 @@ import { initLoggedInUser } from "#app/account";
 import { initAbilities } from "#app/data/abilities/ability";
 import { initBiomes } from "#app/data/balance/biomes";
 import { initEggMoves } from "#app/data/balance/egg-moves";
-import { initPokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
+import { initPokemonPrevolutions, initPokemonStarters } from "#app/data/balance/pokemon-evolutions";
 import { initMoves } from "#app/data/moves/move";
 import { initMysteryEncounters } from "#app/data/mystery-encounters/mystery-encounters";
 import { initPokemonForms } from "#app/data/pokemon-forms";
@@ -70,10 +70,10 @@ export function initTestFile() {
    * @param x The relative x position
    * @param y The relative y position
    */
-  const setPositionRelative = function (guideObject: any, x: number, y: number) {
+  const setPositionRelative = function (guideObject: any, x: number, y: number): any {
     const offsetX = guideObject.width * (-0.5 + (0.5 - guideObject.originX));
     const offsetY = guideObject.height * (-0.5 + (0.5 - guideObject.originY));
-    this.setPosition(guideObject.x + offsetX + x, guideObject.y + offsetY + y);
+    return this.setPosition(guideObject.x + offsetX + x, guideObject.y + offsetY + y);
   };
 
   Phaser.GameObjects.Container.prototype.setPositionRelative = setPositionRelative;
@@ -85,7 +85,6 @@ export function initTestFile() {
   HTMLCanvasElement.prototype.getContext = () => mockContext;
 
   // Initialize all of these things if and only if they have not been initialized yet
-  // initSpecies();
   if (!wasInitialized) {
     wasInitialized = true;
     initI18n();
@@ -101,6 +100,8 @@ export function initTestFile() {
     initAbilities();
     initLoggedInUser();
     initMysteryEncounters();
+    // init the pokemon starters for the pokedex
+    initPokemonStarters();
   }
 
   manageListeners();

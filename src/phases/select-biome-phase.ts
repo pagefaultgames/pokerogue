@@ -1,6 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import { biomeLinks, getBiomeName } from "#app/data/balance/biomes";
-import { Biome } from "#app/enums/biome";
+import { BiomeId } from "#enums/biome-id";
 import { MoneyInterestModifier, MapModifier } from "#app/modifier/modifier";
 import type { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
 import { UiMode } from "#enums/ui-mode";
@@ -13,10 +13,13 @@ export class SelectBiomePhase extends BattlePhase {
   start() {
     super.start();
 
-    const currentBiome = globalScene.arena.biomeType;
+    globalScene.resetSeed();
 
-    const setNextBiome = (nextBiome: Biome) => {
-      if (globalScene.currentBattle.waveIndex % 10 === 1) {
+    const currentBiome = globalScene.arena.biomeType;
+    const nextWaveIndex = globalScene.currentBattle.waveIndex + 1;
+
+    const setNextBiome = (nextBiome: BiomeId) => {
+      if (nextWaveIndex % 10 === 1) {
         globalScene.applyModifiers(MoneyInterestModifier, true);
         globalScene.unshiftPhase(new PartyHealPhase(false));
       }
@@ -25,15 +28,15 @@ export class SelectBiomePhase extends BattlePhase {
     };
 
     if (
-      (globalScene.gameMode.isClassic && globalScene.gameMode.isWaveFinal(globalScene.currentBattle.waveIndex + 9)) ||
-      (globalScene.gameMode.isDaily && globalScene.gameMode.isWaveFinal(globalScene.currentBattle.waveIndex)) ||
-      (globalScene.gameMode.hasShortBiomes && !(globalScene.currentBattle.waveIndex % 50))
+      (globalScene.gameMode.isClassic && globalScene.gameMode.isWaveFinal(nextWaveIndex + 9)) ||
+      (globalScene.gameMode.isDaily && globalScene.gameMode.isWaveFinal(nextWaveIndex)) ||
+      (globalScene.gameMode.hasShortBiomes && !(nextWaveIndex % 50))
     ) {
-      setNextBiome(Biome.END);
+      setNextBiome(BiomeId.END);
     } else if (globalScene.gameMode.hasRandomBiomes) {
-      setNextBiome(this.generateNextBiome());
+      setNextBiome(this.generateNextBiome(nextWaveIndex));
     } else if (Array.isArray(biomeLinks[currentBiome])) {
-      const biomes: Biome[] = (biomeLinks[currentBiome] as (Biome | [Biome, number])[])
+      const biomes: BiomeId[] = (biomeLinks[currentBiome] as (BiomeId | [BiomeId, number])[])
         .filter(b => !Array.isArray(b) || !randSeedInt(b[1]))
         .map(b => (!Array.isArray(b) ? b : b[0]));
 
@@ -57,16 +60,16 @@ export class SelectBiomePhase extends BattlePhase {
         setNextBiome(biomes[randSeedInt(biomes.length)]);
       }
     } else if (biomeLinks.hasOwnProperty(currentBiome)) {
-      setNextBiome(biomeLinks[currentBiome] as Biome);
+      setNextBiome(biomeLinks[currentBiome] as BiomeId);
     } else {
-      setNextBiome(this.generateNextBiome());
+      setNextBiome(this.generateNextBiome(nextWaveIndex));
     }
   }
 
-  generateNextBiome(): Biome {
-    if (!(globalScene.currentBattle.waveIndex % 50)) {
-      return Biome.END;
+  generateNextBiome(waveIndex: number): BiomeId {
+    if (!(waveIndex % 50)) {
+      return BiomeId.END;
     }
-    return globalScene.generateRandomBiome(globalScene.currentBattle.waveIndex);
+    return globalScene.generateRandomBiome(waveIndex);
   }
 }

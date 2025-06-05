@@ -161,7 +161,7 @@ export class UiInputs {
 
   buttonInfo(pressed = true): void {
     if (globalScene.showMovesetFlyout) {
-      for (const p of globalScene.getField().filter(p => p?.isActive(true))) {
+      for (const p of globalScene.getEnemyField().filter(p => p?.isActive(true))) {
         p.toggleFlyout(pressed);
       }
     }
@@ -176,11 +176,13 @@ export class UiInputs {
       return;
     }
     switch (globalScene.ui?.getMode()) {
-      case UiMode.MESSAGE:
+      case UiMode.MESSAGE: {
         const messageHandler = globalScene.ui.getHandler<MessageUiHandler>();
         if (!messageHandler.pendingPrompt || messageHandler.isTextAnimationInProgress()) {
           return;
         }
+        // biome-ignore lint/suspicious/noFallthroughSwitchClause: falls through to show menu overlay
+      }
       case UiMode.TITLE:
       case UiMode.COMMAND:
       case UiMode.MODIFIER_SELECT:

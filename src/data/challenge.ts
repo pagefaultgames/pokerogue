@@ -1,4 +1,5 @@
-import { BooleanHolder, type NumberHolder, randSeedItem, deepCopy } from "#app/utils/common";
+import { BooleanHolder, type NumberHolder, randSeedItem } from "#app/utils/common";
+import { deepCopy } from "#app/utils/data";
 import i18next from "i18next";
 import type { DexAttrProps, GameData } from "#app/system/game-data";
 import { defaultStarterSpecies } from "#app/system/game-data";
@@ -8,15 +9,16 @@ import { speciesStarterCosts } from "#app/data/balance/starters";
 import type Pokemon from "#app/field/pokemon";
 import { PokemonMove } from "#app/field/pokemon";
 import type { FixedBattleConfig } from "#app/battle";
-import { ClassicFixedBossWaves, getRandomTrainerFunc } from "#app/battle";
+import { getRandomTrainerFunc } from "#app/battle";
+import { ClassicFixedBossWaves } from "#enums/fixed-boss-waves";
 import { BattleType } from "#enums/battle-type";
 import Trainer, { TrainerVariant } from "#app/field/trainer";
 import { PokemonType } from "#enums/pokemon-type";
 import { Challenges } from "#enums/challenges";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species-id";
 import { TrainerType } from "#enums/trainer-type";
 import { Nature } from "#enums/nature";
-import type { Moves } from "#enums/moves";
+import type { MoveId } from "#enums/move-id";
 import { TypeColor, TypeShadow } from "#enums/color";
 import { ModifierTier } from "#app/modifier/modifier-tier";
 import { globalScene } from "#app/global-scene";
@@ -303,11 +305,11 @@ export abstract class Challenge {
 
   /**
    * An apply function for STARTER_COST challenges. Derived classes should alter this.
-   * @param _species {@link Species} The pokemon to change the cost of.
+   * @param _species {@link SpeciesId} The pokemon to change the cost of.
    * @param _cost {@link NumberHolder} The cost of the starter.
    * @returns {@link boolean} Whether this function did anything.
    */
-  applyStarterCost(_species: Species, _cost: NumberHolder): boolean {
+  applyStarterCost(_species: SpeciesId, _cost: NumberHolder): boolean {
     return false;
   }
 
@@ -393,11 +395,11 @@ export abstract class Challenge {
    * An apply function for MOVE_ACCESS. Derived classes should alter this.
    * @param _pokemon {@link Pokemon} What pokemon would learn the move.
    * @param _moveSource {@link MoveSourceType} What source the pokemon would get the move from.
-   * @param _move {@link Moves} The move in question.
+   * @param _move {@link MoveId} The move in question.
    * @param _level {@link NumberHolder} The level threshold for access.
    * @returns {@link boolean} Whether this function did anything.
    */
-  applyMoveAccessLevel(_pokemon: Pokemon, _moveSource: MoveSourceType, _move: Moves, _level: NumberHolder): boolean {
+  applyMoveAccessLevel(_pokemon: Pokemon, _moveSource: MoveSourceType, _move: MoveId, _level: NumberHolder): boolean {
     return false;
   }
 
@@ -405,11 +407,11 @@ export abstract class Challenge {
    * An apply function for MOVE_WEIGHT. Derived classes should alter this.
    * @param _pokemon {@link Pokemon} What pokemon would learn the move.
    * @param _moveSource {@link MoveSourceType} What source the pokemon would get the move from.
-   * @param _move {@link Moves} The move in question.
+   * @param _move {@link MoveId} The move in question.
    * @param _weight {@link NumberHolder} The base weight of the move
    * @returns {@link boolean} Whether this function did anything.
    */
-  applyMoveWeight(_pokemon: Pokemon, _moveSource: MoveSourceType, _move: Moves, _level: NumberHolder): boolean {
+  applyMoveWeight(_pokemon: Pokemon, _moveSource: MoveSourceType, _move: MoveId, _level: NumberHolder): boolean {
     return false;
   }
 
@@ -694,7 +696,7 @@ export class SingleGenerationChallenge extends Challenge {
 
 interface monotypeOverride {
   /** The species to override */
-  species: Species;
+  species: SpeciesId;
   /** The type to count as */
   type: PokemonType;
   /** If part of a fusion, should we check the fused species instead of the base species? */
@@ -706,7 +708,7 @@ interface monotypeOverride {
  */
 export class SingleTypeChallenge extends Challenge {
   private static TYPE_OVERRIDES: monotypeOverride[] = [
-    { species: Species.CASTFORM, type: PokemonType.NORMAL, fusion: false },
+    { species: SpeciesId.CASTFORM, type: PokemonType.NORMAL, fusion: false },
   ];
   // TODO: Find a solution for all Pokemon with this ssui issue, including Basculin and Burmy
 
@@ -802,7 +804,7 @@ export class FreshStartChallenge extends Challenge {
     return false;
   }
 
-  applyStarterCost(species: Species, cost: NumberHolder): boolean {
+  applyStarterCost(species: SpeciesId, cost: NumberHolder): boolean {
     if (defaultStarterSpecies.includes(species)) {
       cost.value = speciesStarterCosts[species];
       return true;
@@ -990,13 +992,13 @@ export function applyChallenges(challengeType: ChallengeType.STARTER_POINTS, poi
 /**
  * Apply all challenges that modify the cost of a starter.
  * @param challengeType {@link ChallengeType} ChallengeType.STARTER_COST
- * @param species {@link Species} The pokemon to change the cost of.
+ * @param species {@link SpeciesId} The pokemon to change the cost of.
  * @param points {@link NumberHolder} The cost of the pokemon.
  * @returns True if any challenge was successfully applied.
  */
 export function applyChallenges(
   challengeType: ChallengeType.STARTER_COST,
-  species: Species,
+  species: SpeciesId,
   cost: NumberHolder,
 ): boolean;
 /**
@@ -1088,7 +1090,7 @@ export function applyChallenges(challengeType: ChallengeType.GAME_MODE_MODIFY): 
  * @param challengeType {@link ChallengeType} ChallengeType.MOVE_ACCESS
  * @param pokemon {@link Pokemon} What pokemon would learn the move.
  * @param moveSource {@link MoveSourceType} What source the pokemon would get the move from.
- * @param move {@link Moves} The move in question.
+ * @param move {@link MoveId} The move in question.
  * @param level {@link NumberHolder} The level threshold for access.
  * @returns True if any challenge was successfully applied.
  */
@@ -1096,7 +1098,7 @@ export function applyChallenges(
   challengeType: ChallengeType.MOVE_ACCESS,
   pokemon: Pokemon,
   moveSource: MoveSourceType,
-  move: Moves,
+  move: MoveId,
   level: NumberHolder,
 ): boolean;
 /**
@@ -1104,7 +1106,7 @@ export function applyChallenges(
  * @param challengeType {@link ChallengeType} ChallengeType.MOVE_WEIGHT
  * @param pokemon {@link Pokemon} What pokemon would learn the move.
  * @param moveSource {@link MoveSourceType} What source the pokemon would get the move from.
- * @param move {@link Moves} The move in question.
+ * @param move {@link MoveId} The move in question.
  * @param weight {@link NumberHolder} The weight of the move.
  * @returns True if any challenge was successfully applied.
  */
@@ -1112,7 +1114,7 @@ export function applyChallenges(
   challengeType: ChallengeType.MOVE_WEIGHT,
   pokemon: Pokemon,
   moveSource: MoveSourceType,
-  move: Moves,
+  move: MoveId,
   weight: NumberHolder,
 ): boolean;
 

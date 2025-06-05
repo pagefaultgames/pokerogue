@@ -10,7 +10,7 @@ import { getLocalizedSpriteKey, fixedInt, padInt } from "#app/utils/common";
 import { MoveCategory } from "#enums/MoveCategory";
 import i18next from "i18next";
 import { Button } from "#enums/buttons";
-import type { PokemonMove } from "#app/field/pokemon";
+import type { EnemyPokemon, PokemonMove } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
 import type { CommandPhase } from "#app/phases/command-phase";
 import MoveInfoOverlay from "./move-info-overlay";
@@ -127,7 +127,7 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
     messageHandler.commandWindow.setVisible(false);
     messageHandler.movesWindowContainer.setVisible(true);
     const pokemon = (globalScene.getCurrentPhase() as CommandPhase).getPokemon();
-    if (pokemon.battleSummonData.turnCount <= 1) {
+    if (pokemon.tempSummonData.turnCount <= 1) {
       this.setCursor(0);
     } else {
       this.setCursor(this.getCursor());
@@ -279,7 +279,7 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
       this.moveInfoOverlay.show(pokemonMove.getMove());
 
       pokemon.getOpponents().forEach(opponent => {
-        opponent.updateEffectiveness(this.getEffectivenessText(pokemon, opponent, pokemonMove));
+        (opponent as EnemyPokemon).updateEffectiveness(this.getEffectivenessText(pokemon, opponent, pokemonMove));
       });
     }
 
@@ -292,7 +292,7 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
     this.accuracyText.setVisible(hasMove);
     this.moveCategoryIcon.setVisible(hasMove);
 
-    this.cursorObj.setPosition(13 + (cursor % 2 === 1 ? 100 : 0), -31 + (cursor >= 2 ? 15 : 0));
+    this.cursorObj.setPosition(13 + (cursor % 2 === 1 ? 114 : 0), -31 + (cursor >= 2 ? 15 : 0));
 
     return changed;
   }
@@ -305,7 +305,7 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
     const effectiveness = opponent.getMoveEffectiveness(
       pokemon,
       pokemonMove.getMove(),
-      !opponent.battleData?.abilityRevealed,
+      !opponent.waveData.abilityRevealed,
       undefined,
       undefined,
       true,
@@ -322,7 +322,7 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
     const moveset = pokemon.getMoveset();
 
     for (let moveIndex = 0; moveIndex < 4; moveIndex++) {
-      const moveText = addTextObject(moveIndex % 2 === 0 ? 0 : 100, moveIndex < 2 ? 0 : 16, "-", TextStyle.WINDOW);
+      const moveText = addTextObject(moveIndex % 2 === 0 ? 0 : 114, moveIndex < 2 ? 0 : 16, "-", TextStyle.WINDOW);
       moveText.setName("text-empty-move");
 
       if (moveIndex < moveset.length) {
@@ -356,7 +356,7 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
         opponent.getMoveEffectiveness(
           pokemon,
           pokemonMove.getMove(),
-          !opponent.battleData.abilityRevealed,
+          !opponent.waveData.abilityRevealed,
           undefined,
           undefined,
           true,
@@ -391,7 +391,7 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
 
     const opponents = (globalScene.getCurrentPhase() as CommandPhase).getPokemon().getOpponents();
     opponents.forEach(opponent => {
-      opponent.updateEffectiveness(undefined);
+      (opponent as EnemyPokemon).updateEffectiveness();
     });
   }
 

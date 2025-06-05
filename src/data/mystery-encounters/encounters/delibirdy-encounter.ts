@@ -18,7 +18,7 @@ import { applyModifierTypeToPlayerPokemon } from "#app/data/mystery-encounters/u
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import type { PlayerPokemon } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
-import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
+import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import type { PokemonHeldItemModifier, PokemonInstantReviveModifier } from "#app/modifier/modifier";
 import {
   BerryModifier,
@@ -36,7 +36,7 @@ import { randSeedItem } from "#app/utils/common";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species-id";
 import { timedEventManager } from "#app/global-event-manager";
 
 /** the i18n namespace for this encounter */
@@ -95,7 +95,7 @@ export const DelibirdyEncounter: MysteryEncounter = MysteryEncounterBuilder.with
     {
       spriteKey: "",
       fileRoot: "",
-      species: Species.DELIBIRD,
+      species: SpeciesId.DELIBIRD,
       hasShadow: true,
       repeat: true,
       startFrame: 38,
@@ -104,7 +104,7 @@ export const DelibirdyEncounter: MysteryEncounter = MysteryEncounterBuilder.with
     {
       spriteKey: "",
       fileRoot: "",
-      species: Species.DELIBIRD,
+      species: SpeciesId.DELIBIRD,
       hasShadow: true,
       repeat: true,
       scale: 1.06,
@@ -112,7 +112,7 @@ export const DelibirdyEncounter: MysteryEncounter = MysteryEncounterBuilder.with
     {
       spriteKey: "",
       fileRoot: "",
-      species: Species.DELIBIRD,
+      species: SpeciesId.DELIBIRD,
       hasShadow: true,
       repeat: true,
       startFrame: 65,
@@ -137,7 +137,7 @@ export const DelibirdyEncounter: MysteryEncounter = MysteryEncounterBuilder.with
   ])
   .withOnInit(() => {
     const encounter = globalScene.currentBattle.mysteryEncounter!;
-    encounter.setDialogueToken("delibirdName", getPokemonSpecies(Species.DELIBIRD).getName());
+    encounter.setDialogueToken("delibirdName", getPokemonSpecies(SpeciesId.DELIBIRD).getName());
 
     globalScene.loadBgm("mystery_encounter_delibirdy", "mystery_encounter_delibirdy.mp3");
     return true;

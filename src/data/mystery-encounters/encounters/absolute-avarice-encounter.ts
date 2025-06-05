@@ -11,7 +11,7 @@ import { EnemyPokemon, PokemonMove } from "#app/field/pokemon";
 import type { BerryModifierType, PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species-id";
 import { globalScene } from "#app/global-scene";
 import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
@@ -22,7 +22,7 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { BerryModifier, PokemonInstantReviveModifier } from "#app/modifier/modifier";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/move-id";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { randInt } from "#app/utils/common";
 import { BattlerIndex } from "#app/battle";
@@ -37,7 +37,6 @@ import type HeldModifierConfig from "#app/interfaces/held-modifier-config";
 import type { BerryType } from "#enums/berry-type";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { Stat } from "#enums/stat";
-import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/game-mode";
 import i18next from "i18next";
 
 /** the i18n namespace for this encounter */
@@ -52,15 +51,15 @@ export const AbsoluteAvariceEncounter: MysteryEncounter = MysteryEncounterBuilde
   MysteryEncounterType.ABSOLUTE_AVARICE,
 )
   .withEncounterTier(MysteryEncounterTier.GREAT)
-  .withSceneWaveRangeRequirement(...CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES)
-  .withSceneRequirement(new PersistentModifierRequirement("BerryModifier", 4)) // Must have at least 4 berries to spawn
+  .withSceneWaveRangeRequirement(20, 180)
+  .withSceneRequirement(new PersistentModifierRequirement("BerryModifier", 6)) // Must have at least 6 berries to spawn
   .withFleeAllowed(false)
   .withIntroSpriteConfigs([
     {
       // This sprite has the shadow
       spriteKey: "",
       fileRoot: "",
-      species: Species.GREEDENT,
+      species: SpeciesId.GREEDENT,
       hasShadow: true,
       alpha: 0.001,
       repeat: true,
@@ -69,7 +68,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter = MysteryEncounterBuilde
     {
       spriteKey: "",
       fileRoot: "",
-      species: Species.GREEDENT,
+      species: SpeciesId.GREEDENT,
       hasShadow: false,
       repeat: true,
       x: -5,
@@ -220,20 +219,20 @@ export const AbsoluteAvariceEncounter: MysteryEncounter = MysteryEncounterBuilde
 
     // Do NOT remove the real berries yet or else it will be persisted in the session data
 
-    // SpDef buff below wave 50, +1 to all stats otherwise
+    // +1 SpDef below wave 50, SpDef and Speed otherwise
     const statChangesForBattle: (Stat.ATK | Stat.DEF | Stat.SPATK | Stat.SPDEF | Stat.SPD | Stat.ACC | Stat.EVA)[] =
-      globalScene.currentBattle.waveIndex < 50 ? [Stat.SPDEF] : [Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF, Stat.SPD];
+      globalScene.currentBattle.waveIndex < 50 ? [Stat.SPDEF] : [Stat.SPDEF, Stat.SPD];
 
     // Calculate boss mon
     const config: EnemyPartyConfig = {
       levelAdditiveModifier: 1,
       pokemonConfigs: [
         {
-          species: getPokemonSpecies(Species.GREEDENT),
+          species: getPokemonSpecies(SpeciesId.GREEDENT),
           isBoss: true,
           bossSegments: 3,
           shiny: false, // Shiny lock because of consistency issues between the different options
-          moveSet: [Moves.THRASH, Moves.BODY_PRESS, Moves.STUFF_CHEEKS, Moves.CRUNCH],
+          moveSet: [MoveId.THRASH, MoveId.CRUNCH, MoveId.BODY_PRESS, MoveId.SLACK_OFF],
           modifierConfigs: bossModifierConfigs,
           tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
           mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
@@ -247,7 +246,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter = MysteryEncounterBuilde
     };
 
     encounter.enemyPartyConfigs = [config];
-    encounter.setDialogueToken("greedentName", getPokemonSpecies(Species.GREEDENT).getName());
+    encounter.setDialogueToken("greedentName", getPokemonSpecies(SpeciesId.GREEDENT).getName());
 
     return true;
   })
@@ -303,7 +302,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter = MysteryEncounterBuilde
         encounter.startOfBattleEffects.push({
           sourceBattlerIndex: BattlerIndex.ENEMY,
           targets: [BattlerIndex.ENEMY],
-          move: new PokemonMove(Moves.STUFF_CHEEKS),
+          move: new PokemonMove(MoveId.STUFF_CHEEKS),
           ignorePp: true,
         });
 
@@ -374,12 +373,12 @@ export const AbsoluteAvariceEncounter: MysteryEncounter = MysteryEncounterBuilde
         // Let it have the food
         // Greedent joins the team, level equal to 2 below highest party member (shiny locked)
         const level = getHighestLevelPlayerPokemon(false, true).level - 2;
-        const greedent = new EnemyPokemon(getPokemonSpecies(Species.GREEDENT), level, TrainerSlot.NONE, false, true);
+        const greedent = new EnemyPokemon(getPokemonSpecies(SpeciesId.GREEDENT), level, TrainerSlot.NONE, false, true);
         greedent.moveset = [
-          new PokemonMove(Moves.THRASH),
-          new PokemonMove(Moves.BODY_PRESS),
-          new PokemonMove(Moves.STUFF_CHEEKS),
-          new PokemonMove(Moves.SLACK_OFF),
+          new PokemonMove(MoveId.THRASH),
+          new PokemonMove(MoveId.BODY_PRESS),
+          new PokemonMove(MoveId.STUFF_CHEEKS),
+          new PokemonMove(MoveId.SLACK_OFF),
         ];
         greedent.passive = true;
 

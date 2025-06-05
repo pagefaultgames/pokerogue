@@ -1,13 +1,13 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import type { PokemonTurnData, TurnMove, PokemonMove } from "#app/field/pokemon";
+import type { PokemonTurnData, TurnMove } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
 import { MoveResult } from "#app/field/pokemon";
 import type BattleScene from "#app/battle-scene";
 import { BattlerTagLapseType, BindTag, SubstituteTag } from "#app/data/battler-tags";
-import { Moves } from "#app/enums/moves";
+import { MoveId } from "#enums/move-id";
 import { PokemonAnimType } from "#app/enums/pokemon-anim-type";
 import * as messages from "#app/messages";
-import { allMoves } from "#app/data/moves/move";
+import { allMoves } from "#app/data/data-lists";
 import type { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import GameManager from "#test/testUtils/gameManager";
 
@@ -42,7 +42,6 @@ describe("BattlerTag - SubstituteTag", () => {
           // simulate a Trapped tag set by another Pokemon, then expect the filter to catch it.
           const trapTag = new BindTag(5, 0);
           expect(tagFilter(trapTag)).toBeTruthy();
-          return true;
         }) as Pokemon["findAndRemoveTags"],
       } as unknown as Pokemon;
 
@@ -53,7 +52,7 @@ describe("BattlerTag - SubstituteTag", () => {
     });
 
     it("sets the tag's HP to 1/4 of the source's max HP (rounded down)", async () => {
-      const subject = new SubstituteTag(Moves.SUBSTITUTE, mockPokemon.id);
+      const subject = new SubstituteTag(MoveId.SUBSTITUTE, mockPokemon.id);
 
       vi.spyOn(mockPokemon.scene as BattleScene, "triggerPokemonBattleAnim").mockReturnValue(true);
       vi.spyOn(mockPokemon.scene as BattleScene, "queueMessage").mockReturnValue();
@@ -64,7 +63,7 @@ describe("BattlerTag - SubstituteTag", () => {
     });
 
     it("triggers on-add effects that bring the source out of focus", async () => {
-      const subject = new SubstituteTag(Moves.SUBSTITUTE, mockPokemon.id);
+      const subject = new SubstituteTag(MoveId.SUBSTITUTE, mockPokemon.id);
 
       vi.spyOn(mockPokemon.scene as BattleScene, "triggerPokemonBattleAnim").mockImplementation(
         (_pokemon, battleAnimType, _fieldAssets?, _delayed?) => {
@@ -83,7 +82,7 @@ describe("BattlerTag - SubstituteTag", () => {
     });
 
     it("removes effects that trap the source", async () => {
-      const subject = new SubstituteTag(Moves.SUBSTITUTE, mockPokemon.id);
+      const subject = new SubstituteTag(MoveId.SUBSTITUTE, mockPokemon.id);
 
       vi.spyOn(mockPokemon.scene as BattleScene, "queueMessage").mockReturnValue();
 
@@ -105,7 +104,7 @@ describe("BattlerTag - SubstituteTag", () => {
     });
 
     it("triggers on-remove animation and message", async () => {
-      const subject = new SubstituteTag(Moves.SUBSTITUTE, mockPokemon.id);
+      const subject = new SubstituteTag(MoveId.SUBSTITUTE, mockPokemon.id);
       subject.sourceInFocus = false;
 
       vi.spyOn(mockPokemon.scene as BattleScene, "triggerPokemonBattleAnim").mockImplementation(
@@ -134,7 +133,7 @@ describe("BattlerTag - SubstituteTag", () => {
         getLastXMoves: vi
           .fn()
           .mockReturnValue([
-            { move: Moves.TACKLE, result: MoveResult.SUCCESS } as TurnMove,
+            { move: MoveId.TACKLE, result: MoveResult.SUCCESS } as TurnMove,
           ]) as Pokemon["getLastXMoves"],
       } as unknown as Pokemon;
 
@@ -142,7 +141,7 @@ describe("BattlerTag - SubstituteTag", () => {
     });
 
     it("PRE_MOVE lapse triggers pre-move animation", async () => {
-      const subject = new SubstituteTag(Moves.SUBSTITUTE, mockPokemon.id);
+      const subject = new SubstituteTag(MoveId.SUBSTITUTE, mockPokemon.id);
 
       vi.spyOn(mockPokemon.scene as BattleScene, "triggerPokemonBattleAnim").mockImplementation(
         (_pokemon, battleAnimType, _fieldAssets?, _delayed?) => {
@@ -161,7 +160,7 @@ describe("BattlerTag - SubstituteTag", () => {
     });
 
     it("AFTER_MOVE lapse triggers post-move animation", async () => {
-      const subject = new SubstituteTag(Moves.SUBSTITUTE, mockPokemon.id);
+      const subject = new SubstituteTag(MoveId.SUBSTITUTE, mockPokemon.id);
 
       vi.spyOn(mockPokemon.scene as BattleScene, "triggerPokemonBattleAnim").mockImplementation(
         (_pokemon, battleAnimType, _fieldAssets?, _delayed?) => {
@@ -181,22 +180,18 @@ describe("BattlerTag - SubstituteTag", () => {
 
     // TODO: Figure out how to mock a MoveEffectPhase correctly for this test
     it.todo("HIT lapse triggers on-hit message", async () => {
-      const subject = new SubstituteTag(Moves.SUBSTITUTE, mockPokemon.id);
+      const subject = new SubstituteTag(MoveId.SUBSTITUTE, mockPokemon.id);
 
       vi.spyOn(mockPokemon.scene as BattleScene, "triggerPokemonBattleAnim").mockReturnValue(true);
       vi.spyOn(mockPokemon.scene as BattleScene, "queueMessage").mockReturnValue();
 
-      const pokemonMove = {
-        getMove: vi.fn().mockReturnValue(allMoves[Moves.TACKLE]) as PokemonMove["getMove"],
-      } as PokemonMove;
-
       const moveEffectPhase = {
-        move: pokemonMove,
+        move: allMoves[MoveId.TACKLE],
         getUserPokemon: vi.fn().mockReturnValue(undefined) as MoveEffectPhase["getUserPokemon"],
       } as MoveEffectPhase;
 
       vi.spyOn(mockPokemon.scene as BattleScene, "getCurrentPhase").mockReturnValue(moveEffectPhase);
-      vi.spyOn(allMoves[Moves.TACKLE], "hitsSubstitute").mockReturnValue(true);
+      vi.spyOn(allMoves[MoveId.TACKLE], "hitsSubstitute").mockReturnValue(true);
 
       expect(subject.lapse(mockPokemon, BattlerTagLapseType.HIT)).toBeTruthy();
 
@@ -205,7 +200,7 @@ describe("BattlerTag - SubstituteTag", () => {
     });
 
     it("CUSTOM lapse flags the tag for removal", async () => {
-      const subject = new SubstituteTag(Moves.SUBSTITUTE, mockPokemon.id);
+      const subject = new SubstituteTag(MoveId.SUBSTITUTE, mockPokemon.id);
 
       vi.spyOn(mockPokemon.scene as BattleScene, "triggerPokemonBattleAnim").mockReturnValue(true);
       vi.spyOn(mockPokemon.scene as BattleScene, "queueMessage").mockReturnValue();
@@ -214,7 +209,7 @@ describe("BattlerTag - SubstituteTag", () => {
     });
 
     it("Unsupported lapse type does nothing", async () => {
-      const subject = new SubstituteTag(Moves.SUBSTITUTE, mockPokemon.id);
+      const subject = new SubstituteTag(MoveId.SUBSTITUTE, mockPokemon.id);
 
       vi.spyOn(mockPokemon.scene as BattleScene, "triggerPokemonBattleAnim").mockReturnValue(true);
       vi.spyOn(mockPokemon.scene as BattleScene, "queueMessage").mockReturnValue();

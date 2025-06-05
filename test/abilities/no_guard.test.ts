@@ -1,9 +1,10 @@
 import { BattlerIndex } from "#app/battle";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { MoveEndPhase } from "#app/phases/move-end-phase";
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import { AbilityId } from "#enums/ability-id";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
+import { HitCheckResult } from "#enums/hit-check-result";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, it, expect, vi } from "vitest";
@@ -25,19 +26,20 @@ describe("Abilities - No Guard", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset(Moves.ZAP_CANNON)
-      .ability(Abilities.NO_GUARD)
+      .moveset(MoveId.ZAP_CANNON)
+      .ability(AbilityId.NO_GUARD)
       .enemyLevel(200)
-      .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset(Moves.SPLASH);
+      .enemySpecies(SpeciesId.SNORLAX)
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   it("should make moves always hit regardless of move accuracy", async () => {
     game.override.battleStyle("single");
 
-    await game.classicMode.startBattle([Species.REGIELEKI]);
+    await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
 
-    game.move.select(Moves.ZAP_CANNON);
+    game.move.select(MoveId.ZAP_CANNON);
 
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
 
@@ -48,7 +50,7 @@ describe("Abilities - No Guard", () => {
 
     await game.phaseInterceptor.to(MoveEndPhase);
 
-    expect(moveEffectPhase.hitCheck).toHaveReturnedWith(true);
+    expect(moveEffectPhase.hitCheck).toHaveReturnedWith([HitCheckResult.HIT, 1]);
   });
 
   it("should guarantee double battle with any one LURE", async () => {
