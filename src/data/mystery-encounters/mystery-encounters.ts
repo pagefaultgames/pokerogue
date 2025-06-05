@@ -33,6 +33,7 @@ import { UncommonBreedEncounter } from "#app/data/mystery-encounters/encounters/
 import { GlobalTradeSystemEncounter } from "#app/data/mystery-encounters/encounters/global-trade-system-encounter";
 import { TheExpertPokemonBreederEncounter } from "#app/data/mystery-encounters/encounters/the-expert-pokemon-breeder-encounter";
 import { getBiomeName } from "#app/data/balance/biomes";
+import { SkyBattleEncounter } from "./encounters/sky-battle-encounter";
 
 /**
  * Spawn chance: (BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT + WIGHT_INCREMENT_ON_SPAWN_MISS * <number of missed spawns>) / MYSTERY_ENCOUNTER_SPAWN_MAX_WEIGHT
@@ -171,6 +172,36 @@ export const CIVILIZATION_ENCOUNTER_BIOMES = [
   BiomeId.ISLAND,
 ];
 
+/**
+ * Places where you could fly like a bird
+ */
+export const OPEN_SKY_BIOMES = [
+  BiomeId.TOWN,
+  BiomeId.PLAINS,
+  BiomeId.GRASS,
+  BiomeId.TALL_GRASS,
+  BiomeId.METROPOLIS,
+  BiomeId.FOREST,
+  BiomeId.SEA,
+  BiomeId.SWAMP,
+  BiomeId.BEACH,
+  BiomeId.LAKE,
+  BiomeId.MOUNTAIN,
+  BiomeId.BADLANDS,
+  BiomeId.DESERT,
+  BiomeId.MEADOW,
+  BiomeId.VOLCANO,
+  BiomeId.GRAVEYARD,
+  BiomeId.RUINS,
+  BiomeId.WASTELAND,
+  BiomeId.CONSTRUCTION_SITE,
+  BiomeId.JUNGLE,
+  BiomeId.TEMPLE,
+  BiomeId.SLUM,
+  BiomeId.SNOWY_FOREST,
+  BiomeId.ISLAND,
+];
+
 export const allMysteryEncounters: {
   [encounterType: number]: MysteryEncounter;
 } = {};
@@ -197,6 +228,8 @@ const civilizationBiomeEncounters: MysteryEncounterType[] = [
   MysteryEncounterType.FUN_AND_GAMES,
   MysteryEncounterType.GLOBAL_TRADE_SYSTEM,
 ];
+
+const openSkyBiomeEncounters: MysteryEncounterType[] = [MysteryEncounterType.SKY_BATTLE];
 
 /**
  * To add an encounter to every biome possible, use this array
@@ -293,6 +326,7 @@ export function initMysteryEncounters() {
   allMysteryEncounters[MysteryEncounterType.UNCOMMON_BREED] = UncommonBreedEncounter;
   allMysteryEncounters[MysteryEncounterType.GLOBAL_TRADE_SYSTEM] = GlobalTradeSystemEncounter;
   allMysteryEncounters[MysteryEncounterType.THE_EXPERT_POKEMON_BREEDER] = TheExpertPokemonBreederEncounter;
+  allMysteryEncounters[MysteryEncounterType.SKY_BATTLE] = SkyBattleEncounter;
 
   // Add extreme encounters to biome map
   extremeBiomeEncounters.forEach(encounter => {
@@ -324,6 +358,16 @@ export function initMysteryEncounters() {
   // Add civilization encounters to biome map
   civilizationBiomeEncounters.forEach(encounter => {
     CIVILIZATION_ENCOUNTER_BIOMES.forEach(biome => {
+      const encountersForBiome = mysteryEncountersByBiome.get(biome);
+      if (encountersForBiome && !encountersForBiome.includes(encounter)) {
+        encountersForBiome.push(encounter);
+      }
+    });
+  });
+
+  // add open sky encounters to biome map
+  openSkyBiomeEncounters.forEach(encounter => {
+    OPEN_SKY_BIOMES.forEach(biome => {
       const encountersForBiome = mysteryEncountersByBiome.get(biome);
       if (encountersForBiome && !encountersForBiome.includes(encounter)) {
         encountersForBiome.push(encounter);
