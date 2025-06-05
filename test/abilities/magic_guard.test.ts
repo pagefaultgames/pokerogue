@@ -2,6 +2,7 @@ import { BattlerIndex } from "#app/battle";
 import { ArenaTagSide } from "#app/data/arena-tag";
 import { allMoves } from "#app/data/data-lists";
 import { getStatusEffectCatchRateMultiplier } from "#app/data/status-effect";
+import { toDmgValue } from "#app/utils/common";
 import { AbilityId } from "#enums/ability-id";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { MoveId } from "#enums/move-id";
@@ -100,7 +101,7 @@ describe("AbilityId - Magic Guard", () => {
     expect(leadPokemon.hp).toBeLessThan(leadPokemon.getMaxHp());
   });
 
-  it("should preserve toxic turn count and deal appropriate damage when ability lost", async () => {
+  it("should preserve toxic turn count and deal appropriate damage when disabled", async () => {
     game.override.statusEffect(StatusEffect.TOXIC);
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
@@ -130,7 +131,6 @@ describe("AbilityId - Magic Guard", () => {
   });
 
   it("should preserve burn physical damage halving & status catch boost", async () => {
-    game.override.startingLevel(100).enemyLevel(100);
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
     // NB: Burn applies directly to the physical dmg formula, so we can't just check attack here
@@ -153,7 +153,7 @@ describe("AbilityId - Magic Guard", () => {
     await game.toNextTurn();
 
     const burntDmg = blissey.getInverseHp();
-    expect(burntDmg).toBeCloseTo(prevDmg / 2, 0);
+    expect(burntDmg).toBeCloseTo(toDmgValue(prevDmg / 2), 0);
   });
 
   it("should prevent damage from entry hazards, but not Toxic Spikes poison", async () => {
