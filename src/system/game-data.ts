@@ -248,6 +248,7 @@ export interface RunEntry {
 }
 
 export const DexAttr = {
+  GENDERLESS: 0n,
   NON_SHINY: 1n,
   SHINY: 2n,
   MALE: 4n,
