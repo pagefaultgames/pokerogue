@@ -2,9 +2,9 @@ import { BattlerIndex } from "#app/battle";
 import { allMoves } from "#app/data/data-lists";
 import { DamageAnimPhase } from "#app/phases/damage-anim-phase";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/move-id";
 import type Move from "#app/data/moves/move";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -26,32 +26,32 @@ describe("Moves - Dynamax Cannon", () => {
   });
 
   beforeEach(() => {
-    dynamaxCannon = allMoves[Moves.DYNAMAX_CANNON];
+    dynamaxCannon = allMoves[MoveId.DYNAMAX_CANNON];
     game = new GameManager(phaserGame);
 
     game.override
-      .moveset(Moves.DYNAMAX_CANNON)
+      .moveset(MoveId.DYNAMAX_CANNON)
       .startingLevel(200)
       .levelCap(10)
       .battleStyle("single")
       .disableCrits()
-      .enemySpecies(Species.MAGIKARP)
-      .enemyMoveset(Moves.SPLASH);
+      .enemySpecies(SpeciesId.MAGIKARP)
+      .enemyMoveset(MoveId.SPLASH);
 
     // Note that, for Waves 1-10, the level cap is 10
     game.override.startingWave(1);
     game.override.battleStyle("single");
     game.override.disableCrits();
 
-    game.override.enemySpecies(Species.MAGIKARP);
-    game.override.enemyMoveset([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
+    game.override.enemySpecies(SpeciesId.MAGIKARP);
+    game.override.enemyMoveset([MoveId.SPLASH, MoveId.SPLASH, MoveId.SPLASH, MoveId.SPLASH]);
 
     vi.spyOn(dynamaxCannon, "calculateBattlePower");
   });
 
   it("should return 100 power against an enemy below level cap", async () => {
     game.override.enemyLevel(1);
-    await game.classicMode.startBattle([Species.ETERNATUS]);
+    await game.classicMode.startBattle([SpeciesId.ETERNATUS]);
 
     game.move.select(dynamaxCannon.id);
 
@@ -63,7 +63,7 @@ describe("Moves - Dynamax Cannon", () => {
 
   it("should return 100 power against an enemy at level cap", async () => {
     game.override.enemyLevel(10);
-    await game.classicMode.startBattle([Species.ETERNATUS]);
+    await game.classicMode.startBattle([SpeciesId.ETERNATUS]);
 
     game.move.select(dynamaxCannon.id);
 
@@ -75,7 +75,7 @@ describe("Moves - Dynamax Cannon", () => {
 
   it("should return 120 power against an enemy 1% above level cap", async () => {
     game.override.enemyLevel(101);
-    await game.classicMode.startBattle([Species.ETERNATUS]);
+    await game.classicMode.startBattle([SpeciesId.ETERNATUS]);
 
     game.move.select(dynamaxCannon.id);
 
@@ -90,7 +90,7 @@ describe("Moves - Dynamax Cannon", () => {
 
   it("should return 140 power against an enemy 2% above level capp", async () => {
     game.override.enemyLevel(102);
-    await game.classicMode.startBattle([Species.ETERNATUS]);
+    await game.classicMode.startBattle([SpeciesId.ETERNATUS]);
 
     game.move.select(dynamaxCannon.id);
 
@@ -105,7 +105,7 @@ describe("Moves - Dynamax Cannon", () => {
 
   it("should return 160 power against an enemy 3% above level cap", async () => {
     game.override.enemyLevel(103);
-    await game.classicMode.startBattle([Species.ETERNATUS]);
+    await game.classicMode.startBattle([SpeciesId.ETERNATUS]);
 
     game.move.select(dynamaxCannon.id);
 
@@ -120,7 +120,7 @@ describe("Moves - Dynamax Cannon", () => {
 
   it("should return 180 power against an enemy 4% above level cap", async () => {
     game.override.enemyLevel(104);
-    await game.classicMode.startBattle([Species.ETERNATUS]);
+    await game.classicMode.startBattle([SpeciesId.ETERNATUS]);
 
     game.move.select(dynamaxCannon.id);
 
@@ -135,7 +135,7 @@ describe("Moves - Dynamax Cannon", () => {
 
   it("should return 200 power against an enemy 5% above level cap", async () => {
     game.override.enemyLevel(105);
-    await game.classicMode.startBattle([Species.ETERNATUS]);
+    await game.classicMode.startBattle([SpeciesId.ETERNATUS]);
 
     game.move.select(dynamaxCannon.id);
 
@@ -150,7 +150,7 @@ describe("Moves - Dynamax Cannon", () => {
 
   it("should return 200 power against an enemy way above level cap", async () => {
     game.override.enemyLevel(999);
-    await game.classicMode.startBattle([Species.ETERNATUS]);
+    await game.classicMode.startBattle([SpeciesId.ETERNATUS]);
 
     game.move.select(dynamaxCannon.id);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);

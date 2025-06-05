@@ -2,16 +2,16 @@ import { BattlerIndex } from "#app/battle";
 import { ArenaTagSide } from "#app/data/arena-tag";
 import { allMoves } from "#app/data/data-lists";
 import { getStatusEffectCatchRateMultiplier } from "#app/data/status-effect";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/ability-id";
 import { ArenaTagType } from "#enums/arena-tag-type";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
-describe("Abilities - Magic Guard", () => {
+describe("AbilityId - Magic Guard", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
@@ -28,25 +28,25 @@ describe("Abilities - Magic Guard", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .ability(Abilities.MAGIC_GUARD)
-      .enemySpecies(Species.BLISSEY)
-      .enemyAbility(Abilities.NO_GUARD)
+      .ability(AbilityId.MAGIC_GUARD)
+      .enemySpecies(SpeciesId.BLISSEY)
+      .enemyAbility(AbilityId.NO_GUARD)
       .startingLevel(100)
       .enemyLevel(100);
   });
 
   //Bulbapedia Reference: https://bulbapedia.bulbagarden.net/wiki/Magic_Guard_(Ability)
 
-  it.each<{ name: string; move?: Moves; enemyMove?: Moves }>([
-    { name: "Non-Volatile Status Conditions", enemyMove: Moves.TOXIC },
-    { name: "Volatile Status Conditions", enemyMove: Moves.LEECH_SEED },
-    { name: "Crash Damage", move: Moves.HIGH_JUMP_KICK },
-    { name: "Variable Recoil Moves", move: Moves.DOUBLE_EDGE },
-    { name: "HP% Recoil Moves", move: Moves.CHLOROBLAST },
-  ])("should prevent damage from $name", async ({ move = Moves.SPLASH, enemyMove = Moves.SPLASH }) => {
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+  it.each<{ name: string; move?: MoveId; enemyMove?: MoveId }>([
+    { name: "Non-Volatile Status Conditions", enemyMove: MoveId.TOXIC },
+    { name: "Volatile Status Conditions", enemyMove: MoveId.LEECH_SEED },
+    { name: "Crash Damage", move: MoveId.HIGH_JUMP_KICK },
+    { name: "Variable Recoil Moves", move: MoveId.DOUBLE_EDGE },
+    { name: "HP% Recoil Moves", move: MoveId.CHLOROBLAST },
+  ])("should prevent damage from $name", async ({ move = MoveId.SPLASH, enemyMove = MoveId.SPLASH }) => {
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
     // force a miss on HJK
-    vi.spyOn(allMoves[Moves.HIGH_JUMP_KICK], "accuracy", "get").mockReturnValue(0);
+    vi.spyOn(allMoves[MoveId.HIGH_JUMP_KICK], "accuracy", "get").mockReturnValue(0);
 
     game.move.use(move);
     await game.move.forceEnemyMove(enemyMove);
@@ -56,23 +56,23 @@ describe("Abilities - Magic Guard", () => {
     expect(magikarp.hp).toBe(magikarp.getMaxHp());
   });
 
-  it.each<{ abName: string; move?: Moves; enemyMove?: Moves; passive?: Abilities; enemyAbility?: Abilities }>([
-    { abName: "Bad Dreams", enemyMove: Moves.SPORE, enemyAbility: Abilities.BAD_DREAMS },
-    { abName: "Aftermath", move: Moves.PSYCHIC_FANGS, enemyAbility: Abilities.AFTERMATH },
-    { abName: "Innards Out", move: Moves.PSYCHIC_FANGS, enemyAbility: Abilities.INNARDS_OUT },
-    { abName: "Rough Skin", move: Moves.PSYCHIC_FANGS, enemyAbility: Abilities.ROUGH_SKIN },
-    { abName: "Dry Skin", move: Moves.SUNNY_DAY, passive: Abilities.DRY_SKIN },
-    { abName: "Liquid Ooze", move: Moves.DRAIN_PUNCH, enemyAbility: Abilities.LIQUID_OOZE },
+  it.each<{ abName: string; move?: Moves; enemyMove?: Moves; passive?: AbilityId; enemyAbility?: AbilityId }>([
+    { abName: "Bad Dreams", enemyMove: MoveId.SPORE, enemyAbility: AbilityId.BAD_DREAMS },
+    { abName: "Aftermath", move: MoveId.PSYCHIC_FANGS, enemyAbility: AbilityId.AFTERMATH },
+    { abName: "Innards Out", move: MoveId.PSYCHIC_FANGS, enemyAbility: AbilityId.INNARDS_OUT },
+    { abName: "Rough Skin", move: MoveId.PSYCHIC_FANGS, enemyAbility: AbilityId.ROUGH_SKIN },
+    { abName: "Dry Skin", move: MoveId.SUNNY_DAY, passive: AbilityId.DRY_SKIN },
+    { abName: "Liquid Ooze", move: MoveId.DRAIN_PUNCH, enemyAbility: AbilityId.LIQUID_OOZE },
   ])(
     "should prevent damage from $abName",
     async ({
-      move = Moves.SPLASH,
-      enemyMove = Moves.SPLASH,
-      passive = Abilities.BALL_FETCH,
-      enemyAbility = Abilities.BALL_FETCH,
+      move = MoveId.SPLASH,
+      enemyMove = MoveId.SPLASH,
+      passive = AbilityId.BALL_FETCH,
+      enemyAbility = AbilityId.BALL_FETCH,
     }) => {
       game.override.enemyLevel(1).passiveAbility(passive).enemyAbility(enemyAbility);
-      await game.classicMode.startBattle([Species.MAGIKARP]);
+      await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
       game.move.use(move);
       await game.move.forceEnemyMove(enemyMove);
@@ -83,13 +83,13 @@ describe("Abilities - Magic Guard", () => {
     },
   );
 
-  it.each<{ name: string; move?: Moves; enemyMove?: Moves }>([
-    { name: "Struggle recoil", move: Moves.STRUGGLE },
-    { name: "Self-induced HP cutting", move: Moves.BELLY_DRUM },
-    { name: "Confusion self-damage", enemyMove: Moves.CONFUSE_RAY },
-  ])("should not prevent damage from $name", async ({ move = Moves.SPLASH, enemyMove = Moves.SPLASH }) => {
+  it.each<{ name: string; move?: MoveId; enemyMove?: MoveId }>([
+    { name: "Struggle recoil", move: MoveId.STRUGGLE },
+    { name: "Self-induced HP cutting", move: MoveId.BELLY_DRUM },
+    { name: "Confusion self-damage", enemyMove: MoveId.CONFUSE_RAY },
+  ])("should not prevent damage from $name", async ({ move = MoveId.SPLASH, enemyMove = MoveId.SPLASH }) => {
     game.override.confusionActivation(true);
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
     game.move.use(move);
     await game.move.forceEnemyMove(enemyMove);
@@ -102,10 +102,10 @@ describe("Abilities - Magic Guard", () => {
 
   it("should preserve toxic turn count and deal appropriate damage when ability lost", async () => {
     game.override.statusEffect(StatusEffect.TOXIC);
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    game.move.use(Moves.SPLASH);
-    await game.move.forceEnemyMove(Moves.SPLASH);
+    game.move.use(MoveId.SPLASH);
+    await game.move.forceEnemyMove(MoveId.SPLASH);
     await game.toNextTurn();
 
     const magikarp = game.field.getPlayerPokemon();
@@ -113,16 +113,16 @@ describe("Abilities - Magic Guard", () => {
     expect(magikarp.status?.toxicTurnCount).toBe(1);
 
     // have a few turns pass
-    game.move.use(Moves.SPLASH);
+    game.move.use(MoveId.SPLASH);
     await game.toNextTurn();
-    game.move.use(Moves.SPLASH);
+    game.move.use(MoveId.SPLASH);
     await game.toNextTurn();
-    game.move.use(Moves.SPLASH);
+    game.move.use(MoveId.SPLASH);
     await game.toNextTurn();
     expect(magikarp.status?.toxicTurnCount).toBe(4);
 
-    game.move.use(Moves.SPLASH);
-    await game.move.forceEnemyMove(Moves.GASTRO_ACID);
+    game.move.use(MoveId.SPLASH);
+    await game.move.forceEnemyMove(MoveId.GASTRO_ACID);
     await game.toNextTurn();
 
     expect(magikarp.status?.toxicTurnCount).toBe(5);
@@ -131,11 +131,11 @@ describe("Abilities - Magic Guard", () => {
 
   it("should preserve burn physical damage halving & status catch boost", async () => {
     game.override.startingLevel(100).enemyLevel(100);
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
     // NB: Burn applies directly to the physical dmg formula, so we can't just check attack here
-    game.move.use(Moves.TACKLE);
-    await game.move.forceEnemyMove(Moves.SPLASH);
+    game.move.use(MoveId.TACKLE);
+    await game.move.forceEnemyMove(MoveId.SPLASH);
     await game.toNextTurn();
 
     const magikarp = game.field.getPlayerPokemon();
@@ -149,7 +149,7 @@ describe("Abilities - Magic Guard", () => {
     expect(magikarp.status?.effect).toBe(StatusEffect.BURN);
     expect(getStatusEffectCatchRateMultiplier(magikarp.status!.effect)).toBe(1.5);
 
-    game.move.use(Moves.TACKLE);
+    game.move.use(MoveId.TACKLE);
     await game.toNextTurn();
 
     const burntDmg = blissey.getInverseHp();
@@ -157,9 +157,9 @@ describe("Abilities - Magic Guard", () => {
   });
 
   it("should prevent damage from entry hazards, but not Toxic Spikes poison", async () => {
-    game.scene.arena.addTag(ArenaTagType.SPIKES, -1, Moves.SPIKES, 0, ArenaTagSide.PLAYER);
-    game.scene.arena.addTag(ArenaTagType.TOXIC_SPIKES, -1, Moves.TOXIC_SPIKES, 0, ArenaTagSide.PLAYER);
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    game.scene.arena.addTag(ArenaTagType.SPIKES, -1, MoveId.SPIKES, 0, ArenaTagSide.PLAYER);
+    game.scene.arena.addTag(ArenaTagType.TOXIC_SPIKES, -1, MoveId.TOXIC_SPIKES, 0, ArenaTagSide.PLAYER);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
     // Magic guard prevented damage but not poison
     const player = game.field.getPlayerPokemon();

@@ -3,7 +3,7 @@ import { initMoveAnim, loadMoveAnimAssets } from "#app/data/battle-anims";
 import type Move from "#app/data/moves/move";
 import { allMoves } from "#app/data/data-lists";
 import { SpeciesFormChangeMoveLearnedTrigger } from "#app/data/pokemon-forms";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/move-id";
 import { getPokemonNameWithAffix } from "#app/messages";
 import Overrides from "#app/overrides";
 import EvolutionSceneHandler from "#app/ui/evolution-scene-handler";
@@ -24,14 +24,14 @@ export enum LearnMoveType {
 }
 
 export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
-  private moveId: Moves;
+  private moveId: MoveId;
   private messageMode: UiMode;
   private learnMoveType: LearnMoveType;
   private cost: number;
 
   constructor(
     partyMemberIndex: number,
-    moveId: Moves,
+    moveId: MoveId,
     learnMoveType: LearnMoveType = LearnMoveType.LEARN_MOVE,
     cost = -1,
   ) {
@@ -49,7 +49,7 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
     const currentMoveset = pokemon.getMoveset();
 
     // The game first checks if the Pokemon already has the move and ends the phase if it does.
-    const hasMoveAlready = currentMoveset.some(m => m.moveId === move.id) && this.moveId !== Moves.SKETCH;
+    const hasMoveAlready = currentMoveset.some(m => m.moveId === move.id) && this.moveId !== MoveId.SKETCH;
     if (hasMoveAlready) {
       return this.end();
     }
