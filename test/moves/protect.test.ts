@@ -53,7 +53,7 @@ describe("Moves - Protect", () => {
     { numTurns: 2, chance: 9 },
     { numTurns: 3, chance: 27 },
     { numTurns: 4, chance: 81 },
-  ])("should have a 1/$chance success rate after $times successful uses", async ({ numTurns, chance }) => {
+  ])("should have a 1/$chance success rate after $numTurns successful uses", async ({ numTurns, chance }) => {
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
     const charizard = game.scene.getPlayerPokemon()!;
