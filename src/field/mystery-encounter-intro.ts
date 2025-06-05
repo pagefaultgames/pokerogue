@@ -1,13 +1,13 @@
 import type { GameObjects } from "phaser";
 import { globalScene } from "#app/global-scene";
 import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
-import type { Species } from "#enums/species";
+import type { SpeciesId } from "#enums/species-id";
 import { isNullOrUndefined } from "#app/utils/common";
 import { getSpriteKeysFromSpecies } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import type { Variant } from "#app/sprites/variant";
 import { doShinySparkleAnim } from "#app/field/anims";
-import PlayAnimationConfig = Phaser.Types.Animations.PlayAnimationConfig;
 import { loadPokemonVariantAssets } from "#app/sprites/pokemon-sprite";
+import PlayAnimationConfig = Phaser.Types.Animations.PlayAnimationConfig;
 
 type KnownFileRoot =
   | "arenas"
@@ -39,7 +39,7 @@ export class MysteryEncounterSpriteConfig {
   /** Refer to [/public/images](../../public/images) directorty for all folder names */
   fileRoot: (KnownFileRoot & string) | string;
   /** Optional replacement for `spriteKey`/`fileRoot`. Just know this defaults to male/genderless, form 0, no shiny */
-  species?: Species;
+  species?: SpeciesId;
   /** Enable shadow. Defaults to `false` */
   hasShadow?: boolean = false;
   /** Disable animation. Defaults to `false` */

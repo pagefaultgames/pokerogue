@@ -1,8 +1,8 @@
 import * as MysteryEncounters from "#app/data/mystery-encounters/mystery-encounters";
 import { HUMAN_TRANSITABLE_BIOMES } from "#app/data/mystery-encounters/mystery-encounters";
-import { Biome } from "#app/enums/biome";
+import { BiomeId } from "#enums/biome-id";
 import { MysteryEncounterType } from "#app/enums/mystery-encounter-type";
-import { Species } from "#app/enums/species";
+import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import {
@@ -21,13 +21,13 @@ import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
 import { CommandPhase } from "#app/phases/command-phase";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import { FunAndGamesEncounter } from "#app/data/mystery-encounters/encounters/fun-and-games-encounter";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/move-id";
 import { Command } from "#app/ui/command-ui-handler";
 import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 
 const namespace = "mysteryEncounters/funAndGames";
-const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
-const defaultBiome = Biome.CAVE;
+const defaultParty = [SpeciesId.LAPRAS, SpeciesId.GENGAR, SpeciesId.ABRA];
+const defaultBiome = BiomeId.CAVE;
 const defaultWave = 45;
 
 describe("Fun And Games! - Mystery Encounter", () => {
@@ -47,7 +47,9 @@ describe("Fun And Games! - Mystery Encounter", () => {
     game.override.startingBiome(defaultBiome);
     game.override.disableTrainerWaves();
 
-    const biomeMap = new Map<Biome, MysteryEncounterType[]>([[Biome.VOLCANO, [MysteryEncounterType.FIGHT_OR_FLIGHT]]]);
+    const biomeMap = new Map<BiomeId, MysteryEncounterType[]>([
+      [BiomeId.VOLCANO, [MysteryEncounterType.FIGHT_OR_FLIGHT]],
+    ]);
     HUMAN_TRANSITABLE_BIOMES.forEach(biome => {
       biomeMap.set(biome, [MysteryEncounterType.FUN_AND_GAMES]);
     });
@@ -78,7 +80,7 @@ describe("Fun And Games! - Mystery Encounter", () => {
 
   it("should not spawn outside of CIVILIZATIONN biomes", async () => {
     game.override.mysteryEncounterTier(MysteryEncounterTier.GREAT);
-    game.override.startingBiome(Biome.VOLCANO);
+    game.override.startingBiome(BiomeId.VOLCANO);
     await game.runToMysteryEncounter();
 
     expect(scene.currentBattle?.mysteryEncounter?.encounterType).not.toBe(MysteryEncounterType.FUN_AND_GAMES);
@@ -136,12 +138,12 @@ describe("Fun And Games! - Mystery Encounter", () => {
 
     it("should get 3 turns to attack the Wobbuffet for a reward", async () => {
       scene.money = 20000;
-      game.override.moveset([Moves.TACKLE]);
+      game.override.moveset([MoveId.TACKLE]);
       await game.runToMysteryEncounter(MysteryEncounterType.FUN_AND_GAMES, defaultParty);
       await runMysteryEncounterToEnd(game, 1, { pokemonNo: 1 }, true);
 
       expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
-      expect(scene.getEnemyPokemon()?.species.speciesId).toBe(Species.WOBBUFFET);
+      expect(scene.getEnemyPokemon()?.species.speciesId).toBe(SpeciesId.WOBBUFFET);
       expect(scene.getEnemyPokemon()?.ivs).toEqual([0, 0, 0, 0, 0, 0]);
       expect(scene.getEnemyPokemon()?.nature).toBe(Nature.MILD);
 
@@ -193,7 +195,7 @@ describe("Fun And Games! - Mystery Encounter", () => {
 
     it("should have Wide Lens item in rewards if Wubboffet is at 15-33% HP remaining", async () => {
       scene.money = 20000;
-      game.override.moveset([Moves.SPLASH]);
+      game.override.moveset([MoveId.SPLASH]);
       await game.runToMysteryEncounter(MysteryEncounterType.FUN_AND_GAMES, defaultParty);
       await runMysteryEncounterToEnd(game, 1, { pokemonNo: 1 }, true);
 
@@ -223,7 +225,7 @@ describe("Fun And Games! - Mystery Encounter", () => {
 
     it("should have Scope Lens item in rewards if Wubboffet is at 3-15% HP remaining", async () => {
       scene.money = 20000;
-      game.override.moveset([Moves.SPLASH]);
+      game.override.moveset([MoveId.SPLASH]);
       await game.runToMysteryEncounter(MysteryEncounterType.FUN_AND_GAMES, defaultParty);
       await runMysteryEncounterToEnd(game, 1, { pokemonNo: 1 }, true);
 
@@ -253,7 +255,7 @@ describe("Fun And Games! - Mystery Encounter", () => {
 
     it("should have Multi Lens item in rewards if Wubboffet is at <3% HP remaining", async () => {
       scene.money = 20000;
-      game.override.moveset([Moves.SPLASH]);
+      game.override.moveset([MoveId.SPLASH]);
       await game.runToMysteryEncounter(MysteryEncounterType.FUN_AND_GAMES, defaultParty);
       await runMysteryEncounterToEnd(game, 1, { pokemonNo: 1 }, true);
 

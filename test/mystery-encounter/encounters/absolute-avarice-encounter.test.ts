@@ -1,6 +1,6 @@
-import { Biome } from "#app/enums/biome";
+import { BiomeId } from "#enums/biome-id";
 import { MysteryEncounterType } from "#app/enums/mystery-encounter-type";
-import { Species } from "#app/enums/species";
+import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
@@ -15,15 +15,15 @@ import * as MysteryEncounters from "#app/data/mystery-encounters/mystery-encount
 import { BerryModifier, PokemonHeldItemModifier } from "#app/modifier/modifier";
 import { BerryType } from "#enums/berry-type";
 import { AbsoluteAvariceEncounter } from "#app/data/mystery-encounters/encounters/absolute-avarice-encounter";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/move-id";
 import { CommandPhase } from "#app/phases/command-phase";
 import { MovePhase } from "#app/phases/move-phase";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import i18next from "i18next";
 
 const namespace = "mysteryEncounters/absoluteAvarice";
-const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
-const defaultBiome = Biome.TALL_GRASS;
+const defaultParty = [SpeciesId.LAPRAS, SpeciesId.GENGAR, SpeciesId.ABRA];
+const defaultBiome = BiomeId.TALL_GRASS;
 const defaultWave = 45;
 
 describe("Absolute Avarice - Mystery Encounter", () => {
@@ -44,9 +44,9 @@ describe("Absolute Avarice - Mystery Encounter", () => {
     game.override.disableTrainerWaves();
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
-      new Map<Biome, MysteryEncounterType[]>([
-        [Biome.TALL_GRASS, [MysteryEncounterType.ABSOLUTE_AVARICE]],
-        [Biome.VOLCANO, [MysteryEncounterType.MYSTERIOUS_CHALLENGERS]],
+      new Map<BiomeId, MysteryEncounterType[]>([
+        [BiomeId.TALL_GRASS, [MysteryEncounterType.ABSOLUTE_AVARICE]],
+        [BiomeId.VOLCANO, [MysteryEncounterType.MYSTERIOUS_CHALLENGERS]],
       ]),
     );
   });
@@ -70,7 +70,7 @@ describe("Absolute Avarice - Mystery Encounter", () => {
 
   it("should not spawn outside of proper biomes", async () => {
     game.override.mysteryEncounterTier(MysteryEncounterTier.GREAT);
-    game.override.startingBiome(Biome.VOLCANO);
+    game.override.startingBiome(BiomeId.VOLCANO);
     await game.runToMysteryEncounter();
 
     expect(game.scene.currentBattle.mysteryEncounter?.encounterType).not.toBe(MysteryEncounterType.ABSOLUTE_AVARICE);
@@ -135,14 +135,14 @@ describe("Absolute Avarice - Mystery Encounter", () => {
       const enemyField = scene.getEnemyField();
       expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(enemyField.length).toBe(1);
-      expect(enemyField[0].species.speciesId).toBe(Species.GREEDENT);
+      expect(enemyField[0].species.speciesId).toBe(SpeciesId.GREEDENT);
       const moveset = enemyField[0].moveset.map(m => m.moveId);
       expect(moveset?.length).toBe(4);
-      expect(moveset).toEqual([Moves.THRASH, Moves.CRUNCH, Moves.BODY_PRESS, Moves.SLACK_OFF]);
+      expect(moveset).toEqual([MoveId.THRASH, MoveId.CRUNCH, MoveId.BODY_PRESS, MoveId.SLACK_OFF]);
 
       const movePhases = phaseSpy.mock.calls.filter(p => p[0] instanceof MovePhase).map(p => p[0]);
       expect(movePhases.length).toBe(1);
-      expect(movePhases.filter(p => (p as MovePhase).move.moveId === Moves.STUFF_CHEEKS).length).toBe(1); // Stuff Cheeks used before battle
+      expect(movePhases.filter(p => (p as MovePhase).move.moveId === MoveId.STUFF_CHEEKS).length).toBe(1); // Stuff Cheeks used before battle
     });
 
     it("should give reviver seed to each pokemon after battle", async () => {
@@ -258,10 +258,10 @@ describe("Absolute Avarice - Mystery Encounter", () => {
 
       expect(partyCountBefore + 1).toBe(partyCountAfter);
       const greedent = scene.getPlayerParty()[scene.getPlayerParty().length - 1];
-      expect(greedent.species.speciesId).toBe(Species.GREEDENT);
+      expect(greedent.species.speciesId).toBe(SpeciesId.GREEDENT);
       const moveset = greedent.moveset.map(m => m.moveId);
       expect(moveset?.length).toBe(4);
-      expect(moveset).toEqual([Moves.THRASH, Moves.BODY_PRESS, Moves.STUFF_CHEEKS, Moves.SLACK_OFF]);
+      expect(moveset).toEqual([MoveId.THRASH, MoveId.BODY_PRESS, MoveId.STUFF_CHEEKS, MoveId.SLACK_OFF]);
     });
 
     it("should leave encounter without battle", async () => {
