@@ -2131,11 +2131,11 @@ export class PostIntimidateStatStageChangeAbAttr extends AbAttr {
   override apply(pokemon: Pokemon, passive: boolean, simulated:boolean, cancelled: BooleanHolder, args: any[]): void {
     if (!simulated) {
       const newStatStageChangePhase = new StatStageChangePhase(pokemon.getBattlerIndex(), false, this.stats, this.stages)
-      if(globalScene.findPhase(m => m instanceof MovePhase)){
+      if (globalScene.findPhase(m => m instanceof MovePhase)) {
         globalScene.prependToPhase(newStatStageChangePhase, MovePhase)
-      } else if(globalScene.findPhase(m => m instanceof SwitchSummonPhase)){
+      } else if (globalScene.findPhase(m => m instanceof SwitchSummonPhase)) {
         globalScene.prependToPhase(newStatStageChangePhase, SwitchSummonPhase)
-      }else {
+      } else {
         globalScene.pushPhase(newStatStageChangePhase);
       }
     }
