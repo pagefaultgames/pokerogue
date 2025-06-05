@@ -261,7 +261,7 @@ export class SaveSlotSelectUiHandler extends MessageUiHandler {
         }
       } else {
         this.saveSlotSelectCallback = null;
-        ui.showText("", 0); // Clear any UI text if needed
+        ui.showText("", 0);
         originalCallback?.(-1);
         success = true;
       }
@@ -385,7 +385,7 @@ export class SaveSlotSelectUiHandler extends MessageUiHandler {
       this.sessionSlotsContainer.add(this.cursorObj);
     }
     const cursorPosition = cursor + this.scrollCursor;
-    const valueHeight = this.sessionSlots[prevSlotIndex ?? 0]?.saveData?.runNameText ? 76 : 76; //nocas
+    const valueHeight = this.sessionSlots[prevSlotIndex ?? 0]?.saveData?.runNameText ? 76 : 76;
     const cursorIncrement = cursorPosition * 76;
     if (this.sessionSlots[cursorPosition] && this.cursorObj) {
       const hasData = this.sessionSlots[cursorPosition].hasData;
