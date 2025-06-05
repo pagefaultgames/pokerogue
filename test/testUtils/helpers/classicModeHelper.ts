@@ -65,7 +65,6 @@ export class ClassicModeHelper extends GameManagerHelper {
    */
   async startBattle(): Promise<void>;
   async startBattle(species?: SpeciesId[]): Promise<void> {
-  async startBattle(species?: SpeciesId[]): Promise<void> {
     await this.runToSummon(species);
 
     if (this.game.scene.battleStyle === BattleStyle.SWITCH) {
