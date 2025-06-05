@@ -1,9 +1,9 @@
-import { Species } from "#app/enums/species";
+import { SpeciesId } from "#enums/species-id";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import GameManager from "#test/testUtils/gameManager";
 import { PokeballType } from "#enums/pokeball";
 import type BattleScene from "#app/battle-scene";
-import { Moves } from "#app/enums/moves";
+import { MoveId } from "#enums/move-id";
 import { PokemonType } from "#enums/pokemon-type";
 import { CustomPokemonData } from "#app/data/custom-pokemon-data";
 
@@ -26,7 +26,7 @@ describe("Spec - Pokemon", () => {
   });
 
   it("should not crash when trying to set status of undefined", async () => {
-    await game.classicMode.runToSummon([Species.ABRA]);
+    await game.classicMode.runToSummon([SpeciesId.ABRA]);
 
     const pkm = game.scene.getPlayerPokemon()!;
     expect(pkm).toBeDefined();
@@ -38,8 +38,14 @@ describe("Spec - Pokemon", () => {
     let scene: BattleScene;
 
     beforeEach(async () => {
-      game.override.enemySpecies(Species.ZUBAT);
-      await game.classicMode.runToSummon([Species.ABRA, Species.ABRA, Species.ABRA, Species.ABRA, Species.ABRA]); // 5 Abra, only 1 slot left
+      game.override.enemySpecies(SpeciesId.ZUBAT);
+      await game.classicMode.runToSummon([
+        SpeciesId.ABRA,
+        SpeciesId.ABRA,
+        SpeciesId.ABRA,
+        SpeciesId.ABRA,
+        SpeciesId.ABRA,
+      ]); // 5 Abra, only 1 slot left
       scene = game.scene;
     });
 
@@ -50,7 +56,7 @@ describe("Spec - Pokemon", () => {
       const party = scene.getPlayerParty();
       expect(party).toHaveLength(6);
       party.forEach((pkm, index) => {
-        expect(pkm.species.speciesId).toBe(index === 5 ? Species.ZUBAT : Species.ABRA);
+        expect(pkm.species.speciesId).toBe(index === 5 ? SpeciesId.ZUBAT : SpeciesId.ABRA);
       });
     });
 
@@ -62,20 +68,20 @@ describe("Spec - Pokemon", () => {
       const party = scene.getPlayerParty();
       expect(party).toHaveLength(6);
       party.forEach((pkm, index) => {
-        expect(pkm.species.speciesId).toBe(index === slotIndex ? Species.ZUBAT : Species.ABRA);
+        expect(pkm.species.speciesId).toBe(index === slotIndex ? SpeciesId.ZUBAT : SpeciesId.ABRA);
       });
     });
   });
 
   it("should not share tms between different forms", async () => {
-    game.override.starterForms({ [Species.ROTOM]: 4 });
+    game.override.starterForms({ [SpeciesId.ROTOM]: 4 });
 
-    await game.classicMode.startBattle([Species.ROTOM]);
+    await game.classicMode.startBattle([SpeciesId.ROTOM]);
 
     const fanRotom = game.scene.getPlayerPokemon()!;
 
-    expect(fanRotom.compatibleTms).not.toContain(Moves.BLIZZARD);
-    expect(fanRotom.compatibleTms).toContain(Moves.AIR_SLASH);
+    expect(fanRotom.compatibleTms).not.toContain(MoveId.BLIZZARD);
+    expect(fanRotom.compatibleTms).toContain(MoveId.AIR_SLASH);
   });
 
   describe("Get correct fusion type", () => {
@@ -87,7 +93,7 @@ describe("Spec - Pokemon", () => {
     });
 
     it("Fusing two mons with a single type", async () => {
-      game.override.starterFusionSpecies(Species.CHARMANDER);
+      game.override.starterFusionSpecies(SpeciesId.CHARMANDER);
       await game.classicMode.startBattle();
       const pokemon = scene.getPlayerParty()[0];
 
@@ -128,7 +134,7 @@ describe("Spec - Pokemon", () => {
     });
 
     it("Fusing two mons with same single type", async () => {
-      game.override.starterFusionSpecies(Species.DROWZEE);
+      game.override.starterFusionSpecies(SpeciesId.DROWZEE);
       await game.classicMode.startBattle();
       const pokemon = scene.getPlayerParty()[0];
 
@@ -209,7 +215,7 @@ describe("Spec - Pokemon", () => {
     "should set minimum IVs for enemy trainer pokemon based on wave (%i)",
     async wave => {
       game.override.startingWave(wave);
-      await game.classicMode.startBattle([Species.FEEBAS]);
+      await game.classicMode.startBattle([SpeciesId.FEEBAS]);
       const { waveIndex } = game.scene.currentBattle;
 
       for (const pokemon of game.scene.getEnemyParty()) {

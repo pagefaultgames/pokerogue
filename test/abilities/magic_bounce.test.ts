@@ -6,9 +6,9 @@ import { ArenaTagType } from "#app/enums/arena-tag-type";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
 import { Stat } from "#app/enums/stat";
 import { StatusEffect } from "#app/enums/status-effect";
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import { AbilityId } from "#enums/ability-id";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -29,17 +29,17 @@ describe("Abilities - Magic Bounce", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .ability(Abilities.BALL_FETCH)
+      .ability(AbilityId.BALL_FETCH)
       .battleStyle("single")
-      .moveset([Moves.GROWL, Moves.SPLASH])
+      .moveset([MoveId.GROWL, MoveId.SPLASH])
       .disableCrits()
-      .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.MAGIC_BOUNCE)
-      .enemyMoveset(Moves.SPLASH);
+      .enemySpecies(SpeciesId.MAGIKARP)
+      .enemyAbility(AbilityId.MAGIC_BOUNCE)
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   it("should reflect basic status moves", async () => {
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
     game.move.use(Moves.GROWL);
     await game.phaseInterceptor.to("BerryPhase");
@@ -70,7 +70,7 @@ describe("Abilities - Magic Bounce", () => {
   });
 
   it("should still bounce back a move that would otherwise fail", async () => {
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
     game.scene.getEnemyPokemon()?.setStatStage(Stat.ATK, -6);
 
     game.move.use(Moves.GROWL);
@@ -80,28 +80,28 @@ describe("Abilities - Magic Bounce", () => {
   });
 
   it("should not bounce back a move that was just bounced", async () => {
-    game.override.ability(Abilities.MAGIC_BOUNCE);
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    game.override.ability(AbilityId.MAGIC_BOUNCE);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    game.move.select(Moves.GROWL);
+    game.move.select(MoveId.GROWL);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(game.scene.getPlayerPokemon()!.getStatStage(Stat.ATK)).toBe(-1);
   });
 
   it("should receive the stat change after reflecting a move back to a mirror armor user", async () => {
-    game.override.ability(Abilities.MIRROR_ARMOR);
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    game.override.ability(AbilityId.MIRROR_ARMOR);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    game.move.select(Moves.GROWL);
+    game.move.select(MoveId.GROWL);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(game.scene.getEnemyPokemon()!.getStatStage(Stat.ATK)).toBe(-1);
   });
 
   it("should not bounce back a move from a mold breaker user", async () => {
-    game.override.ability(Abilities.MOLD_BREAKER);
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    game.override.ability(AbilityId.MOLD_BREAKER);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
     game.move.use(Moves.GROWL);
     await game.phaseInterceptor.to("BerryPhase");
@@ -124,7 +124,7 @@ describe("Abilities - Magic Bounce", () => {
     game.override.battleStyle("double").moveset([Moves.SPIKES]);
     await game.classicMode.startBattle([Species.MAGIKARP]);
 
-    game.move.select(Moves.SPIKES);
+    game.move.select(MoveId.SPIKES);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(game.scene.arena.getTagOnSide(ArenaTagType.SPIKES, ArenaTagSide.PLAYER)!["layers"]).toBe(1);
@@ -135,7 +135,7 @@ describe("Abilities - Magic Bounce", () => {
     game.override.moveset([Moves.SPIKES]).enemyMoveset([Moves.PROTECT]);
     await game.classicMode.startBattle([Species.MAGIKARP]);
 
-    game.move.select(Moves.SPIKES);
+    game.move.select(MoveId.SPIKES);
     await game.phaseInterceptor.to("BerryPhase");
     expect(game.scene.arena.getTagOnSide(ArenaTagType.SPIKES, ArenaTagSide.PLAYER)!["layers"]).toBe(1);
   });
@@ -144,7 +144,7 @@ describe("Abilities - Magic Bounce", () => {
     game.override.moveset([Moves.SPIKES]).enemyMoveset([Moves.FLY]);
     await game.classicMode.startBattle([Species.MAGIKARP]);
 
-    game.move.select(Moves.SPIKES);
+    game.move.select(MoveId.SPIKES);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("BerryPhase");
     expect(game.scene.arena.getTagOnSide(ArenaTagType.SPIKES, ArenaTagSide.ENEMY)!["layers"]).toBe(1);
@@ -154,7 +154,7 @@ describe("Abilities - Magic Bounce", () => {
     game.override.moveset([Moves.CURSE]);
     await game.classicMode.startBattle([Species.GASTLY]);
 
-    game.move.select(Moves.CURSE);
+    game.move.select(MoveId.CURSE);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(game.scene.getEnemyPokemon()!.getTag(BattlerTagType.CURSED)).toBeDefined();
@@ -168,22 +168,22 @@ describe("Abilities - Magic Bounce", () => {
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
     // Give the player MOLD_BREAKER for this turn to bypass Magic Bounce.
-    vi.spyOn(playerPokemon, "getAbility").mockReturnValue(allAbilities[Abilities.MOLD_BREAKER]);
+    vi.spyOn(playerPokemon, "getAbility").mockReturnValue(allAbilities[AbilityId.MOLD_BREAKER]);
 
     // turn 1
-    game.move.select(Moves.ENCORE);
-    await game.move.selectEnemyMove(Moves.TACKLE);
+    game.move.select(MoveId.ENCORE);
+    await game.move.selectEnemyMove(MoveId.TACKLE);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
-    expect(enemyPokemon.getTag(BattlerTagType.ENCORE)!["moveId"]).toBe(Moves.TACKLE);
+    expect(enemyPokemon.getTag(BattlerTagType.ENCORE)!["moveId"]).toBe(MoveId.TACKLE);
 
     // turn 2
     vi.spyOn(playerPokemon, "getAbility").mockRestore();
-    game.move.select(Moves.GROWL);
+    game.move.select(MoveId.GROWL);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("BerryPhase");
-    expect(enemyPokemon.getTag(BattlerTagType.ENCORE)!["moveId"]).toBe(Moves.TACKLE);
-    expect(enemyPokemon.getLastXMoves()[0].move).toBe(Moves.TACKLE);
+    expect(enemyPokemon.getTag(BattlerTagType.ENCORE)!["moveId"]).toBe(MoveId.TACKLE);
+    expect(enemyPokemon.getLastXMoves()[0].move).toBe(MoveId.TACKLE);
   });
 
   // TODO: encore is failing if the last move was virtual.
@@ -193,26 +193,26 @@ describe("Abilities - Magic Bounce", () => {
       .enemyMoveset([Moves.GROWL, Moves.TACKLE])
       .enemyAbility(Abilities.MAGIC_BOUNCE);
 
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
     const playerPokemon = game.scene.getPlayerPokemon()!;
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
     // turn 1
-    game.move.select(Moves.GROWL);
-    await game.move.selectEnemyMove(Moves.TACKLE);
+    game.move.select(MoveId.GROWL);
+    await game.move.selectEnemyMove(MoveId.TACKLE);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
     // Give the player MOLD_BREAKER for this turn to bypass Magic Bounce.
-    vi.spyOn(playerPokemon, "getAbility").mockReturnValue(allAbilities[Abilities.MOLD_BREAKER]);
+    vi.spyOn(playerPokemon, "getAbility").mockReturnValue(allAbilities[AbilityId.MOLD_BREAKER]);
 
     // turn 2
-    game.move.select(Moves.ENCORE);
-    await game.move.selectEnemyMove(Moves.TACKLE);
+    game.move.select(MoveId.ENCORE);
+    await game.move.selectEnemyMove(MoveId.TACKLE);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("BerryPhase");
-    expect(enemyPokemon.getTag(BattlerTagType.ENCORE)!["moveId"]).toBe(Moves.TACKLE);
-    expect(enemyPokemon.getLastXMoves()[0].move).toBe(Moves.TACKLE);
+    expect(enemyPokemon.getTag(BattlerTagType.ENCORE)!["moveId"]).toBe(MoveId.TACKLE);
+    expect(enemyPokemon.getLastXMoves()[0].move).toBe(MoveId.TACKLE);
   });
 
   // TODO: stomping tantrum should consider moves that were bounced.
@@ -220,13 +220,13 @@ describe("Abilities - Magic Bounce", () => {
     game.override.battleStyle("single").moveset([Moves.STOMPING_TANTRUM, Moves.CHARM]);
     await game.classicMode.startBattle([Species.MAGIKARP]);
 
-    const stomping_tantrum = allMoves[Moves.STOMPING_TANTRUM];
+    const stomping_tantrum = allMoves[MoveId.STOMPING_TANTRUM];
     vi.spyOn(stomping_tantrum, "calculateBattlePower");
 
-    game.move.select(Moves.CHARM);
+    game.move.select(MoveId.CHARM);
     await game.toNextTurn();
 
-    game.move.select(Moves.STOMPING_TANTRUM);
+    game.move.select(MoveId.STOMPING_TANTRUM);
     await game.phaseInterceptor.to("BerryPhase");
     expect(stomping_tantrum.calculateBattlePower).toHaveReturnedWith(150);
   });
@@ -258,35 +258,35 @@ describe("Abilities - Magic Bounce", () => {
     await game.classicMode.startBattle([Species.PHANPY]);
 
     // Turn 1 - thunder wave immunity test
-    game.move.select(Moves.THUNDER_WAVE);
+    game.move.select(MoveId.THUNDER_WAVE);
     await game.phaseInterceptor.to("BerryPhase");
     expect(game.scene.getPlayerPokemon()!.status).toBeUndefined();
 
     // Turn 2 - soundproof immunity test
-    game.move.select(Moves.GROWL);
+    game.move.select(MoveId.GROWL);
     await game.phaseInterceptor.to("BerryPhase");
     expect(game.scene.getPlayerPokemon()!.getStatStage(Stat.ATK)).toBe(0);
   });
 
   it("should bounce back a move before the accuracy check", async () => {
-    game.override.moveset([Moves.SPORE]);
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    game.override.moveset([MoveId.SPORE]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
     const attacker = game.scene.getPlayerPokemon()!;
 
     vi.spyOn(attacker, "getAccuracyMultiplier").mockReturnValue(0.0);
-    game.move.select(Moves.SPORE);
+    game.move.select(MoveId.SPORE);
     await game.phaseInterceptor.to("BerryPhase");
     expect(game.scene.getPlayerPokemon()!.status?.effect).toBe(StatusEffect.SLEEP);
   });
 
   it("should take the accuracy of the magic bounce user into account", async () => {
-    game.override.moveset([Moves.SPORE]);
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    game.override.moveset([MoveId.SPORE]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
     const opponent = game.scene.getEnemyPokemon()!;
 
     vi.spyOn(opponent, "getAccuracyMultiplier").mockReturnValue(0);
-    game.move.select(Moves.SPORE);
+    game.move.select(MoveId.SPORE);
     await game.phaseInterceptor.to("BerryPhase");
     expect(game.scene.getPlayerPokemon()!.status).toBeUndefined();
   });
@@ -294,14 +294,14 @@ describe("Abilities - Magic Bounce", () => {
   it("should always apply the leftmost available target's magic bounce when bouncing moves like sticky webs in doubles", async () => {
     game.override.battleStyle("double").moveset([Moves.STICKY_WEB, Moves.SPLASH, Moves.TRICK_ROOM]);
 
-    await game.classicMode.startBattle([Species.MAGIKARP, Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.MAGIKARP]);
     const [enemy_1, enemy_2] = game.scene.getEnemyField();
     // set speed just incase logic erroneously checks for speed order
     enemy_1.setStat(Stat.SPD, enemy_2.getStat(Stat.SPD) + 1);
 
     // turn 1
-    game.move.select(Moves.STICKY_WEB, 0);
-    game.move.select(Moves.TRICK_ROOM, 1);
+    game.move.select(MoveId.STICKY_WEB, 0);
+    game.move.select(MoveId.TRICK_ROOM, 1);
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(
@@ -313,8 +313,8 @@ describe("Abilities - Magic Bounce", () => {
     game.scene.arena.removeTagOnSide(ArenaTagType.STICKY_WEB, ArenaTagSide.PLAYER, true);
 
     // turn 2
-    game.move.select(Moves.STICKY_WEB, 0);
-    game.move.select(Moves.TRICK_ROOM, 1);
+    game.move.select(MoveId.STICKY_WEB, 0);
+    game.move.select(MoveId.TRICK_ROOM, 1);
     await game.phaseInterceptor.to("BerryPhase");
     expect(
       game.scene.arena
@@ -335,8 +335,8 @@ describe("Abilities - Magic Bounce", () => {
     expect(game.scene.getEnemyPokemon()!.status?.effect).toBe(StatusEffect.TOXIC);
     expect(game.scene.getPlayerPokemon()!.status).toBeUndefined();
 
-    game.override.ability(Abilities.NO_GUARD);
-    game.move.select(Moves.CHARM);
+    game.override.ability(AbilityId.NO_GUARD);
+    game.move.select(MoveId.CHARM);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("BerryPhase");
     expect(game.scene.getEnemyPokemon()!.getStatStage(Stat.ATK)).toBe(-2);

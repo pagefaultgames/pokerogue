@@ -1,7 +1,7 @@
 import { BattlerIndex } from "#app/battle";
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import { AbilityId } from "#enums/ability-id";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
@@ -32,15 +32,15 @@ describe("Moves - Rage Powder", () => {
   });
 
   test("move effect should be bypassed by Grass type", async () => {
-    await game.classicMode.startBattle([Species.AMOONGUSS, Species.VENUSAUR]);
+    await game.classicMode.startBattle([SpeciesId.AMOONGUSS, SpeciesId.VENUSAUR]);
 
     const enemyPokemon = game.scene.getEnemyField();
 
-    game.move.select(Moves.QUICK_ATTACK, 0, BattlerIndex.ENEMY);
-    game.move.select(Moves.QUICK_ATTACK, 1, BattlerIndex.ENEMY_2);
+    game.move.select(MoveId.QUICK_ATTACK, 0, BattlerIndex.ENEMY);
+    game.move.select(MoveId.QUICK_ATTACK, 1, BattlerIndex.ENEMY_2);
 
-    await game.move.selectEnemyMove(Moves.RAGE_POWDER);
-    await game.move.selectEnemyMove(Moves.SPLASH);
+    await game.move.selectEnemyMove(MoveId.RAGE_POWDER);
+    await game.move.selectEnemyMove(MoveId.SPLASH);
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
@@ -50,20 +50,20 @@ describe("Moves - Rage Powder", () => {
   });
 
   test("move effect should be bypassed by Overcoat", async () => {
-    game.override.ability(Abilities.OVERCOAT);
+    game.override.ability(AbilityId.OVERCOAT);
 
     // Test with two non-Grass type player Pokemon
-    await game.classicMode.startBattle([Species.BLASTOISE, Species.CHARIZARD]);
+    await game.classicMode.startBattle([SpeciesId.BLASTOISE, SpeciesId.CHARIZARD]);
 
     const enemyPokemon = game.scene.getEnemyField();
 
     const enemyStartingHp = enemyPokemon.map(p => p.hp);
 
-    game.move.select(Moves.QUICK_ATTACK, 0, BattlerIndex.ENEMY);
-    game.move.select(Moves.QUICK_ATTACK, 1, BattlerIndex.ENEMY_2);
+    game.move.select(MoveId.QUICK_ATTACK, 0, BattlerIndex.ENEMY);
+    game.move.select(MoveId.QUICK_ATTACK, 1, BattlerIndex.ENEMY_2);
 
-    await game.move.selectEnemyMove(Moves.RAGE_POWDER);
-    await game.move.selectEnemyMove(Moves.SPLASH);
+    await game.move.selectEnemyMove(MoveId.RAGE_POWDER);
+    await game.move.selectEnemyMove(MoveId.SPLASH);
 
     await game.phaseInterceptor.to("BerryPhase", false);
 

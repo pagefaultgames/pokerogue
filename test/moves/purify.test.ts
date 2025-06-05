@@ -2,8 +2,8 @@ import { BattlerIndex } from "#app/battle";
 import { Status } from "#app/data/status-effect";
 import type { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
 import { MoveEndPhase } from "#app/phases/move-end-phase";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -44,7 +44,7 @@ describe("Moves - Purify", () => {
     playerPokemon.hp = playerPokemon.getMaxHp() - 1;
     enemyPokemon.status = new Status(StatusEffect.BURN);
 
-    game.move.select(Moves.PURIFY);
+    game.move.select(MoveId.PURIFY);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to(MoveEndPhase);
 
@@ -60,7 +60,7 @@ describe("Moves - Purify", () => {
     playerPokemon.hp = playerPokemon.getMaxHp() - 1;
     const playerInitialHp = playerPokemon.hp;
 
-    game.move.select(Moves.PURIFY);
+    game.move.select(MoveId.PURIFY);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to(MoveEndPhase);
 

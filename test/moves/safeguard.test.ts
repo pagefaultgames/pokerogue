@@ -3,8 +3,8 @@ import { PostDefendContactApplyStatusEffectAbAttr } from "#app/data/abilities/ab
 import { Abilities } from "#app/enums/abilities";
 import { StatusEffect } from "#app/enums/status-effect";
 import GameManager from "#test/testUtils/gameManager";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -26,20 +26,20 @@ describe("Moves - Safeguard", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .enemySpecies(Species.DRATINI)
-      .enemyMoveset([Moves.SAFEGUARD])
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemySpecies(SpeciesId.DRATINI)
+      .enemyMoveset([MoveId.SAFEGUARD])
+      .enemyAbility(AbilityId.BALL_FETCH)
       .enemyLevel(5)
-      .starterSpecies(Species.DRATINI)
-      .moveset([Moves.NUZZLE, Moves.SPORE, Moves.YAWN, Moves.SPLASH])
-      .ability(Abilities.UNNERVE); // Stop wild Pokemon from potentially eating Lum Berry
+      .starterSpecies(SpeciesId.DRATINI)
+      .moveset([MoveId.NUZZLE, MoveId.SPORE, MoveId.YAWN, MoveId.SPLASH])
+      .ability(AbilityId.UNNERVE); // Stop wild Pokemon from potentially eating Lum Berry
   });
 
   it("protects from damaging moves with additional effects", async () => {
     await game.classicMode.startBattle();
     const enemy = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.NUZZLE);
+    game.move.select(MoveId.NUZZLE);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
@@ -50,7 +50,7 @@ describe("Moves - Safeguard", () => {
     await game.classicMode.startBattle();
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.SPORE);
+    game.move.select(MoveId.SPORE);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
@@ -58,11 +58,11 @@ describe("Moves - Safeguard", () => {
   });
 
   it("protects from confusion", async () => {
-    game.override.moveset([Moves.CONFUSE_RAY]);
+    game.override.moveset([MoveId.CONFUSE_RAY]);
     await game.classicMode.startBattle();
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.CONFUSE_RAY);
+    game.move.select(MoveId.CONFUSE_RAY);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
@@ -74,8 +74,8 @@ describe("Moves - Safeguard", () => {
 
     await game.classicMode.startBattle();
 
-    game.move.select(Moves.SPORE, 0, BattlerIndex.ENEMY_2);
-    game.move.select(Moves.NUZZLE, 1, BattlerIndex.ENEMY_2);
+    game.move.select(MoveId.SPORE, 0, BattlerIndex.ENEMY_2);
+    game.move.select(MoveId.NUZZLE, 1, BattlerIndex.ENEMY_2);
 
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY_2]);
 
@@ -91,7 +91,7 @@ describe("Moves - Safeguard", () => {
     await game.classicMode.startBattle();
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.YAWN);
+    game.move.select(MoveId.YAWN);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
@@ -102,11 +102,11 @@ describe("Moves - Safeguard", () => {
     await game.classicMode.startBattle();
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.YAWN);
+    game.move.select(MoveId.YAWN);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toNextTurn();
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
 
     expect(enemyPokemon.status?.effect).toBe(StatusEffect.SLEEP);

@@ -1,7 +1,7 @@
 import { allMoves } from "#app/data/data-lists";
-import { Abilities } from "#app/enums/abilities";
-import { Moves } from "#app/enums/moves";
-import { Species } from "#app/enums/species";
+import { AbilityId } from "#enums/ability-id";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -38,11 +38,11 @@ describe("Moves - Glaive Rush", () => {
     const enemy = game.scene.getEnemyPokemon()!;
     enemy.hp = 1000;
 
-    game.move.select(Moves.SHADOW_SNEAK);
+    game.move.select(MoveId.SHADOW_SNEAK);
     await game.phaseInterceptor.to("DamageAnimPhase");
     const damageDealt = 1000 - enemy.hp;
     await game.phaseInterceptor.to("TurnEndPhase");
-    game.move.select(Moves.SHADOW_SNEAK);
+    game.move.select(MoveId.SHADOW_SNEAK);
     await game.phaseInterceptor.to("DamageAnimPhase");
     expect(enemy.hp).toBeLessThanOrEqual(1001 - damageDealt * 3);
   });
@@ -53,8 +53,8 @@ describe("Moves - Glaive Rush", () => {
     const enemy = game.scene.getEnemyPokemon()!;
     enemy.hp = 1000;
 
-    allMoves[Moves.AVALANCHE].accuracy = 0;
-    game.move.select(Moves.AVALANCHE);
+    allMoves[MoveId.AVALANCHE].accuracy = 0;
+    game.move.select(MoveId.AVALANCHE);
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(enemy.hp).toBeLessThan(1000);
   });
@@ -69,12 +69,12 @@ describe("Moves - Glaive Rush", () => {
     enemy.hp = 1000;
     player.hp = 1000;
 
-    allMoves[Moves.AVALANCHE].accuracy = 0;
-    game.move.select(Moves.GLAIVE_RUSH);
+    allMoves[MoveId.AVALANCHE].accuracy = 0;
+    game.move.select(MoveId.GLAIVE_RUSH);
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(player.hp).toBeLessThan(1000);
     player.hp = 1000;
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(player.hp).toBe(1000);
   });
@@ -88,18 +88,18 @@ describe("Moves - Glaive Rush", () => {
 
     enemy.hp = 1000;
     player.hp = 1000;
-    allMoves[Moves.SHADOW_SNEAK].accuracy = 0;
+    allMoves[MoveId.SHADOW_SNEAK].accuracy = 0;
 
-    game.move.select(Moves.GLAIVE_RUSH);
+    game.move.select(MoveId.GLAIVE_RUSH);
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(player.hp).toBe(1000);
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to("TurnEndPhase");
     const damagedHp = player.hp;
     expect(player.hp).toBeLessThan(1000);
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(player.hp).toBe(damagedHp);
   });
@@ -112,9 +112,9 @@ describe("Moves - Glaive Rush", () => {
     const enemy = game.scene.getEnemyPokemon()!;
 
     enemy.hp = 1000;
-    allMoves[Moves.SHADOW_SNEAK].accuracy = 0;
+    allMoves[MoveId.SHADOW_SNEAK].accuracy = 0;
 
-    game.move.select(Moves.GLAIVE_RUSH);
+    game.move.select(MoveId.GLAIVE_RUSH);
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(player.hp).toBe(player.getMaxHp());
 

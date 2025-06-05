@@ -1,10 +1,10 @@
 import { Stat } from "#enums/stat";
-import { Species } from "#app/enums/species";
+import { SpeciesId } from "#enums/species-id";
 import type { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
 import { DamageAnimPhase } from "#app/phases/damage-anim-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
+import { AbilityId } from "#enums/ability-id";
+import { MoveId } from "#enums/move-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -49,7 +49,7 @@ describe("Moves - Fissure", () => {
   it("ignores damage modification from abilities, for example FUR_COAT", async () => {
     game.override.ability(Abilities.NO_GUARD).enemyAbility(Abilities.FUR_COAT);
 
-    game.move.select(Moves.FISSURE);
+    game.move.select(MoveId.FISSURE);
     await game.phaseInterceptor.to(DamageAnimPhase, true);
 
     expect(enemyPokemon.isFainted()).toBe(true);
@@ -60,7 +60,7 @@ describe("Moves - Fissure", () => {
 
     partyPokemon.setStatStage(Stat.ACC, -6);
 
-    game.move.select(Moves.FISSURE);
+    game.move.select(MoveId.FISSURE);
 
     // wait for TurnEndPhase instead of DamagePhase as fissure might not actually inflict damage
     await game.phaseInterceptor.to(TurnEndPhase);
@@ -73,7 +73,7 @@ describe("Moves - Fissure", () => {
 
     enemyPokemon.setStatStage(Stat.EVA, 6);
 
-    game.move.select(Moves.FISSURE);
+    game.move.select(MoveId.FISSURE);
 
     // wait for TurnEndPhase instead of DamagePhase as fissure might not actually inflict damage
     await game.phaseInterceptor.to(TurnEndPhase);

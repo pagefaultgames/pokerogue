@@ -1,7 +1,7 @@
 import * as MysteryEncounters from "#app/data/mystery-encounters/mystery-encounters";
-import { Biome } from "#enums/biome";
+import { BiomeId } from "#enums/biome-id";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import {
@@ -22,8 +22,8 @@ import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encount
 import { NON_LEGEND_PARADOX_POKEMON } from "#app/data/balance/special-species-groups";
 
 const namespace = "mysteryEncounters/safariZone";
-const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
-const defaultBiome = Biome.SWAMP;
+const defaultParty = [SpeciesId.LAPRAS, SpeciesId.GENGAR, SpeciesId.ABRA];
+const defaultBiome = BiomeId.SWAMP;
 const defaultWave = 45;
 
 describe("Safari Zone - Mystery Encounter", () => {
@@ -44,11 +44,11 @@ describe("Safari Zone - Mystery Encounter", () => {
       .startingBiome(defaultBiome)
       .disableTrainerWaves();
 
-    const biomeMap = new Map<Biome, MysteryEncounterType[]>([
-      [Biome.VOLCANO, [MysteryEncounterType.FIGHT_OR_FLIGHT]],
-      [Biome.FOREST, [MysteryEncounterType.SAFARI_ZONE]],
-      [Biome.SWAMP, [MysteryEncounterType.SAFARI_ZONE]],
-      [Biome.JUNGLE, [MysteryEncounterType.SAFARI_ZONE]],
+    const biomeMap = new Map<BiomeId, MysteryEncounterType[]>([
+      [BiomeId.VOLCANO, [MysteryEncounterType.FIGHT_OR_FLIGHT]],
+      [BiomeId.FOREST, [MysteryEncounterType.SAFARI_ZONE]],
+      [BiomeId.SWAMP, [MysteryEncounterType.SAFARI_ZONE]],
+      [BiomeId.JUNGLE, [MysteryEncounterType.SAFARI_ZONE]],
     ]);
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(biomeMap);
   });

@@ -1,9 +1,9 @@
 import { BypassSpeedChanceAbAttr } from "#app/data/abilities/ability";
 import { allAbilities } from "#app/data/data-lists";
 import { FaintPhase } from "#app/phases/faint-phase";
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import { AbilityId } from "#enums/ability-id";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
@@ -34,7 +34,7 @@ describe("Abilities - Quick Draw", () => {
       .enemyAbility(Abilities.BALL_FETCH)
       .enemyMoveset([Moves.TACKLE]);
 
-    vi.spyOn(allAbilities[Abilities.QUICK_DRAW].getAttrs(BypassSpeedChanceAbAttr)[0], "chance", "get").mockReturnValue(
+    vi.spyOn(allAbilities[AbilityId.QUICK_DRAW].getAttrs(BypassSpeedChanceAbAttr)[0], "chance", "get").mockReturnValue(
       100,
     );
   });
@@ -48,12 +48,12 @@ describe("Abilities - Quick Draw", () => {
     pokemon.hp = 1;
     enemy.hp = 1;
 
-    game.move.select(Moves.TACKLE);
+    game.move.select(MoveId.TACKLE);
     await game.phaseInterceptor.to(FaintPhase, false);
 
     expect(pokemon.isFainted()).toBe(false);
     expect(enemy.isFainted()).toBe(true);
-    expect(pokemon.waveData.abilitiesApplied).contain(Abilities.QUICK_DRAW);
+    expect(pokemon.waveData.abilitiesApplied).contain(AbilityId.QUICK_DRAW);
   }, 20000);
 
   test(
@@ -70,17 +70,17 @@ describe("Abilities - Quick Draw", () => {
       pokemon.hp = 1;
       enemy.hp = 1;
 
-      game.move.select(Moves.TAIL_WHIP);
+      game.move.select(MoveId.TAIL_WHIP);
       await game.phaseInterceptor.to(FaintPhase, false);
 
       expect(pokemon.isFainted()).toBe(true);
       expect(enemy.isFainted()).toBe(false);
-      expect(pokemon.waveData.abilitiesApplied).not.contain(Abilities.QUICK_DRAW);
+      expect(pokemon.waveData.abilitiesApplied).not.contain(AbilityId.QUICK_DRAW);
     },
   );
 
   test("does not increase priority", async () => {
-    game.override.enemyMoveset([Moves.EXTREME_SPEED]);
+    game.override.enemyMoveset([MoveId.EXTREME_SPEED]);
 
     await game.classicMode.startBattle();
 
@@ -90,11 +90,11 @@ describe("Abilities - Quick Draw", () => {
     pokemon.hp = 1;
     enemy.hp = 1;
 
-    game.move.select(Moves.TACKLE);
+    game.move.select(MoveId.TACKLE);
     await game.phaseInterceptor.to(FaintPhase, false);
 
     expect(pokemon.isFainted()).toBe(true);
     expect(enemy.isFainted()).toBe(false);
-    expect(pokemon.waveData.abilitiesApplied).contain(Abilities.QUICK_DRAW);
+    expect(pokemon.waveData.abilitiesApplied).contain(AbilityId.QUICK_DRAW);
   }, 20000);
 });

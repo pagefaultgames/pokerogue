@@ -1,7 +1,7 @@
 import { BattlerIndex } from "#app/battle";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
@@ -33,15 +33,15 @@ describe("Moves - Spotlight", () => {
   });
 
   test("move should redirect attacks to the target", async () => {
-    await game.classicMode.startBattle([Species.AMOONGUSS, Species.CHARIZARD]);
+    await game.classicMode.startBattle([SpeciesId.AMOONGUSS, SpeciesId.CHARIZARD]);
 
     const enemyPokemon = game.scene.getEnemyField();
 
-    game.move.select(Moves.SPOTLIGHT, 0, BattlerIndex.ENEMY);
-    game.move.select(Moves.QUICK_ATTACK, 1, BattlerIndex.ENEMY_2);
+    game.move.select(MoveId.SPOTLIGHT, 0, BattlerIndex.ENEMY);
+    game.move.select(MoveId.QUICK_ATTACK, 1, BattlerIndex.ENEMY_2);
 
-    await game.move.selectEnemyMove(Moves.SPLASH);
-    await game.move.selectEnemyMove(Moves.SPLASH);
+    await game.move.selectEnemyMove(MoveId.SPLASH);
+    await game.move.selectEnemyMove(MoveId.SPLASH);
 
     await game.phaseInterceptor.to(TurnEndPhase, false);
 
@@ -50,15 +50,15 @@ describe("Moves - Spotlight", () => {
   });
 
   test("move should cause other redirection moves to fail", async () => {
-    await game.classicMode.startBattle([Species.AMOONGUSS, Species.CHARIZARD]);
+    await game.classicMode.startBattle([SpeciesId.AMOONGUSS, SpeciesId.CHARIZARD]);
 
     const enemyPokemon = game.scene.getEnemyField();
 
-    game.move.select(Moves.SPOTLIGHT, 0, BattlerIndex.ENEMY);
-    game.move.select(Moves.QUICK_ATTACK, 1, BattlerIndex.ENEMY_2);
+    game.move.select(MoveId.SPOTLIGHT, 0, BattlerIndex.ENEMY);
+    game.move.select(MoveId.QUICK_ATTACK, 1, BattlerIndex.ENEMY_2);
 
-    await game.move.selectEnemyMove(Moves.SPLASH);
-    await game.move.selectEnemyMove(Moves.FOLLOW_ME);
+    await game.move.selectEnemyMove(MoveId.SPLASH);
+    await game.move.selectEnemyMove(MoveId.FOLLOW_ME);
 
     await game.phaseInterceptor.to("BerryPhase", false);
 

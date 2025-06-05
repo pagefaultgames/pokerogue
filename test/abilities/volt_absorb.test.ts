@@ -1,9 +1,9 @@
 import { Stat } from "#enums/stat";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/ability-id";
 import { BattlerTagType } from "#enums/battler-tag-type";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -30,8 +30,8 @@ describe("Abilities - Volt Absorb", () => {
   });
 
   it("does not activate when CHARGE is used", async () => {
-    const moveToUse = Moves.CHARGE;
-    const ability = Abilities.VOLT_ABSORB;
+    const moveToUse = MoveId.CHARGE;
+    const ability = AbilityId.VOLT_ABSORB;
 
     game.override
       .moveset([moveToUse])
@@ -64,7 +64,7 @@ describe("Abilities - Volt Absorb", () => {
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.THUNDERBOLT);
+    game.move.select(MoveId.THUNDERBOLT);
     enemyPokemon.hp = enemyPokemon.hp - 1;
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("MoveEffectPhase");
@@ -85,7 +85,7 @@ describe("Abilities - Volt Absorb", () => {
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.THUNDERBOLT);
+    game.move.select(MoveId.THUNDERBOLT);
     enemyPokemon.hp = enemyPokemon.hp - 1;
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
 

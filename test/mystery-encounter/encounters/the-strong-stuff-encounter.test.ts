@@ -1,7 +1,7 @@
 import * as MysteryEncounters from "#app/data/mystery-encounters/mystery-encounters";
-import { Biome } from "#enums/biome";
+import { BiomeId } from "#enums/biome-id";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
@@ -11,7 +11,7 @@ import {
   runMysteryEncounterToEnd,
   skipBattleRunMysteryEncounterRewardsPhase,
 } from "#test/mystery-encounter/encounter-test-utils";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/move-id";
 import type BattleScene from "#app/battle-scene";
 import { TheStrongStuffEncounter } from "#app/data/mystery-encounters/encounters/the-strong-stuff-encounter";
 import { Nature } from "#enums/nature";
@@ -28,11 +28,11 @@ import { CustomPokemonData } from "#app/data/custom-pokemon-data";
 import { CommandPhase } from "#app/phases/command-phase";
 import { MovePhase } from "#app/phases/move-phase";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/ability-id";
 
 const namespace = "mysteryEncounters/theStrongStuff";
-const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
-const defaultBiome = Biome.CAVE;
+const defaultParty = [SpeciesId.LAPRAS, SpeciesId.GENGAR, SpeciesId.ABRA];
+const defaultBiome = BiomeId.CAVE;
 const defaultWave = 45;
 
 describe("The Strong Stuff - Mystery Encounter", () => {
@@ -52,13 +52,13 @@ describe("The Strong Stuff - Mystery Encounter", () => {
       .startingWave(defaultWave)
       .startingBiome(defaultBiome)
       .disableTrainerWaves()
-      .enemyAbility(Abilities.BALL_FETCH)
-      .enemyPassiveAbility(Abilities.BALL_FETCH);
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .enemyPassiveAbility(AbilityId.BALL_FETCH);
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
-      new Map<Biome, MysteryEncounterType[]>([
-        [Biome.CAVE, [MysteryEncounterType.THE_STRONG_STUFF]],
-        [Biome.MOUNTAIN, [MysteryEncounterType.MYSTERIOUS_CHALLENGERS]],
+      new Map<BiomeId, MysteryEncounterType[]>([
+        [BiomeId.CAVE, [MysteryEncounterType.THE_STRONG_STUFF]],
+        [BiomeId.MOUNTAIN, [MysteryEncounterType.MYSTERIOUS_CHALLENGERS]],
       ]),
     );
   });
@@ -108,13 +108,13 @@ describe("The Strong Stuff - Mystery Encounter", () => {
         disableSwitch: true,
         pokemonConfigs: [
           {
-            species: getPokemonSpecies(Species.SHUCKLE),
+            species: getPokemonSpecies(SpeciesId.SHUCKLE),
             isBoss: true,
             bossSegments: 5,
             shiny: false,
             customPokemonData: new CustomPokemonData({ spriteScale: 1.25 }),
             nature: Nature.HARDY,
-            moveSet: [Moves.INFESTATION, Moves.SALT_CURE, Moves.GASTRO_ACID, Moves.HEAL_ORDER],
+            moveSet: [MoveId.INFESTATION, MoveId.SALT_CURE, MoveId.GASTRO_ACID, MoveId.HEAL_ORDER],
             modifierConfigs: expect.any(Array),
             tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
             mysteryEncounterBattleEffects: expect.any(Function),
@@ -196,7 +196,7 @@ describe("The Strong Stuff - Mystery Encounter", () => {
       const enemyField = scene.getEnemyField();
       expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(enemyField.length).toBe(1);
-      expect(enemyField[0].species.speciesId).toBe(Species.SHUCKLE);
+      expect(enemyField[0].species.speciesId).toBe(SpeciesId.SHUCKLE);
       expect(enemyField[0].summonData.statStages).toEqual([0, 1, 0, 1, 0, 0, 0]);
       const shuckleItems = enemyField[0].getHeldItems();
       expect(shuckleItems.length).toBe(5);
@@ -214,17 +214,17 @@ describe("The Strong Stuff - Mystery Encounter", () => {
       );
       expect(shuckleItems.find(m => m instanceof BerryModifier && m.berryType === BerryType.LUM)?.stackCount).toBe(2);
       expect(enemyField[0].moveset).toEqual([
-        new PokemonMove(Moves.INFESTATION),
-        new PokemonMove(Moves.SALT_CURE),
-        new PokemonMove(Moves.GASTRO_ACID),
-        new PokemonMove(Moves.HEAL_ORDER),
+        new PokemonMove(MoveId.INFESTATION),
+        new PokemonMove(MoveId.SALT_CURE),
+        new PokemonMove(MoveId.GASTRO_ACID),
+        new PokemonMove(MoveId.HEAL_ORDER),
       ]);
 
       // Should have used moves pre-battle
       const movePhases = phaseSpy.mock.calls.filter(p => p[0] instanceof MovePhase).map(p => p[0]);
       expect(movePhases.length).toBe(2);
-      expect(movePhases.filter(p => (p as MovePhase).move.moveId === Moves.GASTRO_ACID).length).toBe(1);
-      expect(movePhases.filter(p => (p as MovePhase).move.moveId === Moves.STEALTH_ROCK).length).toBe(1);
+      expect(movePhases.filter(p => (p as MovePhase).move.moveId === MoveId.GASTRO_ACID).length).toBe(1);
+      expect(movePhases.filter(p => (p as MovePhase).move.moveId === MoveId.STEALTH_ROCK).length).toBe(1);
     });
 
     it("should have Soul Dew in rewards", async () => {

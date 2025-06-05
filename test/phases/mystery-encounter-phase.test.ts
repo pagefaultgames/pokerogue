@@ -1,7 +1,7 @@
 import { afterEach, beforeAll, beforeEach, expect, describe, it, vi } from "vitest";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species-id";
 import { MysteryEncounterOptionSelectedPhase, MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
 import { UiMode } from "#enums/ui-mode";
 import { Button } from "#enums/buttons";
@@ -33,8 +33,8 @@ describe("Mystery Encounter Phases", () => {
   describe("MysteryEncounterPhase", () => {
     it("Runs to MysteryEncounterPhase", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.MYSTERIOUS_CHALLENGERS, [
-        Species.CHARIZARD,
-        Species.VOLCARONA,
+        SpeciesId.CHARIZARD,
+        SpeciesId.VOLCARONA,
       ]);
 
       await game.phaseInterceptor.to(MysteryEncounterPhase, false);
@@ -43,8 +43,8 @@ describe("Mystery Encounter Phases", () => {
 
     it("Runs MysteryEncounterPhase", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.MYSTERIOUS_CHALLENGERS, [
-        Species.CHARIZARD,
-        Species.VOLCARONA,
+        SpeciesId.CHARIZARD,
+        SpeciesId.VOLCARONA,
       ]);
 
       game.onNextPrompt("MysteryEncounterPhase", UiMode.MYSTERY_ENCOUNTER, () => {
@@ -66,8 +66,8 @@ describe("Mystery Encounter Phases", () => {
       vi.spyOn(ui, "showDialogue");
       vi.spyOn(ui, "showText");
       await game.runToMysteryEncounter(MysteryEncounterType.MYSTERIOUS_CHALLENGERS, [
-        Species.CHARIZARD,
-        Species.VOLCARONA,
+        SpeciesId.CHARIZARD,
+        SpeciesId.VOLCARONA,
       ]);
 
       game.onNextPrompt("MysteryEncounterPhase", UiMode.MESSAGE, () => {

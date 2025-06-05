@@ -1,7 +1,7 @@
 import { BattlerIndex } from "#app/battle";
-import { Abilities } from "#app/enums/abilities";
-import { Moves } from "#app/enums/moves";
-import { Species } from "#app/enums/species";
+import { AbilityId } from "#enums/ability-id";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import { MoveResult } from "#app/field/pokemon";
 import GameManager from "#test/testUtils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -43,8 +43,8 @@ describe("Moves - Gastro Acid", () => {
 
     await game.classicMode.startBattle();
 
-    game.move.select(Moves.GASTRO_ACID, 0, BattlerIndex.ENEMY);
-    game.move.select(Moves.SPLASH, 1);
+    game.move.select(MoveId.GASTRO_ACID, 0, BattlerIndex.ENEMY);
+    game.move.select(MoveId.SPLASH, 1);
 
     await game.phaseInterceptor.to("TurnInitPhase");
 
@@ -52,8 +52,8 @@ describe("Moves - Gastro Acid", () => {
     expect(enemyField[0].summonData.abilitySuppressed).toBe(true);
     expect(enemyField[1].summonData.abilitySuppressed).toBe(false);
 
-    game.move.select(Moves.WATER_GUN, 0, BattlerIndex.ENEMY);
-    game.move.select(Moves.WATER_GUN, 1, BattlerIndex.ENEMY_2);
+    game.move.select(MoveId.WATER_GUN, 0, BattlerIndex.ENEMY);
+    game.move.select(MoveId.WATER_GUN, 1, BattlerIndex.ENEMY_2);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
@@ -66,13 +66,13 @@ describe("Moves - Gastro Acid", () => {
 
     await game.classicMode.startBattle();
 
-    game.move.select(Moves.CORE_ENFORCER);
+    game.move.select(MoveId.CORE_ENFORCER);
     // Force player to be slower to enable Core Enforcer to proc its suppression effect
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
 
     await game.phaseInterceptor.to("TurnInitPhase");
 
-    game.move.select(Moves.GASTRO_ACID);
+    game.move.select(MoveId.GASTRO_ACID);
 
     await game.phaseInterceptor.to("TurnInitPhase");
 
@@ -81,22 +81,22 @@ describe("Moves - Gastro Acid", () => {
 
   it("should suppress the passive of a target even if its main ability is unsuppressable and not suppress main abli", async () => {
     game.override
-      .enemyAbility(Abilities.COMATOSE)
-      .enemyPassiveAbility(Abilities.WATER_ABSORB)
-      .moveset([Moves.SPLASH, Moves.GASTRO_ACID, Moves.WATER_GUN]);
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+      .enemyAbility(AbilityId.COMATOSE)
+      .enemyPassiveAbility(AbilityId.WATER_ABSORB)
+      .moveset([MoveId.SPLASH, MoveId.GASTRO_ACID, MoveId.WATER_GUN]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
     const enemyPokemon = game.scene.getEnemyPokemon();
 
-    game.move.select(Moves.GASTRO_ACID);
+    game.move.select(MoveId.GASTRO_ACID);
     await game.toNextTurn();
     expect(enemyPokemon?.summonData.abilitySuppressed).toBe(true);
 
-    game.move.select(Moves.WATER_GUN);
+    game.move.select(MoveId.WATER_GUN);
     await game.toNextTurn();
     expect(enemyPokemon?.getHpRatio()).toBeLessThan(1);
 
-    game.move.select(Moves.SPORE);
+    game.move.select(MoveId.SPORE);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(enemyPokemon?.status?.effect).toBeFalsy();

@@ -1,8 +1,8 @@
 import { Stat } from "#enums/stat";
 import { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -23,14 +23,14 @@ describe("Moves - Tackle", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    const moveToUse = Moves.TACKLE;
+    const moveToUse = MoveId.TACKLE;
     game.override
       .battleStyle("single")
-      .enemySpecies(Species.MAGIKARP)
+      .enemySpecies(SpeciesId.MAGIKARP)
       .startingLevel(1)
       .startingWave(97)
       .moveset([moveToUse])
-      .enemyMoveset(Moves.GROWTH)
+      .enemyMoveset(MoveId.GROWTH)
       .disableCrits();
   });
 
@@ -47,8 +47,8 @@ describe("Moves - Tackle", () => {
   }, 20000);
 
   it("TACKLE against not resistant", async () => {
-    const moveToUse = Moves.TACKLE;
-    await game.classicMode.startBattle([Species.MIGHTYENA]);
+    const moveToUse = MoveId.TACKLE;
+    await game.classicMode.startBattle([SpeciesId.MIGHTYENA]);
     game.scene.currentBattle.enemyParty[0].stats[Stat.DEF] = 50;
     game.scene.getPlayerParty()[0].stats[Stat.ATK] = 50;
 
