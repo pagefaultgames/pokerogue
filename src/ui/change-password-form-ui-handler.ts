@@ -66,13 +66,9 @@ export class ChangePasswordFormUiHandler extends FormModalUiHandler {
     return inputFieldConfigs;
   }
 
-  override show(args: any[]): boolean {
-    console.log("=========================1=======================");
+  override show(args: [ModalConfig, ...any]): boolean {
     if (super.show(args)) {
-      // Forces the modal to show above the others
-      // this.modalContainer.parentContainer?.bringToTop(this.modalContainer);
-      console.log("========================2========================");
-      const config = args[0] as ModalConfig;
+      const config = args[0];
       const originalSubmitAction = this.submitAction;
       this.submitAction = () => {
         if (globalScene.tweens.getTweensOf(this.modalContainer).length === 0) {
@@ -95,11 +91,24 @@ export class ChangePasswordFormUiHandler extends FormModalUiHandler {
           pokerogueApi.account.changePassword({ password: passwordInput.text }).then(error => {
             if (!error && originalSubmitAction) {
               originalSubmitAction();
+              // Only clear inputs if the action was successful
+              for (const input of this.inputs) {
+                input.setText("");
+              }
             } else {
               onFail(error);
             }
           });
         }
+      };
+      // Upon pressing cancel, the inputs should be cleared
+      const originalCancelAction = this.cancelAction;
+      this.cancelAction = () => {
+        console.log("Change password form cancelled");
+        for (const input of this.inputs) {
+          input.setText("");
+        }
+        originalCancelAction?.();
       };
 
       return true;
