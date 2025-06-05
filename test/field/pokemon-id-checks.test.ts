@@ -1,12 +1,12 @@
-import { allMoves } from "#app/data/moves/move";
+import { allMoves } from "#app/data/data-lists";
 import type Pokemon from "#app/field/pokemon";
+import { MoveId } from "#enums/move-id";
+import { AbilityId } from "#enums/ability-id";
+import { SpeciesId } from "#enums/species-id";
 import { BerryModifier } from "#app/modifier/modifier";
-import { Abilities } from "#enums/abilities";
 import { BattleType } from "#enums/battle-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BerryType } from "#enums/berry-type";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
 import { Stat } from "#enums/stat";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -29,14 +29,14 @@ describe("Field - Pokemon ID Checks", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset(Moves.SPLASH)
-      .ability(Abilities.NO_GUARD)
+      .moveset(MoveId.SPLASH)
+      .ability(AbilityId.NO_GUARD)
       .battleStyle("single")
       .disableCrits()
       .enemyLevel(100)
-      .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset(Moves.SPLASH);
+      .enemySpecies(SpeciesId.MAGIKARP)
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   function onlyUnique<T>(array: T[]): T[] {
@@ -46,7 +46,7 @@ describe("Field - Pokemon ID Checks", () => {
   // TODO: We currently generate IDs as a pure random integer; remove once unique UUIDs are added
   it.todo("2 Pokemon should not be able to generate with the same ID during 1 encounter", async () => {
     game.override.battleType(BattleType.TRAINER); // enemy generates 2 mons
-    await game.classicMode.startBattle([Species.FEEBAS, Species.ABRA]);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.ABRA]);
 
     const ids = (game.scene.getPlayerParty() as Pokemon[]).concat(game.scene.getEnemyParty()).map((p: Pokemon) => p.id);
     const uniqueIds = onlyUnique(ids);
@@ -56,12 +56,12 @@ describe("Field - Pokemon ID Checks", () => {
 
   it("should not prevent item theft with PID of 0", async () => {
     game.override
-      .moveset([Moves.THIEF, Moves.SPLASH])
+      .moveset([MoveId.THIEF, MoveId.SPLASH])
       .enemyHeldItems([{ name: "BERRY", count: 1, type: BerryType.APICOT }]);
 
-    vi.spyOn(allMoves[Moves.THIEF], "chance", "get").mockReturnValue(100);
+    vi.spyOn(allMoves[MoveId.THIEF], "chance", "get").mockReturnValue(100);
 
-    await game.classicMode.startBattle([Species.TREECKO]);
+    await game.classicMode.startBattle([SpeciesId.TREECKO]);
 
     const player = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;
@@ -75,7 +75,7 @@ describe("Field - Pokemon ID Checks", () => {
     expect(player.getHeldItems()).toHaveLength(0);
 
     // Player uses Thief and steals the opponent's item
-    game.move.select(Moves.THIEF);
+    game.move.select(MoveId.THIEF);
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(enemy.getHeldItems()).toHaveLength(0);
@@ -83,8 +83,8 @@ describe("Field - Pokemon ID Checks", () => {
   });
 
   it("should not prevent Syrup Bomb triggering if user has PID of 0", async () => {
-    game.override.moveset(Moves.SYRUP_BOMB);
-    await game.classicMode.startBattle([Species.TREECKO]);
+    game.override.moveset(MoveId.SYRUP_BOMB);
+    await game.classicMode.startBattle([SpeciesId.TREECKO]);
 
     const player = game.scene.getPlayerPokemon()!;
     // Override player pokemon PID to be 0
@@ -93,7 +93,7 @@ describe("Field - Pokemon ID Checks", () => {
     const enemy = game.scene.getEnemyPokemon()!;
     expect(enemy.getTag(BattlerTagType.SYRUP_BOMB)).toBeUndefined();
 
-    game.move.select(Moves.SYRUP_BOMB);
+    game.move.select(MoveId.SYRUP_BOMB);
     await game.phaseInterceptor.to("TurnEndPhase");
 
     const syrupTag = enemy.getTag(BattlerTagType.SYRUP_BOMB)!;
