@@ -1,5 +1,5 @@
 import { BattleStyle } from "#app/enums/battle-style";
-import type { Species } from "#app/enums/species";
+import type { SpeciesId } from "#enums/species-id";
 import { GameModes, getGameMode } from "#app/game-mode";
 import overrides from "#app/overrides";
 import { CommandPhase } from "#app/phases/command-phase";
@@ -11,7 +11,7 @@ import { generateStarter } from "../gameManagerUtils";
 import { GameManagerHelper } from "./gameManagerHelper";
 
 /**
- * Helper to handle classic mode specifics
+ * Helper to handle classic-mode specific operations.
  */
 export class ClassicModeHelper extends GameManagerHelper {
   /**
@@ -19,7 +19,7 @@ export class ClassicModeHelper extends GameManagerHelper {
    * @param species - An array of {@linkcode Species} to summon.
    * @returns A promise that resolves when the summon phase is reached.
    */
-  async runToSummon(species: Species[]): Promise<void>;
+  async runToSummon(species: SpeciesId[]): Promise<void>;
   /**
    * Runs the classic game to the summon phase.
    * Selects 3 daily run starters with a fixed seed of "test"
@@ -28,8 +28,8 @@ export class ClassicModeHelper extends GameManagerHelper {
    * @deprecated - Specifying the starters helps prevent inconsistencies from internal RNG changes.
    */
   async runToSummon(): Promise<void>;
-  async runToSummon(species: Species[] | undefined): Promise<void>;
-  async runToSummon(species?: Species[]): Promise<void> {
+  async runToSummon(species: SpeciesId[] | undefined): Promise<void>;
+  async runToSummon(species?: SpeciesId[]): Promise<void> {
     await this.game.runToTitle();
 
     if (this.game.override.disableShinies) {
@@ -55,7 +55,7 @@ export class ClassicModeHelper extends GameManagerHelper {
    * @param species - An array of {@linkcode Species} to start the battle with.
    * @returns A promise that resolves when the battle is started.
    */
-  async startBattle(species: Species[]): Promise<void>;
+  async startBattle(species: SpeciesId[]): Promise<void>;
   /**
    * Transitions to the start of a battle.
    * Will select 3 daily run starters with a fixed seed of "test"
@@ -64,7 +64,8 @@ export class ClassicModeHelper extends GameManagerHelper {
    * @deprecated - Specifying the starters helps prevent inconsistencies from internal RNG changes.
    */
   async startBattle(): Promise<void>;
-  async startBattle(species?: Species[]): Promise<void> {
+  async startBattle(species?: SpeciesId[]): Promise<void> {
+  async startBattle(species?: SpeciesId[]): Promise<void> {
     await this.runToSummon(species);
 
     if (this.game.scene.battleStyle === BattleStyle.SWITCH) {
