@@ -4850,13 +4850,13 @@ export class NaturalGiftPowerAttr extends VariablePowerAttr {
    *
    * @remarks
    * The berry is not consumed until the move has been successfully used
-   * which has a {@linkcode MoveEffectTrigger.POST_TARGET} trigger.
+   * via a {@linkcode MoveEffectTrigger.POST_TARGET} trigger.
    *
-   * @param user - The Pokémon using the move.
-   * @param _target - The target Pokémon (unused)
-   * @param _move - The move being used (unused)
-   * @param args - args[0] holds the power of user's move
-   * @returns A boolean indicating whether the move was successfully applied.
+   * @param user - The {@linkcode Pokemon} using the move.
+   * @param _target - Unused
+   * @param _move - Unused
+   * @param args - `[0]` A {@linkcode NumebrHolder} containing the power of the currently-used move.
+   * @returns Whether the move was successfully applied.
    */
   apply(user: Pokemon, _target: Pokemon, _move: Move, args: [NumberHolder]): boolean {
     const power = args[0];
@@ -4885,12 +4885,10 @@ export class NaturalGiftTypeAttr extends VariableMoveTypeAttr {
 
   /**
    * Overrides the type of Natural Gift depending on the consumed berry.
-   * The item used for the move is not removed here but in {@linkcode MoveEndPhase}
-   * to ensure
-   * @param user - The Pokémon using the move.
-   * @param target - The target Pokémon.
-   * @param move - The move being used.
-   * @param args - args[0] NumberHolder with the move's type.
+   * @param user - The {@linkcode Pokemon} using the move.
+   * @param _target - Unused
+   * @param _move - Unused
+   * @param args - `[0]` A {@linkcode NumebrHolder} containing the {@linkcode PokemonType} of the currently-used move.
    * @returns A boolean indicating whether the move was successfully applied.
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: [NumberHolder]): boolean {
@@ -4899,7 +4897,7 @@ export class NaturalGiftTypeAttr extends VariableMoveTypeAttr {
       return false;
     }
 
-    const randomBerry = NaturalGiftBerrySelector.getRandomBerry(user) as BerryModifier;
+    const randomBerry = NaturalGiftBerrySelector.getRandomBerry(user);
     // Force repick if the berry is somehow not owned by the user
     if (!randomBerry) {
       return false;
@@ -4912,23 +4910,25 @@ export class NaturalGiftTypeAttr extends VariableMoveTypeAttr {
 
 /**
  * Attribute used to consume the berry selected by {@linkcode NaturalGiftBerrySelector}
+ * upon successful move completion.
  */
 export class NaturalGiftConsumeBerryAttr extends MoveEffectAttr {
   /**
-   *
-   * @param user - The Pokemon using the move
-   * @param _target - The target Pokemon (unused)
+   * Remove the berry used by Natural Gift after the move successfully executes.
+   * @param user - The {@linkcode Pokemon} using the move.
+   * @param _target - Unused
    * @param _move - unused
    * @param args - unused
-   * @returns
+   * @returns Whether the berry was successfully removed.
    */
   apply(user: Pokemon, _target: Pokemon, _move: Move, args: any[]): boolean {
     const berry = NaturalGiftBerrySelector.getSelectedBerry();
     if (isNullOrUndefined(berry)) {
       return false;
     }
+
     user.loseHeldItem(berry, user.isPlayer());
-    // Natural gift counts as berries eaten for the purpose of harvest, but not for the purpose of cud chew.
+    // Natural gift counts as consuming a berry for Harvest, but not eating one for Belch, Cud Chew, etc.
     user.battleData.berriesEaten.push(berry.berryType);
     globalScene.updateModifiers(user.isPlayer());
     NaturalGiftBerrySelector.resetBerry();
@@ -4953,7 +4953,7 @@ export class NaturalGiftBerrySelector {
   public static getRandomBerry(user: Pokemon): BerryModifier | null {
     // Rechoose the berry if it is null or if the user does not have it.
     if (isNullOrUndefined(this.selectedBerry) || !user.getHeldItems().some(item => this.selectedBerry?.match(item))) {
-      const berries =  globalScene.findModifiers(
+      const berries = globalScene.findModifiers(
         m => m instanceof BerryModifier && m.pokemonId === user.id,
         user.isPlayer()
       ) as BerryModifier[];
@@ -9538,7 +9538,7 @@ export function initMoves() {
       .attr(NaturalGiftPowerAttr)
       .attr(NaturalGiftTypeAttr)
       .attr(NaturalGiftConsumeBerryAttr)
-      .condition(user => globalScene.findModifier((m) => m instanceof BerryModifier && m.getPokemon() === user))
+      .condition(user => !!globalScene.findModifier((m) => m instanceof BerryModifier && m.getPokemon() === user))
       .makesContact(false),
     new AttackMove(MoveId.FEINT, PokemonType.NORMAL, MoveCategory.PHYSICAL, 30, 100, 10, -1, 2, 4)
       .attr(RemoveBattlerTagAttr, [ BattlerTagType.PROTECTED ])

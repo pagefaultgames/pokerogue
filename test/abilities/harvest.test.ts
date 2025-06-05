@@ -330,16 +330,24 @@ describe("Abilities - Harvest", () => {
       expect(getPlayerBerries()).toEqual([]);
     });
 
-    // TODO: Enable once Nat Gift gets implemented...???
-    it.todo("can restore berries consumed via Natural Gift", async () => {
+    it("should restore berries consumed via Natural Gift", async () => {
       const initBerries: ModifierOverride[] = [{ name: "BERRY", type: BerryType.STARF, count: 1 }];
       game.override.startingHeldItems(initBerries);
-      await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+      await game.classicMode.startBattle([SpeciesId.ARBOLIVA]);
 
       game.move.select(MoveId.NATURAL_GIFT);
-      await game.phaseInterceptor.to("TurnEndPhase");
+      await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+      await game.phaseInterceptor.to("MoveEndPhase");
 
-      expect(game.scene.getPlayerPokemon()?.battleData.berriesEaten).toHaveLength(0);
+      // ensure berry was consumed by nat gift
+      const arboliva = game.field.getPlayerPokemon();
+      expect(arboliva.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
+      expect(arboliva.battleData.berriesEaten).toHaveLength(1);
+      expectBerriesContaining();
+
+      await game.toEndOfTurn();
+
+      expect(arboliva.battleData.berriesEaten).toHaveLength(0);
       expectBerriesContaining(...initBerries);
     });
   });
