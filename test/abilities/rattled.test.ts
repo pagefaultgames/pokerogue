@@ -28,6 +28,7 @@ describe("Abilities - Rattled", () => {
       .ability(AbilityId.RATTLED)
       .battleType(BattleType.TRAINER)
       .disableCrits()
+      .battleStyle("single")
       .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.INTIMIDATE)
       .enemyMoveset(MoveId.PIN_MISSILE);
