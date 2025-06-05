@@ -2133,6 +2133,8 @@ export class PostIntimidateStatStageChangeAbAttr extends AbAttr {
       const newStatStageChangePhase = new StatStageChangePhase(pokemon.getBattlerIndex(), false, this.stats, this.stages)
       if(globalScene.findPhase(m => m instanceof MovePhase)){
         globalScene.prependToPhase(newStatStageChangePhase, MovePhase)
+      } else if(globalScene.findPhase(m => m instanceof SwitchSummonPhase)){
+        globalScene.prependToPhase(newStatStageChangePhase, SwitchSummonPhase)
       }else {
         globalScene.pushPhase(newStatStageChangePhase);
       }
