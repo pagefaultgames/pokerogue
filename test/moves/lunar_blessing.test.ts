@@ -24,7 +24,7 @@ describe("Moves - Lunar Blessing", () => {
 
     game.override
       .battleStyle("double")
-      .enemySpecies(Species.SHUCKLE)
+      .enemySpecies(SpeciesId.SHUCKLE)
       .enemyMoveset(MoveId.SPLASH)
       .enemyAbility(AbilityId.BALL_FETCH)
       .moveset([MoveId.LUNAR_BLESSING, MoveId.SPLASH])

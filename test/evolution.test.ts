@@ -30,7 +30,7 @@ describe("Evolution", () => {
 
     game.override
       .battleStyle("single")
-      .enemySpecies(Species.MAGIKARP)
+      .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
       .startingLevel(60);
   });

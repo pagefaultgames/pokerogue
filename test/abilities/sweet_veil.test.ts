@@ -69,7 +69,7 @@ describe("Abilities - Sweet Veil", () => {
   });
 
   it("prevents the user and its allies already drowsy due to Yawn from falling asleep.", async () => {
-    game.override.enemySpecies(Species.PIKACHU).enemyLevel(5).startingLevel(5).enemyMoveset(MoveId.SPLASH);
+    game.override.enemySpecies(SpeciesId.PIKACHU).enemyLevel(5).startingLevel(5).enemyMoveset(MoveId.SPLASH);
 
     await game.classicMode.startBattle([SpeciesId.SHUCKLE, SpeciesId.SHUCKLE, SpeciesId.SWIRLIX]);
 

@@ -26,7 +26,7 @@ describe("Moves - Thousand Arrows", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .enemySpecies(Species.TOGETIC)
+      .enemySpecies(SpeciesId.TOGETIC)
       .startingLevel(100)
       .enemyLevel(100)
       .moveset([MoveId.THOUSAND_ARROWS])
@@ -51,7 +51,7 @@ describe("Moves - Thousand Arrows", () => {
   });
 
   it("move should hit and ground targets with Levitate", async () => {
-    game.override.enemySpecies(Species.SNORLAX).enemyAbility(AbilityId.LEVITATE);
+    game.override.enemySpecies(SpeciesId.SNORLAX).enemyAbility(AbilityId.LEVITATE);
 
     await game.classicMode.startBattle([SpeciesId.ILLUMISE]);
 

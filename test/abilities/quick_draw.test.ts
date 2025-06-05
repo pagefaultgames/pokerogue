@@ -25,11 +25,11 @@ describe("Abilities - Quick Draw", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .starterSpecies(Species.MAGIKARP)
+      .starterSpecies(SpeciesId.MAGIKARP)
       .ability(AbilityId.QUICK_DRAW)
       .moveset([MoveId.TACKLE, MoveId.TAIL_WHIP])
       .enemyLevel(100)
-      .enemySpecies(Species.MAGIKARP)
+      .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset([MoveId.TACKLE]);
 

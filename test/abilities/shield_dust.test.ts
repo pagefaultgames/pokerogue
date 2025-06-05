@@ -33,7 +33,7 @@ describe("Abilities - Shield Dust", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .enemySpecies(Species.ONIX)
+      .enemySpecies(SpeciesId.ONIX)
       .enemyAbility(AbilityId.SHIELD_DUST)
       .startingLevel(100)
       .moveset(MoveId.AIR_SLASH)

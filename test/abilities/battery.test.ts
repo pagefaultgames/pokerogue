@@ -28,7 +28,7 @@ describe("Abilities - Battery", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("double")
-      .enemySpecies(Species.SHUCKLE)
+      .enemySpecies(SpeciesId.SHUCKLE)
       .enemyAbility(AbilityId.BALL_FETCH)
       .moveset([MoveId.TACKLE, MoveId.BREAKING_SWIPE, MoveId.SPLASH, MoveId.DAZZLING_GLEAM])
       .enemyMoveset(MoveId.SPLASH);

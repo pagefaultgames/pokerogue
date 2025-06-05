@@ -30,7 +30,7 @@ describe("Abilities - Parental Bond", () => {
       .battleStyle("single")
       .disableCrits()
       .ability(AbilityId.PARENTAL_BOND)
-      .enemySpecies(Species.SNORLAX)
+      .enemySpecies(SpeciesId.SNORLAX)
       .enemyAbility(AbilityId.FUR_COAT)
       .enemyMoveset(MoveId.SPLASH)
       .startingLevel(100)
@@ -62,7 +62,7 @@ describe("Abilities - Parental Bond", () => {
   });
 
   it("should apply secondary effects to both strikes", async () => {
-    game.override.moveset([MoveId.POWER_UP_PUNCH]).enemySpecies(Species.AMOONGUSS);
+    game.override.moveset([MoveId.POWER_UP_PUNCH]).enemySpecies(SpeciesId.AMOONGUSS);
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 

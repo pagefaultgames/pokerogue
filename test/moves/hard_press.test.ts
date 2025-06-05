@@ -30,7 +30,7 @@ describe("Moves - Hard Press", () => {
     game.override
       .battleStyle("single")
       .ability(AbilityId.BALL_FETCH)
-      .enemySpecies(Species.MUNCHLAX)
+      .enemySpecies(SpeciesId.MUNCHLAX)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(MoveId.SPLASH)
       .moveset([MoveId.HARD_PRESS]);

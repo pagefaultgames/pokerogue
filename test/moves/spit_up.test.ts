@@ -34,7 +34,7 @@ describe("Moves - Spit Up", () => {
 
     game.override
       .battleStyle("single")
-      .enemySpecies(Species.RATTATA)
+      .enemySpecies(SpeciesId.RATTATA)
       .enemyMoveset(MoveId.SPLASH)
       .enemyAbility(AbilityId.NONE)
       .enemyLevel(2000)

@@ -57,7 +57,7 @@ describe("Moves - Magic Coat", () => {
 
   it("should not reflect moves used on the next turn", async () => {
     game.override.moveset([MoveId.GROWL, MoveId.SPLASH]).enemyMoveset([MoveId.MAGIC_COAT, MoveId.SPLASH]);
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
     // turn 1
     game.move.select(MoveId.SPLASH);
@@ -82,7 +82,7 @@ describe("Moves - Magic Coat", () => {
 
   it("should individually bounce back multi-target moves when used by both targets in doubles", async () => {
     game.override.battleStyle("double").moveset([MoveId.GROWL, MoveId.SPLASH]);
-    await game.classicMode.startBattle([Species.MAGIKARP, Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.MAGIKARP]);
 
     game.move.select(MoveId.GROWL, 0);
     game.move.select(MoveId.SPLASH, 1);
@@ -97,7 +97,7 @@ describe("Moves - Magic Coat", () => {
       .battleStyle("double")
       .moveset([MoveId.GROWL, MoveId.SPLASH])
       .enemyMoveset([MoveId.SPLASH, MoveId.MAGIC_COAT]);
-    await game.classicMode.startBattle([Species.MAGIKARP, Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.MAGIKARP]);
 
     game.move.select(MoveId.GROWL, 0);
     game.move.select(MoveId.SPLASH, 1);
@@ -125,7 +125,7 @@ describe("Moves - Magic Coat", () => {
       .ability(AbilityId.MAGIC_BOUNCE)
       .moveset([MoveId.GROWL, MoveId.MAGIC_COAT])
       .enemyMoveset([MoveId.SPLASH, MoveId.MAGIC_COAT]);
-    await game.classicMode.startBattle([Species.MAGIKARP, Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.MAGIKARP]);
 
     game.move.select(MoveId.MAGIC_COAT, 0);
     game.move.select(MoveId.GROWL, 1);
@@ -148,7 +148,7 @@ describe("Moves - Magic Coat", () => {
 
   it("should still bounce back a move from a mold breaker user", async () => {
     game.override.ability(AbilityId.MOLD_BREAKER).moveset([MoveId.GROWL]);
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
     game.move.select(MoveId.GROWL);
     await game.phaseInterceptor.to("BerryPhase");
@@ -159,7 +159,7 @@ describe("Moves - Magic Coat", () => {
 
   it("should only bounce spikes back once when both targets use magic coat in doubles", async () => {
     game.override.battleStyle("double").moveset([MoveId.SPIKES]);
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
     game.move.select(MoveId.SPIKES);
     await game.phaseInterceptor.to("BerryPhase");
@@ -170,7 +170,7 @@ describe("Moves - Magic Coat", () => {
 
   it("should not bounce back curse", async () => {
     game.override.moveset([MoveId.CURSE]);
-    await game.classicMode.startBattle([Species.GASTLY]);
+    await game.classicMode.startBattle([SpeciesId.GASTLY]);
 
     game.move.select(MoveId.CURSE);
     await game.phaseInterceptor.to("BerryPhase");
@@ -205,7 +205,7 @@ describe("Moves - Magic Coat", () => {
   // TODO: stomping tantrum should consider moves that were bounced.
   it.todo("should cause stomping tantrum to double in power when the last move was bounced", async () => {
     game.override.battleStyle("single").moveset([MoveId.STOMPING_TANTRUM, MoveId.CHARM]);
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
     const stomping_tantrum = allMoves[MoveId.STOMPING_TANTRUM];
     vi.spyOn(stomping_tantrum, "calculateBattlePower");
@@ -247,7 +247,7 @@ describe("Moves - Magic Coat", () => {
   it("should respect immunities when bouncing a move", async () => {
     vi.spyOn(allMoves[MoveId.THUNDER_WAVE], "accuracy", "get").mockReturnValue(100);
     game.override.moveset([MoveId.THUNDER_WAVE, MoveId.GROWL]).ability(AbilityId.SOUNDPROOF);
-    await game.classicMode.startBattle([Species.PHANPY]);
+    await game.classicMode.startBattle([SpeciesId.PHANPY]);
 
     // Turn 1 - thunder wave immunity test
     game.move.select(MoveId.THUNDER_WAVE);

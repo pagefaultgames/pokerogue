@@ -24,7 +24,7 @@ describe("Moves - Rage Powder", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("double")
-      .enemySpecies(Species.SNORLAX)
+      .enemySpecies(SpeciesId.SNORLAX)
       .startingLevel(100)
       .enemyLevel(100)
       .moveset([MoveId.FOLLOW_ME, MoveId.RAGE_POWDER, MoveId.SPOTLIGHT, MoveId.QUICK_ATTACK])

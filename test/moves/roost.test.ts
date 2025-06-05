@@ -27,7 +27,7 @@ describe("Moves - Roost", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .enemySpecies(Species.RELICANTH)
+      .enemySpecies(SpeciesId.RELICANTH)
       .startingLevel(100)
       .enemyLevel(100)
       .enemyMoveset(MoveId.EARTHQUAKE)

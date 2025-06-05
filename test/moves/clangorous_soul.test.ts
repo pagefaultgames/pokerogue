@@ -28,8 +28,8 @@ describe("Moves - Clangorous Soul", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .starterSpecies(Species.MAGIKARP)
-      .enemySpecies(Species.SNORLAX)
+      .starterSpecies(SpeciesId.MAGIKARP)
+      .enemySpecies(SpeciesId.SNORLAX)
       .startingLevel(100)
       .enemyLevel(100)
       .moveset([MoveId.CLANGOROUS_SOUL])

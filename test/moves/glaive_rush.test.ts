@@ -24,7 +24,7 @@ describe("Moves - Glaive Rush", () => {
     game.override
       .battleStyle("single")
       .disableCrits()
-      .enemySpecies(Species.MAGIKARP)
+      .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset([MoveId.GLAIVE_RUSH])
       .ability(AbilityId.BALL_FETCH)
@@ -32,7 +32,7 @@ describe("Moves - Glaive Rush", () => {
   });
 
   it("takes double damage from attacks", async () => {
-    await game.classicMode.startBattle([Species.KLINK]);
+    await game.classicMode.startBattle([SpeciesId.KLINK]);
 
     const enemy = game.scene.getEnemyPokemon()!;
     enemy.hp = 1000;
@@ -47,7 +47,7 @@ describe("Moves - Glaive Rush", () => {
   });
 
   it("always gets hit by attacks", async () => {
-    await game.classicMode.startBattle([Species.KLINK]);
+    await game.classicMode.startBattle([SpeciesId.KLINK]);
 
     const enemy = game.scene.getEnemyPokemon()!;
     enemy.hp = 1000;
@@ -60,7 +60,7 @@ describe("Moves - Glaive Rush", () => {
 
   it("interacts properly with multi-lens", async () => {
     game.override.startingHeldItems([{ name: "MULTI_LENS", count: 2 }]).enemyMoveset([MoveId.AVALANCHE]);
-    await game.classicMode.startBattle([Species.KLINK]);
+    await game.classicMode.startBattle([SpeciesId.KLINK]);
 
     const player = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;
@@ -80,7 +80,7 @@ describe("Moves - Glaive Rush", () => {
 
   it("secondary effects only last until next move", async () => {
     game.override.enemyMoveset([MoveId.SHADOW_SNEAK]);
-    await game.classicMode.startBattle([Species.KLINK]);
+    await game.classicMode.startBattle([SpeciesId.KLINK]);
 
     const player = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;
@@ -105,7 +105,7 @@ describe("Moves - Glaive Rush", () => {
 
   it("secondary effects are removed upon switching", async () => {
     game.override.enemyMoveset([MoveId.SHADOW_SNEAK]);
-    await game.classicMode.startBattle([Species.KLINK, Species.FEEBAS]);
+    await game.classicMode.startBattle([SpeciesId.KLINK, SpeciesId.FEEBAS]);
 
     const player = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;
@@ -128,7 +128,7 @@ describe("Moves - Glaive Rush", () => {
     game.override
       .moveset([MoveId.SHADOW_SNEAK, MoveId.PROTECT, MoveId.SPLASH, MoveId.GLAIVE_RUSH])
       .enemyMoveset([MoveId.GLAIVE_RUSH, MoveId.SPLASH]);
-    await game.classicMode.startBattle([Species.KLINK]);
+    await game.classicMode.startBattle([SpeciesId.KLINK]);
 
     const player = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;

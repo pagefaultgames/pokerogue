@@ -36,9 +36,9 @@ describe("Moves - Tackle", () => {
 
   it("TACKLE against ghost", async () => {
     const moveToUse = MoveId.TACKLE;
-    game.override.enemySpecies(Species.GENGAR);
+    game.override.enemySpecies(SpeciesId.GENGAR);
 
-    await game.classicMode.startBattle([Species.MIGHTYENA]);
+    await game.classicMode.startBattle([SpeciesId.MIGHTYENA]);
     const hpOpponent = game.scene.currentBattle.enemyParty[0].hp;
     game.move.select(moveToUse);
     await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(TurnEndPhase);

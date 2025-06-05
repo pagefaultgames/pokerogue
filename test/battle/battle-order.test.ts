@@ -26,7 +26,7 @@ describe("Battle order", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .enemySpecies(Species.MEWTWO)
+      .enemySpecies(SpeciesId.MEWTWO)
       .enemyAbility(AbilityId.INSOMNIA)
       .ability(AbilityId.INSOMNIA)
       .moveset([MoveId.TACKLE]);

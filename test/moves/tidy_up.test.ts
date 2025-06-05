@@ -27,10 +27,10 @@ describe("Moves - Tidy Up", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .enemySpecies(Species.MAGIKARP)
+      .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(MoveId.SPLASH)
-      .starterSpecies(Species.FEEBAS)
+      .starterSpecies(SpeciesId.FEEBAS)
       .ability(AbilityId.BALL_FETCH)
       .moveset([MoveId.TIDY_UP])
       .startingLevel(50);

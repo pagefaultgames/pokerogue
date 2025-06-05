@@ -41,7 +41,7 @@ describe("Moves - Flame Burst", () => {
       .disableCrits()
       .ability(AbilityId.UNNERVE)
       .startingWave(4)
-      .enemySpecies(Species.SHUCKLE)
+      .enemySpecies(SpeciesId.SHUCKLE)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset([MoveId.SPLASH]);
   });

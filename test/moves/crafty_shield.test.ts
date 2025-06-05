@@ -29,7 +29,7 @@ describe("Moves - Crafty Shield", () => {
     game.override
       .battleStyle("double")
       .moveset([MoveId.CRAFTY_SHIELD, MoveId.SPLASH, MoveId.SWORDS_DANCE])
-      .enemySpecies(Species.SNORLAX)
+      .enemySpecies(SpeciesId.SNORLAX)
       .enemyMoveset([MoveId.GROWL])
       .enemyAbility(AbilityId.INSOMNIA)
       .startingLevel(100)
@@ -71,7 +71,7 @@ describe("Moves - Crafty Shield", () => {
   });
 
   test("should protect the user and allies from moves that ignore other protection", async () => {
-    game.override.enemySpecies(Species.DUSCLOPS).enemyMoveset([MoveId.CURSE]);
+    game.override.enemySpecies(SpeciesId.DUSCLOPS).enemyMoveset([MoveId.CURSE]);
 
     await game.classicMode.startBattle([SpeciesId.CHARIZARD, SpeciesId.BLASTOISE]);
 

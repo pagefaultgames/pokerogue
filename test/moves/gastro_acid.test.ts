@@ -28,7 +28,7 @@ describe("Moves - Gastro Acid", () => {
       .enemyLevel(100)
       .ability(AbilityId.NONE)
       .moveset([MoveId.GASTRO_ACID, MoveId.WATER_GUN, MoveId.SPLASH, MoveId.CORE_ENFORCER])
-      .enemySpecies(Species.BIDOOF)
+      .enemySpecies(SpeciesId.BIDOOF)
       .enemyMoveset(MoveId.SPLASH)
       .enemyAbility(AbilityId.WATER_ABSORB);
   });

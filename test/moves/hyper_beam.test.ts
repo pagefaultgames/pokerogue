@@ -29,7 +29,7 @@ describe("Moves - Hyper Beam", () => {
     game.override
       .battleStyle("single")
       .ability(AbilityId.BALL_FETCH)
-      .enemySpecies(Species.SNORLAX)
+      .enemySpecies(SpeciesId.SNORLAX)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset([MoveId.SPLASH])
       .enemyLevel(100)

@@ -26,9 +26,9 @@ describe("Moves - Follow Me", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("double")
-      .starterSpecies(Species.AMOONGUSS)
+      .starterSpecies(SpeciesId.AMOONGUSS)
       .ability(AbilityId.BALL_FETCH)
-      .enemySpecies(Species.SNORLAX)
+      .enemySpecies(SpeciesId.SNORLAX)
       .startingLevel(100)
       .enemyLevel(100)
       .moveset([MoveId.FOLLOW_ME, MoveId.RAGE_POWDER, MoveId.SPOTLIGHT, MoveId.QUICK_ATTACK])

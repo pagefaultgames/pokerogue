@@ -29,7 +29,7 @@ describe("Abilities - Moxie", () => {
     const moveToUse = MoveId.AERIAL_ACE;
     game.override
       .battleStyle("single")
-      .enemySpecies(Species.RATTATA)
+      .enemySpecies(SpeciesId.RATTATA)
       .enemyAbility(AbilityId.MOXIE)
       .ability(AbilityId.MOXIE)
       .startingLevel(2000)

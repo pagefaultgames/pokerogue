@@ -117,7 +117,7 @@ describe("Abilities - Illusion", () => {
   });
 
   it("should not break from indirect damage from status, weather or recoil", async () => {
-    game.override.enemySpecies(Species.GIGALITH).enemyAbility(AbilityId.SAND_STREAM);
+    game.override.enemySpecies(SpeciesId.GIGALITH).enemyAbility(AbilityId.SAND_STREAM);
 
     await game.classicMode.startBattle([SpeciesId.ZOROARK, SpeciesId.AZUMARILL]);
 
@@ -131,7 +131,7 @@ describe("Abilities - Illusion", () => {
 
   it("copies the the name, nickname, gender, shininess, and pokeball from the illusion source", async () => {
     game.override.enemyMoveset(MoveId.SPLASH);
-    await game.classicMode.startBattle([Species.ABRA, Species.ZOROARK, Species.AXEW]);
+    await game.classicMode.startBattle([SpeciesId.ABRA, SpeciesId.ZOROARK, SpeciesId.AXEW]);
 
     const axew = game.scene.getPlayerParty().at(2)!;
     axew.shiny = true;

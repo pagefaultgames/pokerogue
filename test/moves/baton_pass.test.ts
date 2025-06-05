@@ -60,7 +60,7 @@ describe("Moves - Baton Pass", () => {
   it("passes stat stage buffs when AI uses it", async () => {
     // arrange
     game.override.startingWave(5).enemyMoveset([MoveId.NASTY_PLOT, MoveId.BATON_PASS]);
-    await game.classicMode.startBattle([Species.RAICHU, Species.SHUCKLE]);
+    await game.classicMode.startBattle([SpeciesId.RAICHU, SpeciesId.SHUCKLE]);
 
     // round 1 - ai buffs
     game.move.select(MoveId.SPLASH);

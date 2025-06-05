@@ -30,7 +30,7 @@ describe("Abilities - Steely Spirit", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("double")
-      .enemySpecies(Species.SHUCKLE)
+      .enemySpecies(SpeciesId.SHUCKLE)
       .enemyAbility(AbilityId.BALL_FETCH)
       .moveset([MoveId.IRON_HEAD, MoveId.SPLASH])
       .enemyMoveset(MoveId.SPLASH);

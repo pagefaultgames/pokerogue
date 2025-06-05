@@ -30,7 +30,7 @@ describe("Abilities - Power Spot", () => {
       .battleStyle("double")
       .moveset([MoveId.TACKLE, MoveId.BREAKING_SWIPE, MoveId.SPLASH, MoveId.DAZZLING_GLEAM])
       .enemyMoveset(MoveId.SPLASH)
-      .enemySpecies(Species.SHUCKLE)
+      .enemySpecies(SpeciesId.SHUCKLE)
       .enemyAbility(AbilityId.BALL_FETCH);
   });
 

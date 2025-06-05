@@ -27,7 +27,7 @@ describe("Weather - Strong Winds", () => {
     game.override
       .battleStyle("single")
       .startingLevel(10)
-      .enemySpecies(Species.TAILLOW)
+      .enemySpecies(SpeciesId.TAILLOW)
       .enemyAbility(AbilityId.DELTA_STREAM)
       .moveset([MoveId.THUNDERBOLT, MoveId.ICE_BEAM, MoveId.ROCK_SLIDE]);
   });

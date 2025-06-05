@@ -35,7 +35,7 @@ describe("Abilities - Magic Guard", () => {
       .moveset([MoveId.SPLASH])
       .startingLevel(100)
       /** Enemy Pokemon overrides */
-      .enemySpecies(Species.SNORLAX)
+      .enemySpecies(SpeciesId.SNORLAX)
       .enemyAbility(AbilityId.INSOMNIA)
       .enemyMoveset(MoveId.SPLASH)
       .enemyLevel(100);
@@ -205,7 +205,7 @@ describe("Abilities - Magic Guard", () => {
   });
 
   it("Magic Guard prevents against damage from volatile status effects", async () => {
-    await game.classicMode.startBattle([Species.DUSKULL]);
+    await game.classicMode.startBattle([SpeciesId.DUSKULL]);
     game.override.moveset([MoveId.CURSE]).enemyAbility(AbilityId.MAGIC_GUARD);
 
     const leadPokemon = game.scene.getPlayerPokemon()!;

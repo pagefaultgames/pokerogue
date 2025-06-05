@@ -29,7 +29,7 @@ describe("Moves - Stockpile", () => {
 
       game.override
         .battleStyle("single")
-        .enemySpecies(Species.RATTATA)
+        .enemySpecies(SpeciesId.RATTATA)
         .enemyMoveset(MoveId.SPLASH)
         .enemyAbility(AbilityId.NONE)
         .startingLevel(2000)

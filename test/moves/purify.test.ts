@@ -26,10 +26,10 @@ describe("Moves - Purify", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .starterSpecies(Species.PYUKUMUKU)
+      .starterSpecies(SpeciesId.PYUKUMUKU)
       .startingLevel(10)
       .moveset([MoveId.PURIFY, MoveId.SIZZLY_SLIDE])
-      .enemySpecies(Species.MAGIKARP)
+      .enemySpecies(SpeciesId.MAGIKARP)
       .enemyLevel(10)
       .enemyMoveset([MoveId.SPLASH, MoveId.NONE, MoveId.NONE, MoveId.NONE]);
   });

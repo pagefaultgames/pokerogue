@@ -130,7 +130,7 @@ describe("Abilities - Disguise", () => {
 
   it("persists form change when wave changes with no arena reset", async () => {
     game.override.starterSpecies(0).starterForms({
-      [Species.MIMIKYU]: bustedForm,
+      [SpeciesId.MIMIKYU]: bustedForm,
     });
     await game.classicMode.startBattle([SpeciesId.FURRET, SpeciesId.MIMIKYU]);
 
@@ -147,9 +147,9 @@ describe("Abilities - Disguise", () => {
   it("reverts to Disguised form on arena reset", async () => {
     game.override
       .startingWave(4)
-      .starterSpecies(Species.MIMIKYU)
+      .starterSpecies(SpeciesId.MIMIKYU)
       .starterForms({
-        [Species.MIMIKYU]: bustedForm,
+        [SpeciesId.MIMIKYU]: bustedForm,
       });
 
     await game.classicMode.startBattle();
@@ -170,7 +170,7 @@ describe("Abilities - Disguise", () => {
       .startingWave(10)
       .starterSpecies(0)
       .starterForms({
-        [Species.MIMIKYU]: bustedForm,
+        [SpeciesId.MIMIKYU]: bustedForm,
       });
 
     await game.classicMode.startBattle([SpeciesId.MIMIKYU, SpeciesId.FURRET]);

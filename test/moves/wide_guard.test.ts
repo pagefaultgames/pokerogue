@@ -28,7 +28,7 @@ describe("Moves - Wide Guard", () => {
     game.override
       .battleStyle("double")
       .moveset([MoveId.WIDE_GUARD, MoveId.SPLASH, MoveId.SURF])
-      .enemySpecies(Species.SNORLAX)
+      .enemySpecies(SpeciesId.SNORLAX)
       .enemyMoveset(MoveId.SWIFT)
       .enemyAbility(AbilityId.INSOMNIA)
       .startingLevel(100)

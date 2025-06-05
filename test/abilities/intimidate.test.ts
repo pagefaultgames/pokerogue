@@ -89,7 +89,7 @@ describe("Abilities - Intimidate", () => {
 
   it("should not activate again if there is no switch or new entry", async () => {
     game.override.startingWave(2).moveset([MoveId.SPLASH]);
-    await game.classicMode.startBattle([Species.MIGHTYENA, Species.POOCHYENA]);
+    await game.classicMode.startBattle([SpeciesId.MIGHTYENA, SpeciesId.POOCHYENA]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
     const enemyPokemon = game.scene.getEnemyPokemon()!;

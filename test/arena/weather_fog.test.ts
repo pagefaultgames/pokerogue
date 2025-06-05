@@ -30,7 +30,7 @@ describe("Weather - Fog", () => {
       .moveset([MoveId.TACKLE])
       .ability(AbilityId.BALL_FETCH)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .enemySpecies(Species.MAGIKARP)
+      .enemySpecies(SpeciesId.MAGIKARP)
       .enemyMoveset([MoveId.SPLASH]);
   });
 

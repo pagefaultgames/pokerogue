@@ -27,7 +27,7 @@ describe("Moves - Tail whip", () => {
     const moveToUse = MoveId.TAIL_WHIP;
     game.override
       .battleStyle("single")
-      .enemySpecies(Species.RATTATA)
+      .enemySpecies(SpeciesId.RATTATA)
       .enemyAbility(AbilityId.INSOMNIA)
       .ability(AbilityId.INSOMNIA)
       .startingLevel(2000)

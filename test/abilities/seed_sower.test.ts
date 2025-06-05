@@ -25,9 +25,9 @@ describe("Abilities - Seed Sower", () => {
     game.override
       .battleStyle("single")
       .disableCrits()
-      .enemySpecies(Species.MAGIKARP)
+      .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .starterSpecies(Species.ARBOLIVA)
+      .starterSpecies(SpeciesId.ARBOLIVA)
       .ability(AbilityId.SEED_SOWER)
       .moveset([MoveId.SPLASH]);
   });

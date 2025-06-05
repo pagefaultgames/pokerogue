@@ -25,9 +25,9 @@ describe("Abilities - Sand Spit", () => {
     game.override
       .battleStyle("single")
       .disableCrits()
-      .enemySpecies(Species.MAGIKARP)
+      .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .starterSpecies(Species.SILICOBRA)
+      .starterSpecies(SpeciesId.SILICOBRA)
       .ability(AbilityId.SAND_SPIT)
       .moveset([MoveId.SPLASH, MoveId.COIL]);
   });

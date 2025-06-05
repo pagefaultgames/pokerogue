@@ -36,7 +36,7 @@ describe("Abilities - Volt Absorb", () => {
       .moveset([moveToUse])
       .ability(ability)
       .enemyMoveset([MoveId.SPLASH, MoveId.NONE, MoveId.NONE, MoveId.NONE])
-      .enemySpecies(Species.DUSKULL)
+      .enemySpecies(SpeciesId.DUSKULL)
       .enemyAbility(AbilityId.BALL_FETCH);
 
     await game.classicMode.startBattle();
@@ -56,7 +56,7 @@ describe("Abilities - Volt Absorb", () => {
     game.override
       .moveset(MoveId.THUNDERBOLT)
       .enemyMoveset(MoveId.SPLASH)
-      .enemySpecies(Species.MAGIKARP)
+      .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.VOLT_ABSORB);
 
     await game.classicMode.startBattle();
@@ -77,7 +77,7 @@ describe("Abilities - Volt Absorb", () => {
     game.override
       .moveset(MoveId.THUNDERBOLT)
       .enemyMoveset(MoveId.DIVE)
-      .enemySpecies(Species.MAGIKARP)
+      .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.VOLT_ABSORB);
 
     await game.classicMode.startBattle();

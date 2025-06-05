@@ -74,7 +74,7 @@ describe("Abilities - Flash Fire", () => {
 
   it("activated after being frozen", async () => {
     game.override.enemyMoveset([MoveId.EMBER]).moveset(MoveId.SPLASH).statusEffect(StatusEffect.FREEZE);
-    await game.classicMode.startBattle([Species.BLISSEY]);
+    await game.classicMode.startBattle([SpeciesId.BLISSEY]);
 
     const blissey = game.scene.getPlayerPokemon()!;
 
@@ -106,7 +106,7 @@ describe("Abilities - Flash Fire", () => {
       .moveset([MoveId.EMBER, MoveId.SPLASH])
       .enemyAbility(AbilityId.FLASH_FIRE)
       .ability(AbilityId.NONE);
-    await game.classicMode.startBattle([Species.BLISSEY]);
+    await game.classicMode.startBattle([SpeciesId.BLISSEY]);
     const blissey = game.scene.getPlayerPokemon()!;
     const initialHP = 1000;
     blissey.hp = initialHP;
@@ -134,8 +134,8 @@ describe("Abilities - Flash Fire", () => {
       .enemyMoveset(MoveId.EMBER)
       .enemyAbility(AbilityId.NONE)
       .ability(AbilityId.FLASH_FIRE)
-      .enemySpecies(Species.BLISSEY);
-    await game.classicMode.startBattle([Species.RATTATA]);
+      .enemySpecies(SpeciesId.BLISSEY);
+    await game.classicMode.startBattle([SpeciesId.RATTATA]);
 
     const blissey = game.scene.getEnemyPokemon()!;
     const initialHP = 1000;

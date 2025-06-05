@@ -25,7 +25,7 @@ describe("Moves - Beat Up", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .enemySpecies(Species.SNORLAX)
+      .enemySpecies(SpeciesId.SNORLAX)
       .enemyLevel(100)
       .enemyMoveset([MoveId.SPLASH])
       .enemyAbility(AbilityId.INSOMNIA)

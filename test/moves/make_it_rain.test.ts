@@ -27,7 +27,7 @@ describe("Moves - Make It Rain", () => {
     game.override
       .battleStyle("double")
       .moveset([MoveId.MAKE_IT_RAIN, MoveId.SPLASH])
-      .enemySpecies(Species.SNORLAX)
+      .enemySpecies(SpeciesId.SNORLAX)
       .enemyAbility(AbilityId.INSOMNIA)
       .enemyMoveset(MoveId.SPLASH)
       .startingLevel(100)

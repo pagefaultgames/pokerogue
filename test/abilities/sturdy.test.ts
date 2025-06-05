@@ -25,10 +25,10 @@ describe("Abilities - Sturdy", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .starterSpecies(Species.LUCARIO)
+      .starterSpecies(SpeciesId.LUCARIO)
       .startingLevel(100)
       .moveset([MoveId.CLOSE_COMBAT, MoveId.FISSURE])
-      .enemySpecies(Species.ARON)
+      .enemySpecies(SpeciesId.ARON)
       .enemyLevel(5)
       .enemyAbility(AbilityId.STURDY);
   });

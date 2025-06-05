@@ -25,7 +25,7 @@ describe("Moves - Haze", () => {
 
       game.override
         .battleStyle("single")
-        .enemySpecies(Species.RATTATA)
+        .enemySpecies(SpeciesId.RATTATA)
         .enemyLevel(100)
         .enemyMoveset(MoveId.SPLASH)
         .enemyAbility(AbilityId.BALL_FETCH)

@@ -25,9 +25,9 @@ describe("Moves - Rollout", () => {
     game.override
       .disableCrits()
       .battleStyle("single")
-      .starterSpecies(Species.RATTATA)
+      .starterSpecies(SpeciesId.RATTATA)
       .ability(AbilityId.BALL_FETCH)
-      .enemySpecies(Species.BIDOOF)
+      .enemySpecies(SpeciesId.BIDOOF)
       .enemyAbility(AbilityId.BALL_FETCH)
       .startingLevel(100)
       .enemyLevel(100)

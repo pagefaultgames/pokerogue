@@ -28,7 +28,7 @@ describe("Moves - Quick Guard", () => {
     game.override
       .battleStyle("double")
       .moveset([MoveId.QUICK_GUARD, MoveId.SPLASH, MoveId.FOLLOW_ME])
-      .enemySpecies(Species.SNORLAX)
+      .enemySpecies(SpeciesId.SNORLAX)
       .enemyMoveset([MoveId.QUICK_ATTACK])
       .enemyAbility(AbilityId.INSOMNIA)
       .startingLevel(100)

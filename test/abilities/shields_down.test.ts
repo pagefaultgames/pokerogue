@@ -37,7 +37,7 @@ describe("Abilities - SHIELDS DOWN", () => {
     const meteorForm = 0,
       coreForm = 7;
     game.override.startingWave(4).starterForms({
-      [Species.MINIOR]: coreForm,
+      [SpeciesId.MINIOR]: coreForm,
     });
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.MINIOR]);
@@ -154,7 +154,7 @@ describe("Abilities - SHIELDS DOWN", () => {
 
   // the `NoTransformAbilityAbAttr` attribute is not checked anywhere, so this test cannot pass.
   test.todo("ditto should not be immune to status after transforming", async () => {
-    game.override.enemySpecies(Species.DITTO).enemyAbility(AbilityId.IMPOSTER).moveset([MoveId.SPLASH, MoveId.SPORE]);
+    game.override.enemySpecies(SpeciesId.DITTO).enemyAbility(AbilityId.IMPOSTER).moveset([MoveId.SPLASH, MoveId.SPORE]);
 
     await game.classicMode.startBattle([SpeciesId.MINIOR]);
 
@@ -171,8 +171,8 @@ describe("Abilities - SHIELDS DOWN", () => {
       .moveset([MoveId.THUNDERBOLT])
       .startingLevel(100)
       .startingWave(5)
-      .enemySpecies(Species.MINIOR);
-    await game.classicMode.startBattle([Species.REGIELEKI]);
+      .enemySpecies(SpeciesId.MINIOR);
+    await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
     const minior = game.scene.getEnemyPokemon()!;
 
     game.move.select(MoveId.THUNDERBOLT);
