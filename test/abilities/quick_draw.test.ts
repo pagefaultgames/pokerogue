@@ -54,7 +54,7 @@ describe("Abilities - Quick Draw", () => {
 
     expect(pokemon.isFainted()).toBe(false);
     expect(enemy.isFainted()).toBe(true);
-    expect(pokemon.waveData.abilitiesApplied).toContain(Abilities.QUICK_DRAW);
+    expect(pokemon.waveData.abilitiesApplied).toContain(AbilityId.QUICK_DRAW);
   });
 
   test(
@@ -96,6 +96,6 @@ describe("Abilities - Quick Draw", () => {
 
     expect(pokemon.isFainted()).toBe(true);
     expect(enemy.isFainted()).toBe(false);
-    expect(pokemon.waveData.abilitiesApplied).toContain(Abilities.QUICK_DRAW);
+    expect(pokemon.waveData.abilitiesApplied).toContain(AbilityId.QUICK_DRAW);
   });
 });
