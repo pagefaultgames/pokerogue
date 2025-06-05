@@ -1670,44 +1670,39 @@ export class AllyStatMultiplierAbAttr extends AbAttr {
 }
 
 /**
- * Ability attribute for Gorilla Tactics
- * @extends PostAttackAbAttr
+ * Takes effect whenever a move succesfully executes, such as gorilla tactics' move-locking.
+ * (More specifically, whenever a move is pushed to the move history)
+ * @extends AbAttr
  */
-export class GorillaTacticsAbAttr extends PostAttackAbAttr {
-  constructor() {
-    super((user, target, move) => true, false);
+export class ExecutedMoveAbAttr extends AbAttr {
+  canApplyExecutedMove(
+    pokemon: Pokemon,
+    simulated: boolean,
+  ): boolean {
+    return true;
   }
 
-  override canApplyPostAttack(
+  applyExecutedMove(
     pokemon: Pokemon,
-    passive: boolean,
     simulated: boolean,
-    defender: Pokemon,
-    move: Move,
-    hitResult: HitResult | null,
-    args: any[]): boolean {
-    return super.canApplyPostAttack(pokemon, passive, simulated, defender, move, hitResult, args)
-      && simulated || !pokemon.getTag(BattlerTagType.GORILLA_TACTICS);
+  ): void {}
+}
+
+/**
+ * Ability attribute for Gorilla Tactics
+ * @extends ExecutedMoveAbAttr
+ */
+export class GorillaTacticsAbAttr extends ExecutedMoveAbAttr {
+  constructor(showAbility: boolean = false) {
+    super(showAbility);
   }
 
-  /**
-   *
-   * @param {Pokemon} pokemon the {@linkcode Pokemon} with this ability
-   * @param passive n/a
-   * @param simulated whether the ability is being simulated
-   * @param defender n/a
-   * @param move n/a
-   * @param hitResult n/a
-   * @param args n/a
-   */
-  override applyPostAttack(
-    pokemon: Pokemon,
-    passive: boolean,
-    simulated: boolean,
-    defender: Pokemon,
-    move: Move,
-    hitResult: HitResult | null,
-    args: any[]): void {
+  override canApplyExecutedMove(pokemon: Pokemon, simulated: boolean): boolean {
+    return super.canApplyExecutedMove(pokemon, simulated) &&
+      simulated || !pokemon.getTag(BattlerTagType.GORILLA_TACTICS);
+  }
+
+  override applyExecutedMove(pokemon: Pokemon, simulated: boolean): void {
     if (!simulated) {
       pokemon.addTag(BattlerTagType.GORILLA_TACTICS);
     }
@@ -6017,6 +6012,22 @@ export function applyPreAttackAbAttrs(
     pokemon,
     (attr, passive) => attr.applyPreAttack(pokemon, passive, simulated, defender, move, args),
     (attr, passive) => attr.canApplyPreAttack(pokemon, passive, simulated, defender, move, args),
+    args,
+    simulated,
+  );
+}
+
+export function applyExecutedMoveAbAttrs(
+  attrType: Constructor<ExecutedMoveAbAttr>,
+  pokemon: Pokemon,
+  simulated: boolean = false,
+  ...args: any[]
+): void {
+  applyAbAttrsInternal<ExecutedMoveAbAttr>(
+    attrType,
+    pokemon,
+    attr => attr.applyExecutedMove(pokemon, simulated),
+    attr => attr.canApplyExecutedMove(pokemon, simulated),
     args,
     simulated,
   );
