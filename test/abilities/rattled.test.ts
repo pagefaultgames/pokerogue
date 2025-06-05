@@ -34,6 +34,7 @@ describe("Abilities - Rattled", () => {
   });
 
   it("should trigger and boost speed immediately after Intimidate attack drop on initial send out", async () => {
+    // `runToSummon` used instead of `startBattle` to avoid skipping past initial "post send out" effects
     await game.classicMode.runToSummon([SpeciesId.GIMMIGHOUL]);
 
     const playerPokemon = game.scene.getPlayerPokemon();
