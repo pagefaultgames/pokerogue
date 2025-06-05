@@ -128,7 +128,7 @@ describe("Test Battle Phase", () => {
 
   it("start battle with selected team", async () => {
     await game.classicMode.startBattle([SpeciesId.CHARIZARD, SpeciesId.CHANSEY, SpeciesId.MEW]);
-    expect(game.scene.getPlayerParty().map(p => p.species.speciesId)).toBe([
+    expect(game.scene.getPlayerParty().map(p => p.species.speciesId)).toEqual([
       SpeciesId.CHARIZARD,
       SpeciesId.CHANSEY,
       SpeciesId.MEW,
