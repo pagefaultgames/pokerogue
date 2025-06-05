@@ -18,10 +18,10 @@ import { addTextObject, TextStyle } from "#app/ui/text";
 import { BooleanHolder, hslToHex, isNullOrUndefined, NumberHolder, toDmgValue } from "#app/utils/common";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BerryType } from "#enums/berry-type";
-import type { Moves } from "#enums/moves";
+import type { MoveId } from "#enums/move-id";
 import type { Nature } from "#enums/nature";
 import type { PokeballType } from "#enums/pokeball";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species-id";
 import { type PermanentStat, type TempBattleStat, BATTLE_STATS, Stat, TEMP_BATTLE_STATS } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import type { PokemonType } from "#enums/pokemon-type";
@@ -872,11 +872,11 @@ export class BaseStatModifier extends PokemonHeldItemModifier {
 }
 
 export class EvoTrackerModifier extends PokemonHeldItemModifier {
-  protected species: Species;
+  protected species: SpeciesId;
   protected required: number;
   public isTransferable = false;
 
-  constructor(type: ModifierType, pokemonId: number, species: Species, required: number, stackCount?: number) {
+  constructor(type: ModifierType, pokemonId: number, species: SpeciesId, required: number, stackCount?: number) {
     super(type, pokemonId, stackCount);
     this.species = species;
     this.required = required;
@@ -1267,20 +1267,20 @@ export class EvolutionStatBoosterModifier extends StatBoosterModifier {
 
 /**
  * Modifier used for held items that Applies {@linkcode Stat} boost(s) using a
- * multiplier if the holder is of a specific {@linkcode Species}.
+ * multiplier if the holder is of a specific {@linkcode SpeciesId}.
  * @extends StatBoosterModifier
  * @see {@linkcode apply}
  */
 export class SpeciesStatBoosterModifier extends StatBoosterModifier {
   /** The species that the held item's stat boost(s) apply to */
-  private species: Species[];
+  private species: SpeciesId[];
 
   constructor(
     type: ModifierType,
     pokemonId: number,
     stats: Stat[],
     multiplier: number,
-    species: Species[],
+    species: SpeciesId[],
     stackCount?: number,
   ) {
     super(type, pokemonId, stats, multiplier, stackCount);
@@ -1315,7 +1315,7 @@ export class SpeciesStatBoosterModifier extends StatBoosterModifier {
   }
 
   /**
-   * Checks if the incoming stat is listed in {@linkcode stats} and if the holder's {@linkcode Species}
+   * Checks if the incoming stat is listed in {@linkcode stats} and if the holder's {@linkcode SpeciesId}
    * (or its fused species) is listed in {@linkcode species}.
    * @param pokemon {@linkcode Pokemon} that holds the item
    * @param stat {@linkcode Stat} being checked at the time
@@ -1332,11 +1332,11 @@ export class SpeciesStatBoosterModifier extends StatBoosterModifier {
 
   /**
    * Checks if either parameter is included in the corresponding lists
-   * @param speciesId {@linkcode Species} being checked
+   * @param speciesId {@linkcode SpeciesId} being checked
    * @param stat {@linkcode Stat} being checked
    * @returns `true` if both parameters are in {@linkcode species} and {@linkcode stats} respectively, false otherwise
    */
-  contains(speciesId: Species, stat: Stat): boolean {
+  contains(speciesId: SpeciesId, stat: Stat): boolean {
     return this.species.includes(speciesId) && this.stats.includes(stat);
   }
 }
@@ -1390,15 +1390,21 @@ export class CritBoosterModifier extends PokemonHeldItemModifier {
 
 /**
  * Modifier used for held items that apply critical-hit stage boost(s)
- * if the holder is of a specific {@linkcode Species}.
+ * if the holder is of a specific {@linkcode SpeciesId}.
  * @extends CritBoosterModifier
  * @see {@linkcode shouldApply}
  */
 export class SpeciesCritBoosterModifier extends CritBoosterModifier {
   /** The species that the held item's critical-hit stage boost applies to */
-  private species: Species[];
+  private species: SpeciesId[];
 
-  constructor(type: ModifierType, pokemonId: number, stageIncrement: number, species: Species[], stackCount?: number) {
+  constructor(
+    type: ModifierType,
+    pokemonId: number,
+    stageIncrement: number,
+    species: SpeciesId[],
+    stackCount?: number,
+  ) {
     super(type, pokemonId, stageIncrement, stackCount);
 
     this.species = species;
@@ -1423,7 +1429,7 @@ export class SpeciesCritBoosterModifier extends CritBoosterModifier {
   }
 
   /**
-   * Checks if the holder's {@linkcode Species} (or its fused species) is listed
+   * Checks if the holder's {@linkcode SpeciesId} (or its fused species) is listed
    * in {@linkcode species}.
    * @param pokemon {@linkcode Pokemon} that holds the held item
    * @param critStage {@linkcode NumberHolder} that holds the resulting critical-hit level
@@ -1620,7 +1626,7 @@ export class BypassSpeedChanceModifier extends PokemonHeldItemModifier {
 
 /**
  * Class for Pokemon held items like King's Rock
- * Because King's Rock can be stacked in PokeRogue, unlike mainline, it does not receive a boost from Abilities.SERENE_GRACE
+ * Because King's Rock can be stacked in PokeRogue, unlike mainline, it does not receive a boost from AbilityId.SERENE_GRACE
  */
 export class FlinchChanceModifier extends PokemonHeldItemModifier {
   private chance: number;
@@ -2111,7 +2117,7 @@ export class TerrastalizeModifier extends ConsumablePokemonModifier {
     return (
       super.shouldApply(playerPokemon) &&
       [playerPokemon?.species.speciesId, playerPokemon?.fusionSpecies?.speciesId].filter(
-        s => s === Species.TERAPAGOS || s === Species.OGERPON || s === Species.SHEDINJA,
+        s => s === SpeciesId.TERAPAGOS || s === SpeciesId.OGERPON || s === SpeciesId.SHEDINJA,
       ).length === 0
     );
   }
@@ -2773,14 +2779,14 @@ export class PokemonMultiHitModifier extends PokemonHeldItemModifier {
   /**
    * For each stack, converts 25 percent of attack damage into an additional strike.
    * @param pokemon The {@linkcode Pokemon} using the move
-   * @param moveId The {@linkcode Moves | identifier} for the move being used
+   * @param moveId The {@linkcode MoveId | identifier} for the move being used
    * @param count {@linkcode NumberHolder} holding the move's hit count for this turn
    * @param damageMultiplier {@linkcode NumberHolder} holding a damage multiplier applied to a strike of this move
    * @returns always `true`
    */
   override apply(
     pokemon: Pokemon,
-    moveId: Moves,
+    moveId: MoveId,
     count: NumberHolder | null = null,
     damageMultiplier: NumberHolder | null = null,
   ): boolean {
@@ -2923,7 +2929,7 @@ export class MoneyRewardModifier extends ConsumableModifier {
     globalScene.addMoney(moneyAmount.value);
 
     globalScene.getPlayerParty().map(p => {
-      if (p.species?.speciesId === Species.GIMMIGHOUL || p.fusionSpecies?.speciesId === Species.GIMMIGHOUL) {
+      if (p.species?.speciesId === SpeciesId.GIMMIGHOUL || p.fusionSpecies?.speciesId === SpeciesId.GIMMIGHOUL) {
         p.evoCounter
           ? (p.evoCounter += Math.min(Math.floor(this.moneyMultiplier), 3))
           : (p.evoCounter = Math.min(Math.floor(this.moneyMultiplier), 3));
