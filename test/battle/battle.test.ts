@@ -91,27 +91,28 @@ describe("Test - Battle Phase", () => {
   }, 20000);
 
   it("do attack wave 3 - single battle - regular - OHKO", async () => {
-    game.override
-      .enemySpecies(SpeciesId.RATTATA)
-      .startingLevel(2000)
-      .startingWave(3)
-      .battleStyle("single")
-      .enemyMoveset(MoveId.TACKLE);
-    await game.classicMode.startBattle([SpeciesId.MEWTWO]);
+    game.override.starterSpecies(SpeciesId.MEWTWO);
+    game.override.enemySpecies(SpeciesId.RATTATA);
+    game.override.startingLevel(2000);
+    game.override.startingWave(3).battleStyle("single");
+    game.override.moveset([MoveId.TACKLE]);
+    game.override.enemyAbility(AbilityId.HYDRATION);
+    game.override.enemyMoveset([MoveId.TACKLE, MoveId.TACKLE, MoveId.TACKLE, MoveId.TACKLE]);
+    await game.classicMode.startBattle();
     game.move.select(MoveId.TACKLE);
     await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(SelectModifierPhase, false);
   }, 20000);
 
   it("do attack wave 3 - single battle - regular - NO OHKO with opponent using non damage attack", async () => {
-    game.override
-      .enemySpecies(SpeciesId.RATTATA)
-      .startingLevel(5)
-      .startingWave(3)
-      .moveset([MoveId.TACKLE])
-      .enemyAbility(AbilityId.HYDRATION)
-      .enemyMoveset(MoveId.TAIL_WHIP)
-      .battleStyle("single");
-    await game.classicMode.startBattle([SpeciesId.MEWTWO]);
+    game.override.starterSpecies(SpeciesId.MEWTWO);
+    game.override.enemySpecies(SpeciesId.RATTATA);
+    game.override.startingLevel(5);
+    game.override.startingWave(3);
+    game.override.moveset([MoveId.TACKLE]);
+    game.override.enemyAbility(AbilityId.HYDRATION);
+    game.override.enemyMoveset([MoveId.TAIL_WHIP, MoveId.TAIL_WHIP, MoveId.TAIL_WHIP, MoveId.TAIL_WHIP]);
+    game.override.battleStyle("single");
+    await game.classicMode.startBattle();
     game.move.select(MoveId.TACKLE);
     await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(TurnInitPhase, false);
   }, 20000);
