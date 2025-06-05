@@ -65,7 +65,7 @@ import { PokemonPhase } from "#app/phases/pokemon-phase";
 import { BooleanHolder, isNullOrUndefined, NumberHolder } from "#app/utils/common";
 import type { nil } from "#app/utils/common";
 import { BattlerTagType } from "#enums/battler-tag-type";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/move-id";
 import i18next from "i18next";
 import type { Phase } from "#app/phase";
 import { ShowAbilityPhase } from "./show-ability-phase";
@@ -224,7 +224,7 @@ export class MoveEffectPhase extends PokemonPhase {
           break;
         case HitCheckResult.NO_EFFECT:
           globalScene.queueMessage(
-            i18next.t(this.move.id === Moves.SHEER_COLD ? "battle:hitResultImmune" : "battle:hitResultNoEffect", {
+            i18next.t(this.move.id === MoveId.SHEER_COLD ? "battle:hitResultImmune" : "battle:hitResultNoEffect", {
               pokemonName: getPokemonNameWithAffix(target),
             }),
           );
@@ -360,7 +360,7 @@ export class MoveEffectPhase extends PokemonPhase {
     ) {
       const firstTarget = this.getFirstTarget();
       new MoveAnim(
-        move.id as Moves,
+        move.id as MoveId,
         user,
         firstTarget?.getBattlerIndex() ?? BattlerIndex.ATTACKER,
         // Some moves used in mystery encounters should be played even on an empty field
@@ -625,12 +625,12 @@ export class MoveEffectPhase extends PokemonPhase {
    * @returns `true` if the move should bypass accuracy and semi-invulnerability
    *
    * Accuracy and semi-invulnerability can be bypassed by:
-   * - An ability like {@linkcode Abilities.NO_GUARD | No Guard}
-   * - A poison type using {@linkcode Moves.TOXIC | Toxic}
-   * - A move like {@linkcode Moves.LOCK_ON | Lock-On} or {@linkcode Moves.MIND_READER | Mind Reader}.
+   * - An ability like {@linkcode AbilityId.NO_GUARD | No Guard}
+   * - A poison type using {@linkcode MoveId.TOXIC | Toxic}
+   * - A move like {@linkcode MoveId.LOCK_ON | Lock-On} or {@linkcode MoveId.MIND_READER | Mind Reader}.
    * - A field-targeted move like spikes
    *
-   * Does *not* check against effects {@linkcode Moves.GLAIVE_RUSH | Glaive Rush} status (which
+   * Does *not* check against effects {@linkcode MoveId.GLAIVE_RUSH | Glaive Rush} status (which
    * should not bypass semi-invulnerability), or interactions like Earthquake hitting against Dig,
    * (which should not bypass the accuracy check).
    *

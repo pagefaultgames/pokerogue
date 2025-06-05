@@ -1,6 +1,6 @@
 import type { BattlerIndex } from "#app/battle";
 import { BattlerTagType } from "#enums/battler-tag-type";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/move-id";
 import { EFFECTIVE_STATS, BATTLE_STATS } from "#enums/stat";
 import { PokemonMove } from "#app/field/pokemon";
 import { globalScene } from "#app/global-scene";
@@ -54,7 +54,7 @@ export class PokemonTransformPhase extends PokemonPhase {
         return new PokemonMove(m.moveId, 0, 0, Math.min(m.getMove().pp, 5));
       }
       console.warn(`Transform: somehow iterating over a ${m} value when copying moveset!`);
-      return new PokemonMove(Moves.NONE);
+      return new PokemonMove(MoveId.NONE);
     });
     user.summonData.types = target.getTypes();
 

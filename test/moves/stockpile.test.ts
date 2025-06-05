@@ -3,9 +3,9 @@ import { StockpilingTag } from "#app/data/battler-tags";
 import { MoveResult } from "#app/field/pokemon";
 import { CommandPhase } from "#app/phases/command-phase";
 import { TurnInitPhase } from "#app/phases/turn-init-phase";
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import { AbilityId } from "#enums/ability-id";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -28,17 +28,17 @@ describe("Moves - Stockpile", () => {
 
       game.override.battleStyle("single");
 
-      game.override.enemySpecies(Species.RATTATA);
-      game.override.enemyMoveset(Moves.SPLASH);
-      game.override.enemyAbility(Abilities.NONE);
+      game.override.enemySpecies(SpeciesId.RATTATA);
+      game.override.enemyMoveset(MoveId.SPLASH);
+      game.override.enemyAbility(AbilityId.NONE);
 
       game.override.startingLevel(2000);
-      game.override.moveset([Moves.STOCKPILE, Moves.SPLASH]);
-      game.override.ability(Abilities.NONE);
+      game.override.moveset([MoveId.STOCKPILE, MoveId.SPLASH]);
+      game.override.ability(AbilityId.NONE);
     });
 
     it("gains a stockpile stack and raises user's DEF and SPDEF stat stages by 1 on each use, fails at max stacks (3)", async () => {
-      await game.classicMode.startBattle([Species.ABOMASNOW]);
+      await game.classicMode.startBattle([SpeciesId.ABOMASNOW]);
 
       const user = game.scene.getPlayerPokemon()!;
 
@@ -55,7 +55,7 @@ describe("Moves - Stockpile", () => {
           await game.phaseInterceptor.to(CommandPhase);
         }
 
-        game.move.select(Moves.STOCKPILE);
+        game.move.select(MoveId.STOCKPILE);
         await game.phaseInterceptor.to(TurnInitPhase);
 
         const stockpilingTag = user.getTag(StockpilingTag)!;
@@ -74,7 +74,7 @@ describe("Moves - Stockpile", () => {
           expect(stockpilingTag.stockpiledCount).toBe(3);
           expect(user.getMoveHistory().at(-1)).toMatchObject({
             result: MoveResult.FAIL,
-            move: Moves.STOCKPILE,
+            move: MoveId.STOCKPILE,
             targets: [user.getBattlerIndex()],
           });
         }
@@ -82,7 +82,7 @@ describe("Moves - Stockpile", () => {
     });
 
     it("gains a stockpile stack even if user's DEF and SPDEF stat stages are at +6", async () => {
-      await game.classicMode.startBattle([Species.ABOMASNOW]);
+      await game.classicMode.startBattle([SpeciesId.ABOMASNOW]);
 
       const user = game.scene.getPlayerPokemon()!;
 
@@ -93,7 +93,7 @@ describe("Moves - Stockpile", () => {
       expect(user.getStatStage(Stat.DEF)).toBe(6);
       expect(user.getStatStage(Stat.SPDEF)).toBe(6);
 
-      game.move.select(Moves.STOCKPILE);
+      game.move.select(MoveId.STOCKPILE);
       await game.phaseInterceptor.to(TurnInitPhase);
 
       const stockpilingTag = user.getTag(StockpilingTag)!;
@@ -105,7 +105,7 @@ describe("Moves - Stockpile", () => {
       // do it again, just for good measure
       await game.phaseInterceptor.to(CommandPhase);
 
-      game.move.select(Moves.STOCKPILE);
+      game.move.select(MoveId.STOCKPILE);
       await game.phaseInterceptor.to(TurnInitPhase);
 
       const stockpilingTagAgain = user.getTag(StockpilingTag)!;

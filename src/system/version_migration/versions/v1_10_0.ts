@@ -3,11 +3,11 @@ import type { BattlerIndex } from "#app/battle";
 import type { MoveResult, TurnMove } from "#app/field/pokemon";
 import type { SessionSaveData } from "#app/system/game-data";
 import { MoveUseType } from "#enums/move-use-type";
-import type { Moves } from "#enums/moves";
+import type { MoveId } from "#enums/move-id";
 
 /** Prior signature of `TurnMove`; used to ensure parity */
 interface OldTurnMove {
-  move: Moves;
+  move: MoveId;
   targets: BattlerIndex[];
   result?: MoveResult;
   virtual?: boolean;

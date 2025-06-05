@@ -6,10 +6,10 @@ import { TrappedTag } from "#app/data/battler-tags";
 import type { MoveTargetSet } from "#app/data/moves/move";
 import { getMoveTargets } from "#app/data/moves/move";
 import { speciesStarterCosts } from "#app/data/balance/starters";
-import { Abilities } from "#app/enums/abilities";
+import { AbilityId } from "#enums/ability-id";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
-import { Biome } from "#app/enums/biome";
-import { Moves } from "#app/enums/moves";
+import { BiomeId } from "#enums/biome-id";
+import { MoveId } from "#enums/move-id";
 import { PokeballType } from "#enums/pokeball";
 import type { PlayerPokemon, TurnMove } from "#app/field/pokemon";
 import { FieldPosition } from "#app/field/pokemon";
@@ -45,7 +45,7 @@ export class CommandPhase extends FieldPhase {
     const cursorResetEvent =
       globalScene.currentBattle.battleType === BattleType.MYSTERY_ENCOUNTER ||
       globalScene.currentBattle.battleType === BattleType.TRAINER ||
-      globalScene.arena.biomeType === Biome.END;
+      globalScene.arena.biomeType === BiomeId.END;
 
     if (commandUiHandler) {
       if (
@@ -81,7 +81,7 @@ export class CommandPhase extends FieldPhase {
     ) {
       globalScene.currentBattle.turnCommands[this.fieldIndex] = {
         command: Command.FIGHT,
-        move: { move: Moves.NONE, targets: [], useType: MoveUseType.NORMAL },
+        move: { move: MoveId.NONE, targets: [], useType: MoveUseType.NORMAL },
         skip: true,
       };
     }
@@ -165,15 +165,15 @@ export class CommandPhase extends FieldPhase {
           playerPokemon.trySelectMove(cursor, isIgnorePP(args[0] as MoveUseType)) ||
           (useStruggle = cursor > -1 && !playerPokemon.getMoveset().filter(m => m.isUsable(playerPokemon)).length)
         ) {
-          let moveId: Moves;
+          let moveId: MoveId;
           if (useStruggle) {
-            moveId = Moves.STRUGGLE;
+            moveId = MoveId.STRUGGLE;
           } else if (turnMove !== undefined) {
             moveId = turnMove.move;
           } else if (cursor > -1) {
             moveId = playerPokemon.getMoveset()[cursor].moveId;
           } else {
-            moveId = Moves.NONE;
+            moveId = MoveId.NONE;
           }
 
           const turnCommand: TurnCommand = {
@@ -249,7 +249,7 @@ export class CommandPhase extends FieldPhase {
             .some(p => !globalScene.gameData.dexData[p.species.speciesId].caughtAttr) &&
           globalScene.gameData.getStarterCount(d => !!d.caughtAttr) < Object.keys(speciesStarterCosts).length - 1;
         if (
-          globalScene.arena.biomeType === Biome.END &&
+          globalScene.arena.biomeType === BiomeId.END &&
           (!globalScene.gameMode.isClassic || globalScene.gameMode.isFreshStartChallenge() || notInDex)
         ) {
           globalScene.ui.setMode(UiMode.COMMAND, this.fieldIndex);
@@ -316,7 +316,7 @@ export class CommandPhase extends FieldPhase {
             if (
               targetPokemon?.isBoss() &&
               targetPokemon?.bossSegmentIndex >= 1 &&
-              !targetPokemon?.hasAbility(Abilities.WONDER_GUARD, false, true) &&
+              !targetPokemon?.hasAbility(AbilityId.WONDER_GUARD, false, true) &&
               cursor < PokeballType.MASTER_BALL
             ) {
               globalScene.ui.setMode(UiMode.COMMAND, this.fieldIndex);
@@ -352,7 +352,7 @@ export class CommandPhase extends FieldPhase {
         const mysteryEncounterFleeAllowed = currentBattle.mysteryEncounter?.fleeAllowed;
         if (
           !isSwitch &&
-          (arena.biomeType === Biome.END ||
+          (arena.biomeType === BiomeId.END ||
             (!isNullOrUndefined(mysteryEncounterFleeAllowed) && !mysteryEncounterFleeAllowed))
         ) {
           globalScene.ui.setMode(UiMode.COMMAND, this.fieldIndex);

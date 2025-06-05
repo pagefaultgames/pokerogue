@@ -31,19 +31,19 @@ import type Pokemon from "#app/field/pokemon";
 import Overrides from "#app/overrides";
 import { TagAddedEvent, TagRemovedEvent, TerrainChangedEvent, WeatherChangedEvent } from "#app/events/arena";
 import type { ArenaTagType } from "#enums/arena-tag-type";
-import { Biome } from "#enums/biome";
-import type { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import { BiomeId } from "#enums/biome-id";
+import type { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import { TimeOfDay } from "#enums/time-of-day";
 import { TrainerType } from "#enums/trainer-type";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/ability-id";
 import { SpeciesFormChangeRevertWeatherFormTrigger, SpeciesFormChangeWeatherTrigger } from "#app/data/pokemon-forms";
 import { CommonAnimPhase } from "#app/phases/common-anim-phase";
 import { WeatherType } from "#enums/weather-type";
 import { FieldEffectModifier } from "#app/modifier/modifier";
 
 export class Arena {
-  public biomeType: Biome;
+  public biomeType: BiomeId;
   public weather: Weather | null;
   public terrain: Terrain | null;
   public tags: ArenaTag[];
@@ -64,7 +64,7 @@ export class Arena {
 
   public readonly eventTarget: EventTarget = new EventTarget();
 
-  constructor(biome: Biome, bgm: string, playerFaints = 0) {
+  constructor(biome: BiomeId, bgm: string, playerFaints = 0) {
     this.biomeType = biome;
     this.tags = [];
     this.bgm = bgm;
@@ -116,7 +116,7 @@ export class Arena {
     const isBossSpecies =
       !!globalScene.getEncounterBossSegments(waveIndex, level) &&
       !!this.pokemonPool[BiomePoolTier.BOSS].length &&
-      (this.biomeType !== Biome.END || globalScene.gameMode.isClassic || globalScene.gameMode.isWaveFinal(waveIndex));
+      (this.biomeType !== BiomeId.END || globalScene.gameMode.isClassic || globalScene.gameMode.isWaveFinal(waveIndex));
     const randVal = isBossSpecies ? 64 : 512;
     // luck influences encounter rarity
     let luckModifier = 0;
@@ -153,9 +153,9 @@ export class Arena {
       ret = globalScene.randomSpecies(waveIndex, level);
     } else {
       const entry = tierPool[randSeedInt(tierPool.length)];
-      let species: Species;
+      let species: SpeciesId;
       if (typeof entry === "number") {
-        species = entry as Species;
+        species = entry as SpeciesId;
       } else {
         const levelThresholds = Object.keys(entry);
         for (let l = levelThresholds.length - 1; l >= 0; l--) {
@@ -199,7 +199,7 @@ export class Arena {
 
     const newSpeciesId = ret.getWildSpeciesForLevel(level, true, isBoss ?? isBossSpecies, globalScene.gameMode);
     if (newSpeciesId !== ret.speciesId) {
-      console.log("Replaced", Species[ret.speciesId], "with", Species[newSpeciesId]);
+      console.log("Replaced", SpeciesId[ret.speciesId], "with", SpeciesId[newSpeciesId]);
       ret = getPokemonSpecies(newSpeciesId);
     }
     return ret;
@@ -239,30 +239,30 @@ export class Arena {
 
   getSpeciesFormIndex(species: PokemonSpecies): number {
     switch (species.speciesId) {
-      case Species.BURMY:
-      case Species.WORMADAM:
+      case SpeciesId.BURMY:
+      case SpeciesId.WORMADAM:
         switch (this.biomeType) {
-          case Biome.BEACH:
+          case BiomeId.BEACH:
             return 1;
-          case Biome.SLUM:
+          case BiomeId.SLUM:
             return 2;
         }
         break;
-      case Species.ROTOM:
+      case SpeciesId.ROTOM:
         switch (this.biomeType) {
-          case Biome.VOLCANO:
+          case BiomeId.VOLCANO:
             return 1;
-          case Biome.SEA:
+          case BiomeId.SEA:
             return 2;
-          case Biome.ICE_CAVE:
+          case BiomeId.ICE_CAVE:
             return 3;
-          case Biome.MOUNTAIN:
+          case BiomeId.MOUNTAIN:
             return 4;
-          case Biome.TALL_GRASS:
+          case BiomeId.TALL_GRASS:
             return 5;
         }
         break;
-      case Species.LYCANROC:
+      case SpeciesId.LYCANROC:
         const timeOfDay = this.getTimeOfDay();
         switch (timeOfDay) {
           case TimeOfDay.DAY:
@@ -281,9 +281,9 @@ export class Arena {
 
   getBgTerrainColorRatioForBiome(): number {
     switch (this.biomeType) {
-      case Biome.SPACE:
+      case BiomeId.SPACE:
         return 1;
-      case Biome.END:
+      case BiomeId.END:
         return 0;
     }
 
@@ -372,8 +372,8 @@ export class Arena {
    */
   triggerWeatherBasedFormChanges(): void {
     globalScene.getField(true).forEach(p => {
-      const isCastformWithForecast = p.hasAbility(Abilities.FORECAST) && p.species.speciesId === Species.CASTFORM;
-      const isCherrimWithFlowerGift = p.hasAbility(Abilities.FLOWER_GIFT) && p.species.speciesId === Species.CHERRIM;
+      const isCastformWithForecast = p.hasAbility(AbilityId.FORECAST) && p.species.speciesId === SpeciesId.CASTFORM;
+      const isCherrimWithFlowerGift = p.hasAbility(AbilityId.FLOWER_GIFT) && p.species.speciesId === SpeciesId.CHERRIM;
 
       if (isCastformWithForecast || isCherrimWithFlowerGift) {
         globalScene.triggerPokemonFormChange(p, SpeciesFormChangeWeatherTrigger);
@@ -387,9 +387,9 @@ export class Arena {
   triggerWeatherBasedFormChangesToNormal(): void {
     globalScene.getField(true).forEach(p => {
       const isCastformWithForecast =
-        p.hasAbility(Abilities.FORECAST, false, true) && p.species.speciesId === Species.CASTFORM;
+        p.hasAbility(AbilityId.FORECAST, false, true) && p.species.speciesId === SpeciesId.CASTFORM;
       const isCherrimWithFlowerGift =
-        p.hasAbility(Abilities.FLOWER_GIFT, false, true) && p.species.speciesId === Species.CHERRIM;
+        p.hasAbility(AbilityId.FLOWER_GIFT, false, true) && p.species.speciesId === SpeciesId.CHERRIM;
 
       if (isCastformWithForecast || isCherrimWithFlowerGift) {
         return globalScene.triggerPokemonFormChange(p, SpeciesFormChangeRevertWeatherFormTrigger);
@@ -488,42 +488,42 @@ export class Arena {
    */
   getTrainerChance(): number {
     switch (this.biomeType) {
-      case Biome.METROPOLIS:
+      case BiomeId.METROPOLIS:
         return 2;
-      case Biome.SLUM:
-      case Biome.BEACH:
-      case Biome.DOJO:
-      case Biome.CONSTRUCTION_SITE:
+      case BiomeId.SLUM:
+      case BiomeId.BEACH:
+      case BiomeId.DOJO:
+      case BiomeId.CONSTRUCTION_SITE:
         return 4;
-      case Biome.PLAINS:
-      case Biome.GRASS:
-      case Biome.LAKE:
-      case Biome.CAVE:
+      case BiomeId.PLAINS:
+      case BiomeId.GRASS:
+      case BiomeId.LAKE:
+      case BiomeId.CAVE:
         return 6;
-      case Biome.TALL_GRASS:
-      case Biome.FOREST:
-      case Biome.SEA:
-      case Biome.SWAMP:
-      case Biome.MOUNTAIN:
-      case Biome.BADLANDS:
-      case Biome.DESERT:
-      case Biome.MEADOW:
-      case Biome.POWER_PLANT:
-      case Biome.GRAVEYARD:
-      case Biome.FACTORY:
-      case Biome.SNOWY_FOREST:
+      case BiomeId.TALL_GRASS:
+      case BiomeId.FOREST:
+      case BiomeId.SEA:
+      case BiomeId.SWAMP:
+      case BiomeId.MOUNTAIN:
+      case BiomeId.BADLANDS:
+      case BiomeId.DESERT:
+      case BiomeId.MEADOW:
+      case BiomeId.POWER_PLANT:
+      case BiomeId.GRAVEYARD:
+      case BiomeId.FACTORY:
+      case BiomeId.SNOWY_FOREST:
         return 8;
-      case Biome.ICE_CAVE:
-      case Biome.VOLCANO:
-      case Biome.RUINS:
-      case Biome.WASTELAND:
-      case Biome.JUNGLE:
-      case Biome.FAIRY_CAVE:
+      case BiomeId.ICE_CAVE:
+      case BiomeId.VOLCANO:
+      case BiomeId.RUINS:
+      case BiomeId.WASTELAND:
+      case BiomeId.JUNGLE:
+      case BiomeId.FAIRY_CAVE:
         return 12;
-      case Biome.SEABED:
-      case Biome.ABYSS:
-      case Biome.SPACE:
-      case Biome.TEMPLE:
+      case BiomeId.SEABED:
+      case BiomeId.ABYSS:
+      case BiomeId.SPACE:
+      case BiomeId.TEMPLE:
         return 16;
       default:
         return 0;
@@ -532,7 +532,7 @@ export class Arena {
 
   getTimeOfDay(): TimeOfDay {
     switch (this.biomeType) {
-      case Biome.ABYSS:
+      case BiomeId.ABYSS:
         return TimeOfDay.NIGHT;
     }
 
@@ -555,16 +555,16 @@ export class Arena {
 
   isOutside(): boolean {
     switch (this.biomeType) {
-      case Biome.SEABED:
-      case Biome.CAVE:
-      case Biome.ICE_CAVE:
-      case Biome.POWER_PLANT:
-      case Biome.DOJO:
-      case Biome.FACTORY:
-      case Biome.ABYSS:
-      case Biome.FAIRY_CAVE:
-      case Biome.TEMPLE:
-      case Biome.LABORATORY:
+      case BiomeId.SEABED:
+      case BiomeId.CAVE:
+      case BiomeId.ICE_CAVE:
+      case BiomeId.POWER_PLANT:
+      case BiomeId.DOJO:
+      case BiomeId.FACTORY:
+      case BiomeId.ABYSS:
+      case BiomeId.FAIRY_CAVE:
+      case BiomeId.TEMPLE:
+      case BiomeId.LABORATORY:
         return false;
       default:
         return true;
@@ -589,7 +589,7 @@ export class Arena {
       return this.overrideTint();
     }
     switch (this.biomeType) {
-      case Biome.ABYSS:
+      case BiomeId.ABYSS:
         return [64, 64, 64];
       default:
         return [128, 128, 128];
@@ -615,9 +615,9 @@ export class Arena {
       return this.overrideTint();
     }
     switch (this.biomeType) {
-      case Biome.ABYSS:
-      case Biome.SPACE:
-      case Biome.END:
+      case BiomeId.ABYSS:
+      case BiomeId.SPACE:
+      case BiomeId.END:
         return this.getDayTint();
     }
 
@@ -674,7 +674,7 @@ export class Arena {
    * Adds a new tag to the arena
    * @param tagType {@linkcode ArenaTagType} the tag being added
    * @param turnCount How many turns the tag lasts
-   * @param sourceMove {@linkcode Moves} the move the tag came from, or `undefined` if not from a move
+   * @param sourceMove {@linkcode MoveId} the move the tag came from, or `undefined` if not from a move
    * @param sourceId The ID of the pokemon in play the tag came from (see {@linkcode BattleScene.getPokemonById})
    * @param side {@linkcode ArenaTagSide} which side(s) the tag applies to
    * @param quiet If a message should be queued on screen to announce the tag being added
@@ -684,7 +684,7 @@ export class Arena {
   addTag(
     tagType: ArenaTagType,
     turnCount: number,
-    sourceMove: Moves | undefined,
+    sourceMove: MoveId | undefined,
     sourceId: number,
     side: ArenaTagSide = ArenaTagSide.BOTH,
     quiet = false,
@@ -838,78 +838,78 @@ export class Arena {
   /** The loop point of any given biome track, read as seconds and milliseconds. */
   getBgmLoopPoint(): number {
     switch (this.biomeType) {
-      case Biome.TOWN:
+      case BiomeId.TOWN:
         return 7.288;
-      case Biome.PLAINS:
+      case BiomeId.PLAINS:
         return 17.485;
-      case Biome.GRASS:
+      case BiomeId.GRASS:
         return 1.995;
-      case Biome.TALL_GRASS:
+      case BiomeId.TALL_GRASS:
         return 9.608;
-      case Biome.METROPOLIS:
+      case BiomeId.METROPOLIS:
         return 141.47;
-      case Biome.FOREST:
+      case BiomeId.FOREST:
         return 0.341;
-      case Biome.SEA:
+      case BiomeId.SEA:
         return 0.024;
-      case Biome.SWAMP:
+      case BiomeId.SWAMP:
         return 4.461;
-      case Biome.BEACH:
+      case BiomeId.BEACH:
         return 3.462;
-      case Biome.LAKE:
+      case BiomeId.LAKE:
         return 7.215;
-      case Biome.SEABED:
+      case BiomeId.SEABED:
         return 2.6;
-      case Biome.MOUNTAIN:
+      case BiomeId.MOUNTAIN:
         return 4.018;
-      case Biome.BADLANDS:
+      case BiomeId.BADLANDS:
         return 17.79;
-      case Biome.CAVE:
+      case BiomeId.CAVE:
         return 14.24;
-      case Biome.DESERT:
+      case BiomeId.DESERT:
         return 1.143;
-      case Biome.ICE_CAVE:
+      case BiomeId.ICE_CAVE:
         return 0.0;
-      case Biome.MEADOW:
+      case BiomeId.MEADOW:
         return 3.891;
-      case Biome.POWER_PLANT:
+      case BiomeId.POWER_PLANT:
         return 9.447;
-      case Biome.VOLCANO:
+      case BiomeId.VOLCANO:
         return 17.637;
-      case Biome.GRAVEYARD:
+      case BiomeId.GRAVEYARD:
         return 13.711;
-      case Biome.DOJO:
+      case BiomeId.DOJO:
         return 6.205;
-      case Biome.FACTORY:
+      case BiomeId.FACTORY:
         return 4.985;
-      case Biome.RUINS:
+      case BiomeId.RUINS:
         return 0.0;
-      case Biome.WASTELAND:
+      case BiomeId.WASTELAND:
         return 6.336;
-      case Biome.ABYSS:
+      case BiomeId.ABYSS:
         return 5.13;
-      case Biome.SPACE:
+      case BiomeId.SPACE:
         return 20.036;
-      case Biome.CONSTRUCTION_SITE:
+      case BiomeId.CONSTRUCTION_SITE:
         return 1.222;
-      case Biome.JUNGLE:
+      case BiomeId.JUNGLE:
         return 0.0;
-      case Biome.FAIRY_CAVE:
+      case BiomeId.FAIRY_CAVE:
         return 4.542;
-      case Biome.TEMPLE:
+      case BiomeId.TEMPLE:
         return 2.547;
-      case Biome.ISLAND:
+      case BiomeId.ISLAND:
         return 2.751;
-      case Biome.LABORATORY:
+      case BiomeId.LABORATORY:
         return 114.862;
-      case Biome.SLUM:
+      case BiomeId.SLUM:
         return 0.0;
-      case Biome.SNOWY_FOREST:
+      case BiomeId.SNOWY_FOREST:
         return 3.047;
-      case Biome.END:
+      case BiomeId.END:
         return 17.153;
       default:
-        console.warn(`missing bgm loop-point for biome "${Biome[this.biomeType]}" (=${this.biomeType})`);
+        console.warn(`missing bgm loop-point for biome "${BiomeId[this.biomeType]}" (=${this.biomeType})`);
         return 0;
     }
   }
@@ -919,37 +919,37 @@ export class Arena {
   }
 }
 
-export function getBiomeKey(biome: Biome): string {
-  return Biome[biome].toLowerCase();
+export function getBiomeKey(biome: BiomeId): string {
+  return BiomeId[biome].toLowerCase();
 }
 
-export function getBiomeHasProps(biomeType: Biome): boolean {
+export function getBiomeHasProps(biomeType: BiomeId): boolean {
   switch (biomeType) {
-    case Biome.METROPOLIS:
-    case Biome.BEACH:
-    case Biome.LAKE:
-    case Biome.SEABED:
-    case Biome.MOUNTAIN:
-    case Biome.BADLANDS:
-    case Biome.CAVE:
-    case Biome.DESERT:
-    case Biome.ICE_CAVE:
-    case Biome.MEADOW:
-    case Biome.POWER_PLANT:
-    case Biome.VOLCANO:
-    case Biome.GRAVEYARD:
-    case Biome.FACTORY:
-    case Biome.RUINS:
-    case Biome.WASTELAND:
-    case Biome.ABYSS:
-    case Biome.CONSTRUCTION_SITE:
-    case Biome.JUNGLE:
-    case Biome.FAIRY_CAVE:
-    case Biome.TEMPLE:
-    case Biome.SNOWY_FOREST:
-    case Biome.ISLAND:
-    case Biome.LABORATORY:
-    case Biome.END:
+    case BiomeId.METROPOLIS:
+    case BiomeId.BEACH:
+    case BiomeId.LAKE:
+    case BiomeId.SEABED:
+    case BiomeId.MOUNTAIN:
+    case BiomeId.BADLANDS:
+    case BiomeId.CAVE:
+    case BiomeId.DESERT:
+    case BiomeId.ICE_CAVE:
+    case BiomeId.MEADOW:
+    case BiomeId.POWER_PLANT:
+    case BiomeId.VOLCANO:
+    case BiomeId.GRAVEYARD:
+    case BiomeId.FACTORY:
+    case BiomeId.RUINS:
+    case BiomeId.WASTELAND:
+    case BiomeId.ABYSS:
+    case BiomeId.CONSTRUCTION_SITE:
+    case BiomeId.JUNGLE:
+    case BiomeId.FAIRY_CAVE:
+    case BiomeId.TEMPLE:
+    case BiomeId.SNOWY_FOREST:
+    case BiomeId.ISLAND:
+    case BiomeId.LABORATORY:
+    case BiomeId.END:
       return true;
   }
 
@@ -958,7 +958,7 @@ export function getBiomeHasProps(biomeType: Biome): boolean {
 
 export class ArenaBase extends Phaser.GameObjects.Container {
   public player: boolean;
-  public biome: Biome;
+  public biome: BiomeId;
   public propValue: number;
   public base: Phaser.GameObjects.Sprite;
   public props: Phaser.GameObjects.Sprite[];
@@ -981,7 +981,7 @@ export class ArenaBase extends Phaser.GameObjects.Container {
       : [];
   }
 
-  setBiome(biome: Biome, propValue?: number): void {
+  setBiome(biome: BiomeId, propValue?: number): void {
     const hasProps = getBiomeHasProps(biome);
     const biomeKey = getBiomeKey(biome);
     const baseKey = `${biomeKey}_${this.player ? "a" : "b"}`;

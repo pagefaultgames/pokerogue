@@ -7,7 +7,7 @@ import type { CommandPhase } from "#app/phases/command-phase";
 import type { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { Command } from "#app/ui/command-ui-handler";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/move-id";
 import { UiMode } from "#enums/ui-mode";
 import { getMovePosition } from "#test/testUtils/gameManagerUtils";
 import { GameManagerHelper } from "#test/testUtils/helpers/gameManagerHelper";
@@ -51,7 +51,7 @@ export class MoveHelper extends GameManagerHelper {
    * @param pkmIndex - the pokemon index. Relevant for double-battles only (defaults to 0)
    * @param targetIndex - The {@linkcode BattlerIndex} of the Pokemon to target for single-target moves, or `null` if a manual call to `selectTarget()` is required
    */
-  public select(move: Moves, pkmIndex: 0 | 1 = 0, targetIndex?: BattlerIndex | null) {
+  public select(move: MoveId, pkmIndex: 0 | 1 = 0, targetIndex?: BattlerIndex | null) {
     const movePosition = getMovePosition(this.game.scene, pkmIndex, move);
 
     this.game.onNextPrompt("CommandPhase", UiMode.COMMAND, () => {
@@ -77,7 +77,7 @@ export class MoveHelper extends GameManagerHelper {
    * @param pkmIndex - the pokemon index. Relevant for double-battles only (defaults to 0)
    * @param targetIndex - The {@linkcode BattlerIndex} of the Pokemon to target for single-target moves, or `null` if a manual call to `selectTarget()` is required
    */
-  public selectWithTera(move: Moves, pkmIndex: 0 | 1 = 0, targetIndex?: BattlerIndex | null) {
+  public selectWithTera(move: MoveId, pkmIndex: 0 | 1 = 0, targetIndex?: BattlerIndex | null) {
     const movePosition = getMovePosition(this.game.scene, pkmIndex, move);
     this.game.scene.getPlayerParty()[pkmIndex].isTerastallized = false;
 
@@ -110,7 +110,7 @@ export class MoveHelper extends GameManagerHelper {
    * @param targetIndex - (optional) The {@linkcode BattlerIndex} of the Pokemon to target for single-target moves, or `null` if a manual call to `selectTarget()` is required
    * @param useTera - If `true`, the Pokemon also chooses to Terastallize. This does not require a Tera Orb. Default: `false`.
    */
-  public use(moveId: Moves, pkmIndex: 0 | 1 = 0, targetIndex?: BattlerIndex | null, useTera = false): void {
+  public use(moveId: MoveId, pkmIndex: 0 | 1 = 0, targetIndex?: BattlerIndex | null, useTera = false): void {
     if ([Overrides.MOVESET_OVERRIDE].flat().length > 0) {
       vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([]);
       console.warn("Warning: `use` overwrites the Pokemon's moveset and disables the player moveset override!");
@@ -152,9 +152,9 @@ export class MoveHelper extends GameManagerHelper {
    * Changes a pokemon's moveset to the given move(s).
    * Used when the normal moveset override can't be used (such as when it's necessary to check or update properties of the moveset).
    * @param pokemon - The {@linkcode Pokemon} being modified
-   * @param moveset - The {@linkcode Moves} (single or array) to change the Pokemon's moveset to
+   * @param moveset - The {@linkcode MoveId} (single or array) to change the Pokemon's moveset to
    */
-  public changeMoveset(pokemon: Pokemon, moveset: Moves | Moves[]): void {
+  public changeMoveset(pokemon: Pokemon, moveset: MoveId | MoveId[]): void {
     if (!Array.isArray(moveset)) {
       moveset = [moveset];
     }
@@ -162,7 +162,7 @@ export class MoveHelper extends GameManagerHelper {
     moveset.forEach(move => {
       pokemon.moveset.push(new PokemonMove(move));
     });
-    const movesetStr = moveset.map(moveId => Moves[moveId]).join(", ");
+    const movesetStr = moveset.map(moveId => MoveId[moveId]).join(", ");
     console.log(`Pokemon ${pokemon.species.name}'s moveset manually set to ${movesetStr} (=[${moveset.join(", ")}])!`);
   }
 
@@ -172,7 +172,7 @@ export class MoveHelper extends GameManagerHelper {
    * @param moveId The {@linkcode MoveId | move} the enemy will use
    * @param target (Optional) the {@linkcode BattlerIndex | target} which the enemy will use the given move against
    */
-  public async selectEnemyMove(moveId: Moves, target?: BattlerIndex) {
+  public async selectEnemyMove(moveId: MoveId, target?: BattlerIndex) {
     // Wait for the next EnemyCommandPhase to start
     await this.game.phaseInterceptor.to("EnemyCommandPhase", false);
     const enemy =
@@ -206,7 +206,7 @@ export class MoveHelper extends GameManagerHelper {
    * @param moveId The {@linkcode MoveId | move} the enemy will use
    * @param target (Optional) the {@linkcode BattlerIndex | target} which the enemy will use the given move against
    */
-  public async forceEnemyMove(moveId: Moves, target?: BattlerIndex) {
+  public async forceEnemyMove(moveId: MoveId, target?: BattlerIndex) {
     // Wait for the next EnemyCommandPhase to start
     await this.game.phaseInterceptor.to("EnemyCommandPhase", false);
 
