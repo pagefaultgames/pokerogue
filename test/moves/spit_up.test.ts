@@ -35,11 +35,11 @@ describe("Moves - Spit Up", () => {
     game.override
       .battleStyle("single")
       .enemySpecies(Species.RATTATA)
-      .enemyMoveset(Moves.SPLASH)
-      .enemyAbility(Abilities.NONE)
+      .enemyMoveset(MoveId.SPLASH)
+      .enemyAbility(AbilityId.NONE)
       .enemyLevel(2000)
-      .moveset(Moves.SPIT_UP)
-      .ability(Abilities.NONE);
+      .moveset(MoveId.SPIT_UP)
+      .ability(AbilityId.NONE);
 
     vi.spyOn(spitUp, "calculateBattlePower");
   });

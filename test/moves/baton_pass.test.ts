@@ -59,17 +59,17 @@ describe("Moves - Baton Pass", () => {
 
   it("passes stat stage buffs when AI uses it", async () => {
     // arrange
-    game.override.startingWave(5).enemyMoveset([Moves.NASTY_PLOT, Moves.BATON_PASS]);
+    game.override.startingWave(5).enemyMoveset([MoveId.NASTY_PLOT, MoveId.BATON_PASS]);
     await game.classicMode.startBattle([Species.RAICHU, Species.SHUCKLE]);
 
     // round 1 - ai buffs
-    game.move.select(Moves.SPLASH);
-    await game.move.forceEnemyMove(Moves.NASTY_PLOT);
+    game.move.select(MoveId.SPLASH);
+    await game.move.forceEnemyMove(MoveId.NASTY_PLOT);
     await game.toNextTurn();
 
     // round 2 - baton pass
-    game.move.select(Moves.SPLASH);
-    await game.move.forceEnemyMove(Moves.BATON_PASS);
+    game.move.select(MoveId.SPLASH);
+    await game.move.forceEnemyMove(MoveId.BATON_PASS);
     await game.phaseInterceptor.to("PostSummonPhase", false);
 
     // check buffs are still there

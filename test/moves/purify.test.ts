@@ -3,7 +3,6 @@ import { Status } from "#app/data/status-effect";
 import type { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
 import { MoveEndPhase } from "#app/phases/move-end-phase";
 import { MoveId } from "#enums/move-id";
-import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -29,10 +28,10 @@ describe("Moves - Purify", () => {
       .battleStyle("single")
       .starterSpecies(Species.PYUKUMUKU)
       .startingLevel(10)
-      .moveset([Moves.PURIFY, Moves.SIZZLY_SLIDE])
+      .moveset([MoveId.PURIFY, MoveId.SIZZLY_SLIDE])
       .enemySpecies(Species.MAGIKARP)
       .enemyLevel(10)
-      .enemyMoveset([Moves.SPLASH, Moves.NONE, Moves.NONE, Moves.NONE]);
+      .enemyMoveset([MoveId.SPLASH, MoveId.NONE, MoveId.NONE, MoveId.NONE]);
   });
 
   test("Purify heals opponent status effect and restores user hp", async () => {

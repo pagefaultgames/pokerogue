@@ -38,7 +38,7 @@ describe("Field Trip - Mystery Encounter", () => {
       .startingWave(defaultWave)
       .startingBiome(defaultBiome)
       .disableTrainerWaves()
-      .moveset([Moves.TACKLE, Moves.UPROAR, Moves.SWORDS_DANCE]);
+      .moveset([MoveId.TACKLE, MoveId.UPROAR, MoveId.SWORDS_DANCE]);
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
       new Map<BiomeId, MysteryEncounterType[]>([[BiomeId.CAVE, [MysteryEncounterType.FIELD_TRIP]]]),

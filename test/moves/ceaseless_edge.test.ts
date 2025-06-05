@@ -29,13 +29,13 @@ describe("Moves - Ceaseless Edge", () => {
     game.override
       .battleStyle("single")
       .enemySpecies(Species.RATTATA)
-      .enemyAbility(Abilities.RUN_AWAY)
-      .enemyPassiveAbility(Abilities.RUN_AWAY)
+      .enemyAbility(AbilityId.RUN_AWAY)
+      .enemyPassiveAbility(AbilityId.RUN_AWAY)
       .startingLevel(100)
       .enemyLevel(100)
-      .moveset([Moves.CEASELESS_EDGE, Moves.SPLASH, Moves.ROAR])
-      .enemyMoveset(Moves.SPLASH);
-    vi.spyOn(allMoves[Moves.CEASELESS_EDGE], "accuracy", "get").mockReturnValue(100);
+      .moveset([MoveId.CEASELESS_EDGE, MoveId.SPLASH, MoveId.ROAR])
+      .enemyMoveset(MoveId.SPLASH);
+    vi.spyOn(allMoves[MoveId.CEASELESS_EDGE], "accuracy", "get").mockReturnValue(100);
   });
 
   test("move should hit and apply spikes", async () => {

@@ -29,8 +29,8 @@ describe("Moves - Thousand Arrows", () => {
       .enemySpecies(Species.TOGETIC)
       .startingLevel(100)
       .enemyLevel(100)
-      .moveset([Moves.THOUSAND_ARROWS])
-      .enemyMoveset(Moves.SPLASH);
+      .moveset([MoveId.THOUSAND_ARROWS])
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   it("move should hit and ground Flying-type targets", async () => {
@@ -51,7 +51,7 @@ describe("Moves - Thousand Arrows", () => {
   });
 
   it("move should hit and ground targets with Levitate", async () => {
-    game.override.enemySpecies(Species.SNORLAX).enemyAbility(Abilities.LEVITATE);
+    game.override.enemySpecies(Species.SNORLAX).enemyAbility(AbilityId.LEVITATE);
 
     await game.classicMode.startBattle([SpeciesId.ILLUMISE]);
 

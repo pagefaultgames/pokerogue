@@ -28,13 +28,13 @@ describe("Moves - Hyper Beam", () => {
 
     game.override
       .battleStyle("single")
-      .ability(Abilities.BALL_FETCH)
+      .ability(AbilityId.BALL_FETCH)
       .enemySpecies(Species.SNORLAX)
-      .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset([Moves.SPLASH])
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .enemyMoveset([MoveId.SPLASH])
       .enemyLevel(100)
-      .moveset([Moves.HYPER_BEAM, Moves.TACKLE]);
-    vi.spyOn(allMoves[Moves.HYPER_BEAM], "accuracy", "get").mockReturnValue(100);
+      .moveset([MoveId.HYPER_BEAM, MoveId.TACKLE]);
+    vi.spyOn(allMoves[MoveId.HYPER_BEAM], "accuracy", "get").mockReturnValue(100);
   });
 
   it("should force the user to recharge on the next turn (and only that turn)", async () => {

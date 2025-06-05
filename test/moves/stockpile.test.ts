@@ -30,11 +30,11 @@ describe("Moves - Stockpile", () => {
       game.override
         .battleStyle("single")
         .enemySpecies(Species.RATTATA)
-        .enemyMoveset(Moves.SPLASH)
-        .enemyAbility(Abilities.NONE)
+        .enemyMoveset(MoveId.SPLASH)
+        .enemyAbility(AbilityId.NONE)
         .startingLevel(2000)
-        .moveset([Moves.STOCKPILE, Moves.SPLASH])
-        .ability(Abilities.NONE);
+        .moveset([MoveId.STOCKPILE, MoveId.SPLASH])
+        .ability(AbilityId.NONE);
     });
 
     it("gains a stockpile stack and raises user's DEF and SPDEF stat stages by 1 on each use, fails at max stacks (3)", async () => {

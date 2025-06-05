@@ -86,7 +86,7 @@ describe("Abilities - ZEN MODE", () => {
 
   it("should switch to base form on arena reset", async () => {
     game.override.startingWave(4).starterForms({
-      [Species.DARMANITAN]: zenForm,
+      [SpeciesId.DARMANITAN]: zenForm,
     });
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.DARMANITAN]);

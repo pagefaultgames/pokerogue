@@ -56,7 +56,7 @@ describe("Moves - Magic Coat", () => {
   });
 
   it("should not reflect moves used on the next turn", async () => {
-    game.override.moveset([Moves.GROWL, Moves.SPLASH]).enemyMoveset([Moves.MAGIC_COAT, Moves.SPLASH]);
+    game.override.moveset([MoveId.GROWL, MoveId.SPLASH]).enemyMoveset([MoveId.MAGIC_COAT, MoveId.SPLASH]);
     await game.classicMode.startBattle([Species.MAGIKARP]);
 
     // turn 1
@@ -81,7 +81,7 @@ describe("Moves - Magic Coat", () => {
   });
 
   it("should individually bounce back multi-target moves when used by both targets in doubles", async () => {
-    game.override.battleStyle("double").moveset([Moves.GROWL, Moves.SPLASH]);
+    game.override.battleStyle("double").moveset([MoveId.GROWL, MoveId.SPLASH]);
     await game.classicMode.startBattle([Species.MAGIKARP, Species.MAGIKARP]);
 
     game.move.select(MoveId.GROWL, 0);
@@ -95,8 +95,8 @@ describe("Moves - Magic Coat", () => {
   it("should bounce back a spread status move against both pokemon", async () => {
     game.override
       .battleStyle("double")
-      .moveset([Moves.GROWL, Moves.SPLASH])
-      .enemyMoveset([Moves.SPLASH, Moves.MAGIC_COAT]);
+      .moveset([MoveId.GROWL, MoveId.SPLASH])
+      .enemyMoveset([MoveId.SPLASH, MoveId.MAGIC_COAT]);
     await game.classicMode.startBattle([Species.MAGIKARP, Species.MAGIKARP]);
 
     game.move.select(MoveId.GROWL, 0);
@@ -122,9 +122,9 @@ describe("Moves - Magic Coat", () => {
   it("should not bounce back a move that was just bounced", async () => {
     game.override
       .battleStyle("double")
-      .ability(Abilities.MAGIC_BOUNCE)
-      .moveset([Moves.GROWL, Moves.MAGIC_COAT])
-      .enemyMoveset([Moves.SPLASH, Moves.MAGIC_COAT]);
+      .ability(AbilityId.MAGIC_BOUNCE)
+      .moveset([MoveId.GROWL, MoveId.MAGIC_COAT])
+      .enemyMoveset([MoveId.SPLASH, MoveId.MAGIC_COAT]);
     await game.classicMode.startBattle([Species.MAGIKARP, Species.MAGIKARP]);
 
     game.move.select(MoveId.MAGIC_COAT, 0);
@@ -147,7 +147,7 @@ describe("Moves - Magic Coat", () => {
   });
 
   it("should still bounce back a move from a mold breaker user", async () => {
-    game.override.ability(Abilities.MOLD_BREAKER).moveset([Moves.GROWL]);
+    game.override.ability(AbilityId.MOLD_BREAKER).moveset([MoveId.GROWL]);
     await game.classicMode.startBattle([Species.MAGIKARP]);
 
     game.move.select(MoveId.GROWL);
@@ -158,7 +158,7 @@ describe("Moves - Magic Coat", () => {
   });
 
   it("should only bounce spikes back once when both targets use magic coat in doubles", async () => {
-    game.override.battleStyle("double").moveset([Moves.SPIKES]);
+    game.override.battleStyle("double").moveset([MoveId.SPIKES]);
     await game.classicMode.startBattle([Species.MAGIKARP]);
 
     game.move.select(MoveId.SPIKES);
@@ -169,7 +169,7 @@ describe("Moves - Magic Coat", () => {
   });
 
   it("should not bounce back curse", async () => {
-    game.override.moveset([Moves.CURSE]);
+    game.override.moveset([MoveId.CURSE]);
     await game.classicMode.startBattle([Species.GASTLY]);
 
     game.move.select(MoveId.CURSE);
@@ -181,9 +181,9 @@ describe("Moves - Magic Coat", () => {
   // TODO: encore is failing if the last move was virtual.
   it.todo("should not cause the bounced move to count for encore", async () => {
     game.override
-      .moveset([Moves.GROWL, Moves.ENCORE])
-      .enemyMoveset([Moves.MAGIC_COAT, Moves.TACKLE])
-      .enemyAbility(Abilities.MAGIC_BOUNCE);
+      .moveset([MoveId.GROWL, MoveId.ENCORE])
+      .enemyMoveset([MoveId.MAGIC_COAT, MoveId.TACKLE])
+      .enemyAbility(AbilityId.MAGIC_BOUNCE);
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
     const enemyPokemon = game.scene.getEnemyPokemon()!;
@@ -204,7 +204,7 @@ describe("Moves - Magic Coat", () => {
 
   // TODO: stomping tantrum should consider moves that were bounced.
   it.todo("should cause stomping tantrum to double in power when the last move was bounced", async () => {
-    game.override.battleStyle("single").moveset([Moves.STOMPING_TANTRUM, Moves.CHARM]);
+    game.override.battleStyle("single").moveset([MoveId.STOMPING_TANTRUM, MoveId.CHARM]);
     await game.classicMode.startBattle([Species.MAGIKARP]);
 
     const stomping_tantrum = allMoves[MoveId.STOMPING_TANTRUM];
@@ -245,8 +245,8 @@ describe("Moves - Magic Coat", () => {
   );
 
   it("should respect immunities when bouncing a move", async () => {
-    vi.spyOn(allMoves[Moves.THUNDER_WAVE], "accuracy", "get").mockReturnValue(100);
-    game.override.moveset([Moves.THUNDER_WAVE, Moves.GROWL]).ability(Abilities.SOUNDPROOF);
+    vi.spyOn(allMoves[MoveId.THUNDER_WAVE], "accuracy", "get").mockReturnValue(100);
+    game.override.moveset([MoveId.THUNDER_WAVE, MoveId.GROWL]).ability(AbilityId.SOUNDPROOF);
     await game.classicMode.startBattle([Species.PHANPY]);
 
     // Turn 1 - thunder wave immunity test

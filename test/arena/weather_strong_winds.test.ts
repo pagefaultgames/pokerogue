@@ -28,8 +28,8 @@ describe("Weather - Strong Winds", () => {
       .battleStyle("single")
       .startingLevel(10)
       .enemySpecies(Species.TAILLOW)
-      .enemyAbility(Abilities.DELTA_STREAM)
-      .moveset([Moves.THUNDERBOLT, Moves.ICE_BEAM, Moves.ROCK_SLIDE]);
+      .enemyAbility(AbilityId.DELTA_STREAM)
+      .moveset([MoveId.THUNDERBOLT, MoveId.ICE_BEAM, MoveId.ROCK_SLIDE]);
   });
 
   it("electric type move is not very effective on Rayquaza", async () => {

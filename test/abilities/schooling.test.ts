@@ -32,7 +32,7 @@ describe("Abilities - SCHOOLING", () => {
     const soloForm = 0,
       schoolForm = 1;
     game.override.startingWave(4).starterForms({
-      [Species.WISHIWASHI]: schoolForm,
+      [SpeciesId.WISHIWASHI]: schoolForm,
     });
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.WISHIWASHI]);

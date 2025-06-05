@@ -28,10 +28,10 @@ describe("Moves - Mat Block", () => {
 
     game.override
       .battleStyle("double")
-      .moveset([Moves.MAT_BLOCK, Moves.SPLASH])
+      .moveset([MoveId.MAT_BLOCK, MoveId.SPLASH])
       .enemySpecies(Species.SNORLAX)
-      .enemyMoveset([Moves.TACKLE])
-      .enemyAbility(Abilities.INSOMNIA)
+      .enemyMoveset([MoveId.TACKLE])
+      .enemyAbility(AbilityId.INSOMNIA)
       .startingLevel(100)
       .enemyLevel(100);
   });

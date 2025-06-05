@@ -26,11 +26,11 @@ describe("Moves - Gastro Acid", () => {
       .battleStyle("double")
       .startingLevel(1)
       .enemyLevel(100)
-      .ability(Abilities.NONE)
-      .moveset([Moves.GASTRO_ACID, Moves.WATER_GUN, Moves.SPLASH, Moves.CORE_ENFORCER])
+      .ability(AbilityId.NONE)
+      .moveset([MoveId.GASTRO_ACID, MoveId.WATER_GUN, MoveId.SPLASH, MoveId.CORE_ENFORCER])
       .enemySpecies(Species.BIDOOF)
-      .enemyMoveset(Moves.SPLASH)
-      .enemyAbility(Abilities.WATER_ABSORB);
+      .enemyMoveset(MoveId.SPLASH)
+      .enemyAbility(AbilityId.WATER_ABSORB);
   });
 
   it("suppresses effect of ability", async () => {

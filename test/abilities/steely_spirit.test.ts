@@ -31,9 +31,9 @@ describe("Abilities - Steely Spirit", () => {
     game.override
       .battleStyle("double")
       .enemySpecies(Species.SHUCKLE)
-      .enemyAbility(Abilities.BALL_FETCH)
-      .moveset([Moves.IRON_HEAD, Moves.SPLASH])
-      .enemyMoveset(Moves.SPLASH);
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .moveset([MoveId.IRON_HEAD, MoveId.SPLASH])
+      .enemyMoveset(MoveId.SPLASH);
     vi.spyOn(allMoves[moveToCheck], "calculateBattlePower");
   });
 

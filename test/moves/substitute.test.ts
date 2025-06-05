@@ -138,7 +138,7 @@ describe("Moves - Substitute", () => {
   });
 
   it("should be bypassed by attackers with Infiltrator", async () => {
-    game.override.enemyMoveset(Moves.TACKLE).enemyAbility(Abilities.INFILTRATOR);
+    game.override.enemyMoveset(MoveId.TACKLE).enemyAbility(AbilityId.INFILTRATOR);
 
     await game.classicMode.startBattle([SpeciesId.BLASTOISE]);
 
@@ -229,7 +229,7 @@ describe("Moves - Substitute", () => {
   });
 
   it("should protect the user from flinching", async () => {
-    game.override.enemyMoveset(Moves.FAKE_OUT).startingLevel(1); // Ensures the Substitute will break
+    game.override.enemyMoveset(MoveId.FAKE_OUT).startingLevel(1); // Ensures the Substitute will break
 
     await game.classicMode.startBattle([SpeciesId.BLASTOISE]);
 
@@ -296,8 +296,8 @@ describe("Moves - Substitute", () => {
   });
 
   it("should prevent the user's items from being stolen", async () => {
-    game.override.enemyMoveset(Moves.THIEF).startingHeldItems([{ name: "BERRY", type: BerryType.SITRUS }]);
-    vi.spyOn(allMoves[Moves.THIEF], "attrs", "get").mockReturnValue([new StealHeldItemChanceAttr(1.0)]); // give Thief 100% steal rate
+    game.override.enemyMoveset(MoveId.THIEF).startingHeldItems([{ name: "BERRY", type: BerryType.SITRUS }]);
+    vi.spyOn(allMoves[MoveId.THIEF], "attrs", "get").mockReturnValue([new StealHeldItemChanceAttr(1.0)]); // give Thief 100% steal rate
 
     await game.classicMode.startBattle([SpeciesId.BLASTOISE]);
 
@@ -313,7 +313,7 @@ describe("Moves - Substitute", () => {
   });
 
   it("should prevent the user's items from being removed", async () => {
-    game.override.moveset([Moves.KNOCK_OFF]).enemyHeldItems([{ name: "BERRY", type: BerryType.SITRUS }]);
+    game.override.moveset([MoveId.KNOCK_OFF]).enemyHeldItems([{ name: "BERRY", type: BerryType.SITRUS }]);
 
     await game.classicMode.startBattle([SpeciesId.BLASTOISE]);
 
@@ -330,7 +330,7 @@ describe("Moves - Substitute", () => {
   });
 
   it("move effect should prevent the user's berries from being stolen and eaten", async () => {
-    game.override.enemyMoveset(Moves.BUG_BITE).startingHeldItems([{ name: "BERRY", type: BerryType.SITRUS }]);
+    game.override.enemyMoveset(MoveId.BUG_BITE).startingHeldItems([{ name: "BERRY", type: BerryType.SITRUS }]);
 
     await game.classicMode.startBattle([SpeciesId.BLASTOISE]);
 
@@ -407,7 +407,7 @@ describe("Moves - Substitute", () => {
   });
 
   it("should prevent the source's Rough Skin from activating when hit", async () => {
-    game.override.enemyMoveset(Moves.TACKLE).ability(Abilities.ROUGH_SKIN);
+    game.override.enemyMoveset(MoveId.TACKLE).ability(AbilityId.ROUGH_SKIN);
 
     await game.classicMode.startBattle([SpeciesId.BLASTOISE]);
 
@@ -421,7 +421,7 @@ describe("Moves - Substitute", () => {
   });
 
   it("should prevent the source's Focus Punch from failing when hit", async () => {
-    game.override.enemyMoveset(Moves.TACKLE).moveset([Moves.FOCUS_PUNCH]);
+    game.override.enemyMoveset(MoveId.TACKLE).moveset([MoveId.FOCUS_PUNCH]);
 
     // Make Focus Punch 40 power to avoid a KO
     vi.spyOn(allMoves[MoveId.FOCUS_PUNCH], "calculateBattlePower").mockReturnValue(40);
@@ -442,7 +442,7 @@ describe("Moves - Substitute", () => {
   });
 
   it("should not allow Shell Trap to activate when attacked", async () => {
-    game.override.enemyMoveset(Moves.TACKLE).moveset([Moves.SHELL_TRAP]);
+    game.override.enemyMoveset(MoveId.TACKLE).moveset([MoveId.SHELL_TRAP]);
 
     await game.classicMode.startBattle([SpeciesId.BLASTOISE]);
 
@@ -458,7 +458,7 @@ describe("Moves - Substitute", () => {
   });
 
   it("should not allow Beak Blast to burn opponents when hit", async () => {
-    game.override.enemyMoveset(Moves.TACKLE).moveset([Moves.BEAK_BLAST]);
+    game.override.enemyMoveset(MoveId.TACKLE).moveset([MoveId.BEAK_BLAST]);
 
     await game.classicMode.startBattle([SpeciesId.BLASTOISE]);
 
@@ -475,7 +475,7 @@ describe("Moves - Substitute", () => {
   });
 
   it("should cause incoming attacks to not activate Counter", async () => {
-    game.override.enemyMoveset(Moves.TACKLE).moveset([Moves.COUNTER]);
+    game.override.enemyMoveset(MoveId.TACKLE).moveset([MoveId.COUNTER]);
 
     await game.classicMode.startBattle([SpeciesId.BLASTOISE]);
 

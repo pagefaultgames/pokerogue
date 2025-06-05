@@ -27,9 +27,9 @@ describe("Battle order", () => {
     game.override
       .battleStyle("single")
       .enemySpecies(Species.MEWTWO)
-      .enemyAbility(Abilities.INSOMNIA)
-      .ability(Abilities.INSOMNIA)
-      .moveset([Moves.TACKLE]);
+      .enemyAbility(AbilityId.INSOMNIA)
+      .ability(AbilityId.INSOMNIA)
+      .moveset([MoveId.TACKLE]);
   });
 
   it("opponent faster than player 50 vs 150", async () => {

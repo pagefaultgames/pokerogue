@@ -26,10 +26,10 @@ describe("Abilities - Seed Sower", () => {
       .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .starterSpecies(Species.ARBOLIVA)
-      .ability(Abilities.SEED_SOWER)
-      .moveset([Moves.SPLASH]);
+      .ability(AbilityId.SEED_SOWER)
+      .moveset([MoveId.SPLASH]);
   });
 
   it("should trigger when hit with damaging move", async () => {

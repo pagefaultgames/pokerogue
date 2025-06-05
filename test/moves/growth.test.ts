@@ -26,10 +26,10 @@ describe("Moves - Growth", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .enemyAbility(Abilities.MOXIE)
-      .ability(Abilities.INSOMNIA)
-      .moveset([Moves.GROWTH])
-      .enemyMoveset(Moves.SPLASH);
+      .enemyAbility(AbilityId.MOXIE)
+      .ability(AbilityId.INSOMNIA)
+      .moveset([MoveId.GROWTH])
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   it("should raise SPATK stat stage by 1", async () => {

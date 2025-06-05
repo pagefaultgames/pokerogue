@@ -28,8 +28,8 @@ describe("Moves - Parting Shot", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .moveset([Moves.PARTING_SHOT, Moves.SPLASH])
-      .enemyMoveset(Moves.SPLASH)
+      .moveset([MoveId.PARTING_SHOT, MoveId.SPLASH])
+      .enemyMoveset(MoveId.SPLASH)
       .startingLevel(5)
       .enemyLevel(5);
   });

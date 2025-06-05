@@ -29,11 +29,11 @@ describe("Moves - Hard Press", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .ability(Abilities.BALL_FETCH)
+      .ability(AbilityId.BALL_FETCH)
       .enemySpecies(Species.MUNCHLAX)
-      .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset(Moves.SPLASH)
-      .moveset([Moves.HARD_PRESS]);
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .enemyMoveset(MoveId.SPLASH)
+      .moveset([MoveId.HARD_PRESS]);
     vi.spyOn(moveToCheck, "calculateBattlePower");
   });
 

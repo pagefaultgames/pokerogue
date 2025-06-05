@@ -27,11 +27,11 @@ describe("Weather - Fog", () => {
     game.override
       .weather(WeatherType.FOG)
       .battleStyle("single")
-      .moveset([Moves.TACKLE])
-      .ability(Abilities.BALL_FETCH)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .moveset([MoveId.TACKLE])
+      .ability(AbilityId.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .enemySpecies(Species.MAGIKARP)
-      .enemyMoveset([Moves.SPLASH]);
+      .enemyMoveset([MoveId.SPLASH]);
   });
 
   it("move accuracy is multiplied by 90%", async () => {

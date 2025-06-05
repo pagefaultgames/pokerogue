@@ -154,7 +154,7 @@ describe("Moves - Transform", () => {
   });
 
   it("should stay transformed with the correct form after reload", async () => {
-    game.override.enemyMoveset([]).moveset([]).enemySpecies(Species.DARMANITAN);
+    game.override.enemyMoveset([]).moveset([]).enemySpecies(SpeciesId.DARMANITAN);
 
     await game.classicMode.startBattle([SpeciesId.DITTO]);
 

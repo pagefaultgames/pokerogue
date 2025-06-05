@@ -23,7 +23,6 @@ import { PlayerGender } from "#enums/player-gender";
 import { SpeciesId } from "#enums/species-id";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { BiomeId } from "#enums/biome-id";
 
 describe("Test Battle Phase", () => {
   let phaserGame: Phaser.Game;
@@ -91,7 +90,7 @@ describe("Test Battle Phase", () => {
   it("do attack wave 3 - single battle - regular - OHKO", async () => {
     game.override.enemySpecies(Species.RATTATA).startingLevel(2000).battleStyle("single");
     await game.classicMode.startBattle([Species.MEWTWO]);
-    game.move.use(Moves.TACKLE);
+    game.move.use(MoveId.TACKLE);
     await game.phaseInterceptor.to("SelectModifierPhase");
   }, 20000);
 
@@ -100,12 +99,12 @@ describe("Test Battle Phase", () => {
       .enemySpecies(Species.RATTATA)
       .startingLevel(5)
       .startingWave(3)
-      .moveset([Moves.TACKLE])
-      .enemyAbility(Abilities.HYDRATION)
-      .enemyMoveset([Moves.TAIL_WHIP, Moves.TAIL_WHIP, Moves.TAIL_WHIP, Moves.TAIL_WHIP])
+      .moveset([MoveId.TACKLE])
+      .enemyAbility(AbilityId.HYDRATION)
+      .enemyMoveset([MoveId.TAIL_WHIP, MoveId.TAIL_WHIP, MoveId.TAIL_WHIP, MoveId.TAIL_WHIP])
       .battleStyle("single");
     await game.classicMode.startBattle([Species.MEWTWO]);
-    game.move.select(Moves.TACKLE);
+    game.move.select(MoveId.TACKLE);
     await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(TurnInitPhase, false);
   }, 20000);
 
@@ -237,17 +236,17 @@ describe("Test Battle Phase", () => {
   }, 20000);
 
   it("kill opponent pokemon", async () => {
-    const moveToUse = Moves.SPLASH;
+    const moveToUse = MoveId.SPLASH;
     game.override
       .battleStyle("single")
       .starterSpecies(Species.MEWTWO)
       .enemySpecies(Species.RATTATA)
-      .enemyAbility(Abilities.HYDRATION)
-      .ability(Abilities.ZEN_MODE)
+      .enemyAbility(AbilityId.HYDRATION)
+      .ability(AbilityId.ZEN_MODE)
       .startingLevel(2000)
       .startingWave(3)
       .moveset([moveToUse])
-      .enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
+      .enemyMoveset([MoveId.TACKLE, MoveId.TACKLE, MoveId.TACKLE, MoveId.TACKLE]);
     await game.classicMode.startBattle([Species.DARMANITAN, Species.CHARIZARD]);
 
     game.move.select(moveToUse);
@@ -258,16 +257,16 @@ describe("Test Battle Phase", () => {
   });
 
   it("to next turn", async () => {
-    const moveToUse = Moves.SPLASH;
+    const moveToUse = MoveId.SPLASH;
     game.override
       .battleStyle("single")
       .enemySpecies(Species.RATTATA)
-      .enemyAbility(Abilities.HYDRATION)
-      .ability(Abilities.ZEN_MODE)
+      .enemyAbility(AbilityId.HYDRATION)
+      .ability(AbilityId.ZEN_MODE)
       .startingLevel(2000)
       .startingWave(3)
       .moveset([moveToUse])
-      .enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
+      .enemyMoveset([MoveId.TACKLE, MoveId.TACKLE, MoveId.TACKLE, MoveId.TACKLE]);
     await game.classicMode.startBattle([Species.MEWTWO]);
     const turn = game.scene.currentBattle.turn;
     game.move.select(moveToUse);
@@ -287,7 +286,7 @@ describe("Test Battle Phase", () => {
       .startingWave(3)
       .startingBiome(Biome.LAKE)
       .moveset([moveToUse])
-      .enemyMoveset([Moves.TACKLE, Moves.TACKLE, Moves.TACKLE, Moves.TACKLE]);
+      .enemyMoveset([MoveId.TACKLE, MoveId.TACKLE, MoveId.TACKLE, MoveId.TACKLE]);
     await game.classicMode.startBattle();
     const waveIndex = game.scene.currentBattle.waveIndex;
     game.move.select(moveToUse);

@@ -29,9 +29,9 @@ describe("Abilities - Battery", () => {
     game.override
       .battleStyle("double")
       .enemySpecies(Species.SHUCKLE)
-      .enemyAbility(Abilities.BALL_FETCH)
-      .moveset([Moves.TACKLE, Moves.BREAKING_SWIPE, Moves.SPLASH, Moves.DAZZLING_GLEAM])
-      .enemyMoveset(Moves.SPLASH);
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .moveset([MoveId.TACKLE, MoveId.BREAKING_SWIPE, MoveId.SPLASH, MoveId.DAZZLING_GLEAM])
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   it("raises the power of allies' special moves by 30%", async () => {

@@ -1,6 +1,5 @@
 import { BattlerIndex } from "#app/battle";
 import { PostDefendContactApplyStatusEffectAbAttr } from "#app/data/abilities/ability";
-import { Abilities } from "#app/enums/abilities";
 import { StatusEffect } from "#app/enums/status-effect";
 import GameManager from "#test/testUtils/gameManager";
 import { MoveId } from "#enums/move-id";
@@ -118,16 +117,16 @@ describe("Moves - Safeguard", () => {
     const enemyPokemon = game.scene.getEnemyPokemon()!;
     enemyPokemon.hp = 1;
 
-    game.move.select(Moves.SPLASH);
-    await game.move.forceEnemyMove(Moves.SAFEGUARD);
+    game.move.select(MoveId.SPLASH);
+    await game.move.forceEnemyMove(MoveId.SAFEGUARD);
     await game.toNextTurn();
 
     expect(enemyPokemon.status?.effect).toBe(StatusEffect.BURN);
 
     enemyPokemon.resetStatus();
 
-    game.move.select(Moves.SPLASH);
-    await game.move.forceEnemyMove(Moves.REST);
+    game.move.select(MoveId.SPLASH);
+    await game.move.forceEnemyMove(MoveId.REST);
     await game.toNextTurn();
 
     expect(enemyPokemon.status?.effect).toBe(StatusEffect.SLEEP);
@@ -137,19 +136,19 @@ describe("Moves - Safeguard", () => {
     await game.classicMode.startBattle();
 
     const player = game.field.getPlayerPokemon();
-    game.field.mockAbility(player, Abilities.STATIC);
+    game.field.mockAbility(player, AbilityId.STATIC);
     vi.spyOn(
       player.getAbility().getAttrs(PostDefendContactApplyStatusEffectAbAttr)[0],
       "chance",
       "get",
     ).mockReturnValue(100);
 
-    game.move.select(Moves.SPLASH);
-    await game.move.forceEnemyMove(Moves.SAFEGUARD);
+    game.move.select(MoveId.SPLASH);
+    await game.move.forceEnemyMove(MoveId.SAFEGUARD);
     await game.toNextTurn();
 
-    game.move.select(Moves.SPLASH);
-    await game.move.forceEnemyMove(Moves.TACKLE);
+    game.move.select(MoveId.SPLASH);
+    await game.move.forceEnemyMove(MoveId.TACKLE);
     await game.toNextTurn();
 
     const enemyPokemon = game.field.getEnemyPokemon();

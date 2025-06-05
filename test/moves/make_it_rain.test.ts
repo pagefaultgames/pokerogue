@@ -26,10 +26,10 @@ describe("Moves - Make It Rain", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("double")
-      .moveset([Moves.MAKE_IT_RAIN, Moves.SPLASH])
+      .moveset([MoveId.MAKE_IT_RAIN, MoveId.SPLASH])
       .enemySpecies(Species.SNORLAX)
-      .enemyAbility(Abilities.INSOMNIA)
-      .enemyMoveset(Moves.SPLASH)
+      .enemyAbility(AbilityId.INSOMNIA)
+      .enemyMoveset(MoveId.SPLASH)
       .startingLevel(100)
       .enemyLevel(100);
   });

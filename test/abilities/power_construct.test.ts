@@ -36,7 +36,7 @@ describe("Abilities - POWER CONSTRUCT", () => {
     const baseForm = 2,
       completeForm = 4;
     game.override.startingWave(4).starterForms({
-      [Species.ZYGARDE]: completeForm,
+      [SpeciesId.ZYGARDE]: completeForm,
     });
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.ZYGARDE]);
@@ -62,7 +62,7 @@ describe("Abilities - POWER CONSTRUCT", () => {
     const baseForm = 3,
       completeForm = 5;
     game.override.startingWave(4).starterForms({
-      [Species.ZYGARDE]: completeForm,
+      [SpeciesId.ZYGARDE]: completeForm,
     });
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.ZYGARDE]);

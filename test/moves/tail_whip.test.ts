@@ -24,15 +24,15 @@ describe("Moves - Tail whip", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    const moveToUse = Moves.TAIL_WHIP;
+    const moveToUse = MoveId.TAIL_WHIP;
     game.override
       .battleStyle("single")
       .enemySpecies(Species.RATTATA)
-      .enemyAbility(Abilities.INSOMNIA)
-      .ability(Abilities.INSOMNIA)
+      .enemyAbility(AbilityId.INSOMNIA)
+      .ability(AbilityId.INSOMNIA)
       .startingLevel(2000)
       .moveset([moveToUse])
-      .enemyMoveset(Moves.SPLASH);
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   it("should lower DEF stat stage by 1", async () => {

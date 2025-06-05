@@ -25,8 +25,8 @@ describe("Abilities - Intrepid Sword", () => {
     game.override
       .battleStyle("single")
       .enemySpecies(Species.ZACIAN)
-      .enemyAbility(Abilities.INTREPID_SWORD)
-      .ability(Abilities.INTREPID_SWORD);
+      .enemyAbility(AbilityId.INTREPID_SWORD)
+      .ability(AbilityId.INTREPID_SWORD);
   });
 
   it("should raise ATK stat stage by 1 on entry", async () => {

@@ -26,15 +26,15 @@ describe("Abilities - Moxie", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    const moveToUse = Moves.AERIAL_ACE;
+    const moveToUse = MoveId.AERIAL_ACE;
     game.override
       .battleStyle("single")
       .enemySpecies(Species.RATTATA)
-      .enemyAbility(Abilities.MOXIE)
-      .ability(Abilities.MOXIE)
+      .enemyAbility(AbilityId.MOXIE)
+      .ability(AbilityId.MOXIE)
       .startingLevel(2000)
       .moveset([moveToUse])
-      .enemyMoveset(Moves.SPLASH);
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   it("should raise ATK stat stage by 1 when winning a battle", async () => {

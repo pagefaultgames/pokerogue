@@ -1,6 +1,5 @@
 import { Stat } from "#enums/stat";
 import { PokemonType } from "#enums/pokemon-type";
-import { SpeciesId } from "#enums/species-id";
 import type { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { AbilityId } from "#enums/ability-id";
@@ -34,14 +33,14 @@ describe("Moves - Dragon Rage", () => {
     game.override
       .battleStyle("single")
       .starterSpecies(Species.SNORLAX)
-      .moveset([Moves.DRAGON_RAGE])
-      .ability(Abilities.BALL_FETCH)
-      .passiveAbility(Abilities.BALL_FETCH)
+      .moveset([MoveId.DRAGON_RAGE])
+      .ability(AbilityId.BALL_FETCH)
+      .passiveAbility(AbilityId.BALL_FETCH)
       .startingLevel(100)
       .enemySpecies(Species.SNORLAX)
-      .enemyMoveset(Moves.SPLASH)
-      .enemyAbility(Abilities.BALL_FETCH)
-      .enemyPassiveAbility(Abilities.BALL_FETCH)
+      .enemyMoveset(MoveId.SPLASH)
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .enemyPassiveAbility(AbilityId.BALL_FETCH)
       .enemyLevel(100);
 
     await game.classicMode.startBattle();
@@ -100,7 +99,7 @@ describe("Moves - Dragon Rage", () => {
   });
 
   it("ignores damage modification from abilities, for example ICE_SCALES", async () => {
-    game.override.disableCrits().enemyAbility(Abilities.ICE_SCALES);
+    game.override.disableCrits().enemyAbility(AbilityId.ICE_SCALES);
 
     game.move.select(MoveId.DRAGON_RAGE);
     await game.phaseInterceptor.to(TurnEndPhase);

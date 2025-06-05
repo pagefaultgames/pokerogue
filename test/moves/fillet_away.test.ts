@@ -33,8 +33,8 @@ describe("Moves - FILLET AWAY", () => {
       .enemySpecies(Species.SNORLAX)
       .startingLevel(100)
       .enemyLevel(100)
-      .moveset([Moves.FILLET_AWAY])
-      .enemyMoveset(Moves.SPLASH);
+      .moveset([MoveId.FILLET_AWAY])
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   //Bulbapedia Reference: https://bulbapedia.bulbagarden.net/wiki/fillet_away_(move)

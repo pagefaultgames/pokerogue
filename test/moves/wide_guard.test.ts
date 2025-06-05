@@ -27,10 +27,10 @@ describe("Moves - Wide Guard", () => {
 
     game.override
       .battleStyle("double")
-      .moveset([Moves.WIDE_GUARD, Moves.SPLASH, Moves.SURF])
+      .moveset([MoveId.WIDE_GUARD, MoveId.SPLASH, MoveId.SURF])
       .enemySpecies(Species.SNORLAX)
-      .enemyMoveset(Moves.SWIFT)
-      .enemyAbility(Abilities.INSOMNIA)
+      .enemyMoveset(MoveId.SWIFT)
+      .enemyAbility(AbilityId.INSOMNIA)
       .startingLevel(100)
       .enemyLevel(100);
   });

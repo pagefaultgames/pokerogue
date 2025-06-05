@@ -68,7 +68,7 @@ describe("Lost at Sea - Mystery Encounter", () => {
   });
 
   it("should not spawn outside of sea biome", async () => {
-    game.override.mysteryEncounterTier(MysteryEncounterTier.COMMON).startingBiome(Biome.MOUNTAIN);
+    game.override.mysteryEncounterTier(MysteryEncounterTier.COMMON).startingBiome(BiomeId.MOUNTAIN);
     await game.runToMysteryEncounter();
 
     expect(game.scene.currentBattle.mysteryEncounter?.encounterType).not.toBe(MysteryEncounterType.LOST_AT_SEA);

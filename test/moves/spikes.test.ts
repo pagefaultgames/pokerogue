@@ -80,8 +80,8 @@ describe("Moves - Spikes", () => {
   }, 20000);
 
   it("should work when all targets fainted", async () => {
-    game.override.enemySpecies(Species.DIGLETT).battleStyle("double").startingLevel(50);
-    await game.classicMode.startBattle([Species.RAYQUAZA, Species.ROWLET]);
+    game.override.enemySpecies(SpeciesId.DIGLETT).battleStyle("double").startingLevel(50);
+    await game.classicMode.startBattle([SpeciesId.RAYQUAZA, SpeciesId.ROWLET]);
 
     game.move.select(MoveId.EARTHQUAKE);
     game.move.select(MoveId.SPIKES, 1);

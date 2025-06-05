@@ -26,10 +26,10 @@ describe("Abilities - Sand Spit", () => {
       .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .starterSpecies(Species.SILICOBRA)
-      .ability(Abilities.SAND_SPIT)
-      .moveset([Moves.SPLASH, Moves.COIL]);
+      .ability(AbilityId.SAND_SPIT)
+      .moveset([MoveId.SPLASH, MoveId.COIL]);
   });
 
   it("should trigger when hit with damaging move", async () => {

@@ -108,7 +108,7 @@ describe("Abilities - Protean", () => {
   });
 
   test("ability applies correctly even if the type has changed by another ability", async () => {
-    game.override.moveset([Moves.TACKLE]).passiveAbility(Abilities.REFRIGERATE);
+    game.override.moveset([MoveId.TACKLE]).passiveAbility(AbilityId.REFRIGERATE);
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
@@ -155,7 +155,7 @@ describe("Abilities - Protean", () => {
   });
 
   test("ability applies correctly even if the pokemon's move misses", async () => {
-    game.override.moveset([Moves.TACKLE]).enemyMoveset(Moves.SPLASH);
+    game.override.moveset([MoveId.TACKLE]).enemyMoveset(MoveId.SPLASH);
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
@@ -186,7 +186,7 @@ describe("Abilities - Protean", () => {
   });
 
   test("ability applies correctly even if the pokemon's move fails because of type immunity", async () => {
-    game.override.moveset([Moves.TACKLE]).enemySpecies(Species.GASTLY);
+    game.override.moveset([MoveId.TACKLE]).enemySpecies(Species.GASTLY);
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
@@ -259,7 +259,7 @@ describe("Abilities - Protean", () => {
   });
 
   test("ability applies correctly even if the pokemon's Trick-or-Treat fails", async () => {
-    game.override.moveset([Moves.TRICK_OR_TREAT]).enemySpecies(Species.GASTLY);
+    game.override.moveset([MoveId.TRICK_OR_TREAT]).enemySpecies(Species.GASTLY);
 
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 

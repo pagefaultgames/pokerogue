@@ -4,7 +4,6 @@ import { MoveEndPhase } from "#app/phases/move-end-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -29,11 +28,11 @@ describe("Moves - Tidy Up", () => {
     game.override
       .battleStyle("single")
       .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset(Moves.SPLASH)
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .enemyMoveset(MoveId.SPLASH)
       .starterSpecies(Species.FEEBAS)
-      .ability(Abilities.BALL_FETCH)
-      .moveset([Moves.TIDY_UP])
+      .ability(AbilityId.BALL_FETCH)
+      .moveset([MoveId.TIDY_UP])
       .startingLevel(50);
   });
 

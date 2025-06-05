@@ -38,7 +38,7 @@ describe("Moves - Dynamax Cannon", () => {
       .enemySpecies(SpeciesId.MAGIKARP)
       .enemyMoveset(MoveId.SPLASH);
 
-    vi.spyOn(allMoves[Moves.DYNAMAX_CANNON], "calculateBattlePower");
+    vi.spyOn(allMoves[MoveId.DYNAMAX_CANNON], "calculateBattlePower");
   });
 
   it("should return 100 power against an enemy below level cap", async () => {

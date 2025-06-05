@@ -25,10 +25,10 @@ describe("Moves - Lunar Blessing", () => {
     game.override
       .battleStyle("double")
       .enemySpecies(Species.SHUCKLE)
-      .enemyMoveset(Moves.SPLASH)
-      .enemyAbility(Abilities.BALL_FETCH)
-      .moveset([Moves.LUNAR_BLESSING, Moves.SPLASH])
-      .ability(Abilities.BALL_FETCH);
+      .enemyMoveset(MoveId.SPLASH)
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .moveset([MoveId.LUNAR_BLESSING, MoveId.SPLASH])
+      .ability(AbilityId.BALL_FETCH);
   });
 
   it("should restore 25% HP of the user and its ally", async () => {

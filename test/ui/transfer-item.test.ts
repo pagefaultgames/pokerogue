@@ -35,9 +35,9 @@ describe("UI - Transfer Items", () => {
         { name: "BERRY", count: 2, type: BerryType.APICOT },
         { name: "BERRY", count: 2, type: BerryType.LUM },
       ])
-      .moveset([Moves.DRAGON_CLAW])
+      .moveset([MoveId.DRAGON_CLAW])
       .enemySpecies(Species.MAGIKARP)
-      .enemyMoveset([Moves.SPLASH]);
+      .enemyMoveset([MoveId.SPLASH]);
 
     await game.classicMode.startBattle([SpeciesId.RAYQUAZA, SpeciesId.RAYQUAZA, SpeciesId.RAYQUAZA]);
 

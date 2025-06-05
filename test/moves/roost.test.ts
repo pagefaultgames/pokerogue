@@ -30,8 +30,8 @@ describe("Moves - Roost", () => {
       .enemySpecies(Species.RELICANTH)
       .startingLevel(100)
       .enemyLevel(100)
-      .enemyMoveset(Moves.EARTHQUAKE)
-      .moveset([Moves.ROOST, Moves.BURN_UP, Moves.DOUBLE_SHOCK]);
+      .enemyMoveset(MoveId.EARTHQUAKE)
+      .moveset([MoveId.ROOST, MoveId.BURN_UP, MoveId.DOUBLE_SHOCK]);
   });
 
   /**

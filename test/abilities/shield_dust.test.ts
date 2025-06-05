@@ -34,10 +34,10 @@ describe("Abilities - Shield Dust", () => {
     game.override
       .battleStyle("single")
       .enemySpecies(Species.ONIX)
-      .enemyAbility(Abilities.SHIELD_DUST)
+      .enemyAbility(AbilityId.SHIELD_DUST)
       .startingLevel(100)
-      .moveset(Moves.AIR_SLASH)
-      .enemyMoveset(Moves.TACKLE);
+      .moveset(MoveId.AIR_SLASH)
+      .enemyMoveset(MoveId.TACKLE);
   });
 
   it("Shield Dust", async () => {

@@ -26,10 +26,10 @@ describe("Moves - Baneful Bunker", () => {
 
     game.override
       .battleStyle("single")
-      .moveset(Moves.SLASH)
+      .moveset(MoveId.SLASH)
       .enemySpecies(Species.SNORLAX)
-      .enemyAbility(Abilities.INSOMNIA)
-      .enemyMoveset(Moves.BANEFUL_BUNKER)
+      .enemyAbility(AbilityId.INSOMNIA)
+      .enemyMoveset(MoveId.BANEFUL_BUNKER)
       .startingLevel(100)
       .enemyLevel(100);
   });

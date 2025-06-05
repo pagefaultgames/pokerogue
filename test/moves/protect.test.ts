@@ -29,10 +29,10 @@ describe("Moves - Protect", () => {
 
     game.override
       .battleStyle("single")
-      .moveset([Moves.PROTECT])
+      .moveset([MoveId.PROTECT])
       .enemySpecies(Species.SNORLAX)
-      .enemyAbility(Abilities.INSOMNIA)
-      .enemyMoveset([Moves.TACKLE])
+      .enemyAbility(AbilityId.INSOMNIA)
+      .enemyMoveset([MoveId.TACKLE])
       .startingLevel(100)
       .enemyLevel(100);
   });

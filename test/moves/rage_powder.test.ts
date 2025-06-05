@@ -27,8 +27,8 @@ describe("Moves - Rage Powder", () => {
       .enemySpecies(Species.SNORLAX)
       .startingLevel(100)
       .enemyLevel(100)
-      .moveset([Moves.FOLLOW_ME, Moves.RAGE_POWDER, Moves.SPOTLIGHT, Moves.QUICK_ATTACK])
-      .enemyMoveset([Moves.RAGE_POWDER, Moves.TACKLE, Moves.SPLASH]);
+      .moveset([MoveId.FOLLOW_ME, MoveId.RAGE_POWDER, MoveId.SPOTLIGHT, MoveId.QUICK_ATTACK])
+      .enemyMoveset([MoveId.RAGE_POWDER, MoveId.TACKLE, MoveId.SPLASH]);
   });
 
   test("move effect should be bypassed by Grass type", async () => {

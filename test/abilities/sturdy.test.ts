@@ -3,7 +3,6 @@ import { DamageAnimPhase } from "#app/phases/damage-anim-phase";
 import { MoveEndPhase } from "#app/phases/move-end-phase";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
@@ -28,10 +27,10 @@ describe("Abilities - Sturdy", () => {
       .battleStyle("single")
       .starterSpecies(Species.LUCARIO)
       .startingLevel(100)
-      .moveset([Moves.CLOSE_COMBAT, Moves.FISSURE])
+      .moveset([MoveId.CLOSE_COMBAT, MoveId.FISSURE])
       .enemySpecies(Species.ARON)
       .enemyLevel(5)
-      .enemyAbility(Abilities.STURDY);
+      .enemyAbility(AbilityId.STURDY);
   });
 
   test("Sturdy activates when user is at full HP", async () => {

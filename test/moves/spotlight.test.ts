@@ -28,8 +28,8 @@ describe("Moves - Spotlight", () => {
       .enemySpecies(Species.SNORLAX)
       .startingLevel(100)
       .enemyLevel(100)
-      .moveset([Moves.FOLLOW_ME, Moves.RAGE_POWDER, Moves.SPOTLIGHT, Moves.QUICK_ATTACK])
-      .enemyMoveset([Moves.FOLLOW_ME, Moves.SPLASH]);
+      .moveset([MoveId.FOLLOW_ME, MoveId.RAGE_POWDER, MoveId.SPOTLIGHT, MoveId.QUICK_ATTACK])
+      .enemyMoveset([MoveId.FOLLOW_ME, MoveId.SPLASH]);
   });
 
   test("move should redirect attacks to the target", async () => {

@@ -25,11 +25,11 @@ describe("Abilities - Wonder Skin", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .moveset([Moves.TACKLE, Moves.CHARM])
-      .ability(Abilities.BALL_FETCH)
-      .enemySpecies(Species.SHUCKLE)
-      .enemyAbility(Abilities.WONDER_SKIN)
-      .enemyMoveset(Moves.SPLASH);
+      .moveset([MoveId.TACKLE, MoveId.CHARM])
+      .ability(AbilityId.BALL_FETCH)
+      .enemySpecies(SpeciesId.SHUCKLE)
+      .enemyAbility(AbilityId.WONDER_SKIN)
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   it("lowers accuracy of status moves to 50%", async () => {

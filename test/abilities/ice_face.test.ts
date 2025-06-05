@@ -33,8 +33,8 @@ describe("Abilities - Ice Face", () => {
     game.override
       .battleStyle("single")
       .enemySpecies(Species.EISCUE)
-      .enemyAbility(Abilities.ICE_FACE)
-      .moveset([Moves.TACKLE, Moves.ICE_BEAM, Moves.TOXIC_THREAD, Moves.HAIL]);
+      .enemyAbility(AbilityId.ICE_FACE)
+      .moveset([MoveId.TACKLE, MoveId.ICE_BEAM, MoveId.TOXIC_THREAD, MoveId.HAIL]);
   });
 
   it("takes no damage from physical move and transforms to Noice", async () => {
@@ -52,7 +52,7 @@ describe("Abilities - Ice Face", () => {
   });
 
   it("takes no damage from the first hit of multihit physical move and transforms to Noice", async () => {
-    game.override.moveset([Moves.SURGING_STRIKES]).enemyLevel(1);
+    game.override.moveset([MoveId.SURGING_STRIKES]).enemyLevel(1);
     await game.classicMode.startBattle([Species.HITMONLEE]);
 
     game.move.select(MoveId.SURGING_STRIKES);

@@ -3,7 +3,6 @@ import { allAbilities } from "#app/data/data-lists";
 import { FaintPhase } from "#app/phases/faint-phase";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
@@ -27,12 +26,12 @@ describe("Abilities - Quick Draw", () => {
     game.override
       .battleStyle("single")
       .starterSpecies(Species.MAGIKARP)
-      .ability(Abilities.QUICK_DRAW)
-      .moveset([Moves.TACKLE, Moves.TAIL_WHIP])
+      .ability(AbilityId.QUICK_DRAW)
+      .moveset([MoveId.TACKLE, MoveId.TAIL_WHIP])
       .enemyLevel(100)
       .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset([Moves.TACKLE]);
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .enemyMoveset([MoveId.TACKLE]);
 
     vi.spyOn(allAbilities[AbilityId.QUICK_DRAW].getAttrs(BypassSpeedChanceAbAttr)[0], "chance", "get").mockReturnValue(
       100,

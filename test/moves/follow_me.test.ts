@@ -27,12 +27,12 @@ describe("Moves - Follow Me", () => {
     game.override
       .battleStyle("double")
       .starterSpecies(Species.AMOONGUSS)
-      .ability(Abilities.BALL_FETCH)
+      .ability(AbilityId.BALL_FETCH)
       .enemySpecies(Species.SNORLAX)
       .startingLevel(100)
       .enemyLevel(100)
-      .moveset([Moves.FOLLOW_ME, Moves.RAGE_POWDER, Moves.SPOTLIGHT, Moves.QUICK_ATTACK])
-      .enemyMoveset([Moves.TACKLE, Moves.FOLLOW_ME, Moves.SPLASH]);
+      .moveset([MoveId.FOLLOW_ME, MoveId.RAGE_POWDER, MoveId.SPOTLIGHT, MoveId.QUICK_ATTACK])
+      .enemyMoveset([MoveId.TACKLE, MoveId.FOLLOW_ME, MoveId.SPLASH]);
   });
 
   test("move should redirect enemy attacks to the user", async () => {
@@ -74,7 +74,7 @@ describe("Moves - Follow Me", () => {
   });
 
   test("move effect should be bypassed by Stalwart", async () => {
-    game.override.ability(Abilities.STALWART).moveset([Moves.QUICK_ATTACK]);
+    game.override.ability(AbilityId.STALWART).moveset([MoveId.QUICK_ATTACK]);
 
     await game.classicMode.startBattle([SpeciesId.AMOONGUSS, SpeciesId.CHARIZARD]);
 

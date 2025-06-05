@@ -25,11 +25,11 @@ describe("Abilities - Perish Song", () => {
       .battleStyle("single")
       .disableCrits()
       .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
       .starterSpecies(Species.CURSOLA)
-      .ability(Abilities.PERISH_BODY)
-      .moveset([Moves.SPLASH])
-      .enemyMoveset([Moves.AQUA_JET]);
+      .ability(AbilityId.PERISH_BODY)
+      .moveset([MoveId.SPLASH])
+      .enemyMoveset([MoveId.AQUA_JET]);
   });
 
   it("should trigger when hit with damaging move", async () => {
@@ -87,8 +87,8 @@ describe("Abilities - Perish Song", () => {
 
   it("should activate if cursola already has perish song, but not reset its counter", async () => {
     game.override
-      .enemyMoveset([Moves.PERISH_SONG, Moves.AQUA_JET, Moves.SPLASH])
-      .moveset([Moves.WHIRLWIND, Moves.SPLASH])
+      .enemyMoveset([MoveId.PERISH_SONG, MoveId.AQUA_JET, MoveId.SPLASH])
+      .moveset([MoveId.WHIRLWIND, MoveId.SPLASH])
       .startingWave(5);
     await game.classicMode.startBattle([Species.CURSOLA]);
     const cursola = game.scene.getPlayerPokemon();

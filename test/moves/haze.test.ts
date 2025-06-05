@@ -27,11 +27,11 @@ describe("Moves - Haze", () => {
         .battleStyle("single")
         .enemySpecies(Species.RATTATA)
         .enemyLevel(100)
-        .enemyMoveset(Moves.SPLASH)
-        .enemyAbility(Abilities.BALL_FETCH)
+        .enemyMoveset(MoveId.SPLASH)
+        .enemyAbility(AbilityId.BALL_FETCH)
         .startingLevel(100)
-        .moveset([Moves.HAZE, Moves.SWORDS_DANCE, Moves.CHARM, Moves.SPLASH])
-        .ability(Abilities.BALL_FETCH);
+        .moveset([MoveId.HAZE, MoveId.SWORDS_DANCE, MoveId.CHARM, MoveId.SPLASH])
+        .ability(AbilityId.BALL_FETCH);
     });
 
     it("should reset all stat changes of all Pokemon on field", async () => {
