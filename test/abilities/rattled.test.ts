@@ -1,0 +1,50 @@
+import { MoveId } from "#enums/move-id";
+import { AbilityId } from "#enums/ability-id";
+import { SpeciesId } from "#enums/species-id";
+import GameManager from "#test/testUtils/gameManager";
+import Phaser from "phaser";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { BattleType } from "#enums/battle-type";
+import { Stat } from "#enums/stat";
+
+describe("Abilities - Rattled", () => {
+  let phaserGame: Phaser.Game;
+  let game: GameManager;
+
+  beforeAll(() => {
+    phaserGame = new Phaser.Game({
+      type: Phaser.HEADLESS,
+    });
+  });
+
+  afterEach(() => {
+    game.phaseInterceptor.restoreOg();
+  });
+
+  beforeEach(() => {
+    game = new GameManager(phaserGame);
+    game.override
+      .moveset([MoveId.FALSE_SWIPE, MoveId.TRICK_ROOM])
+      .ability(AbilityId.RATTLED)
+      .battleType(BattleType.TRAINER)
+      .disableCrits()
+      .enemySpecies(SpeciesId.MAGIKARP)
+      .enemyAbility(AbilityId.INTIMIDATE)
+      .enemyMoveset(MoveId.PIN_MISSILE);
+  });
+
+  it("should reduce attack and then increase speed", async () => {
+    await game.classicMode.runToSummon([SpeciesId.GIMMIGHOUL]);
+
+    const playerPokemon = game.scene.getPlayerPokemon();
+    await game.phaseInterceptor.to("StatStageChangePhase");
+
+    expect(playerPokemon!.getStatStage(Stat.ATK)).toBe(-1);
+    expect(playerPokemon!.getStatStage(Stat.SPD)).toBe(0);
+
+    await game.phaseInterceptor.to("StatStageChangePhase");
+
+    expect(playerPokemon!.getStatStage(Stat.ATK)).toBe(-1);
+    expect(playerPokemon!.getStatStage(Stat.SPD)).toBe(1);
+  });
+});
