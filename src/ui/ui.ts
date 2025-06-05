@@ -27,6 +27,7 @@ import PokedexUiHandler from "./pokedex-ui-handler";
 import { addWindow } from "./ui-theme";
 import LoginFormUiHandler from "./login-form-ui-handler";
 import RegistrationFormUiHandler from "./registration-form-ui-handler";
+import { ChangePasswordFormUiHandler } from "./change-password-form-ui-handler";
 import LoadingModalUiHandler from "./loading-modal-ui-handler";
 import { executeIf } from "#app/utils/common";
 import GameStatsUiHandler from "./game-stats-ui-handler";
@@ -101,6 +102,7 @@ const noTransitionModes = [
   UiMode.ADMIN,
   UiMode.MYSTERY_ENCOUNTER,
   UiMode.RUN_INFO,
+  UiMode.CHANGE_PASSWORD_FORM,
 ];
 
 export default class UI extends Phaser.GameObjects.Container {
@@ -171,6 +173,7 @@ export default class UI extends Phaser.GameObjects.Container {
       new AutoCompleteUiHandler(),
       new AdminUiHandler(),
       new MysteryEncounterUiHandler(),
+      new ChangePasswordFormUiHandler(),
     ];
   }
 

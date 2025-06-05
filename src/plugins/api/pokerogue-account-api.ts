@@ -3,6 +3,7 @@ import type {
   AccountLoginRequest,
   AccountLoginResponse,
   AccountRegisterRequest,
+  AccountChangePwRequest,
 } from "#app/@types/PokerogueAccountApi";
 import { SESSION_ID_COOKIE_NAME } from "#app/constants";
 import { ApiBase } from "#app/plugins/api/api-base";
@@ -94,5 +95,20 @@ export class PokerogueAccountApi extends ApiBase {
     }
 
     removeCookie(SESSION_ID_COOKIE_NAME); // we are always clearing the cookie.
+  }
+
+  public async changePassword(changePwData: AccountChangePwRequest) {
+    try {
+      const response = await this.doPost("/account/changepw", changePwData, "form-urlencoded");
+      if (response.ok) {
+        return null;
+      }
+      console.warn("Change password failed!", response.status, response.statusText);
+      return response.text();
+    } catch (err) {
+      console.warn("Change password failed!", err);
+    }
+
+    return "Unknown error!";
   }
 }
