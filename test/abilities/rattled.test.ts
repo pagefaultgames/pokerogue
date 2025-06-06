@@ -31,7 +31,7 @@ describe("Abilities - Rattled", () => {
       .battleType(BattleType.TRAINER)
       .disableCrits()
       .battleStyle("single")
-      .enemySpecies(SpeciesId.MAGIKARP)
+      .enemySpecies(SpeciesId.DUSKULL)
       .enemyAbility(AbilityId.INTIMIDATE)
       .enemyPassiveAbility(AbilityId.NO_GUARD);
   });
@@ -64,6 +64,25 @@ describe("Abilities - Rattled", () => {
       count: 1,
     });
     expect(game.textInterceptor.logs.filter(t => t === statChangeText)).toHaveLength(enemyHits);
+  });
+
+  it.each<{ type: string; move: MoveId }>([
+    { type: "Bug", move: MoveId.POWDER },
+    { type: "Ghost", move: MoveId.CONFUSE_RAY },
+    { type: "Dark", move: MoveId.TAUNT },
+  ])("should not trigger from $type-type status moves", async ({ move }) => {
+    game.override.enemyAbility(AbilityId.BALL_FETCH);
+    await game.classicMode.startBattle([SpeciesId.GIMMIGHOUL]);
+
+    game.move.use(MoveId.SPLASH);
+    await game.move.forceEnemyMove(move);
+    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    await game.phaseInterceptor.to("MoveEndPhase");
+
+    const gimmighoul = game.field.getPlayerPokemon();
+    expect(gimmighoul.getStatStage(Stat.SPD)).toBe(0);
+    expect(game.phaseInterceptor.log).not.toContain("ShowAbilityPhase");
+    expect(game.phaseInterceptor.log).not.toContain("StatStageChangePhase");
   });
 
   it("should activate after Intimidate attack drop on initial send out", async () => {
