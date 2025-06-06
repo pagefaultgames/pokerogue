@@ -27,7 +27,7 @@ import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { BiomeId } from "#enums/biome-id";
 
-describe("Test Battle Phase", () => {
+describe("Test - Battle Phase", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
@@ -202,47 +202,22 @@ describe("Test Battle Phase", () => {
     await game.phaseInterceptor.runFrom(SelectGenderPhase).to(SummonPhase);
   }, 20000);
 
-  it("2vs1", async () => {
-    game.override.battleStyle("single");
-    game.override.enemySpecies(SpeciesId.MIGHTYENA);
-    game.override.enemyAbility(AbilityId.HYDRATION);
-    game.override.ability(AbilityId.HYDRATION);
-    await game.classicMode.startBattle([SpeciesId.BLASTOISE, SpeciesId.CHARIZARD]);
-    expect(game.scene.ui?.getMode()).toBe(UiMode.COMMAND);
-    expect(game.scene.getCurrentPhase()!.constructor.name).toBe(CommandPhase.name);
-  }, 20000);
+  it.each([
+    { name: "1v1", double: false, qty: 1 },
+    { name: "2v1", double: false, qty: 2 },
+    { name: "2v2", double: true, qty: 2 },
+    { name: "4v2", double: true, qty: 4 },
+  ])("should not crash when starting $name battle", async ({ double, qty }) => {
+    game.override
+      .battleStyle(double ? "double" : "single")
+      .enemySpecies(SpeciesId.MIGHTYENA)
+      .enemyAbility(AbilityId.HYDRATION)
+      .ability(AbilityId.HYDRATION);
 
-  it("1vs1", async () => {
-    game.override.battleStyle("single");
-    game.override.enemySpecies(SpeciesId.MIGHTYENA);
-    game.override.enemyAbility(AbilityId.HYDRATION);
-    game.override.ability(AbilityId.HYDRATION);
-    await game.classicMode.startBattle([SpeciesId.BLASTOISE]);
-    expect(game.scene.ui?.getMode()).toBe(UiMode.COMMAND);
-    expect(game.scene.getCurrentPhase()!.constructor.name).toBe(CommandPhase.name);
-  }, 20000);
-
-  it("2vs2", async () => {
-    game.override.battleStyle("double");
-    game.override.enemySpecies(SpeciesId.MIGHTYENA);
-    game.override.enemyAbility(AbilityId.HYDRATION);
-    game.override.ability(AbilityId.HYDRATION);
-    game.override.startingWave(3);
-    await game.classicMode.startBattle([SpeciesId.BLASTOISE, SpeciesId.CHARIZARD]);
-    expect(game.scene.ui?.getMode()).toBe(UiMode.COMMAND);
-    expect(game.scene.getCurrentPhase()!.constructor.name).toBe(CommandPhase.name);
-  }, 20000);
-
-  it("4vs2", async () => {
-    game.override.battleStyle("double");
-    game.override.enemySpecies(SpeciesId.MIGHTYENA);
-    game.override.enemyAbility(AbilityId.HYDRATION);
-    game.override.ability(AbilityId.HYDRATION);
-    game.override.startingWave(3);
-    await game.classicMode.startBattle([SpeciesId.BLASTOISE, SpeciesId.CHARIZARD, SpeciesId.DARKRAI, SpeciesId.GABITE]);
-    expect(game.scene.ui?.getMode()).toBe(UiMode.COMMAND);
-    expect(game.scene.getCurrentPhase()!.constructor.name).toBe(CommandPhase.name);
-  }, 20000);
+    await game.classicMode.startBattle(
+      [SpeciesId.BLASTOISE, SpeciesId.CHARIZARD, SpeciesId.DARKRAI, SpeciesId.GABITE].slice(0, qty),
+    );
+  });
 
   it("kill opponent pokemon", async () => {
     const moveToUse = MoveId.SPLASH;

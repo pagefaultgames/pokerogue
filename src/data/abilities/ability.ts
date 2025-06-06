@@ -1246,7 +1246,7 @@ export class MoveTypeChangeAbAttr extends PreAttackAbAttr {
 
   /**
    * Determine if the move type change attribute can be applied
-   * 
+   *
    * Can be applied if:
    * - The ability's condition is met, e.g. pixilate only boosts normal moves,
    * - The move is not forbidden from having its type changed by an ability, e.g. {@linkcode MoveId.MULTI_ATTACK}
@@ -1262,7 +1262,7 @@ export class MoveTypeChangeAbAttr extends PreAttackAbAttr {
    */
   override canApplyPreAttack(pokemon: Pokemon, _passive: boolean, _simulated: boolean, _defender: Pokemon | null, move: Move, _args: [NumberHolder?, NumberHolder?, ...any]): boolean {
     return (!this.condition || this.condition(pokemon, _defender, move)) &&
-            !noAbilityTypeOverrideMoves.has(move.id) && 
+            !noAbilityTypeOverrideMoves.has(move.id) &&
             (!pokemon.isTerastallized ||
               (move.id !== MoveId.TERA_BLAST &&
               (move.id !== MoveId.TERA_STARSTORM || pokemon.getTeraType() !== PokemonType.STELLAR || !pokemon.hasSpecies(SpeciesId.TERAPAGOS))));
@@ -4800,14 +4800,18 @@ export class PostFaintContactDamageAbAttr extends PostFaintAbAttr {
   }
 
   override canApplyPostFaint(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker?: Pokemon, move?: Move, hitResult?: HitResult, ...args: any[]): boolean {
-    const diedToDirectDamage = move !== undefined && attacker !== undefined && move.doesFlagEffectApply({flag: MoveFlags.MAKES_CONTACT, user: attacker, target: pokemon});
-    const cancelled = new BooleanHolder(false);
-    globalScene.getField(true).map(p => applyAbAttrs(FieldPreventExplosiveMovesAbAttr, p, cancelled, simulated));
-    if (!diedToDirectDamage || cancelled.value || attacker!.hasAbilityWithAttr(BlockNonDirectDamageAbAttr)) {
+    // Return early if mon did not die to a direct attack.
+    if (move === undefined || attacker === undefined) {
       return false;
     }
 
-    return true;
+    const isContact = move.doesFlagEffectApply({flag: MoveFlags.MAKES_CONTACT, user: attacker, target: pokemon});
+
+    // Check for Damp explosion prevention
+    const cancelledByDamp = new BooleanHolder(false);
+    globalScene.getField(true).map(p => applyAbAttrs(FieldPreventExplosiveMovesAbAttr, p, cancelledByDamp, simulated));
+    const hasMagicGuard = attacker.hasAbilityWithAttr(BlockNonDirectDamageAbAttr)
+    return isContact && !cancelledByDamp.value && !hasMagicGuard;
   }
 
   override applyPostFaint(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker?: Pokemon, move?: Move, hitResult?: HitResult, ...args: any[]): void {
@@ -4823,21 +4827,29 @@ export class PostFaintContactDamageAbAttr extends PostFaintAbAttr {
 }
 
 /**
- * Attribute used for abilities (Innards Out) that damage the opponent based on how much HP the last attack used to knock out the owner of the ability.
+ * Attribute used for abilities that damage an opponent who faints the ability holder
+ * equal to the amount of damage the last attack inflicted.
+ *
+ * Used for {@linkcode Abilities.INNARDS_OUT}.
  */
 export class PostFaintHPDamageAbAttr extends PostFaintAbAttr {
-  constructor() {
-    super ();
-  }
-
   override applyPostFaint(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker?: Pokemon, move?: Move, hitResult?: HitResult, ...args: any[]): void {
-    if (move !== undefined && attacker !== undefined && !simulated) { //If the mon didn't die to indirect damage
-      const damage = pokemon.turnData.attacksReceived[0].damage;
-      attacker.damageAndUpdate((damage), { result: HitResult.INDIRECT });
-      attacker.turnData.damageTaken += damage;
+    // return early if the user died to indirect damage, target has magic guard or was KO'd by an ally
+    if (
+      move === undefined
+      || attacker === undefined
+      || attacker.getAlly() === pokemon
+      || attacker.hasAbilityWithAttr(BlockNonDirectDamageAbAttr)
+    ) {
+      return;
     }
+
+    const damage = pokemon.turnData.attacksReceived[0].damage;
+    attacker.damageAndUpdate(damage, { result: HitResult.INDIRECT });
+    attacker.turnData.damageTaken += damage;
   }
 
+  // Oddly, Innards Out still shows a flyout if the effect was blocked due to Magic Guard...
   getTriggerMessage(pokemon: Pokemon, abilityName: string, ...args: any[]): string {
     return i18next.t("abilityTriggers:postFaintHpDamage", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), abilityName });
   }
