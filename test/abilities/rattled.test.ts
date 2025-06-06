@@ -49,4 +49,19 @@ describe("Abilities - Rattled", () => {
     expect(playerPokemon.getStatStage(Stat.ATK)).toBe(-1);
     expect(playerPokemon.getStatStage(Stat.SPD)).toBe(1);
   });
+
+  it("should activate Rattled from Intimidate before the Pokémon is switched out.", async () => {
+    game.override.enemyLevel(100); // Ensures the opponent switches first by overriding their Pokémon's level to 100.
+    await game.classicMode.startBattle([SpeciesId.GIMMIGHOUL, SpeciesId.BULBASAUR]);
+
+    const playerPokemon = game.field.getPlayerPokemon();
+
+    game.forceEnemyToSwitch();
+    game.doSwitchPokemon(1);
+
+    await game.phaseInterceptor.to("StatStageChangePhase");
+    expect(playerPokemon.getStatStage(Stat.ATK)).toBe(-2);
+    await game.phaseInterceptor.to("StatStageChangePhase");
+    expect(playerPokemon.getStatStage(Stat.SPD)).toBe(2);
+  });
 });
