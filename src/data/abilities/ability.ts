@@ -1698,8 +1698,7 @@ export class GorillaTacticsAbAttr extends ExecutedMoveAbAttr {
   }
 
   override canApplyExecutedMove(pokemon: Pokemon, simulated: boolean): boolean {
-    return super.canApplyExecutedMove(pokemon, simulated) &&
-      simulated || !pokemon.getTag(BattlerTagType.GORILLA_TACTICS);
+    return simulated || !pokemon.getTag(BattlerTagType.GORILLA_TACTICS);
   }
 
   override applyExecutedMove(pokemon: Pokemon, simulated: boolean): void {
