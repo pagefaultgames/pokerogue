@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import { Gender } from "#app/data/gender";
+import { Gender, getGenderSymbol } from "#app/data/gender";
 import { PokeballType } from "#enums/pokeball";
 import type Pokemon from "#app/field/pokemon";
 import { PokemonType } from "#enums/pokemon-type";
@@ -120,44 +120,47 @@ type EvolutionConditionData =
 
 export class SpeciesEvolutionCondition {
   public data: EvolutionConditionData[];
+  private desc: string[];
 
   constructor(...data: EvolutionConditionData[]) {
     this.data = data;
   }
 
-  public get description(): string {
-    const str: string[] = this.data.map(cond => {
-      switch(cond.key) {
-        case EvoCondKey.FRIENDSHIP:
-          return i18next.t("pokemonEvolutions:friendship");
-        case EvoCondKey.TIME:
-          return i18next.t(`pokemonEvolutions:timeOfDay.${TimeOfDay[cond.time[0]]}`);
-        case EvoCondKey.MOVE_TYPE:
-          return i18next.t("pokemonEvolutions:moveType", {type: i18next.t(`pokemonInfo:Type.${cond.pkmnType}`)});
-        case EvoCondKey.PARTY_TYPE:
-          return i18next.t("pokemonEvolutions:partyType", {type: i18next.t(`pokemonInfo:Type.${cond.pkmnType}`)});
-        case EvoCondKey.GENDER:
-          return i18next.t(`pokemonEvolutions:gender.${Gender[cond.gender]}`);
-        case EvoCondKey.MOVE:
-        case EvoCondKey.TYROGUE:
-          return i18next.t("pokemonEvolutions:move", {move: allMoves[cond.move].name});
-        case EvoCondKey.BIOME:
-          return i18next.t("pokemonEvolutions:biome");
-        case EvoCondKey.NATURE:
-          return i18next.t("pokemonEvolutions:nature");
-        case EvoCondKey.WEATHER:
-          return i18next.t("pokemonEvolutions:weather");
-        case EvoCondKey.SHEDINJA:
-          return i18next.t("pokemonEvolutions:shedinja");
-        case EvoCondKey.EVO_TREASURE_TRACKER:
-          return i18next.t("pokemonEvolutions:treasure");
-        case EvoCondKey.SPECIES_CAUGHT:
-          return i18next.t("pokemonEvolutions:caught", {species: getPokemonSpecies(cond.speciesCaught).name});
-        case EvoCondKey.HELD_ITEM:
-          return i18next.t(`pokemonEvolutions:heldItem.${cond.itemKey}`);
-      }
-    }).filter(s => !isNullOrUndefined(s)); // Filter out stringless conditions
-    return str.join(i18next.t("pokemonEvolutions:connector")); // A comma or something of the sort
+  public get description(): string[] {
+    if (isNullOrUndefined(this.desc)) {
+      this.desc = this.data.map(cond => {
+        switch(cond.key) {
+          case EvoCondKey.FRIENDSHIP:
+            return i18next.t("pokemonEvolutions:friendship");
+          case EvoCondKey.TIME:
+            return i18next.t(`pokemonEvolutions:timeOfDay.${TimeOfDay[cond.time[cond.time.length - 1]]}`); // For Day and Night evos, the key we want goes last
+          case EvoCondKey.MOVE_TYPE:
+            return i18next.t("pokemonEvolutions:moveType", {type: i18next.t(`pokemonInfo:Type.${PokemonType[cond.pkmnType]}`)});
+          case EvoCondKey.PARTY_TYPE:
+            return i18next.t("pokemonEvolutions:partyType", {type: i18next.t(`pokemonInfo:Type.${PokemonType[cond.pkmnType]}`)});
+          case EvoCondKey.GENDER:
+            return i18next.t("pokemonEvolutions:gender", {gender: getGenderSymbol(cond.gender)});
+          case EvoCondKey.MOVE:
+          case EvoCondKey.TYROGUE:
+            return i18next.t("pokemonEvolutions:move", {move: allMoves[cond.move].name});
+          case EvoCondKey.BIOME:
+            return i18next.t("pokemonEvolutions:biome");
+          case EvoCondKey.NATURE:
+            return i18next.t("pokemonEvolutions:nature");
+          case EvoCondKey.WEATHER:
+            return i18next.t("pokemonEvolutions:weather");
+          case EvoCondKey.SHEDINJA:
+            return i18next.t("pokemonEvolutions:shedinja");
+          case EvoCondKey.EVO_TREASURE_TRACKER:
+            return i18next.t("pokemonEvolutions:treasure");
+          case EvoCondKey.SPECIES_CAUGHT:
+            return i18next.t("pokemonEvolutions:caught", {species: getPokemonSpecies(cond.speciesCaught).name});
+          case EvoCondKey.HELD_ITEM:
+            return i18next.t(`pokemonEvolutions:heldItem.${cond.itemKey}`);
+        }
+      }).filter(s => !isNullOrUndefined(s)); // Filter out stringless conditions
+    }
+    return this.desc;
   }
 
   public conditionsFulfilled(pokemon: Pokemon): boolean {
@@ -238,21 +241,36 @@ export class SpeciesFormEvolution {
   get description(): string {
     if (this.desc.length === 0) {
       const strings: string[] = [];
+      let len = 0;
       if (this.level > 1) {
-        strings.push(i18next.t("pokemonEvolutions:level") + ` ${this.level}`);
+        strings.push(i18next.t("pokemonEvolutions:level", {lv: this.level}));
       }
       if (this.item) {
         const itemDescription = i18next.t(`modifierType:EvolutionItem.${EvolutionItem[this.item].toUpperCase()}`);
         const rarity = this.item > 50 ? i18next.t("pokemonEvolutions:ULTRA") : i18next.t("pokemonEvolutions:GREAT");
-        strings.push(i18next.t("pokemonEvolutions:using") + itemDescription + ` (${rarity})`);
+        strings.push(i18next.t("pokemonEvolutions:using", {item: itemDescription, tier: rarity}));
       }
       if (this.condition) {
-        strings.push(this.condition.description);
+        if (strings.length === 0) {
+          strings.push(i18next.t("pokemonEvolutions:levelUp"));
+        }
+        strings.push(...this.condition.description);
       }
       this.desc = strings
         .filter(str => str !== "")
-        .map((str, index) => index > 0 ? str[0].toLowerCase() + str.slice(1) : str)
-        .join(i18next.t("pokemonEvolutions:connector"));
+        .map((str, index, arr) => {
+          if (index === 0) {
+            len = str.length;
+            return str;
+          } else if (len + str.length > 60) {
+            len = str.length;
+            return "\n" + str[0].toLowerCase() + str.slice(1);
+          }
+          len += str.length;
+          return str[0].toLowerCase() + str.slice(1);
+        })
+        .join(" ")
+        .replace(" \n", i18next.t("pokemonEvolutions:connector") + "\n");
     }
     return this.desc;
   }
