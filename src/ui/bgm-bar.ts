@@ -1,4 +1,5 @@
-import { addTextObject, TextStyle } from "./text";
+import { addTextObject } from "./text";
+import { TextStyle } from "#enums/text-style";
 import i18next from "i18next";
 import { formatText } from "#app/utils/common";
 import { globalScene } from "#app/global-scene";

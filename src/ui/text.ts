@@ -6,44 +6,7 @@ import InputText from "phaser3-rex-plugins/plugins/inputtext";
 import { globalScene } from "#app/global-scene";
 import { ModifierTier } from "../enums/modifier-tier";
 import i18next from "#app/plugins/i18n";
-
-export enum TextStyle {
-  MESSAGE,
-  WINDOW,
-  WINDOW_ALT,
-  BATTLE_INFO,
-  PARTY,
-  PARTY_RED,
-  SUMMARY,
-  SUMMARY_ALT,
-  SUMMARY_RED,
-  SUMMARY_BLUE,
-  SUMMARY_PINK,
-  SUMMARY_GOLD,
-  SUMMARY_GRAY,
-  SUMMARY_GREEN,
-  MONEY, // Money default styling (pale yellow)
-  MONEY_WINDOW, // Money displayed in Windows (needs different colors based on theme)
-  STATS_LABEL,
-  STATS_VALUE,
-  SETTINGS_VALUE,
-  SETTINGS_LABEL,
-  SETTINGS_SELECTED,
-  SETTINGS_LOCKED,
-  TOOLTIP_TITLE,
-  TOOLTIP_CONTENT,
-  MOVE_INFO_CONTENT,
-  MOVE_PP_FULL,
-  MOVE_PP_HALF_FULL,
-  MOVE_PP_NEAR_EMPTY,
-  MOVE_PP_EMPTY,
-  SMALLER_WINDOW_ALT,
-  BGM_BAR,
-  PERFECT_IV,
-  ME_OPTION_DEFAULT, // Default style for choices in ME
-  ME_OPTION_SPECIAL, // Style for choices with special requirements in ME
-  SHADOW_TEXT, // To obscure unavailable options
-}
+import { TextStyle } from "#enums/text-style";
 
 export interface TextStyleOptions {
   scale: number;

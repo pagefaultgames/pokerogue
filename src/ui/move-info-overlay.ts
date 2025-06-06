@@ -1,6 +1,7 @@
 import type { InfoToggle } from "#app/battle-scene";
 import { globalScene } from "#app/global-scene";
-import { TextStyle, addTextObject } from "./text";
+import { addTextObject } from "./text";
+import { TextStyle } from "#enums/text-style";
 import { addWindow } from "./ui-theme";
 import { getLocalizedSpriteKey, fixedInt } from "#app/utils/common";
 import type Move from "../data/moves/move";
