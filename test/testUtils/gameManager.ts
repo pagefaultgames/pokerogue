@@ -351,15 +351,20 @@ export default class GameManager {
     };
   }
 
-  /** Transition to the first {@linkcode CommandPhase} of the next turn. */
+  /**
+   * Transition to the first {@linkcode CommandPhase} of the next turn.
+   * @returns A promise that resolves once the next {@linkcode CommandPhase} has been reached.
+   */
   async toNextTurn() {
     await this.phaseInterceptor.to("TurnInitPhase");
     await this.phaseInterceptor.to("CommandPhase");
+    console.log("==================[New Turn]==================");
   }
 
   /** Transition to the {@linkcode TurnEndPhase | end of the current turn}. */
   async toEndOfTurn() {
     await this.phaseInterceptor.to("TurnEndPhase");
+    console.log("==================[End of Turn]==================");
   }
 
   /**
@@ -369,6 +374,7 @@ export default class GameManager {
   async toNextWave() {
     this.doSelectModifier();
 
+    // forcibly end the message box for switching pokemon
     this.onNextPrompt(
       "CheckSwitchPhase",
       UiMode.CONFIRM,
@@ -379,7 +385,9 @@ export default class GameManager {
       () => this.isCurrentPhase(TurnInitPhase),
     );
 
-    await this.toNextTurn();
+    await this.phaseInterceptor.to("TurnInitPhase");
+    await this.phaseInterceptor.to("CommandPhase");
+    console.log("==================[New Wave]==================");
   }
 
   /**

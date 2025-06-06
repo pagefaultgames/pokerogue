@@ -1,6 +1,7 @@
 import { BattlerIndex } from "#app/battle";
 import { MoveResult } from "#app/field/pokemon";
 import { AbilityId } from "#enums/ability-id";
+import { MoveUseType } from "#enums/move-use-type";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
@@ -53,19 +54,19 @@ describe("Moves - Last Resort", () => {
     expectLastResortFail();
 
     // Splash (1/3)
-    blissey.pushMoveHistory({ move: MoveId.SPLASH, targets: [BattlerIndex.PLAYER] });
+    blissey.pushMoveHistory({ move: MoveId.SPLASH, targets: [BattlerIndex.PLAYER], useType: MoveUseType.NORMAL });
     game.move.select(MoveId.LAST_RESORT);
     await game.phaseInterceptor.to("TurnEndPhase");
     expectLastResortFail();
 
     // Growl (2/3)
-    blissey.pushMoveHistory({ move: MoveId.GROWL, targets: [BattlerIndex.ENEMY] });
+    blissey.pushMoveHistory({ move: MoveId.GROWL, targets: [BattlerIndex.ENEMY], useType: MoveUseType.NORMAL });
     game.move.select(MoveId.LAST_RESORT);
     await game.phaseInterceptor.to("TurnEndPhase");
     expectLastResortFail(); // Were last resort itself counted, it would error here
 
     // Growth (3/3)
-    blissey.pushMoveHistory({ move: MoveId.GROWTH, targets: [BattlerIndex.PLAYER] });
+    blissey.pushMoveHistory({ move: MoveId.GROWTH, targets: [BattlerIndex.PLAYER], useType: MoveUseType.NORMAL });
     game.move.select(MoveId.LAST_RESORT);
     await game.phaseInterceptor.to("TurnEndPhase");
     expect(game.scene.getPlayerPokemon()?.getLastXMoves()[0]).toEqual(
@@ -117,11 +118,12 @@ describe("Moves - Last Resort", () => {
       expect.objectContaining({
         move: MoveId.LAST_RESORT,
         result: MoveResult.SUCCESS,
-        virtual: true,
+        useType: MoveUseType.FOLLOW_UP,
       }),
       expect.objectContaining({
         move: MoveId.SLEEP_TALK,
         result: MoveResult.SUCCESS,
+        useType: MoveUseType.NORMAL,
       }),
     ]);
   });

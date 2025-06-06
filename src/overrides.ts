@@ -1,26 +1,26 @@
-import { type PokeballCounts } from "#app/battle-scene";
+import type { PokeballCounts } from "#app/battle-scene";
 import { EvolutionItem } from "#app/data/balance/pokemon-evolutions";
-import { Gender } from "#app/data/gender";
+import type { Gender } from "#app/data/gender";
 import { FormChangeItem } from "#app/data/pokemon-forms";
-import { type ModifierOverride } from "#app/modifier/modifier-type";
-import { Variant } from "#app/sprites/variant";
-import { Unlockables } from "#app/system/unlockables";
+import type { ModifierOverride } from "#app/modifier/modifier-type";
+import type { Variant } from "#app/sprites/variant";
+import type { Unlockables } from "#app/system/unlockables";
 import { AbilityId } from "#enums/ability-id";
-import { BattleType } from "#enums/battle-type";
+import type { BattleType } from "#enums/battle-type";
 import { BerryType } from "#enums/berry-type";
-import { BiomeId } from "#enums/biome-id";
-import { EggTier } from "#enums/egg-type";
-import { MoveId } from "#enums/move-id";
-import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
-import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import type { BiomeId } from "#enums/biome-id";
+import type { EggTier } from "#enums/egg-type";
+import type { MoveId } from "#enums/move-id";
+import type { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PokeballType } from "#enums/pokeball";
 import { PokemonType } from "#enums/pokemon-type";
-import { SpeciesId } from "#enums/species-id";
+import type { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
-import { TimeOfDay } from "#enums/time-of-day";
-import { TrainerType } from "#enums/trainer-type";
-import { VariantTier } from "#enums/variant-tier";
+import type { TimeOfDay } from "#enums/time-of-day";
+import type { TrainerType } from "#enums/trainer-type";
+import type { VariantTier } from "#enums/variant-tier";
 import { WeatherType } from "#enums/weather-type";
 
 /**
@@ -150,6 +150,10 @@ class DefaultOverrides {
   readonly ABILITY_OVERRIDE: AbilityId = AbilityId.NONE;
   readonly PASSIVE_ABILITY_OVERRIDE: AbilityId = AbilityId.NONE;
   readonly HAS_PASSIVE_ABILITY_OVERRIDE: boolean | null = null;
+  /**
+   * If set, will be added to each newly caught/obtained player Pokemon.
+   * @remarks If this is set to {@linkcode StatusEffect.SLEEP}, it will always have a constant duration of 4 turns.
+   */
   readonly STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
   readonly GENDER_OVERRIDE: Gender | null = null;
   readonly MOVESET_OVERRIDE: MoveId | Array<MoveId> = [];
@@ -272,7 +276,7 @@ class DefaultOverrides {
 
   /**
    * Set all non-scripted waves to use the selected battle type.
-   * 
+   *
    * Ignored if set to {@linkcode BattleType.TRAINER} and `DISABLE_STANDARD_TRAINERS_OVERRIDE` is `true`.
    */
   readonly BATTLE_TYPE_OVERRIDE: Exclude<BattleType, BattleType.CLEAR> | null = null;
@@ -285,17 +289,17 @@ export const defaultOverrides = new DefaultOverrides();
 
 export default {
   ...defaultOverrides,
-  ...overrides
+  ...overrides,
 } satisfies InstanceType<typeof DefaultOverrides>;
 
 export type BattleStyle = "double" | "single" | "even-doubles" | "odd-doubles";
 
 export type RandomTrainerOverride = {
   /** The Type of trainer to force */
-  trainerType: Exclude<TrainerType, TrainerType.UNKNOWN>,
+  trainerType: Exclude<TrainerType, TrainerType.UNKNOWN>;
   /* If the selected trainer type has a double version, it will always use its double version. */
-  alwaysDouble?: boolean
-}
+  alwaysDouble?: boolean;
+};
 
 /** The type of the {@linkcode DefaultOverrides} class */
 export type OverridesType = typeof DefaultOverrides;

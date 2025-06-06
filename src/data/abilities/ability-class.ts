@@ -61,7 +61,7 @@ export class Ability implements Localizable {
   /**
    * Check if an ability has an attribute that matches `attrType`
    * @param attrType any attribute that extends {@linkcode AbAttr}
-   * @returns true if the ability has attribute `attrType`
+   * @returns `true` if the ability has attribute `attrType`
    */
   hasAttr<T extends AbAttr>(attrType: Constructor<T>): boolean {
     return this.attrs.some(attr => attr instanceof attrType);
