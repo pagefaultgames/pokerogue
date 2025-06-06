@@ -15,7 +15,6 @@ import { Button } from "#enums/buttons";
 import { GameDataType } from "#enums/game-data-type";
 import BgmBar from "#app/ui/bgm-bar";
 import type AwaitableUiHandler from "./awaitable-ui-handler";
-import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import { AdminMode, getAdminModeName } from "./admin-ui-handler";
 import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
 
@@ -126,7 +125,7 @@ export default class MenuUiHandler extends MessageUiHandler {
     const ui = this.getUi();
     this.excludedMenus = () => [
       {
-        condition: globalScene.getCurrentPhase() instanceof SelectModifierPhase,
+        condition: !!globalScene.getCurrentPhase()?.is("SelectModifierPhase"),
         options: [MenuOptions.EGG_GACHA],
       },
       { condition: bypassLogin, options: [MenuOptions.LOG_OUT] },
