@@ -1,5 +1,6 @@
 import type { EnemyPokemon, default as Pokemon } from "../field/pokemon";
-import { addTextObject, TextStyle } from "./text";
+import { addTextObject } from "./text";
+import { TextStyle } from "#enums/text-style";
 import { fixedInt } from "#app/utils/common";
 import { globalScene } from "#app/global-scene";
 import type Move from "#app/data/moves/move";

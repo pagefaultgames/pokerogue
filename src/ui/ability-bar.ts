@@ -1,5 +1,6 @@
 import { globalScene } from "#app/global-scene";
-import { TextStyle, addTextObject } from "./text";
+import { addTextObject } from "./text";
+import { TextStyle } from "#enums/text-style";
 import i18next from "i18next";
 
 const barWidth = 118;

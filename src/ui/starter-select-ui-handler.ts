@@ -35,7 +35,8 @@ import type { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler"
 import MessageUiHandler from "#app/ui/message-ui-handler";
 import PokemonIconAnimHandler, { PokemonIconAnimMode } from "#app/ui/pokemon-icon-anim-handler";
 import { StatsContainer } from "#app/ui/stats-container";
-import { TextStyle, addBBCodeTextObject, addTextObject } from "#app/ui/text";
+import { addBBCodeTextObject, addTextObject } from "#app/ui/text";
+import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import { addWindow } from "#app/ui/ui-theme";
 import { Egg } from "#app/data/egg";

@@ -1,4 +1,5 @@
-import { addTextObject, TextStyle } from "../text";
+import { addTextObject } from "../text";
+import { TextStyle } from "#enums/text-style";
 import type { UiMode } from "#enums/ui-mode";
 import {
   setSettingGamepad,

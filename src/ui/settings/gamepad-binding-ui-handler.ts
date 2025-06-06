@@ -2,7 +2,8 @@ import AbstractBindingUiHandler from "./abstract-binding-ui-handler";
 import type { UiMode } from "#enums/ui-mode";
 import { Device } from "#enums/devices";
 import { getIconWithSettingName, getKeyWithKeycode } from "#app/configs/inputs/configHandler";
-import { addTextObject, TextStyle } from "#app/ui/text";
+import { addTextObject } from "#app/ui/text";
+import { TextStyle } from "#enums/text-style";
 import { globalScene } from "#app/global-scene";
 import i18next from "i18next";
 

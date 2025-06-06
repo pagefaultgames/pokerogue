@@ -1,5 +1,6 @@
 import { globalScene } from "#app/global-scene";
-import { TextStyle, addTextObject } from "#app/ui/text";
+import { addTextObject } from "#app/ui/text";
+import { TextStyle } from "#enums/text-style";
 import type { nil } from "#app/utils/common";
 import { isNullOrUndefined } from "#app/utils/common";
 import i18next from "i18next";

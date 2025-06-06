@@ -1,4 +1,5 @@
-import { TextStyle, addTextObject } from "./text";
+import { addTextObject } from "./text";
+import { TextStyle } from "#enums/text-style";
 import type { UiMode } from "#enums/ui-mode";
 import UiHandler from "./ui-handler";
 import { WindowVariant, addWindow } from "./ui-theme";

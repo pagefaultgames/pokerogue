@@ -1,6 +1,7 @@
 import { bypassLogin } from "#app/global-vars/bypass-login";
 import { globalScene } from "#app/global-scene";
-import { TextStyle, addTextObject, getTextStyleOptions } from "./text";
+import { addTextObject, getTextStyleOptions } from "./text";
+import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import { getEnumKeys, isLocal, fixedInt, sessionIdKey } from "#app/utils/common";
 import { isBeta } from "#app/utils/utility-vars";

@@ -1,7 +1,8 @@
 import { GameModes } from "#enums/game-modes";
 import UiHandler from "./ui-handler";
 import type { SessionSaveData } from "../system/game-data";
-import { TextStyle, addTextObject, addBBCodeTextObject, getTextColor } from "./text";
+import { addTextObject, addBBCodeTextObject, getTextColor } from "./text";
+import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import { addWindow } from "./ui-theme";
 import { getPokeballAtlasKey } from "#app/data/pokeball";

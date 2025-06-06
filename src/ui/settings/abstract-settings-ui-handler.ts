@@ -1,4 +1,5 @@
-import { TextStyle, addTextObject } from "#app/ui/text";
+import { addTextObject } from "#app/ui/text";
+import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import MessageUiHandler from "#app/ui/message-ui-handler";
 import { addWindow } from "#app/ui/ui-theme";

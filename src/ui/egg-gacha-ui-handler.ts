@@ -1,5 +1,6 @@
 import { UiMode } from "#enums/ui-mode";
-import { TextStyle, addTextObject, getEggTierTextTint, getTextStyleOptions } from "./text";
+import { addTextObject, getEggTierTextTint, getTextStyleOptions } from "./text";
+import { TextStyle } from "#enums/text-style";
 import MessageUiHandler from "./message-ui-handler";
 import { fixedInt, randSeedShuffle, getEnumValues } from "#app/utils/common";
 import type { IEggOptions } from "../data/egg";

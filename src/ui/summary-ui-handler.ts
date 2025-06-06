@@ -19,7 +19,8 @@ import { getStarterValueFriendshipCap, speciesStarterCosts } from "#app/data/bal
 import { argbFromRgba } from "@material/material-color-utilities";
 import { getTypeRgb } from "#app/data/type";
 import { PokemonType } from "#enums/pokemon-type";
-import { TextStyle, addBBCodeTextObject, addTextObject, getBBCodeFrag } from "#app/ui/text";
+import { addBBCodeTextObject, addTextObject, getBBCodeFrag } from "#app/ui/text";
+import { TextStyle } from "#enums/text-style";
 import type Move from "#app/data/moves/move";
 import { MoveCategory } from "#enums/MoveCategory";
 import { getPokeballAtlasKey } from "#app/data/pokeball";

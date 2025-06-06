@@ -52,7 +52,8 @@ import type { Phase } from "#app/phase";
 import { initGameSpeed } from "#app/system/game-speed";
 import { Arena, ArenaBase } from "#app/field/arena";
 import { GameData } from "#app/system/game-data";
-import { addTextObject, getTextColor, TextStyle } from "#app/ui/text";
+import { addTextObject, getTextColor } from "#app/ui/text";
+import { TextStyle } from "#enums/text-style";
 import { allMoves } from "./data/data-lists";
 import { MusicPreference } from "#app/system/settings/settings";
 import {

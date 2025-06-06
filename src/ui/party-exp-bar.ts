@@ -1,6 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import type Pokemon from "../field/pokemon";
-import { TextStyle, addTextObject } from "./text";
+import { addTextObject } from "./text";
+import { TextStyle } from "#enums/text-style";
 import i18next from "i18next";
 
 export default class PartyExpBar extends Phaser.GameObjects.Container {

@@ -1,5 +1,6 @@
 import { getPokeballName } from "../data/pokeball";
-import { addTextObject, getTextStyleOptions, TextStyle } from "./text";
+import { addTextObject, getTextStyleOptions } from "./text";
+import { TextStyle } from "#enums/text-style";
 import { Command } from "#enums/command";
 import { UiMode } from "#enums/ui-mode";
 import UiHandler from "./ui-handler";
