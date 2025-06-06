@@ -1246,7 +1246,7 @@ export class MoveTypeChangeAbAttr extends PreAttackAbAttr {
 
   /**
    * Determine if the move type change attribute can be applied
-   * 
+   *
    * Can be applied if:
    * - The ability's condition is met, e.g. pixilate only boosts normal moves,
    * - The move is not forbidden from having its type changed by an ability, e.g. {@linkcode MoveId.MULTI_ATTACK}
@@ -1262,7 +1262,7 @@ export class MoveTypeChangeAbAttr extends PreAttackAbAttr {
    */
   override canApplyPreAttack(pokemon: Pokemon, _passive: boolean, _simulated: boolean, _defender: Pokemon | null, move: Move, _args: [NumberHolder?, NumberHolder?, ...any]): boolean {
     return (!this.condition || this.condition(pokemon, _defender, move)) &&
-            !noAbilityTypeOverrideMoves.has(move.id) && 
+            !noAbilityTypeOverrideMoves.has(move.id) &&
             (!pokemon.isTerastallized ||
               (move.id !== MoveId.TERA_BLAST &&
               (move.id !== MoveId.TERA_STARSTORM || pokemon.getTeraType() !== PokemonType.STELLAR || !pokemon.hasSpecies(SpeciesId.TERAPAGOS))));
@@ -2119,31 +2119,17 @@ export class IntimidateImmunityAbAttr extends AbAttr {
 export class PostIntimidateStatStageChangeAbAttr extends AbAttr {
   private stats: BattleStat[];
   private stages: number;
-  private overwrites: boolean;
 
-  constructor(stats: BattleStat[], stages: number, overwrites?: boolean) {
+  constructor(stats: BattleStat[], stages: number) {
     super(true);
     this.stats = stats;
     this.stages = stages;
-    this.overwrites = !!overwrites;
   }
 
-  override apply(pokemon: Pokemon, passive: boolean, simulated:boolean, cancelled: BooleanHolder, args: any[]): void {
-    if (simulated) {
-      cancelled.value = this.overwrites;
-      return  
+  override apply(pokemon: Pokemon, _passive: boolean, simulated: boolean, _cancelled: BooleanHolder, _args: any[]): void {
+    if (!simulated) {
+      globalScene.unshiftPhase(new StatStageChangePhase(pokemon.getBattlerIndex(), false, this.stats, this.stages));
     }
-
-    const newStatStageChangePhase = new StatStageChangePhase(pokemon.getBattlerIndex(), false, this.stats, this.stages)
-    if (globalScene.findPhase(m => m instanceof MovePhase)) {
-      globalScene.prependToPhase(newStatStageChangePhase, MovePhase)
-    } else if (globalScene.findPhase(m => m instanceof SwitchSummonPhase)) {
-      globalScene.prependToPhase(newStatStageChangePhase, SwitchSummonPhase)
-    } else {
-      globalScene.pushPhase(newStatStageChangePhase);
-    }
-    
-    cancelled.value = this.overwrites;
   }
 }
 
@@ -2349,8 +2335,6 @@ export class PostSummonStatStageChangeAbAttr extends PostSummonAbAttr {
         const cancelled = new BooleanHolder(false);
         if (this.intimidate) {
           applyAbAttrs(IntimidateImmunityAbAttr, opponent, cancelled, simulated);
-          applyAbAttrs(PostIntimidateStatStageChangeAbAttr, opponent, cancelled, simulated);
-
           if (opponent.getTag(BattlerTagType.SUBSTITUTE)) {
             cancelled.value = true;
           }
@@ -2358,6 +2342,7 @@ export class PostSummonStatStageChangeAbAttr extends PostSummonAbAttr {
         if (!cancelled.value) {
           globalScene.unshiftPhase(new StatStageChangePhase(opponent.getBattlerIndex(), false, this.stats, this.stages));
         }
+        applyAbAttrs(PostIntimidateStatStageChangeAbAttr, opponent, cancelled, simulated);
       }
     }
   }
@@ -7401,7 +7386,8 @@ export function initAbilities() {
       .attr(PostSummonStatStageChangeOnArenaAbAttr, ArenaTagType.TAILWIND)
       .ignorable(),
     new Ability(AbilityId.GUARD_DOG, 9)
-      .attr(PostIntimidateStatStageChangeAbAttr, [ Stat.ATK ], 1, true)
+      .attr(PostIntimidateStatStageChangeAbAttr, [ Stat.ATK ], 1)
+      .attr(IntimidateImmunityAbAttr)
       .attr(ForceSwitchOutImmunityAbAttr)
       .ignorable(),
     new Ability(AbilityId.ROCKY_PAYLOAD, 9)
