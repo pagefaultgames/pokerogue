@@ -193,7 +193,8 @@ const civilizationBiomeEncounters: MysteryEncounterType[] = [
   MysteryEncounterType.GLOBAL_TRADE_SYSTEM,
 ];
 
-const openSkyBiomeEncounters: MysteryEncounterType[] = [MysteryEncounterType.SKY_BATTLE];
+// Temporarily disabled pending ME rebalancing
+// const openSkyBiomeEncounters: MysteryEncounterType[] = [MysteryEncounterType.SKY_BATTLE];
 
 /**
  * To add an encounter to every biome possible, use this array
@@ -290,7 +291,8 @@ export function initMysteryEncounters() {
   allMysteryEncounters[MysteryEncounterType.UNCOMMON_BREED] = UncommonBreedEncounter;
   allMysteryEncounters[MysteryEncounterType.GLOBAL_TRADE_SYSTEM] = GlobalTradeSystemEncounter;
   allMysteryEncounters[MysteryEncounterType.THE_EXPERT_POKEMON_BREEDER] = TheExpertPokemonBreederEncounter;
-  allMysteryEncounters[MysteryEncounterType.SKY_BATTLE] = SkyBattleEncounter;
+  // Temporarily disabled pending ME rebalancing
+  // allMysteryEncounters[MysteryEncounterType.SKY_BATTLE] = SkyBattleEncounter;
 
   // Add extreme encounters to biome map
   extremeBiomeEncounters.forEach(encounter => {
@@ -330,6 +332,8 @@ export function initMysteryEncounters() {
   });
 
   // add open sky encounters to biome map
+  // Temporarily disabled pending ME rebalancing
+  /*
   openSkyBiomeEncounters.forEach(encounter => {
     OPEN_SKY_BIOMES.forEach(biome => {
       const encountersForBiome = mysteryEncountersByBiome.get(biome);
@@ -338,6 +342,7 @@ export function initMysteryEncounters() {
       }
     });
   });
+  */
 
   // Add ANY biome encounters to biome map
   let _encounterBiomeTableLog = "";
