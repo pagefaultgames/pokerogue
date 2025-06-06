@@ -223,7 +223,8 @@ export class CommandPhase extends FieldPhase {
     );
   }
 
-  /** Helper method for {@linkcode handleFightCommand} that returns the moveID for the phase
+  /**
+   * Helper method for {@linkcode handleFightCommand} that returns the moveID for the phase
    * based on the move passed in or the cursor.
    *
    * Does not check if the move is usable or not, that should be handled by the caller.
@@ -233,10 +234,16 @@ export class CommandPhase extends FieldPhase {
   }
 
   /**
-   * Handle fight logic
+   * Process the logic for executing a fight-related command
+   *
+   * @remarks
+   * - Validates whether the move can be used, using struggle if not
+   * - Constructs the turn command and inserts it into the battle's turn commands
+   *
    * @param command - The command to handle (FIGHT or TERA)
    * @param cursor - The index that the cursor is placed on, or -1 if no move can be selected.
-   * @param args - Any additional arguments to pass to the command
+   * @param ignorePP - Whether to ignore PP when checking if the move can be used.
+   * @param move - The move to force the command to use, if any.
    */
   private handleFightCommand(
     command: Command.FIGHT | Command.TERA,
@@ -253,7 +260,9 @@ export class CommandPhase extends FieldPhase {
       ? false
       : cursor > -1 && !playerPokemon.getMoveset().some(m => m.isUsable(playerPokemon));
 
-    if (!canUse && !useStruggle) {
+    canUse ||= useStruggle;
+
+    if (!canUse) {
       this.queueFightErrorMessage(playerPokemon, cursor);
       return false;
     }
@@ -280,7 +289,7 @@ export class CommandPhase extends FieldPhase {
             multiple: move.targets.length > 1,
           };
 
-    if (moveId === Moves.NONE) {
+    if (moveId === MoveId.NONE) {
       turnCommand.targets = [this.fieldIndex];
     }
 
