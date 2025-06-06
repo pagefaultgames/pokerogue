@@ -652,12 +652,6 @@ export class FlinchedTag extends BattlerTag {
     super(BattlerTagType.FLINCHED, [BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.TURN_END], 1, sourceMove);
   }
 
-  onAdd(pokemon: Pokemon): void {
-    super.onAdd(pokemon);
-
-    applyAbAttrs(FlinchEffectAbAttr, pokemon, null);
-  }
-
   /**
    * Cancels all subsequent moves used by this tag's Pokemon this turn.
    * @param pokemon - The {@linkcode Pokemon} with this tag.
@@ -672,6 +666,7 @@ export class FlinchedTag extends BattlerTag {
           pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
         }),
       );
+      applyAbAttrs(FlinchEffectAbAttr, pokemon, null);
       return true;
     }
 
