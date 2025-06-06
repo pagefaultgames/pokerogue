@@ -653,7 +653,7 @@ export class FlinchedTag extends BattlerTag {
   }
 
   /**
-   * Cancels all subsequent moves used by this tag's Pokemon this turn.
+   * Cancels the flinched Pokemon's currently used move this turn if called mid-execution, or removes the tag at end of turn.
    * @param pokemon - The {@linkcode Pokemon} with this tag.
    * @param lapseType - The {@linkcode BattlerTagLapseType | lapse type} used for this function call.
    * @returns Whether the tag should remain active.

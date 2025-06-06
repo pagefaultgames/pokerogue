@@ -36,7 +36,8 @@ describe("Moves - Instruct", () => {
     game.override
       .battleStyle("single")
       .enemySpecies(SpeciesId.SHUCKLE)
-      .enemyAbility(AbilityId.NO_GUARD)
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .passiveAbility(AbilityId.NO_GUARD)
       .enemyLevel(100)
       .startingLevel(100)
       .disableCrits();
