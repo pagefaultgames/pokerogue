@@ -1,5 +1,5 @@
 import { MoneyFormat } from "#enums/money-format";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/move-id";
 import i18next from "i18next";
 import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
 import type { Variant } from "#app/sprites/variant";
@@ -435,14 +435,18 @@ export function hasAllLocalizedSprites(lang?: string): boolean {
     case "es-ES":
     case "es-MX":
     case "fr":
+    case "da":
     case "de":
     case "it":
     case "zh-CN":
     case "zh-TW":
     case "pt-BR":
+    case "ro":
+    case "tr":
     case "ko":
     case "ja":
-    case "ca-ES":
+    case "ca":
+    case "ru":
       return true;
     default:
       return false;
@@ -563,8 +567,8 @@ export function isBetween(num: number, min: number, max: number): boolean {
  *
  * @param move the move for which the animation filename is needed
  */
-export function animationFileName(move: Moves): string {
-  return Moves[move].toLowerCase().replace(/\_/g, "-");
+export function animationFileName(move: MoveId): string {
+  return MoveId[move].toLowerCase().replace(/\_/g, "-");
 }
 
 /**

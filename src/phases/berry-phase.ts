@@ -71,7 +71,7 @@ export class BerryPhase extends FieldPhase {
     }
     globalScene.updateModifiers(pokemon.isPlayer());
 
-    // Abilities.CHEEK_POUCH only works once per round of nom noms
+    // AbilityId.CHEEK_POUCH only works once per round of nom noms
     applyAbAttrs(HealFromBerryUseAbAttr, pokemon, new BooleanHolder(false));
   }
 }

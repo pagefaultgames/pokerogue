@@ -1,6 +1,6 @@
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import { AbilityId } from "#enums/ability-id";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -22,12 +22,13 @@ describe("Abilities - Stall", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("single");
-    game.override.disableCrits();
-    game.override.enemySpecies(Species.REGIELEKI);
-    game.override.enemyAbility(Abilities.STALL);
-    game.override.enemyMoveset([Moves.QUICK_ATTACK, Moves.QUICK_ATTACK, Moves.QUICK_ATTACK, Moves.QUICK_ATTACK]);
-    game.override.moveset([Moves.QUICK_ATTACK, Moves.TACKLE]);
+    game.override
+      .battleStyle("single")
+      .disableCrits()
+      .enemySpecies(SpeciesId.REGIELEKI)
+      .enemyAbility(AbilityId.STALL)
+      .enemyMoveset(MoveId.QUICK_ATTACK)
+      .moveset([MoveId.QUICK_ATTACK, MoveId.TACKLE]);
   });
 
   /**
@@ -37,12 +38,12 @@ describe("Abilities - Stall", () => {
    **/
 
   it("Pokemon with Stall should move last in its priority bracket regardless of speed", async () => {
-    await game.startBattle([Species.SHUCKLE]);
+    await game.classicMode.startBattle([SpeciesId.SHUCKLE]);
 
     const playerIndex = game.scene.getPlayerPokemon()!.getBattlerIndex();
     const enemyIndex = game.scene.getEnemyPokemon()!.getBattlerIndex();
 
-    game.move.select(Moves.QUICK_ATTACK);
+    game.move.select(MoveId.QUICK_ATTACK);
 
     await game.phaseInterceptor.to(TurnStartPhase, false);
     const phase = game.scene.getCurrentPhase() as TurnStartPhase;
@@ -55,12 +56,12 @@ describe("Abilities - Stall", () => {
   }, 20000);
 
   it("Pokemon with Stall will go first if a move that is in a higher priority bracket than the opponent's move is used", async () => {
-    await game.startBattle([Species.SHUCKLE]);
+    await game.classicMode.startBattle([SpeciesId.SHUCKLE]);
 
     const playerIndex = game.scene.getPlayerPokemon()!.getBattlerIndex();
     const enemyIndex = game.scene.getEnemyPokemon()!.getBattlerIndex();
 
-    game.move.select(Moves.TACKLE);
+    game.move.select(MoveId.TACKLE);
 
     await game.phaseInterceptor.to(TurnStartPhase, false);
     const phase = game.scene.getCurrentPhase() as TurnStartPhase;
@@ -73,13 +74,13 @@ describe("Abilities - Stall", () => {
   }, 20000);
 
   it("If both Pokemon have stall and use the same move, speed is used to determine who goes first.", async () => {
-    game.override.ability(Abilities.STALL);
-    await game.startBattle([Species.SHUCKLE]);
+    game.override.ability(AbilityId.STALL);
+    await game.classicMode.startBattle([SpeciesId.SHUCKLE]);
 
     const playerIndex = game.scene.getPlayerPokemon()!.getBattlerIndex();
     const enemyIndex = game.scene.getEnemyPokemon()!.getBattlerIndex();
 
-    game.move.select(Moves.TACKLE);
+    game.move.select(MoveId.TACKLE);
 
     await game.phaseInterceptor.to(TurnStartPhase, false);
     const phase = game.scene.getCurrentPhase() as TurnStartPhase;
