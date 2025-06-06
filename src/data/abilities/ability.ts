@@ -5816,6 +5816,7 @@ export class PostDamageForceSwitchAbAttr extends PostDamageAbAttr {
       if (fordbiddenAttackingMoves.includes(lastMoveUsed.move)) {
         return false;
       }
+    }
 
     // Dragon Tail and Circle Throw switch out Pokémon before the Ability activates.
     const fordbiddenDefendingMoves = [ MoveId.DRAGON_TAIL, MoveId.CIRCLE_THROW ];
