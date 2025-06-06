@@ -1292,16 +1292,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    */
   isOffsetBySubstitute(): boolean {
     const substitute = this.getTag(SubstituteTag);
-    if (substitute) {
-      if (substitute.sprite === undefined) {
-        return false;
-      }
-
-      // During the Pokemon's MoveEffect phase, the offset is removed to put the Pokemon "in focus"
-      const currentPhase = globalScene.getCurrentPhase();
-      return !(currentPhase?.is("MoveEffectPhase") && currentPhase.getPokemon() === this);
+    if (!substitute || substitute.sprite === undefined) {
+      return false;
     }
-    return false;
+    // During the Pokemon's MoveEffect phase, the offset is removed to put the Pokemon "in focus"
+    const currentPhase = globalScene.getCurrentPhase();
+    return !(currentPhase?.is("MoveEffectPhase") && currentPhase.getPokemon() === this);
   }
 
   /** If this Pokemon has a Substitute on the field, removes its sprite from the field. */
