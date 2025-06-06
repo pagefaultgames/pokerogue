@@ -22,6 +22,7 @@ import { SubstituteTag } from "#app/data/battler-tags";
 import { SwitchType } from "#enums/switch-type";
 
 export class SwitchSummonPhase extends SummonPhase {
+  public readonly phaseName: "SwitchSummonPhase" | "ReturnPhase" = "SwitchSummonPhase";
   private readonly switchType: SwitchType;
   private readonly slotIndex: number;
   private readonly doReturn: boolean;
