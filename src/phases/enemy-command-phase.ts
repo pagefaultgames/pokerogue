@@ -15,6 +15,7 @@ import { BattlerTagType } from "#enums/battler-tag-type";
  * @see {@linkcode EnemyPokemon.getNextMove}
  */
 export class EnemyCommandPhase extends FieldPhase {
+  public readonly phaseName = "EnemyCommandPhase";
   protected fieldIndex: number;
   protected skipTurn = false;
 
