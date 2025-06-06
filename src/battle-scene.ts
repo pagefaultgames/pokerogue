@@ -19,12 +19,7 @@ import {
   type Constructor,
 } from "#app/utils/common";
 import { deepMergeSpriteData } from "#app/utils/data";
-import type {
-  Modifier,
-  ModifierIdentityPredicate,
-  ModifierPredicate,
-  TurnHeldItemTransferModifier,
-} from "./modifier/modifier";
+import type { Modifier, ModifierPredicate, TurnHeldItemTransferModifier } from "./modifier/modifier";
 import {
   ConsumableModifier,
   ConsumablePokemonModifier,
@@ -3411,11 +3406,6 @@ export default class BattleScene extends SceneBase {
     return (isPlayer ? this.modifiers : this.enemyModifiers).filter(modifierFilter);
   }
 
-  findModifier<T extends PersistentModifier>(
-    modifierFilter: ModifierIdentityPredicate<T>,
-    player?: boolean,
-  ): T | undefined;
-  findModifier(modifierFilter: ModifierPredicate, player?: boolean): PersistentModifier | undefined;
   /**
    * Find the first modifier that pass the `modifierFilter` function
    * @param modifierFilter The function used to filter a target's modifiers
