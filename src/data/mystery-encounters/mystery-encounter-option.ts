@@ -1,5 +1,5 @@
 import type { OptionTextDisplay } from "#app/data/mystery-encounters/mystery-encounter-dialogue";
-import type { Moves } from "#app/enums/moves";
+import type { MoveId } from "#enums/move-id";
 import type { PlayerPokemon } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
 import { globalScene } from "#app/global-scene";
@@ -300,7 +300,7 @@ export class MysteryEncounterOptionBuilder implements Partial<IMysteryEncounterO
    * @param options see {@linkcode CanLearnMoveRequirementOptions}
    * @returns
    */
-  withPokemonCanLearnMoveRequirement(move: Moves | Moves[], options?: CanLearnMoveRequirementOptions) {
+  withPokemonCanLearnMoveRequirement(move: MoveId | MoveId[], options?: CanLearnMoveRequirementOptions) {
     return this.withPrimaryPokemonRequirement(new CanLearnMoveRequirement(move, options));
   }
 

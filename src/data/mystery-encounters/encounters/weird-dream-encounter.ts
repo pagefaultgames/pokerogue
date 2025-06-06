@@ -1,6 +1,6 @@
 import { PokemonType } from "#enums/pokemon-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species-id";
 import { globalScene } from "#app/global-scene";
 import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
@@ -49,55 +49,55 @@ const namespace = "mysteryEncounters/weirdDream";
 
 /** Exclude Ultra Beasts, Paradox, Eternatus, and all legendary/mythical/trio pokemon that are below 570 BST */
 const EXCLUDED_TRANSFORMATION_SPECIES = [
-  Species.ETERNATUS,
+  SpeciesId.ETERNATUS,
   /** UBs */
-  Species.NIHILEGO,
-  Species.BUZZWOLE,
-  Species.PHEROMOSA,
-  Species.XURKITREE,
-  Species.CELESTEELA,
-  Species.KARTANA,
-  Species.GUZZLORD,
-  Species.POIPOLE,
-  Species.NAGANADEL,
-  Species.STAKATAKA,
-  Species.BLACEPHALON,
+  SpeciesId.NIHILEGO,
+  SpeciesId.BUZZWOLE,
+  SpeciesId.PHEROMOSA,
+  SpeciesId.XURKITREE,
+  SpeciesId.CELESTEELA,
+  SpeciesId.KARTANA,
+  SpeciesId.GUZZLORD,
+  SpeciesId.POIPOLE,
+  SpeciesId.NAGANADEL,
+  SpeciesId.STAKATAKA,
+  SpeciesId.BLACEPHALON,
   /** Paradox */
-  Species.GREAT_TUSK,
-  Species.SCREAM_TAIL,
-  Species.BRUTE_BONNET,
-  Species.FLUTTER_MANE,
-  Species.SLITHER_WING,
-  Species.SANDY_SHOCKS,
-  Species.ROARING_MOON,
-  Species.WALKING_WAKE,
-  Species.GOUGING_FIRE,
-  Species.RAGING_BOLT,
-  Species.IRON_TREADS,
-  Species.IRON_BUNDLE,
-  Species.IRON_HANDS,
-  Species.IRON_JUGULIS,
-  Species.IRON_MOTH,
-  Species.IRON_THORNS,
-  Species.IRON_VALIANT,
-  Species.IRON_LEAVES,
-  Species.IRON_BOULDER,
-  Species.IRON_CROWN,
+  SpeciesId.GREAT_TUSK,
+  SpeciesId.SCREAM_TAIL,
+  SpeciesId.BRUTE_BONNET,
+  SpeciesId.FLUTTER_MANE,
+  SpeciesId.SLITHER_WING,
+  SpeciesId.SANDY_SHOCKS,
+  SpeciesId.ROARING_MOON,
+  SpeciesId.WALKING_WAKE,
+  SpeciesId.GOUGING_FIRE,
+  SpeciesId.RAGING_BOLT,
+  SpeciesId.IRON_TREADS,
+  SpeciesId.IRON_BUNDLE,
+  SpeciesId.IRON_HANDS,
+  SpeciesId.IRON_JUGULIS,
+  SpeciesId.IRON_MOTH,
+  SpeciesId.IRON_THORNS,
+  SpeciesId.IRON_VALIANT,
+  SpeciesId.IRON_LEAVES,
+  SpeciesId.IRON_BOULDER,
+  SpeciesId.IRON_CROWN,
   /** These are banned so they don't appear in the < 570 BST pool */
-  Species.COSMOG,
-  Species.MELTAN,
-  Species.KUBFU,
-  Species.COSMOEM,
-  Species.POIPOLE,
-  Species.TERAPAGOS,
-  Species.TYPE_NULL,
-  Species.CALYREX,
-  Species.NAGANADEL,
-  Species.URSHIFU,
-  Species.OGERPON,
-  Species.OKIDOGI,
-  Species.MUNKIDORI,
-  Species.FEZANDIPITI,
+  SpeciesId.COSMOG,
+  SpeciesId.MELTAN,
+  SpeciesId.KUBFU,
+  SpeciesId.COSMOEM,
+  SpeciesId.POIPOLE,
+  SpeciesId.TERAPAGOS,
+  SpeciesId.TYPE_NULL,
+  SpeciesId.CALYREX,
+  SpeciesId.NAGANADEL,
+  SpeciesId.URSHIFU,
+  SpeciesId.OGERPON,
+  SpeciesId.OKIDOGI,
+  SpeciesId.MUNKIDORI,
+  SpeciesId.FEZANDIPITI,
 ];
 
 const SUPER_LEGENDARY_BST_THRESHOLD = 600;
@@ -500,7 +500,7 @@ async function doNewTeamPostProcess(transformations: PokemonTransformation[]) {
 async function postProcessTransformedPokemon(
   previousPokemon: PlayerPokemon,
   newPokemon: PlayerPokemon,
-  speciesRootForm: Species,
+  speciesRootForm: SpeciesId,
   forBattle = false,
 ): Promise<boolean> {
   let isNewStarter = false;
@@ -768,7 +768,7 @@ function doSideBySideTransformations(transformations: PokemonTransformation[]) {
  */
 async function addEggMoveToNewPokemonMoveset(
   newPokemon: PlayerPokemon,
-  speciesRootForm: Species,
+  speciesRootForm: SpeciesId,
   forBattle = false,
 ): Promise<number | null> {
   let eggMoveIndex: null | number = null;

@@ -17,7 +17,7 @@ import { ArenaTagSide, ArenaTrapTag } from "#app/data/arena-tag";
 import { getIsInitialized, initI18n } from "#app/plugins/i18n";
 import i18next from "i18next";
 import { PartyMemberStrength } from "#enums/party-member-strength";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species-id";
 import { TrainerType } from "#enums/trainer-type";
 import { signatureSpecies } from "#app/data/balance/signature-species";
 
@@ -358,7 +358,7 @@ export default class Trainer extends Phaser.GameObjects.Container {
         }
 
         // Create an empty species pool (which will be set to one of the species pools based on the index)
-        let newSpeciesPool: Species[] = [];
+        let newSpeciesPool: SpeciesId[] = [];
         let useNewSpeciesPool = false;
 
         // If we are in a double battle of named trainers, we need to use alternate species pools (generate half the party from each trainer)
@@ -399,9 +399,9 @@ export default class Trainer extends Phaser.GameObjects.Container {
           if (!(index % 2)) {
             // Since the only currently allowed double battle with named trainers is Tate & Liza, we need to make sure that Solrock is the first pokemon in the party for Tate and Lunatone for Liza
             if (index === 0 && TrainerType[this.config.trainerType] === TrainerType[TrainerType.TATE]) {
-              newSpeciesPool = [Species.SOLROCK];
+              newSpeciesPool = [SpeciesId.SOLROCK];
             } else if (index === 0 && TrainerType[this.config.trainerType] === TrainerType[TrainerType.LIZA]) {
-              newSpeciesPool = [Species.LUNATONE];
+              newSpeciesPool = [SpeciesId.LUNATONE];
             } else {
               newSpeciesPool = speciesPoolFiltered;
             }
@@ -409,9 +409,9 @@ export default class Trainer extends Phaser.GameObjects.Container {
             // If the index is odd, use the species pool for the partner trainer (that way he only uses his own pokemon in battle)
             // Since the only currently allowed double battle with named trainers is Tate & Liza, we need to make sure that Solrock is the first pokemon in the party for Tate and Lunatone for Liza
             if (index === 1 && TrainerType[this.config.trainerTypeDouble] === TrainerType[TrainerType.TATE]) {
-              newSpeciesPool = [Species.SOLROCK];
+              newSpeciesPool = [SpeciesId.SOLROCK];
             } else if (index === 1 && TrainerType[this.config.trainerTypeDouble] === TrainerType[TrainerType.LIZA]) {
-              newSpeciesPool = [Species.LUNATONE];
+              newSpeciesPool = [SpeciesId.LUNATONE];
             } else {
               newSpeciesPool = speciesPoolPartnerFiltered;
             }
@@ -542,10 +542,10 @@ export default class Trainer extends Phaser.GameObjects.Container {
 
   /**
    * Checks if the enemy trainer already has the Pokemon species in their party
-   * @param baseSpecies - The base {@linkcode Species} of the current Pokemon
+   * @param baseSpecies - The base {@linkcode SpeciesId} of the current Pokemon
    * @returns `true` if the species is already present in the party
    */
-  checkDuplicateSpecies(baseSpecies: Species): boolean {
+  checkDuplicateSpecies(baseSpecies: SpeciesId): boolean {
     const staticSpecies = (signatureSpecies[TrainerType[this.config.trainerType]] ?? []).flat(1).map(s => {
       let root = s;
       while (pokemonPrevolutions.hasOwnProperty(root)) {
