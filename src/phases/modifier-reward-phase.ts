@@ -5,6 +5,10 @@ import i18next from "i18next";
 import { BattlePhase } from "./battle-phase";
 
 export class ModifierRewardPhase extends BattlePhase {
+  // RibbonModifierRewardPhase extends ModifierRewardPhase and to make typescript happy
+  // we need to use a union type here
+  public readonly phaseName: "ModifierRewardPhase" | "RibbonModifierRewardPhase" | "GameOverModifierRewardPhase" =
+    "ModifierRewardPhase";
   protected modifierType: ModifierType;
 
   constructor(modifierTypeFunc: ModifierTypeFunc) {
