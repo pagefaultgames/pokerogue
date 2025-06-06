@@ -1206,14 +1206,20 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     this.setScale(this.getSpriteScale());
   }
 
-  getHeldItems(): PokemonHeldItemModifier[] {
+  /**
+   * Return all of this Pokemon's held modifiers.
+   * @param transferrableOnly - Whether to only consider transferrable held items; default `false`
+   * @returns An array of all {@linkcode PokemonHeldItemModifier}s held by this Pokemon.
+   */
+  getHeldItems(transferrableOnly = this.getFusionIconAtlasKey): PokemonHeldItemModifier[] {
     if (!globalScene) {
       return [];
     }
     return globalScene.findModifiers(
-      m => m instanceof PokemonHeldItemModifier && m.pokemonId === this.id,
+      (m): m is PokemonHeldItemModifier =>
+        m instanceof PokemonHeldItemModifier && m.pokemonId === this.id && !(transferrableOnly && !m.isTransferable()),
       this.isPlayer(),
-    ) as PokemonHeldItemModifier[];
+    );
   }
 
   updateScale(): void {
@@ -5872,10 +5878,7 @@ export class PlayerPokemon extends Pokemon {
 
         globalScene.getPlayerParty().push(newPokemon);
         newPokemon.evolve(!isFusion ? newEvolution : new FusionSpeciesFormEvolution(this.id, newEvolution), evoSpecies);
-        const modifiers = globalScene.findModifiers(
-          m => m instanceof PokemonHeldItemModifier && m.pokemonId === this.id,
-          true,
-        ) as PokemonHeldItemModifier[];
+        const modifiers = this.getHeldItems();
         modifiers.forEach(m => {
           const clonedModifier = m.clone() as PokemonHeldItemModifier;
           clonedModifier.pokemonId = newPokemon.id;
@@ -5993,11 +5996,7 @@ export class PlayerPokemon extends Pokemon {
     }
 
     // combine the two mons' held items
-    const fusedPartyMemberHeldModifiers = globalScene.findModifiers(
-      m => m instanceof PokemonHeldItemModifier && m.pokemonId === pokemon.id,
-      true,
-    ) as PokemonHeldItemModifier[];
-    for (const modifier of fusedPartyMemberHeldModifiers) {
+    for (const modifier of pokemon.getHeldItems()) {
       globalScene.tryTransferHeldItemModifier(modifier, this, false, modifier.getStackCount(), true, true, false);
     }
     globalScene.updateModifiers(true, true);

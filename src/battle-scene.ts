@@ -19,12 +19,8 @@ import {
   type Constructor,
 } from "#app/utils/common";
 import { deepMergeSpriteData } from "#app/utils/data";
-import type {
-  Modifier,
-  ModifierIdentityPredicate,
-  ModifierPredicate,
-  TurnHeldItemTransferModifier,
-} from "./modifier/modifier";
+import type { Modifier, TurnHeldItemTransferModifier } from "./modifier/modifier";
+import type { ModifierIdentityPredicate, ModifierPredicate } from "./@types/modifier-predicate";
 import {
   ConsumableModifier,
   ConsumablePokemonModifier,
@@ -2125,9 +2121,10 @@ export default class BattleScene extends SceneBase {
       enemy.getSpeciesForm().getBaseExp() *
       (enemy.level / this.getMaxExpLevel()) *
       ((enemy.ivs.reduce((iv: number, total: number) => (total += iv), 0) / 93) * 0.2 + 0.8);
-    this.findModifiers(m => m instanceof PokemonHeldItemModifier && m.pokemonId === enemy.id, false).map(
-      m => (scoreIncrease *= (m as PokemonHeldItemModifier).getScoreMultiplier()),
-    );
+    this.findModifiers(
+      (m): m is PokemonHeldItemModifier => m instanceof PokemonHeldItemModifier && m.pokemonId === enemy.id,
+      false,
+    ).forEach(m => (scoreIncrease *= m.getScoreMultiplier()));
     if (enemy.isBoss()) {
       scoreIncrease *= Math.sqrt(enemy.bossSegments);
     }
@@ -3070,9 +3067,10 @@ export default class BattleScene extends SceneBase {
     const newItemModifier = itemModifier.clone() as PokemonHeldItemModifier;
     newItemModifier.pokemonId = target.id;
     const matchingModifier = this.findModifier(
-      m => m instanceof PokemonHeldItemModifier && m.matchType(itemModifier) && m.pokemonId === target.id,
+      (m): m is PokemonHeldItemModifier =>
+        m instanceof PokemonHeldItemModifier && m.matchType(itemModifier) && m.pokemonId === target.id,
       target.isPlayer(),
-    ) as PokemonHeldItemModifier;
+    );
 
     if (matchingModifier) {
       const maxStackCount = matchingModifier.getMaxStackCount();
@@ -3137,9 +3135,10 @@ export default class BattleScene extends SceneBase {
     }
 
     const matchingModifier = this.findModifier(
-      m => m instanceof PokemonHeldItemModifier && m.matchType(mod) && m.pokemonId === target.id,
+      (m): m is PokemonHeldItemModifier =>
+        m instanceof PokemonHeldItemModifier && m.matchType(mod) && m.pokemonId === target.id,
       target.isPlayer(),
-    ) as PokemonHeldItemModifier;
+    );
 
     if (matchingModifier) {
       const maxStackCount = matchingModifier.getMaxStackCount();
@@ -3365,28 +3364,29 @@ export default class BattleScene extends SceneBase {
    * @param modifierType The type of modifier to apply; must extend {@linkcode PersistentModifier}
    * @param player Whether to search the player (`true`) or the enemy (`false`); Defaults to `true`
    * @returns the list of all modifiers that matched `modifierType`.
+   * @deprecated - use `findModifiers`
    */
   getModifiers<T extends PersistentModifier>(modifierType: Constructor<T>, player = true): T[] {
     return (player ? this.modifiers : this.enemyModifiers).filter((m): m is T => m instanceof modifierType);
   }
 
+  findModifiers<T extends PersistentModifier>(modifierFilter: ModifierIdentityPredicate<T>, isPlayer?: boolean): T[];
+  findModifiers(modifierFilter: ModifierPredicate, isPlayer?: boolean): PersistentModifier[];
   /**
    * Get all of the modifiers that pass the `modifierFilter` function
    * @param modifierFilter - The function used to filter a target's modifiers
    * @param isPlayer - Whether to search the player (`true`) or the enemy (`false`) party; default `true`.
    * @returns - An array containing all modifiers that passed the `modifierFilter` function.
    */
-  findModifiers(modifierFilter: ModifierPredicate, isPlayer?: boolean): PersistentModifier[];
-  findModifiers<T extends PersistentModifier>(modifierFilter: ModifierIdentityPredicate<T>, isPlayer?: boolean): T[];
   findModifiers(modifierFilter: ModifierPredicate, isPlayer = true): PersistentModifier[] {
     return (isPlayer ? this.modifiers : this.enemyModifiers).filter(modifierFilter);
   }
 
-  findModifier(modifierFilter: ModifierPredicate, player?: boolean): PersistentModifier | undefined;
   findModifier<T extends PersistentModifier>(
     modifierFilter: ModifierIdentityPredicate<T>,
     player?: boolean,
   ): T | undefined;
+  findModifier(modifierFilter: ModifierPredicate, player?: boolean): PersistentModifier | undefined;
   /**
    * Get the first modifier that passes the `modifierFilter` function.
    * @param modifierFilter - The function used to filter a target's modifiers.
@@ -3503,13 +3503,10 @@ export default class BattleScene extends SceneBase {
       let matchingFormChange: SpeciesFormChange | null;
       if (pokemon.species.speciesId === SpeciesId.NECROZMA && matchingFormChangeOpts.length > 1) {
         // Ultra Necrozma is changing its form back, so we need to figure out into which form it devolves.
-        const formChangeItemModifiers = (
-          this.findModifiers(
-            m => m instanceof PokemonFormChangeItemModifier && m.pokemonId === pokemon.id,
-          ) as PokemonFormChangeItemModifier[]
-        )
-          .filter(m => m.active)
-          .map(m => m.formChangeItem);
+        const formChangeItemModifiers = this.findModifiers(
+          (m): m is PokemonFormChangeItemModifier =>
+            m instanceof PokemonFormChangeItemModifier && m.active && m.pokemonId === pokemon.id,
+        ).map(m => m.formChangeItem);
 
         matchingFormChange = formChangeItemModifiers.includes(FormChangeItem.N_LUNARIZER)
           ? matchingFormChangeOpts[0]
@@ -3691,13 +3688,13 @@ export default class BattleScene extends SceneBase {
   ): void {
     const participantIds = pokemonParticipantIds ?? this.currentBattle.playerParticipantIds;
     const party = this.getPlayerParty();
-    const expShareModifier = this.findModifier(m => m instanceof ExpShareModifier) as ExpShareModifier;
-    const expBalanceModifier = this.findModifier(m => m instanceof ExpBalanceModifier) as ExpBalanceModifier;
+    const expShareModifier = this.findModifier(m => m instanceof ExpShareModifier);
+    const expBalanceModifier = this.findModifier(m => m instanceof ExpBalanceModifier);
     const multipleParticipantExpBonusModifier = this.findModifier(
       m => m instanceof MultipleParticipantExpBonusModifier,
-    ) as MultipleParticipantExpBonusModifier;
-    const nonFaintedPartyMembers = party.filter(p => p.hp);
-    const expPartyMembers = nonFaintedPartyMembers.filter(p => p.level < this.getMaxExpLevel());
+    );
+    const nonFaintedPartyMembers = party.filter(p => p.hp > 0);
+    const expPartyMembers = party.filter(p => p.hp > 0 && p.level < this.getMaxExpLevel());
     const partyMemberExp: number[] = [];
     // EXP value calculation is based off Pokemon.getExpValue
     if (useWaveIndexMultiplier) {

@@ -377,10 +377,8 @@ export class PersistentModifierRequirement extends EncounterSceneRequirement {
     let modifierCount = 0;
     for (const modifier of this.requiredHeldItemModifiers) {
       const matchingMods = globalScene.findModifiers(m => m.constructor.name === modifier);
-      if (matchingMods?.length > 0) {
-        for (const matchingMod of matchingMods) {
-          modifierCount += matchingMod.stackCount;
-        }
+      for (const matchingMod of matchingMods) {
+        modifierCount += matchingMod.stackCount;
       }
     }
 

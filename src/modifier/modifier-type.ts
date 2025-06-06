@@ -394,8 +394,9 @@ export class PokemonHeldItemModifierType extends PokemonModifierType {
       (pokemon: PlayerPokemon) => {
         const dummyModifier = this.newModifier(pokemon);
         const matchingModifier = globalScene.findModifier(
-          m => m instanceof PokemonHeldItemModifier && m.pokemonId === pokemon.id && m.matchType(dummyModifier),
-        ) as PokemonHeldItemModifier;
+          (m): m is PokemonHeldItemModifier =>
+            m instanceof PokemonHeldItemModifier && m.pokemonId === pokemon.id && m.matchType(dummyModifier),
+        );
         const maxStackCount = dummyModifier.getMaxStackCount();
         if (!maxStackCount) {
           return i18next.t("modifierType:ModifierType.PokemonHeldItemModifierType.extra.inoperable", {

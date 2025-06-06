@@ -314,12 +314,10 @@ function tryGiveBerry(prioritizedPokemon?: PlayerPokemon) {
   // Will try to apply to prioritized pokemon first, then do normal application method if it fails
   if (prioritizedPokemon) {
     const heldBerriesOfType = globalScene.findModifier(
-      m =>
-        m instanceof BerryModifier &&
-        m.pokemonId === prioritizedPokemon.id &&
-        (m as BerryModifier).berryType === berryType,
+      (m): m is BerryModifier =>
+        m instanceof BerryModifier && m.pokemonId === prioritizedPokemon.id && m.berryType === berryType,
       true,
-    ) as BerryModifier;
+    );
 
     if (!heldBerriesOfType || heldBerriesOfType.getStackCount() < heldBerriesOfType.getMaxStackCount()) {
       applyModifierTypeToPlayerPokemon(prioritizedPokemon, berry);
@@ -330,9 +328,10 @@ function tryGiveBerry(prioritizedPokemon?: PlayerPokemon) {
   // Iterate over the party until berry was successfully given
   for (const pokemon of party) {
     const heldBerriesOfType = globalScene.findModifier(
-      m => m instanceof BerryModifier && m.pokemonId === pokemon.id && (m as BerryModifier).berryType === berryType,
+      (m): m is BerryModifier =>
+        m instanceof BerryModifier && m.pokemonId === pokemon.id && (m as BerryModifier).berryType === berryType,
       true,
-    ) as BerryModifier;
+    );
 
     if (!heldBerriesOfType || heldBerriesOfType.getStackCount() < heldBerriesOfType.getMaxStackCount()) {
       applyModifierTypeToPlayerPokemon(pokemon, berry);

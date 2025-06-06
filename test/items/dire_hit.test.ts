@@ -64,8 +64,8 @@ describe("Items - Dire Hit", () => {
 
     await game.phaseInterceptor.to(BattleEndPhase);
 
-    const modifier = game.scene.findModifier(m => m instanceof TempCritBoosterModifier) as TempCritBoosterModifier;
-    expect(modifier.getBattleCount()).toBe(4);
+    const modifier = game.scene.findModifier(m => m instanceof TempCritBoosterModifier);
+    expect(modifier?.getBattleCount()).toBe(4);
 
     // Forced DIRE_HIT to spawn in the first slot with override
     game.onNextPrompt(

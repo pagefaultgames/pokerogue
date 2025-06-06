@@ -15,12 +15,7 @@ import {
   getPlayerModifierTypeOptions,
 } from "#app/modifier/modifier-type";
 import type { Modifier } from "#app/modifier/modifier";
-import {
-  ExtraModifierModifier,
-  HealShopCostModifier,
-  PokemonHeldItemModifier,
-  TempExtraModifierModifier,
-} from "#app/modifier/modifier";
+import { ExtraModifierModifier, HealShopCostModifier, TempExtraModifierModifier } from "#app/modifier/modifier";
 import type ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 import { SHOP_OPTIONS_ROW_LIMIT } from "#app/ui/modifier-select-ui-handler";
 import PartyUiHandler, { PartyUiMode, PartyOption } from "#app/ui/party-ui-handler";
@@ -150,12 +145,7 @@ export class SelectModifierPhase extends BattlePhase {
                     fromSlotIndex !== toSlotIndex &&
                     itemIndex > -1
                   ) {
-                    const itemModifiers = globalScene.findModifiers(
-                      m =>
-                        m instanceof PokemonHeldItemModifier &&
-                        m.isTransferable &&
-                        m.pokemonId === party[fromSlotIndex].id,
-                    ) as PokemonHeldItemModifier[];
+                    const itemModifiers = party[toSlotIndex].getHeldItems(true);
                     const itemModifier = itemModifiers[itemIndex];
                     globalScene.tryTransferHeldItemModifier(
                       itemModifier,

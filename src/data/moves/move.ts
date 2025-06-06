@@ -815,7 +815,7 @@ export default class Move implements Localizable {
     applyPreAttackAbAttrs(MoveTypeChangeAbAttr, source, target, this, true, typeChangeHolder, typeChangeMovePowerMultiplier);
 
     const sourceTeraType = source.getTeraType();
-    if (source.isTerastallized && sourceTeraType === this.type && power.value < 60 && this.priority <= 0 && !this.hasAttr(MultiHitAttr) && !globalScene.findModifier(m => m instanceof PokemonMultiHitModifier && m.pokemonId === source.id)) {
+    if (source.isTerastallized && sourceTeraType === this.type && power.value < 60 && this.priority <= 0 && !this.hasAttr(MultiHitAttr) && !globalScene.hasModifier(m => m instanceof PokemonMultiHitModifier && m.pokemonId === source.id)) {
       power.value = 60;
     }
 
@@ -2570,8 +2570,10 @@ export class StealHeldItemChanceAttr extends MoveEffectAttr {
   }
 
   getTargetHeldItems(target: Pokemon): PokemonHeldItemModifier[] {
-    return globalScene.findModifiers(m => m instanceof PokemonHeldItemModifier
-      && m.pokemonId === target.id, target.isPlayer()) as PokemonHeldItemModifier[];
+    return globalScene.findModifiers((m): m is PokemonHeldItemModifier =>
+      m instanceof PokemonHeldItemModifier
+      && m.pokemonId === target.id, target.isPlayer()
+    );
   }
 
   getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
@@ -2652,8 +2654,10 @@ export class RemoveHeldItemAttr extends MoveEffectAttr {
   }
 
   getTargetHeldItems(target: Pokemon): PokemonHeldItemModifier[] {
-    return globalScene.findModifiers(m => m instanceof PokemonHeldItemModifier
-      && m.pokemonId === target.id, target.isPlayer()) as PokemonHeldItemModifier[];
+    return globalScene.findModifiers((m): m is PokemonHeldItemModifier =>
+      m instanceof PokemonHeldItemModifier
+      && m.pokemonId === target.id, target.isPlayer()
+    );
   }
 
   getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
@@ -2712,8 +2716,10 @@ export class EatBerryAttr extends MoveEffectAttr {
   }
 
   getTargetHeldBerries(target: Pokemon): BerryModifier[] {
-    return globalScene.findModifiers(m => m instanceof BerryModifier
-      && (m as BerryModifier).pokemonId === target.id, target.isPlayer()) as BerryModifier[];
+    return globalScene.findModifiers((m): m is BerryModifier =>
+      m instanceof BerryModifier
+      && m.pokemonId === target.id, target.isPlayer()
+    );
   }
 
   reduceBerryModifier(target: Pokemon) {

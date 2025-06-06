@@ -40,7 +40,7 @@ export class SelectBiomePhase extends BattlePhase {
         .filter(b => !Array.isArray(b) || !randSeedInt(b[1]))
         .map(b => (!Array.isArray(b) ? b : b[0]));
 
-      if (biomes.length > 1 && globalScene.findModifier(m => m instanceof MapModifier)) {
+      if (biomes.length > 1 && globalScene.hasModifier(m => m instanceof MapModifier)) {
         const biomeSelectItems = biomes.map(b => {
           const ret: OptionSelectItem = {
             label: getBiomeName(b),

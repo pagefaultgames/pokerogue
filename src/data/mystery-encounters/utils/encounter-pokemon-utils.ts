@@ -404,12 +404,12 @@ export async function applyModifierTypeToPlayerPokemon(
   // Check if the Pokemon has max stacks of that item already
   const modifier = modType.newModifier(pokemon);
   const existing = globalScene.findModifier(
-    m =>
+    (m): m is PokemonHeldItemModifier =>
       m instanceof PokemonHeldItemModifier &&
       m.type.id === modType.id &&
       m.pokemonId === pokemon.id &&
       m.matchType(modifier),
-  ) as PokemonHeldItemModifier;
+  );
 
   // At max stacks
   if (existing && existing.getStackCount() >= existing.getMaxStackCount()) {

@@ -138,7 +138,6 @@ export class SwitchSummonPhase extends SummonPhase {
       return;
     }
 
-
     if (this.switchType === SwitchType.BATON_PASS) {
       // If switching via baton pass, update opposing tags coming from the prior pokemon
       (this.player ? globalScene.getEnemyField() : globalScene.getPlayerField()).forEach((enemyPokemon: Pokemon) =>
@@ -147,17 +146,17 @@ export class SwitchSummonPhase extends SummonPhase {
 
       // If the recipient pokemon lacks a baton, give our baton to it during the swap
       if (
-        !globalScene.findModifier(
+        !globalScene.hasModifier(
           m =>
             m instanceof SwitchEffectTransferModifier &&
             (m as SwitchEffectTransferModifier).pokemonId === switchedInPokemon.id,
         )
       ) {
         const batonPassModifier = globalScene.findModifier(
-          m =>
+          (m): m is SwitchEffectTransferModifier =>
             m instanceof SwitchEffectTransferModifier &&
             (m as SwitchEffectTransferModifier).pokemonId === this.lastPokemon.id,
-        ) as SwitchEffectTransferModifier;
+        );
 
         if (batonPassModifier) {
           globalScene.tryTransferHeldItemModifier(

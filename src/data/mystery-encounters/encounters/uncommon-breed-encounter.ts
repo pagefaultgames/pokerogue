@@ -204,9 +204,7 @@ export const UncommonBreedEncounter: MysteryEncounter = MysteryEncounterBuilder.
 
         // Remove 4 random berries from player's party
         // Get all player berry items, remove from party, and store reference
-        const berryItems: BerryModifier[] = globalScene.findModifiers(
-          m => m instanceof BerryModifier,
-        ) as BerryModifier[];
+        const berryItems = globalScene.findModifiers(m => m instanceof BerryModifier);
         for (let i = 0; i < 4; i++) {
           const index = randSeedInt(berryItems.length);
           const randBerry = berryItems[index];

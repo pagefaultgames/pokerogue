@@ -82,8 +82,9 @@ export class BattleEndPhase extends BattlePhase {
     }
 
     const lapsingModifiers = globalScene.findModifiers(
-      m => m instanceof LapsingPersistentModifier || m instanceof LapsingPokemonHeldItemModifier,
-    ) as (LapsingPersistentModifier | LapsingPokemonHeldItemModifier)[];
+      (m): m is LapsingPersistentModifier | LapsingPokemonHeldItemModifier =>
+        m instanceof LapsingPersistentModifier || m instanceof LapsingPokemonHeldItemModifier,
+    );
     for (const m of lapsingModifiers) {
       const args: any[] = [];
       if (m instanceof LapsingPokemonHeldItemModifier) {

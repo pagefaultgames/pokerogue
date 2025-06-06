@@ -166,7 +166,7 @@ export const DelibirdyEncounter: MysteryEncounter = MysteryEncounterBuilder.with
       .withOptionPhase(async () => {
         // Give the player an Amulet Coin
         // Check if the player has max stacks of that item already
-        const existing = globalScene.findModifier(m => m instanceof MoneyMultiplierModifier) as MoneyMultiplierModifier;
+        const existing = globalScene.findModifier(m => m instanceof MoneyMultiplierModifier);
 
         if (existing && existing.getStackCount() >= existing.getMaxStackCount()) {
           // At max stacks, give the first party pokemon a Shell Bell instead
@@ -247,9 +247,7 @@ export const DelibirdyEncounter: MysteryEncounter = MysteryEncounterBuilder.with
         // Give the player a Candy Jar if they gave a Berry, and a Berry Pouch for Reviver Seed
         if (modifier instanceof BerryModifier) {
           // Check if the player has max stacks of that Candy Jar already
-          const existing = globalScene.findModifier(
-            m => m instanceof LevelIncrementBoosterModifier,
-          ) as LevelIncrementBoosterModifier;
+          const existing = globalScene.findModifier(m => m instanceof LevelIncrementBoosterModifier);
 
           if (existing && existing.getStackCount() >= existing.getMaxStackCount()) {
             // At max stacks, give the first party pokemon a Shell Bell instead
@@ -271,7 +269,7 @@ export const DelibirdyEncounter: MysteryEncounter = MysteryEncounterBuilder.with
           }
         } else {
           // Check if the player has max stacks of that Berry Pouch already
-          const existing = globalScene.findModifier(m => m instanceof PreserveBerryModifier) as PreserveBerryModifier;
+          const existing = globalScene.findModifier(m => m instanceof PreserveBerryModifier);
 
           if (existing && existing.getStackCount() >= existing.getMaxStackCount()) {
             // At max stacks, give the first party pokemon a Shell Bell instead
@@ -357,7 +355,7 @@ export const DelibirdyEncounter: MysteryEncounter = MysteryEncounterBuilder.with
         const chosenPokemon: PlayerPokemon = encounter.misc.chosenPokemon;
 
         // Check if the player has max stacks of Healing Charm already
-        const existing = globalScene.findModifier(m => m instanceof HealingBoosterModifier) as HealingBoosterModifier;
+        const existing = globalScene.findModifier(m => m instanceof HealingBoosterModifier);
 
         if (existing && existing.getStackCount() >= existing.getMaxStackCount()) {
           // At max stacks, give the first party pokemon a Shell Bell instead

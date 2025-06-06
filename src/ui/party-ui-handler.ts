@@ -225,8 +225,9 @@ export default class PartyUiHandler extends MessageUiHandler {
 
   public static FilterItemMaxStacks = (pokemon: PlayerPokemon, modifier: PokemonHeldItemModifier) => {
     const matchingModifier = globalScene.findModifier(
-      m => m instanceof PokemonHeldItemModifier && m.pokemonId === pokemon.id && m.matchType(modifier),
-    ) as PokemonHeldItemModifier;
+      (m): m is PokemonHeldItemModifier =>
+        m instanceof PokemonHeldItemModifier && m.pokemonId === pokemon.id && m.matchType(modifier),
+    );
     if (matchingModifier && matchingModifier.stackCount === matchingModifier.getMaxStackCount()) {
       return i18next.t("partyUiHandler:tooManyItems", { pokemonName: getPokemonNameWithAffix(pokemon, false) });
     }
@@ -552,11 +553,11 @@ export default class PartyUiHandler extends MessageUiHandler {
         // this next bit checks to see if the the selected item from the original transfer pokemon exists on the new pokemon `p`
         // this returns `undefined` if the new pokemon doesn't have the item at all, otherwise it returns the `pokemonHeldItemModifier` for that item
         const matchingModifier = globalScene.findModifier(
-          m =>
+          (m): m is PokemonHeldItemModifier =>
             m instanceof PokemonHeldItemModifier &&
             m.pokemonId === newPokemon.id &&
             m.matchType(this.getTransferrableItemsFromPokemon(pokemon)[this.transferOptionCursor]),
-        ) as PokemonHeldItemModifier;
+        );
         const partySlot = this.partySlots.filter(m => m.getPokemon() === newPokemon)[0]; // this gets pokemon [p] for us
         if (p !== this.transferCursor) {
           // this skips adding the able/not able labels on the pokemon doing the transfer
@@ -1161,9 +1162,9 @@ export default class PartyUiHandler extends MessageUiHandler {
   }
 
   private allowBatonModifierSwitch(): boolean {
-    return !!(
+    return (
       this.partyUiMode !== PartyUiMode.FAINT_SWITCH &&
-      globalScene.findModifier(
+      globalScene.hasModifier(
         m =>
           m instanceof SwitchEffectTransferModifier && m.pokemonId === globalScene.getPlayerField()[this.fieldIndex].id,
       )

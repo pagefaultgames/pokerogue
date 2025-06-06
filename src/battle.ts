@@ -178,14 +178,14 @@ export default class Battle {
     this.postBattleLoot.push(
       ...globalScene
         .findModifiers(
-          m => m instanceof PokemonHeldItemModifier && m.pokemonId === enemyPokemon.id && m.isTransferable,
+          (m): m is PokemonHeldItemModifier =>
+            m instanceof PokemonHeldItemModifier && m.pokemonId === enemyPokemon.id && m.isTransferable,
           false,
         )
         .map(i => {
-          const ret = i as PokemonHeldItemModifier;
-          //@ts-ignore - this is awful to fix/change
-          ret.pokemonId = null;
-          return ret;
+          // @ts-ignore - this is awful to fix/change
+          i.pokemonId = null;
+          return i;
         }),
     );
   }

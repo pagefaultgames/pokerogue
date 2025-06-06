@@ -191,7 +191,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter = MysteryEncounterBuilde
     globalScene.loadSe("Follow Me", "battle_anims", "Follow Me.mp3");
 
     // Get all player berry items, remove from party, and store reference
-    const berryItems = globalScene.findModifiers(m => m instanceof BerryModifier) as BerryModifier[];
+    const berryItems = globalScene.findModifiers(m => m instanceof BerryModifier);
 
     // Sort berries by party member ID to more easily re-add later if necessary
     const berryItemsMap = new Map<number, BerryModifier[]>();
@@ -256,7 +256,7 @@ export const AbsoluteAvariceEncounter: MysteryEncounter = MysteryEncounterBuilde
 
     // Remove the berries from the party
     // Session has been safely saved at this point, so data won't be lost
-    const berryItems = globalScene.findModifiers(m => m instanceof BerryModifier) as BerryModifier[];
+    const berryItems = globalScene.findModifiers(m => m instanceof BerryModifier);
     berryItems.forEach(berryMod => {
       globalScene.removeModifier(berryMod);
     });

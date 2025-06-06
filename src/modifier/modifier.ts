@@ -54,9 +54,6 @@ import {
 } from "#app/data/abilities/ability";
 import { globalScene } from "#app/global-scene";
 
-export type ModifierPredicate = (modifier: Modifier) => boolean;
-export type ModifierIdentityPredicate<T extends Modifier> = (modifier: Modifier) => modifier is T;
-
 const iconOverflowIndex = 24;
 
 export const modifierSortFunc = (a: Modifier, b: Modifier): number => {
@@ -3253,10 +3250,7 @@ export abstract class HeldItemTransferModifier extends PokemonHeldItemModifier {
     }
 
     const transferredModifierTypes: ModifierType[] = [];
-    const itemModifiers = globalScene.findModifiers(
-      m => m instanceof PokemonHeldItemModifier && m.pokemonId === targetPokemon.id && m.isTransferable,
-      targetPokemon.isPlayer(),
-    ) as PokemonHeldItemModifier[];
+    const itemModifiers = targetPokemon.getHeldItems();
 
     for (let i = 0; i < transferredItemCount; i++) {
       if (!itemModifiers.length) {

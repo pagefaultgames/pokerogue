@@ -19,7 +19,9 @@ describe("Abilities - Harvest", () => {
   let game: GameManager;
 
   const getPlayerBerries = () =>
-    game.scene.getModifiers(BerryModifier, true).filter(b => b.pokemonId === game.scene.getPlayerPokemon()?.id);
+    game.scene.findModifiers(
+      (b): b is BerryModifier => b instanceof BerryModifier && b.pokemonId === game.scene.getPlayerPokemon()!.id,
+    );
 
   /** Check whether the player's Modifiers contains the specified berries and nothing else. */
   function expectBerriesContaining(...berries: ModifierOverride[]): void {
