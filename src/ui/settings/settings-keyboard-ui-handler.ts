@@ -10,7 +10,8 @@ import {
 import { reverseValueToKeySetting, truncateString } from "#app/utils/common";
 import AbstractControlSettingsUiHandler from "#app/ui/settings/abstract-control-settings-ui-handler";
 import type { InterfaceConfig } from "#app/inputs-controller";
-import { addTextObject, TextStyle } from "#app/ui/text";
+import { addTextObject } from "#app/ui/text";
+import { TextStyle } from "#enums/text-style";
 import { deleteBind } from "#app/configs/inputs/configHandler";
 import { Device } from "#enums/devices";
 import { NavigationManager } from "#app/ui/settings/navigationMenu";

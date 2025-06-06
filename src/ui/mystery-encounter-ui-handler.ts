@@ -1,4 +1,5 @@
-import { addBBCodeTextObject, getBBCodeFrag, TextStyle } from "./text";
+import { addBBCodeTextObject, getBBCodeFrag } from "./text";
+import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import UiHandler from "./ui-handler";
 import { Button } from "#enums/buttons";

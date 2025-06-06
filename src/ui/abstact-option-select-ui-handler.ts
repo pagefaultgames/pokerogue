@@ -1,5 +1,6 @@
 import { globalScene } from "#app/global-scene";
-import { TextStyle, addBBCodeTextObject, getTextColor, getTextStyleOptions } from "./text";
+import { addBBCodeTextObject, getTextColor, getTextStyleOptions } from "./text";
+import { TextStyle } from "#enums/text-style";
 import { UiMode } from "#enums/ui-mode";
 import UiHandler from "./ui-handler";
 import { addWindow } from "./ui-theme";
