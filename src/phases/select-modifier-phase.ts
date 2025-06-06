@@ -32,6 +32,7 @@ import type { CustomModifierSettings } from "#app/modifier/modifier-type";
 import { isNullOrUndefined, NumberHolder } from "#app/utils/common";
 
 export class SelectModifierPhase extends BattlePhase {
+  public readonly phaseName = "SelectModifierPhase";
   private rerollCount: number;
   private modifierTiers?: ModifierTier[];
   private customModifierSettings?: CustomModifierSettings;

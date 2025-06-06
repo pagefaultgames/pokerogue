@@ -11,6 +11,7 @@ import { applyPostSetStatusAbAttrs, PostSetStatusAbAttr } from "#app/data/abilit
 import { isNullOrUndefined } from "#app/utils/common";
 
 export class ObtainStatusEffectPhase extends PokemonPhase {
+  public readonly phaseName = "ObtainStatusEffectPhase";
   private statusEffect?: StatusEffect;
   private turnsRemaining?: number;
   private sourceText?: string | null;

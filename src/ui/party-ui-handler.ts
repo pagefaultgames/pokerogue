@@ -25,11 +25,10 @@ import { applyChallenges, ChallengeType } from "#app/data/challenge";
 import MoveInfoOverlay from "#app/ui/move-info-overlay";
 import i18next from "i18next";
 import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import { getPokemonNameWithAffix } from "#app/messages";
 import type { CommandPhase } from "#app/phases/command-phase";
-import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import { globalScene } from "#app/global-scene";
 
 const defaultMessage = i18next.t("partyUiHandler:choosePokemon");
@@ -184,7 +183,7 @@ export default class PartyUiHandler extends MessageUiHandler {
   private selectCallback: PartySelectCallback | PartyModifierTransferSelectCallback | null;
   private selectFilter: PokemonSelectFilter | PokemonModifierTransferSelectFilter;
   private moveSelectFilter: PokemonMoveSelectFilter;
-  private tmMoveId: Moves;
+  private tmMoveId: MoveId;
   private showMovePp: boolean;
 
   private iconAnimHandler: PokemonIconAnimHandler;
@@ -346,7 +345,7 @@ export default class PartyUiHandler extends MessageUiHandler {
       args.length > 4 && args[4] instanceof Function
         ? (args[4] as PokemonMoveSelectFilter)
         : PartyUiHandler.FilterAllMoves;
-    this.tmMoveId = args.length > 5 && args[5] ? args[5] : Moves.NONE;
+    this.tmMoveId = args.length > 5 && args[5] ? args[5] : MoveId.NONE;
     this.showMovePp = args.length > 6 && args[6];
 
     this.partyContainer.setVisible(true);
@@ -751,7 +750,7 @@ export default class PartyUiHandler extends MessageUiHandler {
     // TODO: This risks hitting the other options (.MOVE_i and ALL) so does it? Do we need an extra check?
     if (
       option >= PartyOption.FORM_CHANGE_ITEM &&
-      globalScene.getCurrentPhase() instanceof SelectModifierPhase &&
+      globalScene.getCurrentPhase()?.is("SelectModifierPhase") &&
       this.partyUiMode === PartyUiMode.CHECK
     ) {
       const formChangeItemModifiers = this.getFormChangeItemsModifiers(pokemon);
@@ -1165,8 +1164,7 @@ export default class PartyUiHandler extends MessageUiHandler {
       this.partyUiMode !== PartyUiMode.FAINT_SWITCH &&
       globalScene.findModifier(
         m =>
-          m instanceof SwitchEffectTransferModifier &&
-          m.pokemonId === globalScene.getPlayerField()[this.fieldIndex].id,
+          m instanceof SwitchEffectTransferModifier && m.pokemonId === globalScene.getPlayerField()[this.fieldIndex].id,
       )
     );
   }
@@ -1339,7 +1337,7 @@ export default class PartyUiHandler extends MessageUiHandler {
         this.addCommonOptions(pokemon);
         break;
       case PartyUiMode.CHECK:
-        if (globalScene.getCurrentPhase() instanceof SelectModifierPhase) {
+        if (globalScene.getCurrentPhase()?.is("SelectModifierPhase")) {
           const formChangeItemModifiers = this.getFormChangeItemsModifiers(pokemon);
           for (let i = 0; i < formChangeItemModifiers.length; i++) {
             this.options.push(PartyOption.FORM_CHANGE_ITEM + i);
@@ -1579,7 +1577,7 @@ export default class PartyUiHandler extends MessageUiHandler {
       formChangeItemModifiers = formChangeItemModifiers.filter(
         m => m.active || m.formChangeItem === FormChangeItem.ULTRANECROZIUM_Z,
       );
-    } else if (pokemon.species.speciesId === Species.NECROZMA) {
+    } else if (pokemon.species.speciesId === SpeciesId.NECROZMA) {
       // no form is currently active. the user has to activate some form, except ULTRANECROZIUM_Z
       formChangeItemModifiers = formChangeItemModifiers.filter(
         m => m.formChangeItem !== FormChangeItem.ULTRANECROZIUM_Z,
@@ -1654,7 +1652,7 @@ class PartySlot extends Phaser.GameObjects.Container {
     pokemon: PlayerPokemon,
     iconAnimHandler: PokemonIconAnimHandler,
     partyUiMode: PartyUiMode,
-    tmMoveId: Moves,
+    tmMoveId: MoveId,
   ) {
     super(
       globalScene,
@@ -1677,7 +1675,7 @@ class PartySlot extends Phaser.GameObjects.Container {
     return this.pokemon;
   }
 
-  setup(partyUiMode: PartyUiMode, tmMoveId: Moves) {
+  setup(partyUiMode: PartyUiMode, tmMoveId: MoveId) {
     const currentLanguage = i18next.resolvedLanguage ?? "en";
     const offsetJa = currentLanguage === "ja";
 
