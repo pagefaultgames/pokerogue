@@ -279,7 +279,7 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
       const ppPercentLeft = pp / maxPP;
 
       //** Determines TextStyle according to percentage of PP remaining */
-      let ppColorStyle = TextStyle.MOVE_PP_FULL;
+      let ppColorStyle: TextStyle = TextStyle.MOVE_PP_FULL;
       if (ppPercentLeft > 0.25 && ppPercentLeft <= 0.5) {
         ppColorStyle = TextStyle.MOVE_PP_HALF_FULL;
       } else if (ppPercentLeft > 0 && ppPercentLeft <= 0.25) {

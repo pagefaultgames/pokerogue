@@ -74,7 +74,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
     const gachaInfoContainer = globalScene.add.container(160, 46);
 
     const currentLanguage = i18next.resolvedLanguage ?? "en";
-    let gachaTextStyle = TextStyle.WINDOW_ALT;
+    let gachaTextStyle: TextStyle = TextStyle.WINDOW_ALT;
     let gachaX = 4;
     let gachaY = 0;
     let pokemonIconX = -20;
