@@ -1,4 +1,4 @@
-export enum Biome {
+export enum BiomeId {
   // TODO: Should -1 be part of the enum signature (for "unknown place")
   TOWN,
   PLAINS,
