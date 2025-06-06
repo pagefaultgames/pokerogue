@@ -76,7 +76,7 @@ describe("Field - Pokemon ID Checks", () => {
 
     // Player uses Thief and steals the opponent's item
     game.move.select(MoveId.THIEF);
-    await game.phaseInterceptor.to("TurnEndPhase");
+    await game.toNextTurn();
 
     expect(enemy.getHeldItems()).toHaveLength(0);
     expect(player.getHeldItems()).toHaveLength(1);
@@ -94,7 +94,7 @@ describe("Field - Pokemon ID Checks", () => {
     expect(enemy.getTag(BattlerTagType.SYRUP_BOMB)).toBeUndefined();
 
     game.move.select(MoveId.SYRUP_BOMB);
-    await game.phaseInterceptor.to("TurnEndPhase");
+    await game.toNextTurn();
 
     const syrupTag = enemy.getTag(BattlerTagType.SYRUP_BOMB)!;
     expect(syrupTag).toBeDefined();
