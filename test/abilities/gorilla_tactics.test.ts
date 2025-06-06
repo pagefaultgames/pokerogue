@@ -40,7 +40,7 @@ describe("Abilities - Gorilla Tactics", () => {
 
     game.move.select(MoveId.SPLASH);
     await game.move.forceEnemyMove(MoveId.SPLASH);
-    await game.toEndOfTurn()
+    await game.toEndOfTurn();
 
     expect(darmanitan.getStat(Stat.ATK, false)).toBeCloseTo(initialAtkStat * 1.5);
     // Other moves should be restricted

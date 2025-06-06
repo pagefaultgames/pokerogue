@@ -7260,7 +7260,8 @@ export function initAbilities() {
       .edgeCase(),
       /*
       * Incorrectly locks user into petal dance and ticks down its duration
-      * Incorrectly copies ineffective stat-raising/lowering moves + Teeter Dance
+      * Incorrectly copies ineffective stat-raising/lowering moves + Teeter Dance due to lack of failure propagation
+      * Incorrectly considered for protecting moves and similar
       * Displays all the ability popups all at once (as opposed to when the moves are actually being used)
       */
     new Ability(AbilityId.BATTERY, 7)

@@ -150,7 +150,6 @@ describe("Moves - Disable", () => {
     ).toBe(false);
   });
 
-
   it("should ignore dancer copied moves, even if also in moveset", async () => {
     game.override
       .enemyAbility(AbilityId.DANCER)
