@@ -203,13 +203,14 @@ export default class EggGachaUiHandler extends MessageUiHandler {
 
       // Expiration timer for the legendary gacha
       if (gachaType === GachaType.LEGENDARY) {
-        this.legendaryExpiration.setText(this.getLegendaryGachaTimeLeft());
-        this.legendaryExpiration.setFontSize("64px");
-        this.legendaryExpiration.setPositionRelative(
-          gacha,
-          gacha.width / 2 - this.legendaryExpiration.displayWidth / 2 + 0.3,
-          gacha.height / 2 + 12.5,
-        );
+        this.legendaryExpiration
+          .setText(this.getLegendaryGachaTimeLeft())
+          .setFontSize("64px")
+          .setPositionRelative(
+            gacha,
+            gacha.width / 2 - this.legendaryExpiration.displayWidth / 2 + 0.3,
+            gacha.height / 2 + 12.5,
+          );
         gachaContainer.add(this.legendaryExpiration);
       }
 
