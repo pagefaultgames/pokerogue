@@ -148,7 +148,8 @@ const SPECIAL_TUTOR_MOVES = [MoveId.AEROBLAST, MoveId.AIR_SLASH, MoveId.HURRICAN
 
 const SUPPORT_TUTOR_MOVES = [MoveId.FEATHER_DANCE, MoveId.ROOST, MoveId.PLUCK, MoveId.TAILWIND];
 
-describe("Sky Battle - Mystery Encounter", () => {
+// Re-enable when the ME is re-enabled
+describe.todo("Sky Battle - Mystery Encounter", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
   let scene: BattleScene;
