@@ -4,6 +4,7 @@ import type { EndCardPhase } from "./end-card-phase";
 import { TitlePhase } from "./title-phase";
 
 export class PostGameOverPhase extends Phase {
+  public readonly phaseName = "PostGameOverPhase";
   private endCardPhase?: EndCardPhase;
 
   constructor(endCardPhase?: EndCardPhase) {

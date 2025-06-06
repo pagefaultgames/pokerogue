@@ -2838,7 +2838,7 @@ export class CommanderAbAttr extends AbAttr {
       // Apply boosts from this effect to the ally Dondozo
       pokemon.getAlly()?.addTag(BattlerTagType.COMMANDED, 0, MoveId.NONE, pokemon.id);
       // Cancel the source Pokemon's next move (if a move is queued)
-      globalScene.tryRemovePhase((phase) => phase instanceof MovePhase && phase.pokemon === pokemon);
+      globalScene.tryRemovePhase((phase) => phase.is("MovePhase") && phase.pokemon === pokemon);
     }
   }
 }
@@ -6907,7 +6907,7 @@ export function initAbilities() {
       .ignorable(),
     new Ability(AbilityId.ANALYTIC, 5)
       .attr(MovePowerBoostAbAttr, (user, target, move) => {
-        const movePhase = globalScene.findPhase((phase) => phase instanceof MovePhase && phase.pokemon.id !== user?.id);
+        const movePhase = globalScene.findPhase((phase) => phase.is("MovePhase") && phase.pokemon.id !== user?.id);
         return isNullOrUndefined(movePhase);
       }, 1.3),
     new Ability(AbilityId.ILLUSION, 5)

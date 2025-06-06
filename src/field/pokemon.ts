@@ -232,7 +232,6 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import { DamageAnimPhase } from "#app/phases/damage-anim-phase";
 import { FaintPhase } from "#app/phases/faint-phase";
 import { LearnMovePhase } from "#app/phases/learn-move-phase";
-import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { MoveEndPhase } from "#app/phases/move-end-phase";
 import { ObtainStatusEffectPhase } from "#app/phases/obtain-status-effect-phase";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
@@ -1300,7 +1299,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
       // During the Pokemon's MoveEffect phase, the offset is removed to put the Pokemon "in focus"
       const currentPhase = globalScene.getCurrentPhase();
-      if (currentPhase instanceof MoveEffectPhase && currentPhase.getPokemon() === this) {
+      if (currentPhase?.is("MoveEffectPhase") && currentPhase.getPokemon() === this) {
         return false;
       }
       return true;
@@ -4775,7 +4774,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
      */
     if (effect === StatusEffect.SLEEP || effect === StatusEffect.FREEZE) {
       const currentPhase = globalScene.getCurrentPhase();
-      if (currentPhase instanceof MoveEffectPhase && currentPhase.getUserPokemon() === this) {
+      if (currentPhase?.is("MoveEffectPhase") && currentPhase.getUserPokemon() === this) {
         this.turnData.hitCount = 1;
         this.turnData.hitsLeft = 1;
       }
