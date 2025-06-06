@@ -6630,7 +6630,7 @@ export function initAbilities() {
     new Ability(AbilityId.DROUGHT, 3)
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.SUNNY)
       .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.SUNNY),
-    new Ability(Abilities.ARENA_TRAP, 3)
+    new Ability(AbilityId.ARENA_TRAP, 3)
       .attr(ArenaTrapAbAttr, (user, target) => target.isGrounded())
       .attr(DoubleBattleChanceAbAttr),
     new Ability(AbilityId.VITAL_SPIRIT, 3)
