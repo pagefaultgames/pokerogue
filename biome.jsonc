@@ -132,9 +132,16 @@
         "rules": {
           "correctness": {
             "noUnusedImports": "off"
-          },
+          }
+        }
+      }
+    },
+    {
+      "include": ["src/overrides.ts"],
+      "linter": {
+        "rules": {
           "style": {
-            "useImportType": "error"
+            "useImportType": "off"
           }
         }
       }

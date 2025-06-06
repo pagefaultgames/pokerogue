@@ -1,5 +1,5 @@
-import type { BattlerTagLapseType } from "#app/data/battler-tags";
 import type { PostDancingMoveAbAttr } from "#app/data/abilities/ability";
+import type { BattlerTagLapseType } from "#app/data/battler-tags";
 
 /**
  * Enum representing all the possible ways a given move can be executed.
@@ -61,12 +61,6 @@ export enum MoveUseType {
    */
   REFLECTED = 5
 }
-
-/**
- * Comment block to prevent IDE auto-import removal.
- * {@linkcode BattlerTagLapseType}
- * {@linkcode PostDancingMoveAbAttr}
- */
 
 // # HELPER FUNCTIONS
 // Please update the markdown tables if any new `MoveUseType`s get added.
