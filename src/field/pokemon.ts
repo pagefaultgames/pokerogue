@@ -1211,13 +1211,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param transferrableOnly - Whether to only consider transferrable held items; default `false`
    * @returns An array of all {@linkcode PokemonHeldItemModifier}s held by this Pokemon.
    */
-  getHeldItems(transferrableOnly = this.getFusionIconAtlasKey): PokemonHeldItemModifier[] {
+  getHeldItems(transferrableOnly = false): PokemonHeldItemModifier[] {
     if (!globalScene) {
       return [];
     }
     return globalScene.findModifiers(
       (m): m is PokemonHeldItemModifier =>
-        m instanceof PokemonHeldItemModifier && m.pokemonId === this.id && !(transferrableOnly && !m.isTransferable()),
+        m instanceof PokemonHeldItemModifier && m.pokemonId === this.id && (!transferrableOnly || m.isTransferable),
       this.isPlayer(),
     );
   }
