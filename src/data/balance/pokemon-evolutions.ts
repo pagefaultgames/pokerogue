@@ -243,7 +243,7 @@ export class SpeciesFormEvolution {
       const strings: string[] = [];
       let len = 0;
       if (this.level > 1) {
-        strings.push(i18next.t("pokemonEvolutions:level", {lv: this.level}));
+        strings.push(i18next.t("pokemonEvolutions:atLevel", {lv: this.level}));
       }
       if (this.item) {
         const itemDescription = i18next.t(`modifierType:EvolutionItem.${EvolutionItem[this.item].toUpperCase()}`);
