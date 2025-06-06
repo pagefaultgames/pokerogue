@@ -1,8 +1,8 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import Phaser from "phaser";
 import GameManager from "#test/testUtils/gameManager";
-import { Species } from "#enums/species";
-import { Moves } from "#enums/moves";
+import { SpeciesId } from "#enums/species-id";
+import { MoveId } from "#enums/move-id";
 import { LearnMovePhase } from "#app/phases/learn-move-phase";
 import { UiMode } from "#enums/ui-mode";
 import { Button } from "#app/enums/buttons";
@@ -27,11 +27,11 @@ describe("Learn Move Phase", () => {
   });
 
   it("If Pokemon has less than 4 moves, its newest move will be added to the lowest empty index", async () => {
-    game.override.moveset([Moves.SPLASH]);
-    await game.classicMode.startBattle([Species.BULBASAUR]);
+    game.override.moveset([MoveId.SPLASH]);
+    await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
     const pokemon = game.scene.getPlayerPokemon()!;
     const newMovePos = pokemon?.getMoveset().length;
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.doKillOpponents();
     await game.phaseInterceptor.to(LearnMovePhase);
     const levelMove = pokemon.getLevelMoves(5)[0];
@@ -42,13 +42,13 @@ describe("Learn Move Phase", () => {
   });
 
   it("If a pokemon has 4 move slots filled, the chosen move will be deleted and replaced", async () => {
-    await game.classicMode.startBattle([Species.BULBASAUR]);
+    await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
     const bulbasaur = game.scene.getPlayerPokemon()!;
-    const prevMoveset = [Moves.SPLASH, Moves.ABSORB, Moves.ACID, Moves.VINE_WHIP];
+    const prevMoveset = [MoveId.SPLASH, MoveId.ABSORB, MoveId.ACID, MoveId.VINE_WHIP];
     const moveSlotNum = 3;
 
     game.move.changeMoveset(bulbasaur, prevMoveset);
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.doKillOpponents();
 
     // queue up inputs to confirm dialog boxes
@@ -67,18 +67,18 @@ describe("Learn Move Phase", () => {
     expect(bulbasaur.level).toBeGreaterThanOrEqual(levelReq);
     // Check each of mr mime's moveslots to make sure the changed move (and ONLY the changed move) is different
     bulbasaur.getMoveset().forEach((move, index) => {
-      const expectedMove: Moves = index === moveSlotNum ? levelMoveId : prevMoveset[index];
+      const expectedMove: MoveId = index === moveSlotNum ? levelMoveId : prevMoveset[index];
       expect(move?.moveId).toBe(expectedMove);
     });
   });
 
   it("selecting the newly deleted move will reject it and keep old moveset", async () => {
-    await game.classicMode.startBattle([Species.BULBASAUR]);
+    await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
     const bulbasaur = game.scene.getPlayerPokemon()!;
-    const prevMoveset = [Moves.SPLASH, Moves.ABSORB, Moves.ACID, Moves.VINE_WHIP];
+    const prevMoveset = [MoveId.SPLASH, MoveId.ABSORB, MoveId.ACID, MoveId.VINE_WHIP];
 
-    game.move.changeMoveset(bulbasaur, [Moves.SPLASH, Moves.ABSORB, Moves.ACID, Moves.VINE_WHIP]);
-    game.move.select(Moves.SPLASH);
+    game.move.changeMoveset(bulbasaur, [MoveId.SPLASH, MoveId.ABSORB, MoveId.ACID, MoveId.VINE_WHIP]);
+    game.move.select(MoveId.SPLASH);
     await game.doKillOpponents();
 
     // queue up inputs to confirm dialog boxes
