@@ -1873,11 +1873,11 @@ export class HealAttr extends MoveEffectAttr {
   /** Should an animation be shown? */
   private showAnim: boolean;
 
-  constructor(healRatio?: number, showAnim?: boolean, selfTarget?: boolean) {
-    super(selfTarget === undefined || selfTarget);
+  constructor(healRatio = 1, showAnim = false, selfTarget = true) {
+    super(selfTarget);
 
-    this.healRatio = healRatio || 1;
-    this.showAnim = !!showAnim;
+    this.healRatio = healRatio;
+    this.showAnim = showAnim;
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
@@ -2440,49 +2440,82 @@ export class WaterShurikenMultiHitTypeAttr extends ChangeMultiHitTypeAttr {
 
 export class StatusEffectAttr extends MoveEffectAttr {
   public effect: StatusEffect;
-  public turnsRemaining?: number;
-  public overrideStatus: boolean = false;
 
-  constructor(effect: StatusEffect, selfTarget?: boolean, turnsRemaining?: number, overrideStatus: boolean = false) {
+  constructor(effect: StatusEffect, selfTarget = false) {
     super(selfTarget);
 
     this.effect = effect;
-    this.turnsRemaining = turnsRemaining;
-    this.overrideStatus = overrideStatus;
   }
 
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const moveChance = this.getMoveChance(user, target, move, this.selfTarget, true);
     const statusCheck = moveChance < 0 || moveChance === 100 || user.randBattleSeedInt(100) < moveChance;
+    if (!statusCheck) {
+      return false;
+    }
+
+    // non-status moves don't play sound effects for failures
     const quiet = move.category !== MoveCategory.STATUS;
-    if (statusCheck) {
-      const pokemon = this.selfTarget ? user : target;
-      if (user !== target && move.category === MoveCategory.STATUS && !target.canSetStatus(this.effect, quiet, false, user, true)) {
-        return false;
-      }
-      if (((!pokemon.status || this.overrideStatus) || (pokemon.status.effect === this.effect && moveChance < 0))
-        && pokemon.trySetStatus(this.effect, true, user, this.turnsRemaining, null, this.overrideStatus, quiet)) {
-        applyPostAttackAbAttrs(ConfusionOnStatusEffectAbAttr, user, target, move, null, false, this.effect);
-        return true;
-      }
+
+    if (
+      this.doSetStatus(this.selfTarget ? user : target, user, quiet)
+    ) {
+      applyPostAttackAbAttrs(ConfusionOnStatusEffectAbAttr, user, target, move, null, false, this.effect);
+      return true;
     }
     return false;
   }
 
+  /**
+   * Wrapper function to attempt to set status of a pokemon.
+   * Exists to allow super classes to override parameters.
+   * @param pokemon - The {@linkcode Pokemon} being statused.
+   * @param source - The {@linkcode Pokemon} doing the statusing.
+   * @param quiet - Whether to suppress messages for status immunities.
+   * @returns Whether the status was sucessfully applied.
+   * @see {@linkcode Pokemon.trySetStatus}
+   */
+  protected doSetStatus(pokemon: Pokemon, source: Pokemon, quiet: boolean): boolean {
+    return pokemon.trySetStatus(this.effect, true, source, undefined, null, false, quiet)
+  }
+
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
     const moveChance = this.getMoveChance(user, target, move, this.selfTarget, false);
-    const score = (moveChance < 0) ? -10 : Math.floor(moveChance * -0.1);
+    const score = moveChance < 0 ? -10 : Math.floor(moveChance * -0.1);
     const pokemon = this.selfTarget ? user : target;
 
-    return !pokemon.status && pokemon.canSetStatus(this.effect, true, false, user) ? score : 0;
+    return pokemon.canSetStatus(this.effect, true, false, user) ? score : 0;
   }
 }
 
+/**
+ * Attribute to put the target to sleep for a fixed duration and cure its status.
+ * Used for {@linkcode Moves.REST}.
+ */
+export class RestAttr extends StatusEffectAttr {
+  private duration: number;
+
+  constructor(duration: number) {
+    // Sleep is the only duration-based status ATM
+    super(StatusEffect.SLEEP, true);
+    this.duration = duration;
+  }
+
+  // TODO: Add custom text for rest and make `HealAttr` no longer show the message
+  protected override doSetStatus(pokemon: Pokemon, user: Pokemon, quiet: boolean): boolean {
+    return pokemon.trySetStatus(this.effect, true, user, this.duration, null, true, quiet)
+  }
+}
+
+/**
+ * Attribute to randomly apply one of several statuses to the target.
+ * Used for {@linkcode Moves.TRI_ATTACK} and {@linkcode Moves.DIRE_CLAW}.
+ */
 export class MultiStatusEffectAttr extends StatusEffectAttr {
   public effects: StatusEffect[];
 
-  constructor(effects: StatusEffect[], selfTarget?: boolean, turnsRemaining?: number, overrideStatus?: boolean) {
-    super(effects[0], selfTarget, turnsRemaining, overrideStatus);
+  constructor(effects: StatusEffect[], selfTarget?: boolean) {
+    super(effects[0], selfTarget);
     this.effects = effects;
   }
 
@@ -2512,25 +2545,41 @@ export class PsychoShiftEffectAttr extends MoveEffectAttr {
    * @returns `true` if Psycho Shift's effect is able to be applied to the target
    */
   apply(user: Pokemon, target: Pokemon, _move: Move, _args: any[]): boolean {
-    const statusToApply: StatusEffect | undefined = user.status?.effect ?? (user.hasAbility(AbilityId.COMATOSE) ? StatusEffect.SLEEP : undefined);
+    const statusToApply = user.status?.effect ??
+      (user.hasAbility(AbilityId.COMATOSE) ? StatusEffect.SLEEP : undefined);
 
-    if (target.status) {
+    // Bang is justified as condition func returns early if no status is found
+    if (!target.trySetStatus(statusToApply!, true, user)) {
       return false;
-    } else {
-      const canSetStatus = target.canSetStatus(statusToApply, true, false, user);
-      const trySetStatus = canSetStatus ? target.trySetStatus(statusToApply, true, user) : false;
+    }
 
-      if (trySetStatus && user.status) {
-        // PsychoShiftTag is added to the user if move succeeds so that the user is healed of its status effect after its move
-        user.addTag(BattlerTagType.PSYCHO_SHIFT);
+    if (user.status) {
+      // Add tag to user to heal its status effect after the move ends (unless we have comatose);
+      // Occurs after move use to ensure correct Synchronize timing
+      user.addTag(BattlerTagType.PSYCHO_SHIFT)
+    }
+
+    return true;
+  }
+
+  getCondition(): MoveConditionFunc {
+    return (user, target) => {
+      if (target.status?.effect) {
+        return false;
       }
 
-      return trySetStatus;
+      const statusToApply = user.status?.effect ?? (user.hasAbility(AbilityId.COMATOSE) ? StatusEffect.SLEEP : undefined);
+      return !!statusToApply && target.canSetStatus(statusToApply, false, false, user);
     }
   }
 
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
-    return !target.status && target.canSetStatus(user.status?.effect, true, false, user) ? -10 : 0;
+    const statusToApply =
+      user.status?.effect ??
+      (user.hasAbility(AbilityId.COMATOSE) ? StatusEffect.SLEEP : undefined);
+
+      // TODO: Give this a positive user benefit score
+    return !target.status?.effect && statusToApply && target.canSetStatus(statusToApply, true, false, user) ? -10 : 0;
   }
 }
 
@@ -2800,7 +2849,10 @@ export class HealStatusEffectAttr extends MoveEffectAttr {
    */
   constructor(selfTarget: boolean, effects: StatusEffect | StatusEffect[]) {
     super(selfTarget, { lastHitOnly: true });
-    this.effects = [ effects ].flat(1);
+    if (!Array.isArray(effects)) {
+      effects = [ effects ]
+    }
+    this.effects = effects
   }
 
   /**
@@ -8716,10 +8768,11 @@ export function initMoves() {
       .attr(MultiHitAttr, MultiHitType._2)
       .makesContact(false),
     new SelfStatusMove(MoveId.REST, PokemonType.PSYCHIC, -1, 5, -1, 0, 1)
-      .attr(StatusEffectAttr, StatusEffect.SLEEP, true, 3, true)
       .attr(HealAttr, 1, true)
+      .attr(RestAttr, 3)
       .condition((user, target, move) => !user.isFullHp() && user.canSetStatus(StatusEffect.SLEEP, true, true, user))
-      .triageMove(),
+      .triageMove()
+      .edgeCase(), // Lacks unique message in favor of displaying messages for both heal/status cure
     new AttackMove(MoveId.ROCK_SLIDE, PokemonType.ROCK, MoveCategory.PHYSICAL, 75, 90, 10, 30, 0, 1)
       .attr(FlinchAttr)
       .makesContact(false)
@@ -9439,14 +9492,8 @@ export function initMoves() {
       .unimplemented(),
     new StatusMove(MoveId.PSYCHO_SHIFT, PokemonType.PSYCHIC, 100, 10, -1, 0, 4)
       .attr(PsychoShiftEffectAttr)
-      .condition((user, target, move) => {
-        let statusToApply = user.hasAbility(AbilityId.COMATOSE) ? StatusEffect.SLEEP : undefined;
-        if (user.status?.effect && isNonVolatileStatusEffect(user.status.effect)) {
-          statusToApply = user.status.effect;
-        }
-        return !!statusToApply && target.canSetStatus(statusToApply, false, false, user);
-      }
-      ),
+      .edgeCase(),
+      // TODO: Verify status applied if a statused pokemon obtains Comatose (via Transform) and uses Psycho Shift
     new AttackMove(MoveId.TRUMP_CARD, PokemonType.NORMAL, MoveCategory.SPECIAL, -1, -1, 5, -1, 0, 4)
       .makesContact()
       .attr(LessPPMorePowerAttr),
