@@ -3316,9 +3316,23 @@ export default class BattleScene extends SceneBase {
     });
   }
 
-  hasModifier(modifier: PersistentModifier, enemy = false): boolean {
-    const modifiers = !enemy ? this.modifiers : this.enemyModifiers;
-    return modifiers.indexOf(modifier) > -1;
+  /**
+   * Check whether a given predicate function returns `true` for any of a given side's modifiers.
+   * @param predicate - The {@linkcode ModifierPredicate} to check against.
+   * THe predicate function will be called once for each of the given side's modifiers until it returns `true`,
+   * or the end of the array.
+   * @param enemy - Whether to search the enemy (`true`) or player (`false`) side of the field; default `false`
+   */
+  hasModifier(modifier: ModifierPredicate, enemy?: boolean): boolean;
+  /**
+   * Check whether a given PersistentModifier exists on the given side of the field.
+   * @param modifier - The {@linkcode PersistentModifier} to check against.
+   * @param enemy - Whether to search the enemy (`true`) or player (`false`) side of the field; default `false`
+   */
+  hasModifier(modifier: PersistentModifier, enemy?: boolean): boolean;
+  hasModifier(modifier: ModifierPredicate | PersistentModifier, enemy = false): boolean {
+    const modifiers = enemy ? this.enemyModifiers : this.modifiers;
+    return typeof modifier === "function" ? modifiers.some(modifier) : modifiers.indexOf(modifier) > -1;
   }
 
   /**
@@ -3358,24 +3372,26 @@ export default class BattleScene extends SceneBase {
 
   /**
    * Get all of the modifiers that pass the `modifierFilter` function
-   * @param modifierFilter The function used to filter a target's modifiers
-   * @param isPlayer Whether to search the player (`true`) or the enemy (`false`); Defaults to `true`
-   * @returns the list of all modifiers that passed the `modifierFilter` function
+   * @param modifierFilter - The function used to filter a target's modifiers
+   * @param isPlayer - Whether to search the player (`true`) or the enemy (`false`) party; default `true`.
+   * @returns - An array containing all modifiers that passed the `modifierFilter` function.
    */
+  findModifiers(modifierFilter: ModifierPredicate, isPlayer?: boolean): PersistentModifier[];
+  findModifiers<T extends PersistentModifier>(modifierFilter: ModifierIdentityPredicate<T>, isPlayer?: boolean): T[];
   findModifiers(modifierFilter: ModifierPredicate, isPlayer = true): PersistentModifier[] {
     return (isPlayer ? this.modifiers : this.enemyModifiers).filter(modifierFilter);
   }
 
+  findModifier(modifierFilter: ModifierPredicate, player?: boolean): PersistentModifier | undefined;
   findModifier<T extends PersistentModifier>(
     modifierFilter: ModifierIdentityPredicate<T>,
     player?: boolean,
   ): T | undefined;
-  findModifier(modifierFilter: ModifierPredicate, player?: boolean): PersistentModifier | undefined;
   /**
-   * Find the first modifier that pass the `modifierFilter` function
-   * @param modifierFilter The function used to filter a target's modifiers
-   * @param player Whether to search the player (`true`) or the enemy (`false`); Defaults to `true`
-   * @returns the first modifier that passed the `modifierFilter` function; `undefined` if none passed
+   * Get the first modifier that passes the `modifierFilter` function.
+   * @param modifierFilter - The function used to filter a target's modifiers.
+   * @param isPlayer - Whether to search the player (`true`) or the enemy (`false`) party; default `true`.
+   * @returns - The first modifier that passed the `modifierFilter` function, or `undefined` if none are found.
    */
   findModifier(modifierFilter: ModifierPredicate, player = true): PersistentModifier | undefined {
     return (player ? this.modifiers : this.enemyModifiers).find(modifierFilter);

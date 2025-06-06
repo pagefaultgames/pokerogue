@@ -281,7 +281,7 @@ export class SpeciesFormChangeItemTrigger extends SpeciesFormChangeTrigger {
   }
 
   canChange(pokemon: Pokemon): boolean {
-    return !!globalScene.findModifier(
+    return globalScene.hasModifier(
       m =>
         m instanceof PokemonFormChangeItemModifier &&
         m.pokemonId === pokemon.id &&

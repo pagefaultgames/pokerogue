@@ -36,7 +36,7 @@ export class BerryPhase extends FieldPhase {
    * @param pokemon - The {@linkcode Pokemon} to check
    */
   eatBerries(pokemon: Pokemon): void {
-    const hasUsableBerry = !!globalScene.findModifier(
+    const hasUsableBerry = globalScene.hasModifier(
       m => m instanceof BerryModifier && m.shouldApply(pokemon),
       pokemon.isPlayer(),
     );
