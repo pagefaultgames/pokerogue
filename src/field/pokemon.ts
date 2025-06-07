@@ -503,7 +503,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
       if (level > 1) {
         const fused = new BooleanHolder(globalScene.gameMode.isSplicedOnly);
-        if (!fused.value && !this.isPlayer() && !this.hasTrainer()) {
+        if (!fused.value && this.isEnemy() && !this.hasTrainer()) {
           globalScene.applyModifier(EnemyFusionChanceModifier, false, fused);
         }
 
@@ -788,7 +788,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return true;
   }
 
-  abstract isPlayer(): boolean;
+  abstract isPlayer(): this is PlayerPokemon;
+
+  abstract isEnemy(): this is EnemyPokemon;
 
   abstract hasTrainer(): boolean;
 
@@ -2050,7 +2052,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (Overrides.ABILITY_OVERRIDE && this.isPlayer()) {
       return allAbilities[Overrides.ABILITY_OVERRIDE];
     }
-    if (Overrides.OPP_ABILITY_OVERRIDE && !this.isPlayer()) {
+    if (Overrides.OPP_ABILITY_OVERRIDE && this.isEnemy()) {
       return allAbilities[Overrides.OPP_ABILITY_OVERRIDE];
     }
     if (this.isFusion()) {
@@ -2080,7 +2082,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (Overrides.PASSIVE_ABILITY_OVERRIDE && this.isPlayer()) {
       return allAbilities[Overrides.PASSIVE_ABILITY_OVERRIDE];
     }
-    if (Overrides.OPP_PASSIVE_ABILITY_OVERRIDE && !this.isPlayer()) {
+    if (Overrides.OPP_PASSIVE_ABILITY_OVERRIDE && this.isEnemy()) {
       return allAbilities[Overrides.OPP_PASSIVE_ABILITY_OVERRIDE];
     }
     if (!isNullOrUndefined(this.customPokemonData.passive) && this.customPokemonData.passive !== -1) {
@@ -2152,7 +2154,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     // returns override if valid for current case
     if (
       (Overrides.HAS_PASSIVE_ABILITY_OVERRIDE === false && this.isPlayer()) ||
-      (Overrides.OPP_HAS_PASSIVE_ABILITY_OVERRIDE === false && !this.isPlayer())
+      (Overrides.OPP_HAS_PASSIVE_ABILITY_OVERRIDE === false && this.isEnemy())
     ) {
       return false;
     }
@@ -2160,7 +2162,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       ((Overrides.PASSIVE_ABILITY_OVERRIDE !== AbilityId.NONE || Overrides.HAS_PASSIVE_ABILITY_OVERRIDE) &&
         this.isPlayer()) ||
       ((Overrides.OPP_PASSIVE_ABILITY_OVERRIDE !== AbilityId.NONE || Overrides.OPP_HAS_PASSIVE_ABILITY_OVERRIDE) &&
-        !this.isPlayer())
+        this.isEnemy())
     ) {
       return true;
     }
@@ -2169,7 +2171,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const { currentBattle, gameMode } = globalScene;
     const waveIndex = currentBattle?.waveIndex;
     if (
-      this instanceof EnemyPokemon &&
+      this.isEnemy() &&
       (currentBattle?.battleSpec === BattleSpec.FINAL_BOSS ||
         gameMode.isEndlessMinorBoss(waveIndex) ||
         gameMode.isEndlessMajorBoss(waveIndex))
@@ -2979,9 +2981,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     let fusionOverride: PokemonSpecies | undefined = undefined;
 
-    if (forStarter && this instanceof PlayerPokemon && Overrides.STARTER_FUSION_SPECIES_OVERRIDE) {
+    if (forStarter && this.isPlayer() && Overrides.STARTER_FUSION_SPECIES_OVERRIDE) {
       fusionOverride = getPokemonSpecies(Overrides.STARTER_FUSION_SPECIES_OVERRIDE);
-    } else if (this instanceof EnemyPokemon && Overrides.OPP_FUSION_SPECIES_OVERRIDE) {
+    } else if (this.isEnemy() && Overrides.OPP_FUSION_SPECIES_OVERRIDE) {
       fusionOverride = getPokemonSpecies(Overrides.OPP_FUSION_SPECIES_OVERRIDE);
     }
 
@@ -3292,7 +3294,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.battleInfo.setX(this.battleInfo.x + (this.isPlayer() ? 150 : !this.isBoss() ? -150 : -198));
       this.battleInfo.setVisible(true);
       if (this.isPlayer()) {
-        this.battleInfo.expMaskRect.x += 150;
+        // TODO: How do you get this to not require a private property access?
+        this["battleInfo"].expMaskRect.x += 150;
       }
       globalScene.tweens.add({
         targets: [this.battleInfo, this.battleInfo.expMaskRect],
@@ -3313,7 +3316,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           ease: "Cubic.easeIn",
           onComplete: () => {
             if (this.isPlayer()) {
-              this.battleInfo.expMaskRect.x -= 150;
+              // TODO: How do you get this to not require a private property access?
+              this["battleInfo"].expMaskRect.x -= 150;
             }
             this.battleInfo.setVisible(false);
             this.battleInfo.setX(this.battleInfo.x - (this.isPlayer() ? 150 : !this.isBoss() ? -150 : -198));
@@ -3408,7 +3412,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @returns An array of Pokémon on the allied field.
    */
   getAlliedField(): Pokemon[] {
-    return this instanceof PlayerPokemon ? globalScene.getPlayerField() : globalScene.getEnemyField();
+    return this.isPlayer() ? globalScene.getPlayerField() : globalScene.getEnemyField();
   }
 
   /**
@@ -4260,7 +4264,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     // Copy all stat stages
     for (const s of BATTLE_STATS) {
       const sourceStage = source.getStatStage(s);
-      if (this instanceof PlayerPokemon && sourceStage === 6) {
+      if (this.isPlayer() && sourceStage === 6) {
         globalScene.validateAchv(achvs.TRANSFER_MAX_STAT_STAGE);
       }
       this.setStatStage(s, sourceStage);
@@ -5468,7 +5472,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     heldItem.stackCount--;
     if (heldItem.stackCount <= 0) {
-      globalScene.removeModifier(heldItem, !this.isPlayer());
+      globalScene.removeModifier(heldItem, this.isEnemy());
     }
     if (forBattle) {
       applyPostItemLostAbAttrs(PostItemLostAbAttr, this, false);
@@ -5541,15 +5545,19 @@ export class PlayerPokemon extends Pokemon {
     this.battleInfo.initInfo(this);
   }
 
-  isPlayer(): boolean {
+  override isPlayer(): this is PlayerPokemon {
     return true;
   }
 
-  hasTrainer(): boolean {
+  override isEnemy(): this is EnemyPokemon {
+    return false;
+  }
+
+  override hasTrainer(): boolean {
     return true;
   }
 
-  isBoss(): boolean {
+  override isBoss(): boolean {
     return false;
   }
 
@@ -6494,15 +6502,19 @@ export class EnemyPokemon extends Pokemon {
     return [sortedBenefitScores[targetIndex][0]];
   }
 
-  isPlayer() {
+  override isPlayer(): this is PlayerPokemon {
     return false;
   }
 
-  hasTrainer(): boolean {
+  override isEnemy(): this is EnemyPokemon {
+    return true;
+  }
+
+  override hasTrainer(): boolean {
     return !!this.trainerSlot;
   }
 
-  isBoss(): boolean {
+  override isBoss(): boolean {
     return !!this.bossSegments;
   }
 

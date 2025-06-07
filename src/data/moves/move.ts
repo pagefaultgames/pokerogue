@@ -837,7 +837,7 @@ export default class Move implements Localizable {
       aura.applyPreAttack(source, null, simulated, target, this, [ power ]);
     }
 
-    const alliedField: Pokemon[] = source instanceof PlayerPokemon ? globalScene.getPlayerField() : globalScene.getEnemyField();
+    const alliedField: Pokemon[] = source.isPlayer() ? globalScene.getPlayerField() : globalScene.getEnemyField();
     alliedField.forEach(p => applyPreAttackAbAttrs(UserFieldMoveTypePowerBoostAbAttr, p, target, this, simulated, power));
 
     power.value *= typeChangeMovePowerMultiplier.value;
@@ -4125,7 +4125,7 @@ export class FriendshipPowerAttr extends VariablePowerAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const power = args[0] as NumberHolder;
 
-    const friendshipPower = Math.floor(Math.min(user instanceof PlayerPokemon ? user.friendship : user.species.baseFriendship, 255) / 2.5);
+    const friendshipPower = Math.floor(Math.min(user.isPlayer() ? user.friendship : user.species.baseFriendship, 255) / 2.5);
     power.value = Math.max(!this.invert ? friendshipPower : 102 - friendshipPower, 1);
 
     return true;
@@ -6149,14 +6149,14 @@ export class RevivalBlessingAttr extends MoveEffectAttr {
    * @param target {@linkcode Pokemon} target of this move
    * @param move {@linkcode Move} being used
    * @param args N/A
-   * @returns Promise, true if function succeeds.
+   * @returns `true` if function succeeds.
    */
   override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     // If user is player, checks if the user has fainted pokemon
-    if (user instanceof PlayerPokemon) {
+    if (user.isPlayer()) {
       globalScene.unshiftPhase(new RevivalBlessingPhase(user));
       return true;
-    } else if (user instanceof EnemyPokemon && user.hasTrainer() && globalScene.getEnemyParty().findIndex((p) => p.isFainted() && !p.isBoss()) > -1) {
+    } else if (user.isEnemy() && user.hasTrainer() && globalScene.getEnemyParty().findIndex((p) => p.isFainted() && !p.isBoss()) > -1) {
       // If used by an enemy trainer with at least one fainted non-boss Pokemon, this
       // revives one of said Pokemon selected at random.
       const faintedPokemon = globalScene.getEnemyParty().filter((p) => p.isFainted() && !p.isBoss());
@@ -6187,10 +6187,8 @@ export class RevivalBlessingAttr extends MoveEffectAttr {
 
   getCondition(): MoveConditionFunc {
     return (user, target, move) =>
-      (user instanceof PlayerPokemon && globalScene.getPlayerParty().some((p) => p.isFainted())) ||
-      (user instanceof EnemyPokemon &&
-        user.hasTrainer() &&
-        globalScene.getEnemyParty().some((p) => p.isFainted() && !p.isBoss()));
+      user.hasTrainer() &&
+      (user.isPlayer() ? globalScene.getPlayerParty() : globalScene.getEnemyParty()).some((p: Pokemon) => p.isFainted() && !p.isBoss());
   }
 
   override getUserBenefitScore(user: Pokemon, _target: Pokemon, _move: Move): number {
@@ -6228,7 +6226,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
     // (e.g. when it uses Flip Turn), make it spit out the Tatsugiri before switching out.
     switchOutTarget.lapseTag(BattlerTagType.COMMANDED);
 
-    if (switchOutTarget instanceof PlayerPokemon) {
+    if (switchOutTarget.isPlayer()) {
       /**
       * Check if Wimp Out/Emergency Exit activates due to being hit by U-turn or Volt Switch
       * If it did, the user of U-turn or Volt Switch will not be switched out.
@@ -6382,7 +6380,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
   getSwitchOutCondition(): MoveConditionFunc {
     return (user, target, move) => {
       const switchOutTarget = (this.selfSwitch ? user : target);
-      const player = switchOutTarget instanceof PlayerPokemon;
+      const player = switchOutTarget.isPlayer();
       const forceSwitchAttr = move.getAttrs(ForceSwitchOutAttr).find(attr => attr.switchType === SwitchType.FORCE_SWITCH);
 
       if (!this.selfSwitch) {
@@ -9857,7 +9855,7 @@ export function initMoves() {
         const lastEnemyFaint = globalScene.currentBattle.enemyFaintsHistory[globalScene.currentBattle.enemyFaintsHistory.length - 1];
         return (
           (lastPlayerFaint !== undefined && turn - lastPlayerFaint.turn === 1 && user.isPlayer()) ||
-          (lastEnemyFaint !== undefined && turn - lastEnemyFaint.turn === 1 && !user.isPlayer())
+          (lastEnemyFaint !== undefined && turn - lastEnemyFaint.turn === 1 && user.isEnemy())
         ) ? 2 : 1;
       }),
     new AttackMove(MoveId.FINAL_GAMBIT, PokemonType.FIGHTING, MoveCategory.SPECIAL, -1, 100, 5, -1, 0, 5)
