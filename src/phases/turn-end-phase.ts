@@ -8,7 +8,6 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import {
   EnemyTurnHealModifier,
   EnemyStatusEffectHealChanceModifier,
-  TurnStatusEffectModifier,
   TurnHeldItemTransferModifier,
 } from "#app/modifier/modifier";
 import i18next from "i18next";
@@ -55,7 +54,7 @@ export class TurnEndPhase extends FieldPhase {
         applyPostTurnAbAttrs(PostTurnAbAttr, pokemon);
       }
 
-      globalScene.applyModifiers(TurnStatusEffectModifier, pokemon.isPlayer(), pokemon);
+      applyHeldItems(ITEM_EFFECT.TURN_END_STATUS, { pokemon: pokemon });
       globalScene.applyModifiers(TurnHeldItemTransferModifier, pokemon.isPlayer(), pokemon);
 
       pokemon.tempSummonData.turnCount++;

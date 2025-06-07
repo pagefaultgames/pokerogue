@@ -57,8 +57,6 @@ import {
   DamageMoneyRewardModifier,
   EnemyAttackStatusEffectChanceModifier,
   EnemyEndureChanceModifier,
-  FlinchChanceModifier,
-  HitHealModifier,
   PokemonMultiHitModifier,
 } from "#app/modifier/modifier";
 import { PokemonPhase } from "#app/phases/pokemon-phase";
@@ -456,7 +454,7 @@ export class MoveEffectPhase extends PokemonPhase {
 
     if (dealsDamage && !target.hasAbilityWithAttr(IgnoreMoveEffectsAbAttr) && !this.move.hitsSubstitute(user, target)) {
       const flinched = new BooleanHolder(false);
-      globalScene.applyModifiers(FlinchChanceModifier, user.isPlayer(), user, flinched);
+      applyHeldItems(ITEM_EFFECT.FLINCH_CHANCE, { pokemon: user, flinched: flinched });
       if (flinched.value) {
         target.addTag(BattlerTagType.FLINCHED, undefined, this.move.id, user.id);
       }

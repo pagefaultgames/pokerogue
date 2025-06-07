@@ -42,8 +42,6 @@ import type { AttackTypeBoosterModifierType, ModifierTypeOption } from "#app/mod
 import { modifierTypes } from "#app/modifier/modifier-type";
 import type { PokemonHeldItemModifier } from "#app/modifier/modifier";
 import {
-  AttackTypeBoosterModifier,
-  BypassSpeedChanceModifier,
   ContactHeldItemTransferChanceModifier,
   GigantamaxAccessModifier,
   MegaEvolutionAccessModifier,

@@ -4,6 +4,7 @@ import { HeldItemId } from "#enums/held-item-id";
 import type { PokemonType } from "#enums/pokemon-type";
 import { SpeciesId } from "#enums/species-id";
 import { Stat, type PermanentStat } from "#enums/stat";
+import { StatusEffect } from "#enums/status-effect";
 import { ITEM_EFFECT } from "./held-item";
 import {
   type ATTACK_TYPE_BOOST_PARAMS,
@@ -16,7 +17,10 @@ import {
   permanentStatToHeldItem,
 } from "./held-items/base-stat-booster";
 import { type BERRY_PARAMS, BerryHeldItem, berryTypeToHeldItem } from "./held-items/berry";
+import { type BYPASS_SPEED_CHANCE_PARAMS, BypassSpeedChanceHeldItem } from "./held-items/bypass-speed-chance";
+import { type CRIT_BOOST_PARAMS, CritBoostHeldItem, SpeciesCritBoostHeldItem } from "./held-items/crit-booster";
 import { type EXP_BOOST_PARAMS, ExpBoosterHeldItem } from "./held-items/exp-booster";
+import { type FLINCH_CHANCE_PARAMS, FlinchChanceHeldItem } from "./held-items/flinch-chance";
 import { type HIT_HEAL_PARAMS, HitHealHeldItem } from "./held-items/hit-heal";
 import { InstantReviveHeldItem, type INSTANT_REVIVE_PARAMS } from "./held-items/instant-revive";
 import {
@@ -28,8 +32,9 @@ import {
   SpeciesStatBoostHeldItem,
   type STAT_BOOST_PARAMS,
 } from "./held-items/stat-booster";
-import type { TURN_END_HEAL_PARAMS } from "./held-items/turn-end-heal";
-import { TurnEndHealHeldItem } from "./held-items/turn-end-heal";
+import { type SURVIVE_CHANCE_PARAMS, SurviveChanceHeldItem } from "./held-items/survive-chance";
+import { type TURN_END_HEAL_PARAMS, TurnEndHealHeldItem } from "./held-items/turn-end-heal";
+import { type TURN_END_STATUS_PARAMS, TurnEndStatusHeldItem } from "./held-items/turn-end-status";
 
 export const allHeldItems = {};
 
@@ -55,6 +60,7 @@ export function initHeldItems() {
     allHeldItems[heldItemType] = new AttackTypeBoosterHeldItem(heldItemType, 99, pokemonType, 0.2);
   }
 
+  // Items that boost specific stats
   allHeldItems[HeldItemId.EVIOLITE] = new EvolutionStatBoostHeldItem(
     HeldItemId.EVIOLITE,
     1,
@@ -86,11 +92,26 @@ export function initHeldItems() {
     SpeciesId.CLAMPERL,
   ]);
 
+  // Items that boost the crit rate
+  allHeldItems[HeldItemId.SCOPE_LENS] = new CritBoostHeldItem(HeldItemId.SCOPE_LENS, 1, 1);
+  allHeldItems[HeldItemId.LEEK] = new SpeciesCritBoostHeldItem(HeldItemId.LEEK, 1, 2, [
+    SpeciesId.FARFETCHD,
+    SpeciesId.GALAR_FARFETCHD,
+    SpeciesId.SIRFETCHD,
+  ]);
+
   allHeldItems[HeldItemId.LUCKY_EGG] = new ExpBoosterHeldItem(HeldItemId.LUCKY_EGG, 99, 40);
   allHeldItems[HeldItemId.GOLDEN_EGG] = new ExpBoosterHeldItem(HeldItemId.GOLDEN_EGG, 99, 100);
 
   allHeldItems[HeldItemId.LEFTOVERS] = new TurnEndHealHeldItem(HeldItemId.LEFTOVERS, 4);
   allHeldItems[HeldItemId.SHELL_BELL] = new HitHealHeldItem(HeldItemId.SHELL_BELL, 4);
+
+  allHeldItems[HeldItemId.FOCUS_BAND] = new SurviveChanceHeldItem(HeldItemId.FOCUS_BAND, 5);
+  allHeldItems[HeldItemId.QUICK_CLAW] = new BypassSpeedChanceHeldItem(HeldItemId.QUICK_CLAW, 3);
+  allHeldItems[HeldItemId.KINGS_ROCK] = new FlinchChanceHeldItem(HeldItemId.KINGS_ROCK, 3, 10);
+
+  allHeldItems[HeldItemId.FLAME_ORB] = new TurnEndStatusHeldItem(HeldItemId.FLAME_ORB, 1, StatusEffect.BURN);
+  allHeldItems[HeldItemId.TOXIC_ORB] = new TurnEndStatusHeldItem(HeldItemId.TOXIC_ORB, 1, StatusEffect.TOXIC);
 
   // vitamins
   for (const [statKey, heldItemType] of Object.entries(permanentStatToHeldItem)) {
@@ -109,6 +130,11 @@ type APPLY_HELD_ITEMS_PARAMS = {
   [ITEM_EFFECT.BASE_STAT_BOOSTER]: BASE_STAT_BOOSTER_PARAMS;
   [ITEM_EFFECT.INSTANT_REVIVE]: INSTANT_REVIVE_PARAMS;
   [ITEM_EFFECT.STAT_BOOST]: STAT_BOOST_PARAMS;
+  [ITEM_EFFECT.CRIT_BOOST]: CRIT_BOOST_PARAMS;
+  [ITEM_EFFECT.TURN_END_STATUS]: TURN_END_STATUS_PARAMS;
+  [ITEM_EFFECT.SURVIVE_CHANCE]: SURVIVE_CHANCE_PARAMS;
+  [ITEM_EFFECT.BYPASS_SPEED_CHANCE]: BYPASS_SPEED_CHANCE_PARAMS;
+  [ITEM_EFFECT.FLINCH_CHANCE]: FLINCH_CHANCE_PARAMS;
 };
 
 export function applyHeldItems<T extends ITEM_EFFECT>(effect: T, params: APPLY_HELD_ITEMS_PARAMS[T]) {
