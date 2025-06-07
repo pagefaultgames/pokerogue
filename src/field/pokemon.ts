@@ -1,4 +1,4 @@
-import Phaser from "phaser";
+qqimport Phaser from "phaser";
 import type { AnySound } from "#app/battle-scene";
 import type BattleScene from "#app/battle-scene";
 import { globalScene } from "#app/global-scene";
@@ -2323,8 +2323,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       (!this.isOfType(PokemonType.FLYING, true, true) &&
         !this.hasAbility(AbilityId.LEVITATE) &&
         !this.getTag(BattlerTagType.FLOATING) &&
-        !ignoreSemiInvulnerable) ||
-      !this.getTag(SemiInvulnerableTag)
+        !ignoreSemiInvulnerable || !this.getTag(SemiInvulnerableTag)
+      )
     );
   }
 
