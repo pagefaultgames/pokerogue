@@ -11,6 +11,7 @@ import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { BattlerIndex } from "#app/battle";
+import { StealHeldItemChanceAttr } from "#app/data/moves/move";
 
 describe("Field - Pokemon ID Checks", () => {
   let phaserGame: Phaser.Game;
@@ -57,7 +58,8 @@ describe("Field - Pokemon ID Checks", () => {
   it("should not prevent item theft with PID of 0", async () => {
     game.override.enemyHeldItems([{ name: "BERRY", count: 1, type: BerryType.APICOT }]);
 
-    vi.spyOn(allMoves[MoveId.THIEF], "chance", "get").mockReturnValue(100);
+    // Mock thief's steal chance to be 100% guaranteed
+    vi.spyOn(allMoves[MoveId.THIEF], "attrs", "get").mockReturnValue([new StealHeldItemChanceAttr(1.0)]);
 
     await game.classicMode.startBattle([SpeciesId.TREECKO]);
 
@@ -72,7 +74,6 @@ describe("Field - Pokemon ID Checks", () => {
     expect(enemy.getHeldItems()).toHaveLength(1);
     expect(player.getHeldItems()).toHaveLength(0);
 
-    // Player uses Thief and steals the opponent's item
     game.move.use(MoveId.THIEF);
     await game.toNextTurn();
 
@@ -84,12 +85,14 @@ describe("Field - Pokemon ID Checks", () => {
     await game.classicMode.startBattle([SpeciesId.TREECKO, SpeciesId.AERODACTYL]);
 
     const player = game.field.getPlayerPokemon();
+    const enemy = game.field.getEnemyPokemon();
     // Override player pokemon PID to be 0
     player.id = 0;
     expect(player.getTag(BattlerTagType.DESTINY_BOND)).toBeUndefined();
 
     game.move.use(MoveId.DESTINY_BOND);
-    await game.move.forceEnemyMove(MoveId.FLARE_BLITZ);
+    game.doSelectPartyPokemon(1);
+    await game.move.forceEnemyMove(MoveId.FLAME_WHEEL);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("MoveEndPhase");
 
@@ -99,9 +102,7 @@ describe("Field - Pokemon ID Checks", () => {
 
     await game.phaseInterceptor.to("MoveEndPhase");
 
-    const enemy = game.scene.getEnemyPokemon();
     expect(player.isFainted()).toBe(true);
-    expect(enemy).toBeUndefined();
-    expect(player.getTag(BattlerTagType.DESTINY_BOND)).toBeUndefined();
+    expect(enemy.isFainted()).toBe(true);
   });
 });

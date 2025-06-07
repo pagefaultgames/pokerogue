@@ -175,11 +175,12 @@ export default class Battle {
   }
 
   addPostBattleLoot(enemyPokemon: EnemyPokemon): void {
-    this.postBattleLoot.concat(
-      globalScene.findModifiers(
+    // Push used instead of concat to avoid extra allocation
+    this.postBattleLoot.push(
+      ...(globalScene.findModifiers(
         m => m instanceof PokemonHeldItemModifier && m.pokemonId === enemyPokemon.id && m.isTransferable,
         false,
-      ) as PokemonHeldItemModifier[],
+      ) as PokemonHeldItemModifier[]),
     );
   }
 
