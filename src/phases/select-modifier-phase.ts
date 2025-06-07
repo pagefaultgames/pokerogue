@@ -56,6 +56,10 @@ export class SelectModifierPhase extends BattlePhase {
   start() {
     super.start();
 
+    if (!this.isPlayer()) {
+      return false;
+    }
+
     if (!this.rerollCount && !this.isCopy) {
       this.updateSeed();
     } else if (this.rerollCount) {
@@ -156,15 +160,14 @@ export class SelectModifierPhase extends BattlePhase {
 
   // Apply a chosen modifier: do an effect or open the party menu
   private applyChosenModifier(modifierType: ModifierType, cost: number, modifierSelectCallback): boolean {
-    if (modifierType! instanceof PokemonModifierType) {
-      //TODO: is the bang correct?
+    if (modifierType instanceof PokemonModifierType) {
       if (modifierType instanceof FusePokemonModifierType) {
         this.openFusionMenu(modifierType, cost, modifierSelectCallback);
       } else {
         this.openModifierMenu(modifierType, cost, modifierSelectCallback);
       }
     } else {
-      this.applyModifier(modifierType!.newModifier()!); // TODO: is the bang correct?
+      this.applyModifier(modifierType.newModifier()!);
     }
     return !cost;
   }
@@ -349,17 +352,15 @@ export class SelectModifierPhase extends BattlePhase {
   // Function that determines how many reward slots are available
   private getModifierCount(): number {
     const modifierCountHolder = new NumberHolder(3);
-    if (this.isPlayer()) {
-      globalScene.applyModifiers(ExtraModifierModifier, true, modifierCountHolder);
-      globalScene.applyModifiers(TempExtraModifierModifier, true, modifierCountHolder);
-    }
+    globalScene.applyModifiers(ExtraModifierModifier, true, modifierCountHolder);
+    globalScene.applyModifiers(TempExtraModifierModifier, true, modifierCountHolder);
 
     // If custom modifiers are specified, overrides default item count
     if (this.customModifierSettings) {
       const newItemCount =
-        (this.customModifierSettings.guaranteedModifierTiers?.length || 0) +
-        (this.customModifierSettings.guaranteedModifierTypeOptions?.length || 0) +
-        (this.customModifierSettings.guaranteedModifierTypeFuncs?.length || 0);
+        (this.customModifierSettings.guaranteedModifierTiers?.length ?? 0) +
+        (this.customModifierSettings.guaranteedModifierTypeOptions?.length ?? 0) +
+        (this.customModifierSettings.guaranteedModifierTypeFuncs?.length ?? 0);
       if (this.customModifierSettings.fillRemaining) {
         const originalCount = modifierCountHolder.value;
         modifierCountHolder.value = originalCount > newItemCount ? originalCount : newItemCount;
