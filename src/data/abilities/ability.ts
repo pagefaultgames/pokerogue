@@ -2130,7 +2130,6 @@ export class PostIntimidateStatStageChangeAbAttr extends AbAttr {
     if (!simulated) {
       globalScene.unshiftPhase(new StatStageChangePhase(pokemon.getBattlerIndex(), false, this.stats, this.stages));
     }
-    cancelled.value = this.overwrites;
   }
 }
 
