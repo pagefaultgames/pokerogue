@@ -30,7 +30,7 @@ export class ResetNegativeStatStageHeldItem extends ConsumableHeldItem {
   }
 
   get icon(): string {
-    return "shell_bell";
+    return "white_herb";
   }
   /**
    * Goes through the holder's stat stages and, if any are negative, resets that

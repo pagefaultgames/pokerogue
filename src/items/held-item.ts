@@ -12,6 +12,7 @@ export const ITEM_EFFECT = {
   // Should we actually distinguish different berry effects?
   BERRY: 6,
   BASE_STAT_BOOSTER: 7,
+  INSTANT_REVIVE: 8,
 } as const;
 
 export type ITEM_EFFECT = (typeof ITEM_EFFECT)[keyof typeof ITEM_EFFECT];
