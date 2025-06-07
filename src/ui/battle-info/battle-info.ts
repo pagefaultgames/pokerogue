@@ -1,6 +1,7 @@
 import type { default as Pokemon } from "../../field/pokemon";
 import { getLocalizedSpriteKey, fixedInt, getShinyDescriptor } from "#app/utils/common";
-import { addTextObject, TextStyle } from "../text";
+import { addTextObject } from "../text";
+import { TextStyle } from "#enums/text-style";
 import { getGenderSymbol, getGenderColor, Gender } from "../../data/gender";
 import { StatusEffect } from "#enums/status-effect";
 import { globalScene } from "#app/global-scene";

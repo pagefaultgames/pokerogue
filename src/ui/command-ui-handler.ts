@@ -1,4 +1,5 @@
-import { addTextObject, TextStyle } from "./text";
+import { addTextObject } from "./text";
+import { TextStyle } from "#enums/text-style";
 import PartyUiHandler, { PartyUiMode } from "./party-ui-handler";
 import { UiMode } from "#enums/ui-mode";
 import UiHandler from "./ui-handler";

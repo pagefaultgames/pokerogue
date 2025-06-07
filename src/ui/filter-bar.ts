@@ -1,7 +1,8 @@
 import type { DropDown } from "./dropdown";
 import { DropDownType } from "./dropdown";
 import type { StarterContainer } from "./starter-container";
-import { addTextObject, getTextColor, TextStyle } from "./text";
+import { addTextObject, getTextColor } from "./text";
+import { TextStyle } from "#enums/text-style";
 import type { UiTheme } from "#enums/ui-theme";
 import { addWindow, WindowVariant } from "./ui-theme";
 import { globalScene } from "#app/global-scene";
