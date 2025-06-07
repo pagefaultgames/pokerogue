@@ -19,6 +19,7 @@ import { BooleanHolder, toDmgValue } from "#app/utils/common";
 import { CommonAnimPhase } from "./common-anim-phase";
 
 export class WeatherEffectPhase extends CommonAnimPhase {
+  public readonly phaseName = "WeatherEffectPhase";
   public weather: Weather | null;
 
   constructor() {

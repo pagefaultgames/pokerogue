@@ -5,7 +5,7 @@ import UiHandler from "./ui-handler";
 import i18next from "i18next";
 import { Button } from "#enums/buttons";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { CommandPhase } from "#app/phases/command-phase";
+import type { CommandPhase } from "#app/phases/command-phase";
 import { globalScene } from "#app/global-scene";
 import { TerastallizeAccessModifier } from "#app/modifier/modifier";
 import { PokemonType } from "#enums/pokemon-type";
@@ -75,7 +75,7 @@ export default class CommandUiHandler extends UiHandler {
 
     let commandPhase: CommandPhase;
     const currentPhase = globalScene.getCurrentPhase();
-    if (currentPhase instanceof CommandPhase) {
+    if (currentPhase?.is("CommandPhase")) {
       commandPhase = currentPhase;
     } else {
       commandPhase = globalScene.getStandbyPhase() as CommandPhase;
