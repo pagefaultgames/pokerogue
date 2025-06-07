@@ -342,6 +342,7 @@ export class TypeImmunityAbAttr extends PreDefendAbAttr {
   private immuneType: PokemonType | null;
   private condition: AbAttrCondition | null;
 
+  // TODO: `immuneType` shouldn't be able to be `null`
   constructor(immuneType: PokemonType | null, condition?: AbAttrCondition) {
     super(true);
 
@@ -377,6 +378,7 @@ export class TypeImmunityAbAttr extends PreDefendAbAttr {
 }
 
 export class AttackTypeImmunityAbAttr extends TypeImmunityAbAttr {
+  // biome-ignore lint/complexity/noUselessConstructor: Changes the type of `immuneType`
   constructor(immuneType: PokemonType, condition?: AbAttrCondition) {
     super(immuneType, condition);
   }
@@ -398,6 +400,7 @@ export class AttackTypeImmunityAbAttr extends TypeImmunityAbAttr {
 }
 
 export class TypeImmunityHealAbAttr extends TypeImmunityAbAttr {
+  // biome-ignore lint/complexity/noUselessConstructor: Changes the type of `immuneType`
   constructor(immuneType: PokemonType) {
     super(immuneType);
   }
@@ -499,7 +502,7 @@ export class FullHpResistTypeAbAttr extends PreDefendAbAttr {
 
   override canApplyPreDefend(pokemon: Pokemon, _passive: boolean, _simulated: boolean, _attacker: Pokemon, move: Move | null, _cancelled: BooleanHolder | null, args: any[]): boolean {
     const typeMultiplier = args[0];
-    return (typeMultiplier && typeMultiplier instanceof NumberHolder) && !(move && move.hasAttr(FixedDamageAttr)) && pokemon.isFullHp() && typeMultiplier.value > 0.5;
+    return (typeMultiplier instanceof NumberHolder) && !move?.hasAttr(FixedDamageAttr) && pokemon.isFullHp() && typeMultiplier.value > 0.5;
   }
 
   /**
@@ -1006,10 +1009,6 @@ export class PostDefendWeatherChangeAbAttr extends PostDefendAbAttr {
 }
 
 export class PostDefendAbilitySwapAbAttr extends PostDefendAbAttr {
-  constructor() {
-    super();
-  }
-
   override canApplyPostDefend(pokemon: Pokemon, _passive: boolean, _simulated: boolean, attacker: Pokemon, move: Move, _hitResult: HitResult | null, _args: any[]): boolean {
     return move.doesFlagEffectApply({flag: MoveFlags.MAKES_CONTACT, user: attacker, target: pokemon})
       && attacker.getAbility().isSwappable;
@@ -1434,6 +1433,7 @@ export class MoveTypePowerBoostAbAttr extends MovePowerBoostAbAttr {
 }
 
 export class LowHpMoveTypePowerBoostAbAttr extends MoveTypePowerBoostAbAttr {
+  // biome-ignore lint/complexity/noUselessConstructor: Changes the constructor params
   constructor(boostedType: PokemonType) {
     super(boostedType);
   }
@@ -2053,10 +2053,6 @@ export class PostKnockOutStatStageChangeAbAttr extends PostKnockOutAbAttr {
 }
 
 export class CopyFaintedAllyAbilityAbAttr extends PostKnockOutAbAttr {
-  constructor() {
-    super();
-  }
-
   override canApplyPostKnockOut(pokemon: Pokemon, _passive: boolean, _simulated: boolean, knockedOut: Pokemon, _args: any[]): boolean {
     return pokemon.isPlayer() === knockedOut.isPlayer() && knockedOut.getAbility().isCopiable;
   }
@@ -2385,10 +2381,6 @@ export class PostSummonAllyHealAbAttr extends PostSummonAbAttr {
  * @returns if the move was successful
  */
 export class PostSummonClearAllyStatStagesAbAttr extends PostSummonAbAttr {
-  constructor() {
-    super();
-  }
-
   override canApplyPostSummon(pokemon: Pokemon, _passive: boolean, _simulated: boolean, _args: any[]): boolean {
     return pokemon.getAlly()?.isActive(true) ?? false;
   }
@@ -2691,7 +2683,8 @@ export class PostSummonTransformAbAttr extends PostSummonAbAttr {
         if (targets[0].fusionSpecies) {
           target = targets[1];
           return;
-        } else if (targets[1].fusionSpecies) {
+        }
+        if (targets[1].fusionSpecies) {
           target = targets[0];
           return;
         }
@@ -4116,7 +4109,7 @@ export class PostTurnRestoreBerryAbAttr extends PostTurnAbAttr {
 
     // Add the randomly chosen berry or update the existing one
     const berryModifier = globalScene.findModifier(
-      (m) => m instanceof BerryModifier && m.berryType === chosenBerryType && m.pokemonId == pokemon.id,
+      (m) => m instanceof BerryModifier && m.berryType === chosenBerryType && m.pokemonId === pokemon.id,
       pokemon.isPlayer()
     ) as BerryModifier | undefined;
 
@@ -4318,10 +4311,6 @@ export class PostTurnHurtIfSleepingAbAttr extends PostTurnAbAttr {
  * @extends PostTurnAbAttr
  * @see {@linkcode applyPostTurn} */
 export class FetchBallAbAttr extends PostTurnAbAttr {
-  constructor() {
-    super();
-  }
-
   override canApplyPostTurn(pokemon: Pokemon, _passive: boolean, simulated: boolean, _args: any[]): boolean {
     return !simulated && !isNullOrUndefined(globalScene.currentBattle.lastUsedPokeball) && !!pokemon.isPlayer;
   }
@@ -4812,10 +4801,6 @@ export class PostFaintContactDamageAbAttr extends PostFaintAbAttr {
  * Attribute used for abilities (Innards Out) that damage the opponent based on how much HP the last attack used to knock out the owner of the ability.
  */
 export class PostFaintHPDamageAbAttr extends PostFaintAbAttr {
-  constructor() {
-    super ();
-  }
-
   override applyPostFaint(pokemon: Pokemon, _passive: boolean, simulated: boolean, attacker?: Pokemon, move?: Move, _hitResult?: HitResult, ..._args: any[]): void {
     if (move !== undefined && attacker !== undefined && !simulated) { //If the mon didn't die to indirect damage
       const damage = pokemon.turnData.attacksReceived[0].damage;
@@ -5101,10 +5086,6 @@ export class IgnoreTypeStatusEffectImmunityAbAttr extends AbAttr {
  * @see {@linkcode applyPostBattle}
  */
 export class MoneyAbAttr extends PostBattleAbAttr {
-  constructor() {
-    super();
-  }
-
   override canApplyPostBattle(_pokemon: Pokemon, _passive: boolean, simulated: boolean, args: any[]): boolean {
     return !simulated && args[0];
   }
@@ -5461,10 +5442,9 @@ export class TerrainEventTypeChangeAbAttr extends PostSummonAbAttr {
     const pokemonNameWithAffix = getPokemonNameWithAffix(pokemon);
     if (currentTerrain === TerrainType.NONE) {
       return i18next.t("abilityTriggers:pokemonTypeChangeRevert", { pokemonNameWithAffix });
-    } else {
-      const moveType = i18next.t(`pokemonInfo:Type.${PokemonType[this.determineTypeChange(pokemon, currentTerrain)[0]]}`);
-      return i18next.t("abilityTriggers:pokemonTypeChange", { pokemonNameWithAffix, moveType });
     }
+    const moveType = i18next.t(`pokemonInfo:Type.${PokemonType[this.determineTypeChange(pokemon, currentTerrain)[0]]}`);
+    return i18next.t("abilityTriggers:pokemonTypeChange", { pokemonNameWithAffix, moveType });
   }
 }
 
@@ -5736,10 +5716,12 @@ export class PostDamageForceSwitchAbAttr extends PostDamageAbAttr {
           return false;
         // Will not activate if the Pokémon's HP falls below half by a move affected by Sheer Force.
         // TODO: Make this use the sheer force disable condition
-        } else if (allMoves[enemyLastMoveUsed.move].chance >= 0 && source.hasAbility(AbilityId.SHEER_FORCE)) {
+        }
+        if (allMoves[enemyLastMoveUsed.move].chance >= 0 && source.hasAbility(AbilityId.SHEER_FORCE)) {
           return false;
+        }
         // Activate only after the last hit of multistrike moves
-        } else if (source.turnData.hitsLeft > 1) {
+        if (source.turnData.hitsLeft > 1) {
           return false;
         }
         if (source.turnData.hitCount > 1) {
@@ -5916,7 +5898,7 @@ export function applyStatMultiplierAbAttrs(
 export function applyAllyStatMultiplierAbAttrs(attrType: Constructor<AllyStatMultiplierAbAttr>,
   pokemon: Pokemon, stat: BattleStat, statValue: NumberHolder, simulated = false, checkedPokemon: Pokemon, ignoreAbility: boolean, ...args: any[]
 ): void {
-  return applyAbAttrsInternal<AllyStatMultiplierAbAttr>(
+  applyAbAttrsInternal<AllyStatMultiplierAbAttr>(
     attrType,
     pokemon,
     (attr, passive) => attr.applyAllyStat(pokemon, passive, simulated, stat, statValue, checkedPokemon, ignoreAbility, args),
@@ -6111,7 +6093,7 @@ export function applyPreLeaveFieldAbAttrs(
   simulated = false,
   ...args: any[]
 ): void {
-  return applyAbAttrsInternal<PreLeaveFieldAbAttr>(
+  applyAbAttrsInternal<PreLeaveFieldAbAttr>(
     attrType,
     pokemon,
     (attr, passive) =>
