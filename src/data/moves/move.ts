@@ -5472,13 +5472,6 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
     this.failOnOverlap = !!failOnOverlap;
   }
 
-  canApply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (!super.canApply(user, target, move, args)) {
-      return false;
-    }
-    return true;
-  }
-
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!super.apply(user, target, move, args)) {
       return false;
@@ -6832,7 +6825,7 @@ export class RandomMovesetMoveAttr extends CallMoveAttr {
         return false;
       }
 
-      this.moveId = moves[user.randBattleSeedInt(moves.length)]!.moveId;
+      this.moveId = moves[user.randBattleSeedInt(moves.length)].moveId;
       return true;
     };
   }
@@ -7367,11 +7360,7 @@ export class SketchAttr extends MoveEffectAttr {
         return false;
       }
 
-      if (user.getMoveset().find(m => m.moveId === targetMove.move)) {
-        return false;
-      }
-
-      return true;
+      return !user.getMoveset().some(m => m.moveId === targetMove.move);
     };
   }
 }
