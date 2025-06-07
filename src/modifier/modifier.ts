@@ -46,12 +46,7 @@ import {
 } from "./modifier-type";
 import { Color, ShadowColor } from "#enums/color";
 import { FRIENDSHIP_GAIN_FROM_RARE_CANDY } from "#app/data/balance/starters";
-import {
-  applyAbAttrs,
-  applyPostItemLostAbAttrs,
-  CommanderAbAttr,
-  PostItemLostAbAttr,
-} from "#app/data/abilities/ability";
+import { applyPostItemLostAbAttrs, PostItemLostAbAttr } from "#app/data/abilities/ability";
 import { globalScene } from "#app/global-scene";
 
 export type ModifierPredicate = (modifier: Modifier) => boolean;
@@ -1828,52 +1823,6 @@ export class PreserveBerryModifier extends PersistentModifier {
 
   getMaxStackCount(): number {
     return 3;
-  }
-}
-
-export class PokemonInstantReviveModifier extends PokemonHeldItemModifier {
-  matchType(modifier: Modifier) {
-    return modifier instanceof PokemonInstantReviveModifier;
-  }
-
-  clone() {
-    return new PokemonInstantReviveModifier(this.type, this.pokemonId, this.stackCount);
-  }
-
-  /**
-   * Applies {@linkcode PokemonInstantReviveModifier}
-   * @param pokemon The {@linkcode Pokemon} that holds the item
-   * @returns always `true`
-   */
-  override apply(pokemon: Pokemon): boolean {
-    // Restore the Pokemon to half HP
-    globalScene.unshiftPhase(
-      new PokemonHealPhase(
-        pokemon.getBattlerIndex(),
-        toDmgValue(pokemon.getMaxHp() / 2),
-        i18next.t("modifier:pokemonInstantReviveApply", {
-          pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-          typeName: this.type.name,
-        }),
-        false,
-        false,
-        true,
-      ),
-    );
-
-    // Remove the Pokemon's FAINT status
-    pokemon.resetStatus(true, false, true, false);
-
-    // Reapply Commander on the Pokemon's side of the field, if applicable
-    const field = pokemon.isPlayer() ? globalScene.getPlayerField() : globalScene.getEnemyField();
-    for (const p of field) {
-      applyAbAttrs(CommanderAbAttr, p, null, false);
-    }
-    return true;
-  }
-
-  getMaxHeldItemCount(_pokemon: Pokemon): number {
-    return 1;
   }
 }
 
