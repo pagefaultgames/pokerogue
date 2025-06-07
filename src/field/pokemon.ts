@@ -1,4 +1,4 @@
-qqimport Phaser from "phaser";
+import Phaser from "phaser";
 import type { AnySound } from "#app/battle-scene";
 import type BattleScene from "#app/battle-scene";
 import { globalScene } from "#app/global-scene";
