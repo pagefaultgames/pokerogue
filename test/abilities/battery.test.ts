@@ -26,11 +26,12 @@ describe("Abilities - Battery", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("double");
-    game.override.enemySpecies(SpeciesId.SHUCKLE);
-    game.override.enemyAbility(AbilityId.BALL_FETCH);
-    game.override.moveset([MoveId.TACKLE, MoveId.BREAKING_SWIPE, MoveId.SPLASH, MoveId.DAZZLING_GLEAM]);
-    game.override.enemyMoveset(MoveId.SPLASH);
+    game.override
+      .battleStyle("double")
+      .enemySpecies(SpeciesId.SHUCKLE)
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .moveset([MoveId.TACKLE, MoveId.BREAKING_SWIPE, MoveId.SPLASH, MoveId.DAZZLING_GLEAM])
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   it("raises the power of allies' special moves by 30%", async () => {

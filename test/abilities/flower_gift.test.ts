@@ -47,9 +47,10 @@ describe("Abilities - Flower Gift", () => {
     allyAbility = AbilityId.BALL_FETCH,
     enemyAbility = AbilityId.BALL_FETCH,
   ): Promise<[number, number]> => {
-    game.override.battleStyle("double");
-    game.override.moveset([MoveId.SPLASH, MoveId.SUNNY_DAY, move, MoveId.HEAL_PULSE]);
-    game.override.enemyMoveset([MoveId.SPLASH, MoveId.HEAL_PULSE]);
+    game.override
+      .battleStyle("double")
+      .moveset([MoveId.SPLASH, MoveId.SUNNY_DAY, move, MoveId.HEAL_PULSE])
+      .enemyMoveset([MoveId.SPLASH, MoveId.HEAL_PULSE]);
     const target_index = allyAttacker ? BattlerIndex.ENEMY : BattlerIndex.PLAYER_2;
     const attacker_index = allyAttacker ? BattlerIndex.PLAYER_2 : BattlerIndex.ENEMY;
     const ally_move = allyAttacker ? move : MoveId.SPLASH;

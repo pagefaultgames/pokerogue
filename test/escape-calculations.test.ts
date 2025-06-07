@@ -262,8 +262,7 @@ describe("Escape chance calculations", () => {
   }, 20000);
 
   it("double boss opponent", async () => {
-    game.override.battleStyle("double");
-    game.override.startingWave(10);
+    game.override.battleStyle("double").startingWave(10);
     await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.ABOMASNOW]);
 
     const playerPokemon = game.scene.getPlayerField();

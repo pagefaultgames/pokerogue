@@ -73,8 +73,7 @@ describe("Abilities - Flash Fire", () => {
   }, 20000);
 
   it("activated after being frozen", async () => {
-    game.override.enemyMoveset([MoveId.EMBER]).moveset(MoveId.SPLASH);
-    game.override.statusEffect(StatusEffect.FREEZE);
+    game.override.enemyMoveset([MoveId.EMBER]).moveset(MoveId.SPLASH).statusEffect(StatusEffect.FREEZE);
     await game.classicMode.startBattle([SpeciesId.BLISSEY]);
 
     const blissey = game.scene.getPlayerPokemon()!;
@@ -102,8 +101,11 @@ describe("Abilities - Flash Fire", () => {
   }, 20000);
 
   it("boosts Fire-type move when the ability is activated", async () => {
-    game.override.enemyMoveset([MoveId.FIRE_PLEDGE]).moveset([MoveId.EMBER, MoveId.SPLASH]);
-    game.override.enemyAbility(AbilityId.FLASH_FIRE).ability(AbilityId.NONE);
+    game.override
+      .enemyMoveset([MoveId.FIRE_PLEDGE])
+      .moveset([MoveId.EMBER, MoveId.SPLASH])
+      .enemyAbility(AbilityId.FLASH_FIRE)
+      .ability(AbilityId.NONE);
     await game.classicMode.startBattle([SpeciesId.BLISSEY]);
     const blissey = game.scene.getPlayerPokemon()!;
     const initialHP = 1000;
@@ -127,9 +129,12 @@ describe("Abilities - Flash Fire", () => {
   }, 20000);
 
   it("still activates regardless of accuracy check", async () => {
-    game.override.moveset(MoveId.FIRE_PLEDGE).enemyMoveset(MoveId.EMBER);
-    game.override.enemyAbility(AbilityId.NONE).ability(AbilityId.FLASH_FIRE);
-    game.override.enemySpecies(SpeciesId.BLISSEY);
+    game.override
+      .moveset(MoveId.FIRE_PLEDGE)
+      .enemyMoveset(MoveId.EMBER)
+      .enemyAbility(AbilityId.NONE)
+      .ability(AbilityId.FLASH_FIRE)
+      .enemySpecies(SpeciesId.BLISSEY);
     await game.classicMode.startBattle([SpeciesId.RATTATA]);
 
     const blissey = game.scene.getEnemyPokemon()!;

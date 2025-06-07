@@ -21,19 +21,18 @@ describe("Abilities - Perish Song", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("single");
-    game.override.disableCrits();
-
-    game.override.enemySpecies(SpeciesId.MAGIKARP);
-    game.override.enemyAbility(AbilityId.BALL_FETCH);
-
-    game.override.starterSpecies(SpeciesId.CURSOLA);
-    game.override.ability(AbilityId.PERISH_BODY);
-    game.override.moveset([MoveId.SPLASH]);
+    game.override
+      .battleStyle("single")
+      .disableCrits()
+      .enemySpecies(SpeciesId.MAGIKARP)
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .starterSpecies(SpeciesId.CURSOLA)
+      .ability(AbilityId.PERISH_BODY)
+      .moveset([MoveId.SPLASH])
+      .enemyMoveset([MoveId.AQUA_JET]);
   });
 
   it("should trigger when hit with damaging move", async () => {
-    game.override.enemyMoveset([MoveId.AQUA_JET]);
     await game.classicMode.startBattle();
     const cursola = game.scene.getPlayerPokemon();
     const magikarp = game.scene.getEnemyPokemon();
@@ -46,7 +45,7 @@ describe("Abilities - Perish Song", () => {
   });
 
   it("should trigger even when fainting", async () => {
-    game.override.enemyMoveset([MoveId.AQUA_JET]).enemyLevel(100).startingLevel(1);
+    game.override.enemyLevel(100).startingLevel(1);
     await game.classicMode.startBattle([SpeciesId.CURSOLA, SpeciesId.FEEBAS]);
     const magikarp = game.scene.getEnemyPokemon();
 
@@ -87,9 +86,10 @@ describe("Abilities - Perish Song", () => {
   });
 
   it("should activate if cursola already has perish song, but not reset its counter", async () => {
-    game.override.enemyMoveset([MoveId.PERISH_SONG, MoveId.AQUA_JET, MoveId.SPLASH]);
-    game.override.moveset([MoveId.WHIRLWIND, MoveId.SPLASH]);
-    game.override.startingWave(5);
+    game.override
+      .enemyMoveset([MoveId.PERISH_SONG, MoveId.AQUA_JET, MoveId.SPLASH])
+      .moveset([MoveId.WHIRLWIND, MoveId.SPLASH])
+      .startingWave(5);
     await game.classicMode.startBattle([SpeciesId.CURSOLA]);
     const cursola = game.scene.getPlayerPokemon();
 

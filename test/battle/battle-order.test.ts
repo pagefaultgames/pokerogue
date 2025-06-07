@@ -24,11 +24,12 @@ describe("Battle order", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("single");
-    game.override.enemySpecies(SpeciesId.MEWTWO);
-    game.override.enemyAbility(AbilityId.INSOMNIA);
-    game.override.ability(AbilityId.INSOMNIA);
-    game.override.moveset([MoveId.TACKLE]);
+    game.override
+      .battleStyle("single")
+      .enemySpecies(SpeciesId.MEWTWO)
+      .enemyAbility(AbilityId.INSOMNIA)
+      .ability(AbilityId.INSOMNIA)
+      .moveset([MoveId.TACKLE]);
   });
 
   it("opponent faster than player 50 vs 150", async () => {

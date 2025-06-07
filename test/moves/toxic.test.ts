@@ -75,8 +75,7 @@ describe("Moves - Toxic", () => {
   });
 
   it("moves other than Toxic should not hit semi-invulnerable targets even if user is Poison-type", async () => {
-    game.override.moveset(MoveId.SWIFT);
-    game.override.enemyMoveset(MoveId.FLY);
+    game.override.moveset(MoveId.SWIFT).enemyMoveset(MoveId.FLY);
     await game.classicMode.startBattle([SpeciesId.TOXAPEX]);
 
     game.move.select(MoveId.SWIFT);
