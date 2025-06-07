@@ -1,4 +1,4 @@
-export const HeldItems = {
+export const HeldItemId = {
   NONE: 0x0000,
 
   // Berries
@@ -84,13 +84,13 @@ export const HeldItems = {
   CARBOS: 0x0906,
 };
 
-export type HeldItems = (typeof HeldItems)[keyof typeof HeldItems];
+export type HeldItemId = (typeof HeldItemId)[keyof typeof HeldItemId];
 
-type HeldItemName = keyof typeof HeldItems;
-type HeldItemValue = typeof HeldItems[HeldItemName];
+type HeldItemName = keyof typeof HeldItemId;
+type HeldItemValue = typeof HeldItemId[HeldItemName];
 
 // Use a type-safe reducer to force number keys and values
-export const HeldItemNames: Record<HeldItemValue, HeldItemName> = Object.entries(HeldItems).reduce(
+export const HeldItemNames: Record<HeldItemValue, HeldItemName> = Object.entries(HeldItemId).reduce(
   (acc, [key, value]) => {
     acc[value as HeldItemValue] = key as HeldItemName;
     return acc;

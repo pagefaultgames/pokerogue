@@ -1,5 +1,5 @@
 import type Pokemon from "#app/field/pokemon";
-import { HeldItems } from "#enums/held-items";
+import { HeldItemId } from "#enums/held-item-id";
 import { getStatKey, type PermanentStat, Stat } from "#enums/stat";
 import i18next from "i18next";
 import { HeldItem, ITEM_EFFECT } from "../held-item";
@@ -11,16 +11,16 @@ export interface BASE_STAT_BOOSTER_PARAMS {
 }
 
 interface PermanentStatToHeldItemMap {
-  [key: number]: HeldItems;
+  [key: number]: HeldItemId;
 }
 
 export const permanentStatToHeldItem: PermanentStatToHeldItemMap = {
-  [Stat.HP]: HeldItems.HP_UP,
-  [Stat.ATK]: HeldItems.PROTEIN,
-  [Stat.DEF]: HeldItems.IRON,
-  [Stat.SPATK]: HeldItems.CALCIUM,
-  [Stat.SPDEF]: HeldItems.ZINC,
-  [Stat.SPD]: HeldItems.CARBOS,
+  [Stat.HP]: HeldItemId.HP_UP,
+  [Stat.ATK]: HeldItemId.PROTEIN,
+  [Stat.DEF]: HeldItemId.IRON,
+  [Stat.SPATK]: HeldItemId.CALCIUM,
+  [Stat.SPDEF]: HeldItemId.ZINC,
+  [Stat.SPD]: HeldItemId.CARBOS,
 };
 
 export const statBoostItems: Record<PermanentStat, string> = {
@@ -36,7 +36,7 @@ export class BaseStatBoosterHeldItem extends HeldItem {
   public effects: ITEM_EFFECT[] = [ITEM_EFFECT.BASE_STAT_BOOSTER];
   public stat: PermanentStat;
 
-  constructor(type: HeldItems, maxStackCount = 1, stat: PermanentStat) {
+  constructor(type: HeldItemId, maxStackCount = 1, stat: PermanentStat) {
     super(type, maxStackCount);
     this.stat = stat;
   }

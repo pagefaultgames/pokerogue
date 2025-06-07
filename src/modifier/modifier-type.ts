@@ -129,7 +129,7 @@ import { getStatKey, Stat, TEMP_BATTLE_STATS } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import i18next from "i18next";
 import { timedEventManager } from "#app/global-event-manager";
-import { HeldItems } from "#enums/held-items";
+import { HeldItemId } from "#enums/held-item-id";
 import { allHeldItems } from "#app/items/all-held-items";
 import { TYPE_BOOST_ITEM_BOOST_PERCENT } from "#app/constants";
 import { attackTypeToHeldItem } from "#app/items/held-items/attack-type-booster";
@@ -429,8 +429,8 @@ export class PokemonHeldItemModifierType extends PokemonModifierType {
 }
 
 export class PokemonHeldItemReward extends PokemonModifierType {
-  public itemId: HeldItems;
-  constructor(itemId: HeldItems, newModifierFunc: NewModifierFunc, group?: string, soundName?: string) {
+  public itemId: HeldItemId;
+  constructor(itemId: HeldItemId, newModifierFunc: NewModifierFunc, group?: string, soundName?: string) {
     super(
       "",
       "",
@@ -2153,7 +2153,7 @@ export const modifierTypes = {
 
   WHITE_HERB_REWARD: () =>
     new PokemonHeldItemReward(
-      HeldItems.WHITE_HERB,
+      HeldItemId.WHITE_HERB,
       (type, args) => new ResetNegativeStatStageModifier(type, (args[0] as Pokemon).id),
     ),
 
@@ -2316,12 +2316,12 @@ export const modifierTypes = {
 
   LUCKY_EGG_REWARD: () =>
     new PokemonHeldItemReward(
-      HeldItems.LUCKY_EGG,
+      HeldItemId.LUCKY_EGG,
       (type, args) => new ExpBoosterModifier(type, (args[0] as Pokemon).id),
     ),
   GOLDEN_EGG_REWARD: () =>
     new PokemonHeldItemReward(
-      HeldItems.GOLDEN_EGG,
+      HeldItemId.GOLDEN_EGG,
       (type, args) => new ExpBoosterModifier(type, (args[0] as Pokemon).id),
     ),
 
@@ -2459,10 +2459,16 @@ export const modifierTypes = {
     ),
 
   LEFTOVERS_REWARD: () =>
-    new PokemonHeldItemReward(HeldItems.LEFTOVERS, (type, args) => new TurnHealModifier(type, (args[0] as Pokemon).id)),
+    new PokemonHeldItemReward(
+      HeldItemId.LEFTOVERS,
+      (type, args) => new TurnHealModifier(type, (args[0] as Pokemon).id),
+    ),
 
   SHELL_BELL_REWARD: () =>
-    new PokemonHeldItemReward(HeldItems.SHELL_BELL, (type, args) => new HitHealModifier(type, (args[0] as Pokemon).id)),
+    new PokemonHeldItemReward(
+      HeldItemId.SHELL_BELL,
+      (type, args) => new HitHealModifier(type, (args[0] as Pokemon).id),
+    ),
 
   LEFTOVERS: () =>
     new PokemonHeldItemModifierType(
@@ -3778,14 +3784,14 @@ export function getEnemyModifierTypesForWave(
 }
 
 // TODO: Add proper documentation to this function (once it fully works...)
-// TODO: Convert trainer pool to HeldItems too
+// TODO: Convert trainer pool to HeldItemId too
 export function getEnemyHeldItemsForWave(
   waveIndex: number,
   count: number,
   party: EnemyPokemon[],
   poolType: ModifierPoolType.WILD | ModifierPoolType.TRAINER,
   upgradeChance = 0,
-): HeldItems[] {
+): HeldItemId[] {
   const ret = new Array(count).fill(0).map(() => {
     const reward = getNewModifierTypeOption(
       party,
@@ -3797,7 +3803,7 @@ export function getEnemyHeldItemsForWave(
   });
   if (!(waveIndex % 1000)) {
     // TODO: Change this line with the actual held item when implemented
-    ret.push(HeldItems.MINI_BLACK_HOLE);
+    ret.push(HeldItemId.MINI_BLACK_HOLE);
   }
   return ret;
 }

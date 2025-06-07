@@ -1,7 +1,7 @@
 import { applyPostItemLostAbAttrs, PostItemLostAbAttr } from "#app/data/abilities/ability";
 import type Pokemon from "#app/field/pokemon";
 import { globalScene } from "#app/global-scene";
-import type { HeldItems } from "#enums/held-items";
+import type { HeldItemId } from "#enums/held-item-id";
 
 export const ITEM_EFFECT = {
   ATTACK_TYPE_BOOST: 1,
@@ -18,13 +18,13 @@ export type ITEM_EFFECT = (typeof ITEM_EFFECT)[keyof typeof ITEM_EFFECT];
 
 export class HeldItem {
   //  public pokemonId: number;
-  public type: HeldItems;
+  public type: HeldItemId;
   public maxStackCount: number;
   public isTransferable = true;
   public isStealable = true;
   public isSuppressable = true;
 
-  constructor(type: HeldItems, maxStackCount = 1) {
+  constructor(type: HeldItemId, maxStackCount = 1) {
     this.type = type;
     this.maxStackCount = maxStackCount;
 

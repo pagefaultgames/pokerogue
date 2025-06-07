@@ -5,24 +5,24 @@ import { ConsumableHeldItem, ITEM_EFFECT } from "#app/items/held-item";
 import { PreserveBerryModifier } from "#app/modifier/modifier";
 import { BooleanHolder } from "#app/utils/common";
 import { BerryType } from "#enums/berry-type";
-import { HeldItems } from "#enums/held-items";
+import { HeldItemId } from "#enums/held-item-id";
 
 interface BerryTypeToHeldItemMap {
-  [key: number]: HeldItems;
+  [key: number]: HeldItemId;
 }
 
 export const berryTypeToHeldItem: BerryTypeToHeldItemMap = {
-  [BerryType.SITRUS]: HeldItems.SITRUS_BERRY,
-  [BerryType.LUM]: HeldItems.LUM_BERRY,
-  [BerryType.ENIGMA]: HeldItems.ENIGMA_BERRY,
-  [BerryType.LIECHI]: HeldItems.LIECHI_BERRY,
-  [BerryType.GANLON]: HeldItems.GANLON_BERRY,
-  [BerryType.PETAYA]: HeldItems.PETAYA_BERRY,
-  [BerryType.APICOT]: HeldItems.APICOT_BERRY,
-  [BerryType.SALAC]: HeldItems.SALAC_BERRY,
-  [BerryType.LANSAT]: HeldItems.LANSAT_BERRY,
-  [BerryType.STARF]: HeldItems.STARF_BERRY,
-  [BerryType.LEPPA]: HeldItems.LEPPA_BERRY,
+  [BerryType.SITRUS]: HeldItemId.SITRUS_BERRY,
+  [BerryType.LUM]: HeldItemId.LUM_BERRY,
+  [BerryType.ENIGMA]: HeldItemId.ENIGMA_BERRY,
+  [BerryType.LIECHI]: HeldItemId.LIECHI_BERRY,
+  [BerryType.GANLON]: HeldItemId.GANLON_BERRY,
+  [BerryType.PETAYA]: HeldItemId.PETAYA_BERRY,
+  [BerryType.APICOT]: HeldItemId.APICOT_BERRY,
+  [BerryType.SALAC]: HeldItemId.SALAC_BERRY,
+  [BerryType.LANSAT]: HeldItemId.LANSAT_BERRY,
+  [BerryType.STARF]: HeldItemId.STARF_BERRY,
+  [BerryType.LEPPA]: HeldItemId.LEPPA_BERRY,
 };
 
 export interface BERRY_PARAMS {

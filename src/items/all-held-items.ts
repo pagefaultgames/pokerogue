@@ -1,6 +1,6 @@
 import { getEnumValues } from "#app/utils/common";
 import { BerryType } from "#enums/berry-type";
-import { HeldItems } from "#enums/held-items";
+import { HeldItemId } from "#enums/held-item-id";
 import type { PokemonType } from "#enums/pokemon-type";
 import type { PermanentStat } from "#enums/stat";
 import { ITEM_EFFECT } from "./held-item";
@@ -36,11 +36,11 @@ export function initHeldItems() {
     allHeldItems[heldItemType] = new BaseStatBoosterHeldItem(heldItemType, 10, stat);
   }
 
-  allHeldItems[HeldItems.LEFTOVERS] = new TurnEndHealHeldItem(HeldItems.LEFTOVERS, 4);
-  allHeldItems[HeldItems.SHELL_BELL] = new HitHealHeldItem(HeldItems.SHELL_BELL, 4);
+  allHeldItems[HeldItemId.LEFTOVERS] = new TurnEndHealHeldItem(HeldItemId.LEFTOVERS, 4);
+  allHeldItems[HeldItemId.SHELL_BELL] = new HitHealHeldItem(HeldItemId.SHELL_BELL, 4);
 
-  allHeldItems[HeldItems.LUCKY_EGG] = new ExpBoosterHeldItem(HeldItems.LUCKY_EGG, 99, 40);
-  allHeldItems[HeldItems.GOLDEN_EGG] = new ExpBoosterHeldItem(HeldItems.GOLDEN_EGG, 99, 100);
+  allHeldItems[HeldItemId.LUCKY_EGG] = new ExpBoosterHeldItem(HeldItemId.LUCKY_EGG, 99, 40);
+  allHeldItems[HeldItemId.GOLDEN_EGG] = new ExpBoosterHeldItem(HeldItemId.GOLDEN_EGG, 99, 100);
 
   for (const berry of getEnumValues(BerryType)) {
     let maxStackCount: number;

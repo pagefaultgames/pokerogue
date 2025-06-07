@@ -1,4 +1,4 @@
-import { HeldItemNames, HeldItems } from "#enums/held-items";
+import { HeldItemNames, HeldItemId } from "#enums/held-item-id";
 import { PokemonType } from "#enums/pokemon-type";
 import i18next from "i18next";
 import type { NumberHolder } from "#app/utils/common";
@@ -15,28 +15,28 @@ export interface ATTACK_TYPE_BOOST_PARAMS {
 }
 
 interface AttackTypeToHeldItemMap {
-  [key: number]: HeldItems;
+  [key: number]: HeldItemId;
 }
 
 export const attackTypeToHeldItem: AttackTypeToHeldItemMap = {
-  [PokemonType.NORMAL]: HeldItems.SILK_SCARF,
-  [PokemonType.FIGHTING]: HeldItems.BLACK_BELT,
-  [PokemonType.FLYING]: HeldItems.SHARP_BEAK,
-  [PokemonType.POISON]: HeldItems.POISON_BARB,
-  [PokemonType.GROUND]: HeldItems.SOFT_SAND,
-  [PokemonType.ROCK]: HeldItems.HARD_STONE,
-  [PokemonType.BUG]: HeldItems.SILVER_POWDER,
-  [PokemonType.GHOST]: HeldItems.SPELL_TAG,
-  [PokemonType.STEEL]: HeldItems.METAL_COAT,
-  [PokemonType.FIRE]: HeldItems.CHARCOAL,
-  [PokemonType.WATER]: HeldItems.MYSTIC_WATER,
-  [PokemonType.GRASS]: HeldItems.MIRACLE_SEED,
-  [PokemonType.ELECTRIC]: HeldItems.MAGNET,
-  [PokemonType.PSYCHIC]: HeldItems.TWISTED_SPOON,
-  [PokemonType.ICE]: HeldItems.NEVER_MELT_ICE,
-  [PokemonType.DRAGON]: HeldItems.DRAGON_FANG,
-  [PokemonType.DARK]: HeldItems.BLACK_GLASSES,
-  [PokemonType.FAIRY]: HeldItems.FAIRY_FEATHER,
+  [PokemonType.NORMAL]: HeldItemId.SILK_SCARF,
+  [PokemonType.FIGHTING]: HeldItemId.BLACK_BELT,
+  [PokemonType.FLYING]: HeldItemId.SHARP_BEAK,
+  [PokemonType.POISON]: HeldItemId.POISON_BARB,
+  [PokemonType.GROUND]: HeldItemId.SOFT_SAND,
+  [PokemonType.ROCK]: HeldItemId.HARD_STONE,
+  [PokemonType.BUG]: HeldItemId.SILVER_POWDER,
+  [PokemonType.GHOST]: HeldItemId.SPELL_TAG,
+  [PokemonType.STEEL]: HeldItemId.METAL_COAT,
+  [PokemonType.FIRE]: HeldItemId.CHARCOAL,
+  [PokemonType.WATER]: HeldItemId.MYSTIC_WATER,
+  [PokemonType.GRASS]: HeldItemId.MIRACLE_SEED,
+  [PokemonType.ELECTRIC]: HeldItemId.MAGNET,
+  [PokemonType.PSYCHIC]: HeldItemId.TWISTED_SPOON,
+  [PokemonType.ICE]: HeldItemId.NEVER_MELT_ICE,
+  [PokemonType.DRAGON]: HeldItemId.DRAGON_FANG,
+  [PokemonType.DARK]: HeldItemId.BLACK_GLASSES,
+  [PokemonType.FAIRY]: HeldItemId.FAIRY_FEATHER,
 };
 
 export class AttackTypeBoosterHeldItem extends HeldItem {
@@ -45,7 +45,7 @@ export class AttackTypeBoosterHeldItem extends HeldItem {
   public powerBoost: number;
 
   // This constructor may need a revision
-  constructor(type: HeldItems, maxStackCount = 1, moveType: PokemonType, powerBoost: number) {
+  constructor(type: HeldItemId, maxStackCount = 1, moveType: PokemonType, powerBoost: number) {
     super(type, maxStackCount);
     this.moveType = moveType;
     this.powerBoost = powerBoost;

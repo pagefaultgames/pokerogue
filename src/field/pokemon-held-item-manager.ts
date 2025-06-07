@@ -1,5 +1,5 @@
 import { allHeldItems } from "#app/items/all-held-items";
-import type { HeldItems } from "#app/enums/held-items";
+import type { HeldItemId } from "#app/enums/held-item-id";
 
 interface HeldItemProperties {
   stack: number;
@@ -8,7 +8,7 @@ interface HeldItemProperties {
 }
 
 type HeldItemPropertyMap = {
-  [key in HeldItems]: HeldItemProperties;
+  [key in HeldItemId]: HeldItemProperties;
 };
 
 export class PokemonItemManager {
@@ -22,20 +22,20 @@ export class PokemonItemManager {
     return Object.keys(this.heldItems).map(k => Number(k));
   }
 
-  hasItem(itemType: HeldItems): boolean {
+  hasItem(itemType: HeldItemId): boolean {
     return itemType in this.heldItems;
   }
 
-  getItem(itemType: HeldItems): HeldItemProperties {
+  getItem(itemType: HeldItemId): HeldItemProperties {
     // TODO: Not very safe
     return this.heldItems[itemType];
   }
 
-  getStack(itemType: HeldItems): number {
+  getStack(itemType: HeldItemId): number {
     return itemType in this.heldItems ? this.heldItems[itemType].stack : 0;
   }
 
-  add(itemType: HeldItems, addStack = 1) {
+  add(itemType: HeldItemId, addStack = 1) {
     const maxStack = allHeldItems[itemType].getMaxStackCount();
 
     if (this.hasItem(itemType)) {
@@ -46,7 +46,7 @@ export class PokemonItemManager {
     }
   }
 
-  remove(itemType: HeldItems, removeStack = 1) {
+  remove(itemType: HeldItemId, removeStack = 1) {
     this.heldItems[itemType].stack -= removeStack;
 
     if (this.heldItems[itemType].stack <= 0) {
