@@ -1,29 +1,29 @@
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species-id";
 
 /**
  * A list of all {@link https://bulbapedia.bulbagarden.net/wiki/Paradox_Pok%C3%A9mon | Paradox Pokemon}, NOT including the legendaries Miraidon and Koraidon.
  */
 export const NON_LEGEND_PARADOX_POKEMON = [
-  Species.GREAT_TUSK,
-  Species.SCREAM_TAIL,
-  Species.BRUTE_BONNET,
-  Species.FLUTTER_MANE,
-  Species.SLITHER_WING,
-  Species.SANDY_SHOCKS,
-  Species.ROARING_MOON,
-  Species.WALKING_WAKE,
-  Species.GOUGING_FIRE,
-  Species.RAGING_BOLT,
-  Species.IRON_TREADS,
-  Species.IRON_BUNDLE,
-  Species.IRON_HANDS,
-  Species.IRON_JUGULIS,
-  Species.IRON_MOTH,
-  Species.IRON_THORNS,
-  Species.IRON_VALIANT,
-  Species.IRON_LEAVES,
-  Species.IRON_BOULDER,
-  Species.IRON_CROWN,
+  SpeciesId.GREAT_TUSK,
+  SpeciesId.SCREAM_TAIL,
+  SpeciesId.BRUTE_BONNET,
+  SpeciesId.FLUTTER_MANE,
+  SpeciesId.SLITHER_WING,
+  SpeciesId.SANDY_SHOCKS,
+  SpeciesId.ROARING_MOON,
+  SpeciesId.WALKING_WAKE,
+  SpeciesId.GOUGING_FIRE,
+  SpeciesId.RAGING_BOLT,
+  SpeciesId.IRON_TREADS,
+  SpeciesId.IRON_BUNDLE,
+  SpeciesId.IRON_HANDS,
+  SpeciesId.IRON_JUGULIS,
+  SpeciesId.IRON_MOTH,
+  SpeciesId.IRON_THORNS,
+  SpeciesId.IRON_VALIANT,
+  SpeciesId.IRON_LEAVES,
+  SpeciesId.IRON_BOULDER,
+  SpeciesId.IRON_CROWN,
 ];
 
 /**
@@ -32,15 +32,15 @@ export const NON_LEGEND_PARADOX_POKEMON = [
  * Note that all of these Ultra Beasts are still considered Sub-Legendary.
  */
 export const NON_LEGEND_ULTRA_BEASTS = [
-  Species.NIHILEGO,
-  Species.BUZZWOLE,
-  Species.PHEROMOSA,
-  Species.XURKITREE,
-  Species.CELESTEELA,
-  Species.KARTANA,
-  Species.GUZZLORD,
-  Species.POIPOLE,
-  Species.NAGANADEL,
-  Species.STAKATAKA,
-  Species.BLACEPHALON,
+  SpeciesId.NIHILEGO,
+  SpeciesId.BUZZWOLE,
+  SpeciesId.PHEROMOSA,
+  SpeciesId.XURKITREE,
+  SpeciesId.CELESTEELA,
+  SpeciesId.KARTANA,
+  SpeciesId.GUZZLORD,
+  SpeciesId.POIPOLE,
+  SpeciesId.NAGANADEL,
+  SpeciesId.STAKATAKA,
+  SpeciesId.BLACEPHALON,
 ];

@@ -5,7 +5,7 @@ import { rgbHexToRgba, padInt } from "#app/utils/common";
 import { TextStyle, addTextObject } from "#app/ui/text";
 import { speciesEggMoves } from "#app/data/balance/egg-moves";
 import { allMoves } from "#app/data/data-lists";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species-id";
 import { getEggTierForSpecies } from "#app/data/egg";
 import { starterColors } from "#app/global-vars/starter-colors";
 import { globalScene } from "#app/global-scene";
@@ -182,7 +182,7 @@ export default class PokemonHatchInfoContainer extends PokemonInfoContainer {
     // will always have at least one egg move
     this.pokemonEggMovesContainer.setVisible(true);
 
-    if (species.speciesId === Species.MANAPHY || species.speciesId === Species.PHIONE) {
+    if (species.speciesId === SpeciesId.MANAPHY || species.speciesId === SpeciesId.PHIONE) {
       this.pokemonHatchedIcon.setFrame("manaphy");
     } else {
       this.pokemonHatchedIcon.setFrame(getEggTierForSpecies(species));

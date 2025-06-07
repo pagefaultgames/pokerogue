@@ -13,6 +13,7 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import { SpeciesFormKey } from "#enums/species-form-key";
 
 export class FormChangePhase extends EvolutionPhase {
+  public readonly phaseName = "FormChangePhase";
   private formChange: SpeciesFormChange;
   private modal: boolean;
 

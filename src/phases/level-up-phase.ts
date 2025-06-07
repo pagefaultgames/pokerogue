@@ -10,6 +10,7 @@ import { NumberHolder } from "#app/utils/common";
 import i18next from "i18next";
 
 export class LevelUpPhase extends PlayerPartyMemberPokemonPhase {
+  public readonly phaseName = "LevelUpPhase";
   protected lastLevel: number;
   protected level: number;
   protected pokemon: PlayerPokemon = this.getPlayerPokemon();

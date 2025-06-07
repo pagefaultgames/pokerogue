@@ -6,7 +6,6 @@ import { getEncounterText } from "#app/data/mystery-encounters/utils/encounter-d
 import { CheckSwitchPhase } from "#app/phases/check-switch-phase";
 import { GameOverPhase } from "#app/phases/game-over-phase";
 import { NewBattlePhase } from "#app/phases/new-battle-phase";
-import { PostTurnStatusEffectPhase } from "#app/phases/post-turn-status-effect-phase";
 import { ReturnPhase } from "#app/phases/return-phase";
 import { ScanIvsPhase } from "#app/phases/scan-ivs-phase";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
@@ -39,6 +38,7 @@ import { SelectBiomePhase } from "./select-biome-phase";
  * - Queuing of the {@linkcode MysteryEncounterOptionSelectedPhase}
  */
 export class MysteryEncounterPhase extends Phase {
+  public readonly phaseName = "MysteryEncounterPhase";
   private readonly FIRST_DIALOGUE_PROMPT_DELAY = 300;
   optionSelectSettings?: OptionSelectSettings;
 
@@ -180,6 +180,7 @@ export class MysteryEncounterPhase extends Phase {
  * Any phase that is meant to follow this one MUST be queued via the onOptionSelect() logic of the selected option
  */
 export class MysteryEncounterOptionSelectedPhase extends Phase {
+  public readonly phaseName = "MysteryEncounterOptionSelectedPhase";
   onOptionSelect: OptionPhaseCallback;
 
   constructor() {
@@ -221,6 +222,7 @@ export class MysteryEncounterOptionSelectedPhase extends Phase {
  * See {@linkcode TurnEndPhase} for more details
  */
 export class MysteryEncounterBattleStartCleanupPhase extends Phase {
+  public readonly phaseName = "MysteryEncounterBattleStartCleanupPhase";
   /**
    * Cleans up `TURN_END` tags, any {@linkcode PostTurnStatusEffectPhase}s, checks for Pokemon switches, then continues
    */
@@ -245,8 +247,8 @@ export class MysteryEncounterBattleStartCleanupPhase extends Phase {
     });
 
     // Remove any status tick phases
-    while (globalScene.findPhase(p => p instanceof PostTurnStatusEffectPhase)) {
-      globalScene.tryRemovePhase(p => p instanceof PostTurnStatusEffectPhase);
+    while (globalScene.findPhase(p => p.is("PostTurnStatusEffectPhase"))) {
+      globalScene.tryRemovePhase(p => p.is("PostTurnStatusEffectPhase"));
     }
 
     // The total number of Pokemon in the player's party that can legally fight
@@ -284,6 +286,7 @@ export class MysteryEncounterBattleStartCleanupPhase extends Phase {
  * - Queue the {@linkcode SummonPhase}s, {@linkcode PostSummonPhase}s, etc., required to initialize the phase queue for a battle
  */
 export class MysteryEncounterBattlePhase extends Phase {
+  public readonly phaseName = "MysteryEncounterBattlePhase";
   disableSwitch: boolean;
 
   constructor(disableSwitch = false) {
@@ -513,6 +516,7 @@ export class MysteryEncounterBattlePhase extends Phase {
  * - Queuing of the {@linkcode PostMysteryEncounterPhase}
  */
 export class MysteryEncounterRewardsPhase extends Phase {
+  public readonly phaseName = "MysteryEncounterRewardsPhase";
   addHealPhase: boolean;
 
   constructor(addHealPhase = false) {
@@ -558,7 +562,7 @@ export class MysteryEncounterRewardsPhase extends Phase {
     if (encounter.doEncounterRewards) {
       encounter.doEncounterRewards();
     } else if (this.addHealPhase) {
-      globalScene.tryRemovePhase(p => p instanceof SelectModifierPhase);
+      globalScene.tryRemovePhase(p => p.is("SelectModifierPhase"));
       globalScene.unshiftPhase(
         new SelectModifierPhase(0, undefined, {
           fillRemaining: false,
@@ -580,6 +584,7 @@ export class MysteryEncounterRewardsPhase extends Phase {
  * - Queuing of the next wave
  */
 export class PostMysteryEncounterPhase extends Phase {
+  public readonly phaseName = "PostMysteryEncounterPhase";
   private readonly FIRST_DIALOGUE_PROMPT_DELAY = 750;
   onPostOptionSelect?: OptionPhaseCallback;
 

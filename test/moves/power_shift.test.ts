@@ -1,7 +1,7 @@
-import { Moves } from "#app/enums/moves";
-import { Species } from "#app/enums/species";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#app/enums/stat";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/ability-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -22,22 +22,22 @@ describe("Moves - Power Shift", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.POWER_SHIFT, Moves.BULK_UP])
+      .moveset([MoveId.POWER_SHIFT, MoveId.BULK_UP])
       .battleStyle("single")
-      .ability(Abilities.BALL_FETCH)
-      .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset(Moves.SPLASH);
+      .ability(AbilityId.BALL_FETCH)
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   it("switches the user's raw Attack stat with its raw Defense stat", async () => {
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
     const playerPokemon = game.scene.getPlayerPokemon()!;
 
     playerPokemon.setStat(Stat.ATK, 10, false);
     playerPokemon.setStat(Stat.DEF, 20, false);
 
-    game.move.select(Moves.BULK_UP);
+    game.move.select(MoveId.BULK_UP);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
@@ -47,7 +47,7 @@ describe("Moves - Power Shift", () => {
 
     await game.toNextTurn();
 
-    game.move.select(Moves.POWER_SHIFT);
+    game.move.select(MoveId.POWER_SHIFT);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 

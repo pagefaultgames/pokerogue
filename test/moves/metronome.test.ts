@@ -2,12 +2,12 @@ import { BattlerIndex } from "#app/battle";
 import { RechargingTag, SemiInvulnerableTag } from "#app/data/battler-tags";
 import { RandomMoveAttr } from "#app/data/moves/move";
 import { allMoves } from "#app/data/data-lists";
-import { Abilities } from "#app/enums/abilities";
+import { AbilityId } from "#enums/ability-id";
 import { Stat } from "#app/enums/stat";
 import { MoveResult } from "#app/field/pokemon";
 import { CommandPhase } from "#app/phases/command-phase";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, it, expect, vi } from "vitest";
@@ -29,39 +29,39 @@ describe("Moves - Metronome", () => {
   });
 
   beforeEach(() => {
-    randomMoveAttr = allMoves[Moves.METRONOME].getAttrs(RandomMoveAttr)[0];
+    randomMoveAttr = allMoves[MoveId.METRONOME].getAttrs(RandomMoveAttr)[0];
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.METRONOME, Moves.SPLASH])
+      .moveset([MoveId.METRONOME, MoveId.SPLASH])
       .battleStyle("single")
-      .enemySpecies(Species.SHUCKLE)
-      .enemyMoveset(Moves.SPLASH)
-      .enemyAbility(Abilities.STURDY);
+      .enemySpecies(SpeciesId.SHUCKLE)
+      .enemyMoveset(MoveId.SPLASH)
+      .enemyAbility(AbilityId.STURDY);
   });
 
   it("should not be able to copy Moves.NONE", async () => {
-    await game.classicMode.startBattle([Species.REGIELEKI]);
-    const player = game.scene.getPlayerPokemon()!;
+    await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
 
     // Pick the first move available to use
+    const player = game.field.getPlayerPokemon();
     vi.spyOn(player, "randBattleSeedInt").mockReturnValue(0);
-    game.move.select(Moves.METRONOME);
+    game.move.select(MoveId.METRONOME);
     await game.toNextTurn();
 
-    const lastMoveStr = Moves[player.getLastXMoves()[0].move];
-    expect(lastMoveStr).not.toBe(Moves[Moves.NONE]);
-    expect(lastMoveStr).toBe(Moves[1]);
+    const lastMoveStr = MoveId[player.getLastXMoves()[0].move];
+    expect(lastMoveStr).not.toBe(MoveId[MoveId.NONE]);
+    expect(lastMoveStr).toBe(MoveId[1]);
   });
 
   it("should become semi-invulnerable when using phasing moves", async () => {
-    vi.spyOn(randomMoveAttr, "getMove").mockReturnValue(Moves.DIVE);
-    await game.classicMode.startBattle([Species.REGIELEKI]);
+    await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
+    vi.spyOn(randomMoveAttr, "getMove").mockReturnValue(MoveId.DIVE);
 
     const player = game.scene.getPlayerPokemon()!;
     expect(player.getTag(SemiInvulnerableTag)).toBeUndefined();
     expect(player.visible).toBe(true);
 
-    game.move.select(Moves.METRONOME);
+    game.move.select(MoveId.METRONOME);
     await game.toNextTurn();
 
     expect(player.getTag(SemiInvulnerableTag)).toBeDefined();
@@ -76,10 +76,10 @@ describe("Moves - Metronome", () => {
   });
 
   it("should apply secondary effects of the called move", async () => {
-    await game.classicMode.startBattle([Species.REGIELEKI]);
-    vi.spyOn(randomMoveAttr, "getMove").mockReturnValue(Moves.WOOD_HAMMER);
+    await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
+    vi.spyOn(randomMoveAttr, "getMove").mockReturnValue(MoveId.WOOD_HAMMER);
 
-    game.move.select(Moves.METRONOME);
+    game.move.select(MoveId.METRONOME);
     await game.toNextTurn();
 
     const player = game.scene.getPlayerPokemon()!;
@@ -90,11 +90,11 @@ describe("Moves - Metronome", () => {
   });
 
   it("should count as last move used for Copycat/Mirror Move", async () => {
-    game.override.enemyMoveset(Moves.MIRROR_MOVE);
-    vi.spyOn(randomMoveAttr, "getMove").mockReturnValue(Moves.ABSORB);
-    await game.classicMode.startBattle([Species.REGIELEKI]);
+    await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
+    vi.spyOn(randomMoveAttr, "getMove").mockReturnValue(MoveId.ABSORB);
 
-    game.move.select(Moves.METRONOME);
+    game.move.select(MoveId.METRONOME);
+    await game.move.forceEnemyMove(MoveId.MIRROR_MOVE)
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toNextTurn();
 
@@ -107,27 +107,27 @@ describe("Moves - Metronome", () => {
   });
 
   it("should recharge after using recharge moves", async () => {
-    await game.classicMode.startBattle([Species.REGIELEKI]);
+    await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
     const player = game.scene.getPlayerPokemon()!;
-    vi.spyOn(randomMoveAttr, "getMove").mockReturnValue(Moves.HYPER_BEAM);
-    vi.spyOn(allMoves[Moves.HYPER_BEAM], "accuracy", "get").mockReturnValue(100);
+    vi.spyOn(randomMoveAttr, "getMove").mockReturnValue(MoveId.HYPER_BEAM);
+    vi.spyOn(allMoves[MoveId.HYPER_BEAM], "accuracy", "get").mockReturnValue(100);
 
-    game.move.select(Moves.METRONOME);
+    game.move.select(MoveId.METRONOME);
     await game.toNextTurn();
 
-    expect(player.getTag(RechargingTag)).toBeTruthy();
+    expect(player.getTag(RechargingTag)).toBeDefined();
   });
 
   it("should only target ally for Aromatic Mist", async () => {
     game.override.battleStyle("double");
-    await game.classicMode.startBattle([Species.REGIELEKI, Species.RATTATA]);
+    await game.classicMode.startBattle([SpeciesId.REGIELEKI, SpeciesId.RATTATA]);
+
     const [leftPlayer, rightPlayer] = game.scene.getPlayerField();
     const [leftOpp, rightOpp] = game.scene.getEnemyField();
-    vi.spyOn(randomMoveAttr, "getMove").mockReturnValue(Moves.AROMATIC_MIST);
+    vi.spyOn(randomMoveAttr, "getMove").mockReturnValue(MoveId.AROMATIC_MIST);
 
-    game.move.select(Moves.METRONOME, 0);
-    await game.phaseInterceptor.to(CommandPhase);
-    game.move.select(Moves.SPLASH, 1);
+    game.move.select(MoveId.METRONOME, 0);
+    game.move.select(MoveId.SPLASH, 1);
     await game.toNextTurn();
 
     expect(rightPlayer.getStatStage(Stat.SPDEF)).toBe(1);
@@ -137,12 +137,12 @@ describe("Moves - Metronome", () => {
   });
 
   it("should cause opponent to flee when using Roar", async () => {
-    await game.classicMode.startBattle([Species.REGIELEKI]);
-    vi.spyOn(randomMoveAttr, "getMove").mockReturnValue(Moves.ROAR);
+    await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
+    vi.spyOn(randomMoveAttr, "getMove").mockReturnValue(MoveId.ROAR);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.METRONOME);
+    game.move.select(MoveId.METRONOME);
     await game.phaseInterceptor.to("BerryPhase");
 
     const isVisible = enemyPokemon.visible;

@@ -6,6 +6,7 @@ import { NumberHolder } from "#app/utils/common";
 import { BattlePhase } from "./battle-phase";
 
 export class MoneyRewardPhase extends BattlePhase {
+  public readonly phaseName = "MoneyRewardPhase";
   private moneyMultiplier: number;
 
   constructor(moneyMultiplier: number) {

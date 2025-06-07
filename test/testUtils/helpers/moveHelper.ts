@@ -1,14 +1,14 @@
 import type { BattlerIndex } from "#app/battle";
-import { Button } from "#app/enums/buttons";
+import { getMoveTargets } from "#app/data/moves/move";
 import type Pokemon from "#app/field/pokemon";
 import { PokemonMove } from "#app/field/pokemon";
 import Overrides from "#app/overrides";
 import type { CommandPhase } from "#app/phases/command-phase";
-import { LearnMovePhase } from "#app/phases/learn-move-phase";
+import type { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { Command } from "#app/ui/command-ui-handler";
+import { MoveId } from "#enums/move-id";
 import { UiMode } from "#enums/ui-mode";
-import { Moves } from "#enums/moves";
 import { getMovePosition } from "#test/testUtils/gameManagerUtils";
 import { GameManagerHelper } from "#test/testUtils/helpers/gameManagerHelper";
 import { vi } from "vitest";
@@ -50,7 +50,7 @@ export class MoveHelper extends GameManagerHelper {
    * @param pkmIndex - the pokemon index. Relevant for double-battles only (defaults to 0)
    * @param targetIndex - The {@linkcode BattlerIndex} of the Pokemon to target for single-target moves, or `null` if a manual call to `selectTarget()` is required
    */
-  public select(move: Moves, pkmIndex: 0 | 1 = 0, targetIndex?: BattlerIndex | null) {
+  public select(move: MoveId, pkmIndex: 0 | 1 = 0, targetIndex?: BattlerIndex | null) {
     const movePosition = getMovePosition(this.game.scene, pkmIndex, move);
 
     this.game.onNextPrompt("CommandPhase", UiMode.COMMAND, () => {
@@ -72,7 +72,7 @@ export class MoveHelper extends GameManagerHelper {
    * @param pkmIndex - the pokemon index. Relevant for double-battles only (defaults to 0)
    * @param targetIndex - The {@linkcode BattlerIndex} of the Pokemon to target for single-target moves, or `null` if a manual call to `selectTarget()` is required
    */
-  public selectWithTera(move: Moves, pkmIndex: 0 | 1 = 0, targetIndex?: BattlerIndex | null) {
+  public selectWithTera(move: MoveId, pkmIndex: 0 | 1 = 0, targetIndex?: BattlerIndex | null) {
     const movePosition = getMovePosition(this.game.scene, pkmIndex, move);
     this.game.scene.getPlayerParty()[pkmIndex].isTerastallized = false;
 
@@ -90,6 +90,35 @@ export class MoveHelper extends GameManagerHelper {
     if (targetIndex !== null) {
       this.game.selectTarget(movePosition, targetIndex);
     }
+  }
+
+  /**
+   * Modifies a player pokemon's moveset to contain only the selected move and then
+   * selects it to be used during the next {@linkcode CommandPhase}.
+   *
+   * Warning: Will disable the player moveset override if it is enabled!
+   *
+   * Note: If you need to check for changes in the player's moveset as part of the test, it may be
+   * best to use {@linkcode changeMoveset} and {@linkcode select} instead.
+   * @param moveId - the move to use
+   * @param pkmIndex - the pokemon index. Relevant for double-battles only (defaults to 0)
+   * @param targetIndex - (optional) The {@linkcode BattlerIndex} of the Pokemon to target for single-target moves, or `null` if a manual call to `selectTarget()` is required
+   * @param useTera - If `true`, the Pokemon also chooses to Terastallize. This does not require a Tera Orb. Default: `false`.
+   */
+  public use(moveId: MoveId, pkmIndex: 0 | 1 = 0, targetIndex?: BattlerIndex | null, useTera = false): void {
+    if ([Overrides.MOVESET_OVERRIDE].flat().length > 0) {
+      vi.spyOn(Overrides, "MOVESET_OVERRIDE", "get").mockReturnValue([]);
+      console.warn("Warning: `use` overwrites the Pokemon's moveset and disables the player moveset override!");
+    }
+
+    const pokemon = this.game.scene.getPlayerField()[pkmIndex];
+    pokemon.moveset = [new PokemonMove(moveId)];
+
+    if (useTera) {
+      this.selectWithTera(moveId, pkmIndex, targetIndex);
+      return;
+    }
+    this.select(moveId, pkmIndex, targetIndex);
   }
 
   /**
@@ -118,9 +147,9 @@ export class MoveHelper extends GameManagerHelper {
    * Changes a pokemon's moveset to the given move(s).
    * Used when the normal moveset override can't be used (such as when it's necessary to check or update properties of the moveset).
    * @param pokemon - The {@linkcode Pokemon} being modified
-   * @param moveset - The {@linkcode Moves} (single or array) to change the Pokemon's moveset to
+   * @param moveset - The {@linkcode MoveId} (single or array) to change the Pokemon's moveset to
    */
-  public changeMoveset(pokemon: Pokemon, moveset: Moves | Moves[]): void {
+  public changeMoveset(pokemon: Pokemon, moveset: MoveId | MoveId[]): void {
     if (!Array.isArray(moveset)) {
       moveset = [moveset];
     }
@@ -128,42 +157,78 @@ export class MoveHelper extends GameManagerHelper {
     moveset.forEach(move => {
       pokemon.moveset.push(new PokemonMove(move));
     });
-    const movesetStr = moveset.map(moveId => Moves[moveId]).join(", ");
+    const movesetStr = moveset.map(moveId => MoveId[moveId]).join(", ");
     console.log(`Pokemon ${pokemon.species.name}'s moveset manually set to ${movesetStr} (=[${moveset.join(", ")}])!`);
   }
 
   /**
-   * Simulates learning a move for a player pokemon.
-   * @param move The {@linkcode Moves} being learnt
-   * @param partyIndex The party position of the {@linkcode PlayerPokemon} learning the move (defaults to 0)
-   * @param moveSlotIndex The INDEX (0-4) of the move slot to replace if existent move slots are full;
-   * defaults to 0 (first slot) and 4 aborts the procedure
-   * @returns a promise that resolves once the move has been successfully learnt
+   * Forces the next enemy selecting a move to use the given move in its moveset
+   * against the given target (if applicable).
+   * @param moveId The {@linkcode MoveId | move} the enemy will use
+   * @param target (Optional) the {@linkcode BattlerIndex | target} which the enemy will use the given move against
    */
-  public async learnMove(move: Moves | number, partyIndex = 0, moveSlotIndex = 0) {
-    return new Promise<void>(async (resolve, reject) => {
-      this.game.scene.pushPhase(new LearnMovePhase(partyIndex, move));
+  public async selectEnemyMove(moveId: MoveId, target?: BattlerIndex) {
+    // Wait for the next EnemyCommandPhase to start
+    await this.game.phaseInterceptor.to("EnemyCommandPhase", false);
+    const enemy =
+      this.game.scene.getEnemyField()[(this.game.scene.getCurrentPhase() as EnemyCommandPhase).getFieldIndex()];
+    const legalTargets = getMoveTargets(enemy, moveId);
 
-      // if slots are full, queue up inputs to replace existing moves
-      if (this.game.scene.getPlayerParty()[partyIndex].moveset.filter(m => m).length === 4) {
-        this.game.onNextPrompt("LearnMovePhase", UiMode.CONFIRM, () => {
-          this.game.scene.ui.processInput(Button.ACTION); // "Should a move be forgotten and replaced with XXX?"
-        });
-        this.game.onNextPrompt("LearnMovePhase", UiMode.SUMMARY, () => {
-          for (let x = 0; x < (moveSlotIndex ?? 0); x++) {
-            this.game.scene.ui.processInput(Button.DOWN); // Scrolling in summary pane to move position
-          }
-          this.game.scene.ui.processInput(Button.ACTION);
-          if (moveSlotIndex === 4) {
-            this.game.onNextPrompt("LearnMovePhase", UiMode.CONFIRM, () => {
-              this.game.scene.ui.processInput(Button.ACTION); // "Give up on learning XXX?"
-            });
-          }
-        });
-      }
-
-      await this.game.phaseInterceptor.to(LearnMovePhase).catch(e => reject(e));
-      resolve();
+    vi.spyOn(enemy, "getNextMove").mockReturnValueOnce({
+      move: moveId,
+      targets:
+        target !== undefined && !legalTargets.multiple && legalTargets.targets.includes(target)
+          ? [target]
+          : enemy.getNextTargets(moveId),
     });
+
+    /**
+     * Run the EnemyCommandPhase to completion.
+     * This allows this function to be called consecutively to
+     * force a move for each enemy in a double battle.
+     */
+    await this.game.phaseInterceptor.to("EnemyCommandPhase");
+  }
+
+  /**
+   * Forces the next enemy selecting a move to use the given move against the given target (if applicable).
+   *
+   * Warning: Overwrites the pokemon's moveset and disables the moveset override!
+   *
+   * Note: If you need to check for changes in the enemy's moveset as part of the test, it may be
+   * best to use {@linkcode changeMoveset} and {@linkcode selectEnemyMove} instead.
+   * @param moveId The {@linkcode MoveId | move} the enemy will use
+   * @param target (Optional) the {@linkcode BattlerIndex | target} which the enemy will use the given move against
+   */
+  public async forceEnemyMove(moveId: MoveId, target?: BattlerIndex) {
+    // Wait for the next EnemyCommandPhase to start
+    await this.game.phaseInterceptor.to("EnemyCommandPhase", false);
+
+    const enemy =
+      this.game.scene.getEnemyField()[(this.game.scene.getCurrentPhase() as EnemyCommandPhase).getFieldIndex()];
+
+    if ([Overrides.OPP_MOVESET_OVERRIDE].flat().length > 0) {
+      vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([]);
+      console.warn(
+        "Warning: `forceEnemyMove` overwrites the Pokemon's moveset and disables the enemy moveset override!",
+      );
+    }
+    enemy.moveset = [new PokemonMove(moveId)];
+    const legalTargets = getMoveTargets(enemy, moveId);
+
+    vi.spyOn(enemy, "getNextMove").mockReturnValueOnce({
+      move: moveId,
+      targets:
+        target !== undefined && !legalTargets.multiple && legalTargets.targets.includes(target)
+          ? [target]
+          : enemy.getNextTargets(moveId),
+    });
+
+    /**
+     * Run the EnemyCommandPhase to completion.
+     * This allows this function to be called consecutively to
+     * force a move for each enemy in a double battle.
+     */
+    await this.game.phaseInterceptor.to("EnemyCommandPhase");
   }
 }

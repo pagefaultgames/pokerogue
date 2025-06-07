@@ -10,11 +10,12 @@ import { TitlePhase } from "#app/phases/title-phase";
 import { SaveSlotUiMode } from "#app/ui/save-slot-select-ui-handler";
 import type { Starter } from "#app/ui/starter-select-ui-handler";
 import { UiMode } from "#enums/ui-mode";
-import type { Species } from "#enums/species";
+import type { SpeciesId } from "#enums/species-id";
 import SoundFade from "phaser3-rex-plugins/plugins/soundfade";
 import { isNullOrUndefined } from "#app/utils/common";
 
 export class SelectStarterPhase extends Phase {
+  public readonly phaseName = "SelectStarterPhase";
   start() {
     super.start();
 
@@ -43,7 +44,7 @@ export class SelectStarterPhase extends Phase {
     const loadPokemonAssets: Promise<void>[] = [];
     starters.forEach((starter: Starter, i: number) => {
       if (!i && Overrides.STARTER_SPECIES_OVERRIDE) {
-        starter.species = getPokemonSpecies(Overrides.STARTER_SPECIES_OVERRIDE as Species);
+        starter.species = getPokemonSpecies(Overrides.STARTER_SPECIES_OVERRIDE as SpeciesId);
       }
       const starterProps = globalScene.gameData.getSpeciesDexAttrProps(starter.species, starter.dexAttr);
       let starterFormIndex = Math.min(starterProps.formIndex, Math.max(starter.species.forms.length - 1, 0));

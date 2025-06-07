@@ -19,19 +19,20 @@ on:
 
 jobs:
   test:
-    name: Shard ${{ inputs.shard }} of ${{ inputs.totalShards }}
+    # We can't use dynmically named jobs until https://github.com/orgs/community/discussions/13261 is implemented
+    name: Shard
     runs-on: ubuntu-latest
     if: ${{ !inputs.skip }}
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v4.2.2
         with:
-          submodules: 'recursive'
+          submodules: "recursive"
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version-file: '.nvmrc'
-          cache: 'npm'
+          node-version-file: ".nvmrc"
+          cache: "npm"
       - name: Install Node.js dependencies
         run: npm ci
       - name: Run tests

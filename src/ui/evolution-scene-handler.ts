@@ -22,18 +22,12 @@ export default class EvolutionSceneHandler extends MessageUiHandler {
     const ui = this.getUi();
 
     this.evolutionContainer = globalScene.add.container(0, -globalScene.game.canvas.height / 6);
-    ui.add(this.evolutionContainer);
 
-    const messageBg = globalScene.add.sprite(0, 0, "bg", globalScene.windowType);
-    messageBg.setOrigin(0, 1);
-    messageBg.setVisible(false);
-    ui.add(messageBg);
+    const messageBg = globalScene.add.sprite(0, 0, "bg", globalScene.windowType).setOrigin(0, 1).setVisible(false);
 
     this.messageBg = messageBg;
 
-    this.messageContainer = globalScene.add.container(12, -39);
-    this.messageContainer.setVisible(false);
-    ui.add(this.messageContainer);
+    this.messageContainer = globalScene.add.container(12, -39).setVisible(false);
 
     const message = addTextObject(0, 0, "", TextStyle.MESSAGE, {
       maxLines: 2,
@@ -42,6 +36,8 @@ export default class EvolutionSceneHandler extends MessageUiHandler {
       },
     });
     this.messageContainer.add(message);
+
+    ui.add([this.evolutionContainer, this.messageBg, this.messageContainer]);
 
     this.message = message;
 
@@ -52,10 +48,8 @@ export default class EvolutionSceneHandler extends MessageUiHandler {
     super.show(_args);
 
     globalScene.ui.bringToTop(this.evolutionContainer);
-    globalScene.ui.bringToTop(this.messageBg);
-    globalScene.ui.bringToTop(this.messageContainer);
-    this.messageBg.setVisible(true);
-    this.messageContainer.setVisible(true);
+    globalScene.ui.bringToTop(this.messageBg.setVisible(true));
+    globalScene.ui.bringToTop(this.messageContainer.setVisible(true));
 
     return true;
   }

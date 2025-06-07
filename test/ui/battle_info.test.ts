@@ -1,8 +1,8 @@
 import { ExpGainsSpeed } from "#app/enums/exp-gains-speed";
-import { Species } from "#app/enums/species";
+import { SpeciesId } from "#enums/species-id";
 import { ExpPhase } from "#app/phases/exp-phase";
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
+import { AbilityId } from "#enums/ability-id";
+import { MoveId } from "#enums/move-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -31,11 +31,11 @@ describe("UI - Battle Info", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.GUILLOTINE, Moves.SPLASH])
+      .moveset([MoveId.GUILLOTINE, MoveId.SPLASH])
       .battleStyle("single")
-      .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset(Moves.SPLASH)
-      .enemySpecies(Species.CATERPIE);
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .enemyMoveset(MoveId.SPLASH)
+      .enemySpecies(SpeciesId.CATERPIE);
   });
 
   it.each([ExpGainsSpeed.FAST, ExpGainsSpeed.FASTER, ExpGainsSpeed.SKIP])(
@@ -44,9 +44,9 @@ describe("UI - Battle Info", () => {
       game.settings.expGainsSpeed(expGainsSpeed);
       vi.spyOn(Math, "pow");
 
-      await game.classicMode.startBattle([Species.CHARIZARD]);
+      await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
-      game.move.select(Moves.SPLASH);
+      game.move.select(MoveId.SPLASH);
       await game.doKillOpponents();
       await game.phaseInterceptor.to(ExpPhase, true);
 

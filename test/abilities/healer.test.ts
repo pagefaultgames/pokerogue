@@ -1,6 +1,6 @@
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import { AbilityId } from "#enums/ability-id";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -30,29 +30,29 @@ describe("Abilities - Healer", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.SPLASH])
-      .ability(Abilities.BALL_FETCH)
+      .moveset([MoveId.SPLASH])
+      .ability(AbilityId.BALL_FETCH)
       .battleStyle("double")
       .disableCrits()
-      .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset(Moves.SPLASH);
+      .enemySpecies(SpeciesId.MAGIKARP)
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .enemyMoveset(MoveId.SPLASH);
 
-    healerAttr = allAbilities[Abilities.HEALER].getAttrs(PostTurnResetStatusAbAttr)[0];
+    healerAttr = allAbilities[AbilityId.HEALER].getAttrs(PostTurnResetStatusAbAttr)[0];
     healerAttrSpy = vi
       .spyOn(healerAttr, "getCondition")
       .mockReturnValue((pokemon: Pokemon) => !isNullOrUndefined(pokemon.getAlly()));
   });
 
   it("should not queue a message phase for healing if the ally has fainted", async () => {
-    game.override.moveset([Moves.SPLASH, Moves.LUNAR_DANCE]);
-    await game.classicMode.startBattle([Species.MAGIKARP, Species.MAGIKARP]);
+    game.override.moveset([MoveId.SPLASH, MoveId.LUNAR_DANCE]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.MAGIKARP]);
     const user = game.scene.getPlayerPokemon()!;
     // Only want one magikarp to have the ability.
-    vi.spyOn(user, "getAbility").mockReturnValue(allAbilities[Abilities.HEALER]);
-    game.move.select(Moves.SPLASH);
+    vi.spyOn(user, "getAbility").mockReturnValue(allAbilities[AbilityId.HEALER]);
+    game.move.select(MoveId.SPLASH);
     // faint the ally
-    game.move.select(Moves.LUNAR_DANCE, 1);
+    game.move.select(MoveId.LUNAR_DANCE, 1);
     const abSpy = vi.spyOn(healerAttr, "canApplyPostTurn");
     await game.phaseInterceptor.to("TurnEndPhase");
 
@@ -65,13 +65,13 @@ describe("Abilities - Healer", () => {
   });
 
   it("should heal the status of an ally if the ally has a status", async () => {
-    await game.classicMode.startBattle([Species.MAGIKARP, Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.MAGIKARP]);
     const [user, ally] = game.scene.getPlayerField();
     // Only want one magikarp to have the ability.
-    vi.spyOn(user, "getAbility").mockReturnValue(allAbilities[Abilities.HEALER]);
+    vi.spyOn(user, "getAbility").mockReturnValue(allAbilities[AbilityId.HEALER]);
     expect(ally.trySetStatus(StatusEffect.BURN)).toBe(true);
-    game.move.select(Moves.SPLASH);
-    game.move.select(Moves.SPLASH, 1);
+    game.move.select(MoveId.SPLASH);
+    game.move.select(MoveId.SPLASH, 1);
 
     await game.phaseInterceptor.to("TurnEndPhase");
     await game.toNextTurn();
@@ -81,13 +81,13 @@ describe("Abilities - Healer", () => {
 
   // TODO: Healer is currently checked before the
   it.todo("should heal a burn before its end of turn damage", async () => {
-    await game.classicMode.startBattle([Species.MAGIKARP, Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.MAGIKARP]);
     const [user, ally] = game.scene.getPlayerField();
     // Only want one magikarp to have the ability.
-    vi.spyOn(user, "getAbility").mockReturnValue(allAbilities[Abilities.HEALER]);
+    vi.spyOn(user, "getAbility").mockReturnValue(allAbilities[AbilityId.HEALER]);
     expect(ally.trySetStatus(StatusEffect.BURN)).toBe(true);
-    game.move.select(Moves.SPLASH);
-    game.move.select(Moves.SPLASH, 1);
+    game.move.select(MoveId.SPLASH);
+    game.move.select(MoveId.SPLASH, 1);
     await game.phaseInterceptor.to("TurnEndPhase");
     await game.toNextTurn();
 
