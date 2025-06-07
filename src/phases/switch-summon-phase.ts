@@ -262,22 +262,25 @@ export class SwitchSummonPhase extends SummonPhase {
    * @returns The text to display.
    */
   private getSendOutText(switchedInPokemon: Pokemon): string {
-    return this.switchType === SwitchType.FORCE_SWITCH
-      ? // "XYZ was forced out!"
-        i18next.t("battle:pokemonDraggedOut", {
-          pokemonName: getPokemonNameWithAffix(switchedInPokemon),
-        })
-      : // "Go! XYZ!"
-        this.player
-        ? i18next.t("battle:playerGo", {
-            pokemonName: getPokemonNameWithAffix(switchedInPokemon),
-          })
-        : // "Trainer sent out XYZ!"
-          i18next.t("battle:trainerGo", {
-            trainerName: globalScene.currentBattle.trainer?.getName(
-              !(this.fieldIndex % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER,
-            ),
-            pokemonName: this.getPokemon().getNameToRender(),
-          });
+    if (this.switchType === SwitchType.FORCE_SWITCH) {
+      // "XYZ was dragged out!"
+      return i18next.t("battle:pokemonDraggedOut", {
+        pokemonName: getPokemonNameWithAffix(switchedInPokemon),
+      });
+    }
+    if (this.player) {
+      // "Go! XYZ!"
+      return i18next.t("battle:playerGo", {
+        pokemonName: getPokemonNameWithAffix(switchedInPokemon),
+      });
+    }
+
+    // "Trainer sent out XYZ!"
+    return i18next.t("battle:trainerGo", {
+      trainerName: globalScene.currentBattle.trainer?.getName(
+        !(this.fieldIndex % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER,
+      ),
+      pokemonName: this.getPokemon().getNameToRender(),
+    });
   }
 }
