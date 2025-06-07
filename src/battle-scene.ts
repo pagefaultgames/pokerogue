@@ -145,7 +145,7 @@ import { LoadingScene } from "#app/loading-scene";
 import { LevelCapPhase } from "#app/phases/level-cap-phase";
 import { LoginPhase } from "#app/phases/login-phase";
 import { MessagePhase } from "#app/phases/message-phase";
-import { MovePhase } from "#app/phases/move-phase";
+import type { MovePhase } from "#app/phases/move-phase";
 import { NewBiomeEncounterPhase } from "#app/phases/new-biome-encounter-phase";
 import { NextEncounterPhase } from "#app/phases/next-encounter-phase";
 import { PokemonAnimPhase } from "#app/phases/pokemon-anim-phase";
@@ -153,7 +153,6 @@ import { QuietFormChangePhase } from "#app/phases/quiet-form-change-phase";
 import { ReturnPhase } from "#app/phases/return-phase";
 import { ShowTrainerPhase } from "#app/phases/show-trainer-phase";
 import { SummonPhase } from "#app/phases/summon-phase";
-import { SwitchPhase } from "#app/phases/switch-phase";
 import { TitlePhase } from "#app/phases/title-phase";
 import { ToggleDoublePositionPhase } from "#app/phases/toggle-double-position-phase";
 import { TurnInitPhase } from "#app/phases/turn-init-phase";
@@ -901,7 +900,7 @@ export default class BattleScene extends SceneBase {
       do {
         targetingMovePhase = this.findPhase(
           mp =>
-            mp instanceof MovePhase &&
+            mp.is("MovePhase") &&
             mp.targets.length === 1 &&
             mp.targets[0] === removedPokemon.getBattlerIndex() &&
             mp.pokemon.isPlayer() !== allyPokemon.isPlayer(),
@@ -1450,7 +1449,7 @@ export default class BattleScene extends SceneBase {
     }
 
     if (lastBattle?.double && !newDouble) {
-      this.tryRemovePhase(p => p instanceof SwitchPhase);
+      this.tryRemovePhase((p: Phase) => p.is("SwitchPhase"));
       for (const p of this.getPlayerField()) {
         p.lapseTag(BattlerTagType.COMMANDED);
       }
@@ -1588,9 +1587,7 @@ export default class BattleScene extends SceneBase {
       return 0;
     }
 
-    const isEggPhase: boolean = ["EggLapsePhase", "EggHatchPhase"].includes(
-      this.getCurrentPhase()?.constructor.name ?? "",
-    );
+    const isEggPhase: boolean = ["EggLapsePhase", "EggHatchPhase"].includes(this.getCurrentPhase()?.phaseName ?? "");
 
     if (
       // Give trainers with specialty types an appropriately-typed form for Wormadam, Rotom, Arceus, Oricorio, Silvally, or Paldean Tauros.
@@ -3569,21 +3566,18 @@ export default class BattleScene extends SceneBase {
       gameMode: this.currentBattle ? this.gameMode.getName() : "Title",
       biome: this.currentBattle ? getBiomeName(this.arena.biomeType) : "",
       wave: this.currentBattle?.waveIndex ?? 0,
-      party: this.party
-        ? this.party.map(p => {
-            return {
-              name: p.name,
-              form: p.getFormKey(),
-              types: p.getTypes().map(type => PokemonType[type]),
-              teraType: PokemonType[p.getTeraType()],
-              isTerastallized: p.isTerastallized,
-              level: p.level,
-              currentHP: p.hp,
-              maxHP: p.getMaxHp(),
-              status: p.status?.effect ? StatusEffect[p.status.effect] : "",
-            };
-          })
-        : [],
+      party:
+        this.party?.map(p => ({
+          name: p.name,
+          form: p.getFormKey(),
+          types: p.getTypes().map(type => PokemonType[type]),
+          teraType: PokemonType[p.getTeraType()],
+          isTerastallized: p.isTerastallized,
+          level: p.level,
+          currentHP: p.hp,
+          maxHP: p.getMaxHp(),
+          status: p.status?.effect ? StatusEffect[p.status.effect] : "",
+        })) ?? [], // TODO: review if this can be nullish
       modeChain: this.ui?.getModeChain() ?? [],
     };
     (window as any).gameInfo = gameInfo;
@@ -3966,16 +3960,13 @@ export default class BattleScene extends SceneBase {
           if (previousEncounter !== null && encounterType === previousEncounter) {
             return false;
           }
-          if (
+          return !(
             this.mysteryEncounterSaveData.encounteredEvents.length > 0 &&
             encounterCandidate.maxAllowedEncounters &&
             encounterCandidate.maxAllowedEncounters > 0 &&
             this.mysteryEncounterSaveData.encounteredEvents.filter(e => e.type === encounterType).length >=
               encounterCandidate.maxAllowedEncounters
-          ) {
-            return false;
-          }
-          return true;
+          );
         })
         .map(m => allMysteryEncounters[m]);
       // Decrement tier

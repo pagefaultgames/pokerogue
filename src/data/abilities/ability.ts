@@ -2130,6 +2130,7 @@ export class PostIntimidateStatStageChangeAbAttr extends AbAttr {
     if (!simulated) {
       globalScene.unshiftPhase(new StatStageChangePhase(pokemon.getBattlerIndex(), false, this.stats, this.stages));
     }
+    cancelled.value = this.overwrites;
   }
 }
 
@@ -2649,11 +2650,7 @@ export class PostSummonCopyAllyStatsAbAttr extends PostSummonAbAttr {
     }
 
     const ally = pokemon.getAlly();
-    if (isNullOrUndefined(ally) || ally.getStatStages().every(s => s === 0)) {
-      return false;
-    }
-
-    return true;
+    return !(isNullOrUndefined(ally) || ally.getStatStages().every(s => s === 0));
   }
 
   override applyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): void {
@@ -2719,11 +2716,7 @@ export class PostSummonTransformAbAttr extends PostSummonAbAttr {
     }
 
     // transforming from or into fusion pokemon causes various problems (including crashes and save corruption)
-    if (this.getTarget(targets).fusionSpecies || pokemon.fusionSpecies) {
-      return false;
-    }
-
-    return true;
+    return !(this.getTarget(targets).fusionSpecies || pokemon.fusionSpecies);
   }
 
   override applyPostSummon(pokemon: Pokemon, _passive: boolean, simulated: boolean, _args: any[]): void {
@@ -2824,7 +2817,7 @@ export class CommanderAbAttr extends AbAttr {
       // Apply boosts from this effect to the ally Dondozo
       pokemon.getAlly()?.addTag(BattlerTagType.COMMANDED, 0, MoveId.NONE, pokemon.id);
       // Cancel the source Pokemon's next move (if a move is queued)
-      globalScene.tryRemovePhase((phase) => phase instanceof MovePhase && phase.pokemon === pokemon);
+      globalScene.tryRemovePhase((phase) => phase.is("MovePhase") && phase.pokemon === pokemon);
     }
   }
 }
@@ -3540,10 +3533,7 @@ export class BlockStatusDamageAbAttr extends AbAttr {
   }
 
   override canApply(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
-    if (pokemon.status && this.effects.includes(pokemon.status.effect)) {
-      return true;
-    }
-    return false;
+    return !!pokemon.status?.effect && this.effects.includes(pokemon.status.effect);
   }
 
   /**
@@ -4799,11 +4789,7 @@ export class PostFaintContactDamageAbAttr extends PostFaintAbAttr {
     const diedToDirectDamage = move !== undefined && attacker !== undefined && move.doesFlagEffectApply({flag: MoveFlags.MAKES_CONTACT, user: attacker, target: pokemon});
     const cancelled = new BooleanHolder(false);
     globalScene.getField(true).map(p => applyAbAttrs(FieldPreventExplosiveMovesAbAttr, p, cancelled, simulated));
-    if (!diedToDirectDamage || cancelled.value || attacker!.hasAbilityWithAttr(BlockNonDirectDamageAbAttr)) {
-      return false;
-    }
-
-    return true;
+    return !(!diedToDirectDamage || cancelled.value || attacker!.hasAbilityWithAttr(BlockNonDirectDamageAbAttr));
   }
 
   override applyPostFaint(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker?: Pokemon, move?: Move, hitResult?: HitResult, ...args: any[]): void {
@@ -6504,12 +6490,7 @@ export function initAbilities() {
     new Ability(AbilityId.INTIMIDATE, 3)
       .attr(PostSummonStatStageChangeAbAttr, [ Stat.ATK ], -1, false, true),
     new Ability(AbilityId.SHADOW_TAG, 3)
-      .attr(ArenaTrapAbAttr, (user, target) => {
-        if (target.hasAbility(AbilityId.SHADOW_TAG)) {
-          return false;
-        }
-        return true;
-      }),
+      .attr(ArenaTrapAbAttr, (_user, target) => !target.hasAbility(AbilityId.SHADOW_TAG)),
     new Ability(AbilityId.ROUGH_SKIN, 3)
       .attr(PostDefendContactDamageAbAttr, 8)
       .bypassFaint(),
@@ -6569,10 +6550,7 @@ export function initAbilities() {
       .ignorable(),
     new Ability(AbilityId.MAGNET_PULL, 3)
       .attr(ArenaTrapAbAttr, (user, target) => {
-        if (target.getTypes(true).includes(PokemonType.STEEL) || (target.getTypes(true).includes(PokemonType.STELLAR) && target.getTypes().includes(PokemonType.STEEL))) {
-          return true;
-        }
-        return false;
+        return target.getTypes(true).includes(PokemonType.STEEL) || (target.getTypes(true).includes(PokemonType.STELLAR) && target.getTypes().includes(PokemonType.STEEL));
       }),
     new Ability(AbilityId.SOUNDPROOF, 3)
       .attr(MoveImmunityAbAttr, (pokemon, attacker, move) => pokemon !== attacker && move.hasFlag(MoveFlags.SOUND_BASED))
@@ -6650,12 +6628,7 @@ export function initAbilities() {
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.SUNNY)
       .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.SUNNY),
     new Ability(AbilityId.ARENA_TRAP, 3)
-      .attr(ArenaTrapAbAttr, (user, target) => {
-        if (target.isGrounded()) {
-          return true;
-        }
-        return false;
-      })
+      .attr(ArenaTrapAbAttr, (user, target) => target.isGrounded())
       .attr(DoubleBattleChanceAbAttr),
     new Ability(AbilityId.VITAL_SPIRIT, 3)
       .attr(StatusEffectImmunityAbAttr, StatusEffect.SLEEP)
@@ -6893,7 +6866,7 @@ export function initAbilities() {
       .ignorable(),
     new Ability(AbilityId.ANALYTIC, 5)
       .attr(MovePowerBoostAbAttr, (user, target, move) => {
-        const movePhase = globalScene.findPhase((phase) => phase instanceof MovePhase && phase.pokemon.id !== user?.id);
+        const movePhase = globalScene.findPhase((phase) => phase.is("MovePhase") && phase.pokemon.id !== user?.id);
         return isNullOrUndefined(movePhase);
       }, 1.3),
     new Ability(AbilityId.ILLUSION, 5)

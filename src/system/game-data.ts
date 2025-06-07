@@ -179,11 +179,11 @@ interface Unlocks {
   [key: number]: boolean;
 }
 
-interface AchvUnlocks {
+export interface AchvUnlocks {
   [key: string]: number;
 }
 
-interface VoucherUnlocks {
+export interface VoucherUnlocks {
   [key: string]: number;
 }
 
