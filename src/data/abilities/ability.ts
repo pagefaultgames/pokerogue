@@ -2119,28 +2119,16 @@ export class IntimidateImmunityAbAttr extends AbAttr {
 export class PostIntimidateStatStageChangeAbAttr extends AbAttr {
   private stats: BattleStat[];
   private stages: number;
-  private overwrites: boolean;
 
-  constructor(stats: BattleStat[], stages: number, overwrites?: boolean) {
+  constructor(stats: BattleStat[], stages: number) {
     super(true);
     this.stats = stats;
     this.stages = stages;
-    this.overwrites = !!overwrites;
   }
 
-  override apply(pokemon: Pokemon, passive: boolean, simulated:boolean, cancelled: BooleanHolder, args: any[]): void {
-    if (simulated) {
-      cancelled.value = this.overwrites;
-      return;
-    }
-
-    const newStatStageChangePhase = new StatStageChangePhase(pokemon.getBattlerIndex(), false, this.stats, this.stages);
-    if (globalScene.findPhase(m => m instanceof MovePhase)) {
-      globalScene.prependToPhase(newStatStageChangePhase, MovePhase);
-    } else if (globalScene.findPhase(m => m instanceof SwitchSummonPhase)) {
-      globalScene.prependToPhase(newStatStageChangePhase, SwitchSummonPhase);
-    } else {
-      globalScene.pushPhase(newStatStageChangePhase);
+  override apply(pokemon: Pokemon, _passive: boolean, simulated: boolean, _cancelled: BooleanHolder, _args: any[]): void {
+    if (!simulated) {
+      globalScene.unshiftPhase(new StatStageChangePhase(pokemon.getBattlerIndex(), false, this.stats, this.stages));
     }
     cancelled.value = this.overwrites;
   }
@@ -2348,8 +2336,6 @@ export class PostSummonStatStageChangeAbAttr extends PostSummonAbAttr {
         const cancelled = new BooleanHolder(false);
         if (this.intimidate) {
           applyAbAttrs(IntimidateImmunityAbAttr, opponent, cancelled, simulated);
-          applyAbAttrs(PostIntimidateStatStageChangeAbAttr, opponent, cancelled, simulated);
-
           if (opponent.getTag(BattlerTagType.SUBSTITUTE)) {
             cancelled.value = true;
           }
@@ -2357,6 +2343,7 @@ export class PostSummonStatStageChangeAbAttr extends PostSummonAbAttr {
         if (!cancelled.value) {
           globalScene.unshiftPhase(new StatStageChangePhase(opponent.getBattlerIndex(), false, this.stats, this.stages));
         }
+        applyAbAttrs(PostIntimidateStatStageChangeAbAttr, opponent, cancelled, simulated);
       }
     }
   }
@@ -7372,7 +7359,8 @@ export function initAbilities() {
       .attr(PostSummonStatStageChangeOnArenaAbAttr, ArenaTagType.TAILWIND)
       .ignorable(),
     new Ability(AbilityId.GUARD_DOG, 9)
-      .attr(PostIntimidateStatStageChangeAbAttr, [ Stat.ATK ], 1, true)
+      .attr(PostIntimidateStatStageChangeAbAttr, [ Stat.ATK ], 1)
+      .attr(IntimidateImmunityAbAttr)
       .attr(ForceSwitchOutImmunityAbAttr)
       .ignorable(),
     new Ability(AbilityId.ROCKY_PAYLOAD, 9)
