@@ -1,5 +1,5 @@
 import { HitResult, MoveResult, PlayerPokemon } from "#app/field/pokemon";
-import { BooleanHolder, NumberHolder, toDmgValue, isNullOrUndefined, randSeedItem, randSeedInt, type Constructor } from "#app/utils/common";
+import { BooleanHolder, NumberHolder, toDmgValue, isNullOrUndefined, randSeedItem, randSeedInt, type Constructor, coerceArray } from "#app/utils/common";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { BattlerTagLapseType, GroundedTag } from "#app/data/battler-tags";
 import { getNonVolatileStatusEffects, getStatusEffectDescriptor, getStatusEffectHealText } from "#app/data/status-effect";
@@ -3368,7 +3368,7 @@ export class PreApplyBattlerTagImmunityAbAttr extends PreApplyBattlerTagAbAttr {
   constructor(immuneTagTypes: BattlerTagType | BattlerTagType[]) {
     super(true);
 
-    this.immuneTagTypes = Array.isArray(immuneTagTypes) ? immuneTagTypes : [ immuneTagTypes ];
+    this.immuneTagTypes = coerceArray(immuneTagTypes);
   }
 
   override canApplyPreApplyBattlerTag(pokemon: Pokemon, passive: boolean, simulated: boolean, tag: BattlerTag, cancelled: BooleanHolder, args: any[]): boolean {
@@ -4919,9 +4919,7 @@ export class FlinchStatStageChangeAbAttr extends FlinchEffectAbAttr {
   constructor(stats: BattleStat[], stages: number) {
     super();
 
-    this.stats = Array.isArray(stats)
-      ? stats
-      : [ stats ];
+    this.stats = stats;
     this.stages = stages;
   }
 
