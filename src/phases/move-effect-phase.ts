@@ -219,6 +219,7 @@ export class MoveEffectPhase extends PokemonPhase {
             return;
           }
           break;
+        // biome-ignore lint/suspicious/noFallthroughSwitchClause: The fallthrough is intentional
         case HitCheckResult.NO_EFFECT:
           globalScene.queueMessage(
             i18next.t(this.move.id === MoveId.SHEER_COLD ? "battle:hitResultImmune" : "battle:hitResultNoEffect", {
@@ -294,7 +295,8 @@ export class MoveEffectPhase extends PokemonPhase {
 
     // If other effects were overriden, stop this phase before they can be applied
     if (overridden.value) {
-      return this.end();
+      this.end();
+      return;
     }
 
     // Lapse `MOVE_EFFECT` effects (i.e. semi-invulnerability) when applicable
@@ -743,7 +745,7 @@ export class MoveEffectPhase extends PokemonPhase {
     firstTarget?: boolean | null,
     selfTarget?: boolean,
   ): void {
-    return applyFilteredMoveAttrs(
+    applyFilteredMoveAttrs(
       (attr: MoveAttr) =>
         attr instanceof MoveEffectAttr &&
         attr.trigger === triggerType &&
