@@ -6,6 +6,7 @@ import { SpeciesId } from "#enums/species-id";
 import { Stat, type PermanentStat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import { ITEM_EFFECT } from "./held-item";
+import { type ACCURACY_BOOST_PARAMS, AccuracyBoosterHeldItem } from "./held-items/accuracy-booster";
 import {
   type ATTACK_TYPE_BOOST_PARAMS,
   AttackTypeBoosterHeldItem,
@@ -25,6 +26,7 @@ import { type FLINCH_CHANCE_PARAMS, FlinchChanceHeldItem } from "./held-items/fl
 import { type FRIENDSHIP_BOOST_PARAMS, FriendshipBoosterHeldItem } from "./held-items/friendship-booster";
 import { type HIT_HEAL_PARAMS, HitHealHeldItem } from "./held-items/hit-heal";
 import { InstantReviveHeldItem, type INSTANT_REVIVE_PARAMS } from "./held-items/instant-revive";
+import { type MULTI_HIT_PARAMS, MultiHitHeldItem } from "./held-items/multi-hit";
 import { type NATURE_WEIGHT_BOOST_PARAMS, NatureWeightBoosterHeldItem } from "./held-items/nature-weight-booster";
 import {
   ResetNegativeStatStageHeldItem,
@@ -115,6 +117,8 @@ export function initHeldItems() {
   allHeldItems[HeldItemId.KINGS_ROCK] = new FlinchChanceHeldItem(HeldItemId.KINGS_ROCK, 3, 10);
   allHeldItems[HeldItemId.MYSTICAL_ROCK] = new FieldEffectHeldItem(HeldItemId.MYSTICAL_ROCK, 2);
   allHeldItems[HeldItemId.SOUL_DEW] = new NatureWeightBoosterHeldItem(HeldItemId.SOUL_DEW, 10);
+  allHeldItems[HeldItemId.WIDE_LENS] = new AccuracyBoosterHeldItem(HeldItemId.WIDE_LENS, 3, 5);
+  allHeldItems[HeldItemId.MULTI_LENS] = new MultiHitHeldItem(HeldItemId.MULTI_LENS, 2);
 
   allHeldItems[HeldItemId.FLAME_ORB] = new TurnEndStatusHeldItem(HeldItemId.FLAME_ORB, 1, StatusEffect.BURN);
   allHeldItems[HeldItemId.TOXIC_ORB] = new TurnEndStatusHeldItem(HeldItemId.TOXIC_ORB, 1, StatusEffect.TOXIC);
@@ -144,6 +148,8 @@ type APPLY_HELD_ITEMS_PARAMS = {
   [ITEM_EFFECT.FIELD_EFFECT]: FIELD_EFFECT_PARAMS;
   [ITEM_EFFECT.FRIENDSHIP_BOOSTER]: FRIENDSHIP_BOOST_PARAMS;
   [ITEM_EFFECT.NATURE_WEIGHT_BOOSTER]: NATURE_WEIGHT_BOOST_PARAMS;
+  [ITEM_EFFECT.ACCURACY_BOOSTER]: ACCURACY_BOOST_PARAMS;
+  [ITEM_EFFECT.MULTI_HIT]: MULTI_HIT_PARAMS;
 };
 
 export function applyHeldItems<T extends ITEM_EFFECT>(effect: T, params: APPLY_HELD_ITEMS_PARAMS[T]) {

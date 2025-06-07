@@ -68,10 +68,8 @@ import {
 } from "../abilities/ability";
 import { allAbilities, allMoves } from "../data-lists";
 import {
-  AttackTypeBoosterModifier,
   BerryModifier,
   PokemonHeldItemModifier,
-  PokemonMoveAccuracyBoosterModifier,
   PokemonMultiHitModifier,
   PreserveBerryModifier,
 } from "../../modifier/modifier";
@@ -781,7 +779,7 @@ export default class Move implements Localizable {
     const isOhko = this.hasAttr(OneHitKOAccuracyAttr);
 
     if (!isOhko) {
-      globalScene.applyModifiers(PokemonMoveAccuracyBoosterModifier, user.isPlayer(), user, moveAccuracy);
+      applyHeldItems(ITEM_EFFECT.ACCURACY_BOOSTER, { pokemon: user, moveAccuracy: moveAccuracy });
     }
 
     if (globalScene.arena.weather?.weatherType === WeatherType.FOG) {

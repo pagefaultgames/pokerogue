@@ -96,7 +96,6 @@ import {
   PokemonBaseStatTotalModifier,
   PokemonIncrementingStatModifier,
   EvoTrackerModifier,
-  PokemonMultiHitModifier,
 } from "#app/modifier/modifier";
 import { PokeballType } from "#enums/pokeball";
 import { Gender } from "#app/data/gender";
@@ -3725,14 +3724,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     applyMoveAttrs(FixedDamageAttr, source, this, move, fixedDamage);
     if (fixedDamage.value) {
       const multiLensMultiplier = new NumberHolder(1);
-      globalScene.applyModifiers(
-        PokemonMultiHitModifier,
-        source.isPlayer(),
-        source,
-        move.id,
-        null,
-        multiLensMultiplier,
-      );
+      applyHeldItems(ITEM_EFFECT.MULTI_HIT, {
+        pokemon: source,
+        moveId: move.id,
+        damageMultiplier: multiLensMultiplier,
+      });
       fixedDamage.value = toDmgValue(fixedDamage.value * multiLensMultiplier.value);
 
       return {
@@ -3776,14 +3772,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     /** Multiplier for moves enhanced by Multi-Lens and/or Parental Bond */
     const multiStrikeEnhancementMultiplier = new NumberHolder(1);
-    globalScene.applyModifiers(
-      PokemonMultiHitModifier,
-      source.isPlayer(),
-      source,
-      move.id,
-      null,
-      multiStrikeEnhancementMultiplier,
-    );
+    applyHeldItems(ITEM_EFFECT.MULTI_HIT, {
+      pokemon: source,
+      moveId: move.id,
+      damageMultiplier: multiStrikeEnhancementMultiplier,
+    });
     if (!ignoreSourceAbility) {
       applyPreAttackAbAttrs(
         AddSecondStrikeAbAttr,

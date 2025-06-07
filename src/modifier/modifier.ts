@@ -1,7 +1,6 @@
 import { FusionSpeciesFormEvolution, pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
 import { getBerryEffectFunc, getBerryPredicate } from "#app/data/berry";
 import { getLevelTotalExp } from "#app/data/exp";
-import { allMoves } from "#app/data/data-lists";
 import { MAX_PER_TYPE_POKEBALLS } from "#app/data/pokeball";
 import { type FormChangeItem, SpeciesFormChangeItemTrigger } from "#app/data/pokemon-forms";
 import { getStatusEffectHealText } from "#app/data/status-effect";
@@ -17,7 +16,6 @@ import { addTextObject, TextStyle } from "#app/ui/text";
 import { BooleanHolder, hslToHex, isNullOrUndefined, NumberHolder, toDmgValue } from "#app/utils/common";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BerryType } from "#enums/berry-type";
-import type { MoveId } from "#enums/move-id";
 import type { Nature } from "#enums/nature";
 import type { PokeballType } from "#enums/pokeball";
 import { SpeciesId } from "#enums/species-id";
@@ -32,8 +30,6 @@ import {
   type ModifierOverride,
   type ModifierType,
   type PokemonBaseStatTotalModifierType,
-  type PokemonMoveAccuracyBoosterModifierType,
-  type PokemonMultiHitModifierType,
   type TerastallizeModifierType,
   type TmModifierType,
   getModifierType,
@@ -1689,138 +1685,6 @@ export class ExpBalanceModifier extends PersistentModifier {
 
   getMaxStackCount(): number {
     return 4;
-  }
-}
-
-export class PokemonMoveAccuracyBoosterModifier extends PokemonHeldItemModifier {
-  public override type: PokemonMoveAccuracyBoosterModifierType;
-  private accuracyAmount: number;
-
-  constructor(type: PokemonMoveAccuracyBoosterModifierType, pokemonId: number, accuracy: number, stackCount?: number) {
-    super(type, pokemonId, stackCount);
-    this.accuracyAmount = accuracy;
-  }
-
-  matchType(modifier: Modifier): boolean {
-    if (modifier instanceof PokemonMoveAccuracyBoosterModifier) {
-      const pokemonAccuracyBoosterModifier = modifier as PokemonMoveAccuracyBoosterModifier;
-      return pokemonAccuracyBoosterModifier.accuracyAmount === this.accuracyAmount;
-    }
-    return false;
-  }
-
-  clone(): PersistentModifier {
-    return new PokemonMoveAccuracyBoosterModifier(this.type, this.pokemonId, this.accuracyAmount, this.stackCount);
-  }
-
-  getArgs(): any[] {
-    return super.getArgs().concat(this.accuracyAmount);
-  }
-
-  /**
-   * Checks if {@linkcode PokemonMoveAccuracyBoosterModifier} should be applied
-   * @param pokemon The {@linkcode Pokemon} to apply the move accuracy boost to
-   * @param moveAccuracy {@linkcode NumberHolder} holding the move accuracy boost
-   * @returns `true` if {@linkcode PokemonMoveAccuracyBoosterModifier} should be applied
-   */
-  override shouldApply(pokemon?: Pokemon, moveAccuracy?: NumberHolder): boolean {
-    return super.shouldApply(pokemon, moveAccuracy) && !!moveAccuracy;
-  }
-
-  /**
-   * Applies {@linkcode PokemonMoveAccuracyBoosterModifier}
-   * @param _pokemon The {@linkcode Pokemon} to apply the move accuracy boost to
-   * @param moveAccuracy {@linkcode NumberHolder} holding the move accuracy boost
-   * @returns always `true`
-   */
-  override apply(_pokemon: Pokemon, moveAccuracy: NumberHolder): boolean {
-    moveAccuracy.value = moveAccuracy.value + this.accuracyAmount * this.getStackCount();
-
-    return true;
-  }
-
-  getMaxHeldItemCount(_pokemon: Pokemon): number {
-    return 3;
-  }
-}
-
-export class PokemonMultiHitModifier extends PokemonHeldItemModifier {
-  public override type: PokemonMultiHitModifierType;
-
-  matchType(modifier: Modifier): boolean {
-    return modifier instanceof PokemonMultiHitModifier;
-  }
-
-  clone(): PersistentModifier {
-    return new PokemonMultiHitModifier(this.type, this.pokemonId, this.stackCount);
-  }
-
-  /**
-   * For each stack, converts 25 percent of attack damage into an additional strike.
-   * @param pokemon The {@linkcode Pokemon} using the move
-   * @param moveId The {@linkcode MoveId | identifier} for the move being used
-   * @param count {@linkcode NumberHolder} holding the move's hit count for this turn
-   * @param damageMultiplier {@linkcode NumberHolder} holding a damage multiplier applied to a strike of this move
-   * @returns always `true`
-   */
-  override apply(
-    pokemon: Pokemon,
-    moveId: MoveId,
-    count: NumberHolder | null = null,
-    damageMultiplier: NumberHolder | null = null,
-  ): boolean {
-    const move = allMoves[moveId];
-    /**
-     * The move must meet Parental Bond's restrictions for this item
-     * to apply. This means
-     * - Only attacks are boosted
-     * - Multi-strike moves, charge moves, and self-sacrificial moves are not boosted
-     *   (though Multi-Lens can still affect moves boosted by Parental Bond)
-     * - Multi-target moves are not boosted *unless* they can only hit a single Pokemon
-     * - Fling, Uproar, Rollout, Ice Ball, and Endeavor are not boosted
-     */
-    if (!move.canBeMultiStrikeEnhanced(pokemon)) {
-      return false;
-    }
-
-    if (!isNullOrUndefined(count)) {
-      return this.applyHitCountBoost(count);
-    }
-    if (!isNullOrUndefined(damageMultiplier)) {
-      return this.applyDamageModifier(pokemon, damageMultiplier);
-    }
-
-    return false;
-  }
-
-  /** Adds strikes to a move equal to the number of stacked Multi-Lenses */
-  private applyHitCountBoost(count: NumberHolder): boolean {
-    count.value += this.getStackCount();
-    return true;
-  }
-
-  /**
-   * If applied to the first hit of a move, sets the damage multiplier
-   * equal to (1 - the number of stacked Multi-Lenses).
-   * Additional strikes beyond that are given a 0.25x damage multiplier
-   */
-  private applyDamageModifier(pokemon: Pokemon, damageMultiplier: NumberHolder): boolean {
-    if (pokemon.turnData.hitsLeft === pokemon.turnData.hitCount) {
-      // Reduce first hit by 25% for each stack count
-      damageMultiplier.value *= 1 - 0.25 * this.getStackCount();
-      return true;
-    }
-    if (pokemon.turnData.hitCount - pokemon.turnData.hitsLeft !== this.getStackCount() + 1) {
-      // Deal 25% damage for each remaining Multi Lens hit
-      damageMultiplier.value *= 0.25;
-      return true;
-    }
-    // An extra hit not caused by Multi Lens -- assume it is Parental Bond
-    return false;
-  }
-
-  getMaxHeldItemCount(_pokemon: Pokemon): number {
-    return 2;
   }
 }
 

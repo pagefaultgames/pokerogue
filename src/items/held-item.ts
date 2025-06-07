@@ -23,6 +23,8 @@ export const ITEM_EFFECT = {
   FIELD_EFFECT: 15,
   FRIENDSHIP_BOOSTER: 16,
   NATURE_WEIGHT_BOOSTER: 17,
+  ACCURACY_BOOSTER: 18,
+  MULTI_HIT: 19,
 } as const;
 
 export type ITEM_EFFECT = (typeof ITEM_EFFECT)[keyof typeof ITEM_EFFECT];

@@ -57,7 +57,6 @@ import {
   DamageMoneyRewardModifier,
   EnemyAttackStatusEffectChanceModifier,
   EnemyEndureChanceModifier,
-  PokemonMultiHitModifier,
 } from "#app/modifier/modifier";
 import { PokemonPhase } from "#app/phases/pokemon-phase";
 import { BooleanHolder, isNullOrUndefined, NumberHolder } from "#app/utils/common";
@@ -322,7 +321,7 @@ export class MoveEffectPhase extends PokemonPhase {
       // If Parental Bond is applicable, add another hit
       applyPreAttackAbAttrs(AddSecondStrikeAbAttr, user, null, move, false, hitCount, null);
       // If Multi-Lens is applicable, add hits equal to the number of held Multi-Lenses
-      globalScene.applyModifiers(PokemonMultiHitModifier, user.isPlayer(), user, move.id, hitCount);
+      applyHeldItems(ITEM_EFFECT.MULTI_HIT, { pokemon: user, moveId: move.id, count: hitCount });
       // Set the user's relevant turnData fields to reflect the final hit count
       user.turnData.hitCount = hitCount.value;
       user.turnData.hitsLeft = hitCount.value;
