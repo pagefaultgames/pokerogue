@@ -6742,10 +6742,8 @@ class CallMoveAttr extends OverrideMoveEffectAttr {
 }
 
 /**
- * Attribute used to call a random move.
- * Used for {@linkcode MoveId.METRONOME}
- * @see {@linkcode apply} for move selection and move call
- * @extends CallMoveAttr to call a selected move
+ * Attribute to call a random move.
+ * Used for {@linkcode MoveId.METRONOME}.
  */
 export class RandomMoveAttr extends CallMoveAttr {
   constructor(invalidMoves: ReadonlySet<MoveId>) {
@@ -6754,29 +6752,26 @@ export class RandomMoveAttr extends CallMoveAttr {
   }
 
   /**
-   * This function exists solely to allow tests to override the randomly selected move by mocking this function.
+   * Pick a random move to execute, barring unimplemented moves and ones
+   * in this move's {@linkcode invalidMetronomeMoves | exclusion list}.
+   * Exported to allow tests to override move choice using mocks.
+
+   * @param user - The {@linkcode Pokemon} using the move
+   * @returns A randomly selected {@linkcode Moves | move ID} chosen among
    */
-  public getMoveOverride(): MoveId | null {
-    return null;
+  getMove(user: Pokemon): MoveId {
+    const moveIds = getEnumValues(Moves).filter(m => !this.invalidMoves.has(m) && !allMoves[m].name.endsWith(" (N)"));
+    return moveIds[user.randBattleSeedInt(moveIds.length)];
   }
 
   /**
-   * User calls a random moveId.
-   *
-   * Invalid moves are indicated by what is passed in to invalidMoves: {@linkcode invalidMetronomeMoves}
-   * @param user Pokemon that used the move and will call a random move
-   * @param target Pokemon that will be targeted by the random move (if single target)
-   * @param move Move being used
-   * @param args Unused
+   * @param move - Unused
+   * @param args - Unused
+   * @returns Whether a random move was successfully called
    */
   override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const moveIds = getEnumValues(MoveId).map(m => !this.invalidMoves.has(m) && !allMoves[m].name.endsWith(" (N)") ? m : MoveId.NONE);
-    let moveId: MoveId = MoveId.NONE;
-    do {
-      moveId = this.getMoveOverride() ?? moveIds[user.randBattleSeedInt(moveIds.length)];
-    }
-    while (moveId === MoveId.NONE);
-    return super.apply(user, target, allMoves[moveId], args);
+    const randomMove = this.getMove(user);
+    return super.apply(user, target, allMoves[randomMove], args);
   }
 }
 

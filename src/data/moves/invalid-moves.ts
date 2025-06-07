@@ -1,7 +1,8 @@
 import { MoveId } from "#enums/move-id";
 
-/** Set of moves that cannot be called by {@linkcode MoveId.METRONOME Metronome} */
+/** Set of moves that cannot be called by {@linkcode MoveId.METRONOME | Metronome}. */
 export const invalidMetronomeMoves: ReadonlySet<MoveId> = new Set([
+  MoveId.NONE,
   MoveId.AFTER_YOU,
   MoveId.ASSIST,
   MoveId.BANEFUL_BUNKER,

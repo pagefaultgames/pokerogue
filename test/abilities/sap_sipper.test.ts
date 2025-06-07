@@ -129,23 +129,15 @@ describe("Abilities - Sap Sipper", () => {
   });
 
   it("activate once against multi-hit grass attacks (metronome)", async () => {
-    const moveToUse = MoveId.METRONOME;
-
-    const randomMoveAttr = allMoves[MoveId.METRONOME].findAttr(
-      attr => attr instanceof RandomMoveAttr,
-    ) as RandomMoveAttr;
-    vi.spyOn(randomMoveAttr, "getMoveOverride").mockReturnValue(MoveId.BULLET_SEED);
-
-    game.override.moveset(moveToUse);
+    vi.spyOn(RandomMoveAttr.prototype, "getMove").mockReturnValue(MoveId.BULLET_SEED);
 
     await game.classicMode.startBattle([SpeciesId.BULBASAUR]);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
     const initialEnemyHp = enemyPokemon.hp;
 
-    game.move.select(moveToUse);
-
-    await game.phaseInterceptor.to(TurnEndPhase);
+    game.move.use(Moves.METRONOME);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(initialEnemyHp - enemyPokemon.hp).toBe(0);
     expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(1);

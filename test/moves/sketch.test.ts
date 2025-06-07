@@ -83,7 +83,7 @@ describe("Moves - Sketch", () => {
     const randomMoveAttr = allMoves[MoveId.METRONOME].findAttr(
       attr => attr instanceof RandomMoveAttr,
     ) as RandomMoveAttr;
-    vi.spyOn(randomMoveAttr, "getMoveOverride").mockReturnValue(MoveId.FALSE_SWIPE);
+    vi.spyOn(randomMoveAttr, "getMove").mockReturnValue(MoveId.FALSE_SWIPE);
 
     game.override.enemyMoveset([MoveId.METRONOME]);
     await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
