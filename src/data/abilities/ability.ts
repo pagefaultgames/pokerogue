@@ -65,10 +65,8 @@ import { CommonAnim } from "../battle-anims";
 import { getBerryEffectFunc } from "../berry";
 import { BerryUsedEvent } from "#app/events/battle-scene";
 
-
 // Type imports
-import type { EnemyPokemon, PokemonMove } from "#app/field/pokemon";
-import type Pokemon from "#app/field/pokemon";
+import Pokemon, { EnemyPokemon, PokemonMove } from "#app/field/pokemon";
 import type { Weather } from "#app/data/weather";
 import type { BattlerTag } from "#app/data/battler-tags";
 import type { AbAttrCondition, PokemonDefendCondition, PokemonStatStageChangeCondition, PokemonAttackCondition, AbAttrApplyFunc, AbAttrSuccessFunc } from "#app/@types/ability-types";
@@ -76,6 +74,7 @@ import type { BattlerIndex } from "#app/battle";
 import type Move from "#app/data/moves/move";
 import type { ArenaTrapTag, SuppressAbilitiesTag } from "#app/data/arena-tag";
 import { SelectBiomePhase } from "#app/phases/select-biome-phase";
+import { MoveUseMode } from "#enums/move-use-mode";
 import { noAbilityTypeOverrideMoves } from "../moves/invalid-moves";
 
 export class BlockRecoilDamageAttr extends AbAttr {
@@ -1067,7 +1066,7 @@ export class PostDefendMoveDisableAbAttr extends PostDefendAbAttr {
   }
 
   override canApplyPostDefend(pokemon: Pokemon, passive: boolean, simulated: boolean, attacker: Pokemon, move: Move, hitResult: HitResult | null, args: any[]): boolean {
-    return attacker.getTag(BattlerTagType.DISABLED) === null
+    return isNullOrUndefined(attacker.getTag(BattlerTagType.DISABLED))
       && move.doesFlagEffectApply({flag: MoveFlags.MAKES_CONTACT, user: attacker, target: pokemon}) && (this.chance === -1 || pokemon.randBattleSeedInt(100) < this.chance);
   }
 
@@ -4441,10 +4440,10 @@ export class PostDancingMoveAbAttr extends PostMoveUsedAbAttr {
       // If the move is an AttackMove or a StatusMove the Dancer must replicate the move on the source of the Dance
       if (move.getMove() instanceof AttackMove || move.getMove() instanceof StatusMove) {
         const target = this.getTarget(dancer, source, targets);
-        globalScene.unshiftPhase(new MovePhase(dancer, target, move, true, true));
+        globalScene.unshiftPhase(new MovePhase(dancer, target, move, MoveUseMode.INDIRECT));
       } else if (move.getMove() instanceof SelfStatusMove) {
         // If the move is a SelfStatusMove (ie. Swords Dance) the Dancer should replicate it on itself
-        globalScene.unshiftPhase(new MovePhase(dancer, [ dancer.getBattlerIndex() ], move, true, true));
+        globalScene.unshiftPhase(new MovePhase(dancer, [ dancer.getBattlerIndex() ], move, MoveUseMode.INDIRECT))
       }
     }
   }
@@ -5530,7 +5529,8 @@ class ForceSwitchOutHelper {
    *
    * @param pokemon The {@linkcode Pokemon} attempting to switch out.
    * @returns `true` if the switch is successful
-   */
+  */
+  // TODO: Make this cancel pending move phases on the switched out target
   public switchOutLogic(pokemon: Pokemon): boolean {
     const switchOutTarget = pokemon;
     /**
@@ -6868,10 +6868,10 @@ export function initAbilities() {
       .attr(WonderSkinAbAttr)
       .ignorable(),
     new Ability(AbilityId.ANALYTIC, 5)
-      .attr(MovePowerBoostAbAttr, (user, target, move) => {
-        const movePhase = globalScene.findPhase((phase) => phase.is("MovePhase") && phase.pokemon.id !== user?.id);
-        return isNullOrUndefined(movePhase);
-      }, 1.3),
+      .attr(MovePowerBoostAbAttr, (user) =>
+        // Boost power if all other Pokemon have already moved (no other moves are slated to execute)
+        !globalScene.findPhase((phase) => phase.is("MovePhase") && phase.pokemon.id !== user?.id),
+        1.3),
     new Ability(AbilityId.ILLUSION, 5)
       // The Pokemon generate an illusion if it's available
       .attr(IllusionPreSummonAbAttr, false)
@@ -7145,7 +7145,13 @@ export function initAbilities() {
       .attr(PostFaintHPDamageAbAttr)
       .bypassFaint(),
     new Ability(AbilityId.DANCER, 7)
-      .attr(PostDancingMoveAbAttr),
+      .attr(PostDancingMoveAbAttr)
+      /* Incorrect interations with:
+      * Petal Dance (should not lock in or count down timer; currently does both)
+      * Flinches (due to tag being removed earlier)
+      * Failed/protected moves (should not trigger if original move is protected against)
+      */
+      .edgeCase(),
     new Ability(AbilityId.BATTERY, 7)
       .attr(AllyMoveCategoryPowerBoostAbAttr, [ MoveCategory.SPECIAL ], 1.3),
     new Ability(AbilityId.FLUFFY, 7)
@@ -7288,7 +7294,9 @@ export function initAbilities() {
       .bypassFaint()
       .edgeCase(), //  interacts incorrectly with rock head. It's meant to switch abilities before recoil would apply so that a pokemon with rock head would lose rock head first and still take the recoil
     new Ability(AbilityId.GORILLA_TACTICS, 8)
-      .attr(GorillaTacticsAbAttr),
+      .attr(GorillaTacticsAbAttr)
+      // TODO: Verify whether Gorilla Tactics increases struggle's power or not
+      .edgeCase(),
     new Ability(AbilityId.NEUTRALIZING_GAS, 8)
       .attr(PostSummonAddArenaTagAbAttr, true, ArenaTagType.NEUTRALIZING_GAS, 0)
       .attr(PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr)

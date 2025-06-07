@@ -1,7 +1,7 @@
 import { globalScene } from "#app/global-scene";
 import type { BattlerIndex } from "#app/battle";
 import { MoveChargeAnim } from "#app/data/battle-anims";
-import { applyMoveChargeAttrs, MoveEffectAttr, InstantChargeAttr } from "#app/data/moves/move";
+import { applyMoveChargeAttrs, MoveEffectAttr, InstantChargeAttr, type ChargingMove } from "#app/data/moves/move";
 import type { PokemonMove } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
 import { MoveResult } from "#app/field/pokemon";
@@ -9,10 +9,10 @@ import { BooleanHolder } from "#app/utils/common";
 import { MovePhase } from "#app/phases/move-phase";
 import { PokemonPhase } from "#app/phases/pokemon-phase";
 import { BattlerTagType } from "#enums/battler-tag-type";
+import type { MoveUseMode } from "#enums/move-use-mode";
 
 /**
  * Phase for the "charging turn" of two-turn moves (e.g. Dig).
- * @extends {@linkcode PokemonPhase}
  */
 export class MoveChargePhase extends PokemonPhase {
   public readonly phaseName = "MoveChargePhase";
@@ -21,10 +21,21 @@ export class MoveChargePhase extends PokemonPhase {
   /** The field index targeted by the move (Charging moves assume single target) */
   public targetIndex: BattlerIndex;
 
-  constructor(battlerIndex: BattlerIndex, targetIndex: BattlerIndex, move: PokemonMove) {
+  /** The {@linkcode MoveUseMode} of the move that triggered the charge; passed on from move phase */
+  private useMode: MoveUseMode;
+
+  /**
+   * Create a new MoveChargePhase.
+   * @param battlerIndex - The {@linkcode BattlerIndex} of the user.
+   * @param targetIndex - The {@linkcode BattlerIndex} of the target.
+   * @param move - The {@linkcode PokemonMove} being used
+   * @param useMode - The move's {@linkcode MoveUseMode}
+   */
+  constructor(battlerIndex: BattlerIndex, targetIndex: BattlerIndex, move: PokemonMove, useMode: MoveUseMode) {
     super(battlerIndex);
     this.move = move;
     this.targetIndex = targetIndex;
+    this.useMode = useMode;
   }
 
   public override start() {
@@ -38,7 +49,8 @@ export class MoveChargePhase extends PokemonPhase {
     // immediately end this phase.
     if (!target || !move.isChargingMove()) {
       console.warn("Invalid parameters for MoveChargePhase");
-      return super.end();
+      super.end();
+      return;
     }
 
     new MoveChargeAnim(move.chargeAnim, move.id, user).play(false, () => {
@@ -53,29 +65,29 @@ export class MoveChargePhase extends PokemonPhase {
   /** Checks the move's instant charge conditions, then ends this phase. */
   public override end() {
     const user = this.getUserPokemon();
-    const move = this.move.getMove();
+    // Checked for `ChargingMove` in `this.start()`
+    const move = this.move.getMove() as ChargingMove;
 
-    if (move.isChargingMove()) {
-      const instantCharge = new BooleanHolder(false);
+    const instantCharge = new BooleanHolder(false);
+    applyMoveChargeAttrs(InstantChargeAttr, user, null, move, instantCharge);
 
-      applyMoveChargeAttrs(InstantChargeAttr, user, null, move, instantCharge);
-
-      if (instantCharge.value) {
-        // this MoveEndPhase will be duplicated by the queued MovePhase if not removed
-        globalScene.tryRemovePhase(phase => phase.is("MoveEndPhase") && phase.getPokemon() === user);
-        // queue a new MovePhase for this move's attack phase
-        globalScene.unshiftPhase(new MovePhase(user, [this.targetIndex], this.move, false));
-      } else {
-        user.getMoveQueue().push({ move: move.id, targets: [this.targetIndex] });
-      }
-
-      // Add this move's charging phase to the user's move history
-      user.pushMoveHistory({
-        move: this.move.moveId,
-        targets: [this.targetIndex],
-        result: MoveResult.OTHER,
-      });
+    // If instantly charging, remove the pending MoveEndPhase and queue a new MovePhase for the "attack" portion of the move.
+    // Otherwise, add the attack portion to the user's move queue to execute next turn.
+    if (instantCharge.value) {
+      globalScene.tryRemovePhase(phase => phase.is("MoveEndPhase") && phase.getPokemon() === user);
+      globalScene.unshiftPhase(new MovePhase(user, [this.targetIndex], this.move, this.useMode));
+    } else {
+      user.pushMoveQueue({ move: move.id, targets: [this.targetIndex], useMode: this.useMode });
     }
+
+    // Add this move's charging phase to the user's move history
+    user.pushMoveHistory({
+      move: this.move.moveId,
+      targets: [this.targetIndex],
+      result: MoveResult.OTHER,
+      useMode: this.useMode,
+    });
+
     super.end();
   }
 
