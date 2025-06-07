@@ -287,7 +287,7 @@ export class ReceivedMoveDamageMultiplierAbAttr extends PreDefendAbAttr {
   protected condition: PokemonDefendCondition;
   private damageMultiplier: number;
 
-  constructor(condition: PokemonDefendCondition, damageMultiplier: number, showAbility: boolean = false) {
+  constructor(condition: PokemonDefendCondition, damageMultiplier: number, showAbility = false) {
     super(showAbility);
 
     this.condition = condition;
@@ -1093,7 +1093,7 @@ export class PostStatStageChangeStatStageChangeAbAttr extends PostStatStageChang
     this.stages = stages;
   }
 
-  override canApplyPostStatStageChange(pokemon: Pokemon, simulated: boolean, statStagesChanged: BattleStat[], stagesChanged: integer, selfTarget: boolean, args: any[]): boolean {
+  override canApplyPostStatStageChange(pokemon: Pokemon, simulated: boolean, statStagesChanged: BattleStat[], stagesChanged: number, selfTarget: boolean, args: any[]): boolean {
     return this.condition(pokemon, statStagesChanged, stagesChanged) && !selfTarget;
   }
 
@@ -1159,7 +1159,7 @@ export class MoveEffectChanceMultiplierAbAttr extends AbAttr {
  * @see {@linkcode applyPreDefend}
  */
 export class IgnoreMoveEffectsAbAttr extends PreDefendAbAttr {
-  constructor(showAbility: boolean = false) {
+  constructor(showAbility = false) {
     super(showAbility);
   }
 
@@ -1412,7 +1412,7 @@ export class MovePowerBoostAbAttr extends VariableMovePowerAbAttr {
   private condition: PokemonAttackCondition;
   private powerMultiplier: number;
 
-  constructor(condition: PokemonAttackCondition, powerMultiplier: number, showAbility: boolean = false) {
+  constructor(condition: PokemonAttackCondition, powerMultiplier: number, showAbility = false) {
     super(showAbility);
     this.condition = condition;
     this.powerMultiplier = powerMultiplier;
@@ -1628,7 +1628,7 @@ export class AllyStatMultiplierAbAttr extends AbAttr {
    * @param multipler - The multiplier to apply to the stat
    * @param ignorable - Whether the multiplier can be ignored by mold breaker-like moves and abilities
    */
-  constructor(stat: BattleStat, multiplier: number, ignorable: boolean = true) {
+  constructor(stat: BattleStat, multiplier: number, ignorable = true) {
     super(false);
 
     this.stat = stat;
@@ -2826,7 +2826,7 @@ export class CommanderAbAttr extends AbAttr {
 }
 
 export class PreSwitchOutAbAttr extends AbAttr {
-  constructor(showAbility: boolean = true) {
+  constructor(showAbility = true) {
     super(showAbility);
   }
 
@@ -3590,7 +3590,7 @@ export class IgnoreContactAbAttr extends AbAttr { }
 export class PreWeatherEffectAbAttr extends AbAttr {
   canApplyPreWeatherEffect(
     pokemon: Pokemon,
-    passive: Boolean,
+    passive: boolean,
     simulated: boolean,
     weather: Weather | null,
     cancelled: BooleanHolder,
@@ -3619,7 +3619,7 @@ export class BlockWeatherDamageAttr extends PreWeatherDamageAbAttr {
     this.weatherTypes = weatherTypes;
   }
 
-  override canApplyPreWeatherEffect(pokemon: Pokemon, passive: Boolean, simulated: boolean, weather: Weather, cancelled: BooleanHolder, args: any[]): boolean {
+  override canApplyPreWeatherEffect(pokemon: Pokemon, passive: boolean, simulated: boolean, weather: Weather, cancelled: BooleanHolder, args: any[]): boolean {
     return !this.weatherTypes.length || this.weatherTypes.indexOf(weather?.weatherType) > -1;
   }
 
@@ -3637,7 +3637,7 @@ export class SuppressWeatherEffectAbAttr extends PreWeatherEffectAbAttr {
     this.affectsImmutable = !!affectsImmutable;
   }
 
-  override canApplyPreWeatherEffect(pokemon: Pokemon, passive: Boolean, simulated: boolean, weather: Weather, cancelled: BooleanHolder, args: any[]): boolean {
+  override canApplyPreWeatherEffect(pokemon: Pokemon, passive: boolean, simulated: boolean, weather: Weather, cancelled: BooleanHolder, args: any[]): boolean {
     return this.affectsImmutable || weather.isImmutable();
   }
 
@@ -4705,7 +4705,7 @@ export class MaxMultiHitAbAttr extends AbAttr {
 }
 
 export class PostBattleAbAttr extends AbAttr {
-  constructor(showAbility: boolean = true) {
+  constructor(showAbility = true) {
     super(showAbility);
   }
 
@@ -5475,8 +5475,8 @@ function applySingleAbAttrs<TAttr extends AbAttr>(
   applyFunc: AbAttrApplyFunc<TAttr>,
   successFunc: AbAttrSuccessFunc<TAttr>,
   args: any[],
-  gainedMidTurn: boolean = false,
-  simulated: boolean = false,
+  gainedMidTurn = false,
+  simulated = false,
   messages: string[] = []
 ) {
   if (!pokemon?.canApplyAbility(passive) || (passive && (pokemon.getPassiveAbility().id === pokemon.getAbility().id))) {
@@ -5785,7 +5785,7 @@ function applyAbAttrsInternal<TAttr extends AbAttr>(
   applyFunc: AbAttrApplyFunc<TAttr>,
   successFunc: AbAttrSuccessFunc<TAttr>,
   args: any[],
-  simulated: boolean = false,
+  simulated = false,
   messages: string[] = [],
   gainedMidTurn = false
 ) {
@@ -5914,7 +5914,7 @@ export function applyStatMultiplierAbAttrs(
  * @param args - unused
  */
 export function applyAllyStatMultiplierAbAttrs(attrType: Constructor<AllyStatMultiplierAbAttr>,
-  pokemon: Pokemon, stat: BattleStat, statValue: NumberHolder, simulated: boolean = false, checkedPokemon: Pokemon, ignoreAbility: boolean, ...args: any[]
+  pokemon: Pokemon, stat: BattleStat, statValue: NumberHolder, simulated = false, checkedPokemon: Pokemon, ignoreAbility: boolean, ...args: any[]
 ): void {
   return applyAbAttrsInternal<AllyStatMultiplierAbAttr>(
     attrType,
@@ -6144,7 +6144,7 @@ export function applyPostStatStageChangeAbAttrs(
   attrType: Constructor<PostStatStageChangeAbAttr>,
   pokemon: Pokemon,
   stats: BattleStat[],
-  stages: integer,
+  stages: number,
   selfTarget: boolean,
   simulated = false,
   ...args: any[]
@@ -6355,8 +6355,8 @@ export function applyPostItemLostAbAttrs(
  */
 export function applyOnGainAbAttrs(
   pokemon: Pokemon,
-  passive: boolean = false,
-  simulated: boolean = false,
+  passive = false,
+  simulated = false,
   ...args: any[]): void {
   applySingleAbAttrs<PostSummonAbAttr>(
     pokemon,
