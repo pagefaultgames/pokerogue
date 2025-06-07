@@ -99,6 +99,7 @@ describe("Abilities - Sheer Force", () => {
     await game.toEndOfTurn();
 
     // ability was disabled when using boosted attack
+    expect(game.field.getEnemyPokemon()).toBe(enemyPokemon); // covers wimp out switch stuff
     expect(enemyPokemon.waveData.abilitiesApplied).not.toContain(ability);
     expect(headbuttMove.calculateBattlePower).toHaveLastReturnedWith(headbuttMove.power * SHEER_FORCE_MULT);
     expect(headbuttFlinchAttr.getMoveChance).toHaveLastReturnedWith(0);
