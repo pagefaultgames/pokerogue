@@ -942,8 +942,9 @@ export default class BattleScene extends SceneBase {
     if (isNullOrUndefined(pokemonId)) {
       return null;
     }
-    const findInParty = (party: Pokemon[]) => party.find(p => p.id === pokemonId);
-    return (findInParty(this.getPlayerParty()) || findInParty(this.getEnemyParty())) ?? null;
+
+    const party = (this.getPlayerParty() as Pokemon[]).concat(this.getEnemyParty());
+    return party.find(p => p.id === pokemonId) ?? null;
   }
 
   addPlayerPokemon(

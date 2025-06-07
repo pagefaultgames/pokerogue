@@ -7,10 +7,10 @@ import { BerryModifier } from "#app/modifier/modifier";
 import { BattleType } from "#enums/battle-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BerryType } from "#enums/berry-type";
-import { Stat } from "#enums/stat";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { BattlerIndex } from "#app/battle";
 
 describe("Field - Pokemon ID Checks", () => {
   let phaserGame: Phaser.Game;
@@ -29,12 +29,12 @@ describe("Field - Pokemon ID Checks", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset(MoveId.SPLASH)
       .ability(AbilityId.NO_GUARD)
       .battleStyle("single")
+      .battleType(BattleType.TRAINER)
       .disableCrits()
       .enemyLevel(100)
-      .enemySpecies(SpeciesId.MAGIKARP)
+      .enemySpecies(SpeciesId.ARCANINE)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(MoveId.SPLASH);
   });
@@ -43,7 +43,7 @@ describe("Field - Pokemon ID Checks", () => {
     return [...new Set<T>(array)];
   }
 
-  // TODO: We currently generate IDs as a pure random integer; remove once unique UUIDs are added
+  // TODO: We currently generate IDs as a pure random integer; enable once unique UUIDs are added
   it.todo("2 Pokemon should not be able to generate with the same ID during 1 encounter", async () => {
     game.override.battleType(BattleType.TRAINER); // enemy generates 2 mons
     await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.ABRA]);
@@ -55,9 +55,7 @@ describe("Field - Pokemon ID Checks", () => {
   });
 
   it("should not prevent item theft with PID of 0", async () => {
-    game.override
-      .moveset([MoveId.THIEF, MoveId.SPLASH])
-      .enemyHeldItems([{ name: "BERRY", count: 1, type: BerryType.APICOT }]);
+    game.override.enemyHeldItems([{ name: "BERRY", count: 1, type: BerryType.APICOT }]);
 
     vi.spyOn(allMoves[MoveId.THIEF], "chance", "get").mockReturnValue(100);
 
@@ -75,30 +73,35 @@ describe("Field - Pokemon ID Checks", () => {
     expect(player.getHeldItems()).toHaveLength(0);
 
     // Player uses Thief and steals the opponent's item
-    game.move.select(MoveId.THIEF);
+    game.move.use(MoveId.THIEF);
     await game.toNextTurn();
 
     expect(enemy.getHeldItems()).toHaveLength(0);
     expect(player.getHeldItems()).toHaveLength(1);
   });
 
-  it("should not prevent Syrup Bomb triggering if user has PID of 0", async () => {
-    game.override.moveset(MoveId.SYRUP_BOMB);
-    await game.classicMode.startBattle([SpeciesId.TREECKO]);
+  it("should not prevent Destiny Bond from triggering if user has PID of 0", async () => {
+    await game.classicMode.startBattle([SpeciesId.TREECKO, SpeciesId.AERODACTYL]);
 
-    const player = game.scene.getPlayerPokemon()!;
+    const player = game.field.getPlayerPokemon();
     // Override player pokemon PID to be 0
     player.id = 0;
+    expect(player.getTag(BattlerTagType.DESTINY_BOND)).toBeUndefined();
 
-    const enemy = game.scene.getEnemyPokemon()!;
-    expect(enemy.getTag(BattlerTagType.SYRUP_BOMB)).toBeUndefined();
+    game.move.use(MoveId.DESTINY_BOND);
+    await game.move.forceEnemyMove(MoveId.FLARE_BLITZ);
+    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.phaseInterceptor.to("MoveEndPhase");
 
-    game.move.select(MoveId.SYRUP_BOMB);
-    await game.toNextTurn();
+    const dBondTag = player.getTag(BattlerTagType.DESTINY_BOND)!;
+    expect(dBondTag).toBeDefined();
+    expect(dBondTag.sourceId).toBe(0);
 
-    const syrupTag = enemy.getTag(BattlerTagType.SYRUP_BOMB)!;
-    expect(syrupTag).toBeDefined();
-    expect(syrupTag.getSourcePokemon()).toBe(player);
-    expect(enemy.getStatStage(Stat.SPD)).toBe(-1);
+    await game.phaseInterceptor.to("MoveEndPhase");
+
+    const enemy = game.scene.getEnemyPokemon();
+    expect(player.isFainted()).toBe(true);
+    expect(enemy).toBeUndefined();
+    expect(player.getTag(BattlerTagType.DESTINY_BOND)).toBeUndefined();
   });
 });
