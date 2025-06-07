@@ -36,5 +36,5 @@ describe("EXP Modifier Items", () => {
     const expHolder = new NumberHolder(partyMember.exp);
     game.scene.applyModifiers(PokemonExpBoosterModifier, true, partyMember, expHolder);
     expect(expHolder.value).toBe(440);
-  }, 20000);
+  });
 });

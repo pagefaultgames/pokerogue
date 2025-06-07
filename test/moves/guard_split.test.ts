@@ -50,7 +50,7 @@ describe("Moves - Guard Split", () => {
 
     expect(player.getStat(Stat.SPDEF, false)).toBe(avgSpDef);
     expect(enemy.getStat(Stat.SPDEF, false)).toBe(avgSpDef);
-  }, 20000);
+  });
 
   it("should be idempotent", async () => {
     game.override.enemyMoveset([MoveId.GUARD_SPLIT]);
@@ -73,5 +73,5 @@ describe("Moves - Guard Split", () => {
 
     expect(player.getStat(Stat.SPDEF, false)).toBe(avgSpDef);
     expect(enemy.getStat(Stat.SPDEF, false)).toBe(avgSpDef);
-  }, 20000);
+  });
 });

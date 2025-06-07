@@ -60,7 +60,7 @@ describe("Moves - Disable", () => {
       result: MoveResult.FAIL,
     });
     expect(enemyMon.isMoveRestricted(MoveId.SPLASH)).toBe(false);
-  }, 20000);
+  });
 
   it("causes STRUGGLE if all usable moves are disabled", async () => {
     await game.classicMode.startBattle();
@@ -78,7 +78,7 @@ describe("Moves - Disable", () => {
     expect(enemyHistory).toHaveLength(2);
     expect(enemyHistory[0].move).toBe(MoveId.SPLASH);
     expect(enemyHistory[1].move).toBe(MoveId.STRUGGLE);
-  }, 20000);
+  });
 
   it("cannot disable STRUGGLE", async () => {
     game.override.enemyMoveset([MoveId.STRUGGLE]);
@@ -94,7 +94,7 @@ describe("Moves - Disable", () => {
     expect(playerMon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
     expect(enemyMon.getLastXMoves()[0].move).toBe(MoveId.STRUGGLE);
     expect(enemyMon.isMoveRestricted(MoveId.STRUGGLE)).toBe(false);
-  }, 20000);
+  });
 
   it("interrupts target's move when target moves after", async () => {
     await game.classicMode.startBattle();
@@ -116,7 +116,7 @@ describe("Moves - Disable", () => {
       result: MoveResult.SUCCESS,
     });
     expect(enemyHistory[1].result).toBe(MoveResult.FAIL);
-  }, 20000);
+  });
 
   it("disables NATURE POWER, not the move invoked by it", async () => {
     game.override.enemyMoveset([MoveId.NATURE_POWER]);
@@ -130,7 +130,7 @@ describe("Moves - Disable", () => {
 
     expect(enemyMon.isMoveRestricted(MoveId.NATURE_POWER)).toBe(true);
     expect(enemyMon.isMoveRestricted(enemyMon.getLastXMoves(2)[0].move)).toBe(false);
-  }, 20000);
+  });
 
   it("disables most recent move", async () => {
     game.override.enemyMoveset([MoveId.SPLASH, MoveId.TACKLE]);
@@ -150,5 +150,5 @@ describe("Moves - Disable", () => {
 
     expect(enemyMon.isMoveRestricted(MoveId.TACKLE)).toBe(true);
     expect(enemyMon.isMoveRestricted(MoveId.SPLASH)).toBe(false);
-  }, 20000);
+  });
 });
