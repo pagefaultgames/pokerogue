@@ -48,7 +48,7 @@ import { MoveTarget } from "#enums/MoveTarget";
 import { MoveCategory } from "#enums/MoveCategory";
 import { SpeciesFormChangePostMoveTrigger } from "#app/data/pokemon-forms";
 import { PokemonType } from "#enums/pokemon-type";
-import { DamageResult, PokemonMove, type TurnMove } from "#app/field/pokemon";
+import { type DamageResult, PokemonMove, type TurnMove } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
 import { HitResult, MoveResult } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
@@ -65,14 +65,14 @@ import { PokemonPhase } from "#app/phases/pokemon-phase";
 import { BooleanHolder, isNullOrUndefined, NumberHolder } from "#app/utils/common";
 import type { nil } from "#app/utils/common";
 import { BattlerTagType } from "#enums/battler-tag-type";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/move-id";
 import i18next from "i18next";
 import type { Phase } from "#app/phase";
 import { ShowAbilityPhase } from "./show-ability-phase";
 import { MovePhase } from "./move-phase";
 import { MoveEndPhase } from "./move-end-phase";
 import { HideAbilityPhase } from "#app/phases/hide-ability-phase";
-import { TypeDamageMultiplier } from "#app/data/type";
+import type { TypeDamageMultiplier } from "#app/data/type";
 import { HitCheckResult } from "#enums/hit-check-result";
 import type Move from "#app/data/moves/move";
 import { isFieldTargeted } from "#app/data/moves/move-utils";
@@ -82,6 +82,7 @@ import { DamageAchv } from "#app/system/achv";
 type HitCheckEntry = [HitCheckResult, TypeDamageMultiplier];
 
 export class MoveEffectPhase extends PokemonPhase {
+  public readonly phaseName = "MoveEffectPhase";
   public move: Move;
   private virtual = false;
   protected targets: BattlerIndex[];
@@ -206,19 +207,22 @@ export class MoveEffectPhase extends PokemonPhase {
    * @throws Error if there was an unexpected hit check result
    */
   private applyToTargets(user: Pokemon, targets: Pokemon[]): void {
+    let firstHit = true;
     for (const [i, target] of targets.entries()) {
       const [hitCheckResult, effectiveness] = this.hitChecks[i];
       switch (hitCheckResult) {
         case HitCheckResult.HIT:
-          this.applyMoveEffects(target, effectiveness);
+          this.applyMoveEffects(target, effectiveness, firstHit);
+          firstHit = false;
           if (isFieldTargeted(this.move)) {
             // Stop processing other targets if the move is a field move
             return;
           }
           break;
+        // biome-ignore lint/suspicious/noFallthroughSwitchClause: The fallthrough is intentional
         case HitCheckResult.NO_EFFECT:
           globalScene.queueMessage(
-            i18next.t(this.move.id === Moves.SHEER_COLD ? "battle:hitResultImmune" : "battle:hitResultNoEffect", {
+            i18next.t(this.move.id === MoveId.SHEER_COLD ? "battle:hitResultImmune" : "battle:hitResultNoEffect", {
               pokemonName: getPokemonNameWithAffix(target),
             }),
           );
@@ -291,7 +295,8 @@ export class MoveEffectPhase extends PokemonPhase {
 
     // If other effects were overriden, stop this phase before they can be applied
     if (overridden.value) {
-      return this.end();
+      this.end();
+      return;
     }
 
     // Lapse `MOVE_EFFECT` effects (i.e. semi-invulnerability) when applicable
@@ -349,11 +354,11 @@ export class MoveEffectPhase extends PokemonPhase {
     ) {
       const firstTarget = this.getFirstTarget();
       new MoveAnim(
-        move.id as Moves,
+        move.id as MoveId,
         user,
         firstTarget?.getBattlerIndex() ?? BattlerIndex.ATTACKER,
-        // Field moves and some moves used in mystery encounters should be played even on an empty field
-        fieldMove || (globalScene.currentBattle?.mysteryEncounter?.hasBattleAnimationsWithoutTargets ?? false),
+        // Some moves used in mystery encounters should be played even on an empty field
+        globalScene.currentBattle?.mysteryEncounter?.hasBattleAnimationsWithoutTargets ?? false,
       ).play(move.hitsSubstitute(user, firstTarget), () => this.postAnimCallback(user, targets));
 
       return;
@@ -592,7 +597,7 @@ export class MoveEffectPhase extends PokemonPhase {
     }
 
     const accuracyMultiplier = user.getAccuracyMultiplier(target, this.move);
-    const rand = user.randSeedInt(100);
+    const rand = user.randBattleSeedInt(100);
 
     if (rand < moveAccuracy * accuracyMultiplier) {
       return [HitCheckResult.HIT, effectiveness];
@@ -607,12 +612,12 @@ export class MoveEffectPhase extends PokemonPhase {
    * @returns `true` if the move should bypass accuracy and semi-invulnerability
    *
    * Accuracy and semi-invulnerability can be bypassed by:
-   * - An ability like {@linkcode Abilities.NO_GUARD | No Guard}
-   * - A poison type using {@linkcode Moves.TOXIC | Toxic}
-   * - A move like {@linkcode Moves.LOCK_ON | Lock-On} or {@linkcode Moves.MIND_READER | Mind Reader}.
+   * - An ability like {@linkcode AbilityId.NO_GUARD | No Guard}
+   * - A poison type using {@linkcode MoveId.TOXIC | Toxic}
+   * - A move like {@linkcode MoveId.LOCK_ON | Lock-On} or {@linkcode MoveId.MIND_READER | Mind Reader}.
    * - A field-targeted move like spikes
    *
-   * Does *not* check against effects {@linkcode Moves.GLAIVE_RUSH | Glaive Rush} status (which
+   * Does *not* check against effects {@linkcode MoveId.GLAIVE_RUSH | Glaive Rush} status (which
    * should not bypass semi-invulnerability), or interactions like Earthquake hitting against Dig,
    * (which should not bypass the accuracy check).
    *
@@ -740,7 +745,7 @@ export class MoveEffectPhase extends PokemonPhase {
     firstTarget?: boolean | null,
     selfTarget?: boolean,
   ): void {
-    return applyFilteredMoveAttrs(
+    applyFilteredMoveAttrs(
       (attr: MoveAttr) =>
         attr instanceof MoveEffectAttr &&
         attr.trigger === triggerType &&
@@ -763,15 +768,12 @@ export class MoveEffectPhase extends PokemonPhase {
    * - Invoking {@linkcode applyOnTargetEffects} if the move does not hit a substitute
    * - Triggering form changes and emergency exit / wimp out if this is the last hit
    *
-   * @param target the {@linkcode Pokemon} hit by this phase's move.
-   * @param effectiveness the effectiveness of the move (as previously evaluated in {@linkcode hitCheck})
+   * @param target - the {@linkcode Pokemon} hit by this phase's move.
+   * @param effectiveness - The effectiveness of the move (as previously evaluated in {@linkcode hitCheck})
+   * @param firstTarget - Whether this is the first target successfully struck by the move
    */
-  protected applyMoveEffects(target: Pokemon, effectiveness: TypeDamageMultiplier): void {
+  protected applyMoveEffects(target: Pokemon, effectiveness: TypeDamageMultiplier, firstTarget: boolean): void {
     const user = this.getUserPokemon();
-
-    /** The first target hit by the move */
-    const firstTarget = target === this.getTargets().find((_, i) => this.hitChecks[i][1] > 0);
-
     if (isNullOrUndefined(user)) {
       return;
     }
@@ -810,7 +812,7 @@ export class MoveEffectPhase extends PokemonPhase {
      */
     applyMoveAttrs(StatChangeBeforeDmgCalcAttr, user, target, this.move);
 
-    const { result: result, damage: dmg } = target.getAttackDamage({
+    const { result, damage: dmg } = target.getAttackDamage({
       source: user,
       move: this.move,
       ignoreAbility: false,
@@ -905,6 +907,14 @@ export class MoveEffectPhase extends PokemonPhase {
 
     target.destroySubstitute();
     target.lapseTag(BattlerTagType.COMMANDED);
+
+    // Force `lastHit` to be true if this is a multi hit move with hits left
+    // `hitsLeft` must be left as-is in order for the message displaying the number of hits
+    // to display the proper number.
+    // Note: When Dragon Darts' smart targeting is implemented, this logic may need to be adjusted.
+    if (!this.lastHit && user.turnData.hitsLeft > 1) {
+      this.lastHit = true;
+    }
   }
 
   /**

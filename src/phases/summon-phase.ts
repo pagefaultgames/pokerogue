@@ -17,6 +17,8 @@ import { applyPreSummonAbAttrs, PreSummonAbAttr } from "#app/data/abilities/abil
 import { globalScene } from "#app/global-scene";
 
 export class SummonPhase extends PartyMemberPokemonPhase {
+  // The union type is needed to keep typescript happy as these phases extend from SummonPhase
+  public readonly phaseName: "SummonPhase" | "SummonMissingPhase" | "SwitchSummonPhase" | "ReturnPhase" = "SummonPhase";
   private loaded: boolean;
 
   constructor(fieldIndex: number, player = true, loaded = false) {
@@ -196,6 +198,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
               onComplete: () => {
                 pokemon.cry(pokemon.getHpRatio() > 0.25 ? undefined : { rate: 0.85 });
                 pokemon.getSprite().clearTint();
+                pokemon.fieldSetup();
                 // necessary to stay transformed during wild waves
                 if (pokemon.summonData.speciesForm) {
                   pokemon.loadAssets(false);
@@ -261,6 +264,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
       onComplete: () => {
         pokemon.cry(pokemon.getHpRatio() > 0.25 ? undefined : { rate: 0.85 });
         pokemon.getSprite().clearTint();
+        pokemon.fieldSetup();
         globalScene.updateFieldScale();
         globalScene.time.delayedCall(1000, () => this.end());
       },

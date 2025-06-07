@@ -1,6 +1,7 @@
 import { applyAbAttrs, BypassSpeedChanceAbAttr, PreventBypassSpeedChanceAbAttr } from "#app/data/abilities/ability";
-import { allMoves, MoveHeaderAttr } from "#app/data/moves/move";
-import { Abilities } from "#app/enums/abilities";
+import { MoveHeaderAttr } from "#app/data/moves/move";
+import { allMoves } from "#app/data/data-lists";
+import { AbilityId } from "#enums/ability-id";
 import { Stat } from "#app/enums/stat";
 import type Pokemon from "#app/field/pokemon";
 import { PokemonMove } from "#app/field/pokemon";
@@ -24,6 +25,7 @@ import { globalScene } from "#app/global-scene";
 import { TeraPhase } from "./tera-phase";
 
 export class TurnStartPhase extends FieldPhase {
+  public readonly phaseName = "TurnStartPhase";
   /**
    * This orders the active Pokemon on the field by speed into an BattlerIndex array and returns that array.
    * It also checks for Trick Room and reverses the array if it is present.
@@ -227,7 +229,7 @@ export class TurnStartPhase extends FieldPhase {
                   ? playerActivePokemon[0]
                   : playerActivePokemon[1];
               // check if either active pokemon has the ability "Run Away"
-              const hasRunAway = playerActivePokemon.find(p => p.hasAbility(Abilities.RUN_AWAY));
+              const hasRunAway = playerActivePokemon.find(p => p.hasAbility(AbilityId.RUN_AWAY));
               runningPokemon = hasRunAway !== undefined ? hasRunAway : fasterPokemon;
             }
           }

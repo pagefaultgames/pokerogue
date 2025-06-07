@@ -27,6 +27,7 @@ import { globalScene } from "#app/global-scene";
 import { Gender } from "#app/data/gender";
 
 export class AttemptCapturePhase extends PokemonPhase {
+  public readonly phaseName = "AttemptCapturePhase";
   private pokeballType: PokeballType;
   private pokeball: Phaser.GameObjects.Sprite;
   private originalY: number;
@@ -63,7 +64,7 @@ export class AttemptCapturePhase extends PokemonPhase {
     const modifiedCatchRate = Math.round((((_3m - _2h) * catchRate * pokeballMultiplier) / _3m) * statusMultiplier);
     const shakeProbability = Math.round(65536 / Math.pow(255 / modifiedCatchRate, 0.1875)); // Formula taken from gen 6
     const criticalCaptureChance = getCriticalCaptureChance(modifiedCatchRate);
-    const isCritical = pokemon.randSeedInt(256) < criticalCaptureChance;
+    const isCritical = pokemon.randBattleSeedInt(256) < criticalCaptureChance;
     const fpOffset = pokemon.getFieldPositionOffset();
 
     const pokeballAtlasKey = getPokeballAtlasKey(this.pokeballType);
@@ -135,14 +136,14 @@ export class AttemptCapturePhase extends PokemonPhase {
                       pokeballMultiplier === -1 ||
                       isCritical ||
                       modifiedCatchRate >= 255 ||
-                      pokemon.randSeedInt(65536) < shakeProbability
+                      pokemon.randBattleSeedInt(65536) < shakeProbability
                     ) {
                       globalScene.playSound("se/pb_move");
                     } else {
                       shakeCounter.stop();
                       this.failCatch(shakeCount);
                     }
-                  } else if (isCritical && pokemon.randSeedInt(65536) >= shakeProbability) {
+                  } else if (isCritical && pokemon.randBattleSeedInt(65536) >= shakeProbability) {
                     // Above, perform the one shake check for critical captures after the ball shakes once
                     shakeCounter.stop();
                     this.failCatch(shakeCount);

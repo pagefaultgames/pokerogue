@@ -17,6 +17,7 @@ import { globalScene } from "#app/global-scene";
 import { SelectBiomePhase } from "./select-biome-phase";
 
 export class AttemptRunPhase extends PokemonPhase {
+  public readonly phaseName = "AttemptRunPhase";
   /** For testing purposes: this is to force the pokemon to fail and escape */
   public forceFailEscape = false;
 
@@ -34,7 +35,7 @@ export class AttemptRunPhase extends PokemonPhase {
 
     applyAbAttrs(RunSuccessAbAttr, playerPokemon, null, false, escapeChance);
 
-    if (playerPokemon.randSeedInt(100) < escapeChance.value && !this.forceFailEscape) {
+    if (playerPokemon.randBattleSeedInt(100) < escapeChance.value && !this.forceFailEscape) {
       enemyField.forEach(enemyPokemon => applyPreLeaveFieldAbAttrs(PreLeaveFieldAbAttr, enemyPokemon));
 
       globalScene.playSound("se/flee");
