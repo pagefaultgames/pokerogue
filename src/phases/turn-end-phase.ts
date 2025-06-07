@@ -19,6 +19,7 @@ import { applyHeldItems } from "#app/items/all-held-items";
 import { ITEM_EFFECT } from "#app/items/held-item";
 
 export class TurnEndPhase extends FieldPhase {
+  public readonly phaseName = "TurnEndPhase";
   start() {
     super.start();
 

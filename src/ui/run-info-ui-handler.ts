@@ -21,7 +21,7 @@ import { getNatureStatMultiplier, getNatureName } from "../data/nature";
 import { getVariantTint } from "#app/sprites/variant";
 // biome-ignore lint/style/noNamespaceImport: See `src/system/game-data.ts`
 import * as Modifier from "#app/modifier/modifier";
-import type { Species } from "#enums/species";
+import type { SpeciesId } from "#enums/species-id";
 import { PlayerGender } from "#enums/player-gender";
 import { SettingKeyboard } from "#app/system/settings/settings-keyboard";
 import { getBiomeName } from "#app/data/balance/biomes";
@@ -1026,7 +1026,7 @@ export default class RunInfoUiHandler extends UiHandler {
         ignoreTimeTint: true,
       });
       this.hallofFameContainer.add(pokemonSprite);
-      const speciesLoaded: Map<Species, boolean> = new Map<Species, boolean>();
+      const speciesLoaded: Map<SpeciesId, boolean> = new Map<SpeciesId, boolean>();
       speciesLoaded.set(id, false);
 
       const female = pkmn.gender === 1;
