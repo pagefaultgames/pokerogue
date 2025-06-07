@@ -83,6 +83,7 @@ import { isVirtual, isReflected, MoveUseMode } from "#enums/move-use-mode";
 export type HitCheckEntry = [HitCheckResult, TypeDamageMultiplier];
 
 export class MoveEffectPhase extends PokemonPhase {
+  public readonly phaseName = "MoveEffectPhase";
   public move: Move;
   protected targets: BattlerIndex[];
   protected useMode: MoveUseMode;

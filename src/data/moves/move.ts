@@ -3110,7 +3110,7 @@ export class AwaitCombinedPledgeAttr extends OverrideMoveEffectAttr {
 
     const overridden = args[0] as BooleanHolder;
 
-    const allyMovePhase = globalScene.findPhase<MovePhase>((phase) => phase instanceof MovePhase && phase.pokemon.isPlayer() === user.isPlayer());
+    const allyMovePhase = globalScene.findPhase<MovePhase>((phase) => phase.is("MovePhase") && phase.pokemon.isPlayer() === user.isPlayer());
     if (allyMovePhase) {
       const allyMove = allyMovePhase.move.getMove();
       if (allyMove !== move && allyMove.hasAttr(AwaitCombinedPledgeAttr)) {
@@ -3124,7 +3124,7 @@ export class AwaitCombinedPledgeAttr extends OverrideMoveEffectAttr {
 
         // Move the ally's MovePhase (if needed) so that the ally moves next
         const allyMovePhaseIndex = globalScene.phaseQueue.indexOf(allyMovePhase);
-        const firstMovePhaseIndex = globalScene.phaseQueue.findIndex((phase) => phase instanceof MovePhase);
+        const firstMovePhaseIndex = globalScene.phaseQueue.findIndex((phase) => phase.is("MovePhase"));
         if (allyMovePhaseIndex !== firstMovePhaseIndex) {
           globalScene.prependToPhase(globalScene.phaseQueue.splice(allyMovePhaseIndex, 1)[0], MovePhase);
         }
@@ -4489,7 +4489,7 @@ export class CueNextRoundAttr extends MoveEffectAttr {
 
   override apply(user: Pokemon, target: Pokemon, move: Move, args?: any[]): boolean {
     const nextRoundPhase = globalScene.findPhase<MovePhase>(phase =>
-      phase instanceof MovePhase && phase.move.moveId === MoveId.ROUND
+      phase.is("MovePhase") && phase.move.moveId === MoveId.ROUND
     );
 
     if (!nextRoundPhase) {
@@ -4498,7 +4498,7 @@ export class CueNextRoundAttr extends MoveEffectAttr {
 
     // Update the phase queue so that the next Pokemon using Round moves next
     const nextRoundIndex = globalScene.phaseQueue.indexOf(nextRoundPhase);
-    const nextMoveIndex = globalScene.phaseQueue.findIndex(phase => phase instanceof MovePhase);
+    const nextMoveIndex = globalScene.phaseQueue.findIndex(phase => phase.is("MovePhase"));
     if (nextRoundIndex !== nextMoveIndex) {
       globalScene.prependToPhase(globalScene.phaseQueue.splice(nextRoundIndex, 1)[0], MovePhase);
     }
@@ -5491,13 +5491,6 @@ export class AddBattlerTagAttr extends MoveEffectAttr {
     this.failOnOverlap = !!failOnOverlap;
   }
 
-  canApply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (!super.canApply(user, target, move, args)) {
-      return false;
-    }
-    return true;
-  }
-
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (!super.apply(user, target, move, args)) {
       return false;
@@ -6196,7 +6189,7 @@ export class RevivalBlessingAttr extends MoveEffectAttr {
         // Handle cases where revived pokemon needs to get switched in on same turn
         if (allyPokemon.isFainted() || allyPokemon === pokemon) {
           // Enemy switch phase should be removed and replaced with the revived pkmn switching in
-          globalScene.tryRemovePhase((phase: SwitchSummonPhase) => phase instanceof SwitchSummonPhase && phase.getPokemon() === pokemon);
+          globalScene.tryRemovePhase((phase: SwitchSummonPhase) => phase.is("SwitchSummonPhase") && phase.getPokemon() === pokemon);
           // If the pokemon being revived was alive earlier in the turn, cancel its move
           // (revived pokemon can't move in the turn they're brought back)
           // TODO: might make sense to move this to `FaintPhase` rather than handling it in the move
@@ -6857,7 +6850,7 @@ export class RandomMovesetMoveAttr extends CallMoveAttr {
         return false;
       }
 
-      this.moveId = moves[user.randBattleSeedInt(moves.length)]!.moveId;
+      this.moveId = moves[user.randBattleSeedInt(moves.length)].moveId;
       return true;
     };
   }
@@ -7907,7 +7900,7 @@ export class ForceLastAttr extends MoveEffectAttr {
       // Either the end of the turn or in front of another, slower move which has also been forced last
       const prependPhase = globalScene.findPhase((phase) =>
         [ MovePhase, MoveEndPhase ].every(cls => !(phase instanceof cls))
-        || (phase instanceof MovePhase) && phaseForcedSlower(phase, target, !!globalScene.arena.getTag(ArenaTagType.TRICK_ROOM))
+        || (phase.is("MovePhase")) && phaseForcedSlower(phase, target, !!globalScene.arena.getTag(ArenaTagType.TRICK_ROOM))
       );
       if (prependPhase) {
         globalScene.phaseQueue.splice(
@@ -7959,7 +7952,7 @@ const userSleptOrComatoseCondition: MoveConditionFunc = (user: Pokemon, target: 
 
 const targetSleptOrComatoseCondition: MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) =>  target.status?.effect === StatusEffect.SLEEP || target.hasAbility(AbilityId.COMATOSE);
 
-const failIfLastCondition: MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => globalScene.phaseQueue.find(phase => phase instanceof MovePhase) !== undefined;
+const failIfLastCondition: MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => globalScene.phaseQueue.find(phase => phase.is("MovePhase")) !== undefined;
 
 const failIfLastInPartyCondition: MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => {
   const party: Pokemon[] = user.isPlayer() ? globalScene.getPlayerParty() : globalScene.getEnemyParty();

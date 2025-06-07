@@ -26,6 +26,7 @@ import { ArenaTagType } from "#app/enums/arena-tag-type";
 import { isVirtual, isIgnorePP, MoveUseMode } from "#enums/move-use-mode";
 
 export class CommandPhase extends FieldPhase {
+  public readonly phaseName = "CommandPhase";
   protected fieldIndex: number;
 
   constructor(fieldIndex: number) {

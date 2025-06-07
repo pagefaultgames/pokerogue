@@ -768,7 +768,7 @@ export function setEncounterRewards(
     if (customShopRewards) {
       globalScene.unshiftPhase(new SelectModifierPhase(0, undefined, customShopRewards));
     } else {
-      globalScene.tryRemovePhase(p => p instanceof SelectModifierPhase);
+      globalScene.tryRemovePhase(p => p.is("MysteryEncounterRewardsPhase"));
     }
 
     if (eggRewards) {

@@ -9,13 +9,13 @@ import { BooleanHolder } from "#app/utils/common";
 import { MovePhase } from "#app/phases/move-phase";
 import { PokemonPhase } from "#app/phases/pokemon-phase";
 import { BattlerTagType } from "#enums/battler-tag-type";
-import { MoveEndPhase } from "#app/phases/move-end-phase";
 import type { MoveUseMode } from "#enums/move-use-mode";
 
 /**
  * Phase for the "charging turn" of two-turn moves (e.g. Dig).
  */
 export class MoveChargePhase extends PokemonPhase {
+  public readonly phaseName = "MoveChargePhase";
   /** The move instance that this phase applies */
   public move: PokemonMove;
   /** The field index targeted by the move (Charging moves assume single target) */
@@ -74,7 +74,7 @@ export class MoveChargePhase extends PokemonPhase {
     // If instantly charging, remove the pending MoveEndPhase and queue a new MovePhase for the "attack" portion of the move.
     // Otherwise, add the attack portion to the user's move queue to execute next turn.
     if (instantCharge.value) {
-      globalScene.tryRemovePhase(phase => phase instanceof MoveEndPhase && phase.getPokemon() === user);
+      globalScene.tryRemovePhase(phase => phase.is("MoveEndPhase") && phase.getPokemon() === user);
       globalScene.unshiftPhase(new MovePhase(user, [this.targetIndex], this.move, this.useMode));
     } else {
       user.pushMoveQueue({ move: move.id, targets: [this.targetIndex], useMode: this.useMode });

@@ -13,6 +13,7 @@ import i18next from "i18next";
  * Used for Transform (move) and Imposter (ability)
  */
 export class PokemonTransformPhase extends PokemonPhase {
+  public readonly phaseName = "PokemonTransformPhase";
   protected targetIndex: BattlerIndex;
   private playSound: boolean;
 
