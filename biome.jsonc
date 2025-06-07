@@ -10,7 +10,7 @@
     "enabled": true,
     "useEditorconfig": true,
     "indentStyle": "space",
-    "ignore": ["src/enums/*", "src/data/balance/*", "src/data/abilities/ability.ts"],
+    "ignore": ["src/enums/*", "src/data/balance/*"],
     "lineWidth": 120
   },
   "files": {
