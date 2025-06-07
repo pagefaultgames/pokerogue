@@ -50,7 +50,7 @@ import type PokemonSpecies from "#app/data/pokemon-species";
 import type { IEggOptions } from "#app/data/egg";
 import { Egg } from "#app/data/egg";
 import type { CustomPokemonData } from "#app/data/custom-pokemon-data";
-import type HeldModifierConfig from "#app/interfaces/held-modifier-config";
+import type HeldModifierConfig from "#app/@types/held-modifier-config";
 import { MovePhase } from "#app/phases/move-phase";
 import { EggLapsePhase } from "#app/phases/egg-lapse-phase";
 import { TrainerVictoryPhase } from "#app/phases/trainer-victory-phase";
