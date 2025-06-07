@@ -247,38 +247,20 @@ export default class GameStatsUiHandler extends UiHandler {
     headerText.setOrigin(0, 0);
     headerText.setPositionRelative(headerBg, 8, 4);
 
-    const statsBgWidth = (globalScene.game.canvas.width / 6 - 2) / 2;
-    const [statsBgLeft, statsBgRight] = new Array(2).fill(null).map((_, i) => {
-      const width = statsBgWidth + 2;
-      const height = Math.floor(globalScene.game.canvas.height / 6 - headerBg.height - 2);
-      const statsBg = addWindow(
-        (statsBgWidth - 2) * i,
-        headerBg.height,
-        width,
-        height,
-        false,
-        false,
-        i > 0 ? -3 : 0,
-        1,
-      );
-      statsBg.setOrigin(0, 0);
-      return statsBg;
-    });
+    const statsBgWidth = globalScene.game.canvas.width / 6 - 2;
+    const statsBgHeight = Math.floor(globalScene.game.canvas.height / 6 - headerBg.height - 2);
+    const statsBg = addWindow(0, headerBg.height, statsBgWidth, statsBgHeight, false, false, 0, 1);
+    statsBg.setOrigin(0, 0);
 
     this.statsContainer = globalScene.add.container(0, 0);
 
-    new Array(18).fill(null).map((_, s) => {
-      const statLabel = addTextObject(
-        8 + (s % 2 === 1 ? statsBgWidth : 0),
-        28 + Math.floor(s / 2) * 16,
-        "",
-        TextStyle.STATS_LABEL,
-      );
+    new Array(39).fill(null).map((_, s) => {
+      const statLabel = addTextObject(8, 28 + s * 16, "", TextStyle.STATS_LABEL);
       statLabel.setOrigin(0, 0);
       this.statsContainer.add(statLabel);
       this.statLabels.push(statLabel);
 
-      const statValue = addTextObject(statsBgWidth * ((s % 2) + 1) - 8, statLabel.y, "", TextStyle.STATS_VALUE);
+      const statValue = addTextObject(statsBgWidth - 8, statLabel.y, "", TextStyle.STATS_VALUE);
       statValue.setOrigin(1, 0);
       this.statsContainer.add(statValue);
       this.statValues.push(statValue);
@@ -286,19 +268,18 @@ export default class GameStatsUiHandler extends UiHandler {
 
     this.gameStatsContainer.add(headerBg);
     this.gameStatsContainer.add(headerText);
-    this.gameStatsContainer.add(statsBgLeft);
-    this.gameStatsContainer.add(statsBgRight);
+    this.gameStatsContainer.add(statsBg);
     this.gameStatsContainer.add(this.statsContainer);
 
     // arrows to show that we can scroll through the stats
     const isLegacyTheme = globalScene.uiTheme === UiTheme.LEGACY;
     this.arrowDown = globalScene.add.sprite(
-      statsBgWidth,
+      statsBgWidth / 2,
       globalScene.game.canvas.height / 6 - (isLegacyTheme ? 9 : 5),
       "prompt",
     );
     this.gameStatsContainer.add(this.arrowDown);
-    this.arrowUp = globalScene.add.sprite(statsBgWidth, headerBg.height + (isLegacyTheme ? 7 : 3), "prompt");
+    this.arrowUp = globalScene.add.sprite(statsBgWidth / 2, headerBg.height + (isLegacyTheme ? 7 : 3), "prompt");
     this.arrowUp.flipY = true;
     this.gameStatsContainer.add(this.arrowUp);
 
@@ -335,7 +316,7 @@ export default class GameStatsUiHandler extends UiHandler {
   }
 
   updateStats(): void {
-    const statKeys = Object.keys(displayStats).slice(this.cursor * 2, this.cursor * 2 + 18);
+    const statKeys = Object.keys(displayStats).slice(this.cursor * 2, this.cursor * 2 + 9);
     statKeys.forEach((key, s) => {
       const stat = displayStats[key] as DisplayStat;
       const value = stat.sourceFunc!(globalScene.gameData); // TODO: is this bang correct?
@@ -346,8 +327,8 @@ export default class GameStatsUiHandler extends UiHandler {
       );
       this.statValues[s].setText(value);
     });
-    if (statKeys.length < 18) {
-      for (let s = statKeys.length; s < 18; s++) {
+    if (statKeys.length < 9) {
+      for (let s = statKeys.length; s < 9; s++) {
         this.statLabels[s].setText("");
         this.statValues[s].setText("");
       }
@@ -361,7 +342,7 @@ export default class GameStatsUiHandler extends UiHandler {
     const showUpArrow = this.cursor > 0;
     this.arrowUp.setVisible(showUpArrow);
 
-    const showDownArrow = this.cursor < Math.ceil((Object.keys(displayStats).length - 18) / 2);
+    const showDownArrow = this.cursor < Math.ceil((Object.keys(displayStats).length - 10) / 2);
     this.arrowDown.setVisible(showDownArrow);
   }
 
@@ -381,7 +362,7 @@ export default class GameStatsUiHandler extends UiHandler {
           }
           break;
         case Button.DOWN:
-          if (this.cursor < Math.ceil((Object.keys(displayStats).length - 18) / 2)) {
+          if (this.cursor < Math.ceil(Object.keys(displayStats).length / 2 - 5)) {
             success = this.setCursor(this.cursor + 1);
           }
           break;
