@@ -2925,10 +2925,10 @@ export default class BattleScene extends SceneBase {
 
   addModifier(
     modifier: Modifier | null,
-    ignoreUpdate?: boolean,
-    playSound?: boolean,
-    virtual?: boolean,
-    instant?: boolean,
+    ignoreUpdate = false,
+    playSound = false,
+    virtual = false,
+    instant = false,
     cost?: number,
   ): boolean {
     // We check against modifier.type to stop a bug related to loading in a pokemon that has a form change item, which prior to some patch
@@ -2942,7 +2942,7 @@ export default class BattleScene extends SceneBase {
     this.validateAchvs(ModifierAchv, modifier);
     const modifiersToRemove: PersistentModifier[] = [];
     if (modifier instanceof PersistentModifier) {
-      if ((modifier as PersistentModifier).add(this.modifiers, !!virtual)) {
+      if ((modifier as PersistentModifier).add(this.modifiers, virtual)) {
         if (modifier instanceof PokemonFormChangeItemModifier) {
           const pokemon = this.getPokemonById(modifier.pokemonId);
           if (pokemon) {
@@ -3015,7 +3015,7 @@ export default class BattleScene extends SceneBase {
     return success;
   }
 
-  addEnemyModifier(modifier: PersistentModifier, ignoreUpdate?: boolean, instant?: boolean): Promise<void> {
+  addEnemyModifier(modifier: PersistentModifier, ignoreUpdate = false, instant = false): Promise<void> {
     return new Promise(resolve => {
       const modifiersToRemove: PersistentModifier[] = [];
       if ((modifier as PersistentModifier).add(this.enemyModifiers, false)) {
@@ -3046,9 +3046,7 @@ export default class BattleScene extends SceneBase {
    * @param itemModifier - {@linkcode PokemonHeldItemModifier} to transfer (represents whole stack)
    * @param target - Recipient {@linkcode Pokemon} recieving items
    * @param playSound - Whether to play a sound when transferring the item
-   * @param transferQuantity - How many items of the stack to transfer. Optional, defaults to `1`
-   * @param instant - ??? (Optional)
-   * @param ignoreUpdate - ??? (Optional)
+   * @param transferQuantity - How many items of the stack to transfer. Optional, default `1`
    * @param itemLost - Whether to treat the item's current holder as losing the item (for now, this simply enables Unburden). Default: `true`.
    * @returns Whether the transfer was successful
    */
@@ -3057,8 +3055,6 @@ export default class BattleScene extends SceneBase {
     target: Pokemon,
     playSound: boolean,
     transferQuantity = 1,
-    instant?: boolean,
-    ignoreUpdate?: boolean,
     itemLost = true,
   ): boolean {
     const source = itemModifier.getPokemon();
@@ -3106,8 +3102,8 @@ export default class BattleScene extends SceneBase {
     }
 
     // TODO: what does this do and why is it here
-    if (source.isPlayer() !== target.isPlayer() && !ignoreUpdate) {
-      this.updateModifiers(source.isPlayer(), instant);
+    if (source.isPlayer() !== target.isPlayer()) {
+      this.updateModifiers(source.isPlayer(), false);
     }
 
     // Add however much we took to the recieving pokemon, creating a new modifier if the target lacked one prio
@@ -3118,9 +3114,9 @@ export default class BattleScene extends SceneBase {
       newItemModifier.pokemonId = target.id;
       newItemModifier.stackCount = countTaken;
       if (target.isPlayer()) {
-        this.addModifier(newItemModifier, ignoreUpdate, playSound, false, instant);
+        this.addModifier(newItemModifier, false, playSound);
       } else {
-        this.addEnemyModifier(newItemModifier, ignoreUpdate, instant);
+        this.addEnemyModifier(newItemModifier);
       }
     }
 
@@ -3286,8 +3282,10 @@ export default class BattleScene extends SceneBase {
     [this.modifierBar, this.enemyModifierBar].map(m => m.setVisible(visible));
   }
 
-  // TODO: Document this
-  updateModifiers(player = true, instant?: boolean): void {
+  /**
+   * @param instant - Whether to instantly update any changes to party members' HP bars; default `false`
+   */
+  updateModifiers(player = true, instant = false): void {
     const modifiers = player ? this.modifiers : (this.enemyModifiers as PersistentModifier[]);
     for (let m = 0; m < modifiers.length; m++) {
       const modifier = modifiers[m];
@@ -3319,7 +3317,13 @@ export default class BattleScene extends SceneBase {
     }
   }
 
-  updatePartyForModifiers(party: Pokemon[], instant?: boolean): Promise<void> {
+  /**
+   * Update one or more Pokemon's info containers after having recieved modifiers.
+   * @param party - An array of {@linkcode Pokemon} to update info.
+   * @param instant - Whether to instantly update any changes to the party's HP bars; default `false`
+   * @returns A Promise that resolves once all the info containers have been updated.
+   */
+  updatePartyForModifiers(party: Pokemon[], instant = false): Promise<void> {
     return new Promise(resolve => {
       Promise.allSettled(
         party.map(p => {

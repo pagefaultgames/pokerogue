@@ -175,18 +175,11 @@ export default class Battle {
   }
 
   addPostBattleLoot(enemyPokemon: EnemyPokemon): void {
-    this.postBattleLoot.push(
-      ...globalScene
-        .findModifiers(
-          m => m instanceof PokemonHeldItemModifier && m.pokemonId === enemyPokemon.id && m.isTransferable,
-          false,
-        )
-        .map(i => {
-          const ret = i as PokemonHeldItemModifier;
-          //@ts-ignore - this is awful to fix/change
-          ret.pokemonId = null;
-          return ret;
-        }),
+    this.postBattleLoot.concat(
+      globalScene.findModifiers(
+        m => m instanceof PokemonHeldItemModifier && m.pokemonId === enemyPokemon.id && m.isTransferable,
+        false,
+      ) as PokemonHeldItemModifier[],
     );
   }
 

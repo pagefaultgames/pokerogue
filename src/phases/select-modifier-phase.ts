@@ -162,8 +162,6 @@ export class SelectModifierPhase extends BattlePhase {
                       party[toSlotIndex],
                       true,
                       itemQuantity,
-                      undefined,
-                      undefined,
                       false,
                     );
                   } else {

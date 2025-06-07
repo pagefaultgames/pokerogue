@@ -4724,31 +4724,46 @@ export class PostBattleAbAttr extends AbAttr {
 }
 
 export class PostBattleLootAbAttr extends PostBattleAbAttr {
-  private randItem?: PokemonHeldItemModifier;
-
-  override canApplyPostBattle(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
-    const postBattleLoot = globalScene.currentBattle.postBattleLoot;
-    if (!simulated && postBattleLoot.length && args[0]) {
-      this.randItem = randSeedItem(postBattleLoot);
-      return globalScene.canTransferHeldItemModifier(this.randItem, pokemon, 1);
-    }
-    return false;
-  }
+  /** The index of the random item to steal. */
+  private randItemIndex: number = 0;
 
   /**
    * @param args - `[0]`: boolean for if the battle ended in a victory
    */
-  override applyPostBattle(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): void {
+  override canApplyPostBattle(pokemon: Pokemon, passive: boolean, simulated: boolean, args: [boolean]): boolean {
     const postBattleLoot = globalScene.currentBattle.postBattleLoot;
-    if (!this.randItem) {
-      this.randItem = randSeedItem(postBattleLoot);
+    const wasVictory = args[0];
+    if (simulated || postBattleLoot.length === 0 || !wasVictory) {
+      return false;
     }
 
-    if (globalScene.tryTransferHeldItemModifier(this.randItem, pokemon, true, 1, true, undefined, false)) {
-      postBattleLoot.splice(postBattleLoot.indexOf(this.randItem), 1);
-      globalScene.queueMessage(i18next.t("abilityTriggers:postBattleLoot", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), itemName: this.randItem.type.name }));
+    // Pick a random item and check if we are capped.
+    this.randItemIndex = randSeedInt(postBattleLoot.length);
+    const item = postBattleLoot[this.randItemIndex]
+
+    // We can't use `canTransferItemModifier` as that assumes the Pokemon in question already exists (which it does not)
+    const existingItem = globalScene.findModifier(
+      (m): m is PokemonHeldItemModifier =>
+        m instanceof PokemonHeldItemModifier && m.matchType(item) && m.pokemonId === pokemon.id,
+      pokemon.isPlayer(),
+    ) as PokemonHeldItemModifier | undefined;
+
+    return (existingItem?.getCountUnderMax() ?? Number.MAX_SAFE_INTEGER) > 1
+  }
+
+  /**
+   * Attempt to give the previously selected random item to the ability holder at battle end.
+   * @param args - `[0]`: boolean for if the battle ended in a victory
+   */
+  override applyPostBattle(pokemon: Pokemon, passive: boolean, simulated: boolean, args: [boolean]): void {
+    const postBattleLoot = globalScene.currentBattle.postBattleLoot;
+    const item = postBattleLoot[this.randItemIndex]
+    item.pokemonId = pokemon.id;
+
+    if (globalScene.addModifier(item, false, true)) {
+      postBattleLoot.splice(this.randItemIndex, 1);
+      globalScene.queueMessage(i18next.t("abilityTriggers:postBattleLoot", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), itemName: item.type.name }));
     }
-    this.randItem = undefined;
   }
 }
 
