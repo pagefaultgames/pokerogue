@@ -20,6 +20,7 @@ export const ITEM_EFFECT = {
   SURVIVE_CHANCE: 12,
   BYPASS_SPEED_CHANCE: 13,
   FLINCH_CHANCE: 14,
+  FIELD_EFFECT: 15,
 } as const;
 
 export type ITEM_EFFECT = (typeof ITEM_EFFECT)[keyof typeof ITEM_EFFECT];

@@ -20,6 +20,7 @@ import { type BERRY_PARAMS, BerryHeldItem, berryTypeToHeldItem } from "./held-it
 import { type BYPASS_SPEED_CHANCE_PARAMS, BypassSpeedChanceHeldItem } from "./held-items/bypass-speed-chance";
 import { type CRIT_BOOST_PARAMS, CritBoostHeldItem, SpeciesCritBoostHeldItem } from "./held-items/crit-booster";
 import { type EXP_BOOST_PARAMS, ExpBoosterHeldItem } from "./held-items/exp-booster";
+import { type FIELD_EFFECT_PARAMS, FieldEffectHeldItem } from "./held-items/field-effect";
 import { type FLINCH_CHANCE_PARAMS, FlinchChanceHeldItem } from "./held-items/flinch-chance";
 import { type HIT_HEAL_PARAMS, HitHealHeldItem } from "./held-items/hit-heal";
 import { InstantReviveHeldItem, type INSTANT_REVIVE_PARAMS } from "./held-items/instant-revive";
@@ -109,6 +110,7 @@ export function initHeldItems() {
   allHeldItems[HeldItemId.FOCUS_BAND] = new SurviveChanceHeldItem(HeldItemId.FOCUS_BAND, 5);
   allHeldItems[HeldItemId.QUICK_CLAW] = new BypassSpeedChanceHeldItem(HeldItemId.QUICK_CLAW, 3);
   allHeldItems[HeldItemId.KINGS_ROCK] = new FlinchChanceHeldItem(HeldItemId.KINGS_ROCK, 3, 10);
+  allHeldItems[HeldItemId.MYSTICAL_ROCK] = new FieldEffectHeldItem(HeldItemId.MYSTICAL_ROCK, 2);
 
   allHeldItems[HeldItemId.FLAME_ORB] = new TurnEndStatusHeldItem(HeldItemId.FLAME_ORB, 1, StatusEffect.BURN);
   allHeldItems[HeldItemId.TOXIC_ORB] = new TurnEndStatusHeldItem(HeldItemId.TOXIC_ORB, 1, StatusEffect.TOXIC);
@@ -135,6 +137,7 @@ type APPLY_HELD_ITEMS_PARAMS = {
   [ITEM_EFFECT.SURVIVE_CHANCE]: SURVIVE_CHANCE_PARAMS;
   [ITEM_EFFECT.BYPASS_SPEED_CHANCE]: BYPASS_SPEED_CHANCE_PARAMS;
   [ITEM_EFFECT.FLINCH_CHANCE]: FLINCH_CHANCE_PARAMS;
+  [ITEM_EFFECT.FIELD_EFFECT]: FIELD_EFFECT_PARAMS;
 };
 
 export function applyHeldItems<T extends ITEM_EFFECT>(effect: T, params: APPLY_HELD_ITEMS_PARAMS[T]) {

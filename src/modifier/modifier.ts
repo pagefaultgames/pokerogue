@@ -21,7 +21,7 @@ import type { MoveId } from "#enums/move-id";
 import type { Nature } from "#enums/nature";
 import type { PokeballType } from "#enums/pokeball";
 import { SpeciesId } from "#enums/species-id";
-import { type PermanentStat, type TempBattleStat, BATTLE_STATS, Stat, TEMP_BATTLE_STATS } from "#enums/stat";
+import { type PermanentStat, type TempBattleStat, Stat, TEMP_BATTLE_STATS } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import type { PokemonType } from "#enums/pokemon-type";
 import i18next from "i18next";
@@ -1027,44 +1027,6 @@ export class PokemonIncrementingStatModifier extends PokemonHeldItemModifier {
   }
 }
 
-export class HitHealModifier extends PokemonHeldItemModifier {
-  matchType(modifier: Modifier) {
-    return modifier instanceof HitHealModifier;
-  }
-
-  clone() {
-    return new HitHealModifier(this.type, this.pokemonId, this.stackCount);
-  }
-
-  /**
-   * Applies {@linkcode HitHealModifier}
-   * @param pokemon The {@linkcode Pokemon} that holds the item
-   * @returns `true` if the {@linkcode Pokemon} was healed
-   */
-  override apply(pokemon: Pokemon): boolean {
-    if (pokemon.turnData.totalDamageDealt && !pokemon.isFullHp()) {
-      // TODO: this shouldn't be undefined AFAIK
-      globalScene.unshiftPhase(
-        new PokemonHealPhase(
-          pokemon.getBattlerIndex(),
-          toDmgValue(pokemon.turnData.totalDamageDealt / 8) * this.stackCount,
-          i18next.t("modifier:hitHealApply", {
-            pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-            typeName: this.type.name,
-          }),
-          true,
-        ),
-      );
-    }
-
-    return true;
-  }
-
-  getMaxHeldItemCount(_pokemon: Pokemon): number {
-    return 4;
-  }
-}
-
 export class LevelIncrementBoosterModifier extends PersistentModifier {
   match(modifier: Modifier) {
     return modifier instanceof LevelIncrementBoosterModifier;
@@ -1193,85 +1155,6 @@ export class PreserveBerryModifier extends PersistentModifier {
 
   getMaxStackCount(): number {
     return 3;
-  }
-}
-
-/**
- * Modifier used for held items, namely White Herb, that restore adverse stat
- * stages in battle.
- * @extends PokemonHeldItemModifier
- * @see {@linkcode apply}
- */
-export class ResetNegativeStatStageModifier extends PokemonHeldItemModifier {
-  matchType(modifier: Modifier) {
-    return modifier instanceof ResetNegativeStatStageModifier;
-  }
-
-  clone() {
-    return new ResetNegativeStatStageModifier(this.type, this.pokemonId, this.stackCount);
-  }
-
-  /**
-   * Goes through the holder's stat stages and, if any are negative, resets that
-   * stat stage back to 0.
-   * @param pokemon {@linkcode Pokemon} that holds the item
-   * @returns `true` if any stat stages were reset, false otherwise
-   */
-  override apply(pokemon: Pokemon): boolean {
-    let statRestored = false;
-
-    for (const s of BATTLE_STATS) {
-      if (pokemon.getStatStage(s) < 0) {
-        pokemon.setStatStage(s, 0);
-        statRestored = true;
-      }
-    }
-
-    if (statRestored) {
-      globalScene.queueMessage(
-        i18next.t("modifier:resetNegativeStatStageApply", {
-          pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-          typeName: this.type.name,
-        }),
-      );
-    }
-    return statRestored;
-  }
-
-  getMaxHeldItemCount(_pokemon: Pokemon): number {
-    return 2;
-  }
-}
-
-/**
- * Modifier used for held items, namely Mystical Rock, that extend the
- * duration of weather and terrain effects.
- * @extends PokemonHeldItemModifier
- * @see {@linkcode apply}
- */
-export class FieldEffectModifier extends PokemonHeldItemModifier {
-  /**
-   * Provides two more turns per stack to any weather or terrain effect caused
-   * by the holder.
-   * @param pokemon {@linkcode Pokemon} that holds the held item
-   * @param fieldDuration {@linkcode NumberHolder} that stores the current field effect duration
-   * @returns `true` if the field effect extension was applied successfully
-   */
-  override apply(_pokemon: Pokemon, fieldDuration: NumberHolder): boolean {
-    fieldDuration.value += 2 * this.stackCount;
-    return true;
-  }
-
-  override matchType(modifier: Modifier): boolean {
-    return modifier instanceof FieldEffectModifier;
-  }
-
-  override clone(): FieldEffectModifier {
-    return new FieldEffectModifier(this.type, this.pokemonId, this.stackCount);
-  }
-
-  override getMaxHeldItemCount(_pokemon?: Pokemon): number {
-    return 2;
   }
 }
 
