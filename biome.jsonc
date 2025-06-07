@@ -42,9 +42,6 @@
   // TODO: Remove if we ever get down to 0 circular imports
   "organizeImports": { "enabled": false },
   "linter": {
-    "ignore": [
-      "src/phases/move-effect-phase.ts" // TODO: unignore after move-effect-phase refactor
-    ],
     "enabled": true,
     "rules": {
       "recommended": true,
