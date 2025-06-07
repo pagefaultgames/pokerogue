@@ -649,20 +649,14 @@ class NoRetreatTag extends TrappedTag {
  */
 export class FlinchedTag extends BattlerTag {
   constructor(sourceMove: MoveId) {
-    super(BattlerTagType.FLINCHED, [BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.TURN_END], 0, sourceMove);
-  }
-
-  onAdd(pokemon: Pokemon): void {
-    super.onAdd(pokemon);
-
-    applyAbAttrs(FlinchEffectAbAttr, pokemon, null);
+    super(BattlerTagType.FLINCHED, [BattlerTagLapseType.PRE_MOVE, BattlerTagLapseType.TURN_END], 1, sourceMove);
   }
 
   /**
-   * Cancels the Pokemon's next Move on the turn this tag is applied
-   * @param pokemon The {@linkcode Pokemon} with this tag
-   * @param lapseType The {@linkcode BattlerTagLapseType lapse type} used for this function call
-   * @returns `false` (This tag is always removed after applying its effects)
+   * Cancels the flinched Pokemon's currently used move this turn if called mid-execution, or removes the tag at end of turn.
+   * @param pokemon - The {@linkcode Pokemon} with this tag.
+   * @param lapseType - The {@linkcode BattlerTagLapseType | lapse type} used for this function call.
+   * @returns Whether the tag should remain active.
    */
   lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     if (lapseType === BattlerTagLapseType.PRE_MOVE) {
@@ -672,6 +666,8 @@ export class FlinchedTag extends BattlerTag {
           pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
         }),
       );
+      applyAbAttrs(FlinchEffectAbAttr, pokemon, null);
+      return true;
     }
 
     return super.lapse(pokemon, lapseType);

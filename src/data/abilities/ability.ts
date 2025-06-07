@@ -4438,6 +4438,7 @@ export class PostDancingMoveAbAttr extends PostMoveUsedAbAttr {
     simulated: boolean,
     args: any[]): void {
     if (!simulated) {
+      dancer.turnData.extraTurns++;
       // If the move is an AttackMove or a StatusMove the Dancer must replicate the move on the source of the Dance
       if (move.getMove() instanceof AttackMove || move.getMove() instanceof StatusMove) {
         const target = this.getTarget(dancer, source, targets);
