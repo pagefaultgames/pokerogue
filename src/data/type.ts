@@ -261,10 +261,9 @@ export function getTypeDamageMultiplier(attackType: PokemonType, defType: Pokemo
           return 1;
       }
     case PokemonType.STELLAR:
+    default:
       return 1;
   }
-
-  return 1;
 }
 
 /**
