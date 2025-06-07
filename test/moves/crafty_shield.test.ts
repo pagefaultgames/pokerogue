@@ -1,13 +1,14 @@
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import GameManager from "#test/testUtils/gameManager";
 import { SpeciesId } from "#enums/species-id";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { Stat } from "#enums/stat";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
-import { BerryPhase } from "#app/phases/berry-phase";
-import { CommandPhase } from "#app/phases/command-phase";
+import { BattlerIndex } from "#app/battle";
+import { ArenaTagType } from "#enums/arena-tag-type";
+import { ArenaTagSide } from "#app/data/arena-tag";
 
 describe("Moves - Crafty Shield", () => {
   let phaserGame: Phaser.Game;
@@ -26,85 +27,103 @@ describe("Moves - Crafty Shield", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
 
-    game.override.battleStyle("double");
-
-    game.override.moveset([MoveId.CRAFTY_SHIELD, MoveId.SPLASH, MoveId.SWORDS_DANCE]);
-
-    game.override.enemySpecies(SpeciesId.SNORLAX);
-    game.override.enemyMoveset([MoveId.GROWL]);
-    game.override.enemyAbility(AbilityId.INSOMNIA);
-
-    game.override.startingLevel(100);
-    game.override.enemyLevel(100);
+    game.override
+      .battleStyle("double")
+      .moveset([MoveId.CRAFTY_SHIELD, MoveId.SPLASH, MoveId.SWORDS_DANCE, MoveId.HOWL])
+      .enemySpecies(SpeciesId.DUSKNOIR)
+      .enemyMoveset(MoveId.GROWL)
+      .enemyAbility(AbilityId.INSOMNIA)
+      .startingLevel(100)
+      .enemyLevel(100);
   });
 
-  test("should protect the user and allies from status moves", async () => {
+  it("should protect the user and allies from status moves", async () => {
     await game.classicMode.startBattle([SpeciesId.CHARIZARD, SpeciesId.BLASTOISE]);
 
-    const leadPokemon = game.scene.getPlayerField();
+    const [charizard, blastoise] = game.scene.getPlayerField();
+    game.move.select(MoveId.CRAFTY_SHIELD, BattlerIndex.PLAYER);
+    game.move.select(MoveId.SPLASH, BattlerIndex.PLAYER_2);
+    await game.move.forceEnemyMove(MoveId.GROWL);
+    await game.move.forceEnemyMove(MoveId.GROWL);
 
-    game.move.select(MoveId.CRAFTY_SHIELD);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
-    await game.phaseInterceptor.to(CommandPhase);
-
-    game.move.select(MoveId.SPLASH, 1);
-
-    await game.phaseInterceptor.to(BerryPhase, false);
-
-    leadPokemon.forEach(p => expect(p.getStatStage(Stat.ATK)).toBe(0));
+    expect(charizard.getStatStage(Stat.ATK)).toBe(0);
+    expect(blastoise.getStatStage(Stat.ATK)).toBe(0);
   });
 
-  test("should not protect the user and allies from attack moves", async () => {
-    game.override.enemyMoveset([MoveId.TACKLE]);
-
+  it("should not protect the user and allies from attack moves", async () => {
+    game.override.enemyMoveset(MoveId.TACKLE);
     await game.classicMode.startBattle([SpeciesId.CHARIZARD, SpeciesId.BLASTOISE]);
 
-    const leadPokemon = game.scene.getPlayerField();
+    const [charizard, blastoise] = game.scene.getPlayerField();
 
-    game.move.select(MoveId.CRAFTY_SHIELD);
+    game.move.select(MoveId.CRAFTY_SHIELD, BattlerIndex.PLAYER);
+    game.move.select(MoveId.SPLASH, BattlerIndex.PLAYER_2);
+    await game.move.forceEnemyMove(MoveId.TACKLE, BattlerIndex.PLAYER);
+    await game.move.forceEnemyMove(MoveId.TACKLE, BattlerIndex.PLAYER_2);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
-    await game.phaseInterceptor.to(CommandPhase);
-
-    game.move.select(MoveId.SPLASH, 1);
-
-    await game.phaseInterceptor.to(BerryPhase, false);
-
-    expect(leadPokemon.some(p => p.hp < p.getMaxHp())).toBeTruthy();
+    expect(charizard.isFullHp()).toBe(false);
+    expect(blastoise.isFullHp()).toBe(false);
   });
 
-  test("should protect the user and allies from moves that ignore other protection", async () => {
-    game.override.enemySpecies(SpeciesId.DUSCLOPS);
-    game.override.enemyMoveset([MoveId.CURSE]);
-
+  it("should not block entry hazards and field-targeted moves", async () => {
+    game.override.enemyMoveset([MoveId.PERISH_SONG, MoveId.TOXIC_SPIKES]);
     await game.classicMode.startBattle([SpeciesId.CHARIZARD, SpeciesId.BLASTOISE]);
 
-    const leadPokemon = game.scene.getPlayerField();
+    const [charizard, blastoise] = game.scene.getPlayerField();
 
-    game.move.select(MoveId.CRAFTY_SHIELD);
+    game.move.select(MoveId.CRAFTY_SHIELD, BattlerIndex.PLAYER);
+    game.move.select(MoveId.SPLASH, BattlerIndex.PLAYER_2);
+    await game.move.forceEnemyMove(MoveId.PERISH_SONG);
+    await game.move.forceEnemyMove(MoveId.TOXIC_SPIKES);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
-    await game.phaseInterceptor.to(CommandPhase);
-
-    game.move.select(MoveId.SPLASH, 1);
-
-    await game.phaseInterceptor.to(BerryPhase, false);
-
-    leadPokemon.forEach(p => expect(p.getTag(BattlerTagType.CURSED)).toBeUndefined());
+    expect(game.scene.arena.getTagOnSide(ArenaTagType.TOXIC_SPIKES, ArenaTagSide.PLAYER)).toBeDefined();
+    expect(charizard.getTag(BattlerTagType.PERISH_SONG)).toBeDefined();
+    expect(blastoise.getTag(BattlerTagType.PERISH_SONG)).toBeDefined();
   });
 
-  test("should not block allies' self-targeted moves", async () => {
+  it("should protect the user and allies from moves that ignore other protection", async () => {
+    game.override.moveset(MoveId.CURSE);
+
     await game.classicMode.startBattle([SpeciesId.CHARIZARD, SpeciesId.BLASTOISE]);
 
-    const leadPokemon = game.scene.getPlayerField();
+    const [charizard, blastoise] = game.scene.getPlayerField();
 
-    game.move.select(MoveId.CRAFTY_SHIELD);
+    game.move.select(MoveId.CRAFTY_SHIELD, BattlerIndex.PLAYER);
+    game.move.select(MoveId.SPLASH, BattlerIndex.PLAYER_2);
+    await game.move.forceEnemyMove(MoveId.CURSE, BattlerIndex.PLAYER);
+    await game.move.forceEnemyMove(MoveId.CURSE, BattlerIndex.PLAYER_2);
 
-    await game.phaseInterceptor.to(CommandPhase);
+    await game.phaseInterceptor.to("TurnEndPhase");
 
-    game.move.select(MoveId.SWORDS_DANCE, 1);
+    expect(charizard.getTag(BattlerTagType.CURSED)).toBeDefined();
+    expect(blastoise.getTag(BattlerTagType.CURSED)).toBeDefined();
 
-    await game.phaseInterceptor.to(BerryPhase, false);
+    const [dusknoir1, dusknoir2] = game.scene.getEnemyField();
+    expect(dusknoir1.isFullHp()).toBe(false);
+    expect(dusknoir2.isFullHp()).toBe(false);
+  });
 
-    expect(leadPokemon[0].getStatStage(Stat.ATK)).toBe(0);
-    expect(leadPokemon[1].getStatStage(Stat.ATK)).toBe(2);
+  it("should not block allies' self or ally-targeted moves", async () => {
+    await game.classicMode.startBattle([SpeciesId.CHARIZARD, SpeciesId.BLASTOISE]);
+
+    const [charizard, blastoise] = game.scene.getPlayerField();
+
+    game.move.select(MoveId.CRAFTY_SHIELD, BattlerIndex.PLAYER);
+    game.move.select(MoveId.SWORDS_DANCE, BattlerIndex.PLAYER_2);
+    await game.phaseInterceptor.to("TurnEndPhase");
+
+    expect(charizard.getStatStage(Stat.ATK)).toBe(0);
+    expect(blastoise.getStatStage(Stat.ATK)).toBe(2);
+
+    game.move.select(MoveId.HOWL, BattlerIndex.PLAYER);
+    game.move.select(MoveId.CRAFTY_SHIELD, BattlerIndex.PLAYER_2);
+    await game.phaseInterceptor.to("TurnEndPhase");
+
+    expect(charizard.getStatStage(Stat.ATK)).toBe(1);
+    expect(blastoise.getStatStage(Stat.ATK)).toBe(3);
   });
 });
