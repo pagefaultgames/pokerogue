@@ -147,7 +147,7 @@ export enum ModifierPoolType {
   DAILY_STARTER,
 }
 
-type NewModifierFunc = (type: ModifierType, args: any[]) => Modifier;
+type NewModifierFunc = (type: ModifierType, args: any[]) => Modifier | null;
 
 export class ModifierType {
   public id: string;
@@ -430,11 +430,11 @@ export class PokemonHeldItemModifierType extends PokemonModifierType {
 
 export class PokemonHeldItemReward extends PokemonModifierType {
   public itemId: HeldItemId;
-  constructor(itemId: HeldItemId, newModifierFunc: NewModifierFunc, group?: string, soundName?: string) {
+  constructor(itemId: HeldItemId, group?: string, soundName?: string) {
     super(
       "",
       "",
-      newModifierFunc,
+      () => null,
       (pokemon: PlayerPokemon) => {
         const hasItem = pokemon.heldItemManager.hasItem(this.itemId);
         const maxStackCount = allHeldItems[this.itemId].getMaxStackCount();
@@ -866,11 +866,7 @@ export class BerryReward extends PokemonHeldItemReward implements GeneratedPersi
 
   constructor(berryType: BerryType) {
     const itemId = berryTypeToHeldItem[berryType];
-    super(
-      itemId,
-      // Next argument is useless
-      (type, args) => new BerryModifier(type, (args[0] as Pokemon).id, berryType),
-    );
+    super(itemId);
 
     this.berryType = berryType;
     this.id = "BERRY"; // needed to prevent harvest item deletion; remove after modifier rework
@@ -887,11 +883,7 @@ export class AttackTypeBoosterReward extends PokemonHeldItemReward implements Ge
 
   constructor(moveType: PokemonType, boostPercent: number) {
     const itemId = attackTypeToHeldItem[moveType];
-    super(
-      itemId,
-      // Next argument is useless
-      (_type, args) => new AttackTypeBoosterModifier(this, (args[0] as Pokemon).id, moveType, boostPercent),
-    );
+    super(itemId);
     this.moveType = moveType;
     this.boostPercent = boostPercent;
   }
@@ -1058,7 +1050,7 @@ export class BaseStatBoosterReward extends PokemonHeldItemReward implements Gene
   constructor(stat: PermanentStat) {
     const key = statBoostItems[stat];
     const itemId = permanentStatToHeldItem[stat];
-    super(itemId, (_type, args) => new BaseStatModifier(this, (args[0] as Pokemon).id, this.stat));
+    super(itemId);
 
     this.stat = stat;
     this.key = key;
@@ -2144,6 +2136,8 @@ export const modifierTypes = {
 
   SACRED_ASH: () => new AllPokemonFullReviveModifierType("modifierType:ModifierType.SACRED_ASH", "sacred_ash"),
 
+  REVIVER_SEED_REWARD: () => new PokemonHeldItemReward(HeldItemId.REVIVER_SEED),
+
   REVIVER_SEED: () =>
     new PokemonHeldItemModifierType(
       "modifierType:ModifierType.REVIVER_SEED",
@@ -2151,11 +2145,7 @@ export const modifierTypes = {
       (type, args) => new PokemonInstantReviveModifier(type, (args[0] as Pokemon).id),
     ),
 
-  WHITE_HERB_REWARD: () =>
-    new PokemonHeldItemReward(
-      HeldItemId.WHITE_HERB,
-      (type, args) => new ResetNegativeStatStageModifier(type, (args[0] as Pokemon).id),
-    ),
+  WHITE_HERB_REWARD: () => new PokemonHeldItemReward(HeldItemId.WHITE_HERB),
 
   // TODO: Remove the old one
   WHITE_HERB: () =>
@@ -2314,16 +2304,8 @@ export const modifierTypes = {
   GOLDEN_EXP_CHARM: () =>
     new ExpBoosterModifierType("modifierType:ModifierType.GOLDEN_EXP_CHARM", "golden_exp_charm", 100),
 
-  LUCKY_EGG_REWARD: () =>
-    new PokemonHeldItemReward(
-      HeldItemId.LUCKY_EGG,
-      (type, args) => new ExpBoosterModifier(type, (args[0] as Pokemon).id),
-    ),
-  GOLDEN_EGG_REWARD: () =>
-    new PokemonHeldItemReward(
-      HeldItemId.GOLDEN_EGG,
-      (type, args) => new ExpBoosterModifier(type, (args[0] as Pokemon).id),
-    ),
+  LUCKY_EGG_REWARD: () => new PokemonHeldItemReward(HeldItemId.LUCKY_EGG),
+  GOLDEN_EGG_REWARD: () => new PokemonHeldItemReward(HeldItemId.GOLDEN_EGG),
 
   // TODO: Remove these when refactor is done
   LUCKY_EGG: () => new PokemonExpBoosterModifierType("modifierType:ModifierType.LUCKY_EGG", "lucky_egg", 40),
@@ -2458,17 +2440,9 @@ export const modifierTypes = {
       (type, args) => new FlinchChanceModifier(type, (args[0] as Pokemon).id),
     ),
 
-  LEFTOVERS_REWARD: () =>
-    new PokemonHeldItemReward(
-      HeldItemId.LEFTOVERS,
-      (type, args) => new TurnHealModifier(type, (args[0] as Pokemon).id),
-    ),
+  LEFTOVERS_REWARD: () => new PokemonHeldItemReward(HeldItemId.LEFTOVERS),
 
-  SHELL_BELL_REWARD: () =>
-    new PokemonHeldItemReward(
-      HeldItemId.SHELL_BELL,
-      (type, args) => new HitHealModifier(type, (args[0] as Pokemon).id),
-    ),
+  SHELL_BELL_REWARD: () => new PokemonHeldItemReward(HeldItemId.SHELL_BELL),
 
   LEFTOVERS: () =>
     new PokemonHeldItemModifierType(
