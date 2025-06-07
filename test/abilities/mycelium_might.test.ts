@@ -26,7 +26,7 @@ describe("Abilities - Mycelium Might", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(SpeciesId.SHUCKLE)
       .enemyAbility(AbilityId.CLEAR_BODY)
 

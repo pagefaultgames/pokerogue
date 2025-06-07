@@ -42,7 +42,7 @@ describe("Moves - Light Screen", () => {
       .enemyLevel(100)
       .enemySpecies(SpeciesId.MAGIKARP)
       .enemyMoveset(MoveId.LIGHT_SCREEN)
-      .disableCrits();
+      .criticalHits(false);
   });
 
   it("reduces damage of special attacks by half in a single battle", async () => {

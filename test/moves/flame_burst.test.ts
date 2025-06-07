@@ -37,7 +37,7 @@ describe("Moves - Flame Burst", () => {
     game = new GameManager(phaserGame);
     game.override.battleStyle("double");
     game.override.moveset([MoveId.FLAME_BURST, MoveId.SPLASH]);
-    game.override.disableCrits();
+    game.override.criticalHits(false);
     game.override.ability(AbilityId.UNNERVE);
     game.override.startingWave(4);
     game.override.enemySpecies(SpeciesId.SHUCKLE);

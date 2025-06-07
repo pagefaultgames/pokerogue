@@ -26,7 +26,7 @@ describe("Moves - Grudge", () => {
       .moveset([MoveId.EMBER, MoveId.SPLASH])
       .ability(AbilityId.BALL_FETCH)
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(SpeciesId.SHEDINJA)
       .enemyAbility(AbilityId.WONDER_GUARD)
       .enemyMoveset([MoveId.GRUDGE, MoveId.SPLASH]);

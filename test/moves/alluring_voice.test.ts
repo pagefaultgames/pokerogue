@@ -26,7 +26,7 @@ describe("Moves - Alluring Voice", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.ICE_SCALES)
       .enemyMoveset(MoveId.HOWL)

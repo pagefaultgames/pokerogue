@@ -32,7 +32,7 @@ describe("Moves - Last Respects", () => {
     basePower = move.power;
     game.override
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .moveset([MoveId.LAST_RESPECTS, MoveId.EXPLOSION, MoveId.LUNAR_DANCE])
       .ability(AbilityId.BALL_FETCH)
       .enemyAbility(AbilityId.BALL_FETCH)

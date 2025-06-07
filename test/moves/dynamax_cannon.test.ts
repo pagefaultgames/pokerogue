@@ -32,19 +32,11 @@ describe("Moves - Dynamax Cannon", () => {
     game.override
       .moveset(MoveId.DYNAMAX_CANNON)
       .startingLevel(200)
-      .levelCap(10)
+      .levelCap(100)
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(SpeciesId.MAGIKARP)
       .enemyMoveset(MoveId.SPLASH);
-
-    // Note that, for Waves 1-10, the level cap is 10
-    game.override.startingWave(1);
-    game.override.battleStyle("single");
-    game.override.disableCrits();
-
-    game.override.enemySpecies(SpeciesId.MAGIKARP);
-    game.override.enemyMoveset([MoveId.SPLASH, MoveId.SPLASH, MoveId.SPLASH, MoveId.SPLASH]);
 
     vi.spyOn(dynamaxCannon, "calculateBattlePower");
   });
@@ -62,7 +54,7 @@ describe("Moves - Dynamax Cannon", () => {
   }, 20000);
 
   it("should return 100 power against an enemy at level cap", async () => {
-    game.override.enemyLevel(10);
+    game.override.enemyLevel(100);
     await game.classicMode.startBattle([SpeciesId.ETERNATUS]);
 
     game.move.select(dynamaxCannon.id);

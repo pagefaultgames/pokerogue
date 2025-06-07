@@ -27,7 +27,7 @@ describe("Abilities - Stakeout", () => {
       .moveset([MoveId.SPLASH, MoveId.SURF])
       .ability(AbilityId.STAKEOUT)
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .startingLevel(100)
       .enemyLevel(100)
       .enemySpecies(SpeciesId.SNORLAX)
