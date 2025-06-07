@@ -3,10 +3,12 @@ import { globalScene } from "#app/global-scene";
 import {
   AddSecondStrikeAbAttr,
   AlwaysHitAbAttr,
+  applyExecutedMoveAbAttrs,
   applyPostAttackAbAttrs,
   applyPostDamageAbAttrs,
   applyPostDefendAbAttrs,
   applyPreAttackAbAttrs,
+  ExecutedMoveAbAttr,
   IgnoreMoveEffectsAbAttr,
   MaxMultiHitAbAttr,
   PostAttackAbAttr,
@@ -373,6 +375,7 @@ export class MoveEffectPhase extends PokemonPhase {
     // Add to the move history entry
     if (this.firstHit) {
       user.pushMoveHistory(this.moveHistoryEntry);
+      applyExecutedMoveAbAttrs(ExecutedMoveAbAttr, user);
     }
 
     try {
