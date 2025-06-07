@@ -62,6 +62,7 @@ import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
 import { ArenaTrapTag } from "#app/data/arena-tag";
 import { pokemonFormChanges } from "#app/data/pokemon-forms";
 import type { PokemonType } from "#enums/pokemon-type";
+import type { DexData, DexEntry } from "../@types/dex-data";
 
 export const defaultStarterSpecies: SpeciesId[] = [
   SpeciesId.BULBASAUR,
@@ -131,6 +132,7 @@ export function decrypt(data: string, bypassLogin: boolean): string {
   )(data);
 }
 
+// TODO: Move all these exported interfaces to @types
 export interface SystemSaveData {
   trainerId: number;
   secretId: number;
@@ -189,20 +191,6 @@ export interface VoucherUnlocks {
 
 export interface VoucherCounts {
   [type: string]: number;
-}
-
-export interface DexData {
-  [key: number]: DexEntry;
-}
-
-export interface DexEntry {
-  seenAttr: bigint;
-  caughtAttr: bigint;
-  natureAttr: number;
-  seenCount: number;
-  caughtCount: number;
-  hatchedCount: number;
-  ivs: number[];
 }
 
 export type StarterMoveset = [MoveId] | [MoveId, MoveId] | [MoveId, MoveId, MoveId] | [MoveId, MoveId, MoveId, MoveId];
