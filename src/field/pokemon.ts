@@ -256,6 +256,7 @@ import { MoveFlags } from "#enums/MoveFlags";
 import { timedEventManager } from "#app/global-event-manager";
 import { loadMoveAnimations } from "#app/sprites/pokemon-asset-loader";
 import { ResetStatusPhase } from "#app/phases/reset-status-phase";
+import { getTerrainBlockMessage } from "#app/data/terrain";
 
 export enum LearnMoveSituation {
   MISC,
@@ -4601,16 +4602,34 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     );
   }
 
-  queueImmuneMessage(quiet: boolean, effect?: StatusEffect): void {
-    if (!effect || quiet) {
+  /**
+   * Display an immunity message for a failed status application.
+   * @param quiet - Whether to suppress message and return early
+   * @param reason - The reason for the status application failure -
+   * can be "overlap" (already has same status), "other" (generic fail message)
+   * or a {@linkcode TerrainType} for terrain-based blockages.
+   * Defaults to "other".
+   */
+  queueStatusImmuneMessage(quiet: boolean, reason: "overlap" | "other" | TerrainType = "other"): void {
+    if (quiet) {
       return;
     }
-    const message =
-      effect && this.status?.effect === effect
-        ? getStatusEffectOverlapText(effect ?? StatusEffect.NONE, getPokemonNameWithAffix(this))
-        : i18next.t("abilityTriggers:moveImmunity", {
-            pokemonNameWithAffix: getPokemonNameWithAffix(this),
-          });
+
+    let message = "";
+    if (reason === "overlap" && this) {
+      // "XYZ is already XXX!"
+      message = getStatusEffectOverlapText(this.status?.effect ?? StatusEffect.NONE, getPokemonNameWithAffix(this));
+    } else if (typeof reason === "number") {
+      // "XYZ was protected by the XXX terrain!" /
+      // "XYZ surrounds itself with a protective mist!"
+      message = getTerrainBlockMessage(this, reason);
+    } else {
+      // "It doesn't affect XXX!"
+      message = i18next.t("abilityTriggers:moveImmunity", {
+        pokemonNameWithAffix: getPokemonNameWithAffix(this),
+      });
+    }
+
     globalScene.queueMessage(message);
   }
 
@@ -4632,11 +4651,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   ): boolean {
     if (effect !== StatusEffect.FAINT) {
       if (overrideStatus ? this.status?.effect === effect : this.status) {
-        this.queueImmuneMessage(quiet, effect);
+        this.queueStatusImmuneMessage(quiet, overrideStatus ? "overlap" : "other"); // having different status displays generic fail message
         return false;
       }
       if (this.isGrounded() && !ignoreField && globalScene.arena.terrain?.terrainType === TerrainType.MISTY) {
-        this.queueImmuneMessage(quiet, effect);
+        this.queueStatusImmuneMessage(quiet, TerrainType.MISTY);
         return false;
       }
     }
@@ -4667,7 +4686,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
         if (this.isOfType(PokemonType.POISON) || this.isOfType(PokemonType.STEEL)) {
           if (poisonImmunity.includes(true)) {
-            this.queueImmuneMessage(quiet, effect);
+            this.queueStatusImmuneMessage(quiet);
             return false;
           }
         }
@@ -4675,13 +4694,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
       case StatusEffect.PARALYSIS:
         if (this.isOfType(PokemonType.ELECTRIC)) {
-          this.queueImmuneMessage(quiet, effect);
+          this.queueStatusImmuneMessage(quiet);
           return false;
         }
         break;
       case StatusEffect.SLEEP:
         if (this.isGrounded() && globalScene.arena.terrain?.terrainType === TerrainType.ELECTRIC) {
-          this.queueImmuneMessage(quiet, effect);
+          this.queueStatusImmuneMessage(quiet, TerrainType.ELECTRIC);
           return false;
         }
         break;
@@ -4692,13 +4711,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             globalScene?.arena?.weather?.weatherType &&
             [WeatherType.SUNNY, WeatherType.HARSH_SUN].includes(globalScene.arena.weather.weatherType))
         ) {
-          this.queueImmuneMessage(quiet, effect);
+          this.queueStatusImmuneMessage(quiet);
           return false;
         }
         break;
       case StatusEffect.BURN:
         if (this.isOfType(PokemonType.FIRE)) {
-          this.queueImmuneMessage(quiet, effect);
+          this.queueStatusImmuneMessage(quiet);
           return false;
         }
         break;

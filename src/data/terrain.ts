@@ -4,6 +4,7 @@ import { PokemonType } from "#enums/pokemon-type";
 import { ProtectAttr } from "./moves/move";
 import type { BattlerIndex } from "#app/battle";
 import i18next from "i18next";
+import { getPokemonNameWithAffix } from "#app/messages";
 
 export enum TerrainType {
   NONE,
@@ -96,4 +97,71 @@ export function getTerrainColor(terrainType: TerrainType): [number, number, numb
   }
 
   return [0, 0, 0];
+}
+
+/**
+ * Return the message associated with a terrain effect starting.
+ * @param terrainType - The {@linkcode TerrainType} starting.
+ * @returns A string containing the appropriate terrain start text.
+ */
+export function getTerrainStartMessage(terrainType: TerrainType): string {
+  switch (terrainType) {
+    case TerrainType.MISTY:
+      return i18next.t("terrain:mistyStartMessage");
+    case TerrainType.ELECTRIC:
+      return i18next.t("terrain:electricStartMessage");
+    case TerrainType.GRASSY:
+      return i18next.t("terrain:grassyStartMessage");
+    case TerrainType.PSYCHIC:
+      return i18next.t("terrain:psychicStartMessage");
+    default:
+      console.warn(`${terrainType} unexpectedly provided as terrain type to getTerrainStartMessage!`);
+      return "";
+  }
+}
+
+/**
+ * Return the message associated with a terrain effect ceasing to exist.
+ * @param terrainType - The {@linkcode TerrainType} being cleared.
+ * @returns A string containing the appropriate terrain clear text.
+ */
+export function getTerrainClearMessage(terrainType: TerrainType): string {
+  switch (terrainType) {
+    case TerrainType.MISTY:
+      return i18next.t("terrain:mistyClearMessage");
+    case TerrainType.ELECTRIC:
+      return i18next.t("terrain:electricClearMessage");
+    case TerrainType.GRASSY:
+      return i18next.t("terrain:grassyClearMessage");
+    case TerrainType.PSYCHIC:
+      return i18next.t("terrain:psychicClearMessage");
+    default:
+      console.warn(`${terrainType} unexpectedly provided as terrain type to getTerrainClearMessage!`);
+      return "";
+  }
+}
+
+/**
+ * Return the message associated with a terrain-induced move/effect blockage.
+ * @param pokemon - The {@linkcode Pokemon} being protected.
+ * @param terrainType - The {@linkcode TerrainType} in question
+ * @returns A string containing the appropriate terrain block text.
+ */
+export function getTerrainBlockMessage(pokemon: Pokemon, terrainType: TerrainType): string {
+  switch (terrainType) {
+    case TerrainType.MISTY:
+      return i18next.t("terrain:mistyBlockMessage", {
+        pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+      });
+    case TerrainType.ELECTRIC:
+    case TerrainType.GRASSY:
+    case TerrainType.PSYCHIC:
+      return i18next.t("terrain:defaultBlockMessage", {
+        pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+        terrainName: getTerrainName(terrainType),
+      });
+    default:
+      console.warn(`${terrainType} unexpectedly provided as terrain type to getTerrainBlockMessage!`);
+      return "";
+  }
 }
