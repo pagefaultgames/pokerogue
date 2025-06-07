@@ -15,7 +15,6 @@ import { ArenaTagSide, MistTag } from "#app/data/arena-tag";
 import type { ArenaTag } from "#app/data/arena-tag";
 import type Pokemon from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { ResetNegativeStatStageModifier } from "#app/modifier/modifier";
 import { handleTutorial, Tutorial } from "#app/tutorial";
 import { NumberHolder, BooleanHolder, isNullOrUndefined } from "#app/utils/common";
 import i18next from "i18next";
@@ -23,6 +22,8 @@ import { PokemonPhase } from "./pokemon-phase";
 import { Stat, type BattleStat, getStatKey, getStatStageChangeDescriptionKey } from "#enums/stat";
 import { OctolockTag } from "#app/data/battler-tags";
 import { ArenaTagType } from "#app/enums/arena-tag-type";
+import { applyHeldItems } from "#app/items/all-held-items";
+import { ITEM_EFFECT } from "#app/items/held-item";
 
 export type StatStageChangeCallback = (
   target: Pokemon | null,
@@ -240,16 +241,7 @@ export class StatStageChangePhase extends PokemonPhase {
       );
       if (!existingPhase?.is("StatStageChangePhase")) {
         // Apply White Herb if needed
-        const whiteHerb = globalScene.applyModifier(
-          ResetNegativeStatStageModifier,
-          this.player,
-          pokemon,
-        ) as ResetNegativeStatStageModifier;
-        // If the White Herb was applied, consume it
-        if (whiteHerb) {
-          pokemon.loseHeldItem(whiteHerb);
-          globalScene.updateModifiers(this.player);
-        }
+        applyHeldItems(ITEM_EFFECT.RESET_NEGATIVE_STAT_STAGE, { pokemon: pokemon, isPlayer: this.player });
       }
 
       pokemon.updateInfo();

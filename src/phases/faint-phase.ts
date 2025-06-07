@@ -20,7 +20,6 @@ import type { EnemyPokemon } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
 import { HitResult, PlayerPokemon, PokemonMove } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { PokemonInstantReviveModifier } from "#app/modifier/modifier";
 import { SwitchType } from "#enums/switch-type";
 import i18next from "i18next";
 import { DamageAnimPhase } from "./damage-anim-phase";
@@ -33,6 +32,8 @@ import { VictoryPhase } from "./victory-phase";
 import { isNullOrUndefined } from "#app/utils/common";
 import { FRIENDSHIP_LOSS_FROM_FAINT } from "#app/data/balance/starters";
 import { BattlerTagType } from "#enums/battler-tag-type";
+import { applyHeldItems } from "#app/items/all-held-items";
+import { ITEM_EFFECT } from "#app/items/held-item";
 
 export class FaintPhase extends PokemonPhase {
   public readonly phaseName = "FaintPhase";
@@ -66,17 +67,7 @@ export class FaintPhase extends PokemonPhase {
     faintPokemon.resetSummonData();
 
     if (!this.preventInstantRevive) {
-      const instantReviveModifier = globalScene.applyModifier(
-        PokemonInstantReviveModifier,
-        this.player,
-        faintPokemon,
-      ) as PokemonInstantReviveModifier;
-
-      if (instantReviveModifier) {
-        faintPokemon.loseHeldItem(instantReviveModifier);
-        globalScene.updateModifiers(this.player);
-        return this.end();
-      }
+      applyHeldItems(ITEM_EFFECT.INSTANT_REVIVE, { pokemon: faintPokemon });
     }
 
     /**

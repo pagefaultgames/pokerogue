@@ -68,10 +68,8 @@ import {
 } from "../abilities/ability";
 import { allAbilities, allMoves } from "../data-lists";
 import {
-  AttackTypeBoosterModifier,
   BerryModifier,
   PokemonHeldItemModifier,
-  PokemonMoveAccuracyBoosterModifier,
   PokemonMultiHitModifier,
   PreserveBerryModifier,
 } from "../../modifier/modifier";
@@ -122,7 +120,10 @@ import { MoveFlags } from "#enums/MoveFlags";
 import { MoveEffectTrigger } from "#enums/MoveEffectTrigger";
 import { MultiHitType } from "#enums/MultiHitType";
 import { invalidAssistMoves, invalidCopycatMoves, invalidMetronomeMoves, invalidMirrorMoveMoves, invalidSleepTalkMoves } from "./invalid-moves";
+import { TrainerVariant } from "#app/field/trainer";
 import { SelectBiomePhase } from "#app/phases/select-biome-phase";
+import { applyHeldItems } from "#app/items/all-held-items";
+import { ITEM_EFFECT } from "#app/items/held-item";
 
 type MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => boolean;
 type UserMoveConditionFunc = (user: Pokemon, move: Move) => boolean;
@@ -778,7 +779,7 @@ export default class Move implements Localizable {
     const isOhko = this.hasAttr(OneHitKOAccuracyAttr);
 
     if (!isOhko) {
-      globalScene.applyModifiers(PokemonMoveAccuracyBoosterModifier, user.isPlayer(), user, moveAccuracy);
+      applyHeldItems(ITEM_EFFECT.ACCURACY_BOOSTER, { pokemon: user, moveAccuracy: moveAccuracy });
     }
 
     if (globalScene.arena.weather?.weatherType === WeatherType.FOG) {
@@ -851,7 +852,11 @@ export default class Move implements Localizable {
 
     if (!this.hasAttr(TypelessAttr)) {
       globalScene.arena.applyTags(WeakenMoveTypeTag, simulated, typeChangeHolder.value, power);
-      globalScene.applyModifiers(AttackTypeBoosterModifier, source.isPlayer(), source, typeChangeHolder.value, power);
+      applyHeldItems(ITEM_EFFECT.ATTACK_TYPE_BOOST, {
+        pokemon: source, 
+        moveType: typeChangeHolder.value,
+        movePower: power,
+      });
     }
 
     if (source.getTag(HelpingHandTag)) {

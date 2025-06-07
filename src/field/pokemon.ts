@@ -88,20 +88,14 @@ import {
   EnemyFusionChanceModifier,
   HiddenAbilityRateBoosterModifier,
   BaseStatModifier,
-  PokemonFriendshipBoosterModifier,
   PokemonHeldItemModifier,
-  PokemonNatureWeightModifier,
   ShinyRateBoosterModifier,
-  SurviveDamageModifier,
   TempStatStageBoosterModifier,
   TempCritBoosterModifier,
-  StatBoosterModifier,
-  CritBoosterModifier,
   PokemonBaseStatFlatModifier,
   PokemonBaseStatTotalModifier,
   PokemonIncrementingStatModifier,
   EvoTrackerModifier,
-  PokemonMultiHitModifier,
 } from "#app/modifier/modifier";
 import { PokeballType } from "#enums/pokeball";
 import { Gender } from "#app/data/gender";
@@ -256,6 +250,9 @@ import { MoveFlags } from "#enums/MoveFlags";
 import { timedEventManager } from "#app/global-event-manager";
 import { loadMoveAnimations } from "#app/sprites/pokemon-asset-loader";
 import { ResetStatusPhase } from "#app/phases/reset-status-phase";
+import { PokemonItemManager } from "./pokemon-held-item-manager";
+import { applyHeldItems } from "#app/items/all-held-items";
+import { ITEM_EFFECT } from "#app/items/held-item";
 
 export enum LearnMoveSituation {
   MISC,
@@ -383,6 +380,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public usedTMs: MoveId[];
 
   private shinySparkle: Phaser.GameObjects.Sprite;
+
+  public heldItemManager: PokemonItemManager;
 
   // TODO: Rework this eventually
   constructor(
@@ -532,6 +531,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (!dataSource) {
       this.calculateStats();
     }
+
+    this.heldItemManager = new PokemonItemManager();
   }
 
   /**
@@ -1441,7 +1442,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   getCritStage(source: Pokemon, move: Move): number {
     const critStage = new NumberHolder(0);
     applyMoveAttrs(HighCritAttr, source, this, move, critStage);
-    globalScene.applyModifiers(CritBoosterModifier, source.isPlayer(), source, critStage);
+    applyHeldItems(ITEM_EFFECT.CRIT_BOOST, { pokemon: source, critStage: critStage });
     globalScene.applyModifiers(TempCritBoosterModifier, source.isPlayer(), critStage);
     applyAbAttrs(BonusCritAbAttr, source, null, false, critStage);
     const critBoostTag = source.getTag(CritBoostTag);
@@ -1498,7 +1499,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   ): number {
     const statValue = new NumberHolder(this.getStat(stat, false));
     if (!ignoreHeldItems) {
-      globalScene.applyModifiers(StatBoosterModifier, this.isPlayer(), this, stat, statValue);
+      applyHeldItems(ITEM_EFFECT.STAT_BOOST, { pokemon: this, stat: stat, statValue: statValue });
     }
 
     // The Ruin abilities here are never ignored, but they reveal themselves on summon anyway
@@ -1607,7 +1608,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       } else {
         statHolder.value += 5;
         const natureStatMultiplier = new NumberHolder(getNatureStatMultiplier(this.getNature(), s));
-        globalScene.applyModifier(PokemonNatureWeightModifier, this.isPlayer(), this, natureStatMultiplier);
+        applyHeldItems(ITEM_EFFECT.NATURE_WEIGHT_BOOSTER, { pokemon: this, multiplier: natureStatMultiplier });
         if (natureStatMultiplier.value !== 1) {
           statHolder.value = Math.max(
             Math[natureStatMultiplier.value > 1 ? "ceil" : "floor"](statHolder.value * natureStatMultiplier.value),
@@ -3723,14 +3724,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     applyMoveAttrs(FixedDamageAttr, source, this, move, fixedDamage);
     if (fixedDamage.value) {
       const multiLensMultiplier = new NumberHolder(1);
-      globalScene.applyModifiers(
-        PokemonMultiHitModifier,
-        source.isPlayer(),
-        source,
-        move.id,
-        null,
-        multiLensMultiplier,
-      );
+      applyHeldItems(ITEM_EFFECT.MULTI_HIT, {
+        pokemon: source,
+        moveId: move.id,
+        damageMultiplier: multiLensMultiplier,
+      });
       fixedDamage.value = toDmgValue(fixedDamage.value * multiLensMultiplier.value);
 
       return {
@@ -3774,14 +3772,11 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     /** Multiplier for moves enhanced by Multi-Lens and/or Parental Bond */
     const multiStrikeEnhancementMultiplier = new NumberHolder(1);
-    globalScene.applyModifiers(
-      PokemonMultiHitModifier,
-      source.isPlayer(),
-      source,
-      move.id,
-      null,
-      multiStrikeEnhancementMultiplier,
-    );
+    applyHeldItems(ITEM_EFFECT.MULTI_HIT, {
+      pokemon: source,
+      moveId: move.id,
+      damageMultiplier: multiStrikeEnhancementMultiplier,
+    });
     if (!ignoreSourceAbility) {
       applyPreAttackAbAttrs(
         AddSecondStrikeAbAttr,
@@ -3990,7 +3985,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         surviveDamage.value = this.lapseTag(BattlerTagType.ENDURE_TOKEN);
       }
       if (!surviveDamage.value) {
-        globalScene.applyModifiers(SurviveDamageModifier, this.isPlayer(), this, surviveDamage);
+        applyHeldItems(ITEM_EFFECT.SURVIVE_CHANCE, { pokemon: this, surviveDamage: surviveDamage });
       }
       if (surviveDamage.value) {
         damage = this.hp - 1;
@@ -5645,7 +5640,7 @@ export class PlayerPokemon extends Pokemon {
         fusionStarterSpeciesId ? globalScene.gameData.starterData[fusionStarterSpeciesId] : null,
       ].filter(d => !!d);
       const amount = new NumberHolder(friendship);
-      globalScene.applyModifier(PokemonFriendshipBoosterModifier, true, this, amount);
+      applyHeldItems(ITEM_EFFECT.FRIENDSHIP_BOOSTER, { pokemon: this, friendship: amount });
       const candyFriendshipMultiplier = globalScene.gameMode.isClassic
         ? timedEventManager.getClassicFriendshipMultiplier()
         : 1;

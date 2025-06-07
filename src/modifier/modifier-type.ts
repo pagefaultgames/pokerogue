@@ -129,7 +129,12 @@ import { getStatKey, Stat, TEMP_BATTLE_STATS } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import i18next from "i18next";
 import { timedEventManager } from "#app/global-event-manager";
+import { HeldItemId } from "#enums/held-item-id";
+import { allHeldItems } from "#app/items/all-held-items";
 import { TYPE_BOOST_ITEM_BOOST_PERCENT } from "#app/constants";
+import { attackTypeToHeldItem } from "#app/items/held-items/attack-type-booster";
+import { berryTypeToHeldItem } from "#app/items/held-items/berry";
+import { permanentStatToHeldItem, statBoostItems } from "#app/items/held-items/base-stat-booster";
 
 const outputModifierData = false;
 const useMaxWeightForOutput = false;
@@ -142,7 +147,7 @@ export enum ModifierPoolType {
   DAILY_STARTER,
 }
 
-type NewModifierFunc = (type: ModifierType, args: any[]) => Modifier;
+type NewModifierFunc = (type: ModifierType, args: any[]) => Modifier | null;
 
 export class ModifierType {
   public id: string;
@@ -173,6 +178,10 @@ export class ModifierType {
 
   getDescription(): string {
     return i18next.t(`${this.localeKey}.description` as any);
+  }
+
+  getIcon(): string {
+    return this.iconImage;
   }
 
   setTier(tier: ModifierTier): void {
@@ -416,6 +425,51 @@ export class PokemonHeldItemModifierType extends PokemonModifierType {
 
   newModifier(...args: any[]): PokemonHeldItemModifier {
     return super.newModifier(...args) as PokemonHeldItemModifier;
+  }
+}
+
+export class PokemonHeldItemReward extends PokemonModifierType {
+  public itemId: HeldItemId;
+  constructor(itemId: HeldItemId, group?: string, soundName?: string) {
+    super(
+      "",
+      "",
+      () => null,
+      (pokemon: PlayerPokemon) => {
+        const hasItem = pokemon.heldItemManager.hasItem(this.itemId);
+        const maxStackCount = allHeldItems[this.itemId].getMaxStackCount();
+        if (!maxStackCount) {
+          return i18next.t("modifierType:ModifierType.PokemonHeldItemModifierType.extra.inoperable", {
+            pokemonName: getPokemonNameWithAffix(pokemon),
+          });
+        }
+        if (hasItem && pokemon.heldItemManager.getItem(this.itemId).stack === maxStackCount) {
+          return i18next.t("modifierType:ModifierType.PokemonHeldItemModifierType.extra.tooMany", {
+            pokemonName: getPokemonNameWithAffix(pokemon),
+          });
+        }
+        return null;
+      },
+      group,
+      soundName,
+    );
+    this.itemId = itemId;
+  }
+
+  newModifier(...args: any[]): PokemonHeldItemModifier {
+    return super.newModifier(...args) as PokemonHeldItemModifier;
+  }
+
+  get name(): string {
+    return allHeldItems[this.itemId].getName();
+  }
+
+  getDescription(): string {
+    return allHeldItems[this.itemId].getDescription();
+  }
+
+  getIcon(): string {
+    return allHeldItems[this.itemId].getIcon();
   }
 }
 
@@ -807,6 +861,38 @@ export class BerryModifierType extends PokemonHeldItemModifierType implements Ge
   }
 }
 
+export class BerryReward extends PokemonHeldItemReward implements GeneratedPersistentModifierType {
+  private berryType: BerryType;
+
+  constructor(berryType: BerryType) {
+    const itemId = berryTypeToHeldItem[berryType];
+    super(itemId);
+
+    this.berryType = berryType;
+    this.id = "BERRY"; // needed to prevent harvest item deletion; remove after modifier rework
+  }
+
+  getPregenArgs(): any[] {
+    return [this.berryType];
+  }
+}
+
+export class AttackTypeBoosterReward extends PokemonHeldItemReward implements GeneratedPersistentModifierType {
+  public moveType: PokemonType;
+  public boostPercent: number;
+
+  constructor(moveType: PokemonType, boostPercent: number) {
+    const itemId = attackTypeToHeldItem[moveType];
+    super(itemId);
+    this.moveType = moveType;
+    this.boostPercent = boostPercent;
+  }
+
+  getPregenArgs(): any[] {
+    return [this.moveType];
+  }
+}
+
 enum AttackTypeBoosterItem {
   SILK_SCARF,
   BLACK_BELT,
@@ -950,6 +1036,24 @@ export class BaseStatBoosterModifierType
     return i18next.t("modifierType:ModifierType.BaseStatBoosterModifierType.description", {
       stat: i18next.t(getStatKey(this.stat)),
     });
+  }
+
+  getPregenArgs(): any[] {
+    return [this.stat];
+  }
+}
+
+export class BaseStatBoosterReward extends PokemonHeldItemReward implements GeneratedPersistentModifierType {
+  private stat: PermanentStat;
+  private key: string;
+
+  constructor(stat: PermanentStat) {
+    const key = statBoostItems[stat];
+    const itemId = permanentStatToHeldItem[stat];
+    super(itemId);
+
+    this.stat = stat;
+    this.key = key;
   }
 
   getPregenArgs(): any[] {
@@ -1328,6 +1432,58 @@ export class FusePokemonModifierType extends PokemonModifierType {
   }
 }
 
+class AttackTypeBoosterRewardGenerator extends ModifierTypeGenerator {
+  constructor() {
+    super((party: Pokemon[], pregenArgs?: any[]) => {
+      if (pregenArgs && pregenArgs.length === 1 && pregenArgs[0] in PokemonType) {
+        return new AttackTypeBoosterReward(pregenArgs[0] as PokemonType, TYPE_BOOST_ITEM_BOOST_PERCENT);
+      }
+
+      // TODO: make this consider moves or abilities that change types
+      const attackMoveTypes = party.flatMap(p =>
+        p
+          .getMoveset()
+          .map(m => m.getMove())
+          .filter(m => m instanceof AttackMove)
+          .map(m => m.type),
+      );
+      if (!attackMoveTypes.length) {
+        return null;
+      }
+
+      const attackMoveTypeWeights = new Map<PokemonType, number>();
+      let totalWeight = 0;
+      for (const t of attackMoveTypes) {
+        const weight = attackMoveTypeWeights.get(t) ?? 0;
+        if (weight < 3) {
+          attackMoveTypeWeights.set(t, weight + 1);
+          totalWeight++;
+        }
+      }
+
+      if (!totalWeight) {
+        return null;
+      }
+
+      let type: PokemonType;
+
+      const randInt = randSeedInt(totalWeight);
+      let weight = 0;
+
+      for (const t of attackMoveTypeWeights.keys()) {
+        const typeWeight = attackMoveTypeWeights.get(t)!; // guranteed to be defined
+        if (randInt <= weight + typeWeight) {
+          type = t;
+          break;
+        }
+        weight += typeWeight;
+      }
+
+      return new AttackTypeBoosterReward(type!, TYPE_BOOST_ITEM_BOOST_PERCENT);
+    });
+  }
+}
+
 class AttackTypeBoosterModifierTypeGenerator extends ModifierTypeGenerator {
   constructor() {
     super((party: Pokemon[], pregenArgs?: any[]) => {
@@ -1349,17 +1505,11 @@ class AttackTypeBoosterModifierTypeGenerator extends ModifierTypeGenerator {
       const attackMoveTypeWeights = new Map<PokemonType, number>();
       let totalWeight = 0;
       for (const t of attackMoveTypes) {
-        if (attackMoveTypeWeights.has(t)) {
-          if (attackMoveTypeWeights.get(t)! < 3) {
-            // attackMoveTypeWeights.has(t) was checked before
-            attackMoveTypeWeights.set(t, attackMoveTypeWeights.get(t)! + 1);
-          } else {
-            continue;
-          }
-        } else {
-          attackMoveTypeWeights.set(t, 1);
+        const weight = attackMoveTypeWeights.get(t) ?? 0;
+        if (weight < 3) {
+          attackMoveTypeWeights.set(t, weight + 1);
+          totalWeight++;
         }
-        totalWeight++;
       }
 
       if (!totalWeight) {
@@ -1402,6 +1552,18 @@ class BaseStatBoosterModifierTypeGenerator extends ModifierTypeGenerator {
       }
       const randStat: PermanentStat = randSeedInt(Stat.SPD + 1);
       return new BaseStatBoosterModifierType(randStat);
+    });
+  }
+}
+
+class BaseStatBoosterRewardGenerator extends ModifierTypeGenerator {
+  constructor() {
+    super((_party: Pokemon[], pregenArgs?: any[]) => {
+      if (pregenArgs) {
+        return new BaseStatBoosterReward(pregenArgs[0]);
+      }
+      const randStat: PermanentStat = randSeedInt(Stat.SPD + 1);
+      return new BaseStatBoosterReward(randStat);
     });
   }
 }
@@ -1889,7 +2051,7 @@ export type GeneratorModifierOverride = {
       type?: Nature;
     }
   | {
-      name: keyof Pick<typeof modifierTypes, "ATTACK_TYPE_BOOSTER" | "TERA_SHARD">;
+      name: keyof Pick<typeof modifierTypes, "ATTACK_TYPE_BOOSTER_REWARD" | "ATTACK_TYPE_BOOSTER" | "TERA_SHARD">;
       type?: PokemonType;
     }
   | {
@@ -1974,12 +2136,18 @@ export const modifierTypes = {
 
   SACRED_ASH: () => new AllPokemonFullReviveModifierType("modifierType:ModifierType.SACRED_ASH", "sacred_ash"),
 
+  REVIVER_SEED_REWARD: () => new PokemonHeldItemReward(HeldItemId.REVIVER_SEED),
+
   REVIVER_SEED: () =>
     new PokemonHeldItemModifierType(
       "modifierType:ModifierType.REVIVER_SEED",
       "reviver_seed",
       (type, args) => new PokemonInstantReviveModifier(type, (args[0] as Pokemon).id),
     ),
+
+  WHITE_HERB_REWARD: () => new PokemonHeldItemReward(HeldItemId.WHITE_HERB),
+
+  // TODO: Remove the old one
   WHITE_HERB: () =>
     new PokemonHeldItemModifierType(
       "modifierType:ModifierType.WHITE_HERB",
@@ -2019,7 +2187,11 @@ export const modifierTypes = {
       }
     })("modifierType:ModifierType.DIRE_HIT", "dire_hit", (type, _args) => new TempCritBoosterModifier(type, 5)),
 
+  BASE_STAT_BOOSTER_REWARD: () => new BaseStatBoosterRewardGenerator(),
+
   BASE_STAT_BOOSTER: () => new BaseStatBoosterModifierTypeGenerator(),
+
+  ATTACK_TYPE_BOOSTER_REWARD: () => new AttackTypeBoosterRewardGenerator(),
 
   ATTACK_TYPE_BOOSTER: () => new AttackTypeBoosterModifierTypeGenerator(),
 
@@ -2063,6 +2235,26 @@ export const modifierTypes = {
         shardType = randSeedInt(64) ? (randSeedInt(18) as PokemonType) : PokemonType.STELLAR;
       }
       return new TerastallizeModifierType(shardType);
+    }),
+
+  BERRY_REWARD: () =>
+    new ModifierTypeGenerator((_party: Pokemon[], pregenArgs?: any[]) => {
+      if (pregenArgs && pregenArgs.length === 1 && pregenArgs[0] in BerryType) {
+        return new BerryModifierType(pregenArgs[0] as BerryType);
+      }
+      const berryTypes = getEnumValues(BerryType);
+      let randBerryType: BerryType;
+      const rand = randSeedInt(12);
+      if (rand < 2) {
+        randBerryType = BerryType.SITRUS;
+      } else if (rand < 4) {
+        randBerryType = BerryType.LUM;
+      } else if (rand < 6) {
+        randBerryType = BerryType.LEPPA;
+      } else {
+        randBerryType = berryTypes[randSeedInt(berryTypes.length - 3) + 2];
+      }
+      return new BerryReward(randBerryType);
     }),
 
   BERRY: () =>
@@ -2112,6 +2304,10 @@ export const modifierTypes = {
   GOLDEN_EXP_CHARM: () =>
     new ExpBoosterModifierType("modifierType:ModifierType.GOLDEN_EXP_CHARM", "golden_exp_charm", 100),
 
+  LUCKY_EGG_REWARD: () => new PokemonHeldItemReward(HeldItemId.LUCKY_EGG),
+  GOLDEN_EGG_REWARD: () => new PokemonHeldItemReward(HeldItemId.GOLDEN_EGG),
+
+  // TODO: Remove these when refactor is done
   LUCKY_EGG: () => new PokemonExpBoosterModifierType("modifierType:ModifierType.LUCKY_EGG", "lucky_egg", 40),
   GOLDEN_EGG: () => new PokemonExpBoosterModifierType("modifierType:ModifierType.GOLDEN_EGG", "golden_egg", 100),
 
@@ -2243,6 +2439,10 @@ export const modifierTypes = {
       "kings_rock",
       (type, args) => new FlinchChanceModifier(type, (args[0] as Pokemon).id),
     ),
+
+  LEFTOVERS_REWARD: () => new PokemonHeldItemReward(HeldItemId.LEFTOVERS),
+
+  SHELL_BELL_REWARD: () => new PokemonHeldItemReward(HeldItemId.SHELL_BELL),
 
   LEFTOVERS: () =>
     new PokemonHeldItemModifierType(
@@ -2908,7 +3108,7 @@ const modifierPool: ModifierPool = {
     ),
     new WeightedModifierType(modifierTypes.REVIVER_SEED, 4),
     new WeightedModifierType(modifierTypes.CANDY_JAR, skipInLastClassicWaveOrDefault(5)),
-    new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, 9),
+    new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER_REWARD, 9),
     new WeightedModifierType(modifierTypes.TM_ULTRA, 11),
     new WeightedModifierType(modifierTypes.RARER_CANDY, 4),
     new WeightedModifierType(modifierTypes.GOLDEN_PUNCH, skipInLastClassicWaveOrDefault(2)),
@@ -2932,8 +3132,8 @@ const modifierPool: ModifierPool = {
   [ModifierTier.ROGUE]: [
     new WeightedModifierType(modifierTypes.ROGUE_BALL, () => (hasMaximumBalls(PokeballType.ROGUE_BALL) ? 0 : 16), 16),
     new WeightedModifierType(modifierTypes.RELIC_GOLD, skipInLastClassicWaveOrDefault(2)),
-    new WeightedModifierType(modifierTypes.LEFTOVERS, 3),
-    new WeightedModifierType(modifierTypes.SHELL_BELL, 3),
+    new WeightedModifierType(modifierTypes.LEFTOVERS_REWARD, 3),
+    new WeightedModifierType(modifierTypes.SHELL_BELL_REWARD, 3),
     new WeightedModifierType(modifierTypes.BERRY_POUCH, 4),
     new WeightedModifierType(modifierTypes.GRIP_CLAW, 5),
     new WeightedModifierType(modifierTypes.SCOPE_LENS, 4),
@@ -3009,26 +3209,26 @@ const modifierPool: ModifierPool = {
 };
 
 const wildModifierPool: ModifierPool = {
-  [ModifierTier.COMMON]: [new WeightedModifierType(modifierTypes.BERRY, 1)].map(m => {
+  [ModifierTier.COMMON]: [new WeightedModifierType(modifierTypes.BERRY_REWARD, 1)].map(m => {
     m.setTier(ModifierTier.COMMON);
     return m;
   }),
-  [ModifierTier.GREAT]: [new WeightedModifierType(modifierTypes.BASE_STAT_BOOSTER, 1)].map(m => {
+  [ModifierTier.GREAT]: [new WeightedModifierType(modifierTypes.BASE_STAT_BOOSTER_REWARD, 1)].map(m => {
     m.setTier(ModifierTier.GREAT);
     return m;
   }),
   [ModifierTier.ULTRA]: [
-    new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, 10),
-    new WeightedModifierType(modifierTypes.WHITE_HERB, 0),
+    new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER_REWARD, 10),
+    new WeightedModifierType(modifierTypes.WHITE_HERB_REWARD, 0),
   ].map(m => {
     m.setTier(ModifierTier.ULTRA);
     return m;
   }),
-  [ModifierTier.ROGUE]: [new WeightedModifierType(modifierTypes.LUCKY_EGG, 4)].map(m => {
+  [ModifierTier.ROGUE]: [new WeightedModifierType(modifierTypes.LUCKY_EGG_REWARD, 4)].map(m => {
     m.setTier(ModifierTier.ROGUE);
     return m;
   }),
-  [ModifierTier.MASTER]: [new WeightedModifierType(modifierTypes.GOLDEN_EGG, 1)].map(m => {
+  [ModifierTier.MASTER]: [new WeightedModifierType(modifierTypes.GOLDEN_EGG_REWARD, 1)].map(m => {
     m.setTier(ModifierTier.MASTER);
     return m;
   }),
@@ -3036,19 +3236,19 @@ const wildModifierPool: ModifierPool = {
 
 const trainerModifierPool: ModifierPool = {
   [ModifierTier.COMMON]: [
-    new WeightedModifierType(modifierTypes.BERRY, 8),
-    new WeightedModifierType(modifierTypes.BASE_STAT_BOOSTER, 3),
+    new WeightedModifierType(modifierTypes.BERRY_REWARD, 8),
+    new WeightedModifierType(modifierTypes.BASE_STAT_BOOSTER_REWARD, 3),
   ].map(m => {
     m.setTier(ModifierTier.COMMON);
     return m;
   }),
-  [ModifierTier.GREAT]: [new WeightedModifierType(modifierTypes.BASE_STAT_BOOSTER, 3)].map(m => {
+  [ModifierTier.GREAT]: [new WeightedModifierType(modifierTypes.BASE_STAT_BOOSTER_REWARD, 3)].map(m => {
     m.setTier(ModifierTier.GREAT);
     return m;
   }),
   [ModifierTier.ULTRA]: [
-    new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, 10),
-    new WeightedModifierType(modifierTypes.WHITE_HERB, 0),
+    new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER_REWARD, 10),
+    new WeightedModifierType(modifierTypes.WHITE_HERB_REWARD, 0),
   ].map(m => {
     m.setTier(ModifierTier.ULTRA);
     return m;
@@ -3557,6 +3757,31 @@ export function getEnemyModifierTypesForWave(
   return ret;
 }
 
+// TODO: Add proper documentation to this function (once it fully works...)
+// TODO: Convert trainer pool to HeldItemId too
+export function getEnemyHeldItemsForWave(
+  waveIndex: number,
+  count: number,
+  party: EnemyPokemon[],
+  poolType: ModifierPoolType.WILD | ModifierPoolType.TRAINER,
+  upgradeChance = 0,
+): HeldItemId[] {
+  const ret = new Array(count).fill(0).map(() => {
+    const reward = getNewModifierTypeOption(
+      party,
+      poolType,
+      undefined,
+      upgradeChance && !randSeedInt(upgradeChance) ? 1 : 0,
+    )?.type as PokemonHeldItemReward;
+    return reward.itemId;
+  });
+  if (!(waveIndex % 1000)) {
+    // TODO: Change this line with the actual held item when implemented
+    ret.push(HeldItemId.MINI_BLACK_HOLE);
+  }
+  return ret;
+}
+
 export function getDailyRunStarterModifiers(party: PlayerPokemon[]): PokemonHeldItemModifier[] {
   const ret: PokemonHeldItemModifier[] = [];
   for (const p of party) {
@@ -3598,13 +3823,53 @@ export function getDailyRunStarterModifiers(party: PlayerPokemon[]): PokemonHeld
 function getNewModifierTypeOption(
   party: Pokemon[],
   poolType: ModifierPoolType,
-  tier?: ModifierTier,
+  baseTier?: ModifierTier,
   upgradeCount?: number,
   retryCount = 0,
   allowLuckUpgrades = true,
 ): ModifierTypeOption | null {
   const player = !poolType;
   const pool = getModifierPoolForType(poolType);
+  const thresholds = getPoolThresholds(poolType);
+
+  const tier = determineTier(party, player, baseTier, upgradeCount, retryCount, allowLuckUpgrades);
+
+  const tierThresholds = Object.keys(thresholds[tier]);
+  const totalWeight = Number.parseInt(tierThresholds[tierThresholds.length - 1]);
+  const value = randSeedInt(totalWeight);
+  let index: number | undefined;
+  for (const t of tierThresholds) {
+    const threshold = Number.parseInt(t);
+    if (value < threshold) {
+      index = thresholds[tier][threshold];
+      break;
+    }
+  }
+
+  if (index === undefined) {
+    return null;
+  }
+
+  if (player) {
+    console.log(index, ignoredPoolIndexes[tier].filter(i => i <= index).length, ignoredPoolIndexes[tier]);
+  }
+  let modifierType: ModifierType | null = pool[tier][index].modifierType;
+  if (modifierType instanceof ModifierTypeGenerator) {
+    modifierType = (modifierType as ModifierTypeGenerator).generateType(party);
+    if (modifierType === null) {
+      if (player) {
+        console.log(ModifierTier[tier], upgradeCount);
+      }
+      return getNewModifierTypeOption(party, poolType, tier, upgradeCount, ++retryCount);
+    }
+  }
+
+  console.log(modifierType, !player ? "(enemy)" : "");
+
+  return new ModifierTypeOption(modifierType as ModifierType, upgradeCount!); // TODO: is this bang correct?
+}
+
+function getPoolThresholds(poolType: ModifierPoolType) {
   let thresholds: object;
   switch (poolType) {
     case ModifierPoolType.PLAYER:
@@ -3623,6 +3888,17 @@ function getNewModifierTypeOption(
       thresholds = dailyStarterModifierPoolThresholds;
       break;
   }
+  return thresholds;
+}
+
+function determineTier(
+  party: Pokemon[],
+  player: boolean,
+  tier?: ModifierTier,
+  upgradeCount?: number,
+  retryCount = 0,
+  allowLuckUpgrades = true,
+): ModifierTier {
   if (tier === undefined) {
     const tierValue = randSeedInt(1024);
     if (!upgradeCount) {
@@ -3677,40 +3953,7 @@ function getNewModifierTypeOption(
     retryCount = 0;
     tier--;
   }
-
-  const tierThresholds = Object.keys(thresholds[tier]);
-  const totalWeight = Number.parseInt(tierThresholds[tierThresholds.length - 1]);
-  const value = randSeedInt(totalWeight);
-  let index: number | undefined;
-  for (const t of tierThresholds) {
-    const threshold = Number.parseInt(t);
-    if (value < threshold) {
-      index = thresholds[tier][threshold];
-      break;
-    }
-  }
-
-  if (index === undefined) {
-    return null;
-  }
-
-  if (player) {
-    console.log(index, ignoredPoolIndexes[tier].filter(i => i <= index).length, ignoredPoolIndexes[tier]);
-  }
-  let modifierType: ModifierType | null = pool[tier][index].modifierType;
-  if (modifierType instanceof ModifierTypeGenerator) {
-    modifierType = (modifierType as ModifierTypeGenerator).generateType(party);
-    if (modifierType === null) {
-      if (player) {
-        console.log(ModifierTier[tier], upgradeCount);
-      }
-      return getNewModifierTypeOption(party, poolType, tier, upgradeCount, ++retryCount);
-    }
-  }
-
-  console.log(modifierType, !player ? "(enemy)" : "");
-
-  return new ModifierTypeOption(modifierType as ModifierType, upgradeCount!); // TODO: is this bang correct?
+  return tier;
 }
 
 export function getDefaultModifierTypeForTier(tier: ModifierTier): ModifierType {

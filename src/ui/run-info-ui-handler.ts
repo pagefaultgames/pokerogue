@@ -27,6 +27,7 @@ import { SettingKeyboard } from "#app/system/settings/settings-keyboard";
 import { getBiomeName } from "#app/data/balance/biomes";
 import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { globalScene } from "#app/global-scene";
+import { modifierSortFunc } from "#app/modifier/modifier-bar";
 
 /**
  * RunInfoUiMode indicates possible overlays of RunInfoUiHandler.
@@ -891,7 +892,7 @@ export default class RunInfoUiHandler extends UiHandler {
           }
         }
         if (heldItemsList.length > 0) {
-          (heldItemsList as Modifier.PokemonHeldItemModifier[]).sort(Modifier.modifierSortFunc);
+          (heldItemsList as Modifier.PokemonHeldItemModifier[]).sort(modifierSortFunc);
           let row = 0;
           for (const [index, item] of heldItemsList.entries()) {
             if (index > 36) {

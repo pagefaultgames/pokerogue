@@ -40,7 +40,8 @@ import { AbilityId } from "#enums/ability-id";
 import { SpeciesFormChangeRevertWeatherFormTrigger, SpeciesFormChangeWeatherTrigger } from "#app/data/pokemon-forms";
 import { CommonAnimPhase } from "#app/phases/common-anim-phase";
 import { WeatherType } from "#enums/weather-type";
-import { FieldEffectModifier } from "#app/modifier/modifier";
+import { applyHeldItems } from "#app/items/all-held-items";
+import { ITEM_EFFECT } from "#app/items/held-item";
 
 export class Arena {
   public biomeType: BiomeId;
@@ -339,7 +340,7 @@ export class Arena {
 
     if (!isNullOrUndefined(user)) {
       weatherDuration.value = 5;
-      globalScene.applyModifier(FieldEffectModifier, user.isPlayer(), user, weatherDuration);
+      applyHeldItems(ITEM_EFFECT.FIELD_EFFECT, { pokemon: user, fieldDuration: weatherDuration });
     }
 
     this.weather = weather ? new Weather(weather, weatherDuration.value) : null;
@@ -420,7 +421,7 @@ export class Arena {
 
     if (!isNullOrUndefined(user)) {
       terrainDuration.value = 5;
-      globalScene.applyModifier(FieldEffectModifier, user.isPlayer(), user, terrainDuration);
+      applyHeldItems(ITEM_EFFECT.FIELD_EFFECT, { pokemon: user, fieldDuration: terrainDuration });
     }
 
     this.terrain = terrain ? new Terrain(terrain, terrainDuration.value) : null;

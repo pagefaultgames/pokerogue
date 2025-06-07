@@ -6,16 +6,16 @@ import { TurnEndEvent } from "#app/events/battle-scene";
 import type Pokemon from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import {
-  TurnHealModifier,
   EnemyTurnHealModifier,
   EnemyStatusEffectHealChanceModifier,
-  TurnStatusEffectModifier,
   TurnHeldItemTransferModifier,
 } from "#app/modifier/modifier";
 import i18next from "i18next";
 import { FieldPhase } from "./field-phase";
 import { PokemonHealPhase } from "./pokemon-heal-phase";
 import { globalScene } from "#app/global-scene";
+import { applyHeldItems } from "#app/items/all-held-items";
+import { ITEM_EFFECT } from "#app/items/held-item";
 
 export class TurnEndPhase extends FieldPhase {
   public readonly phaseName = "TurnEndPhase";
@@ -31,7 +31,7 @@ export class TurnEndPhase extends FieldPhase {
       if (!pokemon.switchOutStatus) {
         pokemon.lapseTags(BattlerTagLapseType.TURN_END);
 
-        globalScene.applyModifiers(TurnHealModifier, pokemon.isPlayer(), pokemon);
+        applyHeldItems(ITEM_EFFECT.TURN_END_HEAL, { pokemon: pokemon });
 
         if (globalScene.arena.terrain?.terrainType === TerrainType.GRASSY && pokemon.isGrounded()) {
           globalScene.unshiftPhase(
@@ -54,7 +54,7 @@ export class TurnEndPhase extends FieldPhase {
         applyPostTurnAbAttrs(PostTurnAbAttr, pokemon);
       }
 
-      globalScene.applyModifiers(TurnStatusEffectModifier, pokemon.isPlayer(), pokemon);
+      applyHeldItems(ITEM_EFFECT.TURN_END_STATUS, { pokemon: pokemon });
       globalScene.applyModifiers(TurnHeldItemTransferModifier, pokemon.isPlayer(), pokemon);
 
       pokemon.tempSummonData.turnCount++;
