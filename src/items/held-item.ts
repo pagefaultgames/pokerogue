@@ -25,6 +25,8 @@ export const ITEM_EFFECT = {
   NATURE_WEIGHT_BOOSTER: 17,
   ACCURACY_BOOSTER: 18,
   MULTI_HIT: 19,
+  DAMAGE_MONEY_REWARD: 20,
+  BATON: 21,
 } as const;
 
 export type ITEM_EFFECT = (typeof ITEM_EFFECT)[keyof typeof ITEM_EFFECT];

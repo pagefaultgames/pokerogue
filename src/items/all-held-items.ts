@@ -17,9 +17,11 @@ import {
   BaseStatBoosterHeldItem,
   permanentStatToHeldItem,
 } from "./held-items/base-stat-booster";
+import { type BATON_PARAMS, BatonHeldItem } from "./held-items/baton";
 import { type BERRY_PARAMS, BerryHeldItem, berryTypeToHeldItem } from "./held-items/berry";
 import { type BYPASS_SPEED_CHANCE_PARAMS, BypassSpeedChanceHeldItem } from "./held-items/bypass-speed-chance";
 import { type CRIT_BOOST_PARAMS, CritBoostHeldItem, SpeciesCritBoostHeldItem } from "./held-items/crit-booster";
+import { type DAMAGE_MONEY_REWARD_PARAMS, DamageMoneyRewardHeldItem } from "./held-items/damage-money-reward";
 import { type EXP_BOOST_PARAMS, ExpBoosterHeldItem } from "./held-items/exp-booster";
 import { type FIELD_EFFECT_PARAMS, FieldEffectHeldItem } from "./held-items/field-effect";
 import { type FLINCH_CHANCE_PARAMS, FlinchChanceHeldItem } from "./held-items/flinch-chance";
@@ -119,6 +121,8 @@ export function initHeldItems() {
   allHeldItems[HeldItemId.SOUL_DEW] = new NatureWeightBoosterHeldItem(HeldItemId.SOUL_DEW, 10);
   allHeldItems[HeldItemId.WIDE_LENS] = new AccuracyBoosterHeldItem(HeldItemId.WIDE_LENS, 3, 5);
   allHeldItems[HeldItemId.MULTI_LENS] = new MultiHitHeldItem(HeldItemId.MULTI_LENS, 2);
+  allHeldItems[HeldItemId.GOLDEN_PUNCH] = new DamageMoneyRewardHeldItem(HeldItemId.GOLDEN_PUNCH, 5);
+  allHeldItems[HeldItemId.BATON] = new BatonHeldItem(HeldItemId.BATON, 1);
 
   allHeldItems[HeldItemId.FLAME_ORB] = new TurnEndStatusHeldItem(HeldItemId.FLAME_ORB, 1, StatusEffect.BURN);
   allHeldItems[HeldItemId.TOXIC_ORB] = new TurnEndStatusHeldItem(HeldItemId.TOXIC_ORB, 1, StatusEffect.TOXIC);
@@ -150,6 +154,8 @@ type APPLY_HELD_ITEMS_PARAMS = {
   [ITEM_EFFECT.NATURE_WEIGHT_BOOSTER]: NATURE_WEIGHT_BOOST_PARAMS;
   [ITEM_EFFECT.ACCURACY_BOOSTER]: ACCURACY_BOOST_PARAMS;
   [ITEM_EFFECT.MULTI_HIT]: MULTI_HIT_PARAMS;
+  [ITEM_EFFECT.DAMAGE_MONEY_REWARD]: DAMAGE_MONEY_REWARD_PARAMS;
+  [ITEM_EFFECT.BATON]: BATON_PARAMS;
 };
 
 export function applyHeldItems<T extends ITEM_EFFECT>(effect: T, params: APPLY_HELD_ITEMS_PARAMS[T]) {

@@ -1812,34 +1812,6 @@ export class MoneyMultiplierModifier extends PersistentModifier {
   }
 }
 
-export class DamageMoneyRewardModifier extends PokemonHeldItemModifier {
-  matchType(modifier: Modifier): boolean {
-    return modifier instanceof DamageMoneyRewardModifier;
-  }
-
-  clone(): DamageMoneyRewardModifier {
-    return new DamageMoneyRewardModifier(this.type, this.pokemonId, this.stackCount);
-  }
-
-  /**
-   * Applies {@linkcode DamageMoneyRewardModifier}
-   * @param pokemon The {@linkcode Pokemon} attacking
-   * @param multiplier {@linkcode NumberHolder} holding the multiplier value
-   * @returns always `true`
-   */
-  override apply(_pokemon: Pokemon, multiplier: NumberHolder): boolean {
-    const moneyAmount = new NumberHolder(Math.floor(multiplier.value * (0.5 * this.getStackCount())));
-    globalScene.applyModifiers(MoneyMultiplierModifier, true, moneyAmount);
-    globalScene.addMoney(moneyAmount.value);
-
-    return true;
-  }
-
-  getMaxHeldItemCount(_pokemon: Pokemon): number {
-    return 5;
-  }
-}
-
 export class MoneyInterestModifier extends PersistentModifier {
   match(modifier: Modifier): boolean {
     return modifier instanceof MoneyInterestModifier;
@@ -2031,28 +2003,6 @@ export class BoostBugSpawnModifier extends PersistentModifier {
   }
 
   getMaxStackCount(): number {
-    return 1;
-  }
-}
-
-export class SwitchEffectTransferModifier extends PokemonHeldItemModifier {
-  matchType(modifier: Modifier): boolean {
-    return modifier instanceof SwitchEffectTransferModifier;
-  }
-
-  clone(): SwitchEffectTransferModifier {
-    return new SwitchEffectTransferModifier(this.type, this.pokemonId, this.stackCount);
-  }
-
-  /**
-   * Applies {@linkcode SwitchEffectTransferModifier}
-   * @returns always `true`
-   */
-  override apply(): boolean {
-    return true;
-  }
-
-  getMaxHeldItemCount(_pokemon: Pokemon): number {
     return 1;
   }
 }

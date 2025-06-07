@@ -54,7 +54,6 @@ import { HitResult, MoveResult } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import {
   ContactHeldItemTransferChanceModifier,
-  DamageMoneyRewardModifier,
   EnemyAttackStatusEffectChanceModifier,
   EnemyEndureChanceModifier,
 } from "#app/modifier/modifier";
@@ -887,7 +886,7 @@ export class MoveEffectPhase extends PokemonPhase {
     });
 
     if (user.isPlayer() && !target.isPlayer()) {
-      globalScene.applyModifiers(DamageMoneyRewardModifier, true, user, new NumberHolder(damage));
+      applyHeldItems(ITEM_EFFECT.DAMAGE_MONEY_REWARD, { pokemon: user, damage: damage });
     }
 
     return result;
