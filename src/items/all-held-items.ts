@@ -2,7 +2,8 @@ import { getEnumValues } from "#app/utils/common";
 import { BerryType } from "#enums/berry-type";
 import { HeldItemId } from "#enums/held-item-id";
 import type { PokemonType } from "#enums/pokemon-type";
-import type { PermanentStat } from "#enums/stat";
+import { SpeciesId } from "#enums/species-id";
+import { Stat, type PermanentStat } from "#enums/stat";
 import { ITEM_EFFECT } from "./held-item";
 import {
   type ATTACK_TYPE_BOOST_PARAMS,
@@ -22,6 +23,11 @@ import {
   ResetNegativeStatStageHeldItem,
   type RESET_NEGATIVE_STAT_STAGE_PARAMS,
 } from "./held-items/reset-negative-stat-stage";
+import {
+  EvolutionStatBoostHeldItem,
+  SpeciesStatBoostHeldItem,
+  type STAT_BOOST_PARAMS,
+} from "./held-items/stat-booster";
 import type { TURN_END_HEAL_PARAMS } from "./held-items/turn-end-heal";
 import { TurnEndHealHeldItem } from "./held-items/turn-end-heal";
 
@@ -49,6 +55,37 @@ export function initHeldItems() {
     allHeldItems[heldItemType] = new AttackTypeBoosterHeldItem(heldItemType, 99, pokemonType, 0.2);
   }
 
+  allHeldItems[HeldItemId.EVIOLITE] = new EvolutionStatBoostHeldItem(
+    HeldItemId.EVIOLITE,
+    1,
+    [Stat.DEF, Stat.SPDEF],
+    1.5,
+  );
+  allHeldItems[HeldItemId.LIGHT_BALL] = new SpeciesStatBoostHeldItem(
+    HeldItemId.LIGHT_BALL,
+    1,
+    [Stat.ATK, Stat.SPATK],
+    2,
+    [SpeciesId.PIKACHU],
+  );
+  allHeldItems[HeldItemId.THICK_CLUB] = new SpeciesStatBoostHeldItem(HeldItemId.LIGHT_BALL, 1, [Stat.ATK], 2, [
+    SpeciesId.CUBONE,
+    SpeciesId.MAROWAK,
+    SpeciesId.ALOLA_MAROWAK,
+  ]);
+  allHeldItems[HeldItemId.METAL_POWDER] = new SpeciesStatBoostHeldItem(HeldItemId.LIGHT_BALL, 1, [Stat.DEF], 2, [
+    SpeciesId.DITTO,
+  ]);
+  allHeldItems[HeldItemId.QUICK_POWDER] = new SpeciesStatBoostHeldItem(HeldItemId.LIGHT_BALL, 1, [Stat.SPD], 2, [
+    SpeciesId.DITTO,
+  ]);
+  allHeldItems[HeldItemId.DEEP_SEA_SCALE] = new SpeciesStatBoostHeldItem(HeldItemId.LIGHT_BALL, 1, [Stat.SPDEF], 2, [
+    SpeciesId.CLAMPERL,
+  ]);
+  allHeldItems[HeldItemId.DEEP_SEA_TOOTH] = new SpeciesStatBoostHeldItem(HeldItemId.LIGHT_BALL, 1, [Stat.SPATK], 2, [
+    SpeciesId.CLAMPERL,
+  ]);
+
   allHeldItems[HeldItemId.LUCKY_EGG] = new ExpBoosterHeldItem(HeldItemId.LUCKY_EGG, 99, 40);
   allHeldItems[HeldItemId.GOLDEN_EGG] = new ExpBoosterHeldItem(HeldItemId.GOLDEN_EGG, 99, 100);
 
@@ -71,6 +108,7 @@ type APPLY_HELD_ITEMS_PARAMS = {
   [ITEM_EFFECT.BERRY]: BERRY_PARAMS;
   [ITEM_EFFECT.BASE_STAT_BOOSTER]: BASE_STAT_BOOSTER_PARAMS;
   [ITEM_EFFECT.INSTANT_REVIVE]: INSTANT_REVIVE_PARAMS;
+  [ITEM_EFFECT.STAT_BOOST]: STAT_BOOST_PARAMS;
 };
 
 export function applyHeldItems<T extends ITEM_EFFECT>(effect: T, params: APPLY_HELD_ITEMS_PARAMS[T]) {

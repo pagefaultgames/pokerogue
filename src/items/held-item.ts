@@ -1,7 +1,8 @@
 import { applyPostItemLostAbAttrs, PostItemLostAbAttr } from "#app/data/abilities/ability";
 import type Pokemon from "#app/field/pokemon";
 import { globalScene } from "#app/global-scene";
-import type { HeldItemId } from "#enums/held-item-id";
+import { HeldItemNames, type HeldItemId } from "#enums/held-item-id";
+import i18next from "i18next";
 
 export const ITEM_EFFECT = {
   ATTACK_TYPE_BOOST: 1,
@@ -13,6 +14,7 @@ export const ITEM_EFFECT = {
   BERRY: 6,
   BASE_STAT_BOOSTER: 7,
   INSTANT_REVIVE: 8,
+  STAT_BOOST: 9,
 } as const;
 
 export type ITEM_EFFECT = (typeof ITEM_EFFECT)[keyof typeof ITEM_EFFECT];
@@ -32,6 +34,18 @@ export class HeldItem {
     this.isTransferable = true;
     this.isStealable = true;
     this.isSuppressable = true;
+  }
+
+  getName(): string {
+    return i18next.t(`modifierType:ModifierType.${HeldItemNames[this.type]}.name`) + " (new)";
+  }
+
+  getDescription(): string {
+    return i18next.t(`modifierType:ModifierType.${HeldItemNames[this.type]}.description`);
+  }
+
+  getIcon(): string {
+    return `${HeldItemNames[this.type]?.toLowerCase()}`;
   }
 
   get name(): string {

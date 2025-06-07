@@ -14,18 +14,6 @@ export interface TURN_END_HEAL_PARAMS {
 export class TurnEndHealHeldItem extends HeldItem {
   public effects: ITEM_EFFECT[] = [ITEM_EFFECT.TURN_END_HEAL];
 
-  get name(): string {
-    return i18next.t("modifierType:ModifierType.LEFTOVERS.name") + " (new)";
-  }
-
-  get description(): string {
-    return i18next.t("modifierType:ModifierType.LEFTOVERS.description");
-  }
-
-  get icon(): string {
-    return "leftovers";
-  }
-
   apply(params: TURN_END_HEAL_PARAMS): boolean {
     const pokemon = params.pokemon;
     const stackCount = pokemon.heldItemManager.getStack(this.type);
