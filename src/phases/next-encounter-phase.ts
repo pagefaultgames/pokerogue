@@ -6,6 +6,7 @@ import { EncounterPhase } from "./encounter-phase";
  * Handles generating, loading and preparing for it.
  */
 export class NextEncounterPhase extends EncounterPhase {
+  public readonly phaseName: "NextEncounterPhase" | "NewBiomeEncounterPhase" = "NextEncounterPhase";
   start() {
     super.start();
   }

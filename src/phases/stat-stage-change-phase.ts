@@ -32,6 +32,7 @@ export type StatStageChangeCallback = (
 ) => void;
 
 export class StatStageChangePhase extends PokemonPhase {
+  public readonly phaseName = "StatStageChangePhase";
   private stats: BattleStat[];
   private selfTarget: boolean;
   private stages: number;
@@ -236,9 +237,9 @@ export class StatStageChangePhase extends PokemonPhase {
 
       // Look for any other stat change phases; if this is the last one, do White Herb check
       const existingPhase = globalScene.findPhase(
-        p => p instanceof StatStageChangePhase && p.battlerIndex === this.battlerIndex,
+        p => p.is("StatStageChangePhase") && p.battlerIndex === this.battlerIndex,
       );
-      if (!(existingPhase instanceof StatStageChangePhase)) {
+      if (!existingPhase?.is("StatStageChangePhase")) {
         // Apply White Herb if needed
         applyHeldItems(ITEM_EFFECT.RESET_NEGATIVE_STAT_STAGE, { pokemon: pokemon, isPlayer: this.player });
       }
@@ -308,7 +309,7 @@ export class StatStageChangePhase extends PokemonPhase {
       while (
         (existingPhase = globalScene.findPhase(
           p =>
-            p instanceof StatStageChangePhase &&
+            p.is("StatStageChangePhase") &&
             p.battlerIndex === this.battlerIndex &&
             p.stats.length === 1 &&
             p.stats[0] === this.stats[0] &&
@@ -327,7 +328,7 @@ export class StatStageChangePhase extends PokemonPhase {
     while (
       (existingPhase = globalScene.findPhase(
         p =>
-          p instanceof StatStageChangePhase &&
+          p.is("StatStageChangePhase") &&
           p.battlerIndex === this.battlerIndex &&
           p.selfTarget === this.selfTarget &&
           accEva.some(s => p.stats.includes(s)) === isAccEva &&

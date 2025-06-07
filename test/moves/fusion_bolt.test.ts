@@ -1,6 +1,6 @@
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import { AbilityId } from "#enums/ability-id";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -9,7 +9,7 @@ describe("Moves - Fusion Bolt", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
-  const fusionBolt = Moves.FUSION_BOLT;
+  const fusionBolt = MoveId.FUSION_BOLT;
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({
@@ -23,20 +23,19 @@ describe("Moves - Fusion Bolt", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.moveset([fusionBolt]);
-    game.override.startingLevel(1);
-
-    game.override.enemySpecies(Species.RESHIRAM);
-    game.override.enemyAbility(Abilities.ROUGH_SKIN);
-    game.override.enemyMoveset([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
-
-    game.override.battleStyle("single");
-    game.override.startingWave(97);
-    game.override.disableCrits();
+    game.override
+      .moveset([fusionBolt])
+      .startingLevel(1)
+      .enemySpecies(SpeciesId.RESHIRAM)
+      .enemyAbility(AbilityId.ROUGH_SKIN)
+      .enemyMoveset(MoveId.SPLASH)
+      .battleStyle("single")
+      .startingWave(97)
+      .disableCrits();
   });
 
   it("should not make contact", async () => {
-    await game.classicMode.startBattle([Species.ZEKROM]);
+    await game.classicMode.startBattle([SpeciesId.ZEKROM]);
 
     const partyMember = game.scene.getPlayerPokemon()!;
     const initialHp = partyMember.hp;

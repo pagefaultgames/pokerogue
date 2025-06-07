@@ -47,8 +47,8 @@ import { applyChallenges, ChallengeType } from "#app/data/challenge";
 import MoveInfoOverlay from "#app/ui/move-info-overlay";
 import { getEggTierForSpecies } from "#app/data/egg";
 import { Device } from "#enums/devices";
-import type { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import type { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import { Button } from "#enums/buttons";
 import { EggSourceType } from "#enums/egg-source-types";
 import { DropDown, DropDownLabel, DropDownOption, DropDownState, DropDownType, SortCriteria } from "#app/ui/dropdown";
@@ -59,7 +59,7 @@ import { ScrollBar } from "#app/ui/scroll-bar";
 import { SelectChallengePhase } from "#app/phases/select-challenge-phase";
 import { EncounterPhase } from "#app/phases/encounter-phase";
 import { TitlePhase } from "#app/phases/title-phase";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/ability-id";
 import {
   getPassiveCandyCount,
   getValueReductionCandyCounts,
@@ -162,15 +162,15 @@ const languageSettings: { [key: string]: LanguageSetting } = {
     starterInfoYOffset: 0.5,
     starterInfoXPos: 29,
   },
-  da:{
+  da: {
     starterInfoTextSize: "56px",
     instructionTextSize: "38px",
   },
-  tr:{
+  tr: {
     starterInfoTextSize: "56px",
     instructionTextSize: "38px",
   },
-  ro:{
+  ro: {
     starterInfoTextSize: "56px",
     instructionTextSize: "38px",
   },
@@ -356,7 +356,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
   private allSpecies: PokemonSpecies[] = [];
   private lastSpecies: PokemonSpecies;
-  private speciesLoaded: Map<Species, boolean> = new Map<Species, boolean>();
+  private speciesLoaded: Map<SpeciesId, boolean> = new Map<SpeciesId, boolean>();
   public starterSpecies: PokemonSpecies[] = [];
   private pokerusSpecies: PokemonSpecies[] = [];
   private starterAttr: bigint[] = [];
@@ -365,7 +365,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
   private starterTeras: PokemonType[] = [];
   private starterMovesets: StarterMoveset[] = [];
   private speciesStarterDexEntry: DexEntry | null;
-  private speciesStarterMoves: Moves[];
+  private speciesStarterMoves: MoveId[];
   private canCycleShiny: boolean;
   private canCycleForm: boolean;
   private canCycleGender: boolean;
@@ -795,7 +795,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.randomCursorObj.setOrigin(0, 0);
     this.starterSelectContainer.add(this.randomCursorObj);
 
-    const starterSpecies: Species[] = [];
+    const starterSpecies: SpeciesId[] = [];
 
     const starterBoxContainer = globalScene.add.container(speciesContainerX + 6, 9); //115
 
@@ -1970,7 +1970,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
 
                   ui.setModeWithoutClear(UiMode.OPTION_SELECT, {
                     options: moveset
-                      .map((m: Moves, i: number) => {
+                      .map((m: MoveId, i: number) => {
                         const option: OptionSelectItem = {
                           label: allMoves[m].name,
                           handler: () => {
@@ -1980,7 +1980,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
                                 `${i18next.t("starterSelectUiHandler:selectMoveSwapWith")} ${allMoves[m].name}.`,
                                 null,
                                 () => {
-                                  const possibleMoves = this.speciesStarterMoves.filter((sm: Moves) => sm !== m);
+                                  const possibleMoves = this.speciesStarterMoves.filter((sm: MoveId) => sm !== m);
                                   this.moveInfoOverlay.show(allMoves[possibleMoves[0]]);
 
                                   ui.setModeWithoutClear(UiMode.OPTION_SELECT, {
@@ -2765,7 +2765,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
     this.checkIconId(this.starterIcons[index], species, props.female, props.formIndex, props.shiny, props.variant);
   }
 
-  switchMoveHandler(i: number, newMove: Moves, move: Moves) {
+  switchMoveHandler(i: number, newMove: MoveId, move: MoveId) {
     const speciesId = this.lastSpecies.speciesId;
     const existingMoveIndex = this.starterMoveset?.indexOf(newMove)!; // TODO: is this bang correct?
     this.starterMoveset![i] = newMove; // TODO: is this bang correct?
@@ -3171,7 +3171,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       // HA Filter
       const speciesHasHiddenAbility =
         container.species.abilityHidden !== container.species.ability1 &&
-        container.species.abilityHidden !== Abilities.NONE;
+        container.species.abilityHidden !== AbilityId.NONE;
       const hasHA = starterData.abilityAttr & AbilityAttr.ABILITY_HIDDEN;
       const fitsHA = this.filterBar.getVals(DropDownColumn.MISC).some(misc => {
         if (misc.val === "HIDDEN_ABILITY" && misc.state === DropDownState.ON) {
@@ -3537,7 +3537,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         this.pokemonPassiveLabelText.setVisible(true);
         this.pokemonNatureLabelText.setVisible(true);
         this.pokemonCaughtCountText.setText(`${this.speciesStarterDexEntry.caughtCount}`);
-        if (species.speciesId === Species.MANAPHY || species.speciesId === Species.PHIONE) {
+        if (species.speciesId === SpeciesId.MANAPHY || species.speciesId === SpeciesId.PHIONE) {
           this.pokemonHatchedIcon.setFrame("manaphy");
         } else {
           this.pokemonHatchedIcon.setFrame(getEggTierForSpecies(species));

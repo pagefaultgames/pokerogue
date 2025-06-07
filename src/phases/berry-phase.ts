@@ -20,6 +20,7 @@ import type Pokemon from "#app/field/pokemon";
  * Also triggers Cud Chew's "repeat berry use" effects
  */
 export class BerryPhase extends FieldPhase {
+  public readonly phaseName = "BerryPhase";
   start() {
     super.start();
 
@@ -71,7 +72,7 @@ export class BerryPhase extends FieldPhase {
     }
     globalScene.updateModifiers(pokemon.isPlayer());
 
-    // Abilities.CHEEK_POUCH only works once per round of nom noms
+    // AbilityId.CHEEK_POUCH only works once per round of nom noms
     applyAbAttrs(HealFromBerryUseAbAttr, pokemon, new BooleanHolder(false));
   }
 }
