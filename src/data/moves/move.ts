@@ -123,7 +123,7 @@ import { MoveEffectTrigger } from "#enums/MoveEffectTrigger";
 import { MultiHitType } from "#enums/MultiHitType";
 import { invalidAssistMoves, invalidCopycatMoves, invalidMetronomeMoves, invalidMirrorMoveMoves, invalidSleepTalkMoves, invalidSketchMoves } from "./invalid-moves";
 import { SelectBiomePhase } from "#app/phases/select-biome-phase";
-import { isVirtual, MoveUseType } from "#enums/move-use-type";
+import { isVirtual, MoveUseMode } from "#enums/move-use-mode";
 
 type MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => boolean;
 type UserMoveConditionFunc = (user: Pokemon, move: Move) => boolean;
@@ -3070,7 +3070,7 @@ export class DelayedAttackAttr extends OverrideMoveEffectAttr {
       overridden.value = true;
       globalScene.unshiftPhase(new MoveAnimPhase(new MoveChargeAnim(this.chargeAnim, move.id, user)));
       globalScene.queueMessage(this.chargeText.replace("{TARGET}", getPokemonNameWithAffix(target)).replace("{USER}", getPokemonNameWithAffix(user)));
-      user.pushMoveHistory({ move: move.id, targets: [ target.getBattlerIndex() ], result: MoveResult.OTHER, useType: MoveUseType.NORMAL });
+      user.pushMoveHistory({ move: move.id, targets: [ target.getBattlerIndex() ], result: MoveResult.OTHER, useMode: MoveUseMode.NORMAL });
       const side = target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
       globalScene.arena.addTag(this.tagType, 3, move.id, user.id, side, false, target.getBattlerIndex());
     } else {
@@ -5423,7 +5423,7 @@ export class FrenzyAttr extends MoveEffectAttr {
     if (!user.getTag(BattlerTagType.FRENZY) && user.getMoveQueue().length === 0) {
       const turnCount = user.randBattleSeedIntRange(1, 2); // excludes initial use
       for (let i = 0; i < turnCount; i++) {
-        user.pushMoveQueue({ move: move.id, targets: [ target.getBattlerIndex() ], useType: MoveUseType.IGNORE_PP });
+        user.pushMoveQueue({ move: move.id, targets: [ target.getBattlerIndex() ], useMode: MoveUseMode.IGNORE_PP });
       }
       user.addTag(BattlerTagType.FRENZY, turnCount, move.id, user.id);
     } else {
@@ -6768,7 +6768,7 @@ class CallMoveAttr extends OverrideMoveEffectAttr {
         ? target.getBattlerIndex()
         : moveTargets.targets[user.randBattleSeedInt(moveTargets.targets.length)]];
     globalScene.unshiftPhase(new LoadMoveAnimPhase(move.id));
-    globalScene.unshiftPhase(new MovePhase(user, targets, new PokemonMove(move.id), MoveUseType.FOLLOW_UP));
+    globalScene.unshiftPhase(new MovePhase(user, targets, new PokemonMove(move.id), MoveUseMode.FOLLOW_UP));
     return true;
   }
 }
@@ -6997,7 +6997,7 @@ export class NaturePowerAttr extends OverrideMoveEffectAttr {
 
     // Load the move's animation if we didn't already and unshift a new usage phase
     globalScene.unshiftPhase(new LoadMoveAnimPhase(moveId));
-    globalScene.unshiftPhase(new MovePhase(user, [ target.getBattlerIndex() ], new PokemonMove(moveId), MoveUseType.FOLLOW_UP));
+    globalScene.unshiftPhase(new MovePhase(user, [ target.getBattlerIndex() ], new PokemonMove(moveId), MoveUseMode.FOLLOW_UP));
     return true;
   }
 }
@@ -7083,7 +7083,7 @@ export class RepeatMoveAttr extends MoveEffectAttr {
       targetPokemonName: getPokemonNameWithAffix(target)
     }));
     target.turnData.extraTurns++;
-    globalScene.appendToPhase(new MovePhase(target, moveTargets, movesetMove, MoveUseType.NORMAL), MoveEndPhase);
+    globalScene.appendToPhase(new MovePhase(target, moveTargets, movesetMove, MoveUseMode.NORMAL), MoveEndPhase);
     return true;
   }
 
@@ -7829,7 +7829,7 @@ export class LastResortAttr extends MoveAttr {
 
       const movesInHistory = new Set<MoveId>(
         user.getMoveHistory()
-        .filter(m => !isVirtual(m.useType)) // Last resort ignores virtual moves
+        .filter(m => !isVirtual(m.useMode)) // Last resort ignores virtual moves
         .map(m => m.move)
       );
 
@@ -7913,7 +7913,7 @@ export class ForceLastAttr extends MoveEffectAttr {
         globalScene.phaseQueue.splice(
           globalScene.phaseQueue.indexOf(prependPhase),
           0,
-          new MovePhase(target, [ ...targetMovePhase.targets ], targetMovePhase.move, targetMovePhase.useType, true)
+          new MovePhase(target, [ ...targetMovePhase.targets ], targetMovePhase.move, targetMovePhase.useMode, true)
         );
       }
     }

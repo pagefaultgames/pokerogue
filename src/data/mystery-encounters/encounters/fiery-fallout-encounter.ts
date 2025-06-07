@@ -48,7 +48,7 @@ import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { Stat } from "#enums/stat";
 import { Ability } from "#app/data/abilities/ability-class";
 import { FIRE_RESISTANT_ABILITIES } from "#app/data/mystery-encounters/requirements/requirement-groups";
-import { MoveUseType } from "#enums/move-use-type";
+import { MoveUseMode } from "#enums/move-use-mode";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/fieryFallout";
@@ -195,13 +195,13 @@ export const FieryFalloutEncounter: MysteryEncounter = MysteryEncounterBuilder.w
           sourceBattlerIndex: BattlerIndex.ENEMY,
           targets: [BattlerIndex.PLAYER],
           move: new PokemonMove(MoveId.FIRE_SPIN),
-          useType: MoveUseType.IGNORE_PP,
+          useMode: MoveUseMode.IGNORE_PP,
         },
         {
           sourceBattlerIndex: BattlerIndex.ENEMY_2,
           targets: [BattlerIndex.PLAYER_2],
           move: new PokemonMove(MoveId.FIRE_SPIN),
-          useType: MoveUseType.IGNORE_PP,
+          useMode: MoveUseMode.IGNORE_PP,
         },
       );
       await initBattleWithEnemyConfig(globalScene.currentBattle.mysteryEncounter!.enemyPartyConfigs[0]);

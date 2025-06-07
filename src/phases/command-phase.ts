@@ -23,7 +23,7 @@ import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import { isNullOrUndefined } from "#app/utils/common";
 import { ArenaTagSide } from "#app/data/arena-tag";
 import { ArenaTagType } from "#app/enums/arena-tag-type";
-import { isVirtual, isIgnorePP, MoveUseType } from "#enums/move-use-type";
+import { isVirtual, isIgnorePP, MoveUseMode } from "#enums/move-use-mode";
 
 export class CommandPhase extends FieldPhase {
   protected fieldIndex: number;
@@ -81,7 +81,7 @@ export class CommandPhase extends FieldPhase {
     ) {
       globalScene.currentBattle.turnCommands[this.fieldIndex] = {
         command: Command.FIGHT,
-        move: { move: MoveId.NONE, targets: [], useType: MoveUseType.NORMAL },
+        move: { move: MoveId.NONE, targets: [], useMode: MoveUseMode.NORMAL },
         skip: true,
       };
     }
@@ -104,13 +104,13 @@ export class CommandPhase extends FieldPhase {
       moveQueue.length &&
       moveQueue[0] &&
       moveQueue[0].move &&
-      !isVirtual(moveQueue[0].useType) &&
+      !isVirtual(moveQueue[0].useMode) &&
       (!playerPokemon.getMoveset().find(m => m.moveId === moveQueue[0].move) ||
         !playerPokemon
           .getMoveset()
           [playerPokemon.getMoveset().findIndex(m => m.moveId === moveQueue[0].move)].isUsable(
             playerPokemon,
-            isIgnorePP(moveQueue[0].useType),
+            isIgnorePP(moveQueue[0].useMode),
           ))
     ) {
       moveQueue.shift();
@@ -120,15 +120,15 @@ export class CommandPhase extends FieldPhase {
     if (moveQueue.length > 0) {
       const queuedMove = moveQueue[0];
       if (!queuedMove.move) {
-        this.handleCommand(Command.FIGHT, -1, MoveUseType.NORMAL);
+        this.handleCommand(Command.FIGHT, -1, MoveUseMode.NORMAL);
       } else {
         const moveIndex = playerPokemon.getMoveset().findIndex(m => m.moveId === queuedMove.move);
         if (
           (moveIndex > -1 &&
-            playerPokemon.getMoveset()[moveIndex].isUsable(playerPokemon, isIgnorePP(queuedMove.useType))) ||
-          isVirtual(queuedMove.useType)
+            playerPokemon.getMoveset()[moveIndex].isUsable(playerPokemon, isIgnorePP(queuedMove.useMode))) ||
+          isVirtual(queuedMove.useMode)
         ) {
-          this.handleCommand(Command.FIGHT, moveIndex, queuedMove.useType, queuedMove);
+          this.handleCommand(Command.FIGHT, moveIndex, queuedMove.useMode, queuedMove);
         } else {
           globalScene.ui.setMode(UiMode.COMMAND, this.fieldIndex);
         }
@@ -148,21 +148,21 @@ export class CommandPhase extends FieldPhase {
 
   /**
    * TODO: Remove `args` and clean this thing up
-   * Code will need to be copied over from pkty except replacing the `virtual` and `ignorePP` args with a corresponding `MoveUseType`.
+   * Code will need to be copied over from pkty except replacing the `virtual` and `ignorePP` args with a corresponding `MoveUseMode`.
    */
   handleCommand(command: Command, cursor: number, ...args: any[]): boolean {
     const playerPokemon = globalScene.getPlayerField()[this.fieldIndex];
     let success = false;
 
     switch (command) {
-      // TODO: We don't need 2 args for this - moveUseType is carried over from queuedMove
+      // TODO: We don't need 2 args for this - moveUseMode is carried over from queuedMove
       case Command.TERA:
       case Command.FIGHT:
         let useStruggle = false;
         const turnMove: TurnMove | undefined = args.length === 2 ? (args[1] as TurnMove) : undefined;
         if (
           cursor === -1 ||
-          playerPokemon.trySelectMove(cursor, isIgnorePP(args[0] as MoveUseType)) ||
+          playerPokemon.trySelectMove(cursor, isIgnorePP(args[0] as MoveUseMode)) ||
           (useStruggle = cursor > -1 && !playerPokemon.getMoveset().filter(m => m.isUsable(playerPokemon)).length)
         ) {
           let moveId: MoveId;
@@ -179,7 +179,7 @@ export class CommandPhase extends FieldPhase {
           const turnCommand: TurnCommand = {
             command: Command.FIGHT,
             cursor: cursor,
-            move: { move: moveId, targets: [], useType: args[0] },
+            move: { move: moveId, targets: [], useMode: args[0] },
             args: args,
           };
           const preTurnCommand: TurnCommand = {

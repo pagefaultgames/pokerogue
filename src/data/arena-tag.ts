@@ -30,7 +30,7 @@ import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { CommonAnimPhase } from "#app/phases/common-anim-phase";
-import { MoveUseType } from "#enums/move-use-type";
+import { MoveUseMode } from "#enums/move-use-mode";
 
 export enum ArenaTagSide {
   BOTH,
@@ -896,7 +896,7 @@ export class DelayedAttackTag extends ArenaTag {
       // We currently only add the entry on the turn of the _attack_ and always make it a follow up
       // (meaning it's never targetable by Spite)
       globalScene.unshiftPhase(
-        new MoveEffectPhase(this.sourceId!, [this.targetIndex], allMoves[this.sourceMove!], MoveUseType.FOLLOW_UP),
+        new MoveEffectPhase(this.sourceId!, [this.targetIndex], allMoves[this.sourceMove!], MoveUseMode.FOLLOW_UP),
       ); // TODO: are those bangs correct?
     }
 

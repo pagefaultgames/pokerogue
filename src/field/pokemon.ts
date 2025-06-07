@@ -256,7 +256,7 @@ import { MoveFlags } from "#enums/MoveFlags";
 import { timedEventManager } from "#app/global-event-manager";
 import { loadMoveAnimations } from "#app/sprites/pokemon-asset-loader";
 import { ResetStatusPhase } from "#app/phases/reset-status-phase";
-import { isVirtual, isIgnorePP, MoveUseType } from "#enums/move-use-type";
+import { isVirtual, isIgnorePP, MoveUseMode } from "#enums/move-use-mode";
 
 export enum LearnMoveSituation {
   MISC,
@@ -4383,9 +4383,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   /**
    * Return the most recently executed {@linkcode TurnMove} this {@linkcode Pokemon} has used that is:
    * - Not {@linkcode MoveId.NONE}
-   * - Non-virtual ({@linkcode MoveUseType | useType} < {@linkcode MoveUseType.INDIRECT})
+   * - Non-virtual ({@linkcode MoveUseMode | useMode} < {@linkcode MoveUseMode.INDIRECT})
    * @param ignoreStruggle - Whether to additionally ignore {@linkcode Moves.STRUGGLE}; default `false`
-   * @param ignoreFollowUp - Whether to ignore moves with a use type of {@linkcode MoveUseType.FOLLOW_UP}
+   * @param ignoreFollowUp - Whether to ignore moves with a use type of {@linkcode MoveUseMode.FOLLOW_UP}
    * (e.g. ones called by Copycat/Mirror Move); default `true`.
    * @returns The last move this Pokemon has used satisfying the aforementioned conditions,
    * or `undefined` if no applicable moves have been used since switching in.
@@ -4395,7 +4395,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       m =>
         m.move !== MoveId.NONE &&
         (!ignoreStruggle || m.move !== MoveId.STRUGGLE) &&
-        (!isVirtual(m.useType) || (!ignoreFollowUp && m.useType === MoveUseType.FOLLOW_UP)),
+        (!isVirtual(m.useMode) || (!ignoreFollowUp && m.useMode === MoveUseMode.FOLLOW_UP)),
     );
   }
 
@@ -6237,21 +6237,22 @@ export class EnemyPokemon extends Pokemon {
    */
   // TODO: split this up and move it elsewhere
   getNextMove(): TurnMove {
-    // If this Pokemon has a move already queued, return it.
+    // If this Pokemon has a usable move already queued, return it,
+    // removing all unusable moves before it in the queue.
     const moveQueue = this.getMoveQueue();
     for (const [i, queuedMove] of moveQueue.entries()) {
-      const moveIndex = this.getMoveset().findIndex(m => m.moveId === queuedMove.move);
+      const movesetMove = this.getMoveset().find(m => m.moveId === queuedMove.move);
       // If the queued move was called indirectly, ignore all PP and usability checks.
-      // Otherwise, ensure that the move being used is actually usable
-      // TODO: Virtual moves shouldn't use the move queue
-      if (
-        isVirtual(queuedMove.useType) ||
-        (moveIndex > -1 && this.getMoveset()[moveIndex].isUsable(this, isIgnorePP(queuedMove.useType)))
-      ) {
-        moveQueue.splice(0, i); // TODO: This may be redundant and definitely should not be done here
+      // Otherwise, ensure that the move being used is actually usable & in our moveset.
+      // TODO: What should happen if a pokemon forgets a charging move mid-use?
+      if (isVirtual(queuedMove.useMode) || movesetMove?.isUsable(this, isIgnorePP(queuedMove.useMode))) {
+        moveQueue.splice(0, i); // TODO: This should not be done here
         return queuedMove;
       }
     }
+
+    // We went through the entire queue without a match; clear the entire thing.
+    this.summonData.moveQueue = [];
 
     // Filter out any moves this Pokemon cannot use
     let movePool = this.getMoveset().filter(m => m.isUsable(this));
@@ -6262,7 +6263,7 @@ export class EnemyPokemon extends Pokemon {
         return {
           move: movePool[0].moveId,
           targets: this.getNextTargets(movePool[0].moveId),
-          useType: MoveUseType.NORMAL,
+          useMode: MoveUseMode.NORMAL,
         };
       }
       // If a move is forced because of Encore, use it.
@@ -6274,7 +6275,7 @@ export class EnemyPokemon extends Pokemon {
           return {
             move: encoreMove.moveId,
             targets: this.getNextTargets(encoreMove.moveId),
-            useType: MoveUseType.NORMAL,
+            useMode: MoveUseMode.NORMAL,
           };
         }
       }
@@ -6282,7 +6283,7 @@ export class EnemyPokemon extends Pokemon {
         // No enemy should spawn with this AI type in-game
         case AiType.RANDOM: {
           const moveId = movePool[globalScene.randBattleSeedInt(movePool.length)].moveId;
-          return { move: moveId, targets: this.getNextTargets(moveId), useType: MoveUseType.NORMAL };
+          return { move: moveId, targets: this.getNextTargets(moveId), useMode: MoveUseMode.NORMAL };
         }
         case AiType.SMART_RANDOM:
         case AiType.SMART: {
@@ -6454,7 +6455,7 @@ export class EnemyPokemon extends Pokemon {
           return {
             move: sortedMovePool[r]!.moveId,
             targets: moveTargets[sortedMovePool[r]!.moveId],
-            useType: MoveUseType.NORMAL,
+            useMode: MoveUseMode.NORMAL,
           };
         }
       }
@@ -6464,7 +6465,7 @@ export class EnemyPokemon extends Pokemon {
     return {
       move: MoveId.STRUGGLE,
       targets: this.getNextTargets(MoveId.STRUGGLE),
-      useType: MoveUseType.IGNORE_PP,
+      useMode: MoveUseMode.IGNORE_PP,
     };
   }
 
@@ -6800,7 +6801,7 @@ interface IllusionData {
 export interface TurnMove {
   move: MoveId;
   targets: BattlerIndex[];
-  useType: MoveUseType;
+  useMode: MoveUseMode;
   result?: MoveResult;
   turn?: number;
 }
@@ -6825,7 +6826,7 @@ export class PokemonSummonData {
    * A queue of moves yet to be executed, used by charging, recharging and frenzy moves.
    * So long as this array is nonempty, this Pokemon's corresponding `CommandPhase` will be skipped over entirely
    * in favor of using the queued move.
-   * TODO: Clean up a lot of the code surrounding the move queue. It's intertwined with the
+   * TODO: Clean up a lot of the code surrounding the move queue.
    */
   public moveQueue: TurnMove[] = [];
   public tags: BattlerTag[] = [];

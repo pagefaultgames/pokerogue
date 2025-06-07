@@ -55,7 +55,6 @@ import TextInterceptor from "#test/testUtils/TextInterceptor";
 import { AES, enc } from "crypto-js";
 import fs from "node:fs";
 import { expect, vi } from "vitest";
-import { MoveUseType } from "#enums/move-use-type";
 
 /**
  * Class to manage the game state and transitions between phases.

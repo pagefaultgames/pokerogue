@@ -7,7 +7,7 @@ import { MoveResult } from "#app/field/pokemon";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { describe, beforeAll, afterEach, beforeEach, it, expect } from "vitest";
-import { MoveUseType } from "#enums/move-use-type";
+import { MoveUseMode } from "#enums/move-use-mode";
 
 describe("Moves - Quash", () => {
   let phaserGame: Phaser.Game;
@@ -60,7 +60,7 @@ describe("Moves - Quash", () => {
   });
 
   // TODO: Enable once rampaging moves and move queue are fixed.
-  // Currently does literally nothing because `MoveUseType` is overridden from move queue
+  // Currently does literally nothing because `MoveUseMode` is overridden from move queue
   // within `MovePhase`, but should be enabled once that jank is removed
   it.todo("should maintain PP ignore status of rampaging moves", async () => {
     game.override.moveset([]);
@@ -88,7 +88,7 @@ describe("Moves - Quash", () => {
     expect(rattata.getLastXMoves()[0]).toMatchObject({
       move: MoveId.OUTRAGE,
       result: MoveResult.SUCCESS,
-      useType: MoveUseType.IGNORE_PP,
+      useMode: MoveUseMode.IGNORE_PP,
     });
   });
 

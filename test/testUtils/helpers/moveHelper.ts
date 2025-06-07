@@ -12,7 +12,7 @@ import { UiMode } from "#enums/ui-mode";
 import { getMovePosition } from "#test/testUtils/gameManagerUtils";
 import { GameManagerHelper } from "#test/testUtils/helpers/gameManagerHelper";
 import { vi } from "vitest";
-import { MoveUseType } from "#enums/move-use-type";
+import { MoveUseMode } from "#enums/move-use-mode";
 
 /**
  * Helper to handle a Pokemon's move
@@ -61,7 +61,7 @@ export class MoveHelper extends GameManagerHelper {
       (this.game.scene.getCurrentPhase() as CommandPhase).handleCommand(
         Command.FIGHT,
         movePosition,
-        MoveUseType.NORMAL,
+        MoveUseMode.NORMAL,
       );
     });
 
@@ -89,7 +89,7 @@ export class MoveHelper extends GameManagerHelper {
       );
     });
     this.game.onNextPrompt("CommandPhase", UiMode.FIGHT, () => {
-      (this.game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.TERA, movePosition, MoveUseType.NORMAL);
+      (this.game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.TERA, movePosition, MoveUseMode.NORMAL);
     });
 
     if (targetIndex !== null) {
@@ -185,7 +185,7 @@ export class MoveHelper extends GameManagerHelper {
         target !== undefined && !legalTargets.multiple && legalTargets.targets.includes(target)
           ? [target]
           : enemy.getNextTargets(moveId),
-      useType: MoveUseType.NORMAL,
+      useMode: MoveUseMode.NORMAL,
     });
 
     /**
@@ -228,7 +228,7 @@ export class MoveHelper extends GameManagerHelper {
         target !== undefined && !legalTargets.multiple && legalTargets.targets.includes(target)
           ? [target]
           : enemy.getNextTargets(moveId),
-      useType: MoveUseType.NORMAL,
+      useMode: MoveUseMode.NORMAL,
     });
 
     /**

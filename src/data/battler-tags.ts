@@ -44,7 +44,7 @@ import { EFFECTIVE_STATS, getStatKey, Stat, type BattleStat, type EffectiveStat 
 import { StatusEffect } from "#enums/status-effect";
 import { WeatherType } from "#enums/weather-type";
 import { isNullOrUndefined } from "#app/utils/common";
-import { MoveUseType } from "#enums/move-use-type";
+import { MoveUseMode } from "#enums/move-use-mode";
 import { invalidEncoreMoves } from "./moves/invalid-moves";
 
 export enum BattlerTagLapseType {
@@ -443,7 +443,7 @@ export class RechargingTag extends BattlerTag {
     super.onAdd(pokemon);
 
     // Queue a placeholder move for the Pokemon to "use" next turn.
-    pokemon.pushMoveQueue({ move: MoveId.NONE, targets: [], useType: MoveUseType.NORMAL });
+    pokemon.pushMoveQueue({ move: MoveId.NONE, targets: [], useMode: MoveUseMode.NORMAL });
   }
 
   /** Cancels the source's move this turn and queues a "__ must recharge!" message */
@@ -692,7 +692,7 @@ export class InterruptedTag extends BattlerTag {
       move: MoveId.NONE,
       result: MoveResult.OTHER,
       targets: [],
-      useType: MoveUseType.NORMAL,
+      useMode: MoveUseMode.NORMAL,
     });
   }
 
@@ -1175,7 +1175,7 @@ export class EncoreTag extends MoveRestrictionBattlerTag {
         const lastMove = pokemon.getLastXMoves(1)[0];
         globalScene.tryReplacePhase(
           m => m instanceof MovePhase && m.pokemon === pokemon,
-          new MovePhase(pokemon, lastMove.targets ?? [], movesetMove, MoveUseType.NORMAL),
+          new MovePhase(pokemon, lastMove.targets ?? [], movesetMove, MoveUseMode.NORMAL),
         );
       }
     }

@@ -4,7 +4,7 @@ import type Pokemon from "#app/field/pokemon";
 import { MoveResult } from "#app/field/pokemon";
 import type { MovePhase } from "#app/phases/move-phase";
 import { AbilityId } from "#enums/ability-id";
-import { MoveUseType } from "#enums/move-use-type";
+import { MoveUseMode } from "#enums/move-use-mode";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
@@ -250,7 +250,7 @@ describe("Moves - Instruct", () => {
       move: MoveId.SEED_BOMB,
       targets: [BattlerIndex.ENEMY],
       result: MoveResult.SUCCESS,
-      useType: MoveUseType.NORMAL,
+      useMode: MoveUseMode.NORMAL,
     });
 
     game.doSwitchPokemon(1);
@@ -316,7 +316,7 @@ describe("Moves - Instruct", () => {
       move: MoveId.SONIC_BOOM,
       targets: [BattlerIndex.PLAYER],
       result: MoveResult.SUCCESS,
-      useType: MoveUseType.NORMAL,
+      useMode: MoveUseMode.NORMAL,
     });
 
     game.move.select(MoveId.INSTRUCT);
@@ -343,7 +343,7 @@ describe("Moves - Instruct", () => {
       move: MoveId.ELECTRO_DRIFT,
       targets: [BattlerIndex.PLAYER],
       result: MoveResult.SUCCESS,
-      useType: MoveUseType.NORMAL,
+      useMode: MoveUseMode.NORMAL,
     });
 
     game.move.select(MoveId.SPLASH);
@@ -361,7 +361,7 @@ describe("Moves - Instruct", () => {
       move: MoveId.WHIRLWIND,
       targets: [BattlerIndex.PLAYER],
       result: MoveResult.SUCCESS,
-      useType: MoveUseType.NORMAL,
+      useMode: MoveUseMode.NORMAL,
     });
 
     game.move.select(MoveId.INSTRUCT);
@@ -417,7 +417,7 @@ describe("Moves - Instruct", () => {
       move: MoveId.VINE_WHIP,
       targets: [BattlerIndex.ENEMY],
       result: MoveResult.SUCCESS,
-      useType: MoveUseType.NORMAL,
+      useMode: MoveUseMode.NORMAL,
     });
 
     // Attempt to instruct banette after having been sent airborne
@@ -453,7 +453,7 @@ describe("Moves - Instruct", () => {
       move: MoveId.VINE_WHIP,
       targets: [BattlerIndex.ENEMY],
       result: MoveResult.SUCCESS,
-      useType: MoveUseType.NORMAL,
+      useMode: MoveUseMode.NORMAL,
     });
 
     game.move.select(MoveId.VINE_WHIP, BattlerIndex.PLAYER);

@@ -50,13 +50,13 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
 import { StatusEffect } from "#enums/status-effect";
 import i18next from "i18next";
-import { isVirtual, isIgnorePP, isReflected, MoveUseType, isIgnoreStatus } from "#enums/move-use-type";
+import { isVirtual, isIgnorePP, isReflected, MoveUseMode, isIgnoreStatus } from "#enums/move-use-mode";
 
 export class MovePhase extends BattlePhase {
   protected _pokemon: Pokemon;
   protected _move: PokemonMove;
   protected _targets: BattlerIndex[];
-  protected _useType: MoveUseType;
+  public readonly useMode: MoveUseMode; // Made public for quash
   protected forcedLast: boolean;
 
   /** Whether the current move should fail but still use PP */
@@ -81,14 +81,6 @@ export class MovePhase extends BattlePhase {
     this._move = move;
   }
 
-  public get useType(): MoveUseType {
-    return this._useType;
-  }
-
-  protected set useType(useType: MoveUseType) {
-    this._useType = useType;
-  }
-
   public get targets(): BattlerIndex[] {
     return this._targets;
   }
@@ -101,17 +93,17 @@ export class MovePhase extends BattlePhase {
    * Create a new MovePhase for using moves.
    * @param pokemon - The {@linkcode Pokemon} using the move
    * @param move - The {@linkcode PokemonMove} to use
-   * @param useType - The {@linkcode MoveUseType} corresponding to this move's means of execution (usually `MoveUseType.NORMAL`).
-   * Not marked optional to ensure callers correctly pass on `useTypes`.
+   * @param useMode - The {@linkcode MoveUseMode} corresponding to this move's means of execution (usually `MoveUseMode.NORMAL`).
+   * Not marked optional to ensure callers correctly pass on `useModes`.
    * @param forcedLast - Whether to force this phase to occur last in order (for {@linkcode MoveId.QUASH}); default `false`
    */
-  constructor(pokemon: Pokemon, targets: BattlerIndex[], move: PokemonMove, useType: MoveUseType, forcedLast = false) {
+  constructor(pokemon: Pokemon, targets: BattlerIndex[], move: PokemonMove, useMode: MoveUseMode, forcedLast = false) {
     super();
 
     this.pokemon = pokemon;
     this.targets = targets;
     this.move = move;
-    this.useType = useType;
+    this.useMode = useMode;
     this.forcedLast = forcedLast;
   }
 
@@ -123,7 +115,7 @@ export class MovePhase extends BattlePhase {
   public canMove(ignoreDisableTags = false): boolean {
     return (
       this.pokemon.isActive(true) &&
-      this.move.isUsable(this.pokemon, isIgnorePP(this.useType), ignoreDisableTags) &&
+      this.move.isUsable(this.pokemon, isIgnorePP(this.useMode), ignoreDisableTags) &&
       this.targets.length > 0
     );
   }
@@ -149,16 +141,18 @@ export class MovePhase extends BattlePhase {
   public start(): void {
     super.start();
 
-    console.log(MoveId[this.move.moveId], MoveUseType[this.useType]);
-
-    if (!this.useType) {
-      console.warn(`Unexpected MoveUseType of ${this.useType} during move phase!`);
-      this.useType = MoveUseType.NORMAL;
+    // Cover our bases - if we have no use type
+    if (!this.useMode) {
+      console.warn(`Unexpected MoveUseMode of ${this.useMode} during move phase!`);
+      // @ts-expect-error - useMode is readonly and shouldn't normally be assigned to
+      this.useMode = MoveUseMode.NORMAL;
     }
 
+    console.log(MoveId[this.move.moveId], MoveUseMode[this.useMode]);
+
+    // Check if move is unusable (e.g. running out of PP due to a mid-turn Spite
+    // or the user no longer being on field), ending the phase early if not.
     if (!this.canMove(true)) {
-      // Check if move is unusable (e.g. running out of PP due to a mid-turn Spite
-      // or the user no longer being on field).
       if (this.pokemon.isActive(true)) {
         this.fail();
         this.showMoveText();
@@ -171,7 +165,7 @@ export class MovePhase extends BattlePhase {
     this.pokemon.turnData.acted = true;
 
     // Reset hit-related turn data when starting follow-up moves (e.g. Metronomed moves, Dancer repeats)
-    if (isVirtual(this.useType)) {
+    if (isVirtual(this.useMode)) {
       this.pokemon.turnData.hitsLeft = -1;
       this.pokemon.turnData.hitCount = 0;
     }
@@ -181,7 +175,7 @@ export class MovePhase extends BattlePhase {
       this.move.getMove().doesFlagEffectApply({
         flag: MoveFlags.IGNORE_ABILITIES,
         user: this.pokemon,
-        isFollowUp: isVirtual(this.useType), // Sunsteel strike and co. don't work when called indirectly
+        isFollowUp: isVirtual(this.useMode), // Sunsteel strike and co. don't work when called indirectly
       })
     ) {
       globalScene.arena.setIgnoreAbilities(true, this.pokemon.getBattlerIndex());
@@ -234,12 +228,12 @@ export class MovePhase extends BattlePhase {
    */
   protected resolvePreMoveStatusEffects(): void {
     // Skip for follow ups/reflected moves, no status condition or post turn statuses (e.g. Poison/Toxic)
-    if (!this.pokemon.status || this.pokemon.status?.isPostTurn() || isIgnoreStatus(this.useType)) {
+    if (!this.pokemon.status || this.pokemon.status?.isPostTurn() || isIgnoreStatus(this.useMode)) {
       return;
     }
 
     if (
-      this.useType === MoveUseType.INDIRECT &&
+      this.useMode === MoveUseMode.INDIRECT &&
       [StatusEffect.SLEEP, StatusEffect.FREEZE].includes(this.pokemon.status.effect)
     ) {
       // Dancer thaws out or wakes up a frozen/sleeping user prior to use
@@ -321,7 +315,7 @@ export class MovePhase extends BattlePhase {
 
     // TODO: does this intentionally happen before the no targets/MoveId.NONE on queue cancellation case is checked?
     // (In other words, check if truant can proc on a move w/o targets)
-    if (!isIgnoreStatus(this.useType) && this.canMove() && !this.cancelled) {
+    if (!isIgnoreStatus(this.useMode) && this.canMove() && !this.cancelled) {
       this.pokemon.lapseTags(BattlerTagLapseType.MOVE);
     }
   }
@@ -376,12 +370,13 @@ export class MovePhase extends BattlePhase {
     // Clear out any two turn moves once they've been used.
     // TODO: Refactor move queues and remove this assignment;
     // Move queues should be handled by the calling `CommandPhase` or a manager for it
-    this.useType = moveQueue.shift()?.useType ?? this.useType;
+    // @ts-expect-error - useMode is readonly and shouldn't normally be assigned to
+    this.useMode = moveQueue.shift()?.useMode ?? this.useMode;
     if (this.pokemon.getTag(BattlerTagType.CHARGING)?.sourceMove === this.move.moveId) {
       this.pokemon.lapseTag(BattlerTagType.CHARGING);
     }
 
-    if (!isIgnorePP(this.useType)) {
+    if (!isIgnorePP(this.useMode)) {
       // "commit" to using the move, deducting PP.
       const ppUsed = 1 + this.getPpIncreaseFromPressure(targets);
 
@@ -430,7 +425,7 @@ export class MovePhase extends BattlePhase {
     if (success) {
       const move = this.move.getMove();
       applyPreAttackAbAttrs(PokemonTypeChangeAbAttr, this.pokemon, null, move);
-      globalScene.unshiftPhase(new MoveEffectPhase(this.pokemon.getBattlerIndex(), this.targets, move, this.useType));
+      globalScene.unshiftPhase(new MoveEffectPhase(this.pokemon.getBattlerIndex(), this.targets, move, this.useMode));
     } else {
       if ([MoveId.ROAR, MoveId.WHIRLWIND, MoveId.TRICK_OR_TREAT, MoveId.FORESTS_CURSE].includes(this.move.moveId)) {
         applyPreAttackAbAttrs(PokemonTypeChangeAbAttr, this.pokemon, null, this.move.getMove());
@@ -440,7 +435,7 @@ export class MovePhase extends BattlePhase {
         move: this.move.moveId,
         targets: this.targets,
         result: MoveResult.FAIL,
-        useType: this.useType,
+        useMode: this.useMode,
       });
 
       const failureMessage = move.getFailedText(this.pokemon, targets[0], move);
@@ -460,10 +455,10 @@ export class MovePhase extends BattlePhase {
     }
 
     // Handle Dancer, which triggers immediately after a move is used (rather than waiting on `this.end()`).
-    // Note the MoveUseType check here prevents an infinite Dancer loop.
+    // Note the MoveUseMode check here prevents an infinite Dancer loop.
     if (
       this.move.getMove().hasFlag(MoveFlags.DANCE_MOVE) &&
-      ![MoveUseType.INDIRECT, MoveUseType.REFLECTED].includes(this.useType)
+      ![MoveUseMode.INDIRECT, MoveUseMode.REFLECTED].includes(this.useMode)
     ) {
       // TODO: Fix in dancer PR to move to MEP for hit checks
       globalScene.getField(true).forEach(pokemon => {
@@ -486,7 +481,7 @@ export class MovePhase extends BattlePhase {
         move: this.move.moveId,
         targets: this.targets,
         result: MoveResult.FAIL,
-        useType: this.useType,
+        useMode: this.useMode,
       });
 
       const failureMessage = move.getFailedText(this.pokemon, targets[0], move);
@@ -502,7 +497,7 @@ export class MovePhase extends BattlePhase {
     applyPreAttackAbAttrs(PokemonTypeChangeAbAttr, this.pokemon, null, this.move.getMove());
 
     globalScene.unshiftPhase(
-      new MoveChargePhase(this.pokemon.getBattlerIndex(), this.targets[0], this.move, this.useType),
+      new MoveChargePhase(this.pokemon.getBattlerIndex(), this.targets[0], this.move, this.useMode),
     );
   }
 
@@ -511,7 +506,7 @@ export class MovePhase extends BattlePhase {
    */
   public end(): void {
     globalScene.unshiftPhase(
-      new MoveEndPhase(this.pokemon.getBattlerIndex(), this.getActiveTargetPokemon(), isVirtual(this.useType)),
+      new MoveEndPhase(this.pokemon.getBattlerIndex(), this.getActiveTargetPokemon(), isVirtual(this.useMode)),
     );
 
     super.end();
@@ -641,7 +636,7 @@ export class MovePhase extends BattlePhase {
   protected handlePreMoveFailures(): void {
     if (this.cancelled || this.failed) {
       if (this.failed) {
-        const ppUsed = isIgnorePP(this.useType) ? 0 : 1;
+        const ppUsed = isIgnorePP(this.useMode) ? 0 : 1;
 
         if (ppUsed) {
           this.move.usePp();
@@ -658,7 +653,7 @@ export class MovePhase extends BattlePhase {
         move: MoveId.NONE,
         result: MoveResult.FAIL,
         targets: this.targets,
-        useType: this.useType,
+        useMode: this.useMode,
       });
 
       this.pokemon.lapseTags(BattlerTagLapseType.MOVE_EFFECT);
@@ -682,7 +677,7 @@ export class MovePhase extends BattlePhase {
     }
 
     globalScene.queueMessage(
-      i18next.t(isReflected(this.useType) ? "battle:magicCoatActivated" : "battle:useMove", {
+      i18next.t(isReflected(this.useMode) ? "battle:magicCoatActivated" : "battle:useMove", {
         pokemonNameWithAffix: getPokemonNameWithAffix(this.pokemon),
         moveName: this.move.getName(),
       }),

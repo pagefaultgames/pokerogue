@@ -7,7 +7,7 @@ import { Stat } from "#app/enums/stat";
 import { MoveResult } from "#app/field/pokemon";
 import { CommandPhase } from "#app/phases/command-phase";
 import { BattlerTagType } from "#enums/battler-tag-type";
-import { MoveUseType } from "#enums/move-use-type";
+import { MoveUseMode } from "#enums/move-use-mode";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
@@ -113,7 +113,7 @@ describe("Moves - Metronome", () => {
     expect(player.getLastXMoves()[0]).toMatchObject({
       move: MoveId.SOLAR_BEAM,
       result: MoveResult.SUCCESS,
-      useType: MoveUseType.FOLLOW_UP,
+      useMode: MoveUseMode.FOLLOW_UP,
     });
   });
 

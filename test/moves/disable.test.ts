@@ -1,12 +1,13 @@
 import { BattlerIndex } from "#app/battle";
 import { MoveResult } from "#app/field/pokemon";
 import { AbilityId } from "#enums/ability-id";
-import { MoveUseType } from "#enums/move-use-type";
+import { MoveUseMode } from "#enums/move-use-mode";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import GameManager from "#test/testUtils/gameManager";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { RandomMoveAttr } from "#app/data/moves/move";
 
 describe("Moves - Disable", () => {
   let phaserGame: Phaser.Game;
@@ -110,7 +111,7 @@ describe("Moves - Disable", () => {
     enemyMon.pushMoveHistory({
       move: MoveId.SPLASH,
       targets: [BattlerIndex.ENEMY],
-      useType: MoveUseType.NORMAL,
+      useMode: MoveUseMode.NORMAL,
     });
 
     game.move.select(MoveId.DISABLE);
@@ -128,11 +129,11 @@ describe("Moves - Disable", () => {
     { name: "Copycat", moveId: MoveId.COPYCAT },
     { name: "Metronome", moveId: MoveId.METRONOME },
   ])("should ignore virtual moves called by $name", async ({ moveId }) => {
-    game.override.enemyMoveset(moveId);
+    vi.spyOn(RandomMoveAttr.prototype, "getMoveOverride").mockReturnValue(MoveId.ABSORB);
     await game.classicMode.startBattle([SpeciesId.PIKACHU]);
 
     const playerMon = game.scene.getPlayerPokemon()!;
-    playerMon.pushMoveHistory({ move: MoveId.SPLASH, targets: [BattlerIndex.ENEMY], useType: MoveUseType.NORMAL });
+    playerMon.pushMoveHistory({ move: MoveId.SPLASH, targets: [BattlerIndex.ENEMY], useMode: MoveUseMode.NORMAL });
     game.scene.currentBattle.lastMove = MoveId.SPLASH;
 
     game.move.select(MoveId.DISABLE);
@@ -149,7 +150,6 @@ describe("Moves - Disable", () => {
       `called move ${MoveId[calledMove]} (from ${MoveId[moveId]}) was incorrectly disabled`,
     ).toBe(false);
   });
-
 
   it("should ignore dancer copied moves, even if also in moveset", async () => {
     game.override

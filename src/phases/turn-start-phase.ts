@@ -181,11 +181,11 @@ export class TurnStartPhase extends FieldPhase {
           }
           if (pokemon.isPlayer() && turnCommand.cursor === -1) {
             globalScene.pushPhase(
-              new MovePhase(pokemon, turnCommand.targets || turnCommand.move!.targets, move, turnCommand.move!.useType),
+              new MovePhase(pokemon, turnCommand.targets || turnCommand.move!.targets, move, turnCommand.move!.useMode),
             ); //TODO: is the bang correct here?
           } else {
             globalScene.pushPhase(
-              new MovePhase(pokemon, turnCommand.targets || turnCommand.move!.targets, move, queuedMove.useType),
+              new MovePhase(pokemon, turnCommand.targets || turnCommand.move!.targets, move, queuedMove.useMode),
             ); // TODO: is the bang correct here?
           }
           break;

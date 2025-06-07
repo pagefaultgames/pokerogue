@@ -78,14 +78,14 @@ import type Move from "#app/data/moves/move";
 import { isFieldTargeted } from "#app/data/moves/move-utils";
 import { FaintPhase } from "./faint-phase";
 import { DamageAchv } from "#app/system/achv";
-import { isVirtual, isReflected, MoveUseType } from "#enums/move-use-type";
+import { isVirtual, isReflected, MoveUseMode } from "#enums/move-use-mode";
 
 export type HitCheckEntry = [HitCheckResult, TypeDamageMultiplier];
 
 export class MoveEffectPhase extends PokemonPhase {
   public move: Move;
   protected targets: BattlerIndex[];
-  protected useType: MoveUseType;
+  protected useMode: MoveUseMode;
 
   /** The result of the hit check against each target */
   private hitChecks: HitCheckEntry[];
@@ -110,12 +110,12 @@ export class MoveEffectPhase extends PokemonPhase {
   private queuedPhases: Phase[] = [];
 
   /**
-   * @param useType - The {@linkcode MoveUseType} corresponding to how this move was used.
+   * @param useMode - The {@linkcode MoveUseMode} corresponding to how this move was used.
    */
-  constructor(battlerIndex: BattlerIndex, targets: BattlerIndex[], move: Move, useType: MoveUseType) {
+  constructor(battlerIndex: BattlerIndex, targets: BattlerIndex[], move: Move, useMode: MoveUseMode) {
     super(battlerIndex);
     this.move = move;
-    this.useType = useType;
+    this.useMode = useMode;
 
     /**
      * In double battles, if the right Pokemon selects a spread move and the left Pokemon dies
@@ -201,7 +201,7 @@ export class MoveEffectPhase extends PokemonPhase {
       this.queuedPhases.push(new HideAbilityPhase());
     }
 
-    this.queuedPhases.push(new MovePhase(target, newTargets, new PokemonMove(this.move.id), MoveUseType.REFLECTED));
+    this.queuedPhases.push(new MovePhase(target, newTargets, new PokemonMove(this.move.id), MoveUseMode.REFLECTED));
   }
 
   /**
@@ -302,7 +302,7 @@ export class MoveEffectPhase extends PokemonPhase {
       this.getFirstTarget() ?? null,
       move,
       overridden,
-      isVirtual(this.useType),
+      isVirtual(this.useMode),
     );
 
     // If other effects were overriden, stop this phase before they can be applied
@@ -343,7 +343,7 @@ export class MoveEffectPhase extends PokemonPhase {
       move: this.move.id,
       targets: this.targets,
       result: MoveResult.PENDING,
-      useType: this.useType,
+      useMode: this.useMode,
     };
 
     const fieldMove = isFieldTargeted(move);
@@ -567,7 +567,7 @@ export class MoveEffectPhase extends PokemonPhase {
     }
 
     // Reflected moves cannot be reflected again
-    if (!isReflected(this.useType) && move.doesFlagEffectApply({ flag: MoveFlags.REFLECTABLE, user, target })) {
+    if (!isReflected(this.useMode) && move.doesFlagEffectApply({ flag: MoveFlags.REFLECTABLE, user, target })) {
       return [HitCheckResult.REFLECTED, 0];
     }
 
@@ -732,7 +732,7 @@ export class MoveEffectPhase extends PokemonPhase {
 
   /** @returns A new `MoveEffectPhase` with the same properties as this phase */
   protected getNewHitPhase(): MoveEffectPhase {
-    return new MoveEffectPhase(this.battlerIndex, this.targets, this.move, this.useType);
+    return new MoveEffectPhase(this.battlerIndex, this.targets, this.move, this.useMode);
   }
 
   /** Removes all substitutes that were broken by this phase's invoked move */

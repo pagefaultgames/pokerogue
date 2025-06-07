@@ -31,7 +31,7 @@ import { BerryType } from "#enums/berry-type";
 import { Stat } from "#enums/stat";
 import { CustomPokemonData } from "#app/data/custom-pokemon-data";
 import { randSeedInt } from "#app/utils/common";
-import { MoveUseType } from "#enums/move-use-type";
+import { MoveUseMode } from "#enums/move-use-mode";
 
 /** i18n namespace for the encounter */
 const namespace = "mysteryEncounters/slumberingSnorlax";
@@ -138,7 +138,7 @@ export const SlumberingSnorlaxEncounter: MysteryEncounter = MysteryEncounterBuil
         sourceBattlerIndex: BattlerIndex.ENEMY,
         targets: [BattlerIndex.PLAYER],
         move: new PokemonMove(MoveId.SNORE),
-        useType: MoveUseType.IGNORE_PP,
+        useMode: MoveUseMode.IGNORE_PP,
       });
       await initBattleWithEnemyConfig(encounter.enemyPartyConfigs[0]);
     },

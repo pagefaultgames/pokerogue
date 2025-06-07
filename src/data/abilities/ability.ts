@@ -74,7 +74,7 @@ import type { BattlerIndex } from "#app/battle";
 import type Move from "#app/data/moves/move";
 import type { ArenaTrapTag, SuppressAbilitiesTag } from "#app/data/arena-tag";
 import { SelectBiomePhase } from "#app/phases/select-biome-phase";
-import { MoveUseType } from "#enums/move-use-type";
+import { MoveUseMode } from "#enums/move-use-mode";
 import { noAbilityTypeOverrideMoves } from "../moves/invalid-moves";
 
 export class BlockRecoilDamageAttr extends AbAttr {
@@ -4451,10 +4451,10 @@ export class PostDancingMoveAbAttr extends PostMoveUsedAbAttr {
       // If the move is an AttackMove or a StatusMove the Dancer must replicate the move on the source of the Dance
       if (move.getMove() instanceof AttackMove || move.getMove() instanceof StatusMove) {
         const target = this.getTarget(dancer, source, targets);
-        globalScene.unshiftPhase(new MovePhase(dancer, target, move, MoveUseType.INDIRECT));
+        globalScene.unshiftPhase(new MovePhase(dancer, target, move, MoveUseMode.INDIRECT));
       } else if (move.getMove() instanceof SelfStatusMove) {
         // If the move is a SelfStatusMove (ie. Swords Dance) the Dancer should replicate it on itself
-        globalScene.unshiftPhase(new MovePhase(dancer, [ dancer.getBattlerIndex() ], move, MoveUseType.INDIRECT))
+        globalScene.unshiftPhase(new MovePhase(dancer, [ dancer.getBattlerIndex() ], move, MoveUseMode.INDIRECT))
       }
     }
   }
@@ -7175,12 +7175,12 @@ export function initAbilities() {
       .bypassFaint(),
     new Ability(AbilityId.DANCER, 7)
       .attr(PostDancingMoveAbAttr)
-      .edgeCase(),
       /* Incorrect interations with:
       * Petal Dance (should not lock in or count down timer; currently does both)
       * Flinches (due to tag being removed earlier)
       * Failed/protected moves (should not trigger if original move is protected against)
       */
+      .edgeCase(),
     new Ability(AbilityId.BATTERY, 7)
       .attr(AllyMoveCategoryPowerBoostAbAttr, [ MoveCategory.SPECIAL ], 1.3),
     new Ability(AbilityId.FLUFFY, 7)
@@ -7324,8 +7324,8 @@ export function initAbilities() {
       .edgeCase(), //  interacts incorrectly with rock head. It's meant to switch abilities before recoil would apply so that a pokemon with rock head would lose rock head first and still take the recoil
     new Ability(AbilityId.GORILLA_TACTICS, 8)
       .attr(GorillaTacticsAbAttr)
-      .edgeCase(),
       // TODO: Verify whether Gorilla Tactics increases struggle's power or not
+      .edgeCase(),
     new Ability(AbilityId.NEUTRALIZING_GAS, 8)
       .attr(PostSummonAddArenaTagAbAttr, true, ArenaTagType.NEUTRALIZING_GAS, 0)
       .attr(PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr)

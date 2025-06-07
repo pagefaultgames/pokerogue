@@ -28,14 +28,14 @@ import type { GameModes } from "#app/game-mode";
 import type { EncounterAnim } from "#enums/encounter-anims";
 import type { Challenges } from "#enums/challenges";
 import { globalScene } from "#app/global-scene";
-import type { MoveUseType } from "#enums/move-use-type";
+import type { MoveUseMode } from "#enums/move-use-mode";
 
 export interface EncounterStartOfBattleEffect {
   sourcePokemon?: Pokemon;
   sourceBattlerIndex?: BattlerIndex;
   targets: BattlerIndex[];
   move: PokemonMove;
-  useType: MoveUseType; // TODO: This should always be ignore PP...
+  useMode: MoveUseMode; // TODO: This should always be ignore PP...
 }
 
 const DEFAULT_MAX_ALLOWED_ENCOUNTERS = 2;

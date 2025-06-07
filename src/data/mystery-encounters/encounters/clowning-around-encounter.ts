@@ -49,7 +49,7 @@ import { CustomPokemonData } from "#app/data/custom-pokemon-data";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { EncounterAnim } from "#enums/encounter-anims";
 import { Challenges } from "#enums/challenges";
-import { MoveUseType } from "#enums/move-use-type";
+import { MoveUseMode } from "#enums/move-use-mode";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/clowningAround";
@@ -210,19 +210,19 @@ export const ClowningAroundEncounter: MysteryEncounter = MysteryEncounterBuilder
             sourceBattlerIndex: BattlerIndex.ENEMY,
             targets: [BattlerIndex.ENEMY_2],
             move: new PokemonMove(MoveId.ROLE_PLAY),
-            useType: MoveUseType.IGNORE_PP,
+            useMode: MoveUseMode.IGNORE_PP,
           },
           {
             sourceBattlerIndex: BattlerIndex.ENEMY_2,
             targets: [BattlerIndex.PLAYER],
             move: new PokemonMove(MoveId.TAUNT),
-            useType: MoveUseType.IGNORE_PP,
+            useMode: MoveUseMode.IGNORE_PP,
           },
           {
             sourceBattlerIndex: BattlerIndex.ENEMY_2,
             targets: [BattlerIndex.PLAYER_2],
             move: new PokemonMove(MoveId.TAUNT),
-            useType: MoveUseType.IGNORE_PP,
+            useMode: MoveUseMode.IGNORE_PP,
           },
         );
 

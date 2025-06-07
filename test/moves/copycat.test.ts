@@ -3,7 +3,7 @@ import { RandomMoveAttr } from "#app/data/moves/move";
 import { Stat } from "#app/enums/stat";
 import { MoveResult } from "#app/field/pokemon";
 import { AbilityId } from "#enums/ability-id";
-import { MoveUseType } from "#enums/move-use-type";
+import { MoveUseMode } from "#enums/move-use-mode";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
@@ -75,7 +75,7 @@ describe("Moves - Copycat", () => {
     expect(enemy.getLastXMoves()[0]).toMatchObject({
       move: MoveId.SWORDS_DANCE,
       result: MoveResult.SUCCESS,
-      useType: MoveUseType.FOLLOW_UP,
+      useMode: MoveUseMode.FOLLOW_UP,
     });
     expect(enemy.getStatStage(Stat.ATK)).toBe(2);
   });

@@ -2,7 +2,7 @@ import type { SessionSaveMigrator } from "#app/@types/SessionSaveMigrator";
 import type { BattlerIndex } from "#app/battle";
 import type { MoveResult, TurnMove } from "#app/field/pokemon";
 import type { SessionSaveData } from "#app/system/game-data";
-import { MoveUseType } from "#enums/move-use-type";
+import { MoveUseMode } from "#enums/move-use-mode";
 import type { MoveId } from "#enums/move-id";
 
 /** Prior signature of `TurnMove`; used to ensure parity */
@@ -16,7 +16,7 @@ interface OldTurnMove {
 }
 
 /**
- * Fix player pokemon move history entries with updated `MoveUseTypes`,
+ * Fix player pokemon move history entries with updated `MoveUseModes`,
  * based on the prior values of `virtual` and `ignorePP`.
  * Needed to ensure Last Resort and move-calling moves still work OK.
  * @param data - {@linkcode SystemSaveData}
@@ -31,7 +31,7 @@ const fixMoveHistory: SessionSaveMigrator = {
       turn: tm.turn,
       // NOTE: This unfortuately has to mis-classify Dancer and Magic Bounce-induced moves as `FOLLOW_UP`,
       // given we previously had _no way_ of distinguishing them from follow-up moves post hoc.
-      useType: tm.virtual ? MoveUseType.FOLLOW_UP : tm.ignorePP ? MoveUseType.IGNORE_PP : MoveUseType.NORMAL,
+      useMode: tm.virtual ? MoveUseMode.FOLLOW_UP : tm.ignorePP ? MoveUseMode.IGNORE_PP : MoveUseMode.NORMAL,
     });
     data.party.forEach(pkmn => {
       pkmn.summonData.moveHistory = (pkmn.summonData.moveHistory as OldTurnMove[]).map(mapTurnMove);

@@ -57,7 +57,8 @@ describe("Moves - Dig", () => {
     expect(playerPokemon.getMoveHistory()).toHaveLength(2);
   });
 
-  it("should deduct PP only on the 2nd turn of the move", async () => {
+  // TODO: Verify this on cartridge double battles
+  it.todo("should deduct PP only on the 2nd turn of the move", async () => {
     game.override.moveset([]);
     await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 

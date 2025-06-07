@@ -15,7 +15,7 @@ import type Pokemon from "#app/field/pokemon";
 import type { CommandPhase } from "#app/phases/command-phase";
 import MoveInfoOverlay from "./move-info-overlay";
 import { BattleType } from "#enums/battle-type";
-import { MoveUseType } from "#enums/move-use-type";
+import { MoveUseMode } from "#enums/move-use-mode";
 
 export default class FightUiHandler extends UiHandler implements InfoToggle {
   public static readonly MOVES_CONTAINER_NAME = "moves";
@@ -154,7 +154,7 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
         {
           // Attempts to back out of the move selection pane are blocked in certain MEs
           const { battleType, mysteryEncounter } = globalScene.currentBattle;
-          if (battleType === BattleType.MYSTERY_ENCOUNTER || !mysteryEncounter?.skipToFightInput) {
+          if (battleType !== BattleType.MYSTERY_ENCOUNTER || !mysteryEncounter?.skipToFightInput) {
             ui.setMode(UiMode.COMMAND, this.fieldIndex);
             success = true;
           }
@@ -162,7 +162,7 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
         break;
       case Button.ACTION:
         if (
-          (globalScene.getCurrentPhase() as CommandPhase).handleCommand(this.fromCommand, cursor, MoveUseType.NORMAL)
+          (globalScene.getCurrentPhase() as CommandPhase).handleCommand(this.fromCommand, cursor, MoveUseMode.NORMAL)
         ) {
           success = true;
         } else {
