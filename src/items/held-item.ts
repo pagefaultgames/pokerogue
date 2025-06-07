@@ -21,6 +21,8 @@ export const ITEM_EFFECT = {
   BYPASS_SPEED_CHANCE: 13,
   FLINCH_CHANCE: 14,
   FIELD_EFFECT: 15,
+  FRIENDSHIP_BOOSTER: 16,
+  NATURE_WEIGHT_BOOSTER: 17,
 } as const;
 
 export type ITEM_EFFECT = (typeof ITEM_EFFECT)[keyof typeof ITEM_EFFECT];

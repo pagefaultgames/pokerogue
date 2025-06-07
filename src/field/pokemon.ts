@@ -88,9 +88,7 @@ import {
   EnemyFusionChanceModifier,
   HiddenAbilityRateBoosterModifier,
   BaseStatModifier,
-  PokemonFriendshipBoosterModifier,
   PokemonHeldItemModifier,
-  PokemonNatureWeightModifier,
   ShinyRateBoosterModifier,
   TempStatStageBoosterModifier,
   TempCritBoosterModifier,
@@ -1611,7 +1609,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       } else {
         statHolder.value += 5;
         const natureStatMultiplier = new NumberHolder(getNatureStatMultiplier(this.getNature(), s));
-        globalScene.applyModifier(PokemonNatureWeightModifier, this.isPlayer(), this, natureStatMultiplier);
+        applyHeldItems(ITEM_EFFECT.NATURE_WEIGHT_BOOSTER, { pokemon: this, multiplier: natureStatMultiplier });
         if (natureStatMultiplier.value !== 1) {
           statHolder.value = Math.max(
             Math[natureStatMultiplier.value > 1 ? "ceil" : "floor"](statHolder.value * natureStatMultiplier.value),
@@ -5649,7 +5647,7 @@ export class PlayerPokemon extends Pokemon {
         fusionStarterSpeciesId ? globalScene.gameData.starterData[fusionStarterSpeciesId] : null,
       ].filter(d => !!d);
       const amount = new NumberHolder(friendship);
-      globalScene.applyModifier(PokemonFriendshipBoosterModifier, true, this, amount);
+      applyHeldItems(ITEM_EFFECT.FRIENDSHIP_BOOSTER, { pokemon: this, friendship: amount });
       const candyFriendshipMultiplier = globalScene.gameMode.isClassic
         ? timedEventManager.getClassicFriendshipMultiplier()
         : 1;

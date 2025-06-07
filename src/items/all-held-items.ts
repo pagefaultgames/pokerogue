@@ -22,8 +22,10 @@ import { type CRIT_BOOST_PARAMS, CritBoostHeldItem, SpeciesCritBoostHeldItem } f
 import { type EXP_BOOST_PARAMS, ExpBoosterHeldItem } from "./held-items/exp-booster";
 import { type FIELD_EFFECT_PARAMS, FieldEffectHeldItem } from "./held-items/field-effect";
 import { type FLINCH_CHANCE_PARAMS, FlinchChanceHeldItem } from "./held-items/flinch-chance";
+import { type FRIENDSHIP_BOOST_PARAMS, FriendshipBoosterHeldItem } from "./held-items/friendship-booster";
 import { type HIT_HEAL_PARAMS, HitHealHeldItem } from "./held-items/hit-heal";
 import { InstantReviveHeldItem, type INSTANT_REVIVE_PARAMS } from "./held-items/instant-revive";
+import { type NATURE_WEIGHT_BOOST_PARAMS, NatureWeightBoosterHeldItem } from "./held-items/nature-weight-booster";
 import {
   ResetNegativeStatStageHeldItem,
   type RESET_NEGATIVE_STAT_STAGE_PARAMS,
@@ -103,6 +105,7 @@ export function initHeldItems() {
 
   allHeldItems[HeldItemId.LUCKY_EGG] = new ExpBoosterHeldItem(HeldItemId.LUCKY_EGG, 99, 40);
   allHeldItems[HeldItemId.GOLDEN_EGG] = new ExpBoosterHeldItem(HeldItemId.GOLDEN_EGG, 99, 100);
+  allHeldItems[HeldItemId.SOOTHE_BELL] = new FriendshipBoosterHeldItem(HeldItemId.SOOTHE_BELL, 3);
 
   allHeldItems[HeldItemId.LEFTOVERS] = new TurnEndHealHeldItem(HeldItemId.LEFTOVERS, 4);
   allHeldItems[HeldItemId.SHELL_BELL] = new HitHealHeldItem(HeldItemId.SHELL_BELL, 4);
@@ -111,6 +114,7 @@ export function initHeldItems() {
   allHeldItems[HeldItemId.QUICK_CLAW] = new BypassSpeedChanceHeldItem(HeldItemId.QUICK_CLAW, 3);
   allHeldItems[HeldItemId.KINGS_ROCK] = new FlinchChanceHeldItem(HeldItemId.KINGS_ROCK, 3, 10);
   allHeldItems[HeldItemId.MYSTICAL_ROCK] = new FieldEffectHeldItem(HeldItemId.MYSTICAL_ROCK, 2);
+  allHeldItems[HeldItemId.SOUL_DEW] = new NatureWeightBoosterHeldItem(HeldItemId.SOUL_DEW, 10);
 
   allHeldItems[HeldItemId.FLAME_ORB] = new TurnEndStatusHeldItem(HeldItemId.FLAME_ORB, 1, StatusEffect.BURN);
   allHeldItems[HeldItemId.TOXIC_ORB] = new TurnEndStatusHeldItem(HeldItemId.TOXIC_ORB, 1, StatusEffect.TOXIC);
@@ -138,6 +142,8 @@ type APPLY_HELD_ITEMS_PARAMS = {
   [ITEM_EFFECT.BYPASS_SPEED_CHANCE]: BYPASS_SPEED_CHANCE_PARAMS;
   [ITEM_EFFECT.FLINCH_CHANCE]: FLINCH_CHANCE_PARAMS;
   [ITEM_EFFECT.FIELD_EFFECT]: FIELD_EFFECT_PARAMS;
+  [ITEM_EFFECT.FRIENDSHIP_BOOSTER]: FRIENDSHIP_BOOST_PARAMS;
+  [ITEM_EFFECT.NATURE_WEIGHT_BOOSTER]: NATURE_WEIGHT_BOOST_PARAMS;
 };
 
 export function applyHeldItems<T extends ITEM_EFFECT>(effect: T, params: APPLY_HELD_ITEMS_PARAMS[T]) {

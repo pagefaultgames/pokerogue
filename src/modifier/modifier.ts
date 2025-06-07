@@ -32,8 +32,6 @@ import {
   type ModifierOverride,
   type ModifierType,
   type PokemonBaseStatTotalModifierType,
-  type PokemonExpBoosterModifierType,
-  type PokemonFriendshipBoosterModifierType,
   type PokemonMoveAccuracyBoosterModifierType,
   type PokemonMultiHitModifierType,
   type TerastallizeModifierType,
@@ -1650,59 +1648,6 @@ export class ExpBoosterModifier extends PersistentModifier {
   }
 }
 
-export class PokemonExpBoosterModifier extends PokemonHeldItemModifier {
-  public override type: PokemonExpBoosterModifierType;
-
-  private boostMultiplier: number;
-
-  constructor(type: PokemonExpBoosterModifierType, pokemonId: number, boostPercent: number, stackCount?: number) {
-    super(type, pokemonId, stackCount);
-    this.boostMultiplier = boostPercent * 0.01;
-  }
-
-  matchType(modifier: Modifier): boolean {
-    if (modifier instanceof PokemonExpBoosterModifier) {
-      const pokemonExpModifier = modifier as PokemonExpBoosterModifier;
-      return pokemonExpModifier.boostMultiplier === this.boostMultiplier;
-    }
-    return false;
-  }
-
-  clone(): PersistentModifier {
-    return new PokemonExpBoosterModifier(this.type, this.pokemonId, this.boostMultiplier * 100, this.stackCount);
-  }
-
-  getArgs(): any[] {
-    return super.getArgs().concat(this.boostMultiplier * 100);
-  }
-
-  /**
-   * Checks if {@linkcode PokemonExpBoosterModifier} should be applied
-   * @param pokemon The {@linkcode Pokemon} to apply the exp boost to
-   * @param boost {@linkcode NumberHolder} holding the exp boost value
-   * @returns `true` if {@linkcode PokemonExpBoosterModifier} should be applied
-   */
-  override shouldApply(pokemon: Pokemon, boost: NumberHolder): boolean {
-    return super.shouldApply(pokemon, boost) && !!boost;
-  }
-
-  /**
-   * Applies {@linkcode PokemonExpBoosterModifier}
-   * @param _pokemon The {@linkcode Pokemon} to apply the exp boost to
-   * @param boost {@linkcode NumberHolder} holding the exp boost value
-   * @returns always `true`
-   */
-  override apply(_pokemon: Pokemon, boost: NumberHolder): boolean {
-    boost.value = Math.floor(boost.value * (1 + this.getStackCount() * this.boostMultiplier));
-
-    return true;
-  }
-
-  getMaxHeldItemCount(_pokemon: Pokemon): number {
-    return 99;
-  }
-}
-
 export class ExpShareModifier extends PersistentModifier {
   match(modifier: Modifier): boolean {
     return modifier instanceof ExpShareModifier;
@@ -1744,63 +1689,6 @@ export class ExpBalanceModifier extends PersistentModifier {
 
   getMaxStackCount(): number {
     return 4;
-  }
-}
-
-export class PokemonFriendshipBoosterModifier extends PokemonHeldItemModifier {
-  public override type: PokemonFriendshipBoosterModifierType;
-
-  matchType(modifier: Modifier): boolean {
-    return modifier instanceof PokemonFriendshipBoosterModifier;
-  }
-
-  clone(): PersistentModifier {
-    return new PokemonFriendshipBoosterModifier(this.type, this.pokemonId, this.stackCount);
-  }
-
-  /**
-   * Applies {@linkcode PokemonFriendshipBoosterModifier}
-   * @param _pokemon The {@linkcode Pokemon} to apply the friendship boost to
-   * @param friendship {@linkcode NumberHolder} holding the friendship boost value
-   * @returns always `true`
-   */
-  override apply(_pokemon: Pokemon, friendship: NumberHolder): boolean {
-    friendship.value = Math.floor(friendship.value * (1 + 0.5 * this.getStackCount()));
-
-    return true;
-  }
-
-  getMaxHeldItemCount(_pokemon: Pokemon): number {
-    return 3;
-  }
-}
-
-export class PokemonNatureWeightModifier extends PokemonHeldItemModifier {
-  matchType(modifier: Modifier): boolean {
-    return modifier instanceof PokemonNatureWeightModifier;
-  }
-
-  clone(): PersistentModifier {
-    return new PokemonNatureWeightModifier(this.type, this.pokemonId, this.stackCount);
-  }
-
-  /**
-   * Applies {@linkcode PokemonNatureWeightModifier}
-   * @param _pokemon The {@linkcode Pokemon} to apply the nature weight to
-   * @param multiplier {@linkcode NumberHolder} holding the nature weight
-   * @returns `true` if multiplier was applied
-   */
-  override apply(_pokemon: Pokemon, multiplier: NumberHolder): boolean {
-    if (multiplier.value !== 1) {
-      multiplier.value += 0.1 * this.getStackCount() * (multiplier.value > 1 ? 1 : -1);
-      return true;
-    }
-
-    return false;
-  }
-
-  getMaxHeldItemCount(_pokemon: Pokemon): number {
-    return 10;
   }
 }
 
