@@ -468,7 +468,7 @@ function displayYesNoOptions(resolve) {
 }
 
 function handleRepeatedAbility(resolve, pokemon: PlayerPokemon, ability: Abilities) {
-  showEncounterText("Your pokemon already has this ability. Are you sure you want to apply it?");
+  showEncounterText(`${namespace}:option.1.repeated_ability`);
   const fullOptions = [
     {
       label: i18next.t("menu:yes"),
