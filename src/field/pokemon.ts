@@ -4161,7 +4161,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   getTag<T extends BattlerTag>(tagType: Constructor<T>): T | undefined;
 
   getTag(tagType: BattlerTagType | Constructor<BattlerTag>): BattlerTag | undefined {
-    return tagType instanceof Function
+    return typeof tagType === "function"
       ? this.summonData.tags.find(t => t instanceof tagType)
       : this.summonData.tags.find(t => t.tagType === tagType);
   }
@@ -5121,6 +5121,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
     });
 
+    globalScene.queueMessage(
+      i18next.t("battleInfo:newKey2", {
+        // arguments for the locale key go here;
+        pokemonNameWithAffix: getPokemonNameWithAffix(this),
+      }),
+    );
+
     for (let f = 0; f < 2; f++) {
       const variantColors = variantColorCache[!f ? spriteKey : backSpriteKey];
       const variantColorSet = new Map<number, number[]>();
@@ -5981,9 +5988,8 @@ export class PlayerPokemon extends Pokemon {
       true,
     ) as PokemonHeldItemModifier[];
     for (const modifier of fusedPartyMemberHeldModifiers) {
-      globalScene.tryTransferHeldItemModifier(modifier, this, false, modifier.getStackCount(), true, true, false);
+      globalScene.tryTransferHeldItemModifier(modifier, this, false, modifier.getStackCount(), false);
     }
-    globalScene.updateModifiers(true, true);
     globalScene.removePartyMemberModifiers(fusedPartyMemberIndex);
     globalScene.getPlayerParty().splice(fusedPartyMemberIndex, 1)[0];
     const newPartyMemberIndex = globalScene.getPlayerParty().indexOf(this);

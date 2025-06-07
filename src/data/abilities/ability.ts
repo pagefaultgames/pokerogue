@@ -1716,7 +1716,7 @@ export class GorillaTacticsAbAttr extends PostAttackAbAttr {
 
 export class PostAttackStealHeldItemAbAttr extends PostAttackAbAttr {
   private stealCondition: PokemonAttackCondition | null;
-  private stolenItem?: PokemonHeldItemModifier;
+  private stolenItem: PokemonHeldItemModifier;
 
   constructor(stealCondition?: PokemonAttackCondition) {
     super();
@@ -1731,39 +1731,37 @@ export class PostAttackStealHeldItemAbAttr extends PostAttackAbAttr {
     defender: Pokemon,
     move: Move,
     hitResult: HitResult,
-    args: any[]): boolean {
+    args: any[]
+  ): boolean {
+    // Check which items to steal
+    const heldItems = this.getTargetHeldItems(defender).filter((i) => i.isTransferable);
     if (
-      super.canApplyPostAttack(pokemon, passive, simulated, defender, move, hitResult, args) &&
-      !simulated &&
-      hitResult < HitResult.NO_EFFECT &&
-      (!this.stealCondition || this.stealCondition(pokemon, defender, move))
+      !super.canApplyPostAttack(pokemon, passive, simulated, defender, move, hitResult, args) ||
+      heldItems.length === 0 || // no items to steal
+      hitResult >= HitResult.NO_EFFECT || // move was ineffective/protected against
+      (this.stealCondition && !this.stealCondition(pokemon, defender, move)) // no condition = pass
     ) {
-      const heldItems = this.getTargetHeldItems(defender).filter((i) => i.isTransferable);
-      if (heldItems.length) {
-        // Ensure that the stolen item in testing is the same as when the effect is applied
-        this.stolenItem = heldItems[pokemon.randBattleSeedInt(heldItems.length)];
-        if (globalScene.canTransferHeldItemModifier(this.stolenItem, pokemon)) {
-          return true;
-        }
-      }
+      return false;
     }
-    this.stolenItem = undefined;
-    return false;
+
+    // pick random item and check if we can steal it
+    this.stolenItem = heldItems[pokemon.randBattleSeedInt(heldItems.length)];
+    return globalScene.canTransferHeldItemModifier(this.stolenItem, pokemon)
   }
 
   override applyPostAttack(
     pokemon: Pokemon,
-    passive: boolean,
+    _passive: boolean,
     simulated: boolean,
     defender: Pokemon,
-    move: Move,
-    hitResult: HitResult,
-    args: any[],
+    _move: Move,
+    _hitResult: HitResult,
+    _args: any[],
   ): void {
-    const heldItems = this.getTargetHeldItems(defender).filter((i) => i.isTransferable);
-    if (!this.stolenItem) {
-      this.stolenItem = heldItems[pokemon.randBattleSeedInt(heldItems.length)];
+    if (simulated) {
+      return;
     }
+
     if (globalScene.tryTransferHeldItemModifier(this.stolenItem, pokemon, false)) {
       globalScene.queueMessage(
         i18next.t("abilityTriggers:postAttackStealHeldItem", {
@@ -1773,7 +1771,6 @@ export class PostAttackStealHeldItemAbAttr extends PostAttackAbAttr {
         }),
       );
     }
-    this.stolenItem = undefined;
   }
 
   getTargetHeldItems(target: Pokemon): PokemonHeldItemModifier[] {
@@ -4717,31 +4714,46 @@ export class PostBattleAbAttr extends AbAttr {
 }
 
 export class PostBattleLootAbAttr extends PostBattleAbAttr {
-  private randItem?: PokemonHeldItemModifier;
-
-  override canApplyPostBattle(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
-    const postBattleLoot = globalScene.currentBattle.postBattleLoot;
-    if (!simulated && postBattleLoot.length && args[0]) {
-      this.randItem = randSeedItem(postBattleLoot);
-      return globalScene.canTransferHeldItemModifier(this.randItem, pokemon, 1);
-    }
-    return false;
-  }
+  /** The index of the random item to steal. */
+  private randItemIndex: number = 0;
 
   /**
    * @param args - `[0]`: boolean for if the battle ended in a victory
    */
-  override applyPostBattle(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): void {
+  override canApplyPostBattle(pokemon: Pokemon, passive: boolean, simulated: boolean, args: [boolean]): boolean {
     const postBattleLoot = globalScene.currentBattle.postBattleLoot;
-    if (!this.randItem) {
-      this.randItem = randSeedItem(postBattleLoot);
+    const wasVictory = args[0];
+    if (simulated || postBattleLoot.length === 0 || !wasVictory) {
+      return false;
     }
 
-    if (globalScene.tryTransferHeldItemModifier(this.randItem, pokemon, true, 1, true, undefined, false)) {
-      postBattleLoot.splice(postBattleLoot.indexOf(this.randItem), 1);
-      globalScene.queueMessage(i18next.t("abilityTriggers:postBattleLoot", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), itemName: this.randItem.type.name }));
+    // Pick a random item and check if we are capped.
+    this.randItemIndex = randSeedInt(postBattleLoot.length);
+    const item = postBattleLoot[this.randItemIndex]
+
+    // We can't use `canTransferItemModifier` as that assumes the Pokemon in question already exists (which it does not)
+    const existingItem = globalScene.findModifier(
+      (m): m is PokemonHeldItemModifier =>
+        m instanceof PokemonHeldItemModifier && m.matchType(item) && m.pokemonId === pokemon.id,
+      pokemon.isPlayer(),
+    ) as PokemonHeldItemModifier | undefined;
+
+    return (existingItem?.getCountUnderMax() ?? Number.MAX_SAFE_INTEGER) > 1
+  }
+
+  /**
+   * Attempt to give the previously selected random item to the ability holder at battle end.
+   * @param args - `[0]`: boolean for if the battle ended in a victory
+   */
+  override applyPostBattle(pokemon: Pokemon, passive: boolean, simulated: boolean, args: [boolean]): void {
+    const postBattleLoot = globalScene.currentBattle.postBattleLoot;
+    const item = postBattleLoot[this.randItemIndex]
+    item.pokemonId = pokemon.id;
+
+    if (globalScene.addModifier(item, false, true)) {
+      postBattleLoot.splice(this.randItemIndex, 1);
+      globalScene.queueMessage(i18next.t("abilityTriggers:postBattleLoot", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), itemName: item.type.name }));
     }
-    this.randItem = undefined;
   }
 }
 
@@ -6607,7 +6619,8 @@ export function initAbilities() {
     new Ability(AbilityId.STICKY_HOLD, 3)
       .attr(BlockItemTheftAbAttr)
       .bypassFaint()
-      .ignorable(),
+      .ignorable()
+      .edgeCase(), // may or may not proc incorrectly on user's allies
     new Ability(AbilityId.SHED_SKIN, 3)
       .conditionalAttr(pokemon => !randSeedInt(3), PostTurnResetStatusAbAttr),
     new Ability(AbilityId.GUTS, 3)

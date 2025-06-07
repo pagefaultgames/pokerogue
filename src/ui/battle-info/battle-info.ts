@@ -538,9 +538,14 @@ export default abstract class BattleInfo extends Phaser.GameObjects.Container {
     this.updateHpFrame();
   }
 
-  /** Update the pokemonHp bar */
-  protected updatePokemonHp(pokemon: Pokemon, resolve: (r: void | PromiseLike<void>) => void, instant?: boolean): void {
-    let duration = !instant ? Phaser.Math.Clamp(Math.abs(this.lastHp - pokemon.hp) * 5, 250, 5000) : 0;
+  /**
+   * Update a Pokemon's HP bar.
+   * @param pokemon - The {@linkcode Pokemon} to whom the HP bar belongs.
+   * @param resolve - A promise to which the HP bar will be chained unto.
+   * @param instant - Whether to instantly update the pokemon's HP bar; default `false`
+   */
+  protected updatePokemonHp(pokemon: Pokemon, resolve: (r: void | PromiseLike<void>) => void, instant = false): void {
+    let duration = instant ? 0 : Phaser.Math.Clamp(Math.abs(this.lastHp - pokemon.hp) * 5, 250, 5000);
     const speed = globalScene.hpBarSpeed;
     if (speed) {
       duration = speed >= 3 ? 0 : duration / Math.pow(2, speed);
@@ -563,7 +568,13 @@ export default abstract class BattleInfo extends Phaser.GameObjects.Container {
 
   //#endregion
 
-  async updateInfo(pokemon: Pokemon, instant?: boolean): Promise<void> {
+  /**
+   * Update a Pokemon's battle info, HP bar and other effects.
+   * @param pokemon - The {@linkcode} Pokemon to whom this BattleInfo belongs.
+   * @param instant - Whether to instantly update any changes to this Pokemon's HP bar; default `false`
+   * @returns A Promise that resolves once the Pokemon's info has been successfully updated.
+   */
+  async updateInfo(pokemon: Pokemon, instant = false): Promise<void> {
     let resolve: (r: void | PromiseLike<void>) => void = () => {};
     const promise = new Promise<void>(r => (resolve = r));
     if (!globalScene) {
