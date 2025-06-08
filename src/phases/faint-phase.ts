@@ -11,7 +11,6 @@ import {
 } from "#app/data/abilities/ability";
 import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
 import { battleSpecDialogue } from "#app/data/dialogue";
-import { PostVictoryStatStageChangeAttr } from "#app/data/moves/move";
 import { allMoves } from "#app/data/data-lists";
 import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms/form-change-triggers";
 import { BattleSpec } from "#app/enums/battle-spec";
@@ -145,7 +144,7 @@ export class FaintPhase extends PokemonPhase {
       if (defeatSource?.isOnField()) {
         applyPostVictoryAbAttrs(PostVictoryAbAttr, defeatSource);
         const pvmove = allMoves[pokemon.turnData.attacksReceived[0].move];
-        const pvattrs = pvmove.getAttrs(PostVictoryStatStageChangeAttr);
+        const pvattrs = pvmove.getAttrs("PostVictoryStatStageChangeAttr");
         if (pvattrs.length) {
           for (const pvattr of pvattrs) {
             pvattr.applyPostVictory(defeatSource, defeatSource, pvmove);

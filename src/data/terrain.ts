@@ -1,7 +1,6 @@
 import type Pokemon from "../field/pokemon";
 import type Move from "./moves/move";
 import { PokemonType } from "#enums/pokemon-type";
-import { ProtectAttr } from "./moves/move";
 import type { BattlerIndex } from "#enums/battler-index";
 import i18next from "i18next";
 
@@ -55,7 +54,7 @@ export class Terrain {
   isMoveTerrainCancelled(user: Pokemon, targets: BattlerIndex[], move: Move): boolean {
     switch (this.terrainType) {
       case TerrainType.PSYCHIC:
-        if (!move.hasAttr(ProtectAttr)) {
+        if (!move.hasAttr("ProtectAttr")) {
           // Cancels move if the move has positive priority and targets a Pokemon grounded on the Psychic Terrain
           return (
             move.getPriority(user) > 0 &&

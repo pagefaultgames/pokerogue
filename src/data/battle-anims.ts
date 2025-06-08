@@ -1,5 +1,4 @@
 import { globalScene } from "#app/global-scene";
-import { AttackMove, BeakBlastHeaderAttr, DelayedAttackAttr, SelfStatusMove } from "./moves/move";
 import { allMoves } from "./data-lists";
 import { MoveFlags } from "#enums/MoveFlags";
 import type Pokemon from "../field/pokemon";
@@ -436,7 +435,7 @@ export function initMoveAnim(move: MoveId): Promise<void> {
           if (moveAnims.get(move) !== null) {
             const chargeAnimSource = allMoves[move].isChargingMove()
               ? allMoves[move]
-              : (allMoves[move].getAttrs(DelayedAttackAttr)[0] ?? allMoves[move].getAttrs(BeakBlastHeaderAttr)[0]);
+              : (allMoves[move].getAttrs("DelayedAttackAttr")[0] ?? allMoves[move].getAttrs("BeakBlastHeaderAttr")[0]);
             if (chargeAnimSource && chargeAnims.get(chargeAnimSource.chargeAnim) === null) {
               return;
             }
@@ -448,9 +447,9 @@ export function initMoveAnim(move: MoveId): Promise<void> {
     } else {
       moveAnims.set(move, null);
       const defaultMoveAnim =
-        allMoves[move] instanceof AttackMove
+        allMoves[move].is("AttackMove")
           ? MoveId.TACKLE
-          : allMoves[move] instanceof SelfStatusMove
+          : allMoves[move].is("SelfStatusMove")
             ? MoveId.FOCUS_ENERGY
             : MoveId.TAIL_WHIP;
 
@@ -475,7 +474,7 @@ export function initMoveAnim(move: MoveId): Promise<void> {
             }
             const chargeAnimSource = allMoves[move].isChargingMove()
               ? allMoves[move]
-              : (allMoves[move].getAttrs(DelayedAttackAttr)[0] ?? allMoves[move].getAttrs(BeakBlastHeaderAttr)[0]);
+              : (allMoves[move].getAttrs("DelayedAttackAttr")[0] ?? allMoves[move].getAttrs("BeakBlastHeaderAttr")[0]);
             if (chargeAnimSource) {
               initMoveChargeAnim(chargeAnimSource.chargeAnim).then(() => resolve());
             } else {
@@ -608,7 +607,7 @@ export function loadMoveAnimAssets(moveIds: MoveId[], startLoad?: boolean): Prom
     for (const moveId of moveIds) {
       const chargeAnimSource = allMoves[moveId].isChargingMove()
         ? allMoves[moveId]
-        : (allMoves[moveId].getAttrs(DelayedAttackAttr)[0] ?? allMoves[moveId].getAttrs(BeakBlastHeaderAttr)[0]);
+        : (allMoves[moveId].getAttrs("DelayedAttackAttr")[0] ?? allMoves[moveId].getAttrs("BeakBlastHeaderAttr")[0]);
       if (chargeAnimSource) {
         const moveChargeAnims = chargeAnims.get(chargeAnimSource.chargeAnim);
         moveAnimations.push(moveChargeAnims instanceof AnimConfig ? moveChargeAnims : moveChargeAnims![0]); // TODO: is the bang correct?

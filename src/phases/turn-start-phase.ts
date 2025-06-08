@@ -1,5 +1,4 @@
 import { applyAbAttrs, BypassSpeedChanceAbAttr, PreventBypassSpeedChanceAbAttr } from "#app/data/abilities/ability";
-import { MoveHeaderAttr } from "#app/data/moves/move";
 import { allMoves } from "#app/data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { Stat } from "#app/enums/stat";
@@ -168,7 +167,7 @@ export class TurnStartPhase extends FieldPhase {
             const move =
               pokemon.getMoveset().find(m => m.moveId === queuedMove.move && m.ppUsed < m.getMovePp()) ||
               new PokemonMove(queuedMove.move);
-            if (move.getMove().hasAttr(MoveHeaderAttr)) {
+            if (move.getMove().hasAttr("MoveHeaderAttr")) {
               phaseManager.unshiftNew("MoveHeaderPhase", pokemon, move);
             }
             if (pokemon.isPlayer()) {

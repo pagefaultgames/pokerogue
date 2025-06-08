@@ -4,7 +4,7 @@ import { BattleType } from "#enums/battle-type";
 import type { EncoreTag } from "#app/data/battler-tags";
 import { TrappedTag } from "#app/data/battler-tags";
 import type { MoveTargetSet } from "#app/data/moves/move";
-import { getMoveTargets } from "#app/data/moves/move";
+import { getMoveTargets } from "#app/data/moves/move-utils";
 import { speciesStarterCosts } from "#app/data/balance/starters";
 import { AbilityId } from "#enums/ability-id";
 import { BattlerTagType } from "#app/enums/battler-tag-type";

@@ -2,7 +2,7 @@ import { BattlerIndex } from "#enums/battler-index";
 import { UiMode } from "#enums/ui-mode";
 import UiHandler from "./ui-handler";
 import { isNullOrUndefined, fixedInt } from "#app/utils/common";
-import { getMoveTargets } from "../data/moves/move";
+import { getMoveTargets } from "#app/data/moves/move-utils";
 import { Button } from "#enums/buttons";
 import type { MoveId } from "#enums/move-id";
 import type Pokemon from "#app/field/pokemon";

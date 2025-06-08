@@ -9,36 +9,8 @@ import BattleInfo from "#app/ui/battle-info/battle-info";
 import { EnemyBattleInfo } from "#app/ui/battle-info/enemy-battle-info";
 import { PlayerBattleInfo } from "#app/ui/battle-info/player-battle-info";
 import type Move from "#app/data/moves/move";
-import {
-  HighCritAttr,
-  HitsTagAttr,
-  applyMoveAttrs,
-  FixedDamageAttr,
-  VariableAtkAttr,
-  TypelessAttr,
-  CritOnlyAttr,
-  getMoveTargets,
-  OneHitKOAttr,
-  VariableMoveTypeAttr,
-  VariableDefAttr,
-  AttackMove,
-  ModifiedDamageAttr,
-  VariableMoveTypeMultiplierAttr,
-  IgnoreOpponentStatStagesAttr,
-  SacrificialAttr,
-  VariableMoveCategoryAttr,
-  CounterDamageAttr,
-  StatStageChangeAttr,
-  RechargeAttr,
-  IgnoreWeatherTypeDebuffAttr,
-  BypassBurnDamageReductionAttr,
-  SacrificialAttrOnHit,
-  OneHitKOAccuracyAttr,
-  RespectAttackTypeImmunityAttr,
-  CombinedPledgeStabBoostAttr,
-  VariableMoveTypeChartAttr,
-  HpSplitAttr,
-} from "#app/data/moves/move";
+import { getMoveTargets } from "#app/data/moves/move-utils";
+import { applyMoveAttrs } from "#app/data/moves/apply-attrs";
 import { allMoves } from "#app/data/data-lists";
 import { MoveTarget } from "#enums/MoveTarget";
 import { MoveCategory } from "#enums/MoveCategory";
@@ -1428,7 +1400,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    */
   getCritStage(source: Pokemon, move: Move): number {
     const critStage = new NumberHolder(0);
-    applyMoveAttrs(HighCritAttr, source, this, move, critStage);
+    applyMoveAttrs("HighCritAttr", source, this, move, critStage);
     globalScene.applyModifiers(CritBoosterModifier, source.isPlayer(), source, critStage);
     globalScene.applyModifiers(TempCritBoosterModifier, source.isPlayer(), critStage);
     applyAbAttrs(BonusCritAbAttr, source, null, false, critStage);
@@ -1454,7 +1426,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    */
   getMoveCategory(target: Pokemon, move: Move): MoveCategory {
     const moveCategory = new NumberHolder(move.category);
-    applyMoveAttrs(VariableMoveCategoryAttr, this, target, move, moveCategory);
+    applyMoveAttrs("VariableMoveCategoryAttr", this, target, move, moveCategory);
     return moveCategory.value;
   }
 
@@ -2349,7 +2321,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public getMoveType(move: Move, simulated = true): PokemonType {
     const moveTypeHolder = new NumberHolder(move.type);
 
-    applyMoveAttrs(VariableMoveTypeAttr, this, null, move, moveTypeHolder);
+    applyMoveAttrs("VariableMoveTypeAttr", this, null, move, moveTypeHolder);
     applyPreAttackAbAttrs(MoveTypeChangeAbAttr, this, null, move, simulated, moveTypeHolder);
 
     // If the user is terastallized and the move is tera blast, or tera starstorm that is stellar type,
@@ -2393,18 +2365,18 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       return this.turnData?.moveEffectiveness;
     }
 
-    if (move.hasAttr(TypelessAttr)) {
+    if (move.hasAttr("TypelessAttr")) {
       return 1;
     }
     const moveType = source.getMoveType(move);
 
     const typeMultiplier = new NumberHolder(
-      move.category !== MoveCategory.STATUS || move.hasAttr(RespectAttackTypeImmunityAttr)
+      move.category !== MoveCategory.STATUS || move.hasAttr("RespectAttackTypeImmunityAttr")
         ? this.getAttackTypeEffectiveness(moveType, source, false, simulated, move, useIllusion)
         : 1,
     );
 
-    applyMoveAttrs(VariableMoveTypeMultiplierAttr, source, this, move, typeMultiplier);
+    applyMoveAttrs("VariableMoveTypeMultiplierAttr", source, this, move, typeMultiplier);
     if (this.getTypes(true, true).find(t => move.isTypeImmune(source, this, t))) {
       typeMultiplier.value = 0;
     }
@@ -2431,7 +2403,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     const immuneTags = this.findTags(tag => tag instanceof TypeImmuneTag && tag.immuneType === moveType);
     for (const tag of immuneTags) {
-      if (move && !move.getAttrs(HitsTagAttr).some(attr => attr.tagType === tag.tagType)) {
+      if (move && !move.getAttrs("HitsTagAttr").some(attr => attr.tagType === tag.tagType)) {
         typeMultiplier.value = 0;
         break;
       }
@@ -2487,7 +2459,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         const multiplier = new NumberHolder(getTypeDamageMultiplier(moveType, defType));
         applyChallenges(ChallengeType.TYPE_EFFECTIVENESS, multiplier);
         if (move) {
-          applyMoveAttrs(VariableMoveTypeChartAttr, null, this, move, multiplier, defType);
+          applyMoveAttrs("VariableMoveTypeChartAttr", null, this, move, multiplier, defType);
         }
         if (source) {
           const ignoreImmunity = new BooleanHolder(false);
@@ -3123,24 +3095,26 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     // Bosses never get self ko moves or Pain Split
     if (this.isBoss()) {
-      movePool = movePool.filter(m => !allMoves[m[0]].hasAttr(SacrificialAttr) && !allMoves[m[0]].hasAttr(HpSplitAttr));
+      movePool = movePool.filter(
+        m => !allMoves[m[0]].hasAttr("SacrificialAttr") && !allMoves[m[0]].hasAttr("HpSplitAttr"),
+      );
     }
     // No one gets Memento or Final Gambit
-    movePool = movePool.filter(m => !allMoves[m[0]].hasAttr(SacrificialAttrOnHit));
+    movePool = movePool.filter(m => !allMoves[m[0]].hasAttr("SacrificialAttrOnHit"));
     if (this.hasTrainer()) {
       // Trainers never get OHKO moves
-      movePool = movePool.filter(m => !allMoves[m[0]].hasAttr(OneHitKOAttr));
+      movePool = movePool.filter(m => !allMoves[m[0]].hasAttr("OneHitKOAttr"));
       // Half the weight of self KO moves
-      movePool = movePool.map(m => [m[0], m[1] * (allMoves[m[0]].hasAttr(SacrificialAttr) ? 0.5 : 1)]);
+      movePool = movePool.map(m => [m[0], m[1] * (allMoves[m[0]].hasAttr("SacrificialAttr") ? 0.5 : 1)]);
       // Trainers get a weight bump to stat buffing moves
       movePool = movePool.map(m => [
         m[0],
-        m[1] * (allMoves[m[0]].getAttrs(StatStageChangeAttr).some(a => a.stages > 1 && a.selfTarget) ? 1.25 : 1),
+        m[1] * (allMoves[m[0]].getAttrs("StatStageChangeAttr").some(a => a.stages > 1 && a.selfTarget) ? 1.25 : 1),
       ]);
       // Trainers get a weight decrease to multiturn moves
       movePool = movePool.map(m => [
         m[0],
-        m[1] * (!!allMoves[m[0]].isChargingMove() || !!allMoves[m[0]].hasAttr(RechargeAttr) ? 0.7 : 1),
+        m[1] * (!!allMoves[m[0]].isChargingMove() || !!allMoves[m[0]].hasAttr("RechargeAttr") ? 0.7 : 1),
       ]);
     }
 
@@ -3207,7 +3181,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
               !this.moveset.some(
                 mo =>
                   m[0] === mo.moveId ||
-                  (allMoves[m[0]].hasAttr(SacrificialAttr) && mo.getMove().hasAttr(SacrificialAttr)), // Only one self-KO move allowed
+                  (allMoves[m[0]].hasAttr("SacrificialAttr") && mo.getMove().hasAttr("SacrificialAttr")), // Only one self-KO move allowed
               ),
           )
           .map(m => {
@@ -3236,7 +3210,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             !this.moveset.some(
               mo =>
                 m[0] === mo.moveId ||
-                (allMoves[m[0]].hasAttr(SacrificialAttr) && mo.getMove().hasAttr(SacrificialAttr)), // Only one self-KO move allowed
+                (allMoves[m[0]].hasAttr("SacrificialAttr") && mo.getMove().hasAttr("SacrificialAttr")), // Only one self-KO move allowed
             ),
         );
       }
@@ -3444,7 +3418,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         applyAbAttrs(IgnoreOpponentStatStagesAbAttr, opponent, null, simulated, stat, ignoreStatStage);
       }
       if (move) {
-        applyMoveAttrs(IgnoreOpponentStatStagesAttr, this, opponent, move, ignoreStatStage);
+        applyMoveAttrs("IgnoreOpponentStatStagesAttr", this, opponent, move, ignoreStatStage);
       }
     }
 
@@ -3469,7 +3443,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @returns The calculated accuracy multiplier.
    */
   getAccuracyMultiplier(target: Pokemon, sourceMove: Move): number {
-    const isOhko = sourceMove.hasAttr(OneHitKOAccuracyAttr);
+    const isOhko = sourceMove.hasAttr("OneHitKOAccuracyAttr");
     if (isOhko) {
       return 1;
     }
@@ -3482,7 +3456,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     applyAbAttrs(IgnoreOpponentStatStagesAbAttr, target, null, false, Stat.ACC, ignoreAccStatStage);
     applyAbAttrs(IgnoreOpponentStatStagesAbAttr, this, null, false, Stat.EVA, ignoreEvaStatStage);
-    applyMoveAttrs(IgnoreOpponentStatStagesAttr, this, target, sourceMove, ignoreEvaStatStage);
+    applyMoveAttrs("IgnoreOpponentStatStagesAttr", this, target, sourceMove, ignoreEvaStatStage);
 
     globalScene.applyModifiers(TempStatStageBoosterModifier, this.isPlayer(), Stat.ACC, userAccStage);
 
@@ -3565,7 +3539,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         simulated,
       ),
     );
-    applyMoveAttrs(VariableAtkAttr, source, this, move, sourceAtk);
+    applyMoveAttrs("VariableAtkAttr", source, this, move, sourceAtk);
 
     /**
      * This Pokemon's defensive stat for the given move's category.
@@ -3583,7 +3557,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         simulated,
       ),
     );
-    applyMoveAttrs(VariableDefAttr, source, this, move, targetDef);
+    applyMoveAttrs("VariableDefAttr", source, this, move, targetDef);
 
     /**
      * The attack's base damage, as determined by the source's level, move power
@@ -3610,7 +3584,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    */
   calculateStabMultiplier(source: Pokemon, move: Move, ignoreSourceAbility: boolean, simulated: boolean): number {
     // If the move has the Typeless attribute, it doesn't get STAB (e.g. struggle)
-    if (move.hasAttr(TypelessAttr)) {
+    if (move.hasAttr("TypelessAttr")) {
       return 1;
     }
     const sourceTypes = source.getTypes();
@@ -3622,7 +3596,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       stabMultiplier.value += 0.5;
     }
 
-    applyMoveAttrs(CombinedPledgeStabBoostAttr, source, this, move, stabMultiplier);
+    applyMoveAttrs("CombinedPledgeStabBoostAttr", source, this, move, stabMultiplier);
 
     if (!ignoreSourceAbility) {
       applyAbAttrs(StabBoostAbAttr, source, null, simulated, stabMultiplier);
@@ -3671,7 +3645,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const defendingSide = this.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
 
     const variableCategory = new NumberHolder(move.category);
-    applyMoveAttrs(VariableMoveCategoryAttr, source, this, move, variableCategory);
+    applyMoveAttrs("VariableMoveCategoryAttr", source, this, move, variableCategory);
     const moveCategory = variableCategory.value as MoveCategory;
 
     /** The move's type after type-changing effects are applied */
@@ -3696,7 +3670,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const arenaAttackTypeMultiplier = new NumberHolder(
       globalScene.arena.getAttackTypeMultiplier(moveType, source.isGrounded()),
     );
-    applyMoveAttrs(IgnoreWeatherTypeDebuffAttr, source, this, move, arenaAttackTypeMultiplier);
+    applyMoveAttrs("IgnoreWeatherTypeDebuffAttr", source, this, move, arenaAttackTypeMultiplier);
 
     const isTypeImmune = typeMultiplier * arenaAttackTypeMultiplier.value === 0;
 
@@ -3710,7 +3684,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     // If the attack deals fixed damage, return a result with that much damage
     const fixedDamage = new NumberHolder(0);
-    applyMoveAttrs(FixedDamageAttr, source, this, move, fixedDamage);
+    applyMoveAttrs("FixedDamageAttr", source, this, move, fixedDamage);
     if (fixedDamage.value) {
       const multiLensMultiplier = new NumberHolder(1);
       globalScene.applyModifiers(
@@ -3732,7 +3706,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     // If the attack is a one-hit KO move, return a result with damage equal to this Pokemon's HP
     const isOneHitKo = new BooleanHolder(false);
-    applyMoveAttrs(OneHitKOAttr, source, this, move, isOneHitKo);
+    applyMoveAttrs("OneHitKOAttr", source, this, move, isOneHitKo);
     if (isOneHitKo.value) {
       return {
         cancelled: false,
@@ -3809,7 +3783,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       isPhysical &&
       source.status &&
       source.status.effect === StatusEffect.BURN &&
-      !move.hasAttr(BypassBurnDamageReductionAttr)
+      !move.hasAttr("BypassBurnDamageReductionAttr")
     ) {
       const burnDamageReductionCancelled = new BooleanHolder(false);
       if (!ignoreSourceAbility) {
@@ -3843,7 +3817,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
      */
     const hitsTagMultiplier = new NumberHolder(1);
     move
-      .getAttrs(HitsTagAttr)
+      .getAttrs("HitsTagAttr")
       .filter(hta => hta.doubleDamage)
       .forEach(hta => {
         if (this.getTag(hta.tagType)) {
@@ -3900,7 +3874,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     // This attribute may modify damage arbitrarily, so be careful about changing its order of application.
-    applyMoveAttrs(ModifiedDamageAttr, source, this, move, damage);
+    applyMoveAttrs("ModifiedDamageAttr", source, this, move, damage);
 
     if (this.isFullHp() && !ignoreAbility) {
       applyPreDefendAbAttrs(PreDefendFullHpEndureAbAttr, this, source, move, cancelled, false, damage);
@@ -3936,7 +3910,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   getCriticalHitResult(source: Pokemon, move: Move, simulated = true): boolean {
     const defendingSide = this.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
     const noCritTag = globalScene.arena.getTagOnSide(NoCritTag, defendingSide);
-    if (noCritTag || Overrides.NEVER_CRIT_OVERRIDE || move.hasAttr(FixedDamageAttr)) {
+    if (noCritTag || Overrides.NEVER_CRIT_OVERRIDE || move.hasAttr("FixedDamageAttr")) {
       return false;
     }
     const isCritical = new BooleanHolder(false);
@@ -3944,7 +3918,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     if (source.getTag(BattlerTagType.ALWAYS_CRIT)) {
       isCritical.value = true;
     }
-    applyMoveAttrs(CritOnlyAttr, source, this, move, isCritical);
+    applyMoveAttrs("CritOnlyAttr", source, this, move, isCritical);
     applyAbAttrs(ConditionalCritAbAttr, source, null, simulated, isCritical, this, move);
     if (!isCritical.value) {
       const critChance = [24, 8, 2, 1][Math.max(0, Math.min(this.getCritStage(source, move), 3))];
@@ -6265,7 +6239,7 @@ export class EnemyPokemon extends Pokemon {
               .targets.map(ind => fieldPokemon[ind])
               .filter(p => this.isPlayer() !== p.isPlayer());
             // Only considers critical hits for crit-only moves or when this Pokemon is under the effect of Laser Focus
-            const isCritical = move.hasAttr(CritOnlyAttr) || !!this.getTag(BattlerTagType.ALWAYS_CRIT);
+            const isCritical = move.hasAttr("CritOnlyAttr") || !!this.getTag(BattlerTagType.ALWAYS_CRIT);
 
             return (
               move.category !== MoveCategory.STATUS &&
@@ -6334,7 +6308,7 @@ export class EnemyPokemon extends Pokemon {
                 ![MoveId.SUCKER_PUNCH, MoveId.UPPER_HAND, MoveId.THUNDERCLAP].includes(move.id)
               ) {
                 targetScore = -20;
-              } else if (move instanceof AttackMove) {
+              } else if (move.is("AttackMove")) {
                 /**
                  * Attack moves are given extra multipliers to their base benefit score based on
                  * the move's type effectiveness against the target and whether the move is a STAB move.
@@ -6455,7 +6429,7 @@ export class EnemyPokemon extends Pokemon {
     if (!sortedBenefitScores.length) {
       // Set target to BattlerIndex.ATTACKER when using a counter move
       // This is the same as when the player does so
-      if (move.hasAttr(CounterDamageAttr)) {
+      if (move.hasAttr("CounterDamageAttr")) {
         return [BattlerIndex.ATTACKER];
       }
 

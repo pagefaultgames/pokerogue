@@ -19,22 +19,7 @@ import {
   getStatusEffectHealText,
 } from "#app/data/status-effect";
 import { Gender } from "#app/data/gender";
-import {
-  AttackMove,
-  FlinchAttr,
-  OneHitKOAttr,
-  HitHealAttr,
-  StatusMove,
-  SelfStatusMove,
-  VariablePowerAttr,
-  applyMoveAttrs,
-  RandomMovesetMoveAttr,
-  RandomMoveAttr,
-  NaturePowerAttr,
-  CopyMoveAttr,
-  NeutralDamageAgainstFlyingTypeMultiplierAttr,
-  FixedDamageAttr,
-} from "#app/data/moves/move";
+import { applyMoveAttrs } from "../moves/apply-attrs";
 import { allMoves } from "../data-lists";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import { BerryModifier, HitHealModifier, PokemonHeldItemModifier } from "#app/modifier/modifier";
@@ -523,7 +508,7 @@ export class AttackTypeImmunityAbAttr extends TypeImmunityAbAttr {
   ): boolean {
     return (
       move.category !== MoveCategory.STATUS &&
-      !move.hasAttr(NeutralDamageAgainstFlyingTypeMultiplierAttr) &&
+      !move.hasAttr("NeutralDamageAgainstFlyingTypeMultiplierAttr") &&
       super.canApplyPreDefend(pokemon, passive, simulated, attacker, move, cancelled, args)
     );
   }
@@ -696,7 +681,7 @@ export class NonSuperEffectiveImmunityAbAttr extends TypeImmunityAbAttr {
       args.length > 0
         ? (args[0] as NumberHolder).value
         : pokemon.getAttackTypeEffectiveness(attacker.getMoveType(move), attacker, undefined, undefined, move);
-    return move instanceof AttackMove && modifierValue < 2;
+    return move.is("AttackMove") && modifierValue < 2;
   }
 
   override applyPreDefend(
@@ -738,7 +723,7 @@ export class FullHpResistTypeAbAttr extends PreDefendAbAttr {
     const typeMultiplier = args[0];
     return (
       typeMultiplier instanceof NumberHolder &&
-      !move?.hasAttr(FixedDamageAttr) &&
+      !move?.hasAttr("FixedDamageAttr") &&
       pokemon.isFullHp() &&
       typeMultiplier.value > 0.5
     );
@@ -983,7 +968,7 @@ export class ReverseDrainAbAttr extends PostDefendAbAttr {
     _hitResult: HitResult | null,
     _args: any[],
   ): boolean {
-    return move.hasAttr(HitHealAttr);
+    return move.hasAttr("HitHealAttr");
   }
 
   /**
@@ -2064,10 +2049,10 @@ export class PokemonTypeChangeAbAttr extends PreAttackAbAttr {
        */
       !move.findAttr(
         attr =>
-          attr instanceof RandomMovesetMoveAttr ||
-          attr instanceof RandomMoveAttr ||
-          attr instanceof NaturePowerAttr ||
-          attr instanceof CopyMoveAttr,
+          attr.is("RandomMovesetMoveAttr") ||
+          attr.is("RandomMoveAttr") ||
+          attr.is("NaturePowerAttr") ||
+          attr.is("CopyMoveAttr"),
       )
     ) {
       const moveType = pokemon.getMoveType(move);
@@ -4929,13 +4914,13 @@ function getAnticipationCondition(): AbAttrCondition {
         }
         // the move's base type (not accounting for variable type changes) is super effective
         if (
-          move.getMove() instanceof AttackMove &&
+          move.getMove().is("AttackMove") &&
           pokemon.getAttackTypeEffectiveness(move.getMove().type, opponent, true, undefined, move.getMove()) >= 2
         ) {
           return true;
         }
         // move is a OHKO
-        if (move.getMove().hasAttr(OneHitKOAttr)) {
+        if (move.getMove().hasAttr("OneHitKOAttr")) {
           return true;
         }
         // edge case for hidden power, type is computed
@@ -5004,9 +4989,9 @@ export class ForewarnAbAttr extends PostSummonAbAttr {
     let movePower = 0;
     for (const opponent of pokemon.getOpponents()) {
       for (const move of opponent.moveset) {
-        if (move?.getMove() instanceof StatusMove) {
+        if (move?.getMove().is("StatusMove")) {
           movePower = 1;
-        } else if (move?.getMove().hasAttr(OneHitKOAttr)) {
+        } else if (move?.getMove().hasAttr("OneHitKOAttr")) {
           movePower = 150;
         } else if (
           move?.getMove().id === MoveId.COUNTER ||
@@ -5877,10 +5862,10 @@ export class PostDancingMoveAbAttr extends PostMoveUsedAbAttr {
       dancer.turnData.extraTurns++;
       const phaseManager = globalScene.phaseManager;
       // If the move is an AttackMove or a StatusMove the Dancer must replicate the move on the source of the Dance
-      if (move.getMove() instanceof AttackMove || move.getMove() instanceof StatusMove) {
+      if (move.getMove().is("AttackMove") || move.getMove().is("StatusMove")) {
         const target = this.getTarget(dancer, source, targets);
         phaseManager.unshiftNew("MovePhase", dancer, target, move, true, true);
-      } else if (move.getMove() instanceof SelfStatusMove) {
+      } else if (move.getMove().is("SelfStatusMove")) {
         // If the move is a SelfStatusMove (ie. Swords Dance) the Dancer should replicate it on itself
         phaseManager.unshiftNew("MovePhase", dancer, [dancer.getBattlerIndex()], move, true, true);
       }
@@ -8210,7 +8195,7 @@ export function initAbilities() {
   allAbilities.push(
     new Ability(AbilityId.NONE, 3),
     new Ability(AbilityId.STENCH, 3)
-      .attr(PostAttackApplyBattlerTagAbAttr, false, (user, target, move) => !move.hasAttr(FlinchAttr) && !move.hitsSubstitute(user, target) ? 10 : 0, BattlerTagType.FLINCHED),
+      .attr(PostAttackApplyBattlerTagAbAttr, false, (user, target, move) => !move.hasAttr("FlinchAttr") && !move.hitsSubstitute(user, target) ? 10 : 0, BattlerTagType.FLINCHED),
     new Ability(AbilityId.DRIZZLE, 3)
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.RAIN)
       .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.RAIN),
@@ -8517,7 +8502,7 @@ export function initAbilities() {
     new Ability(AbilityId.TECHNICIAN, 4)
       .attr(MovePowerBoostAbAttr, (user, target, move) => {
         const power = new NumberHolder(move.power);
-        applyMoveAttrs(VariablePowerAttr, user, target, move, power);
+        applyMoveAttrs("VariablePowerAttr", user, target, move, power);
         return power.value <= 60;
       }, 1.5),
     new Ability(AbilityId.LEAF_GUARD, 4)
@@ -8638,7 +8623,7 @@ export function initAbilities() {
       )
       .edgeCase(), // Cannot recover berries used up by fling or natural gift (unimplemented)
     new Ability(AbilityId.TELEPATHY, 5)
-      .attr(MoveImmunityAbAttr, (pokemon, attacker, move) => pokemon.getAlly() === attacker && move instanceof AttackMove)
+      .attr(MoveImmunityAbAttr, (pokemon, attacker, move) => pokemon.getAlly() === attacker && move.is("AttackMove"))
       .ignorable(),
     new Ability(AbilityId.MOODY, 5)
       .attr(MoodyAbAttr),

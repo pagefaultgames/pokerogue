@@ -2,7 +2,6 @@ import { globalScene } from "#app/global-scene";
 import { EvolutionItem, pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
 import { tmPoolTiers, tmSpecies } from "#app/data/balance/tms";
 import { getBerryEffectDescription, getBerryName } from "#app/data/berry";
-import { AttackMove } from "#app/data/moves/move";
 import { allMoves } from "#app/data/data-lists";
 import { getNatureName, getNatureStatMultiplier } from "#app/data/nature";
 import { getPokeballCatchMultiplier, getPokeballName, MAX_PER_TYPE_POKEBALLS } from "#app/data/pokeball";
@@ -1337,7 +1336,7 @@ class AttackTypeBoosterModifierTypeGenerator extends ModifierTypeGenerator {
         p
           .getMoveset()
           .map(m => m.getMove())
-          .filter(m => m instanceof AttackMove)
+          .filter(m => m.is("AttackMove"))
           .map(m => m.type),
       );
       if (!attackMoveTypes.length) {

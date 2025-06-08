@@ -12,7 +12,6 @@ import {
   PokemonHeldItemModifier,
   SwitchEffectTransferModifier,
 } from "#app/modifier/modifier";
-import { ForceSwitchOutAttr } from "#app/data/moves/move";
 import { allMoves } from "#app/data/data-lists";
 import { Gender, getGenderColor, getGenderSymbol } from "#app/data/gender";
 import { StatusEffect } from "#enums/status-effect";
@@ -1178,7 +1177,7 @@ export default class PartyUiHandler extends MessageUiHandler {
     return !!(
       this.partyUiMode === PartyUiMode.FAINT_SWITCH &&
       moveHistory.length &&
-      allMoves[moveHistory[moveHistory.length - 1].move].getAttrs(ForceSwitchOutAttr)[0]?.isBatonPass() &&
+      allMoves[moveHistory[moveHistory.length - 1].move].getAttrs("ForceSwitchOutAttr")[0]?.isBatonPass() &&
       moveHistory[moveHistory.length - 1].result === MoveResult.SUCCESS
     );
   }

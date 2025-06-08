@@ -12,12 +12,7 @@ import { allAbilities } from "./data-lists";
 import { CommonBattleAnim, MoveChargeAnim } from "#app/data/battle-anims";
 import { ChargeAnim, CommonAnim } from "#enums/move-anims-common";
 import type Move from "#app/data/moves/move";
-import {
-  applyMoveAttrs,
-  ConsecutiveUseDoublePowerAttr,
-  HealOnAllyAttr,
-  StatusCategoryOnAllyAttr,
-} from "#app/data/moves/move";
+import { applyMoveAttrs } from "./moves/apply-attrs";
 import { allMoves } from "./data-lists";
 import { MoveFlags } from "#enums/MoveFlags";
 import { MoveCategory } from "#enums/MoveCategory";
@@ -2794,8 +2789,8 @@ export class HealBlockTag extends MoveRestrictionBattlerTag {
    */
   override isMoveTargetRestricted(move: MoveId, user: Pokemon, target: Pokemon) {
     const moveCategory = new NumberHolder(allMoves[move].category);
-    applyMoveAttrs(StatusCategoryOnAllyAttr, user, target, allMoves[move], moveCategory);
-    return allMoves[move].hasAttr(HealOnAllyAttr) && moveCategory.value === MoveCategory.STATUS;
+    applyMoveAttrs("StatusCategoryOnAllyAttr", user, target, allMoves[move], moveCategory);
+    return allMoves[move].hasAttr("HealOnAllyAttr") && moveCategory.value === MoveCategory.STATUS;
   }
 
   /**
@@ -3131,7 +3126,7 @@ export class TormentTag extends MoveRestrictionBattlerTag {
     // This checks for locking / momentum moves like Rollout and Hydro Cannon + if the user is under the influence of BattlerTagType.FRENZY
     // Because Uproar's unique behavior is not implemented, it does not check for Uproar. Torment has been marked as partial in moves.ts
     const moveObj = allMoves[lastMove.move];
-    const isUnaffected = moveObj.hasAttr(ConsecutiveUseDoublePowerAttr) || user.getTag(BattlerTagType.FRENZY);
+    const isUnaffected = moveObj.hasAttr("ConsecutiveUseDoublePowerAttr") || user.getTag(BattlerTagType.FRENZY);
     const validLastMoveResult = lastMove.result === MoveResult.SUCCESS || lastMove.result === MoveResult.MISS;
     return lastMove.move === move && validLastMoveResult && lastMove.move !== MoveId.STRUGGLE && !isUnaffected;
   }

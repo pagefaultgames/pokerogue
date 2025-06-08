@@ -15,10 +15,7 @@ import {
 import { getPokemonNameWithAffix } from "../../messages";
 import type { AttackMoveResult, TurnMove } from "../../field/pokemon";
 import type Pokemon from "../../field/pokemon";
-import {
-  EnemyPokemon,
-  PlayerPokemon,
-} from "../../field/pokemon";
+import type { EnemyPokemon } from "#app/field/pokemon";
 import { PokemonMove } from "./pokemon-move";
 import { MoveResult } from "#enums/move-result";
 import { HitResult } from "#enums/hit-result";
@@ -126,9 +123,12 @@ import { MoveEffectTrigger } from "#enums/MoveEffectTrigger";
 import { MultiHitType } from "#enums/MultiHitType";
 import { invalidAssistMoves, invalidCopycatMoves, invalidMetronomeMoves, invalidMirrorMoveMoves, invalidSleepTalkMoves } from "./invalid-moves";
 import { SelectBiomePhase } from "#app/phases/select-biome-phase";
+import { MoveAttrMap, MoveAttrString, MoveClass, MoveClassMap } from "#app/@types/move-types";
+import { applyMoveAttrs } from "./apply-attrs";
+import { frenzyMissFunc, getMoveTargets } from "./move-utils";
 
 type MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => boolean;
-type UserMoveConditionFunc = (user: Pokemon, move: Move) => boolean;
+export type UserMoveConditionFunc = (user: Pokemon, move: Move) => boolean;
 
 export default class Move implements Localizable {
   public id: MoveId;
@@ -149,6 +149,16 @@ export default class Move implements Localizable {
   /** The move's {@linkcode MoveFlags} */
   private flags: number = 0;
   private nameAppend: string = "";
+
+  /**
+   * Check if the move is of the given subclass without requiring `instanceof`.
+   * 
+   * @param moveSort - The string name of the move to check against
+   * @returns Whether this move is of the provided type.
+   */
+  public is<K extends keyof MoveClassMap>(moveSort: K): this is MoveClassMap[K] {
+    return false;
+  }
 
   constructor(id: MoveId, type: PokemonType, category: MoveCategory, defaultMoveTarget: MoveTarget, power: number, accuracy: number, pp: number, chance: number, priority: number, generation: number) {
     this.id = id;
@@ -191,8 +201,12 @@ export default class Move implements Localizable {
    * @param attrType any attribute that extends {@linkcode MoveAttr}
    * @returns Array of attributes that match `attrType`, Empty Array if none match.
    */
-  getAttrs<T extends MoveAttr>(attrType: Constructor<T>): T[] {
-    return this.attrs.filter((a): a is T => a instanceof attrType);
+  getAttrs<T extends MoveAttrString>(attrType: T): (MoveAttrMap[T])[] {
+    const targetAttr = MoveAttrs[attrType];
+    if (!targetAttr) {
+      return [];
+    }
+    return this.attrs.filter((a): a is MoveAttrMap[T] => a instanceof targetAttr);
   }
 
   /**
@@ -200,8 +214,13 @@ export default class Move implements Localizable {
    * @param attrType any attribute that extends {@linkcode MoveAttr}
    * @returns true if the move has attribute `attrType`
    */
-  hasAttr<T extends MoveAttr>(attrType: Constructor<T>): boolean {
-    return this.attrs.some((attr) => attr instanceof attrType);
+  hasAttr(attrType: MoveAttrString): boolean {
+    const targetAttr = MoveAttrs[attrType];
+    // Guard against invalid attrType
+    if (!targetAttr) {
+      return false;
+    }
+    return this.attrs.some((attr) => attr instanceof targetAttr);
   }
 
   /**
@@ -771,14 +790,14 @@ export default class Move implements Localizable {
   calculateBattleAccuracy(user: Pokemon, target: Pokemon, simulated: boolean = false) {
     const moveAccuracy = new NumberHolder(this.accuracy);
 
-    applyMoveAttrs(VariableAccuracyAttr, user, target, this, moveAccuracy);
+    applyMoveAttrs("VariableAccuracyAttr", user, target, this, moveAccuracy);
     applyPreDefendAbAttrs(WonderSkinAbAttr, target, user, this, { value: false }, simulated, moveAccuracy);
 
     if (moveAccuracy.value === -1) {
       return moveAccuracy.value;
     }
 
-    const isOhko = this.hasAttr(OneHitKOAccuracyAttr);
+    const isOhko = this.hasAttr("OneHitKOAccuracyAttr");
 
     if (!isOhko) {
       globalScene.applyModifiers(PokemonMoveAccuracyBoosterModifier, user.isPlayer(), user, moveAccuracy);
@@ -818,7 +837,7 @@ export default class Move implements Localizable {
     applyPreAttackAbAttrs(MoveTypeChangeAbAttr, source, target, this, true, typeChangeHolder, typeChangeMovePowerMultiplier);
 
     const sourceTeraType = source.getTeraType();
-    if (source.isTerastallized && sourceTeraType === this.type && power.value < 60 && this.priority <= 0 && !this.hasAttr(MultiHitAttr) && !globalScene.findModifier(m => m instanceof PokemonMultiHitModifier && m.pokemonId === source.id)) {
+    if (source.isTerastallized && sourceTeraType === this.type && power.value < 60 && this.priority <= 0 && !this.hasAttr("MultiHitAttr") && !globalScene.findModifier(m => m instanceof PokemonMultiHitModifier && m.pokemonId === source.id)) {
       power.value = 60;
     }
 
@@ -850,9 +869,9 @@ export default class Move implements Localizable {
       power.value *= typeBoost.boostValue;
     }
 
-    applyMoveAttrs(VariablePowerAttr, source, target, this, power);
+    applyMoveAttrs("VariablePowerAttr", source, target, this, power);
 
-    if (!this.hasAttr(TypelessAttr)) {
+    if (!this.hasAttr("TypelessAttr")) {
       globalScene.arena.applyTags(WeakenMoveTypeTag, simulated, typeChangeHolder.value, power);
       globalScene.applyModifiers(AttackTypeBoosterModifier, source.isPlayer(), source, typeChangeHolder.value, power);
     }
@@ -867,7 +886,7 @@ export default class Move implements Localizable {
   getPriority(user: Pokemon, simulated: boolean = true) {
     const priority = new NumberHolder(this.priority);
 
-    applyMoveAttrs(IncrementMovePriorityAttr, user, null, this, priority);
+    applyMoveAttrs("IncrementMovePriorityAttr", user, null, this, priority);
     applyAbAttrs(ChangeMovePriorityAbAttr, user, null, simulated, this, priority);
 
     return priority.value;
@@ -888,7 +907,7 @@ export default class Move implements Localizable {
     } else if (this.id === MoveId.TRIPLE_KICK) {
       effectivePower = 47.07;
     } else {
-      const multiHitAttr = this.getAttrs(MultiHitAttr)[0];
+      const multiHitAttr = this.getAttrs("MultiHitAttr")[0];
       if (multiHitAttr) {
         effectivePower = multiHitAttr.calculateExpectedHitCount(this) * this.power;
       } else {
@@ -901,10 +920,10 @@ export default class Move implements Localizable {
     // These are intentionally not else-if statements even though there are no
     // pokemon moves that have more than one of these attributes. This allows
     // the function to future proof new moves / custom move behaviors.
-    if (this.hasAttr(DelayedAttackAttr)) {
+    if (this.hasAttr("DelayedAttackAttr")) {
       numTurns += 2;
     }
-    if (this.hasAttr(RechargeAttr)) {
+    if (this.hasAttr("RechargeAttr")) {
       numTurns += 1;
     }
     if (this.isChargingMove()) {
@@ -930,10 +949,10 @@ export default class Move implements Localizable {
     const isMultiTarget = multiple && targets.length > 1;
 
     // ...cannot enhance multi-hit or sacrificial moves
-    const exceptAttrs: Constructor<MoveAttr>[] = [
-      MultiHitAttr,
-      SacrificialAttr,
-      SacrificialAttrOnHit
+    const exceptAttrs: MoveAttrString[] = [
+      "MultiHitAttr",
+      "SacrificialAttr",
+      "SacrificialAttrOnHit"
     ];
 
     // ...and cannot enhance these specific moves
@@ -959,6 +978,9 @@ export default class Move implements Localizable {
 }
 
 export class AttackMove extends Move {
+  override is<K extends keyof MoveClassMap>(moveSort: K): this is MoveClassMap[K] {
+    return moveSort === "AttackMove" || super.is(moveSort);
+  }
   constructor(id: MoveId, type: PokemonType, category: MoveCategory, power: number, accuracy: number, pp: number, chance: number, priority: number, generation: number) {
     super(id, type, category, MoveTarget.NEAR_OTHER, power, accuracy, pp, chance, priority, generation);
 
@@ -988,7 +1010,7 @@ export class AttackMove extends Move {
     const [ thisStat, offStat ]: EffectiveStat[] = this.category === MoveCategory.PHYSICAL ? [ Stat.ATK, Stat.SPATK ] : [ Stat.SPATK, Stat.ATK ];
     const statHolder = new NumberHolder(user.getEffectiveStat(thisStat, target));
     const offStatValue = user.getEffectiveStat(offStat, target);
-    applyMoveAttrs(VariableAtkAttr, user, target, move, statHolder);
+    applyMoveAttrs("VariableAtkAttr", user, target, move, statHolder);
     const statRatio = offStatValue / statHolder.value;
     if (statRatio <= 0.75) {
       attackScore *= 2;
@@ -997,7 +1019,7 @@ export class AttackMove extends Move {
     }
 
     const power = new NumberHolder(this.calculateEffectivePower());
-    applyMoveAttrs(VariablePowerAttr, user, target, move, power);
+    applyMoveAttrs("VariablePowerAttr", user, target, move, power);
 
     attackScore += Math.floor(power.value / 5);
 
@@ -1009,11 +1031,17 @@ export class StatusMove extends Move {
   constructor(id: MoveId, type: PokemonType, accuracy: number, pp: number, chance: number, priority: number, generation: number) {
     super(id, type, MoveCategory.STATUS, MoveTarget.NEAR_OTHER, -1, accuracy, pp, chance, priority, generation);
   }
+  override is<K extends keyof MoveClassMap>(moveSort: K): this is MoveClassMap[K] {
+    return moveSort === "StatusMove" || super.is(moveSort);
+  }
 }
 
 export class SelfStatusMove extends Move {
   constructor(id: MoveId, type: PokemonType, accuracy: number, pp: number, chance: number, priority: number, generation: number) {
     super(id, type, MoveCategory.STATUS, MoveTarget.USER, -1, accuracy, pp, chance, priority, generation);
+  }
+  override is<K extends keyof MoveClassMap>(moveSort: K): this is MoveClassMap[K] {
+    return moveSort === "SelfStatusMove" || super.is(moveSort);
   }
 }
 
@@ -1063,8 +1091,12 @@ function ChargeMove<TBase extends SubMove>(Base: TBase) {
      * @returns Array of attributes that match `attrType`, or an empty array if
      * no matches are found.
      */
-    getChargeAttrs<T extends MoveAttr>(attrType: Constructor<T>): T[] {
-      return this.chargeAttrs.filter((attr): attr is T => attr instanceof attrType);
+    getChargeAttrs<T extends MoveAttrString>(attrType: T): (MoveAttrMap[T])[] {
+      const targetAttr = MoveAttrs[attrType];
+      if (!targetAttr) {
+        return [];
+      }
+      return this.chargeAttrs.filter((attr): attr is MoveAttrMap[T] => attr instanceof targetAttr);
     }
 
     /**
@@ -1072,8 +1104,12 @@ function ChargeMove<TBase extends SubMove>(Base: TBase) {
      * @param attrType any attribute that extends {@linkcode MoveAttr}
      * @returns `true` if a matching attribute is found; `false` otherwise
      */
-    hasChargeAttr<T extends MoveAttr>(attrType: Constructor<T>): boolean {
-      return this.chargeAttrs.some((attr) => attr instanceof attrType);
+    hasChargeAttr<T extends MoveAttrString>(attrType: T): boolean {
+      const targetAttr = MoveAttrs[attrType];
+      if (!targetAttr) {
+        return false;
+      }
+      return this.chargeAttrs.some((attr) => attr instanceof targetAttr);
     }
 
     /**
@@ -1096,6 +1132,7 @@ export class ChargingSelfStatusMove extends ChargeMove(SelfStatusMove) {}
 
 export type ChargingMove = ChargingAttackMove | ChargingSelfStatusMove;
 
+
 /**
  * Base class defining all {@linkcode Move} Attributes
  * @abstract
@@ -1104,6 +1141,22 @@ export type ChargingMove = ChargingAttackMove | ChargingSelfStatusMove;
 export abstract class MoveAttr {
   /** Should this {@linkcode Move} target the user? */
   public selfTarget: boolean;
+
+  /**
+   * Returns whether this attribute is of the given type.
+   * 
+   * @remarks
+   * Used to avoid requring the caller to have imported the specific attribute type, avoiding circular dependencies.
+   * @param attr - The attribute to check against
+   * @returns Whether the attribute is an instanceof the given type.
+   */
+  public is<T extends MoveAttrString>(attr: T): this is MoveAttrConstructorMap[MoveAttrString] {
+    const targetAttr = MoveAttrs[attr];
+    if (!targetAttr) {
+      return false;
+    }
+    return this instanceof targetAttr;
+  }
 
   constructor(selfTarget: boolean = false) {
     this.selfTarget = selfTarget;
@@ -1271,7 +1324,7 @@ export class MoveEffectAttr extends MoveAttr {
 
     applyAbAttrs(MoveEffectChanceMultiplierAbAttr, user, null, !showAbility, moveChance, move);
 
-    if ((!move.hasAttr(FlinchAttr) || moveChance.value <= move.chance) && !move.hasAttr(SecretPowerAttr)) {
+    if ((!move.hasAttr("FlinchAttr") || moveChance.value <= move.chance) && !move.hasAttr("SecretPowerAttr")) {
       const userSide = user.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
       globalScene.arena.applyTagsForSide(ArenaTagType.WATER_FIRE_PLEDGE, userSide, false, moveChance);
     }
@@ -2334,7 +2387,7 @@ export class MultiHitAttr extends MoveAttr {
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     const hitType = new NumberHolder(this.intrinsicMultiHitType);
-    applyMoveAttrs(ChangeMultiHitTypeAttr, user, target, move, hitType);
+    applyMoveAttrs("ChangeMultiHitTypeAttr", user, target, move, hitType);
     this.multiHitType = hitType.value;
 
     (args[0] as NumberHolder).value = this.getHitCount(user, target);
@@ -3117,7 +3170,7 @@ export class AwaitCombinedPledgeAttr extends OverrideMoveEffectAttr {
     const allyMovePhase = globalScene.phaseManager.findPhase<MovePhase>((phase) => phase.is("MovePhase") && phase.pokemon.isPlayer() === user.isPlayer());
     if (allyMovePhase) {
       const allyMove = allyMovePhase.move.getMove();
-      if (allyMove !== move && allyMove.hasAttr(AwaitCombinedPledgeAttr)) {
+      if (allyMove !== move && allyMove.hasAttr("AwaitCombinedPledgeAttr")) {
         [ user, allyMovePhase.pokemon ].forEach((p) => p.turnData.combiningPledge = move.id);
 
         // "{userPokemonName} is waiting for {allyPokemonName}'s move..."
@@ -3238,22 +3291,22 @@ export class StatStageChangeAttr extends MoveEffectAttr {
       switch (stat) {
         case Stat.ATK:
           if (this.selfTarget) {
-            noEffect = !user.getMoveset().find(m => m instanceof AttackMove && m.category === MoveCategory.PHYSICAL);
+            noEffect = !user.getMoveset().find(m => {const mv = m.getMove(); return mv.is("AttackMove") && mv.category === MoveCategory.PHYSICAL;} );
           }
           break;
         case Stat.DEF:
           if (!this.selfTarget) {
-            noEffect = !user.getMoveset().find(m => m instanceof AttackMove && m.category === MoveCategory.PHYSICAL);
+            noEffect = !user.getMoveset().find(m => {const mv = m.getMove(); return mv.is("AttackMove") && mv.category === MoveCategory.PHYSICAL;} );
           }
           break;
         case Stat.SPATK:
           if (this.selfTarget) {
-            noEffect = !user.getMoveset().find(m => m instanceof AttackMove && m.category === MoveCategory.SPECIAL);
+            noEffect = !user.getMoveset().find(m => {const mv = m.getMove(); return mv.is("AttackMove") && mv.category === MoveCategory.PHYSICAL;} );
           }
           break;
         case Stat.SPDEF:
           if (!this.selfTarget) {
-            noEffect = !user.getMoveset().find(m => m instanceof AttackMove && m.category === MoveCategory.SPECIAL);
+            noEffect = !user.getMoveset().find(m => {const mv = m.getMove(); return mv.is("AttackMove") && mv.category === MoveCategory.PHYSICAL;} );
           }
           break;
       }
@@ -5413,22 +5466,13 @@ export class FrenzyAttr extends MoveEffectAttr {
       new Array(turnCount).fill(null).map(() => user.getMoveQueue().push({ move: move.id, targets: [ target.getBattlerIndex() ], ignorePP: true }));
       user.addTag(BattlerTagType.FRENZY, turnCount, move.id, user.id);
     } else {
-      applyMoveAttrs(AddBattlerTagAttr, user, target, move, args);
+      applyMoveAttrs("AddBattlerTagAttr", user, target, move, args);
       user.lapseTag(BattlerTagType.FRENZY); // if FRENZY is already in effect (moveQueue.length > 0), lapse the tag
     }
 
     return true;
   }
 }
-
-export const frenzyMissFunc: UserMoveConditionFunc = (user: Pokemon, move: Move) => {
-  while (user.getMoveQueue().length && user.getMoveQueue()[0].move === move.id) {
-    user.getMoveQueue().shift();
-  }
-  user.removeTag(BattlerTagType.FRENZY); // FRENZY tag should be disrupted on miss/no effect
-
-  return true;
-};
 
 /**
  * Attribute that grants {@link https://bulbapedia.bulbagarden.net/wiki/Semi-invulnerable_turn | semi-invulnerability} to the user during
@@ -5784,7 +5828,7 @@ export class ProtectAttr extends AddBattlerTagAttr {
 
       while (moveHistory.length) {
         turnMove = moveHistory.shift();
-        if (!allMoves[turnMove?.move ?? MoveId.NONE].hasAttr(ProtectAttr) || turnMove?.result !== MoveResult.SUCCESS) {
+        if (!allMoves[turnMove?.move ?? MoveId.NONE].hasAttr("ProtectAttr") || turnMove?.result !== MoveResult.SUCCESS) {
           break;
         }
         timesUsed++;
@@ -5915,7 +5959,7 @@ export class AddArenaTagAttr extends MoveEffectAttr {
     }
 
     if ((move.chance < 0 || move.chance === 100 || user.randBattleSeedInt(100) < move.chance) && user.getLastXMoves(1)[0]?.result === MoveResult.SUCCESS) {
-      const side = ((this.selfSideTarget ? user : target).isPlayer() !== (move.hasAttr(AddArenaTrapTagAttr) && target === user)) ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
+      const side = ((this.selfSideTarget ? user : target).isPlayer() !== (move.hasAttr("AddArenaTrapTagAttr") && target === user)) ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
       globalScene.arena.addTag(this.tagType, this.turnCount, move.id, user.id, side);
       return true;
     }
@@ -6379,7 +6423,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
     return (user, target, move) => {
       const switchOutTarget = (this.selfSwitch ? user : target);
       const player = switchOutTarget.isPlayer();
-      const forceSwitchAttr = move.getAttrs(ForceSwitchOutAttr).find(attr => attr.switchType === SwitchType.FORCE_SWITCH);
+      const forceSwitchAttr = move.getAttrs("ForceSwitchOutAttr").find(attr => attr.switchType === SwitchType.FORCE_SWITCH);
 
       if (!this.selfSwitch) {
         if (move.hitsSubstitute(user, target)) {
@@ -7948,58 +7992,6 @@ const attackedByItemMessageFunc = (user: Pokemon, target: Pokemon, move: Move) =
   return message;
 };
 
-export type MoveAttrFilter = (attr: MoveAttr) => boolean;
-
-function applyMoveAttrsInternal(
-  attrFilter: MoveAttrFilter,
-  user: Pokemon | null,
-  target: Pokemon | null,
-  move: Move,
-  args: any[],
-): void {
-  move.attrs.filter((attr) => attrFilter(attr)).forEach((attr) => attr.apply(user, target, move, args));
-}
-
-function applyMoveChargeAttrsInternal(
-  attrFilter: MoveAttrFilter,
-  user: Pokemon | null,
-  target: Pokemon | null,
-  move: ChargingMove,
-  args: any[],
-): void {
-  move.chargeAttrs.filter((attr) => attrFilter(attr)).forEach((attr) => attr.apply(user, target, move, args));
-}
-
-export function applyMoveAttrs(
-  attrType: Constructor<MoveAttr>,
-  user: Pokemon | null,
-  target: Pokemon | null,
-  move: Move,
-  ...args: any[]
-): void {
-  applyMoveAttrsInternal((attr: MoveAttr) => attr instanceof attrType, user, target, move, args);
-}
-
-export function applyFilteredMoveAttrs(
-  attrFilter: MoveAttrFilter,
-  user: Pokemon,
-  target: Pokemon | null,
-  move: Move,
-  ...args: any[]
-): void {
-  applyMoveAttrsInternal(attrFilter, user, target, move, args);
-}
-
-export function applyMoveChargeAttrs(
-  attrType: Constructor<MoveAttr>,
-  user: Pokemon | null,
-  target: Pokemon | null,
-  move: ChargingMove,
-  ...args: any[]
-): void {
-  applyMoveChargeAttrsInternal((attr: MoveAttr) => attr instanceof attrType, user, target, move, args);
-}
-
 export class MoveCondition {
   protected func: MoveConditionFunc;
 
@@ -8178,73 +8170,231 @@ export type MoveTargetSet = {
   multiple: boolean;
 };
 
-export function getMoveTargets(user: Pokemon, move: MoveId, replaceTarget?: MoveTarget): MoveTargetSet {
-  const variableTarget = new NumberHolder(0);
-  user.getOpponents(false).forEach(p => applyMoveAttrs(VariableTargetAttr, user, p, allMoves[move], variableTarget));
-
-  let moveTarget: MoveTarget | undefined;
-  if (allMoves[move].hasAttr(VariableTargetAttr)) {
-    moveTarget = variableTarget.value;
-  } else if (replaceTarget !== undefined) {
-    moveTarget = replaceTarget;
-  } else if (move) {
-    moveTarget = allMoves[move].moveTarget;
-  } else if (move === undefined) {
-    moveTarget = MoveTarget.NEAR_ENEMY;
-  }
-  const opponents = user.getOpponents(false);
-
-  let set: Pokemon[] = [];
-  let multiple = false;
-  const ally: Pokemon | undefined = user.getAlly();
-
-  switch (moveTarget) {
-    case MoveTarget.USER:
-    case MoveTarget.PARTY:
-      set = [ user ];
-      break;
-    case MoveTarget.NEAR_OTHER:
-    case MoveTarget.OTHER:
-    case MoveTarget.ALL_NEAR_OTHERS:
-    case MoveTarget.ALL_OTHERS:
-      set = !isNullOrUndefined(ally) ? (opponents.concat([ ally ])) : opponents;
-      multiple = moveTarget === MoveTarget.ALL_NEAR_OTHERS || moveTarget === MoveTarget.ALL_OTHERS;
-      break;
-    case MoveTarget.NEAR_ENEMY:
-    case MoveTarget.ALL_NEAR_ENEMIES:
-    case MoveTarget.ALL_ENEMIES:
-    case MoveTarget.ENEMY_SIDE:
-      set = opponents;
-      multiple = moveTarget !== MoveTarget.NEAR_ENEMY;
-      break;
-    case MoveTarget.RANDOM_NEAR_ENEMY:
-      set = [ opponents[user.randBattleSeedInt(opponents.length)] ];
-      break;
-    case MoveTarget.ATTACKER:
-      return { targets: [ -1 as BattlerIndex ], multiple: false };
-    case MoveTarget.NEAR_ALLY:
-    case MoveTarget.ALLY:
-      set = !isNullOrUndefined(ally) ? [ ally ] : [];
-      break;
-    case MoveTarget.USER_OR_NEAR_ALLY:
-    case MoveTarget.USER_AND_ALLIES:
-    case MoveTarget.USER_SIDE:
-      set = !isNullOrUndefined(ally) ? [ user, ally ] : [ user ];
-      multiple = moveTarget !== MoveTarget.USER_OR_NEAR_ALLY;
-      break;
-    case MoveTarget.ALL:
-    case MoveTarget.BOTH_SIDES:
-      set = (!isNullOrUndefined(ally) ? [ user, ally ] : [ user ]).concat(opponents);
-      multiple = true;
-      break;
-    case MoveTarget.CURSE:
-      const extraTargets = !isNullOrUndefined(ally) ? [ ally ] : [];
-      set = user.getTypes(true).includes(PokemonType.GHOST) ? (opponents.concat(extraTargets)) : [ user ];
-      break;
-  }
-
-  return { targets: set.filter(p => p?.isActive(true)).map(p => p.getBattlerIndex()).filter(t => t !== undefined), multiple };
-}
+/**
+ * Map of Move attributes to their respective classes. Used for instanceof checks.
+ */
+const MoveAttrs = Object.freeze({
+  MoveEffectAttr,
+  MoveHeaderAttr,
+  MessageHeaderAttr,
+  AddBattlerTagAttr,
+  AddBattlerTagHeaderAttr,
+  BeakBlastHeaderAttr,
+  PreMoveMessageAttr,
+  PreUseInterruptAttr,
+  RespectAttackTypeImmunityAttr,
+  IgnoreOpponentStatStagesAttr,
+  HighCritAttr,
+  CritOnlyAttr,
+  FixedDamageAttr,
+  UserHpDamageAttr,
+  TargetHalfHpDamageAttr,
+  MatchHpAttr,
+  CounterDamageAttr,
+  LevelDamageAttr,
+  RandomLevelDamageAttr,
+  ModifiedDamageAttr,
+  SurviveDamageAttr,
+  SplashAttr,
+  CelebrateAttr,
+  RecoilAttr,
+  SacrificialAttr,
+  SacrificialAttrOnHit,
+  HalfSacrificialAttr,
+  AddSubstituteAttr,
+  HealAttr,
+  PartyStatusCureAttr,
+  FlameBurstAttr,
+  SacrificialFullRestoreAttr,
+  IgnoreWeatherTypeDebuffAttr,
+  WeatherHealAttr,
+  PlantHealAttr,
+  SandHealAttr,
+  BoostHealAttr,
+  HealOnAllyAttr,
+  HitHealAttr,
+  IncrementMovePriorityAttr,
+  MultiHitAttr,
+  ChangeMultiHitTypeAttr,
+  WaterShurikenMultiHitTypeAttr,
+  StatusEffectAttr,
+  MultiStatusEffectAttr,
+  PsychoShiftEffectAttr,
+  StealHeldItemChanceAttr,
+  RemoveHeldItemAttr,
+  EatBerryAttr,
+  StealEatBerryAttr,
+  HealStatusEffectAttr,
+  BypassSleepAttr,
+  BypassBurnDamageReductionAttr,
+  WeatherChangeAttr,
+  ClearWeatherAttr,
+  TerrainChangeAttr,
+  ClearTerrainAttr,
+  OneHitKOAttr,
+  InstantChargeAttr,
+  WeatherInstantChargeAttr,
+  OverrideMoveEffectAttr,
+  DelayedAttackAttr,
+  AwaitCombinedPledgeAttr,
+  StatStageChangeAttr,
+  SecretPowerAttr,
+  PostVictoryStatStageChangeAttr,
+  AcupressureStatStageChangeAttr,
+  GrowthStatStageChangeAttr,
+  CutHpStatStageBoostAttr,
+  OrderUpStatBoostAttr,
+  CopyStatsAttr,
+  InvertStatsAttr,
+  ResetStatsAttr,
+  SwapStatStagesAttr,
+  HpSplitAttr,
+  VariablePowerAttr,
+  LessPPMorePowerAttr,
+  MovePowerMultiplierAttr,
+  BeatUpAttr,
+  DoublePowerChanceAttr,
+  ConsecutiveUsePowerMultiplierAttr,
+  ConsecutiveUseDoublePowerAttr,
+  ConsecutiveUseMultiBasePowerAttr,
+  WeightPowerAttr,
+  ElectroBallPowerAttr,
+  GyroBallPowerAttr,
+  LowHpPowerAttr,
+  CompareWeightPowerAttr,
+  HpPowerAttr,
+  OpponentHighHpPowerAttr,
+  FirstAttackDoublePowerAttr,
+  TurnDamagedDoublePowerAttr,
+  MagnitudePowerAttr,
+  AntiSunlightPowerDecreaseAttr,
+  FriendshipPowerAttr,
+  RageFistPowerAttr,
+  PositiveStatStagePowerAttr,
+  PunishmentPowerAttr,
+  PresentPowerAttr,
+  WaterShurikenPowerAttr,
+  SpitUpPowerAttr,
+  SwallowHealAttr,
+  MultiHitPowerIncrementAttr,
+  LastMoveDoublePowerAttr,
+  CombinedPledgePowerAttr,
+  CombinedPledgeStabBoostAttr,
+  RoundPowerAttr,
+  CueNextRoundAttr,
+  StatChangeBeforeDmgCalcAttr,
+  SpectralThiefAttr,
+  VariableAtkAttr,
+  TargetAtkUserAtkAttr,
+  DefAtkAttr,
+  VariableDefAttr,
+  DefDefAttr,
+  VariableAccuracyAttr,
+  ThunderAccuracyAttr,
+  StormAccuracyAttr,
+  AlwaysHitMinimizeAttr,
+  ToxicAccuracyAttr,
+  BlizzardAccuracyAttr,
+  VariableMoveCategoryAttr,
+  PhotonGeyserCategoryAttr,
+  TeraMoveCategoryAttr,
+  TeraBlastPowerAttr,
+  StatusCategoryOnAllyAttr,
+  ShellSideArmCategoryAttr,
+  VariableMoveTypeAttr,
+  FormChangeItemTypeAttr,
+  TechnoBlastTypeAttr,
+  AuraWheelTypeAttr,
+  RagingBullTypeAttr,
+  IvyCudgelTypeAttr,
+  WeatherBallTypeAttr,
+  TerrainPulseTypeAttr,
+  HiddenPowerTypeAttr,
+  TeraBlastTypeAttr,
+  TeraStarstormTypeAttr,
+  MatchUserTypeAttr,
+  CombinedPledgeTypeAttr,
+  VariableMoveTypeMultiplierAttr,
+  NeutralDamageAgainstFlyingTypeMultiplierAttr,
+  IceNoEffectTypeAttr,
+  FlyingTypeMultiplierAttr,
+  VariableMoveTypeChartAttr,
+  FreezeDryAttr,
+  OneHitKOAccuracyAttr,
+  SheerColdAccuracyAttr,
+  MissEffectAttr,
+  NoEffectAttr,
+  TypelessAttr,
+  BypassRedirectAttr,
+  FrenzyAttr,
+  SemiInvulnerableAttr,
+  LeechSeedAttr,
+  FallDownAttr,
+  GulpMissileTagAttr,
+  JawLockAttr,
+  CurseAttr,
+  LapseBattlerTagAttr,
+  RemoveBattlerTagAttr,
+  FlinchAttr,
+  ConfuseAttr,
+  RechargeAttr,
+  TrapAttr,
+  ProtectAttr,
+  IgnoreAccuracyAttr,
+  FaintCountdownAttr,
+  RemoveAllSubstitutesAttr,
+  HitsTagAttr,
+  HitsTagForDoubleDamageAttr,
+  AddArenaTagAttr,
+  RemoveArenaTagsAttr,
+  AddArenaTrapTagAttr,
+  AddArenaTrapTagHitAttr,
+  RemoveArenaTrapAttr,
+  RemoveScreensAttr,
+  SwapArenaTagsAttr,
+  AddPledgeEffectAttr,
+  RevivalBlessingAttr,
+  ForceSwitchOutAttr,
+  ChillyReceptionAttr,
+  RemoveTypeAttr,
+  CopyTypeAttr,
+  CopyBiomeTypeAttr,
+  ChangeTypeAttr,
+  AddTypeAttr,
+  FirstMoveTypeAttr,
+  CallMoveAttr,
+  RandomMoveAttr,
+  RandomMovesetMoveAttr,
+  NaturePowerAttr,
+  CopyMoveAttr,
+  RepeatMoveAttr,
+  ReducePpMoveAttr,
+  AttackReducePpMoveAttr,
+  MovesetCopyMoveAttr,
+  SketchAttr,
+  AbilityChangeAttr,
+  AbilityCopyAttr,
+  AbilityGiveAttr,
+  SwitchAbilitiesAttr,
+  SuppressAbilitiesAttr,
+  TransformAttr,
+  SwapStatAttr,
+  ShiftStatAttr,
+  AverageStatsAttr,
+  MoneyAttr,
+  DestinyBondAttr,
+  AddBattlerTagIfBoostedAttr,
+  StatusIfBoostedAttr,
+  LastResortAttr,
+  VariableTargetAttr,
+  AfterYouAttr,
+  ForceLastAttr,
+  HitsSameTypeAttr,
+  ResistLastMoveTypeAttr,
+  ExposedMoveAttr,
+});
+/** Map of names  */
+export type MoveAttrConstructorMap = typeof MoveAttrs;
 
 export const selfStatLowerMoves: MoveId[] = [];
 
@@ -11258,7 +11408,7 @@ export function initMoves() {
       .attr(StatusEffectAttr, StatusEffect.TOXIC)
   );
   allMoves.map(m => {
-    if (m.getAttrs(StatStageChangeAttr).some(a => a.selfTarget && a.stages < 0)) {
+    if (m.getAttrs("StatStageChangeAttr").some(a => a.selfTarget && a.stages < 0)) {
       selfStatLowerMoves.push(m.id);
     }
   });
