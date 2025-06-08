@@ -1027,7 +1027,7 @@ export function isPokemonValidForEncounterOptionSelection(
  * @param flagAcceptAbility
  */
 
-export function applyAbilityOverrideToPokemon(pokemon: Pokemon, ability: Abilities, flagAcceptAbility: boolean) {
+export function applyAbilityOverrideToPokemon(pokemon: Pokemon, ability: AbilityId, flagAcceptAbility: boolean) {
   const isFusion = pokemon.isFusion();
   const data = isFusion
     ? (pokemon.fusionCustomPokemonData ??= new CustomPokemonData())

@@ -467,7 +467,7 @@ function displayYesNoOptions(resolve) {
   globalScene.ui.setModeWithoutClear(UiMode.OPTION_SELECT, config, null, true);
 }
 
-function handleRepeatedAbility(resolve, pokemon: PlayerPokemon, ability: Abilities) {
+function handleRepeatedAbility(resolve, pokemon: PlayerPokemon, ability: AbilityId) {
   showEncounterText(`${namespace}:option.1.repeated_ability`);
   const fullOptions = [
     {
