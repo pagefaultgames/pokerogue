@@ -1004,8 +1004,8 @@ export function handleMysteryEncounterBattleStartEffects() {
       } else {
         source = globalScene.getEnemyField()[0];
       }
-      // @ts-ignore: source cannot be undefined
       globalScene.phaseManager.pushPhase(
+        // @ts-ignore: source cannot be undefined
         new MovePhase(source, effect.targets, effect.move, effect.followUp, effect.ignorePp),
       );
     });
