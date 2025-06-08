@@ -1,4 +1,3 @@
-
 export enum BattlerIndex {
   ATTACKER = -1,
   PLAYER,

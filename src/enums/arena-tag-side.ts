@@ -1,4 +1,3 @@
-
 export enum ArenaTagSide {
   BOTH,
   PLAYER,

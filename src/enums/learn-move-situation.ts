@@ -1,4 +1,3 @@
-
 export enum LearnMoveSituation {
   MISC,
   LEVEL_UP,
