@@ -1,4 +1,4 @@
-import { HitResult, MoveResult, PlayerPokemon } from "#app/field/pokemon";
+import { HitResult, MoveResult } from "#app/field/pokemon";
 import {
   BooleanHolder,
   NumberHolder,
@@ -632,7 +632,9 @@ class TypeImmunityStatStageChangeAbAttr extends TypeImmunityAbAttr {
     super.applyPreDefend(pokemon, passive, simulated, attacker, move, cancelled, args);
     cancelled.value = true; // Suppresses "No Effect" message
     if (!simulated) {
-      globalScene.phaseManager.unshiftPhase(new StatStageChangePhase(pokemon.getBattlerIndex(), true, [this.stat], this.stages));
+      globalScene.phaseManager.unshiftPhase(
+        new StatStageChangePhase(pokemon.getBattlerIndex(), true, [this.stat], this.stages),
+      );
     }
   }
 }
@@ -958,7 +960,9 @@ export class MoveImmunityStatStageChangeAbAttr extends MoveImmunityAbAttr {
     args: any[],
   ): void {
     super.applyPreDefend(pokemon, passive, simulated, attacker, move, cancelled, args);
-    globalScene.phaseManager.unshiftPhase(new StatStageChangePhase(pokemon.getBattlerIndex(), true, [this.stat], this.stages));
+    globalScene.phaseManager.unshiftPhase(
+      new StatStageChangePhase(pokemon.getBattlerIndex(), true, [this.stat], this.stages),
+    );
   }
 }
 /**
@@ -1059,7 +1063,9 @@ export class PostDefendStatStageChangeAbAttr extends PostDefendAbAttr {
       const ally = pokemon.getAlly();
       const otherPokemon = !isNullOrUndefined(ally) ? pokemon.getOpponents().concat([ally]) : pokemon.getOpponents();
       for (const other of otherPokemon) {
-        globalScene.phaseManager.unshiftPhase(new StatStageChangePhase(other.getBattlerIndex(), false, [this.stat], this.stages));
+        globalScene.phaseManager.unshiftPhase(
+          new StatStageChangePhase(other.getBattlerIndex(), false, [this.stat], this.stages),
+        );
       }
     } else {
       globalScene.phaseManager.unshiftPhase(
@@ -1444,7 +1450,9 @@ export class PostDefendCritStatStageChangeAbAttr extends PostDefendAbAttr {
     _args: any[],
   ): void {
     if (!simulated) {
-      globalScene.phaseManager.unshiftPhase(new StatStageChangePhase(pokemon.getBattlerIndex(), true, [this.stat], this.stages));
+      globalScene.phaseManager.unshiftPhase(
+        new StatStageChangePhase(pokemon.getBattlerIndex(), true, [this.stat], this.stages),
+      );
     }
   }
 
@@ -2920,7 +2928,9 @@ class PostVictoryStatStageChangeAbAttr extends PostVictoryAbAttr {
   override applyPostVictory(pokemon: Pokemon, _passive: boolean, simulated: boolean, _args: any[]): void {
     const stat = typeof this.stat === "function" ? this.stat(pokemon) : this.stat;
     if (!simulated) {
-      globalScene.phaseManager.unshiftPhase(new StatStageChangePhase(pokemon.getBattlerIndex(), true, [stat], this.stages));
+      globalScene.phaseManager.unshiftPhase(
+        new StatStageChangePhase(pokemon.getBattlerIndex(), true, [stat], this.stages),
+      );
     }
   }
 }
@@ -2986,7 +2996,9 @@ export class PostKnockOutStatStageChangeAbAttr extends PostKnockOutAbAttr {
   ): void {
     const stat = typeof this.stat === "function" ? this.stat(pokemon) : this.stat;
     if (!simulated) {
-      globalScene.phaseManager.unshiftPhase(new StatStageChangePhase(pokemon.getBattlerIndex(), true, [stat], this.stages));
+      globalScene.phaseManager.unshiftPhase(
+        new StatStageChangePhase(pokemon.getBattlerIndex(), true, [stat], this.stages),
+      );
     }
   }
 }
@@ -3100,7 +3112,9 @@ export class PostIntimidateStatStageChangeAbAttr extends AbAttr {
     _args: any[],
   ): void {
     if (!simulated) {
-      globalScene.phaseManager.pushPhase(new StatStageChangePhase(pokemon.getBattlerIndex(), false, this.stats, this.stages));
+      globalScene.phaseManager.pushPhase(
+        new StatStageChangePhase(pokemon.getBattlerIndex(), false, this.stats, this.stages),
+      );
     }
     cancelled.value = this.overwrites;
   }
@@ -3301,7 +3315,9 @@ export class PostSummonStatStageChangeAbAttr extends PostSummonAbAttr {
     if (this.selfTarget) {
       // we unshift the StatStageChangePhase to put it right after the showAbility and not at the end of the
       // phase list (which could be after CommandPhase for example)
-      globalScene.phaseManager.unshiftPhase(new StatStageChangePhase(pokemon.getBattlerIndex(), true, this.stats, this.stages));
+      globalScene.phaseManager.unshiftPhase(
+        new StatStageChangePhase(pokemon.getBattlerIndex(), true, this.stats, this.stages),
+      );
     } else {
       for (const opponent of pokemon.getOpponents()) {
         const cancelled = new BooleanHolder(false);
@@ -3618,7 +3634,9 @@ export class PostSummonUserFieldRemoveStatusEffectAbAttr extends PostSummonAbAtt
     if (!simulated) {
       for (const pokemon of allowedParty) {
         if (pokemon.status && this.statusEffect.includes(pokemon.status.effect)) {
-          globalScene.phaseManager.queueMessage(getStatusEffectHealText(pokemon.status.effect, getPokemonNameWithAffix(pokemon)));
+          globalScene.phaseManager.queueMessage(
+            getStatusEffectHealText(pokemon.status.effect, getPokemonNameWithAffix(pokemon)),
+          );
           pokemon.resetStatus(false);
           pokemon.updateInfo();
         }
@@ -3708,7 +3726,9 @@ export class PostSummonTransformAbAttr extends PostSummonAbAttr {
   override applyPostSummon(pokemon: Pokemon, _passive: boolean, _simulated: boolean, _args: any[]): void {
     const target = this.getTarget(pokemon.getOpponents());
 
-    globalScene.phaseManager.unshiftPhase(new PokemonTransformPhase(pokemon.getBattlerIndex(), target.getBattlerIndex(), true));
+    globalScene.phaseManager.unshiftPhase(
+      new PokemonTransformPhase(pokemon.getBattlerIndex(), target.getBattlerIndex(), true),
+    );
   }
 }
 
@@ -5573,11 +5593,15 @@ export class MoodyAbAttr extends PostTurnAbAttr {
       if (canRaise.length > 0) {
         const raisedStat = canRaise[pokemon.randBattleSeedInt(canRaise.length)];
         canLower = canRaise.filter(s => s !== raisedStat);
-        globalScene.phaseManager.unshiftPhase(new StatStageChangePhase(pokemon.getBattlerIndex(), true, [raisedStat], 2));
+        globalScene.phaseManager.unshiftPhase(
+          new StatStageChangePhase(pokemon.getBattlerIndex(), true, [raisedStat], 2),
+        );
       }
       if (canLower.length > 0) {
         const loweredStat = canLower[pokemon.randBattleSeedInt(canLower.length)];
-        globalScene.phaseManager.unshiftPhase(new StatStageChangePhase(pokemon.getBattlerIndex(), true, [loweredStat], -1));
+        globalScene.phaseManager.unshiftPhase(
+          new StatStageChangePhase(pokemon.getBattlerIndex(), true, [loweredStat], -1),
+        );
       }
     }
   }
@@ -6478,7 +6502,9 @@ export class FlinchStatStageChangeAbAttr extends FlinchEffectAbAttr {
     _args: any[],
   ): void {
     if (!simulated) {
-      globalScene.phaseManager.unshiftPhase(new StatStageChangePhase(pokemon.getBattlerIndex(), true, this.stats, this.stages));
+      globalScene.phaseManager.unshiftPhase(
+        new StatStageChangePhase(pokemon.getBattlerIndex(), true, this.stats, this.stages),
+      );
     }
   }
 }
