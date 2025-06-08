@@ -5580,10 +5580,12 @@ export class FallDownAttr extends AddBattlerTagAttr {
    * @returns `true` if the effect successfully applies; `false` otherwise
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (!target.isGrounded()) {
+    // Smack down and similar only add their tag if the pokemon is already ungrounded without considering semi-invulnerability
+    if (!target.isGrounded(true)) {
       globalScene.queueMessage(i18next.t("moveTriggers:fallDown", { targetPokemonName: getPokemonNameWithAffix(target) }));
+      return super.apply(user, target, move, args);
     }
-    return super.apply(user, target, move, args);
+    return false;
   }
 }
 

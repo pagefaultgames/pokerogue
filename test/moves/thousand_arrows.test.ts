@@ -1,12 +1,12 @@
-import { AbilityId } from "#enums/ability-id";
+import { BattlerIndex } from "#app/battle";
+import { AbilityId } from "#app/enums/ability-id";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
-import { BerryPhase } from "#app/phases/berry-phase";
-import { MoveEffectPhase } from "#app/phases/move-effect-phase";
+import type { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Moves - Thousand Arrows", () => {
   let phaserGame: Phaser.Game;
@@ -24,66 +24,103 @@ describe("Moves - Thousand Arrows", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("single");
-    game.override.enemySpecies(SpeciesId.TOGETIC);
-    game.override.startingLevel(100);
-    game.override.enemyLevel(100);
-    game.override.moveset([MoveId.THOUSAND_ARROWS]);
-    game.override.enemyMoveset([MoveId.SPLASH, MoveId.SPLASH, MoveId.SPLASH, MoveId.SPLASH]);
+    game.override
+      .battleStyle("single")
+      .enemySpecies(SpeciesId.SHUCKLE)
+      .startingLevel(100)
+      .enemyLevel(100)
+      .ability(AbilityId.COMPOUND_EYES)
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .moveset(MoveId.THOUSAND_ARROWS)
+      .enemyMoveset(MoveId.SPLASH);
   });
 
-  it("move should hit and ground Flying-type targets", async () => {
+  it("should hit and ground Flying-type targets, dealing neutral damage", async () => {
+    game.override.enemySpecies(SpeciesId.ARCHEOPS);
     await game.classicMode.startBattle([SpeciesId.ILLUMISE]);
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
+    const shuckle = game.scene.getEnemyPokemon()!;
+    expect(shuckle.getTag(BattlerTagType.IGNORE_FLYING)).toBeUndefined();
 
     game.move.select(MoveId.THOUSAND_ARROWS);
+    await game.phaseInterceptor.to("MoveEffectPhase", false);
+    const hitSpy = vi.spyOn(game.scene.getCurrentPhase() as MoveEffectPhase, "hitCheck");
 
-    await game.phaseInterceptor.to(MoveEffectPhase, false);
-    // Enemy should not be grounded before move effect is applied
-    expect(enemyPokemon.getTag(BattlerTagType.IGNORE_FLYING)).toBeUndefined();
+    await game.toEndOfTurn();
 
-    await game.phaseInterceptor.to(BerryPhase, false);
-
-    expect(enemyPokemon.getTag(BattlerTagType.IGNORE_FLYING)).toBeDefined();
-    expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
+    expect(hitSpy).toHaveReturnedWith([expect.anything(), 1]);
+    expect(shuckle.getTag(BattlerTagType.IGNORE_FLYING)).toBeDefined();
+    expect(shuckle.hp).toBeLessThan(shuckle.getMaxHp());
   });
 
-  it("move should hit and ground targets with Levitate", async () => {
-    game.override.enemySpecies(SpeciesId.SNORLAX);
+  it("should hit and ground targets with Levitate", async () => {
     game.override.enemyAbility(AbilityId.LEVITATE);
-
     await game.classicMode.startBattle([SpeciesId.ILLUMISE]);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
-
-    game.move.select(MoveId.THOUSAND_ARROWS);
-
-    await game.phaseInterceptor.to(MoveEffectPhase, false);
-    // Enemy should not be grounded before move effect is applied
     expect(enemyPokemon.getTag(BattlerTagType.IGNORE_FLYING)).toBeUndefined();
 
-    await game.phaseInterceptor.to(BerryPhase, false);
+    game.move.select(MoveId.THOUSAND_ARROWS);
+    await game.toEndOfTurn();
 
     expect(enemyPokemon.getTag(BattlerTagType.IGNORE_FLYING)).toBeDefined();
     expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
   });
 
-  it("move should hit and ground targets under the effects of Magnet Rise", async () => {
-    game.override.enemySpecies(SpeciesId.SNORLAX);
-
+  it("should hit and ground targets under the effects of Magnet Rise", async () => {
     await game.classicMode.startBattle([SpeciesId.ILLUMISE]);
 
-    const enemyPokemon = game.scene.getEnemyPokemon()!;
-
-    enemyPokemon.addTag(BattlerTagType.FLOATING, undefined, MoveId.MAGNET_RISE);
-
     game.move.select(MoveId.THOUSAND_ARROWS);
+    await game.move.forceEnemyMove(MoveId.MAGNET_RISE);
+    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    await game.phaseInterceptor.to("MoveEndPhase");
 
-    await game.phaseInterceptor.to(BerryPhase, false);
+    // ensure magnet rise suceeeded before getting knocked down
+    const enemyPokemon = game.field.getEnemyPokemon();
+    expect(enemyPokemon.getTag(BattlerTagType.FLOATING)).toBeDefined();
+    await game.toEndOfTurn();
 
     expect(enemyPokemon.getTag(BattlerTagType.FLOATING)).toBeUndefined();
     expect(enemyPokemon.getTag(BattlerTagType.IGNORE_FLYING)).toBeDefined();
     expect(enemyPokemon.hp).toBeLessThan(enemyPokemon.getMaxHp());
   });
+
+  it.each<{ name: string; move: MoveId }>([
+    { name: "Fly", move: MoveId.FLY },
+    { name: "Bounce", move: MoveId.BOUNCE },
+  ])("should cancel the target's Fly", async ({ move }) => {
+    await game.classicMode.startBattle([SpeciesId.ILLUMISE]);
+
+    game.move.select(MoveId.THOUSAND_ARROWS);
+    await game.move.forceEnemyMove(move);
+    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    await game.phaseInterceptor.to("MoveEndPhase");
+
+    // Fly should've worked... until we smacked them
+    const shuckle = game.field.getEnemyPokemon();
+    expect(shuckle.getTag(BattlerTagType.FLYING)).toBeDefined();
+    expect(shuckle.getTag(BattlerTagType.IGNORE_FLYING)).toBeUndefined();
+
+    await game.phaseInterceptor.to("MoveEndPhase");
+    expect(shuckle.getTag(BattlerTagType.FLYING)).toBeUndefined();
+    expect(shuckle.getTag(BattlerTagType.IGNORE_FLYING)).toBeDefined();
+    expect(shuckle.hp).toBeLessThan(shuckle.getMaxHp());
+  });
+
+  it("should NOT ground semi-invulnerable targets unless already ungrounded", async () => {
+    await game.classicMode.startBattle([SpeciesId.ILLUMISE]);
+
+    game.move.select(MoveId.THOUSAND_ARROWS);
+    await game.move.forceEnemyMove(MoveId.DIG);
+    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    await game.toEndOfTurn();
+
+    const shuckle = game.field.getEnemyPokemon();
+    expect(shuckle.isGrounded()).toBe(false);
+    expect(shuckle.getTag(BattlerTagType.IGNORE_FLYING)).toBeUndefined();
+    expect(shuckle.hp).toBeLessThan(shuckle.getMaxHp());
+  });
+
+  // TODO: Sky drop is currently unimplemented
+  it.todo("should hit midair targets from Sky Drop without interrupting");
 });
