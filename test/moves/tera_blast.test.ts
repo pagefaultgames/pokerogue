@@ -1,4 +1,4 @@
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex } from "#enums/battler-index";
 import { Stat } from "#enums/stat";
 import { TeraMoveCategoryAttr } from "#app/data/moves/move";
 import { allMoves } from "#app/data/data-lists";

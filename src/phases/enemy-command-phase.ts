@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex } from "#enums/battler-index";
 import { Command } from "#app/ui/command-ui-handler";
 import { FieldPhase } from "./field-phase";
 import { AbilityId } from "#enums/ability-id";

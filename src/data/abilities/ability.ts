@@ -86,7 +86,7 @@ import type {
   AbAttrApplyFunc,
   AbAttrSuccessFunc,
 } from "#app/@types/ability-types";
-import type { BattlerIndex } from "#app/battle";
+import type { BattlerIndex } from "#enums/battler-index";
 import type Move from "#app/data/moves/move";
 import type { ArenaTrapTag, SuppressAbilitiesTag } from "#app/data/arena-tag";
 import { noAbilityTypeOverrideMoves } from "../moves/invalid-moves";

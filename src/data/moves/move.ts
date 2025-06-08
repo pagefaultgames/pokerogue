@@ -75,7 +75,7 @@ import {
   PokemonMultiHitModifier,
   PreserveBerryModifier,
 } from "../../modifier/modifier";
-import type { BattlerIndex } from "../../battle";
+import type { BattlerIndex } from "#enums/battler-index";
 import { BattleType } from "#enums/battle-type";
 import { TerrainType } from "../terrain";
 import { ModifierPoolType } from "#app/modifier/modifier-type";

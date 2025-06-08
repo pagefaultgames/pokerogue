@@ -24,7 +24,7 @@ import { SpeciesId } from "#enums/species-id";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { Gender } from "#app/data/gender";
 import { PokemonType } from "#enums/pokemon-type";
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex } from "#enums/battler-index";
 import type Pokemon from "#app/field/pokemon";
 import { PokemonMove } from "#app/field/pokemon";
 import { MoveId } from "#enums/move-id";

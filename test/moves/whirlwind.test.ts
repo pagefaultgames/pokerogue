@@ -11,7 +11,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vite
 import { Status } from "#app/data/status-effect";
 import { StatusEffect } from "#enums/status-effect";
 import { globalScene } from "#app/global-scene";
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex } from "#enums/battler-index";
 import { BattleType } from "#enums/battle-type";
 import { TrainerType } from "#enums/trainer-type";
 

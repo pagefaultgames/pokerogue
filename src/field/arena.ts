@@ -17,7 +17,7 @@ import type { PokemonType } from "#enums/pokemon-type";
 import type Move from "#app/data/moves/move";
 import type { ArenaTag } from "#app/data/arena-tag";
 import { ArenaTagSide, ArenaTrapTag, getArenaTag } from "#app/data/arena-tag";
-import type { BattlerIndex } from "#app/battle";
+import type { BattlerIndex } from "#enums/battler-index";
 import { Terrain, TerrainType } from "#app/data/terrain";
 import {
   applyAbAttrs,

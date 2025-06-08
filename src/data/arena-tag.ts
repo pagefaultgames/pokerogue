@@ -9,7 +9,7 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import type Pokemon from "#app/field/pokemon";
 import { HitResult } from "#app/field/pokemon";
 import { StatusEffect } from "#enums/status-effect";
-import type { BattlerIndex } from "#app/battle";
+import type { BattlerIndex } from "#enums/battler-index";
 import {
   BlockNonDirectDamageAbAttr,
   InfiltratorAbAttr,

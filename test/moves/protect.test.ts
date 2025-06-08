@@ -7,7 +7,7 @@ import { MoveId } from "#enums/move-id";
 import { Stat } from "#enums/stat";
 import { allMoves } from "#app/data/data-lists";
 import { ArenaTagSide, ArenaTrapTag } from "#app/data/arena-tag";
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex } from "#enums/battler-index";
 import { MoveResult } from "#app/field/pokemon";
 
 describe("Moves - Protect", () => {

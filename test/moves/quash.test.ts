@@ -1,7 +1,7 @@
 import { SpeciesId } from "#enums/species-id";
 import { MoveId } from "#enums/move-id";
 import { AbilityId } from "#enums/ability-id";
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex } from "#enums/battler-index";
 import { WeatherType } from "#enums/weather-type";
 import { MoveResult } from "#app/field/pokemon";
 import GameManager from "#test/testUtils/gameManager";

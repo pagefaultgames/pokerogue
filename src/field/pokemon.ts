@@ -195,7 +195,7 @@ import {
 } from "#app/data/abilities/ability";
 import { allAbilities } from "#app/data/data-lists";
 import type PokemonData from "#app/system/pokemon-data";
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex } from "#enums/battler-index";
 import { UiMode } from "#enums/ui-mode";
 import type { PartyOption } from "#app/ui/party-ui-handler";
 import PartyUiHandler, { PartyUiMode } from "#app/ui/party-ui-handler";

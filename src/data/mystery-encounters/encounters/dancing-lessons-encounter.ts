@@ -1,4 +1,4 @@
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex } from "#enums/battler-index";
 import { globalScene } from "#app/global-scene";
 import { EncounterBattleAnim } from "#app/data/battle-anims";
 import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";

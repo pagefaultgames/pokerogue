@@ -4,7 +4,7 @@ import { allMoves } from "./data-lists";
 import { MoveFlags } from "#enums/MoveFlags";
 import type Pokemon from "../field/pokemon";
 import { type nil, getFrameMs, getEnumKeys, getEnumValues, animationFileName } from "../utils/common";
-import type { BattlerIndex } from "../battle";
+import type { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
 import { SubstituteTag } from "./battler-tags";
 import { isNullOrUndefined } from "../utils/common";
