@@ -70,7 +70,7 @@ export class LoginPhase extends Phase {
                       });
                     },
                     () => {
-                      globalScene.unshiftPhase(new LoginPhase(false));
+                      globalScene.phaseManager.unshiftPhase(new LoginPhase(false));
                       this.end();
                     },
                   ],
@@ -94,7 +94,7 @@ export class LoginPhase extends Phase {
           removeCookie(sessionIdKey);
           globalScene.reset(true, true);
         } else {
-          globalScene.unshiftPhase(new UnavailablePhase());
+          globalScene.phaseManager.unshiftPhase(new UnavailablePhase());
           super.end();
         }
         return null;
@@ -114,7 +114,7 @@ export class LoginPhase extends Phase {
     globalScene.ui.setMode(UiMode.MESSAGE);
 
     if (!globalScene.gameData.gender) {
-      globalScene.unshiftPhase(new SelectGenderPhase());
+      globalScene.phaseManager.unshiftPhase(new SelectGenderPhase());
     }
 
     handleTutorial(Tutorial.Intro).then(() => super.end());

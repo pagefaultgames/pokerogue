@@ -166,7 +166,7 @@ describe("Abilities - Neutralizing Gas", () => {
 
     vi.spyOn(game.scene.getPlayerPokemon()!, "randBattleSeedInt").mockReturnValue(0);
 
-    const commandPhase = game.scene.getCurrentPhase() as CommandPhase;
+    const commandPhase = game.scene.phaseManager.getCurrentPhase() as CommandPhase;
     commandPhase.handleCommand(Command.RUN, 0);
     await game.phaseInterceptor.to("BerryPhase");
 

@@ -4305,15 +4305,15 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         UiMode.CONFIRM,
         () => {
           ui.setMode(UiMode.STARTER_SELECT);
-          globalScene.clearPhaseQueue();
+          globalScene.phaseManager.clearPhaseQueue();
           if (globalScene.gameMode.isChallenge) {
-            globalScene.pushPhase(new SelectChallengePhase());
-            globalScene.pushPhase(new EncounterPhase());
+            globalScene.phaseManager.pushPhase(new SelectChallengePhase());
+            globalScene.phaseManager.pushPhase(new EncounterPhase());
           } else {
-            globalScene.pushPhase(new TitlePhase());
+            globalScene.phaseManager.pushPhase(new TitlePhase());
           }
           this.clearText();
-          globalScene.getCurrentPhase()?.end();
+          globalScene.phaseManager.getCurrentPhase()?.end();
         },
         cancel,
         null,

@@ -64,7 +64,7 @@ describe("Abilities - Honey Gather", () => {
     const enemy = game.scene.getEnemyPokemon()!;
     vi.spyOn(enemy, "scene", "get").mockReturnValue(game.scene);
 
-    const commandPhase = game.scene.getCurrentPhase() as CommandPhase;
+    const commandPhase = game.scene.phaseManager.getCurrentPhase() as CommandPhase;
     commandPhase.handleCommand(Command.RUN, 0);
     await game.toNextTurn();
 

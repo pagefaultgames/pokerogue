@@ -41,7 +41,7 @@ describe("Mystery Encounter Phases", () => {
       ]);
 
       await game.phaseInterceptor.to(MysteryEncounterPhase, false);
-      expect(game.scene.getCurrentPhase()?.constructor.name).toBe(MysteryEncounterPhase.name);
+      expect(game.scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(MysteryEncounterPhase.name);
     });
 
     it("Runs MysteryEncounterPhase", async () => {
@@ -87,7 +87,9 @@ describe("Mystery Encounter Phases", () => {
 
       // Waitfor required so that option select messages and preOptionPhase logic are handled
       await vi.waitFor(() =>
-        expect(game.scene.getCurrentPhase()?.constructor.name).toBe(MysteryEncounterOptionSelectedPhase.name),
+        expect(game.scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(
+          MysteryEncounterOptionSelectedPhase.name,
+        ),
       );
       expect(ui.getMode()).toBe(UiMode.MESSAGE);
       expect(ui.showDialogue).toHaveBeenCalledTimes(1);

@@ -66,14 +66,14 @@ export class LevelUpPhase extends PlayerPartyMemberPokemonPhase {
       // this feels like an unnecessary optimization
       const levelMoves = this.getPokemon().getLevelMoves(this.lastLevel + 1);
       for (const lm of levelMoves) {
-        globalScene.unshiftPhase(new LearnMovePhase(this.partyMemberIndex, lm[1]));
+        globalScene.phaseManager.unshiftPhase(new LearnMovePhase(this.partyMemberIndex, lm[1]));
       }
     }
     if (!this.pokemon.pauseEvolutions) {
       const evolution = this.pokemon.getEvolution();
       if (evolution) {
         this.pokemon.breakIllusion();
-        globalScene.unshiftPhase(new EvolutionPhase(this.pokemon, evolution, this.lastLevel));
+        globalScene.phaseManager.unshiftPhase(new EvolutionPhase(this.pokemon, evolution, this.lastLevel));
       }
     }
     return super.end();

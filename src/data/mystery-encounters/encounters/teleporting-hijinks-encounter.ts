@@ -227,7 +227,9 @@ async function doBiomeTransitionDialogueAndBattleInit() {
         tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
         mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
           queueEncounterMessage(`${namespace}:boss_enraged`);
-          globalScene.unshiftPhase(new StatStageChangePhase(pokemon.getBattlerIndex(), true, statChangesForBattle, 1));
+          globalScene.phaseManager.unshiftPhase(
+            new StatStageChangePhase(pokemon.getBattlerIndex(), true, statChangesForBattle, 1),
+          );
         },
       },
     ],

@@ -65,7 +65,7 @@ export class WeatherEffectPhase extends CommonAnimPhase {
 
           const damage = toDmgValue(pokemon.getMaxHp() / 16);
 
-          globalScene.queueMessage(getWeatherDamageMessage(this.weather!.weatherType, pokemon) ?? "");
+          globalScene.phaseManager.queueMessage(getWeatherDamageMessage(this.weather!.weatherType, pokemon) ?? "");
           pokemon.damageAndUpdate(damage, { result: HitResult.INDIRECT, ignoreSegments: true });
         };
 

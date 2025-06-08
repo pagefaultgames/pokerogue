@@ -29,9 +29,9 @@ export class ShowPartyExpBarPhase extends PlayerPartyMemberPokemonPhase {
     pokemon.addExp(exp.value);
     const newLevel = pokemon.level;
     if (newLevel > lastLevel) {
-      globalScene.unshiftPhase(new LevelUpPhase(this.partyMemberIndex, lastLevel, newLevel));
+      globalScene.phaseManager.unshiftPhase(new LevelUpPhase(this.partyMemberIndex, lastLevel, newLevel));
     }
-    globalScene.unshiftPhase(new HidePartyExpBarPhase());
+    globalScene.phaseManager.unshiftPhase(new HidePartyExpBarPhase());
     pokemon.updateInfo();
 
     if (globalScene.expParty === ExpNotification.SKIP) {

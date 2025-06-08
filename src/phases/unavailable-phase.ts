@@ -7,7 +7,7 @@ export class UnavailablePhase extends Phase {
   public readonly phaseName = "UnavailablePhase";
   start(): void {
     globalScene.ui.setMode(UiMode.UNAVAILABLE, () => {
-      globalScene.unshiftPhase(new LoginPhase(true));
+      globalScene.phaseManager.unshiftPhase(new LoginPhase(true));
       this.end();
     });
   }

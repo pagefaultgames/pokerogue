@@ -180,7 +180,7 @@ describe("Moves - Whirlwind", () => {
     expect(eligibleEnemy.length).toBe(1);
 
     // Spy on the queueMessage function
-    const queueSpy = vi.spyOn(globalScene, "queueMessage");
+    const queueSpy = vi.spyOn(globalScene.phaseManager, "queueMessage");
 
     // Player uses Whirlwind; opponent uses Splash
     game.move.select(MoveId.WHIRLWIND);

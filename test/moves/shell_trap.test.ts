@@ -50,7 +50,7 @@ describe("Moves - Shell Trap", () => {
 
     await game.phaseInterceptor.to(MoveEndPhase);
 
-    const movePhase = game.scene.getCurrentPhase();
+    const movePhase = game.scene.phaseManager.getCurrentPhase();
     expect(movePhase instanceof MovePhase).toBeTruthy();
     expect((movePhase as MovePhase).pokemon).toBe(playerPokemon[1]);
 
@@ -73,7 +73,7 @@ describe("Moves - Shell Trap", () => {
 
     await game.phaseInterceptor.to(MoveEndPhase);
 
-    const movePhase = game.scene.getCurrentPhase();
+    const movePhase = game.scene.phaseManager.getCurrentPhase();
     expect(movePhase instanceof MovePhase).toBeTruthy();
     expect((movePhase as MovePhase).pokemon).not.toBe(playerPokemon[1]);
 
@@ -96,7 +96,7 @@ describe("Moves - Shell Trap", () => {
 
     await game.phaseInterceptor.to(MoveEndPhase);
 
-    const movePhase = game.scene.getCurrentPhase();
+    const movePhase = game.scene.phaseManager.getCurrentPhase();
     expect(movePhase instanceof MovePhase).toBeTruthy();
     expect((movePhase as MovePhase).pokemon).not.toBe(playerPokemon[1]);
 
@@ -117,7 +117,7 @@ describe("Moves - Shell Trap", () => {
 
     await game.phaseInterceptor.to(MoveEndPhase);
 
-    const movePhase = game.scene.getCurrentPhase();
+    const movePhase = game.scene.phaseManager.getCurrentPhase();
     expect(movePhase instanceof MovePhase).toBeTruthy();
     expect((movePhase as MovePhase).pokemon).not.toBe(playerPokemon[1]);
 

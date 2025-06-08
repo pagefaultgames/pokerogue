@@ -39,7 +39,7 @@ export class AttemptRunPhase extends PokemonPhase {
       enemyField.forEach(enemyPokemon => applyPreLeaveFieldAbAttrs(PreLeaveFieldAbAttr, enemyPokemon));
 
       globalScene.playSound("se/flee");
-      globalScene.queueMessage(i18next.t("battle:runAwaySuccess"), null, true, 500);
+      globalScene.phaseManager.queueMessage(i18next.t("battle:runAwaySuccess"), null, true, 500);
 
       globalScene.tweens.add({
         targets: [globalScene.arenaEnemy, enemyField].flat(),
@@ -60,16 +60,16 @@ export class AttemptRunPhase extends PokemonPhase {
         enemyPokemon.trySetStatus(StatusEffect.FAINT);
       });
 
-      globalScene.pushPhase(new BattleEndPhase(false));
+      globalScene.phaseManager.pushPhase(new BattleEndPhase(false));
 
       if (globalScene.gameMode.hasRandomBiomes || globalScene.isNewBiome()) {
-        globalScene.pushPhase(new SelectBiomePhase());
+        globalScene.phaseManager.pushPhase(new SelectBiomePhase());
       }
 
-      globalScene.pushPhase(new NewBattlePhase());
+      globalScene.phaseManager.pushPhase(new NewBattlePhase());
     } else {
       playerPokemon.turnData.failedRunAway = true;
-      globalScene.queueMessage(i18next.t("battle:runAwayCannotEscape"), null, true, 500);
+      globalScene.phaseManager.queueMessage(i18next.t("battle:runAwayCannotEscape"), null, true, 500);
     }
 
     this.end();
