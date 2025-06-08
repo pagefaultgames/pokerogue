@@ -8,7 +8,7 @@ import { BattlePhase } from "./battle-phase";
 import { randSeedInt } from "#app/utils/common";
 
 export class SelectBiomePhase extends BattlePhase {
-  public readonly phaseNa me = "SelectBiomePhase";
+  public readonly phaseName = "SelectBiomePhase";
   start() {
     super.start();
 
