@@ -9,14 +9,13 @@ import { FieldPosition } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import i18next from "i18next";
 import { PartyMemberPokemonPhase } from "./party-member-pokemon-phase";
-import { PostSummonPhase } from "./post-summon-phase";
-import { GameOverPhase } from "./game-over-phase";
-import { ShinySparklePhase } from "./shiny-sparkle-phase";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import { applyPreSummonAbAttrs, PreSummonAbAttr } from "#app/data/abilities/ability";
 import { globalScene } from "#app/global-scene";
 
 export class SummonPhase extends PartyMemberPokemonPhase {
+  // The union type is needed to keep typescript happy as these phases extend from SummonPhase
+  public readonly phaseName: "SummonPhase" | "SummonMissingPhase" | "SwitchSummonPhase" | "ReturnPhase" = "SummonPhase";
   private loaded: boolean;
 
   constructor(fieldIndex: number, player = true, loaded = false) {
@@ -55,8 +54,8 @@ export class SummonPhase extends PartyMemberPokemonPhase {
       if (legalIndex === -1) {
         console.error("Party Details:\n", party);
         console.error("All available Pokemon were fainted or illegal!");
-        globalScene.clearPhaseQueue();
-        globalScene.unshiftPhase(new GameOverPhase());
+        globalScene.phaseManager.clearPhaseQueue();
+        globalScene.phaseManager.unshiftNew("GameOverPhase");
         this.end();
         return;
       }
@@ -273,7 +272,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
     const pokemon = this.getPokemon();
 
     if (pokemon.isShiny(true)) {
-      globalScene.unshiftPhase(new ShinySparklePhase(pokemon.getBattlerIndex()));
+      globalScene.phaseManager.unshiftNew("ShinySparklePhase", pokemon.getBattlerIndex());
     }
 
     pokemon.resetTurnData();
@@ -289,7 +288,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
   }
 
   queuePostSummon(): void {
-    globalScene.pushPhase(new PostSummonPhase(this.getPokemon().getBattlerIndex()));
+    globalScene.phaseManager.pushNew("PostSummonPhase", this.getPokemon().getBattlerIndex());
   }
 
   end() {

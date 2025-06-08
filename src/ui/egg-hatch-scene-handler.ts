@@ -1,7 +1,6 @@
 import { UiMode } from "#enums/ui-mode";
 import UiHandler from "./ui-handler";
 import { Button } from "#enums/buttons";
-import { EggHatchPhase } from "#app/phases/egg-hatch-phase";
 import { globalScene } from "#app/global-scene";
 
 export default class EggHatchSceneHandler extends UiHandler {
@@ -45,8 +44,8 @@ export default class EggHatchSceneHandler extends UiHandler {
 
   processInput(button: Button): boolean {
     if (button === Button.ACTION || button === Button.CANCEL) {
-      const phase = globalScene.getCurrentPhase();
-      if (phase instanceof EggHatchPhase && phase.trySkip()) {
+      const phase = globalScene.phaseManager.getCurrentPhase();
+      if (phase?.is("EggHatchPhase") && phase.trySkip()) {
         return true;
       }
     }

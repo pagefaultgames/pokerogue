@@ -17,6 +17,7 @@ import { BooleanHolder, NumberHolder } from "#app/utils/common";
 import { PokemonPhase } from "./pokemon-phase";
 
 export class PostTurnStatusEffectPhase extends PokemonPhase {
+  public readonly phaseName = "PostTurnStatusEffectPhase";
   // biome-ignore lint/complexity/noUselessConstructor: Not unnecessary as it makes battlerIndex required
   constructor(battlerIndex: BattlerIndex) {
     super(battlerIndex);
@@ -31,7 +32,7 @@ export class PostTurnStatusEffectPhase extends PokemonPhase {
       applyAbAttrs(BlockStatusDamageAbAttr, pokemon, cancelled);
 
       if (!cancelled.value) {
-        globalScene.queueMessage(
+        globalScene.phaseManager.queueMessage(
           getStatusEffectActivationText(pokemon.status.effect, getPokemonNameWithAffix(pokemon)),
         );
         const damage = new NumberHolder(0);

@@ -2,6 +2,7 @@ import { globalScene } from "#app/global-scene";
 import { Phase } from "#app/phase";
 
 export class MessagePhase extends Phase {
+  public readonly phaseName = "MessagePhase";
   private text: string;
   private callbackDelay?: number | null;
   private prompt?: boolean | null;
@@ -43,8 +44,13 @@ export class MessagePhase extends Phase {
           page0 = page0.split(repname[p]).join(pokename[p]);
           page1 = page1.split(repname[p]).join(pokename[p]);
         }
-        globalScene.unshiftPhase(
-          new MessagePhase(page1, this.callbackDelay, this.prompt, this.promptDelay, this.speaker),
+        globalScene.phaseManager.unshiftNew(
+          "MessagePhase",
+          page1,
+          this.callbackDelay,
+          this.prompt,
+          this.promptDelay,
+          this.speaker,
         );
         this.text = page0.trim();
       } else {

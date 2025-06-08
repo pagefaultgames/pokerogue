@@ -1,8 +1,8 @@
 import { Stat } from "#enums/stat";
 import GameManager from "#test/testUtils/gameManager";
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import { AbilityId } from "#enums/ability-id";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
@@ -24,19 +24,19 @@ describe("Abilities - Wind Rider", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .enemySpecies(Species.SHIFTRY)
-      .enemyAbility(Abilities.WIND_RIDER)
-      .moveset([Moves.TAILWIND, Moves.SPLASH, Moves.PETAL_BLIZZARD, Moves.SANDSTORM])
-      .enemyMoveset(Moves.SPLASH);
+      .enemySpecies(SpeciesId.SHIFTRY)
+      .enemyAbility(AbilityId.WIND_RIDER)
+      .moveset([MoveId.TAILWIND, MoveId.SPLASH, MoveId.PETAL_BLIZZARD, MoveId.SANDSTORM])
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   it("takes no damage from wind moves and its ATK stat stage is raised by 1 when hit by one", async () => {
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
     const shiftry = game.scene.getEnemyPokemon()!;
 
     expect(shiftry.getStatStage(Stat.ATK)).toBe(0);
 
-    game.move.select(Moves.PETAL_BLIZZARD);
+    game.move.select(MoveId.PETAL_BLIZZARD);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
@@ -45,14 +45,14 @@ describe("Abilities - Wind Rider", () => {
   });
 
   it("ATK stat stage is raised by 1 when Tailwind is present on its side", async () => {
-    game.override.enemySpecies(Species.MAGIKARP).ability(Abilities.WIND_RIDER);
+    game.override.enemySpecies(SpeciesId.MAGIKARP).ability(AbilityId.WIND_RIDER);
 
-    await game.classicMode.startBattle([Species.SHIFTRY]);
+    await game.classicMode.startBattle([SpeciesId.SHIFTRY]);
     const shiftry = game.scene.getPlayerPokemon()!;
 
     expect(shiftry.getStatStage(Stat.ATK)).toBe(0);
 
-    game.move.select(Moves.TAILWIND);
+    game.move.select(MoveId.TAILWIND);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
@@ -60,16 +60,16 @@ describe("Abilities - Wind Rider", () => {
   });
 
   it("does not raise ATK stat stage when Tailwind is present on opposing side", async () => {
-    game.override.enemySpecies(Species.MAGIKARP).ability(Abilities.WIND_RIDER);
+    game.override.enemySpecies(SpeciesId.MAGIKARP).ability(AbilityId.WIND_RIDER);
 
-    await game.classicMode.startBattle([Species.SHIFTRY]);
+    await game.classicMode.startBattle([SpeciesId.SHIFTRY]);
     const magikarp = game.scene.getEnemyPokemon()!;
     const shiftry = game.scene.getPlayerPokemon()!;
 
     expect(shiftry.getStatStage(Stat.ATK)).toBe(0);
     expect(magikarp.getStatStage(Stat.ATK)).toBe(0);
 
-    game.move.select(Moves.TAILWIND);
+    game.move.select(MoveId.TAILWIND);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
@@ -78,16 +78,16 @@ describe("Abilities - Wind Rider", () => {
   });
 
   it("does not raise ATK stat stage when Tailwind is present on opposing side", async () => {
-    game.override.enemySpecies(Species.MAGIKARP).ability(Abilities.WIND_RIDER);
+    game.override.enemySpecies(SpeciesId.MAGIKARP).ability(AbilityId.WIND_RIDER);
 
-    await game.classicMode.startBattle([Species.SHIFTRY]);
+    await game.classicMode.startBattle([SpeciesId.SHIFTRY]);
     const magikarp = game.scene.getEnemyPokemon()!;
     const shiftry = game.scene.getPlayerPokemon()!;
 
     expect(shiftry.getStatStage(Stat.ATK)).toBe(0);
     expect(magikarp.getStatStage(Stat.ATK)).toBe(0);
 
-    game.move.select(Moves.TAILWIND);
+    game.move.select(MoveId.TAILWIND);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
@@ -96,15 +96,15 @@ describe("Abilities - Wind Rider", () => {
   });
 
   it("does not interact with Sandstorm", async () => {
-    game.override.enemySpecies(Species.MAGIKARP);
+    game.override.enemySpecies(SpeciesId.MAGIKARP);
 
-    await game.classicMode.startBattle([Species.SHIFTRY]);
+    await game.classicMode.startBattle([SpeciesId.SHIFTRY]);
     const shiftry = game.scene.getPlayerPokemon()!;
 
     expect(shiftry.getStatStage(Stat.ATK)).toBe(0);
     expect(shiftry.isFullHp()).toBe(true);
 
-    game.move.select(Moves.SANDSTORM);
+    game.move.select(MoveId.SANDSTORM);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 

@@ -39,19 +39,16 @@ import { MoveResult } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import Overrides from "#app/overrides";
 import { BattlePhase } from "#app/phases/battle-phase";
-import { CommonAnimPhase } from "#app/phases/common-anim-phase";
-import { MoveChargePhase } from "#app/phases/move-charge-phase";
-import { MoveEffectPhase } from "#app/phases/move-effect-phase";
-import { MoveEndPhase } from "#app/phases/move-end-phase";
 import { NumberHolder } from "#app/utils/common";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/ability-id";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/move-id";
 import { StatusEffect } from "#enums/status-effect";
 import i18next from "i18next";
 
 export class MovePhase extends BattlePhase {
+  public readonly phaseName = "MovePhase";
   protected _pokemon: Pokemon;
   protected _move: PokemonMove;
   protected _targets: BattlerIndex[];
@@ -142,7 +139,7 @@ export class MovePhase extends BattlePhase {
 
   /**
    * Shows whether the current move has been forced to the end of the turn
-   * Needed for speed order, see {@linkcode Moves.QUASH}
+   * Needed for speed order, see {@linkcode MoveId.QUASH}
    * */
   public isForcedLast(): boolean {
     return this.forcedLast;
@@ -151,7 +148,7 @@ export class MovePhase extends BattlePhase {
   public start(): void {
     super.start();
 
-    console.log(Moves[this.move.moveId]);
+    console.log(MoveId[this.move.moveId]);
 
     // Check if move is unusable (e.g. because it's out of PP due to a mid-turn Spite).
     if (!this.canMove(true)) {
@@ -206,14 +203,14 @@ export class MovePhase extends BattlePhase {
     this.end();
   }
 
-  /** Check for cancellation edge cases - no targets remaining, or {@linkcode Moves.NONE} is in the queue */
+  /** Check for cancellation edge cases - no targets remaining, or {@linkcode MoveId.NONE} is in the queue */
   protected resolveFinalPreMoveCancellationChecks(): void {
     const targets = this.getActiveTargetPokemon();
     const moveQueue = this.pokemon.getMoveQueue();
 
     if (
       (targets.length === 0 && !this.move.getMove().hasAttr(AddArenaTrapTagAttr)) ||
-      (moveQueue.length && moveQueue[0].move === Moves.NONE)
+      (moveQueue.length && moveQueue[0].move === MoveId.NONE)
     ) {
       this.showMoveText();
       this.showFailedText();
@@ -272,18 +269,17 @@ export class MovePhase extends BattlePhase {
 
       if (activated) {
         this.cancel();
-        globalScene.queueMessage(
+        globalScene.phaseManager.queueMessage(
           getStatusEffectActivationText(this.pokemon.status.effect, getPokemonNameWithAffix(this.pokemon)),
         );
-        globalScene.unshiftPhase(
-          new CommonAnimPhase(
-            this.pokemon.getBattlerIndex(),
-            undefined,
-            CommonAnim.POISON + (this.pokemon.status.effect - 1),
-          ),
+        globalScene.phaseManager.unshiftNew(
+          "CommonAnimPhase",
+          this.pokemon.getBattlerIndex(),
+          undefined,
+          CommonAnim.POISON + (this.pokemon.status.effect - 1),
         );
       } else if (healed) {
-        globalScene.queueMessage(
+        globalScene.phaseManager.queueMessage(
           getStatusEffectHealText(this.pokemon.status.effect, getPokemonNameWithAffix(this.pokemon)),
         );
         this.pokemon.resetStatus();
@@ -386,8 +382,7 @@ export class MovePhase extends BattlePhase {
     // trigger ability-based user type changes, display move text and then execute move effects.
     applyPreAttackAbAttrs(PokemonTypeChangeAbAttr, this.pokemon, null, move);
     this.showMoveText();
-    globalScene.unshiftPhase(
-      new MoveEffectPhase(this.pokemon.getBattlerIndex(), this.targets, move, this.reflected, this.followUp),
+    globalScene.phaseManager.unshiftNew("MoveEffectPhase", this.pokemon.getBattlerIndex(), this.targets, move, this.reflected, this.followUp,
     );
 
     // Handle Dancer, which triggers immediately after a move is used (rather than waiting on `this.end()`).
@@ -414,12 +409,12 @@ export class MovePhase extends BattlePhase {
     // Protean is supposed to trigger its effects first, _then_ move text is displayed,
     // _then_ any blockage messages are shown.
 
-    // Roar, Whirlwind, Trick-or-Treat, and Forest's Curse
-    // will trigger type changes even on failure,
-    // as will all moves blocked by terrain (weather not included).
+    // Roar, Whirlwind, Trick-or-Treat, and Forest's Curse will trigger Protean/Libero
+    // even on failure, as will all moves blocked by terrain.
+    // TODO: Verify if this also applies to primal weather failures?
     if (
       failedDueToTerrain ||
-      [Moves.ROAR, Moves.WHIRLWIND, Moves.TRICK_OR_TREAT, Moves.FORESTS_CURSE].includes(this.move.moveId)
+      [MoveId.ROAR, MoveId.WHIRLWIND, MoveId.TRICK_OR_TREAT, MoveId.FORESTS_CURSE].includes(this.move.moveId)
     ) {
       applyPreAttackAbAttrs(PokemonTypeChangeAbAttr, this.pokemon, null, move);
     }
@@ -468,22 +463,25 @@ export class MovePhase extends BattlePhase {
     applyPreAttackAbAttrs(PokemonTypeChangeAbAttr, this.pokemon, null, this.move.getMove());
 
     this.showMoveText();
-    globalScene.unshiftPhase(new MoveChargePhase(this.pokemon.getBattlerIndex(), this.targets[0], this.move));
+    globalScene.phaseManager.unshiftNew("MoveChargePhase", this.pokemon.getBattlerIndex(), this.targets[0], this.move);
   }
 
   /**
    * Queue a {@linkcode MoveEndPhase} and then end this phase.
    */
   public end(): void {
-    globalScene.unshiftPhase(
-      new MoveEndPhase(this.pokemon.getBattlerIndex(), this.getActiveTargetPokemon(), this.followUp),
+    globalScene.phaseManager.unshiftNew(
+      "MoveEndPhase",
+      this.pokemon.getBattlerIndex(),
+      this.getActiveTargetPokemon(),
+      this.followUp,
     );
 
     super.end();
   }
 
   /**
-   * Applies PP increasing abilities (currently only {@linkcode Abilities.PRESSURE | Pressure}) if they exist on the target pokemon.
+   * Applies PP increasing abilities (currently only {@linkcode AbilityId.PRESSURE | Pressure}) if they exist on the target pokemon.
    * Note that targets must include only active pokemon.
    *
    * TODO: This hardcodes the PP increase at 1 per opponent, rather than deferring to the ability.
@@ -523,7 +521,7 @@ export class MovePhase extends BattlePhase {
         if (
           redirectTag &&
           (!redirectTag.powder ||
-            (!this.pokemon.isOfType(PokemonType.GRASS) && !this.pokemon.hasAbility(Abilities.OVERCOAT)))
+            (!this.pokemon.isOfType(PokemonType.GRASS) && !this.pokemon.hasAbility(AbilityId.OVERCOAT)))
         ) {
           redirectTarget.value = p.getBattlerIndex();
           redirectedByAbility = false;
@@ -541,12 +539,12 @@ export class MovePhase extends BattlePhase {
         if (this.pokemon.hasAbilityWithAttr(BlockRedirectAbAttr)) {
           redirectTarget.value = currentTarget;
           // TODO: Ability displays should be handled by the ability
-          globalScene.queueAbilityDisplay(
+          globalScene.phaseManager.queueAbilityDisplay(
             this.pokemon,
             this.pokemon.getPassiveAbility().hasAttr(BlockRedirectAbAttr),
             true,
           );
-          globalScene.queueAbilityDisplay(
+          globalScene.phaseManager.queueAbilityDisplay(
             this.pokemon,
             this.pokemon.getPassiveAbility().hasAttr(BlockRedirectAbAttr),
             false,
@@ -594,8 +592,8 @@ export class MovePhase extends BattlePhase {
 
   /**
    * Handles the case where the move was cancelled or failed:
-   * - Uses PP if the move failed (not cancelled) and should use PP (failed moves are not affected by {@link Abilities.PRESSURE | Pressure})
-   * - Records a cancelled OR failed move in move history, so abilities like {@link Abilities.TRUANT | Truant} don't trigger on the
+   * - Uses PP if the move failed (not cancelled) and should use PP (failed moves are not affected by {@linkcode AbilityId.PRESSURE | Pressure})
+   * - Records a cancelled OR failed move in move history, so abilities like {@linkcode AbilityId.TRUANT | Truant} don't trigger on the
    *   next turn and soft-lock.
    * - Lapses `MOVE_EFFECT` tags:
    *   - Semi-invulnerable battler tags (Fly/Dive/etc.) are intended to lapse on move effects, but also need
@@ -603,7 +601,7 @@ export class MovePhase extends BattlePhase {
    *
    *     TODO: ...this seems weird.
    * - Lapses `AFTER_MOVE` tags:
-   *   - This handles the effects of {@linkcode Moves.SUBSTITUTE | Substitute}
+   *   - This handles the effects of {@linkcode MoveId.SUBSTITUTE | Substitute}
    * - Removes the second turn of charge moves
    */
   protected handlePreMoveFailures(): void {
@@ -626,7 +624,7 @@ export class MovePhase extends BattlePhase {
     }
 
     this.pokemon.pushMoveHistory({
-      move: Moves.NONE,
+      move: MoveId.NONE,
       result: MoveResult.FAIL,
       targets: this.targets,
       virtual: this.move.virtual,
@@ -646,7 +644,7 @@ export class MovePhase extends BattlePhase {
   public showMoveText(): void {
     // No text for Moves.NONE, recharging/2-turn moves or interrupted moves
     if (
-      this.move.moveId === Moves.NONE ||
+      this.move.moveId === MoveId.NONE ||
       this.pokemon.getTag(BattlerTagType.RECHARGING) ||
       this.pokemon.getTag(BattlerTagType.INTERRUPTED)
     ) {
@@ -655,7 +653,7 @@ export class MovePhase extends BattlePhase {
 
     // Play message for magic coat reflection
     // TODO: This should be done by the move...
-    globalScene.queueMessage(
+    globalScene.phaseManager.queueMessage(
       i18next.t(this.reflected ? "battle:magicCoatActivated" : "battle:useMove", {
         pokemonNameWithAffix: getPokemonNameWithAffix(this.pokemon),
         moveName: this.move.getName(),
@@ -671,6 +669,6 @@ export class MovePhase extends BattlePhase {
    * ("But it failed!" in english)
    */
   public showFailedText(failedText: string = i18next.t("battle:attackFailed")): void {
-    globalScene.queueMessage(failedText);
+    globalScene.phaseManager.queueMessage(failedText);
   }
 }

@@ -1,4 +1,4 @@
-import type { Abilities } from "#enums/abilities";
+import type { AbilityId } from "#enums/ability-id";
 import type { PokemonType } from "#enums/pokemon-type";
 import type { Nature } from "#enums/nature";
 
@@ -12,8 +12,8 @@ export class CustomPokemonData {
    * The scale at which to render this Pokemon's sprite.
    */
   public spriteScale = -1;
-  public ability: Abilities | -1;
-  public passive: Abilities | -1;
+  public ability: AbilityId | -1;
+  public passive: AbilityId | -1;
   public nature: Nature | -1;
   public types: PokemonType[];
   /** Deprecated but needed for session save migration */

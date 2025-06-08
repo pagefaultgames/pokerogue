@@ -1,5 +1,5 @@
 import { initMoveAnim, loadMoveAnimAssets } from "#app/data/battle-anims";
-import type { Moves } from "#enums/moves";
+import type { MoveId } from "#enums/move-id";
 import { Phase } from "#app/phase";
 
 /**
@@ -8,7 +8,8 @@ import { Phase } from "#app/phase";
  * isn't already loaded (e.g. for Metronome)
  */
 export class LoadMoveAnimPhase extends Phase {
-  constructor(protected moveId: Moves) {
+  public readonly phaseName = "LoadMoveAnimPhase";
+  constructor(protected moveId: MoveId) {
     super();
   }
 

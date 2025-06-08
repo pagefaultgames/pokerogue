@@ -7,12 +7,12 @@ import type { PlayerPokemon } from "../field/pokemon";
 import { UiMode } from "#enums/ui-mode";
 import type PartyUiHandler from "../ui/party-ui-handler";
 import { getPokemonNameWithAffix } from "../messages";
-import { EndEvolutionPhase } from "./end-evolution-phase";
 import { EvolutionPhase } from "./evolution-phase";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { SpeciesFormKey } from "#enums/species-form-key";
 
 export class FormChangePhase extends EvolutionPhase {
+  public readonly phaseName = "FormChangePhase";
   private formChange: SpeciesFormChange;
   private modal: boolean;
 
@@ -99,7 +99,7 @@ export class FormChangePhase extends EvolutionPhase {
                       globalScene.time.delayedCall(900, () => {
                         this.pokemon.changeForm(this.formChange).then(() => {
                           if (!this.modal) {
-                            globalScene.unshiftPhase(new EndEvolutionPhase());
+                            globalScene.phaseManager.unshiftNew("EndEvolutionPhase");
                           }
 
                           globalScene.playSound("se/shine");

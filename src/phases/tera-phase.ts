@@ -9,6 +9,7 @@ import { SpeciesFormChangeTeraTrigger } from "#app/data/pokemon-forms";
 import { CommonAnim, CommonBattleAnim } from "#app/data/battle-anims";
 
 export class TeraPhase extends BattlePhase {
+  public readonly phaseName = "TeraPhase";
   public pokemon: Pokemon;
 
   constructor(pokemon: Pokemon) {
@@ -20,7 +21,7 @@ export class TeraPhase extends BattlePhase {
   start() {
     super.start();
 
-    globalScene.queueMessage(
+    globalScene.phaseManager.queueMessage(
       i18next.t("battle:pokemonTerastallized", {
         pokemonNameWithAffix: getPokemonNameWithAffix(this.pokemon),
         type: i18next.t(`pokemonInfo:Type.${PokemonType[this.pokemon.getTeraType()]}`),

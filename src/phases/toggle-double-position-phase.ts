@@ -3,6 +3,7 @@ import { FieldPosition } from "#app/field/pokemon";
 import { BattlePhase } from "./battle-phase";
 
 export class ToggleDoublePositionPhase extends BattlePhase {
+  public readonly phaseName = "ToggleDoublePositionPhase";
   private double: boolean;
 
   constructor(double: boolean) {

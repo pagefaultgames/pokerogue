@@ -6,6 +6,7 @@ import { Phase } from "#app/phase";
  * Intended to be used as a more 1-off phase to provide exp to the party (such as during MEs), rather than cleanup a battle entirely
  */
 export class PartyExpPhase extends Phase {
+  public readonly phaseName = "PartyExpPhase";
   expValue: number;
   useWaveIndexMultiplier?: boolean;
   pokemonParticipantIds?: Set<number>;

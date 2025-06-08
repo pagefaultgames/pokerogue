@@ -1,4 +1,4 @@
-export enum Moves {
+export enum MoveId {
   /**{@link https://bulbapedia.bulbagarden.net/wiki/None_(move) | Source} */
   NONE,
   /**{@link https://bulbapedia.bulbagarden.net/wiki/Pound_(move) | Source} */

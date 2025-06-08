@@ -6,6 +6,7 @@ import { applyPostSummonAbAttrs, PostSummonRemoveEffectAbAttr } from "#app/data/
 import type Pokemon from "#app/field/pokemon";
 
 export class MoveEndPhase extends PokemonPhase {
+  public readonly phaseName = "MoveEndPhase";
   private wasFollowUp: boolean;
 
   /** Targets from the preceding MovePhase */

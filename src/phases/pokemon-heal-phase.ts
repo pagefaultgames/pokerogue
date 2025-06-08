@@ -14,6 +14,7 @@ import { BattlerTagType } from "#app/enums/battler-tag-type";
 import type { HealBlockTag } from "#app/data/battler-tags";
 
 export class PokemonHealPhase extends CommonAnimPhase {
+  public readonly phaseName = "PokemonHealPhase";
   private hpHealed: number;
   private message: string | null;
   private showFullHpMessage: boolean;
@@ -67,7 +68,7 @@ export class PokemonHealPhase extends CommonAnimPhase {
     let lastStatusEffect = StatusEffect.NONE;
 
     if (healBlock && this.hpHealed > 0) {
-      globalScene.queueMessage(healBlock.onActivation(pokemon));
+      globalScene.phaseManager.queueMessage(healBlock.onActivation(pokemon));
       this.message = null;
       return super.end();
     }
@@ -118,11 +119,13 @@ export class PokemonHealPhase extends CommonAnimPhase {
     }
 
     if (this.message) {
-      globalScene.queueMessage(this.message);
+      globalScene.phaseManager.queueMessage(this.message);
     }
 
     if (this.healStatus && lastStatusEffect && !hasMessage) {
-      globalScene.queueMessage(getStatusEffectHealText(lastStatusEffect, getPokemonNameWithAffix(pokemon)));
+      globalScene.phaseManager.queueMessage(
+        getStatusEffectHealText(lastStatusEffect, getPokemonNameWithAffix(pokemon)),
+      );
     }
 
     if (!healOrDamage && !lastStatusEffect) {

@@ -1,6 +1,6 @@
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import { AbilityId } from "#enums/ability-id";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -23,18 +23,18 @@ describe("Moves - Obstruct", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .enemySpecies(Species.MAGIKARP)
-      .enemyMoveset(Moves.TACKLE)
-      .enemyAbility(Abilities.BALL_FETCH)
-      .ability(Abilities.BALL_FETCH)
-      .moveset([Moves.OBSTRUCT])
-      .starterSpecies(Species.FEEBAS);
+      .enemySpecies(SpeciesId.MAGIKARP)
+      .enemyMoveset(MoveId.TACKLE)
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .ability(AbilityId.BALL_FETCH)
+      .moveset([MoveId.OBSTRUCT])
+      .starterSpecies(SpeciesId.FEEBAS);
   });
 
   it("protects from contact damaging moves and lowers the opponent's defense by 2 stages", async () => {
     await game.classicMode.startBattle();
 
-    game.move.select(Moves.OBSTRUCT);
+    game.move.select(MoveId.OBSTRUCT);
     await game.phaseInterceptor.to("BerryPhase");
 
     const player = game.scene.getPlayerPokemon()!;
@@ -47,7 +47,7 @@ describe("Moves - Obstruct", () => {
   it("bypasses accuracy checks when applying protection and defense reduction", async () => {
     await game.classicMode.startBattle();
 
-    game.move.select(Moves.OBSTRUCT);
+    game.move.select(MoveId.OBSTRUCT);
     await game.phaseInterceptor.to("MoveEffectPhase");
     await game.move.forceMiss();
 
@@ -60,10 +60,10 @@ describe("Moves - Obstruct", () => {
   });
 
   it("protects from non-contact damaging moves and doesn't lower the opponent's defense by 2 stages", async () => {
-    game.override.enemyMoveset(Moves.WATER_GUN);
+    game.override.enemyMoveset(MoveId.WATER_GUN);
     await game.classicMode.startBattle();
 
-    game.move.select(Moves.OBSTRUCT);
+    game.move.select(MoveId.OBSTRUCT);
     await game.phaseInterceptor.to("BerryPhase");
 
     const player = game.scene.getPlayerPokemon()!;
@@ -74,10 +74,10 @@ describe("Moves - Obstruct", () => {
   });
 
   it("doesn't protect from status moves", async () => {
-    game.override.enemyMoveset(Moves.GROWL);
+    game.override.enemyMoveset(MoveId.GROWL);
     await game.classicMode.startBattle();
 
-    game.move.select(Moves.OBSTRUCT);
+    game.move.select(MoveId.OBSTRUCT);
     await game.phaseInterceptor.to("BerryPhase");
 
     const player = game.scene.getPlayerPokemon()!;
@@ -86,10 +86,10 @@ describe("Moves - Obstruct", () => {
   });
 
   it("doesn't reduce the stats of an opponent with Clear Body/etc", async () => {
-    game.override.enemyAbility(Abilities.CLEAR_BODY);
+    game.override.enemyAbility(AbilityId.CLEAR_BODY);
     await game.classicMode.startBattle();
 
-    game.move.select(Moves.OBSTRUCT);
+    game.move.select(MoveId.OBSTRUCT);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(game.scene.getEnemyPokemon()!.getStatStage(Stat.DEF)).toBe(0);

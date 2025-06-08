@@ -70,10 +70,10 @@ export function initTestFile() {
    * @param x The relative x position
    * @param y The relative y position
    */
-  const setPositionRelative = function (guideObject: any, x: number, y: number) {
+  const setPositionRelative = function (guideObject: any, x: number, y: number): any {
     const offsetX = guideObject.width * (-0.5 + (0.5 - guideObject.originX));
     const offsetY = guideObject.height * (-0.5 + (0.5 - guideObject.originY));
-    this.setPosition(guideObject.x + offsetX + x, guideObject.y + offsetY + y);
+    return this.setPosition(guideObject.x + offsetX + x, guideObject.y + offsetY + y);
   };
 
   Phaser.GameObjects.Container.prototype.setPositionRelative = setPositionRelative;

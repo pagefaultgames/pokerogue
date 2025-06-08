@@ -28,14 +28,13 @@ import {
 } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import PokemonData from "#app/system/pokemon-data";
 import { isNullOrUndefined, randSeedInt } from "#app/utils/common";
-import type { Moves } from "#enums/moves";
+import type { MoveId } from "#enums/move-id";
 import { BattlerIndex } from "#app/battle";
 import { SelfStatusMove } from "#app/data/moves/move";
 import { PokeballType } from "#enums/pokeball";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { queueEncounterMessage } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { BerryModifier } from "#app/modifier/modifier";
-import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { Stat } from "#enums/stat";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 
@@ -73,7 +72,7 @@ export const UncommonBreedEncounter: MysteryEncounter = MysteryEncounterBuilder.
     const eggMoves = pokemon.getEggMoves();
     if (eggMoves) {
       const eggMoveIndex = randSeedInt(4);
-      const randomEggMove: Moves = eggMoves[eggMoveIndex];
+      const randomEggMove: MoveId = eggMoves[eggMoveIndex];
       encounter.misc = {
         eggMove: randomEggMove,
         pokemon: pokemon,
@@ -103,8 +102,12 @@ export const UncommonBreedEncounter: MysteryEncounter = MysteryEncounterBuilder.
           tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
           mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
             queueEncounterMessage(`${namespace}:option.1.stat_boost`);
-            globalScene.unshiftPhase(
-              new StatStageChangePhase(pokemon.getBattlerIndex(), true, statChangesForBattle, 1),
+            globalScene.phaseManager.unshiftNew(
+              "StatStageChangePhase",
+              pokemon.getBattlerIndex(),
+              true,
+              statChangesForBattle,
+              1,
             );
           },
         },
@@ -270,10 +273,10 @@ export const UncommonBreedEncounter: MysteryEncounter = MysteryEncounterBuilder.
   )
   .build();
 
-function givePokemonExtraEggMove(pokemon: EnemyPokemon, previousEggMove: Moves) {
+function givePokemonExtraEggMove(pokemon: EnemyPokemon, previousEggMove: MoveId) {
   const eggMoves = pokemon.getEggMoves();
   if (eggMoves) {
-    let randomEggMove: Moves = eggMoves[randSeedInt(4)];
+    let randomEggMove: MoveId = eggMoves[randSeedInt(4)];
     while (randomEggMove === previousEggMove) {
       randomEggMove = eggMoves[randSeedInt(4)];
     }

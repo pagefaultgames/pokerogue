@@ -4,11 +4,9 @@ import { EGG_SEED } from "#app/data/egg";
 import { Phase } from "#app/phase";
 import i18next from "i18next";
 import Overrides from "#app/overrides";
-import { EggHatchPhase } from "./egg-hatch-phase";
 import { UiMode } from "#enums/ui-mode";
 import { achvs } from "#app/system/achv";
 import type { PlayerPokemon } from "#app/field/pokemon";
-import { EggSummaryPhase } from "./egg-summary-phase";
 import { EggHatchData } from "#app/data/egg-hatch-data";
 
 /**
@@ -16,6 +14,7 @@ import { EggHatchData } from "#app/data/egg-hatch-data";
  * Also handles prompts for skipping animation, and calling the egg summary phase
  */
 export class EggLapsePhase extends Phase {
+  public readonly phaseName = "EggLapsePhase";
   private eggHatchData: EggHatchData[] = [];
   private readonly minEggsToSkip: number = 2;
 
@@ -61,12 +60,12 @@ export class EggLapsePhase extends Phase {
           true,
         );
       } else if (eggsToHatchCount >= this.minEggsToSkip && globalScene.eggSkipPreference === 2) {
-        globalScene.queueMessage(i18next.t("battle:eggHatching"));
+        globalScene.phaseManager.queueMessage(i18next.t("battle:eggHatching"));
         this.hatchEggsSkipped(eggsToHatch);
         this.showSummary();
       } else {
         // regular hatches, no summary
-        globalScene.queueMessage(i18next.t("battle:eggHatching"));
+        globalScene.phaseManager.queueMessage(i18next.t("battle:eggHatching"));
         this.hatchEggsRegular(eggsToHatch);
         this.end();
       }
@@ -82,7 +81,7 @@ export class EggLapsePhase extends Phase {
   hatchEggsRegular(eggsToHatch: Egg[]) {
     let eggsToHatchCount: number = eggsToHatch.length;
     for (const egg of eggsToHatch) {
-      globalScene.unshiftPhase(new EggHatchPhase(this, egg, eggsToHatchCount));
+      globalScene.phaseManager.unshiftNew("EggHatchPhase", this, egg, eggsToHatchCount);
       eggsToHatchCount--;
     }
   }
@@ -98,7 +97,7 @@ export class EggLapsePhase extends Phase {
   }
 
   showSummary() {
-    globalScene.unshiftPhase(new EggSummaryPhase(this.eggHatchData));
+    globalScene.phaseManager.unshiftNew("EggSummaryPhase", this.eggHatchData);
     this.end();
   }
 

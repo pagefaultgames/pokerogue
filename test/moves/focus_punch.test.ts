@@ -3,9 +3,9 @@ import { MessagePhase } from "#app/phases/message-phase";
 import { MoveHeaderPhase } from "#app/phases/move-header-phase";
 import { SwitchSummonPhase } from "#app/phases/switch-summon-phase";
 import { TurnStartPhase } from "#app/phases/turn-start-phase";
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import { AbilityId } from "#enums/ability-id";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import i18next from "i18next";
 import Phaser from "phaser";
@@ -29,24 +29,24 @@ describe("Moves - Focus Punch", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .ability(Abilities.UNNERVE)
-      .moveset([Moves.FOCUS_PUNCH])
-      .enemySpecies(Species.GROUDON)
-      .enemyAbility(Abilities.INSOMNIA)
-      .enemyMoveset(Moves.SPLASH)
+      .ability(AbilityId.UNNERVE)
+      .moveset([MoveId.FOCUS_PUNCH])
+      .enemySpecies(SpeciesId.GROUDON)
+      .enemyAbility(AbilityId.INSOMNIA)
+      .enemyMoveset(MoveId.SPLASH)
       .startingLevel(100)
       .enemyLevel(100);
   });
 
   it("should deal damage at the end of turn if uninterrupted", async () => {
-    await game.classicMode.startBattle([Species.CHARIZARD]);
+    await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
     const leadPokemon = game.scene.getPlayerPokemon()!;
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
     const enemyStartingHp = enemyPokemon.hp;
 
-    game.move.select(Moves.FOCUS_PUNCH);
+    game.move.select(MoveId.FOCUS_PUNCH);
 
     await game.phaseInterceptor.to(MessagePhase);
 
@@ -61,16 +61,16 @@ describe("Moves - Focus Punch", () => {
   });
 
   it("should fail if the user is hit", async () => {
-    game.override.enemyMoveset([Moves.TACKLE]);
+    game.override.enemyMoveset([MoveId.TACKLE]);
 
-    await game.classicMode.startBattle([Species.CHARIZARD]);
+    await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
     const leadPokemon = game.scene.getPlayerPokemon()!;
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
     const enemyStartingHp = enemyPokemon.hp;
 
-    game.move.select(Moves.FOCUS_PUNCH);
+    game.move.select(MoveId.FOCUS_PUNCH);
 
     await game.phaseInterceptor.to(MessagePhase);
 
@@ -85,14 +85,14 @@ describe("Moves - Focus Punch", () => {
   });
 
   it("should be cancelled if the user falls asleep mid-turn", async () => {
-    game.override.enemyMoveset([Moves.SPORE]);
+    game.override.enemyMoveset([MoveId.SPORE]);
 
-    await game.classicMode.startBattle([Species.CHARIZARD]);
+    await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
     const leadPokemon = game.scene.getPlayerPokemon()!;
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.FOCUS_PUNCH);
+    game.move.select(MoveId.FOCUS_PUNCH);
 
     await game.phaseInterceptor.to(MessagePhase); // Header message
 
@@ -108,21 +108,21 @@ describe("Moves - Focus Punch", () => {
     /** Guarantee a Trainer battle with multiple enemy Pokemon */
     game.override.startingWave(25);
 
-    await game.classicMode.startBattle([Species.CHARIZARD]);
+    await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
     game.forceEnemyToSwitch();
-    game.move.select(Moves.FOCUS_PUNCH);
+    game.move.select(MoveId.FOCUS_PUNCH);
 
     await game.phaseInterceptor.to(TurnStartPhase);
 
-    expect(game.scene.getCurrentPhase() instanceof SwitchSummonPhase).toBeTruthy();
-    expect(game.scene.phaseQueue.find(phase => phase instanceof MoveHeaderPhase)).toBeDefined();
+    expect(game.scene.phaseManager.getCurrentPhase() instanceof SwitchSummonPhase).toBeTruthy();
+    expect(game.scene.phaseManager.phaseQueue.find(phase => phase instanceof MoveHeaderPhase)).toBeDefined();
   });
   it("should replace the 'but it failed' text when the user gets hit", async () => {
-    game.override.enemyMoveset([Moves.TACKLE]);
-    await game.classicMode.startBattle([Species.CHARIZARD]);
+    game.override.enemyMoveset([MoveId.TACKLE]);
+    await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
-    game.move.select(Moves.FOCUS_PUNCH);
+    game.move.select(MoveId.FOCUS_PUNCH);
     await game.phaseInterceptor.to("MoveEndPhase", true);
     await game.phaseInterceptor.to("MessagePhase", false);
     const consoleSpy = vi.spyOn(console, "log");

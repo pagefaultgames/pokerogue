@@ -5,6 +5,8 @@ import { Phase } from "#app/phase";
  * Plays the given {@linkcode MoveAnim} sequentially.
  */
 export class MoveAnimPhase<Anim extends MoveAnim> extends Phase {
+  public readonly phaseName = "MoveAnimPhase";
+
   constructor(
     protected anim: Anim,
     protected onSubstitute = false,

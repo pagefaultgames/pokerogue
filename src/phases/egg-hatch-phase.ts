@@ -20,6 +20,7 @@ import { doShinySparkleAnim } from "#app/field/anims";
  * Class that represents egg hatching
  */
 export class EggHatchPhase extends Phase {
+  public readonly phaseName = "EggHatchPhase";
   /** The egg that is hatching */
   private egg: Egg;
   /** The new EggHatchData for the egg/pokemon that hatches */
@@ -224,7 +225,7 @@ export class EggHatchPhase extends Phase {
   }
 
   end() {
-    if (globalScene.findPhase(p => p instanceof EggHatchPhase)) {
+    if (globalScene.phaseManager.findPhase(p => p.is("EggHatchPhase"))) {
       this.eggHatchHandler.clear();
     } else {
       globalScene.time.delayedCall(250, () => globalScene.setModifiersVisible(true));

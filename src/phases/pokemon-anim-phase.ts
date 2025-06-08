@@ -4,9 +4,10 @@ import type Pokemon from "#app/field/pokemon";
 import { BattlePhase } from "#app/phases/battle-phase";
 import { isNullOrUndefined } from "#app/utils/common";
 import { PokemonAnimType } from "#enums/pokemon-anim-type";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species-id";
 
 export class PokemonAnimPhase extends BattlePhase {
+  public readonly phaseName = "PokemonAnimPhase";
   /** The type of animation to play in this phase */
   protected key: PokemonAnimType;
   /** The Pokemon to which this animation applies */
@@ -247,7 +248,7 @@ export class PokemonAnimPhase extends BattlePhase {
     }
     const dondozo = this.pokemon.getAlly();
 
-    if (dondozo?.species?.speciesId !== Species.DONDOZO) {
+    if (dondozo?.species?.speciesId !== SpeciesId.DONDOZO) {
       return this.end();
     }
 
