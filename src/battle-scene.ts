@@ -105,11 +105,11 @@ import type PokemonData from "#app/system/pokemon-data";
 import { Nature } from "#enums/nature";
 import type { SpeciesFormChange, SpeciesFormChangeTrigger } from "#app/data/pokemon-forms";
 import {
-  FormChangeItem,
   pokemonFormChanges,
   SpeciesFormChangeManualTrigger,
   SpeciesFormChangeTimeOfDayTrigger,
 } from "#app/data/pokemon-forms";
+import { FormChangeItem } from "#enums/form-change-item";
 import { getTypeRgb } from "#app/data/type";
 import { PokemonType } from "#enums/pokemon-type";
 import PokemonSpriteSparkleHandler from "#app/field/pokemon-sprite-sparkle-handler";

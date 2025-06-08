@@ -6,12 +6,8 @@ import { AttackMove } from "#app/data/moves/move";
 import { allMoves } from "#app/data/data-lists";
 import { getNatureName, getNatureStatMultiplier } from "#app/data/nature";
 import { getPokeballCatchMultiplier, getPokeballName, MAX_PER_TYPE_POKEBALLS } from "#app/data/pokeball";
-import {
-  FormChangeItem,
-  pokemonFormChanges,
-  SpeciesFormChangeCondition,
-  SpeciesFormChangeItemTrigger,
-} from "#app/data/pokemon-forms";
+import { pokemonFormChanges, SpeciesFormChangeCondition, SpeciesFormChangeItemTrigger } from "#app/data/pokemon-forms";
+import { FormChangeItem } from "#enums/form-change-item";
 import { getStatusEffectDescriptor } from "#app/data/status-effect";
 import { PokemonType } from "#enums/pokemon-type";
 import type { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
