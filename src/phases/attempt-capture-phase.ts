@@ -257,7 +257,7 @@ export class AttemptCapturePhase extends PokemonPhase {
       null,
       () => {
         const end = () => {
-          globalScene.unshiftPhase(new VictoryPhase(this.battlerIndex));
+          globalScene.phaseManager.unshiftPhase(new VictoryPhase(this.battlerIndex));
           globalScene.pokemonInfoContainer.hide();
           this.removePb();
           this.end();

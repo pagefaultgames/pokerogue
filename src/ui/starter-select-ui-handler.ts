@@ -23,13 +23,8 @@ import { allSpecies, getPokemonSpeciesForm, getPokerusStarters } from "#app/data
 import { getStarterValueFriendshipCap, speciesStarterCosts, POKERUS_STARTER_COUNT } from "#app/data/balance/starters";
 import { PokemonType } from "#enums/pokemon-type";
 import { GameModes } from "#app/game-mode";
-import type {
-  DexAttrProps,
-  DexEntry,
-  StarterMoveset,
-  StarterAttributes,
-  StarterPreferences,
-} from "#app/system/game-data";
+import type { DexAttrProps, StarterMoveset, StarterAttributes, StarterPreferences } from "#app/system/game-data";
+import type { DexEntry } from "#app/@types/dex-data";
 import { AbilityAttr, DexAttr, loadStarterPreferences, saveStarterPreferences } from "#app/system/game-data";
 import { Tutorial, handleTutorial } from "#app/tutorial";
 import type { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
@@ -4310,15 +4305,15 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         UiMode.CONFIRM,
         () => {
           ui.setMode(UiMode.STARTER_SELECT);
-          globalScene.clearPhaseQueue();
+          globalScene.phaseManager.clearPhaseQueue();
           if (globalScene.gameMode.isChallenge) {
-            globalScene.pushPhase(new SelectChallengePhase());
-            globalScene.pushPhase(new EncounterPhase());
+            globalScene.phaseManager.pushPhase(new SelectChallengePhase());
+            globalScene.phaseManager.pushPhase(new EncounterPhase());
           } else {
-            globalScene.pushPhase(new TitlePhase());
+            globalScene.phaseManager.pushPhase(new TitlePhase());
           }
           this.clearText();
-          globalScene.getCurrentPhase()?.end();
+          globalScene.phaseManager.getCurrentPhase()?.end();
         },
         cancel,
         null,

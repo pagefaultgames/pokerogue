@@ -48,7 +48,7 @@ import type {
   TrainerTierPools,
   TrainerConfigs,
   PartyMemberFuncs,
-} from "./typedefs";
+} from "../../@types/trainer-funcs";
 
 /** Minimum BST for Pokemon generated onto the Elite Four's teams */
 const ELITE_FOUR_MINIMUM_BST = 460;
