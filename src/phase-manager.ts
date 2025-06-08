@@ -548,7 +548,8 @@ export class PhaseManager {
   }
 
   /**
-   * Create a new phase and immediately prepend it to the phase queue. Equivalent to calling {@linkcode create} followed by {@linkcode prependToPhase}.
+   * Create a new phase and immediately prepend it to an existing phase in the phase queue.
+   * Equivalent to calling {@linkcode create} followed by {@linkcode prependToPhase}.
    * @param targetPhase - The phase to search for in phaseQueue
    * @param phase - The name of the phase to create
    * @param args - The arguments to pass to the phase constructor
@@ -563,7 +564,8 @@ export class PhaseManager {
   }
 
   /**
-   * Create a new phase and immediately append it to the phase queue. Equivalent to calling {@linkcode create} followed by {@linkcode appendToPhase}.
+   * Create a new phase and immediately append it to an existing phase the phase queue.
+   * Equivalent to calling {@linkcode create} followed by {@linkcode appendToPhase}.
    * @param targetPhase - The phase to search for in phaseQueue
    * @param phase - The name of the phase to create
    * @param args - The arguments to pass to the phase constructor
