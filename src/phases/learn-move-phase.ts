@@ -12,15 +12,7 @@ import { UiMode } from "#enums/ui-mode";
 import i18next from "i18next";
 import { PlayerPartyMemberPokemonPhase } from "#app/phases/player-party-member-pokemon-phase";
 import type Pokemon from "#app/field/pokemon";
-
-export enum LearnMoveType {
-  /** For learning a move via level-up, evolution, or other non-item-based event */
-  LEARN_MOVE,
-  /** For learning a move via Memory Mushroom */
-  MEMORY,
-  /** For learning a move via TM */
-  TM,
-}
+import { LearnMoveType } from "#enums/learn-move-type";
 
 export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
   public readonly phaseName = "LearnMovePhase";

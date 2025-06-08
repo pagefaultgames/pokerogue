@@ -8,7 +8,7 @@ import { getStatusEffectHealText } from "#app/data/status-effect";
 import Pokemon, { type PlayerPokemon } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import Overrides from "#app/overrides";
-import { LearnMoveType } from "#app/phases/learn-move-phase";
+import { LearnMoveType } from "#enums/learn-move-type";
 import type { VoucherType } from "#app/system/voucher";
 import { Command } from "#enums/command";
 import { addTextObject, TextStyle } from "#app/ui/text";
