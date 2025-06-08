@@ -137,7 +137,7 @@ export const AnOfferYouCantRefuseEncounter: MysteryEncounter = MysteryEncounterB
       })
       .withOptionPhase(async () => {
         // Give the player a Shiny Charm
-        globalScene.unshiftPhase(new ModifierRewardPhase(modifierTypes.SHINY_CHARM));
+        globalScene.phaseManager.unshiftPhase(new ModifierRewardPhase(modifierTypes.SHINY_CHARM));
         leaveEncounterWithoutBattle(true);
       })
       .build(),

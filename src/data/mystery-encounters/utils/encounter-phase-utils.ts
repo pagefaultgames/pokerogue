@@ -428,7 +428,7 @@ export async function initBattleWithEnemyConfig(partyConfig: EnemyPartyConfig): 
     console.log("Moveset:", moveset);
   });
 
-  globalScene.pushPhase(new MysteryEncounterBattlePhase(partyConfig.disableSwitch));
+  globalScene.phaseManager.pushPhase(new MysteryEncounterBattlePhase(partyConfig.disableSwitch));
 
   await Promise.all(loadEnemyAssets);
   battle.enemyParty.forEach((enemyPokemon_2, e_1) => {
@@ -480,7 +480,7 @@ export function updatePlayerMoney(changeValue: number, playSound = true, showMes
   }
   if (showMessage) {
     if (changeValue < 0) {
-      globalScene.queueMessage(
+      globalScene.phaseManager.queueMessage(
         i18next.t("mysteryEncounterMessages:paid_money", {
           amount: -changeValue,
         }),
@@ -488,7 +488,7 @@ export function updatePlayerMoney(changeValue: number, playSound = true, showMes
         true,
       );
     } else {
-      globalScene.queueMessage(
+      globalScene.phaseManager.queueMessage(
         i18next.t("mysteryEncounterMessages:receive_money", {
           amount: changeValue,
         }),
@@ -767,9 +767,9 @@ export function setEncounterRewards(
     }
 
     if (customShopRewards) {
-      globalScene.unshiftPhase(new SelectModifierPhase(0, undefined, customShopRewards));
+      globalScene.phaseManager.unshiftPhase(new SelectModifierPhase(0, undefined, customShopRewards));
     } else {
-      globalScene.tryRemovePhase(p => p.is("MysteryEncounterRewardsPhase"));
+      globalScene.phaseManager.tryRemovePhase(p => p.is("MysteryEncounterRewardsPhase"));
     }
 
     if (eggRewards) {
@@ -807,7 +807,7 @@ export function setEncounterExp(participantId: number | number[], baseExpValue: 
   const participantIds = Array.isArray(participantId) ? participantId : [participantId];
 
   globalScene.currentBattle.mysteryEncounter!.doEncounterExp = () => {
-    globalScene.unshiftPhase(new PartyExpPhase(baseExpValue, useWaveIndex, new Set(participantIds)));
+    globalScene.phaseManager.unshiftPhase(new PartyExpPhase(baseExpValue, useWaveIndex, new Set(participantIds)));
 
     return true;
   };
@@ -829,7 +829,7 @@ export class OptionSelectSettings {
  * @param optionSelectSettings
  */
 export function initSubsequentOptionSelect(optionSelectSettings: OptionSelectSettings) {
-  globalScene.pushPhase(new MysteryEncounterPhase(optionSelectSettings));
+  globalScene.phaseManager.pushPhase(new MysteryEncounterPhase(optionSelectSettings));
 }
 
 /**
@@ -843,8 +843,8 @@ export function leaveEncounterWithoutBattle(
   encounterMode: MysteryEncounterMode = MysteryEncounterMode.NO_BATTLE,
 ) {
   globalScene.currentBattle.mysteryEncounter!.encounterMode = encounterMode;
-  globalScene.clearPhaseQueue();
-  globalScene.clearPhaseQueueSplice();
+  globalScene.phaseManager.clearPhaseQueue();
+  globalScene.phaseManager.clearPhaseQueueSplice();
   handleMysteryEncounterVictory(addHealPhase);
 }
 
@@ -857,8 +857,8 @@ export function handleMysteryEncounterVictory(addHealPhase = false, doNotContinu
   const allowedPkm = globalScene.getPlayerParty().filter(pkm => pkm.isAllowedInBattle());
 
   if (allowedPkm.length === 0) {
-    globalScene.clearPhaseQueue();
-    globalScene.unshiftPhase(new GameOverPhase());
+    globalScene.phaseManager.clearPhaseQueue();
+    globalScene.phaseManager.unshiftPhase(new GameOverPhase());
     return;
   }
 
@@ -869,8 +869,8 @@ export function handleMysteryEncounterVictory(addHealPhase = false, doNotContinu
     return;
   }
   if (encounter.encounterMode === MysteryEncounterMode.NO_BATTLE) {
-    globalScene.pushPhase(new MysteryEncounterRewardsPhase(addHealPhase));
-    globalScene.pushPhase(new EggLapsePhase());
+    globalScene.phaseManager.pushPhase(new MysteryEncounterRewardsPhase(addHealPhase));
+    globalScene.phaseManager.pushPhase(new EggLapsePhase());
   } else if (
     !globalScene
       .getEnemyParty()
@@ -878,15 +878,15 @@ export function handleMysteryEncounterVictory(addHealPhase = false, doNotContinu
         encounter.encounterMode !== MysteryEncounterMode.TRAINER_BATTLE ? p.isOnField() : !p?.isFainted(true),
       )
   ) {
-    globalScene.pushPhase(new BattleEndPhase(true));
+    globalScene.phaseManager.pushPhase(new BattleEndPhase(true));
     if (encounter.encounterMode === MysteryEncounterMode.TRAINER_BATTLE) {
-      globalScene.pushPhase(new TrainerVictoryPhase());
+      globalScene.phaseManager.pushPhase(new TrainerVictoryPhase());
     }
     if (globalScene.gameMode.isEndless || !globalScene.gameMode.isWaveFinal(globalScene.currentBattle.waveIndex)) {
-      globalScene.pushPhase(new MysteryEncounterRewardsPhase(addHealPhase));
+      globalScene.phaseManager.pushPhase(new MysteryEncounterRewardsPhase(addHealPhase));
       if (!encounter.doContinueEncounter) {
         // Only lapse eggs once for multi-battle encounters
-        globalScene.pushPhase(new EggLapsePhase());
+        globalScene.phaseManager.pushPhase(new EggLapsePhase());
       }
     }
   }
@@ -900,8 +900,8 @@ export function handleMysteryEncounterBattleFailed(addHealPhase = false, doNotCo
   const allowedPkm = globalScene.getPlayerParty().filter(pkm => pkm.isAllowedInBattle());
 
   if (allowedPkm.length === 0) {
-    globalScene.clearPhaseQueue();
-    globalScene.unshiftPhase(new GameOverPhase());
+    globalScene.phaseManager.clearPhaseQueue();
+    globalScene.phaseManager.unshiftPhase(new GameOverPhase());
     return;
   }
 
@@ -912,14 +912,14 @@ export function handleMysteryEncounterBattleFailed(addHealPhase = false, doNotCo
     return;
   }
   if (encounter.encounterMode !== MysteryEncounterMode.NO_BATTLE) {
-    globalScene.pushPhase(new BattleEndPhase(false));
+    globalScene.phaseManager.pushPhase(new BattleEndPhase(false));
   }
 
-  globalScene.pushPhase(new MysteryEncounterRewardsPhase(addHealPhase));
+  globalScene.phaseManager.pushPhase(new MysteryEncounterRewardsPhase(addHealPhase));
 
   if (!encounter.doContinueEncounter) {
     // Only lapse eggs once for multi-battle encounters
-    globalScene.pushPhase(new EggLapsePhase());
+    globalScene.phaseManager.pushPhase(new EggLapsePhase());
   }
 }
 
@@ -1004,12 +1004,14 @@ export function handleMysteryEncounterBattleStartEffects() {
       } else {
         source = globalScene.getEnemyField()[0];
       }
-      // @ts-ignore: source cannot be undefined
-      globalScene.pushPhase(new MovePhase(source, effect.targets, effect.move, effect.followUp, effect.ignorePp));
+      globalScene.phaseManager.pushPhase(
+        // @ts-ignore: source cannot be undefined
+        new MovePhase(source, effect.targets, effect.move, effect.followUp, effect.ignorePp),
+      );
     });
 
     // Pseudo turn end phase to reset flinch states, Endure, etc.
-    globalScene.pushPhase(new MysteryEncounterBattleStartCleanupPhase());
+    globalScene.phaseManager.pushPhase(new MysteryEncounterBattleStartCleanupPhase());
 
     encounter.startOfBattleEffectsComplete = true;
   }
