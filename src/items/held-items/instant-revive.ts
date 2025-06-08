@@ -41,7 +41,7 @@ export class InstantReviveHeldItem extends ConsumableHeldItem {
   apply(params: INSTANT_REVIVE_PARAMS): boolean {
     const pokemon = params.pokemon;
     // Restore the Pokemon to half HP
-    globalScene.unshiftPhase(
+    globalScene.phaseManager.unshiftPhase(
       new PokemonHealPhase(
         pokemon.getBattlerIndex(),
         toDmgValue(pokemon.getMaxHp() / 2),

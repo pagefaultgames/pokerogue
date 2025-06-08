@@ -20,7 +20,7 @@ export class TurnEndHealHeldItem extends HeldItem {
     if (pokemon.isFullHp()) {
       return false;
     }
-    globalScene.unshiftPhase(
+    globalScene.phaseManager.unshiftPhase(
       new PokemonHealPhase(
         pokemon.getBattlerIndex(),
         toDmgValue(pokemon.getMaxHp() / 16) * stackCount,
