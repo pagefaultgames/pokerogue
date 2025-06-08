@@ -1,6 +1,6 @@
 import { BattlerIndex } from "#enums/battler-index";
 import { allAbilities } from "#app/data/data-lists";
-import { ArenaTagSide } from "#app/data/arena-tag";
+import { ArenaTagSide } from "#enums/arena-tag-side";
 import { FlinchAttr } from "#app/data/moves/move";
 import { allMoves } from "#app/data/data-lists";
 import { PokemonType } from "#enums/pokemon-type";

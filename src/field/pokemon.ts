@@ -136,7 +136,8 @@ import {
   type GrudgeTag,
 } from "../data/battler-tags";
 import { WeatherType } from "#enums/weather-type";
-import { ArenaTagSide, NoCritTag, WeakenMoveScreenTag } from "#app/data/arena-tag";
+import { NoCritTag, WeakenMoveScreenTag } from "#app/data/arena-tag";
+import { ArenaTagSide } from "#enums/arena-tag-side";
 import type { SuppressAbilitiesTag } from "#app/data/arena-tag";
 import type { Ability } from "#app/data/abilities/ability-class";
 import type { AbAttr } from "#app/data/abilities/ab-attrs/ab-attr";

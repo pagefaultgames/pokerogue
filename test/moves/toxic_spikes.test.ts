@@ -1,5 +1,5 @@
 import type { ArenaTrapTag } from "#app/data/arena-tag";
-import { ArenaTagSide } from "#app/data/arena-tag";
+import { ArenaTagSide } from "#enums/arena-tag-side";
 import type { SessionSaveData } from "#app/system/game-data";
 import { decrypt, encrypt, GameData } from "#app/system/game-data";
 import { AbilityId } from "#enums/ability-id";

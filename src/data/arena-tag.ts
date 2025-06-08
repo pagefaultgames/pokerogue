@@ -26,12 +26,7 @@ import { AbilityId } from "#enums/ability-id";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
-
-export enum ArenaTagSide {
-  BOTH,
-  PLAYER,
-  ENEMY,
-}
+import { ArenaTagSide } from "#enums/arena-tag-side";
 
 export abstract class ArenaTag {
   constructor(

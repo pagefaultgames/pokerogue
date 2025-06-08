@@ -35,7 +35,7 @@ import {
   FixedDamageAttr,
 } from "#app/data/moves/move";
 import { allMoves } from "../data-lists";
-import { ArenaTagSide } from "#app/data/arena-tag";
+import { ArenaTagSide } from "#enums/arena-tag-side";
 import { BerryModifier, HitHealModifier, PokemonHeldItemModifier } from "#app/modifier/modifier";
 import { TerrainType } from "#app/data/terrain";
 import {

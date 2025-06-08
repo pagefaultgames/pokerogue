@@ -16,7 +16,8 @@ import {
   PostDefendAbAttr,
   ReflectStatusMoveAbAttr,
 } from "#app/data/abilities/ability";
-import { ArenaTagSide, ConditionalProtectTag } from "#app/data/arena-tag";
+import { ConditionalProtectTag } from "#app/data/arena-tag";
+import { ArenaTagSide } from "#enums/arena-tag-side";
 import { MoveAnim } from "#app/data/battle-anims";
 import {
   BattlerTagLapseType,

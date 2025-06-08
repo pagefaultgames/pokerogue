@@ -1,5 +1,5 @@
 import type BattleScene from "#app/battle-scene";
-import { ArenaTagSide } from "#app/data/arena-tag";
+import { ArenaTagSide } from "#enums/arena-tag-side";
 import type Move from "#app/data/moves/move";
 import { CritOnlyAttr } from "#app/data/moves/move";
 import { allMoves } from "#app/data/data-lists";
