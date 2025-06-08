@@ -6,7 +6,7 @@ import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { Stat } from "#enums/stat";
 import { BattlerIndex } from "#enums/battler-index";
-import { MoveResult } from "#app/field/pokemon";
+import { MoveResult } from "#enums/move-result";
 
 describe("Moves - Quick Guard", () => {
   let phaserGame: Phaser.Game;

@@ -1,4 +1,5 @@
-import { HitResult, MoveResult } from "#app/field/pokemon";
+import { MoveResult } from "#enums/move-result";
+import { HitResult } from "#enums/hit-result";
 import {
   BooleanHolder,
   NumberHolder,

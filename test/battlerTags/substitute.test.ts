@@ -1,7 +1,7 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import type { PokemonTurnData, TurnMove } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
-import { MoveResult } from "#app/field/pokemon";
+import { MoveResult } from "#enums/move-result";
 import type BattleScene from "#app/battle-scene";
 import { BattlerTagLapseType, BindTag, SubstituteTag } from "#app/data/battler-tags";
 import { MoveId } from "#enums/move-id";

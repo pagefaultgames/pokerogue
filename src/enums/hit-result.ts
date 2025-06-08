@@ -1,0 +1,16 @@
+
+export enum HitResult {
+  EFFECTIVE = 1,
+  SUPER_EFFECTIVE,
+  NOT_VERY_EFFECTIVE,
+  ONE_HIT_KO,
+  NO_EFFECT,
+  STATUS,
+  HEAL,
+  FAIL,
+  MISS,
+  INDIRECT,
+  IMMUNE,
+  CONFUSION,
+  INDIRECT_KO
+}

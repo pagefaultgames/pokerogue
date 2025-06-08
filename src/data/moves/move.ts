@@ -16,12 +16,12 @@ import type { AttackMoveResult, TurnMove } from "../../field/pokemon";
 import type Pokemon from "../../field/pokemon";
 import {
   EnemyPokemon,
-  FieldPosition,
-  HitResult,
-  MoveResult,
   PlayerPokemon,
   PokemonMove,
 } from "../../field/pokemon";
+import { MoveResult } from "#enums/move-result";
+import { HitResult } from "#enums/hit-result";
+import { FieldPosition } from "#enums/field-position";
 import {
   getNonVolatileStatusEffects,
   getStatusEffectHealText,

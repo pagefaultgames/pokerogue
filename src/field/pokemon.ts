@@ -249,21 +249,11 @@ import { doShinySparkleAnim } from "#app/field/anims";
 import { MoveFlags } from "#enums/MoveFlags";
 import { timedEventManager } from "#app/global-event-manager";
 import { loadMoveAnimations } from "#app/sprites/pokemon-asset-loader";
-
-export enum LearnMoveSituation {
-  MISC,
-  LEVEL_UP,
-  RELEARN,
-  EVOLUTION,
-  EVOLUTION_FUSED, // If fusionSpecies has Evolved
-  EVOLUTION_FUSED_BASE, // If fusion's base species has Evolved
-}
-
-export enum FieldPosition {
-  CENTER,
-  LEFT,
-  RIGHT,
-}
+import { FieldPosition } from "#enums/field-position";
+import { LearnMoveSituation } from "#enums/learn-move-situation";
+import { HitResult } from "#enums/hit-result";
+import { AiType } from "#enums/ai-type";
+import type { MoveResult } from "#enums/move-result";
 
 /** Base typeclass for damage parameter methods, used for DRY */
 type damageParams = {
@@ -6943,36 +6933,6 @@ export class PokemonTurnData {
    * @see {@linkcode PokemonSummonData.berriesEatenLast}
    */
   public berriesEaten: BerryType[] = [];
-}
-
-export enum AiType {
-  RANDOM,
-  SMART_RANDOM,
-  SMART,
-}
-
-export enum MoveResult {
-  PENDING,
-  SUCCESS,
-  FAIL,
-  MISS,
-  OTHER,
-}
-
-export enum HitResult {
-  EFFECTIVE = 1,
-  SUPER_EFFECTIVE,
-  NOT_VERY_EFFECTIVE,
-  ONE_HIT_KO,
-  NO_EFFECT,
-  STATUS,
-  HEAL,
-  FAIL,
-  MISS,
-  INDIRECT,
-  IMMUNE,
-  CONFUSION,
-  INDIRECT_KO,
 }
 
 export type DamageResult =
