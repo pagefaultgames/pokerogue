@@ -14,14 +14,7 @@ import { Challenges } from "./enums/challenges";
 import { globalScene } from "#app/global-scene";
 import { getDailyStartingBiome } from "./data/daily-run";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES, CHALLENGE_MODE_MYSTERY_ENCOUNTER_WAVES } from "./constants";
-
-export enum GameModes {
-  CLASSIC,
-  ENDLESS,
-  SPLICED_ENDLESS,
-  DAILY,
-  CHALLENGE,
-}
+import { GameModes } from "#enums/game-modes";
 
 interface GameModeConfig {
   isClassic?: boolean;

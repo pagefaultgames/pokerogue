@@ -22,7 +22,7 @@ import type PokemonSpecies from "#app/data/pokemon-species";
 import { allSpecies, getPokemonSpeciesForm, getPokerusStarters } from "#app/data/pokemon-species";
 import { getStarterValueFriendshipCap, speciesStarterCosts, POKERUS_STARTER_COUNT } from "#app/data/balance/starters";
 import { PokemonType } from "#enums/pokemon-type";
-import { GameModes } from "#app/game-mode";
+import { GameModes } from "#enums/game-modes";
 import type { DexAttrProps, StarterMoveset, StarterAttributes, StarterPreferences } from "#app/system/game-data";
 import type { DexEntry } from "#app/@types/dex-data";
 import { AbilityAttr, DexAttr, loadStarterPreferences, saveStarterPreferences } from "#app/system/game-data";

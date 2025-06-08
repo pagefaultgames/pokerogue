@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import { GameModes } from "../game-mode";
+import { GameModes } from "#enums/game-modes";
 import { TextStyle, addTextObject } from "./text";
 import { UiMode } from "#enums/ui-mode";
 import { addWindow } from "./ui-theme";
