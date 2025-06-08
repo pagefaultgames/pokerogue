@@ -241,7 +241,7 @@ describe("Clowning Around - Mystery Encounter", () => {
       await runMysteryEncounterToEnd(game, 1, undefined, true);
       await skipBattleRunMysteryEncounterRewardsPhase(game);
       await game.phaseInterceptor.to(SelectModifierPhase, false);
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
+      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
       await game.phaseInterceptor.run(SelectModifierPhase);
 
       const leadPokemon = scene.getPlayerParty()[0];
@@ -266,7 +266,7 @@ describe("Clowning Around - Mystery Encounter", () => {
       vi.spyOn(optionSelectUiHandlerRepeatedAbility, "show");
       game.endPhase();
       await game.phaseInterceptor.to(PostMysteryEncounterPhase);
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(PostMysteryEncounterPhase.name);
+      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(PostMysteryEncounterPhase.name);
 
       // Wait for Yes/No confirmation to appear -> accepting the Ability
       await vi.waitFor(() => expect(optionSelectUiHandler.show).toHaveBeenCalled());
