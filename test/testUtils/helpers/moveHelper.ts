@@ -154,7 +154,7 @@ export class MoveHelper extends GameManagerHelper {
    * Changes a pokemon's moveset to the given move(s).
    * Used when the normal moveset override can't be used (such as when it's necessary to check or update properties of the moveset).
    * @param pokemon - The {@linkcode Pokemon} being modified
-   * @param moveset - The {@linkcode MoveId} (single or array) to change the Pokemon's moveset to
+   * @param moveset - The {@linkcode MoveId} (single or array) to change the Pokemon's moveset to.
    */
   public changeMoveset(pokemon: Pokemon, moveset: MoveId | MoveId[]): void {
     if (!Array.isArray(moveset)) {
@@ -169,10 +169,14 @@ export class MoveHelper extends GameManagerHelper {
   }
 
   /**
-   * Forces the next enemy selecting a move to use the given move in its moveset
+   * Forces the next enemy selecting a move to use the given move _in its moveset_
    * against the given target (if applicable).
-   * @param moveId The {@linkcode MoveId | move} the enemy will use
-   * @param target (Optional) the {@linkcode BattlerIndex | target} which the enemy will use the given move against
+   * @param moveId - The {@linkcode Move | move ID} the enemy will be forced to use.
+   * @param target - The {@linkcode BattlerIndex | target} against which the enemy will use the given move;
+   * defaults to normal target selection priorities if omitted or not single-target.
+   * @remarks
+   * If you do not need to check for changes in the enemy's moveset as part of the test, it may be
+   * best to use {@linkcode forceEnemyMove} instead.
    */
   public async selectEnemyMove(moveId: MoveId, target?: BattlerIndex) {
     // Wait for the next EnemyCommandPhase to start
@@ -200,14 +204,18 @@ export class MoveHelper extends GameManagerHelper {
   }
 
   /**
-   * Forces the next enemy selecting a move to use the given move against the given target (if applicable).
+   * Modify the moveset of the next enemy selecting a move to contain only the given move, and then
+   * selects it to be used during the next {@linkcode EnemyCommandPhase} against the given targets.
    *
-   * Warning: Overwrites the pokemon's moveset and disables the moveset override!
+   * Does not require the given move to be in the enemy's moveset beforehand,
+   * but **overwrites the pokemon's moveset** and **disables any prior moveset overrides**!
    *
-   * Note: If you need to check for changes in the enemy's moveset as part of the test, it may be
+   * @param moveId - The {@linkcode Move | move ID} the enemy will be forced to use.
+   * @param target - The {@linkcode BattlerIndex | target} against which the enemy will use the given move;
+   * defaults to normal target selection priorities if omitted or not single-target.
+   * @remarks
+   * If you need to check for changes in the enemy's moveset as part of the test, it may be
    * best to use {@linkcode changeMoveset} and {@linkcode selectEnemyMove} instead.
-   * @param moveId The {@linkcode MoveId | move} the enemy will use
-   * @param target (Optional) the {@linkcode BattlerIndex | target} which the enemy will use the given move against
    */
   public async forceEnemyMove(moveId: MoveId, target?: BattlerIndex) {
     // Wait for the next EnemyCommandPhase to start
