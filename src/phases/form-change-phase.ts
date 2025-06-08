@@ -2,7 +2,7 @@ import { globalScene } from "#app/global-scene";
 import { fixedInt } from "#app/utils/common";
 import { achvs } from "../system/achv";
 import type { SpeciesFormChange } from "../data/pokemon-forms";
-import { getSpeciesFormChangeMessage } from "../data/pokemon-forms";
+import { getSpeciesFormChangeMessage } from "#app/data/pokemon-forms/form-change-triggers";
 import type { PlayerPokemon } from "../field/pokemon";
 import { UiMode } from "#enums/ui-mode";
 import type PartyUiHandler from "../ui/party-ui-handler";

@@ -107,7 +107,7 @@ import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { SwitchPhase } from "#app/phases/switch-phase";
 import { SwitchSummonPhase } from "#app/phases/switch-summon-phase";
-import { SpeciesFormChangeRevertWeatherFormTrigger } from "../pokemon-forms";
+import { SpeciesFormChangeRevertWeatherFormTrigger } from "../pokemon-forms/form-change-triggers";
 import type { GameMode } from "#app/game-mode";
 import { applyChallenges } from "../challenge";
 import { ChallengeType } from "#enums/challenge-type";

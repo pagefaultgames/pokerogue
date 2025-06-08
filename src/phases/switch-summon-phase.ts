@@ -9,7 +9,7 @@ import {
 import { ForceSwitchOutAttr } from "#app/data/moves/move";
 import { allMoves } from "#app/data/data-lists";
 import { getPokeballTintColor } from "#app/data/pokeball";
-import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms";
+import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms/form-change-triggers";
 import { TrainerSlot } from "#enums/trainer-slot";
 import type Pokemon from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";

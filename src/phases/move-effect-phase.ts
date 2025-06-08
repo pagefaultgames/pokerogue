@@ -49,7 +49,7 @@ import { MoveEffectTrigger } from "#enums/MoveEffectTrigger";
 import { MoveFlags } from "#enums/MoveFlags";
 import { MoveTarget } from "#enums/MoveTarget";
 import { MoveCategory } from "#enums/MoveCategory";
-import { SpeciesFormChangePostMoveTrigger } from "#app/data/pokemon-forms";
+import { SpeciesFormChangePostMoveTrigger } from "#app/data/pokemon-forms/form-change-triggers";
 import { PokemonType } from "#enums/pokemon-type";
 import type { DamageResult, TurnMove } from "#app/field/pokemon";
 import { PokemonMove } from "#app/data/moves/pokemon-move";

@@ -214,7 +214,7 @@ import {
   SpeciesFormChangeLapseTeraTrigger,
   SpeciesFormChangeMoveLearnedTrigger,
   SpeciesFormChangePostMoveTrigger,
-} from "#app/data/pokemon-forms";
+} from "#app/data/pokemon-forms/form-change-triggers";
 import { TerrainType } from "#app/data/terrain";
 import type { TrainerSlot } from "#enums/trainer-slot";
 import Overrides from "#app/overrides";

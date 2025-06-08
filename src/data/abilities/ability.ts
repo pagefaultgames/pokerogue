@@ -40,10 +40,10 @@ import { ArenaTagSide } from "#enums/arena-tag-side";
 import { BerryModifier, HitHealModifier, PokemonHeldItemModifier } from "#app/modifier/modifier";
 import { TerrainType } from "#app/data/terrain";
 import {
-  SpeciesFormChangeAbilityTrigger,
   SpeciesFormChangeRevertWeatherFormTrigger,
   SpeciesFormChangeWeatherTrigger,
-} from "#app/data/pokemon-forms";
+} from "../pokemon-forms/form-change-triggers";
+import { SpeciesFormChangeAbilityTrigger } from "../pokemon-forms/form-change-triggers";
 import i18next from "i18next";
 import { Command } from "#enums/command";
 import { BerryModifierType } from "#app/modifier/modifier-type";

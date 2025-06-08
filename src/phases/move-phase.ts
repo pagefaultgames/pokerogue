@@ -29,7 +29,7 @@ import {
 } from "#app/data/moves/move";
 import { allMoves } from "#app/data/data-lists";
 import { MoveFlags } from "#enums/MoveFlags";
-import { SpeciesFormChangePreMoveTrigger } from "#app/data/pokemon-forms";
+import { SpeciesFormChangePreMoveTrigger } from "#app/data/pokemon-forms/form-change-triggers";
 import { getStatusEffectActivationText, getStatusEffectHealText } from "#app/data/status-effect";
 import { PokemonType } from "#enums/pokemon-type";
 import { getTerrainBlockMessage, getWeatherBlockMessage } from "#app/data/weather";

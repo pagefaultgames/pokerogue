@@ -7,7 +7,7 @@ import { StatusEffect } from "#app/enums/status-effect";
 import type Pokemon from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { PokemonPhase } from "./pokemon-phase";
-import { SpeciesFormChangeStatusEffectTrigger } from "#app/data/pokemon-forms";
+import { SpeciesFormChangeStatusEffectTrigger } from "#app/data/pokemon-forms/form-change-triggers";
 import { applyPostSetStatusAbAttrs, PostSetStatusAbAttr } from "#app/data/abilities/ability";
 import { isNullOrUndefined } from "#app/utils/common";
 

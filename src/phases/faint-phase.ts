@@ -13,7 +13,7 @@ import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
 import { battleSpecDialogue } from "#app/data/dialogue";
 import { PostVictoryStatStageChangeAttr } from "#app/data/moves/move";
 import { allMoves } from "#app/data/data-lists";
-import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms";
+import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms/form-change-triggers";
 import { BattleSpec } from "#app/enums/battle-spec";
 import { StatusEffect } from "#app/enums/status-effect";
 import type { EnemyPokemon } from "#app/field/pokemon";

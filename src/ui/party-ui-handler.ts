@@ -19,7 +19,7 @@ import { StatusEffect } from "#enums/status-effect";
 import PokemonIconAnimHandler, { PokemonIconAnimMode } from "#app/ui/pokemon-icon-anim-handler";
 import { pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
 import { addWindow } from "#app/ui/ui-theme";
-import { SpeciesFormChangeItemTrigger } from "#app/data/pokemon-forms";
+import { SpeciesFormChangeItemTrigger } from "#app/data/pokemon-forms/form-change-triggers";
 import { FormChangeItem } from "#enums/form-change-item";
 import { getVariantTint } from "#app/sprites/variant";
 import { Button } from "#enums/buttons";

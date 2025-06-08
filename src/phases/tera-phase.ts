@@ -5,7 +5,7 @@ import i18next from "i18next";
 import { globalScene } from "#app/global-scene";
 import { PokemonType } from "#enums/pokemon-type";
 import { achvs } from "#app/system/achv";
-import { SpeciesFormChangeTeraTrigger } from "#app/data/pokemon-forms";
+import { SpeciesFormChangeTeraTrigger } from "#app/data/pokemon-forms/form-change-triggers";
 import { CommonBattleAnim } from "#app/data/battle-anims";
 import { CommonAnim } from "#enums/move-anims-common";
 

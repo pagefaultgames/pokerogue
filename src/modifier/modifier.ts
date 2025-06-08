@@ -3,7 +3,7 @@ import { getBerryEffectFunc, getBerryPredicate } from "#app/data/berry";
 import { getLevelTotalExp } from "#app/data/exp";
 import { allMoves } from "#app/data/data-lists";
 import { MAX_PER_TYPE_POKEBALLS } from "#app/data/pokeball";
-import { SpeciesFormChangeItemTrigger } from "#app/data/pokemon-forms";
+import { SpeciesFormChangeItemTrigger } from "#app/data/pokemon-forms/form-change-triggers";
 import type { FormChangeItem } from "#enums/form-change-item";
 import { getStatusEffectHealText } from "#app/data/status-effect";
 import Pokemon, { type PlayerPokemon } from "#app/field/pokemon";

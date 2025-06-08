@@ -38,7 +38,10 @@ import { SpeciesId } from "#enums/species-id";
 import { TimeOfDay } from "#enums/time-of-day";
 import { TrainerType } from "#enums/trainer-type";
 import { AbilityId } from "#enums/ability-id";
-import { SpeciesFormChangeRevertWeatherFormTrigger, SpeciesFormChangeWeatherTrigger } from "#app/data/pokemon-forms";
+import {
+  SpeciesFormChangeRevertWeatherFormTrigger,
+  SpeciesFormChangeWeatherTrigger,
+} from "#app/data/pokemon-forms/form-change-triggers";
 import { WeatherType } from "#enums/weather-type";
 import { FieldEffectModifier } from "#app/modifier/modifier";
 

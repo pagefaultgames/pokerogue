@@ -2,7 +2,7 @@ import { globalScene } from "#app/global-scene";
 import { applyChallenges } from "#app/data/challenge";
 import { ChallengeType } from "#enums/challenge-type";
 import { Gender } from "#app/data/gender";
-import { SpeciesFormChangeMoveLearnedTrigger } from "#app/data/pokemon-forms";
+import { SpeciesFormChangeMoveLearnedTrigger } from "#app/data/pokemon-forms/form-change-triggers";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { overrideHeldItems, overrideModifiers } from "#app/modifier/modifier";
 import Overrides from "#app/overrides";
