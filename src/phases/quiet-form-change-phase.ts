@@ -6,7 +6,6 @@ import { getTypeRgb } from "#app/data/type";
 import { BattleSpec } from "#app/enums/battle-spec";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
 import type Pokemon from "#app/field/pokemon";
-import { EnemyPokemon } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { BattlePhase } from "./battle-phase";
 import type { MovePhase } from "./move-phase";
@@ -158,7 +157,7 @@ export class QuietFormChangePhase extends BattlePhase {
 
   end(): void {
     this.pokemon.findAndRemoveTags(t => t.tagType === BattlerTagType.AUTOTOMIZED);
-    if (globalScene?.currentBattle.battleSpec === BattleSpec.FINAL_BOSS && this.pokemon instanceof EnemyPokemon) {
+    if (globalScene?.currentBattle.battleSpec === BattleSpec.FINAL_BOSS && this.pokemon.isEnemy()) {
       globalScene.playBgm();
       globalScene.unshiftPhase(
         new PokemonHealPhase(this.pokemon.getBattlerIndex(), this.pokemon.getMaxHp(), null, false, false, false, true),

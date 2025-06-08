@@ -887,7 +887,7 @@ export class MoveEffectPhase extends PokemonPhase {
       sourceBattlerIndex: user.getBattlerIndex(),
     });
 
-    if (user.isPlayer() && !target.isPlayer()) {
+    if (user.isPlayer() && target.isEnemy()) {
       globalScene.applyModifiers(DamageMoneyRewardModifier, true, user, new NumberHolder(damage));
     }
 
