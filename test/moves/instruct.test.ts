@@ -610,7 +610,12 @@ describe("Moves - Instruct", () => {
 
     // Fake enemy 1 having attacked prior
     const [, player2, enemy1, enemy2] = game.scene.getField();
-    enemy1.pushMoveHistory({ move: MoveId.ABSORB, targets: [BattlerIndex.PLAYER] });
+    enemy1.pushMoveHistory({
+      move: MoveId.ABSORB,
+      targets: [BattlerIndex.PLAYER],
+      result: MoveResult.SUCCESS,
+      useMode: MoveUseMode.NORMAL,
+    });
     game.field.mockAbility(enemy1, AbilityId.STEADFAST);
 
     game.move.use(MoveId.AIR_SLASH, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
