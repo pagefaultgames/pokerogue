@@ -438,8 +438,8 @@ export class GameData {
           globalScene.ui.savingIcon.hide();
           if (error) {
             if (error.startsWith("session out of date")) {
-              globalScene.clearPhaseQueue();
-              globalScene.unshiftPhase(new ReloadSessionPhase());
+              globalScene.phaseManager.clearPhaseQueue();
+              globalScene.phaseManager.unshiftPhase(new ReloadSessionPhase());
             }
             console.error(error);
             return resolve(false);
@@ -471,7 +471,7 @@ export class GameData {
             saveDataOrErr[0] !== "{"
           ) {
             if (saveDataOrErr === 404) {
-              globalScene.queueMessage(
+              globalScene.phaseManager.queueMessage(
                 "Save data could not be found. If this is a new account, you can safely ignore this message.",
                 null,
                 true,
@@ -479,7 +479,7 @@ export class GameData {
               return resolve(true);
             }
             if (typeof saveDataOrErr === "string" && saveDataOrErr?.includes("Too many connections")) {
-              globalScene.queueMessage(
+              globalScene.phaseManager.queueMessage(
                 "Too many people are trying to connect and the server is overloaded. Please try again later.",
                 null,
                 true,
@@ -758,8 +758,8 @@ export class GameData {
     });
 
     if (systemData) {
-      globalScene.clearPhaseQueue();
-      globalScene.unshiftPhase(new ReloadSessionPhase(JSON.stringify(systemData)));
+      globalScene.phaseManager.clearPhaseQueue();
+      globalScene.phaseManager.unshiftPhase(new ReloadSessionPhase(JSON.stringify(systemData)));
       this.clearLocalData();
       return false;
     }
@@ -1260,8 +1260,8 @@ export class GameData {
         pokerogueApi.savedata.session.delete({ slot: slotId, clientSessionId }).then(error => {
           if (error) {
             if (error.startsWith("session out of date")) {
-              globalScene.clearPhaseQueue();
-              globalScene.unshiftPhase(new ReloadSessionPhase());
+              globalScene.phaseManager.clearPhaseQueue();
+              globalScene.phaseManager.unshiftPhase(new ReloadSessionPhase());
             }
             console.error(error);
             resolve(false);
@@ -1332,8 +1332,8 @@ export class GameData {
         localStorage.removeItem(`sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`);
       } else {
         if (jsonResponse?.error?.startsWith("session out of date")) {
-          globalScene.clearPhaseQueue();
-          globalScene.unshiftPhase(new ReloadSessionPhase());
+          globalScene.phaseManager.clearPhaseQueue();
+          globalScene.phaseManager.unshiftPhase(new ReloadSessionPhase());
         }
 
         console.error(jsonResponse);
@@ -1470,8 +1470,8 @@ export class GameData {
             }
             if (error) {
               if (error.startsWith("session out of date")) {
-                globalScene.clearPhaseQueue();
-                globalScene.unshiftPhase(new ReloadSessionPhase());
+                globalScene.phaseManager.clearPhaseQueue();
+                globalScene.phaseManager.unshiftPhase(new ReloadSessionPhase());
               }
               console.error(error);
               return resolve(false);

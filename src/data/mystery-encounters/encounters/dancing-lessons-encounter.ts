@@ -176,7 +176,7 @@ export const DancingLessonsEncounter: MysteryEncounter = MysteryEncounterBuilder
           tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
           mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
             queueEncounterMessage(`${namespace}:option.1.boss_enraged`);
-            globalScene.unshiftPhase(
+            globalScene.phaseManager.unshiftPhase(
               new StatStageChangePhase(
                 pokemon.getBattlerIndex(),
                 true,
@@ -245,7 +245,7 @@ export const DancingLessonsEncounter: MysteryEncounter = MysteryEncounterBuilder
 
         const onPokemonSelected = (pokemon: PlayerPokemon) => {
           encounter.setDialogueToken("selectedPokemon", pokemon.getNameToRender());
-          globalScene.unshiftPhase(
+          globalScene.phaseManager.unshiftPhase(
             new LearnMovePhase(globalScene.getPlayerParty().indexOf(pokemon), MoveId.REVELATION_DANCE),
           );
 

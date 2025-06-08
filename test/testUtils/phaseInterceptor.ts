@@ -301,7 +301,7 @@ export default class PhaseInterceptor {
 
   pop() {
     this.onHold.pop();
-    this.scene.shiftPhase();
+    this.scene.phaseManager.shiftPhase();
   }
 
   /**
@@ -316,7 +316,7 @@ export default class PhaseInterceptor {
   shift(shouldRun = false): void {
     this.onHold.shift();
     if (shouldRun) {
-      this.scene.shiftPhase();
+      this.scene.phaseManager.shiftPhase();
     }
   }
 
@@ -345,7 +345,7 @@ export default class PhaseInterceptor {
    */
   startPhase(phase: PhaseClass) {
     this.log.push(phase.name);
-    const instance = this.scene.getCurrentPhase();
+    const instance = this.scene.phaseManager.getCurrentPhase();
     this.onHold.push({
       name: phase.name,
       call: () => {
@@ -364,7 +364,7 @@ export default class PhaseInterceptor {
    * @param phase - The phase to start.
    */
   superEndPhase() {
-    const instance = this.scene.getCurrentPhase();
+    const instance = this.scene.phaseManager.getCurrentPhase();
     this.originalSuperEnd.apply(instance);
     this.inProgress?.callback();
     this.inProgress = undefined;
@@ -376,7 +376,7 @@ export default class PhaseInterceptor {
    * @param args - Additional arguments to pass to the original method.
    */
   setMode(mode: UiMode, ...args: unknown[]): Promise<void> {
-    const currentPhase = this.scene.getCurrentPhase();
+    const currentPhase = this.scene.phaseManager.getCurrentPhase();
     const instance = this.scene.ui;
     console.log("setMode", `${UiMode[mode]} (=${mode})`, args);
     const ret = this.originalSetMode.apply(instance, [mode, ...args]);
@@ -413,7 +413,7 @@ export default class PhaseInterceptor {
         const actionForNextPrompt = this.prompts[0];
         const expireFn = actionForNextPrompt.expireFn?.();
         const currentMode = this.scene.ui.getMode();
-        const currentPhase = this.scene.getCurrentPhase()?.constructor.name;
+        const currentPhase = this.scene.phaseManager.getCurrentPhase()?.constructor.name;
         const currentHandler = this.scene.ui.getHandler();
         if (expireFn) {
           this.prompts.shift();

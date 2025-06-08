@@ -383,16 +383,16 @@ export default class GameChallengesUiHandler extends UiHandler {
         this.cursorObj?.setVisible(true);
         this.updateChallengeArrows(this.startCursor.visible);
       } else {
-        globalScene.clearPhaseQueue();
-        globalScene.pushPhase(new TitlePhase());
-        globalScene.getCurrentPhase()?.end();
+        globalScene.phaseManager.clearPhaseQueue();
+        globalScene.phaseManager.pushPhase(new TitlePhase());
+        globalScene.phaseManager.getCurrentPhase()?.end();
       }
       success = true;
     } else if (button === Button.SUBMIT || button === Button.ACTION) {
       if (this.hasSelectedChallenge) {
         if (this.startCursor.visible) {
-          globalScene.unshiftPhase(new SelectStarterPhase());
-          globalScene.getCurrentPhase()?.end();
+          globalScene.phaseManager.unshiftPhase(new SelectStarterPhase());
+          globalScene.phaseManager.getCurrentPhase()?.end();
         } else {
           this.startCursor.setVisible(true);
           this.cursorObj?.setVisible(false);

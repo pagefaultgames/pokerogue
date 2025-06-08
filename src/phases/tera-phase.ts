@@ -21,7 +21,7 @@ export class TeraPhase extends BattlePhase {
   start() {
     super.start();
 
-    globalScene.queueMessage(
+    globalScene.phaseManager.queueMessage(
       i18next.t("battle:pokemonTerastallized", {
         pokemonNameWithAffix: getPokemonNameWithAffix(this.pokemon),
         type: i18next.t(`pokemonInfo:Type.${PokemonType[this.pokemon.getTeraType()]}`),

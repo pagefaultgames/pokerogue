@@ -44,7 +44,7 @@ describe("Abilities - Dancer", () => {
     await game.phaseInterceptor.to("MovePhase"); // feebas uses swords dance
     await game.phaseInterceptor.to("MovePhase", false); // oricorio copies swords dance
 
-    let currentPhase = game.scene.getCurrentPhase() as MovePhase;
+    let currentPhase = game.scene.phaseManager.getCurrentPhase() as MovePhase;
     expect(currentPhase.pokemon).toBe(oricorio);
     expect(currentPhase.move.moveId).toBe(MoveId.SWORDS_DANCE);
 
@@ -54,7 +54,7 @@ describe("Abilities - Dancer", () => {
     await game.phaseInterceptor.to("MovePhase"); // magikarp (left) uses victory dance
     await game.phaseInterceptor.to("MovePhase", false); // oricorio copies magikarp's victory dance
 
-    currentPhase = game.scene.getCurrentPhase() as MovePhase;
+    currentPhase = game.scene.phaseManager.getCurrentPhase() as MovePhase;
     expect(currentPhase.pokemon).toBe(oricorio);
     expect(currentPhase.move.moveId).toBe(MoveId.VICTORY_DANCE);
 
@@ -91,13 +91,13 @@ describe("Abilities - Dancer", () => {
 
     await game.phaseInterceptor.to("MovePhase"); // shuckle 2 mirror moves oricorio
     await game.phaseInterceptor.to("MovePhase"); // calls instructed rev dance
-    let currentPhase = game.scene.getCurrentPhase() as MovePhase;
+    let currentPhase = game.scene.phaseManager.getCurrentPhase() as MovePhase;
     expect(currentPhase.pokemon).toBe(shuckle2);
     expect(currentPhase.move.moveId).toBe(MoveId.REVELATION_DANCE);
 
     await game.phaseInterceptor.to("MovePhase"); // shuckle 1 instructs oricorio
     await game.phaseInterceptor.to("MovePhase");
-    currentPhase = game.scene.getCurrentPhase() as MovePhase;
+    currentPhase = game.scene.phaseManager.getCurrentPhase() as MovePhase;
     expect(currentPhase.pokemon).toBe(oricorio);
     expect(currentPhase.move.moveId).toBe(MoveId.REVELATION_DANCE);
   });

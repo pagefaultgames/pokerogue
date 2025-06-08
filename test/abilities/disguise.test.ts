@@ -201,7 +201,7 @@ describe("Abilities - Disguise", () => {
     game.move.select(MoveId.SHADOW_SNEAK);
     await game.toNextWave();
 
-    expect(game.scene.getCurrentPhase()?.constructor.name).toBe("CommandPhase");
+    expect(game.scene.phaseManager.getCurrentPhase()?.constructor.name).toBe("CommandPhase");
     expect(game.scene.currentBattle.waveIndex).toBe(2);
   });
 
