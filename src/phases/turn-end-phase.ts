@@ -5,11 +5,7 @@ import { WeatherType } from "#app/enums/weather-type";
 import { TurnEndEvent } from "#app/events/battle-scene";
 import type Pokemon from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
-import {
-  EnemyTurnHealModifier,
-  EnemyStatusEffectHealChanceModifier,
-  TurnHeldItemTransferModifier,
-} from "#app/modifier/modifier";
+import { EnemyTurnHealModifier, EnemyStatusEffectHealChanceModifier } from "#app/modifier/modifier";
 import i18next from "i18next";
 import { FieldPhase } from "./field-phase";
 import { globalScene } from "#app/global-scene";
@@ -53,7 +49,8 @@ export class TurnEndPhase extends FieldPhase {
       }
 
       applyHeldItems(ITEM_EFFECT.TURN_END_STATUS, { pokemon: pokemon });
-      globalScene.applyModifiers(TurnHeldItemTransferModifier, pokemon.isPlayer(), pokemon);
+
+      applyHeldItems(ITEM_EFFECT.TURN_END_ITEM_STEAL, { pokemon: pokemon });
 
       pokemon.tempSummonData.turnCount++;
       pokemon.tempSummonData.waveTurnCount++;

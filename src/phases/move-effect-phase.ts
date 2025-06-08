@@ -52,11 +52,7 @@ import { type DamageResult, PokemonMove, type TurnMove } from "#app/field/pokemo
 import type Pokemon from "#app/field/pokemon";
 import { HitResult, MoveResult } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
-import {
-  ContactHeldItemTransferChanceModifier,
-  EnemyAttackStatusEffectChanceModifier,
-  EnemyEndureChanceModifier,
-} from "#app/modifier/modifier";
+import { EnemyAttackStatusEffectChanceModifier, EnemyEndureChanceModifier } from "#app/modifier/modifier";
 import { PokemonPhase } from "#app/phases/pokemon-phase";
 import { BooleanHolder, isNullOrUndefined, NumberHolder } from "#app/utils/common";
 import type { nil } from "#app/utils/common";
@@ -999,7 +995,7 @@ export class MoveEffectPhase extends PokemonPhase {
 
     // Apply Grip Claw's chance to steal an item from the target
     if (this.move instanceof AttackMove) {
-      globalScene.applyModifiers(ContactHeldItemTransferChanceModifier, this.player, user, target);
+      applyHeldItems(ITEM_EFFECT.CONTACT_ITEM_STEAL_CHANCE, { pokemon: user, target: target });
     }
   }
 }
