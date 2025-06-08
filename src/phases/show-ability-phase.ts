@@ -36,8 +36,8 @@ export class ShowAbilityPhase extends PokemonPhase {
 
     // If the bar is already out, hide it before showing the new one
     if (globalScene.abilityBar.isVisible()) {
-      globalScene.unshiftPhase(new HideAbilityPhase());
-      globalScene.unshiftPhase(new ShowAbilityPhase(this.battlerIndex, this.passive));
+      globalScene.phaseManager.unshiftPhase(new HideAbilityPhase());
+      globalScene.phaseManager.unshiftPhase(new ShowAbilityPhase(this.battlerIndex, this.passive));
       return this.end();
     }
 

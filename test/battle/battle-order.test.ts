@@ -44,7 +44,7 @@ describe("Battle order", () => {
 
     const playerPokemonIndex = playerPokemon.getBattlerIndex();
     const enemyPokemonIndex = enemyPokemon.getBattlerIndex();
-    const phase = game.scene.getCurrentPhase() as TurnStartPhase;
+    const phase = game.scene.phaseManager.getCurrentPhase() as TurnStartPhase;
     const order = phase.getCommandOrder();
     expect(order[0]).toBe(enemyPokemonIndex);
     expect(order[1]).toBe(playerPokemonIndex);
@@ -63,7 +63,7 @@ describe("Battle order", () => {
 
     const playerPokemonIndex = playerPokemon.getBattlerIndex();
     const enemyPokemonIndex = enemyPokemon.getBattlerIndex();
-    const phase = game.scene.getCurrentPhase() as TurnStartPhase;
+    const phase = game.scene.phaseManager.getCurrentPhase() as TurnStartPhase;
     const order = phase.getCommandOrder();
     expect(order[0]).toBe(playerPokemonIndex);
     expect(order[1]).toBe(enemyPokemonIndex);
@@ -85,7 +85,7 @@ describe("Battle order", () => {
     game.move.select(MoveId.TACKLE, 1);
     await game.phaseInterceptor.runFrom(SelectTargetPhase).to(TurnStartPhase, false);
 
-    const phase = game.scene.getCurrentPhase() as TurnStartPhase;
+    const phase = game.scene.phaseManager.getCurrentPhase() as TurnStartPhase;
     const order = phase.getCommandOrder();
     expect(order.slice(0, 2).includes(enemyIndices[0])).toBe(true);
     expect(order.slice(0, 2).includes(enemyIndices[1])).toBe(true);
@@ -109,7 +109,7 @@ describe("Battle order", () => {
     game.move.select(MoveId.TACKLE, 1);
     await game.phaseInterceptor.runFrom(SelectTargetPhase).to(TurnStartPhase, false);
 
-    const phase = game.scene.getCurrentPhase() as TurnStartPhase;
+    const phase = game.scene.phaseManager.getCurrentPhase() as TurnStartPhase;
     const order = phase.getCommandOrder();
     expect(order[0]).toBe(enemyIndices[1]);
     expect(order.slice(1, 4).includes(enemyIndices[0])).toBe(true);
@@ -134,7 +134,7 @@ describe("Battle order", () => {
     game.move.select(MoveId.TACKLE, 1);
     await game.phaseInterceptor.runFrom(SelectTargetPhase).to(TurnStartPhase, false);
 
-    const phase = game.scene.getCurrentPhase() as TurnStartPhase;
+    const phase = game.scene.phaseManager.getCurrentPhase() as TurnStartPhase;
     const order = phase.getCommandOrder();
     expect(order.slice(0, 2).includes(playerIndices[1])).toBe(true);
     expect(order.slice(0, 2).includes(enemyIndices[1])).toBe(true);

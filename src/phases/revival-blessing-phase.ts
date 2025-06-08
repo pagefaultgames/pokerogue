@@ -35,7 +35,7 @@ export class RevivalBlessingPhase extends BattlePhase {
           pokemon.resetTurnData();
           pokemon.resetStatus(true, false, false, false);
           pokemon.heal(Math.min(toDmgValue(0.5 * pokemon.getMaxHp()), pokemon.getMaxHp()));
-          globalScene.queueMessage(
+          globalScene.phaseManager.queueMessage(
             i18next.t("moveTriggers:revivalBlessing", {
               pokemonName: pokemon.name,
             }),
@@ -51,16 +51,16 @@ export class RevivalBlessingPhase extends BattlePhase {
           ) {
             if (slotIndex <= 1) {
               // Revived ally pokemon
-              globalScene.unshiftPhase(
+              globalScene.phaseManager.unshiftPhase(
                 new SwitchSummonPhase(SwitchType.SWITCH, pokemon.getFieldIndex(), slotIndex, false, true),
               );
-              globalScene.unshiftPhase(new ToggleDoublePositionPhase(true));
+              globalScene.phaseManager.unshiftPhase(new ToggleDoublePositionPhase(true));
             } else if (allyPokemon.isFainted()) {
               // Revived party pokemon, and ally pokemon is fainted
-              globalScene.unshiftPhase(
+              globalScene.phaseManager.unshiftPhase(
                 new SwitchSummonPhase(SwitchType.SWITCH, allyPokemon.getFieldIndex(), slotIndex, false, true),
               );
-              globalScene.unshiftPhase(new ToggleDoublePositionPhase(true));
+              globalScene.phaseManager.unshiftPhase(new ToggleDoublePositionPhase(true));
             }
           }
         }

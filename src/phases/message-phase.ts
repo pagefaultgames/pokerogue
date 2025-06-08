@@ -44,7 +44,7 @@ export class MessagePhase extends Phase {
           page0 = page0.split(repname[p]).join(pokename[p]);
           page1 = page1.split(repname[p]).join(pokename[p]);
         }
-        globalScene.unshiftPhase(
+        globalScene.phaseManager.unshiftPhase(
           new MessagePhase(page1, this.callbackDelay, this.prompt, this.promptDelay, this.speaker),
         );
         this.text = page0.trim();
