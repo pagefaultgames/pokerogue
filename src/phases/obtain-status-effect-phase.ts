@@ -41,7 +41,7 @@ export class ObtainStatusEffectPhase extends PokemonPhase {
         }
         pokemon.updateInfo(true);
         new CommonBattleAnim(CommonAnim.POISON + (this.statusEffect! - 1), pokemon).play(false, () => {
-          globalScene.queueMessage(
+          globalScene.phaseManager.queueMessage(
             getStatusEffectObtainText(
               this.statusEffect,
               getPokemonNameWithAffix(pokemon),
@@ -59,7 +59,7 @@ export class ObtainStatusEffectPhase extends PokemonPhase {
         return;
       }
     } else if (pokemon.status?.effect === this.statusEffect) {
-      globalScene.queueMessage(
+      globalScene.phaseManager.queueMessage(
         getStatusEffectOverlapText(this.statusEffect ?? StatusEffect.NONE, getPokemonNameWithAffix(pokemon)),
       );
     }

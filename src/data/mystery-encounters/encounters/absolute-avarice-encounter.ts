@@ -33,9 +33,8 @@ import {
 } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import { TrainerSlot } from "#enums/trainer-slot";
 import { PokeballType } from "#enums/pokeball";
-import type HeldModifierConfig from "#app/interfaces/held-modifier-config";
+import type HeldModifierConfig from "#app/@types/held-modifier-config";
 import type { BerryType } from "#enums/berry-type";
-import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { Stat } from "#enums/stat";
 import i18next from "i18next";
 import { MoveUseMode } from "#enums/move-use-mode";
@@ -238,8 +237,12 @@ export const AbsoluteAvariceEncounter: MysteryEncounter = MysteryEncounterBuilde
           tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
           mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
             queueEncounterMessage(`${namespace}:option.1.boss_enraged`);
-            globalScene.unshiftPhase(
-              new StatStageChangePhase(pokemon.getBattlerIndex(), true, statChangesForBattle, 1),
+            globalScene.phaseManager.unshiftNew(
+              "StatStageChangePhase",
+              pokemon.getBattlerIndex(),
+              true,
+              statChangesForBattle,
+              1,
             );
           },
         },

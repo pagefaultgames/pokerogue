@@ -35,7 +35,7 @@ describe("Mystery Encounters", () => {
     ]);
 
     await game.phaseInterceptor.to(MysteryEncounterPhase, false);
-    expect(game.scene.getCurrentPhase()!.constructor.name).toBe(MysteryEncounterPhase.name);
+    expect(game.scene.phaseManager.getCurrentPhase()!.constructor.name).toBe(MysteryEncounterPhase.name);
   });
 
   it("Encounters should not run below wave 10", async () => {

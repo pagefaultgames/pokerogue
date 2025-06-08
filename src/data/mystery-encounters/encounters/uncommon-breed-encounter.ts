@@ -35,7 +35,6 @@ import { PokeballType } from "#enums/pokeball";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { queueEncounterMessage } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { BerryModifier } from "#app/modifier/modifier";
-import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { Stat } from "#enums/stat";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { MoveUseMode } from "#enums/move-use-mode";
@@ -104,8 +103,12 @@ export const UncommonBreedEncounter: MysteryEncounter = MysteryEncounterBuilder.
           tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
           mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
             queueEncounterMessage(`${namespace}:option.1.stat_boost`);
-            globalScene.unshiftPhase(
-              new StatStageChangePhase(pokemon.getBattlerIndex(), true, statChangesForBattle, 1),
+            globalScene.phaseManager.unshiftNew(
+              "StatStageChangePhase",
+              pokemon.getBattlerIndex(),
+              true,
+              statChangesForBattle,
+              1,
             );
           },
         },

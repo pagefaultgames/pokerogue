@@ -27,7 +27,6 @@ import { BerryType } from "#enums/berry-type";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { CustomPokemonData } from "#app/data/custom-pokemon-data";
 import { Stat } from "#enums/stat";
-import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { MoveUseMode } from "#enums/move-use-mode";
 
@@ -117,8 +116,12 @@ export const TheStrongStuffEncounter: MysteryEncounter = MysteryEncounterBuilder
           tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
           mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
             queueEncounterMessage(`${namespace}:option.2.stat_boost`);
-            globalScene.unshiftPhase(
-              new StatStageChangePhase(pokemon.getBattlerIndex(), true, [Stat.DEF, Stat.SPDEF], 1),
+            globalScene.phaseManager.unshiftNew(
+              "StatStageChangePhase",
+              pokemon.getBattlerIndex(),
+              true,
+              [Stat.DEF, Stat.SPDEF],
+              1,
             );
           },
         },

@@ -65,7 +65,7 @@ export class PokemonTransformPhase extends PokemonPhase {
       globalScene.playSound("battle_anims/PRSFX- Transform");
     }
 
-    globalScene.queueMessage(
+    globalScene.phaseManager.queueMessage(
       i18next.t("abilityTriggers:postSummonTransform", {
         pokemonNameWithAffix: getPokemonNameWithAffix(user),
         targetName: target.name,

@@ -6,7 +6,6 @@ import type { PokemonMove } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
 import { MoveResult } from "#app/field/pokemon";
 import { BooleanHolder } from "#app/utils/common";
-import { MovePhase } from "#app/phases/move-phase";
 import { PokemonPhase } from "#app/phases/pokemon-phase";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import type { MoveUseMode } from "#enums/move-use-mode";
@@ -73,9 +72,10 @@ export class MoveChargePhase extends PokemonPhase {
 
     // If instantly charging, remove the pending MoveEndPhase and queue a new MovePhase for the "attack" portion of the move.
     // Otherwise, add the attack portion to the user's move queue to execute next turn.
+    // TODO: This checks status twice for a single-turn usage...
     if (instantCharge.value) {
-      globalScene.tryRemovePhase(phase => phase.is("MoveEndPhase") && phase.getPokemon() === user);
-      globalScene.unshiftPhase(new MovePhase(user, [this.targetIndex], this.move, this.useMode));
+      globalScene.phaseManager.tryRemovePhase(phase => phase.is("MoveEndPhase") && phase.getPokemon() === user);
+      globalScene.phaseManager.unshiftNew("MovePhase", user, [this.targetIndex], this.move, this.useMode);
     } else {
       user.pushMoveQueue({ move: move.id, targets: [this.targetIndex], useMode: this.useMode });
     }
