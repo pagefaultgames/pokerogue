@@ -219,8 +219,9 @@ export class MoveEffectPhase extends PokemonPhase {
             return;
           }
           break;
+        // biome-ignore lint/suspicious/noFallthroughSwitchClause: The fallthrough is intentional
         case HitCheckResult.NO_EFFECT:
-          globalScene.queueMessage(
+          globalScene.phaseManager.queueMessage(
             i18next.t(this.move.id === MoveId.SHEER_COLD ? "battle:hitResultImmune" : "battle:hitResultNoEffect", {
               pokemonName: getPokemonNameWithAffix(target),
             }),
@@ -231,7 +232,7 @@ export class MoveEffectPhase extends PokemonPhase {
           applyMoveAttrs(NoEffectAttr, user, target, this.move);
           break;
         case HitCheckResult.MISS:
-          globalScene.queueMessage(
+          globalScene.phaseManager.queueMessage(
             i18next.t("battle:attackMissed", { pokemonNameWithAffix: getPokemonNameWithAffix(target) }),
           );
           applyMoveAttrs(MissEffectAttr, user, target, this.move);
@@ -294,7 +295,8 @@ export class MoveEffectPhase extends PokemonPhase {
 
     // If other effects were overriden, stop this phase before they can be applied
     if (overridden.value) {
-      return this.end();
+      this.end();
+      return;
     }
 
     // Lapse `MOVE_EFFECT` effects (i.e. semi-invulnerability) when applicable
@@ -382,7 +384,7 @@ export class MoveEffectPhase extends PokemonPhase {
     }
 
     if (this.queuedPhases.length) {
-      globalScene.appendToPhase(this.queuedPhases, MoveEndPhase);
+      globalScene.phaseManager.appendToPhase(this.queuedPhases, MoveEndPhase);
     }
     const moveType = user.getMoveType(this.move, true);
     if (this.move.category !== MoveCategory.STATUS && !user.stellarTypesBoosted.includes(moveType)) {
@@ -408,14 +410,14 @@ export class MoveEffectPhase extends PokemonPhase {
      */
     if (user) {
       if (user.turnData.hitsLeft && --user.turnData.hitsLeft >= 1 && this.getFirstTarget()?.isActive()) {
-        globalScene.unshiftPhase(this.getNewHitPhase());
+        globalScene.phaseManager.unshiftPhase(this.getNewHitPhase());
       } else {
         // Queue message for number of hits made by multi-move
         // If multi-hit attack only hits once, still want to render a message
         const hitsTotal = user.turnData.hitCount - Math.max(user.turnData.hitsLeft, 0);
         if (hitsTotal > 1 || (user.turnData.hitsLeft && user.turnData.hitsLeft > 0)) {
           // If there are multiple hits, or if there are hits of the multi-hit move left
-          globalScene.queueMessage(i18next.t("battle:attackHitsCount", { count: hitsTotal }));
+          globalScene.phaseManager.queueMessage(i18next.t("battle:attackHitsCount", { count: hitsTotal }));
         }
         globalScene.applyModifiers(HitHealModifier, this.player, user);
         this.getTargets().forEach(target => (target.turnData.moveEffectiveness = null));
@@ -743,7 +745,7 @@ export class MoveEffectPhase extends PokemonPhase {
     firstTarget?: boolean | null,
     selfTarget?: boolean,
   ): void {
-    return applyFilteredMoveAttrs(
+    applyFilteredMoveAttrs(
       (attr: MoveAttr) =>
         attr instanceof MoveEffectAttr &&
         attr.trigger === triggerType &&
@@ -856,7 +858,7 @@ export class MoveEffectPhase extends PokemonPhase {
         });
 
     if (isCritical) {
-      globalScene.queueMessage(i18next.t("battle:hitResultCriticalHit"));
+      globalScene.phaseManager.queueMessage(i18next.t("battle:hitResultCriticalHit"));
     }
 
     if (damage <= 0) {
@@ -885,7 +887,7 @@ export class MoveEffectPhase extends PokemonPhase {
       sourceBattlerIndex: user.getBattlerIndex(),
     });
 
-    if (user.isPlayer() && !target.isPlayer()) {
+    if (user.isPlayer() && target.isEnemy()) {
       globalScene.applyModifiers(DamageMoneyRewardModifier, true, user, new NumberHolder(damage));
     }
 
@@ -899,9 +901,9 @@ export class MoveEffectPhase extends PokemonPhase {
    */
   protected onFaintTarget(user: Pokemon, target: Pokemon): void {
     // set splice index here, so future scene queues happen before FaintedPhase
-    globalScene.setPhaseQueueSplice();
+    globalScene.phaseManager.setPhaseQueueSplice();
 
-    globalScene.unshiftPhase(new FaintPhase(target.getBattlerIndex(), false, user));
+    globalScene.phaseManager.unshiftPhase(new FaintPhase(target.getBattlerIndex(), false, user));
 
     target.destroySubstitute();
     target.lapseTag(BattlerTagType.COMMANDED);
@@ -934,7 +936,7 @@ export class MoveEffectPhase extends PokemonPhase {
         break;
     }
     if (msg) {
-      globalScene.queueMessage(msg);
+      globalScene.phaseManager.queueMessage(msg);
     }
   }
 

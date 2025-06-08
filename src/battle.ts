@@ -205,7 +205,7 @@ export default class Battle {
     const message = i18next.t("battle:moneyPickedUp", {
       moneyAmount: formattedMoneyAmount,
     });
-    globalScene.queueMessage(message, undefined, true);
+    globalScene.phaseManager.queueMessage(message, undefined, true);
 
     globalScene.currentBattle.moneyScattered = 0;
   }

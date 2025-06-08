@@ -65,10 +65,10 @@ const doEventReward = () => {
       return !(existingCharm && existingCharm.getStackCount() >= existingCharm.getMaxStackCount());
     });
     if (candidates.length > 0) {
-      globalScene.unshiftPhase(new ModifierRewardPhase(modifierTypes[randSeedItem(candidates)]));
+      globalScene.phaseManager.unshiftPhase(new ModifierRewardPhase(modifierTypes[randSeedItem(candidates)]));
     } else {
       // At max stacks, give a Voucher instead
-      globalScene.unshiftPhase(new ModifierRewardPhase(modifierTypes.VOUCHER));
+      globalScene.phaseManager.unshiftPhase(new ModifierRewardPhase(modifierTypes.VOUCHER));
     }
   }
 };
@@ -181,7 +181,7 @@ export const DelibirdyEncounter: MysteryEncounter = MysteryEncounterBuilder.with
           );
           doEventReward();
         } else {
-          globalScene.unshiftPhase(new ModifierRewardPhase(modifierTypes.AMULET_COIN));
+          globalScene.phaseManager.unshiftPhase(new ModifierRewardPhase(modifierTypes.AMULET_COIN));
           doEventReward();
         }
 
@@ -266,7 +266,7 @@ export const DelibirdyEncounter: MysteryEncounter = MysteryEncounterBuilder.with
             );
             doEventReward();
           } else {
-            globalScene.unshiftPhase(new ModifierRewardPhase(modifierTypes.CANDY_JAR));
+            globalScene.phaseManager.unshiftPhase(new ModifierRewardPhase(modifierTypes.CANDY_JAR));
             doEventReward();
           }
         } else {
@@ -288,7 +288,7 @@ export const DelibirdyEncounter: MysteryEncounter = MysteryEncounterBuilder.with
             );
             doEventReward();
           } else {
-            globalScene.unshiftPhase(new ModifierRewardPhase(modifierTypes.BERRY_POUCH));
+            globalScene.phaseManager.unshiftPhase(new ModifierRewardPhase(modifierTypes.BERRY_POUCH));
             doEventReward();
           }
         }
@@ -372,7 +372,7 @@ export const DelibirdyEncounter: MysteryEncounter = MysteryEncounterBuilder.with
           );
           doEventReward();
         } else {
-          globalScene.unshiftPhase(new ModifierRewardPhase(modifierTypes.HEALING_CHARM));
+          globalScene.phaseManager.unshiftPhase(new ModifierRewardPhase(modifierTypes.HEALING_CHARM));
           doEventReward();
         }
 

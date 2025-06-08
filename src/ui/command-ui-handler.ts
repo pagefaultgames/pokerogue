@@ -74,11 +74,11 @@ export default class CommandUiHandler extends UiHandler {
     this.commandsContainer.setVisible(true);
 
     let commandPhase: CommandPhase;
-    const currentPhase = globalScene.getCurrentPhase();
+    const currentPhase = globalScene.phaseManager.getCurrentPhase();
     if (currentPhase?.is("CommandPhase")) {
       commandPhase = currentPhase;
     } else {
-      commandPhase = globalScene.getStandbyPhase() as CommandPhase;
+      commandPhase = globalScene.phaseManager.getStandbyPhase() as CommandPhase;
     }
 
     if (this.canTera()) {
@@ -124,7 +124,7 @@ export default class CommandUiHandler extends UiHandler {
         switch (cursor) {
           // Fight
           case Command.FIGHT:
-            ui.setMode(UiMode.FIGHT, (globalScene.getCurrentPhase() as CommandPhase).getFieldIndex());
+            ui.setMode(UiMode.FIGHT, (globalScene.phaseManager.getCurrentPhase() as CommandPhase).getFieldIndex());
             success = true;
             break;
           // Ball
@@ -137,7 +137,7 @@ export default class CommandUiHandler extends UiHandler {
             ui.setMode(
               UiMode.PARTY,
               PartyUiMode.SWITCH,
-              (globalScene.getCurrentPhase() as CommandPhase).getPokemon().getFieldIndex(),
+              (globalScene.phaseManager.getCurrentPhase() as CommandPhase).getPokemon().getFieldIndex(),
               null,
               PartyUiHandler.FilterNonFainted,
             );
@@ -145,16 +145,20 @@ export default class CommandUiHandler extends UiHandler {
             break;
           // Run
           case Command.RUN:
-            (globalScene.getCurrentPhase() as CommandPhase).handleCommand(Command.RUN, 0);
+            (globalScene.phaseManager.getCurrentPhase() as CommandPhase).handleCommand(Command.RUN, 0);
             success = true;
             break;
           case Command.TERA:
-            ui.setMode(UiMode.FIGHT, (globalScene.getCurrentPhase() as CommandPhase).getFieldIndex(), Command.TERA);
+            ui.setMode(
+              UiMode.FIGHT,
+              (globalScene.phaseManager.getCurrentPhase() as CommandPhase).getFieldIndex(),
+              Command.TERA,
+            );
             success = true;
             break;
         }
       } else {
-        (globalScene.getCurrentPhase() as CommandPhase).cancel();
+        (globalScene.phaseManager.getCurrentPhase() as CommandPhase).cancel();
       }
     } else {
       switch (button) {

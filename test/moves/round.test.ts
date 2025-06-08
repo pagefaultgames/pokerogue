@@ -54,7 +54,9 @@ describe("Moves - Round", () => {
 
     for (let i = 0; i < 4; i++) {
       await game.phaseInterceptor.to("MoveEffectPhase", false);
-      actualTurnOrder.push((game.scene.getCurrentPhase() as MoveEffectPhase).getUserPokemon()!.getBattlerIndex());
+      actualTurnOrder.push(
+        (game.scene.phaseManager.getCurrentPhase() as MoveEffectPhase).getUserPokemon()!.getBattlerIndex(),
+      );
       await game.phaseInterceptor.to("MoveEndPhase");
     }
 
