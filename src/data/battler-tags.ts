@@ -1036,8 +1036,11 @@ export class PowderTag extends BattlerTag {
     movePhase.showMoveText();
     movePhase.fail();
 
-    globalScene.unshiftPhase(
-      new CommonAnimPhase(pokemon.getBattlerIndex(), pokemon.getBattlerIndex(), CommonAnim.POWDER),
+    globalScene.phaseManager.unshiftNew(
+      "CommonAnimPhase",
+      pokemon.getBattlerIndex(),
+      pokemon.getBattlerIndex(),
+      CommonAnim.POWDER,
     );
 
     const cancelDamage = new BooleanHolder(false);
@@ -1047,7 +1050,7 @@ export class PowderTag extends BattlerTag {
     }
 
     // "When the flame touched the powder\non the Pokémon, it exploded!"
-    globalScene.queueMessage(i18next.t("battlerTags:powderLapse", { moveName: move.name }));
+    globalScene.phaseManager.queueMessage(i18next.t("battlerTags:powderLapse", { moveName: move.name }));
 
     return true;
   }
@@ -1175,7 +1178,13 @@ export class EncoreTag extends MoveRestrictionBattlerTag {
         const lastMove = pokemon.getLastXMoves(1)[0];
         globalScene.phaseManager.tryReplacePhase(
           m => m.is("MovePhase") && m.pokemon === pokemon,
-          globalScene.phaseManager.create("MovePhase", pokemon, lastMove.targets ?? [], movesetMove, MoveUseMode.NORMAL),
+          globalScene.phaseManager.create(
+            "MovePhase",
+            pokemon,
+            lastMove.targets ?? [],
+            movesetMove,
+            MoveUseMode.NORMAL,
+          ),
         );
       }
     }

@@ -206,7 +206,7 @@ export class MoveEffectPhase extends PokemonPhase {
         "MovePhase",
         target,
         newTargets,
-        new PokemonMove(this.move.id, 0, 0, true),
+        new PokemonMove(this.move.id),
         MoveUseMode.REFLECTED,
       ),
     );
@@ -427,7 +427,7 @@ export class MoveEffectPhase extends PokemonPhase {
      * unshift another MoveEffectPhase for the next strike before ending this phase.
      */
     if (--user.turnData.hitsLeft >= 1 && this.getFirstTarget()) {
-      globalScene.phaseManager.unshiftPhase(this.addNextHitPhase());
+      this.addNextHitPhase();
       super.end();
       return;
     }
@@ -439,7 +439,7 @@ export class MoveEffectPhase extends PokemonPhase {
     const hitsTotal = user.turnData.hitCount - Math.max(user.turnData.hitsLeft, 0);
     if (hitsTotal > 1 || user.turnData.hitsLeft > 0) {
       // Queue message if multiple hits occurred or were slated to occur (such as a Triple Axel miss)
-      globalScene.queueMessage(i18next.t("battle:attackHitsCount", { count: hitsTotal }));
+      globalScene.phaseManager.queueMessage(i18next.t("battle:attackHitsCount", { count: hitsTotal }));
     }
 
     globalScene.applyModifiers(HitHealModifier, this.player, user);
@@ -741,8 +741,8 @@ export class MoveEffectPhase extends PokemonPhase {
   }
 
   /**
-   * Unshifts a new `MoveEffectPhase` with the same properties as this phase,
-   * except with 1 fewer hit remaining
+   * Unshifts a new `MoveEffectPhase` with the same properties as this phase.
+   * Used to queue the next hit of multi-strike moves.
    */
   protected addNextHitPhase(): void {
     globalScene.phaseManager.unshiftNew("MoveEffectPhase", this.battlerIndex, this.targets, this.move, this.useMode);
