@@ -1,6 +1,6 @@
 import type { Phase } from "#app/phase";
 import type { default as Pokemon } from "#app/field/pokemon";
-import type { Constructor } from "./utils/common";
+import type { PhaseMap, PhaseString } from "./@types/phase-types";
 import { globalScene } from "#app/global-scene";
 import { AddEnemyBuffModifierPhase } from "#app/phases/add-enemy-buff-modifier-phase";
 import { AttemptCapturePhase } from "#app/phases/attempt-capture-phase";
@@ -95,7 +95,6 @@ import { UnavailablePhase } from "#app/phases/unavailable-phase";
 import { UnlockPhase } from "#app/phases/unlock-phase";
 import { VictoryPhase } from "#app/phases/victory-phase";
 import { WeatherEffectPhase } from "#app/phases/weather-effect-phase";
-import type { PhaseString } from "./@types/phase-types";
 
 /**
  * Manager for phases used by battle scene.
@@ -111,7 +110,7 @@ import type { PhaseString } from "./@types/phase-types";
  * The keys of this object are the names of the phases, and the values are the constructors of the phases.
  * This allows for easy creation of new phases without needing to import each phase individually.
  */
-const Phases = Object.freeze({
+const PHASES = Object.freeze({
   AddEnemyBuffModifierPhase,
   AttemptCapturePhase,
   AttemptRunPhase,
@@ -207,7 +206,7 @@ const Phases = Object.freeze({
 
 // This type export cannot be moved to `@types`, as `Phases` is intentionally private to this file
 /** Maps Phase strings to their constructors */
-export type PhaseConstructorMap = typeof Phases;
+export type PhaseConstructorMap = typeof PHASES;
 
 /**
  * PhaseManager is responsible for managing the phases in the battle scene
@@ -412,15 +411,16 @@ export class PhaseManager {
 
   /**
    * Tries to add the input phase to index before target phase in the phaseQueue, else simply calls unshiftPhase()
-   * @param phase {@linkcode Phase} the phase to be added
-   * @param targetPhase {@linkcode Phase} the type of phase to search for in phaseQueue
+   * @param phase - The phase to be added
+   * @param targetPhase - The phase to search for in phaseQueue
    * @returns boolean if a targetPhase was found and added
    */
-  prependToPhase(phase: Phase | Phase[], targetPhase: Constructor<Phase>): boolean {
+  prependToPhase(phase: Phase | Phase[], targetPhase: PhaseString): boolean {
     if (!Array.isArray(phase)) {
       phase = [phase];
     }
-    const targetIndex = this.phaseQueue.findIndex(ph => ph instanceof targetPhase);
+    const target = PHASES[targetPhase];
+    const targetIndex = this.phaseQueue.findIndex(ph => ph instanceof target);
 
     if (targetIndex !== -1) {
       this.phaseQueue.splice(targetIndex, 0, ...phase);
@@ -433,14 +433,15 @@ export class PhaseManager {
   /**
    * Attempt to add the input phase(s) to index after target phase in the {@linkcode phaseQueue}, else simply calls {@linkcode unshiftPhase()}
    * @param phase - The phase(s) to be added
-   * @param targetPhase - The type of phase to search for in {@linkcode phaseQueue}
+   * @param targetPhase - The phase to search for in phaseQueue
    * @returns `true` if a `targetPhase` was found to append to
    */
-  appendToPhase(phase: Phase | Phase[], targetPhase: Constructor<Phase>): boolean {
+  appendToPhase(phase: Phase | Phase[], targetPhase: PhaseString): boolean {
     if (!Array.isArray(phase)) {
       phase = [phase];
     }
-    const targetIndex = this.phaseQueue.findIndex(ph => ph instanceof targetPhase);
+    const target = PHASES[targetPhase];
+    const targetIndex = this.phaseQueue.findIndex(ph => ph instanceof target);
 
     if (targetIndex !== -1 && this.phaseQueue.length > targetIndex) {
       this.phaseQueue.splice(targetIndex + 1, 0, ...phase);
@@ -520,8 +521,8 @@ export class PhaseManager {
   public newPhase<T extends PhaseString>(
     phase: T,
     ...args: ConstructorParameters<PhaseConstructorMap[T]>
-  ): InstanceType<(typeof Phases)[T]> {
-    const PhaseClass = Phases[phase];
+  ): PhaseMap[T] {
+    const PhaseClass = PHASES[phase];
 
     if (!PhaseClass) {
       throw new Error(`Phase ${phase} does not exist in PhaseMap.`);

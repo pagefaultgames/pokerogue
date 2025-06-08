@@ -3125,7 +3125,7 @@ export class AwaitCombinedPledgeAttr extends OverrideMoveEffectAttr {
         const allyMovePhaseIndex = globalScene.phaseManager.phaseQueue.indexOf(allyMovePhase);
         const firstMovePhaseIndex = globalScene.phaseManager.phaseQueue.findIndex((phase) => phase.is("MovePhase"));
         if (allyMovePhaseIndex !== firstMovePhaseIndex) {
-          globalScene.phaseManager.prependToPhase(globalScene.phaseManager.phaseQueue.splice(allyMovePhaseIndex, 1)[0], MovePhase);
+          globalScene.phaseManager.prependToPhase(globalScene.phaseManager.phaseQueue.splice(allyMovePhaseIndex, 1)[0], "MovePhase");
         }
 
         overridden.value = true;
@@ -4488,7 +4488,7 @@ export class CueNextRoundAttr extends MoveEffectAttr {
     const nextRoundIndex = globalScene.phaseManager.phaseQueue.indexOf(nextRoundPhase);
     const nextMoveIndex = globalScene.phaseManager.phaseQueue.findIndex(phase => phase.is("MovePhase"));
     if (nextRoundIndex !== nextMoveIndex) {
-      globalScene.phaseManager.prependToPhase(globalScene.phaseManager.phaseQueue.splice(nextRoundIndex, 1)[0], MovePhase);
+      globalScene.phaseManager.prependToPhase(globalScene.phaseManager.phaseQueue.splice(nextRoundIndex, 1)[0], "MovePhase");
     }
 
     // Mark the corresponding Pokemon as having "joined the Round" (for doubling power later)
@@ -6263,7 +6263,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
               false,
               true
             ),
-            MoveEndPhase
+            "MoveEndPhase"
           );
         } else {
           switchOutTarget.leaveField(this.switchType === SwitchType.SWITCH);
@@ -6274,7 +6274,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
               true,
               true
             ),
-            MoveEndPhase
+            "MoveEndPhase"
           );
           return true;
         }
@@ -6306,7 +6306,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
               false,
               false
             ),
-            MoveEndPhase
+            "MoveEndPhase"
           );
         } else {
           switchOutTarget.leaveField(this.switchType === SwitchType.SWITCH);
@@ -6318,7 +6318,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
               false,
               false
             ),
-            MoveEndPhase
+            "MoveEndPhase"
           );
         }
       }
@@ -7050,7 +7050,7 @@ export class RepeatMoveAttr extends MoveEffectAttr {
     }));
     target.getMoveQueue().unshift({ move: lastMove.move, targets: moveTargets, ignorePP: false });
     target.turnData.extraTurns++;
-    globalScene.phaseManager.appendToPhase(new MovePhase(target, moveTargets, movesetMove), MoveEndPhase);
+    globalScene.phaseManager.appendToPhase(new MovePhase(target, moveTargets, movesetMove), "MoveEndPhase");
     return true;
   }
 
@@ -7852,7 +7852,7 @@ export class AfterYouAttr extends MoveEffectAttr {
     //Will find next acting phase of the targeted pokémon, delete it and queue it next on successful delete.
     const nextAttackPhase = globalScene.phaseManager.findPhase<MovePhase>((phase) => phase.pokemon === target);
     if (nextAttackPhase && globalScene.phaseManager.tryRemovePhase((phase: MovePhase) => phase.pokemon === target)) {
-      globalScene.phaseManager.prependToPhase(new MovePhase(target, [ ...nextAttackPhase.targets ], nextAttackPhase.move), MovePhase);
+      globalScene.phaseManager.prependToPhase(new MovePhase(target, [ ...nextAttackPhase.targets ], nextAttackPhase.move), "MovePhase");
     }
 
     return true;

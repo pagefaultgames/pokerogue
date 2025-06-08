@@ -55,7 +55,6 @@ import { SwitchPhase } from "#app/phases/switch-phase";
 import { SwitchSummonPhase } from "#app/phases/switch-summon-phase";
 import { BattleEndPhase } from "#app/phases/battle-end-phase";
 import { NewBattlePhase } from "#app/phases/new-battle-phase";
-import { MoveEndPhase } from "#app/phases/move-end-phase";
 import { PokemonTransformPhase } from "#app/phases/pokemon-transform-phase";
 import { allAbilities } from "#app/data/data-lists";
 import { AbAttr } from "#app/data/abilities/ab-attrs/ab-attr";
@@ -7243,7 +7242,7 @@ class ForceSwitchOutHelper {
         switchOutTarget.leaveField(this.switchType === SwitchType.SWITCH);
         globalScene.phaseManager.prependToPhase(
           new SwitchPhase(this.switchType, switchOutTarget.getFieldIndex(), true, true),
-          MoveEndPhase,
+          "MoveEndPhase",
         );
         return true;
       }
@@ -7262,7 +7261,7 @@ class ForceSwitchOutHelper {
           : 0;
         globalScene.phaseManager.prependToPhase(
           new SwitchSummonPhase(this.switchType, switchOutTarget.getFieldIndex(), summonIndex, false, false),
-          MoveEndPhase,
+          "MoveEndPhase",
         );
         return true;
       }

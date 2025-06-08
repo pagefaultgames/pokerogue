@@ -70,7 +70,6 @@ import i18next from "i18next";
 import type { Phase } from "#app/phase";
 import { ShowAbilityPhase } from "./show-ability-phase";
 import { MovePhase } from "./move-phase";
-import { MoveEndPhase } from "./move-end-phase";
 import { HideAbilityPhase } from "#app/phases/hide-ability-phase";
 import type { TypeDamageMultiplier } from "#app/data/type";
 import { HitCheckResult } from "#enums/hit-check-result";
@@ -384,7 +383,7 @@ export class MoveEffectPhase extends PokemonPhase {
     }
 
     if (this.queuedPhases.length) {
-      globalScene.phaseManager.appendToPhase(this.queuedPhases, MoveEndPhase);
+      globalScene.phaseManager.appendToPhase(this.queuedPhases, "MoveEndPhase");
     }
     const moveType = user.getMoveType(this.move, true);
     if (this.move.category !== MoveCategory.STATUS && !user.stellarTypesBoosted.includes(moveType)) {

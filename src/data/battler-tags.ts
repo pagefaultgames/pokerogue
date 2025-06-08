@@ -29,7 +29,7 @@ import { HitResult, MoveResult } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { CommonAnimPhase } from "#app/phases/common-anim-phase";
 import type { MoveEffectPhase } from "#app/phases/move-effect-phase";
-import { MovePhase } from "#app/phases/move-phase";
+import type { MovePhase } from "#app/phases/move-phase";
 import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
 import type { StatStageChangeCallback } from "#app/phases/stat-stage-change-phase";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
@@ -560,7 +560,7 @@ export class ShellTrapTag extends BattlerTag {
         // Only shift MovePhase timing if it's not already next up
         if (shellTrapPhaseIndex !== -1 && shellTrapPhaseIndex !== firstMovePhaseIndex) {
           const shellTrapMovePhase = globalScene.phaseManager.phaseQueue.splice(shellTrapPhaseIndex, 1)[0];
-          globalScene.phaseManager.prependToPhase(shellTrapMovePhase, MovePhase);
+          globalScene.phaseManager.prependToPhase(shellTrapMovePhase, "MovePhase");
         }
 
         this.activated = true;
@@ -1194,7 +1194,7 @@ export class EncoreTag extends MoveRestrictionBattlerTag {
         const lastMove = pokemon.getLastXMoves(1)[0];
         globalScene.phaseManager.tryReplacePhase(
           m => m.is("MovePhase") && m.pokemon === pokemon,
-          new MovePhase(pokemon, lastMove.targets ?? [], movesetMove),
+          globalScene.phaseManager.newPhase("MovePhase", pokemon, lastMove.targets ?? [], movesetMove),
         );
       }
     }

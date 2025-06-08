@@ -233,7 +233,6 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import { DamageAnimPhase } from "#app/phases/damage-anim-phase";
 import { FaintPhase } from "#app/phases/faint-phase";
 import { LearnMovePhase } from "#app/phases/learn-move-phase";
-import { MoveEndPhase } from "#app/phases/move-end-phase";
 import { ObtainStatusEffectPhase } from "#app/phases/obtain-status-effect-phase";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { SwitchSummonPhase } from "#app/phases/switch-summon-phase";
@@ -5637,7 +5636,7 @@ export class PlayerPokemon extends Pokemon {
           if (slotIndex >= globalScene.currentBattle.getBattlerCount() && slotIndex < 6) {
             globalScene.phaseManager.prependToPhase(
               new SwitchSummonPhase(switchType, this.getFieldIndex(), slotIndex, false),
-              MoveEndPhase,
+              "MoveEndPhase",
             );
           }
           globalScene.ui.setMode(UiMode.MESSAGE).then(resolve);
