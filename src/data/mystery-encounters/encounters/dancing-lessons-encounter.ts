@@ -26,8 +26,6 @@ import type Pokemon from "#app/field/pokemon";
 import { EnemyPokemon, PokemonMove } from "#app/field/pokemon";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { modifierTypes } from "#app/modifier/modifier-type";
-import { LearnMovePhase } from "#app/phases/learn-move-phase";
-import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import PokemonData from "#app/system/pokemon-data";
 import type { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
 import { BattlerTagType } from "#enums/battler-tag-type";
@@ -176,13 +174,12 @@ export const DancingLessonsEncounter: MysteryEncounter = MysteryEncounterBuilder
           tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
           mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
             queueEncounterMessage(`${namespace}:option.1.boss_enraged`);
-            globalScene.unshiftPhase(
-              new StatStageChangePhase(
-                pokemon.getBattlerIndex(),
-                true,
-                [Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF],
-                1,
-              ),
+            globalScene.phaseManager.unshiftNew(
+              "StatStageChangePhase",
+              pokemon.getBattlerIndex(),
+              true,
+              [Stat.ATK, Stat.DEF, Stat.SPATK, Stat.SPDEF],
+              1,
             );
           },
         },
@@ -245,8 +242,10 @@ export const DancingLessonsEncounter: MysteryEncounter = MysteryEncounterBuilder
 
         const onPokemonSelected = (pokemon: PlayerPokemon) => {
           encounter.setDialogueToken("selectedPokemon", pokemon.getNameToRender());
-          globalScene.unshiftPhase(
-            new LearnMovePhase(globalScene.getPlayerParty().indexOf(pokemon), MoveId.REVELATION_DANCE),
+          globalScene.phaseManager.unshiftNew(
+            "LearnMovePhase",
+            globalScene.getPlayerParty().indexOf(pokemon),
+            MoveId.REVELATION_DANCE,
           );
 
           // Play animation again to "learn" the dance

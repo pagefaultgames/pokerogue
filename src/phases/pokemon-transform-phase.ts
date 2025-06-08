@@ -13,6 +13,7 @@ import i18next from "i18next";
  * Used for Transform (move) and Imposter (ability)
  */
 export class PokemonTransformPhase extends PokemonPhase {
+  public readonly phaseName = "PokemonTransformPhase";
   protected targetIndex: BattlerIndex;
   private playSound: boolean;
 
@@ -64,7 +65,7 @@ export class PokemonTransformPhase extends PokemonPhase {
       globalScene.playSound("battle_anims/PRSFX- Transform");
     }
 
-    globalScene.queueMessage(
+    globalScene.phaseManager.queueMessage(
       i18next.t("abilityTriggers:postSummonTransform", {
         pokemonNameWithAffix: getPokemonNameWithAffix(user),
         targetName: target.name,
