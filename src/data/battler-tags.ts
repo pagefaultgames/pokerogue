@@ -362,7 +362,6 @@ export class DisabledTag extends MoveRestrictionBattlerTag {
 
 /**
  * Tag used by Gorilla Tactics to restrict the user to using only one move.
- * @extends MoveRestrictionBattlerTag
  */
 export class GorillaTacticsTag extends MoveRestrictionBattlerTag {
   private moveId = MoveId.NONE;
@@ -371,7 +370,6 @@ export class GorillaTacticsTag extends MoveRestrictionBattlerTag {
     super(BattlerTagType.GORILLA_TACTICS, BattlerTagLapseType.CUSTOM, 0);
   }
 
-  /** @override */
   override isMoveRestricted(move: MoveId): boolean {
     return move !== this.moveId;
   }
@@ -386,8 +384,7 @@ export class GorillaTacticsTag extends MoveRestrictionBattlerTag {
     const lastSelectedMove = pokemon.getLastNonVirtualMove();
     return (
       !isNullOrUndefined(lastSelectedMove) &&
-      lastSelectedMove.move !== MoveId.STRUGGLE &&
-      !pokemon.getTag(GorillaTacticsTag)
+      lastSelectedMove.move !== MoveId.STRUGGLE
     );
   }
 
@@ -408,19 +405,17 @@ export class GorillaTacticsTag extends MoveRestrictionBattlerTag {
    * @override
    * @param source Gorilla Tactics' {@linkcode BattlerTag} information
    */
-  public override loadTag(source: BattlerTag | any): void {
+  override loadTag(source: BattlerTag | any): void {
     super.loadTag(source);
     this.moveId = source.moveId;
   }
 
   /**
-   *
-   * @override
-   * @param {Pokemon} pokemon n/a
-   * @param {MoveId} _move {@linkcode MoveId} ID of the move being denied
-   * @returns {string} text to display when the move is denied
+   * Return the text displayed when a move is restricted.
+   * @param pokemon - The {@linkcode Pokemon} with this tag.
+   * @returns A string containing the text to display when the move is denied
    */
-  override selectionDeniedText(pokemon: Pokemon, _move: MoveId): string {
+  override selectionDeniedText(pokemon: Pokemon): string {
     return i18next.t("battle:canOnlyUseMove", {
       moveName: allMoves[this.moveId].name,
       pokemonName: getPokemonNameWithAffix(pokemon),
