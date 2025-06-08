@@ -11,7 +11,6 @@ import { BerryModifier } from "#app/modifier/modifier";
 import i18next from "i18next";
 import { BooleanHolder } from "#app/utils/common";
 import { FieldPhase } from "./field-phase";
-import { CommonAnimPhase } from "./common-anim-phase";
 import { globalScene } from "#app/global-scene";
 import type Pokemon from "#app/field/pokemon";
 
@@ -50,7 +49,7 @@ export class BerryPhase extends FieldPhase {
     const cancelled = new BooleanHolder(false);
     pokemon.getOpponents().forEach(opp => applyAbAttrs(PreventBerryUseAbAttr, opp, cancelled));
     if (cancelled.value) {
-      globalScene.queueMessage(
+      globalScene.phaseManager.queueMessage(
         i18next.t("abilityTriggers:preventBerryUse", {
           pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
         }),
@@ -58,8 +57,11 @@ export class BerryPhase extends FieldPhase {
       return;
     }
 
-    globalScene.unshiftPhase(
-      new CommonAnimPhase(pokemon.getBattlerIndex(), pokemon.getBattlerIndex(), CommonAnim.USE_ITEM),
+    globalScene.phaseManager.unshiftNew(
+      "CommonAnimPhase",
+      pokemon.getBattlerIndex(),
+      pokemon.getBattlerIndex(),
+      CommonAnim.USE_ITEM,
     );
 
     for (const berryModifier of globalScene.applyModifiers(BerryModifier, pokemon.isPlayer(), pokemon)) {

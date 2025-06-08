@@ -23,13 +23,8 @@ import { allSpecies, getPokemonSpeciesForm, getPokerusStarters } from "#app/data
 import { getStarterValueFriendshipCap, speciesStarterCosts, POKERUS_STARTER_COUNT } from "#app/data/balance/starters";
 import { PokemonType } from "#enums/pokemon-type";
 import { GameModes } from "#app/game-mode";
-import type {
-  DexAttrProps,
-  DexEntry,
-  StarterMoveset,
-  StarterAttributes,
-  StarterPreferences,
-} from "#app/system/game-data";
+import type { DexAttrProps, StarterMoveset, StarterAttributes, StarterPreferences } from "#app/system/game-data";
+import type { DexEntry } from "#app/@types/dex-data";
 import { AbilityAttr, DexAttr, loadStarterPreferences, saveStarterPreferences } from "#app/system/game-data";
 import { Tutorial, handleTutorial } from "#app/tutorial";
 import type { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
@@ -56,9 +51,6 @@ import { StarterContainer } from "#app/ui/starter-container";
 import { FilterBar } from "#app/ui/filter-bar";
 import { DropDownColumn } from "#enums/drop-down-column";
 import { ScrollBar } from "#app/ui/scroll-bar";
-import { SelectChallengePhase } from "#app/phases/select-challenge-phase";
-import { EncounterPhase } from "#app/phases/encounter-phase";
-import { TitlePhase } from "#app/phases/title-phase";
 import { AbilityId } from "#enums/ability-id";
 import {
   getPassiveCandyCount,
@@ -4310,15 +4302,15 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
         UiMode.CONFIRM,
         () => {
           ui.setMode(UiMode.STARTER_SELECT);
-          globalScene.clearPhaseQueue();
+          globalScene.phaseManager.clearPhaseQueue();
           if (globalScene.gameMode.isChallenge) {
-            globalScene.pushPhase(new SelectChallengePhase());
-            globalScene.pushPhase(new EncounterPhase());
+            globalScene.phaseManager.pushNew("SelectChallengePhase");
+            globalScene.phaseManager.pushNew("EncounterPhase");
           } else {
-            globalScene.pushPhase(new TitlePhase());
+            globalScene.phaseManager.pushNew("TitlePhase");
           }
           this.clearText();
-          globalScene.getCurrentPhase()?.end();
+          globalScene.phaseManager.getCurrentPhase()?.end();
         },
         cancel,
         null,

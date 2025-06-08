@@ -221,7 +221,7 @@ export default class EggSummaryUiHandler extends MessageUiHandler {
     let error = false;
     if (button === Button.CANCEL) {
       if (!this.blockExit) {
-        const phase = globalScene.getCurrentPhase();
+        const phase = globalScene.phaseManager.getCurrentPhase();
         if (phase?.is("EggSummaryPhase")) {
           phase.end();
         }
