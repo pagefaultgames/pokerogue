@@ -74,7 +74,6 @@ import type { TypeDamageMultiplier } from "#app/data/type";
 import { HitCheckResult } from "#enums/hit-check-result";
 import type Move from "#app/data/moves/move";
 import { isFieldTargeted } from "#app/data/moves/move-utils";
-import { FaintPhase } from "./faint-phase";
 import { DamageAchv } from "#app/system/achv";
 
 type HitCheckEntry = [HitCheckResult, TypeDamageMultiplier];
@@ -195,7 +194,7 @@ export class MoveEffectPhase extends PokemonPhase {
     }
 
     this.queuedPhases.push(
-      globalScene.phaseManager.createPhase(
+      globalScene.phaseManager.create(
         "MovePhase",
         target,
         newTargets,
@@ -909,7 +908,7 @@ export class MoveEffectPhase extends PokemonPhase {
     // set splice index here, so future scene queues happen before FaintedPhase
     globalScene.phaseManager.setPhaseQueueSplice();
 
-    globalScene.phaseManager.unshiftPhase(new FaintPhase(target.getBattlerIndex(), false, user));
+    globalScene.phaseManager.unshiftNew("FaintPhase", target.getBattlerIndex(), false, user);
 
     target.destroySubstitute();
     target.lapseTag(BattlerTagType.COMMANDED);

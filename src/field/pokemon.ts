@@ -231,7 +231,6 @@ import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { DamageAnimPhase } from "#app/phases/damage-anim-phase";
-import { FaintPhase } from "#app/phases/faint-phase";
 import { LearnMovePhase } from "#app/phases/learn-move-phase";
 import { ObtainStatusEffectPhase } from "#app/phases/obtain-status-effect-phase";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
@@ -255,7 +254,6 @@ import { doShinySparkleAnim } from "#app/field/anims";
 import { MoveFlags } from "#enums/MoveFlags";
 import { timedEventManager } from "#app/global-event-manager";
 import { loadMoveAnimations } from "#app/sprites/pokemon-asset-loader";
-import { ResetStatusPhase } from "#app/phases/reset-status-phase";
 
 export enum LearnMoveSituation {
   MISC,
@@ -4012,7 +4010,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
        * Once the MoveEffectPhase is over (and calls it's .end() function, shiftPhase() will reset the PhaseQueueSplice via clearPhaseQueueSplice() )
        */
       globalScene.phaseManager.setPhaseQueueSplice();
-      globalScene.phaseManager.unshiftPhase(new FaintPhase(this.getBattlerIndex(), preventEndure));
+      globalScene.phaseManager.unshiftNew("FaintPhase", this.getBattlerIndex(), preventEndure);
       this.destroySubstitute();
       this.lapseTag(BattlerTagType.COMMANDED);
     }
@@ -4827,7 +4825,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     if (asPhase) {
-      globalScene.phaseManager.unshiftPhase(new ResetStatusPhase(this, confusion, reloadAssets));
+      globalScene.phaseManager.unshiftNew("ResetStatusPhase", this, confusion, reloadAssets);
     } else {
       this.clearStatus(confusion, reloadAssets);
     }

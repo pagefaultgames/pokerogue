@@ -63,7 +63,7 @@ export class MoveChargePhase extends PokemonPhase {
         // this MoveEndPhase will be duplicated by the queued MovePhase if not removed
         globalScene.phaseManager.tryRemovePhase(phase => phase.is("MoveEndPhase") && phase.getPokemon() === user);
         // queue a new MovePhase for this move's attack phase
-        globalScene.phaseManager.createAndUnshift("MovePhase", user, [this.targetIndex], this.move, false);
+        globalScene.phaseManager.unshiftNew("MovePhase", user, [this.targetIndex], this.move, false);
       } else {
         user.getMoveQueue().push({ move: move.id, targets: [this.targetIndex] });
       }

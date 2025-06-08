@@ -29,8 +29,6 @@ import { getEncounterText, showEncounterText } from "#app/data/mystery-encounter
 import { getPokemonNameWithAffix } from "#app/messages";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import { ScanIvsPhase } from "#app/phases/scan-ivs-phase";
-import { SummonPhase } from "#app/phases/summon-phase";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { NON_LEGEND_PARADOX_POKEMON } from "#app/data/balance/special-species-groups";
 
@@ -325,7 +323,7 @@ async function summonSafariPokemon() {
   encounter.misc.pokemon = pokemon;
   encounter.misc.safariPokemonRemaining -= 1;
 
-  globalScene.phaseManager.unshiftPhase(new SummonPhase(0, false));
+  globalScene.phaseManager.unshiftNew("SummonPhase", 0, false);
 
   encounter.setDialogueToken("pokemonName", getPokemonNameWithAffix(pokemon));
 
@@ -336,7 +334,7 @@ async function summonSafariPokemon() {
 
   const ivScannerModifier = globalScene.findModifier(m => m instanceof IvScannerModifier);
   if (ivScannerModifier) {
-    globalScene.phaseManager.pushPhase(new ScanIvsPhase(pokemon.getBattlerIndex()));
+    globalScene.phaseManager.pushNew("ScanIvsPhase", pokemon.getBattlerIndex());
   }
 }
 

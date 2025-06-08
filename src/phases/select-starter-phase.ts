@@ -25,7 +25,7 @@ export class SelectStarterPhase extends Phase {
       globalScene.ui.setMode(UiMode.SAVE_SLOT, SaveSlotUiMode.SAVE, (slotId: number) => {
         if (slotId === -1) {
           globalScene.phaseManager.clearPhaseQueue();
-          globalScene.phaseManager.createAndPush("TitlePhase");
+          globalScene.phaseManager.pushNew("TitlePhase");
           return this.end();
         }
         globalScene.sessionSlotId = slotId;

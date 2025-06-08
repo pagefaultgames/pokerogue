@@ -9,7 +9,6 @@ import { getLocalizedSpriteKey } from "#app/utils/common";
 import { Challenges } from "#app/enums/challenges";
 import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import { Color, ShadowColor } from "#app/enums/color";
-import { SelectStarterPhase } from "#app/phases/select-starter-phase";
 import { globalScene } from "#app/global-scene";
 
 /**
@@ -383,14 +382,14 @@ export default class GameChallengesUiHandler extends UiHandler {
         this.updateChallengeArrows(this.startCursor.visible);
       } else {
         globalScene.phaseManager.clearPhaseQueue();
-        globalScene.phaseManager.createAndPush("TitlePhase");
+        globalScene.phaseManager.pushNew("TitlePhase");
         globalScene.phaseManager.getCurrentPhase()?.end();
       }
       success = true;
     } else if (button === Button.SUBMIT || button === Button.ACTION) {
       if (this.hasSelectedChallenge) {
         if (this.startCursor.visible) {
-          globalScene.phaseManager.unshiftPhase(new SelectStarterPhase());
+          globalScene.phaseManager.unshiftNew("SelectStarterPhase");
           globalScene.phaseManager.getCurrentPhase()?.end();
         } else {
           this.startCursor.setVisible(true);

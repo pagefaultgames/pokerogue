@@ -2,7 +2,6 @@ import { globalScene } from "#app/global-scene";
 import { applyPostBattleAbAttrs, PostBattleAbAttr } from "#app/data/abilities/ability";
 import { LapsingPersistentModifier, LapsingPokemonHeldItemModifier } from "#app/modifier/modifier";
 import { BattlePhase } from "./battle-phase";
-import { GameOverPhase } from "./game-over-phase";
 
 export class BattleEndPhase extends BattlePhase {
   public readonly phaseName = "BattleEndPhase";
@@ -56,7 +55,7 @@ export class BattleEndPhase extends BattlePhase {
     // Endless graceful end
     if (globalScene.gameMode.isEndless && globalScene.currentBattle.waveIndex >= 5850) {
       globalScene.phaseManager.clearPhaseQueue();
-      globalScene.phaseManager.unshiftPhase(new GameOverPhase(true));
+      globalScene.phaseManager.unshiftNew("GameOverPhase", true);
     }
 
     for (const pokemon of globalScene.getField()) {

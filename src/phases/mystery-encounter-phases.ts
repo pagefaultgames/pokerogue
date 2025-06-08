@@ -3,13 +3,6 @@ import type { OptionPhaseCallback } from "#app/data/mystery-encounters/mystery-e
 import type MysteryEncounterOption from "#app/data/mystery-encounters/mystery-encounter-option";
 import { SeenEncounterData } from "#app/data/mystery-encounters/mystery-encounter-save-data";
 import { getEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
-import { CheckSwitchPhase } from "#app/phases/check-switch-phase";
-import { GameOverPhase } from "#app/phases/game-over-phase";
-import { ScanIvsPhase } from "#app/phases/scan-ivs-phase";
-import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
-import { SummonPhase } from "#app/phases/summon-phase";
-import { SwitchPhase } from "#app/phases/switch-phase";
-import { ToggleDoublePositionPhase } from "#app/phases/toggle-double-position-phase";
 import { BattleSpec } from "#enums/battle-spec";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
@@ -121,7 +114,7 @@ export class MysteryEncounterPhase extends Phase {
    */
   continueEncounter() {
     const endDialogueAndContinueEncounter = () => {
-      globalScene.phaseManager.createAndPush("MysteryEncounterOptionSelectedPhase");
+      globalScene.phaseManager.pushNew("MysteryEncounterOptionSelectedPhase");
       this.end();
     };
 
@@ -253,7 +246,7 @@ export class MysteryEncounterBattleStartCleanupPhase extends Phase {
     // The total number of legal player Pokemon that aren't currently on the field
     const legalPlayerPartyPokemon = legalPlayerPokemon.filter(p => !p.isActive(true));
     if (!legalPlayerPokemon.length) {
-      globalScene.phaseManager.unshiftPhase(new GameOverPhase());
+      globalScene.phaseManager.unshiftNew("GameOverPhase");
       return this.end();
     }
 
@@ -262,13 +255,13 @@ export class MysteryEncounterBattleStartCleanupPhase extends Phase {
     const playerField = globalScene.getPlayerField();
     playerField.forEach((pokemon, i) => {
       if (!pokemon.isAllowedInBattle() && legalPlayerPartyPokemon.length > i) {
-        globalScene.phaseManager.unshiftPhase(new SwitchPhase(SwitchType.SWITCH, i, true, false));
+        globalScene.phaseManager.unshiftNew("SwitchPhase", SwitchType.SWITCH, i, true, false);
       }
     });
 
     // THEN, if is a double battle, and player only has 1 summoned pokemon, center pokemon on field
     if (globalScene.currentBattle.double && legalPlayerPokemon.length === 1 && legalPlayerPartyPokemon.length === 0) {
-      globalScene.phaseManager.unshiftPhase(new ToggleDoublePositionPhase(true));
+      globalScene.phaseManager.unshiftNew("ToggleDoublePositionPhase", true);
     }
 
     this.end();
@@ -345,9 +338,9 @@ export class MysteryEncounterBattlePhase extends Phase {
         globalScene.playBgm();
       }
       const availablePartyMembers = globalScene.getEnemyParty().filter(p => !p.isFainted()).length;
-      globalScene.phaseManager.unshiftPhase(new SummonPhase(0, false));
+      globalScene.phaseManager.unshiftNew("SummonPhase", 0, false);
       if (globalScene.currentBattle.double && availablePartyMembers > 1) {
-        globalScene.phaseManager.unshiftPhase(new SummonPhase(1, false));
+        globalScene.phaseManager.unshiftNew("SummonPhase", 1, false);
       }
 
       if (!globalScene.currentBattle.mysteryEncounter?.hideBattleIntroMessage) {
@@ -365,9 +358,9 @@ export class MysteryEncounterBattlePhase extends Phase {
         const doTrainerSummon = () => {
           this.hideEnemyTrainer();
           const availablePartyMembers = globalScene.getEnemyParty().filter(p => !p.isFainted()).length;
-          globalScene.phaseManager.unshiftPhase(new SummonPhase(0, false));
+          globalScene.phaseManager.unshiftNew("SummonPhase", 0, false);
           if (globalScene.currentBattle.double && availablePartyMembers > 1) {
-            globalScene.phaseManager.unshiftPhase(new SummonPhase(1, false));
+            globalScene.phaseManager.unshiftNew("SummonPhase", 1, false);
           }
           this.endBattleSetup();
         };
@@ -423,37 +416,37 @@ export class MysteryEncounterBattlePhase extends Phase {
     if (encounterMode !== MysteryEncounterMode.TRAINER_BATTLE) {
       const ivScannerModifier = globalScene.findModifier(m => m instanceof IvScannerModifier);
       if (ivScannerModifier) {
-        enemyField.map(p => globalScene.phaseManager.pushPhase(new ScanIvsPhase(p.getBattlerIndex())));
+        enemyField.map(p => globalScene.phaseManager.pushNew("ScanIvsPhase", p.getBattlerIndex()));
       }
     }
 
     const availablePartyMembers = globalScene.getPlayerParty().filter(p => p.isAllowedInBattle());
 
     if (!availablePartyMembers[0].isOnField()) {
-      globalScene.phaseManager.createAndPush("SummonPhase", 0);
+      globalScene.phaseManager.pushNew("SummonPhase", 0);
     }
 
     if (globalScene.currentBattle.double) {
       if (availablePartyMembers.length > 1) {
-        globalScene.phaseManager.createAndPush("ToggleDoublePositionPhase", true);
+        globalScene.phaseManager.pushNew("ToggleDoublePositionPhase", true);
         if (!availablePartyMembers[1].isOnField()) {
-          globalScene.phaseManager.createAndPush("SummonPhase", 1);
+          globalScene.phaseManager.pushNew("SummonPhase", 1);
         }
       }
     } else {
       if (availablePartyMembers.length > 1 && availablePartyMembers[1].isOnField()) {
         globalScene.getPlayerField().forEach(pokemon => pokemon.lapseTag(BattlerTagType.COMMANDED));
-        globalScene.phaseManager.createAndPush("ReturnPhase", 1);
+        globalScene.phaseManager.pushNew("ReturnPhase", 1);
       }
-      globalScene.phaseManager.createAndPush("ToggleDoublePositionPhase", false);
+      globalScene.phaseManager.pushNew("ToggleDoublePositionPhase", false);
     }
 
     if (encounterMode !== MysteryEncounterMode.TRAINER_BATTLE && !this.disableSwitch) {
       const minPartySize = globalScene.currentBattle.double ? 2 : 1;
       if (availablePartyMembers.length > minPartySize) {
-        globalScene.phaseManager.pushPhase(new CheckSwitchPhase(0, globalScene.currentBattle.double));
+        globalScene.phaseManager.pushNew("CheckSwitchPhase", 0, globalScene.currentBattle.double);
         if (globalScene.currentBattle.double) {
-          globalScene.phaseManager.pushPhase(new CheckSwitchPhase(1, globalScene.currentBattle.double));
+          globalScene.phaseManager.pushNew("CheckSwitchPhase", 1, globalScene.currentBattle.double);
         }
       }
     }
@@ -560,15 +553,13 @@ export class MysteryEncounterRewardsPhase extends Phase {
       encounter.doEncounterRewards();
     } else if (this.addHealPhase) {
       globalScene.phaseManager.tryRemovePhase(p => p.is("SelectModifierPhase"));
-      globalScene.phaseManager.unshiftPhase(
-        new SelectModifierPhase(0, undefined, {
-          fillRemaining: false,
-          rerollMultiplier: -1,
-        }),
-      );
+      globalScene.phaseManager.unshiftNew("SelectModifierPhase", 0, undefined, {
+        fillRemaining: false,
+        rerollMultiplier: -1,
+      });
     }
 
-    globalScene.phaseManager.createAndPush("PostMysteryEncounterPhase");
+    globalScene.phaseManager.pushNew("PostMysteryEncounterPhase");
     this.end();
   }
 }
@@ -615,10 +606,10 @@ export class PostMysteryEncounterPhase extends Phase {
   continueEncounter() {
     const endPhase = () => {
       if (globalScene.gameMode.hasRandomBiomes || globalScene.isNewBiome()) {
-        globalScene.phaseManager.createAndPush("SelectBiomePhase");
+        globalScene.phaseManager.pushNew("SelectBiomePhase");
       }
 
-      globalScene.phaseManager.createAndPush("NewBattlePhase");
+      globalScene.phaseManager.pushNew("NewBattlePhase");
       this.end();
     };
 

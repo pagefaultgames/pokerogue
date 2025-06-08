@@ -297,7 +297,7 @@ export class Arena {
    */
   trySetWeatherOverride(weather: WeatherType): boolean {
     this.weather = new Weather(weather, 0);
-    globalScene.phaseManager.unshiftPhase(new CommonAnimPhase(undefined, undefined, CommonAnim.SUNNY + (weather - 1)));
+    globalScene.phaseManager.unshiftNew("CommonAnimPhase", undefined, undefined, CommonAnim.SUNNY + (weather - 1));
     globalScene.phaseManager.queueMessage(getWeatherStartMessage(weather)!); // TODO: is this bang correct?
     return true;
   }

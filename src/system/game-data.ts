@@ -49,7 +49,6 @@ import { SpeciesId } from "#enums/species-id";
 import { applyChallenges, ChallengeType } from "#app/data/challenge";
 import { WeatherType } from "#enums/weather-type";
 import { TerrainType } from "#app/data/terrain";
-import { ReloadSessionPhase } from "#app/phases/reload-session-phase";
 import { RUN_HISTORY_LIMIT } from "#app/ui/run-history-ui-handler";
 import {
   applySessionVersionMigration,
@@ -427,7 +426,7 @@ export class GameData {
           if (error) {
             if (error.startsWith("session out of date")) {
               globalScene.phaseManager.clearPhaseQueue();
-              globalScene.phaseManager.unshiftPhase(new ReloadSessionPhase());
+              globalScene.phaseManager.unshiftNew("ReloadSessionPhase");
             }
             console.error(error);
             return resolve(false);
@@ -747,7 +746,7 @@ export class GameData {
 
     if (systemData) {
       globalScene.phaseManager.clearPhaseQueue();
-      globalScene.phaseManager.unshiftPhase(new ReloadSessionPhase(JSON.stringify(systemData)));
+      globalScene.phaseManager.unshiftNew("ReloadSessionPhase", JSON.stringify(systemData));
       this.clearLocalData();
       return false;
     }
@@ -1249,7 +1248,7 @@ export class GameData {
           if (error) {
             if (error.startsWith("session out of date")) {
               globalScene.phaseManager.clearPhaseQueue();
-              globalScene.phaseManager.unshiftPhase(new ReloadSessionPhase());
+              globalScene.phaseManager.unshiftNew("ReloadSessionPhase");
             }
             console.error(error);
             resolve(false);
@@ -1321,7 +1320,7 @@ export class GameData {
       } else {
         if (jsonResponse?.error?.startsWith("session out of date")) {
           globalScene.phaseManager.clearPhaseQueue();
-          globalScene.phaseManager.unshiftPhase(new ReloadSessionPhase());
+          globalScene.phaseManager.unshiftNew("ReloadSessionPhase");
         }
 
         console.error(jsonResponse);
@@ -1459,7 +1458,7 @@ export class GameData {
             if (error) {
               if (error.startsWith("session out of date")) {
                 globalScene.phaseManager.clearPhaseQueue();
-                globalScene.phaseManager.unshiftPhase(new ReloadSessionPhase());
+                globalScene.phaseManager.unshiftNew("ReloadSessionPhase");
               }
               console.error(error);
               return resolve(false);

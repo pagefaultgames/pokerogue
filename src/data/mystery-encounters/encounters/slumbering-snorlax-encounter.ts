@@ -26,7 +26,6 @@ import { AiType, PokemonMove } from "#app/field/pokemon";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import { PartyHealPhase } from "#app/phases/party-heal-phase";
 import { BerryType } from "#enums/berry-type";
 import { Stat } from "#enums/stat";
 import { CustomPokemonData } from "#app/data/custom-pokemon-data";
@@ -155,7 +154,7 @@ export const SlumberingSnorlaxEncounter: MysteryEncounter = MysteryEncounterBuil
     async () => {
       // Fall asleep waiting for Snorlax
       // Full heal party
-      globalScene.phaseManager.unshiftPhase(new PartyHealPhase(true));
+      globalScene.phaseManager.unshiftNew("PartyHealPhase", true);
       queueEncounterMessage(`${namespace}:option.2.rest_result`);
       leaveEncounterWithoutBattle();
     },

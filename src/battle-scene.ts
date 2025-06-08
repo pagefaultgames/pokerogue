@@ -685,8 +685,8 @@ export default class BattleScene extends SceneBase {
       ).then(() => loadMoveAnimAssets(defaultMoves, true)),
       this.initStarterColors(),
     ]).then(() => {
-      this.phaseManager.createAndPush("LoginPhase");
-      this.phaseManager.createAndPush("TitlePhase");
+      this.phaseManager.pushNew("LoginPhase");
+      this.phaseManager.pushNew("TitlePhase");
 
       this.phaseManager.shiftPhase();
     });
@@ -1461,7 +1461,7 @@ export default class BattleScene extends SceneBase {
 
         playerField.forEach((pokemon, p) => {
           if (pokemon.isOnField()) {
-            this.phaseManager.createAndPush("ReturnPhase", p);
+            this.phaseManager.pushNew("ReturnPhase", p);
           }
         });
 
@@ -1478,7 +1478,7 @@ export default class BattleScene extends SceneBase {
         }
 
         if (!this.trainer.visible) {
-          this.phaseManager.createAndPush("ShowTrainerPhase");
+          this.phaseManager.pushNew("ShowTrainerPhase");
         }
       }
 
@@ -1487,13 +1487,13 @@ export default class BattleScene extends SceneBase {
       }
 
       if (!this.gameMode.hasRandomBiomes && !isNewBiome) {
-        this.phaseManager.createAndPush("NextEncounterPhase");
+        this.phaseManager.pushNew("NextEncounterPhase");
       } else {
-        this.phaseManager.createAndPush("NewBiomeEncounterPhase");
+        this.phaseManager.pushNew("NewBiomeEncounterPhase");
 
         const newMaxExpLevel = this.getMaxExpLevel();
         if (newMaxExpLevel > maxExpLevel) {
-          this.phaseManager.createAndPush("LevelCapPhase");
+          this.phaseManager.pushNew("LevelCapPhase");
         }
       }
     }
@@ -3185,9 +3185,9 @@ export default class BattleScene extends SceneBase {
       if (matchingFormChange) {
         let phase: Phase;
         if (pokemon.isPlayer() && !matchingFormChange.quiet) {
-          phase = this.phaseManager.createPhase("FormChangePhase", pokemon, matchingFormChange, modal);
+          phase = this.phaseManager.create("FormChangePhase", pokemon, matchingFormChange, modal);
         } else {
-          phase = this.phaseManager.createPhase("QuietFormChangePhase", pokemon, matchingFormChange);
+          phase = this.phaseManager.create("QuietFormChangePhase", pokemon, matchingFormChange);
         }
         if (pokemon.isPlayer() && !matchingFormChange.quiet && modal) {
           this.phaseManager.overridePhase(phase);
@@ -3210,7 +3210,7 @@ export default class BattleScene extends SceneBase {
     delayed = false,
   ): boolean {
     const phaseManager = this.phaseManager;
-    const phase: Phase = phaseManager.createPhase("PokemonAnimPhase", battleAnimType, pokemon, fieldAssets);
+    const phase: Phase = phaseManager.create("PokemonAnimPhase", battleAnimType, pokemon, fieldAssets);
     if (delayed) {
       phaseManager.pushPhase(phase);
     } else {
@@ -3322,9 +3322,9 @@ export default class BattleScene extends SceneBase {
           this.currentBattle.double = true;
           const availablePartyMembers = this.getPlayerParty().filter(p => p.isAllowedInBattle());
           if (availablePartyMembers.length > 1) {
-            this.phaseManager.createAndPush("ToggleDoublePositionPhase", true);
+            this.phaseManager.pushNew("ToggleDoublePositionPhase", true);
             if (!availablePartyMembers[1].isOnField()) {
-              this.phaseManager.createAndPush("SummonPhase", 1);
+              this.phaseManager.pushNew("SummonPhase", 1);
             }
           }
 
@@ -3448,8 +3448,8 @@ export default class BattleScene extends SceneBase {
           const partyMemberIndex = party.indexOf(expPartyMembers[pm]);
           this.phaseManager.unshiftPhase(
             expPartyMembers[pm].isOnField()
-              ? this.phaseManager.createPhase("ExpPhase", partyMemberIndex, exp)
-              : this.phaseManager.createPhase("ShowPartyExpBarPhase", partyMemberIndex, exp),
+              ? this.phaseManager.create("ExpPhase", partyMemberIndex, exp)
+              : this.phaseManager.create("ShowPartyExpBarPhase", partyMemberIndex, exp),
           );
         }
       }

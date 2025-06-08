@@ -57,13 +57,13 @@ export class AttemptRunPhase extends PokemonPhase {
         enemyPokemon.trySetStatus(StatusEffect.FAINT);
       });
 
-      globalScene.phaseManager.createAndPush("BattleEndPhase", false);
+      globalScene.phaseManager.pushNew("BattleEndPhase", false);
 
       if (globalScene.gameMode.hasRandomBiomes || globalScene.isNewBiome()) {
-        globalScene.phaseManager.createAndPush("SelectBiomePhase");
+        globalScene.phaseManager.pushNew("SelectBiomePhase");
       }
 
-      globalScene.phaseManager.createAndPush("NewBattlePhase");
+      globalScene.phaseManager.pushNew("NewBattlePhase");
     } else {
       playerPokemon.turnData.failedRunAway = true;
       globalScene.phaseManager.queueMessage(i18next.t("battle:runAwayCannotEscape"), null, true, 500);

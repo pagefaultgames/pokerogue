@@ -25,9 +25,7 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import { PlayerGender } from "#enums/player-gender";
 import { getPokeballAtlasKey, getPokeballTintColor } from "#app/data/pokeball";
 import { addPokeballOpenParticles } from "#app/field/anims";
-import { ShinySparklePhase } from "#app/phases/shiny-sparkle-phase";
 import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms";
-import { PostSummonPhase } from "#app/phases/post-summon-phase";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import { Nature } from "#enums/nature";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
@@ -411,13 +409,13 @@ function summonPlayerPokemonAnimation(pokemon: PlayerPokemon): Promise<void> {
                 pokemon.resetSummonData();
                 globalScene.time.delayedCall(1000, () => {
                   if (pokemon.isShiny()) {
-                    globalScene.phaseManager.unshiftPhase(new ShinySparklePhase(pokemon.getBattlerIndex()));
+                    globalScene.phaseManager.unshiftNew("ShinySparklePhase", pokemon.getBattlerIndex());
                   }
 
                   pokemon.resetTurnData();
 
                   globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeActiveTrigger, true);
-                  globalScene.phaseManager.pushPhase(new PostSummonPhase(pokemon.getBattlerIndex()));
+                  globalScene.phaseManager.pushNew("PostSummonPhase", pokemon.getBattlerIndex());
                   resolve();
                 });
               },
