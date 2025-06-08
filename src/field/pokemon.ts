@@ -65,6 +65,7 @@ import {
   rgbToHsv,
   deltaRgb,
   isBetween,
+  randSeedFloat,
   type nil,
   type Constructor,
   randSeedIntRange,
@@ -5225,7 +5226,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     let fusionPaletteColors: Map<number, number>;
 
     const originalRandom = Math.random;
-    Math.random = () => Phaser.Math.RND.realInRange(0, 1);
+    Math.random = () => randSeedFloat();
 
     globalScene.executeWithSeedOffset(
       () => {

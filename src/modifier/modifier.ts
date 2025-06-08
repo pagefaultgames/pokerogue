@@ -15,7 +15,7 @@ import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
 import type { VoucherType } from "#app/system/voucher";
 import { Command } from "#app/ui/command-ui-handler";
 import { addTextObject, TextStyle } from "#app/ui/text";
-import { BooleanHolder, hslToHex, isNullOrUndefined, NumberHolder, toDmgValue } from "#app/utils/common";
+import { BooleanHolder, hslToHex, isNullOrUndefined, NumberHolder, randSeedFloat, toDmgValue } from "#app/utils/common";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BerryType } from "#enums/berry-type";
 import type { MoveId } from "#enums/move-id";
@@ -3351,7 +3351,7 @@ export class ContactHeldItemTransferChanceModifier extends HeldItemTransferModif
   }
 
   getTransferredItemCount(): number {
-    return Phaser.Math.RND.realInRange(0, 1) < this.chance * this.getStackCount() ? 1 : 0;
+    return randSeedFloat() <= this.chance * this.getStackCount() ? 1 : 0;
   }
 
   getTransferMessage(pokemon: Pokemon, targetPokemon: Pokemon, item: ModifierType): string {
@@ -3629,7 +3629,7 @@ export class EnemyAttackStatusEffectChanceModifier extends EnemyPersistentModifi
    * @returns `true` if the {@linkcode Pokemon} was affected
    */
   override apply(enemyPokemon: Pokemon): boolean {
-    if (Phaser.Math.RND.realInRange(0, 1) < this.chance * this.getStackCount()) {
+    if (randSeedFloat() <= this.chance * this.getStackCount()) {
       return enemyPokemon.trySetStatus(this.effect, true);
     }
 
@@ -3664,21 +3664,21 @@ export class EnemyStatusEffectHealChanceModifier extends EnemyPersistentModifier
   }
 
   /**
-   * Applies {@linkcode EnemyStatusEffectHealChanceModifier}
-   * @param enemyPokemon The {@linkcode Pokemon} to heal
+   * Applies {@linkcode EnemyStatusEffectHealChanceModifier} to randomly heal status.
+   * @param enemyPokemon - The {@linkcode Pokemon} to heal
    * @returns `true` if the {@linkcode Pokemon} was healed
    */
   override apply(enemyPokemon: Pokemon): boolean {
-    if (enemyPokemon.status && Phaser.Math.RND.realInRange(0, 1) < this.chance * this.getStackCount()) {
-      globalScene.phaseManager.queueMessage(
-        getStatusEffectHealText(enemyPokemon.status.effect, getPokemonNameWithAffix(enemyPokemon)),
-      );
-      enemyPokemon.resetStatus();
-      enemyPokemon.updateInfo();
-      return true;
+    if (!enemyPokemon.status || randSeedFloat() > this.chance * this.getStackCount()) {
+      return false;
     }
 
-    return false;
+    globalScene.phaseManager.queueMessage(
+      getStatusEffectHealText(enemyPokemon.status.effect, getPokemonNameWithAffix(enemyPokemon)),
+    );
+    enemyPokemon.resetStatus();
+    enemyPokemon.updateInfo();
+    return true;
   }
 
   getMaxStackCount(): number {
@@ -3757,7 +3757,7 @@ export class EnemyFusionChanceModifier extends EnemyPersistentModifier {
    * @returns `true` if the {@linkcode EnemyPokemon} is a fusion
    */
   override apply(isFusion: BooleanHolder): boolean {
-    if (Phaser.Math.RND.realInRange(0, 1) >= this.chance * this.getStackCount()) {
+    if (randSeedFloat() > this.chance * this.getStackCount()) {
       return false;
     }
 
