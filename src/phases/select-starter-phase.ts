@@ -6,7 +6,6 @@ import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { overrideHeldItems, overrideModifiers } from "#app/modifier/modifier";
 import Overrides from "#app/overrides";
 import { Phase } from "#app/phase";
-import { TitlePhase } from "#app/phases/title-phase";
 import { SaveSlotUiMode } from "#app/ui/save-slot-select-ui-handler";
 import type { Starter } from "#app/ui/starter-select-ui-handler";
 import { UiMode } from "#enums/ui-mode";
@@ -26,7 +25,7 @@ export class SelectStarterPhase extends Phase {
       globalScene.ui.setMode(UiMode.SAVE_SLOT, SaveSlotUiMode.SAVE, (slotId: number) => {
         if (slotId === -1) {
           globalScene.phaseManager.clearPhaseQueue();
-          globalScene.phaseManager.pushPhase(new TitlePhase());
+          globalScene.phaseManager.createAndPush("TitlePhase");
           return this.end();
         }
         globalScene.sessionSlotId = slotId;

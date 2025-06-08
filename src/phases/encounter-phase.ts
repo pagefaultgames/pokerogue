@@ -27,11 +27,9 @@ import { CheckSwitchPhase } from "#app/phases/check-switch-phase";
 import { GameOverPhase } from "#app/phases/game-over-phase";
 import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
 import { PostSummonPhase } from "#app/phases/post-summon-phase";
-import { ReturnPhase } from "#app/phases/return-phase";
 import { ScanIvsPhase } from "#app/phases/scan-ivs-phase";
 import { ShinySparklePhase } from "#app/phases/shiny-sparkle-phase";
 import { SummonPhase } from "#app/phases/summon-phase";
-import { ToggleDoublePositionPhase } from "#app/phases/toggle-double-position-phase";
 import { achvs } from "#app/system/achv";
 import { handleTutorial, Tutorial } from "#app/tutorial";
 import { UiMode } from "#enums/ui-mode";
@@ -602,21 +600,21 @@ export class EncounterPhase extends BattlePhase {
       const availablePartyMembers = globalScene.getPokemonAllowedInBattle();
 
       if (!availablePartyMembers[0].isOnField()) {
-        globalScene.phaseManager.pushPhase(new SummonPhase(0));
+        globalScene.phaseManager.createAndPush("SummonPhase", 0);
       }
 
       if (globalScene.currentBattle.double) {
         if (availablePartyMembers.length > 1) {
-          globalScene.phaseManager.pushPhase(new ToggleDoublePositionPhase(true));
+          globalScene.phaseManager.createAndPush("ToggleDoublePositionPhase", true);
           if (!availablePartyMembers[1].isOnField()) {
-            globalScene.phaseManager.pushPhase(new SummonPhase(1));
+            globalScene.phaseManager.createAndPush("SummonPhase", 1);
           }
         }
       } else {
         if (availablePartyMembers.length > 1 && availablePartyMembers[1].isOnField()) {
-          globalScene.phaseManager.pushPhase(new ReturnPhase(1));
+          globalScene.phaseManager.createAndPush("ReturnPhase", 1);
         }
-        globalScene.phaseManager.pushPhase(new ToggleDoublePositionPhase(false));
+        globalScene.phaseManager.createAndPush("ToggleDoublePositionPhase", false);
       }
 
       if (

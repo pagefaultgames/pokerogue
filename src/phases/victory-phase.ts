@@ -3,19 +3,12 @@ import { ClassicFixedBossWaves } from "#enums/fixed-boss-waves";
 import { BattleType } from "#enums/battle-type";
 import type { CustomModifierSettings } from "#app/modifier/modifier-type";
 import { modifierTypes } from "#app/modifier/modifier-type";
-import { BattleEndPhase } from "./battle-end-phase";
-import { NewBattlePhase } from "./new-battle-phase";
 import { PokemonPhase } from "./pokemon-phase";
-import { AddEnemyBuffModifierPhase } from "./add-enemy-buff-modifier-phase";
-import { EggLapsePhase } from "./egg-lapse-phase";
-import { GameOverPhase } from "./game-over-phase";
 import { ModifierRewardPhase } from "./modifier-reward-phase";
 import { SelectModifierPhase } from "./select-modifier-phase";
-import { TrainerVictoryPhase } from "./trainer-victory-phase";
 import { handleMysteryEncounterVictory } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { globalScene } from "#app/global-scene";
 import { timedEventManager } from "#app/global-event-manager";
-import { SelectBiomePhase } from "./select-biome-phase";
 
 export class VictoryPhase extends PokemonPhase {
   public readonly phaseName = "VictoryPhase";
@@ -51,12 +44,12 @@ export class VictoryPhase extends PokemonPhase {
         .getEnemyParty()
         .find(p => (globalScene.currentBattle.battleType === BattleType.WILD ? p.isOnField() : !p?.isFainted(true)))
     ) {
-      globalScene.phaseManager.pushPhase(new BattleEndPhase(true));
+      globalScene.phaseManager.createAndPush("BattleEndPhase", true);
       if (globalScene.currentBattle.battleType === BattleType.TRAINER) {
-        globalScene.phaseManager.pushPhase(new TrainerVictoryPhase());
+        globalScene.phaseManager.createAndPush("TrainerVictoryPhase");
       }
       if (globalScene.gameMode.isEndless || !globalScene.gameMode.isWaveFinal(globalScene.currentBattle.waveIndex)) {
-        globalScene.phaseManager.pushPhase(new EggLapsePhase());
+        globalScene.phaseManager.createAndPush("EggLapsePhase");
         if (globalScene.gameMode.isClassic) {
           switch (globalScene.currentBattle.waveIndex) {
             case ClassicFixedBossWaves.RIVAL_1:
@@ -112,20 +105,20 @@ export class VictoryPhase extends PokemonPhase {
                   : modifierTypes.VOUCHER_PLUS,
               ),
             );
-            globalScene.phaseManager.pushPhase(new AddEnemyBuffModifierPhase());
+            globalScene.phaseManager.createAndPush("AddEnemyBuffModifierPhase");
           }
         }
 
         if (globalScene.gameMode.hasRandomBiomes || globalScene.isNewBiome()) {
-          globalScene.phaseManager.pushPhase(new SelectBiomePhase());
+          globalScene.phaseManager.createAndPush("SelectBiomePhase");
         }
 
-        globalScene.phaseManager.pushPhase(new NewBattlePhase());
+        globalScene.phaseManager.createAndPush("NewBattlePhase");
       } else {
         globalScene.currentBattle.battleType = BattleType.CLEAR;
         globalScene.score += globalScene.gameMode.getClearScoreBonus();
         globalScene.updateScoreText();
-        globalScene.phaseManager.pushPhase(new GameOverPhase(true));
+        globalScene.phaseManager.createAndPush("GameOverPhase", true);
       }
     }
 

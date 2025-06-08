@@ -1194,7 +1194,7 @@ export class EncoreTag extends MoveRestrictionBattlerTag {
         const lastMove = pokemon.getLastXMoves(1)[0];
         globalScene.phaseManager.tryReplacePhase(
           m => m.is("MovePhase") && m.pokemon === pokemon,
-          globalScene.phaseManager.newPhase("MovePhase", pokemon, lastMove.targets ?? [], movesetMove),
+          globalScene.phaseManager.createPhase("MovePhase", pokemon, lastMove.targets ?? [], movesetMove),
         );
       }
     }

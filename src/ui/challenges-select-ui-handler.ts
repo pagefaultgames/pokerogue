@@ -10,7 +10,6 @@ import { Challenges } from "#app/enums/challenges";
 import BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import { Color, ShadowColor } from "#app/enums/color";
 import { SelectStarterPhase } from "#app/phases/select-starter-phase";
-import { TitlePhase } from "#app/phases/title-phase";
 import { globalScene } from "#app/global-scene";
 
 /**
@@ -384,7 +383,7 @@ export default class GameChallengesUiHandler extends UiHandler {
         this.updateChallengeArrows(this.startCursor.visible);
       } else {
         globalScene.phaseManager.clearPhaseQueue();
-        globalScene.phaseManager.pushPhase(new TitlePhase());
+        globalScene.phaseManager.createAndPush("TitlePhase");
         globalScene.phaseManager.getCurrentPhase()?.end();
       }
       success = true;

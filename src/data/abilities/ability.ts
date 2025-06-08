@@ -5856,13 +5856,14 @@ export class PostDancingMoveAbAttr extends PostMoveUsedAbAttr {
   ): void {
     if (!simulated) {
       dancer.turnData.extraTurns++;
+      const phaseManager = globalScene.phaseManager;
       // If the move is an AttackMove or a StatusMove the Dancer must replicate the move on the source of the Dance
       if (move.getMove() instanceof AttackMove || move.getMove() instanceof StatusMove) {
         const target = this.getTarget(dancer, source, targets);
-        globalScene.phaseManager.unshiftPhase(new MovePhase(dancer, target, move, true, true));
+        phaseManager.createAndUnshift("MovePhase", dancer, target, move, true, true);
       } else if (move.getMove() instanceof SelfStatusMove) {
         // If the move is a SelfStatusMove (ie. Swords Dance) the Dancer should replicate it on itself
-        globalScene.phaseManager.unshiftPhase(new MovePhase(dancer, [dancer.getBattlerIndex()], move, true, true));
+        phaseManager.createAndUnshift("MovePhase", dancer, [dancer.getBattlerIndex()], move, true, true);
       }
     }
   }
@@ -7293,13 +7294,13 @@ class ForceSwitchOutHelper {
         globalScene.clearEnemyHeldItemModifiers();
 
         if (switchOutTarget.hp) {
-          globalScene.phaseManager.pushPhase(new BattleEndPhase(false));
+          globalScene.phaseManager.createAndPush("BattleEndPhase", false);
 
           if (globalScene.gameMode.hasRandomBiomes || globalScene.isNewBiome()) {
-            globalScene.phaseManager.pushPhase(new SelectBiomePhase());
+            globalScene.phaseManager.createAndPush("SelectBiomePhase");
           }
 
-          globalScene.phaseManager.pushPhase(new NewBattlePhase());
+          globalScene.phaseManager.createAndPush("NewBattlePhase");
         }
       }
     }

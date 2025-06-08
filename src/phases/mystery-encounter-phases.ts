@@ -5,8 +5,6 @@ import { SeenEncounterData } from "#app/data/mystery-encounters/mystery-encounte
 import { getEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { CheckSwitchPhase } from "#app/phases/check-switch-phase";
 import { GameOverPhase } from "#app/phases/game-over-phase";
-import { NewBattlePhase } from "#app/phases/new-battle-phase";
-import { ReturnPhase } from "#app/phases/return-phase";
 import { ScanIvsPhase } from "#app/phases/scan-ivs-phase";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import { SummonPhase } from "#app/phases/summon-phase";
@@ -26,7 +24,6 @@ import { IvScannerModifier } from "../modifier/modifier";
 import { Phase } from "../phase";
 import { UiMode } from "#enums/ui-mode";
 import { isNullOrUndefined, randSeedItem } from "#app/utils/common";
-import { SelectBiomePhase } from "./select-biome-phase";
 
 /**
  * Will handle (in order):
@@ -124,7 +121,7 @@ export class MysteryEncounterPhase extends Phase {
    */
   continueEncounter() {
     const endDialogueAndContinueEncounter = () => {
-      globalScene.phaseManager.pushPhase(new MysteryEncounterOptionSelectedPhase());
+      globalScene.phaseManager.createAndPush("MysteryEncounterOptionSelectedPhase");
       this.end();
     };
 
@@ -433,22 +430,22 @@ export class MysteryEncounterBattlePhase extends Phase {
     const availablePartyMembers = globalScene.getPlayerParty().filter(p => p.isAllowedInBattle());
 
     if (!availablePartyMembers[0].isOnField()) {
-      globalScene.phaseManager.pushPhase(new SummonPhase(0));
+      globalScene.phaseManager.createAndPush("SummonPhase", 0);
     }
 
     if (globalScene.currentBattle.double) {
       if (availablePartyMembers.length > 1) {
-        globalScene.phaseManager.pushPhase(new ToggleDoublePositionPhase(true));
+        globalScene.phaseManager.createAndPush("ToggleDoublePositionPhase", true);
         if (!availablePartyMembers[1].isOnField()) {
-          globalScene.phaseManager.pushPhase(new SummonPhase(1));
+          globalScene.phaseManager.createAndPush("SummonPhase", 1);
         }
       }
     } else {
       if (availablePartyMembers.length > 1 && availablePartyMembers[1].isOnField()) {
         globalScene.getPlayerField().forEach(pokemon => pokemon.lapseTag(BattlerTagType.COMMANDED));
-        globalScene.phaseManager.pushPhase(new ReturnPhase(1));
+        globalScene.phaseManager.createAndPush("ReturnPhase", 1);
       }
-      globalScene.phaseManager.pushPhase(new ToggleDoublePositionPhase(false));
+      globalScene.phaseManager.createAndPush("ToggleDoublePositionPhase", false);
     }
 
     if (encounterMode !== MysteryEncounterMode.TRAINER_BATTLE && !this.disableSwitch) {
@@ -571,7 +568,7 @@ export class MysteryEncounterRewardsPhase extends Phase {
       );
     }
 
-    globalScene.phaseManager.pushPhase(new PostMysteryEncounterPhase());
+    globalScene.phaseManager.createAndPush("PostMysteryEncounterPhase");
     this.end();
   }
 }
@@ -618,10 +615,10 @@ export class PostMysteryEncounterPhase extends Phase {
   continueEncounter() {
     const endPhase = () => {
       if (globalScene.gameMode.hasRandomBiomes || globalScene.isNewBiome()) {
-        globalScene.phaseManager.pushPhase(new SelectBiomePhase());
+        globalScene.phaseManager.createAndPush("SelectBiomePhase");
       }
 
-      globalScene.phaseManager.pushPhase(new NewBattlePhase());
+      globalScene.phaseManager.createAndPush("NewBattlePhase");
       this.end();
     };
 

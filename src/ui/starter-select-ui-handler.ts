@@ -51,9 +51,6 @@ import { StarterContainer } from "#app/ui/starter-container";
 import { FilterBar } from "#app/ui/filter-bar";
 import { DropDownColumn } from "#enums/drop-down-column";
 import { ScrollBar } from "#app/ui/scroll-bar";
-import { SelectChallengePhase } from "#app/phases/select-challenge-phase";
-import { EncounterPhase } from "#app/phases/encounter-phase";
-import { TitlePhase } from "#app/phases/title-phase";
 import { AbilityId } from "#enums/ability-id";
 import {
   getPassiveCandyCount,
@@ -4307,10 +4304,10 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
           ui.setMode(UiMode.STARTER_SELECT);
           globalScene.phaseManager.clearPhaseQueue();
           if (globalScene.gameMode.isChallenge) {
-            globalScene.phaseManager.pushPhase(new SelectChallengePhase());
-            globalScene.phaseManager.pushPhase(new EncounterPhase());
+            globalScene.phaseManager.createAndPush("SelectChallengePhase");
+            globalScene.phaseManager.createAndPush("EncounterPhase");
           } else {
-            globalScene.phaseManager.pushPhase(new TitlePhase());
+            globalScene.phaseManager.createAndPush("TitlePhase");
           }
           this.clearText();
           globalScene.phaseManager.getCurrentPhase()?.end();

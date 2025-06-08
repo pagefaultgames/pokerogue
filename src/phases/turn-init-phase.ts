@@ -11,7 +11,6 @@ import { EnemyCommandPhase } from "./enemy-command-phase";
 import { FieldPhase } from "./field-phase";
 import { GameOverPhase } from "./game-over-phase";
 import { ToggleDoublePositionPhase } from "./toggle-double-position-phase";
-import { TurnStartPhase } from "./turn-start-phase";
 import { globalScene } from "#app/global-scene";
 
 export class TurnInitPhase extends FieldPhase {
@@ -75,7 +74,7 @@ export class TurnInitPhase extends FieldPhase {
       }
     });
 
-    globalScene.phaseManager.pushPhase(new TurnStartPhase());
+    globalScene.phaseManager.createAndPush("TurnStartPhase");
 
     this.end();
   }

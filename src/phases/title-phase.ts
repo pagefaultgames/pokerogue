@@ -22,8 +22,6 @@ import { isLocal, isLocalServerConnected, isNullOrUndefined } from "#app/utils/c
 import i18next from "i18next";
 import { CheckSwitchPhase } from "./check-switch-phase";
 import { EncounterPhase } from "./encounter-phase";
-import { SelectChallengePhase } from "./select-challenge-phase";
-import { SelectStarterPhase } from "./select-starter-phase";
 import { SummonPhase } from "./summon-phase";
 import { globalScene } from "#app/global-scene";
 import Overrides from "#app/overrides";
@@ -125,7 +123,7 @@ export class TitlePhase extends Phase {
             label: i18next.t("menu:cancel"),
             handler: () => {
               globalScene.phaseManager.clearPhaseQueue();
-              globalScene.phaseManager.pushPhase(new TitlePhase());
+              globalScene.phaseManager.createAndPush("TitlePhase");
               super.end();
               return true;
             },
@@ -200,7 +198,7 @@ export class TitlePhase extends Phase {
     globalScene.ui.setMode(UiMode.SAVE_SLOT, SaveSlotUiMode.SAVE, (slotId: number) => {
       globalScene.phaseManager.clearPhaseQueue();
       if (slotId === -1) {
-        globalScene.phaseManager.pushPhase(new TitlePhase());
+        globalScene.phaseManager.createAndPush("TitlePhase");
         return super.end();
       }
       globalScene.sessionSlotId = slotId;
@@ -304,9 +302,9 @@ export class TitlePhase extends Phase {
       globalScene.arena.preloadBgm();
       globalScene.gameMode = getGameMode(this.gameMode);
       if (this.gameMode === GameModes.CHALLENGE) {
-        globalScene.phaseManager.pushPhase(new SelectChallengePhase());
+        globalScene.phaseManager.createAndPush("SelectChallengePhase");
       } else {
-        globalScene.phaseManager.pushPhase(new SelectStarterPhase());
+        globalScene.phaseManager.createAndPush("SelectStarterPhase");
       }
       globalScene.newArena(globalScene.gameMode.getStartingBiome());
     } else {

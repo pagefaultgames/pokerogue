@@ -518,7 +518,7 @@ export class PhaseManager {
    * @param args - The arguments to pass to the phase constructor.
    * @returns The requested phase instance
    */
-  public newPhase<T extends PhaseString>(
+  public createPhase<T extends PhaseString>(
     phase: T,
     ...args: ConstructorParameters<PhaseConstructorMap[T]>
   ): PhaseMap[T] {
@@ -530,5 +530,56 @@ export class PhaseManager {
 
     // @ts-expect-error: Typescript does not support narrowing the type of operands in generic methods (see https://stackoverflow.com/a/72891234)
     return new PhaseClass(...args);
+  }
+
+  /**
+   * Create a new phase and immediately push it to the phase queue. Equivalent to calling {@linkcode createPhase} followed by {@linkcode pushPhase}.
+   * @param phase - The name of the phase to create
+   * @param args - The arguments to pass to the phase constructor
+   */
+  public createAndPush<T extends PhaseString>(phase: T, ...args: ConstructorParameters<PhaseConstructorMap[T]>): void {
+    this.pushPhase(this.createPhase(phase, ...args));
+  }
+
+  /**
+   * Create a new phase and immediately unshift it to the phase queue. Equivalent to calling {@linkcode createPhase} followed by {@linkcode unshiftPhase}.
+   * @param phase - The name of the phase to create
+   * @param args - The arguments to pass to the phase constructor
+   */
+  public createAndUnshift<T extends PhaseString>(
+    phase: T,
+    ...args: ConstructorParameters<PhaseConstructorMap[T]>
+  ): void {
+    this.unshiftPhase(this.createPhase(phase, ...args));
+  }
+
+  /**
+   * Create a new phase and immediately prepend it to the phase queue. Equivalent to calling {@linkcode createPhase} followed by {@linkcode prependToPhase}.
+   * @param targetPhase - The phase to search for in phaseQueue
+   * @param phase - The name of the phase to create
+   * @param args - The arguments to pass to the phase constructor
+   * @returns `true` if a `targetPhase` was found to prepend to
+   */
+  public createAndPrependToPhase<T extends PhaseString>(
+    targetPhase: PhaseString,
+    phase: T,
+    ...args: ConstructorParameters<PhaseConstructorMap[T]>
+  ): boolean {
+    return this.prependToPhase(this.createPhase(phase, ...args), targetPhase);
+  }
+
+  /**
+   * Create a new phase and immediately append it to the phase queue. Equivalent to calling {@linkcode createPhase} followed by {@linkcode appendToPhase}.
+   * @param targetPhase - The phase to search for in phaseQueue
+   * @param phase - The name of the phase to create
+   * @param args - The arguments to pass to the phase constructor
+   * @returns `true` if a `targetPhase` was found to append to
+   */
+  public createAndAppendToPhase<T extends PhaseString>(
+    targetPhase: PhaseString,
+    phase: T,
+    ...args: ConstructorParameters<PhaseConstructorMap[T]>
+  ): boolean {
+    return this.appendToPhase(this.createPhase(phase, ...args), targetPhase);
   }
 }

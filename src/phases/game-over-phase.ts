@@ -10,12 +10,9 @@ import type Pokemon from "#app/field/pokemon";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import { BattlePhase } from "#app/phases/battle-phase";
 import { CheckSwitchPhase } from "#app/phases/check-switch-phase";
-import { EncounterPhase } from "#app/phases/encounter-phase";
 import { EndCardPhase } from "#app/phases/end-card-phase";
 import { GameOverModifierRewardPhase } from "#app/phases/game-over-modifier-reward-phase";
-import { PostGameOverPhase } from "#app/phases/post-game-over-phase";
 import { RibbonModifierRewardPhase } from "#app/phases/ribbon-modifier-reward-phase";
-import { SummonPhase } from "#app/phases/summon-phase";
 import { UnlockPhase } from "#app/phases/unlock-phase";
 import { achvs, ChallengeAchv } from "#app/system/achv";
 import { Unlockables } from "#app/system/unlockables";
@@ -86,13 +83,13 @@ export class GameOverPhase extends BattlePhase {
               globalScene.reset();
               globalScene.phaseManager.clearPhaseQueue();
               globalScene.gameData.loadSession(globalScene.sessionSlotId).then(() => {
-                globalScene.phaseManager.pushPhase(new EncounterPhase(true));
+                globalScene.phaseManager.createAndPush("EncounterPhase", true);
 
                 const availablePartyMembers = globalScene.getPokemonAllowedInBattle().length;
 
-                globalScene.phaseManager.pushPhase(new SummonPhase(0));
+                globalScene.phaseManager.createAndPush("SummonPhase", 0);
                 if (globalScene.currentBattle.double && availablePartyMembers > 1) {
-                  globalScene.phaseManager.pushPhase(new SummonPhase(1));
+                  globalScene.phaseManager.createAndPush("SummonPhase", 1);
                 }
                 if (
                   globalScene.currentBattle.waveIndex > 1 &&
@@ -170,7 +167,7 @@ export class GameOverPhase extends BattlePhase {
             }
             this.getRunHistoryEntry().then(runHistoryEntry => {
               globalScene.gameData.saveRunHistory(runHistoryEntry, this.isVictory);
-              globalScene.phaseManager.pushPhase(new PostGameOverPhase(endCardPhase));
+              globalScene.phaseManager.createAndPush("PostGameOverPhase", endCardPhase);
               this.end();
             });
           };

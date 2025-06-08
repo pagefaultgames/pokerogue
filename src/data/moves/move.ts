@@ -1890,8 +1890,8 @@ export class HealAttr extends MoveEffectAttr {
    * This heals the target and shows the appropriate message.
    */
   addHealPhase(target: Pokemon, healRatio: number) {
-    globalScene.phaseManager.unshiftPhase(new PokemonHealPhase(target.getBattlerIndex(),
-      toDmgValue(target.getMaxHp() * healRatio), i18next.t("moveTriggers:healHp", { pokemonName: getPokemonNameWithAffix(target) }), true, !this.showAnim));
+    globalScene.phaseManager.createAndUnshift("PokemonHealPhase", target.getBattlerIndex(),
+      toDmgValue(target.getMaxHp() * healRatio), i18next.t("moveTriggers:healHp", { pokemonName: getPokemonNameWithAffix(target) }), true, !this.showAnim);
   }
 
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
@@ -6351,13 +6351,13 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
       globalScene.clearEnemyHeldItemModifiers(switchOutTarget);
 
       if (!allyPokemon?.isActive(true) && switchOutTarget.hp) {
-          globalScene.phaseManager.pushPhase(new BattleEndPhase(false));
+          globalScene.phaseManager.createAndPush("BattleEndPhase", false);
 
           if (globalScene.gameMode.hasRandomBiomes || globalScene.isNewBiome()) {
-            globalScene.phaseManager.pushPhase(new SelectBiomePhase());
+            globalScene.phaseManager.createAndPush("SelectBiomePhase");
           }
 
-          globalScene.phaseManager.pushPhase(new NewBattlePhase());
+          globalScene.phaseManager.createAndPush("NewBattlePhase");
       }
     }
 
@@ -6733,8 +6733,8 @@ class CallMoveAttr extends OverrideMoveEffectAttr {
       ? moveTargets.targets
       : [ this.hasTarget ? target.getBattlerIndex() : moveTargets.targets[user.randBattleSeedInt(moveTargets.targets.length)] ]; // account for Mirror Move having a target already
     user.getMoveQueue().push({ move: move.id, targets: targets, virtual: true, ignorePP: true });
-    globalScene.phaseManager.unshiftPhase(new LoadMoveAnimPhase(move.id));
-    globalScene.phaseManager.unshiftPhase(new MovePhase(user, targets, new PokemonMove(move.id, 0, 0, true), true, true));
+    globalScene.phaseManager.createAndUnshift("LoadMoveAnimPhase", move.id);
+    globalScene.phaseManager.createAndUnshift("MovePhase", user, targets, new PokemonMove(move.id, 0, 0, true), true, true);
     return true;
   }
 }
@@ -6962,8 +6962,8 @@ export class NaturePowerAttr extends OverrideMoveEffectAttr {
     }
 
     user.getMoveQueue().push({ move: moveId, targets: [ target.getBattlerIndex() ], ignorePP: true });
-    globalScene.phaseManager.unshiftPhase(new LoadMoveAnimPhase(moveId));
-    globalScene.phaseManager.unshiftPhase(new MovePhase(user, [ target.getBattlerIndex() ], new PokemonMove(moveId, 0, 0, true), true));
+    globalScene.phaseManager.createAndUnshift("LoadMoveAnimPhase", moveId);
+    globalScene.phaseManager.createAndUnshift("MovePhase", user, [ target.getBattlerIndex() ], new PokemonMove(moveId, 0, 0, true), true);
     return true;
   }
 }
@@ -7852,7 +7852,7 @@ export class AfterYouAttr extends MoveEffectAttr {
     //Will find next acting phase of the targeted pokémon, delete it and queue it next on successful delete.
     const nextAttackPhase = globalScene.phaseManager.findPhase<MovePhase>((phase) => phase.pokemon === target);
     if (nextAttackPhase && globalScene.phaseManager.tryRemovePhase((phase: MovePhase) => phase.pokemon === target)) {
-      globalScene.phaseManager.prependToPhase(new MovePhase(target, [ ...nextAttackPhase.targets ], nextAttackPhase.move), "MovePhase");
+      globalScene.phaseManager.createAndPrependToPhase("MovePhase", "MovePhase", target, [ ...nextAttackPhase.targets ], nextAttackPhase.move);
     }
 
     return true;
@@ -7889,7 +7889,7 @@ export class ForceLastAttr extends MoveEffectAttr {
         globalScene.phaseManager.phaseQueue.splice(
           globalScene.phaseManager.phaseQueue.indexOf(prependPhase),
           0,
-          new MovePhase(target, [ ...targetMovePhase.targets ], targetMovePhase.move, false, false, false, true)
+          globalScene.phaseManager.createPhase("MovePhase", target, [ ...targetMovePhase.targets ], targetMovePhase.move, false, false, false, true)
         );
       }
     }
