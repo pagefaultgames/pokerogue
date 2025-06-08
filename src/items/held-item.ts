@@ -27,6 +27,10 @@ export const ITEM_EFFECT = {
   MULTI_HIT: 19,
   DAMAGE_MONEY_REWARD: 20,
   BATON: 21,
+  TURN_END_ITEM_STEAL: 22,
+  CONTACT_ITEM_STEAL_CHANCE: 23,
+  //  EVO_TRACKER: 40,
+  //  BASE_STAT_TOTAL: 50,
 } as const;
 
 export type ITEM_EFFECT = (typeof ITEM_EFFECT)[keyof typeof ITEM_EFFECT];
@@ -48,28 +52,16 @@ export class HeldItem {
     this.isSuppressable = true;
   }
 
-  getName(): string {
+  get name(): string {
     return i18next.t(`modifierType:ModifierType.${HeldItemNames[this.type]}.name`) + " (new)";
   }
 
-  getDescription(): string {
+  get description(): string {
     return i18next.t(`modifierType:ModifierType.${HeldItemNames[this.type]}.description`);
   }
 
-  getIcon(): string {
-    return `${HeldItemNames[this.type]?.toLowerCase()}`;
-  }
-
-  get name(): string {
-    return "";
-  }
-
-  get description(): string {
-    return "";
-  }
-
   get iconName(): string {
-    return "";
+    return `${HeldItemNames[this.type]?.toLowerCase()}`;
   }
 
   // TODO: Aren't these fine as just properties to set in the subclass definition?

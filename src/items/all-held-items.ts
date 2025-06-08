@@ -28,6 +28,11 @@ import { type FLINCH_CHANCE_PARAMS, FlinchChanceHeldItem } from "./held-items/fl
 import { type FRIENDSHIP_BOOST_PARAMS, FriendshipBoosterHeldItem } from "./held-items/friendship-booster";
 import { type HIT_HEAL_PARAMS, HitHealHeldItem } from "./held-items/hit-heal";
 import { InstantReviveHeldItem, type INSTANT_REVIVE_PARAMS } from "./held-items/instant-revive";
+import {
+  ContactItemStealChanceHeldItem,
+  type ITEM_STEAL_PARAMS,
+  TurnEndItemStealHeldItem,
+} from "./held-items/item-steal";
 import { type MULTI_HIT_PARAMS, MultiHitHeldItem } from "./held-items/multi-hit";
 import { type NATURE_WEIGHT_BOOST_PARAMS, NatureWeightBoosterHeldItem } from "./held-items/nature-weight-booster";
 import {
@@ -123,6 +128,8 @@ export function initHeldItems() {
   allHeldItems[HeldItemId.MULTI_LENS] = new MultiHitHeldItem(HeldItemId.MULTI_LENS, 2);
   allHeldItems[HeldItemId.GOLDEN_PUNCH] = new DamageMoneyRewardHeldItem(HeldItemId.GOLDEN_PUNCH, 5);
   allHeldItems[HeldItemId.BATON] = new BatonHeldItem(HeldItemId.BATON, 1);
+  allHeldItems[HeldItemId.GRIP_CLAW] = new ContactItemStealChanceHeldItem(HeldItemId.GRIP_CLAW, 5, 10);
+  allHeldItems[HeldItemId.MINI_BLACK_HOLE] = new TurnEndItemStealHeldItem(HeldItemId.MINI_BLACK_HOLE, 1);
 
   allHeldItems[HeldItemId.FLAME_ORB] = new TurnEndStatusHeldItem(HeldItemId.FLAME_ORB, 1, StatusEffect.BURN);
   allHeldItems[HeldItemId.TOXIC_ORB] = new TurnEndStatusHeldItem(HeldItemId.TOXIC_ORB, 1, StatusEffect.TOXIC);
@@ -156,6 +163,8 @@ type APPLY_HELD_ITEMS_PARAMS = {
   [ITEM_EFFECT.MULTI_HIT]: MULTI_HIT_PARAMS;
   [ITEM_EFFECT.DAMAGE_MONEY_REWARD]: DAMAGE_MONEY_REWARD_PARAMS;
   [ITEM_EFFECT.BATON]: BATON_PARAMS;
+  [ITEM_EFFECT.CONTACT_ITEM_STEAL_CHANCE]: ITEM_STEAL_PARAMS;
+  [ITEM_EFFECT.TURN_END_ITEM_STEAL]: ITEM_STEAL_PARAMS;
 };
 
 export function applyHeldItems<T extends ITEM_EFFECT>(effect: T, params: APPLY_HELD_ITEMS_PARAMS[T]) {
