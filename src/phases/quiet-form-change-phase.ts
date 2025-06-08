@@ -9,7 +9,6 @@ import type Pokemon from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { BattlePhase } from "./battle-phase";
 import type { MovePhase } from "./move-phase";
-import { PokemonHealPhase } from "./pokemon-heal-phase";
 import {
   applyAbAttrs,
   ClearTerrainAbAttr,
@@ -159,8 +158,15 @@ export class QuietFormChangePhase extends BattlePhase {
     this.pokemon.findAndRemoveTags(t => t.tagType === BattlerTagType.AUTOTOMIZED);
     if (globalScene?.currentBattle.battleSpec === BattleSpec.FINAL_BOSS && this.pokemon.isEnemy()) {
       globalScene.playBgm();
-      globalScene.phaseManager.unshiftPhase(
-        new PokemonHealPhase(this.pokemon.getBattlerIndex(), this.pokemon.getMaxHp(), null, false, false, false, true),
+      globalScene.phaseManager.unshiftNew(
+        "PokemonHealPhase",
+        this.pokemon.getBattlerIndex(),
+        this.pokemon.getMaxHp(),
+        null,
+        false,
+        false,
+        false,
+        true,
       );
       this.pokemon.findAndRemoveTags(() => true);
       this.pokemon.bossSegments = 5;

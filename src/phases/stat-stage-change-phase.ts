@@ -72,18 +72,17 @@ export class StatStageChangePhase extends PokemonPhase {
     if (this.stats.length > 1) {
       for (let i = 0; i < this.stats.length; i++) {
         const stat = [this.stats[i]];
-        globalScene.phaseManager.unshiftPhase(
-          new StatStageChangePhase(
-            this.battlerIndex,
-            this.selfTarget,
-            stat,
-            this.stages,
-            this.showMessage,
-            this.ignoreAbilities,
-            this.canBeCopied,
-            this.onChange,
-            this.comingFromMirrorArmorUser,
-          ),
+        globalScene.phaseManager.unshiftNew(
+          "StatStageChangePhase",
+          this.battlerIndex,
+          this.selfTarget,
+          stat,
+          this.stages,
+          this.showMessage,
+          this.ignoreAbilities,
+          this.canBeCopied,
+          this.onChange,
+          this.comingFromMirrorArmorUser,
         );
       }
       return this.end();

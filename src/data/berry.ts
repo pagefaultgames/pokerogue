@@ -8,8 +8,6 @@ import i18next from "i18next";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { BerryType } from "#enums/berry-type";
 import { Stat, type BattleStat } from "#app/enums/stat";
-import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
-import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { globalScene } from "#app/global-scene";
 
 export function getBerryName(berryType: BerryType): string {
@@ -75,16 +73,15 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
         {
           const hpHealed = new NumberHolder(toDmgValue(consumer.getMaxHp() / 4));
           applyAbAttrs(DoubleBerryEffectAbAttr, consumer, null, false, hpHealed);
-          globalScene.phaseManager.unshiftPhase(
-            new PokemonHealPhase(
-              consumer.getBattlerIndex(),
-              hpHealed.value,
-              i18next.t("battle:hpHealBerry", {
-                pokemonNameWithAffix: getPokemonNameWithAffix(consumer),
-                berryName: getBerryName(berryType),
-              }),
-              true,
-            ),
+          globalScene.phaseManager.unshiftNew(
+            "PokemonHealPhase",
+            consumer.getBattlerIndex(),
+            hpHealed.value,
+            i18next.t("battle:hpHealBerry", {
+              pokemonNameWithAffix: getPokemonNameWithAffix(consumer),
+              berryName: getBerryName(berryType),
+            }),
+            true,
           );
         }
         break;
@@ -109,8 +106,12 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
           const stat: BattleStat = berryType - BerryType.ENIGMA;
           const statStages = new NumberHolder(1);
           applyAbAttrs(DoubleBerryEffectAbAttr, consumer, null, false, statStages);
-          globalScene.phaseManager.unshiftPhase(
-            new StatStageChangePhase(consumer.getBattlerIndex(), true, [stat], statStages.value),
+          globalScene.phaseManager.unshiftNew(
+            "StatStageChangePhase",
+            consumer.getBattlerIndex(),
+            true,
+            [stat],
+            statStages.value,
           );
         }
         break;
@@ -126,8 +127,12 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
           const randStat = randSeedInt(Stat.SPD, Stat.ATK);
           const stages = new NumberHolder(2);
           applyAbAttrs(DoubleBerryEffectAbAttr, consumer, null, false, stages);
-          globalScene.phaseManager.unshiftPhase(
-            new StatStageChangePhase(consumer.getBattlerIndex(), true, [randStat], stages.value),
+          globalScene.phaseManager.unshiftNew(
+            "StatStageChangePhase",
+            consumer.getBattlerIndex(),
+            true,
+            [randStat],
+            stages.value,
           );
         }
         break;
