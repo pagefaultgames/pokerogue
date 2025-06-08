@@ -171,6 +171,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
   private pokemonCaughtHatchedContainer: Phaser.GameObjects.Container;
   private pokemonCaughtCountText: Phaser.GameObjects.Text;
   private pokemonFormText: Phaser.GameObjects.Text;
+  private pokemonCategoryText: Phaser.GameObjects.Text;
   private pokemonHatchedIcon: Phaser.GameObjects.Sprite;
   private pokemonHatchedCountText: Phaser.GameObjects.Text;
   private pokemonShinyIcons: Phaser.GameObjects.Sprite[];
@@ -405,6 +406,12 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
     });
     this.pokemonFormText.setOrigin(0, 0);
     this.starterSelectContainer.add(this.pokemonFormText);
+
+    this.pokemonCategoryText = addTextObject(100, 18, "Category", TextStyle.WINDOW_ALT, {
+      fontSize: "42px",
+    });
+    this.pokemonCategoryText.setOrigin(1, 0);
+    this.starterSelectContainer.add(this.pokemonCategoryText);
 
     this.pokemonCaughtHatchedContainer = globalScene.add.container(2, 25);
     this.pokemonCaughtHatchedContainer.setScale(0.5);
@@ -2351,6 +2358,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
         this.pokemonCaughtHatchedContainer.setVisible(true);
         this.pokemonCandyContainer.setVisible(false);
         this.pokemonFormText.setVisible(false);
+        this.pokemonCategoryText.setVisible(false);
 
         const defaultDexAttr = globalScene.gameData.getSpeciesDefaultDexAttr(species, true, true);
         const props = globalScene.gameData.getSpeciesDexAttrProps(species, defaultDexAttr);
@@ -2379,6 +2387,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
       this.pokemonCaughtHatchedContainer.setVisible(false);
       this.pokemonCandyContainer.setVisible(false);
       this.pokemonFormText.setVisible(false);
+      this.pokemonCategoryText.setVisible(false);
 
       this.setSpeciesDetails(species!, {
         // TODO: is this bang correct?
@@ -2529,6 +2538,13 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
         this.pokemonNameText.setText(species.name);
       } else {
         this.pokemonNameText.setText(species ? "???" : "");
+      }
+
+      // Setting the category
+      if (isFormCaught) {
+        this.pokemonCategoryText.setText(species.category);
+      } else {
+        this.pokemonCategoryText.setText("");
       }
 
       // Setting tint of the sprite
