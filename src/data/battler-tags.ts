@@ -9,7 +9,8 @@ import {
   ReverseDrainAbAttr,
 } from "#app/data/abilities/ability";
 import { allAbilities } from "./data-lists";
-import { ChargeAnim, CommonAnim, CommonBattleAnim, MoveChargeAnim } from "#app/data/battle-anims";
+import { CommonBattleAnim, MoveChargeAnim } from "#app/data/battle-anims";
+import { ChargeAnim, CommonAnim } from "#enums/move-anims-common";
 import type Move from "#app/data/moves/move";
 import {
   applyMoveAttrs,

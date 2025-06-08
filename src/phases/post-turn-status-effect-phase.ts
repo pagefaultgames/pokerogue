@@ -8,7 +8,8 @@ import {
   PostDamageAbAttr,
   ReduceBurnDamageAbAttr,
 } from "#app/data/abilities/ability";
-import { CommonBattleAnim, CommonAnim } from "#app/data/battle-anims";
+import { CommonBattleAnim } from "#app/data/battle-anims";
+import { CommonAnim } from "#enums/move-anims-common";
 import { getStatusEffectActivationText } from "#app/data/status-effect";
 import { BattleSpec } from "#app/enums/battle-spec";
 import { StatusEffect } from "#app/enums/status-effect";

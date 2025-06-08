@@ -12,7 +12,7 @@ import {
   getLegendaryWeatherContinuesMessage,
   Weather,
 } from "#app/data/weather";
-import { CommonAnim } from "#app/data/battle-anims";
+import { CommonAnim } from "#enums/move-anims-common";
 import type { PokemonType } from "#enums/pokemon-type";
 import type Move from "#app/data/moves/move";
 import type { ArenaTag } from "#app/data/arena-tag";

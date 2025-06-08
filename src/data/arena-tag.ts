@@ -20,7 +20,8 @@ import {
   applyOnLoseAbAttrs,
 } from "#app/data/abilities/ability";
 import { Stat } from "#enums/stat";
-import { CommonAnim, CommonBattleAnim } from "#app/data/battle-anims";
+import { CommonBattleAnim } from "#app/data/battle-anims";
+import { CommonAnim } from "#enums/move-anims-common";
 import i18next from "i18next";
 import { AbilityId } from "#enums/ability-id";
 import { ArenaTagType } from "#enums/arena-tag-type";

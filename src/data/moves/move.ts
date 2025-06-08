@@ -1,4 +1,5 @@
-import { ChargeAnim, MoveChargeAnim } from "../battle-anims";
+import { MoveChargeAnim } from "../battle-anims";
+import { ChargeAnim } from "#enums/move-anims-common";
 import {
   CommandedTag,
   EncoreTag,

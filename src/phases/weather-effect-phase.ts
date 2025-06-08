@@ -8,7 +8,7 @@ import {
   applyPostWeatherLapseAbAttrs,
   PostWeatherLapseAbAttr,
 } from "#app/data/abilities/ability";
-import { CommonAnim } from "#app/data/battle-anims";
+import { CommonAnim } from "#enums/move-anims-common";
 import type { Weather } from "#app/data/weather";
 import { getWeatherDamageMessage, getWeatherLapseMessage } from "#app/data/weather";
 import { BattlerTagType } from "#app/enums/battler-tag-type";

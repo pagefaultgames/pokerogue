@@ -71,7 +71,7 @@ import { MoveFlags } from "#enums/MoveFlags";
 import { MoveTarget } from "#enums/MoveTarget";
 import { MoveCategory } from "#enums/MoveCategory";
 import type { BerryType } from "#enums/berry-type";
-import { CommonAnim } from "../battle-anims";
+import { CommonAnim } from "#enums/move-anims-common";
 import { getBerryEffectFunc } from "../berry";
 import { BerryUsedEvent } from "#app/events/battle-scene";
 
