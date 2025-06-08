@@ -49,7 +49,6 @@ import { SpeciesId } from "#enums/species-id";
 import { applyChallenges, ChallengeType } from "#app/data/challenge";
 import { WeatherType } from "#enums/weather-type";
 import { TerrainType } from "#app/data/terrain";
-import { ReloadSessionPhase } from "#app/phases/reload-session-phase";
 import { RUN_HISTORY_LIMIT } from "#app/ui/run-history-ui-handler";
 import {
   applySessionVersionMigration,
@@ -62,6 +61,7 @@ import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
 import { ArenaTrapTag } from "#app/data/arena-tag";
 import { pokemonFormChanges } from "#app/data/pokemon-forms";
 import type { PokemonType } from "#enums/pokemon-type";
+import type { DexData, DexEntry } from "../@types/dex-data";
 
 export const defaultStarterSpecies: SpeciesId[] = [
   SpeciesId.BULBASAUR,
@@ -131,6 +131,7 @@ export function decrypt(data: string, bypassLogin: boolean): string {
   )(data);
 }
 
+// TODO: Move all these exported interfaces to @types
 export interface SystemSaveData {
   trainerId: number;
   secretId: number;
@@ -179,30 +180,16 @@ interface Unlocks {
   [key: number]: boolean;
 }
 
-interface AchvUnlocks {
+export interface AchvUnlocks {
   [key: string]: number;
 }
 
-interface VoucherUnlocks {
+export interface VoucherUnlocks {
   [key: string]: number;
 }
 
 export interface VoucherCounts {
   [type: string]: number;
-}
-
-export interface DexData {
-  [key: number]: DexEntry;
-}
-
-export interface DexEntry {
-  seenAttr: bigint;
-  caughtAttr: bigint;
-  natureAttr: number;
-  seenCount: number;
-  caughtCount: number;
-  hatchedCount: number;
-  ivs: number[];
 }
 
 export type StarterMoveset = [MoveId] | [MoveId, MoveId] | [MoveId, MoveId, MoveId] | [MoveId, MoveId, MoveId, MoveId];
@@ -438,8 +425,8 @@ export class GameData {
           globalScene.ui.savingIcon.hide();
           if (error) {
             if (error.startsWith("session out of date")) {
-              globalScene.clearPhaseQueue();
-              globalScene.unshiftPhase(new ReloadSessionPhase());
+              globalScene.phaseManager.clearPhaseQueue();
+              globalScene.phaseManager.unshiftNew("ReloadSessionPhase");
             }
             console.error(error);
             return resolve(false);
@@ -471,7 +458,7 @@ export class GameData {
             saveDataOrErr[0] !== "{"
           ) {
             if (saveDataOrErr === 404) {
-              globalScene.queueMessage(
+              globalScene.phaseManager.queueMessage(
                 "Save data could not be found. If this is a new account, you can safely ignore this message.",
                 null,
                 true,
@@ -479,7 +466,7 @@ export class GameData {
               return resolve(true);
             }
             if (typeof saveDataOrErr === "string" && saveDataOrErr?.includes("Too many connections")) {
-              globalScene.queueMessage(
+              globalScene.phaseManager.queueMessage(
                 "Too many people are trying to connect and the server is overloaded. Please try again later.",
                 null,
                 true,
@@ -758,8 +745,8 @@ export class GameData {
     });
 
     if (systemData) {
-      globalScene.clearPhaseQueue();
-      globalScene.unshiftPhase(new ReloadSessionPhase(JSON.stringify(systemData)));
+      globalScene.phaseManager.clearPhaseQueue();
+      globalScene.phaseManager.unshiftNew("ReloadSessionPhase", JSON.stringify(systemData));
       this.clearLocalData();
       return false;
     }
@@ -1260,8 +1247,8 @@ export class GameData {
         pokerogueApi.savedata.session.delete({ slot: slotId, clientSessionId }).then(error => {
           if (error) {
             if (error.startsWith("session out of date")) {
-              globalScene.clearPhaseQueue();
-              globalScene.unshiftPhase(new ReloadSessionPhase());
+              globalScene.phaseManager.clearPhaseQueue();
+              globalScene.phaseManager.unshiftNew("ReloadSessionPhase");
             }
             console.error(error);
             resolve(false);
@@ -1332,8 +1319,8 @@ export class GameData {
         localStorage.removeItem(`sessionData${slotId ? slotId : ""}_${loggedInUser?.username}`);
       } else {
         if (jsonResponse?.error?.startsWith("session out of date")) {
-          globalScene.clearPhaseQueue();
-          globalScene.unshiftPhase(new ReloadSessionPhase());
+          globalScene.phaseManager.clearPhaseQueue();
+          globalScene.phaseManager.unshiftNew("ReloadSessionPhase");
         }
 
         console.error(jsonResponse);
@@ -1470,8 +1457,8 @@ export class GameData {
             }
             if (error) {
               if (error.startsWith("session out of date")) {
-                globalScene.clearPhaseQueue();
-                globalScene.unshiftPhase(new ReloadSessionPhase());
+                globalScene.phaseManager.clearPhaseQueue();
+                globalScene.phaseManager.unshiftNew("ReloadSessionPhase");
               }
               console.error(error);
               return resolve(false);
