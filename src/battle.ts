@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import type { Command } from "./ui/command-ui-handler";
+import type { Command } from "#enums/command";
 import {
   randomString,
   getEnumValues,

@@ -6,7 +6,7 @@ import { Stat } from "#app/enums/stat";
 import type Pokemon from "#app/field/pokemon";
 import { PokemonMove } from "#app/data/moves/pokemon-move";
 import { BypassSpeedChanceModifier } from "#app/modifier/modifier";
-import { Command } from "#app/ui/command-ui-handler";
+import { Command } from "#enums/command";
 import { randSeedShuffle, BooleanHolder } from "#app/utils/common";
 import { FieldPhase } from "./field-phase";
 import { BattlerIndex } from "#enums/battler-index";

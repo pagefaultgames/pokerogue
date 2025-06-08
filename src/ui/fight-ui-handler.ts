@@ -3,7 +3,7 @@ import { globalScene } from "#app/global-scene";
 import { addTextObject, TextStyle } from "./text";
 import { getTypeDamageMultiplierColor } from "#app/data/type";
 import { PokemonType } from "#enums/pokemon-type";
-import { Command } from "./command-ui-handler";
+import { Command } from "#enums/command";
 import { UiMode } from "#enums/ui-mode";
 import UiHandler from "./ui-handler";
 import { getLocalizedSpriteKey, fixedInt, padInt } from "#app/utils/common";

@@ -10,7 +10,7 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import Overrides from "#app/overrides";
 import { LearnMoveType } from "#app/phases/learn-move-phase";
 import type { VoucherType } from "#app/system/voucher";
-import { Command } from "#app/ui/command-ui-handler";
+import { Command } from "#enums/command";
 import { addTextObject, TextStyle } from "#app/ui/text";
 import { BooleanHolder, hslToHex, isNullOrUndefined, NumberHolder, randSeedFloat, toDmgValue } from "#app/utils/common";
 import { BattlerTagType } from "#enums/battler-tag-type";

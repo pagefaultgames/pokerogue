@@ -1,6 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import type { BattlerIndex } from "#enums/battler-index";
-import { Command } from "#app/ui/command-ui-handler";
+import { Command } from "#enums/command";
 import { UiMode } from "#enums/ui-mode";
 import { PokemonPhase } from "./pokemon-phase";
 import i18next from "#app/plugins/i18n";

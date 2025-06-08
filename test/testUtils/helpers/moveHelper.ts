@@ -6,7 +6,7 @@ import Overrides from "#app/overrides";
 import type { CommandPhase } from "#app/phases/command-phase";
 import type { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
-import { Command } from "#app/ui/command-ui-handler";
+import { Command } from "#enums/command";
 import { MoveId } from "#enums/move-id";
 import { UiMode } from "#enums/ui-mode";
 import { getMovePosition } from "#test/testUtils/gameManagerUtils";

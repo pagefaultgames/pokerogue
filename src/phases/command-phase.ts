@@ -14,7 +14,7 @@ import { PokeballType } from "#enums/pokeball";
 import type { PlayerPokemon, TurnMove } from "#app/field/pokemon";
 import { FieldPosition } from "#enums/field-position";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { Command } from "#app/ui/command-ui-handler";
+import { Command } from "#enums/command";
 import { UiMode } from "#enums/ui-mode";
 import i18next from "i18next";
 import { FieldPhase } from "./field-phase";

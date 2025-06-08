@@ -14,7 +14,7 @@ import { TrainerSlot } from "#enums/trainer-slot";
 import type Pokemon from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { SwitchEffectTransferModifier } from "#app/modifier/modifier";
-import { Command } from "#app/ui/command-ui-handler";
+import { Command } from "#enums/command";
 import i18next from "i18next";
 import { SummonPhase } from "./summon-phase";
 import { SubstituteTag } from "#app/data/battler-tags";

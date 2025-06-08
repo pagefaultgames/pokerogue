@@ -80,7 +80,7 @@ import type { BattlerIndex } from "#enums/battler-index";
 import { BattleType } from "#enums/battle-type";
 import { TerrainType } from "../terrain";
 import { ModifierPoolType } from "#app/modifier/modifier-type";
-import { Command } from "../../ui/command-ui-handler";
+import { Command } from "#enums/command";
 import i18next from "i18next";
 import type { Localizable } from "#app/@types/locales";
 import { getBerryEffectFunc } from "../berry";

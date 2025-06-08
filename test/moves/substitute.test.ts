@@ -6,7 +6,7 @@ import { allMoves } from "#app/data/data-lists";
 import { MoveResult } from "#enums/move-result";
 import type { CommandPhase } from "#app/phases/command-phase";
 import GameManager from "#test/testUtils/gameManager";
-import { Command } from "#app/ui/command-ui-handler";
+import { Command } from "#enums/command";
 import { UiMode } from "#enums/ui-mode";
 import { AbilityId } from "#enums/ability-id";
 import { ArenaTagType } from "#enums/arena-tag-type";

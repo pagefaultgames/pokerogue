@@ -44,7 +44,7 @@ import {
   SpeciesFormChangeWeatherTrigger,
 } from "#app/data/pokemon-forms";
 import i18next from "i18next";
-import { Command } from "#app/ui/command-ui-handler";
+import { Command } from "#enums/command";
 import { BerryModifierType } from "#app/modifier/modifier-type";
 import { getPokeballName } from "#app/data/pokeball";
 import { BattleType } from "#enums/battle-type";
