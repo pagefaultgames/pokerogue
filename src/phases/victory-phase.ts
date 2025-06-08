@@ -51,12 +51,12 @@ export class VictoryPhase extends PokemonPhase {
         .getEnemyParty()
         .find(p => (globalScene.currentBattle.battleType === BattleType.WILD ? p.isOnField() : !p?.isFainted(true)))
     ) {
-      globalScene.pushPhase(new BattleEndPhase(true));
+      globalScene.phaseManager.pushPhase(new BattleEndPhase(true));
       if (globalScene.currentBattle.battleType === BattleType.TRAINER) {
-        globalScene.pushPhase(new TrainerVictoryPhase());
+        globalScene.phaseManager.pushPhase(new TrainerVictoryPhase());
       }
       if (globalScene.gameMode.isEndless || !globalScene.gameMode.isWaveFinal(globalScene.currentBattle.waveIndex)) {
-        globalScene.pushPhase(new EggLapsePhase());
+        globalScene.phaseManager.pushPhase(new EggLapsePhase());
         if (globalScene.gameMode.isClassic) {
           switch (globalScene.currentBattle.waveIndex) {
             case ClassicFixedBossWaves.RIVAL_1:
@@ -64,34 +64,36 @@ export class VictoryPhase extends PokemonPhase {
               // Get event modifiers for this wave
               timedEventManager
                 .getFixedBattleEventRewards(globalScene.currentBattle.waveIndex)
-                .map(r => globalScene.pushPhase(new ModifierRewardPhase(modifierTypes[r])));
+                .map(r => globalScene.phaseManager.pushPhase(new ModifierRewardPhase(modifierTypes[r])));
               break;
             case ClassicFixedBossWaves.EVIL_BOSS_2:
               // Should get Lock Capsule on 165 before shop phase so it can be used in the rewards shop
-              globalScene.pushPhase(new ModifierRewardPhase(modifierTypes.LOCK_CAPSULE));
+              globalScene.phaseManager.pushPhase(new ModifierRewardPhase(modifierTypes.LOCK_CAPSULE));
               break;
           }
         }
         if (globalScene.currentBattle.waveIndex % 10) {
-          globalScene.pushPhase(new SelectModifierPhase(undefined, undefined, this.getFixedBattleCustomModifiers()));
+          globalScene.phaseManager.pushPhase(
+            new SelectModifierPhase(undefined, undefined, this.getFixedBattleCustomModifiers()),
+          );
         } else if (globalScene.gameMode.isDaily) {
-          globalScene.pushPhase(new ModifierRewardPhase(modifierTypes.EXP_CHARM));
+          globalScene.phaseManager.pushPhase(new ModifierRewardPhase(modifierTypes.EXP_CHARM));
           if (
             globalScene.currentBattle.waveIndex > 10 &&
             !globalScene.gameMode.isWaveFinal(globalScene.currentBattle.waveIndex)
           ) {
-            globalScene.pushPhase(new ModifierRewardPhase(modifierTypes.GOLDEN_POKEBALL));
+            globalScene.phaseManager.pushPhase(new ModifierRewardPhase(modifierTypes.GOLDEN_POKEBALL));
           }
         } else {
           const superExpWave = !globalScene.gameMode.isEndless ? (globalScene.offsetGym ? 0 : 20) : 10;
           if (globalScene.gameMode.isEndless && globalScene.currentBattle.waveIndex === 10) {
-            globalScene.pushPhase(new ModifierRewardPhase(modifierTypes.EXP_SHARE));
+            globalScene.phaseManager.pushPhase(new ModifierRewardPhase(modifierTypes.EXP_SHARE));
           }
           if (
             globalScene.currentBattle.waveIndex <= 750 &&
             (globalScene.currentBattle.waveIndex <= 500 || globalScene.currentBattle.waveIndex % 30 === superExpWave)
           ) {
-            globalScene.pushPhase(
+            globalScene.phaseManager.pushPhase(
               new ModifierRewardPhase(
                 globalScene.currentBattle.waveIndex % 30 !== superExpWave || globalScene.currentBattle.waveIndex > 250
                   ? modifierTypes.EXP_CHARM
@@ -100,30 +102,30 @@ export class VictoryPhase extends PokemonPhase {
             );
           }
           if (globalScene.currentBattle.waveIndex <= 150 && !(globalScene.currentBattle.waveIndex % 50)) {
-            globalScene.pushPhase(new ModifierRewardPhase(modifierTypes.GOLDEN_POKEBALL));
+            globalScene.phaseManager.pushPhase(new ModifierRewardPhase(modifierTypes.GOLDEN_POKEBALL));
           }
           if (globalScene.gameMode.isEndless && !(globalScene.currentBattle.waveIndex % 50)) {
-            globalScene.pushPhase(
+            globalScene.phaseManager.pushPhase(
               new ModifierRewardPhase(
                 !(globalScene.currentBattle.waveIndex % 250)
                   ? modifierTypes.VOUCHER_PREMIUM
                   : modifierTypes.VOUCHER_PLUS,
               ),
             );
-            globalScene.pushPhase(new AddEnemyBuffModifierPhase());
+            globalScene.phaseManager.pushPhase(new AddEnemyBuffModifierPhase());
           }
         }
 
         if (globalScene.gameMode.hasRandomBiomes || globalScene.isNewBiome()) {
-          globalScene.pushPhase(new SelectBiomePhase());
+          globalScene.phaseManager.pushPhase(new SelectBiomePhase());
         }
 
-        globalScene.pushPhase(new NewBattlePhase());
+        globalScene.phaseManager.pushPhase(new NewBattlePhase());
       } else {
         globalScene.currentBattle.battleType = BattleType.CLEAR;
         globalScene.score += globalScene.gameMode.getClearScoreBonus();
         globalScene.updateScoreText();
-        globalScene.pushPhase(new GameOverPhase(true));
+        globalScene.phaseManager.pushPhase(new GameOverPhase(true));
       }
     }
 

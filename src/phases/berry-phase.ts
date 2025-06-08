@@ -50,7 +50,7 @@ export class BerryPhase extends FieldPhase {
     const cancelled = new BooleanHolder(false);
     pokemon.getOpponents().forEach(opp => applyAbAttrs(PreventBerryUseAbAttr, opp, cancelled));
     if (cancelled.value) {
-      globalScene.queueMessage(
+      globalScene.phaseManager.queueMessage(
         i18next.t("abilityTriggers:preventBerryUse", {
           pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
         }),
@@ -58,7 +58,7 @@ export class BerryPhase extends FieldPhase {
       return;
     }
 
-    globalScene.unshiftPhase(
+    globalScene.phaseManager.unshiftPhase(
       new CommonAnimPhase(pokemon.getBattlerIndex(), pokemon.getBattlerIndex(), CommonAnim.USE_ITEM),
     );
 

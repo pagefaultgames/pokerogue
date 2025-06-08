@@ -22,9 +22,9 @@ export class SelectBiomePhase extends BattlePhase {
     const setNextBiome = (nextBiome: BiomeId) => {
       if (nextWaveIndex % 10 === 1) {
         globalScene.applyModifiers(MoneyInterestModifier, true);
-        globalScene.unshiftPhase(new PartyHealPhase(false));
+        globalScene.phaseManager.unshiftPhase(new PartyHealPhase(false));
       }
-      globalScene.unshiftPhase(new SwitchBiomePhase(nextBiome));
+      globalScene.phaseManager.unshiftPhase(new SwitchBiomePhase(nextBiome));
       this.end();
     };
 
