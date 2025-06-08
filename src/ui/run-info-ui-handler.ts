@@ -10,7 +10,7 @@ import type PokemonData from "../system/pokemon-data";
 import i18next from "i18next";
 import { Button } from "../enums/buttons";
 import { BattleType } from "#enums/battle-type";
-import { TrainerVariant } from "../field/trainer";
+import { TrainerVariant } from "#enums/trainer-variant";
 import { Challenges } from "#enums/challenges";
 import { getLuckString, getLuckTextTint } from "../modifier/modifier-type";
 import RoundRectangle from "phaser3-rex-plugins/plugins/roundrectangle";

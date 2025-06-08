@@ -6,7 +6,7 @@ import { pokemonEvolutions, pokemonPrevolutions } from "#app/data/balance/pokemo
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { tmSpecies } from "#app/data/balance/tms";
 import { doubleBattleDialogue } from "#app/data/dialogue";
-import { TrainerVariant } from "#app/field/trainer";
+import { TrainerVariant } from "#enums/trainer-variant";
 import { getIsInitialized, initI18n } from "#app/plugins/i18n";
 import i18next from "i18next";
 import { Gender } from "#app/data/gender";

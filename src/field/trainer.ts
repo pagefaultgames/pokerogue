@@ -20,12 +20,7 @@ import { PartyMemberStrength } from "#enums/party-member-strength";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerType } from "#enums/trainer-type";
 import { signatureSpecies } from "#app/data/balance/signature-species";
-
-export enum TrainerVariant {
-  DEFAULT,
-  FEMALE,
-  DOUBLE,
-}
+import { TrainerVariant } from "#enums/trainer-variant";
 
 export default class Trainer extends Phaser.GameObjects.Container {
   public config: TrainerConfig;

@@ -10,7 +10,8 @@ import {
   randInt,
   randSeedFloat,
 } from "#app/utils/common";
-import Trainer, { TrainerVariant } from "./field/trainer";
+import Trainer from "./field/trainer";
+import { TrainerVariant } from "#enums/trainer-variant";
 import type { GameMode } from "./game-mode";
 import { MoneyMultiplierModifier, PokemonHeldItemModifier } from "./modifier/modifier";
 import type { PokeballType } from "#enums/pokeball";

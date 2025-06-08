@@ -11,7 +11,7 @@ import { Button } from "../enums/buttons";
 import { BattleType } from "#enums/battle-type";
 import type { RunEntry } from "../system/game-data";
 import { PlayerGender } from "#enums/player-gender";
-import { TrainerVariant } from "../field/trainer";
+import { TrainerVariant } from "#enums/trainer-variant";
 import { RunDisplayMode } from "#app/ui/run-info-ui-handler";
 
 export type RunSelectCallback = (cursor: number) => void;

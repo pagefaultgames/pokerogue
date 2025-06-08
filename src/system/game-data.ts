@@ -32,7 +32,7 @@ import { GameStats } from "#app/system/game-stats";
 import { Tutorial } from "#app/tutorial";
 import { speciesEggMoves } from "#app/data/balance/egg-moves";
 import { allMoves } from "#app/data/data-lists";
-import { TrainerVariant } from "#app/field/trainer";
+import { TrainerVariant } from "#enums/trainer-variant";
 import type { Variant } from "#app/sprites/variant";
 import { setSettingGamepad, SettingGamepad, settingGamepadDefaults } from "#app/system/settings/settings-gamepad";
 import type { SettingKeyboard } from "#app/system/settings/settings-keyboard";
