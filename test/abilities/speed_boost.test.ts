@@ -98,9 +98,9 @@ describe("Abilities - Speed Boost", () => {
   it("should not trigger if pokemon fails to escape", async () => {
     await game.classicMode.startBattle([SpeciesId.SHUCKLE]);
 
-    const commandPhase = game.scene.getCurrentPhase() as CommandPhase;
+    const commandPhase = game.scene.phaseManager.getCurrentPhase() as CommandPhase;
     commandPhase.handleCommand(Command.RUN, 0);
-    const runPhase = game.scene.getCurrentPhase() as AttemptRunPhase;
+    const runPhase = game.scene.phaseManager.getCurrentPhase() as AttemptRunPhase;
     runPhase.forceFailEscape = true;
     await game.phaseInterceptor.to(AttemptRunPhase);
     await game.toNextTurn();

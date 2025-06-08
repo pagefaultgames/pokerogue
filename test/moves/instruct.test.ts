@@ -1,13 +1,15 @@
 import { BattlerIndex } from "#app/battle";
+import { allMoves } from "#app/data/data-lists";
 import type Pokemon from "#app/field/pokemon";
 import { MoveResult } from "#app/field/pokemon";
 import type { MovePhase } from "#app/phases/move-phase";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
+import { Stat } from "#enums/stat";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Moves - Instruct", () => {
   let phaserGame: Phaser.Game;
@@ -34,7 +36,8 @@ describe("Moves - Instruct", () => {
     game.override
       .battleStyle("single")
       .enemySpecies(SpeciesId.SHUCKLE)
-      .enemyAbility(AbilityId.NO_GUARD)
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .passiveAbility(AbilityId.NO_GUARD)
       .enemyLevel(100)
       .startingLevel(100)
       .disableCrits();
@@ -53,12 +56,12 @@ describe("Moves - Instruct", () => {
 
     await game.phaseInterceptor.to("MovePhase"); // enemy attacks us
     await game.phaseInterceptor.to("MovePhase", false); // instruct
-    let currentPhase = game.scene.getCurrentPhase() as MovePhase;
+    let currentPhase = game.scene.phaseManager.getCurrentPhase() as MovePhase;
     expect(currentPhase.pokemon).toBe(game.scene.getPlayerPokemon());
     await game.phaseInterceptor.to("MoveEndPhase");
 
     await game.phaseInterceptor.to("MovePhase", false); // enemy repeats move
-    currentPhase = game.scene.getCurrentPhase() as MovePhase;
+    currentPhase = game.scene.phaseManager.getCurrentPhase() as MovePhase;
     expect(currentPhase.pokemon).toBe(enemy);
     expect(currentPhase.move.moveId).toBe(MoveId.SONIC_BOOM);
     await game.phaseInterceptor.to("TurnEndPhase", false);
@@ -535,5 +538,28 @@ describe("Moves - Instruct", () => {
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(ivysaur.turnData.attacksReceived.length).toBe(15);
+  });
+
+  it("should respect prior flinches and trigger Steadfast", async () => {
+    game.override.battleStyle("double");
+    vi.spyOn(allMoves[MoveId.AIR_SLASH], "chance", "get").mockReturnValue(100);
+    await game.classicMode.startBattle([SpeciesId.AUDINO, SpeciesId.ABRA]);
+
+    // Fake enemy 1 having attacked prior
+    const [, player2, enemy1, enemy2] = game.scene.getField();
+    enemy1.pushMoveHistory({ move: MoveId.ABSORB, targets: [BattlerIndex.PLAYER] });
+    game.field.mockAbility(enemy1, AbilityId.STEADFAST);
+
+    game.move.use(MoveId.AIR_SLASH, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
+    game.move.use(MoveId.INSTRUCT, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY);
+    await game.move.forceEnemyMove(MoveId.ABSORB);
+    await game.move.forceEnemyMove(MoveId.INSTRUCT, BattlerIndex.ENEMY);
+    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY_2]);
+    await game.toEndOfTurn();
+
+    expect(enemy1.getLastXMoves(-1).map(m => m.move)).toEqual([MoveId.NONE, MoveId.NONE, MoveId.NONE, MoveId.ABSORB]);
+    expect(enemy1.getStatStage(Stat.SPD)).toBe(3);
+    expect(player2.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
+    expect(enemy2.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
   });
 });

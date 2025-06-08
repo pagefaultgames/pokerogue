@@ -19,6 +19,7 @@ import { BooleanHolder, toDmgValue } from "#app/utils/common";
 import { CommonAnimPhase } from "./common-anim-phase";
 
 export class WeatherEffectPhase extends CommonAnimPhase {
+  public readonly phaseName = "WeatherEffectPhase";
   public weather: Weather | null;
 
   constructor() {
@@ -64,7 +65,7 @@ export class WeatherEffectPhase extends CommonAnimPhase {
 
           const damage = toDmgValue(pokemon.getMaxHp() / 16);
 
-          globalScene.queueMessage(getWeatherDamageMessage(this.weather!.weatherType, pokemon) ?? "");
+          globalScene.phaseManager.queueMessage(getWeatherDamageMessage(this.weather!.weatherType, pokemon) ?? "");
           pokemon.damageAndUpdate(damage, { result: HitResult.INDIRECT, ignoreSegments: true });
         };
 
