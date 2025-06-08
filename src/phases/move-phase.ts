@@ -39,10 +39,6 @@ import { MoveResult } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import Overrides from "#app/overrides";
 import { BattlePhase } from "#app/phases/battle-phase";
-import { CommonAnimPhase } from "#app/phases/common-anim-phase";
-import { MoveChargePhase } from "#app/phases/move-charge-phase";
-import { MoveEffectPhase } from "#app/phases/move-effect-phase";
-import { MoveEndPhase } from "#app/phases/move-end-phase";
 import { NumberHolder } from "#app/utils/common";
 import { AbilityId } from "#enums/ability-id";
 import { ArenaTagType } from "#enums/arena-tag-type";
@@ -271,12 +267,11 @@ export class MovePhase extends BattlePhase {
         globalScene.phaseManager.queueMessage(
           getStatusEffectActivationText(this.pokemon.status.effect, getPokemonNameWithAffix(this.pokemon)),
         );
-        globalScene.phaseManager.unshiftPhase(
-          new CommonAnimPhase(
-            this.pokemon.getBattlerIndex(),
-            undefined,
-            CommonAnim.POISON + (this.pokemon.status.effect - 1),
-          ),
+        globalScene.phaseManager.unshiftNew(
+          "CommonAnimPhase",
+          this.pokemon.getBattlerIndex(),
+          undefined,
+          CommonAnim.POISON + (this.pokemon.status.effect - 1),
         );
       } else if (healed) {
         globalScene.phaseManager.queueMessage(
@@ -407,8 +402,13 @@ export class MovePhase extends BattlePhase {
     if (success) {
       const move = this.move.getMove();
       applyPreAttackAbAttrs(PokemonTypeChangeAbAttr, this.pokemon, null, move);
-      globalScene.phaseManager.unshiftPhase(
-        new MoveEffectPhase(this.pokemon.getBattlerIndex(), this.targets, move, this.reflected, this.move.virtual),
+      globalScene.phaseManager.unshiftNew(
+        "MoveEffectPhase",
+        this.pokemon.getBattlerIndex(),
+        this.targets,
+        move,
+        this.reflected,
+        this.move.virtual,
       );
     } else {
       if ([MoveId.ROAR, MoveId.WHIRLWIND, MoveId.TRICK_OR_TREAT, MoveId.FORESTS_CURSE].includes(this.move.moveId)) {
@@ -457,8 +457,11 @@ export class MovePhase extends BattlePhase {
       applyPreAttackAbAttrs(PokemonTypeChangeAbAttr, this.pokemon, null, this.move.getMove());
 
       this.showMoveText();
-      globalScene.phaseManager.unshiftPhase(
-        new MoveChargePhase(this.pokemon.getBattlerIndex(), this.targets[0], this.move),
+      globalScene.phaseManager.unshiftNew(
+        "MoveChargePhase",
+        this.pokemon.getBattlerIndex(),
+        this.targets[0],
+        this.move,
       );
     } else {
       this.pokemon.pushMoveHistory({
@@ -481,8 +484,11 @@ export class MovePhase extends BattlePhase {
    * Queues a {@linkcode MoveEndPhase} and then ends the phase
    */
   public end(): void {
-    globalScene.phaseManager.unshiftPhase(
-      new MoveEndPhase(this.pokemon.getBattlerIndex(), this.getActiveTargetPokemon(), this.followUp),
+    globalScene.phaseManager.unshiftNew(
+      "MoveEndPhase",
+      this.pokemon.getBattlerIndex(),
+      this.getActiveTargetPokemon(),
+      this.followUp,
     );
 
     super.end();

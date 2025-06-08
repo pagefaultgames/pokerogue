@@ -4,11 +4,9 @@ import { EGG_SEED } from "#app/data/egg";
 import { Phase } from "#app/phase";
 import i18next from "i18next";
 import Overrides from "#app/overrides";
-import { EggHatchPhase } from "./egg-hatch-phase";
 import { UiMode } from "#enums/ui-mode";
 import { achvs } from "#app/system/achv";
 import type { PlayerPokemon } from "#app/field/pokemon";
-import { EggSummaryPhase } from "./egg-summary-phase";
 import { EggHatchData } from "#app/data/egg-hatch-data";
 
 /**
@@ -83,7 +81,7 @@ export class EggLapsePhase extends Phase {
   hatchEggsRegular(eggsToHatch: Egg[]) {
     let eggsToHatchCount: number = eggsToHatch.length;
     for (const egg of eggsToHatch) {
-      globalScene.phaseManager.unshiftPhase(new EggHatchPhase(this, egg, eggsToHatchCount));
+      globalScene.phaseManager.unshiftNew("EggHatchPhase", this, egg, eggsToHatchCount);
       eggsToHatchCount--;
     }
   }
@@ -99,7 +97,7 @@ export class EggLapsePhase extends Phase {
   }
 
   showSummary() {
-    globalScene.phaseManager.unshiftPhase(new EggSummaryPhase(this.eggHatchData));
+    globalScene.phaseManager.unshiftNew("EggSummaryPhase", this.eggHatchData);
     this.end();
   }
 

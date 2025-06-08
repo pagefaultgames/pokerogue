@@ -6,12 +6,7 @@ import {
 import { TurnInitEvent } from "#app/events/battle-scene";
 import type { PlayerPokemon } from "#app/field/pokemon";
 import i18next from "i18next";
-import { CommandPhase } from "./command-phase";
-import { EnemyCommandPhase } from "./enemy-command-phase";
 import { FieldPhase } from "./field-phase";
-import { GameOverPhase } from "./game-over-phase";
-import { ToggleDoublePositionPhase } from "./toggle-double-position-phase";
-import { TurnStartPhase } from "./turn-start-phase";
 import { globalScene } from "#app/global-scene";
 
 export class TurnInitPhase extends FieldPhase {
@@ -33,7 +28,7 @@ export class TurnInitPhase extends FieldPhase {
         if (!allowedPokemon.length) {
           // If there are no longer any legal pokemon in the party, game over.
           globalScene.phaseManager.clearPhaseQueue();
-          globalScene.phaseManager.unshiftPhase(new GameOverPhase());
+          globalScene.phaseManager.unshiftNew("GameOverPhase");
         } else if (
           allowedPokemon.length >= globalScene.currentBattle.getBattlerCount() ||
           (globalScene.currentBattle.double && !allowedPokemon[0].isActive(true))
@@ -46,7 +41,7 @@ export class TurnInitPhase extends FieldPhase {
           p.leaveField();
         }
         if (allowedPokemon.length === 1 && globalScene.currentBattle.double) {
-          globalScene.phaseManager.unshiftPhase(new ToggleDoublePositionPhase(true));
+          globalScene.phaseManager.unshiftNew("ToggleDoublePositionPhase", true);
         }
       }
     });
@@ -69,13 +64,15 @@ export class TurnInitPhase extends FieldPhase {
 
         pokemon.resetTurnData();
 
-        globalScene.phaseManager.pushPhase(
-          pokemon.isPlayer() ? new CommandPhase(i) : new EnemyCommandPhase(i - BattlerIndex.ENEMY),
-        );
+        if (pokemon.isPlayer()) {
+          globalScene.phaseManager.pushNew("CommandPhase", i);
+        } else {
+          globalScene.phaseManager.pushNew("EnemyCommandPhase", i - BattlerIndex.ENEMY);
+        }
       }
     });
 
-    globalScene.phaseManager.pushPhase(new TurnStartPhase());
+    globalScene.phaseManager.pushNew("TurnStartPhase");
 
     this.end();
   }

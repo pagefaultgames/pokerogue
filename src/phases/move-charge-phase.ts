@@ -6,7 +6,6 @@ import type { PokemonMove } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
 import { MoveResult } from "#app/field/pokemon";
 import { BooleanHolder } from "#app/utils/common";
-import { MovePhase } from "#app/phases/move-phase";
 import { PokemonPhase } from "#app/phases/pokemon-phase";
 import { BattlerTagType } from "#enums/battler-tag-type";
 
@@ -64,7 +63,7 @@ export class MoveChargePhase extends PokemonPhase {
         // this MoveEndPhase will be duplicated by the queued MovePhase if not removed
         globalScene.phaseManager.tryRemovePhase(phase => phase.is("MoveEndPhase") && phase.getPokemon() === user);
         // queue a new MovePhase for this move's attack phase
-        globalScene.phaseManager.unshiftPhase(new MovePhase(user, [this.targetIndex], this.move, false));
+        globalScene.phaseManager.unshiftNew("MovePhase", user, [this.targetIndex], this.move, false);
       } else {
         user.getMoveQueue().push({ move: move.id, targets: [this.targetIndex] });
       }

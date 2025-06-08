@@ -4,7 +4,6 @@ import { ExpBoosterModifier } from "#app/modifier/modifier";
 import i18next from "i18next";
 import { NumberHolder } from "#app/utils/common";
 import { PlayerPartyMemberPokemonPhase } from "./player-party-member-pokemon-phase";
-import { LevelUpPhase } from "./level-up-phase";
 
 export class ExpPhase extends PlayerPartyMemberPokemonPhase {
   public readonly phaseName = "ExpPhase";
@@ -34,7 +33,7 @@ export class ExpPhase extends PlayerPartyMemberPokemonPhase {
         pokemon.addExp(exp.value);
         const newLevel = pokemon.level;
         if (newLevel > lastLevel) {
-          globalScene.phaseManager.unshiftPhase(new LevelUpPhase(this.partyMemberIndex, lastLevel, newLevel));
+          globalScene.phaseManager.unshiftNew("LevelUpPhase", this.partyMemberIndex, lastLevel, newLevel);
         }
         pokemon.updateInfo().then(() => this.end());
       },

@@ -1,13 +1,12 @@
 import { globalScene } from "#app/global-scene";
 import { Phase } from "#app/phase";
 import { UiMode } from "#enums/ui-mode";
-import { LoginPhase } from "./login-phase";
 
 export class UnavailablePhase extends Phase {
   public readonly phaseName = "UnavailablePhase";
   start(): void {
     globalScene.ui.setMode(UiMode.UNAVAILABLE, () => {
-      globalScene.phaseManager.unshiftPhase(new LoginPhase(true));
+      globalScene.phaseManager.unshiftNew("LoginPhase", true);
       this.end();
     });
   }

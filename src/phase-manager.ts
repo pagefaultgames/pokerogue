@@ -1,11 +1,100 @@
-import { HideAbilityPhase } from "./phases/hide-ability-phase";
-import { ShowAbilityPhase } from "./phases/show-ability-phase";
-import { TurnInitPhase } from "./phases/turn-init-phase";
 import type { Phase } from "#app/phase";
 import type { default as Pokemon } from "#app/field/pokemon";
-import type { Constructor } from "#app/utils/common";
-import { MessagePhase } from "./phases/message-phase";
+import type { PhaseMap, PhaseString } from "./@types/phase-types";
 import { globalScene } from "#app/global-scene";
+import { AddEnemyBuffModifierPhase } from "#app/phases/add-enemy-buff-modifier-phase";
+import { AttemptCapturePhase } from "#app/phases/attempt-capture-phase";
+import { AttemptRunPhase } from "#app/phases/attempt-run-phase";
+import { BattleEndPhase } from "#app/phases/battle-end-phase";
+import { BerryPhase } from "#app/phases/berry-phase";
+import { CheckStatusEffectPhase } from "#app/phases/check-status-effect-phase";
+import { CheckSwitchPhase } from "#app/phases/check-switch-phase";
+import { CommandPhase } from "#app/phases/command-phase";
+import { CommonAnimPhase } from "#app/phases/common-anim-phase";
+import { DamageAnimPhase } from "#app/phases/damage-anim-phase";
+import { EggHatchPhase } from "#app/phases/egg-hatch-phase";
+import { EggLapsePhase } from "#app/phases/egg-lapse-phase";
+import { EggSummaryPhase } from "#app/phases/egg-summary-phase";
+import { EncounterPhase } from "#app/phases/encounter-phase";
+import { EndCardPhase } from "#app/phases/end-card-phase";
+import { EndEvolutionPhase } from "#app/phases/end-evolution-phase";
+import { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
+import { EvolutionPhase } from "#app/phases/evolution-phase";
+import { ExpPhase } from "#app/phases/exp-phase";
+import { FaintPhase } from "#app/phases/faint-phase";
+import { FormChangePhase } from "#app/phases/form-change-phase";
+import { GameOverModifierRewardPhase } from "#app/phases/game-over-modifier-reward-phase";
+import { GameOverPhase } from "#app/phases/game-over-phase";
+import { HideAbilityPhase } from "#app/phases/hide-ability-phase";
+import { HidePartyExpBarPhase } from "#app/phases/hide-party-exp-bar-phase";
+import { LearnMovePhase } from "#app/phases/learn-move-phase";
+import { LevelCapPhase } from "#app/phases/level-cap-phase";
+import { LevelUpPhase } from "#app/phases/level-up-phase";
+import { LoadMoveAnimPhase } from "#app/phases/load-move-anim-phase";
+import { LoginPhase } from "#app/phases/login-phase";
+import { MessagePhase } from "#app/phases/message-phase";
+import { ModifierRewardPhase } from "#app/phases/modifier-reward-phase";
+import { MoneyRewardPhase } from "#app/phases/money-reward-phase";
+import { MoveAnimPhase } from "#app/phases/move-anim-phase";
+import { MoveChargePhase } from "#app/phases/move-charge-phase";
+import { MoveEffectPhase } from "#app/phases/move-effect-phase";
+import { MoveEndPhase } from "#app/phases/move-end-phase";
+import { MoveHeaderPhase } from "#app/phases/move-header-phase";
+import { MovePhase } from "#app/phases/move-phase";
+import {
+  MysteryEncounterPhase,
+  MysteryEncounterOptionSelectedPhase,
+  MysteryEncounterBattlePhase,
+  MysteryEncounterRewardsPhase,
+  PostMysteryEncounterPhase,
+  MysteryEncounterBattleStartCleanupPhase,
+} from "#app/phases/mystery-encounter-phases";
+import { NewBattlePhase } from "#app/phases/new-battle-phase";
+import { NewBiomeEncounterPhase } from "#app/phases/new-biome-encounter-phase";
+import { NextEncounterPhase } from "#app/phases/next-encounter-phase";
+import { ObtainStatusEffectPhase } from "#app/phases/obtain-status-effect-phase";
+import { PartyExpPhase } from "#app/phases/party-exp-phase";
+import { PartyHealPhase } from "#app/phases/party-heal-phase";
+import { PokemonAnimPhase } from "#app/phases/pokemon-anim-phase";
+import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
+import { PokemonTransformPhase } from "#app/phases/pokemon-transform-phase";
+import { PostGameOverPhase } from "#app/phases/post-game-over-phase";
+import { PostSummonPhase } from "#app/phases/post-summon-phase";
+import { PostTurnStatusEffectPhase } from "#app/phases/post-turn-status-effect-phase";
+import { QuietFormChangePhase } from "#app/phases/quiet-form-change-phase";
+import { ReloadSessionPhase } from "#app/phases/reload-session-phase";
+import { ResetStatusPhase } from "#app/phases/reset-status-phase";
+import { ReturnPhase } from "#app/phases/return-phase";
+import { RevivalBlessingPhase } from "#app/phases/revival-blessing-phase";
+import { RibbonModifierRewardPhase } from "#app/phases/ribbon-modifier-reward-phase";
+import { ScanIvsPhase } from "#app/phases/scan-ivs-phase";
+import { SelectBiomePhase } from "#app/phases/select-biome-phase";
+import { SelectChallengePhase } from "#app/phases/select-challenge-phase";
+import { SelectGenderPhase } from "#app/phases/select-gender-phase";
+import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
+import { SelectStarterPhase } from "#app/phases/select-starter-phase";
+import { SelectTargetPhase } from "#app/phases/select-target-phase";
+import { ShinySparklePhase } from "#app/phases/shiny-sparkle-phase";
+import { ShowAbilityPhase } from "#app/phases/show-ability-phase";
+import { ShowPartyExpBarPhase } from "#app/phases/show-party-exp-bar-phase";
+import { ShowTrainerPhase } from "#app/phases/show-trainer-phase";
+import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
+import { SummonMissingPhase } from "#app/phases/summon-missing-phase";
+import { SummonPhase } from "#app/phases/summon-phase";
+import { SwitchBiomePhase } from "#app/phases/switch-biome-phase";
+import { SwitchPhase } from "#app/phases/switch-phase";
+import { SwitchSummonPhase } from "#app/phases/switch-summon-phase";
+import { TeraPhase } from "#app/phases/tera-phase";
+import { TitlePhase } from "#app/phases/title-phase";
+import { ToggleDoublePositionPhase } from "#app/phases/toggle-double-position-phase";
+import { TrainerVictoryPhase } from "#app/phases/trainer-victory-phase";
+import { TurnEndPhase } from "#app/phases/turn-end-phase";
+import { TurnInitPhase } from "#app/phases/turn-init-phase";
+import { TurnStartPhase } from "#app/phases/turn-start-phase";
+import { UnavailablePhase } from "#app/phases/unavailable-phase";
+import { UnlockPhase } from "#app/phases/unlock-phase";
+import { VictoryPhase } from "#app/phases/victory-phase";
+import { WeatherEffectPhase } from "#app/phases/weather-effect-phase";
 
 /**
  * Manager for phases used by battle scene.
@@ -13,6 +102,115 @@ import { globalScene } from "#app/global-scene";
  * *This file must not be imported or used directly. The manager is exclusively used by the battle scene and is not intended for external use.*
  */
 
+/**
+ * Object that holds all of the phase constructors.
+ * This is used to create new phases dynamically using the `newPhase` method in the `PhaseManager`.
+ *
+ * @remarks
+ * The keys of this object are the names of the phases, and the values are the constructors of the phases.
+ * This allows for easy creation of new phases without needing to import each phase individually.
+ */
+const PHASES = Object.freeze({
+  AddEnemyBuffModifierPhase,
+  AttemptCapturePhase,
+  AttemptRunPhase,
+  BattleEndPhase,
+  BerryPhase,
+  CheckStatusEffectPhase,
+  CheckSwitchPhase,
+  CommandPhase,
+  CommonAnimPhase,
+  DamageAnimPhase,
+  EggHatchPhase,
+  EggLapsePhase,
+  EggSummaryPhase,
+  EncounterPhase,
+  EndCardPhase,
+  EndEvolutionPhase,
+  EnemyCommandPhase,
+  EvolutionPhase,
+  ExpPhase,
+  FaintPhase,
+  FormChangePhase,
+  GameOverPhase,
+  GameOverModifierRewardPhase,
+  HideAbilityPhase,
+  HidePartyExpBarPhase,
+  LearnMovePhase,
+  LevelCapPhase,
+  LevelUpPhase,
+  LoadMoveAnimPhase,
+  LoginPhase,
+  MessagePhase,
+  ModifierRewardPhase,
+  MoneyRewardPhase,
+  MoveAnimPhase,
+  MoveChargePhase,
+  MoveEffectPhase,
+  MoveEndPhase,
+  MoveHeaderPhase,
+  MovePhase,
+  MysteryEncounterPhase,
+  MysteryEncounterOptionSelectedPhase,
+  MysteryEncounterBattlePhase,
+  MysteryEncounterBattleStartCleanupPhase,
+  MysteryEncounterRewardsPhase,
+  PostMysteryEncounterPhase,
+  NewBattlePhase,
+  NewBiomeEncounterPhase,
+  NextEncounterPhase,
+  ObtainStatusEffectPhase,
+  PartyExpPhase,
+  PartyHealPhase,
+  PokemonAnimPhase,
+  PokemonHealPhase,
+  PokemonTransformPhase,
+  PostGameOverPhase,
+  PostSummonPhase,
+  PostTurnStatusEffectPhase,
+  QuietFormChangePhase,
+  ReloadSessionPhase,
+  ResetStatusPhase,
+  ReturnPhase,
+  RevivalBlessingPhase,
+  RibbonModifierRewardPhase,
+  ScanIvsPhase,
+  SelectBiomePhase,
+  SelectChallengePhase,
+  SelectGenderPhase,
+  SelectModifierPhase,
+  SelectStarterPhase,
+  SelectTargetPhase,
+  ShinySparklePhase,
+  ShowAbilityPhase,
+  ShowPartyExpBarPhase,
+  ShowTrainerPhase,
+  StatStageChangePhase,
+  SummonMissingPhase,
+  SummonPhase,
+  SwitchBiomePhase,
+  SwitchPhase,
+  SwitchSummonPhase,
+  TeraPhase,
+  TitlePhase,
+  ToggleDoublePositionPhase,
+  TrainerVictoryPhase,
+  TurnEndPhase,
+  TurnInitPhase,
+  TurnStartPhase,
+  UnavailablePhase,
+  UnlockPhase,
+  VictoryPhase,
+  WeatherEffectPhase,
+});
+
+// This type export cannot be moved to `@types`, as `Phases` is intentionally private to this file
+/** Maps Phase strings to their constructors */
+export type PhaseConstructorMap = typeof PHASES;
+
+/**
+ * PhaseManager is responsible for managing the phases in the battle scene
+ */
 export class PhaseManager {
   /** PhaseQueue: dequeue/remove the first element to get the next phase */
   public phaseQueue: Phase[] = [];
@@ -213,15 +411,16 @@ export class PhaseManager {
 
   /**
    * Tries to add the input phase to index before target phase in the phaseQueue, else simply calls unshiftPhase()
-   * @param phase {@linkcode Phase} the phase to be added
-   * @param targetPhase {@linkcode Phase} the type of phase to search for in phaseQueue
+   * @param phase - The phase to be added
+   * @param targetPhase - The phase to search for in phaseQueue
    * @returns boolean if a targetPhase was found and added
    */
-  prependToPhase(phase: Phase | Phase[], targetPhase: Constructor<Phase>): boolean {
+  prependToPhase(phase: Phase | Phase[], targetPhase: PhaseString): boolean {
     if (!Array.isArray(phase)) {
       phase = [phase];
     }
-    const targetIndex = this.phaseQueue.findIndex(ph => ph instanceof targetPhase);
+    const target = PHASES[targetPhase];
+    const targetIndex = this.phaseQueue.findIndex(ph => ph instanceof target);
 
     if (targetIndex !== -1) {
       this.phaseQueue.splice(targetIndex, 0, ...phase);
@@ -234,14 +433,15 @@ export class PhaseManager {
   /**
    * Attempt to add the input phase(s) to index after target phase in the {@linkcode phaseQueue}, else simply calls {@linkcode unshiftPhase()}
    * @param phase - The phase(s) to be added
-   * @param targetPhase - The type of phase to search for in {@linkcode phaseQueue}
+   * @param targetPhase - The phase to search for in phaseQueue
    * @returns `true` if a `targetPhase` was found to append to
    */
-  appendToPhase(phase: Phase | Phase[], targetPhase: Constructor<Phase>): boolean {
+  appendToPhase(phase: Phase | Phase[], targetPhase: PhaseString): boolean {
     if (!Array.isArray(phase)) {
       phase = [phase];
     }
-    const targetIndex = this.phaseQueue.findIndex(ph => ph instanceof targetPhase);
+    const target = PHASES[targetPhase];
+    const targetIndex = this.phaseQueue.findIndex(ph => ph instanceof target);
 
     if (targetIndex !== -1 && this.phaseQueue.length > targetIndex) {
       this.phaseQueue.splice(targetIndex + 1, 0, ...phase);
@@ -307,5 +507,75 @@ export class PhaseManager {
       this.nextCommandPhaseQueue.splice(0, this.nextCommandPhaseQueue.length);
     }
     this.phaseQueue.push(new TurnInitPhase());
+  }
+
+  /**
+   * Dynamically create the named phase from the provided arguments
+   *
+   * @remarks
+   * Used to avoid importing each phase individually, allowing for dynamic creation of phases.
+   * @param phase - The name of the phase to create.
+   * @param args - The arguments to pass to the phase constructor.
+   * @returns The requested phase instance
+   */
+  public create<T extends PhaseString>(phase: T, ...args: ConstructorParameters<PhaseConstructorMap[T]>): PhaseMap[T] {
+    const PhaseClass = PHASES[phase];
+
+    if (!PhaseClass) {
+      throw new Error(`Phase ${phase} does not exist in PhaseMap.`);
+    }
+
+    // @ts-expect-error: Typescript does not support narrowing the type of operands in generic methods (see https://stackoverflow.com/a/72891234)
+    return new PhaseClass(...args);
+  }
+
+  /**
+   * Create a new phase and immediately push it to the phase queue. Equivalent to calling {@linkcode create} followed by {@linkcode pushPhase}.
+   * @param phase - The name of the phase to create
+   * @param args - The arguments to pass to the phase constructor
+   */
+  public pushNew<T extends PhaseString>(phase: T, ...args: ConstructorParameters<PhaseConstructorMap[T]>): void {
+    this.pushPhase(this.create(phase, ...args));
+  }
+
+  /**
+   * Create a new phase and immediately unshift it to the phase queue. Equivalent to calling {@linkcode create} followed by {@linkcode unshiftPhase}.
+   * @param phase - The name of the phase to create
+   * @param args - The arguments to pass to the phase constructor
+   */
+  public unshiftNew<T extends PhaseString>(phase: T, ...args: ConstructorParameters<PhaseConstructorMap[T]>): void {
+    this.unshiftPhase(this.create(phase, ...args));
+  }
+
+  /**
+   * Create a new phase and immediately prepend it to an existing phase in the phase queue.
+   * Equivalent to calling {@linkcode create} followed by {@linkcode prependToPhase}.
+   * @param targetPhase - The phase to search for in phaseQueue
+   * @param phase - The name of the phase to create
+   * @param args - The arguments to pass to the phase constructor
+   * @returns `true` if a `targetPhase` was found to prepend to
+   */
+  public prependNewToPhase<T extends PhaseString>(
+    targetPhase: PhaseString,
+    phase: T,
+    ...args: ConstructorParameters<PhaseConstructorMap[T]>
+  ): boolean {
+    return this.prependToPhase(this.create(phase, ...args), targetPhase);
+  }
+
+  /**
+   * Create a new phase and immediately append it to an existing phase the phase queue.
+   * Equivalent to calling {@linkcode create} followed by {@linkcode appendToPhase}.
+   * @param targetPhase - The phase to search for in phaseQueue
+   * @param phase - The name of the phase to create
+   * @param args - The arguments to pass to the phase constructor
+   * @returns `true` if a `targetPhase` was found to append to
+   */
+  public appendNewToPhase<T extends PhaseString>(
+    targetPhase: PhaseString,
+    phase: T,
+    ...args: ConstructorParameters<PhaseConstructorMap[T]>
+  ): boolean {
+    return this.appendToPhase(this.create(phase, ...args), targetPhase);
   }
 }

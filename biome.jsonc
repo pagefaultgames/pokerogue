@@ -31,7 +31,6 @@
       "src/overrides.ts",
       // TODO: these files are too big and complex, ignore them until their respective refactors
       "src/data/moves/move.ts",
-      "src/data/abilities/ability.ts",
 
       // this file is just too big:
       "src/data/balance/tms.ts"

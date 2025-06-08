@@ -105,8 +105,8 @@ export default class GameManager {
 
       // Must be run after phase interceptor has been initialized.
 
-      this.scene.phaseManager.pushPhase(new LoginPhase());
-      this.scene.phaseManager.pushPhase(new TitlePhase());
+      this.scene.phaseManager.pushNew("LoginPhase");
+      this.scene.phaseManager.pushNew("TitlePhase");
       this.scene.phaseManager.shiftPhase();
 
       this.gameWrapper.scene = this.scene;

@@ -10,11 +10,8 @@ import type { PlayerPokemon, EnemyPokemon } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
 import i18next from "i18next";
 import { NumberHolder } from "#app/utils/common";
-import { BattleEndPhase } from "./battle-end-phase";
-import { NewBattlePhase } from "./new-battle-phase";
 import { PokemonPhase } from "./pokemon-phase";
 import { globalScene } from "#app/global-scene";
-import { SelectBiomePhase } from "./select-biome-phase";
 
 export class AttemptRunPhase extends PokemonPhase {
   public readonly phaseName = "AttemptRunPhase";
@@ -60,13 +57,13 @@ export class AttemptRunPhase extends PokemonPhase {
         enemyPokemon.trySetStatus(StatusEffect.FAINT);
       });
 
-      globalScene.phaseManager.pushPhase(new BattleEndPhase(false));
+      globalScene.phaseManager.pushNew("BattleEndPhase", false);
 
       if (globalScene.gameMode.hasRandomBiomes || globalScene.isNewBiome()) {
-        globalScene.phaseManager.pushPhase(new SelectBiomePhase());
+        globalScene.phaseManager.pushNew("SelectBiomePhase");
       }
 
-      globalScene.phaseManager.pushPhase(new NewBattlePhase());
+      globalScene.phaseManager.pushNew("NewBattlePhase");
     } else {
       playerPokemon.turnData.failedRunAway = true;
       globalScene.phaseManager.queueMessage(i18next.t("battle:runAwayCannotEscape"), null, true, 500);
