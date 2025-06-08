@@ -12,7 +12,6 @@ import {
 } from "#app/modifier/modifier";
 import i18next from "i18next";
 import { FieldPhase } from "./field-phase";
-import { PokemonHealPhase } from "./pokemon-heal-phase";
 import { globalScene } from "#app/global-scene";
 import { applyHeldItems } from "#app/items/all-held-items";
 import { ITEM_EFFECT } from "#app/items/held-item";
@@ -25,7 +24,7 @@ export class TurnEndPhase extends FieldPhase {
     globalScene.currentBattle.incrementTurn();
     globalScene.eventTarget.dispatchEvent(new TurnEndEvent(globalScene.currentBattle.turn));
 
-    globalScene.hideAbilityBar();
+    globalScene.phaseManager.hideAbilityBar();
 
     const handlePokemon = (pokemon: Pokemon) => {
       if (!pokemon.switchOutStatus) {
@@ -34,15 +33,14 @@ export class TurnEndPhase extends FieldPhase {
         applyHeldItems(ITEM_EFFECT.TURN_END_HEAL, { pokemon: pokemon });
 
         if (globalScene.arena.terrain?.terrainType === TerrainType.GRASSY && pokemon.isGrounded()) {
-          globalScene.unshiftPhase(
-            new PokemonHealPhase(
-              pokemon.getBattlerIndex(),
-              Math.max(pokemon.getMaxHp() >> 4, 1),
-              i18next.t("battle:turnEndHpRestore", {
-                pokemonName: getPokemonNameWithAffix(pokemon),
-              }),
-              true,
-            ),
+          globalScene.phaseManager.unshiftNew(
+            "PokemonHealPhase",
+            pokemon.getBattlerIndex(),
+            Math.max(pokemon.getMaxHp() >> 4, 1),
+            i18next.t("battle:turnEndHpRestore", {
+              pokemonName: getPokemonNameWithAffix(pokemon),
+            }),
+            true,
           );
         }
 

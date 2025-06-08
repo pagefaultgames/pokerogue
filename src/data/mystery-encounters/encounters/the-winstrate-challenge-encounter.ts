@@ -27,9 +27,6 @@ import { SpeciesFormChangeAbilityTrigger } from "#app/data/pokemon-forms";
 import { applyPostBattleInitAbAttrs, PostBattleInitAbAttr } from "#app/data/abilities/ability";
 import { showEncounterDialogue, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
-import { PartyHealPhase } from "#app/phases/party-heal-phase";
-import { ShowTrainerPhase } from "#app/phases/show-trainer-phase";
-import { ReturnPhase } from "#app/phases/return-phase";
 import i18next from "i18next";
 import { ModifierTier } from "#app/modifier/modifier-tier";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
@@ -143,7 +140,7 @@ export const TheWinstrateChallengeEncounter: MysteryEncounter = MysteryEncounter
     },
     async () => {
       // Refuse the challenge, they full heal the party and give the player a Rarer Candy
-      globalScene.unshiftPhase(new PartyHealPhase(true));
+      globalScene.phaseManager.unshiftNew("PartyHealPhase", true);
       setEncounterRewards({
         guaranteedModifierTypeFuncs: [modifierTypes.RARER_CANDY],
         fillRemaining: false,
@@ -209,7 +206,7 @@ function endTrainerBattleAndShowDialogue(): Promise<void> {
       for (const pokemon of playerField) {
         pokemon.lapseTag(BattlerTagType.COMMANDED);
       }
-      playerField.forEach((_, p) => globalScene.unshiftPhase(new ReturnPhase(p)));
+      playerField.forEach((_, p) => globalScene.phaseManager.unshiftNew("ReturnPhase", p));
 
       for (const pokemon of globalScene.getPlayerParty()) {
         // Only trigger form change when Eiscue is in Noice form
@@ -227,7 +224,7 @@ function endTrainerBattleAndShowDialogue(): Promise<void> {
         applyPostBattleInitAbAttrs(PostBattleInitAbAttr, pokemon);
       }
 
-      globalScene.unshiftPhase(new ShowTrainerPhase());
+      globalScene.phaseManager.unshiftNew("ShowTrainerPhase");
       // Hide the trainer and init next battle
       const trainer = globalScene.currentBattle.trainer;
       // Unassign previous trainer from battle so it isn't destroyed before animation completes
