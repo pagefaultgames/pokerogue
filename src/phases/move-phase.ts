@@ -13,7 +13,8 @@ import {
 } from "#app/data/abilities/ability";
 import type { DelayedAttackTag } from "#app/data/arena-tag";
 import { CommonAnim } from "#app/data/battle-anims";
-import { BattlerTagLapseType, CenterOfAttentionTag } from "#app/data/battler-tags";
+import { CenterOfAttentionTag } from "#app/data/battler-tags";
+import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
 import {
   AddArenaTrapTagAttr,
   applyMoveAttrs,

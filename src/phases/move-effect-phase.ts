@@ -20,13 +20,13 @@ import { ConditionalProtectTag } from "#app/data/arena-tag";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import { MoveAnim } from "#app/data/battle-anims";
 import {
-  BattlerTagLapseType,
   DamageProtectedTag,
   ProtectedTag,
   SemiInvulnerableTag,
   SubstituteTag,
   TypeBoostTag,
 } from "#app/data/battler-tags";
+import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
 import type { MoveAttr } from "#app/data/moves/move";
 import {
   applyFilteredMoveAttrs,

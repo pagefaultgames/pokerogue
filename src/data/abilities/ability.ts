@@ -11,7 +11,8 @@ import {
   randSeedFloat,
 } from "#app/utils/common";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { BattlerTagLapseType, GroundedTag } from "#app/data/battler-tags";
+import { GroundedTag } from "#app/data/battler-tags";
+import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
 import {
   getNonVolatileStatusEffects,
   getStatusEffectDescriptor,

@@ -9,7 +9,7 @@ import {
   PostKnockOutAbAttr,
   PostVictoryAbAttr,
 } from "#app/data/abilities/ability";
-import { BattlerTagLapseType } from "#app/data/battler-tags";
+import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
 import { battleSpecDialogue } from "#app/data/dialogue";
 import { PostVictoryStatStageChangeAttr } from "#app/data/moves/move";
 import { allMoves } from "#app/data/data-lists";

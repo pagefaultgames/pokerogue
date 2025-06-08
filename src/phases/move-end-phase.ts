@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import { BattlerTagLapseType } from "#app/data/battler-tags";
+import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
 import { PokemonPhase } from "./pokemon-phase";
 import type { BattlerIndex } from "#enums/battler-index";
 import { applyPostSummonAbAttrs, PostSummonRemoveEffectAbAttr } from "#app/data/abilities/ability";
