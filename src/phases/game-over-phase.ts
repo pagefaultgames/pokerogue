@@ -9,8 +9,7 @@ import { trainerConfigs } from "#app/data/trainers/trainer-config";
 import type Pokemon from "#app/field/pokemon";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import { BattlePhase } from "#app/phases/battle-phase";
-import { EndCardPhase } from "#app/phases/end-card-phase";
-import { RibbonModifierRewardPhase } from "#app/phases/ribbon-modifier-reward-phase";
+import type { EndCardPhase } from "#app/phases/end-card-phase";
 import { achvs, ChallengeAchv } from "#app/system/achv";
 import { Unlockables } from "#app/system/unlockables";
 import { UiMode } from "#enums/ui-mode";
@@ -153,9 +152,7 @@ export class GameOverPhase extends BattlePhase {
               this.handleUnlocks();
 
               for (const species of this.firstRibbons) {
-                globalScene.phaseManager.unshiftPhase(
-                  new RibbonModifierRewardPhase(modifierTypes.VOUCHER_PLUS, species),
-                );
+                globalScene.phaseManager.unshiftNew("RibbonModifierRewardPhase", modifierTypes.VOUCHER_PLUS, species);
               }
               if (!firstClear) {
                 globalScene.phaseManager.unshiftNew("GameOverModifierRewardPhase", modifierTypes.VOUCHER_PREMIUM);
@@ -192,7 +189,7 @@ export class GameOverPhase extends BattlePhase {
                       () => {
                         globalScene.ui.fadeOut(500).then(() => {
                           globalScene.charSprite.hide().then(() => {
-                            const endCardPhase = new EndCardPhase();
+                            const endCardPhase = globalScene.phaseManager.create("EndCardPhase");
                             globalScene.phaseManager.unshiftPhase(endCardPhase);
                             clear(endCardPhase);
                           });
@@ -202,7 +199,7 @@ export class GameOverPhase extends BattlePhase {
                   });
               });
             } else {
-              const endCardPhase = new EndCardPhase();
+              const endCardPhase = globalScene.phaseManager.create("EndCardPhase");
               globalScene.phaseManager.unshiftPhase(endCardPhase);
               clear(endCardPhase);
             }

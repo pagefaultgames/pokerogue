@@ -4,8 +4,6 @@ import { BattleType } from "#enums/battle-type";
 import type { CustomModifierSettings } from "#app/modifier/modifier-type";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import { PokemonPhase } from "./pokemon-phase";
-import { ModifierRewardPhase } from "./modifier-reward-phase";
-import { SelectModifierPhase } from "./select-modifier-phase";
 import { handleMysteryEncounterVictory } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { globalScene } from "#app/global-scene";
 import { timedEventManager } from "#app/global-event-manager";
@@ -66,8 +64,11 @@ export class VictoryPhase extends PokemonPhase {
           }
         }
         if (globalScene.currentBattle.waveIndex % 10) {
-          globalScene.phaseManager.pushPhase(
-            new SelectModifierPhase(undefined, undefined, this.getFixedBattleCustomModifiers()),
+          globalScene.phaseManager.pushNew(
+            "SelectModifierPhase",
+            undefined,
+            undefined,
+            this.getFixedBattleCustomModifiers(),
           );
         } else if (globalScene.gameMode.isDaily) {
           globalScene.phaseManager.pushNew("ModifierRewardPhase", modifierTypes.EXP_CHARM);
@@ -86,24 +87,20 @@ export class VictoryPhase extends PokemonPhase {
             globalScene.currentBattle.waveIndex <= 750 &&
             (globalScene.currentBattle.waveIndex <= 500 || globalScene.currentBattle.waveIndex % 30 === superExpWave)
           ) {
-            globalScene.phaseManager.pushPhase(
-              new ModifierRewardPhase(
-                globalScene.currentBattle.waveIndex % 30 !== superExpWave || globalScene.currentBattle.waveIndex > 250
-                  ? modifierTypes.EXP_CHARM
-                  : modifierTypes.SUPER_EXP_CHARM,
-              ),
+            globalScene.phaseManager.pushNew(
+              "ModifierRewardPhase",
+              globalScene.currentBattle.waveIndex % 30 !== superExpWave || globalScene.currentBattle.waveIndex > 250
+                ? modifierTypes.EXP_CHARM
+                : modifierTypes.SUPER_EXP_CHARM,
             );
           }
           if (globalScene.currentBattle.waveIndex <= 150 && !(globalScene.currentBattle.waveIndex % 50)) {
             globalScene.phaseManager.pushNew("ModifierRewardPhase", modifierTypes.GOLDEN_POKEBALL);
           }
           if (globalScene.gameMode.isEndless && !(globalScene.currentBattle.waveIndex % 50)) {
-            globalScene.phaseManager.pushPhase(
-              new ModifierRewardPhase(
-                !(globalScene.currentBattle.waveIndex % 250)
-                  ? modifierTypes.VOUCHER_PREMIUM
-                  : modifierTypes.VOUCHER_PLUS,
-              ),
+            globalScene.phaseManager.pushNew(
+              "ModifierRewardPhase",
+              !(globalScene.currentBattle.waveIndex % 250) ? modifierTypes.VOUCHER_PREMIUM : modifierTypes.VOUCHER_PLUS,
             );
             globalScene.phaseManager.pushNew("AddEnemyBuffModifierPhase");
           }

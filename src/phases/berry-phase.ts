@@ -11,7 +11,6 @@ import { BerryModifier } from "#app/modifier/modifier";
 import i18next from "i18next";
 import { BooleanHolder } from "#app/utils/common";
 import { FieldPhase } from "./field-phase";
-import { CommonAnimPhase } from "./common-anim-phase";
 import { globalScene } from "#app/global-scene";
 import type Pokemon from "#app/field/pokemon";
 
@@ -58,8 +57,11 @@ export class BerryPhase extends FieldPhase {
       return;
     }
 
-    globalScene.phaseManager.unshiftPhase(
-      new CommonAnimPhase(pokemon.getBattlerIndex(), pokemon.getBattlerIndex(), CommonAnim.USE_ITEM),
+    globalScene.phaseManager.unshiftNew(
+      "CommonAnimPhase",
+      pokemon.getBattlerIndex(),
+      pokemon.getBattlerIndex(),
+      CommonAnim.USE_ITEM,
     );
 
     for (const berryModifier of globalScene.applyModifiers(BerryModifier, pokemon.isPlayer(), pokemon)) {

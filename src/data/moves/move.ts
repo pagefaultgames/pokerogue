@@ -2021,8 +2021,10 @@ export class SacrificialFullRestoreAttr extends SacrificialAttr {
     const party = user.isPlayer() ? globalScene.getPlayerParty() : globalScene.getEnemyParty();
     const maxPartyMemberHp = party.map(p => p.getMaxHp()).reduce((maxHp: number, hp: number) => Math.max(hp, maxHp), 0);
 
-    globalScene.phaseManager.pushPhase(
-      new PokemonHealPhase(
+    const pm = globalScene.phaseManager;
+
+    pm.pushPhase(
+      pm.create("PokemonHealPhase",
         user.getBattlerIndex(),
         maxPartyMemberHp,
         i18next.t(this.moveMessage, { pokemonName: getPokemonNameWithAffix(user) }),
@@ -4227,8 +4229,8 @@ export class PresentPowerAttr extends VariablePowerAttr {
       // If this move is multi-hit, disable all other hits
       user.turnData.hitCount = 1;
       user.turnData.hitsLeft = 1;
-      globalScene.phaseManager.unshiftPhase(new PokemonHealPhase(target.getBattlerIndex(),
-        toDmgValue(target.getMaxHp() / 4), i18next.t("moveTriggers:regainedHealth", { pokemonName: getPokemonNameWithAffix(target) }), true));
+      globalScene.phaseManager.unshiftNew("PokemonHealPhase", target.getBattlerIndex(),
+        toDmgValue(target.getMaxHp() / 4), i18next.t("moveTriggers:regainedHealth", { pokemonName: getPokemonNameWithAffix(target) }), true);
     }
 
     return true;
@@ -6255,26 +6257,23 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
         if (this.switchType === SwitchType.FORCE_SWITCH) {
           switchOutTarget.leaveField(true);
           const slotIndex = eligibleNewIndices[user.randBattleSeedInt(eligibleNewIndices.length)];
-          globalScene.phaseManager.prependToPhase(
-            new SwitchSummonPhase(
-              this.switchType,
-              switchOutTarget.getFieldIndex(),
-              slotIndex,
-              false,
-              true
-            ),
-            "MoveEndPhase"
+          globalScene.phaseManager.prependNewToPhase(
+            "MoveEndPhase",
+            "SwitchSummonPhase",
+            this.switchType,
+            switchOutTarget.getFieldIndex(),
+            slotIndex,
+            false,
+            true
           );
         } else {
           switchOutTarget.leaveField(this.switchType === SwitchType.SWITCH);
-          globalScene.phaseManager.prependToPhase(
-            new SwitchPhase(
+          globalScene.phaseManager.prependNewToPhase("MoveEndPhase",
+            "SwitchPhase",
               this.switchType,
               switchOutTarget.getFieldIndex(),
               true,
               true
-            ),
-            "MoveEndPhase"
           );
           return true;
         }
@@ -6298,27 +6297,23 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
         if (this.switchType === SwitchType.FORCE_SWITCH) {
           switchOutTarget.leaveField(true);
           const slotIndex = eligibleNewIndices[user.randBattleSeedInt(eligibleNewIndices.length)];
-          globalScene.phaseManager.prependToPhase(
-            new SwitchSummonPhase(
+          globalScene.phaseManager.prependNewToPhase("MoveEndPhase",
+            "SwitchSummonPhase",
               this.switchType,
               switchOutTarget.getFieldIndex(),
               slotIndex,
               false,
               false
-            ),
-            "MoveEndPhase"
           );
         } else {
           switchOutTarget.leaveField(this.switchType === SwitchType.SWITCH);
-          globalScene.phaseManager.prependToPhase(
-            new SwitchSummonPhase(
-              this.switchType,
-              switchOutTarget.getFieldIndex(),
-              (globalScene.currentBattle.trainer ? globalScene.currentBattle.trainer.getNextSummonIndex((switchOutTarget as EnemyPokemon).trainerSlot) : 0),
-              false,
-              false
-            ),
-            "MoveEndPhase"
+          globalScene.phaseManager.prependNewToPhase("MoveEndPhase",
+            "SwitchSummonPhase",
+            this.switchType,
+            switchOutTarget.getFieldIndex(),
+            (globalScene.currentBattle.trainer ? globalScene.currentBattle.trainer.getNextSummonIndex((switchOutTarget as EnemyPokemon).trainerSlot) : 0),
+            false,
+            false
           );
         }
       }

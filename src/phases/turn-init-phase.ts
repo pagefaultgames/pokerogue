@@ -6,8 +6,6 @@ import {
 import { TurnInitEvent } from "#app/events/battle-scene";
 import type { PlayerPokemon } from "#app/field/pokemon";
 import i18next from "i18next";
-import { CommandPhase } from "./command-phase";
-import { EnemyCommandPhase } from "./enemy-command-phase";
 import { FieldPhase } from "./field-phase";
 import { globalScene } from "#app/global-scene";
 
@@ -66,9 +64,11 @@ export class TurnInitPhase extends FieldPhase {
 
         pokemon.resetTurnData();
 
-        globalScene.phaseManager.pushPhase(
-          pokemon.isPlayer() ? new CommandPhase(i) : new EnemyCommandPhase(i - BattlerIndex.ENEMY),
-        );
+        if (pokemon.isPlayer()) {
+          globalScene.phaseManager.pushNew("CommandPhase", i);
+        } else {
+          globalScene.phaseManager.pushNew("EnemyCommandPhase", i - BattlerIndex.ENEMY);
+        }
       }
     });
 

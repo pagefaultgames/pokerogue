@@ -68,8 +68,6 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
 import i18next from "i18next";
 import type { Phase } from "#app/phase";
-import { ShowAbilityPhase } from "./show-ability-phase";
-import { HideAbilityPhase } from "#app/phases/hide-ability-phase";
 import type { TypeDamageMultiplier } from "#app/data/type";
 import { HitCheckResult } from "#enums/hit-check-result";
 import type Move from "#app/data/moves/move";
@@ -188,9 +186,13 @@ export class MoveEffectPhase extends PokemonPhase {
     // TODO: ability displays should be handled by the ability
     if (!target.getTag(BattlerTagType.MAGIC_COAT)) {
       this.queuedPhases.push(
-        new ShowAbilityPhase(target.getBattlerIndex(), target.getPassiveAbility().hasAttr(ReflectStatusMoveAbAttr)),
+        globalScene.phaseManager.create(
+          "ShowAbilityPhase",
+          target.getBattlerIndex(),
+          target.getPassiveAbility().hasAttr(ReflectStatusMoveAbAttr),
+        ),
       );
-      this.queuedPhases.push(new HideAbilityPhase());
+      this.queuedPhases.push(globalScene.phaseManager.create("HideAbilityPhase"));
     }
 
     this.queuedPhases.push(

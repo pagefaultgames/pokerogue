@@ -23,7 +23,6 @@ import { BoostBugSpawnModifier, IvScannerModifier, TurnHeldItemTransferModifier 
 import { ModifierPoolType, regenerateModifierPoolThresholds } from "#app/modifier/modifier-type";
 import Overrides from "#app/overrides";
 import { BattlePhase } from "#app/phases/battle-phase";
-import { PostSummonPhase } from "#app/phases/post-summon-phase";
 import { achvs } from "#app/system/achv";
 import { handleTutorial, Tutorial } from "#app/tutorial";
 import { UiMode } from "#enums/ui-mode";
@@ -568,21 +567,27 @@ export class EncounterPhase extends BattlePhase {
 
     if (![BattleType.TRAINER, BattleType.MYSTERY_ENCOUNTER].includes(globalScene.currentBattle.battleType)) {
       enemyField.map(p =>
-        globalScene.phaseManager.pushConditionalPhase(new PostSummonPhase(p.getBattlerIndex()), () => {
-          // if there is not a player party, we can't continue
-          if (!globalScene.getPlayerParty().length) {
-            return false;
-          }
-          // how many player pokemon are on the field ?
-          const pokemonsOnFieldCount = globalScene.getPlayerParty().filter(p => p.isOnField()).length;
-          // if it's a 2vs1, there will never be a 2nd pokemon on our field even
-          const requiredPokemonsOnField = Math.min(globalScene.getPlayerParty().filter(p => !p.isFainted()).length, 2);
-          // if it's a double, there should be 2, otherwise 1
-          if (globalScene.currentBattle.double) {
-            return pokemonsOnFieldCount === requiredPokemonsOnField;
-          }
-          return pokemonsOnFieldCount === 1;
-        }),
+        globalScene.phaseManager.pushConditionalPhase(
+          globalScene.phaseManager.create("PostSummonPhase", p.getBattlerIndex()),
+          () => {
+            // if there is not a player party, we can't continue
+            if (!globalScene.getPlayerParty().length) {
+              return false;
+            }
+            // how many player pokemon are on the field ?
+            const pokemonsOnFieldCount = globalScene.getPlayerParty().filter(p => p.isOnField()).length;
+            // if it's a 2vs1, there will never be a 2nd pokemon on our field even
+            const requiredPokemonsOnField = Math.min(
+              globalScene.getPlayerParty().filter(p => !p.isFainted()).length,
+              2,
+            );
+            // if it's a double, there should be 2, otherwise 1
+            if (globalScene.currentBattle.double) {
+              return pokemonsOnFieldCount === requiredPokemonsOnField;
+            }
+            return pokemonsOnFieldCount === 1;
+          },
+        ),
       );
       const ivScannerModifier = globalScene.findModifier(m => m instanceof IvScannerModifier);
       if (ivScannerModifier) {

@@ -9,7 +9,6 @@ import { BypassSpeedChanceModifier } from "#app/modifier/modifier";
 import { Command } from "#app/ui/command-ui-handler";
 import { randSeedShuffle, BooleanHolder } from "#app/utils/common";
 import { FieldPhase } from "./field-phase";
-import { SwitchSummonPhase } from "./switch-summon-phase";
 import { BattlerIndex } from "#app/battle";
 import { TrickRoomTag } from "#app/data/arena-tag";
 import { SwitchType } from "#enums/switch-type";
@@ -203,8 +202,13 @@ export class TurnStartPhase extends FieldPhase {
         case Command.POKEMON:
           {
             const switchType = turnCommand.args?.[0] ? SwitchType.BATON_PASS : SwitchType.SWITCH;
-            phaseManager.unshiftPhase(
-              new SwitchSummonPhase(switchType, pokemon.getFieldIndex(), turnCommand.cursor!, true, pokemon.isPlayer()),
+            phaseManager.unshiftNew(
+              "SwitchSummonPhase",
+              switchType,
+              pokemon.getFieldIndex(),
+              turnCommand.cursor!,
+              true,
+              pokemon.isPlayer(),
             );
           }
           break;
