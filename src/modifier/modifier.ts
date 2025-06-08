@@ -3673,7 +3673,7 @@ export class EnemyStatusEffectHealChanceModifier extends EnemyPersistentModifier
       return false;
     }
 
-    globalScene.queueMessage(
+    globalScene.phaseManager.queueMessage(
       getStatusEffectHealText(enemyPokemon.status.effect, getPokemonNameWithAffix(enemyPokemon)),
     );
     enemyPokemon.resetStatus();
