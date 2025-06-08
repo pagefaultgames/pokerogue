@@ -1,4 +1,3 @@
-import { PokemonFormChangeItemModifier } from "../modifier/modifier";
 import type Pokemon from "../field/pokemon";
 import { StatusEffect } from "#enums/status-effect";
 import { allMoves } from "./data-lists";
@@ -133,6 +132,10 @@ export enum FormChangeItem {
   DARK_MEMORY,
   FAIRY_MEMORY,
   NORMAL_MEMORY, // TODO: Find a potential use for this
+}
+
+export function formChangeItemName(id: FormChangeItem) {
+  return i18next.t(`modifierType:FormChangeItem.${FormChangeItem[id]}`);
 }
 
 export type SpeciesFormChangeConditionPredicate = (p: Pokemon) => boolean;
@@ -277,13 +280,11 @@ export class SpeciesFormChangeItemTrigger extends SpeciesFormChangeTrigger {
   }
 
   canChange(pokemon: Pokemon): boolean {
-    return !!globalScene.findModifier(
-      m =>
-        m instanceof PokemonFormChangeItemModifier &&
-        m.pokemonId === pokemon.id &&
-        m.formChangeItem === this.item &&
-        m.active === this.active,
-    );
+    const matchItem = pokemon.heldItemManager.hasFormChangeItem(this.item);
+    if (!matchItem) {
+      return false;
+    }
+    return pokemon.heldItemManager.formChangeItems[this.item].active === this.active;
   }
 }
 

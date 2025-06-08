@@ -1,5 +1,6 @@
 import { allHeldItems } from "#app/items/all-held-items";
 import type { HeldItemId } from "#app/enums/held-item-id";
+import type { FormChangeItem } from "#app/data/pokemon-forms";
 
 interface HeldItemProperties {
   stack: number;
@@ -11,8 +12,17 @@ type HeldItemPropertyMap = {
   [key in HeldItemId]: HeldItemProperties;
 };
 
+interface FormChangeItemProperties {
+  active: boolean;
+}
+
+type FormChangeItemPropertyMap = {
+  [key in FormChangeItem]: FormChangeItemProperties;
+};
+
 export class PokemonItemManager {
   public heldItems: HeldItemPropertyMap;
+  public formChangeItems: FormChangeItemPropertyMap;
 
   constructor() {
     this.heldItems = {};
@@ -51,6 +61,34 @@ export class PokemonItemManager {
 
     if (this.heldItems[itemType].stack <= 0) {
       delete this.heldItems[itemType];
+    }
+  }
+
+  addFormChangeItem(id: FormChangeItem) {
+    if (!(id in this.formChangeItems)) {
+      this.formChangeItems[id] = { active: false };
+    }
+  }
+
+  hasFormChangeItem(id: FormChangeItem): boolean {
+    return id in this.formChangeItems;
+  }
+
+  hasActiveFormChangeItem(id: FormChangeItem): boolean {
+    return id in this.formChangeItems && this.formChangeItems[id].active;
+  }
+
+  getFormChangeItems(): FormChangeItem[] {
+    return Object.keys(this.formChangeItems).map(k => Number(k));
+  }
+
+  getActiveFormChangeItems(): FormChangeItem[] {
+    return this.getFormChangeItems().filter(m => this.formChangeItems[m].active);
+  }
+
+  toggleActive(id: FormChangeItem) {
+    if (id in this.formChangeItems) {
+      this.formChangeItems[id].active = !this.formChangeItems[id].active;
     }
   }
 }

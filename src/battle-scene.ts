@@ -3167,17 +3167,11 @@ export default class BattleScene extends SceneBase {
       let matchingFormChange: SpeciesFormChange | null;
       if (pokemon.species.speciesId === SpeciesId.NECROZMA && matchingFormChangeOpts.length > 1) {
         // Ultra Necrozma is changing its form back, so we need to figure out into which form it devolves.
-        const formChangeItemModifiers = (
-          this.findModifiers(
-            m => m instanceof PokemonFormChangeItemModifier && m.pokemonId === pokemon.id,
-          ) as PokemonFormChangeItemModifier[]
-        )
-          .filter(m => m.active)
-          .map(m => m.formChangeItem);
+        const formChangeItems = pokemon.heldItemManager.getActiveFormChangeItems();
 
-        matchingFormChange = formChangeItemModifiers.includes(FormChangeItem.N_LUNARIZER)
+        matchingFormChange = formChangeItems.includes(FormChangeItem.N_LUNARIZER)
           ? matchingFormChangeOpts[0]
-          : formChangeItemModifiers.includes(FormChangeItem.N_SOLARIZER)
+          : formChangeItems.includes(FormChangeItem.N_SOLARIZER)
             ? matchingFormChangeOpts[1]
             : null;
       } else {

@@ -6,7 +6,7 @@ import { Command } from "#app/ui/command-ui-handler";
 import MessageUiHandler from "#app/ui/message-ui-handler";
 import { UiMode } from "#enums/ui-mode";
 import { BooleanHolder, toReadableString, randInt, getLocalizedSpriteKey } from "#app/utils/common";
-import { PokemonFormChangeItemModifier, PokemonHeldItemModifier } from "#app/modifier/modifier";
+import { PokemonHeldItemModifier } from "#app/modifier/modifier";
 import { ForceSwitchOutAttr } from "#app/data/moves/move";
 import { allMoves } from "#app/data/data-lists";
 import { Gender, getGenderColor, getGenderSymbol } from "#app/data/gender";
@@ -14,7 +14,7 @@ import { StatusEffect } from "#enums/status-effect";
 import PokemonIconAnimHandler, { PokemonIconAnimMode } from "#app/ui/pokemon-icon-anim-handler";
 import { pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
 import { addWindow } from "#app/ui/ui-theme";
-import { SpeciesFormChangeItemTrigger, FormChangeItem } from "#app/data/pokemon-forms";
+import { SpeciesFormChangeItemTrigger, FormChangeItem, formChangeItemName } from "#app/data/pokemon-forms";
 import { getVariantTint } from "#app/sprites/variant";
 import { Button } from "#enums/buttons";
 import { applyChallenges, ChallengeType } from "#app/data/challenge";
@@ -750,9 +750,9 @@ export default class PartyUiHandler extends MessageUiHandler {
       globalScene.phaseManager.getCurrentPhase()?.is("SelectModifierPhase") &&
       this.partyUiMode === PartyUiMode.CHECK
     ) {
-      const formChangeItemModifiers = this.getFormChangeItemsModifiers(pokemon);
-      const modifier = formChangeItemModifiers[option - PartyOption.FORM_CHANGE_ITEM];
-      modifier.active = !modifier.active;
+      const formChangeItems = this.getFormChangeItems(pokemon);
+      const item = formChangeItems[option - PartyOption.FORM_CHANGE_ITEM];
+      pokemon.heldItemManager.toggleActive(item);
       globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeItemTrigger, false, true);
     }
 
@@ -1332,8 +1332,8 @@ export default class PartyUiHandler extends MessageUiHandler {
         break;
       case PartyUiMode.CHECK:
         if (globalScene.phaseManager.getCurrentPhase()?.is("SelectModifierPhase")) {
-          const formChangeItemModifiers = this.getFormChangeItemsModifiers(pokemon);
-          for (let i = 0; i < formChangeItemModifiers.length; i++) {
+          const formChangeItems = this.getFormChangeItems(pokemon);
+          for (let i = 0; i < formChangeItems.length; i++) {
             this.options.push(PartyOption.FORM_CHANGE_ITEM + i);
           }
         }
@@ -1393,10 +1393,10 @@ export default class PartyUiHandler extends MessageUiHandler {
             }
             break;
           default:
-            const formChangeItemModifiers = this.getFormChangeItemsModifiers(pokemon);
-            if (formChangeItemModifiers && option >= PartyOption.FORM_CHANGE_ITEM) {
-              const modifier = formChangeItemModifiers[option - PartyOption.FORM_CHANGE_ITEM];
-              optionName = `${modifier.active ? i18next.t("partyUiHandler:DEACTIVATE") : i18next.t("partyUiHandler:ACTIVATE")} ${modifier.type.name}`;
+            const formChangeItems = this.getFormChangeItems(pokemon);
+            if (formChangeItems && option >= PartyOption.FORM_CHANGE_ITEM) {
+              const item = formChangeItems[option - PartyOption.FORM_CHANGE_ITEM];
+              optionName = `${pokemon.heldItemManager.hasActiveFormChangeItem(item) ? i18next.t("partyUiHandler:DEACTIVATE") : i18next.t("partyUiHandler:ACTIVATE")} ${formChangeItemName(item)}`;
             } else if (option === PartyOption.UNPAUSE_EVOLUTION) {
               optionName = `${pokemon.pauseEvolutions ? i18next.t("partyUiHandler:UNPAUSE_EVOLUTION") : i18next.t("partyUiHandler:PAUSE_EVOLUTION")}`;
             } else {
@@ -1555,29 +1555,24 @@ export default class PartyUiHandler extends MessageUiHandler {
     });
   }
 
-  getFormChangeItemsModifiers(pokemon: Pokemon) {
-    let formChangeItemModifiers = globalScene.findModifiers(
-      m => m instanceof PokemonFormChangeItemModifier && m.pokemonId === pokemon.id,
-    ) as PokemonFormChangeItemModifier[];
-    const ultraNecrozmaModifiers = formChangeItemModifiers.filter(
-      m => m.active && m.formChangeItem === FormChangeItem.ULTRANECROZIUM_Z,
-    );
-    if (ultraNecrozmaModifiers.length > 0) {
+  getFormChangeItems(pokemon: Pokemon) {
+    let formChangeItems = pokemon.heldItemManager.getFormChangeItems();
+    const hasActiveFormChangeItems = pokemon.heldItemManager.getFormChangeItems().length;
+    const ultraNecrozmaActive = pokemon.heldItemManager.hasActiveFormChangeItem(FormChangeItem.ULTRANECROZIUM_Z);
+    if (ultraNecrozmaActive) {
       // ULTRANECROZIUM_Z is active and deactivating it should be the only option
-      return ultraNecrozmaModifiers;
+      return [FormChangeItem.ULTRANECROZIUM_Z];
     }
-    if (formChangeItemModifiers.find(m => m.active)) {
+    if (hasActiveFormChangeItems) {
       // a form is currently active. the user has to disable the form or activate ULTRANECROZIUM_Z
-      formChangeItemModifiers = formChangeItemModifiers.filter(
-        m => m.active || m.formChangeItem === FormChangeItem.ULTRANECROZIUM_Z,
+      formChangeItems = formChangeItems.filter(
+        m => pokemon.heldItemManager.hasActiveFormChangeItem(m) || m === FormChangeItem.ULTRANECROZIUM_Z,
       );
     } else if (pokemon.species.speciesId === SpeciesId.NECROZMA) {
       // no form is currently active. the user has to activate some form, except ULTRANECROZIUM_Z
-      formChangeItemModifiers = formChangeItemModifiers.filter(
-        m => m.formChangeItem !== FormChangeItem.ULTRANECROZIUM_Z,
-      );
+      formChangeItems = formChangeItems.filter(m => m !== FormChangeItem.ULTRANECROZIUM_Z);
     }
-    return formChangeItemModifiers;
+    return formChangeItems;
   }
 
   getOptionsCursorWithScroll(): number {

@@ -8,6 +8,7 @@ import { getNatureName, getNatureStatMultiplier } from "#app/data/nature";
 import { getPokeballCatchMultiplier, getPokeballName, MAX_PER_TYPE_POKEBALLS } from "#app/data/pokeball";
 import {
   FormChangeItem,
+  formChangeItemName,
   pokemonFormChanges,
   SpeciesFormChangeCondition,
   SpeciesFormChangeItemTrigger,
@@ -1400,7 +1401,7 @@ export class FormChangeItemModifierType extends PokemonModifierType implements G
   }
 
   get name(): string {
-    return i18next.t(`modifierType:FormChangeItem.${FormChangeItem[this.formChangeItem]}`);
+    return formChangeItemName(this.formChangeItem);
   }
 
   getDescription(): string {
