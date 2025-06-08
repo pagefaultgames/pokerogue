@@ -33,7 +33,7 @@ import { getStatusEffectActivationText, getStatusEffectHealText } from "#app/dat
 import { PokemonType } from "#enums/pokemon-type";
 import { getTerrainBlockMessage, getWeatherBlockMessage } from "#app/data/weather";
 import { MoveUsedEvent } from "#app/events/battle-scene";
-import type { PokemonMove } from "#app/field/pokemon";
+import type { PokemonMove } from "#app/data/moves/pokemon-move";
 import type Pokemon from "#app/field/pokemon";
 import { MoveResult } from "#enums/move-result";
 import { getPokemonNameWithAffix } from "#app/messages";

@@ -37,7 +37,7 @@ import { UiMode } from "#enums/ui-mode";
 import i18next from "i18next";
 import type { OptionSelectConfig } from "#app/ui/abstact-option-select-ui-handler";
 import type { PlayerPokemon } from "#app/field/pokemon";
-import { PokemonMove } from "#app/field/pokemon";
+import { PokemonMove } from "#app/data/moves/pokemon-move";
 import { Ability } from "#app/data/abilities/ability-class";
 import { BerryModifier } from "#app/modifier/modifier";
 import { BerryType } from "#enums/berry-type";

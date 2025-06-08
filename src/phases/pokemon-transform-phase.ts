@@ -2,7 +2,7 @@ import type { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
 import { EFFECTIVE_STATS, BATTLE_STATS } from "#enums/stat";
-import { PokemonMove } from "#app/field/pokemon";
+import { PokemonMove } from "#app/data/moves/pokemon-move";
 import { globalScene } from "#app/global-scene";
 import { PokemonPhase } from "./pokemon-phase";
 import { getPokemonNameWithAffix } from "#app/messages";

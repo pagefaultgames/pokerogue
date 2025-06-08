@@ -75,7 +75,8 @@ import { getBerryEffectFunc } from "../berry";
 import { BerryUsedEvent } from "#app/events/battle-scene";
 
 // Type imports
-import type { EnemyPokemon, PokemonMove } from "#app/field/pokemon";
+import type { EnemyPokemon } from "#app/field/pokemon";
+import type { PokemonMove } from "../moves/pokemon-move";
 import type Pokemon from "#app/field/pokemon";
 import type { Weather } from "#app/data/weather";
 import type { BattlerTag } from "#app/data/battler-tags";

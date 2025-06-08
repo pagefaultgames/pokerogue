@@ -4,7 +4,7 @@ import { allMoves } from "#app/data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { Stat } from "#app/enums/stat";
 import type Pokemon from "#app/field/pokemon";
-import { PokemonMove } from "#app/field/pokemon";
+import { PokemonMove } from "#app/data/moves/pokemon-move";
 import { BypassSpeedChanceModifier } from "#app/modifier/modifier";
 import { Command } from "#app/ui/command-ui-handler";
 import { randSeedShuffle, BooleanHolder } from "#app/utils/common";

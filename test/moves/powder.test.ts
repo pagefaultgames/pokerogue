@@ -1,5 +1,5 @@
 import { BattlerIndex } from "#enums/battler-index";
-import { PokemonMove } from "#app/field/pokemon";
+import { PokemonMove } from "#app/data/moves/pokemon-move";
 import { MoveResult } from "#enums/move-result";
 import { BerryPhase } from "#app/phases/berry-phase";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";

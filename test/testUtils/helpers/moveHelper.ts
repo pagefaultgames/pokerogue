@@ -1,7 +1,7 @@
 import type { BattlerIndex } from "#enums/battler-index";
 import { getMoveTargets } from "#app/data/moves/move";
 import type Pokemon from "#app/field/pokemon";
-import { PokemonMove } from "#app/field/pokemon";
+import { PokemonMove } from "#app/data/moves/pokemon-move";
 import Overrides from "#app/overrides";
 import type { CommandPhase } from "#app/phases/command-phase";
 import type { EnemyCommandPhase } from "#app/phases/enemy-command-phase";

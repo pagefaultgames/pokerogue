@@ -17,7 +17,7 @@ import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { SpeciesId } from "#enums/species-id";
 import { Nature } from "#enums/nature";
 import type Pokemon from "#app/field/pokemon";
-import { PokemonMove } from "#app/field/pokemon";
+import { PokemonMove } from "#app/data/moves/pokemon-move";
 import { queueEncounterMessage, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { modifyPlayerPokemonBST } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import { MoveId } from "#enums/move-id";

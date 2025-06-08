@@ -25,7 +25,7 @@ import { ModifierTier } from "#app/modifier/modifier-tier";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { MoveId } from "#enums/move-id";
 import { BattlerIndex } from "#enums/battler-index";
-import { PokemonMove } from "#app/field/pokemon";
+import { PokemonMove } from "#app/data/moves/pokemon-move";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { randSeedInt } from "#app/utils/common";
 

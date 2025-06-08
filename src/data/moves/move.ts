@@ -17,8 +17,8 @@ import type Pokemon from "../../field/pokemon";
 import {
   EnemyPokemon,
   PlayerPokemon,
-  PokemonMove,
 } from "../../field/pokemon";
+import { PokemonMove } from "./pokemon-move";
 import { MoveResult } from "#enums/move-result";
 import { HitResult } from "#enums/hit-result";
 import { FieldPosition } from "#enums/field-position";

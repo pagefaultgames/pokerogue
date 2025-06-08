@@ -2,7 +2,7 @@ import { globalScene } from "#app/global-scene";
 import type { BattlerIndex } from "#enums/battler-index";
 import { MoveChargeAnim } from "#app/data/battle-anims";
 import { applyMoveChargeAttrs, MoveEffectAttr, InstantChargeAttr } from "#app/data/moves/move";
-import type { PokemonMove } from "#app/field/pokemon";
+import type { PokemonMove } from "#app/data/moves/pokemon-move";
 import type Pokemon from "#app/field/pokemon";
 import { MoveResult } from "#enums/move-result";
 import { BooleanHolder } from "#app/utils/common";
