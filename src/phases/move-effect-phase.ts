@@ -82,6 +82,7 @@ import { DamageAchv } from "#app/system/achv";
 type HitCheckEntry = [HitCheckResult, TypeDamageMultiplier];
 
 export class MoveEffectPhase extends PokemonPhase {
+  public readonly phaseName = "MoveEffectPhase";
   public move: Move;
   private virtual = false;
   protected targets: BattlerIndex[];
@@ -218,6 +219,7 @@ export class MoveEffectPhase extends PokemonPhase {
             return;
           }
           break;
+        // biome-ignore lint/suspicious/noFallthroughSwitchClause: The fallthrough is intentional
         case HitCheckResult.NO_EFFECT:
           globalScene.queueMessage(
             i18next.t(this.move.id === MoveId.SHEER_COLD ? "battle:hitResultImmune" : "battle:hitResultNoEffect", {
@@ -293,7 +295,8 @@ export class MoveEffectPhase extends PokemonPhase {
 
     // If other effects were overriden, stop this phase before they can be applied
     if (overridden.value) {
-      return this.end();
+      this.end();
+      return;
     }
 
     // Lapse `MOVE_EFFECT` effects (i.e. semi-invulnerability) when applicable
@@ -742,7 +745,7 @@ export class MoveEffectPhase extends PokemonPhase {
     firstTarget?: boolean | null,
     selfTarget?: boolean,
   ): void {
-    return applyFilteredMoveAttrs(
+    applyFilteredMoveAttrs(
       (attr: MoveAttr) =>
         attr instanceof MoveEffectAttr &&
         attr.trigger === triggerType &&
@@ -884,7 +887,7 @@ export class MoveEffectPhase extends PokemonPhase {
       sourceBattlerIndex: user.getBattlerIndex(),
     });
 
-    if (user.isPlayer() && !target.isPlayer()) {
+    if (user.isPlayer() && target.isEnemy()) {
       globalScene.applyModifiers(DamageMoneyRewardModifier, true, user, new NumberHolder(damage));
     }
 

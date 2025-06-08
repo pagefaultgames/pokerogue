@@ -40,7 +40,6 @@ import {
   type TerastallizeModifierType,
   type TmModifierType,
   getModifierType,
-  ModifierPoolType,
   ModifierTypeGenerator,
   modifierTypes,
   PokemonHeldItemModifierType,
@@ -1091,10 +1090,6 @@ export class PokemonIncrementingStatModifier extends PokemonHeldItemModifier {
     return new PokemonIncrementingStatModifier(this.type, this.pokemonId, this.stackCount);
   }
 
-  getArgs(): any[] {
-    return super.getArgs();
-  }
-
   /**
    * Checks if the {@linkcode PokemonIncrementingStatModifier} should be applied to the {@linkcode Pokemon}.
    * @param pokemon The {@linkcode Pokemon} that holds the item
@@ -1217,10 +1212,6 @@ export class StatBoosterModifier extends PokemonHeldItemModifier {
  * @see {@linkcode apply}
  */
 export class EvolutionStatBoosterModifier extends StatBoosterModifier {
-  clone() {
-    return super.clone() as EvolutionStatBoosterModifier;
-  }
-
   matchType(modifier: Modifier): boolean {
     return modifier instanceof EvolutionStatBoosterModifier;
   }
@@ -3232,8 +3223,7 @@ export abstract class HeldItemTransferModifier extends PokemonHeldItemModifier {
   }
 
   /**
-   * Steals an item from a set of target Pokemon.
-   * This prioritizes high-tier held items when selecting the item to steal.
+   * Steals an item, chosen randomly, from a set of target Pokemon.
    * @param pokemon The {@linkcode Pokemon} holding this item
    * @param target The {@linkcode Pokemon} to steal from (optional)
    * @param _args N/A
@@ -3253,30 +3243,15 @@ export abstract class HeldItemTransferModifier extends PokemonHeldItemModifier {
       return false;
     }
 
-    const poolType = pokemon.isPlayer()
-      ? ModifierPoolType.PLAYER
-      : pokemon.hasTrainer()
-        ? ModifierPoolType.TRAINER
-        : ModifierPoolType.WILD;
-
     const transferredModifierTypes: ModifierType[] = [];
     const itemModifiers = globalScene.findModifiers(
       m => m instanceof PokemonHeldItemModifier && m.pokemonId === targetPokemon.id && m.isTransferable,
       targetPokemon.isPlayer(),
     ) as PokemonHeldItemModifier[];
-    let highestItemTier = itemModifiers
-      .map(m => m.type.getOrInferTier(poolType))
-      .reduce((highestTier, tier) => Math.max(tier!, highestTier), 0); // TODO: is this bang correct?
-    let tierItemModifiers = itemModifiers.filter(m => m.type.getOrInferTier(poolType) === highestItemTier);
 
     for (let i = 0; i < transferredItemCount; i++) {
-      if (!tierItemModifiers.length) {
-        while (highestItemTier-- && !tierItemModifiers.length) {
-          tierItemModifiers = itemModifiers.filter(m => m.type.tier === highestItemTier);
-        }
-        if (!tierItemModifiers.length) {
-          break;
-        }
+      if (!itemModifiers.length) {
+        break;
       }
       const randItemIndex = pokemon.randBattleSeedInt(itemModifiers.length);
       const randItem = itemModifiers[randItemIndex];

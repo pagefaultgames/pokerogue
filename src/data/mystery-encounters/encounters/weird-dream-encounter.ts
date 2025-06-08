@@ -39,7 +39,7 @@ import { PlayerGender } from "#enums/player-gender";
 import { TrainerType } from "#enums/trainer-type";
 import PokemonData from "#app/system/pokemon-data";
 import { Nature } from "#enums/nature";
-import type HeldModifierConfig from "#app/interfaces/held-modifier-config";
+import type HeldModifierConfig from "#app/@types/held-modifier-config";
 import { trainerConfigs } from "#app/data/trainers/trainer-config";
 import { TrainerPartyTemplate } from "#app/data/trainers/TrainerPartyTemplate";
 import { PartyMemberStrength } from "#enums/party-member-strength";

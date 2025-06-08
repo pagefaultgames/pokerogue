@@ -22,6 +22,7 @@ import { SubstituteTag } from "#app/data/battler-tags";
 import { SwitchType } from "#enums/switch-type";
 
 export class SwitchSummonPhase extends SummonPhase {
+  public readonly phaseName: "SwitchSummonPhase" | "ReturnPhase" = "SwitchSummonPhase";
   private readonly switchType: SwitchType;
   private readonly slotIndex: number;
   private readonly doReturn: boolean;
@@ -137,7 +138,6 @@ export class SwitchSummonPhase extends SummonPhase {
       this.end();
       return;
     }
-
 
     if (this.switchType === SwitchType.BATON_PASS) {
       // If switching via baton pass, update opposing tags coming from the prior pokemon

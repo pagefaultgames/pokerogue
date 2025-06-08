@@ -18,7 +18,8 @@ import { BattleSpec } from "#app/enums/battle-spec";
 import { StatusEffect } from "#app/enums/status-effect";
 import type { EnemyPokemon } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
-import { HitResult, PlayerPokemon, PokemonMove } from "#app/field/pokemon";
+import { HitResult, PokemonMove } from "#app/field/pokemon";
+import type { PlayerPokemon } from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { PokemonInstantReviveModifier } from "#app/modifier/modifier";
 import { SwitchType } from "#enums/switch-type";
@@ -35,6 +36,7 @@ import { FRIENDSHIP_LOSS_FROM_FAINT } from "#app/data/balance/starters";
 import { BattlerTagType } from "#enums/battler-tag-type";
 
 export class FaintPhase extends PokemonPhase {
+  public readonly phaseName = "FaintPhase";
   /**
    * Whether or not instant revive should be prevented
    */
@@ -78,10 +80,15 @@ export class FaintPhase extends PokemonPhase {
       }
     }
 
-    /** In case the current pokemon was just switched in, make sure it is counted as participating in the combat */
+    /**
+     * In case the current pokemon was just switched in, make sure it is counted as participating in the combat.
+     * For EXP_SHARE purposes, if the current pokemon faints as the combat ends and it was the ONLY player pokemon
+     * involved in combat, it needs to be counted as a participant so the other party pokemon can get their EXP,
+     * so the fainted pokemon has been included.
+     */
     for (const pokemon of globalScene.getPlayerField()) {
-      if (pokemon?.isActive(true) && pokemon.isPlayer()) {
-        globalScene.currentBattle.addParticipant(pokemon as PlayerPokemon);
+      if (pokemon?.isActive() || pokemon?.isFainted()) {
+        globalScene.currentBattle.addParticipant(pokemon);
       }
     }
 
@@ -197,7 +204,7 @@ export class FaintPhase extends PokemonPhase {
     }
 
     pokemon.faintCry(() => {
-      if (pokemon instanceof PlayerPokemon) {
+      if (pokemon.isPlayer()) {
         pokemon.addFriendship(-FRIENDSHIP_LOSS_FROM_FAINT);
       }
       pokemon.hideInfo();
