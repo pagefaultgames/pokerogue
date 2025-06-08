@@ -10,7 +10,6 @@ import {
   runSelectMysteryEncounterOption,
 } from "#test/mystery-encounter/encounter-test-utils";
 import type BattleScene from "#app/battle-scene";
-import { PlayerPokemon } from "#app/field/pokemon";
 import { HUMAN_TRANSITABLE_BIOMES } from "#app/data/mystery-encounters/mystery-encounters";
 import {
   getSalesmanSpeciesOffer,
@@ -99,7 +98,7 @@ describe("The Pokemon Salesman - Mystery Encounter", () => {
 
     expect(ThePokemonSalesmanEncounter.dialogueTokens?.purchasePokemon).toBeDefined();
     expect(ThePokemonSalesmanEncounter.dialogueTokens?.price).toBeDefined();
-    expect(ThePokemonSalesmanEncounter.misc.pokemon instanceof PlayerPokemon).toBeTruthy();
+    expect(ThePokemonSalesmanEncounter.misc.pokemon.isPlayer()).toBeTruthy();
     expect(ThePokemonSalesmanEncounter.misc?.price?.toString()).toBe(ThePokemonSalesmanEncounter.dialogueTokens?.price);
     expect(onInitResult).toBe(true);
   });
