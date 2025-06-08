@@ -23,9 +23,12 @@ import { allSpecies, getPokemonSpeciesForm, getPokerusStarters } from "#app/data
 import { getStarterValueFriendshipCap, speciesStarterCosts, POKERUS_STARTER_COUNT } from "#app/data/balance/starters";
 import { PokemonType } from "#enums/pokemon-type";
 import { GameModes } from "#enums/game-modes";
-import type { DexAttrProps, StarterMoveset, StarterAttributes, StarterPreferences } from "#app/system/game-data";
+import type { DexAttrProps, StarterMoveset, StarterAttributes } from "#app/system/game-data";
+import type { StarterPreferences } from "#app/utils/data";
 import type { DexEntry } from "#app/@types/dex-data";
-import { AbilityAttr, DexAttr, loadStarterPreferences, saveStarterPreferences } from "#app/system/game-data";
+import { loadStarterPreferences, saveStarterPreferences } from "#app/utils/data";
+import { AbilityAttr } from "#enums/ability-attr";
+import { DexAttr } from "#enums/dex-attr";
 import { Tutorial, handleTutorial } from "#app/tutorial";
 import type { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
 import MessageUiHandler from "#app/ui/message-ui-handler";
