@@ -10,10 +10,10 @@ import type { PlayerPokemon } from "#app/field/pokemon";
 import { AttackTypeBoosterModifier } from "#app/modifier/modifier";
 import type { AttackTypeBoosterModifierType } from "#app/modifier/modifier-type";
 import { isNullOrUndefined } from "#app/utils/common";
-import type { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
+import type { AbilityId } from "#enums/ability-id";
+import { MoveId } from "#enums/move-id";
 import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species-id";
 import { SpeciesFormKey } from "#enums/species-form-key";
 import { TimeOfDay } from "#enums/time-of-day";
 
@@ -275,15 +275,11 @@ export class TimeOfDayRequirement extends EncounterSceneRequirement {
 
   override meetsRequirement(): boolean {
     const timeOfDay = globalScene.arena?.getTimeOfDay();
-    if (
+    return !(
       !isNullOrUndefined(timeOfDay) &&
       this.requiredTimeOfDay?.length > 0 &&
       !this.requiredTimeOfDay.includes(timeOfDay)
-    ) {
-      return false;
-    }
-
-    return true;
+    );
   }
 
   override getDialogueToken(_pokemon?: PlayerPokemon): [string, string] {
@@ -301,15 +297,11 @@ export class WeatherRequirement extends EncounterSceneRequirement {
 
   override meetsRequirement(): boolean {
     const currentWeather = globalScene.arena.weather?.weatherType;
-    if (
+    return !(
       !isNullOrUndefined(currentWeather) &&
       this.requiredWeather?.length > 0 &&
       !this.requiredWeather.includes(currentWeather!)
-    ) {
-      return false;
-    }
-
-    return true;
+    );
   }
 
   override getDialogueToken(_pokemon?: PlayerPokemon): [string, string] {
@@ -424,11 +416,11 @@ export class MoneyRequirement extends EncounterSceneRequirement {
 }
 
 export class SpeciesRequirement extends EncounterPokemonRequirement {
-  requiredSpecies: Species[];
+  requiredSpecies: SpeciesId[];
   minNumberOfPokemon: number;
   invertQuery: boolean;
 
-  constructor(species: Species | Species[], minNumberOfPokemon = 1, invertQuery = false) {
+  constructor(species: SpeciesId | SpeciesId[], minNumberOfPokemon = 1, invertQuery = false) {
     super();
     this.minNumberOfPokemon = minNumberOfPokemon;
     this.invertQuery = invertQuery;
@@ -457,7 +449,7 @@ export class SpeciesRequirement extends EncounterPokemonRequirement {
 
   override getDialogueToken(pokemon?: PlayerPokemon): [string, string] {
     if (pokemon?.species.speciesId && this.requiredSpecies.includes(pokemon.species.speciesId)) {
-      return ["species", Species[pokemon.species.speciesId]];
+      return ["species", SpeciesId[pokemon.species.speciesId]];
     }
     return ["species", ""];
   }
@@ -549,12 +541,17 @@ export class TypeRequirement extends EncounterPokemonRequirement {
 }
 
 export class MoveRequirement extends EncounterPokemonRequirement {
-  requiredMoves: Moves[] = [];
+  requiredMoves: MoveId[] = [];
   minNumberOfPokemon: number;
   invertQuery: boolean;
   excludeDisallowedPokemon: boolean;
 
-  constructor(moves: Moves | Moves[], excludeDisallowedPokemon: boolean, minNumberOfPokemon = 1, invertQuery = false) {
+  constructor(
+    moves: MoveId | MoveId[],
+    excludeDisallowedPokemon: boolean,
+    minNumberOfPokemon = 1,
+    invertQuery = false,
+  ) {
     super();
     this.excludeDisallowedPokemon = excludeDisallowedPokemon;
     this.minNumberOfPokemon = minNumberOfPokemon;
@@ -602,11 +599,11 @@ export class MoveRequirement extends EncounterPokemonRequirement {
  * NOTE: If the Pokemon already knows the move, this requirement will fail, since it's not technically learnable.
  */
 export class CompatibleMoveRequirement extends EncounterPokemonRequirement {
-  requiredMoves: Moves[];
+  requiredMoves: MoveId[];
   minNumberOfPokemon: number;
   invertQuery: boolean;
 
-  constructor(learnableMove: Moves | Moves[], minNumberOfPokemon = 1, invertQuery = false) {
+  constructor(learnableMove: MoveId | MoveId[], minNumberOfPokemon = 1, invertQuery = false) {
     super();
     this.minNumberOfPokemon = minNumberOfPokemon;
     this.invertQuery = invertQuery;
@@ -644,20 +641,20 @@ export class CompatibleMoveRequirement extends EncounterPokemonRequirement {
       pokemon?.compatibleTms.filter(tm => !pokemon.moveset.find(m => m.moveId === tm)).includes(reqMove),
     );
     if (includedCompatMoves.length > 0) {
-      return ["compatibleMove", Moves[includedCompatMoves[0]]];
+      return ["compatibleMove", MoveId[includedCompatMoves[0]]];
     }
     return ["compatibleMove", ""];
   }
 }
 
 export class AbilityRequirement extends EncounterPokemonRequirement {
-  requiredAbilities: Abilities[];
+  requiredAbilities: AbilityId[];
   minNumberOfPokemon: number;
   invertQuery: boolean;
   excludeDisallowedPokemon: boolean;
 
   constructor(
-    abilities: Abilities | Abilities[],
+    abilities: AbilityId | AbilityId[],
     excludeDisallowedPokemon: boolean,
     minNumberOfPokemon = 1,
     invertQuery = false,
@@ -798,7 +795,7 @@ export class CanFormChangeWithItemRequirement extends EncounterPokemonRequiremen
   }
 
   filterByForm(pokemon, formChangeItem) {
-    if (
+    return (
       pokemonFormChanges.hasOwnProperty(pokemon.species.speciesId) &&
       // Get all form changes for this species with an item trigger, including any compound triggers
       pokemonFormChanges[pokemon.species.speciesId]
@@ -807,10 +804,7 @@ export class CanFormChangeWithItemRequirement extends EncounterPokemonRequiremen
         .flatMap(fc => fc.findTrigger(SpeciesFormChangeItemTrigger) as SpeciesFormChangeItemTrigger)
         .flatMap(fc => fc.item)
         .includes(formChangeItem)
-    ) {
-      return true;
-    }
-    return false;
+    );
   }
 
   override queryParty(partyPokemon: PlayerPokemon[]): PlayerPokemon[] {
@@ -868,17 +862,15 @@ export class CanEvolveWithItemRequirement extends EncounterPokemonRequirement {
     ) {
       return true;
     }
-    if (
+
+    return (
       pokemon.isFusion() &&
       pokemonEvolutions.hasOwnProperty(pokemon.fusionSpecies.speciesId) &&
       pokemonEvolutions[pokemon.fusionSpecies.speciesId].filter(
         e => e.item === evolutionItem && (!e.condition || e.condition.predicate(pokemon)),
       ).length &&
       pokemon.getFusionFormKey() !== SpeciesFormKey.GIGANTAMAX
-    ) {
-      return true;
-    }
-    return false;
+    );
   }
 
   override queryParty(partyPokemon: PlayerPokemon[]): PlayerPokemon[] {

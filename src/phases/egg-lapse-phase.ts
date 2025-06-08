@@ -16,6 +16,7 @@ import { EggHatchData } from "#app/data/egg-hatch-data";
  * Also handles prompts for skipping animation, and calling the egg summary phase
  */
 export class EggLapsePhase extends Phase {
+  public readonly phaseName = "EggLapsePhase";
   private eggHatchData: EggHatchData[] = [];
   private readonly minEggsToSkip: number = 2;
 
@@ -61,12 +62,12 @@ export class EggLapsePhase extends Phase {
           true,
         );
       } else if (eggsToHatchCount >= this.minEggsToSkip && globalScene.eggSkipPreference === 2) {
-        globalScene.queueMessage(i18next.t("battle:eggHatching"));
+        globalScene.phaseManager.queueMessage(i18next.t("battle:eggHatching"));
         this.hatchEggsSkipped(eggsToHatch);
         this.showSummary();
       } else {
         // regular hatches, no summary
-        globalScene.queueMessage(i18next.t("battle:eggHatching"));
+        globalScene.phaseManager.queueMessage(i18next.t("battle:eggHatching"));
         this.hatchEggsRegular(eggsToHatch);
         this.end();
       }
@@ -82,7 +83,7 @@ export class EggLapsePhase extends Phase {
   hatchEggsRegular(eggsToHatch: Egg[]) {
     let eggsToHatchCount: number = eggsToHatch.length;
     for (const egg of eggsToHatch) {
-      globalScene.unshiftPhase(new EggHatchPhase(this, egg, eggsToHatchCount));
+      globalScene.phaseManager.unshiftPhase(new EggHatchPhase(this, egg, eggsToHatchCount));
       eggsToHatchCount--;
     }
   }
@@ -98,7 +99,7 @@ export class EggLapsePhase extends Phase {
   }
 
   showSummary() {
-    globalScene.unshiftPhase(new EggSummaryPhase(this.eggHatchData));
+    globalScene.phaseManager.unshiftPhase(new EggSummaryPhase(this.eggHatchData));
     this.end();
   }
 

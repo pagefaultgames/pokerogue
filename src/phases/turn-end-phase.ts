@@ -18,13 +18,14 @@ import { PokemonHealPhase } from "./pokemon-heal-phase";
 import { globalScene } from "#app/global-scene";
 
 export class TurnEndPhase extends FieldPhase {
+  public readonly phaseName = "TurnEndPhase";
   start() {
     super.start();
 
     globalScene.currentBattle.incrementTurn();
     globalScene.eventTarget.dispatchEvent(new TurnEndEvent(globalScene.currentBattle.turn));
 
-    globalScene.hideAbilityBar();
+    globalScene.phaseManager.hideAbilityBar();
 
     const handlePokemon = (pokemon: Pokemon) => {
       if (!pokemon.switchOutStatus) {
@@ -33,7 +34,7 @@ export class TurnEndPhase extends FieldPhase {
         globalScene.applyModifiers(TurnHealModifier, pokemon.isPlayer(), pokemon);
 
         if (globalScene.arena.terrain?.terrainType === TerrainType.GRASSY && pokemon.isGrounded()) {
-          globalScene.unshiftPhase(
+          globalScene.phaseManager.unshiftPhase(
             new PokemonHealPhase(
               pokemon.getBattlerIndex(),
               Math.max(pokemon.getMaxHp() >> 4, 1),

@@ -1,6 +1,7 @@
 import { applyAbAttrs, BypassSpeedChanceAbAttr, PreventBypassSpeedChanceAbAttr } from "#app/data/abilities/ability";
-import { allMoves, MoveHeaderAttr } from "#app/data/moves/move";
-import { Abilities } from "#app/enums/abilities";
+import { MoveHeaderAttr } from "#app/data/moves/move";
+import { allMoves } from "#app/data/data-lists";
+import { AbilityId } from "#enums/ability-id";
 import { Stat } from "#app/enums/stat";
 import type Pokemon from "#app/field/pokemon";
 import { PokemonMove } from "#app/field/pokemon";
@@ -24,6 +25,7 @@ import { globalScene } from "#app/global-scene";
 import { TeraPhase } from "./tera-phase";
 
 export class TurnStartPhase extends FieldPhase {
+  public readonly phaseName = "TurnStartPhase";
   /**
    * This orders the active Pokemon on the field by speed into an BattlerIndex array and returns that array.
    * It also checks for Trick Room and reverses the array if it is present.
@@ -151,7 +153,7 @@ export class TurnStartPhase extends FieldPhase {
 
       switch (preTurnCommand?.command) {
         case Command.TERA:
-          globalScene.pushPhase(new TeraPhase(pokemon));
+          globalScene.phaseManager.pushPhase(new TeraPhase(pokemon));
       }
     }
 
@@ -174,11 +176,13 @@ export class TurnStartPhase extends FieldPhase {
             pokemon.getMoveset().find(m => m.moveId === queuedMove.move && m.ppUsed < m.getMovePp()) ||
             new PokemonMove(queuedMove.move);
           if (move.getMove().hasAttr(MoveHeaderAttr)) {
-            globalScene.unshiftPhase(new MoveHeaderPhase(pokemon, move));
+            globalScene.phaseManager.unshiftPhase(new MoveHeaderPhase(pokemon, move));
           }
           if (pokemon.isPlayer()) {
             if (turnCommand.cursor === -1) {
-              globalScene.pushPhase(new MovePhase(pokemon, turnCommand.targets || turnCommand.move!.targets, move)); //TODO: is the bang correct here?
+              globalScene.phaseManager.pushPhase(
+                new MovePhase(pokemon, turnCommand.targets || turnCommand.move!.targets, move),
+              ); //TODO: is the bang correct here?
             } else {
               const playerPhase = new MovePhase(
                 pokemon,
@@ -187,10 +191,10 @@ export class TurnStartPhase extends FieldPhase {
                 false,
                 queuedMove.ignorePP,
               ); //TODO: is the bang correct here?
-              globalScene.pushPhase(playerPhase);
+              globalScene.phaseManager.pushPhase(playerPhase);
             }
           } else {
-            globalScene.pushPhase(
+            globalScene.phaseManager.pushPhase(
               new MovePhase(
                 pokemon,
                 turnCommand.targets || turnCommand.move!.targets,
@@ -202,11 +206,13 @@ export class TurnStartPhase extends FieldPhase {
           }
           break;
         case Command.BALL:
-          globalScene.unshiftPhase(new AttemptCapturePhase(turnCommand.targets![0] % 2, turnCommand.cursor!)); //TODO: is the bang correct here?
+          globalScene.phaseManager.unshiftPhase(
+            new AttemptCapturePhase(turnCommand.targets![0] % 2, turnCommand.cursor!),
+          ); //TODO: is the bang correct here?
           break;
         case Command.POKEMON:
           const switchType = turnCommand.args?.[0] ? SwitchType.BATON_PASS : SwitchType.SWITCH;
-          globalScene.unshiftPhase(
+          globalScene.phaseManager.unshiftPhase(
             new SwitchSummonPhase(switchType, pokemon.getFieldIndex(), turnCommand.cursor!, true, pokemon.isPlayer()),
           );
           break;
@@ -227,22 +233,22 @@ export class TurnStartPhase extends FieldPhase {
                   ? playerActivePokemon[0]
                   : playerActivePokemon[1];
               // check if either active pokemon has the ability "Run Away"
-              const hasRunAway = playerActivePokemon.find(p => p.hasAbility(Abilities.RUN_AWAY));
+              const hasRunAway = playerActivePokemon.find(p => p.hasAbility(AbilityId.RUN_AWAY));
               runningPokemon = hasRunAway !== undefined ? hasRunAway : fasterPokemon;
             }
           }
-          globalScene.unshiftPhase(new AttemptRunPhase(runningPokemon.getFieldIndex()));
+          globalScene.phaseManager.unshiftPhase(new AttemptRunPhase(runningPokemon.getFieldIndex()));
           break;
       }
     }
 
-    globalScene.pushPhase(new WeatherEffectPhase());
-    globalScene.pushPhase(new BerryPhase());
+    globalScene.phaseManager.pushPhase(new WeatherEffectPhase());
+    globalScene.phaseManager.pushPhase(new BerryPhase());
 
     /** Add a new phase to check who should be taking status damage */
-    globalScene.pushPhase(new CheckStatusEffectPhase(moveOrder));
+    globalScene.phaseManager.pushPhase(new CheckStatusEffectPhase(moveOrder));
 
-    globalScene.pushPhase(new TurnEndPhase());
+    globalScene.phaseManager.pushPhase(new TurnEndPhase());
 
     /**
      * this.end() will call shiftPhase(), which dumps everything from PrependQueue (aka everything that is unshifted()) to the front

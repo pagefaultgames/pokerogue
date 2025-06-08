@@ -7,6 +7,7 @@ import { PlayerPartyMemberPokemonPhase } from "./player-party-member-pokemon-pha
 import { LevelUpPhase } from "./level-up-phase";
 
 export class ExpPhase extends PlayerPartyMemberPokemonPhase {
+  public readonly phaseName = "ExpPhase";
   private expValue: number;
 
   constructor(partyMemberIndex: number, expValue: number) {
@@ -33,7 +34,7 @@ export class ExpPhase extends PlayerPartyMemberPokemonPhase {
         pokemon.addExp(exp.value);
         const newLevel = pokemon.level;
         if (newLevel > lastLevel) {
-          globalScene.unshiftPhase(new LevelUpPhase(this.partyMemberIndex, lastLevel, newLevel));
+          globalScene.phaseManager.unshiftPhase(new LevelUpPhase(this.partyMemberIndex, lastLevel, newLevel));
         }
         pokemon.updateInfo().then(() => this.end());
       },

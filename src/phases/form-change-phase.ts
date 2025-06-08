@@ -13,6 +13,7 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import { SpeciesFormKey } from "#enums/species-form-key";
 
 export class FormChangePhase extends EvolutionPhase {
+  public readonly phaseName = "FormChangePhase";
   private formChange: SpeciesFormChange;
   private modal: boolean;
 
@@ -99,7 +100,7 @@ export class FormChangePhase extends EvolutionPhase {
                       globalScene.time.delayedCall(900, () => {
                         this.pokemon.changeForm(this.formChange).then(() => {
                           if (!this.modal) {
-                            globalScene.unshiftPhase(new EndEvolutionPhase());
+                            globalScene.phaseManager.unshiftPhase(new EndEvolutionPhase());
                           }
 
                           globalScene.playSound("se/shine");

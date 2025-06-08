@@ -36,7 +36,7 @@ import { randSeedItem } from "#app/utils/common";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species-id";
 import { timedEventManager } from "#app/global-event-manager";
 
 /** the i18n namespace for this encounter */
@@ -65,10 +65,10 @@ const doEventReward = () => {
       return !(existingCharm && existingCharm.getStackCount() >= existingCharm.getMaxStackCount());
     });
     if (candidates.length > 0) {
-      globalScene.unshiftPhase(new ModifierRewardPhase(modifierTypes[randSeedItem(candidates)]));
+      globalScene.phaseManager.unshiftPhase(new ModifierRewardPhase(modifierTypes[randSeedItem(candidates)]));
     } else {
       // At max stacks, give a Voucher instead
-      globalScene.unshiftPhase(new ModifierRewardPhase(modifierTypes.VOUCHER));
+      globalScene.phaseManager.unshiftPhase(new ModifierRewardPhase(modifierTypes.VOUCHER));
     }
   }
 };
@@ -95,7 +95,7 @@ export const DelibirdyEncounter: MysteryEncounter = MysteryEncounterBuilder.with
     {
       spriteKey: "",
       fileRoot: "",
-      species: Species.DELIBIRD,
+      species: SpeciesId.DELIBIRD,
       hasShadow: true,
       repeat: true,
       startFrame: 38,
@@ -104,7 +104,7 @@ export const DelibirdyEncounter: MysteryEncounter = MysteryEncounterBuilder.with
     {
       spriteKey: "",
       fileRoot: "",
-      species: Species.DELIBIRD,
+      species: SpeciesId.DELIBIRD,
       hasShadow: true,
       repeat: true,
       scale: 1.06,
@@ -112,7 +112,7 @@ export const DelibirdyEncounter: MysteryEncounter = MysteryEncounterBuilder.with
     {
       spriteKey: "",
       fileRoot: "",
-      species: Species.DELIBIRD,
+      species: SpeciesId.DELIBIRD,
       hasShadow: true,
       repeat: true,
       startFrame: 65,
@@ -137,7 +137,7 @@ export const DelibirdyEncounter: MysteryEncounter = MysteryEncounterBuilder.with
   ])
   .withOnInit(() => {
     const encounter = globalScene.currentBattle.mysteryEncounter!;
-    encounter.setDialogueToken("delibirdName", getPokemonSpecies(Species.DELIBIRD).getName());
+    encounter.setDialogueToken("delibirdName", getPokemonSpecies(SpeciesId.DELIBIRD).getName());
 
     globalScene.loadBgm("mystery_encounter_delibirdy", "mystery_encounter_delibirdy.mp3");
     return true;
@@ -181,7 +181,7 @@ export const DelibirdyEncounter: MysteryEncounter = MysteryEncounterBuilder.with
           );
           doEventReward();
         } else {
-          globalScene.unshiftPhase(new ModifierRewardPhase(modifierTypes.AMULET_COIN));
+          globalScene.phaseManager.unshiftPhase(new ModifierRewardPhase(modifierTypes.AMULET_COIN));
           doEventReward();
         }
 
@@ -266,7 +266,7 @@ export const DelibirdyEncounter: MysteryEncounter = MysteryEncounterBuilder.with
             );
             doEventReward();
           } else {
-            globalScene.unshiftPhase(new ModifierRewardPhase(modifierTypes.CANDY_JAR));
+            globalScene.phaseManager.unshiftPhase(new ModifierRewardPhase(modifierTypes.CANDY_JAR));
             doEventReward();
           }
         } else {
@@ -288,7 +288,7 @@ export const DelibirdyEncounter: MysteryEncounter = MysteryEncounterBuilder.with
             );
             doEventReward();
           } else {
-            globalScene.unshiftPhase(new ModifierRewardPhase(modifierTypes.BERRY_POUCH));
+            globalScene.phaseManager.unshiftPhase(new ModifierRewardPhase(modifierTypes.BERRY_POUCH));
             doEventReward();
           }
         }
@@ -372,7 +372,7 @@ export const DelibirdyEncounter: MysteryEncounter = MysteryEncounterBuilder.with
           );
           doEventReward();
         } else {
-          globalScene.unshiftPhase(new ModifierRewardPhase(modifierTypes.HEALING_CHARM));
+          globalScene.phaseManager.unshiftPhase(new ModifierRewardPhase(modifierTypes.HEALING_CHARM));
           doEventReward();
         }
 

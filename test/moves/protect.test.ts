@@ -1,11 +1,11 @@
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import GameManager from "#test/testUtils/gameManager";
-import { Species } from "#enums/species";
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
+import { SpeciesId } from "#enums/species-id";
+import { AbilityId } from "#enums/ability-id";
+import { MoveId } from "#enums/move-id";
 import { Stat } from "#enums/stat";
-import { allMoves } from "#app/data/moves/move";
+import { allMoves } from "#app/data/data-lists";
 import { ArenaTagSide, ArenaTrapTag } from "#app/data/arena-tag";
 import { BattlerIndex } from "#app/battle";
 import { MoveResult } from "#app/field/pokemon";
@@ -29,22 +29,22 @@ describe("Moves - Protect", () => {
 
     game.override.battleStyle("single");
 
-    game.override.moveset([Moves.PROTECT]);
-    game.override.enemySpecies(Species.SNORLAX);
+    game.override.moveset([MoveId.PROTECT]);
+    game.override.enemySpecies(SpeciesId.SNORLAX);
 
-    game.override.enemyAbility(Abilities.INSOMNIA);
-    game.override.enemyMoveset([Moves.TACKLE]);
+    game.override.enemyAbility(AbilityId.INSOMNIA);
+    game.override.enemyMoveset([MoveId.TACKLE]);
 
     game.override.startingLevel(100);
     game.override.enemyLevel(100);
   });
 
   test("should protect the user from attacks", async () => {
-    await game.classicMode.startBattle([Species.CHARIZARD]);
+    await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
     const leadPokemon = game.scene.getPlayerPokemon()!;
 
-    game.move.select(Moves.PROTECT);
+    game.move.select(MoveId.PROTECT);
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
@@ -52,14 +52,14 @@ describe("Moves - Protect", () => {
   });
 
   test("should prevent secondary effects from the opponent's attack", async () => {
-    game.override.enemyMoveset([Moves.CEASELESS_EDGE]);
-    vi.spyOn(allMoves[Moves.CEASELESS_EDGE], "accuracy", "get").mockReturnValue(100);
+    game.override.enemyMoveset([MoveId.CEASELESS_EDGE]);
+    vi.spyOn(allMoves[MoveId.CEASELESS_EDGE], "accuracy", "get").mockReturnValue(100);
 
-    await game.classicMode.startBattle([Species.CHARIZARD]);
+    await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
     const leadPokemon = game.scene.getPlayerPokemon()!;
 
-    game.move.select(Moves.PROTECT);
+    game.move.select(MoveId.PROTECT);
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
@@ -68,13 +68,13 @@ describe("Moves - Protect", () => {
   });
 
   test("should protect the user from status moves", async () => {
-    game.override.enemyMoveset([Moves.CHARM]);
+    game.override.enemyMoveset([MoveId.CHARM]);
 
-    await game.classicMode.startBattle([Species.CHARIZARD]);
+    await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
     const leadPokemon = game.scene.getPlayerPokemon()!;
 
-    game.move.select(Moves.PROTECT);
+    game.move.select(MoveId.PROTECT);
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
@@ -82,14 +82,14 @@ describe("Moves - Protect", () => {
   });
 
   test("should stop subsequent hits of a multi-hit move", async () => {
-    game.override.enemyMoveset([Moves.TACHYON_CUTTER]);
+    game.override.enemyMoveset([MoveId.TACHYON_CUTTER]);
 
-    await game.classicMode.startBattle([Species.CHARIZARD]);
+    await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
     const leadPokemon = game.scene.getPlayerPokemon()!;
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.PROTECT);
+    game.move.select(MoveId.PROTECT);
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
@@ -98,14 +98,14 @@ describe("Moves - Protect", () => {
   });
 
   test("should fail if the user is the last to move in the turn", async () => {
-    game.override.enemyMoveset([Moves.PROTECT]);
+    game.override.enemyMoveset([MoveId.PROTECT]);
 
-    await game.classicMode.startBattle([Species.CHARIZARD]);
+    await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
     const leadPokemon = game.scene.getPlayerPokemon()!;
     const enemyPokemon = game.scene.getEnemyPokemon()!;
 
-    game.move.select(Moves.PROTECT);
+    game.move.select(MoveId.PROTECT);
 
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
 

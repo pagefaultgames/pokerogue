@@ -6,7 +6,7 @@ import {
 } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species-id";
 import { globalScene } from "#app/global-scene";
 import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
@@ -50,7 +50,7 @@ export const AnOfferYouCantRefuseEncounter: MysteryEncounter = MysteryEncounterB
   .withScenePartySizeRequirement(2, 6, true) // Must have at least 2 pokemon in party
   .withIntroSpriteConfigs([
     {
-      spriteKey: Species.LIEPARD.toString(),
+      spriteKey: SpeciesId.LIEPARD.toString(),
       fileRoot: "pokemon",
       hasShadow: true,
       repeat: true,
@@ -112,7 +112,7 @@ export const AnOfferYouCantRefuseEncounter: MysteryEncounter = MysteryEncounterB
 
     const shinyCharm = generateModifierType(modifierTypes.SHINY_CHARM);
     encounter.setDialogueToken("itemName", shinyCharm?.name ?? i18next.t("modifierType:ModifierType.SHINY_CHARM.name"));
-    encounter.setDialogueToken("liepardName", getPokemonSpecies(Species.LIEPARD).getName());
+    encounter.setDialogueToken("liepardName", getPokemonSpecies(SpeciesId.LIEPARD).getName());
 
     return true;
   })
@@ -137,7 +137,7 @@ export const AnOfferYouCantRefuseEncounter: MysteryEncounter = MysteryEncounterB
       })
       .withOptionPhase(async () => {
         // Give the player a Shiny Charm
-        globalScene.unshiftPhase(new ModifierRewardPhase(modifierTypes.SHINY_CHARM));
+        globalScene.phaseManager.unshiftPhase(new ModifierRewardPhase(modifierTypes.SHINY_CHARM));
         leaveEncounterWithoutBattle(true);
       })
       .build(),
@@ -167,7 +167,7 @@ export const AnOfferYouCantRefuseEncounter: MysteryEncounter = MysteryEncounterB
         // Update money and remove pokemon from party
         updatePlayerMoney(encounter.misc.price);
 
-        setEncounterExp(encounter.options[1].primaryPokemon!.id, getPokemonSpecies(Species.LIEPARD).baseExp, true);
+        setEncounterExp(encounter.options[1].primaryPokemon!.id, getPokemonSpecies(SpeciesId.LIEPARD).baseExp, true);
 
         leaveEncounterWithoutBattle(true);
       })

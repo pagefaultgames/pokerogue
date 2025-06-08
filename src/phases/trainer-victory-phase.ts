@@ -9,21 +9,24 @@ import { ModifierRewardPhase } from "./modifier-reward-phase";
 import { MoneyRewardPhase } from "./money-reward-phase";
 import { TrainerSlot } from "#enums/trainer-slot";
 import { globalScene } from "#app/global-scene";
-import { Biome } from "#app/enums/biome";
+import { BiomeId } from "#enums/biome-id";
 import { achvs } from "#app/system/achv";
 import { timedEventManager } from "#app/global-event-manager";
 
 export class TrainerVictoryPhase extends BattlePhase {
+  public readonly phaseName = "TrainerVictoryPhase";
   start() {
     globalScene.disableMenu = true;
 
     globalScene.playBgm(globalScene.currentBattle.trainer?.config.victoryBgm);
 
-    globalScene.unshiftPhase(new MoneyRewardPhase(globalScene.currentBattle.trainer?.config.moneyMultiplier!)); // TODO: is this bang correct?
+    globalScene.phaseManager.unshiftPhase(
+      new MoneyRewardPhase(globalScene.currentBattle.trainer?.config.moneyMultiplier!),
+    ); // TODO: is this bang correct?
 
     const modifierRewardFuncs = globalScene.currentBattle.trainer?.config.modifierRewardFuncs!; // TODO: is this bang correct?
     for (const modifierRewardFunc of modifierRewardFuncs) {
-      globalScene.unshiftPhase(new ModifierRewardPhase(modifierRewardFunc));
+      globalScene.phaseManager.unshiftPhase(new ModifierRewardPhase(modifierRewardFunc));
     }
 
     const trainerType = globalScene.currentBattle.trainer?.config.trainerType!; // TODO: is this bang correct?
@@ -34,7 +37,7 @@ export class TrainerVictoryPhase extends BattlePhase {
         globalScene.currentBattle.trainer?.config.isBoss
       ) {
         if (timedEventManager.getUpgradeUnlockedVouchers()) {
-          globalScene.unshiftPhase(
+          globalScene.phaseManager.unshiftPhase(
             new ModifierRewardPhase(
               [
                 modifierTypes.VOUCHER_PLUS,
@@ -45,7 +48,7 @@ export class TrainerVictoryPhase extends BattlePhase {
             ),
           );
         } else {
-          globalScene.unshiftPhase(
+          globalScene.phaseManager.unshiftPhase(
             new ModifierRewardPhase(
               [modifierTypes.VOUCHER, modifierTypes.VOUCHER, modifierTypes.VOUCHER_PLUS, modifierTypes.VOUCHER_PREMIUM][
                 vouchers[TrainerType[trainerType]].voucherType
@@ -57,7 +60,7 @@ export class TrainerVictoryPhase extends BattlePhase {
     }
     // Breeders in Space achievement
     if (
-      globalScene.arena.biomeType === Biome.SPACE &&
+      globalScene.arena.biomeType === BiomeId.SPACE &&
       (trainerType === TrainerType.BREEDER || trainerType === TrainerType.EXPERT_POKEMON_BREEDER)
     ) {
       globalScene.validateAchv(achvs.BREEDERS_IN_SPACE);
