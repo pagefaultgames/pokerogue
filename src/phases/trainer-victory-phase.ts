@@ -5,8 +5,6 @@ import { vouchers } from "#app/system/voucher";
 import i18next from "i18next";
 import { randSeedItem } from "#app/utils/common";
 import { BattlePhase } from "./battle-phase";
-import { ModifierRewardPhase } from "./modifier-reward-phase";
-import { MoneyRewardPhase } from "./money-reward-phase";
 import { TrainerSlot } from "#enums/trainer-slot";
 import { globalScene } from "#app/global-scene";
 import { BiomeId } from "#enums/biome-id";
@@ -20,11 +18,11 @@ export class TrainerVictoryPhase extends BattlePhase {
 
     globalScene.playBgm(globalScene.currentBattle.trainer?.config.victoryBgm);
 
-    globalScene.unshiftPhase(new MoneyRewardPhase(globalScene.currentBattle.trainer?.config.moneyMultiplier!)); // TODO: is this bang correct?
+    globalScene.phaseManager.unshiftNew("MoneyRewardPhase", globalScene.currentBattle.trainer?.config.moneyMultiplier!); // TODO: is this bang correct?
 
     const modifierRewardFuncs = globalScene.currentBattle.trainer?.config.modifierRewardFuncs!; // TODO: is this bang correct?
     for (const modifierRewardFunc of modifierRewardFuncs) {
-      globalScene.unshiftPhase(new ModifierRewardPhase(modifierRewardFunc));
+      globalScene.phaseManager.unshiftNew("ModifierRewardPhase", modifierRewardFunc);
     }
 
     const trainerType = globalScene.currentBattle.trainer?.config.trainerType!; // TODO: is this bang correct?
@@ -35,23 +33,21 @@ export class TrainerVictoryPhase extends BattlePhase {
         globalScene.currentBattle.trainer?.config.isBoss
       ) {
         if (timedEventManager.getUpgradeUnlockedVouchers()) {
-          globalScene.unshiftPhase(
-            new ModifierRewardPhase(
-              [
-                modifierTypes.VOUCHER_PLUS,
-                modifierTypes.VOUCHER_PLUS,
-                modifierTypes.VOUCHER_PLUS,
-                modifierTypes.VOUCHER_PREMIUM,
-              ][vouchers[TrainerType[trainerType]].voucherType],
-            ),
+          globalScene.phaseManager.unshiftNew(
+            "ModifierRewardPhase",
+            [
+              modifierTypes.VOUCHER_PLUS,
+              modifierTypes.VOUCHER_PLUS,
+              modifierTypes.VOUCHER_PLUS,
+              modifierTypes.VOUCHER_PREMIUM,
+            ][vouchers[TrainerType[trainerType]].voucherType],
           );
         } else {
-          globalScene.unshiftPhase(
-            new ModifierRewardPhase(
-              [modifierTypes.VOUCHER, modifierTypes.VOUCHER, modifierTypes.VOUCHER_PLUS, modifierTypes.VOUCHER_PREMIUM][
-                vouchers[TrainerType[trainerType]].voucherType
-              ],
-            ),
+          globalScene.phaseManager.unshiftNew(
+            "ModifierRewardPhase",
+            [modifierTypes.VOUCHER, modifierTypes.VOUCHER, modifierTypes.VOUCHER_PLUS, modifierTypes.VOUCHER_PREMIUM][
+              vouchers[TrainerType[trainerType]].voucherType
+            ],
           );
         }
       }
