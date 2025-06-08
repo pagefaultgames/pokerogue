@@ -123,11 +123,10 @@ export class SelectModifierPhase extends BattlePhase {
                 return false;
               }
               globalScene.reroll = true;
-              globalScene.phaseManager.unshiftPhase(
-                new SelectModifierPhase(
-                  this.rerollCount + 1,
-                  this.typeOptions.map(o => o.type?.tier).filter(t => t !== undefined) as ModifierTier[],
-                ),
+              globalScene.phaseManager.unshiftNew(
+                "SelectModifierPhase",
+                this.rerollCount + 1,
+                this.typeOptions.map(o => o.type?.tier).filter(t => t !== undefined) as ModifierTier[],
               );
               globalScene.ui.clearText();
               globalScene.ui.setMode(UiMode.MESSAGE).then(() => super.end());
@@ -419,7 +418,8 @@ export class SelectModifierPhase extends BattlePhase {
   }
 
   copy(): SelectModifierPhase {
-    return new SelectModifierPhase(
+    return globalScene.phaseManager.create(
+      "SelectModifierPhase",
       this.rerollCount,
       this.modifierTiers,
       {

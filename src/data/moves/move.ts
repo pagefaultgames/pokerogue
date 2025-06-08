@@ -1890,8 +1890,8 @@ export class HealAttr extends MoveEffectAttr {
    * This heals the target and shows the appropriate message.
    */
   addHealPhase(target: Pokemon, healRatio: number) {
-    globalScene.phaseManager.unshiftPhase(new PokemonHealPhase(target.getBattlerIndex(),
-      toDmgValue(target.getMaxHp() * healRatio), i18next.t("moveTriggers:healHp", { pokemonName: getPokemonNameWithAffix(target) }), true, !this.showAnim));
+    globalScene.phaseManager.unshiftNew("PokemonHealPhase", target.getBattlerIndex(),
+      toDmgValue(target.getMaxHp() * healRatio), i18next.t("moveTriggers:healHp", { pokemonName: getPokemonNameWithAffix(target) }), true, !this.showAnim);
   }
 
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
@@ -2021,8 +2021,10 @@ export class SacrificialFullRestoreAttr extends SacrificialAttr {
     const party = user.isPlayer() ? globalScene.getPlayerParty() : globalScene.getEnemyParty();
     const maxPartyMemberHp = party.map(p => p.getMaxHp()).reduce((maxHp: number, hp: number) => Math.max(hp, maxHp), 0);
 
-    globalScene.phaseManager.pushPhase(
-      new PokemonHealPhase(
+    const pm = globalScene.phaseManager;
+
+    pm.pushPhase(
+      pm.create("PokemonHealPhase",
         user.getBattlerIndex(),
         maxPartyMemberHp,
         i18next.t(this.moveMessage, { pokemonName: getPokemonNameWithAffix(user) }),
@@ -2233,7 +2235,7 @@ export class HitHealAttr extends MoveEffectAttr {
         message = "";
       }
     }
-    globalScene.phaseManager.unshiftPhase(new PokemonHealPhase(user.getBattlerIndex(), healAmount, message, false, true));
+    globalScene.phaseManager.unshiftNew("PokemonHealPhase", user.getBattlerIndex(), healAmount, message, false, true);
     return true;
   }
 
@@ -3067,7 +3069,7 @@ export class DelayedAttackAttr extends OverrideMoveEffectAttr {
 
     if (!virtual) {
       overridden.value = true;
-      globalScene.phaseManager.unshiftPhase(new MoveAnimPhase(new MoveChargeAnim(this.chargeAnim, move.id, user)));
+      globalScene.phaseManager.unshiftNew("MoveAnimPhase", new MoveChargeAnim(this.chargeAnim, move.id, user));
       globalScene.phaseManager.queueMessage(this.chargeText.replace("{TARGET}", getPokemonNameWithAffix(target)).replace("{USER}", getPokemonNameWithAffix(user)));
       user.pushMoveHistory({ move: move.id, targets: [ target.getBattlerIndex() ], result: MoveResult.OTHER });
       const side = target.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
@@ -3125,7 +3127,7 @@ export class AwaitCombinedPledgeAttr extends OverrideMoveEffectAttr {
         const allyMovePhaseIndex = globalScene.phaseManager.phaseQueue.indexOf(allyMovePhase);
         const firstMovePhaseIndex = globalScene.phaseManager.phaseQueue.findIndex((phase) => phase.is("MovePhase"));
         if (allyMovePhaseIndex !== firstMovePhaseIndex) {
-          globalScene.phaseManager.prependToPhase(globalScene.phaseManager.phaseQueue.splice(allyMovePhaseIndex, 1)[0], MovePhase);
+          globalScene.phaseManager.prependToPhase(globalScene.phaseManager.phaseQueue.splice(allyMovePhaseIndex, 1)[0], "MovePhase");
         }
 
         overridden.value = true;
@@ -3207,7 +3209,7 @@ export class StatStageChangeAttr extends MoveEffectAttr {
     const moveChance = this.getMoveChance(user, target, move, this.selfTarget, true);
     if (moveChance < 0 || moveChance === 100 || user.randBattleSeedInt(100) < moveChance) {
       const stages = this.getLevels(user);
-      globalScene.phaseManager.unshiftPhase(new StatStageChangePhase((this.selfTarget ? user : target).getBattlerIndex(), this.selfTarget, this.stats, stages, this.showMessage));
+      globalScene.phaseManager.unshiftNew("StatStageChangePhase", (this.selfTarget ? user : target).getBattlerIndex(), this.selfTarget, this.stats, stages, this.showMessage);
       return true;
     }
 
@@ -3432,7 +3434,7 @@ export class AcupressureStatStageChangeAttr extends MoveEffectAttr {
     const randStats = BATTLE_STATS.filter((s) => target.getStatStage(s) < 6);
     if (randStats.length > 0) {
       const boostStat = [ randStats[user.randBattleSeedInt(randStats.length)] ];
-      globalScene.phaseManager.unshiftPhase(new StatStageChangePhase(target.getBattlerIndex(), this.selfTarget, boostStat, 2));
+      globalScene.phaseManager.unshiftNew("StatStageChangePhase", target.getBattlerIndex(), this.selfTarget, boostStat, 2);
       return true;
     }
     return false;
@@ -3510,7 +3512,7 @@ export class OrderUpStatBoostAttr extends MoveEffectAttr {
         break;
     }
 
-    globalScene.phaseManager.unshiftPhase(new StatStageChangePhase(user.getBattlerIndex(), this.selfTarget, [ increasedStat ], 1));
+    globalScene.phaseManager.unshiftNew("StatStageChangePhase", user.getBattlerIndex(), this.selfTarget, [ increasedStat ], 1);
     return true;
   }
 }
@@ -4227,8 +4229,8 @@ export class PresentPowerAttr extends VariablePowerAttr {
       // If this move is multi-hit, disable all other hits
       user.turnData.hitCount = 1;
       user.turnData.hitsLeft = 1;
-      globalScene.phaseManager.unshiftPhase(new PokemonHealPhase(target.getBattlerIndex(),
-        toDmgValue(target.getMaxHp() / 4), i18next.t("moveTriggers:regainedHealth", { pokemonName: getPokemonNameWithAffix(target) }), true));
+      globalScene.phaseManager.unshiftNew("PokemonHealPhase", target.getBattlerIndex(),
+        toDmgValue(target.getMaxHp() / 4), i18next.t("moveTriggers:regainedHealth", { pokemonName: getPokemonNameWithAffix(target) }), true);
     }
 
     return true;
@@ -4488,7 +4490,7 @@ export class CueNextRoundAttr extends MoveEffectAttr {
     const nextRoundIndex = globalScene.phaseManager.phaseQueue.indexOf(nextRoundPhase);
     const nextMoveIndex = globalScene.phaseManager.phaseQueue.findIndex(phase => phase.is("MovePhase"));
     if (nextRoundIndex !== nextMoveIndex) {
-      globalScene.phaseManager.prependToPhase(globalScene.phaseManager.phaseQueue.splice(nextRoundIndex, 1)[0], MovePhase);
+      globalScene.phaseManager.prependToPhase(globalScene.phaseManager.phaseQueue.splice(nextRoundIndex, 1)[0], "MovePhase");
     }
 
     // Mark the corresponding Pokemon as having "joined the Round" (for doubling power later)
@@ -4546,7 +4548,7 @@ export class SpectralThiefAttr extends StatChangeBeforeDmgCalcAttr {
          */
         const availableToSteal = Math.min(statStageValueTarget, 6 - statStageValueUser);
 
-        globalScene.phaseManager.unshiftPhase(new StatStageChangePhase(user.getBattlerIndex(), this.selfTarget, [ s ], availableToSteal));
+        globalScene.phaseManager.unshiftNew("StatStageChangePhase", user.getBattlerIndex(), this.selfTarget, [ s ], availableToSteal);
         target.setStatStage(s, statStageValueTarget - availableToSteal);
       }
     }
@@ -5680,8 +5682,8 @@ export class CurseAttr extends MoveEffectAttr {
       target.addTag(BattlerTagType.CURSED, 0, move.id, user.id);
       return true;
     } else {
-      globalScene.phaseManager.unshiftPhase(new StatStageChangePhase(user.getBattlerIndex(), true, [ Stat.ATK, Stat.DEF ], 1));
-      globalScene.phaseManager.unshiftPhase(new StatStageChangePhase(user.getBattlerIndex(), true, [ Stat.SPD ], -1));
+      globalScene.phaseManager.unshiftNew("StatStageChangePhase", user.getBattlerIndex(), true, [ Stat.ATK, Stat.DEF ], 1);
+      globalScene.phaseManager.unshiftNew("StatStageChangePhase", user.getBattlerIndex(), true, [ Stat.SPD ], -1);
       return true;
     }
   }
@@ -6154,7 +6156,7 @@ export class RevivalBlessingAttr extends MoveEffectAttr {
   override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     // If user is player, checks if the user has fainted pokemon
     if (user.isPlayer()) {
-      globalScene.phaseManager.unshiftPhase(new RevivalBlessingPhase(user));
+      globalScene.phaseManager.unshiftNew("RevivalBlessingPhase", user);
       return true;
     } else if (user.isEnemy() && user.hasTrainer() && globalScene.getEnemyParty().findIndex((p) => p.isFainted() && !p.isBoss()) > -1) {
       // If used by an enemy trainer with at least one fainted non-boss Pokemon, this
@@ -6177,7 +6179,7 @@ export class RevivalBlessingAttr extends MoveEffectAttr {
           if (user.fieldPosition === FieldPosition.CENTER) {
             user.setFieldPosition(FieldPosition.LEFT);
           }
-          globalScene.phaseManager.unshiftPhase(new SwitchSummonPhase(SwitchType.SWITCH, allyPokemon.getFieldIndex(), slotIndex, false, false));
+          globalScene.phaseManager.unshiftNew("SwitchSummonPhase", SwitchType.SWITCH, allyPokemon.getFieldIndex(), slotIndex, false, false);
         }
       }
       return true;
@@ -6255,26 +6257,23 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
         if (this.switchType === SwitchType.FORCE_SWITCH) {
           switchOutTarget.leaveField(true);
           const slotIndex = eligibleNewIndices[user.randBattleSeedInt(eligibleNewIndices.length)];
-          globalScene.phaseManager.prependToPhase(
-            new SwitchSummonPhase(
-              this.switchType,
-              switchOutTarget.getFieldIndex(),
-              slotIndex,
-              false,
-              true
-            ),
-            MoveEndPhase
+          globalScene.phaseManager.prependNewToPhase(
+            "MoveEndPhase",
+            "SwitchSummonPhase",
+            this.switchType,
+            switchOutTarget.getFieldIndex(),
+            slotIndex,
+            false,
+            true
           );
         } else {
           switchOutTarget.leaveField(this.switchType === SwitchType.SWITCH);
-          globalScene.phaseManager.prependToPhase(
-            new SwitchPhase(
+          globalScene.phaseManager.prependNewToPhase("MoveEndPhase",
+            "SwitchPhase",
               this.switchType,
               switchOutTarget.getFieldIndex(),
               true,
               true
-            ),
-            MoveEndPhase
           );
           return true;
         }
@@ -6298,27 +6297,23 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
         if (this.switchType === SwitchType.FORCE_SWITCH) {
           switchOutTarget.leaveField(true);
           const slotIndex = eligibleNewIndices[user.randBattleSeedInt(eligibleNewIndices.length)];
-          globalScene.phaseManager.prependToPhase(
-            new SwitchSummonPhase(
+          globalScene.phaseManager.prependNewToPhase("MoveEndPhase",
+            "SwitchSummonPhase",
               this.switchType,
               switchOutTarget.getFieldIndex(),
               slotIndex,
               false,
               false
-            ),
-            MoveEndPhase
           );
         } else {
           switchOutTarget.leaveField(this.switchType === SwitchType.SWITCH);
-          globalScene.phaseManager.prependToPhase(
-            new SwitchSummonPhase(
-              this.switchType,
-              switchOutTarget.getFieldIndex(),
-              (globalScene.currentBattle.trainer ? globalScene.currentBattle.trainer.getNextSummonIndex((switchOutTarget as EnemyPokemon).trainerSlot) : 0),
-              false,
-              false
-            ),
-            MoveEndPhase
+          globalScene.phaseManager.prependNewToPhase("MoveEndPhase",
+            "SwitchSummonPhase",
+            this.switchType,
+            switchOutTarget.getFieldIndex(),
+            (globalScene.currentBattle.trainer ? globalScene.currentBattle.trainer.getNextSummonIndex((switchOutTarget as EnemyPokemon).trainerSlot) : 0),
+            false,
+            false
           );
         }
       }
@@ -6351,13 +6346,13 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
       globalScene.clearEnemyHeldItemModifiers(switchOutTarget);
 
       if (!allyPokemon?.isActive(true) && switchOutTarget.hp) {
-          globalScene.phaseManager.pushPhase(new BattleEndPhase(false));
+          globalScene.phaseManager.pushNew("BattleEndPhase", false);
 
           if (globalScene.gameMode.hasRandomBiomes || globalScene.isNewBiome()) {
-            globalScene.phaseManager.pushPhase(new SelectBiomePhase());
+            globalScene.phaseManager.pushNew("SelectBiomePhase");
           }
 
-          globalScene.phaseManager.pushPhase(new NewBattlePhase());
+          globalScene.phaseManager.pushNew("NewBattlePhase");
       }
     }
 
@@ -6733,8 +6728,8 @@ class CallMoveAttr extends OverrideMoveEffectAttr {
       ? moveTargets.targets
       : [ this.hasTarget ? target.getBattlerIndex() : moveTargets.targets[user.randBattleSeedInt(moveTargets.targets.length)] ]; // account for Mirror Move having a target already
     user.getMoveQueue().push({ move: move.id, targets: targets, virtual: true, ignorePP: true });
-    globalScene.phaseManager.unshiftPhase(new LoadMoveAnimPhase(move.id));
-    globalScene.phaseManager.unshiftPhase(new MovePhase(user, targets, new PokemonMove(move.id, 0, 0, true), true, true));
+    globalScene.phaseManager.unshiftNew("LoadMoveAnimPhase", move.id);
+    globalScene.phaseManager.unshiftNew("MovePhase", user, targets, new PokemonMove(move.id, 0, 0, true), true, true);
     return true;
   }
 }
@@ -6962,8 +6957,8 @@ export class NaturePowerAttr extends OverrideMoveEffectAttr {
     }
 
     user.getMoveQueue().push({ move: moveId, targets: [ target.getBattlerIndex() ], ignorePP: true });
-    globalScene.phaseManager.unshiftPhase(new LoadMoveAnimPhase(moveId));
-    globalScene.phaseManager.unshiftPhase(new MovePhase(user, [ target.getBattlerIndex() ], new PokemonMove(moveId, 0, 0, true), true));
+    globalScene.phaseManager.unshiftNew("LoadMoveAnimPhase", moveId);
+    globalScene.phaseManager.unshiftNew("MovePhase", user, [ target.getBattlerIndex() ], new PokemonMove(moveId, 0, 0, true), true);
     return true;
   }
 }
@@ -7050,7 +7045,7 @@ export class RepeatMoveAttr extends MoveEffectAttr {
     }));
     target.getMoveQueue().unshift({ move: lastMove.move, targets: moveTargets, ignorePP: false });
     target.turnData.extraTurns++;
-    globalScene.phaseManager.appendToPhase(new MovePhase(target, moveTargets, movesetMove), MoveEndPhase);
+    globalScene.phaseManager.appendNewToPhase("MoveEndPhase", "MovePhase", target, moveTargets, movesetMove);
     return true;
   }
 
@@ -7550,7 +7545,7 @@ export class TransformAttr extends MoveEffectAttr {
       return false;
     }
 
-    globalScene.phaseManager.unshiftPhase(new PokemonTransformPhase(user.getBattlerIndex(), target.getBattlerIndex()));
+    globalScene.phaseManager.unshiftNew("PokemonTransformPhase", user.getBattlerIndex(), target.getBattlerIndex());
 
     globalScene.phaseManager.queueMessage(i18next.t("moveTriggers:transformedIntoTarget", { pokemonName: getPokemonNameWithAffix(user), targetName: getPokemonNameWithAffix(target) }));
 
@@ -7852,7 +7847,7 @@ export class AfterYouAttr extends MoveEffectAttr {
     //Will find next acting phase of the targeted pokémon, delete it and queue it next on successful delete.
     const nextAttackPhase = globalScene.phaseManager.findPhase<MovePhase>((phase) => phase.pokemon === target);
     if (nextAttackPhase && globalScene.phaseManager.tryRemovePhase((phase: MovePhase) => phase.pokemon === target)) {
-      globalScene.phaseManager.prependToPhase(new MovePhase(target, [ ...nextAttackPhase.targets ], nextAttackPhase.move), MovePhase);
+      globalScene.phaseManager.prependNewToPhase("MovePhase", "MovePhase", target, [ ...nextAttackPhase.targets ], nextAttackPhase.move);
     }
 
     return true;
@@ -7889,7 +7884,7 @@ export class ForceLastAttr extends MoveEffectAttr {
         globalScene.phaseManager.phaseQueue.splice(
           globalScene.phaseManager.phaseQueue.indexOf(prependPhase),
           0,
-          new MovePhase(target, [ ...targetMovePhase.targets ], targetMovePhase.move, false, false, false, true)
+          globalScene.phaseManager.create("MovePhase", target, [ ...targetMovePhase.targets ], targetMovePhase.move, false, false, false, true)
         );
       }
     }

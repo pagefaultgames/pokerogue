@@ -26,10 +26,6 @@ import { AbilityId } from "#enums/ability-id";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
-import { MoveEffectPhase } from "#app/phases/move-effect-phase";
-import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
-import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
-import { CommonAnimPhase } from "#app/phases/common-anim-phase";
 
 export enum ArenaTagSide {
   BOTH,
@@ -568,9 +564,7 @@ class WishTag extends ArenaTag {
     const target = globalScene.getField()[this.battlerIndex];
     if (target?.isActive(true)) {
       globalScene.phaseManager.queueMessage(this.triggerMessage);
-      globalScene.phaseManager.unshiftPhase(
-        new PokemonHealPhase(target.getBattlerIndex(), this.healHp, null, true, false),
-      );
+      globalScene.phaseManager.unshiftNew("PokemonHealPhase", target.getBattlerIndex(), this.healHp, null, true, false);
     }
   }
 }
@@ -893,8 +887,13 @@ export class DelayedAttackTag extends ArenaTag {
     const ret = super.lapse(arena);
 
     if (!ret) {
-      globalScene.phaseManager.unshiftPhase(
-        new MoveEffectPhase(this.sourceId!, [this.targetIndex], allMoves[this.sourceMove!], false, true),
+      globalScene.phaseManager.unshiftNew(
+        "MoveEffectPhase",
+        this.sourceId!,
+        [this.targetIndex],
+        allMoves[this.sourceMove!],
+        false,
+        true,
       ); // TODO: are those bangs correct?
     }
 
@@ -1028,19 +1027,18 @@ class StickyWebTag extends ArenaTrapTag {
           }),
         );
         const stages = new NumberHolder(-1);
-        globalScene.phaseManager.unshiftPhase(
-          new StatStageChangePhase(
-            pokemon.getBattlerIndex(),
-            false,
-            [Stat.SPD],
-            stages.value,
-            true,
-            false,
-            true,
-            null,
-            false,
-            true,
-          ),
+        globalScene.phaseManager.unshiftNew(
+          "StatStageChangePhase",
+          pokemon.getBattlerIndex(),
+          false,
+          [Stat.SPD],
+          stages.value,
+          true,
+          false,
+          true,
+          null,
+          false,
+          true,
         );
         return true;
       }
@@ -1138,26 +1136,26 @@ class TailwindTag extends ArenaTag {
 
     const source = globalScene.getPokemonById(this.sourceId!); //TODO: this bang is questionable!
     const party = (source?.isPlayer() ? globalScene.getPlayerField() : globalScene.getEnemyField()) ?? [];
+    const phaseManager = globalScene.phaseManager;
 
     for (const pokemon of party) {
       // Apply the CHARGED tag to party members with the WIND_POWER ability
       if (pokemon.hasAbility(AbilityId.WIND_POWER) && !pokemon.getTag(BattlerTagType.CHARGED)) {
         pokemon.addTag(BattlerTagType.CHARGED);
-        globalScene.phaseManager.queueMessage(
+        phaseManager.queueMessage(
           i18next.t("abilityTriggers:windPowerCharged", {
             pokemonName: getPokemonNameWithAffix(pokemon),
             moveName: this.getMoveName(),
           }),
         );
       }
+
       // Raise attack by one stage if party member has WIND_RIDER ability
       // TODO: Ability displays should be handled by the ability
       if (pokemon.hasAbility(AbilityId.WIND_RIDER)) {
-        globalScene.phaseManager.queueAbilityDisplay(pokemon, false, true);
-        globalScene.phaseManager.unshiftPhase(
-          new StatStageChangePhase(pokemon.getBattlerIndex(), true, [Stat.ATK], 1, true),
-        );
-        globalScene.phaseManager.queueAbilityDisplay(pokemon, false, false);
+        phaseManager.queueAbilityDisplay(pokemon, false, true);
+        phaseManager.unshiftNew("StatStageChangePhase", pokemon.getBattlerIndex(), true, [Stat.ATK], 1, true);
+        phaseManager.queueAbilityDisplay(pokemon, false, false);
       }
     }
   }
@@ -1319,8 +1317,11 @@ class FireGrassPledgeTag extends ArenaTag {
           }),
         );
         // TODO: Replace this with a proper animation
-        globalScene.phaseManager.unshiftPhase(
-          new CommonAnimPhase(pokemon.getBattlerIndex(), pokemon.getBattlerIndex(), CommonAnim.MAGMA_STORM),
+        globalScene.phaseManager.unshiftNew(
+          "CommonAnimPhase",
+          pokemon.getBattlerIndex(),
+          pokemon.getBattlerIndex(),
+          CommonAnim.MAGMA_STORM,
         );
         pokemon.damageAndUpdate(toDmgValue(pokemon.getMaxHp() / 8), { result: HitResult.INDIRECT });
       });

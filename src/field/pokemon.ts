@@ -230,13 +230,6 @@ import { BiomeId } from "#enums/biome-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { DamageAnimPhase } from "#app/phases/damage-anim-phase";
-import { FaintPhase } from "#app/phases/faint-phase";
-import { LearnMovePhase } from "#app/phases/learn-move-phase";
-import { MoveEndPhase } from "#app/phases/move-end-phase";
-import { ObtainStatusEffectPhase } from "#app/phases/obtain-status-effect-phase";
-import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
-import { SwitchSummonPhase } from "#app/phases/switch-summon-phase";
 import { Challenges } from "#enums/challenges";
 import { PokemonAnimType } from "#enums/pokemon-anim-type";
 import { PLAYER_PARTY_MAX_SIZE } from "#app/constants";
@@ -256,7 +249,6 @@ import { doShinySparkleAnim } from "#app/field/anims";
 import { MoveFlags } from "#enums/MoveFlags";
 import { timedEventManager } from "#app/global-event-manager";
 import { loadMoveAnimations } from "#app/sprites/pokemon-asset-loader";
-import { ResetStatusPhase } from "#app/phases/reset-status-phase";
 
 export enum LearnMoveSituation {
   MISC,
@@ -4013,7 +4005,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
        * Once the MoveEffectPhase is over (and calls it's .end() function, shiftPhase() will reset the PhaseQueueSplice via clearPhaseQueueSplice() )
        */
       globalScene.phaseManager.setPhaseQueueSplice();
-      globalScene.phaseManager.unshiftPhase(new FaintPhase(this.getBattlerIndex(), preventEndure));
+      globalScene.phaseManager.unshiftNew("FaintPhase", this.getBattlerIndex(), preventEndure);
       this.destroySubstitute();
       this.lapseTag(BattlerTagType.COMMANDED);
     }
@@ -4049,7 +4041,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     } = {},
   ): number {
     const isIndirectDamage = [HitResult.INDIRECT, HitResult.INDIRECT_KO].includes(result);
-    const damagePhase = new DamageAnimPhase(this.getBattlerIndex(), damage, result as DamageResult, isCritical);
+    const damagePhase = globalScene.phaseManager.create(
+      "DamageAnimPhase",
+      this.getBattlerIndex(),
+      damage,
+      result as DamageResult,
+      isCritical,
+    );
     globalScene.phaseManager.unshiftPhase(damagePhase);
     if (this.switchOutStatus && source) {
       damage = 0;
@@ -4778,8 +4776,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       if (overrideStatus) {
         this.resetStatus(false);
       }
-      globalScene.phaseManager.unshiftPhase(
-        new ObtainStatusEffectPhase(this.getBattlerIndex(), effect, turnsRemaining, sourceText, sourcePokemon),
+      globalScene.phaseManager.unshiftNew(
+        "ObtainStatusEffectPhase",
+        this.getBattlerIndex(),
+        effect,
+        turnsRemaining,
+        sourceText,
+        sourcePokemon,
       );
       return true;
     }
@@ -4828,7 +4831,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
 
     if (asPhase) {
-      globalScene.phaseManager.unshiftPhase(new ResetStatusPhase(this, confusion, reloadAssets));
+      globalScene.phaseManager.unshiftNew("ResetStatusPhase", this, confusion, reloadAssets);
     } else {
       this.clearStatus(confusion, reloadAssets);
     }
@@ -5635,9 +5638,13 @@ export class PlayerPokemon extends Pokemon {
         this.getFieldIndex(),
         (slotIndex: number, _option: PartyOption) => {
           if (slotIndex >= globalScene.currentBattle.getBattlerCount() && slotIndex < 6) {
-            globalScene.phaseManager.prependToPhase(
-              new SwitchSummonPhase(switchType, this.getFieldIndex(), slotIndex, false),
-              MoveEndPhase,
+            globalScene.phaseManager.prependNewToPhase(
+              "MoveEndPhase",
+              "SwitchSummonPhase",
+              switchType,
+              this.getFieldIndex(),
+              slotIndex,
+              false,
             );
           }
           globalScene.ui.setMode(UiMode.MESSAGE).then(resolve);
@@ -6001,7 +6008,7 @@ export class PlayerPokemon extends Pokemon {
     pokemon
       .getMoveset(true)
       .map((m: PokemonMove) =>
-        globalScene.phaseManager.unshiftPhase(new LearnMovePhase(newPartyMemberIndex, m.getMove().id)),
+        globalScene.phaseManager.unshiftNew("LearnMovePhase", newPartyMemberIndex, m.getMove().id),
       );
     pokemon.destroy();
     this.updateFusionPalette();
@@ -6644,8 +6651,14 @@ export class EnemyPokemon extends Pokemon {
         stages++;
       }
 
-      globalScene.phaseManager.unshiftPhase(
-        new StatStageChangePhase(this.getBattlerIndex(), true, [boostedStat!], stages, true, true),
+      globalScene.phaseManager.unshiftNew(
+        "StatStageChangePhase",
+        this.getBattlerIndex(),
+        true,
+        [boostedStat!],
+        stages,
+        true,
+        true,
       );
       this.bossSegmentIndex--;
     }

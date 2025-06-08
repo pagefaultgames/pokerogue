@@ -3,7 +3,6 @@ import PartyUiHandler, { PartyOption, PartyUiMode } from "#app/ui/party-ui-handl
 import { UiMode } from "#enums/ui-mode";
 import { SwitchType } from "#enums/switch-type";
 import { BattlePhase } from "./battle-phase";
-import { SwitchSummonPhase } from "./switch-summon-phase";
 
 /**
  * Opens the party selector UI and transitions into a {@linkcode SwitchSummonPhase}
@@ -80,9 +79,7 @@ export class SwitchPhase extends BattlePhase {
             p => p.is("PostSummonPhase") && p.player && p.fieldIndex === this.fieldIndex,
           );
           const switchType = option === PartyOption.PASS_BATON ? SwitchType.BATON_PASS : this.switchType;
-          globalScene.phaseManager.unshiftPhase(
-            new SwitchSummonPhase(switchType, fieldIndex, slotIndex, this.doReturn),
-          );
+          globalScene.phaseManager.unshiftNew("SwitchSummonPhase", switchType, fieldIndex, slotIndex, this.doReturn);
         }
         globalScene.ui.setMode(UiMode.MESSAGE).then(() => super.end());
       },
