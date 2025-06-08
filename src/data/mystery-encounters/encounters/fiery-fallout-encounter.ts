@@ -243,7 +243,7 @@ export const FieryFalloutEncounter: MysteryEncounter = MysteryEncounterBuilder.w
           queueEncounterMessage(`${namespace}:option.2.target_burned`);
 
           // Also permanently change the burned Pokemon's ability to Heatproof
-          applyAbilityOverrideToPokemon(chosenPokemon, Abilities.HEATPROOF, false);
+          applyAbilityOverrideToPokemon(chosenPokemon, AbilityId.HEATPROOF, false);
         }
       }
 

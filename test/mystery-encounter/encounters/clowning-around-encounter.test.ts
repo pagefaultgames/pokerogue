@@ -246,14 +246,14 @@ describe("Clowning Around - Mystery Encounter", () => {
 
       const leadPokemon = scene.getPlayerParty()[0];
       // offer Prankster abiliy for winning the battle
-      const abilityToTrain = Abilities.PRANKSTER;
+      const abilityToTrain = AbilityId.PRANKSTER;
 
       game.onNextPrompt("PostMysteryEncounterPhase", UiMode.MESSAGE, () => {
         game.scene.ui.getHandler().processInput(Button.ACTION);
       });
 
       // Give fto the first Pokemon the Prankster ability
-      vi.spyOn(leadPokemon, "getAbility").mockReturnValue(allAbilities[Abilities.PRANKSTER]);
+      vi.spyOn(leadPokemon, "getAbility").mockReturnValue(allAbilities[AbilityId.PRANKSTER]);
 
       // Run to ability train option selection
       const optionSelectUiHandler = game.scene.ui.handlers[UiMode.OPTION_SELECT] as OptionSelectUiHandler;
@@ -284,7 +284,6 @@ describe("Clowning Around - Mystery Encounter", () => {
 
       // Stop next battle before it runs
       await game.phaseInterceptor.to(NewBattlePhase, false);
-      //game.override.ability(Abilities.PRANKSTER);
 
       expect(leadPokemon.getAbility().id).toBe(abilityToTrain);
     });
