@@ -18,8 +18,8 @@ export interface ITEM_STEAL_PARAMS {
 
 /**
  * Abstract class for held items that steal other Pokemon's items.
- * @see {@linkcode TurnHeldItemTransferModifier}
- * @see {@linkcode ContactHeldItemTransferChanceModifier}
+ * @see {@linkcode TurnEndItemStealHeldItem}
+ * @see {@linkcode ContactItemStealChanceHeldItem}
  */
 export abstract class ItemTransferHeldItem extends HeldItem {
   /**

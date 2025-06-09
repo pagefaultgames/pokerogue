@@ -1,7 +1,7 @@
 import { pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
 import type Pokemon from "#app/field/pokemon";
 import type { NumberHolder } from "#app/utils/common";
-import type { HeldItemId } from "#enums/held-item-id";
+import { HeldItemId } from "#enums/held-item-id";
 import type { SpeciesId } from "#enums/species-id";
 import type { Stat } from "#enums/stat";
 import { HeldItem, ITEM_EFFECT } from "../held-item";
@@ -112,6 +112,23 @@ export class EvolutionStatBoostHeldItem extends StatBoostHeldItem {
   }
 }
 
+export type SpeciesStatBoosterItemId =
+  | typeof HeldItemId.LIGHT_BALL
+  | typeof HeldItemId.THICK_CLUB
+  | typeof HeldItemId.METAL_POWDER
+  | typeof HeldItemId.QUICK_POWDER
+  | typeof HeldItemId.DEEP_SEA_SCALE
+  | typeof HeldItemId.DEEP_SEA_TOOTH;
+
+export const SPECIES_STAT_BOOSTER_ITEMS: SpeciesStatBoosterItemId[] = [
+  HeldItemId.LIGHT_BALL,
+  HeldItemId.THICK_CLUB,
+  HeldItemId.METAL_POWDER,
+  HeldItemId.QUICK_POWDER,
+  HeldItemId.DEEP_SEA_SCALE,
+  HeldItemId.DEEP_SEA_TOOTH,
+];
+
 /**
  * Modifier used for held items that Applies {@linkcode Stat} boost(s) using a
  * multiplier if the holder is of a specific {@linkcode SpeciesId}.
@@ -122,7 +139,13 @@ export class SpeciesStatBoostHeldItem extends StatBoostHeldItem {
   /** The species that the held item's stat boost(s) apply to */
   private species: SpeciesId[];
 
-  constructor(type: HeldItemId, maxStackCount = 1, stats: Stat[], multiplier: number, species: SpeciesId[]) {
+  constructor(
+    type: SpeciesStatBoosterItemId,
+    maxStackCount = 1,
+    stats: Stat[],
+    multiplier: number,
+    species: SpeciesId[],
+  ) {
     super(type, maxStackCount, stats, multiplier);
     this.species = species;
   }
