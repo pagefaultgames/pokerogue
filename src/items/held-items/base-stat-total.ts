@@ -63,7 +63,7 @@ export class BaseStatTotalHeldItem extends HeldItem {
    */
   apply(params: BASE_STAT_TOTAL_PARAMS): boolean {
     const pokemon = params.pokemon;
-    const itemData = pokemon.heldItemManager.heldItems[this.type].data;
+    const itemData = pokemon.heldItemManager.heldItems[this.type]?.data as BASE_STAT_TOTAL_DATA;
     if (!itemData) {
       return false;
     }

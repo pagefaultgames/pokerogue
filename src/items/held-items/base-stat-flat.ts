@@ -13,6 +13,7 @@ export interface BASE_STAT_FLAT_PARAMS {
 
 export interface BASE_STAT_FLAT_DATA {
   statModifier: number;
+  stats: Stat[];
 }
 
 /**
@@ -20,12 +21,10 @@ export interface BASE_STAT_FLAT_DATA {
  */
 export class BaseStatFlatHeldItem extends HeldItem {
   public effects: ITEM_EFFECT[] = [ITEM_EFFECT.BASE_STAT_FLAT];
-  private stats: Stat[];
   public isTransferable = false;
 
-  constructor(type: HeldItemId, maxStackCount = 1, stats: Stat[]) {
+  constructor(type: HeldItemId, maxStackCount = 1) {
     super(type, maxStackCount);
-    this.stats = stats;
   }
 
   get description(): string {
@@ -53,15 +52,16 @@ export class BaseStatFlatHeldItem extends HeldItem {
    */
   apply(params: BASE_STAT_FLAT_PARAMS): boolean {
     const pokemon = params.pokemon;
-    const itemData = pokemon.heldItemManager.heldItems[this.type].data;
+    const itemData = pokemon.heldItemManager.heldItems[this.type]?.data as BASE_STAT_FLAT_DATA;
     if (!itemData) {
       return false;
     }
     const statModifier = itemData.statModifier;
+    const stats = itemData.stats;
     const baseStats = params.baseStats;
     // Modifies the passed in baseStats[] array by a flat value, only if the stat is specified in this.stats
     baseStats.forEach((v, i) => {
-      if (this.stats.includes(i)) {
+      if (stats.includes(i)) {
         const newVal = Math.floor(v + statModifier);
         baseStats[i] = Math.min(Math.max(newVal, 1), 999999);
       }
