@@ -75,13 +75,16 @@ export const HeldItemId = {
   // Mini Black Hole
   MINI_BLACK_HOLE: 0x0801,
 
-  // Vitamins
+  // Stat boosting items
   HP_UP: 0x0901,
   PROTEIN: 0x0902,
   IRON: 0x0903,
   CALCIUM: 0x0904,
   ZINC: 0x0905,
   CARBOS: 0x0906,
+  SHUCKLE_JUICE: 0x0907,
+  OLD_GATEAU: 0x0908,
+  MACHO_BRACE: 0x0909,
 };
 
 export type HeldItemId = (typeof HeldItemId)[keyof typeof HeldItemId];

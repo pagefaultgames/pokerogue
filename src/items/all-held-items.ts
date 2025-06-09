@@ -17,6 +17,8 @@ import {
   BaseStatBoosterHeldItem,
   permanentStatToHeldItem,
 } from "./held-items/base-stat-booster";
+import { type BASE_STAT_FLAT_PARAMS, BaseStatFlatHeldItem } from "./held-items/base-stat-flat";
+import { type BASE_STAT_TOTAL_PARAMS, BaseStatTotalHeldItem } from "./held-items/base-stat-total";
 import { type BATON_PARAMS, BatonHeldItem } from "./held-items/baton";
 import { type BERRY_PARAMS, BerryHeldItem, berryTypeToHeldItem } from "./held-items/berry";
 import { type BYPASS_SPEED_CHANCE_PARAMS, BypassSpeedChanceHeldItem } from "./held-items/bypass-speed-chance";
@@ -27,6 +29,7 @@ import { type FIELD_EFFECT_PARAMS, FieldEffectHeldItem } from "./held-items/fiel
 import { type FLINCH_CHANCE_PARAMS, FlinchChanceHeldItem } from "./held-items/flinch-chance";
 import { type FRIENDSHIP_BOOST_PARAMS, FriendshipBoosterHeldItem } from "./held-items/friendship-booster";
 import { type HIT_HEAL_PARAMS, HitHealHeldItem } from "./held-items/hit-heal";
+import { type INCREMENTING_STAT_PARAMS, IncrementingStatHeldItem } from "./held-items/incrementing-stat";
 import { InstantReviveHeldItem, type INSTANT_REVIVE_PARAMS } from "./held-items/instant-revive";
 import {
   ContactItemStealChanceHeldItem,
@@ -139,6 +142,14 @@ export function initHeldItems() {
     const stat = Number(statKey) as PermanentStat;
     allHeldItems[heldItemType] = new BaseStatBoosterHeldItem(heldItemType, 10, stat);
   }
+
+  allHeldItems[HeldItemId.SHUCKLE_JUICE] = new BaseStatTotalHeldItem(HeldItemId.SHUCKLE_JUICE, 1);
+  allHeldItems[HeldItemId.OLD_GATEAU] = new BaseStatFlatHeldItem(HeldItemId.OLD_GATEAU, 1, [
+    Stat.HP,
+    Stat.ATK,
+    Stat.DEF,
+  ]);
+  allHeldItems[HeldItemId.MACHO_BRACE] = new IncrementingStatHeldItem(HeldItemId.MACHO_BRACE, 50);
 }
 
 type APPLY_HELD_ITEMS_PARAMS = {
@@ -165,6 +176,9 @@ type APPLY_HELD_ITEMS_PARAMS = {
   [ITEM_EFFECT.BATON]: BATON_PARAMS;
   [ITEM_EFFECT.CONTACT_ITEM_STEAL_CHANCE]: ITEM_STEAL_PARAMS;
   [ITEM_EFFECT.TURN_END_ITEM_STEAL]: ITEM_STEAL_PARAMS;
+  [ITEM_EFFECT.BASE_STAT_TOTAL]: BASE_STAT_TOTAL_PARAMS;
+  [ITEM_EFFECT.BASE_STAT_FLAT]: BASE_STAT_FLAT_PARAMS;
+  [ITEM_EFFECT.INCREMENTING_STAT]: INCREMENTING_STAT_PARAMS;
 };
 
 export function applyHeldItems<T extends ITEM_EFFECT>(effect: T, params: APPLY_HELD_ITEMS_PARAMS[T]) {

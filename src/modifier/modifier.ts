@@ -1,5 +1,4 @@
 import { FusionSpeciesFormEvolution, pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
-import { getBerryEffectFunc, getBerryPredicate } from "#app/data/berry";
 import { getLevelTotalExp } from "#app/data/exp";
 import { MAX_PER_TYPE_POKEBALLS } from "#app/data/pokeball";
 import { type FormChangeItem, SpeciesFormChangeItemTrigger } from "#app/data/pokemon-forms";
@@ -11,13 +10,19 @@ import Overrides from "#app/overrides";
 import { LearnMoveType } from "#app/phases/learn-move-phase";
 import type { VoucherType } from "#app/system/voucher";
 import { addTextObject, TextStyle } from "#app/ui/text";
-import { BooleanHolder, hslToHex, isNullOrUndefined, NumberHolder, randSeedFloat, toDmgValue } from "#app/utils/common";
+import {
+  type BooleanHolder,
+  hslToHex,
+  isNullOrUndefined,
+  NumberHolder,
+  randSeedFloat,
+  toDmgValue,
+} from "#app/utils/common";
 import { BattlerTagType } from "#enums/battler-tag-type";
-import { BerryType } from "#enums/berry-type";
 import type { Nature } from "#enums/nature";
 import type { PokeballType } from "#enums/pokeball";
 import { SpeciesId } from "#enums/species-id";
-import { type PermanentStat, type TempBattleStat, Stat, TEMP_BATTLE_STATS } from "#enums/stat";
+import { type TempBattleStat, Stat, TEMP_BATTLE_STATS } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import type { PokemonType } from "#enums/pokemon-type";
 import i18next from "i18next";
@@ -27,16 +32,13 @@ import {
   type FormChangeItemModifierType,
   type ModifierOverride,
   type ModifierType,
-  type PokemonBaseStatTotalModifierType,
   type TerastallizeModifierType,
   type TmModifierType,
   getModifierType,
   ModifierTypeGenerator,
   modifierTypes,
 } from "./modifier-type";
-import { Color, ShadowColor } from "#enums/color";
 import { FRIENDSHIP_GAIN_FROM_RARE_CANDY } from "#app/data/balance/starters";
-import { applyPostItemLostAbAttrs, PostItemLostAbAttr } from "#app/data/abilities/ability";
 import { globalScene } from "#app/global-scene";
 
 export type ModifierPredicate = (modifier: Modifier) => boolean;
@@ -643,382 +645,6 @@ export abstract class PokemonHeldItemModifier extends PersistentModifier {
   abstract getMaxHeldItemCount(pokemon?: Pokemon): number;
 }
 
-export abstract class LapsingPokemonHeldItemModifier extends PokemonHeldItemModifier {
-  protected battlesLeft: number;
-  public isTransferable = false;
-
-  constructor(type: ModifierType, pokemonId: number, battlesLeft?: number, stackCount?: number) {
-    super(type, pokemonId, stackCount);
-
-    this.battlesLeft = battlesLeft!; // TODO: is this bang correct?
-  }
-
-  /**
-   * Lapse the {@linkcode battlesLeft} counter (reduce it by 1)
-   * @param _args arguments passed (not used here)
-   * @returns `true` if {@linkcode battlesLeft} is not null
-   */
-  public lapse(..._args: unknown[]): boolean {
-    return !!--this.battlesLeft;
-  }
-
-  /**
-   * Retrieve the {@linkcode Modifier | Modifiers} icon as a {@linkcode Phaser.GameObjects.Container | Container}
-   * @param forSummary `true` if the icon is for the summary screen
-   * @returns the icon as a {@linkcode Phaser.GameObjects.Container | Container}
-   */
-  public getIcon(forSummary?: boolean): Phaser.GameObjects.Container {
-    const container = super.getIcon(forSummary);
-
-    if (this.getPokemon()?.isPlayer()) {
-      const battleCountText = addTextObject(27, 0, this.battlesLeft.toString(), TextStyle.PARTY, {
-        fontSize: "66px",
-        color: Color.PINK,
-      });
-      battleCountText.setShadow(0, 0);
-      battleCountText.setStroke(ShadowColor.RED, 16);
-      battleCountText.setOrigin(1, 0);
-      container.add(battleCountText);
-    }
-
-    return container;
-  }
-
-  getBattlesLeft(): number {
-    return this.battlesLeft;
-  }
-
-  getMaxStackCount(_forThreshold?: boolean): number {
-    return 1;
-  }
-}
-
-/**
- * Modifier used for held items, specifically vitamins like Carbos, Hp Up, etc., that
- * increase the value of a given {@linkcode PermanentStat}.
- * @extends PokemonHeldItemModifier
- * @see {@linkcode apply}
- */
-export class BaseStatModifier extends PokemonHeldItemModifier {
-  protected stat: PermanentStat;
-  public isTransferable = false;
-
-  constructor(type: ModifierType, pokemonId: number, stat: PermanentStat, stackCount?: number) {
-    super(type, pokemonId, stackCount);
-    this.stat = stat;
-  }
-
-  matchType(modifier: Modifier): boolean {
-    if (modifier instanceof BaseStatModifier) {
-      return (modifier as BaseStatModifier).stat === this.stat;
-    }
-    return false;
-  }
-
-  clone(): PersistentModifier {
-    return new BaseStatModifier(this.type, this.pokemonId, this.stat, this.stackCount);
-  }
-
-  getArgs(): any[] {
-    return super.getArgs().concat(this.stat);
-  }
-
-  /**
-   * Checks if {@linkcode BaseStatModifier} should be applied to the specified {@linkcode Pokemon}.
-   * @param _pokemon the {@linkcode Pokemon} to be modified
-   * @param baseStats the base stats of the {@linkcode Pokemon}
-   * @returns `true` if the {@linkcode Pokemon} should be modified
-   */
-  override shouldApply(_pokemon?: Pokemon, baseStats?: number[]): boolean {
-    return super.shouldApply(_pokemon, baseStats) && Array.isArray(baseStats);
-  }
-
-  /**
-   * Applies the {@linkcode BaseStatModifier} to the specified {@linkcode Pokemon}.
-   * @param _pokemon the {@linkcode Pokemon} to be modified
-   * @param baseStats the base stats of the {@linkcode Pokemon}
-   * @returns always `true`
-   */
-  override apply(_pokemon: Pokemon, baseStats: number[]): boolean {
-    baseStats[this.stat] = Math.floor(baseStats[this.stat] * (1 + this.getStackCount() * 0.1));
-    return true;
-  }
-
-  getScoreMultiplier(): number {
-    return 1.1;
-  }
-
-  getMaxHeldItemCount(pokemon: Pokemon): number {
-    return pokemon.ivs[this.stat];
-  }
-}
-
-export class EvoTrackerModifier extends PokemonHeldItemModifier {
-  protected species: SpeciesId;
-  protected required: number;
-  public isTransferable = false;
-
-  constructor(type: ModifierType, pokemonId: number, species: SpeciesId, required: number, stackCount?: number) {
-    super(type, pokemonId, stackCount);
-    this.species = species;
-    this.required = required;
-  }
-
-  matchType(modifier: Modifier): boolean {
-    return (
-      modifier instanceof EvoTrackerModifier && modifier.species === this.species && modifier.required === this.required
-    );
-  }
-
-  clone(): PersistentModifier {
-    return new EvoTrackerModifier(this.type, this.pokemonId, this.species, this.required, this.stackCount);
-  }
-
-  getArgs(): any[] {
-    return super.getArgs().concat([this.species, this.required]);
-  }
-
-  /**
-   * Applies the {@linkcode EvoTrackerModifier}
-   * @returns always `true`
-   */
-  override apply(): boolean {
-    return true;
-  }
-
-  getIconStackText(virtual?: boolean): Phaser.GameObjects.BitmapText | null {
-    if (this.getMaxStackCount() === 1 || (virtual && !this.virtualStackCount)) {
-      return null;
-    }
-
-    const pokemon = globalScene.getPokemonById(this.pokemonId);
-
-    this.stackCount = pokemon
-      ? pokemon.evoCounter +
-        pokemon.getHeldItems().filter(m => m instanceof DamageMoneyRewardModifier).length +
-        globalScene.findModifiers(
-          m =>
-            m instanceof MoneyMultiplierModifier ||
-            m instanceof ExtraModifierModifier ||
-            m instanceof TempExtraModifierModifier,
-        ).length
-      : this.stackCount;
-
-    const text = globalScene.add.bitmapText(10, 15, "item-count", this.stackCount.toString(), 11);
-    text.letterSpacing = -0.5;
-    if (this.getStackCount() >= this.required) {
-      text.setTint(0xf89890);
-    }
-    text.setOrigin(0, 0);
-
-    return text;
-  }
-
-  getMaxHeldItemCount(pokemon: Pokemon): number {
-    this.stackCount =
-      pokemon.evoCounter +
-      pokemon.getHeldItems().filter(m => m instanceof DamageMoneyRewardModifier).length +
-      globalScene.findModifiers(
-        m =>
-          m instanceof MoneyMultiplierModifier ||
-          m instanceof ExtraModifierModifier ||
-          m instanceof TempExtraModifierModifier,
-      ).length;
-    return 999;
-  }
-}
-
-/**
- * Currently used by Shuckle Juice item
- */
-export class PokemonBaseStatTotalModifier extends PokemonHeldItemModifier {
-  public override type: PokemonBaseStatTotalModifierType;
-  public isTransferable = false;
-
-  private statModifier: number;
-
-  constructor(type: PokemonBaseStatTotalModifierType, pokemonId: number, statModifier: number, stackCount?: number) {
-    super(type, pokemonId, stackCount);
-    this.statModifier = statModifier;
-  }
-
-  override matchType(modifier: Modifier): boolean {
-    return modifier instanceof PokemonBaseStatTotalModifier && this.statModifier === modifier.statModifier;
-  }
-
-  override clone(): PersistentModifier {
-    return new PokemonBaseStatTotalModifier(this.type, this.pokemonId, this.statModifier, this.stackCount);
-  }
-
-  override getArgs(): any[] {
-    return super.getArgs().concat(this.statModifier);
-  }
-
-  /**
-   * Checks if {@linkcode PokemonBaseStatTotalModifier} should be applied to the specified {@linkcode Pokemon}.
-   * @param pokemon the {@linkcode Pokemon} to be modified
-   * @param baseStats the base stats of the {@linkcode Pokemon}
-   * @returns `true` if the {@linkcode Pokemon} should be modified
-   */
-  override shouldApply(pokemon?: Pokemon, baseStats?: number[]): boolean {
-    return super.shouldApply(pokemon, baseStats) && Array.isArray(baseStats);
-  }
-
-  /**
-   * Applies the {@linkcode PokemonBaseStatTotalModifier}
-   * @param _pokemon the {@linkcode Pokemon} to be modified
-   * @param baseStats the base stats of the {@linkcode Pokemon}
-   * @returns always `true`
-   */
-  override apply(_pokemon: Pokemon, baseStats: number[]): boolean {
-    // Modifies the passed in baseStats[] array
-    baseStats.forEach((v, i) => {
-      // HP is affected by half as much as other stats
-      const newVal = i === 0 ? Math.floor(v + this.statModifier / 2) : Math.floor(v + this.statModifier);
-      baseStats[i] = Math.min(Math.max(newVal, 1), 999999);
-    });
-
-    return true;
-  }
-
-  override getScoreMultiplier(): number {
-    return 1.2;
-  }
-
-  override getMaxHeldItemCount(_pokemon: Pokemon): number {
-    return 2;
-  }
-}
-
-/**
- * Currently used by Old Gateau item
- */
-export class PokemonBaseStatFlatModifier extends PokemonHeldItemModifier {
-  private statModifier: number;
-  private stats: Stat[];
-  public isTransferable = false;
-
-  constructor(type: ModifierType, pokemonId: number, statModifier: number, stats: Stat[], stackCount?: number) {
-    super(type, pokemonId, stackCount);
-
-    this.statModifier = statModifier;
-    this.stats = stats;
-  }
-
-  override matchType(modifier: Modifier): boolean {
-    return (
-      modifier instanceof PokemonBaseStatFlatModifier &&
-      modifier.statModifier === this.statModifier &&
-      this.stats.every(s => modifier.stats.some(stat => s === stat))
-    );
-  }
-
-  override clone(): PersistentModifier {
-    return new PokemonBaseStatFlatModifier(this.type, this.pokemonId, this.statModifier, this.stats, this.stackCount);
-  }
-
-  override getArgs(): any[] {
-    return [...super.getArgs(), this.statModifier, this.stats];
-  }
-
-  /**
-   * Checks if the {@linkcode PokemonBaseStatFlatModifier} should be applied to the {@linkcode Pokemon}.
-   * @param pokemon The {@linkcode Pokemon} that holds the item
-   * @param baseStats The base stats of the {@linkcode Pokemon}
-   * @returns `true` if the {@linkcode PokemonBaseStatFlatModifier} should be applied
-   */
-  override shouldApply(pokemon?: Pokemon, baseStats?: number[]): boolean {
-    return super.shouldApply(pokemon, baseStats) && Array.isArray(baseStats);
-  }
-
-  /**
-   * Applies the {@linkcode PokemonBaseStatFlatModifier}
-   * @param _pokemon The {@linkcode Pokemon} that holds the item
-   * @param baseStats The base stats of the {@linkcode Pokemon}
-   * @returns always `true`
-   */
-  override apply(_pokemon: Pokemon, baseStats: number[]): boolean {
-    // Modifies the passed in baseStats[] array by a flat value, only if the stat is specified in this.stats
-    baseStats.forEach((v, i) => {
-      if (this.stats.includes(i)) {
-        const newVal = Math.floor(v + this.statModifier);
-        baseStats[i] = Math.min(Math.max(newVal, 1), 999999);
-      }
-    });
-
-    return true;
-  }
-
-  override getScoreMultiplier(): number {
-    return 1.1;
-  }
-
-  override getMaxHeldItemCount(_pokemon: Pokemon): number {
-    return 1;
-  }
-}
-
-/**
- * Currently used by Macho Brace item
- */
-export class PokemonIncrementingStatModifier extends PokemonHeldItemModifier {
-  public isTransferable = false;
-
-  matchType(modifier: Modifier): boolean {
-    return modifier instanceof PokemonIncrementingStatModifier;
-  }
-
-  clone(): PokemonIncrementingStatModifier {
-    return new PokemonIncrementingStatModifier(this.type, this.pokemonId, this.stackCount);
-  }
-
-  /**
-   * Checks if the {@linkcode PokemonIncrementingStatModifier} should be applied to the {@linkcode Pokemon}.
-   * @param pokemon The {@linkcode Pokemon} that holds the item
-   * @param stat The affected {@linkcode Stat}
-   * @param statHolder The {@linkcode NumberHolder} that holds the stat
-   * @returns `true` if the {@linkcode PokemonBaseStatFlatModifier} should be applied
-   */
-  override shouldApply(pokemon?: Pokemon, stat?: Stat, statHolder?: NumberHolder): boolean {
-    return super.shouldApply(pokemon, stat, statHolder) && !!statHolder;
-  }
-
-  /**
-   * Applies the {@linkcode PokemonIncrementingStatModifier}
-   * @param _pokemon The {@linkcode Pokemon} that holds the item
-   * @param stat The affected {@linkcode Stat}
-   * @param statHolder The {@linkcode NumberHolder} that holds the stat
-   * @returns always `true`
-   */
-  override apply(_pokemon: Pokemon, stat: Stat, statHolder: NumberHolder): boolean {
-    // Modifies the passed in stat number holder by +2 per stack for HP, +1 per stack for other stats
-    // If the Macho Brace is at max stacks (50), adds additional 10% to total HP and 5% to other stats
-    const isHp = stat === Stat.HP;
-
-    if (isHp) {
-      statHolder.value += 2 * this.stackCount;
-      if (this.stackCount === this.getMaxHeldItemCount()) {
-        statHolder.value = Math.floor(statHolder.value * 1.1);
-      }
-    } else {
-      statHolder.value += this.stackCount;
-      if (this.stackCount === this.getMaxHeldItemCount()) {
-        statHolder.value = Math.floor(statHolder.value * 1.05);
-      }
-    }
-
-    return true;
-  }
-
-  getScoreMultiplier(): number {
-    return 1.2;
-  }
-
-  getMaxHeldItemCount(_pokemon?: Pokemon): number {
-    return 50;
-  }
-}
-
 export class LevelIncrementBoosterModifier extends PersistentModifier {
   match(modifier: Modifier) {
     return modifier instanceof LevelIncrementBoosterModifier;
@@ -1050,67 +676,6 @@ export class LevelIncrementBoosterModifier extends PersistentModifier {
 
   getMaxStackCount(_forThreshold?: boolean): number {
     return 99;
-  }
-}
-
-export class BerryModifier extends PokemonHeldItemModifier {
-  public berryType: BerryType;
-  public consumed: boolean;
-
-  constructor(type: ModifierType, pokemonId: number, berryType: BerryType, stackCount?: number) {
-    super(type, pokemonId, stackCount);
-
-    this.berryType = berryType;
-    this.consumed = false;
-  }
-
-  matchType(modifier: Modifier) {
-    return modifier instanceof BerryModifier && (modifier as BerryModifier).berryType === this.berryType;
-  }
-
-  clone() {
-    return new BerryModifier(this.type, this.pokemonId, this.berryType, this.stackCount);
-  }
-
-  getArgs(): any[] {
-    return super.getArgs().concat(this.berryType);
-  }
-
-  /**
-   * Checks if {@linkcode BerryModifier} should be applied
-   * @param pokemon The {@linkcode Pokemon} that holds the berry
-   * @returns `true` if {@linkcode BerryModifier} should be applied
-   */
-  override shouldApply(pokemon: Pokemon): boolean {
-    return !this.consumed && super.shouldApply(pokemon) && getBerryPredicate(this.berryType)(pokemon);
-  }
-
-  /**
-   * Applies {@linkcode BerryModifier}
-   * @param pokemon The {@linkcode Pokemon} that holds the berry
-   * @returns always `true`
-   */
-  override apply(pokemon: Pokemon): boolean {
-    const preserve = new BooleanHolder(false);
-    globalScene.applyModifiers(PreserveBerryModifier, pokemon.isPlayer(), pokemon, preserve);
-    this.consumed = !preserve.value;
-
-    // munch the berry and trigger unburden-like effects
-    getBerryEffectFunc(this.berryType)(pokemon);
-    applyPostItemLostAbAttrs(PostItemLostAbAttr, pokemon, false);
-
-    // Update berry eaten trackers for Belch, Harvest, Cud Chew, etc.
-    // Don't recover it if we proc berry pouch (no item duplication)
-    pokemon.recordEatenBerry(this.berryType, this.consumed);
-
-    return true;
-  }
-
-  getMaxHeldItemCount(_pokemon: Pokemon): number {
-    if ([BerryType.LUM, BerryType.LEPPA, BerryType.SITRUS, BerryType.ENIGMA].includes(this.berryType)) {
-      return 2;
-    }
-    return 3;
   }
 }
 
@@ -1775,9 +1340,7 @@ export class MoneyRewardModifier extends ConsumableModifier {
         p.evoCounter
           ? (p.evoCounter += Math.min(Math.floor(this.moneyMultiplier), 3))
           : (p.evoCounter = Math.min(Math.floor(this.moneyMultiplier), 3));
-        const modifier = getModifierType(modifierTypes.EVOLUTION_TRACKER_GIMMIGHOUL).newModifier(
-          p,
-        ) as EvoTrackerModifier;
+        const modifier = getModifierType(modifierTypes.EVOLUTION_TRACKER_GIMMIGHOUL).newModifier(p); // as EvoTrackerModifier;
         globalScene.addModifier(modifier);
       }
     });

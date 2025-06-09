@@ -88,14 +88,10 @@ import {
   EnemyDamageReducerModifier,
   EnemyFusionChanceModifier,
   HiddenAbilityRateBoosterModifier,
-  BaseStatModifier,
   PokemonHeldItemModifier,
   ShinyRateBoosterModifier,
   TempStatStageBoosterModifier,
   TempCritBoosterModifier,
-  PokemonBaseStatFlatModifier,
-  PokemonBaseStatTotalModifier,
-  PokemonIncrementingStatModifier,
   EvoTrackerModifier,
 } from "#app/modifier/modifier";
 import { PokeballType } from "#enums/pokeball";
@@ -1588,7 +1584,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       const statHolder = new NumberHolder(Math.floor((2 * baseStats[s] + this.ivs[s]) * this.level * 0.01));
       if (s === Stat.HP) {
         statHolder.value = statHolder.value + this.level + 10;
-        globalScene.applyModifier(PokemonIncrementingStatModifier, this.isPlayer(), this, s, statHolder);
+        applyHeldItems(ITEM_EFFECT.INCREMENTING_STAT, { pokemon: this, stat: s, statHolder: statHolder });
         if (this.hasAbility(AbilityId.WONDER_GUARD, false, true)) {
           statHolder.value = 1;
         }
@@ -1610,7 +1606,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
             1,
           );
         }
-        globalScene.applyModifier(PokemonIncrementingStatModifier, this.isPlayer(), this, s, statHolder);
+        applyHeldItems(ITEM_EFFECT.INCREMENTING_STAT, { pokemon: this, stat: s, statHolder: statHolder });
       }
 
       statHolder.value = Phaser.Math.Clamp(statHolder.value, 1, Number.MAX_SAFE_INTEGER);
@@ -1623,9 +1619,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const baseStats = this.getSpeciesForm(true).baseStats.slice(0);
     applyChallenges(ChallengeType.FLIP_STAT, this, baseStats);
     // Shuckle Juice
-    globalScene.applyModifiers(PokemonBaseStatTotalModifier, this.isPlayer(), this, baseStats);
+    applyHeldItems(ITEM_EFFECT.BASE_STAT_TOTAL, { pokemon: this, baseStats: baseStats });
     // Old Gateau
-    globalScene.applyModifiers(PokemonBaseStatFlatModifier, this.isPlayer(), this, baseStats);
+    applyHeldItems(ITEM_EFFECT.BASE_STAT_FLAT, { pokemon: this, baseStats: baseStats });
     if (this.isFusion()) {
       const fusionBaseStats = this.getFusionSpeciesForm(true).baseStats;
       applyChallenges(ChallengeType.FLIP_STAT, this, fusionBaseStats);
@@ -1639,7 +1635,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
     }
     // Vitamins
-    globalScene.applyModifiers(BaseStatModifier, this.isPlayer(), this, baseStats);
+    applyHeldItems(ITEM_EFFECT.BASE_STAT_BOOSTER, { pokemon: this, baseStats: baseStats });
 
     return baseStats;
   }
