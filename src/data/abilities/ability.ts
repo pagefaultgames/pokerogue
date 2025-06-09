@@ -35,7 +35,7 @@ import {
 } from "#app/data/moves/move";
 import { allMoves } from "../data-lists";
 import { ArenaTagSide } from "#app/data/arena-tag";
-import { BerryModifier, HitHealModifier, PokemonHeldItemModifier } from "#app/modifier/modifier";
+import { BerryModifier, PokemonHeldItemModifier } from "#app/modifier/modifier";
 import { TerrainType } from "#app/data/terrain";
 import {
   SpeciesFormChangeAbilityTrigger,
@@ -90,6 +90,7 @@ import type { BattlerIndex } from "#app/battle";
 import type Move from "#app/data/moves/move";
 import type { ArenaTrapTag, SuppressAbilitiesTag } from "#app/data/arena-tag";
 import { noAbilityTypeOverrideMoves } from "../moves/invalid-moves";
+import { HeldItemId } from "#enums/held-item-id";
 
 export class BlockRecoilDamageAttr extends AbAttr {
   constructor() {
@@ -7413,11 +7414,9 @@ class ForceSwitchOutHelper {
  * @returns The amount of health recovered by Shell Bell.
  */
 function calculateShellBellRecovery(pokemon: Pokemon): number {
-  const shellBellModifier = pokemon.getHeldItems().find(m => m instanceof HitHealModifier);
-  if (shellBellModifier) {
-    return toDmgValue(pokemon.turnData.totalDamageDealt / 8) * shellBellModifier.stackCount;
-  }
-  return 0;
+  // Returns 0 if no Shell Bell is present
+  const shellBellStack = pokemon.heldItemManager.getStack(HeldItemId.SHELL_BELL);
+  return toDmgValue(pokemon.turnData.totalDamageDealt / 8) * shellBellStack;
 }
 
 /**
