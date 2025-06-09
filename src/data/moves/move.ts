@@ -123,14 +123,14 @@ import { MoveEffectTrigger } from "#enums/MoveEffectTrigger";
 import { MultiHitType } from "#enums/MultiHitType";
 import { invalidAssistMoves, invalidCopycatMoves, invalidMetronomeMoves, invalidMirrorMoveMoves, invalidSleepTalkMoves } from "./invalid-moves";
 import { SelectBiomePhase } from "#app/phases/select-biome-phase";
-import { MoveAttrMap, MoveAttrString, MoveClass, MoveClassMap } from "#app/@types/move-types";
+import { ChargingMove, MoveAttrMap, MoveAttrString, MoveClass, MoveClassMap } from "#app/@types/move-types";
 import { applyMoveAttrs } from "./apply-attrs";
 import { frenzyMissFunc, getMoveTargets } from "./move-utils";
 
 type MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => boolean;
 export type UserMoveConditionFunc = (user: Pokemon, move: Move) => boolean;
 
-export default class Move implements Localizable {
+export default abstract class Move implements Localizable {
   public id: MoveId;
   public name: string;
   private _type: PokemonType;
@@ -153,12 +153,10 @@ export default class Move implements Localizable {
   /**
    * Check if the move is of the given subclass without requiring `instanceof`.
    * 
-   * @param moveSort - The string name of the move to check against
+   * @param moveKind - The string name of the move to check against
    * @returns Whether this move is of the provided type.
    */
-  public is<K extends keyof MoveClassMap>(moveSort: K): this is MoveClassMap[K] {
-    return false;
-  }
+  public abstract is<K extends keyof MoveClassMap>(moveKind: K): this is MoveClassMap[K];
 
   constructor(id: MoveId, type: PokemonType, category: MoveCategory, defaultMoveTarget: MoveTarget, power: number, accuracy: number, pp: number, chance: number, priority: number, generation: number) {
     this.id = id;
@@ -978,8 +976,8 @@ export default class Move implements Localizable {
 }
 
 export class AttackMove extends Move {
-  override is<K extends keyof MoveClassMap>(moveSort: K): this is MoveClassMap[K] {
-    return moveSort === "AttackMove" || super.is(moveSort);
+  override is<K extends keyof MoveClassMap>(moveKind: K): this is MoveClassMap[K] {
+    return moveKind === "AttackMove";
   }
   constructor(id: MoveId, type: PokemonType, category: MoveCategory, power: number, accuracy: number, pp: number, chance: number, priority: number, generation: number) {
     super(id, type, category, MoveTarget.NEAR_OTHER, power, accuracy, pp, chance, priority, generation);
@@ -1031,8 +1029,9 @@ export class StatusMove extends Move {
   constructor(id: MoveId, type: PokemonType, accuracy: number, pp: number, chance: number, priority: number, generation: number) {
     super(id, type, MoveCategory.STATUS, MoveTarget.NEAR_OTHER, -1, accuracy, pp, chance, priority, generation);
   }
-  override is<K extends keyof MoveClassMap>(moveSort: K): this is MoveClassMap[K] {
-    return moveSort === "StatusMove" || super.is(moveSort);
+
+  override is<K extends keyof MoveClassMap>(moveKind: K): this is MoveClassMap[K] {
+    return moveKind === "StatusMove";
   }
 }
 
@@ -1040,14 +1039,15 @@ export class SelfStatusMove extends Move {
   constructor(id: MoveId, type: PokemonType, accuracy: number, pp: number, chance: number, priority: number, generation: number) {
     super(id, type, MoveCategory.STATUS, MoveTarget.USER, -1, accuracy, pp, chance, priority, generation);
   }
-  override is<K extends keyof MoveClassMap>(moveSort: K): this is MoveClassMap[K] {
-    return moveSort === "SelfStatusMove" || super.is(moveSort);
+
+  override is<K extends keyof MoveClassMap>(moveKind: K): this is MoveClassMap[K] {
+    return moveKind === "SelfStatusMove";
   }
 }
 
 type SubMove = new (...args: any[]) => Move;
 
-function ChargeMove<TBase extends SubMove>(Base: TBase) {
+function ChargeMove<TBase extends SubMove>(Base: TBase, nameAppend: string) {
   return class extends Base {
     /** The animation to play during the move's charging phase */
     public readonly chargeAnim: ChargeAnim = ChargeAnim[`${MoveId[this.id]}_CHARGING`];
@@ -1059,6 +1059,11 @@ function ChargeMove<TBase extends SubMove>(Base: TBase) {
 
     override isChargingMove(): this is ChargingMove {
       return true;
+    }
+
+    override is<K extends keyof MoveClassMap>(moveKind: K): this is MoveClassMap[K] {
+      // Anything subclassing this is a charge move.
+      return moveKind === "ChargeMove" || moveKind === nameAppend;
     }
 
     /**
@@ -1127,11 +1132,8 @@ function ChargeMove<TBase extends SubMove>(Base: TBase) {
   };
 }
 
-export class ChargingAttackMove extends ChargeMove(AttackMove) {}
-export class ChargingSelfStatusMove extends ChargeMove(SelfStatusMove) {}
-
-export type ChargingMove = ChargingAttackMove | ChargingSelfStatusMove;
-
+export class ChargingAttackMove extends ChargeMove(AttackMove, "ChargingAttackMove") {}
+export class ChargingSelfStatusMove extends ChargeMove(SelfStatusMove, "ChargingSelfStatusMove") {}
 
 /**
  * Base class defining all {@linkcode Move} Attributes

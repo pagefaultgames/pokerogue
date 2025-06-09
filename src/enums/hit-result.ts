@@ -1,4 +1,3 @@
-
 export enum HitResult {
   EFFECTIVE = 1,
   SUPER_EFFECTIVE,

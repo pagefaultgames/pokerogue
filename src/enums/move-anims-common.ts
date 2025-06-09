@@ -1,15 +1,16 @@
-
 export enum AnimFrameTarget {
   USER,
   TARGET,
   GRAPHIC
 }
+
 export enum AnimFocus {
   TARGET = 1,
   USER,
   USER_TARGET,
   SCREEN
 }
+
 export enum AnimBlendType {
   NORMAL,
   ADD,

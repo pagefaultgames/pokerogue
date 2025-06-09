@@ -1,4 +1,3 @@
-
 export enum MoveResult {
   PENDING,
   SUCCESS,

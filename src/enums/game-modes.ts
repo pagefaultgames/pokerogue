@@ -1,4 +1,3 @@
-
 export enum GameModes {
   CLASSIC,
   ENDLESS,

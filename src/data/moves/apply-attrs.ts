@@ -2,10 +2,10 @@
  * Module holding functions to apply move attributes.
  * Must not import anything that is not a type.
  */
-import type { MoveAttrString } from "#app/@types/move-types";
 import type Pokemon from "#app/field/pokemon";
-import type { default as Move, ChargingMove, MoveAttr } from "./move";
-import type { MoveAttrFilter } from "#app/@types/move-types";
+import type { default as Move, MoveAttr } from "./move";
+import type { ChargingMove } from "#app/@types/move-types";
+import type { MoveAttrFilter, MoveAttrString } from "#app/@types/move-types";
 
 function applyMoveAttrsInternal(
   attrFilter: MoveAttrFilter,

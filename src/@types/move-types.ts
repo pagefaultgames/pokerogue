@@ -1,4 +1,12 @@
-import type { AttackMove, StatusMove, SelfStatusMove, MoveAttrConstructorMap, MoveAttr } from "#app/data/moves/move";
+import type {
+  AttackMove,
+  StatusMove,
+  SelfStatusMove,
+  ChargingAttackMove,
+  ChargingSelfStatusMove,
+  MoveAttrConstructorMap,
+  MoveAttr,
+} from "#app/data/moves/move";
 
 export type MoveAttrFilter = (attr: MoveAttr) => boolean;
 
@@ -11,6 +19,9 @@ export type MoveClassMap = {
   AttackMove: typeof AttackMove;
   StatusMove: typeof StatusMove;
   SelfStatusMove: typeof SelfStatusMove;
+  ChargingAttackMove: typeof ChargingAttackMove;
+  ChargingSelfStatusMove: typeof ChargingSelfStatusMove;
+  ChargeMove: typeof ChargingAttackMove | typeof ChargingSelfStatusMove;
 };
 
 /**
@@ -26,3 +37,5 @@ export type MoveAttrMap = {
  * Union type of all move attribute names as strings.
  */
 export type MoveAttrString = keyof MoveAttrMap;
+
+export type ChargingMove = ChargingAttackMove | ChargingSelfStatusMove;

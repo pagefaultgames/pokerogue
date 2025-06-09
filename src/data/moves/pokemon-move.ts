@@ -17,7 +17,6 @@ import type Move from "./move";
  * @see {@linkcode getPpRatio} - returns the current PP amount / max PP amount.
  * @see {@linkcode getName} - returns name of {@linkcode Move}.
  **/
-
 export class PokemonMove {
   public moveId: MoveId;
   public ppUsed: number;
