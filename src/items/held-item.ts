@@ -46,6 +46,9 @@ export class HeldItem {
   public isStealable = true;
   public isSuppressable = true;
 
+  //TODO: If this is actually never changed by any subclass, perhaps it should not be here
+  public soundName = "se/restore";
+
   constructor(type: HeldItemId, maxStackCount = 1) {
     this.type = type;
     this.maxStackCount = maxStackCount;

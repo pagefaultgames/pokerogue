@@ -2694,7 +2694,7 @@ export default class BattleScene extends SceneBase {
     if (!ignoreUpdate) {
       this.updateModifiers(pokemon.isPlayer());
     }
-    const soundName = modifier.type.soundName;
+    const soundName = allHeldItems[heldItemId].soundName;
     if (playSound && !this.sound.get(soundName)) {
       this.playSound(soundName);
     }
@@ -2769,7 +2769,7 @@ export default class BattleScene extends SceneBase {
       this.updateModifiers(source.isPlayer());
     }
 
-    const soundName = modifier.type.soundName;
+    const soundName = allHeldItems[heldItemId].soundName;
     if (playSound && !this.sound.get(soundName)) {
       this.playSound(soundName);
     }
