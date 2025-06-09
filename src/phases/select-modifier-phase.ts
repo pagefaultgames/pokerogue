@@ -32,6 +32,8 @@ import Overrides from "#app/overrides";
 import type { CustomModifierSettings } from "#app/modifier/modifier-type";
 import { isNullOrUndefined, NumberHolder } from "#app/utils/common";
 
+export type ModifierSelectCallback = (rowCursor: number, cursor: number) => boolean;
+
 export class SelectModifierPhase extends BattlePhase {
   public readonly phaseName = "SelectModifierPhase";
   private rerollCount: number;
@@ -58,6 +60,10 @@ export class SelectModifierPhase extends BattlePhase {
   start() {
     super.start();
 
+    if (!this.isPlayer()) {
+      return false;
+    }
+
     if (!this.rerollCount && !this.isCopy) {
       this.updateSeed();
     } else if (this.rerollCount) {
@@ -68,6 +74,9 @@ export class SelectModifierPhase extends BattlePhase {
     if (!this.isCopy) {
       regenerateModifierPoolThresholds(party, this.getPoolType(), this.rerollCount);
     }
+    const modifierCount = this.getModifierCount();
+
+    this.typeOptions = this.getModifierTypeOptions(modifierCount);
     const modifierCount = this.getModifierCount();
 
     this.typeOptions = this.getModifierTypeOptions(modifierCount);
@@ -121,7 +130,7 @@ export class SelectModifierPhase extends BattlePhase {
   }
 
   // Pick a modifier from among the rewards and apply it
-  private selectRewardModifierOption(cursor: number, modifierSelectCallback): boolean {
+  private selectRewardModifierOption(cursor: number, modifierSelectCallback: ModifierSelectCallback): boolean {
     if (this.typeOptions.length === 0) {
       globalScene.ui.clearText();
       globalScene.ui.setMode(UiMode.MESSAGE);
@@ -133,7 +142,11 @@ export class SelectModifierPhase extends BattlePhase {
   }
 
   // Pick a modifier from the shop and apply it
-  private selectShopModifierOption(rowCursor: number, cursor: number, modifierSelectCallback): boolean {
+  private selectShopModifierOption(
+    rowCursor: number,
+    cursor: number,
+    modifierSelectCallback: ModifierSelectCallback,
+  ): boolean {
     const shopOptions = getPlayerShopModifierTypeOptionsForWave(
       globalScene.currentBattle.waveIndex,
       globalScene.getWaveMoneyAmount(1),
@@ -157,18 +170,19 @@ export class SelectModifierPhase extends BattlePhase {
   }
 
   // Apply a chosen modifier: do an effect or open the party menu
-  private applyChosenModifier(modifierType: ModifierType, cost: number, modifierSelectCallback): boolean {
-    if (modifierType! instanceof PokemonModifierType) {
-      //TODO: is the bang correct?
-      if (modifierType instanceof PokemonHeldItemReward) {
-        this.openGiveHeldItemMenu(modifierType, modifierSelectCallback);
-      } else if (modifierType instanceof FusePokemonModifierType) {
+  private applyChosenModifier(
+    modifierType: ModifierType,
+    cost: number,
+    modifierSelectCallback: ModifierSelectCallback,
+  ): boolean {
+    if (modifierType instanceof PokemonModifierType) {
+      if (modifierType instanceof FusePokemonModifierType) {
         this.openFusionMenu(modifierType, cost, modifierSelectCallback);
       } else {
         this.openModifierMenu(modifierType, cost, modifierSelectCallback);
       }
     } else {
-      this.applyModifier(modifierType!.newModifier()!); // TODO: is the bang correct?
+      this.applyModifier(modifierType.newModifier()!);
     }
     return !cost;
   }
@@ -198,7 +212,7 @@ export class SelectModifierPhase extends BattlePhase {
   }
 
   // Transfer modifiers among party pokemon
-  private openModifierTransferScreen(modifierSelectCallback) {
+  private openModifierTransferScreen(modifierSelectCallback: ModifierSelectCallback) {
     const party = globalScene.getPlayerParty();
     globalScene.ui.setModeWithoutClear(
       UiMode.PARTY,
@@ -251,7 +265,7 @@ export class SelectModifierPhase extends BattlePhase {
   }
 
   // Applies the effects of the chosen modifier
-  private applyModifier(modifier: Modifier, cost = 0, playSound = false) {
+  private applyModifier(modifier: Modifier, cost = 0, playSound = false): void {
     const result = globalScene.addModifier(modifier, false, playSound, undefined, undefined, cost);
     // Queue a copy of this phase when applying a TM or Memory Mushroom.
     // If the player selects either of these, then escapes out of consuming them,
@@ -399,7 +413,7 @@ export class SelectModifierPhase extends BattlePhase {
 
   // Function that resets the reward selection screen,
   // e.g. after pressing cancel in the party ui or while learning a move
-  private resetModifierSelect(modifierSelectCallback) {
+  private resetModifierSelect(modifierSelectCallback: ModifierSelectCallback) {
     globalScene.ui.setMode(
       UiMode.MODIFIER_SELECT,
       this.isPlayer(),
