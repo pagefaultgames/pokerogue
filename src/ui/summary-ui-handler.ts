@@ -1050,7 +1050,7 @@ export default class SummaryUiHandler extends UiHandler {
           icon.on("pointerout", () => globalScene.ui.hideTooltip());
         });
 
-        const heldItemKeys = this.pokemon?.heldItemManager.getHeldItemKeys();
+        const heldItemKeys = this.pokemon?.heldItemManager.getHeldItems();
         // TODO: Sort them
         //.sort(heldItemSortFunc);
 

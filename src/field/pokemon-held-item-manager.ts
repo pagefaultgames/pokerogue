@@ -31,7 +31,7 @@ export class PokemonItemManager {
     this.heldItems = {};
   }
 
-  getHeldItemKeys(): number[] {
+  getHeldItems(): number[] {
     return Object.keys(this.heldItems).map(k => Number(k));
   }
 
