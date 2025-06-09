@@ -132,7 +132,9 @@ export function initHeldItems() {
   allHeldItems[HeldItemId.GOLDEN_PUNCH] = new DamageMoneyRewardHeldItem(HeldItemId.GOLDEN_PUNCH, 5);
   allHeldItems[HeldItemId.BATON] = new BatonHeldItem(HeldItemId.BATON, 1);
   allHeldItems[HeldItemId.GRIP_CLAW] = new ContactItemStealChanceHeldItem(HeldItemId.GRIP_CLAW, 5, 10);
-  allHeldItems[HeldItemId.MINI_BLACK_HOLE] = new TurnEndItemStealHeldItem(HeldItemId.MINI_BLACK_HOLE, 1);
+  allHeldItems[HeldItemId.MINI_BLACK_HOLE] = new TurnEndItemStealHeldItem(HeldItemId.MINI_BLACK_HOLE, 1)
+    .unstealable()
+    .untransferable();
 
   allHeldItems[HeldItemId.FLAME_ORB] = new TurnEndStatusHeldItem(HeldItemId.FLAME_ORB, 1, StatusEffect.BURN);
   allHeldItems[HeldItemId.TOXIC_ORB] = new TurnEndStatusHeldItem(HeldItemId.TOXIC_ORB, 1, StatusEffect.TOXIC);
@@ -140,16 +142,28 @@ export function initHeldItems() {
   // vitamins
   for (const [statKey, heldItemType] of Object.entries(permanentStatToHeldItem)) {
     const stat = Number(statKey) as PermanentStat;
-    allHeldItems[heldItemType] = new BaseStatBoosterHeldItem(heldItemType, 10, stat);
+    allHeldItems[heldItemType] = new BaseStatBoosterHeldItem(heldItemType, 10, stat)
+      .unstealable()
+      .untransferable()
+      .unsuppressable();
   }
 
-  allHeldItems[HeldItemId.SHUCKLE_JUICE] = new BaseStatTotalHeldItem(HeldItemId.SHUCKLE_JUICE, 1);
+  allHeldItems[HeldItemId.SHUCKLE_JUICE] = new BaseStatTotalHeldItem(HeldItemId.SHUCKLE_JUICE, 1)
+    .unstealable()
+    .untransferable()
+    .unsuppressable();
   allHeldItems[HeldItemId.OLD_GATEAU] = new BaseStatFlatHeldItem(HeldItemId.OLD_GATEAU, 1, [
     Stat.HP,
     Stat.ATK,
     Stat.DEF,
-  ]);
-  allHeldItems[HeldItemId.MACHO_BRACE] = new IncrementingStatHeldItem(HeldItemId.MACHO_BRACE, 50);
+  ])
+    .unstealable()
+    .untransferable()
+    .unsuppressable();
+  allHeldItems[HeldItemId.MACHO_BRACE] = new IncrementingStatHeldItem(HeldItemId.MACHO_BRACE, 50)
+    .unstealable()
+    .untransferable()
+    .unsuppressable();
 }
 
 type APPLY_HELD_ITEMS_PARAMS = {
