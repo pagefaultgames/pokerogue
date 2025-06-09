@@ -88,8 +88,9 @@ import type { BattlerIndex } from "#app/battle";
 import type Move from "#app/data/moves/move";
 import type { ArenaTrapTag, SuppressAbilitiesTag } from "#app/data/arena-tag";
 import { noAbilityTypeOverrideMoves } from "../moves/invalid-moves";
-import { HeldItemId } from "#enums/held-item-id";
+import { HeldItemCategoryId, HeldItemId, isItemInCategory } from "#enums/held-item-id";
 import { allHeldItems } from "#app/items/all-held-items";
+import { berryTypeToHeldItem } from "#app/items/held-items/berry";
 
 export class BlockRecoilDamageAttr extends AbAttr {
   constructor() {
@@ -5432,10 +5433,14 @@ export class PostTurnRestoreBerryAbAttr extends PostTurnAbAttr {
   override canApplyPostTurn(pokemon: Pokemon, _passive: boolean, _simulated: boolean, _args: any[]): boolean {
     // Ensure we have at least 1 recoverable berry (at least 1 berry in berriesEaten is not capped)
     const cappedBerries = new Set(
-      globalScene
-        .getModifiers(BerryModifier, pokemon.isPlayer())
-        .filter(bm => bm.pokemonId === pokemon.id && bm.getCountUnderMax() < 1)
-        .map(bm => bm.berryType),
+      pokemon
+        .getHeldItems()
+        .filter(
+          bm =>
+            isItemInCategory(bm, HeldItemCategoryId.BERRY) &&
+            pokemon.heldItemManager.getStack(bm) < allHeldItems[bm].maxStackCount,
+        )
+        .map(bm => allHeldItems[bm].berryType),
     );
 
     this.berriesUnderCap = pokemon.battleData.berriesEaten.filter(bt => !cappedBerries.has(bt));
@@ -5465,30 +5470,15 @@ export class PostTurnRestoreBerryAbAttr extends PostTurnAbAttr {
     const randomIdx = randSeedInt(this.berriesUnderCap.length);
     const chosenBerryType = this.berriesUnderCap[randomIdx];
     pokemon.battleData.berriesEaten.splice(randomIdx, 1); // Remove berry from memory
-    const chosenBerry = new BerryModifierType(chosenBerryType);
+    const chosenBerry = berryTypeToHeldItem[chosenBerryType];
 
-    // Add the randomly chosen berry or update the existing one
-    const berryModifier = globalScene.findModifier(
-      m => m instanceof BerryModifier && m.berryType === chosenBerryType && m.pokemonId === pokemon.id,
-      pokemon.isPlayer(),
-    ) as BerryModifier | undefined;
-
-    if (berryModifier) {
-      berryModifier.stackCount++;
-    } else {
-      const newBerry = new BerryModifier(chosenBerry, pokemon.id, chosenBerryType, 1);
-      if (pokemon.isPlayer()) {
-        globalScene.addModifier(newBerry);
-      } else {
-        globalScene.addEnemyModifier(newBerry);
-      }
-    }
+    pokemon.heldItemManager.add(chosenBerry);
 
     globalScene.updateModifiers(pokemon.isPlayer());
     globalScene.phaseManager.queueMessage(
       i18next.t("abilityTriggers:postTurnLootCreateEatenBerry", {
         pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-        berryName: chosenBerry.name,
+        berryName: allHeldItems[chosenBerry].name,
       }),
     );
     return true;
@@ -5537,8 +5527,7 @@ export class RepeatBerryNextTurnAbAttr extends PostTurnAbAttr {
     // This doesn't count as "eating" a berry (for unnerve/stuff cheeks/unburden) as no item is consumed.
     for (const berryType of pokemon.summonData.berriesEatenLast) {
       getBerryEffectFunc(berryType)(pokemon);
-      const bMod = new BerryModifier(new BerryModifierType(berryType), pokemon.id, berryType, 1);
-      globalScene.eventTarget.dispatchEvent(new BerryUsedEvent(bMod)); // trigger message
+      globalScene.eventTarget.dispatchEvent(new BerryUsedEvent(pokemon, berryType)); // trigger message
     }
 
     // uncomment to make cheek pouch work with cud chew

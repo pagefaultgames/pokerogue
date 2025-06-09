@@ -153,11 +153,7 @@ export function initHeldItems() {
     .unstealable()
     .untransferable()
     .unsuppressable();
-  allHeldItems[HeldItemId.OLD_GATEAU] = new BaseStatFlatHeldItem(HeldItemId.OLD_GATEAU, 1, [
-    Stat.HP,
-    Stat.ATK,
-    Stat.DEF,
-  ])
+  allHeldItems[HeldItemId.OLD_GATEAU] = new BaseStatFlatHeldItem(HeldItemId.OLD_GATEAU, 1)
     .unstealable()
     .untransferable()
     .unsuppressable();

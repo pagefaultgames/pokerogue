@@ -87,7 +87,7 @@ export const HeldItemId = {
   MACHO_BRACE: 0x0909,
 
   // Evo trackers
-  GIMMIGHOUL_EVO_TRACKER: 0x0a01,
+  GIMMIGHOUL_EVO_TRACKER: 0x0A01,
 };
 
 export type HeldItemId = (typeof HeldItemId)[keyof typeof HeldItemId];
@@ -103,3 +103,27 @@ export const HeldItemNames: Record<HeldItemValue, HeldItemName> = Object.entries
   },
   {} as Record<HeldItemValue, HeldItemName>
 );
+
+
+export const HeldItemCategoryId = {
+  NONE: 0x0000,
+  BERRY: 0x0100,
+  CONSUMABLE: 0x0200,
+  TYPE_ATTACK_BOOSTER: 0x0300,
+  STAT_BOOSTER: 0x0400,
+  CRIT_BOOSTER: 0x0500,
+  GAIN_INCREASE: 0x0600,
+  UNIQUE: 0x0700,
+  BASE_STAT_BOOST: 0x0900,
+  EVO_TRACKER: 0x0A00,
+};
+
+export type HeldItemCategoryId = (typeof HeldItemCategoryId)[keyof typeof HeldItemCategoryId];
+
+function getHeldItemCategory(itemId: HeldItemId): HeldItemCategoryId {
+  return itemId & 0xFF00;
+}
+
+export function isItemInCategory(itemId: HeldItemId, category: HeldItemCategoryId): boolean {
+  return getHeldItemCategory(itemId) === category;
+}

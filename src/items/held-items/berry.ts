@@ -1,4 +1,5 @@
 import { getBerryEffectDescription, getBerryEffectFunc, getBerryName } from "#app/data/berry";
+import { BerryUsedEvent } from "#app/events/battle-scene";
 import type Pokemon from "#app/field/pokemon";
 import { globalScene } from "#app/global-scene";
 import { ConsumableHeldItem, ITEM_EFFECT } from "#app/items/held-item";
@@ -26,10 +27,8 @@ export const berryTypeToHeldItem: BerryTypeToHeldItemMap = {
 };
 
 export interface BERRY_PARAMS {
-  /** The pokemon with the item */
+  /** The pokemon with the berry */
   pokemon: Pokemon;
-  /** Whether the move was used by a player pokemon */
-  isPlayer: boolean;
 }
 
 // TODO: Maybe split up into subclasses?
@@ -72,7 +71,6 @@ export class BerryHeldItem extends ConsumableHeldItem {
    */
   apply(params: BERRY_PARAMS): boolean {
     const pokemon = params.pokemon;
-    const isPlayer = params.isPlayer;
 
     const preserve = new BooleanHolder(false);
     globalScene.applyModifiers(PreserveBerryModifier, pokemon.isPlayer(), pokemon, preserve);
@@ -80,20 +78,15 @@ export class BerryHeldItem extends ConsumableHeldItem {
 
     // munch the berry and trigger unburden-like effects
     getBerryEffectFunc(this.berryType)(pokemon);
-    this.consume(pokemon, isPlayer, consumed);
+    this.consume(pokemon, pokemon.isPlayer(), consumed);
 
     // TODO: Update this method to work with held items
     // Update berry eaten trackers for Belch, Harvest, Cud Chew, etc.
     // Don't recover it if we proc berry pouch (no item duplication)
     pokemon.recordEatenBerry(this.berryType, consumed);
 
-    return true;
-  }
+    globalScene.eventTarget.dispatchEvent(new BerryUsedEvent(pokemon, this.berryType));
 
-  getMaxHeldItemCount(_pokemon: Pokemon): number {
-    if ([BerryType.LUM, BerryType.LEPPA, BerryType.SITRUS, BerryType.ENIGMA].includes(this.berryType)) {
-      return 2;
-    }
-    return 3;
+    return true;
   }
 }

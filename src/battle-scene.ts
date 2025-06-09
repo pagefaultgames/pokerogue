@@ -57,7 +57,6 @@ import {
   getModifierPoolForType,
   getPartyLuckValue,
   ModifierPoolType,
-  PokemonHeldItemModifierType,
 } from "#app/modifier/modifier-type";
 import AbilityBar from "#app/ui/ability-bar";
 import {
