@@ -1494,7 +1494,6 @@ export default class PartyUiHandler extends MessageUiHandler {
       null,
       () => {
         this.clearPartySlots();
-        globalScene.removePartyMemberModifiers(slotIndex);
         const releasedPokemon = globalScene.getPlayerParty().splice(slotIndex, 1)[0];
         releasedPokemon.destroy();
         this.populatePartySlots();

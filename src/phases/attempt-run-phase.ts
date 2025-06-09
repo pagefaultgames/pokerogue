@@ -48,8 +48,6 @@ export class AttemptRunPhase extends PokemonPhase {
           enemyField.forEach(enemyPokemon => enemyPokemon.destroy()),
       });
 
-      globalScene.clearEnemyHeldItemModifiers();
-
       // biome-ignore lint/complexity/noForEach: TODO
       enemyField.forEach(enemyPokemon => {
         enemyPokemon.hideInfo().then(() => enemyPokemon.destroy());

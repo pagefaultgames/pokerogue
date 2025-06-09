@@ -6347,9 +6347,6 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
         }
       }
 
-      // clear out enemy held item modifiers of the switch out target
-      globalScene.clearEnemyHeldItemModifiers(switchOutTarget);
-
       if (!allyPokemon?.isActive(true) && switchOutTarget.hp) {
           globalScene.phaseManager.pushNew("BattleEndPhase", false);
 

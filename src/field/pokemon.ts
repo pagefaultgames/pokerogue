@@ -5991,8 +5991,7 @@ export class PlayerPokemon extends Pokemon {
     for (const modifier of fusedPartyMemberHeldModifiers) {
       globalScene.tryTransferHeldItemModifier(modifier, this, false, modifier.getStackCount(), true, true, false);
     }
-    globalScene.updateModifiers(true, true);
-    globalScene.removePartyMemberModifiers(fusedPartyMemberIndex);
+    globalScene.updateModifiers(true);
     globalScene.getPlayerParty().splice(fusedPartyMemberIndex, 1)[0];
     const newPartyMemberIndex = globalScene.getPlayerParty().indexOf(this);
     pokemon

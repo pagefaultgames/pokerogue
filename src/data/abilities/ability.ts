@@ -7329,8 +7329,6 @@ class ForceSwitchOutHelper {
       }
 
       if (!allyPokemon?.isActive(true)) {
-        globalScene.clearEnemyHeldItemModifiers();
-
         if (switchOutTarget.hp) {
           globalScene.phaseManager.pushNew("BattleEndPhase", false);
 

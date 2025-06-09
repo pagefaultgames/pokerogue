@@ -72,7 +72,6 @@ export class BattleEndPhase extends BattlePhase {
       globalScene.currentBattle.pickUpScatteredMoney();
     }
 
-    globalScene.clearEnemyHeldItemModifiers();
     for (const p of globalScene.getEnemyParty()) {
       try {
         p.destroy();
