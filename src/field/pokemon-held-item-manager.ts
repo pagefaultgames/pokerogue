@@ -4,11 +4,13 @@ import type { FormChangeItem } from "#app/data/pokemon-forms";
 import type { BASE_STAT_TOTAL_DATA } from "#app/items/held-items/base-stat-total";
 import type { BASE_STAT_FLAT_DATA } from "#app/items/held-items/base-stat-flat";
 
+type HELD_ITEM_DATA = BASE_STAT_TOTAL_DATA | BASE_STAT_FLAT_DATA;
+
 interface HeldItemProperties {
   stack: number;
   disabled: boolean;
   cooldown?: number;
-  data?: BASE_STAT_TOTAL_DATA | BASE_STAT_FLAT_DATA;
+  data?: HELD_ITEM_DATA;
 }
 
 type HeldItemPropertyMap = {
@@ -66,14 +68,14 @@ export class PokemonItemManager {
     return itemType in this.heldItems ? this.heldItems[itemType].stack : 0;
   }
 
-  add(itemType: HeldItemId, addStack = 1) {
+  add(itemType: HeldItemId, addStack = 1, data?: HELD_ITEM_DATA) {
     const maxStack = allHeldItems[itemType].getMaxStackCount();
 
     if (this.hasItem(itemType)) {
       // TODO: We may want an error message of some kind instead
       this.heldItems[itemType].stack = Math.min(this.heldItems[itemType].stack + addStack, maxStack);
     } else {
-      this.heldItems[itemType] = { stack: Math.min(addStack, maxStack), disabled: false };
+      this.heldItems[itemType] = { stack: Math.min(addStack, maxStack), disabled: false, data: data };
     }
   }
 

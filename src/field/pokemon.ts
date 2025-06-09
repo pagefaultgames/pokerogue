@@ -92,7 +92,6 @@ import {
   ShinyRateBoosterModifier,
   TempStatStageBoosterModifier,
   TempCritBoosterModifier,
-  EvoTrackerModifier,
 } from "#app/modifier/modifier";
 import { PokeballType } from "#enums/pokeball";
 import { Gender } from "#app/data/gender";
@@ -242,7 +241,7 @@ import { loadMoveAnimations } from "#app/sprites/pokemon-asset-loader";
 import { PokemonItemManager } from "./pokemon-held-item-manager";
 import { applyHeldItems } from "#app/items/all-held-items";
 import { ITEM_EFFECT } from "#app/items/held-item";
-import type { HeldItemId } from "#enums/held-item-id";
+import { HeldItemId } from "#enums/held-item-id";
 
 export enum LearnMoveSituation {
   MISC,
@@ -4375,7 +4374,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       this.setScale(this.getSpriteScale());
       this.loadAssets().then(() => {
         this.calculateStats();
-        globalScene.updateModifiers(this.isPlayer(), true);
+        globalScene.updateModifiers(this.isPlayer());
         Promise.all([this.updateInfo(), globalScene.updateFieldScale()]).then(() => resolve());
       });
     });
@@ -5801,9 +5800,9 @@ export class PlayerPokemon extends Pokemon {
         });
       };
       if (preEvolution.speciesId === SpeciesId.GIMMIGHOUL) {
-        const evotracker = this.getHeldItems().filter(m => m instanceof EvoTrackerModifier)[0] ?? null;
+        const evotracker = this.heldItemManager.hasItem(HeldItemId.GIMMIGHOUL_EVO_TRACKER);
         if (evotracker) {
-          globalScene.removeModifier(evotracker);
+          this.heldItemManager.remove(HeldItemId.GIMMIGHOUL_EVO_TRACKER, 0, true);
         }
       }
       if (!globalScene.gameMode.isDaily || this.metBiome > -1) {
@@ -5911,7 +5910,7 @@ export class PlayerPokemon extends Pokemon {
       const updateAndResolve = () => {
         this.loadAssets().then(() => {
           this.calculateStats();
-          globalScene.updateModifiers(true, true);
+          globalScene.updateModifiers(true);
           this.updateInfo(true).then(() => resolve());
         });
       };
@@ -5983,7 +5982,7 @@ export class PlayerPokemon extends Pokemon {
       true,
     ) as PokemonHeldItemModifier[];
     for (const modifier of fusedPartyMemberHeldModifiers) {
-      globalScene.tryTransferHeldItemModifier(modifier, this, false, modifier.getStackCount(), true, true, false);
+      globalScene.tryTransferHeldItem(modifier, pokemon, this, false, modifier.getStackCount(), true, false);
     }
     globalScene.updateModifiers(true);
     globalScene.getPlayerParty().splice(fusedPartyMemberIndex, 1)[0];

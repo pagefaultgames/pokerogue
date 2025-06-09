@@ -2759,8 +2759,9 @@ export default class BattleScene extends SceneBase {
     }
     const countTaken = Math.min(transferQuantity, itemStack, maxStackCount - matchingItemStack);
 
+    const data = source.heldItemManager[heldItemId].data;
     source.heldItemManager.remove(heldItemId, countTaken);
-    target.heldItemManager.add(heldItemId, countTaken);
+    target.heldItemManager.add(heldItemId, countTaken, data);
 
     if (source.heldItemManager.getStack(heldItemId) === 0 && itemLost) {
       applyPostItemLostAbAttrs(PostItemLostAbAttr, source, false);
