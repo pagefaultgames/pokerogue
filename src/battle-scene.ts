@@ -2717,11 +2717,12 @@ export default class BattleScene extends SceneBase {
   }
 
   /**
-   * Try to transfer a held item to another pokemon.
+   * Try to transfer a held item from source to target.
    * If the recepient already has the maximum amount allowed for this item, the transfer is cancelled.
    * The quantity to transfer is automatically capped at how much the recepient can take before reaching the maximum stack size for the item.
    * A transfer that moves a quantity smaller than what is specified in the transferQuantity parameter is still considered successful.
    * @param heldItemId {@linkcode HeldItemId} item to transfer
+   * @param source {@linkcode Pokemon} giver in this transfer
    * @param target {@linkcode Pokemon} recepient in this transfer
    * @param playSound `true` to play a sound when transferring the item
    * @param transferQuantity How many items of the stack to transfer. Optional, defaults to `1`

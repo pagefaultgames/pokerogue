@@ -47,7 +47,7 @@ export abstract class ItemTransferHeldItem extends HeldItem {
 
     // TODO: Change this logic to use held items
     const transferredModifierTypes: HeldItemId[] = [];
-    const heldItems = targetPokemon.heldItemManager.getHeldItemKeys();
+    const heldItems = targetPokemon.heldItemManager.getTransferableHeldItems();
 
     for (let i = 0; i < transferredItemCount; i++) {
       if (!heldItems.length) {
@@ -56,7 +56,7 @@ export abstract class ItemTransferHeldItem extends HeldItem {
       const randItemIndex = pokemon.randBattleSeedInt(heldItems.length);
       const randItem = heldItems[randItemIndex];
       // TODO: Fix this after updating the various methods in battle-scene.ts
-      if (globalScene.tryTransferHeldItemModifier(randItem, pokemon, false)) {
+      if (globalScene.tryTransferHeldItem(randItem, targetPokemon, pokemon, false)) {
         transferredModifierTypes.push(randItem);
         heldItems.splice(randItemIndex, 1);
       }

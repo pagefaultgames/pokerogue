@@ -35,7 +35,7 @@ import {
 } from "#app/data/moves/move";
 import { allMoves } from "../data-lists";
 import { ArenaTagSide } from "#app/data/arena-tag";
-import { BerryModifier, PokemonHeldItemModifier } from "#app/modifier/modifier";
+import { BerryModifier, type PokemonHeldItemModifier } from "#app/modifier/modifier";
 import { TerrainType } from "#app/data/terrain";
 import {
   SpeciesFormChangeAbilityTrigger,
@@ -91,6 +91,7 @@ import type Move from "#app/data/moves/move";
 import type { ArenaTrapTag, SuppressAbilitiesTag } from "#app/data/arena-tag";
 import { noAbilityTypeOverrideMoves } from "../moves/invalid-moves";
 import { HeldItemId } from "#enums/held-item-id";
+import { allHeldItems } from "#app/items/all-held-items";
 
 export class BlockRecoilDamageAttr extends AbAttr {
   constructor() {
@@ -2540,17 +2541,11 @@ export class AllyStatMultiplierAbAttr extends AbAttr {
  * @extends AbAttr
  */
 export class ExecutedMoveAbAttr extends AbAttr {
-  canApplyExecutedMove(
-    _pokemon: Pokemon,
-    _simulated: boolean,
-  ): boolean {
+  canApplyExecutedMove(_pokemon: Pokemon, _simulated: boolean): boolean {
     return true;
   }
 
-  applyExecutedMove(
-    _pokemon: Pokemon,
-    _simulated: boolean,
-  ): void {}
+  applyExecutedMove(_pokemon: Pokemon, _simulated: boolean): void {}
 }
 
 /**
@@ -2558,7 +2553,7 @@ export class ExecutedMoveAbAttr extends AbAttr {
  * @extends ExecutedMoveAbAttr
  */
 export class GorillaTacticsAbAttr extends ExecutedMoveAbAttr {
-  constructor(showAbility: boolean = false) {
+  constructor(showAbility = false) {
     super(showAbility);
   }
 
@@ -2575,7 +2570,7 @@ export class GorillaTacticsAbAttr extends ExecutedMoveAbAttr {
 
 export class PostAttackStealHeldItemAbAttr extends PostAttackAbAttr {
   private stealCondition: PokemonAttackCondition | null;
-  private stolenItem?: PokemonHeldItemModifier;
+  private stolenItem?: HeldItemId;
 
   constructor(stealCondition?: PokemonAttackCondition) {
     super();
@@ -2598,11 +2593,11 @@ export class PostAttackStealHeldItemAbAttr extends PostAttackAbAttr {
       hitResult < HitResult.NO_EFFECT &&
       (!this.stealCondition || this.stealCondition(pokemon, defender, move))
     ) {
-      const heldItems = this.getTargetHeldItems(defender).filter(i => i.isTransferable);
+      const heldItems = defender.heldItemManager.getTransferableHeldItems();
       if (heldItems.length) {
         // Ensure that the stolen item in testing is the same as when the effect is applied
         this.stolenItem = heldItems[pokemon.randBattleSeedInt(heldItems.length)];
-        if (globalScene.canTransferHeldItemModifier(this.stolenItem, pokemon)) {
+        if (globalScene.canTransferHeldItem(this.stolenItem, defender, pokemon)) {
           return true;
         }
       }
@@ -2620,27 +2615,20 @@ export class PostAttackStealHeldItemAbAttr extends PostAttackAbAttr {
     _hitResult: HitResult,
     _args: any[],
   ): void {
-    const heldItems = this.getTargetHeldItems(defender).filter(i => i.isTransferable);
+    const heldItems = defender.heldItemManager.getTransferableHeldItems();
     if (!this.stolenItem) {
       this.stolenItem = heldItems[pokemon.randBattleSeedInt(heldItems.length)];
     }
-    if (globalScene.tryTransferHeldItemModifier(this.stolenItem, pokemon, false)) {
+    if (globalScene.tryTransferHeldItem(this.stolenItem, defender, pokemon, false)) {
       globalScene.phaseManager.queueMessage(
         i18next.t("abilityTriggers:postAttackStealHeldItem", {
           pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
           defenderName: defender.name,
-          stolenItemType: this.stolenItem.type.name,
+          stolenItemType: allHeldItems[this.stolenItem].name,
         }),
       );
     }
     this.stolenItem = undefined;
-  }
-
-  getTargetHeldItems(target: Pokemon): PokemonHeldItemModifier[] {
-    return globalScene.findModifiers(
-      m => m instanceof PokemonHeldItemModifier && m.pokemonId === target.id,
-      target.isPlayer(),
-    ) as PokemonHeldItemModifier[];
   }
 }
 
@@ -2762,7 +2750,7 @@ export class PostAttackApplyBattlerTagAbAttr extends PostAttackAbAttr {
 
 export class PostDefendStealHeldItemAbAttr extends PostDefendAbAttr {
   private condition?: PokemonDefendCondition;
-  private stolenItem?: PokemonHeldItemModifier;
+  private stolenItem?: HeldItemId;
 
   constructor(condition?: PokemonDefendCondition) {
     super();
@@ -2780,10 +2768,10 @@ export class PostDefendStealHeldItemAbAttr extends PostDefendAbAttr {
     _args: any[],
   ): boolean {
     if (!simulated && hitResult < HitResult.NO_EFFECT && (!this.condition || this.condition(pokemon, attacker, move))) {
-      const heldItems = this.getTargetHeldItems(attacker).filter(i => i.isTransferable);
+      const heldItems = attacker.heldItemManager.getTransferableHeldItems();
       if (heldItems.length) {
         this.stolenItem = heldItems[pokemon.randBattleSeedInt(heldItems.length)];
-        if (globalScene.canTransferHeldItemModifier(this.stolenItem, pokemon)) {
+        if (globalScene.canTransferHeldItem(this.stolenItem, attacker, pokemon)) {
           return true;
         }
       }
@@ -2800,27 +2788,20 @@ export class PostDefendStealHeldItemAbAttr extends PostDefendAbAttr {
     _hitResult: HitResult,
     _args: any[],
   ): void {
-    const heldItems = this.getTargetHeldItems(attacker).filter(i => i.isTransferable);
+    const heldItems = attacker.heldItemManager.getTransferableHeldItems();
     if (!this.stolenItem) {
       this.stolenItem = heldItems[pokemon.randBattleSeedInt(heldItems.length)];
     }
-    if (globalScene.tryTransferHeldItemModifier(this.stolenItem, pokemon, false)) {
+    if (globalScene.tryTransferHeldItem(this.stolenItem, attacker, pokemon, false)) {
       globalScene.phaseManager.queueMessage(
         i18next.t("abilityTriggers:postDefendStealHeldItem", {
           pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
           attackerName: attacker.name,
-          stolenItemType: this.stolenItem.type.name,
+          stolenItemType: allHeldItems[this.stolenItem].name,
         }),
       );
     }
     this.stolenItem = undefined;
-  }
-
-  getTargetHeldItems(target: Pokemon): PokemonHeldItemModifier[] {
-    return globalScene.findModifiers(
-      m => m instanceof PokemonHeldItemModifier && m.pokemonId === target.id,
-      target.isPlayer(),
-    ) as PokemonHeldItemModifier[];
   }
 }
 
@@ -7782,7 +7763,7 @@ export function applyPreAttackAbAttrs(
 export function applyExecutedMoveAbAttrs(
   attrType: Constructor<ExecutedMoveAbAttr>,
   pokemon: Pokemon,
-  simulated: boolean = false,
+  simulated = false,
   ...args: any[]
 ): void {
   applyAbAttrsInternal<ExecutedMoveAbAttr>(

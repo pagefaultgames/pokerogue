@@ -35,6 +35,24 @@ export class PokemonItemManager {
     return Object.keys(this.heldItems).map(k => Number(k));
   }
 
+  getTransferableHeldItems(): number[] {
+    return Object.keys(this.heldItems)
+      .filter(k => allHeldItems[k].isTransferable)
+      .map(k => Number(k));
+  }
+
+  getStealableHeldItems(): number[] {
+    return Object.keys(this.heldItems)
+      .filter(k => allHeldItems[k].isStealable)
+      .map(k => Number(k));
+  }
+
+  getSuppressableHeldItems(): number[] {
+    return Object.keys(this.heldItems)
+      .filter(k => allHeldItems[k].isSuppressable)
+      .map(k => Number(k));
+  }
+
   hasItem(itemType: HeldItemId): boolean {
     return itemType in this.heldItems;
   }

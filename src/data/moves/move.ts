@@ -2559,16 +2559,18 @@ export class StealHeldItemChanceAttr extends MoveEffectAttr {
       return false;
     }
 
-    const heldItems = this.getTargetHeldItems(target).filter((i) => i.isTransferable);
+    const heldItems = target.heldItemManager.getTransferableHeldItems();
     if (!heldItems.length) {
       return false;
     }
 
-    const poolType = target.isPlayer() ? ModifierPoolType.PLAYER : target.hasTrainer() ? ModifierPoolType.TRAINER : ModifierPoolType.WILD;
-    const highestItemTier = heldItems.map((m) => m.type.getOrInferTier(poolType)).reduce((highestTier, tier) => Math.max(tier!, highestTier), 0); // TODO: is the bang after tier correct?
-    const tierHeldItems = heldItems.filter((m) => m.type.getOrInferTier(poolType) === highestItemTier);
-    const stolenItem = tierHeldItems[user.randBattleSeedInt(tierHeldItems.length)];
-    if (!globalScene.tryTransferHeldItemModifier(stolenItem, user, false)) {
+    const stolenItem = heldItems[user.randBattleSeedInt(heldItems.length)];
+  
+//    const poolType = target.isPlayer() ? ModifierPoolType.PLAYER : target.hasTrainer() ? ModifierPoolType.TRAINER : ModifierPoolType.WILD;
+//    const highestItemTier = heldItems.map((m) => m.type.getOrInferTier(poolType)).reduce((highestTier, tier) => Math.max(tier!, highestTier), 0); // TODO: is the bang after tier correct?
+//    const tierHeldItems = heldItems.filter((m) => m.type.getOrInferTier(poolType) === highestItemTier);
+//    const stolenItem = tierHeldItems[user.randBattleSeedInt(tierHeldItems.length)];
+    if (!globalScene.tryTransferHeldItem(stolenItem, target, user, false)) {
       return false;
     }
 
@@ -2576,18 +2578,13 @@ export class StealHeldItemChanceAttr extends MoveEffectAttr {
     return true;
   }
 
-  getTargetHeldItems(target: Pokemon): PokemonHeldItemModifier[] {
-    return globalScene.findModifiers(m => m instanceof PokemonHeldItemModifier
-      && m.pokemonId === target.id, target.isPlayer()) as PokemonHeldItemModifier[];
-  }
-
   getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
-    const heldItems = this.getTargetHeldItems(target);
+    const heldItems = target.heldItemManager.getTransferableHeldItems();
     return heldItems.length ? 5 : 0;
   }
 
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
-    const heldItems = this.getTargetHeldItems(target);
+    const heldItems = target.heldItemManager.getTransferableHeldItems();
     return heldItems.length ? -5 : 0;
   }
 }
