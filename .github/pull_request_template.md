@@ -72,5 +72,5 @@ Do the reviewers need to do something special in order to test your changes?
 
 Are there any localization additions or changes? If so:
 - [ ] Has a locales PR been created on the [locales](https://github.com/pagefaultgames/pokerogue-locales) repo?
-  - [ ] If so, please leave a link to it here: 
+  - [ ] If so, please leave a link to it here:
 - [ ] Has the translation team been contacted for proofreading/translation?
