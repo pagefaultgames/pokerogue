@@ -1045,7 +1045,13 @@ export class SelfStatusMove extends Move {
   }
 }
 
-type SubMove = new (...args: any[]) => Move;
+// TODO: Figure out how to improve the signature of this so that
+// the `ChargeMove` function knows that the argument `Base` is a specific subclass of move that cannot
+// be abstract.
+// Right now, I only know how to do this by using the type conjunction (the & operators)
+type SubMove = new (...args: any[]) => Move & {
+  is<K extends keyof MoveClassMap>(moveKind: K): this is MoveClassMap[K];
+};
 
 function ChargeMove<TBase extends SubMove>(Base: TBase, nameAppend: string) {
   return class extends Base {
@@ -1063,7 +1069,7 @@ function ChargeMove<TBase extends SubMove>(Base: TBase, nameAppend: string) {
 
     override is<K extends keyof MoveClassMap>(moveKind: K): this is MoveClassMap[K] {
       // Anything subclassing this is a charge move.
-      return moveKind === "ChargeMove" || moveKind === nameAppend;
+      return moveKind === "ChargeMove" || moveKind === nameAppend || super.is(moveKind);
     }
 
     /**
