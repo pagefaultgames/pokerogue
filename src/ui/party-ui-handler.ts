@@ -1388,7 +1388,7 @@ export default class PartyUiHandler extends MessageUiHandler {
           case PartyOption.MOVE_1:
           case PartyOption.MOVE_2:
           case PartyOption.MOVE_3:
-          case PartyOption.MOVE_4:
+          case PartyOption.MOVE_4: {
             const move = pokemon.moveset[option - PartyOption.MOVE_1];
             if (this.showMovePp) {
               const maxPP = move.getMovePp();
@@ -1398,7 +1398,8 @@ export default class PartyUiHandler extends MessageUiHandler {
               optionName = move.getName();
             }
             break;
-          default:
+          }
+          default: {
             const formChangeItemModifiers = this.getFormChangeItemsModifiers(pokemon);
             if (formChangeItemModifiers && option >= PartyOption.FORM_CHANGE_ITEM) {
               const modifier = formChangeItemModifiers[option - PartyOption.FORM_CHANGE_ITEM];
@@ -1413,6 +1414,7 @@ export default class PartyUiHandler extends MessageUiHandler {
               }
             }
             break;
+          }
         }
       } else if (this.partyUiMode === PartyUiMode.REMEMBER_MOVE_MODIFIER) {
         const learnableLevelMoves = pokemon.getLearnableLevelMoves();

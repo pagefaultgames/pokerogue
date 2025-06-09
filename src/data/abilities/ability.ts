@@ -2539,17 +2539,11 @@ export class AllyStatMultiplierAbAttr extends AbAttr {
  * @extends AbAttr
  */
 export class ExecutedMoveAbAttr extends AbAttr {
-  canApplyExecutedMove(
-    _pokemon: Pokemon,
-    _simulated: boolean,
-  ): boolean {
+  canApplyExecutedMove(_pokemon: Pokemon, _simulated: boolean): boolean {
     return true;
   }
 
-  applyExecutedMove(
-    _pokemon: Pokemon,
-    _simulated: boolean,
-  ): void {}
+  applyExecutedMove(_pokemon: Pokemon, _simulated: boolean): void {}
 }
 
 /**
@@ -2557,7 +2551,7 @@ export class ExecutedMoveAbAttr extends AbAttr {
  * @extends ExecutedMoveAbAttr
  */
 export class GorillaTacticsAbAttr extends ExecutedMoveAbAttr {
-  constructor(showAbility: boolean = false) {
+  constructor(showAbility = false) {
     super(showAbility);
   }
 
@@ -7785,7 +7779,7 @@ export function applyPreAttackAbAttrs(
 export function applyExecutedMoveAbAttrs(
   attrType: Constructor<ExecutedMoveAbAttr>,
   pokemon: Pokemon,
-  simulated: boolean = false,
+  simulated = false,
   ...args: any[]
 ): void {
   applyAbAttrsInternal<ExecutedMoveAbAttr>(

@@ -149,7 +149,7 @@ export class CommandPhase extends FieldPhase {
 
     switch (command) {
       case Command.TERA:
-      case Command.FIGHT:
+      case Command.FIGHT: {
         let useStruggle = false;
         const turnMove: TurnMove | undefined = args.length === 2 ? (args[1] as TurnMove) : undefined;
         if (
@@ -233,7 +233,8 @@ export class CommandPhase extends FieldPhase {
           );
         }
         break;
-      case Command.BALL:
+      }
+      case Command.BALL: {
         const notInDex =
           globalScene
             .getEnemyField()
@@ -337,8 +338,9 @@ export class CommandPhase extends FieldPhase {
           }
         }
         break;
+      }
       case Command.POKEMON:
-      case Command.RUN:
+      case Command.RUN: {
         const isSwitch = command === Command.POKEMON;
         const { currentBattle, arena } = globalScene;
         const mysteryEncounterFleeAllowed = currentBattle.mysteryEncounter?.fleeAllowed;
@@ -445,6 +447,7 @@ export class CommandPhase extends FieldPhase {
           }
         }
         break;
+      }
     }
 
     if (success) {
