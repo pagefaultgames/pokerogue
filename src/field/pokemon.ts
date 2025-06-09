@@ -154,7 +154,7 @@ import type { TrainerSlot } from "#enums/trainer-slot";
 import Overrides from "#app/overrides";
 import i18next from "i18next";
 import { speciesEggMoves } from "#app/data/balance/egg-moves";
-import { ModifierTier } from "#app/modifier/modifier-tier";
+import { ModifierTier } from "#enums/modifier-tier";
 import { applyChallenges } from "#app/data/challenge";
 import { ChallengeType } from "#enums/challenge-type";
 import { AbilityId } from "#enums/ability-id";

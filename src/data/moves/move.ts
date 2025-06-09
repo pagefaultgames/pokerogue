@@ -51,7 +51,7 @@ import {
 import type { BattlerIndex } from "#enums/battler-index";
 import { BattleType } from "#enums/battle-type";
 import { TerrainType } from "../terrain";
-import { ModifierPoolType } from "#app/modifier/modifier-type";
+import { ModifierPoolType } from "#enums/modifier-pool-type";
 import { Command } from "#enums/command";
 import i18next from "i18next";
 import type { Localizable } from "#app/@types/locales";

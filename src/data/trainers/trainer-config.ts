@@ -37,7 +37,7 @@ import { timedEventManager } from "#app/global-event-manager";
 // Type imports
 import type { PokemonSpeciesFilter } from "#app/data/pokemon-species";
 import type PokemonSpecies from "#app/data/pokemon-species";
-import type { ModifierTypeFunc } from "#app/modifier/modifier-type";
+import type { ModifierTypeFunc } from "#app/@types/modifier-types";
 import type { EnemyPokemon } from "#app/field/pokemon";
 import type { EvilTeam } from "./evil-admin-trainer-pools";
 import type {

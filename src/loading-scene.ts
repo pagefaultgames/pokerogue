@@ -21,6 +21,7 @@ import { initVouchers } from "#app/system/voucher";
 import { BiomeId } from "#enums/biome-id";
 import { initMysteryEncounters } from "#app/data/mystery-encounters/mystery-encounters";
 import { timedEventManager } from "./global-event-manager";
+import { initModifierPools } from "./modifier/init-modifier-pools";
 
 export class LoadingScene extends SceneBase {
   public static readonly KEY = "loading";
@@ -362,6 +363,8 @@ export class LoadingScene extends SceneBase {
     );
 
     this.loadLoadingScreen();
+
+    initModifierPools();
 
     initAchievements();
     initVouchers();
