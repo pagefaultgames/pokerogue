@@ -33,7 +33,6 @@ import {
   PokemonFormChangeItemModifier,
   PokemonHeldItemModifier,
   PokemonHpRestoreModifier,
-  PokemonIncrementingStatModifier,
   RememberMoveModifier,
 } from "./modifier/modifier";
 import { PokeballType } from "#enums/pokeball";
@@ -169,6 +168,7 @@ import { ModifierBar } from "./modifier/modifier-bar";
 import { applyHeldItems } from "./items/all-held-items";
 import { ITEM_EFFECT } from "./items/held-item";
 import { PhaseManager } from "./phase-manager";
+import { HeldItemId } from "#enums/held-item-id";
 
 const DEBUG_RNG = false;
 
@@ -3019,12 +3019,6 @@ export default class BattleScene extends SceneBase {
     const modifierIndex = modifiers.indexOf(modifier);
     if (modifierIndex > -1) {
       modifiers.splice(modifierIndex, 1);
-      if (modifier instanceof PokemonFormChangeItemModifier) {
-        const pokemon = this.getPokemonById(modifier.pokemonId);
-        if (pokemon) {
-          modifier.apply(pokemon, false);
-        }
-      }
       return true;
     }
 
@@ -3177,6 +3171,7 @@ export default class BattleScene extends SceneBase {
       } else {
         matchingFormChange = matchingFormChangeOpts[0];
       }
+
       if (matchingFormChange) {
         let phase: Phase;
         if (pokemon.isPlayer() && !matchingFormChange.quiet) {
@@ -3374,9 +3369,9 @@ export default class BattleScene extends SceneBase {
         const participated = participantIds.has(pId);
         if (participated && pokemonDefeated) {
           partyMember.addFriendship(FRIENDSHIP_GAIN_FROM_BATTLE);
-          const machoBraceModifier = partyMember.getHeldItems().find(m => m instanceof PokemonIncrementingStatModifier);
-          if (machoBraceModifier && machoBraceModifier.stackCount < machoBraceModifier.getMaxStackCount()) {
-            machoBraceModifier.stackCount++;
+          const hasMachoBrace = partyMember.heldItemManager.hasItem(HeldItemId.MACHO_BRACE);
+          if (hasMachoBrace) {
+            partyMember.heldItemManager.add(HeldItemId.MACHO_BRACE);
             this.updateModifiers(true, true);
             partyMember.updateInfo();
           }

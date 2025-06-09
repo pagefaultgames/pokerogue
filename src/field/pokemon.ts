@@ -242,6 +242,7 @@ import { loadMoveAnimations } from "#app/sprites/pokemon-asset-loader";
 import { PokemonItemManager } from "./pokemon-held-item-manager";
 import { applyHeldItems } from "#app/items/all-held-items";
 import { ITEM_EFFECT } from "#app/items/held-item";
+import type { HeldItemId } from "#enums/held-item-id";
 
 export enum LearnMoveSituation {
   MISC,
@@ -5462,15 +5463,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param forBattle If `false`, do not trigger in-battle effects (such as Unburden) from losing the item. For example, set this to `false` if the Pokemon is giving away the held item for a Mystery Encounter. Default is `true`.
    * @returns `true` if the item was removed successfully, `false` otherwise.
    */
-  public loseHeldItem(heldItem: PokemonHeldItemModifier, forBattle = true): boolean {
-    if (heldItem.pokemonId !== -1 && heldItem.pokemonId !== this.id) {
+  public loseHeldItem(heldItemId: HeldItemId, forBattle = true): boolean {
+    if (!this.heldItemManager.hasItem(heldItemId)) {
       return false;
     }
 
-    heldItem.stackCount--;
-    if (heldItem.stackCount <= 0) {
-      globalScene.removeModifier(heldItem, this.isEnemy());
-    }
+    this.heldItemManager.remove(heldItemId);
+
     if (forBattle) {
       applyPostItemLostAbAttrs(PostItemLostAbAttr, this, false);
     }

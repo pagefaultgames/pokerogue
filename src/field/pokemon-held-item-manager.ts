@@ -59,10 +59,10 @@ export class PokemonItemManager {
     }
   }
 
-  remove(itemType: HeldItemId, removeStack = 1) {
+  remove(itemType: HeldItemId, removeStack = 1, all = false) {
     this.heldItems[itemType].stack -= removeStack;
 
-    if (this.heldItems[itemType].stack <= 0) {
+    if (all || this.heldItems[itemType].stack <= 0) {
       delete this.heldItems[itemType];
     }
   }
