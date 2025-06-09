@@ -70,14 +70,14 @@ import { CommonAnim } from "../battle-anims";
 import { getBerryEffectFunc } from "#app/data/berry";
 import { BerryUsedEvent } from "#app/events/battle-scene";
 import { noAbilityTypeOverrideMoves } from "#app/data/moves/invalid-moves";
-import { isVirtual, MoveUseMode } from "#enums/move-use-mode";
+import { MoveUseMode } from "#enums/move-use-mode";
 
 // Type imports
 import type { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import type { BattleStat, EffectiveStat } from "#enums/stat";
 import type { BerryType } from "#enums/berry-type";
 import type Pokemon from "#app/field/pokemon";
-import type { EnemyPokemon, PokemonMove, TurnMove } from "#app/field/pokemon";
+import type { EnemyPokemon, PokemonMove } from "#app/field/pokemon";
 import type { Weather } from "#app/data/weather";
 import type { BattlerTag } from "#app/data/battler-tags";
 import type {
@@ -91,7 +91,7 @@ import type {
 import type { BattlerIndex } from "#app/battle";
 import type Move from "#app/data/moves/move";
 import type { ArenaTrapTag, SuppressAbilitiesTag } from "#app/data/arena-tag";
-import type { Constructor } from "#app/utils/common"
+import type { Constructor } from "#app/utils/common";
 
 export class BlockRecoilDamageAttr extends AbAttr {
   constructor() {
@@ -2557,8 +2557,7 @@ export class GorillaTacticsAbAttr extends ExecutedMoveAbAttr {
   }
 
   override canApplyExecutedMove(pokemon: Pokemon, _simulated: boolean): boolean {
-    // Gorilla Tactics does not trigger on called/reflected moves, only the calling move.
-    return !pokemon.canAddTag(BattlerTagType.GORILLA_TACTICS);
+    return !pokemon.getTag(BattlerTagType.GORILLA_TACTICS);
   }
 
   override applyExecutedMove(pokemon: Pokemon, simulated: boolean): void {
@@ -7787,7 +7786,7 @@ export function applyPreAttackAbAttrs(
 export function applyExecutedMoveAbAttrs(
   attrType: Constructor<ExecutedMoveAbAttr>,
   pokemon: Pokemon,
-  simulated: boolean = false,
+  simulated = false,
   ...args: any[]
 ): void {
   applyAbAttrsInternal<ExecutedMoveAbAttr>(
