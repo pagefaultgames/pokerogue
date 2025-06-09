@@ -1,13 +1,13 @@
 import { Stat } from "#enums/stat";
 import { BattlerIndex } from "#app/battle";
-import { allMoves } from "#app/data/moves/move";
+import { allMoves } from "#app/data/data-lists";
 import type Move from "#app/data/moves/move";
 import { DamageAnimPhase } from "#app/phases/damage-anim-phase";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import { MoveEndPhase } from "#app/phases/move-end-phase";
 import { MovePhase } from "#app/phases/move-phase";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -30,25 +30,24 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
   });
 
   beforeEach(() => {
-    fusionFlare = allMoves[Moves.FUSION_FLARE];
-    fusionBolt = allMoves[Moves.FUSION_BOLT];
+    fusionFlare = allMoves[MoveId.FUSION_FLARE];
+    fusionBolt = allMoves[MoveId.FUSION_BOLT];
     game = new GameManager(phaserGame);
-    game.override.moveset([fusionFlare.id, fusionBolt.id]);
-    game.override.startingLevel(1);
-
-    game.override.enemySpecies(Species.RESHIRAM);
-    game.override.enemyMoveset([Moves.REST, Moves.REST, Moves.REST, Moves.REST]);
-
-    game.override.battleStyle("double");
-    game.override.startingWave(97);
-    game.override.disableCrits();
+    game.override
+      .moveset([fusionFlare.id, fusionBolt.id])
+      .startingLevel(1)
+      .enemySpecies(SpeciesId.RESHIRAM)
+      .enemyMoveset(MoveId.REST)
+      .battleStyle("double")
+      .startingWave(97)
+      .disableCrits();
 
     vi.spyOn(fusionFlare, "calculateBattlePower");
     vi.spyOn(fusionBolt, "calculateBattlePower");
   });
 
   it("FUSION_FLARE should double power of subsequent FUSION_BOLT", async () => {
-    await game.classicMode.startBattle([Species.ZEKROM, Species.ZEKROM]);
+    await game.classicMode.startBattle([SpeciesId.ZEKROM, SpeciesId.ZEKROM]);
 
     game.move.select(fusionFlare.id, 0, BattlerIndex.ENEMY);
     game.move.select(fusionBolt.id, 1, BattlerIndex.ENEMY);
@@ -57,18 +56,18 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
-    expect((game.scene.getCurrentPhase() as MoveEffectPhase).move.id).toBe(fusionFlare.id);
+    expect((game.scene.phaseManager.getCurrentPhase() as MoveEffectPhase).move.id).toBe(fusionFlare.id);
     await game.phaseInterceptor.to(DamageAnimPhase, false);
     expect(fusionFlare.calculateBattlePower).toHaveLastReturnedWith(100);
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
-    expect((game.scene.getCurrentPhase() as MoveEffectPhase).move.id).toBe(fusionBolt.id);
+    expect((game.scene.phaseManager.getCurrentPhase() as MoveEffectPhase).move.id).toBe(fusionBolt.id);
     await game.phaseInterceptor.to(DamageAnimPhase, false);
     expect(fusionBolt.calculateBattlePower).toHaveLastReturnedWith(200);
   }, 20000);
 
   it("FUSION_BOLT should double power of subsequent FUSION_FLARE", async () => {
-    await game.classicMode.startBattle([Species.ZEKROM, Species.ZEKROM]);
+    await game.classicMode.startBattle([SpeciesId.ZEKROM, SpeciesId.ZEKROM]);
 
     game.move.select(fusionBolt.id, 0, BattlerIndex.ENEMY);
     game.move.select(fusionFlare.id, 1, BattlerIndex.ENEMY);
@@ -77,18 +76,18 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
-    expect((game.scene.getCurrentPhase() as MoveEffectPhase).move.id).toBe(fusionBolt.id);
+    expect((game.scene.phaseManager.getCurrentPhase() as MoveEffectPhase).move.id).toBe(fusionBolt.id);
     await game.phaseInterceptor.to(DamageAnimPhase, false);
     expect(fusionBolt.calculateBattlePower).toHaveLastReturnedWith(100);
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
-    expect((game.scene.getCurrentPhase() as MoveEffectPhase).move.id).toBe(fusionFlare.id);
+    expect((game.scene.phaseManager.getCurrentPhase() as MoveEffectPhase).move.id).toBe(fusionFlare.id);
     await game.phaseInterceptor.to(DamageAnimPhase, false);
     expect(fusionFlare.calculateBattlePower).toHaveLastReturnedWith(200);
   }, 20000);
 
   it("FUSION_FLARE should double power of subsequent FUSION_BOLT if a move failed in between", async () => {
-    await game.classicMode.startBattle([Species.ZEKROM, Species.ZEKROM]);
+    await game.classicMode.startBattle([SpeciesId.ZEKROM, SpeciesId.ZEKROM]);
 
     game.move.select(fusionFlare.id, 0, BattlerIndex.PLAYER);
     game.move.select(fusionBolt.id, 1, BattlerIndex.PLAYER);
@@ -97,7 +96,7 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY]);
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
-    expect((game.scene.getCurrentPhase() as MoveEffectPhase).move.id).toBe(fusionFlare.id);
+    expect((game.scene.phaseManager.getCurrentPhase() as MoveEffectPhase).move.id).toBe(fusionFlare.id);
     await game.phaseInterceptor.to(DamageAnimPhase, false);
     expect(fusionFlare.calculateBattlePower).toHaveLastReturnedWith(100);
 
@@ -107,14 +106,14 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
     await game.phaseInterceptor.runFrom(MovePhase).to(MoveEndPhase);
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
-    expect((game.scene.getCurrentPhase() as MoveEffectPhase).move.id).toBe(fusionBolt.id);
+    expect((game.scene.phaseManager.getCurrentPhase() as MoveEffectPhase).move.id).toBe(fusionBolt.id);
     await game.phaseInterceptor.to(DamageAnimPhase, false);
     expect(fusionBolt.calculateBattlePower).toHaveLastReturnedWith(200);
   }, 20000);
 
   it("FUSION_FLARE should not double power of subsequent FUSION_BOLT if a move succeeded in between", async () => {
-    game.override.enemyMoveset([Moves.SPLASH, Moves.SPLASH, Moves.SPLASH, Moves.SPLASH]);
-    await game.classicMode.startBattle([Species.ZEKROM, Species.ZEKROM]);
+    game.override.enemyMoveset(MoveId.SPLASH);
+    await game.classicMode.startBattle([SpeciesId.ZEKROM, SpeciesId.ZEKROM]);
 
     game.move.select(fusionFlare.id, 0, BattlerIndex.ENEMY);
     game.move.select(fusionBolt.id, 1, BattlerIndex.ENEMY);
@@ -123,7 +122,7 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY]);
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
-    expect((game.scene.getCurrentPhase() as MoveEffectPhase).move.id).toBe(fusionFlare.id);
+    expect((game.scene.phaseManager.getCurrentPhase() as MoveEffectPhase).move.id).toBe(fusionFlare.id);
     await game.phaseInterceptor.to(DamageAnimPhase, false);
     expect(fusionFlare.calculateBattlePower).toHaveLastReturnedWith(100);
 
@@ -132,13 +131,13 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
     await game.phaseInterceptor.runFrom(MovePhase).to(MoveEndPhase);
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
-    expect((game.scene.getCurrentPhase() as MoveEffectPhase).move.id).toBe(fusionBolt.id);
+    expect((game.scene.phaseManager.getCurrentPhase() as MoveEffectPhase).move.id).toBe(fusionBolt.id);
     await game.phaseInterceptor.to(DamageAnimPhase, false);
     expect(fusionBolt.calculateBattlePower).toHaveLastReturnedWith(100);
   }, 20000);
 
   it("FUSION_FLARE should double power of subsequent FUSION_BOLT if moves are aimed at allies", async () => {
-    await game.startBattle([Species.ZEKROM, Species.RESHIRAM]);
+    await game.classicMode.startBattle([SpeciesId.ZEKROM, SpeciesId.RESHIRAM]);
 
     game.move.select(fusionBolt.id, 0, BattlerIndex.PLAYER_2);
     game.move.select(fusionFlare.id, 1, BattlerIndex.PLAYER);
@@ -147,19 +146,19 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
-    expect((game.scene.getCurrentPhase() as MoveEffectPhase).move.id).toBe(fusionBolt.id);
+    expect((game.scene.phaseManager.getCurrentPhase() as MoveEffectPhase).move.id).toBe(fusionBolt.id);
     await game.phaseInterceptor.to(DamageAnimPhase, false);
     expect(fusionBolt.calculateBattlePower).toHaveLastReturnedWith(100);
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
-    expect((game.scene.getCurrentPhase() as MoveEffectPhase).move.id).toBe(fusionFlare.id);
+    expect((game.scene.phaseManager.getCurrentPhase() as MoveEffectPhase).move.id).toBe(fusionFlare.id);
     await game.phaseInterceptor.to(DamageAnimPhase, false);
     expect(fusionFlare.calculateBattlePower).toHaveLastReturnedWith(200);
   }, 20000);
 
   it("FUSION_FLARE and FUSION_BOLT alternating throughout turn should double power of subsequent moves", async () => {
-    game.override.enemyMoveset([fusionFlare.id, fusionFlare.id, fusionFlare.id, fusionFlare.id]);
-    await game.classicMode.startBattle([Species.ZEKROM, Species.ZEKROM]);
+    game.override.enemyMoveset(fusionFlare.id);
+    await game.classicMode.startBattle([SpeciesId.ZEKROM, SpeciesId.ZEKROM]);
 
     const party = game.scene.getPlayerParty();
     const enemyParty = game.scene.getEnemyParty();
@@ -191,29 +190,29 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY]);
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
-    expect((game.scene.getCurrentPhase() as MoveEffectPhase).move.id).toBe(fusionBolt.id);
+    expect((game.scene.phaseManager.getCurrentPhase() as MoveEffectPhase).move.id).toBe(fusionBolt.id);
     await game.phaseInterceptor.to(DamageAnimPhase, false);
     expect(fusionBolt.calculateBattlePower).toHaveLastReturnedWith(100);
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
-    expect((game.scene.getCurrentPhase() as MoveEffectPhase).move.id).toBe(fusionFlare.id);
+    expect((game.scene.phaseManager.getCurrentPhase() as MoveEffectPhase).move.id).toBe(fusionFlare.id);
     await game.phaseInterceptor.to(DamageAnimPhase, false);
     expect(fusionFlare.calculateBattlePower).toHaveLastReturnedWith(200);
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
-    expect((game.scene.getCurrentPhase() as MoveEffectPhase).move.id).toBe(fusionBolt.id);
+    expect((game.scene.phaseManager.getCurrentPhase() as MoveEffectPhase).move.id).toBe(fusionBolt.id);
     await game.phaseInterceptor.to(DamageAnimPhase, false);
     expect(fusionBolt.calculateBattlePower).toHaveLastReturnedWith(200);
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
-    expect((game.scene.getCurrentPhase() as MoveEffectPhase).move.id).toBe(fusionFlare.id);
+    expect((game.scene.phaseManager.getCurrentPhase() as MoveEffectPhase).move.id).toBe(fusionFlare.id);
     await game.phaseInterceptor.to(DamageAnimPhase, false);
     expect(fusionFlare.calculateBattlePower).toHaveLastReturnedWith(200);
   }, 20000);
 
   it("FUSION_FLARE and FUSION_BOLT alternating throughout turn should double power of subsequent moves if moves are aimed at allies", async () => {
-    game.override.enemyMoveset([fusionFlare.id, fusionFlare.id, fusionFlare.id, fusionFlare.id]);
-    await game.classicMode.startBattle([Species.ZEKROM, Species.ZEKROM]);
+    game.override.enemyMoveset(fusionFlare.id);
+    await game.classicMode.startBattle([SpeciesId.ZEKROM, SpeciesId.ZEKROM]);
 
     const party = game.scene.getPlayerParty();
     const enemyParty = game.scene.getEnemyParty();
@@ -245,22 +244,22 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY]);
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
-    expect((game.scene.getCurrentPhase() as MoveEffectPhase).move.id).toBe(fusionBolt.id);
+    expect((game.scene.phaseManager.getCurrentPhase() as MoveEffectPhase).move.id).toBe(fusionBolt.id);
     await game.phaseInterceptor.to(DamageAnimPhase, false);
     expect(fusionBolt.calculateBattlePower).toHaveLastReturnedWith(100);
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
-    expect((game.scene.getCurrentPhase() as MoveEffectPhase).move.id).toBe(fusionFlare.id);
+    expect((game.scene.phaseManager.getCurrentPhase() as MoveEffectPhase).move.id).toBe(fusionFlare.id);
     await game.phaseInterceptor.to(DamageAnimPhase, false);
     expect(fusionFlare.calculateBattlePower).toHaveLastReturnedWith(200);
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
-    expect((game.scene.getCurrentPhase() as MoveEffectPhase).move.id).toBe(fusionBolt.id);
+    expect((game.scene.phaseManager.getCurrentPhase() as MoveEffectPhase).move.id).toBe(fusionBolt.id);
     await game.phaseInterceptor.to(DamageAnimPhase, false);
     expect(fusionBolt.calculateBattlePower).toHaveLastReturnedWith(200);
 
     await game.phaseInterceptor.to(MoveEffectPhase, false);
-    expect((game.scene.getCurrentPhase() as MoveEffectPhase).move.id).toBe(fusionFlare.id);
+    expect((game.scene.phaseManager.getCurrentPhase() as MoveEffectPhase).move.id).toBe(fusionFlare.id);
     await game.phaseInterceptor.to(DamageAnimPhase, false);
     expect(fusionFlare.calculateBattlePower).toHaveLastReturnedWith(200);
   }, 20000);

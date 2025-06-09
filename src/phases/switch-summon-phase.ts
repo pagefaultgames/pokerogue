@@ -6,7 +6,8 @@ import {
   PreSummonAbAttr,
   PreSwitchOutAbAttr,
 } from "#app/data/abilities/ability";
-import { allMoves, ForceSwitchOutAttr } from "#app/data/moves/move";
+import { ForceSwitchOutAttr } from "#app/data/moves/move";
+import { allMoves } from "#app/data/data-lists";
 import { getPokeballTintColor } from "#app/data/pokeball";
 import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms";
 import { TrainerSlot } from "#enums/trainer-slot";
@@ -15,12 +16,12 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import { SwitchEffectTransferModifier } from "#app/modifier/modifier";
 import { Command } from "#app/ui/command-ui-handler";
 import i18next from "i18next";
-import { PostSummonPhase } from "./post-summon-phase";
 import { SummonPhase } from "./summon-phase";
 import { SubstituteTag } from "#app/data/battler-tags";
 import { SwitchType } from "#enums/switch-type";
 
 export class SwitchSummonPhase extends SummonPhase {
+  public readonly phaseName: "SwitchSummonPhase" | "ReturnPhase" = "SwitchSummonPhase";
   private readonly switchType: SwitchType;
   private readonly slotIndex: number;
   private readonly doReturn: boolean;
@@ -123,6 +124,12 @@ export class SwitchSummonPhase extends SummonPhase {
     const party = this.player ? this.getParty() : globalScene.getEnemyParty();
     const switchedInPokemon: Pokemon | undefined = party[this.slotIndex];
     this.lastPokemon = this.getPokemon();
+
+    // Defensive programming: Overcome the bug where the summon data has somehow not been reset
+    // prior to switching in a new Pokemon.
+    // Force the switch to occur and load the assets for the new pokemon, ignoring override.
+    switchedInPokemon.resetSummonData();
+    switchedInPokemon.loadAssets(true);
 
     applyPreSummonAbAttrs(PreSummonAbAttr, switchedInPokemon);
     applyPreSwitchOutAbAttrs(PreSwitchOutAbAttr, this.lastPokemon);
@@ -257,6 +264,6 @@ export class SwitchSummonPhase extends SummonPhase {
   }
 
   queuePostSummon(): void {
-    globalScene.unshiftPhase(new PostSummonPhase(this.getPokemon().getBattlerIndex()));
+    globalScene.phaseManager.unshiftNew("PostSummonPhase", this.getPokemon().getBattlerIndex());
   }
 }
