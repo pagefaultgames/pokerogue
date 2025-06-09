@@ -28,7 +28,6 @@ import {
 } from "#app/data/battler-tags";
 import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
 import type { MoveAttr } from "#app/data/moves/move";
-import { MoveEffectAttr } from "#app/data/moves/move";
 import { getMoveTargets } from "#app/data/moves/move-utils";
 import { applyFilteredMoveAttrs, applyMoveAttrs } from "#app/data/moves/apply-attrs";
 import { MoveEffectTrigger } from "#enums/MoveEffectTrigger";
@@ -746,7 +745,7 @@ export class MoveEffectPhase extends PokemonPhase {
   ): void {
     applyFilteredMoveAttrs(
       (attr: MoveAttr) =>
-        attr instanceof MoveEffectAttr &&
+        attr.is("MoveEffectAttr") &&
         attr.trigger === triggerType &&
         (isNullOrUndefined(selfTarget) || attr.selfTarget === selfTarget) &&
         (!attr.firstHitOnly || this.firstHit) &&

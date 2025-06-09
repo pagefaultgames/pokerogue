@@ -123,7 +123,7 @@ import { MoveEffectTrigger } from "#enums/MoveEffectTrigger";
 import { MultiHitType } from "#enums/MultiHitType";
 import { invalidAssistMoves, invalidCopycatMoves, invalidMetronomeMoves, invalidMirrorMoveMoves, invalidSleepTalkMoves } from "./invalid-moves";
 import { SelectBiomePhase } from "#app/phases/select-biome-phase";
-import { ChargingMove, MoveAttrMap, MoveAttrString, MoveClass, MoveClassMap } from "#app/@types/move-types";
+import { ChargingMove, MoveAttrMap, MoveAttrString, MoveKindString, MoveClassMap } from "#app/@types/move-types";
 import { applyMoveAttrs } from "./apply-attrs";
 import { frenzyMissFunc, getMoveTargets } from "./move-utils";
 
@@ -153,10 +153,13 @@ export default abstract class Move implements Localizable {
   /**
    * Check if the move is of the given subclass without requiring `instanceof`.
    * 
+   * ⚠️ Does _not_ work for {@linkcode ChargingAttackMove} and {@linkcode ChargingSelfStatusMove} subclasses. For those,
+   * use {@linkcode isChargingMove} instead.
+   * 
    * @param moveKind - The string name of the move to check against
    * @returns Whether this move is of the provided type.
    */
-  public abstract is<K extends keyof MoveClassMap>(moveKind: K): this is MoveClassMap[K];
+  public abstract is<K extends MoveKindString>(moveKind: K): this is MoveClassMap[K];
 
   constructor(id: MoveId, type: PokemonType, category: MoveCategory, defaultMoveTarget: MoveTarget, power: number, accuracy: number, pp: number, chance: number, priority: number, generation: number) {
     this.id = id;
@@ -976,6 +979,10 @@ export default abstract class Move implements Localizable {
 }
 
 export class AttackMove extends Move {
+  /** This field does not exist at runtime and must not be used.
+   * Its sole purpose is to ensure that typescript is able to properly narrow when the `is` method is called.
+   */
+  declare private _: never;
   override is<K extends keyof MoveClassMap>(moveKind: K): this is MoveClassMap[K] {
     return moveKind === "AttackMove";
   }
@@ -1026,21 +1033,29 @@ export class AttackMove extends Move {
 }
 
 export class StatusMove extends Move {
+  /** This field does not exist at runtime and must not be used.
+   * Its sole purpose is to ensure that typescript is able to properly narrow when the `is` method is called.
+   */
+  declare private _: never;
   constructor(id: MoveId, type: PokemonType, accuracy: number, pp: number, chance: number, priority: number, generation: number) {
     super(id, type, MoveCategory.STATUS, MoveTarget.NEAR_OTHER, -1, accuracy, pp, chance, priority, generation);
   }
 
-  override is<K extends keyof MoveClassMap>(moveKind: K): this is MoveClassMap[K] {
+  override is<K extends MoveKindString>(moveKind: K): this is MoveClassMap[K] {
     return moveKind === "StatusMove";
   }
 }
 
 export class SelfStatusMove extends Move {
+  /** This field does not exist at runtime and must not be used.
+   * Its sole purpose is to ensure that typescript is able to properly narrow when the `is` method is called.
+   */
+  declare private _: never;
   constructor(id: MoveId, type: PokemonType, accuracy: number, pp: number, chance: number, priority: number, generation: number) {
     super(id, type, MoveCategory.STATUS, MoveTarget.USER, -1, accuracy, pp, chance, priority, generation);
   }
 
-  override is<K extends keyof MoveClassMap>(moveKind: K): this is MoveClassMap[K] {
+  override is<K extends MoveKindString>(moveKind: K): this is MoveClassMap[K] {
     return moveKind === "SelfStatusMove";
   }
 }
@@ -1065,11 +1080,6 @@ function ChargeMove<TBase extends SubMove>(Base: TBase, nameAppend: string) {
 
     override isChargingMove(): this is ChargingMove {
       return true;
-    }
-
-    override is<K extends keyof MoveClassMap>(moveKind: K): this is MoveClassMap[K] {
-      // Anything subclassing this is a charge move.
-      return moveKind === "ChargeMove" || moveKind === nameAppend || super.is(moveKind);
     }
 
     /**
@@ -1151,14 +1161,14 @@ export abstract class MoveAttr {
   public selfTarget: boolean;
 
   /**
-   * Returns whether this attribute is of the given type.
-   * 
+   * Return whether this attribute is of the given type.
+   *
    * @remarks
    * Used to avoid requring the caller to have imported the specific attribute type, avoiding circular dependencies.
    * @param attr - The attribute to check against
-   * @returns Whether the attribute is an instanceof the given type.
+   * @returns Whether the attribute is an instance of the given type.
    */
-  public is<T extends MoveAttrString>(attr: T): this is MoveAttrConstructorMap[MoveAttrString] {
+  public is<T extends MoveAttrString>(attr: T): this is MoveAttrMap[T] {
     const targetAttr = MoveAttrs[attr];
     if (!targetAttr) {
       return false;
@@ -3096,7 +3106,11 @@ export class WeatherInstantChargeAttr extends InstantChargeAttr {
 }
 
 export class OverrideMoveEffectAttr extends MoveAttr {
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+  /** This field does not exist at runtime and must not be used.
+   * Its sole purpose is to ensure that typescript is able to properly narrow when the `is` method is called.
+   */
+  declare private _: never;
+  override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     return true;
   }
 }
@@ -8401,7 +8415,8 @@ const MoveAttrs = Object.freeze({
   ResistLastMoveTypeAttr,
   ExposedMoveAttr,
 });
-/** Map of names  */
+
+/** Map of of move attribute names to their constructors */
 export type MoveAttrConstructorMap = typeof MoveAttrs;
 
 export const selfStatLowerMoves: MoveId[] = [];

@@ -446,12 +446,11 @@ export function initMoveAnim(move: MoveId): Promise<void> {
       }
     } else {
       moveAnims.set(move, null);
-      const defaultMoveAnim =
-        allMoves[move].is("AttackMove")
-          ? MoveId.TACKLE
-          : allMoves[move].is("SelfStatusMove")
-            ? MoveId.FOCUS_ENERGY
-            : MoveId.TAIL_WHIP;
+      const defaultMoveAnim = allMoves[move].is("AttackMove")
+        ? MoveId.TACKLE
+        : allMoves[move].is("SelfStatusMove")
+          ? MoveId.FOCUS_ENERGY
+          : MoveId.TAIL_WHIP;
 
       const fetchAnimAndResolve = (move: MoveId) => {
         globalScene
