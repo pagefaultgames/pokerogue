@@ -1,4 +1,4 @@
-import { BattlerTagLapseType } from "#app/data/battler-tags";
+import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
 import type { OptionPhaseCallback } from "#app/data/mystery-encounters/mystery-encounter-option";
 import type MysteryEncounterOption from "#app/data/mystery-encounters/mystery-encounter-option";
 import { SeenEncounterData } from "#app/data/mystery-encounters/mystery-encounter-save-data";

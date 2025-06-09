@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import type { BattlerIndex } from "#app/battle";
+import type { BattlerIndex } from "#enums/battler-index";
 import { PERMANENT_STATS, Stat } from "#app/enums/stat";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { getTextColor, TextStyle } from "#app/ui/text";

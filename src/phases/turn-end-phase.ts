@@ -1,5 +1,5 @@
 import { applyPostTurnAbAttrs, PostTurnAbAttr } from "#app/data/abilities/ability";
-import { BattlerTagLapseType } from "#app/data/battler-tags";
+import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
 import { TerrainType } from "#app/data/terrain";
 import { WeatherType } from "#app/enums/weather-type";
 import { TurnEndEvent } from "#app/events/battle-scene";
