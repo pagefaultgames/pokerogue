@@ -24,6 +24,7 @@ import { type BERRY_PARAMS, BerryHeldItem, berryTypeToHeldItem } from "./held-it
 import { type BYPASS_SPEED_CHANCE_PARAMS, BypassSpeedChanceHeldItem } from "./held-items/bypass-speed-chance";
 import { type CRIT_BOOST_PARAMS, CritBoostHeldItem, SpeciesCritBoostHeldItem } from "./held-items/crit-booster";
 import { type DAMAGE_MONEY_REWARD_PARAMS, DamageMoneyRewardHeldItem } from "./held-items/damage-money-reward";
+import { type EVO_TRACKER_PARAMS, GimmighoulEvoTrackerHeldItem } from "./held-items/evo-tracker";
 import { type EXP_BOOST_PARAMS, ExpBoosterHeldItem } from "./held-items/exp-booster";
 import { type FIELD_EFFECT_PARAMS, FieldEffectHeldItem } from "./held-items/field-effect";
 import { type FLINCH_CHANCE_PARAMS, FlinchChanceHeldItem } from "./held-items/flinch-chance";
@@ -164,6 +165,13 @@ export function initHeldItems() {
     .unstealable()
     .untransferable()
     .unsuppressable();
+
+  allHeldItems[HeldItemId.GIMMIGHOUL_EVO_TRACKER] = new GimmighoulEvoTrackerHeldItem(
+    HeldItemId.GIMMIGHOUL_EVO_TRACKER,
+    999,
+    SpeciesId.GIMMIGHOUL,
+    10,
+  );
 }
 
 type APPLY_HELD_ITEMS_PARAMS = {
@@ -193,6 +201,7 @@ type APPLY_HELD_ITEMS_PARAMS = {
   [ITEM_EFFECT.BASE_STAT_TOTAL]: BASE_STAT_TOTAL_PARAMS;
   [ITEM_EFFECT.BASE_STAT_FLAT]: BASE_STAT_FLAT_PARAMS;
   [ITEM_EFFECT.INCREMENTING_STAT]: INCREMENTING_STAT_PARAMS;
+  [ITEM_EFFECT.EVO_TRACKER]: EVO_TRACKER_PARAMS;
 };
 
 export function applyHeldItems<T extends ITEM_EFFECT>(effect: T, params: APPLY_HELD_ITEMS_PARAMS[T]) {

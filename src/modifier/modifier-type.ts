@@ -20,7 +20,6 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import {
   AddPokeballModifier,
   AddVoucherModifier,
-  BerryModifier,
   BoostBugSpawnModifier,
   DoubleBattleChanceBoosterModifier,
   EnemyAttackStatusEffectChanceModifier,
@@ -31,7 +30,6 @@ import {
   EnemyStatusEffectHealChanceModifier,
   EnemyTurnHealModifier,
   EvolutionItemModifier,
-  EvoTrackerModifier,
   ExpBalanceModifier,
   ExpBoosterModifier,
   ExpShareModifier,
@@ -62,13 +60,11 @@ import {
   PreserveBerryModifier,
   RememberMoveModifier,
   ShinyRateBoosterModifier,
-  SpeciesCritBoosterModifier,
   TempCritBoosterModifier,
   TempStatStageBoosterModifier,
   TerastallizeAccessModifier,
   TerrastalizeModifier,
   TmModifier,
-  TurnStatusEffectModifier,
   type EnemyPersistentModifier,
   type Modifier,
   type PersistentModifier,
@@ -889,20 +885,44 @@ export class BaseStatTotalHeldItemReward extends HeldItemReward {
   }
 }
 
+class BaseStatTotalHeldItemRewardGenerator extends ModifierTypeGenerator {
+  constructor() {
+    super((_party: Pokemon[], pregenArgs?: any[]) => {
+      if (pregenArgs) {
+        return new BaseStatTotalHeldItemReward(HeldItemId.SHUCKLE_JUICE, pregenArgs[0] as number);
+      }
+      return new BaseStatTotalHeldItemReward(HeldItemId.SHUCKLE_JUICE, randSeedInt(20, 1));
+    });
+  }
+}
+
 /**
  * Old Gateau item
  */
 export class BaseStatFlatHeldItemReward extends HeldItemReward {
   private readonly statModifier: number;
+  private readonly stats: Stat[];
 
-  constructor(itemId: HeldItemId, statModifier: number) {
+  constructor(itemId: HeldItemId, statModifier: number, stats: Stat[]) {
     super(itemId);
     this.statModifier = statModifier;
+    this.stats = stats;
   }
 
   apply(pokemon: Pokemon) {
     super.apply(pokemon);
     pokemon.heldItemManager[this.itemId].data.statModifier = this.statModifier;
+  }
+}
+
+class BaseStatFlatHeldItemRewardGenerator extends ModifierTypeGenerator {
+  constructor() {
+    super((_party: Pokemon[], pregenArgs?: any[]) => {
+      if (pregenArgs) {
+        return new BaseStatFlatHeldItemReward(HeldItemId.OLD_GATEAU, pregenArgs[0] as number, pregenArgs[1] as Stat[]);
+      }
+      return new BaseStatFlatHeldItemReward(HeldItemId.OLD_GATEAU, randSeedInt(20, 1), [Stat.HP, Stat.ATK, Stat.DEF]);
+    });
   }
 }
 
@@ -1648,12 +1668,7 @@ export const modifierTypes = {
   FORM_CHANGE_ITEM: () => new FormChangeItemModifierTypeGenerator(false),
   RARE_FORM_CHANGE_ITEM: () => new FormChangeItemModifierTypeGenerator(true),
 
-  EVOLUTION_TRACKER_GIMMIGHOUL: () =>
-    new PokemonHeldItemModifierType(
-      "modifierType:ModifierType.EVOLUTION_TRACKER_GIMMIGHOUL",
-      "relic_gold",
-      (type, args) => new EvoTrackerModifier(type, (args[0] as Pokemon).id, SpeciesId.GIMMIGHOUL, 10),
-    ),
+  EVOLUTION_TRACKER_GIMMIGHOUL: () => new HeldItemReward(HeldItemId.GIMMIGHOUL_EVO_TRACKER),
 
   MEGA_BRACELET: () =>
     new ModifierType(
@@ -1692,9 +1707,9 @@ export const modifierTypes = {
 
   SACRED_ASH: () => new AllPokemonFullReviveModifierType("modifierType:ModifierType.SACRED_ASH", "sacred_ash"),
 
-  REVIVER_SEED_REWARD: () => new HeldItemReward(HeldItemId.REVIVER_SEED),
+  REVIVER_SEED: () => new HeldItemReward(HeldItemId.REVIVER_SEED),
 
-  WHITE_HERB_REWARD: () => new HeldItemReward(HeldItemId.WHITE_HERB),
+  WHITE_HERB: () => new HeldItemReward(HeldItemId.WHITE_HERB),
 
   ETHER: () => new PokemonPpRestoreModifierType("modifierType:ModifierType.ETHER", "ether", 10),
   MAX_ETHER: () => new PokemonPpRestoreModifierType("modifierType:ModifierType.MAX_ETHER", "max_ether", -1),
@@ -1728,9 +1743,9 @@ export const modifierTypes = {
       }
     })("modifierType:ModifierType.DIRE_HIT", "dire_hit", (type, _args) => new TempCritBoosterModifier(type, 5)),
 
-  BASE_STAT_BOOSTER_REWARD: () => new BaseStatBoosterRewardGenerator(),
+  BASE_STAT_BOOSTER: () => new BaseStatBoosterRewardGenerator(),
 
-  ATTACK_TYPE_BOOSTER_REWARD: () => new AttackTypeBoosterRewardGenerator(),
+  ATTACK_TYPE_BOOSTER: () => new AttackTypeBoosterRewardGenerator(),
 
   MINT: () =>
     new ModifierTypeGenerator((_party: Pokemon[], pregenArgs?: any[]) => {
@@ -2000,20 +2015,10 @@ export const modifierTypes = {
       (type, _args) => new EnemyFusionChanceModifier(type, 1),
     ),
 
-  MYSTERY_ENCOUNTER_SHUCKLE_JUICE: () =>
-    new ModifierTypeGenerator((_party: Pokemon[], pregenArgs?: any[]) => {
-      if (pregenArgs) {
-        return new PokemonBaseStatTotalModifierType(pregenArgs[0] as number);
-      }
-      return new PokemonBaseStatTotalModifierType(randSeedInt(20, 1));
-    }),
-  MYSTERY_ENCOUNTER_OLD_GATEAU: () =>
-    new ModifierTypeGenerator((_party: Pokemon[], pregenArgs?: any[]) => {
-      if (pregenArgs) {
-        return new PokemonBaseStatFlatModifierType(pregenArgs[0] as number, pregenArgs[1] as Stat[]);
-      }
-      return new PokemonBaseStatFlatModifierType(randSeedInt(20, 1), [Stat.HP, Stat.ATK, Stat.DEF]);
-    }),
+  MYSTERY_ENCOUNTER_SHUCKLE_JUICE: () => new BaseStatTotalHeldItemRewardGenerator(),
+
+  MYSTERY_ENCOUNTER_OLD_GATEAU: () => new BaseStatFlatHeldItemRewardGenerator(),
+
   MYSTERY_ENCOUNTER_BLACK_SLUDGE: () =>
     new ModifierTypeGenerator((_party: Pokemon[], pregenArgs?: any[]) => {
       if (pregenArgs) {
@@ -2085,7 +2090,7 @@ const modifierPool: ModifierPool = {
           party.filter(
             p =>
               p.hp &&
-              !p.getHeldItems().some(m => m instanceof BerryModifier && m.berryType === BerryType.LEPPA) &&
+              !p.heldItemManager.hasItem(HeldItemId.LEPPA_BERRY) &&
               p
                 .getMoveset()
                 .filter(m => m.ppUsed && m.getMovePp() - m.ppUsed <= 5 && m.ppUsed > Math.floor(m.getMovePp() / 2))
@@ -2104,7 +2109,7 @@ const modifierPool: ModifierPool = {
           party.filter(
             p =>
               p.hp &&
-              !p.getHeldItems().some(m => m instanceof BerryModifier && m.berryType === BerryType.LEPPA) &&
+              !p.heldItemManager.hasItem(HeldItemId.LEPPA_BERRY) &&
               p
                 .getMoveset()
                 .filter(m => m.ppUsed && m.getMovePp() - m.ppUsed <= 5 && m.ppUsed > Math.floor(m.getMovePp() / 2))
@@ -2135,12 +2140,10 @@ const modifierPool: ModifierPool = {
             p =>
               p.hp &&
               !!p.status &&
-              !p.getHeldItems().some(i => {
-                if (i instanceof TurnStatusEffectModifier) {
-                  return (i as TurnStatusEffectModifier).getStatusEffect() === p.status?.effect;
-                }
-                return false;
-              }),
+              !p
+                .getHeldItems()
+                .filter(i => i in [HeldItemId.TOXIC_ORB, HeldItemId.FLAME_ORB])
+                .some(i => allHeldItems[i].effect === p.status?.effect),
           ).length,
           3,
         );
@@ -2201,12 +2204,10 @@ const modifierPool: ModifierPool = {
             p =>
               p.hp &&
               !!p.status &&
-              !p.getHeldItems().some(i => {
-                if (i instanceof TurnStatusEffectModifier) {
-                  return (i as TurnStatusEffectModifier).getStatusEffect() === p.status?.effect;
-                }
-                return false;
-              }),
+              !p
+                .getHeldItems()
+                .filter(i => i in [HeldItemId.TOXIC_ORB, HeldItemId.FLAME_ORB])
+                .some(i => allHeldItems[i].effect === p.status?.effect),
           ).length,
           3,
         );
@@ -2226,7 +2227,7 @@ const modifierPool: ModifierPool = {
           party.filter(
             p =>
               p.hp &&
-              !p.getHeldItems().some(m => m instanceof BerryModifier && m.berryType === BerryType.LEPPA) &&
+              !p.heldItemManager.hasItem(HeldItemId.LEPPA_BERRY) &&
               p
                 .getMoveset()
                 .filter(m => m.ppUsed && m.getMovePp() - m.ppUsed <= 5 && m.ppUsed > Math.floor(m.getMovePp() / 2))
@@ -2245,7 +2246,7 @@ const modifierPool: ModifierPool = {
           party.filter(
             p =>
               p.hp &&
-              !p.getHeldItems().some(m => m instanceof BerryModifier && m.berryType === BerryType.LEPPA) &&
+              !p.heldItemManager.hasItem(HeldItemId.LEPPA_BERRY) &&
               p
                 .getMoveset()
                 .filter(m => m.ppUsed && m.getMovePp() - m.ppUsed <= 5 && m.ppUsed > Math.floor(m.getMovePp() / 2))
@@ -2349,7 +2350,7 @@ const modifierPool: ModifierPool = {
               (p.isFusion() && p.getFusionSpeciesForm(true).speciesId in pokemonEvolutions))
           ) {
             // Check if Pokemon is already holding an Eviolite
-            return !p.getHeldItems().some(i => i.type.id === "EVIOLITE");
+            return !p.heldItemManager.hasItem(HeldItemId.EVIOLITE);
           }
           return false;
         })
@@ -2366,7 +2367,7 @@ const modifierPool: ModifierPool = {
         // If a party member doesn't already have a Leek and is one of the relevant species, Leek can appear
         return party.some(
           p =>
-            !p.getHeldItems().some(i => i instanceof SpeciesCritBoosterModifier) &&
+            !p.heldItemManager.hasItem(HeldItemId.LEEK) &&
             (checkedSpecies.includes(p.getSpeciesForm(true).speciesId) ||
               (p.isFusion() && checkedSpecies.includes(p.getFusionSpeciesForm(true).speciesId))),
         )
@@ -2379,7 +2380,7 @@ const modifierPool: ModifierPool = {
       modifierTypes.TOXIC_ORB,
       (party: Pokemon[]) => {
         return party.some(p => {
-          const isHoldingOrb = p.getHeldItems().some(i => i.type.id === "FLAME_ORB" || i.type.id === "TOXIC_ORB");
+          const isHoldingOrb = p.getHeldItems().some(i => i in [HeldItemId.FLAME_ORB, HeldItemId.TOXIC_ORB]);
 
           if (!isHoldingOrb) {
             const moveset = p
@@ -2425,7 +2426,7 @@ const modifierPool: ModifierPool = {
       modifierTypes.FLAME_ORB,
       (party: Pokemon[]) => {
         return party.some(p => {
-          const isHoldingOrb = p.getHeldItems().some(i => i.type.id === "FLAME_ORB" || i.type.id === "TOXIC_ORB");
+          const isHoldingOrb = p.getHeldItems().some(i => i in [HeldItemId.FLAME_ORB, HeldItemId.TOXIC_ORB]);
 
           if (!isHoldingOrb) {
             const moveset = p
@@ -2471,13 +2472,8 @@ const modifierPool: ModifierPool = {
       modifierTypes.MYSTICAL_ROCK,
       (party: Pokemon[]) => {
         return party.some(p => {
-          let isHoldingMax = false;
-          for (const i of p.getHeldItems()) {
-            if (i.type.id === "MYSTICAL_ROCK") {
-              isHoldingMax = i.getStackCount() === i.getMaxStackCount();
-              break;
-            }
-          }
+          const stack = p.heldItemManager.getStack(HeldItemId.MYSTICAL_ROCK);
+          const isHoldingMax = stack === allHeldItems[HeldItemId.MYSTICAL_ROCK].maxStackCount;
 
           if (!isHoldingMax) {
             const moveset = p.getMoveset(true).map(m => m.moveId);
@@ -2521,7 +2517,7 @@ const modifierPool: ModifierPool = {
     ),
     new WeightedModifierType(modifierTypes.REVIVER_SEED, 4),
     new WeightedModifierType(modifierTypes.CANDY_JAR, skipInLastClassicWaveOrDefault(5)),
-    new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER_REWARD, 9),
+    new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, 9),
     new WeightedModifierType(modifierTypes.TM_ULTRA, 11),
     new WeightedModifierType(modifierTypes.RARER_CANDY, 4),
     new WeightedModifierType(modifierTypes.GOLDEN_PUNCH, skipInLastClassicWaveOrDefault(2)),
@@ -2545,8 +2541,8 @@ const modifierPool: ModifierPool = {
   [ModifierTier.ROGUE]: [
     new WeightedModifierType(modifierTypes.ROGUE_BALL, () => (hasMaximumBalls(PokeballType.ROGUE_BALL) ? 0 : 16), 16),
     new WeightedModifierType(modifierTypes.RELIC_GOLD, skipInLastClassicWaveOrDefault(2)),
-    new WeightedModifierType(modifierTypes.LEFTOVERS_REWARD, 3),
-    new WeightedModifierType(modifierTypes.SHELL_BELL_REWARD, 3),
+    new WeightedModifierType(modifierTypes.LEFTOVERS, 3),
+    new WeightedModifierType(modifierTypes.SHELL_BELL, 3),
     new WeightedModifierType(modifierTypes.BERRY_POUCH, 4),
     new WeightedModifierType(modifierTypes.GRIP_CLAW, 5),
     new WeightedModifierType(modifierTypes.SCOPE_LENS, 4),
@@ -2622,26 +2618,26 @@ const modifierPool: ModifierPool = {
 };
 
 const wildModifierPool: ModifierPool = {
-  [ModifierTier.COMMON]: [new WeightedModifierType(modifierTypes.BERRY_REWARD, 1)].map(m => {
+  [ModifierTier.COMMON]: [new WeightedModifierType(modifierTypes.BERRY, 1)].map(m => {
     m.setTier(ModifierTier.COMMON);
     return m;
   }),
-  [ModifierTier.GREAT]: [new WeightedModifierType(modifierTypes.BASE_STAT_BOOSTER_REWARD, 1)].map(m => {
+  [ModifierTier.GREAT]: [new WeightedModifierType(modifierTypes.BASE_STAT_BOOSTER, 1)].map(m => {
     m.setTier(ModifierTier.GREAT);
     return m;
   }),
   [ModifierTier.ULTRA]: [
-    new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER_REWARD, 10),
-    new WeightedModifierType(modifierTypes.WHITE_HERB_REWARD, 0),
+    new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, 10),
+    new WeightedModifierType(modifierTypes.WHITE_HERB, 0),
   ].map(m => {
     m.setTier(ModifierTier.ULTRA);
     return m;
   }),
-  [ModifierTier.ROGUE]: [new WeightedModifierType(modifierTypes.LUCKY_EGG_REWARD, 4)].map(m => {
+  [ModifierTier.ROGUE]: [new WeightedModifierType(modifierTypes.LUCKY_EGG, 4)].map(m => {
     m.setTier(ModifierTier.ROGUE);
     return m;
   }),
-  [ModifierTier.MASTER]: [new WeightedModifierType(modifierTypes.GOLDEN_EGG_REWARD, 1)].map(m => {
+  [ModifierTier.MASTER]: [new WeightedModifierType(modifierTypes.GOLDEN_EGG, 1)].map(m => {
     m.setTier(ModifierTier.MASTER);
     return m;
   }),
@@ -2649,19 +2645,19 @@ const wildModifierPool: ModifierPool = {
 
 const trainerModifierPool: ModifierPool = {
   [ModifierTier.COMMON]: [
-    new WeightedModifierType(modifierTypes.BERRY_REWARD, 8),
-    new WeightedModifierType(modifierTypes.BASE_STAT_BOOSTER_REWARD, 3),
+    new WeightedModifierType(modifierTypes.BERRY, 8),
+    new WeightedModifierType(modifierTypes.BASE_STAT_BOOSTER, 3),
   ].map(m => {
     m.setTier(ModifierTier.COMMON);
     return m;
   }),
-  [ModifierTier.GREAT]: [new WeightedModifierType(modifierTypes.BASE_STAT_BOOSTER_REWARD, 3)].map(m => {
+  [ModifierTier.GREAT]: [new WeightedModifierType(modifierTypes.BASE_STAT_BOOSTER, 3)].map(m => {
     m.setTier(ModifierTier.GREAT);
     return m;
   }),
   [ModifierTier.ULTRA]: [
-    new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER_REWARD, 10),
-    new WeightedModifierType(modifierTypes.WHITE_HERB_REWARD, 0),
+    new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, 10),
+    new WeightedModifierType(modifierTypes.WHITE_HERB, 0),
   ].map(m => {
     m.setTier(ModifierTier.ULTRA);
     return m;

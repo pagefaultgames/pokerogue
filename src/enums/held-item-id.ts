@@ -85,6 +85,9 @@ export const HeldItemId = {
   SHUCKLE_JUICE: 0x0907,
   OLD_GATEAU: 0x0908,
   MACHO_BRACE: 0x0909,
+
+  // Evo trackers
+  GIMMIGHOUL_EVO_TRACKER: 0x0a01,
 };
 
 export type HeldItemId = (typeof HeldItemId)[keyof typeof HeldItemId];
