@@ -43,7 +43,7 @@ export class SurviveChanceHeldItem extends HeldItem {
     if (!surviveDamage.value && pokemon.randBattleSeedInt(10) < stackCount) {
       surviveDamage.value = true;
 
-      globalScene.queueMessage(
+      globalScene.phaseManager.queueMessage(
         i18next.t("modifier:surviveDamageApply", {
           pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
           typeName: this.name,

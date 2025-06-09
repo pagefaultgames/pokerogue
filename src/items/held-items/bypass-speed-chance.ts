@@ -47,7 +47,7 @@ export class BypassSpeedChanceHeldItem extends HeldItem {
         globalScene.currentBattle.turnCommands[pokemon.getBattlerIndex()]?.command === Command.FIGHT;
 
       if (isCommandFight) {
-        globalScene.queueMessage(
+        globalScene.phaseManager.queueMessage(
           i18next.t("modifier:bypassSpeedChanceApply", {
             pokemonName: getPokemonNameWithAffix(pokemon),
             itemName: this.name,

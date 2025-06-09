@@ -51,7 +51,7 @@ export class ResetNegativeStatStageHeldItem extends ConsumableHeldItem {
     }
 
     if (statRestored) {
-      globalScene.queueMessage(
+      globalScene.phaseManager.queueMessage(
         i18next.t("modifier:resetNegativeStatStageApply", {
           pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
           typeName: this.name,
