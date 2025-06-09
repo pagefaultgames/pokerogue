@@ -148,12 +148,13 @@ describe("Weird Dream - Mystery Encounter", () => {
       const modifierSelectHandler = scene.ui.handlers.find(
         h => h instanceof ModifierSelectUiHandler,
       ) as ModifierSelectUiHandler;
-      expect(modifierSelectHandler.options.length).toEqual(5);
+      expect(modifierSelectHandler.options.length).toEqual(6);
       expect(modifierSelectHandler.options[0].modifierTypeOption.type.id).toEqual("MEMORY_MUSHROOM");
       expect(modifierSelectHandler.options[1].modifierTypeOption.type.id).toEqual("ROGUE_BALL");
       expect(modifierSelectHandler.options[2].modifierTypeOption.type.id).toEqual("MINT");
       expect(modifierSelectHandler.options[3].modifierTypeOption.type.id).toEqual("MINT");
-      expect(modifierSelectHandler.options[3].modifierTypeOption.type.id).toEqual("MINT");
+      expect(modifierSelectHandler.options[4].modifierTypeOption.type.id).toEqual("MINT");
+      expect(modifierSelectHandler.options[5].modifierTypeOption.type.id).toEqual("MINT");
     });
 
     it("should leave encounter without battle", async () => {
