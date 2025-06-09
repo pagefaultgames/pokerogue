@@ -1,11 +1,14 @@
 import { allHeldItems } from "#app/items/all-held-items";
 import type { HeldItemId } from "#app/enums/held-item-id";
 import type { FormChangeItem } from "#app/data/pokemon-forms";
+import type { BASE_STAT_TOTAL_DATA } from "#app/items/held-items/base-stat-total";
+import type { BASE_STAT_FLAT_DATA } from "#app/items/held-items/base-stat-flat";
 
 interface HeldItemProperties {
   stack: number;
   disabled: boolean;
   cooldown?: number;
+  data?: BASE_STAT_TOTAL_DATA | BASE_STAT_FLAT_DATA;
 }
 
 type HeldItemPropertyMap = {
