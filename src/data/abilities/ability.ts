@@ -35,7 +35,6 @@ import {
 } from "#app/data/moves/move";
 import { allMoves } from "../data-lists";
 import { ArenaTagSide } from "#app/data/arena-tag";
-import { BerryModifier, type PokemonHeldItemModifier } from "#app/modifier/modifier";
 import { TerrainType } from "#app/data/terrain";
 import {
   SpeciesFormChangeAbilityTrigger,
@@ -44,7 +43,6 @@ import {
 } from "#app/data/pokemon-forms";
 import i18next from "i18next";
 import { Command } from "#app/ui/command-ui-handler";
-import { BerryModifierType } from "#app/modifier/modifier-type";
 import { getPokeballName } from "#app/data/pokeball";
 import { BattleType } from "#enums/battle-type";
 import type { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
@@ -6203,13 +6201,13 @@ export class PostBattleAbAttr extends AbAttr {
 }
 
 export class PostBattleLootAbAttr extends PostBattleAbAttr {
-  private randItem?: PokemonHeldItemModifier;
+  private randItem?: HeldItemId;
 
   override canApplyPostBattle(pokemon: Pokemon, _passive: boolean, simulated: boolean, args: any[]): boolean {
     const postBattleLoot = globalScene.currentBattle.postBattleLoot;
     if (!simulated && postBattleLoot.length && args[0]) {
       this.randItem = randSeedItem(postBattleLoot);
-      return globalScene.canTransferHeldItemModifier(this.randItem, pokemon, 1);
+      return pokemon.heldItemManager.getStack(this.randItem) < allHeldItems[this.randItem].maxStackCount;
     }
     return false;
   }
@@ -6223,12 +6221,12 @@ export class PostBattleLootAbAttr extends PostBattleAbAttr {
       this.randItem = randSeedItem(postBattleLoot);
     }
 
-    if (globalScene.tryTransferHeldItemModifier(this.randItem, pokemon, true, 1, true, undefined, false)) {
+    if (pokemon.heldItemManager.add(this.randItem)) {
       postBattleLoot.splice(postBattleLoot.indexOf(this.randItem), 1);
       globalScene.phaseManager.queueMessage(
         i18next.t("abilityTriggers:postBattleLoot", {
           pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-          itemName: this.randItem.type.name,
+          itemName: allHeldItems[this.randItem].name,
         }),
       );
     }

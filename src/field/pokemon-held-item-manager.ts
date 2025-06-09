@@ -73,16 +73,21 @@ export class PokemonItemManager {
     return item ? item.stack : 0;
   }
 
-  add(itemType: HeldItemId, addStack = 1, data?: HELD_ITEM_DATA) {
+  add(itemType: HeldItemId, addStack = 1, data?: HELD_ITEM_DATA): boolean {
     const maxStack = allHeldItems[itemType].getMaxStackCount();
     const item = this.heldItems[itemType];
 
     if (item) {
       // TODO: We may want an error message of some kind instead
-      item.stack = Math.min(item.stack + addStack, maxStack);
+      if (item.stack < maxStack) {
+        item.stack = Math.min(item.stack + addStack, maxStack);
+        return true;
+      }
     } else {
       this.heldItems[itemType] = { stack: Math.min(addStack, maxStack), disabled: false, data: data };
+      return true;
     }
+    return false;
   }
 
   remove(itemType: HeldItemId, removeStack = 1, all = false) {

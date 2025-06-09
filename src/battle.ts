@@ -12,7 +12,7 @@ import {
 } from "#app/utils/common";
 import Trainer, { TrainerVariant } from "./field/trainer";
 import type { GameMode } from "./game-mode";
-import { MoneyMultiplierModifier, PokemonHeldItemModifier } from "./modifier/modifier";
+import { MoneyMultiplierModifier } from "./modifier/modifier";
 import type { PokeballType } from "#enums/pokeball";
 import { trainerConfigs } from "#app/data/trainers/trainer-config";
 import { SpeciesFormKey } from "#enums/species-form-key";
@@ -33,6 +33,7 @@ import { ModifierTier } from "#app/modifier/modifier-tier";
 import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { BattleType } from "#enums/battle-type";
 import { ClassicFixedBossWaves } from "#enums/fixed-boss-waves";
+import type { HeldItemId } from "#enums/held-item-id";
 
 export enum BattlerIndex {
   ATTACKER = -1,
@@ -77,7 +78,7 @@ export default class Battle {
   public turnCommands: TurnCommands;
   public playerParticipantIds: Set<number> = new Set<number>();
   public battleScore = 0;
-  public postBattleLoot: PokemonHeldItemModifier[] = [];
+  public postBattleLoot: HeldItemId[] = [];
   public escapeAttempts = 0;
   public lastMove: MoveId;
   public battleSeed: string = randomString(16, true);
@@ -176,19 +177,7 @@ export default class Battle {
   }
 
   addPostBattleLoot(enemyPokemon: EnemyPokemon): void {
-    this.postBattleLoot.push(
-      ...globalScene
-        .findModifiers(
-          m => m instanceof PokemonHeldItemModifier && m.pokemonId === enemyPokemon.id && m.isTransferable,
-          false,
-        )
-        .map(i => {
-          const ret = i as PokemonHeldItemModifier;
-          //@ts-ignore - this is awful to fix/change
-          ret.pokemonId = null;
-          return ret;
-        }),
-    );
+    this.postBattleLoot.push(...enemyPokemon.getHeldItems());
   }
 
   pickUpScatteredMoney(): void {
