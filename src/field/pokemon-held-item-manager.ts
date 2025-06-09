@@ -14,7 +14,7 @@ interface HeldItemProperties {
 }
 
 type HeldItemPropertyMap = {
-  [key in HeldItemId]: HeldItemProperties;
+  [key in HeldItemId]?: HeldItemProperties;
 };
 
 interface FormChangeItemProperties {
@@ -22,7 +22,7 @@ interface FormChangeItemProperties {
 }
 
 type FormChangeItemPropertyMap = {
-  [key in FormChangeItem]: FormChangeItemProperties;
+  [key in FormChangeItem]?: FormChangeItemProperties;
 };
 
 export class PokemonItemManager {
@@ -31,6 +31,7 @@ export class PokemonItemManager {
 
   constructor() {
     this.heldItems = {};
+    this.formChangeItems = {};
   }
 
   getHeldItems(): number[] {
@@ -59,31 +60,40 @@ export class PokemonItemManager {
     return itemType in this.heldItems;
   }
 
+  /*
   getItem(itemType: HeldItemId): HeldItemProperties {
-    // TODO: Not very safe
-    return this.heldItems[itemType];
+    if (itemType in this.heldItems) {
+      return this.heldItems[itemType];
+    }
   }
+*/
 
   getStack(itemType: HeldItemId): number {
-    return itemType in this.heldItems ? this.heldItems[itemType].stack : 0;
+    const item = this.heldItems[itemType];
+    return item ? item.stack : 0;
   }
 
   add(itemType: HeldItemId, addStack = 1, data?: HELD_ITEM_DATA) {
     const maxStack = allHeldItems[itemType].getMaxStackCount();
+    const item = this.heldItems[itemType];
 
-    if (this.hasItem(itemType)) {
+    if (item) {
       // TODO: We may want an error message of some kind instead
-      this.heldItems[itemType].stack = Math.min(this.heldItems[itemType].stack + addStack, maxStack);
+      item.stack = Math.min(item.stack + addStack, maxStack);
     } else {
       this.heldItems[itemType] = { stack: Math.min(addStack, maxStack), disabled: false, data: data };
     }
   }
 
   remove(itemType: HeldItemId, removeStack = 1, all = false) {
-    this.heldItems[itemType].stack -= removeStack;
+    const item = this.heldItems[itemType];
 
-    if (all || this.heldItems[itemType].stack <= 0) {
-      delete this.heldItems[itemType];
+    if (item) {
+      item.stack -= removeStack;
+
+      if (all || item.stack <= 0) {
+        delete this.heldItems[itemType];
+      }
     }
   }
 
@@ -98,7 +108,11 @@ export class PokemonItemManager {
   }
 
   hasActiveFormChangeItem(id: FormChangeItem): boolean {
-    return id in this.formChangeItems && this.formChangeItems[id].active;
+    const item = this.formChangeItems[id];
+    if (item) {
+      return item.active;
+    }
+    return false;
   }
 
   getFormChangeItems(): FormChangeItem[] {
@@ -106,12 +120,18 @@ export class PokemonItemManager {
   }
 
   getActiveFormChangeItems(): FormChangeItem[] {
-    return this.getFormChangeItems().filter(m => this.formChangeItems[m].active);
+    return this.getFormChangeItems().filter(m => this.formChangeItems[m]?.active);
   }
 
   toggleActive(id: FormChangeItem) {
-    if (id in this.formChangeItems) {
-      this.formChangeItems[id].active = !this.formChangeItems[id].active;
+    const item = this.formChangeItems[id];
+    if (item) {
+      item.active = !item.active;
     }
+  }
+
+  clearItems() {
+    this.heldItems = {};
+    this.formChangeItems = {};
   }
 }
