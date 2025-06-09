@@ -1,5 +1,4 @@
 import type { Modifier } from "typescript";
-import { TurnHeldItemTransferModifier } from "../modifier/modifier";
 import { pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
 import i18next from "i18next";
 import { NumberHolder } from "#app/utils/common";
@@ -16,6 +15,8 @@ import type { ConditionFn } from "#app/@types/common";
 import { Stat, getShortenedStatKey } from "#app/enums/stat";
 import { Challenges } from "#app/enums/challenges";
 import { globalScene } from "#app/global-scene";
+import { HeldItemId } from "#enums/held-item-id";
+import type Pokemon from "#app/field/pokemon";
 
 export enum AchvTier {
   COMMON,
@@ -186,6 +187,19 @@ export class ModifierAchv extends Achv {
     modifierFunc: (modifier: Modifier) => boolean,
   ) {
     super(localizationKey, name, description, iconImage, score, (args: any[]) => modifierFunc(args[0] as Modifier));
+  }
+}
+
+export class HeldItemAchv extends Achv {
+  constructor(
+    localizationKey: string,
+    name: string,
+    description: string,
+    iconImage: string,
+    score: number,
+    pokemonFunc: (pokemon: Pokemon) => boolean,
+  ) {
+    super(localizationKey, name, description, iconImage, score, (args: any[]) => pokemonFunc(args[0] as Pokemon));
   }
 }
 
@@ -490,13 +504,13 @@ export const achvs = {
     25,
   ).setSecret(true),
   SPLICE: new Achv("SPLICE", "", "SPLICE.description", "dna_splicers", 10),
-  MINI_BLACK_HOLE: new ModifierAchv(
+  MINI_BLACK_HOLE: new HeldItemAchv(
     "MINI_BLACK_HOLE",
     "",
     "MINI_BLACK_HOLE.description",
     "mini_black_hole",
     25,
-    modifier => modifier instanceof TurnHeldItemTransferModifier,
+    pokemon => pokemon.heldItemManager.hasItem(HeldItemId.MINI_BLACK_HOLE),
   ).setSecret(),
   CATCH_MYTHICAL: new Achv("CATCH_MYTHICAL", "", "CATCH_MYTHICAL.description", "strange_ball", 50).setSecret(),
   CATCH_SUB_LEGENDARY: new Achv("CATCH_SUB_LEGENDARY", "", "CATCH_SUB_LEGENDARY.description", "rb", 75).setSecret(),

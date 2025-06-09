@@ -87,7 +87,7 @@ import { pokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
 import PokeballTray from "#app/ui/pokeball-tray";
 import InvertPostFX from "#app/pipelines/invert";
 import type { Achv } from "#app/system/achv";
-import { achvs, ModifierAchv, MoneyAchv } from "#app/system/achv";
+import { achvs, HeldItemAchv, ModifierAchv, MoneyAchv } from "#app/system/achv";
 import type { Voucher } from "#app/system/voucher";
 import { vouchers } from "#app/system/voucher";
 import { Gender } from "#app/data/gender";
@@ -2697,6 +2697,10 @@ export default class BattleScene extends SceneBase {
     const soundName = allHeldItems[heldItemId].soundName;
     if (playSound && !this.sound.get(soundName)) {
       this.playSound(soundName);
+    }
+
+    if (pokemon.isPlayer()) {
+      this.validateAchvs(HeldItemAchv, pokemon);
     }
   }
 
