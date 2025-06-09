@@ -2709,7 +2709,7 @@ export default class BattleScene extends SceneBase {
 
     this.triggerPokemonFormChange(pokemon, SpeciesFormChangeItemTrigger);
 
-    pokemon.heldItemManager.formChangeItems[itemId].active = true;
+    pokemon.heldItemManager.toggleActive(itemId);
 
     if (!ignoreUpdate) {
       this.updateModifiers(false);

@@ -5977,12 +5977,9 @@ export class PlayerPokemon extends Pokemon {
     }
 
     // combine the two mons' held items
-    const fusedPartyMemberHeldModifiers = globalScene.findModifiers(
-      m => m instanceof PokemonHeldItemModifier && m.pokemonId === pokemon.id,
-      true,
-    ) as PokemonHeldItemModifier[];
-    for (const modifier of fusedPartyMemberHeldModifiers) {
-      globalScene.tryTransferHeldItem(modifier, pokemon, this, false, modifier.getStackCount(), true, false);
+    const fusedPartyMemberHeldItems = pokemon.getHeldItems();
+    for (const item of fusedPartyMemberHeldItems) {
+      globalScene.tryTransferHeldItem(item, pokemon, this, false, pokemon.heldItemManager.getStack(item), true, false);
     }
     globalScene.updateModifiers(true);
     globalScene.getPlayerParty().splice(fusedPartyMemberIndex, 1)[0];
