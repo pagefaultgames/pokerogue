@@ -1,6 +1,7 @@
 import type Pokemon from "#app/field/pokemon";
 import type { NumberHolder } from "#app/utils/common";
 import type { HeldItemId } from "#enums/held-item-id";
+import i18next from "i18next";
 import { HeldItem, ITEM_EFFECT } from "../held-item";
 
 export interface EXP_BOOST_PARAMS {
@@ -12,11 +13,19 @@ export interface EXP_BOOST_PARAMS {
 
 export class ExpBoosterHeldItem extends HeldItem {
   public effects: ITEM_EFFECT[] = [ITEM_EFFECT.EXP_BOOSTER];
+  private boostPercent: number;
   private boostMultiplier: number;
 
   constructor(type: HeldItemId, maxStackCount = 1, boostPercent: number) {
     super(type, maxStackCount);
+    this.boostPercent = boostPercent;
     this.boostMultiplier = boostPercent * 0.01;
+  }
+
+  get description(): string {
+    return i18next.t("modifierType:ModifierType.PokemonExpBoosterModifierType.description", {
+      boostPercent: this.boostPercent,
+    });
   }
 
   // TODO: What do we do with this? Need to look up all the shouldApply

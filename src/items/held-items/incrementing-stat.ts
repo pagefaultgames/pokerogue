@@ -2,6 +2,7 @@ import type Pokemon from "#app/field/pokemon";
 import { HeldItem, ITEM_EFFECT } from "../held-item";
 import { Stat } from "#enums/stat";
 import type { NumberHolder } from "#app/utils/common";
+import i18next from "i18next";
 
 export interface INCREMENTING_STAT_PARAMS {
   /** The pokemon with the item */
@@ -27,6 +28,14 @@ export class IncrementingStatHeldItem extends HeldItem {
   //  override shouldApply(pokemon?: Pokemon, stat?: Stat, statHolder?: NumberHolder): boolean {
   //    return super.shouldApply(pokemon, stat, statHolder) && !!statHolder;
   //  }
+
+  get name(): string {
+    return i18next.t("modifierType:ModifierType.MYSTERY_ENCOUNTER_MACHO_BRACE.name") + " (new)";
+  }
+
+  get description(): string {
+    return i18next.t("modifierType:ModifierType.MYSTERY_ENCOUNTER_MACHO_BRACE.description");
+  }
 
   /**
    * Applies the {@linkcode PokemonIncrementingStatModifier}

@@ -16,12 +16,7 @@ import {
   PokemonHeldItemReward,
 } from "#app/modifier/modifier-type";
 import type { Modifier } from "#app/modifier/modifier";
-import {
-  ExtraModifierModifier,
-  HealShopCostModifier,
-  PokemonHeldItemModifier,
-  TempExtraModifierModifier,
-} from "#app/modifier/modifier";
+import { ExtraModifierModifier, HealShopCostModifier, TempExtraModifierModifier } from "#app/modifier/modifier";
 import type ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 import { SHOP_OPTIONS_ROW_LIMIT } from "#app/ui/modifier-select-ui-handler";
 import PartyUiHandler, { PartyUiMode, PartyOption } from "#app/ui/party-ui-handler";
@@ -74,9 +69,6 @@ export class SelectModifierPhase extends BattlePhase {
     if (!this.isCopy) {
       regenerateModifierPoolThresholds(party, this.getPoolType(), this.rerollCount);
     }
-    const modifierCount = this.getModifierCount();
-
-    this.typeOptions = this.getModifierTypeOptions(modifierCount);
     const modifierCount = this.getModifierCount();
 
     this.typeOptions = this.getModifierTypeOptions(modifierCount);
@@ -176,6 +168,9 @@ export class SelectModifierPhase extends BattlePhase {
     modifierSelectCallback: ModifierSelectCallback,
   ): boolean {
     if (modifierType instanceof PokemonModifierType) {
+      if (modifierType instanceof PokemonHeldItemReward) {
+        this.openGiveHeldItemMenu(modifierType, modifierSelectCallback);
+      }
       if (modifierType instanceof FusePokemonModifierType) {
         this.openFusionMenu(modifierType, cost, modifierSelectCallback);
       } else {
@@ -226,17 +221,15 @@ export class SelectModifierPhase extends BattlePhase {
           fromSlotIndex !== toSlotIndex &&
           itemIndex > -1
         ) {
-          const itemModifiers = globalScene.findModifiers(
-            m => m instanceof PokemonHeldItemModifier && m.isTransferable && m.pokemonId === party[fromSlotIndex].id,
-          ) as PokemonHeldItemModifier[];
-          const itemModifier = itemModifiers[itemIndex];
-          globalScene.tryTransferHeldItemModifier(
-            itemModifier,
+          const items = party[fromSlotIndex].heldItemManager.getTransferableHeldItems();
+          const item = items[itemIndex];
+          globalScene.tryTransferHeldItem(
+            item,
+            party[fromSlotIndex],
             party[toSlotIndex],
             true,
             itemQuantity,
-            undefined,
-            undefined,
+            true,
             false,
           );
         } else {
@@ -373,7 +366,7 @@ export class SelectModifierPhase extends BattlePhase {
       (slotIndex: number, _option: PartyOption) => {
         if (slotIndex < 6) {
           globalScene.ui.setMode(UiMode.MODIFIER_SELECT, this.isPlayer()).then(() => {
-            party[slotIndex].heldItemManager.add(reward.itemId);
+            reward.apply(party[slotIndex]);
             globalScene.ui.clearText();
             globalScene.ui.setMode(UiMode.MESSAGE);
             super.end();

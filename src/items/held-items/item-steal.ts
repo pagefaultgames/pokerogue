@@ -85,6 +85,10 @@ export class TurnEndItemStealHeldItem extends ItemTransferHeldItem {
   public effects: ITEM_EFFECT[] = [ITEM_EFFECT.TURN_END_ITEM_STEAL];
   isTransferable = true;
 
+  get description(): string {
+    return i18next.t("modifierType:ModifierType.TurnHeldItemTransferModifierType.description");
+  }
+
   /**
    * Determines the targets to transfer items from when this applies.
    * @param pokemon the {@linkcode Pokemon} holding this item
@@ -121,12 +125,20 @@ export class TurnEndItemStealHeldItem extends ItemTransferHeldItem {
  */
 export class ContactItemStealChanceHeldItem extends ItemTransferHeldItem {
   public effects: ITEM_EFFECT[] = [ITEM_EFFECT.CONTACT_ITEM_STEAL_CHANCE];
+  public readonly chancePercent: number;
   public readonly chance: number;
 
   constructor(type: HeldItemId, maxStackCount = 1, chancePercent: number) {
     super(type, maxStackCount);
 
+    this.chancePercent = chancePercent;
     this.chance = chancePercent / 100;
+  }
+
+  get description(): string {
+    return i18next.t("modifierType:ModifierType.ContactHeldItemTransferChanceModifierType.description", {
+      chancePercent: this.chancePercent,
+    });
   }
 
   /**

@@ -1,7 +1,8 @@
 import type Pokemon from "#app/field/pokemon";
 import type { HeldItemId } from "#enums/held-item-id";
 import { HeldItem, ITEM_EFFECT } from "../held-item";
-import type { Stat } from "#enums/stat";
+import { getStatKey, type Stat } from "#enums/stat";
+import i18next from "i18next";
 
 export interface BASE_STAT_FLAT_PARAMS {
   /** The pokemon with the item */
@@ -25,6 +26,13 @@ export class BaseStatFlatHeldItem extends HeldItem {
   constructor(type: HeldItemId, maxStackCount = 1, stats: Stat[]) {
     super(type, maxStackCount);
     this.stats = stats;
+  }
+
+  get description(): string {
+    return i18next.t("modifierType:ModifierType.PokemonBaseStatFlatModifierType.description", {
+      stats: this.stats.map(stat => i18next.t(getStatKey(stat))).join("/"),
+      statValue: this.statModifier,
+    });
   }
 
   /**

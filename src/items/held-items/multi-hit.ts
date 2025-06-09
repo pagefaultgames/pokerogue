@@ -3,6 +3,7 @@ import { HeldItem, ITEM_EFFECT } from "#app/items/held-item";
 import { isNullOrUndefined, type NumberHolder } from "#app/utils/common";
 import type { MoveId } from "#enums/move-id";
 import { allMoves } from "#app/data/data-lists";
+import i18next from "i18next";
 
 export interface MULTI_HIT_PARAMS {
   pokemon: Pokemon;
@@ -19,6 +20,10 @@ export interface MULTI_HIT_PARAMS {
  */
 export class MultiHitHeldItem extends HeldItem {
   public effects: ITEM_EFFECT[] = [ITEM_EFFECT.MULTI_HIT];
+
+  get description(): string {
+    return i18next.t("modifierType:ModifierType.PokemonMultiHitModifierType.description");
+  }
 
   /**
    * For each stack, converts 25 percent of attack damage into an additional strike.
