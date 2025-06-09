@@ -6,7 +6,6 @@ import {
   PreSummonAbAttr,
   PreSwitchOutAbAttr,
 } from "#app/data/abilities/ability";
-import { ForceSwitchOutAttr } from "#app/data/moves/move";
 import { allMoves } from "#app/data/data-lists";
 import { getPokeballTintColor } from "#app/data/pokeball";
 import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms/form-change-triggers";
@@ -226,7 +225,7 @@ export class SwitchSummonPhase extends SummonPhase {
 
     const currentCommand = globalScene.currentBattle.turnCommands[this.fieldIndex]?.command;
     const lastPokemonIsForceSwitchedAndNotFainted =
-      lastUsedMove?.hasAttr(ForceSwitchOutAttr) && !this.lastPokemon.isFainted();
+      lastUsedMove?.hasAttr("ForceSwitchOutAttr") && !this.lastPokemon.isFainted();
     const lastPokemonHasForceSwitchAbAttr =
       this.lastPokemon.hasAbilityWithAttr(PostDamageForceSwitchAbAttr) && !this.lastPokemon.isFainted();
 
