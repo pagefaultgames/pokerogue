@@ -159,7 +159,15 @@ export class SwitchSummonPhase extends SummonPhase {
         ) as SwitchEffectTransferModifier;
 
         if (batonPassModifier) {
-          globalScene.tryTransferHeldItemModifier(batonPassModifier, switchedInPokemon, false, 1, false);
+          globalScene.tryTransferHeldItemModifier(
+            batonPassModifier,
+            switchedInPokemon,
+            false,
+            undefined,
+            undefined,
+            undefined,
+            false,
+          );
         }
       }
     }

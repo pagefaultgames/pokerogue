@@ -5131,13 +5131,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       }
     });
 
-    globalScene.phaseManager.queueMessage(
-      i18next.t("battleInfo:newKey2", {
-        // arguments for the locale key go here;
-        pokemonNameWithAffix: getPokemonNameWithAffix(this),
-      }),
-    );
-
     for (let f = 0; f < 2; f++) {
       const variantColors = variantColorCache[!f ? spriteKey : backSpriteKey];
       const variantColorSet = new Map<number, number[]>();
@@ -6006,8 +5999,9 @@ export class PlayerPokemon extends Pokemon {
       true,
     ) as PokemonHeldItemModifier[];
     for (const modifier of fusedPartyMemberHeldModifiers) {
-      globalScene.tryTransferHeldItemModifier(modifier, this, false, modifier.getStackCount(), false);
+      globalScene.tryTransferHeldItemModifier(modifier, this, false, modifier.getStackCount(), true, true, false);
     }
+    globalScene.updateModifiers(true, true);
     globalScene.removePartyMemberModifiers(fusedPartyMemberIndex);
     globalScene.getPlayerParty().splice(fusedPartyMemberIndex, 1)[0];
     const newPartyMemberIndex = globalScene.getPlayerParty().indexOf(this);

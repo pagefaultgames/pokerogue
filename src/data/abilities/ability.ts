@@ -2539,17 +2539,11 @@ export class AllyStatMultiplierAbAttr extends AbAttr {
  * @extends AbAttr
  */
 export class ExecutedMoveAbAttr extends AbAttr {
-  canApplyExecutedMove(
-    _pokemon: Pokemon,
-    _simulated: boolean,
-  ): boolean {
+  canApplyExecutedMove(_pokemon: Pokemon, _simulated: boolean): boolean {
     return true;
   }
 
-  applyExecutedMove(
-    _pokemon: Pokemon,
-    _simulated: boolean,
-  ): void {}
+  applyExecutedMove(_pokemon: Pokemon, _simulated: boolean): void {}
 }
 
 /**
@@ -2557,7 +2551,7 @@ export class ExecutedMoveAbAttr extends AbAttr {
  * @extends ExecutedMoveAbAttr
  */
 export class GorillaTacticsAbAttr extends ExecutedMoveAbAttr {
-  constructor(showAbility: boolean = false) {
+  constructor(showAbility = false) {
     super(showAbility);
   }
 
@@ -2574,7 +2568,7 @@ export class GorillaTacticsAbAttr extends ExecutedMoveAbAttr {
 
 export class PostAttackStealHeldItemAbAttr extends PostAttackAbAttr {
   private stealCondition: PokemonAttackCondition | null;
-  private stolenItem: PokemonHeldItemModifier;
+  private stolenItem?: PokemonHeldItemModifier;
 
   constructor(stealCondition?: PokemonAttackCondition) {
     super();
@@ -2591,35 +2585,38 @@ export class PostAttackStealHeldItemAbAttr extends PostAttackAbAttr {
     hitResult: HitResult,
     args: any[],
   ): boolean {
-    // Check which items to steal
-    const heldItems = this.getTargetHeldItems(defender).filter((i) => i.isTransferable);
     if (
-      !super.canApplyPostAttack(pokemon, passive, simulated, defender, move, hitResult, args) ||
-      heldItems.length === 0 || // no items to steal
-      hitResult >= HitResult.NO_EFFECT || // move was ineffective/protected against
-      (this.stealCondition && !this.stealCondition(pokemon, defender, move)) // no condition = pass
+      super.canApplyPostAttack(pokemon, passive, simulated, defender, move, hitResult, args) &&
+      !simulated &&
+      hitResult < HitResult.NO_EFFECT &&
+      (!this.stealCondition || this.stealCondition(pokemon, defender, move))
     ) {
-      return false;
+      const heldItems = this.getTargetHeldItems(defender).filter(i => i.isTransferable);
+      if (heldItems.length) {
+        // Ensure that the stolen item in testing is the same as when the effect is applied
+        this.stolenItem = heldItems[pokemon.randBattleSeedInt(heldItems.length)];
+        if (globalScene.canTransferHeldItemModifier(this.stolenItem, pokemon)) {
+          return true;
+        }
+      }
     }
-
-    // pick random item and check if we can steal it
-    this.stolenItem = heldItems[pokemon.randBattleSeedInt(heldItems.length)];
-    return globalScene.canTransferHeldItemModifier(this.stolenItem, pokemon)
+    this.stolenItem = undefined;
+    return false;
   }
 
   override applyPostAttack(
     pokemon: Pokemon,
     _passive: boolean,
-    simulated: boolean,
+    _simulated: boolean,
     defender: Pokemon,
     _move: Move,
     _hitResult: HitResult,
     _args: any[],
   ): void {
-    if (simulated) {
-      return;
+    const heldItems = this.getTargetHeldItems(defender).filter(i => i.isTransferable);
+    if (!this.stolenItem) {
+      this.stolenItem = heldItems[pokemon.randBattleSeedInt(heldItems.length)];
     }
-
     if (globalScene.tryTransferHeldItemModifier(this.stolenItem, pokemon, false)) {
       globalScene.phaseManager.queueMessage(
         i18next.t("abilityTriggers:postAttackStealHeldItem", {
@@ -2629,6 +2626,7 @@ export class PostAttackStealHeldItemAbAttr extends PostAttackAbAttr {
         }),
       );
     }
+    this.stolenItem = undefined;
   }
 
   getTargetHeldItems(target: Pokemon): PokemonHeldItemModifier[] {
@@ -6217,45 +6215,36 @@ export class PostBattleAbAttr extends AbAttr {
 }
 
 export class PostBattleLootAbAttr extends PostBattleAbAttr {
-  /** The index of the random item to steal. */
-  private randItemIndex = 0;
+  private randItem?: PokemonHeldItemModifier;
+
+  override canApplyPostBattle(pokemon: Pokemon, _passive: boolean, simulated: boolean, args: any[]): boolean {
+    const postBattleLoot = globalScene.currentBattle.postBattleLoot;
+    if (!simulated && postBattleLoot.length && args[0]) {
+      this.randItem = randSeedItem(postBattleLoot);
+      return globalScene.canTransferHeldItemModifier(this.randItem, pokemon, 1);
+    }
+    return false;
+  }
 
   /**
    * @param _args - `[0]`: boolean for if the battle ended in a victory
    */
-  override canApplyPostBattle(pokemon: Pokemon, _passive: boolean, simulated: boolean, args: [boolean]): boolean {
+  override applyPostBattle(pokemon: Pokemon, _passive: boolean, _simulated: boolean, _args: any[]): void {
     const postBattleLoot = globalScene.currentBattle.postBattleLoot;
-    const wasVictory = args[0];
-    if (simulated || postBattleLoot.length === 0 || !wasVictory) {
-      return false;
+    if (!this.randItem) {
+      this.randItem = randSeedItem(postBattleLoot);
     }
 
-    // Pick a random item and check if we are capped.
-    this.randItemIndex = randSeedInt(postBattleLoot.length);
-    const item = postBattleLoot[this.randItemIndex]
-
-    // We can't use `canTransferItemModifier` as that assumes the Pokemon in question already exists (which it does not)
-    const existingItem = globalScene.findModifier(
-      (m): m is PokemonHeldItemModifier =>
-        m instanceof PokemonHeldItemModifier && m.matchType(item) && m.pokemonId === pokemon.id,
-      pokemon.isPlayer(),
-    ) as PokemonHeldItemModifier | undefined;
-
-    return (existingItem?.getCountUnderMax() ?? Number.MAX_SAFE_INTEGER) > 1
-  }
-
-  /**
-   * Attempt to give the previously selected random item to the ability holder at battle end.
-   */
-  override applyPostBattle(pokemon: Pokemon): void {
-    const postBattleLoot = globalScene.currentBattle.postBattleLoot;
-    const item = postBattleLoot[this.randItemIndex]
-    item.pokemonId = pokemon.id;
-
-    if (globalScene.addModifier(item, false, true)) {
-      postBattleLoot.splice(this.randItemIndex, 1);
-      globalScene.phaseManager.queueMessage(i18next.t("abilityTriggers:postBattleLoot", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon), itemName: item.type.name }));
+    if (globalScene.tryTransferHeldItemModifier(this.randItem, pokemon, true, 1, true, undefined, false)) {
+      postBattleLoot.splice(postBattleLoot.indexOf(this.randItem), 1);
+      globalScene.phaseManager.queueMessage(
+        i18next.t("abilityTriggers:postBattleLoot", {
+          pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+          itemName: this.randItem.type.name,
+        }),
+      );
     }
+    this.randItem = undefined;
   }
 }
 
@@ -7790,7 +7779,7 @@ export function applyPreAttackAbAttrs(
 export function applyExecutedMoveAbAttrs(
   attrType: Constructor<ExecutedMoveAbAttr>,
   pokemon: Pokemon,
-  simulated: boolean = false,
+  simulated = false,
   ...args: any[]
 ): void {
   applyAbAttrsInternal<ExecutedMoveAbAttr>(
@@ -8401,8 +8390,7 @@ export function initAbilities() {
     new Ability(AbilityId.STICKY_HOLD, 3)
       .attr(BlockItemTheftAbAttr)
       .bypassFaint()
-      .ignorable()
-      .edgeCase(), // may or may not proc incorrectly on user's allies
+      .ignorable(),
     new Ability(AbilityId.SHED_SKIN, 3)
       .conditionalAttr(_pokemon => !randSeedInt(3), PostTurnResetStatusAbAttr),
     new Ability(AbilityId.GUTS, 3)

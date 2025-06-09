@@ -2614,10 +2614,10 @@ export default class BattleScene extends SceneBase {
 
   addModifier(
     modifier: Modifier | null,
-    ignoreUpdate = false,
-    playSound = false,
-    virtual = false,
-    instant = false,
+    ignoreUpdate?: boolean,
+    playSound?: boolean,
+    virtual?: boolean,
+    instant?: boolean,
     cost?: number,
   ): boolean {
     // We check against modifier.type to stop a bug related to loading in a pokemon that has a form change item, which prior to some patch
@@ -2631,7 +2631,7 @@ export default class BattleScene extends SceneBase {
     this.validateAchvs(ModifierAchv, modifier);
     const modifiersToRemove: PersistentModifier[] = [];
     if (modifier instanceof PersistentModifier) {
-      if ((modifier as PersistentModifier).add(this.modifiers, virtual)) {
+      if ((modifier as PersistentModifier).add(this.modifiers, !!virtual)) {
         if (modifier instanceof PokemonFormChangeItemModifier) {
           const pokemon = this.getPokemonById(modifier.pokemonId);
           if (pokemon) {
@@ -2704,7 +2704,7 @@ export default class BattleScene extends SceneBase {
     return success;
   }
 
-  addEnemyModifier(modifier: PersistentModifier, ignoreUpdate = false, instant = false): Promise<void> {
+  addEnemyModifier(modifier: PersistentModifier, ignoreUpdate?: boolean, instant?: boolean): Promise<void> {
     return new Promise(resolve => {
       const modifiersToRemove: PersistentModifier[] = [];
       if ((modifier as PersistentModifier).add(this.enemyModifiers, false)) {
@@ -2732,128 +2732,124 @@ export default class BattleScene extends SceneBase {
    * If the recepient already has the maximum amount allowed for this item, the transfer is cancelled.
    * The quantity to transfer is automatically capped at how much the recepient can take before reaching the maximum stack size for the item.
    * A transfer that moves a quantity smaller than what is specified in the transferQuantity parameter is still considered successful.
-   * @param itemModifier - {@linkcode PokemonHeldItemModifier} to transfer (represents whole stack)
-   * @param target - Recipient {@linkcode Pokemon} recieving items
-   * @param playSound - Whether to play a sound when transferring the item
-   * @param transferQuantity - How many items of the stack to transfer. Optional, default `1`
-   * @param itemLost - Whether to treat the item's current holder as losing the item (for now, this simply enables Unburden). Default: `true`.
-   * @returns Whether the transfer was successful
+   * @param itemModifier {@linkcode PokemonHeldItemModifier} item to transfer (represents the whole stack)
+   * @param target {@linkcode Pokemon} recepient in this transfer
+   * @param playSound `true` to play a sound when transferring the item
+   * @param transferQuantity How many items of the stack to transfer. Optional, defaults to `1`
+   * @param instant ??? (Optional)
+   * @param ignoreUpdate ??? (Optional)
+   * @param itemLost If `true`, treat the item's current holder as losing the item (for now, this simply enables Unburden). Default is `true`.
+   * @returns `true` if the transfer was successful
    */
   tryTransferHeldItemModifier(
     itemModifier: PokemonHeldItemModifier,
     target: Pokemon,
     playSound: boolean,
     transferQuantity = 1,
+    instant?: boolean,
+    ignoreUpdate?: boolean,
     itemLost = true,
   ): boolean {
-    const source = itemModifier.getPokemon();
-    // Check if source even exists and error if not.
-    // Almost certainly redundant due to checking inside condition, but better log twice than not at all
-    if (isNullOrUndefined(source)) {
-      console.error(
-        `Pokemon ${target.getNameToRender()} tried to transfer %d items from nonexistent source; item: `,
-        transferQuantity,
-        itemModifier,
-      );
-      return false;
-    }
-
-    // Check for effects that might block us from stealing
+    const source = itemModifier.pokemonId ? itemModifier.getPokemon() : null;
     const cancelled = new BooleanHolder(false);
-    if (source.isPlayer() !== target.isPlayer()) {
+
+    if (source && source.isPlayer() !== target.isPlayer()) {
       applyAbAttrs(BlockItemTheftAbAttr, source, cancelled);
     }
+
     if (cancelled.value) {
       return false;
     }
 
-    // check if we have an item already and calc how much to transfer
+    const newItemModifier = itemModifier.clone() as PokemonHeldItemModifier;
+    newItemModifier.pokemonId = target.id;
     const matchingModifier = this.findModifier(
-      (m): m is PokemonHeldItemModifier =>
-        m instanceof PokemonHeldItemModifier && m.matchType(itemModifier) && m.pokemonId === target.id,
+      m => m instanceof PokemonHeldItemModifier && m.matchType(itemModifier) && m.pokemonId === target.id,
       target.isPlayer(),
-    );
-    const countTaken = Math.min(
-      transferQuantity,
-      itemModifier.stackCount,
-      matchingModifier?.getCountUnderMax() ?? Number.MAX_SAFE_INTEGER,
-    );
-    if (countTaken <= 0) {
-      // Can't transfer negative items
-      return false;
-    }
+    ) as PokemonHeldItemModifier;
 
-    itemModifier.stackCount -= countTaken;
-
-    // If the old modifier is at 0 stacks, try to remove it
-    if (itemModifier.stackCount <= 0 && !this.removeModifier(itemModifier, !source.isPlayer())) {
-      return false;
-    }
-
-    // TODO: what does this do and why is it here
-    if (source.isPlayer() !== target.isPlayer()) {
-      this.updateModifiers(source.isPlayer(), false);
-    }
-
-    // Add however much we took to the recieving pokemon, creating a new modifier if the target lacked one prio
     if (matchingModifier) {
-      matchingModifier.stackCount += countTaken;
-    } else {
-      const newItemModifier = itemModifier.clone() as PokemonHeldItemModifier;
-      newItemModifier.pokemonId = target.id;
-      newItemModifier.stackCount = countTaken;
-      if (target.isPlayer()) {
-        this.addModifier(newItemModifier, false, playSound);
-      } else {
-        this.addEnemyModifier(newItemModifier);
+      const maxStackCount = matchingModifier.getMaxStackCount();
+      if (matchingModifier.stackCount >= maxStackCount) {
+        return false;
       }
+      const countTaken = Math.min(
+        transferQuantity,
+        itemModifier.stackCount,
+        maxStackCount - matchingModifier.stackCount,
+      );
+      itemModifier.stackCount -= countTaken;
+      newItemModifier.stackCount = matchingModifier.stackCount + countTaken;
+    } else {
+      const countTaken = Math.min(transferQuantity, itemModifier.stackCount);
+      itemModifier.stackCount -= countTaken;
+      newItemModifier.stackCount = countTaken;
     }
 
-    if (itemLost) {
-      applyPostItemLostAbAttrs(PostItemLostAbAttr, source, false);
-    }
+    const removeOld = itemModifier.stackCount === 0;
 
-    return true;
+    if (!removeOld || !source || this.removeModifier(itemModifier, source.isEnemy())) {
+      const addModifier = () => {
+        if (!matchingModifier || this.removeModifier(matchingModifier, target.isEnemy())) {
+          if (target.isPlayer()) {
+            this.addModifier(newItemModifier, ignoreUpdate, playSound, false, instant);
+            if (source && itemLost) {
+              applyPostItemLostAbAttrs(PostItemLostAbAttr, source, false);
+            }
+            return true;
+          }
+          this.addEnemyModifier(newItemModifier, ignoreUpdate, instant);
+          if (source && itemLost) {
+            applyPostItemLostAbAttrs(PostItemLostAbAttr, source, false);
+          }
+          return true;
+        }
+        return false;
+      };
+      if (source && source.isPlayer() !== target.isPlayer() && !ignoreUpdate) {
+        this.updateModifiers(source.isPlayer(), instant);
+        addModifier();
+      } else {
+        addModifier();
+      }
+      return true;
+    }
+    return false;
   }
 
   canTransferHeldItemModifier(itemModifier: PokemonHeldItemModifier, target: Pokemon, transferQuantity = 1): boolean {
-    const source = itemModifier.getPokemon();
-    if (isNullOrUndefined(source)) {
-      console.error(
-        `Pokemon ${target.getNameToRender()} tried to transfer %d items from nonexistent source; item: `,
-        transferQuantity,
-        itemModifier,
-      );
-      return false;
-    }
+    const mod = itemModifier.clone() as PokemonHeldItemModifier;
+    const source = mod.pokemonId ? mod.getPokemon() : null;
+    const cancelled = new BooleanHolder(false);
 
-    // If we somehow lack the item being transferred, skip
-    if (!this.hasModifier(itemModifier, !source.isPlayer())) {
-      return false;
-    }
-
-    // Check enemy theft prevention
-    // TODO: Verify whether sticky hold procs on friendly fire ally theft
-    if (source.isPlayer() !== target.isPlayer()) {
-      const cancelled = new BooleanHolder(false);
+    if (source && source.isPlayer() !== target.isPlayer()) {
       applyAbAttrs(BlockItemTheftAbAttr, source, cancelled);
-      if (cancelled.value) {
+    }
+
+    if (cancelled.value) {
+      return false;
+    }
+
+    const matchingModifier = this.findModifier(
+      m => m instanceof PokemonHeldItemModifier && m.matchType(mod) && m.pokemonId === target.id,
+      target.isPlayer(),
+    ) as PokemonHeldItemModifier;
+
+    if (matchingModifier) {
+      const maxStackCount = matchingModifier.getMaxStackCount();
+      if (matchingModifier.stackCount >= maxStackCount) {
         return false;
       }
+      const countTaken = Math.min(transferQuantity, mod.stackCount, maxStackCount - matchingModifier.stackCount);
+      mod.stackCount -= countTaken;
+    } else {
+      const countTaken = Math.min(transferQuantity, mod.stackCount);
+      mod.stackCount -= countTaken;
     }
 
-    // Finally, ensure we can actually steal at least 1 item
-    const matchingModifier = this.findModifier(
-      (m): m is PokemonHeldItemModifier =>
-        m instanceof PokemonHeldItemModifier && m.matchType(itemModifier) && m.pokemonId === target.id,
-      target.isPlayer(),
-    );
-    const countTaken = Math.min(
-      transferQuantity,
-      itemModifier.stackCount,
-      matchingModifier?.getCountUnderMax() ?? Number.MAX_SAFE_INTEGER,
-    );
-    return countTaken > 0;
+    const removeOld = mod.stackCount === 0;
+
+    return !removeOld || !source || this.hasModifier(itemModifier, !source.isPlayer());
   }
 
   removePartyMemberModifiers(partyMemberIndex: number): Promise<void> {
@@ -2971,10 +2967,8 @@ export default class BattleScene extends SceneBase {
     [this.modifierBar, this.enemyModifierBar].map(m => m.setVisible(visible));
   }
 
-  /**
-   * @param instant - Whether to instantly update any changes to party members' HP bars; default `false`
-   */
-  updateModifiers(player = true, instant = false): void {
+  // TODO: Document this
+  updateModifiers(player = true, instant?: boolean): void {
     const modifiers = player ? this.modifiers : (this.enemyModifiers as PersistentModifier[]);
     for (let m = 0; m < modifiers.length; m++) {
       const modifier = modifiers[m];
@@ -2991,7 +2985,6 @@ export default class BattleScene extends SceneBase {
       }
     }
 
-    // Why do we silently delete missing modifiers?
     const modifiersClone = modifiers.slice(0);
     for (const modifier of modifiersClone) {
       if (!modifier.getStackCount()) {
@@ -3006,13 +2999,7 @@ export default class BattleScene extends SceneBase {
     }
   }
 
-  /**
-   * Update one or more Pokemon's info containers after having recieved modifiers.
-   * @param party - An array of {@linkcode Pokemon} to update info.
-   * @param instant - Whether to instantly update any changes to the party's HP bars; default `false`
-   * @returns A Promise that resolves once all the info containers have been updated.
-   */
-  updatePartyForModifiers(party: Pokemon[], instant = false): Promise<void> {
+  updatePartyForModifiers(party: Pokemon[], instant?: boolean): Promise<void> {
     return new Promise(resolve => {
       Promise.allSettled(
         party.map(p => {
@@ -3023,71 +3010,44 @@ export default class BattleScene extends SceneBase {
     });
   }
 
-  /**
-   * Check whether a given {@linkcode PersistentModifier} exists on a given side of the field.
-   * @param modifier - The {@linkcode PersistentModifier} to check the existence of.
-   * @param enemy - Whether to check the enemy (`true`) or player (`false`) party. Default is `false`.
-   * @returns Whether the specified modifier exists on the given side of the field.
-   * @remarks This also compares `pokemonId`s to confirm a match (and therefore owners).
-   */
   hasModifier(modifier: PersistentModifier, enemy = false): boolean {
-    return (!enemy ? this.modifiers : this.enemyModifiers).includes(modifier);
+    const modifiers = !enemy ? this.modifiers : this.enemyModifiers;
+    return modifiers.indexOf(modifier) > -1;
   }
 
   /**
-   * Remove a currently owned item. If the item is stacked, the entire item stack
+   * Removes a currently owned item. If the item is stacked, the entire item stack
    * gets removed. This function does NOT apply in-battle effects, such as Unburden.
    * If in-battle effects are needed, use {@linkcode Pokemon.loseHeldItem} instead.
-   * @param modifier - The item to be removed.
-   * @param enemy - Whether to remove from the enemy (`true`) or player (`false`) party; default `false`.
-   * @returns Whether the item exists and was successfully removed
+   * @param modifier The item to be removed.
+   * @param enemy `true` to remove an item owned by the enemy rather than the player; default `false`.
+   * @returns `true` if the item exists and was successfully removed, `false` otherwise
    */
   removeModifier(modifier: PersistentModifier, enemy = false): boolean {
     const modifiers = !enemy ? this.modifiers : this.enemyModifiers;
     const modifierIndex = modifiers.indexOf(modifier);
-    if (modifierIndex === -1) {
-      return false;
+    if (modifierIndex > -1) {
+      modifiers.splice(modifierIndex, 1);
+      if (modifier instanceof PokemonFormChangeItemModifier) {
+        const pokemon = this.getPokemonById(modifier.pokemonId);
+        if (pokemon) {
+          modifier.apply(pokemon, false);
+        }
+      }
+      return true;
     }
 
-    modifiers.splice(modifierIndex, 1);
-    if (modifier instanceof PokemonFormChangeItemModifier) {
-      const pokemon = this.getPokemonById(modifier.pokemonId);
-      if (pokemon) {
-        modifier.apply(pokemon, false);
-      }
-    }
-    return true;
+    return false;
   }
 
   /**
-   * Get all modifiers of all {@linkcode Pokemon} in the given party,
-   * optionally filtering based on `modifierType` if provided.
-   * @param player Whether to search the player (`true`) or enemy (`false`) party; Defaults to `true`
-   * @returns An array containing all {@linkcode PersistentModifier}s on the given side of the field.
-   * @overload
+   * Get all of the modifiers that match `modifierType`
+   * @param modifierType The type of modifier to apply; must extend {@linkcode PersistentModifier}
+   * @param player Whether to search the player (`true`) or the enemy (`false`); Defaults to `true`
+   * @returns the list of all modifiers that matched `modifierType`.
    */
-  getModifiers(player?: boolean): PersistentModifier[];
-
-  /**
-   * Get all modifiers of all {@linkcode Pokemon} in the given party,
-   * optionally filtering based on `modifierType` if provided.
-   * @param modifierType The type of modifier to check against; must extend {@linkcode PersistentModifier}.
-   * If omitted, will return all {@linkcode PersistentModifier}s regardless of type.
-   * @param player Whether to search the player (`true`) or enemy (`false`) party; Defaults to `true`
-   * @returns An array containing all modifiers matching `modifierType` on the given side of the field.
-   * @overload
-   */
-  getModifiers<T extends PersistentModifier>(modifierType: Constructor<T>, player?: boolean): T[];
-
-  // NOTE: Boolean typing on 1st parameter needed to satisfy "bool only" overload
-  getModifiers<T extends PersistentModifier>(modifierType?: Constructor<T> | boolean, player?: boolean) {
-    const usePlayer: boolean = player ?? (typeof modifierType !== "boolean" || modifierType); // non-bool in 1st position = true by default
-    const mods = usePlayer ? this.modifiers : this.enemyModifiers;
-
-    if (typeof modifierType === "undefined" || typeof modifierType === "boolean") {
-      return mods;
-    }
-    return mods.filter((m): m is T => m instanceof modifierType);
+  getModifiers<T extends PersistentModifier>(modifierType: Constructor<T>, player = true): T[] {
+    return (player ? this.modifiers : this.enemyModifiers).filter((m): m is T => m instanceof modifierType);
   }
 
   /**
