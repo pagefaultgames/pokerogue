@@ -17,7 +17,8 @@ export type * from "#app/data/moves/move";
  * Does not include the ChargeMove subclasses. For that, use `ChargingMoveClassMap`.
  *
  * @privateremarks
- * The `Never` field is necessary to ensure typescript does not improperly narrow a failed `is` guard to `never`.
+ * The `never` field (`declare private _: never`) in some classes is necessary
+ * to ensure typescript does not improperly narrow a failed `is` guard to `never`.
  *
  * For example, if we did not have the never, and wrote
  * ```
@@ -34,10 +35,6 @@ export type MoveClassMap = {
   StatusMove: StatusMove;
   SelfStatusMove: SelfStatusMove;
 };
-
-/*
- * Without the `Never: never` field, typescript will
- */
 
 /**
  * Union type of all move subclass names
