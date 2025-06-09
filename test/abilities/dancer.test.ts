@@ -25,7 +25,7 @@ describe("Abilities - Dancer", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("double");
+    game.override.battleStyle("double").enemyAbility(AbilityId.BALL_FETCH);
   });
 
   // Reference Link: https://bulbapedia.bulbagarden.net/wiki/Dancer_(Ability)
