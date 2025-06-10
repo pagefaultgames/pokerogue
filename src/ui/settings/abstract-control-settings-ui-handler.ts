@@ -137,7 +137,7 @@ export default abstract class AbstractControlSettingsUiHandler extends UiHandler
 
     const iconCancel = globalScene.add.sprite(0, 0, "keyboard");
     iconCancel.setOrigin(0, -0.1);
-    iconCancel.setPositionRelative(this.actionsBg, this.navigationContainer.width - 100, 4);
+    iconCancel.setPositionRelative(this.actionsBg, actionText.x - 28, 4);
     this.navigationIcons["BUTTON_CANCEL"] = iconCancel;
 
     const cancelText = addTextObject(0, 0, i18next.t("settings:back"), TextStyle.SETTINGS_LABEL);
@@ -146,7 +146,7 @@ export default abstract class AbstractControlSettingsUiHandler extends UiHandler
 
     const iconReset = globalScene.add.sprite(0, 0, "keyboard");
     iconReset.setOrigin(0, -0.1);
-    iconReset.setPositionRelative(this.actionsBg, this.navigationContainer.width - 180, 4);
+    iconReset.setPositionRelative(this.actionsBg, cancelText.x - 28, 4);
     this.navigationIcons["BUTTON_HOME"] = iconReset;
 
     const resetText = addTextObject(0, 0, i18next.t("settings:reset"), TextStyle.SETTINGS_LABEL);
