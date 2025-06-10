@@ -126,12 +126,8 @@ import i18next from "i18next";
 import { timedEventManager } from "#app/global-event-manager";
 import { TYPE_BOOST_ITEM_BOOST_PERCENT } from "#app/constants";
 import { ModifierPoolType } from "#enums/modifier-pool-type";
-
 import { getModifierPoolForType, getModifierType } from "#app/utils/modifier-utils";
 import type { ModifierTypeFunc, WeightedModifierTypeWeightFunc } from "#app/@types/modifier-types";
-
-// biome-ignore lint/correctness/noUnusedImports: This import is used in a
-import type { initModifierPools } from "./init-modifier-pools";
 
 const outputModifierData = false;
 const useMaxWeightForOutput = false;
@@ -2993,10 +2989,6 @@ export function getLuckTextTint(luckValue: number): number {
   return getModifierTierTextTint(modifierTier);
 }
 
-/**
- * Initialize the modifier types object with the initial set of modifier types.
- * {@linkcode initModifierPools} MUST be called before this function.
- */
 export function initModifierTypes() {
   for (const [key, value] of Object.entries(modifierTypeInitObj)) {
     modifierTypes[key] = value;

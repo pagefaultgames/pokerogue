@@ -24,6 +24,8 @@ import { MoveId } from "#enums/move-id";
 import { StatusEffect } from "#enums/status-effect";
 import { AbilityId } from "#enums/ability-id";
 import { MAX_PER_TYPE_POKEBALLS } from "#app/data/pokeball";
+// biome-ignore lint/correctness/noUnusedImports: This is used in a tsdoc comment
+import type { initModifierTypes } from "./modifier-type";
 
 /**
  * Initialize the wild modifier pool
@@ -780,6 +782,10 @@ function initDailyStarterModifierPool() {
   });
 }
 
+/**
+ * Initialize {@linkcode modifierPool} with the initial set of modifier types.
+ * {@linkcode initModifierTypes} MUST be called before this function.
+ */
 export function initModifierPools() {
   // The modifier pools the player chooses from during modifier selection
   initCommonModifierPool();
