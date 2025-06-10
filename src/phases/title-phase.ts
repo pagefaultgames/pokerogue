@@ -3,7 +3,8 @@ import { BattleType } from "#enums/battle-type";
 import { fetchDailyRunSeed, getDailyRunStarters } from "#app/data/daily-run";
 import { Gender } from "#app/data/gender";
 import { getBiomeKey } from "#app/field/arena";
-import { GameMode, GameModes, getGameMode } from "#app/game-mode";
+import { GameMode, getGameMode } from "#app/game-mode";
+import { GameModes } from "#enums/game-modes";
 import type { Modifier } from "#app/modifier/modifier";
 import {
   getDailyRunStarterModifiers,

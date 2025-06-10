@@ -1,6 +1,6 @@
 import { AttemptRunPhase } from "#app/phases/attempt-run-phase";
 import type { CommandPhase } from "#app/phases/command-phase";
-import { Command } from "#app/ui/command-ui-handler";
+import { Command } from "#enums/command";
 import { NumberHolder } from "#app/utils/common";
 import { AbilityId } from "#enums/ability-id";
 import { SpeciesId } from "#enums/species-id";

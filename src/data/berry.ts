@@ -1,6 +1,6 @@
 import { getPokemonNameWithAffix } from "../messages";
 import type Pokemon from "../field/pokemon";
-import { HitResult } from "../field/pokemon";
+import { HitResult } from "#enums/hit-result";
 import { getStatusEffectHealText } from "./status-effect";
 import { NumberHolder, toDmgValue, randSeedInt } from "#app/utils/common";
 import { DoubleBerryEffectAbAttr, ReduceBerryUseThresholdAbAttr, applyAbAttrs } from "./abilities/ability";
