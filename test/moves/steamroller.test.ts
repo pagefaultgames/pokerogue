@@ -1,10 +1,10 @@
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex } from "#enums/battler-index";
 import { allMoves } from "#app/data/data-lists";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
 import type { DamageCalculationResult } from "#app/field/pokemon";
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import { AbilityId } from "#enums/ability-id";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -25,26 +25,26 @@ describe("Moves - Steamroller", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.moveset([Moves.STEAMROLLER]).battleStyle("single").enemyAbility(Abilities.BALL_FETCH);
+    game.override.moveset([MoveId.STEAMROLLER]).battleStyle("single").enemyAbility(AbilityId.BALL_FETCH);
   });
 
   it("should always hit a minimzed target with double damage", async () => {
-    game.override.enemySpecies(Species.DITTO).enemyMoveset(Moves.MINIMIZE);
-    await game.classicMode.startBattle([Species.IRON_BOULDER]);
+    game.override.enemySpecies(SpeciesId.DITTO).enemyMoveset(MoveId.MINIMIZE);
+    await game.classicMode.startBattle([SpeciesId.IRON_BOULDER]);
 
     const ditto = game.scene.getEnemyPokemon()!;
     vi.spyOn(ditto, "getAttackDamage");
     ditto.hp = 5000;
-    const steamroller = allMoves[Moves.STEAMROLLER];
+    const steamroller = allMoves[MoveId.STEAMROLLER];
     vi.spyOn(steamroller, "calculateBattleAccuracy");
     const ironBoulder = game.scene.getPlayerPokemon()!;
     vi.spyOn(ironBoulder, "getAccuracyMultiplier");
     // Turn 1
-    game.move.select(Moves.STEAMROLLER);
+    game.move.select(MoveId.STEAMROLLER);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toNextTurn();
     // Turn 2
-    game.move.select(Moves.STEAMROLLER);
+    game.move.select(MoveId.STEAMROLLER);
     await game.toNextTurn();
 
     const [dmgCalcTurn1, dmgCalcTurn2]: DamageCalculationResult[] = vi

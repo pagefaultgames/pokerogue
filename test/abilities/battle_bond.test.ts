@@ -1,10 +1,9 @@
-import { MultiHitAttr } from "#app/data/moves/move";
 import { allMoves } from "#app/data/data-lists";
 import { MultiHitType } from "#enums/MultiHitType";
 import { Status } from "#app/data/status-effect";
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import { AbilityId } from "#enums/ability-id";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import GameManager from "#test/testUtils/gameManager";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -31,17 +30,17 @@ describe("Abilities - BATTLE BOND", () => {
     game.override
       .battleStyle("single")
       .startingWave(4) // Leads to arena reset on Wave 5 trainer battle
-      .ability(Abilities.BATTLE_BOND)
-      .starterForms({ [Species.GRENINJA]: ashForm })
-      .moveset([Moves.SPLASH, Moves.WATER_SHURIKEN])
-      .enemySpecies(Species.BULBASAUR)
-      .enemyMoveset(Moves.SPLASH)
+      .ability(AbilityId.BATTLE_BOND)
+      .starterForms({ [SpeciesId.GRENINJA]: ashForm })
+      .moveset([MoveId.SPLASH, MoveId.WATER_SHURIKEN])
+      .enemySpecies(SpeciesId.BULBASAUR)
+      .enemyMoveset(MoveId.SPLASH)
       .startingLevel(100) // Avoid levelling up
       .enemyLevel(1000); // Avoid opponent dying before `doKillOpponents()`
   });
 
   it("check if fainted pokemon switches to base form on arena reset", async () => {
-    await game.classicMode.startBattle([Species.MAGIKARP, Species.GRENINJA]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.GRENINJA]);
 
     const greninja = game.scene.getPlayerParty()[1];
     expect(greninja.formIndex).toBe(ashForm);
@@ -50,7 +49,7 @@ describe("Abilities - BATTLE BOND", () => {
     greninja.status = new Status(StatusEffect.FAINT);
     expect(greninja.isFainted()).toBe(true);
 
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.doKillOpponents();
     await game.phaseInterceptor.to("TurnEndPhase");
     game.doSelectModifier();
@@ -60,13 +59,13 @@ describe("Abilities - BATTLE BOND", () => {
   });
 
   it("should not keep buffing Water Shuriken after Greninja switches to base form", async () => {
-    await game.classicMode.startBattle([Species.GRENINJA]);
+    await game.classicMode.startBattle([SpeciesId.GRENINJA]);
 
-    const waterShuriken = allMoves[Moves.WATER_SHURIKEN];
+    const waterShuriken = allMoves[MoveId.WATER_SHURIKEN];
     vi.spyOn(waterShuriken, "calculateBattlePower");
 
     let actualMultiHitType: MultiHitType | null = null;
-    const multiHitAttr = waterShuriken.getAttrs(MultiHitAttr)[0];
+    const multiHitAttr = waterShuriken.getAttrs("MultiHitAttr")[0];
     vi.spyOn(multiHitAttr, "getHitCount").mockImplementation(() => {
       actualMultiHitType = multiHitAttr.getMultiHitType();
       return 3;
@@ -76,7 +75,7 @@ describe("Abilities - BATTLE BOND", () => {
     let expectedBattlePower = 20;
     let expectedMultiHitType = MultiHitType._3;
 
-    game.move.select(Moves.WATER_SHURIKEN);
+    game.move.select(MoveId.WATER_SHURIKEN);
     await game.phaseInterceptor.to("BerryPhase", false);
     expect(waterShuriken.calculateBattlePower).toHaveLastReturnedWith(expectedBattlePower);
     expect(actualMultiHitType).toBe(expectedMultiHitType);
@@ -88,7 +87,7 @@ describe("Abilities - BATTLE BOND", () => {
     expectedBattlePower = 15;
     expectedMultiHitType = MultiHitType._2_TO_5;
 
-    game.move.select(Moves.WATER_SHURIKEN);
+    game.move.select(MoveId.WATER_SHURIKEN);
     await game.phaseInterceptor.to("BerryPhase", false);
     expect(waterShuriken.calculateBattlePower).toHaveLastReturnedWith(expectedBattlePower);
     expect(actualMultiHitType).toBe(expectedMultiHitType);

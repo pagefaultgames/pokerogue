@@ -1,10 +1,10 @@
-import { BattlerIndex } from "../battle";
+import { BattlerIndex } from "#enums/battler-index";
 import { UiMode } from "#enums/ui-mode";
 import UiHandler from "./ui-handler";
 import { isNullOrUndefined, fixedInt } from "#app/utils/common";
-import { getMoveTargets } from "../data/moves/move";
+import { getMoveTargets } from "#app/data/moves/move-utils";
 import { Button } from "#enums/buttons";
-import type { Moves } from "#enums/moves";
+import type { MoveId } from "#enums/move-id";
 import type Pokemon from "#app/field/pokemon";
 import type { ModifierBar } from "#app/modifier/modifier";
 import { SubstituteTag } from "#app/data/battler-tags";
@@ -14,7 +14,7 @@ export type TargetSelectCallback = (targets: BattlerIndex[]) => void;
 
 export default class TargetSelectUiHandler extends UiHandler {
   private fieldIndex: number;
-  private move: Moves;
+  private move: MoveId;
   private targetSelectCallback: TargetSelectCallback;
   private cursor0: number; // associated with BattlerIndex.PLAYER
   private cursor1: number; // associated with BattlerIndex.PLAYER_2
@@ -42,7 +42,7 @@ export default class TargetSelectUiHandler extends UiHandler {
     super.show(args);
 
     this.fieldIndex = args[0] as number;
-    this.move = args[1] as Moves;
+    this.move = args[1] as MoveId;
     this.targetSelectCallback = args[2] as TargetSelectCallback;
     const user = globalScene.getPlayerField()[this.fieldIndex];
 

@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import type { BattlerIndex } from "#app/battle";
+import type { BattlerIndex } from "#enums/battler-index";
 import {
   applyAbAttrs,
   applyPostDamageAbAttrs,
@@ -8,7 +8,8 @@ import {
   PostDamageAbAttr,
   ReduceBurnDamageAbAttr,
 } from "#app/data/abilities/ability";
-import { CommonBattleAnim, CommonAnim } from "#app/data/battle-anims";
+import { CommonBattleAnim } from "#app/data/battle-anims";
+import { CommonAnim } from "#enums/move-anims-common";
 import { getStatusEffectActivationText } from "#app/data/status-effect";
 import { BattleSpec } from "#app/enums/battle-spec";
 import { StatusEffect } from "#app/enums/status-effect";
@@ -17,6 +18,7 @@ import { BooleanHolder, NumberHolder } from "#app/utils/common";
 import { PokemonPhase } from "./pokemon-phase";
 
 export class PostTurnStatusEffectPhase extends PokemonPhase {
+  public readonly phaseName = "PostTurnStatusEffectPhase";
   // biome-ignore lint/complexity/noUselessConstructor: Not unnecessary as it makes battlerIndex required
   constructor(battlerIndex: BattlerIndex) {
     super(battlerIndex);
@@ -31,7 +33,7 @@ export class PostTurnStatusEffectPhase extends PokemonPhase {
       applyAbAttrs(BlockStatusDamageAbAttr, pokemon, cancelled);
 
       if (!cancelled.value) {
-        globalScene.queueMessage(
+        globalScene.phaseManager.queueMessage(
           getStatusEffectActivationText(pokemon.status.effect, getPokemonNameWithAffix(pokemon)),
         );
         const damage = new NumberHolder(0);

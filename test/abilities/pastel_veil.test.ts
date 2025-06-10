@@ -1,9 +1,9 @@
-import { BattlerIndex } from "#app/battle";
-import { Abilities } from "#app/enums/abilities";
+import { BattlerIndex } from "#enums/battler-index";
+import { AbilityId } from "#enums/ability-id";
 import { CommandPhase } from "#app/phases/command-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -27,22 +27,22 @@ describe("Abilities - Pastel Veil", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("double")
-      .moveset([Moves.TOXIC_THREAD, Moves.SPLASH])
-      .enemyAbility(Abilities.BALL_FETCH)
-      .enemySpecies(Species.SUNKERN)
-      .enemyMoveset(Moves.SPLASH);
+      .moveset([MoveId.TOXIC_THREAD, MoveId.SPLASH])
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .enemySpecies(SpeciesId.SUNKERN)
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   it("prevents the user and its allies from being afflicted by poison", async () => {
-    await game.classicMode.startBattle([Species.MAGIKARP, Species.GALAR_PONYTA]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.GALAR_PONYTA]);
     const ponyta = game.scene.getPlayerField()[1];
     const magikarp = game.scene.getPlayerField()[0];
     ponyta.abilityIndex = 1;
 
-    expect(ponyta.hasAbility(Abilities.PASTEL_VEIL)).toBe(true);
+    expect(ponyta.hasAbility(AbilityId.PASTEL_VEIL)).toBe(true);
 
-    game.move.select(Moves.SPLASH);
-    game.move.select(Moves.TOXIC_THREAD, 1, BattlerIndex.PLAYER);
+    game.move.select(MoveId.SPLASH);
+    game.move.select(MoveId.TOXIC_THREAD, 1, BattlerIndex.PLAYER);
 
     await game.phaseInterceptor.to(TurnEndPhase);
 
@@ -50,21 +50,21 @@ describe("Abilities - Pastel Veil", () => {
   });
 
   it("it heals the poisoned status condition of allies if user is sent out into battle", async () => {
-    await game.classicMode.startBattle([Species.MAGIKARP, Species.FEEBAS, Species.GALAR_PONYTA]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.FEEBAS, SpeciesId.GALAR_PONYTA]);
     const ponyta = game.scene.getPlayerParty()[2];
     const magikarp = game.scene.getPlayerField()[0];
     ponyta.abilityIndex = 1;
 
-    expect(ponyta.hasAbility(Abilities.PASTEL_VEIL)).toBe(true);
+    expect(ponyta.hasAbility(AbilityId.PASTEL_VEIL)).toBe(true);
 
-    game.move.select(Moves.SPLASH);
-    game.move.select(Moves.TOXIC_THREAD, 1, BattlerIndex.PLAYER);
+    game.move.select(MoveId.SPLASH);
+    game.move.select(MoveId.TOXIC_THREAD, 1, BattlerIndex.PLAYER);
 
     await game.phaseInterceptor.to(TurnEndPhase);
     expect(magikarp.status?.effect).toBe(StatusEffect.POISON);
 
     await game.phaseInterceptor.to(CommandPhase);
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     game.doSwitchPokemon(2);
     await game.phaseInterceptor.to(TurnEndPhase);
 

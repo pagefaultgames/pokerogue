@@ -1,8 +1,8 @@
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex } from "#enums/battler-index";
 import { RandomMoveAttr } from "#app/data/moves/move";
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import { AbilityId } from "#enums/ability-id";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -24,25 +24,25 @@ describe("Moves - Ability-Ignoring Moves", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.MOONGEIST_BEAM, Moves.SUNSTEEL_STRIKE, Moves.PHOTON_GEYSER, Moves.METRONOME])
-      .ability(Abilities.STURDY)
+      .moveset([MoveId.MOONGEIST_BEAM, MoveId.SUNSTEEL_STRIKE, MoveId.PHOTON_GEYSER, MoveId.METRONOME])
+      .ability(AbilityId.STURDY)
       .startingLevel(200)
       .battleStyle("single")
       .disableCrits()
-      .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.STURDY)
-      .enemyMoveset(Moves.SPLASH);
+      .enemySpecies(SpeciesId.MAGIKARP)
+      .enemyAbility(AbilityId.STURDY)
+      .enemyMoveset(MoveId.SPLASH);
   });
 
-  it.each<{ name: string; move: Moves }>([
-    { name: "Sunsteel Strike", move: Moves.SUNSTEEL_STRIKE },
-    { name: "Moongeist Beam", move: Moves.MOONGEIST_BEAM },
-    { name: "Photon Geyser", move: Moves.PHOTON_GEYSER },
-  ])("$name should ignore enemy abilities during move use", async ({move}) => {
-    await game.classicMode.startBattle([Species.NECROZMA]);
+  it.each<{ name: string; move: MoveId }>([
+    { name: "Sunsteel Strike", move: MoveId.SUNSTEEL_STRIKE },
+    { name: "Moongeist Beam", move: MoveId.MOONGEIST_BEAM },
+    { name: "Photon Geyser", move: MoveId.PHOTON_GEYSER },
+  ])("$name should ignore enemy abilities during move use", async ({ move }) => {
+    await game.classicMode.startBattle([SpeciesId.NECROZMA]);
 
-    const player = game.scene.getPlayerPokemon()!;
-    const enemy = game.scene.getEnemyPokemon()!;
+    const player = game.field.getPlayerPokemon();
+    const enemy = game.field.getEnemyPokemon();
 
     game.move.select(move);
     await game.phaseInterceptor.to("MoveEffectPhase");
@@ -56,40 +56,40 @@ describe("Moves - Ability-Ignoring Moves", () => {
   });
 
   it("should not ignore enemy abilities when called by metronome", async () => {
-    await game.classicMode.startBattle([Species.MILOTIC]);
-    vi.spyOn(RandomMoveAttr.prototype, "getMoveOverride").mockReturnValue(Moves.PHOTON_GEYSER);
+    await game.classicMode.startBattle([SpeciesId.MILOTIC]);
+    vi.spyOn(RandomMoveAttr.prototype, "getMoveOverride").mockReturnValue(MoveId.PHOTON_GEYSER);
 
-    const enemy = game.scene.getEnemyPokemon()!;
-    game.move.select(Moves.METRONOME);
-    await game.phaseInterceptor.to("BerryPhase");
+    const enemy = game.field.getEnemyPokemon();
+    game.move.select(MoveId.METRONOME);
+    await game.toEndOfTurn();
 
     expect(enemy.isFainted()).toBe(false);
-    expect(game.scene.getPlayerPokemon()?.getLastXMoves()[0].move).toBe(Moves.PHOTON_GEYSER);
+    expect(game.scene.getPlayerPokemon()?.getLastXMoves()[0].move).toBe(MoveId.PHOTON_GEYSER);
   });
 
   it("should not ignore enemy abilities when called by Mirror Move", async () => {
-    game.override.moveset(Moves.MIRROR_MOVE).enemyMoveset(Moves.SUNSTEEL_STRIKE);
+    game.override.moveset(MoveId.MIRROR_MOVE).enemyMoveset(MoveId.SUNSTEEL_STRIKE);
 
-    await game.classicMode.startBattle([Species.MILOTIC]);
+    await game.classicMode.startBattle([SpeciesId.MILOTIC]);
 
-    const enemy = game.scene.getEnemyPokemon()!;
-    game.move.select(Moves.MIRROR_MOVE);
+    const enemy = game.field.getEnemyPokemon();
+    game.move.select(MoveId.MIRROR_MOVE);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
-    await game.phaseInterceptor.to("BerryPhase");
+    await game.toEndOfTurn();
 
     expect(enemy.isFainted()).toBe(false);
-    expect(game.scene.getPlayerPokemon()?.getLastXMoves()[0].move).toBe(Moves.SUNSTEEL_STRIKE);
+    expect(game.scene.getPlayerPokemon()?.getLastXMoves()[0].move).toBe(MoveId.SUNSTEEL_STRIKE);
   });
 
   // TODO: Verify this behavior on cart
   it("should ignore enemy abilities when called by Instruct", async () => {
-    game.override.moveset([Moves.SUNSTEEL_STRIKE, Moves.INSTRUCT]).battleStyle("double");
-    await game.classicMode.startBattle([Species.SOLGALEO, Species.LUNALA]);
+    game.override.moveset([MoveId.SUNSTEEL_STRIKE, MoveId.INSTRUCT]).battleStyle("double");
+    await game.classicMode.startBattle([SpeciesId.SOLGALEO, SpeciesId.LUNALA]);
 
-    const solgaleo = game.scene.getPlayerPokemon()!;
+    const solgaleo = game.field.getPlayerPokemon();
 
-    game.move.select(Moves.SUNSTEEL_STRIKE, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
-    game.move.select(Moves.INSTRUCT, BattlerIndex.PLAYER_2, BattlerIndex.PLAYER);
+    game.move.select(MoveId.SUNSTEEL_STRIKE, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
+    game.move.select(MoveId.INSTRUCT, BattlerIndex.PLAYER_2, BattlerIndex.PLAYER);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
 
     await game.phaseInterceptor.to("MoveEffectPhase"); // initial attack
@@ -99,7 +99,7 @@ describe("Moves - Ability-Ignoring Moves", () => {
     expect(game.scene.arena.ignoreAbilities).toBe(true);
     expect(game.scene.arena.ignoringEffectSource).toBe(solgaleo.getBattlerIndex());
 
-    await game.phaseInterceptor.to("BerryPhase");
+    await game.toEndOfTurn();
 
     // Both the initial and redirected instruct use ignored sturdy
     const [enemy1, enemy2] = game.scene.getEnemyField();

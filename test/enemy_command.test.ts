@@ -1,11 +1,11 @@
 import type BattleScene from "#app/battle-scene";
 import { allMoves } from "#app/data/data-lists";
 import { MoveCategory } from "#enums/MoveCategory";
-import { Abilities } from "#app/enums/abilities";
-import { Moves } from "#app/enums/moves";
-import { Species } from "#app/enums/species";
+import { AbilityId } from "#enums/ability-id";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import type { EnemyPokemon } from "#app/field/pokemon";
-import { AiType } from "#app/field/pokemon";
+import { AiType } from "#enums/ai-type";
 import { randSeedInt } from "#app/utils/common";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -49,17 +49,17 @@ describe("Enemy Commands - Move Selection", () => {
     game = new GameManager(phaserGame);
     globalScene = game.scene;
 
-    game.override.ability(Abilities.BALL_FETCH).enemyAbility(Abilities.BALL_FETCH);
+    game.override.ability(AbilityId.BALL_FETCH).enemyAbility(AbilityId.BALL_FETCH);
   });
 
   it("should never use Status moves if an attack can KO", async () => {
     game.override
-      .enemySpecies(Species.ETERNATUS)
-      .enemyMoveset([Moves.ETERNABEAM, Moves.SLUDGE_BOMB, Moves.DRAGON_DANCE, Moves.COSMIC_POWER])
+      .enemySpecies(SpeciesId.ETERNATUS)
+      .enemyMoveset([MoveId.ETERNABEAM, MoveId.SLUDGE_BOMB, MoveId.DRAGON_DANCE, MoveId.COSMIC_POWER])
       .startingLevel(1)
       .enemyLevel(100);
 
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
     enemyPokemon.aiType = AiType.SMART_RANDOM;
@@ -78,12 +78,12 @@ describe("Enemy Commands - Move Selection", () => {
 
   it("should not select Last Resort if it would fail, even if the move KOs otherwise", async () => {
     game.override
-      .enemySpecies(Species.KANGASKHAN)
-      .enemyMoveset([Moves.LAST_RESORT, Moves.GIGA_IMPACT, Moves.SPLASH, Moves.SWORDS_DANCE])
+      .enemySpecies(SpeciesId.KANGASKHAN)
+      .enemyMoveset([MoveId.LAST_RESORT, MoveId.GIGA_IMPACT, MoveId.SPLASH, MoveId.SWORDS_DANCE])
       .startingLevel(1)
       .enemyLevel(100);
 
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
     const enemyPokemon = game.scene.getEnemyPokemon()!;
     enemyPokemon.aiType = AiType.SMART_RANDOM;
@@ -94,7 +94,7 @@ describe("Enemy Commands - Move Selection", () => {
     getEnemyMoveChoices(enemyPokemon, moveChoices);
 
     enemyMoveset.forEach(mv => {
-      if (mv?.getMove().category === MoveCategory.STATUS || mv?.moveId === Moves.LAST_RESORT) {
+      if (mv?.getMove().category === MoveCategory.STATUS || mv?.moveId === MoveId.LAST_RESORT) {
         expect(moveChoices[mv.moveId]).toBe(0);
       }
     });
