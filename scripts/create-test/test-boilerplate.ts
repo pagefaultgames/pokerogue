@@ -34,6 +34,7 @@ describe("{{description}}", () => {
 
   it("should do XYZ", async () => {
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
+
     game.move.use(MoveId.SPLASH);
     await game.toEndOfTurn();
 
