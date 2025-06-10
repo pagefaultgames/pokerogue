@@ -147,15 +147,15 @@ describe("Moves - Instruct", () => {
     vi.spyOn(RandomMoveAttr.prototype, "getMoveOverride").mockReturnValue(MoveId.ABSORB);
     await game.classicMode.startBattle([SpeciesId.AMOONGUSS]);
 
-    const enemy = game.scene.getEnemyPokemon()!;
+    const enemy = game.field.getEnemyPokemon();
     game.move.changeMoveset(enemy, [MoveId.METRONOME, MoveId.ABSORB]);
 
     game.move.use(MoveId.INSTRUCT);
     await game.move.selectEnemyMove(MoveId.METRONOME);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
-    await game.phaseInterceptor.to("BerryPhase");
+    await game.toEndOfTurn();
 
-    expect(game.scene.getPlayerPokemon()!.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+    expect(game.field.getPlayerPokemon().getLastXMoves()[0].result).toBe(MoveResult.FAIL);
   });
 
   it("should respect enemy's status condition", async () => {
@@ -169,7 +169,7 @@ describe("Moves - Instruct", () => {
     game.move.select(MoveId.INSTRUCT);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.phaseInterceptor.to("MovePhase");
-    // force enemy's instructed move (and only the instructed move) to bork
+    // force enemy's instructed move (and only the instructed move) to fail
     await game.move.forceStatusActivation(true);
     await game.move.forceStatusActivation(false);
     await game.phaseInterceptor.to("TurnEndPhase", false);
@@ -259,8 +259,8 @@ describe("Moves - Instruct", () => {
     game.doSwitchPokemon(1);
     await game.phaseInterceptor.to("TurnEndPhase", false);
 
-    const enemyMoves = game.scene.getEnemyPokemon()?.getLastXMoves(-1)!;
-    expect(enemyMoves?.[0]?.result).toBe(MoveResult.FAIL);
+    const enemyMoves = game.field.getEnemyPokemon().getLastXMoves(-1);
+    expect(enemyMoves[0]?.result).toBe(MoveResult.FAIL);
   });
 
   it("should fail if no move has yet been used by target", async () => {
@@ -289,7 +289,7 @@ describe("Moves - Instruct", () => {
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER_2, BattlerIndex.PLAYER, BattlerIndex.ENEMY_2]);
     await game.phaseInterceptor.to("TurnEndPhase", false);
 
-    expect(game.scene.getPlayerPokemon()!.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
+    expect(game.field.getPlayerPokemon().getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
     expect(enemy1.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
     expect(enemy1.getMoveset().find(m => m.moveId === MoveId.SONIC_BOOM)?.ppUsed).toBe(1);
   });
@@ -385,9 +385,9 @@ describe("Moves - Instruct", () => {
       .enemyMoveset([MoveId.SPLASH, MoveId.PSYCHIC_TERRAIN]);
     await game.classicMode.startBattle([SpeciesId.BANETTE, SpeciesId.KLEFKI]);
 
-    const banette = game.scene.getPlayerPokemon()!;
+    const banette = game.field.getPlayerPokemon();
 
-    game.move.select(MoveId.QUICK_ATTACK, BattlerIndex.PLAYER, BattlerIndex.ENEMY); // succeeds due to terrain no
+    game.move.select(MoveId.QUICK_ATTACK, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
     game.move.select(MoveId.SPLASH, BattlerIndex.PLAYER_2);
     await game.move.selectEnemyMove(MoveId.SPLASH);
     await game.move.selectEnemyMove(MoveId.PSYCHIC_TERRAIN);
