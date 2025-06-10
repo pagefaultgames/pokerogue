@@ -159,7 +159,7 @@ export class TurnStartPhase extends FieldPhase {
       }
 
       switch (turnCommand?.command) {
-        case Command.FIGHT:
+        case Command.FIGHT: {
           const queuedMove = turnCommand.move;
           pokemon.turnData.order = orderIndex++;
           if (!queuedMove) {
@@ -190,6 +190,7 @@ export class TurnStartPhase extends FieldPhase {
             ); // TODO: is the bang correct here?
           }
           break;
+        }
         case Command.BALL:
           phaseManager.unshiftNew("AttemptCapturePhase", turnCommand.targets![0] % 2, turnCommand.cursor!); //TODO: is the bang correct here?
           break;
