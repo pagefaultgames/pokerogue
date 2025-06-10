@@ -129,13 +129,6 @@ export class MovePhase extends BattlePhase {
   public start(): void {
     super.start();
 
-    // Cover our bases - if we have no use type
-    if (!this.useMode) {
-      console.warn(`Unexpected MoveUseMode of ${this.useMode} during move phase!`);
-      // @ts-expect-error - useMode is readonly and shouldn't normally be assigned to
-      this.useMode = MoveUseMode.NORMAL;
-    }
-
     console.log(MoveId[this.move.moveId], MoveUseMode[this.useMode]);
 
     // Check if move is unusable (e.g. running out of PP due to a mid-turn Spite
