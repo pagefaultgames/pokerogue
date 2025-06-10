@@ -13,6 +13,7 @@ import { MoveUseMode } from "#enums/move-use-mode";
 describe("Abilities - Gorilla Tactics", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
+
   beforeAll(() => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,

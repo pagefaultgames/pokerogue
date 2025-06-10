@@ -28,7 +28,7 @@ import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
 import { ArenaTagSide } from "#enums/arena-tag-side";
-import { MoveUseMode } from "#enums/move-use-mode"
+import { MoveUseMode } from "#enums/move-use-mode";
 
 export abstract class ArenaTag {
   constructor(

@@ -164,7 +164,11 @@ export default class FightUiHandler extends UiHandler implements InfoToggle {
         break;
       case Button.ACTION:
         if (
-          (globalScene.phaseManager.getCurrentPhase() as CommandPhase).handleCommand(this.fromCommand, cursor, MoveUseMode.NORMAL)
+          (globalScene.phaseManager.getCurrentPhase() as CommandPhase).handleCommand(
+            this.fromCommand,
+            cursor,
+            MoveUseMode.NORMAL,
+          )
         ) {
           success = true;
         } else {

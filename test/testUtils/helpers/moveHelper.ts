@@ -92,7 +92,11 @@ export class MoveHelper extends GameManagerHelper {
       );
     });
     this.game.onNextPrompt("CommandPhase", UiMode.FIGHT, () => {
-      (this.game.scene.phaseManager.getCurrentPhase() as CommandPhase).handleCommand(Command.TERA, movePosition, MoveUseMode.NORMAL);
+      (this.game.scene.phaseManager.getCurrentPhase() as CommandPhase).handleCommand(
+        Command.TERA,
+        movePosition,
+        MoveUseMode.NORMAL,
+      );
     });
 
     if (targetIndex !== null) {

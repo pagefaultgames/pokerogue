@@ -1,4 +1,4 @@
-import type { PlayerPokemon , TurnMove} from "#app/field/pokemon";
+import type { PlayerPokemon, TurnMove } from "#app/field/pokemon";
 import type { PokemonMove } from "#app/data/moves/pokemon-move";
 import type Pokemon from "#app/field/pokemon";
 import { MoveResult } from "#enums/move-result";

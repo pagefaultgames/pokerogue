@@ -15,7 +15,6 @@ import type { DelayedAttackTag } from "#app/data/arena-tag";
 import { CommonAnim } from "#enums/move-anims-common";
 import { CenterOfAttentionTag } from "#app/data/battler-tags";
 import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
-import type { HealStatusEffectAttr } from "#app/data/moves/move";
 import { applyMoveAttrs } from "#app/data/moves/apply-attrs";
 import { allMoves } from "#app/data/data-lists";
 import { MoveFlags } from "#enums/MoveFlags";
@@ -263,8 +262,7 @@ export class MovePhase extends BattlePhase {
           !!this.move
             .getMove()
             .findAttr(
-              attr => attr.is("HealStatusEffectAttr")
-              && attr.selfTarget && attr.isOfEffect(StatusEffect.FREEZE),
+              attr => attr.is("HealStatusEffectAttr") && attr.selfTarget && attr.isOfEffect(StatusEffect.FREEZE),
             ) ||
           (!this.pokemon.randBattleSeedInt(5) && Overrides.STATUS_ACTIVATION_OVERRIDE !== true) ||
           Overrides.STATUS_ACTIVATION_OVERRIDE === false;
@@ -279,10 +277,11 @@ export class MovePhase extends BattlePhase {
       globalScene.phaseManager.queueMessage(
         getStatusEffectActivationText(this.pokemon.status.effect, getPokemonNameWithAffix(this.pokemon)),
       );
-      globalScene.phaseManager.unshiftNew("CommonAnimPhase",
-          this.pokemon.getBattlerIndex(),
-          undefined,
-          CommonAnim.POISON + (this.pokemon.status.effect - 1), // offset anim # by effect #
+      globalScene.phaseManager.unshiftNew(
+        "CommonAnimPhase",
+        this.pokemon.getBattlerIndex(),
+        undefined,
+        CommonAnim.POISON + (this.pokemon.status.effect - 1), // offset anim # by effect #
       );
     } else if (healed) {
       // cure status and play effect
@@ -497,7 +496,6 @@ export class MovePhase extends BattlePhase {
       this.move,
       this.useMode,
     );
-
   }
 
   /**
@@ -506,7 +504,9 @@ export class MovePhase extends BattlePhase {
   public end(): void {
     globalScene.phaseManager.unshiftNew(
       "MoveEndPhase",
-      this.pokemon.getBattlerIndex(), this.getActiveTargetPokemon(), isVirtual(this.useMode),
+      this.pokemon.getBattlerIndex(),
+      this.getActiveTargetPokemon(),
+      isVirtual(this.useMode),
     );
 
     super.end();
