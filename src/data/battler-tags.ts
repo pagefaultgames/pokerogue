@@ -392,7 +392,7 @@ export class GorillaTacticsTag extends MoveRestrictionBattlerTag {
    * @override
    * @param source Gorilla Tactics' {@linkcode BattlerTag} information
    */
-  override loadTag(source: BattlerTag | any): void {
+  public override loadTag(source: BattlerTag | any): void {
     super.loadTag(source);
     this.moveId = source.moveId;
   }
@@ -1129,7 +1129,7 @@ export class EncoreTag extends MoveRestrictionBattlerTag {
   }
 
   canAdd(pokemon: Pokemon): boolean {
-    const lastMove = pokemon.getLastNonVirtualMove(false);
+    const lastMove = pokemon.getLastNonVirtualMove();
     if (!lastMove) {
       return false;
     }
