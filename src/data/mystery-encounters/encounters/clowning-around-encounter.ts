@@ -13,7 +13,7 @@ import { TrainerPartyCompoundTemplate } from "#app/data/trainers/TrainerPartyTem
 import { TrainerPartyTemplate } from "#app/data/trainers/TrainerPartyTemplate";
 import { ModifierTier } from "#enums/modifier-tier";
 import type { PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
-import { modifierTypes } from "#app/modifier/modifier-type";
+import { modifierTypes } from "#app/data/data-lists";
 import { ModifierPoolType } from "#enums/modifier-pool-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PartyMemberStrength } from "#enums/party-member-strength";

@@ -6,11 +6,8 @@ import { getBiomeKey } from "#app/field/arena";
 import { GameMode, getGameMode } from "#app/game-mode";
 import { GameModes } from "#enums/game-modes";
 import type { Modifier } from "#app/modifier/modifier";
-import {
-  getDailyRunStarterModifiers,
-  modifierTypes,
-  regenerateModifierPoolThresholds,
-} from "#app/modifier/modifier-type";
+import { getDailyRunStarterModifiers, regenerateModifierPoolThresholds } from "#app/modifier/modifier-type";
+import { modifierTypes } from "#app/data/data-lists";
 import { ModifierPoolType } from "#enums/modifier-pool-type";
 import { Phase } from "#app/phase";
 import type { SessionSaveData } from "#app/system/game-data";

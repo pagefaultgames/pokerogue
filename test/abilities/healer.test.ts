@@ -8,6 +8,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi, type MockIn
 import { isNullOrUndefined } from "#app/utils/common";
 import { allAbilities } from "#app/data/data-lists";
 import type Pokemon from "#app/field/pokemon";
+import type { PostTurnResetStatusAbAttr } from "#app/@types/ability-types";
 
 describe("Abilities - Healer", () => {
   let phaserGame: Phaser.Game;

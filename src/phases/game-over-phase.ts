@@ -7,7 +7,7 @@ import type PokemonSpecies from "#app/data/pokemon-species";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { trainerConfigs } from "#app/data/trainers/trainer-config";
 import type Pokemon from "#app/field/pokemon";
-import { modifierTypes } from "#app/modifier/modifier-type";
+import { modifierTypes } from "#app/data/data-lists";
 import { BattlePhase } from "#app/phases/battle-phase";
 import type { EndCardPhase } from "#app/phases/end-card-phase";
 import { achvs, ChallengeAchv } from "#app/system/achv";

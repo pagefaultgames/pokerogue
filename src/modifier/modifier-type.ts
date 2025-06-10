@@ -2,7 +2,7 @@ import { globalScene } from "#app/global-scene";
 import { EvolutionItem, pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
 import { tmPoolTiers, tmSpecies } from "#app/data/balance/tms";
 import { getBerryEffectDescription, getBerryName } from "#app/data/berry";
-import { allMoves } from "#app/data/data-lists";
+import { allMoves, modifierTypes } from "#app/data/data-lists";
 import { getNatureName, getNatureStatMultiplier } from "#app/data/nature";
 import { getPokeballCatchMultiplier, getPokeballName } from "#app/data/pokeball";
 import { pokemonFormChanges, SpeciesFormChangeCondition } from "#app/data/pokemon-forms";
@@ -127,9 +127,11 @@ import { timedEventManager } from "#app/global-event-manager";
 import { TYPE_BOOST_ITEM_BOOST_PERCENT } from "#app/constants";
 import { ModifierPoolType } from "#enums/modifier-pool-type";
 
-
-import { getModifierPoolForType } from "#app/utils/modifier-pool-utils";
+import { getModifierPoolForType, getModifierType } from "#app/utils/modifier-utils";
 import type { ModifierTypeFunc, WeightedModifierTypeWeightFunc } from "#app/@types/modifier-types";
+
+// biome-ignore lint/correctness/noUnusedImports: This import is used in a
+import type { initModifierPools } from "./init-modifier-pools";
 
 const outputModifierData = false;
 const useMaxWeightForOutput = false;
@@ -144,6 +146,19 @@ export class ModifierType {
   public soundName: string;
   public tier: ModifierTier;
   protected newModifierFunc: NewModifierFunc | null;
+
+  /**
+   * Checks if the modifier type is of a specific type
+   * @param modifierType - The type to check against
+   * @return Whether the modifier type is of the specified type
+   */
+  public is<K extends ModifierTypeString>(modifierType: K): this is ModifierTypeInstanceMap[K] {
+    const targetType = ModifierTypeConstructorMap[modifierType];
+    if (!targetType) {
+      return false;
+    }
+    return this instanceof targetType;
+  }
 
   constructor(
     localeKey: string | null,
@@ -213,7 +228,7 @@ export class ModifierType {
    * @param func
    */
   withIdFromFunc(func: ModifierTypeFunc): ModifierType {
-    this.id = Object.keys(modifierTypes).find(k => modifierTypes[k] === func)!; // TODO: is this bang correct?
+    this.id = Object.keys(modifierTypeInitObj).find(k => modifierTypeInitObj[k] === func)!; // TODO: is this bang correct?
     return this;
   }
 
@@ -1626,7 +1641,7 @@ class EvolutionItemModifierTypeGenerator extends ModifierTypeGenerator {
   }
 }
 
-class FormChangeItemModifierTypeGenerator extends ModifierTypeGenerator {
+export class FormChangeItemModifierTypeGenerator extends ModifierTypeGenerator {
   constructor(isRareFormChangeItem: boolean) {
     super((party: Pokemon[], pregenArgs?: any[]) => {
       if (pregenArgs && pregenArgs.length === 1 && pregenArgs[0] in FormChangeItem) {
@@ -1789,7 +1804,6 @@ export class EnemyEndureChanceModifierType extends ModifierType {
   }
 }
 
-
 export class WeightedModifierType {
   public modifierType: ModifierType;
   public weight: number | WeightedModifierTypeWeightFunc;
@@ -1801,7 +1815,7 @@ export class WeightedModifierType {
     maxWeight?: number | WeightedModifierTypeWeightFunc,
   ) {
     this.modifierType = modifierTypeFunc();
-    this.modifierType.id = Object.keys(modifierTypes).find(k => modifierTypes[k] === modifierTypeFunc)!; // TODO: is this bang correct?
+    this.modifierType.id = Object.keys(modifierTypeInitObj).find(k => modifierTypeInitObj[k] === modifierTypeFunc)!; // TODO: is this bang correct?
     this.weight = weight;
     this.maxWeight = maxWeight || (!(weight instanceof Function) ? weight : 0);
   }
@@ -1810,7 +1824,6 @@ export class WeightedModifierType {
     this.modifierType.setTier(tier);
   }
 }
-
 
 type BaseModifierOverride = {
   name: Exclude<ModifierTypeKeys, GeneratorModifierOverride["name"]>;
@@ -1822,39 +1835,39 @@ export type GeneratorModifierOverride = {
   count?: number;
 } & (
   | {
-      name: keyof Pick<typeof modifierTypes, "SPECIES_STAT_BOOSTER" | "RARE_SPECIES_STAT_BOOSTER">;
+      name: keyof Pick<typeof modifierTypeInitObj, "SPECIES_STAT_BOOSTER" | "RARE_SPECIES_STAT_BOOSTER">;
       type?: SpeciesStatBoosterItem;
     }
   | {
-      name: keyof Pick<typeof modifierTypes, "TEMP_STAT_STAGE_BOOSTER">;
+      name: keyof Pick<typeof modifierTypeInitObj, "TEMP_STAT_STAGE_BOOSTER">;
       type?: TempBattleStat;
     }
   | {
-      name: keyof Pick<typeof modifierTypes, "BASE_STAT_BOOSTER">;
+      name: keyof Pick<typeof modifierTypeInitObj, "BASE_STAT_BOOSTER">;
       type?: Stat;
     }
   | {
-      name: keyof Pick<typeof modifierTypes, "MINT">;
+      name: keyof Pick<typeof modifierTypeInitObj, "MINT">;
       type?: Nature;
     }
   | {
-      name: keyof Pick<typeof modifierTypes, "ATTACK_TYPE_BOOSTER" | "TERA_SHARD">;
+      name: keyof Pick<typeof modifierTypeInitObj, "ATTACK_TYPE_BOOSTER" | "TERA_SHARD">;
       type?: PokemonType;
     }
   | {
-      name: keyof Pick<typeof modifierTypes, "BERRY">;
+      name: keyof Pick<typeof modifierTypeInitObj, "BERRY">;
       type?: BerryType;
     }
   | {
-      name: keyof Pick<typeof modifierTypes, "EVOLUTION_ITEM" | "RARE_EVOLUTION_ITEM">;
+      name: keyof Pick<typeof modifierTypeInitObj, "EVOLUTION_ITEM" | "RARE_EVOLUTION_ITEM">;
       type?: EvolutionItem;
     }
   | {
-      name: keyof Pick<typeof modifierTypes, "FORM_CHANGE_ITEM" | "RARE_FORM_CHANGE_ITEM">;
+      name: keyof Pick<typeof modifierTypeInitObj, "FORM_CHANGE_ITEM" | "RARE_FORM_CHANGE_ITEM">;
       type?: FormChangeItem;
     }
   | {
-      name: keyof Pick<typeof modifierTypes, "TM_COMMON" | "TM_GREAT" | "TM_ULTRA">;
+      name: keyof Pick<typeof modifierTypeInitObj, "TM_COMMON" | "TM_GREAT" | "TM_ULTRA">;
       type?: MoveId;
     }
 );
@@ -1862,9 +1875,9 @@ export type GeneratorModifierOverride = {
 /** Type used to construct modifiers and held items for overriding purposes. */
 export type ModifierOverride = GeneratorModifierOverride | BaseModifierOverride;
 
-export type ModifierTypeKeys = keyof typeof modifierTypes;
+export type ModifierTypeKeys = keyof typeof modifierTypeInitObj;
 
-export const modifierTypes = {
+const modifierTypeInitObj = Object.freeze({
   POKEBALL: () => new AddPokeballModifierType("pb", PokeballType.POKEBALL, 5),
   GREAT_BALL: () => new AddPokeballModifierType("gb", PokeballType.GREAT_BALL, 5),
   ULTRA_BALL: () => new AddPokeballModifierType("ub", PokeballType.ULTRA_BALL, 5),
@@ -2373,23 +2386,18 @@ export const modifierTypes = {
       "golden_net",
       (type, _args) => new BoostBugSpawnModifier(type),
     ),
-};
+});
+
+/**
+ * The initial set of modifier types, used to generate the modifier pool.
+ */
+export type ModifierTypes = typeof modifierTypeInitObj;
 
 export interface ModifierPool {
   [tier: string]: WeightedModifierType[];
 }
 
-
-const modifierPool: ModifierPool = {
-};
-
-export function getModifierType(modifierTypeFunc: ModifierTypeFunc): ModifierType {
-  const modifierType = modifierTypeFunc();
-  if (!modifierType.id) {
-    modifierType.id = Object.keys(modifierTypes).find(k => modifierTypes[k] === modifierTypeFunc)!; // TODO: is this bang correct?
-  }
-  return modifierType;
-}
+const modifierPool: ModifierPool = {};
 
 let modifierPoolThresholds = {};
 let ignoredPoolIndexes = {};
@@ -2519,7 +2527,7 @@ export interface CustomModifierSettings {
 }
 
 export function getModifierTypeFuncById(id: string): ModifierTypeFunc {
-  return modifierTypes[id];
+  return modifierTypeInitObj[id];
 }
 
 /**
@@ -2572,12 +2580,12 @@ export function getPlayerModifierTypeOptions(
       customModifierSettings.guaranteedModifierTypeFuncs.length > 0
     ) {
       customModifierSettings.guaranteedModifierTypeFuncs!.forEach((mod, _i) => {
-        const modifierId = Object.keys(modifierTypes).find(k => modifierTypes[k] === mod) as string;
-        let guaranteedMod: ModifierType = modifierTypes[modifierId]?.();
+        const modifierId = Object.keys(modifierTypeInitObj).find(k => modifierTypeInitObj[k] === mod) as string;
+        let guaranteedMod: ModifierType = modifierTypeInitObj[modifierId]?.();
 
         // Populates item id and tier
         guaranteedMod = guaranteedMod
-          .withIdFromFunc(modifierTypes[modifierId])
+          .withIdFromFunc(modifierTypeInitObj[modifierId])
           .withTierFromPool(ModifierPoolType.PLAYER, party);
 
         const modType =
@@ -2656,7 +2664,7 @@ export function overridePlayerModifierTypeOptions(options: ModifierTypeOption[],
   const minLength = Math.min(options.length, Overrides.ITEM_REWARD_OVERRIDE.length);
   for (let i = 0; i < minLength; i++) {
     const override: ModifierOverride = Overrides.ITEM_REWARD_OVERRIDE[i];
-    const modifierFunc = modifierTypes[override.name];
+    const modifierFunc = modifierTypeInitObj[override.name];
     let modifierType: ModifierType | null = modifierFunc();
 
     if (modifierType instanceof ModifierTypeGenerator) {
@@ -2677,29 +2685,29 @@ export function getPlayerShopModifierTypeOptionsForWave(waveIndex: number, baseC
 
   const options = [
     [
-      new ModifierTypeOption(modifierTypes.POTION(), 0, baseCost * 0.2),
-      new ModifierTypeOption(modifierTypes.ETHER(), 0, baseCost * 0.4),
-      new ModifierTypeOption(modifierTypes.REVIVE(), 0, baseCost * 2),
+      new ModifierTypeOption(modifierTypeInitObj.POTION(), 0, baseCost * 0.2),
+      new ModifierTypeOption(modifierTypeInitObj.ETHER(), 0, baseCost * 0.4),
+      new ModifierTypeOption(modifierTypeInitObj.REVIVE(), 0, baseCost * 2),
     ],
     [
-      new ModifierTypeOption(modifierTypes.SUPER_POTION(), 0, baseCost * 0.45),
-      new ModifierTypeOption(modifierTypes.FULL_HEAL(), 0, baseCost),
+      new ModifierTypeOption(modifierTypeInitObj.SUPER_POTION(), 0, baseCost * 0.45),
+      new ModifierTypeOption(modifierTypeInitObj.FULL_HEAL(), 0, baseCost),
     ],
     [
-      new ModifierTypeOption(modifierTypes.ELIXIR(), 0, baseCost),
-      new ModifierTypeOption(modifierTypes.MAX_ETHER(), 0, baseCost),
+      new ModifierTypeOption(modifierTypeInitObj.ELIXIR(), 0, baseCost),
+      new ModifierTypeOption(modifierTypeInitObj.MAX_ETHER(), 0, baseCost),
     ],
     [
-      new ModifierTypeOption(modifierTypes.HYPER_POTION(), 0, baseCost * 0.8),
-      new ModifierTypeOption(modifierTypes.MAX_REVIVE(), 0, baseCost * 2.75),
-      new ModifierTypeOption(modifierTypes.MEMORY_MUSHROOM(), 0, baseCost * 4),
+      new ModifierTypeOption(modifierTypeInitObj.HYPER_POTION(), 0, baseCost * 0.8),
+      new ModifierTypeOption(modifierTypeInitObj.MAX_REVIVE(), 0, baseCost * 2.75),
+      new ModifierTypeOption(modifierTypeInitObj.MEMORY_MUSHROOM(), 0, baseCost * 4),
     ],
     [
-      new ModifierTypeOption(modifierTypes.MAX_POTION(), 0, baseCost * 1.5),
-      new ModifierTypeOption(modifierTypes.MAX_ELIXIR(), 0, baseCost * 2.5),
+      new ModifierTypeOption(modifierTypeInitObj.MAX_POTION(), 0, baseCost * 1.5),
+      new ModifierTypeOption(modifierTypeInitObj.MAX_ELIXIR(), 0, baseCost * 2.5),
     ],
-    [new ModifierTypeOption(modifierTypes.FULL_RESTORE(), 0, baseCost * 2.25)],
-    [new ModifierTypeOption(modifierTypes.SACRED_ASH(), 0, baseCost * 10)],
+    [new ModifierTypeOption(modifierTypeInitObj.FULL_RESTORE(), 0, baseCost * 2.25)],
+    [new ModifierTypeOption(modifierTypeInitObj.SACRED_ASH(), 0, baseCost * 10)],
   ];
   return options.slice(0, Math.ceil(Math.max(waveIndex + 10, 0) / 30)).flat();
 }
@@ -2754,7 +2762,7 @@ export function getEnemyModifierTypesForWave(
           ?.type as PokemonHeldItemModifierType,
     );
   if (!(waveIndex % 1000)) {
-    ret.push(getModifierType(modifierTypes.MINI_BLACK_HOLE) as PokemonHeldItemModifierType);
+    ret.push(getModifierType(modifierTypeInitObj.MINI_BLACK_HOLE) as PokemonHeldItemModifierType);
   }
   return ret;
 }
@@ -2984,3 +2992,34 @@ export function getLuckTextTint(luckValue: number): number {
   }
   return getModifierTierTextTint(modifierTier);
 }
+
+/**
+ * Initialize the modifier types object with the initial set of modifier types.
+ * {@linkcode initModifierPools} MUST be called before this function.
+ */
+export function initModifierTypes() {
+  for (const [key, value] of Object.entries(modifierTypeInitObj)) {
+    modifierTypes[key] = value;
+  }
+}
+
+// TODO: If necessary, add the rest of the modifier types here.
+// For now, doing the minimal work until the modifier rework lands.
+const ModifierTypeConstructorMap = Object.freeze({
+  ModifierTypeGenerator,
+  PokemonHeldItemModifierType,
+});
+
+/**
+ * Map of of modifier type strings to their constructor type
+ */
+export type ModifierTypeConstructorMap = typeof ModifierTypeConstructorMap;
+
+/**
+ * Map of modifier type strings to their instance type
+ */
+export type ModifierTypeInstanceMap = {
+  [K in keyof ModifierTypeConstructorMap]: InstanceType<ModifierTypeConstructorMap[K]>;
+};
+
+export type ModifierTypeString = keyof ModifierTypeConstructorMap;

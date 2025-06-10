@@ -1,12 +1,13 @@
 import { FusionSpeciesFormEvolution, pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
 import { getBerryEffectFunc, getBerryPredicate } from "#app/data/berry";
 import { getLevelTotalExp } from "#app/data/exp";
-import { allMoves } from "#app/data/data-lists";
+import { allMoves, modifierTypes } from "#app/data/data-lists";
 import { MAX_PER_TYPE_POKEBALLS } from "#app/data/pokeball";
 import { SpeciesFormChangeItemTrigger } from "#app/data/pokemon-forms/form-change-triggers";
 import type { FormChangeItem } from "#enums/form-change-item";
 import { getStatusEffectHealText } from "#app/data/status-effect";
-import Pokemon, { type PlayerPokemon } from "#app/field/pokemon";
+import type { PlayerPokemon } from "#app/field/pokemon";
+import type Pokemon from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import Overrides from "#app/overrides";
 import { LearnMoveType } from "#enums/learn-move-type";
@@ -24,29 +25,26 @@ import { type PermanentStat, type TempBattleStat, BATTLE_STATS, Stat, TEMP_BATTL
 import { StatusEffect } from "#enums/status-effect";
 import type { PokemonType } from "#enums/pokemon-type";
 import i18next from "i18next";
-import {
-  type DoubleBattleChanceBoosterModifierType,
-  type EvolutionItemModifierType,
-  type FormChangeItemModifierType,
-  type ModifierOverride,
-  type ModifierType,
-  type PokemonBaseStatTotalModifierType,
-  type PokemonExpBoosterModifierType,
-  type PokemonFriendshipBoosterModifierType,
-  type PokemonMoveAccuracyBoosterModifierType,
-  type PokemonMultiHitModifierType,
-  type TerastallizeModifierType,
-  type TmModifierType,
-  getModifierType,
-  ModifierTypeGenerator,
-  modifierTypes,
-  PokemonHeldItemModifierType,
+import type {
+  DoubleBattleChanceBoosterModifierType,
+  EvolutionItemModifierType,
+  FormChangeItemModifierType,
+  ModifierOverride,
+  ModifierType,
+  PokemonBaseStatTotalModifierType,
+  PokemonExpBoosterModifierType,
+  PokemonFriendshipBoosterModifierType,
+  PokemonMoveAccuracyBoosterModifierType,
+  PokemonMultiHitModifierType,
+  TerastallizeModifierType,
+  TmModifierType,
 } from "./modifier-type";
+import { getModifierType } from "#app/utils/modifier-utils";
 import { Color, ShadowColor } from "#enums/color";
 import { FRIENDSHIP_GAIN_FROM_RARE_CANDY } from "#app/data/balance/starters";
 import { applyAbAttrs, applyPostItemLostAbAttrs } from "#app/data/abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
-import type { ModifierString } from "#app/@types/modifier-types";
+import type { ModifierInstanceMap, ModifierString } from "#app/@types/modifier-types";
 
 export type ModifierPredicate = (modifier: Modifier) => boolean;
 
@@ -161,7 +159,7 @@ export abstract class Modifier {
   }
 
   /** */
-  public is<T extends ModifierString>(modifier: ModifierString): this is ModifierConstructorMap[T] {
+  public is<T extends ModifierString>(modifier: T): this is ModifierInstanceMap[T] {
     const targetModifier = ModifierClassMap[modifier];
     if (!targetModifier) {
       return false;
@@ -192,6 +190,9 @@ export abstract class Modifier {
 export abstract class PersistentModifier extends Modifier {
   public stackCount: number;
   public virtualStackCount: number;
+
+  /** */
+  private declare _: never;
 
   constructor(type: ModifierType, stackCount = 1) {
     super(type);
@@ -1598,7 +1599,7 @@ export class BypassSpeedChanceModifier extends PokemonHeldItemModifier {
       doBypassSpeed.value = true;
       const isCommandFight =
         globalScene.currentBattle.turnCommands[pokemon.getBattlerIndex()]?.command === Command.FIGHT;
-      const hasQuickClaw = this.type instanceof PokemonHeldItemModifierType && this.type.id === "QUICK_CLAW";
+      const hasQuickClaw = this.type.is("PokemonHeldItemModifierType") && this.type.id === "QUICK_CLAW";
 
       if (isCommandFight && hasQuickClaw) {
         globalScene.phaseManager.queueMessage(
@@ -3220,7 +3221,7 @@ export abstract class HeldItemTransferModifier extends PokemonHeldItemModifier {
    * @returns the opponents of the source {@linkcode Pokemon}
    */
   getTargets(pokemon?: Pokemon, ..._args: unknown[]): Pokemon[] {
-    return pokemon instanceof Pokemon ? pokemon.getOpponents() : [];
+    return pokemon?.getOpponents?.() ?? [];
   }
 
   /**
@@ -3792,7 +3793,7 @@ export function overrideModifiers(isPlayer = true): void {
     const modifierFunc = modifierTypes[item.name];
     let modifierType: ModifierType | null = modifierFunc();
 
-    if (modifierType instanceof ModifierTypeGenerator) {
+    if (modifierType.is("ModifierTypeGenerator")) {
       const pregenArgs = "type" in item && item.type !== null ? [item.type] : undefined;
       modifierType = modifierType.generateType([], pregenArgs);
     }
@@ -3834,7 +3835,7 @@ export function overrideHeldItems(pokemon: Pokemon, isPlayer = true): void {
     let modifierType: ModifierType | null = modifierFunc();
     const qty = item.count || 1;
 
-    if (modifierType instanceof ModifierTypeGenerator) {
+    if (modifierType.is("ModifierTypeGenerator")) {
       const pregenArgs = "type" in item && item.type !== null ? [item.type] : undefined;
       modifierType = modifierType.generateType([], pregenArgs);
     }
@@ -3853,10 +3854,9 @@ export function overrideHeldItems(pokemon: Pokemon, isPlayer = true): void {
   }
 }
 
-
 /**
  * Private map from modifier strings to their constructors.
- * 
+ *
  * @remarks
  * Used for {@linkcode Modifier.is} to check if a modifier is of a certain type without
  * requiring modifier types to be imported in every file.
@@ -3948,6 +3948,7 @@ const ModifierClassMap = Object.freeze({
   EnemyStatusEffectHealChanceModifier,
   EnemyEndureChanceModifier,
   EnemyFusionChanceModifier,
+  MoneyMultiplierModifier,
 });
 
 export type ModifierConstructorMap = typeof ModifierClassMap;

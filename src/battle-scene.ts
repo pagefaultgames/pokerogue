@@ -58,12 +58,12 @@ import {
   getEnemyModifierTypesForWave,
   getLuckString,
   getLuckTextTint,
-  getModifierType,
   getPartyLuckValue,
-  modifierTypes,
   PokemonHeldItemModifierType,
 } from "#app/modifier/modifier-type";
-import { getModifierPoolForType } from "./utils/modifier-pool-utils";
+import { getModifierType } from "./utils/modifier-utils";
+import { modifierTypes } from "./data/data-lists";
+import { getModifierPoolForType } from "./utils/modifier-utils";
 import { ModifierPoolType } from "#enums/modifier-pool-type";
 import AbilityBar from "#app/ui/ability-bar";
 import { applyAbAttrs, applyPostBattleInitAbAttrs, applyPostItemLostAbAttrs } from "./data/abilities/apply-ab-attrs";

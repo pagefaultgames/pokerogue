@@ -25,7 +25,7 @@ import { HiddenAbilityRateBoosterModifier, PokemonFormChangeItemModifier } from 
 import { achvs } from "#app/system/achv";
 import { showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import type { PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
-import { modifierTypes } from "#app/modifier/modifier-type";
+import { modifierTypes } from "#app/data/data-lists";
 import i18next from "#app/plugins/i18n";
 import {
   doPokemonTransformationSequence,

@@ -7,16 +7,11 @@ import {
   wildModifierPool,
 } from "#app/modifier/modifier-pools";
 import { globalScene } from "#app/global-scene";
-import {
-  DoubleBattleChanceBoosterModifier,
-  ResetNegativeStatStageModifier,
-  SpeciesCritBoosterModifier,
-  TurnStatusEffectModifier,
-} from "./modifier";
+import { DoubleBattleChanceBoosterModifier, SpeciesCritBoosterModifier, TurnStatusEffectModifier } from "./modifier";
 import { WeightedModifierType } from "./modifier-type";
 import { ModifierTier } from "../enums/modifier-tier";
 import type { WeightedModifierTypeWeightFunc } from "#app/@types/modifier-types";
-import { modifierTypes } from "./modifier-type";
+import { modifierTypes } from "#app/data/data-lists";
 import { PokeballType } from "#enums/pokeball";
 import { BerryModifier } from "./modifier";
 import { BerryType } from "#enums/berry-type";

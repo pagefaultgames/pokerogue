@@ -19,9 +19,9 @@ import {
   getPartyLuckValue,
   ModifierTypeGenerator,
   ModifierTypeOption,
-  modifierTypes,
   regenerateModifierPoolThresholds,
 } from "#app/modifier/modifier-type";
+import { modifierTypes } from "#app/data/data-lists";
 import { ModifierPoolType } from "#enums/modifier-pool-type";
 import type PokemonData from "#app/system/pokemon-data";
 import type { OptionSelectConfig, OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
