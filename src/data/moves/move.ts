@@ -68,7 +68,6 @@ import {
 } from "../abilities/ability";
 import { allAbilities, allMoves } from "../data-lists";
 import {
-  BerryModifier,
   PokemonHeldItemModifier,
   PreserveBerryModifier,
 } from "../../modifier/modifier";
@@ -124,7 +123,7 @@ import { SelectBiomePhase } from "#app/phases/select-biome-phase";
 import { allHeldItems, applyHeldItems } from "#app/items/all-held-items";
 import { ITEM_EFFECT } from "#app/items/held-item";
 import { berryTypeToHeldItem } from "#app/items/held-items/berry";
-import { HeldItemId } from "#enums/held-item-id";
+import { HeldItemCategoryId, HeldItemId, isItemInCategory } from "#enums/held-item-id";
 
 type MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => boolean;
 type UserMoveConditionFunc = (user: Pokemon, move: Move) => boolean;
@@ -2683,7 +2682,7 @@ export class RemoveHeldItemAttr extends MoveEffectAttr {
  * Attribute that causes targets of the move to eat a berry. Used for Teatime, Stuff Cheeks
  */
 export class EatBerryAttr extends MoveEffectAttr {
-  protected chosenBerry: BerryModifier;
+  protected chosenBerry: HeldItemId;
   constructor(selfTarget: boolean) {
     super(selfTarget);
   }
@@ -2723,9 +2722,8 @@ export class EatBerryAttr extends MoveEffectAttr {
     return true;
   }
 
-  getTargetHeldBerries(target: Pokemon): BerryModifier[] {
-    return globalScene.findModifiers(m => m instanceof BerryModifier
-      && (m as BerryModifier).pokemonId === target.id, target.isPlayer()) as BerryModifier[];
+  getTargetHeldBerries(target: Pokemon): HeldItemId[] {
+    return target.getHeldItems().filter(m => isItemInCategory(m, HeldItemCategoryId.BERRY));
   }
 
   reduceBerryModifier(target: Pokemon) {
@@ -2746,10 +2744,10 @@ export class EatBerryAttr extends MoveEffectAttr {
    */
    protected eatBerry(consumer: Pokemon, berryOwner: Pokemon = consumer, updateHarvest = consumer === berryOwner) {
      // consumer eats berry, owner triggers unburden and similar effects
-    getBerryEffectFunc(this.chosenBerry.berryType)(consumer);
+    getBerryEffectFunc(allHeldItems[this.chosenBerry].berryType)(consumer);
     applyPostItemLostAbAttrs(PostItemLostAbAttr, berryOwner, false);
     applyAbAttrs(HealFromBerryUseAbAttr, consumer, new BooleanHolder(false));
-    consumer.recordEatenBerry(this.chosenBerry.berryType, updateHarvest);
+    consumer.recordEatenBerry(allHeldItems[this.chosenBerry].berryType, updateHarvest);
   }
 }
 
@@ -2788,7 +2786,7 @@ export class StealEatBerryAttr extends EatBerryAttr {
     // pick a random berry and eat it
     this.chosenBerry = heldBerries[user.randBattleSeedInt(heldBerries.length)];
     applyPostItemLostAbAttrs(PostItemLostAbAttr, target, false);
-    const message = i18next.t("battle:stealEatBerry", { pokemonName: user.name, targetName: target.name, berryName: this.chosenBerry.type.name });
+    const message = i18next.t("battle:stealEatBerry", { pokemonName: user.name, targetName: target.name, berryName: allHeldItems[this.chosenBerry].name });
     globalScene.phaseManager.queueMessage(message);
     this.reduceBerryModifier(target);
     this.eatBerry(user, target);
@@ -10586,7 +10584,7 @@ export function initMoves() {
       .attr(EatBerryAttr, true)
       .attr(StatStageChangeAttr, [ Stat.DEF ], 2, true)
       .condition((user) => {
-        const userBerries = globalScene.findModifiers(m => m instanceof BerryModifier, user.isPlayer());
+        const userBerries = user.getHeldItems().filter(m => isItemInCategory(m, HeldItemCategoryId.BERRY));
         return userBerries.length > 0;
       })
       .edgeCase(), // Stuff Cheeks should not be selectable when the user does not have a berry, see wiki
