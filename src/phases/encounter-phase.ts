@@ -30,7 +30,7 @@ import { PlayerGender } from "#enums/player-gender";
 import { SpeciesId } from "#enums/species-id";
 import { overrideHeldItems, overrideModifiers } from "#app/modifier/modifier";
 import i18next from "i18next";
-import { WEIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/data/mystery-encounters/mystery-encounters";
+import { WEIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/constants";
 import { getNatureName } from "#app/data/nature";
 
 export class EncounterPhase extends BattlePhase {

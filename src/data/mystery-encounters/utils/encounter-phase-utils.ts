@@ -3,10 +3,7 @@ import { BattlerIndex } from "#enums/battler-index";
 import { BattleType } from "#enums/battle-type";
 import { biomeLinks, BiomePoolTier } from "#app/data/balance/biomes";
 import type MysteryEncounterOption from "#app/data/mystery-encounters/mystery-encounter-option";
-import {
-  AVERAGE_ENCOUNTERS_PER_RUN_TARGET,
-  WEIGHT_INCREMENT_ON_SPAWN_MISS,
-} from "#app/data/mystery-encounters/mystery-encounters";
+import { AVERAGE_ENCOUNTERS_PER_RUN_TARGET, WEIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/constants";
 import { showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import type { PlayerPokemon } from "#app/field/pokemon";
 import type { AiType } from "#enums/ai-type";
