@@ -25,7 +25,7 @@ Troubleshooting:
 - *fatal: not a git repository (or any of the parent directories): .git*
   - Install git, and then run `git init` in the folder of the project.
 - *Lefthook seems to be stuck running the post-merge check*
-  - You likely need to press 'Enter'.
+  - You likely need to press Enter.
 - *I ran `npm run start:dev` but it didn't seem to start anything*
   - If the last message before your command was `lefthook something something post-merge`, your `run` command got eaten by the Lefthook monster, but running it again will work.
 - *I started the game but all text looks like code instead of actual sentences*
