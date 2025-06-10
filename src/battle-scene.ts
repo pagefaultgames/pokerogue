@@ -30,7 +30,6 @@ import {
   HealingBoosterModifier,
   MultipleParticipantExpBonusModifier,
   PersistentModifier,
-  PokemonHeldItemModifier,
   PokemonHpRestoreModifier,
   RememberMoveModifier,
 } from "./modifier/modifier";
@@ -150,7 +149,6 @@ import {
 import { MysteryEncounterSaveData } from "#app/data/mystery-encounters/mystery-encounter-save-data";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
-import type HeldModifierConfig from "#app/@types/held-modifier-config";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import { ExpGainsSpeed } from "#enums/exp-gains-speed";
 import { BattlerTagType } from "#enums/battler-tag-type";
@@ -167,6 +165,7 @@ import { allHeldItems, applyHeldItems } from "./items/all-held-items";
 import { ITEM_EFFECT } from "./items/held-item";
 import { PhaseManager } from "./phase-manager";
 import { HeldItemId } from "#enums/held-item-id";
+import type { HeldItemPropertyMap } from "./field/pokemon-held-item-manager";
 
 const DEBUG_RNG = false;
 
@@ -2088,9 +2087,7 @@ export default class BattleScene extends SceneBase {
       enemy.getSpeciesForm().getBaseExp() *
       (enemy.level / this.getMaxExpLevel()) *
       ((enemy.ivs.reduce((iv: number, total: number) => (total += iv), 0) / 93) * 0.2 + 0.8);
-    this.findModifiers(m => m instanceof PokemonHeldItemModifier && m.pokemonId === enemy.id, false).map(
-      m => (scoreIncrease *= (m as PokemonHeldItemModifier).getScoreMultiplier()),
-    );
+    enemy.getHeldItems().map(m => (scoreIncrease *= allHeldItems[m].getScoreMultiplier()));
     if (enemy.isBoss()) {
       scoreIncrease *= Math.sqrt(enemy.bossSegments);
     }
@@ -2806,7 +2803,7 @@ export default class BattleScene extends SceneBase {
     return countTaken > 0;
   }
 
-  generateEnemyModifiers(heldModifiersConfigs?: HeldModifierConfig[][]): Promise<void> {
+  generateEnemyModifiers(heldItemConfigs?: HeldItemPropertyMap[]): Promise<void> {
     return new Promise(resolve => {
       if (this.currentBattle.battleSpec === BattleSpec.FINAL_BOSS) {
         return resolve();
@@ -2828,19 +2825,8 @@ export default class BattleScene extends SceneBase {
       }
 
       party.forEach((enemyPokemon: EnemyPokemon, i: number) => {
-        if (heldModifiersConfigs && i < heldModifiersConfigs.length && heldModifiersConfigs[i]) {
-          for (const mt of heldModifiersConfigs[i]) {
-            let modifier: PokemonHeldItemModifier;
-            if (mt.modifier instanceof PokemonHeldItemModifierType) {
-              modifier = mt.modifier.newModifier(enemyPokemon);
-            } else {
-              modifier = mt.modifier as PokemonHeldItemModifier;
-              modifier.pokemonId = enemyPokemon.id;
-            }
-            modifier.stackCount = mt.stackCount ?? 1;
-            modifier.isTransferable = mt.isTransferable ?? modifier.isTransferable;
-            this.addEnemyModifier(modifier, true);
-          }
+        if (heldItemConfigs && i < heldItemConfigs.length && heldItemConfigs[i]) {
+          enemyPokemon.heldItemManager.overrideItems(heldItemConfigs[i]);
         } else {
           const isBoss =
             enemyPokemon.isBoss() ||
