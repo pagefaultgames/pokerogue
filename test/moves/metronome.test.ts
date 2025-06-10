@@ -87,7 +87,7 @@ describe("Moves - Metronome", () => {
     vi.spyOn(randomMoveAttr, "getMoveOverride").mockReturnValue(MoveId.SOLAR_BEAM);
     await game.classicMode.startBattle([SpeciesId.REGIELEKI]);
 
-    const player = game.scene.getPlayerPokemon()!;
+    const player = game.field.getPlayerPokemon();
     game.move.changeMoveset(player, [MoveId.METRONOME, MoveId.SOLAR_BEAM]);
 
     const [metronomeMove, solarBeamMove] = player.getMoveset();
