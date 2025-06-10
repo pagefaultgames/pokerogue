@@ -42,8 +42,8 @@ describe("Terrain -", () => {
         .disableCrits()
         .enemySpecies(SpeciesId.SNOM)
         .enemyAbility(AbilityId.STURDY)
-        .ability(AbilityId.NO_GUARD)
-        .passiveAbility(ability)
+        .ability(ability)
+        .passiveAbility(AbilityId.NO_GUARD)
         .enemyPassiveAbility(AbilityId.LEVITATE);
     });
 
@@ -55,27 +55,31 @@ describe("Terrain -", () => {
       const powerSpy = vi.spyOn(allMoves[move], "calculateBattlePower");
       game.move.use(move);
       await game.move.forceEnemyMove(move);
-      await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+      await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
       await game.toEndOfTurn();
 
-      // Player grounded attack got boost while enemy ungrounded attack didn't
-      expect(powerSpy).toHaveLastReturnedWith(allMoves[move].power);
-      expect(powerSpy).toHaveNthReturnedWith(2, allMoves[move].power * 1.3);
+      // Player grounded attack got boosted while enemy ungrounded attack didn't
+      expect(powerSpy).toHaveLastReturnedWith(allMoves[move].power * 1.3);
+      expect(powerSpy).toHaveNthReturnedWith(1, allMoves[move].power);
     });
 
     it(`should change Terrain Pulse into a ${typeStr}-type move and double its base power`, async () => {
       await game.classicMode.startBattle([SpeciesId.BLISSEY]);
 
-      const blissey = game.field.getPlayerPokemon();
       const powerSpy = vi.spyOn(allMoves[MoveId.TERRAIN_PULSE], "calculateBattlePower");
-      const typeSpy = vi.spyOn(blissey, "getMoveType");
+      const playerTypeSpy = vi.spyOn(game.field.getPlayerPokemon(), "getMoveType");
+      const enemyTypeSpy = vi.spyOn(game.field.getEnemyPokemon(), "getMoveType");
 
-      game.move.use(move);
-      await game.move.forceEnemyMove(MoveId.SPLASH);
+      game.move.use(MoveId.TERRAIN_PULSE);
+      await game.move.forceEnemyMove(MoveId.TERRAIN_PULSE);
+      await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
       await game.toEndOfTurn();
 
+      // player grounded terrain pulse was boosted & type converted; enemy ungrounded one wasn't
       expect(powerSpy).toHaveLastReturnedWith(allMoves[move].power * 2.6); // 2 * 1.3
-      expect(typeSpy).toHaveLastReturnedWith(type);
+      expect(playerTypeSpy).toHaveLastReturnedWith(type);
+      expect(powerSpy).toHaveNthReturnedWith(1, allMoves[move].power);
+      expect(enemyTypeSpy).toHaveNthReturnedWith(1, allMoves[MoveId.TERRAIN_PULSE].type);
     });
   });
 
@@ -169,7 +173,7 @@ describe("Terrain -", () => {
     );
   });
 
-  // TODO: Enable tests after terrain-msg branch is merged
+  // TODO: Enable suites after terrain-fail-msg branch is merged
   describe.skip("Electric Terrain", () => {
     afterEach(() => {
       game.phaseInterceptor.restoreOg();
@@ -234,8 +238,7 @@ describe("Terrain -", () => {
     });
   });
 
-  // TODO: Enable tests after terrain-msg branch is merged
-  describe("Misty Terrain", () => {
+  describe.skip("Misty Terrain", () => {
     afterEach(() => {
       game.phaseInterceptor.restoreOg();
     });

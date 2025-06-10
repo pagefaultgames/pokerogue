@@ -660,6 +660,10 @@ export class FlinchedTag extends BattlerTag {
   }
 }
 
+/**
+ * Tag to cancel the target's action when knocked out of a flying move by Smack Down or Gravity.
+ */
+// TODO: This is not a very good way to cancel a semi invulnerable turn
 export class InterruptedTag extends BattlerTag {
   constructor(sourceMove: MoveId) {
     super(BattlerTagType.INTERRUPTED, BattlerTagLapseType.PRE_MOVE, 0, sourceMove);

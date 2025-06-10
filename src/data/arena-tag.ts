@@ -1096,12 +1096,10 @@ export class GravityTag extends ArenaTag {
   onAdd(_arena: Arena): void {
     globalScene.phaseManager.queueMessage(i18next.t("arenaTag:gravityOnAdd"));
     globalScene.getField(true).forEach(pokemon => {
-      if (pokemon !== null) {
-        pokemon.removeTag(BattlerTagType.FLOATING);
-        pokemon.removeTag(BattlerTagType.TELEKINESIS);
-        if (pokemon.getTag(BattlerTagType.FLYING)) {
-          pokemon.addTag(BattlerTagType.INTERRUPTED);
-        }
+      pokemon.removeTag(BattlerTagType.FLOATING);
+      pokemon.removeTag(BattlerTagType.TELEKINESIS);
+      if (pokemon.getTag(BattlerTagType.FLYING)) {
+        pokemon.addTag(BattlerTagType.INTERRUPTED);
       }
     });
   }

@@ -5299,13 +5299,11 @@ export class VariableMoveTypeMultiplierAttr extends MoveAttr {
 }
 
 export class NeutralDamageAgainstFlyingTypeMultiplierAttr extends VariableMoveTypeMultiplierAttr {
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (!target.getTag(BattlerTagType.IGNORE_FLYING)) {
-      const multiplier = args[0] as NumberHolder;
-      //When a flying type is hit, the first hit is always 1x multiplier.
-      if (target.isOfType(PokemonType.FLYING)) {
-        multiplier.value = 1;
-      }
+  apply(user: Pokemon, target: Pokemon, move: Move, args: [NumberHolder]): boolean {
+    if (!target.isGrounded(true) && target.isOfType(PokemonType.FLYING)) {
+      const multiplier = args[0];
+      // When a flying type is hit, the first hit is always 1x multiplier.
+      multiplier.value = 1;
       return true;
     }
 
@@ -5634,8 +5632,8 @@ export class LeechSeedAttr extends AddBattlerTagAttr {
 }
 
 /**
- * Adds the appropriate battler tag for Smack Down and Thousand arrows
- * @extends AddBattlerTagAttr
+ * Attribute to add the {@linkcode BattlerTagType.IGNORE_FLYING | IGNORE_FLYING} battler tag to the target
+ * and remove any prior sources of ungroundedness.
  */
 export class FallDownAttr extends AddBattlerTagAttr {
   constructor() {
@@ -5644,19 +5642,29 @@ export class FallDownAttr extends AddBattlerTagAttr {
 
   /**
    * Adds Grounded Tag to the target and checks if fallDown message should be displayed
-   * @param user the {@linkcode Pokemon} using the move
-   * @param target the {@linkcode Pokemon} targeted by the move
-   * @param move the {@linkcode Move} invoking this effect
+   * @param user - The {@linkcode Pokemon} using the move
+   * @param target - The {@linkcode Pokemon} targeted by the move
+   * @param move - The {@linkcode Move} invoking this effect
    * @param args n/a
-   * @returns `true` if the effect successfully applies; `false` otherwise
+   * @returns Whether the target was successfully brought down to earth.
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    // Smack down and similar only add their tag if the pokemon is already ungrounded without considering semi-invulnerability
-    if (!target.isGrounded(true)) {
-      globalScene.phaseManager.queueMessage(i18next.t("moveTriggers:fallDown", { targetPokemonName: getPokemonNameWithAffix(target) }));
-      return super.apply(user, target, move, args);
+    // Smack down and similar only add their tag if the pokemon is already ungrounded
+    // TODO: Does this work if the target is semi-invulnerable?
+    if (target.isGrounded(true)) {
+      return false;
     }
-    return false;
+
+    // Remove the target's flying/floating state and telekinesis, interrupting fly/bounce's activation.
+    // TODO: This is not a good way to remove flying...
+    target.removeTag(BattlerTagType.FLOATING);
+    target.removeTag(BattlerTagType.TELEKINESIS);
+    if (target.getTag(BattlerTagType.FLYING)) {
+      target.addTag(BattlerTagType.INTERRUPTED);
+    }
+
+    globalScene.phaseManager.queueMessage(i18next.t("moveTriggers:fallDown", { targetPokemonName: getPokemonNameWithAffix(target) }));
+    return super.apply(user, target, move, args);
   }
 }
 
@@ -7975,6 +7983,7 @@ const phaseForcedSlower = (phase: MovePhase, target: Pokemon, trickRoom: boolean
   return phase.isForcedLast() && slower;
 };
 
+// TODO: This needs to become unselectable, not merely fail
 const failOnGravityCondition: MoveConditionFunc = (user, target, move) => !globalScene.arena.getTag(ArenaTagType.GRAVITY);
 
 const failOnBossCondition: MoveConditionFunc = (user, target, move) => !target.isBossImmune();
@@ -9280,6 +9289,7 @@ export function initMoves() {
       .attr(RandomMovesetMoveAttr, invalidAssistMoves, true),
     new SelfStatusMove(MoveId.INGRAIN, PokemonType.GRASS, -1, 20, -1, 0, 3)
       .attr(AddBattlerTagAttr, BattlerTagType.INGRAIN, true, true)
+      // NB: We add the tag directly to avoid removing Telekinesis' accuracy boost
       .attr(AddBattlerTagAttr, BattlerTagType.IGNORE_FLYING, true, true)
       .attr(RemoveBattlerTagAttr, [ BattlerTagType.FLOATING ], true),
     new AttackMove(MoveId.SUPERPOWER, PokemonType.FIGHTING, MoveCategory.PHYSICAL, 120, 100, 5, -1, 0, 3)
@@ -9907,8 +9917,6 @@ export function initMoves() {
       .unimplemented(),
     new AttackMove(MoveId.SMACK_DOWN, PokemonType.ROCK, MoveCategory.PHYSICAL, 50, 100, 15, -1, 0, 5)
       .attr(FallDownAttr)
-      .attr(AddBattlerTagAttr, BattlerTagType.INTERRUPTED)
-      .attr(RemoveBattlerTagAttr, [ BattlerTagType.FLYING, BattlerTagType.FLOATING, BattlerTagType.TELEKINESIS ])
       .attr(HitsTagAttr, BattlerTagType.FLYING)
       .makesContact(false)
       // TODO: Confirm if Smack Down & Thousand Arrows will ground semi-invulnerable Pokemon with No Guard, etc.
@@ -10364,8 +10372,6 @@ export function initMoves() {
       .attr(FallDownAttr)
       .attr(HitsTagAttr, BattlerTagType.FLYING)
       .attr(HitsTagAttr, BattlerTagType.FLOATING)
-      .attr(AddBattlerTagAttr, BattlerTagType.INTERRUPTED)
-      .attr(RemoveBattlerTagAttr, [ BattlerTagType.FLYING, BattlerTagType.FLOATING, BattlerTagType.TELEKINESIS ])
       .makesContact(false)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
       // TODO: Confirm if Smack Down & Thousand Arrows will ground semi-invulnerable Pokemon with No Guard, etc.
