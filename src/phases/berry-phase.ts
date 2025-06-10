@@ -4,7 +4,7 @@ import {
   HealFromBerryUseAbAttr,
   RepeatBerryNextTurnAbAttr,
 } from "#app/data/abilities/ability";
-import { CommonAnim } from "#app/data/battle-anims";
+import { CommonAnim } from "#enums/move-anims-common";
 import { BerryUsedEvent } from "#app/events/battle-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { BerryModifier } from "#app/modifier/modifier";
