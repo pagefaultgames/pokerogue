@@ -1,35 +1,39 @@
+import type Pokemon from "#app/field/pokemon";
 import { globalScene } from "#app/global-scene";
-import { type Modifier, type PersistentModifier, PokemonHeldItemModifier } from "./modifier";
+import { allHeldItems } from "#app/items/all-held-items";
+import type { HeldItemId } from "#enums/held-item-id";
+import type { Modifier, PersistentModifier } from "./modifier";
 
 const iconOverflowIndex = 24;
 
 export const modifierSortFunc = (a: Modifier, b: Modifier): number => {
   const itemNameMatch = a.type.name.localeCompare(b.type.name);
   const typeNameMatch = a.constructor.name.localeCompare(b.constructor.name);
-  const aId = a instanceof PokemonHeldItemModifier && a.pokemonId ? a.pokemonId : 4294967295;
-  const bId = b instanceof PokemonHeldItemModifier && b.pokemonId ? b.pokemonId : 4294967295;
 
-  //First sort by pokemonID
-  if (aId < bId) {
-    return 1;
+  //Then sort by item type
+  if (typeNameMatch === 0) {
+    return itemNameMatch;
+    //Finally sort by item name
   }
-  if (aId > bId) {
-    return -1;
+  return typeNameMatch;
+};
+
+//TODO: revisit this function
+export const heldItemSortFunc = (a: HeldItemId, b: HeldItemId): number => {
+  const itemNameMatch = allHeldItems[a].name.localeCompare(allHeldItems[b].name);
+  const itemIdMatch = a - b;
+
+  if (itemIdMatch === 0) {
+    return itemNameMatch;
+    //Finally sort by item name
   }
-  if (aId === bId) {
-    //Then sort by item type
-    if (typeNameMatch === 0) {
-      return itemNameMatch;
-      //Finally sort by item name
-    }
-    return typeNameMatch;
-  }
-  return 0;
+  return itemIdMatch;
 };
 
 export class ModifierBar extends Phaser.GameObjects.Container {
   private player: boolean;
-  private modifierCache: PersistentModifier[];
+  private modifierCache: (PersistentModifier | HeldItemId)[];
+  private totalVisibleLength = 0;
 
   constructor(enemy?: boolean) {
     super(globalScene, 1 + (enemy ? 302 : 0), 2);
@@ -43,48 +47,60 @@ export class ModifierBar extends Phaser.GameObjects.Container {
    * @param {PersistentModifier[]} modifiers - The list of modifiers to be displayed in the {@linkcode ModifierBar}
    * @param {boolean} hideHeldItems - If set to "true", only modifiers not assigned to a Pokémon are displayed
    */
-  updateModifiers(modifiers: PersistentModifier[], hideHeldItems = false) {
+  updateModifiers(modifiers: PersistentModifier[], pokemonA: Pokemon, pokemonB?: Pokemon, hideHeldItems = false) {
     this.removeAll(true);
 
-    const visibleIconModifiers = modifiers.filter(m => m.isIconVisible());
-    const nonPokemonSpecificModifiers = visibleIconModifiers
-      .filter(m => !(m as PokemonHeldItemModifier).pokemonId)
-      .sort(modifierSortFunc);
-    const pokemonSpecificModifiers = visibleIconModifiers
-      .filter(m => (m as PokemonHeldItemModifier).pokemonId)
-      .sort(modifierSortFunc);
+    const sortedVisibleModifiers = modifiers.filter(m => m.isIconVisible()).sort(modifierSortFunc);
 
-    const sortedVisibleIconModifiers = hideHeldItems
-      ? nonPokemonSpecificModifiers
-      : nonPokemonSpecificModifiers.concat(pokemonSpecificModifiers);
+    const heldItemsA = pokemonA.getHeldItems().sort(heldItemSortFunc);
+    const heldItemsB = pokemonB ? pokemonB.getHeldItems().sort(heldItemSortFunc) : [];
 
-    sortedVisibleIconModifiers.forEach((modifier: PersistentModifier, i: number) => {
+    this.totalVisibleLength = sortedVisibleModifiers.length;
+    if (!hideHeldItems) {
+      this.totalVisibleLength += heldItemsA.length + heldItemsB.length;
+    }
+
+    sortedVisibleModifiers.forEach((modifier: PersistentModifier, i: number) => {
       const icon = modifier.getIcon();
-      if (i >= iconOverflowIndex) {
-        icon.setVisible(false);
-      }
-      this.add(icon);
-      this.setModifierIconPosition(icon, sortedVisibleIconModifiers.length);
-      icon.setInteractive(new Phaser.Geom.Rectangle(0, 0, 32, 24), Phaser.Geom.Rectangle.Contains);
-      icon.on("pointerover", () => {
-        globalScene.ui.showTooltip(modifier.type.name, modifier.type.getDescription());
-        if (this.modifierCache && this.modifierCache.length > iconOverflowIndex) {
-          this.updateModifierOverflowVisibility(true);
-        }
-      });
-      icon.on("pointerout", () => {
-        globalScene.ui.hideTooltip();
-        if (this.modifierCache && this.modifierCache.length > iconOverflowIndex) {
-          this.updateModifierOverflowVisibility(false);
-        }
-      });
+      this.addIcon(icon, i, modifier.type.name, modifier.type.getDescription());
+    });
+
+    heldItemsA.forEach((item: HeldItemId, i: number) => {
+      const icon = allHeldItems[item].createPokemonIcon(pokemonA);
+      this.addIcon(icon, i, allHeldItems[item].name, allHeldItems[item].description);
+    });
+
+    heldItemsB.forEach((item: HeldItemId, i: number) => {
+      const icon = allHeldItems[item].createPokemonIcon(pokemonB);
+      this.addIcon(icon, i, allHeldItems[item].name, allHeldItems[item].description);
     });
 
     for (const icon of this.getAll()) {
       this.sendToBack(icon);
     }
 
-    this.modifierCache = modifiers;
+    this.modifierCache = (modifiers as (PersistentModifier | HeldItemId)[]).concat(heldItemsA).concat(heldItemsB);
+  }
+
+  addIcon(icon: Phaser.GameObjects.Container, i: number, name: string, description: string) {
+    if (i >= iconOverflowIndex) {
+      icon.setVisible(false);
+    }
+    this.add(icon);
+    this.setModifierIconPosition(icon, this.totalVisibleLength);
+    icon.setInteractive(new Phaser.Geom.Rectangle(0, 0, 32, 24), Phaser.Geom.Rectangle.Contains);
+    icon.on("pointerover", () => {
+      globalScene.ui.showTooltip(name, description);
+      if (this.modifierCache && this.modifierCache.length > iconOverflowIndex) {
+        this.updateModifierOverflowVisibility(true);
+      }
+    });
+    icon.on("pointerout", () => {
+      globalScene.ui.hideTooltip();
+      if (this.modifierCache && this.modifierCache.length > iconOverflowIndex) {
+        this.updateModifierOverflowVisibility(false);
+      }
+    });
   }
 
   updateModifierOverflowVisibility(ignoreLimit: boolean) {
