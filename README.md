@@ -18,8 +18,14 @@ If you have the motivation and experience with Typescript/Javascript (or are wil
 #### Running Locally
 
 1. Clone the repo and in the root directory run `npm install`
-    - *if you run into any errors, reach out in the **#dev-corner** channel in discord*
+    - *if you run into any errors, check out Troubleshooting below and then reach out in the **#dev-corner** channel in discord*
 2. Run `npm run start:dev` to locally run the project in `localhost:8000`
+
+Troubleshooting:
+- *fatal: not a git repository (or any of the parent directories): .git*
+  - Install git, and then run `git init` in the folder of the project.
+- *Lefthook seems to be stuck running the post-merge check*
+  - You likely need to press 'Enter'.
 
 #### Linting
 
