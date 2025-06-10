@@ -1,4 +1,4 @@
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex } from "#enums/battler-index";
 import { AbilityId } from "#app/enums/ability-id";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
 import type { MoveEffectPhase } from "#app/phases/move-effect-phase";
@@ -44,7 +44,7 @@ describe("Moves - Thousand Arrows", () => {
 
     game.move.select(MoveId.THOUSAND_ARROWS);
     await game.phaseInterceptor.to("MoveEffectPhase", false);
-    const hitSpy = vi.spyOn(game.scene.getCurrentPhase() as MoveEffectPhase, "hitCheck");
+    const hitSpy = vi.spyOn(game.scene.phaseManager.getCurrentPhase() as MoveEffectPhase, "hitCheck");
 
     await game.toEndOfTurn();
 

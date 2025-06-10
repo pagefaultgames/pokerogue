@@ -1,7 +1,7 @@
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex } from "#enums/battler-index";
 import { allMoves } from "#app/data/data-lists";
 import { getTerrainName, TerrainType } from "#app/data/terrain";
-import { MoveResult } from "#app/field/pokemon";
+import { MoveResult } from "#enums/move-result";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { capitalizeFirstLetter, randSeedInt, toDmgValue } from "#app/utils/common";
 import { AbilityId } from "#enums/ability-id";
@@ -99,6 +99,7 @@ describe("Terrain -", () => {
     it("should heal all grounded, non-semi-invulnerable pokemon for 1/16th max HP at end of turn", async () => {
       await game.classicMode.startBattle([SpeciesId.BLISSEY]);
 
+      // shuckle is grounded, pidgeot isn't
       const blissey = game.field.getPlayerPokemon();
       blissey.hp = toDmgValue(blissey.getMaxHp() / 2);
       expect(blissey.getHpRatio()).toBeCloseTo(0.5, 1);
@@ -114,7 +115,6 @@ describe("Terrain -", () => {
       expect(game.phaseInterceptor.log).toContain("PokemonHealPhase");
       expect(blissey.getHpRatio()).toBeCloseTo(0.5625, 1);
       expect(shuckle.getHpRatio()).toBeCloseTo(0.5, 1);
-      game.phaseInterceptor.clearLogs();
 
       game.move.use(MoveId.DIG);
       await game.toNextTurn();
@@ -169,7 +169,7 @@ describe("Terrain -", () => {
     );
   });
 
-  // TODO: Enable after terrain block PR is added
+  // TODO: Enable tests after terrain-msg branch is merged
   describe.skip("Electric Terrain", () => {
     afterEach(() => {
       game.phaseInterceptor.restoreOg();
@@ -183,24 +183,23 @@ describe("Terrain -", () => {
         .enemyLevel(100)
         .enemySpecies(SpeciesId.SHUCKLE)
         .enemyAbility(AbilityId.ELECTRIC_SURGE)
-        .enemyPassiveAbility(AbilityId.LEVITATE)
         .ability(AbilityId.NO_GUARD);
     });
 
     it("should prevent all grounded pokemon from being put to sleep", async () => {
-      await game.classicMode.startBattle([SpeciesId.BLISSEY]);
+      await game.classicMode.startBattle([SpeciesId.PIDGEOT]);
 
       game.move.use(MoveId.SPORE);
       await game.move.forceEnemyMove(MoveId.SPORE);
       await game.toEndOfTurn();
 
-      const blissey = game.field.getPlayerPokemon();
+      const pidgeot = game.field.getPlayerPokemon();
       const shuckle = game.field.getEnemyPokemon();
-      expect(blissey.status?.effect).toBeUndefined();
+      expect(pidgeot.status?.effect).toBeUndefined();
       expect(shuckle.status?.effect).toBe(StatusEffect.SLEEP);
       // TODO: These don't work due to how move failures are propagated
-      expect(blissey.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
-      expect(shuckle.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+      expect(pidgeot.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+      expect(shuckle.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
 
       expect(game.textInterceptor.logs).not.toContain(
         i18next.t("terrain:defaultBlockMessage", {
@@ -211,16 +210,19 @@ describe("Terrain -", () => {
     });
 
     it("should prevent attack moves from applying sleep without showing text/failing move", async () => {
-      await game.classicMode.startBattle([SpeciesId.BLISSEY]);
       vi.spyOn(allMoves[MoveId.RELIC_SONG], "chance", "get").mockReturnValue(100);
+      await game.classicMode.startBattle([SpeciesId.BLISSEY]);
+
+      const shuckle = game.field.getEnemyPokemon();
+      const statusSpy = vi.spyOn(shuckle, "canSetStatus");
 
       game.move.use(MoveId.RELIC_SONG);
       await game.move.forceEnemyMove(MoveId.SPLASH);
       await game.toEndOfTurn();
 
       const blissey = game.field.getPlayerPokemon();
-      const shuckle = game.field.getEnemyPokemon();
       expect(shuckle.status?.effect).toBeUndefined();
+      expect(statusSpy).toHaveLastReturnedWith(false);
       expect(blissey.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
 
       expect(game.textInterceptor.logs).not.toContain(
@@ -232,6 +234,7 @@ describe("Terrain -", () => {
     });
   });
 
+  // TODO: Enable tests after terrain-msg branch is merged
   describe("Misty Terrain", () => {
     afterEach(() => {
       game.phaseInterceptor.restoreOg();
@@ -245,26 +248,25 @@ describe("Terrain -", () => {
         .enemyLevel(100)
         .enemySpecies(SpeciesId.SHUCKLE)
         .enemyAbility(AbilityId.MISTY_SURGE)
-        .enemyPassiveAbility(AbilityId.LEVITATE)
         .ability(AbilityId.NO_GUARD);
     });
 
     it("should prevent all grounded pokemon from being statused or confused", async () => {
       game.override.confusionActivation(false); // prevent self hits from ruining things
-      await game.classicMode.startBattle([SpeciesId.BLISSEY]);
+      await game.classicMode.startBattle([SpeciesId.PIDGEOT]);
 
-      // blissey is grounded, shuckle isn't
+      // shuckle is grounded, pidgeot isn't
       game.move.use(MoveId.TOXIC);
       await game.move.forceEnemyMove(MoveId.TOXIC);
       await game.toNextTurn();
 
-      const blissey = game.field.getPlayerPokemon();
+      const pidgeot = game.field.getPlayerPokemon();
       const shuckle = game.field.getEnemyPokemon();
-      expect(blissey.status?.effect).toBeUndefined();
+      expect(pidgeot.status?.effect).toBeUndefined();
       expect(shuckle.status?.effect).toBe(StatusEffect.TOXIC);
       // TODO: These don't work due to how move failures are propagated
-      expect(blissey.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
-      expect(shuckle.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+      expect(pidgeot.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
+      expect(shuckle.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
 
       expect(game.textInterceptor.logs).toContain(
         i18next.t("terrain:mistyBlockMessage", {
@@ -277,21 +279,30 @@ describe("Terrain -", () => {
       await game.move.forceEnemyMove(MoveId.CONFUSE_RAY);
       await game.toNextTurn();
 
-      expect(blissey.getTag(BattlerTagType.CONFUSED)).toBeUndefined();
-      expect(shuckle.getTag(BattlerTagType.CONFUSED)).toBeUndefined();
+      expect(pidgeot.getTag(BattlerTagType.CONFUSED)).toBeUndefined();
+      expect(shuckle.getTag(BattlerTagType.CONFUSED)).toBeDefined();
     });
 
-    it("should prevent attack moves from applying status without showing text/failing move", async () => {
+    it.each<{ status: string; move: MoveId }>([
+      { status: "Sleep", move: MoveId.RELIC_SONG },
+      { status: "Burn", move: MoveId.SACRED_FIRE },
+      { status: "Freeze", move: MoveId.ICE_BEAM },
+      { status: "Paralysis", move: MoveId.NUZZLE },
+      { status: "Poison", move: MoveId.SLUDGE_BOMB },
+      { status: "Toxic", move: MoveId.MALIGNANT_CHAIN },
+      { status: "Confusion", move: MoveId.MAGICAL_TORQUE },
+    ])("should prevent attack moves from applying $name without showing text/failing move", async ({ move }) => {
       await game.classicMode.startBattle([SpeciesId.BLISSEY]);
-      vi.spyOn(allMoves[MoveId.SACRED_FIRE], "chance", "get").mockReturnValue(100);
+      vi.spyOn(allMoves[move], "chance", "get").mockReturnValue(100);
 
-      game.move.use(MoveId.SACRED_FIRE);
+      game.move.use(move);
       await game.move.forceEnemyMove(MoveId.SPLASH);
       await game.toEndOfTurn();
 
       const blissey = game.field.getPlayerPokemon();
       const shuckle = game.field.getEnemyPokemon();
       expect(shuckle.status?.effect).toBeUndefined();
+      expect(shuckle.getTag(BattlerTagType.CONFUSED)).toBeUndefined();
       expect(blissey.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
 
       expect(game.textInterceptor.logs).not.toContain(

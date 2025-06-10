@@ -8,6 +8,8 @@ import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { StatusEffect } from "#enums/status-effect";
+import { MoveResult } from "#enums/move-result";
 
 describe("Arena - Gravity", () => {
   let phaserGame: Phaser.Game;
@@ -27,130 +29,129 @@ describe("Arena - Gravity", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .moveset([MoveId.TACKLE, MoveId.GRAVITY, MoveId.FISSURE])
       .ability(AbilityId.UNNERVE)
       .enemyAbility(AbilityId.BALL_FETCH)
-      .enemySpecies(SpeciesId.SHUCKLE)
-      .enemyMoveset(MoveId.SPLASH)
+      .enemySpecies(SpeciesId.MAGIKARP)
       .enemyLevel(5);
   });
 
   // Reference: https://bulbapedia.bulbagarden.net/wiki/Gravity_(move)
 
-  it("non-OHKO move accuracy is multiplied by 1.67", async () => {
-    const moveToCheck = allMoves[MoveId.TACKLE];
-
-    vi.spyOn(moveToCheck, "calculateBattleAccuracy");
-
-    // Setup Gravity on first turn
+  it("should multiply all non-OHKO move accuracy by 1.67x", async () => {
+    const accSpy = vi.spyOn(allMoves[MoveId.TACKLE], "calculateBattleAccuracy");
     await game.classicMode.startBattle([SpeciesId.PIKACHU]);
-    game.move.select(MoveId.GRAVITY);
-    await game.phaseInterceptor.to("TurnEndPhase");
+
+    game.move.use(MoveId.GRAVITY);
+    await game.move.forceEnemyMove(MoveId.TACKLE);
+    await game.toEndOfTurn();
 
     expect(game.scene.arena.getTag(ArenaTagType.GRAVITY)).toBeDefined();
-
-    // Use non-OHKO move on second turn
-    await game.toNextTurn();
-    game.move.select(MoveId.TACKLE);
-    await game.phaseInterceptor.to("MoveEffectPhase");
-
-    expect(moveToCheck.calculateBattleAccuracy).toHaveLastReturnedWith(100 * 1.67);
+    expect(accSpy).toHaveLastReturnedWith(allMoves[MoveId.TACKLE].accuracy * 1.67);
   });
 
-  it("OHKO move accuracy is not affected", async () => {
-    /** See Fissure {@link https://bulbapedia.bulbagarden.net/wiki/Fissure_(move)} */
-    const moveToCheck = allMoves[MoveId.FISSURE];
-
-    vi.spyOn(moveToCheck, "calculateBattleAccuracy");
-
-    // Setup Gravity on first turn
+  it("should not affect OHKO move accuracy", async () => {
+    const accSpy = vi.spyOn(allMoves[MoveId.FISSURE], "calculateBattleAccuracy");
     await game.classicMode.startBattle([SpeciesId.PIKACHU]);
-    game.move.select(MoveId.GRAVITY);
-    await game.phaseInterceptor.to("TurnEndPhase");
+
+    game.move.use(MoveId.GRAVITY);
+    await game.move.forceEnemyMove(MoveId.FISSURE);
+    await game.toEndOfTurn();
 
     expect(game.scene.arena.getTag(ArenaTagType.GRAVITY)).toBeDefined();
-
-    // Use OHKO move on second turn
-    await game.toNextTurn();
-    game.move.select(MoveId.FISSURE);
-    await game.phaseInterceptor.to("MoveEffectPhase");
-
-    expect(moveToCheck.calculateBattleAccuracy).toHaveLastReturnedWith(30);
+    expect(accSpy).toHaveLastReturnedWith(allMoves[MoveId.FISSURE].accuracy);
   });
 
-  describe("Against flying types", () => {
-    it("can be hit by ground-type moves now", async () => {
-      game.override.enemySpecies(SpeciesId.PIDGEOT).moveset([MoveId.GRAVITY, MoveId.EARTHQUAKE]);
+  describe.each<{ name: string; overrides: () => unknown }>([
+    { name: "Flying-type", overrides: () => game.override.enemySpecies(SpeciesId.MOLTRES) },
+    { name: "Levitating", overrides: () => game.override.enemyAbility(AbilityId.LEVITATE) },
+  ])("should ground $name Pokemon", ({ overrides }) => {
+    beforeEach(overrides);
 
+    it("should remove immunity to Ground-type moves", async () => {
       await game.classicMode.startBattle([SpeciesId.PIKACHU]);
 
-      const pidgeot = game.scene.getEnemyPokemon()!;
-      vi.spyOn(pidgeot, "getAttackTypeEffectiveness");
+      const enemy = game.field.getEnemyPokemon();
+      const effectivenessSpy = vi.spyOn(enemy, "getAttackTypeEffectiveness");
 
-      // Try earthquake on 1st turn (fails!);
-      game.move.select(MoveId.EARTHQUAKE);
-      await game.phaseInterceptor.to("TurnEndPhase");
-
-      expect(pidgeot.getAttackTypeEffectiveness).toHaveLastReturnedWith(0);
-
-      // Setup Gravity on 2nd turn
+      game.move.use(MoveId.EARTHQUAKE);
+      await game.move.forceEnemyMove(MoveId.GRAVITY);
+      await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
       await game.toNextTurn();
-      game.move.select(MoveId.GRAVITY);
-      await game.phaseInterceptor.to("TurnEndPhase");
 
       expect(game.scene.arena.getTag(ArenaTagType.GRAVITY)).toBeDefined();
-
-      // Use ground move on 3rd turn
-      await game.toNextTurn();
-      game.move.select(MoveId.EARTHQUAKE);
-      await game.phaseInterceptor.to("TurnEndPhase");
-
-      expect(pidgeot.getAttackTypeEffectiveness).toHaveLastReturnedWith(1);
+      expect(effectivenessSpy).toHaveLastReturnedWith(2);
+      expect(enemy.isGrounded()).toBe(true);
     });
 
-    it("keeps super-effective moves super-effective after using gravity", async () => {
-      game.override.enemySpecies(SpeciesId.PIDGEOT).moveset([MoveId.GRAVITY, MoveId.THUNDERBOLT]);
-
+    it("should preserve normal move effectiveness for secondary type", async () => {
       await game.classicMode.startBattle([SpeciesId.PIKACHU]);
 
-      const pidgeot = game.scene.getEnemyPokemon()!;
-      vi.spyOn(pidgeot, "getAttackTypeEffectiveness");
+      const enemy = game.field.getEnemyPokemon();
+      const effectivenessSpy = vi.spyOn(enemy, "getAttackTypeEffectiveness");
 
-      // Setup Gravity on 1st turn
-      game.move.select(MoveId.GRAVITY);
-      await game.phaseInterceptor.to("TurnEndPhase");
+      game.move.use(MoveId.THUNDERBOLT);
+      await game.move.forceEnemyMove(MoveId.GRAVITY);
+      await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+      await game.toEndOfTurn();
 
-      expect(game.scene.arena.getTag(ArenaTagType.GRAVITY)).toBeDefined();
+      expect(effectivenessSpy).toHaveLastReturnedWith(2);
+    });
 
-      // Use electric move on 2nd turn
+    it("causes terrain to come into effect", async () => {
+      await game.classicMode.startBattle([SpeciesId.PIKACHU]);
+
+      const enemy = game.field.getEnemyPokemon();
+      enemy.hp = 1;
+      const statusSpy = vi.spyOn(enemy, "canSetStatus");
+
+      // Turn 1: set up electric terrain; spore works due to being ungrounded
+      game.move.use(MoveId.SPORE);
+      await game.move.forceEnemyMove(MoveId.ELECTRIC_TERRAIN);
+      await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
       await game.toNextTurn();
-      game.move.select(MoveId.THUNDERBOLT);
-      await game.phaseInterceptor.to("TurnEndPhase");
 
-      expect(pidgeot.getAttackTypeEffectiveness).toHaveLastReturnedWith(2);
+      expect(statusSpy).toHaveLastReturnedWith(true);
+      expect(enemy.status?.effect).toBe(StatusEffect.SLEEP);
+
+      enemy.resetStatus();
+
+      // Turn 2: gravity grounds enemy; makes spore fail
+      game.move.use(MoveId.SPORE);
+      await game.move.forceEnemyMove(MoveId.GRAVITY);
+      await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+      await game.toNextTurn();
+
+      expect(statusSpy).toHaveLastReturnedWith(true);
+      expect(enemy.status?.effect).toBeUndefined();
     });
   });
 
-  it("cancels Fly if its user is semi-invulnerable", async () => {
-    game.override.enemySpecies(SpeciesId.SNORLAX).enemyMoveset(MoveId.FLY).moveset([MoveId.GRAVITY, MoveId.SPLASH]);
-
+  it.each<{ name: string; move: MoveId }>([
+    { name: "Fly", move: MoveId.FLY },
+    { name: "Bounce", move: MoveId.BOUNCE },
+    { name: "Sky Drop", move: MoveId.SKY_DROP },
+  ])("cancels $name if its user is semi-invulnerable", async ({ move }) => {
     await game.classicMode.startBattle([SpeciesId.CHARIZARD]);
 
-    const charizard = game.scene.getPlayerPokemon()!;
-    const snorlax = game.scene.getEnemyPokemon()!;
+    const charizard = game.field.getPlayerPokemon();
+    const snorlax = game.field.getEnemyPokemon();
 
-    game.move.select(MoveId.SPLASH);
-
+    game.move.use(MoveId.SPLASH);
+    await game.move.forceEnemyMove(move);
     await game.toNextTurn();
+
     expect(snorlax.getTag(BattlerTagType.FLYING)).toBeDefined();
 
     game.move.select(MoveId.GRAVITY);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
-
     await game.phaseInterceptor.to("MoveEffectPhase");
+
     expect(snorlax.getTag(BattlerTagType.INTERRUPTED)).toBeDefined();
 
-    await game.phaseInterceptor.to("TurnEndPhase");
+    await game.toEndOfTurn();
+
     expect(charizard.hp).toBe(charizard.getMaxHp());
+    expect(snorlax.getTag(BattlerTagType.FLYING)).toBeUndefined();
+    expect(snorlax.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
   });
 });
