@@ -1,4 +1,4 @@
-import type { BattlerIndex } from "#app/battle";
+import type { BattlerIndex } from "#enums/battler-index";
 import { ClassicFixedBossWaves } from "#enums/fixed-boss-waves";
 import { BattleType } from "#enums/battle-type";
 import type { CustomModifierSettings } from "#app/modifier/modifier-type";
