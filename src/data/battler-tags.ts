@@ -9,23 +9,20 @@ import {
   ReverseDrainAbAttr,
 } from "#app/data/abilities/ability";
 import { allAbilities } from "./data-lists";
-import { ChargeAnim, CommonAnim, CommonBattleAnim, MoveChargeAnim } from "#app/data/battle-anims";
+import { CommonBattleAnim, MoveChargeAnim } from "#app/data/battle-anims";
+import { ChargeAnim, CommonAnim } from "#enums/move-anims-common";
 import type Move from "#app/data/moves/move";
-import {
-  applyMoveAttrs,
-  ConsecutiveUseDoublePowerAttr,
-  HealOnAllyAttr,
-  StatusCategoryOnAllyAttr,
-} from "#app/data/moves/move";
+import { applyMoveAttrs } from "./moves/apply-attrs";
 import { allMoves } from "./data-lists";
 import { MoveFlags } from "#enums/MoveFlags";
 import { MoveCategory } from "#enums/MoveCategory";
-import { SpeciesFormChangeAbilityTrigger } from "#app/data/pokemon-forms";
+import { SpeciesFormChangeAbilityTrigger } from "./pokemon-forms/form-change-triggers";
 import { getStatusEffectHealText } from "#app/data/status-effect";
 import { TerrainType } from "#app/data/terrain";
 import { PokemonType } from "#enums/pokemon-type";
 import type Pokemon from "#app/field/pokemon";
-import { HitResult, MoveResult } from "#app/field/pokemon";
+import { MoveResult } from "#enums/move-result";
+import { HitResult } from "#enums/hit-result";
 import { getPokemonNameWithAffix } from "#app/messages";
 import type { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import type { MovePhase } from "#app/phases/move-phase";
@@ -41,19 +38,7 @@ import { EFFECTIVE_STATS, getStatKey, Stat, type BattleStat, type EffectiveStat 
 import { StatusEffect } from "#enums/status-effect";
 import { WeatherType } from "#enums/weather-type";
 import { isNullOrUndefined } from "#app/utils/common";
-
-export enum BattlerTagLapseType {
-  FAINT,
-  MOVE,
-  PRE_MOVE,
-  AFTER_MOVE,
-  MOVE_EFFECT,
-  TURN_END,
-  HIT,
-  /** Tag lapses AFTER_HIT, applying its effects even if the user faints */
-  AFTER_HIT,
-  CUSTOM,
-}
+import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
 
 export class BattlerTag {
   public tagType: BattlerTagType;
@@ -2784,8 +2769,8 @@ export class HealBlockTag extends MoveRestrictionBattlerTag {
    */
   override isMoveTargetRestricted(move: MoveId, user: Pokemon, target: Pokemon) {
     const moveCategory = new NumberHolder(allMoves[move].category);
-    applyMoveAttrs(StatusCategoryOnAllyAttr, user, target, allMoves[move], moveCategory);
-    return allMoves[move].hasAttr(HealOnAllyAttr) && moveCategory.value === MoveCategory.STATUS;
+    applyMoveAttrs("StatusCategoryOnAllyAttr", user, target, allMoves[move], moveCategory);
+    return allMoves[move].hasAttr("HealOnAllyAttr") && moveCategory.value === MoveCategory.STATUS;
   }
 
   /**
@@ -3121,7 +3106,7 @@ export class TormentTag extends MoveRestrictionBattlerTag {
     // This checks for locking / momentum moves like Rollout and Hydro Cannon + if the user is under the influence of BattlerTagType.FRENZY
     // Because Uproar's unique behavior is not implemented, it does not check for Uproar. Torment has been marked as partial in moves.ts
     const moveObj = allMoves[lastMove.move];
-    const isUnaffected = moveObj.hasAttr(ConsecutiveUseDoublePowerAttr) || user.getTag(BattlerTagType.FRENZY);
+    const isUnaffected = moveObj.hasAttr("ConsecutiveUseDoublePowerAttr") || user.getTag(BattlerTagType.FRENZY);
     const validLastMoveResult = lastMove.result === MoveResult.SUCCESS || lastMove.result === MoveResult.MISS;
     return lastMove.move === move && validLastMoveResult && lastMove.move !== MoveId.STRUGGLE && !isUnaffected;
   }

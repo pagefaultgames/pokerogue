@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import type { BattlerIndex } from "#app/battle";
+import type { BattlerIndex } from "#enums/battler-index";
 import {
   applyAbAttrs,
   applyPostStatStageChangeAbAttrs,
@@ -11,7 +11,8 @@ import {
   StatStageChangeCopyAbAttr,
   StatStageChangeMultiplierAbAttr,
 } from "#app/data/abilities/ability";
-import { ArenaTagSide, MistTag } from "#app/data/arena-tag";
+import { MistTag } from "#app/data/arena-tag";
+import { ArenaTagSide } from "#enums/arena-tag-side";
 import type { ArenaTag } from "#app/data/arena-tag";
 import type Pokemon from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";

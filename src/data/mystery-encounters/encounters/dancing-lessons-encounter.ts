@@ -1,4 +1,4 @@
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex } from "#enums/battler-index";
 import { globalScene } from "#app/global-scene";
 import { EncounterBattleAnim } from "#app/data/battle-anims";
 import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
@@ -23,7 +23,8 @@ import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { TrainerSlot } from "#enums/trainer-slot";
 import type { PlayerPokemon } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
-import { EnemyPokemon, PokemonMove } from "#app/field/pokemon";
+import { EnemyPokemon } from "#app/field/pokemon";
+import { PokemonMove } from "#app/data/moves/pokemon-move";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import PokemonData from "#app/system/pokemon-data";

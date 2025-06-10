@@ -12,12 +12,13 @@ import {
   getLegendaryWeatherContinuesMessage,
   Weather,
 } from "#app/data/weather";
-import { CommonAnim } from "#app/data/battle-anims";
+import { CommonAnim } from "#enums/move-anims-common";
 import type { PokemonType } from "#enums/pokemon-type";
 import type Move from "#app/data/moves/move";
 import type { ArenaTag } from "#app/data/arena-tag";
-import { ArenaTagSide, ArenaTrapTag, getArenaTag } from "#app/data/arena-tag";
-import type { BattlerIndex } from "#app/battle";
+import { ArenaTrapTag, getArenaTag } from "#app/data/arena-tag";
+import { ArenaTagSide } from "#enums/arena-tag-side";
+import type { BattlerIndex } from "#enums/battler-index";
 import { Terrain, TerrainType } from "#app/data/terrain";
 import {
   applyAbAttrs,
@@ -37,7 +38,10 @@ import { SpeciesId } from "#enums/species-id";
 import { TimeOfDay } from "#enums/time-of-day";
 import { TrainerType } from "#enums/trainer-type";
 import { AbilityId } from "#enums/ability-id";
-import { SpeciesFormChangeRevertWeatherFormTrigger, SpeciesFormChangeWeatherTrigger } from "#app/data/pokemon-forms";
+import {
+  SpeciesFormChangeRevertWeatherFormTrigger,
+  SpeciesFormChangeWeatherTrigger,
+} from "#app/data/pokemon-forms/form-change-triggers";
 import { WeatherType } from "#enums/weather-type";
 import { FieldEffectModifier } from "#app/modifier/modifier";
 
