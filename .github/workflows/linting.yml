@@ -1,0 +1,42 @@
+name: Linting
+
+on:
+  push:
+    branches:
+      - main
+      - beta
+  pull_request:
+    branches:
+      - main
+      - beta
+  merge_group:
+    types: [checks_requested]
+
+jobs:
+  run-linters:
+    name: Run linters
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v4
+        with:
+          submodules: 'recursive'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+
+      - name: Install Node.js dependencies
+        run: npm ci
+      
+      - name: Run ESLint
+        run: npm run eslint-ci
+
+      - name: Lint with Biome
+        run: npm run biome-ci
+
+      - name: Check dependencies with depcruise
+        run: npm run depcruise
