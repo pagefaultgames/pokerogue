@@ -5,7 +5,6 @@ import type Pokemon from "../field/pokemon";
 import { PokemonType } from "#enums/pokemon-type";
 import type Move from "./moves/move";
 import { randSeedInt } from "#app/utils/common";
-import { SuppressWeatherEffectAbAttr } from "./abilities/ability";
 import { TerrainType, getTerrainName } from "./terrain";
 import i18next from "i18next";
 import { globalScene } from "#app/global-scene";
@@ -108,10 +107,10 @@ export class Weather {
     for (const pokemon of field) {
       let suppressWeatherEffectAbAttr: SuppressWeatherEffectAbAttr | null = pokemon
         .getAbility()
-        .getAttrs(SuppressWeatherEffectAbAttr)[0];
+        .getAttrs("SuppressWeatherEffectAbAttr")[0];
       if (!suppressWeatherEffectAbAttr) {
         suppressWeatherEffectAbAttr = pokemon.hasPassive()
-          ? pokemon.getPassiveAbility().getAttrs(SuppressWeatherEffectAbAttr)[0]
+          ? pokemon.getPassiveAbility().getAttrs("SuppressWeatherEffectAbAttr")[0]
           : null;
       }
       if (suppressWeatherEffectAbAttr && (!this.isImmutable() || suppressWeatherEffectAbAttr.affectsImmutable)) {

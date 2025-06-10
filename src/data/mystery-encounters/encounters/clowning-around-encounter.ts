@@ -38,7 +38,6 @@ import i18next from "i18next";
 import type { OptionSelectConfig } from "#app/ui/abstact-option-select-ui-handler";
 import type { PlayerPokemon } from "#app/field/pokemon";
 import { PokemonMove } from "#app/data/moves/pokemon-move";
-import { Ability } from "#app/data/abilities/ability-class";
 import { BerryModifier } from "#app/modifier/modifier";
 import { BerryType } from "#enums/berry-type";
 import { BattlerIndex } from "#enums/battler-index";
@@ -49,6 +48,7 @@ import { CustomPokemonData } from "#app/data/custom-pokemon-data";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { EncounterAnim } from "#enums/encounter-anims";
 import { Challenges } from "#enums/challenges";
+import { allAbilities } from "#app/data/data-lists";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/clowningAround";
@@ -139,7 +139,7 @@ export const ClowningAroundEncounter: MysteryEncounter = MysteryEncounterBuilder
 
     // Generate random ability for Blacephalon from pool
     const ability = RANDOM_ABILITY_POOL[randSeedInt(RANDOM_ABILITY_POOL.length)];
-    encounter.setDialogueToken("ability", new Ability(ability, 3).name);
+    encounter.setDialogueToken("ability", allAbilities[ability].name);
     encounter.misc = { ability };
 
     // Decide the random types for Blacephalon. They should not be the same.

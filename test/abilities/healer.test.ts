@@ -6,7 +6,6 @@ import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi, type MockInstance } from "vitest";
 import { isNullOrUndefined } from "#app/utils/common";
-import { PostTurnResetStatusAbAttr } from "#app/data/abilities/ability";
 import { allAbilities } from "#app/data/data-lists";
 import type Pokemon from "#app/field/pokemon";
 
@@ -38,7 +37,7 @@ describe("Abilities - Healer", () => {
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(MoveId.SPLASH);
 
-    healerAttr = allAbilities[AbilityId.HEALER].getAttrs(PostTurnResetStatusAbAttr)[0];
+    healerAttr = allAbilities[AbilityId.HEALER].getAttrs("PostTurnResetStatusAbAttr")[0];
     healerAttrSpy = vi
       .spyOn(healerAttr, "getCondition")
       .mockReturnValue((pokemon: Pokemon) => !isNullOrUndefined(pokemon.getAlly()));

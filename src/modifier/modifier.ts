@@ -44,12 +44,7 @@ import {
 } from "./modifier-type";
 import { Color, ShadowColor } from "#enums/color";
 import { FRIENDSHIP_GAIN_FROM_RARE_CANDY } from "#app/data/balance/starters";
-import {
-  applyAbAttrs,
-  applyPostItemLostAbAttrs,
-  CommanderAbAttr,
-  PostItemLostAbAttr,
-} from "#app/data/abilities/ability";
+import { applyAbAttrs, applyPostItemLostAbAttrs } from "#app/data/abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
 
 export type ModifierPredicate = (modifier: Modifier) => boolean;
@@ -1877,7 +1872,7 @@ export class BerryModifier extends PokemonHeldItemModifier {
 
     // munch the berry and trigger unburden-like effects
     getBerryEffectFunc(this.berryType)(pokemon);
-    applyPostItemLostAbAttrs(PostItemLostAbAttr, pokemon, false);
+    applyPostItemLostAbAttrs("PostItemLostAbAttr", pokemon, false);
 
     // Update berry eaten trackers for Belch, Harvest, Cud Chew, etc.
     // Don't recover it if we proc berry pouch (no item duplication)
@@ -1965,7 +1960,7 @@ export class PokemonInstantReviveModifier extends PokemonHeldItemModifier {
     // Reapply Commander on the Pokemon's side of the field, if applicable
     const field = pokemon.isPlayer() ? globalScene.getPlayerField() : globalScene.getEnemyField();
     for (const p of field) {
-      applyAbAttrs(CommanderAbAttr, p, null, false);
+      applyAbAttrs("CommanderAbAttr", p, null, false);
     }
     return true;
   }

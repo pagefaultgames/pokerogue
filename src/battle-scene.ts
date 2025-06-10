@@ -66,15 +66,7 @@ import {
   PokemonHeldItemModifierType,
 } from "#app/modifier/modifier-type";
 import AbilityBar from "#app/ui/ability-bar";
-import {
-  applyAbAttrs,
-  applyPostBattleInitAbAttrs,
-  applyPostItemLostAbAttrs,
-  BlockItemTheftAbAttr,
-  DoubleBattleChanceAbAttr,
-  PostBattleInitAbAttr,
-  PostItemLostAbAttr,
-} from "#app/data/abilities/ability";
+import { applyAbAttrs, applyPostBattleInitAbAttrs, applyPostItemLostAbAttrs } from "./data/abilities/apply-ab-attrs";
 import { allAbilities } from "./data/data-lists";
 import type { FixedBattleConfig } from "#app/battle";
 import Battle from "#app/battle";
@@ -1264,7 +1256,7 @@ export default class BattleScene extends SceneBase {
     const doubleChance = new NumberHolder(newWaveIndex % 10 === 0 ? 32 : 8);
     this.applyModifiers(DoubleBattleChanceBoosterModifier, true, doubleChance);
     for (const p of playerField) {
-      applyAbAttrs(DoubleBattleChanceAbAttr, p, null, false, doubleChance);
+      applyAbAttrs("DoubleBattleChanceAbAttr", p, null, false, doubleChance);
     }
     return Math.max(doubleChance.value, 1);
   }
@@ -1469,7 +1461,7 @@ export default class BattleScene extends SceneBase {
         for (const pokemon of this.getPlayerParty()) {
           pokemon.resetBattleAndWaveData();
           pokemon.resetTera();
-          applyPostBattleInitAbAttrs(PostBattleInitAbAttr, pokemon);
+          applyPostBattleInitAbAttrs("PostBattleInitAbAttr", pokemon);
           if (
             pokemon.hasSpecies(SpeciesId.TERAPAGOS) ||
             (this.gameMode.isClassic && this.currentBattle.waveIndex > 180 && this.currentBattle.waveIndex <= 190)
@@ -2745,7 +2737,7 @@ export default class BattleScene extends SceneBase {
     const cancelled = new BooleanHolder(false);
 
     if (source && source.isPlayer() !== target.isPlayer()) {
-      applyAbAttrs(BlockItemTheftAbAttr, source, cancelled);
+      applyAbAttrs("BlockItemTheftAbAttr", source, cancelled);
     }
 
     if (cancelled.value) {
@@ -2785,13 +2777,13 @@ export default class BattleScene extends SceneBase {
           if (target.isPlayer()) {
             this.addModifier(newItemModifier, ignoreUpdate, playSound, false, instant);
             if (source && itemLost) {
-              applyPostItemLostAbAttrs(PostItemLostAbAttr, source, false);
+              applyPostItemLostAbAttrs("PostItemLostAbAttr", source, false);
             }
             return true;
           }
           this.addEnemyModifier(newItemModifier, ignoreUpdate, instant);
           if (source && itemLost) {
-            applyPostItemLostAbAttrs(PostItemLostAbAttr, source, false);
+            applyPostItemLostAbAttrs("PostItemLostAbAttr", source, false);
           }
           return true;
         }
@@ -2814,7 +2806,7 @@ export default class BattleScene extends SceneBase {
     const cancelled = new BooleanHolder(false);
 
     if (source && source.isPlayer() !== target.isPlayer()) {
-      applyAbAttrs(BlockItemTheftAbAttr, source, cancelled);
+      applyAbAttrs("BlockItemTheftAbAttr", source, cancelled);
     }
 
     if (cancelled.value) {
