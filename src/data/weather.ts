@@ -10,6 +10,7 @@ import i18next from "i18next";
 import { globalScene } from "#app/global-scene";
 import type { Arena } from "#app/field/arena";
 import { timedEventManager } from "#app/global-event-manager";
+import type { SuppressWeatherEffectAbAttr } from "./abilities/ability";
 
 export class Weather {
   public weatherType: WeatherType;
