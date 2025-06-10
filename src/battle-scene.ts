@@ -101,7 +101,7 @@ import type { SpeciesFormChangeTrigger } from "./data/pokemon-forms/form-change-
 import { pokemonFormChanges } from "#app/data/pokemon-forms";
 import { SpeciesFormChangeTimeOfDayTrigger } from "./data/pokemon-forms/form-change-triggers";
 import { SpeciesFormChangeManualTrigger } from "./data/pokemon-forms/form-change-triggers";
-import { SpeciesFormChangeItemTrigger } from "#app/data/pokemon-forms";
+import { SpeciesFormChangeItemTrigger } from "#app/data/pokemon-forms/form-change-triggers";
 import { FormChangeItem } from "#enums/form-change-item";
 import { getTypeRgb } from "#app/data/type";
 import { PokemonType } from "#enums/pokemon-type";
