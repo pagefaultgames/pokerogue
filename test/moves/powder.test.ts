@@ -169,7 +169,7 @@ describe("Moves - Powder", () => {
     await game.phaseInterceptor.to("MoveEffectPhase");
     const enemyStartingHp = enemyPokemon.hp;
 
-    await game.phaseInterceptor.to("BerryPhase");
+    await game.toEndOfTurn();
 
     // player should not take damage
     expect(enemyPokemon.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
