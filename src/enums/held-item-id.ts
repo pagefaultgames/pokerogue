@@ -71,17 +71,17 @@ export const HeldItemId = {
   FLAME_ORB: 0x070C,
   SOUL_DEW: 0x070D,
   BATON: 0x070E,
+  MINI_BLACK_HOLE: 0x070F,
 
-  // Mini Black Hole
-  MINI_BLACK_HOLE: 0x0801,
+  // Vitamins
+  HP_UP: 0x0801,
+  PROTEIN: 0x0802,
+  IRON: 0x0803,
+  CALCIUM: 0x0804,
+  ZINC: 0x0805,
+  CARBOS: 0x0806,
 
-  // Stat boosting items
-  HP_UP: 0x0901,
-  PROTEIN: 0x0902,
-  IRON: 0x0903,
-  CALCIUM: 0x0904,
-  ZINC: 0x0905,
-  CARBOS: 0x0906,
+  // Other stat boosting items
   SHUCKLE_JUICE: 0x0907,
   OLD_GATEAU: 0x0908,
   MACHO_BRACE: 0x0909,
@@ -114,6 +114,7 @@ export const HeldItemCategoryId = {
   CRIT_BOOSTER: 0x0500,
   GAIN_INCREASE: 0x0600,
   UNIQUE: 0x0700,
+  VITAMIN: 0x0800,
   BASE_STAT_BOOST: 0x0900,
   EVO_TRACKER: 0x0A00,
 };
