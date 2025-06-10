@@ -4,7 +4,7 @@ import type { BooleanHolder } from "#app/utils/common";
 import { globalScene } from "#app/global-scene";
 import i18next from "i18next";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { Command } from "#app/ui/command-ui-handler";
+import { Command } from "#enums/command";
 
 export interface BYPASS_SPEED_CHANCE_PARAMS {
   /** The pokemon with the item */

@@ -14,7 +14,7 @@ import { StatusEffect } from "#enums/status-effect";
 import PokemonIconAnimHandler, { PokemonIconAnimMode } from "#app/ui/pokemon-icon-anim-handler";
 import { pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
 import { addWindow } from "#app/ui/ui-theme";
-import { SpeciesFormChangeItemTrigger, formChangeItemName } from "#app/data/pokemon-forms/form-change-triggers";
+import { SpeciesFormChangeItemTrigger } from "#app/data/pokemon-forms/form-change-triggers";
 import { FormChangeItem } from "#enums/form-change-item";
 import { getVariantTint } from "#app/sprites/variant";
 import { Button } from "#enums/buttons";
@@ -29,6 +29,7 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import type { CommandPhase } from "#app/phases/command-phase";
 import { globalScene } from "#app/global-scene";
 import { HeldItemId } from "#enums/held-item-id";
+import { formChangeItemName } from "#app/data/pokemon-forms";
 
 const defaultMessage = i18next.t("partyUiHandler:choosePokemon");
 

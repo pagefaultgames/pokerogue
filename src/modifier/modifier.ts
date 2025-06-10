@@ -1,8 +1,6 @@
 import { FusionSpeciesFormEvolution, pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
 import { getLevelTotalExp } from "#app/data/exp";
 import { MAX_PER_TYPE_POKEBALLS } from "#app/data/pokeball";
-import { SpeciesFormChangeItemTrigger } from "#app/data/pokemon-forms/form-change-triggers";
-import type { FormChangeItem } from "#enums/form-change-item";
 import { getStatusEffectHealText } from "#app/data/status-effect";
 import type Pokemon from "#app/field/pokemon";
 import type { PlayerPokemon } from "#app/field/pokemon";
@@ -10,7 +8,6 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import Overrides from "#app/overrides";
 import { LearnMoveType } from "#enums/learn-move-type";
 import type { VoucherType } from "#app/system/voucher";
-import { Command } from "#enums/command";
 import { addTextObject, TextStyle } from "#app/ui/text";
 import {
   type BooleanHolder,
@@ -31,7 +28,6 @@ import i18next from "i18next";
 import {
   type DoubleBattleChanceBoosterModifierType,
   type EvolutionItemModifierType,
-  type FormChangeItemModifierType,
   type ModifierOverride,
   type ModifierType,
   type TerastallizeModifierType,
@@ -544,107 +540,6 @@ export class TerastallizeAccessModifier extends PersistentModifier {
   getMaxStackCount(): number {
     return 1;
   }
-}
-
-export abstract class PokemonHeldItemModifier extends PersistentModifier {
-  /** The ID of the {@linkcode Pokemon} that this item belongs to. */
-  public pokemonId: number;
-  /** Whether this item can be transfered to or stolen by another Pokemon. */
-  public isTransferable = true;
-
-  constructor(type: ModifierType, pokemonId: number, stackCount?: number) {
-    super(type, stackCount);
-
-    this.pokemonId = pokemonId;
-  }
-
-  abstract matchType(_modifier: Modifier): boolean;
-
-  match(modifier: Modifier) {
-    return this.matchType(modifier) && (modifier as PokemonHeldItemModifier).pokemonId === this.pokemonId;
-  }
-
-  getArgs(): any[] {
-    return [this.pokemonId];
-  }
-
-  /**
-   * Applies the {@linkcode PokemonHeldItemModifier} to the given {@linkcode Pokemon}.
-   * @param pokemon The {@linkcode Pokemon} that holds the held item
-   * @param args additional parameters
-   */
-  abstract override apply(pokemon: Pokemon, ...args: unknown[]): boolean;
-
-  /**
-   * Checks if {@linkcode PokemonHeldItemModifier} should be applied.
-   * @param pokemon The {@linkcode Pokemon} that holds the item
-   * @param _args N/A
-   * @returns if {@linkcode PokemonHeldItemModifier} should be applied
-   */
-  override shouldApply(pokemon?: Pokemon, ..._args: unknown[]): boolean {
-    return !!pokemon && (this.pokemonId === -1 || pokemon.id === this.pokemonId);
-  }
-
-  isIconVisible(): boolean {
-    return !!this.getPokemon()?.isOnField();
-  }
-
-  getIcon(forSummary?: boolean): Phaser.GameObjects.Container {
-    const container = !forSummary ? globalScene.add.container(0, 0) : super.getIcon();
-
-    if (!forSummary) {
-      const pokemon = this.getPokemon();
-      if (pokemon) {
-        const pokemonIcon = globalScene.addPokemonIcon(pokemon, -2, 10, 0, 0.5, undefined, true);
-        container.add(pokemonIcon);
-        container.setName(pokemon.id.toString());
-      }
-
-      const item = globalScene.add.sprite(16, this.virtualStackCount ? 8 : 16, "items");
-      item.setScale(0.5);
-      item.setOrigin(0, 0.5);
-      item.setTexture("items", this.type.getIcon());
-      container.add(item);
-
-      const stackText = this.getIconStackText();
-      if (stackText) {
-        container.add(stackText);
-      }
-
-      const virtualStackText = this.getIconStackText(true);
-      if (virtualStackText) {
-        container.add(virtualStackText);
-      }
-    } else {
-      container.setScale(0.5);
-    }
-
-    return container;
-  }
-
-  getPokemon(): Pokemon | undefined {
-    return this.pokemonId ? (globalScene.getPokemonById(this.pokemonId) ?? undefined) : undefined;
-  }
-
-  getScoreMultiplier(): number {
-    return 1;
-  }
-
-  getMaxStackCount(forThreshold?: boolean): number {
-    const pokemon = this.getPokemon();
-    if (!pokemon) {
-      return 0;
-    }
-    if (pokemon.isPlayer() && forThreshold) {
-      return globalScene
-        .getPlayerParty()
-        .map(p => this.getMaxHeldItemCount(p))
-        .reduce((stackCount: number, maxStackCount: number) => Math.max(stackCount, maxStackCount), 0);
-    }
-    return this.getMaxHeldItemCount(pokemon);
-  }
-
-  abstract getMaxHeldItemCount(pokemon?: Pokemon): number;
 }
 
 export class LevelIncrementBoosterModifier extends PersistentModifier {
@@ -1251,69 +1146,6 @@ export class ExpBalanceModifier extends PersistentModifier {
 
   getMaxStackCount(): number {
     return 4;
-  }
-}
-
-export class PokemonFormChangeItemModifier extends PokemonHeldItemModifier {
-  public override type: FormChangeItemModifierType;
-  public formChangeItem: FormChangeItem;
-  public active: boolean;
-  public isTransferable = false;
-
-  constructor(
-    type: FormChangeItemModifierType,
-    pokemonId: number,
-    formChangeItem: FormChangeItem,
-    active: boolean,
-    stackCount?: number,
-  ) {
-    super(type, pokemonId, stackCount);
-    this.formChangeItem = formChangeItem;
-    this.active = active;
-  }
-
-  matchType(modifier: Modifier): boolean {
-    return modifier instanceof PokemonFormChangeItemModifier && modifier.formChangeItem === this.formChangeItem;
-  }
-
-  clone(): PersistentModifier {
-    return new PokemonFormChangeItemModifier(
-      this.type,
-      this.pokemonId,
-      this.formChangeItem,
-      this.active,
-      this.stackCount,
-    );
-  }
-
-  getArgs(): any[] {
-    return super.getArgs().concat(this.formChangeItem, this.active);
-  }
-
-  /**
-   * Applies {@linkcode PokemonFormChangeItemModifier}
-   * @param pokemon The {@linkcode Pokemon} to apply the form change item to
-   * @param active `true` if the form change item is active
-   * @returns `true` if the form change item was applied
-   */
-  override apply(pokemon: Pokemon, active: boolean): boolean {
-    const switchActive = this.active && !active;
-
-    if (switchActive) {
-      this.active = false;
-    }
-
-    const ret = globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeItemTrigger);
-
-    if (switchActive) {
-      this.active = true;
-    }
-
-    return ret;
-  }
-
-  getMaxHeldItemCount(_pokemon: Pokemon): number {
-    return 1;
   }
 }
 

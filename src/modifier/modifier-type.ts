@@ -46,7 +46,6 @@ import {
   MoneyRewardModifier,
   MultipleParticipantExpBonusModifier,
   PokemonAllMovePpRestoreModifier,
-  PokemonFormChangeItemModifier,
   type PokemonHeldItemModifier,
   PokemonHpRestoreModifier,
   PokemonLevelIncrementModifier,
@@ -1099,8 +1098,8 @@ export class FormChangeItemReward extends PokemonModifierType {
   constructor(formChangeItem: FormChangeItem) {
     super(
       "",
-      FormChangeItem[formChangeItem].toLowerCase(),
-      (_type, args) => new PokemonFormChangeItemModifier(this, (args[0] as PlayerPokemon).id, formChangeItem, true),
+      "",
+      () => null,
       (pokemon: PlayerPokemon) => {
         // Make sure the Pokemon has alternate forms
         if (

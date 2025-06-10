@@ -8,12 +8,12 @@ type HELD_ITEM_DATA = BASE_STAT_TOTAL_DATA | BASE_STAT_FLAT_DATA;
 
 interface HeldItemProperties {
   stack: number;
-  disabled: boolean;
+  disabled?: boolean;
   cooldown?: number;
   data?: HELD_ITEM_DATA;
 }
 
-type HeldItemPropertyMap = {
+export type HeldItemPropertyMap = {
   [key in HeldItemId]?: HeldItemProperties;
 };
 
@@ -21,7 +21,7 @@ interface FormChangeItemProperties {
   active: boolean;
 }
 
-type FormChangeItemPropertyMap = {
+export type FormChangeItemPropertyMap = {
   [key in FormChangeItem]?: FormChangeItemProperties;
 };
 
@@ -71,6 +71,10 @@ export class PokemonItemManager {
   getStack(itemType: HeldItemId): number {
     const item = this.heldItems[itemType];
     return item ? item.stack : 0;
+  }
+
+  overrideItems(newItems: HeldItemPropertyMap) {
+    this.heldItems = newItems;
   }
 
   add(itemType: HeldItemId, addStack = 1, data?: HELD_ITEM_DATA): boolean {

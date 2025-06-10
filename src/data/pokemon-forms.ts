@@ -25,6 +25,7 @@ import {
   type SpeciesFormChangeTrigger,
   SpeciesFormChangeWeatherTrigger,
 } from "./pokemon-forms/form-change-triggers";
+import i18next from "i18next";
 
 export function formChangeItemName(id: FormChangeItem) {
   return i18next.t(`modifierType:FormChangeItem.${FormChangeItem[id]}`);
