@@ -1,5 +1,5 @@
-import { BattlerIndex } from "#app/battle";
-import { AbilityId } from "#app/enums/ability-id";
+import { BattlerIndex } from "#enums/battler-index";
+import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";

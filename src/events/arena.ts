@@ -1,4 +1,4 @@
-import type { ArenaTagSide } from "#app/data/arena-tag";
+import type { ArenaTagSide } from "#enums/arena-tag-side";
 import type { ArenaTagType } from "#enums/arena-tag-type";
 import type { TerrainType } from "#app/data/terrain";
 import type { WeatherType } from "#enums/weather-type";

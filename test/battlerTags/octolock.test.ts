@@ -1,6 +1,7 @@
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import type Pokemon from "#app/field/pokemon";
-import { BattlerTagLapseType, OctolockTag, TrappedTag } from "#app/data/battler-tags";
+import { OctolockTag, TrappedTag } from "#app/data/battler-tags";
+import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
 import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { Stat } from "#enums/stat";
 import GameManager from "#test/testUtils/gameManager";
@@ -28,7 +29,7 @@ describe("BattlerTag - OctolockTag", () => {
 
       const subject = new OctolockTag(1);
 
-      vi.spyOn(game.scene, "unshiftPhase").mockImplementation(phase => {
+      vi.spyOn(game.scene.phaseManager, "unshiftPhase").mockImplementation(phase => {
         expect(phase).toBeInstanceOf(StatStageChangePhase);
         expect((phase as StatStageChangePhase)["stages"]).toEqual(-1);
         expect((phase as StatStageChangePhase)["stats"]).toEqual([Stat.DEF, Stat.SPDEF]);
@@ -36,7 +37,7 @@ describe("BattlerTag - OctolockTag", () => {
 
       subject.lapse(mockPokemon, BattlerTagLapseType.TURN_END);
 
-      expect(game.scene.unshiftPhase).toBeCalledTimes(1);
+      expect(game.scene.phaseManager.unshiftPhase).toBeCalledTimes(1);
     });
   });
 

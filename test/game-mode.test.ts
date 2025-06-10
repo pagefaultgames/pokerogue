@@ -1,5 +1,6 @@
 import type { GameMode } from "#app/game-mode";
-import { GameModes, getGameMode } from "#app/game-mode";
+import { getGameMode } from "#app/game-mode";
+import { GameModes } from "#enums/game-modes";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import * as Utils from "#app/utils/common";
 import GameManager from "#test/testUtils/gameManager";

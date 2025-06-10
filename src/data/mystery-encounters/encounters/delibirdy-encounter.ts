@@ -29,7 +29,6 @@ import {
 } from "#app/modifier/modifier";
 import type { PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
 import { modifierTypes } from "#app/modifier/modifier-type";
-import { ModifierRewardPhase } from "#app/phases/modifier-reward-phase";
 import i18next from "#app/plugins/i18n";
 import type { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
 import { randSeedItem } from "#app/utils/common";
@@ -65,10 +64,10 @@ const doEventReward = () => {
       return !(existingCharm && existingCharm.getStackCount() >= existingCharm.getMaxStackCount());
     });
     if (candidates.length > 0) {
-      globalScene.unshiftPhase(new ModifierRewardPhase(modifierTypes[randSeedItem(candidates)]));
+      globalScene.phaseManager.unshiftNew("ModifierRewardPhase", modifierTypes[randSeedItem(candidates)]);
     } else {
       // At max stacks, give a Voucher instead
-      globalScene.unshiftPhase(new ModifierRewardPhase(modifierTypes.VOUCHER));
+      globalScene.phaseManager.unshiftNew("ModifierRewardPhase", modifierTypes.VOUCHER);
     }
   }
 };
@@ -181,7 +180,7 @@ export const DelibirdyEncounter: MysteryEncounter = MysteryEncounterBuilder.with
           );
           doEventReward();
         } else {
-          globalScene.unshiftPhase(new ModifierRewardPhase(modifierTypes.AMULET_COIN));
+          globalScene.phaseManager.unshiftNew("ModifierRewardPhase", modifierTypes.AMULET_COIN);
           doEventReward();
         }
 
@@ -266,7 +265,7 @@ export const DelibirdyEncounter: MysteryEncounter = MysteryEncounterBuilder.with
             );
             doEventReward();
           } else {
-            globalScene.unshiftPhase(new ModifierRewardPhase(modifierTypes.CANDY_JAR));
+            globalScene.phaseManager.unshiftNew("ModifierRewardPhase", modifierTypes.CANDY_JAR);
             doEventReward();
           }
         } else {
@@ -288,7 +287,7 @@ export const DelibirdyEncounter: MysteryEncounter = MysteryEncounterBuilder.with
             );
             doEventReward();
           } else {
-            globalScene.unshiftPhase(new ModifierRewardPhase(modifierTypes.BERRY_POUCH));
+            globalScene.phaseManager.unshiftNew("ModifierRewardPhase", modifierTypes.BERRY_POUCH);
             doEventReward();
           }
         }
@@ -372,7 +371,7 @@ export const DelibirdyEncounter: MysteryEncounter = MysteryEncounterBuilder.with
           );
           doEventReward();
         } else {
-          globalScene.unshiftPhase(new ModifierRewardPhase(modifierTypes.HEALING_CHARM));
+          globalScene.phaseManager.unshiftNew("ModifierRewardPhase", modifierTypes.HEALING_CHARM);
           doEventReward();
         }
 

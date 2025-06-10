@@ -7,8 +7,6 @@ import { UiMode } from "#enums/ui-mode";
 import i18next, { t } from "i18next";
 import { sessionIdKey, executeIf } from "#app/utils/common";
 import { getCookie, removeCookie } from "#app/utils/cookies";
-import { SelectGenderPhase } from "./select-gender-phase";
-import { UnavailablePhase } from "./unavailable-phase";
 
 export class LoginPhase extends Phase {
   public readonly phaseName = "LoginPhase";
@@ -70,7 +68,7 @@ export class LoginPhase extends Phase {
                       });
                     },
                     () => {
-                      globalScene.unshiftPhase(new LoginPhase(false));
+                      globalScene.phaseManager.unshiftNew("LoginPhase", false);
                       this.end();
                     },
                   ],
@@ -94,7 +92,7 @@ export class LoginPhase extends Phase {
           removeCookie(sessionIdKey);
           globalScene.reset(true, true);
         } else {
-          globalScene.unshiftPhase(new UnavailablePhase());
+          globalScene.phaseManager.unshiftNew("UnavailablePhase");
           super.end();
         }
         return null;
@@ -114,7 +112,7 @@ export class LoginPhase extends Phase {
     globalScene.ui.setMode(UiMode.MESSAGE);
 
     if (!globalScene.gameData.gender) {
-      globalScene.unshiftPhase(new SelectGenderPhase());
+      globalScene.phaseManager.unshiftNew("SelectGenderPhase");
     }
 
     handleTutorial(Tutorial.Intro).then(() => super.end());

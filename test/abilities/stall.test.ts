@@ -46,7 +46,7 @@ describe("Abilities - Stall", () => {
     game.move.select(MoveId.QUICK_ATTACK);
 
     await game.phaseInterceptor.to(TurnStartPhase, false);
-    const phase = game.scene.getCurrentPhase() as TurnStartPhase;
+    const phase = game.scene.phaseManager.getCurrentPhase() as TurnStartPhase;
     const speedOrder = phase.getSpeedOrder();
     const commandOrder = phase.getCommandOrder();
     // The player Pokemon (without Stall) goes first despite having lower speed than the opponent.
@@ -64,7 +64,7 @@ describe("Abilities - Stall", () => {
     game.move.select(MoveId.TACKLE);
 
     await game.phaseInterceptor.to(TurnStartPhase, false);
-    const phase = game.scene.getCurrentPhase() as TurnStartPhase;
+    const phase = game.scene.phaseManager.getCurrentPhase() as TurnStartPhase;
     const speedOrder = phase.getSpeedOrder();
     const commandOrder = phase.getCommandOrder();
     // The opponent Pokemon (with Stall) goes first because its move is still within a higher priority bracket than its opponent.
@@ -83,7 +83,7 @@ describe("Abilities - Stall", () => {
     game.move.select(MoveId.TACKLE);
 
     await game.phaseInterceptor.to(TurnStartPhase, false);
-    const phase = game.scene.getCurrentPhase() as TurnStartPhase;
+    const phase = game.scene.phaseManager.getCurrentPhase() as TurnStartPhase;
     const speedOrder = phase.getSpeedOrder();
     const commandOrder = phase.getCommandOrder();
 

@@ -6,17 +6,15 @@ import {
   PreSummonAbAttr,
   PreSwitchOutAbAttr,
 } from "#app/data/abilities/ability";
-import { ForceSwitchOutAttr } from "#app/data/moves/move";
 import { allMoves } from "#app/data/data-lists";
 import { getPokeballTintColor } from "#app/data/pokeball";
-import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms";
+import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms/form-change-triggers";
 import { TrainerSlot } from "#enums/trainer-slot";
 import type Pokemon from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { SwitchEffectTransferModifier } from "#app/modifier/modifier";
-import { Command } from "#app/ui/command-ui-handler";
+import { Command } from "#enums/command";
 import i18next from "i18next";
-import { PostSummonPhase } from "./post-summon-phase";
 import { SummonPhase } from "./summon-phase";
 import { SubstituteTag } from "#app/data/battler-tags";
 import { SwitchType } from "#enums/switch-type";
@@ -139,7 +137,6 @@ export class SwitchSummonPhase extends SummonPhase {
       return;
     }
 
-
     if (this.switchType === SwitchType.BATON_PASS) {
       // If switching via baton pass, update opposing tags coming from the prior pokemon
       (this.player ? globalScene.getEnemyField() : globalScene.getPlayerField()).forEach((enemyPokemon: Pokemon) =>
@@ -228,7 +225,7 @@ export class SwitchSummonPhase extends SummonPhase {
 
     const currentCommand = globalScene.currentBattle.turnCommands[this.fieldIndex]?.command;
     const lastPokemonIsForceSwitchedAndNotFainted =
-      lastUsedMove?.hasAttr(ForceSwitchOutAttr) && !this.lastPokemon.isFainted();
+      lastUsedMove?.hasAttr("ForceSwitchOutAttr") && !this.lastPokemon.isFainted();
     const lastPokemonHasForceSwitchAbAttr =
       this.lastPokemon.hasAbilityWithAttr(PostDamageForceSwitchAbAttr) && !this.lastPokemon.isFainted();
 
@@ -266,6 +263,6 @@ export class SwitchSummonPhase extends SummonPhase {
   }
 
   queuePostSummon(): void {
-    globalScene.unshiftPhase(new PostSummonPhase(this.getPokemon().getBattlerIndex()));
+    globalScene.phaseManager.unshiftNew("PostSummonPhase", this.getPokemon().getBattlerIndex());
   }
 }

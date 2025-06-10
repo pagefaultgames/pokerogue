@@ -32,7 +32,6 @@ import type { PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import { Gender } from "#app/data/gender";
 import type { PermanentStat } from "#enums/stat";
-import { VictoryPhase } from "#app/phases/victory-phase";
 import { SummaryUiMode } from "#app/ui/summary-ui-handler";
 import { CustomPokemonData } from "#app/data/custom-pokemon-data";
 import type { AbilityId } from "#enums/ability-id";
@@ -675,7 +674,7 @@ export async function catchPokemon(
         if (!globalScene.getEnemyParty().some(p => p.id === pokemon.id)) {
           globalScene.getEnemyParty().push(pokemon);
         }
-        globalScene.unshiftPhase(new VictoryPhase(pokemon.id, true));
+        globalScene.phaseManager.unshiftNew("VictoryPhase", pokemon.id, true);
         globalScene.pokemonInfoContainer.hide();
         if (pokeball) {
           removePb(pokeball);

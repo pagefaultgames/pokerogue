@@ -1,7 +1,7 @@
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex } from "#enums/battler-index";
 import { allMoves } from "#app/data/data-lists";
 import type Pokemon from "#app/field/pokemon";
-import { MoveResult } from "#app/field/pokemon";
+import { MoveResult } from "#enums/move-result";
 import type { MovePhase } from "#app/phases/move-phase";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
@@ -56,12 +56,12 @@ describe("Moves - Instruct", () => {
 
     await game.phaseInterceptor.to("MovePhase"); // enemy attacks us
     await game.phaseInterceptor.to("MovePhase", false); // instruct
-    let currentPhase = game.scene.getCurrentPhase() as MovePhase;
+    let currentPhase = game.scene.phaseManager.getCurrentPhase() as MovePhase;
     expect(currentPhase.pokemon).toBe(game.scene.getPlayerPokemon());
     await game.phaseInterceptor.to("MoveEndPhase");
 
     await game.phaseInterceptor.to("MovePhase", false); // enemy repeats move
-    currentPhase = game.scene.getCurrentPhase() as MovePhase;
+    currentPhase = game.scene.phaseManager.getCurrentPhase() as MovePhase;
     expect(currentPhase.pokemon).toBe(enemy);
     expect(currentPhase.move.moveId).toBe(MoveId.SONIC_BOOM);
     await game.phaseInterceptor.to("TurnEndPhase", false);

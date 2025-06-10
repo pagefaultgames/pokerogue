@@ -1,12 +1,12 @@
-import type { BattlerIndex } from "#app/battle";
-import { getMoveTargets } from "#app/data/moves/move";
+import type { BattlerIndex } from "#enums/battler-index";
+import { getMoveTargets } from "#app/data/moves/move-utils";
 import type Pokemon from "#app/field/pokemon";
-import { PokemonMove } from "#app/field/pokemon";
+import { PokemonMove } from "#app/data/moves/pokemon-move";
 import Overrides from "#app/overrides";
 import type { CommandPhase } from "#app/phases/command-phase";
 import type { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
-import { Command } from "#app/ui/command-ui-handler";
+import { Command } from "#enums/command";
 import { MoveId } from "#enums/move-id";
 import { UiMode } from "#enums/ui-mode";
 import { getMovePosition } from "#test/testUtils/gameManagerUtils";
@@ -23,7 +23,7 @@ export class MoveHelper extends GameManagerHelper {
    */
   public async forceHit(): Promise<void> {
     await this.game.phaseInterceptor.to(MoveEffectPhase, false);
-    const moveEffectPhase = this.game.scene.getCurrentPhase() as MoveEffectPhase;
+    const moveEffectPhase = this.game.scene.phaseManager.getCurrentPhase() as MoveEffectPhase;
     vi.spyOn(moveEffectPhase.move, "calculateBattleAccuracy").mockReturnValue(-1);
   }
 
@@ -34,7 +34,7 @@ export class MoveHelper extends GameManagerHelper {
    */
   public async forceMiss(firstTargetOnly = false): Promise<void> {
     await this.game.phaseInterceptor.to(MoveEffectPhase, false);
-    const moveEffectPhase = this.game.scene.getCurrentPhase() as MoveEffectPhase;
+    const moveEffectPhase = this.game.scene.phaseManager.getCurrentPhase() as MoveEffectPhase;
     const accuracy = vi.spyOn(moveEffectPhase.move, "calculateBattleAccuracy");
 
     if (firstTargetOnly) {
@@ -54,10 +54,17 @@ export class MoveHelper extends GameManagerHelper {
     const movePosition = getMovePosition(this.game.scene, pkmIndex, move);
 
     this.game.onNextPrompt("CommandPhase", UiMode.COMMAND, () => {
-      this.game.scene.ui.setMode(UiMode.FIGHT, (this.game.scene.getCurrentPhase() as CommandPhase).getFieldIndex());
+      this.game.scene.ui.setMode(
+        UiMode.FIGHT,
+        (this.game.scene.phaseManager.getCurrentPhase() as CommandPhase).getFieldIndex(),
+      );
     });
     this.game.onNextPrompt("CommandPhase", UiMode.FIGHT, () => {
-      (this.game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.FIGHT, movePosition, false);
+      (this.game.scene.phaseManager.getCurrentPhase() as CommandPhase).handleCommand(
+        Command.FIGHT,
+        movePosition,
+        false,
+      );
     });
 
     if (targetIndex !== null) {
@@ -79,12 +86,12 @@ export class MoveHelper extends GameManagerHelper {
     this.game.onNextPrompt("CommandPhase", UiMode.COMMAND, () => {
       this.game.scene.ui.setMode(
         UiMode.FIGHT,
-        (this.game.scene.getCurrentPhase() as CommandPhase).getFieldIndex(),
+        (this.game.scene.phaseManager.getCurrentPhase() as CommandPhase).getFieldIndex(),
         Command.TERA,
       );
     });
     this.game.onNextPrompt("CommandPhase", UiMode.FIGHT, () => {
-      (this.game.scene.getCurrentPhase() as CommandPhase).handleCommand(Command.TERA, movePosition, false);
+      (this.game.scene.phaseManager.getCurrentPhase() as CommandPhase).handleCommand(Command.TERA, movePosition, false);
     });
 
     if (targetIndex !== null) {
@@ -147,7 +154,7 @@ export class MoveHelper extends GameManagerHelper {
    * Changes a pokemon's moveset to the given move(s).
    * Used when the normal moveset override can't be used (such as when it's necessary to check or update properties of the moveset).
    * @param pokemon - The {@linkcode Pokemon} being modified
-   * @param moveset - The {@linkcode MoveId} (single or array) to change the Pokemon's moveset to
+   * @param moveset - The {@linkcode MoveId} (single or array) to change the Pokemon's moveset to.
    */
   public changeMoveset(pokemon: Pokemon, moveset: MoveId | MoveId[]): void {
     if (!Array.isArray(moveset)) {
@@ -162,16 +169,22 @@ export class MoveHelper extends GameManagerHelper {
   }
 
   /**
-   * Forces the next enemy selecting a move to use the given move in its moveset
+   * Forces the next enemy selecting a move to use the given move _in its moveset_
    * against the given target (if applicable).
-   * @param moveId The {@linkcode MoveId | move} the enemy will use
-   * @param target (Optional) the {@linkcode BattlerIndex | target} which the enemy will use the given move against
+   * @param moveId - The {@linkcode Move | move ID} the enemy will be forced to use.
+   * @param target - The {@linkcode BattlerIndex | target} against which the enemy will use the given move;
+   * defaults to normal target selection priorities if omitted or not single-target.
+   * @remarks
+   * If you do not need to check for changes in the enemy's moveset as part of the test, it may be
+   * best to use {@linkcode forceEnemyMove} instead.
    */
   public async selectEnemyMove(moveId: MoveId, target?: BattlerIndex) {
     // Wait for the next EnemyCommandPhase to start
     await this.game.phaseInterceptor.to("EnemyCommandPhase", false);
     const enemy =
-      this.game.scene.getEnemyField()[(this.game.scene.getCurrentPhase() as EnemyCommandPhase).getFieldIndex()];
+      this.game.scene.getEnemyField()[
+        (this.game.scene.phaseManager.getCurrentPhase() as EnemyCommandPhase).getFieldIndex()
+      ];
     const legalTargets = getMoveTargets(enemy, moveId);
 
     vi.spyOn(enemy, "getNextMove").mockReturnValueOnce({
@@ -191,21 +204,27 @@ export class MoveHelper extends GameManagerHelper {
   }
 
   /**
-   * Forces the next enemy selecting a move to use the given move against the given target (if applicable).
+   * Modify the moveset of the next enemy selecting a move to contain only the given move, and then
+   * selects it to be used during the next {@linkcode EnemyCommandPhase} against the given targets.
    *
-   * Warning: Overwrites the pokemon's moveset and disables the moveset override!
+   * Does not require the given move to be in the enemy's moveset beforehand,
+   * but **overwrites the pokemon's moveset** and **disables any prior moveset overrides**!
    *
-   * Note: If you need to check for changes in the enemy's moveset as part of the test, it may be
+   * @param moveId - The {@linkcode Move | move ID} the enemy will be forced to use.
+   * @param target - The {@linkcode BattlerIndex | target} against which the enemy will use the given move;
+   * defaults to normal target selection priorities if omitted or not single-target.
+   * @remarks
+   * If you need to check for changes in the enemy's moveset as part of the test, it may be
    * best to use {@linkcode changeMoveset} and {@linkcode selectEnemyMove} instead.
-   * @param moveId The {@linkcode MoveId | move} the enemy will use
-   * @param target (Optional) the {@linkcode BattlerIndex | target} which the enemy will use the given move against
    */
   public async forceEnemyMove(moveId: MoveId, target?: BattlerIndex) {
     // Wait for the next EnemyCommandPhase to start
     await this.game.phaseInterceptor.to("EnemyCommandPhase", false);
 
     const enemy =
-      this.game.scene.getEnemyField()[(this.game.scene.getCurrentPhase() as EnemyCommandPhase).getFieldIndex()];
+      this.game.scene.getEnemyField()[
+        (this.game.scene.phaseManager.getCurrentPhase() as EnemyCommandPhase).getFieldIndex()
+      ];
 
     if ([Overrides.OPP_MOVESET_OVERRIDE].flat().length > 0) {
       vi.spyOn(Overrides, "OPP_MOVESET_OVERRIDE", "get").mockReturnValue([]);

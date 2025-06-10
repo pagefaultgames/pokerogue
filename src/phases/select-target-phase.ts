@@ -1,8 +1,7 @@
 import { globalScene } from "#app/global-scene";
-import type { BattlerIndex } from "#app/battle";
-import { Command } from "#app/ui/command-ui-handler";
+import type { BattlerIndex } from "#enums/battler-index";
+import { Command } from "#enums/command";
 import { UiMode } from "#enums/ui-mode";
-import { CommandPhase } from "./command-phase";
 import { PokemonPhase } from "./pokemon-phase";
 import i18next from "#app/plugins/i18n";
 import { allMoves } from "#app/data/data-lists";
@@ -28,12 +27,12 @@ export class SelectTargetPhase extends PokemonPhase {
         const errorMessage = user
           .getRestrictingTag(move!, user, fieldSide[targets[0]])!
           .selectionDeniedText(user, moveObject.id);
-        globalScene.queueMessage(i18next.t(errorMessage, { moveName: moveObject.name }), 0, true);
+        globalScene.phaseManager.queueMessage(i18next.t(errorMessage, { moveName: moveObject.name }), 0, true);
         targets = [];
       }
       if (targets.length < 1) {
         globalScene.currentBattle.turnCommands[this.fieldIndex] = null;
-        globalScene.unshiftPhase(new CommandPhase(this.fieldIndex));
+        globalScene.phaseManager.unshiftNew("CommandPhase", this.fieldIndex);
       } else {
         turnCommand!.targets = targets; //TODO: is the bang correct here?
       }

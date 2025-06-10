@@ -1,5 +1,6 @@
 import i18next from "i18next";
-import { GameMode, GameModes } from "../game-mode";
+import { GameMode } from "../game-mode";
+import { GameModes } from "#enums/game-modes";
 
 export enum Unlockables {
   ENDLESS_MODE,

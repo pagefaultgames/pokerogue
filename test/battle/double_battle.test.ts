@@ -1,6 +1,7 @@
 import { Status } from "#app/data/status-effect";
 import { AbilityId } from "#enums/ability-id";
-import { GameModes, getGameMode } from "#app/game-mode";
+import { getGameMode } from "#app/game-mode";
+import { GameModes } from "#enums/game-modes";
 import { BattleEndPhase } from "#app/phases/battle-end-phase";
 import { TurnInitPhase } from "#app/phases/turn-init-phase";
 import { MoveId } from "#enums/move-id";

@@ -2,7 +2,7 @@ import { globalScene } from "#app/global-scene";
 import { initMoveAnim, loadMoveAnimAssets } from "#app/data/battle-anims";
 import type Move from "#app/data/moves/move";
 import { allMoves } from "#app/data/data-lists";
-import { SpeciesFormChangeMoveLearnedTrigger } from "#app/data/pokemon-forms";
+import { SpeciesFormChangeMoveLearnedTrigger } from "#app/data/pokemon-forms/form-change-triggers";
 import { MoveId } from "#enums/move-id";
 import { getPokemonNameWithAffix } from "#app/messages";
 import Overrides from "#app/overrides";
@@ -12,15 +12,7 @@ import { UiMode } from "#enums/ui-mode";
 import i18next from "i18next";
 import { PlayerPartyMemberPokemonPhase } from "#app/phases/player-party-member-pokemon-phase";
 import type Pokemon from "#app/field/pokemon";
-
-export enum LearnMoveType {
-  /** For learning a move via level-up, evolution, or other non-item-based event */
-  LEARN_MOVE,
-  /** For learning a move via Memory Mushroom */
-  MEMORY,
-  /** For learning a move via TM */
-  TM,
-}
+import { LearnMoveType } from "#enums/learn-move-type";
 
 export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
   public readonly phaseName = "LearnMovePhase";
@@ -195,7 +187,7 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
         pokemon.usedTMs = [];
       }
       pokemon.usedTMs.push(this.moveId);
-      globalScene.tryRemovePhase(phase => phase.is("SelectModifierPhase"));
+      globalScene.phaseManager.tryRemovePhase(phase => phase.is("SelectModifierPhase"));
     } else if (this.learnMoveType === LearnMoveType.MEMORY) {
       if (this.cost !== -1) {
         if (!Overrides.WAIVE_ROLL_FEE_OVERRIDE) {
@@ -205,7 +197,7 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
         }
         globalScene.playSound("se/buy");
       } else {
-        globalScene.tryRemovePhase(phase => phase.is("SelectModifierPhase"));
+        globalScene.phaseManager.tryRemovePhase(phase => phase.is("SelectModifierPhase"));
       }
     }
     pokemon.setMove(index, this.moveId);

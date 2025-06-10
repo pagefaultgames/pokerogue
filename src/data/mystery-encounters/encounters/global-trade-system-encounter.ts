@@ -33,7 +33,8 @@ import {
 } from "#app/utils/common";
 import type { PlayerPokemon } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
-import { EnemyPokemon, PokemonMove } from "#app/field/pokemon";
+import { EnemyPokemon } from "#app/field/pokemon";
+import { PokemonMove } from "#app/data/moves/pokemon-move";
 import type { PokemonHeldItemModifier } from "#app/modifier/modifier";
 import {
   HiddenAbilityRateBoosterModifier,

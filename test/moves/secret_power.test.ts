@@ -8,9 +8,9 @@ import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { StatusEffect } from "#enums/status-effect";
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex } from "#enums/battler-index";
 import { ArenaTagType } from "#enums/arena-tag-type";
-import { ArenaTagSide } from "#app/data/arena-tag";
+import { ArenaTagSide } from "#enums/arena-tag-side";
 import { MoveEffectChanceMultiplierAbAttr } from "#app/data/abilities/ability";
 import { allAbilities } from "#app/data/data-lists";
 

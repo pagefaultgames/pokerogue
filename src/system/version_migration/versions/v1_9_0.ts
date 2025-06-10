@@ -1,5 +1,5 @@
 import type { SessionSaveMigrator } from "#app/@types/SessionSaveMigrator";
-import { PokemonMove } from "#app/field/pokemon";
+import { PokemonMove } from "#app/data/moves/pokemon-move";
 import type { SessionSaveData } from "#app/system/game-data";
 import type PokemonData from "#app/system/pokemon-data";
 import { MoveId } from "#enums/move-id";

@@ -4,7 +4,6 @@ import { getPokemonNameWithAffix } from "../messages";
 import type Pokemon from "../field/pokemon";
 import { PokemonType } from "#enums/pokemon-type";
 import type Move from "./moves/move";
-import { AttackMove } from "./moves/move";
 import { randSeedInt } from "#app/utils/common";
 import { SuppressWeatherEffectAbAttr } from "./abilities/ability";
 import { TerrainType, getTerrainName } from "./terrain";
@@ -95,9 +94,9 @@ export class Weather {
 
     switch (this.weatherType) {
       case WeatherType.HARSH_SUN:
-        return move instanceof AttackMove && moveType === PokemonType.WATER;
+        return move.is("AttackMove") && moveType === PokemonType.WATER;
       case WeatherType.HEAVY_RAIN:
-        return move instanceof AttackMove && moveType === PokemonType.FIRE;
+        return move.is("AttackMove") && moveType === PokemonType.FIRE;
     }
 
     return false;

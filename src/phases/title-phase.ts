@@ -3,7 +3,8 @@ import { BattleType } from "#enums/battle-type";
 import { fetchDailyRunSeed, getDailyRunStarters } from "#app/data/daily-run";
 import { Gender } from "#app/data/gender";
 import { getBiomeKey } from "#app/field/arena";
-import { GameMode, GameModes, getGameMode } from "#app/game-mode";
+import { GameMode, getGameMode } from "#app/game-mode";
+import { GameModes } from "#enums/game-modes";
 import type { Modifier } from "#app/modifier/modifier";
 import {
   getDailyRunStarterModifiers,
@@ -20,11 +21,6 @@ import { SaveSlotUiMode } from "#app/ui/save-slot-select-ui-handler";
 import { UiMode } from "#enums/ui-mode";
 import { isLocal, isLocalServerConnected, isNullOrUndefined } from "#app/utils/common";
 import i18next from "i18next";
-import { CheckSwitchPhase } from "./check-switch-phase";
-import { EncounterPhase } from "./encounter-phase";
-import { SelectChallengePhase } from "./select-challenge-phase";
-import { SelectStarterPhase } from "./select-starter-phase";
-import { SummonPhase } from "./summon-phase";
 import { globalScene } from "#app/global-scene";
 import Overrides from "#app/overrides";
 
@@ -124,8 +120,8 @@ export class TitlePhase extends Phase {
           options.push({
             label: i18next.t("menu:cancel"),
             handler: () => {
-              globalScene.clearPhaseQueue();
-              globalScene.pushPhase(new TitlePhase());
+              globalScene.phaseManager.clearPhaseQueue();
+              globalScene.phaseManager.pushNew("TitlePhase");
               super.end();
               return true;
             },
@@ -198,9 +194,9 @@ export class TitlePhase extends Phase {
   initDailyRun(): void {
     globalScene.ui.clearText();
     globalScene.ui.setMode(UiMode.SAVE_SLOT, SaveSlotUiMode.SAVE, (slotId: number) => {
-      globalScene.clearPhaseQueue();
+      globalScene.phaseManager.clearPhaseQueue();
       if (slotId === -1) {
-        globalScene.pushPhase(new TitlePhase());
+        globalScene.phaseManager.pushNew("TitlePhase");
         return super.end();
       }
       globalScene.sessionSlotId = slotId;
@@ -304,23 +300,23 @@ export class TitlePhase extends Phase {
       globalScene.arena.preloadBgm();
       globalScene.gameMode = getGameMode(this.gameMode);
       if (this.gameMode === GameModes.CHALLENGE) {
-        globalScene.pushPhase(new SelectChallengePhase());
+        globalScene.phaseManager.pushNew("SelectChallengePhase");
       } else {
-        globalScene.pushPhase(new SelectStarterPhase());
+        globalScene.phaseManager.pushNew("SelectStarterPhase");
       }
       globalScene.newArena(globalScene.gameMode.getStartingBiome());
     } else {
       globalScene.playBgm();
     }
 
-    globalScene.pushPhase(new EncounterPhase(this.loaded));
+    globalScene.phaseManager.pushNew("EncounterPhase", this.loaded);
 
     if (this.loaded) {
       const availablePartyMembers = globalScene.getPokemonAllowedInBattle().length;
 
-      globalScene.pushPhase(new SummonPhase(0, true, true));
+      globalScene.phaseManager.pushNew("SummonPhase", 0, true, true);
       if (globalScene.currentBattle.double && availablePartyMembers > 1) {
-        globalScene.pushPhase(new SummonPhase(1, true, true));
+        globalScene.phaseManager.pushNew("SummonPhase", 1, true, true);
       }
 
       if (
@@ -329,9 +325,9 @@ export class TitlePhase extends Phase {
       ) {
         const minPartySize = globalScene.currentBattle.double ? 2 : 1;
         if (availablePartyMembers > minPartySize) {
-          globalScene.pushPhase(new CheckSwitchPhase(0, globalScene.currentBattle.double));
+          globalScene.phaseManager.pushNew("CheckSwitchPhase", 0, globalScene.currentBattle.double);
           if (globalScene.currentBattle.double) {
-            globalScene.pushPhase(new CheckSwitchPhase(1, globalScene.currentBattle.double));
+            globalScene.phaseManager.pushNew("CheckSwitchPhase", 1, globalScene.currentBattle.double);
           }
         }
       }

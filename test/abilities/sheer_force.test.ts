@@ -1,11 +1,10 @@
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex } from "#enums/battler-index";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { FlinchAttr } from "#app/data/moves/move";
 import { allMoves } from "#app/data/data-lists";
 
 describe("Abilities - Sheer Force", () => {
@@ -40,7 +39,7 @@ describe("Abilities - Sheer Force", () => {
 
     const airSlashMove = allMoves[MoveId.AIR_SLASH];
     vi.spyOn(airSlashMove, "calculateBattlePower");
-    const airSlashFlinchAttr = airSlashMove.getAttrs(FlinchAttr)[0];
+    const airSlashFlinchAttr = airSlashMove.getAttrs("FlinchAttr")[0];
     vi.spyOn(airSlashFlinchAttr, "getMoveChance");
 
     game.move.use(MoveId.AIR_SLASH);
@@ -92,7 +91,7 @@ describe("Abilities - Sheer Force", () => {
 
     const headbuttMove = allMoves[MoveId.HEADBUTT];
     vi.spyOn(headbuttMove, "calculateBattlePower");
-    const headbuttFlinchAttr = headbuttMove.getAttrs(FlinchAttr)[0];
+    const headbuttFlinchAttr = headbuttMove.getAttrs("FlinchAttr")[0];
     vi.spyOn(headbuttFlinchAttr, "getMoveChance");
 
     game.move.use(MoveId.HEADBUTT);

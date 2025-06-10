@@ -1,4 +1,3 @@
-export const starterColors: StarterColors = {};
-interface StarterColors {
+export const starterColors: {
   [key: string]: [string, string];
-}
+} = {};

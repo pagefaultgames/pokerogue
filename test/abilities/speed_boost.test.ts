@@ -6,7 +6,7 @@ import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import type { CommandPhase } from "#app/phases/command-phase";
-import { Command } from "#app/ui/command-ui-handler";
+import { Command } from "#enums/command";
 import { AttemptRunPhase } from "#app/phases/attempt-run-phase";
 
 describe("Abilities - Speed Boost", () => {
@@ -98,9 +98,9 @@ describe("Abilities - Speed Boost", () => {
   it("should not trigger if pokemon fails to escape", async () => {
     await game.classicMode.startBattle([SpeciesId.SHUCKLE]);
 
-    const commandPhase = game.scene.getCurrentPhase() as CommandPhase;
+    const commandPhase = game.scene.phaseManager.getCurrentPhase() as CommandPhase;
     commandPhase.handleCommand(Command.RUN, 0);
-    const runPhase = game.scene.getCurrentPhase() as AttemptRunPhase;
+    const runPhase = game.scene.phaseManager.getCurrentPhase() as AttemptRunPhase;
     runPhase.forceFailEscape = true;
     await game.phaseInterceptor.to(AttemptRunPhase);
     await game.toNextTurn();

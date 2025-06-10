@@ -1,4 +1,4 @@
-import type { TrainerTierPools } from "#app/data/trainers/typedefs";
+import type { TrainerTierPools } from "#app/@types/trainer-funcs";
 import { TrainerPoolTier } from "#enums/trainer-pool-tier";
 import { SpeciesId } from "#enums/species-id";
 

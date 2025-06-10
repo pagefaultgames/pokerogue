@@ -12,12 +12,13 @@ import {
   getLegendaryWeatherContinuesMessage,
   Weather,
 } from "#app/data/weather";
-import { CommonAnim } from "#app/data/battle-anims";
+import { CommonAnim } from "#enums/move-anims-common";
 import type { PokemonType } from "#enums/pokemon-type";
 import type Move from "#app/data/moves/move";
 import type { ArenaTag } from "#app/data/arena-tag";
-import { ArenaTagSide, ArenaTrapTag, getArenaTag } from "#app/data/arena-tag";
-import type { BattlerIndex } from "#app/battle";
+import { ArenaTrapTag, getArenaTag } from "#app/data/arena-tag";
+import { ArenaTagSide } from "#enums/arena-tag-side";
+import type { BattlerIndex } from "#enums/battler-index";
 import { Terrain, TerrainType } from "#app/data/terrain";
 import {
   applyAbAttrs,
@@ -37,8 +38,10 @@ import { SpeciesId } from "#enums/species-id";
 import { TimeOfDay } from "#enums/time-of-day";
 import { TrainerType } from "#enums/trainer-type";
 import { AbilityId } from "#enums/ability-id";
-import { SpeciesFormChangeRevertWeatherFormTrigger, SpeciesFormChangeWeatherTrigger } from "#app/data/pokemon-forms";
-import { CommonAnimPhase } from "#app/phases/common-anim-phase";
+import {
+  SpeciesFormChangeRevertWeatherFormTrigger,
+  SpeciesFormChangeWeatherTrigger,
+} from "#app/data/pokemon-forms/form-change-triggers";
 import { WeatherType } from "#enums/weather-type";
 import { FieldEffectModifier } from "#app/modifier/modifier";
 
@@ -297,8 +300,8 @@ export class Arena {
    */
   trySetWeatherOverride(weather: WeatherType): boolean {
     this.weather = new Weather(weather, 0);
-    globalScene.unshiftPhase(new CommonAnimPhase(undefined, undefined, CommonAnim.SUNNY + (weather - 1)));
-    globalScene.queueMessage(getWeatherStartMessage(weather)!); // TODO: is this bang correct?
+    globalScene.phaseManager.unshiftNew("CommonAnimPhase", undefined, undefined, CommonAnim.SUNNY + (weather - 1));
+    globalScene.phaseManager.queueMessage(getWeatherStartMessage(weather)!); // TODO: is this bang correct?
     return true;
   }
 
@@ -328,10 +331,14 @@ export class Arena {
       this.weather?.isImmutable() &&
       ![WeatherType.HARSH_SUN, WeatherType.HEAVY_RAIN, WeatherType.STRONG_WINDS, WeatherType.NONE].includes(weather)
     ) {
-      globalScene.unshiftPhase(
-        new CommonAnimPhase(undefined, undefined, CommonAnim.SUNNY + (oldWeatherType - 1), true),
+      globalScene.phaseManager.unshiftNew(
+        "CommonAnimPhase",
+        undefined,
+        undefined,
+        CommonAnim.SUNNY + (oldWeatherType - 1),
+        true,
       );
-      globalScene.queueMessage(getLegendaryWeatherContinuesMessage(oldWeatherType)!);
+      globalScene.phaseManager.queueMessage(getLegendaryWeatherContinuesMessage(oldWeatherType)!);
       return false;
     }
 
@@ -348,10 +355,16 @@ export class Arena {
     ); // TODO: is this bang correct?
 
     if (this.weather) {
-      globalScene.unshiftPhase(new CommonAnimPhase(undefined, undefined, CommonAnim.SUNNY + (weather - 1), true));
-      globalScene.queueMessage(getWeatherStartMessage(weather)!); // TODO: is this bang correct?
+      globalScene.phaseManager.unshiftNew(
+        "CommonAnimPhase",
+        undefined,
+        undefined,
+        CommonAnim.SUNNY + (weather - 1),
+        true,
+      );
+      globalScene.phaseManager.queueMessage(getWeatherStartMessage(weather)!); // TODO: is this bang correct?
     } else {
-      globalScene.queueMessage(getWeatherClearMessage(oldWeatherType)!); // TODO: is this bang correct?
+      globalScene.phaseManager.queueMessage(getWeatherClearMessage(oldWeatherType)!); // TODO: is this bang correct?
     }
 
     globalScene
@@ -431,11 +444,16 @@ export class Arena {
 
     if (this.terrain) {
       if (!ignoreAnim) {
-        globalScene.unshiftPhase(new CommonAnimPhase(undefined, undefined, CommonAnim.MISTY_TERRAIN + (terrain - 1)));
+        globalScene.phaseManager.unshiftNew(
+          "CommonAnimPhase",
+          undefined,
+          undefined,
+          CommonAnim.MISTY_TERRAIN + (terrain - 1),
+        );
       }
-      globalScene.queueMessage(getTerrainStartMessage(terrain)!); // TODO: is this bang correct?
+      globalScene.phaseManager.queueMessage(getTerrainStartMessage(terrain)!); // TODO: is this bang correct?
     } else {
-      globalScene.queueMessage(getTerrainClearMessage(oldTerrainType)!); // TODO: is this bang correct?
+      globalScene.phaseManager.queueMessage(getTerrainClearMessage(oldTerrainType)!); // TODO: is this bang correct?
     }
 
     globalScene

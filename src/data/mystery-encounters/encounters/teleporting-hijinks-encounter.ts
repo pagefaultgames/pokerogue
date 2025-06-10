@@ -27,7 +27,6 @@ import { getPartyLuckValue, modifierTypes } from "#app/modifier/modifier-type";
 import { TrainerSlot } from "#enums/trainer-slot";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { Stat } from "#enums/stat";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import {
@@ -227,7 +226,13 @@ async function doBiomeTransitionDialogueAndBattleInit() {
         tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
         mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
           queueEncounterMessage(`${namespace}:boss_enraged`);
-          globalScene.unshiftPhase(new StatStageChangePhase(pokemon.getBattlerIndex(), true, statChangesForBattle, 1));
+          globalScene.phaseManager.unshiftNew(
+            "StatStageChangePhase",
+            pokemon.getBattlerIndex(),
+            true,
+            statChangesForBattle,
+            1,
+          );
         },
       },
     ],
