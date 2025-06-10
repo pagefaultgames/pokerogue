@@ -8,6 +8,7 @@
     "strictNullChecks": true,
     "sourceMap": false,
     "strict": false, // TODO: Enable this eventually
+    "exactOptionalPropertyTypes": true,
     "rootDir": ".",
     "baseUrl": "./src",
     "paths": {
