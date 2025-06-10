@@ -31,7 +31,8 @@ export class QuietFormChangePhase extends BattlePhase {
     super.start();
 
     if (this.pokemon.formIndex === this.pokemon.species.forms.findIndex(f => f.formKey === this.formChange.formKey)) {
-      return this.end();
+      this.end();
+      return;
     }
 
     const preName = getPokemonNameWithAffix(this.pokemon);
