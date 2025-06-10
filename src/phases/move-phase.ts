@@ -294,7 +294,7 @@ export class MovePhase extends BattlePhase {
   }
 
   /**
-   * Lapse {@linkcode BattlerTagLapseType.PRE_MOVE  | PRE_MOVE} tags that trigger before a move is used, regardless of whether or not it failed.
+   * Lapse {@linkcode BattlerTagLapseType.PRE_MOVE | PRE_MOVE} tags that trigger before a move is used, regardless of whether or not it failed.
    * Also lapse {@linkcode BattlerTagLapseType.MOVE | MOVE} tags if the move is successful and not called indirectly.
    */
   protected lapsePreMoveAndMoveTags(): void {
