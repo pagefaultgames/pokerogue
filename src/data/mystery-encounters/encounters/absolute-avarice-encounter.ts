@@ -7,7 +7,8 @@ import {
   transitionMysteryEncounterIntroVisuals,
 } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import type Pokemon from "#app/field/pokemon";
-import { EnemyPokemon, PokemonMove } from "#app/field/pokemon";
+import { EnemyPokemon } from "#app/field/pokemon";
+import { PokemonMove } from "#app/data/moves/pokemon-move";
 import type { BerryModifierType, PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
@@ -25,7 +26,7 @@ import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { MoveId } from "#enums/move-id";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { randInt } from "#app/utils/common";
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex } from "#enums/battler-index";
 import {
   applyModifierTypeToPlayerPokemon,
   catchPokemon,

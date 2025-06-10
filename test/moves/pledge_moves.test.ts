@@ -1,7 +1,6 @@
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex } from "#enums/battler-index";
 import { allAbilities } from "#app/data/data-lists";
-import { ArenaTagSide } from "#app/data/arena-tag";
-import { FlinchAttr } from "#app/data/moves/move";
+import { ArenaTagSide } from "#enums/arena-tag-side";
 import { allMoves } from "#app/data/data-lists";
 import { PokemonType } from "#enums/pokemon-type";
 import { ArenaTagType } from "#enums/arena-tag-type";
@@ -228,7 +227,7 @@ describe("Moves - Pledge Moves", () => {
 
     await game.classicMode.startBattle([SpeciesId.BLASTOISE, SpeciesId.CHARIZARD]);
 
-    const ironHeadFlinchAttr = allMoves[MoveId.IRON_HEAD].getAttrs(FlinchAttr)[0];
+    const ironHeadFlinchAttr = allMoves[MoveId.IRON_HEAD].getAttrs("FlinchAttr")[0];
     vi.spyOn(ironHeadFlinchAttr, "getMoveChance");
 
     game.move.select(MoveId.WATER_PLEDGE, 0, BattlerIndex.ENEMY);

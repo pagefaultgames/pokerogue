@@ -8,7 +8,7 @@ import type Pokemon from "../field/pokemon";
 import i18next from "i18next";
 import type { StarterDataEntry } from "../system/game-data";
 import type { DexEntry } from "#app/@types/dex-data";
-import { DexAttr } from "../system/game-data";
+import { DexAttr } from "#enums/dex-attr";
 import { fixedInt, getShinyDescriptor } from "#app/utils/common";
 import ConfirmUiHandler from "./confirm-ui-handler";
 import { StatsContainer } from "./stats-container";

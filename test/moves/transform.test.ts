@@ -6,7 +6,7 @@ import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { MoveId } from "#enums/move-id";
 import { Stat, EFFECTIVE_STATS } from "#enums/stat";
 import { AbilityId } from "#enums/ability-id";
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex } from "#enums/battler-index";
 
 // TODO: Add more tests once Transform is fully implemented
 describe("Moves - Transform", () => {
