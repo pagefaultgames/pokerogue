@@ -5,7 +5,7 @@ import { toReadableString, isNullOrUndefined, randSeedItem, randSeedInt, randSee
 import { pokemonEvolutions, pokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { tmSpecies } from "#app/data/balance/tms";
-import { doubleBattleDialogue } from "#app/data/dialogue";
+import { doubleBattleDialogue } from "../double-battle-dialogue";
 import { TrainerVariant } from "#enums/trainer-variant";
 import { getIsInitialized, initI18n } from "#app/plugins/i18n";
 import i18next from "i18next";

@@ -5,11 +5,11 @@ import type Pokemon from "../field/pokemon";
 import { type nil, getFrameMs, getEnumKeys, getEnumValues, animationFileName } from "../utils/common";
 import type { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
-import { SubstituteTag } from "./battler-tags";
 import { isNullOrUndefined } from "../utils/common";
 import Phaser from "phaser";
 import { EncounterAnim } from "#enums/encounter-anims";
 import { AnimBlendType, AnimFrameTarget, AnimFocus, ChargeAnim, CommonAnim } from "#enums/move-anims-common";
+import { BattlerTagType } from "#enums/battler-tag-type";
 
 export class AnimConfig {
   public id: number;
@@ -770,7 +770,7 @@ export abstract class BattleAnim {
     const user = !isOppAnim ? this.user : this.target;
     const target = !isOppAnim ? this.target : this.user;
 
-    const targetSubstitute = onSubstitute && user !== target ? target!.getTag(SubstituteTag) : null;
+    const targetSubstitute = onSubstitute && user !== target ? target!.getTag(BattlerTagType.SUBSTITUTE) : null;
 
     const userInitialX = user!.x; // TODO: is this bang correct?
     const userInitialY = user!.y; // TODO: is this bang correct?

@@ -18,7 +18,7 @@ import { BerryType } from "#enums/berry-type";
 import { SpeciesId } from "#enums/species-id";
 import { timedEventManager } from "#app/global-event-manager";
 import { pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
-import { Unlockables } from "#app/system/unlockables";
+import { Unlockables } from "#enums/unlockables";
 import { isNullOrUndefined } from "#app/utils/common";
 import { MoveId } from "#enums/move-id";
 import { StatusEffect } from "#enums/status-effect";

@@ -11,7 +11,7 @@ import { modifierTypes } from "#app/data/data-lists";
 import { BattlePhase } from "#app/phases/battle-phase";
 import type { EndCardPhase } from "#app/phases/end-card-phase";
 import { achvs, ChallengeAchv } from "#app/system/achv";
-import { Unlockables } from "#app/system/unlockables";
+import { Unlockables } from "#enums/unlockables";
 import { UiMode } from "#enums/ui-mode";
 import { isLocal, isLocalServerConnected } from "#app/utils/common";
 import { PlayerGender } from "#enums/player-gender";
