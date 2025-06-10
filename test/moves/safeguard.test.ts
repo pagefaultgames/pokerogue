@@ -1,4 +1,4 @@
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex } from "#enums/battler-index";
 import { PostDefendContactApplyStatusEffectAbAttr } from "#app/data/abilities/ability";
 import { StatusEffect } from "#app/enums/status-effect";
 import GameManager from "#test/testUtils/gameManager";

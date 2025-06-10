@@ -140,7 +140,7 @@ describe("Abilities - Imposter", () => {
     await game.doKillOpponents();
     await game.toNextWave();
 
-    expect(game.scene.getCurrentPhase()?.constructor.name).toBe("CommandPhase");
+    expect(game.scene.phaseManager.getCurrentPhase()?.constructor.name).toBe("CommandPhase");
     expect(game.scene.currentBattle.waveIndex).toBe(2);
 
     await game.reload.reloadSession();
@@ -175,7 +175,7 @@ describe("Abilities - Imposter", () => {
     await game.doKillOpponents();
     await game.toNextWave();
 
-    expect(game.scene.getCurrentPhase()?.constructor.name).toBe("CommandPhase");
+    expect(game.scene.phaseManager.getCurrentPhase()?.constructor.name).toBe("CommandPhase");
     expect(game.scene.currentBattle.waveIndex).toBe(2);
 
     await game.reload.reloadSession();

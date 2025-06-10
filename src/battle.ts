@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import type { Command } from "./ui/command-ui-handler";
+import type { Command } from "#enums/command";
 import {
   randomString,
   getEnumValues,
@@ -8,8 +8,10 @@ import {
   shiftCharCodes,
   randSeedItem,
   randInt,
+  randSeedFloat,
 } from "#app/utils/common";
-import Trainer, { TrainerVariant } from "./field/trainer";
+import Trainer from "./field/trainer";
+import { TrainerVariant } from "#enums/trainer-variant";
 import type { GameMode } from "./game-mode";
 import { MoneyMultiplierModifier, PokemonHeldItemModifier } from "./modifier/modifier";
 import type { PokeballType } from "#enums/pokeball";
@@ -32,14 +34,7 @@ import { ModifierTier } from "#app/modifier/modifier-tier";
 import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { BattleType } from "#enums/battle-type";
 import { ClassicFixedBossWaves } from "#enums/fixed-boss-waves";
-
-export enum BattlerIndex {
-  ATTACKER = -1,
-  PLAYER,
-  PLAYER_2,
-  ENEMY,
-  ENEMY_2,
-}
+import { BattlerIndex } from "#enums/battler-index";
 
 export interface TurnCommand {
   command: Command;
@@ -150,7 +145,7 @@ export default class Battle {
   randSeedGaussForLevel(value: number): number {
     let rand = 0;
     for (let i = value; i > 0; i--) {
-      rand += Phaser.Math.RND.realInRange(0, 1);
+      rand += randSeedFloat();
     }
     return rand / value;
   }
@@ -205,7 +200,7 @@ export default class Battle {
     const message = i18next.t("battle:moneyPickedUp", {
       moneyAmount: formattedMoneyAmount,
     });
-    globalScene.queueMessage(message, undefined, true);
+    globalScene.phaseManager.queueMessage(message, undefined, true);
 
     globalScene.currentBattle.moneyScattered = 0;
   }

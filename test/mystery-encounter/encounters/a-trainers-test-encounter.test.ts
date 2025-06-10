@@ -108,7 +108,7 @@ describe("A Trainer's Test - Mystery Encounter", () => {
       await runMysteryEncounterToEnd(game, 1, undefined, true);
 
       const enemyField = scene.getEnemyField();
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
+      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(enemyField.length).toBe(1);
       expect(scene.currentBattle.trainer).toBeDefined();
       expect(
@@ -133,7 +133,7 @@ describe("A Trainer's Test - Mystery Encounter", () => {
       await runMysteryEncounterToEnd(game, 1, undefined, true);
       await skipBattleRunMysteryEncounterRewardsPhase(game);
       await game.phaseInterceptor.to(SelectModifierPhase, false);
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
+      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
 
       const eggsAfter = scene.gameData.eggs;
       expect(eggsAfter).toBeDefined();
@@ -163,7 +163,7 @@ describe("A Trainer's Test - Mystery Encounter", () => {
     });
 
     it("Should fully heal the party", async () => {
-      const phaseSpy = vi.spyOn(scene, "unshiftPhase");
+      const phaseSpy = vi.spyOn(scene.phaseManager, "unshiftPhase");
 
       await game.runToMysteryEncounter(MysteryEncounterType.A_TRAINERS_TEST, defaultParty);
       await runMysteryEncounterToEnd(game, 2);
@@ -181,7 +181,7 @@ describe("A Trainer's Test - Mystery Encounter", () => {
 
       await runMysteryEncounterToEnd(game, 2);
       await game.phaseInterceptor.to(SelectModifierPhase, false);
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
+      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
 
       const eggsAfter = scene.gameData.eggs;
       expect(eggsAfter).toBeDefined();

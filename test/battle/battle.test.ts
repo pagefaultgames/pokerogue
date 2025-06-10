@@ -1,6 +1,7 @@
 import { allSpecies } from "#app/data/pokemon-species";
 import { Stat } from "#enums/stat";
-import { GameModes, getGameMode } from "#app/game-mode";
+import { getGameMode } from "#app/game-mode";
+import { GameModes } from "#enums/game-modes";
 import { BattleEndPhase } from "#app/phases/battle-end-phase";
 import { CommandPhase } from "#app/phases/command-phase";
 import { DamageAnimPhase } from "#app/phases/damage-anim-phase";
@@ -85,7 +86,7 @@ describe("Test Battle Phase", () => {
   it("newGame one-liner", async () => {
     await game.classicMode.startBattle();
     expect(game.scene.ui?.getMode()).toBe(UiMode.COMMAND);
-    expect(game.scene.getCurrentPhase()!.constructor.name).toBe(CommandPhase.name);
+    expect(game.scene.phaseManager.getCurrentPhase()!.constructor.name).toBe(CommandPhase.name);
   }, 20000);
 
   it("do attack wave 3 - single battle - regular - OHKO", async () => {
@@ -188,7 +189,7 @@ describe("Test Battle Phase", () => {
       game.scene.gameMode = getGameMode(GameModes.CLASSIC);
       const starters = generateStarter(game.scene);
       const selectStarterPhase = new SelectStarterPhase();
-      game.scene.pushPhase(new EncounterPhase(false));
+      game.scene.phaseManager.pushPhase(new EncounterPhase(false));
       selectStarterPhase.initBattle(starters);
     });
     await game.phaseInterceptor.runFrom(SelectGenderPhase).to(SummonPhase);
@@ -201,7 +202,7 @@ describe("Test Battle Phase", () => {
     game.override.ability(AbilityId.HYDRATION);
     await game.classicMode.startBattle([SpeciesId.BLASTOISE, SpeciesId.CHARIZARD]);
     expect(game.scene.ui?.getMode()).toBe(UiMode.COMMAND);
-    expect(game.scene.getCurrentPhase()!.constructor.name).toBe(CommandPhase.name);
+    expect(game.scene.phaseManager.getCurrentPhase()!.constructor.name).toBe(CommandPhase.name);
   }, 20000);
 
   it("1vs1", async () => {
@@ -211,7 +212,7 @@ describe("Test Battle Phase", () => {
     game.override.ability(AbilityId.HYDRATION);
     await game.classicMode.startBattle([SpeciesId.BLASTOISE]);
     expect(game.scene.ui?.getMode()).toBe(UiMode.COMMAND);
-    expect(game.scene.getCurrentPhase()!.constructor.name).toBe(CommandPhase.name);
+    expect(game.scene.phaseManager.getCurrentPhase()!.constructor.name).toBe(CommandPhase.name);
   }, 20000);
 
   it("2vs2", async () => {
@@ -222,7 +223,7 @@ describe("Test Battle Phase", () => {
     game.override.startingWave(3);
     await game.classicMode.startBattle([SpeciesId.BLASTOISE, SpeciesId.CHARIZARD]);
     expect(game.scene.ui?.getMode()).toBe(UiMode.COMMAND);
-    expect(game.scene.getCurrentPhase()!.constructor.name).toBe(CommandPhase.name);
+    expect(game.scene.phaseManager.getCurrentPhase()!.constructor.name).toBe(CommandPhase.name);
   }, 20000);
 
   it("4vs2", async () => {
@@ -233,7 +234,7 @@ describe("Test Battle Phase", () => {
     game.override.startingWave(3);
     await game.classicMode.startBattle([SpeciesId.BLASTOISE, SpeciesId.CHARIZARD, SpeciesId.DARKRAI, SpeciesId.GABITE]);
     expect(game.scene.ui?.getMode()).toBe(UiMode.COMMAND);
-    expect(game.scene.getCurrentPhase()!.constructor.name).toBe(CommandPhase.name);
+    expect(game.scene.phaseManager.getCurrentPhase()!.constructor.name).toBe(CommandPhase.name);
   }, 20000);
 
   it("kill opponent pokemon", async () => {

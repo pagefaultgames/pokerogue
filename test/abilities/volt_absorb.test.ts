@@ -6,7 +6,7 @@ import { MoveId } from "#enums/move-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex } from "#enums/battler-index";
 import { SpeciesId } from "#enums/species-id";
 
 // See also: TypeImmunityAbAttr

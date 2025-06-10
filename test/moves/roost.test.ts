@@ -1,4 +1,4 @@
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex } from "#enums/battler-index";
 import { PokemonType } from "#enums/pokemon-type";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
