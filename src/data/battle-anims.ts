@@ -5,6 +5,7 @@ import type Pokemon from "../field/pokemon";
 import { type nil, getFrameMs, getEnumKeys, getEnumValues, animationFileName } from "../utils/common";
 import type { BattlerIndex } from "#enums/battler-index";
 import { MoveId } from "#enums/move-id";
+import { SubstituteTag } from "./battler-tags";
 import { isNullOrUndefined } from "../utils/common";
 import Phaser from "phaser";
 import { EncounterAnim } from "#enums/encounter-anims";

@@ -4109,6 +4109,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   getTag(tagType: BattlerTagType.GRUDGE): GrudgeTag | nil;
 
   /** @overload */
+  getTag(tagType: BattlerTagType.SUBSTITUTE): SubstituteTag | undefined;
+
+  /** @overload */
   getTag(tagType: BattlerTagType): BattlerTag | undefined;
 
   /** @overload */
