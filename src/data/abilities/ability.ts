@@ -248,13 +248,6 @@ export abstract class AbAttr {
     this.showAbility = showAbility;
   }
 
-  // public is<K extends AbAttrString>(AbAttrName: K): K is AbAttrConstructorMap[K] {
-  //   const targetAttr = AbAttrConstructorMap[AbAttrName];
-  //   if (!targetAttr ) {
-  //     return false;
-  //   }
-  //   return this instanceof targetAttr;
-  // }
   /**
    * Applies ability effects without checking conditions
    * @param _pokemon - The pokemon to apply this ability to
