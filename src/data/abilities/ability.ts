@@ -1924,10 +1924,12 @@ export class FieldMultiplyStatAbAttr extends AbAttr {
     _args: any[],
   ): boolean {
     return (
-      (this.canStack || !hasApplied.value)
-      && this.stat === stat
+      (this.canStack || !hasApplied.value) &&
+      this.stat === stat &&
       // targets with the same stat-changing ability as this are unaffected
-      && checkedPokemon.getAbilityAttrs(FieldMultiplyStatAbAttr).every(attr => attr.stat !== stat)
+      checkedPokemon
+        .getAbilityAttrs(FieldMultiplyStatAbAttr)
+        .every(attr => attr.stat !== stat)
     );
   }
 
@@ -2095,16 +2097,23 @@ export class PokemonTypeChangeAbAttr extends PreAttackAbAttr {
  * Used by {@linkcode Moves.PARENTAL_BOND | Parental Bond}.
  *
  * @param damageMultiplier - The damage multiplier for the added strike, relative to the first.
-*/
+ */
 export class AddSecondStrikeAbAttr extends PreAttackAbAttr {
   private damageMultiplier: number;
- constructor(damageMultiplier: number) {
+  constructor(damageMultiplier: number) {
     super(false);
 
     this.damageMultiplier = damageMultiplier;
   }
 
-  override canApplyPreAttack(pokemon: Pokemon, _passive: boolean, _simulated: boolean, _defender: Pokemon | null, move: Move, _args: [NumberHolder?, NumberHolder?]): boolean {
+  override canApplyPreAttack(
+    pokemon: Pokemon,
+    _passive: boolean,
+    _simulated: boolean,
+    _defender: Pokemon | null,
+    move: Move,
+    _args: [NumberHolder?, NumberHolder?],
+  ): boolean {
     return move.canBeMultiStrikeEnhanced(pokemon, true);
   }
 
@@ -2119,7 +2128,14 @@ export class AddSecondStrikeAbAttr extends PreAttackAbAttr {
    * - `[1]` - A {@linkcode NumberHolder} holding the current strike's damage multiplier.
    */
   // TODO: Review if these args can be undefined when called (and remove the ? if not)
-  override applyPreAttack(pokemon: Pokemon, _passive: boolean, _simulated: boolean, _defender: Pokemon, _move: Move, args: [NumberHolder?, NumberHolder?]): void {
+  override applyPreAttack(
+    pokemon: Pokemon,
+    _passive: boolean,
+    _simulated: boolean,
+    _defender: Pokemon,
+    _move: Move,
+    args: [NumberHolder?, NumberHolder?],
+  ): void {
     const hitCount = args[0];
     const multiplier = args[1];
     if (hitCount?.value) {
@@ -4188,20 +4204,32 @@ export class ConfusionOnStatusEffectAbAttr extends PostAttackAbAttr {
     this.effects = new Set(effects);
   }
 
-   /**
-    * Check that the target was inflicted by the correct status condition from this Pokemon
-    * and can be confused.
-    * @param pokemon - {The @linkcode Pokemon} with this ability
-    * @param passive - N/A
-    * @param defender - The {@linkcode Pokemon} being targeted (will be confused)
-    * @param move - The {@linkcode Move} that applied the status effect
-    * @param hitResult - N/A
-    * @param args `[0]` - The {@linkcode StatusEffect} applied by the move
-    * @returns `true` if the target can be confused after being statused.
+  /**
+   * Check that the target was inflicted by the correct status condition from this Pokemon
+   * and can be confused.
+   * @param pokemon - {The @linkcode Pokemon} with this ability
+   * @param passive - N/A
+   * @param defender - The {@linkcode Pokemon} being targeted (will be confused)
+   * @param move - The {@linkcode Move} that applied the status effect
+   * @param hitResult - N/A
+   * @param args `[0]` - The {@linkcode StatusEffect} applied by the move
+   * @returns `true` if the target can be confused after being statused.
    */
-  override canApplyPostAttack(pokemon: Pokemon, passive: boolean, simulated: boolean, defender: Pokemon, move: Move, hitResult: HitResult | null, args: [StatusEffect]): boolean {
-    return super.canApplyPostAttack(pokemon, passive, simulated, defender, move, hitResult, args)
-        && this.effects.has(args[0]) && !defender.isFainted() && defender.canAddTag(BattlerTagType.CONFUSED);
+  override canApplyPostAttack(
+    pokemon: Pokemon,
+    passive: boolean,
+    simulated: boolean,
+    defender: Pokemon,
+    move: Move,
+    hitResult: HitResult | null,
+    args: [StatusEffect],
+  ): boolean {
+    return (
+      super.canApplyPostAttack(pokemon, passive, simulated, defender, move, hitResult, args) &&
+      this.effects.has(args[0]) &&
+      !defender.isFainted() &&
+      defender.canAddTag(BattlerTagType.CONFUSED)
+    );
   }
 
   /**
@@ -4398,8 +4426,15 @@ export class ConditionalUserFieldProtectStatAbAttr extends PreStatStageChangeAbA
    * @param cancelled - {@linkcode BooleanHolder} containing whether the stat change was already prevented
    * @param args - `[0]`: The {@linkcode Pokemon} receiving the stat change
    * @returns `true` if the ability can be applied
-  */
-  override canApplyPreStatStageChange(pokemon: Pokemon, passive: boolean, simulated: boolean, stat: BattleStat, cancelled: BooleanHolder, args: [Pokemon]): boolean {
+   */
+  override canApplyPreStatStageChange(
+    _pokemon: Pokemon,
+    _passive: boolean,
+    _simulated: boolean,
+    stat: BattleStat,
+    cancelled: BooleanHolder,
+    args: [Pokemon],
+  ): boolean {
     const target = args[0];
     if (!target) {
       return false;
@@ -4647,7 +4682,13 @@ export class ConditionalCritAbAttr extends AbAttr {
    * - `[1]` The {@linkcode Pokemon} being targeted (unused)
    * - `[2]` The {@linkcode Move} used by the ability holder (unused)
    */
-  override apply(pokemon: Pokemon, passive: boolean, simulated: boolean, cancelled: BooleanHolder, args: [BooleanHolder, Pokemon, Move, ...any]): void {
+  override apply(
+    _pokemon: Pokemon,
+    _passive: boolean,
+    _simulated: boolean,
+    _cancelled: BooleanHolder,
+    args: [BooleanHolder, Pokemon, Move, ...any],
+  ): void {
     (args[0] as BooleanHolder).value = true;
   }
 }
@@ -5676,9 +5717,13 @@ export class PostTurnHurtIfSleepingAbAttr extends PostTurnAbAttr {
         continue;
       }
 
-      if (!opp.hasAbilityWithAttr(BlockNonDirectDamageAbAttr)) {
+      const cancelled = new BooleanHolder(false);
+      applyAbAttrs(BlockNonDirectDamageAbAttr, opp, cancelled, false);
+      if (!cancelled) {
         opp.damageAndUpdate(toDmgValue(opp.getMaxHp() / 8), { result: HitResult.INDIRECT });
-        globalScene.queueMessage(i18next.t("abilityTriggers:badDreams", { pokemonName: getPokemonNameWithAffix(opp) }));
+        globalScene.phaseManager.queueMessage(
+          i18next.t("abilityTriggers:badDreams", { pokemonName: getPokemonNameWithAffix(opp) }),
+        );
       }
     }
   }
