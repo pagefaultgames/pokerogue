@@ -1,8 +1,9 @@
-import type { PlayerPokemon, PokemonMove } from "#app/field/pokemon";
+import type { PlayerPokemon } from "#app/field/pokemon";
+import type { PokemonMove } from "#app/data/moves/pokemon-move";
 import type Pokemon from "#app/field/pokemon";
-import { MoveResult } from "#app/field/pokemon";
+import { MoveResult } from "#enums/move-result";
 import { addBBCodeTextObject, addTextObject, getTextColor, TextStyle } from "#app/ui/text";
-import { Command } from "#app/ui/command-ui-handler";
+import { Command } from "#enums/command";
 import MessageUiHandler from "#app/ui/message-ui-handler";
 import { UiMode } from "#enums/ui-mode";
 import { BooleanHolder, toReadableString, randInt, getLocalizedSpriteKey } from "#app/utils/common";
@@ -11,17 +12,18 @@ import {
   PokemonHeldItemModifier,
   SwitchEffectTransferModifier,
 } from "#app/modifier/modifier";
-import { ForceSwitchOutAttr } from "#app/data/moves/move";
 import { allMoves } from "#app/data/data-lists";
 import { Gender, getGenderColor, getGenderSymbol } from "#app/data/gender";
 import { StatusEffect } from "#enums/status-effect";
 import PokemonIconAnimHandler, { PokemonIconAnimMode } from "#app/ui/pokemon-icon-anim-handler";
 import { pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
 import { addWindow } from "#app/ui/ui-theme";
-import { SpeciesFormChangeItemTrigger, FormChangeItem } from "#app/data/pokemon-forms";
+import { SpeciesFormChangeItemTrigger } from "#app/data/pokemon-forms/form-change-triggers";
+import { FormChangeItem } from "#enums/form-change-item";
 import { getVariantTint } from "#app/sprites/variant";
 import { Button } from "#enums/buttons";
-import { applyChallenges, ChallengeType } from "#app/data/challenge";
+import { applyChallenges } from "#app/data/challenge";
+import { ChallengeType } from "#enums/challenge-type";
 import MoveInfoOverlay from "#app/ui/move-info-overlay";
 import i18next from "i18next";
 import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
@@ -1175,7 +1177,7 @@ export default class PartyUiHandler extends MessageUiHandler {
     return !!(
       this.partyUiMode === PartyUiMode.FAINT_SWITCH &&
       moveHistory.length &&
-      allMoves[moveHistory[moveHistory.length - 1].move].getAttrs(ForceSwitchOutAttr)[0]?.isBatonPass() &&
+      allMoves[moveHistory[moveHistory.length - 1].move].getAttrs("ForceSwitchOutAttr")[0]?.isBatonPass() &&
       moveHistory[moveHistory.length - 1].result === MoveResult.SUCCESS
     );
   }

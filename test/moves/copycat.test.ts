@@ -1,8 +1,8 @@
-import { BattlerIndex } from "#app/battle";
-import { RandomMoveAttr } from "#app/data/moves/move";
+import { BattlerIndex } from "#enums/battler-index";
+import type { RandomMoveAttr } from "#app/data/moves/move";
 import { allMoves } from "#app/data/data-lists";
 import { Stat } from "#app/enums/stat";
-import { MoveResult } from "#app/field/pokemon";
+import { MoveResult } from "#enums/move-result";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
@@ -27,7 +27,7 @@ describe("Moves - Copycat", () => {
   });
 
   beforeEach(() => {
-    randomMoveAttr = allMoves[MoveId.METRONOME].getAttrs(RandomMoveAttr)[0];
+    randomMoveAttr = allMoves[MoveId.METRONOME].getAttrs("RandomMoveAttr")[0];
     game = new GameManager(phaserGame);
     game.override
       .moveset([MoveId.COPYCAT, MoveId.SPIKY_SHIELD, MoveId.SWORDS_DANCE, MoveId.SPLASH])

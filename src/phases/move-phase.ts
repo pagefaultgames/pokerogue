@@ -1,4 +1,4 @@
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex } from "#enums/battler-index";
 import { globalScene } from "#app/global-scene";
 import {
   applyAbAttrs,
@@ -12,30 +12,21 @@ import {
   ReduceStatusEffectDurationAbAttr,
 } from "#app/data/abilities/ability";
 import type { DelayedAttackTag } from "#app/data/arena-tag";
-import { CommonAnim } from "#app/data/battle-anims";
-import { BattlerTagLapseType, CenterOfAttentionTag } from "#app/data/battler-tags";
-import {
-  AddArenaTrapTagAttr,
-  applyMoveAttrs,
-  BypassRedirectAttr,
-  BypassSleepAttr,
-  CopyMoveAttr,
-  DelayedAttackAttr,
-  frenzyMissFunc,
-  HealStatusEffectAttr,
-  PreMoveMessageAttr,
-  PreUseInterruptAttr,
-} from "#app/data/moves/move";
+import { CommonAnim } from "#enums/move-anims-common";
+import { CenterOfAttentionTag } from "#app/data/battler-tags";
+import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
+import type { HealStatusEffectAttr } from "#app/data/moves/move";
+import { applyMoveAttrs } from "#app/data/moves/apply-attrs";
 import { allMoves } from "#app/data/data-lists";
 import { MoveFlags } from "#enums/MoveFlags";
-import { SpeciesFormChangePreMoveTrigger } from "#app/data/pokemon-forms";
+import { SpeciesFormChangePreMoveTrigger } from "#app/data/pokemon-forms/form-change-triggers";
 import { getStatusEffectActivationText, getStatusEffectHealText } from "#app/data/status-effect";
 import { PokemonType } from "#enums/pokemon-type";
 import { getTerrainBlockMessage, getWeatherBlockMessage } from "#app/data/weather";
 import { MoveUsedEvent } from "#app/events/battle-scene";
-import type { PokemonMove } from "#app/field/pokemon";
+import type { PokemonMove } from "#app/data/moves/pokemon-move";
 import type Pokemon from "#app/field/pokemon";
-import { MoveResult } from "#app/field/pokemon";
+import { MoveResult } from "#enums/move-result";
 import { getPokemonNameWithAffix } from "#app/messages";
 import Overrides from "#app/overrides";
 import { BattlePhase } from "#app/phases/battle-phase";
@@ -46,6 +37,7 @@ import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
 import { StatusEffect } from "#enums/status-effect";
 import i18next from "i18next";
+import { frenzyMissFunc } from "#app/data/moves/move-utils";
 
 export class MovePhase extends BattlePhase {
   public readonly phaseName = "MovePhase";
@@ -204,7 +196,7 @@ export class MovePhase extends BattlePhase {
     const moveQueue = this.pokemon.getMoveQueue();
 
     if (
-      (targets.length === 0 && !this.move.getMove().hasAttr(AddArenaTrapTagAttr)) ||
+      (targets.length === 0 && !this.move.getMove().hasAttr("AddArenaTrapTagAttr")) ||
       (moveQueue.length && moveQueue[0].move === MoveId.NONE)
     ) {
       this.showMoveText();
@@ -233,7 +225,7 @@ export class MovePhase extends BattlePhase {
             Overrides.STATUS_ACTIVATION_OVERRIDE !== false;
           break;
         case StatusEffect.SLEEP: {
-          applyMoveAttrs(BypassSleepAttr, this.pokemon, null, this.move.getMove());
+          applyMoveAttrs("BypassSleepAttr", this.pokemon, null, this.move.getMove());
           const turnsRemaining = new NumberHolder(this.pokemon.status.sleepTurnsRemaining ?? 0);
           applyAbAttrs(
             ReduceStatusEffectDurationAbAttr,
@@ -253,7 +245,10 @@ export class MovePhase extends BattlePhase {
             !!this.move
               .getMove()
               .findAttr(
-                attr => attr instanceof HealStatusEffectAttr && attr.selfTarget && attr.isOfEffect(StatusEffect.FREEZE),
+                attr =>
+                  attr.is("HealStatusEffectAttr") &&
+                  attr.selfTarget &&
+                  (attr as unknown as HealStatusEffectAttr).isOfEffect(StatusEffect.FREEZE),
               ) ||
             (!this.pokemon.randBattleSeedInt(5) && Overrides.STATUS_ACTIVATION_OVERRIDE !== true) ||
             Overrides.STATUS_ACTIVATION_OVERRIDE === false;
@@ -303,7 +298,7 @@ export class MovePhase extends BattlePhase {
     // form changes happen even before we know that the move wll execute.
     globalScene.triggerPokemonFormChange(this.pokemon, SpeciesFormChangePreMoveTrigger);
 
-    const isDelayedAttack = this.move.getMove().hasAttr(DelayedAttackAttr);
+    const isDelayedAttack = this.move.getMove().hasAttr("DelayedAttackAttr");
     if (isDelayedAttack) {
       // Check the player side arena if future sight is active
       const futureSightTags = globalScene.arena.findTags(t => t.tagType === ArenaTagType.FUTURE_SIGHT);
@@ -331,7 +326,7 @@ export class MovePhase extends BattlePhase {
 
     let success = true;
     // Check if there are any attributes that can interrupt the move, overriding the fail message.
-    for (const move of this.move.getMove().getAttrs(PreUseInterruptAttr)) {
+    for (const move of this.move.getMove().getAttrs("PreUseInterruptAttr")) {
       if (move.apply(this.pokemon, targets[0], this.move.getMove())) {
         success = false;
         break;
@@ -386,7 +381,7 @@ export class MovePhase extends BattlePhase {
     }
 
     // Update the battle's "last move" pointer, unless we're currently mimicking a move.
-    if (!allMoves[this.move.moveId].hasAttr(CopyMoveAttr)) {
+    if (!allMoves[this.move.moveId].hasAttr("CopyMoveAttr")) {
       // The last move used is unaffected by moves that fail
       if (success) {
         globalScene.currentBattle.lastMove = this.move.moveId;
@@ -543,7 +538,7 @@ export class MovePhase extends BattlePhase {
       });
 
       if (currentTarget !== redirectTarget.value) {
-        const bypassRedirectAttrs = this.move.getMove().getAttrs(BypassRedirectAttr);
+        const bypassRedirectAttrs = this.move.getMove().getAttrs("BypassRedirectAttr");
         bypassRedirectAttrs.forEach(attr => {
           if (!attr.abilitiesOnly || redirectedByAbility) {
             redirectTarget.value = currentTarget;
@@ -667,7 +662,7 @@ export class MovePhase extends BattlePhase {
 
     // Moves with pre-use messages (Magnitude, Chilly Reception, Fickle Beam, etc.) always display their messages even on failure
     // TODO: This assumes single target for message funcs - is this sustainable?
-    applyMoveAttrs(PreMoveMessageAttr, this.pokemon, this.pokemon.getOpponents(false)[0], this.move.getMove());
+    applyMoveAttrs("PreMoveMessageAttr", this.pokemon, this.pokemon.getOpponents(false)[0], this.move.getMove());
   }
 
   public showFailedText(failedText: string = i18next.t("battle:attackFailed")): void {

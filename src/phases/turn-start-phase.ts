@@ -1,15 +1,14 @@
 import { applyAbAttrs, BypassSpeedChanceAbAttr, PreventBypassSpeedChanceAbAttr } from "#app/data/abilities/ability";
-import { MoveHeaderAttr } from "#app/data/moves/move";
 import { allMoves } from "#app/data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { Stat } from "#app/enums/stat";
 import type Pokemon from "#app/field/pokemon";
-import { PokemonMove } from "#app/field/pokemon";
+import { PokemonMove } from "#app/data/moves/pokemon-move";
 import { BypassSpeedChanceModifier } from "#app/modifier/modifier";
-import { Command } from "#app/ui/command-ui-handler";
+import { Command } from "#enums/command";
 import { randSeedShuffle, BooleanHolder } from "#app/utils/common";
 import { FieldPhase } from "./field-phase";
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex } from "#enums/battler-index";
 import { TrickRoomTag } from "#app/data/arena-tag";
 import { SwitchType } from "#enums/switch-type";
 import { globalScene } from "#app/global-scene";
@@ -168,7 +167,7 @@ export class TurnStartPhase extends FieldPhase {
             const move =
               pokemon.getMoveset().find(m => m.moveId === queuedMove.move && m.ppUsed < m.getMovePp()) ||
               new PokemonMove(queuedMove.move);
-            if (move.getMove().hasAttr(MoveHeaderAttr)) {
+            if (move.getMove().hasAttr("MoveHeaderAttr")) {
               phaseManager.unshiftNew("MoveHeaderPhase", pokemon, move);
             }
             if (pokemon.isPlayer()) {

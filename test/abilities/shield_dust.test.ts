@@ -1,4 +1,4 @@
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex } from "#enums/battler-index";
 import {
   applyAbAttrs,
   applyPreDefendAbAttrs,

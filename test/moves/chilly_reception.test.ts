@@ -1,5 +1,5 @@
 import { RandomMoveAttr } from "#app/data/moves/move";
-import { MoveResult } from "#app/field/pokemon";
+import { MoveResult } from "#enums/move-result";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
@@ -41,7 +41,7 @@ describe("Moves - Chilly Reception", () => {
 
     game.move.select(MoveId.CHILLY_RECEPTION);
     game.doSelectPartyPokemon(1);
-    await game.phaseInterceptor.to("BerryPhase", false);
+    await game.toEndOfTurn();
 
     expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.SNOW);
     expect(game.scene.getPlayerPokemon()).toBe(meowth);
@@ -56,8 +56,8 @@ describe("Moves - Chilly Reception", () => {
     await game.classicMode.startBattle([SpeciesId.SLOWKING]);
 
     game.move.select(MoveId.CHILLY_RECEPTION);
+    await game.toEndOfTurn();
 
-    await game.phaseInterceptor.to("BerryPhase", false);
     expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.SNOW);
     expect(game.phaseInterceptor.log).not.toContain("SwitchSummonPhase");
     expect(game.scene.getPlayerPokemon()?.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
@@ -81,7 +81,7 @@ describe("Moves - Chilly Reception", () => {
     //  await game.phaseInterceptor.to("SwitchSummonPhase", false);
     //  expect(slowking.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
 
-    await game.phaseInterceptor.to("BerryPhase", false);
+    await game.toEndOfTurn();
 
     expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.SNOW);
     expect(game.phaseInterceptor.log).toContain("SwitchSummonPhase");
@@ -104,7 +104,7 @@ describe("Moves - Chilly Reception", () => {
 
     game.move.select(MoveId.CHILLY_RECEPTION);
     game.doSelectPartyPokemon(1);
-    await game.phaseInterceptor.to("BerryPhase", false);
+    await game.toEndOfTurn();
 
     expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.SNOW);
     expect(game.phaseInterceptor.log).not.toContain("SwitchSummonPhase");
@@ -123,7 +123,7 @@ describe("Moves - Chilly Reception", () => {
 
     game.move.select(MoveId.METRONOME);
     game.doSelectPartyPokemon(1);
-    await game.phaseInterceptor.to("BerryPhase", false);
+    await game.toEndOfTurn();
 
     expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.SNOW);
     expect(game.scene.getPlayerPokemon()).toBe(meowth);
@@ -141,8 +141,8 @@ describe("Moves - Chilly Reception", () => {
 
     game.move.select(MoveId.SPLASH);
     await game.move.selectEnemyMove(MoveId.TACKLE);
+    await game.toEndOfTurn();
 
-    await game.phaseInterceptor.to("BerryPhase", false);
     expect(game.scene.arena.weather?.weatherType).toBeUndefined();
   });
 });

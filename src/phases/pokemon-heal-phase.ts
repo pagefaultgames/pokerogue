@@ -1,9 +1,9 @@
 import { globalScene } from "#app/global-scene";
-import type { BattlerIndex } from "#app/battle";
-import { CommonAnim } from "#app/data/battle-anims";
+import type { BattlerIndex } from "#enums/battler-index";
+import { CommonAnim } from "#enums/move-anims-common";
 import { getStatusEffectHealText } from "#app/data/status-effect";
 import { StatusEffect } from "#app/enums/status-effect";
-import { HitResult } from "#app/field/pokemon";
+import { HitResult } from "#enums/hit-result";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { HealingBoosterModifier } from "#app/modifier/modifier";
 import { HealAchv } from "#app/system/achv";
