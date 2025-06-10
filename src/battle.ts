@@ -13,7 +13,7 @@ import {
 import Trainer from "./field/trainer";
 import { TrainerVariant } from "#enums/trainer-variant";
 import type { GameMode } from "./game-mode";
-import type { PokemonHeldItemModifier } from "./modifier/modifier";
+import { MoneyMultiplierModifier, type PokemonHeldItemModifier } from "./modifier/modifier";
 import type { PokeballType } from "#enums/pokeball";
 import { trainerConfigs } from "#app/data/trainers/trainer-config";
 import { SpeciesFormKey } from "#enums/species-form-key";
