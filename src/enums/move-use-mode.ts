@@ -11,12 +11,12 @@ import type { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
  * instead using the available helper functions
  * ({@linkcode isVirtual}, {@linkcode isIgnoreStatus}, {@linkcode isIgnorePP} and {@linkcode isReflected}).
  */
-export enum MoveUseMode {
+export const MoveUseMode = {
   /**
   * This move was used normally (i.e. clicking on the button) or called via Instruct.
   * It deducts PP from the user's moveset (failing if out of PP), and interacts normally with other moves and abilities.
   */
-  NORMAL = 1,
+  NORMAL: 1,
 
   /**
    * This move was called by an effect that ignores PP, such as a consecutively executed move (e.g. Outrage).
@@ -27,7 +27,7 @@ export enum MoveUseMode {
    *
    * PP can still be reduced by other effects (such as Spite or Eerie Spell).
    */
-  IGNORE_PP = 2,
+  IGNORE_PP: 2,
 
   /**
    * This move was called indirectly by an out-of-turn effect other than Instruct or the user's previous move.
@@ -39,7 +39,7 @@ export enum MoveUseMode {
    *
    * They still respect the user's volatile status conditions and confusion (though will uniquely _cure freeze and sleep before use_).
    */
-  INDIRECT = 3,
+  INDIRECT: 3,
 
   /**
     * This move was called as part of another move's effect (such as for most {@link https://bulbapedia.bulbagarden.net/wiki/Category:Moves_that_call_other_moves | Move-calling moves}).
@@ -50,7 +50,7 @@ export enum MoveUseMode {
     * They are _not ignored_ by other move-calling moves and abilities (unlike {@linkcode MoveUseMode.FOLLOW_UP} and {@linkcode MoveUseMode.REFLECTED}),
     * but still inherit the former's disregard for moveset-related effects.
     */
-  FOLLOW_UP = 4,
+  FOLLOW_UP: 4,
 
   /**
    * This move was reflected by Magic Coat or Magic Bounce.
@@ -59,9 +59,11 @@ export enum MoveUseMode {
    * and retain the same copy prevention as {@linkcode MoveUseMode.FOLLOW_UP}, but additionally
    * **cannot be reflected by other reflecting effects**.
    */
-  REFLECTED = 5
+  REFLECTED: 5
   // TODO: Add use type TRANSPARENT for Future Sight and Doom Desire to prevent move history pushing
-}
+} as const;
+
+export type MoveUseMode = (typeof MoveUseMode)[keyof typeof MoveUseMode];
 
 // # HELPER FUNCTIONS
 // Please update the markdown tables if any new `MoveUseMode`s get added.

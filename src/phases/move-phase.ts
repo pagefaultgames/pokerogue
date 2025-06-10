@@ -449,10 +449,8 @@ export class MovePhase extends BattlePhase {
 
     // Handle Dancer, which triggers immediately after a move is used (rather than waiting on `this.end()`).
     // Note the MoveUseMode check here prevents an infinite Dancer loop.
-    if (
-      this.move.getMove().hasFlag(MoveFlags.DANCE_MOVE) &&
-      ![MoveUseMode.INDIRECT, MoveUseMode.REFLECTED].includes(this.useMode)
-    ) {
+    const dancerModes: MoveUseMode[] = [MoveUseMode.INDIRECT, MoveUseMode.REFLECTED] as const;
+    if (this.move.getMove().hasFlag(MoveFlags.DANCE_MOVE) && !dancerModes.includes(this.useMode)) {
       // TODO: Fix in dancer PR to move to MEP for hit checks
       globalScene.getField(true).forEach(pokemon => {
         applyPostMoveUsedAbAttrs(PostMoveUsedAbAttr, pokemon, this.move, this.pokemon, this.targets);
