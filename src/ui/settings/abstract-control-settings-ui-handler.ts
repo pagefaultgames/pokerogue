@@ -126,6 +126,11 @@ export default abstract class AbstractControlSettingsUiHandler extends UiHandler
     );
     this.actionsBg.setOrigin(0, 0);
 
+    /*
+     * If there isn't enough space to fit all the icons and texts, there will be an overlap
+     * This currently doesn't happen, but it's something to keep in mind.
+     */
+
     const iconAction = globalScene.add.sprite(0, 0, "keyboard");
     iconAction.setOrigin(0, -0.1);
     iconAction.setPositionRelative(this.actionsBg, this.navigationContainer.width - 32, 4);
