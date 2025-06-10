@@ -1,9 +1,9 @@
-import { FlinchAttr, StatStageChangeAttr } from "#app/data/moves/move";
+import type { FlinchAttr, StatStageChangeAttr } from "#app/data/moves/move";
 import { allMoves } from "#app/data/data-lists";
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
+import { AbilityId } from "#enums/ability-id";
+import { MoveId } from "#enums/move-id";
 import type Move from "#app/data/moves/move";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -19,9 +19,9 @@ describe("Moves - Triple Arrows", () => {
     phaserGame = new Phaser.Game({
       type: Phaser.HEADLESS,
     });
-    tripleArrows = allMoves[Moves.TRIPLE_ARROWS];
-    flinchAttr = tripleArrows.getAttrs(FlinchAttr)[0];
-    defDropAttr = tripleArrows.getAttrs(StatStageChangeAttr)[0];
+    tripleArrows = allMoves[MoveId.TRIPLE_ARROWS];
+    flinchAttr = tripleArrows.getAttrs("FlinchAttr")[0];
+    defDropAttr = tripleArrows.getAttrs("StatStageChangeAttr")[0];
   });
 
   afterEach(() => {
@@ -31,21 +31,21 @@ describe("Moves - Triple Arrows", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .ability(Abilities.BALL_FETCH)
-      .moveset([Moves.TRIPLE_ARROWS])
+      .ability(AbilityId.BALL_FETCH)
+      .moveset([MoveId.TRIPLE_ARROWS])
       .battleStyle("single")
-      .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.STURDY)
-      .enemyMoveset(Moves.SPLASH);
+      .enemySpecies(SpeciesId.MAGIKARP)
+      .enemyAbility(AbilityId.STURDY)
+      .enemyMoveset(MoveId.SPLASH);
 
     vi.spyOn(flinchAttr, "getMoveChance");
     vi.spyOn(defDropAttr, "getMoveChance");
   });
 
   it("has a 30% flinch chance and 50% defense drop chance", async () => {
-    await game.classicMode.startBattle([Species.FEEBAS]);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-    game.move.select(Moves.TRIPLE_ARROWS);
+    game.move.select(MoveId.TRIPLE_ARROWS);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(flinchAttr.getMoveChance).toHaveReturnedWith(30);
@@ -53,10 +53,10 @@ describe("Moves - Triple Arrows", () => {
   });
 
   it("is affected normally by Serene Grace", async () => {
-    game.override.ability(Abilities.SERENE_GRACE);
-    await game.classicMode.startBattle([Species.FEEBAS]);
+    game.override.ability(AbilityId.SERENE_GRACE);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-    game.move.select(Moves.TRIPLE_ARROWS);
+    game.move.select(MoveId.TRIPLE_ARROWS);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(flinchAttr.getMoveChance).toHaveReturnedWith(60);

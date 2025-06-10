@@ -1,14 +1,14 @@
 import type { ArenaTrapTag } from "#app/data/arena-tag";
-import { ArenaTagSide } from "#app/data/arena-tag";
+import { ArenaTagSide } from "#enums/arena-tag-side";
 import { allMoves } from "#app/data/data-lists";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/ability-id";
 import { ArenaTagType } from "#enums/arena-tag-type";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex } from "#enums/battler-index";
 import { StatusEffect } from "#enums/status-effect";
 import { PokemonInstantReviveModifier } from "#app/modifier/modifier";
 
@@ -16,7 +16,7 @@ describe("Moves - Destiny Bond", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
-  const defaultParty = [Species.BULBASAUR, Species.SQUIRTLE];
+  const defaultParty = [SpeciesId.BULBASAUR, SpeciesId.SQUIRTLE];
   const enemyFirst = [BattlerIndex.ENEMY, BattlerIndex.PLAYER];
   const playerFirst = [BattlerIndex.PLAYER, BattlerIndex.ENEMY];
 
@@ -34,16 +34,16 @@ describe("Moves - Destiny Bond", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .ability(Abilities.UNNERVE) // Pre-emptively prevent flakiness from opponent berries
-      .enemySpecies(Species.RATTATA)
-      .enemyAbility(Abilities.RUN_AWAY)
+      .ability(AbilityId.UNNERVE) // Pre-emptively prevent flakiness from opponent berries
+      .enemySpecies(SpeciesId.RATTATA)
+      .enemyAbility(AbilityId.RUN_AWAY)
       .startingLevel(100) // Make sure tested moves KO
       .enemyLevel(5)
-      .enemyMoveset(Moves.DESTINY_BOND);
+      .enemyMoveset(MoveId.DESTINY_BOND);
   });
 
   it("should KO the opponent on the same turn", async () => {
-    const moveToUse = Moves.TACKLE;
+    const moveToUse = MoveId.TACKLE;
 
     game.override.moveset(moveToUse);
     await game.classicMode.startBattle(defaultParty);
@@ -60,16 +60,16 @@ describe("Moves - Destiny Bond", () => {
   });
 
   it("should KO the opponent on the next turn", async () => {
-    const moveToUse = Moves.TACKLE;
+    const moveToUse = MoveId.TACKLE;
 
-    game.override.moveset([Moves.SPLASH, moveToUse]);
+    game.override.moveset([MoveId.SPLASH, moveToUse]);
     await game.classicMode.startBattle(defaultParty);
 
     const enemyPokemon = game.scene.getEnemyPokemon();
     const playerPokemon = game.scene.getPlayerPokemon();
 
     // Turn 1: Enemy uses Destiny Bond and doesn't faint
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.setTurnOrder(playerFirst);
     await game.toNextTurn();
 
@@ -86,16 +86,16 @@ describe("Moves - Destiny Bond", () => {
   });
 
   it("should fail if used twice in a row", async () => {
-    const moveToUse = Moves.TACKLE;
+    const moveToUse = MoveId.TACKLE;
 
-    game.override.moveset([Moves.SPLASH, moveToUse]);
+    game.override.moveset([MoveId.SPLASH, moveToUse]);
     await game.classicMode.startBattle(defaultParty);
 
     const enemyPokemon = game.scene.getEnemyPokemon();
     const playerPokemon = game.scene.getPlayerPokemon();
 
     // Turn 1: Enemy uses Destiny Bond and doesn't faint
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.setTurnOrder(enemyFirst);
     await game.toNextTurn();
 
@@ -113,9 +113,9 @@ describe("Moves - Destiny Bond", () => {
 
   it("should not KO the opponent if the user dies to weather", async () => {
     // Opponent will be reduced to 1 HP by False Swipe, then faint to Sandstorm
-    const moveToUse = Moves.FALSE_SWIPE;
+    const moveToUse = MoveId.FALSE_SWIPE;
 
-    game.override.moveset(moveToUse).ability(Abilities.SAND_STREAM);
+    game.override.moveset(moveToUse).ability(AbilityId.SAND_STREAM);
     await game.classicMode.startBattle(defaultParty);
 
     const enemyPokemon = game.scene.getEnemyPokemon();
@@ -130,16 +130,16 @@ describe("Moves - Destiny Bond", () => {
   });
 
   it("should not KO the opponent if the user had another turn", async () => {
-    const moveToUse = Moves.TACKLE;
+    const moveToUse = MoveId.TACKLE;
 
-    game.override.moveset([Moves.SPORE, moveToUse]);
+    game.override.moveset([MoveId.SPORE, moveToUse]);
     await game.classicMode.startBattle(defaultParty);
 
     const enemyPokemon = game.scene.getEnemyPokemon();
     const playerPokemon = game.scene.getPlayerPokemon();
 
     // Turn 1: Enemy uses Destiny Bond and doesn't faint
-    game.move.select(Moves.SPORE);
+    game.move.select(MoveId.SPORE);
     await game.setTurnOrder(enemyFirst);
     await game.toNextTurn();
 
@@ -157,8 +157,8 @@ describe("Moves - Destiny Bond", () => {
   });
 
   it("should not KO an ally", async () => {
-    game.override.moveset([Moves.DESTINY_BOND, Moves.CRUNCH]).battleStyle("double");
-    await game.classicMode.startBattle([Species.SHEDINJA, Species.BULBASAUR, Species.SQUIRTLE]);
+    game.override.moveset([MoveId.DESTINY_BOND, MoveId.CRUNCH]).battleStyle("double");
+    await game.classicMode.startBattle([SpeciesId.SHEDINJA, SpeciesId.BULBASAUR, SpeciesId.SQUIRTLE]);
 
     const enemyPokemon0 = game.scene.getEnemyField()[0];
     const enemyPokemon1 = game.scene.getEnemyField()[1];
@@ -166,8 +166,8 @@ describe("Moves - Destiny Bond", () => {
     const playerPokemon1 = game.scene.getPlayerField()[1];
 
     // Shedinja uses Destiny Bond, then ally Bulbasaur KO's Shedinja with Crunch
-    game.move.select(Moves.DESTINY_BOND, 0);
-    game.move.select(Moves.CRUNCH, 1, BattlerIndex.PLAYER);
+    game.move.select(MoveId.DESTINY_BOND, 0);
+    game.move.select(MoveId.CRUNCH, 1, BattlerIndex.PLAYER);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.PLAYER_2, BattlerIndex.ENEMY, BattlerIndex.ENEMY_2]);
     await game.phaseInterceptor.to("BerryPhase");
 
@@ -178,7 +178,7 @@ describe("Moves - Destiny Bond", () => {
   });
 
   it("should not cause a crash if the user is KO'd by Ceaseless Edge", async () => {
-    const moveToUse = Moves.CEASELESS_EDGE;
+    const moveToUse = MoveId.CEASELESS_EDGE;
     vi.spyOn(allMoves[moveToUse], "accuracy", "get").mockReturnValue(100);
 
     game.override.moveset(moveToUse);
@@ -201,7 +201,7 @@ describe("Moves - Destiny Bond", () => {
   });
 
   it("should not cause a crash if the user is KO'd by Pledge moves", async () => {
-    game.override.moveset([Moves.GRASS_PLEDGE, Moves.WATER_PLEDGE]).battleStyle("double");
+    game.override.moveset([MoveId.GRASS_PLEDGE, MoveId.WATER_PLEDGE]).battleStyle("double");
     await game.classicMode.startBattle(defaultParty);
 
     const enemyPokemon0 = game.scene.getEnemyField()[0];
@@ -209,8 +209,8 @@ describe("Moves - Destiny Bond", () => {
     const playerPokemon0 = game.scene.getPlayerField()[0];
     const playerPokemon1 = game.scene.getPlayerField()[1];
 
-    game.move.select(Moves.GRASS_PLEDGE, 0, BattlerIndex.ENEMY);
-    game.move.select(Moves.WATER_PLEDGE, 1, BattlerIndex.ENEMY);
+    game.move.select(MoveId.GRASS_PLEDGE, 0, BattlerIndex.ENEMY);
+    game.move.select(MoveId.WATER_PLEDGE, 1, BattlerIndex.ENEMY);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER, BattlerIndex.PLAYER_2]);
     await game.phaseInterceptor.to("BerryPhase");
 
@@ -230,7 +230,7 @@ describe("Moves - Destiny Bond", () => {
    * from occurring with fainting by KO'ing a Destiny Bond user with U-Turn.
    */
   it("should not allow the opponent to revive via Reviver Seed", async () => {
-    const moveToUse = Moves.TACKLE;
+    const moveToUse = MoveId.TACKLE;
 
     game.override.moveset(moveToUse).startingHeldItems([{ name: "REVIVER_SEED" }]);
     await game.classicMode.startBattle(defaultParty);

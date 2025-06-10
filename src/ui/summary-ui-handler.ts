@@ -13,7 +13,8 @@ import {
   formatStat,
   getShinyDescriptor,
 } from "#app/utils/common";
-import type { PlayerPokemon, PokemonMove } from "#app/field/pokemon";
+import type { PlayerPokemon } from "#app/field/pokemon";
+import type { PokemonMove } from "#app/data/moves/pokemon-move";
 import { getStarterValueFriendshipCap, speciesStarterCosts } from "#app/data/balance/starters";
 import { argbFromRgba } from "@material/material-color-utilities";
 import { getTypeRgb } from "#app/data/type";
@@ -1239,7 +1240,7 @@ export default class SummaryUiHandler extends UiHandler {
     this.moveSelect = true;
     this.extraMoveRowContainer.setVisible(true);
     this.selectedMoveIndex = -1;
-    this.setCursor(0);
+    this.setCursor(this.summaryUiMode === SummaryUiMode.LEARN_MOVE ? 4 : 0);
     this.showMoveEffect();
   }
 

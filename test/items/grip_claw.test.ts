@@ -1,10 +1,10 @@
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex } from "#enums/battler-index";
 import type Pokemon from "#app/field/pokemon";
 import type { ContactHeldItemTransferChanceModifier } from "#app/modifier/modifier";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/ability-id";
 import { BerryType } from "#enums/berry-type";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phase from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -28,12 +28,12 @@ describe("Items - Grip Claw", () => {
 
     game.override
       .battleStyle("double")
-      .moveset([Moves.TACKLE, Moves.SPLASH, Moves.ATTRACT])
+      .moveset([MoveId.TACKLE, MoveId.SPLASH, MoveId.ATTRACT])
       .startingHeldItems([{ name: "GRIP_CLAW", count: 1 }])
-      .enemySpecies(Species.SNORLAX)
-      .enemyAbility(Abilities.UNNERVE)
-      .ability(Abilities.UNNERVE)
-      .enemyMoveset(Moves.SPLASH)
+      .enemySpecies(SpeciesId.SNORLAX)
+      .enemyAbility(AbilityId.UNNERVE)
+      .ability(AbilityId.UNNERVE)
+      .enemyMoveset(MoveId.SPLASH)
       .enemyHeldItems([
         { name: "BERRY", type: BerryType.SITRUS, count: 2 },
         { name: "BERRY", type: BerryType.LUM, count: 2 },
@@ -42,7 +42,7 @@ describe("Items - Grip Claw", () => {
   });
 
   it("should steal items on contact and only from the attack target", async () => {
-    await game.classicMode.startBattle([Species.FEEBAS, Species.MILOTIC]);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MILOTIC]);
 
     const [playerPokemon] = game.scene.getPlayerField();
 
@@ -56,8 +56,8 @@ describe("Items - Grip Claw", () => {
     const enemy2HeldItemCount = getHeldItemCount(enemyPokemon[1]);
     expect(enemy2HeldItemCount).toBeGreaterThan(0);
 
-    game.move.select(Moves.TACKLE, 0, BattlerIndex.ENEMY_2);
-    game.move.select(Moves.SPLASH, 1);
+    game.move.select(MoveId.TACKLE, 0, BattlerIndex.ENEMY_2);
+    game.move.select(MoveId.SPLASH, 1);
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
@@ -71,7 +71,7 @@ describe("Items - Grip Claw", () => {
   });
 
   it("should not steal items when using a targetted, non attack move", async () => {
-    await game.classicMode.startBattle([Species.FEEBAS, Species.MILOTIC]);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MILOTIC]);
 
     const [playerPokemon] = game.scene.getPlayerField();
 
@@ -85,8 +85,8 @@ describe("Items - Grip Claw", () => {
     const enemy2HeldItemCount = getHeldItemCount(enemyPokemon[1]);
     expect(enemy2HeldItemCount).toBeGreaterThan(0);
 
-    game.move.select(Moves.ATTRACT, 0, BattlerIndex.ENEMY_2);
-    game.move.select(Moves.SPLASH, 1);
+    game.move.select(MoveId.ATTRACT, 0, BattlerIndex.ENEMY_2);
+    game.move.select(MoveId.SPLASH, 1);
 
     await game.phaseInterceptor.to("BerryPhase", false);
 
@@ -102,12 +102,12 @@ describe("Items - Grip Claw", () => {
   it("should not allow Pollen Puff to steal items when healing ally", async () => {
     game.override
       .battleStyle("double")
-      .moveset([Moves.POLLEN_PUFF, Moves.ENDURE])
+      .moveset([MoveId.POLLEN_PUFF, MoveId.ENDURE])
       .startingHeldItems([
         { name: "GRIP_CLAW", count: 1 },
         { name: "BERRY", type: BerryType.LUM, count: 1 },
       ]);
-    await game.classicMode.startBattle([Species.BULBASAUR, Species.OMANYTE]);
+    await game.classicMode.startBattle([SpeciesId.BULBASAUR, SpeciesId.OMANYTE]);
 
     const [leftPokemon, rightPokemon] = game.scene.getPlayerField();
 
@@ -116,8 +116,8 @@ describe("Items - Grip Claw", () => {
 
     const heldItemCountBefore = getHeldItemCount(rightPokemon);
 
-    game.move.select(Moves.POLLEN_PUFF, 0, BattlerIndex.PLAYER_2);
-    game.move.select(Moves.ENDURE, 1);
+    game.move.select(MoveId.POLLEN_PUFF, 0, BattlerIndex.PLAYER_2);
+    game.move.select(MoveId.ENDURE, 1);
 
     await game.toNextTurn();
 

@@ -1,8 +1,8 @@
 import { SubstituteTag } from "#app/data/battler-tags";
-import { MoveResult } from "#app/field/pokemon";
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import { MoveResult } from "#enums/move-result";
+import { AbilityId } from "#enums/ability-id";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, it, expect } from "vitest";
@@ -24,19 +24,19 @@ describe("Moves - Shed Tail", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.SHED_TAIL])
+      .moveset([MoveId.SHED_TAIL])
       .battleStyle("single")
-      .enemySpecies(Species.SNORLAX)
-      .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset(Moves.SPLASH);
+      .enemySpecies(SpeciesId.SNORLAX)
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   it("transfers a Substitute doll to the switched in Pokemon", async () => {
-    await game.classicMode.startBattle([Species.MAGIKARP, Species.FEEBAS]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.FEEBAS]);
 
     const magikarp = game.scene.getPlayerPokemon()!;
 
-    game.move.select(Moves.SHED_TAIL);
+    game.move.select(MoveId.SHED_TAIL);
     game.doSelectPartyPokemon(1);
 
     await game.phaseInterceptor.to("TurnEndPhase", false);
@@ -53,12 +53,12 @@ describe("Moves - Shed Tail", () => {
   });
 
   it("should fail if no ally is available to switch in", async () => {
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
     const magikarp = game.scene.getPlayerPokemon()!;
     expect(game.scene.getPlayerParty().length).toBe(1);
 
-    game.move.select(Moves.SHED_TAIL);
+    game.move.select(MoveId.SHED_TAIL);
 
     await game.phaseInterceptor.to("TurnEndPhase", false);
 

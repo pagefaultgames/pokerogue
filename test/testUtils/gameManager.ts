@@ -1,17 +1,16 @@
 import { updateUserInfo } from "#app/account";
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex } from "#enums/battler-index";
 import BattleScene from "#app/battle-scene";
-import { getMoveTargets } from "#app/data/moves/move";
 import type { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
 import Trainer from "#app/field/trainer";
-import { GameModes, getGameMode } from "#app/game-mode";
+import { getGameMode } from "#app/game-mode";
+import { GameModes } from "#enums/game-modes";
 import { globalScene } from "#app/global-scene";
 import { ModifierTypeOption, modifierTypes } from "#app/modifier/modifier-type";
 import overrides from "#app/overrides";
 import { CheckSwitchPhase } from "#app/phases/check-switch-phase";
 import { CommandPhase } from "#app/phases/command-phase";
 import { EncounterPhase } from "#app/phases/encounter-phase";
-import { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
 import { FaintPhase } from "#app/phases/faint-phase";
 import { LoginPhase } from "#app/phases/login-phase";
 import { MovePhase } from "#app/phases/move-phase";
@@ -31,14 +30,12 @@ import type PartyUiHandler from "#app/ui/party-ui-handler";
 import type StarterSelectUiHandler from "#app/ui/starter-select-ui-handler";
 import type TargetSelectUiHandler from "#app/ui/target-select-ui-handler";
 import { isNullOrUndefined } from "#app/utils/common";
-import { BattleStyle } from "#enums/battle-style";
 import { Button } from "#enums/buttons";
 import { ExpGainsSpeed } from "#enums/exp-gains-speed";
 import { ExpNotification } from "#enums/exp-notification";
-import type { Moves } from "#enums/moves";
 import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PlayerGender } from "#enums/player-gender";
-import type { Species } from "#enums/species";
+import type { SpeciesId } from "#enums/species-id";
 import { UiMode } from "#enums/ui-mode";
 import ErrorInterceptor from "#test/testUtils/errorInterceptor";
 import { generateStarter, waitUntil } from "#test/testUtils/gameManagerUtils";
@@ -105,13 +102,13 @@ export default class GameManager {
     if (!firstTimeScene) {
       this.scene.reset(false, true);
       (this.scene.ui.handlers[UiMode.STARTER_SELECT] as StarterSelectUiHandler).clearStarterPreferences();
-      this.scene.clearAllPhases();
+      this.scene.phaseManager.clearAllPhases();
 
       // Must be run after phase interceptor has been initialized.
 
-      this.scene.pushPhase(new LoginPhase());
-      this.scene.pushPhase(new TitlePhase());
-      this.scene.shiftPhase();
+      this.scene.phaseManager.pushNew("LoginPhase");
+      this.scene.phaseManager.pushNew("TitlePhase");
+      this.scene.phaseManager.shiftPhase();
 
       this.gameWrapper.scene = this.scene;
     }
@@ -158,7 +155,7 @@ export default class GameManager {
    * Ends the current phase.
    */
   endPhase() {
-    this.scene.getCurrentPhase()?.end();
+    this.scene.phaseManager.getCurrentPhase()?.end();
   }
 
   /**
@@ -207,7 +204,7 @@ export default class GameManager {
    * @param species
    * @param mode
    */
-  async runToFinalBossEncounter(species: Species[], mode: GameModes) {
+  async runToFinalBossEncounter(species: SpeciesId[], mode: GameModes) {
     console.log("===to final boss encounter===");
     await this.runToTitle();
 
@@ -215,7 +212,7 @@ export default class GameManager {
       this.scene.gameMode = getGameMode(mode);
       const starters = generateStarter(this.scene, species);
       const selectStarterPhase = new SelectStarterPhase();
-      this.scene.pushPhase(new EncounterPhase(false));
+      this.scene.phaseManager.pushPhase(new EncounterPhase(false));
       selectStarterPhase.initBattle(starters);
     });
 
@@ -236,7 +233,7 @@ export default class GameManager {
    * @param species Optional array of species for party.
    * @returns A promise that resolves when the EncounterPhase ends.
    */
-  async runToMysteryEncounter(encounterType?: MysteryEncounterType, species?: Species[]) {
+  async runToMysteryEncounter(encounterType?: MysteryEncounterType, species?: SpeciesId[]) {
     if (!isNullOrUndefined(encounterType)) {
       this.override.disableTrainerWaves();
       this.override.mysteryEncounter(encounterType);
@@ -251,7 +248,7 @@ export default class GameManager {
         this.scene.gameMode = getGameMode(GameModes.CLASSIC);
         const starters = generateStarter(this.scene, species);
         const selectStarterPhase = new SelectStarterPhase();
-        this.scene.pushPhase(new EncounterPhase(false));
+        this.scene.phaseManager.pushPhase(new EncounterPhase(false));
         selectStarterPhase.initBattle(starters);
       },
       () => this.isCurrentPhase(EncounterPhase),
@@ -275,42 +272,6 @@ export default class GameManager {
   }
 
   /**
-   * @deprecated Use `game.classicMode.startBattle()` or `game.dailyMode.startBattle()` instead
-   *
-   * Transitions to the start of a battle.
-   * @param species - Optional array of species to start the battle with.
-   * @returns A promise that resolves when the battle is started.
-   */
-  async startBattle(species?: Species[]) {
-    await this.classicMode.runToSummon(species);
-
-    if (this.scene.battleStyle === BattleStyle.SWITCH) {
-      this.onNextPrompt(
-        "CheckSwitchPhase",
-        UiMode.CONFIRM,
-        () => {
-          this.setMode(UiMode.MESSAGE);
-          this.endPhase();
-        },
-        () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(TurnInitPhase),
-      );
-
-      this.onNextPrompt(
-        "CheckSwitchPhase",
-        UiMode.CONFIRM,
-        () => {
-          this.setMode(UiMode.MESSAGE);
-          this.endPhase();
-        },
-        () => this.isCurrentPhase(CommandPhase) || this.isCurrentPhase(TurnInitPhase),
-      );
-    }
-
-    await this.phaseInterceptor.to(CommandPhase);
-    console.log("==================[New Turn]==================");
-  }
-
-  /**
    * Emulate a player's target selection after a move is chosen, usually called automatically by {@linkcode MoveHelper.select}.
    * Will trigger during the next {@linkcode SelectTargetPhase}
    * @param targetIndex - The {@linkcode BattlerIndex} of the attack target, or `undefined` for multi-target attacks
@@ -322,7 +283,7 @@ export default class GameManager {
       UiMode.TARGET_SELECT,
       () => {
         const handler = this.scene.ui.getHandler() as TargetSelectUiHandler;
-        const move = (this.scene.getCurrentPhase() as SelectTargetPhase)
+        const move = (this.scene.phaseManager.getCurrentPhase() as SelectTargetPhase)
           .getPokemon()
           .getMoveset()
           [movePosition].getMove();
@@ -378,36 +339,6 @@ export default class GameManager {
         this.isCurrentPhase(NewBattlePhase) ||
         this.isCurrentPhase(CheckSwitchPhase),
     );
-  }
-
-  /**
-   * Forces the next enemy selecting a move to use the given move in its moveset against the
-   * given target (if applicable).
-   * @param moveId - The {@linkcode Moves | move} the enemy will use
-   * @param target - The {@linkcode BattlerIndex} of the target against which the enemy will use the given move;
-   * will use normal target selection priorities if omitted.
-   * @deprecated Use {@linkcode MoveHelper.forceEnemyMove} or {@linkcode MoveHelper.selectEnemyMove}
-   */
-  async forceEnemyMove(moveId: Moves, target?: BattlerIndex) {
-    // Wait for the next EnemyCommandPhase to start
-    await this.phaseInterceptor.to(EnemyCommandPhase, false);
-    const enemy = this.scene.getEnemyField()[(this.scene.getCurrentPhase() as EnemyCommandPhase).getFieldIndex()];
-    const legalTargets = getMoveTargets(enemy, moveId);
-
-    vi.spyOn(enemy, "getNextMove").mockReturnValueOnce({
-      move: moveId,
-      targets:
-        target !== undefined && !legalTargets.multiple && legalTargets.targets.includes(target)
-          ? [target]
-          : enemy.getNextTargets(moveId),
-    });
-
-    /**
-     * Run the EnemyCommandPhase to completion.
-     * This allows this function to be called consecutively to
-     * force a move for each enemy in a double battle.
-     */
-    await this.phaseInterceptor.to(EnemyCommandPhase);
   }
 
   forceEnemyToSwitch() {
@@ -467,7 +398,7 @@ export default class GameManager {
    */
   isCurrentPhase(phaseTarget) {
     const targetName = typeof phaseTarget === "string" ? phaseTarget : phaseTarget.name;
-    return this.scene.getCurrentPhase()?.constructor.name === targetName;
+    return this.scene.phaseManager.getCurrentPhase()?.constructor.name === targetName;
   }
 
   /**
@@ -519,7 +450,7 @@ export default class GameManager {
   async killPokemon(pokemon: PlayerPokemon | EnemyPokemon) {
     return new Promise<void>(async (resolve, reject) => {
       pokemon.hp = 0;
-      this.scene.pushPhase(new FaintPhase(pokemon.getBattlerIndex(), true));
+      this.scene.phaseManager.pushPhase(new FaintPhase(pokemon.getBattlerIndex(), true));
       await this.phaseInterceptor.to(FaintPhase).catch(e => reject(e));
       resolve();
     });
@@ -599,7 +530,7 @@ export default class GameManager {
   async setTurnOrder(order: BattlerIndex[]): Promise<void> {
     await this.phaseInterceptor.to(TurnStartPhase, false);
 
-    vi.spyOn(this.scene.getCurrentPhase() as TurnStartPhase, "getSpeedOrder").mockReturnValue(order);
+    vi.spyOn(this.scene.phaseManager.getCurrentPhase() as TurnStartPhase, "getSpeedOrder").mockReturnValue(order);
   }
 
   /**
