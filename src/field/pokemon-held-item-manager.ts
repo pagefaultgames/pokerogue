@@ -73,6 +73,11 @@ export class PokemonItemManager {
     return item ? item.stack : 0;
   }
 
+  isMaxStack(itemType: HeldItemId): boolean {
+    const item = this.heldItems[itemType];
+    return item ? item.stack >= allHeldItems[itemType].getMaxStackCount() : false;
+  }
+
   overrideItems(newItems: HeldItemPropertyMap) {
     this.heldItems = newItems;
   }

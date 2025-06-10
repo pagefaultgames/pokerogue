@@ -67,7 +67,6 @@ import {
 } from "../abilities/ability";
 import { allAbilities, allMoves } from "../data-lists";
 import {
-  PokemonHeldItemModifier,
   PreserveBerryModifier,
 } from "../../modifier/modifier";
 import type { BattlerIndex } from "#enums/battler-index";
@@ -118,7 +117,6 @@ import { MoveFlags } from "#enums/MoveFlags";
 import { MoveEffectTrigger } from "#enums/MoveEffectTrigger";
 import { MultiHitType } from "#enums/MultiHitType";
 import { invalidAssistMoves, invalidCopycatMoves, invalidMetronomeMoves, invalidMirrorMoveMoves, invalidSleepTalkMoves } from "./invalid-moves";
-import { TrainerVariant } from "#app/field/trainer";
 import { SelectBiomePhase } from "#app/phases/select-biome-phase";
 import { allHeldItems, applyHeldItems } from "#app/items/all-held-items";
 import { ITEM_EFFECT } from "#app/items/held-item";
@@ -2735,19 +2733,14 @@ export class RemoveHeldItemAttr extends MoveEffectAttr {
 
     return true;
   }
-
-  getTargetHeldItems(target: Pokemon): PokemonHeldItemModifier[] {
-    return globalScene.findModifiers(m => m instanceof PokemonHeldItemModifier
-      && m.pokemonId === target.id, target.isPlayer()) as PokemonHeldItemModifier[];
-  }
-
+  
   getUserBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
-    const heldItems = this.getTargetHeldItems(target);
+    const heldItems = target.getHeldItems();
     return heldItems.length ? 5 : 0;
   }
 
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
-    const heldItems = this.getTargetHeldItems(target);
+    const heldItems = target.getHeldItems();
     return heldItems.length ? -5 : 0;
   }
 }

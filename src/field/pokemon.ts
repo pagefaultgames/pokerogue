@@ -60,7 +60,6 @@ import {
   EnemyDamageReducerModifier,
   EnemyFusionChanceModifier,
   HiddenAbilityRateBoosterModifier,
-  PokemonHeldItemModifier,
   ShinyRateBoosterModifier,
   TempStatStageBoosterModifier,
   TempCritBoosterModifier,
@@ -5823,14 +5822,10 @@ export class PlayerPokemon extends Pokemon {
 
         globalScene.getPlayerParty().push(newPokemon);
         newPokemon.evolve(!isFusion ? newEvolution : new FusionSpeciesFormEvolution(this.id, newEvolution), evoSpecies);
-        const modifiers = globalScene.findModifiers(
-          m => m instanceof PokemonHeldItemModifier && m.pokemonId === this.id,
-          true,
-        ) as PokemonHeldItemModifier[];
-        modifiers.forEach(m => {
-          const clonedModifier = m.clone() as PokemonHeldItemModifier;
-          clonedModifier.pokemonId = newPokemon.id;
-          globalScene.addModifier(clonedModifier, true);
+        //TODO: This currently does not consider any values associated with the items e.g. disabled
+        const heldItems = this.getHeldItems();
+        heldItems.forEach(item => {
+          newPokemon.heldItemManager.add(item, this.heldItemManager.getStack(item));
         });
         globalScene.updateModifiers(true);
       }
