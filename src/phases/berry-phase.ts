@@ -4,7 +4,7 @@ import {
   HealFromBerryUseAbAttr,
   RepeatBerryNextTurnAbAttr,
 } from "#app/data/abilities/ability";
-import { CommonAnim } from "#app/data/battle-anims";
+import { CommonAnim } from "#enums/move-anims-common";
 import { getPokemonNameWithAffix } from "#app/messages";
 import i18next from "i18next";
 import { BooleanHolder } from "#app/utils/common";

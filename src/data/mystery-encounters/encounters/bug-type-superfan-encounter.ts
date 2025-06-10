@@ -23,7 +23,7 @@ import { TrainerType } from "#enums/trainer-type";
 import { SpeciesId } from "#enums/species-id";
 import type { PlayerPokemon } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
-import { PokemonMove } from "#app/field/pokemon";
+import { PokemonMove } from "#app/data/moves/pokemon-move";
 import { getEncounterText, showEncounterDialogue } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { MoveId } from "#enums/move-id";
 import type { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";

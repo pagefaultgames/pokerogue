@@ -1,20 +1,17 @@
 import { globalScene } from "#app/global-scene";
 import { EvolutionItem, pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
 import { tmPoolTiers, tmSpecies } from "#app/data/balance/tms";
-import { AttackMove } from "#app/data/moves/move";
 import { allMoves } from "#app/data/data-lists";
 import { getNatureName, getNatureStatMultiplier } from "#app/data/nature";
 import { getPokeballCatchMultiplier, getPokeballName, MAX_PER_TYPE_POKEBALLS } from "#app/data/pokeball";
-import {
-  FormChangeItem,
-  formChangeItemName,
-  pokemonFormChanges,
-  SpeciesFormChangeCondition,
-  SpeciesFormChangeItemTrigger,
-} from "#app/data/pokemon-forms";
+import { pokemonFormChanges, SpeciesFormChangeCondition } from "#app/data/pokemon-forms";
+import { SpeciesFormChangeItemTrigger } from "#app/data/pokemon-forms/form-change-triggers";
+import { FormChangeItem } from "#enums/form-change-item";
+import { formChangeItemName } from "#app/data/pokemon-forms";
 import { getStatusEffectDescriptor } from "#app/data/status-effect";
 import { PokemonType } from "#enums/pokemon-type";
-import type { EnemyPokemon, PlayerPokemon, PokemonMove } from "#app/field/pokemon";
+import type { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
+import type { PokemonMove } from "#app/data/moves/pokemon-move";
 import type Pokemon from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import {
@@ -1169,7 +1166,7 @@ class AttackTypeBoosterRewardGenerator extends ModifierTypeGenerator {
         p
           .getMoveset()
           .map(m => m.getMove())
-          .filter(m => m instanceof AttackMove)
+          .filter(m => m.is("AttackMove"))
           .map(m => m.type),
       );
       if (!attackMoveTypes.length) {

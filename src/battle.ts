@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import type { Command } from "./ui/command-ui-handler";
+import type { Command } from "#enums/command";
 import {
   randomString,
   getEnumValues,
@@ -10,7 +10,8 @@ import {
   randInt,
   randSeedFloat,
 } from "#app/utils/common";
-import Trainer, { TrainerVariant } from "./field/trainer";
+import Trainer from "./field/trainer";
+import { TrainerVariant } from "#enums/trainer-variant";
 import type { GameMode } from "./game-mode";
 import { MoneyMultiplierModifier } from "./modifier/modifier";
 import type { PokeballType } from "#enums/pokeball";
@@ -34,14 +35,7 @@ import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { BattleType } from "#enums/battle-type";
 import { ClassicFixedBossWaves } from "#enums/fixed-boss-waves";
 import type { HeldItemId } from "#enums/held-item-id";
-
-export enum BattlerIndex {
-  ATTACKER = -1,
-  PLAYER,
-  PLAYER_2,
-  ENEMY,
-  ENEMY_2,
-}
+import { BattlerIndex } from "#enums/battler-index";
 
 export interface TurnCommand {
   command: Command;

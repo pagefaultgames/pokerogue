@@ -1,4 +1,4 @@
-import { FlinchAttr, StatStageChangeAttr } from "#app/data/moves/move";
+import type { FlinchAttr, StatStageChangeAttr } from "#app/data/moves/move";
 import { allMoves } from "#app/data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
@@ -20,8 +20,8 @@ describe("Moves - Triple Arrows", () => {
       type: Phaser.HEADLESS,
     });
     tripleArrows = allMoves[MoveId.TRIPLE_ARROWS];
-    flinchAttr = tripleArrows.getAttrs(FlinchAttr)[0];
-    defDropAttr = tripleArrows.getAttrs(StatStageChangeAttr)[0];
+    flinchAttr = tripleArrows.getAttrs("FlinchAttr")[0];
+    defDropAttr = tripleArrows.getAttrs("StatStageChangeAttr")[0];
   });
 
   afterEach(() => {
