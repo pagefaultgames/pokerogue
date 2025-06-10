@@ -32,11 +32,10 @@ describe("{{description}}", () => {
       .enemyLevel(100);
   });
 
-  it("should do X", async () => {
+  it("should do XYZ", async () => {
     await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
     game.move.use(MoveId.SPLASH);
-
     await game.toEndOfTurn();
 
     expect(true).toBe(true);
