@@ -20,7 +20,7 @@
     "biome": "biome check --write --changed --no-errors-on-unmatched",
     "biome-ci": "biome ci --diagnostic-level=error --reporter=github --no-errors-on-unmatched",
     "docs": "typedoc",
-    "depcruise": "depcruise src",
+    "depcruise": "depcruise src test",
     "depcruise:graph": "depcruise src --output-type dot | node dependency-graph.js > dependency-graph.svg",
     "postinstall": "npx lefthook install && npx lefthook run post-merge",
     "update-version:patch": "npm version patch --force --no-git-tag-version",
