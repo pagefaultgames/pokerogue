@@ -121,10 +121,21 @@ export const HeldItemCategoryId = {
 
 export type HeldItemCategoryId = (typeof HeldItemCategoryId)[keyof typeof HeldItemCategoryId];
 
+const ITEM_CATEGORY_MASK = 0xFF00
+
 function getHeldItemCategory(itemId: HeldItemId): HeldItemCategoryId {
-  return itemId & 0xFF00;
+  return itemId & ITEM_CATEGORY_MASK;
 }
 
 export function isItemInCategory(itemId: HeldItemId, category: HeldItemCategoryId): boolean {
   return getHeldItemCategory(itemId) === category;
+}
+
+export function isItemInRequested(
+  itemId: HeldItemId,
+  requestedItems: (HeldItemCategoryId | HeldItemId)[]
+): boolean {
+  return requestedItems.some(entry => {
+    itemId === entry || (itemId & ITEM_CATEGORY_MASK) === entry
+  });
 }

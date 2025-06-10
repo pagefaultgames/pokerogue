@@ -1,6 +1,6 @@
 import { allHeldItems } from "#app/items/all-held-items";
-import type { HeldItemId } from "#app/enums/held-item-id";
-import type { FormChangeItem } from "#app/data/pokemon-forms";
+import { isItemInRequested, type HeldItemCategoryId, type HeldItemId } from "#app/enums/held-item-id";
+import type { FormChangeItem } from "#enums/form-change-item";
 import type { BASE_STAT_TOTAL_DATA } from "#app/items/held-items/base-stat-total";
 import type { BASE_STAT_FLAT_DATA } from "#app/items/held-items/base-stat-flat";
 
@@ -100,6 +100,11 @@ export class PokemonItemManager {
         delete this.heldItems[itemType];
       }
     }
+  }
+
+  filterRequestedItems(requestedItems: (HeldItemCategoryId | HeldItemId)[], transferableOnly = true, exclude = false) {
+    const currentItems = transferableOnly ? this.getTransferableHeldItems() : this.getHeldItems();
+    return currentItems.filter(it => !exclude && isItemInRequested(it, requestedItems));
   }
 
   addFormChangeItem(id: FormChangeItem) {
