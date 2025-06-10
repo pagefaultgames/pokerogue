@@ -1,4 +1,4 @@
-import { GameModes } from "#app/game-mode";
+import { GameModes } from "#enums/game-modes";
 import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
 import type OptionSelectUiHandler from "#app/ui/settings/option-select-ui-handler";
 import { UiMode } from "#enums/ui-mode";

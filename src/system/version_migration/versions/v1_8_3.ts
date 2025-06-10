@@ -1,6 +1,7 @@
 import type { SystemSaveMigrator } from "#app/@types/SystemSaveMigrator";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
-import { DexAttr, type SystemSaveData } from "#app/system/game-data";
+import type { SystemSaveData } from "#app/system/game-data";
+import { DexAttr } from "#enums/dex-attr";
 import { SpeciesId } from "#enums/species-id";
 
 /**
