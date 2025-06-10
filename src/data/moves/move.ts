@@ -96,13 +96,9 @@ import {
   getStatKey,
   Stat,
 } from "#app/enums/stat";
-import { BattleEndPhase } from "#app/phases/battle-end-phase";
 import { MoveEndPhase } from "#app/phases/move-end-phase";
 import { MovePhase } from "#app/phases/move-phase";
-import { NewBattlePhase } from "#app/phases/new-battle-phase";
 import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
-import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
-import { SwitchPhase } from "#app/phases/switch-phase";
 import { SwitchSummonPhase } from "#app/phases/switch-summon-phase";
 import { SpeciesFormChangeRevertWeatherFormTrigger } from "../pokemon-forms/form-change-triggers";
 import type { GameMode } from "#app/game-mode";
@@ -111,10 +107,6 @@ import { ChallengeType } from "#enums/challenge-type";
 import { SwitchType } from "#enums/switch-type";
 import { StatusEffect } from "#enums/status-effect";
 import { globalScene } from "#app/global-scene";
-import { RevivalBlessingPhase } from "#app/phases/revival-blessing-phase";
-import { LoadMoveAnimPhase } from "#app/phases/load-move-anim-phase";
-import { PokemonTransformPhase } from "#app/phases/pokemon-transform-phase";
-import { MoveAnimPhase } from "#app/phases/move-anim-phase";
 import { loggedInUser } from "#app/account";
 import { MoveCategory } from "#enums/MoveCategory";
 import { MoveTarget } from "#enums/MoveTarget";
@@ -122,7 +114,6 @@ import { MoveFlags } from "#enums/MoveFlags";
 import { MoveEffectTrigger } from "#enums/MoveEffectTrigger";
 import { MultiHitType } from "#enums/MultiHitType";
 import { invalidAssistMoves, invalidCopycatMoves, invalidMetronomeMoves, invalidMirrorMoveMoves, invalidSleepTalkMoves, invalidSketchMoves } from "./invalid-moves";
-import { SelectBiomePhase } from "#app/phases/select-biome-phase";
 import { isVirtual, MoveUseMode } from "#enums/move-use-mode";
 import { ChargingMove, MoveAttrMap, MoveAttrString, MoveKindString, MoveClassMap } from "#app/@types/move-types";
 import { applyMoveAttrs } from "./apply-attrs";
@@ -6263,7 +6254,7 @@ export class RevivalBlessingAttr extends MoveEffectAttr {
           globalScene.phaseManager.tryRemovePhase((phase: SwitchSummonPhase) => phase.is("SwitchSummonPhase") && phase.getPokemon() === pokemon);
           // If the pokemon being revived was alive earlier in the turn, cancel its move
           // (revived pokemon can't move in the turn they're brought back)
-          // TODO: might make sense to move this to `FaintPhase` after checking for Rev Seed (rather than handling it in the move_
+          // TODO: might make sense to move this to `FaintPhase` after checking for Rev Seed (rather than handling it in the move)
           globalScene.phaseManager.findPhase((phase: MovePhase) => phase.pokemon === pokemon)?.cancel();
           if (user.fieldPosition === FieldPosition.CENTER) {
             user.setFieldPosition(FieldPosition.LEFT);
@@ -6919,6 +6910,7 @@ export class RandomMovesetMoveAttr extends CallMoveAttr {
   }
 }
 
+// TODO: extend CallMoveAttr
 export class NaturePowerAttr extends OverrideMoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     let moveId = MoveId.NONE;
@@ -7122,14 +7114,13 @@ export class RepeatMoveAttr extends MoveEffectAttr {
     // but since Instruct adds a new move phase _after_ all that occurs, we need to handle this interaction manually.
     const firstTarget = globalScene.getField()[moveTargets[0]];
     if (
-      globalScene.currentBattle.double // double battle
+      globalScene.currentBattle.double
       && moveTargets.length === 1
       && firstTarget.isFainted()
       && firstTarget !== target.getAlly()
     ) {
       const ally = firstTarget.getAlly();
       if (!isNullOrUndefined(ally) && ally.isActive()) {
-        // ally exists, is not dead and can sponge the blast
         moveTargets = [ ally.getBattlerIndex() ];
       }
     }
@@ -9140,9 +9131,9 @@ export function initMoves() {
       .ignoresSubstitute()
       .condition((user, target, move) => new EncoreTag(user.id).canAdd(target))
       .reflectable()
-      .edgeCase(),
       // Can lock infinitely into struggle; has incorrect interactions with Blood Moon/Gigaton Hammer
       // Also may or may not incorrectly select targets for replacement move (needs verification)
+      .edgeCase(),
     new AttackMove(MoveId.PURSUIT, PokemonType.DARK, MoveCategory.PHYSICAL, 40, 100, 20, -1, 0, 2)
       .partial(), // No effect implemented
     new AttackMove(MoveId.RAPID_SPIN, PokemonType.NORMAL, MoveCategory.PHYSICAL, 50, 100, 40, 100, 0, 2)
@@ -10024,13 +10015,14 @@ export function initMoves() {
       .chargeAttr(SemiInvulnerableAttr, BattlerTagType.FLYING)
       .condition(failOnGravityCondition)
       .condition((user, target, move) => !target.getTag(BattlerTagType.SUBSTITUTE))
-      .partial(),
-      /* Cf https://bulbapedia.bulbagarden.net/wiki/Sky_Drop_(move) and https://www.smogon.com/dex/sv/moves/sky-drop/:
+      /*
+       * Cf https://bulbapedia.bulbagarden.net/wiki/Sky_Drop_(move) and https://www.smogon.com/dex/sv/moves/sky-drop/:
        * Should immobilize and give target semi-invulnerability
        * Flying types should take no damage
        * Should fail on targets above a certain weight threshold
        * Should remove all redirection effects on successful takeoff (Rage Poweder, etc.)
-      */
+       */
+      .partial(),
     new SelfStatusMove(MoveId.SHIFT_GEAR, PokemonType.STEEL, -1, 10, -1, 0, 5)
       .attr(StatStageChangeAttr, [ Stat.ATK ], 1, true)
       .attr(StatStageChangeAttr, [ Stat.SPD ], 2, true),
@@ -10601,13 +10593,13 @@ export function initMoves() {
     new StatusMove(MoveId.INSTRUCT, PokemonType.PSYCHIC, -1, 15, -1, 0, 7)
       .ignoresSubstitute()
       .attr(RepeatMoveAttr)
-      .edgeCase(),
       /*
-      * Incorrect interactions with Gigaton Hammer, Blood Moon & Torment due to them _failing on use_, not merely being unselectable.
-      * Incorrectly ticks down Encore's fail counter
-      TODO: Verify whether Instruct can repeat Struggle
-      TODO: Verify whether Instruct can fail when using a copied move also in one's own moveset
-      */
+       * Incorrect interactions with Gigaton Hammer, Blood Moon & Torment due to them _failing on use_, not merely being unselectable.
+       * Incorrectly ticks down Encore's fail counter
+       * TODO: Verify whether Instruct can repeat Struggle
+       * TODO: Verify whether Instruct can fail when using a copied move also in one's own moveset
+       */
+      .edgeCase(),
     new AttackMove(MoveId.BEAK_BLAST, PokemonType.FLYING, MoveCategory.PHYSICAL, 100, 100, 15, -1, -3, 7)
       .attr(BeakBlastHeaderAttr)
       .ballBombMove()
@@ -10669,8 +10661,8 @@ export function initMoves() {
         const lastNonDancerMove = user.getLastXMoves(2)[1] as TurnMove | undefined;
         return lastNonDancerMove && (lastNonDancerMove.result === MoveResult.MISS || lastNonDancerMove.result === MoveResult.FAIL) ? 2 : 1
       })
-      .edgeCase(),
       // TODO: Review mainline accuracy and draft tests as needed
+      .edgeCase(),
     new AttackMove(MoveId.SHADOW_BONE, PokemonType.GHOST, MoveCategory.PHYSICAL, 85, 100, 10, 20, 0, 7)
       .attr(StatStageChangeAttr, [ Stat.DEF ], -1)
       .makesContact(false),
