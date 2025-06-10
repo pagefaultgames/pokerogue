@@ -1,10 +1,10 @@
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex } from "#enums/battler-index";
 import { RechargingTag, SemiInvulnerableTag } from "#app/data/battler-tags";
-import { RandomMoveAttr } from "#app/data/moves/move";
+import type { RandomMoveAttr } from "#app/data/moves/move";
 import { allMoves } from "#app/data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { Stat } from "#app/enums/stat";
-import { MoveResult } from "#app/field/pokemon";
+import { MoveResult } from "#enums/move-result";
 import { CommandPhase } from "#app/phases/command-phase";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveUseMode } from "#enums/move-use-mode";
@@ -31,7 +31,7 @@ describe("Moves - Metronome", () => {
   });
 
   beforeEach(() => {
-    randomMoveAttr = allMoves[MoveId.METRONOME].getAttrs(RandomMoveAttr)[0];
+    randomMoveAttr = allMoves[MoveId.METRONOME].getAttrs("RandomMoveAttr")[0];
     game = new GameManager(phaserGame);
     game.override
       .moveset([MoveId.METRONOME, MoveId.SPLASH])

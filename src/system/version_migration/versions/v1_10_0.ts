@@ -1,6 +1,7 @@
 import type { SessionSaveMigrator } from "#app/@types/SessionSaveMigrator";
-import type { BattlerIndex } from "#app/battle";
-import type { MoveResult, TurnMove } from "#app/field/pokemon";
+import type { BattlerIndex } from "#enums/battler-index";
+import type { TurnMove } from "#app/field/pokemon";
+import type { MoveResult } from "#enums/move-result";
 import type { SessionSaveData } from "#app/system/game-data";
 import { MoveUseMode } from "#enums/move-use-mode";
 import type { MoveId } from "#enums/move-id";
@@ -10,8 +11,8 @@ interface OldTurnMove {
   move: MoveId;
   targets: BattlerIndex[];
   result?: MoveResult;
-  virtual?: boolean;
   turn?: number;
+  virtual?: boolean;
   ignorePP?: boolean;
 }
 

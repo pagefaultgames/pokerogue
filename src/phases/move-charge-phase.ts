@@ -1,14 +1,15 @@
 import { globalScene } from "#app/global-scene";
-import type { BattlerIndex } from "#app/battle";
+import type { BattlerIndex } from "#enums/battler-index";
 import { MoveChargeAnim } from "#app/data/battle-anims";
-import { applyMoveChargeAttrs, MoveEffectAttr, InstantChargeAttr, type ChargingMove } from "#app/data/moves/move";
-import type { PokemonMove } from "#app/field/pokemon";
+import { applyMoveChargeAttrs } from "#app/data/moves/apply-attrs";
+import type { PokemonMove } from "#app/data/moves/pokemon-move";
 import type Pokemon from "#app/field/pokemon";
-import { MoveResult } from "#app/field/pokemon";
+import { MoveResult } from "#enums/move-result";
 import { BooleanHolder } from "#app/utils/common";
 import { PokemonPhase } from "#app/phases/pokemon-phase";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import type { MoveUseMode } from "#enums/move-use-mode";
+import type { ChargingMove } from "#app/@types/move-types";
 
 /**
  * Phase for the "charging turn" of two-turn moves (e.g. Dig).
@@ -55,7 +56,7 @@ export class MoveChargePhase extends PokemonPhase {
     new MoveChargeAnim(move.chargeAnim, move.id, user).play(false, () => {
       move.showChargeText(user, target);
 
-      applyMoveChargeAttrs(MoveEffectAttr, user, target, move);
+      applyMoveChargeAttrs("MoveEffectAttr", user, target, move);
       user.addTag(BattlerTagType.CHARGING, 1, move.id, user.id);
       this.end();
     });
@@ -68,7 +69,7 @@ export class MoveChargePhase extends PokemonPhase {
     const move = this.move.getMove() as ChargingMove;
 
     const instantCharge = new BooleanHolder(false);
-    applyMoveChargeAttrs(InstantChargeAttr, user, null, move, instantCharge);
+    applyMoveChargeAttrs("InstantChargeAttr", user, null, move, instantCharge);
 
     // If instantly charging, remove the pending MoveEndPhase and queue a new MovePhase for the "attack" portion of the move.
     // Otherwise, add the attack portion to the user's move queue to execute next turn.

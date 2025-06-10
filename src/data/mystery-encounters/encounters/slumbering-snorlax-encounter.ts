@@ -21,8 +21,9 @@ import {
 import { queueEncounterMessage } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { Nature } from "#enums/nature";
 import { MoveId } from "#enums/move-id";
-import { BattlerIndex } from "#app/battle";
-import { AiType, PokemonMove } from "#app/field/pokemon";
+import { BattlerIndex } from "#enums/battler-index";
+import { PokemonMove } from "#app/data/moves/pokemon-move";
+import { AiType } from "#enums/ai-type";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
