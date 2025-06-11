@@ -136,6 +136,8 @@ export class LoadingScene extends SceneBase {
     this.loadAtlas("party_slot_hp_overlay", "ui");
     this.loadAtlas("party_pb", "ui");
     this.loadAtlas("party_cancel", "ui");
+    this.loadAtlas("party_discard", "ui");
+    this.loadAtlas("party_transfer", "ui");
 
     this.loadImage("summary_bg", "ui");
     this.loadImage("summary_overlay_shiny", "ui");

@@ -3118,6 +3118,19 @@ export default class BattleScene extends SceneBase {
     return false;
   }
 
+  tryDiscardHeldItemModifier(itemModifier: PokemonHeldItemModifier, discardQuantity = 1): boolean {
+    const countTaken = Math.min(discardQuantity, itemModifier.stackCount);
+    itemModifier.stackCount -= countTaken;
+
+    const removeOld = itemModifier.stackCount === 0;
+
+    if (removeOld) {
+      return this.removeModifier(itemModifier);
+    }
+
+    return true;
+  }
+
   canTransferHeldItemModifier(itemModifier: PokemonHeldItemModifier, target: Pokemon, transferQuantity = 1): boolean {
     const mod = itemModifier.clone() as PokemonHeldItemModifier;
     const source = mod.pokemonId ? mod.getPokemon() : null;

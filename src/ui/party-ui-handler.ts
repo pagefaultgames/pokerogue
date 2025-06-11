@@ -104,6 +104,11 @@ export enum PartyUiMode {
    * This is generally used in for Mystery Encounter or special effects that require the player to select a Pokemon
    */
   SELECT,
+  /**
+   * Indicates that the party UI is open to select a party member from which to discard an item from
+   * This type of selection can be cancelled.
+   */
+  DISCARD,
 }
 
 export enum PartyOption {
@@ -122,6 +127,7 @@ export enum PartyOption {
   RELEASE,
   RENAME,
   SELECT,
+  DISCARD,
   SCROLL_UP = 1000,
   SCROLL_DOWN = 1001,
   FORM_CHANGE_ITEM = 2000,
@@ -156,6 +162,7 @@ export default class PartyUiHandler extends MessageUiHandler {
   private partySlotsContainer: Phaser.GameObjects.Container;
   private partySlots: PartySlot[];
   private partyCancelButton: PartyCancelButton;
+  private PartyDiscardModeButton: PartyDiscardModeButton;
   private partyMessageBox: Phaser.GameObjects.NineSlice;
   private moveInfoOverlay: MoveInfoOverlay;
 
@@ -309,6 +316,11 @@ export default class PartyUiHandler extends MessageUiHandler {
     this.iconAnimHandler = new PokemonIconAnimHandler();
     this.iconAnimHandler.setup();
 
+    const partyDiscardModeButton = new PartyDiscardModeButton(60, -globalScene.game.canvas.height / 15 - 1);
+    partyContainer.add(partyDiscardModeButton);
+
+    this.PartyDiscardModeButton = partyDiscardModeButton;
+
     // prepare move overlay. in case it appears to be too big, set the overlayScale to .5
     const overlayScale = 1;
     this.moveInfoOverlay = new MoveInfoOverlay({
@@ -352,6 +364,7 @@ export default class PartyUiHandler extends MessageUiHandler {
     this.partyContainer.setVisible(true);
     this.partyBg.setTexture(`party_bg${globalScene.currentBattle.double ? "_double" : ""}`);
     this.populatePartySlots();
+    this.PartyDiscardModeButton.toggleIcon(this.partyUiMode);
     this.setCursor(0);
 
     return true;
@@ -596,7 +609,7 @@ export default class PartyUiHandler extends MessageUiHandler {
     const option = this.options[this.optionsCursor];
     if (button === Button.LEFT) {
       /** Decrease quantity for the current item and update UI */
-      if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER) {
+      if (this.isItemManageMode()) {
         this.transferQuantities[option] =
           this.transferQuantities[option] === 1
             ? this.transferQuantitiesMax[option]
@@ -610,7 +623,7 @@ export default class PartyUiHandler extends MessageUiHandler {
 
     if (button === Button.RIGHT) {
       /** Increase quantity for the current item and update UI */
-      if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER) {
+      if (this.isItemManageMode()) {
         this.transferQuantities[option] =
           this.transferQuantities[option] === this.transferQuantitiesMax[option]
             ? 1
@@ -636,6 +649,34 @@ export default class PartyUiHandler extends MessageUiHandler {
       this.updateOptions();
     }
     success = this.moveOptionCursor(button);
+
+    return success;
+  }
+
+  private processDiscardMenuInput(pokemon: PlayerPokemon) {
+    const ui = this.getUi();
+    this.clearOptions();
+
+    const itemModifiers = this.getTransferrableItemsFromPokemon(pokemon);
+
+    let success = true;
+    if (this.optionsCursor === itemModifiers.length) {
+      for (let i = 0; i < itemModifiers.length; i++) {
+        success = globalScene.tryDiscardHeldItemModifier(itemModifiers[i], this.transferQuantities[i]);
+      }
+    } else {
+      success = globalScene.tryDiscardHeldItemModifier(
+        itemModifiers[this.optionsCursor],
+        this.transferQuantities[this.optionsCursor],
+      );
+    }
+
+    if (success) {
+      this.showText("Item has been discarded.", undefined, () => this.showText("", 0), null, true); // missing confirm message call from i18next.t.
+      ui.playSelect();
+    } else {
+      ui.playError();
+    }
 
     return success;
   }
@@ -724,6 +765,10 @@ export default class PartyUiHandler extends MessageUiHandler {
     // PartyOption.ALL, and options specific to the mode (held items)
     if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER) {
       return this.processModifierTransferModeInput(pokemon);
+    }
+
+    if (this.partyUiMode === PartyUiMode.DISCARD) {
+      return this.processDiscardMenuInput(pokemon);
     }
 
     // options specific to the mode (moves)
@@ -865,7 +910,7 @@ export default class PartyUiHandler extends MessageUiHandler {
     }
 
     if (button === Button.LEFT || button === Button.RIGHT) {
-      if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER) {
+      if (this.isItemManageMode()) {
         return this.processModifierTransferModeLeftRightInput(button);
       }
     }
@@ -920,10 +965,17 @@ export default class PartyUiHandler extends MessageUiHandler {
     return !(this.partyUiMode === PartyUiMode.FAINT_SWITCH || this.partyUiMode === PartyUiMode.REVIVAL_BLESSING);
   }
 
+  private isItemManageMode(): boolean {
+    return this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER || this.partyUiMode === PartyUiMode.DISCARD;
+  }
+
   private processPartyActionInput(): boolean {
     const ui = this.getUi();
     if (this.cursor < 6) {
-      if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER && !this.transferMode) {
+      if (
+        (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER && !this.transferMode) ||
+        this.partyUiMode === PartyUiMode.DISCARD
+      ) {
         /** Initialize item quantities for the selected Pokemon */
         const itemModifiers = globalScene.findModifiers(
           m =>
@@ -935,6 +987,24 @@ export default class PartyUiHandler extends MessageUiHandler {
         this.transferQuantitiesMax = itemModifiers.map(item => item.getStackCount());
       }
       this.showOptions();
+      ui.playSelect();
+    }
+
+    if (this.cursor === 7) {
+      switch (this.partyUiMode) {
+        case PartyUiMode.DISCARD:
+          this.partyUiMode = PartyUiMode.MODIFIER_TRANSFER;
+          ui.playSelect();
+          break;
+        case PartyUiMode.MODIFIER_TRANSFER:
+          this.partyUiMode = PartyUiMode.DISCARD;
+          ui.playSelect();
+          break;
+        default:
+          ui.playError();
+          break;
+      }
+      this.PartyDiscardModeButton.toggleIcon(this.partyUiMode);
       ui.playSelect();
     }
     // Pressing return button
@@ -957,6 +1027,7 @@ export default class PartyUiHandler extends MessageUiHandler {
       this.clearTransfer();
       ui.playSelect();
     } else if (this.allowCancel()) {
+      this.PartyDiscardModeButton.clear();
       if (this.selectCallback) {
         const selectCallback = this.selectCallback;
         this.selectCallback = null;
@@ -978,9 +1049,19 @@ export default class PartyUiHandler extends MessageUiHandler {
     let success = false;
     switch (button) {
       case Button.UP:
+        if (this.cursor === 7 && this.isItemManageMode()) {
+          success = this.setCursor(0);
+          break;
+        }
         success = this.setCursor(this.cursor ? (this.cursor < 6 ? this.cursor - 1 : slotCount - 1) : 6);
         break;
       case Button.DOWN:
+        if (this.cursor === 0) {
+          if (this.isItemManageMode()) {
+            success = this.setCursor(7);
+            break;
+          }
+        }
         success = this.setCursor(this.cursor < 6 ? (this.cursor < slotCount - 1 ? this.cursor + 1 : 6) : 0);
         break;
       case Button.LEFT:
@@ -989,7 +1070,7 @@ export default class PartyUiHandler extends MessageUiHandler {
         }
         break;
       case Button.RIGHT:
-        if (slotCount === battlerCount) {
+        if ((this.cursor === 7 && this.isItemManageMode()) || slotCount === battlerCount) {
           success = this.setCursor(6);
           break;
         }
@@ -1045,11 +1126,15 @@ export default class PartyUiHandler extends MessageUiHandler {
         this.partySlots[this.lastCursor].deselect();
       } else if (this.lastCursor === 6) {
         this.partyCancelButton.deselect();
+      } else if (this.lastCursor === 7) {
+        this.PartyDiscardModeButton.deselect();
       }
       if (cursor < 6) {
         this.partySlots[cursor].select();
       } else if (cursor === 6) {
         this.partyCancelButton.select();
+      } else if (cursor === 7) {
+        this.PartyDiscardModeButton.select();
       }
     }
     return changed;
@@ -1144,14 +1229,16 @@ export default class PartyUiHandler extends MessageUiHandler {
           optionsMessage = i18next.t("partyUiHandler:selectAnotherPokemonToSplice");
         }
         break;
+      case PartyUiMode.DISCARD:
+        optionsMessage = "Select a held item to discard.\nUse < and > to change quantity."; //Missing discard i18next.t call message
     }
 
     this.showText(optionsMessage, 0);
 
     this.updateOptions();
 
-    /** When an item is being selected for transfer, the message box is taller as the message occupies two lines */
-    if (this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER) {
+    /** When an item is being selected for transfer or discard, the message box is taller as the message occupies two lines */
+    if (this.isItemManageMode()) {
       this.partyMessageBox.setSize(262 - Math.max(this.optionsBg.displayWidth - 56, 0), 42);
     } else {
       this.partyMessageBox.setSize(262 - Math.max(this.optionsBg.displayWidth - 56, 0), 30);
@@ -1278,6 +1365,10 @@ export default class PartyUiHandler extends MessageUiHandler {
           this.addCommonOptions(pokemon);
         }
         break;
+      case PartyUiMode.DISCARD:
+        this.updateOptionsWithModifierTransferMode(pokemon);
+        //maybe change the name, this is the item selection menu
+        break;
       // TODO: This still needs to be broken up.
       // It could use a rework differentiating different kind of switches
       // to treat baton passing separately from switching on faint.
@@ -1382,7 +1473,8 @@ export default class PartyUiHandler extends MessageUiHandler {
         optionName = "↓";
       } else if (
         (this.partyUiMode !== PartyUiMode.REMEMBER_MOVE_MODIFIER &&
-          (this.partyUiMode !== PartyUiMode.MODIFIER_TRANSFER || this.transferMode)) ||
+          (this.partyUiMode !== PartyUiMode.MODIFIER_TRANSFER || this.transferMode) &&
+          this.partyUiMode !== PartyUiMode.DISCARD) ||
         option === PartyOption.CANCEL
       ) {
         switch (option) {
@@ -1443,7 +1535,7 @@ export default class PartyUiHandler extends MessageUiHandler {
       const itemModifiers = this.getItemModifiers(pokemon);
       const itemModifier = itemModifiers[option];
       if (
-        this.partyUiMode === PartyUiMode.MODIFIER_TRANSFER &&
+        this.isItemManageMode() &&
         this.transferQuantitiesMax[option] > 1 &&
         !this.transferMode &&
         itemModifier !== undefined &&
@@ -1473,7 +1565,6 @@ export default class PartyUiHandler extends MessageUiHandler {
       optionText.x = 15 - this.optionsBg.width;
     }
   }
-
   startTransfer(): void {
     this.transferMode = true;
     this.transferCursor = this.cursor;
@@ -1963,5 +2054,78 @@ class PartyCancelButton extends Phaser.GameObjects.Container {
 
     this.partyCancelBg.setFrame("party_cancel");
     this.partyCancelPb.setFrame("party_pb");
+  }
+}
+
+class PartyDiscardModeButton extends Phaser.GameObjects.Container {
+  private selected: boolean;
+
+  private transferIcon: Phaser.GameObjects.Sprite;
+  private discardIcon: Phaser.GameObjects.Sprite;
+  private textBox: Phaser.GameObjects.Text;
+
+  constructor(x: number, y: number) {
+    super(globalScene, x, y);
+
+    this.setup();
+  }
+
+  setup() {
+    this.transferIcon = globalScene.add.sprite(0, 0, "party_transfer", "normal");
+    this.discardIcon = globalScene.add.sprite(0, 0, "party_discard", "normal");
+    this.textBox = addTextObject(-8, -7, "Transfer", TextStyle.PARTY);
+
+    this.add(this.transferIcon);
+    this.add(this.discardIcon);
+    this.add(this.textBox);
+
+    this.clear();
+  }
+
+  select() {
+    if (this.selected) {
+      return;
+    }
+
+    this.selected = true;
+
+    this.transferIcon.setFrame("selected");
+    this.discardIcon.setFrame("selected");
+  }
+
+  deselect() {
+    if (!this.selected) {
+      return;
+    }
+
+    this.selected = false;
+
+    this.transferIcon.setFrame("normal");
+    this.discardIcon.setFrame("normal");
+  }
+
+  toggleIcon(partyMode: number) {
+    switch (partyMode) {
+      case PartyUiMode.DISCARD:
+        this.transferIcon.setVisible(true);
+        this.discardIcon.setVisible(false);
+        this.textBox.setVisible(true);
+        this.textBox.setText("Transfer");
+        break;
+      case PartyUiMode.MODIFIER_TRANSFER:
+        this.transferIcon.setVisible(false);
+        this.discardIcon.setVisible(true);
+        this.textBox.setVisible(true);
+        this.textBox.setText("Discard");
+        break;
+      default:
+        return;
+    }
+  }
+
+  clear() {
+    this.transferIcon.setVisible(false);
+    this.discardIcon.setVisible(false);
+    this.textBox.setVisible(false);
   }
 }
