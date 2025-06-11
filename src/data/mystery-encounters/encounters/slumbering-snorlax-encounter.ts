@@ -1,5 +1,4 @@
 import { STEALING_MOVES } from "#app/data/mystery-encounters/requirements/requirement-groups";
-import type { PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { SpeciesId } from "#enums/species-id";
@@ -11,7 +10,6 @@ import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/myst
 import { MoveRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
 import type { EnemyPartyConfig, EnemyPokemonConfig } from "../utils/encounter-phase-utils";
 import {
-  generateModifierType,
   initBattleWithEnemyConfig,
   leaveEncounterWithoutBattle,
   loadCustomMovesForEncounter,
@@ -27,10 +25,9 @@ import { AiType } from "#enums/ai-type";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import { BerryType } from "#enums/berry-type";
-import { Stat } from "#enums/stat";
 import { CustomPokemonData } from "#app/data/custom-pokemon-data";
 import { randSeedInt } from "#app/utils/common";
+import { HeldItemId } from "#enums/held-item-id";
 
 /** i18n namespace for the encounter */
 const namespace = "mysteryEncounters/slumberingSnorlax";
@@ -77,25 +74,13 @@ export const SlumberingSnorlaxEncounter: MysteryEncounter = MysteryEncounterBuil
       status: [StatusEffect.SLEEP, 6], // Extra turns on timer for Snorlax's start of fight moves
       nature: Nature.DOCILE,
       moveSet: [MoveId.BODY_SLAM, MoveId.CRUNCH, MoveId.SLEEP_TALK, MoveId.REST],
-      modifierConfigs: [
-        {
-          modifier: generateModifierType(modifierTypes.BERRY, [BerryType.SITRUS]) as PokemonHeldItemModifierType,
-        },
-        {
-          modifier: generateModifierType(modifierTypes.BERRY, [BerryType.ENIGMA]) as PokemonHeldItemModifierType,
-        },
-        {
-          modifier: generateModifierType(modifierTypes.BASE_STAT_BOOSTER, [Stat.HP]) as PokemonHeldItemModifierType,
-        },
-        {
-          modifier: generateModifierType(modifierTypes.SOOTHE_BELL) as PokemonHeldItemModifierType,
-          stackCount: randSeedInt(2, 0),
-        },
-        {
-          modifier: generateModifierType(modifierTypes.LUCKY_EGG) as PokemonHeldItemModifierType,
-          stackCount: randSeedInt(2, 0),
-        },
-      ],
+      heldItemConfig: {
+        [HeldItemId.SITRUS_BERRY]: { stack: 1 },
+        [HeldItemId.ENIGMA_BERRY]: { stack: 1 },
+        [HeldItemId.HP_UP]: { stack: 1 },
+        [HeldItemId.SOOTHE_BELL]: { stack: randSeedInt(2, 0) },
+        [HeldItemId.LUCKY_EGG]: { stack: randSeedInt(2, 0) },
+      },
       customPokemonData: new CustomPokemonData({ spriteScale: 1.25 }),
       aiType: AiType.SMART, // Required to ensure Snorlax uses Sleep Talk while it is asleep
     };

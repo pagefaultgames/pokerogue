@@ -80,6 +80,12 @@ export class PokemonItemManager {
 
   overrideItems(newItems: HeldItemPropertyMap) {
     this.heldItems = newItems;
+    // The following is to allow randomly generated item configs to have stack 0
+    for (const [item, properties] of Object.entries(this.heldItems)) {
+      if (!properties || properties.stack <= 0) {
+        delete this.heldItems[item];
+      }
+    }
   }
 
   add(itemType: HeldItemId, addStack = 1, data?: HELD_ITEM_DATA): boolean {
