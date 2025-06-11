@@ -663,4 +663,11 @@ export class PhaseManager {
   ): boolean {
     return this.appendToPhase(this.create(phase, ...args), targetPhase);
   }
+
+  public startNewDynamicPhase<T extends PhaseString>(
+    phase: T,
+    ...args: ConstructorParameters<PhaseConstructorMap[T]>
+  ): void {
+    this.startDynamicPhase(this.create(phase, ...args));
+  }
 }
