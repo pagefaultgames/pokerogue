@@ -88,8 +88,8 @@ export interface Starter {
   nature: Nature;
   moveset?: StarterMoveset;
   pokerus: boolean;
-  nickname?: string;
-  teraType?: PokemonType;
+  nickname?: string | undefined;
+  teraType?: PokemonType | undefined;
 }
 
 interface LanguageSetting {
