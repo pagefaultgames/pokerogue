@@ -7,16 +7,13 @@ import { Phase } from "#app/phase";
  */
 export class PartyExpPhase extends Phase {
   public readonly phaseName = "PartyExpPhase";
-  expValue: number;
-  useWaveIndexMultiplier?: boolean;
-  pokemonParticipantIds?: Set<number>;
 
-  constructor(expValue: number, useWaveIndexMultiplier?: boolean, pokemonParticipantIds?: Set<number>) {
+  constructor(
+    public expValue: number,
+    public useWaveIndexMultiplier?: boolean,
+    public pokemonParticipantIds?: Set<number>,
+  ) {
     super();
-
-    this.expValue = expValue;
-    this.useWaveIndexMultiplier = useWaveIndexMultiplier;
-    this.pokemonParticipantIds = pokemonParticipantIds;
   }
 
   /**

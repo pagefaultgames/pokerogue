@@ -143,15 +143,9 @@ export class FusionSpeciesFormEvolution extends SpeciesFormEvolution {
 }
 
 export class SpeciesEvolutionCondition {
-  public predicate: EvolutionConditionPredicate;
-  public enforceFunc?: EvolutionConditionEnforceFunc;
-  public description: string;
+  public description = "";
 
-  constructor(predicate: EvolutionConditionPredicate, enforceFunc?: EvolutionConditionEnforceFunc) {
-    this.predicate = predicate;
-    this.enforceFunc = enforceFunc;
-    this.description = "";
-  }
+  constructor(public predicate: EvolutionConditionPredicate, public enforceFunc?: EvolutionConditionEnforceFunc) {}
 }
 
 class GenderEvolutionCondition extends SpeciesEvolutionCondition {

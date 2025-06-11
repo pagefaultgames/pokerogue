@@ -152,10 +152,10 @@ export default abstract class Move implements Localizable {
 
   /**
    * Check if the move is of the given subclass without requiring `instanceof`.
-   * 
+   *
    * ⚠️ Does _not_ work for {@linkcode ChargingAttackMove} and {@linkcode ChargingSelfStatusMove} subclasses. For those,
    * use {@linkcode isChargingMove} instead.
-   * 
+   *
    * @param moveKind - The string name of the move to check against
    * @returns Whether this move is of the provided type.
    */
@@ -662,7 +662,7 @@ export default abstract class Move implements Localizable {
   doesFlagEffectApply({ flag, user, target, isFollowUp = false }: {
     flag: MoveFlags;
     user: Pokemon;
-    target?: Pokemon;
+    target?: Pokemon | undefined;
     isFollowUp?: boolean;
   }): boolean {
     // special cases below, eg: if the move flag is MAKES_CONTACT, and the user pokemon has an ability that ignores contact (like "Long Reach"), then overrides and move does not make contact
@@ -1253,15 +1253,14 @@ interface MoveEffectAttrOptions {
  * @see {@linkcode apply}
  */
 export class MoveEffectAttr extends MoveAttr {
-  /**
-   * A container for this attribute's optional parameters
-   * @see {@linkcode MoveEffectAttrOptions} for supported params.
-   */
-  protected options?: MoveEffectAttrOptions;
-
-  constructor(selfTarget?: boolean, options?: MoveEffectAttrOptions) {
+  constructor(
+    selfTarget?: boolean,
+    /**
+     * A container for this attribute's optional parameters
+     * @see {@linkcode MoveEffectAttrOptions} for supported params.
+     */
+    protected options?: MoveEffectAttrOptions) {
     super(selfTarget);
-    this.options = options;
   }
 
   /**
@@ -1451,7 +1450,7 @@ export class PreMoveMessageAttr extends MoveAttr {
  * @extends MoveAttr
  */
 export class PreUseInterruptAttr extends MoveAttr {
-  protected message?: string | ((user: Pokemon, target: Pokemon, move: Move) => string);
+  protected message: string | ((user: Pokemon, target: Pokemon, move: Move) => string);
   protected overridesFailedMessage: boolean;
   protected conditionFunc: MoveConditionFunc;
 
@@ -1459,10 +1458,10 @@ export class PreUseInterruptAttr extends MoveAttr {
    * Create a new MoveInterruptedMessageAttr.
    * @param message The message to display when the move is interrupted, or a function that formats the message based on the user, target, and move.
    */
-  constructor(message?: string | ((user: Pokemon, target: Pokemon, move: Move) => string), conditionFunc?: MoveConditionFunc) {
+  constructor(message: string | ((user: Pokemon, target: Pokemon, move: Move) => string), conditionFunc: MoveConditionFunc) {
     super();
     this.message = message;
-    this.conditionFunc = conditionFunc ?? (() => true);
+    this.conditionFunc = conditionFunc;
   }
 
   /**
@@ -2207,15 +2206,16 @@ export class SandHealAttr extends WeatherHealAttr {
  * @extends HealAttr
  * @see {@linkcode apply}
  */
+// TODO: Convert other healing attributes (WeatherHealAttr, etc) to base off of this class
 export class BoostHealAttr extends HealAttr {
   /** Healing received when {@linkcode condition} is false */
   private normalHealRatio: number;
   /** Healing received when {@linkcode condition} is true */
   private boostedHealRatio: number;
   /** The lambda expression to check against when boosting the healing value */
-  private condition?: MoveConditionFunc;
+  private condition: MoveConditionFunc;
 
-  constructor(normalHealRatio: number = 0.5, boostedHealRatio: number = 2 / 3, showAnim?: boolean, selfTarget?: boolean, condition?: MoveConditionFunc) {
+  constructor(normalHealRatio: number, boostedHealRatio: number, condition: MoveConditionFunc, showAnim?: boolean, selfTarget?: boolean, ) {
     super(normalHealRatio, showAnim, selfTarget);
     this.normalHealRatio = normalHealRatio;
     this.boostedHealRatio = boostedHealRatio;
@@ -2229,8 +2229,8 @@ export class BoostHealAttr extends HealAttr {
    * @param args N/A
    * @returns true if the move was successful
    */
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const healRatio: number = (this.condition ? this.condition(user, target, move) : false) ? this.boostedHealRatio : this.normalHealRatio;
+  override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const healRatio = this.condition(user, target, move) ? this.boostedHealRatio : this.normalHealRatio;
     this.addHealPhase(target, healRatio);
     return true;
   }
@@ -2516,7 +2516,7 @@ export class WaterShurikenMultiHitTypeAttr extends ChangeMultiHitTypeAttr {
 
 export class StatusEffectAttr extends MoveEffectAttr {
   public effect: StatusEffect;
-  public turnsRemaining?: number;
+  public turnsRemaining?: number | undefined;
   public overrideStatus: boolean = false;
 
   constructor(effect: StatusEffect, selfTarget?: boolean, turnsRemaining?: number, overrideStatus: boolean = false) {
@@ -3240,19 +3240,18 @@ interface StatStageChangeAttrOptions extends MoveEffectAttrOptions {
  * @see {@linkcode apply}
  */
 export class StatStageChangeAttr extends MoveEffectAttr {
-  public stats: BattleStat[];
-  public stages: number;
-  /**
-   * Container for optional parameters to this attribute.
-   * @see {@linkcode StatStageChangeAttrOptions} for available optional params
-   */
-  protected override options?: StatStageChangeAttrOptions;
-
-  constructor(stats: BattleStat[], stages: number, selfTarget?: boolean, options?: StatStageChangeAttrOptions) {
+  constructor(
+    public stats: BattleStat[],
+    public stages: number,
+    selfTarget?: boolean,
+    /**
+     * Container for optional parameters to this attribute.
+     * @see {@linkcode StatStageChangeAttrOptions} for available optional params
+     */
+    protected override options?: StatStageChangeAttrOptions) {
     super(selfTarget, options);
     this.stats = stats;
     this.stages = stages;
-    this.options = options;
   }
 
   /**
@@ -3484,16 +3483,16 @@ export class SecretPowerAttr extends MoveEffectAttr {
 export class PostVictoryStatStageChangeAttr extends MoveAttr {
   private stats: BattleStat[];
   private stages: number;
-  private condition?: MoveConditionFunc;
   private showMessage: boolean;
 
-  constructor(stats: BattleStat[], stages: number, selfTarget?: boolean, condition?: MoveConditionFunc, showMessage: boolean = true, firstHitOnly: boolean = false) {
+  constructor(stats: BattleStat[], stages: number, selfTarget?: boolean, private condition?: MoveConditionFunc, showMessage: boolean = true, firstHitOnly: boolean = false) {
     super();
     this.stats = stats;
     this.stages = stages;
     this.condition = condition;
     this.showMessage = showMessage;
   }
+
   applyPostVictory(user: Pokemon, target: Pokemon, move: Move): void {
     if (this.condition && !this.condition(user, target, move)) {
       return;
@@ -10484,7 +10483,7 @@ export function initMoves() {
       .attr(StatStageChangeAttr, [ Stat.SPD ], -1, true)
       .punchingMove(),
     new StatusMove(MoveId.FLORAL_HEALING, PokemonType.FAIRY, -1, 10, -1, 0, 7)
-      .attr(BoostHealAttr, 0.5, 2 / 3, true, false, (user, target, move) => globalScene.arena.terrain?.terrainType === TerrainType.GRASSY)
+      .attr(BoostHealAttr, 0.5, 2 / 3, (user, target, move) => globalScene.arena.terrain?.terrainType === TerrainType.GRASSY, true, false)
       .triageMove()
       .reflectable(),
     new AttackMove(MoveId.HIGH_HORSEPOWER, PokemonType.GROUND, MoveCategory.PHYSICAL, 95, 95, 10, -1, 0, 7),

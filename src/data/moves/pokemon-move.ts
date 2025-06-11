@@ -23,18 +23,21 @@ export class PokemonMove {
   public ppUp: number;
   public virtual: boolean;
 
-  /**
-   * If defined and nonzero, overrides the maximum PP of the move (e.g., due to move being copied by Transform).
-   * This also nullifies all effects of `ppUp`.
-   */
-  public maxPpOverride?: number;
-
-  constructor(moveId: MoveId, ppUsed = 0, ppUp = 0, virtual = false, maxPpOverride?: number) {
+  constructor(
+    moveId: MoveId,
+    ppUsed = 0,
+    ppUp = 0,
+    virtual = false,
+    /**
+     * If defined and nonzero, overrides the maximum PP of the move (e.g., due to move being copied by Transform).
+     * This also nullifies all effects of `ppUp`.
+     */
+    public maxPpOverride = 0,
+  ) {
     this.moveId = moveId;
     this.ppUsed = ppUsed;
     this.ppUp = ppUp;
     this.virtual = virtual;
-    this.maxPpOverride = maxPpOverride;
   }
 
   /**

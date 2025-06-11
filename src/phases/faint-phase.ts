@@ -36,16 +36,17 @@ export class FaintPhase extends PokemonPhase {
    */
   private preventInstantRevive: boolean;
 
-  /**
-   * The source Pokemon that dealt fatal damage
-   */
-  private source?: Pokemon;
-
-  constructor(battlerIndex: BattlerIndex, preventInstantRevive = false, source?: Pokemon) {
+  constructor(
+    battlerIndex: BattlerIndex,
+    preventInstantRevive = false,
+    /**
+     * The source Pokemon that dealt fatal damage
+     */
+    private source?: Pokemon,
+  ) {
     super(battlerIndex);
 
     this.preventInstantRevive = preventInstantRevive;
-    this.source = source;
   }
 
   start() {

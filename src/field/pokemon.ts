@@ -302,14 +302,14 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public isTerastallized: boolean;
   public stellarTypesBoosted: PokemonType[];
 
-  public fusionSpecies: PokemonSpecies | null;
+  public fusionSpecies?: PokemonSpecies | undefined = undefined;
   public fusionFormIndex: number;
   public fusionAbilityIndex: number;
   public fusionShiny: boolean;
   public fusionVariant: Variant;
   public fusionGender: Gender;
   public fusionLuck: number;
-  public fusionCustomPokemonData: CustomPokemonData | null;
+  public fusionCustomPokemonData?: CustomPokemonData | undefined = undefined;
   public fusionTeraType: PokemonType;
 
   public customPokemonData: CustomPokemonData = new CustomPokemonData();
@@ -412,7 +412,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
           ? dataSource.fusionSpecies
           : dataSource.fusionSpecies
             ? getPokemonSpecies(dataSource.fusionSpecies)
-            : null;
+            : undefined;
       this.fusionFormIndex = dataSource.fusionFormIndex;
       this.fusionAbilityIndex = dataSource.fusionAbilityIndex;
       this.fusionShiny = dataSource.fusionShiny;
@@ -682,7 +682,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         gender: pokemon.gender,
         pokeball: pokemon.pokeball,
         fusionFormIndex: pokemon.fusionFormIndex,
-        fusionSpecies: pokemon.fusionSpecies || undefined,
+        fusionSpecies: pokemon.fusionSpecies,
         fusionGender: pokemon.fusionGender,
       };
 
@@ -2980,14 +2980,13 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   public clearFusionSpecies(): void {
-    this.fusionSpecies = null;
     this.fusionFormIndex = 0;
     this.fusionAbilityIndex = 0;
     this.fusionShiny = false;
     this.fusionVariant = 0;
     this.fusionGender = 0;
     this.fusionLuck = 0;
-    this.fusionCustomPokemonData = null;
+    this.fusionCustomPokemonData = this.fusionSpecies = undefined;
 
     this.generateName();
     this.calculateStats();
@@ -4746,7 +4745,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       globalScene.phaseManager.unshiftNew(
         "ObtainStatusEffectPhase",
         this.getBattlerIndex(),
-        effect,
+        effect ?? StatusEffect.NONE, // This is addressed in a separate PR; please don't sue
         turnsRemaining,
         sourceText,
         sourcePokemon,
@@ -6725,7 +6724,7 @@ interface IllusionData {
   /** The pokeball of the illusion */
   pokeball: PokeballType;
   /** The fusion species of the illusion if it's a fusion */
-  fusionSpecies?: PokemonSpecies;
+  fusionSpecies?: PokemonSpecies | undefined;
   /** The fusionFormIndex of the illusion */
   fusionFormIndex?: number;
   /** The fusionGender of the illusion if it's a fusion */

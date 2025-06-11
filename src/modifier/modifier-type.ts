@@ -3309,7 +3309,7 @@ export interface CustomModifierSettings {
   guaranteedModifierTypeFuncs?: ModifierTypeFunc[];
   fillRemaining?: boolean;
   /** Set to negative value to disable rerolls completely in shop */
-  rerollMultiplier?: number;
+  rerollMultiplier?: number | undefined;
   allowLuckUpgrades?: boolean;
 }
 

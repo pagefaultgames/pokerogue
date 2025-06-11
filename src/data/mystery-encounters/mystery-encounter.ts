@@ -53,9 +53,9 @@ export interface IMysteryEncounter {
   options: [MysteryEncounterOption, MysteryEncounterOption, ...MysteryEncounterOption[]];
   spriteConfigs: MysteryEncounterSpriteConfig[];
   encounterTier: MysteryEncounterTier;
-  encounterAnimations?: EncounterAnim[];
-  disallowedGameModes?: GameModes[];
-  disallowedChallenges?: Challenges[];
+  encounterAnimations?: EncounterAnim[] | undefined;
+  disallowedGameModes?: GameModes[] | undefined;
+  disallowedChallenges?: Challenges[] | undefined;
   hideBattleIntroMessage: boolean;
   autoHideIntroVisuals: boolean;
   enterIntroVisualsFromRight: boolean;
@@ -68,11 +68,11 @@ export interface IMysteryEncounter {
   skipToFightInput: boolean;
   preventGameStatsUpdates: boolean;
 
-  onInit?: () => boolean;
-  onVisualsStart?: () => boolean;
-  doEncounterExp?: () => boolean;
-  doEncounterRewards?: () => boolean;
-  doContinueEncounter?: () => Promise<void>;
+  onInit?: (() => boolean) | undefined;
+  onVisualsStart?: (() => boolean) | undefined;
+  doEncounterExp?: (() => boolean) | undefined;
+  doEncounterRewards?: (() => boolean) | undefined;
+  doContinueEncounter?: (() => Promise<void>) | undefined;
 
   requirements: EncounterSceneRequirement[];
   primaryPokemonRequirements: EncounterPokemonRequirement[];
@@ -105,15 +105,15 @@ export default class MysteryEncounter implements IMysteryEncounter {
    * Custom battle animations that are configured for encounter effects and visuals
    * Specify here so that assets are loaded on initialization of encounter
    */
-  encounterAnimations?: EncounterAnim[];
+  encounterAnimations?: EncounterAnim[] | undefined;
   /**
    * If specified, defines any game modes where the {@linkcode MysteryEncounter} should *NOT* spawn
    */
-  disallowedGameModes?: GameModes[];
+  disallowedGameModes?: GameModes[] | undefined;
   /**
    * If specified, defines any challenges (from Challenge game mode) where the {@linkcode MysteryEncounter} should *NOT* spawn
    */
-  disallowedChallenges?: Challenges[];
+  disallowedChallenges?: Challenges[] | undefined;
   /**
    * If true, hides "A Wild X Appeared" etc. messages
    * Default true
@@ -172,24 +172,24 @@ export default class MysteryEncounter implements IMysteryEncounter {
   // #region Event callback functions
 
   /** Event when Encounter is first loaded, use it for data conditioning */
-  onInit?: () => boolean;
+  onInit?: (() => boolean) | undefined;
   /** Event when battlefield visuals have finished sliding in and the encounter dialogue begins */
-  onVisualsStart?: () => boolean;
+  onVisualsStart?: (() => boolean) | undefined;
   /** Event triggered prior to {@linkcode CommandPhase}, during {@linkcode TurnInitPhase} */
-  onTurnStart?: () => boolean;
+  onTurnStart?: (() => boolean) | undefined;
   /** Event prior to any rewards logic in {@linkcode MysteryEncounterRewardsPhase} */
-  onRewards?: () => Promise<void>;
+  onRewards?: (() => Promise<void>) | undefined;
   /** Will provide the player party EXP before rewards are displayed for that wave */
-  doEncounterExp?: () => boolean;
+  doEncounterExp?: (() => boolean) | undefined;
   /** Will provide the player a rewards shop for that wave */
-  doEncounterRewards?: () => boolean;
+  doEncounterRewards?: (() => boolean) | undefined;
   /** Will execute callback during VictoryPhase of a continuousEncounter */
-  doContinueEncounter?: () => Promise<void>;
+  doContinueEncounter?: (() => Promise<void>) | undefined;
   /**
    * Can perform special logic when a ME battle is lost, before GameOver/battle retry prompt.
    * Should return `true` if it is treated as "real" Game Over, `false` if not.
    */
-  onGameOver?: () => boolean;
+  onGameOver?: (() => boolean) | undefined;
 
   /**
    * Requirements
@@ -204,8 +204,8 @@ export default class MysteryEncounter implements IMysteryEncounter {
    */
   secondaryPokemonRequirements: EncounterPokemonRequirement[];
   excludePrimaryFromSupportRequirements: boolean;
-  primaryPokemon?: PlayerPokemon;
-  secondaryPokemon?: PlayerPokemon[];
+  primaryPokemon?: PlayerPokemon | undefined;
+  secondaryPokemon?: PlayerPokemon[] | undefined;
 
   // #region Post-construct / Auto-populated params
   localizationKey: string;
@@ -224,7 +224,7 @@ export default class MysteryEncounter implements IMysteryEncounter {
    * Otherwise, will be undefined
    * You probably shouldn't do anything directly with this unless you have a very specific need
    */
-  introVisuals?: MysteryEncounterIntroVisuals;
+  introVisuals?: MysteryEncounterIntroVisuals | undefined;
 
   // #region Flags
 
@@ -252,7 +252,7 @@ export default class MysteryEncounter implements IMysteryEncounter {
   /**
    * Will be set by option select handlers automatically, and can be used to refer to which option was chosen by later phases
    */
-  selectedOption?: MysteryEncounterOption;
+  selectedOption?: MysteryEncounterOption | undefined;
   /**
    * Will be set by option select handlers automatically, and can be used to refer to which option was chosen by later phases
    */

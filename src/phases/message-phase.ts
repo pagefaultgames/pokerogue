@@ -4,17 +4,17 @@ import { Phase } from "#app/phase";
 export class MessagePhase extends Phase {
   public readonly phaseName = "MessagePhase";
   private text: string;
-  private callbackDelay?: number | null;
-  private prompt?: boolean | null;
-  private promptDelay?: number | null;
-  private speaker?: string;
+  private callbackDelay: number | null = null;
+  private prompt: boolean | null;
+  private promptDelay: number | null;
+  private speaker = "";
 
   constructor(
     text: string,
-    callbackDelay?: number | null,
-    prompt?: boolean | null,
-    promptDelay?: number | null,
-    speaker?: string,
+    callbackDelay: number | null = null,
+    prompt: boolean | null = null,
+    promptDelay: number | null = null,
+    speaker = "",
   ) {
     super();
 

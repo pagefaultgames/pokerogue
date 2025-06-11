@@ -163,15 +163,15 @@ export interface StarterMoveData {
 }
 
 export interface StarterAttributes {
-  nature?: number;
-  ability?: number;
-  variant?: number;
-  form?: number;
-  female?: boolean;
-  shiny?: boolean;
-  favorite?: boolean;
-  nickname?: string;
-  tera?: PokemonType;
+  nature?: number | undefined;
+  ability?: number | undefined;
+  variant?: number | undefined;
+  form?: number | undefined;
+  female?: boolean | undefined;
+  shiny?: boolean | undefined;
+  favorite?: boolean | undefined;
+  nickname?: string | undefined;
+  tera?: PokemonType | undefined;
 }
 
 export interface DexAttrProps {

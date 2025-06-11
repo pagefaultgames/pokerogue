@@ -45,7 +45,6 @@ export class BattlerTag {
   public lapseTypes: BattlerTagLapseType[];
   public turnCount: number;
   public sourceMove: MoveId;
-  public sourceId?: number;
   public isBatonPassable: boolean;
 
   constructor(
@@ -53,14 +52,13 @@ export class BattlerTag {
     lapseType: BattlerTagLapseType | BattlerTagLapseType[],
     turnCount: number,
     sourceMove?: MoveId,
-    sourceId?: number,
+    public sourceId?: number,
     isBatonPassable = false,
   ) {
     this.tagType = tagType;
     this.lapseTypes = Array.isArray(lapseType) ? lapseType : [lapseType];
     this.turnCount = turnCount;
     this.sourceMove = sourceMove!; // TODO: is this bang correct?
-    this.sourceId = sourceId;
     this.isBatonPassable = isBatonPassable;
   }
 

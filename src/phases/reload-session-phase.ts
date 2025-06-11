@@ -5,12 +5,9 @@ import { fixedInt } from "#app/utils/common";
 
 export class ReloadSessionPhase extends Phase {
   public readonly phaseName = "ReloadSessionPhase";
-  private systemDataStr?: string;
 
-  constructor(systemDataStr?: string) {
+  constructor(private systemDataStr?: string) {
     super();
-
-    this.systemDataStr = systemDataStr;
   }
 
   start(): void {

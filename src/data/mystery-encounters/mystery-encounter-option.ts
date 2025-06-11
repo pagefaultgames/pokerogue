@@ -45,7 +45,7 @@ export default class MysteryEncounterOption implements IMysteryEncounterOption {
   requirements: EncounterSceneRequirement[];
   primaryPokemonRequirements: EncounterPokemonRequirement[];
   secondaryPokemonRequirements: EncounterPokemonRequirement[];
-  primaryPokemon?: PlayerPokemon;
+  primaryPokemon?: PlayerPokemon | undefined;
   secondaryPokemon?: PlayerPokemon[];
   excludePrimaryFromSecondaryRequirements: boolean;
 

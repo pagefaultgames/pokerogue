@@ -32,8 +32,8 @@ export abstract class ApiBase {
    * @param bodyData The body-data to send.
    * @param dataType The data-type of the {@linkcode bodyData}.
    */
-  protected async doPost<D = undefined>(path: string, bodyData?: D, dataType: DataType = "json") {
-    let body: string | undefined = undefined;
+  protected async doPost<D = null>(path: string, bodyData?: D, dataType: DataType = "json") {
+    let body: string | null = null;
     const headers: HeadersInit = {};
 
     if (bodyData) {
