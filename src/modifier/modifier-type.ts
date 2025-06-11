@@ -1,13 +1,13 @@
 import { globalScene } from "#app/global-scene";
 import { EvolutionItem, pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
 import { tmPoolTiers, tmSpecies } from "#app/data/balance/tms";
-import { getBerryEffectDescription, getBerryName } from "#app/data/berry";
 import { allMoves } from "#app/data/data-lists";
 import { getNatureName, getNatureStatMultiplier } from "#app/data/nature";
 import { getPokeballCatchMultiplier, getPokeballName, MAX_PER_TYPE_POKEBALLS } from "#app/data/pokeball";
 import { pokemonFormChanges, SpeciesFormChangeCondition } from "#app/data/pokemon-forms";
 import { SpeciesFormChangeItemTrigger } from "#app/data/pokemon-forms/form-change-triggers";
 import { FormChangeItem } from "#enums/form-change-item";
+import { formChangeItemName } from "#app/data/pokemon-forms";
 import { getStatusEffectDescriptor } from "#app/data/status-effect";
 import { PokemonType } from "#enums/pokemon-type";
 import type { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
@@ -17,14 +17,7 @@ import { getPokemonNameWithAffix } from "#app/messages";
 import {
   AddPokeballModifier,
   AddVoucherModifier,
-  AttackTypeBoosterModifier,
-  BaseStatModifier,
-  BerryModifier,
   BoostBugSpawnModifier,
-  BypassSpeedChanceModifier,
-  ContactHeldItemTransferChanceModifier,
-  CritBoosterModifier,
-  DamageMoneyRewardModifier,
   DoubleBattleChanceBoosterModifier,
   EnemyAttackStatusEffectChanceModifier,
   EnemyDamageBoosterModifier,
@@ -34,19 +27,15 @@ import {
   EnemyStatusEffectHealChanceModifier,
   EnemyTurnHealModifier,
   EvolutionItemModifier,
-  EvolutionStatBoosterModifier,
-  EvoTrackerModifier,
   ExpBalanceModifier,
   ExpBoosterModifier,
   ExpShareModifier,
   ExtraModifierModifier,
-  FlinchChanceModifier,
   FusePokemonModifier,
   GigantamaxAccessModifier,
   HealingBoosterModifier,
   HealShopCostModifier,
   HiddenAbilityRateBoosterModifier,
-  HitHealModifier,
   IvScannerModifier,
   LevelIncrementBoosterModifier,
   LockModifierTiersModifier,
@@ -57,45 +46,26 @@ import {
   MoneyRewardModifier,
   MultipleParticipantExpBonusModifier,
   PokemonAllMovePpRestoreModifier,
-  PokemonBaseStatFlatModifier,
-  PokemonBaseStatTotalModifier,
-  PokemonExpBoosterModifier,
-  PokemonFormChangeItemModifier,
-  PokemonFriendshipBoosterModifier,
-  PokemonHeldItemModifier,
+  type PokemonHeldItemModifier,
   PokemonHpRestoreModifier,
-  PokemonIncrementingStatModifier,
-  PokemonInstantReviveModifier,
   PokemonLevelIncrementModifier,
-  PokemonMoveAccuracyBoosterModifier,
-  PokemonMultiHitModifier,
   PokemonNatureChangeModifier,
-  PokemonNatureWeightModifier,
   PokemonPpRestoreModifier,
   PokemonPpUpModifier,
   PokemonStatusHealModifier,
   PreserveBerryModifier,
   RememberMoveModifier,
-  ResetNegativeStatStageModifier,
   ShinyRateBoosterModifier,
-  SpeciesCritBoosterModifier,
-  SpeciesStatBoosterModifier,
-  SurviveDamageModifier,
-  SwitchEffectTransferModifier,
   TempCritBoosterModifier,
   TempStatStageBoosterModifier,
   TerastallizeAccessModifier,
   TerrastalizeModifier,
   TmModifier,
-  TurnHealModifier,
-  TurnHeldItemTransferModifier,
-  TurnStatusEffectModifier,
   type EnemyPersistentModifier,
   type Modifier,
   type PersistentModifier,
   TempExtraModifierModifier,
   CriticalCatchChanceBoosterModifier,
-  FieldEffectModifier,
 } from "#app/modifier/modifier";
 import { ModifierTier } from "#app/modifier/modifier-tier";
 import Overrides from "#app/overrides";
@@ -126,7 +96,13 @@ import { getStatKey, Stat, TEMP_BATTLE_STATS } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
 import i18next from "i18next";
 import { timedEventManager } from "#app/global-event-manager";
+import { HeldItemId } from "#enums/held-item-id";
+import { allHeldItems } from "#app/items/all-held-items";
 import { TYPE_BOOST_ITEM_BOOST_PERCENT } from "#app/constants";
+import { attackTypeToHeldItem } from "#app/items/held-items/attack-type-booster";
+import { berryTypeToHeldItem } from "#app/items/held-items/berry";
+import { permanentStatToHeldItem, statBoostItems } from "#app/items/held-items/base-stat-booster";
+import { SPECIES_STAT_BOOSTER_ITEMS, type SpeciesStatBoosterItemId } from "#app/items/held-items/stat-booster";
 
 const outputModifierData = false;
 const useMaxWeightForOutput = false;
@@ -139,7 +115,7 @@ export enum ModifierPoolType {
   DAILY_STARTER,
 }
 
-type NewModifierFunc = (type: ModifierType, args: any[]) => Modifier;
+type NewModifierFunc = (type: ModifierType, args: any[]) => Modifier | null;
 
 export class ModifierType {
   public id: string;
@@ -170,6 +146,10 @@ export class ModifierType {
 
   getDescription(): string {
     return i18next.t(`${this.localeKey}.description` as any);
+  }
+
+  getIcon(): string {
+    return this.iconImage;
   }
 
   setTier(tier: ModifierTier): void {
@@ -376,30 +356,22 @@ export class PokemonModifierType extends ModifierType {
   }
 }
 
-export class PokemonHeldItemModifierType extends PokemonModifierType {
-  constructor(
-    localeKey: string,
-    iconImage: string,
-    newModifierFunc: NewModifierFunc,
-    group?: string,
-    soundName?: string,
-  ) {
+export class HeldItemReward extends PokemonModifierType {
+  public itemId: HeldItemId;
+  constructor(itemId: HeldItemId, group?: string, soundName?: string) {
     super(
-      localeKey,
-      iconImage,
-      newModifierFunc,
+      "",
+      "",
+      () => null,
       (pokemon: PlayerPokemon) => {
-        const dummyModifier = this.newModifier(pokemon);
-        const matchingModifier = globalScene.findModifier(
-          m => m instanceof PokemonHeldItemModifier && m.pokemonId === pokemon.id && m.matchType(dummyModifier),
-        ) as PokemonHeldItemModifier;
-        const maxStackCount = dummyModifier.getMaxStackCount();
+        const hasItem = pokemon.heldItemManager.hasItem(this.itemId);
+        const maxStackCount = allHeldItems[this.itemId].getMaxStackCount();
         if (!maxStackCount) {
           return i18next.t("modifierType:ModifierType.PokemonHeldItemModifierType.extra.inoperable", {
             pokemonName: getPokemonNameWithAffix(pokemon),
           });
         }
-        if (matchingModifier && matchingModifier.stackCount === maxStackCount) {
+        if (hasItem && pokemon.heldItemManager.getStack(this.itemId) === maxStackCount) {
           return i18next.t("modifierType:ModifierType.PokemonHeldItemModifierType.extra.tooMany", {
             pokemonName: getPokemonNameWithAffix(pokemon),
           });
@@ -409,10 +381,23 @@ export class PokemonHeldItemModifierType extends PokemonModifierType {
       group,
       soundName,
     );
+    this.itemId = itemId;
   }
 
-  newModifier(...args: any[]): PokemonHeldItemModifier {
-    return super.newModifier(...args) as PokemonHeldItemModifier;
+  get name(): string {
+    return allHeldItems[this.itemId].name;
+  }
+
+  get description(): string {
+    return allHeldItems[this.itemId].name;
+  }
+
+  get icon(): string {
+    return allHeldItems[this.itemId].name;
+  }
+
+  apply(pokemon: Pokemon) {
+    pokemon.heldItemManager.add(this.itemId);
   }
 }
 
@@ -776,27 +761,15 @@ export class TempStatStageBoosterModifierType extends ModifierType implements Ge
   }
 }
 
-export class BerryModifierType extends PokemonHeldItemModifierType implements GeneratedPersistentModifierType {
+export class BerryReward extends HeldItemReward implements GeneratedPersistentModifierType {
   private berryType: BerryType;
 
   constructor(berryType: BerryType) {
-    super(
-      "",
-      `${BerryType[berryType].toLowerCase()}_berry`,
-      (type, args) => new BerryModifier(type, (args[0] as Pokemon).id, berryType),
-      "berry",
-    );
+    const itemId = berryTypeToHeldItem[berryType];
+    super(itemId);
 
     this.berryType = berryType;
     this.id = "BERRY"; // needed to prevent harvest item deletion; remove after modifier rework
-  }
-
-  get name(): string {
-    return getBerryName(this.berryType);
-  }
-
-  getDescription(): string {
-    return getBerryEffectDescription(this.berryType);
   }
 
   getPregenArgs(): any[] {
@@ -804,88 +777,42 @@ export class BerryModifierType extends PokemonHeldItemModifierType implements Ge
   }
 }
 
-enum AttackTypeBoosterItem {
-  SILK_SCARF,
-  BLACK_BELT,
-  SHARP_BEAK,
-  POISON_BARB,
-  SOFT_SAND,
-  HARD_STONE,
-  SILVER_POWDER,
-  SPELL_TAG,
-  METAL_COAT,
-  CHARCOAL,
-  MYSTIC_WATER,
-  MIRACLE_SEED,
-  MAGNET,
-  TWISTED_SPOON,
-  NEVER_MELT_ICE,
-  DRAGON_FANG,
-  BLACK_GLASSES,
-  FAIRY_FEATHER,
+class BerryRewardGenerator extends ModifierTypeGenerator {
+  constructor() {
+    super((_party: Pokemon[], pregenArgs?: any[]) => {
+      if (pregenArgs && pregenArgs.length === 1 && pregenArgs[0] in BerryType) {
+        return new BerryReward(pregenArgs[0] as BerryType);
+      }
+      const berryTypes = getEnumValues(BerryType);
+      let randBerryType: BerryType;
+      const rand = randSeedInt(12);
+      if (rand < 2) {
+        randBerryType = BerryType.SITRUS;
+      } else if (rand < 4) {
+        randBerryType = BerryType.LUM;
+      } else if (rand < 6) {
+        randBerryType = BerryType.LEPPA;
+      } else {
+        randBerryType = berryTypes[randSeedInt(berryTypes.length - 3) + 2];
+      }
+      return new BerryReward(randBerryType);
+    });
+  }
 }
 
-export class AttackTypeBoosterModifierType
-  extends PokemonHeldItemModifierType
-  implements GeneratedPersistentModifierType
-{
+export class AttackTypeBoosterReward extends HeldItemReward implements GeneratedPersistentModifierType {
   public moveType: PokemonType;
   public boostPercent: number;
 
   constructor(moveType: PokemonType, boostPercent: number) {
-    super(
-      "",
-      `${AttackTypeBoosterItem[moveType]?.toLowerCase()}`,
-      (_type, args) => new AttackTypeBoosterModifier(this, (args[0] as Pokemon).id, moveType, boostPercent),
-    );
-
+    const itemId = attackTypeToHeldItem[moveType];
+    super(itemId);
     this.moveType = moveType;
     this.boostPercent = boostPercent;
   }
 
-  get name(): string {
-    return i18next.t(`modifierType:AttackTypeBoosterItem.${AttackTypeBoosterItem[this.moveType]?.toLowerCase()}`);
-  }
-
-  getDescription(): string {
-    // TODO: Need getTypeName?
-    return i18next.t("modifierType:ModifierType.AttackTypeBoosterModifierType.description", {
-      moveType: i18next.t(`pokemonInfo:Type.${PokemonType[this.moveType]}`),
-    });
-  }
-
   getPregenArgs(): any[] {
     return [this.moveType];
-  }
-}
-
-export type SpeciesStatBoosterItem = keyof typeof SpeciesStatBoosterModifierTypeGenerator.items;
-
-/**
- * Modifier type for {@linkcode SpeciesStatBoosterModifier}
- * @extends PokemonHeldItemModifierType
- * @implements GeneratedPersistentModifierType
- */
-export class SpeciesStatBoosterModifierType
-  extends PokemonHeldItemModifierType
-  implements GeneratedPersistentModifierType
-{
-  public key: SpeciesStatBoosterItem;
-
-  constructor(key: SpeciesStatBoosterItem) {
-    const item = SpeciesStatBoosterModifierTypeGenerator.items[key];
-    super(
-      `modifierType:SpeciesBoosterItem.${key}`,
-      key.toLowerCase(),
-      (type, args) =>
-        new SpeciesStatBoosterModifier(type, (args[0] as Pokemon).id, item.stats, item.multiplier, item.species),
-    );
-
-    this.key = key;
-  }
-
-  getPregenArgs(): any[] {
-    return [this.key];
   }
 }
 
@@ -924,104 +851,75 @@ export class AllPokemonLevelIncrementModifierType extends ModifierType {
   }
 }
 
-export class BaseStatBoosterModifierType
-  extends PokemonHeldItemModifierType
-  implements GeneratedPersistentModifierType
-{
+export class BaseStatBoosterReward extends HeldItemReward {
   private stat: PermanentStat;
   private key: string;
 
   constructor(stat: PermanentStat) {
-    const key = BaseStatBoosterModifierTypeGenerator.items[stat];
-    super("", key, (_type, args) => new BaseStatModifier(this, (args[0] as Pokemon).id, this.stat));
+    const key = statBoostItems[stat];
+    const itemId = permanentStatToHeldItem[stat];
+    super(itemId);
 
     this.stat = stat;
     this.key = key;
-  }
-
-  get name(): string {
-    return i18next.t(`modifierType:BaseStatBoosterItem.${this.key}`);
-  }
-
-  getDescription(): string {
-    return i18next.t("modifierType:ModifierType.BaseStatBoosterModifierType.description", {
-      stat: i18next.t(getStatKey(this.stat)),
-    });
-  }
-
-  getPregenArgs(): any[] {
-    return [this.stat];
   }
 }
 
 /**
  * Shuckle Juice item
  */
-export class PokemonBaseStatTotalModifierType
-  extends PokemonHeldItemModifierType
-  implements GeneratedPersistentModifierType
-{
+export class BaseStatTotalHeldItemReward extends HeldItemReward {
   private readonly statModifier: number;
 
-  constructor(statModifier: number) {
-    super(
-      "modifierType:ModifierType.MYSTERY_ENCOUNTER_SHUCKLE_JUICE",
-      "berry_juice",
-      (_type, args) => new PokemonBaseStatTotalModifier(this, (args[0] as Pokemon).id, this.statModifier),
-    );
+  constructor(itemId: HeldItemId, statModifier: number) {
+    super(itemId);
     this.statModifier = statModifier;
   }
 
-  override getDescription(): string {
-    return i18next.t("modifierType:ModifierType.PokemonBaseStatTotalModifierType.description", {
-      increaseDecrease: i18next.t(
-        this.statModifier >= 0
-          ? "modifierType:ModifierType.PokemonBaseStatTotalModifierType.extra.increase"
-          : "modifierType:ModifierType.PokemonBaseStatTotalModifierType.extra.decrease",
-      ),
-      blessCurse: i18next.t(
-        this.statModifier >= 0
-          ? "modifierType:ModifierType.PokemonBaseStatTotalModifierType.extra.blessed"
-          : "modifierType:ModifierType.PokemonBaseStatTotalModifierType.extra.cursed",
-      ),
-      statValue: this.statModifier,
-    });
+  apply(pokemon: Pokemon) {
+    super.apply(pokemon);
+    pokemon.heldItemManager[this.itemId].data.statModifier = this.statModifier;
   }
+}
 
-  public getPregenArgs(): any[] {
-    return [this.statModifier];
+class BaseStatTotalHeldItemRewardGenerator extends ModifierTypeGenerator {
+  constructor() {
+    super((_party: Pokemon[], pregenArgs?: any[]) => {
+      if (pregenArgs) {
+        return new BaseStatTotalHeldItemReward(HeldItemId.SHUCKLE_JUICE, pregenArgs[0] as number);
+      }
+      return new BaseStatTotalHeldItemReward(HeldItemId.SHUCKLE_JUICE, randSeedInt(20, 1));
+    });
   }
 }
 
 /**
  * Old Gateau item
  */
-export class PokemonBaseStatFlatModifierType
-  extends PokemonHeldItemModifierType
-  implements GeneratedPersistentModifierType
-{
+export class BaseStatFlatHeldItemReward extends HeldItemReward {
   private readonly statModifier: number;
   private readonly stats: Stat[];
 
-  constructor(statModifier: number, stats: Stat[]) {
-    super(
-      "modifierType:ModifierType.MYSTERY_ENCOUNTER_OLD_GATEAU",
-      "old_gateau",
-      (_type, args) => new PokemonBaseStatFlatModifier(this, (args[0] as Pokemon).id, this.statModifier, this.stats),
-    );
+  constructor(itemId: HeldItemId, statModifier: number, stats: Stat[]) {
+    super(itemId);
     this.statModifier = statModifier;
     this.stats = stats;
   }
 
-  override getDescription(): string {
-    return i18next.t("modifierType:ModifierType.PokemonBaseStatFlatModifierType.description", {
-      stats: this.stats.map(stat => i18next.t(getStatKey(stat))).join("/"),
-      statValue: this.statModifier,
-    });
+  apply(pokemon: Pokemon) {
+    super.apply(pokemon);
+    pokemon.heldItemManager[this.itemId].data.statModifier = this.statModifier;
   }
+}
 
-  public getPregenArgs(): any[] {
-    return [this.statModifier, this.stats];
+class BaseStatFlatHeldItemRewardGenerator extends ModifierTypeGenerator {
+  constructor() {
+    super((_party: Pokemon[], pregenArgs?: any[]) => {
+      if (pregenArgs) {
+        return new BaseStatFlatHeldItemReward(HeldItemId.OLD_GATEAU, pregenArgs[0] as number, pregenArgs[1] as Stat[]);
+      }
+      return new BaseStatFlatHeldItemReward(HeldItemId.OLD_GATEAU, randSeedInt(20, 1), [Stat.HP, Stat.ATK, Stat.DEF]);
+    });
   }
 }
 
@@ -1092,72 +990,6 @@ export class ExpBoosterModifierType extends ModifierType {
     return i18next.t("modifierType:ModifierType.ExpBoosterModifierType.description", {
       boostPercent: this.boostPercent,
     });
-  }
-}
-
-export class PokemonExpBoosterModifierType extends PokemonHeldItemModifierType {
-  private boostPercent: number;
-
-  constructor(localeKey: string, iconImage: string, boostPercent: number) {
-    super(
-      localeKey,
-      iconImage,
-      (_type, args) => new PokemonExpBoosterModifier(this, (args[0] as Pokemon).id, boostPercent),
-    );
-
-    this.boostPercent = boostPercent;
-  }
-
-  getDescription(): string {
-    return i18next.t("modifierType:ModifierType.PokemonExpBoosterModifierType.description", {
-      boostPercent: this.boostPercent,
-    });
-  }
-}
-
-export class PokemonFriendshipBoosterModifierType extends PokemonHeldItemModifierType {
-  constructor(localeKey: string, iconImage: string) {
-    super(localeKey, iconImage, (_type, args) => new PokemonFriendshipBoosterModifier(this, (args[0] as Pokemon).id));
-  }
-
-  getDescription(): string {
-    return i18next.t("modifierType:ModifierType.PokemonFriendshipBoosterModifierType.description");
-  }
-}
-
-export class PokemonMoveAccuracyBoosterModifierType extends PokemonHeldItemModifierType {
-  private amount: number;
-
-  constructor(localeKey: string, iconImage: string, amount: number, group?: string, soundName?: string) {
-    super(
-      localeKey,
-      iconImage,
-      (_type, args) => new PokemonMoveAccuracyBoosterModifier(this, (args[0] as Pokemon).id, amount),
-      group,
-      soundName,
-    );
-
-    this.amount = amount;
-  }
-
-  getDescription(): string {
-    return i18next.t("modifierType:ModifierType.PokemonMoveAccuracyBoosterModifierType.description", {
-      accuracyAmount: this.amount,
-    });
-  }
-}
-
-export class PokemonMultiHitModifierType extends PokemonHeldItemModifierType {
-  constructor(localeKey: string, iconImage: string) {
-    super(
-      localeKey,
-      iconImage,
-      (type, args) => new PokemonMultiHitModifier(type as PokemonMultiHitModifierType, (args[0] as Pokemon).id),
-    );
-  }
-
-  getDescription(): string {
-    return i18next.t("modifierType:ModifierType.PokemonMultiHitModifierType.description");
   }
 }
 
@@ -1260,14 +1092,14 @@ export class EvolutionItemModifierType extends PokemonModifierType implements Ge
 /**
  * Class that represents form changing items
  */
-export class FormChangeItemModifierType extends PokemonModifierType implements GeneratedPersistentModifierType {
+export class FormChangeItemReward extends PokemonModifierType {
   public formChangeItem: FormChangeItem;
 
   constructor(formChangeItem: FormChangeItem) {
     super(
       "",
-      FormChangeItem[formChangeItem].toLowerCase(),
-      (_type, args) => new PokemonFormChangeItemModifier(this, (args[0] as PlayerPokemon).id, formChangeItem, true),
+      "",
+      () => null,
       (pokemon: PlayerPokemon) => {
         // Make sure the Pokemon has alternate forms
         if (
@@ -1293,15 +1125,11 @@ export class FormChangeItemModifierType extends PokemonModifierType implements G
   }
 
   get name(): string {
-    return i18next.t(`modifierType:FormChangeItem.${FormChangeItem[this.formChangeItem]}`);
+    return formChangeItemName(this.formChangeItem);
   }
 
   getDescription(): string {
     return i18next.t("modifierType:ModifierType.FormChangeItemModifierType.description");
-  }
-
-  getPregenArgs(): any[] {
-    return [this.formChangeItem];
   }
 }
 
@@ -1325,13 +1153,14 @@ export class FusePokemonModifierType extends PokemonModifierType {
   }
 }
 
-class AttackTypeBoosterModifierTypeGenerator extends ModifierTypeGenerator {
+class AttackTypeBoosterRewardGenerator extends ModifierTypeGenerator {
   constructor() {
     super((party: Pokemon[], pregenArgs?: any[]) => {
       if (pregenArgs && pregenArgs.length === 1 && pregenArgs[0] in PokemonType) {
-        return new AttackTypeBoosterModifierType(pregenArgs[0] as PokemonType, TYPE_BOOST_ITEM_BOOST_PERCENT);
+        return new AttackTypeBoosterReward(pregenArgs[0] as PokemonType, TYPE_BOOST_ITEM_BOOST_PERCENT);
       }
 
+      // TODO: make this consider moves or abilities that change types
       const attackMoveTypes = party.flatMap(p =>
         p
           .getMoveset()
@@ -1346,17 +1175,11 @@ class AttackTypeBoosterModifierTypeGenerator extends ModifierTypeGenerator {
       const attackMoveTypeWeights = new Map<PokemonType, number>();
       let totalWeight = 0;
       for (const t of attackMoveTypes) {
-        if (attackMoveTypeWeights.has(t)) {
-          if (attackMoveTypeWeights.get(t)! < 3) {
-            // attackMoveTypeWeights.has(t) was checked before
-            attackMoveTypeWeights.set(t, attackMoveTypeWeights.get(t)! + 1);
-          } else {
-            continue;
-          }
-        } else {
-          attackMoveTypeWeights.set(t, 1);
+        const weight = attackMoveTypeWeights.get(t) ?? 0;
+        if (weight < 3) {
+          attackMoveTypeWeights.set(t, weight + 1);
+          totalWeight++;
         }
-        totalWeight++;
       }
 
       if (!totalWeight) {
@@ -1377,28 +1200,19 @@ class AttackTypeBoosterModifierTypeGenerator extends ModifierTypeGenerator {
         weight += typeWeight;
       }
 
-      return new AttackTypeBoosterModifierType(type!, TYPE_BOOST_ITEM_BOOST_PERCENT);
+      return new AttackTypeBoosterReward(type!, TYPE_BOOST_ITEM_BOOST_PERCENT);
     });
   }
 }
 
-class BaseStatBoosterModifierTypeGenerator extends ModifierTypeGenerator {
-  public static readonly items: Record<PermanentStat, string> = {
-    [Stat.HP]: "hp_up",
-    [Stat.ATK]: "protein",
-    [Stat.DEF]: "iron",
-    [Stat.SPATK]: "calcium",
-    [Stat.SPDEF]: "zinc",
-    [Stat.SPD]: "carbos",
-  };
-
+class BaseStatBoosterRewardGenerator extends ModifierTypeGenerator {
   constructor() {
     super((_party: Pokemon[], pregenArgs?: any[]) => {
       if (pregenArgs) {
-        return new BaseStatBoosterModifierType(pregenArgs[0]);
+        return new BaseStatBoosterReward(pregenArgs[0]);
       }
       const randStat: PermanentStat = randSeedInt(Stat.SPD + 1);
-      return new BaseStatBoosterModifierType(randStat);
+      return new BaseStatBoosterReward(randStat);
     });
   }
 }
@@ -1430,66 +1244,21 @@ class TempStatStageBoosterModifierTypeGenerator extends ModifierTypeGenerator {
  * the current list of {@linkcode items}.
  * @extends ModifierTypeGenerator
  */
-class SpeciesStatBoosterModifierTypeGenerator extends ModifierTypeGenerator {
+class SpeciesStatBoosterRewardGenerator extends ModifierTypeGenerator {
   /** Object comprised of the currently available species-based stat boosting held items */
-  public static readonly items = {
-    LIGHT_BALL: {
-      stats: [Stat.ATK, Stat.SPATK],
-      multiplier: 2,
-      species: [SpeciesId.PIKACHU],
-      rare: true,
-    },
-    THICK_CLUB: {
-      stats: [Stat.ATK],
-      multiplier: 2,
-      species: [SpeciesId.CUBONE, SpeciesId.MAROWAK, SpeciesId.ALOLA_MAROWAK],
-      rare: true,
-    },
-    METAL_POWDER: {
-      stats: [Stat.DEF],
-      multiplier: 2,
-      species: [SpeciesId.DITTO],
-      rare: true,
-    },
-    QUICK_POWDER: {
-      stats: [Stat.SPD],
-      multiplier: 2,
-      species: [SpeciesId.DITTO],
-      rare: true,
-    },
-    DEEP_SEA_SCALE: {
-      stats: [Stat.SPDEF],
-      multiplier: 2,
-      species: [SpeciesId.CLAMPERL],
-      rare: false,
-    },
-    DEEP_SEA_TOOTH: {
-      stats: [Stat.SPATK],
-      multiplier: 2,
-      species: [SpeciesId.CLAMPERL],
-      rare: false,
-    },
-  };
 
   constructor(rare: boolean) {
     super((party: Pokemon[], pregenArgs?: any[]) => {
-      const items = SpeciesStatBoosterModifierTypeGenerator.items;
-      if (pregenArgs && pregenArgs.length === 1 && pregenArgs[0] in items) {
-        return new SpeciesStatBoosterModifierType(pregenArgs[0] as SpeciesStatBoosterItem);
+      if (pregenArgs && pregenArgs.length === 1 && pregenArgs[0] in SPECIES_STAT_BOOSTER_ITEMS) {
+        return new HeldItemReward(pregenArgs[0] as HeldItemId);
       }
 
       // Get a pool of items based on the rarity.
-      const keys: (keyof SpeciesStatBoosterItem)[] = [];
-      const values: (typeof items)[keyof typeof items][] = [];
-      const weights: number[] = [];
-      for (const [key, val] of Object.entries(SpeciesStatBoosterModifierTypeGenerator.items)) {
-        if (val.rare !== rare) {
-          continue;
-        }
-        values.push(val);
-        keys.push(key as keyof SpeciesStatBoosterItem);
-        weights.push(0);
-      }
+      const tierItems = rare
+        ? [HeldItemId.LIGHT_BALL, HeldItemId.THICK_CLUB, HeldItemId.METAL_POWDER, HeldItemId.QUICK_POWDER]
+        : [HeldItemId.DEEP_SEA_SCALE, HeldItemId.DEEP_SEA_TOOTH];
+
+      const weights = new Array(tierItems.length).fill(0);
 
       for (const p of party) {
         const speciesId = p.getSpeciesForm(true).speciesId;
@@ -1497,18 +1266,11 @@ class SpeciesStatBoosterModifierTypeGenerator extends ModifierTypeGenerator {
         // TODO: Use commented boolean when Fling is implemented
         const hasFling = false; /* p.getMoveset(true).some(m => m.moveId === MoveId.FLING) */
 
-        for (const i in values) {
-          const checkedSpecies = values[i].species;
-          const checkedStats = values[i].stats;
+        for (const i in tierItems) {
+          const checkedSpecies = allHeldItems[tierItems[i]].species;
 
           // If party member already has the item being weighted currently, skip to the next item
-          const hasItem = p
-            .getHeldItems()
-            .some(
-              m =>
-                m instanceof SpeciesStatBoosterModifier &&
-                (m as SpeciesStatBoosterModifier).contains(checkedSpecies[0], checkedStats[0]),
-            );
+          const hasItem = p.heldItemManager.hasItem(tierItems[i]);
 
           if (!hasItem) {
             if (checkedSpecies.includes(speciesId) || (!!fusionSpeciesId && checkedSpecies.includes(fusionSpeciesId))) {
@@ -1522,6 +1284,7 @@ class SpeciesStatBoosterModifierTypeGenerator extends ModifierTypeGenerator {
         }
       }
 
+      // TODO: Replace this with a helper function
       let totalWeight = 0;
       for (const weight of weights) {
         totalWeight += weight;
@@ -1535,7 +1298,7 @@ class SpeciesStatBoosterModifierTypeGenerator extends ModifierTypeGenerator {
           if (weights[i] !== 0) {
             const curWeight = weight + weights[i];
             if (randInt <= weight + weights[i]) {
-              return new SpeciesStatBoosterModifierType(keys[i] as SpeciesStatBoosterItem);
+              return new HeldItemReward(tierItems[i]);
             }
             weight = curWeight;
           }
@@ -1631,11 +1394,11 @@ class EvolutionItemModifierTypeGenerator extends ModifierTypeGenerator {
   }
 }
 
-class FormChangeItemModifierTypeGenerator extends ModifierTypeGenerator {
+class FormChangeItemRewardGenerator extends ModifierTypeGenerator {
   constructor(isRareFormChangeItem: boolean) {
     super((party: Pokemon[], pregenArgs?: any[]) => {
       if (pregenArgs && pregenArgs.length === 1 && pregenArgs[0] in FormChangeItem) {
-        return new FormChangeItemModifierType(pregenArgs[0] as FormChangeItem);
+        return new FormChangeItemReward(pregenArgs[0] as FormChangeItem);
       }
 
       const formChangeItemPool = [
@@ -1659,16 +1422,7 @@ class FormChangeItemModifierTypeGenerator extends ModifierTypeGenerator {
                     fc.preFormKey === p.getFormKey(),
                 )
                 .map(fc => fc.findTrigger(SpeciesFormChangeItemTrigger) as SpeciesFormChangeItemTrigger)
-                .filter(
-                  t =>
-                    t?.active &&
-                    !globalScene.findModifier(
-                      m =>
-                        m instanceof PokemonFormChangeItemModifier &&
-                        m.pokemonId === p.id &&
-                        m.formChangeItem === t.item,
-                    ),
-                );
+                .filter(t => t?.active && !p.heldItemManager.hasFormChangeItem(t.item));
 
               if (p.species.speciesId === SpeciesId.NECROZMA) {
                 // technically we could use a simplified version and check for formChanges.length > 3, but in case any code changes later, this might break...
@@ -1711,46 +1465,8 @@ class FormChangeItemModifierTypeGenerator extends ModifierTypeGenerator {
         return null;
       }
 
-      return new FormChangeItemModifierType(formChangeItemPool[randSeedInt(formChangeItemPool.length)]);
+      return new FormChangeItemReward(formChangeItemPool[randSeedInt(formChangeItemPool.length)]);
     });
-  }
-}
-
-export class ContactHeldItemTransferChanceModifierType extends PokemonHeldItemModifierType {
-  private chancePercent: number;
-
-  constructor(localeKey: string, iconImage: string, chancePercent: number, group?: string, soundName?: string) {
-    super(
-      localeKey,
-      iconImage,
-      (type, args) => new ContactHeldItemTransferChanceModifier(type, (args[0] as Pokemon).id, chancePercent),
-      group,
-      soundName,
-    );
-
-    this.chancePercent = chancePercent;
-  }
-
-  getDescription(): string {
-    return i18next.t("modifierType:ModifierType.ContactHeldItemTransferChanceModifierType.description", {
-      chancePercent: this.chancePercent,
-    });
-  }
-}
-
-export class TurnHeldItemTransferModifierType extends PokemonHeldItemModifierType {
-  constructor(localeKey: string, iconImage: string, group?: string, soundName?: string) {
-    super(
-      localeKey,
-      iconImage,
-      (type, args) => new TurnHeldItemTransferModifier(type, (args[0] as Pokemon).id),
-      group,
-      soundName,
-    );
-  }
-
-  getDescription(): string {
-    return i18next.t("modifierType:ModifierType.TurnHeldItemTransferModifierType.description");
   }
 }
 
@@ -1871,7 +1587,7 @@ export type GeneratorModifierOverride = {
 } & (
   | {
       name: keyof Pick<typeof modifierTypes, "SPECIES_STAT_BOOSTER" | "RARE_SPECIES_STAT_BOOSTER">;
-      type?: SpeciesStatBoosterItem;
+      type?: SpeciesStatBoosterItemId;
     }
   | {
       name: keyof Pick<typeof modifierTypes, "TEMP_STAT_STAGE_BOOSTER">;
@@ -1924,15 +1640,11 @@ export const modifierTypes = {
 
   EVOLUTION_ITEM: () => new EvolutionItemModifierTypeGenerator(false),
   RARE_EVOLUTION_ITEM: () => new EvolutionItemModifierTypeGenerator(true),
-  FORM_CHANGE_ITEM: () => new FormChangeItemModifierTypeGenerator(false),
-  RARE_FORM_CHANGE_ITEM: () => new FormChangeItemModifierTypeGenerator(true),
 
-  EVOLUTION_TRACKER_GIMMIGHOUL: () =>
-    new PokemonHeldItemModifierType(
-      "modifierType:ModifierType.EVOLUTION_TRACKER_GIMMIGHOUL",
-      "relic_gold",
-      (type, args) => new EvoTrackerModifier(type, (args[0] as Pokemon).id, SpeciesId.GIMMIGHOUL, 10),
-    ),
+  FORM_CHANGE_ITEM: () => new FormChangeItemRewardGenerator(false),
+  RARE_FORM_CHANGE_ITEM: () => new FormChangeItemRewardGenerator(true),
+
+  EVOLUTION_TRACKER_GIMMIGHOUL: () => new HeldItemReward(HeldItemId.GIMMIGHOUL_EVO_TRACKER),
 
   MEGA_BRACELET: () =>
     new ModifierType(
@@ -1971,18 +1683,9 @@ export const modifierTypes = {
 
   SACRED_ASH: () => new AllPokemonFullReviveModifierType("modifierType:ModifierType.SACRED_ASH", "sacred_ash"),
 
-  REVIVER_SEED: () =>
-    new PokemonHeldItemModifierType(
-      "modifierType:ModifierType.REVIVER_SEED",
-      "reviver_seed",
-      (type, args) => new PokemonInstantReviveModifier(type, (args[0] as Pokemon).id),
-    ),
-  WHITE_HERB: () =>
-    new PokemonHeldItemModifierType(
-      "modifierType:ModifierType.WHITE_HERB",
-      "white_herb",
-      (type, args) => new ResetNegativeStatStageModifier(type, (args[0] as Pokemon).id),
-    ),
+  REVIVER_SEED: () => new HeldItemReward(HeldItemId.REVIVER_SEED),
+
+  WHITE_HERB: () => new HeldItemReward(HeldItemId.WHITE_HERB),
 
   ETHER: () => new PokemonPpRestoreModifierType("modifierType:ModifierType.ETHER", "ether", 10),
   MAX_ETHER: () => new PokemonPpRestoreModifierType("modifierType:ModifierType.MAX_ETHER", "max_ether", -1),
@@ -2001,8 +1704,8 @@ export const modifierTypes = {
   SUPER_LURE: () => new DoubleBattleChanceBoosterModifierType("modifierType:ModifierType.SUPER_LURE", "super_lure", 15),
   MAX_LURE: () => new DoubleBattleChanceBoosterModifierType("modifierType:ModifierType.MAX_LURE", "max_lure", 30),
 
-  SPECIES_STAT_BOOSTER: () => new SpeciesStatBoosterModifierTypeGenerator(false),
-  RARE_SPECIES_STAT_BOOSTER: () => new SpeciesStatBoosterModifierTypeGenerator(true),
+  SPECIES_STAT_BOOSTER: () => new SpeciesStatBoosterRewardGenerator(false),
+  RARE_SPECIES_STAT_BOOSTER: () => new SpeciesStatBoosterRewardGenerator(true),
 
   TEMP_STAT_STAGE_BOOSTER: () => new TempStatStageBoosterModifierTypeGenerator(),
 
@@ -2016,9 +1719,9 @@ export const modifierTypes = {
       }
     })("modifierType:ModifierType.DIRE_HIT", "dire_hit", (type, _args) => new TempCritBoosterModifier(type, 5)),
 
-  BASE_STAT_BOOSTER: () => new BaseStatBoosterModifierTypeGenerator(),
+  BASE_STAT_BOOSTER: () => new BaseStatBoosterRewardGenerator(),
 
-  ATTACK_TYPE_BOOSTER: () => new AttackTypeBoosterModifierTypeGenerator(),
+  ATTACK_TYPE_BOOSTER: () => new AttackTypeBoosterRewardGenerator(),
 
   MINT: () =>
     new ModifierTypeGenerator((_party: Pokemon[], pregenArgs?: any[]) => {
@@ -2028,12 +1731,7 @@ export const modifierTypes = {
       return new PokemonNatureChangeModifierType(randSeedInt(getEnumValues(Nature).length) as Nature);
     }),
 
-  MYSTICAL_ROCK: () =>
-    new PokemonHeldItemModifierType(
-      "modifierType:ModifierType.MYSTICAL_ROCK",
-      "mystical_rock",
-      (type, args) => new FieldEffectModifier(type, (args[0] as Pokemon).id),
-    ),
+  MYSTICAL_ROCK: () => new HeldItemReward(HeldItemId.MYSTICAL_ROCK),
 
   TERA_SHARD: () =>
     new ModifierTypeGenerator((party: Pokemon[], pregenArgs?: any[]) => {
@@ -2062,25 +1760,7 @@ export const modifierTypes = {
       return new TerastallizeModifierType(shardType);
     }),
 
-  BERRY: () =>
-    new ModifierTypeGenerator((_party: Pokemon[], pregenArgs?: any[]) => {
-      if (pregenArgs && pregenArgs.length === 1 && pregenArgs[0] in BerryType) {
-        return new BerryModifierType(pregenArgs[0] as BerryType);
-      }
-      const berryTypes = getEnumValues(BerryType);
-      let randBerryType: BerryType;
-      const rand = randSeedInt(12);
-      if (rand < 2) {
-        randBerryType = BerryType.SITRUS;
-      } else if (rand < 4) {
-        randBerryType = BerryType.LUM;
-      } else if (rand < 6) {
-        randBerryType = BerryType.LEPPA;
-      } else {
-        randBerryType = berryTypes[randSeedInt(berryTypes.length - 3) + 2];
-      }
-      return new BerryModifierType(randBerryType);
-    }),
+  BERRY: () => new BerryRewardGenerator(),
 
   TM_COMMON: () => new TmModifierTypeGenerator(ModifierTier.COMMON),
   TM_GREAT: () => new TmModifierTypeGenerator(ModifierTier.GREAT),
@@ -2109,42 +1789,17 @@ export const modifierTypes = {
   GOLDEN_EXP_CHARM: () =>
     new ExpBoosterModifierType("modifierType:ModifierType.GOLDEN_EXP_CHARM", "golden_exp_charm", 100),
 
-  LUCKY_EGG: () => new PokemonExpBoosterModifierType("modifierType:ModifierType.LUCKY_EGG", "lucky_egg", 40),
-  GOLDEN_EGG: () => new PokemonExpBoosterModifierType("modifierType:ModifierType.GOLDEN_EGG", "golden_egg", 100),
+  LUCKY_EGG: () => new HeldItemReward(HeldItemId.LUCKY_EGG),
+  GOLDEN_EGG: () => new HeldItemReward(HeldItemId.GOLDEN_EGG),
 
-  SOOTHE_BELL: () => new PokemonFriendshipBoosterModifierType("modifierType:ModifierType.SOOTHE_BELL", "soothe_bell"),
+  SOOTHE_BELL: () => new HeldItemReward(HeldItemId.SOOTHE_BELL),
 
-  SCOPE_LENS: () =>
-    new PokemonHeldItemModifierType(
-      "modifierType:ModifierType.SCOPE_LENS",
-      "scope_lens",
-      (type, args) => new CritBoosterModifier(type, (args[0] as Pokemon).id, 1),
-    ),
-  LEEK: () =>
-    new PokemonHeldItemModifierType(
-      "modifierType:ModifierType.LEEK",
-      "leek",
-      (type, args) =>
-        new SpeciesCritBoosterModifier(type, (args[0] as Pokemon).id, 2, [
-          SpeciesId.FARFETCHD,
-          SpeciesId.GALAR_FARFETCHD,
-          SpeciesId.SIRFETCHD,
-        ]),
-    ),
+  SCOPE_LENS: () => new HeldItemReward(HeldItemId.SCOPE_LENS),
+  LEEK: () => new HeldItemReward(HeldItemId.LEEK),
 
-  EVIOLITE: () =>
-    new PokemonHeldItemModifierType(
-      "modifierType:ModifierType.EVIOLITE",
-      "eviolite",
-      (type, args) => new EvolutionStatBoosterModifier(type, (args[0] as Pokemon).id, [Stat.DEF, Stat.SPDEF], 1.5),
-    ),
+  EVIOLITE: () => new HeldItemReward(HeldItemId.EVIOLITE),
 
-  SOUL_DEW: () =>
-    new PokemonHeldItemModifierType(
-      "modifierType:ModifierType.SOUL_DEW",
-      "soul_dew",
-      (type, args) => new PokemonNatureWeightModifier(type, (args[0] as Pokemon).id),
-    ),
+  SOUL_DEW: () => new HeldItemReward(HeldItemId.SOUL_DEW),
 
   NUGGET: () =>
     new MoneyRewardModifierType(
@@ -2174,12 +1829,8 @@ export const modifierTypes = {
       "amulet_coin",
       (type, _args) => new MoneyMultiplierModifier(type),
     ),
-  GOLDEN_PUNCH: () =>
-    new PokemonHeldItemModifierType(
-      "modifierType:ModifierType.GOLDEN_PUNCH",
-      "golden_punch",
-      (type, args) => new DamageMoneyRewardModifier(type, (args[0] as Pokemon).id),
-    ),
+  GOLDEN_PUNCH: () => new HeldItemReward(HeldItemId.GOLDEN_PUNCH),
+
   COIN_CASE: () =>
     new ModifierType(
       "modifierType:ModifierType.COIN_CASE",
@@ -2194,11 +1845,10 @@ export const modifierTypes = {
       (type, _args) => new LockModifierTiersModifier(type),
     ),
 
-  GRIP_CLAW: () =>
-    new ContactHeldItemTransferChanceModifierType("modifierType:ModifierType.GRIP_CLAW", "grip_claw", 10),
-  WIDE_LENS: () => new PokemonMoveAccuracyBoosterModifierType("modifierType:ModifierType.WIDE_LENS", "wide_lens", 5),
+  GRIP_CLAW: () => new HeldItemReward(HeldItemId.GRIP_CLAW),
+  WIDE_LENS: () => new HeldItemReward(HeldItemId.WIDE_LENS),
 
-  MULTI_LENS: () => new PokemonMultiHitModifierType("modifierType:ModifierType.MULTI_LENS", "zoom_lens"),
+  MULTI_LENS: () => new HeldItemReward(HeldItemId.MULTI_LENS),
 
   HEALING_CHARM: () =>
     new ModifierType(
@@ -2220,59 +1870,21 @@ export const modifierTypes = {
       (type, _args) => new PreserveBerryModifier(type),
     ),
 
-  FOCUS_BAND: () =>
-    new PokemonHeldItemModifierType(
-      "modifierType:ModifierType.FOCUS_BAND",
-      "focus_band",
-      (type, args) => new SurviveDamageModifier(type, (args[0] as Pokemon).id),
-    ),
+  FOCUS_BAND: () => new HeldItemReward(HeldItemId.FOCUS_BAND),
 
-  QUICK_CLAW: () =>
-    new PokemonHeldItemModifierType(
-      "modifierType:ModifierType.QUICK_CLAW",
-      "quick_claw",
-      (type, args) => new BypassSpeedChanceModifier(type, (args[0] as Pokemon).id),
-    ),
+  QUICK_CLAW: () => new HeldItemReward(HeldItemId.QUICK_CLAW),
 
-  KINGS_ROCK: () =>
-    new PokemonHeldItemModifierType(
-      "modifierType:ModifierType.KINGS_ROCK",
-      "kings_rock",
-      (type, args) => new FlinchChanceModifier(type, (args[0] as Pokemon).id),
-    ),
+  KINGS_ROCK: () => new HeldItemReward(HeldItemId.KINGS_ROCK),
 
-  LEFTOVERS: () =>
-    new PokemonHeldItemModifierType(
-      "modifierType:ModifierType.LEFTOVERS",
-      "leftovers",
-      (type, args) => new TurnHealModifier(type, (args[0] as Pokemon).id),
-    ),
-  SHELL_BELL: () =>
-    new PokemonHeldItemModifierType(
-      "modifierType:ModifierType.SHELL_BELL",
-      "shell_bell",
-      (type, args) => new HitHealModifier(type, (args[0] as Pokemon).id),
-    ),
+  LEFTOVERS: () => new HeldItemReward(HeldItemId.LEFTOVERS),
 
-  TOXIC_ORB: () =>
-    new PokemonHeldItemModifierType(
-      "modifierType:ModifierType.TOXIC_ORB",
-      "toxic_orb",
-      (type, args) => new TurnStatusEffectModifier(type, (args[0] as Pokemon).id),
-    ),
-  FLAME_ORB: () =>
-    new PokemonHeldItemModifierType(
-      "modifierType:ModifierType.FLAME_ORB",
-      "flame_orb",
-      (type, args) => new TurnStatusEffectModifier(type, (args[0] as Pokemon).id),
-    ),
+  SHELL_BELL: () => new HeldItemReward(HeldItemId.SHELL_BELL),
 
-  BATON: () =>
-    new PokemonHeldItemModifierType(
-      "modifierType:ModifierType.BATON",
-      "baton",
-      (type, args) => new SwitchEffectTransferModifier(type, (args[0] as Pokemon).id),
-    ),
+  TOXIC_ORB: () => new HeldItemReward(HeldItemId.TOXIC_ORB),
+
+  FLAME_ORB: () => new HeldItemReward(HeldItemId.FLAME_ORB),
+
+  BATON: () => new HeldItemReward(HeldItemId.BATON),
 
   SHINY_CHARM: () =>
     new ModifierType(
@@ -2298,8 +1910,7 @@ export const modifierTypes = {
 
   DNA_SPLICERS: () => new FusePokemonModifierType("modifierType:ModifierType.DNA_SPLICERS", "dna_splicers"),
 
-  MINI_BLACK_HOLE: () =>
-    new TurnHeldItemTransferModifierType("modifierType:ModifierType.MINI_BLACK_HOLE", "mini_black_hole"),
+  MINI_BLACK_HOLE: () => new HeldItemReward(HeldItemId.MINI_BLACK_HOLE),
 
   VOUCHER: () => new AddVoucherModifierType(VoucherType.REGULAR, 1),
   VOUCHER_PLUS: () => new AddVoucherModifierType(VoucherType.PLUS, 1),
@@ -2380,20 +1991,10 @@ export const modifierTypes = {
       (type, _args) => new EnemyFusionChanceModifier(type, 1),
     ),
 
-  MYSTERY_ENCOUNTER_SHUCKLE_JUICE: () =>
-    new ModifierTypeGenerator((_party: Pokemon[], pregenArgs?: any[]) => {
-      if (pregenArgs) {
-        return new PokemonBaseStatTotalModifierType(pregenArgs[0] as number);
-      }
-      return new PokemonBaseStatTotalModifierType(randSeedInt(20, 1));
-    }),
-  MYSTERY_ENCOUNTER_OLD_GATEAU: () =>
-    new ModifierTypeGenerator((_party: Pokemon[], pregenArgs?: any[]) => {
-      if (pregenArgs) {
-        return new PokemonBaseStatFlatModifierType(pregenArgs[0] as number, pregenArgs[1] as Stat[]);
-      }
-      return new PokemonBaseStatFlatModifierType(randSeedInt(20, 1), [Stat.HP, Stat.ATK, Stat.DEF]);
-    }),
+  MYSTERY_ENCOUNTER_SHUCKLE_JUICE: () => new BaseStatTotalHeldItemRewardGenerator(),
+
+  MYSTERY_ENCOUNTER_OLD_GATEAU: () => new BaseStatFlatHeldItemRewardGenerator(),
+
   MYSTERY_ENCOUNTER_BLACK_SLUDGE: () =>
     new ModifierTypeGenerator((_party: Pokemon[], pregenArgs?: any[]) => {
       if (pregenArgs) {
@@ -2409,12 +2010,8 @@ export const modifierTypes = {
         (type, _args) => new HealShopCostModifier(type, 2.5),
       );
     }),
-  MYSTERY_ENCOUNTER_MACHO_BRACE: () =>
-    new PokemonHeldItemModifierType(
-      "modifierType:ModifierType.MYSTERY_ENCOUNTER_MACHO_BRACE",
-      "macho_brace",
-      (type, args) => new PokemonIncrementingStatModifier(type, (args[0] as Pokemon).id),
-    ),
+  MYSTERY_ENCOUNTER_MACHO_BRACE: () => new HeldItemReward(HeldItemId.MACHO_BRACE),
+
   MYSTERY_ENCOUNTER_GOLDEN_BUG_NET: () =>
     new ModifierType(
       "modifierType:ModifierType.MYSTERY_ENCOUNTER_GOLDEN_BUG_NET",
@@ -2469,7 +2066,7 @@ const modifierPool: ModifierPool = {
           party.filter(
             p =>
               p.hp &&
-              !p.getHeldItems().some(m => m instanceof BerryModifier && m.berryType === BerryType.LEPPA) &&
+              !p.heldItemManager.hasItem(HeldItemId.LEPPA_BERRY) &&
               p
                 .getMoveset()
                 .filter(m => m.ppUsed && m.getMovePp() - m.ppUsed <= 5 && m.ppUsed > Math.floor(m.getMovePp() / 2))
@@ -2488,7 +2085,7 @@ const modifierPool: ModifierPool = {
           party.filter(
             p =>
               p.hp &&
-              !p.getHeldItems().some(m => m instanceof BerryModifier && m.berryType === BerryType.LEPPA) &&
+              !p.heldItemManager.hasItem(HeldItemId.LEPPA_BERRY) &&
               p
                 .getMoveset()
                 .filter(m => m.ppUsed && m.getMovePp() - m.ppUsed <= 5 && m.ppUsed > Math.floor(m.getMovePp() / 2))
@@ -2519,12 +2116,10 @@ const modifierPool: ModifierPool = {
             p =>
               p.hp &&
               !!p.status &&
-              !p.getHeldItems().some(i => {
-                if (i instanceof TurnStatusEffectModifier) {
-                  return (i as TurnStatusEffectModifier).getStatusEffect() === p.status?.effect;
-                }
-                return false;
-              }),
+              !p
+                .getHeldItems()
+                .filter(i => i in [HeldItemId.TOXIC_ORB, HeldItemId.FLAME_ORB])
+                .some(i => allHeldItems[i].effect === p.status?.effect),
           ).length,
           3,
         );
@@ -2585,12 +2180,10 @@ const modifierPool: ModifierPool = {
             p =>
               p.hp &&
               !!p.status &&
-              !p.getHeldItems().some(i => {
-                if (i instanceof TurnStatusEffectModifier) {
-                  return (i as TurnStatusEffectModifier).getStatusEffect() === p.status?.effect;
-                }
-                return false;
-              }),
+              !p
+                .getHeldItems()
+                .filter(i => i in [HeldItemId.TOXIC_ORB, HeldItemId.FLAME_ORB])
+                .some(i => allHeldItems[i].effect === p.status?.effect),
           ).length,
           3,
         );
@@ -2610,7 +2203,7 @@ const modifierPool: ModifierPool = {
           party.filter(
             p =>
               p.hp &&
-              !p.getHeldItems().some(m => m instanceof BerryModifier && m.berryType === BerryType.LEPPA) &&
+              !p.heldItemManager.hasItem(HeldItemId.LEPPA_BERRY) &&
               p
                 .getMoveset()
                 .filter(m => m.ppUsed && m.getMovePp() - m.ppUsed <= 5 && m.ppUsed > Math.floor(m.getMovePp() / 2))
@@ -2629,7 +2222,7 @@ const modifierPool: ModifierPool = {
           party.filter(
             p =>
               p.hp &&
-              !p.getHeldItems().some(m => m instanceof BerryModifier && m.berryType === BerryType.LEPPA) &&
+              !p.heldItemManager.hasItem(HeldItemId.LEPPA_BERRY) &&
               p
                 .getMoveset()
                 .filter(m => m.ppUsed && m.getMovePp() - m.ppUsed <= 5 && m.ppUsed > Math.floor(m.getMovePp() / 2))
@@ -2733,7 +2326,7 @@ const modifierPool: ModifierPool = {
               (p.isFusion() && p.getFusionSpeciesForm(true).speciesId in pokemonEvolutions))
           ) {
             // Check if Pokemon is already holding an Eviolite
-            return !p.getHeldItems().some(i => i.type.id === "EVIOLITE");
+            return !p.heldItemManager.hasItem(HeldItemId.EVIOLITE);
           }
           return false;
         })
@@ -2750,7 +2343,7 @@ const modifierPool: ModifierPool = {
         // If a party member doesn't already have a Leek and is one of the relevant species, Leek can appear
         return party.some(
           p =>
-            !p.getHeldItems().some(i => i instanceof SpeciesCritBoosterModifier) &&
+            !p.heldItemManager.hasItem(HeldItemId.LEEK) &&
             (checkedSpecies.includes(p.getSpeciesForm(true).speciesId) ||
               (p.isFusion() && checkedSpecies.includes(p.getFusionSpeciesForm(true).speciesId))),
         )
@@ -2763,7 +2356,7 @@ const modifierPool: ModifierPool = {
       modifierTypes.TOXIC_ORB,
       (party: Pokemon[]) => {
         return party.some(p => {
-          const isHoldingOrb = p.getHeldItems().some(i => i.type.id === "FLAME_ORB" || i.type.id === "TOXIC_ORB");
+          const isHoldingOrb = p.getHeldItems().some(i => i in [HeldItemId.FLAME_ORB, HeldItemId.TOXIC_ORB]);
 
           if (!isHoldingOrb) {
             const moveset = p
@@ -2809,7 +2402,7 @@ const modifierPool: ModifierPool = {
       modifierTypes.FLAME_ORB,
       (party: Pokemon[]) => {
         return party.some(p => {
-          const isHoldingOrb = p.getHeldItems().some(i => i.type.id === "FLAME_ORB" || i.type.id === "TOXIC_ORB");
+          const isHoldingOrb = p.getHeldItems().some(i => i in [HeldItemId.FLAME_ORB, HeldItemId.TOXIC_ORB]);
 
           if (!isHoldingOrb) {
             const moveset = p
@@ -2855,13 +2448,8 @@ const modifierPool: ModifierPool = {
       modifierTypes.MYSTICAL_ROCK,
       (party: Pokemon[]) => {
         return party.some(p => {
-          let isHoldingMax = false;
-          for (const i of p.getHeldItems()) {
-            if (i.type.id === "MYSTICAL_ROCK") {
-              isHoldingMax = i.getStackCount() === i.getMaxStackCount();
-              break;
-            }
-          }
+          const stack = p.heldItemManager.getStack(HeldItemId.MYSTICAL_ROCK);
+          const isHoldingMax = stack === allHeldItems[HeldItemId.MYSTICAL_ROCK].maxStackCount;
 
           if (!isHoldingMax) {
             const moveset = p.getMoveset(true).map(m => m.moveId);
@@ -3235,8 +2823,8 @@ export function regenerateModifierPoolThresholds(party: Pokemon[], poolType: Mod
               : weightedModifierType.modifierType;
           const weight =
             !existingModifiers.length ||
-            itemModifierType instanceof PokemonHeldItemModifierType ||
-            itemModifierType instanceof FormChangeItemModifierType ||
+            itemModifierType instanceof HeldItemReward ||
+            itemModifierType instanceof FormChangeItemReward ||
             existingModifiers.find(m => m.stackCount < m.getMaxStackCount(true))
               ? weightedModifierType.weight instanceof Function
                 ? // biome-ignore lint/complexity/noBannedTypes: TODO: refactor to not use Function type
@@ -3534,22 +3122,26 @@ export function getEnemyBuffModifierForWave(
   return modifier;
 }
 
-export function getEnemyModifierTypesForWave(
+// TODO: Add proper documentation to this function (once it fully works...)
+export function getEnemyHeldItemsForWave(
   waveIndex: number,
   count: number,
   party: EnemyPokemon[],
   poolType: ModifierPoolType.WILD | ModifierPoolType.TRAINER,
   upgradeChance = 0,
-): PokemonHeldItemModifierType[] {
-  const ret = new Array(count)
-    .fill(0)
-    .map(
-      () =>
-        getNewModifierTypeOption(party, poolType, undefined, upgradeChance && !randSeedInt(upgradeChance) ? 1 : 0)
-          ?.type as PokemonHeldItemModifierType,
-    );
+): HeldItemId[] {
+  const ret = new Array(count).fill(0).map(() => {
+    const reward = getNewModifierTypeOption(
+      party,
+      poolType,
+      undefined,
+      upgradeChance && !randSeedInt(upgradeChance) ? 1 : 0,
+    )?.type as HeldItemReward;
+    return reward.itemId;
+  });
   if (!(waveIndex % 1000)) {
-    ret.push(getModifierType(modifierTypes.MINI_BLACK_HOLE) as PokemonHeldItemModifierType);
+    // TODO: Change this line with the actual held item when implemented
+    ret.push(HeldItemId.MINI_BLACK_HOLE);
   }
   return ret;
 }
@@ -3595,13 +3187,53 @@ export function getDailyRunStarterModifiers(party: PlayerPokemon[]): PokemonHeld
 function getNewModifierTypeOption(
   party: Pokemon[],
   poolType: ModifierPoolType,
-  tier?: ModifierTier,
+  baseTier?: ModifierTier,
   upgradeCount?: number,
   retryCount = 0,
   allowLuckUpgrades = true,
 ): ModifierTypeOption | null {
   const player = !poolType;
   const pool = getModifierPoolForType(poolType);
+  const thresholds = getPoolThresholds(poolType);
+
+  const tier = determineTier(party, player, baseTier, upgradeCount, retryCount, allowLuckUpgrades);
+
+  const tierThresholds = Object.keys(thresholds[tier]);
+  const totalWeight = Number.parseInt(tierThresholds[tierThresholds.length - 1]);
+  const value = randSeedInt(totalWeight);
+  let index: number | undefined;
+  for (const t of tierThresholds) {
+    const threshold = Number.parseInt(t);
+    if (value < threshold) {
+      index = thresholds[tier][threshold];
+      break;
+    }
+  }
+
+  if (index === undefined) {
+    return null;
+  }
+
+  if (player) {
+    console.log(index, ignoredPoolIndexes[tier].filter(i => i <= index).length, ignoredPoolIndexes[tier]);
+  }
+  let modifierType: ModifierType | null = pool[tier][index].modifierType;
+  if (modifierType instanceof ModifierTypeGenerator) {
+    modifierType = (modifierType as ModifierTypeGenerator).generateType(party);
+    if (modifierType === null) {
+      if (player) {
+        console.log(ModifierTier[tier], upgradeCount);
+      }
+      return getNewModifierTypeOption(party, poolType, tier, upgradeCount, ++retryCount);
+    }
+  }
+
+  console.log(modifierType, !player ? "(enemy)" : "");
+
+  return new ModifierTypeOption(modifierType as ModifierType, upgradeCount!); // TODO: is this bang correct?
+}
+
+function getPoolThresholds(poolType: ModifierPoolType) {
   let thresholds: object;
   switch (poolType) {
     case ModifierPoolType.PLAYER:
@@ -3620,6 +3252,17 @@ function getNewModifierTypeOption(
       thresholds = dailyStarterModifierPoolThresholds;
       break;
   }
+  return thresholds;
+}
+
+function determineTier(
+  party: Pokemon[],
+  player: boolean,
+  tier?: ModifierTier,
+  upgradeCount?: number,
+  retryCount = 0,
+  allowLuckUpgrades = true,
+): ModifierTier {
   if (tier === undefined) {
     const tierValue = randSeedInt(1024);
     if (!upgradeCount) {
@@ -3674,40 +3317,7 @@ function getNewModifierTypeOption(
     retryCount = 0;
     tier--;
   }
-
-  const tierThresholds = Object.keys(thresholds[tier]);
-  const totalWeight = Number.parseInt(tierThresholds[tierThresholds.length - 1]);
-  const value = randSeedInt(totalWeight);
-  let index: number | undefined;
-  for (const t of tierThresholds) {
-    const threshold = Number.parseInt(t);
-    if (value < threshold) {
-      index = thresholds[tier][threshold];
-      break;
-    }
-  }
-
-  if (index === undefined) {
-    return null;
-  }
-
-  if (player) {
-    console.log(index, ignoredPoolIndexes[tier].filter(i => i <= index).length, ignoredPoolIndexes[tier]);
-  }
-  let modifierType: ModifierType | null = pool[tier][index].modifierType;
-  if (modifierType instanceof ModifierTypeGenerator) {
-    modifierType = (modifierType as ModifierTypeGenerator).generateType(party);
-    if (modifierType === null) {
-      if (player) {
-        console.log(ModifierTier[tier], upgradeCount);
-      }
-      return getNewModifierTypeOption(party, poolType, tier, upgradeCount, ++retryCount);
-    }
-  }
-
-  console.log(modifierType, !player ? "(enemy)" : "");
-
-  return new ModifierTypeOption(modifierType as ModifierType, upgradeCount!); // TODO: is this bang correct?
+  return tier;
 }
 
 export function getDefaultModifierTypeForTier(tier: ModifierTier): ModifierType {

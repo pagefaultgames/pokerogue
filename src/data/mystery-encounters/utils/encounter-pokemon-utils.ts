@@ -28,7 +28,6 @@ import {
   showEncounterText,
 } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { getPokemonNameWithAffix } from "#app/messages";
-import type { PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import { Gender } from "#app/data/gender";
 import type { PermanentStat } from "#enums/stat";
@@ -37,6 +36,7 @@ import { CustomPokemonData } from "#app/data/custom-pokemon-data";
 import type { AbilityId } from "#enums/ability-id";
 import type { PokeballType } from "#enums/pokeball";
 import { StatusEffect } from "#enums/status-effect";
+import type { HeldItemId } from "#enums/held-item-id";
 
 /** Will give +1 level every 10 waves */
 export const STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER = 1;
@@ -421,6 +421,13 @@ export async function applyModifierTypeToPlayerPokemon(
   }
 
   globalScene.addModifier(modifier, false, false, false, true);
+}
+
+export function applyHeldItemWithFallback(pokemon: Pokemon, item: HeldItemId, fallbackItem?: HeldItemId) {
+  const added = pokemon.heldItemManager.add(item);
+  if (!added && fallbackItem) {
+    pokemon.heldItemManager.add(fallbackItem);
+  }
 }
 
 /**

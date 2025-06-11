@@ -14,20 +14,16 @@ import {
   selectPokemonForOption,
   updatePlayerMoney,
 } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { applyModifierTypeToPlayerPokemon } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import type { PlayerPokemon } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
-import type { PokemonHeldItemModifier, PokemonInstantReviveModifier } from "#app/modifier/modifier";
 import {
-  BerryModifier,
   HealingBoosterModifier,
   LevelIncrementBoosterModifier,
   MoneyMultiplierModifier,
   PreserveBerryModifier,
 } from "#app/modifier/modifier";
-import type { PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import i18next from "#app/plugins/i18n";
 import type { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
@@ -37,23 +33,33 @@ import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { SpeciesId } from "#enums/species-id";
 import { timedEventManager } from "#app/global-event-manager";
+import { HeldItemCategoryId, HeldItemId, isItemInCategory } from "#enums/held-item-id";
+import { allHeldItems } from "#app/items/all-held-items";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounters/delibirdy";
 
 /** Berries only */
-const OPTION_2_ALLOWED_MODIFIERS = ["BerryModifier", "PokemonInstantReviveModifier"];
+const OPTION_2_ALLOWED_MODIFIERS = [HeldItemCategoryId.BERRY, HeldItemId.REVIVER_SEED];
 
 /** Disallowed items are berries, Reviver Seeds, and Vitamins (form change items and fusion items are not PokemonHeldItemModifiers) */
-const OPTION_3_DISALLOWED_MODIFIERS = [
-  "BerryModifier",
-  "PokemonInstantReviveModifier",
-  "TerastallizeModifier",
-  "PokemonBaseStatModifier",
-  "PokemonBaseStatTotalModifier",
-];
+const OPTION_3_DISALLOWED_MODIFIERS = [HeldItemCategoryId.BERRY, HeldItemId.REVIVER_SEED];
 
 const DELIBIRDY_MONEY_PRICE_MULTIPLIER = 2;
+
+async function backupOption() {
+  globalScene.getPlayerPokemon()?.heldItemManager.add(HeldItemId.SHELL_BELL);
+  globalScene.playSound("item_fanfare");
+  await showEncounterText(
+    i18next.t("battle:rewardGain", {
+      modifierName: allHeldItems[HeldItemId.SHELL_BELL].name,
+    }),
+    null,
+    undefined,
+    true,
+  );
+  doEventReward();
+}
 
 const doEventReward = () => {
   const event_buff = timedEventManager.getDelibirdyBuff();
@@ -169,16 +175,7 @@ export const DelibirdyEncounter: MysteryEncounter = MysteryEncounterBuilder.with
 
         if (existing && existing.getStackCount() >= existing.getMaxStackCount()) {
           // At max stacks, give the first party pokemon a Shell Bell instead
-          const shellBell = generateModifierType(modifierTypes.SHELL_BELL) as PokemonHeldItemModifierType;
-          await applyModifierTypeToPlayerPokemon(globalScene.getPlayerPokemon()!, shellBell);
-          globalScene.playSound("item_fanfare");
-          await showEncounterText(
-            i18next.t("battle:rewardGain", { modifierName: shellBell.name }),
-            null,
-            undefined,
-            true,
-          );
-          doEventReward();
+          backupOption();
         } else {
           globalScene.phaseManager.unshiftNew("ModifierRewardPhase", modifierTypes.AMULET_COIN);
           doEventReward();
@@ -205,19 +202,17 @@ export const DelibirdyEncounter: MysteryEncounter = MysteryEncounterBuilder.with
         const encounter = globalScene.currentBattle.mysteryEncounter!;
         const onPokemonSelected = (pokemon: PlayerPokemon) => {
           // Get Pokemon held items and filter for valid ones
-          const validItems = pokemon.getHeldItems().filter(it => {
-            return OPTION_2_ALLOWED_MODIFIERS.some(heldItem => it.constructor.name === heldItem) && it.isTransferable;
-          });
+          const validItems = pokemon.heldItemManager.filterRequestedItems(OPTION_2_ALLOWED_MODIFIERS, true);
 
-          return validItems.map((modifier: PokemonHeldItemModifier) => {
+          return validItems.map((item: HeldItemId) => {
             const option: OptionSelectItem = {
-              label: modifier.type.name,
+              label: allHeldItems[item].name,
               handler: () => {
                 // Pokemon and item selected
-                encounter.setDialogueToken("chosenItem", modifier.type.name);
+                encounter.setDialogueToken("chosenItem", allHeldItems[item].name);
                 encounter.misc = {
                   chosenPokemon: pokemon,
-                  chosenModifier: modifier,
+                  chosenItem: item,
                 };
                 return true;
               },
@@ -240,11 +235,11 @@ export const DelibirdyEncounter: MysteryEncounter = MysteryEncounterBuilder.with
       })
       .withOptionPhase(async () => {
         const encounter = globalScene.currentBattle.mysteryEncounter!;
-        const modifier: BerryModifier | PokemonInstantReviveModifier = encounter.misc.chosenModifier;
+        const chosenItem: HeldItemId = encounter.misc.chosenItem;
         const chosenPokemon: PlayerPokemon = encounter.misc.chosenPokemon;
 
         // Give the player a Candy Jar if they gave a Berry, and a Berry Pouch for Reviver Seed
-        if (modifier instanceof BerryModifier) {
+        if (isItemInCategory(chosenItem, HeldItemCategoryId.BERRY)) {
           // Check if the player has max stacks of that Candy Jar already
           const existing = globalScene.findModifier(
             m => m instanceof LevelIncrementBoosterModifier,
@@ -252,18 +247,7 @@ export const DelibirdyEncounter: MysteryEncounter = MysteryEncounterBuilder.with
 
           if (existing && existing.getStackCount() >= existing.getMaxStackCount()) {
             // At max stacks, give the first party pokemon a Shell Bell instead
-            const shellBell = generateModifierType(modifierTypes.SHELL_BELL) as PokemonHeldItemModifierType;
-            await applyModifierTypeToPlayerPokemon(globalScene.getPlayerPokemon()!, shellBell);
-            globalScene.playSound("item_fanfare");
-            await showEncounterText(
-              i18next.t("battle:rewardGain", {
-                modifierName: shellBell.name,
-              }),
-              null,
-              undefined,
-              true,
-            );
-            doEventReward();
+            backupOption();
           } else {
             globalScene.phaseManager.unshiftNew("ModifierRewardPhase", modifierTypes.CANDY_JAR);
             doEventReward();
@@ -274,25 +258,14 @@ export const DelibirdyEncounter: MysteryEncounter = MysteryEncounterBuilder.with
 
           if (existing && existing.getStackCount() >= existing.getMaxStackCount()) {
             // At max stacks, give the first party pokemon a Shell Bell instead
-            const shellBell = generateModifierType(modifierTypes.SHELL_BELL) as PokemonHeldItemModifierType;
-            await applyModifierTypeToPlayerPokemon(globalScene.getPlayerPokemon()!, shellBell);
-            globalScene.playSound("item_fanfare");
-            await showEncounterText(
-              i18next.t("battle:rewardGain", {
-                modifierName: shellBell.name,
-              }),
-              null,
-              undefined,
-              true,
-            );
-            doEventReward();
+            backupOption();
           } else {
             globalScene.phaseManager.unshiftNew("ModifierRewardPhase", modifierTypes.BERRY_POUCH);
             doEventReward();
           }
         }
 
-        chosenPokemon.loseHeldItem(modifier, false);
+        chosenPokemon.loseHeldItem(chosenItem, false);
 
         leaveEncounterWithoutBattle(true);
       })
@@ -315,21 +288,17 @@ export const DelibirdyEncounter: MysteryEncounter = MysteryEncounterBuilder.with
         const encounter = globalScene.currentBattle.mysteryEncounter!;
         const onPokemonSelected = (pokemon: PlayerPokemon) => {
           // Get Pokemon held items and filter for valid ones
-          const validItems = pokemon.getHeldItems().filter(it => {
-            return (
-              !OPTION_3_DISALLOWED_MODIFIERS.some(heldItem => it.constructor.name === heldItem) && it.isTransferable
-            );
-          });
+          const validItems = pokemon.heldItemManager.filterRequestedItems(OPTION_3_DISALLOWED_MODIFIERS, true, true);
 
-          return validItems.map((modifier: PokemonHeldItemModifier) => {
+          return validItems.map((item: HeldItemId) => {
             const option: OptionSelectItem = {
-              label: modifier.type.name,
+              label: allHeldItems[item].name,
               handler: () => {
                 // Pokemon and item selected
-                encounter.setDialogueToken("chosenItem", modifier.type.name);
+                encounter.setDialogueToken("chosenItem", allHeldItems[item].name);
                 encounter.misc = {
                   chosenPokemon: pokemon,
-                  chosenModifier: modifier,
+                  chosenItem: item,
                 };
                 return true;
               },
@@ -360,16 +329,7 @@ export const DelibirdyEncounter: MysteryEncounter = MysteryEncounterBuilder.with
 
         if (existing && existing.getStackCount() >= existing.getMaxStackCount()) {
           // At max stacks, give the first party pokemon a Shell Bell instead
-          const shellBell = generateModifierType(modifierTypes.SHELL_BELL) as PokemonHeldItemModifierType;
-          await applyModifierTypeToPlayerPokemon(globalScene.getPlayerParty()[0], shellBell);
-          globalScene.playSound("item_fanfare");
-          await showEncounterText(
-            i18next.t("battle:rewardGain", { modifierName: shellBell.name }),
-            null,
-            undefined,
-            true,
-          );
-          doEventReward();
+          backupOption();
         } else {
           globalScene.phaseManager.unshiftNew("ModifierRewardPhase", modifierTypes.HEALING_CHARM);
           doEventReward();

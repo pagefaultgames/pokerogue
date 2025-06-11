@@ -48,7 +48,6 @@ import type PokemonSpecies from "#app/data/pokemon-species";
 import type { IEggOptions } from "#app/data/egg";
 import { Egg } from "#app/data/egg";
 import type { CustomPokemonData } from "#app/data/custom-pokemon-data";
-import type HeldModifierConfig from "#app/@types/held-modifier-config";
 import type { Variant } from "#app/sprites/variant";
 import { StatusEffect } from "#enums/status-effect";
 import { globalScene } from "#app/global-scene";
@@ -57,6 +56,7 @@ import { PokemonType } from "#enums/pokemon-type";
 import { getNatureName } from "#app/data/nature";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { timedEventManager } from "#app/global-event-manager";
+import type { HeldItemPropertyMap } from "#app/field/pokemon-held-item-manager";
 
 /**
  * Animates exclamation sprite over trainer's head at start of encounter
@@ -106,7 +106,7 @@ export interface EnemyPokemonConfig {
   /** Can set just the status, or pass a timer on the status turns */
   status?: StatusEffect | [StatusEffect, number];
   mysteryEncounterBattleEffects?: (pokemon: Pokemon) => void;
-  modifierConfigs?: HeldModifierConfig[];
+  heldItemConfig?: HeldItemPropertyMap;
   tags?: BattlerTagType[];
   dataSource?: PokemonData;
   tera?: PokemonType;
@@ -438,8 +438,8 @@ export async function initBattleWithEnemyConfig(partyConfig: EnemyPartyConfig): 
       battle.battleType === BattleType.TRAINER ? ModifierPoolType.TRAINER : ModifierPoolType.WILD,
     );
     const customModifierTypes = partyConfig?.pokemonConfigs
-      ?.filter(config => config?.modifierConfigs)
-      .map(config => config.modifierConfigs!);
+      ?.filter(config => config?.heldItemConfig)
+      .map(config => config.heldItemConfig!);
     globalScene.generateEnemyModifiers(customModifierTypes);
   }
 }

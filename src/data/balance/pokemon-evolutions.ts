@@ -11,11 +11,11 @@ import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { SpeciesFormKey } from "#enums/species-form-key";
 import { TimeOfDay } from "#enums/time-of-day";
-import { DamageMoneyRewardModifier, ExtraModifierModifier, MoneyMultiplierModifier, SpeciesStatBoosterModifier, TempExtraModifierModifier } from "#app/modifier/modifier";
-import type { SpeciesStatBoosterModifierType } from "#app/modifier/modifier-type";
 import { speciesStarterCosts } from "./starters";
 import i18next from "i18next";
 import { initI18n } from "#app/plugins/i18n";
+import { allHeldItems } from "#app/items/all-held-items";
+import { HeldItemId } from "#enums/held-item-id";
 
 export enum SpeciesWildEvolutionDelay {
   NONE,
@@ -274,10 +274,7 @@ class MoveTypeEvolutionCondition extends SpeciesEvolutionCondition {
 
 class TreasureEvolutionCondition extends SpeciesEvolutionCondition {
   constructor() {
-    super(p => p.evoCounter
-      + p.getHeldItems().filter(m => m instanceof DamageMoneyRewardModifier).length
-      + globalScene.findModifiers(m => m instanceof MoneyMultiplierModifier
-        || m instanceof ExtraModifierModifier || m instanceof TempExtraModifierModifier).length > 9);
+    super(p => allHeldItems[HeldItemId.GIMMIGHOUL_EVO_TRACKER].getStackCount(p) > 9);
     this.description = i18next.t("pokemonEvolutions:treasure");
   }
 }
@@ -1794,8 +1791,8 @@ export const pokemonEvolutions: PokemonEvolutions = {
   ],
   [SpeciesId.CLAMPERL]: [
     // TODO: Change the SpeciesEvolutionConditions here to use a bespoke HeldItemEvolutionCondition after the modifier rework
-    new SpeciesEvolution(SpeciesId.HUNTAIL, 1, EvolutionItem.LINKING_CORD, new SpeciesEvolutionCondition(p => p.getHeldItems().some(m => m instanceof SpeciesStatBoosterModifier && (m.type as SpeciesStatBoosterModifierType).key === "DEEP_SEA_TOOTH")), SpeciesWildEvolutionDelay.VERY_LONG),
-    new SpeciesEvolution(SpeciesId.GOREBYSS, 1, EvolutionItem.LINKING_CORD, new SpeciesEvolutionCondition(p => p.getHeldItems().some(m => m instanceof SpeciesStatBoosterModifier && (m.type as SpeciesStatBoosterModifierType).key === "DEEP_SEA_SCALE")), SpeciesWildEvolutionDelay.VERY_LONG)
+    new SpeciesEvolution(SpeciesId.HUNTAIL, 1, EvolutionItem.LINKING_CORD, new SpeciesEvolutionCondition(p => p.heldItemManager.hasItem(HeldItemId.DEEP_SEA_TOOTH)), SpeciesWildEvolutionDelay.VERY_LONG),
+    new SpeciesEvolution(SpeciesId.GOREBYSS, 1, EvolutionItem.LINKING_CORD, new SpeciesEvolutionCondition(p => p.heldItemManager.hasItem(HeldItemId.DEEP_SEA_SCALE)), SpeciesWildEvolutionDelay.VERY_LONG)
   ],
   [SpeciesId.BOLDORE]: [
     new SpeciesEvolution(SpeciesId.GIGALITH, 1, EvolutionItem.LINKING_CORD, null, SpeciesWildEvolutionDelay.VERY_LONG)
