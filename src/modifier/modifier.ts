@@ -158,7 +158,15 @@ export abstract class Modifier {
     this.type = type;
   }
 
-  /** */
+  /**
+   * Return whether this modifier is of the given class
+   *
+   * @remarks
+   * Used to avoid requiring the caller to have imported the specific modifier class, avoiding circular dependencies.
+   *
+   * @param modifier - The modifier to check against
+   * @returns Whether the modiifer is an instance of the given type
+   */
   public is<T extends ModifierString>(modifier: T): this is ModifierInstanceMap[T] {
     const targetModifier = ModifierClassMap[modifier];
     if (!targetModifier) {
@@ -191,7 +199,9 @@ export abstract class PersistentModifier extends Modifier {
   public stackCount: number;
   public virtualStackCount: number;
 
-  /** */
+  /** This field does not exist at runtime and must not be used.
+   * Its sole purpose is to ensure that typescript is able to properly narrow when the `is` method is called.
+   */
   private declare _: never;
 
   constructor(type: ModifierType, stackCount = 1) {

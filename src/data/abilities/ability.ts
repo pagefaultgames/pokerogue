@@ -102,10 +102,6 @@ export class Ability implements Localizable {
     this.attrs = [];
     this.conditions = [];
 
-    this.isSuppressable = true;
-    this.isCopiable = true;
-    this.isReplaceable = true;
-
     this.localize();
   }
 
