@@ -45,7 +45,7 @@ export class ChallengeModeHelper extends GameManagerHelper {
       this.game.scene.gameMode.challenges = this.challenges;
       const starters = generateStarter(this.game.scene, species);
       const selectStarterPhase = new SelectStarterPhase();
-      this.game.scene.pushPhase(new EncounterPhase(false));
+      this.game.scene.phaseManager.pushPhase(new EncounterPhase(false));
       selectStarterPhase.initBattle(starters);
     });
 

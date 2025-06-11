@@ -1,12 +1,12 @@
 import { globalScene } from "#app/global-scene";
-import { applyChallenges, ChallengeType } from "#app/data/challenge";
+import { applyChallenges } from "#app/data/challenge";
+import { ChallengeType } from "#enums/challenge-type";
 import { Gender } from "#app/data/gender";
-import { SpeciesFormChangeMoveLearnedTrigger } from "#app/data/pokemon-forms";
+import { SpeciesFormChangeMoveLearnedTrigger } from "#app/data/pokemon-forms/form-change-triggers";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { overrideHeldItems, overrideModifiers } from "#app/modifier/modifier";
 import Overrides from "#app/overrides";
 import { Phase } from "#app/phase";
-import { TitlePhase } from "#app/phases/title-phase";
 import { SaveSlotUiMode } from "#app/ui/save-slot-select-ui-handler";
 import type { Starter } from "#app/ui/starter-select-ui-handler";
 import { UiMode } from "#enums/ui-mode";
@@ -25,8 +25,8 @@ export class SelectStarterPhase extends Phase {
       globalScene.ui.clearText();
       globalScene.ui.setMode(UiMode.SAVE_SLOT, SaveSlotUiMode.SAVE, (slotId: number) => {
         if (slotId === -1) {
-          globalScene.clearPhaseQueue();
-          globalScene.pushPhase(new TitlePhase());
+          globalScene.phaseManager.clearPhaseQueue();
+          globalScene.phaseManager.pushNew("TitlePhase");
           return this.end();
         }
         globalScene.sessionSlotId = slotId;

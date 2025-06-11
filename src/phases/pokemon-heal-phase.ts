@@ -1,9 +1,9 @@
 import { globalScene } from "#app/global-scene";
-import type { BattlerIndex } from "#app/battle";
-import { CommonAnim } from "#app/data/battle-anims";
+import type { BattlerIndex } from "#enums/battler-index";
+import { CommonAnim } from "#enums/move-anims-common";
 import { getStatusEffectHealText } from "#app/data/status-effect";
 import { StatusEffect } from "#app/enums/status-effect";
-import { HitResult } from "#app/field/pokemon";
+import { HitResult } from "#enums/hit-result";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { HealingBoosterModifier } from "#app/modifier/modifier";
 import { HealAchv } from "#app/system/achv";
@@ -68,7 +68,7 @@ export class PokemonHealPhase extends CommonAnimPhase {
     let lastStatusEffect = StatusEffect.NONE;
 
     if (healBlock && this.hpHealed > 0) {
-      globalScene.queueMessage(healBlock.onActivation(pokemon));
+      globalScene.phaseManager.queueMessage(healBlock.onActivation(pokemon));
       this.message = null;
       return super.end();
     }
@@ -119,11 +119,13 @@ export class PokemonHealPhase extends CommonAnimPhase {
     }
 
     if (this.message) {
-      globalScene.queueMessage(this.message);
+      globalScene.phaseManager.queueMessage(this.message);
     }
 
     if (this.healStatus && lastStatusEffect && !hasMessage) {
-      globalScene.queueMessage(getStatusEffectHealText(lastStatusEffect, getPokemonNameWithAffix(pokemon)));
+      globalScene.phaseManager.queueMessage(
+        getStatusEffectHealText(lastStatusEffect, getPokemonNameWithAffix(pokemon)),
+      );
     }
 
     if (!healOrDamage && !lastStatusEffect) {
