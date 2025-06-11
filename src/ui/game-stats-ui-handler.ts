@@ -5,7 +5,7 @@ import UiHandler from "#app/ui/ui-handler";
 import { addWindow } from "#app/ui/ui-theme";
 import { getPlayTimeString, formatFancyLargeNumber, toReadableString } from "#app/utils/common";
 import type { GameData } from "#app/system/game-data";
-import { DexAttr } from "#app/system/game-data";
+import { DexAttr } from "#enums/dex-attr";
 import { speciesStarterCosts } from "#app/data/balance/starters";
 import { Button } from "#enums/buttons";
 import i18next from "i18next";

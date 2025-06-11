@@ -4,8 +4,8 @@ import { describe, expect, it } from "vitest";
 async function importModule() {
   try {
     initStatsKeys();
-    const { PokemonMove } = await import("#app/field/pokemon");
-    const { Species } = await import("#enums/species");
+    const { PokemonMove } = await import("#app/data/moves/pokemon-move");
+    const { SpeciesId: Species } = await import("#enums/species-id");
     return {
       PokemonMove,
       Species,
