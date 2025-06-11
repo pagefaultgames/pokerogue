@@ -29,7 +29,7 @@ import { MoveResult } from "#enums/move-result";
 import { getPokemonNameWithAffix } from "#app/messages";
 import Overrides from "#app/overrides";
 import { BattlePhase } from "#app/phases/battle-phase";
-import { NumberHolder } from "#app/utils/common";
+import { enumValueToKey, NumberHolder } from "#app/utils/common";
 import { AbilityId } from "#enums/ability-id";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
@@ -129,7 +129,7 @@ export class MovePhase extends BattlePhase {
   public start(): void {
     super.start();
 
-    console.log(MoveId[this.move.moveId], MoveUseMode[this.useMode]);
+    console.log(MoveId[this.move.moveId], enumValueToKey(MoveUseMode, this.useMode));
 
     // Check if move is unusable (e.g. running out of PP due to a mid-turn Spite
     // or the user no longer being on field), ending the phase early if not.
