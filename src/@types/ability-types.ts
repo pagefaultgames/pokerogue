@@ -4,6 +4,9 @@ import type Pokemon from "#app/field/pokemon";
 import type { BattleStat } from "#enums/stat";
 import type { AbAttrConstructorMap } from "#app/data/abilities/ability";
 
+// biome-ignore lint/correctness/noUnusedImports: Used in a tsdoc comment
+import type { applyAbAttrs } from "#app/data/abilities/apply-ab-attrs";
+
 // Intentionally re-export all types from the ability attributes module
 export type * from "#app/data/abilities/ability";
 
@@ -25,3 +28,16 @@ export type AbAttrString = keyof AbAttrConstructorMap;
 export type AbAttrMap = {
   [K in keyof AbAttrConstructorMap]: InstanceType<AbAttrConstructorMap[K]>;
 };
+
+/**
+ * Subset of ability attribute classes that may be passed to {@linkcode applyAbAttrs } method
+ *
+ * @remarks
+ * Our AbAttr classes violate Liskov Substitution Principal.
+ *
+ * AbAttrs that are not in this have subclasses with apply methods requiring different parameters than
+ * the base apply method.
+ *
+ * Such attributes may not be passed to the {@linkcode applyAbAttrs} method
+ */
+export type CallableAbAttrString = Exclude<AbAttrString, "PreDefendAbAttr" | "PreAttackAbAttr">;

@@ -38,7 +38,7 @@ export function getBerryPredicate(berryType: BerryType): BerryPredicate {
         const threshold = new NumberHolder(0.25);
         // Offset BerryType such that LIECHI -> Stat.ATK = 1, GANLON -> Stat.DEF = 2, so on and so forth
         const stat: BattleStat = berryType - BerryType.ENIGMA;
-        applyAbAttrs("ReduceBerryUseThresholdAbAttr", pokemon, null, false, threshold);
+        applyAbAttrs("ReduceBerryUseThresholdAbAttr", { pokemon, stat});
         return pokemon.getHpRatio() < threshold.value && pokemon.getStatStage(stat) < 6;
       };
     case BerryType.LANSAT:
@@ -72,7 +72,7 @@ export function getBerryEffectFunc(berryType: BerryType): BerryEffectFunc {
       case BerryType.ENIGMA:
         {
           const hpHealed = new NumberHolder(toDmgValue(consumer.getMaxHp() / 4));
-          applyAbAttrs("DoubleBerryEffectAbAttr", consumer, null, false, hpHealed);
+          applyAbAttrs("DoubleBerryEffectAbAttr", { pokemon: consumer, effectValue: hpHealed, cancelled: null});
           globalScene.phaseManager.unshiftNew(
             "PokemonHealPhase",
             consumer.getBattlerIndex(),

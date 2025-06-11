@@ -1,0 +1,34 @@
+/*
+ * A collection of custom utility types that aid in type checking and ensuring strict type conformity
+ */
+
+// biome-ignore lint/correctness/noUnusedImports: Used in a tsdoc comment
+import type { AbAttr } from "./ability-types";
+
+/** Exactly matches the type of the argument, preventing adding additional properties.
+ * ⚠️ Should never be used with `extends`, as this will nullify the exactness of the type.
+ * As an example, used to ensure that the parameters of {@linkcode AbAttr#canApply} and {@linkcode AbAttr#getTriggerMessage} are compatible with
+ * the type of the apply method
+ *
+ * @typeParam T - The type to match exactly
+ */
+export type Exact<T> = {
+  [K in keyof T]: T[K];
+};
+
+/**
+ * Type hint that indicates that the type is intended to be closed to a specific shape.
+ *
+ * @remarks
+ * Can be used to ensure that a particular parameter does not change when subclassed, **But will only do so for one level of inheritance**
+ * ```ts
+ * type foo = { } // whatever
+ * class Foo {
+ *  method<T>(param: Closed<T, foo>)
+ * }
+ * ```
+ *
+ * @typeParam T - The type to check
+ * @typeParam Shape - The shape to match against
+ */
+export type Closed<X, Shape> = X extends Shape ? (Shape extends X ? X : never) : never;
