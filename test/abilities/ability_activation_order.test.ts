@@ -67,7 +67,7 @@ describe("Ability Activation Order", () => {
     expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.SUNNY);
   });
 
-  it("should activate priority AbilityId first", async () => {
+  it("should activate priority abilities first", async () => {
     game.override
       .startingLevel(1)
       .enemyLevel(100)
