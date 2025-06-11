@@ -18,7 +18,6 @@ import i18next from "i18next";
 import { SummonPhase } from "./summon-phase";
 import { SubstituteTag } from "#app/data/battler-tags";
 import { SwitchType } from "#enums/switch-type";
-import { PostSummonPhase } from "#app/phases/post-summon-phase";
 
 export class SwitchSummonPhase extends SummonPhase {
   public readonly phaseName: "SwitchSummonPhase" | "ReturnPhase" = "SwitchSummonPhase";
@@ -252,7 +251,7 @@ export class SwitchSummonPhase extends SummonPhase {
   }
 
   queuePostSummon(): void {
-    globalScene.phaseManager.startDynamicPhase(new PostSummonPhase(this.getPokemon().getBattlerIndex()));
+    globalScene.phaseManager.pushNew("PostSummonPhase", this.getPokemon().getBattlerIndex());
   }
 
   /**

@@ -3,6 +3,7 @@ import { globalScene } from "#app/global-scene";
 import { Phase } from "#app/phase";
 
 export class ActivatePriorityQueuePhase extends Phase {
+  public readonly phaseName = "ActivatePriorityQueuePhase";
   private type: DynamicPhaseType;
 
   constructor(type: DynamicPhaseType) {
@@ -12,7 +13,7 @@ export class ActivatePriorityQueuePhase extends Phase {
 
   override start() {
     super.start();
-    globalScene.startDynamicPhaseType(this.type);
+    globalScene.phaseManager.startDynamicPhaseType(this.type);
     this.end();
   }
 

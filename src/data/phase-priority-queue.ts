@@ -81,9 +81,9 @@ export class PostSummonPhasePriorityQueue extends PhasePriorityQueue {
 
     phasePokemon.getAbilityPriorities().forEach((priority, idx) => {
       this.queue.push(new PostSummonActivateAbilityPhase(phasePokemon.getBattlerIndex(), priority, !!idx));
-      globalScene.appendToPhase(
+      globalScene.phaseManager.appendToPhase(
         new ActivatePriorityQueuePhase(DynamicPhaseType.POST_SUMMON),
-        ActivatePriorityQueuePhase,
+        "ActivatePriorityQueuePhase",
         (p: ActivatePriorityQueuePhase) => p.getType() === DynamicPhaseType.POST_SUMMON,
       );
     });

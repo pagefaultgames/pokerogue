@@ -115,6 +115,7 @@ import { WeatherEffectPhase } from "#app/phases/weather-effect-phase";
  * This allows for easy creation of new phases without needing to import each phase individually.
  */
 const PHASES = Object.freeze({
+  ActivatePriorityQueuePhase,
   AddEnemyBuffModifierPhase,
   AttemptCapturePhase,
   AttemptRunPhase,
