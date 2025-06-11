@@ -20,7 +20,7 @@ export class BerryPhase extends FieldPhase {
 
     this.executeForAll(pokemon => {
       this.eatBerries(pokemon);
-      applyAbAttrs("RepeatBerryNextTurnAbAttr", pokemon, null);
+      applyAbAttrs("CudChewConsumeBerryAbAttr", { pokemon });
     });
 
     this.end();

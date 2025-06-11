@@ -4071,7 +4071,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     const stubTag = new BattlerTag(tagType, 0, 0);
 
     const cancelled = new BooleanHolder(false);
-    applyPreApplyBattlerTagAbAttrs("BattlerTagImmunityAbAttr", this, stubTag, cancelled, true);
+    applyAbAttrs("BattlerTagImmunityAbAttr", this, stubTag, cancelled, true, this);
 
     const userField = this.getAlliedField();
     userField.forEach(pokemon =>
