@@ -1,26 +1,29 @@
 <!-- (Once you have read these comments, you are free to remove them) -->
 <!-- Feel free to look at other PRs for examples -->
 <!--
-Make sure the title includes categorization (choose the one that best fits):
--       [Bug]: If the PR is primarily a bug fix
--      [Move]: If a move has new or changed functionality
--   [Ability]: If an ability has new or changed functionality
--      [Item]: For new or modified items
--   [Mystery]: For new or modified Mystery Encounters
--      [Test]: If the PR is primarily adding or modifying tests
--     [UI/UX]: If the PR is changing UI/UX elements
--     [Audio]: If the PR is adding or changing music/sfx
--    [Sprite]: If the PR is adding or changing sprites
--   [Balance]: If the PR is related to game balance
-- [Challenge]: If the PR is adding or modifying challenges
+Make sure the title includes categorization (choose the label(s) that best fit):
+-  [Bug]: If the PR is primarily a bug fix
+-  [Move]: If a move has new or changed functionality
+-  [Ability]: If an ability has new or changed functionality
+-  [Item]: For new or modified items
+-  [Mystery]: For new or modified Mystery Encounters
+-  [Test]: If the PR is primarily adding or modifying tests
+-  [UI/UX]: If the PR is changing UI/UX elements
+-  [Audio]: If the PR is adding or changing music/sfx
+-  [Sprite]: If the PR is adding or changing sprites
+-  [Balance]: If the PR is related to game balance
+-  [Challenge]: If the PR is adding or modifying challenges
 -  [Refactor]: If the PR is primarily rewriting existing code
--      [Docs]: If the PR is just adding or modifying documentation (such as tsdocs/code comments)
--    [GitHub]: For changes to GitHub workflows/templates/etc
--      [Misc]: If no other category fits the PR
+-  [Dev]: If the PR is primarily changing something pertaining to development (lefthook hooks, linter rules, etc.)
+-  [i18n]: If the PR is primarily adding/changing locale keys or key usage (may come with an associated locales PR)
+-  [Docs]: If the PR is adding or modifying documentation (such as tsdocs/code comments)
+-  [GitHub]: For changes to GitHub workflows/templates/etc
+-  [Misc]: If no other category fits the PR
 -->
+
 <!--
 Make sure that this PR is not overlapping with someone else's work
-Please try to keep the PR self-contained (and small)
+Please try to keep the PR self-contained (and small!)
 -->
 
 ## What are the changes the user will see?
