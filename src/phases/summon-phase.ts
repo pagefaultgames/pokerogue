@@ -1,11 +1,11 @@
 import { BattleType } from "#enums/battle-type";
 import { getPokeballAtlasKey, getPokeballTintColor } from "#app/data/pokeball";
-import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms";
+import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms/form-change-triggers";
 import { TrainerSlot } from "#enums/trainer-slot";
 import { PlayerGender } from "#app/enums/player-gender";
 import { addPokeballOpenParticles } from "#app/field/anims";
 import type Pokemon from "#app/field/pokemon";
-import { FieldPosition } from "#app/field/pokemon";
+import { FieldPosition } from "#enums/field-position";
 import { getPokemonNameWithAffix } from "#app/messages";
 import i18next from "i18next";
 import { PartyMemberPokemonPhase } from "./party-member-pokemon-phase";

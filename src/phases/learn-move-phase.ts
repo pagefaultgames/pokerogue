@@ -2,7 +2,7 @@ import { globalScene } from "#app/global-scene";
 import { initMoveAnim, loadMoveAnimAssets } from "#app/data/battle-anims";
 import type Move from "#app/data/moves/move";
 import { allMoves } from "#app/data/data-lists";
-import { SpeciesFormChangeMoveLearnedTrigger } from "#app/data/pokemon-forms";
+import { SpeciesFormChangeMoveLearnedTrigger } from "#app/data/pokemon-forms/form-change-triggers";
 import { MoveId } from "#enums/move-id";
 import { getPokemonNameWithAffix } from "#app/messages";
 import Overrides from "#app/overrides";
@@ -12,17 +12,8 @@ import { UiMode } from "#enums/ui-mode";
 import i18next from "i18next";
 import { PlayerPartyMemberPokemonPhase } from "#app/phases/player-party-member-pokemon-phase";
 import type Pokemon from "#app/field/pokemon";
-import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import { ConfirmUiMode } from "#enums/confirm-ui-mode";
-
-export enum LearnMoveType {
-  /** For learning a move via level-up, evolution, or other non-item-based event */
-  LEARN_MOVE,
-  /** For learning a move via Memory Mushroom */
-  MEMORY,
-  /** For learning a move via TM */
-  TM,
-}
+import { LearnMoveType } from "#enums/learn-move-type";
 
 export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
   public readonly phaseName = "LearnMovePhase";

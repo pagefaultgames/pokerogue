@@ -1,6 +1,7 @@
 import { allSpecies } from "#app/data/pokemon-species";
 import { Stat } from "#enums/stat";
-import { GameModes, getGameMode } from "#app/game-mode";
+import { getGameMode } from "#app/game-mode";
+import { GameModes } from "#enums/game-modes";
 import { BattleEndPhase } from "#app/phases/battle-end-phase";
 import { CommandPhase } from "#app/phases/command-phase";
 import { DamageAnimPhase } from "#app/phases/damage-anim-phase";

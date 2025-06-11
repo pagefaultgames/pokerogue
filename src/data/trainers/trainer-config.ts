@@ -1,12 +1,12 @@
 import { globalScene } from "#app/global-scene";
 import { modifierTypes } from "#app/modifier/modifier-type";
-import { PokemonMove } from "#app/field/pokemon";
+import { PokemonMove } from "../moves/pokemon-move";
 import { toReadableString, isNullOrUndefined, randSeedItem, randSeedInt, randSeedIntRange } from "#app/utils/common";
 import { pokemonEvolutions, pokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { tmSpecies } from "#app/data/balance/tms";
 import { doubleBattleDialogue } from "#app/data/dialogue";
-import { TrainerVariant } from "#app/field/trainer";
+import { TrainerVariant } from "#enums/trainer-variant";
 import { getIsInitialized, initI18n } from "#app/plugins/i18n";
 import i18next from "i18next";
 import { Gender } from "#app/data/gender";
