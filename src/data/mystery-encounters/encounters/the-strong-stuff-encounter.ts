@@ -5,9 +5,7 @@ import {
   leaveEncounterWithoutBattle,
   setEncounterRewards,
   transitionMysteryEncounterIntroVisuals,
-  generateModifierType,
 } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import type { PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { globalScene } from "#app/global-scene";
@@ -23,11 +21,11 @@ import { modifyPlayerPokemonBST } from "#app/data/mystery-encounters/utils/encou
 import { MoveId } from "#enums/move-id";
 import { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
-import { BerryType } from "#enums/berry-type";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { CustomPokemonData } from "#app/data/custom-pokemon-data";
 import { Stat } from "#enums/stat";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
+import { HeldItemId } from "#enums/held-item-id";
 
 /** the i18n namespace for the encounter */
 const namespace = "mysteryEncounters/theStrongStuff";
@@ -94,24 +92,13 @@ export const TheStrongStuffEncounter: MysteryEncounter = MysteryEncounterBuilder
           customPokemonData: new CustomPokemonData({ spriteScale: 1.25 }),
           nature: Nature.HARDY,
           moveSet: [MoveId.INFESTATION, MoveId.SALT_CURE, MoveId.GASTRO_ACID, MoveId.HEAL_ORDER],
-          modifierConfigs: [
-            {
-              modifier: generateModifierType(modifierTypes.BERRY, [BerryType.SITRUS]) as PokemonHeldItemModifierType,
-            },
-            {
-              modifier: generateModifierType(modifierTypes.BERRY, [BerryType.ENIGMA]) as PokemonHeldItemModifierType,
-            },
-            {
-              modifier: generateModifierType(modifierTypes.BERRY, [BerryType.APICOT]) as PokemonHeldItemModifierType,
-            },
-            {
-              modifier: generateModifierType(modifierTypes.BERRY, [BerryType.GANLON]) as PokemonHeldItemModifierType,
-            },
-            {
-              modifier: generateModifierType(modifierTypes.BERRY, [BerryType.LUM]) as PokemonHeldItemModifierType,
-              stackCount: 2,
-            },
-          ],
+          heldItemConfig: {
+            [HeldItemId.SITRUS_BERRY]: { stack: 1 },
+            [HeldItemId.ENIGMA_BERRY]: { stack: 1 },
+            [HeldItemId.APICOT_BERRY]: { stack: 1 },
+            [HeldItemId.GANLON_BERRY]: { stack: 1 },
+            [HeldItemId.LUM_BERRY]: { stack: 2 },
+          },
           tags: [BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON],
           mysteryEncounterBattleEffects: (pokemon: Pokemon) => {
             queueEncounterMessage(`${namespace}:option.2.stat_boost`);
