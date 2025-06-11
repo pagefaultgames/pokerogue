@@ -174,19 +174,7 @@ export class SwitchSummonPhase extends SummonPhase {
     party[this.slotIndex] = this.lastPokemon;
     party[this.fieldIndex] = switchedInPokemon;
     const showTextAndSummon = () => {
-      globalScene.ui.showText(
-        this.player
-          ? i18next.t("battle:playerGo", {
-              pokemonName: getPokemonNameWithAffix(switchedInPokemon),
-            })
-          : i18next.t("battle:trainerGo", {
-              trainerName: globalScene.currentBattle.trainer?.getName(
-                !(this.fieldIndex % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER,
-              ),
-              pokemonName: this.getPokemon().getNameToRender(),
-            }),
-      );
-
+      globalScene.ui.showText(this.getSendOutText(switchedInPokemon));
       /**
        * If this switch is passing a Substitute, make the switched Pokemon matches the returned Pokemon's state as it left.
        * Otherwise, clear any persisting tags on the returned Pokemon.
@@ -264,5 +252,33 @@ export class SwitchSummonPhase extends SummonPhase {
 
   queuePostSummon(): void {
     globalScene.phaseManager.unshiftNew("PostSummonPhase", this.getPokemon().getBattlerIndex());
+  }
+
+  /**
+   * Get the text to be displayed when a pokemon is forced to switch and leave the field.
+   * @param switchedInPokemon - The Pokemon having newly been sent in.
+   * @returns The text to display.
+   */
+  private getSendOutText(switchedInPokemon: Pokemon): string {
+    if (this.switchType === SwitchType.FORCE_SWITCH) {
+      // "XYZ was dragged out!"
+      return i18next.t("battle:pokemonDraggedOut", {
+        pokemonName: getPokemonNameWithAffix(switchedInPokemon),
+      });
+    }
+    if (this.player) {
+      // "Go! XYZ!"
+      return i18next.t("battle:playerGo", {
+        pokemonName: getPokemonNameWithAffix(switchedInPokemon),
+      });
+    }
+
+    // "Trainer sent out XYZ!"
+    return i18next.t("battle:trainerGo", {
+      trainerName: globalScene.currentBattle.trainer?.getName(
+        !(this.fieldIndex % 2) ? TrainerSlot.TRAINER : TrainerSlot.TRAINER_PARTNER,
+      ),
+      pokemonName: this.getPokemon().getNameToRender(),
+    });
   }
 }
