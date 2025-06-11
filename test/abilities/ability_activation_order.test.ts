@@ -1,6 +1,6 @@
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import { AbilityId } from "#enums/ability-id";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { WeatherType } from "#enums/weather-type";
 import GameManager from "#test/testUtils/gameManager";
@@ -24,18 +24,18 @@ describe("Ability Activation Order", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([Moves.SPLASH])
-      .ability(Abilities.BALL_FETCH)
+      .moveset([MoveId.SPLASH])
+      .ability(AbilityId.BALL_FETCH)
       .battleStyle("single")
       .disableCrits()
-      .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset(Moves.SPLASH);
+      .enemySpecies(SpeciesId.MAGIKARP)
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   it("should activate the ability of the faster Pokemon first", async () => {
-    game.override.enemyLevel(100).ability(Abilities.DRIZZLE).enemyAbility(Abilities.DROUGHT);
-    await game.classicMode.startBattle([Species.SLOWPOKE]);
+    game.override.enemyLevel(100).ability(AbilityId.DRIZZLE).enemyAbility(AbilityId.DROUGHT);
+    await game.classicMode.startBattle([SpeciesId.SLOWPOKE]);
 
     // Enemy's ability should activate first, so sun ends up replaced with rain
     expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.RAIN);
@@ -45,12 +45,12 @@ describe("Ability Activation Order", () => {
     game.override
       .startingLevel(25)
       .enemyLevel(50)
-      .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.DROUGHT)
-      .ability(Abilities.DRIZZLE)
+      .enemySpecies(SpeciesId.MAGIKARP)
+      .enemyAbility(AbilityId.DROUGHT)
+      .ability(AbilityId.DRIZZLE)
       .startingHeldItems([{ name: "BASE_STAT_BOOSTER", type: Stat.SPD, count: 100 }]);
 
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
     expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.SUNNY);
   });
 
@@ -58,24 +58,24 @@ describe("Ability Activation Order", () => {
     game.override
       .startingLevel(35)
       .enemyLevel(50)
-      .enemySpecies(Species.DITTO)
-      .enemyAbility(Abilities.DROUGHT)
-      .ability(Abilities.DRIZZLE)
+      .enemySpecies(SpeciesId.DITTO)
+      .enemyAbility(AbilityId.DROUGHT)
+      .ability(AbilityId.DRIZZLE)
       .startingHeldItems([{ name: "SPECIES_STAT_BOOSTER", type: "QUICK_POWDER" }]);
 
-    await game.classicMode.startBattle([Species.DITTO]);
+    await game.classicMode.startBattle([SpeciesId.DITTO]);
     expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.SUNNY);
   });
 
-  it("should activate priority abilities first", async () => {
+  it("should activate priority AbilityId first", async () => {
     game.override
       .startingLevel(1)
       .enemyLevel(100)
-      .enemySpecies(Species.ACCELGOR)
-      .enemyAbility(Abilities.DROUGHT)
-      .ability(Abilities.NEUTRALIZING_GAS);
+      .enemySpecies(SpeciesId.ACCELGOR)
+      .enemyAbility(AbilityId.DROUGHT)
+      .ability(AbilityId.NEUTRALIZING_GAS);
 
-    await game.classicMode.startBattle([Species.SLOWPOKE]);
+    await game.classicMode.startBattle([SpeciesId.SLOWPOKE]);
     expect(game.scene.arena.weather).toBeUndefined();
   });
 
@@ -83,12 +83,12 @@ describe("Ability Activation Order", () => {
     game.override
       .startingLevel(35)
       .enemyLevel(50)
-      .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.SLOW_START)
-      .enemyPassiveAbility(Abilities.DROUGHT)
-      .ability(Abilities.DRIZZLE);
+      .enemySpecies(SpeciesId.MAGIKARP)
+      .enemyAbility(AbilityId.SLOW_START)
+      .enemyPassiveAbility(AbilityId.DROUGHT)
+      .ability(AbilityId.DRIZZLE);
 
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
     // Slow start activates and makes enemy slower, so drought activates after drizzle
     expect(game.scene.arena.weather?.weatherType).toBe(WeatherType.SUNNY);
   });
