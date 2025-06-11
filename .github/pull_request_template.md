@@ -1,7 +1,7 @@
 <!-- (Once you have read these comments, you are free to remove them) -->
 <!-- Feel free to look at other PRs for examples -->
 <!--
-Make sure the title includes categorization (choose the label(s) that best fit):
+Make sure the title includes categorization (choose the one that best fits):
 -  [Bug]: If the PR is primarily a bug fix
 -  [Move]: If a move has new or changed functionality
 -  [Ability]: If an ability has new or changed functionality
