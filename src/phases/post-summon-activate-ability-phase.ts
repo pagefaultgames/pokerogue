@@ -1,4 +1,4 @@
-import { applyPostSummonAbAttrs, PostSummonAbAttr } from "#app/data/abilities/ability";
+import { applyPostSummonAbAttrs } from "#app/data/abilities/apply-ab-attrs";
 import { PostSummonPhase } from "#app/phases/post-summon-phase";
 import type { BattlerIndex } from "#enums/battler-index";
 
@@ -16,7 +16,7 @@ export class PostSummonActivateAbilityPhase extends PostSummonPhase {
   }
 
   start() {
-    applyPostSummonAbAttrs(PostSummonAbAttr, this.getPokemon(), this.passive, false);
+    applyPostSummonAbAttrs("PostSummonAbAttr", this.getPokemon(), this.passive, false);
 
     this.end();
   }
