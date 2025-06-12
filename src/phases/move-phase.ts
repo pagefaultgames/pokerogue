@@ -1,16 +1,6 @@
 import { BattlerIndex } from "#enums/battler-index";
 import { globalScene } from "#app/global-scene";
-import {
-  applyAbAttrs,
-  applyPostMoveUsedAbAttrs,
-  applyPreAttackAbAttrs,
-  BlockRedirectAbAttr,
-  IncreasePpAbAttr,
-  PokemonTypeChangeAbAttr,
-  PostMoveUsedAbAttr,
-  RedirectMoveAbAttr,
-  ReduceStatusEffectDurationAbAttr,
-} from "#app/data/abilities/ability";
+import { applyAbAttrs, applyPostMoveUsedAbAttrs, applyPreAttackAbAttrs } from "#app/data/abilities/apply-ab-attrs";
 import type { DelayedAttackTag } from "#app/data/arena-tag";
 import { CommonAnim } from "#enums/move-anims-common";
 import { CenterOfAttentionTag } from "#app/data/battler-tags";
@@ -229,7 +219,7 @@ export class MovePhase extends BattlePhase {
           applyMoveAttrs("BypassSleepAttr", this.pokemon, null, this.move.getMove());
           const turnsRemaining = new NumberHolder(this.pokemon.status.sleepTurnsRemaining ?? 0);
           applyAbAttrs(
-            ReduceStatusEffectDurationAbAttr,
+            "ReduceStatusEffectDurationAbAttr",
             this.pokemon,
             null,
             false,
@@ -398,7 +388,7 @@ export class MovePhase extends BattlePhase {
      */
     if (success) {
       const move = this.move.getMove();
-      applyPreAttackAbAttrs(PokemonTypeChangeAbAttr, this.pokemon, null, move);
+      applyPreAttackAbAttrs("PokemonTypeChangeAbAttr", this.pokemon, null, move);
       globalScene.phaseManager.unshiftNew(
         "MoveEffectPhase",
         this.pokemon.getBattlerIndex(),
@@ -409,7 +399,7 @@ export class MovePhase extends BattlePhase {
       );
     } else {
       if ([MoveId.ROAR, MoveId.WHIRLWIND, MoveId.TRICK_OR_TREAT, MoveId.FORESTS_CURSE].includes(this.move.moveId)) {
-        applyPreAttackAbAttrs(PokemonTypeChangeAbAttr, this.pokemon, null, this.move.getMove());
+        applyPreAttackAbAttrs("PokemonTypeChangeAbAttr", this.pokemon, null, this.move.getMove());
       }
 
       this.pokemon.pushMoveHistory({
@@ -439,7 +429,7 @@ export class MovePhase extends BattlePhase {
     // Note that the `!this.followUp` check here prevents an infinite Dancer loop.
     if (this.move.getMove().hasFlag(MoveFlags.DANCE_MOVE) && !this.followUp) {
       globalScene.getField(true).forEach(pokemon => {
-        applyPostMoveUsedAbAttrs(PostMoveUsedAbAttr, pokemon, this.move, this.pokemon, this.targets);
+        applyPostMoveUsedAbAttrs("PostMoveUsedAbAttr", pokemon, this.move, this.pokemon, this.targets);
       });
     }
   }
@@ -451,7 +441,7 @@ export class MovePhase extends BattlePhase {
 
     if (move.applyConditions(this.pokemon, targets[0], move)) {
       // Protean and Libero apply on the charging turn of charge moves
-      applyPreAttackAbAttrs(PokemonTypeChangeAbAttr, this.pokemon, null, this.move.getMove());
+      applyPreAttackAbAttrs("PokemonTypeChangeAbAttr", this.pokemon, null, this.move.getMove());
 
       this.showMoveText();
       globalScene.phaseManager.unshiftNew(
@@ -500,7 +490,7 @@ export class MovePhase extends BattlePhase {
   public getPpIncreaseFromPressure(targets: Pokemon[]): number {
     const foesWithPressure = this.pokemon
       .getOpponents()
-      .filter(o => targets.includes(o) && o.isActive(true) && o.hasAbilityWithAttr(IncreasePpAbAttr));
+      .filter(o => targets.includes(o) && o.isActive(true) && o.hasAbilityWithAttr("IncreasePpAbAttr"));
     return foesWithPressure.length;
   }
 
@@ -518,7 +508,9 @@ export class MovePhase extends BattlePhase {
       globalScene
         .getField(true)
         .filter(p => p !== this.pokemon)
-        .forEach(p => applyAbAttrs(RedirectMoveAbAttr, p, null, false, this.move.moveId, redirectTarget, this.pokemon));
+        .forEach(p =>
+          applyAbAttrs("RedirectMoveAbAttr", p, null, false, this.move.moveId, redirectTarget, this.pokemon),
+        );
 
       /** `true` if an Ability is responsible for redirecting the move to another target; `false` otherwise */
       let redirectedByAbility = currentTarget !== redirectTarget.value;
@@ -547,17 +539,17 @@ export class MovePhase extends BattlePhase {
           }
         });
 
-        if (this.pokemon.hasAbilityWithAttr(BlockRedirectAbAttr)) {
+        if (this.pokemon.hasAbilityWithAttr("BlockRedirectAbAttr")) {
           redirectTarget.value = currentTarget;
           // TODO: Ability displays should be handled by the ability
           globalScene.phaseManager.queueAbilityDisplay(
             this.pokemon,
-            this.pokemon.getPassiveAbility().hasAttr(BlockRedirectAbAttr),
+            this.pokemon.getPassiveAbility().hasAttr("BlockRedirectAbAttr"),
             true,
           );
           globalScene.phaseManager.queueAbilityDisplay(
             this.pokemon,
-            this.pokemon.getPassiveAbility().hasAttr(BlockRedirectAbAttr),
+            this.pokemon.getPassiveAbility().hasAttr("BlockRedirectAbAttr"),
             false,
           );
         }

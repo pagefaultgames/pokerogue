@@ -1,6 +1,6 @@
 import { getCharVariantFromDialogue } from "#app/data/dialogue";
 import { TrainerType } from "#app/enums/trainer-type";
-import { modifierTypes } from "#app/modifier/modifier-type";
+import { modifierTypes } from "#app/data/data-lists";
 import { vouchers } from "#app/system/voucher";
 import i18next from "i18next";
 import { randSeedItem } from "#app/utils/common";
