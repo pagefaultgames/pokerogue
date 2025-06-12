@@ -86,7 +86,7 @@ export class Ability implements Localizable {
   public name: string;
   public description: string;
   public generation: number;
-  public postSummonPriority: number;
+  public readonly postSummonPriority: number;
   public isBypassFaint: boolean;
   public isIgnorable: boolean;
   public isSuppressable = true;
