@@ -1,6 +1,6 @@
 import { STEALING_MOVES } from "#app/data/mystery-encounters/requirements/requirement-groups";
 import type { PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
-import { modifierTypes } from "#app/modifier/modifier-type";
+import { modifierTypes } from "#app/data/data-lists";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { SpeciesId } from "#enums/species-id";
 import { globalScene } from "#app/global-scene";

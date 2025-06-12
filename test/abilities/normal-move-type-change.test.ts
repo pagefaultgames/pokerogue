@@ -9,7 +9,6 @@ import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { TYPE_BOOST_ITEM_BOOST_PERCENT } from "#app/constants";
 import { allAbilities } from "#app/data/data-lists";
-import { MoveTypeChangeAbAttr } from "#app/data/abilities/ability";
 import { toDmgValue } from "#app/utils/common";
 
 /**
@@ -160,7 +159,7 @@ describe.each([
 
     // get the power boost from the ability so we can compare it to the item
     // @ts-expect-error power multiplier is private
-    const boost = allAbilities[ab]?.getAttrs(MoveTypeChangeAbAttr)[0]?.powerMultiplier;
+    const boost = allAbilities[ab]?.getAttrs("MoveTypeChangeAbAttr")[0]?.powerMultiplier;
     expect(boost, "power boost should be defined").toBeDefined();
 
     const powerSpy = vi.spyOn(testMoveInstance, "calculateBattlePower");
@@ -177,7 +176,7 @@ describe.each([
 
     // get the power boost from the ability so we can compare it to the item
     // @ts-expect-error power multiplier is private
-    const boost = allAbilities[ab]?.getAttrs(MoveTypeChangeAbAttr)[0]?.powerMultiplier;
+    const boost = allAbilities[ab]?.getAttrs("MoveTypeChangeAbAttr")[0]?.powerMultiplier;
     expect(boost, "power boost should be defined").toBeDefined();
 
     const tackle = allMoves[MoveId.TACKLE];
