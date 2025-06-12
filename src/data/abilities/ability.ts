@@ -8737,7 +8737,7 @@ export function initAbilities() {
       .attr(PokemonTypeChangeAbAttr),
     //.condition((p) => !p.summonData.abilitiesApplied.includes(AbilityId.PROTEAN)), //Gen 9 Implementation
     new Ability(AbilityId.FUR_COAT, 6)
-      .attr(ReceivedMoveDamageMultiplierAbAttr, (_target, _user, move) => move.category === MoveCategory.PHYSICAL || move.id === MoveId.PSYSHOCK || move.id === MoveId.PSYSTRIKE || move.id === MoveId.SECRET_SWORD, 0.5)
+      .attr(ReceivedMoveDamageMultiplierAbAttr, (_target, _user, move) => move.category === MoveCategory.PHYSICAL || move.hasAttr("DefDefAttr"), 0.5)
       .ignorable(),
     new Ability(AbilityId.MAGICIAN, 6)
       .attr(PostAttackStealHeldItemAbAttr),
