@@ -2,17 +2,17 @@ import type BattleScene from "#app/battle-scene";
 import { CreepingFogEncounter } from "#app/data/mystery-encounters/encounters/creeping-fog-encounter";
 import * as MysteryEncounters from "#app/data/mystery-encounters/mystery-encounters";
 import * as EncounterPhaseUtils from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { Biome } from "#app/enums/biome";
+import { BiomeId } from "#enums/biome-id";
 import { TimeOfDay } from "#enums/time-of-day";
 import { MysteryEncounterType } from "#app/enums/mystery-encounter-type";
-import { Species } from "#app/enums/species";
-import { PokemonMove } from "#app/field/pokemon";
-import { ModifierTier } from "#app/modifier/modifier-tier";
+import { SpeciesId } from "#enums/species-id";
+import { PokemonMove } from "#app/data/moves/pokemon-move";
+import { ModifierTier } from "#enums/modifier-tier";
 import { CommandPhase } from "#app/phases/command-phase";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 import { UiMode } from "#enums/ui-mode";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/move-id";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import {
@@ -26,43 +26,48 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vite
 import { WeatherType } from "#enums/weather-type";
 
 const namespace = "mysteryEncounters/creepingFog";
-const defaultParty = [Species.LAPRAS, Species.GENGAR, Species.ABRA];
-const defaultBiome = Biome.FOREST;
+const defaultParty = [SpeciesId.LAPRAS, SpeciesId.GENGAR, SpeciesId.ABRA];
+const defaultBiome = BiomeId.FOREST;
 const defaultWave = 51;
-const enemyPokemonForest50_110 = [Species.MACHAMP, Species.GRIMMSNARL, Species.LYCANROC, Species.ALOLA_RATICATE];
+const enemyPokemonForest50_110 = [
+  SpeciesId.MACHAMP,
+  SpeciesId.GRIMMSNARL,
+  SpeciesId.LYCANROC,
+  SpeciesId.ALOLA_RATICATE,
+];
 const enemyPokemonSwamp110_140 = [
-  Species.MACHAMP,
-  Species.GRIMMSNARL,
-  Species.POLIWRATH,
-  Species.SCOLIPEDE,
-  Species.MIENSHAO,
-  Species.DRACOZOLT,
+  SpeciesId.MACHAMP,
+  SpeciesId.GRIMMSNARL,
+  SpeciesId.POLIWRATH,
+  SpeciesId.SCOLIPEDE,
+  SpeciesId.MIENSHAO,
+  SpeciesId.DRACOZOLT,
 ];
 const enemyPokemonGraveyard140_Plus = [
-  Species.MACHAMP,
-  Species.GRIMMSNARL,
-  Species.GOLURK,
-  Species.HONEDGE,
-  Species.ZWEILOUS,
-  Species.SCOLIPEDE,
-  Species.MIENSHAO,
-  Species.DRACOZOLT,
-  Species.PIDGEOT,
+  SpeciesId.MACHAMP,
+  SpeciesId.GRIMMSNARL,
+  SpeciesId.GOLURK,
+  SpeciesId.HONEDGE,
+  SpeciesId.ZWEILOUS,
+  SpeciesId.SCOLIPEDE,
+  SpeciesId.MIENSHAO,
+  SpeciesId.DRACOZOLT,
+  SpeciesId.PIDGEOT,
 ];
 
 const enemyMoveset = {
-  [Species.MACHAMP]: [Moves.DYNAMIC_PUNCH, Moves.STONE_EDGE, Moves.DUAL_CHOP, Moves.FISSURE],
-  [Species.GRIMMSNARL]: [Moves.STONE_EDGE, Moves.CLOSE_COMBAT, Moves.IRON_TAIL, Moves.PLAY_ROUGH],
-  [Species.LYCANROC]: [Moves.STONE_EDGE, Moves.CLOSE_COMBAT, Moves.IRON_TAIL, Moves.PLAY_ROUGH],
-  [Species.ALOLA_RATICATE]: [Moves.FALSE_SURRENDER, Moves.SUCKER_PUNCH, Moves.PLAY_ROUGH, Moves.POPULATION_BOMB],
-  [Species.POLIWRATH]: [Moves.DYNAMIC_PUNCH, Moves.HYDRO_PUMP, Moves.DUAL_CHOP, Moves.HYPNOSIS],
-  [Species.GOLURK]: [Moves.EARTHQUAKE, Moves.POLTERGEIST, Moves.DYNAMIC_PUNCH, Moves.STONE_EDGE],
-  [Species.HONEDGE]: [Moves.IRON_HEAD, Moves.POLTERGEIST, Moves.SACRED_SWORD, Moves.SHADOW_SNEAK],
-  [Species.ZWEILOUS]: [Moves.DRAGON_RUSH, Moves.CRUNCH, Moves.GUNK_SHOT, Moves.SCREECH],
-  [Species.SCOLIPEDE]: [Moves.MEGAHORN, Moves.NOXIOUS_TORQUE, Moves.ROLLOUT, Moves.BANEFUL_BUNKER],
-  [Species.MIENSHAO]: [Moves.HIGH_JUMP_KICK, Moves.STONE_EDGE, Moves.BLAZE_KICK, Moves.GUNK_SHOT],
-  [Species.DRACOZOLT]: [Moves.BOLT_BEAK, Moves.DRAGON_RUSH, Moves.EARTHQUAKE, Moves.STONE_EDGE],
-  [Species.PIDGEOT]: [Moves.HURRICANE, Moves.HEAT_WAVE, Moves.FOCUS_BLAST, Moves.WILDBOLT_STORM],
+  [SpeciesId.MACHAMP]: [MoveId.DYNAMIC_PUNCH, MoveId.STONE_EDGE, MoveId.DUAL_CHOP, MoveId.FISSURE],
+  [SpeciesId.GRIMMSNARL]: [MoveId.STONE_EDGE, MoveId.CLOSE_COMBAT, MoveId.IRON_TAIL, MoveId.PLAY_ROUGH],
+  [SpeciesId.LYCANROC]: [MoveId.STONE_EDGE, MoveId.CLOSE_COMBAT, MoveId.IRON_TAIL, MoveId.PLAY_ROUGH],
+  [SpeciesId.ALOLA_RATICATE]: [MoveId.FALSE_SURRENDER, MoveId.SUCKER_PUNCH, MoveId.PLAY_ROUGH, MoveId.POPULATION_BOMB],
+  [SpeciesId.POLIWRATH]: [MoveId.DYNAMIC_PUNCH, MoveId.HYDRO_PUMP, MoveId.DUAL_CHOP, MoveId.HYPNOSIS],
+  [SpeciesId.GOLURK]: [MoveId.EARTHQUAKE, MoveId.POLTERGEIST, MoveId.DYNAMIC_PUNCH, MoveId.STONE_EDGE],
+  [SpeciesId.HONEDGE]: [MoveId.IRON_HEAD, MoveId.POLTERGEIST, MoveId.SACRED_SWORD, MoveId.SHADOW_SNEAK],
+  [SpeciesId.ZWEILOUS]: [MoveId.DRAGON_RUSH, MoveId.CRUNCH, MoveId.GUNK_SHOT, MoveId.SCREECH],
+  [SpeciesId.SCOLIPEDE]: [MoveId.MEGAHORN, MoveId.NOXIOUS_TORQUE, MoveId.ROLLOUT, MoveId.BANEFUL_BUNKER],
+  [SpeciesId.MIENSHAO]: [MoveId.HIGH_JUMP_KICK, MoveId.STONE_EDGE, MoveId.BLAZE_KICK, MoveId.GUNK_SHOT],
+  [SpeciesId.DRACOZOLT]: [MoveId.BOLT_BEAK, MoveId.DRAGON_RUSH, MoveId.EARTHQUAKE, MoveId.STONE_EDGE],
+  [SpeciesId.PIDGEOT]: [MoveId.HURRICANE, MoveId.HEAT_WAVE, MoveId.FOCUS_BLAST, MoveId.WILDBOLT_STORM],
 };
 
 describe("Creeping Fog - Mystery Encounter", () => {
@@ -84,10 +89,10 @@ describe("Creeping Fog - Mystery Encounter", () => {
     game.override.startingTimeOfDay(TimeOfDay.NIGHT);
 
     vi.spyOn(MysteryEncounters, "mysteryEncountersByBiome", "get").mockReturnValue(
-      new Map<Biome, MysteryEncounterType[]>([
-        [Biome.FOREST, [MysteryEncounterType.CREEPING_FOG]],
-        [Biome.FOREST, [MysteryEncounterType.SAFARI_ZONE]],
-        [Biome.SPACE, [MysteryEncounterType.MYSTERIOUS_CHALLENGERS]],
+      new Map<BiomeId, MysteryEncounterType[]>([
+        [BiomeId.FOREST, [MysteryEncounterType.CREEPING_FOG]],
+        [BiomeId.FOREST, [MysteryEncounterType.SAFARI_ZONE]],
+        [BiomeId.SPACE, [MysteryEncounterType.MYSTERIOUS_CHALLENGERS]],
       ]),
     );
   });
@@ -113,7 +118,7 @@ describe("Creeping Fog - Mystery Encounter", () => {
 
   it("should not spawn outside of proper biomes", async () => {
     game.override.mysteryEncounterTier(MysteryEncounterTier.ULTRA);
-    game.override.startingBiome(Biome.SPACE);
+    game.override.startingBiome(BiomeId.SPACE);
     game.override.startingTimeOfDay(TimeOfDay.NIGHT);
 
     await game.runToMysteryEncounter();
@@ -153,7 +158,7 @@ describe("Creeping Fog - Mystery Encounter", () => {
       //Expect that the weather is set to heavy fog
       expect(scene.arena.weather?.weatherType).toBe(WeatherType.HEAVY_FOG);
       const enemyField = scene.getEnemyField();
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
+      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(enemyField.length).toBe(1);
       expect(enemyPokemonForest50_110).toContain(enemyField[0].species.speciesId);
       const moveset = enemyField[0].moveset.map(m => m.moveId);
@@ -162,7 +167,7 @@ describe("Creeping Fog - Mystery Encounter", () => {
 
     it("should start battle against shadowy Pokemon from the Swamp Mid Level Pool", async () => {
       game.override.startingWave(113);
-      game.override.startingBiome(Biome.SWAMP);
+      game.override.startingBiome(BiomeId.SWAMP);
       await game.runToMysteryEncounter(MysteryEncounterType.CREEPING_FOG, defaultParty);
       // Make party lead's level arbitrarily high to not get KOed by move
       const partyLead = scene.getPlayerParty()[0];
@@ -172,7 +177,7 @@ describe("Creeping Fog - Mystery Encounter", () => {
       //Expect that the weather is set to heavy fog
       expect(scene.arena.weather?.weatherType).toBe(WeatherType.HEAVY_FOG);
       const enemyField = scene.getEnemyField();
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
+      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(enemyField.length).toBe(1);
       expect(enemyPokemonSwamp110_140).toContain(enemyField[0].species.speciesId);
       const moveset = enemyField[0].moveset.map(m => m.moveId);
@@ -181,7 +186,7 @@ describe("Creeping Fog - Mystery Encounter", () => {
 
     it("should start battle against shadowy Pokemon from the Graveyard High Level Pool", async () => {
       game.override.startingWave(143);
-      game.override.startingBiome(Biome.GRAVEYARD);
+      game.override.startingBiome(BiomeId.GRAVEYARD);
       await game.runToMysteryEncounter(MysteryEncounterType.CREEPING_FOG, defaultParty);
       // Make party lead's level arbitrarily high to not get KOed by move
       const partyLead = scene.getPlayerParty()[0];
@@ -191,7 +196,7 @@ describe("Creeping Fog - Mystery Encounter", () => {
       //Expect that the weather is set to heavy fog
       expect(scene.arena.weather?.weatherType).toBe(WeatherType.HEAVY_FOG);
       const enemyField = scene.getEnemyField();
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
+      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(enemyField.length).toBe(1);
       expect(enemyPokemonGraveyard140_Plus).toContain(enemyField[0].species.speciesId);
       const moveset = enemyField[0].moveset.map(m => m.moveId);
@@ -203,7 +208,7 @@ describe("Creeping Fog - Mystery Encounter", () => {
       await runMysteryEncounterToEnd(game, 1, undefined, true);
       await skipBattleRunMysteryEncounterRewardsPhase(game);
       await game.phaseInterceptor.to(SelectModifierPhase, false);
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
+      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
       await game.phaseInterceptor.run(SelectModifierPhase);
 
       expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
@@ -240,22 +245,22 @@ describe("Creeping Fog - Mystery Encounter", () => {
     it("should skip battle with Pokemon if wave level under 140", async () => {
       const leaveEncounterWithoutBattleSpy = vi.spyOn(EncounterPhaseUtils, "leaveEncounterWithoutBattle");
       await game.runToMysteryEncounter(MysteryEncounterType.CREEPING_FOG, defaultParty);
-      scene.getPlayerParty()[1].moveset = [new PokemonMove(Moves.DEFOG)];
+      scene.getPlayerParty()[1].moveset = [new PokemonMove(MoveId.DEFOG)];
       await runMysteryEncounterToEnd(game, 2);
       expect(leaveEncounterWithoutBattleSpy).toBeCalled();
     });
 
     it("should not skip battle with Pokemon", async () => {
       game.override.startingWave(143);
-      game.override.startingBiome(Biome.GRAVEYARD);
+      game.override.startingBiome(BiomeId.GRAVEYARD);
       await game.runToMysteryEncounter(MysteryEncounterType.CREEPING_FOG, defaultParty);
-      scene.getPlayerParty()[1].moveset = [new PokemonMove(Moves.DEFOG)];
+      scene.getPlayerParty()[1].moveset = [new PokemonMove(MoveId.DEFOG)];
       const partyLead = scene.getPlayerParty()[0];
       partyLead.level = 1000;
       partyLead.calculateStats();
       await runMysteryEncounterToEnd(game, 2, undefined, true);
       const enemyField = scene.getEnemyField();
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
+      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(enemyField.length).toBe(1);
       expect(enemyPokemonGraveyard140_Plus).toContain(enemyField[0].species.speciesId);
       const moveset = enemyField[0].moveset.map(m => m.moveId);
@@ -266,7 +271,7 @@ describe("Creeping Fog - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.CREEPING_FOG, defaultParty);
       scene.getPlayerParty().forEach(p => (p.moveset = []));
       await game.phaseInterceptor.to(MysteryEncounterPhase, false);
-      const encounterPhase = scene.getCurrentPhase();
+      const encounterPhase = scene.phaseManager.getCurrentPhase();
       expect(encounterPhase?.constructor.name).toBe(MysteryEncounterPhase.name);
       const mysteryEncounterPhase = encounterPhase as MysteryEncounterPhase;
       vi.spyOn(mysteryEncounterPhase, "continueEncounter");
@@ -297,16 +302,16 @@ describe("Creeping Fog - Mystery Encounter", () => {
       game.override.startingWave(63);
       const leaveEncounterWithoutBattleSpy = vi.spyOn(EncounterPhaseUtils, "leaveEncounterWithoutBattle");
       await game.runToMysteryEncounter(MysteryEncounterType.CREEPING_FOG, defaultParty);
-      scene.getPlayerParty()[1].moveset = [new PokemonMove(Moves.FORESIGHT)];
+      scene.getPlayerParty()[1].moveset = [new PokemonMove(MoveId.FORESIGHT)];
       await runMysteryEncounterToEnd(game, 3);
       expect(leaveEncounterWithoutBattleSpy).toBeCalled();
     });
 
     it("should not skip battle with Pokemon", async () => {
       game.override.startingWave(143);
-      game.override.startingBiome(Biome.GRAVEYARD);
+      game.override.startingBiome(BiomeId.GRAVEYARD);
       await game.runToMysteryEncounter(MysteryEncounterType.CREEPING_FOG, defaultParty);
-      scene.getPlayerParty()[1].moveset = [new PokemonMove(Moves.FORESIGHT)];
+      scene.getPlayerParty()[1].moveset = [new PokemonMove(MoveId.FORESIGHT)];
       const partyLead = scene.getPlayerParty()[0];
       partyLead.level = 1000;
       partyLead.calculateStats();
@@ -314,7 +319,7 @@ describe("Creeping Fog - Mystery Encounter", () => {
       //Expect that the weather is set to heavy fog
       expect(scene.arena.weather?.weatherType).toBe(WeatherType.HEAVY_FOG);
       const enemyField = scene.getEnemyField();
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
+      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(enemyField.length).toBe(1);
       expect(enemyPokemonGraveyard140_Plus).toContain(enemyField[0].species.speciesId);
       const moveset = enemyField[0].moveset.map(m => m.moveId);
@@ -326,7 +331,7 @@ describe("Creeping Fog - Mystery Encounter", () => {
       scene.getPlayerParty().forEach(p => (p.moveset = []));
       await game.phaseInterceptor.to(MysteryEncounterPhase, false);
 
-      const encounterPhase = scene.getCurrentPhase();
+      const encounterPhase = scene.phaseManager.getCurrentPhase();
       expect(encounterPhase?.constructor.name).toBe(MysteryEncounterPhase.name);
       const mysteryEncounterPhase = encounterPhase as MysteryEncounterPhase;
       vi.spyOn(mysteryEncounterPhase, "continueEncounter");
