@@ -35,6 +35,11 @@ export default class RenameRunFormUiHandler extends FormModalUiHandler {
 
   show(args: any[]): boolean {
     if (super.show(args)) {
+      if (this.inputs?.length) {
+        this.inputs.forEach(input => {
+          input.text = "";
+        });
+      }
       const config = args[0] as ModalConfig;
       this.submitAction = _ => {
         this.sanitizeInputs();
