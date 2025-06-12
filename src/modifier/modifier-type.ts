@@ -130,6 +130,7 @@ import { ModifierPoolType } from "#enums/modifier-pool-type";
 import { getModifierPoolForType, getModifierType } from "#app/utils/modifier-utils";
 import type { ModifierTypeFunc, WeightedModifierTypeWeightFunc } from "#app/@types/modifier-types";
 import { applyChallenges } from "#app/data/challenge";
+import { ChallengeType } from "#enums/challenge-type";
 
 const outputModifierData = false;
 const useMaxWeightForOutput = false;

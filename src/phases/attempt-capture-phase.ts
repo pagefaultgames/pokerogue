@@ -25,7 +25,8 @@ import i18next from "i18next";
 import { globalScene } from "#app/global-scene";
 import { Gender } from "#app/data/gender";
 import { BooleanHolder } from "#app/utils/common";
-import { ChallengeType, applyChallenges } from "#app/data/challenge";
+import { applyChallenges } from "#app/data/challenge";
+import { ChallengeType } from "#enums/challenge-type";
 
 export class AttemptCapturePhase extends PokemonPhase {
   public readonly phaseName = "AttemptCapturePhase";

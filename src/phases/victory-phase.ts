@@ -8,6 +8,7 @@ import { handleMysteryEncounterVictory } from "#app/data/mystery-encounters/util
 import { globalScene } from "#app/global-scene";
 import { timedEventManager } from "#app/global-event-manager";
 
+import { ChallengeType } from "#enums/challenge-type";
 import { BooleanHolder } from "#app/utils/common";
 import { applyChallenges } from "#app/data/challenge";
 
@@ -111,7 +112,12 @@ export class VictoryPhase extends PokemonPhase {
           }
           if (!isHealPhaseActive.value) {
             //Push shop instead of healing phase for NoHealChallenge
-            globalScene.pushPhase(new SelectModifierPhase(undefined, undefined, this.getFixedBattleCustomModifiers()));
+            globalScene.phaseManager.pushNew(
+              "SelectModifierPhase",
+              undefined,
+              undefined,
+              this.getFixedBattleCustomModifiers(),
+            );
           }
         }
 
