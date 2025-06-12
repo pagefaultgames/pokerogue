@@ -1,25 +1,25 @@
 import type Battle from "#app/battle";
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex } from "#enums/battler-index";
 import { BattleType } from "#enums/battle-type";
 import { biomeLinks, BiomePoolTier } from "#app/data/balance/biomes";
 import type MysteryEncounterOption from "#app/data/mystery-encounters/mystery-encounter-option";
-import {
-  AVERAGE_ENCOUNTERS_PER_RUN_TARGET,
-  WEIGHT_INCREMENT_ON_SPAWN_MISS,
-} from "#app/data/mystery-encounters/mystery-encounters";
+import { AVERAGE_ENCOUNTERS_PER_RUN_TARGET, WEIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/constants";
 import { showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
-import type { AiType, PlayerPokemon } from "#app/field/pokemon";
+import type { PlayerPokemon } from "#app/field/pokemon";
+import type { AiType } from "#enums/ai-type";
 import type Pokemon from "#app/field/pokemon";
-import { EnemyPokemon, FieldPosition, PokemonMove } from "#app/field/pokemon";
+import { EnemyPokemon } from "#app/field/pokemon";
+import { PokemonMove } from "#app/data/moves/pokemon-move";
+import { FieldPosition } from "#enums/field-position";
 import type { CustomModifierSettings, ModifierType } from "#app/modifier/modifier-type";
 import {
   getPartyLuckValue,
-  ModifierPoolType,
   ModifierTypeGenerator,
   ModifierTypeOption,
-  modifierTypes,
   regenerateModifierPoolThresholds,
 } from "#app/modifier/modifier-type";
+import { modifierTypes } from "#app/data/data-lists";
+import { ModifierPoolType } from "#enums/modifier-pool-type";
 import type PokemonData from "#app/system/pokemon-data";
 import type { OptionSelectConfig, OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
 import type { PartyOption, PokemonSelectFilter } from "#app/ui/party-ui-handler";
@@ -30,7 +30,8 @@ import type { BattlerTagType } from "#enums/battler-tag-type";
 import { BiomeId } from "#enums/biome-id";
 import type { TrainerType } from "#enums/trainer-type";
 import i18next from "i18next";
-import Trainer, { TrainerVariant } from "#app/field/trainer";
+import Trainer from "#app/field/trainer";
+import { TrainerVariant } from "#enums/trainer-variant";
 import type { Gender } from "#app/data/gender";
 import type { Nature } from "#enums/nature";
 import type { MoveId } from "#enums/move-id";

@@ -1,5 +1,5 @@
-import { BattlerIndex } from "#app/battle";
-import { ShellSideArmCategoryAttr } from "#app/data/moves/move";
+import { BattlerIndex } from "#enums/battler-index";
+import type { ShellSideArmCategoryAttr } from "#app/data/moves/move";
 import { allMoves } from "#app/data/data-lists";
 import type Move from "#app/data/moves/move";
 import { AbilityId } from "#enums/ability-id";
@@ -27,7 +27,7 @@ describe("Moves - Shell Side Arm", () => {
 
   beforeEach(() => {
     shellSideArm = allMoves[MoveId.SHELL_SIDE_ARM];
-    shellSideArmAttr = shellSideArm.getAttrs(ShellSideArmCategoryAttr)[0];
+    shellSideArmAttr = shellSideArm.getAttrs("ShellSideArmCategoryAttr")[0];
     game = new GameManager(phaserGame);
     game.override
       .moveset([MoveId.SHELL_SIDE_ARM, MoveId.SPLASH])

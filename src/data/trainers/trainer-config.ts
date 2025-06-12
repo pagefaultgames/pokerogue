@@ -1,12 +1,12 @@
 import { globalScene } from "#app/global-scene";
-import { modifierTypes } from "#app/modifier/modifier-type";
-import { PokemonMove } from "#app/field/pokemon";
+import { modifierTypes } from "../data-lists";
+import { PokemonMove } from "../moves/pokemon-move";
 import { toReadableString, isNullOrUndefined, randSeedItem, randSeedInt, randSeedIntRange } from "#app/utils/common";
 import { pokemonEvolutions, pokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { tmSpecies } from "#app/data/balance/tms";
-import { doubleBattleDialogue } from "#app/data/dialogue";
-import { TrainerVariant } from "#app/field/trainer";
+import { doubleBattleDialogue } from "../double-battle-dialogue";
+import { TrainerVariant } from "#enums/trainer-variant";
 import { getIsInitialized, initI18n } from "#app/plugins/i18n";
 import i18next from "i18next";
 import { Gender } from "#app/data/gender";
@@ -37,7 +37,7 @@ import { timedEventManager } from "#app/global-event-manager";
 // Type imports
 import type { PokemonSpeciesFilter } from "#app/data/pokemon-species";
 import type PokemonSpecies from "#app/data/pokemon-species";
-import type { ModifierTypeFunc } from "#app/modifier/modifier-type";
+import type { ModifierTypeFunc } from "#app/@types/modifier-types";
 import type { EnemyPokemon } from "#app/field/pokemon";
 import type { EvilTeam } from "./evil-admin-trainer-pools";
 import type {

@@ -11,7 +11,6 @@ import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { SpeciesFormKey } from "#enums/species-form-key";
 import { TimeOfDay } from "#enums/time-of-day";
-import { EvoTrackerModifier, SpeciesStatBoosterModifier } from "#app/modifier/modifier";
 import type { SpeciesStatBoosterItem, SpeciesStatBoosterModifierType } from "#app/modifier/modifier-type";
 import { speciesStarterCosts } from "./starters";
 import i18next from "i18next";
@@ -178,7 +177,7 @@ export class SpeciesEvolutionCondition {
         case EvoCondKey.PARTY_TYPE:
           return !!globalScene.getPlayerParty().find(p => p.getTypes(false, false, true).indexOf(cond.pkmnType) > -1)
         case EvoCondKey.EVO_TREASURE_TRACKER:
-          return pokemon.getHeldItems().some(m => m instanceof EvoTrackerModifier && m.getStackCount() >= cond.value);
+          return pokemon.getHeldItems().some(m => m.is("EvoTrackerModifier") && m.getStackCount() >= cond.value);
         case EvoCondKey.GENDER:
           return pokemon.gender === cond.gender;
         case EvoCondKey.SHEDINJA: // Shedinja cannot be evolved into directly
@@ -201,7 +200,7 @@ export class SpeciesEvolutionCondition {
         case EvoCondKey.SPECIES_CAUGHT:
           return !!globalScene.gameData.dexData[cond.speciesCaught].caughtAttr;
         case EvoCondKey.HELD_ITEM:
-          return pokemon.getHeldItems().some(m => m instanceof SpeciesStatBoosterModifier && (m.type as SpeciesStatBoosterModifierType).key === cond.itemKey)
+          return pokemon.getHeldItems().some(m => m.is("SpeciesStatBoosterModifier") && (m.type as SpeciesStatBoosterModifierType).key === cond.itemKey)
       }
     });
   }

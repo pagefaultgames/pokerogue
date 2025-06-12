@@ -17,7 +17,7 @@ import { TheStrongStuffEncounter } from "#app/data/mystery-encounters/encounters
 import { Nature } from "#enums/nature";
 import { BerryType } from "#enums/berry-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
-import { PokemonMove } from "#app/field/pokemon";
+import { PokemonMove } from "#app/data/moves/pokemon-move";
 import { UiMode } from "#enums/ui-mode";
 import ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 import { BerryModifier, PokemonBaseStatTotalModifier } from "#app/modifier/modifier";
