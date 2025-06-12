@@ -5,43 +5,36 @@ As a developer, it's important to help maintain global accessibility by effectiv
 
 This document aims to cover everything you need to know to help keep the integration process for localization smooth and simple.
 
-# Basic Assumptions
+# Stupid Assumptions
 Before you continue, this document assumes:
-- You are familiar with Git commands and GitHub's tools at a basic level.
-- You have already set up an environment for development according to the README at https://github.com/pagefaultgames/pokerogue
-- You have joined the [community Discord](https://discord.gg/pokerogue) and joined the development channels via **[#select-roles](https://discord.com/channels/1125469663833370665/1194825607738052621)**.
-The development channels are the easiest way to keep in touch with the Translation Team and other developers.
+<!-- TODO: Change to mention contributing.md once that released -->
+- You have already forked the repository and set up a  development environment according to the [respository README] (https://github.com/pagefaultgames/pokerogue/blob/beta/README.md).
+<!-- TODO: Get @SirsBenjie to add a good Git/GH tutorial for noobs --> 
+- You have a basic level of familiarity with Git commands and GitHub repositories.
+- You have joined the [community Discord](https://discord.gg/pokerogue) and have access to `#dev-corner` and related channels via **[#select-roles](https://discord.com/channels/1125469663833370665/1194825607738052621)**. This is the easiest way to keep in touch with both the Translation Team and other like-minded contributors!
 
 ## About the `pokerogue-locales` submodule
 
-PokéRogue's translations are managed under a dedicated repository at https://github.com/pagefaultgames/pokerogue-locales/. 
-This repository is integrated into the main repository as a [git submodule](https://git-scm.com/book/en/v2/Git-Tools-Submodules) within the `public/locales` folder.
+PokéRogue's translations are managed under a separate dedicated repository, [`pokerogue-locales`](https://github.com/pagefaultgames/pokerogue-locales/). 
+This repository is integrated into the main one as a [git submodule](https://git-scm.com/book/en/v2/Git-Tools-Submodules) within the `public/locales` folder.
 
 ### What Is a Submodule?
 
-In essence, a submodule is a way for one repository (i.e. project) to use another repositoey internally (in this case, locales).
+In essence, a submodule is a way for one repository (i.e. `pokerogue`) to use another repository internally (`pokerogue-locales`).
 From the perspective of the main project, the locales submodule is fairly simple to work with, but there are some important commands to keep in mind.
 
-#### Setting Up the Submodule in Your Main Fork
+#### Fetching Changes from Submodules
 
-When you first start development in your main fork, you can fetch translations from the locales repo with this command:
+Once you have set up your fork, run the following command to integrate the latest locales changes into your branch:
 ```bash
 git submodule update --init --recursive
 ```
 [^1]
-(This step is unnecessary if you ran `git clone` with the `--recurse-submodules` flag as specified in the README.)
 
-[^1]: If you run into issues with your development environment after doing so, you may have to delete the `.git/modules/public` and `public/locales` folders before re-running the command.
-#### Updating Locales to the Latest Version
+This is run automatically after merge or switching branches, so you _usually_ won't have to run it manually in most cases.
 
-When you need to fetch recent locale changes into your working branch, you can do so with this command:
-<!-- TODO: Add a VS Codr `tasks.json` with this as a task -->
+[^1]: If you run into issues with your development environment afterwards, try deleting the `.git/modules/public` and `public/locales` folders before re-running the command.
 
-```bash
-git submodule update --remote --recursive
-```
-
-(This is run automatically on merge or switching branches, so you _usually_ won't have to run it in most cases.
 ## Adding Translated Text
 
 ### How Are Translations Integrated?
