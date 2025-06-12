@@ -18,18 +18,18 @@ import {
   AnyCombinationPokemonRequirement,
   TypeRequirement,
 } from "../mystery-encounter-requirements";
-import { modifierTypes } from "#app/modifier/modifier-type";
 import { PokemonType } from "#enums/pokemon-type";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import { randSeedInt, randSeedShuffle } from "#app/utils/common";
-import { type PlayerPokemon, PokemonMove } from "#app/field/pokemon";
+import type { PlayerPokemon } from "#app/field/pokemon";
+import { PokemonMove } from "#app/data/moves/pokemon-move";
 import i18next from "i18next";
 import MoveInfoOverlay from "#app/ui/move-info-overlay";
 import { showEncounterDialogue } from "../utils/encounter-dialogue-utils";
 import type { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
-import { allMoves } from "#app/data/data-lists";
+import { allMoves, modifierTypes } from "#app/data/data-lists";
 import { LearnMovePhase } from "#app/phases/learn-move-phase";
 import { TrainerPartyTemplate } from "#app/data/trainers/TrainerPartyTemplate";
 import { getRandomPartyMemberFunc, type TrainerConfig, trainerConfigs } from "#app/data/trainers/trainer-config";
@@ -45,15 +45,18 @@ const SKY_BATTLE_WAVES: [number, number] = [50, 180];
 /**
  * These pokemon come from serebii's
  * {@link https://www.serebii.net/xy/skybattles.shtml | Sky Battle Page}
+ * Also pokemon that are expected to fly (e.g beedril and mew)
  */
 const POOL_0_POKEMON = [
   SpeciesId.CHARIZARD,
   SpeciesId.BUTTERFREE,
+  SpeciesId.BEEDRILL,
   SpeciesId.PIDGEOTTO,
   SpeciesId.PIDGEOT,
   SpeciesId.FEAROW,
   SpeciesId.ZUBAT,
   SpeciesId.GOLBAT,
+  SpeciesId.VENOMOTH,
   SpeciesId.HAUNTER,
   SpeciesId.KOFFING,
   SpeciesId.WEEZING,
@@ -64,6 +67,8 @@ const POOL_0_POKEMON = [
   SpeciesId.ZAPDOS,
   SpeciesId.MOLTRES,
   SpeciesId.DRAGONITE,
+  SpeciesId.MEWTWO, // ?
+  SpeciesId.MEW,
   SpeciesId.NOCTOWL,
   SpeciesId.LEDYBA,
   SpeciesId.LEDIAN,
@@ -76,17 +81,21 @@ const POOL_0_POKEMON = [
   SpeciesId.YANMA,
   SpeciesId.MISDREAVUS,
   SpeciesId.UNOWN,
+  SpeciesId.FORRETRESS, // ?
   SpeciesId.GLIGAR,
   SpeciesId.MANTINE,
   SpeciesId.SKARMORY,
   SpeciesId.LUGIA,
   SpeciesId.HO_OH,
+  SpeciesId.CELEBI,
   SpeciesId.BEAUTIFLY,
+  SpeciesId.DUSTOX,
   SpeciesId.SWELLOW,
   SpeciesId.WINGULL,
   SpeciesId.PELIPPER,
   SpeciesId.MASQUERAIN,
   SpeciesId.NINJASK,
+  SpeciesId.SHEDINJA, // ?
   SpeciesId.VIBRAVA,
   SpeciesId.FLYGON,
   SpeciesId.SWABLU,
@@ -98,10 +107,14 @@ const POOL_0_POKEMON = [
   SpeciesId.DUSKULL,
   SpeciesId.TROPIUS,
   SpeciesId.CHIMECHO,
+  SpeciesId.GLALIE, // ?
   SpeciesId.SALAMENCE,
+  SpeciesId.METANG,
+  SpeciesId.METAGROSS, // ?
   SpeciesId.LATIAS,
   SpeciesId.LATIOS,
   SpeciesId.RAYQUAZA,
+  SpeciesId.JIRACHI,
   SpeciesId.STARAVIA,
   SpeciesId.STARAPTOR,
   SpeciesId.MOTHIM,
@@ -116,38 +129,95 @@ const POOL_0_POKEMON = [
   SpeciesId.BRONZONG,
   SpeciesId.CARNIVINE,
   SpeciesId.MANTYKE,
+  SpeciesId.MAGNEZONE, // ?
   SpeciesId.TOGEKISS,
   SpeciesId.YANMEGA,
   SpeciesId.GLISCOR,
+  SpeciesId.DUSKNOIR, // ?
   SpeciesId.ROTOM,
   SpeciesId.UXIE,
   SpeciesId.MESPRIT,
   SpeciesId.AZELF,
+  SpeciesId.GIRATINA,
   SpeciesId.CRESSELIA,
+  SpeciesId.ARCEUS,
   SpeciesId.TRANQUILL,
   SpeciesId.UNFEZANT,
   SpeciesId.WOOBAT,
   SpeciesId.SWOOBAT,
   SpeciesId.SIGILYPH,
   SpeciesId.ARCHEOPS,
+  SpeciesId.SOLOSIS,
+  SpeciesId.DUOSION,
+  SpeciesId.REUNICLUS,
   SpeciesId.SWANNA,
+  SpeciesId.VANILLISH,
+  SpeciesId.VANILLUXE,
   SpeciesId.EMOLGA,
   SpeciesId.TYNAMO,
   SpeciesId.EELEKTRIK,
   SpeciesId.EELEKTROSS,
+  SpeciesId.LAMPENT,
+  SpeciesId.CHANDELURE,
   SpeciesId.CRYOGONAL,
   SpeciesId.BRAVIARY,
   SpeciesId.MANDIBUZZ,
   SpeciesId.HYDREIGON,
+  SpeciesId.VOLCARONA,
   SpeciesId.TORNADUS,
   SpeciesId.THUNDURUS,
+  SpeciesId.RESHIRAM,
+  SpeciesId.ZEKROM,
   SpeciesId.LANDORUS,
   SpeciesId.FLETCHINDER,
   SpeciesId.TALONFLAME,
   SpeciesId.VIVILLON,
+  SpeciesId.FLOETTE,
+  SpeciesId.FLORGES,
+  SpeciesId.HAWLUCHA, // ?
   SpeciesId.NOIBAT,
   SpeciesId.NOIVERN,
   SpeciesId.YVELTAL,
+  SpeciesId.DARTRIX,
+  SpeciesId.DECIDUEYE, //?
+  SpeciesId.TRUMBEAK,
+  SpeciesId.TOUCANNON,
+  SpeciesId.VIKAVOLT,
+  SpeciesId.ORICORIO,
+  SpeciesId.RIBOMBEE,
+  SpeciesId.COMFEY, //?
+  SpeciesId.MINIOR,
+  SpeciesId.TAPU_KOKO,
+  SpeciesId.TAPU_LELE,
+  SpeciesId.TAPU_BULU,
+  SpeciesId.TAPU_FINI,
+  SpeciesId.LUNALA,
+  SpeciesId.NIHILEGO,
+  SpeciesId.BUZZWOLE,
+  SpeciesId.CELESTEELA,
+  SpeciesId.NECROZMA,
+  SpeciesId.POIPOLE,
+  SpeciesId.NAGANADEL,
+  SpeciesId.CORVISQUIRE,
+  SpeciesId.CORVIKNIGHT,
+  SpeciesId.ORBEETLE,
+  SpeciesId.FLAPPLE,
+  SpeciesId.CRAMORANT,
+  SpeciesId.FROSMOTH,
+  SpeciesId.DRAKLOAK,
+  SpeciesId.DRAGAPULT,
+  SpeciesId.ETERNATUS,
+  SpeciesId.ENAMORUS,
+  SpeciesId.SQUAWKABILLY,
+  SpeciesId.WATTREL,
+  SpeciesId.KILOWATTREL,
+  SpeciesId.BOMBIRDIER,
+  SpeciesId.FLAMIGO,
+  SpeciesId.FLUTTER_MANE,
+  SpeciesId.IRON_JUGULIS,
+  SpeciesId.ROARING_MOON,
+  SpeciesId.MIRAIDON,
+  SpeciesId.KORAIDON,
 ];
 
 const PHYSICAL_TUTOR_MOVES = [
@@ -259,6 +329,42 @@ export const SkyBattleEncounter: MysteryEncounter = MysteryEncounterBuilder.with
         yShadow: 7,
       },
     ];
+
+    const intro = [
+      {
+        text: `${namespace}:intro` + female ? "_f" : "",
+      },
+      {
+        speaker: `${namespace}:speaker`,
+        text: `${namespace}:intro_dialogue` + female ? "_f" : "",
+      },
+    ];
+    const title = `${namespace}:title` + female ? "_f" : "";
+    const description = `${namespace}:description` + female ? "_f" : "";
+    const outro = [
+      {
+        text: `${namespace}:outro` + female ? "_f" : "",
+      },
+    ];
+
+    encounter.dialogue = { ...encounter.dialogue, intro: intro };
+    let encounterOptionsDialogue = encounter.dialogue.encounterOptionsDialogue ?? {};
+    encounter.dialogue = {
+      ...encounter.dialogue,
+      encounterOptionsDialogue: {
+        ...encounterOptionsDialogue,
+        title,
+      },
+    };
+    encounterOptionsDialogue = encounter.dialogue.encounterOptionsDialogue ?? {};
+    encounter.dialogue = {
+      ...encounter.dialogue,
+      encounterOptionsDialogue: {
+        ...encounterOptionsDialogue,
+        description,
+      },
+    };
+    encounter.dialogue = { ...encounter.dialogue, outro: outro };
 
     return true;
   })
@@ -409,7 +515,8 @@ function doFlyingTypeTutor(): Promise<void> {
   // biome-ignore lint/suspicious/noAsyncPromiseExecutor: TODO explain
   return new Promise<void>(async resolve => {
     const moveOptions = globalScene.currentBattle.mysteryEncounter!.misc.moveTutorOptions;
-    await showEncounterDialogue(`${namespace}:battle_won`, `${namespace}:speaker`);
+    const female = globalScene.currentBattle.mysteryEncounter!.enemyPartyConfigs[0].female; //TODO: Is this [0] correct enought?
+    await showEncounterDialogue(`${namespace}:battle_won` + female ? "_f" : "", `${namespace}:speaker`);
 
     const overlayScale = 1;
     const moveInfoOverlay = new MoveInfoOverlay({
@@ -456,7 +563,7 @@ function doFlyingTypeTutor(): Promise<void> {
     }
     // Option select complete, handle if they are learning a move
     if (result && result.selectedOptionIndex < moveOptions.length) {
-      globalScene.unshiftPhase(
+      globalScene.phaseManager.unshiftPhase(
         new LearnMovePhase(result.selectedPokemonIndex, moveOptions[result.selectedOptionIndex].moveId),
       );
     }

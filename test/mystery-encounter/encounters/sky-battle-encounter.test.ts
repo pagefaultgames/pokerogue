@@ -11,7 +11,7 @@ import {
 } from "#test/mystery-encounter/encounter-test-utils";
 import { MoveId } from "#enums/move-id";
 import type BattleScene from "#app/battle-scene";
-import { PokemonMove } from "#app/field/pokemon";
+import { PokemonMove } from "#app/data/moves/pokemon-move";
 import { UiMode } from "#enums/ui-mode";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
@@ -33,11 +33,13 @@ const defaultWave = 52;
 const POOL_0_POKEMON = [
   SpeciesId.CHARIZARD,
   SpeciesId.BUTTERFREE,
+  SpeciesId.BEEDRILL,
   SpeciesId.PIDGEOTTO,
   SpeciesId.PIDGEOT,
   SpeciesId.FEAROW,
   SpeciesId.ZUBAT,
   SpeciesId.GOLBAT,
+  SpeciesId.VENOMOTH,
   SpeciesId.HAUNTER,
   SpeciesId.KOFFING,
   SpeciesId.WEEZING,
@@ -48,6 +50,8 @@ const POOL_0_POKEMON = [
   SpeciesId.ZAPDOS,
   SpeciesId.MOLTRES,
   SpeciesId.DRAGONITE,
+  SpeciesId.MEWTWO, // ?
+  SpeciesId.MEW,
   SpeciesId.NOCTOWL,
   SpeciesId.LEDYBA,
   SpeciesId.LEDIAN,
@@ -60,17 +64,21 @@ const POOL_0_POKEMON = [
   SpeciesId.YANMA,
   SpeciesId.MISDREAVUS,
   SpeciesId.UNOWN,
+  SpeciesId.FORRETRESS, // ?
   SpeciesId.GLIGAR,
   SpeciesId.MANTINE,
   SpeciesId.SKARMORY,
   SpeciesId.LUGIA,
   SpeciesId.HO_OH,
+  SpeciesId.CELEBI,
   SpeciesId.BEAUTIFLY,
+  SpeciesId.DUSTOX,
   SpeciesId.SWELLOW,
   SpeciesId.WINGULL,
   SpeciesId.PELIPPER,
   SpeciesId.MASQUERAIN,
   SpeciesId.NINJASK,
+  SpeciesId.SHEDINJA, // ?
   SpeciesId.VIBRAVA,
   SpeciesId.FLYGON,
   SpeciesId.SWABLU,
@@ -82,10 +90,14 @@ const POOL_0_POKEMON = [
   SpeciesId.DUSKULL,
   SpeciesId.TROPIUS,
   SpeciesId.CHIMECHO,
+  SpeciesId.GLALIE, // ?
   SpeciesId.SALAMENCE,
+  SpeciesId.METANG,
+  SpeciesId.METAGROSS, // ?
   SpeciesId.LATIAS,
   SpeciesId.LATIOS,
   SpeciesId.RAYQUAZA,
+  SpeciesId.JIRACHI,
   SpeciesId.STARAVIA,
   SpeciesId.STARAPTOR,
   SpeciesId.MOTHIM,
@@ -100,38 +112,95 @@ const POOL_0_POKEMON = [
   SpeciesId.BRONZONG,
   SpeciesId.CARNIVINE,
   SpeciesId.MANTYKE,
+  SpeciesId.MAGNEZONE, // ?
   SpeciesId.TOGEKISS,
   SpeciesId.YANMEGA,
   SpeciesId.GLISCOR,
+  SpeciesId.DUSKNOIR, // ?
   SpeciesId.ROTOM,
   SpeciesId.UXIE,
   SpeciesId.MESPRIT,
   SpeciesId.AZELF,
+  SpeciesId.GIRATINA,
   SpeciesId.CRESSELIA,
+  SpeciesId.ARCEUS,
   SpeciesId.TRANQUILL,
   SpeciesId.UNFEZANT,
   SpeciesId.WOOBAT,
   SpeciesId.SWOOBAT,
   SpeciesId.SIGILYPH,
   SpeciesId.ARCHEOPS,
+  SpeciesId.SOLOSIS,
+  SpeciesId.DUOSION,
+  SpeciesId.REUNICLUS,
   SpeciesId.SWANNA,
+  SpeciesId.VANILLISH,
+  SpeciesId.VANILLUXE,
   SpeciesId.EMOLGA,
   SpeciesId.TYNAMO,
   SpeciesId.EELEKTRIK,
   SpeciesId.EELEKTROSS,
+  SpeciesId.LAMPENT,
+  SpeciesId.CHANDELURE,
   SpeciesId.CRYOGONAL,
   SpeciesId.BRAVIARY,
   SpeciesId.MANDIBUZZ,
   SpeciesId.HYDREIGON,
+  SpeciesId.VOLCARONA,
   SpeciesId.TORNADUS,
   SpeciesId.THUNDURUS,
+  SpeciesId.RESHIRAM,
+  SpeciesId.ZEKROM,
   SpeciesId.LANDORUS,
   SpeciesId.FLETCHINDER,
   SpeciesId.TALONFLAME,
   SpeciesId.VIVILLON,
+  SpeciesId.FLOETTE,
+  SpeciesId.FLORGES,
+  SpeciesId.HAWLUCHA, // ?
   SpeciesId.NOIBAT,
   SpeciesId.NOIVERN,
   SpeciesId.YVELTAL,
+  SpeciesId.DARTRIX,
+  SpeciesId.DECIDUEYE, //?
+  SpeciesId.TRUMBEAK,
+  SpeciesId.TOUCANNON,
+  SpeciesId.VIKAVOLT,
+  SpeciesId.ORICORIO,
+  SpeciesId.RIBOMBEE,
+  SpeciesId.COMFEY, //?
+  SpeciesId.MINIOR,
+  SpeciesId.TAPU_KOKO,
+  SpeciesId.TAPU_LELE,
+  SpeciesId.TAPU_BULU,
+  SpeciesId.TAPU_FINI,
+  SpeciesId.LUNALA,
+  SpeciesId.NIHILEGO,
+  SpeciesId.BUZZWOLE,
+  SpeciesId.CELESTEELA,
+  SpeciesId.NECROZMA,
+  SpeciesId.POIPOLE,
+  SpeciesId.NAGANADEL,
+  SpeciesId.CORVISQUIRE,
+  SpeciesId.CORVIKNIGHT,
+  SpeciesId.ORBEETLE,
+  SpeciesId.FLAPPLE,
+  SpeciesId.CRAMORANT,
+  SpeciesId.FROSMOTH,
+  SpeciesId.DRAKLOAK,
+  SpeciesId.DRAGAPULT,
+  SpeciesId.ETERNATUS,
+  SpeciesId.ENAMORUS,
+  SpeciesId.SQUAWKABILLY,
+  SpeciesId.WATTREL,
+  SpeciesId.KILOWATTREL,
+  SpeciesId.BOMBIRDIER,
+  SpeciesId.FLAMIGO,
+  SpeciesId.FLUTTER_MANE,
+  SpeciesId.IRON_JUGULIS,
+  SpeciesId.ROARING_MOON,
+  SpeciesId.MIRAIDON,
+  SpeciesId.KORAIDON,
 ];
 
 const PHYSICAL_TUTOR_MOVES = [
@@ -239,7 +308,7 @@ describe.todo("Sky Battle - Mystery Encounter", () => {
       await runMysteryEncounterToEnd(game, 1, undefined, true);
 
       const enemyParty = scene.getEnemyParty();
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
+      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(scene.currentBattle.trainer?.config.trainerType).toBe(TrainerType.SKY_TRAINER);
       //Ensure the number of enemy pokemon match our party
       expect(enemyParty.length).toBe(scene.getPlayerParty().length);
@@ -250,7 +319,7 @@ describe.todo("Sky Battle - Mystery Encounter", () => {
       game.override.moveset([MoveId.DRAGON_CLAW, MoveId.EARTHQUAKE]);
       await game.runToMysteryEncounter(MysteryEncounterType.SKY_BATTLE, defaultParty);
       await runMysteryEncounterToEnd(game, 1, undefined, true);
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
+      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       await skipBattleRunMysteryEncounterRewardsPhase(game, false);
 
       // Only allow acceptable moves (setting available pp to 0)
@@ -274,7 +343,7 @@ describe.todo("Sky Battle - Mystery Encounter", () => {
     it("should remove ineligeble pokemon from player party", async () => {
       await game.runToMysteryEncounter(MysteryEncounterType.SKY_BATTLE, defaultParty);
       await runMysteryEncounterToEnd(game, 1, undefined, true);
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
+      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       await skipBattleRunMysteryEncounterRewardsPhase(game, false);
 
       // Only allow acceptable pokemon
@@ -304,7 +373,7 @@ describe.todo("Sky Battle - Mystery Encounter", () => {
       await runMysteryEncounterToEnd(game, 1, undefined, true);
       await skipBattleRunMysteryEncounterRewardsPhase(game, false);
 
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(MysteryEncounterRewardsPhase.name);
+      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(MysteryEncounterRewardsPhase.name);
       game.phaseInterceptor["prompts"] = []; // Clear out prompt handlers
       game.onNextPrompt("MysteryEncounterRewardsPhase", UiMode.OPTION_SELECT, () => {
         game.phaseInterceptor.superEndPhase();
@@ -339,7 +408,7 @@ describe.todo("Sky Battle - Mystery Encounter", () => {
       ]);
       await game.phaseInterceptor.to(MysteryEncounterPhase, false);
 
-      const encounterPhase = scene.getCurrentPhase();
+      const encounterPhase = scene.phaseManager.getCurrentPhase();
       expect(encounterPhase?.constructor.name).toBe(MysteryEncounterPhase.name);
       const mysteryEncounterPhase = encounterPhase as MysteryEncounterPhase;
       vi.spyOn(mysteryEncounterPhase, "continueEncounter");
@@ -348,7 +417,7 @@ describe.todo("Sky Battle - Mystery Encounter", () => {
 
       await runSelectMysteryEncounterOption(game, 2);
 
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(MysteryEncounterPhase.name);
+      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(MysteryEncounterPhase.name);
       expect(scene.ui.playError).not.toHaveBeenCalled(); // No error sfx, option is disabled
       expect(mysteryEncounterPhase.handleOptionSelect).not.toHaveBeenCalled();
       expect(mysteryEncounterPhase.continueEncounter).not.toHaveBeenCalled();
@@ -358,7 +427,7 @@ describe.todo("Sky Battle - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.SKY_BATTLE, defaultParty);
       await runMysteryEncounterToEnd(game, 2);
 
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
+      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
       await game.phaseInterceptor.run(SelectModifierPhase);
 
       expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
