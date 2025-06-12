@@ -29,7 +29,7 @@ import {
 } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { getPokemonNameWithAffix } from "#app/messages";
 import type { PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
-import { modifierTypes } from "#app/modifier/modifier-type";
+import { modifierTypes } from "#app/data/data-lists";
 import { Gender } from "#app/data/gender";
 import type { PermanentStat } from "#enums/stat";
 import { SummaryUiMode } from "#app/ui/summary-ui-handler";
