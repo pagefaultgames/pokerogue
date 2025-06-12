@@ -10,25 +10,25 @@ import {
 import { BerryType } from "#enums/berry-type";
 import { randSeedInt } from "#app/utils/common";
 import { globalScene } from "#app/global-scene";
-import { modifierTypes } from "#app/modifier/modifier-type";
+import { modifierTypes } from "#app/data/data-lists";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import { Nature } from "#enums/nature";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import type { PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
 import { TimeOfDayRequirement } from "#app/data/mystery-encounters/mystery-encounter-requirements";
 import { TimeOfDay } from "#enums/time-of-day";
-import type { Abilities } from "#enums/abilities";
+import type { AbilityId } from "#enums/ability-id";
 import { Stat } from "#enums/stat";
-import type HeldModifierConfig from "#app/interfaces/held-modifier-config";
+import type HeldModifierConfig from "#app/@types/held-modifier-config";
 import { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { CustomPokemonData } from "#app/data/custom-pokemon-data";
-import { ModifierTier } from "#app/modifier/modifier-tier";
+import { ModifierTier } from "#enums/modifier-tier";
 import {
   MoveRequirement,
   AbilityRequirement,
@@ -40,7 +40,7 @@ import {
   LIGHT_ABILITIES,
   LIGHT_MOVES,
 } from "#app/data/mystery-encounters/requirements/requirement-groups";
-import { Biome } from "#enums/biome";
+import { BiomeId } from "#enums/biome-id";
 import { WeatherType } from "#enums/weather-type";
 import FogOverlay from "#app/ui/fog-overlay";
 
@@ -72,17 +72,17 @@ export const CreepingFogEncounter: MysteryEncounter = MysteryEncounterBuilder.wi
     const waveIndex = globalScene.currentBattle.waveIndex;
     const encounter = globalScene.currentBattle.mysteryEncounter!;
     const chosenPokemonAttributes = chooseBoss();
-    const chosenPokemon = chosenPokemonAttributes[0] as Species;
+    const chosenPokemon = chosenPokemonAttributes[0] as SpeciesId;
     const naturePokemon = chosenPokemonAttributes[1] as Nature;
-    const abilityPokemon = chosenPokemonAttributes[2] as Abilities;
+    const abilityPokemon = chosenPokemonAttributes[2] as AbilityId;
     const passivePokemon = chosenPokemon[3] as boolean;
-    const movesPokemon = chosenPokemonAttributes[4] as Moves[];
+    const movesPokemon = chosenPokemonAttributes[4] as MoveId[];
     const modifPokemon = chosenPokemonAttributes[5] as HeldModifierConfig[];
     const segments = waveIndex < 80 ? 2 : waveIndex < 140 ? 3 : 4;
 
     const pokemonConfig: EnemyPokemonConfig = {
       species: getPokemonSpecies(chosenPokemon),
-      formIndex: [Species.LYCANROC, Species.PIDGEOT].includes(chosenPokemon) ? 1 : 0,
+      formIndex: [SpeciesId.LYCANROC, SpeciesId.PIDGEOT].includes(chosenPokemon) ? 1 : 0,
       isBoss: true,
       shiny: false,
       customPokemonData: new CustomPokemonData({ spriteScale: 1 + segments * 0.05 }),
@@ -308,47 +308,47 @@ function chooseBoss() {
   const wave = globalScene.currentBattle.waveIndex;
   const allBiomePokemon = [
     [
-      Species.MACHAMP,
+      SpeciesId.MACHAMP,
       Nature.JOLLY,
       1,
       false,
-      [Moves.DYNAMIC_PUNCH, Moves.STONE_EDGE, Moves.DUAL_CHOP, Moves.FISSURE],
+      [MoveId.DYNAMIC_PUNCH, MoveId.STONE_EDGE, MoveId.DUAL_CHOP, MoveId.FISSURE],
       [],
     ],
     [
-      Species.GRIMMSNARL,
+      SpeciesId.GRIMMSNARL,
       Nature.ADAMANT,
       null,
       false,
-      [Moves.STONE_EDGE, Moves.CLOSE_COMBAT, Moves.IRON_TAIL, Moves.PLAY_ROUGH],
+      [MoveId.STONE_EDGE, MoveId.CLOSE_COMBAT, MoveId.IRON_TAIL, MoveId.PLAY_ROUGH],
       [{ modifier: generateModifierType(modifierTypes.MICLE_BERRY) as PokemonHeldItemModifierType }],
     ],
   ];
   const ForestTallGrassPokemon = [
     [
-      Species.LYCANROC,
+      SpeciesId.LYCANROC,
       Nature.JOLLY,
       2,
       false,
-      [Moves.STONE_EDGE, Moves.CLOSE_COMBAT, Moves.IRON_TAIL, Moves.PLAY_ROUGH],
+      [MoveId.STONE_EDGE, MoveId.CLOSE_COMBAT, MoveId.IRON_TAIL, MoveId.PLAY_ROUGH],
       [],
     ],
     [
-      Species.ALOLA_RATICATE,
+      SpeciesId.ALOLA_RATICATE,
       Nature.ADAMANT,
       1,
       false,
-      [Moves.FALSE_SURRENDER, Moves.SUCKER_PUNCH, Moves.PLAY_ROUGH, Moves.POPULATION_BOMB],
+      [MoveId.FALSE_SURRENDER, MoveId.SUCKER_PUNCH, MoveId.PLAY_ROUGH, MoveId.POPULATION_BOMB],
       [{ modifier: generateModifierType(modifierTypes.REVIVER_SEED) as PokemonHeldItemModifierType }],
     ],
   ];
   const SwampLakePokemon = [
     [
-      Species.POLIWRATH,
+      SpeciesId.POLIWRATH,
       Nature.NAIVE,
       null,
       true,
-      [Moves.DYNAMIC_PUNCH, Moves.HYDRO_PUMP, Moves.DUAL_CHOP, Moves.HYPNOSIS],
+      [MoveId.DYNAMIC_PUNCH, MoveId.HYDRO_PUMP, MoveId.DUAL_CHOP, MoveId.HYPNOSIS],
       [
         { modifier: generateModifierType(modifierTypes.BERRY, [BerryType.SITRUS]) as PokemonHeldItemModifierType },
         { modifier: generateModifierType(modifierTypes.BASE_STAT_BOOSTER, [Stat.HP]) as PokemonHeldItemModifierType },
@@ -357,92 +357,92 @@ function chooseBoss() {
   ];
   const GraveyardPokemon = [
     [
-      Species.GOLURK,
+      SpeciesId.GOLURK,
       Nature.ADAMANT,
       2,
       false,
-      [Moves.EARTHQUAKE, Moves.POLTERGEIST, Moves.DYNAMIC_PUNCH, Moves.STONE_EDGE],
+      [MoveId.EARTHQUAKE, MoveId.POLTERGEIST, MoveId.DYNAMIC_PUNCH, MoveId.STONE_EDGE],
       [],
     ],
     [
-      Species.HONEDGE,
+      SpeciesId.HONEDGE,
       Nature.CAREFUL,
       0,
       false,
-      [Moves.IRON_HEAD, Moves.POLTERGEIST, Moves.SACRED_SWORD, Moves.SHADOW_SNEAK],
+      [MoveId.IRON_HEAD, MoveId.POLTERGEIST, MoveId.SACRED_SWORD, MoveId.SHADOW_SNEAK],
       [],
     ],
     [
-      Species.ZWEILOUS,
+      SpeciesId.ZWEILOUS,
       Nature.BRAVE,
       null,
       true,
-      [Moves.DRAGON_RUSH, Moves.CRUNCH, Moves.GUNK_SHOT, Moves.SCREECH],
+      [MoveId.DRAGON_RUSH, MoveId.CRUNCH, MoveId.GUNK_SHOT, MoveId.SCREECH],
       [{ modifier: generateModifierType(modifierTypes.QUICK_CLAW) as PokemonHeldItemModifierType, stackCount: 2 }],
     ],
   ];
   const wave110_140Pokemon = [
     [
-      Species.SCOLIPEDE,
+      SpeciesId.SCOLIPEDE,
       Nature.ADAMANT,
       2,
       false,
-      [Moves.MEGAHORN, Moves.NOXIOUS_TORQUE, Moves.ROLLOUT, Moves.BANEFUL_BUNKER],
+      [MoveId.MEGAHORN, MoveId.NOXIOUS_TORQUE, MoveId.ROLLOUT, MoveId.BANEFUL_BUNKER],
       [{ modifier: generateModifierType(modifierTypes.MICLE_BERRY) as PokemonHeldItemModifierType }],
     ],
     [
-      Species.MIENSHAO,
+      SpeciesId.MIENSHAO,
       Nature.JOLLY,
       null,
       true,
-      [Moves.HIGH_JUMP_KICK, Moves.STONE_EDGE, Moves.BLAZE_KICK, Moves.GUNK_SHOT],
+      [MoveId.HIGH_JUMP_KICK, MoveId.STONE_EDGE, MoveId.BLAZE_KICK, MoveId.GUNK_SHOT],
       [],
     ],
     [
-      Species.DRACOZOLT,
+      SpeciesId.DRACOZOLT,
       Nature.JOLLY,
       null,
       true,
-      [Moves.BOLT_BEAK, Moves.DRAGON_RUSH, Moves.EARTHQUAKE, Moves.STONE_EDGE],
+      [MoveId.BOLT_BEAK, MoveId.DRAGON_RUSH, MoveId.EARTHQUAKE, MoveId.STONE_EDGE],
       [],
     ],
   ];
   const wave140PlusPokemon = [
     [
-      Species.PIDGEOT,
+      SpeciesId.PIDGEOT,
       Nature.HASTY,
       0,
       false,
-      [Moves.HURRICANE, Moves.HEAT_WAVE, Moves.FOCUS_BLAST, Moves.WILDBOLT_STORM],
+      [MoveId.HURRICANE, MoveId.HEAT_WAVE, MoveId.FOCUS_BLAST, MoveId.WILDBOLT_STORM],
       [],
     ],
   ];
 
-  let pool = allBiomePokemon as [Species, Nature, Abilities, boolean, Moves[], HeldModifierConfig[]][];
+  let pool = allBiomePokemon as [SpeciesId, Nature, AbilityId, boolean, MoveId[], HeldModifierConfig[]][];
 
   // Include biome-specific Pokémon if within wave 50-80
   if (wave >= 50) {
-    if (biome === Biome.FOREST || biome === Biome.TALL_GRASS) {
+    if (biome === BiomeId.FOREST || biome === BiomeId.TALL_GRASS) {
       pool = pool.concat(
-        ForestTallGrassPokemon as [Species, Nature, Abilities, boolean, Moves[], HeldModifierConfig[]][],
+        ForestTallGrassPokemon as [SpeciesId, Nature, AbilityId, boolean, MoveId[], HeldModifierConfig[]][],
       );
     }
-    if (biome === Biome.SWAMP || biome === Biome.LAKE) {
-      pool = pool.concat(SwampLakePokemon as [Species, Nature, Abilities, boolean, Moves[], HeldModifierConfig[]][]);
+    if (biome === BiomeId.SWAMP || biome === BiomeId.LAKE) {
+      pool = pool.concat(SwampLakePokemon as [SpeciesId, Nature, AbilityId, boolean, MoveId[], HeldModifierConfig[]][]);
     }
-    if (biome === Biome.GRAVEYARD) {
-      pool = pool.concat(GraveyardPokemon as [Species, Nature, Abilities, boolean, Moves[], HeldModifierConfig[]][]);
+    if (biome === BiomeId.GRAVEYARD) {
+      pool = pool.concat(GraveyardPokemon as [SpeciesId, Nature, AbilityId, boolean, MoveId[], HeldModifierConfig[]][]);
     }
   }
 
   // Waves 110-140 content
   if (wave >= 110) {
-    pool = pool.concat(wave110_140Pokemon as [Species, Nature, Abilities, boolean, Moves[], HeldModifierConfig[]][]);
+    pool = pool.concat(wave110_140Pokemon as [SpeciesId, Nature, AbilityId, boolean, MoveId[], HeldModifierConfig[]][]);
   }
 
   // Wave 140+
   if (wave >= 140) {
-    pool = pool.concat(wave140PlusPokemon as [Species, Nature, Abilities, boolean, Moves[], HeldModifierConfig[]][]);
+    pool = pool.concat(wave140PlusPokemon as [SpeciesId, Nature, AbilityId, boolean, MoveId[], HeldModifierConfig[]][]);
   }
   // Randomly choose one
   return pool[randSeedInt(pool.length, 0)];

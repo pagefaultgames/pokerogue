@@ -111,12 +111,12 @@ export const EXTORTION_MOVES = [
 /**
  * Moves that can clear a foggy weather
  */
-export const DEFOG_MOVES = [Moves.DEFOG, Moves.RAPID_SPIN, Moves.GUST];
+export const DEFOG_MOVES = [MoveId.DEFOG, MoveId.RAPID_SPIN, MoveId.GUST];
 
 /**
  * Moves that can help navigate through foggy weather
  */
-export const LIGHT_MOVES = [Moves.FLASH, Moves.FORESIGHT];
+export const LIGHT_MOVES = [MoveId.FLASH, MoveId.FORESIGHT];
 
 /**
  * Abilities that (loosely) can be used to trap/rob someone
@@ -149,14 +149,14 @@ export const FIRE_RESISTANT_ABILITIES = [
 /**
  * Abilities that can clear foggy weather
  */
-export const DEFOG_ABILITIES = [Abilities.AIR_LOCK, Abilities.CLOUD_NINE];
+export const DEFOG_ABILITIES = [AbilityId.AIR_LOCK, AbilityId.CLOUD_NINE];
 
 /**
  * Abilities that can help navigate through foggy weather
  */
 export const LIGHT_ABILITIES = [
-  Abilities.KEEN_EYE,
-  Abilities.ILLUMINATE,
-  Abilities.COMPOUND_EYES,
-  Abilities.VICTORY_STAR,
+  AbilityId.KEEN_EYE,
+  AbilityId.ILLUMINATE,
+  AbilityId.COMPOUND_EYES,
+  AbilityId.VICTORY_STAR,
 ];
