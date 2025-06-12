@@ -1,10 +1,10 @@
 import { globalScene } from "#app/global-scene";
-import { applyAbAttrs, applyPostSummonAbAttrs } from "#app/data/abilities/apply-ab-attrs";
 import { ArenaTrapTag } from "#app/data/arena-tag";
 import { StatusEffect } from "#app/enums/status-effect";
 import { PokemonPhase } from "./pokemon-phase";
 import { MysteryEncounterPostSummonTag } from "#app/data/battler-tags";
 import { BattlerTagType } from "#enums/battler-tag-type";
+import { applyAbAttrs } from "#app/data/abilities/apply-ab-attrs";
 
 export class PostSummonPhase extends PokemonPhase {
   public readonly phaseName = "PostSummonPhase";
@@ -26,12 +26,15 @@ export class PostSummonPhase extends PokemonPhase {
       pokemon.lapseTag(BattlerTagType.MYSTERY_ENCOUNTER_POST_SUMMON);
     }
 
-    applyPostSummonAbAttrs("PostSummonAbAttr", pokemon);
     const field = pokemon.isPlayer() ? globalScene.getPlayerField() : globalScene.getEnemyField();
     for (const p of field) {
       applyAbAttrs("CommanderAbAttr", p, null, false);
     }
 
     this.end();
+  }
+
+  public getPriority() {
+    return 0;
   }
 }

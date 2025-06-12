@@ -86,6 +86,7 @@ export class Ability implements Localizable {
   public name: string;
   public description: string;
   public generation: number;
+  public readonly postSummonPriority: number;
   public isBypassFaint: boolean;
   public isIgnorable: boolean;
   public isSuppressable = true;
@@ -94,11 +95,12 @@ export class Ability implements Localizable {
   public attrs: AbAttr[];
   public conditions: AbAttrCondition[];
 
-  constructor(id: AbilityId, generation: number) {
+  constructor(id: AbilityId, generation: number, postSummonPriority = 0) {
     this.id = id;
 
     this.nameAppend = "";
     this.generation = generation;
+    this.postSummonPriority = postSummonPriority;
     this.attrs = [];
     this.conditions = [];
 
@@ -8104,7 +8106,7 @@ export function initAbilities() {
       .conditionalAttr(p => globalScene.currentBattle.double && [ AbilityId.PLUS, AbilityId.MINUS ].some(a => (p.getAlly()?.hasAbility(a) ?? false)), StatMultiplierAbAttr, Stat.SPATK, 1.5),
     new Ability(AbilityId.MINUS, 3)
       .conditionalAttr(p => globalScene.currentBattle.double && [ AbilityId.PLUS, AbilityId.MINUS ].some(a => (p.getAlly()?.hasAbility(a) ?? false)), StatMultiplierAbAttr, Stat.SPATK, 1.5),
-    new Ability(AbilityId.FORECAST, 3)
+    new Ability(AbilityId.FORECAST, 3, -2)
       .uncopiable()
       .unreplaceable()
       .attr(NoFusionAbilityAbAttr)
@@ -8238,7 +8240,7 @@ export function initAbilities() {
       .attr(StatusEffectImmunityAbAttr)
       .condition(getWeatherCondition(WeatherType.SUNNY, WeatherType.HARSH_SUN))
       .ignorable(),
-    new Ability(AbilityId.KLUTZ, 4)
+    new Ability(AbilityId.KLUTZ, 4, 1)
       .unimplemented(),
     new Ability(AbilityId.MOLD_BREAKER, 4)
       .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) => i18next.t("abilityTriggers:postSummonMoldBreaker", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }))
@@ -8290,7 +8292,7 @@ export function initAbilities() {
       .uncopiable()
       .unsuppressable()
       .unreplaceable(),
-    new Ability(AbilityId.FLOWER_GIFT, 4)
+    new Ability(AbilityId.FLOWER_GIFT, 4, -2)
       .conditionalAttr(getWeatherCondition(WeatherType.SUNNY || WeatherType.HARSH_SUN), StatMultiplierAbAttr, Stat.ATK, 1.5)
       .conditionalAttr(getWeatherCondition(WeatherType.SUNNY || WeatherType.HARSH_SUN), StatMultiplierAbAttr, Stat.SPDEF, 1.5)
       .conditionalAttr(getWeatherCondition(WeatherType.SUNNY || WeatherType.HARSH_SUN), AllyStatMultiplierAbAttr, Stat.ATK, 1.5)
@@ -8312,7 +8314,7 @@ export function initAbilities() {
     new Ability(AbilityId.CONTRARY, 5)
       .attr(StatStageChangeMultiplierAbAttr, -1)
       .ignorable(),
-    new Ability(AbilityId.UNNERVE, 5)
+    new Ability(AbilityId.UNNERVE, 5, 1)
       .attr(PreventBerryUseAbAttr),
     new Ability(AbilityId.DEFIANT, 5)
       .attr(PostStatStageChangeStatStageChangeAbAttr, (_target, _statsChanged, stages) => stages < 0, [ Stat.ATK ], 2),
@@ -8554,7 +8556,7 @@ export function initAbilities() {
       .attr(PostDefendStatStageChangeAbAttr, (_target, user, move) => user.getMoveType(move) === PokemonType.WATER && move.category !== MoveCategory.STATUS, Stat.DEF, 2),
     new Ability(AbilityId.MERCILESS, 7)
       .attr(ConditionalCritAbAttr, (_user, target, _move) => target?.status?.effect === StatusEffect.TOXIC || target?.status?.effect === StatusEffect.POISON),
-    new Ability(AbilityId.SHIELDS_DOWN, 7)
+    new Ability(AbilityId.SHIELDS_DOWN, 7, -1)
       .attr(PostBattleInitFormChangeAbAttr, () => 0)
       .attr(PostSummonFormChangeAbAttr, p => p.formIndex % 7 + (p.getHpRatio() <= 0.5 ? 7 : 0))
       .attr(PostTurnFormChangeAbAttr, p => p.formIndex % 7 + (p.getHpRatio() <= 0.5 ? 7 : 0))
@@ -8592,7 +8594,7 @@ export function initAbilities() {
       .attr(MoveTypeChangeAbAttr, PokemonType.ELECTRIC, 1.2, (_user, _target, move) => move.type === PokemonType.NORMAL),
     new Ability(AbilityId.SURGE_SURFER, 7)
       .conditionalAttr(getTerrainCondition(TerrainType.ELECTRIC), StatMultiplierAbAttr, Stat.SPD, 2),
-    new Ability(AbilityId.SCHOOLING, 7)
+    new Ability(AbilityId.SCHOOLING, 7, -1)
       .attr(PostBattleInitFormChangeAbAttr, () => 0)
       .attr(PostSummonFormChangeAbAttr, p => p.level < 20 || p.getHpRatio() <= 0.25 ? 0 : 1)
       .attr(PostTurnFormChangeAbAttr, p => p.level < 20 || p.getHpRatio() <= 0.25 ? 0 : 1)
@@ -8761,7 +8763,7 @@ export function initAbilities() {
       .ignorable(),
     new Ability(AbilityId.RIPEN, 8)
       .attr(DoubleBerryEffectAbAttr),
-    new Ability(AbilityId.ICE_FACE, 8)
+    new Ability(AbilityId.ICE_FACE, 8, -2)
       .attr(NoTransformAbilityAbAttr)
       .attr(NoFusionAbilityAbAttr)
       // Add BattlerTagType.ICE_FACE if the pokemon is in ice face form
@@ -8781,7 +8783,7 @@ export function initAbilities() {
       .ignorable(),
     new Ability(AbilityId.POWER_SPOT, 8)
       .attr(AllyMoveCategoryPowerBoostAbAttr, [ MoveCategory.SPECIAL, MoveCategory.PHYSICAL ], 1.3),
-    new Ability(AbilityId.MIMICRY, 8)
+    new Ability(AbilityId.MIMICRY, 8, -1)
       .attr(TerrainEventTypeChangeAbAttr),
     new Ability(AbilityId.SCREEN_CLEANER, 8)
       .attr(PostSummonRemoveArenaTagAbAttr, [ ArenaTagType.AURORA_VEIL, ArenaTagType.LIGHT_SCREEN, ArenaTagType.REFLECT ]),
@@ -8796,7 +8798,7 @@ export function initAbilities() {
       .edgeCase(), //  interacts incorrectly with rock head. It's meant to switch abilities before recoil would apply so that a pokemon with rock head would lose rock head first and still take the recoil
     new Ability(AbilityId.GORILLA_TACTICS, 8)
       .attr(GorillaTacticsAbAttr),
-    new Ability(AbilityId.NEUTRALIZING_GAS, 8)
+    new Ability(AbilityId.NEUTRALIZING_GAS, 8, 2)
       .attr(PostSummonAddArenaTagAbAttr, true, ArenaTagType.NEUTRALIZING_GAS, 0)
       .attr(PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr)
       .uncopiable()
@@ -8828,14 +8830,14 @@ export function initAbilities() {
       .attr(PostVictoryStatStageChangeAbAttr, Stat.ATK, 1),
     new Ability(AbilityId.GRIM_NEIGH, 8)
       .attr(PostVictoryStatStageChangeAbAttr, Stat.SPATK, 1),
-    new Ability(AbilityId.AS_ONE_GLASTRIER, 8)
+    new Ability(AbilityId.AS_ONE_GLASTRIER, 8, 1)
       .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) => i18next.t("abilityTriggers:postSummonAsOneGlastrier", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }))
       .attr(PreventBerryUseAbAttr)
       .attr(PostVictoryStatStageChangeAbAttr, Stat.ATK, 1)
       .uncopiable()
       .unreplaceable()
       .unsuppressable(),
-    new Ability(AbilityId.AS_ONE_SPECTRIER, 8)
+    new Ability(AbilityId.AS_ONE_SPECTRIER, 8, 1)
       .attr(PostSummonMessageAbAttr, (pokemon: Pokemon) => i18next.t("abilityTriggers:postSummonAsOneSpectrier", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) }))
       .attr(PreventBerryUseAbAttr)
       .attr(PostVictoryStatStageChangeAbAttr, Stat.SPATK, 1)
@@ -8893,12 +8895,12 @@ export function initAbilities() {
       .edgeCase(), // Encore, Frenzy, and other non-`TURN_END` tags don't lapse correctly on the commanding Pokemon.
     new Ability(AbilityId.ELECTROMORPHOSIS, 9)
       .attr(PostDefendApplyBattlerTagAbAttr, (_target, _user, move) => move.category !== MoveCategory.STATUS, BattlerTagType.CHARGED),
-    new Ability(AbilityId.PROTOSYNTHESIS, 9)
+    new Ability(AbilityId.PROTOSYNTHESIS, 9, -2)
       .conditionalAttr(getWeatherCondition(WeatherType.SUNNY, WeatherType.HARSH_SUN), PostSummonAddBattlerTagAbAttr, BattlerTagType.PROTOSYNTHESIS, 0, true)
       .attr(PostWeatherChangeAddBattlerTagAttr, BattlerTagType.PROTOSYNTHESIS, 0, WeatherType.SUNNY, WeatherType.HARSH_SUN)
       .uncopiable()
       .attr(NoTransformAbilityAbAttr),
-    new Ability(AbilityId.QUARK_DRIVE, 9)
+    new Ability(AbilityId.QUARK_DRIVE, 9, -2)
       .conditionalAttr(getTerrainCondition(TerrainType.ELECTRIC), PostSummonAddBattlerTagAbAttr, BattlerTagType.QUARK_DRIVE, 0, true)
       .attr(PostTerrainChangeAddBattlerTagAttr, BattlerTagType.QUARK_DRIVE, 0, TerrainType.ELECTRIC)
       .uncopiable()
@@ -8942,7 +8944,7 @@ export function initAbilities() {
     new Ability(AbilityId.SUPREME_OVERLORD, 9)
       .attr(VariableMovePowerBoostAbAttr, (user, _target, _move) => 1 + 0.1 * Math.min(user.isPlayer() ? globalScene.arena.playerFaints : globalScene.currentBattle.enemyFaints, 5))
       .partial(), // Should only boost once, on summon
-    new Ability(AbilityId.COSTAR, 9)
+    new Ability(AbilityId.COSTAR, 9, -2)
       .attr(PostSummonCopyAllyStatsAbAttr),
     new Ability(AbilityId.TOXIC_DEBRIS, 9)
       .attr(PostDefendApplyArenaTrapTagAbAttr, (_target, _user, move) => move.category === MoveCategory.PHYSICAL, ArenaTagType.TOXIC_SPIKES)
@@ -8964,7 +8966,7 @@ export function initAbilities() {
       .ignorable(),
     new Ability(AbilityId.SUPERSWEET_SYRUP, 9)
       .attr(PostSummonStatStageChangeAbAttr, [ Stat.EVA ], -1),
-    new Ability(AbilityId.HOSPITALITY, 9)
+    new Ability(AbilityId.HOSPITALITY, 9, -2)
       .attr(PostSummonAllyHealAbAttr, 4, true),
     new Ability(AbilityId.TOXIC_CHAIN, 9)
       .attr(PostAttackApplyStatusEffectAbAttr, false, 30, StatusEffect.TOXIC),
@@ -8988,7 +8990,7 @@ export function initAbilities() {
       .uncopiable()
       .unreplaceable()
       .attr(NoTransformAbilityAbAttr),
-    new Ability(AbilityId.TERA_SHIFT, 9)
+    new Ability(AbilityId.TERA_SHIFT, 9, 2)
       .attr(PostSummonFormChangeAbAttr, p => p.getFormKey() ? 0 : 1)
       .uncopiable()
       .unreplaceable()

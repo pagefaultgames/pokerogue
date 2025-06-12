@@ -470,15 +470,18 @@ export function applyPostVictoryAbAttrs<K extends AbAttrString>(
 export function applyPostSummonAbAttrs<K extends AbAttrString>(
   attrType: AbAttrMap[K] extends PostSummonAbAttr ? K : never,
   pokemon: Pokemon,
+  passive = false,
   simulated = false,
   ...args: any[]
 ): void {
-  applyAbAttrsInternal(
-    attrType,
+  applySingleAbAttrs(
     pokemon,
+    passive,
+    attrType,
     (attr, passive) => (attr as PostSummonAbAttr).applyPostSummon(pokemon, passive, simulated, args),
     (attr, passive) => (attr as PostSummonAbAttr).canApplyPostSummon(pokemon, passive, simulated, args),
     args,
+    false,
     simulated,
   );
 }
