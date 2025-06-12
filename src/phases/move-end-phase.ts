@@ -2,7 +2,7 @@ import { globalScene } from "#app/global-scene";
 import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
 import { PokemonPhase } from "./pokemon-phase";
 import type { BattlerIndex } from "#enums/battler-index";
-import { applyPostSummonAbAttrs, PostSummonRemoveEffectAbAttr } from "#app/data/abilities/ability";
+import { applyPostSummonAbAttrs } from "#app/data/abilities/apply-ab-attrs";
 import type Pokemon from "#app/field/pokemon";
 
 export class MoveEndPhase extends PokemonPhase {
@@ -30,7 +30,7 @@ export class MoveEndPhase extends PokemonPhase {
     globalScene.arena.setIgnoreAbilities(false);
     for (const target of this.targets) {
       if (target) {
-        applyPostSummonAbAttrs(PostSummonRemoveEffectAbAttr, target);
+        applyPostSummonAbAttrs("PostSummonRemoveEffectAbAttr", target);
       }
     }
 

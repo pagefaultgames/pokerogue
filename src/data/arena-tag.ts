@@ -10,15 +10,7 @@ import type Pokemon from "#app/field/pokemon";
 import { HitResult } from "#enums/hit-result";
 import { StatusEffect } from "#enums/status-effect";
 import type { BattlerIndex } from "#enums/battler-index";
-import {
-  BlockNonDirectDamageAbAttr,
-  InfiltratorAbAttr,
-  PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr,
-  ProtectStatAbAttr,
-  applyAbAttrs,
-  applyOnGainAbAttrs,
-  applyOnLoseAbAttrs,
-} from "#app/data/abilities/ability";
+import { applyAbAttrs, applyOnGainAbAttrs, applyOnLoseAbAttrs } from "./abilities/apply-ab-attrs";
 import { Stat } from "#enums/stat";
 import { CommonBattleAnim } from "#app/data/battle-anims";
 import { CommonAnim } from "#enums/move-anims-common";
@@ -145,7 +137,7 @@ export class MistTag extends ArenaTag {
     if (attacker) {
       const bypassed = new BooleanHolder(false);
       // TODO: Allow this to be simulated
-      applyAbAttrs(InfiltratorAbAttr, attacker, null, false, bypassed);
+      applyAbAttrs("InfiltratorAbAttr", attacker, null, false, bypassed);
       if (bypassed.value) {
         return false;
       }
@@ -210,7 +202,7 @@ export class WeakenMoveScreenTag extends ArenaTag {
   ): boolean {
     if (this.weakenedCategories.includes(moveCategory)) {
       const bypassed = new BooleanHolder(false);
-      applyAbAttrs(InfiltratorAbAttr, attacker, null, false, bypassed);
+      applyAbAttrs("InfiltratorAbAttr", attacker, null, false, bypassed);
       if (bypassed.value) {
         return false;
       }
@@ -766,7 +758,7 @@ class SpikesTag extends ArenaTrapTag {
     }
 
     const cancelled = new BooleanHolder(false);
-    applyAbAttrs(BlockNonDirectDamageAbAttr, pokemon, cancelled);
+    applyAbAttrs("BlockNonDirectDamageAbAttr", pokemon, cancelled);
     if (simulated || cancelled.value) {
       return !cancelled.value;
     }
@@ -954,7 +946,7 @@ class StealthRockTag extends ArenaTrapTag {
 
   override activateTrap(pokemon: Pokemon, simulated: boolean): boolean {
     const cancelled = new BooleanHolder(false);
-    applyAbAttrs(BlockNonDirectDamageAbAttr, pokemon, cancelled);
+    applyAbAttrs("BlockNonDirectDamageAbAttr", pokemon, cancelled);
     if (cancelled.value) {
       return false;
     }
@@ -1011,7 +1003,7 @@ class StickyWebTag extends ArenaTrapTag {
   override activateTrap(pokemon: Pokemon, simulated: boolean): boolean {
     if (pokemon.isGrounded()) {
       const cancelled = new BooleanHolder(false);
-      applyAbAttrs(ProtectStatAbAttr, pokemon, cancelled);
+      applyAbAttrs("ProtectStatAbAttr", pokemon, cancelled);
 
       if (simulated) {
         return !cancelled.value;
@@ -1445,8 +1437,8 @@ export class SuppressAbilitiesTag extends ArenaTag {
       // Could have a custom message that plays when a specific pokemon's NG ends? This entire thing exists due to passives after all
       const setter = globalScene
         .getField()
-        .filter(p => p?.hasAbilityWithAttr(PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr, false))[0];
-      applyOnGainAbAttrs(setter, setter.getAbility().hasAttr(PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr));
+        .filter(p => p?.hasAbilityWithAttr("PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr", false))[0];
+      applyOnGainAbAttrs(setter, setter.getAbility().hasAttr("PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr"));
     }
   }
 
@@ -1458,7 +1450,7 @@ export class SuppressAbilitiesTag extends ArenaTag {
 
     for (const pokemon of globalScene.getField(true)) {
       // There is only one pokemon with this attr on the field on removal, so its abilities are already active
-      if (pokemon && !pokemon.hasAbilityWithAttr(PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr, false)) {
+      if (pokemon && !pokemon.hasAbilityWithAttr("PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr", false)) {
         [true, false].forEach(passive => applyOnGainAbAttrs(pokemon, passive));
       }
     }
