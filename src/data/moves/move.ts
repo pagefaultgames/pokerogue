@@ -6789,6 +6789,89 @@ export abstract class CallMoveAttr extends OverrideMoveEffectAttr {
 }
 
 /**
+ * Attribute to call a random move among moves not in a banlist.
+ * Used for {@linkcode MoveId.METRONOME}.
+ */
+export class RandomMoveAttr extends CallMoveAttr {
+  constructor(
+    /**
+     * A {@linkcode ReadonlySet} containing all moves that this MoveAttr cannot copy,
+     * in addition to unimplemented moves and `MoveId.NONE`.
+     * The move will fail if the chosen move is inside this banlist (if it exists).
+     */
+    protected readonly invalidMoves: ReadonlySet<MoveId>,
+  ) {
+    super(true);
+  }
+
+  /**
+   * Pick a random move to execute, barring unimplemented moves and ones
+   * in this move's {@linkcode invalidMetronomeMoves | exclusion list}.
+   * Overridden as public to allow tests to override move choice using mocks.
+   *
+   * @param user - The {@linkcode Pokemon} using the move
+   * @returns The {@linkcode MoveId} that will be called.
+   */
+  public override getMove(user: Pokemon): MoveId {
+    const moveIds = getEnumValues(MoveId).filter(m => m !== MoveId.NONE && !this.invalidMoves.has(m) && !allMoves[m].name.endsWith(" (N)"));
+    return moveIds[user.randBattleSeedInt(moveIds.length)];
+  }
+}
+
+/**
+ * Attribute used to call a random move in the user or party's moveset.
+ * Used for {@linkcode MoveId.ASSIST} and {@linkcode MoveId.SLEEP_TALK}
+ *
+ * Fails if the user has no callable moves.
+ */
+export class RandomMovesetMoveAttr extends RandomMoveAttr {
+  /**
+   * The previously-selected MoveId for this attribute.
+   * Reset to `MoveId.NONE` after successful use.
+   */
+  private selectedMove: MoveId = MoveId.NONE
+  constructor(invalidMoves: ReadonlySet<MoveId>,
+    /**
+     * Whether to consider all moves from the user's party (`true`) or the user's own moveset (`false`);
+     * default `false`.
+     */
+    private includeParty = false
+  ) {
+    super(invalidMoves);
+  }
+
+  /**
+   * Select a random move from either the user's or its party members' movesets,
+   * or return an already-selected one if one exists.
+   *
+   * @param user - The {@linkcode Pokemon} using the move.
+   * @returns The {@linkcode MoveId} that will be called.
+   */
+  override getMove(user: Pokemon): MoveId {
+    if (this.selectedMove) {
+      const m = this.selectedMove;
+      this.selectedMove = MoveId.NONE;
+      return m;
+    }
+
+    // includeParty will be true for Assist, false for Sleep Talk
+    const allies: Pokemon[] = this.includeParty
+      ? (user.isPlayer() ? globalScene.getPlayerParty() : globalScene.getEnemyParty()).filter(p => p !== user)
+      : [ user ];
+
+    // Assist & Sleep Talk consider duplicate moves for their selection (hence why we use an array instead of a set)
+    const moveset = allies.flatMap(p => p.moveset);
+    const eligibleMoves = moveset.filter(m => m.moveId !== MoveId.NONE && !this.invalidMoves.has(m.moveId) && !m.getMove().name.endsWith(" (N)"));
+    this.selectedMove = eligibleMoves[user.randBattleSeedInt(eligibleMoves.length)]?.moveId ?? MoveId.NONE; // will fail if 0 length array
+    return this.selectedMove;
+  }
+
+  override getCondition(): MoveConditionFunc {
+    return (user) => this.getMove(user) !== MoveId.NONE;
+  }
+}
+
+/**
  * Attribute to call a different move based on the current terrain and biome.
  * Used by {@linkcode MoveId.NATURE_POWER}
  */
@@ -6935,88 +7018,8 @@ export class CopyMoveAttr extends CallMoveAttr {
     };
   }
 }
-/**
- * Attribute to call a random move among moves not in a banlist.
- * Used for {@linkcode MoveId.METRONOME}.
- */
-export class RandomMoveAttr extends CallMoveAttr {
-  constructor(
-    /**
-     * A {@linkcode ReadonlySet} containing all moves that this MoveAttr cannot copy,
-     * in addition to unimplemented moves and `MoveId.NONE`.
-     * The move will fail if the chosen move is inside this banlist (if it exists).
-     */
-    protected readonly invalidMoves: ReadonlySet<MoveId>,
-  ) {
-    super(true);
-  }
 
-  /**
-   * Pick a random move to execute, barring unimplemented moves and ones
-   * in this move's {@linkcode invalidMetronomeMoves | exclusion list}.
-   * Overridden as public to allow tests to override move choice using mocks.
-   *
-   * @param user - The {@linkcode Pokemon} using the move
-   * @returns The {@linkcode MoveId} that will be called.
-   */
-  public override getMove(user: Pokemon): MoveId {
-    const moveIds = getEnumValues(MoveId).filter(m => m !== MoveId.NONE && !this.invalidMoves.has(m) && !allMoves[m].name.endsWith(" (N)"));
-    return moveIds[user.randBattleSeedInt(moveIds.length)];
-  }
-}
 
-/**
- * Attribute used to call a random move in the user or party's moveset.
- * Used for {@linkcode MoveId.ASSIST} and {@linkcode MoveId.SLEEP_TALK}
- *
- * Fails if the user has no callable moves.
- */
-export class RandomMovesetMoveAttr extends RandomMoveAttr {
-  /**
-   * The previously-selected MoveId for this attribute.
-   * Reset to `MoveId.NONE` after successful use.
-   */
-  private selectedMove: MoveId = MoveId.NONE
-  constructor(invalidMoves: ReadonlySet<MoveId>,
-    /**
-     * Whether to consider all moves from the user's party (`true`) or the user's own moveset (`false`);
-     * default `false`.
-     */
-    private includeParty = false
-  ) {
-    super(invalidMoves);
-  }
-
-  /**
-   * Select a random move from either the user's or its party members' movesets,
-   * or return an already-selected one if one exists.
-   *
-   * @param user - The {@linkcode Pokemon} using the move.
-   * @returns The {@linkcode MoveId} that will be called.
-   */
-  override getMove(user: Pokemon): MoveId {
-    if (this.selectedMove) {
-      const m = this.selectedMove;
-      this.selectedMove = MoveId.NONE;
-      return m;
-    }
-
-    // includeParty will be true for Assist, false for Sleep Talk
-    const allies: Pokemon[] = this.includeParty
-      ? (user.isPlayer() ? globalScene.getPlayerParty() : globalScene.getEnemyParty()).filter(p => p !== user)
-      : [ user ];
-
-    // Assist & Sleep Talk consider duplicate moves for their selection (hence why we use an array instead of a set)
-    const moveset = allies.flatMap(p => p.moveset);
-    const eligibleMoves = moveset.filter(m => m.moveId !== MoveId.NONE && !this.invalidMoves.has(m.moveId) && !m.getMove().name.endsWith(" (N)"));
-    this.selectedMove = eligibleMoves[user.randBattleSeedInt(eligibleMoves.length)]?.moveId ?? MoveId.NONE; // will fail if 0 length array
-    return this.selectedMove;
-  }
-
-  override getCondition(): MoveConditionFunc {
-    return (user) => this.getMove(user) !== MoveId.NONE;
-  }
-}
 
 /**
  * Attribute used for moves that causes the target to repeat their last used move.
