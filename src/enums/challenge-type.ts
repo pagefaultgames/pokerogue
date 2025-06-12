@@ -65,5 +65,44 @@ export enum ChallengeType {
   /**
    * Modifies what the pokemon stats for Flip Stat Mode.
    */
-  FLIP_STAT
+  FLIP_STAT,
+  /**
+   * Challenge that modifies if the player should auto heal every 10th wave
+   */
+  NO_HEAL_PHASE,
+  /**
+   * Modifies if the shop item is blacklisted
+   * @see {@linkcode Challenge.applyShopItemBlacklist}
+   */
+  SHOP_ITEM_BLACKLIST,
+  /**
+   * Modifies if the random item is blacklisted
+   * @see {@linkcode Challenge.applyRandomItemBlacklist}
+   */
+  RANDOM_ITEM_BLACKLIST,
+  /**
+   * Modifies if the move is blacklisted
+   * @see {@linkcode Challenge.applyMoveBlacklist}
+   */
+  MOVE_BLACKLIST,
+  /**
+   * Modifies if pokemon are allowed to be revived from fainting
+   * @see {@linkcode Challenge.applyRevivePrevention}
+   */
+  PREVENT_REVIVE,
+  /**
+   * Modifies if pokemon are allowed to be revived from fainting
+   * @see {@linkcode Challenge.applyDeletePokemon}
+   */
+  DELETE_POKEMON,
+  /**
+   * Challenge that modifies if the player should catch pokemon on waves other than the first
+   * @see {@linkcode Challenge.applyAddPokemonToParty}
+   */
+  ADD_POKEMON_TO_PARTY,
+  /**
+   * Modifies if pokemon are allowed to fuse
+   * @see {@linkcode Challenge.applyShouldFuse}
+   */
+  SHOULD_FUSE,
 }

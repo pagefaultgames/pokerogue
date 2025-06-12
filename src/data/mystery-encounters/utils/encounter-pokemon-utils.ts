@@ -38,7 +38,8 @@ import type { AbilityId } from "#enums/ability-id";
 import type { PokeballType } from "#enums/pokeball";
 import { StatusEffect } from "#enums/status-effect";
 import { BooleanHolder } from "#app/utils/common";
-import { ChallengeType, applyChallenges } from "#app/data/challenge";
+import { applyChallenges } from "#app/data/challenge";
+import { ChallengeType } from "#enums/challenge-type";
 
 /** Will give +1 level every 10 waves */
 export const STANDARD_ENCOUNTER_BOOSTED_LEVEL_MODIFIER = 1;

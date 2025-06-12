@@ -20,7 +20,7 @@ import { Challenges } from "#enums/challenges";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerType } from "#enums/trainer-type";
 import { Nature } from "#enums/nature";
-import type { MoveId } from "#enums/move-id";
+import { MoveId } from "#enums/move-id";
 import { TypeColor, TypeShadow } from "#enums/color";
 import { ModifierTier } from "#enums/modifier-tier";
 import { globalScene } from "#app/global-scene";
@@ -1018,7 +1018,7 @@ export class HardcoreChallenge extends Challenge {
   }
 
   applyMoveBlacklist(move: PokemonMove, moveCanBeUsed: BooleanHolder): boolean {
-    const moveBlacklist = [Moves.REVIVAL_BLESSING];
+    const moveBlacklist = [MoveId.REVIVAL_BLESSING];
     moveCanBeUsed.value = !moveBlacklist.includes(move.moveId);
     return true;
   }

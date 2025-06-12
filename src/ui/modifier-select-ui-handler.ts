@@ -16,7 +16,8 @@ import i18next from "i18next";
 import { ShopCursorTarget } from "#app/enums/shop-cursor-target";
 import Phaser from "phaser";
 import type { PokeballType } from "#enums/pokeball";
-import { applyChallenges, ChallengeType } from "#app/data/challenge";
+import { applyChallenges } from "#app/data/challenge";
+import { ChallengeType } from "#enums/challenge-type";
 import { BooleanHolder } from "#app/utils/common";
 
 export const SHOP_OPTIONS_ROW_LIMIT = 7;

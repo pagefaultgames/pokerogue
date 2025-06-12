@@ -46,6 +46,7 @@ import { applyAbAttrs } from "#app/data/abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
 import type { ModifierInstanceMap, ModifierString } from "#app/@types/modifier-types";
 import { applyChallenges } from "#app/data/challenge";
+import { ChallengeType } from "#enums/challenge-type";
 
 export type ModifierPredicate = (modifier: Modifier) => boolean;
 

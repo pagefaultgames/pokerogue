@@ -3,7 +3,8 @@ import { applyAbAttrs } from "#app/data/abilities/apply-ab-attrs";
 import { LapsingPersistentModifier, LapsingPokemonHeldItemModifier } from "#app/modifier/modifier";
 import { BattlePhase } from "./battle-phase";
 import { BooleanHolder } from "#app/utils/common";
-import { applyChallenges, ChallengeType } from "#app/data/challenge";
+import { applyChallenges } from "#app/data/challenge";
+import { ChallengeType } from "#enums/challenge-type";
 
 export class BattleEndPhase extends BattlePhase {
   public readonly phaseName = "BattleEndPhase";
