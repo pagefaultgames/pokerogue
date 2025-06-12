@@ -1,7 +1,7 @@
-import { BattlerIndex } from "#app/battle";
-import { Abilities } from "#enums/abilities";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import { BattlerIndex } from "#enums/battler-index";
+import { AbilityId } from "#enums/ability-id";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import { allMoves } from "#app/data/data-lists";
 import type Move from "#app/data/moves/move";
 import GameManager from "#test/testUtils/gameManager";
@@ -25,24 +25,24 @@ describe("Moves - Rage Fist", () => {
   });
 
   beforeEach(() => {
-    move = allMoves[Moves.RAGE_FIST];
+    move = allMoves[MoveId.RAGE_FIST];
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .moveset([Moves.RAGE_FIST, Moves.SPLASH, Moves.SUBSTITUTE, Moves.TIDY_UP])
+      .moveset([MoveId.RAGE_FIST, MoveId.SPLASH, MoveId.SUBSTITUTE, MoveId.TIDY_UP])
       .startingLevel(100)
       .enemyLevel(1)
-      .enemySpecies(Species.MAGIKARP)
-      .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset(Moves.DOUBLE_KICK);
+      .enemySpecies(SpeciesId.MAGIKARP)
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .enemyMoveset(MoveId.DOUBLE_KICK);
 
     vi.spyOn(move, "calculateBattlePower");
   });
 
   it("should gain power per hit taken", async () => {
-    await game.classicMode.startBattle([Species.FEEBAS]);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-    game.move.select(Moves.RAGE_FIST);
+    game.move.select(MoveId.RAGE_FIST);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("TurnEndPhase");
 
@@ -50,17 +50,17 @@ describe("Moves - Rage Fist", () => {
   });
 
   it("caps at 6 hits taken", async () => {
-    await game.classicMode.startBattle([Species.FEEBAS]);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
     // spam splash against magikarp hitting us 2 times per turn
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.toNextTurn();
 
-    game.move.select(Moves.RAGE_FIST);
+    game.move.select(MoveId.RAGE_FIST);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("TurnEndPhase");
 
@@ -70,12 +70,12 @@ describe("Moves - Rage Fist", () => {
   });
 
   it("should not count substitute hits or confusion damage", async () => {
-    game.override.enemySpecies(Species.SHUCKLE).enemyMoveset([Moves.CONFUSE_RAY, Moves.DOUBLE_KICK]);
+    game.override.enemySpecies(SpeciesId.SHUCKLE).enemyMoveset([MoveId.CONFUSE_RAY, MoveId.DOUBLE_KICK]);
 
-    await game.classicMode.startBattle([Species.REGIROCK]);
+    await game.classicMode.startBattle([SpeciesId.REGIROCK]);
 
-    game.move.select(Moves.SUBSTITUTE);
-    await game.move.selectEnemyMove(Moves.DOUBLE_KICK);
+    game.move.select(MoveId.SUBSTITUTE);
+    await game.move.selectEnemyMove(MoveId.DOUBLE_KICK);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toNextTurn();
 
@@ -83,13 +83,13 @@ describe("Moves - Rage Fist", () => {
     expect(game.scene.getPlayerPokemon()?.battleData.hitCount).toBe(0);
 
     // remove substitute and get confused
-    game.move.select(Moves.TIDY_UP);
-    await game.move.selectEnemyMove(Moves.CONFUSE_RAY);
+    game.move.select(MoveId.TIDY_UP);
+    await game.move.selectEnemyMove(MoveId.CONFUSE_RAY);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toNextTurn();
 
-    game.move.select(Moves.RAGE_FIST);
-    await game.move.selectEnemyMove(Moves.CONFUSE_RAY);
+    game.move.select(MoveId.RAGE_FIST);
+    await game.move.selectEnemyMove(MoveId.CONFUSE_RAY);
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.move.forceConfusionActivation(true);
     await game.toNextTurn();
@@ -99,15 +99,15 @@ describe("Moves - Rage Fist", () => {
   });
 
   it("should maintain hits recieved between wild waves", async () => {
-    await game.classicMode.startBattle([Species.FEEBAS]);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
-    game.move.select(Moves.RAGE_FIST);
+    game.move.select(MoveId.RAGE_FIST);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextWave();
 
     expect(game.scene.getPlayerPokemon()?.battleData.hitCount).toBe(2);
 
-    game.move.select(Moves.RAGE_FIST);
+    game.move.select(MoveId.RAGE_FIST);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("TurnEndPhase");
 
@@ -116,14 +116,14 @@ describe("Moves - Rage Fist", () => {
   });
 
   it("should reset hits recieved before trainer battles", async () => {
-    await game.classicMode.startBattle([Species.IRON_HANDS]);
+    await game.classicMode.startBattle([SpeciesId.IRON_HANDS]);
 
     const ironHands = game.scene.getPlayerPokemon()!;
     expect(ironHands).toBeDefined();
 
     // beat up a magikarp
-    game.move.select(Moves.RAGE_FIST);
-    await game.move.selectEnemyMove(Moves.DOUBLE_KICK);
+    game.move.select(MoveId.RAGE_FIST);
+    await game.move.selectEnemyMove(MoveId.DOUBLE_KICK);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("TurnEndPhase");
 
@@ -138,15 +138,15 @@ describe("Moves - Rage Fist", () => {
   });
 
   it("should reset hits recieved before new biome", async () => {
-    game.override.enemySpecies(Species.MAGIKARP).startingWave(10);
+    game.override.enemySpecies(SpeciesId.MAGIKARP).startingWave(10);
 
-    await game.classicMode.startBattle([Species.MAGIKARP]);
+    await game.classicMode.startBattle([SpeciesId.MAGIKARP]);
 
-    game.move.select(Moves.RAGE_FIST);
+    game.move.select(MoveId.RAGE_FIST);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
 
-    game.move.select(Moves.RAGE_FIST);
+    game.move.select(MoveId.RAGE_FIST);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.phaseInterceptor.to("BerryPhase", false);
 
@@ -154,7 +154,7 @@ describe("Moves - Rage Fist", () => {
   });
 
   it("should not reset if switched out or on reload", async () => {
-    game.override.enemyMoveset(Moves.TACKLE);
+    game.override.enemyMoveset(MoveId.TACKLE);
 
     const getPartyHitCount = () =>
       game.scene
@@ -162,10 +162,10 @@ describe("Moves - Rage Fist", () => {
         .filter(p => !!p)
         .map(m => m.battleData.hitCount);
 
-    await game.classicMode.startBattle([Species.CHARIZARD, Species.BLASTOISE]);
+    await game.classicMode.startBattle([SpeciesId.CHARIZARD, SpeciesId.BLASTOISE]);
 
     // Charizard hit
-    game.move.select(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
     await game.toNextTurn();
     expect(getPartyHitCount()).toEqual([1, 0]);
@@ -181,12 +181,12 @@ describe("Moves - Rage Fist", () => {
     expect(getPartyHitCount()).toEqual([2, 1]);
 
     // Charizard rage fist
-    game.move.select(Moves.RAGE_FIST);
+    game.move.select(MoveId.RAGE_FIST);
     await game.phaseInterceptor.to("MoveEndPhase");
 
     const charizard = game.scene.getPlayerPokemon()!;
     expect(charizard).toBeDefined();
-    expect(charizard.species.speciesId).toBe(Species.CHARIZARD);
+    expect(charizard.species.speciesId).toBe(SpeciesId.CHARIZARD);
     expect(move.calculateBattlePower).toHaveLastReturnedWith(150);
 
     // go to new wave, reload game and beat up another poor sap
@@ -195,7 +195,7 @@ describe("Moves - Rage Fist", () => {
     await game.reload.reloadSession();
 
     // outsped and oneshot means power rmains same as prior
-    game.move.select(Moves.RAGE_FIST);
+    game.move.select(MoveId.RAGE_FIST);
     await game.phaseInterceptor.to("MoveEndPhase");
     expect(move.calculateBattlePower).toHaveLastReturnedWith(150);
   });

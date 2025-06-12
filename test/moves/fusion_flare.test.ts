@@ -1,6 +1,6 @@
 import { TurnStartPhase } from "#app/phases/turn-start-phase";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
@@ -10,7 +10,7 @@ describe("Moves - Fusion Flare", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 
-  const fusionFlare = Moves.FUSION_FLARE;
+  const fusionFlare = MoveId.FUSION_FLARE;
 
   beforeAll(() => {
     phaserGame = new Phaser.Game({
@@ -24,19 +24,18 @@ describe("Moves - Fusion Flare", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.moveset([fusionFlare]);
-    game.override.startingLevel(1);
-
-    game.override.enemySpecies(Species.RATTATA);
-    game.override.enemyMoveset([Moves.REST, Moves.REST, Moves.REST, Moves.REST]);
-
-    game.override.battleStyle("single");
-    game.override.startingWave(97);
-    game.override.disableCrits();
+    game.override
+      .moveset([fusionFlare])
+      .startingLevel(1)
+      .enemySpecies(SpeciesId.RATTATA)
+      .enemyMoveset(MoveId.REST)
+      .battleStyle("single")
+      .startingWave(97)
+      .disableCrits();
   });
 
   it("should thaw freeze status condition", async () => {
-    await game.classicMode.startBattle([Species.RESHIRAM]);
+    await game.classicMode.startBattle([SpeciesId.RESHIRAM]);
 
     const partyMember = game.scene.getPlayerPokemon()!;
 

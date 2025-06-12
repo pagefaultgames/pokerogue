@@ -4,14 +4,13 @@ import {
   HealFromBerryUseAbAttr,
   RepeatBerryNextTurnAbAttr,
 } from "#app/data/abilities/ability";
-import { CommonAnim } from "#app/data/battle-anims";
+import { CommonAnim } from "#enums/move-anims-common";
 import { BerryUsedEvent } from "#app/events/battle-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { BerryModifier } from "#app/modifier/modifier";
 import i18next from "i18next";
 import { BooleanHolder } from "#app/utils/common";
 import { FieldPhase } from "./field-phase";
-import { CommonAnimPhase } from "./common-anim-phase";
 import { globalScene } from "#app/global-scene";
 import type Pokemon from "#app/field/pokemon";
 
@@ -20,6 +19,7 @@ import type Pokemon from "#app/field/pokemon";
  * Also triggers Cud Chew's "repeat berry use" effects
  */
 export class BerryPhase extends FieldPhase {
+  public readonly phaseName = "BerryPhase";
   start() {
     super.start();
 
@@ -49,7 +49,7 @@ export class BerryPhase extends FieldPhase {
     const cancelled = new BooleanHolder(false);
     pokemon.getOpponents().forEach(opp => applyAbAttrs(PreventBerryUseAbAttr, opp, cancelled));
     if (cancelled.value) {
-      globalScene.queueMessage(
+      globalScene.phaseManager.queueMessage(
         i18next.t("abilityTriggers:preventBerryUse", {
           pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
         }),
@@ -57,8 +57,11 @@ export class BerryPhase extends FieldPhase {
       return;
     }
 
-    globalScene.unshiftPhase(
-      new CommonAnimPhase(pokemon.getBattlerIndex(), pokemon.getBattlerIndex(), CommonAnim.USE_ITEM),
+    globalScene.phaseManager.unshiftNew(
+      "CommonAnimPhase",
+      pokemon.getBattlerIndex(),
+      pokemon.getBattlerIndex(),
+      CommonAnim.USE_ITEM,
     );
 
     for (const berryModifier of globalScene.applyModifiers(BerryModifier, pokemon.isPlayer(), pokemon)) {
@@ -71,7 +74,7 @@ export class BerryPhase extends FieldPhase {
     }
     globalScene.updateModifiers(pokemon.isPlayer());
 
-    // Abilities.CHEEK_POUCH only works once per round of nom noms
+    // AbilityId.CHEEK_POUCH only works once per round of nom noms
     applyAbAttrs(HealFromBerryUseAbAttr, pokemon, new BooleanHolder(false));
   }
 }

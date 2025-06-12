@@ -193,35 +193,35 @@ export const Setting: Array<Setting> = [
     options: [
       {
         value: "1",
-        label: "1x",
+        label: i18next.t("settings:gameSpeed1x"),
       },
       {
         value: "1.25",
-        label: "1.25x",
+        label: i18next.t("settings:gameSpeed1_25x"),
       },
       {
         value: "1.5",
-        label: "1.5x",
+        label: i18next.t("settings:gameSpeed1_5x"),
       },
       {
         value: "2",
-        label: "2x",
+        label: i18next.t("settings:gameSpeed2x"),
       },
       {
         value: "2.5",
-        label: "2.5x",
+        label: i18next.t("settings:gameSpeed2_5x"),
       },
       {
         value: "3",
-        label: "3x",
+        label: i18next.t("settings:gameSpeed3x"),
       },
       {
         value: "4",
-        label: "4x",
+        label: i18next.t("settings:gameSpeed4x"),
       },
       {
         value: "5",
-        label: "5x",
+        label: i18next.t("settings:gameSpeed5x"),
       },
     ],
     default: 3,

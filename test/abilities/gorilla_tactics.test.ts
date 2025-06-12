@@ -1,8 +1,8 @@
-import { BattlerIndex } from "#app/battle";
-import { Moves } from "#app/enums/moves";
-import { Species } from "#app/enums/species";
+import { BattlerIndex } from "#enums/battler-index";
+import { MoveId } from "#enums/move-id";
+import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#app/enums/stat";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/ability-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -24,46 +24,46 @@ describe("Abilities - Gorilla Tactics", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset([Moves.SPLASH, Moves.DISABLE])
-      .enemySpecies(Species.MAGIKARP)
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .enemyMoveset([MoveId.SPLASH, MoveId.DISABLE])
+      .enemySpecies(SpeciesId.MAGIKARP)
       .enemyLevel(30)
-      .moveset([Moves.SPLASH, Moves.TACKLE, Moves.GROWL])
-      .ability(Abilities.GORILLA_TACTICS);
+      .moveset([MoveId.SPLASH, MoveId.TACKLE, MoveId.GROWL])
+      .ability(AbilityId.GORILLA_TACTICS);
   });
 
   it("boosts the Pokémon's Attack by 50%, but limits the Pokémon to using only one move", async () => {
-    await game.classicMode.startBattle([Species.GALAR_DARMANITAN]);
+    await game.classicMode.startBattle([SpeciesId.GALAR_DARMANITAN]);
 
     const darmanitan = game.scene.getPlayerPokemon()!;
     const initialAtkStat = darmanitan.getStat(Stat.ATK);
 
-    game.move.select(Moves.SPLASH);
-    await game.move.selectEnemyMove(Moves.SPLASH);
+    game.move.select(MoveId.SPLASH);
+    await game.move.selectEnemyMove(MoveId.SPLASH);
 
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(darmanitan.getStat(Stat.ATK, false)).toBeCloseTo(initialAtkStat * 1.5);
     // Other moves should be restricted
-    expect(darmanitan.isMoveRestricted(Moves.TACKLE)).toBe(true);
-    expect(darmanitan.isMoveRestricted(Moves.SPLASH)).toBe(false);
+    expect(darmanitan.isMoveRestricted(MoveId.TACKLE)).toBe(true);
+    expect(darmanitan.isMoveRestricted(MoveId.SPLASH)).toBe(false);
   });
 
   it("should struggle if the only usable move is disabled", async () => {
-    await game.classicMode.startBattle([Species.GALAR_DARMANITAN]);
+    await game.classicMode.startBattle([SpeciesId.GALAR_DARMANITAN]);
 
     const darmanitan = game.scene.getPlayerPokemon()!;
     const enemy = game.scene.getEnemyPokemon()!;
 
     // First turn, lock move to Growl
-    game.move.select(Moves.GROWL);
-    await game.move.selectEnemyMove(Moves.SPLASH);
+    game.move.select(MoveId.GROWL);
+    await game.move.selectEnemyMove(MoveId.SPLASH);
 
     // Second turn, Growl is interrupted by Disable
     await game.toNextTurn();
 
-    game.move.select(Moves.GROWL);
-    await game.move.selectEnemyMove(Moves.DISABLE);
+    game.move.select(MoveId.GROWL);
+    await game.move.selectEnemyMove(MoveId.DISABLE);
     await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
 
     await game.phaseInterceptor.to("TurnEndPhase");
@@ -72,10 +72,39 @@ describe("Abilities - Gorilla Tactics", () => {
     // Third turn, Struggle is used
     await game.toNextTurn();
 
-    game.move.select(Moves.TACKLE);
+    game.move.select(MoveId.TACKLE);
+    await game.move.forceEnemyMove(MoveId.SPLASH); //prevent protect from being used by the enemy
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
 
     await game.phaseInterceptor.to("MoveEndPhase");
     expect(darmanitan.hp).toBeLessThan(darmanitan.getMaxHp());
+  });
+
+  it("should activate when the opponenet protects", async () => {
+    await game.classicMode.startBattle([SpeciesId.GALAR_DARMANITAN]);
+
+    const darmanitan = game.field.getPlayerPokemon();
+
+    game.move.select(MoveId.TACKLE);
+    await game.move.selectEnemyMove(MoveId.PROTECT);
+
+    await game.toEndOfTurn();
+    expect(darmanitan.isMoveRestricted(MoveId.SPLASH)).toBe(true);
+    expect(darmanitan.isMoveRestricted(MoveId.TACKLE)).toBe(false);
+  });
+
+  it("should activate when a move is succesfully executed but misses", async () => {
+    await game.classicMode.startBattle([SpeciesId.GALAR_DARMANITAN]);
+
+    const darmanitan = game.field.getPlayerPokemon();
+
+    game.move.select(MoveId.TACKLE);
+    await game.move.selectEnemyMove(MoveId.SPLASH);
+    await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
+    await game.move.forceMiss();
+    await game.toEndOfTurn();
+
+    expect(darmanitan.isMoveRestricted(MoveId.SPLASH)).toBe(true);
+    expect(darmanitan.isMoveRestricted(MoveId.TACKLE)).toBe(false);
   });
 });
