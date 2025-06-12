@@ -4,7 +4,7 @@ import type { globalScene } from "#app/global-scene";
 // -- end tsdoc imports --
 
 import type { BattlerIndex } from "#enums/battler-index";
-import type { Ability } from "#app/data/abilities/ability-class";
+import type { Ability } from "#app/data/abilities/ability";
 import { allAbilities } from "#app/data/data-lists";
 import type Pokemon from "#app/field/pokemon";
 import type { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
