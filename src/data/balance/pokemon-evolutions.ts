@@ -177,7 +177,10 @@ export class SpeciesEvolutionCondition {
         case EvoCondKey.PARTY_TYPE:
           return !!globalScene.getPlayerParty().find(p => p.getTypes(false, false, true).indexOf(cond.pkmnType) > -1)
         case EvoCondKey.EVO_TREASURE_TRACKER:
-          return pokemon.getHeldItems().some(m => m.is("EvoTrackerModifier") && m.getStackCount() >= cond.value);
+          return pokemon.getHeldItems().some(m =>
+            m.is("EvoTrackerModifier") &&
+            m.getStackCount() + pokemon.getPersistentTreasureCount() >= cond.value
+          );
         case EvoCondKey.GENDER:
           return pokemon.gender === cond.gender;
         case EvoCondKey.SHEDINJA: // Shedinja cannot be evolved into directly

@@ -5449,6 +5449,15 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     }
     this.turnData.berriesEaten.push(berryType);
   }
+
+  getPersistentTreasureCount(): number {
+    return this.getHeldItems().filter(m => m.is("DamageMoneyRewardModifier")).length +
+      globalScene.findModifiers(
+        m =>
+          m.is("MoneyMultiplierModifier") ||
+          m.is("ExtraModifierModifier"),
+      ).length;
+  }
 }
 
 export class PlayerPokemon extends Pokemon {

@@ -923,21 +923,13 @@ export class EvoTrackerModifier extends PokemonHeldItemModifier {
   }
 
   getIconStackText(virtual?: boolean): Phaser.GameObjects.BitmapText | null {
-    const pokemon = globalScene.getPokemonById(this.pokemonId);
+    const pokemon = this.getPokemon();
 
-    this.virtualStackCount = pokemon
-      ? pokemon.getHeldItems().filter(m => m instanceof DamageMoneyRewardModifier).length +
-        globalScene.findModifiers(
-          m =>
-            m instanceof MoneyMultiplierModifier ||
-            m instanceof ExtraModifierModifier ||
-            m instanceof TempExtraModifierModifier,
-        ).length
-      : 0;
+    const count = (pokemon?.getPersistentTreasureCount() || 0) + this.getStackCount();
 
-    const text = globalScene.add.bitmapText(10, 15, "item-count", this.getStackCount().toString(), 11);
+    const text = globalScene.add.bitmapText(10, 15, "item-count", count.toString(), 11);
     text.letterSpacing = -0.5;
-    if (this.getStackCount() >= this.required) {
+    if (count >= this.required) {
       text.setTint(0xf89890);
     }
     text.setOrigin(0, 0);
