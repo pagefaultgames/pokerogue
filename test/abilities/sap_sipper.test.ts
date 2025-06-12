@@ -89,7 +89,7 @@ describe("Abilities - Sap Sipper", () => {
     const enemy = game.field.getEnemyPokemon();
 
     game.move.use(MoveId.BULLET_SEED);
-    await game.toNextTurn();
+    await game.toEndOfTurn();
 
     expect(enemy.hp).toBe(enemy.getMaxHp());
     expect(enemy.getStatStage(Stat.ATK)).toBe(1);
@@ -99,7 +99,7 @@ describe("Abilities - Sap Sipper", () => {
     await game.toEndOfTurn();
 
     expect(enemy.hp).toBe(enemy.getMaxHp());
-    expect(enemy.getStatStage(Stat.ATK)).toBe(1);
+    expect(enemy.getStatStage(Stat.ATK)).toBe(2);
     expect(player.turnData.hitCount).toBe(1);
   });
 
