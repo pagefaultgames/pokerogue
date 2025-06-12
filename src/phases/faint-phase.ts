@@ -5,10 +5,7 @@ import {
   applyPostFaintAbAttrs,
   applyPostKnockOutAbAttrs,
   applyPostVictoryAbAttrs,
-  PostFaintAbAttr,
-  PostKnockOutAbAttr,
-  PostVictoryAbAttr,
-} from "#app/data/abilities/ability";
+} from "#app/data/abilities/apply-ab-attrs";
 import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
 import { battleSpecDialogue } from "#app/data/dialogue";
 import { allMoves } from "#app/data/data-lists";
@@ -124,7 +121,7 @@ export class FaintPhase extends PokemonPhase {
     if (pokemon.turnData.attacksReceived?.length) {
       const lastAttack = pokemon.turnData.attacksReceived[0];
       applyPostFaintAbAttrs(
-        PostFaintAbAttr,
+        "PostFaintAbAttr",
         pokemon,
         globalScene.getPokemonById(lastAttack.sourceId)!,
         new PokemonMove(lastAttack.move).getMove(),
@@ -132,18 +129,18 @@ export class FaintPhase extends PokemonPhase {
       ); // TODO: is this bang correct?
     } else {
       //If killed by indirect damage, apply post-faint abilities without providing a last move
-      applyPostFaintAbAttrs(PostFaintAbAttr, pokemon);
+      applyPostFaintAbAttrs("PostFaintAbAttr", pokemon);
     }
 
     const alivePlayField = globalScene.getField(true);
     for (const p of alivePlayField) {
-      applyPostKnockOutAbAttrs(PostKnockOutAbAttr, p, pokemon);
+      applyPostKnockOutAbAttrs("PostKnockOutAbAttr", p, pokemon);
     }
     if (pokemon.turnData.attacksReceived?.length) {
       const defeatSource = this.source;
 
       if (defeatSource?.isOnField()) {
-        applyPostVictoryAbAttrs(PostVictoryAbAttr, defeatSource);
+        applyPostVictoryAbAttrs("PostVictoryAbAttr", defeatSource);
         const pvmove = allMoves[pokemon.turnData.attacksReceived[0].move];
         const pvattrs = pvmove.getAttrs("PostVictoryStatStageChangeAttr");
         if (pvattrs.length) {
