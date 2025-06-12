@@ -6781,7 +6781,7 @@ export abstract class CallMoveAttr extends OverrideMoveEffectAttr {
     const targets = moveTargets.multiple || moveTargets.targets.length === 1
       ? moveTargets.targets
       : [ this.selfTarget ? target.getBattlerIndex() : moveTargets.targets[user.randBattleSeedInt(moveTargets.targets.length)] ]; // account for Mirror Move having a target already
-    user.getMoveQueue().push({ move: copiedMove.id, targets: targets, virtual: true, ignorePP: true });
+
     globalScene.phaseManager.unshiftNew("LoadMoveAnimPhase", copiedMove.id);
     globalScene.phaseManager.unshiftNew("MovePhase", user, targets, new PokemonMove(copiedMove.id, 0, 0, true), true, true);
     return true;
@@ -6883,7 +6883,6 @@ export class NaturePowerAttr extends CallMoveAttr {
   override getMove(user: Pokemon): MoveId {
     const moveId = this.getMoveIdForTerrain(globalScene.arena.getTerrainType(), globalScene.arena.biomeType)
     // Unshift a phase to load the move's animation (in case it isn't already), then use the move.
-    globalScene.phaseManager.unshiftNew("LoadMoveAnimPhase", moveId);
     globalScene.phaseManager.queueMessage(i18next.t("moveTriggers:naturePowerUse", {
       pokemonName: getPokemonNameWithAffix(user),
       moveName: allMoves[moveId].name,
@@ -7007,8 +7006,8 @@ export class CopyMoveAttr extends CallMoveAttr {
 
   override getMove(_user: Pokemon, target: Pokemon): MoveId {
     return this.selfTarget
-      ? target.getLastXMoves()[0]?.move ?? MoveId.NONE
-      : globalScene.currentBattle.lastMove;
+      ? globalScene.currentBattle.lastMove
+      : target.getLastXMoves()[0]?.move ?? MoveId.NONE
   }
 
   getCondition(): MoveConditionFunc {

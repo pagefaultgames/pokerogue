@@ -370,12 +370,10 @@ export class MovePhase extends BattlePhase {
       success = passesConditions && !failedDueToWeather && !failedDueToTerrain;
     }
 
-    // Update the battle's "last move" pointer, unless we're currently mimicking a move.
-    if (!allMoves[this.move.moveId].hasAttr("CopyMoveAttr")) {
-      // The last move used is unaffected by moves that fail
-      if (success) {
-        globalScene.currentBattle.lastMove = this.move.moveId;
-      }
+    // Update the battle's "last move" pointer, unless we're currently mimicking a move
+    // or the move failed.
+    if (!allMoves[this.move.moveId].hasAttr("CallMoveAttr") && success) {
+      globalScene.currentBattle.lastMove = this.move.moveId;
     }
 
     /**
