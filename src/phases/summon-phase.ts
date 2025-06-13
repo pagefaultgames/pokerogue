@@ -1,16 +1,16 @@
 import { BattleType } from "#enums/battle-type";
 import { getPokeballAtlasKey, getPokeballTintColor } from "#app/data/pokeball";
-import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms";
+import { SpeciesFormChangeActiveTrigger } from "#app/data/pokemon-forms/form-change-triggers";
 import { TrainerSlot } from "#enums/trainer-slot";
 import { PlayerGender } from "#app/enums/player-gender";
 import { addPokeballOpenParticles } from "#app/field/anims";
 import type Pokemon from "#app/field/pokemon";
-import { FieldPosition } from "#app/field/pokemon";
+import { FieldPosition } from "#enums/field-position";
 import { getPokemonNameWithAffix } from "#app/messages";
 import i18next from "i18next";
 import { PartyMemberPokemonPhase } from "./party-member-pokemon-phase";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
-import { applyPreSummonAbAttrs, PreSummonAbAttr } from "#app/data/abilities/ability";
+import { applyPreSummonAbAttrs } from "#app/data/abilities/apply-ab-attrs";
 import { globalScene } from "#app/global-scene";
 
 export class SummonPhase extends PartyMemberPokemonPhase {
@@ -27,7 +27,7 @@ export class SummonPhase extends PartyMemberPokemonPhase {
   start() {
     super.start();
 
-    applyPreSummonAbAttrs(PreSummonAbAttr, this.getPokemon());
+    applyPreSummonAbAttrs("PreSummonAbAttr", this.getPokemon());
     this.preSummon();
   }
 

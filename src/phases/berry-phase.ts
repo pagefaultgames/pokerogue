@@ -1,10 +1,5 @@
-import {
-  applyAbAttrs,
-  PreventBerryUseAbAttr,
-  HealFromBerryUseAbAttr,
-  RepeatBerryNextTurnAbAttr,
-} from "#app/data/abilities/ability";
-import { CommonAnim } from "#app/data/battle-anims";
+import { applyAbAttrs } from "#app/data/abilities/apply-ab-attrs";
+import { CommonAnim } from "#enums/move-anims-common";
 import { BerryUsedEvent } from "#app/events/battle-scene";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { BerryModifier } from "#app/modifier/modifier";
@@ -25,7 +20,7 @@ export class BerryPhase extends FieldPhase {
 
     this.executeForAll(pokemon => {
       this.eatBerries(pokemon);
-      applyAbAttrs(RepeatBerryNextTurnAbAttr, pokemon, null);
+      applyAbAttrs("RepeatBerryNextTurnAbAttr", pokemon, null);
     });
 
     this.end();
@@ -47,7 +42,7 @@ export class BerryPhase extends FieldPhase {
 
     // TODO: If both opponents on field have unnerve, which one displays its message?
     const cancelled = new BooleanHolder(false);
-    pokemon.getOpponents().forEach(opp => applyAbAttrs(PreventBerryUseAbAttr, opp, cancelled));
+    pokemon.getOpponents().forEach(opp => applyAbAttrs("PreventBerryUseAbAttr", opp, cancelled));
     if (cancelled.value) {
       globalScene.phaseManager.queueMessage(
         i18next.t("abilityTriggers:preventBerryUse", {
@@ -75,6 +70,6 @@ export class BerryPhase extends FieldPhase {
     globalScene.updateModifiers(pokemon.isPlayer());
 
     // AbilityId.CHEEK_POUCH only works once per round of nom noms
-    applyAbAttrs(HealFromBerryUseAbAttr, pokemon, new BooleanHolder(false));
+    applyAbAttrs("HealFromBerryUseAbAttr", pokemon, new BooleanHolder(false));
   }
 }

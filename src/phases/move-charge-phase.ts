@@ -1,10 +1,10 @@
 import { globalScene } from "#app/global-scene";
-import type { BattlerIndex } from "#app/battle";
+import type { BattlerIndex } from "#enums/battler-index";
 import { MoveChargeAnim } from "#app/data/battle-anims";
-import { applyMoveChargeAttrs, MoveEffectAttr, InstantChargeAttr } from "#app/data/moves/move";
-import type { PokemonMove } from "#app/field/pokemon";
+import { applyMoveChargeAttrs } from "#app/data/moves/apply-attrs";
+import type { PokemonMove } from "#app/data/moves/pokemon-move";
 import type Pokemon from "#app/field/pokemon";
-import { MoveResult } from "#app/field/pokemon";
+import { MoveResult } from "#enums/move-result";
 import { BooleanHolder } from "#app/utils/common";
 import { PokemonPhase } from "#app/phases/pokemon-phase";
 import { BattlerTagType } from "#enums/battler-tag-type";
@@ -43,7 +43,7 @@ export class MoveChargePhase extends PokemonPhase {
     new MoveChargeAnim(move.chargeAnim, move.id, user).play(false, () => {
       move.showChargeText(user, target);
 
-      applyMoveChargeAttrs(MoveEffectAttr, user, target, move);
+      applyMoveChargeAttrs("MoveEffectAttr", user, target, move);
       user.addTag(BattlerTagType.CHARGING, 1, move.id, user.id);
       this.end();
     });
@@ -57,7 +57,7 @@ export class MoveChargePhase extends PokemonPhase {
     if (move.isChargingMove()) {
       const instantCharge = new BooleanHolder(false);
 
-      applyMoveChargeAttrs(InstantChargeAttr, user, null, move, instantCharge);
+      applyMoveChargeAttrs("InstantChargeAttr", user, null, move, instantCharge);
 
       if (instantCharge.value) {
         // this MoveEndPhase will be duplicated by the queued MovePhase if not removed

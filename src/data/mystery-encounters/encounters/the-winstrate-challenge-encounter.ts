@@ -8,7 +8,7 @@ import {
   transitionMysteryEncounterIntroVisuals,
 } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import type { PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
-import { modifierTypes } from "#app/modifier/modifier-type";
+import { modifierTypes } from "#app/data/data-lists";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { globalScene } from "#app/global-scene";
 import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
@@ -23,12 +23,12 @@ import { Nature } from "#enums/nature";
 import { PokemonType } from "#enums/pokemon-type";
 import { BerryType } from "#enums/berry-type";
 import { Stat } from "#enums/stat";
-import { SpeciesFormChangeAbilityTrigger } from "#app/data/pokemon-forms";
-import { applyPostBattleInitAbAttrs, PostBattleInitAbAttr } from "#app/data/abilities/ability";
+import { SpeciesFormChangeAbilityTrigger } from "#app/data/pokemon-forms/form-change-triggers";
+import { applyPostBattleInitAbAttrs } from "#app/data/abilities/apply-ab-attrs";
 import { showEncounterDialogue, showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import i18next from "i18next";
-import { ModifierTier } from "#app/modifier/modifier-tier";
+import { ModifierTier } from "#enums/modifier-tier";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { BattlerTagType } from "#enums/battler-tag-type";
 
@@ -221,7 +221,7 @@ function endTrainerBattleAndShowDialogue(): Promise<void> {
 
         // Each trainer battle is supposed to be a new fight, so reset all per-battle activation effects
         pokemon.resetBattleAndWaveData();
-        applyPostBattleInitAbAttrs(PostBattleInitAbAttr, pokemon);
+        applyPostBattleInitAbAttrs("PostBattleInitAbAttr", pokemon);
       }
 
       globalScene.phaseManager.unshiftNew("ShowTrainerPhase");

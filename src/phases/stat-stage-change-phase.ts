@@ -1,17 +1,12 @@
 import { globalScene } from "#app/global-scene";
-import type { BattlerIndex } from "#app/battle";
+import type { BattlerIndex } from "#enums/battler-index";
 import {
   applyAbAttrs,
   applyPostStatStageChangeAbAttrs,
   applyPreStatStageChangeAbAttrs,
-  ConditionalUserFieldProtectStatAbAttr,
-  PostStatStageChangeAbAttr,
-  ProtectStatAbAttr,
-  ReflectStatStageChangeAbAttr,
-  StatStageChangeCopyAbAttr,
-  StatStageChangeMultiplierAbAttr,
-} from "#app/data/abilities/ability";
-import { ArenaTagSide, MistTag } from "#app/data/arena-tag";
+} from "#app/data/abilities/apply-ab-attrs";
+import { MistTag } from "#app/data/arena-tag";
+import { ArenaTagSide } from "#enums/arena-tag-side";
 import type { ArenaTag } from "#app/data/arena-tag";
 import type Pokemon from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
@@ -131,7 +126,7 @@ export class StatStageChangePhase extends PokemonPhase {
     const stages = new NumberHolder(this.stages);
 
     if (!this.ignoreAbilities) {
-      applyAbAttrs(StatStageChangeMultiplierAbAttr, pokemon, null, false, stages);
+      applyAbAttrs("StatStageChangeMultiplierAbAttr", pokemon, null, false, stages);
     }
 
     let simulate = false;
@@ -151,9 +146,9 @@ export class StatStageChangePhase extends PokemonPhase {
       }
 
       if (!cancelled.value && !this.selfTarget && stages.value < 0) {
-        applyPreStatStageChangeAbAttrs(ProtectStatAbAttr, pokemon, stat, cancelled, simulate);
+        applyPreStatStageChangeAbAttrs("ProtectStatAbAttr", pokemon, stat, cancelled, simulate);
         applyPreStatStageChangeAbAttrs(
-          ConditionalUserFieldProtectStatAbAttr,
+          "ConditionalUserFieldProtectStatAbAttr",
           pokemon,
           stat,
           cancelled,
@@ -163,7 +158,7 @@ export class StatStageChangePhase extends PokemonPhase {
         const ally = pokemon.getAlly();
         if (!isNullOrUndefined(ally)) {
           applyPreStatStageChangeAbAttrs(
-            ConditionalUserFieldProtectStatAbAttr,
+            "ConditionalUserFieldProtectStatAbAttr",
             ally,
             stat,
             cancelled,
@@ -179,7 +174,7 @@ export class StatStageChangePhase extends PokemonPhase {
           !this.comingFromMirrorArmorUser
         ) {
           applyPreStatStageChangeAbAttrs(
-            ReflectStatStageChangeAbAttr,
+            "ReflectStatStageChangeAbAttr",
             pokemon,
             stat,
             cancelled,
@@ -227,11 +222,17 @@ export class StatStageChangePhase extends PokemonPhase {
 
       if (stages.value > 0 && this.canBeCopied) {
         for (const opponent of pokemon.getOpponents()) {
-          applyAbAttrs(StatStageChangeCopyAbAttr, opponent, null, false, this.stats, stages.value);
+          applyAbAttrs("StatStageChangeCopyAbAttr", opponent, null, false, this.stats, stages.value);
         }
       }
 
-      applyPostStatStageChangeAbAttrs(PostStatStageChangeAbAttr, pokemon, filteredStats, this.stages, this.selfTarget);
+      applyPostStatStageChangeAbAttrs(
+        "PostStatStageChangeAbAttr",
+        pokemon,
+        filteredStats,
+        this.stages,
+        this.selfTarget,
+      );
 
       // Look for any other stat change phases; if this is the last one, do White Herb check
       const existingPhase = globalScene.phaseManager.findPhase(
