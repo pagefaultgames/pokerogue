@@ -2,6 +2,8 @@ import { randIntRange } from "#app/utils/common";
 import { StatusEffect } from "#enums/status-effect";
 import type { ParseKeys } from "i18next";
 import i18next from "i18next";
+import { applyAbAttrs } from "#app/data/abilities/apply-ab-attrs";
+import type Pokemon from "#app/field/pokemon";
 
 export class Status {
   public effect: StatusEffect;
@@ -15,10 +17,25 @@ export class Status {
     this.sleepTurnsRemaining = sleepTurnsRemaining;
   }
 
-  incrementTurn(): void {
-    this.toxicTurnCount++;
-    if (this.sleepTurnsRemaining) {
+  /**
+   * Tick up this status effect's toxic turn count if it is {@linkcode StatusEffect.TOXIC}.
+   */
+  incrementToxicTurnCount(): void {
+    if (this.effect === StatusEffect.TOXIC) {
+      this.toxicTurnCount++;
+    }
+  }
+
+  /**
+   * Tick down this status effect's sleep turns remaining if it is {@linkcode StatusEffect.SLEEP}.
+   * Takes into account Early Bird's increase to sleep wakeup speed.
+   * @param pokemon - The {@linkcode Pokemon} being woken up
+   */
+  decrementSleepTurnCount(pokemon: Pokemon): void {
+    if (this.effect === StatusEffect.SLEEP && this.sleepTurnsRemaining) {
       this.sleepTurnsRemaining--;
+      // Tick down turns remaining for Early Bird
+      applyAbAttrs("ReduceSleepDurationAbAttr", pokemon, null, false, this);
     }
   }
 

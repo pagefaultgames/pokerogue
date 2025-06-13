@@ -28,6 +28,7 @@ import { BattlerIndex } from "#enums/battler-index";
 import { PokemonMove } from "#app/data/moves/pokemon-move";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { randSeedInt } from "#app/utils/common";
+import { MoveUseMode } from "#enums/move-use-mode";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounters/trashToTreasure";
@@ -207,13 +208,13 @@ export const TrashToTreasureEncounter: MysteryEncounter = MysteryEncounterBuilde
             sourceBattlerIndex: BattlerIndex.ENEMY,
             targets: [BattlerIndex.PLAYER],
             move: new PokemonMove(MoveId.TOXIC),
-            ignorePp: true,
+            useMode: MoveUseMode.IGNORE_PP,
           },
           {
             sourceBattlerIndex: BattlerIndex.ENEMY,
             targets: [BattlerIndex.ENEMY],
             move: new PokemonMove(MoveId.STOCKPILE),
-            ignorePp: true,
+            useMode: MoveUseMode.IGNORE_PP,
           },
         );
         await initBattleWithEnemyConfig(encounter.enemyPartyConfigs[0]);

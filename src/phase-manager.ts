@@ -99,6 +99,7 @@ import { UnavailablePhase } from "#app/phases/unavailable-phase";
 import { UnlockPhase } from "#app/phases/unlock-phase";
 import { VictoryPhase } from "#app/phases/victory-phase";
 import { WeatherEffectPhase } from "#app/phases/weather-effect-phase";
+import { DancerPhase } from "#app/phases/dancer-phase";
 
 /**
  * Manager for phases used by battle scene.
@@ -126,6 +127,7 @@ const PHASES = Object.freeze({
   CommandPhase,
   CommonAnimPhase,
   DamageAnimPhase,
+  DancerPhase,
   EggHatchPhase,
   EggLapsePhase,
   EggSummaryPhase,
@@ -397,7 +399,7 @@ export class PhaseManager {
    * @returns the found phase or undefined if none found
    */
   findPhase<P extends Phase = Phase>(phaseFilter: (phase: P) => boolean): P | undefined {
-    return this.phaseQueue.find(phaseFilter) as P;
+    return this.phaseQueue.find(phaseFilter) as P | undefined;
   }
 
   tryReplacePhase(phaseFilter: (phase: Phase) => boolean, phase: Phase): boolean {
@@ -571,7 +573,6 @@ export class PhaseManager {
    */
   public queueAbilityDisplay(pokemon: Pokemon, passive: boolean, show: boolean): void {
     this.unshiftPhase(show ? new ShowAbilityPhase(pokemon.getBattlerIndex(), passive) : new HideAbilityPhase());
-    this.clearPhaseQueueSplice();
   }
 
   /**

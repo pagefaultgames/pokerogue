@@ -7,16 +7,16 @@ import {
   isNullOrUndefined,
   randSeedItem,
   randSeedInt,
-  type Constructor,
   randSeedFloat,
 } from "#app/utils/common";
 import { getPokemonNameWithAffix } from "#app/messages";
-import { GroundedTag } from "#app/data/battler-tags";
+import { GroundedTag, SemiInvulnerableTag } from "#app/data/battler-tags";
 import { BattlerTagLapseType } from "#enums/battler-tag-lapse-type";
 import {
   getNonVolatileStatusEffects,
   getStatusEffectDescriptor,
   getStatusEffectHealText,
+  type Status,
 } from "#app/data/status-effect";
 import { Gender } from "#app/data/gender";
 import { applyMoveAttrs } from "../moves/apply-attrs";
@@ -34,12 +34,11 @@ import { Command } from "#enums/command";
 import { BerryModifierType } from "#app/modifier/modifier-type";
 import { getPokeballName } from "#app/data/pokeball";
 import { BattleType } from "#enums/battle-type";
-import type { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { globalScene } from "#app/global-scene";
 import { allAbilities } from "#app/data/data-lists";
 
 // Enum imports
-import { Stat, type BattleStat, BATTLE_STATS, EFFECTIVE_STATS, getStatKey, type EffectiveStat } from "#enums/stat";
+import { Stat, BATTLE_STATS, EFFECTIVE_STATS, getStatKey } from "#enums/stat";
 import { PokemonType } from "#enums/pokemon-type";
 import { PokemonAnimType } from "#enums/pokemon-anim-type";
 import { StatusEffect } from "#enums/status-effect";
@@ -53,14 +52,18 @@ import { SwitchType } from "#enums/switch-type";
 import { MoveFlags } from "#enums/MoveFlags";
 import { MoveTarget } from "#enums/MoveTarget";
 import { MoveCategory } from "#enums/MoveCategory";
-import type { BerryType } from "#enums/berry-type";
 import { CommonAnim } from "#enums/move-anims-common";
-import { getBerryEffectFunc } from "../berry";
+import { getBerryEffectFunc } from "#app/data/berry";
 import { BerryUsedEvent } from "#app/events/battle-scene";
+import { noAbilityTypeOverrideMoves } from "#app/data/moves/invalid-moves";
+import { MoveUseMode } from "#enums/move-use-mode";
 
 // Type imports
+import type { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
+import type { BattleStat, EffectiveStat } from "#enums/stat";
+import type { BerryType } from "#enums/berry-type";
 import type { EnemyPokemon } from "#app/field/pokemon";
-import type { PokemonMove } from "../moves/pokemon-move";
+import { PokemonMove } from "../moves/pokemon-move";
 import type Pokemon from "#app/field/pokemon";
 import type { Weather } from "#app/data/weather";
 import type { BattlerTag } from "#app/data/battler-tags";
@@ -75,7 +78,10 @@ import type {
 import type { BattlerIndex } from "#enums/battler-index";
 import type Move from "#app/data/moves/move";
 import type { ArenaTrapTag, SuppressAbilitiesTag } from "#app/data/arena-tag";
-import { noAbilityTypeOverrideMoves } from "../moves/invalid-moves";
+import type { HitCheckEntry } from "#app/phases/move-effect-phase";
+import { HitCheckResult } from "#enums/hit-check-result";
+import type { Constructor } from "#app/utils/common";
+import { getMoveTargets } from "#app/data/moves/move-utils";
 import type { Localizable } from "#app/@types/locales";
 import { applyAbAttrs } from "./apply-ab-attrs";
 
@@ -1914,7 +1920,7 @@ export class PostDefendMoveDisableAbAttr extends PostDefendAbAttr {
     _args: any[],
   ): boolean {
     return (
-      attacker.getTag(BattlerTagType.DISABLED) === null &&
+      isNullOrUndefined(attacker.getTag(BattlerTagType.DISABLED)) &&
       move.doesFlagEffectApply({ flag: MoveFlags.MAKES_CONTACT, user: attacker, target: pokemon }) &&
       (this.chance === -1 || pokemon.randBattleSeedInt(100) < this.chance)
     );
@@ -2732,7 +2738,6 @@ export class AllyStatMultiplierAbAttr extends AbAttr {
 /**
  * Takes effect whenever a move succesfully executes, such as gorilla tactics' move-locking.
  * (More specifically, whenever a move is pushed to the move history)
- * @extends AbAttr
  */
 export class ExecutedMoveAbAttr extends AbAttr {
   canApplyExecutedMove(_pokemon: Pokemon, _simulated: boolean): boolean {
@@ -2743,16 +2748,16 @@ export class ExecutedMoveAbAttr extends AbAttr {
 }
 
 /**
- * Ability attribute for Gorilla Tactics
- * @extends ExecutedMoveAbAttr
+ * Ability attribute for {@linkcode AbilityId.GORILLA_TACTICS | Gorilla Tactics}
+ * to lock the user into its first selected move.
  */
 export class GorillaTacticsAbAttr extends ExecutedMoveAbAttr {
   constructor(showAbility = false) {
     super(showAbility);
   }
 
-  override canApplyExecutedMove(pokemon: Pokemon, simulated: boolean): boolean {
-    return simulated || !pokemon.getTag(BattlerTagType.GORILLA_TACTICS);
+  override canApplyExecutedMove(pokemon: Pokemon, _simulated: boolean): boolean {
+    return !pokemon.getTag(BattlerTagType.GORILLA_TACTICS);
   }
 
   override applyExecutedMove(pokemon: Pokemon, simulated: boolean): void {
@@ -3283,11 +3288,11 @@ export class PostIntimidateStatStageChangeAbAttr extends AbAttr {
   private stages: number;
   private overwrites: boolean;
 
-  constructor(stats: BattleStat[], stages: number, overwrites?: boolean) {
+  constructor(stats: BattleStat[], stages: number, overwrites = false) {
     super(true);
     this.stats = stats;
     this.stages = stages;
-    this.overwrites = !!overwrites;
+    this.overwrites = overwrites;
   }
 
   override apply(
@@ -3382,11 +3387,17 @@ export class PostSummonRemoveArenaTagAbAttr extends PostSummonAbAttr {
 export class PostSummonAddArenaTagAbAttr extends PostSummonAbAttr {
   private readonly tagType: ArenaTagType;
   private readonly turnCount: number;
-  private readonly side?: ArenaTagSide;
-  private readonly quiet?: boolean;
+  private readonly side: ArenaTagSide;
+  private readonly quiet: boolean;
   private sourceId: number;
 
-  constructor(showAbility: boolean, tagType: ArenaTagType, turnCount: number, side?: ArenaTagSide, quiet?: boolean) {
+  constructor(
+    showAbility: boolean,
+    tagType: ArenaTagType,
+    turnCount: number,
+    side: ArenaTagSide = ArenaTagSide.BOTH,
+    quiet = false,
+  ) {
     super(showAbility);
     this.tagType = tagType;
     this.turnCount = turnCount;
@@ -3439,7 +3450,7 @@ export class PostSummonAddBattlerTagAbAttr extends PostSummonAbAttr {
   private tagType: BattlerTagType;
   private turnCount: number;
 
-  constructor(tagType: BattlerTagType, turnCount: number, showAbility?: boolean) {
+  constructor(tagType: BattlerTagType, turnCount: number, showAbility = true) {
     super(showAbility);
 
     this.tagType = tagType;
@@ -3488,13 +3499,13 @@ export class PostSummonStatStageChangeAbAttr extends PostSummonAbAttr {
   private selfTarget: boolean;
   private intimidate: boolean;
 
-  constructor(stats: BattleStat[], stages: number, selfTarget?: boolean, intimidate?: boolean) {
+  constructor(stats: BattleStat[], stages: number, selfTarget = false, intimidate = false) {
     super(true);
 
     this.stats = stats;
     this.stages = stages;
-    this.selfTarget = !!selfTarget;
-    this.intimidate = !!intimidate;
+    this.selfTarget = selfTarget;
+    this.intimidate = intimidate;
   }
 
   override applyPostSummon(pokemon: Pokemon, _passive: boolean, simulated: boolean, _args: any[]): void {
@@ -3537,6 +3548,10 @@ export class PostSummonStatStageChangeAbAttr extends PostSummonAbAttr {
   }
 }
 
+/**
+ * Attribute to heal the user's allies upon entering battle.
+ * Used by {@linkcode AbilityId.HOSPITALITY}.
+ */
 export class PostSummonAllyHealAbAttr extends PostSummonAbAttr {
   private healRatio: number;
   private showAnim: boolean;
@@ -4849,7 +4864,7 @@ export class MultCritAbAttr extends AbAttr {
 export class ConditionalCritAbAttr extends AbAttr {
   private condition: PokemonAttackCondition;
 
-  constructor(condition: PokemonAttackCondition, _checkUser?: boolean) {
+  constructor(condition: PokemonAttackCondition) {
     super(false);
 
     this.condition = condition;
@@ -5038,10 +5053,10 @@ export class BlockWeatherDamageAttr extends PreWeatherDamageAbAttr {
 export class SuppressWeatherEffectAbAttr extends PreWeatherEffectAbAttr {
   public affectsImmutable: boolean;
 
-  constructor(affectsImmutable?: boolean) {
+  constructor(affectsImmutable = false) {
     super(true);
 
-    this.affectsImmutable = !!affectsImmutable;
+    this.affectsImmutable = affectsImmutable;
   }
 
   override canApplyPreWeatherEffect(
@@ -5883,6 +5898,7 @@ export class PostTurnHurtIfSleepingAbAttr extends PostTurnAbAttr {
           !opp.switchOutStatus,
       );
   }
+
   /**
    * Deals damage to all sleeping opponents equal to 1/8 of their max hp (min 1)
    * @param pokemon {@linkcode Pokemon} with this ability
@@ -5991,101 +6007,152 @@ export class PostBiomeChangeTerrainChangeAbAttr extends PostBiomeChangeAbAttr {
 }
 
 /**
- * Triggers just after a move is used either by the opponent or the player
- * @extends AbAttr
+ * Attribute to trigger effects after a move is used by either side of the field.
  */
 export class PostMoveUsedAbAttr extends AbAttr {
+  /**
+   * Check whether this ability can be applied after a move is used.
+   * @param pokemon - The {@linkcode Pokemon} with the ability
+   * @param move - The {@linkcode Move} having been been used
+   * @param source - The {@linkcode Pokemon} who used the move
+   * @param targets - Array of {@linkcode BattlerIndex}es containing Pokemon targeted by move.
+   * @param hitChecks - Array of {@linkcode HitCheckEntry | HitCheckEntries} containing results of move usage
+   * @param simulated - Whether the ability call is simulated
+   * @param args - Extra arguments passed to the function. Handled by child classes.
+   * @returns Whether the ability can be successfully applied.
+   * By default, it requires:
+   * * The pokemon with the ability is not semi-invulnerable
+   * * The move was used by another pokemon
+   * * The move's effect was successfully applied against at least 1 target
+   */
   canApplyPostMoveUsed(
-    _pokemon: Pokemon,
-    _move: PokemonMove,
-    _source: Pokemon,
-    _targets: BattlerIndex[],
+    pokemon: Pokemon,
+    _move: Move,
+    source: Pokemon,
+    targets: BattlerIndex[],
+    hitChecks: HitCheckEntry[],
     _simulated: boolean,
     _args: any[],
   ): boolean {
-    return true;
+    return (
+      !pokemon.getTag(SemiInvulnerableTag) &&
+      source.getBattlerIndex() !== pokemon.getBattlerIndex() &&
+      targets.length > 0 &&
+      hitChecks.some(hr => hr[0] === HitCheckResult.HIT)
+    );
   }
 
   applyPostMoveUsed(
     _pokemon: Pokemon,
-    _move: PokemonMove,
+    _move: Move,
     _source: Pokemon,
     _targets: BattlerIndex[],
+    _hitChecks: HitCheckEntry[],
     _simulated: boolean,
     _args: any[],
   ): void {}
 }
 
 /**
- * Triggers after a dance move is used either by the opponent or the player
- * @extends PostMoveUsedAbAttr
+ * Triggers after a dance move is used either by the opponent or the player.
  */
 export class PostDancingMoveAbAttr extends PostMoveUsedAbAttr {
-  override canApplyPostMoveUsed(
+  /**
+   * Check whether this ability can be applied after a move is used.
+   * @param dancer - The {@linkcode Pokemon} with the ability
+   * @param move - The {@linkcode Move} having been used
+   * @param source - The {@linkcode Pokemon} who used the move
+   * @param targets - Array of {@linkcode BattlerIndex}es containing Pokemon targeted by move.
+   * @param hitResults - Array of {@linkcode HitCheckEntry | HitCheckEntries} containing results of move usage
+   * @param simulated - N/A
+   * @param args - N/A
+   * @returns `true` if the ability can be applied, `false` otherwise
+   * @see {@linkcode applyPostMoveUsed}
+   */
+  canApplyPostMoveUsed(
     dancer: Pokemon,
-    _move: PokemonMove,
+    move: Move,
     source: Pokemon,
-    _targets: BattlerIndex[],
-    _simulated: boolean,
-    _args: any[],
+    targets: BattlerIndex[],
+    hitResults: HitCheckEntry[],
+    simulated: boolean,
+    args: any[],
   ): boolean {
-    // List of tags that prevent the Dancer from replicating the move
-    const forbiddenTags = [
-      BattlerTagType.FLYING,
-      BattlerTagType.UNDERWATER,
-      BattlerTagType.UNDERGROUND,
-      BattlerTagType.HIDDEN,
-    ];
-    // The move to replicate cannot come from the Dancer
     return (
-      source.getBattlerIndex() !== dancer.getBattlerIndex() &&
-      !dancer.summonData.tags.some(tag => forbiddenTags.includes(tag.tagType))
+      super.canApplyPostMoveUsed(dancer, move, source, targets, hitResults, simulated, args) &&
+      move.hasFlag(MoveFlags.DANCE_MOVE)
     );
   }
 
   /**
-   * Resolves the Dancer ability by replicating the move used by the source of the dance
-   * either on the source itself or on the target of the dance
-   * @param dancer {@linkcode Pokemon} with Dancer ability
-   * @param move {@linkcode PokemonMove} Dancing move used by the source
-   * @param source {@linkcode Pokemon} that used the dancing move
-   * @param targets {@linkcode BattlerIndex}Targets of the dancing move
-   * @param _args N/A
+   * Resolves the {@linkcode AbilityId.DANCER | Dancer} ability by replicating other Pokemon's dance moves
+   * on either this Pokemon or the user of the move.
+   * @param dancer - The {@linkcode Pokemon} with Dancer
+   * @param move - The {@linkcode Move} having been used
+   * @param source - The {@linkcode Pokemon} who used the move
+   * @param targets - Array of {@linkcode BattlerIndex}es containing Pokemon targeted by original move
+   * @param _hitResults - N/A
+   * @param _simulated - Whether the ability call is simulated
+   * @param _args - N/A
    */
   override applyPostMoveUsed(
     dancer: Pokemon,
-    move: PokemonMove,
+    move: Move,
     source: Pokemon,
     targets: BattlerIndex[],
-    simulated: boolean,
+    _hitResults: HitCheckEntry[],
+    _simulated: boolean,
     _args: any[],
   ): void {
-    if (!simulated) {
-      dancer.turnData.extraTurns++;
-      const phaseManager = globalScene.phaseManager;
-      // If the move is an AttackMove or a StatusMove the Dancer must replicate the move on the source of the Dance
-      if (move.getMove().is("AttackMove") || move.getMove().is("StatusMove")) {
-        const target = this.getTarget(dancer, source, targets);
-        phaseManager.unshiftNew("MovePhase", dancer, target, move, true, true);
-      } else if (move.getMove().is("SelfStatusMove")) {
-        // If the move is a SelfStatusMove (ie. Swords Dance) the Dancer should replicate it on itself
-        phaseManager.unshiftNew("MovePhase", dancer, [dancer.getBattlerIndex()], move, true, true);
-      }
-    }
+    // increment extra turns var to ensure subsequent multi-hit moves don't bork
+    dancer.turnData.extraTurns++;
+
+    globalScene.phaseManager.unshiftNew(
+      "MovePhase",
+      dancer,
+      this.getMoveTargets(dancer, source, move, targets),
+      new PokemonMove(move.id),
+      MoveUseMode.INDIRECT,
+    );
   }
 
   /**
-   * Get the correct targets of Dancer ability
+   * Get the correct targets of Dancer ability.
    *
-   * @param dancer {@linkcode Pokemon} Pokemon with Dancer ability
-   * @param source {@linkcode Pokemon} Source of the dancing move
-   * @param targets {@linkcode BattlerIndex} Targets of the dancing move
+   * @param dancer - The {@linkcode Pokemon} with Dancer
+   * @param source - The {@linkcode Pokemon} that used the dancing move
+   * @param move - The {@linkcode Move} being used
+   * @param targets - An array of {@linkcode BattlerIndex}es containing original targets of copied move
    */
-  getTarget(dancer: Pokemon, source: Pokemon, targets: BattlerIndex[]): BattlerIndex[] {
-    if (dancer.isPlayer()) {
-      return source.isPlayer() ? targets : [source.getBattlerIndex()];
+  private getMoveTargets(dancer: Pokemon, source: Pokemon, move: Move, targets: BattlerIndex[]): BattlerIndex[] {
+    if (move.isMultiTarget()) {
+      return getMoveTargets(dancer, move.id).targets;
     }
-    return source.isPlayer() ? [source.getBattlerIndex()] : targets;
+
+    // Self-targeted status moves (Swords Dance & co.) are always replicated on the user.
+    if (move.is("SelfStatusMove")) {
+      return [dancer.getBattlerIndex()];
+    }
+
+    // Attack moves are unleashed on the source of the dance UNLESS they are an ally attacking an enemy
+    // (in which case we retain the prior move's targets)
+    if (dancer.isPlayer() !== source.isPlayer() || targets.includes(dancer.getBattlerIndex())) {
+      targets = [source.getBattlerIndex()];
+    }
+
+    // Attempt to redirect to the prior target's partner if fainted and not our own ally.
+    const firstTarget = globalScene.getField()[targets[0]];
+    const ally = firstTarget.getAlly();
+    if (
+      globalScene.currentBattle.double &&
+      firstTarget.isFainted() &&
+      firstTarget.isPlayer() !== dancer.isPlayer() &&
+      ally?.isActive()
+    ) {
+      return [ally.getBattlerIndex()];
+    }
+
+    return targets;
   }
 }
 
@@ -6187,7 +6254,7 @@ export class BypassBurnDamageReductionAbAttr extends AbAttr {
 
 /**
  * Causes Pokemon to take reduced damage from the {@linkcode StatusEffect.BURN | Burn} status
- * @param multiplier Multiplied with the damage taken
+ * @param multiplier - Multiplier for burn damage taken
  */
 export class ReduceBurnDamageAbAttr extends AbAttr {
   constructor(protected multiplier: number) {
@@ -6195,7 +6262,7 @@ export class ReduceBurnDamageAbAttr extends AbAttr {
   }
 
   /**
-   * Applies the damage reduction
+   * Applies the burn damage reduction
    * @param _pokemon N/A
    * @param _passive N/A
    * @param _cancelled N/A
@@ -6644,40 +6711,37 @@ export class RedirectTypeMoveAbAttr extends RedirectMoveAbAttr {
   }
 }
 
+// TODO: Rework this - currently it's just an empty class used as a marker
 export class BlockRedirectAbAttr extends AbAttr {}
 
 /**
- * Used by Early Bird, makes the pokemon wake up faster
- * @param statusEffect - The {@linkcode StatusEffect} to check for
- * @see {@linkcode apply}
+ * Decrements a {@linkcode Pokemon}'s sleep turn counter by 2 whenever it would be decreased by 1.
+ * Used by {@linkcode AbilityId.EARLY_BIRD}.
  */
-export class ReduceStatusEffectDurationAbAttr extends AbAttr {
-  private statusEffect: StatusEffect;
-
-  constructor(statusEffect: StatusEffect) {
+export class ReduceSleepDurationAbAttr extends AbAttr {
+  constructor() {
     super(false);
-
-    this.statusEffect = statusEffect;
   }
 
   override canApply(_pokemon: Pokemon, _passive: boolean, _simulated: boolean, args: any[]): boolean {
-    return args[1] instanceof NumberHolder && args[0] === this.statusEffect;
+    // Sleep is the only duration-based status effect
+    return (args[0] as Status).effect === StatusEffect.SLEEP;
   }
 
   /**
    * Reduces the number of sleep turns remaining by an extra 1 when applied
-   * @param args - The args passed to the `AbAttr`:
-   * - `[0]` - The {@linkcode StatusEffect} of the Pokemon
-   * - `[1]` - The number of turns remaining until the status is healed
+   * @param args `[0]` - The Pokemon's current {@linkcode Status}
    */
   override apply(
     _pokemon: Pokemon,
     _passive: boolean,
     _simulated: boolean,
     _cancelled: BooleanHolder,
-    args: any[],
+    args: [Status],
   ): void {
-    args[1].value -= 1;
+    if (args[0].sleepTurnsRemaining) {
+      args[0].sleepTurnsRemaining--;
+    }
   }
 }
 
@@ -6717,6 +6781,7 @@ export class FlinchStatStageChangeAbAttr extends FlinchEffectAbAttr {
   }
 }
 
+// TODO: Move PP increasing property from `move-phase` into the ability class
 export class IncreasePpAbAttr extends AbAttr {}
 
 export class ForceSwitchOutImmunityAbAttr extends AbAttr {
@@ -7377,6 +7442,7 @@ class ForceSwitchOutHelper {
    * @param pokemon The {@linkcode Pokemon} attempting to switch out.
    * @returns `true` if the switch is successful
    */
+  // TODO: Make this cancel pending move phases on the switched out target
   public switchOutLogic(pokemon: Pokemon): boolean {
     const switchOutTarget = pokemon;
     /**
@@ -7634,6 +7700,7 @@ export class PostDamageForceSwitchAbAttr extends PostDamageAbAttr {
       }
     }
 
+    // TODO: Why do we do this?
     if (pokemon.hp + damage >= pokemon.getMaxHp() * this.hpRatio) {
       const shellBellHeal = calculateShellBellRecovery(pokemon);
       if (pokemon.hp - shellBellHeal < pokemon.getMaxHp() * this.hpRatio) {
@@ -7863,7 +7930,7 @@ const AbilityAttrs = Object.freeze({
   RedirectMoveAbAttr,
   RedirectTypeMoveAbAttr,
   BlockRedirectAbAttr,
-  ReduceStatusEffectDurationAbAttr,
+  ReduceSleepDurationAbAttr,
   FlinchEffectAbAttr,
   FlinchStatStageChangeAbAttr,
   IncreasePpAbAttr,
@@ -8080,7 +8147,7 @@ export function initAbilities() {
       .attr(ReceivedTypeDamageMultiplierAbAttr, PokemonType.ICE, 0.5)
       .ignorable(),
     new Ability(AbilityId.EARLY_BIRD, 3)
-      .attr(ReduceStatusEffectDurationAbAttr, StatusEffect.SLEEP),
+      .attr(ReduceSleepDurationAbAttr),
     new Ability(AbilityId.FLAME_BODY, 3)
       .attr(PostDefendContactApplyStatusEffectAbAttr, 30, StatusEffect.BURN)
       .bypassFaint(),
@@ -8377,10 +8444,10 @@ export function initAbilities() {
       .attr(WonderSkinAbAttr)
       .ignorable(),
     new Ability(AbilityId.ANALYTIC, 5)
-      .attr(MovePowerBoostAbAttr, (user, _target, _move) => {
-        const movePhase = globalScene.phaseManager.findPhase((phase) => phase.is("MovePhase") && phase.pokemon.id !== user?.id);
-        return isNullOrUndefined(movePhase);
-      }, 1.3),
+      .attr(MovePowerBoostAbAttr, (user) =>
+        // Boost power if all other Pokemon have already moved (no other moves are slated to execute)
+        !globalScene.phaseManager.findPhase((phase) => phase.is("MovePhase") && phase.pokemon.id !== user?.id),
+        1.3),
     new Ability(AbilityId.ILLUSION, 5)
       // The Pokemon generate an illusion if it's available
       .attr(IllusionPreSummonAbAttr, false)
@@ -8654,7 +8721,13 @@ export function initAbilities() {
       .attr(PostFaintHPDamageAbAttr)
       .bypassFaint(),
     new Ability(AbilityId.DANCER, 7)
-      .attr(PostDancingMoveAbAttr),
+      .attr(PostDancingMoveAbAttr)
+      /* Incorrect interations with:
+      * Petal Dance (should not lock in or count down timer; currently does both)
+      * All status moves whose `apply` function unshifts a phase with eligibility checks
+        * (this includes stat stage moves as well as Teeter Dance and co.) due to moves being still considered "successful"
+      */
+      .edgeCase(),
     new Ability(AbilityId.BATTERY, 7)
       .attr(AllyMoveCategoryPowerBoostAbAttr, [ MoveCategory.SPECIAL ], 1.3),
     new Ability(AbilityId.FLUFFY, 7)
@@ -8795,9 +8868,11 @@ export function initAbilities() {
     new Ability(AbilityId.WANDERING_SPIRIT, 8)
       .attr(PostDefendAbilitySwapAbAttr)
       .bypassFaint()
-      .edgeCase(), //  interacts incorrectly with rock head. It's meant to switch abilities before recoil would apply so that a pokemon with rock head would lose rock head first and still take the recoil
+      .edgeCase(), // interacts incorrectly with rock head. It's meant to switch abilities before recoil would apply so that a pokemon with rock head would lose rock head first and still take the recoil
     new Ability(AbilityId.GORILLA_TACTICS, 8)
-      .attr(GorillaTacticsAbAttr),
+      .attr(GorillaTacticsAbAttr)
+      // TODO: Verify whether Gorilla Tactics increases struggle's power or not
+      .edgeCase(),
     new Ability(AbilityId.NEUTRALIZING_GAS, 8, 2)
       .attr(PostSummonAddArenaTagAbAttr, true, ArenaTagType.NEUTRALIZING_GAS, 0)
       .attr(PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr)
