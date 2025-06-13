@@ -12,7 +12,7 @@ import { CheckStatusEffectPhase } from "#app/phases/check-status-effect-phase";
 import { CheckSwitchPhase } from "#app/phases/check-switch-phase";
 import { CommandPhase } from "#app/phases/command-phase";
 import { CommonAnimPhase } from "#app/phases/common-anim-phase";
-import type { Constructor } from "#app/utils/common";
+import { coerceArray, type Constructor } from "#app/utils/common";
 import { DamageAnimPhase } from "#app/phases/damage-anim-phase";
 import type { DynamicPhaseType } from "#enums/dynamic-phase-type";
 import { EggHatchPhase } from "#app/phases/egg-hatch-phase";
@@ -438,9 +438,7 @@ export class PhaseManager {
    * @returns boolean if a targetPhase was found and added
    */
   prependToPhase(phase: Phase | Phase[], targetPhase: PhaseString): boolean {
-    if (!Array.isArray(phase)) {
-      phase = [phase];
-    }
+    phase = coerceArray(phase);
     const target = PHASES[targetPhase];
     const targetIndex = this.phaseQueue.findIndex(ph => ph instanceof target);
 
@@ -460,9 +458,7 @@ export class PhaseManager {
    * @returns `true` if a `targetPhase` was found to append to
    */
   appendToPhase(phase: Phase | Phase[], targetPhase: PhaseString, condition?: (p: Phase) => boolean): boolean {
-    if (!Array.isArray(phase)) {
-      phase = [phase];
-    }
+    phase = coerceArray(phase);
     const target = PHASES[targetPhase];
     const targetIndex = this.phaseQueue.findIndex(ph => ph instanceof target && (!condition || condition(ph)));
 
