@@ -6,7 +6,7 @@ import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { BattleType } from "#enums/battle-type";
 import { getStatKey, getStatStageChangeDescriptionKey, Stat } from "#enums/stat";
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex } from "#enums/battler-index";
 import i18next from "i18next";
 import { getPokemonNameWithAffix } from "#app/messages";
 
