@@ -9,6 +9,7 @@ import {
   randSeedInt,
   type Constructor,
   randSeedFloat,
+  coerceArray,
 } from "#app/utils/common";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { GroundedTag } from "#app/data/battler-tags";
@@ -4689,7 +4690,7 @@ export class PreApplyBattlerTagImmunityAbAttr extends PreApplyBattlerTagAbAttr {
   constructor(immuneTagTypes: BattlerTagType | BattlerTagType[]) {
     super(true);
 
-    this.immuneTagTypes = Array.isArray(immuneTagTypes) ? immuneTagTypes : [immuneTagTypes];
+    this.immuneTagTypes = coerceArray(immuneTagTypes);
   }
 
   override canApplyPreApplyBattlerTag(
@@ -6694,7 +6695,7 @@ export class FlinchStatStageChangeAbAttr extends FlinchEffectAbAttr {
   constructor(stats: BattleStat[], stages: number) {
     super();
 
-    this.stats = Array.isArray(stats) ? stats : [stats];
+    this.stats = stats;
     this.stages = stages;
   }
 
