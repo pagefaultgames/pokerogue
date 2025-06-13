@@ -12,9 +12,15 @@ import { BattlerIndex } from "#enums/battler-index";
 import { TrickRoomTag } from "#app/data/arena-tag";
 import { SwitchType } from "#enums/switch-type";
 import { globalScene } from "#app/global-scene";
+import type { TurnCommand } from "#app/battle";
 
 export class TurnStartPhase extends FieldPhase {
   public readonly phaseName = "TurnStartPhase";
+
+  constructor() {
+    super(false);
+  }
+
   /**
    * This orders the active Pokemon on the field by speed into an BattlerIndex array and returns that array.
    * It also checks for Trick Room and reverses the array if it is present.
@@ -130,8 +136,6 @@ export class TurnStartPhase extends FieldPhase {
     const field = globalScene.getField();
     const moveOrder = this.getCommandOrder();
 
-    let orderIndex = 0;
-
     for (const o of this.getSpeedOrder()) {
       const pokemon = field[o];
       const preTurnCommand = globalScene.currentBattle.preTurnCommands[o];
@@ -148,96 +152,20 @@ export class TurnStartPhase extends FieldPhase {
 
     const phaseManager = globalScene.phaseManager;
 
-    for (const o of moveOrder) {
+    moveOrder.forEach((o, index) => {
       const pokemon = field[o];
       const turnCommand = globalScene.currentBattle.turnCommands[o];
 
-      if (turnCommand?.skip) {
-        continue;
+      if (!turnCommand || turnCommand.skip) {
+        return;
       }
 
-      switch (turnCommand?.command) {
-        case Command.FIGHT:
-          {
-            const queuedMove = turnCommand.move;
-            pokemon.turnData.order = orderIndex++;
-            if (!queuedMove) {
-              continue;
-            }
-            const move =
-              pokemon.getMoveset().find(m => m.moveId === queuedMove.move && m.ppUsed < m.getMovePp()) ||
-              new PokemonMove(queuedMove.move);
-            if (move.getMove().hasAttr("MoveHeaderAttr")) {
-              phaseManager.unshiftNew("MoveHeaderPhase", pokemon, move);
-            }
-            if (pokemon.isPlayer()) {
-              if (turnCommand.cursor === -1) {
-                phaseManager.pushNew("MovePhase", pokemon, turnCommand.targets || turnCommand.move!.targets, move);
-              } else {
-                phaseManager.pushNew(
-                  "MovePhase",
-                  pokemon,
-                  turnCommand.targets || turnCommand.move!.targets, // TODO: is the bang correct here?
-                  move,
-                  false,
-                  queuedMove.ignorePP,
-                );
-              }
-            } else {
-              phaseManager.pushNew(
-                "MovePhase",
-                pokemon,
-                turnCommand.targets || turnCommand.move!.targets,
-                move,
-                false,
-                queuedMove.ignorePP,
-              );
-            }
-          }
-          break;
-        case Command.BALL:
-          phaseManager.unshiftNew("AttemptCapturePhase", turnCommand.targets![0] % 2, turnCommand.cursor!); //TODO: is the bang correct here?
-          break;
-        case Command.POKEMON:
-          {
-            const switchType = turnCommand.args?.[0] ? SwitchType.BATON_PASS : SwitchType.SWITCH;
-            phaseManager.unshiftNew(
-              "SwitchSummonPhase",
-              switchType,
-              pokemon.getFieldIndex(),
-              turnCommand.cursor!,
-              true,
-              pokemon.isPlayer(),
-            );
-          }
-          break;
-        case Command.RUN:
-          {
-            let runningPokemon = pokemon;
-            if (globalScene.currentBattle.double) {
-              const playerActivePokemon = field.filter(pokemon => {
-                if (pokemon) {
-                  return pokemon.isPlayer() && pokemon.isActive();
-                }
-                return;
-              });
-              // if only one pokemon is alive, use that one
-              if (playerActivePokemon.length > 1) {
-                // find which active pokemon has faster speed
-                const fasterPokemon =
-                  playerActivePokemon[0].getStat(Stat.SPD) > playerActivePokemon[1].getStat(Stat.SPD)
-                    ? playerActivePokemon[0]
-                    : playerActivePokemon[1];
-                // check if either active pokemon has the ability "Run Away"
-                const hasRunAway = playerActivePokemon.find(p => p.hasAbility(AbilityId.RUN_AWAY));
-                runningPokemon = hasRunAway !== undefined ? hasRunAway : fasterPokemon;
-              }
-            }
-            phaseManager.unshiftNew("AttemptRunPhase", runningPokemon.getFieldIndex());
-          }
-          break;
+      // TODO: This logic is questionable, especially given the fact that `order` is used for exactly 1 thing...
+      if (turnCommand.command === Command.FIGHT) {
+        pokemon.turnData.order = index;
       }
-    }
+      this.handleTurnCommand(turnCommand, pokemon);
+    });
 
     phaseManager.pushNew("WeatherEffectPhase");
     phaseManager.pushNew("BerryPhase");
@@ -253,5 +181,75 @@ export class TurnStartPhase extends FieldPhase {
      * this is important since stuff like SwitchSummon, AttemptRun, AttemptCapture Phases break the "flow" and should take precedence
      */
     this.end();
+  }
+
+  private handleTurnCommand(turnCommand: TurnCommand, pokemon: Pokemon) {
+    switch (turnCommand?.command) {
+      case Command.FIGHT:
+        this.handleFightCommand(turnCommand, pokemon);
+        break;
+      case Command.BALL:
+        globalScene.phaseManager.unshiftNew("AttemptCapturePhase", turnCommand.targets![0] % 2, turnCommand.cursor!); //TODO: is the bang correct here?
+        break;
+      case Command.POKEMON:
+        globalScene.phaseManager.unshiftNew(
+          "SwitchSummonPhase",
+          turnCommand.args?.[0] ? SwitchType.BATON_PASS : SwitchType.SWITCH,
+          pokemon.getFieldIndex(),
+          turnCommand.cursor!,
+          true,
+          pokemon.isPlayer(),
+        );
+        break;
+      case Command.RUN:
+        {
+          const playerActivePokemon = globalScene.getPokemonAllowedInBattle();
+          if (!globalScene.currentBattle.double || playerActivePokemon.length === 1) {
+            // If not in doubles, attempt to run with the currently active Pokemon.
+            globalScene.phaseManager.unshiftNew("AttemptRunPhase", pokemon.getFieldIndex());
+            return;
+          }
+
+          // Use the fastest first pokemon we find with Run Away, or else the faster of the 2 player pokemon.
+          // This intentionally does not check for Trick Room.
+          // TODO: This phase should take a pokemon at all
+          const sortedPkmn = playerActivePokemon.sort((p1, p2) => p1.getStat(Stat.SPD) - p2.getStat(Stat.SPD));
+          const runningPokemon = sortedPkmn.find(p => p.hasAbility(AbilityId.RUN_AWAY)) ?? sortedPkmn[0];
+
+          globalScene.phaseManager.unshiftNew("AttemptRunPhase", runningPokemon.getFieldIndex());
+        }
+        break;
+    }
+  }
+
+  private handleFightCommand(turnCommand: TurnCommand, pokemon: Pokemon) {
+    if (!turnCommand.move) {
+      return;
+    }
+
+    const queuedMove = turnCommand.move;
+
+    // TODO: This seems somewhat dubious
+    const move =
+      pokemon.getMoveset().find(m => m.moveId === queuedMove.move && m.ppUsed < m.getMovePp()) ??
+      new PokemonMove(queuedMove.move);
+
+    if (move.getMove().hasAttr("MoveHeaderAttr")) {
+      globalScene.phaseManager.unshiftNew("MoveHeaderPhase", pokemon, move);
+    }
+
+    // TODO: Review what a `-1` cursor means
+    if (pokemon.isPlayer() && turnCommand.cursor === -1) {
+      globalScene.phaseManager.pushNew("MovePhase", pokemon, turnCommand.targets ?? queuedMove.targets, move);
+    } else {
+      globalScene.phaseManager.pushNew(
+        "MovePhase",
+        pokemon,
+        turnCommand.targets ?? turnCommand.move.targets,
+        move,
+        false,
+        queuedMove.ignorePP,
+      );
+    }
   }
 }
