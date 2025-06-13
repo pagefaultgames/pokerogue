@@ -1,7 +1,14 @@
 import { globalScene } from "#app/global-scene";
 import { modifierTypes } from "../data-lists";
 import { PokemonMove } from "../moves/pokemon-move";
-import { toReadableString, isNullOrUndefined, randSeedItem, randSeedInt, coerceArray, randSeedIntRange } from "#app/utils/common";
+import {
+  toReadableString,
+  isNullOrUndefined,
+  randSeedItem,
+  randSeedInt,
+  coerceArray,
+  randSeedIntRange,
+} from "#app/utils/common";
 import { pokemonEvolutions, pokemonPrevolutions } from "#app/data/balance/pokemon-evolutions";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { tmSpecies } from "#app/data/balance/tms";
