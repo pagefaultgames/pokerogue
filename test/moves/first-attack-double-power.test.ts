@@ -1,16 +1,16 @@
 import { BattlerIndex } from "#app/battle";
 import { allMoves } from "#app/data/data-lists";
-import { Abilities } from "#enums/abilities";
+import { AbilityId } from "#enums/ability-id";
 import { BattleType } from "#enums/battle-type";
-import { Moves } from "#enums/moves";
-import { Species } from "#enums/species";
+import { MoveId } from "#enums/move-id";
+import { SpeciesIs } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi, type MockInstance } from "vitest";
 
-describe.each<{ name: string; move: Moves }>([
-  { name: "Bolt Beak", move: Moves.BOLT_BEAK },
-  { name: "Fishious Rend", move: Moves.FISHIOUS_REND },
+describe.each<{ name: string; move: MoveId }>([
+  { name: "Bolt Beak", move: MoveId.BOLT_BEAK },
+  { name: "Fishious Rend", move: MoveId.FISHIOUS_REND },
 ])("Moves - $name", ({ move }) => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
@@ -35,15 +35,15 @@ describe.each<{ name: string; move: Moves }>([
       .battleType(BattleType.TRAINER)
       .disableCrits()
       .enemyLevel(100)
-      .enemySpecies(Species.DRACOVISH)
-      .enemyAbility(Abilities.BALL_FETCH)
-      .enemyMoveset(Moves.SPLASH);
+      .enemySpecies(SpeciesId.DRACOVISH)
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .enemyMoveset(MoveId.SPLASH);
 
     powerSpy = vi.spyOn(allMoves[move], "calculateBattlePower");
   });
 
   it("should double power if the user moves before the target", async () => {
-    await game.classicMode.startBattle([Species.FEEBAS]);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
     // turn 1: enemy, then player (no boost)
     game.move.select(move);
@@ -61,12 +61,12 @@ describe.each<{ name: string; move: Moves }>([
   });
   
   it("should only consider the selected target in Double Battles", async () => {
-    game.override.battleStyle("double").moveset([move, Moves.SPLASH]);
-    await game.classicMode.startBattle([Species.FEEBAS, Species.MILOTIC]);
+    game.override.battleStyle("double");
+    await game.classicMode.startBattle([SpeciesId.FEEBAS, SpeciesId.MILOTIC]);
 
     // Use move after everyone but P1 and enemy 1 have already moved
-    game.move.select(move, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
-    game.move.select(Moves.SPLASH, BattlerIndex.PLAYER_2);
+    game.move.use(move, BattlerIndex.PLAYER, BattlerIndex.ENEMY);
+    game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER_2);
     await game.setTurnOrder([BattlerIndex.PLAYER_2, BattlerIndex.ENEMY_2, BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toNextTurn();
 
@@ -74,7 +74,7 @@ describe.each<{ name: string; move: Moves }>([
   });
 
   it("should double power on the turn the target switches in", async () => {
-    await game.classicMode.startBattle([Species.FEEBAS]);
+    await game.classicMode.startBattle([SpeciesId.FEEBAS]);
 
     game.move.select(move);
     game.forceEnemyToSwitch();
@@ -84,17 +84,17 @@ describe.each<{ name: string; move: Moves }>([
   });
 
   // TODO: Verify behavior with Instruct/Dancer
-  it.todo.each<{ type: string; allyMove: Moves }>([
-    { type: "a Dancer-induced", allyMove: Moves.FIERY_DANCE },
-    { type: "an Instructed", allyMove: Moves.INSTRUCT },
+  it.todo.each<{ type: string; allyMove: MoveId }>([
+    { type: "a Dancer-induced", allyMove: MoveId.FIERY_DANCE },
+    { type: "an Instructed", allyMove: MoveId.INSTRUCT },
   ])("should double power if $type move is used as the target's first action that turn", async ({ allyMove }) => {
-    game.override.battleStyle("double").moveset([move, allyMove]).enemyAbility(Abilities.DANCER);
-    await game.classicMode.startBattle([Species.DRACOVISH, Species.ARCTOZOLT]);
+    game.override.battleStyle("double").moveset([move, allyMove]).enemyAbility(AbilityId.DANCER);
+    await game.classicMode.startBattle([SpeciesIs.DRACOVISH, SpeciesId.ARCTOZOLT]);
 
     // Simulate enemy having used splash last turn to allow Instruct to copy it
     const enemy = game.scene.getEnemyPokemon()!;
     enemy.pushMoveHistory({
-      move: Moves.SPLASH,
+      move: MoveId.SPLASH,
       targets: [BattlerIndex.ENEMY],
       turn: game.scene.currentBattle.turn - 1,
     });
