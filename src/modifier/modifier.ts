@@ -2388,15 +2388,13 @@ export class EvolutionItemModifier extends ConsumablePokemonModifier {
   override apply(playerPokemon: PlayerPokemon): boolean {
     let matchingEvolution = pokemonEvolutions.hasOwnProperty(playerPokemon.species.speciesId)
       ? pokemonEvolutions[playerPokemon.species.speciesId].find(
-          e =>
-            e.evoItem === this.type.evolutionItem && e.validate(playerPokemon, false, e.item!),
+          e => e.evoItem === this.type.evolutionItem && e.validate(playerPokemon, false, e.item!),
         )
       : null;
 
     if (!matchingEvolution && playerPokemon.isFusion()) {
       matchingEvolution = pokemonEvolutions[playerPokemon.fusionSpecies!.speciesId].find(
-        e =>
-          e.evoItem === this.type.evolutionItem && e.validate(playerPokemon, true, e.item!),
+        e => e.evoItem === this.type.evolutionItem && e.validate(playerPokemon, true, e.item!),
       );
       if (matchingEvolution) {
         matchingEvolution = new FusionSpeciesFormEvolution(playerPokemon.species.speciesId, matchingEvolution);
@@ -2919,7 +2917,7 @@ export class MoneyRewardModifier extends ConsumableModifier {
         const factor = Math.min(Math.floor(this.moneyMultiplier), 3);
         const modifier = getModifierType(modifierTypes.EVOLUTION_TRACKER_GIMMIGHOUL).newModifier(
           p,
-          factor
+          factor,
         ) as EvoTrackerModifier;
         globalScene.addModifier(modifier);
       }

@@ -1218,10 +1218,8 @@ export class EvolutionItemModifierType extends PokemonModifierType implements Ge
       (pokemon: PlayerPokemon) => {
         if (
           pokemonEvolutions.hasOwnProperty(pokemon.species.speciesId) &&
-          pokemonEvolutions[pokemon.species.speciesId].filter(
-            e =>
-              e.validate(pokemon, false, this.evolutionItem),
-          ).length &&
+          pokemonEvolutions[pokemon.species.speciesId].filter(e => e.validate(pokemon, false, this.evolutionItem))
+            .length &&
           pokemon.getFormKey() !== SpeciesFormKey.GIGANTAMAX
         ) {
           return null;
@@ -1230,10 +1228,8 @@ export class EvolutionItemModifierType extends PokemonModifierType implements Ge
           pokemon.isFusion() &&
           pokemon.fusionSpecies &&
           pokemonEvolutions.hasOwnProperty(pokemon.fusionSpecies.speciesId) &&
-          pokemonEvolutions[pokemon.fusionSpecies.speciesId].filter(
-            e =>
-              e.validate(pokemon, true, this.evolutionItem),
-          ).length &&
+          pokemonEvolutions[pokemon.fusionSpecies.speciesId].filter(e => e.validate(pokemon, true, this.evolutionItem))
+            .length &&
           pokemon.getFusionFormKey() !== SpeciesFormKey.GIGANTAMAX
         ) {
           return null;
@@ -1593,10 +1589,7 @@ class EvolutionItemModifierTypeGenerator extends ModifierTypeGenerator {
           )
           .flatMap(p => {
             const evolutions = pokemonEvolutions[p.species.speciesId];
-            return evolutions.filter(
-              e =>
-                e.isValidItemEvolution(p),
-            );
+            return evolutions.filter(e => e.isValidItemEvolution(p));
           }),
         party
           .filter(
@@ -1610,10 +1603,7 @@ class EvolutionItemModifierTypeGenerator extends ModifierTypeGenerator {
           )
           .flatMap(p => {
             const evolutions = pokemonEvolutions[p.fusionSpecies!.speciesId];
-            return evolutions.filter(
-              e =>
-                e.validate(p, true),
-            );
+            return evolutions.filter(e => e.validate(p, true));
           }),
       ]
         .flat()
@@ -1884,7 +1874,8 @@ const modifierTypeInitObj = Object.freeze({
     new PokemonHeldItemModifierType(
       "modifierType:ModifierType.EVOLUTION_TRACKER_GIMMIGHOUL",
       "relic_gold",
-      (type, args) => new EvoTrackerModifier(type, (args[0] as Pokemon).id, SpeciesId.GIMMIGHOUL, 10, (args[1] as number ?? 1)),
+      (type, args) =>
+        new EvoTrackerModifier(type, (args[0] as Pokemon).id, SpeciesId.GIMMIGHOUL, 10, (args[1] as number) ?? 1),
     ),
 
   MEGA_BRACELET: () =>

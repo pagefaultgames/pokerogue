@@ -1,6 +1,5 @@
 import { globalScene } from "#app/global-scene";
 import { allAbilities } from "../data-lists";
-import { EvolutionItem, pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
 import { Nature } from "#enums/nature";
 import { pokemonFormChanges } from "#app/data/pokemon-forms";
 import { SpeciesFormChangeItemTrigger } from "../pokemon-forms/form-change-triggers";
@@ -16,7 +15,6 @@ import type { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { SpeciesId } from "#enums/species-id";
-import { SpeciesFormKey } from "#enums/species-form-key";
 import { TimeOfDay } from "#enums/time-of-day";
 
 export interface EncounterRequirement {

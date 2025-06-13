@@ -79,9 +79,7 @@ import {
 import { PokeballType } from "#enums/pokeball";
 import { Gender } from "#app/data/gender";
 import { Status, getRandomStatus } from "#app/data/status-effect";
-import type {
-  SpeciesFormEvolution,
-} from "#app/data/balance/pokemon-evolutions";
+import type { SpeciesFormEvolution } from "#app/data/balance/pokemon-evolutions";
 import {
   pokemonEvolutions,
   pokemonPrevolutions,
@@ -5451,12 +5449,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   getPersistentTreasureCount(): number {
-    return this.getHeldItems().filter(m => m.is("DamageMoneyRewardModifier")).length +
-      globalScene.findModifiers(
-        m =>
-          m.is("MoneyMultiplierModifier") ||
-          m.is("ExtraModifierModifier"),
-      ).length;
+    return (
+      this.getHeldItems().filter(m => m.is("DamageMoneyRewardModifier")).length +
+      globalScene.findModifiers(m => m.is("MoneyMultiplierModifier") || m.is("ExtraModifierModifier")).length
+    );
   }
 }
 
