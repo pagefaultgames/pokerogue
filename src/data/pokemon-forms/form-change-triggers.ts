@@ -1,5 +1,5 @@
 import i18next from "i18next";
-import type { Constructor } from "#app/utils/common";
+import { coerceArray, type Constructor } from "#app/utils/common";
 import type { TimeOfDay } from "#enums/time-of-day";
 import type Pokemon from "#app/field/pokemon";
 import type { SpeciesFormChange } from "#app/data/pokemon-forms";
@@ -125,10 +125,7 @@ export class SpeciesFormChangeStatusEffectTrigger extends SpeciesFormChangeTrigg
 
   constructor(statusEffects: StatusEffect | StatusEffect[], invert = false) {
     super();
-    if (!Array.isArray(statusEffects)) {
-      statusEffects = [statusEffects];
-    }
-    this.statusEffects = statusEffects;
+    this.statusEffects = coerceArray(statusEffects);
     this.invert = invert;
     // this.description = i18next.t("pokemonEvolutions:Forms.statusEffect");
   }
