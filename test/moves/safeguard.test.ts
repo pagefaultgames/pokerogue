@@ -1,5 +1,4 @@
 import { BattlerIndex } from "#enums/battler-index";
-import { PostDefendContactApplyStatusEffectAbAttr } from "#app/data/abilities/ability";
 import { allAbilities } from "#app/data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { StatusEffect } from "#app/enums/status-effect";
@@ -139,7 +138,7 @@ describe("Moves - Safeguard", () => {
   it("protects from ability-inflicted status", async () => {
     game.override.ability(AbilityId.STATIC);
     vi.spyOn(
-      allAbilities[AbilityId.STATIC].getAttrs(PostDefendContactApplyStatusEffectAbAttr)[0],
+      allAbilities[AbilityId.STATIC].getAttrs("PostDefendContactApplyStatusEffectAbAttr")[0],
       "chance",
       "get",
     ).mockReturnValue(100);

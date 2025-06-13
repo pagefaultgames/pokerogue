@@ -11,7 +11,6 @@ import { StatusEffect } from "#enums/status-effect";
 import { BattlerIndex } from "#enums/battler-index";
 import { ArenaTagType } from "#enums/arena-tag-type";
 import { ArenaTagSide } from "#enums/arena-tag-side";
-import { MoveEffectChanceMultiplierAbAttr } from "#app/data/abilities/ability";
 import { allAbilities } from "#app/data/data-lists";
 
 describe("Moves - Secret Power", () => {
@@ -68,7 +67,7 @@ describe("Moves - Secret Power", () => {
       .battleStyle("double");
     await game.classicMode.startBattle([SpeciesId.BLASTOISE, SpeciesId.CHARIZARD]);
 
-    const sereneGraceAttr = allAbilities[AbilityId.SERENE_GRACE].getAttrs(MoveEffectChanceMultiplierAbAttr)[0];
+    const sereneGraceAttr = allAbilities[AbilityId.SERENE_GRACE].getAttrs("MoveEffectChanceMultiplierAbAttr")[0];
     vi.spyOn(sereneGraceAttr, "canApply");
 
     game.move.select(MoveId.WATER_PLEDGE, 0, BattlerIndex.ENEMY);
