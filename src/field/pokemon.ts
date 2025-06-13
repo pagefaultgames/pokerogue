@@ -4759,7 +4759,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param quiet - Whether to suppress in-battle messages for status checks; default `false`.
    * @returns Whether the status effect was successfully applied (or a phase for it)
    */
-  // TODO: Make this take a destructured object for params and make it same order as `canSetStatus`
   trySetStatus(
     effect: StatusEffect,
     asPhase = false,

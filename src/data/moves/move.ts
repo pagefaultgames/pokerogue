@@ -2458,7 +2458,7 @@ export class StatusEffectAttr extends MoveEffectAttr {
     const quiet = move.category !== MoveCategory.STATUS;
 
     if (
-      this.doSetStatus(this.selfTarget ? user : target, user, quiet)
+      target.trySetStatus(this.effect, true, user, undefined, null, false, quiet)
     ) {
       applyPostAttackAbAttrs(ConfusionOnStatusEffectAbAttr, user, target, move, null, false, this.effect);
       return true;
@@ -2466,18 +2466,6 @@ export class StatusEffectAttr extends MoveEffectAttr {
     return false;
   }
 
-  /**
-   * Wrapper function to attempt to set status of a pokemon.
-   * Exists to allow super classes to override parameters.
-   * @param pokemon - The {@linkcode Pokemon} being statused.
-   * @param source - The {@linkcode Pokemon} doing the statusing.
-   * @param quiet - Whether to suppress messages for status immunities.
-   * @returns Whether the status was sucessfully applied.
-   * @see {@linkcode Pokemon.trySetStatus}
-   */
-  protected doSetStatus(pokemon: Pokemon, source: Pokemon, quiet: boolean): boolean {
-    return pokemon.trySetStatus(this.effect, true, source, undefined, null, false, quiet)
-  }
 
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
     const moveChance = this.getMoveChance(user, target, move, this.selfTarget, false);
@@ -8770,9 +8758,7 @@ export function initMoves() {
     new SelfStatusMove(MoveId.REST, PokemonType.PSYCHIC, -1, 5, -1, 0, 1)
       .attr(HealAttr, 1, true)
       .attr(RestAttr, 3)
-      .condition((user, target, move) => !user.isFullHp() && user.canSetStatus(StatusEffect.SLEEP, true, true, user))
-      .triageMove()
-      .edgeCase(), // Lacks unique message in favor of displaying messages for both heal/status cure
+      .triageMove(),
     new AttackMove(MoveId.ROCK_SLIDE, PokemonType.ROCK, MoveCategory.PHYSICAL, 75, 90, 10, 30, 0, 1)
       .attr(FlinchAttr)
       .makesContact(false)
