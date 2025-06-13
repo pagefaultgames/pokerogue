@@ -54,10 +54,9 @@ import { HitCheckResult } from "#enums/hit-check-result";
 import type Move from "#app/data/moves/move";
 import { isFieldTargeted } from "#app/data/moves/move-utils";
 import { DamageAchv } from "#app/system/achv";
-import { isVirtual, isReflected, MoveUseMode } from "#enums/move-use-mode";
+import { isVirtual, isReflected, MoveUseMode, isDancerCopiable } from "#enums/move-use-mode";
 
 export type HitCheckEntry = [HitCheckResult, TypeDamageMultiplier];
-
 export class MoveEffectPhase extends PokemonPhase {
   public readonly phaseName = "MoveEffectPhase";
   public move: Move;
@@ -112,11 +111,11 @@ export class MoveEffectPhase extends PokemonPhase {
    * Compute targets and the results of hit checks of the invoked move against all targets,
    * organized by battler index.
    *
-   * **This is *not* a pure function**; it has the following side effects
-   * - `this.hitChecks` - The results of the hit checks against each target
-   * - `this.moveHistoryEntry` - Sets success or failure based on the hit check results
-   * - user.turnData.hitCount and user.turnData.hitsLeft - Both set to 1 if the
-   *   move was unsuccessful against all targets
+   * **This is *not* a pure function** and has the following side effects:
+   * - Sets `this.hitChecks` to the results of the hit checks against each target
+   * - Sets success/failure of `this.moveHistoryEntry` based on the hit check results
+   * - Sets `user.turnData.hitCount` and `user.turnData.hitsLeft` to 1 if the move
+   * was unsuccessful against all targets (effectively canceling it)
    *
    * @returns The targets of the invoked move
    * @see {@linkcode hitCheck}
@@ -194,9 +193,9 @@ export class MoveEffectPhase extends PokemonPhase {
   }
 
   /**
-   * Apply the move to each of the resolved targets.
+   * Apply the move to each of its resolved targets.
    * @param targets - The resolved set of targets of the move
-   * @throws Error if there was an unexpected hit check result
+   * @throws - Error if there was an unexpected hit check result
    */
   private applyToTargets(user: Pokemon, targets: Pokemon[]): void {
     let firstHit = true;
@@ -368,6 +367,7 @@ export class MoveEffectPhase extends PokemonPhase {
    */
   private postAnimCallback(user: Pokemon, targets: Pokemon[]) {
     // Add to the move history entry
+    // TODO: Once Truant is fixed to not check history, don't push an entry for reflected/indirect moves
     if (this.firstHit) {
       user.pushMoveHistory(this.moveHistoryEntry);
       applyExecutedMoveAbAttrs("ExecutedMoveAbAttr", user);
@@ -428,6 +428,19 @@ export class MoveEffectPhase extends PokemonPhase {
     this.getTargets().forEach(target => {
       target.turnData.moveEffectiveness = null;
     });
+
+    // Dancer does not proc on other dancer moves, nor for either occurrence of a reflected move.
+    // (This blocks copying on the follow-up reflected use; the initial use gets blocked by hit checks)
+    if (isDancerCopiable(this.useMode)) {
+      globalScene.phaseManager.appendNewToPhase(
+        "MoveEndPhase",
+        "DancerPhase",
+        this.battlerIndex,
+        this.targets,
+        this.move,
+        this.hitChecks,
+      );
+    }
     super.end();
   }
 
@@ -759,7 +772,7 @@ export class MoveEffectPhase extends PokemonPhase {
     user: Pokemon,
     target: Pokemon | null,
     firstTarget?: boolean | null,
-    selfTarget?: boolean,
+    selfTarget = false,
   ): void {
     applyFilteredMoveAttrs(
       (attr: MoveAttr) =>

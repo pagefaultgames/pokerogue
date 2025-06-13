@@ -1,6 +1,6 @@
 import { BattlerIndex } from "#enums/battler-index";
 import { globalScene } from "#app/global-scene";
-import { applyAbAttrs, applyPostMoveUsedAbAttrs, applyPreAttackAbAttrs } from "#app/data/abilities/apply-ab-attrs";
+import { applyAbAttrs, applyPreAttackAbAttrs } from "#app/data/abilities/apply-ab-attrs";
 import type { DelayedAttackTag } from "#app/data/arena-tag";
 import { CommonAnim } from "#enums/move-anims-common";
 import { CenterOfAttentionTag } from "#app/data/battler-tags";
@@ -212,7 +212,8 @@ export class MovePhase extends BattlePhase {
       return;
     }
 
-    this.pokemon.status.incrementTurn();
+    // Decrement sleep turn count, triggering Early Bird as applicable.
+    this.pokemon.status.decrementSleepTurnCount(this.pokemon);
 
     /** Whether to prevent us from using the move */
     let activated = false;
@@ -221,38 +222,35 @@ export class MovePhase extends BattlePhase {
 
     switch (this.pokemon.status.effect) {
       case StatusEffect.PARALYSIS:
-        activated =
-          (this.pokemon.randBattleSeedInt(4) === 0 || Overrides.STATUS_ACTIVATION_OVERRIDE === true) &&
-          Overrides.STATUS_ACTIVATION_OVERRIDE !== false;
+        // 20% chance to proc each turn (unless status override is set)
+        activated = Overrides.STATUS_ACTIVATION_OVERRIDE ?? this.pokemon.randBattleSeedInt(4) === 0;
         break;
       case StatusEffect.SLEEP: {
+        healed = (this.pokemon.status.sleepTurnsRemaining ?? 1) <= 0;
+        // Check for Snore and Sleep Talk - they apply the BYPASS_SLEEP tag for 1 turn to allow use while asleep
         applyMoveAttrs("BypassSleepAttr", this.pokemon, null, this.move.getMove());
-        const turnsRemaining = new NumberHolder(this.pokemon.status.sleepTurnsRemaining ?? 0);
-        applyAbAttrs(
-          "ReduceStatusEffectDurationAbAttr",
-          this.pokemon,
-          null,
-          false,
-          this.pokemon.status.effect,
-          turnsRemaining,
-        );
-        this.pokemon.status.sleepTurnsRemaining = turnsRemaining.value;
-        healed = this.pokemon.status.sleepTurnsRemaining <= 0;
-        activated = !healed && !this.pokemon.getTag(BattlerTagType.BYPASS_SLEEP);
-        break;
-      }
-      case StatusEffect.FREEZE:
-        healed =
-          !!this.move
-            .getMove()
-            .findAttr(
-              attr => attr.is("HealStatusEffectAttr") && attr.selfTarget && attr.isOfEffect(StatusEffect.FREEZE),
-            ) ||
-          (!this.pokemon.randBattleSeedInt(5) && Overrides.STATUS_ACTIVATION_OVERRIDE !== true) ||
-          Overrides.STATUS_ACTIVATION_OVERRIDE === false;
-
+        if (this.pokemon.getTag(BattlerTagType.BYPASS_SLEEP)) {
+          // Komala is love, Komala is life, Komala will **MURDER YOU IN ITS SLEEP**
+          break;
+        }
         activated = !healed;
         break;
+      }
+      case StatusEffect.FREEZE: {
+        // Unfreeze if using a move that thaws the user or if a 20% roll succeeds;
+        // all other cases remain frozen
+        const selfThaw = !!this.move
+          .getMove()
+          .findAttr(attr => attr.is("HealStatusEffectAttr") && attr.selfTarget && attr.isOfEffect(StatusEffect.FREEZE));
+        const randomThaw =
+          Overrides.STATUS_ACTIVATION_OVERRIDE !== null
+            ? !Overrides.STATUS_ACTIVATION_OVERRIDE
+            : this.pokemon.randBattleSeedInt(5) === 0;
+
+        healed = selfThaw || randomThaw;
+        activated = !healed;
+        break;
+      }
     }
 
     if (activated) {
@@ -429,16 +427,6 @@ export class MovePhase extends BattlePhase {
 
       // Remove the user from its semi-invulnerable state (if applicable)
       this.pokemon.lapseTags(BattlerTagLapseType.MOVE_EFFECT);
-    }
-
-    // Handle Dancer, which triggers immediately after a move is used (rather than waiting on `this.end()`).
-    // Note the MoveUseMode check here prevents an infinite Dancer loop.
-    const dancerModes: MoveUseMode[] = [MoveUseMode.INDIRECT, MoveUseMode.REFLECTED] as const;
-    if (this.move.getMove().hasFlag(MoveFlags.DANCE_MOVE) && !dancerModes.includes(this.useMode)) {
-      // TODO: Fix in dancer PR to move to MEP for hit checks
-      globalScene.getField(true).forEach(pokemon => {
-        applyPostMoveUsedAbAttrs("PostMoveUsedAbAttr", pokemon, this.move, this.pokemon, this.targets);
-      });
     }
   }
 

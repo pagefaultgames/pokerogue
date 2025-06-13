@@ -1,4 +1,4 @@
-import { type PokeballCounts } from "#app/battle-scene";
+import type { PokeballCounts } from "#app/battle-scene";
 import { EvolutionItem } from "#app/data/balance/pokemon-evolutions";
 import { Gender } from "#app/data/gender";
 import { FormChangeItem } from "#enums/form-change-item";
@@ -6,21 +6,21 @@ import { type ModifierOverride } from "#app/modifier/modifier-type";
 import { Variant } from "#app/sprites/variant";
 import { Unlockables } from "#enums/unlockables";
 import { AbilityId } from "#enums/ability-id";
-import { BattleType } from "#enums/battle-type";
+import type { BattleType } from "#enums/battle-type";
 import { BerryType } from "#enums/berry-type";
-import { BiomeId } from "#enums/biome-id";
-import { EggTier } from "#enums/egg-type";
-import { MoveId } from "#enums/move-id";
-import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
-import { MysteryEncounterType } from "#enums/mystery-encounter-type";
+import type { BiomeId } from "#enums/biome-id";
+import type { EggTier } from "#enums/egg-type";
+import type { MoveId } from "#enums/move-id";
+import type { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
+import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { PokeballType } from "#enums/pokeball";
 import { PokemonType } from "#enums/pokemon-type";
-import { SpeciesId } from "#enums/species-id";
+import type { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import { StatusEffect } from "#enums/status-effect";
-import { TimeOfDay } from "#enums/time-of-day";
-import { TrainerType } from "#enums/trainer-type";
-import { VariantTier } from "#enums/variant-tier";
+import type { TimeOfDay } from "#enums/time-of-day";
+import type { TrainerType } from "#enums/trainer-type";
+import type { VariantTier } from "#enums/variant-tier";
 import { WeatherType } from "#enums/weather-type";
 
 /**
@@ -150,6 +150,10 @@ class DefaultOverrides {
   readonly ABILITY_OVERRIDE: AbilityId = AbilityId.NONE;
   readonly PASSIVE_ABILITY_OVERRIDE: AbilityId = AbilityId.NONE;
   readonly HAS_PASSIVE_ABILITY_OVERRIDE: boolean | null = null;
+  /**
+   * If set, will be added to each newly caught/obtained player Pokemon.
+   * @remarks If this is set to {@linkcode StatusEffect.SLEEP}, it will always have a constant duration of 4 turns.
+   */
   readonly STATUS_OVERRIDE: StatusEffect = StatusEffect.NONE;
   readonly GENDER_OVERRIDE: Gender | null = null;
   readonly MOVESET_OVERRIDE: MoveId | Array<MoveId> = [];

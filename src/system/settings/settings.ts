@@ -959,7 +959,7 @@ export function setSetting(setting: string, value: number): boolean {
               },
               {
                 label: "Türkçe (Needs Help)",
-                handler: () => changeLocaleHandler("tr")
+                handler: () => changeLocaleHandler("tr"),
               },
               {
                 label: "Русский (Needs Help)",
@@ -967,11 +967,11 @@ export function setSetting(setting: string, value: number): boolean {
               },
               {
                 label: "Dansk (Needs Help)",
-                handler: () => changeLocaleHandler("da")
+                handler: () => changeLocaleHandler("da"),
               },
               {
                 label: "Română (Needs Help)",
-                handler: () => changeLocaleHandler("ro")
+                handler: () => changeLocaleHandler("ro"),
               },
               {
                 label: i18next.t("settings:back"),

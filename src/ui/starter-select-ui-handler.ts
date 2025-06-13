@@ -1763,7 +1763,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       }
     } else if (this.randomCursorObj.visible) {
       switch (button) {
-        case Button.ACTION:
+        case Button.ACTION: {
           if (this.starterSpecies.length >= 6) {
             error = true;
             break;
@@ -1815,6 +1815,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             }
           });
           break;
+        }
         case Button.UP:
           this.randomCursorObj.setVisible(false);
           this.filterBarCursor = this.filterBar.numFilters - 1;
