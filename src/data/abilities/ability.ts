@@ -231,11 +231,6 @@ export interface AbAttrBaseParams {
    */
   readonly pokemon: Pokemon;
 
-  /**
-   * Whether the ability application results in the interaction being cancelled
-   */
-  readonly cancelled: BooleanHolder;
-
   /** Whether the ability's effects are being simulated.
    * Used to prevent, for instance, messages flyouts from being displayed.
    * Defaults to false.
@@ -244,6 +239,13 @@ export interface AbAttrBaseParams {
 
   /** Whether the ability is the passive ability. Default false */
   readonly passive?: boolean;
+}
+
+export interface AbAttrParamsWithCancel extends AbAttrBaseParams {
+  /**
+   * Whether the ability application results in the interaction being cancelled
+   */
+  readonly cancelled: BooleanHolder;
 }
 
 export abstract class AbAttr {
@@ -308,7 +310,7 @@ export class BlockRecoilDamageAttr extends AbAttr {
     super(false);
   }
 
-  override apply({ cancelled }: AbAttrBaseParams): void {
+  override apply({ cancelled }: AbAttrParamsWithCancel): void {
     cancelled.value = true;
   }
 }
@@ -338,7 +340,9 @@ export class DoubleBattleChanceAbAttr extends AbAttr {
   }
 }
 
-export class PostBattleInitAbAttr extends AbAttr {}
+export class PostBattleInitAbAttr extends AbAttr {
+  private declare readonly _: never;
+}
 
 export class PostBattleInitFormChangeAbAttr extends PostBattleInitAbAttr {
   private formFunc: (p: Pokemon) => number;
@@ -390,6 +394,7 @@ export class PostTeraFormChangeStatChangeAbAttr extends AbAttr {
  * Clears a specified weather whenever this attribute is called.
  */
 export class ClearWeatherAbAttr extends AbAttr {
+  // TODO: evaluate why this is a field and constructor parameter even though it is never checked
   private weather: WeatherType[];
 
   /**
@@ -419,6 +424,7 @@ export class ClearWeatherAbAttr extends AbAttr {
  * Clears a specified terrain whenever this attribute is called.
  */
 export class ClearTerrainAbAttr extends AbAttr {
+  // TODO: evaluate why this is a field and constructor parameter even though it is never checked
   private terrain: TerrainType[];
 
   /**
@@ -449,7 +455,7 @@ type PreDefendAbAttrCondition = (pokemon: Pokemon, attacker: Pokemon, move: Move
  * Often extended by other interfaces to add more parameters.
  * Used, e.g. by {@linkcode PreDefendAbAttr} and {@linkcode PostAttackAbAttr}
  */
-export interface AugmentMoveInteractionAbAttrParams extends AbAttrBaseParams {
+export interface AugmentMoveInteractionAbAttrParams extends AbAttrParamsWithCancel {
   /** The move used by (or against, for defend attributes) */
   move: Move;
   /** The pokemon on the other side of the interaction*/
@@ -469,7 +475,9 @@ export interface PreDefendModifyDamageAbAttrParams extends AugmentMoveInteractio
  *
  * ⚠️ This attribute must not be called via `applyAbAttrs` as its subclasses violate the Liskov Substitution Principle.
  */
-export abstract class PreDefendAbAttr extends AbAttr {}
+export abstract class PreDefendAbAttr extends AbAttr {
+  private declare readonly _: never;
+}
 
 export class PreDefendFullHpEndureAbAttr extends PreDefendAbAttr {
   override canApply({ pokemon, damage }: PreDefendModifyDamageAbAttrParams): boolean {
@@ -492,7 +500,7 @@ export class PreDefendFullHpEndureAbAttr extends PreDefendAbAttr {
 }
 
 export class BlockItemTheftAbAttr extends AbAttr {
-  override apply({ cancelled }: AbAttrBaseParams): void {
+  override apply({ cancelled }: AbAttrParamsWithCancel): void {
     cancelled.value = true;
   }
 
@@ -856,7 +864,9 @@ export interface PostMoveInteractionAbAttrParams extends AugmentMoveInteractionA
   readonly hitResult: HitResult;
 }
 
-export class PostDefendAbAttr extends AbAttr {}
+export class PostDefendAbAttr extends AbAttr {
+  private declare readonly _: never;
+}
 
 /**
  * Class for abilities that make drain moves deal damage to user instead of healing them.
@@ -983,26 +993,27 @@ export class PostDefendHpGatedStatStageChangeAbAttr extends PostDefendAbAttr {
 
 export class PostDefendApplyArenaTrapTagAbAttr extends PostDefendAbAttr {
   private condition: PokemonDefendCondition;
-  private tagType: ArenaTagType;
+  private arenaTagType: ArenaTagType;
 
   constructor(condition: PokemonDefendCondition, tagType: ArenaTagType) {
     super(true);
 
     this.condition = condition;
-    this.tagType = tagType;
+    this.arenaTagType = tagType;
   }
 
   override canApply({ pokemon, opponent: attacker, move }: PostMoveInteractionAbAttrParams): boolean {
-    const tag = globalScene.arena.getTag(this.tagType) as ArenaTrapTag;
+    const tag = globalScene.arena.getTag(this.arenaTagType) as ArenaTrapTag;
     return (
-      this.condition(pokemon, attacker, move) && (!globalScene.arena.getTag(this.tagType) || tag.layers < tag.maxLayers)
+      this.condition(pokemon, attacker, move) &&
+      (!globalScene.arena.getTag(this.arenaTagType) || tag.layers < tag.maxLayers)
     );
   }
 
   override apply({ simulated, pokemon }: PostMoveInteractionAbAttrParams): void {
     if (!simulated) {
       globalScene.arena.addTag(
-        this.tagType,
+        this.arenaTagType,
         0,
         undefined,
         pokemon.id,
@@ -1089,7 +1100,7 @@ export class PostDefendTerrainChangeAbAttr extends PostDefendAbAttr {
 }
 
 export class PostDefendContactApplyStatusEffectAbAttr extends PostDefendAbAttr {
-  public chance: number;
+  private chance: number;
   private effects: StatusEffect[];
 
   constructor(chance: number, ...effects: StatusEffect[]) {
@@ -1703,10 +1714,10 @@ may not modify the type of apply's parameter to an interface that introduces new
 or changes the type of existing fields.
 */
 export abstract class VariableMovePowerAbAttr extends PreAttackAbAttr {
-  override canApply<T>(_params: Closed<T, PreAttackModifyPowerAbAttrParams>): boolean {
+  override canApply(_params: Closed<PreAttackModifyPowerAbAttrParams>): boolean {
     return true;
   }
-  override apply<T>(_params: Closed<T, PreAttackModifyPowerAbAttrParams>): void {}
+  override apply(_params: Closed<PreAttackModifyPowerAbAttrParams>): void {}
 }
 
 export class MovePowerBoostAbAttr extends VariableMovePowerAbAttr {
@@ -1938,11 +1949,11 @@ export class AllyStatMultiplierAbAttr extends AbAttr {
  * (More specifically, whenever a move is pushed to the move history)
  */
 export class ExecutedMoveAbAttr extends AbAttr {
-  canApply<T>(_params: Closed<T, AbAttrBaseParams>): boolean {
+  canApply(_params: Closed<AbAttrBaseParams>): boolean {
     return true;
   }
 
-  apply<T>(_params: Closed<T, AbAttrBaseParams>): void {}
+  apply(_params: Closed<AbAttrBaseParams>): void {}
 }
 
 /**
@@ -1991,11 +2002,11 @@ export abstract class PostAttackAbAttr extends AbAttr {
    * This can be changed by providing a different {@link attackCondition} to the constructor. See {@link ConfusionOnStatusEffectAbAttr}
    * for an example of an effect that does not require a damaging move.
    */
-  override canApply<T>({ pokemon, opponent, move }: Closed<T, PostMoveInteractionAbAttrParams>): boolean {
+  override canApply({ pokemon, opponent, move }: Closed<PostMoveInteractionAbAttrParams>): boolean {
     return this.attackCondition(pokemon, opponent, move);
   }
 
-  override apply<T>(_params: Closed<T, PostMoveInteractionAbAttrParams>): void {}
+  override apply(_params: Closed<PostMoveInteractionAbAttrParams>): void {}
 }
 
 export class PostAttackStealHeldItemAbAttr extends PostAttackAbAttr {
@@ -2209,11 +2220,11 @@ type of their parameters. This is enforced via the Closed type.
  * Base class for defining all {@linkcode Ability} Attributes after a status effect has been set.
  */
 export class PostSetStatusAbAttr extends AbAttr {
-  canApply<T>(_params: Closed<T, PostSetStatusAbAttrParams>): boolean {
+  canApply(_params: Closed<PostSetStatusAbAttrParams>): boolean {
     return true;
   }
 
-  apply<T>(_params: Closed<T, PostSetStatusAbAttrParams>): void {}
+  apply(_params: Closed<PostSetStatusAbAttrParams>): void {}
 }
 
 /**
@@ -2258,11 +2269,11 @@ export class SynchronizeStatusAbAttr extends PostSetStatusAbAttr {
  * Not to be confused with {@link PostKnockOutAbAttr}, which applies after any pokemon is knocked out in battle.
  */
 export class PostVictoryAbAttr extends AbAttr {
-  canApply<T>(_params: Closed<T, AbAttrBaseParams>): boolean {
+  canApply(_params: Closed<AbAttrBaseParams>): boolean {
     return true;
   }
 
-  apply<T>(_params: Closed<T, AbAttrBaseParams>): void {}
+  apply(_params: Closed<AbAttrBaseParams>): void {}
 }
 
 class PostVictoryStatStageChangeAbAttr extends PostVictoryAbAttr {
@@ -2318,11 +2329,11 @@ export interface PostKnockOutAbAttrParams extends AbAttrBaseParams {
  * Not to be confused with {@linkcode PostVictoryAbAttr}, which applies after the user directly knocks out an opponent.
  */
 export abstract class PostKnockOutAbAttr extends AbAttr {
-  canApply<T>(_params: Closed<T, PostKnockOutAbAttrParams>): boolean {
+  canApply(_params: Closed<PostKnockOutAbAttrParams>): boolean {
     return true;
   }
 
-  apply<T>(_params: Closed<T, PostKnockOutAbAttrParams>): void {}
+  apply(_params: Closed<PostKnockOutAbAttrParams>): void {}
 }
 
 export class PostKnockOutStatStageChangeAbAttr extends PostKnockOutAbAttr {
@@ -2405,11 +2416,11 @@ export class IntimidateImmunityAbAttr extends AbAttr {
     super(false);
   }
 
-  override apply({ cancelled }: AbAttrBaseParams): void {
+  override apply({ cancelled }: AbAttrParamsWithCancel): void {
     cancelled.value = true;
   }
 
-  getTriggerMessage({ pokemon }: AbAttrBaseParams, abilityName: string, ..._args: any[]): string {
+  getTriggerMessage({ pokemon }: AbAttrParamsWithCancel, abilityName: string, ..._args: any[]): string {
     return i18next.t("abilityTriggers:intimidateImmunity", {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
       abilityName,
@@ -2429,7 +2440,7 @@ export class PostIntimidateStatStageChangeAbAttr extends AbAttr {
     this.overwrites = !!overwrites;
   }
 
-  override apply({ pokemon, simulated, cancelled }: AbAttrBaseParams): void {
+  override apply({ pokemon, simulated, cancelled }: AbAttrParamsWithCancel): void {
     if (!simulated) {
       globalScene.phaseManager.pushNew(
         "StatStageChangePhase",
@@ -2463,14 +2474,14 @@ export abstract class PostSummonAbAttr extends AbAttr {
     return this.activateOnGain;
   }
 
-  canApply<T>(_params: Closed<T, AbAttrBaseParams>): boolean {
+  canApply(_params: Closed<AbAttrBaseParams>): boolean {
     return true;
   }
 
   /**
    * Applies ability post summon (after switching in)
    */
-  apply<T>(_params: Closed<T, AbAttrBaseParams>): void {}
+  apply(_params: Closed<AbAttrBaseParams>): void {}
 }
 
 /**
@@ -2648,7 +2659,7 @@ export class PostSummonStatStageChangeAbAttr extends PostSummonAbAttr {
     for (const opponent of pokemon.getOpponents()) {
       const cancelled = new BooleanHolder(false);
       if (this.intimidate) {
-        const params: AbAttrBaseParams = { pokemon: opponent, cancelled, simulated };
+        const params: AbAttrParamsWithCancel = { pokemon: opponent, cancelled, simulated };
         applyAbAttrs("IntimidateImmunityAbAttr", params);
         applyAbAttrs("PostIntimidateStatStageChangeAbAttr", params);
 
@@ -3165,11 +3176,11 @@ export abstract class PreSwitchOutAbAttr extends AbAttr {
     super(showAbility);
   }
 
-  canApply<T>(_params: Closed<T, AbAttrBaseParams>): boolean {
+  canApply(_params: Closed<AbAttrBaseParams>): boolean {
     return true;
   }
 
-  apply<T>(_params: Closed<T, AbAttrBaseParams>): void {}
+  apply(_params: Closed<AbAttrBaseParams>): void {}
 }
 
 /**
@@ -3296,11 +3307,11 @@ export class PreSwitchOutFormChangeAbAttr extends PreSwitchOutAbAttr {
  * Base class for ability attributes that apply their effect just before the user leaves the field
  */
 export class PreLeaveFieldAbAttr extends AbAttr {
-  canApplyPreLeaveField<T>(_params: Closed<T, AbAttrBaseParams>): boolean {
+  canApplyPreLeaveField(_params: Closed<AbAttrBaseParams>): boolean {
     return true;
   }
 
-  applyPreLeaveField<T>(_params: Closed<T, AbAttrBaseParams>): void {}
+  applyPreLeaveField(_params: Closed<AbAttrBaseParams>): void {}
 }
 
 /**
@@ -3390,11 +3401,11 @@ export interface PreStatStageChangeAbAttrParams extends AbAttrBaseParams {
  * Base class for ability attributes that apply their effect before a stat stage change.
  */
 export abstract class PreStatStageChangeAbAttr extends AbAttr {
-  canApplyPreStatStageChange<T>(_params: Closed<T, PreStatStageChangeAbAttrParams>): boolean {
+  canApplyPreStatStageChange(_params: Closed<PreStatStageChangeAbAttrParams>): boolean {
     return true;
   }
 
-  applyPreStatStageChange<T>(_params: Closed<T, PreStatStageChangeAbAttrParams>): void {}
+  applyPreStatStageChange(_params: Closed<PreStatStageChangeAbAttrParams>): void {}
 }
 
 /**
@@ -3518,11 +3529,11 @@ export interface PreSetStatusAbAttrParams extends AbAttrBaseParams {
 
 export class PreSetStatusAbAttr extends AbAttr {
   /** Return whether the ability attribute can be applied */
-  canApply<T>(_params: Closed<T, PreSetStatusAbAttrParams>): boolean {
+  canApply(_params: Closed<PreSetStatusAbAttrParams>): boolean {
     return true;
   }
 
-  apply<T>(_params: Closed<T, PreSetStatusAbAttrParams>): void {}
+  apply(_params: Closed<PreSetStatusAbAttrParams>): void {}
 }
 
 /**
@@ -3708,11 +3719,11 @@ export interface PreApplyBattlerTagAbAttrParams extends AbAttrBaseParams {
  * Base class for ability attributes that apply their effect before a BattlerTag {@linkcode BattlerTag} is applied.
  */
 export abstract class PreApplyBattlerTagAbAttr extends AbAttr {
-  canApplyPreApplyBattlerTag<T>(_params: Closed<T, PreApplyBattlerTagAbAttrParams>): boolean {
+  canApplyPreApplyBattlerTag(_params: Closed<PreApplyBattlerTagAbAttrParams>): boolean {
     return true;
   }
 
-  applyPreApplyBattlerTag<T>(_params: Closed<T, PreApplyBattlerTagAbAttrParams>): void {}
+  applyPreApplyBattlerTag(_params: Closed<PreApplyBattlerTagAbAttrParams>): void {}
 }
 
 /**
@@ -3874,7 +3885,7 @@ export class BlockNonDirectDamageAbAttr extends AbAttr {
     super(false);
   }
 
-  override apply({ cancelled }: AbAttrBaseParams): void {
+  override apply({ cancelled }: AbAttrParamsWithCancel): void {
     cancelled.value = true;
   }
 }
@@ -3894,19 +3905,19 @@ export class BlockStatusDamageAbAttr extends AbAttr {
     this.effects = effects;
   }
 
-  override canApply({ pokemon }: AbAttrBaseParams): boolean {
+  override canApply({ pokemon }: AbAttrParamsWithCancel): boolean {
     return !!pokemon.status?.effect && this.effects.includes(pokemon.status.effect);
   }
 
   /**
    */
-  override apply({ cancelled }: AbAttrBaseParams): void {
+  override apply({ cancelled }: AbAttrParamsWithCancel): void {
     cancelled.value = true;
   }
 }
 
 export class BlockOneHitKOAbAttr extends AbAttr {
-  override apply({ cancelled }: AbAttrBaseParams): void {
+  override apply({ cancelled }: AbAttrParamsWithCancel): void {
     cancelled.value = true;
   }
 }
@@ -3954,17 +3965,17 @@ export class IgnoreContactAbAttr extends AbAttr {}
 /**
  * Shared interface for attributes that respond to a weather.
  */
-export interface PreWeatherEffectAbAttrParams extends AbAttrBaseParams {
+export interface PreWeatherEffectAbAttrParams extends AbAttrParamsWithCancel {
   /** The weather effect for the interaction. `null` is treated as no weather */
   weather: Weather | null;
 }
 
 export abstract class PreWeatherEffectAbAttr extends AbAttr {
-  override canApply<T>(_params: Closed<T, PreWeatherEffectAbAttrParams>): boolean {
+  override canApply(_params: Closed<PreWeatherEffectAbAttrParams>): boolean {
     return true;
   }
 
-  override apply<T>(_params: Closed<T, PreWeatherEffectAbAttrParams>): void {}
+  override apply(_params: Closed<PreWeatherEffectAbAttrParams>): void {}
 }
 
 /**
@@ -4211,11 +4222,11 @@ export interface PostWeatherChangeAbAttrParams extends AbAttrBaseParams {
  * Base class for ability attributes that apply their effect after a weather change.
  */
 export abstract class PostWeatherChangeAbAttr extends AbAttr {
-  canApply<T = PostWeatherChangeAbAttrParams>(_params: Closed<T, PostWeatherChangeAbAttrParams>): boolean {
+  canApply(_params: Closed<PostWeatherChangeAbAttrParams>): boolean {
     return true;
   }
 
-  apply<T = PostWeatherChangeAbAttrParams>(_params: Closed<T, PostWeatherChangeAbAttrParams>): void {}
+  apply(_params: Closed<PostWeatherChangeAbAttrParams>): void {}
 }
 
 /**
@@ -4417,11 +4428,11 @@ export interface PostTerrainChangeAbAttrParams extends AbAttrBaseParams {
 }
 
 export class PostTerrainChangeAbAttr extends AbAttr {
-  canApply<T>(_params: Closed<T, PostTerrainChangeAbAttrParams>): boolean {
+  canApply(_params: Closed<PostTerrainChangeAbAttrParams>): boolean {
     return true;
   }
 
-  apply<T>(_params: Closed<T, PostTerrainChangeAbAttrParams>): void {}
+  apply(_params: Closed<PostTerrainChangeAbAttrParams>): void {}
 }
 
 export class PostTerrainChangeAddBattlerTagAttr extends PostTerrainChangeAbAttr {
@@ -4456,11 +4467,11 @@ function getTerrainCondition(...terrainTypes: TerrainType[]): AbAttrCondition {
 }
 
 export class PostTurnAbAttr extends AbAttr {
-  canApply<T>(_params: Closed<T, AbAttrBaseParams>): boolean {
+  canApply(_params: Closed<AbAttrBaseParams>): boolean {
     return true;
   }
 
-  apply<T>(_params: Closed<T, AbAttrBaseParams>): void {}
+  apply(_params: Closed<AbAttrBaseParams>): void {}
 }
 
 /**
@@ -4896,11 +4907,11 @@ export interface PostMoveUsedAbAttrParams extends AbAttrBaseParams {
  * Triggers just after a move is used either by the opponent or the player
  */
 export class PostMoveUsedAbAttr extends AbAttr {
-  canApplyPostMoveUsed<T = AbAttrBaseParams>(_params: Closed<T, PostMoveUsedAbAttrParams>): boolean {
+  canApplyPostMoveUsed(_params: Closed<PostMoveUsedAbAttrParams>): boolean {
     return true;
   }
 
-  applyPostMoveUsed(_params: Closed<PostMoveUsedAbAttrParams, PostMoveUsedAbAttrParams>): void {}
+  applyPostMoveUsed(_params: Closed<PostMoveUsedAbAttrParams>): void {}
 }
 
 /**
@@ -5041,11 +5052,12 @@ export class StatStageChangeCopyAbAttr extends AbAttr {
 }
 
 export class BypassBurnDamageReductionAbAttr extends AbAttr {
+  private declare readonly _: never;
   constructor() {
     super(false);
   }
 
-  override apply({ cancelled }: AbAttrBaseParams): void {
+  override apply({ cancelled }: AbAttrParamsWithCancel): void {
     cancelled.value = true;
   }
 }
@@ -5091,7 +5103,7 @@ export class PreventBerryUseAbAttr extends AbAttr {
   /**
    * Prevent use of opposing berries.
    */
-  override apply({ cancelled }: AbAttrBaseParams): void {
+  override apply({ cancelled }: AbAttrParamsWithCancel): void {
     cancelled.value = true;
   }
 }
@@ -5243,15 +5255,16 @@ export interface PostBattleAbAttrParams extends AbAttrBaseParams {
 
 // TODO PICKUP FROM HERE 6/12/2025
 export abstract class PostBattleAbAttr extends AbAttr {
+  private declare readonly _: never;
   constructor(showAbility = true) {
     super(showAbility);
   }
 
-  canApply<T>(_params: Closed<T, PostBattleAbAttrParams>): boolean {
+  canApply(_params: Closed<PostBattleAbAttrParams>): boolean {
     return true;
   }
 
-  apply<T>(_params: Closed<T, PostBattleAbAttrParams>): void {}
+  apply(_params: Closed<PostBattleAbAttrParams>): void {}
 }
 
 export class PostBattleLootAbAttr extends PostBattleAbAttr {
@@ -5298,11 +5311,11 @@ export interface PostFaintAbAttrParams extends AbAttrBaseParams {
 }
 
 export abstract class PostFaintAbAttr extends AbAttr {
-  canApply<T>(_params: Closed<T, PostFaintAbAttrParams>): boolean {
+  canApply(_params: Closed<PostFaintAbAttrParams>): boolean {
     return true;
   }
 
-  apply<T>(_params: Closed<T, PostFaintAbAttrParams>): void {}
+  apply(_params: Closed<PostFaintAbAttrParams>): void {}
 }
 
 /**
@@ -5443,7 +5456,9 @@ export class RedirectTypeMoveAbAttr extends RedirectMoveAbAttr {
   }
 }
 
-export class BlockRedirectAbAttr extends AbAttr {}
+export class BlockRedirectAbAttr extends AbAttr {
+  private declare readonly _: never;
+}
 
 export interface ReduceStatusEffectDurationAbAttrParams extends AbAttrBaseParams {
   /** The status effect in question */
@@ -5490,11 +5505,11 @@ export abstract class FlinchEffectAbAttr extends AbAttr {
     super(true);
   }
 
-  canApply<T>(_params: Closed<T, AbAttrBaseParams>): boolean {
+  canApply(_params: Closed<AbAttrBaseParams>): boolean {
     return true;
   }
 
-  apply<T>(_params: Closed<T, AbAttrBaseParams>): void {}
+  apply(_params: Closed<AbAttrBaseParams>): void {}
 }
 
 export class FlinchStatStageChangeAbAttr extends FlinchEffectAbAttr {
@@ -5525,7 +5540,7 @@ export class IncreasePpAbAttr extends AbAttr {}
 
 /** @sealed */
 export class ForceSwitchOutImmunityAbAttr extends AbAttr {
-  override apply({ cancelled }: AbAttrBaseParams): void {
+  override apply({ cancelled }: AbAttrParamsWithCancel): void {
     cancelled.value = true;
   }
 }
@@ -5616,10 +5631,14 @@ export class MoveAbilityBypassAbAttr extends AbAttr {
   }
 }
 
-export class AlwaysHitAbAttr extends AbAttr {}
+export class AlwaysHitAbAttr extends AbAttr {
+  private declare readonly _: never;
+}
 
 /** Attribute for abilities that allow moves that make contact to ignore protection (i.e. Unseen Fist) */
-export class IgnoreProtectOnContactAbAttr extends AbAttr {}
+export class IgnoreProtectOnContactAbAttr extends AbAttr {
+  private declare readonly _: never;
+}
 
 export interface InfiltratorAbAttrParams extends AbAttrBaseParams {
   /** Holds a flag indicating that infiltrator's bypass is active */
@@ -5632,6 +5651,7 @@ export interface InfiltratorAbAttrParams extends AbAttrBaseParams {
  * @sealed
  */
 export class InfiltratorAbAttr extends AbAttr {
+  private declare readonly _: never;
   constructor() {
     super(false);
   }
@@ -5700,7 +5720,7 @@ export class IgnoreTypeImmunityAbAttr extends AbAttr {
   }
 }
 
-export interface IgnoreTypeStatusEffectImmunityAbAttrParams extends AbAttrBaseParams {
+export interface IgnoreTypeStatusEffectImmunityAbAttrParams extends AbAttrParamsWithCancel {
   /** The status effect being applied */
   readonly statusEffect: StatusEffect;
   /** Holds whether the type immunity should be bypassed */
@@ -5756,7 +5776,7 @@ export class MoneyAbAttr extends PostBattleAbAttr {
  */
 export class PostSummonStatStageChangeOnArenaAbAttr extends PostSummonStatStageChangeAbAttr {
   /** The type of arena tag that conditions the stat change. */
-  private tagType: ArenaTagType;
+  private arenaTagType: ArenaTagType;
 
   /**
    * Creates an instance of PostSummonStatStageChangeOnArenaAbAttr.
@@ -5766,12 +5786,12 @@ export class PostSummonStatStageChangeOnArenaAbAttr extends PostSummonStatStageC
    */
   constructor(tagType: ArenaTagType) {
     super([Stat.ATK], 1, true, false);
-    this.tagType = tagType;
+    this.arenaTagType = tagType;
   }
 
   override canApply(params: AbAttrBaseParams): boolean {
     const side = params.pokemon.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
-    return (globalScene.arena.getTagOnSide(this.tagType, side) ?? false) && super.canApply(params);
+    return (globalScene.arena.getTagOnSide(this.arenaTagType, side) ?? false) && super.canApply(params);
   }
 }
 
@@ -5842,9 +5862,10 @@ export class FormBlockDamageAbAttr extends ReceivedMoveDamageMultiplierAbAttr {
  * @see {@linkcode applyPreSummon()}
  */
 export class PreSummonAbAttr extends AbAttr {
-  apply<T>(_params: Closed<T, AbAttrBaseParams>): void {}
+  private declare readonly _: never;
+  apply(_params: Closed<AbAttrBaseParams>): void {}
 
-  canApply<T>(_params: Closed<T, AbAttrBaseParams>): boolean {
+  canApply(_params: Closed<AbAttrBaseParams>): boolean {
     return true;
   }
 }

@@ -33,11 +33,7 @@ import type { ArenaTrapTag } from "../arena-tag";
 import { WeakenMoveTypeTag } from "../arena-tag";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import {
-  applyAbAttrs,
-  applyPostAttackAbAttrs,
-  applyPostItemLostAbAttrs,
-  applyPreAttackAbAttrs,
-  applyPreDefendAbAttrs
+  applyAbAttrs
 } from "../abilities/apply-ab-attrs";
 import { allAbilities, allMoves } from "../data-lists";
 import {

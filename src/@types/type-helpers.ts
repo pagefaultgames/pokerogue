@@ -18,17 +18,7 @@ export type Exact<T> = {
 
 /**
  * Type hint that indicates that the type is intended to be closed to a specific shape.
+ * Does not actually do anything special, is really just an alias for X.
  *
- * @remarks
- * Can be used to ensure that a particular parameter does not change when subclassed, **But will only do so for one level of inheritance**
- * ```ts
- * type foo = { } // whatever
- * class Foo {
- *  method<T>(param: Closed<T, foo>)
- * }
- * ```
- *
- * @typeParam T - The type to check
- * @typeParam Shape - The shape to match against
  */
-export type Closed<X, Shape> = X extends Shape ? (Shape extends X ? X : never) : never;
+export type Closed<X> = X;
