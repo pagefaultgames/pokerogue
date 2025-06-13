@@ -6530,13 +6530,26 @@ export class PostFaintContactDamageAbAttr extends PostFaintAbAttr {
     _hitResult?: HitResult,
     ..._args: any[]
   ): boolean {
-    const diedToDirectDamage =
-      move !== undefined &&
-      attacker !== undefined &&
-      move.doesFlagEffectApply({ flag: MoveFlags.MAKES_CONTACT, user: attacker, target: pokemon });
+    // Return early if ability user did not die to a direct-contact attack.
+    if (
+      move === undefined ||
+      attacker === undefined ||
+      !move.doesFlagEffectApply({ flag: MoveFlags.MAKES_CONTACT, user: attacker, target: pokemon })
+    ) {
+      return false;
+    }
+
     const cancelled = new BooleanHolder(false);
-    globalScene.getField(true).map(p => applyAbAttrs("FieldPreventExplosiveMovesAbAttr", p, cancelled, simulated));
-    return !(!diedToDirectDamage || cancelled.value || attacker!.hasAbilityWithAttr("BlockNonDirectDamageAbAttr"));
+    // TODO: This should be in speed order
+    globalScene.getField(true).forEach(p => applyAbAttrs("FieldPreventExplosiveMovesAbAttr", p, cancelled, simulated));
+
+    if (cancelled.value) {
+      return false;
+    }
+
+    // TODO: Does aftermath display text if the attacker has Magic Guard?
+    applyAbAttrs("BlockNonDirectDamageAbAttr", attacker, cancelled);
+    return cancelled.value;
   }
 
   override applyPostFaint(
@@ -6545,15 +6558,15 @@ export class PostFaintContactDamageAbAttr extends PostFaintAbAttr {
     simulated: boolean,
     attacker?: Pokemon,
     _move?: Move,
-    _hitResult?: HitResult,
-    ..._args: any[]
   ): void {
-    if (!simulated) {
-      attacker!.damageAndUpdate(toDmgValue(attacker!.getMaxHp() * (1 / this.damageRatio)), {
-        result: HitResult.INDIRECT,
-      });
-      attacker!.turnData.damageTaken += toDmgValue(attacker!.getMaxHp() * (1 / this.damageRatio));
+    if (simulated) {
+      return;
     }
+
+    attacker!.damageAndUpdate(toDmgValue(attacker!.getMaxHp() * (1 / this.damageRatio)), {
+      result: HitResult.INDIRECT,
+    });
+    attacker!.turnData.damageTaken += toDmgValue(attacker!.getMaxHp() * (1 / this.damageRatio));
   }
 
   getTriggerMessage(pokemon: Pokemon, abilityName: string, ..._args: any[]): string {
@@ -6565,27 +6578,38 @@ export class PostFaintContactDamageAbAttr extends PostFaintAbAttr {
 }
 
 /**
- * Attribute used for abilities (Innards Out) that damage the opponent based on how much HP the last attack used to knock out the owner of the ability.
+ * Attribute used for abilities that damage an opponent who faints the ability holder
+ * equal to the amount of damage the last attack inflicted.
+ *
+ * Used for {@linkcode Abilities.INNARDS_OUT}.
  */
 export class PostFaintHPDamageAbAttr extends PostFaintAbAttr {
   override applyPostFaint(
     pokemon: Pokemon,
     _passive: boolean,
-    simulated: boolean,
+    _simulated: boolean,
     attacker?: Pokemon,
     move?: Move,
-    _hitResult?: HitResult,
-    ..._args: any[]
   ): void {
-    //If the mon didn't die to indirect damage
-    if (move !== undefined && attacker !== undefined && !simulated) {
-      const damage = pokemon.turnData.attacksReceived[0].damage;
-      attacker.damageAndUpdate(damage, { result: HitResult.INDIRECT });
-      attacker.turnData.damageTaken += damage;
+    // return early if the user died to indirect damage, target has magic guard or was KO'd by an ally
+    if (move === undefined || attacker === undefined || attacker.getAlly() === pokemon) {
+      return;
     }
+
+    // TODO: Confirm that magic guard's flyout shows here?
+    const cancelled = new BooleanHolder(false);
+    applyAbAttrs("BlockNonDirectDamageAbAttr", attacker, cancelled);
+    if (cancelled.value) {
+      return;
+    }
+
+    const damage = pokemon.turnData.attacksReceived[0].damage;
+    attacker.damageAndUpdate(damage, { result: HitResult.INDIRECT });
+    attacker.turnData.damageTaken += damage;
   }
 
-  getTriggerMessage(pokemon: Pokemon, abilityName: string, ..._args: any[]): string {
+  // Oddly, Innards Out still shows a flyout if the effect was blocked due to Magic Guard...
+  override getTriggerMessage(pokemon: Pokemon, abilityName: string): string {
     return i18next.t("abilityTriggers:postFaintHpDamage", {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
       abilityName,
