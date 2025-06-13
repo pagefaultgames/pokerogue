@@ -17,10 +17,6 @@ import type { TurnCommand } from "#app/battle";
 export class TurnStartPhase extends FieldPhase {
   public readonly phaseName = "TurnStartPhase";
 
-  constructor() {
-    super(false);
-  }
-
   /**
    * This orders the active Pokemon on the field by speed into an BattlerIndex array and returns that array.
    * It also checks for Trick Room and reverses the array if it is present.
@@ -160,7 +156,8 @@ export class TurnStartPhase extends FieldPhase {
         return;
       }
 
-      // TODO: This logic is questionable, especially given the fact that `order` is used for exactly 1 thing...
+      // TODO: This logic is questionable and needs to be redone,
+      // especially given the fact that `order` is used for exactly 1 thing...
       if (turnCommand.command === Command.FIGHT) {
         pokemon.turnData.order = index;
       }
@@ -196,7 +193,7 @@ export class TurnStartPhase extends FieldPhase {
           "SwitchSummonPhase",
           turnCommand.args?.[0] ? SwitchType.BATON_PASS : SwitchType.SWITCH,
           pokemon.getFieldIndex(),
-          turnCommand.cursor!,
+          turnCommand.cursor!, // TODO: Is this bang correct?
           true,
           pokemon.isPlayer(),
         );
