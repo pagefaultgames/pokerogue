@@ -1,9 +1,10 @@
-import type { AbAttrBaseParams, AbAttrMap, CallableAbAttrString } from "#app/@types/ability-types";
+import type { AbAttrParamMap } from "#app/@types/ab-attr-types";
+import type { AbAttr, AbAttrBaseParams, AbAttrMap, CallableAbAttrString } from "#app/@types/ability-types";
 import { globalScene } from "#app/global-scene";
 
 function applySingleAbAttrs<T extends CallableAbAttrString>(
   attrType: T,
-  params: Parameters<AbAttrMap[T]["apply"]>[0],
+  params: AbAttrParamMap[T],
   gainedMidTurn = false,
   messages: string[] = [],
 ) {
@@ -11,6 +12,13 @@ function applySingleAbAttrs<T extends CallableAbAttrString>(
   if (!pokemon?.canApplyAbility(passive) || (passive && pokemon.getPassiveAbility().id === pokemon.getAbility().id)) {
     return;
   }
+
+  const attr = 1 as unknown as AbAttr;
+
+  if (attr.is("BlockRedirectAbAttr")) {
+    attr
+  }
+
 
   const ability = passive ? pokemon.getPassiveAbility() : pokemon.getAbility();
   if (
@@ -22,8 +30,9 @@ function applySingleAbAttrs<T extends CallableAbAttrString>(
     return;
   }
 
+
+  // typescript assert 
   for (const attr of ability.getAttrs(attrType)) {
-    declare const attr: AbAttrMap[T];
     const condition = attr.getCondition();
     let abShown = false;
     if ((condition && !condition(pokemon)) || !attr.canApply(params)) {
@@ -36,7 +45,7 @@ function applySingleAbAttrs<T extends CallableAbAttrString>(
       globalScene.phaseManager.queueAbilityDisplay(pokemon, passive, true);
       abShown = true;
     }
-    const message = attr.getTriggerMessage(pokemon, ability.name, params);
+    const message = attr.getTriggerMessage(params, ability.name);
     if (message) {
       if (!simulated) {
         globalScene.phaseManager.queueMessage(message);
@@ -44,7 +53,7 @@ function applySingleAbAttrs<T extends CallableAbAttrString>(
       messages.push(message);
     }
 
-    attr.apply(params);
+    
 
     if (abShown) {
       globalScene.phaseManager.queueAbilityDisplay(pokemon, passive, false);
