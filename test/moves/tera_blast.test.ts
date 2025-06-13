@@ -1,6 +1,6 @@
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex } from "#enums/battler-index";
 import { Stat } from "#enums/stat";
-import { TeraMoveCategoryAttr } from "#app/data/moves/move";
+import type { TeraMoveCategoryAttr } from "#app/data/moves/move";
 import { allMoves } from "#app/data/data-lists";
 import type Move from "#app/data/moves/move";
 import { PokemonType } from "#enums/pokemon-type";
@@ -23,7 +23,7 @@ describe("Moves - Tera Blast", () => {
       type: Phaser.HEADLESS,
     });
     moveToCheck = allMoves[MoveId.TERA_BLAST];
-    teraBlastAttr = moveToCheck.getAttrs(TeraMoveCategoryAttr)[0];
+    teraBlastAttr = moveToCheck.getAttrs("TeraMoveCategoryAttr")[0];
   });
 
   afterEach(() => {

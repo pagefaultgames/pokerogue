@@ -1,16 +1,19 @@
 import { globalScene } from "#app/global-scene";
-import type { BattlerIndex } from "#app/battle";
-import { CommonBattleAnim, CommonAnim } from "#app/data/battle-anims";
-import { getStatusEffectObtainText } from "#app/data/status-effect";
+import type { BattlerIndex } from "#enums/battler-index";
+import { CommonBattleAnim } from "#app/data/battle-anims";
+import { CommonAnim } from "#enums/move-anims-common";
+import { getStatusEffectObtainText, getStatusEffectOverlapText } from "#app/data/status-effect";
 import { StatusEffect } from "#app/enums/status-effect";
 import type Pokemon from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { PokemonPhase } from "./pokemon-phase";
-import { SpeciesFormChangeStatusEffectTrigger } from "#app/data/pokemon-forms";
-import { applyPostSetStatusAbAttrs, PostSetStatusAbAttr } from "#app/data/abilities/ability";
+import { SpeciesFormChangeStatusEffectTrigger } from "#app/data/pokemon-forms/form-change-triggers";
+import { applyPostSetStatusAbAttrs } from "#app/data/abilities/apply-ab-attrs";
+import { isNullOrUndefined } from "#app/utils/common";
 
 /** The phase where pokemon obtain status effects. */
 export class ObtainStatusEffectPhase extends PokemonPhase {
+  public readonly phaseName = "ObtainStatusEffectPhase";
   private statusEffect: StatusEffect;
   private sleepTurnsRemaining?: number;
   private sourceText?: string | null;
@@ -42,26 +45,20 @@ export class ObtainStatusEffectPhase extends PokemonPhase {
 
   start() {
     const pokemon = this.getPokemon();
-    // No need to override status as the calling `trySetStatus` call will do it for us
-    // TODO: Consider changing this
-    if (!pokemon.canSetStatus(this.statusEffect, false, false, this.sourcePokemon)) {
-      this.end();
-      return;
-    }
 
     pokemon.doSetStatus(this.statusEffect, this.sleepTurnsRemaining);
     pokemon.updateInfo(true);
 
     new CommonBattleAnim(CommonAnim.POISON + (this.statusEffect! - 1), pokemon).play(false, () => {
-      globalScene.queueMessage(
+      globalScene.phaseManager.queueMessage(
         getStatusEffectObtainText(this.statusEffect, getPokemonNameWithAffix(pokemon), this.sourceText ?? undefined),
       );
       if (this.statusEffect && this.statusEffect !== StatusEffect.FAINT) {
         globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeStatusEffectTrigger, true);
         // If the status was applied from a move, ensure abilities are not ignored for follow-up triggers.
-        // (This is fine as this phase only runs after the MoveEffectPhase concludes and all effects have been applied.)
+        // TODO: Ensure this isn't breaking any other phases unshifted afterwards
         globalScene.arena.setIgnoreAbilities(false);
-        applyPostSetStatusAbAttrs(PostSetStatusAbAttr, pokemon, this.statusEffect, this.sourcePokemon);
+        applyPostSetStatusAbAttrs("PostSetStatusAbAttr", pokemon, this.statusEffect, this.sourcePokemon);
       }
       this.end();
     });
