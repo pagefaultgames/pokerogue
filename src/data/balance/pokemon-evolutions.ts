@@ -260,11 +260,12 @@ export class SpeciesFormEvolution {
       }
       this.desc = strings
         .filter(str => str !== "")
-        .map((str, index, arr) => {
+        .map((str, index) => {
           if (index === 0) {
             len = str.length;
             return str;
-          } else if (len + str.length > 60) {
+          }
+          if (len + str.length > 60) {
             len = str.length;
             return "\n" + str[0].toLowerCase() + str.slice(1);
           }

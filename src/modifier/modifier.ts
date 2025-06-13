@@ -922,7 +922,7 @@ export class EvoTrackerModifier extends PokemonHeldItemModifier {
     return true;
   }
 
-  getIconStackText(virtual?: boolean): Phaser.GameObjects.BitmapText | null {
+  getIconStackText(_virtual?: boolean): Phaser.GameObjects.BitmapText | null {
     const pokemon = this.getPokemon();
 
     const count = (pokemon?.getPersistentTreasureCount() || 0) + this.getStackCount();
@@ -937,7 +937,7 @@ export class EvoTrackerModifier extends PokemonHeldItemModifier {
     return text;
   }
 
-  getMaxHeldItemCount(pokemon: Pokemon): number {
+  getMaxHeldItemCount(_pokemon: Pokemon): number {
     return 999;
   }
 

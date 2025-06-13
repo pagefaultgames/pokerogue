@@ -6068,7 +6068,7 @@ export class EnemyPokemon extends Pokemon {
       let prevolution: SpeciesId;
       let speciesId = species.speciesId;
       while ((prevolution = pokemonPrevolutions[speciesId])) {
-        const evolution = pokemonEvolutions[prevolution].find(
+        const _evolution = pokemonEvolutions[prevolution].find(
           pe => pe.speciesId === speciesId && (!pe.evoFormKey || pe.evoFormKey === this.getFormKey()),
         );
         speciesId = prevolution;
