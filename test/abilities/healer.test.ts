@@ -6,9 +6,9 @@ import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { isNullOrUndefined } from "#app/utils/common";
-import { PostTurnResetStatusAbAttr } from "#app/data/abilities/ability";
 import { allAbilities } from "#app/data/data-lists";
 import type Pokemon from "#app/field/pokemon";
+import { PostTurnResetStatusAbAttr } from "#app/@types/ability-types";
 
 describe("Abilities - Healer", () => {
   let phaserGame: Phaser.Game;
@@ -36,7 +36,7 @@ describe("Abilities - Healer", () => {
       .enemyMoveset(MoveId.SPLASH);
 
     // Mock healer to have a 100% chance of healing its ally
-    vi.spyOn(allAbilities[AbilityId.HEALER].getAttrs(PostTurnResetStatusAbAttr)[0], "getCondition").mockReturnValue(
+    vi.spyOn(allAbilities[AbilityId.HEALER].getAttrs("PostTurnResetStatusAbAttr")[0], "getCondition").mockReturnValue(
       (pokemon: Pokemon) => !isNullOrUndefined(pokemon.getAlly()),
     );
   });
@@ -47,7 +47,7 @@ describe("Abilities - Healer", () => {
     await game.classicMode.startBattle([SpeciesId.MAGIKARP, SpeciesId.MAGIKARP]);
 
     const user = game.scene.getPlayerPokemon()!;
-    // Only want one magikarp to have the ability.
+    // Only want one magikarp to have the ability
     vi.spyOn(user, "getAbility").mockReturnValue(allAbilities[AbilityId.HEALER]);
     game.move.select(MoveId.SPLASH);
     // faint the ally

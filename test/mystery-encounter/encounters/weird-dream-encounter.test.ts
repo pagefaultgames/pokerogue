@@ -19,7 +19,7 @@ import { WeirdDreamEncounter } from "#app/data/mystery-encounters/encounters/wei
 import * as EncounterTransformationSequence from "#app/data/mystery-encounters/utils/encounter-transformation-sequence";
 import { SelectModifierPhase } from "#app/phases/select-modifier-phase";
 import { CommandPhase } from "#app/phases/command-phase";
-import { ModifierTier } from "#app/modifier/modifier-tier";
+import { ModifierTier } from "#enums/modifier-tier";
 
 const namespace = "mysteryEncounters/weirdDream";
 const defaultParty = [SpeciesId.MAGBY, SpeciesId.HAUNTER, SpeciesId.ABRA];
