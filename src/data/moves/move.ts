@@ -4433,6 +4433,11 @@ export class SwallowHealAttr extends HealAttr {
 
     return false;
   }
+
+  // TODO: Is this correct? Should stockpile count as "succeeding" even at full HP?
+  override getCondition(): MoveConditionFunc {
+    return hasStockpileStacksCondition;
+  }
 }
 
 const hasStockpileStacksCondition: MoveConditionFunc = (user) => {
@@ -9266,10 +9271,11 @@ export function initMoves() {
       .attr(SpitUpPowerAttr, 100)
       .attr(RemoveBattlerTagAttr, [ BattlerTagType.STOCKPILING ], true),
     new SelfStatusMove(MoveId.SWALLOW, PokemonType.NORMAL, -1, 10, -1, 0, 3)
-      .condition(hasStockpileStacksCondition)
       .attr(SwallowHealAttr)
       .attr(RemoveBattlerTagAttr, [ BattlerTagType.STOCKPILING ], true)
-      .triageMove(),
+      .triageMove()
+      // TODO: Verify if using Swallow at full HP still consumes stacks or not
+      .edgeCase(),
     new AttackMove(MoveId.HEAT_WAVE, PokemonType.FIRE, MoveCategory.SPECIAL, 95, 90, 10, 10, 0, 3)
       .attr(HealStatusEffectAttr, true, StatusEffect.FREEZE)
       .attr(StatusEffectAttr, StatusEffect.BURN)
