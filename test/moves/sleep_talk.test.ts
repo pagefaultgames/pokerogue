@@ -46,17 +46,17 @@ describe("Moves - Sleep Talk", () => {
     const feebas = game.field.getPlayerPokemon();
     expect(feebas.getStatStage(Stat.ATK)).toBe(2);
     expect(feebas.getLastXMoves(2)).toEqual([
-        expect.objectContaining({
-          move: MoveId.SWORDS_DANCE,
-          result: MoveResult.SUCCESS,
-          virtual: true,
-        }),
-        expect.objectContaining({
-          move: MoveId.SLEEP_TALK,
-          result: MoveResult.SUCCESS,
-          virtual: false,
-        })
-      ])
+      expect.objectContaining({
+        move: MoveId.SWORDS_DANCE,
+        result: MoveResult.SUCCESS,
+        virtual: true,
+      }),
+      expect.objectContaining({
+        move: MoveId.SLEEP_TALK,
+        result: MoveResult.SUCCESS,
+        virtual: false,
+      }),
+    ]);
   });
 
   it("should fail if the user is not asleep", async () => {
@@ -96,7 +96,7 @@ describe("Moves - Sleep Talk", () => {
     game.move.select(MoveId.SLEEP_TALK);
     await game.toNextTurn();
 
-    const feebas = game.field.getPlayerPokemon()
+    const feebas = game.field.getPlayerPokemon();
     expect(feebas.getStatStage(Stat.SPD)).toBe(1);
     expect(feebas.getStatStage(Stat.DEF)).toBe(-1);
   });

@@ -552,7 +552,7 @@ class WishTag extends ArenaTag {
     const target = globalScene.getField()[this.battlerIndex];
     if (target?.isActive(true)) {
       globalScene.phaseManager.queueMessage(this.triggerMessage);
-      globalScene.phaseManager.unshiftNew("PokemonHealPhase", target.getBattlerIndex(), this.healHp, null, true, false);
+      globalScene.phaseManager.unshiftNew("PokemonHealPhase", target.getBattlerIndex(), this.healHp, null);
     }
   }
 }
@@ -839,7 +839,6 @@ class ToxicSpikesTag extends ArenaTrapTag {
 
     return pokemon.trySetStatus(
       this.layers === 1 ? StatusEffect.POISON : StatusEffect.TOXIC,
-      true,
       null,
       0,
       this.getMoveName(),

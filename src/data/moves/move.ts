@@ -27,7 +27,7 @@ import {
 } from "../status-effect";
 import { getTypeDamageMultiplier } from "../type";
 import { PokemonType } from "#enums/pokemon-type";
-import { BooleanHolder, NumberHolder, isNullOrUndefined, toDmgValue, randSeedItem, randSeedInt, getEnumValues, toReadableString, type Constructor, randSeedFloat } from "#app/utils/common";
+import { BooleanHolder, NumberHolder, isNullOrUndefined, toDmgValue, randSeedItem, randSeedInt, getEnumValues, toReadableString, type Constructor, randSeedFloat, coerceArray } from "#app/utils/common";
 import { WeatherType } from "#enums/weather-type";
 import type { ArenaTrapTag } from "../arena-tag";
 import { WeakenMoveTypeTag } from "../arena-tag";
@@ -70,13 +70,9 @@ import {
   getStatKey,
   Stat,
 } from "#app/enums/stat";
-import { BattleEndPhase } from "#app/phases/battle-end-phase";
 import { MoveEndPhase } from "#app/phases/move-end-phase";
 import { MovePhase } from "#app/phases/move-phase";
-import { NewBattlePhase } from "#app/phases/new-battle-phase";
 import { PokemonHealPhase } from "#app/phases/pokemon-heal-phase";
-import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
-import { SwitchPhase } from "#app/phases/switch-phase";
 import { SwitchSummonPhase } from "#app/phases/switch-summon-phase";
 import { SpeciesFormChangeRevertWeatherFormTrigger } from "../pokemon-forms/form-change-triggers";
 import type { GameMode } from "#app/game-mode";
@@ -1916,19 +1912,16 @@ export class AddSubstituteAttr extends MoveEffectAttr {
  * @see {@linkcode apply}
  */
 export class HealAttr extends MoveEffectAttr {
-  /** The percentage of {@linkcode Stat.HP} to heal */
-  private healRatio: number;
-  /** Should an animation be shown? */
-  private showAnim: boolean;
-
-  constructor(healRatio = 1, showAnim = false, selfTarget = true) {
+  constructor(
+    /** The percentage of {@linkcode Stat.HP} to heal. */
+    private healRatio: number,
+    /** Whether to display a healing animation when healing the target; default `false` */
+    private showAnim = false,
+    selfTarget = true) {
     super(selfTarget);
-
-    this.healRatio = healRatio;
-    this.showAnim = showAnim;
   }
 
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+  override apply(user: Pokemon, target: Pokemon, _move: Move, _args: any[]): boolean {
     this.addHealPhase(this.selfTarget ? user : target, this.healRatio);
     return true;
   }
@@ -1937,14 +1930,96 @@ export class HealAttr extends MoveEffectAttr {
    * Creates a new {@linkcode PokemonHealPhase}.
    * This heals the target and shows the appropriate message.
    */
-  addHealPhase(target: Pokemon, healRatio: number) {
+  protected addHealPhase(target: Pokemon, healRatio: number) {
     globalScene.phaseManager.unshiftNew("PokemonHealPhase", target.getBattlerIndex(),
       toDmgValue(target.getMaxHp() * healRatio), i18next.t("moveTriggers:healHp", { pokemonName: getPokemonNameWithAffix(target) }), true, !this.showAnim);
   }
 
-  getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
+  override getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
     const score = ((1 - (this.selfTarget ? user : target).getHpRatio()) * 20) - this.healRatio * 10;
     return Math.round(score / (1 - this.healRatio / 2));
+  }
+
+  override canApply(_user: Pokemon, target: Pokemon, _move: Move, _args?: any[]): boolean {
+    if (target.isFullHp()) {
+      globalScene.phaseManager.queueMessage(i18next.t("battle:hpIsFull", {
+        pokemonName: getPokemonNameWithAffix(target),
+      }))
+      return false;
+    }
+    return true;
+  }
+}
+
+/**
+ * Attribute for moves with variable healing amounts.
+ * Heals the target by an amount depending on the return value of {@linkcode healFunc}.
+ *
+ * Used for {@linkcode MoveId.MOONLIGHT}, {@linkcode MoveId.SHORE_UP}, {@linkcode MoveId.JUNGLE_HEALING}, {@linkcode MoveId.SWALLOW}
+ */
+export class VariableHealAttr extends HealAttr {
+  constructor(
+    /** A function yielding the amount of HP to heal. */
+    private healFunc: (user: Pokemon, target: Pokemon, _move: Move) => number,
+    showAnim = false,
+    selfTarget = true,
+  ) {
+    super(1, showAnim, selfTarget);
+    this.healFunc = healFunc;
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, _args: any[]): boolean {
+    const healRatio = this.healFunc(user, target, move)
+    this.addHealPhase(target, healRatio);
+    return true;
+  }
+}
+
+/**
+ * Heals the target only if it is an ally.
+ * Used for {@linkcode MoveId.POLLEN_PUFF}.
+ */
+export class HealOnAllyAttr extends HealAttr {
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (user.getAlly() === target) {
+      super.apply(user, target, move, args);
+      return true;
+    }
+
+    return false;
+  }
+
+  override canApply(user: Pokemon, target: Pokemon, _move: Move, _args?: any[]): boolean {
+    return user.getAlly() !== target || super.canApply(user, target, _move, _args);
+  }
+}
+
+/**
+ * Attribute to put the user to sleep for a fixed duration, fully heal them and cure their status.
+ * Used for {@linkcode MoveId.REST}.
+ */
+export class RestAttr extends HealAttr {
+  private duration: number;
+
+  constructor(duration: number) {
+    super(1);
+    this.duration = duration;
+  }
+
+  override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    user.trySetStatus(StatusEffect.SLEEP, user, this.duration, null, true, true);
+    globalScene.phaseManager.queueMessage(i18next.t("moveTriggers:restBecameHealthy", {
+      pokemonName: getPokemonNameWithAffix(user),
+    }))
+    return super.apply(user, target, move, args);
+  }
+
+  override addHealPhase(user: Pokemon, healRatio: number): void {
+    globalScene.phaseManager.unshiftNew("PokemonHealPhase", user.getBattlerIndex(), healRatio, "")
+  }
+
+  canApply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    return super.canApply(user, target, move, args) && user.canSetStatus(StatusEffect.SLEEP, true, true, user)
   }
 }
 
@@ -2128,111 +2203,6 @@ export class IgnoreWeatherTypeDebuffAttr extends MoveAttr {
   }
 }
 
-export abstract class WeatherHealAttr extends HealAttr {
-  constructor() {
-    super(0.5);
-  }
-
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    let healRatio = 0.5;
-    if (!globalScene.arena.weather?.isEffectSuppressed()) {
-      const weatherType = globalScene.arena.weather?.weatherType || WeatherType.NONE;
-      healRatio = this.getWeatherHealRatio(weatherType);
-    }
-    this.addHealPhase(user, healRatio);
-    return true;
-  }
-
-  abstract getWeatherHealRatio(weatherType: WeatherType): number;
-}
-
-export class PlantHealAttr extends WeatherHealAttr {
-  getWeatherHealRatio(weatherType: WeatherType): number {
-    switch (weatherType) {
-      case WeatherType.SUNNY:
-      case WeatherType.HARSH_SUN:
-        return 2 / 3;
-      case WeatherType.RAIN:
-      case WeatherType.SANDSTORM:
-      case WeatherType.HAIL:
-      case WeatherType.SNOW:
-      case WeatherType.HEAVY_RAIN:
-        return 0.25;
-      default:
-        return 0.5;
-    }
-  }
-}
-
-export class SandHealAttr extends WeatherHealAttr {
-  getWeatherHealRatio(weatherType: WeatherType): number {
-    switch (weatherType) {
-      case WeatherType.SANDSTORM:
-        return 2 / 3;
-      default:
-        return 0.5;
-    }
-  }
-}
-
-/**
- * Heals the target or the user by either {@linkcode normalHealRatio} or {@linkcode boostedHealRatio}
- * depending on the evaluation of {@linkcode condition}
- * @extends HealAttr
- * @see {@linkcode apply}
- */
-export class BoostHealAttr extends HealAttr {
-  /** Healing received when {@linkcode condition} is false */
-  private normalHealRatio: number;
-  /** Healing received when {@linkcode condition} is true */
-  private boostedHealRatio: number;
-  /** The lambda expression to check against when boosting the healing value */
-  private condition?: MoveConditionFunc;
-
-  constructor(normalHealRatio: number = 0.5, boostedHealRatio: number = 2 / 3, showAnim?: boolean, selfTarget?: boolean, condition?: MoveConditionFunc) {
-    super(normalHealRatio, showAnim, selfTarget);
-    this.normalHealRatio = normalHealRatio;
-    this.boostedHealRatio = boostedHealRatio;
-    this.condition = condition;
-  }
-
-  /**
-   * @param user {@linkcode Pokemon} using the move
-   * @param target {@linkcode Pokemon} target of the move
-   * @param move {@linkcode Move} with this attribute
-   * @param args N/A
-   * @returns true if the move was successful
-   */
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const healRatio: number = (this.condition ? this.condition(user, target, move) : false) ? this.boostedHealRatio : this.normalHealRatio;
-    this.addHealPhase(target, healRatio);
-    return true;
-  }
-}
-
-/**
- * Heals the target only if it is the ally
- * @extends HealAttr
- * @see {@linkcode apply}
- */
-export class HealOnAllyAttr extends HealAttr {
-  /**
-   * @param user {@linkcode Pokemon} using the move
-   * @param target {@linkcode Pokemon} target of the move
-   * @param move {@linkcode Move} with this attribute
-   * @param args N/A
-   * @returns true if the function succeeds
-   */
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (user.getAlly() === target) {
-      super.apply(user, target, move, args);
-      return true;
-    }
-
-    return false;
-  }
-}
-
 /**
  * Heals user as a side effect of a move that hits a target.
  * Healing is based on {@linkcode healRatio} * the amount of damage dealt or a stat of the target.
@@ -2240,6 +2210,7 @@ export class HealOnAllyAttr extends HealAttr {
  * @see {@linkcode apply}
  * @see {@linkcode getUserBenefitScore}
  */
+// TODO: Make Strength Sap its own attribute that extends off of this one
 export class HitHealAttr extends MoveEffectAttr {
   private healRatio: number;
   private healStat: EffectiveStat | null;
@@ -2508,7 +2479,7 @@ export class StatusEffectAttr extends MoveEffectAttr {
     const quiet = move.category !== MoveCategory.STATUS;
 
     if (
-      target.trySetStatus(this.effect, true, user, undefined, null, false, quiet)
+      target.trySetStatus(this.effect, user, undefined, null, false, quiet)
     ) {
       applyPostAttackAbAttrs("ConfusionOnStatusEffectAbAttr", user, target, move, null, false, this.effect);
       return true;
@@ -2516,32 +2487,12 @@ export class StatusEffectAttr extends MoveEffectAttr {
     return false;
   }
 
-
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
     const moveChance = this.getMoveChance(user, target, move, this.selfTarget, false);
     const score = moveChance < 0 ? -10 : Math.floor(moveChance * -0.1);
     const pokemon = this.selfTarget ? user : target;
 
     return pokemon.canSetStatus(this.effect, true, false, user) ? score : 0;
-  }
-}
-
-/**
- * Attribute to put the target to sleep for a fixed duration and cure its status.
- * Used for {@linkcode Moves.REST}.
- */
-export class RestAttr extends StatusEffectAttr {
-  private duration: number;
-
-  constructor(duration: number) {
-    // Sleep is the only duration-based status ATM
-    super(StatusEffect.SLEEP, true);
-    this.duration = duration;
-  }
-
-  // TODO: Add custom text for rest and make `HealAttr` no longer show the message
-  protected override doSetStatus(pokemon: Pokemon, user: Pokemon, quiet: boolean): boolean {
-    return pokemon.trySetStatus(this.effect, true, user, this.duration, null, true, quiet)
   }
 }
 
@@ -2587,13 +2538,13 @@ export class PsychoShiftEffectAttr extends MoveEffectAttr {
       (user.hasAbility(AbilityId.COMATOSE) ? StatusEffect.SLEEP : undefined);
 
     // Bang is justified as condition func returns early if no status is found
-    if (!target.trySetStatus(statusToApply!, true, user)) {
+    if (!target.trySetStatus(statusToApply!, user)) {
       return false;
     }
 
     if (user.status) {
       // Add tag to user to heal its status effect after the move ends (unless we have comatose);
-      // Occurs after move use to ensure correct Synchronize timing
+      // occurs after move use to ensure correct Synchronize timing
       user.addTag(BattlerTagType.PSYCHO_SHIFT)
     }
 
@@ -2677,7 +2628,7 @@ export class StealHeldItemChanceAttr extends MoveEffectAttr {
  * Used for Incinerate and Knock Off.
  * Not Implemented Cases: (Same applies for Thief)
  * "If the user faints due to the target's Ability (Rough Skin or Iron Barbs) or held Rocky Helmet, it cannot remove the target's held item."
- * "If the Pokémon is knocked out by the attack, Sticky Hold does not protect the held item.""
+ * "If the Pokémon is knocked out by the attack, Sticky Hold does not protect the held item."
  */
 export class RemoveHeldItemAttr extends MoveEffectAttr {
 
@@ -2887,10 +2838,7 @@ export class HealStatusEffectAttr extends MoveEffectAttr {
    */
   constructor(selfTarget: boolean, effects: StatusEffect | StatusEffect[]) {
     super(selfTarget, { lastHitOnly: true });
-    if (!Array.isArray(effects)) {
-      effects = [ effects ]
-    }
-    this.effects = effects
+    this.effects = coerceArray(effects)
   }
 
   /**
@@ -4357,36 +4305,6 @@ export class SpitUpPowerAttr extends VariablePowerAttr {
       const power = args[0] as NumberHolder;
       power.value = this.multiplier * stockpilingTag.stockpiledCount;
       return true;
-    }
-
-    return false;
-  }
-}
-
-/**
- * Attribute used to apply Swallow's healing, which scales with Stockpile stacks.
- * Does NOT remove stockpiled stacks.
- */
-export class SwallowHealAttr extends HealAttr {
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    const stockpilingTag = user.getTag(StockpilingTag);
-
-    if (stockpilingTag && stockpilingTag.stockpiledCount > 0) {
-      const stockpiled = stockpilingTag.stockpiledCount;
-      let healRatio: number;
-
-      if (stockpiled === 1) {
-        healRatio = 0.25;
-      } else if (stockpiled === 2) {
-        healRatio = 0.50;
-      } else { // stockpiled >= 3
-        healRatio = 1.00;
-      }
-
-      if (healRatio) {
-        this.addHealPhase(user, healRatio);
-        return true;
-      }
     }
 
     return false;
@@ -7862,7 +7780,7 @@ export class StatusIfBoostedAttr extends MoveEffectAttr {
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     if (target.turnData.statStagesIncreased) {
-      target.trySetStatus(this.effect, true, user);
+      target.trySetStatus(this.effect, user);
     }
     return true;
   }
@@ -8027,6 +7945,53 @@ const attackedByItemMessageFunc = (user: Pokemon, target: Pokemon, move: Move) =
   const message: string = i18next.t("moveTriggers:attackedByItem", { pokemonName: getPokemonNameWithAffix(target), itemName: itemName });
   return message;
 };
+
+const sunnyHealRatioFunc = (): number => {
+  if (globalScene.arena.weather?.isEffectSuppressed()) {
+    return 1 / 2;
+  }
+
+  switch (globalScene.arena.getWeatherType()) {
+    case WeatherType.SUNNY:
+    case WeatherType.HARSH_SUN:
+      return 2 / 3;
+    case WeatherType.RAIN:
+    case WeatherType.SANDSTORM:
+    case WeatherType.HAIL:
+    case WeatherType.SNOW:
+    case WeatherType.HEAVY_RAIN:
+    case WeatherType.FOG:
+      return 1 / 4;
+    case WeatherType.STRONG_WINDS:
+    default:
+      return 1 / 2;
+  }
+}
+
+const shoreUpHealRatioFunc = (): number => {
+  if (globalScene.arena.weather?.isEffectSuppressed()) {
+    return 1 / 2;
+  }
+
+  return globalScene.arena.getWeatherType() === WeatherType.SANDSTORM ? 2 / 3 : 1 / 2;
+}
+
+const swallowHealFunc = (user: Pokemon): number => {
+  const tag = user.getTag(StockpilingTag);
+  if (!tag || tag.stockpiledCount <= 0) {
+    return 0;
+  }
+
+  switch (tag.stockpiledCount) {
+    case 1:
+      return 0.25
+    case 2:
+      return 0.5
+    case 3:
+    default: // in case we ever get more stacks
+      return 1;
+  }
+}
 
 export class MoveCondition {
   protected func: MoveConditionFunc;
@@ -8238,15 +8203,12 @@ const MoveAttrs = Object.freeze({
   SacrificialAttrOnHit,
   HalfSacrificialAttr,
   AddSubstituteAttr,
-  HealAttr,
   PartyStatusCureAttr,
   FlameBurstAttr,
   SacrificialFullRestoreAttr,
   IgnoreWeatherTypeDebuffAttr,
-  WeatherHealAttr,
-  PlantHealAttr,
-  SandHealAttr,
-  BoostHealAttr,
+  HealAttr,
+  VariableHealAttr,
   HealOnAllyAttr,
   HitHealAttr,
   IncrementMovePriorityAttr,
@@ -8311,7 +8273,6 @@ const MoveAttrs = Object.freeze({
   PresentPowerAttr,
   WaterShurikenPowerAttr,
   SpitUpPowerAttr,
-  SwallowHealAttr,
   MultiHitPowerIncrementAttr,
   LastMoveDoublePowerAttr,
   CombinedPledgePowerAttr,
@@ -8888,7 +8849,6 @@ export function initMoves() {
       .attr(MultiHitAttr, MultiHitType._2)
       .makesContact(false),
     new SelfStatusMove(MoveId.REST, PokemonType.PSYCHIC, -1, 5, -1, 0, 1)
-      .attr(HealAttr, 1, true)
       .attr(RestAttr, 3)
       .triageMove(),
     new AttackMove(MoveId.ROCK_SLIDE, PokemonType.ROCK, MoveCategory.PHYSICAL, 75, 90, 10, 30, 0, 1)
@@ -9158,13 +9118,13 @@ export function initMoves() {
       .attr(StatStageChangeAttr, [ Stat.ATK ], 1, true),
     new AttackMove(MoveId.VITAL_THROW, PokemonType.FIGHTING, MoveCategory.PHYSICAL, 70, -1, 10, -1, -1, 2),
     new SelfStatusMove(MoveId.MORNING_SUN, PokemonType.NORMAL, -1, 5, -1, 0, 2)
-      .attr(PlantHealAttr)
+      .attr(VariableHealAttr, sunnyHealRatioFunc)
       .triageMove(),
     new SelfStatusMove(MoveId.SYNTHESIS, PokemonType.GRASS, -1, 5, -1, 0, 2)
-      .attr(PlantHealAttr)
+    .attr(VariableHealAttr, sunnyHealRatioFunc)
       .triageMove(),
     new SelfStatusMove(MoveId.MOONLIGHT, PokemonType.FAIRY, -1, 5, -1, 0, 2)
-      .attr(PlantHealAttr)
+    .attr(VariableHealAttr, sunnyHealRatioFunc)
       .triageMove(),
     new AttackMove(MoveId.HIDDEN_POWER, PokemonType.NORMAL, MoveCategory.SPECIAL, 60, 100, 15, -1, 0, 2)
       .attr(HiddenPowerTypeAttr),
@@ -9221,12 +9181,12 @@ export function initMoves() {
       .condition(user => (user.getTag(StockpilingTag)?.stockpiledCount ?? 0) < 3)
       .attr(AddBattlerTagAttr, BattlerTagType.STOCKPILING, true),
     new AttackMove(MoveId.SPIT_UP, PokemonType.NORMAL, MoveCategory.SPECIAL, -1, -1, 10, -1, 0, 3)
-      .condition(hasStockpileStacksCondition)
       .attr(SpitUpPowerAttr, 100)
+      .condition(hasStockpileStacksCondition)
       .attr(RemoveBattlerTagAttr, [ BattlerTagType.STOCKPILING ], true),
     new SelfStatusMove(MoveId.SWALLOW, PokemonType.NORMAL, -1, 10, -1, 0, 3)
+      .attr(VariableHealAttr, swallowHealFunc)
       .condition(hasStockpileStacksCondition)
-      .attr(SwallowHealAttr)
       .attr(RemoveBattlerTagAttr, [ BattlerTagType.STOCKPILING ], true)
       .triageMove(),
     new AttackMove(MoveId.HEAT_WAVE, PokemonType.FIRE, MoveCategory.SPECIAL, 95, 90, 10, 10, 0, 3)
@@ -9610,15 +9570,16 @@ export function initMoves() {
       .unimplemented(),
     new StatusMove(MoveId.PSYCHO_SHIFT, PokemonType.PSYCHIC, 100, 10, -1, 0, 4)
       .attr(PsychoShiftEffectAttr)
-      .edgeCase(),
       // TODO: Verify status applied if a statused pokemon obtains Comatose (via Transform) and uses Psycho Shift
+      .edgeCase(),
     new AttackMove(MoveId.TRUMP_CARD, PokemonType.NORMAL, MoveCategory.SPECIAL, -1, -1, 5, -1, 0, 4)
       .makesContact()
       .attr(LessPPMorePowerAttr),
     new StatusMove(MoveId.HEAL_BLOCK, PokemonType.PSYCHIC, 100, 15, -1, 0, 4)
       .attr(AddBattlerTagAttr, BattlerTagType.HEAL_BLOCK, false, true, 5)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
-      .reflectable(),
+      .reflectable()
+      .edgeCase(),
     new AttackMove(MoveId.WRING_OUT, PokemonType.NORMAL, MoveCategory.SPECIAL, -1, 100, 5, -1, 0, 4)
       .attr(OpponentHighHpPowerAttr, 120)
       .makesContact(),
@@ -10471,7 +10432,7 @@ export function initMoves() {
       .unimplemented(),
     /* End Unused */
     new SelfStatusMove(MoveId.SHORE_UP, PokemonType.GROUND, -1, 5, -1, 0, 7)
-      .attr(SandHealAttr)
+      .attr(VariableHealAttr, shoreUpHealRatioFunc)
       .triageMove(),
     new AttackMove(MoveId.FIRST_IMPRESSION, PokemonType.BUG, MoveCategory.PHYSICAL, 90, 100, 10, -1, 2, 7)
       .condition(new FirstMoveCondition()),
@@ -10491,7 +10452,7 @@ export function initMoves() {
       .attr(StatStageChangeAttr, [ Stat.SPD ], -1, true)
       .punchingMove(),
     new StatusMove(MoveId.FLORAL_HEALING, PokemonType.FAIRY, -1, 10, -1, 0, 7)
-      .attr(BoostHealAttr, 0.5, 2 / 3, true, false, (user, target, move) => globalScene.arena.terrain?.terrainType === TerrainType.GRASSY)
+      .attr(VariableHealAttr, () => globalScene.arena.terrain?.terrainType === TerrainType.GRASSY ? 2 / 3 : 1 / 2, true, false)
       .triageMove()
       .reflectable(),
     new AttackMove(MoveId.HIGH_HORSEPOWER, PokemonType.GROUND, MoveCategory.PHYSICAL, 95, 95, 10, -1, 0, 7),

@@ -13,6 +13,7 @@ import { CommonAnimPhase } from "./common-anim-phase";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
 import type { HealBlockTag } from "#app/data/battler-tags";
 
+// TODO: Refactor this - it has far too many arguments
 export class PokemonHealPhase extends CommonAnimPhase {
   public readonly phaseName = "PokemonHealPhase";
   private hpHealed: number;
@@ -28,7 +29,7 @@ export class PokemonHealPhase extends CommonAnimPhase {
     battlerIndex: BattlerIndex,
     hpHealed: number,
     message: string | null,
-    showFullHpMessage: boolean,
+    showFullHpMessage = true,
     skipAnim = false,
     revive = false,
     healStatus = false,
@@ -69,9 +70,10 @@ export class PokemonHealPhase extends CommonAnimPhase {
 
     if (healBlock && this.hpHealed > 0) {
       globalScene.phaseManager.queueMessage(healBlock.onActivation(pokemon));
-      this.message = null;
-      return super.end();
+      super.end();
+      return;
     }
+
     if (healOrDamage) {
       const hpRestoreMultiplier = new NumberHolder(1);
       if (!this.revive) {

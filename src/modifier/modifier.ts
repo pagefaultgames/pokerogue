@@ -1766,7 +1766,7 @@ export class TurnStatusEffectModifier extends PokemonHeldItemModifier {
    * @returns `true` if the status effect was applied successfully
    */
   override apply(pokemon: Pokemon): boolean {
-    return pokemon.trySetStatus(this.effect, true, pokemon, undefined, this.type.name);
+    return pokemon.trySetStatus(this.effect, pokemon, undefined, this.type.name);
   }
 
   getMaxHeldItemCount(_pokemon: Pokemon): number {
@@ -3639,7 +3639,7 @@ export class EnemyAttackStatusEffectChanceModifier extends EnemyPersistentModifi
    */
   override apply(enemyPokemon: Pokemon): boolean {
     if (randSeedFloat() <= this.chance * this.getStackCount()) {
-      return enemyPokemon.trySetStatus(this.effect, true);
+      return enemyPokemon.trySetStatus(this.effect);
     }
 
     return false;

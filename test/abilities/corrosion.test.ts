@@ -64,7 +64,7 @@ describe("Abilities - Corrosion", () => {
     expect(enemyPokemon.status?.effect).toBeUndefined();
 
     game.move.select(MoveId.TOXIC);
-    await game.toEndOfTurn()
+    await game.toEndOfTurn();
 
     expect(playerPokemon.status?.effect).toBe(StatusEffect.TOXIC);
     expect(enemyPokemon.status?.effect).toBeUndefined();

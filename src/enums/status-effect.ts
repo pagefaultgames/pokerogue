@@ -1,5 +1,5 @@
 /** Enum representing all non-volatile status effects. */
-// TODO: Add a type that excludes `NONE` and `FAINT`
+// TODO: Remove StatusEffect.FAINT
 export enum StatusEffect {
   NONE,
   POISON,

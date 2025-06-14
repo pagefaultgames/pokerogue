@@ -1,4 +1,4 @@
-import { MoveResult } from "#app/field/pokemon";
+import { MoveResult } from "#enums/move-result";
 import { AbilityId } from "#enums/ability-id";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
@@ -26,7 +26,6 @@ describe("MoveId - Rest", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     game.override
-      .moveset([MoveId.REST, MoveId.SWORDS_DANCE])
       .ability(AbilityId.BALL_FETCH)
       .battleStyle("single")
       .disableCrits()
@@ -39,11 +38,11 @@ describe("MoveId - Rest", () => {
     game.override.statusEffect(StatusEffect.POISON);
     await game.classicMode.startBattle([SpeciesId.SNORLAX]);
 
-    const snorlax = game.scene.getPlayerPokemon()!;
+    const snorlax = game.field.getPlayerPokemon();
     snorlax.hp = 1;
     expect(snorlax.status?.effect).toBe(StatusEffect.POISON);
 
-    game.move.select(MoveId.REST);
+    game.move.use(MoveId.REST);
     await game.toEndOfTurn();
 
     expect(snorlax.isFullHp()).toBe(true);
@@ -53,26 +52,26 @@ describe("MoveId - Rest", () => {
   it("should always last 3 turns", async () => {
     await game.classicMode.startBattle([SpeciesId.SNORLAX]);
 
-    const snorlax = game.scene.getPlayerPokemon()!;
+    const snorlax = game.field.getPlayerPokemon();
     snorlax.hp = 1;
 
     // Cf https://bulbapedia.bulbagarden.net/wiki/Rest_(move):
     // > The user is unable to use MoveId while asleep for 2 turns after the turn when Rest is used.
-    game.move.select(MoveId.REST);
+    game.move.use(MoveId.REST);
     await game.toNextTurn();
 
     expect(snorlax.status?.effect).toBe(StatusEffect.SLEEP);
     expect(snorlax.status?.sleepTurnsRemaining).toBe(3);
 
-    game.move.select(MoveId.SWORDS_DANCE);
+    game.move.use(MoveId.SWORDS_DANCE);
     await game.toNextTurn();
     expect(snorlax.status?.sleepTurnsRemaining).toBe(2);
 
-    game.move.select(MoveId.SWORDS_DANCE);
+    game.move.use(MoveId.SWORDS_DANCE);
     await game.toNextTurn();
     expect(snorlax.status?.sleepTurnsRemaining).toBe(1);
 
-    game.move.select(MoveId.SWORDS_DANCE);
+    game.move.use(MoveId.SWORDS_DANCE);
     await game.toNextTurn();
     expect(snorlax.status?.effect).toBeUndefined();
     expect(snorlax.getStatStage(Stat.ATK)).toBe(2);
@@ -81,11 +80,11 @@ describe("MoveId - Rest", () => {
   it("should preserve non-volatile status conditions", async () => {
     await game.classicMode.startBattle([SpeciesId.SNORLAX]);
 
-    const snorlax = game.scene.getPlayerPokemon()!;
+    const snorlax = game.field.getPlayerPokemon();
     snorlax.hp = 1;
     snorlax.addTag(BattlerTagType.CONFUSED, 999);
 
-    game.move.select(MoveId.REST);
+    game.move.use(MoveId.REST);
     await game.toEndOfTurn();
 
     expect(snorlax.getTag(BattlerTagType.CONFUSED)).toBeDefined();
@@ -100,11 +99,11 @@ describe("MoveId - Rest", () => {
     game.override.ability(ability).statusEffect(status);
     await game.classicMode.startBattle([SpeciesId.SNORLAX]);
 
-    const snorlax = game.scene.getPlayerPokemon()!;
+    const snorlax = game.field.getPlayerPokemon();
 
     snorlax.hp = snorlax.getMaxHp() - dmg;
 
-    game.move.select(MoveId.REST);
+    game.move.use(MoveId.REST);
     await game.toEndOfTurn();
 
     expect(snorlax.getLastXMoves()[0].result).toBe(MoveResult.FAIL);
@@ -114,7 +113,7 @@ describe("MoveId - Rest", () => {
     game.override.statusEffect(StatusEffect.SLEEP).moveset([MoveId.REST, MoveId.SLEEP_TALK]);
     await game.classicMode.startBattle([SpeciesId.SNORLAX]);
 
-    const snorlax = game.scene.getPlayerPokemon()!;
+    const snorlax = game.field.getPlayerPokemon();
     snorlax.hp = 1;
 
     // Need to use sleep talk here since you normally can't move while asleep
@@ -126,22 +125,22 @@ describe("MoveId - Rest", () => {
     expect(snorlax.getLastXMoves(-1).map(tm => tm.result)).toEqual([MoveResult.FAIL, MoveResult.SUCCESS]);
   });
 
-  it("should succeed if called the turn after waking up", async () => {
+  it("should succeed if called the same turn as the user wakes", async () => {
     game.override.statusEffect(StatusEffect.SLEEP);
     await game.classicMode.startBattle([SpeciesId.SNORLAX]);
 
-    const snorlax = game.scene.getPlayerPokemon()!;
+    const snorlax = game.field.getPlayerPokemon();
     snorlax.hp = 1;
 
     expect(snorlax.status?.effect).toBe(StatusEffect.SLEEP);
     snorlax.status!.sleepTurnsRemaining = 1;
 
-    game.move.select(MoveId.REST);
+    game.move.use(MoveId.REST);
     await game.toNextTurn();
 
-    expect(snorlax.status?.effect).toBe(StatusEffect.SLEEP);
+    expect(snorlax.status!.effect).toBe(StatusEffect.SLEEP);
     expect(snorlax.isFullHp()).toBe(true);
     expect(snorlax.getLastXMoves()[0].result).toBe(MoveResult.SUCCESS);
-    expect(snorlax.status?.sleepTurnsRemaining).toBeGreaterThan(1);
+    expect(snorlax.status!.sleepTurnsRemaining).toBeGreaterThan(1);
   });
 });

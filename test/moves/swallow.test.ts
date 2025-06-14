@@ -3,14 +3,12 @@ import { StockpilingTag } from "#app/data/battler-tags";
 import { BattlerTagType } from "#app/enums/battler-tag-type";
 import type { TurnMove } from "#app/field/pokemon";
 import { MoveResult } from "#enums/move-result";
-import { MovePhase } from "#app/phases/move-phase";
-import { TurnInitPhase } from "#app/phases/turn-init-phase";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 describe("Moves - Swallow", () => {
   let phaserGame: Phaser.Game;
@@ -31,99 +29,41 @@ describe("Moves - Swallow", () => {
       .battleStyle("single")
       .enemySpecies(SpeciesId.RATTATA)
       .enemyMoveset(MoveId.SPLASH)
-      .enemyAbility(AbilityId.NONE)
-      .enemyLevel(2000)
-      .moveset(MoveId.SWALLOW)
-      .ability(AbilityId.NONE);
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .enemyLevel(1000)
+      .startingLevel(1000)
+      .ability(AbilityId.BALL_FETCH);
   });
 
-  describe("consumes all stockpile stacks to heal (scaling with stacks)", () => {
-    it("1 stack -> 25% heal", async () => {
-      const stacksToSetup = 1;
-      const expectedHeal = 25;
+  it.each<{ stackCount: number; healPercent: number }>([
+    { stackCount: 1, healPercent: 25 },
+    { stackCount: 2, healPercent: 50 },
+    { stackCount: 3, healPercent: 100 },
+  ])(
+    "should heal the user by $healPercent% when consuming $count stockpile stacks",
+    async ({ stackCount, healPercent }) => {
+      await game.classicMode.startBattle([SpeciesId.SWALOT]);
 
-      await game.classicMode.startBattle([SpeciesId.ABOMASNOW]);
+      const swalot = game.field.getPlayerPokemon();
+      swalot.hp = 1;
 
-      const pokemon = game.scene.getPlayerPokemon()!;
-      vi.spyOn(pokemon, "getMaxHp").mockReturnValue(100);
-      pokemon["hp"] = 1;
+      for (let i = 0; i < stackCount; i++) {
+        swalot.addTag(BattlerTagType.STOCKPILING);
+      }
 
-      pokemon.addTag(BattlerTagType.STOCKPILING);
-
-      const stockpilingTag = pokemon.getTag(StockpilingTag)!;
+      const stockpilingTag = swalot.getTag(StockpilingTag)!;
       expect(stockpilingTag).toBeDefined();
-      expect(stockpilingTag.stockpiledCount).toBe(stacksToSetup);
+      expect(stockpilingTag.stockpiledCount).toBe(stackCount);
 
-      vi.spyOn(pokemon, "heal");
+      game.move.use(MoveId.SWALLOW);
+      await game.toEndOfTurn();
 
-      game.move.select(MoveId.SWALLOW);
-      await game.phaseInterceptor.to(TurnInitPhase);
+      expect(swalot.getHpRatio()).toBeCloseTo(healPercent / 100, 1);
+      expect(swalot.getTag(StockpilingTag)).toBeUndefined();
+    },
+  );
 
-      expect(pokemon.heal).toHaveBeenCalledOnce();
-      expect(pokemon.heal).toHaveReturnedWith(expectedHeal);
-
-      expect(pokemon.getTag(StockpilingTag)).toBeUndefined();
-    });
-
-    it("2 stacks -> 50% heal", async () => {
-      const stacksToSetup = 2;
-      const expectedHeal = 50;
-
-      await game.classicMode.startBattle([SpeciesId.ABOMASNOW]);
-
-      const pokemon = game.scene.getPlayerPokemon()!;
-      vi.spyOn(pokemon, "getMaxHp").mockReturnValue(100);
-      pokemon["hp"] = 1;
-
-      pokemon.addTag(BattlerTagType.STOCKPILING);
-      pokemon.addTag(BattlerTagType.STOCKPILING);
-
-      const stockpilingTag = pokemon.getTag(StockpilingTag)!;
-      expect(stockpilingTag).toBeDefined();
-      expect(stockpilingTag.stockpiledCount).toBe(stacksToSetup);
-
-      vi.spyOn(pokemon, "heal");
-
-      game.move.select(MoveId.SWALLOW);
-      await game.phaseInterceptor.to(TurnInitPhase);
-
-      expect(pokemon.heal).toHaveBeenCalledOnce();
-      expect(pokemon.heal).toHaveReturnedWith(expectedHeal);
-
-      expect(pokemon.getTag(StockpilingTag)).toBeUndefined();
-    });
-
-    it("3 stacks -> 100% heal", async () => {
-      const stacksToSetup = 3;
-      const expectedHeal = 100;
-
-      await game.classicMode.startBattle([SpeciesId.ABOMASNOW]);
-
-      const pokemon = game.scene.getPlayerPokemon()!;
-      vi.spyOn(pokemon, "getMaxHp").mockReturnValue(100);
-      pokemon["hp"] = 0.0001;
-
-      pokemon.addTag(BattlerTagType.STOCKPILING);
-      pokemon.addTag(BattlerTagType.STOCKPILING);
-      pokemon.addTag(BattlerTagType.STOCKPILING);
-
-      const stockpilingTag = pokemon.getTag(StockpilingTag)!;
-      expect(stockpilingTag).toBeDefined();
-      expect(stockpilingTag.stockpiledCount).toBe(stacksToSetup);
-
-      vi.spyOn(pokemon, "heal");
-
-      game.move.select(MoveId.SWALLOW);
-      await game.phaseInterceptor.to(TurnInitPhase);
-
-      expect(pokemon.heal).toHaveBeenCalledOnce();
-      expect(pokemon.heal).toHaveReturnedWith(expect.closeTo(expectedHeal));
-
-      expect(pokemon.getTag(StockpilingTag)).toBeUndefined();
-    });
-  });
-
-  it("fails without stacks", async () => {
+  it("should fail without stacks", async () => {
     await game.classicMode.startBattle([SpeciesId.ABOMASNOW]);
 
     const pokemon = game.scene.getPlayerPokemon()!;
@@ -131,17 +71,17 @@ describe("Moves - Swallow", () => {
     const stockpilingTag = pokemon.getTag(StockpilingTag)!;
     expect(stockpilingTag).toBeUndefined();
 
-    game.move.select(MoveId.SWALLOW);
-    await game.phaseInterceptor.to(TurnInitPhase);
+    game.move.use(MoveId.SWALLOW);
+    await game.toEndOfTurn();
 
-    expect(pokemon.getMoveHistory().at(-1)).toMatchObject<TurnMove>({
+    expect(pokemon.getLastXMoves()[0]).toMatchObject({
       move: MoveId.SWALLOW,
       result: MoveResult.FAIL,
       targets: [pokemon.getBattlerIndex()],
     });
   });
 
-  describe("restores stat stage boosts granted by stacks", () => {
+  describe("should reset stat stage boosts granted by stacks", () => {
     it("decreases stats based on stored values (both boosts equal)", async () => {
       await game.classicMode.startBattle([SpeciesId.ABOMASNOW]);
 
@@ -150,16 +90,13 @@ describe("Moves - Swallow", () => {
 
       const stockpilingTag = pokemon.getTag(StockpilingTag)!;
       expect(stockpilingTag).toBeDefined();
-
-      game.move.select(MoveId.SWALLOW);
-      await game.phaseInterceptor.to(MovePhase);
-
       expect(pokemon.getStatStage(Stat.DEF)).toBe(1);
       expect(pokemon.getStatStage(Stat.SPDEF)).toBe(1);
 
-      await game.phaseInterceptor.to(TurnInitPhase);
+      game.move.use(MoveId.SWALLOW);
+      await game.toEndOfTurn();
 
-      expect(pokemon.getMoveHistory().at(-1)).toMatchObject<TurnMove>({
+      expect(pokemon.getLastXMoves()[0]).toMatchObject({
         move: MoveId.SWALLOW,
         result: MoveResult.SUCCESS,
         targets: [pokemon.getBattlerIndex()],
@@ -167,8 +104,6 @@ describe("Moves - Swallow", () => {
 
       expect(pokemon.getStatStage(Stat.DEF)).toBe(0);
       expect(pokemon.getStatStage(Stat.SPDEF)).toBe(0);
-
-      expect(pokemon.getTag(StockpilingTag)).toBeUndefined();
     });
 
     it("lower stat stages based on stored values (different boosts)", async () => {
@@ -179,7 +114,6 @@ describe("Moves - Swallow", () => {
 
       const stockpilingTag = pokemon.getTag(StockpilingTag)!;
       expect(stockpilingTag).toBeDefined();
-
       // for the sake of simplicity (and because other tests cover the setup), set boost amounts directly
       stockpilingTag.statChangeCounts = {
         [Stat.DEF]: -1,
@@ -187,10 +121,9 @@ describe("Moves - Swallow", () => {
       };
 
       game.move.select(MoveId.SWALLOW);
+      await game.toEndOfTurn();
 
-      await game.phaseInterceptor.to(TurnInitPhase);
-
-      expect(pokemon.getMoveHistory().at(-1)).toMatchObject<TurnMove>({
+      expect(pokemon.getLastXMoves()[0]).toMatchObject<TurnMove>({
         move: MoveId.SWALLOW,
         result: MoveResult.SUCCESS,
         targets: [pokemon.getBattlerIndex()],
@@ -198,8 +131,6 @@ describe("Moves - Swallow", () => {
 
       expect(pokemon.getStatStage(Stat.DEF)).toBe(1);
       expect(pokemon.getStatStage(Stat.SPDEF)).toBe(-2);
-
-      expect(pokemon.getTag(StockpilingTag)).toBeUndefined();
     });
   });
 });

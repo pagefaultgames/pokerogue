@@ -2,14 +2,13 @@ import { globalScene } from "#app/global-scene";
 import type { BattlerIndex } from "#enums/battler-index";
 import { CommonBattleAnim } from "#app/data/battle-anims";
 import { CommonAnim } from "#enums/move-anims-common";
-import { getStatusEffectObtainText, getStatusEffectOverlapText } from "#app/data/status-effect";
+import { getStatusEffectObtainText } from "#app/data/status-effect";
 import { StatusEffect } from "#app/enums/status-effect";
 import type Pokemon from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { PokemonPhase } from "./pokemon-phase";
 import { SpeciesFormChangeStatusEffectTrigger } from "#app/data/pokemon-forms/form-change-triggers";
 import { applyPostSetStatusAbAttrs } from "#app/data/abilities/apply-ab-attrs";
-import { isNullOrUndefined } from "#app/utils/common";
 
 /** The phase where pokemon obtain status effects. */
 export class ObtainStatusEffectPhase extends PokemonPhase {
@@ -49,7 +48,7 @@ export class ObtainStatusEffectPhase extends PokemonPhase {
     pokemon.doSetStatus(this.statusEffect, this.sleepTurnsRemaining);
     pokemon.updateInfo(true);
 
-    new CommonBattleAnim(CommonAnim.POISON + (this.statusEffect! - 1), pokemon).play(false, () => {
+    new CommonBattleAnim(CommonAnim.POISON + (this.statusEffect - 1), pokemon).play(false, () => {
       globalScene.phaseManager.queueMessage(
         getStatusEffectObtainText(this.statusEffect, getPokemonNameWithAffix(pokemon), this.sourceText ?? undefined),
       );

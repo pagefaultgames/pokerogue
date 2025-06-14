@@ -1549,7 +1549,7 @@ export class PostDefendContactApplyStatusEffectAbAttr extends PostDefendAbAttr {
   ): void {
     const effect =
       this.effects.length === 1 ? this.effects[0] : this.effects[pokemon.randBattleSeedInt(this.effects.length)];
-    attacker.trySetStatus(effect, true, pokemon);
+    attacker.trySetStatus(effect, pokemon);
   }
 }
 
@@ -2885,7 +2885,7 @@ export class PostAttackApplyStatusEffectAbAttr extends PostAttackAbAttr {
   ): void {
     const effect =
       this.effects.length === 1 ? this.effects[0] : this.effects[pokemon.randBattleSeedInt(this.effects.length)];
-    attacker.trySetStatus(effect, true, pokemon);
+    attacker.trySetStatus(effect, pokemon);
   }
 }
 
@@ -3092,7 +3092,7 @@ export class SynchronizeStatusAbAttr extends PostSetStatusAbAttr {
     _args: any[],
   ): void {
     if (!simulated && sourcePokemon) {
-      sourcePokemon.trySetStatus(effect, true, pokemon);
+      sourcePokemon.trySetStatus(effect, pokemon);
     }
   }
 }
@@ -8931,7 +8931,7 @@ export function initAbilities() {
     new Ability(AbilityId.ORICHALCUM_PULSE, 9)
       .attr(PostSummonWeatherChangeAbAttr, WeatherType.SUNNY)
       .attr(PostBiomeChangeWeatherChangeAbAttr, WeatherType.SUNNY)
-      .conditionalAttr(getWeatherCondition(WeatherType.SUNNY, WeatherType.HARSH_SUN), StatMultiplierAbAttr, Stat.ATK, 4 / 3), // No game freak rounding jank
+      .conditionalAttr(getWeatherCondition(WeatherType.SUNNY, WeatherType.HARSH_SUN), StatMultiplierAbAttr, Stat.ATK, 4 / 3),
     new Ability(AbilityId.HADRON_ENGINE, 9)
       .attr(PostSummonTerrainChangeAbAttr, TerrainType.ELECTRIC)
       .attr(PostBiomeChangeTerrainChangeAbAttr, TerrainType.ELECTRIC)

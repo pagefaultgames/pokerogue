@@ -154,7 +154,6 @@ export function getRandomStatus(statusA: Status | null, statusB: Status | null):
   return randIntRange(0, 2) ? statusA : statusB;
 }
 
-// TODO: Make this a type and remove these
 /**
  * Gets all non volatile status effects
  * @returns A list containing all non volatile status effects
