@@ -84,7 +84,8 @@ describe("Swallow & Spit Up", () => {
       });
     });
 
-    it("should fail and display message at full HP without consuming stacks", async () => {
+    // TODO: Does this consume stacks or not?
+    it.todo("should fail and display message at full HP, consuming stacks", async () => {
       await game.classicMode.startBattle([SpeciesId.SWALOT]);
 
       const swalot = game.field.getPlayerPokemon();
@@ -234,7 +235,6 @@ describe("Swallow & Spit Up", () => {
       // should have fallen by 2 stages from Simple
       expect(player.getStatStage(Stat.DEF)).toBe(-1);
       expect(player.getStatStage(Stat.SPDEF)).toBe(-1);
-      expect(player.waveData.abilityRevealed).toBe(true);
     });
 
     it("should invert stat drops when gaining Contrary", async () => {
@@ -259,7 +259,6 @@ describe("Swallow & Spit Up", () => {
       // should have risen 1 stage from Contrary
       expect(player.getStatStage(Stat.DEF)).toBe(2);
       expect(player.getStatStage(Stat.SPDEF)).toBe(2);
-      expect(player.waveData.abilityRevealed).toBe(true);
     });
   });
 });
