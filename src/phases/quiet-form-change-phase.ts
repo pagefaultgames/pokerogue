@@ -12,12 +12,7 @@ import type Pokemon from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { BattlePhase } from "./battle-phase";
 import type { MovePhase } from "./move-phase";
-import {
-  applyAbAttrs,
-  ClearTerrainAbAttr,
-  ClearWeatherAbAttr,
-  PostTeraFormChangeStatChangeAbAttr,
-} from "#app/data/abilities/ability";
+import { applyAbAttrs } from "#app/data/abilities/apply-ab-attrs";
 
 export class QuietFormChangePhase extends BattlePhase {
   public readonly phaseName = "QuietFormChangePhase";
@@ -185,9 +180,9 @@ export class QuietFormChangePhase extends BattlePhase {
       }
     }
     if (this.formChange.trigger instanceof SpeciesFormChangeTeraTrigger) {
-      applyAbAttrs(PostTeraFormChangeStatChangeAbAttr, this.pokemon, null);
-      applyAbAttrs(ClearWeatherAbAttr, this.pokemon, null);
-      applyAbAttrs(ClearTerrainAbAttr, this.pokemon, null);
+      applyAbAttrs("PostTeraFormChangeStatChangeAbAttr", this.pokemon, null);
+      applyAbAttrs("ClearWeatherAbAttr", this.pokemon, null);
+      applyAbAttrs("ClearTerrainAbAttr", this.pokemon, null);
     }
 
     super.end();

@@ -25,7 +25,7 @@ import { HiddenAbilityRateBoosterModifier, PokemonFormChangeItemModifier } from 
 import { achvs } from "#app/system/achv";
 import { showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import type { PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
-import { modifierTypes } from "#app/modifier/modifier-type";
+import { modifierTypes } from "#app/data/data-lists";
 import i18next from "#app/plugins/i18n";
 import {
   doPokemonTransformationSequence,
@@ -34,7 +34,7 @@ import {
 import { getLevelTotalExp } from "#app/data/exp";
 import { Stat } from "#enums/stat";
 import { Challenges } from "#enums/challenges";
-import { ModifierTier } from "#app/modifier/modifier-tier";
+import { ModifierTier } from "#enums/modifier-tier";
 import { PlayerGender } from "#enums/player-gender";
 import { TrainerType } from "#enums/trainer-type";
 import PokemonData from "#app/system/pokemon-data";
