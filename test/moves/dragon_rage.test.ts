@@ -1,6 +1,5 @@
 import { Stat } from "#enums/stat";
 import { PokemonType } from "#enums/pokemon-type";
-import { SpeciesId } from "#enums/species-id";
 import type { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { AbilityId } from "#enums/ability-id";
@@ -9,6 +8,7 @@ import { MoveId } from "#enums/move-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { SpeciesId } from "#enums/species-id";
 
 describe("Moves - Dragon Rage", () => {
   let phaserGame: Phaser.Game;
@@ -31,19 +31,18 @@ describe("Moves - Dragon Rage", () => {
   beforeEach(async () => {
     game = new GameManager(phaserGame);
 
-    game.override.battleStyle("single");
-
-    game.override.starterSpecies(SpeciesId.SNORLAX);
-    game.override.moveset([MoveId.DRAGON_RAGE]);
-    game.override.ability(AbilityId.BALL_FETCH);
-    game.override.passiveAbility(AbilityId.BALL_FETCH);
-    game.override.startingLevel(100);
-
-    game.override.enemySpecies(SpeciesId.SNORLAX);
-    game.override.enemyMoveset(MoveId.SPLASH);
-    game.override.enemyAbility(AbilityId.BALL_FETCH);
-    game.override.enemyPassiveAbility(AbilityId.BALL_FETCH);
-    game.override.enemyLevel(100);
+    game.override
+      .battleStyle("single")
+      .starterSpecies(SpeciesId.SNORLAX)
+      .moveset([MoveId.DRAGON_RAGE])
+      .ability(AbilityId.BALL_FETCH)
+      .passiveAbility(AbilityId.BALL_FETCH)
+      .startingLevel(100)
+      .enemySpecies(SpeciesId.SNORLAX)
+      .enemyMoveset(MoveId.SPLASH)
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .enemyPassiveAbility(AbilityId.BALL_FETCH)
+      .enemyLevel(100);
 
     await game.classicMode.startBattle();
 
@@ -101,8 +100,7 @@ describe("Moves - Dragon Rage", () => {
   });
 
   it("ignores damage modification from abilities, for example ICE_SCALES", async () => {
-    game.override.disableCrits();
-    game.override.enemyAbility(AbilityId.ICE_SCALES);
+    game.override.disableCrits().enemyAbility(AbilityId.ICE_SCALES);
 
     game.move.select(MoveId.DRAGON_RAGE);
     await game.phaseInterceptor.to(TurnEndPhase);

@@ -23,12 +23,13 @@ describe("Abilities - Wonder Skin", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("single");
-    game.override.moveset([MoveId.TACKLE, MoveId.CHARM]);
-    game.override.ability(AbilityId.BALL_FETCH);
-    game.override.enemySpecies(SpeciesId.SHUCKLE);
-    game.override.enemyAbility(AbilityId.WONDER_SKIN);
-    game.override.enemyMoveset(MoveId.SPLASH);
+    game.override
+      .battleStyle("single")
+      .moveset([MoveId.TACKLE, MoveId.CHARM])
+      .ability(AbilityId.BALL_FETCH)
+      .enemySpecies(SpeciesId.SHUCKLE)
+      .enemyAbility(AbilityId.WONDER_SKIN)
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   it("lowers accuracy of status moves to 50%", async () => {

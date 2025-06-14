@@ -28,12 +28,13 @@ describe("Moves - FILLET AWAY", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.starterSpecies(SpeciesId.MAGIKARP);
-    game.override.enemySpecies(SpeciesId.SNORLAX);
-    game.override.startingLevel(100);
-    game.override.enemyLevel(100);
-    game.override.moveset([MoveId.FILLET_AWAY]);
-    game.override.enemyMoveset(MoveId.SPLASH);
+    game.override
+      .starterSpecies(SpeciesId.MAGIKARP)
+      .enemySpecies(SpeciesId.SNORLAX)
+      .startingLevel(100)
+      .enemyLevel(100)
+      .moveset([MoveId.FILLET_AWAY])
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   //Bulbapedia Reference: https://bulbapedia.bulbagarden.net/wiki/fillet_away_(move)

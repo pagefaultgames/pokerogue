@@ -4,11 +4,11 @@ import { MoveEndPhase } from "#app/phases/move-end-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
-import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { SubstituteTag } from "#app/data/battler-tags";
+import { SpeciesId } from "#enums/species-id";
 
 describe("Moves - Tidy Up", () => {
   let phaserGame: Phaser.Game;
@@ -26,14 +26,15 @@ describe("Moves - Tidy Up", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("single");
-    game.override.enemySpecies(SpeciesId.MAGIKARP);
-    game.override.enemyAbility(AbilityId.BALL_FETCH);
-    game.override.enemyMoveset(MoveId.SPLASH);
-    game.override.starterSpecies(SpeciesId.FEEBAS);
-    game.override.ability(AbilityId.BALL_FETCH);
-    game.override.moveset([MoveId.TIDY_UP]);
-    game.override.startingLevel(50);
+    game.override
+      .battleStyle("single")
+      .enemySpecies(SpeciesId.MAGIKARP)
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .enemyMoveset(MoveId.SPLASH)
+      .starterSpecies(SpeciesId.FEEBAS)
+      .ability(AbilityId.BALL_FETCH)
+      .moveset([MoveId.TIDY_UP])
+      .startingLevel(50);
   });
 
   it("spikes are cleared", async () => {

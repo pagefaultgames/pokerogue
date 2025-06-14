@@ -23,15 +23,14 @@ describe("Moves - Beat Up", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("single");
-
-    game.override.enemySpecies(SpeciesId.SNORLAX);
-    game.override.enemyLevel(100);
-    game.override.enemyMoveset([MoveId.SPLASH]);
-    game.override.enemyAbility(AbilityId.INSOMNIA);
-
-    game.override.startingLevel(100);
-    game.override.moveset([MoveId.BEAT_UP]);
+    game.override
+      .battleStyle("single")
+      .enemySpecies(SpeciesId.SNORLAX)
+      .enemyLevel(100)
+      .enemyMoveset([MoveId.SPLASH])
+      .enemyAbility(AbilityId.INSOMNIA)
+      .startingLevel(100)
+      .moveset([MoveId.BEAT_UP]);
   });
 
   it("should hit once for each healthy player Pokemon", async () => {

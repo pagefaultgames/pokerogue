@@ -79,8 +79,7 @@ describe("An Offer You Can't Refuse - Mystery Encounter", () => {
   });
 
   it("should not spawn outside of HUMAN_TRANSITABLE_BIOMES", async () => {
-    game.override.mysteryEncounterTier(MysteryEncounterTier.GREAT);
-    game.override.startingBiome(BiomeId.VOLCANO);
+    game.override.mysteryEncounterTier(MysteryEncounterTier.GREAT).startingBiome(BiomeId.VOLCANO);
     await game.runToMysteryEncounter();
 
     expect(scene.currentBattle?.mysteryEncounter?.encounterType).not.toBe(
