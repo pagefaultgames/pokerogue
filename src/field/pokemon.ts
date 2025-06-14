@@ -2278,14 +2278,12 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     applyMoveAttrs("VariableMoveTypeAttr", this, null, move, moveTypeHolder);
 
-    const cancelled = new BooleanHolder(false);
     const power = new NumberHolder(move.power);
     applyAbAttrs("MoveTypeChangeAbAttr", {
       pokemon: this,
       move,
       simulated,
       moveType: moveTypeHolder,
-      cancelled,
       power,
       opponent: this,
     });
@@ -3747,7 +3745,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         opponent: this,
         move,
         simulated,
-        cancelled: new BooleanHolder(false),
         multiplier: multiStrikeEnhancementMultiplier,
       });
     }
@@ -3855,8 +3852,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
         move,
         simulated,
         damage,
-        // cancelled isn't necessary for this ability attribute, but is required by the interface
-        cancelled: new BooleanHolder(false),
       });
     }
 
@@ -3872,7 +3867,6 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       pokemon: this,
       opponent: source,
       move,
-      cancelled,
       simulated,
       damage,
     };
