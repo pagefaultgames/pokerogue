@@ -6064,15 +6064,6 @@ export class EnemyPokemon extends Pokemon {
 
       this.luck = (this.shiny ? this.variant + 1 : 0) + (this.fusionShiny ? this.fusionVariant + 1 : 0);
 
-      let prevolution: SpeciesId;
-      let speciesId = species.speciesId;
-      while ((prevolution = pokemonPrevolutions[speciesId])) {
-        const _evolution = pokemonEvolutions[prevolution].find(
-          pe => pe.speciesId === speciesId && (!pe.evoFormKey || pe.evoFormKey === this.getFormKey()),
-        );
-        speciesId = prevolution;
-      }
-
       if (this.hasTrainer() && globalScene.currentBattle) {
         const { waveIndex } = globalScene.currentBattle;
         const ivs: number[] = [];
