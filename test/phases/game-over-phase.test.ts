@@ -6,7 +6,7 @@ import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { achvs } from "#app/system/achv";
-import { Unlockables } from "#app/system/unlockables";
+import { Unlockables } from "#enums/unlockables";
 
 describe("Game Over Phase", () => {
   let phaserGame: Phaser.Game;

@@ -1,13 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import Overrides from "#app/overrides";
-import {
-  applyAbAttrs,
-  BlockNonDirectDamageAbAttr,
-  FlinchEffectAbAttr,
-  ProtectStatAbAttr,
-  ConditionalUserFieldProtectStatAbAttr,
-  ReverseDrainAbAttr,
-} from "#app/data/abilities/ability";
+import { applyAbAttrs } from "./abilities/apply-ab-attrs";
 import { allAbilities } from "./data-lists";
 import { CommonBattleAnim, MoveChargeAnim } from "#app/data/battle-anims";
 import { ChargeAnim, CommonAnim } from "#enums/move-anims-common";
@@ -28,7 +21,7 @@ import type { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import type { MovePhase } from "#app/phases/move-phase";
 import type { StatStageChangeCallback } from "#app/phases/stat-stage-change-phase";
 import i18next from "#app/plugins/i18n";
-import { BooleanHolder, getFrameMs, NumberHolder, toDmgValue } from "#app/utils/common";
+import { BooleanHolder, coerceArray, getFrameMs, NumberHolder, toDmgValue } from "#app/utils/common";
 import { AbilityId } from "#enums/ability-id";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
@@ -57,7 +50,7 @@ export class BattlerTag {
     isBatonPassable = false,
   ) {
     this.tagType = tagType;
-    this.lapseTypes = Array.isArray(lapseType) ? lapseType : [lapseType];
+    this.lapseTypes = coerceArray(lapseType);
     this.turnCount = turnCount;
     this.sourceMove = sourceMove!; // TODO: is this bang correct?
     this.sourceId = sourceId;
@@ -132,16 +125,6 @@ export interface TerrainBattlerTag {
  * Players and enemies should not be allowed to select restricted moves.
  */
 export abstract class MoveRestrictionBattlerTag extends BattlerTag {
-  constructor(
-    tagType: BattlerTagType,
-    lapseType: BattlerTagLapseType | BattlerTagLapseType[],
-    turnCount: number,
-    sourceMove?: MoveId,
-    sourceId?: number,
-  ) {
-    super(tagType, lapseType, turnCount, sourceMove, sourceId);
-  }
-
   /** @override */
   override lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     if (lapseType === BattlerTagLapseType.PRE_MOVE) {
@@ -652,7 +635,7 @@ export class FlinchedTag extends BattlerTag {
           pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
         }),
       );
-      applyAbAttrs(FlinchEffectAbAttr, pokemon, null);
+      applyAbAttrs("FlinchEffectAbAttr", pokemon, null);
       return true;
     }
 
@@ -973,7 +956,7 @@ export class SeedTag extends BattlerTag {
     }
 
     const cancelled = new BooleanHolder(false);
-    applyAbAttrs(BlockNonDirectDamageAbAttr, pokemon, cancelled);
+    applyAbAttrs("BlockNonDirectDamageAbAttr", pokemon, cancelled);
 
     if (cancelled.value) {
       return true;
@@ -988,7 +971,7 @@ export class SeedTag extends BattlerTag {
 
     // Damage the target and restore our HP (or take damage in the case of liquid ooze)
     const damage = pokemon.damageAndUpdate(toDmgValue(pokemon.getMaxHp() / 8), { result: HitResult.INDIRECT });
-    const reverseDrain = pokemon.hasAbilityWithAttr(ReverseDrainAbAttr, false);
+    const reverseDrain = pokemon.hasAbilityWithAttr("ReverseDrainAbAttr", false);
     globalScene.phaseManager.unshiftNew(
       "PokemonHealPhase",
       source.getBattlerIndex(),
@@ -1053,7 +1036,7 @@ export class PowderTag extends BattlerTag {
           globalScene.phaseManager.unshiftNew("CommonAnimPhase", idx, idx, CommonAnim.POWDER);
 
           const cancelDamage = new BooleanHolder(false);
-          applyAbAttrs(BlockNonDirectDamageAbAttr, pokemon, cancelDamage);
+          applyAbAttrs("BlockNonDirectDamageAbAttr", pokemon, cancelDamage);
           if (!cancelDamage.value) {
             pokemon.damageAndUpdate(Math.floor(pokemon.getMaxHp() / 4), { result: HitResult.INDIRECT });
           }
@@ -1106,7 +1089,7 @@ export class NightmareTag extends BattlerTag {
       phaseManager.unshiftNew("CommonAnimPhase", pokemon.getBattlerIndex(), undefined, CommonAnim.CURSE); // TODO: Update animation type
 
       const cancelled = new BooleanHolder(false);
-      applyAbAttrs(BlockNonDirectDamageAbAttr, pokemon, cancelled);
+      applyAbAttrs("BlockNonDirectDamageAbAttr", pokemon, cancelled);
 
       if (!cancelled.value) {
         pokemon.damageAndUpdate(toDmgValue(pokemon.getMaxHp() / 4), { result: HitResult.INDIRECT });
@@ -1469,7 +1452,7 @@ export abstract class DamagingTrapTag extends TrappedTag {
       phaseManager.unshiftNew("CommonAnimPhase", pokemon.getBattlerIndex(), undefined, this.commonAnim);
 
       const cancelled = new BooleanHolder(false);
-      applyAbAttrs(BlockNonDirectDamageAbAttr, pokemon, cancelled);
+      applyAbAttrs("BlockNonDirectDamageAbAttr", pokemon, cancelled);
 
       if (!cancelled.value) {
         pokemon.damageAndUpdate(toDmgValue(pokemon.getMaxHp() / 8), { result: HitResult.INDIRECT });
@@ -1522,16 +1505,6 @@ export class WrapTag extends DamagingTrapTag {
 }
 
 export abstract class VortexTrapTag extends DamagingTrapTag {
-  constructor(
-    tagType: BattlerTagType,
-    commonAnim: CommonAnim,
-    turnCount: number,
-    sourceMove: MoveId,
-    sourceId: number,
-  ) {
-    super(tagType, commonAnim, turnCount, sourceMove, sourceId);
-  }
-
   getTrapMessage(pokemon: Pokemon): string {
     return i18next.t("battlerTags:vortexOnTrap", {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
@@ -1744,7 +1717,7 @@ export class ContactDamageProtectedTag extends ContactProtectedTag {
    */
   override onContact(attacker: Pokemon, user: Pokemon): void {
     const cancelled = new BooleanHolder(false);
-    applyAbAttrs(BlockNonDirectDamageAbAttr, user, cancelled);
+    applyAbAttrs("BlockNonDirectDamageAbAttr", user, cancelled);
     if (!cancelled.value) {
       attacker.damageAndUpdate(toDmgValue(attacker.getMaxHp() * (1 / this.damageRatio)), {
         result: HitResult.INDIRECT,
@@ -2345,7 +2318,7 @@ export class SaltCuredTag extends BattlerTag {
       );
 
       const cancelled = new BooleanHolder(false);
-      applyAbAttrs(BlockNonDirectDamageAbAttr, pokemon, cancelled);
+      applyAbAttrs("BlockNonDirectDamageAbAttr", pokemon, cancelled);
 
       if (!cancelled.value) {
         const pokemonSteelOrWater = pokemon.isOfType(PokemonType.STEEL) || pokemon.isOfType(PokemonType.WATER);
@@ -2405,7 +2378,7 @@ export class CursedTag extends BattlerTag {
       );
 
       const cancelled = new BooleanHolder(false);
-      applyAbAttrs(BlockNonDirectDamageAbAttr, pokemon, cancelled);
+      applyAbAttrs("BlockNonDirectDamageAbAttr", pokemon, cancelled);
 
       if (!cancelled.value) {
         pokemon.damageAndUpdate(toDmgValue(pokemon.getMaxHp() / 4), { result: HitResult.INDIRECT });
@@ -2740,7 +2713,7 @@ export class GulpMissileTag extends BattlerTag {
       }
 
       const cancelled = new BooleanHolder(false);
-      applyAbAttrs(BlockNonDirectDamageAbAttr, attacker, cancelled);
+      applyAbAttrs("BlockNonDirectDamageAbAttr", attacker, cancelled);
 
       if (!cancelled.value) {
         attacker.damageAndUpdate(Math.max(1, Math.floor(attacker.getMaxHp() / 4)), { result: HitResult.INDIRECT });
@@ -3136,8 +3109,8 @@ export class MysteryEncounterPostSummonTag extends BattlerTag {
 
     if (lapseType === BattlerTagLapseType.CUSTOM) {
       const cancelled = new BooleanHolder(false);
-      applyAbAttrs(ProtectStatAbAttr, pokemon, cancelled);
-      applyAbAttrs(ConditionalUserFieldProtectStatAbAttr, pokemon, cancelled, false, pokemon);
+      applyAbAttrs("ProtectStatAbAttr", pokemon, cancelled);
+      applyAbAttrs("ConditionalUserFieldProtectStatAbAttr", pokemon, cancelled, false, pokemon);
       if (!cancelled.value) {
         if (pokemon.mysteryEncounterBattleEffects) {
           pokemon.mysteryEncounterBattleEffects(pokemon);

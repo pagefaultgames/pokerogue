@@ -7,11 +7,7 @@ import { Command } from "#enums/command";
 import MessageUiHandler from "#app/ui/message-ui-handler";
 import { UiMode } from "#enums/ui-mode";
 import { BooleanHolder, toReadableString, randInt, getLocalizedSpriteKey } from "#app/utils/common";
-import {
-  PokemonFormChangeItemModifier,
-  PokemonHeldItemModifier,
-  SwitchEffectTransferModifier,
-} from "#app/modifier/modifier";
+import type { PokemonFormChangeItemModifier, PokemonHeldItemModifier } from "#app/modifier/modifier";
 import { allMoves } from "#app/data/data-lists";
 import { Gender, getGenderColor, getGenderSymbol } from "#app/data/gender";
 import { StatusEffect } from "#enums/status-effect";
@@ -226,7 +222,7 @@ export default class PartyUiHandler extends MessageUiHandler {
 
   public static FilterItemMaxStacks = (pokemon: PlayerPokemon, modifier: PokemonHeldItemModifier) => {
     const matchingModifier = globalScene.findModifier(
-      m => m instanceof PokemonHeldItemModifier && m.pokemonId === pokemon.id && m.matchType(modifier),
+      m => m.is("PokemonHeldItemModifier") && m.pokemonId === pokemon.id && m.matchType(modifier),
     ) as PokemonHeldItemModifier;
     if (matchingModifier && matchingModifier.stackCount === matchingModifier.getMaxStackCount()) {
       return i18next.t("partyUiHandler:tooManyItems", { pokemonName: getPokemonNameWithAffix(pokemon, false) });
@@ -554,7 +550,7 @@ export default class PartyUiHandler extends MessageUiHandler {
         // this returns `undefined` if the new pokemon doesn't have the item at all, otherwise it returns the `pokemonHeldItemModifier` for that item
         const matchingModifier = globalScene.findModifier(
           m =>
-            m instanceof PokemonHeldItemModifier &&
+            m.is("PokemonHeldItemModifier") &&
             m.pokemonId === newPokemon.id &&
             m.matchType(this.getTransferrableItemsFromPokemon(pokemon)[this.transferOptionCursor]),
         ) as PokemonHeldItemModifier;
@@ -687,7 +683,7 @@ export default class PartyUiHandler extends MessageUiHandler {
 
   private getTransferrableItemsFromPokemon(pokemon: PlayerPokemon) {
     return globalScene.findModifiers(
-      m => m instanceof PokemonHeldItemModifier && m.isTransferable && m.pokemonId === pokemon.id,
+      m => m.is("PokemonHeldItemModifier") && m.isTransferable && m.pokemonId === pokemon.id,
     ) as PokemonHeldItemModifier[];
   }
 
@@ -928,7 +924,7 @@ export default class PartyUiHandler extends MessageUiHandler {
         /** Initialize item quantities for the selected Pokemon */
         const itemModifiers = globalScene.findModifiers(
           m =>
-            m instanceof PokemonHeldItemModifier &&
+            m.is("PokemonHeldItemModifier") &&
             m.isTransferable &&
             m.pokemonId === globalScene.getPlayerParty()[this.cursor].id,
         ) as PokemonHeldItemModifier[];
@@ -1165,8 +1161,7 @@ export default class PartyUiHandler extends MessageUiHandler {
     return !!(
       this.partyUiMode !== PartyUiMode.FAINT_SWITCH &&
       globalScene.findModifier(
-        m =>
-          m instanceof SwitchEffectTransferModifier && m.pokemonId === globalScene.getPlayerField()[this.fieldIndex].id,
+        m => m.is("SwitchEffectTransferModifier") && m.pokemonId === globalScene.getPlayerField()[this.fieldIndex].id,
       )
     );
   }
@@ -1185,7 +1180,7 @@ export default class PartyUiHandler extends MessageUiHandler {
   private getItemModifiers(pokemon: Pokemon): PokemonHeldItemModifier[] {
     return (
       (globalScene.findModifiers(
-        m => m instanceof PokemonHeldItemModifier && m.isTransferable && m.pokemonId === pokemon.id,
+        m => m.is("PokemonHeldItemModifier") && m.isTransferable && m.pokemonId === pokemon.id,
       ) as PokemonHeldItemModifier[]) ?? []
     );
   }
@@ -1390,7 +1385,7 @@ export default class PartyUiHandler extends MessageUiHandler {
           case PartyOption.MOVE_1:
           case PartyOption.MOVE_2:
           case PartyOption.MOVE_3:
-          case PartyOption.MOVE_4:
+          case PartyOption.MOVE_4: {
             const move = pokemon.moveset[option - PartyOption.MOVE_1];
             if (this.showMovePp) {
               const maxPP = move.getMovePp();
@@ -1400,7 +1395,8 @@ export default class PartyUiHandler extends MessageUiHandler {
               optionName = move.getName();
             }
             break;
-          default:
+          }
+          default: {
             const formChangeItemModifiers = this.getFormChangeItemsModifiers(pokemon);
             if (formChangeItemModifiers && option >= PartyOption.FORM_CHANGE_ITEM) {
               const modifier = formChangeItemModifiers[option - PartyOption.FORM_CHANGE_ITEM];
@@ -1415,6 +1411,7 @@ export default class PartyUiHandler extends MessageUiHandler {
               }
             }
             break;
+          }
         }
       } else if (this.partyUiMode === PartyUiMode.REMEMBER_MOVE_MODIFIER) {
         const learnableLevelMoves = pokemon.getLearnableLevelMoves();
@@ -1565,7 +1562,7 @@ export default class PartyUiHandler extends MessageUiHandler {
 
   getFormChangeItemsModifiers(pokemon: Pokemon) {
     let formChangeItemModifiers = globalScene.findModifiers(
-      m => m instanceof PokemonFormChangeItemModifier && m.pokemonId === pokemon.id,
+      m => m.is("PokemonFormChangeItemModifier") && m.pokemonId === pokemon.id,
     ) as PokemonFormChangeItemModifier[];
     const ultraNecrozmaModifiers = formChangeItemModifiers.filter(
       m => m.active && m.formChangeItem === FormChangeItem.ULTRANECROZIUM_Z,

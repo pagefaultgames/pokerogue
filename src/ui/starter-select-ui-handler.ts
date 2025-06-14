@@ -8,7 +8,7 @@ import i18next from "i18next";
 import type BBCodeText from "phaser3-rex-plugins/plugins/bbcodetext";
 import { starterColors } from "#app/global-vars/starter-colors";
 import { globalScene } from "#app/global-scene";
-import type { Ability } from "#app/data/abilities/ability-class";
+import type { Ability } from "#app/data/abilities/ability";
 import { allAbilities } from "#app/data/data-lists";
 import { speciesEggMoves } from "#app/data/balance/egg-moves";
 import { GrowthRate, getGrowthRateColor } from "#app/data/exp";
@@ -1763,7 +1763,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
       }
     } else if (this.randomCursorObj.visible) {
       switch (button) {
-        case Button.ACTION:
+        case Button.ACTION: {
           if (this.starterSpecies.length >= 6) {
             error = true;
             break;
@@ -1815,6 +1815,7 @@ export default class StarterSelectUiHandler extends MessageUiHandler {
             }
           });
           break;
+        }
         case Button.UP:
           this.randomCursorObj.setVisible(false);
           this.filterBarCursor = this.filterBar.numFilters - 1;
