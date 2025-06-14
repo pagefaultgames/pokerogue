@@ -1,8 +1,8 @@
-import type { AbAttrParamMap } from "#app/@types/ab-attr-types";
-import type { AbAttr, AbAttrBaseParams, AbAttrMap, CallableAbAttrString } from "#app/@types/ability-types";
+import type { AbAttrParamMap } from "#app/@types/ability-types";
+import type { AbAttr, AbAttrBaseParams, AbAttrString, CallableAbAttrString } from "#app/@types/ability-types";
 import { globalScene } from "#app/global-scene";
 
-function applySingleAbAttrs<T extends CallableAbAttrString>(
+function applySingleAbAttrs<T extends AbAttrString>(
   attrType: T,
   params: AbAttrParamMap[T],
   gainedMidTurn = false,
@@ -15,10 +15,9 @@ function applySingleAbAttrs<T extends CallableAbAttrString>(
 
   const attr = 1 as unknown as AbAttr;
 
-  if (attr.is("BlockRedirectAbAttr")) {
-    attr
+  if (attr.is("BypassSpeedChanceAbAttr")) {
+    attr;
   }
-
 
   const ability = passive ? pokemon.getPassiveAbility() : pokemon.getAbility();
   if (
@@ -30,12 +29,15 @@ function applySingleAbAttrs<T extends CallableAbAttrString>(
     return;
   }
 
-
-  // typescript assert 
+  // typescript assert
   for (const attr of ability.getAttrs(attrType)) {
     const condition = attr.getCondition();
     let abShown = false;
-    if ((condition && !condition(pokemon)) || !attr.canApply(params)) {
+    if (
+      (condition && !condition(pokemon)) ||
+      // @ts-ignore: typescript can't unify the type of params with the generic type that was passed
+      !attr.canApply(params)
+    ) {
       continue;
     }
 
@@ -45,6 +47,7 @@ function applySingleAbAttrs<T extends CallableAbAttrString>(
       globalScene.phaseManager.queueAbilityDisplay(pokemon, passive, true);
       abShown = true;
     }
+    // @ts-expect-error - typescript can't unify the type of params with the generic type that was passed
     const message = attr.getTriggerMessage(params, ability.name);
     if (message) {
       if (!simulated) {
@@ -53,7 +56,8 @@ function applySingleAbAttrs<T extends CallableAbAttrString>(
       messages.push(message);
     }
 
-    
+    // @ts-ignore: typescript can't unify the type of params with the generic type that was passed
+    attr.apply(params);
 
     if (abShown) {
       globalScene.phaseManager.queueAbilityDisplay(pokemon, passive, false);
@@ -69,30 +73,41 @@ function applySingleAbAttrs<T extends CallableAbAttrString>(
 
 function applyAbAttrsInternal<T extends CallableAbAttrString>(
   attrType: T,
-  params: Parameters<AbAttrMap[T]["apply"]>[0],
+  params: AbAttrParamMap[T],
   messages: string[] = [],
   gainedMidTurn = false,
 ) {
-  const { pokemon } = params;
+  // If the pokemon is not defined, no ability attributes to be applied.
+  // TODO: Evaluate whether this check is even necessary anymore
+  if (!params.pokemon) {
+    return;
+  }
+  if (params.passive !== undefined) {
+    applySingleAbAttrs(attrType, params, gainedMidTurn, messages);
+    return;
+  }
   for (const passive of [false, true]) {
-    if (pokemon) {
-      applySingleAbAttrs(attrType, { ...params, passive }, gainedMidTurn, messages);
-      globalScene.phaseManager.clearPhaseQueueSplice();
-    }
+    params.passive = passive;
+    applySingleAbAttrs(attrType, params, gainedMidTurn, messages);
+    globalScene.phaseManager.clearPhaseQueueSplice();
+    // We need to restore passive to its original state in case it was undefined earlier
+    // this is necessary in case this method is called with an object that is reused.
+    params.passive = undefined;
   }
 }
 
 /**
- * @param attrType - The type of the ability attribute to apply
+ * @param attrType - The type of the ability attribute to apply. (note: may not be any attribute that extends PostSummonAbAttr)
  * @param params - The parameters to pass to the ability attribute's apply method
+ * @param messages - An optional array to which ability trigger messges will be added
  */
 export function applyAbAttrs<T extends CallableAbAttrString>(
   attrType: T,
-  params: Parameters<AbAttrMap[T]["apply"]>[0],
+  params: AbAttrParamMap[T],
+  messages?: string[],
 ): void {
-  applyAbAttrsInternal(attrType, params);
+  applyAbAttrsInternal(attrType, params, messages);
 }
-
 
 // TODO: Improve the type signatures of the following methods / refactor the apply methods
 
@@ -108,17 +123,8 @@ export function applyOnGainAbAttrs(params: AbAttrBaseParams): void {
 /**
  * Applies ability attributes which activate when the ability is lost or suppressed (i.e. primal weather)
  */
-export function applyOnLoseAbAttrs(params): void {
-  applySingleAbAttrs("PreLeaveFieldAbAttr");
+export function applyOnLoseAbAttrs(params: AbAttrBaseParams): void {
+  applySingleAbAttrs("PreLeaveFieldAbAttr", params, true);
 
-  applySingleAbAttrs(
-    pokemon,
-    passive,
-    "IllusionBreakAbAttr",
-    (attr, passive) => attr.apply(pokemon, passive, simulated, null, args),
-    (attr, passive) => attr.canApply(pokemon, passive, simulated, args),
-    args,
-    true,
-    simulated,
-  );
+  applySingleAbAttrs("IllusionBreakAbAttr", params, true);
 }

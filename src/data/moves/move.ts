@@ -2570,7 +2570,7 @@ export class PsychoShiftEffectAttr extends MoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, _move: Move, _args: any[]): boolean {
     const statusToApply: StatusEffect | undefined = user.status?.effect ?? (user.hasAbility(AbilityId.COMATOSE) ? StatusEffect.SLEEP : undefined);
 
-    if (target.status) {
+    if (target.status || !statusToApply) {
       return false;
     } else {
       const canSetStatus = target.canSetStatus(statusToApply, true, false, user);
@@ -2586,7 +2586,8 @@ export class PsychoShiftEffectAttr extends MoveEffectAttr {
   }
 
   getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
-    return !target.status && target.canSetStatus(user.status?.effect, true, false, user) ? -10 : 0;
+    const statusToApply = user.status?.effect ?? (user.hasAbility(AbilityId.COMATOSE) ? StatusEffect.SLEEP : undefined);
+    return !target.status && statusToApply && target.canSetStatus(statusToApply, true, false, user) ? -10 : 0;
   }
 }
 

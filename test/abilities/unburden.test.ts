@@ -285,7 +285,7 @@ describe("Abilities - Unburden", () => {
     expect(getHeldItemCount(purrloin)).toBe(1);
     expect(treecko.getEffectiveStat(Stat.SPD)).toBe(initialTreeckoSpeed);
     expect(purrloin.getEffectiveStat(Stat.SPD)).toBe(initialPurrloinSpeed);
-    expect(unburdenAttr.applyPostItemLost).not.toHaveBeenCalled();
+    expect(unburdenAttr.apply).not.toHaveBeenCalled();
   });
 
   it("should not speed up a Pokemon after it loses the ability Unburden", async () => {
