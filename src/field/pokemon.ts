@@ -38,7 +38,6 @@ import {
   deltaRgb,
   isBetween,
   randSeedFloat,
-  type nil,
   type Constructor,
   randSeedIntRange,
   coerceArray,
@@ -4109,7 +4108,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**@overload */
-  getTag(tagType: BattlerTagType.GRUDGE): GrudgeTag | nil;
+  getTag(tagType: BattlerTagType.GRUDGE): GrudgeTag | undefined;
 
   /** @overload */
   getTag(tagType: BattlerTagType.SUBSTITUTE): SubstituteTag | undefined;
@@ -4790,9 +4789,15 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
       // If the user is semi-invulnerable when put asleep (such as due to Yawm),
       // remove their invulnerability and cancel the upcoming move from the queue
-      const invulnTag = this.getTag(SemiInvulnerableTag);
-      if (invulnTag) {
-        this.removeTag(invulnTag.tagType);
+      const invulnTagTypes = [
+        BattlerTagType.FLYING,
+        BattlerTagType.UNDERGROUND,
+        BattlerTagType.UNDERWATER,
+        BattlerTagType.HIDDEN,
+      ];
+
+      if (this.findTag(t => invulnTagTypes.includes(t.tagType))) {
+        this.findAndRemoveTags(t => invulnTagTypes.includes(t.tagType));
         this.getMoveQueue().shift();
       }
     }
