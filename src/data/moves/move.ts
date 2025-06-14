@@ -1948,22 +1948,20 @@ export class HealAttr extends MoveEffectAttr {
     return Math.round(score / (1 - this.healRatio / 2));
   }
 
-  // TODO: Remove once `canApply` is made to make status moves fail if no attributes apply
-  override getCondition(): MoveConditionFunc {
-    return (user, target, move) => this.canApply(user, target, move, [])
-  }
-
+  // TODO: Change post move failure rework
   override canApply(user: Pokemon, target: Pokemon, _move: Move, _args?: any[]): boolean {
-    return super.canApply(user, target, _move, _args) && !(this.selfTarget ? user : target).isFullHp();
-  }
+    if (!super.canApply(user, target, _move, _args)) {
+      return false;
+    }
 
-  override getFailedText(user: Pokemon, target: Pokemon, _move: Move): string | undefined {
     const healedPokemon = this.selfTarget ? user : target;
-    return healedPokemon.isFullHp()
-      ? i18next.t("battle:hpIsFull", {
+    if (healedPokemon.isFullHp()) {
+      globalScene.phaseManager.queueMessage(i18next.t("battle:hpIsFull", {
         pokemonName: getPokemonNameWithAffix(healedPokemon),
-      })
-    : undefined;
+      }))
+      return false;
+    }
+    return true;
   }
 }
 
@@ -1991,13 +1989,12 @@ export class RestAttr extends HealAttr {
     globalScene.phaseManager.unshiftNew("PokemonHealPhase", user.getBattlerIndex(), user.getMaxHp(), null)
   }
 
-  override canApply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    // Intentionally suppress messages here as we display generic fail msg
-    // TODO: This might have order-of-operation jank
-    return (
-      super.canApply(user, target, move, args)
+  override getCondition(): MoveConditionFunc {
+    return (user, target, move) =>
+      super.canApply(user, target, move, [])
+      // Intentionally suppress messages here as we display generic fail msg
+      // TODO: This might have order-of-operation jank
       && user.canSetStatus(StatusEffect.SLEEP, true, true, user)
-    );
   }
 }
 
@@ -4432,11 +4429,6 @@ export class SwallowHealAttr extends HealAttr {
     }
 
     return false;
-  }
-
-  // TODO: Is this correct? Should stockpile count as "succeeding" even at full HP?
-  override getCondition(): MoveConditionFunc {
-    return hasStockpileStacksCondition;
   }
 }
 
