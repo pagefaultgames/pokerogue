@@ -2233,13 +2233,29 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     return this.teraType;
   }
 
-  public isGrounded(): boolean {
+  /**
+   * Return whether this Pokemon is currently on the ground.
+   *
+   * To be considered grounded, a Pokemon must either:
+   * * Be {@linkcode GroundedTag | forcibly grounded} from an effect like Smack Down or Ingrain
+   * * Be under the effects of {@linkcode ArenaTagType.GRAVITY | harsh gravity}
+   * * **Not** be any of the following things:
+   *   * {@linkcode PokemonType.FLYING | Flying-type}
+   *   * {@linkcode Abilities.LEVITATE | Levitating}
+   *   * {@linkcode BattlerTagType.FLOATING | Floating} from Magnet Rise, etc.
+   *   * Currently {@linkcode SemiInvulnerableTag | semi-invulnerable} with `ignoreSemiInvulnerable` set to `false`
+   * @param ignoreSemiInvulnerable - Whether to ignore the target's semi-invulnerable state when determining groundedness;
+   default `false`
+   * @returns Whether this pokemon is currently grounded, as described above.
+   */
+  public isGrounded(ignoreSemiInvulnerable = false): boolean {
     return (
       !!this.getTag(GroundedTag) ||
+      !!globalScene.arena.hasTag(ArenaTagType.GRAVITY) ||
       (!this.isOfType(PokemonType.FLYING, true, true) &&
         !this.hasAbility(AbilityId.LEVITATE) &&
         !this.getTag(BattlerTagType.FLOATING) &&
-        !this.getTag(SemiInvulnerableTag))
+        (ignoreSemiInvulnerable || !this.getTag(SemiInvulnerableTag)))
     );
   }
 
@@ -2417,7 +2433,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
 
     // Handle flying v ground type immunity without removing flying type so effective types are still effective
     // Related to https://github.com/pagefaultgames/pokerogue/issues/524
-    if (moveType === PokemonType.GROUND && (this.isGrounded() || arena.hasTag(ArenaTagType.GRAVITY))) {
+    //
+    if (moveType === PokemonType.GROUND && this.isGrounded(true)) {
       const flyingIndex = types.indexOf(PokemonType.FLYING);
       if (flyingIndex > -1) {
         types.splice(flyingIndex, 1);

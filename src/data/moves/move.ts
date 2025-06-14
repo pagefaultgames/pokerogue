@@ -126,10 +126,10 @@ export default abstract class Move implements Localizable {
 
   /**
    * Check if the move is of the given subclass without requiring `instanceof`.
-   * 
+   *
    * ⚠️ Does _not_ work for {@linkcode ChargingAttackMove} and {@linkcode ChargingSelfStatusMove} subclasses. For those,
    * use {@linkcode isChargingMove} instead.
-   * 
+   *
    * @param moveKind - The string name of the move to check against
    * @returns Whether this move is of the provided type.
    */
@@ -5627,10 +5627,12 @@ export class FallDownAttr extends AddBattlerTagAttr {
    * @returns `true` if the effect successfully applies; `false` otherwise
    */
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (!target.isGrounded()) {
+    // Smack down and similar only add their tag if the pokemon is already ungrounded without considering semi-invulnerability
+    if (!target.isGrounded(true)) {
       globalScene.phaseManager.queueMessage(i18next.t("moveTriggers:fallDown", { targetPokemonName: getPokemonNameWithAffix(target) }));
+      return super.apply(user, target, move, args);
     }
-    return super.apply(user, target, move, args);
+    return false;
   }
 }
 
@@ -9884,7 +9886,9 @@ export function initMoves() {
       .attr(AddBattlerTagAttr, BattlerTagType.INTERRUPTED)
       .attr(RemoveBattlerTagAttr, [ BattlerTagType.FLYING, BattlerTagType.FLOATING, BattlerTagType.TELEKINESIS ])
       .attr(HitsTagAttr, BattlerTagType.FLYING)
-      .makesContact(false),
+      .makesContact(false)
+      // TODO: Confirm if Smack Down & Thousand Arrows will ground semi-invulnerable Pokemon with No Guard, etc.
+      .edgeCase(),
     new AttackMove(MoveId.STORM_THROW, PokemonType.FIGHTING, MoveCategory.PHYSICAL, 60, 100, 10, -1, 0, 5)
       .attr(CritOnlyAttr),
     new AttackMove(MoveId.FLAME_BURST, PokemonType.FIRE, MoveCategory.SPECIAL, 70, 100, 15, -1, 0, 5)
@@ -10339,7 +10343,9 @@ export function initMoves() {
       .attr(AddBattlerTagAttr, BattlerTagType.INTERRUPTED)
       .attr(RemoveBattlerTagAttr, [ BattlerTagType.FLYING, BattlerTagType.FLOATING, BattlerTagType.TELEKINESIS ])
       .makesContact(false)
-      .target(MoveTarget.ALL_NEAR_ENEMIES),
+      .target(MoveTarget.ALL_NEAR_ENEMIES)
+      // TODO: Confirm if Smack Down & Thousand Arrows will ground semi-invulnerable Pokemon with No Guard, etc.
+      .edgeCase(),
     new AttackMove(MoveId.THOUSAND_WAVES, PokemonType.GROUND, MoveCategory.PHYSICAL, 90, 100, 10, -1, 0, 6)
       .attr(AddBattlerTagAttr, BattlerTagType.TRAPPED, false, false, 1, 1, true)
       .makesContact(false)
