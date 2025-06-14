@@ -40,7 +40,7 @@ describe("Moves - Swallow", () => {
     { stackCount: 2, healPercent: 50 },
     { stackCount: 3, healPercent: 100 },
   ])(
-    "should heal the user by $healPercent% when consuming $count stockpile stacks",
+    "should heal the user by $healPercent% max HP when consuming $count stockpile stacks",
     async ({ stackCount, healPercent }) => {
       await game.classicMode.startBattle([SpeciesId.SWALOT]);
 
@@ -120,7 +120,7 @@ describe("Moves - Swallow", () => {
         [Stat.SPDEF]: 2,
       };
 
-      game.move.select(MoveId.SWALLOW);
+      game.move.use(MoveId.SWALLOW);
       await game.toEndOfTurn();
 
       expect(pokemon.getLastXMoves()[0]).toMatchObject<TurnMove>({
