@@ -457,7 +457,9 @@ type PreDefendAbAttrCondition = (pokemon: Pokemon, attacker: Pokemon, move: Move
  * Often extended by other interfaces to add more parameters.
  * Used, e.g. by {@linkcode PreDefendAbAttr} and {@linkcode PostAttackAbAttr}
  */
-export interface AugmentMoveInteractionAbAttrParams extends AbAttrParamsWithCancel {
+// TODO: Consider making this not require `cancelled`, as many abilities do not do anything with the parameter.
+// Leaving it in bloats callsites.
+export interface AugmentMoveInteractionAbAttrParams extends AbAttrBaseParams {
   /** The move used by (or against, for defend attributes) */
   move: Move;
   /** The pokemon on the other side of the interaction*/
@@ -585,6 +587,8 @@ export class ReceivedTypeDamageMultiplierAbAttr extends ReceivedMoveDamageMultip
 export interface TypeMultiplierAbAttrParams extends AugmentMoveInteractionAbAttrParams {
   /** Holds the type multiplier of an attack. In the case of an immunity, this value will be set to 0. */
   typeMultiplier: NumberHolder;
+  /** Its particular meaning depends on the ability attribute, though usually means that the "no effect" message should not be played */
+  cancelled: BooleanHolder;
 }
 
 /**
@@ -770,8 +774,13 @@ export class FullHpResistTypeAbAttr extends PreDefendAbAttr {
   }
 }
 
+export interface FieldPriorityMoveImmunityAbAttrParams extends AugmentMoveInteractionAbAttrParams {
+  /** Holds whether the pokemon is immune to the move being used */
+  cancelled: BooleanHolder;
+}
+
 export class FieldPriorityMoveImmunityAbAttr extends PreDefendAbAttr {
-  override canApply({ move, opponent: attacker }: AugmentMoveInteractionAbAttrParams): boolean {
+  override canApply({ move, opponent: attacker }: FieldPriorityMoveImmunityAbAttrParams): boolean {
     return (
       !(move.moveTarget === MoveTarget.USER || move.moveTarget === MoveTarget.NEAR_ALLY) &&
       move.getPriority(attacker) > 0 &&
@@ -779,11 +788,17 @@ export class FieldPriorityMoveImmunityAbAttr extends PreDefendAbAttr {
     );
   }
 
-  override apply({ cancelled }: AugmentMoveInteractionAbAttrParams): void {
+  override apply({ cancelled }: FieldPriorityMoveImmunityAbAttrParams): void {
     cancelled.value = true;
   }
 }
 
+export interface MoveImmunityAbAttrParams extends AugmentMoveInteractionAbAttrParams {
+  /** Holds whether the standard "no effect" message (due to a type-based immunity) should be suppressed */
+  cancelled: BooleanHolder;
+}
+// TODO: Consider examining whether the this move immunity ability attribute
+// can be merged with the MoveTypeMultiplierAbAttr in some way.
 export class MoveImmunityAbAttr extends PreDefendAbAttr {
   private immuneCondition: PreDefendAbAttrCondition;
 
@@ -793,15 +808,17 @@ export class MoveImmunityAbAttr extends PreDefendAbAttr {
     this.immuneCondition = immuneCondition;
   }
 
-  override canApply({ pokemon, opponent: attacker, move }: AugmentMoveInteractionAbAttrParams): boolean {
+  override canApply({ pokemon, opponent: attacker, move }: MoveImmunityAbAttrParams): boolean {
+    // TODO: Investigate whether this method should be checking against `cancelled`, specifically
+    // if not checking this results in multiple flyouts showing when multiple abilities block the move.
     return this.immuneCondition(pokemon, attacker, move);
   }
 
-  override apply({ cancelled }: AugmentMoveInteractionAbAttrParams): void {
+  override apply({ cancelled }: MoveImmunityAbAttrParams): void {
     cancelled.value = true;
   }
 
-  override getTriggerMessage({ pokemon }: AugmentMoveInteractionAbAttrParams, _abilityName: string): string {
+  override getTriggerMessage({ pokemon }: MoveImmunityAbAttrParams, _abilityName: string): string {
     return i18next.t("abilityTriggers:moveImmunity", { pokemonNameWithAffix: getPokemonNameWithAffix(pokemon) });
   }
 }
@@ -839,13 +856,13 @@ export class MoveImmunityStatStageChangeAbAttr extends MoveImmunityAbAttr {
     this.stages = stages;
   }
 
-  override canApply(params: AugmentMoveInteractionAbAttrParams): boolean {
+  override canApply(params: MoveImmunityAbAttrParams): boolean {
     // TODO: Evaluate whether it makes sense to check against simulated here.
     // We likely want to check 'simulated' when the apply method enqueues the phase
     return !params.simulated && super.canApply(params);
   }
 
-  override apply(params: AugmentMoveInteractionAbAttrParams): void {
+  override apply(params: MoveImmunityAbAttrParams): void {
     super.apply(params);
     // TODO: We probably should not unshift the phase if this is simulated
     globalScene.phaseManager.unshiftNew(
@@ -1471,8 +1488,14 @@ export class IgnoreMoveEffectsAbAttr extends PreDefendAbAttr {
   }
 }
 
+export interface FieldPreventExplosiveMovesAbAttrParams extends AbAttrBaseParams {
+  /** Holds whether the explosive move should be prevented*/
+  cancelled: BooleanHolder;
+}
+
 export class FieldPreventExplosiveMovesAbAttr extends AbAttr {
-  override apply({ cancelled }: AugmentMoveInteractionAbAttrParams): void {
+  // TODO: investigate whether we need to check against `cancelled` in a `canApply` method
+  override apply({ cancelled }: FieldPreventExplosiveMovesAbAttrParams): void {
     cancelled.value = true;
   }
 }
@@ -5319,8 +5342,6 @@ export class PostFaintContactDamageAbAttr extends PostFaintAbAttr {
         pokemon: otherPokemon,
         simulated,
         cancelled,
-        move,
-        opponent: pokemon,
       });
     }
     return !(!diedToDirectDamage || cancelled.value || attacker.hasAbilityWithAttr("BlockNonDirectDamageAbAttr"));
