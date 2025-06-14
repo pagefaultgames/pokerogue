@@ -26,7 +26,7 @@ describe("Moves - Forest's Curse", () => {
       .moveset([MoveId.FORESTS_CURSE, MoveId.TRICK_OR_TREAT])
       .ability(AbilityId.BALL_FETCH)
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(MoveId.SPLASH);

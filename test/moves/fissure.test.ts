@@ -29,7 +29,7 @@ describe("Moves - Fissure", () => {
     game = new GameManager(phaserGame);
 
     game.override.battleStyle("single");
-    game.override.disableCrits();
+    game.override.criticalHits(false);
 
     game.override.starterSpecies(SpeciesId.SNORLAX);
     game.override.moveset([MoveId.FISSURE]);

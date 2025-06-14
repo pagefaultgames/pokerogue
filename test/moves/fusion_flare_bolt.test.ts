@@ -40,7 +40,7 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
       .enemyMoveset(MoveId.REST)
       .battleStyle("double")
       .startingWave(97)
-      .disableCrits();
+      .criticalHits(false);
 
     vi.spyOn(fusionFlare, "calculateBattlePower");
     vi.spyOn(fusionBolt, "calculateBattlePower");

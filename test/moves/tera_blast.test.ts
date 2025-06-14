@@ -35,7 +35,7 @@ describe("Moves - Tera Blast", () => {
 
     game.override
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .starterSpecies(SpeciesId.FEEBAS)
       .moveset([MoveId.TERA_BLAST])
       .ability(AbilityId.BALL_FETCH)

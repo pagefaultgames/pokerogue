@@ -28,7 +28,7 @@ describe("Boss Pokemon / Shields", () => {
     game.override
       .battleStyle("single")
       .disableTrainerWaves()
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(SpeciesId.RATTATA)
       .enemyMoveset(MoveId.SPLASH)
       .enemyHeldItems([])
