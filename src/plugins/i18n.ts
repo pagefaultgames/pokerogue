@@ -293,6 +293,7 @@ export async function initI18n(): Promise<void> {
       "mysteryEncounters/theWinstrateChallenge",
       "mysteryEncounters/teleportingHijinks",
       "mysteryEncounters/bugTypeSuperfan",
+      "mysteryEncounters/skyBattle",
       "mysteryEncounters/funAndGames",
       "mysteryEncounters/uncommonBreed",
       "mysteryEncounters/globalTradeSystem",
