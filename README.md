@@ -17,9 +17,19 @@ If you have the motivation and experience with Typescript/Javascript (or are wil
 
 #### Running Locally
 
-1. Clone the repo and in the root directory run `npm install`
-    - *if you run into any errors, reach out in the **#dev-corner** channel in discord*
+1. **Clone** the repo and in the root directory run `npm install`
+    - *if you run into any errors, check out Troubleshooting below and then reach out in the **#dev-corner** channel in discord*
 2. Run `npm run start:dev` to locally run the project in `localhost:8000`
+
+Troubleshooting:
+- *fatal: not a git repository (or any of the parent directories): .git*
+  - Install git, and then run `git init` in the folder of the project.
+- *Lefthook seems to be stuck running the post-merge check*
+  - You likely need to press Enter.
+- *I ran `npm run start:dev` but it didn't seem to start anything*
+  - If the last message before your command was `lefthook something something post-merge`, your `run` command got eaten by the Lefthook monster, but running it again will work.
+- *I started the game but all text looks like code instead of actual sentences*
+  - You likely downloaded the code instead of cloning the repository, meaning that the localization submodule did not get included. Can you start again and clone the repository instead of downloading the code as a ZIP file?
 
 #### Linting
 
