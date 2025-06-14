@@ -62,22 +62,34 @@ Since these two PRs aren't technically linked, it's important to coordinate with
 As the developer, you are responsible for creating or adjusting English keys (or your mother language) in support of your feature or enhancement; the Translation Team will take care of the rest.
 
 When your new feature or enhancement requires a new key **without changing text in existing keys**, we require the following workflow with regards to localization:
-1. You (the developer) make a pull request to the main repository for your new feature. If this feature requires new text, the text should be integrated into the code with a new `i18next` key pointing to where you plan to add it into the locales repository. **DO NOT HARDCODE PLAYER-FACING ENGLISH TEXT INTO THE CODE!**
-2. You then make another pull request -- this time to the `poketernity-locales` repository -- adding a new entry to the English locale with text for each key you added to your main PR.
+1. You (the developer) make a pull request to the main repository for your new feature. If this feature requires new text, the text should be integrated into the code with a new `i18next` key pointing to where you plan to add it into the locales repository. **DO NOT HARDCODE PLAYER-FACING TEXT INTO THE CODE!**
+2. You then make another pull request -- this time to the `pokerogue-locales` repository -- adding a new entries to the JSON files with text for each key you added to your main PR.
    - For any feature pulled from the mainline Pokémon games (e.g. a Move or Ability implementation), it's best practice to include a source link for any added text.
      [Poké Corpus](https://abcboy101.github.io/poke-corpus/) is a great resource for finding text from the mainline games; otherwise, a video (YouTube or otherwise) showing the text in mainline should suffice.
-   - You should also notify the current Head of the translation department to ensure a fast response.
-3. The Translation Team will approve the locale PR (after corrections, if necessary), then merge it into `pokerogue-locales`.
-4. You can then test integration in your main PR after fetching the updated locale (`git submodule update --remote --recursive`).
-   To ease the review process, you should consider providing a video of any text additions being shown in-game.
-6. The Dev Team will approve your main PR for your feature, then merge it into PokéRogue's beta environment.
+   - You should also [notify the current Head of Translation](#Contacting Translation Staff) to ensure a fast response.
+3. You can now [test locales integration](#Filming Locales Changes) in your main PR.
+4. The Translation Team will approve the locale PR (after corrections, if necessary), then merge it into `pokerogue-locales`.
+5. The Dev Team will approve your main PR for your feature, then merge it into PokéRogue's beta environment.
 
 ### Requirements for Modifying Translated Text
 
 PRs that modify existing text have different risks with respect to coordination between development and translation, so their requirements are slightly different:
-- As above, you set up 2 PRs: one for the feature itself in the main repo, and another for the changes you need to make to the locale repo as a result of your feature.
+- As above, you set up 2 PRs: one for the feature itself in the main repo, and another for the associated locales changes in the locales repo.
 - Now, however, you need to have your main PR be approved by the Dev Team **before** your corresponding locale changes are merged in.
-- After your main PR is approved, the Translation Team will merge your locale PR, and you may update the submodule and post video evidence of locale integration as above.
+- After your main PR is approved, the Translation Team will merge your locale PR, and you may update the submodule and post video evidence of locale integration in the **locales PR**.
 <!-- - A Lead or Senior Translator from the Translation Team will then approve your main PR (if all is well), clearing your feature for merging into beta. -->
 
-If you have any questions about the developer process for localization, don't hesitate to ask in the PR itself. <!--feel free to contact us on [Discord]().--> The Dev Team and Translation Team will be happy to help!
+## Filming Locales Changes
+TODO mention obs
+
+## Contacting Translation Staff
+It is much easier for someone to merge a PR if they know it exists. 
+
+The best way to notify Translation staff of an impending Locales PR is by **pinging the current Head of Translation** in the community discord.
+
+The current Head of Translation is:
+** @lugiadrien **
+
+# Closing Remarks
+If you have any questions about the developer process for localization, don't hesitate to ask someone in `#dev-corner`!
+The Dev Team and Translation Team will be happy to answer any questions.
