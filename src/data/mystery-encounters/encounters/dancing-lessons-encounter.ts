@@ -40,6 +40,7 @@ import { PokeballType } from "#enums/pokeball";
 import { SpeciesId } from "#enums/species-id";
 import { Stat } from "#enums/stat";
 import i18next from "i18next";
+import { MoveUseMode } from "#enums/move-use-mode";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounters/dancingLessons";
@@ -214,7 +215,7 @@ export const DancingLessonsEncounter: MysteryEncounter = MysteryEncounterBuilder
           sourceBattlerIndex: BattlerIndex.ENEMY,
           targets: [BattlerIndex.PLAYER],
           move: new PokemonMove(MoveId.REVELATION_DANCE),
-          ignorePp: true,
+          useMode: MoveUseMode.IGNORE_PP,
         });
 
         await hideOricorioPokemon();

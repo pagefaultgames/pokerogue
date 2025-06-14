@@ -620,3 +620,25 @@ export function coerceArray<T>(input: T): T extends any[] ? T : [T];
 export function coerceArray<T>(input: T): T | [T] {
   return Array.isArray(input) ? input : [input];
 }
+
+/**
+ * Returns the name of the key that matches the enum [object] value.
+ * @param input - The enum [object] to check
+ * @param val - The value to get the key of
+ * @returns The name of the key with the specified value
+ * @example
+ * const thing = {
+ *   one: 1,
+ *   two: 2,
+ * } as const;
+ * console.log(enumValueToKey(thing, thing.two)); // output: "two"
+ * @throws An `Error` if an invalid enum value is passed to the function
+ */
+export function enumValueToKey<T extends Record<string, string | number>>(input: T, val: T[keyof T]): keyof T {
+  for (const [key, value] of Object.entries(input)) {
+    if (val === value) {
+      return key as keyof T;
+    }
+  }
+  throw new Error(`Invalid value passed to \`enumValueToKey\`! Value: ${val}`);
+}
