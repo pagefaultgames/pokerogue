@@ -1003,12 +1003,7 @@ export class PowderTag extends BattlerTag {
 
     const idx = pokemon.getBattlerIndex();
 
-    globalScene.phaseManager.unshiftNew(
-      "CommonAnimPhase",
-      idx,
-      idx,
-      CommonAnim.POWDER,
-    );
+    globalScene.phaseManager.unshiftNew("CommonAnimPhase", idx, idx, CommonAnim.POWDER);
 
     const cancelDamage = new BooleanHolder(false);
     applyAbAttrs("BlockNonDirectDamageAbAttr", pokemon, cancelDamage);
