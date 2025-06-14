@@ -368,7 +368,7 @@ export class Arena {
         pokemon.findAndRemoveTags(
           t => "weatherTypes" in t && !(t.weatherTypes as WeatherType[]).find(t => t === weather),
         );
-        applyAbAttrs("PostWeatherChangeAbAttr", {pokemon, weather});
+        applyAbAttrs("PostWeatherChangeAbAttr", { pokemon, weather });
       });
 
     return true;
@@ -457,8 +457,8 @@ export class Arena {
         pokemon.findAndRemoveTags(
           t => "terrainTypes" in t && !(t.terrainTypes as TerrainType[]).find(t => t === terrain),
         );
-        applyPostTerrainChangeAbAttrs("PostTerrainChangeAbAttr", pokemon, terrain);
-        applyAbAttrs("TerrainEventTypeChangeAbAttr", pokemon, null, false);
+        applyAbAttrs("PostTerrainChangeAbAttr", { pokemon, terrain });
+        applyAbAttrs("TerrainEventTypeChangeAbAttr", { pokemon });
       });
 
     return true;

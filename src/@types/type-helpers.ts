@@ -22,3 +22,11 @@ export type Exact<T> = {
  *
  */
 export type Closed<X> = X;
+
+/**
+ * Remove `readonly` from all properties of the provided type
+ * @typeParam T - The type to make mutable
+ */
+export type Mutable<T> = {
+  -readonly [P in keyof T]: T[P];
+};

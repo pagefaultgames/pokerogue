@@ -137,7 +137,7 @@ export class MistTag extends ArenaTag {
     if (attacker) {
       const bypassed = new BooleanHolder(false);
       // TODO: Allow this to be simulated
-      applyAbAttrs("InfiltratorAbAttr", attacker, null, false, bypassed);
+      applyAbAttrs("InfiltratorAbAttr", { pokemon: attacker, simulated: false, bypassed });
       if (bypassed.value) {
         return false;
       }
@@ -758,7 +758,7 @@ class SpikesTag extends ArenaTrapTag {
     }
 
     const cancelled = new BooleanHolder(false);
-    applyAbAttrs("BlockNonDirectDamageAbAttr", pokemon, cancelled);
+    applyAbAttrs("BlockNonDirectDamageAbAttr", { pokemon, cancelled });
     if (simulated || cancelled.value) {
       return !cancelled.value;
     }
@@ -1438,7 +1438,10 @@ export class SuppressAbilitiesTag extends ArenaTag {
       const setter = globalScene
         .getField()
         .filter(p => p?.hasAbilityWithAttr("PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr", false))[0];
-      applyOnGainAbAttrs(setter, setter.getAbility().hasAttr("PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr"));
+      applyOnGainAbAttrs({
+        pokemon: setter,
+        passive: setter.getAbility().hasAttr("PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr"),
+      });
     }
   }
 
@@ -1451,7 +1454,7 @@ export class SuppressAbilitiesTag extends ArenaTag {
     for (const pokemon of globalScene.getField(true)) {
       // There is only one pokemon with this attr on the field on removal, so its abilities are already active
       if (pokemon && !pokemon.hasAbilityWithAttr("PreLeaveFieldRemoveSuppressAbilitiesSourceAbAttr", false)) {
-        [true, false].forEach(passive => applyOnGainAbAttrs(pokemon, passive));
+        [true, false].forEach(passive => applyOnGainAbAttrs({ pokemon, passive }));
       }
     }
   }
