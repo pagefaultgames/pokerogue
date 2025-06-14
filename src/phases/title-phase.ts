@@ -204,7 +204,7 @@ export class TitlePhase extends Phase {
         globalScene.eventManager.startEventChallenges();
 
         globalScene.setSeed(seed);
-        globalScene.resetSeed(0);
+        globalScene.resetSeed();
 
         globalScene.money = globalScene.gameMode.getStartingMoney();
 
@@ -283,6 +283,7 @@ export class TitlePhase extends Phase {
             console.error("Failed to load daily run:\n", err);
           });
       } else {
+        // Grab first 10 chars of ISO date format (YYYY-MM-DD) and convert to base64
         let seed: string = btoa(new Date().toISOString().substring(0, 10));
         if (!isNullOrUndefined(Overrides.DAILY_RUN_SEED_OVERRIDE)) {
           seed = Overrides.DAILY_RUN_SEED_OVERRIDE;
