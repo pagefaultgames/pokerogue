@@ -1952,49 +1952,6 @@ export class HealAttr extends MoveEffectAttr {
 }
 
 /**
- * Attribute for moves with variable healing amounts.
- * Heals the target by an amount depending on the return value of {@linkcode healFunc}.
- *
- * Used for {@linkcode MoveId.MOONLIGHT}, {@linkcode MoveId.SHORE_UP}, {@linkcode MoveId.JUNGLE_HEALING}, {@linkcode MoveId.SWALLOW}
- */
-export class VariableHealAttr extends HealAttr {
-  constructor(
-    /** A function yielding the amount of HP to heal. */
-    private healFunc: (user: Pokemon, target: Pokemon, _move: Move) => number,
-    showAnim = false,
-    selfTarget = true,
-  ) {
-    super(1, showAnim, selfTarget);
-    this.healFunc = healFunc;
-  }
-
-  apply(user: Pokemon, target: Pokemon, move: Move, _args: any[]): boolean {
-    const healRatio = this.healFunc(user, target, move)
-    this.addHealPhase(target, healRatio);
-    return true;
-  }
-}
-
-/**
- * Heals the target only if it is an ally.
- * Used for {@linkcode MoveId.POLLEN_PUFF}.
- */
-export class HealOnAllyAttr extends HealAttr {
-  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    if (user.getAlly() === target) {
-      super.apply(user, target, move, args);
-      return true;
-    }
-
-    return false;
-  }
-
-  override canApply(user: Pokemon, target: Pokemon, _move: Move, _args?: any[]): boolean {
-    return user.getAlly() !== target || super.canApply(user, target, _move, _args);
-  }
-}
-
-/**
  * Attribute to put the user to sleep for a fixed duration, fully heal them and cure their status.
  * Used for {@linkcode MoveId.REST}.
  */
@@ -2200,6 +2157,111 @@ export class IgnoreWeatherTypeDebuffAttr extends MoveAttr {
       weatherModifier.value = Math.max(weatherModifier.value, 1);
     }
     return true;
+  }
+}
+
+export abstract class WeatherHealAttr extends HealAttr {
+  constructor() {
+    super(0.5);
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    let healRatio = 0.5;
+    if (!globalScene.arena.weather?.isEffectSuppressed()) {
+      const weatherType = globalScene.arena.weather?.weatherType || WeatherType.NONE;
+      healRatio = this.getWeatherHealRatio(weatherType);
+    }
+    this.addHealPhase(user, healRatio);
+    return true;
+  }
+
+  abstract getWeatherHealRatio(weatherType: WeatherType): number;
+}
+
+export class PlantHealAttr extends WeatherHealAttr {
+  getWeatherHealRatio(weatherType: WeatherType): number {
+    switch (weatherType) {
+      case WeatherType.SUNNY:
+      case WeatherType.HARSH_SUN:
+        return 2 / 3;
+      case WeatherType.RAIN:
+      case WeatherType.SANDSTORM:
+      case WeatherType.HAIL:
+      case WeatherType.SNOW:
+      case WeatherType.HEAVY_RAIN:
+        return 0.25;
+      default:
+        return 0.5;
+    }
+  }
+}
+
+export class SandHealAttr extends WeatherHealAttr {
+  getWeatherHealRatio(weatherType: WeatherType): number {
+    switch (weatherType) {
+      case WeatherType.SANDSTORM:
+        return 2 / 3;
+      default:
+        return 0.5;
+    }
+  }
+}
+
+/**
+ * Heals the target or the user by either {@linkcode normalHealRatio} or {@linkcode boostedHealRatio}
+ * depending on the evaluation of {@linkcode condition}
+ * @extends HealAttr
+ * @see {@linkcode apply}
+ */
+export class BoostHealAttr extends HealAttr {
+  /** Healing received when {@linkcode condition} is false */
+  private normalHealRatio: number;
+  /** Healing received when {@linkcode condition} is true */
+  private boostedHealRatio: number;
+  /** The lambda expression to check against when boosting the healing value */
+  private condition?: MoveConditionFunc;
+
+  constructor(normalHealRatio: number = 0.5, boostedHealRatio: number = 2 / 3, showAnim?: boolean, selfTarget?: boolean, condition?: MoveConditionFunc) {
+    super(normalHealRatio, showAnim, selfTarget);
+    this.normalHealRatio = normalHealRatio;
+    this.boostedHealRatio = boostedHealRatio;
+    this.condition = condition;
+  }
+
+  /**
+   * @param user {@linkcode Pokemon} using the move
+   * @param target {@linkcode Pokemon} target of the move
+   * @param move {@linkcode Move} with this attribute
+   * @param args N/A
+   * @returns true if the move was successful
+   */
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const healRatio: number = (this.condition ? this.condition(user, target, move) : false) ? this.boostedHealRatio : this.normalHealRatio;
+    this.addHealPhase(target, healRatio);
+    return true;
+  }
+}
+
+/**
+ * Heals the target only if it is the ally
+ * @extends HealAttr
+ * @see {@linkcode apply}
+ */
+export class HealOnAllyAttr extends HealAttr {
+  /**
+   * @param user {@linkcode Pokemon} using the move
+   * @param target {@linkcode Pokemon} target of the move
+   * @param move {@linkcode Move} with this attribute
+   * @param args N/A
+   * @returns true if the function succeeds
+   */
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    if (user.getAlly() === target) {
+      super.apply(user, target, move, args);
+      return true;
+    }
+
+    return false;
   }
 }
 
@@ -4305,6 +4367,40 @@ export class SpitUpPowerAttr extends VariablePowerAttr {
       const power = args[0] as NumberHolder;
       power.value = this.multiplier * stockpilingTag.stockpiledCount;
       return true;
+    }
+
+    return false;
+  }
+}
+
+/**
+ * Attribute used to apply Swallow's healing, which scales with Stockpile stacks.
+ * Does NOT remove stockpiled stacks.
+ */
+export class SwallowHealAttr extends HealAttr {
+  constructor() {
+    super(1)
+  }
+
+  apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    const stockpilingTag = user.getTag(StockpilingTag);
+
+    if (stockpilingTag && stockpilingTag.stockpiledCount > 0) {
+      const stockpiled = stockpilingTag.stockpiledCount;
+      let healRatio: number;
+
+      if (stockpiled === 1) {
+        healRatio = 0.25;
+      } else if (stockpiled === 2) {
+        healRatio = 0.50;
+      } else { // stockpiled >= 3
+        healRatio = 1.00;
+      }
+
+      if (healRatio) {
+        this.addHealPhase(user, healRatio);
+        return true;
+      }
     }
 
     return false;
@@ -7946,53 +8042,6 @@ const attackedByItemMessageFunc = (user: Pokemon, target: Pokemon, move: Move) =
   return message;
 };
 
-const sunnyHealRatioFunc = (): number => {
-  if (globalScene.arena.weather?.isEffectSuppressed()) {
-    return 1 / 2;
-  }
-
-  switch (globalScene.arena.getWeatherType()) {
-    case WeatherType.SUNNY:
-    case WeatherType.HARSH_SUN:
-      return 2 / 3;
-    case WeatherType.RAIN:
-    case WeatherType.SANDSTORM:
-    case WeatherType.HAIL:
-    case WeatherType.SNOW:
-    case WeatherType.HEAVY_RAIN:
-    case WeatherType.FOG:
-      return 1 / 4;
-    case WeatherType.STRONG_WINDS:
-    default:
-      return 1 / 2;
-  }
-}
-
-const shoreUpHealRatioFunc = (): number => {
-  if (globalScene.arena.weather?.isEffectSuppressed()) {
-    return 1 / 2;
-  }
-
-  return globalScene.arena.getWeatherType() === WeatherType.SANDSTORM ? 2 / 3 : 1 / 2;
-}
-
-const swallowHealFunc = (user: Pokemon): number => {
-  const tag = user.getTag(StockpilingTag);
-  if (!tag || tag.stockpiledCount <= 0) {
-    return 0;
-  }
-
-  switch (tag.stockpiledCount) {
-    case 1:
-      return 0.25
-    case 2:
-      return 0.5
-    case 3:
-    default: // in case we ever get more stacks
-      return 1;
-  }
-}
-
 export class MoveCondition {
   protected func: MoveConditionFunc;
 
@@ -8203,12 +8252,15 @@ const MoveAttrs = Object.freeze({
   SacrificialAttrOnHit,
   HalfSacrificialAttr,
   AddSubstituteAttr,
+  HealAttr,
   PartyStatusCureAttr,
   FlameBurstAttr,
   SacrificialFullRestoreAttr,
   IgnoreWeatherTypeDebuffAttr,
-  HealAttr,
-  VariableHealAttr,
+  WeatherHealAttr,
+  PlantHealAttr,
+  SandHealAttr,
+  BoostHealAttr,
   HealOnAllyAttr,
   HitHealAttr,
   IncrementMovePriorityAttr,
@@ -8273,6 +8325,7 @@ const MoveAttrs = Object.freeze({
   PresentPowerAttr,
   WaterShurikenPowerAttr,
   SpitUpPowerAttr,
+  SwallowHealAttr,
   MultiHitPowerIncrementAttr,
   LastMoveDoublePowerAttr,
   CombinedPledgePowerAttr,
@@ -9118,13 +9171,13 @@ export function initMoves() {
       .attr(StatStageChangeAttr, [ Stat.ATK ], 1, true),
     new AttackMove(MoveId.VITAL_THROW, PokemonType.FIGHTING, MoveCategory.PHYSICAL, 70, -1, 10, -1, -1, 2),
     new SelfStatusMove(MoveId.MORNING_SUN, PokemonType.NORMAL, -1, 5, -1, 0, 2)
-      .attr(VariableHealAttr, sunnyHealRatioFunc)
+      .attr(PlantHealAttr)
       .triageMove(),
     new SelfStatusMove(MoveId.SYNTHESIS, PokemonType.GRASS, -1, 5, -1, 0, 2)
-    .attr(VariableHealAttr, sunnyHealRatioFunc)
+      .attr(PlantHealAttr)
       .triageMove(),
     new SelfStatusMove(MoveId.MOONLIGHT, PokemonType.FAIRY, -1, 5, -1, 0, 2)
-    .attr(VariableHealAttr, sunnyHealRatioFunc)
+      .attr(PlantHealAttr)
       .triageMove(),
     new AttackMove(MoveId.HIDDEN_POWER, PokemonType.NORMAL, MoveCategory.SPECIAL, 60, 100, 15, -1, 0, 2)
       .attr(HiddenPowerTypeAttr),
@@ -9181,12 +9234,12 @@ export function initMoves() {
       .condition(user => (user.getTag(StockpilingTag)?.stockpiledCount ?? 0) < 3)
       .attr(AddBattlerTagAttr, BattlerTagType.STOCKPILING, true),
     new AttackMove(MoveId.SPIT_UP, PokemonType.NORMAL, MoveCategory.SPECIAL, -1, -1, 10, -1, 0, 3)
-      .attr(SpitUpPowerAttr, 100)
       .condition(hasStockpileStacksCondition)
+      .attr(SpitUpPowerAttr, 100)
       .attr(RemoveBattlerTagAttr, [ BattlerTagType.STOCKPILING ], true),
     new SelfStatusMove(MoveId.SWALLOW, PokemonType.NORMAL, -1, 10, -1, 0, 3)
-      .attr(VariableHealAttr, swallowHealFunc)
       .condition(hasStockpileStacksCondition)
+      .attr(SwallowHealAttr)
       .attr(RemoveBattlerTagAttr, [ BattlerTagType.STOCKPILING ], true)
       .triageMove(),
     new AttackMove(MoveId.HEAT_WAVE, PokemonType.FIRE, MoveCategory.SPECIAL, 95, 90, 10, 10, 0, 3)
@@ -10432,7 +10485,7 @@ export function initMoves() {
       .unimplemented(),
     /* End Unused */
     new SelfStatusMove(MoveId.SHORE_UP, PokemonType.GROUND, -1, 5, -1, 0, 7)
-      .attr(VariableHealAttr, shoreUpHealRatioFunc)
+      .attr(SandHealAttr)
       .triageMove(),
     new AttackMove(MoveId.FIRST_IMPRESSION, PokemonType.BUG, MoveCategory.PHYSICAL, 90, 100, 10, -1, 2, 7)
       .condition(new FirstMoveCondition()),
@@ -10452,7 +10505,7 @@ export function initMoves() {
       .attr(StatStageChangeAttr, [ Stat.SPD ], -1, true)
       .punchingMove(),
     new StatusMove(MoveId.FLORAL_HEALING, PokemonType.FAIRY, -1, 10, -1, 0, 7)
-      .attr(VariableHealAttr, () => globalScene.arena.terrain?.terrainType === TerrainType.GRASSY ? 2 / 3 : 1 / 2, true, false)
+      .attr(BoostHealAttr, 0.5, 2 / 3, true, false, (user, target, move) => globalScene.arena.terrain?.terrainType === TerrainType.GRASSY)
       .triageMove()
       .reflectable(),
     new AttackMove(MoveId.HIGH_HORSEPOWER, PokemonType.GROUND, MoveCategory.PHYSICAL, 95, 95, 10, -1, 0, 7),
