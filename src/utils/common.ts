@@ -58,8 +58,8 @@ export function randSeedGauss(stdev: number, mean = 0): number {
   if (!stdev) {
     return 0;
   }
-  const u = 1 - Phaser.Math.RND.realInRange(0, 1);
-  const v = Phaser.Math.RND.realInRange(0, 1);
+  const u = 1 - randSeedFloat();
+  const v = randSeedFloat();
   const z = Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
   return z * stdev + mean;
 }
@@ -88,9 +88,9 @@ export function randInt(range: number, min = 0): number {
 }
 
 /**
- * Generates a random number using the global seed, or the current battle's seed if called via `Battle.randSeedInt`
- * @param range How large of a range of random numbers to choose from. If {@linkcode range} <= 1, returns {@linkcode min}
- * @param min The minimum integer to pick, default `0`
+ * Generate a random integer using the global seed, or the current battle's seed if called via `Battle.randSeedInt`
+ * @param range - How large of a range of random numbers to choose from. If {@linkcode range} <= 1, returns {@linkcode min}
+ * @param min - The minimum integer to pick, default `0`
  * @returns A random integer between {@linkcode min} and ({@linkcode min} + {@linkcode range} - 1)
  */
 export function randSeedInt(range: number, min = 0): number {
@@ -117,6 +117,14 @@ export function randSeedIntRange(min: number, max: number): number {
  */
 export function randIntRange(min: number, max: number): number {
   return randInt(max - min, min);
+}
+
+/**
+ * Generate and return a random real number between `0` and `1` using the global seed.
+ * @returns A random floating-point number between `0` and `1`
+ */
+export function randSeedFloat(): number {
+  return Phaser.Math.RND.frac();
 }
 
 export function randItem<T>(items: T[]): T {
@@ -517,12 +525,19 @@ export function capitalizeString(str: string, sep: string, lowerFirstChar = true
   return null;
 }
 
-export function isNullOrUndefined(object: any): object is null | undefined {
-  return object === null || object === undefined;
+/**
+ * Report whether a given value is nullish (`null`/`undefined`).
+ * @param val - The value whose nullishness is being checked
+ * @returns `true` if `val` is either `null` or `undefined`
+ */
+export function isNullOrUndefined(val: any): val is null | undefined {
+  return val === null || val === undefined;
 }
 
 /**
- * Capitalizes the first letter of a string
+ * Capitalize the first letter of a string.
+ * @param str - The string whose first letter is being capitalized
+ * @return The original string with its first letter capitalized
  */
 export function capitalizeFirstLetter(str: string) {
   return str.charAt(0).toUpperCase() + str.slice(1);
@@ -595,4 +610,13 @@ export function getShinyDescriptor(variant: Variant): string {
     case 0:
       return i18next.t("common:commonShiny");
   }
+}
+
+/**
+ * If the input isn't already an array, turns it into one.
+ * @returns An array with the same type as the type of the input
+ */
+export function coerceArray<T>(input: T): T extends any[] ? T : [T];
+export function coerceArray<T>(input: T): T | [T] {
+  return Array.isArray(input) ? input : [input];
 }

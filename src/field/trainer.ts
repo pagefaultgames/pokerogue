@@ -13,19 +13,15 @@ import { TeraAIMode } from "#enums/tera-ai-mode";
 import type { EnemyPokemon } from "#app/field/pokemon";
 import { randSeedWeightedItem, randSeedItem, randSeedInt } from "#app/utils/common";
 import type { PersistentModifier } from "#app/modifier/modifier";
-import { ArenaTagSide, ArenaTrapTag } from "#app/data/arena-tag";
+import { ArenaTrapTag } from "#app/data/arena-tag";
+import { ArenaTagSide } from "#enums/arena-tag-side";
 import { getIsInitialized, initI18n } from "#app/plugins/i18n";
 import i18next from "i18next";
 import { PartyMemberStrength } from "#enums/party-member-strength";
 import { SpeciesId } from "#enums/species-id";
 import { TrainerType } from "#enums/trainer-type";
 import { signatureSpecies } from "#app/data/balance/signature-species";
-
-export enum TrainerVariant {
-  DEFAULT,
-  FEMALE,
-  DOUBLE,
-}
+import { TrainerVariant } from "#enums/trainer-variant";
 
 export default class Trainer extends Phaser.GameObjects.Container {
   public config: TrainerConfig;

@@ -1,4 +1,4 @@
-import { MoveResult } from "#app/field/pokemon";
+import { MoveResult } from "#enums/move-result";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";

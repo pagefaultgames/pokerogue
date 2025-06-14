@@ -6,7 +6,7 @@ import { TurnEndPhase } from "#app/phases/turn-end-phase";
 import { MoveId } from "#enums/move-id";
 import { Stat, EFFECTIVE_STATS } from "#enums/stat";
 import { AbilityId } from "#enums/ability-id";
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex } from "#enums/battler-index";
 
 // TODO: Add more tests once Transform is fully implemented
 describe("Moves - Transform", () => {
@@ -132,7 +132,7 @@ describe("Moves - Transform", () => {
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toNextWave();
 
-    expect(game.scene.getCurrentPhase()?.constructor.name).toBe("CommandPhase");
+    expect(game.scene.phaseManager.getCurrentPhase()?.constructor.name).toBe("CommandPhase");
     expect(game.scene.currentBattle.waveIndex).toBe(2);
 
     await game.reload.reloadSession();
@@ -173,7 +173,7 @@ describe("Moves - Transform", () => {
     await game.setTurnOrder([BattlerIndex.PLAYER, BattlerIndex.ENEMY]);
     await game.toNextWave();
 
-    expect(game.scene.getCurrentPhase()?.constructor.name).toBe("CommandPhase");
+    expect(game.scene.phaseManager.getCurrentPhase()?.constructor.name).toBe("CommandPhase");
     expect(game.scene.currentBattle.waveIndex).toBe(2);
 
     await game.reload.reloadSession();

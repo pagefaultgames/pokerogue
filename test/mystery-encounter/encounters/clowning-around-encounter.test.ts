@@ -15,12 +15,12 @@ import {
 import { MoveId } from "#enums/move-id";
 import type BattleScene from "#app/battle-scene";
 import type Pokemon from "#app/field/pokemon";
-import { PokemonMove } from "#app/field/pokemon";
+import { PokemonMove } from "#app/data/moves/pokemon-move";
 import { UiMode } from "#enums/ui-mode";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { initSceneWithoutEncounterPhase } from "#test/testUtils/gameManagerUtils";
-import { ModifierTier } from "#app/modifier/modifier-tier";
+import { ModifierTier } from "#enums/modifier-tier";
 import { ClowningAroundEncounter } from "#app/data/mystery-encounters/encounters/clowning-around-encounter";
 import { TrainerType } from "#enums/trainer-type";
 import { AbilityId } from "#enums/ability-id";
@@ -29,7 +29,7 @@ import { Button } from "#enums/buttons";
 import type PartyUiHandler from "#app/ui/party-ui-handler";
 import type OptionSelectUiHandler from "#app/ui/settings/option-select-ui-handler";
 import type { PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
-import { modifierTypes } from "#app/modifier/modifier-type";
+import { modifierTypes } from "#app/data/data-lists";
 import { BerryType } from "#enums/berry-type";
 import type { PokemonHeldItemModifier } from "#app/modifier/modifier";
 import { PokemonType } from "#enums/pokemon-type";
@@ -167,13 +167,13 @@ describe("Clowning Around - Mystery Encounter", () => {
     });
 
     it("should start double battle against the clown", async () => {
-      const phaseSpy = vi.spyOn(scene, "pushPhase");
+      const phaseSpy = vi.spyOn(scene.phaseManager, "pushPhase");
 
       await game.runToMysteryEncounter(MysteryEncounterType.CLOWNING_AROUND, defaultParty);
       await runMysteryEncounterToEnd(game, 1, undefined, true);
 
       const enemyField = scene.getEnemyField();
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
+      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(enemyField.length).toBe(2);
       expect(enemyField[0].species.speciesId).toBe(SpeciesId.MR_MIME);
       expect(enemyField[0].moveset).toEqual([
@@ -202,7 +202,7 @@ describe("Clowning Around - Mystery Encounter", () => {
       await runMysteryEncounterToEnd(game, 1, undefined, true);
       await skipBattleRunMysteryEncounterRewardsPhase(game);
       await game.phaseInterceptor.to(SelectModifierPhase, false);
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
+      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
       await game.phaseInterceptor.run(SelectModifierPhase);
       const abilityToTrain = scene.currentBattle.mysteryEncounter?.misc.ability;
 
@@ -217,7 +217,7 @@ describe("Clowning Around - Mystery Encounter", () => {
       vi.spyOn(partyUiHandler, "show");
       game.endPhase();
       await game.phaseInterceptor.to(PostMysteryEncounterPhase);
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(PostMysteryEncounterPhase.name);
+      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(PostMysteryEncounterPhase.name);
 
       // Wait for Yes/No confirmation to appear
       await vi.waitFor(() => expect(optionSelectUiHandler.show).toHaveBeenCalled());

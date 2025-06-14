@@ -1,6 +1,6 @@
 import { BattlerTagType } from "#enums/battler-tag-type";
-import { BattlerIndex } from "#app/battle";
-import { MoveResult } from "#app/field/pokemon";
+import { BattlerIndex } from "#enums/battler-index";
+import { MoveResult } from "#enums/move-result";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";

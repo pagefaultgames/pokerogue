@@ -1,5 +1,5 @@
-import { BattlerIndex } from "#app/battle";
-import { ArenaTagSide } from "#app/data/arena-tag";
+import { BattlerIndex } from "#enums/battler-index";
+import { ArenaTagSide } from "#enums/arena-tag-side";
 import { allMoves } from "#app/data/data-lists";
 import GameManager from "#test/testUtils/gameManager";
 import { toDmgValue } from "#app/utils/common";

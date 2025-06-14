@@ -1,4 +1,3 @@
-import { MultiHitAttr } from "#app/data/moves/move";
 import { allMoves } from "#app/data/data-lists";
 import { MultiHitType } from "#enums/MultiHitType";
 import { Status } from "#app/data/status-effect";
@@ -66,7 +65,7 @@ describe("Abilities - BATTLE BOND", () => {
     vi.spyOn(waterShuriken, "calculateBattlePower");
 
     let actualMultiHitType: MultiHitType | null = null;
-    const multiHitAttr = waterShuriken.getAttrs(MultiHitAttr)[0];
+    const multiHitAttr = waterShuriken.getAttrs("MultiHitAttr")[0];
     vi.spyOn(multiHitAttr, "getHitCount").mockImplementation(() => {
       actualMultiHitType = multiHitAttr.getMultiHitType();
       return 3;

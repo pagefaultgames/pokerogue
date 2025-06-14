@@ -1,3 +1,8 @@
+import { loggedInUser } from "#app/account";
+import type { StarterAttributes } from "#app/system/game-data";
+import { AES, enc } from "crypto-js";
+import { saveKey } from "#app/constants";
+
 /**
  * Perform a deep copy of an object.
  * @param values - The object to be deep copied.
@@ -36,5 +41,47 @@ export function deepMergeSpriteData(dest: object, source: object) {
     } else {
       deepMergeSpriteData(dest[key], source[key]);
     }
+  }
+}
+
+export function encrypt(data: string, bypassLogin: boolean): string {
+  return (bypassLogin
+    ? (data: string) => btoa(encodeURIComponent(data))
+    : (data: string) => AES.encrypt(data, saveKey))(data) as unknown as string; // TODO: is this correct?
+}
+
+export function decrypt(data: string, bypassLogin: boolean): string {
+  return (
+    bypassLogin
+      ? (data: string) => decodeURIComponent(atob(data))
+      : (data: string) => AES.decrypt(data, saveKey).toString(enc.Utf8)
+  )(data);
+}
+
+// the latest data saved/loaded for the Starter Preferences. Required to reduce read/writes. Initialize as "{}", since this is the default value and no data needs to be stored if present.
+// if they ever add private static variables, move this into StarterPrefs
+const StarterPrefers_DEFAULT: string = "{}";
+let StarterPrefers_private_latest: string = StarterPrefers_DEFAULT;
+
+export interface StarterPreferences {
+  [key: number]: StarterAttributes;
+}
+// called on starter selection show once
+
+export function loadStarterPreferences(): StarterPreferences {
+  return JSON.parse(
+    (StarterPrefers_private_latest =
+      localStorage.getItem(`starterPrefs_${loggedInUser?.username}`) || StarterPrefers_DEFAULT),
+  );
+}
+// called on starter selection clear, always
+
+export function saveStarterPreferences(prefs: StarterPreferences): void {
+  const pStr: string = JSON.stringify(prefs);
+  if (pStr !== StarterPrefers_private_latest) {
+    // something changed, store the update
+    localStorage.setItem(`starterPrefs_${loggedInUser?.username}`, pStr);
+    // update the latest prefs
+    StarterPrefers_private_latest = pStr;
   }
 }

@@ -1,8 +1,10 @@
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex } from "#enums/battler-index";
+import { MoveResult } from "#enums/move-result";
 import type { MovePhase } from "#app/phases/move-phase";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
+import { Stat } from "#enums/stat";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
@@ -23,7 +25,7 @@ describe("Abilities - Dancer", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("double");
+    game.override.battleStyle("double").enemyAbility(AbilityId.BALL_FETCH);
   });
 
   // Reference Link: https://bulbapedia.bulbagarden.net/wiki/Dancer_(Ability)
@@ -42,7 +44,7 @@ describe("Abilities - Dancer", () => {
     await game.phaseInterceptor.to("MovePhase"); // feebas uses swords dance
     await game.phaseInterceptor.to("MovePhase", false); // oricorio copies swords dance
 
-    let currentPhase = game.scene.getCurrentPhase() as MovePhase;
+    let currentPhase = game.scene.phaseManager.getCurrentPhase() as MovePhase;
     expect(currentPhase.pokemon).toBe(oricorio);
     expect(currentPhase.move.moveId).toBe(MoveId.SWORDS_DANCE);
 
@@ -52,7 +54,7 @@ describe("Abilities - Dancer", () => {
     await game.phaseInterceptor.to("MovePhase"); // magikarp (left) uses victory dance
     await game.phaseInterceptor.to("MovePhase", false); // oricorio copies magikarp's victory dance
 
-    currentPhase = game.scene.getCurrentPhase() as MovePhase;
+    currentPhase = game.scene.phaseManager.getCurrentPhase() as MovePhase;
     expect(currentPhase.pokemon).toBe(oricorio);
     expect(currentPhase.move.moveId).toBe(MoveId.VICTORY_DANCE);
 
@@ -89,14 +91,53 @@ describe("Abilities - Dancer", () => {
 
     await game.phaseInterceptor.to("MovePhase"); // shuckle 2 mirror moves oricorio
     await game.phaseInterceptor.to("MovePhase"); // calls instructed rev dance
-    let currentPhase = game.scene.getCurrentPhase() as MovePhase;
+    let currentPhase = game.scene.phaseManager.getCurrentPhase() as MovePhase;
     expect(currentPhase.pokemon).toBe(shuckle2);
     expect(currentPhase.move.moveId).toBe(MoveId.REVELATION_DANCE);
 
     await game.phaseInterceptor.to("MovePhase"); // shuckle 1 instructs oricorio
     await game.phaseInterceptor.to("MovePhase");
-    currentPhase = game.scene.getCurrentPhase() as MovePhase;
+    currentPhase = game.scene.phaseManager.getCurrentPhase() as MovePhase;
     expect(currentPhase.pokemon).toBe(oricorio);
     expect(currentPhase.move.moveId).toBe(MoveId.REVELATION_DANCE);
+  });
+
+  it("should not break subsequent last hit only moves", async () => {
+    game.override.battleStyle("single");
+    await game.classicMode.startBattle([SpeciesId.ORICORIO, SpeciesId.FEEBAS]);
+
+    const [oricorio, feebas] = game.scene.getPlayerParty();
+
+    game.move.use(MoveId.BATON_PASS);
+    game.doSelectPartyPokemon(1);
+    await game.move.forceEnemyMove(MoveId.SWORDS_DANCE);
+    await game.setTurnOrder([BattlerIndex.ENEMY, BattlerIndex.PLAYER]);
+    await game.phaseInterceptor.to("TurnEndPhase");
+
+    expect(game.phaseInterceptor.log).toContain("SwitchSummonPhase");
+    expect(game.field.getPlayerPokemon()).toBe(feebas);
+    expect(feebas.getStatStage(Stat.ATK)).toBe(2);
+    expect(oricorio.isOnField()).toBe(false);
+    expect(oricorio.visible).toBe(false);
+  });
+
+  it("should not trigger while flinched", async () => {
+    game.override.battleStyle("double").moveset(MoveId.SPLASH).enemyMoveset([MoveId.SWORDS_DANCE, MoveId.FAKE_OUT]);
+    await game.classicMode.startBattle([SpeciesId.ORICORIO]);
+
+    const oricorio = game.scene.getPlayerPokemon()!;
+    expect(oricorio).toBeDefined();
+
+    // get faked out and copy swords dance
+    game.move.select(MoveId.SPLASH);
+    await game.move.forceEnemyMove(MoveId.SWORDS_DANCE);
+    await game.move.forceEnemyMove(MoveId.FAKE_OUT, BattlerIndex.PLAYER);
+    await game.phaseInterceptor.to("TurnEndPhase");
+
+    expect(oricorio.getLastXMoves(-1)[0]).toMatchObject({
+      move: MoveId.NONE,
+      result: MoveResult.FAIL,
+    });
+    expect(oricorio.getStatStage(Stat.ATK)).toBe(0);
   });
 });

@@ -1,6 +1,6 @@
 import { BiomeId } from "#enums/biome-id";
 import { SpeciesId } from "#enums/species-id";
-import { GameModes } from "#app/game-mode";
+import { GameModes } from "#enums/game-modes";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import GameManager from "#test/testUtils/gameManager";
 

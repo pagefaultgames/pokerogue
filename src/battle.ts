@@ -1,5 +1,5 @@
 import { globalScene } from "#app/global-scene";
-import type { Command } from "./ui/command-ui-handler";
+import type { Command } from "#enums/command";
 import {
   randomString,
   getEnumValues,
@@ -8,10 +8,12 @@ import {
   shiftCharCodes,
   randSeedItem,
   randInt,
+  randSeedFloat,
 } from "#app/utils/common";
-import Trainer, { TrainerVariant } from "./field/trainer";
+import Trainer from "./field/trainer";
+import { TrainerVariant } from "#enums/trainer-variant";
 import type { GameMode } from "./game-mode";
-import { MoneyMultiplierModifier, PokemonHeldItemModifier } from "./modifier/modifier";
+import { MoneyMultiplierModifier, type PokemonHeldItemModifier } from "./modifier/modifier";
 import type { PokeballType } from "#enums/pokeball";
 import { trainerConfigs } from "#app/data/trainers/trainer-config";
 import { SpeciesFormKey } from "#enums/species-form-key";
@@ -28,18 +30,11 @@ import i18next from "#app/plugins/i18n";
 import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterMode } from "#enums/mystery-encounter-mode";
 import type { CustomModifierSettings } from "#app/modifier/modifier-type";
-import { ModifierTier } from "#app/modifier/modifier-tier";
+import { ModifierTier } from "#enums/modifier-tier";
 import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { BattleType } from "#enums/battle-type";
 import { ClassicFixedBossWaves } from "#enums/fixed-boss-waves";
-
-export enum BattlerIndex {
-  ATTACKER = -1,
-  PLAYER,
-  PLAYER_2,
-  ENEMY,
-  ENEMY_2,
-}
+import { BattlerIndex } from "#enums/battler-index";
 
 export interface TurnCommand {
   command: Command;
@@ -150,7 +145,7 @@ export default class Battle {
   randSeedGaussForLevel(value: number): number {
     let rand = 0;
     for (let i = value; i > 0; i--) {
-      rand += Phaser.Math.RND.realInRange(0, 1);
+      rand += randSeedFloat();
     }
     return rand / value;
   }
@@ -178,7 +173,7 @@ export default class Battle {
     this.postBattleLoot.push(
       ...globalScene
         .findModifiers(
-          m => m instanceof PokemonHeldItemModifier && m.pokemonId === enemyPokemon.id && m.isTransferable,
+          m => m.is("PokemonHeldItemModifier") && m.pokemonId === enemyPokemon.id && m.isTransferable,
           false,
         )
         .map(i => {
@@ -205,7 +200,7 @@ export default class Battle {
     const message = i18next.t("battle:moneyPickedUp", {
       moneyAmount: formattedMoneyAmount,
     });
-    globalScene.queueMessage(message, undefined, true);
+    globalScene.phaseManager.queueMessage(message, undefined, true);
 
     globalScene.currentBattle.moneyScattered = 0;
   }

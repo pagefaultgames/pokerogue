@@ -116,7 +116,7 @@ describe("Berries Abound - Mystery Encounter", () => {
       await runMysteryEncounterToEnd(game, 1, undefined, true);
 
       const enemyField = scene.getEnemyField();
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
+      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(enemyField.length).toBe(1);
       expect(enemyField[0].species.speciesId).toBe(speciesToSpawn);
     });
@@ -137,7 +137,7 @@ describe("Berries Abound - Mystery Encounter", () => {
       await runMysteryEncounterToEnd(game, 1, undefined, true);
       await skipBattleRunMysteryEncounterRewardsPhase(game);
       await game.phaseInterceptor.to(SelectModifierPhase, false);
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
+      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
 
       const berriesAfter = scene.findModifiers(m => m instanceof BerryModifier) as BerryModifier[];
       const berriesAfterCount = berriesAfter.reduce((a, b) => a + b.stackCount, 0);
@@ -150,7 +150,7 @@ describe("Berries Abound - Mystery Encounter", () => {
       await runMysteryEncounterToEnd(game, 1, undefined, true);
       await skipBattleRunMysteryEncounterRewardsPhase(game);
       await game.phaseInterceptor.to(SelectModifierPhase, false);
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
+      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
       await game.phaseInterceptor.run(SelectModifierPhase);
 
       expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);
@@ -190,7 +190,7 @@ describe("Berries Abound - Mystery Encounter", () => {
       await runMysteryEncounterToEnd(game, 2, undefined, true);
 
       const enemyField = scene.getEnemyField();
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
+      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(enemyField.length).toBe(1);
       expect(enemyField[0].species.speciesId).toBe(speciesToSpawn);
 
@@ -214,7 +214,7 @@ describe("Berries Abound - Mystery Encounter", () => {
       await runMysteryEncounterToEnd(game, 2, undefined, true);
 
       const enemyField = scene.getEnemyField();
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
+      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(CommandPhase.name);
       expect(enemyField.length).toBe(1);
       expect(enemyField[0].species.speciesId).toBe(speciesToSpawn);
 
@@ -235,7 +235,7 @@ describe("Berries Abound - Mystery Encounter", () => {
 
       await runMysteryEncounterToEnd(game, 2);
       await game.phaseInterceptor.to(SelectModifierPhase, false);
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
+      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(SelectModifierPhase.name);
       await game.phaseInterceptor.run(SelectModifierPhase);
 
       expect(scene.ui.getMode()).to.equal(UiMode.MODIFIER_SELECT);

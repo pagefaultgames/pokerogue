@@ -1,4 +1,4 @@
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex } from "#enums/battler-index";
 import { PostTurnRestoreBerryAbAttr } from "#app/data/abilities/ability";
 import type Pokemon from "#app/field/pokemon";
 import { BerryModifier, PreserveBerryModifier } from "#app/modifier/modifier";

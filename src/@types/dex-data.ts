@@ -1,6 +1,7 @@
-/**
- * Dex entry for a single Pokemon Species
- */
+export interface DexData {
+  [key: number]: DexEntry;
+}
+
 export interface DexEntry {
   seenAttr: bigint;
   caughtAttr: bigint;
@@ -9,8 +10,4 @@ export interface DexEntry {
   caughtCount: number;
   hatchedCount: number;
   ivs: number[];
-}
-
-export interface DexData {
-  [key: number]: DexEntry;
 }

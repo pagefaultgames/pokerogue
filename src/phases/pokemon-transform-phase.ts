@@ -1,8 +1,8 @@
-import type { BattlerIndex } from "#app/battle";
+import type { BattlerIndex } from "#enums/battler-index";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
 import { EFFECTIVE_STATS, BATTLE_STATS } from "#enums/stat";
-import { PokemonMove } from "#app/field/pokemon";
+import { PokemonMove } from "#app/data/moves/pokemon-move";
 import { globalScene } from "#app/global-scene";
 import { PokemonPhase } from "./pokemon-phase";
 import { getPokemonNameWithAffix } from "#app/messages";
@@ -13,6 +13,7 @@ import i18next from "i18next";
  * Used for Transform (move) and Imposter (ability)
  */
 export class PokemonTransformPhase extends PokemonPhase {
+  public readonly phaseName = "PokemonTransformPhase";
   protected targetIndex: BattlerIndex;
   private playSound: boolean;
 
@@ -64,7 +65,7 @@ export class PokemonTransformPhase extends PokemonPhase {
       globalScene.playSound("battle_anims/PRSFX- Transform");
     }
 
-    globalScene.queueMessage(
+    globalScene.phaseManager.queueMessage(
       i18next.t("abilityTriggers:postSummonTransform", {
         pokemonNameWithAffix: getPokemonNameWithAffix(user),
         targetName: target.name,

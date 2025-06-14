@@ -1,7 +1,7 @@
 import { PokeballType } from "#app/enums/pokeball";
 import { WeatherType } from "#app/enums/weather-type";
 import type { CommandPhase } from "#app/phases/command-phase";
-import { Command } from "#app/ui/command-ui-handler";
+import { Command } from "#enums/command";
 import { AbilityId } from "#enums/ability-id";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
@@ -146,7 +146,7 @@ describe("Abilities - Desolate Land", () => {
 
     vi.spyOn(game.scene.getPlayerPokemon()!, "randBattleSeedInt").mockReturnValue(0);
 
-    const commandPhase = game.scene.getCurrentPhase() as CommandPhase;
+    const commandPhase = game.scene.phaseManager.getCurrentPhase() as CommandPhase;
     commandPhase.handleCommand(Command.RUN, 0);
     await game.phaseInterceptor.to("BerryPhase");
 

@@ -5,7 +5,7 @@ import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex } from "#enums/battler-index";
 import { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
 import { VictoryPhase } from "#app/phases/victory-phase";
 import { TurnEndPhase } from "#app/phases/turn-end-phase";

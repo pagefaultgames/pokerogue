@@ -12,3 +12,8 @@ post-merge:
   commands:
     update-submodules:
       run: git submodule update --init --recursive
+
+post-checkout:
+  commands:
+    update-submodules:
+      run: git submodule update --init --recursive

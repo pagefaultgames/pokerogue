@@ -4,6 +4,7 @@ import { getBiomeKey } from "#app/field/arena";
 import { BattlePhase } from "./battle-phase";
 
 export class SwitchBiomePhase extends BattlePhase {
+  public readonly phaseName = "SwitchBiomePhase";
   private nextBiome: BiomeId;
 
   constructor(nextBiome: BiomeId) {

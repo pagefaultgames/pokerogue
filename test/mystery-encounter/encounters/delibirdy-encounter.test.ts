@@ -26,7 +26,7 @@ import {
 } from "#app/modifier/modifier";
 import { MysteryEncounterPhase } from "#app/phases/mystery-encounter-phases";
 import { generateModifierType } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import { modifierTypes } from "#app/modifier/modifier-type";
+import { modifierTypes } from "#app/data/data-lists";
 import { BerryType } from "#enums/berry-type";
 
 const namespace = "mysteryEncounters/delibirdy";
@@ -153,7 +153,7 @@ describe("Delibird-y - Mystery Encounter", () => {
       await game.runToMysteryEncounter(MysteryEncounterType.DELIBIRDY, defaultParty);
       await game.phaseInterceptor.to(MysteryEncounterPhase, false);
 
-      const encounterPhase = scene.getCurrentPhase();
+      const encounterPhase = scene.phaseManager.getCurrentPhase();
       expect(encounterPhase?.constructor.name).toBe(MysteryEncounterPhase.name);
       const mysteryEncounterPhase = encounterPhase as MysteryEncounterPhase;
       vi.spyOn(mysteryEncounterPhase, "continueEncounter");
@@ -162,7 +162,7 @@ describe("Delibird-y - Mystery Encounter", () => {
 
       await runSelectMysteryEncounterOption(game, 1);
 
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(MysteryEncounterPhase.name);
+      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(MysteryEncounterPhase.name);
       expect(scene.ui.playError).not.toHaveBeenCalled(); // No error sfx, option is disabled
       expect(mysteryEncounterPhase.handleOptionSelect).not.toHaveBeenCalled();
       expect(mysteryEncounterPhase.continueEncounter).not.toHaveBeenCalled();
@@ -308,7 +308,7 @@ describe("Delibird-y - Mystery Encounter", () => {
 
       await game.phaseInterceptor.to(MysteryEncounterPhase, false);
 
-      const encounterPhase = scene.getCurrentPhase();
+      const encounterPhase = scene.phaseManager.getCurrentPhase();
       expect(encounterPhase?.constructor.name).toBe(MysteryEncounterPhase.name);
       const mysteryEncounterPhase = encounterPhase as MysteryEncounterPhase;
       vi.spyOn(mysteryEncounterPhase, "continueEncounter");
@@ -317,7 +317,7 @@ describe("Delibird-y - Mystery Encounter", () => {
 
       await runSelectMysteryEncounterOption(game, 2);
 
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(MysteryEncounterPhase.name);
+      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(MysteryEncounterPhase.name);
       expect(scene.ui.playError).not.toHaveBeenCalled(); // No error sfx, option is disabled
       expect(mysteryEncounterPhase.handleOptionSelect).not.toHaveBeenCalled();
       expect(mysteryEncounterPhase.continueEncounter).not.toHaveBeenCalled();
@@ -441,7 +441,7 @@ describe("Delibird-y - Mystery Encounter", () => {
 
       await game.phaseInterceptor.to(MysteryEncounterPhase, false);
 
-      const encounterPhase = scene.getCurrentPhase();
+      const encounterPhase = scene.phaseManager.getCurrentPhase();
       expect(encounterPhase?.constructor.name).toBe(MysteryEncounterPhase.name);
       const mysteryEncounterPhase = encounterPhase as MysteryEncounterPhase;
       vi.spyOn(mysteryEncounterPhase, "continueEncounter");
@@ -450,7 +450,7 @@ describe("Delibird-y - Mystery Encounter", () => {
 
       await runSelectMysteryEncounterOption(game, 3);
 
-      expect(scene.getCurrentPhase()?.constructor.name).toBe(MysteryEncounterPhase.name);
+      expect(scene.phaseManager.getCurrentPhase()?.constructor.name).toBe(MysteryEncounterPhase.name);
       expect(scene.ui.playError).not.toHaveBeenCalled(); // No error sfx, option is disabled
       expect(mysteryEncounterPhase.handleOptionSelect).not.toHaveBeenCalled();
       expect(mysteryEncounterPhase.continueEncounter).not.toHaveBeenCalled();

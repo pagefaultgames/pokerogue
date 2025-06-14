@@ -4,7 +4,7 @@ import { AbilityId } from "#enums/ability-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex } from "#enums/battler-index";
 import { allAbilities } from "#app/data/data-lists";
 import { allMoves } from "#app/data/data-lists";
 import { MoveCategory } from "#enums/MoveCategory";

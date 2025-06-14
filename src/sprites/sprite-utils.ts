@@ -21,8 +21,5 @@ export function hasExpSprite(key: string): boolean {
   if (keyMatch[5]) {
     k += keyMatch[5];
   }
-  if (!expSpriteKeys.has(k)) {
-    return false;
-  }
-  return true;
+  return expSpriteKeys.has(k);
 }

@@ -1,5 +1,5 @@
 import { RechargingTag, SemiInvulnerableTag } from "#app/data/battler-tags";
-import { RandomMoveAttr } from "#app/data/moves/move";
+import type { RandomMoveAttr } from "#app/data/moves/move";
 import { allMoves } from "#app/data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { Stat } from "#app/enums/stat";
@@ -27,7 +27,7 @@ describe("Moves - Metronome", () => {
   });
 
   beforeEach(() => {
-    randomMoveAttr = allMoves[MoveId.METRONOME].getAttrs(RandomMoveAttr)[0];
+    randomMoveAttr = allMoves[MoveId.METRONOME].getAttrs("RandomMoveAttr")[0];
     game = new GameManager(phaserGame);
     game.override
       .moveset([MoveId.METRONOME, MoveId.SPLASH])

@@ -26,7 +26,7 @@ import { EggSourceType } from "#enums/egg-source-types";
 import { EggTier } from "#enums/egg-type";
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import { modifierTypes } from "#app/modifier/modifier-type";
+import { modifierTypes } from "#app/data/data-lists";
 import { PokemonType } from "#enums/pokemon-type";
 import { getPokeballTintColor } from "#app/data/pokeball";
 
@@ -658,8 +658,8 @@ function onGameOver() {
   globalScene.playBgm(globalScene.arena.bgm);
 
   // Clear any leftover battle phases
-  globalScene.clearPhaseQueue();
-  globalScene.clearPhaseQueueSplice();
+  globalScene.phaseManager.clearPhaseQueue();
+  globalScene.phaseManager.clearPhaseQueueSplice();
 
   // Return enemy Pokemon
   const pokemon = globalScene.getEnemyPokemon();

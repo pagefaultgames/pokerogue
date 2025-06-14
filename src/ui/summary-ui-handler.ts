@@ -13,7 +13,8 @@ import {
   formatStat,
   getShinyDescriptor,
 } from "#app/utils/common";
-import type { PlayerPokemon, PokemonMove } from "#app/field/pokemon";
+import type { PlayerPokemon } from "#app/field/pokemon";
+import type { PokemonMove } from "#app/data/moves/pokemon-move";
 import { getStarterValueFriendshipCap, speciesStarterCosts } from "#app/data/balance/starters";
 import { argbFromRgba } from "@material/material-color-utilities";
 import { getTypeRgb } from "#app/data/type";
@@ -32,7 +33,7 @@ import { loggedInUser } from "#app/account";
 import type { Variant } from "#app/sprites/variant";
 import { getVariantTint } from "#app/sprites/variant";
 import { Button } from "#enums/buttons";
-import type { Ability } from "#app/data/abilities/ability-class";
+import type { Ability } from "#app/data/abilities/ability";
 import i18next from "i18next";
 import { modifierSortFunc } from "#app/modifier/modifier";
 import { PlayerGender } from "#enums/player-gender";

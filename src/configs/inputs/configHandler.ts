@@ -197,10 +197,7 @@ export function canIAssignThisKey(config, key) {
 export function canIOverrideThisSetting(config, settingName) {
   const key = getKeyWithSettingName(config, settingName);
   // || isTheLatestBind(config, settingName) no longer needed since action and cancel are protected
-  if (config.blacklist?.includes(key)) {
-    return false;
-  }
-  return true;
+  return !config.blacklist?.includes(key);
 }
 
 export function canIDeleteThisKey(config, key) {

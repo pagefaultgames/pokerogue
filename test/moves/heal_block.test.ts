@@ -1,5 +1,5 @@
-import { BattlerIndex } from "#app/battle";
-import { ArenaTagSide } from "#app/data/arena-tag";
+import { BattlerIndex } from "#enums/battler-index";
+import { ArenaTagSide } from "#enums/arena-tag-side";
 import GameManager from "#test/testUtils/gameManager";
 import { AbilityId } from "#enums/ability-id";
 import { ArenaTagType } from "#enums/arena-tag-type";
