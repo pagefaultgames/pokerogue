@@ -9,7 +9,7 @@ import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
-describe("MoveId - Rest", () => {
+describe("Move - Rest", () => {
   let phaserGame: Phaser.Game;
   let game: GameManager;
 

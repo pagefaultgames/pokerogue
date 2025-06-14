@@ -4453,7 +4453,7 @@ export class PreSetStatusAbAttr extends AbAttr {
     _pokemon: Pokemon,
     _passive: boolean,
     _simulated: boolean,
-    _effect: StatusEffect | undefined,
+    _effect: StatusEffect,
     _cancelled: BooleanHolder,
     _args: any[],
   ): boolean {
@@ -4464,7 +4464,7 @@ export class PreSetStatusAbAttr extends AbAttr {
     _pokemon: Pokemon,
     _passive: boolean,
     _simulated: boolean,
-    _effect: StatusEffect | undefined,
+    _effect: StatusEffect,
     _cancelled: BooleanHolder,
     _args: any[],
   ): void {}
