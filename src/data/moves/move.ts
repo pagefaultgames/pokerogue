@@ -1165,8 +1165,9 @@ export abstract class MoveAttr {
   }
 
   /**
-   * @virtual
-   * @returns the {@linkcode MoveCondition} or {@linkcode MoveConditionFunc} for this {@linkcode Move}
+   * Return this `MoveAttr`'s associated {@linkcode MoveCondition} or {@linkcode MoveConditionFunc}.
+   * The specified condition will be added to all {@linkcode Move}s with this attribute,
+   * and moves **will fail upon use** if _at least 1_ of their attached conditions returns `false`.
    */
   getCondition(): MoveCondition | MoveConditionFunc | null {
     return null;
@@ -1279,15 +1280,21 @@ export class MoveEffectAttr extends MoveAttr {
   }
 
   /**
-   * Determines whether the {@linkcode Move}'s effects are valid to {@linkcode apply}
-   * @virtual
-   * @param user {@linkcode Pokemon} using the move
-   * @param target {@linkcode Pokemon} target of the move
-   * @param move {@linkcode Move} with this attribute
-   * @param args Set of unique arguments needed by this attribute
-   * @returns true if basic application of the ability attribute should be possible
+   * Determine whether this {@linkcode MoveAttr}'s effects are able to {@linkcode apply | be applied} to the target.
+   *
+   * Will **NOT** cause the move to fail upon returning `false` (unlike {@linkcode getCondition};
+   * merely that the effect for this attribute will be nullified.
+   * @param user - The {@linkcode Pokemon} using the move
+   * @param target - The {@linkcode Pokemon} being targeted by the move, or {@linkcode user} if the move is
+   * {@linkcode selfTarget | self-targeting}
+   * @param move - The {@linkcode Move} being used
+   * @param _args - Set of unique arguments needed by this attribute
+   * @returns `true` if basic application of this `MoveAttr`s effects should be possible
    */
-  canApply(user: Pokemon, target: Pokemon, move: Move, args?: any[]) {
+  // TODO: Decouple this check from the `apply` step
+  // TODO: Make non-damaging moves fail by default if none of their attributes can apply
+  canApply(user: Pokemon, target: Pokemon, move: Move, _args?: any[]) {
+    // TODO: These checks seem redundant
     return !! (this.selfTarget ? user.hp && !user.getTag(BattlerTagType.FRENZY) : target.hp)
            && (this.selfTarget || !target.getTag(BattlerTagType.PROTECTED) ||
                 move.doesFlagEffectApply({ flag: MoveFlags.IGNORE_PROTECT, user, target }));
@@ -1941,8 +1948,13 @@ export class HealAttr extends MoveEffectAttr {
     return Math.round(score / (1 - this.healRatio / 2));
   }
 
+  // TODO: Remove once `canApply` is made to make status moves fail if no attributes apply
+  override getCondition(): MoveConditionFunc {
+    return (user, target, move) => this.canApply(user, target, move, [])
+  }
+
   override canApply(user: Pokemon, target: Pokemon, _move: Move, _args?: any[]): boolean {
-    return !(this.selfTarget ? user : target).isFullHp();
+    return super.canApply(user, target, _move, _args) && !(this.selfTarget ? user : target).isFullHp();
   }
 
   override getFailedText(user: Pokemon, target: Pokemon, _move: Move): string | undefined {
@@ -1969,20 +1981,23 @@ export class RestAttr extends HealAttr {
 
   override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
    const wasSet = user.trySetStatus(StatusEffect.SLEEP, user, this.duration, null, true, true,
-      i18next.t("moveTriggers:restBecameHealthy", {
+    i18next.t("moveTriggers:restBecameHealthy", {
       pokemonName: getPokemonNameWithAffix(user),
     }));
     return wasSet && super.apply(user, target, move, args);
   }
 
-  override addHealPhase(user: Pokemon, healRatio: number): void {
-    globalScene.phaseManager.unshiftNew("PokemonHealPhase", user.getBattlerIndex(), healRatio, null)
+  override addHealPhase(user: Pokemon): void {
+    globalScene.phaseManager.unshiftNew("PokemonHealPhase", user.getBattlerIndex(), user.getMaxHp(), null)
   }
 
   override canApply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     // Intentionally suppress messages here as we display generic fail msg
     // TODO: This might have order-of-operation jank
-    return super.canApply(user, target, move, args) && user.canSetStatus(StatusEffect.SLEEP, true, true, user)
+    return (
+      super.canApply(user, target, move, args)
+      && user.canSetStatus(StatusEffect.SLEEP, true, true, user)
+    );
   }
 }
 

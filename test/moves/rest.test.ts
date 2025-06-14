@@ -45,7 +45,7 @@ describe("Move - Rest", () => {
     game.move.use(MoveId.REST);
     await game.toEndOfTurn();
 
-    expect(snorlax.isFullHp()).toBe(true);
+    expect(snorlax.hp).toBe(snorlax.getMaxHp());
     expect(snorlax.status?.effect).toBe(StatusEffect.SLEEP);
   });
 
