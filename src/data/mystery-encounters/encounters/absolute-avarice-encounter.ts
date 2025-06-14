@@ -9,7 +9,6 @@ import {
 import type Pokemon from "#app/field/pokemon";
 import { EnemyPokemon } from "#app/field/pokemon";
 import { PokemonMove } from "#app/data/moves/pokemon-move";
-import type { BerryModifierType, PokemonHeldItemModifierType } from "#app/modifier/modifier-type";
 import { modifierTypes } from "#app/modifier/modifier-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { SpeciesId } from "#enums/species-id";
@@ -21,7 +20,6 @@ import { PersistentModifierRequirement } from "#app/data/mystery-encounters/myst
 import { queueEncounterMessage } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
-import { BerryModifier, PokemonInstantReviveModifier } from "#app/modifier/modifier";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import { MoveId } from "#enums/move-id";
 import { BattlerTagType } from "#enums/battler-tag-type";
@@ -38,9 +36,22 @@ import type HeldModifierConfig from "#app/@types/held-modifier-config";
 import type { BerryType } from "#enums/berry-type";
 import { Stat } from "#enums/stat";
 import i18next from "i18next";
+import type { MysteryEncounterSpriteConfig } from "#app/field/mystery-encounter-intro";
 
 /** the i18n namespace for this encounter */
 const namespace = "mysteryEncounters/absoluteAvarice";
+
+function berrySprite(spriteKey: string, x: number, y: number): MysteryEncounterSpriteConfig {
+  return {
+    spriteKey: spriteKey,
+    fileRoot: "items",
+    isItem: true,
+    x: x,
+    y: y,
+    hidden: true,
+    disableAnimation: true,
+  };
+}
 
 /**
  * Absolute Avarice encounter.
@@ -73,105 +84,17 @@ export const AbsoluteAvariceEncounter: MysteryEncounter = MysteryEncounterBuilde
       repeat: true,
       x: -5,
     },
-    {
-      spriteKey: "lum_berry",
-      fileRoot: "items",
-      isItem: true,
-      x: 7,
-      y: -14,
-      hidden: true,
-      disableAnimation: true,
-    },
-    {
-      spriteKey: "salac_berry",
-      fileRoot: "items",
-      isItem: true,
-      x: 2,
-      y: 4,
-      hidden: true,
-      disableAnimation: true,
-    },
-    {
-      spriteKey: "lansat_berry",
-      fileRoot: "items",
-      isItem: true,
-      x: 32,
-      y: 5,
-      hidden: true,
-      disableAnimation: true,
-    },
-    {
-      spriteKey: "liechi_berry",
-      fileRoot: "items",
-      isItem: true,
-      x: 6,
-      y: -5,
-      hidden: true,
-      disableAnimation: true,
-    },
-    {
-      spriteKey: "sitrus_berry",
-      fileRoot: "items",
-      isItem: true,
-      x: 7,
-      y: 8,
-      hidden: true,
-      disableAnimation: true,
-    },
-    {
-      spriteKey: "enigma_berry",
-      fileRoot: "items",
-      isItem: true,
-      x: 26,
-      y: -4,
-      hidden: true,
-      disableAnimation: true,
-    },
-    {
-      spriteKey: "leppa_berry",
-      fileRoot: "items",
-      isItem: true,
-      x: 16,
-      y: -27,
-      hidden: true,
-      disableAnimation: true,
-    },
-    {
-      spriteKey: "petaya_berry",
-      fileRoot: "items",
-      isItem: true,
-      x: 30,
-      y: -17,
-      hidden: true,
-      disableAnimation: true,
-    },
-    {
-      spriteKey: "ganlon_berry",
-      fileRoot: "items",
-      isItem: true,
-      x: 16,
-      y: -11,
-      hidden: true,
-      disableAnimation: true,
-    },
-    {
-      spriteKey: "apicot_berry",
-      fileRoot: "items",
-      isItem: true,
-      x: 14,
-      y: -2,
-      hidden: true,
-      disableAnimation: true,
-    },
-    {
-      spriteKey: "starf_berry",
-      fileRoot: "items",
-      isItem: true,
-      x: 18,
-      y: 9,
-      hidden: true,
-      disableAnimation: true,
-    },
+    berrySprite("lum_berry", 7, -14),
+    berrySprite("salac_berry", 2, 4),
+    berrySprite("lansat_berry", 32, 5),
+    berrySprite("liechi_berry", 6, -5),
+    berrySprite("sitrus_berry", 7, 8),
+    berrySprite("enigma_berry", 26, -4),
+    berrySprite("leppa_berry", 16, -27),
+    berrySprite("petaya_berry", 30, -17),
+    berrySprite("ganlon_berry", 16, -11),
+    berrySprite("apicot_berry", 14, -2),
+    berrySprite("starf_berry", 18, 9),
   ])
   .withHideWildIntroMessage(true)
   .withAutoHideIntroVisuals(false)
