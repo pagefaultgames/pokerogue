@@ -94,7 +94,7 @@ export default class AbstractSettingsUiHandler extends MessageUiHandler {
 
     const iconCancel = globalScene.add.sprite(0, 0, "keyboard");
     iconCancel.setOrigin(0, -0.1);
-    iconCancel.setPositionRelative(actionsBg, this.navigationContainer.width - 100, 4);
+    iconCancel.setPositionRelative(actionsBg, actionText.x - 28, 4);
     this.navigationIcons["BUTTON_CANCEL"] = iconCancel;
 
     const cancelText = addTextObject(0, 0, i18next.t("settings:back"), TextStyle.SETTINGS_LABEL);
