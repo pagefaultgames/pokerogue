@@ -3282,13 +3282,11 @@ export class IntimidateImmunityAbAttr extends AbAttr {
 export class PostIntimidateStatStageChangeAbAttr extends AbAttr {
   private stats: BattleStat[];
   private stages: number;
-  private overwrites: boolean;
 
-  constructor(stats: BattleStat[], stages: number, overwrites?: boolean) {
+  constructor(stats: BattleStat[], stages: number) {
     super(true);
     this.stats = stats;
     this.stages = stages;
-    this.overwrites = !!overwrites;
   }
 
   override apply(
@@ -3299,7 +3297,7 @@ export class PostIntimidateStatStageChangeAbAttr extends AbAttr {
     _args: any[],
   ): void {
     if (!simulated) {
-      globalScene.phaseManager.pushNew(
+      globalScene.phaseManager.unshiftNew(
         "StatStageChangePhase",
         pokemon.getBattlerIndex(),
         false,
@@ -3307,7 +3305,6 @@ export class PostIntimidateStatStageChangeAbAttr extends AbAttr {
         this.stages,
       );
     }
-    cancelled.value = this.overwrites;
   }
 }
 
@@ -3518,7 +3515,6 @@ export class PostSummonStatStageChangeAbAttr extends PostSummonAbAttr {
         const cancelled = new BooleanHolder(false);
         if (this.intimidate) {
           applyAbAttrs("IntimidateImmunityAbAttr", opponent, cancelled, simulated);
-          applyAbAttrs("PostIntimidateStatStageChangeAbAttr", opponent, cancelled, simulated);
 
           if (opponent.getTag(BattlerTagType.SUBSTITUTE)) {
             cancelled.value = true;
@@ -3533,6 +3529,7 @@ export class PostSummonStatStageChangeAbAttr extends PostSummonAbAttr {
             this.stages,
           );
         }
+        applyAbAttrs("PostIntimidateStatStageChangeAbAttr", opponent, cancelled, simulated);
       }
     }
   }
@@ -8872,7 +8869,8 @@ export function initAbilities() {
       .attr(PostSummonStatStageChangeOnArenaAbAttr, ArenaTagType.TAILWIND)
       .ignorable(),
     new Ability(AbilityId.GUARD_DOG, 9)
-      .attr(PostIntimidateStatStageChangeAbAttr, [ Stat.ATK ], 1, true)
+      .attr(PostIntimidateStatStageChangeAbAttr, [ Stat.ATK ], 1)
+      .attr(IntimidateImmunityAbAttr)
       .attr(ForceSwitchOutImmunityAbAttr)
       .ignorable(),
     new Ability(AbilityId.ROCKY_PAYLOAD, 9)
