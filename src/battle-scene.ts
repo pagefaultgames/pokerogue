@@ -2966,7 +2966,7 @@ export default class BattleScene extends SceneBase {
       if (
         modifier instanceof PokemonHeldItemModifier &&
         !isNullOrUndefined(modifier.getSpecies()) &&
-        !this.getPokemonById((modifier as PokemonHeldItemModifier).pokemonId)?.hasSpecies(modifier.getSpecies()!)
+        !this.getPokemonById(modifier.pokemonId)?.hasSpecies(modifier.getSpecies()!)
       ) {
         modifiers.splice(m--, 1);
       }
