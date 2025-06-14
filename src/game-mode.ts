@@ -90,13 +90,14 @@ export class GameMode implements GameModeConfig {
   }
 
   /**
+   * Helper function to get starting level for game mode.
    * @returns either:
-   * - override from overrides.ts
+   * - starting level override from overrides.ts
    * - 20 for Daily Runs
    * - 5 for all other modes
    */
   getStartingLevel(): number {
-    if (Overrides.STARTING_LEVEL_OVERRIDE) {
+    if (Overrides.STARTING_LEVEL_OVERRIDE && Overrides.STARTING_LEVEL_OVERRIDE > 0) {
       return Overrides.STARTING_LEVEL_OVERRIDE;
     }
     switch (this.modeId) {

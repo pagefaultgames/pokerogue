@@ -31,7 +31,7 @@ describe("Moves - Baton Pass", () => {
       .moveset([MoveId.BATON_PASS, MoveId.NASTY_PLOT, MoveId.SPLASH])
       .ability(AbilityId.BALL_FETCH)
       .enemyMoveset(MoveId.SPLASH)
-      .disableCrits();
+      .criticalHits(false);
   });
 
   it("transfers all stat stages when player uses it", async () => {

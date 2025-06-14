@@ -40,7 +40,7 @@ describe("Moves - Instruct", () => {
       .passiveAbility(AbilityId.NO_GUARD)
       .enemyLevel(100)
       .startingLevel(100)
-      .disableCrits();
+      .criticalHits(false);
   });
 
   it("should repeat target's last used move", async () => {

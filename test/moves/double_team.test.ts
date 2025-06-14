@@ -26,7 +26,7 @@ describe("Moves - Double Team", () => {
     game.override
       .battleStyle("single")
       .moveset([MoveId.DOUBLE_TEAM])
-      .disableCrits()
+      .criticalHits(false)
       .ability(AbilityId.BALL_FETCH)
       .enemySpecies(SpeciesId.SHUCKLE)
       .enemyAbility(AbilityId.BALL_FETCH)

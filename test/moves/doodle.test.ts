@@ -27,7 +27,7 @@ describe("Moves - Doodle", () => {
       .moveset([MoveId.SPLASH, MoveId.DOODLE])
       .ability(AbilityId.ADAPTABILITY)
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(MoveId.SPLASH);

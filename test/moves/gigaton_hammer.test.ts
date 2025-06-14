@@ -29,7 +29,7 @@ describe("Moves - Gigaton Hammer", () => {
       .startingLevel(10)
       .enemyLevel(100)
       .enemyMoveset(MoveId.SPLASH)
-      .disableCrits();
+      .criticalHits(false);
   });
 
   it("can't be used two turns in a row", async () => {

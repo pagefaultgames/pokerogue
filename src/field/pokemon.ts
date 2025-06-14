@@ -1356,8 +1356,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   }
 
   /**
-   * Calculate the critical-hit stage of a move used against this pokemon by
-   * the given source
+   * Calculate the critical-hit stage of a move used **against** this pokemon by
+   * the given source.
+   *
    * @param source - The {@linkcode Pokemon} using the move
    * @param move - The {@linkcode Move} being used
    * @returns The final critical-hit stage value
@@ -1370,11 +1371,9 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     applyAbAttrs("BonusCritAbAttr", source, null, false, critStage);
     const critBoostTag = source.getTag(CritBoostTag);
     if (critBoostTag) {
-      if (critBoostTag instanceof DragonCheerTag) {
-        critStage.value += critBoostTag.typesOnAdd.includes(PokemonType.DRAGON) ? 2 : 1;
-      } else {
-        critStage.value += 2;
-      }
+      // Dragon cheer only gives +1 crit stage to non-dragon types
+      critStage.value +=
+        critBoostTag instanceof DragonCheerTag && !critBoostTag.typesOnAdd.includes(PokemonType.DRAGON) ? 1 : 2;
     }
 
     console.log(`crit stage: +${critStage.value}`);
@@ -3888,33 +3887,39 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     };
   }
 
-  /** Calculate whether the given move critically hits this pokemon
+  /**
+   * Determine whether the given move will score a critical hit **against** this Pokemon.
    * @param source - The {@linkcode Pokemon} using the move
    * @param move - The {@linkcode Move} being used
-   * @param simulated - If `true`, suppresses changes to game state during calculation (defaults to `true`)
-   * @returns whether the move critically hits the pokemon
+   * @returns Whether the move will critically hit the defender.
    */
-  getCriticalHitResult(source: Pokemon, move: Move, simulated = true): boolean {
-    const defendingSide = this.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
-    const noCritTag = globalScene.arena.getTagOnSide(NoCritTag, defendingSide);
-    if (noCritTag || Overrides.NEVER_CRIT_OVERRIDE || move.hasAttr("FixedDamageAttr")) {
+  getCriticalHitResult(source: Pokemon, move: Move): boolean {
+    if (move.hasAttr("FixedDamageAttr")) {
+      // fixed damage moves (Dragon Rage, etc.) will nevet crit
       return false;
     }
-    const isCritical = new BooleanHolder(false);
 
-    if (source.getTag(BattlerTagType.ALWAYS_CRIT)) {
-      isCritical.value = true;
-    }
-    applyMoveAttrs("CritOnlyAttr", source, this, move, isCritical);
-    applyAbAttrs("ConditionalCritAbAttr", source, null, simulated, isCritical, this, move);
-    if (!isCritical.value) {
-      const critChance = [24, 8, 2, 1][Math.max(0, Math.min(this.getCritStage(source, move), 3))];
-      isCritical.value = critChance === 1 || !globalScene.randBattleSeedInt(critChance);
-    }
+    const alwaysCrit = new BooleanHolder(false);
+    applyMoveAttrs("CritOnlyAttr", source, this, move, alwaysCrit);
+    applyAbAttrs("ConditionalCritAbAttr", source, null, false, alwaysCrit, this, move);
+    const alwaysCritTag = !!source.getTag(BattlerTagType.ALWAYS_CRIT);
+    const critChance = [24, 8, 2, 1][Phaser.Math.Clamp(this.getCritStage(source, move), 0, 3)];
 
-    applyAbAttrs("BlockCritAbAttr", this, null, simulated, isCritical);
+    let isCritical = alwaysCrit.value || alwaysCritTag || critChance === 1;
 
-    return isCritical.value;
+    // If we aren't already guaranteed to crit, do a random roll & check overrides
+    isCritical ||= Overrides.CRITICAL_HIT_OVERRIDE ?? globalScene.randBattleSeedInt(critChance) === 0;
+
+    // apply crit block effects from lucky chant & co., overridding previous effects
+    const blockCrit = new BooleanHolder(false);
+    applyAbAttrs("BlockCritAbAttr", this, null, false, blockCrit);
+    const blockCritTag = globalScene.arena.getTagOnSide(
+      NoCritTag,
+      this.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY,
+    );
+    isCritical &&= !blockCritTag && !blockCrit.value; // need to roll a crit and not be blocked by either crit prevention effect
+
+    return isCritical;
   }
 
   /**

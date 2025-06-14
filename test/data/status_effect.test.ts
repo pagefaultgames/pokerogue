@@ -359,7 +359,7 @@ describe("Status Effects", () => {
         .moveset([MoveId.SPLASH])
         .ability(AbilityId.BALL_FETCH)
         .battleStyle("single")
-        .disableCrits()
+        .criticalHits(false)
         .enemySpecies(SpeciesId.MAGIKARP)
         .enemyAbility(AbilityId.BALL_FETCH)
         .enemyMoveset(MoveId.SPLASH);
@@ -415,7 +415,7 @@ describe("Status Effects", () => {
         .moveset([MoveId.SPLASH])
         .ability(AbilityId.BALL_FETCH)
         .battleStyle("single")
-        .disableCrits()
+        .criticalHits(false)
         .enemySpecies(SpeciesId.MAGIKARP)
         .enemyAbility(AbilityId.BALL_FETCH)
         .enemyMoveset(MoveId.NUZZLE)
