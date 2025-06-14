@@ -12,7 +12,6 @@ import { UiMode } from "#enums/ui-mode";
 import i18next from "i18next";
 import { PlayerPartyMemberPokemonPhase } from "#app/phases/player-party-member-pokemon-phase";
 import type Pokemon from "#app/field/pokemon";
-import { ConfirmUiMode } from "#enums/confirm-ui-mode";
 import { LearnMoveType } from "#enums/learn-move-type";
 
 export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
@@ -164,10 +163,6 @@ export class LearnMovePhase extends PlayerPartyMemberPokemonPhase {
         globalScene.ui.setMode(this.messageMode);
         this.replaceMoveCheck(move, pokemon);
       },
-      false,
-      0,
-      0,
-      ConfirmUiMode.DEFAULT_NO,
     );
   }
 
