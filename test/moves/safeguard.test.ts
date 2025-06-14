@@ -1,5 +1,5 @@
 import { BattlerIndex } from "#enums/battler-index";
-import { PostDefendContactApplyStatusEffectAbAttr } from "#app/data/abilities/ability";
+import { allAbilities } from "#app/data/data-lists";
 import { StatusEffect } from "#app/enums/status-effect";
 import GameManager from "#test/testUtils/gameManager";
 import { MoveId } from "#enums/move-id";
@@ -139,7 +139,7 @@ describe("Moves - Safeguard", () => {
     const player = game.field.getPlayerPokemon();
     game.field.mockAbility(player, AbilityId.STATIC);
     vi.spyOn(
-      player.getAbility().getAttrs(PostDefendContactApplyStatusEffectAbAttr)[0],
+      allAbilities[AbilityId.STATIC].getAttrs("PostDefendContactApplyStatusEffectAbAttr")[0],
       "chance",
       "get",
     ).mockReturnValue(100);

@@ -1,4 +1,3 @@
-import { BypassSpeedChanceAbAttr } from "#app/data/abilities/ability";
 import { allAbilities } from "#app/data/data-lists";
 import { FaintPhase } from "#app/phases/faint-phase";
 import { AbilityId } from "#enums/ability-id";
@@ -34,9 +33,11 @@ describe("Abilities - Quick Draw", () => {
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset([MoveId.TACKLE]);
 
-    vi.spyOn(allAbilities[AbilityId.QUICK_DRAW].getAttrs(BypassSpeedChanceAbAttr)[0], "chance", "get").mockReturnValue(
-      100,
-    );
+    vi.spyOn(
+      allAbilities[AbilityId.QUICK_DRAW].getAttrs("BypassSpeedChanceAbAttr")[0],
+      "chance",
+      "get",
+    ).mockReturnValue(100);
   });
 
   test("makes pokemon going first in its priority bracket", async () => {

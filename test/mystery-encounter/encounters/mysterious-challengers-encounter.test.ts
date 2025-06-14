@@ -14,7 +14,7 @@ import { UiMode } from "#enums/ui-mode";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { initSceneWithoutEncounterPhase } from "#test/testUtils/gameManagerUtils";
-import { ModifierTier } from "#app/modifier/modifier-tier";
+import { ModifierTier } from "#enums/modifier-tier";
 import { MysteriousChallengersEncounter } from "#app/data/mystery-encounters/encounters/mysterious-challengers-encounter";
 import { TrainerConfig } from "#app/data/trainers/trainer-config";
 import { TrainerPartyCompoundTemplate } from "#app/data/trainers/TrainerPartyTemplate";
