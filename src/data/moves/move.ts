@@ -2156,6 +2156,7 @@ export class PlantHealAttr extends WeatherHealAttr {
       case WeatherType.SANDSTORM:
       case WeatherType.HAIL:
       case WeatherType.SNOW:
+      case WeatherType.FOG:
       case WeatherType.HEAVY_RAIN:
         return 0.25;
       default:
@@ -4157,6 +4158,7 @@ export class AntiSunlightPowerDecreaseAttr extends VariablePowerAttr {
         case WeatherType.SANDSTORM:
         case WeatherType.HAIL:
         case WeatherType.SNOW:
+        case WeatherType.FOG:
         case WeatherType.HEAVY_RAIN:
           power.value *= 0.5;
           return true;
