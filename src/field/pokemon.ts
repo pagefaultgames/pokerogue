@@ -3910,7 +3910,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     // If we aren't already guaranteed to crit, do a random roll & check overrides
     isCritical ||= Overrides.CRITICAL_HIT_OVERRIDE ?? globalScene.randBattleSeedInt(critChance) === 0;
 
-    // apply crit block effects from lucky chant & co., overridding previous effects
+    // apply crit block effects from lucky chant & co., overriding previous effects
     const blockCrit = new BooleanHolder(false);
     applyAbAttrs("BlockCritAbAttr", this, null, false, blockCrit);
     const blockCritTag = globalScene.arena.getTagOnSide(
