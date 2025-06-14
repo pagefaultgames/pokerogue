@@ -36,15 +36,11 @@ export enum SortCriteria {
 }
 
 export class DropDownLabel {
-  public state: DropDownState;
-  public text: string;
-  public sprite?: Phaser.GameObjects.Sprite;
-
-  constructor(label: string, sprite?: Phaser.GameObjects.Sprite, state: DropDownState = DropDownState.OFF) {
-    this.text = label || "";
-    this.sprite = sprite;
-    this.state = state;
-  }
+  constructor(
+    public text: string,
+    public sprite?: Phaser.GameObjects.Sprite,
+    public state: DropDownState = DropDownState.OFF,
+  ) {}
 }
 
 export class DropDownOption extends Phaser.GameObjects.Container {

@@ -13,24 +13,15 @@ import { isNullOrUndefined } from "#app/utils/common";
 
 export class ObtainStatusEffectPhase extends PokemonPhase {
   public readonly phaseName = "ObtainStatusEffectPhase";
-  private statusEffect?: StatusEffect;
-  private turnsRemaining?: number;
-  private sourceText?: string | null;
-  private sourcePokemon?: Pokemon | null;
 
   constructor(
     battlerIndex: BattlerIndex,
-    statusEffect?: StatusEffect,
-    turnsRemaining?: number,
-    sourceText?: string | null,
-    sourcePokemon?: Pokemon | null,
+    private statusEffect: StatusEffect,
+    private turnsRemaining = 0,
+    private sourceText: string | null = null,
+    private sourcePokemon: Pokemon | null = null,
   ) {
     super(battlerIndex);
-
-    this.statusEffect = statusEffect;
-    this.turnsRemaining = turnsRemaining;
-    this.sourceText = sourceText;
-    this.sourcePokemon = sourcePokemon;
   }
 
   start() {

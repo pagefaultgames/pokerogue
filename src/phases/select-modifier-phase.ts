@@ -35,25 +35,15 @@ export type ModifierSelectCallback = (rowCursor: number, cursor: number) => bool
 
 export class SelectModifierPhase extends BattlePhase {
   public readonly phaseName = "SelectModifierPhase";
-  private rerollCount: number;
-  private modifierTiers?: ModifierTier[];
-  private customModifierSettings?: CustomModifierSettings;
-  private isCopy: boolean;
-
   private typeOptions: ModifierTypeOption[];
 
   constructor(
-    rerollCount = 0,
-    modifierTiers?: ModifierTier[],
-    customModifierSettings?: CustomModifierSettings,
-    isCopy = false,
+    private rerollCount = 0,
+    private modifierTiers?: ModifierTier[],
+    private customModifierSettings?: CustomModifierSettings,
+    private isCopy = false,
   ) {
     super();
-
-    this.rerollCount = rerollCount;
-    this.modifierTiers = modifierTiers;
-    this.customModifierSettings = customModifierSettings;
-    this.isCopy = isCopy;
   }
 
   start() {

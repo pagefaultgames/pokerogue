@@ -30,15 +30,13 @@ import { isNullOrUndefined, randSeedItem } from "#app/utils/common";
 export class MysteryEncounterPhase extends Phase {
   public readonly phaseName = "MysteryEncounterPhase";
   private readonly FIRST_DIALOGUE_PROMPT_DELAY = 300;
-  optionSelectSettings?: OptionSelectSettings;
 
   /**
    * Mostly useful for having repeated queries during a single encounter, where the queries and options may differ each time
    * @param optionSelectSettings allows overriding the typical options of an encounter with new ones
    */
-  constructor(optionSelectSettings?: OptionSelectSettings) {
+  constructor(public optionSelectSettings?: OptionSelectSettings) {
     super();
-    this.optionSelectSettings = optionSelectSettings;
   }
 
   /**
@@ -574,7 +572,7 @@ export class MysteryEncounterRewardsPhase extends Phase {
 export class PostMysteryEncounterPhase extends Phase {
   public readonly phaseName = "PostMysteryEncounterPhase";
   private readonly FIRST_DIALOGUE_PROMPT_DELAY = 750;
-  onPostOptionSelect?: OptionPhaseCallback;
+  onPostOptionSelect?: OptionPhaseCallback | undefined;
 
   constructor() {
     super();
