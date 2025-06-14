@@ -206,7 +206,7 @@ export class WeakenMoveScreenTag extends ArenaTag {
   ): boolean {
     if (this.weakenedCategories.includes(moveCategory)) {
       const bypassed = new BooleanHolder(false);
-      applyAbAttrs("InfiltratorAbAttr", attacker, null, false, bypassed);
+      applyAbAttrs("InfiltratorAbAttr", { pokemon: attacker, bypassed });
       if (bypassed.value) {
         return false;
       }
