@@ -32,6 +32,7 @@ import { FunAndGamesEncounter } from "#app/data/mystery-encounters/encounters/fu
 import { UncommonBreedEncounter } from "#app/data/mystery-encounters/encounters/uncommon-breed-encounter";
 import { GlobalTradeSystemEncounter } from "#app/data/mystery-encounters/encounters/global-trade-system-encounter";
 import { TheExpertPokemonBreederEncounter } from "#app/data/mystery-encounters/encounters/the-expert-pokemon-breeder-encounter";
+import { CreepingFogEncounter } from "#app/data/mystery-encounters/encounters/creeping-fog-encounter";
 import { getBiomeName } from "#app/data/balance/biomes";
 
 export const EXTREME_ENCOUNTER_BIOMES = [
@@ -192,11 +193,11 @@ export const mysteryEncountersByBiome = new Map<BiomeId, MysteryEncounterType[]>
   [BiomeId.TOWN, []],
   [BiomeId.PLAINS, [MysteryEncounterType.SLUMBERING_SNORLAX]],
   [BiomeId.GRASS, [MysteryEncounterType.SLUMBERING_SNORLAX, MysteryEncounterType.ABSOLUTE_AVARICE]],
-  [BiomeId.TALL_GRASS, [MysteryEncounterType.SLUMBERING_SNORLAX, MysteryEncounterType.ABSOLUTE_AVARICE]],
+  [BiomeId.TALL_GRASS, [MysteryEncounterType.SLUMBERING_SNORLAX, MysteryEncounterType.ABSOLUTE_AVARICE, MysteryEncounterType.CREEPING_FOG]],
   [BiomeId.METROPOLIS, []],
-  [BiomeId.FOREST, [MysteryEncounterType.SAFARI_ZONE, MysteryEncounterType.ABSOLUTE_AVARICE]],
+  [BiomeId.FOREST, [MysteryEncounterType.SAFARI_ZONE, MysteryEncounterType.ABSOLUTE_AVARICE, MysteryEncounterType.CREEPING_FOG]],
   [BiomeId.SEA, [MysteryEncounterType.LOST_AT_SEA]],
-  [BiomeId.SWAMP, [MysteryEncounterType.SAFARI_ZONE]],
+  [BiomeId.SWAMP, [MysteryEncounterType.SAFARI_ZONE, MysteryEncounterType.CREEPING_FOG]],
   [BiomeId.BEACH, []],
   [BiomeId.LAKE, []],
   [BiomeId.SEABED, []],
@@ -208,7 +209,7 @@ export const mysteryEncountersByBiome = new Map<BiomeId, MysteryEncounterType[]>
   [BiomeId.MEADOW, []],
   [BiomeId.POWER_PLANT, []],
   [BiomeId.VOLCANO, [MysteryEncounterType.FIERY_FALLOUT, MysteryEncounterType.DANCING_LESSONS]],
-  [BiomeId.GRAVEYARD, []],
+  [BiomeId.GRAVEYARD, [MysteryEncounterType.CREEPING_FOG]],
   [BiomeId.DOJO, []],
   [BiomeId.FACTORY, []],
   [BiomeId.RUINS, []],
@@ -257,6 +258,7 @@ export function initMysteryEncounters() {
   allMysteryEncounters[MysteryEncounterType.UNCOMMON_BREED] = UncommonBreedEncounter;
   allMysteryEncounters[MysteryEncounterType.GLOBAL_TRADE_SYSTEM] = GlobalTradeSystemEncounter;
   allMysteryEncounters[MysteryEncounterType.THE_EXPERT_POKEMON_BREEDER] = TheExpertPokemonBreederEncounter;
+  allMysteryEncounters[MysteryEncounterType.CREEPING_FOG] = CreepingFogEncounter;
 
   // Add extreme encounters to biome map
   extremeBiomeEncounters.forEach(encounter => {

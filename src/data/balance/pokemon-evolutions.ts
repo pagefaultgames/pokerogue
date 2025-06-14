@@ -1138,7 +1138,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(SpeciesId.SLIGGOO, 40, null, new TimeOfDayEvolutionCondition("day"))
   ],
   [SpeciesId.SLIGGOO]: [
-    new SpeciesEvolution(SpeciesId.GOODRA, 50, null, new WeatherEvolutionCondition([ WeatherType.RAIN, WeatherType.FOG, WeatherType.HEAVY_RAIN ]), SpeciesWildEvolutionDelay.LONG)
+    new SpeciesEvolution(SpeciesId.GOODRA, 50, null, new WeatherEvolutionCondition([ WeatherType.RAIN, WeatherType.FOG, WeatherType.HEAVY_FOG, WeatherType.HEAVY_RAIN ]), SpeciesWildEvolutionDelay.LONG)
   ],
   [SpeciesId.BERGMITE]: [
     new SpeciesEvolution(SpeciesId.HISUI_AVALUGG, 37, null, new TimeOfDayEvolutionCondition("night")),
@@ -1361,7 +1361,7 @@ export const pokemonEvolutions: PokemonEvolutions = {
     new SpeciesEvolution(SpeciesId.HISUI_ZOROARK, 30, null, null)
   ],
   [SpeciesId.HISUI_SLIGGOO]: [
-    new SpeciesEvolution(SpeciesId.HISUI_GOODRA, 50, null, new WeatherEvolutionCondition([ WeatherType.RAIN, WeatherType.FOG, WeatherType.HEAVY_RAIN ]), SpeciesWildEvolutionDelay.LONG)
+    new SpeciesEvolution(SpeciesId.HISUI_GOODRA, 50, null, new WeatherEvolutionCondition([ WeatherType.RAIN, WeatherType.FOG, WeatherType.HEAVY_FOG, WeatherType.HEAVY_RAIN ]), SpeciesWildEvolutionDelay.LONG)
   ],
   [SpeciesId.SPRIGATITO]: [
     new SpeciesEvolution(SpeciesId.FLORAGATO, 16, null, null)

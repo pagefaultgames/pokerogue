@@ -8450,6 +8450,27 @@
 						"w": 16,
 						"h": 16
 					}
+				},
+				{
+					"filename": "micle_berry",
+					"rotated": false,
+					"trimmed": true,
+					"sourceSize": {
+						"w": 20,
+						"h": 20
+					},
+					"spriteSourceSize": {
+						"x": 8,
+						"y": 8,
+						"w": 20,
+						"h": 20
+					},
+					"frame": {
+						"x": 400,
+						"y": 386,
+						"w": 20,
+						"h": 20
+					}
 				}
 			]
 		}
