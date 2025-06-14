@@ -294,7 +294,6 @@ describe("Status Effect Messages", () => {
       expect(text).toBe("statusEffect:burn.overlap");
     });
   });
-
   afterEach(() => {});
 });
 
