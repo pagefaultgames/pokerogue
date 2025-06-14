@@ -332,12 +332,13 @@ export default class AbstractSettingsUiHandler extends MessageUiHandler {
         case Button.CYCLE_SHINY:
           success = this.navigationContainer.navigate(button);
           break;
-        case Button.ACTION:
+        case Button.ACTION: {
           const setting: Setting = this.settings[cursor];
           if (setting?.activatable) {
             success = this.activateSetting(setting);
           }
           break;
+        }
       }
     }
 
