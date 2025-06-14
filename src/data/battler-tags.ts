@@ -132,16 +132,6 @@ export interface TerrainBattlerTag {
  * Players and enemies should not be allowed to select restricted moves.
  */
 export abstract class MoveRestrictionBattlerTag extends BattlerTag {
-  constructor(
-    tagType: BattlerTagType,
-    lapseType: BattlerTagLapseType | BattlerTagLapseType[],
-    turnCount: number,
-    sourceMove?: MoveId,
-    sourceId?: number,
-  ) {
-    super(tagType, lapseType, turnCount, sourceMove, sourceId);
-  }
-
   /** @override */
   override lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     if (lapseType === BattlerTagLapseType.PRE_MOVE) {
@@ -1463,16 +1453,6 @@ export class WrapTag extends DamagingTrapTag {
 }
 
 export abstract class VortexTrapTag extends DamagingTrapTag {
-  constructor(
-    tagType: BattlerTagType,
-    commonAnim: CommonAnim,
-    turnCount: number,
-    sourceMove: MoveId,
-    sourceId: number,
-  ) {
-    super(tagType, commonAnim, turnCount, sourceMove, sourceId);
-  }
-
   getTrapMessage(pokemon: Pokemon): string {
     return i18next.t("battlerTags:vortexOnTrap", {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),

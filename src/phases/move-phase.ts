@@ -321,7 +321,8 @@ export class MovePhase extends BattlePhase {
       if (fail) {
         this.showMoveText();
         this.showFailedText();
-        return this.end();
+        this.end();
+        return;
       }
     }
 
