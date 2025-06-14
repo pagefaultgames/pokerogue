@@ -1,14 +1,8 @@
 import { globalScene } from "#app/global-scene";
-import type { BattlerIndex } from "#app/battle";
-import {
-  applyAbAttrs,
-  applyPostDamageAbAttrs,
-  BlockNonDirectDamageAbAttr,
-  BlockStatusDamageAbAttr,
-  PostDamageAbAttr,
-  ReduceBurnDamageAbAttr,
-} from "#app/data/abilities/ability";
-import { CommonBattleAnim, CommonAnim } from "#app/data/battle-anims";
+import type { BattlerIndex } from "#enums/battler-index";
+import { applyAbAttrs, applyPostDamageAbAttrs } from "#app/data/abilities/apply-ab-attrs";
+import { CommonBattleAnim } from "#app/data/battle-anims";
+import { CommonAnim } from "#enums/move-anims-common";
 import { getStatusEffectActivationText } from "#app/data/status-effect";
 import { BattleSpec } from "#app/enums/battle-spec";
 import { StatusEffect } from "#app/enums/status-effect";
@@ -28,8 +22,8 @@ export class PostTurnStatusEffectPhase extends PokemonPhase {
     if (pokemon?.isActive(true) && pokemon.status && pokemon.status.isPostTurn() && !pokemon.switchOutStatus) {
       pokemon.status.incrementTurn();
       const cancelled = new BooleanHolder(false);
-      applyAbAttrs(BlockNonDirectDamageAbAttr, pokemon, cancelled);
-      applyAbAttrs(BlockStatusDamageAbAttr, pokemon, cancelled);
+      applyAbAttrs("BlockNonDirectDamageAbAttr", pokemon, cancelled);
+      applyAbAttrs("BlockStatusDamageAbAttr", pokemon, cancelled);
 
       if (!cancelled.value) {
         globalScene.phaseManager.queueMessage(
@@ -45,14 +39,14 @@ export class PostTurnStatusEffectPhase extends PokemonPhase {
             break;
           case StatusEffect.BURN:
             damage.value = Math.max(pokemon.getMaxHp() >> 4, 1);
-            applyAbAttrs(ReduceBurnDamageAbAttr, pokemon, null, false, damage);
+            applyAbAttrs("ReduceBurnDamageAbAttr", pokemon, null, false, damage);
             break;
         }
         if (damage.value) {
           // Set preventEndure flag to avoid pokemon surviving thanks to focus band, sturdy, endure ...
           globalScene.damageNumberHandler.add(this.getPokemon(), pokemon.damage(damage.value, false, true));
           pokemon.updateInfo();
-          applyPostDamageAbAttrs(PostDamageAbAttr, pokemon, damage.value, pokemon.hasPassive(), false, []);
+          applyPostDamageAbAttrs("PostDamageAbAttr", pokemon, damage.value, pokemon.hasPassive(), false, []);
         }
         new CommonBattleAnim(CommonAnim.POISON + (pokemon.status.effect - 1), pokemon).play(false, () => this.end());
       } else {

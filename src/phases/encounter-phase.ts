@@ -1,13 +1,8 @@
-import { BattlerIndex } from "#app/battle";
+import { BattlerIndex } from "#enums/battler-index";
 import { BattleType } from "#enums/battle-type";
 import { globalScene } from "#app/global-scene";
 import { PLAYER_PARTY_MAX_SIZE } from "#app/constants";
-import {
-  applyAbAttrs,
-  SyncEncounterNatureAbAttr,
-  applyPreSummonAbAttrs,
-  PreSummonAbAttr,
-} from "#app/data/abilities/ability";
+import { applyAbAttrs, applyPreSummonAbAttrs } from "#app/data/abilities/apply-ab-attrs";
 import { initEncounterAnims, loadEncounterAnimAssets } from "#app/data/battle-anims";
 import { getCharVariantFromDialogue } from "#app/data/dialogue";
 import { getEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
@@ -17,10 +12,11 @@ import { TrainerSlot } from "#enums/trainer-slot";
 import { getRandomWeatherType } from "#app/data/weather";
 import { EncounterPhaseEvent } from "#app/events/battle-scene";
 import type Pokemon from "#app/field/pokemon";
-import { FieldPosition } from "#app/field/pokemon";
+import { FieldPosition } from "#enums/field-position";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { BoostBugSpawnModifier, IvScannerModifier, TurnHeldItemTransferModifier } from "#app/modifier/modifier";
-import { ModifierPoolType, regenerateModifierPoolThresholds } from "#app/modifier/modifier-type";
+import { regenerateModifierPoolThresholds } from "#app/modifier/modifier-type";
+import { ModifierPoolType } from "#enums/modifier-pool-type";
 import Overrides from "#app/overrides";
 import { BattlePhase } from "#app/phases/battle-phase";
 import { achvs } from "#app/system/achv";
@@ -34,7 +30,7 @@ import { PlayerGender } from "#enums/player-gender";
 import { SpeciesId } from "#enums/species-id";
 import { overrideHeldItems, overrideModifiers } from "#app/modifier/modifier";
 import i18next from "i18next";
-import { WEIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/data/mystery-encounters/mystery-encounters";
+import { WEIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/constants";
 import { getNatureName } from "#app/data/nature";
 
 export class EncounterPhase extends BattlePhase {
@@ -132,7 +128,7 @@ export class EncounterPhase extends BattlePhase {
             .slice(0, !battle.double ? 1 : 2)
             .reverse()
             .forEach(playerPokemon => {
-              applyAbAttrs(SyncEncounterNatureAbAttr, playerPokemon, null, false, battle.enemyParty[e]);
+              applyAbAttrs("SyncEncounterNatureAbAttr", playerPokemon, null, false, battle.enemyParty[e]);
             });
         }
       }
@@ -253,7 +249,7 @@ export class EncounterPhase extends BattlePhase {
         if (e < (battle.double ? 2 : 1)) {
           if (battle.battleType === BattleType.WILD) {
             for (const pokemon of globalScene.getField()) {
-              applyPreSummonAbAttrs(PreSummonAbAttr, pokemon, []);
+              applyPreSummonAbAttrs("PreSummonAbAttr", pokemon, []);
             }
             globalScene.field.add(enemyPokemon);
             battle.seenEnemyPartyMemberIds.add(enemyPokemon.id);

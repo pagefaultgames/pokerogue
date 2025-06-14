@@ -7,7 +7,8 @@ import i18next from "i18next";
 import type { AnySound } from "#app/battle-scene";
 import { globalScene } from "#app/global-scene";
 import type { GameMode } from "#app/game-mode";
-import { DexAttr, type StarterMoveset } from "#app/system/game-data";
+import type { StarterMoveset } from "#app/system/game-data";
+import { DexAttr } from "#enums/dex-attr";
 import {
   isNullOrUndefined,
   capitalizeString,

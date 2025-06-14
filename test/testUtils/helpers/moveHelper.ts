@@ -1,17 +1,18 @@
-import type { BattlerIndex } from "#app/battle";
-import { getMoveTargets } from "#app/data/moves/move";
+import type { BattlerIndex } from "#enums/battler-index";
+import { getMoveTargets } from "#app/data/moves/move-utils";
 import type Pokemon from "#app/field/pokemon";
-import { PokemonMove } from "#app/field/pokemon";
+import { PokemonMove } from "#app/data/moves/pokemon-move";
 import Overrides from "#app/overrides";
 import type { CommandPhase } from "#app/phases/command-phase";
 import type { EnemyCommandPhase } from "#app/phases/enemy-command-phase";
 import { MoveEffectPhase } from "#app/phases/move-effect-phase";
-import { Command } from "#app/ui/command-ui-handler";
+import { Command } from "#enums/command";
 import { MoveId } from "#enums/move-id";
 import { UiMode } from "#enums/ui-mode";
 import { getMovePosition } from "#test/testUtils/gameManagerUtils";
 import { GameManagerHelper } from "#test/testUtils/helpers/gameManagerHelper";
 import { vi } from "vitest";
+import { coerceArray } from "#app/utils/common";
 
 /**
  * Helper to handle a Pokemon's move
@@ -157,9 +158,7 @@ export class MoveHelper extends GameManagerHelper {
    * @param moveset - The {@linkcode MoveId} (single or array) to change the Pokemon's moveset to.
    */
   public changeMoveset(pokemon: Pokemon, moveset: MoveId | MoveId[]): void {
-    if (!Array.isArray(moveset)) {
-      moveset = [moveset];
-    }
+    moveset = coerceArray(moveset);
     pokemon.moveset = [];
     moveset.forEach(move => {
       pokemon.moveset.push(new PokemonMove(move));
