@@ -2004,8 +2004,6 @@ export class HealOnAllyAttr extends HealAttr {
   }
 }
 
-}
-
 /**
  * Cures the user's party of non-volatile status conditions, ie. Heal Bell, Aromatherapy
  * @extends MoveEffectAttr
