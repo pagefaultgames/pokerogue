@@ -2285,6 +2285,11 @@ export class HealOnAllyAttr extends HealAttr {
 
     return false;
   }
+
+  override canApply(user: Pokemon, target: Pokemon, _move: Move, _args?: any[]): boolean {
+    // Don't fail move if not targeting an ally
+    return user.getAlly() !== target || super.canApply(user, target, _move, _args);
+  }
 }
 
 /**

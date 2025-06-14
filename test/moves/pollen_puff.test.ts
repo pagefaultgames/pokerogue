@@ -84,7 +84,7 @@ describe("Moves - Pollen Puff", () => {
     game.move.use(MoveId.SPLASH, BattlerIndex.PLAYER_2);
     await game.toEndOfTurn();
 
-    expect(bulbasaur.turnData.hitCount).toBe(1);
+    expect(bulbasaur.turnData.hitCount).toBe(0);
     expect(omantye.hp).toBeLessThanOrEqual(0.5 * omantye.getMaxHp() + 1);
     expect(game.phaseInterceptor.log.filter(l => l === "PokemonHealPhase")).toHaveLength(1);
   });
