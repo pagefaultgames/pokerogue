@@ -127,6 +127,10 @@ function getHeldItemCategory(itemId: HeldItemId): HeldItemCategoryId {
   return itemId & ITEM_CATEGORY_MASK;
 }
 
+export function isCategoryId(categoryId: HeldItemCategoryId): boolean {
+  return (categoryId & ITEM_CATEGORY_MASK) === categoryId;
+}
+
 export function isItemInCategory(itemId: HeldItemId, category: HeldItemCategoryId): boolean {
   return getHeldItemCategory(itemId) === category;
 }

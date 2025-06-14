@@ -9,6 +9,7 @@ type HELD_ITEM_DATA = BASE_STAT_TOTAL_DATA | BASE_STAT_FLAT_DATA;
 interface HeldItemProperties {
   stack: number;
   disabled?: boolean;
+  unstealable?: boolean; //TODO: ensure this is taken into account by stealing effects
   cooldown?: number;
   data?: HELD_ITEM_DATA;
 }
