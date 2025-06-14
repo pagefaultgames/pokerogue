@@ -4700,6 +4700,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
    * @param sourceText - The text to show for the source of the status effect, if any; default `null`.
    * @param overrideStatus - Whether to allow overriding the Pokemon's current status with a different one; default `false`.
    * @param quiet - Whether to suppress in-battle messages for status checks; default `true`.
+   * @param overrideMessage - A string containing text to be displayed upon status setting; defaults to normal key for status
    * @returns Whether the status effect phase was successfully created.
    * @see {@linkcode doSetStatus} - alternate function that sets status immediately (albeit without condition checks).
    */
@@ -4710,6 +4711,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     sourceText: string | null = null,
     overrideStatus?: boolean,
     quiet = true,
+    overrideMessage?: string | undefined,
   ): boolean {
     // TODO: This needs to propagate failure status for non-status moves
     if (!this.canSetStatus(effect, quiet, overrideStatus, sourcePokemon)) {
@@ -4739,9 +4741,10 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       "ObtainStatusEffectPhase",
       this.getBattlerIndex(),
       effect,
+      sourcePokemon,
       sleepTurnsRemaining,
       sourceText,
-      sourcePokemon,
+      overrideMessage,
     );
 
     return true;

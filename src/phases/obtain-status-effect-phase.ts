@@ -13,33 +13,28 @@ import { applyPostSetStatusAbAttrs } from "#app/data/abilities/apply-ab-attrs";
 /** The phase where pokemon obtain status effects. */
 export class ObtainStatusEffectPhase extends PokemonPhase {
   public readonly phaseName = "ObtainStatusEffectPhase";
-  private statusEffect: StatusEffect;
-  private sleepTurnsRemaining?: number;
-  private sourceText?: string | null;
-  private sourcePokemon?: Pokemon | null;
 
   /**
    * Create a new ObtainStatusEffectPhase.
    * @param battlerIndex - The {@linkcode BattlerIndex} of the Pokemon obtaining the status effect.
    * @param statusEffect - The {@linkcode StatusEffect} being applied.
+   * @param sourcePokemon - The {@linkcode Pokemon} applying the status effect to the target,
+   * or `null` if the status is applied from a non-Pokemon source (hazards, etc.); default `null`.
    * @param sleepTurnsRemaining - The number of turns to set {@linkcode StatusEffect.SLEEP} for;
    * defaults to a random number between 2 and 4 and is unused for non-Sleep statuses.
-   * @param sourceText
-   * @param sourcePokemon
+   * @param sourceText - The text to show for the source of the status effect, if any; default `null`.
+   * @param overrideMessage - A string containing text to be displayed upon status setting;
+   * defaults to normal key for status if blank or `undefined`.
    */
   constructor(
     battlerIndex: BattlerIndex,
-    statusEffect: StatusEffect,
-    sleepTurnsRemaining?: number,
-    sourceText?: string | null,
-    sourcePokemon?: Pokemon | null,
+    private statusEffect: StatusEffect,
+    private sourcePokemon?: Pokemon | null,
+    private sleepTurnsRemaining?: number,
+    private sourceText?: string | null,
+    private overrideMessage?: string | undefined,
   ) {
     super(battlerIndex);
-
-    this.statusEffect = statusEffect;
-    this.sleepTurnsRemaining = sleepTurnsRemaining;
-    this.sourceText = sourceText;
-    this.sourcePokemon = sourcePokemon;
   }
 
   start() {
@@ -50,7 +45,8 @@ export class ObtainStatusEffectPhase extends PokemonPhase {
 
     new CommonBattleAnim(CommonAnim.POISON + (this.statusEffect - 1), pokemon).play(false, () => {
       globalScene.phaseManager.queueMessage(
-        getStatusEffectObtainText(this.statusEffect, getPokemonNameWithAffix(pokemon), this.sourceText ?? undefined),
+        this.overrideMessage ||
+          getStatusEffectObtainText(this.statusEffect, getPokemonNameWithAffix(pokemon), this.sourceText ?? undefined),
       );
       if (this.statusEffect && this.statusEffect !== StatusEffect.FAINT) {
         globalScene.triggerPokemonFormChange(pokemon, SpeciesFormChangeStatusEffectTrigger, true);

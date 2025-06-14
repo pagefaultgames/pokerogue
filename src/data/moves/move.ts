@@ -1917,7 +1917,8 @@ export class HealAttr extends MoveEffectAttr {
     private healRatio: number,
     /** Whether to display a healing animation when healing the target; default `false` */
     private showAnim = false,
-    selfTarget = true) {
+    selfTarget = true
+  ) {
     super(selfTarget);
   }
 
@@ -1935,19 +1936,22 @@ export class HealAttr extends MoveEffectAttr {
       toDmgValue(target.getMaxHp() * healRatio), i18next.t("moveTriggers:healHp", { pokemonName: getPokemonNameWithAffix(target) }), true, !this.showAnim);
   }
 
-  override getTargetBenefitScore(user: Pokemon, target: Pokemon, move: Move): number {
+  override getTargetBenefitScore(user: Pokemon, target: Pokemon, _move: Move): number {
     const score = ((1 - (this.selfTarget ? user : target).getHpRatio()) * 20) - this.healRatio * 10;
     return Math.round(score / (1 - this.healRatio / 2));
   }
 
-  override canApply(_user: Pokemon, target: Pokemon, _move: Move, _args?: any[]): boolean {
-    if (target.isFullHp()) {
-      globalScene.phaseManager.queueMessage(i18next.t("battle:hpIsFull", {
-        pokemonName: getPokemonNameWithAffix(target),
-      }))
-      return false;
-    }
-    return true;
+  override canApply(user: Pokemon, target: Pokemon, _move: Move, _args?: any[]): boolean {
+    return !(this.selfTarget ? user : target).isFullHp();
+  }
+
+  override getFailedText(user: Pokemon, target: Pokemon, _move: Move): string | undefined {
+    const healedPokemon = this.selfTarget ? user : target;
+    return healedPokemon.isFullHp()
+      ? i18next.t("battle:hpIsFull", {
+        pokemonName: getPokemonNameWithAffix(healedPokemon),
+      })
+    : undefined;
   }
 }
 
@@ -1959,23 +1963,25 @@ export class RestAttr extends HealAttr {
   private duration: number;
 
   constructor(duration: number) {
-    super(1);
+    super(1, true);
     this.duration = duration;
   }
 
   override apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
-    user.trySetStatus(StatusEffect.SLEEP, user, this.duration, null, true, true);
-    globalScene.phaseManager.queueMessage(i18next.t("moveTriggers:restBecameHealthy", {
+   const wasSet = user.trySetStatus(StatusEffect.SLEEP, user, this.duration, null, true, true,
+      i18next.t("moveTriggers:restBecameHealthy", {
       pokemonName: getPokemonNameWithAffix(user),
-    }))
-    return super.apply(user, target, move, args);
+    }));
+    return wasSet && super.apply(user, target, move, args);
   }
 
   override addHealPhase(user: Pokemon, healRatio: number): void {
-    globalScene.phaseManager.unshiftNew("PokemonHealPhase", user.getBattlerIndex(), healRatio, "")
+    globalScene.phaseManager.unshiftNew("PokemonHealPhase", user.getBattlerIndex(), healRatio, null)
   }
 
-  canApply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+  override canApply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
+    // Intentionally suppress messages here as we display generic fail msg
+    // TODO: This might have order-of-operation jank
     return super.canApply(user, target, move, args) && user.canSetStatus(StatusEffect.SLEEP, true, true, user)
   }
 }
@@ -9631,8 +9637,7 @@ export function initMoves() {
     new StatusMove(MoveId.HEAL_BLOCK, PokemonType.PSYCHIC, 100, 15, -1, 0, 4)
       .attr(AddBattlerTagAttr, BattlerTagType.HEAL_BLOCK, false, true, 5)
       .target(MoveTarget.ALL_NEAR_ENEMIES)
-      .reflectable()
-      .edgeCase(),
+      .reflectable(),
     new AttackMove(MoveId.WRING_OUT, PokemonType.NORMAL, MoveCategory.SPECIAL, -1, 100, 5, -1, 0, 4)
       .attr(OpponentHighHpPowerAttr, 120)
       .makesContact(),
