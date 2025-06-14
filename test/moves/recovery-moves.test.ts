@@ -104,7 +104,7 @@ describe("Moves - Recovery Moves", () => {
       game.move.use(MoveId.MOONLIGHT);
       await game.toEndOfTurn();
 
-      expect(blissey.getHpRatio()).toBeCloseTo(0.67, 1);
+      expect(blissey.getHpRatio()).toBeCloseTo(0.66, 1);
     });
 
     const nonSunWTs = getEnumValues(WeatherType)

@@ -1948,16 +1948,18 @@ export class HealAttr extends MoveEffectAttr {
   }
 
   override canApply(user: Pokemon, target: Pokemon, _move: Move, _args?: any[]): boolean {
-    return !(this.selfTarget ? user : target).isFullHp();
-  }
+    if (!super.canApply(user, target, _move, _args)) {
+      return false;
+    }
 
-  override getFailedText(user: Pokemon, target: Pokemon, _move: Move): string | undefined {
     const healedPokemon = this.selfTarget ? user : target;
-    return healedPokemon.isFullHp()
-      ? i18next.t("battle:hpIsFull", {
+    if (healedPokemon.isFullHp()) {
+      globalScene.phaseManager.queueMessage(i18next.t("battle:hpIsFull", {
         pokemonName: getPokemonNameWithAffix(healedPokemon),
-      })
-    : undefined;
+      }))
+      return false;
+    }
+    return true;
   }
 }
 
