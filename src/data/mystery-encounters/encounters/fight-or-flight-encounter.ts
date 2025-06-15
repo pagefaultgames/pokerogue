@@ -9,13 +9,10 @@ import {
 } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
 import { STEALING_MOVES } from "#app/data/mystery-encounters/requirements/requirement-groups";
 import type Pokemon from "#app/field/pokemon";
-import { ModifierTier } from "#app/modifier/modifier-tier";
+import { ModifierTier } from "#enums/modifier-tier";
 import type { ModifierTypeOption } from "#app/modifier/modifier-type";
-import {
-  getPlayerModifierTypeOptions,
-  ModifierPoolType,
-  regenerateModifierPoolThresholds,
-} from "#app/modifier/modifier-type";
+import { getPlayerModifierTypeOptions, regenerateModifierPoolThresholds } from "#app/modifier/modifier-type";
+import { ModifierPoolType } from "#enums/modifier-pool-type";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { globalScene } from "#app/global-scene";
 import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
@@ -32,7 +29,6 @@ import PokemonData from "#app/system/pokemon-data";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { queueEncounterMessage } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import { randSeedInt } from "#app/utils/common";
-import { StatStageChangePhase } from "#app/phases/stat-stage-change-phase";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 
 /** the i18n namespace for the encounter */
@@ -76,7 +72,13 @@ export const FightOrFlightEncounter: MysteryEncounter = MysteryEncounterBuilder.
             queueEncounterMessage(`${namespace}:option.1.stat_boost`);
             // Randomly boost 1 stat 2 stages
             // Cannot boost Spd, Acc, or Evasion
-            globalScene.unshiftPhase(new StatStageChangePhase(pokemon.getBattlerIndex(), true, [randSeedInt(4, 1)], 2));
+            globalScene.phaseManager.unshiftNew(
+              "StatStageChangePhase",
+              pokemon.getBattlerIndex(),
+              true,
+              [randSeedInt(4, 1)],
+              2,
+            );
           },
         },
       ],

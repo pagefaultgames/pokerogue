@@ -1,10 +1,10 @@
 import { type PokeballCounts } from "#app/battle-scene";
 import { EvolutionItem } from "#app/data/balance/pokemon-evolutions";
 import { Gender } from "#app/data/gender";
-import { FormChangeItem } from "#app/data/pokemon-forms";
+import { FormChangeItem } from "#enums/form-change-item";
 import { type ModifierOverride } from "#app/modifier/modifier-type";
 import { Variant } from "#app/sprites/variant";
-import { Unlockables } from "#app/system/unlockables";
+import { Unlockables } from "#enums/unlockables";
 import { AbilityId } from "#enums/ability-id";
 import { BattleType } from "#enums/battle-type";
 import { BerryType } from "#enums/berry-type";
@@ -272,7 +272,7 @@ class DefaultOverrides {
 
   /**
    * Set all non-scripted waves to use the selected battle type.
-   * 
+   *
    * Ignored if set to {@linkcode BattleType.TRAINER} and `DISABLE_STANDARD_TRAINERS_OVERRIDE` is `true`.
    */
   readonly BATTLE_TYPE_OVERRIDE: Exclude<BattleType, BattleType.CLEAR> | null = null;

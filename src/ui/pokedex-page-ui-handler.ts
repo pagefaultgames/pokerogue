@@ -20,8 +20,10 @@ import { allSpecies, getPokemonSpecies, getPokemonSpeciesForm, normalForm } from
 import { getStarterValueFriendshipCap, speciesStarterCosts } from "#app/data/balance/starters";
 import { starterPassiveAbilities } from "#app/data/balance/passives";
 import { PokemonType } from "#enums/pokemon-type";
-import type { DexEntry, StarterAttributes } from "#app/system/game-data";
-import { AbilityAttr, DexAttr } from "#app/system/game-data";
+import type { StarterAttributes } from "#app/system/game-data";
+import type { DexEntry } from "#app/@types/dex-data";
+import { AbilityAttr } from "#enums/ability-attr";
+import { DexAttr } from "#enums/dex-attr";
 import type { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
 import MessageUiHandler from "#app/ui/message-ui-handler";
 import { StatsContainer } from "#app/ui/stats-container";
@@ -665,7 +667,7 @@ export default class PokedexPageUiHandler extends MessageUiHandler {
   show(args: any[]): boolean {
     // Allow the use of candies if we are in one of the whitelisted phases
     this.canUseCandies = ["TitlePhase", "SelectStarterPhase", "CommandPhase"].includes(
-      globalScene.getCurrentPhase()?.constructor.name ?? "",
+      globalScene.phaseManager.getCurrentPhase()?.phaseName ?? "",
     );
 
     if (args.length >= 1 && args[0] === "refresh") {

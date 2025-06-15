@@ -1,3 +1,4 @@
+import { coerceArray } from "#app/utils/common";
 import type MockTextureManager from "#test/testUtils/mocks/mockTextureManager";
 import type { MockGameObject } from "../mockGameObject";
 
@@ -216,11 +217,7 @@ export default class MockContainer implements MockGameObject {
   }
 
   add(obj: MockGameObject | MockGameObject[]): this {
-    if (Array.isArray(obj)) {
-      this.list.push(...obj);
-    } else {
-      this.list.push(obj);
-    }
+    this.list.push(...coerceArray(obj));
     return this;
   }
 
@@ -232,18 +229,12 @@ export default class MockContainer implements MockGameObject {
 
   addAt(obj: MockGameObject | MockGameObject[], index = 0): this {
     // Adds a Game Object to this Container at the given index.
-    if (!Array.isArray(obj)) {
-      obj = [obj];
-    }
-    this.list.splice(index, 0, ...obj);
+    this.list.splice(index, 0, ...coerceArray(obj));
     return this;
   }
 
   remove(obj: MockGameObject | MockGameObject[], destroyChild = false): this {
-    if (!Array.isArray(obj)) {
-      obj = [obj];
-    }
-    for (const item of obj) {
+    for (const item of coerceArray(obj)) {
       const index = this.list.indexOf(item);
       if (index !== -1) {
         this.list.splice(index, 1);

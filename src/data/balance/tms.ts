@@ -1,4 +1,4 @@
-import { ModifierTier } from "#app/modifier/modifier-tier";
+import { ModifierTier } from "#enums/modifier-tier";
 import { MoveId } from "#enums/move-id";
 import { SpeciesId } from "#enums/species-id";
 
@@ -5988,6 +5988,7 @@ export const tmSpecies: TmSpecies = {
     SpeciesId.FEZANDIPITI,
     SpeciesId.ARCHALUDON,
     SpeciesId.IRON_CROWN,
+    SpeciesId.TERAPAGOS,
     SpeciesId.ALOLA_RATICATE,
     SpeciesId.ALOLA_RAICHU,
     SpeciesId.ALOLA_SANDSLASH,
@@ -16248,6 +16249,7 @@ export const tmSpecies: TmSpecies = {
     SpeciesId.CALYREX,
     SpeciesId.SANDY_SHOCKS,
     SpeciesId.IRON_JUGULIS,
+    SpeciesId.TERAPAGOS,
     SpeciesId.ALOLA_DUGTRIO,
     SpeciesId.GALAR_SLOWPOKE,
     SpeciesId.GALAR_SLOWBRO,
@@ -39466,6 +39468,8 @@ export const tmSpecies: TmSpecies = {
     SpeciesId.FARFETCHD,
     SpeciesId.DODUO,
     SpeciesId.DODRIO,
+    SpeciesId.DEWGONG,
+    SpeciesId.GRIMER,
     SpeciesId.MUK,
     SpeciesId.GASTLY,
     SpeciesId.HAUNTER,
@@ -39477,6 +39481,7 @@ export const tmSpecies: TmSpecies = {
     SpeciesId.CUBONE,
     SpeciesId.MAROWAK,
     SpeciesId.HITMONLEE,
+    SpeciesId.HITMONCHAN,
     SpeciesId.LICKITUNG,
     SpeciesId.TANGELA,
     SpeciesId.GOLDEEN,
@@ -48806,6 +48811,7 @@ export const tmSpecies: TmSpecies = {
     SpeciesId.GARGANACL,
     SpeciesId.GLIMMET,
     SpeciesId.GLIMMORA,
+    SpeciesId.TERAPAGOS,
     SpeciesId.ALOLA_GEODUDE,
     SpeciesId.ALOLA_GRAVELER,
     SpeciesId.ALOLA_GOLEM,
@@ -53077,6 +53083,7 @@ export const tmSpecies: TmSpecies = {
     SpeciesId.MIRAIDON,
     SpeciesId.ARCHALUDON,
     SpeciesId.IRON_CROWN,
+    SpeciesId.TERAPAGOS,
     [
       SpeciesId.WORMADAM,
       "trash",

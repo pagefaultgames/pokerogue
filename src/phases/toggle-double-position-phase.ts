@@ -1,8 +1,9 @@
 import { globalScene } from "#app/global-scene";
-import { FieldPosition } from "#app/field/pokemon";
+import { FieldPosition } from "#enums/field-position";
 import { BattlePhase } from "./battle-phase";
 
 export class ToggleDoublePositionPhase extends BattlePhase {
+  public readonly phaseName = "ToggleDoublePositionPhase";
   private double: boolean;
 
   constructor(double: boolean) {

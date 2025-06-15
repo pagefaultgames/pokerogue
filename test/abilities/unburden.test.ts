@@ -1,5 +1,4 @@
-import { BattlerIndex } from "#app/battle";
-import { PostItemLostAbAttr } from "#app/data/abilities/ability";
+import { BattlerIndex } from "#enums/battler-index";
 import { StealHeldItemChanceAttr } from "#app/data/moves/move";
 import { allMoves } from "#app/data/data-lists";
 import type Pokemon from "#app/field/pokemon";
@@ -277,7 +276,7 @@ describe("Abilities - Unburden", () => {
     const [treecko, purrloin] = game.scene.getPlayerParty();
     const initialTreeckoSpeed = treecko.getStat(Stat.SPD);
     const initialPurrloinSpeed = purrloin.getStat(Stat.SPD);
-    const unburdenAttr = treecko.getAbilityAttrs(PostItemLostAbAttr)[0];
+    const unburdenAttr = treecko.getAbilityAttrs("PostItemLostAbAttr")[0];
     vi.spyOn(unburdenAttr, "applyPostItemLost");
 
     // Player uses Baton Pass, which also passes the Baton item
