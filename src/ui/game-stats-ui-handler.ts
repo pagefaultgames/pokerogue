@@ -1,5 +1,6 @@
 import Phaser from "phaser";
-import { TextStyle, addTextObject } from "#app/ui/text";
+import { addTextObject } from "#app/ui/text";
+import { TextStyle } from "#enums/text-style";
 import type { UiMode } from "#enums/ui-mode";
 import UiHandler from "#app/ui/ui-handler";
 import { addWindow } from "#app/ui/ui-theme";
