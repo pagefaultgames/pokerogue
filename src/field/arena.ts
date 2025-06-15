@@ -5,8 +5,6 @@ import { randSeedInt, NumberHolder, isNullOrUndefined, type Constructor } from "
 import type PokemonSpecies from "#app/data/pokemon-species";
 import { getPokemonSpecies } from "#app/data/pokemon-species";
 import {
-  getTerrainClearMessage,
-  getTerrainStartMessage,
   getWeatherClearMessage,
   getWeatherStartMessage,
   getLegendaryWeatherContinuesMessage,
@@ -19,7 +17,7 @@ import type { ArenaTag } from "#app/data/arena-tag";
 import { ArenaTrapTag, getArenaTag } from "#app/data/arena-tag";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import type { BattlerIndex } from "#enums/battler-index";
-import { Terrain, TerrainType } from "#app/data/terrain";
+import { Terrain, TerrainType, getTerrainClearMessage, getTerrainStartMessage } from "#app/data/terrain";
 import {
   applyAbAttrs,
   applyPostTerrainChangeAbAttrs,
@@ -449,9 +447,9 @@ export class Arena {
           CommonAnim.MISTY_TERRAIN + (terrain - 1),
         );
       }
-      globalScene.phaseManager.queueMessage(getTerrainStartMessage(terrain)!); // TODO: is this bang correct?
+      globalScene.phaseManager.queueMessage(getTerrainStartMessage(terrain));
     } else {
-      globalScene.phaseManager.queueMessage(getTerrainClearMessage(oldTerrainType)!); // TODO: is this bang correct?
+      globalScene.phaseManager.queueMessage(getTerrainClearMessage(oldTerrainType));
     }
 
     globalScene
