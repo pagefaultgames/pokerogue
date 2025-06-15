@@ -135,7 +135,8 @@ export class MovePhase extends BattlePhase {
         this.showMoveText();
         this.showFailedText();
       }
-      return this.end();
+      this.end();
+      return;
     }
 
     this.pokemon.turnData.acted = true;
@@ -310,7 +311,8 @@ export class MovePhase extends BattlePhase {
       if (fail) {
         this.showMoveText();
         this.showFailedText();
-        return this.end();
+        this.end();
+        return;
       }
     }
 

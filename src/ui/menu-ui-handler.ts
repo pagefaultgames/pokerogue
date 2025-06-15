@@ -686,7 +686,7 @@ export default class MenuUiHandler extends MessageUiHandler {
             error = true;
           }
           break;
-        case MenuOptions.LOG_OUT:
+        case MenuOptions.LOG_OUT: {
           success = true;
           const doLogout = () => {
             ui.setMode(UiMode.LOADING, {
@@ -718,6 +718,7 @@ export default class MenuUiHandler extends MessageUiHandler {
             doLogout();
           }
           break;
+        }
       }
     } else if (button === Button.CANCEL) {
       success = true;

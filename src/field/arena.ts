@@ -263,7 +263,7 @@ export class Arena {
             return 5;
         }
         break;
-      case SpeciesId.LYCANROC:
+      case SpeciesId.LYCANROC: {
         const timeOfDay = this.getTimeOfDay();
         switch (timeOfDay) {
           case TimeOfDay.DAY:
@@ -275,6 +275,7 @@ export class Arena {
             return 1;
         }
         break;
+      }
     }
 
     return 0;

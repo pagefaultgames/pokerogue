@@ -1990,8 +1990,6 @@ export interface ModifierPool {
   [tier: string]: WeightedModifierType[];
 }
 
-const modifierPool: ModifierPool = {};
-
 let modifierPoolThresholds = {};
 let ignoredPoolIndexes = {};
 
@@ -2510,7 +2508,7 @@ function determineTier(
     }
 
     tier += upgradeCount;
-    while (tier && (!modifierPool.hasOwnProperty(tier) || !modifierPool[tier].length)) {
+    while (tier && (!pool.hasOwnProperty(tier) || !pool[tier].length)) {
       tier--;
       if (upgradeCount) {
         upgradeCount--;
@@ -2521,7 +2519,7 @@ function determineTier(
     if (tier < ModifierTier.MASTER && allowLuckUpgrades) {
       const partyLuckValue = getPartyLuckValue(party);
       const upgradeOdds = Math.floor(128 / ((partyLuckValue + 4) / 4));
-      while (modifierPool.hasOwnProperty(tier + upgradeCount + 1) && modifierPool[tier + upgradeCount + 1].length) {
+      while (pool.hasOwnProperty(tier + upgradeCount + 1) && pool[tier + upgradeCount + 1].length) {
         if (randSeedInt(upgradeOdds) < 4) {
           upgradeCount++;
         } else {
@@ -2538,6 +2536,7 @@ function determineTier(
 }
 
 export function getDefaultModifierTypeForTier(tier: ModifierTier): ModifierType {
+  const modifierPool = getModifierPoolForType(ModifierPoolType.PLAYER);
   let modifierType: ModifierType | WeightedModifierType = modifierPool[tier || ModifierTier.COMMON][0];
   if (modifierType instanceof WeightedModifierType) {
     modifierType = (modifierType as WeightedModifierType).modifierType;

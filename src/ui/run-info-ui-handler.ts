@@ -568,7 +568,7 @@ export default class RunInfoUiHandler extends UiHandler {
       case GameModes.SPLICED_ENDLESS:
         modeText.appendText(`${i18next.t("gameMode:endlessSpliced")}`, false);
         break;
-      case GameModes.CHALLENGE:
+      case GameModes.CHALLENGE: {
         modeText.appendText(`${i18next.t("gameMode:challenge")}`, false);
         modeText.appendText(`${i18next.t("runHistory:challengeRules")}: `);
         modeText.setWrapMode(1); // wrap by word
@@ -583,6 +583,7 @@ export default class RunInfoUiHandler extends UiHandler {
           }
         }
         break;
+      }
       case GameModes.ENDLESS:
         modeText.appendText(`${i18next.t("gameMode:endless")}`, false);
         break;
@@ -688,7 +689,7 @@ export default class RunInfoUiHandler extends UiHandler {
           case Challenges.SINGLE_GENERATION:
             rules.push(i18next.t(`runHistory:challengeMonoGen${this.runInfo.challenges[i].value}`));
             break;
-          case Challenges.SINGLE_TYPE:
+          case Challenges.SINGLE_TYPE: {
             const typeRule = PokemonType[this.runInfo.challenges[i].value - 1];
             const typeTextColor = `[color=${TypeColor[typeRule]}]`;
             const typeShadowColor = `[shadow=${TypeShadow[typeRule]}]`;
@@ -696,16 +697,18 @@ export default class RunInfoUiHandler extends UiHandler {
               typeTextColor + typeShadowColor + i18next.t(`pokemonInfo:Type.${typeRule}`)! + "[/color]" + "[/shadow]";
             rules.push(typeText);
             break;
+          }
           case Challenges.INVERSE_BATTLE:
             rules.push(i18next.t("challenges:inverseBattle.shortName"));
             break;
-          default:
+          default: {
             const localisationKey = Challenges[this.runInfo.challenges[i].id]
               .split("_")
               .map((f, i) => (i ? `${f[0]}${f.slice(1).toLowerCase()}` : f.toLowerCase()))
               .join("");
             rules.push(i18next.t(`challenges:${localisationKey}.name`));
             break;
+          }
         }
       }
     }

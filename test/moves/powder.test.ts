@@ -28,9 +28,8 @@ describe("Moves - Powder", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("single");
-
     game.override
+      .battleStyle("single")
       .enemySpecies(SpeciesId.SNORLAX)
       .enemyLevel(100)
       .enemyMoveset(MoveId.EMBER)
