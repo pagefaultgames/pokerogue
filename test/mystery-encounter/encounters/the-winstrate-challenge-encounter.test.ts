@@ -44,10 +44,11 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
   beforeEach(async () => {
     game = new GameManager(phaserGame);
     scene = game.scene;
-    game.override.mysteryEncounterChance(100);
-    game.override.startingWave(defaultWave);
-    game.override.startingBiome(defaultBiome);
-    game.override.disableTrainerWaves();
+    game.override
+      .mysteryEncounterChance(100)
+      .startingWave(defaultWave)
+      .startingBiome(defaultBiome)
+      .disableTrainerWaves();
 
     const biomeMap = new Map<BiomeId, MysteryEncounterType[]>([
       [BiomeId.VOLCANO, [MysteryEncounterType.FIGHT_OR_FLIGHT]],
@@ -60,8 +61,6 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
 
   afterEach(() => {
     game.phaseInterceptor.restoreOg();
-    vi.clearAllMocks();
-    vi.resetAllMocks();
   });
 
   it("should have the correct properties", async () => {
@@ -86,8 +85,7 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
   });
 
   it("should not spawn outside of HUMAN_TRANSITABLE_BIOMES", async () => {
-    game.override.mysteryEncounterTier(MysteryEncounterTier.GREAT);
-    game.override.startingBiome(BiomeId.VOLCANO);
+    game.override.mysteryEncounterTier(MysteryEncounterTier.GREAT).startingBiome(BiomeId.VOLCANO);
     await game.runToMysteryEncounter();
 
     expect(scene.currentBattle?.mysteryEncounter?.encounterType).not.toBe(MysteryEncounterType.THE_WINSTRATE_CHALLENGE);
@@ -307,7 +305,7 @@ describe("The Winstrate Challenge - Mystery Encounter", () => {
       ) as ModifierSelectUiHandler;
       expect(modifierSelectHandler.options.length).toEqual(1);
       expect(modifierSelectHandler.options[0].modifierTypeOption.type.id).toBe("MYSTERY_ENCOUNTER_MACHO_BRACE");
-    }, 15000);
+    });
   });
 
   describe("Option 2 - Refuse the Challenge", () => {

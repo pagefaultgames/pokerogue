@@ -42,7 +42,7 @@ describe("Moves - Magnet Rise", () => {
     const finalHp = game.scene.getPlayerParty()[0].hp;
     const hpLost = finalHp - startingHp;
     expect(hpLost).toBe(0);
-  }, 20000);
+  });
 
   it("MAGNET RISE - Gravity", async () => {
     await game.classicMode.startBattle();
@@ -58,5 +58,5 @@ describe("Moves - Magnet Rise", () => {
     finalHp = game.scene.getPlayerParty()[0].hp;
     hpLost = finalHp - startingHp;
     expect(hpLost).not.toBe(0);
-  }, 20000);
+  });
 });

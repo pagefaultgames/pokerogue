@@ -89,7 +89,6 @@ describe("Abilities - Flower Veil", () => {
     await game.move.selectEnemyMove(MoveId.THUNDER_WAVE);
     await game.toNextTurn();
     expect(game.scene.getPlayerPokemon()!.status).toBeUndefined();
-    vi.spyOn(allMoves[MoveId.THUNDER_WAVE], "accuracy", "get").mockClear();
   });
 
   it("should not prevent status conditions for a non-grass user and its non-grass allies", async () => {

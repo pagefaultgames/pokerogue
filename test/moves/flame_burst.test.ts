@@ -35,14 +35,15 @@ describe("Moves - Flame Burst", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("double");
-    game.override.moveset([MoveId.FLAME_BURST, MoveId.SPLASH]);
-    game.override.criticalHits(false);
-    game.override.ability(AbilityId.UNNERVE);
-    game.override.startingWave(4);
-    game.override.enemySpecies(SpeciesId.SHUCKLE);
-    game.override.enemyAbility(AbilityId.BALL_FETCH);
-    game.override.enemyMoveset([MoveId.SPLASH]);
+    game.override
+      .battleStyle("double")
+      .moveset([MoveId.FLAME_BURST, MoveId.SPLASH])
+      .criticalHits(false)
+      .ability(AbilityId.UNNERVE)
+      .startingWave(4)
+      .enemySpecies(SpeciesId.SHUCKLE)
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .enemyMoveset(MoveId.SPLASH);
   });
 
   it("inflicts damage to the target's ally equal to 1/16 of its max HP", async () => {
