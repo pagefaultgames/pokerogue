@@ -1,6 +1,5 @@
 import { BerryPhase } from "#app/phases/berry-phase";
 import { MessagePhase } from "#app/phases/message-phase";
-import { MoveHeaderPhase } from "#app/phases/move-header-phase";
 import { SwitchSummonPhase } from "#app/phases/switch-summon-phase";
 import { TurnStartPhase } from "#app/phases/turn-start-phase";
 import { AbilityId } from "#enums/ability-id";
@@ -116,7 +115,7 @@ describe("Moves - Focus Punch", () => {
     await game.phaseInterceptor.to(TurnStartPhase);
 
     expect(game.scene.phaseManager.getCurrentPhase() instanceof SwitchSummonPhase).toBeTruthy();
-    expect(game.scene.phaseManager.phaseQueue.find(phase => phase instanceof MoveHeaderPhase)).toBeDefined();
+    expect(game.scene.phaseManager.hasPhaseOfType("MoveHeaderPhase")).toBeTruthy();
   });
   it("should replace the 'but it failed' text when the user gets hit", async () => {
     game.override.enemyMoveset([MoveId.TACKLE]);

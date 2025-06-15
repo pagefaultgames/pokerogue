@@ -98,6 +98,8 @@ import { UnlockPhase } from "#app/phases/unlock-phase";
 import { VictoryPhase } from "#app/phases/victory-phase";
 import { WeatherEffectPhase } from "#app/phases/weather-effect-phase";
 import { DynamicQueueManager } from "#app/queues/dynamic-queue-manager";
+import type { PhaseConditionFunc } from "#app/@types/phase-condition";
+import { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
 
 /**
  * Manager for phases used by battle scene.
@@ -217,8 +219,8 @@ export type PhaseConstructorMap = typeof PHASES;
  */
 export class PhaseManager {
   /** PhaseQueue: dequeue/remove the first element to get the next phase */
-  public phaseQueue: Phase[] = [];
-  public conditionalQueue: Array<[() => boolean, Phase]> = [];
+  private phaseQueue: Phase[] = [];
+  private conditionalQueue: Array<[() => boolean, Phase]> = [];
   /** PhaseQueuePrepend: is a temp storage of what will be added to PhaseQueue */
   private phaseQueuePrepend: Phase[] = [];
 
@@ -381,6 +383,15 @@ export class PhaseManager {
     return true;
   }
 
+  public hasPhaseOfType(type: PhaseString, condition?: PhaseConditionFunc): boolean {
+    if (this.dynamicQueueManager.isDynamicPhase(type)) {
+      return this.dynamicQueueManager.exists(type, condition);
+    }
+    return [this.phaseQueue, this.phaseQueuePrepend].some((queue: Phase[]) =>
+      queue.find(phase => phase.is(type) && (!condition || condition(phase))),
+    );
+  }
+
   /**
    * Find a specific {@linkcode Phase} in the phase queue.
    *
@@ -420,6 +431,11 @@ export class PhaseManager {
       return true;
     }
     return false;
+  }
+
+  public removeAllPhasesOfType(type: PhaseString): void {
+    this.phaseQueue = this.phaseQueue.filter(phase => !phase.is(type));
+    this.phaseQueuePrepend = this.phaseQueuePrepend.filter(phase => !phase.is(type));
   }
 
   /**
@@ -630,5 +646,13 @@ export class PhaseManager {
     ...args: ConstructorParameters<PhaseConstructorMap[T]>
   ): void {
     this.startDynamicPhase(this.create(phase, ...args));
+  }
+
+  public forceMoveNext(phaseCondition: PhaseConditionFunc) {
+    this.dynamicQueueManager.setMoveTimingModifier(phaseCondition, MovePhaseTimingModifier.FIRST);
+  }
+
+  public forceMoveLast(phaseCondition: PhaseConditionFunc) {
+    this.dynamicQueueManager.setMoveTimingModifier(phaseCondition, MovePhaseTimingModifier.LAST);
   }
 }

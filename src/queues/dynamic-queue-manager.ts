@@ -1,3 +1,4 @@
+import type { PhaseConditionFunc } from "#app/@types/phase-condition";
 import type { PhaseString } from "#app/@types/phase-types";
 import type { Phase } from "#app/phase";
 import type { SwitchSummonPhase } from "#app/phases/switch-summon-phase";
@@ -5,6 +6,7 @@ import { MovePhasePriorityQueue } from "#app/queues/move-phase-priority-queue";
 import type { PhasePriorityQueue } from "#app/queues/phase-priority-queue";
 import { PokemonPhasePriorityQueue } from "#app/queues/pokemon-phase-priority-queue";
 import { PostSummonPhasePriorityQueue } from "#app/queues/post-summon-phase-priority-queue";
+import type { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
 export class DynamicQueueManager {
   private dynamicPhaseMap: Map<PhaseString, PhasePriorityQueue<Phase>>;
 
@@ -31,5 +33,14 @@ export class DynamicQueueManager {
 
   public isDynamicPhase(type: PhaseString): boolean {
     return this.dynamicPhaseMap.has(type);
+  }
+
+  public exists(type: PhaseString, condition?: PhaseConditionFunc): boolean {
+    return !!this.dynamicPhaseMap.get(type)?.hasPhaseWithCondition(condition);
+  }
+
+  public setMoveTimingModifier(condition: PhaseConditionFunc, modifier: MovePhaseTimingModifier) {
+    const movePhaseQueue: MovePhasePriorityQueue = this.dynamicPhaseMap.get("MovePhase") as MovePhasePriorityQueue;
+    movePhaseQueue.setTimingModifier(condition, modifier);
   }
 }

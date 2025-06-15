@@ -28,6 +28,7 @@ import { StatusEffect } from "#enums/status-effect";
 import i18next from "i18next";
 import { frenzyMissFunc } from "#app/data/moves/move-utils";
 import { PokemonPhase } from "#app/phases/pokemon-phase";
+import { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
 
 export class MovePhase extends PokemonPhase {
   public readonly phaseName = "MovePhase";
@@ -36,7 +37,7 @@ export class MovePhase extends PokemonPhase {
   protected _targets: BattlerIndex[];
   protected followUp: boolean;
   protected ignorePp: boolean;
-  protected forcedLast: boolean;
+  protected _timingModifier: MovePhaseTimingModifier;
   protected failed = false;
   protected cancelled = false;
   protected reflected = false;
@@ -65,6 +66,14 @@ export class MovePhase extends PokemonPhase {
     this._targets = targets;
   }
 
+  public get timingModifier(): MovePhaseTimingModifier {
+    return this._timingModifier;
+  }
+
+  public set timingModifier(modifier: MovePhaseTimingModifier) {
+    this._timingModifier = modifier;
+  }
+
   /**
    * @param followUp Indicates that the move being used is a "follow-up" - for example, a move being used by Metronome or Dancer.
    *                 Follow-ups bypass a few failure conditions, including flinches, sleep/paralysis/freeze and volatile status checks, etc.
@@ -79,7 +88,6 @@ export class MovePhase extends PokemonPhase {
     followUp = false,
     ignorePp = false,
     reflected = false,
-    forcedLast = false,
   ) {
     super(pokemon.getBattlerIndex());
 
@@ -89,7 +97,7 @@ export class MovePhase extends PokemonPhase {
     this.followUp = followUp;
     this.ignorePp = ignorePp;
     this.reflected = reflected;
-    this.forcedLast = forcedLast;
+    this.timingModifier = MovePhaseTimingModifier.NORMAL;
   }
 
   /**
@@ -113,14 +121,6 @@ export class MovePhase extends PokemonPhase {
   /**Signifies the current move should cancel and retain PP */
   public cancel(): void {
     this.cancelled = true;
-  }
-
-  /**
-   * Shows whether the current move has been forced to the end of the turn
-   * Needed for speed order, see {@linkcode MoveId.QUASH}
-   * */
-  public isForcedLast(): boolean {
-    return this.forcedLast;
   }
 
   public start(): void {

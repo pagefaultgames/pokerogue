@@ -1,3 +1,4 @@
+import type { PhaseConditionFunc } from "#app/@types/phase-condition";
 import type { Phase } from "#app/phase";
 
 /**
@@ -39,5 +40,9 @@ export abstract class PhasePriorityQueue<T extends Phase> {
 
   public isEmpty(): boolean {
     return !this.queue.length;
+  }
+
+  public hasPhaseWithCondition(condition?: PhaseConditionFunc): boolean {
+    return this.queue.find(phase => !condition || condition(phase)) !== undefined;
   }
 }

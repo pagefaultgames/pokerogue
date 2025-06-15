@@ -527,17 +527,7 @@ export class ShellTrapTag extends BattlerTag {
 
       // Trap should only be triggered by opponent's Physical moves
       if (phaseData?.move.category === MoveCategory.PHYSICAL && pokemon.isOpponent(phaseData.attacker)) {
-        const shellTrapPhaseIndex = globalScene.phaseManager.phaseQueue.findIndex(
-          phase => phase.is("MovePhase") && phase.pokemon === pokemon,
-        );
-        const firstMovePhaseIndex = globalScene.phaseManager.phaseQueue.findIndex(phase => phase.is("MovePhase"));
-
-        // Only shift MovePhase timing if it's not already next up
-        if (shellTrapPhaseIndex !== -1 && shellTrapPhaseIndex !== firstMovePhaseIndex) {
-          const shellTrapMovePhase = globalScene.phaseManager.phaseQueue.splice(shellTrapPhaseIndex, 1)[0];
-          globalScene.phaseManager.prependToPhase(shellTrapMovePhase, "MovePhase");
-        }
-
+        globalScene.phaseManager.forceMoveNext((phase: MovePhase) => phase.pokemon === pokemon);
         this.activated = true;
       }
 

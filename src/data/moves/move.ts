@@ -3184,11 +3184,7 @@ export class AwaitCombinedPledgeAttr extends OverrideMoveEffectAttr {
         }));
 
         // Move the ally's MovePhase (if needed) so that the ally moves next
-        const allyMovePhaseIndex = globalScene.phaseManager.phaseQueue.indexOf(allyMovePhase);
-        const firstMovePhaseIndex = globalScene.phaseManager.phaseQueue.findIndex((phase) => phase.is("MovePhase"));
-        if (allyMovePhaseIndex !== firstMovePhaseIndex) {
-          globalScene.phaseManager.prependToPhase(globalScene.phaseManager.phaseQueue.splice(allyMovePhaseIndex, 1)[0], "MovePhase");
-        }
+        globalScene.phaseManager.forceMoveNext((phase: MovePhase) => phase.pokemon === user.getAlly());
 
         overridden.value = true;
         return true;
@@ -4546,12 +4542,7 @@ export class CueNextRoundAttr extends MoveEffectAttr {
       return false;
     }
 
-    // Update the phase queue so that the next Pokemon using Round moves next
-    const nextRoundIndex = globalScene.phaseManager.phaseQueue.indexOf(nextRoundPhase);
-    const nextMoveIndex = globalScene.phaseManager.phaseQueue.findIndex(phase => phase.is("MovePhase"));
-    if (nextRoundIndex !== nextMoveIndex) {
-      globalScene.phaseManager.prependToPhase(globalScene.phaseManager.phaseQueue.splice(nextRoundIndex, 1)[0], "MovePhase");
-    }
+    globalScene.phaseManager.forceMoveLast((phase: MovePhase) => phase.is("MovePhase") && phase.move.moveId === MoveId.ROUND);
 
     // Mark the corresponding Pokemon as having "joined the Round" (for doubling power later)
     nextRoundPhase.pokemon.turnData.joinedRound = true;
@@ -7923,37 +7914,10 @@ export class ForceLastAttr extends MoveEffectAttr {
   override apply(user: Pokemon, target: Pokemon, _move: Move, _args: any[]): boolean {
     globalScene.phaseManager.queueMessage(i18next.t("moveTriggers:forceLast", { targetPokemonName: getPokemonNameWithAffix(target) }));
 
-    const targetMovePhase = globalScene.phaseManager.findPhase<MovePhase>((phase) => phase.pokemon === target);
-    if (targetMovePhase && !targetMovePhase.isForcedLast() && globalScene.phaseManager.tryRemovePhase((phase: MovePhase) => phase.pokemon === target)) {
-      // Finding the phase to insert the move in front of -
-      // Either the end of the turn or in front of another, slower move which has also been forced last
-      const prependPhase = globalScene.phaseManager.findPhase((phase) =>
-        [ MovePhase, MoveEndPhase ].every(cls => !(phase instanceof cls))
-        || (phase.is("MovePhase")) && phaseForcedSlower(phase, target, !!globalScene.arena.getTag(ArenaTagType.TRICK_ROOM))
-      );
-      if (prependPhase) {
-        globalScene.phaseManager.phaseQueue.splice(
-          globalScene.phaseManager.phaseQueue.indexOf(prependPhase),
-          0,
-          globalScene.phaseManager.create("MovePhase", target, [ ...targetMovePhase.targets ], targetMovePhase.move, false, false, false, true)
-        );
-      }
-    }
+    globalScene.phaseManager.forceMoveLast((phase: MovePhase) => phase.pokemon === target);
     return true;
   }
 }
-
-/** Returns whether a {@linkcode MovePhase} has been forced last and the corresponding pokemon is slower than {@linkcode target} */
-const phaseForcedSlower = (phase: MovePhase, target: Pokemon, trickRoom: boolean): boolean => {
-  let slower: boolean;
-  // quashed pokemon still have speed ties
-  if (phase.pokemon.getEffectiveStat(Stat.SPD) === target.getEffectiveStat(Stat.SPD)) {
-    slower = !!target.randBattleSeedInt(2);
-  } else {
-    slower = !trickRoom ? phase.pokemon.getEffectiveStat(Stat.SPD) < target.getEffectiveStat(Stat.SPD) : phase.pokemon.getEffectiveStat(Stat.SPD) > target.getEffectiveStat(Stat.SPD);
-  }
-  return phase.isForcedLast() && slower;
-};
 
 const failOnGravityCondition: MoveConditionFunc = (user, target, move) => !globalScene.arena.getTag(ArenaTagType.GRAVITY);
 
@@ -7975,7 +7939,7 @@ const userSleptOrComatoseCondition: MoveConditionFunc = (user: Pokemon, target: 
 
 const targetSleptOrComatoseCondition: MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) =>  target.status?.effect === StatusEffect.SLEEP || target.hasAbility(AbilityId.COMATOSE);
 
-const failIfLastCondition: MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => globalScene.phaseManager.phaseQueue.find(phase => phase.is("MovePhase")) !== undefined;
+const failIfLastCondition: MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => globalScene.phaseManager.hasPhaseOfType("MovePhase");
 
 const failIfLastInPartyCondition: MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => {
   const party: Pokemon[] = user.isPlayer() ? globalScene.getPlayerParty() : globalScene.getEnemyParty();
