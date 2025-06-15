@@ -408,7 +408,7 @@ function summonPlayerPokemonAnimation(pokemon: PlayerPokemon): Promise<void> {
               onComplete: () => {
                 pokemon.cry(pokemon.getHpRatio() > 0.25 ? undefined : { rate: 0.85 });
                 pokemon.getSprite().clearTint();
-                pokemon.resetSummonData();
+                pokemon.fieldSetup(true);
                 globalScene.time.delayedCall(1000, () => {
                   if (pokemon.isShiny()) {
                     globalScene.unshiftPhase(new ShinySparklePhase(pokemon.getBattlerIndex()));
