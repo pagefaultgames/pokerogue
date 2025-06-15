@@ -31,7 +31,7 @@ describe("Moves - Sleep Talk", () => {
       .battleStyle("single")
       .disableCrits()
       .enemySpecies(SpeciesId.MAGIKARP)
-      .enemyAbility(AbilityId.BALL_FETCH)
+      .enemyAbility(AbilityId.NO_GUARD)
       .enemyMoveset(MoveId.SPLASH)
       .enemyLevel(100);
   });
