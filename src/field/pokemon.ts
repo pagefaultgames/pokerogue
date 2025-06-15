@@ -6089,12 +6089,12 @@ export class EnemyPokemon extends Pokemon {
 
       if (this.hasTrainer() && globalScene.currentBattle) {
         const { waveIndex } = globalScene.currentBattle;
-        const ivs: IVTuple = Array.from(
+        const ivs = Array.from(
           {
             length: 6,
           },
           () => randSeedIntRange(Math.floor(waveIndex / 10), 31),
-        );
+        ) as IVTuple;
         this.ivs = ivs;
       }
     }

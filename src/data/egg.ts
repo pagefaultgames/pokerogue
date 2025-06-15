@@ -38,6 +38,7 @@ import {
   HATCH_WAVES_LEGENDARY_EGG,
 } from "#app/data/balance/rates";
 import { speciesEggTiers } from "#app/data/balance/species-egg-tiers";
+import type { IVType } from "#app/@types/stat-types";
 
 export const EGG_SEED = 1073741824;
 
@@ -270,9 +271,9 @@ export class Egg {
 
       const secondaryIvs = getIvsFromId(randSeedInt(4294967295));
 
-      for (let s = 0; s < ret.ivs.length; s++) {
-        ret.ivs[s] = Math.max(ret.ivs[s], secondaryIvs[s]);
-      }
+      ret.ivs = ret.ivs.map(
+        (iv, i) => Math.max(iv, secondaryIvs[i]) as IVType, // ts doesn't know the number will be between 0-31
+      );
     };
 
     ret = ret!; // Tell TS compiler it's defined now

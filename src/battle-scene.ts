@@ -160,7 +160,7 @@ import { timedEventManager } from "./global-event-manager";
 import { starterColors } from "./global-vars/starter-colors";
 import { startingWave } from "./starting-wave";
 import { PhaseManager } from "./phase-manager";
-import type { IVTuple } from "#app/@types/stat-types";
+import type { IVTuple, IVType } from "#app/@types/stat-types";
 
 const DEBUG_RNG = false;
 
@@ -169,7 +169,7 @@ const OPP_IVS_OVERRIDE_VALIDATED: IVTuple | null =
     ? null
     : Array.isArray(Overrides.OPP_IVS_OVERRIDE)
       ? Overrides.OPP_IVS_OVERRIDE
-      : new Array(6).fill(Overrides.OPP_IVS_OVERRIDE);
+      : (new Array(6).fill(Overrides.OPP_IVS_OVERRIDE) as IVTuple);
 
 export interface PokeballCounts {
   [pb: string]: number;
@@ -910,7 +910,7 @@ export default class BattleScene extends SceneBase {
     gender?: Gender,
     shiny?: boolean,
     variant?: Variant,
-    ivs?: number[],
+    ivs?: IVTuple,
     nature?: Nature,
     dataSource?: Pokemon | PokemonData,
     postProcess?: (playerPokemon: PlayerPokemon) => void,
@@ -958,23 +958,20 @@ export default class BattleScene extends SceneBase {
     }
 
     if (boss && !dataSource) {
+      // Generate a 2nd higher roll and linearly interpolate between the two.
       const secondaryIvs = getIvsFromId(randSeedInt(4294967296));
 
-      for (let s = 0; s < pokemon.ivs.length; s++) {
-        pokemon.ivs[s] = Math.round(
-          Phaser.Math.Linear(
-            Math.min(pokemon.ivs[s], secondaryIvs[s]),
-            Math.max(pokemon.ivs[s], secondaryIvs[s]),
-            0.75,
-          ),
-        );
-      }
+      pokemon.ivs = pokemon.ivs.map(
+        (iv, i) =>
+          Math.round(Phaser.Math.Linear(Math.min(iv, secondaryIvs[i]), Math.max(iv, secondaryIvs[i]), 0.75)) as IVType, // ts doesn't know the number will be between 0-31
+      );
     }
+
     if (postProcess) {
       postProcess(pokemon);
     }
 
-    if (OPP_IVS_OVERRIDE_VALIDATED) {
+    if (OPP_IVS_OVERRIDE_VALIDATED !== null) {
       pokemon.ivs = OPP_IVS_OVERRIDE_VALIDATED;
     }
     pokemon.init();
@@ -2084,7 +2081,7 @@ export default class BattleScene extends SceneBase {
     let scoreIncrease =
       enemy.getSpeciesForm().getBaseExp() *
       (enemy.level / this.getMaxExpLevel()) *
-      ((enemy.ivs.reduce((iv: number, total: number) => (total += iv), 0) / 93) * 0.2 + 0.8);
+      ((enemy.ivs.reduce((total, iv) => total + iv, 0) / 93) * 0.2 + 0.8);
     this.findModifiers(m => m instanceof PokemonHeldItemModifier && m.pokemonId === enemy.id, false).map(
       m => (scoreIncrease *= (m as PokemonHeldItemModifier).getScoreMultiplier()),
     );

@@ -54,6 +54,7 @@ import { PokemonType } from "#enums/pokemon-type";
 import { getNatureName } from "#app/data/nature";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { timedEventManager } from "#app/global-event-manager";
+import type { IVTuple } from "#app/@types/stat-types";
 
 /**
  * Animates exclamation sprite over trainer's head at start of encounter
@@ -96,7 +97,7 @@ export interface EnemyPokemonConfig {
   passive?: boolean;
   moveSet?: MoveId[];
   nature?: Nature;
-  ivs?: [number, number, number, number, number, number];
+  ivs?: IVTuple;
   shiny?: boolean;
   /** Is only checked if Pokemon is shiny */
   variant?: Variant;

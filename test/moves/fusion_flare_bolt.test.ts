@@ -11,6 +11,7 @@ import { SpeciesId } from "#enums/species-id";
 import GameManager from "#test/testUtils/gameManager";
 import Phaser from "phaser";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import type { PermanentStatTuple } from "#app/@types/stat-types";
 
 describe("Moves - Fusion Flare and Fusion Bolt", () => {
   let phaserGame: Phaser.Game;
@@ -156,6 +157,7 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
     expect(fusionFlare.calculateBattlePower).toHaveLastReturnedWith(200);
   }, 20000);
 
+  // TODO: Clean these tests up
   it("FUSION_FLARE and FUSION_BOLT alternating throughout turn should double power of subsequent moves", async () => {
     game.override.enemyMoveset(fusionFlare.id);
     await game.classicMode.startBattle([SpeciesId.ZEKROM, SpeciesId.ZEKROM]);
@@ -168,7 +170,10 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
     game.scene.clearEnemyModifiers();
 
     // Mock stats by replacing entries in copy with desired values for specific stats
-    const stats = {
+    const stats: {
+      enemy: [PermanentStatTuple, PermanentStatTuple];
+      player: [PermanentStatTuple, PermanentStatTuple];
+    } = {
       enemy: [[...enemyParty[0].stats], [...enemyParty[1].stats]],
       player: [[...party[0].stats], [...party[1].stats]],
     };
@@ -222,7 +227,10 @@ describe("Moves - Fusion Flare and Fusion Bolt", () => {
     game.scene.clearEnemyModifiers();
 
     // Mock stats by replacing entries in copy with desired values for specific stats
-    const stats = {
+    const stats: {
+      enemy: [PermanentStatTuple, PermanentStatTuple];
+      player: [PermanentStatTuple, PermanentStatTuple];
+    } = {
       enemy: [[...enemyParty[0].stats], [...enemyParty[1].stats]],
       player: [[...party[0].stats], [...party[1].stats]],
     };

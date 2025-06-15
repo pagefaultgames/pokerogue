@@ -121,7 +121,8 @@ export class EncounterPhase extends BattlePhase {
             !!globalScene.getEncounterBossSegments(battle.waveIndex, level, enemySpecies),
           );
           if (globalScene.currentBattle.battleSpec === BattleSpec.FINAL_BOSS) {
-            battle.enemyParty[e].ivs = new Array(6).fill(31);
+            // max IVs for eternatus
+            battle.enemyParty[e].ivs = [31, 31, 31, 31, 31, 31];
           }
           globalScene
             .getPlayerParty()

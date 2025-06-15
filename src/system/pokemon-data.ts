@@ -14,6 +14,7 @@ import type { MoveId } from "#enums/move-id";
 import type { SpeciesId } from "#enums/species-id";
 import { CustomPokemonData } from "#app/data/custom-pokemon-data";
 import type { PokemonType } from "#enums/pokemon-type";
+import type { IVTuple, PermanentStatTuple } from "#app/@types/stat-types";
 
 export default class PokemonData {
   public id: number;
@@ -31,8 +32,8 @@ export default class PokemonData {
   public levelExp: number;
   public gender: Gender;
   public hp: number;
-  public stats: number[];
-  public ivs: number[];
+  public stats: PermanentStatTuple;
+  public ivs: IVTuple;
   public nature: Nature;
   public moveset: PokemonMove[];
   public status: Status | null;

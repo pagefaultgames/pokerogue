@@ -19,7 +19,7 @@ export type PermanentStatTuple = Head<Head<StatTuple>>;
 /** Tuple containing all {@linkcode BattleStat}s of a Pokemon. */
 export type BattleStatTuple = Tail<PermanentStatTuple>;
 
-// Since typescript lacks integer range unions, we have to use THIS abomination to strongly type an IV
+/** Integer literal union containing all numbers from 0-31 inclusive; used to strongly type Pokemon IVs.  */
 export type IVType =
   | 0
   | 1
@@ -56,4 +56,5 @@ export type IVType =
 
 type toIvTuple<T extends [...any]> = { [k in keyof T]: IVType };
 
+/** A 6-length tuple of integers in the range [0-31]; used to strongly type Pokemon IVs. */
 export type IVTuple = toIvTuple<PermanentStatTuple>;

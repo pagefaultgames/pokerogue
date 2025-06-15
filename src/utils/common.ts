@@ -3,7 +3,7 @@ import { MoveId } from "#enums/move-id";
 import i18next from "i18next";
 import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
 import type { Variant } from "#app/sprites/variant";
-import type { IVTuple } from "#app/@types/stat-types";
+import type { IVTuple, IVType } from "#app/@types/stat-types";
 
 export type nil = null | undefined;
 
@@ -88,6 +88,8 @@ export function randInt(range: number, min = 0): number {
   return Math.floor(Math.random() * range) + min;
 }
 
+export function randSeedInt(range: 31, min?: IVType): IVType;
+export function randSeedInt(range: number, min?: number): number;
 /**
  * Generate a random integer using the global seed, or the current battle's seed if called via `Battle.randSeedInt`
  * @param range - How large of a range of random numbers to choose from. If {@linkcode range} <= 1, returns {@linkcode min}
@@ -191,7 +193,7 @@ export function getIvsFromId(id: number): IVTuple {
     (id & 0x00007c00) >>> 10,
     (id & 0x000003e0) >>> 5,
     id & 0x0000001f,
-  ];
+  ] as IVTuple; // TS doesn't know the numbers are between 0-31
 }
 
 export function formatLargeNumber(count: number, threshold: number): string {
