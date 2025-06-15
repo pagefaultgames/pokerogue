@@ -25,10 +25,7 @@ import { allMoves } from "../data-lists";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import { BerryModifier, HitHealModifier, PokemonHeldItemModifier } from "#app/modifier/modifier";
 import { TerrainType } from "#app/data/terrain";
-import { pokemonFormChanges,
-  SpeciesFormChangeRevertWeatherFormTrigger,
-  SpeciesFormChangeWeatherTrigger,
-} from "../pokemon-forms/form-change-triggers";
+import { pokemonFormChanges, SpeciesFormChangeWeatherTrigger } from "../pokemon-forms/form-change-triggers";
 import { SpeciesFormChangeAbilityTrigger } from "../pokemon-forms/form-change-triggers";
 import i18next from "i18next";
 import { Command } from "#enums/command";
@@ -3974,11 +3971,11 @@ export class PostSummonFormChangeByWeatherAbAttr extends PostSummonAbAttr {
    * Determine if the pokemon has a forme change that is triggered by the weather
    *
    * @param pokemon - The pokemon with the forme change ability
-   * @param passive - unused
-   * @param simulated - unused
-   * @param args - unused
+   * @param _passive - unused
+   * @param _simulated - unused
+   * @param _args - unused
    */
-  override canApplyPostSummon(pokemon: Pokemon, passive: boolean, simulated: boolean, args: any[]): boolean {
+  override canApplyPostSummon(pokemon: Pokemon, _passive: boolean, _simulated: boolean, _args: any[]): boolean {
     return !!pokemonFormChanges[pokemon.species.speciesId]?.some(
       fc => fc.findTrigger(SpeciesFormChangeWeatherTrigger) && fc.canChange(pokemon),
     );
