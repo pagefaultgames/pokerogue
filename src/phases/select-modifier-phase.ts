@@ -12,15 +12,11 @@ import {
   PokemonPpRestoreModifierType,
   PokemonPpUpModifierType,
   getPlayerModifierTypeOptions,
+  HeldItemReward,
 } from "#app/modifier/modifier-type";
 import { ModifierPoolType } from "#enums/modifier-pool-type";
 import type { Modifier } from "#app/modifier/modifier";
-import {
-  ExtraModifierModifier,
-  HealShopCostModifier,
-  PokemonHeldItemModifier,
-  TempExtraModifierModifier,
-} from "#app/modifier/modifier";
+import { ExtraModifierModifier, HealShopCostModifier, TempExtraModifierModifier } from "#app/modifier/modifier";
 import type ModifierSelectUiHandler from "#app/ui/modifier-select-ui-handler";
 import { SHOP_OPTIONS_ROW_LIMIT } from "#app/ui/modifier-select-ui-handler";
 import PartyUiHandler, { PartyUiMode, PartyOption } from "#app/ui/party-ui-handler";
@@ -172,6 +168,9 @@ export class SelectModifierPhase extends BattlePhase {
     modifierSelectCallback: ModifierSelectCallback,
   ): boolean {
     if (modifierType instanceof PokemonModifierType) {
+      if (modifierType instanceof HeldItemReward) {
+        this.openGiveHeldItemMenu(modifierType, modifierSelectCallback);
+      }
       if (modifierType instanceof FusePokemonModifierType) {
         this.openFusionMenu(modifierType, cost, modifierSelectCallback);
       } else {
@@ -222,17 +221,15 @@ export class SelectModifierPhase extends BattlePhase {
           fromSlotIndex !== toSlotIndex &&
           itemIndex > -1
         ) {
-          const itemModifiers = globalScene.findModifiers(
-            m => m instanceof PokemonHeldItemModifier && m.isTransferable && m.pokemonId === party[fromSlotIndex].id,
-          ) as PokemonHeldItemModifier[];
-          const itemModifier = itemModifiers[itemIndex];
-          globalScene.tryTransferHeldItemModifier(
-            itemModifier,
+          const items = party[fromSlotIndex].heldItemManager.getTransferableHeldItems();
+          const item = items[itemIndex];
+          globalScene.tryTransferHeldItem(
+            item,
+            party[fromSlotIndex],
             party[toSlotIndex],
             true,
             itemQuantity,
-            undefined,
-            undefined,
+            true,
             false,
           );
         } else {
@@ -290,11 +287,7 @@ export class SelectModifierPhase extends BattlePhase {
   }
 
   // Opens the party menu specifically for fusions
-  private openFusionMenu(
-    modifierType: PokemonModifierType,
-    cost: number,
-    modifierSelectCallback: ModifierSelectCallback,
-  ): void {
+  private openFusionMenu(modifierType, cost, modifierSelectCallback) {
     const party = globalScene.getPlayerParty();
     globalScene.ui.setModeWithoutClear(
       UiMode.PARTY,
@@ -320,11 +313,7 @@ export class SelectModifierPhase extends BattlePhase {
   }
 
   // Opens the party menu to apply one of various modifiers
-  private openModifierMenu(
-    modifierType: PokemonModifierType,
-    cost: number,
-    modifierSelectCallback: ModifierSelectCallback,
-  ): void {
+  private openModifierMenu(modifierType, cost, modifierSelectCallback) {
     const party = globalScene.getPlayerParty();
     const pokemonModifierType = modifierType as PokemonModifierType;
     const isMoveModifier = modifierType instanceof PokemonMoveModifierType;
@@ -367,18 +356,43 @@ export class SelectModifierPhase extends BattlePhase {
     );
   }
 
+  private openGiveHeldItemMenu(reward, modifierSelectCallback) {
+    const party = globalScene.getPlayerParty();
+    const partyUiMode = PartyUiMode.MODIFIER;
+    globalScene.ui.setModeWithoutClear(
+      UiMode.PARTY,
+      partyUiMode,
+      -1,
+      (slotIndex: number, _option: PartyOption) => {
+        if (slotIndex < 6) {
+          globalScene.ui.setMode(UiMode.MODIFIER_SELECT, this.isPlayer()).then(() => {
+            reward.apply(party[slotIndex]);
+            globalScene.ui.clearText();
+            globalScene.ui.setMode(UiMode.MESSAGE);
+            super.end();
+          });
+        } else {
+          this.resetModifierSelect(modifierSelectCallback);
+        }
+      },
+      reward.selectFilter,
+    );
+  }
+
   // Function that determines how many reward slots are available
   private getModifierCount(): number {
     const modifierCountHolder = new NumberHolder(3);
-    globalScene.applyModifiers(ExtraModifierModifier, true, modifierCountHolder);
-    globalScene.applyModifiers(TempExtraModifierModifier, true, modifierCountHolder);
+    if (this.isPlayer()) {
+      globalScene.applyModifiers(ExtraModifierModifier, true, modifierCountHolder);
+      globalScene.applyModifiers(TempExtraModifierModifier, true, modifierCountHolder);
+    }
 
     // If custom modifiers are specified, overrides default item count
     if (this.customModifierSettings) {
       const newItemCount =
-        (this.customModifierSettings.guaranteedModifierTiers?.length ?? 0) +
-        (this.customModifierSettings.guaranteedModifierTypeOptions?.length ?? 0) +
-        (this.customModifierSettings.guaranteedModifierTypeFuncs?.length ?? 0);
+        (this.customModifierSettings.guaranteedModifierTiers?.length || 0) +
+        (this.customModifierSettings.guaranteedModifierTypeOptions?.length || 0) +
+        (this.customModifierSettings.guaranteedModifierTypeFuncs?.length || 0);
       if (this.customModifierSettings.fillRemaining) {
         const originalCount = modifierCountHolder.value;
         modifierCountHolder.value = originalCount > newItemCount ? originalCount : newItemCount;
