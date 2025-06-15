@@ -1,6 +1,6 @@
 import { Stat } from "#enums/stat";
 import { StockpilingTag } from "#app/data/battler-tags";
-import type { TurnMove } from "#app/field/pokemon";
+import type { TurnMove } from "#app/@types/turn-move";
 import { MoveResult } from "#enums/move-result";
 import { CommandPhase } from "#app/phases/command-phase";
 import { TurnInitPhase } from "#app/phases/turn-init-phase";

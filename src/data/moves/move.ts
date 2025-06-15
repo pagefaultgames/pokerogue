@@ -13,7 +13,8 @@ import {
   TypeBoostTag,
 } from "../battler-tags";
 import { getPokemonNameWithAffix } from "../../messages";
-import type { AttackMoveResult, TurnMove } from "../../field/pokemon";
+import type { TurnMove } from "#app/@types/turn-move";
+import type { AttackMoveResult } from "#app/@types/attack-move-result";
 import type Pokemon from "../../field/pokemon";
 import type { EnemyPokemon } from "#app/field/pokemon";
 import { PokemonMove } from "./pokemon-move";
