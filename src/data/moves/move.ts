@@ -4542,7 +4542,7 @@ export class CueNextRoundAttr extends MoveEffectAttr {
       return false;
     }
 
-    globalScene.phaseManager.forceMoveLast((phase: MovePhase) => phase.is("MovePhase") && phase.move.moveId === MoveId.ROUND);
+    globalScene.phaseManager.forceMoveNext((phase: MovePhase) => phase.is("MovePhase") && phase.move.moveId === MoveId.ROUND);
 
     // Mark the corresponding Pokemon as having "joined the Round" (for doubling power later)
     nextRoundPhase.pokemon.turnData.joinedRound = true;
