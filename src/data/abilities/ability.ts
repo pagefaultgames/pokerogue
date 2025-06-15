@@ -6549,7 +6549,7 @@ export class PostFaintContactDamageAbAttr extends PostFaintAbAttr {
 
     // TODO: Does aftermath display text if the attacker has Magic Guard?
     applyAbAttrs("BlockNonDirectDamageAbAttr", attacker, cancelled);
-    return cancelled.value;
+    return !cancelled.value;
   }
 
   override applyPostFaint(
