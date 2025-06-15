@@ -519,7 +519,7 @@ export default class GameManager {
   }
 
   /**
-   * Intercepts `TurnStartPhase` and mocks {@linkcode TurnStartPhase.getSpeedOrder}'s return value.
+   * Modifies the queue manager to return move phases in a particular order
    * Used to manually modify Pokemon turn order.
    * Note: This *DOES NOT* account for priority.
    * @param order - The turn order to set as an array of {@linkcode BattlerIndex}es.

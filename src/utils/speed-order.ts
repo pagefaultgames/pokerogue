@@ -8,6 +8,10 @@ export interface hasPokemon {
   getPokemon(): Pokemon;
 }
 
+export function applyInSpeedOrder<T extends Pokemon>(pokemonList: T[], callback: (pokemon: Pokemon) => void): void {
+  sortInSpeedOrder(pokemonList).forEach(pokemon => callback(pokemon));
+}
+
 export function sortInSpeedOrder<T extends Pokemon | hasPokemon>(pokemonList: T[]): T[] {
   pokemonList = shuffle(pokemonList);
   sortBySpeed(pokemonList);
