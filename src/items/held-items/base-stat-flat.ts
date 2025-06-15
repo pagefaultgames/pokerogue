@@ -1,7 +1,7 @@
 import type Pokemon from "#app/field/pokemon";
 import type { HeldItemId } from "#enums/held-item-id";
 import { HeldItem, ITEM_EFFECT } from "../held-item";
-import { getStatKey, type Stat } from "#enums/stat";
+import { getStatKey } from "#enums/stat";
 import i18next from "i18next";
 
 export interface BASE_STAT_FLAT_PARAMS {
@@ -9,11 +9,6 @@ export interface BASE_STAT_FLAT_PARAMS {
   pokemon: Pokemon;
   /** The amount of exp to gain */
   baseStats: number[];
-}
-
-export interface BASE_STAT_FLAT_DATA {
-  statModifier: number;
-  stats: Stat[];
 }
 
 /**

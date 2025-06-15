@@ -46,7 +46,6 @@ import {
   MoneyRewardModifier,
   MultipleParticipantExpBonusModifier,
   PokemonAllMovePpRestoreModifier,
-  type PokemonHeldItemModifier,
   PokemonHpRestoreModifier,
   PokemonLevelIncrementModifier,
   PokemonNatureChangeModifier,
@@ -98,12 +97,12 @@ import { HeldItemId } from "#enums/held-item-id";
 import { allHeldItems } from "#app/items/all-held-items";
 import { TYPE_BOOST_ITEM_BOOST_PERCENT } from "#app/constants";
 import { attackTypeToHeldItem } from "#app/items/held-items/attack-type-booster";
-import { berryTypeToHeldItem } from "#app/items/held-items/berry";
 import { permanentStatToHeldItem, statBoostItems } from "#app/items/held-items/base-stat-booster";
 import { SPECIES_STAT_BOOSTER_ITEMS, type SpeciesStatBoosterItemId } from "#app/items/held-items/stat-booster";
 import { ModifierPoolType } from "#enums/modifier-pool-type";
-import { getModifierPoolForType, getModifierType } from "#app/utils/modifier-utils";
+import { getModifierPoolForType } from "#app/utils/modifier-utils";
 import type { ModifierTypeFunc, WeightedModifierTypeWeightFunc } from "#app/@types/modifier-types";
+import { getNewAttackTypeBoosterHeldItem, getNewBerryHeldItem, getNewVitaminHeldItem } from "#app/items/held-item-pool";
 
 const outputModifierData = false;
 const useMaxWeightForOutput = false;
@@ -767,41 +766,14 @@ export class TempStatStageBoosterModifierType extends ModifierType implements Ge
   }
 }
 
-export class BerryReward extends HeldItemReward implements GeneratedPersistentModifierType {
-  private berryType: BerryType;
-
-  constructor(berryType: BerryType) {
-    const itemId = berryTypeToHeldItem[berryType];
-    super(itemId);
-
-    this.berryType = berryType;
-    this.id = "BERRY"; // needed to prevent harvest item deletion; remove after modifier rework
-  }
-
-  getPregenArgs(): any[] {
-    return [this.berryType];
-  }
-}
-
 class BerryRewardGenerator extends ModifierTypeGenerator {
   constructor() {
     super((_party: Pokemon[], pregenArgs?: any[]) => {
       if (pregenArgs && pregenArgs.length === 1 && pregenArgs[0] in BerryType) {
         return new BerryReward(pregenArgs[0] as BerryType);
       }
-      const berryTypes = getEnumValues(BerryType);
-      let randBerryType: BerryType;
-      const rand = randSeedInt(12);
-      if (rand < 2) {
-        randBerryType = BerryType.SITRUS;
-      } else if (rand < 4) {
-        randBerryType = BerryType.LUM;
-      } else if (rand < 6) {
-        randBerryType = BerryType.LEPPA;
-      } else {
-        randBerryType = berryTypes[randSeedInt(berryTypes.length - 3) + 2];
-      }
-      return new BerryReward(randBerryType);
+      const item = getNewBerryHeldItem();
+      return new HeldItemReward(item);
     });
   }
 }
@@ -1166,47 +1138,9 @@ class AttackTypeBoosterRewardGenerator extends ModifierTypeGenerator {
         return new AttackTypeBoosterReward(pregenArgs[0] as PokemonType, TYPE_BOOST_ITEM_BOOST_PERCENT);
       }
 
-      // TODO: make this consider moves or abilities that change types
-      const attackMoveTypes = party.flatMap(p =>
-        p
-          .getMoveset()
-          .map(m => m.getMove())
-          .filter(m => m.is("AttackMove"))
-          .map(m => m.type),
-      );
-      if (!attackMoveTypes.length) {
-        return null;
-      }
+      const item = getNewAttackTypeBoosterHeldItem(party);
 
-      const attackMoveTypeWeights = new Map<PokemonType, number>();
-      let totalWeight = 0;
-      for (const t of attackMoveTypes) {
-        const weight = attackMoveTypeWeights.get(t) ?? 0;
-        if (weight < 3) {
-          attackMoveTypeWeights.set(t, weight + 1);
-          totalWeight++;
-        }
-      }
-
-      if (!totalWeight) {
-        return null;
-      }
-
-      let type: PokemonType;
-
-      const randInt = randSeedInt(totalWeight);
-      let weight = 0;
-
-      for (const t of attackMoveTypeWeights.keys()) {
-        const typeWeight = attackMoveTypeWeights.get(t)!; // guranteed to be defined
-        if (randInt <= weight + typeWeight) {
-          type = t;
-          break;
-        }
-        weight += typeWeight;
-      }
-
-      return new AttackTypeBoosterReward(type!, TYPE_BOOST_ITEM_BOOST_PERCENT);
+      return item ? new HeldItemReward(item) : null;
     });
   }
 }
@@ -1217,8 +1151,7 @@ class BaseStatBoosterRewardGenerator extends ModifierTypeGenerator {
       if (pregenArgs) {
         return new BaseStatBoosterReward(pregenArgs[0]);
       }
-      const randStat: PermanentStat = randSeedInt(Stat.SPD + 1);
-      return new BaseStatBoosterReward(randStat);
+      return new HeldItemReward(getNewVitaminHeldItem());
     });
   }
 }

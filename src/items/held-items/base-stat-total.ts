@@ -1,16 +1,13 @@
 import type Pokemon from "#app/field/pokemon";
 import i18next from "i18next";
 import { HeldItem, ITEM_EFFECT } from "../held-item";
+import type { BASE_STAT_TOTAL_DATA } from "../held-item-data";
 
 export interface BASE_STAT_TOTAL_PARAMS {
   /** The pokemon with the item */
   pokemon: Pokemon;
   /** The amount of exp to gain */
   baseStats: number[];
-}
-
-export interface BASE_STAT_TOTAL_DATA {
-  statModifier: number;
 }
 
 /**

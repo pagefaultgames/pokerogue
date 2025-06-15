@@ -1,110 +1,157 @@
-/*
 import type { PlayerPokemon } from "#app/field/pokemon";
-import { randSeedInt } from "#app/utils/common";
-import { HeldItemCategoryId, HeldItemId, isCategoryId } from "#enums/held-item-id";
+import type Pokemon from "#app/field/pokemon";
+import { coerceArray, getEnumValues, randSeedFloat, randSeedInt } from "#app/utils/common";
+import { BerryType } from "#enums/berry-type";
+import { HeldItemCategoryId, HeldItemId } from "#enums/held-item-id";
+import type { PokemonType } from "#enums/pokemon-type";
 import { RewardTier } from "#enums/reward-tier";
+import { PERMANENT_STATS } from "#enums/stat";
+import {
+  type HeldItemPool,
+  type HeldItemSpecs,
+  type HeldItemTieredPool,
+  type HeldItemWeights,
+  isHeldItemCategoryEntry,
+} from "./held-item-data-types";
+import { attackTypeToHeldItem } from "./held-items/attack-type-booster";
+import { permanentStatToHeldItem } from "./held-items/base-stat-booster";
+import { berryTypeToHeldItem } from "./held-items/berry";
 
-interface HeldItemPoolEntry {
-  weight: number;
-  item: HeldItemId | HeldItemCategoryId;
-}
+export const wildHeldItemPool: HeldItemTieredPool = {};
 
-export type HeldItemPool = {
-  [key in RewardTier]?: HeldItemPoolEntry[];
-};
+export const trainerHeldItemPool: HeldItemTieredPool = {};
 
-const dailyStarterHeldItemPool: HeldItemPool = {
-  [RewardTier.COMMON]: [
-    { item: HeldItemCategoryId.BASE_STAT_BOOST, weight: 1 },
-    { item: HeldItemCategoryId.BERRY, weight: 3 },
-  ],
-  [RewardTier.GREAT]: [{ item: HeldItemCategoryId.TYPE_ATTACK_BOOSTER, weight: 5 }],
-  [RewardTier.ULTRA]: [
-    { item: HeldItemId.REVIVER_SEED, weight: 4 },
-    { item: HeldItemId.SOOTHE_BELL, weight: 1 },
-    { item: HeldItemId.SOUL_DEW, weight: 1 },
-    { item: HeldItemId.GOLDEN_PUNCH, weight: 1 },
-  ],
-  [RewardTier.ROGUE]: [
-    { item: HeldItemId.GRIP_CLAW, weight: 5 },
-    { item: HeldItemId.BATON, weight: 2 },
-    { item: HeldItemId.FOCUS_BAND, weight: 5 },
-    { item: HeldItemId.QUICK_CLAW, weight: 3 },
-    { item: HeldItemId.KINGS_ROCK, weight: 3 },
-  ],
-  [RewardTier.MASTER]: [
-    { item: HeldItemId.LEFTOVERS, weight: 1 },
-    { item: HeldItemId.SHELL_BELL, weight: 1 },
-  ],
-};
+export const dailyStarterHeldItemPool: HeldItemTieredPool = {};
 
-export function getDailyRunStarterHeldItems(party: PlayerPokemon[]): PokemonHeldItemModifier[] {
-  const ret: HeldItemId[] = [];
+export function getDailyRunStarterHeldItems(party: PlayerPokemon[]) {
   for (const p of party) {
     for (let m = 0; m < 3; m++) {
       const tierValue = randSeedInt(64);
 
-      let tier: RewardTier;
-      if (tierValue > 25) {
-        tier = RewardTier.COMMON;
-      } else if (tierValue > 12) {
-        tier = RewardTier.GREAT;
-      } else if (tierValue > 4) {
-        tier = RewardTier.ULTRA;
-      } else if (tierValue) {
-        tier = RewardTier.ROGUE;
-      } else {
-        tier = RewardTier.MASTER;
-      }
+      const tier = getDailyRewardTier(tierValue);
 
-      const item = getNewHeldItemFromPool(party, dailyStarterHeldItemPool, tier);
-      ret.push(item);
+      const item = getNewHeldItemFromPool(dailyStarterHeldItemPool[tier] as HeldItemPool, p);
+      p.heldItemManager.add(item);
     }
   }
-
-  return ret;
 }
 
-function getNewModifierTypeOption(
-  party: Pokemon[],
-  poolType: ModifierPoolType,
-  baseTier?: ModifierTier,
-  upgradeCount?: number,
-  retryCount = 0,
-  allowLuckUpgrades = true,
-): ModifierTypeOption | null {
-  const player = !poolType;
-  const pool = getModifierPoolForType(poolType);
-  const thresholds = getPoolThresholds(poolType);
+function getDailyRewardTier(tierValue: number): RewardTier {
+  if (tierValue > 25) {
+    return RewardTier.COMMON;
+  }
+  if (tierValue > 12) {
+    return RewardTier.GREAT;
+  }
+  if (tierValue > 4) {
+    return RewardTier.ULTRA;
+  }
+  if (tierValue > 0) {
+    return RewardTier.ROGUE;
+  }
+  return RewardTier.MASTER;
+}
 
-  const tier = determineTier(party, player, baseTier, upgradeCount, retryCount, allowLuckUpgrades);
+function pickWeightedIndex(weights: number[]): number {
+  const totalWeight = weights.reduce((sum, w) => sum + w, 0);
 
-  const tierThresholds = Object.keys(thresholds[tier]);
-  const totalWeight = Number.parseInt(tierThresholds[tierThresholds.length - 1]);
-  const value = randSeedInt(totalWeight);
-  let index: number | undefined;
-  for (const t of tierThresholds) {
-    const threshold = Number.parseInt(t);
-    if (value < threshold) {
-      index = thresholds[tier][threshold];
-      break;
-    }
+  if (totalWeight <= 0) {
+    throw new Error("Total weight must be greater than 0.");
   }
 
-  if (index === undefined) {
+  let r = randSeedFloat() * totalWeight;
+
+  for (let i = 0; i < weights.length; i++) {
+    if (r < weights[i]) {
+      return i;
+    }
+    r -= weights[i];
+  }
+
+  return -1; // TODO: Change to something more appropriate
+}
+
+export function getNewVitaminHeldItem(customWeights: HeldItemWeights = {}): HeldItemId {
+  const items = PERMANENT_STATS.map(s => permanentStatToHeldItem[s]);
+  const weights = items.map(t => customWeights[t] ?? t);
+  return items[pickWeightedIndex(weights)];
+}
+
+export function getNewBerryHeldItem(customWeights: HeldItemWeights = {}): HeldItemId {
+  const berryTypes = getEnumValues(BerryType);
+  const items = berryTypes.map(b => berryTypeToHeldItem[b]);
+
+  const weights = items.map(t =>
+    (customWeights[t] ?? (t === HeldItemId.SITRUS_BERRY || t === HeldItemId.LUM_BERRY || t === HeldItemId.LEPPA_BERRY))
+      ? 2
+      : 1,
+  );
+
+  return items[pickWeightedIndex(weights)];
+}
+
+export function getNewAttackTypeBoosterHeldItem(
+  pokemon: Pokemon | Pokemon[],
+  customWeights: HeldItemWeights = {},
+): HeldItemId | null {
+  const party = coerceArray(pokemon);
+
+  // TODO: make this consider moves or abilities that change types
+  const attackMoveTypes = party.flatMap(p =>
+    p
+      .getMoveset()
+      .filter(m => m.getMove().is("AttackMove"))
+      .map(m => m.getMove().type),
+  );
+  if (!attackMoveTypes.length) {
     return null;
   }
 
-  if (player) {
-    console.log(index, ignoredPoolIndexes[tier].filter(i => i <= index).length, ignoredPoolIndexes[tier]);
-  }
+  const attackMoveTypeWeights = attackMoveTypes.reduce((map, type) => {
+    const current = map.get(type) ?? 0;
+    if (current < 3) {
+      map.set(type, current + 1);
+    }
+    return map;
+  }, new Map<PokemonType, number>());
 
-  const item = pool[tier][index].item;
-  if (isCategoryId(item)) {
-    return getNewHeldItemCategoryOption(item);
-  }
-  return item;
+  const types = Array.from(attackMoveTypeWeights.keys());
 
-  //  console.log(modifierType, !player ? "(enemy)" : "");
+  const weights = types.map(type => customWeights[attackTypeToHeldItem[type]] ?? attackMoveTypeWeights.get(type)!);
+
+  const type = types[pickWeightedIndex(weights)];
+  return attackTypeToHeldItem[type];
 }
-*/
+
+export function getNewHeldItemFromCategory(
+  id: HeldItemCategoryId,
+  pokemon: Pokemon | Pokemon[],
+  customWeights: HeldItemWeights = {},
+): HeldItemId | null {
+  if (id === HeldItemCategoryId.BERRY) {
+    return getNewBerryHeldItem(customWeights);
+  }
+  if (id === HeldItemCategoryId.VITAMIN) {
+    return getNewVitaminHeldItem(customWeights);
+  }
+  if (id === HeldItemCategoryId.TYPE_ATTACK_BOOSTER) {
+    return getNewAttackTypeBoosterHeldItem(pokemon, customWeights);
+  }
+  return null;
+}
+
+function getNewHeldItemFromPool(pool: HeldItemPool, pokemon: Pokemon): HeldItemId | HeldItemSpecs {
+  const weights = pool.map(p => (typeof p.weight === "function" ? p.weight(coerceArray(pokemon)) : p.weight));
+
+  const entry = pool[pickWeightedIndex(weights)].entry;
+
+  if (typeof entry === "number") {
+    return entry as HeldItemId;
+  }
+
+  if (isHeldItemCategoryEntry(entry)) {
+    return getNewHeldItemFromCategory(entry.id, pokemon, entry?.customWeights) as HeldItemId;
+  }
+
+  return entry as HeldItemSpecs;
+}

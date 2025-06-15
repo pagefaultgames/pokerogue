@@ -1,22 +1,7 @@
 import { allHeldItems } from "#app/items/all-held-items";
 import { isItemInRequested, type HeldItemCategoryId, type HeldItemId } from "#app/enums/held-item-id";
 import type { FormChangeItem } from "#enums/form-change-item";
-import type { BASE_STAT_TOTAL_DATA } from "#app/items/held-items/base-stat-total";
-import type { BASE_STAT_FLAT_DATA } from "#app/items/held-items/base-stat-flat";
-
-type HELD_ITEM_DATA = BASE_STAT_TOTAL_DATA | BASE_STAT_FLAT_DATA;
-
-interface HeldItemProperties {
-  stack: number;
-  disabled?: boolean;
-  unstealable?: boolean; //TODO: ensure this is taken into account by stealing effects
-  cooldown?: number;
-  data?: HELD_ITEM_DATA;
-}
-
-export type HeldItemPropertyMap = {
-  [key in HeldItemId]?: HeldItemProperties;
-};
+import { isHeldItemSpecs, type HeldItemDataMap, type HeldItemSpecs } from "#app/items/held-item-data-types";
 
 interface FormChangeItemProperties {
   active: boolean;
@@ -27,7 +12,7 @@ export type FormChangeItemPropertyMap = {
 };
 
 export class PokemonItemManager {
-  public heldItems: HeldItemPropertyMap;
+  public heldItems: HeldItemDataMap;
   public formChangeItems: FormChangeItemPropertyMap;
 
   constructor() {
@@ -61,14 +46,6 @@ export class PokemonItemManager {
     return itemType in this.heldItems;
   }
 
-  /*
-  getItem(itemType: HeldItemId): HeldItemProperties {
-    if (itemType in this.heldItems) {
-      return this.heldItems[itemType];
-    }
-  }
-*/
-
   getStack(itemType: HeldItemId): number {
     const item = this.heldItems[itemType];
     return item ? item.stack : 0;
@@ -79,7 +56,7 @@ export class PokemonItemManager {
     return item ? item.stack >= allHeldItems[itemType].getMaxStackCount() : false;
   }
 
-  overrideItems(newItems: HeldItemPropertyMap) {
+  overrideItems(newItems: HeldItemDataMap) {
     this.heldItems = newItems;
     // The following is to allow randomly generated item configs to have stack 0
     for (const [item, properties] of Object.entries(this.heldItems)) {
@@ -89,7 +66,11 @@ export class PokemonItemManager {
     }
   }
 
-  add(itemType: HeldItemId, addStack = 1, data?: HELD_ITEM_DATA): boolean {
+  add(itemType: HeldItemId | HeldItemSpecs, addStack = 1): boolean {
+    if (isHeldItemSpecs(itemType)) {
+      return this.addItemWithSpecs(itemType);
+    }
+
     const maxStack = allHeldItems[itemType].getMaxStackCount();
     const item = this.heldItems[itemType];
 
@@ -100,10 +81,23 @@ export class PokemonItemManager {
         return true;
       }
     } else {
-      this.heldItems[itemType] = { stack: Math.min(addStack, maxStack), disabled: false, data: data };
+      this.heldItems[itemType] = { stack: Math.min(addStack, maxStack) };
       return true;
     }
     return false;
+  }
+
+  addItemWithSpecs(itemSpecs: HeldItemSpecs): boolean {
+    const id = itemSpecs.id;
+    const maxStack = allHeldItems[id].getMaxStackCount();
+    const item = this.heldItems[id];
+
+    const tempStack = item?.stack ?? 0;
+
+    this.heldItems[id] = itemSpecs;
+    this.heldItems[id].stack = Math.min(itemSpecs.stack + tempStack, maxStack);
+
+    return true;
   }
 
   remove(itemType: HeldItemId, removeStack = 1, all = false) {

@@ -1,11 +1,5 @@
 import type Pokemon from "#app/field/pokemon";
-import {
-  dailyStarterModifierPool,
-  enemyBuffModifierPool,
-  modifierPool,
-  trainerModifierPool,
-  wildModifierPool,
-} from "#app/modifier/modifier-pools";
+import { enemyBuffModifierPool, modifierPool } from "#app/modifier/modifier-pools";
 import { globalScene } from "#app/global-scene";
 import { DoubleBattleChanceBoosterModifier, SpeciesCritBoosterModifier, TurnStatusEffectModifier } from "./modifier";
 import { WeightedModifierType } from "./modifier-type";
@@ -26,35 +20,6 @@ import { AbilityId } from "#enums/ability-id";
 import { MAX_PER_TYPE_POKEBALLS } from "#app/data/pokeball";
 // biome-ignore lint/correctness/noUnusedImports: This is used in a tsdoc comment
 import type { initModifierTypes } from "./modifier-type";
-
-/**
- * Initialize the wild modifier pool
- */
-function initWildModifierPool() {
-  wildModifierPool[ModifierTier.COMMON] = [new WeightedModifierType(modifierTypes.BERRY, 1)].map(m => {
-    m.setTier(ModifierTier.COMMON);
-    return m;
-  });
-  wildModifierPool[ModifierTier.GREAT] = [new WeightedModifierType(modifierTypes.BASE_STAT_BOOSTER, 1)].map(m => {
-    m.setTier(ModifierTier.GREAT);
-    return m;
-  });
-  wildModifierPool[ModifierTier.ULTRA] = [
-    new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, 10),
-    new WeightedModifierType(modifierTypes.WHITE_HERB, 0),
-  ].map(m => {
-    m.setTier(ModifierTier.ULTRA);
-    return m;
-  });
-  wildModifierPool[ModifierTier.ROGUE] = [new WeightedModifierType(modifierTypes.LUCKY_EGG, 4)].map(m => {
-    m.setTier(ModifierTier.ROGUE);
-    return m;
-  });
-  wildModifierPool[ModifierTier.MASTER] = [new WeightedModifierType(modifierTypes.GOLDEN_EGG, 1)].map(m => {
-    m.setTier(ModifierTier.MASTER);
-    return m;
-  });
-}
 
 /**
  * Initialize the common modifier pool
@@ -649,46 +614,6 @@ function initMasterModifierPool() {
   });
 }
 
-function initTrainerModifierPool() {
-  trainerModifierPool[ModifierTier.COMMON] = [
-    new WeightedModifierType(modifierTypes.BERRY, 8),
-    new WeightedModifierType(modifierTypes.BASE_STAT_BOOSTER, 3),
-  ].map(m => {
-    m.setTier(ModifierTier.COMMON);
-    return m;
-  });
-  trainerModifierPool[ModifierTier.GREAT] = [new WeightedModifierType(modifierTypes.BASE_STAT_BOOSTER, 3)].map(m => {
-    m.setTier(ModifierTier.GREAT);
-    return m;
-  });
-  trainerModifierPool[ModifierTier.ULTRA] = [
-    new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, 10),
-    new WeightedModifierType(modifierTypes.WHITE_HERB, 0),
-  ].map(m => {
-    m.setTier(ModifierTier.ULTRA);
-    return m;
-  });
-  trainerModifierPool[ModifierTier.ROGUE] = [
-    new WeightedModifierType(modifierTypes.FOCUS_BAND, 2),
-    new WeightedModifierType(modifierTypes.LUCKY_EGG, 4),
-    new WeightedModifierType(modifierTypes.QUICK_CLAW, 1),
-    new WeightedModifierType(modifierTypes.GRIP_CLAW, 1),
-    new WeightedModifierType(modifierTypes.WIDE_LENS, 1),
-  ].map(m => {
-    m.setTier(ModifierTier.ROGUE);
-    return m;
-  });
-  trainerModifierPool[ModifierTier.MASTER] = [
-    new WeightedModifierType(modifierTypes.KINGS_ROCK, 1),
-    new WeightedModifierType(modifierTypes.LEFTOVERS, 1),
-    new WeightedModifierType(modifierTypes.SHELL_BELL, 1),
-    new WeightedModifierType(modifierTypes.SCOPE_LENS, 1),
-  ].map(m => {
-    m.setTier(ModifierTier.MASTER);
-    return m;
-  });
-}
-
 /**
  * Initialize the enemy buff modifier pool
  */
@@ -738,51 +663,6 @@ function initEnemyBuffModifierPool() {
 }
 
 /**
- * Initialize the daily starter modifier pool
- */
-function initDailyStarterModifierPool() {
-  dailyStarterModifierPool[ModifierTier.COMMON] = [
-    new WeightedModifierType(modifierTypes.BASE_STAT_BOOSTER, 1),
-    new WeightedModifierType(modifierTypes.BERRY, 3),
-  ].map(m => {
-    m.setTier(ModifierTier.COMMON);
-    return m;
-  });
-  dailyStarterModifierPool[ModifierTier.GREAT] = [new WeightedModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, 5)].map(
-    m => {
-      m.setTier(ModifierTier.GREAT);
-      return m;
-    },
-  );
-  dailyStarterModifierPool[ModifierTier.ULTRA] = [
-    new WeightedModifierType(modifierTypes.REVIVER_SEED, 4),
-    new WeightedModifierType(modifierTypes.SOOTHE_BELL, 1),
-    new WeightedModifierType(modifierTypes.SOUL_DEW, 1),
-    new WeightedModifierType(modifierTypes.GOLDEN_PUNCH, 1),
-  ].map(m => {
-    m.setTier(ModifierTier.ULTRA);
-    return m;
-  });
-  dailyStarterModifierPool[ModifierTier.ROGUE] = [
-    new WeightedModifierType(modifierTypes.GRIP_CLAW, 5),
-    new WeightedModifierType(modifierTypes.BATON, 2),
-    new WeightedModifierType(modifierTypes.FOCUS_BAND, 5),
-    new WeightedModifierType(modifierTypes.QUICK_CLAW, 3),
-    new WeightedModifierType(modifierTypes.KINGS_ROCK, 3),
-  ].map(m => {
-    m.setTier(ModifierTier.ROGUE);
-    return m;
-  });
-  dailyStarterModifierPool[ModifierTier.MASTER] = [
-    new WeightedModifierType(modifierTypes.LEFTOVERS, 1),
-    new WeightedModifierType(modifierTypes.SHELL_BELL, 1),
-  ].map(m => {
-    m.setTier(ModifierTier.MASTER);
-    return m;
-  });
-}
-
-/**
  * Initialize {@linkcode modifierPool} with the initial set of modifier types.
  * {@linkcode initModifierTypes} MUST be called before this function.
  */
@@ -798,7 +678,6 @@ export function initModifierPools() {
   initWildModifierPool();
   initTrainerModifierPool();
   initEnemyBuffModifierPool();
-  initDailyStarterModifierPool();
 }
 
 /**
