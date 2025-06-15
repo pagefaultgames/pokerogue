@@ -56,6 +56,10 @@ type HeldItemPoolEntry = {
 
 export type HeldItemPool = HeldItemPoolEntry[];
 
+export function isHeldItemPool(value: any): value is HeldItemPool {
+  return Array.isArray(value) && value.every(entry => "entry" in entry && "weight" in entry);
+}
+
 export type HeldItemTieredPool = {
   [key in RewardTier]?: HeldItemPool;
 };
@@ -63,7 +67,6 @@ export type HeldItemTieredPool = {
 type HeldItemConfigurationEntry = {
   entry: HeldItemId | HeldItemCategoryEntry | HeldItemSpecs | HeldItemPool;
   count?: number | (() => number);
-  excluded?: HeldItemId[];
 };
 
 export type HeldItemConfiguration = HeldItemConfigurationEntry[];

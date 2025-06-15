@@ -7,11 +7,14 @@ import type { PokemonType } from "#enums/pokemon-type";
 import { RewardTier } from "#enums/reward-tier";
 import { PERMANENT_STATS } from "#enums/stat";
 import {
+  type HeldItemConfiguration,
   type HeldItemPool,
   type HeldItemSpecs,
   type HeldItemTieredPool,
   type HeldItemWeights,
   isHeldItemCategoryEntry,
+  isHeldItemPool,
+  isHeldItemSpecs,
 } from "./held-item-data-types";
 import { attackTypeToHeldItem } from "./held-items/attack-type-booster";
 import { permanentStatToHeldItem } from "./held-items/base-stat-booster";
@@ -140,7 +143,7 @@ export function getNewHeldItemFromCategory(
   return null;
 }
 
-function getNewHeldItemFromPool(pool: HeldItemPool, pokemon: Pokemon): HeldItemId | HeldItemSpecs {
+function getNewHeldItemFromPool(pool: HeldItemPool, pokemon: Pokemon | Pokemon[]): HeldItemId | HeldItemSpecs {
   const weights = pool.map(p => (typeof p.weight === "function" ? p.weight(coerceArray(pokemon)) : p.weight));
 
   const entry = pool[pickWeightedIndex(weights)].entry;
@@ -154,4 +157,37 @@ function getNewHeldItemFromPool(pool: HeldItemPool, pokemon: Pokemon): HeldItemI
   }
 
   return entry as HeldItemSpecs;
+}
+
+export function assignItemsFromConfiguration(config: HeldItemConfiguration, pokemon: Pokemon) {
+  config.forEach(item => {
+    const { entry, count } = item;
+    const actualCount = typeof count === "function" ? count() : (count ?? 1);
+
+    if (typeof entry === "number") {
+      pokemon.heldItemManager.add(entry, actualCount);
+    }
+
+    if (isHeldItemSpecs(entry)) {
+      pokemon.heldItemManager.add(entry);
+    }
+
+    if (isHeldItemCategoryEntry(entry)) {
+      for (let i = 1; i <= actualCount; i++) {
+        const newItem = getNewHeldItemFromCategory(entry.id, pokemon, entry?.customWeights);
+        if (newItem) {
+          pokemon.heldItemManager.add(newItem);
+        }
+      }
+    }
+
+    if (isHeldItemPool(entry)) {
+      for (let i = 1; i <= actualCount; i++) {
+        const newItem = getNewHeldItemFromPool(entry, pokemon);
+        if (newItem) {
+          pokemon.heldItemManager.add(newItem);
+        }
+      }
+    }
+  });
 }
