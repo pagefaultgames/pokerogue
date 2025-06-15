@@ -977,7 +977,7 @@ class StealthRockTag extends ArenaTrapTag {
 
   override activateTrap(pokemon: Pokemon, simulated: boolean): boolean {
     const cancelled = new BooleanHolder(false);
-    applyAbAttrs("BlockNonDirectDamageAbAttr", pokemon, cancelled);
+    applyAbAttrs("BlockNonDirectDamageAbAttr", { pokemon, cancelled });
     if (cancelled.value) {
       return false;
     }
@@ -1043,7 +1043,12 @@ class StickyWebTag extends ArenaTrapTag {
   override activateTrap(pokemon: Pokemon, simulated: boolean): boolean {
     if (pokemon.isGrounded()) {
       const cancelled = new BooleanHolder(false);
-      applyAbAttrs("ProtectStatAbAttr", pokemon, cancelled);
+      applyAbAttrs("ProtectStatAbAttr", {
+        pokemon,
+        cancelled,
+        stat: Stat.SPD,
+        stages: -1,
+      });
 
       if (simulated) {
         return !cancelled.value;
@@ -1475,7 +1480,9 @@ export class SuppressAbilitiesTag extends ArenaTag {
 
       for (const fieldPokemon of globalScene.getField(true)) {
         if (fieldPokemon && fieldPokemon.id !== pokemon.id) {
-          [true, false].forEach(passive => applyOnLoseAbAttrs(fieldPokemon, passive));
+          // TODO: investigate whether we can just remove the foreach and call `applyAbAttrs` directly, providing
+          // the appropriate attributes (preLEaveField and IllusionBreak)
+          [true, false].forEach(passive => applyOnLoseAbAttrs({ pokemon: fieldPokemon, passive }));
         }
       }
     }
