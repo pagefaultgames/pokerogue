@@ -9,6 +9,7 @@ import { globalScene } from "#app/global-scene";
 import { applyInSpeedOrder } from "#app/utils/speed-order";
 import type Pokemon from "#app/field/pokemon";
 import { applyAbAttrs } from "#app/data/abilities/apply-ab-attrs";
+import { BypassSpeedChanceModifier } from "#app/modifier/modifier";
 
 export class TurnStartPhase extends FieldPhase {
   public readonly phaseName = "TurnStartPhase";
@@ -73,7 +74,10 @@ export class TurnStartPhase extends FieldPhase {
     });
 
     const phaseManager = globalScene.phaseManager;
-    applyInSpeedOrder(activeField, (p: Pokemon) => applyAbAttrs("BypassSpeedChanceAbAttr", p, null));
+    applyInSpeedOrder(activeField, (p: Pokemon) => {
+      applyAbAttrs("BypassSpeedChanceAbAttr", p, null);
+      globalScene.applyModifiers(BypassSpeedChanceModifier, p.isPlayer(), p);
+    });
 
     for (const o of moveOrder) {
       const pokemon = field[o];
