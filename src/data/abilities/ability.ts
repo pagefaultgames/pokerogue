@@ -8407,7 +8407,7 @@ export function initAbilities() {
       .ignorable(),
     new Ability(AbilityId.ANALYTIC, 5)
       .attr(MovePowerBoostAbAttr, (user, _target, _move) => {
-        const movePhase = globalScene.phaseManager.findPhase((phase) => phase.is("MovePhase") && phase.pokemon.id !== user?.id);
+        const movePhase = globalScene.phaseManager.findPhase("MovePhase", (phase) => phase.is("MovePhase") && phase.pokemon.id !== user?.id);
         return isNullOrUndefined(movePhase);
       }, 1.3),
     new Ability(AbilityId.ILLUSION, 5)

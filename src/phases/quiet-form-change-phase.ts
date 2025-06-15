@@ -11,7 +11,6 @@ import { BattlerTagType } from "#app/enums/battler-tag-type";
 import type Pokemon from "#app/field/pokemon";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { BattlePhase } from "./battle-phase";
-import type { MovePhase } from "./move-phase";
 import { applyAbAttrs } from "#app/data/abilities/apply-ab-attrs";
 
 export class QuietFormChangePhase extends BattlePhase {
@@ -172,9 +171,7 @@ export class QuietFormChangePhase extends BattlePhase {
       this.pokemon.initBattleInfo();
       this.pokemon.cry();
 
-      const movePhase = globalScene.phaseManager.findPhase(
-        p => p.is("MovePhase") && p.pokemon === this.pokemon,
-      ) as MovePhase;
+      const movePhase = globalScene.phaseManager.findPhase("MovePhase", p => p.pokemon === this.pokemon);
       if (movePhase) {
         movePhase.cancel();
       }

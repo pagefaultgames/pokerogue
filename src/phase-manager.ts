@@ -394,15 +394,21 @@ export class PhaseManager {
 
   /**
    * Find a specific {@linkcode Phase} in the phase queue.
-   *
+   * @param phaseType - A {@linkcode PhaseString} representing which type to search for
    * @param phaseFilter filter function to use to find the wanted phase
    * @returns the found phase or undefined if none found
    */
-  findPhase<P extends Phase = Phase>(phaseFilter: (phase: P) => boolean): P | undefined {
-    return this.phaseQueue.find(phaseFilter) as P;
+  findPhase<P extends PhaseString>(
+    phaseType: P,
+    phaseFilter?: (phase: PhaseMap[P]) => boolean,
+  ): PhaseMap[P] | undefined {
+    if (this.dynamicQueueManager.isDynamicPhase(phaseType)) {
+      return this.dynamicQueueManager.findPhaseOfType(phaseType, phaseFilter) as PhaseMap[P];
+    }
+    return this.phaseQueue.find(phase => phase.is(phaseType) && (!phaseFilter || phaseFilter(phase))) as PhaseMap[P];
   }
 
-  tryReplacePhase(phaseFilter: (phase: Phase) => boolean, phase: Phase): boolean {
+  tryReplacePhase(phaseFilter: PhaseConditionFunc, phase: Phase): boolean {
     const phaseIndex = this.phaseQueue.findIndex(phaseFilter);
     if (phaseIndex > -1) {
       this.phaseQueue[phaseIndex] = phase;
@@ -411,7 +417,7 @@ export class PhaseManager {
     return false;
   }
 
-  tryRemovePhase(phaseFilter: (phase: Phase) => boolean): boolean {
+  tryRemovePhase(phaseFilter: PhaseConditionFunc): boolean {
     const phaseIndex = this.phaseQueue.findIndex(phaseFilter);
     if (phaseIndex > -1) {
       this.phaseQueue.splice(phaseIndex, 1);
@@ -424,7 +430,7 @@ export class PhaseManager {
    * Will search for a specific phase in {@linkcode phaseQueuePrepend} via filter, and remove the first result if a match is found.
    * @param phaseFilter filter function
    */
-  tryRemoveUnshiftedPhase(phaseFilter: (phase: Phase) => boolean): boolean {
+  tryRemoveUnshiftedPhase(phaseFilter: PhaseConditionFunc): boolean {
     const phaseIndex = this.phaseQueuePrepend.findIndex(phaseFilter);
     if (phaseIndex > -1) {
       this.phaseQueuePrepend.splice(phaseIndex, 1);
@@ -464,7 +470,7 @@ export class PhaseManager {
    * @param condition Condition the target phase must meet to be appended to
    * @returns `true` if a `targetPhase` was found to append to
    */
-  appendToPhase(phase: Phase | Phase[], targetPhase: PhaseString, condition?: (p: Phase) => boolean): boolean {
+  appendToPhase(phase: Phase | Phase[], targetPhase: PhaseString, condition?: PhaseConditionFunc): boolean {
     phase = coerceArray(phase);
     const target = PHASES[targetPhase];
     const targetIndex = this.phaseQueue.findIndex(ph => ph instanceof target && (!condition || condition(ph)));

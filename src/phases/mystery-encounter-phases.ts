@@ -237,7 +237,7 @@ export class MysteryEncounterBattleStartCleanupPhase extends Phase {
     });
 
     // Remove any status tick phases
-    while (globalScene.phaseManager.findPhase(p => p.is("PostTurnStatusEffectPhase"))) {
+    while (globalScene.phaseManager.findPhase("PostTurnStatusEffectPhase")) {
       globalScene.phaseManager.tryRemovePhase(p => p.is("PostTurnStatusEffectPhase"));
     }
 

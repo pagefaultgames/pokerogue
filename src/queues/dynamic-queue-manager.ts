@@ -36,6 +36,10 @@ export class DynamicQueueManager {
     return this.dynamicPhaseMap.has(type);
   }
 
+  public findPhaseOfType(type: PhaseString, condition?: PhaseConditionFunc): Phase | undefined {
+    return this.dynamicPhaseMap.get(type)?.findPhase(condition);
+  }
+
   public exists(type: PhaseString, condition?: PhaseConditionFunc): boolean {
     return !!this.dynamicPhaseMap.get(type)?.hasPhaseWithCondition(condition);
   }

@@ -861,8 +861,8 @@ export default class BattleScene extends SceneBase {
       let targetingMovePhase: MovePhase;
       do {
         targetingMovePhase = this.phaseManager.findPhase(
+          "MovePhase",
           mp =>
-            mp.is("MovePhase") &&
             mp.targets.length === 1 &&
             mp.targets[0] === removedPokemon.getBattlerIndex() &&
             mp.pokemon.isPlayer() !== allyPokemon.isPlayer(),

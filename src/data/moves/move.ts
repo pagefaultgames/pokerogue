@@ -3171,7 +3171,7 @@ export class AwaitCombinedPledgeAttr extends OverrideMoveEffectAttr {
 
     const overridden = args[0] as BooleanHolder;
 
-    const allyMovePhase = globalScene.phaseManager.findPhase<MovePhase>((phase) => phase.is("MovePhase") && phase.pokemon.isPlayer() === user.isPlayer());
+    const allyMovePhase = globalScene.phaseManager.findPhase("MovePhase", (phase) => phase.pokemon.isPlayer() === user.isPlayer());
     if (allyMovePhase) {
       const allyMove = allyMovePhase.move.getMove();
       if (allyMove !== move && allyMove.hasAttr("AwaitCombinedPledgeAttr")) {
@@ -4534,8 +4534,7 @@ export class CueNextRoundAttr extends MoveEffectAttr {
   }
 
   override apply(user: Pokemon, target: Pokemon, move: Move, args?: any[]): boolean {
-    const nextRoundPhase = globalScene.phaseManager.findPhase<MovePhase>(phase =>
-      phase.is("MovePhase") && phase.move.moveId === MoveId.ROUND
+    const nextRoundPhase = globalScene.phaseManager.findPhase("MovePhase", phase => phase.move.moveId === MoveId.ROUND
     );
 
     if (!nextRoundPhase) {
@@ -6217,7 +6216,7 @@ export class RevivalBlessingAttr extends MoveEffectAttr {
           globalScene.phaseManager.tryRemovePhase((phase: SwitchSummonPhase) => phase.is("SwitchSummonPhase") && phase.getPokemon() === pokemon);
           // If the pokemon being revived was alive earlier in the turn, cancel its move
           // (revived pokemon can't move in the turn they're brought back)
-          globalScene.phaseManager.findPhase((phase: MovePhase) => phase.pokemon === pokemon)?.cancel();
+          globalScene.phaseManager.findPhase("MovePhase", (phase: MovePhase) => phase.pokemon === pokemon)?.cancel();
           if (user.fieldPosition === FieldPosition.CENTER) {
             user.setFieldPosition(FieldPosition.LEFT);
           }
@@ -7887,7 +7886,7 @@ export class AfterYouAttr extends MoveEffectAttr {
     globalScene.phaseManager.queueMessage(i18next.t("moveTriggers:afterYou", { targetName: getPokemonNameWithAffix(target) }));
 
     //Will find next acting phase of the targeted pokémon, delete it and queue it next on successful delete.
-    const nextAttackPhase = globalScene.phaseManager.findPhase<MovePhase>((phase) => phase.pokemon === target);
+    const nextAttackPhase = globalScene.phaseManager.findPhase("MovePhase", (phase) => phase.pokemon === target);
     if (nextAttackPhase && globalScene.phaseManager.tryRemovePhase((phase: MovePhase) => phase.pokemon === target)) {
       globalScene.phaseManager.prependNewToPhase("MovePhase", "MovePhase", target, [ ...nextAttackPhase.targets ], nextAttackPhase.move);
     }
