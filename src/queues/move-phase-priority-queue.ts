@@ -1,10 +1,20 @@
+import type { PhaseConditionFunc } from "#app/@types/phase-condition";
 import type { MovePhase } from "#app/phases/move-phase";
 import { PokemonPhasePriorityQueue } from "#app/queues/pokemon-phase-priority-queue";
+import { isNullOrUndefined } from "#app/utils/common";
+import type { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
 
 export class MovePhasePriorityQueue extends PokemonPhasePriorityQueue<MovePhase> {
   public override reorder(): void {
     super.reorder();
     this.sortPostSpeed();
+  }
+
+  public setTimingModifier(condition: PhaseConditionFunc, modifier: MovePhaseTimingModifier): void {
+    const phase = this.queue.find(phase => condition(phase));
+    if (!isNullOrUndefined(phase)) {
+      phase.timingModifier = modifier;
+    }
   }
 
   private sortPostSpeed(): void {
@@ -18,11 +28,17 @@ export class MovePhasePriorityQueue extends PokemonPhasePriorityQueue<MovePhase>
         movePhase.move.getMove().getPriorityModifier(movePhase.pokemon),
       );
 
-      if (priority[0] === priority[1] && priorityModifiers[0] !== priorityModifiers[1]) {
-        return priorityModifiers[0] - priorityModifiers[1];
+      const timingModifiers = [a, b].map(movePhase => movePhase.timingModifier);
+
+      if (timingModifiers[0] !== timingModifiers[1]) {
+        return timingModifiers[1] - timingModifiers[0];
       }
 
-      return priority[0] - priority[1];
+      if (priority[0] === priority[1] && priorityModifiers[0] !== priorityModifiers[1]) {
+        return priorityModifiers[1] - priorityModifiers[0];
+      }
+
+      return priority[1] - priority[0];
     });
   }
 }
