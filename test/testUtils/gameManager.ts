@@ -531,7 +531,7 @@ export default class GameManager {
   async setTurnOrder(order: BattlerIndex[]): Promise<void> {
     await this.phaseInterceptor.to(TurnStartPhase, false);
 
-    vi.spyOn(this.scene.phaseManager.getCurrentPhase() as TurnStartPhase, "getSpeedOrder").mockReturnValue(order);
+    this.scene.phaseManager.dynamicQueueManager.setMoveOrder(order);
   }
 
   /**

@@ -228,7 +228,7 @@ export class PhaseManager {
   private phaseQueuePrependSpliceIndex = -1;
   private nextCommandPhaseQueue: Phase[] = [];
 
-  private dynamicQueueManager = new DynamicQueueManager();
+  public dynamicQueueManager = new DynamicQueueManager();
 
   private currentPhase: Phase | null = null;
   private standbyPhase: Phase | null = null;

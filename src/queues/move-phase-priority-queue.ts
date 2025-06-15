@@ -2,6 +2,7 @@ import type { PhaseConditionFunc } from "#app/@types/phase-condition";
 import type { MovePhase } from "#app/phases/move-phase";
 import { PokemonPhasePriorityQueue } from "#app/queues/pokemon-phase-priority-queue";
 import { isNullOrUndefined } from "#app/utils/common";
+import type { BattlerIndex } from "#enums/battler-index";
 import type { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
 
 export class MovePhasePriorityQueue extends PokemonPhasePriorityQueue<MovePhase> {
@@ -15,6 +16,10 @@ export class MovePhasePriorityQueue extends PokemonPhasePriorityQueue<MovePhase>
     if (!isNullOrUndefined(phase)) {
       phase.timingModifier = modifier;
     }
+  }
+
+  public setMoveOrder(order: BattlerIndex[]) {
+    this.setOrder = order;
   }
 
   private sortPostSpeed(): void {

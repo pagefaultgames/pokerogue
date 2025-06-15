@@ -6,6 +6,7 @@ import { MovePhasePriorityQueue } from "#app/queues/move-phase-priority-queue";
 import type { PhasePriorityQueue } from "#app/queues/phase-priority-queue";
 import { PokemonPhasePriorityQueue } from "#app/queues/pokemon-phase-priority-queue";
 import { PostSummonPhasePriorityQueue } from "#app/queues/post-summon-phase-priority-queue";
+import type { BattlerIndex } from "#enums/battler-index";
 import type { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
 export class DynamicQueueManager {
   private dynamicPhaseMap: Map<PhaseString, PhasePriorityQueue<Phase>>;
@@ -42,5 +43,9 @@ export class DynamicQueueManager {
   public setMoveTimingModifier(condition: PhaseConditionFunc, modifier: MovePhaseTimingModifier) {
     const movePhaseQueue: MovePhasePriorityQueue = this.dynamicPhaseMap.get("MovePhase") as MovePhasePriorityQueue;
     movePhaseQueue.setTimingModifier(condition, modifier);
+  }
+
+  public setMoveOrder(order: BattlerIndex[]) {
+    (this.dynamicPhaseMap.get("MovePhase") as MovePhasePriorityQueue).setMoveOrder(order);
   }
 }
