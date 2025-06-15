@@ -23,18 +23,19 @@ describe("Moves - Rollout", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.disableCrits();
-    game.override.battleStyle("single");
-    game.override.starterSpecies(SpeciesId.RATTATA);
-    game.override.ability(AbilityId.BALL_FETCH);
-    game.override.enemySpecies(SpeciesId.BIDOOF);
-    game.override.enemyAbility(AbilityId.BALL_FETCH);
-    game.override.startingLevel(100);
-    game.override.enemyLevel(100);
-    game.override.enemyMoveset(MoveId.SPLASH);
+    game.override
+      .disableCrits()
+      .battleStyle("single")
+      .starterSpecies(SpeciesId.RATTATA)
+      .ability(AbilityId.BALL_FETCH)
+      .enemySpecies(SpeciesId.BIDOOF)
+      .enemyAbility(AbilityId.BALL_FETCH)
+      .startingLevel(100)
+      .enemyLevel(100)
+      .enemyMoveset(MoveId.SPLASH);
   });
 
-  it("should double it's dmg on sequential uses but reset after 5", async () => {
+  it("should double its dmg on sequential uses but reset after 5", async () => {
     game.override.moveset([MoveId.ROLLOUT]);
     vi.spyOn(allMoves[MoveId.ROLLOUT], "accuracy", "get").mockReturnValue(100); //always hit
 

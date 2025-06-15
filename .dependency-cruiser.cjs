@@ -16,7 +16,7 @@ module.exports = {
     {
       name: "only-type-imports",
       severity: "error",
-      comment: "Files in enums and @types may only use type imports.",
+      comment: "Files in 'enums/' and '@types/' must only use type imports.",
       from: {
         path: ["(^|/)src/@types", "(^|/)src/enums"],
       },
@@ -26,7 +26,7 @@ module.exports = {
     },
     {
       name: "no-circular-at-runtime",
-      severity: "warn",
+      severity: "error",
       comment:
         "This dependency is part of a circular relationship. You might want to revise " +
         "your solution (i.e. use dependency inversion, make sure the modules have a single responsibility) ",
@@ -46,7 +46,7 @@ module.exports = {
         "add an exception for it in your dependency-cruiser configuration. By default " +
         "this rule does not scrutinize dot-files (e.g. .eslintrc.js), TypeScript declaration " +
         "files (.d.ts), tsconfig.json and some of the babel and webpack configs.",
-      severity: "warn",
+      severity: "error",
       from: {
         orphan: true,
         pathNot: [
@@ -54,8 +54,7 @@ module.exports = {
           "[.]d[.]ts$", // TypeScript declaration files
           "(^|/)tsconfig[.]json$", // TypeScript config
           "(^|/)(?:babel|webpack)[.]config[.](?:js|cjs|mjs|ts|cts|mts|json)$", // other configs
-          // anything in src/@types
-          "(^|/)src/@types/",
+          "(^|/)test/.+[.]setup[.]ts", // Vitest setup files
         ],
       },
       to: {},
@@ -65,7 +64,7 @@ module.exports = {
       comment:
         "A module depends on a node core module that has been deprecated. Find an alternative - these are " +
         "bound to exist - node doesn't deprecate lightly.",
-      severity: "warn",
+      severity: "error",
       from: {},
       to: {
         dependencyTypes: ["core"],
@@ -98,7 +97,7 @@ module.exports = {
       comment:
         "This module uses a (version of an) npm module that has been deprecated. Either upgrade to a later " +
         "version of that module, or find an alternative. Deprecated modules are a security risk.",
-      severity: "warn",
+      severity: "error",
       from: {},
       to: {
         dependencyTypes: ["deprecated"],
@@ -134,7 +133,7 @@ module.exports = {
         "Likely this module depends on an external ('npm') package that occurs more than once " +
         "in your package.json i.e. bot as a devDependencies and in dependencies. This will cause " +
         "maintenance problems later on.",
-      severity: "warn",
+      severity: "error",
       from: {},
       to: {
         moreThanOneDependencyType: true,
@@ -145,7 +144,7 @@ module.exports = {
       },
     },
 
-    /* rules you might want to tweak for your specific situation: */
+    // rules you might want to tweak for your specific situation:
 
     {
       name: "not-to-spec",
@@ -200,7 +199,7 @@ module.exports = {
         "in your package.json. This makes sense if your package is e.g. a plugin, but in " +
         "other cases - maybe not so much. If the use of a peer dependency is intentional " +
         "add an exception to your dependency-cruiser configuration.",
-      severity: "warn",
+      severity: "error",
       from: {},
       to: {
         dependencyTypes: ["npm-peer"],
@@ -208,6 +207,7 @@ module.exports = {
     },
   ],
   options: {
+    exclude: ["src/plugins/vite/*", "src/vite.env.d.ts"],
     /* Which modules not to follow further when encountered */
     doNotFollow: {
       /* path: an array of regular expressions in strings to match against */
@@ -247,7 +247,7 @@ module.exports = {
        true: also detect dependencies that only exist before typescript-to-javascript compilation
        "specify": for each dependency identify whether it only exists before compilation or also after
      */
-    // tsPreCompilationDeps: false,
+    tsPreCompilationDeps: true,
 
     /* list of extensions to scan that aren't javascript or compile-to-javascript.
        Empty by default. Only put extensions in here that you want to take into

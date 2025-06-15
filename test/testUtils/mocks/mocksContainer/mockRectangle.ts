@@ -1,3 +1,4 @@
+import { coerceArray } from "#app/utils/common";
 import type { MockGameObject } from "../mockGameObject";
 
 export default class MockRectangle implements MockGameObject {
@@ -50,11 +51,7 @@ export default class MockRectangle implements MockGameObject {
 
   add(obj: MockGameObject | MockGameObject[]): this {
     // Adds a child to this Game Object.
-    if (Array.isArray(obj)) {
-      this.list.push(...obj);
-    } else {
-      this.list.push(obj);
-    }
+    this.list.push(...coerceArray(obj));
     return this;
   }
 

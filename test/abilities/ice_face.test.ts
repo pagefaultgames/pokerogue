@@ -30,10 +30,11 @@ describe("Abilities - Ice Face", () => {
 
   beforeEach(() => {
     game = new GameManager(phaserGame);
-    game.override.battleStyle("single");
-    game.override.enemySpecies(SpeciesId.EISCUE);
-    game.override.enemyAbility(AbilityId.ICE_FACE);
-    game.override.moveset([MoveId.TACKLE, MoveId.ICE_BEAM, MoveId.TOXIC_THREAD, MoveId.HAIL]);
+    game.override
+      .battleStyle("single")
+      .enemySpecies(SpeciesId.EISCUE)
+      .enemyAbility(AbilityId.ICE_FACE)
+      .moveset([MoveId.TACKLE, MoveId.ICE_BEAM, MoveId.TOXIC_THREAD, MoveId.HAIL]);
   });
 
   it("takes no damage from physical move and transforms to Noice", async () => {
@@ -51,8 +52,7 @@ describe("Abilities - Ice Face", () => {
   });
 
   it("takes no damage from the first hit of multihit physical move and transforms to Noice", async () => {
-    game.override.moveset([MoveId.SURGING_STRIKES]);
-    game.override.enemyLevel(1);
+    game.override.moveset([MoveId.SURGING_STRIKES]).enemyLevel(1);
     await game.classicMode.startBattle([SpeciesId.HITMONLEE]);
 
     game.move.select(MoveId.SURGING_STRIKES);
@@ -196,12 +196,13 @@ describe("Abilities - Ice Face", () => {
   });
 
   it("reverts to Ice Face on arena reset", async () => {
-    game.override.startingWave(4);
-    game.override.startingLevel(4);
-    game.override.enemySpecies(SpeciesId.MAGIKARP);
-    game.override.starterForms({
-      [SpeciesId.EISCUE]: noiceForm,
-    });
+    game.override
+      .startingWave(4)
+      .startingLevel(4)
+      .enemySpecies(SpeciesId.MAGIKARP)
+      .starterForms({
+        [SpeciesId.EISCUE]: noiceForm,
+      });
 
     await game.classicMode.startBattle([SpeciesId.EISCUE]);
 
