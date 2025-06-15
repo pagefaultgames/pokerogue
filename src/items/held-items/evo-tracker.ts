@@ -1,6 +1,5 @@
 import type Pokemon from "#app/field/pokemon";
 import { globalScene } from "#app/global-scene";
-import { ExtraModifierModifier, MoneyMultiplierModifier, TempExtraModifierModifier } from "#app/modifier/modifier";
 import type { NumberHolder } from "#app/utils/common";
 import { HeldItemId } from "#enums/held-item-id";
 import type { SpeciesId } from "#enums/species-id";
@@ -76,10 +75,7 @@ export class GimmighoulEvoTrackerHeldItem extends EvoTrackerHeldItem {
       pokemon.evoCounter +
       pokemon.heldItemManager.getStack(HeldItemId.GOLDEN_PUNCH) +
       globalScene.findModifiers(
-        m =>
-          m instanceof MoneyMultiplierModifier ||
-          m instanceof ExtraModifierModifier ||
-          m instanceof TempExtraModifierModifier,
+        m => m.is("MoneyMultiplierModifier") || m.is("ExtraModifierModifier") || m.is("TempExtraModifierModifier"),
       ).length;
     return stackCount;
   }
