@@ -1,7 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import i18next from "i18next";
 import { isNullOrUndefined, randSeedInt } from "#app/utils/common";
-import { PokemonHeldItemModifier } from "#app/modifier/modifier";
 import type { EnemyPokemon, PlayerPokemon } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
 import {
@@ -387,42 +386,6 @@ export async function modifyPlayerPokemonBST(pokemon: PlayerPokemon, value: numb
   }
 }
 
-/**
- * Will attempt to add a new modifier to a Pokemon.
- * If the Pokemon already has max stacks of that item, it will instead apply 'fallbackModifierType', if specified.
- * @param scene
- * @param pokemon
- * @param modType
- * @param fallbackModifierType
- */
-export async function applyModifierTypeToPlayerPokemon(
-  pokemon: PlayerPokemon,
-  modType: PokemonHeldItemModifierType,
-  fallbackModifierType?: PokemonHeldItemModifierType,
-) {
-  // Check if the Pokemon has max stacks of that item already
-  const modifier = modType.newModifier(pokemon);
-  const existing = globalScene.findModifier(
-    m =>
-      m instanceof PokemonHeldItemModifier &&
-      m.type.id === modType.id &&
-      m.pokemonId === pokemon.id &&
-      m.matchType(modifier),
-  ) as PokemonHeldItemModifier;
-
-  // At max stacks
-  if (existing && existing.getStackCount() >= existing.getMaxStackCount()) {
-    if (!fallbackModifierType) {
-      return;
-    }
-
-    // Apply fallback
-    return applyModifierTypeToPlayerPokemon(pokemon, fallbackModifierType);
-  }
-
-  globalScene.addModifier(modifier, false, false, false, true);
-}
-
 export function applyHeldItemWithFallback(pokemon: Pokemon, item: HeldItemId, fallbackItem?: HeldItemId) {
   const added = pokemon.heldItemManager.add(item);
   if (!added && fallbackItem) {
@@ -694,20 +657,10 @@ export async function catchPokemon(
         }
       };
       const addToParty = (slotIndex?: number) => {
-        const newPokemon = pokemon.addToParty(pokeballType, slotIndex);
-        const modifiers = globalScene.findModifiers(m => m instanceof PokemonHeldItemModifier, false);
+        pokemon.addToParty(pokeballType, slotIndex);
         if (globalScene.getPlayerParty().filter(p => p.isShiny()).length === 6) {
           globalScene.validateAchv(achvs.SHINY_PARTY);
         }
-        Promise.all(modifiers.map(m => globalScene.addModifier(m, true))).then(() => {
-          globalScene.updateModifiers(true);
-          removePokemon();
-          if (newPokemon) {
-            newPokemon.loadAssets().then(end);
-          } else {
-            end();
-          }
-        });
       };
       Promise.all([pokemon.hideInfo(), globalScene.gameData.setPokemonCaught(pokemon)]).then(() => {
         if (globalScene.getPlayerParty().length === 6) {

@@ -7,10 +7,7 @@ import {
   setEncounterExp,
   setEncounterRewards,
   transitionMysteryEncounterIntroVisuals,
-  generateModifierType,
 } from "#app/data/mystery-encounters/utils/encounter-phase-utils";
-import type { AttackTypeBoosterModifierType } from "#app/modifier/modifier-type";
-import { modifierTypes } from "#app/data/data-lists";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { globalScene } from "#app/global-scene";
 import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
@@ -36,7 +33,6 @@ import { queueEncounterMessage } from "#app/data/mystery-encounters/utils/encoun
 import {
   applyAbilityOverrideToPokemon,
   applyDamageToPokemon,
-  applyModifierTypeToPlayerPokemon,
 } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
@@ -46,6 +42,9 @@ import { AbilityId } from "#enums/ability-id";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { Stat } from "#enums/stat";
 import { FIRE_RESISTANT_ABILITIES } from "#app/data/mystery-encounters/requirements/requirement-groups";
+import { HeldItemCategoryId, HeldItemId } from "#enums/held-item-id";
+import { getNewHeldItemFromCategory } from "#app/items/held-item-pool";
+import { allHeldItems } from "#app/items/all-held-items";
 import { allAbilities } from "#app/data/data-lists";
 
 /** the i18n namespace for the encounter */
@@ -302,16 +301,14 @@ function giveLeadPokemonAttackTypeBoostItem() {
   const leadPokemon = globalScene.getPlayerParty()?.[0];
   if (leadPokemon) {
     // Generate type booster held item, default to Charcoal if item fails to generate
-    let boosterModifierType = generateModifierType(modifierTypes.ATTACK_TYPE_BOOSTER) as AttackTypeBoosterModifierType;
-    if (!boosterModifierType) {
-      boosterModifierType = generateModifierType(modifierTypes.ATTACK_TYPE_BOOSTER, [
-        PokemonType.FIRE,
-      ]) as AttackTypeBoosterModifierType;
+    let item = getNewHeldItemFromCategory(HeldItemCategoryId.TYPE_ATTACK_BOOSTER, leadPokemon);
+    if (!item) {
+      item = HeldItemId.CHARCOAL;
     }
-    applyModifierTypeToPlayerPokemon(leadPokemon, boosterModifierType);
+    leadPokemon.heldItemManager.add(item);
 
     const encounter = globalScene.currentBattle.mysteryEncounter!;
-    encounter.setDialogueToken("itemName", boosterModifierType.name);
+    encounter.setDialogueToken("itemName", allHeldItems[item].name);
     encounter.setDialogueToken("leadPokemon", leadPokemon.getNameToRender());
     queueEncounterMessage(`${namespace}:found_item`);
   }

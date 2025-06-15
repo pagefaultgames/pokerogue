@@ -53,7 +53,7 @@ import { PokemonType } from "#enums/pokemon-type";
 import { getNatureName } from "#app/data/nature";
 import { getPokemonNameWithAffix } from "#app/messages";
 import { timedEventManager } from "#app/global-event-manager";
-import type { HeldItemPropertyMap } from "#app/field/pokemon-held-item-manager";
+import type { HeldItemConfiguration } from "#app/items/held-item-data-types";
 
 /**
  * Animates exclamation sprite over trainer's head at start of encounter
@@ -103,7 +103,7 @@ export interface EnemyPokemonConfig {
   /** Can set just the status, or pass a timer on the status turns */
   status?: StatusEffect | [StatusEffect, number];
   mysteryEncounterBattleEffects?: (pokemon: Pokemon) => void;
-  heldItemConfig?: HeldItemPropertyMap;
+  heldItemConfig?: HeldItemConfiguration;
   tags?: BattlerTagType[];
   dataSource?: PokemonData;
   tera?: PokemonType;
