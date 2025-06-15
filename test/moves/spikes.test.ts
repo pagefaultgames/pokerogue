@@ -49,7 +49,7 @@ describe("Moves - Spikes", () => {
 
     const player = game.scene.getPlayerParty()[0];
     expect(player.hp).toBe(player.getMaxHp());
-  }, 20000);
+  });
 
   it("should damage opposing pokemon that are forced to switch in", async () => {
     game.override.startingWave(5);
@@ -63,7 +63,7 @@ describe("Moves - Spikes", () => {
 
     const enemy = game.scene.getEnemyParty()[0];
     expect(enemy.hp).toBeLessThan(enemy.getMaxHp());
-  }, 20000);
+  });
 
   it("should damage opposing pokemon that choose to switch in", async () => {
     game.override.startingWave(5);
@@ -78,7 +78,7 @@ describe("Moves - Spikes", () => {
 
     const enemy = game.scene.getEnemyParty()[0];
     expect(enemy.hp).toBeLessThan(enemy.getMaxHp());
-  }, 20000);
+  });
 
   it("should work when all targets fainted", async () => {
     game.override.enemySpecies(SpeciesId.DIGLETT).battleStyle("double").startingLevel(50);
@@ -89,5 +89,5 @@ describe("Moves - Spikes", () => {
     await game.phaseInterceptor.to("TurnEndPhase");
 
     expect(game.scene.arena.getTagOnSide(ArenaTrapTag, ArenaTagSide.ENEMY)).toBeDefined();
-  }, 20000);
+  });
 });

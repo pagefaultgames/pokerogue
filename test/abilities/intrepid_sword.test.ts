@@ -39,5 +39,5 @@ describe("Abilities - Intrepid Sword", () => {
 
     expect(playerPokemon.getStatStage(Stat.ATK)).toBe(1);
     expect(enemyPokemon.getStatStage(Stat.ATK)).toBe(1);
-  }, 20000);
+  });
 });

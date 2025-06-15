@@ -69,7 +69,7 @@ describe("Abilities - Sheer Force", () => {
     await game.phaseInterceptor.to("BerryPhase", false);
 
     expect(bindMove.calculateBattlePower).toHaveLastReturnedWith(bindMove.power);
-  }, 20000);
+  });
 
   it("Sheer Force does not boost the base damage of moves with no secondary effect", async () => {
     game.override.moveset([MoveId.TACKLE]);

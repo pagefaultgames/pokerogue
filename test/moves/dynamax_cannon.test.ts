@@ -51,7 +51,7 @@ describe("Moves - Dynamax Cannon", () => {
     expect((game.scene.phaseManager.getCurrentPhase() as MoveEffectPhase).move.id).toBe(dynamaxCannon.id);
     await game.phaseInterceptor.to(DamageAnimPhase, false);
     expect(dynamaxCannon.calculateBattlePower).toHaveLastReturnedWith(100);
-  }, 20000);
+  });
 
   it("should return 100 power against an enemy at level cap", async () => {
     game.override.enemyLevel(10);
@@ -63,7 +63,7 @@ describe("Moves - Dynamax Cannon", () => {
     expect((game.scene.phaseManager.getCurrentPhase() as MoveEffectPhase).move.id).toBe(dynamaxCannon.id);
     await game.phaseInterceptor.to(DamageAnimPhase, false);
     expect(dynamaxCannon.calculateBattlePower).toHaveLastReturnedWith(100);
-  }, 20000);
+  });
 
   it("should return 120 power against an enemy 1% above level cap", async () => {
     game.override.enemyLevel(101);
@@ -78,7 +78,7 @@ describe("Moves - Dynamax Cannon", () => {
     vi.spyOn(game.scene, "getMaxExpLevel").mockReturnValue(100);
     await game.phaseInterceptor.to(DamageAnimPhase, false);
     expect(dynamaxCannon.calculateBattlePower).toHaveLastReturnedWith(120);
-  }, 20000);
+  });
 
   it("should return 140 power against an enemy 2% above level capp", async () => {
     game.override.enemyLevel(102);
@@ -93,7 +93,7 @@ describe("Moves - Dynamax Cannon", () => {
     vi.spyOn(game.scene, "getMaxExpLevel").mockReturnValue(100);
     await game.phaseInterceptor.to(DamageAnimPhase, false);
     expect(dynamaxCannon.calculateBattlePower).toHaveLastReturnedWith(140);
-  }, 20000);
+  });
 
   it("should return 160 power against an enemy 3% above level cap", async () => {
     game.override.enemyLevel(103);
@@ -108,7 +108,7 @@ describe("Moves - Dynamax Cannon", () => {
     vi.spyOn(game.scene, "getMaxExpLevel").mockReturnValue(100);
     await game.phaseInterceptor.to(DamageAnimPhase, false);
     expect(dynamaxCannon.calculateBattlePower).toHaveLastReturnedWith(160);
-  }, 20000);
+  });
 
   it("should return 180 power against an enemy 4% above level cap", async () => {
     game.override.enemyLevel(104);
@@ -123,7 +123,7 @@ describe("Moves - Dynamax Cannon", () => {
     vi.spyOn(game.scene, "getMaxExpLevel").mockReturnValue(100);
     await game.phaseInterceptor.to(DamageAnimPhase, false);
     expect(dynamaxCannon.calculateBattlePower).toHaveLastReturnedWith(180);
-  }, 20000);
+  });
 
   it("should return 200 power against an enemy 5% above level cap", async () => {
     game.override.enemyLevel(105);
@@ -138,7 +138,7 @@ describe("Moves - Dynamax Cannon", () => {
     vi.spyOn(game.scene, "getMaxExpLevel").mockReturnValue(100);
     await game.phaseInterceptor.to(DamageAnimPhase, false);
     expect(dynamaxCannon.calculateBattlePower).toHaveLastReturnedWith(200);
-  }, 20000);
+  });
 
   it("should return 200 power against an enemy way above level cap", async () => {
     game.override.enemyLevel(999);
@@ -151,5 +151,5 @@ describe("Moves - Dynamax Cannon", () => {
     expect((game.scene.phaseManager.getCurrentPhase() as MoveEffectPhase).move.id).toBe(dynamaxCannon.id);
     await game.phaseInterceptor.to(DamageAnimPhase, false);
     expect(dynamaxCannon.calculateBattlePower).toHaveLastReturnedWith(200);
-  }, 20000);
+  });
 });

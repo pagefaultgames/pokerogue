@@ -46,5 +46,5 @@ describe("Moves - Tail whip", () => {
     await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(TurnInitPhase);
 
     expect(enemyPokemon.getStatStage(Stat.DEF)).toBe(-1);
-  }, 20000);
+  });
 });
