@@ -780,7 +780,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
   readonly subLegendary: boolean;
   readonly legendary: boolean;
   readonly mythical: boolean;
-  readonly species: string;
+  public category: string;
   readonly growthRate: GrowthRate;
   /** The chance (as a decimal) for this Species to be male, or `null` for genderless species */
   readonly malePercent: number | null;
@@ -794,7 +794,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
     subLegendary: boolean,
     legendary: boolean,
     mythical: boolean,
-    species: string,
+    category: string,
     type1: PokemonType,
     type2: PokemonType | null,
     height: number,
@@ -845,7 +845,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
     this.subLegendary = subLegendary;
     this.legendary = legendary;
     this.mythical = mythical;
-    this.species = species;
+    this.category = category;
     this.growthRate = growthRate;
     this.malePercent = malePercent;
     this.genderDiffs = genderDiffs;
@@ -984,6 +984,7 @@ export default class PokemonSpecies extends PokemonSpeciesForm implements Locali
 
   localize(): void {
     this.name = i18next.t(`pokemon:${SpeciesId[this.speciesId].toLowerCase()}`);
+    this.category = i18next.t(`pokemonCategory:${SpeciesId[this.speciesId].toLowerCase()}_category`);
   }
 
   getWildSpeciesForLevel(level: number, allowEvolving: boolean, isBoss: boolean, gameMode: GameMode): SpeciesId {
