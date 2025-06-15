@@ -90,9 +90,9 @@ export default class Battle {
   public playerFaintsHistory: FaintLogEntry[] = [];
   public enemyFaintsHistory: FaintLogEntry[] = [];
 
-  public mysteryEncounterType?: MysteryEncounterType;
+  public mysteryEncounterType?: MysteryEncounterType | undefined;
   /** If the current battle is a Mystery Encounter, this will always be defined */
-  public mysteryEncounter?: MysteryEncounter;
+  public mysteryEncounter?: MysteryEncounter | undefined;
 
   private rngCounter = 0;
 

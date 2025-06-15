@@ -28,7 +28,7 @@ describe("Abilities - Forecast", () => {
    * @param form The expected form based on the active weather
    * @param initialForm The initial form pre form change
    */
-  const testWeatherFormChange = async (game: GameManager, weather: WeatherType, form: number, initialForm?: number) => {
+  const testWeatherFormChange = async (game: GameManager, weather: WeatherType, form: number, initialForm: number) => {
     game.override.weather(weather).starterForms({ [SpeciesId.CASTFORM]: initialForm });
     await game.classicMode.startBattle([SpeciesId.CASTFORM]);
 
