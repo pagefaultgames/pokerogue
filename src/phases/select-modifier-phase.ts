@@ -134,7 +134,7 @@ export class SelectModifierPhase extends BattlePhase {
       return true;
     }
     const modifierType = this.typeOptions[cursor].type;
-    return this.applyChosenModifier(modifierType, 0, modifierSelectCallback);
+    return this.applyChosenModifier(modifierType, -1, modifierSelectCallback);
   }
 
   // Pick a modifier from the shop and apply it
@@ -260,8 +260,13 @@ export class SelectModifierPhase extends BattlePhase {
     return false;
   }
 
-  // Applies the effects of the chosen modifier
-  private applyModifier(modifier: Modifier, cost = 0, playSound = false): void {
+  /**
+   * Apply the effects of the chosen modifier
+   * @param modifier - The modifier to apply
+   * @param cost - The cost of the modifier if it was purchased, or -1 if selected as the modifier reward
+   * @param playSound - Whether the 'obtain modifier' sound should be played when adding the modifier.
+   */
+  private applyModifier(modifier: Modifier, cost = -1, playSound = false): void {
     const result = globalScene.addModifier(modifier, false, playSound, undefined, undefined, cost);
     // Queue a copy of this phase when applying a TM or Memory Mushroom.
     // If the player selects either of these, then escapes out of consuming them,
