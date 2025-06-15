@@ -54,7 +54,7 @@ export class MovePhase extends PokemonPhase {
     return this._move;
   }
 
-  protected set move(move: PokemonMove) {
+  public set move(move: PokemonMove) {
     this._move = move;
   }
 
@@ -88,6 +88,7 @@ export class MovePhase extends PokemonPhase {
     followUp = false,
     ignorePp = false,
     reflected = false,
+    timingModifier = MovePhaseTimingModifier.NORMAL,
   ) {
     super(pokemon.getBattlerIndex());
 
@@ -97,7 +98,7 @@ export class MovePhase extends PokemonPhase {
     this.followUp = followUp;
     this.ignorePp = ignorePp;
     this.reflected = reflected;
-    this.timingModifier = MovePhaseTimingModifier.NORMAL;
+    this.timingModifier = timingModifier;
   }
 
   /**

@@ -296,4 +296,8 @@ export class SummonPhase extends PartyMemberPokemonPhase {
 
     super.end();
   }
+
+  public getFieldIndex(): number {
+    return this.fieldIndex;
+  }
 }

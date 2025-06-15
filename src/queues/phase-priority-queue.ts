@@ -42,6 +42,15 @@ export abstract class PhasePriorityQueue<T extends Phase> {
     return !this.queue.length;
   }
 
+  public remove(condition: PhaseConditionFunc): boolean {
+    const phaseIndex = this.queue.findIndex(condition);
+    if (phaseIndex > -1) {
+      this.queue.splice(phaseIndex, 1);
+      return true;
+    }
+    return false;
+  }
+
   public findPhase(condition?: PhaseConditionFunc): Phase | undefined {
     return this.queue.find(phase => !condition || condition(phase));
   }

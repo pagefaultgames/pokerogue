@@ -101,6 +101,7 @@ import { ChargingMove, MoveAttrMap, MoveAttrString, MoveKindString, MoveClassMap
 import { applyMoveAttrs } from "./apply-attrs";
 import { frenzyMissFunc, getMoveTargets } from "./move-utils";
 import { MovePriorityModifier } from "#enums/move-priority-modifier";
+import { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
 
 type MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => boolean;
 export type UserMoveConditionFunc = (user: Pokemon, move: Move) => boolean;
@@ -6212,8 +6213,6 @@ export class RevivalBlessingAttr extends MoveEffectAttr {
       if (globalScene.currentBattle.double && globalScene.getEnemyParty().length > 1 && !isNullOrUndefined(allyPokemon)) {
         // Handle cases where revived pokemon needs to get switched in on same turn
         if (allyPokemon.isFainted() || allyPokemon === pokemon) {
-          // Enemy switch phase should be removed and replaced with the revived pkmn switching in
-          globalScene.phaseManager.tryRemovePhase((phase: SwitchSummonPhase) => phase.is("SwitchSummonPhase") && phase.getPokemon() === pokemon);
           // If the pokemon being revived was alive earlier in the turn, cancel its move
           // (revived pokemon can't move in the turn they're brought back)
           globalScene.phaseManager.findPhase("MovePhase", (phase: MovePhase) => phase.pokemon === pokemon)?.cancel();
@@ -7086,7 +7085,7 @@ export class RepeatMoveAttr extends MoveEffectAttr {
     }));
     target.getMoveQueue().unshift({ move: lastMove.move, targets: moveTargets, ignorePP: false });
     target.turnData.extraTurns++;
-    globalScene.phaseManager.appendNewToPhase("MoveEndPhase", "MovePhase", target, moveTargets, movesetMove);
+    globalScene.phaseManager.appendNewToPhase("MoveEndPhase", "MovePhase", target, moveTargets, movesetMove, false, false, false, MovePhaseTimingModifier.FIRST);
     return true;
   }
 
@@ -7884,12 +7883,7 @@ export class AfterYouAttr extends MoveEffectAttr {
    */
   override apply(user: Pokemon, target: Pokemon, _move: Move, _args: any[]): boolean {
     globalScene.phaseManager.queueMessage(i18next.t("moveTriggers:afterYou", { targetName: getPokemonNameWithAffix(target) }));
-
-    //Will find next acting phase of the targeted pokémon, delete it and queue it next on successful delete.
-    const nextAttackPhase = globalScene.phaseManager.findPhase("MovePhase", (phase) => phase.pokemon === target);
-    if (nextAttackPhase && globalScene.phaseManager.tryRemovePhase((phase: MovePhase) => phase.pokemon === target)) {
-      globalScene.phaseManager.prependNewToPhase("MovePhase", "MovePhase", target, [ ...nextAttackPhase.targets ], nextAttackPhase.move);
-    }
+    globalScene.phaseManager.forceMoveNext((phase: MovePhase) => phase.pokemon === target);
 
     return true;
   }

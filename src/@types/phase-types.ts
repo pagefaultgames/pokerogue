@@ -23,3 +23,7 @@ export type PhaseClass = PhaseConstructorMap[keyof PhaseConstructorMap];
  * Union type of all phase names as strings.
  */
 export type PhaseString = keyof PhaseMap;
+
+export type DynamicPhaseString = "PostSummonPhase" | "SwitchSummonPhase" | "MovePhase";
+
+export type StaticPhaseString = Exclude<PhaseString, DynamicPhaseString>;

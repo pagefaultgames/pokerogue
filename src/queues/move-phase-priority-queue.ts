@@ -1,4 +1,5 @@
 import type { PhaseConditionFunc } from "#app/@types/phase-condition";
+import type { PokemonMove } from "#app/data/moves/pokemon-move";
 import type { MovePhase } from "#app/phases/move-phase";
 import { PokemonPhasePriorityQueue } from "#app/queues/pokemon-phase-priority-queue";
 import { isNullOrUndefined } from "#app/utils/common";
@@ -15,6 +16,13 @@ export class MovePhasePriorityQueue extends PokemonPhasePriorityQueue<MovePhase>
     const phase = this.queue.find(phase => condition(phase));
     if (!isNullOrUndefined(phase)) {
       phase.timingModifier = modifier;
+    }
+  }
+
+  public setMoveForPhase(condition: PhaseConditionFunc, move: PokemonMove) {
+    const phase = this.queue.find(phase => condition(phase));
+    if (!isNullOrUndefined(phase)) {
+      phase.move = move;
     }
   }
 

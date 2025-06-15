@@ -13,7 +13,7 @@ export class ActivatePriorityQueuePhase extends Phase {
 
   override start() {
     super.start();
-    globalScene.phaseManager.startNextDynamicPhaseOfType(this.type);
+    globalScene.phaseManager.startNextDynamicPhase();
     this.end();
   }
 

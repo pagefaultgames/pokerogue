@@ -1,19 +1,20 @@
 import type { PhaseConditionFunc } from "#app/@types/phase-condition";
 import type { PhaseString } from "#app/@types/phase-types";
+import type { PokemonMove } from "#app/data/moves/pokemon-move";
 import type { Phase } from "#app/phase";
-import type { SwitchSummonPhase } from "#app/phases/switch-summon-phase";
 import { MovePhasePriorityQueue } from "#app/queues/move-phase-priority-queue";
 import type { PhasePriorityQueue } from "#app/queues/phase-priority-queue";
-import { PokemonPhasePriorityQueue } from "#app/queues/pokemon-phase-priority-queue";
 import { PostSummonPhasePriorityQueue } from "#app/queues/post-summon-phase-priority-queue";
+import { SwitchSummonPhasePriorityQueue } from "#app/queues/switch-summon-phase-priority-queue";
 import type { BattlerIndex } from "#enums/battler-index";
 import type { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
+
 export class DynamicQueueManager {
   private dynamicPhaseMap: Map<PhaseString, PhasePriorityQueue<Phase>>;
 
   constructor() {
     this.dynamicPhaseMap = new Map();
-    this.dynamicPhaseMap.set("SwitchSummonPhase", new PokemonPhasePriorityQueue<SwitchSummonPhase>());
+    this.dynamicPhaseMap.set("SwitchSummonPhase", new SwitchSummonPhasePriorityQueue());
     this.dynamicPhaseMap.set("PostSummonPhase", new PostSummonPhasePriorityQueue());
     this.dynamicPhaseMap.set("MovePhase", new MovePhasePriorityQueue());
   }
@@ -28,8 +29,8 @@ export class DynamicQueueManager {
     this.dynamicPhaseMap.get(phase.phaseName)?.push(phase);
   }
 
-  public popNextPhaseOfType(type: PhaseString): Phase | undefined {
-    return this.dynamicPhaseMap.get(type)?.pop();
+  public popNextPhase(): Phase | undefined {
+    return [...this.dynamicPhaseMap.values()].find(queue => !queue.isEmpty())?.pop();
   }
 
   public isDynamicPhase(type: PhaseString): boolean {
@@ -44,9 +45,22 @@ export class DynamicQueueManager {
     return !!this.dynamicPhaseMap.get(type)?.hasPhaseWithCondition(condition);
   }
 
+  public removePhase(condition: PhaseConditionFunc) {
+    for (const queue of this.dynamicPhaseMap.values()) {
+      if (queue.remove(condition)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   public setMoveTimingModifier(condition: PhaseConditionFunc, modifier: MovePhaseTimingModifier) {
     const movePhaseQueue: MovePhasePriorityQueue = this.dynamicPhaseMap.get("MovePhase") as MovePhasePriorityQueue;
     movePhaseQueue.setTimingModifier(condition, modifier);
+  }
+
+  public setMoveForPhase(condition: PhaseConditionFunc, move: PokemonMove) {
+    (this.dynamicPhaseMap.get("MovePhase") as MovePhasePriorityQueue).setMoveForPhase(condition, move);
   }
 
   public setMoveOrder(order: BattlerIndex[]) {
