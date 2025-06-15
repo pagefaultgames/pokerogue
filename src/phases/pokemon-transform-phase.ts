@@ -29,7 +29,8 @@ export class PokemonTransformPhase extends PokemonPhase {
     const target = globalScene.getField(true).find(p => p.getBattlerIndex() === this.targetIndex);
 
     if (!target) {
-      return this.end();
+      this.end();
+      return;
     }
 
     user.summonData.speciesForm = target.getSpeciesForm();
