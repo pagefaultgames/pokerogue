@@ -193,6 +193,7 @@ import type { MoveResult } from "#enums/move-result";
 import { PokemonMove } from "#app/data/moves/pokemon-move";
 import type { AbAttrMap, AbAttrString } from "#app/@types/ability-types";
 import { getTerrainBlockMessage } from "#app/data/terrain";
+import { LearnMoveSituation } from "#enums/learn-move-situation";
 
 /** Base typeclass for damage parameter methods, used for DRY */
 type damageParams = {
