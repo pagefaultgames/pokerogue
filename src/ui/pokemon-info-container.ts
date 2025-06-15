@@ -384,7 +384,7 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
       }
 
       const starterSpeciesId = pokemon.species.getRootSpeciesId();
-      const originalIvs: PermanentStatTuple | null = eggInfo
+      const originalIvs: IvTuple | null = eggInfo
         ? dexEntry.caughtAttr
           ? dexEntry.ivs
           : null
