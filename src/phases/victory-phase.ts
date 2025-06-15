@@ -8,6 +8,10 @@ import { handleMysteryEncounterVictory } from "#app/data/mystery-encounters/util
 import { globalScene } from "#app/global-scene";
 import { timedEventManager } from "#app/global-event-manager";
 
+import { ChallengeType } from "#enums/challenge-type";
+import { BooleanHolder } from "#app/utils/common";
+import { applyChallenges } from "#app/data/challenge";
+
 export class VictoryPhase extends PokemonPhase {
   public readonly phaseName = "VictoryPhase";
   /** If true, indicates that the phase is intended for EXP purposes only, and not to continue a battle to next phase */
@@ -37,6 +41,8 @@ export class VictoryPhase extends PokemonPhase {
       return this.end();
     }
 
+    const isHealPhaseActive = new BooleanHolder(true);
+    applyChallenges(ChallengeType.NO_HEAL_PHASE, isHealPhaseActive);
     if (
       !globalScene
         .getEnemyParty()
@@ -103,6 +109,15 @@ export class VictoryPhase extends PokemonPhase {
               !(globalScene.currentBattle.waveIndex % 250) ? modifierTypes.VOUCHER_PREMIUM : modifierTypes.VOUCHER_PLUS,
             );
             globalScene.phaseManager.pushNew("AddEnemyBuffModifierPhase");
+          }
+          if (!isHealPhaseActive.value) {
+            //Push shop instead of healing phase for NoHealChallenge
+            globalScene.phaseManager.pushNew(
+              "SelectModifierPhase",
+              undefined,
+              undefined,
+              this.getFixedBattleCustomModifiers(),
+            );
           }
         }
 
