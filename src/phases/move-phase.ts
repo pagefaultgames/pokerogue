@@ -19,7 +19,6 @@ import type Pokemon from "#app/field/pokemon";
 import { MoveResult } from "#enums/move-result";
 import { getPokemonNameWithAffix } from "#app/messages";
 import Overrides from "#app/overrides";
-import { BattlePhase } from "#app/phases/battle-phase";
 import { NumberHolder } from "#app/utils/common";
 import { AbilityId } from "#enums/ability-id";
 import { ArenaTagType } from "#enums/arena-tag-type";
@@ -28,8 +27,9 @@ import { MoveId } from "#enums/move-id";
 import { StatusEffect } from "#enums/status-effect";
 import i18next from "i18next";
 import { frenzyMissFunc } from "#app/data/moves/move-utils";
+import { PokemonPhase } from "#app/phases/pokemon-phase";
 
-export class MovePhase extends BattlePhase {
+export class MovePhase extends PokemonPhase {
   public readonly phaseName = "MovePhase";
   protected _pokemon: Pokemon;
   protected _move: PokemonMove;
@@ -81,7 +81,7 @@ export class MovePhase extends BattlePhase {
     reflected = false,
     forcedLast = false,
   ) {
-    super();
+    super(pokemon.getBattlerIndex());
 
     this.pokemon = pokemon;
     this.targets = targets;

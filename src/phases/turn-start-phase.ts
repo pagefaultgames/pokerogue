@@ -69,7 +69,7 @@ export class TurnStartPhase extends FieldPhase {
       applyAbAttrs("BypassSpeedChanceAbAttr", p, null, false, bypassSpeed);
       applyAbAttrs("PreventBypassSpeedChanceAbAttr", p, null, false, bypassSpeed, canCheckHeldItems);
       if (canCheckHeldItems.value) {
-        globalScene.applyModifiers(BypassSpeedChanceModifier, p.isPlayer(), p, bypassSpeed);
+        globalScene.applyModifiers(BypassSpeedChanceModifier, p.isPlayer(), p);
       }
       battlerBypassSpeed[p.getBattlerIndex()] = bypassSpeed;
     });

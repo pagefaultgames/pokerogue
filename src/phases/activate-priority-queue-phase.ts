@@ -1,23 +1,23 @@
-import type { DynamicPhaseType } from "#enums/dynamic-phase-type";
+import type { PhaseString } from "#app/@types/phase-types";
 import { globalScene } from "#app/global-scene";
 import { Phase } from "#app/phase";
 
 export class ActivatePriorityQueuePhase extends Phase {
   public readonly phaseName = "ActivatePriorityQueuePhase";
-  private type: DynamicPhaseType;
+  private readonly type: PhaseString;
 
-  constructor(type: DynamicPhaseType) {
+  constructor(type: PhaseString) {
     super();
     this.type = type;
   }
 
   override start() {
     super.start();
-    globalScene.phaseManager.startDynamicPhaseType(this.type);
+    globalScene.phaseManager.startNextDynamicPhaseOfType(this.type);
     this.end();
   }
 
-  public getType(): DynamicPhaseType {
+  public getType(): PhaseString {
     return this.type;
   }
 }

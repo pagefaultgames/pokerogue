@@ -193,6 +193,7 @@ import { AiType } from "#enums/ai-type";
 import type { MoveResult } from "#enums/move-result";
 import { PokemonMove } from "#app/data/moves/pokemon-move";
 import type { AbAttrMap, AbAttrString } from "#app/@types/ability-types";
+import type { TurnCommand } from "#app/battle";
 
 /** Base typeclass for damage parameter methods, used for DRY */
 type damageParams = {
@@ -6868,6 +6869,7 @@ export class PokemonWaveData {
  * Resets at the start of a new turn, as well as on switch.
  */
 export class PokemonTurnData {
+  public turnCommand?: TurnCommand;
   public flinched = false;
   public acted = false;
   /** How many times the current move should hit the target(s) */
