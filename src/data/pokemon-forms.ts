@@ -256,9 +256,9 @@ export const pokemonFormChanges: PokemonFormChanges = {
     new SpeciesFormChange(SpeciesId.CASTFORM, "", "snowy", new SpeciesFormChangeWeatherTrigger(AbilityId.FORECAST, [ WeatherType.HAIL, WeatherType.SNOW ]), true),
     new SpeciesFormChange(SpeciesId.CASTFORM, "sunny", "snowy", new SpeciesFormChangeWeatherTrigger(AbilityId.FORECAST, [ WeatherType.HAIL, WeatherType.SNOW ]), true),
     new SpeciesFormChange(SpeciesId.CASTFORM, "rainy", "snowy", new SpeciesFormChangeWeatherTrigger(AbilityId.FORECAST, [ WeatherType.HAIL, WeatherType.SNOW ]), true),
-    new SpeciesFormChange(SpeciesId.CASTFORM, "sunny", "", new SpeciesFormChangeRevertWeatherFormTrigger(AbilityId.FORECAST, [ WeatherType.NONE, WeatherType.SANDSTORM, WeatherType.STRONG_WINDS, WeatherType.FOG ]), true),
-    new SpeciesFormChange(SpeciesId.CASTFORM, "rainy", "", new SpeciesFormChangeRevertWeatherFormTrigger(AbilityId.FORECAST, [ WeatherType.NONE, WeatherType.SANDSTORM, WeatherType.STRONG_WINDS, WeatherType.FOG ]), true),
-    new SpeciesFormChange(SpeciesId.CASTFORM, "snowy", "", new SpeciesFormChangeRevertWeatherFormTrigger(AbilityId.FORECAST, [ WeatherType.NONE, WeatherType.SANDSTORM, WeatherType.STRONG_WINDS, WeatherType.FOG ]), true),
+    new SpeciesFormChange(SpeciesId.CASTFORM, "sunny", "", new SpeciesFormChangeRevertWeatherFormTrigger(AbilityId.FORECAST, [ WeatherType.NONE, WeatherType.SANDSTORM, WeatherType.STRONG_WINDS, WeatherType.FOG, WeatherType.HEAVY_FOG ]), true),
+    new SpeciesFormChange(SpeciesId.CASTFORM, "rainy", "", new SpeciesFormChangeRevertWeatherFormTrigger(AbilityId.FORECAST, [ WeatherType.NONE, WeatherType.SANDSTORM, WeatherType.STRONG_WINDS, WeatherType.FOG, WeatherType.HEAVY_FOG ]), true),
+    new SpeciesFormChange(SpeciesId.CASTFORM, "snowy", "", new SpeciesFormChangeRevertWeatherFormTrigger(AbilityId.FORECAST, [ WeatherType.NONE, WeatherType.SANDSTORM, WeatherType.STRONG_WINDS, WeatherType.FOG, WeatherType.HEAVY_FOG ]), true),
     new SpeciesFormChange(SpeciesId.CASTFORM, "sunny", "", new SpeciesFormChangeActiveTrigger(), true),
     new SpeciesFormChange(SpeciesId.CASTFORM, "rainy", "", new SpeciesFormChangeActiveTrigger(), true),
     new SpeciesFormChange(SpeciesId.CASTFORM, "snowy", "", new SpeciesFormChangeActiveTrigger(), true)
@@ -300,7 +300,7 @@ export const pokemonFormChanges: PokemonFormChanges = {
   ],
   [SpeciesId.CHERRIM]: [
     new SpeciesFormChange(SpeciesId.CHERRIM, "overcast", "sunshine", new SpeciesFormChangeWeatherTrigger(AbilityId.FLOWER_GIFT, [ WeatherType.SUNNY, WeatherType.HARSH_SUN ]), true),
-    new SpeciesFormChange(SpeciesId.CHERRIM, "sunshine", "overcast", new SpeciesFormChangeRevertWeatherFormTrigger(AbilityId.FLOWER_GIFT, [ WeatherType.NONE, WeatherType.SANDSTORM, WeatherType.STRONG_WINDS, WeatherType.FOG, WeatherType.HAIL, WeatherType.HEAVY_RAIN, WeatherType.SNOW, WeatherType.RAIN ]), true),
+    new SpeciesFormChange(SpeciesId.CHERRIM, "sunshine", "overcast", new SpeciesFormChangeRevertWeatherFormTrigger(AbilityId.FLOWER_GIFT, [ WeatherType.NONE, WeatherType.SANDSTORM, WeatherType.STRONG_WINDS, WeatherType.FOG, WeatherType.HEAVY_FOG, WeatherType.HAIL, WeatherType.HEAVY_RAIN, WeatherType.SNOW, WeatherType.RAIN ]), true),
     new SpeciesFormChange(SpeciesId.CHERRIM, "sunshine", "overcast", new SpeciesFormChangeActiveTrigger(), true)
   ],
   [SpeciesId.LOPUNNY]: [

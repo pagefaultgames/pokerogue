@@ -760,9 +760,6 @@ export default abstract class Move implements Localizable {
     applyMoveAttrs("VariableAccuracyAttr", user, target, this, moveAccuracy);
     applyPreDefendAbAttrs("WonderSkinAbAttr", target, user, this, { value: false }, simulated, moveAccuracy);
 
-    if (moveAccuracy.value === -1) {
-      return moveAccuracy.value;
-    }
 
     const isOhko = this.hasAttr("OneHitKOAccuracyAttr");
 
@@ -770,7 +767,11 @@ export default abstract class Move implements Localizable {
       globalScene.applyModifiers(PokemonMoveAccuracyBoosterModifier, user.isPlayer(), user, moveAccuracy);
     }
 
-    if (globalScene.arena.weather?.weatherType === WeatherType.FOG) {
+    if (moveAccuracy.value === -1) { //Check accuracy after applying items modifier in case of Micle Berry
+      return moveAccuracy.value;
+    }
+
+    if (globalScene.arena.weather?.weatherType === WeatherType.FOG || globalScene.arena.weather?.weatherType === WeatherType.HEAVY_FOG) {
       /**
        *  The 0.9 multiplier is PokeRogue-only implementation, Bulbapedia uses 3/5
        *  See Fog {@link https://bulbapedia.bulbagarden.net/wiki/Fog}
@@ -9384,7 +9385,7 @@ export function initMoves() {
         if (!weather) {
           return 1;
         }
-        const weatherTypes = [ WeatherType.SUNNY, WeatherType.RAIN, WeatherType.SANDSTORM, WeatherType.HAIL, WeatherType.SNOW, WeatherType.FOG, WeatherType.HEAVY_RAIN, WeatherType.HARSH_SUN ];
+        const weatherTypes = [ WeatherType.SUNNY, WeatherType.RAIN, WeatherType.SANDSTORM, WeatherType.HAIL, WeatherType.SNOW, WeatherType.FOG, WeatherType.HEAVY_RAIN, WeatherType.HARSH_SUN, WeatherType.HEAVY_FOG ];
         if (weatherTypes.includes(weather.weatherType) && !weather.isEffectSuppressed()) {
           return 2;
         }
