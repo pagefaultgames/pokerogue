@@ -193,6 +193,7 @@ import { AiType } from "#enums/ai-type";
 import type { MoveResult } from "#enums/move-result";
 import { PokemonMove } from "#app/data/moves/pokemon-move";
 import type { AbAttrMap, AbAttrString } from "#app/@types/ability-types";
+import type { IVTuple, PermanentStatTuple } from "#app/@types/stat-types";
 
 /** Base typeclass for damage parameter methods, used for DRY */
 type damageParams = {
@@ -247,8 +248,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   public levelExp: number;
   public gender: Gender;
   public hp: number;
-  public stats: number[];
-  public ivs: number[];
+  public stats: PermanentStatTuple;
+  public ivs: IVTuple;
   public nature: Nature;
   public moveset: PokemonMove[];
   public status: Status | null;
@@ -317,7 +318,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     gender?: Gender,
     shiny?: boolean,
     variant?: Variant,
-    ivs?: number[],
+    ivs?: IVTuple,
     nature?: Nature,
     dataSource?: Pokemon | PokemonData,
   ) {
@@ -5475,7 +5476,7 @@ export class PlayerPokemon extends Pokemon {
     gender?: Gender,
     shiny?: boolean,
     variant?: Variant,
-    ivs?: number[],
+    ivs?: IVTuple,
     nature?: Nature,
     dataSource?: Pokemon | PokemonData,
   ) {
@@ -6088,10 +6089,12 @@ export class EnemyPokemon extends Pokemon {
 
       if (this.hasTrainer() && globalScene.currentBattle) {
         const { waveIndex } = globalScene.currentBattle;
-        const ivs: number[] = [];
-        while (ivs.length < 6) {
-          ivs.push(randSeedIntRange(Math.floor(waveIndex / 10), 31));
-        }
+        const ivs: IVTuple = Array.from(
+          {
+            length: 6,
+          },
+          () => randSeedIntRange(Math.floor(waveIndex / 10), 31),
+        );
         this.ivs = ivs;
       }
     }

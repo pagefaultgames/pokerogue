@@ -14,6 +14,7 @@ import ConfirmUiHandler from "./confirm-ui-handler";
 import { StatsContainer } from "./stats-container";
 import { TextStyle, addBBCodeTextObject, addTextObject, getTextColor } from "./text";
 import { addWindow } from "./ui-theme";
+import type { PermanentStatTuple } from "#app/@types/stat-types";
 
 interface LanguageSetting {
   infoContainerTextSize: string;
@@ -383,7 +384,7 @@ export default class PokemonInfoContainer extends Phaser.GameObjects.Container {
       }
 
       const starterSpeciesId = pokemon.species.getRootSpeciesId();
-      const originalIvs: number[] | null = eggInfo
+      const originalIvs: PermanentStatTuple | null = eggInfo
         ? dexEntry.caughtAttr
           ? dexEntry.ivs
           : null

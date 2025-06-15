@@ -3,6 +3,7 @@ import { MoveId } from "#enums/move-id";
 import i18next from "i18next";
 import { pokerogueApi } from "#app/plugins/api/pokerogue-api";
 import type { Variant } from "#app/sprites/variant";
+import type { IVTuple } from "#app/@types/stat-types";
 
 export type nil = null | undefined;
 
@@ -182,7 +183,7 @@ export function getPlayTimeString(totalSeconds: number): string {
  * @param id 32-bit number
  * @returns An array of six numbers corresponding to 5-bit chunks from {@linkcode id}
  */
-export function getIvsFromId(id: number): number[] {
+export function getIvsFromId(id: number): IVTuple {
   return [
     (id & 0x3e000000) >>> 25,
     (id & 0x01f00000) >>> 20,

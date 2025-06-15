@@ -160,12 +160,16 @@ import { timedEventManager } from "./global-event-manager";
 import { starterColors } from "./global-vars/starter-colors";
 import { startingWave } from "./starting-wave";
 import { PhaseManager } from "./phase-manager";
+import type { IVTuple } from "#app/@types/stat-types";
 
 const DEBUG_RNG = false;
 
-const OPP_IVS_OVERRIDE_VALIDATED: number[] = (
-  Array.isArray(Overrides.OPP_IVS_OVERRIDE) ? Overrides.OPP_IVS_OVERRIDE : new Array(6).fill(Overrides.OPP_IVS_OVERRIDE)
-).map(iv => (Number.isNaN(iv) || iv === null || iv > 31 ? -1 : iv));
+const OPP_IVS_OVERRIDE_VALIDATED: IVTuple | null =
+  Overrides.OPP_IVS_OVERRIDE === null
+    ? null
+    : Array.isArray(Overrides.OPP_IVS_OVERRIDE)
+      ? Overrides.OPP_IVS_OVERRIDE
+      : new Array(6).fill(Overrides.OPP_IVS_OVERRIDE);
 
 export interface PokeballCounts {
   [pb: string]: number;
@@ -970,12 +974,9 @@ export default class BattleScene extends SceneBase {
       postProcess(pokemon);
     }
 
-    for (let i = 0; i < pokemon.ivs.length; i++) {
-      if (OPP_IVS_OVERRIDE_VALIDATED[i] > -1) {
-        pokemon.ivs[i] = OPP_IVS_OVERRIDE_VALIDATED[i];
-      }
+    if (OPP_IVS_OVERRIDE_VALIDATED) {
+      pokemon.ivs = OPP_IVS_OVERRIDE_VALIDATED;
     }
-
     pokemon.init();
     return pokemon;
   }
