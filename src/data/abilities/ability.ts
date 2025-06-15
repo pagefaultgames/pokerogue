@@ -7238,17 +7238,13 @@ export class BypassSpeedChanceAbAttr extends AbAttr {
     this.chance = chance;
   }
 
-  override canApply(pokemon: Pokemon, _passive: boolean, simulated: boolean, args: any[]): boolean {
-    const bypassSpeed = args[0] as BooleanHolder;
+  override canApply(pokemon: Pokemon, _passive: boolean, simulated: boolean, _args: any[]): boolean {
     const turnCommand = globalScene.currentBattle.turnCommands[pokemon.getBattlerIndex()];
-    const isCommandFight = turnCommand?.command === Command.FIGHT;
     const move = turnCommand?.move?.move ? allMoves[turnCommand.move.move] : null;
     const isDamageMove = move?.category === MoveCategory.PHYSICAL || move?.category === MoveCategory.SPECIAL;
     return (
       !simulated &&
-      !bypassSpeed.value &&
       pokemon.randBattleSeedInt(100) < this.chance &&
-      isCommandFight &&
       isDamageMove &&
       pokemon.canAddTag(BattlerTagType.BYPASS_SPEED)
     );
