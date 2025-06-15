@@ -275,7 +275,7 @@ export class SelectModifierPhase extends BattlePhase {
       globalScene.phaseManager.unshiftPhase(this.copy());
     }
 
-    if (cost && !(modifier.type instanceof RememberMoveModifierType)) {
+    if (cost !== -1 && !(modifier.type instanceof RememberMoveModifierType)) {
       if (result) {
         if (!Overrides.WAIVE_ROLL_FEE_OVERRIDE) {
           globalScene.money -= cost;
