@@ -68,6 +68,7 @@ import { DexAttr } from "#enums/dex-attr";
 import { AbilityAttr } from "#enums/ability-attr";
 import { defaultStarterSpecies, saveKey } from "#app/constants";
 import { encrypt, decrypt } from "#app/utils/data";
+import type { IVTuple } from "#app/@types/stat-types";
 
 function getDataTypeKey(dataType: GameDataType, slotId = 0): string {
   switch (dataType) {
@@ -1945,7 +1946,13 @@ export class GameData {
     _unlockSpeciesNature(species.speciesId);
   }
 
-  updateSpeciesDexIvs(speciesId: SpeciesId, ivs: number[]): void {
+  /**
+   * When a pokemon is caught or added, maximize its lowest pre-evolution's {@linkcode DexData}
+   * with the IVs of the newly caught pokemon.
+   * @param speciesId - The {@linkcode SpeciesId} to update dex data for.
+   * @param ivs - The {@linkcode IVTuple | IVs} of the caught pokemon.
+   */
+  updateSpeciesDexIvs(speciesId: SpeciesId, ivs: IVTuple): void {
     let dexEntry: DexEntry;
     do {
       dexEntry = globalScene.gameData.dexData[speciesId];
@@ -1955,7 +1962,7 @@ export class GameData {
           dexIvs[i] = ivs[i];
         }
       }
-      if (dexIvs.filter(iv => iv === 31).length === 6) {
+      if (dexIvs.every(iv => iv === 31)) {
         globalScene.validateAchv(achvs.PERFECT_IVS);
       }
     } while (pokemonPrevolutions.hasOwnProperty(speciesId) && (speciesId = pokemonPrevolutions[speciesId]));

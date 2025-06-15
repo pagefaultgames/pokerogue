@@ -22,6 +22,7 @@ import { TimeOfDay } from "#enums/time-of-day";
 import { TrainerType } from "#enums/trainer-type";
 import { VariantTier } from "#enums/variant-tier";
 import { WeatherType } from "#enums/weather-type";
+import type { IVTuple, IVType } from "#app/@types/stat-types";
 
 /**
  * This comment block exists to prevent IDEs from automatically removing unused imports
@@ -177,7 +178,11 @@ class DefaultOverrides {
   readonly OPP_MOVESET_OVERRIDE: MoveId | Array<MoveId> = [];
   readonly OPP_SHINY_OVERRIDE: boolean | null = null;
   readonly OPP_VARIANT_OVERRIDE: Variant | null = null;
-  readonly OPP_IVS_OVERRIDE: number | number[] = [];
+  /**
+   * An array of IVs to give the opposing pokemon.
+   * Specifying a single number will use it for all 6 IVs, while `null` will disable the override.
+  */
+  readonly OPP_IVS_OVERRIDE: IVType | IVTuple | null = null;
   readonly OPP_FORM_OVERRIDES: Partial<Record<SpeciesId, number>> = {};
   /**
    * Override to give the enemy Pokemon a given amount of health segments
