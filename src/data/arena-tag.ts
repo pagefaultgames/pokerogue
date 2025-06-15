@@ -20,6 +20,7 @@ import { ArenaTagType } from "#enums/arena-tag-type";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
 import { ArenaTagSide } from "#enums/arena-tag-side";
+import { MoveUseMode } from "#enums/move-use-mode";
 
 export abstract class ArenaTag {
   constructor(
@@ -902,13 +903,13 @@ export class DelayedAttackTag extends ArenaTag {
     const ret = super.lapse(arena);
 
     if (!ret) {
+      // TODO: This should not add to move history (for Spite)
       globalScene.phaseManager.unshiftNew(
         "MoveEffectPhase",
         this.sourceId!,
         [this.targetIndex],
         allMoves[this.sourceMove!],
-        false,
-        true,
+        MoveUseMode.FOLLOW_UP,
       ); // TODO: are those bangs correct?
     }
 
