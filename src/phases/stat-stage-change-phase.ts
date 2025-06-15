@@ -1,10 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import type { BattlerIndex } from "#enums/battler-index";
-import {
-  applyAbAttrs,
-  applyPostStatStageChangeAbAttrs,
-  applyPreStatStageChangeAbAttrs,
-} from "#app/data/abilities/apply-ab-attrs";
+import { applyAbAttrs } from "#app/data/abilities/apply-ab-attrs";
 import { MistTag } from "#app/data/arena-tag";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import type { ArenaTag } from "#app/data/arena-tag";
@@ -18,6 +14,10 @@ import { PokemonPhase } from "./pokemon-phase";
 import { Stat, type BattleStat, getStatKey, getStatStageChangeDescriptionKey } from "#enums/stat";
 import { OctolockTag } from "#app/data/battler-tags";
 import { ArenaTagType } from "#app/enums/arena-tag-type";
+import type {
+  ConditionalUserFieldProtectStatAbAttrParams,
+  PreStatStageChangeAbAttrParams,
+} from "#app/@types/ability-types";
 
 export type StatStageChangeCallback = (
   target: Pokemon | null,
@@ -126,7 +126,7 @@ export class StatStageChangePhase extends PokemonPhase {
     const stages = new NumberHolder(this.stages);
 
     if (!this.ignoreAbilities) {
-      applyAbAttrs("StatStageChangeMultiplierAbAttr", pokemon, null, false, stages);
+      applyAbAttrs("StatStageChangeMultiplierAbAttr", { pokemon, numStages: stages });
     }
 
     let simulate = false;
@@ -146,42 +146,38 @@ export class StatStageChangePhase extends PokemonPhase {
       }
 
       if (!cancelled.value && !this.selfTarget && stages.value < 0) {
-        applyPreStatStageChangeAbAttrs("ProtectStatAbAttr", pokemon, stat, cancelled, simulate);
-        applyPreStatStageChangeAbAttrs(
-          "ConditionalUserFieldProtectStatAbAttr",
+        const abAttrParams: PreStatStageChangeAbAttrParams & ConditionalUserFieldProtectStatAbAttrParams = {
           pokemon,
           stat,
           cancelled,
-          simulate,
-          pokemon,
-        );
+          simulated: simulate,
+          target: pokemon,
+          stages: this.stages,
+        };
+        applyAbAttrs("ProtectStatAbAttr", abAttrParams);
+        applyAbAttrs("ConditionalUserFieldProtectStatAbAttr", abAttrParams);
+        // TODO: Consider skipping this call if `cancelled` is false.
         const ally = pokemon.getAlly();
         if (!isNullOrUndefined(ally)) {
-          applyPreStatStageChangeAbAttrs(
-            "ConditionalUserFieldProtectStatAbAttr",
-            ally,
-            stat,
-            cancelled,
-            simulate,
-            pokemon,
-          );
+          applyAbAttrs("ConditionalUserFieldProtectStatAbAttr", { ...abAttrParams, pokemon: ally });
         }
 
         /** Potential stat reflection due to Mirror Armor, does not apply to Octolock end of turn effect */
         if (
           opponentPokemon !== undefined &&
+          // TODO: investigate whether this is stoping mirror armor from applying to non-octolock
+          // reasons for stat drops if the user has the Octolock tag
           !pokemon.findTag(t => t instanceof OctolockTag) &&
           !this.comingFromMirrorArmorUser
         ) {
-          applyPreStatStageChangeAbAttrs(
-            "ReflectStatStageChangeAbAttr",
+          applyAbAttrs("ReflectStatStageChangeAbAttr", {
             pokemon,
             stat,
             cancelled,
-            simulate,
-            opponentPokemon,
-            this.stages,
-          );
+            simulated: simulate,
+            source: opponentPokemon,
+            stages: this.stages,
+          });
         }
       }
 
@@ -222,17 +218,16 @@ export class StatStageChangePhase extends PokemonPhase {
 
       if (stages.value > 0 && this.canBeCopied) {
         for (const opponent of pokemon.getOpponents()) {
-          applyAbAttrs("StatStageChangeCopyAbAttr", opponent, null, false, this.stats, stages.value);
+          applyAbAttrs("StatStageChangeCopyAbAttr", { pokemon: opponent, stats: this.stats, numStages: stages.value });
         }
       }
 
-      applyPostStatStageChangeAbAttrs(
-        "PostStatStageChangeAbAttr",
+      applyAbAttrs("PostStatStageChangeAbAttr", {
         pokemon,
-        filteredStats,
-        this.stages,
-        this.selfTarget,
-      );
+        stats: filteredStats,
+        stages: this.stages,
+        selfTarget: this.selfTarget,
+      });
 
       // Look for any other stat change phases; if this is the last one, do White Herb check
       const existingPhase = globalScene.phaseManager.findPhase(

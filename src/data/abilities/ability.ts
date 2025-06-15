@@ -1402,6 +1402,12 @@ export class PostDefendMoveDisableAbAttr extends PostDefendAbAttr {
 
 export class PostStatStageChangeAbAttr extends AbAttr {
   private declare readonly _: never;
+
+  override canApply(_params: Closed<PostStatStageChangeAbAttrParams>) {
+    return true;
+  }
+
+  override apply(_params: Closed<PostStatStageChangeAbAttrParams>) {}
 }
 
 export interface PostStatStageChangeAbAttrParams extends AbAttrBaseParams {
@@ -3415,9 +3421,12 @@ export interface PreStatStageChangeAbAttrParams extends AbAttrBaseParams {
   stat: BattleStat;
   /** The amount of stages to change by (negative if the stat is being decreased) */
   stages: number;
-  /** The source of the stat stage drop */
-  source: Pokemon;
-  // Note: `cancelled` already exists in `AbAttrBaseParams`, though we redefine it here to change its tsdoc
+  /** The source of the stat stage drop. May be omitted if the source of the stat drop is the user itself.
+   *
+   * @remarks
+   * Currently, only used by {@linkcode ReflectStatStageChangeAbAttr} in order to reflect the stat stage change
+   */
+  source?: Pokemon;
   /** Holder that will be set to true if the stat stage change should be cancelled due to the ability */
   cancelled: BooleanHolder;
 }
@@ -3440,10 +3449,17 @@ export class ReflectStatStageChangeAbAttr extends PreStatStageChangeAbAttr {
   /** {@linkcode BattleStat} to reflect */
   private reflectedStat?: BattleStat;
 
+  override canApply({ source, cancelled }: PreStatStageChangeAbAttrParams): boolean {
+    return !!source && !cancelled.value;
+  }
+
   /**
    * Apply the {@linkcode ReflectStatStageChangeAbAttr} to an interaction
    */
   override apply({ source, cancelled, stat, simulated, stages }: PreStatStageChangeAbAttrParams): void {
+    if (!source) {
+      return;
+    }
     this.reflectedStat = stat;
     if (!simulated) {
       globalScene.phaseManager.unshiftNew(
