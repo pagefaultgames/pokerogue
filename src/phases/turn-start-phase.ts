@@ -209,7 +209,7 @@ export class TurnStartPhase extends FieldPhase {
 
           // Use the fastest first pokemon we find with Run Away, or else the faster of the 2 player pokemon.
           // This intentionally does not check for Trick Room.
-          // TODO: This phase should take a pokemon at all
+          // TODO: This phase should not take a pokemon at all
           const sortedPkmn = playerActivePokemon.sort((p1, p2) => p1.getStat(Stat.SPD) - p2.getStat(Stat.SPD));
           const runningPokemon = sortedPkmn.find(p => p.hasAbility(AbilityId.RUN_AWAY)) ?? sortedPkmn[0];
 
