@@ -328,7 +328,7 @@ export const DancingLessonsEncounter: MysteryEncounter = MysteryEncounterBuilder
       .withOptionPhase(async () => {
         // Show the Oricorio a dance, and recruit it
         const encounter = globalScene.currentBattle.mysteryEncounter!;
-        const oricorio = encounter.misc.oricorioData.toPokemon();
+        const oricorio = encounter.misc.oricorioData.toPokemon() as EnemyPokemon;
         oricorio.passive = true;
 
         // Ensure the Oricorio's moveset gains the Dance move the player used
