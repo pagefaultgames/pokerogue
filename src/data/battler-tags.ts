@@ -1496,7 +1496,7 @@ export class WrapTag extends DamagingTrapTag {
       return "ERROR - CHECK CONSOLE AND REPORT";
     }
 
-    return i18next.t("battlerTags:clampOnTrap", {
+    return i18next.t("battlerTags:wrapOnTrap", {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
       sourcePokemonName: getPokemonNameWithAffix(source),
       moveName: this.getMoveName(),
