@@ -552,7 +552,7 @@ class WishTag extends ArenaTag {
     const target = globalScene.getField()[this.battlerIndex];
     if (target?.isActive(true)) {
       globalScene.phaseManager.queueMessage(this.triggerMessage);
-      globalScene.phaseManager.unshiftNew("PokemonHealPhase", target.getBattlerIndex(), this.healHp, null, true, false);
+      globalScene.phaseManager.unshiftNew("PokemonHealPhase", target.getBattlerIndex(), this.healHp, null);
     }
   }
 }
@@ -811,32 +811,38 @@ class ToxicSpikesTag extends ArenaTrapTag {
   }
 
   override activateTrap(pokemon: Pokemon, simulated: boolean): boolean {
-    if (pokemon.isGrounded()) {
-      if (simulated) {
-        return true;
-      }
-      if (pokemon.isOfType(PokemonType.POISON)) {
-        this.neutralized = true;
-        if (globalScene.arena.removeTag(this.tagType)) {
-          globalScene.phaseManager.queueMessage(
-            i18next.t("arenaTag:toxicSpikesActivateTrapPoison", {
-              pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
-              moveName: this.getMoveName(),
-            }),
-          );
-          return true;
-        }
-      } else if (!pokemon.status) {
-        const toxic = this.layers > 1;
-        if (
-          pokemon.trySetStatus(!toxic ? StatusEffect.POISON : StatusEffect.TOXIC, true, null, 0, this.getMoveName())
-        ) {
-          return true;
-        }
-      }
+    if (!pokemon.isGrounded()) {
+      return false;
     }
 
-    return false;
+    if (simulated) {
+      return true;
+    }
+
+    // poison types will neutralize toxic spikes
+    if (pokemon.isOfType(PokemonType.POISON)) {
+      this.neutralized = true;
+      if (globalScene.arena.removeTag(this.tagType)) {
+        globalScene.phaseManager.queueMessage(
+          i18next.t("arenaTag:toxicSpikesActivateTrapPoison", {
+            pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
+            moveName: this.getMoveName(),
+          }),
+        );
+      }
+      return true;
+    }
+
+    if (pokemon.status) {
+      return false;
+    }
+
+    return pokemon.trySetStatus(
+      this.layers === 1 ? StatusEffect.POISON : StatusEffect.TOXIC,
+      null,
+      0,
+      this.getMoveName(),
+    );
   }
 
   getMatchupScoreMultiplier(pokemon: Pokemon): number {
