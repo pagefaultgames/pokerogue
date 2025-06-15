@@ -53,20 +53,12 @@ import {
   getEnemyHeldItemsForWave,
   getLuckString,
   getLuckTextTint,
-  getModifierPoolForType,
   getPartyLuckValue,
-  ModifierPoolType,
 } from "#app/modifier/modifier-type";
+import { getModifierPoolForType } from "./utils/modifier-utils";
+import { ModifierPoolType } from "#enums/modifier-pool-type";
 import AbilityBar from "#app/ui/ability-bar";
-import {
-  applyAbAttrs,
-  applyPostBattleInitAbAttrs,
-  applyPostItemLostAbAttrs,
-  BlockItemTheftAbAttr,
-  DoubleBattleChanceAbAttr,
-  PostBattleInitAbAttr,
-  PostItemLostAbAttr,
-} from "#app/data/abilities/ability";
+import { applyAbAttrs, applyPostBattleInitAbAttrs, applyPostItemLostAbAttrs } from "./data/abilities/apply-ab-attrs";
 import { allAbilities } from "./data/data-lists";
 import type { FixedBattleConfig } from "#app/battle";
 import Battle from "#app/battle";
@@ -138,14 +130,13 @@ import { LoadingScene } from "#app/loading-scene";
 import type { MovePhase } from "#app/phases/move-phase";
 import { ShopCursorTarget } from "#app/enums/shop-cursor-target";
 import MysteryEncounter from "#app/data/mystery-encounters/mystery-encounter";
+import { allMysteryEncounters, mysteryEncountersByBiome } from "#app/data/mystery-encounters/mystery-encounters";
 import {
-  allMysteryEncounters,
   ANTI_VARIANCE_WEIGHT_MODIFIER,
   AVERAGE_ENCOUNTERS_PER_RUN_TARGET,
   BASE_MYSTERY_ENCOUNTER_SPAWN_WEIGHT,
   MYSTERY_ENCOUNTER_SPAWN_MAX_WEIGHT,
-  mysteryEncountersByBiome,
-} from "#app/data/mystery-encounters/mystery-encounters";
+} from "./constants";
 import { MysteryEncounterSaveData } from "#app/data/mystery-encounters/mystery-encounter-save-data";
 import { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
@@ -1261,7 +1252,7 @@ export default class BattleScene extends SceneBase {
     const doubleChance = new NumberHolder(newWaveIndex % 10 === 0 ? 32 : 8);
     this.applyModifiers(DoubleBattleChanceBoosterModifier, true, doubleChance);
     for (const p of playerField) {
-      applyAbAttrs(DoubleBattleChanceAbAttr, p, null, false, doubleChance);
+      applyAbAttrs("DoubleBattleChanceAbAttr", p, null, false, doubleChance);
     }
     return Math.max(doubleChance.value, 1);
   }
@@ -1466,7 +1457,7 @@ export default class BattleScene extends SceneBase {
         for (const pokemon of this.getPlayerParty()) {
           pokemon.resetBattleAndWaveData();
           pokemon.resetTera();
-          applyPostBattleInitAbAttrs(PostBattleInitAbAttr, pokemon);
+          applyPostBattleInitAbAttrs("PostBattleInitAbAttr", pokemon);
           if (
             pokemon.hasSpecies(SpeciesId.TERAPAGOS) ||
             (this.gameMode.isClassic && this.currentBattle.waveIndex > 180 && this.currentBattle.waveIndex <= 190)
@@ -1641,6 +1632,9 @@ export default class BattleScene extends SceneBase {
       case SpeciesId.TATSUGIRI:
       case SpeciesId.PALDEA_TAUROS:
         return randSeedInt(species.forms.length);
+      case SpeciesId.MAUSHOLD:
+      case SpeciesId.DUDUNSPARCE:
+        return !randSeedInt(4) ? 1 : 0;
       case SpeciesId.PIKACHU:
         if (this.currentBattle?.battleType === BattleType.TRAINER && this.currentBattle?.waveIndex < 30) {
           return 0; // Ban Cosplay and Partner Pika from Trainers before wave 30
@@ -2744,7 +2738,7 @@ export default class BattleScene extends SceneBase {
     const cancelled = new BooleanHolder(false);
 
     if (source && source.isPlayer() !== target.isPlayer()) {
-      applyAbAttrs(BlockItemTheftAbAttr, source, cancelled);
+      applyAbAttrs("BlockItemTheftAbAttr", source, cancelled);
     }
 
     if (cancelled.value) {
@@ -2765,7 +2759,7 @@ export default class BattleScene extends SceneBase {
     target.heldItemManager.add(heldItemId, countTaken, data);
 
     if (source.heldItemManager.getStack(heldItemId) === 0 && itemLost) {
-      applyPostItemLostAbAttrs(PostItemLostAbAttr, source, false);
+      applyPostItemLostAbAttrs("PostItemLostAbAttr", source, false);
     }
 
     if (source.isPlayer() !== target.isPlayer() && !ignoreUpdate) {
@@ -2784,7 +2778,7 @@ export default class BattleScene extends SceneBase {
     const cancelled = new BooleanHolder(false);
 
     if (source && source.isPlayer() !== target.isPlayer()) {
-      applyAbAttrs(BlockItemTheftAbAttr, source, cancelled);
+      applyAbAttrs("BlockItemTheftAbAttr", source, cancelled);
     }
 
     if (cancelled.value) {

@@ -33,38 +33,12 @@ import type { ArenaTrapTag } from "../arena-tag";
 import { WeakenMoveTypeTag } from "../arena-tag";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import {
-  AllyMoveCategoryPowerBoostAbAttr,
   applyAbAttrs,
   applyPostAttackAbAttrs,
   applyPostItemLostAbAttrs,
   applyPreAttackAbAttrs,
-  applyPreDefendAbAttrs,
-  BlockItemTheftAbAttr,
-  BlockNonDirectDamageAbAttr,
-  BlockOneHitKOAbAttr,
-  BlockRecoilDamageAttr,
-  ChangeMovePriorityAbAttr,
-  ConfusionOnStatusEffectAbAttr,
-  FieldMoveTypePowerBoostAbAttr,
-  FieldPreventExplosiveMovesAbAttr,
-  ForceSwitchOutImmunityAbAttr,
-  HealFromBerryUseAbAttr,
-  IgnoreContactAbAttr,
-  IgnoreMoveEffectsAbAttr,
-  IgnoreProtectOnContactAbAttr,
-  InfiltratorAbAttr,
-  MaxMultiHitAbAttr,
-  MoveAbilityBypassAbAttr,
-  MoveEffectChanceMultiplierAbAttr,
-  MoveTypeChangeAbAttr,
-  PostDamageForceSwitchAbAttr,
-  PostItemLostAbAttr,
-  ReflectStatusMoveAbAttr,
-  ReverseDrainAbAttr,
-  UserFieldMoveTypePowerBoostAbAttr,
-  VariableMovePowerAbAttr,
-  WonderSkinAbAttr,
-} from "../abilities/ability";
+  applyPreDefendAbAttrs
+} from "../abilities/apply-ab-attrs";
 import { allAbilities, allMoves } from "../data-lists";
 import {
   PreserveBerryModifier,
@@ -72,7 +46,7 @@ import {
 import type { BattlerIndex } from "#enums/battler-index";
 import { BattleType } from "#enums/battle-type";
 import { TerrainType } from "../terrain";
-import { ModifierPoolType } from "#app/modifier/modifier-type";
+import { ModifierPoolType } from "#enums/modifier-pool-type";
 import { Command } from "#enums/command";
 import i18next from "i18next";
 import type { Localizable } from "#app/@types/locales";
@@ -376,7 +350,7 @@ export default abstract class Move implements Localizable {
 
     const bypassed = new BooleanHolder(false);
     // TODO: Allow this to be simulated
-    applyAbAttrs(InfiltratorAbAttr, user, null, false, bypassed);
+    applyAbAttrs("InfiltratorAbAttr", user, null, false, bypassed);
 
     return !bypassed.value
         && !this.hasFlag(MoveFlags.SOUND_BASED)
@@ -667,14 +641,14 @@ export default abstract class Move implements Localizable {
     // special cases below, eg: if the move flag is MAKES_CONTACT, and the user pokemon has an ability that ignores contact (like "Long Reach"), then overrides and move does not make contact
     switch (flag) {
       case MoveFlags.MAKES_CONTACT:
-        if (user.hasAbilityWithAttr(IgnoreContactAbAttr) || this.hitsSubstitute(user, target)) {
+        if (user.hasAbilityWithAttr("IgnoreContactAbAttr") || this.hitsSubstitute(user, target)) {
           return false;
         }
         break;
       case MoveFlags.IGNORE_ABILITIES:
-        if (user.hasAbilityWithAttr(MoveAbilityBypassAbAttr)) {
+        if (user.hasAbilityWithAttr("MoveAbilityBypassAbAttr")) {
           const abilityEffectsIgnored = new BooleanHolder(false);
-          applyAbAttrs(MoveAbilityBypassAbAttr, user, abilityEffectsIgnored, false, this);
+          applyAbAttrs("MoveAbilityBypassAbAttr", user, abilityEffectsIgnored, false, this);
           if (abilityEffectsIgnored.value) {
             return true;
           }
@@ -683,7 +657,7 @@ export default abstract class Move implements Localizable {
         }
         return this.hasFlag(MoveFlags.IGNORE_ABILITIES) && !isFollowUp;
       case MoveFlags.IGNORE_PROTECT:
-        if (user.hasAbilityWithAttr(IgnoreProtectOnContactAbAttr)
+        if (user.hasAbilityWithAttr("IgnoreProtectOnContactAbAttr")
           && this.doesFlagEffectApply({ flag: MoveFlags.MAKES_CONTACT, user })) {
           return true;
         }
@@ -694,7 +668,7 @@ export default abstract class Move implements Localizable {
           target?.getTag(SemiInvulnerableTag) ||
           !(target?.getTag(BattlerTagType.MAGIC_COAT) ||
             (!this.doesFlagEffectApply({ flag: MoveFlags.IGNORE_ABILITIES, user, target }) &&
-              target?.hasAbilityWithAttr(ReflectStatusMoveAbAttr)))
+              target?.hasAbilityWithAttr("ReflectStatusMoveAbAttr")))
         ) {
           return false;
         }
@@ -791,7 +765,7 @@ export default abstract class Move implements Localizable {
     const moveAccuracy = new NumberHolder(this.accuracy);
 
     applyMoveAttrs("VariableAccuracyAttr", user, target, this, moveAccuracy);
-    applyPreDefendAbAttrs(WonderSkinAbAttr, target, user, this, { value: false }, simulated, moveAccuracy);
+    applyPreDefendAbAttrs("WonderSkinAbAttr", target, user, this, { value: false }, simulated, moveAccuracy);
 
     if (moveAccuracy.value === -1) {
       return moveAccuracy.value;
@@ -834,25 +808,25 @@ export default abstract class Move implements Localizable {
     const typeChangeMovePowerMultiplier = new NumberHolder(1);
     const typeChangeHolder = new NumberHolder(this.type);
 
-    applyPreAttackAbAttrs(MoveTypeChangeAbAttr, source, target, this, true, typeChangeHolder, typeChangeMovePowerMultiplier);
+    applyPreAttackAbAttrs("MoveTypeChangeAbAttr", source, target, this, true, typeChangeHolder, typeChangeMovePowerMultiplier);
 
     const sourceTeraType = source.getTeraType();
     if (source.isTerastallized && sourceTeraType === this.type && power.value < 60 && this.priority <= 0 && !this.hasAttr("MultiHitAttr") && !source.heldItemManager.hasItem(HeldItemId.MULTI_LENS)) {
       power.value = 60;
     }
 
-    applyPreAttackAbAttrs(VariableMovePowerAbAttr, source, target, this, simulated, power);
+    applyPreAttackAbAttrs("VariableMovePowerAbAttr", source, target, this, simulated, power);
     const ally = source.getAlly();
     if (!isNullOrUndefined(ally)) {
-      applyPreAttackAbAttrs(AllyMoveCategoryPowerBoostAbAttr, ally, target, this, simulated, power);
+      applyPreAttackAbAttrs("AllyMoveCategoryPowerBoostAbAttr", ally, target, this, simulated, power);
     }
 
     const fieldAuras = new Set(
       globalScene.getField(true)
-        .map((p) => p.getAbilityAttrs(FieldMoveTypePowerBoostAbAttr).filter(attr => {
+        .map((p) => p.getAbilityAttrs("FieldMoveTypePowerBoostAbAttr").filter(attr => {
           const condition = attr.getCondition();
           return (!condition || condition(p));
-        }) as FieldMoveTypePowerBoostAbAttr[])
+        }))
         .flat(),
     );
     for (const aura of fieldAuras) {
@@ -860,7 +834,7 @@ export default abstract class Move implements Localizable {
     }
 
     const alliedField: Pokemon[] = source.isPlayer() ? globalScene.getPlayerField() : globalScene.getEnemyField();
-    alliedField.forEach(p => applyPreAttackAbAttrs(UserFieldMoveTypePowerBoostAbAttr, p, target, this, simulated, power));
+    alliedField.forEach(p => applyPreAttackAbAttrs("UserFieldMoveTypePowerBoostAbAttr", p, target, this, simulated, power));
 
     power.value *= typeChangeMovePowerMultiplier.value;
 
@@ -891,7 +865,7 @@ export default abstract class Move implements Localizable {
     const priority = new NumberHolder(this.priority);
 
     applyMoveAttrs("IncrementMovePriorityAttr", user, null, this, priority);
-    applyAbAttrs(ChangeMovePriorityAbAttr, user, null, simulated, this, priority);
+    applyAbAttrs("ChangeMovePriorityAbAttr", user, null, simulated, this, priority);
 
     return priority.value;
   }
@@ -1343,7 +1317,7 @@ export class MoveEffectAttr extends MoveAttr {
   getMoveChance(user: Pokemon, target: Pokemon, move: Move, selfEffect?: Boolean, showAbility?: Boolean): number {
     const moveChance = new NumberHolder(this.effectChanceOverride ?? move.chance);
 
-    applyAbAttrs(MoveEffectChanceMultiplierAbAttr, user, null, !showAbility, moveChance, move);
+    applyAbAttrs("MoveEffectChanceMultiplierAbAttr", user, null, !showAbility, moveChance, move);
 
     if ((!move.hasAttr("FlinchAttr") || moveChance.value <= move.chance) && !move.hasAttr("SecretPowerAttr")) {
       const userSide = user.isPlayer() ? ArenaTagSide.PLAYER : ArenaTagSide.ENEMY;
@@ -1351,7 +1325,7 @@ export class MoveEffectAttr extends MoveAttr {
     }
 
     if (!selfEffect) {
-      applyPreDefendAbAttrs(IgnoreMoveEffectsAbAttr, target, user, null, null, !showAbility, moveChance);
+      applyPreDefendAbAttrs("IgnoreMoveEffectsAbAttr", target, user, null, null, !showAbility, moveChance);
     }
     return moveChance.value;
   }
@@ -1729,8 +1703,8 @@ export class RecoilAttr extends MoveEffectAttr {
 
     const cancelled = new BooleanHolder(false);
     if (!this.unblockable) {
-      applyAbAttrs(BlockRecoilDamageAttr, user, cancelled);
-      applyAbAttrs(BlockNonDirectDamageAbAttr, user, cancelled);
+      applyAbAttrs("BlockRecoilDamageAttr", user, cancelled);
+      applyAbAttrs("BlockNonDirectDamageAbAttr", user, cancelled);
     }
 
     if (cancelled.value) {
@@ -1863,7 +1837,7 @@ export class HalfSacrificialAttr extends MoveEffectAttr {
 
     const cancelled = new BooleanHolder(false);
     // Check to see if the Pokemon has an ability that blocks non-direct damage
-    applyAbAttrs(BlockNonDirectDamageAbAttr, user, cancelled);
+    applyAbAttrs("BlockNonDirectDamageAbAttr", user, cancelled);
     if (!cancelled.value) {
       user.damageAndUpdate(toDmgValue(user.getMaxHp() / 2), { result: HitResult.INDIRECT, ignoreSegments: true });
       globalScene.phaseManager.queueMessage(i18next.t("moveTriggers:cutHpPowerUpMove", { pokemonName: getPokemonNameWithAffix(user) })); // Queue recoil message
@@ -2062,7 +2036,7 @@ export class FlameBurstAttr extends MoveEffectAttr {
     const cancelled = new BooleanHolder(false);
 
     if (!isNullOrUndefined(targetAlly)) {
-      applyAbAttrs(BlockNonDirectDamageAbAttr, targetAlly, cancelled);
+      applyAbAttrs("BlockNonDirectDamageAbAttr", targetAlly, cancelled);
     }
 
     if (cancelled.value || !targetAlly || targetAlly.switchOutStatus) {
@@ -2185,6 +2159,7 @@ export class PlantHealAttr extends WeatherHealAttr {
       case WeatherType.SANDSTORM:
       case WeatherType.HAIL:
       case WeatherType.SNOW:
+      case WeatherType.FOG:
       case WeatherType.HEAVY_RAIN:
         return 0.25;
       default:
@@ -2292,7 +2267,7 @@ export class HitHealAttr extends MoveEffectAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     let healAmount = 0;
     let message = "";
-    const reverseDrain = target.hasAbilityWithAttr(ReverseDrainAbAttr, false);
+    const reverseDrain = target.hasAbilityWithAttr("ReverseDrainAbAttr", false);
     if (this.healStat !== null) {
       // Strength Sap formula
       healAmount = target.getEffectiveStat(this.healStat);
@@ -2303,7 +2278,7 @@ export class HitHealAttr extends MoveEffectAttr {
       message = i18next.t("battle:regainHealth", { pokemonName: getPokemonNameWithAffix(user) });
     }
     if (reverseDrain) {
-      if (user.hasAbilityWithAttr(BlockNonDirectDamageAbAttr)) {
+      if (user.hasAbilityWithAttr("BlockNonDirectDamageAbAttr")) {
         healAmount = 0;
         message = "";
       } else {
@@ -2433,7 +2408,7 @@ export class MultiHitAttr extends MoveAttr {
       {
         const rand = user.randBattleSeedInt(20);
         const hitValue = new NumberHolder(rand);
-        applyAbAttrs(MaxMultiHitAbAttr, user, null, false, hitValue);
+        applyAbAttrs("MaxMultiHitAbAttr", user, null, false, hitValue);
         if (hitValue.value >= 13) {
           return 2;
         } else if (hitValue.value >= 6) {
@@ -2541,7 +2516,7 @@ export class StatusEffectAttr extends MoveEffectAttr {
       }
       if (((!pokemon.status || this.overrideStatus) || (pokemon.status.effect === this.effect && moveChance < 0))
         && pokemon.trySetStatus(this.effect, true, user, this.turnsRemaining, null, this.overrideStatus, quiet)) {
-        applyPostAttackAbAttrs(ConfusionOnStatusEffectAbAttr, user, target, move, null, false, this.effect);
+        applyPostAttackAbAttrs("ConfusionOnStatusEffectAbAttr", user, target, move, null, false, this.effect);
         return true;
       }
     }
@@ -2699,7 +2674,7 @@ export class RemoveHeldItemAttr extends MoveEffectAttr {
     // Check for abilities that block item theft
     // TODO: This should not trigger if the target would faint beforehand
     const cancelled = new BooleanHolder(false);
-    applyAbAttrs(BlockItemTheftAbAttr, target, cancelled);
+    applyAbAttrs("BlockItemTheftAbAttr", target, cancelled);
 
     if (cancelled.value) {
       return false;
@@ -2812,8 +2787,8 @@ export class EatBerryAttr extends MoveEffectAttr {
    protected eatBerry(consumer: Pokemon, berryOwner: Pokemon = consumer, updateHarvest = consumer === berryOwner) {
      // consumer eats berry, owner triggers unburden and similar effects
     getBerryEffectFunc(allHeldItems[this.chosenBerry].berryType)(consumer);
-    applyPostItemLostAbAttrs(PostItemLostAbAttr, berryOwner, false);
-    applyAbAttrs(HealFromBerryUseAbAttr, consumer, new BooleanHolder(false));
+    applyPostItemLostAbAttrs("PostItemLostAbAttr", berryOwner, false);
+    applyAbAttrs("HealFromBerryUseAbAttr", consumer, new BooleanHolder(false));
     consumer.recordEatenBerry(allHeldItems[this.chosenBerry].berryType, updateHarvest);
   }
 }
@@ -2838,7 +2813,7 @@ export class StealEatBerryAttr extends EatBerryAttr {
   apply(user: Pokemon, target: Pokemon, move: Move, args: any[]): boolean {
     // check for abilities that block item theft
     const cancelled = new BooleanHolder(false);
-    applyAbAttrs(BlockItemTheftAbAttr, target, cancelled);
+    applyAbAttrs("BlockItemTheftAbAttr", target, cancelled);
     if (cancelled.value === true) {
       return false;
     }
@@ -2852,7 +2827,7 @@ export class StealEatBerryAttr extends EatBerryAttr {
 
     // pick a random berry and eat it
     this.chosenBerry = heldBerries[user.randBattleSeedInt(heldBerries.length)];
-    applyPostItemLostAbAttrs(PostItemLostAbAttr, target, false);
+    applyPostItemLostAbAttrs("PostItemLostAbAttr", target, false);
     const message = i18next.t("battle:stealEatBerry", { pokemonName: user.name, targetName: target.name, berryName: allHeldItems[this.chosenBerry].name });
     globalScene.phaseManager.queueMessage(message);
     this.reduceBerryModifier(target);
@@ -2893,7 +2868,7 @@ export class HealStatusEffectAttr extends MoveEffectAttr {
 
     // Special edge case for shield dust blocking Sparkling Aria curing burn
     const moveTargets = getMoveTargets(user, move.id);
-    if (target.hasAbilityWithAttr(IgnoreMoveEffectsAbAttr) && move.id === MoveId.SPARKLING_ARIA && moveTargets.targets.length === 1) {
+    if (target.hasAbilityWithAttr("IgnoreMoveEffectsAbAttr") && move.id === MoveId.SPARKLING_ARIA && moveTargets.targets.length === 1) {
       return false;
     }
 
@@ -3043,7 +3018,7 @@ export class OneHitKOAttr extends MoveAttr {
   getCondition(): MoveConditionFunc {
     return (user, target, move) => {
       const cancelled = new BooleanHolder(false);
-      applyAbAttrs(BlockOneHitKOAbAttr, target, cancelled);
+      applyAbAttrs("BlockOneHitKOAbAttr", target, cancelled);
       return !cancelled.value && user.level >= target.level;
     };
   }
@@ -4184,6 +4159,7 @@ export class AntiSunlightPowerDecreaseAttr extends VariablePowerAttr {
         case WeatherType.SANDSTORM:
         case WeatherType.HAIL:
         case WeatherType.SNOW:
+        case WeatherType.FOG:
         case WeatherType.HEAVY_RAIN:
           power.value *= 0.5;
           return true;
@@ -5443,7 +5419,7 @@ export class NoEffectAttr extends MoveAttr {
 
 const crashDamageFunc = (user: Pokemon, move: Move) => {
   const cancelled = new BooleanHolder(false);
-  applyAbAttrs(BlockNonDirectDamageAbAttr, user, cancelled);
+  applyAbAttrs("BlockNonDirectDamageAbAttr", user, cancelled);
   if (cancelled.value) {
     return false;
   }
@@ -6303,7 +6279,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
       * Check if Wimp Out/Emergency Exit activates due to being hit by U-turn or Volt Switch
       * If it did, the user of U-turn or Volt Switch will not be switched out.
       */
-      if (target.getAbility().hasAttr(PostDamageForceSwitchAbAttr)
+      if (target.getAbility().hasAttr("PostDamageForceSwitchAbAttr")
         && [ MoveId.U_TURN, MoveId.VOLT_SWITCH, MoveId.FLIP_TURN ].includes(move.id)
       ) {
         if (this.hpDroppedBelowHalf(target)) {
@@ -6392,7 +6368,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
       * Check if Wimp Out/Emergency Exit activates due to being hit by U-turn or Volt Switch
       * If it did, the user of U-turn or Volt Switch will not be switched out.
       */
-      if (target.getAbility().hasAttr(PostDamageForceSwitchAbAttr)
+      if (target.getAbility().hasAttr("PostDamageForceSwitchAbAttr")
         && [ MoveId.U_TURN, MoveId.VOLT_SWITCH, MoveId.FLIP_TURN ].includes(move.id)
       ) {
         if (this.hpDroppedBelowHalf(target)) {
@@ -6432,7 +6408,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
 
   getFailedText(_user: Pokemon, target: Pokemon, _move: Move): string | undefined {
     const blockedByAbility = new BooleanHolder(false);
-    applyAbAttrs(ForceSwitchOutImmunityAbAttr, target, blockedByAbility);
+    applyAbAttrs("ForceSwitchOutImmunityAbAttr", target, blockedByAbility);
     if (blockedByAbility.value) {
       return i18next.t("moveTriggers:cannotBeSwitchedOut", { pokemonName: getPokemonNameWithAffix(target) });
     }
@@ -6472,7 +6448,7 @@ export class ForceSwitchOutAttr extends MoveEffectAttr {
         }
 
         const blockedByAbility = new BooleanHolder(false);
-        applyAbAttrs(ForceSwitchOutImmunityAbAttr, target, blockedByAbility);
+        applyAbAttrs("ForceSwitchOutImmunityAbAttr", target, blockedByAbility);
         if (blockedByAbility.value) {
           return false;
         }
@@ -7979,7 +7955,7 @@ const failIfSingleBattle: MoveConditionFunc = (user, target, move) => globalScen
 
 const failIfDampCondition: MoveConditionFunc = (user, target, move) => {
   const cancelled = new BooleanHolder(false);
-  globalScene.getField(true).map(p=>applyAbAttrs(FieldPreventExplosiveMovesAbAttr, p, cancelled));
+  globalScene.getField(true).map(p=>applyAbAttrs("FieldPreventExplosiveMovesAbAttr", p, cancelled));
   // Queue a message if an ability prevented usage of the move
   if (cancelled.value) {
     globalScene.phaseManager.queueMessage(i18next.t("moveTriggers:cannotUseMove", { pokemonName: getPokemonNameWithAffix(user), moveName: move.name }));

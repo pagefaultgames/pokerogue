@@ -1,5 +1,6 @@
 import { FusionSpeciesFormEvolution, pokemonEvolutions } from "#app/data/balance/pokemon-evolutions";
 import { getLevelTotalExp } from "#app/data/exp";
+import { allMoves, modifierTypes } from "#app/data/data-lists";
 import { MAX_PER_TYPE_POKEBALLS } from "#app/data/pokeball";
 import { getStatusEffectHealText } from "#app/data/status-effect";
 import type Pokemon from "#app/field/pokemon";
@@ -36,16 +37,156 @@ import {
   ModifierTypeGenerator,
   modifierTypes,
 } from "./modifier-type";
+import { getModifierType } from "#app/utils/modifier-utils";
 import { FRIENDSHIP_GAIN_FROM_RARE_CANDY } from "#app/data/balance/starters";
 import { globalScene } from "#app/global-scene";
+import type { ModifierInstanceMap, ModifierString } from "#app/@types/modifier-types";
 
 export type ModifierPredicate = (modifier: Modifier) => boolean;
+
+
+const iconOverflowIndex = 24;
+
+export const modifierSortFunc = (a: Modifier, b: Modifier): number => {
+  const itemNameMatch = a.type.name.localeCompare(b.type.name);
+  const typeNameMatch = a.constructor.name.localeCompare(b.constructor.name);
+  const aId = a instanceof PokemonHeldItemModifier && a.pokemonId ? a.pokemonId : 4294967295;
+  const bId = b instanceof PokemonHeldItemModifier && b.pokemonId ? b.pokemonId : 4294967295;
+
+  //First sort by pokemonID
+  if (aId < bId) {
+    return 1;
+  }
+  if (aId > bId) {
+    return -1;
+  }
+  if (aId === bId) {
+    //Then sort by item type
+    if (typeNameMatch === 0) {
+      return itemNameMatch;
+      //Finally sort by item name
+    }
+    return typeNameMatch;
+  }
+  return 0;
+};
+
+export class ModifierBar extends Phaser.GameObjects.Container {
+  private player: boolean;
+  private modifierCache: PersistentModifier[];
+
+  constructor(enemy?: boolean) {
+    super(globalScene, 1 + (enemy ? 302 : 0), 2);
+
+    this.player = !enemy;
+    this.setScale(0.5);
+  }
+
+  /**
+   * Method to update content displayed in {@linkcode ModifierBar}
+   * @param {PersistentModifier[]} modifiers - The list of modifiers to be displayed in the {@linkcode ModifierBar}
+   * @param {boolean} hideHeldItems - If set to "true", only modifiers not assigned to a Pokémon are displayed
+   */
+  updateModifiers(modifiers: PersistentModifier[], hideHeldItems = false) {
+    this.removeAll(true);
+
+    const visibleIconModifiers = modifiers.filter(m => m.isIconVisible());
+    const nonPokemonSpecificModifiers = visibleIconModifiers
+      .filter(m => !(m as PokemonHeldItemModifier).pokemonId)
+      .sort(modifierSortFunc);
+    const pokemonSpecificModifiers = visibleIconModifiers
+      .filter(m => (m as PokemonHeldItemModifier).pokemonId)
+      .sort(modifierSortFunc);
+
+    const sortedVisibleIconModifiers = hideHeldItems
+      ? nonPokemonSpecificModifiers
+      : nonPokemonSpecificModifiers.concat(pokemonSpecificModifiers);
+
+    sortedVisibleIconModifiers.forEach((modifier: PersistentModifier, i: number) => {
+      const icon = modifier.getIcon();
+      if (i >= iconOverflowIndex) {
+        icon.setVisible(false);
+      }
+      this.add(icon);
+      this.setModifierIconPosition(icon, sortedVisibleIconModifiers.length);
+      icon.setInteractive(new Phaser.Geom.Rectangle(0, 0, 32, 24), Phaser.Geom.Rectangle.Contains);
+      icon.on("pointerover", () => {
+        globalScene.ui.showTooltip(modifier.type.name, modifier.type.getDescription());
+        if (this.modifierCache && this.modifierCache.length > iconOverflowIndex) {
+          this.updateModifierOverflowVisibility(true);
+        }
+      });
+      icon.on("pointerout", () => {
+        globalScene.ui.hideTooltip();
+        if (this.modifierCache && this.modifierCache.length > iconOverflowIndex) {
+          this.updateModifierOverflowVisibility(false);
+        }
+      });
+    });
+
+    for (const icon of this.getAll()) {
+      this.sendToBack(icon);
+    }
+
+    this.modifierCache = modifiers;
+  }
+
+  updateModifierOverflowVisibility(ignoreLimit: boolean) {
+    const modifierIcons = this.getAll().reverse();
+    for (const modifier of modifierIcons.map(m => m as Phaser.GameObjects.Container).slice(iconOverflowIndex)) {
+      modifier.setVisible(ignoreLimit);
+    }
+  }
+
+  setModifierIconPosition(icon: Phaser.GameObjects.Container, modifierCount: number) {
+    const rowIcons: number = 12 + 6 * Math.max(Math.ceil(Math.min(modifierCount, 24) / 12) - 2, 0);
+
+    const x = ((this.getIndex(icon) % rowIcons) * 26) / (rowIcons / 12);
+    const y = Math.floor(this.getIndex(icon) / rowIcons) * 20;
+
+    icon.setPosition(this.player ? x : -x, y);
+  }
+}
 
 export abstract class Modifier {
   public type: ModifierType;
 
   constructor(type: ModifierType) {
     this.type = type;
+  }
+
+  /**
+   * Return whether this modifier is of the given class
+   *
+   * @remarks
+   * Used to avoid requiring the caller to have imported the specific modifier class, avoiding circular dependencies.
+   *
+   * @param modifier - The modifier to check against
+   * @returns Whether the modiifer is an instance of the given type
+   */
+  public is<T extends ModifierString>(modifier: T): this is ModifierInstanceMap[T] {
+    const targetModifier = ModifierClassMap[modifier];
+    if (!targetModifier) {
+      return false;
+    }
+    return this instanceof targetModifier;
+  }
+
+  /**
+   * Return whether this modifier is of the given class
+   *
+   * @remarks
+   * Used to avoid requiring the caller to have imported the specific modifier class, avoiding circular dependencies.
+   *
+   * @param modifier - The modifier to check against
+   * @returns Whether the modiifer is an instance of the given type
+   */
+  public is<T extends ModifierString>(modifier: T): this is ModifierInstanceMap[T] {
+    const targetModifier = ModifierClassMap[modifier];
+    if (!targetModifier) {
+      return false;
+    }
+    return this instanceof targetModifier;
   }
 
   match(_modifier: Modifier): boolean {
@@ -71,6 +212,11 @@ export abstract class Modifier {
 export abstract class PersistentModifier extends Modifier {
   public stackCount: number;
   public virtualStackCount: number;
+
+  /** This field does not exist at runtime and must not be used.
+   * Its sole purpose is to ensure that typescript is able to properly narrow when the `is` method is called.
+   */
+  private declare _: never;
 
   constructor(type: ModifierType, stackCount = 1) {
     super(type);
@@ -1828,7 +1974,7 @@ export function overrideModifiers(isPlayer = true): void {
     const modifierFunc = modifierTypes[item.name];
     let modifierType: ModifierType | null = modifierFunc();
 
-    if (modifierType instanceof ModifierTypeGenerator) {
+    if (modifierType.is("ModifierTypeGenerator")) {
       const pregenArgs = "type" in item && item.type !== null ? [item.type] : undefined;
       modifierType = modifierType.generateType([], pregenArgs);
     }
@@ -1870,7 +2016,7 @@ export function overrideHeldItems(pokemon: Pokemon, isPlayer = true): void {
     let modifierType: ModifierType | null = modifierFunc();
     const qty = item.count || 1;
 
-    if (modifierType instanceof ModifierTypeGenerator) {
+    if (modifierType.is("ModifierTypeGenerator")) {
       const pregenArgs = "type" in item && item.type !== null ? [item.type] : undefined;
       modifierType = modifierType.generateType([], pregenArgs);
     }
@@ -1888,3 +2034,102 @@ export function overrideHeldItems(pokemon: Pokemon, isPlayer = true): void {
     }
   }
 }
+
+/**
+ * Private map from modifier strings to their constructors.
+ *
+ * @remarks
+ * Used for {@linkcode Modifier.is} to check if a modifier is of a certain type without
+ * requiring modifier types to be imported in every file.
+ */
+const ModifierClassMap = Object.freeze({
+  PersistentModifier,
+  ConsumableModifier,
+  AddPokeballModifier,
+  AddVoucherModifier,
+  LapsingPersistentModifier,
+  DoubleBattleChanceBoosterModifier,
+  TempStatStageBoosterModifier,
+  TempCritBoosterModifier,
+  MapModifier,
+  MegaEvolutionAccessModifier,
+  GigantamaxAccessModifier,
+  TerastallizeAccessModifier,
+  PokemonHeldItemModifier,
+  LapsingPokemonHeldItemModifier,
+  BaseStatModifier,
+  EvoTrackerModifier,
+  PokemonBaseStatTotalModifier,
+  PokemonBaseStatFlatModifier,
+  PokemonIncrementingStatModifier,
+  StatBoosterModifier,
+  SpeciesStatBoosterModifier,
+  CritBoosterModifier,
+  SpeciesCritBoosterModifier,
+  AttackTypeBoosterModifier,
+  SurviveDamageModifier,
+  BypassSpeedChanceModifier,
+  FlinchChanceModifier,
+  TurnHealModifier,
+  TurnStatusEffectModifier,
+  HitHealModifier,
+  LevelIncrementBoosterModifier,
+  BerryModifier,
+  PreserveBerryModifier,
+  PokemonInstantReviveModifier,
+  ResetNegativeStatStageModifier,
+  FieldEffectModifier,
+  ConsumablePokemonModifier,
+  TerrastalizeModifier,
+  PokemonHpRestoreModifier,
+  PokemonStatusHealModifier,
+  ConsumablePokemonMoveModifier,
+  PokemonPpRestoreModifier,
+  PokemonAllMovePpRestoreModifier,
+  PokemonPpUpModifier,
+  PokemonNatureChangeModifier,
+  PokemonLevelIncrementModifier,
+  TmModifier,
+  RememberMoveModifier,
+  EvolutionItemModifier,
+  FusePokemonModifier,
+  MultipleParticipantExpBonusModifier,
+  HealingBoosterModifier,
+  ExpBoosterModifier,
+  PokemonExpBoosterModifier,
+  ExpShareModifier,
+  ExpBalanceModifier,
+  PokemonFriendshipBoosterModifier,
+  PokemonNatureWeightModifier,
+  PokemonMoveAccuracyBoosterModifier,
+  PokemonMultiHitModifier,
+  PokemonFormChangeItemModifier,
+  MoneyRewardModifier,
+  DamageMoneyRewardModifier,
+  MoneyInterestModifier,
+  HiddenAbilityRateBoosterModifier,
+  ShinyRateBoosterModifier,
+  CriticalCatchChanceBoosterModifier,
+  LockModifierTiersModifier,
+  HealShopCostModifier,
+  BoostBugSpawnModifier,
+  SwitchEffectTransferModifier,
+  HeldItemTransferModifier,
+  TurnHeldItemTransferModifier,
+  ContactHeldItemTransferChanceModifier,
+  IvScannerModifier,
+  ExtraModifierModifier,
+  TempExtraModifierModifier,
+  EnemyPersistentModifier,
+  EnemyDamageMultiplierModifier,
+  EnemyDamageBoosterModifier,
+  EnemyDamageReducerModifier,
+  EnemyTurnHealModifier,
+  EnemyAttackStatusEffectChanceModifier,
+  EnemyStatusEffectHealChanceModifier,
+  EnemyEndureChanceModifier,
+  EnemyFusionChanceModifier,
+  MoneyMultiplierModifier,
+});
+
+export type ModifierConstructorMap = typeof ModifierClassMap;

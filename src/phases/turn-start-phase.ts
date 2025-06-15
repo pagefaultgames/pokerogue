@@ -1,4 +1,4 @@
-import { applyAbAttrs, BypassSpeedChanceAbAttr, PreventBypassSpeedChanceAbAttr } from "#app/data/abilities/ability";
+import { applyAbAttrs } from "#app/data/abilities/apply-ab-attrs";
 import { allMoves } from "#app/data/data-lists";
 import { AbilityId } from "#enums/ability-id";
 import { Stat } from "#app/enums/stat";
@@ -67,8 +67,8 @@ export class TurnStartPhase extends FieldPhase {
     globalScene.getField(true).map(p => {
       const bypassSpeed = new BooleanHolder(false);
       const canCheckHeldItems = new BooleanHolder(true);
-      applyAbAttrs(BypassSpeedChanceAbAttr, p, null, false, bypassSpeed);
-      applyAbAttrs(PreventBypassSpeedChanceAbAttr, p, null, false, bypassSpeed, canCheckHeldItems);
+      applyAbAttrs("BypassSpeedChanceAbAttr", p, null, false, bypassSpeed);
+      applyAbAttrs("PreventBypassSpeedChanceAbAttr", p, null, false, bypassSpeed, canCheckHeldItems);
       if (canCheckHeldItems.value) {
         applyHeldItems(ITEM_EFFECT.BYPASS_SPEED_CHANCE, { pokemon: p, doBypassSpeed: bypassSpeed });
       }

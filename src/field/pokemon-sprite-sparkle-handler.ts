@@ -1,6 +1,6 @@
 import { globalScene } from "#app/global-scene";
 import Pokemon from "./pokemon";
-import { fixedInt, randInt } from "#app/utils/common";
+import { fixedInt, coerceArray, randInt } from "#app/utils/common";
 
 export default class PokemonSpriteSparkleHandler {
   private sprites: Set<Phaser.GameObjects.Sprite>;
@@ -57,9 +57,7 @@ export default class PokemonSpriteSparkleHandler {
   }
 
   add(sprites: Phaser.GameObjects.Sprite | Phaser.GameObjects.Sprite[]): void {
-    if (!Array.isArray(sprites)) {
-      sprites = [sprites];
-    }
+    sprites = coerceArray(sprites);
     for (const s of sprites) {
       if (this.sprites.has(s)) {
         continue;
@@ -69,9 +67,7 @@ export default class PokemonSpriteSparkleHandler {
   }
 
   remove(sprites: Phaser.GameObjects.Sprite | Phaser.GameObjects.Sprite[]): void {
-    if (!Array.isArray(sprites)) {
-      sprites = [sprites];
-    }
+    sprites = coerceArray(sprites);
     for (const s of sprites) {
       this.sprites.delete(s);
     }

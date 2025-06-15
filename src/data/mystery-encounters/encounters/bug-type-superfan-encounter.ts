@@ -36,12 +36,12 @@ import {
 } from "#app/data/mystery-encounters/mystery-encounter-requirements";
 import { PokemonType } from "#enums/pokemon-type";
 import type { ModifierTypeOption } from "#app/modifier/modifier-type";
-import { modifierTypes } from "#app/modifier/modifier-type";
+import { modifierTypes } from "#app/data/data-lists";
 import { GigantamaxAccessModifier, MegaEvolutionAccessModifier } from "#app/modifier/modifier";
 import i18next from "i18next";
 import MoveInfoOverlay from "#app/ui/move-info-overlay";
 import { allMoves } from "#app/data/data-lists";
-import { ModifierTier } from "#app/modifier/modifier-tier";
+import { ModifierTier } from "#enums/modifier-tier";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { getSpriteKeysFromSpecies } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 import { HeldItemId } from "#enums/held-item-id";

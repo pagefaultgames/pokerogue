@@ -3,10 +3,7 @@ import { BattlerIndex } from "#enums/battler-index";
 import { BattleType } from "#enums/battle-type";
 import { biomeLinks, BiomePoolTier } from "#app/data/balance/biomes";
 import type MysteryEncounterOption from "#app/data/mystery-encounters/mystery-encounter-option";
-import {
-  AVERAGE_ENCOUNTERS_PER_RUN_TARGET,
-  WEIGHT_INCREMENT_ON_SPAWN_MISS,
-} from "#app/data/mystery-encounters/mystery-encounters";
+import { AVERAGE_ENCOUNTERS_PER_RUN_TARGET, WEIGHT_INCREMENT_ON_SPAWN_MISS } from "#app/constants";
 import { showEncounterText } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
 import type { PlayerPokemon } from "#app/field/pokemon";
 import type { AiType } from "#enums/ai-type";
@@ -17,18 +14,18 @@ import { FieldPosition } from "#enums/field-position";
 import type { CustomModifierSettings, ModifierType } from "#app/modifier/modifier-type";
 import {
   getPartyLuckValue,
-  ModifierPoolType,
   ModifierTypeGenerator,
   ModifierTypeOption,
-  modifierTypes,
   regenerateModifierPoolThresholds,
 } from "#app/modifier/modifier-type";
+import { modifierTypes } from "#app/data/data-lists";
+import { ModifierPoolType } from "#enums/modifier-pool-type";
 import type PokemonData from "#app/system/pokemon-data";
 import type { OptionSelectConfig, OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
 import type { PartyOption, PokemonSelectFilter } from "#app/ui/party-ui-handler";
 import { PartyUiMode } from "#app/ui/party-ui-handler";
 import { UiMode } from "#enums/ui-mode";
-import { isNullOrUndefined, randSeedInt, randomString, randSeedItem } from "#app/utils/common";
+import { isNullOrUndefined, randSeedInt, randomString, randSeedItem, coerceArray } from "#app/utils/common";
 import type { BattlerTagType } from "#enums/battler-tag-type";
 import { BiomeId } from "#enums/biome-id";
 import type { TrainerType } from "#enums/trainer-type";
@@ -452,7 +449,7 @@ export async function initBattleWithEnemyConfig(partyConfig: EnemyPartyConfig): 
  * @param moves
  */
 export function loadCustomMovesForEncounter(moves: MoveId | MoveId[]) {
-  moves = Array.isArray(moves) ? moves : [moves];
+  moves = coerceArray(moves);
   return Promise.all(moves.map(move => initMoveAnim(move))).then(() => loadMoveAnimAssets(moves));
 }
 
@@ -795,7 +792,7 @@ export function setEncounterRewards(
  * @param useWaveIndex - set to false when directly passing the the full exp value instead of baseExpValue
  */
 export function setEncounterExp(participantId: number | number[], baseExpValue: number, useWaveIndex = true) {
-  const participantIds = Array.isArray(participantId) ? participantId : [participantId];
+  const participantIds = coerceArray(participantId);
 
   globalScene.currentBattle.mysteryEncounter!.doEncounterExp = () => {
     globalScene.phaseManager.unshiftNew("PartyExpPhase", baseExpValue, useWaveIndex, new Set(participantIds));

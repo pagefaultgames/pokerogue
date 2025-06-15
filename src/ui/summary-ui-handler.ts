@@ -32,7 +32,7 @@ import { loggedInUser } from "#app/account";
 import type { Variant } from "#app/sprites/variant";
 import { getVariantTint } from "#app/sprites/variant";
 import { Button } from "#enums/buttons";
-import type { Ability } from "#app/data/abilities/ability-class";
+import type { Ability } from "#app/data/abilities/ability";
 import i18next from "i18next";
 import { heldItemSortFunc } from "#app/modifier/modifier-bar";
 import { PlayerGender } from "#enums/player-gender";
