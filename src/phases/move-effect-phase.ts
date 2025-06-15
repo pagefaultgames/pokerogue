@@ -54,6 +54,7 @@ import { HitCheckResult } from "#enums/hit-check-result";
 import type Move from "#app/data/moves/move";
 import { isFieldTargeted } from "#app/data/moves/move-utils";
 import { DamageAchv } from "#app/system/achv";
+import { MovePhaseTimingModifier } from "#enums/move-phase-timing-modifier";
 
 type HitCheckEntry = [HitCheckResult, TypeDamageMultiplier];
 
@@ -166,26 +167,23 @@ export class MoveEffectPhase extends PokemonPhase {
       : [user.getBattlerIndex()];
     // TODO: ability displays should be handled by the ability
     if (!target.getTag(BattlerTagType.MAGIC_COAT)) {
-      this.queuedPhases.push(
-        globalScene.phaseManager.create(
-          "ShowAbilityPhase",
-          target.getBattlerIndex(),
-          target.getPassiveAbility().hasAttr("ReflectStatusMoveAbAttr"),
-        ),
+      globalScene.phaseManager.unshiftNew(
+        "ShowAbilityPhase",
+        target.getBattlerIndex(),
+        target.getPassiveAbility().hasAttr("ReflectStatusMoveAbAttr"),
       );
-      this.queuedPhases.push(globalScene.phaseManager.create("HideAbilityPhase"));
+      globalScene.phaseManager.unshiftNew("HideAbilityPhase");
     }
 
-    this.queuedPhases.push(
-      globalScene.phaseManager.create(
-        "MovePhase",
-        target,
-        newTargets,
-        new PokemonMove(this.move.id, 0, 0, true),
-        true,
-        true,
-        true,
-      ),
+    globalScene.phaseManager.startNewDynamicPhase(
+      "MovePhase",
+      target,
+      newTargets,
+      new PokemonMove(this.move.id, 0, 0, true),
+      true,
+      true,
+      true,
+      MovePhaseTimingModifier.FIRST,
     );
   }
 
@@ -372,9 +370,6 @@ export class MoveEffectPhase extends PokemonPhase {
       return;
     }
 
-    if (this.queuedPhases.length) {
-      globalScene.phaseManager.appendToPhase(this.queuedPhases, "MoveEndPhase");
-    }
     const moveType = user.getMoveType(this.move, true);
     if (this.move.category !== MoveCategory.STATUS && !user.stellarTypesBoosted.includes(moveType)) {
       user.stellarTypesBoosted.push(moveType);
