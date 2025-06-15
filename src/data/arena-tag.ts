@@ -1032,7 +1032,7 @@ class StickyWebTag extends ArenaTrapTag {
     }
 
     globalScene.phaseManager.queueMessage(
-      i18next.t("arenaTag:spikesOnAdd", {
+      i18next.t("arenaTag:stickyWebOnAdd", {
         moveName: this.getMoveName(),
         opponentDesc: source.getOpponentDescriptor(),
       }),
