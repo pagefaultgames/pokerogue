@@ -79,6 +79,7 @@ import type { ArenaTrapTag, SuppressAbilitiesTag } from "#app/data/arena-tag";
 import { noAbilityTypeOverrideMoves } from "../moves/invalid-moves";
 import type { Localizable } from "#app/@types/locales";
 import { applyAbAttrs } from "./apply-ab-attrs";
+import { MovePriorityModifier } from "#enums/move-priority-modifier";
 
 export class Ability implements Localizable {
   public id: AbilityId;
@@ -4978,6 +4979,31 @@ export class ChangeMovePriorityAbAttr extends AbAttr {
   }
 }
 
+export class ChangeMovePriorityModifierAbAttr extends AbAttr {
+  private newModifier: MovePriorityModifier;
+  private moveFunc: (pokemon: Pokemon, move: Move) => boolean;
+
+  constructor(moveFunc: (pokemon: Pokemon, move: Move) => boolean, newModifier: MovePriorityModifier) {
+    super(false);
+    this.newModifier = newModifier;
+    this.moveFunc = moveFunc;
+  }
+
+  override canApply(pokemon: Pokemon, _passive: boolean, _simulated: boolean, args: any[]): boolean {
+    return this.moveFunc(pokemon, args[0] as Move);
+  }
+
+  override apply(
+    _pokemon: Pokemon,
+    _passive: boolean,
+    _simulated: boolean,
+    _cancelled: BooleanHolder | null,
+    args: any[],
+  ): void {
+    (args[1] as NumberHolder).value = this.newModifier;
+  }
+}
+
 export class IgnoreContactAbAttr extends AbAttr {}
 
 export class PreWeatherEffectAbAttr extends AbAttr {
@@ -7219,7 +7245,12 @@ export class BypassSpeedChanceAbAttr extends AbAttr {
     const move = turnCommand?.move?.move ? allMoves[turnCommand.move.move] : null;
     const isDamageMove = move?.category === MoveCategory.PHYSICAL || move?.category === MoveCategory.SPECIAL;
     return (
-      !simulated && !bypassSpeed.value && pokemon.randBattleSeedInt(100) < this.chance && isCommandFight && isDamageMove
+      !simulated &&
+      !bypassSpeed.value &&
+      pokemon.randBattleSeedInt(100) < this.chance &&
+      isCommandFight &&
+      isDamageMove &&
+      pokemon.canAddTag(BattlerTagType.BYPASS_SPEED)
     );
   }
 
@@ -7228,17 +7259,16 @@ export class BypassSpeedChanceAbAttr extends AbAttr {
    * @param {Pokemon} _pokemon {@linkcode Pokemon}  the Pokemon applying this ability
    * @param {boolean} _passive N/A
    * @param {BooleanHolder} _cancelled N/A
-   * @param {any[]} args [0] {@linkcode BooleanHolder} set to true when the ability activated
+   * @param {any[]} _args N/A
    */
   override apply(
-    _pokemon: Pokemon,
+    pokemon: Pokemon,
     _passive: boolean,
     _simulated: boolean,
     _cancelled: BooleanHolder,
-    args: any[],
+    _args: any[],
   ): void {
-    const bypassSpeed = args[0] as BooleanHolder;
-    bypassSpeed.value = true;
+    pokemon.addTag(BattlerTagType.BYPASS_SPEED);
   }
 
   getTriggerMessage(pokemon: Pokemon, _abilityName: string, ..._args: any[]): string {
@@ -7270,7 +7300,6 @@ export class PreventBypassSpeedChanceAbAttr extends AbAttr {
 
   /**
    * @argument {boolean} bypassSpeed - determines if a Pokemon is able to bypass speed at the moment
-   * @argument {boolean} canCheckHeldItems - determines if a Pokemon has access to Quick Claw's effects or not
    */
   override apply(
     _pokemon: Pokemon,
@@ -7280,9 +7309,7 @@ export class PreventBypassSpeedChanceAbAttr extends AbAttr {
     args: any[],
   ): void {
     const bypassSpeed = args[0] as BooleanHolder;
-    const canCheckHeldItems = args[1] as BooleanHolder;
     bypassSpeed.value = false;
-    canCheckHeldItems.value = false;
   }
 }
 
@@ -7814,6 +7841,7 @@ const AbilityAttrs = Object.freeze({
   BlockStatusDamageAbAttr,
   BlockOneHitKOAbAttr,
   ChangeMovePriorityAbAttr,
+  ChangeMovePriorityModifierAbAttr,
   IgnoreContactAbAttr,
   PreWeatherEffectAbAttr,
   PreWeatherDamageAbAttr,
@@ -8230,7 +8258,7 @@ export function initAbilities() {
       .attr(AlwaysHitAbAttr)
       .attr(DoubleBattleChanceAbAttr),
     new Ability(AbilityId.STALL, 4)
-      .attr(ChangeMovePriorityAbAttr, (_pokemon, _move: Move) => true, -0.2),
+      .attr(ChangeMovePriorityModifierAbAttr, (_pokemon, _move: Move) => true, MovePriorityModifier.LAST_IN_BRACKET),
     new Ability(AbilityId.TECHNICIAN, 4)
       .attr(MovePowerBoostAbAttr, (user, target, move) => {
         const power = new NumberHolder(move.power);
@@ -8957,7 +8985,7 @@ export function initAbilities() {
       .attr(TypeImmunityHealAbAttr, PokemonType.GROUND)
       .ignorable(),
     new Ability(AbilityId.MYCELIUM_MIGHT, 9)
-      .attr(ChangeMovePriorityAbAttr, (_pokemon, move) => move.category === MoveCategory.STATUS, -0.2)
+      .attr(ChangeMovePriorityModifierAbAttr, (_pokemon, move) => move.category === MoveCategory.STATUS, MovePriorityModifier.LAST_IN_BRACKET)
       .attr(PreventBypassSpeedChanceAbAttr, (_pokemon, move) => move.category === MoveCategory.STATUS)
       .attr(MoveAbilityBypassAbAttr, (_pokemon, move: Move) => move.category === MoveCategory.STATUS),
     new Ability(AbilityId.MINDS_EYE, 9)

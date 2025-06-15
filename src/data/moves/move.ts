@@ -100,6 +100,7 @@ import { SelectBiomePhase } from "#app/phases/select-biome-phase";
 import { ChargingMove, MoveAttrMap, MoveAttrString, MoveKindString, MoveClassMap } from "#app/@types/move-types";
 import { applyMoveAttrs } from "./apply-attrs";
 import { frenzyMissFunc, getMoveTargets } from "./move-utils";
+import { MovePriorityModifier } from "#enums/move-priority-modifier";
 
 type MoveConditionFunc = (user: Pokemon, target: Pokemon, move: Move) => boolean;
 export type UserMoveConditionFunc = (user: Pokemon, move: Move) => boolean;
@@ -865,6 +866,13 @@ export default abstract class Move implements Localizable {
     applyAbAttrs("ChangeMovePriorityAbAttr", user, null, simulated, this, priority);
 
     return priority.value;
+  }
+
+  getPriorityModifier(user: Pokemon, simulated = true): MovePriorityModifier {
+    const modifierHolder = new NumberHolder(MovePriorityModifier.NORMAL);
+    applyAbAttrs("ChangeMovePriorityModifierAbAttr", user, null, simulated, this, modifierHolder);
+    modifierHolder.value = user.getTag(BattlerTagType.BYPASS_SPEED) ? MovePriorityModifier.FIRST_IN_BRACKET : modifierHolder.value;
+    return modifierHolder.value;
   }
 
   /**

@@ -3422,6 +3422,23 @@ export class GrudgeTag extends BattlerTag {
 }
 
 /**
+ * Tag to allow the affected Pokemon's move to go first in its priority bracket.
+ * Used for {@link https://bulbapedia.bulbagarden.net/wiki/Quick_Draw_(Ability) Quick Draw}
+ * and {@link https://bulbapedia.bulbagarden.net/wiki/Quick_Claw Quick Claw}.
+ */
+export class BypassSpeedTag extends BattlerTag {
+  constructor() {
+    super(BattlerTagType.BYPASS_SPEED, BattlerTagLapseType.TURN_END, 1);
+  }
+
+  override canAdd(pokemon: Pokemon): boolean {
+    const cancelled = new BooleanHolder(false);
+    applyAbAttrs("PreventBypassSpeedChanceAbAttr", pokemon, null, false, cancelled);
+    return !cancelled.value;
+  }
+}
+
+/**
  * Tag used to heal the user of Psycho Shift of its status effect if Psycho Shift succeeds in transferring its status effect to the target Pokemon
  */
 export class PsychoShiftTag extends BattlerTag {
@@ -3668,6 +3685,8 @@ export function getBattlerTag(
       return new PsychoShiftTag();
     case BattlerTagType.MAGIC_COAT:
       return new MagicCoatTag();
+    case BattlerTagType.BYPASS_SPEED:
+      return new BypassSpeedTag();
     case BattlerTagType.NONE:
     default:
       return new BattlerTag(tagType, BattlerTagLapseType.CUSTOM, turnCount, sourceMove, sourceId);
