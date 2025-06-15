@@ -272,7 +272,7 @@ class DefaultOverrides {
 
   /**
    * Set all non-scripted waves to use the selected battle type.
-   * 
+   *
    * Ignored if set to {@linkcode BattleType.TRAINER} and `DISABLE_STANDARD_TRAINERS_OVERRIDE` is `true`.
    */
   readonly BATTLE_TYPE_OVERRIDE: Exclude<BattleType, BattleType.CLEAR> | null = null;
