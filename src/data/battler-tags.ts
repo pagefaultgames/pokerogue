@@ -1492,7 +1492,7 @@ export class WrapTag extends DamagingTrapTag {
   getTrapMessage(pokemon: Pokemon): string {
     const source = this.getSourcePokemon();
     if (!source) {
-      console.warn(`Failed to get source Pokemon for ClampTag getTrapMessage; id: ${this.sourceId}`);
+      console.warn(`Failed to get source Pokemon for WrapTag getTrapMessage; id: ${this.sourceId}`);
       return "ERROR - CHECK CONSOLE AND REPORT";
     }
 
