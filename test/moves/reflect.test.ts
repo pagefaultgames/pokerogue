@@ -41,7 +41,7 @@ describe("Moves - Reflect", () => {
       .enemyLevel(100)
       .enemySpecies(SpeciesId.MAGIKARP)
       .enemyMoveset(MoveId.REFLECT)
-      .disableCrits();
+      .criticalHits(false);
   });
 
   it("reduces damage of physical attacks by half in a single battle", async () => {

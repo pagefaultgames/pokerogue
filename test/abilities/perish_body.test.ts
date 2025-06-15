@@ -23,13 +23,13 @@ describe("Abilities - Perish Song", () => {
     game = new GameManager(phaserGame);
     game.override
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemySpecies(SpeciesId.MAGIKARP)
       .enemyAbility(AbilityId.BALL_FETCH)
       .starterSpecies(SpeciesId.CURSOLA)
       .ability(AbilityId.PERISH_BODY)
-      .moveset([MoveId.SPLASH])
-      .enemyMoveset([MoveId.AQUA_JET]);
+      .moveset(MoveId.SPLASH)
+      .enemyMoveset(MoveId.AQUA_JET);
   });
 
   it("should trigger when hit with damaging move", async () => {

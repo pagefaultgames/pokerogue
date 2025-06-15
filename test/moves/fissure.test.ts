@@ -30,9 +30,9 @@ describe("Moves - Fissure", () => {
 
     game.override
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .starterSpecies(SpeciesId.SNORLAX)
-      .moveset([MoveId.FISSURE])
+      .moveset(MoveId.FISSURE)
       .passiveAbility(AbilityId.BALL_FETCH)
       .startingLevel(100)
       .enemySpecies(SpeciesId.SNORLAX)

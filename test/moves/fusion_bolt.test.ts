@@ -31,7 +31,7 @@ describe("Moves - Fusion Bolt", () => {
       .enemyMoveset(MoveId.SPLASH)
       .battleStyle("single")
       .startingWave(97)
-      .disableCrits();
+      .criticalHits(false);
   });
 
   it("should not make contact", async () => {

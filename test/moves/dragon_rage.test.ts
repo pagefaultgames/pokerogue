@@ -51,7 +51,7 @@ describe("Moves - Dragon Rage", () => {
   });
 
   it("ignores weaknesses", async () => {
-    game.override.disableCrits();
+    game.override.criticalHits(false);
     vi.spyOn(enemyPokemon, "getTypes").mockReturnValue([PokemonType.DRAGON]);
 
     game.move.select(MoveId.DRAGON_RAGE);
@@ -61,7 +61,7 @@ describe("Moves - Dragon Rage", () => {
   });
 
   it("ignores resistances", async () => {
-    game.override.disableCrits();
+    game.override.criticalHits(false);
     vi.spyOn(enemyPokemon, "getTypes").mockReturnValue([PokemonType.STEEL]);
 
     game.move.select(MoveId.DRAGON_RAGE);
@@ -71,7 +71,7 @@ describe("Moves - Dragon Rage", () => {
   });
 
   it("ignores SPATK stat stages", async () => {
-    game.override.disableCrits();
+    game.override.criticalHits(false);
     partyPokemon.setStatStage(Stat.SPATK, 2);
 
     game.move.select(MoveId.DRAGON_RAGE);
@@ -81,7 +81,7 @@ describe("Moves - Dragon Rage", () => {
   });
 
   it("ignores stab", async () => {
-    game.override.disableCrits();
+    game.override.criticalHits(false);
     vi.spyOn(partyPokemon, "getTypes").mockReturnValue([PokemonType.DRAGON]);
 
     game.move.select(MoveId.DRAGON_RAGE);
@@ -100,7 +100,7 @@ describe("Moves - Dragon Rage", () => {
   });
 
   it("ignores damage modification from abilities, for example ICE_SCALES", async () => {
-    game.override.disableCrits().enemyAbility(AbilityId.ICE_SCALES);
+    game.override.criticalHits(false).enemyAbility(AbilityId.ICE_SCALES);
 
     game.move.select(MoveId.DRAGON_RAGE);
     await game.phaseInterceptor.to(TurnEndPhase);

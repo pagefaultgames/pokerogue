@@ -28,7 +28,7 @@ describe("Game Over Phase", () => {
       .moveset([MoveId.MEMENTO, MoveId.ICE_BEAM, MoveId.SPLASH])
       .ability(AbilityId.BALL_FETCH)
       .battleStyle("single")
-      .disableCrits()
+      .criticalHits(false)
       .enemyAbility(AbilityId.BALL_FETCH)
       .enemyMoveset(MoveId.SPLASH)
       .startingWave(200)

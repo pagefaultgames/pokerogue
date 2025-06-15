@@ -31,7 +31,7 @@ describe("Moves - Tackle", () => {
       .startingWave(97)
       .moveset([moveToUse])
       .enemyMoveset(MoveId.GROWTH)
-      .disableCrits();
+      .criticalHits(false);
   });
 
   it("TACKLE against ghost", async () => {
