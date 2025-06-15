@@ -1194,7 +1194,14 @@ class TailwindTag extends ArenaTag {
       // TODO: Ability displays should be handled by the ability
       if (pokemon.hasAbility(AbilityId.WIND_RIDER)) {
         globalScene.phaseManager.queueAbilityDisplay(pokemon, false, true);
-        globalScene.phaseManager.unshiftNew("StatStageChangePhase", pokemon.getBattlerIndex(), true, [Stat.ATK], 1, true);
+        globalScene.phaseManager.unshiftNew(
+          "StatStageChangePhase",
+          pokemon.getBattlerIndex(),
+          true,
+          [Stat.ATK],
+          1,
+          true,
+        );
         globalScene.phaseManager.queueAbilityDisplay(pokemon, false, false);
       }
     }
