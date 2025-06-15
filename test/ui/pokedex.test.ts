@@ -502,13 +502,13 @@ describe("UI - Pokedex", () => {
       // Nab the pokemon that is selected for comparison later.
 
       // @ts-expect-error - `lastSpecies` is private
-      const selectedPokemon = pokedexHandler.lastSpecies.speciesId;
+      const selectedPokemon = pokedexHandler.lastSpeciesId.speciesId;
       for (let i = 0; i < 11; i++) {
         pokedexHandler.processInput(Button.DOWN);
       }
 
       // @ts-expect-error `lastSpecies` is private
-      expect(selectedPokemon).toEqual(pokedexHandler.lastSpecies.speciesId);
+      expect(selectedPokemon).toEqual(pokedexHandler.lastSpeciesId.speciesId);
     },
   );
 

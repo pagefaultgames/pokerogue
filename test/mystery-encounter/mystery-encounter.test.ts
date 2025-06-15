@@ -24,8 +24,7 @@ describe("Mystery Encounters", () => {
   beforeEach(() => {
     game = new GameManager(phaserGame);
     scene = game.scene;
-    game.override.startingWave(11);
-    game.override.mysteryEncounterChance(100);
+    game.override.startingWave(11).mysteryEncounterChance(100);
   });
 
   it("Spawns a mystery encounter", async () => {
