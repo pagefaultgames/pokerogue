@@ -41,6 +41,7 @@ import {
   type nil,
   type Constructor,
   randSeedIntRange,
+  coerceArray,
 } from "#app/utils/common";
 import type { TypeDamageMultiplier } from "#app/data/type";
 import { getTypeDamageMultiplier, getTypeRgb } from "#app/data/type";
@@ -1774,9 +1775,7 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
     let overrideArray: MoveId | Array<MoveId> = this.isPlayer()
       ? Overrides.MOVESET_OVERRIDE
       : Overrides.OPP_MOVESET_OVERRIDE;
-    if (!Array.isArray(overrideArray)) {
-      overrideArray = [overrideArray];
-    }
+    overrideArray = coerceArray(overrideArray);
     if (overrideArray.length > 0) {
       if (!this.isPlayer()) {
         this.moveset = [];
@@ -4385,14 +4384,16 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
   // biome-ignore lint: there are a ton of issues..
   faintCry(callback: Function): void {
     if (this.fusionSpecies && this.getSpeciesForm() !== this.getFusionSpeciesForm()) {
-      return this.fusionFaintCry(callback);
+      this.fusionFaintCry(callback);
+      return;
     }
 
     const key = this.species.getCryKey(this.formIndex);
     let rate = 0.85;
     const cry = globalScene.playSound(key, { rate: rate }) as AnySound;
     if (!cry || globalScene.fieldVolume === 0) {
-      return callback();
+      callback();
+      return;
     }
     const sprite = this.getSprite();
     const tintSprite = this.getTintSprite();
@@ -4460,7 +4461,8 @@ export default abstract class Pokemon extends Phaser.GameObjects.Container {
       rate: rate,
     }) as AnySound;
     if (!cry || !fusionCry || globalScene.fieldVolume === 0) {
-      return callback();
+      callback();
+      return;
     }
     fusionCry.stop();
     duration = Math.min(duration, fusionCry.totalDuration * 1000);

@@ -47,5 +47,5 @@ describe("Moves - Speed Swap", () => {
 
     expect(player.getStat(Stat.SPD, false)).toBe(enemySpd);
     expect(enemy.getStat(Stat.SPD, false)).toBe(playerSpd);
-  }, 20000);
+  });
 });

@@ -2,7 +2,7 @@ import type { EnemyPartyConfig } from "#app/data/mystery-encounters/utils/encoun
 import type { PlayerPokemon } from "#app/field/pokemon";
 import type { PokemonMove } from "../moves/pokemon-move";
 import type Pokemon from "#app/field/pokemon";
-import { capitalizeFirstLetter, isNullOrUndefined } from "#app/utils/common";
+import { capitalizeFirstLetter, coerceArray, isNullOrUndefined } from "#app/utils/common";
 import type { MysteryEncounterType } from "#enums/mystery-encounter-type";
 import type { MysteryEncounterSpriteConfig } from "#app/field/mystery-encounter-intro";
 import MysteryEncounterIntroVisuals from "#app/field/mystery-encounter-intro";
@@ -717,7 +717,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
   withAnimations(
     ...encounterAnimations: EncounterAnim[]
   ): this & Required<Pick<IMysteryEncounter, "encounterAnimations">> {
-    const animations = Array.isArray(encounterAnimations) ? encounterAnimations : [encounterAnimations];
+    const animations = coerceArray(encounterAnimations);
     return Object.assign(this, { encounterAnimations: animations });
   }
 
@@ -729,7 +729,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
   withDisallowedGameModes(
     ...disallowedGameModes: GameModes[]
   ): this & Required<Pick<IMysteryEncounter, "disallowedGameModes">> {
-    const gameModes = Array.isArray(disallowedGameModes) ? disallowedGameModes : [disallowedGameModes];
+    const gameModes = coerceArray(disallowedGameModes);
     return Object.assign(this, { disallowedGameModes: gameModes });
   }
 
@@ -741,7 +741,7 @@ export class MysteryEncounterBuilder implements Partial<IMysteryEncounter> {
   withDisallowedChallenges(
     ...disallowedChallenges: Challenges[]
   ): this & Required<Pick<IMysteryEncounter, "disallowedChallenges">> {
-    const challenges = Array.isArray(disallowedChallenges) ? disallowedChallenges : [disallowedChallenges];
+    const challenges = coerceArray(disallowedChallenges);
     return Object.assign(this, { disallowedChallenges: challenges });
   }
 

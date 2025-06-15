@@ -21,7 +21,7 @@ import type { MoveEffectPhase } from "#app/phases/move-effect-phase";
 import type { MovePhase } from "#app/phases/move-phase";
 import type { StatStageChangeCallback } from "#app/phases/stat-stage-change-phase";
 import i18next from "#app/plugins/i18n";
-import { BooleanHolder, getFrameMs, NumberHolder, toDmgValue } from "#app/utils/common";
+import { BooleanHolder, coerceArray, getFrameMs, NumberHolder, toDmgValue } from "#app/utils/common";
 import { AbilityId } from "#enums/ability-id";
 import { BattlerTagType } from "#enums/battler-tag-type";
 import { MoveId } from "#enums/move-id";
@@ -49,7 +49,7 @@ export class BattlerTag {
     isBatonPassable = false,
   ) {
     this.tagType = tagType;
-    this.lapseTypes = Array.isArray(lapseType) ? lapseType : [lapseType];
+    this.lapseTypes = coerceArray(lapseType);
     this.turnCount = turnCount;
     this.sourceMove = sourceMove!; // TODO: is this bang correct?
     this.isBatonPassable = isBatonPassable;
@@ -123,16 +123,6 @@ export interface TerrainBattlerTag {
  * Players and enemies should not be allowed to select restricted moves.
  */
 export abstract class MoveRestrictionBattlerTag extends BattlerTag {
-  constructor(
-    tagType: BattlerTagType,
-    lapseType: BattlerTagLapseType | BattlerTagLapseType[],
-    turnCount: number,
-    sourceMove?: MoveId,
-    sourceId?: number,
-  ) {
-    super(tagType, lapseType, turnCount, sourceMove, sourceId);
-  }
-
   /** @override */
   override lapse(pokemon: Pokemon, lapseType: BattlerTagLapseType): boolean {
     if (lapseType === BattlerTagLapseType.PRE_MOVE) {
@@ -1468,16 +1458,6 @@ export class WrapTag extends DamagingTrapTag {
 }
 
 export abstract class VortexTrapTag extends DamagingTrapTag {
-  constructor(
-    tagType: BattlerTagType,
-    commonAnim: CommonAnim,
-    turnCount: number,
-    sourceMove: MoveId,
-    sourceId: number,
-  ) {
-    super(tagType, commonAnim, turnCount, sourceMove, sourceId);
-  }
-
   getTrapMessage(pokemon: Pokemon): string {
     return i18next.t("battlerTags:vortexOnTrap", {
       pokemonNameWithAffix: getPokemonNameWithAffix(pokemon),
