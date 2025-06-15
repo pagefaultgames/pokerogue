@@ -30,6 +30,11 @@ export class MovePhasePriorityQueue extends PokemonPhasePriorityQueue<MovePhase>
     this.setOrder = order;
   }
 
+  public override clear(): void {
+    this.setOrder = undefined;
+    super.clear();
+  }
+
   private sortPostSpeed(): void {
     this.queue.sort((a: MovePhase, b: MovePhase) => {
       const priority = [a, b].map(movePhase => {
