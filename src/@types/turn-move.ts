@@ -1,9 +1,9 @@
-import type { BattlerIndex } from "#app/battle";
-import type { Moves } from "#enums/moves";
-import type { MoveResult } from "#app/field/pokemon";
+import type { BattlerIndex } from "#enums/battler-index";
+import type { MoveId } from "#enums/move-id";
+import type { MoveResult } from "#enums/move-result";
 
 export interface TurnMove {
-  move: Moves;
+  move: MoveId;
   targets: BattlerIndex[];
   result?: MoveResult;
   virtual?: boolean;

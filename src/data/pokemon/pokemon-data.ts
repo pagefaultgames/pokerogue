@@ -3,11 +3,11 @@ import type { Gender } from "#app/data/gender";
 import type { PokemonSpeciesForm } from "#app/data/pokemon-species";
 import type { TypeDamageMultiplier } from "#app/data/type";
 import { isNullOrUndefined } from "#app/utils/common";
-import type { Abilities } from "#enums/abilities";
+import type { AbilityId } from "#enums/ability-id";
 import type { BerryType } from "#enums/berry-type";
-import type { Moves } from "#enums/moves";
+import type { MoveId } from "#enums/move-id";
 import type { PokemonType } from "#enums/pokemon-type";
-import { PokemonMove } from "#app/field/pokemon";
+import { PokemonMove } from "#app/data/moves/pokemon-move";
 import type { TurnMove } from "#app/@types/turn-move";
 import type { AttackMoveResult } from "#app/@types/attack-move-result";
 import type { Nature } from "#enums/nature";
@@ -23,8 +23,8 @@ export class CustomPokemonData {
    * The scale at which to render this Pokemon's sprite.
    */
   public spriteScale = -1;
-  public ability: Abilities | -1;
-  public passive: Abilities | -1;
+  public ability: AbilityId | -1;
+  public passive: AbilityId | -1;
   public nature: Nature | -1;
   public types: PokemonType[];
   /** Deprecated but needed for session save migration */
@@ -46,7 +46,6 @@ export class CustomPokemonData {
  * Resets on switch or new battle.
  */
 export class PokemonSummonData {
-  /** [Atk, Def, SpAtk, SpDef, Spd, Acc, Eva] */
   public statStages: number[] = [0, 0, 0, 0, 0, 0, 0];
   public moveQueue: TurnMove[] = [];
   public tags: BattlerTag[] = [];
@@ -56,8 +55,8 @@ export class PokemonSummonData {
   // TODO: Move these into a separate class & add rage fist hit count
   public speciesForm: PokemonSpeciesForm | null = null;
   public fusionSpeciesForm: PokemonSpeciesForm | null = null;
-  public ability: Abilities | undefined;
-  public passiveAbility: Abilities | undefined;
+  public ability: AbilityId | undefined;
+  public passiveAbility: AbilityId | undefined;
   public gender: Gender | undefined;
   public fusionGender: Gender | undefined;
   public stats: number[] = [0, 0, 0, 0, 0, 0];
@@ -120,7 +119,7 @@ export class PokemonTempSummonData {
  * Reset on switch and new wave, but not stored in `SummonData` to avoid being written to the save file.
 
  * Used to evaluate "first turn only" conditions such as
- * {@linkcode Moves.FAKE_OUT | Fake Out} and {@linkcode Moves.FIRST_IMPRESSION | First Impression}).
+ * {@linkcode MoveId.FAKE_OUT | Fake Out} and {@linkcode MoveId.FIRST_IMPRESSION | First Impression}).
  */
   waveTurnCount = 1;
 }
@@ -130,9 +129,9 @@ export class PokemonTempSummonData {
  * Resets at the start of a new battle (but not on switch).
  */
 export class PokemonBattleData {
-  /** Counter tracking direct hits this Pokemon has received during this battle; used for {@linkcode Moves.RAGE_FIST} */
+  /** Counter tracking direct hits this Pokemon has received during this battle; used for {@linkcode MoveId.RAGE_FIST} */
   public hitCount = 0;
-  /** Whether this Pokemon has eaten a berry this battle; used for {@linkcode Moves.BELCH} */
+  /** Whether this Pokemon has eaten a berry this battle; used for {@linkcode MoveId.BELCH} */
   public hasEatenBerry = false;
   /** Array containing all berries eaten and not yet recovered during this current battle; used by {@linkcode Abilities.HARVEST} */
   public berriesEaten: BerryType[] = [];
@@ -157,7 +156,7 @@ export class PokemonWaveData {
    * A set of all the abilities this {@linkcode Pokemon} has used in this wave.
    * Used to track once per battle conditions, as well as (hopefully) by the updated AI for move effectiveness.
    */
-  public abilitiesApplied: Set<Abilities> = new Set<Abilities>();
+  public abilitiesApplied: Set<AbilityId> = new Set();
   /** Whether the pokemon's ability has been revealed or not */
   public abilityRevealed = false;
 }
@@ -184,7 +183,7 @@ export class PokemonTurnData {
   public statStagesIncreased = false;
   public statStagesDecreased = false;
   public moveEffectiveness: TypeDamageMultiplier | null = null;
-  public combiningPledge?: Moves;
+  public combiningPledge?: MoveId;
   public switchedInThisTurn = false;
   public failedRunAway = false;
   public joinedRound = false;

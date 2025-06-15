@@ -2,6 +2,17 @@
 module.exports = {
   forbidden: [
     {
+      name: "only-type-imports",
+      severity: "error",
+      comment: "Files in enums and @types may only use type imports.",
+      from: {
+        path: ["(^|/)src/@types", "(^|/)src/enums"],
+      },
+      to: {
+        dependencyTypesNot: ["type-only"],
+      },
+    },
+    {
       name: "no-circular-at-runtime",
       severity: "warn",
       comment:
@@ -31,6 +42,8 @@ module.exports = {
           "[.]d[.]ts$", // TypeScript declaration files
           "(^|/)tsconfig[.]json$", // TypeScript config
           "(^|/)(?:babel|webpack)[.]config[.](?:js|cjs|mjs|ts|cts|mts|json)$", // other configs
+          // anything in src/@types
+          "(^|/)src/@types/",
         ],
       },
       to: {},
@@ -205,7 +218,7 @@ module.exports = {
        module systems it knows of. It's the default because it's the safe option
        It might come at a performance penalty, though.
        moduleSystems: ['amd', 'cjs', 'es6', 'tsd']
-      
+
        As in practice only commonjs ('cjs') and ecmascript modules ('es6')
        are widely used, you can limit the moduleSystems to those.
      */
@@ -213,7 +226,7 @@ module.exports = {
     // moduleSystems: ['cjs', 'es6'],
 
     /* prefix for links in html and svg output (e.g. 'https://github.com/you/yourrepo/blob/main/'
-       to open it on your online repo or `vscode://file/${process.cwd()}/` to 
+       to open it on your online repo or `vscode://file/${process.cwd()}/` to
        open it in visual studio code),
      */
     // prefix: `vscode://file/${process.cwd()}/`,
@@ -258,7 +271,7 @@ module.exports = {
        to './webpack.conf.js'.
 
        The (optional) `env` and `arguments` attributes contain the parameters
-       to be passed if your webpack config is a function and takes them (see 
+       to be passed if your webpack config is a function and takes them (see
         webpack documentation for details)
      */
     // webpackConfig: {
@@ -309,8 +322,8 @@ module.exports = {
          A list of alias fields in package.jsons
          See [this specification](https://github.com/defunctzombie/package-browser-field-spec) and
          the webpack [resolve.alias](https://webpack.js.org/configuration/resolve/#resolvealiasfields)
-         documentation 
-         
+         documentation
+
          Defaults to an empty array (= don't use alias fields).
        */
       // aliasFields: ["browser"],

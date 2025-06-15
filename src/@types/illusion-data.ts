@@ -2,7 +2,7 @@ import type { Gender } from "#app/data/gender";
 import type PokemonSpecies from "#app/data/pokemon-species";
 import type { Variant } from "#app/sprites/variant";
 import type { PokeballType } from "#enums/pokeball";
-import type { Species } from "#enums/species";
+import type { SpeciesId } from "#enums/species-id";
 
 /**
  * Data pertaining to this Pokemon's Illusion.
@@ -23,7 +23,7 @@ export interface IllusionData {
     fusionVariant: Variant;
   };
   /** The species of the illusion */
-  species: Species;
+  species: SpeciesId;
   /** The formIndex of the illusion */
   formIndex: number;
   /** The gender of the illusion */

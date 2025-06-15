@@ -21,13 +21,12 @@ import type MysteryEncounter from "#app/data/mystery-encounters/mystery-encounte
 import { MysteryEncounterBuilder } from "#app/data/mystery-encounters/mystery-encounter";
 import { MysteryEncounterTier } from "#enums/mystery-encounter-tier";
 import { TrainerType } from "#enums/trainer-type";
-import { Species } from "#enums/species";
+import { SpeciesId } from "#enums/species-id";
 import type { PlayerPokemon } from "#app/field/pokemon";
 import type Pokemon from "#app/field/pokemon";
-import { PokemonMove } from "#app/field/pokemon";
+import { PokemonMove } from "#app/data/moves/pokemon-move";
 import { getEncounterText, showEncounterDialogue } from "#app/data/mystery-encounters/utils/encounter-dialogue-utils";
-import { LearnMovePhase } from "#app/phases/learn-move-phase";
-import { Moves } from "#enums/moves";
+import { MoveId } from "#enums/move-id";
 import type { OptionSelectItem } from "#app/ui/abstact-option-select-ui-handler";
 import { MysteryEncounterOptionBuilder } from "#app/data/mystery-encounters/mystery-encounter-option";
 import { MysteryEncounterOptionMode } from "#enums/mystery-encounter-option-mode";
@@ -39,7 +38,7 @@ import {
 } from "#app/data/mystery-encounters/mystery-encounter-requirements";
 import { PokemonType } from "#enums/pokemon-type";
 import type { AttackTypeBoosterModifierType, ModifierTypeOption } from "#app/modifier/modifier-type";
-import { modifierTypes } from "#app/modifier/modifier-type";
+import { modifierTypes } from "#app/data/data-lists";
 import type { PokemonHeldItemModifier } from "#app/modifier/modifier";
 import {
   AttackTypeBoosterModifier,
@@ -51,7 +50,7 @@ import {
 import i18next from "i18next";
 import MoveInfoOverlay from "#app/ui/move-info-overlay";
 import { allMoves } from "#app/data/data-lists";
-import { ModifierTier } from "#app/modifier/modifier-tier";
+import { ModifierTier } from "#enums/modifier-tier";
 import { CLASSIC_MODE_MYSTERY_ENCOUNTER_WAVES } from "#app/constants";
 import { getSpriteKeysFromSpecies } from "#app/data/mystery-encounters/utils/encounter-pokemon-utils";
 
@@ -59,110 +58,116 @@ import { getSpriteKeysFromSpecies } from "#app/data/mystery-encounters/utils/enc
 const namespace = "mysteryEncounters/bugTypeSuperfan";
 
 const POOL_1_POKEMON = [
-  Species.PARASECT,
-  Species.VENOMOTH,
-  Species.LEDIAN,
-  Species.ARIADOS,
-  Species.YANMA,
-  Species.BEAUTIFLY,
-  Species.DUSTOX,
-  Species.MASQUERAIN,
-  Species.NINJASK,
-  Species.VOLBEAT,
-  Species.ILLUMISE,
-  Species.ANORITH,
-  Species.KRICKETUNE,
-  Species.WORMADAM,
-  Species.MOTHIM,
-  Species.SKORUPI,
-  Species.JOLTIK,
-  Species.LARVESTA,
-  Species.VIVILLON,
-  Species.CHARJABUG,
-  Species.RIBOMBEE,
-  Species.SPIDOPS,
-  Species.LOKIX,
+  SpeciesId.PARASECT,
+  SpeciesId.VENOMOTH,
+  SpeciesId.LEDIAN,
+  SpeciesId.ARIADOS,
+  SpeciesId.YANMA,
+  SpeciesId.BEAUTIFLY,
+  SpeciesId.DUSTOX,
+  SpeciesId.MASQUERAIN,
+  SpeciesId.NINJASK,
+  SpeciesId.VOLBEAT,
+  SpeciesId.ILLUMISE,
+  SpeciesId.ANORITH,
+  SpeciesId.KRICKETUNE,
+  SpeciesId.WORMADAM,
+  SpeciesId.MOTHIM,
+  SpeciesId.SKORUPI,
+  SpeciesId.JOLTIK,
+  SpeciesId.LARVESTA,
+  SpeciesId.VIVILLON,
+  SpeciesId.CHARJABUG,
+  SpeciesId.RIBOMBEE,
+  SpeciesId.SPIDOPS,
+  SpeciesId.LOKIX,
 ];
 
 const POOL_2_POKEMON = [
-  Species.SCYTHER,
-  Species.PINSIR,
-  Species.HERACROSS,
-  Species.FORRETRESS,
-  Species.SCIZOR,
-  Species.SHUCKLE,
-  Species.SHEDINJA,
-  Species.ARMALDO,
-  Species.VESPIQUEN,
-  Species.DRAPION,
-  Species.YANMEGA,
-  Species.LEAVANNY,
-  Species.SCOLIPEDE,
-  Species.CRUSTLE,
-  Species.ESCAVALIER,
-  Species.ACCELGOR,
-  Species.GALVANTULA,
-  Species.VIKAVOLT,
-  Species.ARAQUANID,
-  Species.ORBEETLE,
-  Species.CENTISKORCH,
-  Species.FROSMOTH,
-  Species.KLEAVOR,
+  SpeciesId.SCYTHER,
+  SpeciesId.PINSIR,
+  SpeciesId.HERACROSS,
+  SpeciesId.FORRETRESS,
+  SpeciesId.SCIZOR,
+  SpeciesId.SHUCKLE,
+  SpeciesId.SHEDINJA,
+  SpeciesId.ARMALDO,
+  SpeciesId.VESPIQUEN,
+  SpeciesId.DRAPION,
+  SpeciesId.YANMEGA,
+  SpeciesId.LEAVANNY,
+  SpeciesId.SCOLIPEDE,
+  SpeciesId.CRUSTLE,
+  SpeciesId.ESCAVALIER,
+  SpeciesId.ACCELGOR,
+  SpeciesId.GALVANTULA,
+  SpeciesId.VIKAVOLT,
+  SpeciesId.ARAQUANID,
+  SpeciesId.ORBEETLE,
+  SpeciesId.CENTISKORCH,
+  SpeciesId.FROSMOTH,
+  SpeciesId.KLEAVOR,
 ];
 
-const POOL_3_POKEMON: { species: Species; formIndex?: number }[] = [
+const POOL_3_POKEMON: { species: SpeciesId; formIndex?: number }[] = [
   {
-    species: Species.PINSIR,
+    species: SpeciesId.PINSIR,
     formIndex: 1,
   },
   {
-    species: Species.SCIZOR,
+    species: SpeciesId.SCIZOR,
     formIndex: 1,
   },
   {
-    species: Species.HERACROSS,
+    species: SpeciesId.HERACROSS,
     formIndex: 1,
   },
   {
-    species: Species.ORBEETLE,
+    species: SpeciesId.ORBEETLE,
     formIndex: 1,
   },
   {
-    species: Species.CENTISKORCH,
+    species: SpeciesId.CENTISKORCH,
     formIndex: 1,
   },
   {
-    species: Species.DURANT,
+    species: SpeciesId.DURANT,
   },
   {
-    species: Species.VOLCARONA,
+    species: SpeciesId.VOLCARONA,
   },
   {
-    species: Species.GOLISOPOD,
+    species: SpeciesId.GOLISOPOD,
   },
 ];
 
-const POOL_4_POKEMON = [Species.GENESECT, Species.SLITHER_WING, Species.BUZZWOLE, Species.PHEROMOSA];
+const POOL_4_POKEMON = [SpeciesId.GENESECT, SpeciesId.SLITHER_WING, SpeciesId.BUZZWOLE, SpeciesId.PHEROMOSA];
 
-const PHYSICAL_TUTOR_MOVES = [Moves.MEGAHORN, Moves.ATTACK_ORDER, Moves.BUG_BITE, Moves.FIRST_IMPRESSION, Moves.LUNGE];
+const PHYSICAL_TUTOR_MOVES = [
+  MoveId.MEGAHORN,
+  MoveId.ATTACK_ORDER,
+  MoveId.BUG_BITE,
+  MoveId.FIRST_IMPRESSION,
+  MoveId.LUNGE,
+];
 
 const SPECIAL_TUTOR_MOVES = [
-  Moves.SILVER_WIND,
-  Moves.SIGNAL_BEAM,
-  Moves.BUG_BUZZ,
-  Moves.POLLEN_PUFF,
-  Moves.STRUGGLE_BUG,
+  MoveId.SILVER_WIND,
+  MoveId.SIGNAL_BEAM,
+  MoveId.BUG_BUZZ,
+  MoveId.POLLEN_PUFF,
+  MoveId.STRUGGLE_BUG,
 ];
 
 const STATUS_TUTOR_MOVES = [
-  Moves.STRING_SHOT,
-  Moves.DEFEND_ORDER,
-  Moves.RAGE_POWDER,
-  Moves.STICKY_WEB,
-  Moves.SILK_TRAP,
+  MoveId.STRING_SHOT,
+  MoveId.DEFEND_ORDER,
+  MoveId.RAGE_POWDER,
+  MoveId.STICKY_WEB,
+  MoveId.SILK_TRAP,
 ];
 
-const MISC_TUTOR_MOVES = [Moves.LEECH_LIFE, Moves.U_TURN, Moves.HEAL_ORDER, Moves.QUIVER_DANCE, Moves.INFESTATION];
+const MISC_TUTOR_MOVES = [MoveId.LEECH_LIFE, MoveId.U_TURN, MoveId.HEAL_ORDER, MoveId.QUIVER_DANCE, MoveId.INFESTATION];
 
 /**
  * Wave breakpoints that determine how strong to make the Bug-Type Superfan's team
@@ -213,12 +218,12 @@ export const BugTypeSuperfanEncounter: MysteryEncounter = MysteryEncounterBuilde
 
     let beedrillKeys: { spriteKey: string; fileRoot: string }, butterfreeKeys: { spriteKey: string; fileRoot: string };
     if (globalScene.currentBattle.waveIndex < WAVE_LEVEL_BREAKPOINTS[3]) {
-      beedrillKeys = getSpriteKeysFromSpecies(Species.BEEDRILL, false);
-      butterfreeKeys = getSpriteKeysFromSpecies(Species.BUTTERFREE, false);
+      beedrillKeys = getSpriteKeysFromSpecies(SpeciesId.BEEDRILL, false);
+      butterfreeKeys = getSpriteKeysFromSpecies(SpeciesId.BUTTERFREE, false);
     } else {
       // Mega Beedrill/Gmax Butterfree
-      beedrillKeys = getSpriteKeysFromSpecies(Species.BEEDRILL, false, 1);
-      butterfreeKeys = getSpriteKeysFromSpecies(Species.BUTTERFREE, false, 1);
+      beedrillKeys = getSpriteKeysFromSpecies(SpeciesId.BEEDRILL, false, 1);
+      butterfreeKeys = getSpriteKeysFromSpecies(SpeciesId.BUTTERFREE, false, 1);
     }
 
     encounter.spriteConfigs = [
@@ -519,26 +524,26 @@ function getTrainerConfigForWave(waveIndex: number) {
   if (waveIndex < WAVE_LEVEL_BREAKPOINTS[0]) {
     // Use default template (2 AVG)
     config
-      .setPartyMemberFunc(0, getRandomPartyMemberFunc([Species.BEEDRILL], TrainerSlot.TRAINER, true))
-      .setPartyMemberFunc(1, getRandomPartyMemberFunc([Species.BUTTERFREE], TrainerSlot.TRAINER, true));
+      .setPartyMemberFunc(0, getRandomPartyMemberFunc([SpeciesId.BEEDRILL], TrainerSlot.TRAINER, true))
+      .setPartyMemberFunc(1, getRandomPartyMemberFunc([SpeciesId.BUTTERFREE], TrainerSlot.TRAINER, true));
   } else if (waveIndex < WAVE_LEVEL_BREAKPOINTS[1]) {
     config
       .setPartyTemplates(new TrainerPartyTemplate(3, PartyMemberStrength.AVERAGE))
-      .setPartyMemberFunc(0, getRandomPartyMemberFunc([Species.BEEDRILL], TrainerSlot.TRAINER, true))
-      .setPartyMemberFunc(1, getRandomPartyMemberFunc([Species.BUTTERFREE], TrainerSlot.TRAINER, true))
+      .setPartyMemberFunc(0, getRandomPartyMemberFunc([SpeciesId.BEEDRILL], TrainerSlot.TRAINER, true))
+      .setPartyMemberFunc(1, getRandomPartyMemberFunc([SpeciesId.BUTTERFREE], TrainerSlot.TRAINER, true))
       .setPartyMemberFunc(2, getRandomPartyMemberFunc(POOL_1_POKEMON, TrainerSlot.TRAINER, true));
   } else if (waveIndex < WAVE_LEVEL_BREAKPOINTS[2]) {
     config
       .setPartyTemplates(new TrainerPartyTemplate(4, PartyMemberStrength.AVERAGE))
-      .setPartyMemberFunc(0, getRandomPartyMemberFunc([Species.BEEDRILL], TrainerSlot.TRAINER, true))
-      .setPartyMemberFunc(1, getRandomPartyMemberFunc([Species.BUTTERFREE], TrainerSlot.TRAINER, true))
+      .setPartyMemberFunc(0, getRandomPartyMemberFunc([SpeciesId.BEEDRILL], TrainerSlot.TRAINER, true))
+      .setPartyMemberFunc(1, getRandomPartyMemberFunc([SpeciesId.BUTTERFREE], TrainerSlot.TRAINER, true))
       .setPartyMemberFunc(2, getRandomPartyMemberFunc(POOL_1_POKEMON, TrainerSlot.TRAINER, true))
       .setPartyMemberFunc(3, getRandomPartyMemberFunc(POOL_2_POKEMON, TrainerSlot.TRAINER, true));
   } else if (waveIndex < WAVE_LEVEL_BREAKPOINTS[3]) {
     config
       .setPartyTemplates(new TrainerPartyTemplate(5, PartyMemberStrength.AVERAGE))
-      .setPartyMemberFunc(0, getRandomPartyMemberFunc([Species.BEEDRILL], TrainerSlot.TRAINER, true))
-      .setPartyMemberFunc(1, getRandomPartyMemberFunc([Species.BUTTERFREE], TrainerSlot.TRAINER, true))
+      .setPartyMemberFunc(0, getRandomPartyMemberFunc([SpeciesId.BEEDRILL], TrainerSlot.TRAINER, true))
+      .setPartyMemberFunc(1, getRandomPartyMemberFunc([SpeciesId.BUTTERFREE], TrainerSlot.TRAINER, true))
       .setPartyMemberFunc(2, getRandomPartyMemberFunc(POOL_1_POKEMON, TrainerSlot.TRAINER, true))
       .setPartyMemberFunc(3, getRandomPartyMemberFunc(POOL_2_POKEMON, TrainerSlot.TRAINER, true))
       .setPartyMemberFunc(4, getRandomPartyMemberFunc(POOL_2_POKEMON, TrainerSlot.TRAINER, true));
@@ -547,7 +552,7 @@ function getTrainerConfigForWave(waveIndex: number) {
       .setPartyTemplates(new TrainerPartyTemplate(5, PartyMemberStrength.AVERAGE))
       .setPartyMemberFunc(
         0,
-        getRandomPartyMemberFunc([Species.BEEDRILL], TrainerSlot.TRAINER, true, p => {
+        getRandomPartyMemberFunc([SpeciesId.BEEDRILL], TrainerSlot.TRAINER, true, p => {
           p.formIndex = 1;
           p.generateAndPopulateMoveset();
           p.generateName();
@@ -555,7 +560,7 @@ function getTrainerConfigForWave(waveIndex: number) {
       )
       .setPartyMemberFunc(
         1,
-        getRandomPartyMemberFunc([Species.BUTTERFREE], TrainerSlot.TRAINER, true, p => {
+        getRandomPartyMemberFunc([SpeciesId.BUTTERFREE], TrainerSlot.TRAINER, true, p => {
           p.formIndex = 1;
           p.generateAndPopulateMoveset();
           p.generateName();
@@ -580,7 +585,7 @@ function getTrainerConfigForWave(waveIndex: number) {
       .setPartyTemplates(new TrainerPartyTemplate(5, PartyMemberStrength.AVERAGE))
       .setPartyMemberFunc(
         0,
-        getRandomPartyMemberFunc([Species.BEEDRILL], TrainerSlot.TRAINER, true, p => {
+        getRandomPartyMemberFunc([SpeciesId.BEEDRILL], TrainerSlot.TRAINER, true, p => {
           p.formIndex = 1;
           p.generateAndPopulateMoveset();
           p.generateName();
@@ -588,7 +593,7 @@ function getTrainerConfigForWave(waveIndex: number) {
       )
       .setPartyMemberFunc(
         1,
-        getRandomPartyMemberFunc([Species.BUTTERFREE], TrainerSlot.TRAINER, true, p => {
+        getRandomPartyMemberFunc([SpeciesId.BUTTERFREE], TrainerSlot.TRAINER, true, p => {
           p.formIndex = 1;
           p.generateAndPopulateMoveset();
           p.generateName();
@@ -625,7 +630,7 @@ function getTrainerConfigForWave(waveIndex: number) {
       )
       .setPartyMemberFunc(
         0,
-        getRandomPartyMemberFunc([Species.BEEDRILL], TrainerSlot.TRAINER, true, p => {
+        getRandomPartyMemberFunc([SpeciesId.BEEDRILL], TrainerSlot.TRAINER, true, p => {
           p.formIndex = 1;
           p.generateAndPopulateMoveset();
           p.generateName();
@@ -633,7 +638,7 @@ function getTrainerConfigForWave(waveIndex: number) {
       )
       .setPartyMemberFunc(
         1,
-        getRandomPartyMemberFunc([Species.BUTTERFREE], TrainerSlot.TRAINER, true, p => {
+        getRandomPartyMemberFunc([SpeciesId.BUTTERFREE], TrainerSlot.TRAINER, true, p => {
           p.formIndex = 1;
           p.generateAndPopulateMoveset();
           p.generateName();
@@ -663,7 +668,7 @@ function getTrainerConfigForWave(waveIndex: number) {
       )
       .setPartyMemberFunc(
         0,
-        getRandomPartyMemberFunc([Species.BEEDRILL], TrainerSlot.TRAINER, true, p => {
+        getRandomPartyMemberFunc([SpeciesId.BEEDRILL], TrainerSlot.TRAINER, true, p => {
           p.setBoss(true, 2);
           p.formIndex = 1;
           p.generateAndPopulateMoveset();
@@ -672,7 +677,7 @@ function getTrainerConfigForWave(waveIndex: number) {
       )
       .setPartyMemberFunc(
         1,
-        getRandomPartyMemberFunc([Species.BUTTERFREE], TrainerSlot.TRAINER, true, p => {
+        getRandomPartyMemberFunc([SpeciesId.BUTTERFREE], TrainerSlot.TRAINER, true, p => {
           p.setBoss(true, 2);
           p.formIndex = 1;
           p.generateAndPopulateMoveset();
@@ -760,8 +765,10 @@ function doBugTypeMoveTutor(): Promise<void> {
 
     // Option select complete, handle if they are learning a move
     if (result && result.selectedOptionIndex < moveOptions.length) {
-      globalScene.unshiftPhase(
-        new LearnMovePhase(result.selectedPokemonIndex, moveOptions[result.selectedOptionIndex].moveId),
+      globalScene.phaseManager.unshiftNew(
+        "LearnMovePhase",
+        result.selectedPokemonIndex,
+        moveOptions[result.selectedOptionIndex].moveId,
       );
     }
 

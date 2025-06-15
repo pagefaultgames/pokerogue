@@ -1,9 +1,9 @@
-import type { BattlerIndex } from "#app/battle";
-import type { Moves } from "#enums/moves";
+import type { BattlerIndex } from "#enums/battler-index";
 import type { DamageResult } from "#app/field/pokemon";
+import type { MoveId } from "#enums/move-id";
 
 export interface AttackMoveResult {
-  move: Moves;
+  move: MoveId;
   result: DamageResult;
   damage: number;
   critical: boolean;
