@@ -42,5 +42,5 @@ describe("Moves - Growth", () => {
     await game.phaseInterceptor.runFrom(EnemyCommandPhase).to(TurnInitPhase);
 
     expect(playerPokemon.getStatStage(Stat.SPATK)).toBe(1);
-  }, 20000);
+  });
 });
