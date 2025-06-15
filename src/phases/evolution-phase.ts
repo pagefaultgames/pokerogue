@@ -411,11 +411,7 @@ export class EvolutionPhase extends Phase {
       .getLevelMoves(this.lastLevel + 1, true, false, false, learnSituation)
       .filter(lm => lm[0] === EVOLVE_MOVE);
     for (const lm of levelMoves) {
-      globalScene.phaseManager.unshiftNew(
-            "LearnMovePhase",
-            globalScene.getPlayerParty().indexOf(this.pokemon),
-            lm[1],
-          );
+      globalScene.phaseManager.unshiftNew("LearnMovePhase", globalScene.getPlayerParty().indexOf(this.pokemon), lm[1]);
     }
     globalScene.phaseManager.unshiftNew("EndEvolutionPhase");
 
