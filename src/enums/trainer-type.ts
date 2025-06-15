@@ -118,6 +118,7 @@ export enum TrainerType {
   EXPERT_POKEMON_BREEDER,
   FUTURE_SELF_M,
   FUTURE_SELF_F,
+  SKY_TRAINER,
 
   BROCK = 200,
   MISTY,
