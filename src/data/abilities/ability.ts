@@ -25,8 +25,11 @@ import { allMoves } from "../data-lists";
 import { ArenaTagSide } from "#enums/arena-tag-side";
 import { BerryModifier, HitHealModifier, PokemonHeldItemModifier } from "#app/modifier/modifier";
 import { TerrainType } from "#app/data/terrain";
-import { pokemonFormChanges, SpeciesFormChangeWeatherTrigger } from "../pokemon-forms/form-change-triggers";
-import { SpeciesFormChangeAbilityTrigger } from "../pokemon-forms/form-change-triggers";
+import { pokemonFormChanges } from "../pokemon-forms";
+import {
+  SpeciesFormChangeWeatherTrigger,
+  SpeciesFormChangeAbilityTrigger,
+} from "../pokemon-forms/form-change-triggers";
 import i18next from "i18next";
 import { Command } from "#enums/command";
 import { BerryModifierType } from "#app/modifier/modifier-type";
