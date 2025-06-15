@@ -40,6 +40,9 @@ export default class EggGachaUiHandler extends MessageUiHandler {
 
   private scale = 0.1666666667;
 
+  private legendaryExpiration = addTextObject(0, 0, "", TextStyle.WINDOW_ALT);
+  private playTimeTimer: Phaser.Time.TimerEvent | null;
+
   constructor() {
     super(UiMode.EGG_GACHA);
 
@@ -128,7 +131,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
       gachaInfoContainer.add(gachaUpLabel);
 
       switch (gachaType as GachaType) {
-        case GachaType.LEGENDARY:
+        case GachaType.LEGENDARY: {
           if (["de", "es-ES"].includes(currentLanguage)) {
             gachaUpLabel.setAlign("center");
             gachaUpLabel.setY(0);
@@ -149,6 +152,7 @@ export default class EggGachaUiHandler extends MessageUiHandler {
 
           gachaInfoContainer.add(pokemonIcon);
           break;
+        }
         case GachaType.MOVE:
           if (["de", "es-ES", "fr", "pt-BR", "ru"].includes(currentLanguage)) {
             gachaUpLabel.setAlign("center");
@@ -197,6 +201,19 @@ export default class EggGachaUiHandler extends MessageUiHandler {
       this.gachaInfoContainers.push(gachaInfoContainer);
 
       this.eggGachaContainer.add(gachaContainer);
+
+      // Expiration timer for the legendary gacha
+      if (gachaType === GachaType.LEGENDARY) {
+        this.legendaryExpiration
+          .setText(this.getLegendaryGachaTimeLeft())
+          .setFontSize("64px")
+          .setPositionRelative(
+            gacha,
+            gacha.width / 2 - this.legendaryExpiration.displayWidth / 2 + 0.3,
+            gacha.height / 2 + 12.5,
+          );
+        gachaContainer.add(this.legendaryExpiration);
+      }
 
       this.updateGachaInfo(g);
     });
@@ -357,6 +374,8 @@ export default class EggGachaUiHandler extends MessageUiHandler {
     this.eggGachaContainer.setVisible(true);
 
     handleTutorial(Tutorial.Egg_Gacha);
+
+    this.legendaryGachaTimer();
 
     return true;
   }
@@ -605,11 +624,12 @@ export default class EggGachaUiHandler extends MessageUiHandler {
   updateGachaInfo(gachaType: GachaType): void {
     const infoContainer = this.gachaInfoContainers[gachaType];
     switch (gachaType as GachaType) {
-      case GachaType.LEGENDARY:
+      case GachaType.LEGENDARY: {
         const species = getPokemonSpecies(getLegendaryGachaSpeciesForTimestamp(new Date().getTime()));
         const pokemonIcon = infoContainer.getAt(1) as Phaser.GameObjects.Sprite;
         pokemonIcon.setTexture(species.getIconAtlasKey(), species.getIconId(false));
         break;
+      }
     }
   }
 
@@ -846,9 +866,37 @@ export default class EggGachaUiHandler extends MessageUiHandler {
     return changed;
   }
 
+  legendaryGachaTimer(): void {
+    if (this.playTimeTimer) {
+      this.playTimeTimer.destroy();
+      this.playTimeTimer = null;
+    }
+    this.playTimeTimer = globalScene.time.addEvent({
+      loop: true,
+      delay: fixedInt(1000),
+      callback: () => {
+        this.legendaryExpiration.setText(this.getLegendaryGachaTimeLeft());
+      },
+    });
+  }
+
+  getLegendaryGachaTimeLeft(): string {
+    // 86400000 is the number of miliseconds in one day
+    const msUntilMidnight = 86400000 - (Date.now() % 86400000);
+    const hours = `${Math.floor(msUntilMidnight / 3600000)}`;
+    const minutes = `${Math.floor((msUntilMidnight % 3600000) / 60000)}`;
+    const seconds = `${Math.floor((msUntilMidnight % 60000) / 1000)}`;
+
+    return `${hours.padStart(2, "0")}:${minutes.padStart(2, "0")}:${seconds.padStart(2, "0")}`;
+  }
+
   clear(): void {
     super.clear();
     this.setGachaCursor(-1);
     this.eggGachaContainer.setVisible(false);
+    if (this.playTimeTimer) {
+      this.playTimeTimer.destroy();
+      this.playTimeTimer = null;
+    }
   }
 }

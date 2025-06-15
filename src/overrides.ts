@@ -1,10 +1,10 @@
 import { type PokeballCounts } from "#app/battle-scene";
 import { EvolutionItem } from "#app/data/balance/pokemon-evolutions";
 import { Gender } from "#app/data/gender";
-import { FormChangeItem } from "#app/data/pokemon-forms";
+import { FormChangeItem } from "#enums/form-change-item";
 import { type ModifierOverride } from "#app/modifier/modifier-type";
 import { Variant } from "#app/sprites/variant";
-import { Unlockables } from "#app/system/unlockables";
+import { Unlockables } from "#enums/unlockables";
 import { AbilityId } from "#enums/ability-id";
 import { BattleType } from "#enums/battle-type";
 import { BerryType } from "#enums/berry-type";
