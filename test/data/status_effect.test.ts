@@ -13,7 +13,7 @@ import { SpeciesId } from "#enums/species-id";
 import { StatusEffect } from "#enums/status-effect";
 import GameManager from "#test/testUtils/gameManager";
 import { mockI18next } from "#test/testUtils/testUtils";
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 const pokemonName = "PKM";
 const sourceText = "SOURCE";
@@ -294,10 +294,6 @@ describe("Status Effect Messages", () => {
       const text = getStatusEffectOverlapText(statusEffect, pokemonName);
       expect(text).toBe("statusEffect:burn.overlap");
     });
-  });
-
-  afterEach(() => {
-    vi.resetAllMocks();
   });
 });
 
