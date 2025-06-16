@@ -1,5 +1,4 @@
 import type Battle from "#app/battle";
-import { BattlerIndex } from "#enums/battler-index";
 import { BattleType } from "#enums/battle-type";
 import { biomeLinks, BiomePoolTier } from "#app/data/balance/biomes";
 import type MysteryEncounterOption from "#app/data/mystery-encounters/mystery-encounter-option";
@@ -974,33 +973,8 @@ export function handleMysteryEncounterBattleStartEffects() {
   ) {
     const effects = encounter.startOfBattleEffects;
     effects.forEach(effect => {
-      let source: EnemyPokemon | Pokemon;
-      if (effect.sourcePokemon) {
-        source = effect.sourcePokemon;
-      } else if (!isNullOrUndefined(effect.sourceBattlerIndex)) {
-        if (effect.sourceBattlerIndex === BattlerIndex.ATTACKER) {
-          source = globalScene.getEnemyField()[0];
-        } else if (effect.sourceBattlerIndex === BattlerIndex.ENEMY) {
-          source = globalScene.getEnemyField()[0];
-        } else if (effect.sourceBattlerIndex === BattlerIndex.ENEMY_2) {
-          source = globalScene.getEnemyField()[1];
-        } else if (effect.sourceBattlerIndex === BattlerIndex.PLAYER) {
-          source = globalScene.getPlayerField()[0];
-        } else if (effect.sourceBattlerIndex === BattlerIndex.PLAYER_2) {
-          source = globalScene.getPlayerField()[1];
-        }
-      } else {
-        source = globalScene.getEnemyField()[0];
-      }
-      globalScene.phaseManager.pushNew(
-        "MovePhase",
-        // @ts-expect-error: source is guaranteed to be defined
-        source,
-        effect.targets,
-        effect.move,
-        effect.followUp,
-        effect.ignorePp,
-      );
+      const source = effect.sourcePokemon ?? globalScene.getField()[effect.sourceBattlerIndex ?? 0];
+      globalScene.phaseManager.pushNew("MovePhase", source, effect.targets, effect.move, effect.useMode);
     });
 
     // Pseudo turn end phase to reset flinch states, Endure, etc.

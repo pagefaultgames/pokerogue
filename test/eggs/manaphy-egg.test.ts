@@ -21,7 +21,6 @@ describe("Manaphy Eggs", () => {
 
   afterEach(() => {
     game.phaseInterceptor.restoreOg();
-    vi.restoreAllMocks();
   });
 
   beforeEach(async () => {

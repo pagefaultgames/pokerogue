@@ -262,7 +262,7 @@ export class Arena {
             return 5;
         }
         break;
-      case SpeciesId.LYCANROC:
+      case SpeciesId.LYCANROC: {
         const timeOfDay = this.getTimeOfDay();
         switch (timeOfDay) {
           case TimeOfDay.DAY:
@@ -274,6 +274,7 @@ export class Arena {
             return 1;
         }
         break;
+      }
     }
 
     return 0;
@@ -763,6 +764,9 @@ export class Arena {
           t => t instanceof tagType && (side === ArenaTagSide.BOTH || t.side === ArenaTagSide.BOTH || t.side === side),
         );
   }
+
+  // TODO: Add an overload similar to `Array.prototype.find` if the predicate func is of the form
+  // `(x): x is T`
 
   /**
    * Uses {@linkcode findTagsOnSide} to filter (using the parameter function) for specific tags that apply to both sides

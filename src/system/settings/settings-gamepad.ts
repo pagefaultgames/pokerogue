@@ -32,7 +32,10 @@ const pressAction = i18next.t("settings:pressActionToAssign");
 
 export const settingGamepadOptions = {
   [SettingGamepad.Controller]: [i18next.t("settings:controllerDefault"), i18next.t("settings:controllerChange")],
-  [SettingGamepad.Gamepad_Support]: [i18next.t("settings:gamepadSupportAuto"), i18next.t("settings:gamepadSupportDisabled")],
+  [SettingGamepad.Gamepad_Support]: [
+    i18next.t("settings:gamepadSupportAuto"),
+    i18next.t("settings:gamepadSupportDisabled"),
+  ],
   [SettingGamepad.Button_Up]: [`KEY ${Button.UP.toString()}`, pressAction],
   [SettingGamepad.Button_Down]: [`KEY ${Button.DOWN.toString()}`, pressAction],
   [SettingGamepad.Button_Left]: [`KEY ${Button.LEFT.toString()}`, pressAction],
