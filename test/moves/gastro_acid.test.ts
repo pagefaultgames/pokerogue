@@ -96,7 +96,7 @@ describe("Moves - Gastro Acid", () => {
     await game.toNextTurn();
     expect(enemyPokemon?.getHpRatio()).toBeLessThan(1);
 
-    game.move.select(MoveId.SPORE);
+    game.move.use(MoveId.SPORE);
     await game.phaseInterceptor.to("BerryPhase");
 
     expect(enemyPokemon?.status?.effect).toBeFalsy();
